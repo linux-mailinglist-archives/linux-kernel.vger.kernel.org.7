@@ -1,423 +1,163 @@
-Return-Path: <linux-kernel+bounces-663151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-663153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE308AC4445
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 22:12:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 65CD6AC444C
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 22:13:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 792AD176F0E
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 20:12:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5852F177FC3
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 20:13:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6310523F41D;
-	Mon, 26 May 2025 20:12:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74BD423FC68;
+	Mon, 26 May 2025 20:13:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HIdBF+fr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dVi6KoAo"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E5983FE7;
-	Mon, 26 May 2025 20:12:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2555423F422
+	for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 20:13:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748290340; cv=none; b=M1kam78gtZ4RrE275LlUG3X3Tc7+5oqf8YxGsMvaFZRZv3O2b+NaHaJ3iLdQdkxdCHfnLVztc8ygxze2fA87MGLxZnylbaZBQScaPeX2SHgvosTmwp/3aSPAAfQmIbqSIFUz4ktDJaJEH/xCXHY3wcgUIvm/80PZO0lnPKQAjAQ=
+	t=1748290399; cv=none; b=FP9bs0nAP8KBKPLU63PTiCscnOyJweHnZOfOK2PiqMUXKIn1KPFZbglmf4BtATtSFkc4KKzBQI35e6RTgldkSv467p3qbxAi59lKQTyNtgDo3q8AUEAvIf6W60fWOLpRkE/yVVKzAfWcIK2kI34sUjglmT1ZQT7PUYJtjTvMtx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748290340; c=relaxed/simple;
-	bh=jh/tF4rtDx9TN6BskFp9fOGlfEIylMCbMK9zzx4Jnnc=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=S/iojG2iT1w9iTRQIlJ3+PvH+g63NCmOJw56p20869JXZNHutG2QYerns5stoudCKlBHLxL6BaCx2C40yzl9NaM20fIsqqg7uDGpSz+/BdC9oi6VGbKtBD9BeRJMqJTVUF9gNGgV0OFItGVs7EoM+sANHF1GdQR0A4WFT6BryK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HIdBF+fr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB14CC4CEE7;
-	Mon, 26 May 2025 20:12:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748290339;
-	bh=jh/tF4rtDx9TN6BskFp9fOGlfEIylMCbMK9zzx4Jnnc=;
-	h=From:Date:Subject:To:Cc:From;
-	b=HIdBF+frlQWBmIRuSrkL+a+y+8KAR7dojRJo9WdArgCj+RLwwfW44Dsur3nBG86Ev
-	 kUkLqI65K4D17BmLOWJA5dOzpPLGrJ+mxsYiCO4Fqg5SUEfCzhmAhza4mFm26nDNBD
-	 s2H9JBK9zY46row3lP0IUKwdGPXciMzqy4K+9d0S/kY9X3Wk9zAlGo5M8yKB9lGmRz
-	 BwJreBlctWMGd//5DhxwiIhCXhqj8PTUpqfwS+wn1hfhiai3BbnHGD+AlR13PBCvtp
-	 pIR2FR6e1VJgZrNJnhwVw3oiUErLsXCNM9C4fyTCV5C/kE2uZgLJm7s3pUV2EeUwrW
-	 gcTdmPvb6bCkg==
-Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-404da7584adso1051366b6e.3;
-        Mon, 26 May 2025 13:12:19 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUb0s2Y5MX0Wsx2t/K7zShDzrYz0cTvQzLy6xM7JEdWqcKim9WCddNAP13NdVqiCt0uG8OygqOUD1gi@vger.kernel.org, AJvYcCXIq7hrkd0dazd8I+pmS/H15V79DPoPA93bQJMpdLibeWYa/K49ADWhy7frvdk/CKAf9bSa3oEgNeOrE4+3@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxs7jJZVBN5Ex7Ok+yQLwJuomKFlf3KjPI6B6pd0PI9VNcf31es
-	QW0Xbq03B+w+j7RimSljyl5tmLbwzOLOfn/EVfBlYCZ7jl7rThx8uAJNLBu3jED9zWIYYl1T5Tg
-	wFDuTV/egz/zGCuK3lwLGxQg5Qo5aSOk=
-X-Google-Smtp-Source: AGHT+IEwHBixHJeadRDoOmPkk8pwJuXktV/RpEPtbyJLCKvP4+sL2uh8P30O5tjagcs0piJZcWKDfz1Pl5NNLRZJYPE=
-X-Received: by 2002:a05:6808:318f:b0:406:4ec6:2613 with SMTP id
- 5614622812f47-4064ec62a50mr3808626b6e.19.1748290339098; Mon, 26 May 2025
- 13:12:19 -0700 (PDT)
+	s=arc-20240116; t=1748290399; c=relaxed/simple;
+	bh=udre1uGBOac6motS58as4+M/iSTXL1UBy24ANEE9bs4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pqu+hFrUpLw4mhclJsluUmnr1SfODCw9fdOyFxjcdsj9y9L+Wt+uwU4iHomMrTTwNVuKBRSoWY+lETCsqzxDApAncs2hAVSuys4gDxfQ6Kc8W7Dt/iZooF6vCSKY/NMbD4qbZ639L9JBs7s4/6eApeojmMzkfBcwM2NjnGII86E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dVi6KoAo; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1748290395;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hM8pOHSOHM6og3y9wbI886KhOM4ZVpJTZ9nEg3CMFeQ=;
+	b=dVi6KoAoOjxGLNDjB2ZCQQ6R7j7mKqlY4WeXdc8uVMmTZcYom17EaixbS8yB9gijPdmeoi
+	ygUW/9D42prQm5N/paM3EtPMlWgJ/+Ovcfoa5P9IKxkt/bQ3m64lKWxkReea2u6WPeQKm/
+	f/z5iYVcE9IMyWLy5eb1w2iW3PCnpTA=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-228-2TMwL713MpqP_ai1MLaIAg-1; Mon, 26 May 2025 16:13:14 -0400
+X-MC-Unique: 2TMwL713MpqP_ai1MLaIAg-1
+X-Mimecast-MFC-AGG-ID: 2TMwL713MpqP_ai1MLaIAg_1748290393
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-445135eb689so16302725e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 13:13:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748290392; x=1748895192;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hM8pOHSOHM6og3y9wbI886KhOM4ZVpJTZ9nEg3CMFeQ=;
+        b=fDaMYDWf0I1F5rMJ2CH1021Q3DzsiXJrwngXH6bkSNcMLo/oqLMfIYNDk7SoodjjrD
+         ag+IbYAskBBWPbPpl2MQs/v1a/1S/ZYESUmBO7ZGIngefaDwfPn11UrVPO6IQwtRMLrh
+         s4VCvpu53J6iGDZI0sxvqzNLtwinjg+axfxvB0HAO3VknVgoT+3dONcynFkecZVguog9
+         u19V3+0JBbjWUQoqGx0AYMVcUtpRGrQbiRCS84/2cpSpAenvwMUPYW9NYLuL5RI74R5D
+         2GPBc6+i44jnfc26bk7jLPrSH9d9g0i3WmgsA31qZ4g1X1ExC/iE+cctaoqcC5ZxfLKM
+         4p6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXdWJSjpxgts5U9yhoCtVC66PQfiPtm/SsUD4RsCKEbLgBuyeQ8ubTXdK/+H/mzftH8NIqJR6r2CbIkQE4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUzaDHeYUe2YB9cZ/Nyp56uJ2k7kycLXuWPdvdZGPzwlEvctNh
+	2ajARD21dGOsOxC18gZnpWU0KsaBK65r81HwybjcN6VG2sKWkjmxJTte6ns0B4yM/MaNAVPE2Dg
+	jzTuaApswh9qyLXvPzv9uMBw3IvyS5TLuDJAXdNEP5S1gFZRDxjvj8+nmi+6EdQsAfiMfTvvfs+
+	fniu55KrrE64DkAFqUCPK+hVgLbcj80jemn3IQ2IKHiTg1o0xj
+X-Gm-Gg: ASbGnctcbt1K85C6BGgwfGR60VoCVeF2ZP3NCBFyVWEUcNk/nrfsLRuNSmR+68HVZ+E
+	dXSIQhyFmxb64AweOFcPhkhXNfScu698XIoLb90HY5EyzqpZc1z/u0TVwXqM3PE0e4Aw=
+X-Received: by 2002:a05:6000:40da:b0:3a3:698a:973 with SMTP id ffacd0b85a97d-3a4cb49fa3bmr8695105f8f.59.1748290392179;
+        Mon, 26 May 2025 13:13:12 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF0+AxXJPizTpP9QoO5IXtFAO01qqghm8BjYyQ+skkTbjCSgR/3ySaxc11xbULNV7xS2YBFBlH2xIjzip8xtKo=
+X-Received: by 2002:a05:6000:40da:b0:3a3:698a:973 with SMTP id
+ ffacd0b85a97d-3a4cb49fa3bmr8695090f8f.59.1748290391828; Mon, 26 May 2025
+ 13:13:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 26 May 2025 22:12:06 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0gK5=_HkTg-O7GOz-xUw27_484_AeoJHaz9vN0XRZvmqw@mail.gmail.com>
-X-Gm-Features: AX0GCFvmXz6tFBEWzA30kzSLciOq5iaWrISE4xpQmRMo9b8rpcHbmILU13SpVr8
-Message-ID: <CAJZ5v0gK5=_HkTg-O7GOz-xUw27_484_AeoJHaz9vN0XRZvmqw@mail.gmail.com>
-Subject: [GIT PULL] Power management updates for v6.16-rc1
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux PM <linux-pm@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	ACPI Devel Maling List <linux-acpi@vger.kernel.org>
+References: <20250522030628.1924833-1-chenhuacai@loongson.cn>
+In-Reply-To: <20250522030628.1924833-1-chenhuacai@loongson.cn>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Date: Mon, 26 May 2025 22:13:00 +0200
+X-Gm-Features: AX0GCFvALzV40Zi8ewJWNPzDDkxsciCzCRalOrRxez99t8YObAZ1GdsLNkTkCX8
+Message-ID: <CABgObfadeF0Er+M7Lv0kB0O1bugDk+_3jbwKU38Ju63YO7NZhQ@mail.gmail.com>
+Subject: Re: [GIT PULL] LoongArch KVM changes for v6.16
+To: Huacai Chen <chenhuacai@loongson.cn>
+Cc: Huacai Chen <chenhuacai@kernel.org>, Tianrui Zhao <zhaotianrui@loongson.cn>, 
+	Bibo Mao <maobibo@loongson.cn>, kvm@vger.kernel.org, loongarch@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, Xuerui Wang <kernel@xen0n.name>, 
+	Jiaxun Yang <jiaxun.yang@flygoat.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Linus,
+On Thu, May 22, 2025 at 5:07=E2=80=AFAM Huacai Chen <chenhuacai@loongson.cn=
+> wrote:
+>
+> The following changes since commit a5806cd506af5a7c19bcd596e4708b5c464bfd=
+21:
+>
+>   Linux 6.15-rc7 (2025-05-18 13:57:29 -0700)
+>
+> are available in the Git repository at:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/chenhuacai/linux-loongson=
+.git tags/loongarch-kvm-6.16
+>
+> for you to fetch changes up to a867688c8cbb1b83667a6665362d89e8c762e820:
+>
+>   KVM: selftests: Add supported test cases for LoongArch (2025-05-20 20:2=
+0:26 +0800)
+
+Pulled, thanks.
+
+Paolo
+
+> ----------------------------------------------------------------
+> LoongArch KVM changes for v6.16
+>
+> 1. Don't flush tlb if HW PTW supported.
+> 2. Add LoongArch KVM selftests support.
+>
+> ----------------------------------------------------------------
+> Bibo Mao (7):
+>       LoongArch: KVM: Add ecode parameter for exception handlers
+>       LoongArch: KVM: Do not flush tlb if HW PTW supported
+>       KVM: selftests: Add VM_MODE_P47V47_16K VM mode
+>       KVM: selftests: Add KVM selftests header files for LoongArch
+>       KVM: selftests: Add core KVM selftests support for LoongArch
+>       KVM: selftests: Add ucall test support for LoongArch
+>       KVM: selftests: Add supported test cases for LoongArch
+>
+>  MAINTAINERS                                        |   2 +
+>  arch/loongarch/include/asm/kvm_host.h              |   2 +-
+>  arch/loongarch/include/asm/kvm_vcpu.h              |   2 +-
+>  arch/loongarch/kvm/exit.c                          |  37 +--
+>  arch/loongarch/kvm/mmu.c                           |  15 +-
+>  tools/testing/selftests/kvm/Makefile               |   2 +-
+>  tools/testing/selftests/kvm/Makefile.kvm           |  17 +
+>  tools/testing/selftests/kvm/include/kvm_util.h     |   6 +
+>  .../kvm/include/loongarch/kvm_util_arch.h          |   7 +
+>  .../selftests/kvm/include/loongarch/processor.h    | 141 +++++++++
+>  .../selftests/kvm/include/loongarch/ucall.h        |  20 ++
+>  tools/testing/selftests/kvm/lib/kvm_util.c         |   3 +
+>  .../selftests/kvm/lib/loongarch/exception.S        |  59 ++++
+>  .../selftests/kvm/lib/loongarch/processor.c        | 346 +++++++++++++++=
+++++++
+>  tools/testing/selftests/kvm/lib/loongarch/ucall.c  |  38 +++
+>  .../testing/selftests/kvm/set_memory_region_test.c |   2 +-
+>  16 files changed, 674 insertions(+), 25 deletions(-)
+>  create mode 100644 tools/testing/selftests/kvm/include/loongarch/kvm_uti=
+l_arch.h
+>  create mode 100644 tools/testing/selftests/kvm/include/loongarch/process=
+or.h
+>  create mode 100644 tools/testing/selftests/kvm/include/loongarch/ucall.h
+>  create mode 100644 tools/testing/selftests/kvm/lib/loongarch/exception.S
+>  create mode 100644 tools/testing/selftests/kvm/lib/loongarch/processor.c
+>  create mode 100644 tools/testing/selftests/kvm/lib/loongarch/ucall.c
+>
 
-Please pull from the tag
-
- git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
- pm-6.16-rc1
-
-with top-most commit 3e0c509fbdb106ba2d2fa13beafe58f4ba11e13d
-
- Merge branch 'pm-tools'
-
-on top of commit a5806cd506af5a7c19bcd596e4708b5c464bfd21
-
- Linux 6.15-rc7
-
-to receive power management updates for 6.16-rc1.
-
-Once again, the changes are dominated by cpufreq updates, but this time
-the majority of them are cpufreq core changes, mostly related to the
-introduction of policy locking guards and __free() usage, and fixes
-related to boost handling.  Still, there is also a significant update
-of the intel_pstate driver making it register an energy model when
-running on a hybrid platform which is used for enabling energy-aware
-scheduling (EAS) if the driver operates in the passive mode (and
-schedutil is used as the cpufreq governor for all CPUs which is the
-passive mode default).  There are some amd-pstate driver updates too,
-for a good measure, including the "Requested CPU Min frequency" BIOS
-option support and new online/offline callbacks.
-
-In the cpuidle space, the most significant change is the addition of
-a C1 demotion on/off sysfs knob to intel_idle which should help some
-users to configure their systems more precisely.  There is also the
-conversion of the PSCI cpuidle driver to a faux device one and there
-are two small updates of cpuidle governors.
-
-Device power management is also modified quite a bit, especially the
-handling of devices with asynchronous suspend and resume enabled during
-system transitions.  They are now going to be handled more asynchronously
-during suspend transitions and somewhat less aggressively during resume
-transitions.
-
-Apart from the above, the operating performance points (OPP) library
-is now going to use mutex locking guards and scope-based cleanup
-helpers and there is the usual bunch of assorted fixes and code
-cleanups.
-
-Specifics:
-
- - Fix potential division-by-zero error in em_compute_costs() (Yaxiong
-   Tian).
-
- - Fix typos in energy model documentation and example driver code (Moon
-   Hee Lee, Atul Kumar Pant).
-
- - Rearrange the energy model management code and add a new function for
-   adjusting a CPU energy model after adjusting the capacity of the
-   given CPU to it (Rafael Wysocki).
-
- - Refactor cpufreq_online(), add and use cpufreq policy locking guards,
-   use __free() in policy reference counting, and clean up core cpufreq
-   code on top of that (Rafael Wysocki).
-
- - Fix boost handling on CPU suspend/resume and sysfs updates (Viresh
-   Kumar).
-
- - Fix des_perf clamping with max_perf in amd_pstate_update() (Dhananjay
-   Ugwekar).
-
- - Add offline, online and suspend callbacks to the amd-pstate driver,
-   rename and use the existing amd_pstate_epp callbacks in it (Dhananjay
-   Ugwekar).
-
- - Add support for the "Requested CPU Min frequency" BIOS option to the
-   amd-pstate driver (Dhananjay Ugwekar).
-
- - Reset amd-pstate driver mode after running selftests (Swapnil
-   Sapkal).
-
- - Avoid shadowing ret in amd_pstate_ut_check_driver() (Nathan
-   Chancellor).
-
- - Add helper for governor checks to the schedutil cpufreq governor and
-   move cpufreq-specific EAS checks to cpufreq (Rafael Wysocki).
-
- - Populate the cpu_capacity sysfs entries from the intel_pstate driver
-   after registering asym capacity support (Ricardo Neri).
-
- - Add support for enabling Energy-aware scheduling (EAS) to the
-   intel_pstate driver when operating in the passive mode on a hybrid
-   platform (Rafael Wysocki).
-
- - Drop redundant cpus_read_lock() from store_local_boost() in the
-   cpufreq core (Seyediman Seyedarab).
-
- - Replace sscanf() with kstrtouint() in the cpufreq code and use a
-   symbol instead of a raw number in it (Bowen Yu).
-
- - Add support for autonomous CPU performance state selection to the
-   CPPC cpufreq driver (Lifeng Zheng).
-
- - OPP: Add dev_pm_opp_set_level() (Praveen Talari).
-
- - Introduce scope-based cleanup headers and mutex locking guards in OPP
-   core (Viresh Kumar).
-
- - Switch OPP to use kmemdup_array() (Zhang Enpei).
-
- - Optimize bucket assignment when next_timer_ns equals KTIME_MAX in the
-   menu cpuidle governor (Zhongqiu Han).
-
- - Convert the cpuidle PSCI driver to a faux device one (Sudeep Holla).
-
- - Add C1 demotion on/off sysfs knob to the intel_idle driver (Artem
-   Bityutskiy).
-
- - Fix typos in two comments in the teo cpuidle governor (Atul Kumar
-   Pant).
-
- - Fix denying of auto suspend in pm_suspend_timer_fn() (Charan Teja
-   Kalla).
-
- - Move debug runtime PM attributes to runtime_attrs[] (Rafael Wysocki).
-
- - Add new devm_ functions for enabling runtime PM and runtime PM
-   reference counting (Bence Cs=C3=B3k=C3=A1s).
-
- - Remove size arguments from strscpy() calls in the hibernation core
-   code (Thorsten Blum).
-
- - Adjust the handling of devices with asynchronous suspend enabled
-   during system suspend and resume to start resuming them immediately
-   after resuming their parents and to start suspending such a device
-   immediately after suspending its first child (Rafael Wysocki).
-
- - Adjust messages printed during tasks freezing to avoid using
-   pr_cont() (Andrew Sayers, Paul Menzel).
-
- - Clean up unnecessary usage of !! in pm_print_times_init() (Zihuan
-   Zhang).
-
- - Add missing wakeup source attribute relax_count to sysfs and
-   remove the space character at the end ofi the string produced by
-   pm_show_wakelocks() (Zijun Hu).
-
- - Add configurable pm_test delay for hibernation (Zihuan Zhang).
-
- - Disable asynchronous suspend in ucsi_ccg_probe() to prevent the
-   cypd4226 device on Tegra boards from suspending prematurely (Jon
-   Hunter).
-
- - Unbreak printing PM debug messages during hibernation and clean up
-   some related code (Rafael Wysocki).
-
- - Add a systemd service to run cpupower and change cpupower binding's
-   Makefile to use -lcpupower (John B. Wyatt IV, Francesco Poli).
-
-Thanks!
-
-
----------------
-
-Andrew Sayers (1):
-      PM: sleep: Use two lines for "Restarting..." / "done" messages
-
-Artem Bityutskiy (3):
-      intel_idle: Add C1 demotion on/off sysfs knob
-      Documentation: admin-guide: pm: Document intel_idle C1 demotion
-      Documentation: ABI: testing: document the new cpuidle sysfs file
-
-Atul Kumar Pant (2):
-      cpuidle: teo: Fix typos in two comments
-      PM: EM: Documentation: Fix typos in example driver code
-
-Bence Cs=C3=B3k=C3=A1s (1):
-      PM: runtime: Add new devm functions
-
-Bowen Yu (2):
-      cpufreq: Replace magic number
-      cpufreq: Update sscanf() to kstrtouint()
-
-Charan Teja Kalla (1):
-      PM: runtime: fix denying of auto suspend in pm_suspend_timer_fn()
-
-Dhananjay Ugwekar (3):
-      cpufreq/amd-pstate: Move max_perf limiting in amd_pstate_update
-      cpufreq/amd-pstate: Add offline, online and suspend callbacks
-for amd_pstate_driver
-      cpufreq/amd-pstate: Add support for the "Requested CPU Min
-frequency" BIOS option
-
-Francesco Poli (wintermute) (4):
-      cpupower: add a systemd service to run cpupower
-      cpupower: do not write DESTDIR to cpupower.service
-      cpupower: do not call systemctl at install time
-      cpupower: do not install files to /etc/default/
-
-John B. Wyatt IV (1):
-      cpupower: change binding's makefile to use -lcpupower
-
-Jon Hunter (1):
-      ucsi_ccg: Disable async suspend in ucsi_ccg_probe()
-
-Lifeng Zheng (1):
-      cpufreq: CPPC: Add support for autonomous selection
-
-Moon Hee Lee (1):
-      PM: EM: Documentation: fix typo in energy-model.rst
-
-Nathan Chancellor (1):
-      cpufreq/amd-pstate: Avoid shadowing ret in amd_pstate_ut_check_driver=
-()
-
-Paul Menzel (1):
-      PM: freezer: Rewrite restarting tasks log to remove stray *done.*
-
-Praveen Talari (1):
-      OPP: Add dev_pm_opp_set_level()
-
-Rafael J. Wysocki (25):
-      cpufreq: Consolidate some code in cpufreq_online()
-      cpufreq: Split cpufreq_online()
-      cpufreq: Add and use cpufreq policy locking guards
-      cpufreq: intel_pstate: Rearrange max frequency updates handling code
-      cpufreq: Use locking guard and __free() in cpufreq_update_policy()
-      cpufreq: Drop cpufreq_cpu_acquire() and cpufreq_cpu_release()
-      cpufreq: Use __free() for policy reference counting cleanup
-      cpufreq: Introduce cpufreq_policy_refresh()
-      cpufreq: Pass policy pointer to ->update_limits()
-      cpufreq: Drop unused cpufreq_get_policy()
-      PM: sleep: Resume children after resuming the parent
-      PM: sleep: Suspend async parents after suspending children
-      PM: sleep: Make suspend of devices more asynchronous
-      cpufreq/sched: schedutil: Add helper for governor checks
-      cpufreq/sched: Move cpufreq-specific EAS checks to cpufreq
-      PM: sysfs: Move debug runtime PM attributes to runtime_attrs[]
-      PM: sleep: Print PM debug messages during hibernation
-      PM: sleep: Introduce pm_suspend_in_progress()
-      cpufreq: Drop policy locking from cpufreq_policy_is_good_for_eas()
-      PM: EM: Move CPU capacity check to em_adjust_new_capacity()
-      PM: EM: Introduce em_adjust_cpu_capacity()
-      cpufreq: intel_pstate: EAS support for hybrid platforms
-      cpufreq: intel_pstate: EAS: Increase cost for CPUs using L3 cache
-      cpufreq: intel_pstate: Document hybrid processor support
-      PM: sleep: Introduce pm_sleep_transition_in_progress()
-
-Ricardo Neri (2):
-      arch_topology: Relocate cpu_scale to topology.[h|c]
-      cpufreq: intel_pstate: Populate the cpu_capacity sysfs entries
-
-Seyediman Seyedarab (1):
-      cpufreq: drop redundant cpus_read_lock() from store_local_boost()
-
-Sudeep Holla (2):
-      cpuidle: psci: Transition to the faux device interface
-      cpuidle: psci: Avoid initializing faux device if no DT idle
-states are present
-
-Swapnil Sapkal (1):
-      amd-pstate-ut: Reset amd-pstate driver mode after running selftests
-
-Thorsten Blum (1):
-      PM: hibernate: Remove size arguments when calling strscpy()
-
-Viresh Kumar (10):
-      OPP: Remove _get_opp_table_kref()
-      OPP: Return opp from dev_pm_opp_get()
-      OPP: Return opp_table from dev_pm_opp_get_opp_table_ref()
-      OPP: Use scope-based OF cleanup helpers
-      cpufreq: Don't unnecessarily call set_boost()
-      cpufreq: Introduce policy_set_boost()
-      cpufreq: Preserve policy's boost state after resume
-      cpufreq: Force sync policy boost with global boost on sysfs update
-      OPP: Define and use scope-based cleanup helpers
-      OPP: Use mutex locking guards
-
-Yaxiong Tian (1):
-      PM: EM: Fix potential division-by-zero error in em_compute_costs()
-
-Zhang Enpei (1):
-      OPP: switch to use kmemdup_array()
-
-Zhongqiu Han (1):
-      cpuidle: menu: Optimize bucket assignment when next_timer_ns
-equals KTIME_MAX
-
-Zihuan Zhang (2):
-      PM: sleep: Remove unnecessary !!
-      PM: hibernate: add configurable delay for pm_test
-
-Zijun Hu (2):
-      PM: wakeup: Add missing wakeup source attribute relax_count
-      PM: wakeup: Delete space in the end of string shown by pm_show_wakelo=
-cks()
-
----------------
-
- Documentation/ABI/testing/sysfs-devices-system-cpu |  61 ++-
- Documentation/admin-guide/kernel-parameters.txt    |   7 +
- Documentation/admin-guide/pm/intel_idle.rst        |  21 +
- Documentation/admin-guide/pm/intel_pstate.rst      | 104 ++++-
- Documentation/power/energy-model.rst               |   8 +-
- arch/x86/pci/fixup.c                               |   4 +-
- drivers/base/arch_topology.c                       |  52 ---
- drivers/base/power/main.c                          | 216 ++++++++--
- drivers/base/power/runtime.c                       |  46 +-
- drivers/base/power/sysfs.c                         |  15 +-
- drivers/base/power/wakeup.c                        |   2 +-
- drivers/base/power/wakeup_stats.c                  |   2 +
- drivers/base/topology.c                            |  52 +++
- drivers/cpufreq/amd-pstate-ut.c                    |  21 +-
- drivers/cpufreq/amd-pstate.c                       | 120 ++++--
- drivers/cpufreq/amd-pstate.h                       |   3 +
- drivers/cpufreq/cppc_cpufreq.c                     | 109 +++++
- drivers/cpufreq/cpufreq.c                          | 463 ++++++++++-------=
-----
- drivers/cpufreq/intel_pstate.c                     | 181 ++++++--
- drivers/cpuidle/cpuidle-psci.c                     |  43 +-
- drivers/cpuidle/governors/menu.c                   |   2 +-
- drivers/cpuidle/governors/teo.c                    |   4 +-
- drivers/gpu/drm/xe/xe_pm.c                         |   2 +-
- drivers/idle/intel_idle.c                          | 102 +++++
- drivers/opp/core.c                                 | 428 +++++++----------=
---
- drivers/opp/cpu.c                                  |  30 +-
- drivers/opp/of.c                                   | 205 ++++-----
- drivers/opp/opp.h                                  |   1 -
- drivers/usb/typec/ucsi/ucsi_ccg.c                  |   2 +
- include/linux/arch_topology.h                      |   8 -
- include/linux/cpufreq.h                            |  22 +-
- include/linux/energy_model.h                       |   2 +
- include/linux/pm_opp.h                             |  32 +-
- include/linux/pm_runtime.h                         |   4 +
- include/linux/suspend.h                            |   9 +
- include/linux/topology.h                           |   9 +
- kernel/power/energy_model.c                        |  72 ++--
- kernel/power/hibernate.c                           |  23 +-
- kernel/power/main.c                                |   8 +-
- kernel/power/power.h                               |   4 +
- kernel/power/process.c                             |   8 +-
- kernel/power/wakelock.c                            |   3 +
- kernel/sched/cpufreq_schedutil.c                   |   9 +-
- kernel/sched/sched.h                               |   2 -
- kernel/sched/topology.c                            |  25 +-
- tools/power/cpupower/Makefile                      |  13 +
- tools/power/cpupower/README                        |  28 ++
- tools/power/cpupower/bindings/python/Makefile      |   8 +-
- tools/power/cpupower/bindings/python/README        |  13 +-
- tools/power/cpupower/cpupower-service.conf         |  32 ++
- tools/power/cpupower/cpupower.service.in           |  16 +
- tools/power/cpupower/cpupower.sh                   |  26 ++
- tools/power/pm-graph/sleepgraph.py                 |   3 +-
- 53 files changed, 1723 insertions(+), 962 deletions(-)
 
