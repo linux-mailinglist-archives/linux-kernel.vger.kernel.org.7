@@ -1,107 +1,88 @@
-Return-Path: <linux-kernel+bounces-662554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-662553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BC16AC3C49
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 11:02:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CFB0AC3C45
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 11:02:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 667993B7495
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 09:02:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15E58175589
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 09:02:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1C091F2BAE;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 464051F099A;
 	Mon, 26 May 2025 09:02:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bdR91CGU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EEFB1E9B0B;
-	Mon, 26 May 2025 09:02:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FCC21DE3DC
+	for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 09:02:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748250126; cv=none; b=a9iNe6lN/Ymuw3k9tleEzMAQsUXJcjJbSHg5F4RN1LZK3GyfKVYWDjIZMxaqixPgMhGohXoH+4WYmq7OtfUsWTsnB83EUXjYgn3FrFEwppXMgRfhfWWEUYDRjlW+BWuH83NVnAPVSx/eP9+dWlD78ybOa7m5TTloKrFSnY4nX/A=
+	t=1748250125; cv=none; b=rKnupPey8O2Y0two+keXF4WBnUCaW9ztlZMv3t6GoDlkaD/l0I5zh9fv5j1qqB8pm7KV9ZTiBRtGleGYsZD4kFRLjjKB6CGig5ARiYPKauJu3e+KzBzO9UR71NLxwOcPXUzJSh9c1XNIREXQ2ooeMtiDTMYQ4zI7XJetq/Hi8iY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748250126; c=relaxed/simple;
-	bh=dN/e6uhiPG0gbtb1wPFzzVl1DX4FB152MF7H9e4ibV8=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=KYvIPRtMnmVBk1XYGDHZhKzfJ2VxIjfCPlsr2gKhdD5vDdwZd/VDEMxwUdmUW1cuGiU7KIr7poRNPYZUyIvMepay/JibrWdhSZlQ9BfXU5jNRkizOsMT9O8P0HL1aVW8SmOQf3QicobjmELEtq2CIyjWCR48AVzVeYprDJyWVdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bdR91CGU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 355C0C4CEE7;
-	Mon, 26 May 2025 09:02:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748250125;
-	bh=dN/e6uhiPG0gbtb1wPFzzVl1DX4FB152MF7H9e4ibV8=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=bdR91CGUEmWkCYOZTftiSKKI4OzJqQ3ATjbzVx9FaySp2fTLbRstZR0/VYQMdirxI
-	 ihEUXGt2TX9j6+AEXjLgjxoy2k+75rvx+6eVrFdYy08O3SYWwNXgUc3lr9051mnF+P
-	 1z4TNJ4qwATNqXRl7ZOHvgzr6FHi1RPwcWgN/RE9cz9q7nEmTNHj7xPIVGo5D5RmiZ
-	 RU6FAvPeVL6ri6u6wG7lbtL46aLMGxfau3O45zztpA0mqmuJnhFaHWe2hiY1SeSEE/
-	 aOhDXjTYaI7vCq5OHwCdVJENXPFQUin5ak4mR7yipel7BrfRfmmFiKE/1aoIn+CaAE
-	 e9FGsdk8YMIPg==
+	s=arc-20240116; t=1748250125; c=relaxed/simple;
+	bh=iNv1gQSKyIMIKr9i6JunsrlpXrdjDYXhGUYJ9HKPltw=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Y05IF+gfziKOEgzL8GxshFDLOCCzePLFUvTxx4eMEQj7KV2c2b/5GNdIZ3mS25oletn71DCHatJe6EHhJUvl3ROmMAowbsw7RM1xIFraBPVXvJhP2MssVoTrojma01ftjELl1QA4U3c6k6ppoakfOGoPtdsFuzTNJ9mIhotMtdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-86caab2dad2so414167439f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 02:02:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748250123; x=1748854923;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=z1bhu/Q4fBCIQv5JvP1GVj1ujdFmEGHSOuS9K7uvR+Q=;
+        b=h5KpTTFJs8LFuSEKEr6nIphQ0FeqVeCYRUHRz4M7jEJqFQEFLTNRyWs130Daytx249
+         sLTkcfoD/K3BMnznDr9veHk9GkTaGmoHat6NMt2X570EpuS50QD+saFjWCXYqv/r4YoJ
+         aCHJMGYm8YM/eJLGlvgjX1XU92tMwT/3JiczENav53VVbgsy6v+7GDkOOumutgcGIaMS
+         vUGHV+sK2yxUXonxJc9hipzChQo3X8qmOB2RnBVXRDDewfbzoq5IxYjhb5HYaM4yj//+
+         eSxDSPY1Jesqv/iXQTlbBzwacsZetN+wGUa90cXO1dgDkfFOZoa/aeHAYFWZ9xFiwJrN
+         f69g==
+X-Forwarded-Encrypted: i=1; AJvYcCWKhUHUIVC+cn8mm2Pa6hFDUH67Z4p19NGBGqqgBjAyTBf1FXf6JkIqCtoN66Oo/qbwgQ0HofvvF6KpQc8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIZ4c3d/TI4S5rJ1X+QLyp6PtUw/5OboSg+G8tmEbINsx2DKwT
+	wm34LET91nUY8iOsknGaoal5c2281huVJeu/uma5TmWGMCgGKFqXNJVS8YfXUTFDMaeJo0ur5Th
+	ed/sBwRbtD4p5xQjukuAHXSfZH7alJodWSupbrOEDlQZAb15EADYUdrrQ+PU=
+X-Google-Smtp-Source: AGHT+IFX3kWTjNpBqKEVLQJLm3XJRnpHrdteqAl1zuQuEOsrGl6r3hTiKQhweIfyFaWl8D45P3jGoJTEmi5H5B3KkRYZfk7TuYSx
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 26 May 2025 11:01:58 +0200
-Message-Id: <DA5YY0YF28GO.3DONTQDLY6VBD@kernel.org>
-Cc: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
- <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
- <benno.lossin@proton.me>, "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- "Danilo Krummrich" <dakr@kernel.org>, "Drew Fustini" <drew@pdp7.com>, "Guo
- Ren" <guoren@kernel.org>, "Fu Wei" <wefu@redhat.com>, "Rob Herring"
- <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
- Dooley" <conor+dt@kernel.org>, "Paul Walmsley" <paul.walmsley@sifive.com>,
- "Palmer Dabbelt" <palmer@dabbelt.com>, "Albert Ou" <aou@eecs.berkeley.edu>,
- "Alexandre Ghiti" <alex@ghiti.fr>, "Marek Szyprowski"
- <m.szyprowski@samsung.com>, <linux-kernel@vger.kernel.org>,
- <linux-pwm@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
- <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>
-Subject: Re: [PATCH RFC 0/6] Rust Abstractions for PWM subsystem with TH1520
- PWM driver
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Michal Wilczynski" <m.wilczynski@samsung.com>, "Drew Fustini"
- <pdp7pdp7@gmail.com>
-X-Mailer: aerc 0.20.1
-References: <CGME20250524211519eucas1p218997c69b98b14d3af2eb6bf4e9d3187@eucas1p2.samsung.com> <20250524-rust-next-pwm-working-fan-for-sending-v1-0-bdd2d5094ff7@samsung.com> <aDJGgLZ9tITwGBxq@x1> <b5f4af17-05ef-453d-8f04-283590ae5b87@samsung.com>
-In-Reply-To: <b5f4af17-05ef-453d-8f04-283590ae5b87@samsung.com>
+MIME-Version: 1.0
+X-Received: by 2002:a05:6602:7205:b0:86a:235c:3fd with SMTP id
+ ca18e2360f4ac-86cbb7295d0mr784735339f.0.1748250123488; Mon, 26 May 2025
+ 02:02:03 -0700 (PDT)
+Date: Mon, 26 May 2025 02:02:03 -0700
+In-Reply-To: <cbdb562b-65e8-4610-bf0e-307b93ed47a7@yandex.ru>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68342e0b.a70a0220.253bc2.0093.GAE@google.com>
+Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in hci_sock_get_channel
+From: syzbot <syzbot+0a7039d5d9986ff4ecec@syzkaller.appspotmail.com>
+To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon May 26, 2025 at 10:22 AM CEST, Michal Wilczynski wrote:
-> On 5/25/25 00:21, Drew Fustini wrote:
->> Thanks for the patch series. It will be great to have PWM working
->> upstream.
->>=20
->> I've not built Linux with Rust before, so I'm going through the quick
->> start [1]. I've also never built Linux with LLVM before but clang seems
->> like the best compiler to use for Rust. Are you using LLVM?
->
-> Hi Drew,
-> You're correct, Clang is the way to go for Rust in the kernel. I also
-> followed the official quick start guide. To answer your question
-> directly: yes, I'm using LLVM.
+Hello,
 
-Just to let you know, there is an effort to get rustc to work with a gcc
-backend rustc_gcc_codegen [1]. And there also is the gccrs project [2]
-trying to create a gnu Rust compiler.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-[1]: https://rust-for-linux.com/rustc_codegen_gcc
-[2]: https://rust-for-linux.com/gccrs
+Reported-by: syzbot+0a7039d5d9986ff4ecec@syzkaller.appspotmail.com
+Tested-by: syzbot+0a7039d5d9986ff4ecec@syzkaller.appspotmail.com
 
-They have made a lot of progress over the last year, so we're hopeful
-that they become usable in the near future. But for the moment,
-Clang/LLVM is the way to go.
+Tested on:
 
-Hope this helps!
+commit:         0ff41df1 Linux 6.15
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=10e25170580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=2fc22398e1fbdb58
+dashboard link: https://syzkaller.appspot.com/bug?extid=0a7039d5d9986ff4ecec
+compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
+userspace arch: arm64
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=17561df4580000
 
----
-Cheers,
-Benno
+Note: testing is done by a robot and is best-effort only.
 
