@@ -1,130 +1,191 @@
-Return-Path: <linux-kernel+bounces-662255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-662257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BB4EAC37C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 03:43:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09CF7AC37CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 03:46:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CEADC3A847B
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 01:43:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 729D5188B71D
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 01:46:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 607FE13B298;
-	Mon, 26 May 2025 01:43:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B8937D3F4;
+	Mon, 26 May 2025 01:46:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="s2Uz9F/B"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="D1NqYsc5"
+Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 269E98BEE;
-	Mon, 26 May 2025 01:43:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03F871C27
+	for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 01:46:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748223809; cv=none; b=U3zxZoN2L0MHptAsIigN6cicsdm/mvRrzgMEN4Y5WH+OHbTFgC1ZBNxk9JW+pvRJ+tZ2jY9uKuPW4MLAWi176l5TREgHNF9aECrF9BcqBi4FMd0kV3hqxgo5/p9bLcqFx6zCiu6Tv8ikERNUxmSVDWhAoZPsjQUMRalX+V/awkA=
+	t=1748223964; cv=none; b=jrURJfxREYC4ulLGF06IhkC+XQXJavN3Jojoo7RarX7xiqrG42r9D9MTbXsBhYeAHklG4tq2IDTzcH2w3GU2w6oZIeHoIBFf8DyZOyBteG/FY1eAXFgGdqyykHVAc1So1z88JUG9n0yCEup8w83oaDn2PXZsr3ElC/LTJTaTAh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748223809; c=relaxed/simple;
-	bh=LLzuF6atmoLAtdgeB97udFx8tGNSqJglLQfkQHOx55c=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=NKm1dw6/QvapmBiDJ2bZUiwd7KKBg02F0vr/k3S2b+TrSYSxkA2Uq1e2v2hM75o2kSFN19/TUjuboekmI70ANfMYdB5jz3IEgBik1J0/ehtm5BaVodwfKzU3pPeIv8HrRq+QPXZza+D9gHieLoLAK2JslnznJJrRdll+Mei75KA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=s2Uz9F/B; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1748223797;
-	bh=GukcE8YDOVhu/U89crmZAPYL47oVpM/EXOi3tA0x4PU=;
-	h=Date:From:To:Cc:Subject:From;
-	b=s2Uz9F/BDlYG0QINDL3oZyFzqlTJkLKgBZflv3BbqtVlDxZQhRRz9YLFSYRpTCo6x
-	 wHdXqFde9haGGa/fzhyM4hiV2uHPyP6uSFCFG0LhkfjkfqkydfT6nTl6Io9Q0lGcMX
-	 WOvqNsPmJmyRucilFgLadJyrdj1tnguyiChab9Mgwr7/M1p2DrRuwXzVLZwjazDkJH
-	 AI+7OQmZN41IgCfisNejRa9ljS0FpXtDozouGftsx6qolBNf/c/WI0sc96khrOwmOB
-	 AhZuBH+oZzRc6CNq4Jpxxsy2JWjts2hZscIMhDa+t2IC9+8mvDGL5mh7Hq3JBP+YWn
-	 4Sis7K0tDVI8A==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4b5JSP0QNPz4wcT;
-	Mon, 26 May 2025 11:43:17 +1000 (AEST)
-Date: Mon, 26 May 2025 11:43:15 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Andi Shyti <andi.shyti@kernel.org>, Wolfram Sang <wsa@the-dreams.de>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patches in the i2c-host tree
-Message-ID: <20250526114315.733b0728@canb.auug.org.au>
+	s=arc-20240116; t=1748223964; c=relaxed/simple;
+	bh=avQT8PyI3lebe+jvDhFejRbfs5/P6o/qFy8DbdNBJ7c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OtDzLBYJNi8eDaMT1hsf2pqgpbaq2cl9cdM7xkKy52ko+l+Galf0Drvz9H+QZOVOptxruf3g2lKYRPpLLyr2UyYy00WiBae1Fgxt4TvviUikc1FdKwaQyjoboQpjFZ4eU2W7Teu2i1uQ0jaeiodVX/SgHthJV2Ex3k8DOAxYmoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=D1NqYsc5; arc=none smtp.client-ip=95.215.58.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <2b8810d1-b312-4ee6-928c-e078b8c52000@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1748223959;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=E9kj9b7G03RkcCUZzfbgk5ZYXL85YjieEBuLF4BZ1dk=;
+	b=D1NqYsc5sCvF5UWehhuKAxPft2KqmSx1u9333NBHR0p0MPpgRd9vUurqLc4wYmU7IaiNuz
+	PG3PwwZpIS4yjHEB0A30yrRAwn5QwFscTvrBlPTnPkYopNAPGNQcyyYW8wvHGMhequnDMM
+	zQw2QCEKTkfOBSLrX9nn5sJlFmPqb2k=
+Date: Mon, 26 May 2025 09:45:47 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/j6f.eH.17RndcIjLbnsHMiZ";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Subject: Re: [PATCH v3 1/2] Docs/LoongArch: Add Advanced Extended-Redirect IRQ
+ model description
+To: Tianyang Zhang <zhangtianyang@loongson.cn>, chenhuacai@kernel.org,
+ kernel@xen0n.name, corbet@lwn.net, alexs@kernel.org, tglx@linutronix.de,
+ jiaxun.yang@flygoat.com, peterz@infradead.org, wangliupu@loongson.cn,
+ lvjianmin@loongson.cn, maobibo@loongson.cn, siyanteng@cqsoftware.com.cn,
+ gaosong@loongson.cn, yangtiezhu@loongson.cn
+Cc: loongarch@lists.linux.dev, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250523101833.17940-1-zhangtianyang@loongson.cn>
+ <20250523101833.17940-2-zhangtianyang@loongson.cn>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yanteng Si <si.yanteng@linux.dev>
+In-Reply-To: <20250523101833.17940-2-zhangtianyang@loongson.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
---Sig_/j6f.eH.17RndcIjLbnsHMiZ
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+在 5/23/25 6:18 PM, Tianyang Zhang 写道:
+> Introduce the redirect interrupt controllers.When the redirect interrupt
+> controller is enabled, the routing target of MSI interrupts is no longer a
+> specific CPU and vector number, but a specific redirect entry. The actual
+> CPU and vector number used are described by the redirect entry.
+>
+> Signed-off-by: Tianyang Zhang <zhangtianyang@loongson.cn>
 
-The following commits are also in the i2c tree as different commits
-(but the same patches):
+Only for Chinese:
 
-  a088ce22c118 ("i2c: mlxbf: avoid 64-bit division")
-  50f317545149 ("i2c: viai2c-wmt: Replace dev_err() with dev_err_probe() in=
- probe function")
-  608e2d633096 ("i2c: designware: Don't warn about missing get_clk_rate_khz=
-")
-  481391b537bb ("i2c: designware: Invoke runtime suspend on quick slave re-=
-registration")
-  736f258f0a9b ("i2c-mlxbf: Improve I2C bus timing configuration")
-  a1a8ccd53458 ("i2c-mlxbf: Add repeated start condition support")
-  c43383e2ffa4 ("i2c: xgene-slimpro: Replace dev_err() with dev_err_probe()=
- in probe function")
-  3887d3f64260 ("dt-bindings: i2c: i2c-wmt: Convert to YAML")
-  66234d6c7157 ("i2c: microchip-corei2c: add smbus support")
-  55d144eaea36 ("i2c: mlxbf: Allow build with COMPILE_TEST")
-  52360f31e6ba ("i2c: I2C_DESIGNWARE_AMDISP should depend on DRM_AMD_ISP")
 
-These are commits
+Reviewed-by: Yanteng Si <si.yanteng@linux.dev>
 
-  2b2805404c92 ("i2c: mlxbf: avoid 64-bit division")
-  3b7d8d151a7e ("i2c: viai2c-wmt: Replace dev_err() with dev_err_probe() in=
- probe function")
-  bdf4442f4c7e ("i2c: designware: Don't warn about missing get_clk_rate_khz=
-")
-  2fe2b969d911 ("i2c: designware: Invoke runtime suspend on quick slave re-=
-registration")
-  e981364d89bf ("i2c-mlxbf: Improve I2C bus timing configuration")
-  6bdc662c05c5 ("i2c-mlxbf: Add repeated start condition support")
-  24d9f6050520 ("i2c: xgene-slimpro: Replace dev_err() with dev_err_probe()=
- in probe function")
-  29b0b4ce6417 ("dt-bindings: i2c: i2c-wmt: Convert to YAML")
-  d6ceb4053826 ("i2c: microchip-corei2c: add smbus support")
-  053859002c20 ("i2c: mlxbf: Allow build with COMPILE_TEST")
-  66e64b457c23 ("i2c: I2C_DESIGNWARE_AMDISP should depend on DRM_AMD_ISP")
 
-in the i2c tree.
+Thanks,
 
---=20
-Cheers,
-Stephen Rothwell
+Yanteng
 
---Sig_/j6f.eH.17RndcIjLbnsHMiZ
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmgzxzQACgkQAVBC80lX
-0GzM2gf/WR2etlL0RFcGOhBDs61K9XusaY3h63EUSPa9rmKYH7f3ZWjl2t6tQweU
-SeB6BCxlludWnmGhfd0rXwXV+20nFJxLrcFZsv/7onOJArCf6oOg+kBEZ+QeuCVo
-qCxargOIiehPVjmEU4GPGb/fKCsirl1PzwQvLWY5nhoF5KG5sGZHkfgAsnGvLBHc
-M5+GYEc6+KqcpSwoK650miOEdOtHi9d+jF96YlCDlrvU9H3nEa5hFavQi1S3EnS3
-9LM4JaC9MqZ4ToI8tx5WakSJorBtMIyXLbz+AzdINu4ShSRpepSuK/n4Wq3gUgN9
-jgs0p30SSKdUhw3gsFM7SIrc6ZvlBw==
-=cWka
------END PGP SIGNATURE-----
-
---Sig_/j6f.eH.17RndcIjLbnsHMiZ--
+> ---
+>   .../arch/loongarch/irq-chip-model.rst         | 38 +++++++++++++++++++
+>   .../zh_CN/arch/loongarch/irq-chip-model.rst   | 37 ++++++++++++++++++
+>   2 files changed, 75 insertions(+)
+>
+> diff --git a/Documentation/arch/loongarch/irq-chip-model.rst b/Documentation/arch/loongarch/irq-chip-model.rst
+> index a7ecce11e445..d9a2e8d7f70e 100644
+> --- a/Documentation/arch/loongarch/irq-chip-model.rst
+> +++ b/Documentation/arch/loongarch/irq-chip-model.rst
+> @@ -181,6 +181,44 @@ go to PCH-PIC/PCH-LPC and gathered by EIOINTC, and then go to CPUINTC directly::
+>                | Devices |
+>                +---------+
+>   
+> +Advanced Extended IRQ model (with redirection)
+> +==============================================
+> +
+> +In this model, IPI (Inter-Processor Interrupt) and CPU Local Timer interrupt go
+> +to CPUINTC directly, CPU UARTS interrupts go to LIOINTC, PCH-MSI interrupts go
+> +to REDIRECT for remapping it to AVEC, and then go to CPUINTC directly, while all
+> +other devices interrupts go to PCH-PIC/PCH-LPC and gathered by EIOINTC, and then
+> +go to CPUINTC directly::
+> +
+> + +-----+     +-----------------------+     +-------+
+> + | IPI | --> |        CPUINTC        | <-- | Timer |
+> + +-----+     +-----------------------+     +-------+
+> +              ^          ^          ^
+> +              |          |          |
+> +       +---------+ +----------+ +---------+     +-------+
+> +       | EIOINTC | | AVECINTC | | LIOINTC | <-- | UARTs |
+> +       +---------+ +----------+ +---------+     +-------+
+> +            ^            ^
+> +            |            |
+> +            |      +----------+
+> +            |      | REDIRECT |
+> +            |      +----------+
+> +            |            ^
+> +            |            |
+> +       +---------+  +---------+
+> +       | PCH-PIC |  | PCH-MSI |
+> +       +---------+  +---------+
+> +         ^     ^           ^
+> +         |     |           |
+> + +---------+ +---------+ +---------+
+> + | Devices | | PCH-LPC | | Devices |
+> + +---------+ +---------+ +---------+
+> +                  ^
+> +                  |
+> +             +---------+
+> +             | Devices |
+> +             +---------+
+> +
+>   ACPI-related definitions
+>   ========================
+>   
+> diff --git a/Documentation/translations/zh_CN/arch/loongarch/irq-chip-model.rst b/Documentation/translations/zh_CN/arch/loongarch/irq-chip-model.rst
+> index d4ff80de47b6..7e4e3e55c7ad 100644
+> --- a/Documentation/translations/zh_CN/arch/loongarch/irq-chip-model.rst
+> +++ b/Documentation/translations/zh_CN/arch/loongarch/irq-chip-model.rst
+> @@ -174,6 +174,43 @@ CPU串口（UARTs）中断发送到LIOINTC，PCH-MSI中断发送到AVECINTC，
+>                | Devices |
+>                +---------+
+>   
+> +高级扩展IRQ模型 (带重定向)
+> +==========================
+> +
+> +在这种模型里面，IPI（Inter-Processor Interrupt）和CPU本地时钟中断直接发送到CPUINTC，
+> +CPU串口（UARTs）中断发送到LIOINTC，PCH-MSI中断首先发送到REDIRECT模块,完成重定向后发
+> +送到AVECINTC，而后通过AVECINTC直接送达CPUINTC，而其他所有设备的中断则分别发送到所连
+> +接的PCH-PIC/PCH-LPC，然后由EIOINTC统一收集，再直接到达CPUINTC::
+> +
+> + +-----+     +-----------------------+     +-------+
+> + | IPI | --> |        CPUINTC        | <-- | Timer |
+> + +-----+     +-----------------------+     +-------+
+> +              ^          ^          ^
+> +              |          |          |
+> +       +---------+ +----------+ +---------+     +-------+
+> +       | EIOINTC | | AVECINTC | | LIOINTC | <-- | UARTs |
+> +       +---------+ +----------+ +---------+     +-------+
+> +            ^            ^
+> +            |            |
+> +            |      +----------+
+> +            |      | REDIRECT |
+> +            |      +----------+
+> +            |            ^
+> +            |            |
+> +       +---------+  +---------+
+> +       | PCH-PIC |  | PCH-MSI |
+> +       +---------+  +---------+
+> +         ^     ^           ^
+> +         |     |           |
+> + +---------+ +---------+ +---------+
+> + | Devices | | PCH-LPC | | Devices |
+> + +---------+ +---------+ +---------+
+> +                  ^
+> +                  |
+> +             +---------+
+> +             | Devices |
+> +             +---------+
+> +
+>   ACPI相关的定义
+>   ==============
+>   
 
