@@ -1,115 +1,151 @@
-Return-Path: <linux-kernel+bounces-662458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-662460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 029F3AC3AEB
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 09:53:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67246AC3AF1
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 09:53:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FF9318935AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 07:53:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40F35173FC5
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 07:53:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E50C1E1DEC;
-	Mon, 26 May 2025 07:53:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 092FE1E1A20;
+	Mon, 26 May 2025 07:53:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LzTJvrdC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gpFXMSgJ"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDB331C84CD;
-	Mon, 26 May 2025 07:53:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A27381E1A05
+	for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 07:53:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748245987; cv=none; b=tSxE3THfYaEj58sUWZWWiW9Kw2pJz6a5kkORsos2ydKG7qJRc97KIVkmODp6meOAjegctvms/zuVIXaSe6Lm3JWyFTKxnC4m7kAvgEzU8ArVWiB+IOO1IYLEtC9t6ZpYsX2CXCKtPFHkf8OFYo7C8oeICtzXKH+oGcaCfFW9f7o=
+	t=1748246000; cv=none; b=Cm2CLzIGdODTKLGBB/iyDWdQ+Cv3ijjS9yubRyQq9UhT42FI/ekf0pPEe46Eg358wdUBw259sEdlgjFDJGAqR8XBxYgGDQVz24ASZlX48Rs17wgHpIjpleexd1RgljE8BzDZUcYedYcFhIaW+49U2oWfjopCyGM1Dc1+UPVQnV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748245987; c=relaxed/simple;
-	bh=BbYGMsfcLHp+/GVsG438+tTvy3Zkb+vofZ3c+RLfKYE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hz7J9pL3D9k1hI94JGzWLGfSxtb9Twzk7xtdFwATGmgSiGxcAhTsPy0XCFwGiy14lQfQMF/0Zx0K+jYGqNP6tPtONxAzBO9U09yIK2DKSUIpbnHWkq1C1DvqnjPx2QrRRXosRr9nsWDdmueehmkT8o7JJLe4Q+rLX52RS/2sLxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LzTJvrdC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A1D8C4CEE7;
-	Mon, 26 May 2025 07:53:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748245987;
-	bh=BbYGMsfcLHp+/GVsG438+tTvy3Zkb+vofZ3c+RLfKYE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LzTJvrdCv3nCLYhYIyEeMGq+fLpz1CGeMaWzTofOe+2rmzvRlodufbGuN+/2f/w4G
-	 KBXhQ55ORwcVVU92jYoabGLkCqfcCbu/Gz64FYjnA3kC4n2lXAUvePfc2IaRHyla4G
-	 Ns+hSFLf2rSCV8sINX63yJrk1TRm8jqBh5E0hcb4anV7JnDZgm9Gvrq+OYFzNQbVg6
-	 pLWkpdIOjUZoamrP4CODlUBJHpD8owQmUlbsTAhXZX78ufwuuEYqQH8JvPFkC41PqF
-	 yws+zgWoe3a3BUJlJI8MCWycG58EOYJDeLk1DiLLNyvalOc7drqO6BbjLwasHGacyy
-	 4bq16Cx6N3Y1Q==
-Date: Mon, 26 May 2025 09:53:04 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Drew Fustini <drew@pdp7.com>, 
-	Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, 
-	Marek Szyprowski <m.szyprowski@samsung.com>, linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, linux-riscv@lists.infradead.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH RFC 1/6] rust: Add basic PWM abstractions
-Message-ID: <enxctdseecqz765nmd24vziiaksmyhltqfwycdszmfq3s7orjm@lnpc7czuluis>
-References: <20250524-rust-next-pwm-working-fan-for-sending-v1-0-bdd2d5094ff7@samsung.com>
- <CGME20250524211520eucas1p1378fbab27f4b1ae8808706c074fa217c@eucas1p1.samsung.com>
- <20250524-rust-next-pwm-working-fan-for-sending-v1-1-bdd2d5094ff7@samsung.com>
+	s=arc-20240116; t=1748246000; c=relaxed/simple;
+	bh=8zGG98q9qUYZNS1ImPKzK++WJb03mJOL5AJYgz2KFCk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JetWg5VAndjZY53iFtB9cpykTqBMp9GC5E//8ODk21x2ykWJjkOIk62QMQAJtluYHSJjw/0MWnNhV0BTsQLGavjxkY++lStAOlfq6JWSuyaE7du0baD3d9t14Q2QIutKLTXy4dl6l6EyBeVUQSE9tmaNfTgy7tZMmmk19GotSRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gpFXMSgJ; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5efe8d9ebdfso3799991a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 00:53:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1748245997; x=1748850797; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=AXjdGFDhJ6dNVjl5AY3P4sCfMdaDyI2qz17SglDOYM0=;
+        b=gpFXMSgJQhPdX5UeopVBNb7w6/CoU2PjayQ9+ojv1LsNI75uhEq8NuuzNEO2XwTDCE
+         lQjANMZ5MNcNonkrh2vkXKM1VeCb3Jr+d7HaUVX5fZ14Lg7BQ9OmJ9brhQZQXDmhS/hN
+         Sdstz4qPi/7XVm/Burk2ajpErLeh3WRXEM5cmrvZhZbzYLbKhBlO8QmDtN0CPz4/XimA
+         s1h4+AyMFw3LatLb2W8bPiT/vjcirip0TIt2YI+NASJ5Cwgwx4BsKoLsGF5d0tyrO+cF
+         cpoFoKYGl+WXzyF2abSt6xkuQKB1WwiG7csu9PgbopUrvrRXUUOiAvY7R8eZZU7e/E5b
+         N8bA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748245997; x=1748850797;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AXjdGFDhJ6dNVjl5AY3P4sCfMdaDyI2qz17SglDOYM0=;
+        b=rh/ZUl/cpGhPHD3m9NrNfp+2qAFT6Kyiv060ZLiDImLAjgjyRVaNcXpnn08tQSxqHT
+         kfeFt3dJ1tHoPfidMw/tSvpE20JTdsCQVpFZV3CSahgcLGy1sjKI1eiMR0DpJAeWZTWM
+         DXpsLVvpQHXLx2XVPy1bsJrXJQ2Vk2QqqEVJ20wOGWAfttSelOwl0QoVV0zaUZrHuhip
+         c6adSoB3nSyGYEbLklsJM3Sj9wxuCsKn+VOJiABkuHHqMWx7mycAusa9SbVkHq8+Y+DT
+         pDJDuF4q/xhbkSsdlX5Zq1Bde45voQ8vc7/tOyggwZmX+kAzANtnA+UhGplSOTbM7zH1
+         gvfw==
+X-Forwarded-Encrypted: i=1; AJvYcCV8qYm09WPEk3zlfTjNZ3jnRZW+ix+ccdAt18B70Bb84IDv18tdGfyurzPSMw0/A7f1l7FFbnp/lhIB2GI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyv+fM9rjeFn5xPsrQY4whnDIbYwf+LLq1RksnpDOPqx8fNVz7U
+	A4iA5en9iOMqzC/xp9OEhBGI8f1/+sZhw5LG7SMQz36+9n47fD5bMvhaFFBHlhO3A2gjNsYl9X+
+	0l7vGxbf6XiHNMosjqnz6zx4OGXJHmlmasiR2l4mFjA==
+X-Gm-Gg: ASbGncsjIAnWvk9nWqc3N2j8d582QKzofwnaB1h741rSQ8TO6pHADELo+LcztSFbOTJ
+	ffMZ5QcTmeffJcijh46MBcwqr14J2de12TpvoAB+eQxfqvl7wt02KBThtjEw1UL+e+d/K1GRvQ8
+	CEZwDXmdsW6/XYsHjfEwnnLDFx/X6gA5LcJOs7RtBP+ThxhksQJ9J8i/BZPcs0CMZgRLJNMUpk
+X-Google-Smtp-Source: AGHT+IEHR623wBlrfv2bAwYHebBHB/uVZnyri8NclAhYoOaAPShxgc2ECJIYwH4Jo6EBzAfQkeCfgUHu9q3L/BOSO8s=
+X-Received: by 2002:a17:907:9803:b0:ad4:8ec1:8fc9 with SMTP id
+ a640c23a62f3a-ad85b20aca2mr724880666b.42.1748245996928; Mon, 26 May 2025
+ 00:53:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ojsy757ta3qba3or"
-Content-Disposition: inline
-In-Reply-To: <20250524-rust-next-pwm-working-fan-for-sending-v1-1-bdd2d5094ff7@samsung.com>
+References: <AA29CA6A-EC92-4B45-85F5-A9DE760F0A92@ateme.com>
+ <4c0f13ab-c9cd-42c4-84bd-244365b450e2@amd.com> <996ca8cb-3ac8-4f1b-93f1-415f43922d7a@ateme.com>
+ <3daac950-3656-4ec4-bbee-7a3bbad6d631@amd.com> <CAKfTPtBovA700=_0BajnzkdDP6MkdgLU=E3M0GTq4zoLW=RGhA@mail.gmail.com>
+ <de22462b-cda6-400f-b28c-4d1b9b244eec@amd.com> <CAKfTPtC6siPqX=vBweKz+dt2zoGiSQEGo32yh+MGhxNLSSW1_w@mail.gmail.com>
+ <c0e87c08-f863-47f3-8016-c44e3dce2811@amd.com> <db7b5ad7-3dad-4e7c-a323-d0128ae818eb@ateme.com>
+ <CAKfTPtDkmsFD=1uG+dGOrYfdaap4SWupc8kVV8LanwaXSbxruA@mail.gmail.com> <fea6da1d-85d6-459d-9ac3-661d5909420b@ateme.com>
+In-Reply-To: <fea6da1d-85d6-459d-9ac3-661d5909420b@ateme.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Mon, 26 May 2025 09:53:05 +0200
+X-Gm-Features: AX0GCFuROGCSyLoX-AVhsYdFkI6e9UYLuZkd2WamYF2gufcPj-7lR5ZaPUa4N-s
+Message-ID: <CAKfTPtAPPG2Xa1P9r+NQZv_VkYRic+e-qxG1ODJodPUqdry7BQ@mail.gmail.com>
+Subject: Re: IPC drop down on AMD epyc 7702P
+To: Jean-Baptiste Roquefere <jb.roquefere@ateme.com>
+Cc: K Prateek Nayak <kprateek.nayak@amd.com>, Peter Zijlstra <peterz@infradead.org>, 
+	"mingo@kernel.org" <mingo@kernel.org>, Juri Lelli <juri.lelli@redhat.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Borislav Petkov <bp@alien8.de>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	"Gautham R. Shenoy" <gautham.shenoy@amd.com>, Swapnil Sapkal <swapnil.sapkal@amd.com>, 
+	Valentin Schneider <vschneid@redhat.com>, 
+	"regressions@lists.linux.dev" <regressions@lists.linux.dev>, 
+	"stable@vger.kernel.org" <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
+On Fri, 23 May 2025 at 14:24, Jean-Baptiste Roquefere
+<jb.roquefere@ateme.com> wrote:
+>
+> Hello Vincent,
+>
+> > As said previously, I don't see an obvious connection between commit
+> > 16b0a7a1a0af  ("sched/fair: Ensure tasks spreading in LLC during LB")
+> > which mainly ensures a better usage of CPUs inside a LLC. Do you have
+> > cpufreq and freq scaling enabled ? The only link that I could think
+> > of, is that the spread of task inside a llc favors inter LLC newly
+> > idle load balance
+> # lsmod | grep cpufreq
+> cpufreq_userspace      16384  0
+> cpufreq_conservative    16384  0
+> cpufreq_powersave      16384  0
+>
+>
+> but I'm not sure cpufreq is well loaded :
+>
+> # cpupower frequency-info
+> analyzing CPU 0:
+>    no or unknown cpufreq driver is active on this CPU
+>    CPUs which run at the same hardware frequency: Not Available
+>    CPUs which need to have their frequency coordinated by software: Not
+> Available
+>    maximum transition latency:  Cannot determine or is not supported.
+> Not Available
+>    available cpufreq governors: Not Available
+>    Unable to determine current policy
+>    current CPU frequency: Unable to call hardware
+>    current CPU frequency:  Unable to call to kernel
+>    boost state support:
+>      Supported: yes
+>      Active: yes
+>      Boost States: 0
+>      Total States: 3
+>      Pstate-P0:  2000MHz
+>      Pstate-P1:  1800MHz
+>      Pstate-P2:  1500MHz
+>
+> And I cant find cpufreq/ under /sys/devices/system/cpu/cpu*/
 
---ojsy757ta3qba3or
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Subject: Re: [PATCH RFC 1/6] rust: Add basic PWM abstractions
-MIME-Version: 1.0
+Looks like you don't have cpufreq driver so we can forget a perf drop
+because of a lower avg freq
+Thanks
 
-Hello Michal,
-
-On Sat, May 24, 2025 at 11:14:55PM +0200, Michal Wilczynski wrote:
-> Introduce initial Rust abstractions for the Linux PWM subsystem. These
-> abstractions provide safe wrappers around the core C data structures and
-> functions, enabling the development of PWM chip drivers in Rust.
-
-Oh wow, thanks for rustifying PWM. That might be my chance to actually
-learn Rust.
-
-I don't know when I will find the time to look into that in detail but
-one thing I'd like to have for Rust support is that the drivers use the
-new abstraction (i.e. .round_waveform_tohw() + .round_waveform_fromhw()
-+ .read_waveform() + .write_waveform()) instead of the older .apply()
-callback.
-
-Best regards
-Uwe
-
---ojsy757ta3qba3or
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmg0Hd0ACgkQj4D7WH0S
-/k59QQf/Zie657XEyEobiX+YRFby/LT3J0PihO7GXdaQaMVGvLXBOvDxjG8OeNu0
-+ZLs+pGuXMJEBtLuBgN35D8f0MRvrzhYkHLoG4OEMCUXYl8F5PandUtiVaW9YRjQ
-Qd5ty0G46BqM2IA20QvxKKkF3AVsirwbNjANp5TvaQTyesJcg/vh++5W0Lt0q7mb
-YI8daLWPWRRYwCk8pHmPIMtsjHVTVG6MxvPH+Gg4u3Yd7d5NBb0CyHs4VMtITtFl
-XNtNmS8hfXx3VYXyOo5UNFXezymWT31Uu+zPeNRRUIr2wmCiXajJu8m7SmFlk8B1
-3LKMk6AoAK7O/+PlI1FfS3OTse1tsg==
-=SkCA
------END PGP SIGNATURE-----
-
---ojsy757ta3qba3or--
+>
+>
+> Thanks for your help,
+>
+> jb
+>
 
