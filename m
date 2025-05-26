@@ -1,188 +1,194 @@
-Return-Path: <linux-kernel+bounces-662633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-662635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DF40AC3D8F
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 12:01:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A3E6EAC3D9B
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 12:04:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 978E13A629F
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 10:01:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EB033A7706
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 10:04:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02C751F4CB1;
-	Mon, 26 May 2025 10:01:26 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71F4A14AD2B;
-	Mon, 26 May 2025 10:01:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2CFB1F540F;
+	Mon, 26 May 2025 10:04:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="M4g5Y3nW"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEB941F4261
+	for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 10:04:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748253685; cv=none; b=MEYnsWf5iotrbarISJROUsB0JJfwSxUc2AlApjCIqkjAJ1URWJPPMlSEV5eGkeZ53Vigh0P6t8lpX00U8epO0k7dDX64dS5Ag/1lUuUv8ByLDa88vsDoc8R2WfBheEDe6nxoQtEUUvueUPUYG1b16zgQPj0PHBkpETx1SzUX8fo=
+	t=1748253886; cv=none; b=mhO6epP31CgrVKVwUbajqVZiQP4RfcvjE/3EejkdcK+Vce3kZ2QKumxXfzdHbtVpIJ6N49ZCDPqjEgh0Bs7qQECq2tNrsBWtcqA7vSy4HrbcZJjs1i8fJxw3Und2l8S2e60yrF+CP3xdzFePIrVhEA9Co3CxW8fQC4vznLNWat8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748253685; c=relaxed/simple;
-	bh=7xnBbO9oZrXF/pz7tZt0xLcfgxXrxwyrfMm82fzzaRs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lCbjRs/DT3HvQYD7PH72TnQJXvHt5pK/6s1l7gVo61dZ96rNg0tokKCVVFXU3rdGxmX5cPcIBnOfQCrvbIKvUxpYrvzbVUL23htHE7fdAdZcopZOJLS/1YTEw7hm1DPRdw/XtTUbcoOaVUzySOdjEx1XIGVa1Fqjc4CcJQAymqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-681ff7000002311f-43-68343beced90
-Date: Mon, 26 May 2025 19:01:11 +0900
-From: Byungchul Park <byungchul@sk.com>
-To: Toke =?iso-8859-1?Q?H=F8iland-J=F8rgensen?= <toke@redhat.com>
-Cc: Mina Almasry <almasrymina@google.com>, willy@infradead.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, kernel_team@skhynix.com, kuba@kernel.org,
-	ilias.apalodimas@linaro.org, harry.yoo@oracle.com, hawk@kernel.org,
-	akpm@linux-foundation.org, davem@davemloft.net,
-	john.fastabend@gmail.com, andrew+netdev@lunn.ch,
-	asml.silence@gmail.com, tariqt@nvidia.com, edumazet@google.com,
-	pabeni@redhat.com, saeedm@nvidia.com, leon@kernel.org,
-	ast@kernel.org, daniel@iogearbox.net, david@redhat.com,
-	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
-	rppt@kernel.org, surenb@google.com, mhocko@suse.com,
-	horms@kernel.org, linux-rdma@vger.kernel.org, bpf@vger.kernel.org,
-	vishal.moola@gmail.com
-Subject: Re: [PATCH 12/18] page_pool: use netmem APIs to access
- page->pp_magic in page_pool_page_is_pp()
-Message-ID: <20250526100111.GA39311@system.software.com>
-References: <20250523032609.16334-1-byungchul@sk.com>
- <20250523032609.16334-13-byungchul@sk.com>
- <CAHS8izN6QAcAr-qkFSYAy0JaTU+hdM56r-ug-AWDGGqLvHkNuQ@mail.gmail.com>
- <20250526022307.GA27145@system.software.com>
- <20250526023624.GB27145@system.software.com>
- <87o6vfahoh.fsf@toke.dk>
- <20250526094305.GA29080@system.software.com>
- <87ldqjae92.fsf@toke.dk>
+	s=arc-20240116; t=1748253886; c=relaxed/simple;
+	bh=eSK6YZcLQNcfWyBCA5lDtS+FZisIhv1cZBflT0atmTw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=KpJ+qW1IF+/qrMgnb/fRIH6HxC7Y83cczKqhBdTNWsQmh2H+PeS/YIHQbWhACa4azCXlzFHs5HaYMiwZcB2qpke49iYNz8gLHqEtGNZ4RiHKfNJC7Ekvrir+iatMBE0oPP+44ZYFfpYommx7yxMMGOm0JK9pQYWl8UQEcr35bVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=M4g5Y3nW; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3a4dc0f164fso420266f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 03:04:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1748253881; x=1748858681; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=DV2U6idgVojBbiD7oQDIMDL4s90BH7rw7O7YWkBzKdA=;
+        b=M4g5Y3nWO370Zacw7hWSenWJoRdKlSf5imPCM1zFvWuGmSlfBnFhsLCsjhgWaxe+6l
+         BqXEwDXDgZnvLvpJwuKgaw6FbgdwM6U9qrFQKkTD8rAzWxjQjbx7JfJ7Y1To/StghCxo
+         NjViCAm54A2x8uET7VOUcZrn0HDsrD8X1EFZhTid+kiwzHYDdULrc1AlpiRDzxIoi7UZ
+         Efdh+9nR+ue9obvZKdwKzzgiBDOeKaH50NT7kPcSGpN2nxHZDQNo6PSy0qN9uY547vMU
+         gIbapzhdR7KDDWHeFLRFCylRiwbykkTAOd1Lod9ZtufiakAdYmsentReXYr9ybU9R/Cg
+         2RAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748253881; x=1748858681;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DV2U6idgVojBbiD7oQDIMDL4s90BH7rw7O7YWkBzKdA=;
+        b=hpnIhhhRLoKSMeG4TabyhrPwLe0KlrU+TMtgcX5O7XiWpYBWct64a+qAeVJSw4SDTB
+         1IU170XMLBjnKCekqMQrHFWOfGRvFLBNpclo5+OfDYyyWzbP0kWQlJN48i/NGZ2akR5n
+         lB/seChHOlTCFlh2GaC0PGhW1qtj9BXcFnmEeOE+W5DBiM/j1cKopsy2zetlvLPsT5Gv
+         wfxdSvxab1D4PcxV62MsEKFNfb83//QShmlwMlxHcLuaPRH6dHFT7zqDIbycdbZz3y4j
+         yh3EwxBFwcw+xxByAsYJ+mO0p1M27zaoRpTg3rOQSXXuXWGWoxD22gyBSNHSbOfeBYVg
+         o+iw==
+X-Forwarded-Encrypted: i=1; AJvYcCVidh/Jp1Kr9KpyEQteukjfc+xaV4r92S1ZJNBOLbuNLHZLpcfMAh1hXqYHrYJsY5HMgR14pLZ6QoG4WgE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqLX/sYmNpx8d0Aqkbu7+qMQMTYxyfPpX9H2WN/2SFmIpNvIVB
+	kcxSOLjRbWTQ93GtAAcjKZyu0FWJaTIEYVHp1r0jvIIkHNl/xj6tryEwZXpVIGJzmNo=
+X-Gm-Gg: ASbGncv62v/ejKGROX1YofvACxulhQa+d0S0TsDnwl6++nf58lFg195zTXqkGNatLu+
+	Zt9AIe+GgiNEcykoUJW9yudSdU6xVhAKMOaDw4UG9nm6rXO1aR/PoWCPFnYi/nGJbuB/TqYFjGa
+	H2fA/xGMElkbdbrzHnV93muENyuzYnysjSmIgUsk4VKOaiE2fnwXbn4uFqdEYjQAGGZj2zKRwuv
+	VnKslpmYADxTGTBqI/FoBifAsVYU1PJIMOBML4+pxn+gZz+saBhCLxwmq8Tt7UVdxKSCl2xwZmF
+	IUWBJpGqHlPYMrRE6LUAHK0umaSOOLquqwpeVamm1pa+1Mspq1vIlHm3AZI83VOM3Pw8iwXFZiD
+	TuADY+EQUjwkq8Hqb9zfdv7LQPkQ+vzA=
+X-Google-Smtp-Source: AGHT+IGPPusAGdBj+JyaVRhQQ6sAZOIsx4vzH7PAiLud1ABGfWxc4dBci9VDUB4fBJQIrwDdRYc/Uw==
+X-Received: by 2002:a05:6000:4027:b0:39c:1f02:5409 with SMTP id ffacd0b85a97d-3a4cb4619camr5820777f8f.9.1748253880831;
+        Mon, 26 May 2025 03:04:40 -0700 (PDT)
+Received: from [192.168.0.2] (host-80-116-51-117.retail.telecomitalia.it. [80.116.51.117])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a35ca888fcsm36141834f8f.78.2025.05.26.03.04.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 May 2025 03:04:40 -0700 (PDT)
+From: Angelo Dureghello <adureghello@baylibre.com>
+X-Google-Original-From: Angelo Dureghello <adureghello@baylibre.org>
+Subject: [PATCH v7 0/6] iio: adc: add ad7606 calibration support
+Date: Mon, 26 May 2025 12:03:15 +0200
+Message-Id: <20250526-wip-bl-ad7606-calibration-v7-0-b487022ce199@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <87ldqjae92.fsf@toke.dk>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTcRjG+Z9zdnYcDo5T868rw3UxhMpK7KVCCjL+9CG6fIiMqJWnNi8z
-	NjMXRFajUJxZCdZcOYu8rGC1vEzx1hItLTJDWbPSzAvB7KJl5ro5RfLbj+d9eJ7nw8vRslui
-	ME6tSRe0GmWKgpUwklH/Wys9G2NU0Ya6DWC23WPh7mQmlPU7RGC2ViP49rNXDOMtbSzcLpmg
-	wfzCwMB32xQNQ60DYugrHWag/mINDQOXnrBgNHhpOOcop6CzOk8EBVN3aKjJ6hfDqzozC+/u
-	/RXBsNPIwFNTBQN9eZuh1bIAJjo8CFpsNRRM5N5g4WqXhYUPhj4EXY8HGCg6m4fA1ugSgXfS
-	zG6OIJUVrylSa3orJhb7CfKwPIrkuLpoYrdms8Q+dkVM3vTUs+TJNS9Dah3jFDGe/8SSr0Nu
-	hnxu7GaJrbKbIc8sLWIybg/fySdINiUKKeoMQbs67pBE9aChGB2/EZ75vv25KAtZQ3KQH4f5
-	GDx2P5+a4+JsG+1jhl+GCw1FM8zykdjl+jnNHBfEb8Edk8dykISj+XERto4ZZzyBfBLOdY+w
-	PpbygEt62hmfScZ7KNzhaRXPHgLw0+uDjI/p6dBfN7tmQmlejsv+cLPyYny+qmhG9pve8LJ5
-	l08O5pfg5uo2yheJeQeHLxT+Fc9uDsWPyl1MPgowzWswzWsw/W8wzWuwIMaKZGpNRqpSnRKz
-	SqXXqDNXHUlLtaPpzyk9/Wu/A4117nEinkMKf+khxTqVTKTM0OlTnQhztCJIutAcrZJJE5X6
-	U4I27aD2RIqgcyI5xyhCpGsnTibK+GPKdCFZEI4L2rkrxfmFZaGC9cm793rccZ2Ud2jHSoLl
-	1uDMhKratojqwsjIGu375VqqKXCF+fWoO/WT29/47ELIvoVefYarLMkzOjIlf6z/feYB/kKP
-	lupaDg4u9d/fmSC/3CRfPbjox2TMx7KAm7H347ceiA/fHtTfcCd099HyM9mWXmP3Ng3tjD38
-	xTkcp2B0KuWaKFqrU/4DmdcGhTUDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTcRjG+Z/bzkar4zI7aRid6GKQFRq8oYVR0MEwukEQRK46tKlbuqm4
-	oFg6i9TZRaOaMyfm1GWMzHRFxTBTp0W6Lqx10SwrQiuvTNfNKZHffjzPw4/3w0vjslwylFaq
-	0wWNWp7CURJCsj0mZ1V/TLRiTbZrBZjttRRc92VBVY+DBLOtAcHI+GsRDDe3UlBRPoaD+amB
-	gFH7BA59Lb0i6LZ+IuDe6UYces+2UWA0+HHIdlRj8LDURUJnQyEJxROVODTqe0Tw7K6Zgne1
-	f0j41GQkwGWqIaC7MA5aLCEw1tGPoNneiMFYQSkFRW4LBR8M3QjcD3sJKDlZiMD+wEOC32em
-	4ji+vuYVxt8xvRXxlroM/lb1Sj7P48b5OtsZiq8buiDi37y8R/Ftl/0Ef8cxjPHGnG8UP9jn
-	JfjvD15QfMWXHxhvr39B8I8tzaIdQfsksYeFFGWmoFm9MVGiuHm/DKWWhme9b39C6pFtfh4S
-	0ywTzZadseMBJpil7CVDyRRTzHLW4xmfZJoOZjaxHb4jeUhC48wwydqGjFObuUwSW+D9TAVY
-	ygBb/rKdCIxkTD/GdvS3iKaLINZ15SMRYHxS+vOqe0qKM2Fs1W96Ol7E5twumYrFkzd0OXcG
-	4nnMEtbZ0IqdQ7NNM0SmGSLTf5FphsiCCBsKVqozVXJlyrpIbbJCp1ZmRR46qqpDk89hPf7z
-	vAONPNvahBgacbOkiVyUQkbKM7U6VRNiaZwLli40r1HIpIflumOC5ugBTUaKoG1CYTTBzZfG
-	7xUSZcwRebqQLAipguZfi9HiUD0qfr4s1+NwstFnrWWWfeF3VRJbxOjEQH1bF7Uhl938I//G
-	7ljlrs8FA2hO1LYF68OqRkHUc78zBAZ3mKwR4V7uVHvaV6duoy9h9bVU//lWX3KItWjuvF+4
-	8pHYnx9h7FsfG6/fr0sbrN2SkbSh0ntx8UDC0297Kl1xZTHXD9ac4AitQr52Ja7Ryv8C3w2N
-	oBgDAAA=
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGM8NGgC/43QzWrDMAwH8FcpPs9Dlvy5095j7GDH9mromuKUb
+ KXk3ef0sjCC2fEvoZ+E7mxKtaSJvRzurKa5TGU8t2CeDmw4+vNH4iW2zBBQgUTHv8qFhxP30Wj
+ QfPCnEqq/timO4Mlpr4EUsjZ/qSmX74f99t7ysUzXsd4eq2axVv+jzoIDT0FGaVEEYfA1+NvaT
+ s/D+MlWeMZfTAH2MGyYMDJE8BmsCDsYbTHdw6hhOgUTdDJIYHYwucVsD5MNc8JTRksm6b3L1AY
+ T3Z+phklQMg9mcJniDqY3GHZ/plfMmuBAEkUPf7BlWX4Azz2OqUYCAAA=
+X-Change-ID: 20250429-wip-bl-ad7606-calibration-20a396a60352
+To: Jonathan Cameron <jic23@kernel.org>, 
+ David Lechner <dlechner@baylibre.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Andy Shevchenko <andy@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, 
+ Michael Hennerich <Michael.Hennerich@analog.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Michael Hennerich <michael.hennerich@analog.com>, 
+ devicetree@vger.kernel.org, Angelo Dureghello <adureghello@baylibre.com>, 
+ Conor Dooley <conor.dooley@microchip.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3377;
+ i=adureghello@baylibre.com; h=from:subject:message-id;
+ bh=eSK6YZcLQNcfWyBCA5lDtS+FZisIhv1cZBflT0atmTw=;
+ b=owGbwMvMwCXGf3bn1e/btlsznlZLYsgwscnecHDetTezxVZkrj1a5fzq4urwyu/tLLxO7rM6J
+ /AKt15r7yhlYRDjYpAVU2SpS4wwCb0dKqW8gHE2zBxWJpAhDFycAjCR93sZGRqnrNb48dpgVo3/
+ lfVHs5X/xu9dsGhCepHFk/TM03fst71m+O/p8O+j6uzzthb7Dt4+HxfQ26UtefSJM5fMH6bbe9h
+ qJnIDAA==
+X-Developer-Key: i=adureghello@baylibre.com; a=openpgp;
+ fpr=703CDFAD8B573EB00850E38366D1CB9419AF3953
 
-On Mon, May 26, 2025 at 11:54:33AM +0200, Toke Høiland-Jørgensen wrote:
-> Byungchul Park <byungchul@sk.com> writes:
-> 
-> > On Mon, May 26, 2025 at 10:40:30AM +0200, Toke Høiland-Jørgensen wrote:
-> >> Byungchul Park <byungchul@sk.com> writes:
-> >> 
-> >> > On Mon, May 26, 2025 at 11:23:07AM +0900, Byungchul Park wrote:
-> >> >> On Fri, May 23, 2025 at 10:21:17AM -0700, Mina Almasry wrote:
-> >> >> > On Thu, May 22, 2025 at 8:26 PM Byungchul Park <byungchul@sk.com> wrote:
-> >> >> > >
-> >> >> > > To simplify struct page, the effort to seperate its own descriptor from
-> >> >> > > struct page is required and the work for page pool is on going.
-> >> >> > >
-> >> >> > > To achieve that, all the code should avoid accessing page pool members
-> >> >> > > of struct page directly, but use safe APIs for the purpose.
-> >> >> > >
-> >> >> > > Use netmem_is_pp() instead of directly accessing page->pp_magic in
-> >> >> > > page_pool_page_is_pp().
-> >> >> > >
-> >> >> > > Signed-off-by: Byungchul Park <byungchul@sk.com>
-> >> >> > > ---
-> >> >> > >  include/linux/mm.h   | 5 +----
-> >> >> > >  net/core/page_pool.c | 5 +++++
-> >> >> > >  2 files changed, 6 insertions(+), 4 deletions(-)
-> >> >> > >
-> >> >> > > diff --git a/include/linux/mm.h b/include/linux/mm.h
-> >> >> > > index 8dc012e84033..3f7c80fb73ce 100644
-> >> >> > > --- a/include/linux/mm.h
-> >> >> > > +++ b/include/linux/mm.h
-> >> >> > > @@ -4312,10 +4312,7 @@ int arch_lock_shadow_stack_status(struct task_struct *t, unsigned long status);
-> >> >> > >  #define PP_MAGIC_MASK ~(PP_DMA_INDEX_MASK | 0x3UL)
-> >> >> > >
-> >> >> > >  #ifdef CONFIG_PAGE_POOL
-> >> >> > > -static inline bool page_pool_page_is_pp(struct page *page)
-> >> >> > > -{
-> >> >> > > -       return (page->pp_magic & PP_MAGIC_MASK) == PP_SIGNATURE;
-> >> >> > > -}
-> >> >> > 
-> >> >> > I vote for keeping this function as-is (do not convert it to netmem),
-> >> >> > and instead modify it to access page->netmem_desc->pp_magic.
-> >> >> 
-> >> >> Once the page pool fields are removed from struct page, struct page will
-> >> >> have neither struct netmem_desc nor the fields..
-> >> >> 
-> >> >> So it's unevitable to cast it to netmem_desc in order to refer to
-> >> >> pp_magic.  Again, pp_magic is no longer associated to struct page.
-> >> >
-> >> > Options that come across my mind are:
-> >> >
-> >> >    1. use lru field of struct page instead, with appropriate comment but
-> >> >       looks so ugly.
-> >> >    2. instead of a full word for the magic, use a bit of flags or use
-> >> >       the private field for that purpose.
-> >> >    3. do not check magic number for page pool.
-> >> >    4. more?
-> >> 
-> >> I'm not sure I understand Mina's concern about CPU cycles from casting.
-> >> The casting is a compile-time thing, which shouldn't affect run-time
-> >
-> > I didn't mention it but yes.
-> >
-> >> performance as long as the check is kept as an inline function. So it's
-> >> "just" a matter of exposing struct netmem_desc to mm.h so it can use it
-> >
-> > Then.. we should expose net_iov as well, but I'm afraid it looks weird.
-> > Do you think it's okay?
-> 
-> Well, it'll be ugly, I grant you that :)
-> 
-> Hmm, so another idea could be to add the pp_magic field to the inner
-> union that the lru field is in, and keep the page_pool_page_is_pp()
-> as-is. Then add an assert for offsetof(struct page, pp_magic) ==
-> offsetof(netmem_desc, pp_magic) on the netmem side, which can be removed
-> once the two structs no longer shadow each other?
+Add gain, offset and phase (as a delay) calibration support, for
+ad7606b, ad7606c16 and ad7606c18.
 
-It would work, but still that's what I wanted to avoid.
+Calibration is available for devices with software mode capability. 
 
-To Matthew and mm folks,
+Offset and phase calibration is configurable by sysfs attributes, while
+gain calibration value in ohms must match the external RFilter value,
+when an external RFilter is available, so implemented through a specific
+devicetree "adi,rfilter-ohms" property.
 
-Does it look okay?
+This patchset depends on:
+https://lore.kernel.org/linux-iio/20250505131544.0a7477a2@jic23-huawei/
 
-	Byungchul
-> 
-> That way you can still get rid of the embedded page_pool struct in
-> struct page, and the pp_magic field will just be a transition thing
-> until things are completely separated...
-> 
-> -Toke
+Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+---
+Changes in v7:
+- Fix each wrong commit desc. occurence related to convdelay.
+- Fix ABI documentation with better words.
+- Fix wrong comments in driver source code.
+- Add r_gain default before reading the fdt value.
+- Link to v6: https://lore.kernel.org/r/20250522-wip-bl-ad7606-calibration-v6-0-487b90433da0@baylibre.com
+
+Changes in v6:
+- exit for error in case of fdt that breaks the dt_schema,
+- add (5/6) patch to fix the above on older code too, 
+- Link to v5: https://lore.kernel.org/r/20250519-wip-bl-ad7606-calibration-v5-0-4054fc7c9f3d@baylibre.com
+
+Changes in v5:
+- fix tab/spaces wrong formatting on ABI doc (1/5),
+- fix description in ABI doc (1/5),
+- fix code multiline alignments (3/5),
+- fix calibration offset calculation as oneliner expression (3/5), 
+- Link to v4: https://lore.kernel.org/r/20250508-wip-bl-ad7606-calibration-v4-0-91a3f2837e6b@baylibre.com
+
+Changes in v4:
+- fix ad7606_chan_calib_gain_setup appropriately to be called once.
+- Link to v3: https://lore.kernel.org/r/20250506-wip-bl-ad7606-calibration-v3-0-6eb7b6e72307@baylibre.com
+
+Changes in v3:
+- fix dt_bindings,
+- change sysfs calib_delay to convdelay,
+- fix sysfs documentation accordingly,
+- used u32 for reg and r_gain,
+- used DIV_ROUND_CLOSEST for setting r_gain,
+- minor syntax fixes,
+- Link to v2: https://lore.kernel.org/r/20250502-wip-bl-ad7606-calibration-v2-0-174bd0af081b@baylibre.com
+
+Changes in v2:
+- change phase_delay to calib_delay,
+- fix dt_bindings,
+- fix gain calibarion fdt parsing,
+- fix ad7606c-18 calib offset range,
+- fix calib offset calculation,
+- fix calib gain range,
+- Link to v1: https://lore.kernel.org/r/20250429-wip-bl-ad7606-calibration-v1-0-eb4d4821b172@baylibre.com
+
+---
+Angelo Dureghello (6):
+      Documentation: ABI: IIO: add calibconv_delay documentation
+      iio: core: add ADC delay calibration definition
+      iio: adc: ad7606: add offset and phase calibration support
+      dt-bindings: iio: adc: adi,ad7606: add gain calibration support
+      iio: adc: ad7606: exit for invalid fdt dt_schema properties
+      iio: adc: ad7606: add gain calibration support
+
+ Documentation/ABI/testing/sysfs-bus-iio            |  24 +++
+ .../devicetree/bindings/iio/adc/adi,ad7606.yaml    |  29 +++
+ drivers/iio/adc/ad7606.c                           | 218 ++++++++++++++++++++-
+ drivers/iio/adc/ad7606.h                           |  12 ++
+ drivers/iio/industrialio-core.c                    |   1 +
+ include/linux/iio/types.h                          |   1 +
+ 6 files changed, 279 insertions(+), 6 deletions(-)
+---
+base-commit: 789fd0b1a017f1582fee73effb5cfa740ad6569b
+change-id: 20250429-wip-bl-ad7606-calibration-20a396a60352
+
+Best regards,
+-- 
+Angelo Dureghello <adureghello@baylibre.com>
+
 
