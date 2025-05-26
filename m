@@ -1,62 +1,87 @@
-Return-Path: <linux-kernel+bounces-662764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-662766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A72E7AC3F4B
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 14:23:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EFBFAC3F4E
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 14:24:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 671A33A60DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 12:22:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE5983A6FFD
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 12:23:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1B42200B9B;
-	Mon, 26 May 2025 12:22:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 139691FFC55;
+	Mon, 26 May 2025 12:24:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Drmulf52"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D/eJNjUJ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 891601DFE8;
-	Mon, 26 May 2025 12:22:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76C711E834B
+	for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 12:24:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748262173; cv=none; b=QS9qO8EcZ/CeeqcZYv4ABZSZx71n8gJdSd6HihTHI+wLQvnfC7YyHzTgLkMXPMfapFDC4cIcxHqsoszOfiTkkrf3qEGnbOtK1x4+YHzrdnPJxST8OW0IHUeQOgU8l9RIlMWYdFDHvg3r9zPgeElQcy6PhXbiDptFbdaiq5771pI=
+	t=1748262246; cv=none; b=G2vOhFKt69TvSBY75+fCyLe0Jl+pgKyrcmLu9fWD5RlfM7n63WpBV6+roPhl+FKxxZxkXw1MmS6OlaVHR6vKnHdqTn8yLupziUPiccipzzfQqF4o+DzTySemKCxY4dacZNlicNuCSRwwn1yPCG9XOLmzLtApk9UA0nbezkk1M5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748262173; c=relaxed/simple;
-	bh=4E9MVqUihvjyf3MlTLRLsTqOw86xjLpIYSFPtahvYLM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=eWOKv76LEU8r78wbx7T7KFRM+h3p26HgYGIELpqP0uKAH62gb0GlfPj+ssi0cx3DcOkJ4wt3J/x3JStSTsMwaLX444+bdOa+sIH1up8ucGiaht3XJKbvOr/WYloxtCJ3Adrbh6vw4R08QG0S/lIxAoMX/s1ByLcjtU8nErap6CY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Drmulf52; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54Q91lap015727;
-	Mon, 26 May 2025 12:21:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	++eHJTg6nwBtRRWpfeobl+erEFq938t+JYbREpmq6W8=; b=Drmulf52i3f4nRoH
-	R/244wCNe8Iy3gYjPinYkFs0IAvpVWQmZWUWudnXtYaG1vGK6O6snSUabeIz082y
-	eSvtxKXryxCMhU7tVeZThrj2mnluJmQ2gqYWD/NEYfmf0ggvFEN16pf22L7CJfwZ
-	9Ei+W/9euKGYkWZp1WM+mgyRVwvrrbrMi9Z9kTGeS8Wn7Bf3eAhIZxjqWywG5VIp
-	uuR8iRAxQOiRVngpHCpcn1oLtQ23K8zz9wo9zTOiH/pK6aqGEItVeYzlk469eX40
-	p4NNYrSudug6ZQCe8NRVNWZ2a6gFB6U+zI6Nphxm+8vTavsATdhRA+O2w7bBxY6Z
-	7B0MZA==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46u6b5m4vh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 26 May 2025 12:21:53 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 54QCLqRA026385
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 26 May 2025 12:21:52 GMT
-Received: from [10.64.68.119] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 26 May
- 2025 05:21:45 -0700
-Message-ID: <6367013c-58c9-478e-8399-b4a53e2d8a66@quicinc.com>
-Date: Mon, 26 May 2025 20:21:40 +0800
+	s=arc-20240116; t=1748262246; c=relaxed/simple;
+	bh=ztFgBMUTJ0FW3msAWaAlWOios7p3gwv7RgLc/TKzPvI=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=lMV92UJABz3a6NjsKf9N/DT0wBBiVD+2uXBhIgFckLf12EzxyyJjE3UjDlHE/93YN5L4+BG6S5HAIPONJ/16vQ2ZlhrDrEgjCAb81lRB3mAbl8UTi54uGl9xco1rvEdq+Nee3QrK0bhaERqc9VzRqR3+sO40pWNJQwTUngh27Vo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=D/eJNjUJ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1748262243;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=f1hUbLfWBJa++NBQk5ASCDVxczZvEsEV/qvkLyROOug=;
+	b=D/eJNjUJfcfAbVhes9QtxY5f21XwWVU8A/14AW0t9vwULJLLZQFOrxMZDjf834ttA2UGc7
+	P56RS1xMkGBP+CqTtWXoQaGxP+VOsQA6bKcVv98T22+WL9LyeKLIuZBsrAnGRCJk5hIUJx
+	8kEcC9OJD7Ll2k3B6oW0ahwx53eZRTk=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-16-hIXBW-YoMPe2FNzcSVrTwg-1; Mon, 26 May 2025 08:24:01 -0400
+X-MC-Unique: hIXBW-YoMPe2FNzcSVrTwg-1
+X-Mimecast-MFC-AGG-ID: hIXBW-YoMPe2FNzcSVrTwg_1748262241
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-441d438a9b7so14514625e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 05:24:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748262240; x=1748867040;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:from:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=f1hUbLfWBJa++NBQk5ASCDVxczZvEsEV/qvkLyROOug=;
+        b=BPuMwx/QZ/edM/898jo1cPY/M8kTqwTAccmyDmkV+zrStJYybqaDy1vXU7J9/mdTyR
+         A+D4ctRNh5Bvx9vhghIvFF+bdBV1tzp8xakLosTSIFHCJkK4zTJlI/cZoJZhq+wZ6H7B
+         volNLI8MbhGVqOKKWg7MgF8rrrvSEdL5t/zbrNvq6KNCxojpM3WTwET400QJyKo5sQzI
+         hj77EPsbMdMQGKjQwN78vRl0yhNVrFXAKEKUi/Cm4/xsiMxzpIvFAZORG68vgZpX+2OT
+         PDXQ7UYxYy+2D0W7/ZKYWiuCx95N0HHQ63rS9BFxsF+PSIBvHz6HrDlu/cTh5mFxv7JE
+         uDgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXtjiz0DXBYITepm8qOitFG+OUTAWS82teHvUjK/ChmDiTCim9B5JTUpDE0TChwUzY0Iv+beTr8EvNwWjY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzT/pknz2uVqEufMAdmTBA1dZy81mdZLGZfSJPzcYpBXKCx5dUh
+	Dhm2W3QYbwAgFIAOyBx7puPym9TeMFP0fNsaRS49PId5i7/wFj801ZMxn0+4YLjxD2g6tmXpN+d
+	fDGt0fsN5d/KMx+CpWfeL4RsIF2DYB73eJVjZB0uEheEBKi6vRnl+c3DBobPFZu2/2w==
+X-Gm-Gg: ASbGncvbfnv0zmdpFoF9nH2UBkJrmc5YGjd6I3A//NZVGcrLPYJvISSMQXOAi3lxMhC
+	+LVnFQR60Phlm1AqdmItw0KFFvscpYsD6aKWwO2dCnA6X8dPoSNNx5i8gVv2gDKGcBuVnyYjo21
+	hkly3MY0nVr+0u0WhWPlIvwW9+AWxT4o7ZcsvZKwIEQ26IjUi9OIVYYuEyMXqqYAH7tpBPXGtHe
+	zt8M74QRrlg6Rv9gi34SERyNLerc/3AdaDYyhS6xLiT42/vJWO5HQwJ7hiQVD0GUDp0xe43zwih
+	F4vYctB+u2Usza0VINGEDUelYgxZQPQ1o7MOeEXQiU9lgOPBAV4VrBRPLhveulSBD7gnXSk6Z9N
+	989DEIfC/rneUei3gzevLdXtH0CnlG47lng7ttAo=
+X-Received: by 2002:a05:6000:18a8:b0:3a3:6478:e08 with SMTP id ffacd0b85a97d-3a4ca544f78mr7973477f8f.23.1748262240548;
+        Mon, 26 May 2025 05:24:00 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFCd+TDq8gpbIs+tC4tvt576LzOqo/K2mmtAv7N2bHG5fgvQDVY0iA2xsAsXn3MxRT60vvaKg==
+X-Received: by 2002:a05:6000:18a8:b0:3a3:6478:e08 with SMTP id ffacd0b85a97d-3a4ca544f78mr7973449f8f.23.1748262240079;
+        Mon, 26 May 2025 05:24:00 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f19:6500:e1c1:8216:4c25:efe4? (p200300d82f196500e1c182164c25efe4.dip0.t-ipconnect.de. [2003:d8:2f19:6500:e1c1:8216:4c25:efe4])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4d9982c96sm2595262f8f.64.2025.05.26.05.23.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 26 May 2025 05:23:59 -0700 (PDT)
+Message-ID: <347b3035-26fe-43af-8df4-b1610d305908@redhat.com>
+Date: Mon, 26 May 2025 14:23:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,99 +89,206 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 04/45] drm/msm/dp: split msm_dp_panel_read_sink_caps()
- into two parts
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-CC: Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Rob Clark
-	<robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, "Simona
- Vetter" <simona@ffwll.ch>,
-        Stephen Boyd <swboyd@chromium.org>,
-        "Chandan
- Uddaraju" <chandanu@codeaurora.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Kuogee Hsieh <quic_khsieh@quicinc.com>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Vara Reddy <quic_varar@quicinc.com>,
-        Rob Clark
-	<robdclark@chromium.org>,
-        Tanmay Shah <tanmay@codeaurora.org>, <linux-arm-msm@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Jessica Zhang <quic_jesszhan@quicinc.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-References: <20241205-dp_mst-v1-0-f8618d42a99a@quicinc.com>
- <20241205-dp_mst-v1-4-f8618d42a99a@quicinc.com>
- <osctzl3bgutcjt3hjvgxaq64imn2i67hagqm5slfozf33tnj66@5hlfmqmt7if5>
- <2a54ffe8-8e40-49f6-8735-96da47e1bbc6@quicinc.com>
- <smj62cjqy7ihd3ywnvwkqzczlg7op4rqy3yrwlibjvouqerofr@bnlpwl3j4jge>
+Subject: Re: [PATCH] mm/hugetlb: remove redundant folio_test_hugetlb
+From: David Hildenbrand <david@redhat.com>
+To: yangge1116@126.com, akpm@linux-foundation.org
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, 21cnbao@gmail.com,
+ baolin.wang@linux.alibaba.com, muchun.song@linux.dev, osalvador@suse.de,
+ liuzixing@hygon.cn
+References: <1747987559-23082-1-git-send-email-yangge1116@126.com>
+ <427043ca-ae91-4386-8ffd-aaf164773226@redhat.com>
 Content-Language: en-US
-From: Yongxing Mou <quic_yongmou@quicinc.com>
-In-Reply-To: <smj62cjqy7ihd3ywnvwkqzczlg7op4rqy3yrwlibjvouqerofr@bnlpwl3j4jge>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <427043ca-ae91-4386-8ffd-aaf164773226@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=ZcodNtVA c=1 sm=1 tr=0 ts=68345ce1 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10
- a=c4V0u5EJHjKTGh-yu2cA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI2MDEwNSBTYWx0ZWRfX2HrpXyis01E1
- h5qfjPL6uGiJYB+ycRr+hQkVvcy5v9/bAQfsI6bP/choEvyKdXeG4p1o+MwqceXp3Jvvn4NcK+S
- Y9aY/k/vfNiqe4Kn7qstl/6MlCu581FR88WSCg8D3X80ltq8N0+lQJQb0t4uQLms2NzsB0YA9dg
- zh2aPMzZZnmYEqtsfe+voBv45oNhgMpzgPAxTx1o114t4L0pGKjfubxi0s/PukwhZn7zGZ0uS8u
- L3UqBATupgHtWAVcKGsmOA6DsoYCL484tJbeuRovKxwsbu570jcpm8RkSr7YLa2jfvnyR3RLPnR
- 1ygxIdMsgWIh+7xUCuctoIrtWbqJjwk3rh8/upkg2JcJI+gNx2iWdI7IY7BAqpVs/9lEb9miN04
- BddZDrhPjTNPoTsLrcmJE2c8hBWZCe8L364fFRLvPG6w1LyZEv8IcURs5ZPcyn/qlgQZUXCC
-X-Proofpoint-GUID: 28rMw1k_p1WuO9MdpSCcMqY0SgH7FD4m
-X-Proofpoint-ORIG-GUID: 28rMw1k_p1WuO9MdpSCcMqY0SgH7FD4m
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-26_06,2025-05-26_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 malwarescore=0 mlxlogscore=999 bulkscore=0 priorityscore=1501
- spamscore=0 clxscore=1015 suspectscore=0 lowpriorityscore=0 phishscore=0
- impostorscore=0 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505160000
- definitions=main-2505260105
 
-
-
-On 2025/5/22 20:38, Dmitry Baryshkov wrote:
-> On Thu, May 22, 2025 at 05:51:52PM +0800, Yongxing Mou wrote:
+On 26.05.25 14:20, David Hildenbrand wrote:
+> On 23.05.25 10:05, yangge1116@126.com wrote:
+>> From: Ge Yang <yangge1116@126.com>
 >>
+>> In the isolate_or_dissolve_huge_folio() function, the folio_test_hugetlb()
+>> function is called to determine whether a folio is a hugetlb folio.
+>> However, in the subsequent alloc_and_dissolve_hugetlb_folio() function,
+>> the folio_test_hugetlb() function is called again to make the same
+>> determination about whether the folio is a hugetlb folio. It appears that
+>> the folio_test_hugetlb() check in the isolate_or_dissolve_huge_folio()
+>> function can be removed. Additionally, a similar issue exists in the
+>> replace_free_hugepage_folios() function, and it should be addressed as
+>> well.
 >>
->> On 2024/12/6 16:51, Dmitry Baryshkov wrote:
->>> On Thu, Dec 05, 2024 at 08:31:35PM -0800, Abhinav Kumar wrote:
->>>> In preparation of DP MST where link caps are read for the
->>>> immediate downstream device and the edid is read through
->>>> sideband messaging, split the msm_dp_panel_read_sink_caps() into
->>>> two parts which read the link parameters and the edid parts
->>>> respectively.
->>>
->>> As you are touching this part, could you please refactor the code
->>> instead by dropping the msm_dp_panel->drm_edid? There should be no need
->>> to store EDID in the panel structure.
->>>
->> Hi, Dmitry, Abhinav will be leaving the company and will no longer be
->> responsible for updating and address the comments. I will take over handling
->> MST patch series. Regarding this comments, I don't got that where the
->> drm_edid should be stored. In MST cases, where multiple panels exist, i
->> think that there should be a separate drm_edid saved for each panel.
+>> Suggested-by: Oscar Salvador <osalvador@suse.de>
+>> Signed-off-by: Ge Yang <yangge1116@126.com>
+>> ---
+>>    mm/hugetlb.c | 51 +++++++++++++--------------------------------------
+>>    1 file changed, 13 insertions(+), 38 deletions(-)
+>>
+>> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+>> index 6c2e007..6e46f2f 100644
+>> --- a/mm/hugetlb.c
+>> +++ b/mm/hugetlb.c
+>> @@ -2787,20 +2787,24 @@ void restore_reserve_on_error(struct hstate *h, struct vm_area_struct *vma,
+>>    /*
+>>     * alloc_and_dissolve_hugetlb_folio - Allocate a new folio and dissolve
+>>     * the old one
+>> - * @h: struct hstate old page belongs to
+>>     * @old_folio: Old folio to dissolve
+>>     * @list: List to isolate the page in case we need to
+>>     * Returns 0 on success, otherwise negated error.
+>>     */
+>> -static int alloc_and_dissolve_hugetlb_folio(struct hstate *h,
+>> -			struct folio *old_folio, struct list_head *list)
+>> +static int alloc_and_dissolve_hugetlb_folio(struct folio *old_folio,
+>> +			struct list_head *list)
+>>    {
+>> -	gfp_t gfp_mask = htlb_alloc_mask(h) | __GFP_THISNODE;
+>> +	gfp_t gfp_mask;
+>> +	struct hstate *h;
+>>    	int nid = folio_nid(old_folio);
+>>    	struct folio *new_folio = NULL;
+>>    	int ret = 0;
+>>    
+>>    retry:
+>> +	/*
+>> +	 * The old_folio might have been dissolved from under our feet, so make sure
+>> +	 * to carefully check the state under the lock.
+>> +	 */
+>>    	spin_lock_irq(&hugetlb_lock);
+>>    	if (!folio_test_hugetlb(old_folio)) {
+>>    		/*
+>> @@ -2829,8 +2833,10 @@ static int alloc_and_dissolve_hugetlb_folio(struct hstate *h,
+>>    		cond_resched();
+>>    		goto retry;
+>>    	} else {
+>> +		h = folio_hstate(old_folio);
+>>    		if (!new_folio) {
+>>    			spin_unlock_irq(&hugetlb_lock);
+>> +			gfp_mask = htlb_alloc_mask(h) | __GFP_THISNODE;
+>>    			new_folio = alloc_buddy_hugetlb_folio(h, gfp_mask, nid,
+>>    							      NULL, NULL);
+>>    			if (!new_folio)
+>> @@ -2874,35 +2880,20 @@ static int alloc_and_dissolve_hugetlb_folio(struct hstate *h,
+>>    
+>>    int isolate_or_dissolve_huge_folio(struct folio *folio, struct list_head *list)
+>>    {
+>> -	struct hstate *h;
+>>    	int ret = -EBUSY;
+>>    
+>>    	/*
+>> -	 * The page might have been dissolved from under our feet, so make sure
+>> -	 * to carefully check the state under the lock.
+>> -	 * Return success when racing as if we dissolved the page ourselves.
+>> -	 */
+>> -	spin_lock_irq(&hugetlb_lock);
+>> -	if (folio_test_hugetlb(folio)) {
+>> -		h = folio_hstate(folio);
+>> -	} else {
+>> -		spin_unlock_irq(&hugetlb_lock);
+>> -		return 0;
+>> -	}
+>> -	spin_unlock_irq(&hugetlb_lock);
+>> -
+>> -	/*
+>>    	 * Fence off gigantic pages as there is a cyclic dependency between
+>>    	 * alloc_contig_range and them. Return -ENOMEM as this has the effect
+>>    	 * of bailing out right away without further retrying.
+>>    	 */
+>> -	if (hstate_is_gigantic(h))
+>> +	if (folio_order(folio) > MAX_PAGE_ORDER)
+>>    		return -ENOMEM;
+>>    
+>>    	if (folio_ref_count(folio) && folio_isolate_hugetlb(folio, list))
+>>    		ret = 0;
+>>    	else if (!folio_ref_count(folio))
+>> -		ret = alloc_and_dissolve_hugetlb_folio(h, folio, list);
+>> +		ret = alloc_and_dissolve_hugetlb_folio(folio, list);
+>>    
+>>    	return ret;
+>>    }
+>> @@ -2916,7 +2907,6 @@ int isolate_or_dissolve_huge_folio(struct folio *folio, struct list_head *list)
+>>     */
+>>    int replace_free_hugepage_folios(unsigned long start_pfn, unsigned long end_pfn)
+>>    {
+>> -	struct hstate *h;
+>>    	struct folio *folio;
+>>    	int ret = 0;
+>>    
+>> @@ -2925,23 +2915,8 @@ int replace_free_hugepage_folios(unsigned long start_pfn, unsigned long end_pfn)
+>>    	while (start_pfn < end_pfn) {
+>>    		folio = pfn_folio(start_pfn);
+>>    
+>> -		/*
+>> -		 * The folio might have been dissolved from under our feet, so make sure
+>> -		 * to carefully check the state under the lock.
+>> -		 */
+>> -		spin_lock_irq(&hugetlb_lock);
+>> -		if (folio_test_hugetlb(folio)) {
+>> -			h = folio_hstate(folio);
+>> -		} else {
+>> -			spin_unlock_irq(&hugetlb_lock);
+>> -			start_pfn++;
+>> -			continue;
+>> -		}
+>> -		spin_unlock_irq(&hugetlb_lock);
 > 
-> Why do we need to store EDID at all?
+> ^ oh my, that is bad code.
 > 
-Got it. Will try to drop it.
+> Taking the hugetlb_lock for each and ever page in the range.
+> 
+> Let me find that code and nack it.
+
+Already in 6.15, gah.
+
+Please convert that code to never ever take any hugeglb locks unless we 
+are clearly dealing with a hugetlb folios.
+
+-- 
+Cheers,
+
+David / dhildenb
 
 
