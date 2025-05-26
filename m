@@ -1,344 +1,129 @@
-Return-Path: <linux-kernel+bounces-662905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-662903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 350FEAC4119
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 16:14:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6982AC4113
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 16:13:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6CD93B25E5
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 14:13:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB6B016725C
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 14:13:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A36451A9B24;
-	Mon, 26 May 2025 14:13:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46A9A20E00A;
+	Mon, 26 May 2025 14:13:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="c9jjjkxL"
-Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11010055.outbound.protection.outlook.com [52.101.228.55])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ZSlUmImI"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A9314207F;
-	Mon, 26 May 2025 14:13:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.228.55
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748268830; cv=fail; b=fpqN7n0FYnNQr7Vq7afHokr6zAF8RhNSrkroFPJIK90ig+dppbNu0D8QrtAu8ZBdTazXtN/kbGFTt0tXcMJVf5a+xySQPO4/oiVURywdhwAGWivvWGfKBMAVjhxqsYjC2y7Flv5O8z9lj36rmOEBpbkeJ71yObpHse0IJL77hCI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748268830; c=relaxed/simple;
-	bh=hwN5i8Aif76BfXnMKVNHHu68E859C9TXtp72f9SShuc=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=iSQ83MRzErjf4+hNQ2HmD7LN9BDWwUxJhHbz3xe0W1c1r4/JdkhYnlct3TbIusfOFISAzQQqx9XyCNFYOeBOzu4Q2xvvr5p+yUki/Nno9rM2I+VGBjNU8Jm/qX6YiMd4LtGuP/1/yJpdlmMTi03cC2Wno7tQRNeYm/mrAG1Rrck=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=c9jjjkxL; arc=fail smtp.client-ip=52.101.228.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VhagqhXTrS1qJvyWr5pC533T6mMNJEwPyd7x258QiwhNZZTXGn66DHSuL4DGRGh8cRkYkzhiCmovFkkHk5f1wOVWzlKnKdi9ai3qfbZ2b9oX68nSrjR549Z1g42+z+XRzcK6+qxA+cyhJeiNJsUJihzgJm9r2h3tjFoyC7u+d1Gys1WwSxQnAbmSqNKCB2pGgwZW64BLk5Ocv5h+oscydKFlyreJIMYpkYcL5yEc9cJK/O0ms4oY/BcNHLcIYLczG5kwqBpba7b9MC6gRDwY5tHY1lO8OE5zJK/c7Rc8KPzjMYmAKoxZkPE8yS346yKkCH7MbDvaQdeXV9a1AeUV3w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=y0wiZIEy3a7306QTfQ5xXCVqHInsjT8WxLfIvZTrFuQ=;
- b=Ngv8N+9DsCmYbuOvT/tAkmNh0U5FadCVE+8TN0r0QsucIPSYUSvFJJlk4P0oBkORVM+U0zxBiqP7pJ9dwF7WOoKoFkaYg5K9qle3nGN3pNLNn+YWTkIKf4tuJfN5fdnLjODv9HIoWfY3hDSwhvKY5uuItw7jVbM4/ndTxyVCJ1Vncs9pBqGNcGo9wIWXyy2Uz1X0pByy70i8GHoTUdFSun+ekx5uQTAj2hZ2I5JCpA0WdM226hHnkWxKMwq51KFlowu9d89mKYGfcnNZguIszfox3YZhLzqm3fi/rMfrx1ZLvXkNnzczOAToq+XG/s1tftUJ+USnO64zfKnQrdu5Vw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=y0wiZIEy3a7306QTfQ5xXCVqHInsjT8WxLfIvZTrFuQ=;
- b=c9jjjkxLlIm1VI2/8iFAKS7XW9mlB1HpZypWTaxWPRfOc5z39q+G1YYwXA5xcbMATQfGVn7Fys3RRGcLNLYYjHuwzDKcy2lrXgGzEXCMwCEtIsx+tvyshKwjEXJu5SQgVLHrLjV0V84FP8tKjrWezkFsSU6h8R5PRgSewu4KjU8=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-Received: from OS9PR01MB13950.jpnprd01.prod.outlook.com (2603:1096:604:35e::5)
- by OS3PR01MB9349.jpnprd01.prod.outlook.com (2603:1096:604:1ca::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.26; Mon, 26 May
- 2025 14:13:42 +0000
-Received: from OS9PR01MB13950.jpnprd01.prod.outlook.com
- ([fe80::244d:8815:7064:a9f3]) by OS9PR01MB13950.jpnprd01.prod.outlook.com
- ([fe80::244d:8815:7064:a9f3%3]) with mapi id 15.20.8769.025; Mon, 26 May 2025
- 14:13:35 +0000
-Message-ID: <d695e04c-b2f1-41ff-8510-33529bf5f916@bp.renesas.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24B351F37D4;
+	Mon, 26 May 2025 14:13:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748268812; cv=none; b=dTUh6kbB3jiJsTB9NnRCl9WE7H4x/VOQEkO4guCqfEeNCwybXNl3wpkQQKipDY0URbEGqAY9tquaXCan/gGalIH+MVDNFR+Xea8SlW5kOjQiKWNZ13WjQGVCb3Qxbnmf0jzVByQJLQvOcdRMNRlmS3h0ZA+d1gmUrCsYUL7Hw6w=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748268812; c=relaxed/simple;
+	bh=RfOzpjQyx5CF5y4v62KF88B1iYfZaFwCnC7uIMdlFKg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BGzv4D/Rg6iIB0WzltgHiiHfMk3VRm65C6V7l5CintGyuMFKWxry8r5jpUKFwuQlXImOAm0ep0FZkH1EVoPHzmn+YE7op0UPOavvj3RowkybdMYlRbWw4jQwL/lkX6yHwbTJeAxpuz+OrnvMkji/L706wBA5sQWscGMt1m48YV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=ZSlUmImI; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (237.69-130-109.adsl-dyn.isp.belgacom.be [109.130.69.237])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 9BAD7743;
+	Mon, 26 May 2025 16:13:04 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1748268784;
+	bh=RfOzpjQyx5CF5y4v62KF88B1iYfZaFwCnC7uIMdlFKg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZSlUmImITcHygktdRLQLpoApXk0GjqO0wVOKgXdSY2bxdMiXtI7RH+0Wlfln5hxck
+	 shVUOzZDPWJFKoeuWHXQ4wuRZSEkuULuwko3eeLK8ChKipuLOMmXAfjRwEOl0PLD4O
+	 MbAIreXkJkUbnAphO18C5mrZJMwG/beoysi0Buwg=
 Date: Mon, 26 May 2025 16:13:23 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/bridge: adv7511: Do not merge adv7511_mode_set() with
- atomic_enable()
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Maxime Ripard <mripard@kernel.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- tomm.merciai@gmail.com, linux-renesas-soc@vger.kernel.org,
- biju.das.jz@bp.renesas.com, Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Douglas Anderson <dianders@chromium.org>,
- Adam Ford <aford173@gmail.com>, Jesse Van Gavere <jesseevg@gmail.com>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20250526085455.33371-1-tommaso.merciai.xr@bp.renesas.com>
- <20250526-cryptic-blue-mussel-ac57fe@houat>
- <91d8a288-1f2d-469c-a596-6265893584ae@bp.renesas.com>
- <20250526104902.GB17743@pendragon.ideasonboard.com>
- <209ddc02-01d2-4375-afcf-2c9a55fe8fc1@bp.renesas.com>
- <20250526-cherubic-ambitious-cobra-3c6a1e@houat>
- <7603c3b1-edff-4c02-a4a5-1d5f72720cad@oss.qualcomm.com>
- <aec5d09f-248b-4dcc-8536-89b4b9d47e9c@bp.renesas.com>
-Content-Language: en-US
-From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-In-Reply-To: <aec5d09f-248b-4dcc-8536-89b4b9d47e9c@bp.renesas.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: FR5P281CA0035.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:f3::11) To TYRPR01MB13941.jpnprd01.prod.outlook.com
- (2603:1096:405:21c::10)
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 2/4] media: Documentation: Add note about UVCH length
+ field
+Message-ID: <20250526141323.GQ17743@pendragon.ideasonboard.com>
+References: <20250404-uvc-meta-v5-0-f79974fc2d20@chromium.org>
+ <20250404-uvc-meta-v5-2-f79974fc2d20@chromium.org>
+ <20250526134946.GN17743@pendragon.ideasonboard.com>
+ <CANiDSCvPG_3qc4Emhat=NdRZXsmNDD0pwh182bXDFK2TgYN_ug@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: OS9PR01MB13950:EE_|OS3PR01MB9349:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4b3d6810-1f88-4262-d221-08dd9c5f80a9
-X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
- =?utf-8?B?LzJiK0JGOGxnQnkxbWJkc0lXU2R1MDVtNUt0WFNxcndNeGoxdloyK1FRN3hX?=
- =?utf-8?B?S0cwUEs1SWcrbGxoVUlvSUJSb0dReFVoRG1jMnJ0KzhUS21aajYvM0pLL1I1?=
- =?utf-8?B?UngxdlhlUDF6azZ0RjNOWnhsVmRwbEdGYVdKN3NDc3dwNHhXWlB2YVJnV2FV?=
- =?utf-8?B?N2svOU4yRmR0VGVrdTEwN2gxemFldHhobU5yMnZxbDJQTG5hdUdkQnpXYkJM?=
- =?utf-8?B?NlJORElkVVY1NnhEbENpVFFBTktiTXVjeFNES1lXQm4xVEtBU0FsT1phelY4?=
- =?utf-8?B?T1ZVczh1RVY3NHU5NWp5cjdFQjArWGlCOXp2N2VTREp3SnUyMHJaeWNqOUMv?=
- =?utf-8?B?NTE2MjU4R05Rdk9LaktOUVlNSGhKS2Y3S3V5V2VoY1JHNEJYMGdzMjZTcjZF?=
- =?utf-8?B?eDBZWGhKOElsV0RpMHhTcE5GRklPdTdicy9XbWFyUElEM2xyS081NlpHbU1y?=
- =?utf-8?B?ckhPWUtMWXdBTU0zY3I2OEJ5d3I2RTJVVlBPOXdNcEdyS0dZVTBjeXArTVdL?=
- =?utf-8?B?S0wxdURCZjFJUml5UUI4NFJBT1dBQnhDVW9pNDhrQlFrd1FXT09QK25pRkJu?=
- =?utf-8?B?c2tURVk1cEdRQTFNaFJocDBJSjhIdCtLUEUwSUdUcHQzSDZBMHpRam80dnU1?=
- =?utf-8?B?U2EwT1MraWFyUTVQemtyUWRtYzhJZWtJbTliaEpJK3RBcW4yZ1ZxaldHanE4?=
- =?utf-8?B?dnhTSEMwSVJEZWZoT01KcEZxZjFoZXBvZUxidFNFbWltR3FCbFcrMlFvZGRw?=
- =?utf-8?B?VnY1U2N2QVd2ZEhBNDdGMS9Xc1hVZHFrR2RqUXVXVXNRSjZUZHNpdDdWd2li?=
- =?utf-8?B?ZjUwWisvZTRDTVVLMGxwa0JRV3JyNkdoTFJpTktRTm4yRTMwVC9KaHphWURH?=
- =?utf-8?B?YWhqWDNydWM3cnRMWXVhNG54MW1sKzJjWEd4WmdBempxM2FDVFhmWmRyZTA3?=
- =?utf-8?B?MFJnU0Fab0FsRUFIV3Z5WG9CUzQ0U3V1NWhaZ2lBK2puM2pZa2traXUzMWts?=
- =?utf-8?B?WHY1b0w4UngxWDJkek5xMzE0cDJFdTdhNWhUTk9sMElXVnJtZGRFdnNCL1ZS?=
- =?utf-8?B?Sm1tSFBDN3l2SGFZOGRQUmpXcDBVSk1EZmh0SmJJeTRabjVUNXB3YmtDRlV3?=
- =?utf-8?B?K3NHWXJrWWxYREZpL2F4N3lrcThHcEZSa2ExY0VKc3FZcC9HcDh2VG94VEEx?=
- =?utf-8?B?MUtqdUl6aFZ1UE5EaUR1cHBOYzFDM3ZpT3VZTXYyWkpmb1loTXd2ZWFZanpC?=
- =?utf-8?B?dlMwd2lsQzR4ZXVZYVhCcDJ1THF0dzVKTTJtMzR6eCszTmxzMWgrc1FQcC9X?=
- =?utf-8?B?N0tWa0J6VUxsa2h2MUpuOVRHbWFYS25WRlg4ZzVuVjd0aU5nQ3JmUU5EYkM4?=
- =?utf-8?B?WnhRK040RGNnVEFENzRmSW9aa3lBM2JiZUp0VUhTaVA3eEZDeUF2S0JwUnVs?=
- =?utf-8?B?eWcya3h3Q0YzZUNna3JORjhhNmVqK2lxaytGZGlBUGZWVUE3bkRhL2NDMW91?=
- =?utf-8?B?dXd1aUxSajRqamtZa01pR2NXK3dNVk81Rlp5a1l0Tk9tQ1VaeW1OTE10MWw3?=
- =?utf-8?B?QUdveW9hcTdjMmJLZEpCMGF5dDhWQ2FqYUt5Y1lUOGZIVmROc2pZcGdvY1Yw?=
- =?utf-8?B?YzRGQXNYMjRQTVJQYXdlbjh4RXh1SFhUeDNBcjFnM2lnYWk1V1FqeUlNNWRp?=
- =?utf-8?B?ZDdnYlEwb0MvZjA3SzArUEp0SGZCbnRoRUV2cURYb0VtYVdoYk9MZUNTRGdI?=
- =?utf-8?B?UHpvYkFxdWJidCtobjRZQ01PUXJhajltWGhTTTkvVnM4WHcvY1RFSlJ1eGV0?=
- =?utf-8?B?MDlpZDJXSkUweU1tUVR0OFZzQW9hNjdUZm4vOHp2dUJQbzNzYlJlcWhDUFdB?=
- =?utf-8?B?enNRZEJqdVpEK0NXQ01uUUxSdlZyR1BOODhpQW9LWHVBY1QxWkNrMDlsNWh6?=
- =?utf-8?Q?vRt8eV13vPo=3D?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS9PR01MB13950.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?utf-8?B?MmdyZlRpL0N0YnFrclFhMVlJYnpVTmJmeTAvY1dNZ1VtcXg4MmdrNExOSXZ4?=
- =?utf-8?B?QTBIc01aNlJXMzlwV3BpczVHNE9FSDJqN2tQSUpkY3dMemQxMUtyMWhrT0Ur?=
- =?utf-8?B?ZDZSbFlXZlVaSGx0bnphTmw5UWtXRGhsS1FLa2RXc3N0SmRDdFNWM1NSUUdI?=
- =?utf-8?B?NTZHbE43MmJ3YXZ4em1uMzdUTEVibDF1ajFZWFJiU2VKZ1paWkw4VWN5TXp0?=
- =?utf-8?B?b09DNFBiOGErdHQwalB3VldxUW8wcmt1Rjl2S3Q2ZDZQcjBGVTFUOFZCUjZw?=
- =?utf-8?B?QW1JbW85Y1B6Ym5qNDRmWFdNWGRhRFlPYkdCMEZ3bTRuS3V4dmdXM1lJSnRS?=
- =?utf-8?B?T3p3VWh6SVlwNDk0d0tuTWt4eEdIZng1WVU4a2VVN01GcEhpb1puSFc5VGQx?=
- =?utf-8?B?alY0b2RhQVFTRGh4UWdiVzRjRFJkeFU1NGk2eitTOVp0SkxYQUhLN21PUGdv?=
- =?utf-8?B?R1hJazVwZzljZVBWUXhFSmU0Q2s0djVzUTlGWlFwalhMcDZJNE93M0I1ZnJw?=
- =?utf-8?B?Rm00MlNKTXV2dWNUT0Z1R3czMW5uRUxpbUVkczlZSGFtOEJiTnZmUlcxL1oz?=
- =?utf-8?B?ZXc2cmZ0SVduamhZQWlGRmw1WlhNVldrUEJNdWI5L005WVlZUEJ2bkpTa1p6?=
- =?utf-8?B?NllCVkZ1VXh5YlgzZHBDZmdGbEhzU1ZleVp0dEg0MG9tY0p2MHhaUWE5R0gx?=
- =?utf-8?B?cVZaVTl3THZzQnJWSms0N2NocmZPcDBDeEc4MTVXbE51ZHJ4VitZNE9xbzJx?=
- =?utf-8?B?TGk2QnAzc2tDZEEvR0ppVVRsVm5pTWYxcnhnVUtDY05Fd0EwWUNVQjliZTNm?=
- =?utf-8?B?VFZ6SDYySy9TTzk0cFVnVmYrcCtsSVBNUXFSczVGSXRDc2hqQnBOZ2d4M0tn?=
- =?utf-8?B?Z2Q3d1VMdm1OTjNnejNYTVo1Z1NtOEtsMlJyOFN6V3ZIdXc1Z1BPdHJaUTVQ?=
- =?utf-8?B?S1I4SHpMZ1A1UlNuTkU3QTk5c3J3SzJaY0VFbHFRaVJ6MmxtSGhpN05QNHZX?=
- =?utf-8?B?Y0xqdTlpRDFtYTdlYWJVNnVROFl1cFVTYUtLNEFXN0VhOE9PdjBVOVNiOEoz?=
- =?utf-8?B?MU4yZGFEcVpJeWxZQVJLVmwxbjVtQkJacFFxeHZPRGpxUzNSRVJEdXp6TXdY?=
- =?utf-8?B?N0krb2RQVnNMeTRkSWN2cmt0YitOQVgza2lSTmJDVGUyV3poS09ZTEpxNkZK?=
- =?utf-8?B?S1VjTVFVRFl4MjI0OGFxWkVnWHRWWHAzRXgwZER2T1B5YS9QdDZZUUR4SUhV?=
- =?utf-8?B?OXM1ZkYyemhjWWNDUG5mMGNqZ3hLU3BBYmxCaXR5RHhvWW9abjFKZTR2Tmtt?=
- =?utf-8?B?TUFNWlJETWpJMjZTcWdHaXJodDJqMVEyQkVWajVKc2xuK2p6eWlkalZtTUxq?=
- =?utf-8?B?c3g0djBBTE5xUk93OWdCQ3BSblp1aHl6UVlNZ1dVWmM1SHZzNldhR094UHl1?=
- =?utf-8?B?dVlPNW1uczVObElBenJQa0JveTNsUHp3c1JvUU1HeHRHLzdndUNoeEN0NktR?=
- =?utf-8?B?b0V4aG5YUC8xSi9kTms3d2licVpqbWtHaFZEWHJpWDAzd25tUkxoTHhpQUV6?=
- =?utf-8?B?b0NBRUlSSFBDWVB4R2hYeUVGZUFVdkdTLzJmV3RCbmdzT1ozUm8xTmdINTY3?=
- =?utf-8?B?MnVPQ0RaU2dObjJHK0VFL0JQaEFiV0dBQWlkbmF0NG16c1Q3bWdBdUNTOGt6?=
- =?utf-8?B?SmVISW1uM2lvcTVwcHJWZnhsY05vanFtdG9vazhYeTAydnkreG5KdStiYlNi?=
- =?utf-8?B?bEVoY3Q3cDUxZytlYWNrSUw0NEFWS1dtWFRKaUNiUzZaN1NWTXkrdTVVc0RR?=
- =?utf-8?B?TFkwVksrT01WV0JPcXhZNkwwdDlSUjZqUFM5SnZHMnpaL1UycjZjNmZXWjFW?=
- =?utf-8?B?TTQvbHpOcVZZZnlrSDJKVUZjdjJVNjE1UXVJeS8wQjVZTVJxYnRtKzJWanN1?=
- =?utf-8?B?V1hNQWdEcThvbWhNc3hkS0ZYTi85ZkpNOEYwc1NDZndybDFWWDFXS0hSS0Jt?=
- =?utf-8?B?aW5ET0pVZC81RGZseEYwK0cyLytPTVpLU2dROFpTcE04WUhyNkhpeXFlWnBS?=
- =?utf-8?B?aXNBcEpHeG1PdDNueityVnVKb0FHV3dYSmFhMGJNbjhEdGs2TmdGU1NmdGpP?=
- =?utf-8?B?N2w3RXBwdTBsMzhqRkFnTmxVbmZpNU5xaXJ1cmdTWi9mU2V5WkZIMk1kRm1w?=
- =?utf-8?Q?x3/Yeb2fYbfMp5K081DpZCY=3D?=
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4b3d6810-1f88-4262-d221-08dd9c5f80a9
-X-MS-Exchange-CrossTenant-AuthSource: TYRPR01MB13941.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 May 2025 14:13:35.5504
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: eR78WcdP/bAFRdAwb6lWtUNexG1shwTrY7mjzz4r6RrMTkjz1FZIHt0Nsy80Znc0dSMFjHAh7BPeKGuJI9h8yMHq8Ge61pVjZ+6LWgF+2vrIQg+A7kC2tvkF8zRuxCNI
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3PR01MB9349
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CANiDSCvPG_3qc4Emhat=NdRZXsmNDD0pwh182bXDFK2TgYN_ug@mail.gmail.com>
 
+On Mon, May 26, 2025 at 04:04:03PM +0200, Ricardo Ribalda wrote:
+> On Mon, 26 May 2025 at 15:49, Laurent Pinchart wrote:
+> > On Fri, Apr 04, 2025 at 06:37:35AM +0000, Ricardo Ribalda wrote:
+> > > The documentation currently describes the UVC length field as the "length
+> > > of the rest of the block", which can be misleading. The driver limits the
+> > > data copied to a maximum of 12 bytes.
+> > >
+> > > This change adds a clarifying sentence to the documentation to make this
+> > > restriction explicit.
+> > >
+> > > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> > > ---
+> > >  Documentation/userspace-api/media/v4l/metafmt-uvc.rst | 4 +++-
+> > >  1 file changed, 3 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/Documentation/userspace-api/media/v4l/metafmt-uvc.rst b/Documentation/userspace-api/media/v4l/metafmt-uvc.rst
+> > > index 784346d14bbdbf28348262084d5b0646d30bd1da..42599875331c0066cf529153caccb731148023b9 100644
+> > > --- a/Documentation/userspace-api/media/v4l/metafmt-uvc.rst
+> > > +++ b/Documentation/userspace-api/media/v4l/metafmt-uvc.rst
+> > > @@ -44,7 +44,9 @@ Each individual block contains the following fields:
+> > >          them
+> > >      * - :cspan:`1` *The rest is an exact copy of the UVC payload header:*
+> > >      * - __u8 length;
+> > > -      - length of the rest of the block, including this field
+> > > +      - length of the rest of the block, including this field. Please note that
+> > > +        regardless of the this value, for V4L2_META_FMT_UVC the kernel will
+> >
+> > "the this value" looks like a typo.
+> 
+> Thanks! Will fix in v2
+> 
+> >
+> > > +        never copy more than 2-12 bytes.
+> >
+> > Are you saying here that length can be larger than 12, but only up to 12
+> > bytes will be copied (when both SCR and PTS are present) ? If that's the
+> > case, it would be better to fix the driver to clamp the length value to
+> > the number of bytes actually present in the buffer.
+> 
+> As the documentation says, this is an exact copy of the UVC payload header.
+> 
+> Assuming SCR and PTS, for devices that have metadata length will be
+> the real length provided by the hardware. but buf[] will only contain
+> 12 bytes.
+> 
+> Replacing the value of length with the actual value will be a uAPI
+> breakage. I do not think that is a very good idea to change it,
+> considering that this number is used by parsers.
 
+Do you think there could be userspace code that relies on the value
+being larger than 12, even though the metadata after the standard UVC
+block isn't present in the buffer ? Are you aware of any particular
+implementation of such userspace code ?
 
-On 26/05/25 16:02, Tommaso Merciai wrote:
-> Hi All,
-> Thanks for your comments.
-> 
-> On 26/05/25 15:18, Dmitry Baryshkov wrote:
->> On 26/05/2025 14:40, Maxime Ripard wrote:
->>> On Mon, May 26, 2025 at 01:19:23PM +0200, Tommaso Merciai wrote:
->>>> Hi Laurent,
->>>> Thanks for your comment.
->>>>
->>>> On 26/05/25 12:49, Laurent Pinchart wrote:
->>>>> On Mon, May 26, 2025 at 11:58:37AM +0200, Tommaso Merciai wrote:
->>>>>> Hi Maxime,
->>>>>> Thanks for your comment.
->>>>>>
->>>>>> On 26/05/25 11:26, Maxime Ripard wrote:
->>>>>>> Hi,
->>>>>>>
->>>>>>> On Mon, May 26, 2025 at 10:54:52AM +0200, Tommaso Merciai wrote:
->>>>>>>> After adv7511_mode_set() was merged into .atomic_enable(), only the
->>>>>>>> native resolution is working when using modetest.
->>>>>>>>
->>>>>>>> This is caused by incorrect timings: adv7511_mode_set() must not be
->>>>>>>> merged into .atomic_enable().
->>>>>>>>
->>>>>>>> Move adv7511_mode_set() back to the .mode_set() callback in
->>>>>>>> drm_bridge_funcs to restore correct behavior.
->>>>>>>>
->>>>>>>> Fixes: 0a9e2f0a6466 ("drm/bridge: adv7511: switch to the HDMI 
->>>>>>>> connector helpers")
->>>>>>>> Reported-by: Biju Das <biju.das.jz@bp.renesas.com>
->>>>>>>> Closes: https://lore.kernel.org/all/aDB8bD6cF7qiSpKd@tom-desktop/
->>>>>>>> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
->>>>>>>
->>>>>>> Explaining why, both in the commit log and the comments, would be 
->>>>>>> nice.
->>>>>>> Because I can't think of any good reason it just can't work for that
->>>>>>> bridge.
->>>>>>
->>>>>> Sorry, let me clarify and share with you some details:
->>>>>>
->>>>>> adv7511_mode_set:
->>>>>>     - Is setting up timings registers for the DSI2HDMI bridge in 
->>>>>> our case
->>>>>>       we are using ADV7535 bridge.
->>>>>>
->>>>>> rzg2l_mipi_dsi_atomic_enable:
->>>>>>     - Is setting up the vclock for the DSI ip
->>>>>>
->>>>>> Testing new/old implementation a bit we found the following:
->>>>>>
->>>>>> root@smarc-rzg3e:~# modetest -M rzg2l-du -d -s HDMI- 
->>>>>> A-1:800x600-56.25@XR24
->>>>>> setting mode 800x600-56.25Hz on connectors HDMI-A-1, crtc 62
->>>>>> [   49.273134] adv7511_mode_set_old: drm_mode_vrefresh(mode) = 56
->>>>>> [   49.281006] rzg2l_mipi_dsi_atomic_enable: mode->clock: 36000
->>>>>>
->>>>>> root@smarc-rzg3e:~# modetest -M rzg2l-du -d -s HDMI- 
->>>>>> A-1:800x600-56.25@XR24
->>>>>> setting mode 800x600-56.25Hz on connectors HDMI-A-1, crtc 62
->>>>>> [   74.076881] rzg2l_mipi_dsi_atomic_enable: mode->clock: 36000
->>>>>> [   74.092130] adv7511_mode_set: drm_mode_vrefresh(adj_mode) = 56
->>>>>>
->>>>>> Same result but different timing (in function call perspective):
->>>>>>
->>>>>>     - old: adv7511_mode_set() is call before 
->>>>>> rzg2l_mipi_dsi_atomic_enable()
->>>>>>     - new: adv7511_mode_set() is call after 
->>>>>> rzg2l_mipi_dsi_atomic_enable()
->>>>>
->>>>> What is "old" and "new" here ? Is it before and after Dmitry's 
->>>>> patch, or
->>>>> before and after yours ? Please be precise when describing problems.
->>>>
->>>> Sorry, you are completely right:
->>>>
->>>>   - old --> before Dmitry's patch
->>>>   - new --> after Dmitry's patch
->>>>
->>>>>
->>>>>> What do you think? Thanks in advance.
->>>>>
->>>>> You're only explaining above what the "old" and "new" behaviours are,
->>>>> and claiming one of them is causing an issue, but you're not 
->>>>> explaining
->>>>> *why* it causes an issue. That's what your commit message is 
->>>>> expected to
->>>>> detail.
->>>>>
->>>>
->>>> Thanks for the clarification! :)
->>>> I will send v2 explaining better this.
->>>
->>> In particular, if the driver needs to have mode_set called before
->>> atomic_enable, you should say why moving the call to mode_set earlier in
->>> the function wouldn't work.
->>
->> It might be the same thing as we had on PS8640: it had to be brought 
->> up before the host starts the DSI link, so that there is no clock 
->> input on the DSI clock lane.
->>
-> 
-> Some updates on my side:
-> 
-> I'm not seeing any differences from a regs perspective when using the 
-> old driver version (before Dmitry's patch) and the new driver version 
-> (after Dmitry's patch).
-> 
-> In particular, i2cdump -f -y 7 0x4c shows me the same result.
+> > >      * - __u8 flags;
+> > >        - Flags, indicating presence of other standard UVC fields
+> > >      * - __u8 buf[];
 
-Please ignore this (wrong address)
+-- 
+Regards,
 
-The right test is: i2cdump -f -y 7 0x3d
-
-And I'm seeing the following differences:
-
-# WORK:
-reg | val
-0x3d → 0x00
-0x3e → 0x00
-
-# DON't WORK
-reg | val
-0x3d → 0x10
-0x3e → 0x40
-
-Thanks & Regards,
-Tommaso
-
-
-> 
-> Unfortunately, since I don't have the ADV7535 datasheet, I believe this 
-> issue may be related to the functions call sequence.
-> 
-> I agree with Dmitry's theory.
-> 
-> Let me gently know if you need some more test on my side. Thanks in 
-> advance.
-> 
-> Regards,
-> Tommaso
-> 
-> 
-> 
-> 
-> 
-> 
-> 
-> 
-
+Laurent Pinchart
 
