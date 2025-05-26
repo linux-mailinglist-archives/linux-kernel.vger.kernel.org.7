@@ -1,218 +1,149 @@
-Return-Path: <linux-kernel+bounces-662696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-662698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36A6CAC3E56
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 13:13:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6560BAC3E5A
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 13:14:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF4141896B5B
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 11:13:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B67317706C
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 11:14:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65C151F8ADB;
-	Mon, 26 May 2025 11:13:08 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25AFE1FBCBE;
+	Mon, 26 May 2025 11:14:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="dOgOkcgW"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4010D1F8723
-	for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 11:13:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8333327454;
+	Mon, 26 May 2025 11:14:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748257987; cv=none; b=u0ImG++Xa2nO/qYy6htnW3Uj5qTcA87payQOoH/hdiItqPffFu3vn1f3qwyHMBwHBbnJqrVw0DlOTkY4H5iIZ/TTlKJhwZVr3aYOv7be2ajryd/Y4EvqzkmJxutFW+3sJnKgmRay65uQOgNX9CwUIutg2owPZlt84BsR+oapZUc=
+	t=1748258054; cv=none; b=KtJEebJo7U5LmGe0ioPq9grMxeJjFfrgbi8b5RYqpvqyD9i4NG3LmAn/xAcOt2FBs9tq6J+uaxvMfQFb9/CfMXyjxDVOHrMTOLiaUUWIm6BarDMHHb/vGXyUqfOGDW7bKWBMF+84KXWcYwXlNS1rddfQ56k0wle3d4NosrN2+bw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748257987; c=relaxed/simple;
-	bh=j936ZhGI7U0g7mslNsfCMJ7tqnpqgWMJ1PiUp+EWck4=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Htou/k+78NmViFQbcHFDSfyPBWY23QvIPZDFE5tIxRo9tok2q6+WlbSwcF7L2p0QYe2WDgqH/bVthCffYqwRln5tWV652XJi5qyYlE4ibn6zXw1xhaBIa6e6h52eIi8YX1OBLPGEhgCYuGERaH/e58tXDZXGCDX5SS0olc3oBoI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-85dcaf42b61so418006339f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 04:13:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748257985; x=1748862785;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gtBcCEwisggIr0b3FMXx4cQKPJB6mmq/WFbpMitOhDY=;
-        b=cMW1sbTA9UP+KHNOhhYE7pmQFBeOGDITobeILOrHZ20fBvu7OC7o3zzdFAxKSmgefx
-         78rF8Yj5IpfK99xy26RVLNv6UiMhxwe/u3u0DRLWbhPlVOHaddk7cVEW1eWkCUl91iA3
-         R/twg0+u1IuIdxONLBPrQ6O3xXBrr/jzOpEhEaSN/7JukKo//bVJ5PJOtZUSXX9tYN5O
-         olPQn+QgmVKGj3no5mAfBA3WGdopU2IC/C+znm8B1kLnvyGOOaa+UIN7Zcf9lZ3P74Hr
-         uYyXFP1McmsSFbaKi8HelaJX8tuk5Ci2uvE5e3n2ZgGpOYbdUaFfO55xdmNplYTmikOv
-         oU5g==
-X-Forwarded-Encrypted: i=1; AJvYcCUCXOzv4+MmYbyL1ipsjbfnk4VRsaj3akLCODBkECWrkITj7xKCMNIwMu7Dth3+b/zcD8oE+T8UWGN65O8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIu+Dnz/OsDHlg/gVsyTVI0HD2bNVUTILNddhT9ren6h6CRzan
-	44IjTgEQKOB3mm32H+dkOc9/MipfTODbdAWZ4uy6Ql0g1NsqZMqO023QhnYVHCh4mW4cIsbnoIc
-	kYGnFIX2RzAdR3GU9481+Mu5iE6pmi6w+RkKvUcXgJm7I+xjvILw/bc56DGg=
-X-Google-Smtp-Source: AGHT+IGKcLqczNDdOsqLKf68n4y53v3Hio4vmQPQSXfwn7R/aF6926Md1Pd4Ov7reSedg2ro2CIKaIbZ+FOXWbaLT/VDEu6fIadV
+	s=arc-20240116; t=1748258054; c=relaxed/simple;
+	bh=hVGhZucvzX5ojlygkfesTT5oBv5VBt6Jo24Z6T3XFmI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GUhqbOMVN6Ia0uLYWqdAbkF2yDtR1wm0BoUDAoweigvw6oeF/TlcqPYwVAK1abtaixLuQx7u5Oglv+v0IxTF+iHUYCg17REJxwXJlcdIob8Jb8JZTe8e5iYwOea3SouNixi8LK33tzy/2SU1XmxAiA835acCCKZG0Uqw3XMnvK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=dOgOkcgW; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=sRNyPwXExErBy/8kJGAzUEFc8FCKqjhWu+hUzGskcX8=; b=dOgOkcgW3891K46lC3h/P8Giqy
+	j5wpFWLFbNsIvtu/CSMhuFpyXc2GMmf/qW7htsdUuVeQHy4WDIcUcklGJ/ViGPPunnUieV9Q4IDtY
+	70vmdgOjsG/48WsDWWmRsgX30TeD25TnjOsUCjtkWJ8k3jGqeGKxRcEtaaR8bnvQ6O//TGBBuqxEm
+	T9eJVseaQnlwEULmm3DUUsYFcCO4JUm3QzyGMhJ7MbX7DRjfIxy6Nuz+t721q3JL8uYv2FRdti1TE
+	iXAOOvdxAotvmC56UVFnZM0j6AKJPYx3gSPt4AVRPNX7xCbTzeO3zT+lJmLdb3I0e/ttaelmWVQne
+	f2AjMJBg==;
+Received: from [223.233.79.88] (helo=[192.168.1.12])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1uJVmL-00DHZz-KJ; Mon, 26 May 2025 13:14:01 +0200
+Message-ID: <1bc43d6c-2650-0670-8c2a-25e8d36cfb7c@igalia.com>
+Date: Mon, 26 May 2025 16:43:52 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:3a02:b0:85c:96a5:dc2c with SMTP id
- ca18e2360f4ac-86cbb8bee7emr881726539f.14.1748257985367; Mon, 26 May 2025
- 04:13:05 -0700 (PDT)
-Date: Mon, 26 May 2025 04:13:05 -0700
-In-Reply-To: <05DB907D-8EF0-4E16-A133-3E32A8F8FD1C@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68344cc1.a70a0220.253bc2.0096.GAE@google.com>
-Subject: Re: [syzbot] [bcachefs?] WARNING in rhashtable_init_noprof
-From: syzbot <syzbot+bcc38a9556d0324c2ec2@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, mmpgouride@gmail.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.0
+Subject: Re: [PATCH v4 3/3] exec: Add support for 64 byte 'tsk->comm_ext'
+Content-Language: en-US
+To: Kees Cook <kees@kernel.org>
+Cc: Bhupesh <bhupesh@igalia.com>, akpm@linux-foundation.org,
+ kernel-dev@igalia.com, linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+ linux-perf-users@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, oliver.sang@intel.com, lkp@intel.com,
+ laoar.shao@gmail.com, pmladek@suse.com, rostedt@goodmis.org,
+ mathieu.desnoyers@efficios.com, arnaldo.melo@gmail.com,
+ alexei.starovoitov@gmail.com, andrii.nakryiko@gmail.com,
+ mirq-linux@rere.qmqm.pl, peterz@infradead.org, willy@infradead.org,
+ david@redhat.com, viro@zeniv.linux.org.uk, ebiederm@xmission.com,
+ brauner@kernel.org, jack@suse.cz, mingo@redhat.com, juri.lelli@redhat.com,
+ bsegall@google.com, mgorman@suse.de, vschneid@redhat.com,
+ linux-trace-kernel@vger.kernel.org
+References: <20250521062337.53262-1-bhupesh@igalia.com>
+ <20250521062337.53262-4-bhupesh@igalia.com>
+ <202505222041.B639D482FB@keescook>
+ <a7c323fe-6d11-4a21-a203-bd60acbfd831@igalia.com>
+ <202505231346.52F291C54@keescook>
+From: Bhupesh Sharma <bhsharma@igalia.com>
+In-Reply-To: <202505231346.52F291C54@keescook>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Hi Kees,
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-KASAN: slab-use-after-free Read in rhashtable_free_and_destroy
+On 5/24/25 2:25 AM, Kees Cook wrote:
+> On Fri, May 23, 2025 at 06:01:41PM +0530, Bhupesh Sharma wrote:
+>> 2. %s usage: I checked this at multiple places and can confirm that %s usage
+>> to print out 'tsk->comm' (as a string), get the longer
+>>      new "extended comm".
+> As an example of why I don't like this union is that this is now lying
+> to the compiler. e.g. a %s of an object with a known size (sizeof(comm))
+> may now run off the end of comm without finding a %NUL character... this
+> is "safe" in the sense that the "extended comm" is %NUL terminated, but
+> it makes the string length ambiguous for the compiler (and any
+> associated security hardening).
 
-==================================================================
-BUG: KASAN: slab-use-after-free in rhashtable_free_and_destroy+0x7d7/0x940 lib/rhashtable.c:1172
-Read of size 8 at addr ffff8880294ab830 by task bch-copygc/loop/7051
+Right.
 
-CPU: 0 UID: 0 PID: 7051 Comm: bch-copygc/loop Not tainted 6.15.0-rc4-syzkaller-00272-g9b38df1f0d77 #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:408 [inline]
- print_report+0xd2/0x2b0 mm/kasan/report.c:521
- kasan_report+0x118/0x150 mm/kasan/report.c:634
- rhashtable_free_and_destroy+0x7d7/0x940 lib/rhashtable.c:1172
- bch2_copygc_thread+0xc69/0xd40 fs/bcachefs/movinggc.c:427
- kthread+0x70e/0x8a0 kernel/kthread.c:464
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:153
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
+>
+>> 3. users who do 'sizeof(->comm)' will continue to get the old value because
+>> of the union.
+> Right -- this is exactly where I think it can get very very wrong,
+> leaving things unterminated.
+>
+>> The problem with having two separate comms: tsk->comm and tsk->ext_comm,
+>> instead of a union is two fold:
+>> (a). If we keep two separate statically allocated comms: tsk->comm and
+>> tsk->ext_comm in struct task_struct, we need to basically keep supporting
+>> backward compatibility / ABI via tsk->comm and ask new user-land users to
+>> move to tsk->ext_comm.
+>>
+>> (b). If we keep one statically allocated comm: tsk->comm and one dynamically allocated tsk->ext_comm in struct task_struct, then we have the problem of allocating the tsk->ext_comm which _may_ be in the exec()  hot path.
+>>
+>> I think the discussion between Linus and Yafang (see [1]), was more towards avoiding the approach in 3(a).
+>>
+>> Also we discussed the 3(b) approach, during the review of v2 of this series, where there was a apprehensions around: adding another field to store the task name and allocating tsk->ext_comm dynamically in the exec() hot path (see [2]).
+> Right -- I agree we need them statically allocated. But I think a union
+> is going to be really error-prone.
+>
+> How about this: rename task->comm to something else (task->comm_str?),
+> increase its size and then add ABI-keeping wrappers for everything that
+> _must_ have the old length.
+>
+> Doing this guarantees we won't miss anything (since "comm" got renamed),
+> and during the refactoring all the places where the old length is required
+> will be glaringly obvious. (i.e. it will be harder to make mistakes
+> about leaving things unterminated.)
+>
 
-Allocated by task 7051:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
- poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
- __kasan_kmalloc+0x93/0xb0 mm/kasan/common.c:394
- kasan_kmalloc include/linux/kasan.h:260 [inline]
- __do_kmalloc_node mm/slub.c:4341 [inline]
- __kvmalloc_node_noprof+0x314/0x600 mm/slub.c:5026
- bucket_table_alloc lib/rhashtable.c:186 [inline]
- rhashtable_init_noprof+0x4ee/0xbb0 lib/rhashtable.c:1075
- bch2_copygc_thread+0xb7/0xd40 fs/bcachefs/movinggc.c:356
- kthread+0x70e/0x8a0 kernel/kthread.c:464
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:153
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+Ok, I got your point. Let me explore then how best a ABI-keeping wrapper 
+can be introduced.
+I am thinking of something like:
 
-Freed by task 7048:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
- kasan_save_free_info+0x46/0x50 mm/kasan/generic.c:576
- poison_slab_object mm/kasan/common.c:247 [inline]
- __kasan_slab_free+0x62/0x70 mm/kasan/common.c:264
- kasan_slab_free include/linux/kasan.h:233 [inline]
- slab_free_hook mm/slub.c:2398 [inline]
- slab_free mm/slub.c:4656 [inline]
- kfree+0x18e/0x440 mm/slub.c:4855
- rhashtable_free_and_destroy+0x7e8/0x940 lib/rhashtable.c:1173
- bch2_copygc_thread+0xc69/0xd40 fs/bcachefs/movinggc.c:427
- kthread+0x70e/0x8a0 kernel/kthread.c:464
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:153
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+abi_wrapper_get_task_comm {
 
-The buggy address belongs to the object at ffff8880294ab800
- which belongs to the cache kmalloc-1k of size 1024
-The buggy address is located 48 bytes inside of
- freed 1024-byte region [ffff8880294ab800, ffff8880294abc00)
+     if (requested_comm_length <= 16)
+         return 16byte comm with NUL terminator; // old comm (16-bytes)
+     else
+         return 64byte comm with NUL terminator; // extended comm (64-bytes)
+     ....
+}
 
-The buggy address belongs to the physical page:
-page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x294a8
-head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
-page_type: f5(slab)
-raw: 00fff00000000040 ffff88801a041dc0 dead000000000122 0000000000000000
-raw: 0000000000000000 0000000000100010 00000000f5000000 0000000000000000
-head: 00fff00000000040 ffff88801a041dc0 dead000000000122 0000000000000000
-head: 0000000000000000 0000000000100010 00000000f5000000 0000000000000000
-head: 00fff00000000003 ffffea0000a52a01 00000000ffffffff 00000000ffffffff
-head: ffffffffffffffff 0000000000000000 00000000ffffffff 0000000000000008
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 3, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 6998, tgid 6996 (syz.4.25), ts 143611566388, free_ts 143543501461
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x240/0x2a0 mm/page_alloc.c:1718
- prep_new_page mm/page_alloc.c:1726 [inline]
- get_page_from_freelist+0x21ce/0x22b0 mm/page_alloc.c:3688
- __alloc_frozen_pages_noprof+0x181/0x370 mm/page_alloc.c:4970
- alloc_pages_mpol+0x232/0x4a0 mm/mempolicy.c:2301
- alloc_slab_page mm/slub.c:2468 [inline]
- allocate_slab+0x8a/0x3b0 mm/slub.c:2632
- new_slab mm/slub.c:2686 [inline]
- ___slab_alloc+0xbfc/0x1480 mm/slub.c:3872
- __slab_alloc mm/slub.c:3962 [inline]
- __slab_alloc_node mm/slub.c:4037 [inline]
- slab_alloc_node mm/slub.c:4198 [inline]
- __do_kmalloc_node mm/slub.c:4340 [inline]
- __kmalloc_noprof+0x305/0x4f0 mm/slub.c:4353
- kmalloc_noprof include/linux/slab.h:909 [inline]
- kzalloc_noprof include/linux/slab.h:1039 [inline]
- __alloc_workqueue+0x103/0x1b70 kernel/workqueue.c:5683
- alloc_workqueue+0xd4/0x210 kernel/workqueue.c:5786
- bch2_fs_journal_init+0x2dc/0x4d0 fs/bcachefs/journal.c:1648
- bch2_fs_init_rw fs/bcachefs/super.c:830 [inline]
- __bch2_fs_read_write+0x837/0x880 fs/bcachefs/super.c:500
- bch2_fs_read_write_early+0x26/0x40 fs/bcachefs/super.c:588
- bch2_run_recovery_pass fs/bcachefs/recovery_passes.c:415 [inline]
- __bch2_run_recovery_passes+0x391/0x1110 fs/bcachefs/recovery_passes.c:470
- bch2_run_recovery_passes+0x184/0x210 fs/bcachefs/recovery_passes.c:541
- bch2_fs_recovery+0x2617/0x3970 fs/bcachefs/recovery.c:974
- bch2_fs_start+0xa43/0xd30 fs/bcachefs/super.c:1206
-page last free pid 7040 tgid 7040 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1262 [inline]
- __free_frozen_pages+0xc68/0xe50 mm/page_alloc.c:2725
- discard_slab mm/slub.c:2730 [inline]
- __put_partials+0x161/0x1c0 mm/slub.c:3199
- put_cpu_partial+0x17c/0x250 mm/slub.c:3274
- __slab_free+0x2f7/0x400 mm/slub.c:4526
- qlink_free mm/kasan/quarantine.c:163 [inline]
- qlist_free_all+0x97/0x140 mm/kasan/quarantine.c:179
- kasan_quarantine_reduce+0x148/0x160 mm/kasan/quarantine.c:286
- __kasan_slab_alloc+0x22/0x80 mm/kasan/common.c:329
- kasan_slab_alloc include/linux/kasan.h:250 [inline]
- slab_post_alloc_hook mm/slub.c:4161 [inline]
- slab_alloc_node mm/slub.c:4210 [inline]
- kmem_cache_alloc_noprof+0x1c1/0x3c0 mm/slub.c:4217
- vm_area_alloc+0x24/0x140 kernel/fork.c:441
- __mmap_new_vma mm/vma.c:2402 [inline]
- __mmap_region mm/vma.c:2519 [inline]
- mmap_region+0xcf4/0x1e50 mm/vma.c:2597
- do_mmap+0xc68/0x1100 mm/mmap.c:561
- vm_mmap_pgoff+0x31b/0x4c0 mm/util.c:579
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xf6/0x220 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+Please let me know if this looks better. Accordingly I will start with 
+v5 changes.
 
-Memory state around the buggy address:
- ffff8880294ab700: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
- ffff8880294ab780: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->ffff8880294ab800: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                     ^
- ffff8880294ab880: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff8880294ab900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
-
-
-Tested on:
-
-commit:         9b38df1f bcachefs: Don't allocate buckets_in_flight on..
-git tree:       https://github.com/alanskind/bcachefs
-console output: https://syzkaller.appspot.com/x/log.txt?x=17cdbad4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=96ae50edd782e9ea
-dashboard link: https://syzkaller.appspot.com/bug?extid=bcc38a9556d0324c2ec2
-compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
-
-Note: no patches were applied.
+Thanks,
+Bhupesh
 
