@@ -1,196 +1,212 @@
-Return-Path: <linux-kernel+bounces-662941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-662943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C11D5AC4197
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 16:40:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69591AC419E
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 16:41:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48A631899BE7
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 14:40:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46C083B48A0
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 14:40:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21D1720E6F3;
-	Mon, 26 May 2025 14:40:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YaqPh+cT";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4UI7GP3j"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B64321422B;
+	Mon, 26 May 2025 14:40:42 +0000 (UTC)
+Received: from mail-m155101.qiye.163.com (mail-m155101.qiye.163.com [101.71.155.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E7EB20DD4E;
-	Mon, 26 May 2025 14:40:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BBFC211479;
+	Mon, 26 May 2025 14:40:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748270425; cv=none; b=exAO8XpEANKFqXc4IFVsE6/aZVc4ao+TP5mJCx4Nj9EjBgP4OY0smbLKcw6FOgSvDxXSTnLllLO7UCR93i5WvkdW4fkD8gR8veOqC0fb8DGPZyHlxdisibuangCT2aA/MWpz8gYA5ISd94rtLeUHHFlNLrG+KGHihO6blnHGSUw=
+	t=1748270442; cv=none; b=cgTAtNZB/9yVEyWHTrXOiow/chQl4yU1DXwoUL1F6L3FEk5XJnCapbY8T0p/iIQN74QpfW2MeN5EMtDjDhFbjWeu18D2mMiVxLxohqNoV0NiZfAxfLrtoEozzWpO7Yd9NuldsNqdxvzFj0Up3WZISff05HcODfcyNb07I3NdZps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748270425; c=relaxed/simple;
-	bh=ep1DMStgP4KLh6kjdF/WowDeKpc6b4Jr1zjb7jz95KE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bg4PtCZnG6qTAFDlN4JVwuVI0A/Ap9B7p0eTcQ95eTcNHsylhiG9clWB+OiN1hMw8m5pVx0R2Bo4aYXrVDvgZ5UXB5o4pWy9PGf9m+o9h8KcHKNvX5MFtAIE0uGZMUngxOO6Pdr/FwdNiTUvfsmFgkZPhiDP5lB0r29o6VodOhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YaqPh+cT; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4UI7GP3j; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 26 May 2025 16:40:17 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1748270421;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5TV7kVDxmFuWEFaBNT2bTxAWVnJUcrUxNAcskziBBPw=;
-	b=YaqPh+cTVv5lTI5hx6r+wn4iVxIXWsXlZq9NNG9ZJrowba5y96FUCXn4V9S9OtEmvsAnE1
-	BZeIXFupqA3oxM2jR+7gypjG7pLtOzQLmaA6NfHfW6w7EpLaJUJM9K/OsNu0TAav/1ZZyp
-	p3XHSmTeyQ3PdTEbF5TvaCGHyjh08ALd/czrLMDTCxgYW/1OgEV6phLi1zUBCHv4rfStV8
-	XYdUId9gJEhaL98yD0Wneh6LjOuLO29r/gJ51BWJlPkOck3+g0j8JBUNFketul+PQ8I24Q
-	OkzkjQYdCWQYkWo9BcEdzJwc6x+0pL71A9xM0ALChTPNFde0V3eekKclAcHhTg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1748270421;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5TV7kVDxmFuWEFaBNT2bTxAWVnJUcrUxNAcskziBBPw=;
-	b=4UI7GP3jRqpneYJ72JmNnXXUSJd4HUvvqHF+iKuexX3Mz+vq6IbmremQ77q1N5HxM7CFlp
-	31goQIRm4O7oynCQ==
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-To: Nicolas Schier <nicolas.schier@linux.dev>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Willy Tarreau <w@1wt.eu>, Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
-	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, 
-	Shuah Khan <shuah@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, linux-doc@vger.kernel.org
-Subject: Re: [PATCH v2 01/11] kbuild: userprogs: add nolibc support
-Message-ID: <20250526163610-88b7aae6-7be4-4a02-be20-ec7fe74cbf31@linutronix.de>
-References: <20250407-kunit-kselftests-v2-0-454114e287fd@linutronix.de>
- <20250407-kunit-kselftests-v2-1-454114e287fd@linutronix.de>
- <20250522-fluorescent-liberal-pigeon-0404ed@l-nschier-aarch64>
+	s=arc-20240116; t=1748270442; c=relaxed/simple;
+	bh=bwc4ehrUUb5yMr61UXhl319IcCCrFAV6pb82Pcs8dqI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=W7ziH6k8oH0kDczRtw4viknqFKZHSwaGOaAdj/cvytdhCQYiGvtwvFamMPNfjVNVVo8/v2pkgFprz6pccC8JMJPpgxBIIAHiIQYb0m0Y2s6H8v8uA+iPC05a8C7mNXrF/pJwWZwIoqoTPOgd0Q013PF0dWBVorHhR4zq3xSOWxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=whut.edu.cn; spf=pass smtp.mailfrom=whut.edu.cn; arc=none smtp.client-ip=101.71.155.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=whut.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=whut.edu.cn
+Received: from [127.0.0.1] (gy-adaptive-ssl-proxy-3-entmail-virt135.gy.ntes [27.18.99.37])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 16709a323;
+	Mon, 26 May 2025 22:40:30 +0800 (GMT+08:00)
+From: Ze Huang <huangze@whut.edu.cn>
+Date: Mon, 26 May 2025 22:40:17 +0800
+Subject: [PATCH v4 1/4] dt-bindings: usb: dwc3: add support for SpacemiT K1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250522-fluorescent-liberal-pigeon-0404ed@l-nschier-aarch64>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250526-b4-k1-dwc3-v3-v4-1-63e4e525e5cb@whut.edu.cn>
+References: <20250526-b4-k1-dwc3-v3-v4-0-63e4e525e5cb@whut.edu.cn>
+In-Reply-To: <20250526-b4-k1-dwc3-v3-v4-0-63e4e525e5cb@whut.edu.cn>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>, 
+ Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Alexandre Ghiti <alex@ghiti.fr>
+Cc: linux-usb@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, Ze Huang <huangze@whut.edu.cn>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1748270423; l=3650;
+ i=huangze@whut.edu.cn; s=20250325; h=from:subject:message-id;
+ bh=bwc4ehrUUb5yMr61UXhl319IcCCrFAV6pb82Pcs8dqI=;
+ b=4WUvEDLz9hoMoYvR0A1q4dM0FNou2Q5lu6Ek6vmgD1+ATlDBk7yfp6NCgACDGnB60kk7VvTRG
+ eaVF9rrPeW1Cq09qfQ6iamBFp4Q5HTDKSZKZ8w7Xk2le1X3N/dTs4ZM
+X-Developer-Key: i=huangze@whut.edu.cn; a=ed25519;
+ pk=C3zfn/kH6oMJickaXBa8dxTZO68EBiD93F+tAenboRA=
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkZH0gaVktCTUlPGR0eQkJLTVYeHw5VEwETFhoSFy
+	QUDg9ZV1kYEgtZQVlJTFVKQ1VCQlVITFlXWRYaDxIVHRRZQVlPS0hVSktJQk1KSlVKS0tVS1kG
+X-HM-Tid: 0a970d09b8fc03a1kunm5f56ec4c12e05
+X-HM-MType: 10
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6MTI6GDo4TzE3PgwWGisYFDk2
+	PzgwChZVSlVKTE9DSUxLT0hNQ0tLVTMWGhIXVRMOGhUcAR47DBMOD1UeHw5VGBVFWVdZEgtZQVlJ
+	TFVKQ1VCQlVITFlXWQgBWUFOSkxPNwY+
 
-On Mon, May 26, 2025 at 04:19:53PM +0200, Nicolas Schier wrote:
-> On Mon, Apr 07, 2025 at 09:42:38AM +0200, Thomas Weiﬂschuh wrote:
-> > Userprogs are built with the regular kernel compiler $CC.
-> > A kernel compiler does not necessarily contain a libc which is required
-> > for a normal userspace application.
-> > However the kernel tree does contain a minimal libc implementation
-> > "nolibc" which can be used to build userspace applications.
-> > 
-> > Introduce support to build userprogs against nolibc instead of the
-> > default libc of the compiler, which may not exist.
-> > 
-> > Signed-off-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
-> > 
-> > ---
-> > This could probably be moved out of the generic kbuild makefiles.
-> > I think the ergonimics would suffer and this functionality could be
-> > used by other users of userprogs.
-> > 
-> > Also this does currently not support out-of-tree builds.
-> 
-> (out-of-tree == external kmods;  out-of-source == build-dir != source-dir)
-> 
-> you probably meant out-of-source.
+Add support for the USB 3.0 Dual-Role Device (DRD) controller embedded
+in the SpacemiT K1 SoC. The controller is based on the Synopsys
+DesignWare Core USB 3 (DWC3) IP, supporting USB3.0 host mode and USB 2.0
+DRD mode.
 
-I *did* mean out-of-tree.
+Signed-off-by: Ze Huang <huangze@whut.edu.cn>
+---
+ .../devicetree/bindings/usb/spacemit,k1-dwc3.yaml  | 116 +++++++++++++++++++++
+ 1 file changed, 116 insertions(+)
 
-Out-of-source already works with the current patchset. It is the default setup of kunit.py.
+diff --git a/Documentation/devicetree/bindings/usb/spacemit,k1-dwc3.yaml b/Documentation/devicetree/bindings/usb/spacemit,k1-dwc3.yaml
+new file mode 100644
+index 0000000000000000000000000000000000000000..bba3fc1c020500383b1256a97648be3f626c7602
+--- /dev/null
++++ b/Documentation/devicetree/bindings/usb/spacemit,k1-dwc3.yaml
+@@ -0,0 +1,116 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/usb/spacemit,k1-dwc3.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: SpacemiT K1 SuperSpeed DWC3 USB SoC Controller
++
++maintainers:
++  - Ze Huang <huangze9015@gmail.com>
++
++description: |
++  The SpacemiT K1 embeds a DWC3 USB IP Core which supports Host functions
++  for USB 3.0 and DRD for USB 2.0.
++
++  Key features:
++  - USB3.0 SuperSpeed and USB2.0 High/Full/Low-Speed support
++  - Supports low-power modes (USB2.0 suspend, USB3.0 U1/U2/U3)
++  - Internal DMA controller and flexible endpoint FIFO sizing
++
++  Communication Interface:
++  - Use of PIPE3 (125MHz) interface for USB3.0 PHY
++  - Use of UTMI+ (30/60MHz) interface for USB2.0 PHY
++
++allOf:
++  - $ref: snps,dwc3-common.yaml#
++
++properties:
++  compatible:
++    const: spacemit,k1-dwc3
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    maxItems: 1
++
++  clock-names:
++    const: usbdrd30
++
++  interconnects:
++    maxItems: 1
++    description:
++      On SpacemiT K1, USB performs DMA through bus other than parent DT node.
++      The 'interconnects' property explicitly describes this path, ensuring
++      correct address translation.
++
++  interconnect-names:
++    const: dma-mem
++
++  interrupts:
++    maxItems: 1
++
++  phys:
++    items:
++      - description: phandle to USB2/HS PHY
++      - description: phandle to USB3/SS PHY
++
++  phy-names:
++    items:
++      - const: usb2-phy
++      - const: usb3-phy
++
++  resets:
++    maxItems: 1
++
++  vbus-supply:
++    description: A phandle to the regulator supplying the VBUS voltage.
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++  - interconnects
++  - interconnect-names
++  - interrupts
++  - phys
++  - phy-names
++  - resets
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    usb@c0a00000 {
++        compatible = "spacemit,k1-dwc3";
++        reg = <0xc0a00000 0x10000>;
++        clocks = <&syscon_apmu 16>;
++        clock-names = "usbdrd30";
++        interconnects = <&mbus0>;
++        interconnect-names = "dma-mem";
++        interrupts = <125>;
++        phys = <&usb2phy>, <&usb3phy>;
++        phy-names = "usb2-phy", "usb3-phy";
++        resets = <&syscon_apmu 8>;
++        vbus-supply = <&usb3_vbus>;
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        hub_2_0: hub@1 {
++            compatible = "usb2109,2817";
++            reg = <1>;
++            vdd-supply = <&usb3_vhub>;
++            peer-hub = <&hub_3_0>;
++            reset-gpios = <&gpio 3 28 1>;
++        };
++
++        hub_3_0: hub@2 {
++            compatible = "usb2109,817";
++            reg = <2>;
++            vdd-supply = <&usb3_vhub>;
++            peer-hub = <&hub_2_0>;
++            reset-gpios = <&gpio 3 28 1>;
++        };
++    };
 
-> > For that tools/include/nolibc/*.h and usr/include/*.h would need to be
-> > installed into the build directory.
-> 
-> Out-of-source builds could be achieved by adding 'headers' as 
-> dependency, see below.
-> 
-> > ---
-> >  Documentation/kbuild/makefiles.rst | 12 ++++++++++++
-> >  scripts/Makefile.userprogs         | 16 +++++++++++++---
-> >  2 files changed, 25 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/Documentation/kbuild/makefiles.rst b/Documentation/kbuild/makefiles.rst
-> > index 3b9a8bc671e2e92126857059e985d6e5b2c43fd4..f905a6f77c965311c491cfd7ab3103185af7e82e 100644
-> > --- a/Documentation/kbuild/makefiles.rst
-> > +++ b/Documentation/kbuild/makefiles.rst
-> > @@ -970,6 +970,18 @@ When linking bpfilter_umh, it will be passed the extra option -static.
-> >  
-> >  From command line, :ref:`USERCFLAGS and USERLDFLAGS <userkbuildflags>` will also be used.
-> >  
-> > +Bulding userprogs against nolibc
-> 
-> Bulding -> Building
+-- 
+2.49.0
 
-Ack.
-
-> > +--------------------------------
-> > +
-> > +Not all kernel toolchains provide a libc.
-> > +Simple userprogs can be built against a very simple libc call "nolibc" provided
-> > +by the kernel source tree.
-> > +
-> > +Example::
-> > +
-> > +  # lib/kunit/Makefile
-> > +  uapi-preinit-nolibc := $(CONFIG_ARCH_HAS_NOLIBC)
-> > +
-> >  When userspace programs are actually built
-> >  ------------------------------------------
-> >  
-> > diff --git a/scripts/Makefile.userprogs b/scripts/Makefile.userprogs
-> > index f3a7e1ef3753b54303718fae97f4b3c9d4eac07c..a1447c02b948901631098b585f5cf4d3ea383a57 100644
-> > --- a/scripts/Makefile.userprogs
-> > +++ b/scripts/Makefile.userprogs
-> > @@ -16,10 +16,20 @@ user-csingle	:= $(addprefix $(obj)/, $(user-csingle))
-> >  user-cmulti	:= $(addprefix $(obj)/, $(user-cmulti))
-> >  user-cobjs	:= $(addprefix $(obj)/, $(user-cobjs))
-> >  
-> > +user-libgcc     := $(call try-run,$(CC) -Werror $(KBUILD_USERCFLAGS) -lgcc -x c -shared /dev/null -o "$$TMP",-lgcc)
-> > +
-> > +user_nolibc_ccflags := -nostdlib -nostdinc -static -fno-ident -fno-asynchronous-unwind-tables \
-> > +		      -ffreestanding -fno-stack-protector \
-> > +		      -isystem $(objtree)/usr/include -include $(srctree)/tools/include/nolibc/nolibc.h -isystem $(srctree)/tools/include/nolibc/
-> > +user_nolibc_ldflags := -nostdlib -nostdinc -static
-> > +user_nolibc_ldlibs  := $(user-libgcc)
-> > +
-> >  user_ccflags	= -Wp,-MMD,$(depfile) $(KBUILD_USERCFLAGS) $(userccflags) \
-> > -			$($(target-stem)-userccflags)
-> > -user_ldflags	= $(KBUILD_USERLDFLAGS) $(userldflags) $($(target-stem)-userldflags)
-> > -user_ldlibs	= $(userldlibs) $($(target-stem)-userldlibs)
-> > +			$($(target-stem)-userccflags) $(if $($(target-stem)-nolibc),$(user_nolibc_ccflags))
-> > +user_ldflags	= $(KBUILD_USERLDFLAGS) $(userldflags) $($(target-stem)-userldflags) \
-> > +			$(if $($(target-stem)-nolibc),$(user_nolibc_ldflags))
-> > +user_ldlibs	= $(userldlibs) $($(target-stem)-userldlibs) \
-> > +			$(if $($(target-stem)-nolibc),$(user_nolibc_ldlibs))
-> >  
-> >  # Create an executable from a single .c file
-> >  quiet_cmd_user_cc_c = CC [U]  $@
-> 
-> Adding another hunk for scripts/Makefile.userprogs would allow to build
-> out-of-source:
-> 
-> @@ -39,5 +49,5 @@ $(call multi_depend, $(user-cmulti), , -objs)
->  # Create .o file from a .c file
->  quiet_cmd_user_cc_o_c = CC [U]  $@
->        cmd_user_cc_o_c = $(CC) $(user_ccflags) -c -o $@ $<
-> -$(user-cobjs): $(obj)/%.o: $(src)/%.c FORCE
-> +$(user-cobjs): $(obj)/%.o: $(src)/%.c headers FORCE
->         $(call if_changed_dep,user_cc_o_c)
-> 
-> But I am unsure if it is ok to add 'headers' as a build dependency for 
-> userprogs.  For me, it feels a bit odd, but I think it really makes 
-> sense here.
-
-Currently this dependency is encoded in Kconfig.
-If CONFIG_HEADERS_INSTALL=y then the headers are installed in the 'prepare'
-phase and already available when building any userprog.
-To me this seems like the easier and nicer implementation.
 
