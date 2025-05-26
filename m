@@ -1,131 +1,167 @@
-Return-Path: <linux-kernel+bounces-662712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-662714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 444B9AC3EA0
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 13:31:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3D1FAC3EA5
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 13:35:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B7963A5D63
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 11:31:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5ADE9188A229
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 11:35:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E0391FDE33;
-	Mon, 26 May 2025 11:31:16 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31ACC1D5146;
+	Mon, 26 May 2025 11:35:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gG1noKS+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03F081FA14E;
-	Mon, 26 May 2025 11:31:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8637919CC3D;
+	Mon, 26 May 2025 11:35:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748259076; cv=none; b=drXVeQtZ/uIUWKHJej0N1j2+f7+TrUgY41GK7pq3iEmzTnVhYWSIyzXzhHtp2HvMfAmyYXfKB8QRksTUj7AiD0xFm0SXS91d2YaK+ptukbdcYXUq2NNvICpNA81zCPovhOM3ljB+cVhF/ZHl7eniPJu7kMMkG28xDYsfRDTlrpI=
+	t=1748259302; cv=none; b=SGd/gwhx1kuODuvc4tU9mv3VYUNheblHf1zChK4+c1RKmGQsxiYbKKd+NBAoymfCH2JLSAkv5U9YNcsZBBwrAQt5wDV6QKVI629JtlT6WQpkKNHEowNQF30zmthnyDbSeSfl6ZOrJRyPcxeFiht0JqZt0IioYqwpINpr/JeVDmU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748259076; c=relaxed/simple;
-	bh=unQHwttsPk2VIVW8P5U8+Uwy9Nf2rG5/z0nIzV6CFQs=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YbsqDoXJLWEhWdHKQr7QZGs9Z+fOEKyAehL+357dxb2ib2KK2k8bixTqaUqEQU9f/7LZpJo6W3uDblRHBg9SluQXKvZ3/K9N0/WWj1WMYp8BoVwv/bZkF3DLhl8HU4GqwxtNF9ULPzvXfbJbb6lgLYv4K2CDeznSBd4YaH3RyHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4b5YS36gQHz1R7q2;
-	Mon, 26 May 2025 19:28:51 +0800 (CST)
-Received: from kwepemh100008.china.huawei.com (unknown [7.202.181.93])
-	by mail.maildlp.com (Postfix) with ESMTPS id 64E6F140159;
-	Mon, 26 May 2025 19:31:06 +0800 (CST)
-Received: from localhost.localdomain (10.50.165.33) by
- kwepemh100008.china.huawei.com (7.202.181.93) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 26 May 2025 19:31:05 +0800
-From: Lifeng Zheng <zhenglifeng1@huawei.com>
-To: <rafael@kernel.org>, <viresh.kumar@linaro.org>, <robert.moore@intel.com>,
-	<lenb@kernel.org>
-CC: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-acpi@vger.kernel.org>, <acpica-devel@lists.linux.dev>,
-	<linuxarm@huawei.com>, <jonathan.cameron@huawei.com>,
-	<zhanjie9@hisilicon.com>, <lihuisong@huawei.com>,
-	<cenxinghai@h-partners.com>, <yubowen8@huawei.com>, <zhenglifeng1@huawei.com>
-Subject: [PATCH 3/3] cpufreq: CPPC: Remove forward declaration of cppc_cpufreq_register_em()
-Date: Mon, 26 May 2025 19:30:57 +0800
-Message-ID: <20250526113057.3086513-4-zhenglifeng1@huawei.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20250526113057.3086513-1-zhenglifeng1@huawei.com>
-References: <20250526113057.3086513-1-zhenglifeng1@huawei.com>
+	s=arc-20240116; t=1748259302; c=relaxed/simple;
+	bh=5SkZ27MFt+s5gbVQg3eH6ITCcs8U+KTTQskKya4Ci2M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QNs5LuBrHn08QEnHpjzOzkwbKgRLk6+6uRHmLPYuYi14KYzK0gLF6yY5xuM+cWcni3f0I0aH7D5qp4OwOGHV1WcaV9jUZwN0nJgdcA3PanIXsl84yDFYjFHyc/FNRYZKrx6G8yu9r3nZVcbun7HcKrt7pp35t68kMq7Tuv03DLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gG1noKS+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB06BC4CEE7;
+	Mon, 26 May 2025 11:35:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748259302;
+	bh=5SkZ27MFt+s5gbVQg3eH6ITCcs8U+KTTQskKya4Ci2M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gG1noKS+2rYdiUxvikU5MDWDqnSdzxnC9pj6g76zAGYnk1dcH6cnfbBUQgOsDClG+
+	 GUpED1jEpKKy5Te/ypi2RuF822sr2UMZX50rQRtwMktVq8Vqcj9Bjz0s4uPhX1JMSf
+	 Jo4fIK1u2alLzFlyrie5kSUgfwgVwtS4K25V1aGH6IIYKEUmGmA2XEjYxD2/1FsfHk
+	 yXqubXIUIXoXcRXZ2AEFBWiOxX8DeXGI14kqOrW04n+pU+MoXURCJM7DcMdrMQAYAd
+	 uy/yRH4aR8OzcuaiXIky6inPYCq4VcYdM6fvZc8ReXgddoXcwS6QbjqkItVNpXCpTU
+	 5Bvzd3q9bASjg==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1uJW6g-000000000GJ-1m26;
+	Mon, 26 May 2025 13:35:03 +0200
+Date: Mon, 26 May 2025 13:35:02 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Remi Pommarel <repk@triplefau.lt>
+Cc: Johan Hovold <johan+linaro@kernel.org>,
+	Jeff Johnson <jjohnson@kernel.org>,
+	Miaoqing Pan <quic_miaoqing@quicinc.com>,
+	Steev Klimaszewski <steev@kali.org>,
+	Clayton Craft <clayton@craftyguy.net>,
+	Jens Glathe <jens.glathe@oldschoolsolutions.biz>,
+	Nicolas Escande <nico.escande@gmail.com>,
+	ath12k@lists.infradead.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] wifi: ath12k: fix ring-buffer corruption
+Message-ID: <aDRR5oYBU0Z-DaWr@hovoldconsulting.com>
+References: <20250321095219.19369-1-johan+linaro@kernel.org>
+ <aC8-mUinxA6y688X@pilgrim>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
- kwepemh100008.china.huawei.com (7.202.181.93)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aC8-mUinxA6y688X@pilgrim>
 
-cppc_cpufreq_register_em() is only used in populate_efficiency_class(). A
-forward declaration is not necessary. Move cppc_cpufreq_register_em() in
-front of populate_efficiency_class() and remove the forward declaration of
-cppc_cpufreq_register_em().
+On Thu, May 22, 2025 at 05:11:21PM +0200, Remi Pommarel wrote:
+> On Fri, Mar 21, 2025 at 10:52:19AM +0100, Johan Hovold wrote:
+> > Users of the Lenovo ThinkPad X13s have reported that Wi-Fi sometimes
+> > breaks and the log fills up with errors like:
+> > 
+> >     ath11k_pci 0006:01:00.0: HTC Rx: insufficient length, got 1484, expected 1492
+> >     ath11k_pci 0006:01:00.0: HTC Rx: insufficient length, got 1460, expected 1484
+> > 
+> > which based on a quick look at the ath11k driver seemed to indicate some
+> > kind of ring-buffer corruption.
+> > 
+> > Miaoqing Pan tracked it down to the host seeing the updated destination
+> > ring head pointer before the updated descriptor, and the error handling
+> > for that in turn leaves the ring buffer in an inconsistent state.
+> > 
+> > While this has not yet been observed with ath12k, the ring-buffer
+> > implementation is very similar to the ath11k one and it suffers from the
+> > same bugs.
 
-No functional change.
+> > Note that the READ_ONCE() are only needed to avoid compiler mischief in
+> > case the ring-buffer helpers are ever inlined.
 
-Signed-off-by: Lifeng Zheng <zhenglifeng1@huawei.com>
----
- drivers/cpufreq/cppc_cpufreq.c | 25 ++++++++++++-------------
- 1 file changed, 12 insertions(+), 13 deletions(-)
+> > @@ -343,11 +343,10 @@ static int ath12k_ce_completed_recv_next(struct ath12k_ce_pipe *pipe,
+> >  		goto err;
+> >  	}
+> >  
+> > +	/* Make sure descriptor is read after the head pointer. */
+> > +	dma_rmb();
+> > +
+> 
+> That does not seem to be the only place descriptor is read just after
+> the head pointer, ath12k_dp_rx_process{,err,reo_status,wbm_err} seem to
+> also suffer the same sickness.
 
-diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
-index c2be4b188a23..a1fd0ff22bc5 100644
---- a/drivers/cpufreq/cppc_cpufreq.c
-+++ b/drivers/cpufreq/cppc_cpufreq.c
-@@ -344,7 +344,6 @@ static unsigned int cppc_cpufreq_get_transition_delay_us(unsigned int cpu)
- #if defined(CONFIG_ARM64) && defined(CONFIG_ENERGY_MODEL)
- 
- static DEFINE_PER_CPU(unsigned int, efficiency_class);
--static void cppc_cpufreq_register_em(struct cpufreq_policy *policy);
- 
- /* Create an artificial performance state every CPPC_EM_CAP_STEP capacity unit. */
- #define CPPC_EM_CAP_STEP	(20)
-@@ -480,6 +479,18 @@ static int cppc_get_cpu_cost(struct device *cpu_dev, unsigned long KHz,
- 	return 0;
- }
- 
-+static void cppc_cpufreq_register_em(struct cpufreq_policy *policy)
-+{
-+	struct cppc_cpudata *cpu_data;
-+	struct em_data_callback em_cb =
-+		EM_ADV_DATA_CB(cppc_get_cpu_power, cppc_get_cpu_cost);
-+
-+	cpu_data = policy->driver_data;
-+	em_dev_register_perf_domain(get_cpu_device(policy->cpu),
-+			get_perf_level_count(policy), &em_cb,
-+			cpu_data->shared_cpu_map, 0);
-+}
-+
- static void populate_efficiency_class(void)
- {
- 	struct acpi_madt_generic_interrupt *gicc;
-@@ -514,18 +525,6 @@ static void populate_efficiency_class(void)
- 	cppc_cpufreq_driver.register_em = cppc_cpufreq_register_em;
- }
- 
--static void cppc_cpufreq_register_em(struct cpufreq_policy *policy)
--{
--	struct cppc_cpudata *cpu_data;
--	struct em_data_callback em_cb =
--		EM_ADV_DATA_CB(cppc_get_cpu_power, cppc_get_cpu_cost);
--
--	cpu_data = policy->driver_data;
--	em_dev_register_perf_domain(get_cpu_device(policy->cpu),
--			get_perf_level_count(policy), &em_cb,
--			cpu_data->shared_cpu_map, 0);
--}
--
- #else
- static void populate_efficiency_class(void)
- {
--- 
-2.33.0
+Indeed, I only started with the corruption issues that users were
+reporting (with ath11k) and was gonna follow up with further fixes once
+the initial ones were merged (and when I could find more time).
 
+> Why not move the dma_rmb() in ath12k_hal_srng_access_begin() as below,
+> that would look to me as a good place to do it.
+> 
+> @@ -2133,6 +2133,9 @@ void ath12k_hal_srng_access_begin(struct
+> ath12k_base *ab, struct hal_srng *srng)
+>                         *(volatile u32 *)srng->u.src_ring.tp_addr;
+>         else
+>                 srng->u.dst_ring.cached_hp = *srng->u.dst_ring.hp_addr;
+> +
+> +       /* Make sure descriptors are read after the head pointer. */
+> +       dma_rmb();
+>  }
+> 
+> This should ensure the issue does not happen anywhere not just for
+> ath12k_ce_recv_process_cb().
+
+We only need the read barrier for dest rings so the barrier would go in
+the else branch, but I prefer keeping it in the caller so that it is
+more obvious when it is needed and so that we can skip the barrier when
+the ring is empty (e.g. as done above).
+
+I've gone through and reviewed the remaining call sites now and will
+send a follow-on fix for them.
+
+> Note that ath12k_hal_srng_dst_get_next_entry() does not need a barrier
+> as it uses cached_hp from ath12k_hal_srng_access_begin().
+
+Yeah, it's only needed before accessing the descriptor fields.
+
+> > @@ -1962,7 +1962,7 @@ u32 ath12k_hal_ce_dst_status_get_length(struct hal_ce_srng_dst_status_desc *desc
+> >  {
+> >  	u32 len;
+> >  
+> > -	len = le32_get_bits(desc->flags, HAL_CE_DST_STATUS_DESC_FLAGS_LEN);
+> > +	len = le32_get_bits(READ_ONCE(desc->flags), HAL_CE_DST_STATUS_DESC_FLAGS_LEN);
+> >  	desc->flags &= ~cpu_to_le32(HAL_CE_DST_STATUS_DESC_FLAGS_LEN);
+> >  
+> >  	return len;
+> > @@ -2132,7 +2132,7 @@ void ath12k_hal_srng_access_begin(struct ath12k_base *ab, struct hal_srng *srng)
+> >  		srng->u.src_ring.cached_tp =
+> >  			*(volatile u32 *)srng->u.src_ring.tp_addr;
+> >  	else
+> > -		srng->u.dst_ring.cached_hp = *srng->u.dst_ring.hp_addr;
+> > +		srng->u.dst_ring.cached_hp = READ_ONCE(*srng->u.dst_ring.hp_addr);
+> 
+> dma_rmb() acting also as a compiler barrier why the need for both
+> READ_ONCE() ?
+
+Yeah, I was being overly cautious here and it should be fine with plain
+accesses when reading the descriptor after the barrier, but the memory
+model seems to require READ_ONCE() when fetching the head pointer.
+Currently, hp_addr is marked as volatile so READ_ONCE() could be
+dropped for that reason, but I'd rather keep it here explicitly (e.g. in
+case someone decides to drop the volatile).
+
+Johan
 
