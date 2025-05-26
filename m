@@ -1,157 +1,205 @@
-Return-Path: <linux-kernel+bounces-662686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-662643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2470AC3E3F
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 13:02:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D34BEAC3DB3
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 12:08:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41085176F2F
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 11:02:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 998A43A29FF
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 10:08:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BA3B1F8730;
-	Mon, 26 May 2025 11:02:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D01C81F463F;
+	Mon, 26 May 2025 10:08:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="hd3eoDjJ"
-Received: from mail-m49200.qiye.163.com (mail-m49200.qiye.163.com [45.254.49.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Spq1EHqX"
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 415F81EB5E5;
-	Mon, 26 May 2025 11:02:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF18620ED
+	for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 10:08:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748257334; cv=none; b=JHtbVx5c4IbwYbx+h1WMD9xnrY3kpjc65Sexxs+YjrOZEbR9a051ge0bZc9zquXNQgn9pCfj0LziDGUtGDzOsb375vh1Gkw5Etoz/mFQk4NfXraz8XtupMajs73/kfGZVWnSr0MML2HGnXHVHyJuVR3NxksNs6vWmB9NVFHzJ+I=
+	t=1748254109; cv=none; b=peU5yRhwujnOCVXOP248WHUJf6tFDW94h/Zip/bhVKQDzlhHO1WaPn4mWasP9McxBL3Ev9K+Cq06Gj/WBQPdNPJPuf0AEEKMt0urBKvitkXzNR+ZqEjuW7oAM07ZynpE0oQv+W2jSruO8T7A82loHDqVUo0hz+s/r0peuZpvNtY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748257334; c=relaxed/simple;
-	bh=nNZNAF1hEy1BM5e25X0MPXf0mDdxiy7pQ3s33raf/4o=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=mYbpDIiu9YiW3SAHS+9xDHdefgr5LfOpgpgJ+c8Wu3kVqor3RxsE6iWpWjpOmLpXhI24BiKpHRCuodnHdHXJ7VkGf8cR4DeN0BVrhbolgI2DGOsTNknS7lZT3xnNeP5iB4XYpS8rNOeXQG9tj2zi/4Y5JhJy4fc419Gg7nvMDc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=hd3eoDjJ; arc=none smtp.client-ip=45.254.49.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from rockchip.. (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 1660c0163;
-	Mon, 26 May 2025 14:26:02 +0800 (GMT+08:00)
-From: Elaine Zhang <zhangqing@rock-chips.com>
-To: zhangqing@rock-chips.com,
-	mkl@pengutronix.de,
-	kernel@pengutronix.de,
-	mailhol.vincent@wanadoo.fr,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	heiko@sntech.de,
-	cl@rock-chips.com,
-	kever.yang@rock-chips.com
-Cc: linux-can@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH v6 1/4] dt-bindings: can: rockchip_canfd: add rk3576 CAN-FD controller
-Date: Mon, 26 May 2025 14:25:56 +0800
-Message-Id: <20250526062559.2061311-2-zhangqing@rock-chips.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250526062559.2061311-1-zhangqing@rock-chips.com>
-References: <20250526062559.2061311-1-zhangqing@rock-chips.com>
+	s=arc-20240116; t=1748254109; c=relaxed/simple;
+	bh=RssPTTSlOi3uPhFyxHYOhka1vxO3+iE4N6adykha/8k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mTSWn7w8TDYgPxrEtj7QPBQvMiCmhPNryrd7IjTp53CwWeUVP8HNLTenCTdvp0UsQOA9fspBrUXeb2bsn0BYQpQ/sbgH9VrXT4trBQjtgWwe0VqZ00Ct4p/DAVQ9ZFciR8jlxOrGQHh2TvdJ2YLCbDFcaXIjfQGEibzViqIDZH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Spq1EHqX; arc=none smtp.client-ip=209.85.219.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e7d9d480e6cso977421276.2
+        for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 03:08:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1748254106; x=1748858906; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=NpPv+jwx+sCOwe5Xg7tTvOuLFtJsEPCNaLZVy2I7eGY=;
+        b=Spq1EHqXbIGNlg8Q0GD1Yo9/3bvEJqFPG812dFxbLji/uK0kQjjyLHvZUht+9GvYRM
+         Y887wY4XJ4FhVokSF9aCttMUiaNtIk77o5WaMFJjK5DKTlXZmZAlzMhCfGYPbLaaj8TT
+         F+0mUzb5A0qLF7UTSlADuiQKQkOecHZQM9Em9IpU5oCHYDWlEVjUQUYzZ89baHq1nSZ1
+         +B1BdsEBnZ1UpX60FLeY4BgiMlMzP2lqEry0mOAoHHFkedBXE5r8MB2Fl8r+GVvUYut4
+         ctRghzxNgRm5akLx3a0u8p8Km5ASdCEhEOX2a5wN0hD+mybJpcp8LbwEsikO+0PwlxzP
+         OVyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748254106; x=1748858906;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NpPv+jwx+sCOwe5Xg7tTvOuLFtJsEPCNaLZVy2I7eGY=;
+        b=Fl9TRLLpcgGu4l6hGCXg1z0D7mSEFG624B3XoGOMthuhCKmHTJ9po+syUp3C0TdTk0
+         Mkpv/GeATtsido7U3WVyP0ge65wTr2m6EQuAFQChG2pJFYegeoiMbMzSlzEkOHZVNtXi
+         e9RQ3WYduPYb6eA2zJ7XmKncaVLULCEjp1WhPOpOaHd6EVqfnNJMzet7AlnfyFDJShJR
+         TMGXPTldqBr9TpXjjTQWG5kxsYaecLdloPoIkvKOx6YWUB3h6KPhOhEa/8zxy/u2EQQz
+         iO6EP31o6hW86ldzZliXWYw4EgcV5kaqvWuwajg4u6Sas9l2pCCisMq1po404mhT9YMZ
+         4KmA==
+X-Forwarded-Encrypted: i=1; AJvYcCXltB9PFpc19Jsc0DV1QnWxCX6cTwuVvpI6Ka4jTXW2DcrPTJzT9AB6NJUtPTI88Mezl6G0K5NsEtZ9sB0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTXRI078RwBDoEWCqPMtddbqBbF50FCgmVG7OWxHqR3B5qEbJZ
+	yBa3zyRmnhJ10mREQ6STVKJLaxuqc2TwUqqH7UJAXcYafgvppsHHTKESoJmc5gR8ejkC2Fc24wK
+	l1SQ3+46naxzxWIukIXiIkfxnof5P5pc+TGWjayy9zg==
+X-Gm-Gg: ASbGncsmJhQ9yLx+oONW8CN5Q+LSeWAi+Lh99eZf8ZZjayR5oZNNZANa7eI10fP9aT0
+	Vif8JcU6ftg6jiHzP6eDsiEsRuUpOHnOD1fEhYmls8/HOKfRnseBlEvX4tu0pNaE/tEm1l6CKjq
+	8e0QyfIRWlzrNG1y8oe+jtEfeBOfKTbUFYDw==
+X-Google-Smtp-Source: AGHT+IFdBGTGYZOotDK/y3Q59f0r8dFms0TkmjC4C0sHaJmgkuM3Am4LonkHZ4KeqelTVat8o4uyIxhJmZyFRyDPL7U=
+X-Received: by 2002:a05:6902:160d:b0:e7d:b8ce:cb91 with SMTP id
+ 3f1490d57ef6-e7db8cecd3dmr1219626276.5.1748254105723; Mon, 26 May 2025
+ 03:08:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGUhNS1ZCTkkYSh4aGk9JTklWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSUhCS0
-	NVSktLVUpCWQY+
-X-HM-Tid: 0a970b4505d703a3kunm902b49ed4a334f
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6MDI6Ezo6KTE*TQ4YLSI2KiIv
-	VjgKCQxVSlVKTE9DSU9LTE1ITE5CVTMWGhIXVQETGhUcChIVHDsJFBgQVhgTEgsIVRgUFkVZV1kS
-	C1lBWU5DVUlJVUxVSkpPWVdZCAFZQUlCTUM3Bg++
-DKIM-Signature:a=rsa-sha256;
-	b=hd3eoDjJnAomOvcH7u9EmQMC5Rx1mS43FbGLhnX5HSdDi9Gn+lrlsMB4++DVV9ZdqjLcRL1yXilw2rsr6I3W1W9DAwtOzOXatBt5f1TwTP+OxDJUAZTif1l5S1d/HYJYtbvUjX4I/ZifwEzmCVx7gwnnsWpqSp/70B3LzRgiHX4=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=7fytvpm/jX3lLm6RHxCGcgAQyOSDx3LtRYraqdpexfA=;
-	h=date:mime-version:subject:message-id:from;
+References: <CAPDyKFrHD1hVCfOK-JV5FJM+Cd9DoKKZGKcC94fxx6_9Bsri1g@mail.gmail.com>
+ <20250508202826.33bke6atcvqdkfa4@hiago-nb> <CAPDyKFr3yF=yYZ=Xo5FicvSbDPOTx7+fMwc8dMCLYKPBMEtCKA@mail.gmail.com>
+ <20250509191308.6i3ydftzork3sv5c@hiago-nb> <CAPDyKFpnLzk5YR3piksGhdB8ZoGNCzmweBTxm_rDX5=vjLFxqQ@mail.gmail.com>
+ <20250519172357.vfnwehrbkk24vkge@hiago-nb> <CAPDyKFpGcgMzOUHf-JTRTLBviFdLdbjZKrMm8yd37ZqJ1nfkHw@mail.gmail.com>
+ <20250521041306.GA28017@nxa18884-linux> <20250521041840.GB28017@nxa18884-linux>
+ <CAPDyKFpSb+KsfDr1-=uk4TF4Op1dUQ9rDwPP5sSpMfxDRDhnZA@mail.gmail.com> <20250523191713.nylhi74jq6z4hqmr@hiago-nb>
+In-Reply-To: <20250523191713.nylhi74jq6z4hqmr@hiago-nb>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 26 May 2025 12:07:49 +0200
+X-Gm-Features: AX0GCFtV9JrsWnRtXpr1h2X2HDFYAFvpBaxszSIspVyj2HxlBm4_wnbvi_OW3II
+Message-ID: <CAPDyKFq6HG6iTZRnBSN25vhCU8Zj1c+r_ufGbiBsJ16N+1bJVg@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] remoteproc: imx_rproc: add power mode check for
+ remote core attachment
+To: Hiago De Franco <hiagofranco@gmail.com>
+Cc: Peng Fan <peng.fan@oss.nxp.com>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
+	linux-pm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Bjorn Andersson <andersson@kernel.org>, Hiago De Franco <hiago.franco@toradex.com>, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	daniel.baluta@nxp.com, iuliana.prodan@oss.nxp.com, 
+	Fabio Estevam <festevam@gmail.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, Peng Fan <peng.fan@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Add documentation for the rockchip rk3576 CAN-FD controller.
+On Fri, 23 May 2025 at 21:17, Hiago De Franco <hiagofranco@gmail.com> wrote:
+>
+> Hi Ulf,
+>
+> On Wed, May 21, 2025 at 02:11:02PM +0200, Ulf Hansson wrote:
+> > You should not provide any flag (or attach_data to
+> > dev_pm_domain_attach_list()) at all. In other words just call
+> > dev_pm_domain_attach_list(dev, NULL, &priv->pd_list), similar to how
+> > drivers/remoteproc/imx_dsp_rproc.c does it.
+> >
+> > In this way, the device_link is created by making the platform->dev
+> > the consumer and by keeping the supplier-devices (corresponding to the
+> > genpds) in RPM_SUSPENDED state.
+> >
+> > The PM domains (genpds) are then left in their current state, which
+> > should allow us to call dev_pm_genpd_is_on() for the corresponding
+> > supplier-devices, to figure out whether the bootloader turned them on
+> > or not, I think.
+> >
+> > Moreover, to make sure the genpds are turned on when needed, we also
+> > need to call pm_runtime_enable(platform->dev) and
+> > pm_runtime_get_sync(platform->dev). The easiest approach is probably
+> > to do that during ->probe() - and then as an improvement on top you
+> > may want to implement more fine-grained support for runtime PM.
+> >
+> > [...]
+> >
+> > Kind regards
+> > Uffe
+>
+> I did some tests here and I might be missing something. I used the
+> dev_pm_genpd_is_on() inside imx_rproc.c with the following changes:
+>
+> @@ -902,7 +902,12 @@ static int imx_rproc_attach_pd(struct imx_rproc *priv)
+>         if (dev->pm_domain)
+>                 return 0;
+>
+>         ret = dev_pm_domain_attach_list(dev, &pd_data, &priv->pd_list);
+> +       printk("hfranco: returned pd devs is %d", ret);
+> +       for (int i = 0; i < ret; i++) {
+> +               test = dev_pm_genpd_is_on(priv->pd_list->pd_devs[i]);
+> +               printk("hfranco: returned value is %d", test);
+> +       }
+>         return ret < 0 ? ret : 0;
+>  }
+>
+> This was a quick test to check the returned value, and it always return
+> 1 for both pds, even if I did not boot the remote core.
+>
+> So I was wondering if it was because of PD_FLAG_DEV_LINK_ON, I removed
+> it and passed NULL to dev_pm_domain_attach_list().
 
-Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
----
- .../net/can/rockchip,rk3568v2-canfd.yaml      | 41 +++++++++++++++++++
- 1 file changed, 41 insertions(+)
+Right, that's exactly what we should be doing.
 
-diff --git a/Documentation/devicetree/bindings/net/can/rockchip,rk3568v2-canfd.yaml b/Documentation/devicetree/bindings/net/can/rockchip,rk3568v2-canfd.yaml
-index a077c0330013..c6595fef6cb5 100644
---- a/Documentation/devicetree/bindings/net/can/rockchip,rk3568v2-canfd.yaml
-+++ b/Documentation/devicetree/bindings/net/can/rockchip,rk3568v2-canfd.yaml
-@@ -12,11 +12,27 @@ maintainers:
- 
- allOf:
-   - $ref: can-controller.yaml#
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: rockchip,rk3576-canfd
-+      required:
-+        - compatible
-+    then:
-+      required:
-+        - dmas
-+        - dma-names
-+    else:
-+      properties:
-+        dmas: false
-+        dma-names: false
- 
- properties:
-   compatible:
-     oneOf:
-       - const: rockchip,rk3568v2-canfd
-+      - const: rockchip,rk3576-canfd
-       - items:
-           - const: rockchip,rk3568v3-canfd
-           - const: rockchip,rk3568v2-canfd
-@@ -43,6 +59,13 @@ properties:
-       - const: core
-       - const: apb
- 
-+  dmas:
-+    maxItems: 1
-+
-+  dma-names:
-+    items:
-+      - const: rx
-+
- required:
-   - compatible
-   - reg
-@@ -72,3 +95,21 @@ examples:
-             reset-names = "core", "apb";
-         };
-     };
-+
-+  - |
-+    soc {
-+        #address-cells = <2>;
-+        #size-cells = <2>;
-+
-+        can@2ac00000 {
-+            compatible = "rockchip,rk3576-canfd";
-+            reg = <0x0 0x2ac00000 0x0 0x1000>;
-+            interrupts = <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>;
-+            clocks = <&cru CLK_CAN0>, <&cru PCLK_CAN0>;
-+            clock-names = "baud", "pclk";
-+            resets = <&cru SRST_CAN0>, <&cru SRST_P_CAN0>;
-+            reset-names = "core", "apb";
-+            dmas = <&dmac0 20>;
-+            dma-names = "rx";
-+        };
-+    };
--- 
-2.34.1
+> Booting the kernel
+> now it correctly reports 0 for both pds, however when I start the
+> remote core with a hello world firmware and boot the kernel, the CPU
+> resets with a fault reset ("Reset cause: SCFW fault reset").
+>
+> I added both pm functions to probe, just to test:
+>
+> @@ -1152,6 +1158,9 @@ static int imx_rproc_probe(struct platform_device *pdev)
+>                 goto err_put_clk;
+>         }
+>
+> +       pm_runtime_enable(dev);
+> +       pm_runtime_get_sync(dev);
+> +
 
+Indeed, calling pm_runtime_enable() and then pm_runtime_get_sync()
+should turn on the PM domains for the device, which I assume is needed
+at some point.
+
+Although, I wonder if this may be a bit too late, I would expect that
+you at least need to call these *before* the call to rproc_add(), as I
+assume the rproc-core may start using the device/driver beyond that
+point.
+
+>         return 0
+>
+> Now the kernel boot with the remote core running, but it still returns
+> 0 from dev_pm_genpd_is_on(). So basically now it always returns 0, with
+> or without the remote core running.
+
+dev_pm_genpd_is_on() is returning the current status of the PM domain
+(genpd) for the device.
+
+Could it be that the genpd provider doesn't register its PM domains
+with the state that the HW is really in? pm_genpd_init() is the call
+that allows the genpd provider to specify the initial state.
+
+I think we need Peng's help here to understand what goes on.
+
+>
+> I tried to move pm_runtime_get_sync() to .prepare function but it make
+> the kernel not boot anymore (with the SCU fault reset).
+
+Try move pm_runtime_enable() before rproc_add().
+
+>
+> Do you have any suggestions? Am I doing something wrong with these PDs?
+>
+> Best regards,
+> Hiago.
+
+Kind regards
+Uffe
 
