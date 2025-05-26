@@ -1,146 +1,144 @@
-Return-Path: <linux-kernel+bounces-662619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-662611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A92AAC3D4C
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 11:50:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68461AC3D28
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 11:45:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 124183A7CB4
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 09:49:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 128EF1897A3E
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 09:45:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E17B1EF36C;
-	Mon, 26 May 2025 09:50:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 134F51F181F;
+	Mon, 26 May 2025 09:44:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=t12smtp-sign004.email header.i=@t12smtp-sign004.email header.b="hxQa09JG"
-Received: from mail75.out.titan.email (mail75.out.titan.email [3.216.99.55])
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="kW53G5X0";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="f+DQhnPO"
+Received: from fout-b4-smtp.messagingengine.com (fout-b4-smtp.messagingengine.com [202.12.124.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE5A017A2FA
-	for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 09:50:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.216.99.55
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748253009; cv=none; b=IaUmn/xGKsQ/kN4EMHlCMZbfk4FzPXW7g5Sorz9iBDzXbA4b0uS/PcPTXKRXXtpndLTGIHRlC60m1M0z1RepCc/W3ClXx57QEz0kvUGeVDOKDJn1d37p69dlLo5UrlktsdhmqVo/ru4MmGmtP8R+hr23pAPa3fJRjWNh7Acekw0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748253009; c=relaxed/simple;
-	bh=Fhwk/QJsN5ivsoCoJbgc0ERFelGGKGbpRKXM0aVBQCc=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=QEgm3ENslo4/ZNy3fBsesL9RyDniqby0eSXYfR2ygxu9rD0u5l3f8DsaPwD2KSLAqPU2PBMx0VYn3pNnS81utX5UsflmF9V4Yzli0m7t5XnU+lgOP18pTJFBV7xlRXGi/LFQOud9b/TBQCOxp2CgDl9eyF6mzZq4otQvl7C8Vac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=coly.li; spf=pass smtp.mailfrom=coly.li; dkim=pass (1024-bit key) header.d=t12smtp-sign004.email header.i=@t12smtp-sign004.email header.b=hxQa09JG; arc=none smtp.client-ip=3.216.99.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=coly.li
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=coly.li
-Received: from localhost (localhost [127.0.0.1])
-	by smtp-out.flockmail.com (Postfix) with ESMTP id 836ABE0187;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ECD91DDC00;
 	Mon, 26 May 2025 09:44:47 +0000 (UTC)
-DKIM-Signature: a=rsa-sha256; bh=Fhwk/QJsN5ivsoCoJbgc0ERFelGGKGbpRKXM0aVBQCc=;
-	c=relaxed/relaxed; d=t12smtp-sign004.email;
-	h=cc:message-id:references:subject:mime-version:in-reply-to:date:from:to:from:to:cc:subject:date:message-id:in-reply-to:references:reply-to;
-	q=dns/txt; s=titan1; t=1748252687; v=1;
-	b=hxQa09JGCNbZJXm5eAhDnaa8xghHHDOJpfdOStUjJ+Y8K1Dkij+l5FV69Sp0wWs1jzsau0KP
-	PBczB0gNlzC5+YFzg43EulRiDQgMgJ6h5/EQ5BbiHv4XDSgxraEw5cUp9QmPyiCj7k0f6vBBmgc
-	ducsf62AEFbOE/WTcJ40j3zY=
-Received: from smtpclient.apple (n218103205009.netvigator.com [218.103.205.9])
-	by smtp-out.flockmail.com (Postfix) with ESMTPA id E4991E0461;
-	Mon, 26 May 2025 09:44:44 +0000 (UTC)
-Content-Type: text/plain;
-	charset=utf-8
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.147
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748252690; cv=none; b=eiziAKgIC+CD1fJCKXluSZ4F6pvbCNExPIXUO+ysdQ6sALTHeh5UthZhH8JBIgr9HEJldfVtN3IFG1W35hPd6UGtyd0FkDwbVI2Kgd8TiEARx9NzAC4Ea/h6uuTKdQ/1+vsBvLmEr60+90oo4J6+Ig+y5uFMeJNtj3/u7qw2hTg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748252690; c=relaxed/simple;
+	bh=bb98zN70alBi04NywXfw0P2mmtqlU0HLOtZ6Cu7eZmw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VCVV2kHpPmgBHFmDIT/wGBbhuZKIE9k0KhkyS4Dwmx8Wv7E+UlnC59wrVHZuHE7wqzroQM+gCbZ4yz2OorOP3bwp0z9nKBr/rKJ6Th+PIP54vOWTsinlnGs44lhbUSwpyoGowSEIx9QFXVkTshJM52yCEH4onLyphhyGgvrPDpY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=kW53G5X0; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=f+DQhnPO; arc=none smtp.client-ip=202.12.124.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
+Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
+	by mailfout.stl.internal (Postfix) with ESMTP id 1459A1140145;
+	Mon, 26 May 2025 05:44:46 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-02.internal (MEProxy); Mon, 26 May 2025 05:44:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm1; t=1748252685; x=1748339085; bh=2s1FVRH8ze
+	XTYEXSnFTRCvOwlP/FaIIrpYPPnfZTWeg=; b=kW53G5X0MDr+cwcxkNHxyjQokg
+	m6egZZtU18nuddTtqCurOLqEJ7oecTDJTjjsmQ0ppp4t3yhL3MCbUqSp3c7AsDE9
+	MeqZ7fGFjqDmMjU7P9Bzhw7Ba5eX18RtG26YI+cS6b+R80F2BI5saEK+9ondWWIF
+	ln5Ga5lmh4JTsFp773j3jwwkCkYFDc1+PkGU2Q3D90wJI0WRlob1mdmkpP3emT/k
+	RYMD3No5ccuslcDv0BK1wH69+oDlrBuIcDFp6OIpqskrJ772b1B2aaNwDf+dTKlI
+	RvajcWNxoKfNgoUI8kyMmcysDfXQQqyNjKammE4MNLApgJuLpQYDTik82HxA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1748252685; x=1748339085; bh=2s1FVRH8zeXTYEXSnFTRCvOwlP/FaIIrpYP
+	PnfZTWeg=; b=f+DQhnPOBd1mblLJF+FxzCUpNxI4F1yuj2o6Byy9u6lt0nlze8R
+	Jt0RoDkXOG88kS52ATPYGbEKO7QXRVhKg4Vkn+Xgl8pzw4/40d+r+P9qkBwu7EaR
+	2felheDGHzGFF3miBWvGABY2cjpJMyrGuSPUBLLi4peigOeWAl8DP8aWz9OXYtNB
+	9ZRAnYA8l501jvQhvTS6U4Ys2ll5RwEgHAJvtSU63QTfZdSEtvQVvCwbSx/sZkbb
+	w/PcsUWQFk5Z/G37ADlC+8vrmE+rX90jXpn1TxVKCNgRSlf/X63bjyeKGjxCj7tr
+	cOpc6W6TTcbHLKsYkAcBKoi/eSD5+IwXPJA==
+X-ME-Sender: <xms:DTg0aDzqpmImc7Kn4A9Ve2jiLFKJJFCMARf5zOWXcrWqBysCekF7PQ>
+    <xme:DTg0aLS_yTZYHReJhfed8LBk11cfuZoxkqNCbI0nBccbtH1LPzYXVlGDqDIMYl4-0
+    eOQ5Ze2CDBH_A>
+X-ME-Received: <xmr:DTg0aNWvcl89EMPWsiiBfmnMEwzuSksDEAtgkjQ5ZjHbr3S9u3II-YJazZ7s1f2cDkiNm5mXPqxYzQ39FgwTpr2ELJMtrTw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgddujedvtdculddtuddrgeefvddrtd
+    dtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggft
+    fghnshhusghstghrihgsvgdpuffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftd
+    dtnecunecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhep
+    ifhrvghgucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecuggftrfgrthhtvghrnh
+    epgeegkeeugefffeevjeelleduhfetkeefveehiefhheejfeejtefgfeejtdevhfeknecu
+    ffhomhgrihhnpegvrhhrohhrrdhnvghtnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
+    hrrghmpehmrghilhhfrhhomhepghhrvghgsehkrhhorghhrdgtohhmpdhnsggprhgtphht
+    thhopeduvddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepvhhulhgrsgesihhstg
+    grshdrrggtrdgtnhdprhgtphhtthhopehjohhhrghnnhgvshesshhiphhsohhluhhtihho
+    nhhsrdhnvghtpdhrtghpthhtoheplhhutghirghnohdrtghovghlhhhosehinhhtvghlrd
+    gtohhmpdhrtghpthhtoheplhhinhhugidqfihirhgvlhgvshhssehvghgvrhdrkhgvrhhn
+    vghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrh
+    hnvghlrdhorhhgpdhrtghpthhtohepshhtrggslhgvsehvghgvrhdrkhgvrhhnvghlrdho
+    rhhg
+X-ME-Proxy: <xmx:DTg0aNinDcEcvYecpixnBVUZcwhHkkmm8EywxABOCoka2pN6h3lcAg>
+    <xmx:DTg0aFBLAL8yE1M5Dy7IcGFgRSm-YWK7Gb2RhFEkes_V0292JFMLxA>
+    <xmx:DTg0aGKNcOUdNfHVs0b5RDtQKUiB4YqwGWqZX4G8-vDX9NDp7CUSMA>
+    <xmx:DTg0aEDQ55S9TyG0cn-SG9rRonI4c-ASU6MWshzX3voofNCKWvcPlg>
+    <xmx:DTg0aKUvDe8sQp-pK0nzd5R3C1xaA6VHgHswT148zdOGRgcQuvv5cAcZ>
+Feedback-ID: i787e41f1:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 26 May 2025 05:44:44 -0400 (EDT)
+Date: Mon, 26 May 2025 11:44:42 +0200
+From: Greg KH <greg@kroah.com>
+To: Wentao Liang <vulab@iscas.ac.cn>
+Cc: johannes@sipsolutions.net, luciano.coelho@intel.com,
+	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2] mac80211: Add null pointer check for
+ ieee80211_link_get_chanctx()
+Message-ID: <2025052614-spring-ether-8d09@gregkh>
+References: <20250526091903.587-1-vulab@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
-Subject: Re: [PATCH v2] bcache: add the deferred_flush IO processing path in
- the writeback mode
-Feedback-ID: :i@coly.li:coly.li:flockmailId
-From: Coly Li <i@coly.li>
-X-Priority: 3
-In-Reply-To: <tencent_0AEE08B04C9DDE6C2354F36C@qq.com>
-Date: Mon, 26 May 2025 17:44:31 +0800
-Cc: Coly Li <colyli@kernel.org>,
- =?utf-8?B?6YKT5pe65rOi?= <dengwangbo@kylinos.com.cn>,
- "kent.overstreet" <kent.overstreet@linux.dev>,
- linux-bcache <linux-bcache@vger.kernel.org>,
- linux-kernel <linux-kernel@vger.kernel.org>,
- =?utf-8?B?5aSP5Y2O?= <xiahua@kylinos.com.cn>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <19FD6A47-11AA-4C76-B5B6-98BB84971D16@coly.li>
-References: <ug3sqyn42af4bjsp3l5d5ymiabtc767oaoud3ddzv6jnw2eh27@4gcxqaq5tatf>
- <20250428073445.24108-1-zhoujifeng@kylinos.com.cn>
- <tencent_2272EC35532EE12E3CCD543A@qq.com>
- <C16766D1-0FDE-40C7-822B-96927F6A683A@coly.li>
- <tencent_0AEE08B04C9DDE6C2354F36C@qq.com>
-To: Zhou Jifeng <zhoujifeng@kylinos.com.cn>
-X-Mailer: Apple Mail (2.3826.600.51.1.1)
-X-F-Verdict: SPFVALID
-X-Titan-Src-Out: 1748252687379173531.26132.5852282787715180134@prod-use1-smtp-out1004.
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.4 cv=J9BQ7BnS c=1 sm=1 tr=0 ts=6834380f
-	a=eJNHGpZBYRW47XJYT+WeIA==:117 a=eJNHGpZBYRW47XJYT+WeIA==:17
-	a=IkcTkHD0fZMA:10 a=CEWIc4RMnpUA:10 a=NEAV23lmAAAA:8 a=2g-bObx1AAAA:8
-	a=9wspj6F5nppUeS8yhG0A:9 a=QEXdDO2ut3YA:10 a=2vxvtA42U9rPmyYw9DsL:22
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250526091903.587-1-vulab@iscas.ac.cn>
 
+On Mon, May 26, 2025 at 05:19:03PM +0800, Wentao Liang wrote:
+> The function ieee80211_chsw_switch_vifs() calls the function
+> ieee80211_link_get_chanctx(), but does not check its return value.
+> The return value is a null pointer if the ieee80211_link_get_chanctx()
+> fails. This will lead to a null pointer dereference in the following
+> code "&old_ctx->conf". A proper implementation can be found in
+> ieee80211_link_use_reserved_assign().
+> 
+> Add a null pointer check and goto error handling path if the
+> function fails.
+> 
+> Fixes: 5d52ee811019 ("mac80211: allow reservation of a running chanctx")
+> Cc: stable@vger.kernel.org # v3.16
+> Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+> ---
+> v2: Fix code error.
+> 
+>  net/mac80211/chan.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/net/mac80211/chan.c b/net/mac80211/chan.c
+> index a442cb667520..c9b703c283e7 100644
+> --- a/net/mac80211/chan.c
+> +++ b/net/mac80211/chan.c
+> @@ -1503,6 +1503,10 @@ static int ieee80211_chsw_switch_vifs(struct ieee80211_local *local,
+>  				continue;
+>  
+>  			old_ctx = ieee80211_link_get_chanctx(link);
+> +			if (WARN_ON(!old_ctx)) {
 
+You just caused the machine to crash and reboot on billions of Linux
+systems if this ever is triggered.  So please never do that :(
 
-> 2025=E5=B9=B45=E6=9C=8826=E6=97=A5 17:42=EF=BC=8CZhou Jifeng =
-<zhoujifeng@kylinos.com.cn> =E5=86=99=E9=81=93=EF=BC=9A
->=20
-> On Mon, 26 May 2025 at 15:42, Coly Li <i@coly.li> wrote:
->>=20
->> Hi Jifeng,
->>=20
->>> 2025=E5=B9=B45=E6=9C=8826=E6=97=A5 14:41=EF=BC=8CZhou Jifeng =
-<zhoujifeng@kylinos.com.cn> =E5=86=99=E9=81=93=EF=BC=9A
->>>=20
->>> On Mon, 28 Apr 2025 at 15:36, Zhou Jifeng =
-<zhoujifeng@kylinos.com.cn> wrote:
->>> .....
->>>> v1->v2: Version v2 mainly addresses the issue of low efficiency in
->>>> writing back dirty data in version v1. When writing back dirty =
-data,
->>>> it no longer uses the FUA method but instead writes back no more =
-than
->>>> 500 dirty bkeys and then uniformly sends a PREFLUSH instruction =
-once.
->>>> I will supplement more test data later.
->>> .....
->>>=20
->>> Comparison test data::
->>> =
-https://github.com/jifengzhou/file/blob/main/bcache-deferred-patch-correla=
-tion-data.pdf
->>>=20
->>=20
->> Can I access the raw data to have a look?
->>=20
->> And the three different testings, which parameters of bcache are =
-modified from default?
->>=20
->> Thank.
->>=20
->>=20
->> Coly Li
->=20
-> Test raw data address:
-> https://github.com/jifengzhou/file/tree/main/deferred%20test%20data
->=20
-> I have not learned the default values =E2=80=8B=E2=80=8Bof the =
-parameters in the configuration file. Generally, they are=20
-> configured according to the required characteristics, such as random =
-IO, sequential IO, block size, etc.
-> The only difference between the first and second test parameters is =
-openflags. The difference between=20
-> the third test and the first two groups is openflags, xfersize, and =
-seekpct. The xfersize parameter is=20
-> used to control the access block size, and the seekpct parameter is =
-used to control the random ratio. 0=20
-> represents complete order and 100 represents 100% random.
+thanks,
 
-Copied. Because the data lines from chats are too closed, I need to read =
-them more close.
-
-Thanks.
-
-Coly Li=
+greg k-h
 
