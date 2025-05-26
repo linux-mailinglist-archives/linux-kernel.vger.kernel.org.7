@@ -1,133 +1,118 @@
-Return-Path: <linux-kernel+bounces-662350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-662347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26D0CAC394D
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 07:35:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDA10AC393D
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 07:32:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2213189394D
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 05:36:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6479F16D87B
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 05:32:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A72251C5D7A;
-	Mon, 26 May 2025 05:35:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 719031C6FFE;
+	Mon, 26 May 2025 05:32:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="hurJAwJ6"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="RtFiJnYd"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67C5F1B3930;
-	Mon, 26 May 2025 05:35:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAB4872615;
+	Mon, 26 May 2025 05:32:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748237739; cv=none; b=ZTOZy2a7jqil2wABVbw7QXqhgwCOTXJiqO9uIhSFnojtTyu2X8OdT6vAuMhJxe1Efh0qNLGQQ67uArzH69uGyRTLX+91l7oqqd2P48QJ0KD89cfwq+QkxwijUlYVKbvsxgPFT04IOzhXLN5gXyvy2VuTanC3zUncmxLpQi9BlBA=
+	t=1748237557; cv=none; b=fdTROk6t5gfw6oYZwYscF17GYAyb/zN50IzwonU9kqe0JYTJuWEdG2jk18EKdMnqJBR/O9buZr0tvIEJ3V/CDJ1Vy2wcMxk/+IJadjUpwpct1dqFJYAJeQOxuzCZPZQ+eNOHusuUvCVYIYoVUFgZTrLTD6A2IznPIQ1Jk5Vn/Ss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748237739; c=relaxed/simple;
-	bh=0pNqoPv8fPVLNxtu59Wp0wSlLX9MZ0Zb+OUFxvPIcKA=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Nm2ziAXLbksqzM7L4US6MljM2npAhI71Ix6nYOxcTrhvjKW/1czv0+TjGmIOHpaZewGJt+em3yGYveXNalB3XEgHZ2LHoP8nWJl+QSOCIznE6cvTnfq5EaXQrgx+8xXJhLhXkVsFXce5XnGzVvYVCXbQt30DbqAoXp0Qohg58Ck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=hurJAwJ6; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1748237737; x=1779773737;
-  h=from:to:subject:date:message-id:in-reply-to:references:
-   mime-version:content-transfer-encoding;
-  bh=0pNqoPv8fPVLNxtu59Wp0wSlLX9MZ0Zb+OUFxvPIcKA=;
-  b=hurJAwJ6QlLm26FjYERejJD66WPdI4bEvhbJsK1+STvweniEohn0cwBm
-   UETjdRpTTolbl81xoRvHMG2VgYIjxbN9f2X3ruvrZ0cgbweTJep3bIWid
-   vLx7nx/OYXTtW40lox9dWcu1NJPT0kM7eomQg1vCo958GDpmizRUHIK2b
-   6tiBfNp+H/VAqf3tyD/a02U8+GXytqaHWgE6IAON4RuFekPjWu6I+2AZb
-   of2OOw0iebeS4Z8ZVYFfNNQYyhLH6BUki8g9cQG6QCmSCs+5a4UMypzbh
-   FyrGWXvGsQC5pO2uiR0UTAoXN2N2/cf3exYmbZkr5zizq0JNBxLRb0iH1
-   w==;
-X-CSE-ConnectionGUID: ZIY/Wzj3Q22sZWvgvBPVZg==
-X-CSE-MsgGUID: pU6mxBHsTDO5iMasIG/dxg==
-X-IronPort-AV: E=Sophos;i="6.15,315,1739862000"; 
-   d="scan'208";a="41602085"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 25 May 2025 22:35:34 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Sun, 25 May 2025 22:35:08 -0700
-Received: from che-dk-ungapp03lx.microchip.com (10.10.85.11) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
- 15.1.2507.44 via Frontend Transport; Sun, 25 May 2025 22:35:05 -0700
-From: Thangaraj Samynathan <thangaraj.s@microchip.com>
-To: <bryan.whitehead@microchip.com>, <UNGLinuxDriver@microchip.com>,
-	<andrew+netdev@lunn.ch>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 net 2/2] net: lan743x: Fix PHY reset handling during initialization and WOL
-Date: Mon, 26 May 2025 11:00:48 +0530
-Message-ID: <20250526053048.287095-3-thangaraj.s@microchip.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250526053048.287095-1-thangaraj.s@microchip.com>
-References: <20250526053048.287095-1-thangaraj.s@microchip.com>
+	s=arc-20240116; t=1748237557; c=relaxed/simple;
+	bh=85rFq+5p+XU7DPVtNBLCJZao5ByBt1eDsLVgQn8O7n4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=cl6tZjph8BFvMrGvseFPvcG2qdtIseSSznL/+9+tdC7vcz01TPdAZRfhM04b1odhJauE2IFCMZKoN/Nel3/T1gmJ6cCEtfkdo3DHpigPMONEnh5oqXwpRFlehxgMe+vqhc6cR+d7b2Y1unln6J2qJ3lZTemFqK+U6TFdH1fpnC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=RtFiJnYd; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 54Q5W96h2608394;
+	Mon, 26 May 2025 00:32:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1748237529;
+	bh=DO4UKFcjT1jdMKNGMOOu+sLadecJqRP1bouop32CCm0=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=RtFiJnYd7nXxwSojuQIrd9mJgtNDVSvW+AGDmXTVJ19vlc3+816bilhY7/7m+vG1f
+	 2HD7EMgz8BfN0DLww5VD9VTMSLsjxHU4m/kzMFIVJtcUFxyLlqTRreooPydkElIPVk
+	 ZupVL31Wl2OeHaoP8CGE9KC8zHq//Hvn9q3wb+bM=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 54Q5W9G14007162
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Mon, 26 May 2025 00:32:09 -0500
+Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 26
+ May 2025 00:32:09 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 26 May 2025 00:32:08 -0500
+Received: from [10.24.69.185] (dhcp-10-24-69-185.dhcp.ti.com [10.24.69.185])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 54Q5W5HQ116398;
+	Mon, 26 May 2025 00:32:06 -0500
+Message-ID: <4f660adb-1cb4-4bcf-9d1c-c13e62818f07@ti.com>
+Date: Mon, 26 May 2025 11:02:05 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: ti: k3-am642-phyboard-electra: Fix PRU-ICSSG
+ Ethernet ports
+To: Wadim Egorov <w.egorov@phytec.de>, <nm@ti.com>, <kristo@kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <upstream@lists.phytec.de>
+References: <20250521053339.1751844-1-w.egorov@phytec.de>
+From: Vignesh Raghavendra <vigneshr@ti.com>
+Content-Language: en-US
+In-Reply-To: <20250521053339.1751844-1-w.egorov@phytec.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Remove lan743x_phy_init from lan743x_hardware_init as it resets the PHY
-registers, causing WOL to fail on subsequent attempts. Add a call to
-lan743x_hw_reset_phy in the probe function to ensure the PHY is reset
-during device initialization.
 
-Fixes: 23f0703c125be ("lan743x: Add main source files for new lan743x driver")
-Signed-off-by: Thangaraj Samynathan <thangaraj.s@microchip.com>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
----
- drivers/net/ethernet/microchip/lan743x_main.c | 13 ++++---------
- 1 file changed, 4 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/net/ethernet/microchip/lan743x_main.c b/drivers/net/ethernet/microchip/lan743x_main.c
-index efa569b670cb..9d70b51ca91d 100644
---- a/drivers/net/ethernet/microchip/lan743x_main.c
-+++ b/drivers/net/ethernet/microchip/lan743x_main.c
-@@ -1346,11 +1346,6 @@ static int lan743x_hw_reset_phy(struct lan743x_adapter *adapter)
- 				  50000, 1000000);
- }
- 
--static int lan743x_phy_init(struct lan743x_adapter *adapter)
--{
--	return lan743x_hw_reset_phy(adapter);
--}
--
- static void lan743x_phy_interface_select(struct lan743x_adapter *adapter)
- {
- 	u32 id_rev;
-@@ -3534,10 +3529,6 @@ static int lan743x_hardware_init(struct lan743x_adapter *adapter,
- 	if (ret)
- 		return ret;
- 
--	ret = lan743x_phy_init(adapter);
--	if (ret)
--		return ret;
--
- 	ret = lan743x_ptp_init(adapter);
- 	if (ret)
- 		return ret;
-@@ -3674,6 +3665,10 @@ static int lan743x_pcidev_probe(struct pci_dev *pdev,
- 	if (ret)
- 		goto cleanup_pci;
- 
-+	ret = lan743x_hw_reset_phy(adapter);
-+	if (ret)
-+		goto cleanup_pci;
-+
- 	ret = lan743x_hardware_init(adapter, pdev);
- 	if (ret)
- 		goto cleanup_pci;
+On 21/05/25 11:03, Wadim Egorov wrote:
+> For the ICSSG PHYs to operate correctly, a 25 MHz reference clock must
+> be supplied on CLKOUT0. Previously, our bootloader configured this
+> clock, which is why the PRU Ethernet ports appeared to work, but the
+> change never made it into the device tree.
+> 
+
+Should this patch have a Fixes tag then?
+
+> Add clock properties to make EXT_REFCLK1.CLKOUT0 output a 25MHz clock.
+> 
+> Signed-off-by: Wadim Egorov <w.egorov@phytec.de>
+> ---
+>  arch/arm64/boot/dts/ti/k3-am642-phyboard-electra-rdk.dts | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/ti/k3-am642-phyboard-electra-rdk.dts b/arch/arm64/boot/dts/ti/k3-am642-phyboard-electra-rdk.dts
+> index f63c101b7d61..129524eb5b91 100644
+> --- a/arch/arm64/boot/dts/ti/k3-am642-phyboard-electra-rdk.dts
+> +++ b/arch/arm64/boot/dts/ti/k3-am642-phyboard-electra-rdk.dts
+> @@ -322,6 +322,8 @@ AM64X_IOPAD(0x0040, PIN_OUTPUT, 7)	/* (U21) GPMC0_AD1.GPIO0_16 */
+>  &icssg0_mdio {
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&icssg0_mdio_pins_default &clkout0_pins_default>;
+> +	assigned-clocks = <&k3_clks 157 123>;
+> +	assigned-clock-parents = <&k3_clks 157 125>;
+>  	status = "okay";
+>  
+>  	icssg0_phy1: ethernet-phy@1 {
+
 -- 
-2.25.1
+Regards
+Vignesh
+https://ti.com/opensource
 
 
