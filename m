@@ -1,126 +1,154 @@
-Return-Path: <linux-kernel+bounces-663152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-663154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5451AC4448
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 22:13:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75BFAAC4453
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 22:15:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71CB1189AC1D
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 20:13:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E2D817ABC51
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 20:14:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BACBD23F405;
-	Mon, 26 May 2025 20:13:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F99E241665;
+	Mon, 26 May 2025 20:15:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YvPKZC8B"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a9DNDbVK"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E3E33594F;
-	Mon, 26 May 2025 20:13:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E577123ED75;
+	Mon, 26 May 2025 20:15:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748290385; cv=none; b=PRImnmVgCwjs4MZmyaT98PGnuv1QwqLaocLpBhkVAOSWDlW6LyHv7UxpK0snEOiQMRsEyWajGiu3RakSyvqWffKJmnwFCXB+fDV/FfD60D4j4I4bLtuhGCbWIk4gtxEFC4KiHOLzeG4yx8hQSVRBnA7fpmAIEY5VikuU4nkaj6o=
+	t=1748290525; cv=none; b=jshFt4FrrqHkIj1N9wxkLc5SCsX8THSTV8aVJcCXN3Jek9f+g653uAhExbhndmhhwTe/DEtE8cC4vwH/JmMxulPZdomcrZNVF/pWhLye3YUDiyURGGF2ae1R4aA3YDxW6SGFYH0/9QAtGKbycRC6Zz9juYWgfOslg4YYFFzI+5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748290385; c=relaxed/simple;
-	bh=bnsE2ty017q1zNmvzRrPKR1CTQHHJV7d8zVVaWLVRxo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YrvV7ar+keY3hWEaSJS1MxtwaSYcVaekzLPO+6pjEBMvEk0ARH3e8+j1PqeOtd1R8k2iwLSOZWpVA1xezCek+b+z+0HZZjL3Pef4zgByJN60oOkaEyi1bTnWixifvc3s8+e7bMku66YqeGH5nbRNeq8w2bCYGHpvxDX8WahHPVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YvPKZC8B; arc=none smtp.client-ip=209.85.128.46
+	s=arc-20240116; t=1748290525; c=relaxed/simple;
+	bh=ohtRGyK05Q4++k9YprJKtDiINTrJ38VxHWprFUmxbjE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bQ8zattVoaORx5stu95k3hvG1U2UbF/tOj0RQpIhGVe4Vk6Xu5p/y1Gneiu6fypvWK4MypheO62JUpBF/w37rdXe0zWna6CybbUyJBcsDwvb5zBrw4aTe439tIkutQ8b+T0Vl8Gpgm3rZpc+5M8zYVRe+I8rvHf570SXcH16Agg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a9DNDbVK; arc=none smtp.client-ip=209.85.167.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-442ec3ce724so21822775e9.0;
-        Mon, 26 May 2025 13:13:03 -0700 (PDT)
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-54b10594812so3501928e87.1;
+        Mon, 26 May 2025 13:15:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748290382; x=1748895182; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=bnsE2ty017q1zNmvzRrPKR1CTQHHJV7d8zVVaWLVRxo=;
-        b=YvPKZC8B1tdGLXyJRO1p9yf+5DzOyLAYRP53ITXYuZMAveyt1Iffu+TyjjfNn2ciWM
-         lj4ZHzD7BEg8j8WtV++RgKZ9oW5y6lac1FhuShhgibFKGUPsPCkJ4G/xVvMyrfjsa5wN
-         TyfpwYKd0pqp/R7KGZgSwl9AHmh8NS5Sx5rGXGLLWffMK826ubh0ChcKvyaianosF9Zy
-         9OyeIKZHfN0FuVXx+dk7LYJDN74xEkZq5bwBGKzOkL1vSxDWGc1Hw9O6qpeu5xrUVwi+
-         Ju/hMzKqqK2Gee76igoxnn0pQXXApPHgOQrWpuOZ4V/ZzHrvNTSeyNDm4TUwDBhghVQx
-         1wlw==
+        d=gmail.com; s=20230601; t=1748290522; x=1748895322; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=iz3Z0SmA3CH68uW+s2njhq2Ak0+uNQJ+8t0g3Yz/k4k=;
+        b=a9DNDbVKGQBqdaEjKgtw9YCJBVzTBuU7djkQ4IVB6D3AxIVpmGDFReDJw//cik0/US
+         gkeAMRanuNX0cPpR6WYvMZVKrcV3SO+3U0Q/4aYSvJTqYx5kW+AbRPOCJeScvTygRw7j
+         NxyO2f/9u2CkH6KAmoxnLzd/kljAm+zyWPdZ7a7U/TfY3TJaCkZI40mMEZOUnuJ7vaKJ
+         0eFy7hhAnwje2gxLUDnU4/bQvPMfCd4VHPe3m9rl7rX4p4Fe6NhSbO8FSvx2vmGs/kYG
+         g5uDjBjMxKgDVc4uHZUAp0ovxOSDAZTF6ATTCV8rzWh/XoCwhd5ZDkweV63wyhpQyiDB
+         K1Ww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748290382; x=1748895182;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bnsE2ty017q1zNmvzRrPKR1CTQHHJV7d8zVVaWLVRxo=;
-        b=D8Z1j9RojGQBW99Yui1quCZe6dCqXZHc99pQsPWLUGWKbO2O7kcqzEWcYmzOO8+MXj
-         xpiG7YJyWM1VlYYoG7giOLFL7IU5uudck/7xyVBVjs/mOFy2gcK+OcKdS+FM9YNwi/wD
-         fYjX7cKrPY1QRuIlg5oXLdeX3qu9PKoUbPE/ccAZ6aPzMdOOouS97OIFZ6veYaydXm1d
-         Glu8adOgT3VbyZlsCHp+aua91wV11tifH+3ZluC/xaBIWlEfBgNEUKQJ5YxLFC7yOqsY
-         kRkvGJcu0QRdNF3itskOoGbMdVMqZfbF3ymRtJ1rEq8q3rjNChl9HcblAiV+EjHjGZFw
-         AQ6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWZp5YVbzQmEBaFtV9PJwscWoogOyYc40TIF8lpYB0wTVSDwKyIl48xq0undrww9nuS5VvdukygyOo33wfT@vger.kernel.org, AJvYcCWz4B7BGyDi+8WWwsYhIUzytVHiqOgEqp0eR6SGxiEkIU1EDG/LVwmKzyuGjU1+93XBSia1NSXnC5M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIN/sNJg9BpfQxqbKSxQdS9rUOeyCmKr4B3gl4RFd1ZVaEqMnI
-	0LnY4weODuWjg5NKi20F1osP4vjHrpsKoia3T5e2I/Oa5xj2BjDNa810
-X-Gm-Gg: ASbGncsluuMxhxeMhhZZoQ79lKsc7cBj8EABExi3WRSnGmdXHsOIlboCBy16WcDSAE4
-	GDVodC3rO8C21NhV0Bvftb2nBaQEI5LmqZ1/+gwwCcX8Xh3GkgrM6nxTM58fI2tSvfthg1jhS3f
-	kNSFpTmjvlzPLho3f1NPagTrhr0YWJavhPiHrittOQPjGtZ0t/Uf9h7YXcsEVcTHhnSUjYlmE/0
-	SaECAJU4trAniS/SjnVMFnwUd0lsn00IsyWMDFfwlkBJOT5C4ML2aWvvBZ/Iu4+Wb/r+QUKFXxK
-	fKHWiCV/4+0itMYZECmNtX9o0oqjgnUnwv9hO9stT+GdH0eGw3WE4+aBOHbQ7T10G/Y4k6RHfQ=
-	=
-X-Google-Smtp-Source: AGHT+IHRZVOvtRV5Ua48CC2FCczPsJuD9og79DxVJ6hZ7v7AwFdZsBQwSfPuQKUMK2DQgn0Nmq04mA==
-X-Received: by 2002:a05:6000:2f88:b0:3a4:d0fe:42af with SMTP id ffacd0b85a97d-3a4d0fe4f10mr6659054f8f.33.1748290381612;
-        Mon, 26 May 2025 13:13:01 -0700 (PDT)
-Received: from [192.168.1.121] ([176.206.99.211])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-447f78b2f19sm242080575e9.32.2025.05.26.13.13.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 May 2025 13:13:01 -0700 (PDT)
-Message-ID: <86d1b019-faec-40ab-b850-8fad22dc4321@gmail.com>
-Date: Mon, 26 May 2025 22:13:00 +0200
+        d=1e100.net; s=20230601; t=1748290522; x=1748895322;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iz3Z0SmA3CH68uW+s2njhq2Ak0+uNQJ+8t0g3Yz/k4k=;
+        b=Y4hmwNrAa2/9DiK82PGmP049PBXeZ/PY7G0/l5mf9/ud41EhPPIEm/5rz90qJlE7O5
+         MgdpohQaCVIN2TvsDWRz6vU5fS7fmWZNYqn/IYVmcIw+HK9DmeBp+e4yo5LzuqAcbkLr
+         WcEWUsFg105fUJjBjIU5oKvsC/oYyUC7NhNr2O9udLAndx0ATZKUdSaSYMiamgOj0+TP
+         o4Q2p0lU3Ifh13sPnp9A3dfcgATzkkgJXvgNjbaTgTR/3ssaZxqaK6nMtMx0XqlwJop2
+         tcV/3flfw5QuKuebVDkKABPLfdof7n+MsK8eq9DnvmAiQdtpQCmjhQAYrxA2IHZjvR8E
+         K6Dg==
+X-Forwarded-Encrypted: i=1; AJvYcCUisb2iFKypYmQz25ZW01AuDR9EmRC6qvs7IiLiom/S0oPvm+jnqSxNmzpPCTyXiRvD8HKQN7U7@vger.kernel.org, AJvYcCUnRZ2AeQgp3bSNwVshFZt73P8PSuDKXHRRn8YuzxLnvBD2TsAXcwVv9suy44mtLaOg1TjyV30E26zmeYk=@vger.kernel.org, AJvYcCWy5Nq5aiNUZbdWNaiSCJbnHoy3bFIuT2UWASG3OXD+m3+eM+4ka9P1Gclb7Vmtzon4WxSrAtgm@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsXT6QbhM6ez3PAjR87Er9IlAIYOpMxUJQMAazqH+pxNyMfF7w
+	bYAqBfa0BGrLx6nRTWl+4IW5ipcUj9+ad4NaQSLymRd7MdXU4bXvxi3b
+X-Gm-Gg: ASbGncukH/b8XVoYXbafd6/HNRG6zhC8jRANoouqrXvBkP69ogHAgh9lgUj1hNifEn8
+	SueFimg3i1PQFV8iNqkuOsfbfr9eIC2FqqjnL1C5gIcLU9nvZA6X5MHiRk3aZI+jU6RxxtdzZ1K
+	Lpd2S0s2aR5lGUMgqfw1V8+JARdwRMkU/5+CntNcK+pfh+oSwtty9zkI7+CmPUT/bOeFR+axiSd
+	MRTKWsgyGKoX3sHrf/r0ZIHRryLCqHaVKl5XewuEAeiZ/3rxgfN1W9RZ4DAbIuib05BflbkpAOu
+	TSwrwGRcPO5ibvLHfj49KJGLvTgM7BLeFLtbpAdDWYnbcICLkRwCWpMpTRNuJnvlhg==
+X-Google-Smtp-Source: AGHT+IGycTsl0j5+lha/9zLWk2PFmXfqE+GNYPHs8FfhaZmKI2qkSFlQux6x1txIjajzO9kiHd4gIQ==
+X-Received: by 2002:a05:6512:b9a:b0:549:6759:3979 with SMTP id 2adb3069b0e04-5521c7ade8fmr3277731e87.18.1748290521529;
+        Mon, 26 May 2025 13:15:21 -0700 (PDT)
+Received: from home.paul.comp (paulfertser.info. [2001:470:26:54b:226:9eff:fe70:80c2])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5532642ee85sm163125e87.138.2025.05.26.13.15.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 May 2025 13:15:21 -0700 (PDT)
+Received: from home.paul.comp (home.paul.comp [IPv6:0:0:0:0:0:0:0:1])
+	by home.paul.comp (8.15.2/8.15.2/Debian-22+deb11u3) with ESMTP id 54QKFHOQ030107;
+	Mon, 26 May 2025 23:15:18 +0300
+Received: (from paul@localhost)
+	by home.paul.comp (8.15.2/8.15.2/Submit) id 54QKFF40030106;
+	Mon, 26 May 2025 23:15:15 +0300
+Date: Mon, 26 May 2025 23:15:14 +0300
+From: Paul Fertser <fercerpav@gmail.com>
+To: Jerry C Chen/WYHQ/Wiwynn <Jerry_C_Chen@wiwynn.com>
+Cc: "patrick@stwcx.xyz" <patrick@stwcx.xyz>,
+        Samuel Mendoza-Jonas <sam@mendozajonas.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH v1] net/ncsi: fix buffer overflow in getting version id
+Message-ID: <aDTL0uWIgLRgyu6s@home.paul.comp>
+References: <20250515083448.3511588-1-Jerry_C_Chen@wiwynn.com>
+ <aCWuCPsm+G5EBOt/@home.paul.comp>
+ <SEZPR04MB685354203C242413D1EBE96CB098A@SEZPR04MB6853.apcprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/2] iio: fix suspend and resume triggering for bmi160
- and bmi270
-To: Andy Shevchenko <andy@kernel.org>
-Cc: Jonathan Cameron <jic23@kernel.org>, David Lechner
- <dlechner@baylibre.com>, =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Alex Lanzano <lanzano.alex@gmail.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- Peter Zijlstra <peterz@infradead.org>, Danila Tikhonov <danila@jiaxyga.com>,
- Greg KH <gregkh@linuxfoundation.org>,
- "Derek J . Clark" <derekjohn.clark@gmail.com>,
- =?UTF-8?Q?Philip_M=C3=BCller?= <philm@manjaro.org>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250525142530.71955-1-benato.denis96@gmail.com>
- <aDTHzs5AtiNmYIAF@smile.fi.intel.com>
-Content-Language: en-US, it-IT, en-US-large
-From: Denis Benato <benato.denis96@gmail.com>
-In-Reply-To: <aDTHzs5AtiNmYIAF@smile.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <SEZPR04MB685354203C242413D1EBE96CB098A@SEZPR04MB6853.apcprd04.prod.outlook.com>
 
+Hi Jerry,
 
-On 5/26/25 21:58, Andy Shevchenko wrote:
-> On Sun, May 25, 2025 at 04:25:28PM +0200, Denis Benato wrote:
->> Two imu devices bmi160 and bmi270 are similar to bmi323, with the same bug and
->> a common usecase: fix the aforementioned bug about triggering not resuming
->> after sleep in the same way it was solved for the bmi323 device driver.
->>
->> The bmi270 patch has been tested on a device where the device irq pin
->> is connected to the CPU ensuring it doesn't cause harm to devices that
->> do not use hrtimer or other external triggers.
->>
->> Changelog from v1 [1]
->> - include linux/pm.h where needed
->> - used "Closed" to reference the solved issue for each driver
->> - merged two lines into one (on both drivers)
-> I got this series twice without any (?) difference in the versions. Care to
-> explain what's going on?
->
->
-I am sorry: mails were not being sent to the main lkml nor the iio mailing list and so
-I resent to everybody, otherwise doing "answer to all" would have created a mess
-where discussions would get lost.
+On Fri, May 23, 2025 at 07:32:26AM +0000, Jerry C Chen/WYHQ/Wiwynn wrote:
+> Sorry for late replay, it takes some effort to change company policy of the proprietary.
+
+I can imagine! However it's not necessary to send patches from
+corporate e-mail address via the corporate mail server, you can just
+send from your own personal account with the appropriate From:
+specification to attribute it to your corporate address[0].
+
+> For the questions:
+
+Please consider just using standard inline method of replying in the
+future, letting your MUA quote the original message for context
+properly.
+
+> 1. What upstream tree did you intend it for and why?
+>  - Linux mainline
+>   We are developing openBMC with kernel-6.6.
+>   For submitting patch to kernel-6.6 stable tree, it should exist in mainline first.
+>   Reference: https://github.com/openbmc/linux/commits/dev-6.6/
+
+Indeed, and the process of submitting to mainline implies that for
+each subsystem there's a tree which subsystem maintainer(s) use for
+the integration and which is later offered as a the pull request for
+the upcoming version, usually it's called {subsystem}-next (also such
+trees get tested together being merged into linux-next regularly). I
+guess in this case you should make sure your patch applies to net-next
+(and makes sense there). Neither the current submission[1] nor the
+previous one[2] were applicable (see "netdev/tree_selection success
+Guessing tree name failed - patch did not apply" and indeed I tried to
+"git am" it manually to what was "net-next" back then and it failed.
+
+> 2. Have you seen such cards in the wild? It wouldn't harm mentioning
+> specific examples in the commit message to probably help people
+> searching for problems specific to them later. You can also consider
+> adding Fixes: and Cc: stable tags if this bugfix solves a real issue
+> and should be backported to stable kernels.
+>  - This NIC is developed by META terminus team and the problematic string is:
+>  The channel Version Str : 24.12.08-000
+>  I will update it to commit message later.
+
+I see, thank you. Sigh, this 12 characters limit doesn't seem to make
+much sense, too restrictive to fit a useful part of "git describe
+--tags" even, but it is what it is...
+
+[0] https://www.kernel.org/doc/html/latest/process/submitting-patches.html#from-line
+[1] https://patchwork.kernel.org/project/netdevbpf/patch/20250515083448.3511588-1-Jerry_C_Chen@wiwynn.com/
+[2] https://patchwork.kernel.org/project/netdevbpf/patch/20250227055044.3878374-1-Jerry_C_Chen@wiwynn.com/
 
