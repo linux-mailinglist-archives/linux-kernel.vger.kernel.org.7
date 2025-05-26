@@ -1,200 +1,192 @@
-Return-Path: <linux-kernel+bounces-662872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-662876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2FF8AC40C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 15:56:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35B2AAC40CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 15:59:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 298581899AC5
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 13:56:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 935773A3E22
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 13:58:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E0BD20D4E4;
-	Mon, 26 May 2025 13:56:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA33E20D516;
+	Mon, 26 May 2025 13:59:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="etoqA2Oq"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="N59tftQH"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 097E41D2F42
-	for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 13:56:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6794A83CC7;
+	Mon, 26 May 2025 13:59:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748267772; cv=none; b=OPmmFVGSzcl1NuhkVe0SFTJnPr/EkpFj6wDs4HV8Xg4/K1clCTHzTx1ARMpQMa2utclwXvdxHAFVi9vY/MQ/xEwyq1QFTZK4RSZ6uEQKGpAlYeveeDC5uPLNezdF7Rd9eAhs8dY3Mj8y2y1R3uN+DeZT5oIbKm5NDh4cSBoexL8=
+	t=1748267947; cv=none; b=lD63Ohs2zpPzmd8Jqh/pqh5vdJcsjqRe13nRsRNCJeB4QXkdnE3MhbPx3ZHzLGswL4K9kLw0dYVxeLxxfJPlP04DzKADIbOeMkzqbvl/NLf/DFtcqFQDld/g1PoE8COsPyY0N60BDSKIwayhJx4Q8mRzYiOYb1wbPjvo+usJf0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748267772; c=relaxed/simple;
-	bh=8/rgdMR7ZxeHT7lcm2WF5v/murhX9m6bqlwpbwbmYXE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TwLBNnvWuS2n39dMcU6ZNy3siu9xl/VV/k6AxgpUC7accZgueVS9tMY8jqysoeizcAJYpUUzAgpvbC9RG+fLtOe7qgKSw1yoi3QfLmdyy2OB+XChN3o6Zn2KctjeXuWRf7TK9Dx0yCNeL0yTvnszRVHZLQKf1zq2X/FosbcjPSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=etoqA2Oq; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1748267769;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZHjg19p96sdYw4xDXVkvX1Jw1LT1R8JNp7/yMvD2jYc=;
-	b=etoqA2Oq/tD7MVKlvvCj+8J5BXsKMFUHDbm7Ayk393SbUVjtrUATCKwF2eBJs3+bxRSAwJ
-	EBb2Y44qxj7iS35z8sKF/H7FVEyQv+nOtAQ94ltkFf5fP05b/PyDKfdYpCEn6nZNW28fQu
-	39Sg9ngN5UquwEti9TEpfzL8TsudqhU=
-Received: from mail-yb1-f197.google.com (mail-yb1-f197.google.com
- [209.85.219.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-493-thO0TCC0Ms-qaVVPbZzmrw-1; Mon, 26 May 2025 09:56:08 -0400
-X-MC-Unique: thO0TCC0Ms-qaVVPbZzmrw-1
-X-Mimecast-MFC-AGG-ID: thO0TCC0Ms-qaVVPbZzmrw_1748267768
-Received: by mail-yb1-f197.google.com with SMTP id 3f1490d57ef6-e7d9a27bdf0so2271199276.1
-        for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 06:56:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748267768; x=1748872568;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZHjg19p96sdYw4xDXVkvX1Jw1LT1R8JNp7/yMvD2jYc=;
-        b=FPkL+OoYZ481u9fkEkii6BhcglhK/OyNP0OZg+D13Hs/DzVrPcqd6Wj5koY3PoIb7q
-         zld8rPsiRz5AwibRSnq6qJbxpvBHlTuOtDFZOeVYkMC5hurTHFB+fnfPU9Aqyy43QOpV
-         AlYY2SWBAiVLrxTSDxXYTHK7ojS4tmPCys3WOql5HnHNFycV3U0u/gcq6evycPWFRA/3
-         rBENB4y0X/hNy1HBWDnUSw9RL1ZXYAuGGSVr1FZg9R9emRfKANmOJZUfVOR426kwQsKb
-         UtALMnz5JdVf/uPF62Kt3SbsXfCDpW9jnQ1nHuQHXZfJTC38AJLfGgZ7mo9nmd5MhyIy
-         SBug==
-X-Forwarded-Encrypted: i=1; AJvYcCVvdTsxk/XiNxyOr2qg7Ry7KBMstXOthR+Efc5tnvcz42Xq7St9UqWGxhWILHYC66cpwiczWewMZbbN7Fc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGxayxTA838IAk4e82tHg74yB4BQMAXIiH9Yux4CkBViw8v3Kd
-	I056s7jRBdWP2Mb1f1xtQYCHUUzHRkZBNDQimUOBRTTLVqujLfmzQ/BMzT0O9/3eEwusQbtu/aU
-	RMTpClKfMTIdcpr+qp8JeESiYe9Tez0SfBxD6pLzBeXzKplx4rLw6dmuKzzXuBtkVvpk7v6NNP9
-	0ImW5a3qDX4gSr33dVrNdL8eKDKqBAu4SBwENY5mm1
-X-Gm-Gg: ASbGnct/qCpezHIQC6eKMCXMSupZrHYorj0507e5okeSHy1dbMV7qHlY3rxniLh1Iz9
-	AaIHlMvyLVsMuY1c4QxklNCRjlte2ihZ89QGiYH85GplziMZXeQso1xsKUVwWPJ/aMHU=
-X-Received: by 2002:a05:6902:726:b0:e7d:9926:8bfa with SMTP id 3f1490d57ef6-e7d992698bamr7492106276.40.1748267767946;
-        Mon, 26 May 2025 06:56:07 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH6/c9lr+TAbVpG6J4lomzrC+5Fqw+cD9liLOLTj4YHysZUc3zSZfIwwilBGPgcyufFRQ1Bu826/aDBdCJ/pfU=
-X-Received: by 2002:a05:6902:726:b0:e7d:9926:8bfa with SMTP id
- 3f1490d57ef6-e7d992698bamr7492081276.40.1748267767587; Mon, 26 May 2025
- 06:56:07 -0700 (PDT)
+	s=arc-20240116; t=1748267947; c=relaxed/simple;
+	bh=dKulxEiY15lZectwjfcMxxTI9E66Z9Afnh4p1oVGxWY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=SiIEpWzfw5bMZYnBdB4vSKxB6pbmDOkQ8eHm966STlMPRC0VTZ4HLhWjy9r1zKTCs4tnTzSbm27e0ZG4jSrAzc6YfS4qPtrOhNshWAuCePSg3pl6Lkr6MyhmwB+aZhhz21zq46J1HZ4VZa/4GSWhu982fwKW48rXfXsZSoBjTts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=N59tftQH; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54QB4ouB008311;
+	Mon, 26 May 2025 15:58:22 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=iME9KjGK67m/xnxG1WewEK
+	y8P1UELljqtP5FxofjwTI=; b=N59tftQHIzhDI2/lM6Kd+IfC4HPphcauLRknuR
+	d7F+3gpdoBHpdj/G1RvVsznikUV0MTyon2nNnh4eQeqRPv8ChEtJeEru1y6Ex9zD
+	wChqXqcT8SSjY9kjDMgh+kXe73wHdjAjl4LrSXDtqsKlx+d138sajasF3bZWWvBC
+	vUkJgV5GkfGqT9iEq8uN2XfTjDGn67g9JK1RGjn0wdQ0110zRQBDKvrPUemsxg1Z
+	3KuuH+locyPobhB0/o9NotnCXz1cCDgY3FS5G/rNOkmwEnhXrbVb75PmPbvw40yU
+	/IdAjo8WYLE71TJzB6sdrkdLgdSJgXbQUwDjjUQ9ZvQc3Qmg==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 46u5f1ych7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 26 May 2025 15:58:21 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 7A06440044;
+	Mon, 26 May 2025 15:57:14 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id DBD5EA605A1;
+	Mon, 26 May 2025 15:56:39 +0200 (CEST)
+Received: from localhost (10.48.87.141) by SHFDAG1NODE1.st.com (10.75.129.69)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 26 May
+ 2025 15:56:39 +0200
+From: Gatien Chevallier <gatien.chevallier@foss.st.com>
+Date: Mon, 26 May 2025 15:56:29 +0200
+Subject: [PATCH] Input: gpio-keys - fix a sleep while atomic with
+ PREEMPT_RT
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250526134949.907948-1-kshk@linux.ibm.com>
-In-Reply-To: <20250526134949.907948-1-kshk@linux.ibm.com>
-From: Stefano Garzarella <sgarzare@redhat.com>
-Date: Mon, 26 May 2025 15:55:55 +0200
-X-Gm-Features: AX0GCFu9lGy_XLKzXTOFqdveWLMPIwPqhG0BIVwB-1v6mcjATpC-MDj6A7atdG4
-Message-ID: <CAGxU2F40O3xDSwA4m6r+O5bWoTJgRXqGfyMiLH_sMij+YmE5aw@mail.gmail.com>
-Subject: Re: [PATCH net v2] vsock/test: Fix occasional failure in SOCK_STREAM
- SHUT_RD test
-To: Konstantin Shkolnyy <kshk@linux.ibm.com>
-Cc: virtualization@lists.linux.dev, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, mjrosato@linux.ibm.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20250526-gpio_keys_preempt_rt-v1-1-09ddadf8e19d@foss.st.com>
+X-B4-Tracking: v=1; b=H4sIAAxzNGgC/x2MQQqAIBAAvxJ7TlAhyb4SIVGrLZGKShTR35OOw
+ zDzQMZEmGFoHkh4UqbgK4i2gWWbvUNGa2WQXHa8k4q5SMHseGcTE+IRi0mFCa6EXno7a6GgplV
+ Zuv7tOL3vB+IbmDRmAAAA
+X-Change-ID: 20250526-gpio_keys_preempt_rt-10619c8fa916
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Sebastian Andrzej Siewior
+	<bigeasy@linutronix.de>,
+        Clark Williams <clrkwllms@kernel.org>,
+        Steven
+ Rostedt <rostedt@goodmis.org>,
+        Paul Cercueil <paul@crapouillou.net>
+CC: <linux-input@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-rt-devel@lists.linux.dev>,
+        Fabrice Gasnier
+	<fabrice.gasnier@foss.st.com>,
+        Gatien Chevallier
+	<gatien.chevallier@foss.st.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3169;
+ i=gatien.chevallier@foss.st.com; h=from:subject:message-id;
+ bh=DHxEGb/AHMv5Ys0f78ixiNKy6Fq8z4olwXnij6qd/UY=;
+ b=owEB7QES/pANAwAKAar3Rq6G8cMoAcsmYgBoNHMWhHk7FXvpM83LciQUxRozhzBRNolr/gI+0
+ xfOyz+JYH2JAbMEAAEKAB0WIQRuDsu+jpEBc9gaoV2q90auhvHDKAUCaDRzFgAKCRCq90auhvHD
+ KJHvDAC91aT4V0KtljJ3XRSPIZfu3e6zZwtx2RD9L/5XKxZAJO2SawRHPAtuTumMEkKtToShzak
+ jRRFS4dbz9JtcxAXYWtYdnPK26Ahorao+XbnK+g9OeNdDdnaZX5pUPi9eqeBXduhLlYklwxP9rz
+ P8JTMLNlcW0uoZdLD5nqLEeQT5ujokfpmnVUZX0AQJVrRuS5Ia3Ok4q1ycmLRIHglVj70jecPX3
+ 6pz1MSG6PIg9lJHExHjKwQHhvSxukHSVDVEoX8azZXD6WAw5KVonqVmkty73zhmTN6UxDbUkVEk
+ Da4/O6o0CJvnEG1WmVOCK50+eEcxsMa6aZf2AQ44zXEHYwylSJRYgYt9z+BqO+wjPzjVQl/8+G6
+ vFP7Uvt1E7CEMEPEdx9iClH8toYits3np4jIXGIdxctanL3LGcN4ZHxEXmEXnM+BloT0WrER6G7
+ gMinoYt2JLKSHUm1g5lDTAzFuThEt7ufzvb3gc5TNz073dmqMv4VkVGKMY3FUrvvcYj4A=
+X-Developer-Key: i=gatien.chevallier@foss.st.com; a=openpgp;
+ fpr=6E0ECBBE8E910173D81AA15DAAF746AE86F1C328
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-26_07,2025-05-26_02,2025-03-28_01
 
-On Mon, 26 May 2025 at 15:50, Konstantin Shkolnyy <kshk@linux.ibm.com> wrote:
->
-> The test outputs:
-> "SOCK_STREAM SHUT_RD...expected send(2) failure, got 1".
->
-> It tests that shutdown(fd, SHUT_RD) on one side causes send() to fail on
-> the other side. However, sometimes there is a delay in delivery of the
-> SHUT_RD command, send() succeeds and the test fails, even though the
-> command is properly delivered and send() starts failing several
-> milliseconds later.
->
-> The delay occurs in the kernel because the used buffer notification
-> callback virtio_vsock_rx_done(), called upon receipt of the SHUT_RD
-> command, doesn't immediately disable send(). It delegates that to
-> a kernel thread (via vsock->rx_work). Sometimes that thread is delayed
-> more than the test expects.
->
-> Change the test to keep calling send() until it fails or a timeout occurs.
->
-> Fixes: b698bd97c5711 ("test/vsock: shutdowned socket test")
-> Signed-off-by: Konstantin Shkolnyy <kshk@linux.ibm.com>
-> ---
-> Changes in v2:
->  - Move the new function to utils.c.
+From: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
 
-BTW I think I already fixed the same issue in this series:
-https://lore.kernel.org/netdev/20250514141927.159456-1-sgarzare@redhat.com/
+When enabling PREEMPT_RT, the gpio_keys_irq_timer() callback runs in
+hard irq context, but the input_event() takes a spin_lock, which isn't
+allowed there as it is converted to a rt_spin_lock().
 
-Can you check it?
+[ 4054.289999] BUG: sleeping function called from invalid context at kernel/locking/spinlock_rt.c:48
+[ 4054.290028] in_atomic(): 1, irqs_disabled(): 1, non_block: 0, pid: 0, name: swapper/0
+...
+[ 4054.290195]  __might_resched+0x13c/0x1f4
+[ 4054.290209]  rt_spin_lock+0x54/0x11c
+[ 4054.290219]  input_event+0x48/0x80
+[ 4054.290230]  gpio_keys_irq_timer+0x4c/0x78
+[ 4054.290243]  __hrtimer_run_queues+0x1a4/0x438
+[ 4054.290257]  hrtimer_interrupt+0xe4/0x240
+[ 4054.290269]  arch_timer_handler_phys+0x2c/0x44
+[ 4054.290283]  handle_percpu_devid_irq+0x8c/0x14c
+[ 4054.290297]  handle_irq_desc+0x40/0x58
+[ 4054.290307]  generic_handle_domain_irq+0x1c/0x28
+[ 4054.290316]  gic_handle_irq+0x44/0xcc
 
-Thanks,
-Stefano
+Considering the gpio_keys_irq_isr() can run in any context, e.g. it can
+be threaded, it seems there's no point in requesting the timer isr to
+run in hard irq context.
 
->
->  tools/testing/vsock/util.c       | 11 +++++++++++
->  tools/testing/vsock/util.h       |  1 +
->  tools/testing/vsock/vsock_test.c | 14 ++------------
->  3 files changed, 14 insertions(+), 12 deletions(-)
->
-> diff --git a/tools/testing/vsock/util.c b/tools/testing/vsock/util.c
-> index de25892f865f..04ac88dc4d3a 100644
-> --- a/tools/testing/vsock/util.c
-> +++ b/tools/testing/vsock/util.c
-> @@ -798,3 +798,14 @@ void enable_so_zerocopy_check(int fd)
->         setsockopt_int_check(fd, SOL_SOCKET, SO_ZEROCOPY, 1,
->                              "setsockopt SO_ZEROCOPY");
->  }
-> +
-> +void vsock_test_for_send_failure(int fd, int send_flags)
-> +{
-> +       timeout_begin(TIMEOUT);
-> +       while (true) {
-> +               if (send(fd, "A", 1, send_flags) == -1)
-> +                       return;
-> +               timeout_check("expected send(2) failure");
-> +       }
-> +       timeout_end();
-> +}
-> diff --git a/tools/testing/vsock/util.h b/tools/testing/vsock/util.h
-> index d1f765ce3eee..58c17cfb63d4 100644
-> --- a/tools/testing/vsock/util.h
-> +++ b/tools/testing/vsock/util.h
-> @@ -79,4 +79,5 @@ void setsockopt_int_check(int fd, int level, int optname, int val,
->  void setsockopt_timeval_check(int fd, int level, int optname,
->                               struct timeval val, char const *errmsg);
->  void enable_so_zerocopy_check(int fd);
-> +void vsock_test_for_send_failure(int fd, int send_flags);
->  #endif /* UTIL_H */
-> diff --git a/tools/testing/vsock/vsock_test.c b/tools/testing/vsock/vsock_test.c
-> index 613551132a96..b68a85a6d929 100644
-> --- a/tools/testing/vsock/vsock_test.c
-> +++ b/tools/testing/vsock/vsock_test.c
-> @@ -1060,15 +1060,9 @@ static void sigpipe(int signo)
->
->  static void test_stream_check_sigpipe(int fd)
->  {
-> -       ssize_t res;
-> -
->         have_sigpipe = 0;
->
-> -       res = send(fd, "A", 1, 0);
-> -       if (res != -1) {
-> -               fprintf(stderr, "expected send(2) failure, got %zi\n", res);
-> -               exit(EXIT_FAILURE);
-> -       }
-> +       vsock_test_for_send_failure(fd, 0);
->
->         if (!have_sigpipe) {
->                 fprintf(stderr, "SIGPIPE expected\n");
-> @@ -1077,11 +1071,7 @@ static void test_stream_check_sigpipe(int fd)
->
->         have_sigpipe = 0;
->
-> -       res = send(fd, "A", 1, MSG_NOSIGNAL);
-> -       if (res != -1) {
-> -               fprintf(stderr, "expected send(2) failure, got %zi\n", res);
-> -               exit(EXIT_FAILURE);
-> -       }
-> +       vsock_test_for_send_failure(fd, MSG_NOSIGNAL);
->
->         if (have_sigpipe) {
->                 fprintf(stderr, "SIGPIPE not expected\n");
-> --
-> 2.34.1
->
+So relax the hrtimer not to use the hard context. This requires the
+spin_lock to be added back in gpio_keys_irq_timer().
+
+Fixes: 019002f20cb5 ("Input: gpio-keys - use hrtimer for release timer")
+Suggested-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Signed-off-by: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
+Signed-off-by: Gatien Chevallier <gatien.chevallier@foss.st.com>
+---
+ drivers/input/keyboard/gpio_keys.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/input/keyboard/gpio_keys.c b/drivers/input/keyboard/gpio_keys.c
+index 5c39a217b94c8ad03a8542380eed741fccdca5da..99fc7d3c29ea5809604915782525fecacb151612 100644
+--- a/drivers/input/keyboard/gpio_keys.c
++++ b/drivers/input/keyboard/gpio_keys.c
+@@ -448,12 +448,15 @@ static enum hrtimer_restart gpio_keys_irq_timer(struct hrtimer *t)
+ 						      struct gpio_button_data,
+ 						      release_timer);
+ 	struct input_dev *input = bdata->input;
++	unsigned long flags;
+ 
++	spin_lock_irqsave(&bdata->lock, flags);
+ 	if (bdata->key_pressed) {
+ 		input_report_key(input, *bdata->code, 0);
+ 		input_sync(input);
+ 		bdata->key_pressed = false;
+ 	}
++	spin_unlock_irqrestore(&bdata->lock, flags);
+ 
+ 	return HRTIMER_NORESTART;
+ }
+@@ -486,7 +489,7 @@ static irqreturn_t gpio_keys_irq_isr(int irq, void *dev_id)
+ 	if (bdata->release_delay)
+ 		hrtimer_start(&bdata->release_timer,
+ 			      ms_to_ktime(bdata->release_delay),
+-			      HRTIMER_MODE_REL_HARD);
++			      HRTIMER_MODE_REL);
+ out:
+ 	return IRQ_HANDLED;
+ }
+@@ -628,7 +631,7 @@ static int gpio_keys_setup_key(struct platform_device *pdev,
+ 
+ 		bdata->release_delay = button->debounce_interval;
+ 		hrtimer_setup(&bdata->release_timer, gpio_keys_irq_timer,
+-			      CLOCK_REALTIME, HRTIMER_MODE_REL_HARD);
++			      CLOCK_REALTIME, HRTIMER_MODE_REL);
+ 
+ 		isr = gpio_keys_irq_isr;
+ 		irqflags = 0;
+
+---
+base-commit: 0ff41df1cb268fc69e703a08a57ee14ae967d0ca
+change-id: 20250526-gpio_keys_preempt_rt-10619c8fa916
+
+Best regards,
+-- 
+Gatien Chevallier <gatien.chevallier@foss.st.com>
 
 
