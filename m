@@ -1,96 +1,115 @@
-Return-Path: <linux-kernel+bounces-662319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-662321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD93DAC38C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 06:41:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 806ADAC38C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 06:42:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F9873AB186
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 04:41:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 347093AF445
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 04:41:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96ACC1AA7A6;
-	Mon, 26 May 2025 04:41:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8825F9E8;
+	Mon, 26 May 2025 04:42:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hx5AEqT/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ghWZRD9g"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F002A1A5BB7;
-	Mon, 26 May 2025 04:41:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ED7A1A5BB7;
+	Mon, 26 May 2025 04:42:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748234498; cv=none; b=Bp7AvJ5fZO5TMA3Si0jOGegnQhXBQkYnywdN4gnppCtieo+Xqm9yO8pc8bOcDBG0MCaqfyYJU1/62FWLrf361Z+XSUdTD8LMhpXojl3v1w2dlKByzIZpmuDBWfHXN/8uYGS9XTyN7eNDhIybd9h6x0DQO38pEVQIyP0eDoBtwP8=
+	t=1748234532; cv=none; b=Hbg+DMVs+I4o73UOujAc7mPz7ZWzmIpzC+PCNGZCTv1JhcOBBIYVLY7vnk6qHKXxwC3Cs4bYFNmQGUzSURWiwjjsWkvdi45d3psWDJqgcghJZFgm+NvDs70Css7t7anRSgxkoh9cVEfMyU16dLsBOso4ccpogfQ4xLSCZCr8uq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748234498; c=relaxed/simple;
-	bh=Y1XraJq9kE/HXXuiK/BxlucfeSWavk0dpOiPe49xlu4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=HaQJWBs8vgGLoWrRn8pcuKPybBqGZQDNu50JIOANHZBEajmIGSHrtjKggrEHMgUH/5GnMqKAMSqH6S8uwPsYSnJyIEuWgsf+IxJ3dgbuRJZNZbiPlNlDN9M3whncCCv8C2n1lwz0UrNSm9kuTcFRHODs/ICPjvVkleL1AKHlCoE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hx5AEqT/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FFDCC4CEE7;
-	Mon, 26 May 2025 04:41:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748234497;
-	bh=Y1XraJq9kE/HXXuiK/BxlucfeSWavk0dpOiPe49xlu4=;
-	h=Date:From:To:Cc:Subject:Reply-To:From;
-	b=hx5AEqT/jRoHfdnN8vI2gJX2o5yo3/vcXNY9k5Hscc15BhYXJLbQsHZp2ViiWi3/F
-	 J12G/RVJIkONTmTxpQ71AACBkh/NooeOjXS5pncPO7Kydl4bKwAHlNTWnnjG6fqzPP
-	 190/MVibmkrGk7IIaTc/AL8w8jA1Gju8ex1IgBPMK8mZs4RSXFtxyy0Ec2fQ5ND6t9
-	 JhE0FKKOXVkTqWpa4jfuicOv2SLAAFzlbrnOUSXReLX2KsD5QzrtNwZas7SC5vJGYD
-	 k5y+W5jYPibxFiNiw4cQhD2nqX3X6vJjl7QnyHjCXflpUt7Wj4O3/8K9YhPmeL/ON/
-	 0khvub9Ki0/Xg==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id EFF47CE0854; Sun, 25 May 2025 21:41:36 -0700 (PDT)
-Date: Sun, 25 May 2025 21:41:36 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: torvalds@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, lkmm@lists.linux.dev,
-	kernel-team@meta.com, akiyks@gmail.com, urezki@gmail.com
-Subject: [GIT PULL] LKMM changes for v6.16
-Message-ID: <737fd7ca-57d8-47cc-b6d4-e3e701ffc733@paulmck-laptop>
-Reply-To: paulmck@kernel.org
+	s=arc-20240116; t=1748234532; c=relaxed/simple;
+	bh=wh6FAG1MYBL44zjA9AdlYjou/dw0Qo4I6P1h8EWlDlE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=RBr1b0ybiGzcko2CDGsF3QD2b8pGTx5RVYeINvgBYigOAb2l3sosBSKFWO957Ut0DXb51vxiWvImOs+Bk8UHeXsqgTHbarUvWGfBD4EVzIvboQNPaj1Kto8LL6WBB6rtxR+jbzr5oqg70k3dcgleeCzeDTOPIAeNnPq81srkBEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=ghWZRD9g; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1748234526;
+	bh=Exd92gNvIvV9e2aFllw6Zejj3A4JmFBEJQTUCw7k6T4=;
+	h=Date:From:To:Cc:Subject:From;
+	b=ghWZRD9gXbi9FWreBoWxK5fSGTObTrZdrsoRRB5M1eE2rdfCKuW0usoFa/TfS9yLp
+	 a+tz7nB3SEBd1rWh/VsSrVSgAXvT2p5Z7NhMOpAg5kboXeTD1fjU38nA1ArznprgAk
+	 fOK+oK/kCO0BJAHqxWWrK5BWLhqNiJY8Ah39XLbhV22k4cRplWQjf1fgOpTsaaliaF
+	 yUNzplMWZfGoEDHrnN7EdlQkdzVEsKS/HYAx2nRBzoxIm4QLkUmbKvQqUEwkC7Z6Oh
+	 ULj0r3mxA/LYH112Z7o7HfTbkbL/2MsS92Zopr5umE5vd4mBcpkuufBf7hPjrrukmV
+	 TN+aGgKMZY6HA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4b5NQj0KBGz4wvg;
+	Mon, 26 May 2025 14:42:04 +1000 (AEST)
+Date: Mon, 26 May 2025 14:42:04 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
+ "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>,
+ Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the tip tree with the bcachefs tree
+Message-ID: <20250526144204.658ddfc7@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: multipart/signed; boundary="Sig_/lHW/FY9AoZ/Fkf+_J3nU15Q";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Hello, Linus,
+--Sig_/lHW/FY9AoZ/Fkf+_J3nU15Q
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-When the v6.16 merge window opens, please pull this LKMM update from:
+Hi all,
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git tags/lkmm.2025.05.25a
-  # HEAD: 5c9e0062989e5d2bd77b75c432b54e8ec7689bc7: tools/memory-model/Documentation: Fix SRCU section in explanation.txt (2025-04-23 12:17:04 -0700)
+Today's linux-next merge of the tip tree got a conflict in:
 
-----------------------------------------------------------------
-lkmm: Update documentation
+  fs/bcachefs/clock.c
 
-Changes
--------
+between commit:
 
-* Cross-references, typos, broken URLs (Akira Yokosawa)
-* Clarify SRCU explanation (Uladzislau Rezki)
+  881e64bc3a17 ("bcachefs: bch2_kthread_io_clock_wait_once()")
 
-----------------------------------------------------------------
-Akira Yokosawa (4):
-      tools/memory-model: docs/README: Update introduction of locking.txt
-      tools/memory-model: docs/simple.txt: Fix trivial typos
-      tools/memory-model: docs/ordering: Fix trivial typos
-      tools/memory-model: docs/references: Remove broken link to imgtec.com
+from the bcachefs tree and commit:
 
-Uladzislau Rezki (Sony) (1):
-      tools/memory-model/Documentation: Fix SRCU section in explanation.txt
+  aad823aa3a7d ("treewide, timers: Rename destroy_timer_on_stack() as timer=
+_destroy_on_stack()")
 
- tools/memory-model/Documentation/README          |  7 +++++--
- tools/memory-model/Documentation/explanation.txt |  2 +-
- tools/memory-model/Documentation/locking.txt     |  5 +++++
- tools/memory-model/Documentation/ordering.txt    | 22 +++++++++++-----------
- tools/memory-model/Documentation/recipes.txt     |  4 ++++
- tools/memory-model/Documentation/references.txt  |  3 +--
- tools/memory-model/Documentation/simple.txt      |  4 ++--
- 7 files changed, 29 insertions(+), 18 deletions(-)
+from the tip tree.
+
+I fixed it up (the former removed a line updated by the latter, so I
+just used that) and can carry the fix as necessary. This is now fixed
+as far as linux-next is concerned, but any non trivial conflicts should
+be mentioned to your upstream maintainer when your tree is submitted for
+merging.  You may also want to consider cooperating with the maintainer
+of the conflicting tree to minimise any particularly complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/lHW/FY9AoZ/Fkf+_J3nU15Q
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmgz8RwACgkQAVBC80lX
+0GwwyQf+Lxvwe209syGhno5KfjjLHEQzxCjQsodDjF7u+TVZsm7DCVmtx+CtCvHD
+fwWdUgpgoxtrp/E0Z1zVbhOUHH7tkoyx6XjOuBSouJxvT+Bs7RIDW6JDH9Ks/UFg
+4z+aUYDZWCHpqpLD+05wNWDA5rDXEcN/oUAzVaHN7QR6nre0KtmtGmqmxHS+M6/N
+XpvrtXxvHwIVw+lJZUtKw7DA7JQCgevuRExEkIIA/gqg+xdt6kY4+Kcal8pVtjP4
+FVgyH3KDyWROeoKaB0p4gr4XeCJPM5HikKYAt5kxHx58Yn/KRxvgton9dbT5pHtQ
+qsHLD63+42O0EBZLDxS7slJBzFAEfw==
+=rOOe
+-----END PGP SIGNATURE-----
+
+--Sig_/lHW/FY9AoZ/Fkf+_J3nU15Q--
 
