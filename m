@@ -1,135 +1,101 @@
-Return-Path: <linux-kernel+bounces-663038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-663040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1572CAC42D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 18:13:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 31A68AC42D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 18:16:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C43FA18997EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 16:13:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD600189AF6A
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 16:16:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA69A22756A;
-	Mon, 26 May 2025 16:13:34 +0000 (UTC)
-Received: from mail-m49197.qiye.163.com (mail-m49197.qiye.163.com [45.254.49.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FF31231831;
+	Mon, 26 May 2025 16:15:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="EaOgnIe2"
+Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D142223706;
-	Mon, 26 May 2025 16:13:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C6AA22F3AB
+	for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 16:15:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748276014; cv=none; b=kPL3m/ZPwUpzAH4+zda5gXuBhiznfSvo48+X9u18CNWW/09NTkbGqnqlCAtl4d9WednQukdR3w3VL2dqq0ijb3UmInmoeShtM4eqXuBsIPXT5WxcSIY0QJ5jTus/cUHipJN0PexAs3aguzkvvTvYrk64LXc85oH0T8Oy7BRTq6o=
+	t=1748276132; cv=none; b=nBm+POIq+KTPZtVRJg8jOZ48CwNEXLAcDMBn3rNqeFfPiyw1Wmsxgw8kbKzgz4A7WU363tLAEL98+v82f+cRqeygyJzmqMfqBDA5Q6/kKBu98kIG0ksNyMeDkY8CZMNVVMRyLRcBighVylEhkIq5Z0kkAovkYulsjhJf1IiJz5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748276014; c=relaxed/simple;
-	bh=Mxu3zih8rVxIa8U4gXvsG/YABdlmId8tC9PX3ZTiJbk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=T0L99PKqqxKruW5EkTiZz94L1rQz4SEW1BcOwqCV35Rfl7z298CFwrQmilr7qEuTxqwFzmS+l1mwC+HoKvwyP6L/ToG69Mqc2MrxfFO/Svc/34uZFhs6ZC7olqFrTX/RwmQ9VJ+aiCiW0VTONleyCF5j5hzQav4f5Lo1IxxyMaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=whut.edu.cn; spf=pass smtp.mailfrom=whut.edu.cn; arc=none smtp.client-ip=45.254.49.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=whut.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=whut.edu.cn
-Received: from [198.18.0.1] (gy-adaptive-ssl-proxy-4-entmail-virt151.gy.ntes [113.57.237.88])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 16718ef7d;
-	Tue, 27 May 2025 00:13:22 +0800 (GMT+08:00)
-Message-ID: <0a90fb41-6e24-464f-bf2b-cdd76bfb7f08@whut.edu.cn>
-Date: Tue, 27 May 2025 00:13:22 +0800
+	s=arc-20240116; t=1748276132; c=relaxed/simple;
+	bh=MFBeKmhAhNCeSEYunv9WJ5f1eCCOILDRuQ1f9ACG3qk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=R+lbFmMYm7wBvM5T7THSMw3h2VbfnS4Ls8nAsAixprjR/cmUFGkFUpAV8kU5llCGYXruHdZw0aeHUDpE/RvK21bicT1HVR3pBhmaGKQQQ618BQX1FbpKZsUg/ItF/o8uY/LZHYVbZjXLpwHE5Ejx6S1kuVXEGdZxVnKZbGTJr8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=EaOgnIe2; arc=none smtp.client-ip=91.218.175.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
+	t=1748276116;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=JafaCAGJGUzONesEsTwK7Fp4cbryqbnxv96ud7slC/o=;
+	b=EaOgnIe2JbKBWXb5SWzSwqUTKqR+L7PNAjxIqpGlvjgLDlj1hbA82saH6+gN5BHl8vxVHk
+	rUFh/sJ9pdxYXskigNRqSi1k4727NOLgFWp6QkuVLkn8AKOIq6MRUf+t8I3ZheJKrLeOQh
+	852T8FRJzmP4VsY2PMGScf1V1HSO8obJzvFlflc3QzZUekB2jKjSrzWD58LEObJ1HEimlS
+	OouE/t5t7CZwR/mESHouvXUoF3zRMXaT5QrwbZqpomC4xbTqB7QT6+lt6yoNwncQWUeE3V
+	GuaUGnpp/b8C78+IrXOA2C/4bPfub3KWCC8IQZLNqLibLt90ew0y7C08B2J4Mw==
+From: Diederik de Haas <didi.debian@cknow.org>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>
+Cc: Dragan Simic <dsimic@manjaro.org>,
+	Maximilian Weigand <mweigand@mweigand.net>,
+	Marek Kraus <gamiee@pine64.org>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Diederik de Haas <didi.debian@cknow.org>,
+	hrdl <git@hrdl.eu>,
+	phantomas <phantomas@phantomas.xyz>
+Subject: [PATCH] arm64: dts: rockchip: Fix cover detection on PineNote
+Date: Mon, 26 May 2025 18:14:47 +0200
+Message-ID: <20250526161506.139028-1-didi.debian@cknow.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Linux)
-Subject: Re: [PATCH v4 3/4] phy: spacemit: support K1 USB2.0 PHY controller
-To: Neil Armstrong <neil.armstrong@linaro.org>, Vinod Koul
- <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>,
- Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20250526-b4-k1-usb3-phy-v2-v4-0-eca668fc16a2@whut.edu.cn>
- <20250526-b4-k1-usb3-phy-v2-v4-3-eca668fc16a2@whut.edu.cn>
- <39e6b2e7-2aae-4f11-8cb0-2e911c2d7793@linaro.org>
-Content-Language: en-US
-From: Ze Huang <huangze@whut.edu.cn>
-In-Reply-To: <39e6b2e7-2aae-4f11-8cb0-2e911c2d7793@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkaTRhKVhodHU5CSB0ZSk9MH1YeHw5VEwETFhoSFy
-	QUDg9ZV1kYEgtZQVlKSkhVTkxVSUhMVUNDWVdZFhoPEhUdFFlBWU9LSFVKS0hKTkxOVUpLS1VKQk
-	tLWQY+
-X-HM-Tid: 0a970d5ebe4303a1kunmdb12c2341c809
-X-HM-MType: 10
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Pwg6Dyo6FzE6Pgw6GDQ4SywU
-	PRIwC0pVSlVKTE9DSUxNS0tMTk9OVTMWGhIXVRMOGhUcAR47DBMOD1UeHw5VGBVFWVdZEgtZQVlK
-	SkhVTkxVSUhMVUNDWVdZCAFZQUlCTk83Bg++
+X-Migadu-Flow: FLOW_OUT
 
-On 5/26/25 11:51 PM, neil.armstrong@linaro.org wrote:
-> Hi,
->
-> On 26/05/2025 16:31, Ze Huang wrote:
->> The SpacemiT K1 SoC includes three USB ports:
->>
->> - One USB2.0 OTG port
->> - One USB2.0 host-only port
->> - One USB3.0 port with an integrated USB2.0 DRD interface
->>
->> Each of these ports is connected to a USB2.0 PHY responsible for USB2
->> transmission.
->>
->> This commit adds support for the SpacemiT K1 USB2.0 PHY, which is
->> compliant with the USB 2.0 specification and supports both 8-bit 60MHz
->> and 16-bit 30MHz parallel interfaces.
->>
->> Signed-off-by: Ze Huang <huangze@whut.edu.cn>
->> ---
->>   drivers/phy/Kconfig                |   1 +
->>   drivers/phy/Makefile               |   1 +
->>   drivers/phy/spacemit/Kconfig       |  13 ++++
->>   drivers/phy/spacemit/Makefile      |   2 +
->>   drivers/phy/spacemit/phy-k1-usb2.c | 131 
->> +++++++++++++++++++++++++++++++++++++
->>   5 files changed, 148 insertions(+)
->>
-...
->> +
->> +static const struct of_device_id spacemit_usb2phy_dt_match[] = {
->> +    { .compatible = "spacemit,k1-usb2-phy", },
->> +    { /* sentinal */ }
->
-> => sentinel
+The SW_MACHINE_COVER switch event was added to input event codes to
+detect the removal of the back cover of the N900.
+But on the PineNote its purpose is to detect when the front cover gets
+closed, just like when a laptop lid is closed. Therefore SW_LID is the
+appropriate linux code and not SW_MACHINE_COVER.
 
-Thanks!
+Reported-by: hrdl <git@hrdl.eu>
+Helped-by: phantomas <phantomas@phantomas.xyz>
+Link: https://lore.kernel.org/r/270f27c9-afd6-171d-7dce-fe1d71dd8f9a@wizzup.org/
+Signed-off-by: Diederik de Haas <didi.debian@cknow.org>
+---
+ arch/arm64/boot/dts/rockchip/rk3566-pinenote.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->
->> +};
->> +MODULE_DEVICE_TABLE(of, spacemit_usb2phy_dt_match);
->> +
->> +static struct platform_driver spacemit_usb2_phy_driver = {
->> +    .probe    = spacemit_usb2phy_probe,
->> +    .driver = {
->> +        .name   = "spacemit-usb2-phy",
->> +        .of_match_table = spacemit_usb2phy_dt_match,
->> +    },
->> +};
->> +module_platform_driver(spacemit_usb2_phy_driver);
->> +
->> +MODULE_DESCRIPTION("Spacemit USB 2.0 PHY driver");
->> +MODULE_LICENSE("GPL");
->>
->
-> It looks fine, but why didn't also convert thid driver to regmap ?
-
-Will do
-
->
-> Thanks,
-> Neil
->
->
->
+diff --git a/arch/arm64/boot/dts/rockchip/rk3566-pinenote.dtsi b/arch/arm64/boot/dts/rockchip/rk3566-pinenote.dtsi
+index 3613661417b2..5c6f8cc401c9 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3566-pinenote.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3566-pinenote.dtsi
+@@ -55,7 +55,7 @@ switch-cover {
+ 			label = "cover";
+ 			gpios = <&gpio0 RK_PC7 GPIO_ACTIVE_LOW>;
+ 			linux,input-type = <EV_SW>;
+-			linux,code = <SW_MACHINE_COVER>;
++			linux,code = <SW_LID>;
+ 			linux,can-disable;
+ 			wakeup-event-action = <EV_ACT_DEASSERTED>;
+ 			wakeup-source;
+-- 
+2.49.0
 
 
