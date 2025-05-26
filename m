@@ -1,170 +1,146 @@
-Return-Path: <linux-kernel+bounces-662610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-662619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07676AC3D25
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 11:43:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A92AAC3D4C
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 11:50:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D64D03B8AF5
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 09:43:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 124183A7CB4
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 09:49:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACE551F2C44;
-	Mon, 26 May 2025 09:43:20 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D1411DED51;
-	Mon, 26 May 2025 09:43:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E17B1EF36C;
+	Mon, 26 May 2025 09:50:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=t12smtp-sign004.email header.i=@t12smtp-sign004.email header.b="hxQa09JG"
+Received: from mail75.out.titan.email (mail75.out.titan.email [3.216.99.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE5A017A2FA
+	for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 09:50:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.216.99.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748252600; cv=none; b=IB8lR4UNIp7A4kVLqMbOgWs+sBYvAzB/BnaN05cVXM7l36LeeNdUVR4BoPo/yzPo7uPEPFGsuqqfZpz88j5RDfrd6x6a2vu830MCKGoxR2fDQ2JadRcvvvmqLU6cty2nxVa5JvBXZv9yT6iwmcPehTl7sGyfa70XWeRmvtwAE2s=
+	t=1748253009; cv=none; b=IaUmn/xGKsQ/kN4EMHlCMZbfk4FzPXW7g5Sorz9iBDzXbA4b0uS/PcPTXKRXXtpndLTGIHRlC60m1M0z1RepCc/W3ClXx57QEz0kvUGeVDOKDJn1d37p69dlLo5UrlktsdhmqVo/ru4MmGmtP8R+hr23pAPa3fJRjWNh7Acekw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748252600; c=relaxed/simple;
-	bh=RAownFC008qLgAz0i6YGuiM00cnuDux7xgF6Vj1jySM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PZG3hOJuy4RH4v1y0E5hjOx9vhEJBZdcxpDMxGdCF/b2qqE3/5mSoYX2YyxiDlX6BjgXuqAKQeeuMFTg11TUgcRtFpXztfx46LR6IxcLbJ2cEn8+gJqAMVQf0MzOa4xn/P+wwKN7jsgapPUl+ZmFCjvFET1F/NWG6MH625w46mo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-681ff7000002311f-0e-683437af7710
-Date: Mon, 26 May 2025 18:43:05 +0900
-From: Byungchul Park <byungchul@sk.com>
-To: Toke =?iso-8859-1?Q?H=F8iland-J=F8rgensen?= <toke@redhat.com>
-Cc: Mina Almasry <almasrymina@google.com>, willy@infradead.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, kernel_team@skhynix.com, kuba@kernel.org,
-	ilias.apalodimas@linaro.org, harry.yoo@oracle.com, hawk@kernel.org,
-	akpm@linux-foundation.org, davem@davemloft.net,
-	john.fastabend@gmail.com, andrew+netdev@lunn.ch,
-	asml.silence@gmail.com, tariqt@nvidia.com, edumazet@google.com,
-	pabeni@redhat.com, saeedm@nvidia.com, leon@kernel.org,
-	ast@kernel.org, daniel@iogearbox.net, david@redhat.com,
-	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
-	rppt@kernel.org, surenb@google.com, mhocko@suse.com,
-	horms@kernel.org, linux-rdma@vger.kernel.org, bpf@vger.kernel.org,
-	vishal.moola@gmail.com
-Subject: Re: [PATCH 12/18] page_pool: use netmem APIs to access
- page->pp_magic in page_pool_page_is_pp()
-Message-ID: <20250526094305.GA29080@system.software.com>
-References: <20250523032609.16334-1-byungchul@sk.com>
- <20250523032609.16334-13-byungchul@sk.com>
- <CAHS8izN6QAcAr-qkFSYAy0JaTU+hdM56r-ug-AWDGGqLvHkNuQ@mail.gmail.com>
- <20250526022307.GA27145@system.software.com>
- <20250526023624.GB27145@system.software.com>
- <87o6vfahoh.fsf@toke.dk>
+	s=arc-20240116; t=1748253009; c=relaxed/simple;
+	bh=Fhwk/QJsN5ivsoCoJbgc0ERFelGGKGbpRKXM0aVBQCc=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=QEgm3ENslo4/ZNy3fBsesL9RyDniqby0eSXYfR2ygxu9rD0u5l3f8DsaPwD2KSLAqPU2PBMx0VYn3pNnS81utX5UsflmF9V4Yzli0m7t5XnU+lgOP18pTJFBV7xlRXGi/LFQOud9b/TBQCOxp2CgDl9eyF6mzZq4otQvl7C8Vac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=coly.li; spf=pass smtp.mailfrom=coly.li; dkim=pass (1024-bit key) header.d=t12smtp-sign004.email header.i=@t12smtp-sign004.email header.b=hxQa09JG; arc=none smtp.client-ip=3.216.99.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=coly.li
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=coly.li
+Received: from localhost (localhost [127.0.0.1])
+	by smtp-out.flockmail.com (Postfix) with ESMTP id 836ABE0187;
+	Mon, 26 May 2025 09:44:47 +0000 (UTC)
+DKIM-Signature: a=rsa-sha256; bh=Fhwk/QJsN5ivsoCoJbgc0ERFelGGKGbpRKXM0aVBQCc=;
+	c=relaxed/relaxed; d=t12smtp-sign004.email;
+	h=cc:message-id:references:subject:mime-version:in-reply-to:date:from:to:from:to:cc:subject:date:message-id:in-reply-to:references:reply-to;
+	q=dns/txt; s=titan1; t=1748252687; v=1;
+	b=hxQa09JGCNbZJXm5eAhDnaa8xghHHDOJpfdOStUjJ+Y8K1Dkij+l5FV69Sp0wWs1jzsau0KP
+	PBczB0gNlzC5+YFzg43EulRiDQgMgJ6h5/EQ5BbiHv4XDSgxraEw5cUp9QmPyiCj7k0f6vBBmgc
+	ducsf62AEFbOE/WTcJ40j3zY=
+Received: from smtpclient.apple (n218103205009.netvigator.com [218.103.205.9])
+	by smtp-out.flockmail.com (Postfix) with ESMTPA id E4991E0461;
+	Mon, 26 May 2025 09:44:44 +0000 (UTC)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <87o6vfahoh.fsf@toke.dk>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTYRzGe3fOzo7L0XFmvWkoLSQoKithf0rCiOAQFGF0QYMa7eSWc8o0
-	0yjUNMp5zfygc9lUsrUuq2VuRWjpUIdRtlCm5QWvlV28NTSlcpPIbz+e932f3/PhpQlxJT+Q
-	VqqTOY1appJQQlL4zbdqs1kargh7OxIAevN9Cu7NpMKdfhsf9KY6BNOzHwQwZW+hoLrSTYD+
-	bTYJP82/CBhuHhBAX80ICS+uWgkYKGylID97joDLNiMP2usK+FDy6zYB1ox+Abx/rqeg9/4f
-	Pow05pPg0N0loa8gEpoNq8Dd9hWB3WzlgTvvJgU3nAYKBrP7EDibBkgozyxAYK538WFuRk9F
-	rmNr73bx2Ge6HgFrsJxjnxg3slqXk2AtphyKtUwWC9iPnS8otrV0jmSf2aZ4bH7Wd4qdGO4m
-	2R/1HRRrru0g2dcGu4CdsgQfYqKFEXJOpUzhNFt3nxIqSgqPJObgVHfOI14G6hJrkQ+NmXD8
-	OleL/nF7TwPpYZIJxa6rTsLDFLMBu1yzC0zTK5k9uG0mVouENMFM8bFpMt97x585i/O6RykP
-	ixjADY5iby5mqni4q/XEYu6HHWVD3n5ioXO+wuntJJggfOc3vRiH4Kyn5d6nPgsTbk2/8U4L
-	YNbjl3UtPI8XMw9ofH38DbG4eQ1+ZXSRRchPt0ShW6LQ/VfoligMiDQhsVKdEi9TqsK3KNLU
-	ytQtpxPiLWjh49Rcmo+xocn2w42IoZHEV3RKskMh5stSktLiGxGmCclK0Vp9mEIsksvSLnCa
-	hJOacyouqREF0aRktWi7+7xczMTKkrk4jkvkNP9OebRPYAZadWyscLSs6J10LLOyYnXZK1vz
-	nuLQTQe/Fh+Q7vI3lqbaI0L+DPXkxcq/xwSMOTTRn5p7o/afkeyIuFC7z9oWJ093XHNpS1eM
-	T+rnjwfvbeqNCv9y5ejOBwc+n2gZK8odEjGP/SY6VXsHw0o+FUgfjq/A6dWRcRdDS5ZJn9cE
-	UteXS8gkhWzbRkKTJPsL/3bhnjQDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTYRiA+845OzuuFqel9ZGSsAhLSo2MXqgsf/kVJPWjgpBy5Mktddam
-	okUw20A0L138oXPVTHRm0WyVrpuKiilJycyamhesWT+66lze0LZF5L+H53vfh/fHx9Eyg2gd
-	p1JnCBq1IlXOShhJ/C79VuvOaGWUpQGByXqPhbvT2WAZtYvAVOdV7plBMUy2v2ShqtJDg+mN
-	gYEp6ywNro4xMYzUjDPwPK+RhrGSThaKDHM0XLLXUtB2o0sEPQ3FIiidraahUTcqht6nJhaG
-	7y2KYLy1iIEu4x0GRor3QYd5DXhefUXQbm2kwFN4g4XrDjMLHw0jCBxtYwxU5BYjsDY5RTA3
-	bWL3ycmjO/0UeWIcEhOzLZM8rA0nBU4HTWx1+SyxTVwTkw/vnrOks2yOIU/skxQp0n9nyS/X
-	AEN+NPWxpOrLT4pYH/UxpNvcLj606rhkd5KQqsoSNJExiRJlacmRs/k425NfT+lQv6wABXCY
-	j8Y9Q82Mjxl+I3bmOWgfs3wYdjpnvMxxgXwsfjWdXIAkHM1PinDdRJF/ZjV/BhcOfGZ9LOUB
-	N3dd83sZf5vC/Z0Jf/0q3FX+yd+nvc35mw5/k+aDsWWB+6tDsf5xhX81wHvCLfdr5OMgfgNu
-	aXhJXUErjUtKxiUl4/+ScUnJjJg6FKhSZ6UpVKk7IrQpyhy1KjviVHqaDXn/Rs3F+at25O6N
-	a0U8h+QrpIny7UqZSJGlzUlrRZij5YHSEFOUUiZNUuScFzTpJzWZqYK2FQVzjHyt9MAxIVHG
-	JysyhBRBOCto/r1SXMA6HQq/2b0psayF73Ddnw3ecjkEmpfNr30muXJB4TqcEXE1xPVtc+iE
-	IFuPu5mYwQfvTxzVW8K01l3pNVMnLOVUi7viF3YkDdfXHlx8cTruNLWnOvLngni/u/JUu22b
-	wZ5w5FysK63pcUKeUxcUB9XP7F/eGrRuw/LfOfF7K5WkJlfOaJWKbeG0Rqv4AwzywKAXAwAA
-X-CFilter-Loop: Reflected
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH v2] bcache: add the deferred_flush IO processing path in
+ the writeback mode
+Feedback-ID: :i@coly.li:coly.li:flockmailId
+From: Coly Li <i@coly.li>
+X-Priority: 3
+In-Reply-To: <tencent_0AEE08B04C9DDE6C2354F36C@qq.com>
+Date: Mon, 26 May 2025 17:44:31 +0800
+Cc: Coly Li <colyli@kernel.org>,
+ =?utf-8?B?6YKT5pe65rOi?= <dengwangbo@kylinos.com.cn>,
+ "kent.overstreet" <kent.overstreet@linux.dev>,
+ linux-bcache <linux-bcache@vger.kernel.org>,
+ linux-kernel <linux-kernel@vger.kernel.org>,
+ =?utf-8?B?5aSP5Y2O?= <xiahua@kylinos.com.cn>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <19FD6A47-11AA-4C76-B5B6-98BB84971D16@coly.li>
+References: <ug3sqyn42af4bjsp3l5d5ymiabtc767oaoud3ddzv6jnw2eh27@4gcxqaq5tatf>
+ <20250428073445.24108-1-zhoujifeng@kylinos.com.cn>
+ <tencent_2272EC35532EE12E3CCD543A@qq.com>
+ <C16766D1-0FDE-40C7-822B-96927F6A683A@coly.li>
+ <tencent_0AEE08B04C9DDE6C2354F36C@qq.com>
+To: Zhou Jifeng <zhoujifeng@kylinos.com.cn>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
+X-F-Verdict: SPFVALID
+X-Titan-Src-Out: 1748252687379173531.26132.5852282787715180134@prod-use1-smtp-out1004.
+X-CMAE-Score: 0
+X-CMAE-Analysis: v=2.4 cv=J9BQ7BnS c=1 sm=1 tr=0 ts=6834380f
+	a=eJNHGpZBYRW47XJYT+WeIA==:117 a=eJNHGpZBYRW47XJYT+WeIA==:17
+	a=IkcTkHD0fZMA:10 a=CEWIc4RMnpUA:10 a=NEAV23lmAAAA:8 a=2g-bObx1AAAA:8
+	a=9wspj6F5nppUeS8yhG0A:9 a=QEXdDO2ut3YA:10 a=2vxvtA42U9rPmyYw9DsL:22
 
-On Mon, May 26, 2025 at 10:40:30AM +0200, Toke Høiland-Jørgensen wrote:
-> Byungchul Park <byungchul@sk.com> writes:
-> 
-> > On Mon, May 26, 2025 at 11:23:07AM +0900, Byungchul Park wrote:
-> >> On Fri, May 23, 2025 at 10:21:17AM -0700, Mina Almasry wrote:
-> >> > On Thu, May 22, 2025 at 8:26 PM Byungchul Park <byungchul@sk.com> wrote:
-> >> > >
-> >> > > To simplify struct page, the effort to seperate its own descriptor from
-> >> > > struct page is required and the work for page pool is on going.
-> >> > >
-> >> > > To achieve that, all the code should avoid accessing page pool members
-> >> > > of struct page directly, but use safe APIs for the purpose.
-> >> > >
-> >> > > Use netmem_is_pp() instead of directly accessing page->pp_magic in
-> >> > > page_pool_page_is_pp().
-> >> > >
-> >> > > Signed-off-by: Byungchul Park <byungchul@sk.com>
-> >> > > ---
-> >> > >  include/linux/mm.h   | 5 +----
-> >> > >  net/core/page_pool.c | 5 +++++
-> >> > >  2 files changed, 6 insertions(+), 4 deletions(-)
-> >> > >
-> >> > > diff --git a/include/linux/mm.h b/include/linux/mm.h
-> >> > > index 8dc012e84033..3f7c80fb73ce 100644
-> >> > > --- a/include/linux/mm.h
-> >> > > +++ b/include/linux/mm.h
-> >> > > @@ -4312,10 +4312,7 @@ int arch_lock_shadow_stack_status(struct task_struct *t, unsigned long status);
-> >> > >  #define PP_MAGIC_MASK ~(PP_DMA_INDEX_MASK | 0x3UL)
-> >> > >
-> >> > >  #ifdef CONFIG_PAGE_POOL
-> >> > > -static inline bool page_pool_page_is_pp(struct page *page)
-> >> > > -{
-> >> > > -       return (page->pp_magic & PP_MAGIC_MASK) == PP_SIGNATURE;
-> >> > > -}
-> >> > 
-> >> > I vote for keeping this function as-is (do not convert it to netmem),
-> >> > and instead modify it to access page->netmem_desc->pp_magic.
-> >> 
-> >> Once the page pool fields are removed from struct page, struct page will
-> >> have neither struct netmem_desc nor the fields..
-> >> 
-> >> So it's unevitable to cast it to netmem_desc in order to refer to
-> >> pp_magic.  Again, pp_magic is no longer associated to struct page.
-> >
-> > Options that come across my mind are:
-> >
-> >    1. use lru field of struct page instead, with appropriate comment but
-> >       looks so ugly.
-> >    2. instead of a full word for the magic, use a bit of flags or use
-> >       the private field for that purpose.
-> >    3. do not check magic number for page pool.
-> >    4. more?
-> 
-> I'm not sure I understand Mina's concern about CPU cycles from casting.
-> The casting is a compile-time thing, which shouldn't affect run-time
 
-I didn't mention it but yes.
 
-> performance as long as the check is kept as an inline function. So it's
-> "just" a matter of exposing struct netmem_desc to mm.h so it can use it
+> 2025=E5=B9=B45=E6=9C=8826=E6=97=A5 17:42=EF=BC=8CZhou Jifeng =
+<zhoujifeng@kylinos.com.cn> =E5=86=99=E9=81=93=EF=BC=9A
+>=20
+> On Mon, 26 May 2025 at 15:42, Coly Li <i@coly.li> wrote:
+>>=20
+>> Hi Jifeng,
+>>=20
+>>> 2025=E5=B9=B45=E6=9C=8826=E6=97=A5 14:41=EF=BC=8CZhou Jifeng =
+<zhoujifeng@kylinos.com.cn> =E5=86=99=E9=81=93=EF=BC=9A
+>>>=20
+>>> On Mon, 28 Apr 2025 at 15:36, Zhou Jifeng =
+<zhoujifeng@kylinos.com.cn> wrote:
+>>> .....
+>>>> v1->v2: Version v2 mainly addresses the issue of low efficiency in
+>>>> writing back dirty data in version v1. When writing back dirty =
+data,
+>>>> it no longer uses the FUA method but instead writes back no more =
+than
+>>>> 500 dirty bkeys and then uniformly sends a PREFLUSH instruction =
+once.
+>>>> I will supplement more test data later.
+>>> .....
+>>>=20
+>>> Comparison test data::
+>>> =
+https://github.com/jifengzhou/file/blob/main/bcache-deferred-patch-correla=
+tion-data.pdf
+>>>=20
+>>=20
+>> Can I access the raw data to have a look?
+>>=20
+>> And the three different testings, which parameters of bcache are =
+modified from default?
+>>=20
+>> Thank.
+>>=20
+>>=20
+>> Coly Li
+>=20
+> Test raw data address:
+> https://github.com/jifengzhou/file/tree/main/deferred%20test%20data
+>=20
+> I have not learned the default values =E2=80=8B=E2=80=8Bof the =
+parameters in the configuration file. Generally, they are=20
+> configured according to the required characteristics, such as random =
+IO, sequential IO, block size, etc.
+> The only difference between the first and second test parameters is =
+openflags. The difference between=20
+> the third test and the first two groups is openflags, xfersize, and =
+seekpct. The xfersize parameter is=20
+> used to control the access block size, and the seekpct parameter is =
+used to control the random ratio. 0=20
+> represents complete order and 100 represents 100% random.
 
-Then.. we should expose net_iov as well, but I'm afraid it looks weird.
-Do you think it's okay?
+Copied. Because the data lines from chats are too closed, I need to read =
+them more close.
 
-As I told in another thread, embedding strcut netmem_desc into struct
-net_iov will require a huge single patch altering all the users of
-struct net_iov.
+Thanks.
 
-	Byungchul
-
-> in the inline definition. Unless I'm missing something?
-> 
-> -Toke
+Coly Li=
 
