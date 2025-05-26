@@ -1,273 +1,138 @@
-Return-Path: <linux-kernel+bounces-666765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A9F0AC7B81
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 12:02:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2321AC7C57
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 13:03:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED4B14E0EA3
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 10:02:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2256B17F86E
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 11:03:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DBCC274FD0;
-	Thu, 29 May 2025 10:01:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DBAC28E579;
+	Thu, 29 May 2025 11:03:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MU/N+Fbk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ckWi9FuQ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97F3E111AD
-	for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 10:01:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFB5A28E5EE
+	for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 11:03:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748512918; cv=none; b=DHvPZoKjblLXIOQdu3nzNPveleFk3Ml9hJG7kIH7aLJ0YMX35K+Ojn8VUpTj5tJWb8X4jcyh+clTuUBtzhCbvggcwWaAMfxsk+BvxZDBu6sHxuOZgWzOmlLJDI+TNNCeMFPhiHlZHRSCLZR4DrLrfiUO72UdxhkeBgx8dVklOoo=
+	t=1748516606; cv=none; b=iTAg2MOMBuMRG3PWe8wANBVNZghA+IWWlyiubgJo4kKAUQS8lJ8qU9MsZPVAdX4SfnqlU/oWplY3XhtkYXNgeXQqkzIIva7hAWn7seUogu3eZbM0jWfsYfXNKj+BcZLr9y6dATxKm2KmM07YXobst+f1kHXlWyBSCdq8DSxz7UI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748512918; c=relaxed/simple;
-	bh=2ufONresXyN9nIBS/2CJIER+Gx2fXtM+NLFEO+g/v88=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LRBBox9pJJ5O20nLY/uy+jgXTl6ccPNHpSUnXvGIwJSqK6YUhjhCbh2qD0ufO5+UKV4fbd5M8hCk3AnzEtAklGJqfSqAmmBLhiNHRhl6kV3rijlO1oKe64O8tXqea1LvBgyabAwa4+2Nq2DQZD7Q1KxV/JOC6A30xdnlNXj/7TE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MU/N+Fbk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E975AC4CEE7;
-	Thu, 29 May 2025 10:01:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748512917;
-	bh=2ufONresXyN9nIBS/2CJIER+Gx2fXtM+NLFEO+g/v88=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=MU/N+FbkykER5J1L/qfhrbLxajINqVHNMb1tOglbmRrEe4LdbgxScBGcJlE478FnQ
-	 /7sKYH1CEuqUTlY5k/45ZJdxrhiUCHOePILfXORHy1vudIXx3ZK7KDDG4hxv8FFtLT
-	 dIxv5pb0ZNDxtgYPjK1kgibH25cxVrkiDVndeqa+nNK17xPVp263vJpK09clO8uipR
-	 hWbwbheTBWezQMcLpZefEwCgUMXoM2nuC2FmULzyhBioxsqs/PR5FC48o8cDFXpk9V
-	 gUAnV1gxLCgk20FoW2bPFbfzK1CDbEEVFFwCtgfMwx9lQhFq9LHSlS8JjsOaWbvQKA
-	 4yzz7T2d4H+1w==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1uKa5C-001WZG-F1;
-	Thu, 29 May 2025 11:01:54 +0100
-Date: Thu, 29 May 2025 11:01:54 +0100
-Message-ID: <86cybrenvx.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Xi Ruoyao <xry111@xry111.site>
-Cc: James Morse <james.morse@arm.com>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	Ben Horgan <ben.horgan@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-	Mingcong Bai <jeffbai@aosc.io>,
-	Shaopeng Tan <tan.shaopeng@fujitsu.com>
-Subject: Re: [PATCH v3] arm64: Add override for MPAM
-In-Reply-To: <20250516102556.9688-1-xry111@xry111.site>
-References: <20250516102556.9688-1-xry111@xry111.site>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1748516606; c=relaxed/simple;
+	bh=a5P0gjL8Vo5KhlId+oMX9JsVNueZoptKbI4BdgfocF0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=a+bJkuv6466WctDGBOkEpiRitQlrCJPZaxwsSxxAehXLWpkXqHme8vaRxEMDmdoCy3QL4bvi0OwsQpEdRB0UWKzzUHab+UgtFs2IM2RgUP+IzLGknER7SdmORrjhm5g3WUuIqXAEKLl4ilFqtcafmJAENF73FEmWqyg1ynod2gA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ckWi9FuQ; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1748516605; x=1780052605;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=a5P0gjL8Vo5KhlId+oMX9JsVNueZoptKbI4BdgfocF0=;
+  b=ckWi9FuQrknmdsncpHxlfqYsAkJF+ClOPntVdQSlnK7yyjVHP39XjN1m
+   r+V7cQdmew97/IZ1z+iq0sa8nhFE0wpOBcidqT2Hs6cxiVtYFG+UHqS8f
+   0GX42uiXm5E/r2kAuDcZH53mwci/UZH46pk62HWRZdNslGWvHVn7GLjKT
+   rPYO3oYbsF+ttc4UtQ0iknI4Ym6TJiQjZ6UjrCdan7BXei2nRT2mo/pJw
+   7g52KRvqknKpGX7FOXmJh99uHn2o+D3VRf/I90yPDqvnQl2Vk2j6VVlsM
+   RB3Iyljpj4U+Aj6MrUC65ArNrkt+3Z9QElFpQVh6i0raxo7Q7gvJfHr96
+   Q==;
+X-CSE-ConnectionGUID: XfheHlfKQVeKGNKorH1erQ==
+X-CSE-MsgGUID: howsLqpPRmGlqtUcfG/kMA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11447"; a="60830497"
+X-IronPort-AV: E=Sophos;i="6.15,192,1739865600"; 
+   d="scan'208";a="60830497"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2025 04:03:25 -0700
+X-CSE-ConnectionGUID: o0aJREnsTGuTgMvnT4VpSQ==
+X-CSE-MsgGUID: 7+jSCsvTRDK+7087BF/e4Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,192,1739865600"; 
+   d="scan'208";a="143864674"
+Received: from igk-lkp-server01.igk.intel.com (HELO b69e6467d450) ([10.211.3.150])
+  by fmviesa008.fm.intel.com with ESMTP; 29 May 2025 04:03:23 -0700
+Received: from kbuild by b69e6467d450 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uKb2f-0000hF-11;
+	Thu, 29 May 2025 11:03:21 +0000
+Date: Tue, 27 May 2025 01:46:50 +0800
+From: kernel test robot <lkp@intel.com>
+To: Puranjay Mohan <puranjay@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Palmer Dabbelt <palmer@rivosinc.com>,
+	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@rivosinc.com>
+Subject: include/linux/ftrace.h:138:9: warning: returning 'int' from a
+ function with return type 'struct pt_regs *' makes pointer from integer
+ without a cast
+Message-ID: <202505270110.axfo7Wl5-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: xry111@xry111.site, james.morse@arm.com, anshuman.khandual@arm.com, ben.horgan@arm.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, shameerali.kolothum.thodi@huawei.com, jeffbai@aosc.io, tan.shaopeng@fujitsu.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Fri, 16 May 2025 11:25:56 +0100,
-Xi Ruoyao <xry111@xry111.site> wrote:
-> 
-> As the message of the commit 09e6b306f3ba ("arm64: cpufeature: discover
-> CPU support for MPAM") already states, if a buggy firmware fails to
-> either enable MPAM or emulate the trap as if it were disabled, the
-> kernel will just fail to boot.  While upgrading the firmware should be
-> the best solution, we have some hardware of which the vendor have made
-> no response 2 months after we requested a firmware update.  Allow
-> overriding it so our devices don't become some e-waste.
-> 
-> Cc: James Morse <james.morse@arm.com>
-> Cc: Marc Zyngier <maz@kernel.org>
-> Cc: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
-> Cc: Mingcong Bai <jeffbai@aosc.io>
-> Tested-by: Shaopeng Tan <tan.shaopeng@fujitsu.com>
-> Tested-by: Ben Horgan <ben.horgan@arm.com>
-> Signed-off-by: Xi Ruoyao <xry111@xry111.site>
-> ---
-> 
-> [v2]->v3:
-> - Fix typos in the subject and a comment.
-> - Remove a useless #include directive.
-> 
-> [v1]->v2:
-> - Handle the override and initialize EL2 mpam in finalise_el2_state
-> - Move info->mpamidr assignment to {init,update}_cpu_features
-> 
-> [v1]: https://lore.kernel.org/linux-arm-kernel/20250401055650.22542-1-xry111@xry111.site/
-> 
->  .../admin-guide/kernel-parameters.txt         |  3 +++
->  arch/arm64/include/asm/el2_setup.h            | 24 ++++++++-----------
->  arch/arm64/kernel/cpufeature.c                |  7 ++++--
->  arch/arm64/kernel/cpuinfo.c                   |  7 ++++--
->  arch/arm64/kernel/pi/idreg-override.c         |  2 ++
->  5 files changed, 25 insertions(+), 18 deletions(-)
-> 
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index 8f75ec177399..0bfcbeab7a3b 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -458,6 +458,9 @@
->  	arm64.nomops	[ARM64] Unconditionally disable Memory Copy and Memory
->  			Set instructions support
->  
-> +	arm64.nompam	[ARM64] Unconditionally disable Memory Partitioning And
-> +			Monitoring support
-> +
->  	arm64.nomte	[ARM64] Unconditionally disable Memory Tagging Extension
->  			support
->  
-> diff --git a/arch/arm64/include/asm/el2_setup.h b/arch/arm64/include/asm/el2_setup.h
-> index d40e427ddad9..2e6b9086efc5 100644
-> --- a/arch/arm64/include/asm/el2_setup.h
-> +++ b/arch/arm64/include/asm/el2_setup.h
-> @@ -294,19 +294,6 @@
->  .Lskip_gcs_\@:
->  .endm
->  
-> -.macro __init_el2_mpam
-> -	/* Memory Partitioning And Monitoring: disable EL2 traps */
-> -	mrs	x1, id_aa64pfr0_el1
-> -	ubfx	x0, x1, #ID_AA64PFR0_EL1_MPAM_SHIFT, #4
-> -	cbz	x0, .Lskip_mpam_\@		// skip if no MPAM
-> -	msr_s	SYS_MPAM2_EL2, xzr		// use the default partition
-> -						// and disable lower traps
-> -	mrs_s	x0, SYS_MPAMIDR_EL1
-> -	tbz	x0, #MPAMIDR_EL1_HAS_HCR_SHIFT, .Lskip_mpam_\@	// skip if no MPAMHCR reg
-> -	msr_s	SYS_MPAMHCR_EL2, xzr		// clear TRAP_MPAMIDR_EL1 -> EL2
-> -.Lskip_mpam_\@:
-> -.endm
-> -
->  /**
->   * Initialize EL2 registers to sane values. This should be called early on all
->   * cores that were booted in EL2. Note that everything gets initialised as
-> @@ -324,7 +311,6 @@
->  	__init_el2_stage2
->  	__init_el2_gicv3
->  	__init_el2_hstr
-> -	__init_el2_mpam
->  	__init_el2_nvhe_idregs
->  	__init_el2_cptr
->  	__init_el2_fgt
-> @@ -371,6 +357,16 @@
->  #endif
->  
->  .macro finalise_el2_state
-> +	check_override id_aa64pfr0, ID_AA64PFR0_EL1_MPAM_SHIFT, .Linit_mpam_\@, .Lskip_mpam_\@, x1, x2
-> +
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   0ff41df1cb268fc69e703a08a57ee14ae967d0ca
+commit: 7caa9765465f60b6d88e22264892cee12d971888 ftrace: riscv: move from REGS to ARGS
+date:   1 year ago
+config: riscv-randconfig-2001-20250514 (https://download.01.org/0day-ci/archive/20250527/202505270110.axfo7Wl5-lkp@intel.com/config)
+compiler: riscv64-linux-gcc (GCC) 8.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250527/202505270110.axfo7Wl5-lkp@intel.com/reproduce)
 
-I'm afraid this is not completely correct, see below.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202505270110.axfo7Wl5-lkp@intel.com/
 
-> +.Linit_mpam_\@:
-> +	msr_s	SYS_MPAM2_EL2, xzr		// use the default partition
-> +						// and disable lower traps
-> +	mrs_s	x0, SYS_MPAMIDR_EL1
-> +	tbz	x0, #MPAMIDR_EL1_HAS_HCR_SHIFT, .Lskip_mpam_\@  // skip if no MPAMHCR reg
-> +	msr_s   SYS_MPAMHCR_EL2, xzr		// clear TRAP_MPAMIDR_EL1 -> EL2
-> +
-> +.Lskip_mpam_\@:
->  	check_override id_aa64pfr0, ID_AA64PFR0_EL1_SVE_SHIFT, .Linit_sve_\@, .Lskip_sve_\@, x1, x2
->  
->  .Linit_sve_\@:	/* SVE register access */
-> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-> index 4c46d80aa64b..7b8c998a0466 100644
-> --- a/arch/arm64/kernel/cpufeature.c
-> +++ b/arch/arm64/kernel/cpufeature.c
-> @@ -1198,8 +1198,10 @@ void __init init_cpu_features(struct cpuinfo_arm64 *info)
->  		cpacr_restore(cpacr);
->  	}
->  
-> -	if (id_aa64pfr0_mpam(info->reg_id_aa64pfr0))
-> +	if (id_aa64pfr0_mpam(read_sanitised_ftr_reg(SYS_ID_AA64PFR0_EL1))) {
-> +		info->reg_mpamidr = read_cpuid(MPAMIDR_EL1);
->  		init_cpu_ftr_reg(SYS_MPAMIDR_EL1, info->reg_mpamidr);
-> +	}
->  
->  	if (id_aa64pfr1_mte(info->reg_id_aa64pfr1))
->  		init_cpu_ftr_reg(SYS_GMID_EL1, info->reg_gmid);
-> @@ -1450,7 +1452,8 @@ void update_cpu_features(int cpu,
->  		cpacr_restore(cpacr);
->  	}
->  
-> -	if (id_aa64pfr0_mpam(info->reg_id_aa64pfr0)) {
-> +	if (id_aa64pfr0_mpam(read_sanitised_ftr_reg(SYS_ID_AA64PFR0_EL1))) {
-> +		info->reg_mpamidr = read_cpuid(MPAMIDR_EL1);
->  		taint |= check_update_ftr_reg(SYS_MPAMIDR_EL1, cpu,
->  					info->reg_mpamidr, boot->reg_mpamidr);
->  	}
-> diff --git a/arch/arm64/kernel/cpuinfo.c b/arch/arm64/kernel/cpuinfo.c
-> index 285d7d538342..15d39fbc6085 100644
-> --- a/arch/arm64/kernel/cpuinfo.c
-> +++ b/arch/arm64/kernel/cpuinfo.c
-> @@ -494,8 +494,11 @@ static void __cpuinfo_store_cpu(struct cpuinfo_arm64 *info)
->  	if (id_aa64pfr0_32bit_el0(info->reg_id_aa64pfr0))
->  		__cpuinfo_store_cpu_32bit(&info->aarch32);
->  
-> -	if (id_aa64pfr0_mpam(info->reg_id_aa64pfr0))
-> -		info->reg_mpamidr = read_cpuid(MPAMIDR_EL1);
-> +	/*
-> +	 * info->reg_mpamidr deferred to {init,update}_cpu_features because we
-> +	 * don't want to read it (and trigger a trap on buggy firmware) if
-> +	 * using an aa64pfr0_el1 override to unconditionally disable MPAM.
-> +	 */
->  
->  	if (IS_ENABLED(CONFIG_ARM64_SME) &&
->  	    id_aa64pfr1_sme(info->reg_id_aa64pfr1)) {
-> diff --git a/arch/arm64/kernel/pi/idreg-override.c b/arch/arm64/kernel/pi/idreg-override.c
-> index c6b185b885f7..836e5a9b98d0 100644
-> --- a/arch/arm64/kernel/pi/idreg-override.c
-> +++ b/arch/arm64/kernel/pi/idreg-override.c
-> @@ -127,6 +127,7 @@ static const struct ftr_set_desc pfr0 __prel64_initconst = {
->  	.fields		= {
->  	        FIELD("sve", ID_AA64PFR0_EL1_SVE_SHIFT, pfr0_sve_filter),
->  		FIELD("el0", ID_AA64PFR0_EL1_EL0_SHIFT, NULL),
-> +		FIELD("mpam", ID_AA64PFR0_EL1_MPAM_SHIFT, NULL),
->  		{}
->  	},
->  };
-> @@ -246,6 +247,7 @@ static const struct {
->  	{ "rodata=off",			"arm64_sw.rodataoff=1" },
->  	{ "arm64.nolva",		"id_aa64mmfr2.varange=0" },
->  	{ "arm64.no32bit_el0",		"id_aa64pfr0.el0=1" },
-> +	{ "arm64.nompam",		"id_aa64pfr0.mpam=0" },
+All warnings (new ones prefixed by >>):
 
-ID_AA64PFR0_EL1.MPAM represents the *major* version. Setting it to 0
-is only meaningful if ID_AA64PFR1_EL1.MPAM_frac (the minor version) is
-also 0 (i.e. if the HW implements MPAMv1.0).
+   In file included from arch/riscv/kernel/asm-offsets.c:12:
+   include/linux/ftrace.h: In function 'ftrace_get_regs':
+   include/linux/ftrace.h:138:9: error: implicit declaration of function 'arch_ftrace_get_regs'; did you mean 'ftrace_get_regs'? [-Werror=implicit-function-declaration]
+     return arch_ftrace_get_regs(fregs);
+            ^~~~~~~~~~~~~~~~~~~~
+            ftrace_get_regs
+>> include/linux/ftrace.h:138:9: warning: returning 'int' from a function with return type 'struct pt_regs *' makes pointer from integer without a cast [-Wint-conversion]
+     return arch_ftrace_get_regs(fregs);
+            ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+   cc1: some warnings being treated as errors
+   make[3]: *** [scripts/Makefile.build:117: arch/riscv/kernel/asm-offsets.s] Error 1 shuffle=145074831
+   make[3]: Target 'prepare' not remade because of errors.
+   make[2]: *** [Makefile:1203: prepare0] Error 2 shuffle=145074831
+   make[2]: Target 'prepare' not remade because of errors.
+   make[1]: *** [Makefile:240: __sub-make] Error 2 shuffle=145074831
+   make[1]: Target 'prepare' not remade because of errors.
+   make: *** [Makefile:240: __sub-make] Error 2 shuffle=145074831
+   make: Target 'prepare' not remade because of errors.
 
-If the HW implements MPAMv0.1 or MPAMv1.1, this change will definitely
-not do the right thing, as you will always expose MPAMv0.1 (which is
-in general the worse possible option).
 
-So you would need to:
+vim +138 include/linux/ftrace.h
 
-- nuke both MPAM and MPAM_frac in their respective ID registers,
-  ensuring that we effectively advertise the absence of MPAM
+d19ad0775dcd64 Steven Rostedt (VMware  2020-10-28  132) 
+d19ad0775dcd64 Steven Rostedt (VMware  2020-10-28  133) static __always_inline struct pt_regs *ftrace_get_regs(struct ftrace_regs *fregs)
+d19ad0775dcd64 Steven Rostedt (VMware  2020-10-28  134) {
+d19ad0775dcd64 Steven Rostedt (VMware  2020-10-28  135) 	if (!fregs)
+d19ad0775dcd64 Steven Rostedt (VMware  2020-10-28  136) 		return NULL;
+d19ad0775dcd64 Steven Rostedt (VMware  2020-10-28  137) 
+02a474ca266a47 Steven Rostedt (VMware  2020-10-27 @138) 	return arch_ftrace_get_regs(fregs);
+d19ad0775dcd64 Steven Rostedt (VMware  2020-10-28  139) }
+d19ad0775dcd64 Steven Rostedt (VMware  2020-10-28  140) 
 
-- either check for both fields wherever we currently refer only to
-  MPAM, as what we have today looks fragile, or unconditionally
-  override both ID fields if the HW actually implements MPAMv0.1.
+:::::: The code at line 138 was first introduced by commit
+:::::: 02a474ca266a47ea8f4d5a11f4ffa120f83730ad ftrace/x86: Allow for arguments to be passed in to ftrace_regs by default
 
-  I personally think the former is easier to implement.
-
-Note that these would be two separate changes, and that you only need
-to implement the first one to achieve what you're after for the
-current level of MPAM support.
-
-Thanks,
-
-	M.
+:::::: TO: Steven Rostedt (VMware) <rostedt@goodmis.org>
+:::::: CC: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
 -- 
-Without deviation from the norm, progress is not possible.
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
