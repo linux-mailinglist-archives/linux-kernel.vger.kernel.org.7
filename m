@@ -1,145 +1,188 @@
-Return-Path: <linux-kernel+bounces-662351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-662353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3D94AC394F
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 07:36:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3004AC3957
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 07:39:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BD981893C9A
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 05:36:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B53A3A509D
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 05:39:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 476781C6FFE;
-	Mon, 26 May 2025 05:35:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C144D1C84AD;
+	Mon, 26 May 2025 05:39:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ir8d8f7c"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PktyAzPG";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="L5mklkIN"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2211D19D880;
-	Mon, 26 May 2025 05:35:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 004AA136349;
+	Mon, 26 May 2025 05:39:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748237751; cv=none; b=cYUpNy/wo+UwoiibqqimISieT4Rxc1wJ8VSsrhuRC+nFTnCK42Yz+HYRKfhWt0pNBZIITkhlgHZM8N4Y6J2vUj8LwPFomjInO25YSdc+Pkgc+zjMk5tyoVSp3ZtRo4ChP8BV74hVKSrs/BAZwhPbkx6q4e7Z1Gd/Cy1r96kgq8k=
+	t=1748237951; cv=none; b=qvl9UpWIUSEDcSKcq71ckYPfmst8apk/+fawIDrvMA6+5cXmlgTd0hBv9V7Yr8PygTy3qQCY3X09CofvX2yoZ6Hj1Dp+3Ia6aq3JnNoPJ9cB/87nWg6hfMyfCSqxqH3TlUTsuaLw6j/6BQEoBTTXhlKscOgBugcWau12wje/3+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748237751; c=relaxed/simple;
-	bh=BuRWnb3cuhbj4vQVIyISoqjQkh79be9NQ73UrJ/GVfU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=DZ2XhJqnRHJq6wMCSz0rTuUwZQ3CojTZQ5puvtXow3qKOHScy9hQYN1DZpDWESNdY1Tey0ZSFQrEmjlhqTmORwHFuwDFD7XWHNMww0jHi9hTzYGB29qLL8BBlHHfRhxw3SEq3RdxUAy1j5eqpJi9lwfUOodyFcMb5Bn1+3YlUq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ir8d8f7c; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54PNFIiK004485;
-	Mon, 26 May 2025 05:35:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	uzLUVXXayimdmrDZtlg5c2L5SZ46QViuJixjKXrRq1M=; b=ir8d8f7cftwLovYX
-	+MikWJcfg820+33u4Vd5LVq6desP0ikI6B/1p1V7GjNxjaUUA6HdNv96selJx8n7
-	qzlHFzOVxBURlW8h5nVWXW4tYpn2rbsttBYIar9JaDaukWt9zFqVhotA6pyg1Lx1
-	Hw5Ajxf5kdn6c2BXiKvDaeaJSEQuf2x+bDDIOt1DnLKNrkAoN45ISXhtlFHdWbr3
-	AezROUzbdXOWXCpSVW9mNt1kBZT/+pjZJs7NIcPeuc7VTIeKleeNkDNkySwPpp5N
-	HNRu1s62WcCyMNGw4d574oy3PGzDt2r5F00jgL+U2iTpnUkLh/9fOAC7XROReXU4
-	BKKOcw==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46u6g8u1uh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 26 May 2025 05:35:46 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 54Q5Zjmt006177
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 26 May 2025 05:35:45 GMT
-Received: from [10.151.36.184] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 25 May
- 2025 22:35:42 -0700
-Message-ID: <d859183f-d9dc-1db4-e6a6-7db1cbdbaab7@quicinc.com>
-Date: Mon, 26 May 2025 11:05:39 +0530
+	s=arc-20240116; t=1748237951; c=relaxed/simple;
+	bh=bvi9/AnhH38DquhZv0IqLUVYPmYVpjwwJgZnzK0ONZA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rfw0Xwb/YrZGqb1NDG//cUEw0k/Z/jcI7LzRgaiWeZUq6lRIwkMNrp3HWbKWSmrKF/iA+kgQ5V8Vumo8FQnOZj0aws/B2EgteZ0m5nESQDyGyC3OVCOWVcluzwt54Z2ylAWJpqKmh6Gzq3FRXkU+zKurP/+MZ8IJOD9gXTrinlY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PktyAzPG; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=L5mklkIN; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 26 May 2025 07:39:00 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1748237945;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XFwlwfcUWsrciv3uqI5GflyLPzZ54rN6yZqsSqBaoTY=;
+	b=PktyAzPGgeoAdDzdgI+++hZu7fMbjfr6H+099v4my+y4508n4MJtiQACCvEsFZ3xAct+gU
+	boRl35+QrYJPScjva4DLTwapEu9rpM9aBpbLIplcNApH5gkBmhOz1B2Uokyfv69V6uUsBx
+	TEQotNpT9xs+PXbjnouMYjcjNHqty81ZRuhCNWfrezU2GdSPqfZUbPpujlj+gBL8qcOZn1
+	PES5mgYalFB+A3xxG/pQNBJVn4VKiDlZ5yU425BnpA9itXXPxGOfubOiR9RKUGSNab3xsE
+	ts9jPCucocoCFAVeR9ccxiZje1e3VguAAbTdaz7RnnAj+xhRXAN/mL0du1KE4g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1748237945;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XFwlwfcUWsrciv3uqI5GflyLPzZ54rN6yZqsSqBaoTY=;
+	b=L5mklkINJ3LFQ0YLlGpTfMRx3J90rM/lyphpIJf4TmO140xAbC8rlZUug/3iyyK6EV/Oa2
+	JWUZ6azxdyj8UqAw==
+From: Nam Cao <namcao@linutronix.de>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	John Ogness <john.ogness@linutronix.de>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
+	linux-rt-users@vger.kernel.org, Joe Damato <jdamato@fastly.com>,
+	Martin Karsten <mkarsten@uwaterloo.ca>,
+	Jens Axboe <axboe@kernel.dk>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Valentin Schneider <vschneid@redhat.com>
+Subject: Re: [PATCH v2] eventpoll: Fix priority inversion problem
+Message-ID: <20250526053900.asTaMltl@linutronix.de>
+References: <20250523061104.3490066-1-namcao@linutronix.de>
+ <20250523122611.Q64SSO7S@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH] spi: spi-qpic-snand: use NANDC_STEP_SIZE consistently
-Content-Language: en-US
-To: Gabor Juhos <j4g8y7@gmail.com>, Mark Brown <broonie@kernel.org>
-CC: Varadarajan Narayanan <quic_varada@quicinc.com>,
-        Sricharan Ramabadhran
-	<quic_srichara@quicinc.com>,
-        <linux-spi@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20250525-qpic-snand-nandc_step_size-v1-1-6039e9bfe1c6@gmail.com>
-From: Md Sadre Alam <quic_mdalam@quicinc.com>
-In-Reply-To: <20250525-qpic-snand-nandc_step_size-v1-1-6039e9bfe1c6@gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=d4b1yQjE c=1 sm=1 tr=0 ts=6833fdb2 cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=pGLkceISAAAA:8
- a=COk6AnOGAAAA:8 a=YikZN-sOpGJawurdiwoA:9 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: DyuXlRWRfyNK0KXyMH50zPgZ7eF8zNCw
-X-Proofpoint-GUID: DyuXlRWRfyNK0KXyMH50zPgZ7eF8zNCw
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI2MDA0NCBTYWx0ZWRfX2vZOAhu5aaDm
- 9tk3CqQTSEPNXyOSfdfrp5VewhrnPg1riU231jy3k/tdSMBRrKvE0YdYJStl0dSL/UckTjFzN9T
- e/WHi4bVspEbOS/w2q1OGsDt/5qP+xivE/ebP+hHHUZeoQ2mHH9FvyzJxXXrPUBfpryMg9ZIiAn
- 7PhdjOCQv53OmWgyDaNx9jDHOxzEPn/647Se4rUKSVOAAeSFuKhUpMNS3v4L57QuzJm3vXQyKSZ
- hYWxX7KyPZUq3oiGNWPq8tPvVqeWlcuGsNh4yRn/HxXtmnjghBDfo+ilikMEKyNRiN90DX51ntH
- pf9A1u7Ke9mXHSXzRruNyDzVNeW1oAKmHf4BXMNoemDtuuiUTg4LdiGQT/AUKeMM47IrHoUPQ+m
- PXaH1rA+DR1/a6Kh50wsipWolmMULSE321hwNtLLvBfTFDibnv2HY2KG4bztA07v94ZdGKLi
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-26_03,2025-05-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 suspectscore=0 malwarescore=0 phishscore=0 mlxlogscore=905
- lowpriorityscore=0 priorityscore=1501 bulkscore=0 spamscore=0 clxscore=1015
- impostorscore=0 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505160000
- definitions=main-2505260044
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250523122611.Q64SSO7S@linutronix.de>
 
-Hi,
+On Fri, May 23, 2025 at 02:26:11PM +0200, Sebastian Andrzej Siewior wrote:
+> On 2025-05-23 08:11:04 [+0200], Nam Cao wrote:
+> On the AMD I tried
+> Unpatched:
+> | $ perf bench epoll all 2>&1 | grep -v "^\["
+> | # Running epoll/wait benchmark...
+> | Run summary [PID 3019]: 255 threads monitoring on 64 file-descriptors for 8 secs.
+> |
+> |
+> | Averaged 785 operations/sec (+- 0.05%), total secs = 8
+> |
+> | # Running epoll/ctl benchmark...
+> | Run summary [PID 3019]: 256 threads doing epoll_ctl ops 64 file-descriptors for 8 secs.
+> |
+> |
+> | Averaged 2652 ADD operations (+- 1.19%)
+> | Averaged 2652 MOD operations (+- 1.19%)
+> | Averaged 2652 DEL operations (+- 1.19%)
+> 
+> Patched:
+> | $ perf bench epoll all 2>&1 | grep -v "^\["
+> | # Running epoll/wait benchmark...
+> | Run summary [PID 3001]: 255 threads monitoring on 64 file-descriptors for 8 secs.
+> | 
+> | 
+> | Averaged 1386 operations/sec (+- 3.94%), total secs = 8
+> | 
+> | # Running epoll/ctl benchmark...
+> | Run summary [PID 3001]: 256 threads doing epoll_ctl ops 64 file-descriptors for 8 secs.
+> | 
+> | 
+> | Averaged 1495 ADD operations (+- 1.11%)
+> | Averaged 1495 MOD operations (+- 1.11%)
+> | Averaged 1495 DEL operations (+- 1.11%)
+> 
+> The epoll_waits improves again, epoll_ctls does not. I'm not sure how to
+> read the latter. My guess would be that ADD/ MOD are fine but DEL is a
+> bit bad because it has to del, iterate, …, add back.
 
-On 5/25/2025 7:45 PM, Gabor Juhos wrote:
-> Change the qcom_spi_read_page_ecc() function to use NANDC_STEP_SIZE
-> instead of a magic number while calculating the data size to keep it
-> consistent with other functions like qcom_spi_program_{raw,ecc,oob}
-> and qcom_spi_read_cw_{raw,page_oob}.
-> 
-> No functional changes.
-> 
-> Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
-> ---
->   drivers/spi/spi-qpic-snand.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/spi/spi-qpic-snand.c b/drivers/spi/spi-qpic-snand.c
-> index fd129650434f0129e24d3bdac7e7c4d5542627e6..037178d6576e82c3f19c3cc2c6c78f056dc488af 100644
-> --- a/drivers/spi/spi-qpic-snand.c
-> +++ b/drivers/spi/spi-qpic-snand.c
-> @@ -821,7 +821,7 @@ static int qcom_spi_read_page_ecc(struct qcom_nand_controller *snandc,
->   		int data_size, oob_size;
->   
->   		if (i == (num_cw - 1)) {
-> -			data_size = 512 - ((num_cw - 1) << 2);
-> +			data_size = NANDC_STEP_SIZE - ((num_cw - 1) << 2);
->   			oob_size = (num_cw << 2) + ecc_cfg->ecc_bytes_hw +
->   				    ecc_cfg->spare_bytes;
->   		} else {
-> 
-> ---
-> base-commit: b00d6864a4c948529dc6ddd2df76bf175bf27c63
-> change-id: 20250525-qpic-snand-nandc_step_size-5606f4aaeda0
-> 
-> Best regards,
+Yeah EPOLL_CTL_DEL is clearly worse. But epoll_ctl() is not
+performance-critical, so I wouldn't worry about it.
 
-Reviewed-by: Md Sadre Alam <quic_mdalam@quicinc.com>
+> > diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+> > index d4dbffdedd08e..483a5b217fad4 100644
+> > --- a/fs/eventpoll.c
+> > +++ b/fs/eventpoll.c
+> > @@ -136,14 +136,29 @@ struct epitem {
+> >  		struct rcu_head rcu;
+> >  	};
+> >  
+> > -	/* List header used to link this structure to the eventpoll ready list */
+> > -	struct list_head rdllink;
+> > +	/*
+> > +	 * Whether epitem.rdllink is currently used in a list. When used, it cannot be detached or
+> 
+> Notation wise I would either use plain "rdllink" or the C++ notation
+> "epitem::rdllink".
+> 
+> > +	 * inserted elsewhere.
+> 
+> When set, it is attached to eventpoll::rdllist and can not be attached
+> again.
+> This nothing to do with detaching.
+> 
+> > +	 * It may be in use for two reasons:
+> > +	 *
+> > +	 * 1. This item is on the eventpoll ready list.
+> > +	 * 2. This item is being consumed by a waiter and stashed on a temporary list. If inserting
+> > +	 *    is blocked due to this reason, the waiter will add this item to the list once
+> > +	 *    consuming is done.
+> > +	 */
+> > +	bool link_used;
+> >  
+> >  	/*
+> > -	 * Works together "struct eventpoll"->ovflist in keeping the
+> > -	 * single linked chain of items.
+> > +	 * Indicate whether this item is ready for consumption. All items on the ready list has this
+>                                                                                            have
+> > +	 * flag set. Item that should be on the ready list, but cannot be added because of
+> > +	 * link_used (in other words, a waiter is consuming the ready list), also has this flag
+> > +	 * set. When a waiter is done consuming, the waiter will add ready items to the ready list.
+> 
+> This sounds confusing. What about:
+> 
+> | Ready items should be on eventpoll::rdllist. This might be not the case
+> | if a waiter is consuming the list and removed temporary all items while
+> | doing so. Once done, the item will be added back to eventpoll::rdllist.
+> 
+> The reason is either an item is removed from the list and you have to
+> remove them all, look for the right one, remove it from the list, splice
+> what is left to the original list.
+> I did not find another reason for that.
+
+Thanks for the comments. However, while looking at them again, I think I
+complicate things with these flags.
+
+Instead of "link_used", I could take advantage of llist_node::next. Instead
+of "ready", I could do another ep_item_poll().
+
+Therefore I am removing them for v3, then there won't be any more confusion
+with these flags.
+
+Thanks for the review, I will resolve your other comments in v3.
+Nam
 
