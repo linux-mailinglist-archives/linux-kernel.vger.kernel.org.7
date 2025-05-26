@@ -1,146 +1,89 @@
-Return-Path: <linux-kernel+bounces-662408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-662406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93614AC3A47
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 08:57:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 326E1AC3A41
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 08:55:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FD163AF3B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 06:56:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDE16189454C
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 06:55:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5145A1DDC08;
-	Mon, 26 May 2025 06:57:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="goLW3uCB"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C7D61DED40;
+	Mon, 26 May 2025 06:54:57 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06E383FD1;
-	Mon, 26 May 2025 06:57:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54C1A148832;
+	Mon, 26 May 2025 06:54:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748242627; cv=none; b=o9hQksmp59yYkBNZrzkOS3HBSd9tvZY39PRTuj5wmICERMoOZ4rIn4MhUhKKIJ3hu0u5O3rbH6d8uUnStGT3xCSe9c/MKpgOXUGPQYykDr96hASn/nndmKvkmrOMgkdj7MBkbLdkJ2xsD+K8Nyhj7d6cg1npFLfO8v/ccKfCM1Q=
+	t=1748242496; cv=none; b=NZIv3hpA+3lfzgrdkSSSbHjFBzypZL0x4o2PL3u1l0hGD21EIFkVeX4CyLrIej3ZBOACRTwqDQRTTSWIdW4d8+QMWvM5RC0dbFl2a8y7vZIgUWpSbcd7Uv/HIlE5AloGJJeGWE9CmEMtXC08Whcd0W3IazuSzkHbI5vHBLJYctI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748242627; c=relaxed/simple;
-	bh=oZQN+ug918+BLKQ/ARQBkx0CRSMO2V0v/6JWUiYv6pA=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DYCUeF8HE24ZmTeXGNv8H27247MTO9GxsL9GybYVS8Yxk1zudiOV+b5/JoVMsJUL5gh+L2ne671PgFGm+2X/zQlG4XHli1t70FwnFB/vFaIRdeaJ0PgutfeyaZt5h3jLr8AoUn5SI2ImhKCyZZnMClPb62Ce5hcFREv39f6sKck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=goLW3uCB; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1748242625; x=1779778625;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=oZQN+ug918+BLKQ/ARQBkx0CRSMO2V0v/6JWUiYv6pA=;
-  b=goLW3uCBiDLvaieT8tyCtiggBP0E8CnXS+nIy761A5bXitV7yTVsyFe5
-   kEYoj/0dYPQKNBhjJRuw7CCOHPjWnZDOiR+Dgqy2hz5MurLMDzP5sXb8z
-   CGtLCScp+vpGQJ3FO+ri2xNtd7nZre6tkVuAgDWknKaVxdPbmiALMBATw
-   KoRP86Cw6fxrAtNwM4rzFHu72ipZ71v87rEYaQv2mduMq6oFZDDXJiYZs
-   RidlMb4Y3Bs/gSUxGKfXydcBdLiT16oJNSGI4NLyEXsNLYu//NUZlCawk
-   nuaveUv5r3VxOzJ/ZuBt0HtKdoVfUn3uA8N6EvqO9tXAJTQyWGPi1zaSU
-   A==;
-X-CSE-ConnectionGUID: 2ChXxIHBTJS4QRZjcLK3sQ==
-X-CSE-MsgGUID: H9vU0z7vRy2ybCEZXv41MQ==
-X-IronPort-AV: E=Sophos;i="6.15,315,1739862000"; 
-   d="scan'208";a="46897844"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 25 May 2025 23:56:58 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Sun, 25 May 2025 23:56:28 -0700
-Received: from localhost (10.10.85.11) by chn-vm-ex03.mchp-main.com
- (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.44 via Frontend
- Transport; Sun, 25 May 2025 23:56:28 -0700
-Date: Mon, 26 May 2025 08:54:45 +0200
-From: Horatiu Vultur <horatiu.vultur@microchip.com>
-To: Andrew Lunn <andrew@lunn.ch>
-CC: <hkallweit1@gmail.com>, <linux@armlinux.org.uk>, <davem@davemloft.net>,
-	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
-	<richardcochran@gmail.com>, <kory.maincent@bootlin.com>,
-	<wintera@linux.ibm.com>, <viro@zeniv.linux.org.uk>,
-	<quentin.schulz@bootlin.com>, <atenart@kernel.org>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net] net: phy: mscc: Stop clearing the the UDPv4 checksum
- for L2 frames
-Message-ID: <20250526065445.o7pchn5tilq7izmx@DEN-DL-M31836.microchip.com>
-References: <20250523082716.2935895-1-horatiu.vultur@microchip.com>
- <13c4a8b2-89a8-428c-baad-a366ff6ab8b0@lunn.ch>
+	s=arc-20240116; t=1748242496; c=relaxed/simple;
+	bh=MdTOaq3posLXtFIw77bYtXg1zoLZtm5ps1W3lVWfd5I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BEvsSJWLclh6Zm43vdoS6NG2KES6TY94ZUKtn/MmoLKO9pDhe8jCA3Nh/tGAtNnlPh6V0hyvUg/hlgIxLZcvLzQZcuJSM1Jey//B618kx53T3+g3VlH1z8jXtBTsxPs9banvsHQhQYZkooZxvXFnXqNic8FeOzftzno3cruyI00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 9583068AFE; Mon, 26 May 2025 08:54:48 +0200 (CEST)
+Date: Mon, 26 May 2025 08:54:48 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: mhklinux@outlook.com
+Cc: simona@ffwll.ch, deller@gmx.de, haiyangz@microsoft.com,
+	kys@microsoft.com, wei.liu@kernel.org, decui@microsoft.com,
+	akpm@linux-foundation.org, weh@microsoft.com, tzimmermann@suse.de,
+	hch@lst.de, dri-devel@lists.freedesktop.org,
+	linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hyperv@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v3 3/4] fbdev/deferred-io: Support contiguous kernel
+ memory framebuffers
+Message-ID: <20250526065448.GB13065@lst.de>
+References: <20250523161522.409504-1-mhklinux@outlook.com> <20250523161522.409504-4-mhklinux@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <13c4a8b2-89a8-428c-baad-a366ff6ab8b0@lunn.ch>
+In-Reply-To: <20250523161522.409504-4-mhklinux@outlook.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-The 05/23/2025 14:59, Andrew Lunn wrote:
-
-Hi Andrew,
-
+On Fri, May 23, 2025 at 09:15:21AM -0700, mhkelley58@gmail.com wrote:
+> Commit 37b4837959cb ("video: deferred io with physically contiguous
+> memory") from the year 2008 purported to add support for contiguous
+> kernel memory framebuffers. The motivating device, sh_mobile_lcdcfb, uses
+> dma_alloc_coherent() to allocate framebuffer memory, which is likely to
+> use alloc_pages(). It's unclear to me how this commit actually worked at
+> the time, unless dma_alloc_coherent() was pulling from a CMA pool instead
+> of alloc_pages(). Or perhaps alloc_pages() worked differently or on the
+> arm32 architecture on which sh_mobile_lcdcfb is used.
 > 
-> On Fri, May 23, 2025 at 10:27:16AM +0200, Horatiu Vultur wrote:
-> > We have noticed that when PHY timestamping is enabled, L2 frames seems
-> > to be modified by changing two 2 bytes with a value of 0. The place were
-> > these 2 bytes seems to be random(or I couldn't find a pattern).  In most
-> > of the cases the userspace can ignore these frames but if for example
-> > those 2 bytes are in the correction field there is nothing to do.  This
-> > seems to happen when configuring the HW for IPv4 even that the flow is
-> > not enabled.
-> > These 2 bytes correspond to the UDPv4 checksum and once we don't enable
-> > clearing the checksum when using L2 frames then the frame doesn't seem
-> > to be changed anymore.
-> >
-> > Fixes: 7d272e63e0979d ("net: phy: mscc: timestamping and PHC support")
-> > Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
-> > ---
-> >  drivers/net/phy/mscc/mscc_ptp.c | 4 +++-
-> >  1 file changed, 3 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/net/phy/mscc/mscc_ptp.c b/drivers/net/phy/mscc/mscc_ptp.c
-> > index 6f96f2679f0bf..6b800081eed52 100644
-> > --- a/drivers/net/phy/mscc/mscc_ptp.c
-> > +++ b/drivers/net/phy/mscc/mscc_ptp.c
-> > @@ -946,7 +946,9 @@ static int vsc85xx_ip1_conf(struct phy_device *phydev, enum ts_blk blk,
-> >       /* UDP checksum offset in IPv4 packet
-> >        * according to: https://tools.ietf.org/html/rfc768
-> >        */
-> > -     val |= IP1_NXT_PROT_UDP_CHKSUM_OFF(26) | IP1_NXT_PROT_UDP_CHKSUM_CLEAR;
-> > +     val |= IP1_NXT_PROT_UDP_CHKSUM_OFF(26);
-> > +     if (enable)
-> > +             val |= IP1_NXT_PROT_UDP_CHKSUM_CLEAR;
-> 
-> Is this towards the media, or received from the media?
+> In any case, for x86 and arm64 today, commit 37b4837959cb9 is not
+> sufficient to support contiguous kernel memory framebuffers. The problem
+> can be seen with the hyperv_fb driver, which may allocate the framebuffer
+> memory using vmalloc() or alloc_pages(), depending on the configuration
+> of the Hyper-V guest VM (Gen 1 vs. Gen 2) and the size of the framebuffer.
 
-It is when the vsc85xx PHY receives frames from the link partner.
+That langugage is far too nice.  The existing users of fb_defio are
+all gravely broken because they violate the dma API restriction to
+not poke into the memory.  You can't speculate what you get from
+dma_alloc_coherent and it can change behind you all the time.
 
->Have you tried sending packets with deliberately broken UDPv4 checksum?
->Does the PHYs PTP engine correctly ignore such packets?
+> Fix this limitation by adding defio support for contiguous kernel memory
+> framebuffers. A driver with a framebuffer allocated from contiguous
+> kernel memory must set the FBINFO_KMEMFB flag to indicate such.
 
-No, I have not done that. What I don't understand is why should I send
-UDPv4 frames when we enable to timestamp only L2 frames.
+Honestly, the right thing is to invert the flag.  What hypervs is doing
+here - take kernel memory in the direct mapping or from vmalloc is fine.
 
-> 
-> I suppose the opposite could also be true. Do you see it ignoring
-> frames which are actually O.K? It could be looking in the wrong place
-> for the checksum, so the checksum fails.
+What others drivers do it completely broken crap.  So add a flag
+FBINFO_BROKEN_CRAP to maybe keep the guessing.  Or just disable it
+because it's dangerous.
 
-I have not seen any frames being ignored by HW. The HW is configured to
-set the nanosecond part of the RX timestamp into the frame. And it is
-always doing that, the problem is that sometimes on top of this change
-it also replaces 2 bytes in the frame with 0. And it is the userspace
-(ptp4l) who ignores those frames because the are corrupted.
-
-> 
->         Andrew
-
--- 
-/Horatiu
 
