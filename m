@@ -1,191 +1,220 @@
-Return-Path: <linux-kernel+bounces-662257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-662259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09CF7AC37CB
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 03:46:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01698AC37D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 03:52:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 729D5188B71D
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 01:46:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D23F7A8578
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 01:50:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B8937D3F4;
-	Mon, 26 May 2025 01:46:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E638D146A72;
+	Mon, 26 May 2025 01:51:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="D1NqYsc5"
-Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ze5KlatB"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03F871C27
-	for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 01:46:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A00098248C;
+	Mon, 26 May 2025 01:51:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748223964; cv=none; b=jrURJfxREYC4ulLGF06IhkC+XQXJavN3Jojoo7RarX7xiqrG42r9D9MTbXsBhYeAHklG4tq2IDTzcH2w3GU2w6oZIeHoIBFf8DyZOyBteG/FY1eAXFgGdqyykHVAc1So1z88JUG9n0yCEup8w83oaDn2PXZsr3ElC/LTJTaTAh4=
+	t=1748224315; cv=none; b=LGZlYHuI6EBa5FmbM3USWqcxPchNNharm2C2oN3Vk3bV2SlmjUauTPpPk0kqjVWSlPRt/GyEpGBtdgZKsJfqJxGQRV+iy9cnLvS8G3X8xzjYAenG85pZch+9kZktaNM1GvE5xSw4Mr5tKioGmcE7iDNN08cC/iDzMmHm89l0FRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748223964; c=relaxed/simple;
-	bh=avQT8PyI3lebe+jvDhFejRbfs5/P6o/qFy8DbdNBJ7c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OtDzLBYJNi8eDaMT1hsf2pqgpbaq2cl9cdM7xkKy52ko+l+Galf0Drvz9H+QZOVOptxruf3g2lKYRPpLLyr2UyYy00WiBae1Fgxt4TvviUikc1FdKwaQyjoboQpjFZ4eU2W7Teu2i1uQ0jaeiodVX/SgHthJV2Ex3k8DOAxYmoI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=D1NqYsc5; arc=none smtp.client-ip=95.215.58.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <2b8810d1-b312-4ee6-928c-e078b8c52000@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1748223959;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=E9kj9b7G03RkcCUZzfbgk5ZYXL85YjieEBuLF4BZ1dk=;
-	b=D1NqYsc5sCvF5UWehhuKAxPft2KqmSx1u9333NBHR0p0MPpgRd9vUurqLc4wYmU7IaiNuz
-	PG3PwwZpIS4yjHEB0A30yrRAwn5QwFscTvrBlPTnPkYopNAPGNQcyyYW8wvHGMhequnDMM
-	zQw2QCEKTkfOBSLrX9nn5sJlFmPqb2k=
-Date: Mon, 26 May 2025 09:45:47 +0800
+	s=arc-20240116; t=1748224315; c=relaxed/simple;
+	bh=QY2ohkza2x1tajvdG6eeg4JxxBs3fEmJoktrKFBxEgk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NeTMm293NH39czmFS9i6j0mZvE7Xhd+pQY2jlWax0tc3bpzfL9eK98KKO1WuyqGv3xPrgnBxxvXuWg0Bogy0QFsJSaXeMq9DE2Rno2Ti8bS7bMizb8HnrnAYBh/edElJToc0qUoRDH5bQCuktR5b26VEb2lckMoBV4FnIH1yy1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ze5KlatB; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-73c17c770a7so1692899b3a.2;
+        Sun, 25 May 2025 18:51:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748224313; x=1748829113; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/DKj8oNkwRWAiy5DwXiV4r+Z3UZ5RRrUNHD6WtNis8g=;
+        b=Ze5KlatBmy7jdVmSrhn8t8PA63mU84+o2dmg4OaW24mGhX/wm7UJOr2AIb8NhB6M2G
+         1+Qh/YpycL6QwCvr+HomSigfBuAUGnwOwg+YN2/xzfx8QXJwjqHIATYnd1f240GOWlL5
+         F67jOTbhta5DbkFwhPt4gHZ3W6rynJ5mdE40EeBea16inqfjpiZiD0eJIiOj0PQG7xwW
+         flKaYl9lIiLNrl0AZQqE0PIiEL7OxIg8ITL8g99lP9+7nwHiSxaZSRNSRPgtm30r2ZDZ
+         algrQDccQcFdJzC2Xftfm80IT/y1qYJpJao2M0+ke4HV6ubqfi6XcqGtoT0LlKgvKZq2
+         mPfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748224313; x=1748829113;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/DKj8oNkwRWAiy5DwXiV4r+Z3UZ5RRrUNHD6WtNis8g=;
+        b=gbdZ96UJStu3v/20uezZYu/3s451IKYxeche2IyRrEA2oI+z24WxGkPbnLUmvVAdJg
+         ybL0e3IP5Kom4NRm3cYDE2TPe+QdhlTo0KAjZPB+Vglc/3lHOZ4OgiGFTNQpj/eAHelA
+         CiLmWc1oR9UskO94DkUs/tLgJt6hi8vL4yRiQb3znEc45g6iC8pQ6RN2WlQd99O/jpNM
+         ivB6Al61kzMj1d8jm+Z7WHPnnkl2HXaBN24Jzl0UXp/FvYIPZgzJjs9fYzV7iioIV+ZF
+         h3De3pKgvKTBooLo7b0PHC61YJZzE9S8SK6J4OKsjmBk1KJh7rGn5mxc0uLVs1yI67xe
+         nnJA==
+X-Forwarded-Encrypted: i=1; AJvYcCU87IdeMUuzv6YYYopDp9/1zz1yNDa+n+y2LHtpx2AUc0WTFn43UQwV7WdqkNDJvl+4EoinYgDjLFk=@vger.kernel.org, AJvYcCX694GptvhHfrnwCakntm3Id5WlNJC2jadd4vide+q+LppgOQOFHPP0QrEenKvHCMvEEB+Md3KL1kBeYJKU@vger.kernel.org
+X-Gm-Message-State: AOJu0YwfCxsV7l3ywooQBDdj1q5ZrVgT9SQPwzJllYhnmId9qobCbEeq
+	IOoVn4o0HPzpvaXEL0Z+fkPBw13Jps0sX8OtspszU/U4ebDU5MDIH8yl
+X-Gm-Gg: ASbGncuwDsRAYmuEtFUo4VZTlukJG/37JmrlvFs1UXiNtlMexr5qNNYd7sf23bQ3tC9
+	RCb5TE9cjJyTGpOXl30BIugzPtUTx8cpa9Nm/Oef55Yc+q6nSeDFK/wJ1QImHBUHQvN67a+w901
+	ALNoRYVl16C0EntCsVnhHLp9oL1gW2+GgUQqviMWS+qJ3RI8i2g5C3Pv+Ca1krGv5hBOckY/keq
+	eoOSvdrF+K8UBAsgg9Mrr0HFCtUs8ta9mi0XVb/key/AsuCDycZQx1JLFQX25Plet1JLB9h8lI0
+	LVa0J5lMf1/DHVE1DJy0Nst1HV5kDI+jFNPIQKMvQ0t0nuAV5CN0nFJkbkrigA==
+X-Google-Smtp-Source: AGHT+IEej+6PkcO2/DXbswdOAlQW3W/DYX0Gbdx4UIAQjE96Wze4Ix7GvGI6pQ+GrMV3odHkPK89sg==
+X-Received: by 2002:a05:6a00:2905:b0:742:a9ed:a3d6 with SMTP id d2e1a72fcca58-745fe035fa7mr9505358b3a.17.1748224312672;
+        Sun, 25 May 2025 18:51:52 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-742a96def30sm15993990b3a.20.2025.05.25.18.51.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 25 May 2025 18:51:51 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id E85A84230C03; Mon, 26 May 2025 08:51:48 +0700 (WIB)
+Date: Mon, 26 May 2025 08:51:48 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Abdulrasaq Lawani <abdulrasaqolawani@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Jonathan Corbet <corbet@lwn.net>
+Cc: dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] drm: add overview diagram for drm stack
+Message-ID: <aDPJNBTDmHoZ-z1d@archie.me>
+References: <20250523-drm-doc-updates-v2-0-e517df152cf6@gmail.com>
+ <20250523-drm-doc-updates-v2-2-e517df152cf6@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v3 1/2] Docs/LoongArch: Add Advanced Extended-Redirect IRQ
- model description
-To: Tianyang Zhang <zhangtianyang@loongson.cn>, chenhuacai@kernel.org,
- kernel@xen0n.name, corbet@lwn.net, alexs@kernel.org, tglx@linutronix.de,
- jiaxun.yang@flygoat.com, peterz@infradead.org, wangliupu@loongson.cn,
- lvjianmin@loongson.cn, maobibo@loongson.cn, siyanteng@cqsoftware.com.cn,
- gaosong@loongson.cn, yangtiezhu@loongson.cn
-Cc: loongarch@lists.linux.dev, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250523101833.17940-1-zhangtianyang@loongson.cn>
- <20250523101833.17940-2-zhangtianyang@loongson.cn>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yanteng Si <si.yanteng@linux.dev>
-In-Reply-To: <20250523101833.17940-2-zhangtianyang@loongson.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="hXCUMJnyg9VmLHa2"
+Content-Disposition: inline
+In-Reply-To: <20250523-drm-doc-updates-v2-2-e517df152cf6@gmail.com>
 
 
-在 5/23/25 6:18 PM, Tianyang Zhang 写道:
-> Introduce the redirect interrupt controllers.When the redirect interrupt
-> controller is enabled, the routing target of MSI interrupts is no longer a
-> specific CPU and vector number, but a specific redirect entry. The actual
-> CPU and vector number used are described by the redirect entry.
->
-> Signed-off-by: Tianyang Zhang <zhangtianyang@loongson.cn>
+--hXCUMJnyg9VmLHa2
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Only for Chinese:
+On Fri, May 23, 2025 at 03:52:26PM -0400, Abdulrasaq Lawani wrote:
+> diff --git a/Documentation/gpu/introduction.rst b/Documentation/gpu/intro=
+duction.rst
+> index 91bb0efc96d69921a122c5265b1431fa18110a7a..2653048ad4bb0ecbc2b676295=
+440442dddbabae6 100644
+> --- a/Documentation/gpu/introduction.rst
+> +++ b/Documentation/gpu/introduction.rst
+> @@ -15,41 +15,43 @@ and the new vblank internals, in addition to all the =
+regular features
+>  found in current kernels.
+> =20
+>  Overview of the Linux DRM Architecture
+> ------------------------------------------------
+> -+-----------------------------+
+> -|     User-space Apps         |
+> -| (Games, Browsers, ML, etc.) |
+> -+-----------------------------+
+> -              |
+> -              v
+> -+---------------------------------------+
+> -|    Graphics APIs   |   Compute APIs   |
+> -|  (OpenGL, Vulkan)  |  (OpenCL, CUDA)  |
+> -+---------------------------------------+
+> -          |                   |
+> -          v                   v
+> -+---------------------+  +-----------------------+
+> -|  User-space Driver  |  |    Compute Runtime    |
+> -|  (Mesa, AMD/NVIDIA) |  |  (OpenCL, CUDA, ROCm) |
+> -+---------------------+  +-----------------------+
+> -          |                   |
+> -          +--------+----------+
+> -                   |
+> -                   v
+> -        +-----------------------+
+> -        |   libdrm (DRM API)    |
+> -        +-----------------------+
+> -                   |
+> -                   v
+> -+-------------------------------------------+
+> -|     Kernel DRM/KMS Driver (i915, amdgpu,  |
+> -|     nouveau, etc.)                        |
+> -+-------------------------------------------+
+> -        |                       |
+> -        v                       v
+> -+----------------+     +-------------------+
+> -| GPU Display HW |     | GPU Compute Units |
+> -+----------------+     +-------------------+
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
 
+Why promoting the section heading?
 
-Reviewed-by: Yanteng Si <si.yanteng@linux.dev>
-
-
-Thanks,
-
-Yanteng
-
-> ---
->   .../arch/loongarch/irq-chip-model.rst         | 38 +++++++++++++++++++
->   .../zh_CN/arch/loongarch/irq-chip-model.rst   | 37 ++++++++++++++++++
->   2 files changed, 75 insertions(+)
->
-> diff --git a/Documentation/arch/loongarch/irq-chip-model.rst b/Documentation/arch/loongarch/irq-chip-model.rst
-> index a7ecce11e445..d9a2e8d7f70e 100644
-> --- a/Documentation/arch/loongarch/irq-chip-model.rst
-> +++ b/Documentation/arch/loongarch/irq-chip-model.rst
-> @@ -181,6 +181,44 @@ go to PCH-PIC/PCH-LPC and gathered by EIOINTC, and then go to CPUINTC directly::
->                | Devices |
->                +---------+
->   
-> +Advanced Extended IRQ model (with redirection)
-> +==============================================
+> +::
 > +
-> +In this model, IPI (Inter-Processor Interrupt) and CPU Local Timer interrupt go
-> +to CPUINTC directly, CPU UARTS interrupts go to LIOINTC, PCH-MSI interrupts go
-> +to REDIRECT for remapping it to AVEC, and then go to CPUINTC directly, while all
-> +other devices interrupts go to PCH-PIC/PCH-LPC and gathered by EIOINTC, and then
-> +go to CPUINTC directly::
-> +
-> + +-----+     +-----------------------+     +-------+
-> + | IPI | --> |        CPUINTC        | <-- | Timer |
-> + +-----+     +-----------------------+     +-------+
-> +              ^          ^          ^
-> +              |          |          |
-> +       +---------+ +----------+ +---------+     +-------+
-> +       | EIOINTC | | AVECINTC | | LIOINTC | <-- | UARTs |
-> +       +---------+ +----------+ +---------+     +-------+
-> +            ^            ^
-> +            |            |
-> +            |      +----------+
-> +            |      | REDIRECT |
-> +            |      +----------+
-> +            |            ^
-> +            |            |
-> +       +---------+  +---------+
-> +       | PCH-PIC |  | PCH-MSI |
-> +       +---------+  +---------+
-> +         ^     ^           ^
-> +         |     |           |
-> + +---------+ +---------+ +---------+
-> + | Devices | | PCH-LPC | | Devices |
-> + +---------+ +---------+ +---------+
-> +                  ^
-> +                  |
-> +             +---------+
-> +             | Devices |
-> +             +---------+
-> +
->   ACPI-related definitions
->   ========================
->   
-> diff --git a/Documentation/translations/zh_CN/arch/loongarch/irq-chip-model.rst b/Documentation/translations/zh_CN/arch/loongarch/irq-chip-model.rst
-> index d4ff80de47b6..7e4e3e55c7ad 100644
-> --- a/Documentation/translations/zh_CN/arch/loongarch/irq-chip-model.rst
-> +++ b/Documentation/translations/zh_CN/arch/loongarch/irq-chip-model.rst
-> @@ -174,6 +174,43 @@ CPU串口（UARTs）中断发送到LIOINTC，PCH-MSI中断发送到AVECINTC，
->                | Devices |
->                +---------+
->   
-> +高级扩展IRQ模型 (带重定向)
-> +==========================
-> +
-> +在这种模型里面，IPI（Inter-Processor Interrupt）和CPU本地时钟中断直接发送到CPUINTC，
-> +CPU串口（UARTs）中断发送到LIOINTC，PCH-MSI中断首先发送到REDIRECT模块,完成重定向后发
-> +送到AVECINTC，而后通过AVECINTC直接送达CPUINTC，而其他所有设备的中断则分别发送到所连
-> +接的PCH-PIC/PCH-LPC，然后由EIOINTC统一收集，再直接到达CPUINTC::
-> +
-> + +-----+     +-----------------------+     +-------+
-> + | IPI | --> |        CPUINTC        | <-- | Timer |
-> + +-----+     +-----------------------+     +-------+
-> +              ^          ^          ^
-> +              |          |          |
-> +       +---------+ +----------+ +---------+     +-------+
-> +       | EIOINTC | | AVECINTC | | LIOINTC | <-- | UARTs |
-> +       +---------+ +----------+ +---------+     +-------+
-> +            ^            ^
-> +            |            |
-> +            |      +----------+
-> +            |      | REDIRECT |
-> +            |      +----------+
-> +            |            ^
-> +            |            |
-> +       +---------+  +---------+
-> +       | PCH-PIC |  | PCH-MSI |
-> +       +---------+  +---------+
-> +         ^     ^           ^
-> +         |     |           |
-> + +---------+ +---------+ +---------+
-> + | Devices | | PCH-LPC | | Devices |
-> + +---------+ +---------+ +---------+
-> +                  ^
-> +                  |
-> +             +---------+
-> +             | Devices |
-> +             +---------+
-> +
->   ACPI相关的定义
->   ==============
->   
+> +        +-----------------------------+
+> +        |     User-space Apps         |
+> +        | (Games, Browsers, ML, etc.) |
+> +        +-----------------------------+
+> +                      |
+> +                      v
+> +        +---------------------------------------+
+> +        |    Graphics APIs   |   Compute APIs   |
+> +        |  (OpenGL, Vulkan)  |  (OpenCL, CUDA)  |
+> +        +---------------------------------------+
+> +                |                   |
+> +                v                   v
+> +        +---------------------+  +-----------------------+
+> +        |  User-space Driver  |  |    Compute Runtime    |
+> +        |  (Mesa, AMD/NVIDIA) |  |  (OpenCL, CUDA, ROCm) |
+> +        +---------------------+  +-----------------------+
+> +                |                   |
+> +                +--------+----------+
+> +                         |
+> +                         v
+> +                +-----------------------+
+> +                |   libdrm (DRM API)    |
+> +                +-----------------------+
+> +                          |
+> +                          v
+> +        +-------------------------------------------+
+> +        |     Kernel DRM/KMS Driver (i915, amdgpu,  |
+> +        |     nouveau, etc.)                        |
+> +        +-------------------------------------------+
+> +                |                       |
+> +                v                       v
+> +        +----------------+     +-------------------+
+> +        | GPU Display HW |     | GPU Compute Units |
+> +        +----------------+     +-------------------+
+> =20
+
+This is not how reviews from v1 should be addressed. Instead of making
+separate commit for review suggestions, you need to squash them into affect=
+ed
+commit(s) in v1. In this case, there should be only one resulting patch. Do=
+n't
+forget to send it as v3.
+
+Thanks.
+
+--=20
+An old man doll... just what I always wanted! - Clara
+
+--hXCUMJnyg9VmLHa2
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaDPJMQAKCRD2uYlJVVFO
+oy74AQDPmxrQb9rYKD39w7NaTsaOldYEhp+puSEJ2KpMwsY1SAEA9lVhnB307H4N
+uJLfQF9+cMButgaKwwW89bmWLnPxTQ0=
+=XjDz
+-----END PGP SIGNATURE-----
+
+--hXCUMJnyg9VmLHa2--
 
