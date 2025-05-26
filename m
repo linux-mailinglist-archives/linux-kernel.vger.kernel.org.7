@@ -1,107 +1,223 @@
-Return-Path: <linux-kernel+bounces-662570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-662572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D82A1AC3C85
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 11:19:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF803AC3C90
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 11:22:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EA233ABA7A
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 09:19:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78C5317591C
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 09:22:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9B371EF36C;
-	Mon, 26 May 2025 09:19:31 +0000 (UTC)
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89D0D1F12F8;
+	Mon, 26 May 2025 09:22:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="AlVj9DIS"
+Received: from TYVP286CU001.outbound.protection.outlook.com (mail-japaneastazon11011060.outbound.protection.outlook.com [52.101.125.60])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EFEE19DF8B;
-	Mon, 26 May 2025 09:19:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748251171; cv=none; b=m9+oKmI3mzyBl/22Ap5pDGt/3kceAKjGtyIPNYVz/lbuzt0AVASIxfqVwE2xf0lCGFQ8muv+BXgvBQWE3/F45Ch89wdODsdAF0ZkZ+7gZr35b4J7IV/8bHla7mcJHVOZx+Q6gQh9tA0oOIQHG5OUG+baviQPw+h4MopDOQM+ijA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748251171; c=relaxed/simple;
-	bh=dG4J7u6ZAFXFgS60iYbh4ZXwMw//VZ9CBuQVCx/Y0ng=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MnDboHuPsw5oImPt+7KgQcoBD6e7INyIzvXj9JZ3NizpXPtqkJpgPOX0ffIz7S/eRqQiZ2wnS8JWCGht4e0t/nGX3q4psTxC9iWqukTWdB/ClKOMoRxBnSC5/x79++aJeXV28zCacCsjF9oySOZTPtPmcuX94cwkaP6EILE9xXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost.localdomain (unknown [124.16.141.245])
-	by APP-03 (Coremail) with SMTP id rQCowADHGFEZMjRocxodAA--.6994S2;
-	Mon, 26 May 2025 17:19:22 +0800 (CST)
-From: Wentao Liang <vulab@iscas.ac.cn>
-To: johannes@sipsolutions.net,
-	luciano.coelho@intel.com
-Cc: linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Wentao Liang <vulab@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH v2] mac80211: Add null pointer check for ieee80211_link_get_chanctx()
-Date: Mon, 26 May 2025 17:19:03 +0800
-Message-ID: <20250526091903.587-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.42.0.windows.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BADA61A2622;
+	Mon, 26 May 2025 09:22:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.125.60
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748251323; cv=fail; b=EQXlVIgrGcUDuGoysHBD0Z1U9/5zkQeL3f+1Fza93N7x0UL9BUsPqDmwslhrUyFQn80A5KSQWVdO2VMR60aV3GhQS5N/WAvIIukGR/JIgnFo7Yrx+MU1S1Oh0HS1WkTOA2XoKQPV9XrSyxtf1/ikr4BZwFgMM9V3I4cVwjOnmP4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748251323; c=relaxed/simple;
+	bh=1dE01Etq/Dj5WJhdY7yS/IVD0FnOu3EB1yJsRQttPy8=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=jtyZepqM6Jq7URVfl2XHVPB+bMrtjdOVMSjF0ECWoGclOU0ecJiJMuScndj6UCRw6OvvhIfX0m63b7GTrQUQb47B+Qn1LooKFuoVIFyL1hdex3US1eGy8mz+kLvuXD3U6Tr9V1qxzbFW/7TV9H3TCDjz7RSYJn9quldptHkHnE0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=AlVj9DIS; arc=fail smtp.client-ip=52.101.125.60
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=fT4h+vN2w2GZm+4aHVFz7k9+izHGhpNQb2uMXZF7JjlZhNJfD2A3Qduqls7qN9L7iDR+O4THDIhzazcgvn0t4Wgq/krs3ykH3n4qKWJ3cKc/KFZKSXJ3WHfgOoaMdOpvwOxCX0XEMY6Xw0i5I2NXIGgJpEM0CS1jJaYwRR4NvaNgdkFIVg/rxcZhrQ/95g1dJ/Dz5hCpuD2DCd2j+Rqhml9RPWbvB7jUPkYiNDn1v1N7C0x88gApcgL8vEUcrUqH1sUMIgJmVtTM15YPMrRxiW47XFqXGFTdznK7yHVnbhfsPNHeESsCfNk79ENQCwob8HtUYSktss/z2tKqfZa9dw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=xRV8rC/76RdwCpwx7ofihmIaEHqnfTR59oD/oVIwubA=;
+ b=qYlZ4TzIUndqTWrQ7ctkketKH5uPpYIy+rAprLc6l6NdDr3Uwy8fBlw/+ksu966GT02kL3kZFOGJ7xJjrD6ybIp/1HNahjEApI9qAVtavdWAdIWKZNGUQ4rJmuWO6iUwB3ys6yjg9wgzCsslYCj1fNRqQLYuOvrgHtWyv5Qc+pfvJC91gTDejIHghU6lloFmMinWgDrXfhUzZXhFRQ5cpQs7AsH2q+I9JuuBRMf21Tc9OqFoW3T61eJrelmkOt78637H8chfzYJ5edQmRHrXpPEa7umHN8bTkh1mqzAqOaNJdMHLAjrueAorhArx8qbIYNqQCYUhEdx60nS4NvoQ7g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xRV8rC/76RdwCpwx7ofihmIaEHqnfTR59oD/oVIwubA=;
+ b=AlVj9DISAvA2//Hp/s+s21+79rrqC/Yc2bPFHBQb+p8zZ+BdzPsTSx2QSd+ktWdC+cIhat9TROCKYuXGbJvTB5fY0X/XhpzeEPVfaQmjgwIxcRPtGIlAMOxtF2umwQzL2G9g9+HiiL8Sy8O1v8BusWrdMdrbKkBMGBPsiz5jOV8=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+Received: from OS9PR01MB13950.jpnprd01.prod.outlook.com (2603:1096:604:35e::5)
+ by OS7PR01MB11443.jpnprd01.prod.outlook.com (2603:1096:604:241::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.25; Mon, 26 May
+ 2025 09:21:57 +0000
+Received: from OS9PR01MB13950.jpnprd01.prod.outlook.com
+ ([fe80::244d:8815:7064:a9f3]) by OS9PR01MB13950.jpnprd01.prod.outlook.com
+ ([fe80::244d:8815:7064:a9f3%3]) with mapi id 15.20.8769.022; Mon, 26 May 2025
+ 09:21:57 +0000
+Message-ID: <c0aa1d6f-4a2e-455f-b458-1b679beefe0f@bp.renesas.com>
+Date: Mon, 26 May 2025 11:21:44 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/bridge: adv7511: Do not merge adv7511_mode_set() with
+ atomic_enable()
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: tomm.merciai@gmail.com, linux-renesas-soc@vger.kernel.org,
+ biju.das.jz@bp.renesas.com, Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ Douglas Anderson <dianders@chromium.org>, Adam Ford <aford173@gmail.com>,
+ Jesse Van Gavere <jesseevg@gmail.com>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+References: <20250526085455.33371-1-tommaso.merciai.xr@bp.renesas.com>
+ <CAMuHMdVMDd2abFFzMY_Rbm=7pnX5C2qHBsa68tF_c=bRnp3zkg@mail.gmail.com>
+Content-Language: en-US
+From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+In-Reply-To: <CAMuHMdVMDd2abFFzMY_Rbm=7pnX5C2qHBsa68tF_c=bRnp3zkg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR2P281CA0119.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:9d::15) To OS9PR01MB13950.jpnprd01.prod.outlook.com
+ (2603:1096:604:35e::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:rQCowADHGFEZMjRocxodAA--.6994S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7XF45uw1Dtr4ktw48Kw43GFg_yoW8JrWUpF
-	43KryjgFyUXw15Xa48G3y8uFy5ua12kw1FkFyvy3Z3Aa1vgFsxWF4rCr45XF1rCF4DGa4S
-	vF4vqrn0v34DArDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkl14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
-	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
-	jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr
-	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkF7I0En4kS14v26r12
-	6r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI
-	0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y
-	0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxV
-	WUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1l
-	IxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUjO6pDUUUU
-	U==
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiCQ8OA2g0LsYQ5wAAsI
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: OS9PR01MB13950:EE_|OS7PR01MB11443:EE_
+X-MS-Office365-Filtering-Correlation-Id: 93cb31be-e1d7-4bc3-ffc9-08dd9c36c2cc
+X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+ =?utf-8?B?L3diSlA5andhaG5SQWt5ajE3bFVyQnBPU21tRjh4OWhqV1IxMlYvdEx5cHhV?=
+ =?utf-8?B?MHVneTJXWWRRd3NLS2h0ZGNTQ1NxdW5WbEZVZmdlUUZsNU1qK2JHMnE5ck5K?=
+ =?utf-8?B?Ung2WWlVWWNJZGxqWFlLN2FIZnZDTzVRVlhVam1rVFRpRWVqcjlxTkNEUits?=
+ =?utf-8?B?ZUcxSU0xRUVRZmhuOEpaUUlBVU1yUHAxc0UvQjJkak9VdklVNHBGelpVdnJU?=
+ =?utf-8?B?Y1pxd3VhdGRDUjN6YndzNjBhbXhmbzlHWXJ5RVpvekNQMU9WT3EvbzExT0VB?=
+ =?utf-8?B?ZHN6RG9ZaWlmZXBXU0ZWTGU0N3dQTlJ1WjUxY2tsMXNuZ1ZHVXlLUXdEU2pw?=
+ =?utf-8?B?bmQvenBET3J6VU4yTThqWnNHRVhUWXdKbytNaHQ2cnU1QjhLUG02MEdjV0Vi?=
+ =?utf-8?B?ekFXZVZZaXZJQlNJaG5lcnhzdjZNQjZCdXZlYzFPVFgwZ0o2OURkMmZEeUtp?=
+ =?utf-8?B?cDFITnNJNjhyRmtvNVdMRHluQVpVSDlnUmp3eXBFR1V4NCsySDBQWUFGRGRq?=
+ =?utf-8?B?VndpWEIxZnRSR3JlT1ArbXMxZDVRYTBrM1BLUUwzUU5rOUdGdUFCKzBBV3NE?=
+ =?utf-8?B?R2pvdTdCVGdZMVFiQ01ibUpYZm9CZ09pWjd6YmErSFJQQTc1OG91SGNpNVph?=
+ =?utf-8?B?bVZzSXhyY01wR1c0ZXRqNDlpZDZFVWJZK2JMUUx2R1JUTXp5VXR0SnVhcUtB?=
+ =?utf-8?B?QWxqYzZvZFJEOXdncnlzZFZxVGFiS2xBMzVyaE1tNzhJblRaeVFUU1lTOEpN?=
+ =?utf-8?B?RldMMEtJcS9qR0Z0SVdEOGtDbm81aGp2RE5CemxETE56YXJjNFFmeTFNMVY5?=
+ =?utf-8?B?RElaaXdmeVRZWGp5TWh1aEZVTE1UYW1CUGkzM2djeDg0WFlJdFlSMDdqeEJJ?=
+ =?utf-8?B?eHArUVZmeG5IV1o3cnV6Uk15WGhweE9tb3dtUGp3NXJYSzRhaWY5MHRYZVVW?=
+ =?utf-8?B?ZWVqdy83NVl4M3ZtVzFaZXhTZnQ0RmtVRWF4bFMyTzEzVzIwSFFPQkZPQk11?=
+ =?utf-8?B?VDc2U3RpTUpBRUFKK1BSenZTTktidG1LU05rS1NtcUFwcFdKZkVhUmtPVDRK?=
+ =?utf-8?B?OCt6dnROcUFjL1dHSmpsVmNLVE5WdWlxbTJkUEJ3emMwOFBnZmRib1p6WUhl?=
+ =?utf-8?B?ODRIRy96L1BDRDI0bHU1aWU3cWo2UjZzTk10UXdZUmVZMmdZM25POG13LzJv?=
+ =?utf-8?B?TkZMZFE2a1Y4VWRqQk1TVGJWOVdlQ0liRWZ6RW10UFE2RUF4ZC93QkNiZHV4?=
+ =?utf-8?B?QVUzMzJpckl4Y3hMdS9TOWdqbzI1MEFMNVhqbTBDVXNjMlowMVRwNXBpd2VI?=
+ =?utf-8?B?YXBBT0wxekp1UDd4WFFBS3kxQWx3SXNLMlhlYUx5aFJ4a1BPNTJDbUtwdE93?=
+ =?utf-8?B?S1NnSzUyeitld010a0k5L0I5N0xCam1ob0JkcnlUdlBGamZQK1lvajZhZTR0?=
+ =?utf-8?B?b3pmYjFCZEV6SmJSVm45blRoRFZQRERQejFNVnJVOUhZUm1VSGljOWJ4dXky?=
+ =?utf-8?B?SGNyRjNiczB4TWNidTBiVmc5cFV6NlE1M0g2YUJCUVEzMUVERjVwaGhxMUZX?=
+ =?utf-8?B?M2p6cHB4MEdON3oybGRUUHRpQmZqaGs5L3IzTVBEdTZERGRJK2pObGpuWmor?=
+ =?utf-8?B?Ti92WWVaQlFVZXREMW9UN0lpZUM0aU84VnE2VEJVaFhBQmRPUi81MlRXZTBm?=
+ =?utf-8?B?VUNhbXZsZHBnYm41alFUUmxVUWcwblpsb0FWMWhvN3E5ektVMkNUeXFFZG44?=
+ =?utf-8?B?dEx4K1UrWFI5YktUS3UwOUZFVFJwMTZXcGE5cGtPZlRoNm04azFqTWV3amdM?=
+ =?utf-8?Q?ySjNfGZo76Z2SxARoZWtw1IwrZR0UVOp/djO0=3D?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS9PR01MB13950.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?utf-8?B?K2d2TTdxQjhNY1pOVzB0MjdQcHk0b1NpVlVQa1J5M3ZZeUsrcFVEMC9SeTBw?=
+ =?utf-8?B?U3MweTZ3ekcyMjZ0ZWZweHJnaUlIT3JHZFhTTXRxL2xmTWNMbWtvM0xjaStR?=
+ =?utf-8?B?ZnNWZ211Y25WYlZPbURjM2MrQmpQb3Y3QU1VbHF6aVY1d3hqUEhUUnJyMGV0?=
+ =?utf-8?B?bUFqRUd5a0tuTHFXSVhKeE8vUzBLTVRUeW9PTXhIekdqT2dQYjR3ckpSeHFL?=
+ =?utf-8?B?SGxMMDhrOGtaU0dlbnFnOUJRKzFRb1o5Z0w3RFJUTjlWclRrajNNeml1TjFy?=
+ =?utf-8?B?eUlndXNTdk5jQktIUVVJckVPenhZK3dieEhZUTBFVnpMQ1hEZVFPWGFqWFhZ?=
+ =?utf-8?B?cmJIT1N1OTlQSjBKY0dDcXZOK3Y1blhrY1BHYW81UW45SGNkR1RwbGNnYjc2?=
+ =?utf-8?B?ZkVGTThqNU5Ed1BiQ0VNSkFYa0pibEtBVE5YVnhiK1hkMk1ZR2dtSzhybFQx?=
+ =?utf-8?B?TUltR09GanpDN3NTQnViVGlPQ3BsN0xiZVg3bStkMkx5YkNlUGE2YTlmSjhB?=
+ =?utf-8?B?dXI4Tjluc2FicEY4TUtGMGx5VElWb2pxcXpJM3QxN0lsaVRHNTNYRjVsZVp3?=
+ =?utf-8?B?YmtYZDJCUHg2bUZyZUF3M0xDb1dGbFRGUjFiZlBzdGZDNlRTZ01vLzRBNEc0?=
+ =?utf-8?B?TzdNM0JzUGhpemJUM2pCSEdVeSt2c0lMUmN1TVNlSjFHWlpyVmJzdVlNQnhs?=
+ =?utf-8?B?UjRMQkM0Q01ndU5YMi9ZeFV1SS9iMU1zWTdXZXRFKzFIYk9kRXVVVmJaWVN1?=
+ =?utf-8?B?SUFTRk9GSlc2TVp5R1lGbndMY1Q4SkQyNFdnODhJN2xEOHhhUXdIWGtRZjNi?=
+ =?utf-8?B?Y0QzMjdRWTdPbEdHNjEvVjVFTTA2ZHVaS0dPZXh5aGtHeS9mdmlpb2x1ZU9D?=
+ =?utf-8?B?Y3BGUk5oeE1UVkJVMk43aWJvRENvR05RVXB5Y3BsLzQvVCtab015eXZNMDlB?=
+ =?utf-8?B?ekRUUVhtV1psMUZ4WjBiNklCVFpQSXhnT2h1Q0g5ZVdLL3M2UnhqeTlQdG51?=
+ =?utf-8?B?Q0NmQUdmV3p3V3pUOXpFd3A3dEUwYmRZaGk2OXFvZ05iQ2Y1SnQxSklkWXZh?=
+ =?utf-8?B?WmVWeXBTYUJLVnpxWStHa1pnZnVZbStXYUdhUFVXLzFPM0hqM1dKNWpEaVZi?=
+ =?utf-8?B?cmprUEE3RVVUbURoT3QvVEgvdzlLc2VVSDk5Qm9kdTJCSlVTYVNjakNoOTJs?=
+ =?utf-8?B?U0QyZ0RLQ2pIcW1ncDVjSlBsdUM0bFFIV1JxV1RRUmZ5WWRYWGtxVk15Mk9K?=
+ =?utf-8?B?OE5CUmtJdzRxbXFSWndCeFhhSEFEWS9GK1ZNeEEveTlMS0h4RlRtek5BZ1FX?=
+ =?utf-8?B?Wi9oeUQyYW9vT0k0WUk0VlFCY2tsVzdrMjlaQ0RHd1B1S0RtaDdoTnJUWlBv?=
+ =?utf-8?B?UmRTR1QrMmt1emdEMDRhaVNrQnJWTXFDS0NhMkxkNzZnM2dIdklOVkZBbGxr?=
+ =?utf-8?B?ZGhnQ0hCWVloUXREb3RoWWRSQ21ua1o2TTI1K3lzV3dCV041MXJmQTN6ZDVi?=
+ =?utf-8?B?dHR2QWJaeVUyWGhEWFVYOVJ5dXdQL2hyYUh5VFdJOGhLKzA1alpBdjRqN243?=
+ =?utf-8?B?SUlDZTNrM1ZSWjFJcThEaHNrZkIrSGdhcW9zbzdOSUtOYisrK3NQdFBDT0FG?=
+ =?utf-8?B?a3Q5QkxHSWdtM1cwNGRySGZFTmcydDRHN1BUeEhvbVJFU1VMdmZjTmhNbGEr?=
+ =?utf-8?B?M2JWeFNhMTV6UWVvOUgyNFRmQVY3cVVnTTBoWU5YbjZnOXRBVHdDeVhwM3JE?=
+ =?utf-8?B?SVplYzJPQUFOQVJ1TkJBVkJ4dGhyaUNEVnBLMVFFUmxKeFc4QUhuejlacFl1?=
+ =?utf-8?B?blFQZXJadFcrOHAvQUwvTHdRSFROTDlpa1p6RDZEMlFTajc1clptc2JZNmYr?=
+ =?utf-8?B?eXFpTWNlZDRUTEtWd1ZFK0JpMjFZWGdYeWtkeUljc1ZhTkhMWHZFQWNmNUd3?=
+ =?utf-8?B?MnN5QWJtaUR1dmQ1NGxjUEhhb1JwS1hSR2hxZkRZOWdYdUU3L3BsMVkzeFZu?=
+ =?utf-8?B?a0ZZbWFXQ1ptaGpYTFluVVJxSlViVXZiQXdCeThwVk1Bd3AwMEFPYXVkQ1Va?=
+ =?utf-8?B?V1UwZURoWDdqbm9GQ2xWdmJBdllMNDhucEpLaFZOQnFucGNSblhtZk5Kb0pL?=
+ =?utf-8?B?bUJEeGMyMDBRakJXOEZrTnNIY2V2ZjJuZ0MwM3AwQnBNZ003NXRmc0tMd2Jj?=
+ =?utf-8?Q?ojTepU4OHQLh7Hgq0vTSgbs=3D?=
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 93cb31be-e1d7-4bc3-ffc9-08dd9c36c2cc
+X-MS-Exchange-CrossTenant-AuthSource: OS9PR01MB13950.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 May 2025 09:21:57.0506
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 8I9OKE4j7t74RDiD0yynu4MnaDuLSAPqW7wwFlPuWp2TEwsZIJKGwjvlheLSJUeNPoi7w4tAPnkXcGm8ZcW5+sZhOv1tg6smhd1caqQNIFWZT4E/OhrQNqUEv4GRb/lJ
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS7PR01MB11443
 
-The function ieee80211_chsw_switch_vifs() calls the function
-ieee80211_link_get_chanctx(), but does not check its return value.
-The return value is a null pointer if the ieee80211_link_get_chanctx()
-fails. This will lead to a null pointer dereference in the following
-code "&old_ctx->conf". A proper implementation can be found in
-ieee80211_link_use_reserved_assign().
+Hi Geert,
+Thanks for your comment.
 
-Add a null pointer check and goto error handling path if the
-function fails.
+On 26/05/25 11:13, Geert Uytterhoeven wrote:
+> Hi Tommaso,
+> 
+> On Mon, 26 May 2025 at 10:55, Tommaso Merciai
+> <tommaso.merciai.xr@bp.renesas.com> wrote:
+>> After adv7511_mode_set() was merged into .atomic_enable(), only the
+>> native resolution is working when using modetest.
+>>
+>> This is caused by incorrect timings: adv7511_mode_set() must not be
+>> merged into .atomic_enable().
+>>
+>> Move adv7511_mode_set() back to the .mode_set() callback in
+>> drm_bridge_funcs to restore correct behavior.
+> 
+> Thanks for your patch!
+> 
+>> Fixes: 0a9e2f0a6466 ("drm/bridge: adv7511: switch to the HDMI connector helpers")
+> 
+> I can't find that commit? I guess you mean:
+> Fixes: ae01d3183d2763ed ("drm/bridge: adv7511: switch to the HDMI
+> connector helpers")
 
-Fixes: 5d52ee811019 ("mac80211: allow reservation of a running chanctx")
-Cc: stable@vger.kernel.org # v3.16
-Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
----
-v2: Fix code error.
+Yes, sorry.
+You are completely right!
 
- net/mac80211/chan.c | 4 ++++
- 1 file changed, 4 insertions(+)
+https://cgit.freedesktop.org/drm/drm-misc/commit/drivers/gpu/drm/bridge/adv7511?id=ae01d3183d2763ed27ab71f4ef5402b683d9ad8a
 
-diff --git a/net/mac80211/chan.c b/net/mac80211/chan.c
-index a442cb667520..c9b703c283e7 100644
---- a/net/mac80211/chan.c
-+++ b/net/mac80211/chan.c
-@@ -1503,6 +1503,10 @@ static int ieee80211_chsw_switch_vifs(struct ieee80211_local *local,
- 				continue;
- 
- 			old_ctx = ieee80211_link_get_chanctx(link);
-+			if (WARN_ON(!old_ctx)) {
-+				err = -EINVAL;
-+				goto out;
-+			}
- 			vif_chsw[i].vif = &link->sdata->vif;
- 			vif_chsw[i].old_ctx = &old_ctx->conf;
- 			vif_chsw[i].new_ctx = &ctx->conf;
--- 
-2.42.0.windows.2
+> 
+> Gr{oetje,eeting}s,
+> 
+>                          Geert
+> 
 
+Thanks & Regards,
+Tommaso
 
