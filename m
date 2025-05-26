@@ -1,135 +1,122 @@
-Return-Path: <linux-kernel+bounces-662498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-662501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D8F4AC3B98
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 10:23:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E73ACAC3B9E
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 10:25:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2A7B3B2B93
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 08:22:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB8553A7318
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 08:25:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADA4A1E633C;
-	Mon, 26 May 2025 08:23:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEE9C1DF26B;
+	Mon, 26 May 2025 08:25:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="Zfi/Nceo"
-Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O5tTg7rg"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 900841E32DB;
-	Mon, 26 May 2025 08:22:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9684D16D9BF
+	for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 08:25:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748247781; cv=none; b=SfwOnP6KUpPjo5/3MVtGkEcswmnqn7VhbUbUk/c6rSriFWDWKT2HKA2TPg14fLk8R9po4cvvJL9IWsFwCS6AHUlbka5twADSdIdjlcKOHD5N94wvUZ5V1UcUbb0telj4U0iawZ08b5Gl7qVE53Zm4xjmLqf+18PyPEXaLxy/iA0=
+	t=1748247927; cv=none; b=Jo+s95Nvds8kFh5sGQYjS1LMJzoNDSsIw1ikbu9TksVaG2mMXcpCU34XV/zC24nRa3kehgRyU/Nj99kVyLQiW6ZkpkKB9nMaO8vLCq4CBShrh1kPZG8xKZHkTmjgKbQQ9u98BDf7CxCBKfwAtLdeMxuvobItACvCUO3wptP8x5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748247781; c=relaxed/simple;
-	bh=2KWGZqpL6ham/Q0N5PUCqGJYyzBKQe9H13tYc978hyU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FKzAWcMLNlucvutxrCWPitD0nuzX1g5S3BX2iGyUPnhhlDGPnL5M6jLdNORHzkP3VEwxWC8UBn+qbEAo5tQ/NUSNJuFRhOMx+gFHLZSL75FAzPcjCuUcBrAtyHBKJQj1j34Sl29uEPCer40TcMKTAxT5bLkAnOQnA/VCgpQwwlk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=Zfi/Nceo; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
-	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54Q6Fhis021644;
-	Mon, 26 May 2025 04:22:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=DKIM; bh=ej5T3
-	MjH+ZxmpbsNfOcLqm7MXXx2F089tYefr5/DKVQ=; b=Zfi/NceoNjBSH5vv5N6qo
-	R9sTI2OHtO9mJxhgMqJrJV2eAMXSgI8+/k/bulp5/OrUxQAfb35GBsBL68NgFsEY
-	E2IQMPK92XZBYk5Tr0x+hAcTtPgTUarlgxX2XIC1f1iI7ae6GZTdB0qdPpGgahkf
-	HlM7z2FtcFwJ0GmV9JnUQU+5FLwWuFGrhSidhd92vVqx/wlUBrYtD6eIzRikJJnr
-	ZMgYgNwpjU1f8HEbzdRD5Pam/Oz1Qg5SW0Q0vxqb66Bgsp1BbgUcUi3GBgHhMsCU
-	BmHffsCYNNJp5qMdhDn1z/BQNjgSHXFjgcZwFQb0l8bPNHAbpRhZ9pLOoRbLoxty
-	Q==
-Received: from nwd2mta4.analog.com ([137.71.173.58])
-	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 46ub16f9c1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 26 May 2025 04:22:51 -0400 (EDT)
-Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
-	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 54Q8MoNd026835
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 26 May 2025 04:22:50 -0400
-Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by ASHBMBX8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Mon, 26 May
- 2025 04:22:50 -0400
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
- Transport; Mon, 26 May 2025 04:22:50 -0400
-Received: from amiclaus-VirtualBox.ad.analog.com (AMICLAUS-L02.ad.analog.com [10.48.65.174])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 54Q8MdJB015981;
-	Mon, 26 May 2025 04:22:44 -0400
-From: Antoniu Miclaus <antoniu.miclaus@analog.com>
-To: <jic23@kernel.org>, <linux-iio@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: Antoniu Miclaus <antoniu.miclaus@analog.com>,
-        =?UTF-8?q?Nuno=20S=C3=A1?=
-	<nuno.sa@analog.com>
-Subject: [PATCH v2 2/2] iio: adc: ad4080: extend check for data lanes num
-Date: Mon, 26 May 2025 11:22:28 +0300
-Message-ID: <20250526082228.4961-2-antoniu.miclaus@analog.com>
+	s=arc-20240116; t=1748247927; c=relaxed/simple;
+	bh=A86gVWyxt3fqHTgPnFRNwt6qGwUVCyI9lJ66h0Lsauc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gbHWWFaicrUniMnkfj9c9SNglrV3zRNbwfn99YSzEpMJCjrgaoU9SDFkfMoXVV4KXhd/tAntnLlXOL4IiylPav3YrditlPlXotYRpbMqUVnr9xwdMvfoEW2j6VIUnDetQXUaFBqEkqNIC548cUYunc3fAIHc7UaPpHqnlrhEyDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O5tTg7rg; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-443a787bd14so21517885e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 01:25:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748247924; x=1748852724; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=IjTfQZqn1PiQ/alPx5E/R8fl2JQ4RFmD3TN8UG47HJE=;
+        b=O5tTg7rg0ofOsZlUpLS0cWuBuq+ica9VmwxwT+5LmDQ6i6S0hpysDIGF1lx7X23Z2t
+         75imo/jiMWLbzb5WSghW0zCIMAG/Af/WcNq+2tMQerjhOthKraM2X05SljLnweWddteZ
+         LZRcaimZaZsa64+J5Swe+2e3XGOTgfGNA1fYoPorsicknZCzXPLFUEzELbGuTsidkv8Y
+         oc4SaOOKq/vXlIHzG4BU+AKike885DFpPjXmvfb2eofMCc+xNLSY7o4UkWto4YKPODxZ
+         SJNMzwDZjOFu/f4uSR1/9xOLhu5ZLXXrpStXtuxrcPHpTODiA+DVnY86U7kNnwZ/oJw0
+         rNHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748247924; x=1748852724;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IjTfQZqn1PiQ/alPx5E/R8fl2JQ4RFmD3TN8UG47HJE=;
+        b=K652ND1MiS5dr2tCfIf84exx1O3Mbt+O6LhY0ZdssJv6JMdwO/mVDcC25QJCeMd79E
+         CKEniC7PZGpPWjXIuNqv8x7A3amar7It7jXo6mHNxsOAeilJlbch4GuaxlPjxkjo1km8
+         ZMT8baS2TV8/akIT/6AHpD5yqNDTxt6SViYYRuCnsBfrVdo1l6W5rBje6oQO03CI8qax
+         Y+VHnRKZzftszt5GiswOqaMyVPMJSkea3hWeF4kg/TYR3MSLcFtwokBIOWW53PIBTyB0
+         bPYAoHWJJ+Dorp0tLj5ieie5jdASBadRmVZTXH8ShYfpfTThxWoogUmihse1D4lEVpSY
+         Bq0w==
+X-Forwarded-Encrypted: i=1; AJvYcCX1OSqUeaRAtd8PdWq9yMa2hNONz4GEXT+tBdvtYWmldJ6fS66z1QXFBCNhDJN/ZeurEuUy9zDTPdzKNtI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlLPKflnMHfm3gWK98CvLI6+sFIratwKsZQyKEeXxz76P/Fcf4
+	+7zG2KVqEO0lX8kcGBlX+DUj+IKSv6mKuSi2l0EgJb2OZGRz6UAND2yL
+X-Gm-Gg: ASbGncu9D0/LkbTd6i3g9iMfALqW5BR+TckjTkjrDyTEgWRF2PbCFMF8YJIfCSfjz/A
+	KBLRmqOGToUCupTmZNAlDknD0Yqcb57/5Nt2nvXlLMuY7qXi/HjQYkHIkq5nu4yA+BSa+klv8wZ
+	lMNLCSwtn5EV45f4mUBIPTTRYRrWcDBIY1bcEAPJfe6vwFdQCpAlW/36A5KFkDlKBrdlfI6lFOU
+	6hh8eY6710TTSSM5al2c53fQVK1Onl5MCFPGlWJgmBgSE+zDBdQsF61sKVnNXczxwTk/6eh7CtK
+	N1HlFrQM/LVJY3ym3E3/N7I601vTzkVI4xDrdi81++zx8WQmtNL4/EPQ3FOL8LTT+B/cbTWFgR2
+	u
+X-Google-Smtp-Source: AGHT+IFBl/+xet0BN01vYtH+quwU5fxmlIYd+ljBiL9S3v8VXGWzm9YbKPOJn383AQ8UM2AngthXSw==
+X-Received: by 2002:a05:6000:4026:b0:3a0:b8ba:849f with SMTP id ffacd0b85a97d-3a4ca123b72mr7178853f8f.4.1748247923507;
+        Mon, 26 May 2025 01:25:23 -0700 (PDT)
+Received: from localhost.localdomain ([41.79.198.22])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4d74843b2sm3063748f8f.53.2025.05.26.01.25.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 May 2025 01:25:23 -0700 (PDT)
+From: Khalid Ali <khaliidcaliy@gmail.com>
+X-Google-Original-From: Khalid Ali <khaliidcaliy@gmail.com
+To: tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com
+Cc: x86@kernel.org,
+	hpa@zytor.com,
+	linux-kernel@vger.kernel.org,
+	Khalid Ali <khaliidcaliy@gmail.com>
+Subject: [PATCH] x86/kerrnel/FPU: clear MP bit of cr0
+Date: Mon, 26 May 2025 08:22:44 +0000
+Message-ID: <20250526082414.689-1-khaliidcaliy@gmail.com>
 X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250526082228.4961-1-antoniu.miclaus@analog.com>
-References: <20250526082228.4961-1-antoniu.miclaus@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-GUID: o-3eo_LfeivqUsmU0lF_ukr4VJgK9x39
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI2MDA3MCBTYWx0ZWRfXyv43VdLBuR5a
- J2xShgxvdzkapG+KlIjXdGWzZ14ZE9O0bHMPwnmliUJ3ShSrR0DJYOWmbm6fGkHhvDZbktllYDQ
- rAPNaCrxWR6xEIkEamQ2UyhyyhtMAryVpFC7yqizY3IL9nwUR9AL25g8MPJOG+YEEtfKV+3f4l1
- 9ZxeLJlI/xxHrcrbg3xp+OTEUtEARgy2vCxrtfHr7tAYAfZy5EaMHiUQh9VcAQTMUo/5ZHGSSqX
- ehbQ9fR/AI9JkuIySY2sIEWn3YxerQrC6ZmHRvvzGbU9+ryk0QvfSTUC6GxQ5p1VWXbhOTMwNZq
- yN1ogq2j0cUkjr8T8/3FTZq2/7igJGS1hghuQT98jaWDL2C8Xdsdbnv5izjFzUVVOF8BB28uIW6
- HCgssVXbmW7mgki6HiXNKIzMLvN9gwEKThJnYAdCtUbSwGONRfo6pzMuFWsAtZaHvcVW/qpk
-X-Authority-Analysis: v=2.4 cv=XemJzJ55 c=1 sm=1 tr=0 ts=683424db cx=c_pps
- a=3WNzaoukacrqR9RwcOSAdA==:117 a=3WNzaoukacrqR9RwcOSAdA==:17
- a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=gAnH3GRIAAAA:8 a=GGKVI5b-SMvUNDNwoSIA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: o-3eo_LfeivqUsmU0lF_ukr4VJgK9x39
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-26_04,2025-05-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 mlxscore=0 priorityscore=1501 suspectscore=0 phishscore=0
- impostorscore=0 malwarescore=0 bulkscore=0 lowpriorityscore=0 spamscore=0
- mlxlogscore=999 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505160000
- definitions=main-2505260070
 
-Extend the check for st->num_lanes to ensure it is not greater
-than 2, preventing invalid configurations.
+From: Khalid Ali <khaliidcaliy@gmail.com>
 
-The AD4080 only supports up to 2 data lanes.
+Clear MP bit when initializing x87 FPU, since what it does
+is making WAIT/FWAIT instructions to react to setting of TS flag.
+Right now TS bit is cleared so MP should be cleared, as it is not
+needed. This should set the bit in defined state.
 
-Reviewed-by: Nuno Sá <nuno.sa@analog.com>
-Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+Signed-off-by: Khalid Ali <khaliidcaliy@gmail.com>
 ---
-no changes in v2.
- drivers/iio/adc/ad4080.c | 2 +-
+ arch/x86/kernel/fpu/init.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/iio/adc/ad4080.c b/drivers/iio/adc/ad4080.c
-index c36eb41d738a..6e61787ed321 100644
---- a/drivers/iio/adc/ad4080.c
-+++ b/drivers/iio/adc/ad4080.c
-@@ -516,7 +516,7 @@ static int ad4080_properties_parse(struct ad4080_state *st)
+diff --git a/arch/x86/kernel/fpu/init.c b/arch/x86/kernel/fpu/init.c
+index 998a08f17e33..2a2b45610b74 100644
+--- a/arch/x86/kernel/fpu/init.c
++++ b/arch/x86/kernel/fpu/init.c
+@@ -30,7 +30,7 @@ static void fpu__init_cpu_generic(void)
+ 		cr4_set_bits(cr4_mask);
  
- 	st->num_lanes = 1;
- 	device_property_read_u32(dev, "adi,num-lanes", &st->num_lanes);
--	if (!st->num_lanes)
-+	if (!st->num_lanes || st->num_lanes > 2)
- 		return dev_err_probe(dev, -EINVAL,
- 				     "Invalid 'adi,num-lanes' value: %u",
- 				     st->num_lanes);
+ 	cr0 = read_cr0();
+-	cr0 &= ~(X86_CR0_TS|X86_CR0_EM); /* clear TS and EM */
++	cr0 &= ~(X86_CR0_TS|X86_CR0_EM|X86_CR0_MP); /* clear TS, EM and MP*/
+ 	if (!boot_cpu_has(X86_FEATURE_FPU))
+ 		cr0 |= X86_CR0_EM;
+ 	write_cr0(cr0);
 -- 
 2.49.0
 
