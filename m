@@ -1,151 +1,198 @@
-Return-Path: <linux-kernel+bounces-662956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-662962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09774AC41CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 16:50:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB755AC41D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 16:52:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD842189B246
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 14:50:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 231523B8557
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 14:52:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A5B8212B0C;
-	Mon, 26 May 2025 14:50:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lDnKj95H";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zm8REmFi"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A045D20C484;
+	Mon, 26 May 2025 14:52:46 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4674E202F83;
-	Mon, 26 May 2025 14:50:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09F8F7E110
+	for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 14:52:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748271024; cv=none; b=NsobHpoFdE4P6bOYYoAs+wm8MZ75NM4hf1ZTy3VF/SJddYJgJMHoPYMdL1C8o+4g7A8ntOQd1XvwyyxrPFu+CLmWzCSZMJPqAebVTU+VIUfu+mFMEZCFl3hWEnTlxj+tzv/VlgeMFsKQD51obIB8M7iOKXO/J0G6IRQtXCd9A4k=
+	t=1748271166; cv=none; b=SpY3ALdcfJ4h4sWkU3OnjcSPtC21s3OSQ05kX82Zm+2ABHkp3HNB6l4TsmxJBBFDdhPGfQ8lcyt7lUoRqdg2ZhVgZtvxdge4yy7/2WlPlRFnNqwCRywFXZQf10yaUceMixyQmN7HzvZC+o6EB9cZEtjCedr1FmESTJFFFYT0jyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748271024; c=relaxed/simple;
-	bh=6aKzDgGB/ZUmFcoUldyOCp1+E10okRiX8GJYWNpjka0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PWmCzNoqBwN02WSz6hgmJHG0s/9dA4EU499/UJj2MxoWghB4HhxsSPED3e8swXS/dZVYObRnL277Kia7M32KzwHcu1hpFbd/8u+jDNEam164alH3fLew8jgXZqNfReXy/6Xt866mQJ9JJNUgkf3vgb/lvKg8AUdBxLRWu39EEyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lDnKj95H; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zm8REmFi; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 26 May 2025 16:50:19 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1748271020;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LNlsAOL7ZgwI2HEsBSEBPxt6J5Za4EdYqqyFjUCPx+s=;
-	b=lDnKj95HzNnLs+kNUe+FsdhY6xmb8zMvOyt3YglhAP4AMP1McZ0Q0WRq30XvZ1dD8AHl96
-	EKaEYdE7+Ref10HJ7RgivJBYUoIUsl2/HFxLcm/jABo+S75ibkApABSHxCIJbFfnVBjWDY
-	+w1UuaI2jAV8MB58wsgr0q+Mz7ZsylyNpQx2A9VtnD3ifETfyqdJ2GaMyyH+bddcsTmG/R
-	tudzmruX3Dvk2rH3i+WuyqbrckCRdcT6XcuilC50BwB3QudmW8NcyzbMoEPnrTKXwyajek
-	8yUA+jn8dg70ny23F9a/XWbZYGT0vfmdXtz6XoTRslHHkwyOniU90HnYGL5o8g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1748271020;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LNlsAOL7ZgwI2HEsBSEBPxt6J5Za4EdYqqyFjUCPx+s=;
-	b=zm8REmFiKPwOTZ24+PZoOb7jWmzgaIsmL406pqgMB9q9a/Alo73hYSk10LJpi6Wb0fJKVA
-	9XxmVxesYvMMHIAQ==
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-To: Nicolas Schier <nicolas.schier@linux.dev>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Willy Tarreau <w@1wt.eu>, Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
-	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, 
-	Shuah Khan <shuah@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, linux-doc@vger.kernel.org
-Subject: Re: [PATCH v2 09/11] kunit: uapi: Add example for UAPI tests
-Message-ID: <20250526164038-12259c68-586f-4a24-a814-8ffed5778742@linutronix.de>
-References: <20250407-kunit-kselftests-v2-0-454114e287fd@linutronix.de>
- <20250407-kunit-kselftests-v2-9-454114e287fd@linutronix.de>
- <20250526-marvellous-abstract-koala-317cb4@l-nschier-aarch64>
+	s=arc-20240116; t=1748271166; c=relaxed/simple;
+	bh=G7c72AV8gS3wkfxDivSJ+ckK3flK2C0qPAWpZppbbr4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uj2xGruqunkkdtaF+wAMNVnP71lschQmu4quEbKloA+xnR225Xz2XuSHsdr6K0CD3VViAz5KbCDNJnfEgN6qdc43Xk4bHcsoQbS7Ii05z6k6ipojS/fI+yybAL/y1eYsY1R0Uap3dHsfC/UHE8Dvzv6+tTAN8QhyHSKIkk+o9qo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4b5dyg534Bz4f3lDG
+	for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 22:52:11 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id 717351A0A11
+	for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 22:52:38 +0800 (CST)
+Received: from [10.67.109.184] (unknown [10.67.109.184])
+	by APP3 (Coremail) with SMTP id _Ch0CgD3lsE0gDRoZo2CNQ--.12408S2;
+	Mon, 26 May 2025 22:52:38 +0800 (CST)
+Message-ID: <4cbc1e43-ea46-44de-9e2b-1c62dcd2b6d5@huaweicloud.com>
+Date: Mon, 26 May 2025 22:52:36 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] mm/mmap: Fix uprobe anon page be overwritten when
+ expanding vma during mremap
+Content-Language: en-US
+To: David Hildenbrand <david@redhat.com>, lorenzo.stoakes@oracle.com,
+ oleg@redhat.com
+Cc: mhiramat@kernel.org, peterz@infradead.org, Liam.Howlett@oracle.com,
+ akpm@linux-foundation.org, vbabka@suse.cz, jannh@google.com,
+ pfalcato@suse.de, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ pulehui@huawei.com
+References: <20250521092503.3116340-1-pulehui@huaweicloud.com>
+ <62b5ccf5-f1cd-43c2-b0bc-f542f40c5bdf@redhat.com>
+ <afe53868-5542-47d6-8005-71c1b3bec840@huaweicloud.com>
+ <13c5fe73-9e11-4465-b401-fc96a22dc5d1@redhat.com>
+From: Pu Lehui <pulehui@huaweicloud.com>
+In-Reply-To: <13c5fe73-9e11-4465-b401-fc96a22dc5d1@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250526-marvellous-abstract-koala-317cb4@l-nschier-aarch64>
+X-CM-TRANSID:_Ch0CgD3lsE0gDRoZo2CNQ--.12408S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxur4Duw13KrWxJw47AF1UKFg_yoWrGr4xpa
+	yxJas8KF1DJFWFyryqv34DtFyrtw4Ut3yUXrn8JFya93s8Kr1aqFW7ZFWjkFy3XrZ3tF4U
+	tr4Ut343Xa47JaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
+	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1
+	7KsUUUUUU==
+X-CM-SenderInfo: psxovxtxl6x35dzhxuhorxvhhfrp/
 
-On Mon, May 26, 2025 at 04:22:02PM +0200, Nicolas Schier wrote:
-> On Mon, Apr 07, 2025 at 09:42:46AM +0200, Thomas Wei�schuh wrote:
-> > Extend the example to show how to run a userspace executable.
-> > 
-> > Signed-off-by: Thomas Wei�schuh <thomas.weissschuh@linutronix.de>
-> > ---
-> >  lib/kunit/.kunitconfig         |  2 ++
-> >  lib/kunit/Makefile             |  9 ++++++++-
-> >  lib/kunit/kunit-example-test.c | 15 +++++++++++++++
-> >  lib/kunit/kunit-example-uapi.c | 22 ++++++++++++++++++++++
-> >  4 files changed, 47 insertions(+), 1 deletion(-)
+
+On 2025/5/22 23:14, David Hildenbrand wrote:
+> On 22.05.25 16:37, Pu Lehui wrote:
+>>
+>>
+>> On 2025/5/21 18:25, David Hildenbrand wrote:
+>>> On 21.05.25 11:25, Pu Lehui wrote:
+>>>> From: Pu Lehui <pulehui@huawei.com>
+>>>>
+>>>> We encountered a BUG alert triggered by Syzkaller as follows:
+>>>>      BUG: Bad rss-counter state mm:00000000b4a60fca type:MM_ANONPAGES
+>>>> val:1
+>>>>
+>>>> And we can reproduce it with the following steps:
+>>>> 1. register uprobe on file at zero offset
+>>>> 2. mmap the file at zero offset:
+>>>>      addr1 = mmap(NULL, 2 * 4096, PROT_NONE, MAP_PRIVATE, fd, 0);
+>>>
+>>> So, here we will install a uprobe.
+>>>
+>>>> 3. mremap part of vma1 to new vma2:
+>>>>      addr2 = mremap(addr1, 4096, 2 * 4096, MREMAP_MAYMOVE);
+>>>
+>>> Okay, so we'll essentially move the uprobe as we mremap.
+>>>
+>>>
+>>>> 4. mremap back to orig addr1:
+>>>>      mremap(addr2, 4096, 4096, MREMAP_MAYMOVE | MREMAP_FIXED, addr1);
+>>>
+>>> And here, we would expect to move the uprobe again.
+>>>
+>>>>
+>>>> In the step 3, the vma1 range [addr1, addr1 + 4096] will be remap to 
+>>>> new
+>>>> vma2 with range [addr2, addr2 + 8192], and remap uprobe anon page from
+>>>> the vma1 to vma2, then unmap the vma1 range [addr1, addr1 + 4096].
+>>>> In tht step 4, the vma2 range [addr2, addr2 + 4096] will be remap back
+>>>> to the addr range [addr1, addr1 + 4096]. Since the addr range [addr1 +
+>>>> 4096, addr1 + 8192] still maps the file, it will take
+>>>> vma_merge_new_range to merge these two addr ranges, and then do
+>>>> uprobe_mmap in vma_complete. Since the merged vma pgoff is also zero
+>>>> offset, it will install uprobe anon page to the merged vma.
+>>>
+>>> Oh, so we're installing the uprobe into the extended VMA before moving
+>>> the page tables.
+>> Yep!
+>>>
+>>> Gah.
+>>>
+>>>> However, the
+>>>> upcomming move_page_tables step, which use set_pte_at to remap the vma2
+>>>> uprobe anon page to the merged vma, will over map the old uprobe anon
+>>>> page in the merged vma, and lead the old uprobe anon page to be orphan.
+>>>
+>>> Right, when moving page tables we don't expect there to already be
+>>> something from the uprobe code.
+>>>
+>>>>
+>>>> Since the uprobe anon page will be remapped to the merged vma, we can
+>>>> remove the unnecessary uprobe_mmap at merged vma, that is, do not
+>>>> perform uprobe_mmap when there is no vma in the addr range to be
+>>>> expaned.
+>>>
+>>> Hmmm, I'll have to think about other corner cases ....
+>>>
+>> looking forward to it
+> 
+> I think, the rule is that we must not install a uprobe for the range 
+> that we will be actually moving the page tables for.
+> 
+> So, for the range we're effectively moving (not the one we're extending).
+> 
+> Because logically, the uprobe will be already handled by the existing 
+> page tables that we're moving.
+> 
+> For the range we're extending, we must call uprobe handling code ...
 > 
 > 
-> Adding this diff allows 'make clean' to clean up the UAPI test binary:
+> Alternatively, maybe we could call uprobe handling code after moving the 
+> page tables. We'd probably find that the uprobe is already installed and 
+> do nothing (so the theory :) ). ... if that would simplify anything.
 > 
-> 
-> diff --git a/lib/Makefile b/lib/Makefile
-> --- a/lib/Makefile
-> +++ b/lib/Makefile
-> @@ -112,8 +112,6 @@ CFLAGS_REMOVE_test_fpu_impl.o += $(CC_FLAGS_NO_FPU)
->  # Some KUnit files (hooks.o) need to be built-in even when KUnit is a module,
->  # so we can't just use obj-$(CONFIG_KUNIT).
-> -ifdef CONFIG_KUNIT
-> -obj-y += kunit/
-> -endif
-> +obj-$(if $(CONFIG_KUNIT),y) += kunit/
 
-Wouldn't the following be sufficient?
+Hi David, Lorenzo, Oleg,
 
-obj-y += kunit/
+My apologies for the delay. Thanks for your reply.
 
-The the kunit Makefile doesn't do anything if CONFIG_KUNIT=y and AFAIK for
-directories obj-m and obj-y should do the same.
+To make things simpler, perhaps we could try post-processing, that is:
 
->  
->  ifeq ($(CONFIG_DEBUG_KOBJECT),y)
->  CFLAGS_kobject.o += -DDEBUG
-> 
-> 
-> 
-> plus the 'clean-files' addition below.
+diff --git a/mm/mremap.c b/mm/mremap.c
+index 83e359754961..46a757fd26dc 100644
+--- a/mm/mremap.c
++++ b/mm/mremap.c
+@@ -240,6 +240,11 @@ static int move_ptes(struct pagetable_move_control 
+*pmc,
+                 if (pte_none(ptep_get(old_pte)))
+                         continue;
 
-<snip>
++               /* skip move pte when expanded range has uprobe */
++               if (unlikely(pte_present(*new_pte) &&
++                            vma_has_uprobes(pmc->new, new_addr, 
+new_addr + PAGE_SIZE)))
++                       continue;
++
+                 pte = ptep_get_and_clear(mm, old_addr, old_pte);
+                 /*
+                  * If we are remapping a valid PTE, make sure
 
-> > diff --git a/lib/kunit/Makefile b/lib/kunit/Makefile
-> > index 989933dab9ad2267f376db470b876ce2a88711b4..1b6be12676f89cafa34f0093d8136b36f4cf5532 100644
-> > --- a/lib/kunit/Makefile
-> > +++ b/lib/kunit/Makefile
-> > @@ -30,4 +30,11 @@ obj-$(CONFIG_KUNIT_TEST) +=		string-stream-test.o
-> >  obj-$(CONFIG_KUNIT_TEST) +=		assert_test.o
-> >  endif
-> >  
-> > -obj-$(CONFIG_KUNIT_EXAMPLE_TEST) +=	kunit-example-test.o
-> > +userprogs +=				kunit-example-uapi
-> 
-> clean-files +=				kunit-example-uapi
+What do you think?
 
-This shouldn't be necessary as $(userprogs) is automatically added to
-__clean-files in scripts/Makefile.clean.
+Thanks,
+Lehui
 
-> > +kunit-example-uapi-userccflags :=	-static
-> > +kunit-example-uapi-nolibc :=		$(CONFIG_ARCH_HAS_NOLIBC)
-> > +blobs +=				kunit-example-uapi.blob.o
-> > +
-> > +obj-$(CONFIG_KUNIT_EXAMPLE_TEST) +=	kunit-example-mod.o
-> > +kunit-example-mod-y +=			kunit-example-test.o
-> > +kunit-example-mod-$(CONFIG_KUNIT_UAPI) += kunit-example-uapi.blob.o
-> 
-> -- 
-> Nicolas Schier
 
