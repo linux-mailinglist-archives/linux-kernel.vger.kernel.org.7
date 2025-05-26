@@ -1,160 +1,204 @@
-Return-Path: <linux-kernel+bounces-662767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-662769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77F48AC3F4F
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 14:25:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0906CAC3F58
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 14:28:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 305E2176338
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 12:25:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF1307A1458
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 12:26:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACE891FFC46;
-	Mon, 26 May 2025 12:25:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7EFE201267;
+	Mon, 26 May 2025 12:28:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="OGi0+/oi"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="esVvCT1S"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 603621DFE8
-	for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 12:25:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85D5D1FF7CD;
+	Mon, 26 May 2025 12:27:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748262329; cv=none; b=jMcbUZM7jXdwXOObn9XuXJDJbHImj9lIQyTS13t5H6CLt0sTLz0mAobnt3L2ywUA/gqYukEfTm8ea6r/MCJuLKQ7kM+6opJgHIqYDV9kdwPaWhiSdYpZPIGOgOgojHwgd2ZmK7S9N7eHzGNcXeXptImaMDrgyfnO3vwjH9Mwkmw=
+	t=1748262480; cv=none; b=grr70YPY2qAnluL1DE7S7fLhZAtayYswQp/nvN0O3FwbdlsdePlkiCQ3sHtBfv4krNtXbilBHrX5Lm2+7CKCYjilmbTahtAZmr7XLy7g2XLQ0hw3NhnhFgHewvBJuoK3a0eyz+isiDPnvsvR+ZKUA0qRcI16fleBdmsgGS1PjCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748262329; c=relaxed/simple;
-	bh=+e5ZtENc2EvNkDlFdwRpbDItWEQYDhezFwMvrAWeFns=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=CJVbO4/xzBli54uu3fhSF5rh3TjPcpm7JUcKQ6/MP9PHZloO12fBxHuXWS45aMRb8ZuFwG3rKqGzjhQL/IUs5K7EExWdNsOBM/JDV+e2bOEUr8InJnaTTFwtSeg+S+xompM22NmnOgsMN5lpkedjkUBfvZQy+c5fFapQ/+16i3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=OGi0+/oi; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id E6A7A43999;
-	Mon, 26 May 2025 12:25:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1748262325;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SGcFMzxRqwZHeyCIUfXG3hV8hcSrtdD19rnC1FAfz94=;
-	b=OGi0+/oi9B3QDJ1KGV+hqFr4jwgJ66ptIKnfiXUyHOp8YjRVIngeyqOZjOtY3z+rI0y7ug
-	5z7jfbQ1Ld1G9sISQaoa1It6KFL0gQfrAaFLu1EzG5V4NBnzavkxG/WjWgXRTSeGgTQLWR
-	HsjLu8qP2BEIjmtxcIOKePLrqejwQU/kvU/pcTIq2dogwQiWAOugpH7wUE+UzzE7FgJyMY
-	RjxNiaXyAwVw8ETuf/74U/ccYcEXIDjq4aheJt98HrSZgfIZqN3vq82/mH7TzMxcir7YsQ
-	j/ng/O0laZGNuT038HrZk6FIs5UFuOQJ+ivag8upCNg10izXEde8A9sca3ajpg==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Chuanhong Guo <gch981213@gmail.com>
-Cc: Sky Huang <SkyLake.Huang@mediatek.com>,  Matthias Brugger
- <matthias.bgg@gmail.com>,  AngeloGioacchino Del Regno
- <angelogioacchino.delregno@collabora.com>,  Richard Weinberger
- <richard@nod.at>,  Vignesh Raghavendra <vigneshr@ti.com>,  Daniel Golle
- <daniel@makrotopia.org>,  Chia-Lin Kao <acelan.kao@canonical.com>,  Cheng
- Ming Lin <chengminglin@mxic.com.tw>,  Christophe JAILLET
- <christophe.jaillet@wanadoo.fr>,  Pratyush Yadav <pratyush@kernel.org>,
-  linux-kernel@vger.kernel.org,  linux-mtd@lists.infradead.org,
-  linux-arm-kernel@lists.infradead.org,
-  linux-mediatek@lists.infradead.org,  Steven Liu <Steven.Liu@mediatek.com>
-Subject: Re: [PATCH nand/next] mtd: nand: spi: Use write_cache first and
- then update_cache in write operation
-In-Reply-To: <CAJsYDVKiMeYY2rw_BxuW4BAxvMcq5hDwzhiPoAR=tkXzZpRYiw@mail.gmail.com>
-	(Chuanhong Guo's message of "Tue, 29 Apr 2025 19:58:05 +0800")
-References: <20241119093949.3014-1-SkyLake.Huang@mediatek.com>
-	<871pymtab3.fsf@bootlin.com>
-	<c1e2d8ea-1b37-479d-8239-cb9bf0efdcaf@gmail.com>
-	<87bjsfv0x1.fsf@bootlin.com>
-	<CAJsYDVKiMeYY2rw_BxuW4BAxvMcq5hDwzhiPoAR=tkXzZpRYiw@mail.gmail.com>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Mon, 26 May 2025 14:25:21 +0200
-Message-ID: <87sekry2xa.fsf@bootlin.com>
+	s=arc-20240116; t=1748262480; c=relaxed/simple;
+	bh=z2OkRRgDb+V8wLFMS6yObcblnV66nbwgge/WZA5MiRA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=MB2AMD5V5Steze6Xk5/kCpr/3lambN3z0LeuxLTxfmTiAHSMCc+/Nurfcbq+gOJZR5sFRwyvv3eIBGrPPuXlFIz2xSjNkPF0XXIqBdlV97vg8zYhGpHB9dMq5xiVWoocRVXSWNXBmv00pvekDOe4P1eEy4ilhJq5OmvZ7ZM2Sk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=esVvCT1S; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54Q8dLu8002986;
+	Mon, 26 May 2025 12:26:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Cx6XOn2PoFhzZ/6d8Eju1VmGVG5xuLEUSViIIS/j7Sw=; b=esVvCT1SOootMzHc
+	+GkM2j0WSF8nAgdbCflLAcPhG0um4Bu6/FA90d+bywIe9qJZ24ybzUgLdifOCNJb
+	JTunxW5iaqJgcgwSNhVKTlzokz9i9H9qTkfXzPgD6iyYf2QWHZOuo5wXCjlOxSHs
+	lZ6wK+xh59vZ1zFFdpYhETVnSVzZGsxnO8vvb8qzt7Wue92yt0pVFRo9pKpmcaMt
+	L8PkaG1jOsbkuL+tpJ3RnEo3WogNdxbfWzHDVrLw6UAnS9wSo/IxI88M9M8NigG0
+	0cq1zYE6FP0/WMJRR062pdBnpCjPr2A3lBqKJVJjeoHkZn9AhlFvcqQAZGCNzfnU
+	uGf3Ow==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46vmyugjey-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 26 May 2025 12:26:57 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 54QCQvYm002042
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 26 May 2025 12:26:57 GMT
+Received: from [10.64.68.119] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 26 May
+ 2025 05:26:50 -0700
+Message-ID: <df3807e5-c381-4440-be64-9bd49a2ecd9d@quicinc.com>
+Date: Mon, 26 May 2025 20:26:47 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgddujeehudculddtuddrgeefvddrtddtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefujghffgffkfggtgfgsehtqhertddtreejnecuhfhrohhmpefoihhquhgvlhcutfgrhihnrghluceomhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepffeghfejtdefieeguddukedujeektdeihfelleeuieeuveehkedvleduheeivdefnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhepmhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudeipdhrtghpthhtohepghgthhelkeduvddufeesghhmrghilhdrtghomhdprhgtphhtthhopefukhihnfgrkhgvrdfjuhgrnhhgsehmvgguihgrthgvkhdrtghomhdprhgtphhtthhopehmrghtthhhihgrshdrsghgghesghhmrghilhdrtghomhdprhgtphhtthhopegrnhhgvghlohhgihhorggttghhihhnohdruggvlhhrvghgnhhosegtohhllhgrsghorhgrrdgtohhmp
- dhrtghpthhtoheprhhitghhrghrugesnhhougdrrghtpdhrtghpthhtohepvhhighhnvghshhhrsehtihdrtghomhdprhgtphhtthhopegurghnihgvlhesmhgrkhhrohhtohhpihgrrdhorhhgpdhrtghpthhtoheprggtvghlrghnrdhkrghosegtrghnohhnihgtrghlrdgtohhm
-X-GND-Sasl: miquel.raynal@bootlin.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 05/45] drm/msm/dp: add a helper to read mst caps for
+ dp_panel
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Abhinav Kumar
+	<quic_abhinavk@quicinc.com>
+CC: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        "Marijn
+ Suijten" <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Stephen Boyd <swboyd@chromium.org>,
+        "Chandan
+ Uddaraju" <chandanu@codeaurora.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Kuogee Hsieh <quic_khsieh@quicinc.com>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Vara Reddy <quic_varar@quicinc.com>,
+        Rob Clark
+	<robdclark@chromium.org>,
+        Tanmay Shah <tanmay@codeaurora.org>, <linux-arm-msm@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Jessica Zhang <quic_jesszhan@quicinc.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+References: <20241205-dp_mst-v1-0-f8618d42a99a@quicinc.com>
+ <20241205-dp_mst-v1-5-f8618d42a99a@quicinc.com>
+ <aksnudxy2oyojjzwm73i4mulftcxccdsnddcdamypmscn6skpq@ijtp7x76m3pt>
+Content-Language: en-US
+From: Yongxing Mou <quic_yongmou@quicinc.com>
+In-Reply-To: <aksnudxy2oyojjzwm73i4mulftcxccdsnddcdamypmscn6skpq@ijtp7x76m3pt>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI2MDEwNSBTYWx0ZWRfX/FIVSfANFpKM
+ TbLw24WJE/GtaexIp1kafrznpEDG8pRDs7YHXmtlRy1blgavVxP9ZrhTI/3PGRa58Dcn/NJRKeO
+ IH+0cSmmxXkH3ktp07WdBFzwD1jjvwnkTdxw/Ynh/nDhSBxj1dkG2bksXzOTqPZlEvP8B0eOmEC
+ htEHaPvb6Mi+A5W8DMRKDfpauHZZp5H7ToG6Gegjh7DmyGFWpyn1mXvCfQm9f6hiTBVhm+ZZAVq
+ KZBs9E+cTNKbUaD5PEmGVLcbJk/t/iLZYQDCXg3rLt503eg4YSI8e1v0w3Y0gMtWopER0D4BdT9
+ rSKAHjD6tyaHNXKQZQaizbSf1J9TqZfgSbqIZCW891qfiLQyLnRcIZEJbU5jF3DIJU0NcSoqsfi
+ 3PpV68qlapg7ptUuGMcThsVReWmiEioGN229ViB1Gy1Lt+5YArmSKwO12etUlgDluR2PQxeG
+X-Authority-Analysis: v=2.4 cv=MsdS63ae c=1 sm=1 tr=0 ts=68345e12 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=COk6AnOGAAAA:8
+ a=BYOfdb0HyH0VPR54-rAA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: q9peK1PaMGx0hbNCpzFdIcaJELhBfI3W
+X-Proofpoint-ORIG-GUID: q9peK1PaMGx0hbNCpzFdIcaJELhBfI3W
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-26_06,2025-05-26_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 malwarescore=0 impostorscore=0 priorityscore=1501 spamscore=0
+ mlxscore=0 lowpriorityscore=0 clxscore=1015 bulkscore=0 suspectscore=0
+ adultscore=0 mlxlogscore=999 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505160000
+ definitions=main-2505260105
 
-Hello Chuanhong,
 
->> >>> Before applying this patch, write operation uses only 34H(update_cac=
-he):
->> >>> [78.937720] OP code: 0x34, addr val: 0x0, data nbytes: 1020, data 1s=
-t byte: 0xa5
->> >>> [78.945297] OP code: 0x34, addr val: 0x3fc, data nbytes: 1020, data =
-1st byte: 0xa5
->> >>> [78.954251] OP code: 0x34, addr val: 0x7f8, data nbytes: 72, data 1s=
-t byte: 0xa5
->> >>> [78.962966] OP code: 0x10, addr val: 0x300
->> >>> [78.968816] OP code: 0x34, addr val: 0x0, data nbytes: 1020, data 1s=
-t byte: 0xff
->> >>> [78.977233] OP code: 0x34, addr val: 0x3fc, data nbytes: 1020, data =
-1st byte: 0xff
->> >>> [78.985124] OP code: 0x34, addr val: 0x7f8, data nbytes: 72, data 1s=
-t byte: 0xff
->> >>> [78.992527] OP code: 0x10, addr val: 0x301
->> >>> [78.996981] OP code: 0x34, addr val: 0x0, data nbytes: 1020, data 1s=
-t byte: 0xff
->> >>> [79.004416] OP code: 0x34, addr val: 0x3fc, data nbytes: 1020, data =
-1st byte: 0xff
->> >>> [79.012031] OP code: 0x34, addr val: 0x7f8, data nbytes: 72, data 1s=
-t byte: 0xff
->> >>> [79.019435] OP code: 0x10, addr val: 0x302
->> >> I am sorry but above you said that we should not perform:
->> >>      0x32, 0x32, 0x32...
->> >> because the second time it would clear the cache again. And here
->> >> you tell us that actually the core already handles that by performing
->> >> instead:
->> >>      0x34, 0x34, 0x34...
->> >> So what is the problem?
->> >> Or maybe I misunderstood the issue, but I think Chuanhong raised an
->> >> issue that is already solved? Isn't it?
->> >>
->> >
->> > The issue is that the FORESEE NANDs require the first cache writing
->> > instruction to be WRITE_CACHE instead of UPDATE_CACHE. i.e. it needs a
->> > command sequence of:
->> >     0x32, 0x34, 0x34, 0x34...
+
+On 2024/12/6 16:52, Dmitry Baryshkov wrote:
+> On Thu, Dec 05, 2024 at 08:31:36PM -0800, Abhinav Kumar wrote:
+>> Add a helper to check whether a dp_panel is mst capable.
 >>
->> So Foresee NANDs do not support update_cache, why are they advertised in
->> the first place? Could you we have a less impacting solution for the
->> other NANDs?
+>> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+>> ---
+>>   drivers/gpu/drm/msm/dp/dp_aux.h   |  1 +
+>>   drivers/gpu/drm/msm/dp/dp_panel.c | 14 ++++++++++++++
+>>   drivers/gpu/drm/msm/dp/dp_panel.h |  1 +
+>>   3 files changed, 16 insertions(+)
 >>
->> > This patch does exactly that, making the first instruction issued 0x32.
->> > It should be applied to fix the issue above.
+>> diff --git a/drivers/gpu/drm/msm/dp/dp_aux.h b/drivers/gpu/drm/msm/dp/dp_aux.h
+>> index 39c5b4c8596ab28d822493a6b4d479f5f786cdee..cb97a73cdd6ea74b612053bec578247a42214f23 100644
+>> --- a/drivers/gpu/drm/msm/dp/dp_aux.h
+>> +++ b/drivers/gpu/drm/msm/dp/dp_aux.h
+>> @@ -8,6 +8,7 @@
+>>   
+>>   #include "dp_catalog.h"
+>>   #include <drm/display/drm_dp_helper.h>
+>> +#include <drm/display/drm_dp_mst_helper.h>
+>>   
+>>   int msm_dp_aux_register(struct drm_dp_aux *msm_dp_aux);
+>>   void msm_dp_aux_unregister(struct drm_dp_aux *msm_dp_aux);
+>> diff --git a/drivers/gpu/drm/msm/dp/dp_panel.c b/drivers/gpu/drm/msm/dp/dp_panel.c
+>> index d277e9b2cbc03688976b6aa481ee724b186bab51..172de804dec445cb08ad8e3f058407f483cd6684 100644
+>> --- a/drivers/gpu/drm/msm/dp/dp_panel.c
+>> +++ b/drivers/gpu/drm/msm/dp/dp_panel.c
+>> @@ -108,6 +108,20 @@ static u32 msm_dp_panel_get_supported_bpp(struct msm_dp_panel *msm_dp_panel,
+>>   	return min_supported_bpp;
+>>   }
+>>   
+>> +bool msm_dp_panel_read_mst_cap(struct msm_dp_panel *msm_dp_panel)
+>> +{
+>> +	struct msm_dp_panel_private *panel;
+>> +
+>> +	if (!msm_dp_panel) {
+>> +		DRM_ERROR("invalid input\n");
+>> +		return 0;
+>> +	}
+>> +
+>> +	panel = container_of(msm_dp_panel, struct msm_dp_panel_private, msm_dp_panel);
+>> +
+>> +	return drm_dp_read_mst_cap(panel->aux, msm_dp_panel->dpcd);
+> 
+> So, it's a one-line wrapper. Do we actually need it?
+It beacuse the point of aux is in msm_dp_panel_private, so if we want to 
+call drm_dp_read_mst_cap in other file, we need this wrapper.
+> 
+>> +}
+>> +
+>>   int msm_dp_panel_read_link_caps(struct msm_dp_panel *msm_dp_panel,
+>>   				struct drm_connector *connector)
+>>   {
+>> diff --git a/drivers/gpu/drm/msm/dp/dp_panel.h b/drivers/gpu/drm/msm/dp/dp_panel.h
+>> index 7a38655c443af597c84fb78c6702b2a3ef9822ed..363b416e4cbe290f9c0e6171d6c0c5170f9fea62 100644
+>> --- a/drivers/gpu/drm/msm/dp/dp_panel.h
+>> +++ b/drivers/gpu/drm/msm/dp/dp_panel.h
+>> @@ -67,6 +67,7 @@ int msm_dp_panel_get_modes(struct msm_dp_panel *msm_dp_panel,
+>>   		struct drm_connector *connector);
+>>   void msm_dp_panel_handle_sink_request(struct msm_dp_panel *msm_dp_panel);
+>>   void msm_dp_panel_tpg_config(struct msm_dp_panel *msm_dp_panel, bool enable);
+>> +bool msm_dp_panel_read_mst_cap(struct msm_dp_panel *dp_panel);
+>>   
+>>   /**
+>>    * is_link_rate_valid() - validates the link rate
 >>
->> My understanding is that this is very specific to FORESEE NANDs and you
->> are changing this for all NANDs. I have fears that it will break
->> everywhere else.
->
-> I just checked a few datasheets of SPI-NANDs from
-> Toshiba/Winbond/Etron/ESMT/GigaDevice/Macronix.
-> All of them specify the programming sequence to be:
-> write_enable->write_cache->update_cache if needed->
-> program_execute->poll status.
-> Some of them mentions that the only difference between write_cache
-> and update_cache is whether the page cache is cleared before
-> writing (Winbond), while others don't specifically say that.
->
-> The original sequence doesn't seem to be following any manufacturers'
-> instructions. We just haven't run into any problems until this FORESEE
-> one.
+>> -- 
+>> 2.34.1
+>>
+> 
 
-That is what I am saying. It currently works, and we may encounter
-silent failures all around because of this change, even if it might be
-theoretically correct. Anyhow, we have these templates (both write and
-update) so let's try to re-use them.
-
-However I dislike the current implementation which changes the global
-wdesc template and puts it back. Can you please propose something cleaner?
-
-Thanks,
-Miqu=C3=A8l
 
