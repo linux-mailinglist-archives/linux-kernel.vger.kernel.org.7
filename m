@@ -1,232 +1,103 @@
-Return-Path: <linux-kernel+bounces-662302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-662303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95C7EAC385A
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 05:57:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A5F9AC3863
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 06:04:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AAF53A7DED
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 03:57:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B9403AF800
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 04:03:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3003E19F424;
-	Mon, 26 May 2025 03:57:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A86AE194C86;
+	Mon, 26 May 2025 04:04:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZrNrGyWs"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="fYoDOP7y"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8581D19D08F;
-	Mon, 26 May 2025 03:57:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FC43136E;
+	Mon, 26 May 2025 04:04:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748231844; cv=none; b=Cyjxu668jket/ZjH7ex/5OE1t1JdIsHw6lM2rp+chgzoCTGqYthURhQhZWZTuCMDaxY9vosz9L7uzGokJwLqdIeSL3MECNF344FBTtQ4PTFoiB9adC2tAUfLL4r6Wv80mlF0JvS9AghlRQZlZG1L04/Hju6olA8Or6XYhJd15To=
+	t=1748232249; cv=none; b=bK0LTHZHcRmA1rpLewrF1m+nbMHa2p7KIOyUhMjLE8t6zfJBKOTA0PcWf1oK8q1jugHGl0eZi4XTK3zoWC27uvMNQuv8be+tA4786/qpJQXZYJa/NdX7Pj50JEg4i8cXQiMKj02WiYuAZACXJNDB3rsyBf1eXcIPy9ITU+YcGck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748231844; c=relaxed/simple;
-	bh=pWUuIdj/mES3UrDkctgQF/95KeFIX871EUzEOhGNdu8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=T7VfbFerr/T2+ctUOg5/v+NLNXxVUa4guvNM+GVO1PmokXjhQGx3IC0R1DOGM6rCiDFZm+kdDz+yp6MGIzZdyfLxdaCjEkSsjsso0eG1/o+OsNPmer4F6FtSloVtOSn9geDH2EQznfEHoPJw5mHXvvmmCK+u6gY9RcfdpliWEHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZrNrGyWs; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-30db1bc464dso18181661fa.0;
-        Sun, 25 May 2025 20:57:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748231840; x=1748836640; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zFYKaF5MdOzMoUJdYK+pJqy+h1cRWqDSmXlmSKPedVg=;
-        b=ZrNrGyWsvQKLmATwdpVzDARiphfh7bV3pILAg6WwTxJhxUTmJ2S+AgjpuY977V0qqa
-         zCe8jRRD/fgnVKKt84KGtzfL1PZq4Ue/77AnnDnsqhz8lw6/Z3D+p0lA8vpBe/fiTCIu
-         M2hSQY2jt6f6CPKpz6Eci9z+/59LKKo1j89qqD9YaLcTfz38lFUUX/Q0A6MUjSaK4DdO
-         x5dZJrxKLIpAVJD2LwjqRQNPOzLP+f/z2NGJ1GucV2//zVtDb1ioUcllQ3R8cIR4Dk3A
-         66g+najA+P6IPBdNzzjBaN9MVACPUgStDqyIZ7dr3AAyb4cyagOuS/te4wHAaqGw05ar
-         xgGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748231840; x=1748836640;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zFYKaF5MdOzMoUJdYK+pJqy+h1cRWqDSmXlmSKPedVg=;
-        b=dORWbHN2Odr/959j5KdXFBYdNATGxqkv42DCCwOwOv0b3iaPHfad8CUD/x/wMiw2p+
-         yGh+rKosJu5DiC+HufZVBLKv9G7EWjYBTe2y4eZ7LVMCNruyC6RXCc46HqdTGYi2bIMO
-         gEtlXYPX+QgB88fSC23f4G6p/2WgzRSMUTooi2fJBQjDAh+bQ2dGxVmXbthvwFDctAhe
-         WMPWW6C4y/JMrYG+LeihlEpsiLpeA7SvKEYfvkOq+MEaIg2TR5llHt+3PIhauUji5u5M
-         T9JJvhzS422qlnfcU54WTUKzq67yHxdKvMQHQQfQXM04bwU8i/RqKV0mkzCM/UOSh6a1
-         ikuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWzIHXkdla4hksrMp3JyfpdB5nIrIf+3iFiBWPLcHSz/d02G5wVBoKOnohTr34lJWme2YbWsLKwVhR8@vger.kernel.org, AJvYcCXmqMg03HFlnaV2YJ7bu76lzWRNW+G6DMcZCYwPNAxlFZeuS0vEoyB8qPfYWDNaeCD+7o0nJTytehRnH4MC@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKgwXBa49Dm7z13i6npdNqdQqbVM+PEcVZSWFAVr5UCKo9woML
-	p0c6d+Q4844nRA7U4Bs37axdr8HX/c+5fms5l3zMIcyr0S/KiQnK0U1KpQCKwVx2tw2vYJVPQwD
-	nF6UJrmY4yEf4ZrFVM3tIGvOGWBnni9I=
-X-Gm-Gg: ASbGnctnXW1QaAOzLWGJGR0FTvsKHNgChrcMx88olemi9rftRbOTYZn6kIdbWJWFMc+
-	mZjQjhTj3tYTrEGRlJDVK3afOgep70tvtJ0bhNWkPOkvP/KCpDMgNMM4g/G2FjRSRZVIfXQr9/A
-	J3QayRnxilaRRGN9EXq7jOXWQJGBRIPRFvR8pC+inlumVYE8F9DOstXD/RQmQkRzjSiIk=
-X-Google-Smtp-Source: AGHT+IFglGOFvc94hDJJ+iVTcL3H6Lguo5HUhsNTeHxD1snKYkGJepa0VX6LderHITQpczdb+2Xp4I0HIVJ8Ctj4OUQ=
-X-Received: by 2002:a05:651c:b25:b0:30b:cb10:3a20 with SMTP id
- 38308e7fff4ca-3295ba791e0mr21311351fa.32.1748231840130; Sun, 25 May 2025
- 20:57:20 -0700 (PDT)
+	s=arc-20240116; t=1748232249; c=relaxed/simple;
+	bh=pVPW7KL1NCmBp1OXDziIa1A4WltH1K88pWtKUwYVyMQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=kp5qTaP8zDGPkiU/N+9uNhRMt5v+x2ZYaKYhKB2/ZgV+5Z6kimV6tjMtoSLes4lPDDInNvzsEzhB9XfILM38+fcRWvRhbMW70fRmvdCs+JvFxHzuPo9sCOIJGao4ut77kL9yd5OA19q1h1ATs0JS7qKpqADRKV8GXxKNlcTSRyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=fYoDOP7y; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1748232242;
+	bh=F+nRG37SpRcnjpSd/OETYbq1EiO3SBiZAKrhwFVPnyo=;
+	h=Date:From:To:Cc:Subject:From;
+	b=fYoDOP7yzZqtOkRzXIxm+6IpgIQ4l2qeLqNzUUwAKksxnmxOLxKbiZhfNOC+g3jGx
+	 c34bYygLp6v8tUVxOEIP1E634R1/F7GegLuclpqguIJbJHG317Bgxkhqat3FRSmxn+
+	 Y6X3iCyW5wAbIEkHBJfWCw0Hw0nimg+Y6GFKYibqQXqqfkKzlIGlE+uO464cIRfpMJ
+	 FtkIX954rBlMffRv3DVx883HIEHPwzJ+AmUPj3A+h4L2W+RwfHLcfPSEIzHxcNZwJR
+	 go6KVeZjVUCTx/BTcpKvgEaL1I5qn1OSxisIbfwDg2fwIjyDnx5jcKydwIiNeC1aEw
+	 IqKKJ7CIRM4fQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4b5MZn59sBz4wbV;
+	Mon, 26 May 2025 14:04:01 +1000 (AEST)
+Date: Mon, 26 May 2025 14:04:00 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Lee Jones <lee@kernel.org>, Arnd Bergmann <arnd@arndb.de>
+Cc: ARM <linux-arm-kernel@lists.infradead.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patch in the mfd tree
+Message-ID: <20250526140400.54ac8a6c@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250503234030.130605-1-linux@treblig.org>
-In-Reply-To: <20250503234030.130605-1-linux@treblig.org>
-From: Steve French <smfrench@gmail.com>
-Date: Sun, 25 May 2025 22:57:08 -0500
-X-Gm-Features: AX0GCFvPd0Adolnn1ZM7I39tciaAPW3DaBAHk6K8jPSv5S55usBDLzH4A01Y66g
-Message-ID: <CAH2r5mvG_y6-z618TyHnNVf9ueS3hrWP8NPP_HJOTCxAnBvYKQ@mail.gmail.com>
-Subject: Re: [PATCH] smb: client: Remove an unused function and variable
-To: linux@treblig.org
-Cc: sfrench@samba.org, pc@manguebit.com, ronniesahlberg@gmail.com, 
-	sprasad@microsoft.com, tom@talpey.com, bharathsm@microsoft.com, 
-	linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/GiMdUWencATi/G0+tRQw5iU";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/GiMdUWencATi/G0+tRQw5iU
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-merged into cifs-2.6.git for-next
+Hi all,
 
-On Sat, May 3, 2025 at 6:40=E2=80=AFPM <linux@treblig.org> wrote:
->
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
->
-> SMB2_QFS_info() has been unused since 2018's
-> commit 730928c8f4be ("cifs: update smb2_queryfs() to use compounding")
->
-> sign_CIFS_PDUs has been unused since 2009's
-> commit 2edd6c5b0517 ("[CIFS] NTLMSSP support moving into new file, old de=
-ad
-> code removed")
->
-> Remove them.
->
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-> ---
->  fs/smb/client/cifsfs.c    |  1 -
->  fs/smb/client/smb2pdu.c   | 65 ---------------------------------------
->  fs/smb/client/smb2proto.h |  3 --
->  3 files changed, 69 deletions(-)
->
-> diff --git a/fs/smb/client/cifsfs.c b/fs/smb/client/cifsfs.c
-> index a08c42363ffc..d192a19bd761 100644
-> --- a/fs/smb/client/cifsfs.c
-> +++ b/fs/smb/client/cifsfs.c
-> @@ -70,7 +70,6 @@ bool require_gcm_256; /* false by default */
->  bool enable_negotiate_signing; /* false by default */
->  unsigned int global_secflags =3D CIFSSEC_DEF;
->  /* unsigned int ntlmv2_support =3D 0; */
-> -unsigned int sign_CIFS_PDUs =3D 1;
->
->  /*
->   * Global transaction id (XID) information
-> diff --git a/fs/smb/client/smb2pdu.c b/fs/smb/client/smb2pdu.c
-> index c4d52bebd37d..eef971509589 100644
-> --- a/fs/smb/client/smb2pdu.c
-> +++ b/fs/smb/client/smb2pdu.c
-> @@ -5919,71 +5919,6 @@ SMB311_posix_qfs_info(const unsigned int xid, stru=
-ct cifs_tcon *tcon,
->         return rc;
->  }
->
-> -int
-> -SMB2_QFS_info(const unsigned int xid, struct cifs_tcon *tcon,
-> -             u64 persistent_fid, u64 volatile_fid, struct kstatfs *fsdat=
-a)
-> -{
-> -       struct smb_rqst rqst;
-> -       struct smb2_query_info_rsp *rsp =3D NULL;
-> -       struct kvec iov;
-> -       struct kvec rsp_iov;
-> -       int rc =3D 0;
-> -       int resp_buftype;
-> -       struct cifs_ses *ses =3D tcon->ses;
-> -       struct TCP_Server_Info *server;
-> -       struct smb2_fs_full_size_info *info =3D NULL;
-> -       int flags =3D 0;
-> -       int retries =3D 0, cur_sleep =3D 1;
-> -
-> -replay_again:
-> -       /* reinitialize for possible replay */
-> -       flags =3D 0;
-> -       server =3D cifs_pick_channel(ses);
-> -
-> -       rc =3D build_qfs_info_req(&iov, tcon, server,
-> -                               FS_FULL_SIZE_INFORMATION,
-> -                               sizeof(struct smb2_fs_full_size_info),
-> -                               persistent_fid, volatile_fid);
-> -       if (rc)
-> -               return rc;
-> -
-> -       if (smb3_encryption_required(tcon))
-> -               flags |=3D CIFS_TRANSFORM_REQ;
-> -
-> -       memset(&rqst, 0, sizeof(struct smb_rqst));
-> -       rqst.rq_iov =3D &iov;
-> -       rqst.rq_nvec =3D 1;
-> -
-> -       if (retries)
-> -               smb2_set_replay(server, &rqst);
-> -
-> -       rc =3D cifs_send_recv(xid, ses, server,
-> -                           &rqst, &resp_buftype, flags, &rsp_iov);
-> -       free_qfs_info_req(&iov);
-> -       if (rc) {
-> -               cifs_stats_fail_inc(tcon, SMB2_QUERY_INFO_HE);
-> -               goto qfsinf_exit;
-> -       }
-> -       rsp =3D (struct smb2_query_info_rsp *)rsp_iov.iov_base;
-> -
-> -       info =3D (struct smb2_fs_full_size_info *)(
-> -               le16_to_cpu(rsp->OutputBufferOffset) + (char *)rsp);
-> -       rc =3D smb2_validate_iov(le16_to_cpu(rsp->OutputBufferOffset),
-> -                              le32_to_cpu(rsp->OutputBufferLength), &rsp=
-_iov,
-> -                              sizeof(struct smb2_fs_full_size_info));
-> -       if (!rc)
-> -               smb2_copy_fs_info_to_kstatfs(info, fsdata);
-> -
-> -qfsinf_exit:
-> -       free_rsp_buf(resp_buftype, rsp_iov.iov_base);
-> -
-> -       if (is_replayable_error(rc) &&
-> -           smb2_should_replay(tcon, &retries, &cur_sleep))
-> -               goto replay_again;
-> -
-> -       return rc;
-> -}
-> -
->  int
->  SMB2_QFS_attr(const unsigned int xid, struct cifs_tcon *tcon,
->               u64 persistent_fid, u64 volatile_fid, int level)
-> diff --git a/fs/smb/client/smb2proto.h b/fs/smb/client/smb2proto.h
-> index 4662c7e2d259..035aa1624053 100644
-> --- a/fs/smb/client/smb2proto.h
-> +++ b/fs/smb/client/smb2proto.h
-> @@ -259,9 +259,6 @@ extern int smb2_handle_cancelled_close(struct cifs_tc=
-on *tcon,
->                                        __u64 volatile_fid);
->  extern int smb2_handle_cancelled_mid(struct mid_q_entry *mid, struct TCP=
-_Server_Info *server);
->  void smb2_cancelled_close_fid(struct work_struct *work);
-> -extern int SMB2_QFS_info(const unsigned int xid, struct cifs_tcon *tcon,
-> -                        u64 persistent_file_id, u64 volatile_file_id,
-> -                        struct kstatfs *FSData);
->  extern int SMB311_posix_qfs_info(const unsigned int xid, struct cifs_tco=
-n *tcon,
->                          u64 persistent_file_id, u64 volatile_file_id,
->                          struct kstatfs *FSData);
-> --
-> 2.49.0
->
->
+The following commit is also in the arm-soc tree as a different commit
+(but the same patch):
 
+  0ffcf5f1e41c ("dt-bindings: mfd: qcom,tcsr: Add compatible for ipq5018")
+
+This is commit
+
+  1d2c5d5f3f44 ("dt-bindings: mfd: qcom,tcsr: Add compatible for ipq5018")
+
+in the arm-soc tree.
 
 --=20
-Thanks,
+Cheers,
+Stephen Rothwell
 
-Steve
+--Sig_/GiMdUWencATi/G0+tRQw5iU
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmgz6DAACgkQAVBC80lX
+0Gw4igf/Y1lIfyP/CrdlXV98mwYWR3zXbxjuBgQALmyhxhGukvqBCr7/SZO5l4he
+TJiJz3G2u0E6bI0cbJhsONaoGnYZOq+GjXO8MGRab4hlCKN5bJKrH5B7r8Mxc8I9
+8+pgKOYAHXQ/V7VX6nX+vOwI0srw15R0a1nlcAVHU5fPnUWkYiBiBerUvS+VdPXn
+Hg78VwEyvH89B8LOBhtdDgjrjezvK1uU6VBOYXewOU08onDl71oHRYqQQszBKVLM
+KMqxMIi0OSmBFnQQO9Qfa/XfMn1LSueP7smTxIlX79GSo3i9rsAHiT1LzYERYK1W
+DttfJhK9J+Bu4aAZWIDdgutO46UtWA==
+=+nIT
+-----END PGP SIGNATURE-----
+
+--Sig_/GiMdUWencATi/G0+tRQw5iU--
 
