@@ -1,238 +1,131 @@
-Return-Path: <linux-kernel+bounces-662500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-662502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B695DAC3B9D
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 10:23:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0ADCBAC3BA2
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 10:25:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F3EE17403F
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 08:23:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB1B53A6B6C
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 08:25:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D1251E3DED;
-	Mon, 26 May 2025 08:23:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0016C1E32DB;
+	Mon, 26 May 2025 08:25:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hjUDad0o"
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zy8xMqda"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6D511D90A5
-	for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 08:23:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFAB71C3BFC;
+	Mon, 26 May 2025 08:25:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748247813; cv=none; b=YEfU8m2RJCH1pPX8fB51m7Sj3/fvHxFlVE7dmRHNLEjckteUmGhZ/MDcYOaYWdGvoJRihC/o84by86Hbq1UNt4N6EfZIwKsT92z+p1zUYWp7gZ8l18VhOiXHMPp61l9LvIYfsNk6bhceNynJKl5hP0qic0QdVrvPyk3px6MuYp0=
+	t=1748247938; cv=none; b=l/3Jb95tdfHWJYHMSv4USBvTdiegjSUjMTcVjV1MZeWBg9yZ6vxqffvlI6yASfC4mNRXOf9EkQ1Lz/XpBNuZAOXVVX//FTHcULRSwtUm2a6f6xtMl8LWJOjXh7pGXafJVlvx5gCNfmWfCmO9t8GMfJAVpWAoRgRJsX9carKvWnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748247813; c=relaxed/simple;
-	bh=/u2pRKc8DAPwS8qhuBy/bmveBbyD9ydGg17ar/9+9b0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OiHAUMhiynENk+RYTPRzd471IRIwJDbD3VfnRCnA39XtaehZxucEliQCA+wP4ktoicJqyo7Q2x1PWFzbNx9pKR17DVGlQ6GFu1rimluYLmlwJ0HTKPioHPrxNSbhw9i/PjfPyab4qzdBMzwp6ps3pvL38bT61fAC3jmTadmJgY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hjUDad0o; arc=none smtp.client-ip=209.85.219.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6f0ad74483fso17736326d6.1
-        for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 01:23:31 -0700 (PDT)
+	s=arc-20240116; t=1748247938; c=relaxed/simple;
+	bh=mrau+5W3Z8JvklmOOYvgbOSIomPEjlwRXbUD0M51bdo=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=lqVVetWpFM+vHJvoOVanyYolpKlKl/ahb0hqFBjcsOCBtyA7nIQ0ElNmgIzCBh9Nx8onrAUiyy4hfzrapgKQndK2GyYo6zVg8Y+B4GXUnFvh2wcIz6azteHwapNrRZqF8u8rxUdQZaBGbq9+Rjc6M1fT6Lh9a6EiI1nApHqWGek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zy8xMqda; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-441d437cfaaso11574655e9.1;
+        Mon, 26 May 2025 01:25:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1748247811; x=1748852611; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1748247935; x=1748852735; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=84n7LcBHS9qDmuOC4JYR5K/fcw9OQaXEZENkHIEWdts=;
-        b=hjUDad0oJMm3HP5dLANnhW0HVdAmQlMGiJfOpGvB9Q0ERZw7Jjoq7HtPNdPpwdijcA
-         PLbOuqWAi5tj858jk809NWnt5D50vuWFakh3nIB5xUpUKwzjmW6RChX85HhAWzW36m2j
-         Vu6KIf1jHeNrN20/HPUowrPXN87VhIbvRdQJuuOV2o4ARheXkLcJ8ImwhMoWQO8edtwt
-         W3qDK6bIMC5LAyHI/h5DQc2ABEEDz+Q//JEABDxOmY/d7NWFhCOEVa4Btra60poDuSLu
-         O2P2oN7FhrC1ii49tJT9IJ5uDNocGfgc2Tv6V1GatFZEf9KHhkrRxaWvDhzwxKvVsR5t
-         iRgA==
+        bh=K3LtL4dcePRmP7dRZnkQEwm7VTaCE+JP89biT5r/gZE=;
+        b=Zy8xMqdadRBi3vYot6elSV+9STHswxJbRLlhziCIeqMfQjsVq8G9+kuycYrXfifSHR
+         iC4/F0ibhjKCNf1Ysk/kwauIOxp4oy57+3j0XeqH80TMSb/tXvE+Hhu+3xFVa262zYEx
+         yEfjgLRX9mEWD/fIWQsR8MDRp/1FWyIoVcaxZLzmu2aps+mpwiSeOON8X/scELdceDsr
+         YwJh884cLM5AfF6Jev9ZjzFjAjKGTnDpDunSgZpVkxPLBj4luvSN1Rx/iJ3MEaERyzU0
+         AmYIPzuNBDCz5MmNMIlUkQGcoD13SJNCexsHT6gQ+HCgRSqLGDG5YLscfZcT7R5ss1bL
+         kpww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748247811; x=1748852611;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=84n7LcBHS9qDmuOC4JYR5K/fcw9OQaXEZENkHIEWdts=;
-        b=kLh85f1NhQKK9MLpIFLJwqfz4O8sechV9flTGeYB5X6uD2X8iTE9UjCNZw2dhHVg7j
-         9RIhK9Rw3PkDjkYJjKy4YP05zeln5Nq6FGYOkN/MA3qxDriw+z0SW2VGc6X5l+1Z++ga
-         pLbH8E0SUnt3tWI2Slq8w3jc5p8RA29oU02FfgOLzx50wAjLMVwZ7yeiUk2jKncSJH0j
-         nwrjM3QBuF6K06zUGVIET5SNdl1uzi2A3mhQfQu++u1K14xPAjtCpWv9jCSh+AuBI1Jj
-         Jh/B/neUreyV6BkqM6TqLxAW5PdEkhh+7UPdKnPq1MB9LyBETOob1P6SSvXcWpRQ8zs6
-         KtRg==
-X-Forwarded-Encrypted: i=1; AJvYcCUtpvAO89hEalk8jxD8B1PPRoKdnLTbSLwn6YxESIWjAucZM+Nj1G6HNJ4M1cKgOVj93cKwDu+FCu8zUaw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxtk7H280TCpu1qFtmE2bm1bZtPj3sBXOh4Flb8HLoIZ0B9cz/d
-	EwR5EeQCVjLPnfhLz4J5CmHeLLzPpM9BZauixsGtLbwgk8gMUa12fc90VMntSCGlehpXShQm+xU
-	k5Xr4pdmv3E5kmOOccm8iRjl2i389NPM9dtg0zJOK
-X-Gm-Gg: ASbGncup8NxG3dyTmrKXOLn3fhVG6/e4jXaozF/YmcMzvCpcY0F6yL/4pcfDNrwDiA2
-	WNUjV/NHhxyG9X0aCg/wVuujl2/+04L1TvaehpB0h5qSFseFvwdO4fbCXs4EJxguJ/mn1D/MAi6
-	eE65yXQ/1dYaIi1KaiSIxEH0KU3Dga+57TGjRKurf2pw4=
-X-Google-Smtp-Source: AGHT+IFz/xG46iZgyY9nkIOQGMKaD8FQAKUzqsO5IU1y1cfjSX7dhen3YqdOwADG5Xwcl3WnnR228ADH7WGm2lrkCS8=
-X-Received: by 2002:a05:6214:1d0d:b0:6f2:a886:7c6d with SMTP id
- 6a1803df08f44-6fa9cfe73a6mr133658476d6.3.1748247810315; Mon, 26 May 2025
- 01:23:30 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1748247935; x=1748852735;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=K3LtL4dcePRmP7dRZnkQEwm7VTaCE+JP89biT5r/gZE=;
+        b=mEMDFkxzK7gH/es/cOpfpFCtOt4VcUhKqHUC/UI5zdN5LdyMdPxOd2/pDRYmYOKsJm
+         5q7OA2teX2GczMh3YAR42xuj1l53tnp8wblpdGTFuH9JIP+9kZ1r3pvYa9ZO2w6xZHQf
+         CbMNLeGStKgsDwv/r88pVHhz8rVjj5J+HjCpwG9q3dX8K7wZgrMhebeYxuuvsd0VkkPW
+         ozj+bmFgGOIHmZGtD9B1ZU+Yt3V/uiZPAVQiUfgiNAM2fTG209HpY2dV4vq3Jj2cDfAr
+         VZWCe9ebOufGlkDm4LEMTCpEISuNs7jPsU9Gf9nHRJQVb7VgHDswQ85Lp49r/yyk71Sp
+         +JJA==
+X-Forwarded-Encrypted: i=1; AJvYcCUPWP1tgQjs38Kw7fB1b2cSRgiNkZ+sxsKkUrKMK+mg9WSNy8C6ZcKwo3r9JXQ5GqS/ANNyggWx@vger.kernel.org, AJvYcCXl97hRSNlQdqNQ20Xno9Ekvn8xbGtnZ/8RewoyH1HrhaU6b5HiPS9rGtyw8K1ReIcFgIwLtzq+6g/f09s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxahXC67vOF2nlB5yGapcp6Ph3jcuDxQ7X8a9sLm9Sw4IRJdv1q
+	nYsBZ+Rn3jaSz3uhLGAUKnbKg1r+e0zOtZyTgaaxZ1thecsh6rzqgnUFxgKDnQ==
+X-Gm-Gg: ASbGncvCxQNSNkLFr/+DSYR35UEE5NnM+3+f85fdXQ9vnqjYwIQXXtKQQ6qQ9dKFq6y
+	Iyt0lA68zGuaaqZlfPIG7mGiLBp08b3GNMQaVIptjVVAcGMfie5mRomaxrw9Oi9W6uXqzJKO4BU
+	N2B00e2O2GG4PXGFsUKkYg6DavSvyMTABkDrioYqITj68htYtsw2OpWuOGrjHevc0Z1HZPcCvud
+	nxjMMwGSY4szhHiqhN9OA6fDhmBe4RecaLeia6zx66+Kt2MnYRGaSi3FnQTV6BgoLY4F1MYtQS3
+	TluKvmeZX4WvqiOxauPmPuutRGKtiZ/ypbo06Kqd6x1Mo76qz/T0V1gKvND6nRClH7Hm4A==
+X-Google-Smtp-Source: AGHT+IHONOG2O48qIuY4eklj5S69BfbVICIKGxv25oIduenSsheivugPO42TjE+T9bsPuDinayEQ5A==
+X-Received: by 2002:a05:600c:138f:b0:43d:fa5d:9315 with SMTP id 5b1f17b1804b1-44c94c2d54emr65618275e9.33.1748247934614;
+        Mon, 26 May 2025 01:25:34 -0700 (PDT)
+Received: from localhost (freebox.vlq16.iliad.fr. [213.36.7.13])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4481ca9f2d9sm233086655e9.19.2025.05.26.01.25.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 26 May 2025 01:25:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <CAA3_Gnogt7GR0gZVZwQ4vXXav6TpXMK6t=QTLsqKOaX3Bo_tNA@mail.gmail.com>
-In-Reply-To: <CAA3_Gnogt7GR0gZVZwQ4vXXav6TpXMK6t=QTLsqKOaX3Bo_tNA@mail.gmail.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Mon, 26 May 2025 01:23:18 -0700
-X-Gm-Features: AX0GCFvV_EHZWs4lMyBGnQsogf2LhjTkEZvKCFQeSXeBo0x4YluhaL7Nf65Jncw
-Message-ID: <CANn89iLVq=3d7Ra7gKmTpLcMzuWv+KamYs=KjUHH2z3cPpDBDA@mail.gmail.com>
-Subject: Re: [PATCH net] bonding: Fix header_ops type confusion
-To: =?UTF-8?B?5oi455Sw5pmD5aSq?= <kota.toda@gmo-cybersecurity.com>
-Cc: =?UTF-8?B?5bCP5rGg5oKg55Sf?= <yuki.koike@gmo-cybersecurity.com>, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, pabeni@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 26 May 2025 10:25:33 +0200
+Message-Id: <DA5Y65C1FEEX.1YVIUHMANNAYC@gmail.com>
+Cc: <linux-wireless@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <stable@vger.kernel.org>
+Subject: Re: [PATCH] mac80211: Add null pointer check for
+ ieee80211_link_get_chanctx()
+From: "Nicolas Escande" <nico.escande@gmail.com>
+To: "Wentao Liang" <vulab@iscas.ac.cn>, <johannes@sipsolutions.net>,
+ <luciano.coelho@intel.com>
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a
+References: <20250525164211.2039-1-vulab@iscas.ac.cn>
+In-Reply-To: <20250525164211.2039-1-vulab@iscas.ac.cn>
 
-On Sun, May 25, 2025 at 10:08=E2=80=AFPM =E6=88=B8=E7=94=B0=E6=99=83=E5=A4=
-=AA <kota.toda@gmo-cybersecurity.com> wrote:
+On Sun May 25, 2025 at 6:42 PM CEST, Wentao Liang wrote:
+> The function ieee80211_chsw_switch_vifs() calls the function
+> ieee80211_link_get_chanctx(), but does not check its return value.
+> The return value is a null pointer if the ieee80211_link_get_chanctx()
+> fails. This will lead to a null pointer dereference in the following
+> code "&old_ctx->conf". A proper implementation can be found in
+> ieee80211_link_use_reserved_assign().
 >
-> In bond_setup_by_slave(), the slave=E2=80=99s header_ops are unconditiona=
-lly
-> copied into the bonding device. As a result, the bonding device may invok=
-e
-> the slave-specific header operations on itself, causing
-> netdev_priv(bond_dev) (a struct bonding) to be incorrectly interpreted
-> as the slave's private-data type.
+> Add a null pointer check and goto error handling path if the
+> function fails.
 >
-> This type-confusion bug can lead to out-of-bounds writes into the skb,
-> resulting in memory corruption.
->
-> This patch adds two members to struct bonding, bond_header_ops and
-> header_slave_dev, to avoid type-confusion while keeping track of the
-> slave's header_ops.
->
-> Fixes: 1284cd3a2b740 (bonding: two small fixes for IPoIB support)
-> Signed-off-by: Kota Toda <kota.toda@gmo-cybersecurity.com>
-> Signed-off-by: Yuki Koike <yuki.koike@gmo-cybersecurity.com>
-> Co-Developed-by: Yuki Koike <yuki.koike@gmo-cybersecurity.com>
-> Reviewed-by: Paolo Abeni <pabeni@redhat.com>
-> Reported-by: Kota Toda <kota.toda@gmo-cybersecurity.com>
+> Fixes: 5d52ee811019 ("mac80211: allow reservation of a running chanctx")
+> Cc: stable@vger.kernel.org # v3.16
+> Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
 > ---
->  drivers/net/bonding/bond_main.c | 61
-> ++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
->  include/net/bonding.h           |  5 +++++
->  2 files changed, 65 insertions(+), 1 deletion(-)
+>  net/mac80211/chan.c | 4 ++++
+>  1 file changed, 4 insertions(+)
 >
-> diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_m=
-ain.c
-> index 8ea183da8d53..690f3e0971d0 100644
-> --- a/drivers/net/bonding/bond_main.c
-> +++ b/drivers/net/bonding/bond_main.c
-> @@ -1619,14 +1619,65 @@ static void bond_compute_features(struct bonding =
-*bond)
->      netdev_change_features(bond_dev);
->  }
->
-> +static int bond_hard_header(struct sk_buff *skb, struct net_device *dev,
-> +        unsigned short type, const void *daddr,
-> +        const void *saddr, unsigned int len)
-> +{
-> +    struct bonding *bond =3D netdev_priv(dev);
-> +    struct net_device *slave_dev;
-> +
-> +    slave_dev =3D bond->header_slave_dev;
-> +
-> +    return dev_hard_header(skb, slave_dev, type, daddr, saddr, len);
-> +}
-> +
-> +static void bond_header_cache_update(struct hh_cache *hh, const
-> struct net_device *dev,
-> +        const unsigned char *haddr)
-> +{
-> +    const struct bonding *bond =3D netdev_priv(dev);
-> +    struct net_device *slave_dev;
-> +
-> +    slave_dev =3D bond->header_slave_dev;
+> diff --git a/net/mac80211/chan.c b/net/mac80211/chan.c
+> index a442cb667520..9e6235001e0a 100644
+> --- a/net/mac80211/chan.c
+> +++ b/net/mac80211/chan.c
+> @@ -1503,6 +1503,10 @@ static int ieee80211_chsw_switch_vifs(struct ieee8=
+0211_local *local,
+>  				continue;
+> =20
+>  			old_ctx =3D ieee80211_link_get_chanctx(link);
+> +			if (WARN_ON(old_ctx)) {
+Don't you mean 'if (WARN_ON(!old_ctx)) {'
+> +				err =3D -EINVAL;
+> +				goto out;
+> +			}
+>  			vif_chsw[i].vif =3D &link->sdata->vif;
+>  			vif_chsw[i].old_ctx =3D &old_ctx->conf;
+>  			vif_chsw[i].new_ctx =3D &ctx->conf;
 
-I do not see any barrier ?
-
-> +
-> +    if (!slave_dev->header_ops || !slave_dev->header_ops->cache_update)
-> +        return;
-> +
-> +    slave_dev->header_ops->cache_update(hh, slave_dev, haddr);
-> +}
-> +
->  static void bond_setup_by_slave(struct net_device *bond_dev,
->                  struct net_device *slave_dev)
->  {
-> +    struct bonding *bond =3D netdev_priv(bond_dev);
->      bool was_up =3D !!(bond_dev->flags & IFF_UP);
->
->      dev_close(bond_dev);
->
-> -    bond_dev->header_ops        =3D slave_dev->header_ops;
-> +    /* Some functions are given dev as an argument
-> +     * while others not. When dev is not given, we cannot
-> +     * find out what is the slave device through struct bonding
-> +     * (the private data of bond_dev). Therefore, we need a raw
-> +     * header_ops variable instead of its pointer to const header_ops
-> +     * and assign slave's functions directly.
-> +     * For the other case, we set the wrapper functions that pass
-> +     * slave_dev to the wrapped functions.
-> +     */
-> +    bond->bond_header_ops.create =3D bond_hard_header;
-> +    bond->bond_header_ops.cache_update =3D bond_header_cache_update;
-> +    if (slave_dev->header_ops) {
-> +        bond->bond_header_ops.parse =3D slave_dev->header_ops->parse;
-> +        bond->bond_header_ops.cache =3D slave_dev->header_ops->cache;
-> +        bond->bond_header_ops.validate =3D slave_dev->header_ops->valida=
-te;
-> +        bond->bond_header_ops.parse_protocol =3D
-> slave_dev->header_ops->parse_protocol;
-
-All these updates probably need WRITE_ONCE(), and corresponding
-READ_ONCE() on reader sides, at a very minimum ...
-
-RCU would even be better later.
-
-
-> +    } else {
-> +        bond->bond_header_ops.parse =3D NULL;
-> +        bond->bond_header_ops.cache =3D NULL;
-> +        bond->bond_header_ops.validate =3D NULL;
-> +        bond->bond_header_ops.parse_protocol =3D NULL;
-> +    }
-> +
-> +    bond->header_slave_dev      =3D slave_dev;
-> +    bond_dev->header_ops        =3D &bond->bond_header_ops;
->
->      bond_dev->type            =3D slave_dev->type;
->      bond_dev->hard_header_len   =3D slave_dev->hard_header_len;
-> @@ -2676,6 +2727,14 @@ static int bond_release_and_destroy(struct
-> net_device *bond_dev,
->      struct bonding *bond =3D netdev_priv(bond_dev);
->      int ret;
->
-> +    /* If slave_dev is the earliest registered one, we must clear
-> +     * the variables related to header_ops to avoid dangling pointer.
-> +     */
-> +    if (bond->header_slave_dev =3D=3D slave_dev) {
-> +        bond->header_slave_dev =3D NULL;
-> +        bond_dev->header_ops =3D NULL;
-> +    }
-> +
->      ret =3D __bond_release_one(bond_dev, slave_dev, false, true);
->      if (ret =3D=3D 0 && !bond_has_slaves(bond) &&
->          bond_dev->reg_state !=3D NETREG_UNREGISTERING) {
-> diff --git a/include/net/bonding.h b/include/net/bonding.h
-> index 95f67b308c19..cf8206187ce9 100644
-> --- a/include/net/bonding.h
-> +++ b/include/net/bonding.h
-> @@ -215,6 +215,11 @@ struct bond_ipsec {
->   */
->  struct bonding {
->      struct   net_device *dev; /* first - useful for panic debug */
-> +    struct   net_device *header_slave_dev;  /* slave net_device for
-> header_ops */
-> +    /* maintained as a non-const variable
-> +     * because bond's header_ops should change depending on slaves.
-> +     */
-> +    struct   header_ops bond_header_ops;
->      struct   slave __rcu *curr_active_slave;
->      struct   slave __rcu *current_arp_slave;
->      struct   slave __rcu *primary_slave;
 
