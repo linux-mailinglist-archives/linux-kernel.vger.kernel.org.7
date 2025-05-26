@@ -1,115 +1,87 @@
-Return-Path: <linux-kernel+bounces-662407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-662409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE241AC3A42
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 08:55:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D12A9AC3A49
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 08:57:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70F8C18929B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 06:55:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A005516F543
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 06:57:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 644BA1D63C0;
-	Mon, 26 May 2025 06:55:23 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFC171C5F35
-	for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 06:55:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC3081DDC0F;
+	Mon, 26 May 2025 06:57:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="F5fb1/2Q"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B5701D63C7;
+	Mon, 26 May 2025 06:57:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748242523; cv=none; b=cSwReBJm4mljDTXD5r00cUKmDjZgOs7hFVRXyALSLTN8wqfxiYkpYMOFs3AMntlfxzs5JSu38LEh3ge8deixZrsxO/SsPrNUOXSrnTza+XY3nfH2pFGbOjeYuampNt668k5aMpRlH9Hk5Ea5ut05avz9wOcoUSSHSsS1iONHznI=
+	t=1748242637; cv=none; b=OO3NCvrt+x9McGhZ/OVu2F1IFybHucLn0Tisf4iNVCl3ZjuOi1M/7rPNi1DAONxMsK0cVU/0NnfdEorLfEofH1sLDKpaEsoGizBCAJj6rx6YjM45ZR/Pz5cDFGjfQTtMPiQn3YSQ90fU47SQiPl5n4YzX+j1w59EmYGGjmPrQ4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748242523; c=relaxed/simple;
-	bh=11uRemiH4yPMy8oCJMxXpaySk1ix9Nd4b3Ls/kbEcvs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GWioRoHnm4BCNAIfGF/eTo3s03B6zLWn2GKbhOcuuHKA9uCGy1Z3zTY897YdG/7FrZYUPur1uUKnhuMHutrIITpmsJrDXnV8q7c7R6BU8Pw2ZII+T3oyQFdm4BwlnQCh3JxsmG1zD5p29yTaisk2z3Rj+CNAJTJmj/3M+CTVnzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.2.10.34])
-	by gateway (Coremail) with SMTP id _____8Axx2lVEDRo+JX8AA--.45027S3;
-	Mon, 26 May 2025 14:55:17 +0800 (CST)
-Received: from localhost.localdomain (unknown [10.2.10.34])
-	by front1 (Coremail) with SMTP id qMiowMCx7MRREDRolR3yAA--.32845S2;
-	Mon, 26 May 2025 14:55:16 +0800 (CST)
-From: Tianyang Zhang <zhangtianyang@loongson.cn>
-To: chenhuacai@kernel.org,
-	kernel@xen0n.name,
-	zhanghongchen@loongson.cn,
-	wangming01@loongson.cn,
-	peterx@redhat.com
-Cc: loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	zhangtianyang <zhangtianyang@loongson.cn>
-Subject: [PATCH] Loongarch:Fixed up panic cause by a NULL-pmd
-Date: Mon, 26 May 2025 14:55:12 +0800
-Message-Id: <20250526065512.13215-1-zhangtianyang@loongson.cn>
-X-Mailer: git-send-email 2.20.1
+	s=arc-20240116; t=1748242637; c=relaxed/simple;
+	bh=xx1G0IYpkddJ0UURedTcGID3WAvrp5o/oNP8111w3E4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kQOZkl0s7LUOjSw7F3JG8DbLyAizaqFkmbMvnbe3gRFTSJd6aic4G+Wgg4ktSGNjLVQ2QVF3TemfqcAzFx4VT3zxWTZ/MfNWHAyBGHGc0rMAtfgEvYily4njE2ZF5LrhQbTclpKKoDoJeyAc497BHd7xwiHK3uounb6gbU0euVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=F5fb1/2Q; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=3N5HVYn95TiR6tJjSW/C9FetSHwnCCxJu25MIh3EBkc=; b=F5fb1/2QHKzRbttsGm0r+q54qI
+	H7HZrcgE4M58see/1CKgkrCjrs2Ig/FYVJmX3ZsG2JQ6rkUYSV9UmD9v2nt+ibO0JZaej0rgB8xOR
+	NG7I1BFqbpus+ljHBsviSXS0sPiLAo1knXvQZSeG1gXYwN99qC2J0cnGKcjREtniTiq1/MPvgl97m
+	t6BShkxGpJSwirIzfwkUktj9kdttZ3lQZzd6fXVYzsujrogA2tn9UDEK1kBoVg6Zqv3Pr2BSnamw+
+	yOZsCrEx1v6E8Gu1ZnbNqNGhNECMppJcjCbdArw8JQlTgaom8ZQI64pxslfI9DKjJf2Sk/jhyk9xd
+	xoqZiueQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uJRlq-00000008F7Y-3DxB;
+	Mon, 26 May 2025 06:57:14 +0000
+Date: Sun, 25 May 2025 23:57:14 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Leon Romanovsky <leon@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org, jgg@ziepe.ca,
+	zyjzyj2000@gmail.com, Daisuke Matsuda <dskmtsd@gmail.com>,
+	hch@infradead.org
+Subject: Re: [PATCH for-next v3] RDMA/core: Avoid hmm_dma_map_alloc() for
+ virtual DMA devices
+Message-ID: <aDQQyjJv9YKK_ZoV@infradead.org>
+References: <20250524144328.4361-1-dskmtsd@gmail.com>
+ <174815946854.1055673.18158398913709776499.b4-ty@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMCx7MRREDRolR3yAA--.32845S2
-X-CM-SenderInfo: x2kd0wxwld05hdqjqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj93XoW7Ww1fur4ktryUCFyftry8tFc_yoW8Wr1kpr
-	y7C3Z5Gr40yryDJa17AFWkZFn7XasFkF4kW3Z2ya4DZwnxtw1jqFy8JwnI9F48ArWrJ3y0
-	9F45Ka9YqF1UJagCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUkYb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r106r15M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AK
-	xVWxJr0_GcWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27w
-	Aqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE
-	14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCF04k20xvY0x
-	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
-	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
-	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF
-	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
-	CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8r9N3UUUUU==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <174815946854.1055673.18158398913709776499.b4-ty@kernel.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-From: zhangtianyang <zhangtianyang@loongson.cn>
+On Sun, May 25, 2025 at 03:51:08AM -0400, Leon Romanovsky wrote:
+> 
+> On Sat, 24 May 2025 14:43:28 +0000, Daisuke Matsuda wrote:
+> > Drivers such as rxe, which use virtual DMA, must not call into the DMA
+> > mapping core since they lack physical DMA capabilities. Otherwise, a NULL
+> > pointer dereference is observed as shown below. This patch ensures the RDMA
+> > core handles virtual and physical DMA paths appropriately.
+> > 
+> > This fixes the following kernel oops:
+> > 
+> > [...]
+> 
+> Applied, thanks!
 
-Fixes: bd51834d1cf6 ("LoongArch: Return NULL from huge_pte_offset() for invalid PMD")
-ERROR INFO:
-
-CPU 25 Unable to handle kernel paging request at virtual address 0x0
-         ...
- Call Trace:
- [<900000000023c30c>] huge_pte_offset+0x3c/0x58
- [<900000000057fd4c>] hugetlb_follow_page_mask+0x74/0x438
- [<900000000051fee8>] __get_user_pages+0xe0/0x4c8
- [<9000000000522414>] faultin_page_range+0x84/0x380
- [<9000000000564e8c>] madvise_vma_behavior+0x534/0xa48
- [<900000000056689c>] do_madvise+0x1bc/0x3e8
- [<9000000000566df4>] sys_madvise+0x24/0x38
- [<90000000015b9e88>] do_syscall+0x78/0x98
- [<9000000000221f18>] handle_syscall+0xb8/0x158
-
-In some cases, pmd may be NULL and rely on NULL as the return value
-for processing, so it is necessary to determine this situation here
-Signed-off-by: zhangtianyang <zhangtianyang@loongson.cn>
----
- arch/loongarch/mm/hugetlbpage.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/arch/loongarch/mm/hugetlbpage.c b/arch/loongarch/mm/hugetlbpage.c
-index cea84d7f2b91..02dad4624fe3 100644
---- a/arch/loongarch/mm/hugetlbpage.c
-+++ b/arch/loongarch/mm/hugetlbpage.c
-@@ -47,7 +47,8 @@ pte_t *huge_pte_offset(struct mm_struct *mm, unsigned long addr,
- 				pmd = pmd_offset(pud, addr);
- 		}
- 	}
--	return pmd_none(pmdp_get(pmd)) ? NULL : (pte_t *) pmd;
-+
-+	return (!pmd || pmd_none(pmdp_get(pmd))) ? NULL : (pte_t *) pmd;
- }
- 
- uint64_t pmd_to_entrylo(unsigned long pmd_val)
--- 
-2.20.1
+So while this version look correct, the idea of open coding the
+virtual device version of hmm_dma_map directly in the ODP code
+is a nasty leaky abstraction.  Please pull it into a proper ib_dma_*
+wrapper.
 
 
