@@ -1,173 +1,146 @@
-Return-Path: <linux-kernel+bounces-662737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-662728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C027AC3EEE
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 13:51:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 394E4AC3ED2
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 13:47:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D73583ABD93
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 11:51:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F773177884
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 11:47:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D35EF1F8EF6;
-	Mon, 26 May 2025 11:51:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="vNauEA0N";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="h1uYi9+z"
-Received: from mout-y-111.mailbox.org (mout-y-111.mailbox.org [91.198.250.236])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 379051FF61D;
+	Mon, 26 May 2025 11:46:46 +0000 (UTC)
+Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F49D1C8601;
-	Mon, 26 May 2025 11:51:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.198.250.236
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36A581F7580;
+	Mon, 26 May 2025 11:46:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.62.165.209
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748260307; cv=none; b=YN3etR9T9zCcIe3LsPEECRusCw1palhcaIEBwT5ahKUWBEEMIuEV21Nxjsc4j5j+D/Kze7v8qnLq81t0LvBMARTNfY0kNyoM0A4RVeSU+YUkhI/lVSB6UHHHJCtW/UH2D6LBXvBnCI4UuUnp4wYbEk+I//XHQpKUtN6SE7gsYVc=
+	t=1748260005; cv=none; b=d9YDfj9H0dH0Pe4+uInXdS9BW4FoaU7XTS32bYxEfRyCKjpKdyqhk5aF4VPukYw8Ci/e26vBGh6rGtgbMLjDzB5YFxBu/k+BgMSlbHq1noXjUbizaFwvGUdp6NsbFhS8YMEoef6WpiPEfjd5/OG6+6sPhOJC5uqK+gMRbxGJA6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748260307; c=relaxed/simple;
-	bh=V00na71ORZdQe7cyi9jM8wn2nHHwRLWsEta5FlPqy64=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=VExWqFXJXllt1cBXnSDQS3jQ09Arj89KGqBcG+02MsY3wj6ZZzIHu6J50Ut9DDrAsL1rc0Ie/6B2+N/RY4CySx3+gweDm/7srDWMmNF8Fa0ObFcoxAKix7GQEsDKWSEoWenHGQPVxSdgDAxNxLPj32q4bloqB9TZuKvcR1B0V68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=vNauEA0N; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=h1uYi9+z; arc=none smtp.client-ip=91.198.250.236
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	s=arc-20240116; t=1748260005; c=relaxed/simple;
+	bh=ctdWOqVhw8PP7NozucmroMp+2QHGZHR7hJ6JgXHeR0k=;
+	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
+	 Subject:Content-Type; b=U7/uLWGRMUxxYEV479NZJx/FLc3XVlkae/d6Zrx1kF1FuaEvs68Q7PM+8s/rxNnGp2TO12F4sF/S5MeaxB5L9q60TI2W6IXUo5yst3yk2BIDTV0ReMLupniEc0BQpT5XsLemudf7MVMYZd9dlooCRkBNBc5r6RVCRjGhZBzJdGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=183.62.165.209
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mout-y-111.mailbox.org (Postfix) with ESMTPS id 4b5Yql2Kshz9xn8;
-	Mon, 26 May 2025 13:45:55 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1748259955;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=0iEnhsMyyhLqVb+t9d6JK42KoDeD/BDXMFXX8vR1gm8=;
-	b=vNauEA0NxP92F1Au9esFhltpHvXYYxuNADdZkqOwq190xijq8sUJeedWgjFV++/D2nPqWo
-	2wKvs0ebgRzCxSwbUatxTa59OJuLpxGTBj3tyD+L0cA8XVOhv5WUC+VoQCj6zUsRuS6ny+
-	fzgd3fdsAv5Zln8oQMaDKDAp2zVQEfaH4btyj58iXEMIbocpe35DzPZJtGmYh0hLA/EBcQ
-	MH7pnSRBvuekHXsSh6TPEPjPb1UXxv4YLUA16qAMR/PEOHw673PdOajkdyfJzqyyzJIQOZ
-	SFdFF8AEVXgXwiXG1efukjs8s+muR1EyCMzeIK5pnwcGDhRttamqqVvah0AJmQ==
-From: George Stark <george.stark@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1748259953;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=0iEnhsMyyhLqVb+t9d6JK42KoDeD/BDXMFXX8vR1gm8=;
-	b=h1uYi9+zl/rZ0lNwjhkRUL/tTmVRKunr5taucBku1n8wKTMNXzp2fZvVCXUPTcEJAm/XLj
-	AZWVxxgski972QfvxEHhWTt/dzVTflx+t7Jrakov4FmHXPElAsb7/FbGqQy8KbSkcKim3l
-	k5H5vf4UW0Q+xLjOpSsCSlEMpx0+M7knLpbLe1ohTuZ/qeg29aNJIneGLC1R+VYZ1TaldP
-	Z78IdPF4uPhcXljRmMVxunYX5AvK7JLGxBdvIUIQA6zOlUN+CrENrApQDc8pZseZIsDc3Q
-	V3lH0i0i787ghx6NVDaDfQHB5XAPr+bajA21B5SbHCHKAFaN4ndfkOKkChHBFA==
-To: andi.shyti@kernel.org,
-	neil.armstrong@linaro.org,
-	khilman@baylibre.com,
-	jbrunet@baylibre.com,
-	martin.blumenstingl@googlemail.com,
-	george.stark@mailbox.org,
-	linux-i2c@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-amlogic@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/1] i2c: meson: support smbus block read function
-Date: Mon, 26 May 2025 14:45:33 +0300
-Message-ID: <20250526114533.3287944-1-george.stark@mailbox.org>
+	by mxct.zte.com.cn (FangMail) with ESMTPS id 4b5YrK5YSBz51SW7;
+	Mon, 26 May 2025 19:46:25 +0800 (CST)
+Received: from njy2app08.zte.com.cn ([10.40.13.206])
+	by mse-fl2.zte.com.cn with SMTP id 54QBkGU1075015;
+	Mon, 26 May 2025 19:46:16 +0800 (+08)
+	(envelope-from jiang.kun2@zte.com.cn)
+Received: from mapi (njb2app05[null])
+	by mapi (Zmail) with MAPI id mid204;
+	Mon, 26 May 2025 19:46:19 +0800 (CST)
+Date: Mon, 26 May 2025 19:46:19 +0800 (CST)
+X-Zmail-TransId: 2afd6834548b4f5-54aaa
+X-Mailer: Zmail v1.0
+Message-ID: <20250526194619126ArX868H3UosA7Jz31tRqF@zte.com.cn>
+In-Reply-To: <CANn89i+C-qk-WhEanMS_tRiYJHHixH33MAO3u-wQVdWGJOjskw@mail.gmail.com>
+References: 20250526162746319JPXpL0xRJ-n7onnZApOiV@zte.com.cn,CANn89i+C-qk-WhEanMS_tRiYJHHixH33MAO3u-wQVdWGJOjskw@mail.gmail.com
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-MBO-RS-META: ydmzzk1c465fug6ojipqhh39tsnq41gs
-X-MBO-RS-ID: 4ee51b3cee18d95dcd0
+Mime-Version: 1.0
+From: <jiang.kun2@zte.com.cn>
+To: <edumazet@google.com>
+Cc: <davem@davemloft.net>, <kuba@kernel.org>, <dsahern@kernel.org>,
+        <pabeni@redhat.com>, <horms@kernel.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <xu.xin16@zte.com.cn>,
+        <yang.yang29@zte.com.cn>, <wang.yaxin@zte.com.cn>,
+        <fan.yu9@zte.com.cn>, <he.peilin@zte.com.cn>, <tu.qiang35@zte.com.cn>,
+        <qiu.yutan@zte.com.cn>, <zhang.yunkai@zte.com.cn>,
+        <ye.xingchen@zte.com.cn>
+Subject: =?UTF-8?B?UmU6IFtQQVRDSCBuZXQtbmV4dF0gbmV0OiBhcnA6IHVzZSBrZnJlZV9za2JfcmVhc29uKCkgaW4gYXJwX3Jjdigp?=
+Content-Type: multipart/mixed;
+	boundary="=====_001_next====="
+X-MAIL:mse-fl2.zte.com.cn 54QBkGU1075015
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 68345491.000/4b5YrK5YSBz51SW7
 
-In order to implement reading I2C_SMBUS_BLOCK_DATA call i2c bus driver
-has to support I2C_M_RECV_LEN flag meaning that total block size to read
-will be received in the first byte of the message. So add support for
-I2C_M_RECV_LEN flag.
 
-Signed-off-by: George Stark <george.stark@mailbox.org>
----
- drivers/i2c/busses/i2c-meson.c | 27 +++++++++++++++++++++++----
- 1 file changed, 23 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-meson.c b/drivers/i2c/busses/i2c-meson.c
-index c7b203cc4434..6d8fe151325a 100644
---- a/drivers/i2c/busses/i2c-meson.c
-+++ b/drivers/i2c/busses/i2c-meson.c
-@@ -95,6 +95,7 @@ struct meson_i2c {
- 	int			count;
- 	int			pos;
- 	int			error;
-+	bool			recv_len;
- 
- 	spinlock_t		lock;
- 	struct completion	done;
-@@ -259,7 +260,7 @@ static void meson_i2c_prepare_xfer(struct meson_i2c *i2c)
- 		meson_i2c_add_token(i2c, TOKEN_DATA);
- 
- 	if (i2c->count) {
--		if (write || i2c->pos + i2c->count < i2c->msg->len)
-+		if (write || i2c->pos + i2c->count < i2c->msg->len || i2c->recv_len)
- 			meson_i2c_add_token(i2c, TOKEN_DATA);
- 		else
- 			meson_i2c_add_token(i2c, TOKEN_DATA_LAST);
-@@ -268,7 +269,7 @@ static void meson_i2c_prepare_xfer(struct meson_i2c *i2c)
- 	if (write)
- 		meson_i2c_put_data(i2c, i2c->msg->buf + i2c->pos, i2c->count);
- 
--	if (i2c->last && i2c->pos + i2c->count >= i2c->msg->len)
-+	if (i2c->last && i2c->pos + i2c->count >= i2c->msg->len && !i2c->recv_len)
- 		meson_i2c_add_token(i2c, TOKEN_STOP);
- 
- 	writel(i2c->tokens[0], i2c->regs + REG_TOK_LIST0);
-@@ -288,9 +289,26 @@ static void meson_i2c_transfer_complete(struct meson_i2c *i2c, u32 ctrl)
- 		i2c->error = -ENXIO;
- 		i2c->state = STATE_IDLE;
- 	} else {
--		if (i2c->state == STATE_READ && i2c->count)
-+		if (i2c->state == STATE_READ && i2c->count) {
- 			meson_i2c_get_data(i2c, i2c->msg->buf + i2c->pos,
- 					   i2c->count);
-+			if (i2c->recv_len) {
-+				unsigned int len = i2c->msg->buf[0];
-+
-+				if (unlikely(len > I2C_SMBUS_BLOCK_MAX)) {
-+					dev_dbg(i2c->dev,
-+						"smbus block size %d is too big\n",
-+						len);
-+
-+					i2c->error = -EPROTO;
-+					i2c->state = STATE_IDLE;
-+					return;
-+				}
-+
-+				i2c->recv_len = false;
-+				i2c->msg->len += len;
-+			}
-+		}
- 
- 		i2c->pos += i2c->count;
- 
-@@ -371,6 +389,7 @@ static int meson_i2c_xfer_msg(struct meson_i2c *i2c, struct i2c_msg *msg,
- 		meson_i2c_do_start(i2c, msg);
- 
- 	i2c->state = (msg->flags & I2C_M_RD) ? STATE_READ : STATE_WRITE;
-+	i2c->recv_len = (msg->flags & I2C_M_RD) && (i2c->msg->flags & I2C_M_RECV_LEN);
- 	meson_i2c_prepare_xfer(i2c);
- 
- 	if (!atomic)
-@@ -444,7 +463,7 @@ static int meson_i2c_xfer_atomic(struct i2c_adapter *adap,
- 
- static u32 meson_i2c_func(struct i2c_adapter *adap)
- {
--	return I2C_FUNC_I2C | I2C_FUNC_SMBUS_EMUL;
-+	return I2C_FUNC_I2C | I2C_FUNC_SMBUS_EMUL | I2C_FUNC_SMBUS_READ_BLOCK_DATA;
- }
- 
- static const struct i2c_algorithm meson_i2c_algorithm = {
--- 
-2.25.1
+--=====_001_next=====
+Content-Type: multipart/related;
+	boundary="=====_002_next====="
+
+
+--=====_002_next=====
+Content-Type: multipart/alternative;
+	boundary="=====_003_next====="
+
+
+--=====_003_next=====
+Content-Type: text/plain;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+
+PkFyZSB0aGVzZSBlcnJvcnMgY29tbW9uIGVub3VnaCB0byBnZXQgZGVkaWNhdGVkIGRyb3AgcmVh
+c29ucyA/IE1vc3QNCj5zdGFja3MgaGF2ZSBpbXBsZW1lbnRlZCBBUlAgbW9yZSB0aGFuIDIwIHll
+YXJzIGFnby4NCj4NCj5JIHRoaW5rIHRoYXQgZm9yIHJhcmUgZXZlbnRzIGxpa2UgdGhpcywgdGhl
+IHN0YW5kYXJkIGNhbGwgZ3JhcGggc2hvdWxkDQo+YmUgcGxlbnR5IGVub3VnaC4gKHBlcmYgcmVj
+b3JkIC1hZyAtZSBza2I6a2ZyZWVfc2tiKQ0KPg0KPk90aGVyd2lzZSB3ZSB3aWxsIGdldCAxMDAw
+IGRyb3AgcmVhc29ucywgYW5kIHRoZSBwcm9mdXNpb24gb2YgbmFtZXMNCj5tYWtlcyB0aGVtIHVz
+ZWxlc3MuDQoNClRoYW5rIHlvdSBmb3IgeW91ciBmZWVkYmFjay4NCg0KTWFsaWNpb3VzbHkgY3Jh
+ZnRlZCBBUlAgcGFja2V0cyBvZnRlbiB0cmlnZ2VyIHRoZXNlIHR3byBzY2VuYXJpb3MuIA0KVXNp
+bmcgcGVyZiBjYW5ub3QgZGlyZWN0bHkgZGlzdGluZ3Vpc2ggYmV0d2VlbiB0aGUgdHdvIGNhc2Vz
+OyANCmFkZGl0aW9uYWxseSwgZW5hYmxpbmcgcGVyZiBpbiBlbWJlZGRlZCBlbnZpcm9ubWVudHMg
+bWF5IGxlYWQgdG8gDQpub3RpY2VhYmxlIHBlcmZvcm1hbmNlIG92ZXJoZWFkLg0KDQpNb3JlIGlt
+cG9ydGFudGx5LCBpbiB0aGlzIHBhdGNoLCBJIGJlbGlldmUgcmVwbGFjaW5nIHBza2JfbWF5X3B1
+bGwgd2l0aCANCnBza2JfbWF5X3B1bGxfcmVhc29uIG1ha2VzIHNlbnNlLCBzbyB1c2luZyBrZnJl
+ZV9za2JfcmVhc29uKCkgaW4gDQphcnBfcmN2KCkgaXMgbWVhbmluZ2Z1bC4=
+
+
+--=====_003_next=====
+Content-Type: text/html ;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+
+PGRpdiBjbGFzcz0iemNvbnRlbnRSb3ciPjxkaXYgc3R5bGU9ImZvbnQtc2l6ZToxNHB4O2ZvbnQt
+ZmFtaWx5OuW+rui9r+mbhem7kSxNaWNyb3NvZnQgWWFIZWk7bGluZS1oZWlnaHQ6MS41Ij48ZGl2
+IHN0eWxlPSJsaW5lLWhlaWdodDoxLjUiPiZndDtBcmUgdGhlc2UgZXJyb3JzIGNvbW1vbiBlbm91
+Z2ggdG8gZ2V0IGRlZGljYXRlZCBkcm9wIHJlYXNvbnMgPyBNb3N0PC9kaXY+PGRpdiBzdHlsZT0i
+bGluZS1oZWlnaHQ6MS41Ij4mZ3Q7c3RhY2tzIGhhdmUgaW1wbGVtZW50ZWQgQVJQIG1vcmUgdGhh
+biAyMCB5ZWFycyBhZ28uPC9kaXY+PGRpdiBzdHlsZT0ibGluZS1oZWlnaHQ6MS41Ij4mZ3Q7PC9k
+aXY+PGRpdiBzdHlsZT0ibGluZS1oZWlnaHQ6MS41Ij4mZ3Q7SSB0aGluayB0aGF0IGZvciByYXJl
+IGV2ZW50cyBsaWtlIHRoaXMsIHRoZSBzdGFuZGFyZCBjYWxsIGdyYXBoIHNob3VsZDwvZGl2Pjxk
+aXYgc3R5bGU9ImxpbmUtaGVpZ2h0OjEuNSI+Jmd0O2JlIHBsZW50eSBlbm91Z2guIChwZXJmIHJl
+Y29yZCAtYWcgLWUgc2tiOmtmcmVlX3NrYik8L2Rpdj48ZGl2IHN0eWxlPSJsaW5lLWhlaWdodDox
+LjUiPiZndDs8L2Rpdj48ZGl2IHN0eWxlPSJsaW5lLWhlaWdodDoxLjUiPiZndDtPdGhlcndpc2Ug
+d2Ugd2lsbCBnZXQgMTAwMCBkcm9wIHJlYXNvbnMsIGFuZCB0aGUgcHJvZnVzaW9uIG9mIG5hbWVz
+PC9kaXY+PGRpdiBzdHlsZT0ibGluZS1oZWlnaHQ6MS41Ij4mZ3Q7bWFrZXMgdGhlbSB1c2VsZXNz
+LjwvZGl2PjxkaXYgc3R5bGU9ImxpbmUtaGVpZ2h0OjEuNSI+PGJyPjwvZGl2PjxkaXYgc3R5bGU9
+ImxpbmUtaGVpZ2h0OjEuNSI+VGhhbmsgeW91IGZvciB5b3VyIGZlZWRiYWNrLjwvZGl2PjxkaXYg
+c3R5bGU9ImxpbmUtaGVpZ2h0OjEuNSI+PGJyPjwvZGl2PjxkaXYgc3R5bGU9ImxpbmUtaGVpZ2h0
+OjEuNSI+TWFsaWNpb3VzbHkgY3JhZnRlZCBBUlAgcGFja2V0cyBvZnRlbiB0cmlnZ2VyIHRoZXNl
+IHR3byBzY2VuYXJpb3MuJm5ic3A7PC9kaXY+PGRpdiBzdHlsZT0ibGluZS1oZWlnaHQ6MS41Ij5V
+c2luZyBwZXJmIGNhbm5vdCBkaXJlY3RseSBkaXN0aW5ndWlzaCBiZXR3ZWVuIHRoZSB0d28gY2Fz
+ZXM7Jm5ic3A7PC9kaXY+PGRpdiBzdHlsZT0ibGluZS1oZWlnaHQ6MS41Ij5hZGRpdGlvbmFsbHks
+IGVuYWJsaW5nIHBlcmYgaW4gZW1iZWRkZWQgZW52aXJvbm1lbnRzIG1heSBsZWFkIHRvJm5ic3A7
+PC9kaXY+PGRpdiBzdHlsZT0ibGluZS1oZWlnaHQ6MS41Ij5ub3RpY2VhYmxlIHBlcmZvcm1hbmNl
+IG92ZXJoZWFkLjwvZGl2PjxkaXYgc3R5bGU9ImxpbmUtaGVpZ2h0OjEuNSI+PGJyPjwvZGl2Pjxk
+aXYgc3R5bGU9ImxpbmUtaGVpZ2h0OjEuNSI+TW9yZSBpbXBvcnRhbnRseSwgaW4gdGhpcyBwYXRj
+aCwgSSBiZWxpZXZlIHJlcGxhY2luZyBwc2tiX21heV9wdWxsIHdpdGgmbmJzcDs8L2Rpdj48ZGl2
+IHN0eWxlPSJsaW5lLWhlaWdodDoxLjUiPnBza2JfbWF5X3B1bGxfcmVhc29uIG1ha2VzIHNlbnNl
+LCBzbyB1c2luZyBrZnJlZV9za2JfcmVhc29uKCkgaW4mbmJzcDs8L2Rpdj48ZGl2IHN0eWxlPSJs
+aW5lLWhlaWdodDoxLjUiPmFycF9yY3YoKSBpcyBtZWFuaW5nZnVsLjwvZGl2PjwvZGl2Pjxicj48
+YnI+PGJyPjxicj48L2Rpdj4=
+
+
+--=====_003_next=====--
+
+--=====_002_next=====--
+
+--=====_001_next=====--
 
 
