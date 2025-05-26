@@ -1,87 +1,62 @@
-Return-Path: <linux-kernel+bounces-662812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-662814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 861E2AC3FF4
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 14:59:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F619AC3FF5
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 14:59:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A35AC3BB84E
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 12:58:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 644E01883687
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 12:59:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2A9A15E5DC;
-	Mon, 26 May 2025 12:57:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0340220298E;
+	Mon, 26 May 2025 12:58:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Mk39sru+"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mbdof1iD"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 561C220010C
-	for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 12:57:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1C98202C49;
+	Mon, 26 May 2025 12:58:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748264245; cv=none; b=MWkX5SeTgGvGPHdkmFZeJbC3XC0r9jrANBE2qzU32Qbifab4ZtfiOWqPf7T69ukQ3V6wgJ26hj2QHKZYom+8j1k2B8kZpTp8/D9I1spz/bVhc1/NIUavz+usa4JB+38dxPvH1IgMLE3MbP0fQbmwHpA34dHWKlIf8SfeOjGZJF8=
+	t=1748264314; cv=none; b=RzERxgKwUmoBCo7b7HN9croyCpmsCmBIaAVp6N5OT/c1zjRX6iyQN5rDgoAEDwwPZWp3NC1psc0D2EXNzyb6GsjMfDRruX39/p5GPcELSxY+BtTxDkcrWGvAV66ItxPqE430g7lRO2S8GwNbiUA5vwUAoOo+ptm78jN9abXpCYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748264245; c=relaxed/simple;
-	bh=n4huyPMO4/X42xZu+9qZoHMd+IX7dk0uovDPy4AF9To=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KvbTDl3L/4mNgOui9KUku9YxM94Ue1NRF/SzKp8GkbGLeI2eCryZ3fQnBdfkwBWjAomHjKf9YOitU7jtlt/u4PSfMmgORlfmkHQZJjuAydhrZUybwUrNlBNHRcCLbc/A5Znx6ZS4dPcfmmolqvDjor9iqwiyKf8dTGr1Nn1JcjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Mk39sru+; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1748264242;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=WL+ruCNUWwEKdiiLFkuRLW2VoKFDdxUqIK4QLCM8Sgg=;
-	b=Mk39sru+yaa9oXrrKuhWMY/IrD8D3thG7Bru+Fy27jZTtZs/7p+of3QqHPF9XZ39ol9Kkt
-	cdj3wTMwGbBfUiNvBpftx6P7fLWmYGMidDdeRdJJKdqE19xWGVWraedNv5fj9/IIAf5/gX
-	zRY2UqkbrPnqUShlQ+1edelauyt8gy8=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-613--WToRrkQO-2sjHuuelOo2w-1; Mon, 26 May 2025 08:57:21 -0400
-X-MC-Unique: -WToRrkQO-2sjHuuelOo2w-1
-X-Mimecast-MFC-AGG-ID: -WToRrkQO-2sjHuuelOo2w_1748264240
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-442ffaa7dbeso16476245e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 05:57:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748264240; x=1748869040;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=WL+ruCNUWwEKdiiLFkuRLW2VoKFDdxUqIK4QLCM8Sgg=;
-        b=ZoZTw62SC9DtT2IacC8ukUnvs5JWQ6l/cJeS4NB9gUd4DDHRtxi1TSfxbzhAfhNjfJ
-         K8r3F7sXKLB5e4Cw7yhZt0H6Cm752xyw7R1Z8lShHG79XB3+xjiwgeDu+9H6je4dB4Jp
-         qLSHuJLquevyvSkBeaVFrVlcuFtAO3jbo0vqK/h4A4M+ltH5AowquUiwuH14SfIWoOKF
-         FdOBULy1NPiY4lUtNnRseh0KG7+rpwZWmwkHlReOCGjyKVXtXAZVUA1zeabgkT/1vTu7
-         p5MdgdpZ5UuSrReOnbhFL6klyLBiqAuZfOMjNjjTY8EcOesWhntDAcofS9VgHnNYVcpT
-         p6Pg==
-X-Forwarded-Encrypted: i=1; AJvYcCXjRg0fxRvRj+uTzky3qg58Ama1phswWNMliQudUlxIuWtPvWHAQDxrsk1OJgMVaTVoJtBkZ+M9YX2oQmU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywz9Cvp+vNIpnfBI8ocQjygd1LSVIk+3RSC9zKsfUXSavJQdhBU
-	B0eNxFX6/qrb6k+guDdmMIaaPqcxtSMGjtN/cZ2FH7aDEivqmbICuZ2kr5hkg16ZrKdoiugIIiy
-	498SOPAbtntF3fNMS2GrZ3eDa7+gO8jWRhll08ARsI/nwXtdIspW1OeQPrhxrSjWKvg==
-X-Gm-Gg: ASbGncvHtLGM6aI/BS0XKxbR7UEAM2zSmPq5306oQTfW1LvTzhhWQCNjraLC3uyIvV6
-	1rit6dClKW69Zyi8x7y4anlj+5Y77ryyflwHVivInEeOnMsljUYPbRHavJwdCdHxuusfpfnaQPB
-	SUKXclDtuPI2pfYKDYv12zLPgnhYeRHXKhzOX/BgHQPq6xBxM74htzXBPMOltMglr5+3r0VjhDv
-	NlsT5HlSefIYhjZSEB6j9LeV88FX8EKrYQ0rsVCzlE6R40laz4e/jR9Ec7frt+lrqaCDr4Cypoe
-	ijKv62AKaidMvgdsSlrsAqN6+m5KhTueQtsAveAcyYRIB8RkdqwoSmOO61WEE7MwP6Bm0K8E5VV
-	Gupe7TUttAMy7Kjq+LWh7tvmaFzomofNHig029xA=
-X-Received: by 2002:a05:600c:64c5:b0:43c:fbbf:7bf1 with SMTP id 5b1f17b1804b1-44c935dbb26mr88081775e9.30.1748264239761;
-        Mon, 26 May 2025 05:57:19 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGsj2yVg6GQyvPIsfBqR6TicSZOd6Jk+h3Evd8KqH3QryvnfOsfvZJ4MBvT1e9QXcVH65VfsQ==
-X-Received: by 2002:a05:600c:64c5:b0:43c:fbbf:7bf1 with SMTP id 5b1f17b1804b1-44c935dbb26mr88081405e9.30.1748264239355;
-        Mon, 26 May 2025 05:57:19 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f19:6500:e1c1:8216:4c25:efe4? (p200300d82f196500e1c182164c25efe4.dip0.t-ipconnect.de. [2003:d8:2f19:6500:e1c1:8216:4c25:efe4])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-447f78b2f19sm232109465e9.32.2025.05.26.05.57.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 May 2025 05:57:18 -0700 (PDT)
-Message-ID: <955fd396-10b1-48cb-977d-74f3e158b1cd@redhat.com>
-Date: Mon, 26 May 2025 14:57:17 +0200
+	s=arc-20240116; t=1748264314; c=relaxed/simple;
+	bh=BgUTWUiEJ1NJmL0IGaNLW+K3RWO5fJmGT1a2jOXQ8ro=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=SQyWC1LJ+K10gVNMwvJOiqEJHipPpB8Mvz+GGckKuSqMv4/+EQPaFNVOiLBwRyo/At7ozrZBrM6psMT3qsjVipyCLilaoUAKU+W3JLBwyhxPT5nDMzvhwpg4zqEeoPwLRXoufhhEKW6oulDnZihC3IJO5x+EWwrIOHnSnSR2ejE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mbdof1iD; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54Q9qPkR015219;
+	Mon, 26 May 2025 12:57:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	9L65B9cAXkrXNycFsx+oz14Vk89MX3SAUsF1qlfrcMM=; b=mbdof1iD0bvrWDN+
+	49CWUOA+Qj6NQ0x09L6JfrZDcG9r0aaVuPjMYCVF6z8xSUZU0nr1rsDahjMfJqP1
+	jBgQcyDnGqFc/8JmpqoWpGjkGyvIBRRcDQb+wj5bGZqYKiq1xMnHgMWfFYiRbReL
+	9TTbOyt/DN1V7FyCMfbeuniUvdKxspYK0gs1JWn/1bgYitAgLjPnAcPxeWVDSnKn
+	ejtsB1qEwZHjJZf1uB7wR/FOrte81mLDU58vMcdV+EiQgKTSPM5aFqurYBnZLnsr
+	1vFWoeWV4PpQfE6Cl+64xNo7+HdMH4TTmjE7IUpPA49COdYTvn9tsOsSy69FNY8R
+	Vmu9Sw==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46u66wccc6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 26 May 2025 12:57:45 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 54QCvibr027574
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 26 May 2025 12:57:44 GMT
+Received: from [10.64.68.119] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 26 May
+ 2025 05:57:38 -0700
+Message-ID: <187d55f0-f4ec-4d5e-a449-708ebed1ab45@quicinc.com>
+Date: Mon, 26 May 2025 20:57:35 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,161 +64,428 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 0/5] add process_madvise() flags to modify behaviour
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
- Arnd Bergmann <arnd@arndb.de>, Christian Brauner <brauner@kernel.org>,
- linux-mm@kvack.org, linux-arch@vger.kernel.org,
- linux-kernel@vger.kernel.org, SeongJae Park <sj@kernel.org>,
- Usama Arif <usamaarif642@gmail.com>
-References: <7tzfy4mmbo2utodqr5clk24mcawef5l2gwrgmnp5jmqxmhkpav@jpzaaoys6jro>
- <5604190c-3309-4cb8-b746-2301615d933c@lucifer.local>
- <uxhvhja5igs5cau7tomk56wit65lh7ooq7i5xsdzyqsv5ikavm@kiwe26ioxl3t>
- <e8c459cb-c8b8-4c34-8f94-c8918bef582f@lucifer.local>
- <226owobtknee4iirb7sdm3hs26u4nvytdugxgxtz23kcrx6tzg@nryescaj266u>
- <7a214bee-d184-460f-88d6-2249b9d513ba@lucifer.local>
- <djdcvn3flljlbl7pwyurpdplqxikxy6j2obj6cwcjd4znr6hwj@w3lzlvdibi2i>
- <e4d9dd63-5000-4939-b09c-c322d41a9d70@lucifer.local>
- <x6uzxhwrgamet2ftqtgzxcg7osnw62rcv4eym52nr4l6awsqgt@qivrdfpguaop>
- <9433c2d6-200c-4320-80f3-840ca5e66f64@redhat.com>
- <uhla5o5xqshcrihc5gpkqqyoplj7hxrbptp6prmwd2mh3ikw4m@m6apbkyfny6c>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH 17/45] drm/msm/dp: use stream_id to change offsets in
+ dp_catalog
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Abhinav Kumar
+	<quic_abhinavk@quicinc.com>
+CC: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        "Marijn
+ Suijten" <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Stephen Boyd <swboyd@chromium.org>,
+        "Chandan
+ Uddaraju" <chandanu@codeaurora.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Kuogee Hsieh <quic_khsieh@quicinc.com>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Vara Reddy <quic_varar@quicinc.com>,
+        Rob Clark
+	<robdclark@chromium.org>,
+        Tanmay Shah <tanmay@codeaurora.org>, <linux-arm-msm@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Jessica Zhang <quic_jesszhan@quicinc.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+References: <20241205-dp_mst-v1-0-f8618d42a99a@quicinc.com>
+ <20241205-dp_mst-v1-17-f8618d42a99a@quicinc.com>
+ <45awcx2az5m5v4etpuaycqx2dolzjkrcjg6ehmooivwuqb6ac3@euo7rsoccqup>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <uhla5o5xqshcrihc5gpkqqyoplj7hxrbptp6prmwd2mh3ikw4m@m6apbkyfny6c>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Yongxing Mou <quic_yongmou@quicinc.com>
+In-Reply-To: <45awcx2az5m5v4etpuaycqx2dolzjkrcjg6ehmooivwuqb6ac3@euo7rsoccqup>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=aYJhnQot c=1 sm=1 tr=0 ts=68346549 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=COk6AnOGAAAA:8
+ a=ZPSvpmQREfRDJfDRKNsA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: h2q3X7BekGhI8uLZbgim2OODXENxQ2ga
+X-Proofpoint-GUID: h2q3X7BekGhI8uLZbgim2OODXENxQ2ga
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI2MDExMCBTYWx0ZWRfX4fy0ACFsqfFa
+ CmRlcA3HmBA/tY5s8eMkilEqppUUoPmyOxzywgM8bzfhTenbu/DoK2zLoTuzWNk8BsnwqsztK4u
+ 0vhAhYVmm6XrpR07rWWbBLGWig7QPNfD9ajT4pXsJnGGuvoj0OAAgMGLhTnHaGhGcD8hCS9du+G
+ RTfQucp0jmePrT/xNNJrsW5CgLo36PxIC4EA588jgrJKY5Ye8MlYeWmImRZShR3PqpMshYPLGnU
+ mTG+CsLF/vsJSDHYmqFY+CPcJvD+oZAr3iFVkDmzrjGC/Bto0Y2NwCdo0MxSKHFMkGYmA+EsPiH
+ BL/ac0rYhnaWjCvE/123fJjgfktTuQ30ndsRDc+Lr/9xayW0YOeOGGVDOZgnD6gkLRzHtK4IIfo
+ Ei560KFcgkZF90Xw0mLYVumgD+NbXLCjBJW/67txi58mX1w1D2n2AAlLmiKs+qMtkMFwg/Hn
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-26_06,2025-05-26_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 suspectscore=0 impostorscore=0 adultscore=0
+ mlxlogscore=999 lowpriorityscore=0 malwarescore=0 mlxscore=0 spamscore=0
+ clxscore=1015 bulkscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505160000 definitions=main-2505260110
 
+
+
+On 2024/12/8 13:42, Dmitry Baryshkov wrote:
+> On Thu, Dec 05, 2024 at 08:31:48PM -0800, Abhinav Kumar wrote:
+>> Use the dp_panel's stream_id to adjust the offsets for stream 1
+>> which will be used for MST in the dp_catalog. Also add additional
+>> register defines for stream 1.
 >>
->> To summarize my current view:
+>> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+>> ---
+>>   drivers/gpu/drm/msm/dp/dp_catalog.c | 99 ++++++++++++++++++++++++++++---------
+>>   drivers/gpu/drm/msm/dp/dp_catalog.h |  9 ++--
+>>   drivers/gpu/drm/msm/dp/dp_ctrl.c    |  3 ++
+>>   drivers/gpu/drm/msm/dp/dp_panel.c   |  2 +
+>>   drivers/gpu/drm/msm/dp/dp_reg.h     | 13 ++++-
+>>   5 files changed, 99 insertions(+), 27 deletions(-)
 >>
->> 1) ebpf: most people are are not a fan of that, and I agree, at least
->>     for this purpose. If we were talking about making better *placement*
->>     decisions using epbf, it would be a different story.
+>> diff --git a/drivers/gpu/drm/msm/dp/dp_catalog.c b/drivers/gpu/drm/msm/dp/dp_catalog.c
+>> index ee7f2d0b23aa034428a01ef2c9752f51013c5e01..e6f6edf617898241c74580eb0ae6bc58f06a154f 100644
+>> --- a/drivers/gpu/drm/msm/dp/dp_catalog.c
+>> +++ b/drivers/gpu/drm/msm/dp/dp_catalog.c
+>> @@ -457,10 +457,20 @@ void msm_dp_catalog_ctrl_config_misc(struct msm_dp_catalog *msm_dp_catalog,
+>>   					u32 test_bits_depth)
+>>   {
+>>   	u32 misc_val;
+>> +	u32 reg_offset = 0;
+>> +
+>>   	struct msm_dp_catalog_private *catalog = container_of(msm_dp_catalog,
+>>   				struct msm_dp_catalog_private, msm_dp_catalog);
+>>   
+>> -	misc_val = msm_dp_read_link(catalog, REG_DP_MISC1_MISC0);
+>> +	if (msm_dp_catalog->stream_id >= DP_STREAM_MAX) {
+>> +		DRM_ERROR("invalid stream_id:%d\n", msm_dp_catalog->stream_id);
+>> +		return;
+>> +	}
 > 
->  From placement decisions, do you mean placement between memory
-> tiers/nodes or something else?
-
-More like: which size to place, but it could be extended to other 
-policies, maybe.
-
-Assume we have a page fault and have to decide which size to place.
-
-For a process that we really want to use THPs (VM_HUEPAGE?), we could 
-use the largest free folio possible.
-
-For a process that we don't want to spend valuable THPs on (VM_HUEPAGE 
-not set?), we could use the smallest free folio possible.
-
-Such a possibly might be encoded in an ebpf program I assume.
-
-The hints (prioritize regions/processes, deprioritize 
-regions/processes), such as VM_HUGEPAGE, inputs into such a program.
+> Please drop extra-protective handling. How can stream_id become invalid?
 > 
+>> +
+>> +	if (msm_dp_catalog->stream_id == DP_STREAM_1)
+>> +		reg_offset = REG_DP1_MISC1_MISC0 - REG_DP_MISC1_MISC0;
+>> +
+>> +	misc_val = msm_dp_read_link(catalog, REG_DP_MISC1_MISC0 + reg_offset);
+>>   
+>>   	/* clear bpp bits */
+>>   	misc_val &= ~(0x07 << DP_MISC0_TEST_BITS_DEPTH_SHIFT);
+>> @@ -470,7 +480,7 @@ void msm_dp_catalog_ctrl_config_misc(struct msm_dp_catalog *msm_dp_catalog,
+>>   	misc_val |= DP_MISC0_SYNCHRONOUS_CLK;
+>>   
+>>   	drm_dbg_dp(catalog->drm_dev, "misc settings = 0x%x\n", misc_val);
+>> -	msm_dp_write_link(catalog, REG_DP_MISC1_MISC0, misc_val);
+>> +	msm_dp_write_link(catalog, REG_DP_MISC1_MISC0 + reg_offset, misc_val);
+>>   }
+>>   
+>>   void msm_dp_catalog_setup_peripheral_flush(struct msm_dp_catalog *msm_dp_catalog)
+>> @@ -500,10 +510,21 @@ void msm_dp_catalog_ctrl_config_msa(struct msm_dp_catalog *msm_dp_catalog,
+>>   	u32 const link_rate_hbr2 = 540000;
+>>   	u32 const link_rate_hbr3 = 810000;
+>>   	unsigned long den, num;
+>> +	u32 mvid_reg_off = 0, nvid_reg_off = 0;
+>>   
+>>   	struct msm_dp_catalog_private *catalog = container_of(msm_dp_catalog,
+>>   				struct msm_dp_catalog_private, msm_dp_catalog);
+>>   
+>> +	if (msm_dp_catalog->stream_id >= DP_STREAM_MAX) {
+>> +		DRM_ERROR("invalid stream_id:%d\n", msm_dp_catalog->stream_id);
+>> +		return;
+>> +	}
+>> +
+>> +	if (msm_dp_catalog->stream_id == DP_STREAM_1) {
+>> +		mvid_reg_off = REG_DP1_SOFTWARE_MVID - REG_DP_SOFTWARE_MVID;
+>> +		nvid_reg_off = REG_DP1_SOFTWARE_NVID - REG_DP_SOFTWARE_NVID;
+>> +	}
+>> +
+>>   	if (rate == link_rate_hbr3)
+>>   		pixel_div = 6;
+>>   	else if (rate == 162000 || rate == 270000)
+>> @@ -545,9 +566,14 @@ void msm_dp_catalog_ctrl_config_msa(struct msm_dp_catalog *msm_dp_catalog,
+>>   		nvid *= 3;
+>>   
+>>   	drm_dbg_dp(catalog->drm_dev, "mvid=0x%x, nvid=0x%x\n", mvid, nvid);
+>> -	msm_dp_write_link(catalog, REG_DP_SOFTWARE_MVID, mvid);
+>> -	msm_dp_write_link(catalog, REG_DP_SOFTWARE_NVID, nvid);
+>> -	msm_dp_write_p0(catalog, MMSS_DP_DSC_DTO, 0x0);
+>> +
+>> +	msm_dp_write_link(catalog, REG_DP_SOFTWARE_MVID + mvid_reg_off, mvid);
+>> +	msm_dp_write_link(catalog, REG_DP_SOFTWARE_NVID + nvid_reg_off, nvid);
+>> +
+>> +	if (msm_dp_catalog->stream_id == DP_STREAM_0)
+>> +		msm_dp_write_p0(catalog, MMSS_DP_DSC_DTO, 0x0);
+>> +	else
+>> +		msm_dp_write_p1(catalog, MMSS_DP_DSC_DTO, 0x0);
+>>   }
+>>   
+>>   int msm_dp_catalog_ctrl_set_pattern_state_bit(struct msm_dp_catalog *msm_dp_catalog,
+>> @@ -910,13 +936,20 @@ int msm_dp_catalog_panel_timing_cfg(struct msm_dp_catalog *msm_dp_catalog, u32 t
+>>   	struct msm_dp_catalog_private *catalog = container_of(msm_dp_catalog,
+>>   				struct msm_dp_catalog_private, msm_dp_catalog);
+>>   	u32 reg;
+>> +	u32 offset = 0;
+>> +
+>> +	if (msm_dp_catalog->stream_id == DP_STREAM_1)
+>> +		offset = REG_DP1_TOTAL_HOR_VER - REG_DP_TOTAL_HOR_VER;
+>>   
+>> -	msm_dp_write_link(catalog, REG_DP_TOTAL_HOR_VER, total);
+>> -	msm_dp_write_link(catalog, REG_DP_START_HOR_VER_FROM_SYNC, sync_start);
+>> -	msm_dp_write_link(catalog, REG_DP_HSYNC_VSYNC_WIDTH_POLARITY, width_blanking);
+>> -	msm_dp_write_link(catalog, REG_DP_ACTIVE_HOR_VER, msm_dp_active);
+>> +	msm_dp_write_link(catalog, REG_DP_TOTAL_HOR_VER + offset, total);
+>> +	msm_dp_write_link(catalog, REG_DP_START_HOR_VER_FROM_SYNC + offset, sync_start);
+>> +	msm_dp_write_link(catalog, REG_DP_HSYNC_VSYNC_WIDTH_POLARITY + offset, width_blanking);
+>> +	msm_dp_write_link(catalog, REG_DP_ACTIVE_HOR_VER + offset, msm_dp_active);
+>>   
+>> -	reg = msm_dp_read_p0(catalog, MMSS_DP_INTF_CONFIG);
+>> +	if (msm_dp_catalog->stream_id == DP_STREAM_0)
+>> +		reg = msm_dp_read_p0(catalog, MMSS_DP_INTF_CONFIG);
+>> +	else
+>> +		reg = msm_dp_read_p1(catalog, MMSS_DP_INTF_CONFIG);
+>>   
+>>   	if (msm_dp_catalog->wide_bus_en)
+>>   		reg |= DP_INTF_CONFIG_DATABUS_WIDEN;
+>> @@ -926,7 +959,11 @@ int msm_dp_catalog_panel_timing_cfg(struct msm_dp_catalog *msm_dp_catalog, u32 t
+>>   
+>>   	DRM_DEBUG_DP("wide_bus_en=%d reg=%#x\n", msm_dp_catalog->wide_bus_en, reg);
+>>   
+>> -	msm_dp_write_p0(catalog, MMSS_DP_INTF_CONFIG, reg);
+>> +	if (msm_dp_catalog->stream_id == DP_STREAM_0)
+>> +		msm_dp_write_p0(catalog, MMSS_DP_INTF_CONFIG, reg);
+>> +	else
+>> +		msm_dp_write_p1(catalog, MMSS_DP_INTF_CONFIG, reg);
+>> +
+>>   	return 0;
+>>   }
+>>   
+>> @@ -936,18 +973,22 @@ static void msm_dp_catalog_panel_send_vsc_sdp(struct msm_dp_catalog *msm_dp_cata
+>>   	u32 header[2];
+>>   	u32 val;
+>>   	int i;
+>> +	u32 msm_dp_generic_offset = 0;
+>>   
+>>   	catalog = container_of(msm_dp_catalog, struct msm_dp_catalog_private, msm_dp_catalog);
+>>   
+>> +	if (msm_dp_catalog->stream_id == DP_STREAM_1)
+>> +		msm_dp_generic_offset = MMSS_DP1_GENERIC0_0 - MMSS_DP_GENERIC0_0;
+>> +
+>>   	msm_dp_utils_pack_sdp_header(&vsc_sdp->sdp_header, header);
+>>   
+>> -	msm_dp_write_link(catalog, MMSS_DP_GENERIC0_0, header[0]);
+>> -	msm_dp_write_link(catalog, MMSS_DP_GENERIC0_1, header[1]);
+>> +	msm_dp_write_link(catalog, MMSS_DP_GENERIC0_0 + msm_dp_generic_offset, header[0]);
+>> +	msm_dp_write_link(catalog, MMSS_DP_GENERIC0_1 + msm_dp_generic_offset, header[1]);
+>>   
+>>   	for (i = 0; i < sizeof(vsc_sdp->db); i += 4) {
+>>   		val = ((vsc_sdp->db[i]) | (vsc_sdp->db[i + 1] << 8) | (vsc_sdp->db[i + 2] << 16) |
+>>   		       (vsc_sdp->db[i + 3] << 24));
+>> -		msm_dp_write_link(catalog, MMSS_DP_GENERIC0_2 + i, val);
+>> +		msm_dp_write_link(catalog, MMSS_DP_GENERIC0_2 + i + msm_dp_generic_offset, val);
+>>   	}
+>>   }
+>>   
+>> @@ -955,13 +996,17 @@ static void msm_dp_catalog_panel_update_sdp(struct msm_dp_catalog *msm_dp_catalo
+>>   {
+>>   	struct msm_dp_catalog_private *catalog;
+>>   	u32 hw_revision;
+>> +	u32 sdp_cfg3_offset = 0;
+>>   
+>>   	catalog = container_of(msm_dp_catalog, struct msm_dp_catalog_private, msm_dp_catalog);
+>>   
+>> +	if (msm_dp_catalog->stream_id == DP_STREAM_1)
+>> +		sdp_cfg3_offset = MMSS_DP1_SDP_CFG3 - MMSS_DP_SDP_CFG3;
+>> +
+>>   	hw_revision = msm_dp_catalog_hw_revision(msm_dp_catalog);
+>>   	if (hw_revision < DP_HW_VERSION_1_2 && hw_revision >= DP_HW_VERSION_1_0) {
+>> -		msm_dp_write_link(catalog, MMSS_DP_SDP_CFG3, 0x01);
+>> -		msm_dp_write_link(catalog, MMSS_DP_SDP_CFG3, 0x00);
+>> +		msm_dp_write_link(catalog, MMSS_DP_SDP_CFG3 + sdp_cfg3_offset, 0x01);
+>> +		msm_dp_write_link(catalog, MMSS_DP_SDP_CFG3 + sdp_cfg3_offset, 0x00);
+>>   	}
+>>   }
+>>   
+>> @@ -969,18 +1014,27 @@ void msm_dp_catalog_panel_enable_vsc_sdp(struct msm_dp_catalog *msm_dp_catalog,
+>>   {
+>>   	struct msm_dp_catalog_private *catalog;
+>>   	u32 cfg, cfg2, misc;
+>> +	u32 misc_reg_offset = 0;
+>> +	u32 sdp_cfg_offset = 0;
+>> +	u32 sdp_cfg2_offset = 0;
+>>   
+>>   	catalog = container_of(msm_dp_catalog, struct msm_dp_catalog_private, msm_dp_catalog);
+>>   
+>> -	cfg = msm_dp_read_link(catalog, MMSS_DP_SDP_CFG);
+>> -	cfg2 = msm_dp_read_link(catalog, MMSS_DP_SDP_CFG2);
+>> -	misc = msm_dp_read_link(catalog, REG_DP_MISC1_MISC0);
+>> +	if (msm_dp_catalog->stream_id == DP_STREAM_1) {
+>> +		misc_reg_offset = REG_DP1_MISC1_MISC0 - REG_DP_MISC1_MISC0;
+>> +		sdp_cfg_offset = MMSS_DP1_SDP_CFG - MMSS_DP_SDP_CFG;
+>> +		sdp_cfg2_offset = MMSS_DP1_SDP_CFG2 - MMSS_DP_SDP_CFG2;
+>> +	}
+>> +
+>> +	cfg = msm_dp_read_link(catalog, MMSS_DP_SDP_CFG + sdp_cfg_offset);
+>> +	cfg2 = msm_dp_read_link(catalog, MMSS_DP_SDP_CFG2 + sdp_cfg2_offset);
+>> +	misc = msm_dp_read_link(catalog, REG_DP_MISC1_MISC0 + misc_reg_offset);
+>>   
+>>   	cfg |= GEN0_SDP_EN;
+>> -	msm_dp_write_link(catalog, MMSS_DP_SDP_CFG, cfg);
+>> +	msm_dp_write_link(catalog, MMSS_DP_SDP_CFG + sdp_cfg_offset, cfg);
+>>   
+>>   	cfg2 |= GENERIC0_SDPSIZE_VALID;
+>> -	msm_dp_write_link(catalog, MMSS_DP_SDP_CFG2, cfg2);
+>> +	msm_dp_write_link(catalog, MMSS_DP_SDP_CFG2 + sdp_cfg2_offset, cfg2);
+>>   
+>>   	msm_dp_catalog_panel_send_vsc_sdp(msm_dp_catalog, vsc_sdp);
+>>   
+>> @@ -990,7 +1044,8 @@ void msm_dp_catalog_panel_enable_vsc_sdp(struct msm_dp_catalog *msm_dp_catalog,
+>>   	drm_dbg_dp(catalog->drm_dev, "vsc sdp enable=1\n");
+>>   
+>>   	pr_debug("misc settings = 0x%x\n", misc);
+>> -	msm_dp_write_link(catalog, REG_DP_MISC1_MISC0, misc);
+>> +
+>> +	msm_dp_write_link(catalog, REG_DP_MISC1_MISC0 + misc_reg_offset, misc);
+>>   
+>>   	msm_dp_catalog_panel_update_sdp(msm_dp_catalog);
+>>   }
+>> diff --git a/drivers/gpu/drm/msm/dp/dp_catalog.h b/drivers/gpu/drm/msm/dp/dp_catalog.h
+>> index edeebf1f313f50e9c54feee1e5aa6aa2dbba3058..c020b7cfa008241e937f6a53764b136431f1dbd9 100644
+>> --- a/drivers/gpu/drm/msm/dp/dp_catalog.h
+>> +++ b/drivers/gpu/drm/msm/dp/dp_catalog.h
+>> @@ -47,10 +47,6 @@ enum msm_dp_catalog_audio_header_type {
+>>   	DP_AUDIO_SDP_HEADER_MAX,
+>>   };
+>>   
+>> -struct msm_dp_catalog {
+>> -	bool wide_bus_en;
+>> -};
+>> -
+>>   /* stream id */
+>>   enum msm_dp_stream_id {
+>>   	DP_STREAM_0,
+>> @@ -60,6 +56,11 @@ enum msm_dp_stream_id {
+>>   	DP_STREAM_MAX,
+>>   };
+>>   
+>> +struct msm_dp_catalog {
+>> +	bool wide_bus_en;
+>> +	enum msm_dp_stream_id stream_id;
+>> +};
+>> +
+> 
+> The same can be achieved by moving enum msm_dp_stream_id up in one of
+> the earlier patches.
+> 
+>>   /* Debug module */
+>>   void msm_dp_catalog_snapshot(struct msm_dp_catalog *msm_dp_catalog, struct msm_disp_state *disp_state);
+>>   
+>> diff --git a/drivers/gpu/drm/msm/dp/dp_ctrl.c b/drivers/gpu/drm/msm/dp/dp_ctrl.c
+>> index 0648831df956dfc7afa1cbfb0dea2c32b02ff74e..ba39b009032dd6f5cb708988963cd6acb6838e4a 100644
+>> --- a/drivers/gpu/drm/msm/dp/dp_ctrl.c
+>> +++ b/drivers/gpu/drm/msm/dp/dp_ctrl.c
+>> @@ -179,6 +179,7 @@ static void msm_dp_ctrl_configure_source_params(struct msm_dp_ctrl_private *ctrl
+>>   						struct msm_dp_panel *msm_dp_panel)
+>>   {
+>>   	u32 cc, tb;
+>> +	ctrl->catalog->stream_id = msm_dp_panel->stream_id;
+>>   
+>>   	msm_dp_catalog_ctrl_lane_mapping(ctrl->catalog);
+>>   	msm_dp_catalog_setup_peripheral_flush(ctrl->catalog);
+>> @@ -2062,7 +2063,9 @@ void msm_dp_ctrl_clear_vsc_sdp_pkt(struct msm_dp_ctrl *msm_dp_ctrl, struct msm_d
+>>   	struct msm_dp_ctrl_private *ctrl;
+>>   
+>>   	ctrl = container_of(msm_dp_ctrl, struct msm_dp_ctrl_private, msm_dp_ctrl);
+>> +	ctrl->catalog->stream_id = dp_panel->stream_id;
+>>   	msm_dp_catalog_panel_disable_vsc_sdp(ctrl->catalog);
+>> +
+>>   }
+>>   
+>>   void msm_dp_ctrl_psm_config(struct msm_dp_ctrl *msm_dp_ctrl)
+>> diff --git a/drivers/gpu/drm/msm/dp/dp_panel.c b/drivers/gpu/drm/msm/dp/dp_panel.c
+>> index 172de804dec445cb08ad8e3f058407f483cd6684..662bf02b8b1a5165f927835bef3c11ac091ddce6 100644
+>> --- a/drivers/gpu/drm/msm/dp/dp_panel.c
+>> +++ b/drivers/gpu/drm/msm/dp/dp_panel.c
+>> @@ -309,7 +309,9 @@ static int msm_dp_panel_setup_vsc_sdp_yuv_420(struct msm_dp_panel *msm_dp_panel)
+>>   
+>>   	panel = container_of(msm_dp_panel, struct msm_dp_panel_private, msm_dp_panel);
+>>   	catalog = panel->catalog;
+>> +
+>>   	msm_dp_mode = &msm_dp_panel->msm_dp_mode;
+>> +	catalog->stream_id = msm_dp_panel->stream_id;
+> 
+> Why is it a proper place to set catalog->stream_id? It doesn't looks
+> like it to me.
+Ok, maybe msm_dp_display_set_stream_id is more proper place. Or can we 
+drop stream_id in catalog totally, and f the stream_id is needed in the 
+catalog function, pass it as a parameter to the catalog function. just 
+like that:
+int msm_dp_ctrl_***(struct msm_dp_ctrl *ctrl, enum msm_dp_stream_id 
+stream_id,***);
+
+> 
+>>   
+>>   	memset(&vsc_sdp_data, 0, sizeof(vsc_sdp_data));
+>>   
+>> diff --git a/drivers/gpu/drm/msm/dp/dp_reg.h b/drivers/gpu/drm/msm/dp/dp_reg.h
+>> index 3835c7f5cb984406f8fc52ea765ef2315e0d175b..6c534fde6034fced2cb428e9a29de31ed5c5fcc4 100644
+>> --- a/drivers/gpu/drm/msm/dp/dp_reg.h
+>> +++ b/drivers/gpu/drm/msm/dp/dp_reg.h
+>> @@ -138,13 +138,17 @@
+>>   #define DP_CONFIGURATION_CTRL_LSCLK_DIV_SHIFT	(0x0D)
+>>   
+>>   #define REG_DP_SOFTWARE_MVID			(0x00000010)
+>> +#define REG_DP1_SOFTWARE_MVID			(0x00000414)
+>>   #define REG_DP_SOFTWARE_NVID			(0x00000018)
+>> +#define REG_DP1_SOFTWARE_NVID			(0x00000418)
+>>   #define REG_DP_TOTAL_HOR_VER			(0x0000001C)
+>> +#define REG_DP1_TOTAL_HOR_VER			(0x0000041C)
+>>   #define REG_DP_START_HOR_VER_FROM_SYNC		(0x00000020)
+>>   #define REG_DP_HSYNC_VSYNC_WIDTH_POLARITY	(0x00000024)
+>>   #define REG_DP_ACTIVE_HOR_VER			(0x00000028)
+>> -
+>>   #define REG_DP_MISC1_MISC0			(0x0000002C)
+>> +#define REG_DP1_MISC1_MISC0			(0x0000042C)
+>> +
+>>   #define DP_MISC0_SYNCHRONOUS_CLK		(0x00000001)
+>>   #define DP_MISC0_COLORIMETRY_CFG_SHIFT		(0x00000001)
+>>   #define DP_MISC0_TEST_BITS_DEPTH_SHIFT		(0x00000005)
+>> @@ -211,8 +215,11 @@
+>>   #define MMSS_DP_AUDIO_CTRL_RESET		(0x00000214)
+>>   
+>>   #define MMSS_DP_SDP_CFG				(0x00000228)
+>> +#define MMSS_DP1_SDP_CFG			(0x000004E0)
+>>   #define GEN0_SDP_EN				(0x00020000)
+>>   #define MMSS_DP_SDP_CFG2			(0x0000022C)
+>> +#define MMSS_DP1_SDP_CFG2			(0x000004E4)
+>> +
+>>   #define MMSS_DP_AUDIO_TIMESTAMP_0		(0x00000230)
+>>   #define MMSS_DP_AUDIO_TIMESTAMP_1		(0x00000234)
+>>   #define GENERIC0_SDPSIZE_VALID			(0x00010000)
+>> @@ -221,6 +228,8 @@
+>>   #define MMSS_DP_AUDIO_STREAM_1			(0x00000244)
+>>   
+>>   #define MMSS_DP_SDP_CFG3			(0x0000024c)
+>> +#define MMSS_DP1_SDP_CFG3			(0x000004E8)
+>> +
+>>   #define UPDATE_SDP				(0x00000001)
+>>   
+>>   #define MMSS_DP_EXTENSION_0			(0x00000250)
+>> @@ -270,6 +279,8 @@
+>>   #define MMSS_DP_GENERIC1_8			(0x00000348)
+>>   #define MMSS_DP_GENERIC1_9			(0x0000034C)
+>>   
+>> +#define MMSS_DP1_GENERIC0_0			(0x00000490)
+>> +
+>>   #define MMSS_DP_VSCEXT_0			(0x000002D0)
+>>   #define MMSS_DP_VSCEXT_1			(0x000002D4)
+>>   #define MMSS_DP_VSCEXT_2			(0x000002D8)
 >>
->> 2) prctl(): the unloved child, and I can understand why. Maybe now is
->>     the right time to stop adding new MM things that feel weird in there.
->>     Maybe we should already have done that with the KSM toggle (guess who
->>     was involved in that ;) ).
-> 
-> At the moment systemd is the user I know of and I think it would very
-> easy to migrate it to whatever new thing we decide here.
-
-Agreed.
-
-> 
+>> -- 
+>> 2.34.1
 >>
->> 3) process_madvise(): I think it's an interesting extension, but
->>     probably we should just have something that applies to the whole
->>     address space naturally. At least my take for now.
->>
->> 4) new syscall: worth exploring how it would look. I'm especially
->>     interested in flag options (e.g., SET_DEFAULT_EXEC) and how we could
->>     make them only apply to selected controls.
 > 
-> Were there any previous discussion on SET_DEFAULT_EXEC? First time I am
-> hearing about it.
-
-I think it evolved in the discussion here from PMADV_SET_FORK_EXEC_DEFAULT.
-
-> 
-> Overall I agree with your assessment and thus I was requesting to at
-> least discuss the new syscall option as well.
-
-Yes.
-
-I am still not sure if having a new "process" [1] mode would be a 
-reasonable alternative to setting the VM_HUGEPAGE/VM_NOHUGEPAGE default. 
-Assuming we would have a "process" mode, we could (a) set the policy 
-per-process using the new syscall we discuss here, and options to (B) 
-set the policy to use for the exec child and (c) maybe an option to seal 
-the policy (depending on who is allowed to set the policy in the first 
-place).
-
-On the + side, we don't lose hints/instructions from the app 
-(VM_HUGEPAGE/VM_NOHUGEPAGE) when changing the policy on an already 
-running process.
-
-The problem I see with the "process" policy is that people might want 
-different "default" policies for processes, which means that we will 
-have to add yet another toggle.
-
-
-How I hate THP toggles. :)
-
-[1] 
-https://lore.kernel.org/all/CALOAHbB-KQ4+z-Lupv7RcxArfjX7qtWcrboMDdT4LdpoTXOMyw@mail.gmail.com/
-
--- 
-Cheers,
-
-David / dhildenb
 
 
