@@ -1,224 +1,162 @@
-Return-Path: <linux-kernel+bounces-662770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-662764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0381AC3F59
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 14:28:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A72E7AC3F4B
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 14:23:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63BAF7A2462
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 12:27:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 671A33A60DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 12:22:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00C88202979;
-	Mon, 26 May 2025 12:28:02 +0000 (UTC)
-Received: from mout01.posteo.de (mout01.posteo.de [185.67.36.65])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1B42200B9B;
+	Mon, 26 May 2025 12:22:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Drmulf52"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1F6A2E406
-	for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 12:27:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 891601DFE8;
+	Mon, 26 May 2025 12:22:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748262481; cv=none; b=qnZBbVrH1hgjMD/G+yMF2JCfHYDzNXse6QvGDc1HRj/ogX2zqu/z95VNfnIojIhd3PYO9k+NKU7eXKeRAOQY2VxnDZadZVvoZ7Hh/kLuzeSeKldUh85GJo5rEiSZELwaTyYAKVIJWm0Z6GxnEjYyoXbxfHQOvQnoaSEyiPOLNWw=
+	t=1748262173; cv=none; b=QS9qO8EcZ/CeeqcZYv4ABZSZx71n8gJdSd6HihTHI+wLQvnfC7YyHzTgLkMXPMfapFDC4cIcxHqsoszOfiTkkrf3qEGnbOtK1x4+YHzrdnPJxST8OW0IHUeQOgU8l9RIlMWYdFDHvg3r9zPgeElQcy6PhXbiDptFbdaiq5771pI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748262481; c=relaxed/simple;
-	bh=0rmVmbMcJp5k3+ikOwmDGPnUvhGzziGf8qXeDsUY2u8=;
-	h=References:From:To:Cc:Subject:Date:In-reply-to:Message-ID:
-	 MIME-Version:Content-Type; b=sKgvXYNz5kJEhGooMA5f4ut+stndGzrYXE4RyF8M5HcVqifJza6M4dsK3oKdxUS+xS4FnyyTm1VI7drkborwpp+D9QuNwuHxylf4pWrznGBzcXsMuyl6cgKX6VbJbSAo8G6ODMTA/DZb0m+AjOeOwv6SmIHjqxzkVw8F9VePino=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net; spf=pass smtp.mailfrom=posteo.net; arc=none smtp.client-ip=185.67.36.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.net
-Received: from submission (posteo.de [185.67.36.169]) 
-	by mout01.posteo.de (Postfix) with ESMTPS id 10BBE240027
-	for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 14:27:56 +0200 (CEST)
-Received: from customer (localhost [127.0.0.1])
-	by submission (posteo.de) with ESMTPSA id 4b5Zm94DKpz6tvc;
-	Mon, 26 May 2025 14:27:53 +0200 (CEST)
-References: <68342b55.a70a0220.253bc2.0091.GAE@google.com>
-From: Charalampos Mitrodimas <charmitro@posteo.net>
-To: syzbot <syzbot+f0c4a4aba757549ae26c@syzkaller.appspotmail.com>
-Cc: davem@davemloft.net, edumazet@google.com, horms@kernel.org,
- jmaloy@redhat.com, kuba@kernel.org, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, pabeni@redhat.com,
- syzkaller-bugs@googlegroups.com, tipc-discussion@lists.sourceforge.net,
- wangliang74@huawei.com
-Subject: Re: [syzbot] [tipc?] WARNING: refcount bug in tipc_crypto_xmit
-Date: Mon, 26 May 2025 12:21:22 +0000
-In-reply-to: <68342b55.a70a0220.253bc2.0091.GAE@google.com>
-Message-ID: <87msazftff.fsf@posteo.net>
+	s=arc-20240116; t=1748262173; c=relaxed/simple;
+	bh=4E9MVqUihvjyf3MlTLRLsTqOw86xjLpIYSFPtahvYLM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=eWOKv76LEU8r78wbx7T7KFRM+h3p26HgYGIELpqP0uKAH62gb0GlfPj+ssi0cx3DcOkJ4wt3J/x3JStSTsMwaLX444+bdOa+sIH1up8ucGiaht3XJKbvOr/WYloxtCJ3Adrbh6vw4R08QG0S/lIxAoMX/s1ByLcjtU8nErap6CY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Drmulf52; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54Q91lap015727;
+	Mon, 26 May 2025 12:21:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	++eHJTg6nwBtRRWpfeobl+erEFq938t+JYbREpmq6W8=; b=Drmulf52i3f4nRoH
+	R/244wCNe8Iy3gYjPinYkFs0IAvpVWQmZWUWudnXtYaG1vGK6O6snSUabeIz082y
+	eSvtxKXryxCMhU7tVeZThrj2mnluJmQ2gqYWD/NEYfmf0ggvFEN16pf22L7CJfwZ
+	9Ei+W/9euKGYkWZp1WM+mgyRVwvrrbrMi9Z9kTGeS8Wn7Bf3eAhIZxjqWywG5VIp
+	uuR8iRAxQOiRVngpHCpcn1oLtQ23K8zz9wo9zTOiH/pK6aqGEItVeYzlk469eX40
+	p4NNYrSudug6ZQCe8NRVNWZ2a6gFB6U+zI6Nphxm+8vTavsATdhRA+O2w7bBxY6Z
+	7B0MZA==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46u6b5m4vh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 26 May 2025 12:21:53 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 54QCLqRA026385
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 26 May 2025 12:21:52 GMT
+Received: from [10.64.68.119] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 26 May
+ 2025 05:21:45 -0700
+Message-ID: <6367013c-58c9-478e-8399-b4a53e2d8a66@quicinc.com>
+Date: Mon, 26 May 2025 20:21:40 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 04/45] drm/msm/dp: split msm_dp_panel_read_sink_caps()
+ into two parts
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+CC: Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Rob Clark
+	<robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, "Simona
+ Vetter" <simona@ffwll.ch>,
+        Stephen Boyd <swboyd@chromium.org>,
+        "Chandan
+ Uddaraju" <chandanu@codeaurora.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Kuogee Hsieh <quic_khsieh@quicinc.com>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Vara Reddy <quic_varar@quicinc.com>,
+        Rob Clark
+	<robdclark@chromium.org>,
+        Tanmay Shah <tanmay@codeaurora.org>, <linux-arm-msm@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Jessica Zhang <quic_jesszhan@quicinc.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+References: <20241205-dp_mst-v1-0-f8618d42a99a@quicinc.com>
+ <20241205-dp_mst-v1-4-f8618d42a99a@quicinc.com>
+ <osctzl3bgutcjt3hjvgxaq64imn2i67hagqm5slfozf33tnj66@5hlfmqmt7if5>
+ <2a54ffe8-8e40-49f6-8735-96da47e1bbc6@quicinc.com>
+ <smj62cjqy7ihd3ywnvwkqzczlg7op4rqy3yrwlibjvouqerofr@bnlpwl3j4jge>
+Content-Language: en-US
+From: Yongxing Mou <quic_yongmou@quicinc.com>
+In-Reply-To: <smj62cjqy7ihd3ywnvwkqzczlg7op4rqy3yrwlibjvouqerofr@bnlpwl3j4jge>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=ZcodNtVA c=1 sm=1 tr=0 ts=68345ce1 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10
+ a=c4V0u5EJHjKTGh-yu2cA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI2MDEwNSBTYWx0ZWRfX2HrpXyis01E1
+ h5qfjPL6uGiJYB+ycRr+hQkVvcy5v9/bAQfsI6bP/choEvyKdXeG4p1o+MwqceXp3Jvvn4NcK+S
+ Y9aY/k/vfNiqe4Kn7qstl/6MlCu581FR88WSCg8D3X80ltq8N0+lQJQb0t4uQLms2NzsB0YA9dg
+ zh2aPMzZZnmYEqtsfe+voBv45oNhgMpzgPAxTx1o114t4L0pGKjfubxi0s/PukwhZn7zGZ0uS8u
+ L3UqBATupgHtWAVcKGsmOA6DsoYCL484tJbeuRovKxwsbu570jcpm8RkSr7YLa2jfvnyR3RLPnR
+ 1ygxIdMsgWIh+7xUCuctoIrtWbqJjwk3rh8/upkg2JcJI+gNx2iWdI7IY7BAqpVs/9lEb9miN04
+ BddZDrhPjTNPoTsLrcmJE2c8hBWZCe8L364fFRLvPG6w1LyZEv8IcURs5ZPcyn/qlgQZUXCC
+X-Proofpoint-GUID: 28rMw1k_p1WuO9MdpSCcMqY0SgH7FD4m
+X-Proofpoint-ORIG-GUID: 28rMw1k_p1WuO9MdpSCcMqY0SgH7FD4m
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-26_06,2025-05-26_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 malwarescore=0 mlxlogscore=999 bulkscore=0 priorityscore=1501
+ spamscore=0 clxscore=1015 suspectscore=0 lowpriorityscore=0 phishscore=0
+ impostorscore=0 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505160000
+ definitions=main-2505260105
 
 
-syzbot <syzbot+f0c4a4aba757549ae26c@syzkaller.appspotmail.com> writes:
 
-> Hello,
->
-> syzbot found the following issue on:
->
-> HEAD commit:    b1427432d3b6 Merge tag 'iommu-fixes-v6.15-rc7' of git://gi..
-> git tree:       upstream
-> console+strace: https://syzkaller.appspot.com/x/log.txt?x=17ba35f4580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=9fd1c9848687d742
-> dashboard link: https://syzkaller.appspot.com/bug?extid=f0c4a4aba757549ae26c
-> compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=161ee170580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=164328e8580000
->
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/48a582dac9f0/disk-b1427432.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/94ad5463a7f5/vmlinux-b1427432.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/4d0af31b0b08/bzImage-b1427432.xz
->
-> The issue was bisected to:
->
-> commit e279024617134c94fd3e37470156534d5f2b3472
-> Author: Wang Liang <wangliang74@huawei.com>
-> Date:   Tue May 20 10:14:04 2025 +0000
->
->     net/tipc: fix slab-use-after-free Read in tipc_aead_encrypt_done
->
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10018df4580000
-> final oops:     https://syzkaller.appspot.com/x/report.txt?x=12018df4580000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=14018df4580000
->
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+f0c4a4aba757549ae26c@syzkaller.appspotmail.com
-> Fixes: e27902461713 ("net/tipc: fix slab-use-after-free Read in tipc_aead_encrypt_done")
->
-> ------------[ cut here ]------------
-> refcount_t: addition on 0; use-after-free.
-> WARNING: CPU: 1 PID: 36 at lib/refcount.c:25 refcount_warn_saturate+0xfa/0x1d0 lib/refcount.c:25
-> Modules linked in:
-> CPU: 1 UID: 0 PID: 36 Comm: kworker/u8:2 Not tainted 6.15.0-rc7-syzkaller-00144-gb1427432d3b6 #0 PREEMPT(full) 
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-> Workqueue: netns cleanup_net
-> RIP: 0010:refcount_warn_saturate+0xfa/0x1d0 lib/refcount.c:25
-> Code: 00 00 e8 79 f6 06 fd 5b 41 5e e9 81 6c a0 06 cc e8 6b f6 06 fd c6 05 06 3c b0 0a 01 90 48 c7 c7 80 aa c1 8b e8 e7 52 cb fc 90 <0f> 0b 90 90 eb d7 e8 4b f6 06 fd c6 05 e7 3b b0 0a 01 90 48 c7 c7
-> RSP: 0018:ffffc90000a08668 EFLAGS: 00010246
-> RAX: bb5b0788a28fc300 RBX: 0000000000000002 RCX: ffff888142681e00
-> RDX: 0000000000000100 RSI: 0000000000000000 RDI: 0000000000000002
-> RBP: ffffc90000a087e8 R08: 0000000000000003 R09: 0000000000000004
-> R10: dffffc0000000000 R11: fffffbfff1bba984 R12: ffff88807df80000
-> R13: dffffc0000000000 R14: ffff88807df8016c R15: ffff888033397800
-> FS:  0000000000000000(0000) GS:ffff8881261c2000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000555569a1e878 CR3: 000000007b8fc000 CR4: 00000000003526f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  <IRQ>
->  __refcount_add include/linux/refcount.h:-1 [inline]
->  __refcount_inc include/linux/refcount.h:366 [inline]
->  refcount_inc include/linux/refcount.h:383 [inline]
->  get_net include/net/net_namespace.h:268 [inline]
->  tipc_aead_encrypt net/tipc/crypto.c:821 [inline]
->  tipc_crypto_xmit+0x1820/0x22c0 net/tipc/crypto.c:1761
->  tipc_crypto_clone_msg+0x90/0x170 net/tipc/crypto.c:1656
->  tipc_crypto_xmit+0x1998/0x22c0 net/tipc/crypto.c:1717
->  tipc_bearer_xmit_skb+0x245/0x400 net/tipc/bearer.c:572
->  tipc_disc_timeout+0x580/0x6d0 net/tipc/discover.c:338
->  call_timer_fn+0x17b/0x5f0 kernel/time/timer.c:1789
->  expire_timers kernel/time/timer.c:1840 [inline]
->  __run_timers kernel/time/timer.c:2414 [inline]
->  __run_timer_base+0x61a/0x860 kernel/time/timer.c:2426
->  run_timer_base kernel/time/timer.c:2435 [inline]
->  run_timer_softirq+0xb7/0x180 kernel/time/timer.c:2445
->  handle_softirqs+0x286/0x870 kernel/softirq.c:579
->  __do_softirq kernel/softirq.c:613 [inline]
->  invoke_softirq kernel/softirq.c:453 [inline]
->  __irq_exit_rcu+0xca/0x1f0 kernel/softirq.c:680
->  irq_exit_rcu+0x9/0x30 kernel/softirq.c:696
->  instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1049 [inline]
->  sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1049
->  </IRQ>
->  <TASK>
->  asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-> RIP: 0010:lock_acquire+0x175/0x360 kernel/locking/lockdep.c:5870
-> Code: 00 00 00 00 9c 8f 44 24 30 f7 44 24 30 00 02 00 00 0f 85 cd 00 00 00 f7 44 24 08 00 02 00 00 74 01 fb 65 48 8b 05 8b 9f d7 10 <48> 3b 44 24 58 0f 85 f2 00 00 00 48 83 c4 60 5b 41 5c 41 5d 41 5e
-> RSP: 0018:ffffc90000ad7378 EFLAGS: 00000206
-> RAX: bb5b0788a28fc300 RBX: 0000000000000000 RCX: bb5b0788a28fc300
-> RDX: 0000000000000000 RSI: ffffffff8d939072 RDI: ffffffff8bc1f600
-> RBP: ffffffff8171ca05 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: ffffffff8171ca05 R12: 0000000000000002
-> R13: ffffffff8df3dee0 R14: 0000000000000000 R15: 0000000000000246
->  rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
->  rcu_read_lock include/linux/rcupdate.h:841 [inline]
->  class_rcu_constructor include/linux/rcupdate.h:1155 [inline]
->  unwind_next_frame+0xc2/0x2390 arch/x86/kernel/unwind_orc.c:479
->  arch_stack_walk+0x11c/0x150 arch/x86/kernel/stacktrace.c:25
->  stack_trace_save+0x9c/0xe0 kernel/stacktrace.c:122
->  kasan_save_stack+0x3e/0x60 mm/kasan/common.c:47
->  kasan_record_aux_stack+0xbc/0xd0 mm/kasan/generic.c:548
->  __call_rcu_common kernel/rcu/tree.c:3082 [inline]
->  call_rcu+0x142/0x990 kernel/rcu/tree.c:3202
->  inet_release+0x187/0x210 net/ipv4/af_inet.c:435
->  __sock_release net/socket.c:647 [inline]
->  sock_release+0x85/0x150 net/socket.c:675
->  wg_netns_pre_exit+0xd6/0x1d0 drivers/net/wireguard/device.c:423
->  ops_pre_exit_list net/core/net_namespace.c:162 [inline]
->  cleanup_net+0x594/0xbd0 net/core/net_namespace.c:634
->  process_one_work kernel/workqueue.c:3238 [inline]
->  process_scheduled_works+0xadb/0x17a0 kernel/workqueue.c:3319
->  worker_thread+0x8a0/0xda0 kernel/workqueue.c:3400
->  kthread+0x70e/0x8a0 kernel/kthread.c:464
->  ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:153
->  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
->  </TASK>
-> ----------------
-> Code disassembly (best guess):
->    0:	00 00                	add    %al,(%rax)
->    2:	00 00                	add    %al,(%rax)
->    4:	9c                   	pushf
->    5:	8f 44 24 30          	pop    0x30(%rsp)
->    9:	f7 44 24 30 00 02 00 	testl  $0x200,0x30(%rsp)
->   10:	00
->   11:	0f 85 cd 00 00 00    	jne    0xe4
->   17:	f7 44 24 08 00 02 00 	testl  $0x200,0x8(%rsp)
->   1e:	00
->   1f:	74 01                	je     0x22
->   21:	fb                   	sti
->   22:	65 48 8b 05 8b 9f d7 	mov    %gs:0x10d79f8b(%rip),%rax        # 0x10d79fb5
->   29:	10
-> * 2a:	48 3b 44 24 58       	cmp    0x58(%rsp),%rax <-- trapping instruction
->   2f:	0f 85 f2 00 00 00    	jne    0x127
->   35:	48 83 c4 60          	add    $0x60,%rsp
->   39:	5b                   	pop    %rbx
->   3a:	41 5c                	pop    %r12
->   3c:	41 5d                	pop    %r13
->   3e:	41 5e                	pop    %r14
->
->
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
->
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
->
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
->
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
->
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
->
-> If you want to undo deduplication, reply with:
-> #syz undup
+On 2025/5/22 20:38, Dmitry Baryshkov wrote:
+> On Thu, May 22, 2025 at 05:51:52PM +0800, Yongxing Mou wrote:
+>>
+>>
+>> On 2024/12/6 16:51, Dmitry Baryshkov wrote:
+>>> On Thu, Dec 05, 2024 at 08:31:35PM -0800, Abhinav Kumar wrote:
+>>>> In preparation of DP MST where link caps are read for the
+>>>> immediate downstream device and the edid is read through
+>>>> sideband messaging, split the msm_dp_panel_read_sink_caps() into
+>>>> two parts which read the link parameters and the edid parts
+>>>> respectively.
+>>>
+>>> As you are touching this part, could you please refactor the code
+>>> instead by dropping the msm_dp_panel->drm_edid? There should be no need
+>>> to store EDID in the panel structure.
+>>>
+>> Hi, Dmitry, Abhinav will be leaving the company and will no longer be
+>> responsible for updating and address the comments. I will take over handling
+>> MST patch series. Regarding this comments, I don't got that where the
+>> drm_edid should be stored. In MST cases, where multiple panels exist, i
+>> think that there should be a separate drm_edid saved for each panel.
+> 
+> Why do we need to store EDID at all?
+> 
+Got it. Will try to drop it.
 
-#syz test: https://github.com/charmitro/linux.git d72ee421a78726747979874e8dba97c1641df213
 
