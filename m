@@ -1,109 +1,101 @@
-Return-Path: <linux-kernel+bounces-662486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-662488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B379BAC3B8D
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 10:21:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22E97AC3B4E
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 10:14:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BD3B3A2CB2
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 08:21:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2B211895E01
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 08:14:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 732E71E32DB;
-	Mon, 26 May 2025 08:13:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA7C41E9B3D;
+	Mon, 26 May 2025 08:13:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sd/xVPxS"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="iCPb/AcH"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CA271EB5DB
-	for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 08:13:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80E121E5B72;
+	Mon, 26 May 2025 08:13:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748247185; cv=none; b=Rx06DXyGJdqKVzFHYV/60gRXOvbFvAcPHGFKLjtGEKk1CGpmurYZ/S4Gyc2ndLb6th8psZvXRtpG4SDnegY8icmlJ48X91jUSfO0EnnxJVwV9hX0RF8drULQVK+GJY6jMD8i/lCdzcmEfHRLrvvEelNhMjClT3T5uCzooHl0McY=
+	t=1748247228; cv=none; b=GsKkEF95uNRQI4vSSx48WL0w5aaThrxg79L2GT0ptxAA+Qrzs3na9jXbE7o/9uMba/5T+gKQ7DdndQ4n+rs8jkVpufrU6Gfx6g6knDGvWF1cwqaMPAT8aDOq/jPEbQMwBZ+xKnZHkLpLZXUBC2QPyIp57h+lA7IIfNJOU0nfN1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748247185; c=relaxed/simple;
-	bh=6dMenWW9G9+jrd7FF1PAJg9qND6VwFxBlkOpgHYc29k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mPQdPSXJFpTGf0dq03h0hOil4T+JFnNqnSAZ+Xyx5NCW7FNXtwNBjjzlstygeCS28Sj48+CAv5Et1I9G15TIM4daBZv1koti9a8ahGOkDnXo74LZIDErdtYuINr+Aw7b8DKoVGmnwebJzNVSqBO0qQWPSleZfe0ZqdtV1tC7pOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sd/xVPxS; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3a4dba2c767so261907f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 01:13:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1748247182; x=1748851982; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6dMenWW9G9+jrd7FF1PAJg9qND6VwFxBlkOpgHYc29k=;
-        b=sd/xVPxSFGLvyz7LKqDzLZhGNXqoFKu7+ucNEgIKbRH+1hyeArcNCT1OW9VoVAOgBs
-         N/xwIHI8Ch9pwVEFXW7ipYS2B6ri0EWCAw4eUNQCZGZQz809wf5ucyl3k0yJPnJ60uFo
-         t04t3MssAPXRXu35rdMAM0bEhCNAFcR6UEKyugHhiw1Moj/5ERABN5JpgQ5P/kBoqVje
-         kVfyYvo9hg+JBhpNO+WvIx2svOYPVRaVZHRrU2QL+WF3ThXMTxyPep05ZVx2jXT+CTjV
-         HwL3+eQ1LDI/KNT+390leRj+lzUY6oj7Q6JTALTzmUvoJAGe3uj1V1OxNq7Mirv0aHCc
-         fUKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748247182; x=1748851982;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6dMenWW9G9+jrd7FF1PAJg9qND6VwFxBlkOpgHYc29k=;
-        b=KCPmr0RnfVd9oobUHsJUEwuM4RO8iFPMHlqJFLQ0EhH+wdlg2WOV1Z0VotiiZ4/5vs
-         fwe/P3V515LIX5qOJ0k5LTfe6hGi+K8UEg/UMUDy4NrMDZAndmVK5no/V82O8OpIR1Yf
-         P/Jmh1ouneqiZARf1/zEt/JGa/S8nkF4AZ+AOvocHXFD9U5z8nexGe9sAKtFxakRFLl7
-         FNOEOB/0mhIVUfNVaOqs24BdJjMvPVGRV8SyV8ByEl291sRkKihv2vv9DUM4p3fYfo8J
-         yJ3V8+UV4uHybaIAUXLAt3bgPv04unq02TL1/e6/L02bYidtKlj35QYTwBM8B2e8kBVM
-         t3hg==
-X-Gm-Message-State: AOJu0YwIh2RU95fTSmlvvXjKNu0ZkDxbkeCh2F9cIYzlYGOL6A2cCak1
-	TIbEpdufTOibrugFTACfMSBAQflpw0W2mtwUFoZI6xS7ZnIVH/cBa/R3mlGn9OoCPF4=
-X-Gm-Gg: ASbGncvxhZAgKgFyNyRHSrBAGOORRI+zGtf1Gt6LmhmmXtszapdFTh2v97lCPyePyAU
-	jm49499p2ACJXuc/ljc0Ie5/ZfvZM2d9sheFX0472GJ9Ty854FbXCKJs0xOnvA3GKgNK3KSDNhh
-	QgIf/Ow4NjB8+nExFogVXQ1zI54Sdzipv/QES69xoFOe79q/ISQmL8FcyTI65xUKmWVuMZHSrOK
-	G3RQek8JZVtHURtzpDgahqOkcDW1xi/39Lzq/y6sUhHnNxeDxGkcM8nTGhc5xosKgq2N2sgyIHA
-	3uYEnI42scXK7QDXK41GahErnENLkt1H1PgrDKwymEg6094aQLfd+izY0FSDSMdDLLhqC0ziSa0
-	lRUmGMQ5YTDeuNViT
-X-Google-Smtp-Source: AGHT+IHGSsVUmWj3Jah1vKvr6sQDWVSDBSGyOlSKcnIVvmpIKC/Y46McYZjwHULPKpThDtSFgrrx3Q==
-X-Received: by 2002:a05:6000:1acb:b0:3a3:6434:5d34 with SMTP id ffacd0b85a97d-3a4ca413eafmr6970418f8f.17.1748247182279;
-        Mon, 26 May 2025 01:13:02 -0700 (PDT)
-Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4d8ea9520sm2349448f8f.70.2025.05.26.01.13.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 May 2025 01:13:01 -0700 (PDT)
-Message-ID: <e8750bc1-11ab-480c-a0fb-262ff6a0dd22@linaro.org>
-Date: Mon, 26 May 2025 09:13:00 +0100
+	s=arc-20240116; t=1748247228; c=relaxed/simple;
+	bh=+itlrWYzfhQ7YhSm6Rwr1H/9x36GVhI08lVyKj97jHk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Ng9IbER/3EGYoS0yYpX4gy2rnEH+UOLO6IbrPGQwKj1DO5koSBNYGZEyi77vs+fymVvIbAbJP4G1rNwgkq0qATN4UcO8qf31Dz9TWZoa2wsEedh6pkuPa2mhDESuoL70olWlbk7PsOMn7e+taeehjV7yZLxdifev4hs112eL7QE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=iCPb/AcH; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=+itlrWYzfhQ7YhSm6Rwr1H/9x36GVhI08lVyKj97jHk=;
+	t=1748247226; x=1749456826; b=iCPb/AcHDU6xG2x4fpv6MMjLVYp219VtBpAxWy4oXe75HWE
+	n3V4EhYUOqImhZx0CH9FVoqMBysskPOjz5H12PUByFqzmrd0mZQ7wI5mKG1uYL7MW5ylnHuoU16Q7
+	o/n8foKno8h0UK6qJ1PLN/AyJb+wRmw9TyyFLl/MD5Qh9mRT8qrxrcju7sEcUD2NOM973DbrJtKgu
+	AUUbYpVHxltjFXq+7RVjCj4HUxzOFA2A4pfDvML4Fjw2qvdu/u8l8XtoDvQ2qolb0xmt4lfGhwC1+
+	aq2c3uGUz+XPZ1zQH/7CNJPSYBQxA3WyBDOZmVHLgUSH1QJ31arq88CmDTqYksXA==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98.2)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1uJSxj-0000000DOyV-1Dst;
+	Mon, 26 May 2025 10:13:35 +0200
+Message-ID: <23aadbd78d3585c900c579c26f360011cf1ca830.camel@sipsolutions.net>
+Subject: Re: [PATCH v2 2/6] ASoC: aoa: Use helper function
+ for_each_child_of_node_scoped()
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Ai Chao <aichao@kylinos.cn>, perex <perex@perex.cz>, tiwai
+ <tiwai@suse.com>,  "kuninori.morimoto.gx"
+ <kuninori.morimoto.gx@renesas.com>, lgirdwood <lgirdwood@gmail.com>,
+ broonie <broonie@kernel.org>, jbrunet	 <jbrunet@baylibre.com>,
+ "neil.armstrong" <neil.armstrong@linaro.org>, khilman	
+ <khilman@baylibre.com>, "martin.blumenstingl"	
+ <martin.blumenstingl@googlemail.com>, "shengjiu.wang"
+ <shengjiu.wang@gmail.com>,  "Xiubo.Lee" <Xiubo.Lee@gmail.com>, festevam
+ <festevam@gmail.com>, nicoleotsuka <nicoleotsuka@gmail.com>,  shawnguo
+ <shawnguo@kernel.org>, "s.hauer" <s.hauer@pengutronix.de>,
+ "srinivas.kandagatla"	 <srinivas.kandagatla@linaro.org>
+Cc: linux-sound <linux-sound@vger.kernel.org>, linux-kernel	
+ <linux-kernel@vger.kernel.org>, linuxppc-dev
+ <linuxppc-dev@lists.ozlabs.org>,  linux-renesas-soc
+ <linux-renesas-soc@vger.kernel.org>, linux-arm-kernel
+ <linux-arm-kernel@lists.infradead.org>,  linux-amlogic
+ <linux-amlogic@lists.infradead.org>, imx <imx@lists.linux.dev>, kernel
+ <kernel@pengutronix.de>,  linux-arm-msm <linux-arm-msm@vger.kernel.org>
+Date: Mon, 26 May 2025 10:13:33 +0200
+In-Reply-To: <eb1ddeb3-06b6-4ac5-b20a-06b92c7f1363@kylinos.cn>
+References: <2aq0nyvyf7t-2aq4hsc7kp6@nsmail7.0.0--kylin--1>
+	 <7e708dcc98c6f0f615b1b87d190464cfe78be668.camel@sipsolutions.net>
+	 <eb1ddeb3-06b6-4ac5-b20a-06b92c7f1363@kylinos.cn>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] media: qcom: camss: vfe: Add VBIF setting support
-To: vincent.knecht@mailoo.org, Robert Foss <rfoss@kernel.org>,
- Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- =?UTF-8?Q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>,
- phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
-References: <20250525-camss-8x39-vbif-v2-0-6d3d5c5af456@mailoo.org>
- <20250525-camss-8x39-vbif-v2-1-6d3d5c5af456@mailoo.org>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20250525-camss-8x39-vbif-v2-1-6d3d5c5af456@mailoo.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-malware-bazaar: not-scanned
 
-On 25/05/2025 20:25, Vincent Knecht via B4 Relay wrote:
-> +void vfe_vbif_reg_write(struct vfe_device *vfe, u32 reg, u32 val);
+On Mon, 2025-05-26 at 16:12 +0800, Ai Chao wrote:
+> Hi Johannes:
+>=20
+> > > "simplifies the code" is no need to callof_node_put() .
+> > Fair. Except that's not what you _actually_ changed here. Like I said,
+> > either it's buggy before or after.
+> >=20
+> In the function i2sbus_probe, it not return a struct device_node, so , I=
+=20
+> think function for_each_child_of_node_scoped is better than=20
+> for_each_child_of_node.
 
-write_reg() / read_reg()
+You still haven't explained why it's even correct.
 
----
-bod
+johannes
 
