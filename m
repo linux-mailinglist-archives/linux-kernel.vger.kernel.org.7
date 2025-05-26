@@ -1,133 +1,151 @@
-Return-Path: <linux-kernel+bounces-662679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-662668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A9C8AC3E2B
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 12:53:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38ABDAC3E10
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 12:50:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1970316ED3D
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 10:53:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF7C63B8612
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 10:49:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F2AF1F584E;
-	Mon, 26 May 2025 10:53:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AF7D1F5847;
+	Mon, 26 May 2025 10:50:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="npd5rTTO"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rU0L5bMV"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F1A31F2C58;
-	Mon, 26 May 2025 10:53:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB75E1F4706
+	for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 10:50:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748256800; cv=none; b=jf8bosrVUGFioVkz2+6Vo2ZD1CN2ngNLh5Nsu5AqW2PIE8fW9R+OPQagP1kFKPRROC2aHXAnirGgJwnqry5L8g4EPRJ3Bpl8QjfrRKw6aRmNorJUbsFfcNCcydeCx6g1GCuA+F5qahlZORw2WQ+Gpwa3wYZkbo+X6moN+ZZalx4=
+	t=1748256605; cv=none; b=ejB9fyznJKZ3euAQLJIg4zryJFzlnnP6KUV6Vwqjvv7iqOYiWxOJ7c2vWMZokMAV312LMzAayRctv8pxKJCy2+7iL4DKPO3xNfWQMFB3dS7emNWbIpFNxEJDc7R3VpHCwqT65JzqOmuYtWFbQHkacw2M/yD4UQcjskSouJElrCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748256800; c=relaxed/simple;
-	bh=WLKM1lsIY+1Am20lyCuFsPPqSoIW9AVqjjqK8uiQasI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jm4viEBsTGLmySXPYIK+4eYRf/XXRn0eAjuly+V4VPv1f/je5tILbMk2/ETlz8fXxtfZvfc4ySbsqdCbqb2jvlAVCZYbixYTxNdMCjJNGYYEuaybnBPrTHpm8JZYFAliDrUx/3tYhzyuNBPvhI6T1eqSKPQD7iRufDbiAT7oNdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=npd5rTTO; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1748256798; x=1779792798;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=WLKM1lsIY+1Am20lyCuFsPPqSoIW9AVqjjqK8uiQasI=;
-  b=npd5rTTOi7WFARHrhu33sRwWlqtWEq0RMYttxgyV/NArVgv9ARHhK00I
-   +Idn3hAAUgvt+fwg+0tUzoPU9jkPhrMlib+jpH478gMVCzx9JDOmh++dG
-   4thOF9XDiiHi+WNIoYe7CJuqIg6B6RVZQ6vhW4Jwf6ZhXUtKnO8Y8INty
-   uC333UTM3z16C2QwAcDlb+EnrR1bxrhMmX29XnevD1ofc9+lJmdosMwe+
-   9D8A+xq1Nc4p0KKdmtlL+em3j7PIpNRlhBz+DpC6Mwm3fOFCwqQYXz3Qm
-   SuSIgLa3ygQd49hAdMdjIfpcWQdrVqnDMYkeN+uLVEvLN2sZlTKxFmkmu
-   w==;
-X-CSE-ConnectionGUID: 2vE0bmw2Q+S5uRXMsSlSIg==
-X-CSE-MsgGUID: YxTr3YiZRrO253hlhgRwyg==
-X-IronPort-AV: E=Sophos;i="6.15,315,1739862000"; 
-   d="scan'208";a="41615861"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 26 May 2025 03:53:17 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Mon, 26 May 2025 03:53:11 -0700
-Received: from che-dk-ungapp03lx.microchip.com (10.10.85.11) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.2507.44 via Frontend Transport; Mon, 26 May 2025 03:53:09 -0700
-From: Thangaraj Samynathan <thangaraj.s@microchip.com>
-To: <broonie@kernel.org>, <linux-spi@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <UNGLinuxDriver@microchip.com>
-Subject: [PATCH v1 for-next] spi: spi-pci1xxxx: Add support for 25MHz Clock frequency in C0
-Date: Mon, 26 May 2025 16:19:08 +0530
-Message-ID: <20250526104908.404564-1-thangaraj.s@microchip.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1748256605; c=relaxed/simple;
+	bh=WbpB9upkv3/HDk+JtSehQw0Ct5NABTO0UPSvKkYXBgE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=NzBmFnB+DkqYX8NaKnqSlAmVAXuwCLjmsuxOpejciA4T2bSzIJ3pbQqDsvhpYL44nR1qvoQ8GT02GmFYvfP8JYc3vAA3TvEv8TqVYDvMYRX8PwyvCwNEY87HT5ftBUVXkUNQT2tEaO4zkPR8okrx9DX12iS+xj+p7ql4hFTLtj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rU0L5bMV; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43d4ff56136so3837455e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 03:50:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1748256602; x=1748861402; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=r4lITYVXHPG+JFCrFUyQZsYC0j5Z3JlSEM4hag1CnWg=;
+        b=rU0L5bMVA/9qcPQVPhAiyuvTxnIQOYPgLYOEV9oZz+9qyrlsl8d3dhewne4+esXoGR
+         i5RGVGswwh2itHz0qgfTVuQrz6nr3I/itdBlrS3kmJpntZAmnNA3onl036GivDzqcEgF
+         xFz+aMf2QQNZqN7Mo8IzLPaefaHtvbxx6up3ymRCfgOsHxYn98hK6kwHtFfDojPe9HJL
+         yl7iODrfeaY4Ycqx5HTm5m89hg1QeLmrCE4mrufzdIVSrmb6FXLR5XHKJhO4YnkAzN7Q
+         jNmeUbh8XNG/8RaV+aivdGB2qFDuoiq0st2VVIfEV6oKKFobxnBGgBAxteOWbfE4Jj8q
+         bFRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748256602; x=1748861402;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=r4lITYVXHPG+JFCrFUyQZsYC0j5Z3JlSEM4hag1CnWg=;
+        b=SzpUzLLpRJljKXzmLk3ga7mAyO6cQJUhqRTjE0uG7PxJ8p3tWS7oP3rmK7ZrdmNx55
+         G2nQ/9y3AsR/764WDcVPRSlf+SPb0AB90W+N3ZNtBcisHc/B+66I1wnvwOVqXM4HP5n6
+         VMev64+z9jzvg6rcNqZ16bU9K+IJKrvdttWR8VzI7REOi33n2X+j6AX8eB8jeJU2zHAu
+         t2le9Hn+h3M6TgzOS9fEl8qKideed1ermKZUciraaSN90Dtqo3B13feV1BnC81081WKt
+         SFWGNk5mW+Pkuz9BQySMkX7SXZn1XGQYWwFJZoquxa4wTeueMAbDXnPWF0TTpNWuqsGv
+         YG0w==
+X-Forwarded-Encrypted: i=1; AJvYcCVwNMD92vmb0dl3tKllVZRLlcdR8fqeQ8he7nMcOV2wQp60QRz2f0ZfUvxiQsx8WTAglVGWP7HBWtBAxeg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4U/JlaTF3EI4tv4d0QwfOQepOJfQcGrKDIk2EVokEcyP2Q6ah
+	ZWeU2OzAC6TwsIV3cYYsCJu7GUkYVBXbJttcZst0FlbtZ2TU+JtCjpBQA0FoCwQp6Vo9F1F8cl3
+	WOETB
+X-Gm-Gg: ASbGnctROHCToSn0/LylfQX9mV9e3M+v083ieYpU4r09ntFvYhN2AFWLhJdi3LXQMXv
+	gSpZh+FiHXjZNwWWbBTovuRGW+6OE991K79UdLkZX2mYA9ieTu7hi2zyQHT3D8JSRsSWOpj3RCB
+	CuIYCQJyuDk7dm9dAdASzaFYIW8ozZ1kj7mq/wMPQdp+Mkdrig0zICDQicqJ9XugGJt2yTfgkeh
+	MqY/NlEPCW5HM3mO49X+9vybMkFULnQB+R/5ZRotpvkFeTwxr6a8j3gYF7VLhZFtc0CDbBtZJIi
+	qEFJ4aIIa/jFH1fo4In3X8cUqv6ZT/Hsuw989fS3ZlPfXOh0b6wzgQPRQP4NSZ5tekbCv8M=
+X-Google-Smtp-Source: AGHT+IFTCow9aqRgGawC6WRupjB7jYfRrQO5KpOeG1VtSzVc+AOaepEj65qG+3tyNe2uLXjkg3HTig==
+X-Received: by 2002:a05:600c:314f:b0:43d:fa58:81d2 with SMTP id 5b1f17b1804b1-44c939c15b7mr24734825e9.9.1748256601649;
+        Mon, 26 May 2025 03:50:01 -0700 (PDT)
+Received: from [192.168.1.29] ([178.197.223.125])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-447f73d4b68sm236337215e9.23.2025.05.26.03.50.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 May 2025 03:50:00 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 0/6] ASoC: codecs: wcd93xx: Few simplifications of code and
+ extend wcd939x
+Date: Mon, 26 May 2025 12:49:49 +0200
+Message-Id: <20250526-b4-asoc-wcd9395-vdd-px-v1-0-64d3cb60313b@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAE1HNGgC/3XMyw6CMBCF4Vchs3aSXihSXsWwgOmg3QC2WEkI7
+ 24DC924/E9yvg0iB88RmmKDwMlHP4055KUAenTjndG73KCEMsKoCvsSuzgRvslZbQ0m53BekUl
+ eta5174SCfJ4DD3494Ft7duDnK/vLOX75pvjF//gHhoK4KrWtB0vUJAntvn8AYg3uasIAAAA=
+X-Change-ID: 20250526-b4-asoc-wcd9395-vdd-px-ec173383bd02
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ Srinivas Kandagatla <srini@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1586;
+ i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
+ bh=WbpB9upkv3/HDk+JtSehQw0Ct5NABTO0UPSvKkYXBgE=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoNEdR7qFvr6UL1ZKTX3h/FDIAzezQEzI4GYoa2
+ L4h6FAFDLuJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaDRHUQAKCRDBN2bmhouD
+ 1w1ZD/9MVoUXjC9vO2SEnpFp8EXEhxpV1ONhPJ6ST2hcJMe1hbdgGCKoOaN64U9Yr9d0bAEVvxR
+ FbiX2DxbctoAxw4NhIA5XumxqO2mQoE0RZPqNWVyZ1P+EJw73qjQOIK3AaSMcWom6Vprh+Om7Jl
+ ccO3YbuMTwJacvJMz6UV4AEuC9zWp/pc52b0Kpb6TLR9xQwrsSwISF/9zJdzrL6Hz+mdtmKHGbN
+ PreHzQAPbqJAXIcPvdr9YpsxGU3W3u0shKAnJiIAtYNHMDVjisj/8YsgRidBZ2FHbWQD0Zq0Sdz
+ nSVxOWgUpgoeyAwCElaSZb7wsqDm5w7H5TctZXUTu5zAKb7IO0ZB1Y0rC+8vC+BWH/JqPAJdyiT
+ MSjODoEyLNpEZW8CokmtSr5vMLriSCZUZ5E6L/L2LLtdm73VLEnw/CDEtuEOWv10E/9UN3StNB9
+ UGtimW4YwJ3u/qqeuNjFclZbZBmYYosOv9GGxsBezyDHZ6cl1HZ/tvIPMAyl5SAfX8h+eWk4sCm
+ Qg08A85sGt0lBCpPy+HuiKhnzMM4Oe35hn3XleMS5etsx+FRLUyaqHg4z6yclFLSc9WRdxxAPH3
+ 3hGOoTL9nmLUVxXFq4TDwMS4DV6/vnwHP+8mTbnPv4ZMYYxEGUEyh8oD4G7ZQz9KWHFTYsk5Uag
+ vUoAi/jyY1lo1fw==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
+ fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-Adds support for 25MHz clock frequency. Support for this frequency
-is added in C0.
+Make the WCD93xx codec drivers simpler using
+devm_regulator_bulk_get_enable() and obtain missing VDD_PX supply on
+wcd939x.
 
-Signed-off-by: Thangaraj Samynathan <thangaraj.s@microchip.com>
+Context depends on fixes:
+https://lore.kernel.org/r/20250526-b4-b4-asoc-wcd9395-vdd-px-fixes-v1-0-0b8a2993b7d3@linaro.org
+
 ---
- drivers/spi/spi-pci1xxxx.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+Krzysztof Kozlowski (6):
+      ASoC: codecs: wcd937x: Simplify with devm_regulator_bulk_get_enable()
+      ASoC: codecs: wcd938x: Simplify with devm_regulator_bulk_get_enable()
+      ASoC: codecs: wcd939x: Simplify with devm_regulator_bulk_get_enable()
+      ASoC: codecs: wcd939x: Simplify return from devm_gpiod_get() error
+      ASoC: dt-bindings: qcom,wcd939x: Document missing VDD_PX supply
+      ASoC: codecs: wcd939x: Add VDD_PX supply
 
-diff --git a/drivers/spi/spi-pci1xxxx.c b/drivers/spi/spi-pci1xxxx.c
-index 330078b1d50f..e9153570e9e9 100644
---- a/drivers/spi/spi-pci1xxxx.c
-+++ b/drivers/spi/spi-pci1xxxx.c
-@@ -23,6 +23,7 @@
- #define	SYS_FREQ_DEFAULT		(62500000)
- 
- #define	PCI1XXXX_SPI_MAX_CLOCK_HZ	(30000000)
-+#define	PCI1XXXX_SPI_CLK_25MHZ		(25000000)
- #define	PCI1XXXX_SPI_CLK_20MHZ		(20000000)
- #define	PCI1XXXX_SPI_CLK_15MHZ		(15000000)
- #define	PCI1XXXX_SPI_CLK_12MHZ		(12000000)
-@@ -318,12 +319,14 @@ static void pci1xxxx_spi_set_cs(struct spi_device *spi, bool enable)
- 	writel(regval, par->reg_base + SPI_MST_CTL_REG_OFFSET(p->hw_inst));
- }
- 
--static u8 pci1xxxx_get_clock_div(u32 hz)
-+static u8 pci1xxxx_get_clock_div(struct pci1xxxx_spi *par, u32 hz)
- {
- 	u8 val = 0;
- 
- 	if (hz >= PCI1XXXX_SPI_MAX_CLOCK_HZ)
- 		val = 2;
-+	else if (par->dev_rev >= 0xC0 && hz >= PCI1XXXX_SPI_CLK_25MHZ)
-+		val = 1;
- 	else if ((hz < PCI1XXXX_SPI_MAX_CLOCK_HZ) && (hz >= PCI1XXXX_SPI_CLK_20MHZ))
- 		val = 3;
- 	else if ((hz < PCI1XXXX_SPI_CLK_20MHZ) && (hz >= PCI1XXXX_SPI_CLK_15MHZ))
-@@ -423,7 +426,7 @@ static int pci1xxxx_spi_transfer_with_io(struct spi_controller *spi_ctlr,
- 
- 	p->spi_xfer_in_progress = true;
- 	p->bytes_recvd = 0;
--	clkdiv = pci1xxxx_get_clock_div(xfer->speed_hz);
-+	clkdiv = pci1xxxx_get_clock_div(par, xfer->speed_hz);
- 	tx_buf = xfer->tx_buf;
- 	rx_buf = xfer->rx_buf;
- 	transfer_len = xfer->len;
-@@ -492,7 +495,7 @@ static int pci1xxxx_spi_transfer_with_dma(struct spi_controller *spi_ctlr,
- 	}
- 	p->xfer = xfer;
- 	p->mode = spi->mode;
--	p->clkdiv = pci1xxxx_get_clock_div(xfer->speed_hz);
-+	p->clkdiv = pci1xxxx_get_clock_div(par, xfer->speed_hz);
- 	p->bytes_recvd = 0;
- 	p->rx_buf = xfer->rx_buf;
- 	regval = readl(par->reg_base + SPI_MST_EVENT_REG_OFFSET(p->hw_inst));
+ .../devicetree/bindings/sound/qcom,wcd939x.yaml    |  3 ++
+ sound/soc/codecs/wcd937x.c                         | 31 +++++----------
+ sound/soc/codecs/wcd937x.h                         |  1 -
+ sound/soc/codecs/wcd938x.c                         | 35 +++++------------
+ sound/soc/codecs/wcd939x.c                         | 45 +++++++---------------
+ 5 files changed, 34 insertions(+), 81 deletions(-)
+---
+base-commit: 3717d2adda1ad07b4ecf3bef144ee489cc1563a1
+change-id: 20250526-b4-asoc-wcd9395-vdd-px-ec173383bd02
+prerequisite-change-id: 20250526-b4-b4-asoc-wcd9395-vdd-px-fixes-0ce64398f9cc:v1
+prerequisite-patch-id: 104000f7254b9cc81be49af9ca584544718e52f1
+prerequisite-patch-id: 230fcd1b712c5a3199e7c9d8250e98e5d55c0a40
+prerequisite-patch-id: ecdbe74955eb7b710f72af1e3cf32ccac52890d5
+
+Best regards,
 -- 
-2.25.1
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 
