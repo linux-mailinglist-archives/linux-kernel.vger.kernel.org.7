@@ -1,88 +1,169 @@
-Return-Path: <linux-kernel+bounces-662715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-662717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B44AAC3EAA
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 13:37:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75F58AC3EAD
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 13:37:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35CBC1892478
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 11:37:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15CDF18941FD
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 11:37:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8776A1D5175;
-	Mon, 26 May 2025 11:37:05 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E7201F7580;
+	Mon, 26 May 2025 11:37:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ScdH/Yoi"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 971A71917F4
-	for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 11:37:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA94E1F2388
+	for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 11:37:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748259425; cv=none; b=oAKldhurAXvO6VaBghTdIZWixAY4fbFlb8SG6d11rhWUPT/HUq9GOy8QKHIMEGmSiTxviBd+UtZw2GheubT5kqneZiyEoXSkVhNQLpocLe5YTrGZs/j1/rLi8z2xNAys/9u0z91Kn2y+I/cVJ4W/1fOfsgQDzC8U+QYK2Knn9Ng=
+	t=1748259440; cv=none; b=IzbMixkzD2dpxXvjwXyGWSYWJNNP3UaHlHGQ+sxeH32JniqjkiNSfVIakWL12LFrGdF2JXbUOumnsdYDZwa2Z2GeD3EHbhROhL3N8x6f4gXoVZicCogpK+xdop+b4AutLkEwEL/ecZI7FUFIXLSWcWLh7v1zfQt5N1nsbknDX4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748259425; c=relaxed/simple;
-	bh=PBP4BRHa3zQlpTVFq9T8QfgQEs8bqvS+dL8cF6PY40o=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Xp8hgDTeyIMVIg+Hn6zZZkx4jqpnCVvkR08vpdqQTroEdzfOEDKSaPYMy/Xdei5v9uhknM9iq5cq1Juwvf7Ml8njPPSFKhWzWJbG8HX5nYSPjSrQK+rUWdkri/8ql+M0ngsexrL1FCGEIHBr+qv9iN3Lbi1Ei0GtZv+tcRjvqa8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-85b3a6c37e2so202125939f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 04:37:03 -0700 (PDT)
+	s=arc-20240116; t=1748259440; c=relaxed/simple;
+	bh=nSDYH4WEhkI0c4mWAbs9ei0wGtWyyYjJxPJ8Zztq6V8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pPPkcZ5uoTXD11jqKqkLEGwOK8PZxopV/WbLS192IfaaTKffJVrX0PkF58RYe3p5lZbZ2hffxQ+KZm+vd6zYFamNkZc5dmwKZ4J8qEXBf4odlAOghgMjQ1Cw6n4FzTbP1hl4VUu3pU3m35ih3X1UFtNvY3D3+EP/3RgohPEcE9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ScdH/Yoi; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3a374f727dbso67289f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 04:37:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1748259437; x=1748864237; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=q+rDiPz0qSiYsyHG9zqVRKjQE9VlYlwaE/0xL4WFAXE=;
+        b=ScdH/YoiFPxoMBbOD6lhW0f7B7pot7t5pETKHfKXpgM445bToixc2S0ECXCN5bBlPm
+         24Qi9YUk3hKPS1zzUDQvCxWKh6arP2ePb2j9aGn3vW0RigfXDsdOK6RUAzIN4JToy2AL
+         YgmIvgOgi3epmQumVuywj5Sls/fX1whN1vwGHzQxj1sbN6JoTutCKxaud0oRT5wYTx28
+         UOMNNpiA0bkjeTjORP1447x0WIcijMN8qGNo8m46g/MIg8L2EWaRuThs7l7210eJ8UYt
+         C23P2GY6NdIqvAagaJlITQou4pf5MhRo33LV21XTeGq8GGJIoOCRM2kDu4QPfwPyLQuP
+         mwiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748259423; x=1748864223;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zvECZZhMo/HKpBAjwfYomPTuSxbG9Ek5XgXDE+jfvn8=;
-        b=mz37X3/7RH1NxNiMRrulvhoUmEJgrNeVlS8NYyBqygb/w6KFQlw9g1trBzqEflaQMz
-         x7bXg/EmFYZJohkAHLG77nQSutIESzt2+D74JnASAL11FotmaNKPRIm06XEM9+w/ln+b
-         +Wy8S3do6lkwdKvel+E8QchS4yrd+/IBzt1/MNhl8xgnmM/6/BuT8lHRsEbBzuaKttgb
-         uczb/zIAKz1mwN+x264QhV8FasG5hLWBgCT53DpZt1B+Tla4i5b3Yovwifp/PtePI0xZ
-         P5spxCo/wLpo1YOuJmbAvrXDZGIz4sOQTAU5dRtWtNHZhPQsEHLi8I/00f1jsVxtn5xN
-         aqrg==
-X-Forwarded-Encrypted: i=1; AJvYcCV2mihY/bupsIQCtj6NdSd1zGl6TpFUgXsoNdJpjPOXF5rqrwyrDKRn1AwR65ZI2T2C6Dl+ZTMmRo8r1us=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz28tc5jn48AmumRHCdYvcg2wB8FPKkrDWpLQtCUXa/dfLeABMV
-	ZfeaifW+XdBe9pZAPSra47z47EI+e4mK+/Rm7ncPhLe+pvzEe2MStmaQ5ni8mjhI1Vkmv7DIPMI
-	tcLz8oPjV9Y4X1sHYvDAz3Fa4qsdUcHCsH+uRwWhIYoPVEk1OZt3ABwymhSA=
-X-Google-Smtp-Source: AGHT+IHcHmAxV2OXMcbS+/EJq5tl+Fy1ptes1d6BkrDL68ToRQ/TYAPnfT2LAtjnW/vGF2r33ryvgAxcmpAbTuffZtzd633s18AY
+        d=1e100.net; s=20230601; t=1748259437; x=1748864237;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=q+rDiPz0qSiYsyHG9zqVRKjQE9VlYlwaE/0xL4WFAXE=;
+        b=cCPQxzt3sFmt+PPzAonAodvFGyP0uqDjmFMIGWHKPdGqMnjlS1BD4OU/BZ4zNp19jj
+         BxMZWk606cXrOoI0GmSmPt9MgYza4tpB2ScsbDli4N7kn95Gm2ndGOGBIQnCOboF+/+c
+         OCk4x3x3fCQGI36Ztu3DGyddLefiG06UDQ7M3urgcgdH3TERclFZ52HkZ2+PDMTa0n3J
+         9KPi0mxs9EaCb37xdaAnqaOHF27p+IiRGMI4Sc3RkfQ/6WlEttHsLeQl9vQDDVPZ8UD4
+         3EY5OfKkxYl2uVif/dd8blQJ9HkPoHYIaAGIhdZs4rjtsYmHLo361dSA2Sjj4K56qJle
+         s/lA==
+X-Forwarded-Encrypted: i=1; AJvYcCU6DtFz6uRC3qJHiOv1XVAlSt512dVfq7NlDF1RwACeZG7HsS+weFuyHSJxtzkWeNfR9zEbEsvd7xR5Hh4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjGZKthijAFrPvKYPKSUnu82xn01U4ZLO0ssYgznApdenMFddt
+	BZJ+yTq71nqsZdzjB9m0gDvHe2MWnBDHTze3YSajljvgknU0cigRhF3mDnKdb1Mt5Sw=
+X-Gm-Gg: ASbGncu0dmaV+ZyT3jT07r3N9vyvEwd66odsPMxfp8h0wSUDWNEsrOE6ud6/ZsIlUDN
+	/3v2Tgq3A5FD9wNtEOeF8LcoUzn7WlmvTah2Pfj8Z4ggu/FcXJmScB1OSqaykmbcSMau5tnDQD4
+	/BY1/ibcgbHmd3imZ5MkmTn22kZdAWHIO0xwUOi7jVDljVu7KsoSs4kRaPaIlnQI9m0O3HCCwWO
+	bUprO9Zfoj4WMR4jaSDajlTiVeO6TOyEcJXa41zyMDpkx4+SlpzsuiIrAlp9NRTtVy1W/0cdk27
+	XtB9xdf3c4rnrRSwD5IYpASoq8esod3wF3QMe0u8yXsg5zqlJiP/w5vq
+X-Google-Smtp-Source: AGHT+IEv5PUqkz+rdGK7cMHOMrelnch8JlHVRcoDJFXgNKq4OweFef3f63o86S/y+HO8Dwb3Au7C2g==
+X-Received: by 2002:a05:6000:40ca:b0:3a4:d8f8:fba7 with SMTP id ffacd0b85a97d-3a4d8f8fd9dmr2806239f8f.2.1748259436914;
+        Mon, 26 May 2025 04:37:16 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a4cce08411sm7388745f8f.51.2025.05.26.04.37.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 May 2025 04:37:16 -0700 (PDT)
+Date: Mon, 26 May 2025 14:37:13 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: clingfei <clf700383@gmail.com>, Kees Cook <keescook@chromium.org>
+Cc: elder@kernel.org, johan@kernel.org, vireshk@kernel.org,
+	gregkh@linuxfoundation.org, greybus-dev@lists.linaro.org,
+	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] greybus: Avoid fake flexible array for response data
+Message-ID: <aDRSaZ4Rq47hjMuY@stanley.mountain>
+References: <20250526110654.3916536-1-clf700383@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:379b:b0:85b:4ad1:70e with SMTP id
- ca18e2360f4ac-86cbb8706c1mr1064294339f.6.1748259422753; Mon, 26 May 2025
- 04:37:02 -0700 (PDT)
-Date: Mon, 26 May 2025 04:37:02 -0700
-In-Reply-To: <20250526105115.2345-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6834525e.a70a0220.29d4a0.0804.GAE@google.com>
-Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in hci_sock_get_channel
-From: syzbot <syzbot+0a7039d5d9986ff4ecec@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250526110654.3916536-1-clf700383@gmail.com>
 
-Hello,
+On Mon, May 26, 2025 at 07:06:54PM +0800, clingfei wrote:
+> As https://lore.kernel.org/all/20240304211940.it.083-kees@kernel.org/
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+I don't want to have to read a link to understand the commit message.
 
-Reported-by: syzbot+0a7039d5d9986ff4ecec@syzkaller.appspotmail.com
-Tested-by: syzbot+0a7039d5d9986ff4ecec@syzkaller.appspotmail.com
+Does this change really affect anything in terms of "enforce the 0-sized
+destinations" rule?  I don't think this is a destination.  I think Kees
+enabled the checking he wanted.  You should probably CC him since we're
+refering to his email.
 
-Tested on:
+> pointed out, to enforce the 0-sized destinations, the remaining 0-sized
+> destinations need to be handled. Thus the struct
+> gb_control_get_manifest_response and struct gb_i2c_transfer_response
+> are removed.
 
-commit:         d7fa1af5 Merge branch 'for-next/core' into for-kernelci
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=16fbe8e8580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=89c13de706fbf07a
-dashboard link: https://syzkaller.appspot.com/bug?extid=0a7039d5d9986ff4ecec
-compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
-userspace arch: arm64
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=170e5170580000
+Here is a better commit message;
 
-Note: testing is done by a robot and is best-effort only.
+"We want to get rid of zero size arrays and use flexible arrays instead.
+However, in this case the struct is just one flexible array of u8 which
+adds no value.  Just use a char pointer instead."
+
+I would have ignored it, probably but actually the
+gb_control_get_manifest_response struct is not used so put that in a
+separate commit.  That's a simpler commit to review.
+
+"The gb_control_get_manifest_response struct is not used.  Delete it."
+
+> 
+> Signed-off-by: clingfei <clf700383@gmail.com>
+> ---
+>  drivers/staging/greybus/i2c.c             | 9 ++++-----
+>  include/linux/greybus/greybus_protocols.h | 9 ---------
+>  2 files changed, 4 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/staging/greybus/i2c.c b/drivers/staging/greybus/i2c.c
+> index 14f1ff6d448c..2857c2834206 100644
+> --- a/drivers/staging/greybus/i2c.c
+> +++ b/drivers/staging/greybus/i2c.c
+> @@ -144,15 +144,14 @@ gb_i2c_operation_create(struct gb_connection *connection,
+>  }
+>  
+>  static void gb_i2c_decode_response(struct i2c_msg *msgs, u32 msg_count,
+> -				   struct gb_i2c_transfer_response *response)
+> +				   u8 *data)
+>  {
+>  	struct i2c_msg *msg = msgs;
+> -	u8 *data;
+>  	u32 i;
+>  
+> -	if (!response)
+> +	if (!data)
+>  		return;
+> -	data = response->data;
+> +
+>  	for (i = 0; i < msg_count; i++) {
+>  		if (msg->flags & I2C_M_RD) {
+>  			memcpy(msg->buf, data, msg->len);
+> @@ -188,7 +187,7 @@ static int gb_i2c_transfer_operation(struct gb_i2c_device *gb_i2c_dev,
+>  
+>  	ret = gb_operation_request_send_sync(operation);
+>  	if (!ret) {
+> -		struct gb_i2c_transfer_response *response;
+> +		u8 *response;
+>  
+>  		response = operation->response->payload;
+>  		gb_i2c_decode_response(msgs, msg_count, response);
+
+I like when parameters are called the same thing on both sides.  The
+name "response" adds no value.  Instead get rid of that variable and
+pass operation->response->payload directly.
+
+		gb_i2c_decode_response(msgs, msg_count,
+				       operation->response->payload);
+
+regards,
+dan carpenter
+
 
