@@ -1,163 +1,196 @@
-Return-Path: <linux-kernel+bounces-662354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-662356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 305E6AC3959
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 07:39:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34554AC3963
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 07:43:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE13E171804
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 05:39:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEF8A3AE834
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 05:42:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6330C1C84AD;
-	Mon, 26 May 2025 05:39:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AC491C84CF;
+	Mon, 26 May 2025 05:43:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qsy0iSxE"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Pfds+7Om"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D0F0136349;
-	Mon, 26 May 2025 05:39:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F29919B5B1;
+	Mon, 26 May 2025 05:43:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748237964; cv=none; b=oTvo9l4JSYfGI1ejtjyv/bIWETdxUi/tlL5MwE2aUg+XpA72c1hH9BvrT4r+rJwLE6IFpA9BDW54g4FfYOoQ0CB+P1Vw0wR4aqkOzGR2XpuDl+f36imfIAB19phSBrasOQHtBwTyBNIJ5NbtuIrHfKqPC8UEPzL4rKi/9wTgW5g=
+	t=1748238184; cv=none; b=j0aHS5h0P4pDrPox9VClKCB4AIJzY0gbuEzI0qoFq8HAmBAimZI0ZKxgTqIMHC0EAe67jO8IOnpeb0hHS67e9mu4BDmL9a11jrXiLkg8Rt4RALgVzT428xe2eBUHOGqMj3LzjTeaSukHGd+ZM6u8wHXk+EZ91iMbOimJFzsyhgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748237964; c=relaxed/simple;
-	bh=rB6DtSGBYvQRTpJ/h23/TPejO2Pzgd4zo6EBey4hcas=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XktznBnxdYJpueEgQTtNrnKa9H9Djmu76tLn37lQaCtFKH2FWWUHW72iAUF8rck5L+cychXAf5go3VogZIcUFaBCJhb0pssiGWFGYoEbJdFNjxNmH0ioxB/3a7PcPhjX1WsEph1cUQaG47mlAatxJ6L2QyK4SX1Yi+CvDjN+of4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qsy0iSxE; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2346846ee0eso3663885ad.3;
-        Sun, 25 May 2025 22:39:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748237962; x=1748842762; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dLp6cnqyCbjFDWsg2nybeJcpM5tSNUhvPi8JJGmzqF0=;
-        b=Qsy0iSxE85qWONzM3q1TXBzBFRit0OrFgHVdbG9gdGQeO6l+1sunRSyyYXklHYN9XT
-         MsHV+CH86Dots8bP3swyFaBxkJvU5H23U6/+Le+VH1UaADYDkMHxIph7S4vRR9iIgMR1
-         iOBCJLUFAiNQ0detzyuxAoQX+0eDW5w+TlfKSjOzEiXuKB6C+hi6TWeYkZX5O6Z/3vyX
-         yV1DrNX+US1w41Cxj6BnHNLtwb4fnqCpZo0yn56KWbvUX81d6DNQqSRwbl2B8QxKjLAK
-         QSnSmj/q3PWXdi5kKO2uNFmZJQWkVz24Pvit7v727T9QuHZKPvWgpKHETu3R1rDvbegx
-         awBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748237962; x=1748842762;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dLp6cnqyCbjFDWsg2nybeJcpM5tSNUhvPi8JJGmzqF0=;
-        b=FVdtDOKI4R28D1cTVvdr+J00ygWDjUvbVSjOgoDJ39WYjTy1OCttwYBP5IWKO759oB
-         +sGcxBVqSyv8WeMZ0axl5wq0cHP5vQVPxxnAi6dAsq6k+5JWdPiOHudbWL86JRuKWQCk
-         FkPafe8+ARvCS0VJoJYP2IE6btB4yPz+j+y+UeMu+zjU0ZUO5WWJZsvbaJBiMr6Kewc7
-         3WHuafSfsxJ0mcT8AcUBeqH8xwe3tTj2stw88LVZPpGvytSCU1FgPA6MvD8xTze9cZn1
-         k7qbHR9jvyRrmpGjVdEEY7lImQOkkZSycWVviwGpruaxC6dXtjdr0x0JFH9eTBDTFmaT
-         jbRw==
-X-Forwarded-Encrypted: i=1; AJvYcCUsiNo1DAeV4IguNFN/FlmPY8eeyt6rf0Qe/wTiUTp4DYYWXFuFB5+DJx7oo1YxR4iN89VzpniPRY+2DkDx@vger.kernel.org, AJvYcCVhklqkhGnUCVSsVg1YGBHM11/Pq6X5Y3t3I36q4gtkUwnJHpE2f+FcThiATWjz4w2WGSJGnk9Xev9F@vger.kernel.org, AJvYcCWW9GqfQDeMMKjPWx0tsxtUHyqxI/3asavO7342sIuQUMIvRM5OkvAfw+NoLHGlG0dkFxVdBmlO@vger.kernel.org
-X-Gm-Message-State: AOJu0YyorftQg3PhdpnpEFc5RHh5HNmwpBf643ex2tRUvBK6JEGV1khA
-	Z0nyg/OxF1SERn/c/m+NjUrJi1Zz0l0GZviq5rY9p4O+319ZqSG7TjFBpEJcpAKP
-X-Gm-Gg: ASbGncukWv3D5/lOmHYEG/NWraQGIviQsHpBQb4MB6/v2ACQ6sLtEIf7QYHGUO9uq7z
-	BtB7BuGGplwk1hc6UlQHjXUhPCwZ7vEYujQYe8XGwQlrxXIjkmqS+jR/Phv525q4mX+aANqNhEq
-	AdRxnw3CkJ+RrrASqAx0bryK1UHHIkhS+C6N/myoyJjksrm8nYREuEwDvcPuXbG3h4eHqKBCwMZ
-	rIa51kpka3DeEKYWSmEMckYi3KSZrSJHXlSR+RGft6J9cfH0vi/Q+BkjhXykxNTN25e84MNcD4l
-	n5m4h+ymTe0YYmFfGBgBmRcQx+9v5zzaLHRkihTnTsAHnjVqWLLN8iz2Cb8ShcSc6Xb8UGXKbKJ
-	Quh4oILVMkvH6d/iQQik3jcD7a2ps
-X-Google-Smtp-Source: AGHT+IG7xgzxnz1Grj9UzPDie6FzHib+saLpOZH8onxhz75DWnCGce9JBep2Vj0Bc2x5YD1GmylXew==
-X-Received: by 2002:a17:902:eccb:b0:22e:3f1e:b8c8 with SMTP id d9443c01a7336-23414f5cceamr132744715ad.15.1748237962243;
-        Sun, 25 May 2025 22:39:22 -0700 (PDT)
-Received: from [0.0.0.0] (ec2-54-193-105-225.us-west-1.compute.amazonaws.com. [54.193.105.225])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2343635891bsm22297405ad.130.2025.05.25.22.39.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 25 May 2025 22:39:21 -0700 (PDT)
-Message-ID: <705d99b3-9803-4f5f-a807-607b49349b68@gmail.com>
-Date: Sun, 25 May 2025 22:41:52 -0700
+	s=arc-20240116; t=1748238184; c=relaxed/simple;
+	bh=XPVNF4i9clBR5CeNLdOBha/wncAQ8cozfftoZr4bljk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WoYqEbyoE8gBs8R6ofM+Z+A7GQyPPC5UHHWQeMH6+JLaKmCnEDL2+OcozAMTJQoq2Stsr/3NFUqAMZKYzOl9lU+N5bCaP+cnd3xaiL7GT0wPn7PrhVyN2AKtslRb2HUIiJEVU+/tVzbF0aOT/D6L3GtxVOIMxYPFL/rqqq3N+h8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Pfds+7Om; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54PNgKtO027105;
+	Mon, 26 May 2025 05:43:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=BEBZg8MlIJLrV0u6uphLCbW27wGjna4VB4z
+	ejoKbxk4=; b=Pfds+7OmhtY9qgqC1T6e+bLnEyJqZRq8rKRcgizWCHVegnqJib8
+	BAtYfL1UIrUHBHun1/bOO2IduYZ26qaWO6gq2wNjuzcaH+h/xcJ7Q8yZFqRsaSae
+	WQrp63yeWVnYc6mAXgDM60GH0qsC2d8J61klnL1paFco/L9Q83tPmc38rqNcICA8
+	jdcM3i7zznNa2lvxWJLt/0THvc6vYaOFP6IIhNRINd/Q/6ilayIOrxe/O2a+mJJ6
+	NAc0B4XQRkaDQzA4ecz7UCUSb7PrGKuZczBjygK2CeIF7/U1ZxTHMqVmleS/ZKAm
+	vGS86RuTC+v8nRQN0csosEmOtWda37ivfFw==
+Received: from aptaippmta02.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46u6b5k2qf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 26 May 2025 05:43:00 +0000 (GMT)
+Received: from pps.filterd (APTAIPPMTA02.qualcomm.com [127.0.0.1])
+	by APTAIPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 54Q5gw4k027444;
+	Mon, 26 May 2025 05:42:58 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 46u76kqmab-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 26 May 2025 05:42:58 +0000
+Received: from APTAIPPMTA02.qualcomm.com (APTAIPPMTA02.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 54Q5gvmc027434;
+	Mon, 26 May 2025 05:42:58 GMT
+Received: from bt-iot-sh02-lnx.ap.qualcomm.com (bt-iot-sh02-lnx.qualcomm.com [10.253.144.65])
+	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 54Q5gvVc027433
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 26 May 2025 05:42:57 +0000
+Received: by bt-iot-sh02-lnx.ap.qualcomm.com (Postfix, from userid 37913)
+	id 9065722650; Mon, 26 May 2025 13:42:56 +0800 (CST)
+From: Cheng Jiang <quic_chejiang@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, quic_chejiang@quicinc.com,
+        quic_jiaymao@quicinc.com, quic_zijuhu@quicinc.com,
+        quic_mohamull@quicinc.com
+Subject: [PATCH v1] arm64: dts: qcom: Add Bluetooth support for qcs9075 IQ-9075-EVK
+Date: Mon, 26 May 2025 13:42:28 +0800
+Message-Id: <20250526054228.221095-1-quic_chejiang@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/2] ethernet: eswin: Document for eic7700 SoC
-To: weishangjuan@eswincomputing.com, andrew+netdev@lunn.ch,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- richardcochran@gmail.com, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
- p.zabel@pengutronix.de, yong.liang.choong@linux.intel.com,
- rmk+kernel@armlinux.org.uk, jszhang@kernel.org, inochiama@gmail.com,
- jan.petrous@oss.nxp.com, dfustini@tenstorrent.com, 0x1207@gmail.com,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org
-Cc: ningyu@eswincomputing.com, linmin@eswincomputing.com,
- lizhi2@eswincomputing.com
-References: <20250516010849.784-1-weishangjuan@eswincomputing.com>
- <20250516011040.801-1-weishangjuan@eswincomputing.com>
-Content-Language: en-US
-From: Bo Gan <ganboing@gmail.com>
-In-Reply-To: <20250516011040.801-1-weishangjuan@eswincomputing.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=ZcodNtVA c=1 sm=1 tr=0 ts=6833ff64 cx=c_pps
+ a=nuhDOHQX5FNHPW3J6Bj6AA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=dt9VzEwgFbYA:10 a=COk6AnOGAAAA:8 a=WXduBcdBxNLdlasUCgQA:9
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI2MDA0NSBTYWx0ZWRfXypCT2mScAcst
+ Emc8kH5MZMN5T6yRbDSkuHRG3bJUsaMLiJFrngnZXmHxT+rEczMPQ25lVFBYm0wBb4jqPl6MKDb
+ 9u+4FRoqrMVcOkOMjl9c81NjyOr7SSzFCTM+LOyXnbr8zq3Dx7AMcWbN2Hmc48VIVMLYdk8xvH8
+ 36XicASVS92z+ZLQvKiYLjXm7P5e6RpMKZxEIBkDq1dqVzdBMZtnyEffJnPudQYSs8/xb2Phhdu
+ IUoTh6L7IbXWYPFJXijOMg8rkZGOHCHuoJi1WIQbUNuG+E66yDQAMosLCuyCb1KitTO8h0UGhE3
+ 1dKnx5uPaT1b6rN9cv7jsBore4Y9DSZ3kqbdkl8WuMcQnsfrKcdz9lkLAdFAr3aPw50jy3nlWqf
+ w4UJX7JVlRNFY+X5EXDS95neFF6m8DoyT6GkJYPq/dMyz18q+JyqLYhPQ25H2Ho4UX18ir3+
+X-Proofpoint-GUID: ehaCpic6QNEYUzuwhqwH1gupFxqCvyUh
+X-Proofpoint-ORIG-GUID: ehaCpic6QNEYUzuwhqwH1gupFxqCvyUh
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-26_03,2025-05-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 malwarescore=0 mlxlogscore=999 bulkscore=0 priorityscore=1501
+ spamscore=0 clxscore=1011 suspectscore=0 lowpriorityscore=0 phishscore=0
+ impostorscore=0 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505160000
+ definitions=main-2505260045
 
-On 5/15/25 18:10, weishangjuan@eswincomputing.com wrote:> From: Shangjuan Wei <weishangjuan@eswincomputing.com>
-> 
-> Add ESWIN EIC7700 Ethernet controller, supporting
-> multi-rate (10M/100M/1G) auto-negotiation, PHY LED configuration,
-> clock/reset control, and AXI bus parameter optimization.
-> 
-> Signed-off-by: Zhi Li <lizhi2@eswincomputing.com>
-> Signed-off-by: Shangjuan Wei <weishangjuan@eswincomputing.com>
-> ---...> +  # Custom properties
-> +  eswin,hsp_sp_csr:
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> +    description: HSP SP control register> +...> +additionalProperties: false
-> +
-> +  eswin,syscrg_csr:
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> +    description: System clock registers
-> +
-> +  eswin,dly_hsp_reg:
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +    description: HSP delay control registers
-...
-> +examples:
-> +  - |
-> +    gmac0: ethernet@50400000 {...> +        dma-noncoherent;
-> +        eswin,hsp_sp_csr = <&hsp_sp_csr 0x1030 0x100 0x108>;
-> +        eswin,syscrg_csr = <&sys_crg 0x148 0x14c>;
-> +        eswin,dly_hsp_reg = <0x114 0x118 0x11c>;
+Add Bluetooth support for qcs9075 IQ-9075-EVK
 
-Please help explain the meaning of eswin,<reg> array, and also the expected
-number of elements in it, like what starfive did to their JH71x0 device-
-tree bindings. E.g., this is what net/starfive,jh7110-dwmac.yaml looks like:
+Signed-off-by: Cheng Jiang <quic_chejiang@quicinc.com>
+---
+ .../boot/dts/qcom/qcs9075-iq-9075-evk.dts     | 42 +++++++++++++++++++
+ 1 file changed, 42 insertions(+)
 
-...
-   starfive,syscon:
-     $ref: /schemas/types.yaml#/definitions/phandle-array
-     items:
-       - items:
-           - description: phandle to syscon that configures phy mode
-           - description: Offset of phy mode selection
-           - description: Shift of phy mode selection
-     description:
-       A phandle to syscon with two arguments that configure phy mode.
-       The argument one is the offset of phy mode selection, the
-       argument two is the shift of phy mode selection.
-...
+diff --git a/arch/arm64/boot/dts/qcom/qcs9075-iq-9075-evk.dts b/arch/arm64/boot/dts/qcom/qcs9075-iq-9075-evk.dts
+index ba8a359d8..d44f8f5eb 100644
+--- a/arch/arm64/boot/dts/qcom/qcs9075-iq-9075-evk.dts
++++ b/arch/arm64/boot/dts/qcom/qcs9075-iq-9075-evk.dts
+@@ -15,6 +15,7 @@ / {
+ 
+ 	aliases {
+ 		serial0 = &uart10;
++		serial1 = &uart17;
+ 	};
+ 
+ 	chosen {
+@@ -264,6 +265,32 @@ qup_uart10_default: qup-uart10-state {
+ 		pins = "gpio46", "gpio47";
+ 		function = "qup1_se3";
+ 	};
++
++	qup_uart17_default: qup-uart17-state {
++		qup_uart17_cts: qup-uart17-cts-pins {
++			pins = "gpio91";
++			function = "qup2_se3";
++			bias-disable;
++		};
++
++		qup_uart17_rts: qup0-uart17-rts-pins {
++			pins = "gpio92";
++			function = "qup2_se3";
++			bias-pull-down;
++		};
++
++		qup_uart17_tx: qup0-uart17-tx-pins {
++			pins = "gpio93";
++			function = "qup2_se3";
++			bias-pull-up;
++		};
++
++		qup_uart17_rx: qup0-uart17-rx-pins {
++			pins = "gpio94";
++			function = "qup2_se3";
++			bias-pull-down;
++		};
++	};
+ };
+ 
+ &uart10 {
+@@ -273,6 +300,21 @@ &uart10 {
+ 	status = "okay";
+ };
+ 
++&uart17 {
++	pinctrl-0 = <&qup_uart17_default>;
++	pinctrl-names = "default";
++	qcom,load-firmware;
++	qcom,xfer-mode = <1>;
++	status = "okay";
++
++	/* HS UART Instance */
++	bluetooth: bluetooth {
++		compatible = "qcom,wcn6855-bt";
++		pinctrl-names = "default";
++		max-speed = <3200000>;
++	};
++};
++
+ &xo_board_clk {
+ 	clock-frequency = <38400000>;
+ };
 
-Otherwise, there's no way for people to reason about the driver code.
-The same should apply for your sdhci/usb/pcie/... patchsets as well.
-Also there's no reference to the first element of the hsp_sp_csr array.
- From the vendor code, I'm reading that you are using the first element
-as the register to set the stream ID of the device to tag the memory
-transactions for SMMU, but in the patch, there's no mentioning of it.
-I'm guessing you are planning to upstream that part later. If so, I
-think it's better to put that register index at the end of the array,
-and make it optional. It should then be properly documented as well.
+base-commit: 176e917e010cb7dcc605f11d2bc33f304292482b
+prerequisite-patch-id: 853eaf437b81f6fa9bd6d36e6ed5350acaf73017
+prerequisite-patch-id: 6d9fd3e0257f120cff342c287774454aad2be2e8
+prerequisite-patch-id: 736cbcd47d5e7cfcc53fcaa7da920eac757ce487
+prerequisite-patch-id: 4eddce6daeaa125f14380586c759f8cb8997c601
+prerequisite-patch-id: baac180e8715b5cf2922f79346440d92569704f6
+prerequisite-patch-id: 65730290d31f18e66e2ba0dfdeb1844d7442c272
+-- 
+2.34.1
 
-Bo
 
