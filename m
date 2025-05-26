@@ -1,98 +1,167 @@
-Return-Path: <linux-kernel+bounces-662691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-662693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AC70AC3E4A
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 13:06:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D4CE0AC3E4E
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 13:08:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6549E1889EC2
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 11:07:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80D5B188EF54
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 11:08:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98EE11F8676;
-	Mon, 26 May 2025 11:06:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 004B31F8747;
+	Mon, 26 May 2025 11:08:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="eQV3tGFz"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OM+KKRCe"
+Received: from mail-pl1-f196.google.com (mail-pl1-f196.google.com [209.85.214.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7475D13A3ED;
-	Mon, 26 May 2025 11:06:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02DBE1F4180
+	for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 11:08:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748257607; cv=none; b=EXFxyOXoTcWcKDkZfCZdLYMGUFRhNjXGbKPWCw8tXQMypzYrUkSEX3rClRdml6TFYcGK+QWZk62ooalOWYNWQeSEpS5gnrQtu3UTNxNZJmFG9AwNaNyOk6etXGUPacU3ULIjAmMnRR1i8Zhu6lkQ8HuUXOxEdWXjbN/rL5K0x48=
+	t=1748257693; cv=none; b=qcG9ygcM0hq06NocKZgz0GjySOriTBfmwVvMpRo/xxDHsWMe4h7iiLFvk+PnoOcO5Bf+WcZsaKkVCkuHPvg4P0dg46Q3JOjg1r63IZ7RQ/37aJv3WRzUV5dSioUaGNaoSwD3fPoS76SEwwHj7h3QXIzLJx51Wo+gIJ2pbf5LwMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748257607; c=relaxed/simple;
-	bh=Ean1VPfRB81uVPVay3RqkdUh3RGI7jVffLlfB096V60=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fEk1n8qgxbMJKIljIXJvxHZvtkGCMLL2+kw896gMTbQ8eboN6FOvMnbnrqlPBbRAUDAx+pcsVqlxbYfRLK6Jh/LGAQ7pVjlP3mCZHHGhOes4VhUuSdlSXhyWhkO/27o/nqUqkIfZqA43nOuHgrkglBvjGBuNVC+wcno0bflA6+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=eQV3tGFz; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=XbgAsHBKZvPZSS34msp8ninxXYxoWbwGju3TTBvMeKU=; b=eQV3tGFzAHqEVT/nJd/xm8E047
-	7Lip9Zx9jMHz34ILn/PC4V7R0/IxnbEldc58K///ZVwdahWMx6URtBaU9gux9rt2GalWd3LtXqawo
-	FvwBw1wayhZLiEOcvnSjA/k81G/wXwXSrS5GEKJV3UxAwEKCUhSqP2vOB+cbVEw8JXYDMNHmldKQu
-	FqV2QbIl9lccy7ON6aoy+Dz8wUrvLJrlvNUZrIw4qs92me3FzrQcLFcZ9IlXc2ri9kNy+iwvYXhx9
-	jMhVeSeDbJOCv0pQ2/lSiTE3OSxeIwTSbQ5nt7QDj7kNpad0bB0TBcvHOxUkgwBmB319azRTb8Vy/
-	DjRWQSqQ==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uJVf9-00000001sER-0Ffe;
-	Mon, 26 May 2025 11:06:35 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 834BE300472; Mon, 26 May 2025 13:06:34 +0200 (CEST)
-Date: Mon, 26 May 2025 13:06:34 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
-	Petr Mladek <pmladek@suse.com>, Miroslav Benes <mbenes@suse.cz>,
-	Joe Lawrence <joe.lawrence@redhat.com>,
-	live-patching@vger.kernel.org, Song Liu <song@kernel.org>,
-	laokz <laokz@foxmail.com>, Jiri Kosina <jikos@kernel.org>,
-	Marcos Paulo de Souza <mpdesouza@suse.com>,
-	Weinan Liu <wnliu@google.com>,
-	Fazla Mehrab <a.mehrab@bytedance.com>,
-	Chen Zhongjin <chenzhongjin@huawei.com>,
-	Puranjay Mohan <puranjay@kernel.org>,
-	Masahiro Yamada <masahiroy@kernel.org>
-Subject: Re: [PATCH v2 42/62] kbuild,x86: Fix module permissions for
- __jump_table and __bug_table
-Message-ID: <20250526110634.GO24938@noisy.programming.kicks-ass.net>
-References: <cover.1746821544.git.jpoimboe@kernel.org>
- <9da1e9f592aadc8fbf48b7429e3fbcea4606a76a.1746821544.git.jpoimboe@kernel.org>
+	s=arc-20240116; t=1748257693; c=relaxed/simple;
+	bh=O+dE09fzj62OmqV+UsjuQLQsX2ktS32WrQkumdnCevU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DBPlSeXBV6b2kNJJynjMwHNWXR2/rNnjmNyk/KpaT1rsCoihrBZ/qyqiaKT3QgvjEMamaWpdFI23JdhtjgHAyUk/XzjNKsZ2Nf8OM5aA0qpvQLsYo4LdPFP2hDkbEtiiGHaKHgnwvmzY+zZR1B3cLiU9a3dljS3dnALbMO4ZC8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OM+KKRCe; arc=none smtp.client-ip=209.85.214.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f196.google.com with SMTP id d9443c01a7336-231f39b1b7aso1804045ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 04:08:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748257691; x=1748862491; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TYrv+P2HDOOtjJG1Ylbuyew/XFq9E/PugmdWiaigIXA=;
+        b=OM+KKRCe3U3GdJussATPtTMASZQrF7Iobyt8JuWS0UFLFfZByPYc0qAuF9aKsTheZf
+         H/ZyiR83rcA4BmbO62wL0biAIZzT1jomjIx911SYWufvObBb3i3iyKqTotiiQ9Eui6I1
+         vHn6jrztJEKotdobeOGGmqDaW/TQRfzUqIJGlsen5NhBXkwfJeFnd4KDiTyRZgNR80oi
+         cjjUlyatyiA8bbtdvQPT8704THnsh9qBKv7Ahq+KDgTZr2j0ctV5YFIIose/aAXMiuWH
+         E+yaYp6CiqnIue6LlZ545WcKl5IySkm8jiL+i4w0J2RM3CRUSLf+XReqUFBuYUtr19AM
+         0tsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748257691; x=1748862491;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TYrv+P2HDOOtjJG1Ylbuyew/XFq9E/PugmdWiaigIXA=;
+        b=AR64b+01bsV7ZuCUyGrLmwWCMr3HSMUsKM77r2krbAhSMK0ZT/x7pVfLNazrggVPza
+         lvaFrn5USjnY18JZw7XNQs8jqf8AJYKjWTgDS56ebq62p/72Izzhb1aQrm93ZQIkR+78
+         vxPVIuQY8XuMMX5AJN2lcmPtIXsQrKj6rSSh0gIGpasB/HE/NI20g2tM/MNaidSL1+eA
+         H2nlhgfNYCT/ap8661ud8lqrtGckhuKlHVHKjTC3CihFZ2+0d3teWNaAJ6oiU5TXbXv2
+         dxDi4rh/ExWky9jpKpDxnMG0UzJ+Ap+J9mmW9KHnyKWIJHPgeosvkLn+YeZfJa7fQUkc
+         Cmgw==
+X-Forwarded-Encrypted: i=1; AJvYcCUWNX3sk2kR59bwcYQMAwmP5LfTJ3fRY0hw0BGagqS7Fgbr4piMVgKtm2K5nJmUND6UkGIgQv1hODJ5USU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHmEYpkVVxvZjlEn3Tgo5eCD/n2IJxF3SN9MIvxTawc/tH8UsH
+	I2f3PNq2cKSSHRsz2J5m1kzNWDhhGLtmJ3EwBxzZ6xgutgv2ktACiqc1NE76W+D5qxjXJTTa
+X-Gm-Gg: ASbGncuMN5SeXfgJ54sIyOzeunTltXhOtXV+mfmrUcaPVmpAMAnB5BMQWGYqUEEj2y7
+	5Ei4MQs2aqaott6TGqKWIYOX//wEaosOq12wbo2SOMHRz0hIavPNjNRPjmKp+yXkz0yky6cIf1Y
+	7LyQ27i135UqTV5Bu311PVLcMagPJ7LZx8QfXCGdJLIUQLkf0yVRof4OG99+cKpvJgCt3kWDfIj
+	FFCoReG2ih8kcABaaHhEvsByqXswbPvYFYXF8Mygb9zSxWJA5/T+6uFFkEn+Tc0Y+4Dhktiyv7u
+	+xCRID0tR26O6d471TlUuhg2BdxX0Q==
+X-Google-Smtp-Source: AGHT+IHq3w0bF9u3FNLf9NfvqS8horvVYf7CrW5lhlByo7h0D4LInhkkAn5Rq1vWblX71HzqOcrmxA==
+X-Received: by 2002:a17:902:db03:b0:223:5525:622f with SMTP id d9443c01a7336-23414f2fca5mr49499585ad.1.1748257691042;
+        Mon, 26 May 2025 04:08:11 -0700 (PDT)
+Received: from user.. ([2001:da8:283:e049::9:6ed3])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23435e7671asm28156875ad.89.2025.05.26.04.08.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 May 2025 04:08:10 -0700 (PDT)
+From: clingfei <clf700383@gmail.com>
+To: elder@kernel.org
+Cc: johan@kernel.org,
+	vireshk@kernel.org,
+	gregkh@linuxfoundation.org,
+	greybus-dev@lists.linaro.org,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	clf700383@gmail.com
+Subject: [PATCH] greybus: Avoid fake flexible array for response data
+Date: Mon, 26 May 2025 19:06:54 +0800
+Message-Id: <20250526110654.3916536-1-clf700383@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9da1e9f592aadc8fbf48b7429e3fbcea4606a76a.1746821544.git.jpoimboe@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Fri, May 09, 2025 at 01:17:06PM -0700, Josh Poimboeuf wrote:
-> An upcoming patch will add the SHF_MERGE flag to x86 __jump_table and
-> __bug_table so their entry sizes can be defined in inline asm.
-> 
-> However, those sections have SHF_WRITE, which the Clang linker (lld)
-> explicitly forbids combining with SHF_MERGE.
-> 
-> Those sections are modified at runtime and must remain writable.  While
-> SHF_WRITE is ignored by vmlinux, it's still needed for modules.
-> 
-> To work around the linker interference, remove SHF_WRITE during
-> compilation and restore it after linking the module.
+As https://lore.kernel.org/all/20240304211940.it.083-kees@kernel.org/
+pointed out, to enforce the 0-sized destinations, the remaining 0-sized
+destinations need to be handled. Thus the struct
+gb_control_get_manifest_response and struct gb_i2c_transfer_response
+are removed.
 
-*groan*
+Signed-off-by: clingfei <clf700383@gmail.com>
+---
+ drivers/staging/greybus/i2c.c             | 9 ++++-----
+ include/linux/greybus/greybus_protocols.h | 9 ---------
+ 2 files changed, 4 insertions(+), 14 deletions(-)
 
-This and the following patches marking a whole bunch of sections M,
-seems to suggest you're going to rely on sh_entsize actually working.
+diff --git a/drivers/staging/greybus/i2c.c b/drivers/staging/greybus/i2c.c
+index 14f1ff6d448c..2857c2834206 100644
+--- a/drivers/staging/greybus/i2c.c
++++ b/drivers/staging/greybus/i2c.c
+@@ -144,15 +144,14 @@ gb_i2c_operation_create(struct gb_connection *connection,
+ }
+ 
+ static void gb_i2c_decode_response(struct i2c_msg *msgs, u32 msg_count,
+-				   struct gb_i2c_transfer_response *response)
++				   u8 *data)
+ {
+ 	struct i2c_msg *msg = msgs;
+-	u8 *data;
+ 	u32 i;
+ 
+-	if (!response)
++	if (!data)
+ 		return;
+-	data = response->data;
++
+ 	for (i = 0; i < msg_count; i++) {
+ 		if (msg->flags & I2C_M_RD) {
+ 			memcpy(msg->buf, data, msg->len);
+@@ -188,7 +187,7 @@ static int gb_i2c_transfer_operation(struct gb_i2c_device *gb_i2c_dev,
+ 
+ 	ret = gb_operation_request_send_sync(operation);
+ 	if (!ret) {
+-		struct gb_i2c_transfer_response *response;
++		u8 *response;
+ 
+ 		response = operation->response->payload;
+ 		gb_i2c_decode_response(msgs, msg_count, response);
+diff --git a/include/linux/greybus/greybus_protocols.h b/include/linux/greybus/greybus_protocols.h
+index 820134b0105c..14395f9300d6 100644
+--- a/include/linux/greybus/greybus_protocols.h
++++ b/include/linux/greybus/greybus_protocols.h
+@@ -110,11 +110,6 @@ struct gb_control_get_manifest_size_response {
+ 	__le16			size;
+ } __packed;
+ 
+-/* Control protocol manifest get request has no payload */
+-struct gb_control_get_manifest_response {
+-	__u8			data[0];
+-} __packed;
+-
+ /* Control protocol [dis]connected request */
+ struct gb_control_connected_request {
+ 	__le16			cport_id;
+@@ -678,10 +673,6 @@ struct gb_i2c_transfer_request {
+ 	__le16				op_count;
+ 	struct gb_i2c_transfer_op	ops[];		/* op_count of these */
+ } __packed;
+-struct gb_i2c_transfer_response {
+-	__u8				data[0];	/* inbound data */
+-} __packed;
+-
+ 
+ /* GPIO */
+ 
+-- 
+2.34.1
 
-There was an ld.lld bug, and IIRC you need to enforce llvm-20 or later
-if you want this to be so.
 
