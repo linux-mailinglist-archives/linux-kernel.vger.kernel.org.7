@@ -1,215 +1,183 @@
-Return-Path: <linux-kernel+bounces-662828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-662830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB3DDAC4017
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 15:14:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4918DAC401B
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 15:15:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E44E1896CEA
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 13:14:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C02621898BA5
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 13:15:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEB1F202980;
-	Mon, 26 May 2025 13:14:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30FAC204F9B;
+	Mon, 26 May 2025 13:15:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QKuRH+LY"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="lOHsH8r0"
+Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61E2138FA3
-	for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 13:14:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0CE5202F8D
+	for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 13:15:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748265263; cv=none; b=MVXl2DuP1w/6jS9DcBYf9a8mR8lQdFHhSXNADyGknXgybPQeIw3OASCli2pxY2UQry0sdQT8W8WFfYYT3xTHbg0n+RaueiVIx7yRi0PG/Psuglqz5RRBPcp3H3PT6ZSNDjYaysZ6jDYJCe2ViEsdwNNGZeXAwdxnHa4HIRuzon8=
+	t=1748265316; cv=none; b=r3phSsoC96KmNBfhgdkkOkH7w7zVjFGCTOhVZiv+3lEr3XE2V8JTaL8Ennkkn8QRwSdnRkdaHxGuv9KuGAv1s2e+2x+u5M8u53hktMTvy08yciybMFIoPcvYc9FoZIvHuvyth0N3Q65hbPlu9o0x5i3sVvfXqCPl2+DcKn/L4F8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748265263; c=relaxed/simple;
-	bh=bO/0Xaesh46tkH/6EtZkwZJC/Ke1U0YJEB9UHrN+Dm8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=D1q7IltMLS0f3kuYc6tpElYQVS+mnkmvvgBsbokJKT3dLgpq7Xa+iMYpelEFZkAyJMrxd8Lime78lYqaxOXEWaAACuM3pEirHmQsXN2GW2cu6zbrRNEmwrCEzEy/az1W5BQAc7SQmVbuSSp3PWYi/hZLCNv+dR0loKCGvL7y5I0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QKuRH+LY; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-601dfef6a8dso3703373a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 06:14:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1748265260; x=1748870060; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=w4+k+Nu4YkKy6LiE5cuySMYYEE0NwgP2DNr9A1G8YXc=;
-        b=QKuRH+LY1NOE1YAGOwll4HD0duTKyGYI7G/DN1kwjJmzGywhQiyqqv4gt9aM3LEVaa
-         EZ/IFOBh0HiDNQuVnVCdcejuu4xqnQ0U0E0iF17vdsE5oroGskHVbv1dbPGY0NIKqAvW
-         vdN5KzkSbLCDxkGXTIRu7lm0YXkJL8lSDFzOWqtz4WJX8azVWzWKaRssutWvtzkuYbvc
-         bAxOjrIW+Jz3v4fHI4HaFr5IFm9T8MAcYJPs9TsSmu9YeI5LQZXqHw6OYdnDNNIxd5o4
-         8AdlL9DNGEY0Q+iGYiYTpObkMIyswm7kjZLGfKU1Pu/GLqmjqC/h9NNAD4FSOTptBrJd
-         ISUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748265260; x=1748870060;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=w4+k+Nu4YkKy6LiE5cuySMYYEE0NwgP2DNr9A1G8YXc=;
-        b=j0Ul8Usnefv8ON1M9bpCvJ7pwiGuAyCoRT9SiKikQIXxl6v5GrWO46glFllNHzh3Ax
-         chJpAvZcrvb9Mv9f06g6e9i06+Y+kgmQx2iT45UH8cSnb2v18Alaa4K4CXzu1qYVNj/9
-         T2TX0S1wTcnHTVa7HH44Wz96SsUjjnb55NNvIOyiBk77uxS3fuiI+IGW+9qowu1SZrBS
-         JQHNTAco5lOhq4AMBkmImZ2picb0b6BPATyMrEQD1alhmTKTo49p5jSJ5mt+i6RiazkA
-         qy4XevbS4Npty3qUX+Wr/tIGz/1rMXKAurxUeYdqKL62uuwJfR0wOnYdNQnW7zs8JfVu
-         qEQA==
-X-Forwarded-Encrypted: i=1; AJvYcCVvV6WqIZi0atKz0MQmjuPjUe3Rdc1uHxbFl35i+80ER0/9CS/ApIqQKCXIPWlmyTIh/EL13BXl4oQOgOQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxU5uXljxqvxgKXTr4auhl0aEEg04OfZvxuQ453DzK8IT6yVPib
-	cESFro+OyDpmD+4F9cD7NS6SM96m/+f2CdOwCFcRTQbY5XJjHCsERBYSFqySaA/uQ4k1hOOCvpT
-	B0Z2Xdj8vRGbvq0h8e4Brsq6borQHC/RM+qCPQtUy
-X-Gm-Gg: ASbGncuC+0nBeFz5ixwpQt6EQfDm7zjKq5ZbXd52ik5bwEI32qzH65MEbOXNiwxvEym
-	sz2aZnHhfcezXsM8GKKVGBPjAI3oqISM1UYnmvqRu2mHRFCFzl41HQA43du5DQSHJ9mIh1sF+x5
-	gOBW3CbPNkUseWczxfsduwfWcJytBp7l2wdAK6Dse/i2JzPxhIcsPocIe1Dt7Dgp75BKJ2EthrE
-	aBTg3BaJyTT
-X-Google-Smtp-Source: AGHT+IGSDYm4oUBrMvAWr4qV6JEwgtkxAoXA09ViNidu+7oqcKIQevQbpQyCq8UT33Rf3UPLw9iojM9JPNyO0bGNSiY=
-X-Received: by 2002:a05:6402:5cb:b0:5f8:36b2:dc1a with SMTP id
- 4fb4d7f45d1cf-602d9dfb022mr6373984a12.16.1748265259311; Mon, 26 May 2025
- 06:14:19 -0700 (PDT)
+	s=arc-20240116; t=1748265316; c=relaxed/simple;
+	bh=5cEag7n/qT/o4g/Ip4j9kwDbg2D33oMxgHBLz+BmT7g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=R6qcfVMQQdEL76wflHlW6vw6fh5myZThT5TEpvlLHJF6VeoZCV5cF3Vo6Q8Zdwjn7QnTDo3imbD6a/wYM4rUWsheJ5CfMGMHqlnpoV0St5IRFb+bNOpDzWKt+5y+QPn63gU4ewbcDfnFRPwzuNvZoRzH6B0ac/6e9cF9ozTV10I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=lOHsH8r0; arc=none smtp.client-ip=95.215.58.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <16ab4d89-89ea-464b-812a-172f971c4627@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1748265310;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CfDsj/vggLw1N/iYXFLN6UBaW5wDtfTF6K8viv4sf0Y=;
+	b=lOHsH8r0rAxYasqquR5evScp3j0sdXz2qMSwPB1laENDgaNWr6cDRiUG0m8Y8i7rI/Gqft
+	Lr2tcMj0UsGgcM/29lHTUHt4sGnMver8GCjndfw1ZIYysb67b14Cm9POvw6nFFjt48RJt4
+	G/NKSms/TR+GZP1W2K3gpWI8x/Dtf04=
+Date: Mon, 26 May 2025 21:14:58 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1747349530.git.babu.moger@amd.com> <e7e8f489ef148a4dcd5837d71c83efad47b5b7c3.1747349530.git.babu.moger@amd.com>
- <dd195d60-3e40-42be-88e5-7f3bbbba63ce@intel.com> <SJ1PR11MB6083C5179F98E3873CA34C35FC99A@SJ1PR11MB6083.namprd11.prod.outlook.com>
- <aDDjs4PZxeouNJr0@agluck-desk3>
-In-Reply-To: <aDDjs4PZxeouNJr0@agluck-desk3>
-From: Peter Newman <peternewman@google.com>
-Date: Mon, 26 May 2025 15:14:08 +0200
-X-Gm-Features: AX0GCFs_DCKZgy9xuJ0w8LNwHoWYFzGA3d96dNjxjpA4WAsm7kDE__eyTTN92UE
-Message-ID: <CALPaoCj7FBv_vfDp+4tgqo4p8T7Eov_Ys+CQRoAX6u43a4OTDQ@mail.gmail.com>
-Subject: Re: [PATCH v13 11/27] x86/resctrl: Implement resctrl_arch_config_cntr()
- to assign a counter with ABMC
-To: "Luck, Tony" <tony.luck@intel.com>
-Cc: "Chatre, Reinette" <reinette.chatre@intel.com>, Babu Moger <babu.moger@amd.com>, 
-	"corbet@lwn.net" <corbet@lwn.net>, "tglx@linutronix.de" <tglx@linutronix.de>, 
-	"mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>, 
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "james.morse@arm.com" <james.morse@arm.com>, 
-	"dave.martin@arm.com" <dave.martin@arm.com>, "fenghuay@nvidia.com" <fenghuay@nvidia.com>, 
-	"x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>, 
-	"paulmck@kernel.org" <paulmck@kernel.org>, 
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, "thuth@redhat.com" <thuth@redhat.com>, 
-	"rostedt@goodmis.org" <rostedt@goodmis.org>, "ardb@kernel.org" <ardb@kernel.org>, 
-	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, 
-	"daniel.sneddon@linux.intel.com" <daniel.sneddon@linux.intel.com>, 
-	"jpoimboe@kernel.org" <jpoimboe@kernel.org>, 
-	"alexandre.chartre@oracle.com" <alexandre.chartre@oracle.com>, 
-	"pawan.kumar.gupta@linux.intel.com" <pawan.kumar.gupta@linux.intel.com>, 
-	"thomas.lendacky@amd.com" <thomas.lendacky@amd.com>, "perry.yuan@amd.com" <perry.yuan@amd.com>, 
-	"seanjc@google.com" <seanjc@google.com>, "Huang, Kai" <kai.huang@intel.com>, 
-	"Li, Xiaoyao" <xiaoyao.li@intel.com>, 
-	"kan.liang@linux.intel.com" <kan.liang@linux.intel.com>, "Li, Xin3" <xin3.li@intel.com>, 
-	"ebiggers@google.com" <ebiggers@google.com>, "xin@zytor.com" <xin@zytor.com>, 
-	"Mehta, Sohil" <sohil.mehta@intel.com>, 
-	"andrew.cooper3@citrix.com" <andrew.cooper3@citrix.com>, 
-	"mario.limonciello@amd.com" <mario.limonciello@amd.com>, 
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"Wieczor-Retman, Maciej" <maciej.wieczor-retman@intel.com>, "Eranian, Stephane" <eranian@google.com>, 
-	"Xiaojian.Du@amd.com" <Xiaojian.Du@amd.com>, "gautham.shenoy@amd.com" <gautham.shenoy@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 4/7] sched/fair: Take care of group/affinity/sched_class
+ change for throttled task
+To: Aaron Lu <ziqianlu@bytedance.com>
+Cc: Valentin Schneider <vschneid@redhat.com>, Ben Segall
+ <bsegall@google.com>, K Prateek Nayak <kprateek.nayak@amd.com>,
+ Peter Zijlstra <peterz@infradead.org>, Josh Don <joshdon@google.com>,
+ Ingo Molnar <mingo@redhat.com>, Vincent Guittot
+ <vincent.guittot@linaro.org>, Xi Wang <xii@google.com>,
+ linux-kernel@vger.kernel.org, Juri Lelli <juri.lelli@redhat.com>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>,
+ Chuyi Zhou <zhouchuyi@bytedance.com>, Jan Kiszka <jan.kiszka@siemens.com>,
+ Florian Bezdeka <florian.bezdeka@siemens.com>
+References: <20250520104110.3673059-1-ziqianlu@bytedance.com>
+ <20250520104110.3673059-5-ziqianlu@bytedance.com>
+ <63237b23-ae10-45f9-abdd-8ea4adb4d15e@linux.dev>
+ <20250523075640.GA1168183@bytedance>
+ <ad8197f1-548d-4fad-abd0-e8f6e9dbe12a@linux.dev>
+ <20250523094106.GA1210419@bytedance>
+ <a0d4f499-1222-45da-a3ea-e9d445b81c87@linux.dev>
+ <20250523115921.GB1240558@bytedance>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Chengming Zhou <chengming.zhou@linux.dev>
+In-Reply-To: <20250523115921.GB1240558@bytedance>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-Hi Tony,
+On 2025/5/23 19:59, Aaron Lu wrote:
+> On Fri, May 23, 2025 at 05:53:55PM +0800, Chengming Zhou wrote:
+>> On 2025/5/23 17:42, Aaron Lu wrote:
+>>> On Fri, May 23, 2025 at 05:13:35PM +0800, Chengming Zhou wrote:
+>>>> On 2025/5/23 15:56, Aaron Lu wrote:
+>>>>> On Fri, May 23, 2025 at 10:43:53AM +0800, Chengming Zhou wrote:
+>>>>>> On 2025/5/20 18:41, Aaron Lu wrote:
+>>>>>>> On task group change, for tasks whose on_rq equals to TASK_ON_RQ_QUEUED,
+>>>>>>> core will dequeue it and then requeued it.
+>>>>>>>
+>>>>>>> The throttled task is still considered as queued by core because p->on_rq
+>>>>>>> is still set so core will dequeue it, but since the task is already
+>>>>>>> dequeued on throttle in fair, handle this case properly.
+>>>>>>>
+>>>>>>> Affinity and sched class change is similar.
+>>>>>>
+>>>>>> How about setting p->on_rq to 0 when throttled? which is the fact that
+>>>>>> the task is not on cfs queue anymore, does this method cause any problem?
+>>>>>>
+>>>>>
+>>>>> On task group change/affinity change etc. if the throttled task is
+>>>>> regarded as !on_rq, then it will miss the chance to be enqueued to the
+>>>>> new(and correct) cfs_rqs, instead, it will be enqueued back to its
+>>>>> original cfs_rq on unthrottle which breaks affinity or task group
+>>>>
+>>>> Yeah, this is indeed a problem, I was thinking to delete the throttled task
+>>>> from the cfs_rq limbo list, then add it to another cfs_rq limbo list or cfs_rq
+>>>> runnable tree based on the new cfs_rq's throttle status.
+>>>
+>>> Only work when the task is still handled by fair :)
+>>>
+>>>>
+>>>> But it's much complex compared with your current method.
+>>>>
+>>>>> settings. We may be able to do something in tg_unthrottle_up() to take
+>>>>> special care of these situations, but it seems a lot of headaches.
+>>>>>
+>>>>> Also, for task group change, if the new task group does not have throttle
+>>>>> setting, that throttled task should be allowed to run immediately instead
+>>>>> of waiting for its old cfs_rq's unthrottle event. Similar is true when
+>>>>> this throttled task changed its sched class, like from fair to rt.
+>>>>>
+>>>>> Makes sense?
+>>>>
+>>>> Ok, the another problem of the current method I can think of is the PELT maintenance,
+>>>> we skip the actual dequeue_task_fair() process, which includes PELT detach, we just
+>>>> delete it from the cfs_rq limbo list, so it can result in PELT maintenance error.
+>>>>
+>>>
+>>> There are corresponding callbacks that handle this, e.g. for task group
+>>> change, there is task_change_group_fair() that handles PELT detach; for
+>>> affinity change, there is migrate_task_rq_fair() does that and for sched
+>>> class change, there is switched_from/to() does that.
+>>>
+>>> Or do I miss anything?
+>>
+>> migrate_task_rq_fair() only do it when !task_on_rq_migrating(p), which is wakeup migrate,
+>> because we already do detach in dequeue_task_fair() for on_rq task migration...
+>> You can see the DO_DETACH flag in update_load_avg() called from dequeue_entity().
+>>
+> 
+> Understood, thanks for catching this!
+> 
+> So the code was initially developed on top of v5.15 and there is a
+> detach in migrate_task_rq_fair():
+> 
+> 	if (p->on_rq == TASK_ON_RQ_MIGRATING) {
+> 		/*
+> 		 * In case of TASK_ON_RQ_MIGRATING we in fact hold the 'old'
+> 		 * rq->lock and can modify state directly.
+> 		 */
+> 		lockdep_assert_rq_held(task_rq(p));
+> 		detach_entity_cfs_rq(&p->se);
+> 	}
+> 
+> But looks like it's gone now by commit e1f078f50478("sched/fair: Combine
+> detach into dequeue when migrating task") and I failed to notice this
+> detail...
 
-On Fri, May 23, 2025 at 11:08=E2=80=AFPM Luck, Tony <tony.luck@intel.com> w=
-rote:
->
-> On Thu, May 22, 2025 at 10:16:16PM +0000, Luck, Tony wrote:
-> > > It looks to me as though there are a couple of changes in the telemet=
-ry work
-> > > that would benefit this work. https://lore.kernel.org/lkml/2025052122=
-5049.132551-2-tony.luck@intel.com/
-> > > switches the monitor events to be maintained in an array indexed by e=
-vent ID, eliminating the
-> > > need for searching the evt_list that this work does in a couple of pl=
-aces. Also note the handy
-> > > new for_each_mbm_event() helper (https://lore.kernel.org/lkml/2025052=
-1225049.132551-5-tony.luck@intel.com/).
-> >
-> > Yesterday I ran through the exercise of rebasing my AET patches on top =
-of these
-> > ABMC patches in order to check whether the ABMC patches painted resctrl
-> > into some corner that would be hard to get back out of.
-> >
-> > Good news: they don't.
-> >
-> > There was a bunch of manual patching to make the first four patches fit=
- on top
-> > of the ABMC code, but I also noticed a few places where things were sim=
-pler
-> > after combining the two series.
-> >
-> > Maybe a good path forward would be to take those first four patches fro=
-m
-> > my AET series and then build ABMC on top of those.
->
-> As an encouragement to try this direction, I took my four patches
-> on top of tip x86/cache and then applied Babu's ABMC series.
+Yeah..
 
-I did the same thing last week, except in the other order, so I
-switched to your changes to test.
+> 
+> Anyway, the task is already dequeued without TASK_ON_RQ_MIGRATING being
+> set when throttled and it can't be dequeued again, so perhaps something
+> like below could cure this situation?(just to illustrate the idea, not
+> even compile tested)
 
->
-> Changes to Babu's code:
-> 1) Adapt where needed for removal of evt_list. Use event array instead.
-> 2) Use for_each_mbm_event() [Maybe didn't get all places?]
-> 3) Bring the s/evt_val/evt_cfg/ fix into patch 20 from 21
-> 4) Fix fir tree declaration for resctrl_process_assign()
->
-> I don't have an AMD system to check if the ABMC parts still work. But
-> it does pass the resctrl self tests, so legacy isn't broken.
->
-> Patches in the "my_mbm_plus_babu_abmc" branch of my kernel.org
-> repo: git://git.kernel.org/pub/scm/linux/kernel/git/aegl/linux.git
+Ok, seems reasonable to me!
 
-Thanks for applying my suggestion[1] about the array entry sizes, but
-you needed one more dereference:
-
-diff --git a/arch/x86/kernel/cpu/resctrl/core.c
-b/arch/x86/kernel/cpu/resctrl/core.c
-index 1db6a61e27746..0c27e0a5a7b96 100644
---- a/arch/x86/kernel/cpu/resctrl/core.c
-+++ b/arch/x86/kernel/cpu/resctrl/core.c
-@@ -399,7 +399,7 @@ static int domain_setup_ctrlval(struct
-rdt_resource *r, struct rdt_ctrl_domain *
-  */
- static int arch_domain_mbm_alloc(u32 num_rmid, struct
-rdt_hw_mon_domain *hw_dom)
- {
--       size_t tsize =3D sizeof(hw_dom->arch_mbm_states[0]);
-+       size_t tsize =3D sizeof(*hw_dom->arch_mbm_states[0]);
-        enum resctrl_event_id evt;
-        int idx;
-
-diff --git a/fs/resctrl/rdtgroup.c b/fs/resctrl/rdtgroup.c
-index 098ff002d2232..44ec33cb165f7 100644
---- a/fs/resctrl/rdtgroup.c
-+++ b/fs/resctrl/rdtgroup.c
-@@ -4819,7 +4823,7 @@ void resctrl_offline_mon_domain(struct
-rdt_resource *r, struct rdt_mon_domain *d
- static int domain_setup_mon_state(struct rdt_resource *r, struct
-rdt_mon_domain *d)
- {
-        u32 idx_limit =3D resctrl_arch_system_num_rmid_idx();
--       size_t tsize =3D sizeof(d->mbm_states[0]);
-+       size_t tsize =3D sizeof(*d->mbm_states[0]);
-        enum resctrl_event_id evt;
-        int idx;
-
-
-You should be able to repro an array overrun without ABMC, and a page
-fault is likely if the system implements a lot of RMIDs. The AMD EPYC
-9B45 I tested on implements 4096 RMIDs.
-
-Thanks,
--Peter
-
-
-[1] https://lore.kernel.org/lkml/CALPaoCj8yfzJ=3D5CkxTPQXc0-WRWpu0xKRX8v4FA=
-WFGQKtXtMUw@mail.gmail.com/
+> 
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 89afa472299b7..dc2e9a6bf3fd7 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -5868,6 +5868,9 @@ static void dequeue_throttled_task(struct task_struct *p, int flags)
+> 	WARN_ON_ONCE(flags & DEQUEUE_SLEEP);
+> 
+> 	list_del_init(&p->throttle_node);
+> +
+> +       if (task_on_rq_migrating(p))
+> +               detach_task_cfs_rq(p);
+> }
+> 
+> 
 
