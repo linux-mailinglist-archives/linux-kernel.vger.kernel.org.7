@@ -1,158 +1,183 @@
-Return-Path: <linux-kernel+bounces-662796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-662784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 301F2AC3FB5
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 14:54:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E56EAC3F8A
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 14:52:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF8C43B9D2B
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 12:53:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 868291770AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 12:52:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D10F82144AE;
-	Mon, 26 May 2025 12:52:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3D06202F8E;
+	Mon, 26 May 2025 12:51:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="as1FBl7E"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cnFqwu23"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55DDF20B803;
-	Mon, 26 May 2025 12:52:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74D63202987
+	for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 12:51:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748263925; cv=none; b=ZS8EN0ZqJqW1HKDDBs3/NZPWB0xvfY4moFLBmvZZbW9gSPVX8XxoENw9/ZIGfsJvgnP64gw/9REaWOPYKZuQhAazZWbP+UEwdq7O3QpuYEfYwgkdauXUPFdPBmTx0MFkRWlmB0kVmqmVUZ8qNR1LuNSkXNUbLN6xR/YMRd3rpeI=
+	t=1748263912; cv=none; b=i5OidRz3F8uFaE3nNU9aVeCMeY5TfMCBNDmGv3IIG0SNQJLas2mM8kCWJC0IectPr1ZUukPhTV9vzpASligVy6yoiSGME7wCc4/nG7Bs6QkdynChMa8AxjD9K+W5nlpY9QJJstHX1OJD+DV1XXD71B0HHozfb1e2Nn9klauD9no=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748263925; c=relaxed/simple;
-	bh=tBP5oLb8ACuC7GOCZhYJUMu3KBz3kbJIztCUV8vrNM8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=V7HAI4lw+J8/prOyro4tva4C4pqGy3EMzvZPnvAwcbNdBkYWUhAbZLIeXgf5jUahRLBpWpZymfsY7KQxBXRs5E+H324ikjmm9d645gmHBLHbs1IcJfcEj9xRY2J3nwyuooxhLNCL/Nqb3FYjSfTlDXoRyNhoqX/oHm9A2Jwe+qc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=as1FBl7E; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1748263921;
-	bh=tBP5oLb8ACuC7GOCZhYJUMu3KBz3kbJIztCUV8vrNM8=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=as1FBl7EVqCmY2+bLxgwRuqfEG1HTD0bbcI641A+tx+BiZihlwzX2g5AASCFMG6H4
-	 d7F8PKFvdSI9Rvwv1HiXuQ2uM3DmzPqn5zRMUJG4A6YeniY5Oar6UIxsLN8D8+vV4d
-	 IOjiV9P5dID1eXmj3/DRWWCAnfkMDPRxu+aV3MEsZG7ddfICoLWNh5CvZC33dPBsYd
-	 gOcLMmQpsmug064TXKLt/QjSNQ2bxJ5UbyDrhu5hfVEAPqyizrs2tWukOtw5BfyuZH
-	 lKyWl8Pf5kYOtmTu1wnKv9x8B3Vqu8jIL9vruFBx5hAUUlPVrmoLh1QwRc9mYQ+TFo
-	 GQUaf2WYtg7Eg==
-Received: from localhost (unknown [82.76.59.134])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with UTF8SMTPSA id 66BB617E36C2;
-	Mon, 26 May 2025 14:52:01 +0200 (CEST)
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Date: Mon, 26 May 2025 15:51:34 +0300
-Subject: [PATCH 11/11] HID: playstation: Support DualSense audio jack event
- reporting
+	s=arc-20240116; t=1748263912; c=relaxed/simple;
+	bh=xGtgOVGl/7+FDUtfK4xwWE1CZC1f6N33ajHG2jCeSsU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=orj/MBSiGVVRlMIuZn1gXf8dP6MculZ1dvNhAeiPtYJ8OFEYIMxmglXuVsUP/1zKYXPdlVB3BykhSp5Zgbo3XMXzCLFEftJBdSm+3YxJdAJFKBXnOP1x57JPlDxodEM6799xGawIBOOrZTE2QlOdjYleP4aVrKm72iYQ7j2r8B4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cnFqwu23; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1748263909;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5h5iun9WeuvV4gJlQiA1mE7zK3XNw6p2G6AruARxVOU=;
+	b=cnFqwu23iW0paQrGc/xvzZZDMwyaHqFd3ju6QonvMBD/D/y6klkb3H7AoQ9+aMlR7rrV8+
+	yhbzjAsBzy98PgDRaG4+ScufqwV59nFF4TzEnSuHdmQWEC6J1ZN40sa2hS+cXvj/d1r4w3
+	6TMr9O3y++k2xuoSsre0htBYJ15lRbk=
+Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
+ [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-210-dKitLjHiNyCUZM204QDmjA-1; Mon, 26 May 2025 08:51:48 -0400
+X-MC-Unique: dKitLjHiNyCUZM204QDmjA-1
+X-Mimecast-MFC-AGG-ID: dKitLjHiNyCUZM204QDmjA_1748263907
+Received: by mail-lf1-f72.google.com with SMTP id 2adb3069b0e04-55324f4e56dso274746e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 05:51:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748263906; x=1748868706;
+        h=content-transfer-encoding:mime-version:message-id:date:references
+         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5h5iun9WeuvV4gJlQiA1mE7zK3XNw6p2G6AruARxVOU=;
+        b=AyCGE6qRcUOYz7Or0osOGTgsK40TNiVt4pnJlgIN2CFaFjq5XBkXxdLoh9H4MyzSyc
+         Mgdq+QiNEiPK1Fy0LEWol+Ybm+EpI1DsTBbwvngm1Ir6zGrazmAYi3mmImtIOwCoxuaJ
+         52V2zzJq2SuW3lVqXQkb3E67WCQF4bHxb34yaFNRea7mEHYsIHnVoPMm2mYp8s/XPeqZ
+         /AlqgSIMeqNntcOhq+x+9FM+uumQLDeowWp/T2ayde95vHhQfcOpcJSzmtOk6XREKe2r
+         aqGAqRZ16RuTwIluEM4gvqwcrLileGMtBy2r4YUHRj1gL+i8UA/XMWu5O5tevDXKG/5R
+         pA+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV3ANhfJSsIL8bBMHk1OGrIEkCst2Y2ZTjGO05S/IV0s5HU3nc4qftqw0dn81YpGksuPSI20L5fl3v5gu8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxt/0Pp2MZMfOsV+VXRAxF8lmXjAEEpFr9V59QIp/hKy68rxvh5
+	Mtr4pfjjsDQ2J7EvBVbAZKLDgz3AAy0vGks/HM2fPfmWn4JWI2hl3+qn4CYkiIZ04KrdaiR6RJH
+	ZEIAsqDGNmF9q5zuBVbwwtr9FEeTnjy/QfTqLJorT1Y/8OgOOPpzOaelw0R66BaFfnzGeRgNoww
+	==
+X-Gm-Gg: ASbGncvACnQvfE8mXNVd6cXX6YLi1AMhcpVRl4NycS/jiIhJ4WU4nyhoYbT3l9Zue/A
+	5P+fOaQm8zMIKJrU0KUK5I+Fb9mTqrJMjXAVjmScDFowH3vAe+cJpkpELE8rAKxHqmTvpYXeVzr
+	kxOn3OY4ab4oSKdlG4dwjajJTDujjmFT0/2zWLLe7wH+AiWdb17eKdg9re9ef94FBbMjJFYCDxU
+	wOGNste2cmLEeUzqoQSBXfgLiRlO1ce9zhR3Ut9wfDWVaUKB3aQ47NFfS9FcewLWNEzjOVhH7YO
+	U0FP439V
+X-Received: by 2002:a05:6512:4147:b0:553:25e9:7f3a with SMTP id 2adb3069b0e04-55325e97fbdmr160067e87.36.1748263906262;
+        Mon, 26 May 2025 05:51:46 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEbUYYwfzZb+OGN39N2NMQpTC1fcBTwawJZeg/s6ljgk9Apq9BdD2PbfjdkZ+T1CNXKmlehQQ==
+X-Received: by 2002:a05:6512:4147:b0:553:25e9:7f3a with SMTP id 2adb3069b0e04-55325e97fbdmr160062e87.36.1748263905761;
+        Mon, 26 May 2025 05:51:45 -0700 (PDT)
+Received: from alrua-x1.borgediget.toke.dk ([2a0c:4d80:42:443::2])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-550e702f1desm5129402e87.208.2025.05.26.05.51.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 May 2025 05:51:45 -0700 (PDT)
+Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
+	id 427701AA3F2A; Mon, 26 May 2025 14:51:44 +0200 (CEST)
+From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
+To: Mina Almasry <almasrymina@google.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Cc: Jesper Dangaard Brouer <hawk@kernel.org>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+ <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
+ <horms@kernel.org>, Shuah Khan <shuah@kernel.org>, Ilias Apalodimas
+ <ilias.apalodimas@linaro.org>, Mina Almasry <almasrymina@google.com>
+Subject: Re: [PATCH RFC net-next v2] page_pool: import Jesper's page_pool
+ benchmark
+In-Reply-To: <20250525034354.258247-1-almasrymina@google.com>
+References: <20250525034354.258247-1-almasrymina@google.com>
+X-Clacks-Overhead: GNU Terry Pratchett
+Date: Mon, 26 May 2025 14:51:44 +0200
+Message-ID: <87iklna61r.fsf@toke.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250526-dualsense-hid-jack-v1-11-a65fee4a60cc@collabora.com>
-References: <20250526-dualsense-hid-jack-v1-0-a65fee4a60cc@collabora.com>
-In-Reply-To: <20250526-dualsense-hid-jack-v1-0-a65fee4a60cc@collabora.com>
-To: Roderick Colenbrander <roderick.colenbrander@sony.com>, 
- Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>, 
- Henrik Rydberg <rydberg@bitmath.org>
-Cc: kernel@collabora.com, linux-input@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-The DualSense controller complies with v1.0 of the USB Audio Class spec
-(UAC1), hence it cannot advertise any jack detection capability.
+Mina Almasry <almasrymina@google.com> writes:
 
-However, this feature can be implemented in the generic USB audio driver
-via quirks, i.e. by configuring an input handler to receive hotplug
-events from the HID driver.
+> From: Jesper Dangaard Brouer <hawk@kernel.org>
+>
+> We frequently consult with Jesper's out-of-tree page_pool benchmark to
+> evaluate page_pool changes.
+>
+> Import the benchmark into the upstream linux kernel tree so that (a)
+> we're all running the same version, (b) pave the way for shared
+> improvements, and (c) maybe one day integrate it with nipa, if possible.
+>
+> Import bench_page_pool_simple from commit 35b1716d0c30 ("Add
+> page_bench06_walk_all"), from this repository:
+> https://github.com/netoptimizer/prototype-kernel.git
+>
+> Changes done during upstreaming:
+> - Fix checkpatch issues.
+> - Remove the tasklet logic not needed.
+> - Move under tools/testing
+> - Create ksft for the benchmark.
+> - Changed slightly how the benchmark gets build. Out of tree, time_bench
+>   is built as an independent .ko. Here it is included in
+>   bench_page_pool.ko
+>
+> Steps to run:
+>
+> ```
+> mkdir -p /tmp/run-pp-bench
+> make -C ./tools/testing/selftests/net/bench
+> make -C ./tools/testing/selftests/net/bench install INSTALL_PATH=3D/tmp/r=
+un-pp-bench
+> rsync --delete -avz --progress /tmp/run-pp-bench mina@$SERVER:~/
+> ssh mina@$SERVER << EOF
+>   cd ~/run-pp-bench && sudo ./test_bench_page_pool.sh
+> EOF
+> ```
+>
+> Output:
+>
+> ```
+> (benchmrk dmesg logs)
+>
+> Fast path results:
+> no-softirq-page_pool01 Per elem: 11 cycles(tsc) 4.368 ns
+>
+> ptr_ring results:
+> no-softirq-page_pool02 Per elem: 527 cycles(tsc) 195.187 ns
+>
+> slow path results:
+> no-softirq-page_pool03 Per elem: 549 cycles(tsc) 203.466 ns
+> ```
+>
+> Cc: Jesper Dangaard Brouer <hawk@kernel.org>
+> Cc: Ilias Apalodimas <ilias.apalodimas@linaro.org>
+> Cc: Jakub Kicinski <kuba@kernel.org>
+> Cc: Toke H=C3=B8iland-J=C3=B8rgensen <toke@toke.dk>
+>
+> Signed-off-by: Mina Almasry <almasrymina@google.com>
 
-Register a dedicated input device for the audio jack and use it to
-report all headphone and headset mic insert events.
+Back when you posted the first RFC, Jesper and I chatted about ways to
+avoid the ugly "load module and read the output from dmesg" interface to
+the test.
 
-Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
----
- drivers/hid/hid-playstation.c | 33 +++++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+One idea we came up with was to make the module include only the "inner"
+functions for the benchmark, and expose those to BPF as kfuncs. Then the
+test runner can be a BPF program that runs the tests, collects the data
+and passes it to userspace via maps or a ringbuffer or something. That's
+a nicer and more customisable interface than the printk output. And if
+they're small enough, maybe we could even include the functions into the
+page_pool code itself, instead of in a separate benchmark module?
 
-diff --git a/drivers/hid/hid-playstation.c b/drivers/hid/hid-playstation.c
-index ed8e67c5bf5d3a9e9721da31a6bd84f0b6802b14..1231165098691398cd471e71cb9787651f753023 100644
---- a/drivers/hid/hid-playstation.c
-+++ b/drivers/hid/hid-playstation.c
-@@ -178,6 +178,7 @@ struct dualsense {
- 	struct input_dev *gamepad;
- 	struct input_dev *sensors;
- 	struct input_dev *touchpad;
-+	struct input_dev *jack;
- 
- 	/* Update version is used as a feature/capability version. */
- 	u16 update_version;
-@@ -958,6 +959,25 @@ static struct input_dev *ps_touchpad_create(struct hid_device *hdev, int width,
- 	return touchpad;
- }
- 
-+static struct input_dev *ps_headset_jack_create(struct hid_device *hdev)
-+{
-+	struct input_dev *jack;
-+	int ret;
-+
-+	jack = ps_allocate_input_dev(hdev, "Headset Jack");
-+	if (IS_ERR(jack))
-+		return ERR_CAST(jack);
-+
-+	input_set_capability(jack, EV_SW, SW_HEADPHONE_INSERT);
-+	input_set_capability(jack, EV_SW, SW_MICROPHONE_INSERT);
-+
-+	ret = input_register_device(jack);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
-+	return jack;
-+}
-+
- static ssize_t firmware_version_show(struct device *dev,
- 				     struct device_attribute *attr, char *buf)
- {
-@@ -1360,8 +1380,15 @@ static void dualsense_output_worker(struct work_struct *work)
- 				common->audio_flags2 =
- 					FIELD_PREP(DS_OUTPUT_AUDIO_FLAGS2_SP_PREAMP_GAIN, 0x2);
- 			}
-+
-+			input_report_switch(ds->jack, SW_HEADPHONE_INSERT, val);
- 		}
- 
-+		val = ds->plugged_state & DS_STATUS_PLUGGED_MIC;
-+		if (val != (ds->prev_plugged_state & DS_STATUS_PLUGGED_MIC))
-+			input_report_switch(ds->jack, SW_MICROPHONE_INSERT, val);
-+
-+		input_sync(ds->jack);
- 		ds->prev_plugged_state = ds->plugged_state;
- 	}
- 
-@@ -1775,6 +1802,12 @@ static struct ps_device *dualsense_create(struct hid_device *hdev)
- 		goto err;
- 	}
- 
-+	ds->jack = ps_headset_jack_create(hdev);
-+	if (IS_ERR(ds->jack)) {
-+		ret = PTR_ERR(ds->jack);
-+		goto err;
-+	}
-+
- 	ret = ps_device_register_battery(ps_dev);
- 	if (ret)
- 		goto err;
+WDYT of that idea? :)
 
--- 
-2.49.0
+-Toke
 
 
