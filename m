@@ -1,95 +1,91 @@
-Return-Path: <linux-kernel+bounces-662697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-662700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1928AC3E58
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 13:14:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 68859AC3E67
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 13:17:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B82903B979F
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 11:13:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 733B23AF2B3
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 11:16:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C2B31F91C5;
-	Mon, 26 May 2025 11:14:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EF3B1F30AD;
+	Mon, 26 May 2025 11:16:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="Jfhx1B3P"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jr895s3t"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B22B27454
-	for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 11:14:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 362C81F75A6
+	for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 11:16:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748258046; cv=none; b=NmQaDKtDtqnfBHlHg0xFKLZJ4KveVLIcgFqCNAn1h5YaJ53RZ8tQ7rat/lujSaEWByRL/bZ5iNTi4SMo1MoFmGSjt/0ngeBI2DyBlqrQo1Jiul5P6nsJ3YLZXQyUvt5aQrwrep0bGqQNMSTg0v/wRtdjVLLTKzKu2VB/rXkK+Ow=
+	t=1748258214; cv=none; b=RNnxtFhV8sVtJ9goWeek6OQdNqTDKwKJmqtYmbQ6xHyE17A6sda914DvpL+oLCWEX4yClx4ea2P/sGrzCtJH1kC/a8ArwCe4qha3l3kqbWXFoQdCXWf+LjMa/DZuqJrbmfxWz0k/+GJlZnPk7/L9Q7SuIGbgvw72trfS0r8MYWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748258046; c=relaxed/simple;
-	bh=VnAgd0ZQRivApTR3Ldr5WYwHCJLxJNgqjBaNl5DS1Ws=;
+	s=arc-20240116; t=1748258214; c=relaxed/simple;
+	bh=oc+X8bF/5frSyry5RmoMGZugC3S28EX+om9zx6pPuzk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KOcbnQKzV9eOQymKC2VEZCcQZWwvn0qucl33C/7x2kW8Su5uHM8qct8Mm0pm6CgDo3kAvUIRLDMuevNx5SDQ+7hIaTpWJfYvjv66Uef7kzlaRlF+ryo9kwB/4sC7ewDSmrTYwD3NxDeKu4wIvqpX5Oevrj8s38LBHFhlL5vPB0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=Jfhx1B3P; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3a365a6804eso1246769f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 04:14:03 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=UEUufQ4OkGPF+c05zIC1RbeieU/GCj1xp9JiZX3F5F1Gk3ta4MG+4PkztCgiZS5Y4GitvIBYUhcYkG54YHULpXdC1Fxf6uCbofPtHYZNg/TBLLXVAKt0HfHMkE5d+86DY7dyWKSO5ofX/Jmhnz/kjBVFjxfmAXdpJ1EdTudhBNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jr895s3t; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-23446bb8785so13840645ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 04:16:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1748258042; x=1748862842; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1748258212; x=1748863012; darn=vger.kernel.org;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=1qGPkkOzz/AvcHXID85KRR2dfTKt6dbyAQOGmEwhnXA=;
-        b=Jfhx1B3Pvz7gQ9A4b1+ihmbbCLVcUEkJPx5tG1uy9QiKB5QDFmZDLkAi19eUTuLlfx
-         9Rd5+1lkrMHCL4xe9d7xVaF3oXL31FMnONihOSqEMm9WDGA08cj5XoZkFDbzW+/jTk8S
-         Fvtkt0uh1kj8u9ZVDgjY/NRgC+k4KGoZrKDyFW22ILBY/8GJClANav3y9U6ZVBE+OLZ+
-         zcPrH/QjG31aEirRja5RLoxdupCqTa+zcuGU25JmCmu7pZbDAVgXm0EptTSpr5tg9/o6
-         Hx+GUu1iI/mIfMJpMxpctROQCAzEdWGrUoOqV9CFQ+R+EWgRQmCLVysZrzXOBo5OTRde
-         3FqA==
+        bh=ulxYmn9OC6+sDst91oQAEFfcIS70kmh66nNINkuqjTQ=;
+        b=jr895s3tV1MBSAWPfXqDo93zmyExxl4EhiDUsSLC4hv0CumYvXZUUGiGnony6JNsVN
+         /DZ541bnerw82EGtaMJfl5YQI7WaPP3ZMlDLSCyA8gDsgQnC0JCwNBG+FTcZ1rcRvypr
+         cha90JWZxBzo7nt+dYTYgzI6iMV+k1fcf0kYO6VVTgLDM2J6RtCQMTK6wTH+KZsUHS8g
+         OONMYnBuTnwYNVwDQO1Lo9jSBTS3cGRc/JbsiHomCOlCcjiECDRQZyvWhTPy29oSCcs1
+         +hry76irJdfajtCmOkra1XUCuCcwID2KtCHAd13lwL66Awzh0tbTjtx3wDBY1mseXcVA
+         eWcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748258042; x=1748862842;
+        d=1e100.net; s=20230601; t=1748258212; x=1748863012;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1qGPkkOzz/AvcHXID85KRR2dfTKt6dbyAQOGmEwhnXA=;
-        b=v9PKDn1Cs1HfCN+QEea19rAu9x7L+cfNpM0COQyYZqw8BCWXfbgCdiLSY9hUOdZM10
-         gBYLqRH7seGLRt5IFcTQ+OXBpDdIV+7RYE6tP8YiI8mp8pDYoHnS3zXLLvRSUiKfM1oU
-         fKOBWDJXnNedwDBg9SUCF/SfMW8dfLaII+i6wZ7B5FEaY2dv0eOMasKRsmfIMuTN/565
-         yEcHBWLwy5jQp2IDQdLn6gcSguPKKqSqzJ7FaViR2h2Df8Gjl9eJLk3GI5aqC2CAdTpA
-         Tse87TPBJSvHiGlNOe/1MFC7FOAeBI61uzlruvVi6IcMBZqOM9HWBzTfFJBK8jEBSX/z
-         Iw4g==
-X-Forwarded-Encrypted: i=1; AJvYcCUrHcl/l8g5RLZ7j1hIhuM1FWvdy9CSu8w6yp3cyMzfDXPtAcA+et0hiKNJ0yDIfFTBdIjUpFcgR1HZzZI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzN+5DgapxODL7hnU+IR13lO+WyP4xSl+1/7NS797k4OJrqFD3x
-	gww0twyVzAKehUqIgSTI21YEH117o36DEW7B5PIVKJtFvuRehOGVlpx+0iF6jnANY6c=
-X-Gm-Gg: ASbGnctSkZKdUakiG7JQgb/RkgIrBOZNXq5cSUyPwsRYy9XLL8PMbf+67aJdoe33kep
-	i0VnvLEyoJ3NhNo+fExz5kwa9AG5Jh9WEyCgZQfPahDUS40wz9/UCjmD2YiTqsFX9/Mgg7dADYB
-	pf2b7wLVpxSqSkm33n23N0rYY2/wuwWRVm0+wd6IltzaYo2BZCm0eAP0SAIWHHb6E6ehsprPwi5
-	gzY+M4DEQpe3WE4FQC/I+hDk6evoAVvzpXkeQh7KinBzvy8Buho5UpHPTnSm0+u+YEw5yz/3Fkb
-	1lc420i+Mea1C/Q7GVdT5n+Xnl2J5tVpwWdS8EcjpPqUhdEfLvtmw0jwtHeEP2zm5CveP1H4A8S
-	XsYSD
-X-Google-Smtp-Source: AGHT+IEohXUMBSqO1qFUGi+04cLdFeL8i/QAY/ZQ64aMi3jtMK4s6/6493H521FOcUTuehMxIQIXpg==
-X-Received: by 2002:a05:6000:40d9:b0:3a4:c2e4:11b with SMTP id ffacd0b85a97d-3a4cb4a962amr7086907f8f.51.1748258041562;
-        Mon, 26 May 2025 04:14:01 -0700 (PDT)
-Received: from localhost (cst2-173-28.cust.vodafone.cz. [31.30.173.28])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4cc932836sm7397037f8f.39.2025.05.26.04.14.00
+        bh=ulxYmn9OC6+sDst91oQAEFfcIS70kmh66nNINkuqjTQ=;
+        b=DMPUB2RkSwKeTCVMej4ZyNgIMJ3J0XIk6dDA8l077Nifm9kSkvsZDrXy6J0esfMmfn
+         2X6bciW3er3CYiseUSWkcQUmxdU/HhC3fQ5Lca+Wm9AunVa3A9rCmOYwAHZJf6H7mEzE
+         qU7ck7YnSnibOlKCmU/Ta77TAhuZzGmesaYIP071sZLed7OjgqOqlNki4LcUOl8AN+Bl
+         tpsttSuwzNev+Pw4qPBtwqSrLYV/a5Nc0RBCGsYm6hRrdp0hhcRXmeklsch65KYFaIm7
+         MMMfqm9WNSwZdJiRSi+WMvMdkFsoRkVvLPOuuxE+QFmcq3YLgk1F0LGAGofnfjQRCP1x
+         JT2A==
+X-Forwarded-Encrypted: i=1; AJvYcCUKJkEQi87QoCbkqYwfRi5PoDBo3RSILwRnG5x58rUpW5ZWmUgijqX1MR1nddpAgzRRnkE+Y/6MdEgGlOs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7EU0N8Pu0LkOwuacodTXuC7GmOs+wanG1Jp57e3feUf9lCsQh
+	qdLw64RjU5X/Kiso8SmBFC8sJ7XDvOkuIkcrzNMKMIEsSeQOiksazq2Hvd9c5Bfjqg==
+X-Gm-Gg: ASbGncsZiDZnuHh2mJw1PPtfflXaph42jFTwo7TfgNYBhEahl4RS/S19zmuO6xclQvI
+	cHrgIz3buB87HNoDactufPIssPd6u3G9BBJcA88BbEJThqufIz1drQigNNCGtrRsLD3JK9opcRp
+	O8gMyQlPEL/NxLFMP2qyA/8Ha49DDihCtOOvehYwh0kOXtngjtqhNCj2Gbsve00BdfM4qtIgMV9
+	fYGY0/9uSzTsPJnDD4cTukUXie+DRpC/wynov6lUFYiWJiAJynJrtNPtmPJwipRxhsaSbn4VDt0
+	IVCEtBspy5BRrLZgq1AtSHX2xyeKdLjbrQTBKWxFnwrZt+EvWh8iQVAzk6WMLOH6jN3/CiekCg=
+	=
+X-Google-Smtp-Source: AGHT+IE3knpqyPoHytl1HTPVu5Io02EXVExU+HLdRLl7BELYi33dIBObAhSkST7PxeVLbJc2K7u30g==
+X-Received: by 2002:a17:903:4b30:b0:224:24d5:f20a with SMTP id d9443c01a7336-23414fe558emr147961405ad.48.1748258212357;
+        Mon, 26 May 2025 04:16:52 -0700 (PDT)
+Received: from thinkpad ([120.56.205.192])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-234180b2c31sm39997795ad.155.2025.05.26.04.16.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 May 2025 04:14:01 -0700 (PDT)
-Date: Mon, 26 May 2025 13:13:59 +0200
-From: Andrew Jones <ajones@ventanamicro.com>
-To: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@ventanamicro.com>
-Cc: Atish Patra <atish.patra@linux.dev>, Anup Patel <anup@brainfault.org>, 
-	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Mayuresh Chitale <mchitale@ventanamicro.com>, linux-riscv@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Palmer Dabbelt <palmer@rivosinc.com>, kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
-	linux-riscv <linux-riscv-bounces@lists.infradead.org>
-Subject: Re: [PATCH v3 9/9] RISC-V: KVM: Upgrade the supported SBI version to
- 3.0
-Message-ID: <20250526-224478e15ee50987124a47ac@orel>
-References: <20250522-pmu_event_info-v3-0-f7bba7fd9cfe@rivosinc.com>
- <20250522-pmu_event_info-v3-9-f7bba7fd9cfe@rivosinc.com>
- <DA3KSSN3MJW5.2CM40VEWBWDHQ@ventanamicro.com>
- <61627296-6f94-45ea-9410-ed0ea2251870@linux.dev>
- <DA5YWWPPVCQW.22VHONAQHOCHE@ventanamicro.com>
+        Mon, 26 May 2025 04:16:51 -0700 (PDT)
+Date: Mon, 26 May 2025 16:46:42 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Lukas Wunner <lukas@wunner.de>
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com, 
+	linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	cassel@kernel.org, wilfred.mallawa@wdc.com
+Subject: Re: [PATCH 1/2] PCI: Save and restore root port config space in
+ pcibios_reset_secondary_bus()
+Message-ID: <crihkpezsnfuzwm4b7fkyy5b3je55zwxhnk65ctq5wncr4hwq5@63f4fr3bvrsx>
+References: <20250524185304.26698-1-manivannan.sadhasivam@linaro.org>
+ <20250524185304.26698-2-manivannan.sadhasivam@linaro.org>
+ <aDLFG06J-kXnvckG@wunner.de>
+ <qujhzxzysxm6keqcnjx5jvt5ggsoiiogy2kpv4cu5qo4dcfrvm@yonxobo7jrk7>
+ <aDQQLU1wrgstypEi@wunner.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -99,44 +95,28 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <DA5YWWPPVCQW.22VHONAQHOCHE@ventanamicro.com>
+In-Reply-To: <aDQQLU1wrgstypEi@wunner.de>
 
-On Mon, May 26, 2025 at 11:00:30AM +0200, Radim Krčmář wrote:
-> 2025-05-23T10:16:11-07:00, Atish Patra <atish.patra@linux.dev>:
-> > On 5/23/25 6:31 AM, Radim Krčmář wrote:
-> >> 2025-05-22T12:03:43-07:00, Atish Patra <atishp@rivosinc.com>:
-> >>> Upgrade the SBI version to v3.0 so that corresponding features
-> >>> can be enabled in the guest.
-> >>>
-> >>> Signed-off-by: Atish Patra <atishp@rivosinc.com>
-> >>> ---
-> >>> diff --git a/arch/riscv/include/asm/kvm_vcpu_sbi.h b/arch/riscv/include/asm/kvm_vcpu_sbi.h
-> >>> -#define KVM_SBI_VERSION_MAJOR 2
-> >>> +#define KVM_SBI_VERSION_MAJOR 3
-> >> I think it's time to add versioning to KVM SBI implementation.
-> >> Userspace should be able to select the desired SBI version and KVM would
-> >> tell the guest that newer features are not supported.
-
-We need new code for this, but it's a good idea.
-
-> >
-> > We can achieve that through onereg interface by disabling individual SBI 
-> > extensions.
-> > We can extend the existing onereg interface to disable a specific SBI 
-> > version directly
-> > instead of individual ones to save those IOCTL as well.
+On Mon, May 26, 2025 at 08:54:37AM +0200, Lukas Wunner wrote:
+> On Sun, May 25, 2025 at 01:28:18PM +0530, Manivannan Sadhasivam wrote:
+> > On Sun, May 25, 2025 at 09:22:03AM +0200, Lukas Wunner wrote:
+> > > "The device state" is ambiguous as the Root Port is a device itself
+> > > and even referred to by the "dev" variable.  I think what you mean
+> > > is "The Endpoint state".
+> > > 
+> > 
+> > Yes! Will fix them while applying, thanks!
 > 
-> Yes, I am all in favor of letting userspace provide all values in the
-> BASE extension.
+> ICYMI, current controller/dw-rockchip branch still uses
+> "The device state", not "The Endpoint state" in commit
+> 56eecfc8f46f ("PCI/ERR: Add support for resetting the
+> Root Ports in a platform specific way").
+> 
 
-This is covered by your recent patch that provides userspace_sbi.
-With that, userspace can disable all extensions that aren't
-supported by a given spec version, disable BASE and then provide
-a BASE that advertises the version it wants. The new code is needed
-for extensions that userspace still wants KVM to accelerate, but then
-KVM needs to be informed it should deny all functions not included in
-the selected spec version.
+Ah, missed this comment. Incorported now!
 
-Thanks,
-drew
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
