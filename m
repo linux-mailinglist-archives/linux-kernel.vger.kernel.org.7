@@ -1,121 +1,398 @@
-Return-Path: <linux-kernel+bounces-662423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-662427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F38AAAC3A74
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 09:19:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6069BAC3A7F
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 09:20:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 607257A30A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 07:17:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37A8F173844
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 07:20:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40CD11DF270;
-	Mon, 26 May 2025 07:18:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A6851E00B4;
+	Mon, 26 May 2025 07:19:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="flSGD7em"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p6yYNvk1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFDFF163
-	for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 07:18:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 652491E1E19;
+	Mon, 26 May 2025 07:19:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748243924; cv=none; b=JtlQbaEwALu+SkNCAk/lbUoXXEY/l79RaWaZwxzk4B5nHLkEfe+75VYZcQVilv4M9muNywAp4tF8B+Z69KurhyPM1Kfn6nwbwtg7DAjXUmvvAK7W7LTJ73I6mtzDUGAhs+bPgu3X+YmTqr4Eru9idrVPusYf8rdLVTKKyc12dmI=
+	t=1748243947; cv=none; b=NFgE49816ykEOjaUgIIU0E2lKsgpaTTVtEnZMaTqomnWQJXSS1eLqLoEgmoI6HOMwkoUAAlzBLcV2+CVX3v0PAjxXn6ADwsIB8KwyxWd+tibuZfhbhVmneYFSCMK1UiUXVuEyIG5la9ctc9rR67xRIJpMuXZnLRXwmtxz33CmVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748243924; c=relaxed/simple;
-	bh=An7YfCK9P5Y4IqEAGSFIZ+7Dm9ye7HbtEMNfRfd0Il4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fVqlHQfyeMX+YxzgslqX9Kv/5sFCKCH9MP8VGQ/7OjOc5+EG3wiQboUJezzQCqA57gvr8LFWLh+Ym0QhpuGBazRy6D09o3DkgwSizkCCvM/dtt5eMAwgcw+JRGXfTQAJssCicWeVJTMR8QTb754eAyZYCqCsEgK6F11oq0fynMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=flSGD7em; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1748243920;
-	bh=An7YfCK9P5Y4IqEAGSFIZ+7Dm9ye7HbtEMNfRfd0Il4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=flSGD7emFIbdlp0qLXRG111oWl4A1cXDZllM5+HlHPV8FSxMcXygIY8kqbdRVR4TE
-	 xWsIZ/bDeyHsAj7dM7MlqPNP/2Q37wROemXksM6LnBG56lQ4Lx5q6/D6pxwiDBTktN
-	 zMsqq8u4tWtRzkFxWcwO4VSXc4+1fHek9fqrEGUM9X/jMagfzeHBIOlJdnaYPO1bMa
-	 NGBdIR36V494xeHB9VtCOaf9dT3bgtvgIY57MMDr99Zui+FNTpbjvpbSd1mxCMFKTh
-	 GHkLE0gagkaOcz2ZqidnB2Ur2Fc44uOG+NJVtDPel9XPUGvIEAGeDFsrQ0xXRj99fv
-	 Ui5dqla013DpA==
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 7765917E0E89;
-	Mon, 26 May 2025 09:18:40 +0200 (CEST)
-Date: Mon, 26 May 2025 09:18:34 +0200
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: Ashley Smith <ashley.smith@collabora.com>
-Cc: Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, kernel@collabora.com,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] drm/panthor: Reset queue slots if termination fails
-Message-ID: <20250526091834.16548264@collabora.com>
-In-Reply-To: <20250519145150.2265020-1-ashley.smith@collabora.com>
-References: <20250519145150.2265020-1-ashley.smith@collabora.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1748243947; c=relaxed/simple;
+	bh=MjYPiAp6HUDGi6nKBvrWjFgh7veuqNf/NgjVVb31RgQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fzvy20FF7DiuDGq0dnuExdYcmGu/og/lPa5jpPGM6ry4vdeY/tO1w5N/y/7RmeJA4hR7qJmQ3tEMzM6hanMu0quaxkUa9CsO65JU1VsaJbbQrgpBLplGba0Ah+b7SqigqiIOUCWMExDdnPJ1IE0+FvNVovB+j4Y5iebxTghzQ4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p6yYNvk1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40C92C4CEE7;
+	Mon, 26 May 2025 07:18:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748243946;
+	bh=MjYPiAp6HUDGi6nKBvrWjFgh7veuqNf/NgjVVb31RgQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=p6yYNvk1UZWsU9zZbkmavxfC8uunacknREKse3aaucerpdwp9F6kLDMWkQWb6DDod
+	 Vc6Uh6UwVuVY395SjjoGbswsZSWGKv5fDXisYecvI9/z2Mgx4to0suQluaTO5ARyDR
+	 cG63kecb7/uSZemKj3eKpM5wArxIFa/+FnHesIQiA7Do7pQhoZIBJn7yexMn4i2hwC
+	 ntOqS0ITdO9IOFmwN299nG81oVgmitV8y8pm/u/0cfPFyn1yjaOt8K0vRAxxdGnoQP
+	 f1RQh2VDJ+u0IVPv+odHaJqBNF7NtF+YKxZRA3sGVC5uj3AlCRrPC1+g/pfx05yZji
+	 5Br1R5PcNoMZQ==
+Date: Mon, 26 May 2025 10:18:45 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com,
+	changyuanl@google.com, dmatlack@google.com, rientjes@google.com,
+	corbet@lwn.net, rdunlap@infradead.org,
+	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com,
+	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org,
+	akpm@linux-foundation.org, tj@kernel.org, yoann.congal@smile.fr,
+	mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com,
+	axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com,
+	vincent.guittot@linaro.org, hannes@cmpxchg.org,
+	dan.j.williams@intel.com, david@redhat.com,
+	joel.granados@kernel.org, rostedt@goodmis.org,
+	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn,
+	linux@weissschuh.net, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-mm@kvack.org,
+	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com,
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
+	hpa@zytor.com, rafael@kernel.org, dakr@kernel.org,
+	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com,
+	myungjoo.ham@samsung.com, yesanishhere@gmail.com,
+	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com,
+	aleksander.lobakin@intel.com, ira.weiny@intel.com,
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de,
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com,
+	stuart.w.hayes@gmail.com, ptyadav@amazon.de
+Subject: Re: [RFC v2 05/16] luo: luo_core: integrate with KHO
+Message-ID: <aDQV1bAt0i8d95MQ@kernel.org>
+References: <20250515182322.117840-1-pasha.tatashin@soleen.com>
+ <20250515182322.117840-6-pasha.tatashin@soleen.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250515182322.117840-6-pasha.tatashin@soleen.com>
 
-On Mon, 19 May 2025 15:50:19 +0100
-Ashley Smith <ashley.smith@collabora.com> wrote:
-
-> This fixes a bug where if we timeout after a suspend and the termination
-> fails, due to waiting on a fence that will never be signalled for
-> example, we do not resume the group correctly. The fix forces a reset
-> for groups that are not terminated correctly.
+On Thu, May 15, 2025 at 06:23:09PM +0000, Pasha Tatashin wrote:
+> Integrate the LUO with the KHO framework to enable passing LUO state
+> across a kexec reboot.
 > 
-> Signed-off-by: Ashley Smith <ashley.smith@collabora.com>
+> This patch introduces the following changes:
+> - During the KHO finalization phase allocate FDT blob.
+> - Populate this FDT with a LUO compatibility string ("luo-v1") and the
+>   current LUO state (`luo_state`).
+> - Implement a KHO notifier
 
-We clearly need a Fixes tag, otherwise "drm/panthor: Make the timeout
-per-queue instead of per-job" will be backported, but not this one,
-which will lead to UAF. Can you send a v5 with both patches in the same
-series, each with a proper Fixes tag?
-
-> ---
-> Changes in v2:
->  - Fixed syntax error
-> ---
->  drivers/gpu/drm/panthor/panthor_sched.c | 11 ++++++++++-
->  1 file changed, 10 insertions(+), 1 deletion(-)
+Would be nice to have more details about how LUO interacts with KHO, like
+how LUO states correspond to the state of KHO, what may trigger
+corresponding state transitions etc.
+ 
+> LUO now depends on `CONFIG_KEXEC_HANDOVER`. The core state transition
+> logic (`luo_do_*_calls`) remains unimplemented in this patch.
 > 
-> diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/panthor/panthor_sched.c
-> index 43ee57728de5..65d8ae3dcac1 100644
-> --- a/drivers/gpu/drm/panthor/panthor_sched.c
-> +++ b/drivers/gpu/drm/panthor/panthor_sched.c
-> @@ -2727,8 +2727,17 @@ void panthor_sched_suspend(struct panthor_device *ptdev)
->  			 * automatically terminate all active groups, so let's
->  			 * force the state to halted here.
->  			 */
-> -			if (csg_slot->group->state != PANTHOR_CS_GROUP_TERMINATED)
-> +			if (csg_slot->group->state != PANTHOR_CS_GROUP_TERMINATED) {
->  				csg_slot->group->state = PANTHOR_CS_GROUP_TERMINATED;
+> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+> ---
+>  drivers/misc/liveupdate/luo_core.c | 222 ++++++++++++++++++++++++++++-
+>  1 file changed, 219 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/misc/liveupdate/luo_core.c b/drivers/misc/liveupdate/luo_core.c
+> index 919c37b0b4d1..a76e886bc3b1 100644
+> --- a/drivers/misc/liveupdate/luo_core.c
+> +++ b/drivers/misc/liveupdate/luo_core.c
+> @@ -36,9 +36,12 @@
+>  #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+>  
+>  #include <linux/err.h>
+> +#include <linux/kexec_handover.h>
+>  #include <linux/kobject.h>
+> +#include <linux/libfdt.h>
+>  #include <linux/liveupdate.h>
+>  #include <linux/rwsem.h>
+> +#include <linux/sizes.h>
+>  #include <linux/string.h>
+>  #include "luo_internal.h"
+>  
+> @@ -55,6 +58,12 @@ const char *const luo_state_str[] = {
+>  
+>  bool luo_enabled;
+>  
+> +static void *luo_fdt_out;
+> +static void *luo_fdt_in;
+> +#define LUO_FDT_SIZE		SZ_1M
+
+Does LUO really need that much?
+
+> +#define LUO_KHO_ENTRY_NAME	"LUO"
+> +#define LUO_COMPATIBLE		"luo-v1"
 > +
-> +				/* Reset the queue slots manually if the termination
-> +				 * request failed.
-> +				 */
-> +				for (i = 0; i < group->queue_count; i++) {
-> +					if (group->queues[i])
-> +						cs_slot_reset_locked(ptdev, csg_id, i);
-> +				}
-> +			}
->  			slot_mask &= ~BIT(csg_id);
->  		}
->  	}
-> 
-> base-commit: 9934ab18051118385c7ea44d8e14175edbe6dc9c
+>  static int __init early_liveupdate_param(char *buf)
+>  {
+>  	return kstrtobool(buf, &luo_enabled);
+> @@ -79,6 +88,60 @@ static inline void luo_set_state(enum liveupdate_state state)
+>  	__luo_set_state(state);
+>  }
+>  
+> +/* Called during the prepare phase, to create LUO fdt tree */
+> +static int luo_fdt_setup(struct kho_serialization *ser)
+> +{
+> +	void *fdt_out;
+> +	int ret;
+> +
+> +	fdt_out = (void *)__get_free_pages(GFP_KERNEL | __GFP_ZERO,
+> +					   get_order(LUO_FDT_SIZE));
+> +	if (!fdt_out) {
+> +		pr_err("failed to allocate FDT memory\n");
+> +		return -ENOMEM;
+> +	}
+> +
+> +	ret = fdt_create_empty_tree(fdt_out, LUO_FDT_SIZE);
+> +	if (ret)
+> +		goto exit_free;
+> +
+> +	ret = fdt_setprop(fdt_out, 0, "compatible", LUO_COMPATIBLE,
+> +			  strlen(LUO_COMPATIBLE) + 1);
+> +	if (ret)
+> +		goto exit_free;
+> +
+> +	ret = kho_preserve_phys(__pa(fdt_out), LUO_FDT_SIZE);
+> +	if (ret)
+> +		goto exit_free;
+> +
+> +	ret = kho_add_subtree(ser, LUO_KHO_ENTRY_NAME, fdt_out);
+> +	if (ret)
+> +		goto exit_unpreserve;
+> +	luo_fdt_out = fdt_out;
+> +
+> +	return 0;
+> +
+> +exit_unpreserve:
+> +	kho_unpreserve_phys(__pa(fdt_out), LUO_FDT_SIZE);
+> +exit_free:
+> +	free_pages((unsigned long)fdt_out, get_order(LUO_FDT_SIZE));
+> +	pr_err("failed to prepare LUO FDT: %d\n", ret);
+> +
+> +	return ret;
+> +}
+> +
+> +static void luo_fdt_destroy(void)
+> +{
+> +	kho_unpreserve_phys(__pa(luo_fdt_out), LUO_FDT_SIZE);
+> +	free_pages((unsigned long)luo_fdt_out, get_order(LUO_FDT_SIZE));
+> +	luo_fdt_out = NULL;
+> +}
+> +
+> +static int luo_do_prepare_calls(void)
+> +{
+> +	return 0;
+> +}
+> +
+>  static int luo_do_freeze_calls(void)
+>  {
+>  	return 0;
+> @@ -88,11 +151,111 @@ static void luo_do_finish_calls(void)
+>  {
+>  }
+>  
+> -int luo_prepare(void)
+> +static void luo_do_cancel_calls(void)
+> +{
+> +}
+> +
+> +static int __luo_prepare(struct kho_serialization *ser)
+>  {
+> +	int ret;
+> +
+> +	if (down_write_killable(&luo_state_rwsem)) {
+> +		pr_warn("[prepare] event canceled by user\n");
+> +		return -EAGAIN;
+> +	}
+> +
+> +	if (!is_current_luo_state(LIVEUPDATE_STATE_NORMAL)) {
+> +		pr_warn("Can't switch to [%s] from [%s] state\n",
+> +			luo_state_str[LIVEUPDATE_STATE_PREPARED],
+> +			LUO_STATE_STR);
+> +		ret = -EINVAL;
+> +		goto exit_unlock;
+> +	}
+> +
+> +	ret = luo_fdt_setup(ser);
+> +	if (ret)
+> +		goto exit_unlock;
 
+At this point LUO should know how many subsystems are participating in live
+update, I believe it can properly size the fdt. 
+
+> +
+> +	ret = luo_do_prepare_calls();
+> +	if (ret)
+> +		goto exit_unlock;
+> +
+> +	luo_set_state(LIVEUPDATE_STATE_PREPARED);
+> +
+> +exit_unlock:
+> +	up_write(&luo_state_rwsem);
+> +
+> +	return ret;
+> +}
+> +
+> +static int __luo_cancel(void)
+> +{
+> +	if (down_write_killable(&luo_state_rwsem)) {
+> +		pr_warn("[cancel] event canceled by user\n");
+> +		return -EAGAIN;
+> +	}
+> +
+> +	if (!is_current_luo_state(LIVEUPDATE_STATE_PREPARED) &&
+> +	    !is_current_luo_state(LIVEUPDATE_STATE_FROZEN)) {
+> +		pr_warn("Can't switch to [%s] from [%s] state\n",
+> +			luo_state_str[LIVEUPDATE_STATE_NORMAL],
+> +			LUO_STATE_STR);
+> +		up_write(&luo_state_rwsem);
+> +
+> +		return -EINVAL;
+> +	}
+> +
+> +	luo_do_cancel_calls();
+> +	luo_fdt_destroy();
+> +	luo_set_state(LIVEUPDATE_STATE_NORMAL);
+> +
+> +	up_write(&luo_state_rwsem);
+> +
+>  	return 0;
+>  }
+>  
+> +static int luo_kho_notifier(struct notifier_block *self,
+> +			    unsigned long cmd, void *v)
+> +{
+> +	int ret;
+> +
+> +	switch (cmd) {
+> +	case KEXEC_KHO_FINALIZE:
+> +		ret = __luo_prepare((struct kho_serialization *)v);
+> +		break;
+> +	case KEXEC_KHO_ABORT:
+> +		ret = __luo_cancel();
+> +		break;
+> +	default:
+> +		return NOTIFY_BAD;
+> +	}
+> +
+> +	return notifier_from_errno(ret);
+> +}
+> +
+> +static struct notifier_block luo_kho_notifier_nb = {
+> +	.notifier_call = luo_kho_notifier,
+> +};
+> +
+> +/**
+> + * luo_prepare - Initiate the live update preparation phase.
+> + *
+> + * This function is called to begin the live update process. It attempts to
+> + * transition the luo to the ``LIVEUPDATE_STATE_PREPARED`` state.
+> + *
+> + * If the calls complete successfully, the orchestrator state is set
+> + * to ``LIVEUPDATE_STATE_PREPARED``. If any  call fails a
+> + * ``LIVEUPDATE_CANCEL`` is sent to roll back any actions.
+> + *
+> + * @return 0 on success, ``-EAGAIN`` if the state change was cancelled by the
+> + * user while waiting for the lock, ``-EINVAL`` if the orchestrator is not in
+> + * the normal state, or a negative error code returned by the calls.
+> + */
+> +int luo_prepare(void)
+> +{
+> +	return kho_finalize();
+> +}
+> +
+>  /**
+>   * luo_freeze() - Initiate the final freeze notification phase for live update.
+>   *
+> @@ -188,9 +351,23 @@ int luo_finish(void)
+>  	return 0;
+>  }
+>  
+> +/**
+> + * luo_cancel - Cancel the ongoing live update from prepared or frozen states.
+> + *
+> + * This function is called to abort a live update that is currently in the
+> + * ``LIVEUPDATE_STATE_PREPARED`` state.
+> + *
+> + * If the state is correct, it triggers the ``LIVEUPDATE_CANCEL`` notifier chain
+> + * to allow subsystems to undo any actions performed during the prepare or
+> + * freeze events. Finally, the orchestrator state is transitioned back to
+> + * ``LIVEUPDATE_STATE_NORMAL``.
+> + *
+> + * @return 0 on success, or ``-EAGAIN`` if the state change was cancelled by the
+> + * user while waiting for the lock.
+> + */
+>  int luo_cancel(void)
+>  {
+> -	return 0;
+> +	return kho_abort();
+>  }
+>  
+>  void luo_state_read_enter(void)
+> @@ -205,7 +382,46 @@ void luo_state_read_exit(void)
+>  
+>  static int __init luo_startup(void)
+>  {
+> -	__luo_set_state(LIVEUPDATE_STATE_NORMAL);
+> +	phys_addr_t fdt_phys;
+> +	int ret;
+> +
+> +	if (!kho_is_enabled()) {
+> +		if (luo_enabled)
+> +			pr_warn("Disabling liveupdate because KHO is disabled\n");
+> +		luo_enabled = false;
+> +		return 0;
+> +	}
+> +
+> +	ret = register_kho_notifier(&luo_kho_notifier_nb);
+> +	if (ret) {
+> +		luo_enabled = false;
+> +		pr_warn("Failed to register with KHO [%d]\n", ret);
+> +	}
+> +
+> +	/*
+> +	 * Retrieve LUO subtree, and verify its format.  Panic in case of
+> +	 * exceptions, since machine devices and memory is in unpredictable
+> +	 * state.
+> +	 */
+> +	ret = kho_retrieve_subtree(LUO_KHO_ENTRY_NAME, &fdt_phys);
+> +	if (ret) {
+> +		if (ret != -ENOENT) {
+> +			panic("failed to retrieve FDT '%s' from KHO: %d\n",
+> +			      LUO_KHO_ENTRY_NAME, ret);
+> +		}
+> +		__luo_set_state(LIVEUPDATE_STATE_NORMAL);
+> +
+> +		return 0;
+> +	}
+> +
+> +	luo_fdt_in = __va(fdt_phys);
+> +	ret = fdt_node_check_compatible(luo_fdt_in, 0, LUO_COMPATIBLE);
+> +	if (ret) {
+> +		panic("FDT '%s' is incompatible with '%s' [%d]\n",
+> +		      LUO_KHO_ENTRY_NAME, LUO_COMPATIBLE, ret);
+> +	}
+> +
+> +	__luo_set_state(LIVEUPDATE_STATE_UPDATED);
+>  
+>  	return 0;
+>  }
+> -- 
+> 2.49.0.1101.gccaa498523-goog
+> 
+> 
+
+-- 
+Sincerely yours,
+Mike.
 
