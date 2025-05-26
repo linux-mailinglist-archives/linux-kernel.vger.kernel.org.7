@@ -1,204 +1,110 @@
-Return-Path: <linux-kernel+bounces-662861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-662864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0D04AC409B
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 15:43:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 819A1AC40A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 15:47:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 964A01899222
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 13:44:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EF93188C28B
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 13:47:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A44D820CCE3;
-	Mon, 26 May 2025 13:43:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51DB720E023;
+	Mon, 26 May 2025 13:46:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="aHVq773Q";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="SWzT/9EW";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="aHVq773Q";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="SWzT/9EW"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EeFwupQW"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EEDA1FDE1E
-	for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 13:43:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2398B20E00A;
+	Mon, 26 May 2025 13:46:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748267019; cv=none; b=q/0vKYhKd+0ovdXdH01Cryo0F7UIV36HwXrsHixGBrsKAI5hPjK9D+zCHYknuXVJ1TxYVhgvvIAdscZlau12zolH7Gy9RBkcyiFnNZHm0cbrG9iET2Vms6/QHpEUwnmFKAvWDBL1e9w7bYKv8qySWMlGHrMImpL28QKG4tOak54=
+	t=1748267208; cv=none; b=ZB0NWStRESY8ReyjCleNB0j+b03gMG57FXXDL3iSirMScg11qY9u72zLZvdjg4V4bE/Ykby9FEwDnlyOyWVcvZDZyMVWo6IhmgH1jdaOmWjX9yQo4MDaIY94SZM/4TVOkIePk5Q3e8FqTG+lC1tzgP+m13BmmvCJlIHDH/Yc5R8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748267019; c=relaxed/simple;
-	bh=dbdT8CH9kLMBgpqw2k4Ycebiq5nWvPRHpskIWVDXcdI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gY/dmyieRiQZOzE/hSqcJolVt6+um7fTQ8D5zRZYZ3r5PER9P0Xl6VNhCUH+p+wrggygp4NczP20SaXUnwDKSodZIaOmK2O+qceAKG9wpEh5rkfCYq3UMsVQpoCyhy12n844twOu+YSO7K8i+Dqx8k/DYivJbsU5p3f6ouT+x6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=aHVq773Q; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=SWzT/9EW; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=aHVq773Q; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=SWzT/9EW; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 7643121B02;
-	Mon, 26 May 2025 13:43:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1748267015; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GJKMoSICTohzot7RddDaVJ7KmKKzKBE+vdA1bFKH+Pc=;
-	b=aHVq773QRUWSwQ9s8pxOdi67mNt6I5VQ942/TSaRSITHgILgc31qt6Eirz/BQp8Xaqjeaz
-	sLpchB+Diu2r+A/ubbuua+0rl3rb4fs/DQ8w81N/EFecvmirPWSmAWFipE4ZnezfrTpBNL
-	24bT2fYxIhLiOU2aji0bDNNo2RM2Glw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1748267015;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GJKMoSICTohzot7RddDaVJ7KmKKzKBE+vdA1bFKH+Pc=;
-	b=SWzT/9EWur9LCVlkKsb1+TOM1kIEi4QMD/HvfZc93wQG5YP7usIwmf1AIuunacNlO22SyS
-	rHvJF5IaJodK++Cg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1748267015; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GJKMoSICTohzot7RddDaVJ7KmKKzKBE+vdA1bFKH+Pc=;
-	b=aHVq773QRUWSwQ9s8pxOdi67mNt6I5VQ942/TSaRSITHgILgc31qt6Eirz/BQp8Xaqjeaz
-	sLpchB+Diu2r+A/ubbuua+0rl3rb4fs/DQ8w81N/EFecvmirPWSmAWFipE4ZnezfrTpBNL
-	24bT2fYxIhLiOU2aji0bDNNo2RM2Glw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1748267015;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GJKMoSICTohzot7RddDaVJ7KmKKzKBE+vdA1bFKH+Pc=;
-	b=SWzT/9EWur9LCVlkKsb1+TOM1kIEi4QMD/HvfZc93wQG5YP7usIwmf1AIuunacNlO22SyS
-	rHvJF5IaJodK++Cg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6B62D1397F;
-	Mon, 26 May 2025 13:43:35 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Rww2GgdwNGiuPQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 26 May 2025 13:43:35 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 26105A09B7; Mon, 26 May 2025 15:43:31 +0200 (CEST)
-Date: Mon, 26 May 2025 15:43:31 +0200
-From: Jan Kara <jack@suse.cz>
-To: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
-Cc: Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.com>, 
-	Tao Ma <boyu.mt@taobao.com>, Andreas Dilger <adilger.kernel@dilger.ca>, 
-	Eric Biggers <ebiggers@google.com>, linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kernel-dev@igalia.com, 
-	syzbot+0c89d865531d053abb2d@syzkaller.appspotmail.com, stable@vger.kernel.org
-Subject: Re: [PATCH] ext4: inline: do not convert when writing to memory map
-Message-ID: <ixlyfqaobk4whctod5wwhusqeeduqxamni6zkxl2wdlbtcyms2@intsywwjfv25>
-References: <20250519-ext4_inline_page_mkwrite-v1-1-865d9a62b512@igalia.com>
- <20250520145708.GA432950@mit.edu>
- <aC5LA4bExl8rMRv0@quatroqueijos.cascardo.eti.br>
+	s=arc-20240116; t=1748267208; c=relaxed/simple;
+	bh=gEIcXbeyJylzemFfm58X30GOjXDyhHO6XtAq4kotWx4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=sQnvHCZLou3SewAUpGKZ2kuAv7uOI9HpPTjkTMAF+tMsP2PmjdZwfbKtN71B7x0y1IajHNGGRaxgnOjswbo1ClioAj4e+sicbGfguavQZlBKenauapls+bGuXzv5DEXA7F/T9N0m5/gBU5TFrROXgBkxACavdg2RVpEEBZAt+Ag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EeFwupQW; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43cfdc2c8c9so14206165e9.2;
+        Mon, 26 May 2025 06:46:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748267205; x=1748872005; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gEIcXbeyJylzemFfm58X30GOjXDyhHO6XtAq4kotWx4=;
+        b=EeFwupQWE1wqoFx2PYUH6axCdwkJOkdH3zckqyAdokdsHvwGqDLINWIAE4mLNts2jk
+         c+msyjARqIpZhHl2MaBu3llANsMOUgXeRy9WYMx5oldt0l0+fHs5s5Di4C43+f0Hktj6
+         E7blTLAsPvEKM21KiVX29RHgbXOiOWtUKid4qCKZMuMj0oFAKuPGmP8UPxHSVIgEAwBP
+         9zFYTRPRfRGOp/UiIE8o1JMI8sPKyAsKcry6iqQBuQqDnDMsIB6U8q7R8P7PuueONSIx
+         hCltMajhGSIzeqTd/jp5XQHNQeKLkaRvGT+6d5LPBenR2Df7H1yYeR/VktPfwa7kYCKn
+         zBdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748267205; x=1748872005;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gEIcXbeyJylzemFfm58X30GOjXDyhHO6XtAq4kotWx4=;
+        b=nm+sIpYrr/1SXae6LvNZMB8SyQP5g0Z8QcQDldv9I/SA+RtvQDiWIMAnlwGFZ1jvBw
+         ZQPJIuUlThzZscTrbo9z7j8J+kUxDuwSpPEyb2tAT2HDJ9t9XPz4Hl0PiRRYJntRAkiT
+         wS+VOWzB/NTnIqEMCKySTa6JwiipfJl7w7F5pbI4xGy2nlSppIk/GnOYsS1LrfAlVSEs
+         Aiw3wRIqUIbqsYokkLzh0yGOnzAbZlc+56KGLV8b0+KJBKDFm/EQ7GDTaMvgyAqluy5H
+         k0SlaSp9tX7ZhnpxPV2d9Qrnpb7Av8/xBt4rmFXfquhbvpkw9IJFxV+V9BXf44JPJUZx
+         QEdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU4answNTcpXtnUpW8GOuuTfWRqqhgWsFJ+tyLXt+FLRrFOwyYFs4oMsYkv47VQ6owSpEzpenthr6fL@vger.kernel.org, AJvYcCUpFoBGmq6XnTGMtPoerpvGTeSbq8kZKN/fg1xNQYiyqLk7Fi/EXT9Pj6StDeYp9ieBsP6xCYvhsubVb/Ov@vger.kernel.org
+X-Gm-Message-State: AOJu0YyT8JDy2Wp0E/jRD3cd1zmgdfhjemyIpEqn4j+YuW752w0IPuRA
+	M3fBLDgQj8co3V9CPQGSSCoq/4BsuV6SK7yA38z0PLWushnO96RIdpSP
+X-Gm-Gg: ASbGncuzY7jfKp3eA4G/Bl0cygS57THLspcktwrFAFtg+xm8COfQzwar1tlfKh3aoqj
+	9yKVNEEAWFk8N0trErQUBrIPBTE2wQWEFBo/rB2AMDWt4csRMvCjH/OwZXq6bj3RBJWiDy27376
+	iYbqIqra3+4jW550PJJeGZiQWsnOzJ1UqpIE99L3pLFj/vIw6z+851MWvQt5L+P35lDkoU4dhIy
+	zreUYWJww1ifa2jSQ2onGQIv1RiNsbJclxZB0wjYUMCbYwB00ksgwk59Xebqyzwc6KkaapM7Yb/
+	nBvFkxBEbLLQP+sanE6b2kw+TC3YPPAqmPLlDOLu9r5sEQh04lYAHnIsDNBdv+SEAg==
+X-Google-Smtp-Source: AGHT+IF0w9TRTgFRE1/w5CXqazhpiPGG/3gemNBKdnwqA3lLvRBETofTT6VO4WQ+GxGnfbleVvKptQ==
+X-Received: by 2002:a5d:64ee:0:b0:3a3:6e44:eb5f with SMTP id ffacd0b85a97d-3a4cb49b40amr7421372f8f.46.1748267205141;
+        Mon, 26 May 2025 06:46:45 -0700 (PDT)
+Received: from localhost.localdomain ([41.79.198.22])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-447f73d3edcsm244864055e9.20.2025.05.26.06.46.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 May 2025 06:46:44 -0700 (PDT)
+From: Khalid Ali <khaliidcaliy@gmail.com>
+X-Google-Original-From: Khalid Ali <khaliidcaliy@gmail.com
+To: peterz@infradead.org
+Cc: bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	hpa@zytor.com,
+	khaliidcaliy@gmail.com,
+	lenb@kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	mingo@redhat.com,
+	rafael@kernel.org,
+	tglx@linutronix.de,
+	x86@kernel.org
+Subject: Re: [PATCH] x86/ACPI: invalidate all cache lines on ACPI C-state transitions
+Date: Mon, 26 May 2025 13:45:33 +0000
+Message-ID: <20250526134600.619-1-khaliidcaliy@gmail.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250526120029.GR39944@noisy.programming.kicks-ass.net>
+References: <20250526120029.GR39944@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aC5LA4bExl8rMRv0@quatroqueijos.cascardo.eti.br>
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spam-Score: 0.70
-X-Spamd-Result: default: False [0.70 / 50.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	TAGGED_RCPT(0.00)[0c89d865531d053abb2d];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	RCVD_TLS_LAST(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
+Content-Transfer-Encoding: 8bit
 
-On Wed 21-05-25 18:52:03, Thadeu Lima de Souza Cascardo wrote:
-> On Tue, May 20, 2025 at 10:57:08AM -0400, Theodore Ts'o wrote:
-> > On Mon, May 19, 2025 at 07:42:46AM -0300, Thadeu Lima de Souza Cascardo wrote:
-> > > inline data handling has a race between writing and writing to a memory
-> > > map.
-> > > 
-> > > When ext4_page_mkwrite is called, it calls ext4_convert_inline_data, which
-> > > destroys the inline data, but if block allocation fails, restores the
-> > > inline data. In that process, we could have:
-> > > 
-> > > CPU1					CPU2
-> > > destroy_inline_data
-> > > 					write_begin (does not see inline data)
-> > > restory_inline_data
-> > > 					write_end (sees inline data)
-> > > 
-> > > The conversion inside ext4_page_mkwrite was introduced at commit
-> > > 7b4cc9787fe3 ("ext4: evict inline data when writing to memory map"). This
-> > > fixes a documented bug in the commit message, which suggests some
-> > > alternatives fixes.
-> > 
-> > Your fix just reverts commit 7b4cc9787fe3, and removes the BUG_ON.
-> > While this is great for shutting up the syzbot report, but it causes
-> > file writes to an inline data file via a mmap to never get written
-> > back to the storage device.  So you are replacing BUG_ON that can get
-> > triggered on a race condition in case of a failed block allocation,
-> > with silent data corruption.   This is not an improvement.
-> > 
-> > Thanks for trying to address this, but I'm not going to accept your
-> > proposed fix.
-> > 
-> >      	    	 	       	       - Ted
-> 
-> Hi, Ted.
-> 
-> I am trying to understand better the circumstances where the data loss
-> might occur with the fix, but might not occur without the fix. Or, even if
-> they occur either way, such that I can work on a better/proper fix.
-> 
-> Right now, if ext4_convert_inline_data (called from ext4_page_mkwrite)
-> fails with ENOSPC, the memory access will lead to a SIGBUS. The same will
-> happen without the fix, if there are no blocks available.
-> 
-> Now, without ext4_convert_inline_data, blocks will be allocated by
-> ext4_page_mkwrite and written by ext4_do_writepages. Are you concerned
-> about a failure between the clearing of the inode data and the writing of
-> the block in ext4_do_writepages?
-> 
-> Or are you concerned about a potential race condition when allocating
-> blocks?
-> 
-> Which of these cannot happen today with the code as is? If I understand
-> correctly, the inline conversion code also calls ext4_destroy_inline_data
-> before allocating and writing to blocks.
-> 
-> Thanks a lot for the review and guidance.
+> This is absolutely insane. This day and age, nobody should use WBINVD
+> ever. We've managed to not do this for decades, and I'm thinking that
+> either the SPEC is 'mistaken' or otherwise out of line with reality.
 
-So I'm not sure what Ted was exactly worried about because writeback code
-should normally allocate underlying blocks for writeout of the mmaped page
-AFAICT. But the problem I can see is that clearing
-EXT4_STATE_MAY_INLINE_DATA requires i_rwsem held as otherwise we may be
-racing with e.g. write(2) and switching EXT4_STATE_MAY_INLINE_DATA in the
-middle of the write will cause bad things (inconsistency between how
-write_begin() and write_end() callbacks behave).
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> If you hate performance, and you want to break things like CAT, feel
+> free to put this in your own kernel.
+Sorry, i made a mistake, i meant ACPI 6.4 and 6.5. I already resent this patch
+please check the resended one.
 
