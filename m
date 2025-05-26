@@ -1,166 +1,125 @@
-Return-Path: <linux-kernel+bounces-663020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-663018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97E0CAC4298
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 17:52:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83598AC4292
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 17:49:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82ABA1898B1A
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 15:52:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5109F170A0F
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 15:49:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A956B213E74;
-	Mon, 26 May 2025 15:52:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 484B42144AE;
+	Mon, 26 May 2025 15:49:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="7KAOfWuS"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cOjbiuJB"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE93F1EEA47;
-	Mon, 26 May 2025 15:52:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A91671F37D4
+	for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 15:49:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748274733; cv=none; b=n1OmWhPHwokQKQIRXbuB4orODHFXPzqjx4b6XhsvNtt1N9xHHjaO0E9ebcas5mqN18C4zOPjowlxOvcRnjK4zrZJYZ+u8un5Pg5NERVi7bKk/rgN4G7eCnXW4StdHPI/O9lqiSfG6diM6h2mislJv+DhWAjoYsPmjwQ/dQIcuZY=
+	t=1748274585; cv=none; b=DOSgkkpsMVS8LXZr+TRvFOHfijBUCxw2tV0SCMBFwjvbUzYcibDfKXDmb+yCUG3386y0GA5PrkXkpoeSoELzGREKHy7ciZo9Pk5JtUyh8DpcOoeErn4h/FnmFs/oLfIZy2RTy5rET+mw4WBzic7zGAyDigoPAnoeNmVw1bD4iCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748274733; c=relaxed/simple;
-	bh=za6bVeF1c6KeXsHnOuzuJWYKeSGH1gVcfLmfUUP+kaw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=tF49SjQetrinvezoPxe8yi71tg1oXPL7ANkbDftU8fjPGTxy8Xgw8d3KHrfEbcSBSTjtzzNhPe4Ysh1plnzghqZ0y1W7ZXcgXmj+zk6Vf2hBaGhfXVIKMQWwn90Zu2ZE/TYUM3aiG31OHrmi/kFhWUcirF5QkO9bJ95pVF+kP7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=7KAOfWuS; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54QB4fPp012749;
-	Mon, 26 May 2025 17:51:45 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	rW5ZHuaPdfqfwDvrnkrsezcElkYLPA1vqOkoWGgulJw=; b=7KAOfWuSkxrfv3ap
-	O/Sd902RG47wwlINI4gwwK7ogvvAsXgo4HKT2hcSwYMLVZjKAzZBh4Jqlzi3/DC5
-	UB6qLfo2/9JVQ+w+LizQVutPccWnKsLldljzQ69yzezypqQbxJyyr8hVJzYHeatI
-	oQsACu+tzGfsUuiODQFi8BxsiPO4RYcdPpA1/vVxdUGm0ctQj9dTvy0LQmJEi8C5
-	1/Fh3z+pnmZpvX0jnyBWOQQpF2tGmN+Wr4rIn0Hz2Vlx6tQG4JnxtZVUoxjI70Tl
-	PHa0sdv/yDXDIkr54h9okZ7Vov/saSr6jtTloRwKPzoo1SmxwjC7DfxqsfyozAlU
-	tNr7oQ==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 46uqp4dnhb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 26 May 2025 17:51:45 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id E564F40056;
-	Mon, 26 May 2025 17:50:19 +0200 (CEST)
-Received: from Webmail-eu.st.com (eqndag1node5.st.com [10.75.129.134])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 9BE99ACB869;
-	Mon, 26 May 2025 17:48:33 +0200 (CEST)
-Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE5.st.com
- (10.75.129.134) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 26 May
- 2025 17:48:33 +0200
-Received: from [10.48.86.222] (10.48.86.222) by SAFDAG1NODE1.st.com
- (10.75.90.17) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 26 May
- 2025 17:48:32 +0200
-Message-ID: <ab75c390-b172-4dbb-b46b-8cbf64d4600a@foss.st.com>
-Date: Mon, 26 May 2025 17:48:31 +0200
+	s=arc-20240116; t=1748274585; c=relaxed/simple;
+	bh=esfR/7E9RzNnrtv3HQf3a0vNmNHimAlYwcMIVFZe6Z4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P+Wi3sXQWI86cqgirsuTpj3XaLCi5dNB78HSPTbYlBzyrXN4xHCfu8Lh4wCkzOXhgkPWHNJ/3TlzQwlwNxc5V5WbSGCRUXI+ZVjzrg7DRUdq5/X4XTUtHGUvttIsVQH2JFlv0ieGkSYVYEPbYx74PBqE1PXOlt0zRsafHPDK8wA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cOjbiuJB; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1748274582;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=71sBxG+HNn06KJZZiyUhTeRS7hpVP19g02Rul7ZiNbM=;
+	b=cOjbiuJBrWvwGE9OSta8UhBPt6YZTqeG4kSR0Tpolfr5dRzOYrn46tB2Yg34VYAMRZxZvI
+	8ZFtt4EwfIXdqtRWygLubzfTihWXk4Vzkt3blKbns8N7rvZz584t4USdwcJBvBUSXtokvs
+	M/GbGuTG3DmHzAC11oG6HpU72E3depk=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-156-YiTpz-tYOrCvnBpakVAylA-1; Mon,
+ 26 May 2025 11:49:41 -0400
+X-MC-Unique: YiTpz-tYOrCvnBpakVAylA-1
+X-Mimecast-MFC-AGG-ID: YiTpz-tYOrCvnBpakVAylA_1748274579
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5130B19560B5;
+	Mon, 26 May 2025 15:49:38 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.44.32.4])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 0FE69195608D;
+	Mon, 26 May 2025 15:49:32 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Mon, 26 May 2025 17:48:57 +0200 (CEST)
+Date: Mon, 26 May 2025 17:48:51 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Pu Lehui <pulehui@huaweicloud.com>
+Cc: David Hildenbrand <david@redhat.com>, lorenzo.stoakes@oracle.com,
+	mhiramat@kernel.org, peterz@infradead.org, Liam.Howlett@oracle.com,
+	akpm@linux-foundation.org, vbabka@suse.cz, jannh@google.com,
+	pfalcato@suse.de, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	pulehui@huawei.com
+Subject: Re: [RFC PATCH] mm/mmap: Fix uprobe anon page be overwritten when
+ expanding vma during mremap
+Message-ID: <20250526154850.GA4156@redhat.com>
+References: <20250521092503.3116340-1-pulehui@huaweicloud.com>
+ <62b5ccf5-f1cd-43c2-b0bc-f542f40c5bdf@redhat.com>
+ <afe53868-5542-47d6-8005-71c1b3bec840@huaweicloud.com>
+ <13c5fe73-9e11-4465-b401-fc96a22dc5d1@redhat.com>
+ <4cbc1e43-ea46-44de-9e2b-1c62dcd2b6d5@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] iio: adc: stm32-adc: Fix race in installing chained
- IRQ handler
-To: Jonathan Cameron <jic23@kernel.org>,
-        =?UTF-8?Q?Nuno_S=C3=A1?=
-	<noname.nuno@gmail.com>
-CC: Chen Ni <nichen@iscas.ac.cn>, <dlechner@baylibre.com>,
-        <nuno.sa@analog.com>, <andy@kernel.org>, <mcoquelin.stm32@gmail.com>,
-        <alexandre.torgue@foss.st.com>, <u.kleine-koenig@baylibre.com>,
-        <tglx@linutronix.de>, <robh@kernel.org>, <jirislaby@kernel.org>,
-        <linux-iio@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Olivier Moysan <olivier.moysan@foss.st.com>
-References: <20250515083101.3811350-1-nichen@iscas.ac.cn>
- <229cf78caaa7e9f2bb4cfa62c019acd51a1cd684.camel@gmail.com>
- <20250525120703.5dd89fc2@jic23-huawei>
-Content-Language: en-US
-From: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
-In-Reply-To: <20250525120703.5dd89fc2@jic23-huawei>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SAFDAG1NODE1.st.com
- (10.75.90.17)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-26_08,2025-05-26_02,2025-03-28_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4cbc1e43-ea46-44de-9e2b-1c62dcd2b6d5@huaweicloud.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
+Hi Lehui,
 
-On 5/25/25 13:07, Jonathan Cameron wrote:
-> On Thu, 15 May 2025 11:26:56 +0100
-> Nuno Sá <noname.nuno@gmail.com> wrote:
-> 
->> On Thu, 2025-05-15 at 16:31 +0800, Chen Ni wrote:
->>> Fix a race where a pending interrupt could be received and the handler
->>> called before the handler's data has been setup, by converting to
->>> irq_set_chained_handler_and_data().
->>>
->>> Fixes: d58c67d1d851 ("iio: adc: stm32-adc: add support for STM32MP1")
->>> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
->>> ---  
->>
->> Reviewed-by: Nuno Sá <nuno.sa@analog.com>
-> Looks good to me and I've queued it up for after rc1.  If any
-> ST folk have time to take a look that would be great.
+As I said, I don't understand mm/, so can't comment, but...
 
-Hi Jonathan,
+On 05/26, Pu Lehui wrote:
+>
+> To make things simpler, perhaps we could try post-processing, that is:
+>
+> diff --git a/mm/mremap.c b/mm/mremap.c
+> index 83e359754961..46a757fd26dc 100644
+> --- a/mm/mremap.c
+> +++ b/mm/mremap.c
+> @@ -240,6 +240,11 @@ static int move_ptes(struct pagetable_move_control
+> *pmc,
+>                 if (pte_none(ptep_get(old_pte)))
+>                         continue;
+>
+> +               /* skip move pte when expanded range has uprobe */
+> +               if (unlikely(pte_present(*new_pte) &&
+> +                            vma_has_uprobes(pmc->new, new_addr, new_addr +
+> PAGE_SIZE)))
+> +                       continue;
+> +
 
-One minor comment at my end, not sure if that changes a lot...
-This could be a fix for the older commit:
-1add69880240 ("iio: adc: Add support for STM32 ADC core")
+I was thinking about
 
-Apart from that, you can add my:
-Tested-by: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
-Reviewed-by: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
+	WARN_ON(!pte_none(*new_pte))
 
-BR,
-Fabrice
+at the start of the main loop.
 
-> 
-> Jonathan
-> 
->>
->>> Changelog:
->>>
->>> v1 -> v2:
->>>
->>> 1. Add Fixes tag.
->>> ---
->>>  drivers/iio/adc/stm32-adc-core.c | 7 +++----
->>>  1 file changed, 3 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/drivers/iio/adc/stm32-adc-core.c b/drivers/iio/adc/stm32-adc-
->>> core.c
->>> index bd3458965bff..21c04a98b3b6 100644
->>> --- a/drivers/iio/adc/stm32-adc-core.c
->>> +++ b/drivers/iio/adc/stm32-adc-core.c
->>> @@ -430,10 +430,9 @@ static int stm32_adc_irq_probe(struct platform_device
->>> *pdev,
->>>  		return -ENOMEM;
->>>  	}
->>>  
->>> -	for (i = 0; i < priv->cfg->num_irqs; i++) {
->>> -		irq_set_chained_handler(priv->irq[i], stm32_adc_irq_handler);
->>> -		irq_set_handler_data(priv->irq[i], priv);
->>> -	}
->>> +	for (i = 0; i < priv->cfg->num_irqs; i++)
->>> +		irq_set_chained_handler_and_data(priv->irq[i],
->>> +						 stm32_adc_irq_handler,
->>> priv);
->>>  
->>>  	return 0;
->>>  }  
-> 
+Obviously not to fix the problem, but rather to make it more explicit.
+
+This matches the similar xxx_none() checks in the move_pgt_entry() paths,
+say, move_normal_pmd().
+
+Oleg.
+
 
