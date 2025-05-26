@@ -1,318 +1,248 @@
-Return-Path: <linux-kernel+bounces-662593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-662587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7F0DAC3CE8
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 11:31:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FB76AC3CDB
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 11:30:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BA15189749C
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 09:31:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63ACB7A33F2
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 09:28:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCCF91F2BBB;
-	Mon, 26 May 2025 09:29:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F72A1F4262;
+	Mon, 26 May 2025 09:29:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RDNPPFWN"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iNZYxPFJ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 326F61F873B
-	for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 09:29:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 755491F416B
+	for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 09:29:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748251795; cv=none; b=e4ElSLMedCvv/Jdnyxzz/r3WRDzakLuwc3+0X5TesFgMrCwmfyXx6vG5yjORTRKCcx+2TQQpWPXGYY0o43SyS4jP1vdexOXSREslHr8FicT4oiTuwa41lzAcpIwJHLkhLN9452kzm4cAyssnEZBDIiatWd39gVaj59Jw9i3Pi38=
+	t=1748251759; cv=none; b=LipscI7M5qLL9s1KfGt3k4dR8vGVp7sQRj2QC5NVdc92Z5b66uPJsGPVAoPwiGtWguz6nvNAgpKwZh3EBcJLmBwBbICrPm6FnbydFB/QkW97OnaiZhEtMmrXImgpruBTqzkVvQ7geS9GyB54blTItkN/i+vYsJTIsq4vZLrcfyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748251795; c=relaxed/simple;
-	bh=kcUU9krrxz4wWXbCSdYpKCBaoyDMroYVrjFc9QNVoz4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=juKfDBHBIInBauzqJAarvTRIDkjrnxI/1rCYu9UclWHNgCKwJSRjJVOeHc5EY+6Wvr0iHcX990xV6mnMXsK7rETa9E4X6AcwIR950iZur6hyvXJXbgI3qc8zYcdq49fD47IHiirDAxrl/oULo8AYfy9dge8S3oMZQJZd80PlzW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RDNPPFWN; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-742c27df0daso1354129b3a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 02:29:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1748251793; x=1748856593; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OhII2By9W5/ZH38QC2aGImrbUspJ4sEI9fSz/8giFeU=;
-        b=RDNPPFWN31Rv8HAqVTJi6j8+7KJ3ZOTVzaKNDDn9cZx7C1ZoT6lb+nOwCX1CRMYfw5
-         d2ETptP0NaPMxsMdovOZzWwT7K9NMYvi1uDBssNLZL1TMDb8yEmIarBtRNqykR/WCLad
-         /7Y50RzrZRKpAQSvh5H5UxAfcVVaFnD2n4hNi9pXhgQjg6fViZMBhO+JwuCIoUMr7u53
-         XNrTXcmi+NHTdzn9LcshXFWjmVidP2oFL0BoWzOa6CWJUjuaLKSDWKo4GyozC2oBO6S2
-         YkHWJlMqD0nAmzTN3sFEa9ErVgt4n0vNPhfJnCXJQPm0PZ8ybaXxRAodejONt4GuENCc
-         jEBQ==
+	s=arc-20240116; t=1748251759; c=relaxed/simple;
+	bh=Xe3vi7ENNMH1j/u/5pu4GOZqnQeAC5v0Ldme1+1Y8pg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lH2HW3PW90s6syy5wUHv2e6+xZdjnGmkndu1F1gs9eYxyYulujZHveXSVZXtDRoQ7t7zd3MuUN+DRdM4TIe2qMgUt2ZmGIXH50er4oIBsPKVMMomvQH3TPeB4O1MiRq2+ElmLpt4wbtKspeB9w0uXDZbIzU/vlJliAv4fCBEKCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iNZYxPFJ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1748251756;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=IMZoildo8uZCd/Eo0gESUyxMqAeWKWWm7Nj0lUCDNuY=;
+	b=iNZYxPFJP4fLwiqPeZUfJ+Y8ByG7VoM7mjueJ27/+rYI/hR+2kUMfu+IMasNswYYjKTAlz
+	LV8w9FYg3cF9JSMjfMhpjInhhMi7QBRgNPUJQ0OVBgrYUjgE8FYgTtgGordGgL7j6TtRJ2
+	othLkxGDO8TdpVPKYkU6DPFkZCt9cV4=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-342-plMLEDhkMuaesnPfBZg5tQ-1; Mon, 26 May 2025 05:29:14 -0400
+X-MC-Unique: plMLEDhkMuaesnPfBZg5tQ-1
+X-Mimecast-MFC-AGG-ID: plMLEDhkMuaesnPfBZg5tQ_1748251753
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-442f90418b0so10922215e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 02:29:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748251793; x=1748856593;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OhII2By9W5/ZH38QC2aGImrbUspJ4sEI9fSz/8giFeU=;
-        b=Q5GA4D8+1Mq3UiScP+ZLFbEDvmTDKfjQeGBdcYAJKY0FT523WMxcXvPGr6jb/lGTD+
-         8gELEMhuHc8jz5rXINt/R0jvczh3XtdysZ857rrzf7006003bdk2snKSEF4pDYkxNd9c
-         ETa0AzN4YkaIViWbQoLKLF+a29KU3xiW9KvYTA7yqfz57hulGbOHOlbiz0Rkjuh99ga6
-         nc+KCsTbuLtyO8npi+dXyZVTBERDCIvpQOrRjUETxAOWO4RAOtjshqNnsViLOk/vyMgX
-         ATmO5W5WZOAmiFhoN0hNY6yPuk5RJ9JYquASV/9ym0BiQzHDcGj5sK6QA7B40km1hQ9l
-         3Lzg==
-X-Forwarded-Encrypted: i=1; AJvYcCUdvDO2MoqI0BT4Dh6C+QKI8d3SmDnCfRBAwGuXLNVB/h+R11HsdQPRpNEK54OIhZFkoyk8EwlpSyfqg8w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YydjU7wFeWCp4XLrB1mGezOm5unvVsR9x/9X+8ailTr70CCw2kZ
-	z615LP0x6mZMzmqbC2E/Iwpzgekzjo51O1G5pUiTl9LCnIDY7lAVyNL/ZZKnVIvVA4o=
-X-Gm-Gg: ASbGnctbBLE2I0+GO/V0nZ0iuBCfIr2vI8n5vvD8MagC2uEJKWu34kVUYTAof5vx+bV
-	Hqx2eiKxSNFmizpaS2bDuymbRzDGKAhMHK5kF8dd54uupsNh6UEJY3nmjIGZleRRxwBcKrBt8K4
-	iPVo6e4fXkZGRUMywjol8B7qE9nFrrbn9/ktB1jO73F2DSmytwb9GfBvVGWIWz6l11+1ZiSWVsv
-	+fQ09si6hRecG/p2ZbSOAs5NMS0FTnIO/PBxg7EU4Doc+ACcRnB/6sAntgqsCdQ3E8HHily9N9S
-	p+Hid1n2RoAeyT65riWbe6FSL8r5c/JTtnCJC4V3rsi+GZHJ/g==
-X-Google-Smtp-Source: AGHT+IG55AR/uE4eHY6Xk+Rm8Z5PklwBjam4j1tPPRyG9RAe4OgSbIbahN8FCWGm2HVg66P47jtsDw==
-X-Received: by 2002:a05:6a20:cf8c:b0:1f5:7b6f:f8e8 with SMTP id adf61e73a8af0-2188c1939c2mr15221738637.6.1748251793393;
-        Mon, 26 May 2025 02:29:53 -0700 (PDT)
-Received: from [127.0.1.1] ([104.234.225.11])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-742a9876e62sm17162393b3a.147.2025.05.26.02.29.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 May 2025 02:29:52 -0700 (PDT)
-From: Jun Nie <jun.nie@linaro.org>
-Date: Mon, 26 May 2025 17:28:30 +0800
-Subject: [PATCH v10 12/12] drm/msm/dpu: Enable quad-pipe for DSC and
- dual-DSI case
+        d=1e100.net; s=20230601; t=1748251753; x=1748856553;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=IMZoildo8uZCd/Eo0gESUyxMqAeWKWWm7Nj0lUCDNuY=;
+        b=CDluvzdaa9cIREPoZWmiN1n7jlizXoN6RhQqEh9v6ED0x/XgAn7JuP1dKaCvyiAHp9
+         c1AKagIs/dmoCV6LEPXnJX1Adae1DSILIrRycptqbi83waDHeQ2cS12wUMyEznaKJZog
+         aGabOOHuwUFLS1GQdvFgkvNAoWaXfyWtEZyv3wsQea3lJ4Q20Dwf6Hu8lqyXiUoc2pd4
+         Ef/p1LmtEw4uiCqPyirS13jpmINV5gcBJnsze0W5u6W3vK/bBMwYwxWCl+07vMn9Ma/X
+         iR2CB2jGXpkdOZUmmRqQS9Ye3YtYn/PqFCOsRDModjZGqt3aX+WoGL0q7XcIj86Lg5w/
+         vrkg==
+X-Forwarded-Encrypted: i=1; AJvYcCWKUNdraVsrwyQyLDWJPam5IXnz5xwVlxCuWO/hrDXZlRJ3pAsF5X38M/3SQKCpRyQJgSsHIo0+DG6z4gs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNFWJ7DXqNBDVUxy2CzxzahIIhoQr15HwC+0MhYZH5EaHI+JyO
+	bSckIQHOC7EWF0WpDuMyjVzuYPv+z4eUHz051lWwj3B4rgVCF1XjaRmVcTbwf6+54P+wflj0FNc
+	2/w5VdXtWaTPY7Aw/gqxYgBly101a2JBlO8IZlx975CdwqwwmkQSInsvwwdDRR9C7sA==
+X-Gm-Gg: ASbGnct9NO9HQwpfD3jqi5aX5JOFdTydSOeMSC9LrUoV5bXysWyz0V9fySk6uUZNpSt
+	EQbBzzYhrGr649K9zEHASInn2ZYb+WHgeUOaSDXB5O1x+T0mEif3PmrVbGiwYtzDidu3pziQyhK
+	FN65kYgdu22vyprC8fhyALsYYd8XzP8OfKBo2K9+7mO882mpyd76gT7X9h/ivl3Z0oZwA4VhHJ6
+	aCGXtl6rspZPz9rpAzqqw0IyX7TCyX+98rSD+6IahxM0THn3clO9XhAjSexE7tCY5PsN8VvA9I+
+	mN4bdGhQhDLypt6C4MxpfHnNWcANn3nWa152OqsR9aKTujthPT8DhkH1+PPzblJKh1uCP25uQ+t
+	u8RzEnPJ7zF1HMeTmfrMsRWFNKMnVG/otN/gOHrg=
+X-Received: by 2002:a05:600c:4f52:b0:43c:f44c:72b7 with SMTP id 5b1f17b1804b1-44c919e1684mr75482405e9.14.1748251752795;
+        Mon, 26 May 2025 02:29:12 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHTunjhfmdiMmCnUy4TVsNn3Xc64kFhImUqJVrq64nA5IfjlCoeJDr+2370sEhKOY96qYgXxw==
+X-Received: by 2002:a05:600c:4f52:b0:43c:f44c:72b7 with SMTP id 5b1f17b1804b1-44c919e1684mr75482085e9.14.1748251752380;
+        Mon, 26 May 2025 02:29:12 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f19:6500:e1c1:8216:4c25:efe4? (p200300d82f196500e1c182164c25efe4.dip0.t-ipconnect.de. [2003:d8:2f19:6500:e1c1:8216:4c25:efe4])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-447f23bfe80sm227992765e9.20.2025.05.26.02.29.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 26 May 2025 02:29:11 -0700 (PDT)
+Message-ID: <dbc7c66b-24c9-49f4-8988-a7eec1280ca8@redhat.com>
+Date: Mon, 26 May 2025 11:29:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v0 2/2] mm: sched: Batch-migrate misplaced pages
+To: Zi Yan <ziy@nvidia.com>
+Cc: Bharata B Rao <bharata@amd.com>, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, Jonathan.Cameron@huawei.com, dave.hansen@intel.com,
+ gourry@gourry.net, hannes@cmpxchg.org, mgorman@techsingularity.net,
+ mingo@redhat.com, peterz@infradead.org, raghavendra.kt@amd.com,
+ riel@surriel.com, rientjes@google.com, sj@kernel.org, weixugc@google.com,
+ willy@infradead.org, ying.huang@linux.alibaba.com, dave@stgolabs.net,
+ nifan.cxl@gmail.com, joshua.hahnjy@gmail.com, xuezhengchu@huawei.com,
+ yiannis@zptcorp.com, akpm@linux-foundation.org
+References: <20250521080238.209678-1-bharata@amd.com>
+ <20250521080238.209678-3-bharata@amd.com>
+ <62cef618-123c-4ffa-b45a-c38b65d2a5a3@redhat.com>
+ <AE28D27C-58C2-41A4-B553-50049E963745@nvidia.com>
+ <5d6b92d8-251f-463b-adde-724ea25b2d89@redhat.com>
+ <996B013E-4143-4182-959F-356241BE609A@nvidia.com>
+ <382839fc-ea63-421a-8397-72cb35dd8052@redhat.com>
+ <FF2F9A08-9BD8-4207-901D-AC9B21443BF6@nvidia.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <FF2F9A08-9BD8-4207-901D-AC9B21443BF6@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250526-v6-15-quad-pipe-upstream-v10-12-5fed4f8897c4@linaro.org>
-References: <20250526-v6-15-quad-pipe-upstream-v10-0-5fed4f8897c4@linaro.org>
-In-Reply-To: <20250526-v6-15-quad-pipe-upstream-v10-0-5fed4f8897c4@linaro.org>
-To: Rob Clark <robdclark@gmail.com>, 
- Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Jessica Zhang <quic_jesszhan@quicinc.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- Dmitry Baryshkov <lumag@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- Jun Nie <jun.nie@linaro.org>, Dmitry Baryshkov <lumag@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1748251705; l=8147;
- i=jun.nie@linaro.org; s=20240403; h=from:subject:message-id;
- bh=kcUU9krrxz4wWXbCSdYpKCBaoyDMroYVrjFc9QNVoz4=;
- b=LU3cjez648NHHXeU75oAvVJsXxHa464qmMXaHe94CWaGJboA2VcVF6jcAbGBdvEcUeE1vhWLl
- MaltpZJmECdA5mU+FqEL2+Y8NiC50MZCgMttiJrHANLUC+MguwdGXBF
-X-Developer-Key: i=jun.nie@linaro.org; a=ed25519;
- pk=MNiBt/faLPvo+iJoP1hodyY2x6ozVXL8QMptmsKg3cc=
 
-To support high-resolution cases that exceed the width limitation of
-a pair of SSPPs, or scenarios that surpass the maximum MDP clock rate,
-additional pipes are necessary to enable parallel data processing
-within the SSPP width constraints and MDP clock rate.
+On 22.05.25 19:30, Zi Yan wrote:
+> On 22 May 2025, at 13:21, David Hildenbrand wrote:
+> 
+>> On 22.05.25 18:38, Zi Yan wrote:
+>>> On 22 May 2025, at 12:26, David Hildenbrand wrote:
+>>>
+>>>> On 22.05.25 18:24, Zi Yan wrote:
+>>>>> On 22 May 2025, at 12:11, David Hildenbrand wrote:
+>>>>>
+>>>>>> On 21.05.25 10:02, Bharata B Rao wrote:
+>>>>>>> Currently the folios identified as misplaced by the NUMA
+>>>>>>> balancing sub-system are migrated one by one from the NUMA
+>>>>>>> hint fault handler as and when they are identified as
+>>>>>>> misplaced.
+>>>>>>>
+>>>>>>> Instead of such singe folio migrations, batch them and
+>>>>>>> migrate them at once.
+>>>>>>>
+>>>>>>> Identified misplaced folios are isolated and stored in
+>>>>>>> a per-task list. A new task_work is queued from task tick
+>>>>>>> handler to migrate them in batches. Migration is done
+>>>>>>> periodically or if pending number of isolated foios exceeds
+>>>>>>> a threshold.
+>>>>>>
+>>>>>> That means that these pages are effectively unmovable for other purposes (CMA, compaction, long-term pinning, whatever) until that list was drained.
+>>>>>>
+>>>>>> Bad.
+>>>>>
+>>>>> Probably we can mark these pages and when others want to migrate the page,
+>>>>> get_new_page() just looks at the page's target node and get a new page from
+>>>>> the target node.
+>>>>
+>>>> How do you envision that working when CMA needs to migrate this exact page to a different location?
+>>>>
+>>>> It cannot isolate it for migration because ... it's already isolated ... so it will give up.
+>>>>
+>>>> Marking might not be easy I assume ...
+>>>
+>>> I guess you mean we do not have any extra bit to indicate this page is isolated,
+>>> but it can be migrated. My point is that if this page is going to be migrated
+>>> due to other reasons, like CMA, compaction, why not migrate it to the target
+>>> node instead of moving it around within the same node.
+>>
+>> I think we'd have to identify that
+>>
+>> a) This page is isolate for migration (could be isolated for other
+>>     reasons)
+>>
+>> b) The one responsible for the isolation is numa code (could be someone
+>>     else)
+>>
+>> c) We're allowed to grab that page from that list (IOW sync against
+>>     others, and especially also against), to essentially "steal" the
+>>     isolated page.
+> 
+> Right. c) sounds like adding more contention to the candidate list.
+> I wonder if we can just mark the page as migration candidate (using
+> a page flag or something else), then migrate it whenever CMA,
+> compaction, long-term pinning and more look at the page.
 
-Request 4 mixers and 4 DSCs for high-resolution cases where both DSC
-and dual interfaces are enabled. More use cases can be incorporated
-later if quad-pipe capabilities are required.
+I mean, all these will migrate the page either way, no need to add 
+another flag for that.
 
-Signed-off-by: Jun Nie <jun.nie@linaro.org>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Reviewed-by: Jessica Zhang <quic_jesszhan@quicinc.com>
----
- drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c         | 27 +++++++++++++++++------
- drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.h         |  6 ++---
- drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c      | 28 ++++++++----------------
- drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys.h |  2 +-
- drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h   |  2 +-
- drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h      |  2 +-
- 6 files changed, 35 insertions(+), 32 deletions(-)
+I guess what you mean, indicating that the migration destination should 
+be on a different node than the current one.
 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-index 47ab43dfec76acc058fb275d1928603e8e8e7fc6..67534cec9bf48f2fa368553be6b3a0bbc307e861 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-@@ -200,7 +200,7 @@ static int dpu_crtc_get_lm_crc(struct drm_crtc *crtc,
- 		struct dpu_crtc_state *crtc_state)
- {
- 	struct dpu_crtc_mixer *m;
--	u32 crcs[CRTC_DUAL_MIXERS];
-+	u32 crcs[CRTC_QUAD_MIXERS];
- 
- 	int rc = 0;
- 	int i;
-@@ -1298,6 +1298,7 @@ static struct msm_display_topology dpu_crtc_get_topology(
- 	struct drm_display_mode *mode = &crtc_state->adjusted_mode;
- 	struct msm_display_topology topology = {0};
- 	struct drm_encoder *drm_enc;
-+	u32 num_rt_intf;
- 
- 	drm_for_each_encoder_mask(drm_enc, crtc->dev, crtc_state->encoder_mask)
- 		dpu_encoder_update_topology(drm_enc, &topology, crtc_state->state,
-@@ -1311,11 +1312,14 @@ static struct msm_display_topology dpu_crtc_get_topology(
- 	 * Dual display
- 	 * 2 LM, 2 INTF ( Split display using 2 interfaces)
- 	 *
-+	 * If DSC is enabled, try to use 4:4:2 topology if there is enough
-+	 * resource. Otherwise, use 2:2:2 topology.
-+	 *
- 	 * Single display
- 	 * 1 LM, 1 INTF
- 	 * 2 LM, 1 INTF (stream merge to support high resolution interfaces)
- 	 *
--	 * If DSC is enabled, use 2 LMs for 2:2:1 topology
-+	 * If DSC is enabled, use 2:2:1 topology
- 	 *
- 	 * Add dspps to the reservation requirements if ctm is requested
- 	 *
-@@ -1327,14 +1331,23 @@ static struct msm_display_topology dpu_crtc_get_topology(
- 	 * (mode->hdisplay > MAX_HDISPLAY_SPLIT) check.
- 	 */
- 
--	if (topology.num_intf == 2 && !topology.cwb_enabled)
--		topology.num_lm = 2;
--	else if (topology.num_dsc == 2)
-+	num_rt_intf = topology.num_intf;
-+	if (topology.cwb_enabled)
-+		num_rt_intf--;
-+
-+	if (topology.num_dsc) {
-+		if (dpu_kms->catalog->dsc_count >= num_rt_intf * 2)
-+			topology.num_dsc = num_rt_intf * 2;
-+		else
-+			topology.num_dsc = num_rt_intf;
-+		topology.num_lm = topology.num_dsc;
-+	} else if (num_rt_intf == 2) {
- 		topology.num_lm = 2;
--	else if (dpu_kms->catalog->caps->has_3d_merge)
-+	} else if (dpu_kms->catalog->caps->has_3d_merge) {
- 		topology.num_lm = (mode->hdisplay > MAX_HDISPLAY_SPLIT) ? 2 : 1;
--	else
-+	} else {
- 		topology.num_lm = 1;
-+	}
- 
- 	if (crtc_state->ctm)
- 		topology.num_dspp = topology.num_lm;
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.h
-index 6eaba5696e8e6bd1246a9895c4c8714ca6589b10..455073c7025b0bcb970d8817f197d9bcacc6dca5 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.h
-@@ -210,7 +210,7 @@ struct dpu_crtc_state {
- 
- 	bool bw_control;
- 	bool bw_split_vote;
--	struct drm_rect lm_bounds[CRTC_DUAL_MIXERS];
-+	struct drm_rect lm_bounds[CRTC_QUAD_MIXERS];
- 
- 	uint64_t input_fence_timeout_ns;
- 
-@@ -218,10 +218,10 @@ struct dpu_crtc_state {
- 
- 	/* HW Resources reserved for the crtc */
- 	u32 num_mixers;
--	struct dpu_crtc_mixer mixers[CRTC_DUAL_MIXERS];
-+	struct dpu_crtc_mixer mixers[CRTC_QUAD_MIXERS];
- 
- 	u32 num_ctls;
--	struct dpu_hw_ctl *hw_ctls[CRTC_DUAL_MIXERS];
-+	struct dpu_hw_ctl *hw_ctls[CRTC_QUAD_MIXERS];
- 
- 	enum dpu_crtc_crc_source crc_source;
- 	int crc_frame_skip_count;
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-index 8b6fa7ef78e2c0fb38daef9090dbf747c7ba111d..456e62ebc795b6c50c96d1ffcea2be566fb8d51c 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-@@ -55,7 +55,7 @@
- #define MAX_PHYS_ENCODERS_PER_VIRTUAL \
- 	(MAX_H_TILES_PER_DISPLAY * NUM_PHYS_ENCODER_TYPES)
- 
--#define MAX_CHANNELS_PER_ENC 2
-+#define MAX_CHANNELS_PER_ENC 4
- #define MAX_CWB_PER_ENC 2
- 
- #define IDLE_SHORT_TIMEOUT	1
-@@ -675,22 +675,12 @@ void dpu_encoder_update_topology(struct drm_encoder *drm_enc,
- 
- 	dsc = dpu_encoder_get_dsc_config(drm_enc);
- 
--	/* We only support 2 DSC mode (with 2 LM and 1 INTF) */
--	if (dsc) {
--		/*
--		 * Use 2 DSC encoders, 2 layer mixers and 1 or 2 interfaces
--		 * when Display Stream Compression (DSC) is enabled,
--		 * and when enough DSC blocks are available.
--		 * This is power-optimal and can drive up to (including) 4k
--		 * screens.
--		 */
--		WARN(topology->num_intf > 2,
--		     "DSC topology cannot support more than 2 interfaces\n");
--		if (topology->num_intf >= 2 || dpu_kms->catalog->dsc_count >= 2)
--			topology->num_dsc = 2;
--		else
--			topology->num_dsc = 1;
--	}
-+	/*
-+	 * Set DSC number as 1 to mark the enabled status, will be adjusted
-+	 * in dpu_crtc_get_topology()
-+	 */
-+	if (dsc)
-+		topology->num_dsc = 1;
- 
- 	connector = drm_atomic_get_new_connector_for_encoder(state, drm_enc);
- 	if (!connector)
-@@ -2178,8 +2168,8 @@ static void dpu_encoder_helper_reset_mixers(struct dpu_encoder_phys *phys_enc)
- 	struct dpu_hw_mixer_cfg mixer;
- 	int i, num_lm;
- 	struct dpu_global_state *global_state;
--	struct dpu_hw_blk *hw_lm[2];
--	struct dpu_hw_mixer *hw_mixer[2];
-+	struct dpu_hw_blk *hw_lm[MAX_CHANNELS_PER_ENC];
-+	struct dpu_hw_mixer *hw_mixer[MAX_CHANNELS_PER_ENC];
- 	struct dpu_hw_ctl *ctl = phys_enc->hw_ctl;
- 
- 	memset(&mixer, 0, sizeof(mixer));
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys.h
-index 61b22d9494546885db609efa156222792af73d2a..09395d7910ac87c035b65cf476350bf6c9619612 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys.h
-@@ -302,7 +302,7 @@ static inline enum dpu_3d_blend_mode dpu_encoder_helper_get_3d_blend_mode(
- 
- 	/* Use merge_3d unless DSC MERGE topology is used */
- 	if (phys_enc->split_role == ENC_ROLE_SOLO &&
--	    dpu_cstate->num_mixers == CRTC_DUAL_MIXERS &&
-+	    (dpu_cstate->num_mixers != 1) &&
- 	    !dpu_encoder_use_dsc_merge(phys_enc->parent))
- 		return BLEND_3D_H_ROW_INT;
- 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
-index 01dd6e65f777f3b92f41e2ccb08f279650d50425..1348f70183602e2ced7bc0658636759413af8d13 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
-@@ -24,7 +24,7 @@
- #define DPU_MAX_IMG_WIDTH 0x3fff
- #define DPU_MAX_IMG_HEIGHT 0x3fff
- 
--#define CRTC_DUAL_MIXERS	2
-+#define CRTC_QUAD_MIXERS	4
- 
- #define MAX_XIN_COUNT 16
- 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h
-index e4875a1f638db6f1983d9c51cb399319d27675e9..5cedcda285273a46cd6e11da63cde92cab94b9f4 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h
-@@ -34,7 +34,7 @@
- #define DPU_MAX_PLANES			4
- #endif
- 
--#define STAGES_PER_PLANE		1
-+#define STAGES_PER_PLANE		2
- #define PIPES_PER_STAGE			2
- #define PIPES_PER_PLANE			(PIPES_PER_STAGE * STAGES_PER_PLANE)
- #ifndef DPU_MAX_DE_CURVES
+Well, and for the NUMA scanner (below) to find which pages to migrate.
+
+... to be this raises some questions: like, if we don't migrate 
+immediately, could that information ("migrate this page") actually now 
+be wrong? I guess a way to obtain the destination node would suffice: if 
+the destination node matches, no need to migrate from that NUMA scanner.
+
+In addition,
+> periodically, the migration task would do a PFN scanning and migrate
+> any migration candidate. I remember Willy did some experiments showing
+> that PFN scanning is very fast.
+
+PFN scanning can be faster than walking lists, but I suspect it depends 
+on how many pages there really are to be migrated ... and some other 
+factors :)
 
 -- 
-2.34.1
+Cheers,
+
+David / dhildenb
 
 
