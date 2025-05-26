@@ -1,132 +1,120 @@
-Return-Path: <linux-kernel+bounces-662685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-662689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52430AC3E3C
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 13:01:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23F01AC3E42
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 13:03:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 853F83B928E
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 11:00:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AB5518981B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 11:03:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12CC01F4C96;
-	Mon, 26 May 2025 11:01:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qg0sQ4GR"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA55F1F8EF6;
+	Mon, 26 May 2025 11:02:57 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1341D10FD;
-	Mon, 26 May 2025 11:01:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 984B41ACEDE
+	for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 11:02:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748257265; cv=none; b=FAZg6J87QbOFp+p/brjdKWLsrmQiYLg4FNPEblwNYV5gLrEvHN8iUkjV6GJirK5RWGhE2iovWAE+rdUnZDmQY9IXBXHFJtuPBKkxBWmiF+Rg/tGy1pF5j8zxzRfIotF9d3lMuncU+bEjoLLbvcud5OLqSjlVykJcyUpOahcDoNg=
+	t=1748257377; cv=none; b=LQJUpR3nlYgZ1wBXV9Iw1FTNZMFfuYpvYFMmuPi3cZisGGeGHVinOlo2IXY3ERO7z7mhYNB2i0pWNYaXzl+AnaHk/IJitH7Q9p7jc4joIE4n26nLUoUxycLqChynEJ0FAQCvApb6KZaiLgRPdJhDFPFus5KD1Y/wRF9LmiXzD4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748257265; c=relaxed/simple;
-	bh=P8k5cqwnruQ1x9W80TsUFMMyat57fGLTCZhNMJY7rZY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qoqFAAXTEKjp8i8VbTD41G+NglPnHeNofO+FQ1iKRBiLg5gKY5jB6VCV/SnjF6Ssn4211/NyuC786YqdI1hFOTrXssURga3JX4QW+dDqCHfb5mngzQbDwhBrITIPRVDc8pXQjrsq4yUE5FJh5TV/ZDjTGHc+gWVzJN1mf4aEVdg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qg0sQ4GR; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b26c5fd40a9so2149954a12.1;
-        Mon, 26 May 2025 04:01:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748257263; x=1748862063; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=P8k5cqwnruQ1x9W80TsUFMMyat57fGLTCZhNMJY7rZY=;
-        b=Qg0sQ4GRpQyZKmqg5R0xUkr3MoqdyDC6uaF7Uiyj8BHrJzQr9rk6iN/KaMSVzop0YW
-         SbXIOuMZzrs+5pb93KHI0w3q1lZGPVPzY9RvbW2qIVtbiaeWPuUpzbMWI57kh//ibecj
-         +Yw4R5/UaCriy/3N2q3almvQvPpjs+1rpPakJbK1iydkVjn4skEuyf1jvqgKAFjisIZP
-         dFJqqWLVnvswKlPmkItR4l0wGMGJJ8FI7RJN41sa6u0auVZExFfp+LiT0wLQt/8cssqg
-         4q4/dacThcGNo2VpQx4IbkZgrhfpTLNqsMyd37MwzneGaDerBwbOvHbQJ+v3M6WPuf1+
-         Ozfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748257263; x=1748862063;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=P8k5cqwnruQ1x9W80TsUFMMyat57fGLTCZhNMJY7rZY=;
-        b=wFZgHN470/SS2vuCRqkAlv/nCVcmnYYHlxBRrnHTm37mcg/kgMS8WQRDthlyrT5FWY
-         +nVXOKQeG9x4LaXaCJIf6tu0WOkCuBRomNudspoNoIg4IsBg32nziKQ7Z9yV177C/DUB
-         E2ZYTEt/EUEzrdkk9T8pzF1+8lFuEBADzPik4G7Ekp/sb2FTM2DFq41ZDPi5CE+7WtKE
-         D4aQwXwvgcUrG+uj7IibmnZInsiB7ECmCelHI4rvH6Y7cyZ1RUL0ts2URyXEzDtqQQcW
-         97xQGlerfqP5mCSbwIyNZL0yWwzrCI691rABZgGisEoPfK5brXwHMphclhrfYki3lEvo
-         5kSA==
-X-Forwarded-Encrypted: i=1; AJvYcCVV9qa7jvlgotMA3Hq7kcakT/JJm03vf+o1JEIw7N+icHbMfacOXSj0ZHpRMzTo3U68uqG+ZSOxnEnX9+Y=@vger.kernel.org, AJvYcCVrozKOgCuZ0L9o8CcLUaNBtuPBUP3GHq5ZXtjc0xZauZJe19Z40Hk/TT1ddQpbh5o5w50SufU5@vger.kernel.org
-X-Gm-Message-State: AOJu0YySmn66TklphZV6BxEeSGv2kpY7gEgGyHJ2xX14m3jHOv+1CfxT
-	syyMxD4N3S8dVk+AsPOiN/x+/O6LqvN4b56gV+TGPOb4cjZK18AGx4hDN5ryyYBJPjLlxqbN7zl
-	s6R3JtIqliXzNGpItWHUktk4uCUjqqgrXH3x2SLQ=
-X-Gm-Gg: ASbGnctA1aXrcqMe5Juhv2dVlGQUqYZWKOjTnzGjYQo4c/tvX0QWzjIP53+QQTUYWJN
-	9TZQO1J85fX02dObFyVU46FnB/Xw0JlvDT85+ku33wuMduW5AEmQKBXi496iBOjwSOSNq+nGH2j
-	S9q6jQXsLD7I+d7qv+/0rovssVhAced/G9cog=
-X-Google-Smtp-Source: AGHT+IFzKALfpHYrl261f5UqzhKbxKXbyaXPEfSZRiUqquUXIhamqnDtqYwWSjn1xlfXmEci9RHW6Yv3ctXFpmAsmu0=
-X-Received: by 2002:a17:90b:4d07:b0:311:1617:5bc4 with SMTP id
- 98e67ed59e1d1-3111617a102mr11083391a91.12.1748257263138; Mon, 26 May 2025
- 04:01:03 -0700 (PDT)
+	s=arc-20240116; t=1748257377; c=relaxed/simple;
+	bh=Ldi1yVf2ldhjemlFYQtQ6NnLnOmR4yYHcpAsoMfrSX0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=XMWj2G42JlsxbeXS5+bcxQjs5Y+ueawe55k64VN9NUDNmNKzy40+AVEdsr/TVhkO+OWJxGooX84Z/8f7wWOQAOPm7A3qPk32yHIu9LYwCiLeEmjMYYVGwVt6v8HTcq09O+dw6tixMDrRTRIkP30kceZm4AelfrFKE2cDI270F4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from dude06.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::5c])
+	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
+	(envelope-from <f.pflug@pengutronix.de>)
+	id 1uJVbX-0000Pi-89; Mon, 26 May 2025 13:02:51 +0200
+From: Fabian Pflug <f.pflug@pengutronix.de>
+Subject: [PATCH v2 0/2] Add devicetree for NXP i.MX93 FRDM board
+Date: Mon, 26 May 2025 13:02:34 +0200
+Message-Id: <20250526-fpg-nxp-imx93-frdm-v2-0-e5ad0efaec33@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250520160717.7350-1-aha310510@gmail.com> <20250522145037.4715a643@kernel.org>
-In-Reply-To: <20250522145037.4715a643@kernel.org>
-From: Jeongjun Park <aha310510@gmail.com>
-Date: Mon, 26 May 2025 20:00:53 +0900
-X-Gm-Features: AX0GCFuBtvDmlIQiOi-FLJP0rr1olcYAogKIohBgi9-ICrvKDMnxZu5Hw369nvU
-Message-ID: <CAO9qdTHuDb9Uqu3zqjnV6PdX9ExWv24Q9_JfQ8FbKigipDrN+Q@mail.gmail.com>
-Subject: Re: [PATCH v2] ptp: remove ptp->n_vclocks check logic in ptp_vclock_in_use()
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: richardcochran@gmail.com, andrew+netdev@lunn.ch, davem@davemloft.net, 
-	edumazet@google.com, pabeni@redhat.com, yangbo.lu@nxp.com, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEpKNGgC/33NQQ6DIBAF0KuYWXcaQGm0q96jcWFh0FmIBKyhM
+ d691AN0+X7y/98hUWRKcK92iLRx4sUXqEsFZhr8SMi2GJRQWmhVowsj+hyQ59wVRTujNka2YpD
+ ODh2UYojkOJ+jz7544rQu8XN+bPKX/p3bJArUze2lbN2oVutHID++17h4zldL0B/H8QV5ba4zu
+ QAAAA==
+X-Change-ID: 20250523-fpg-nxp-imx93-frdm-5cc180a1fda9
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ Fabian Pflug <f.pflug@pengutronix.de>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Daniel Baluta <daniel.baluta@nxp.com>
+X-Mailer: b4 0.14.2
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:1101:1d::5c
+X-SA-Exim-Mail-From: f.pflug@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Jakub Kicinski <kuba@kernel.org> wrote:
->
-> On Wed, 21 May 2025 01:07:17 +0900 Jeongjun Park wrote:
-> > The reason why this is appropriate is that any path that uses
-> > ptp->n_vclocks must unconditionally check if ptp->n_vclocks is greater
-> > than 0 before unregistering vclocks, and all functions are already
-> > written this way. And in the function that uses ptp->n_vclocks, we
-> > already get ptp->n_vclocks_mux before unregistering vclocks.
->
-> What about ptp_clock_freerun()? We seem to call it for clock ops
-> like settime and it does not check n_vclocks.
+I could not test all features of the board, therefore a lot of stuff is
+omitted from the devicetree. but this is enough to have the board boot
+via eMMC or SD-Card, debug via debug USB connector and have a network
+connection.
 
-ptp_clock_freerun() calls ptp_vclock_in_use() to check n_vclocks.
+The FRDM i.MX 93 development board is a low-cost and compact development
+board featuring the i.MX93 applications processor.
 
->
-> > Therefore, we need to remove the redundant check for ptp->n_vclocks in
-> > ptp_vclock_in_use() to prevent recursive locking.
->
-> IIUC lockdep is complaining that we are trying to lock the vclock's
-> n_vclocks_mux, while we already hold that lock for the real clock's
-> instance. It doesn't understand that the two are in a fixed hierarchy
-> so the deadlock is not possible.
->
-> If my understanding is correct could you please clearly state in the
-> commit message that this is a false positive? And if so isn't a better
-> fix to _move_ the !ptp->is_virtual_clock check before the lock in
-> ptp_vclock_in_use()? that way we preserve current behavior for real
-> clocks, but vclocks can return early and avoid confusing lockdep?
-> --
-> pw-bot: cr
+It features:
+- Dual Cortex-A55
+- 2 GB LPDDR4X / LPDDR4
+- 32 GB eMMC5.1
+- MicroSD slot
+- GbE RJ45 x 2
+- USB2.0 1x Type C, 1x Type A
 
-Your right! This deadlock report seems to be a false positive. It seems
-appropriate to add a description of this false positive to the commit
-message.
+This file is based upon the one provided by nxp in their own kernel and
+yocto meta layer for the device, but adapted for mainline.
 
-However, it is not appropriate to move the code that checks
-ptp->is_virtual_clock. If you need to check n_vclocks when checking
-whether ptp virtual clock is in use, it means that caller function has
-already performed work related to n_vclocks, and in this case, it is
-appropriate to perform n_vclocks check and n_vclocks_mux lock in caller
-function.
+Signed-off-by: Fabian Pflug <f.pflug@pengutronix.de>
+---
+Changes in v2:
+- 1/2: remove CAN node, as it has not been tested.
+- 1/2: ran dt-format (Thanks Frank Li)
+	But also reordered some nodes afterwards again to have
+	regulator-min before regulator-max, have the pinmux at the end
+	of the file, and have the regulator-name as the first node
+	inside the regulators.
+	Re-added comments, that were deleted.
+- 1/2: changes subjet to ar64:dts (Thanks Fabio Estevan)
+- 1/2: removed reg_vdd_12v (Tanks Fabio Estevan)
+- 1/2: added aliases for rtc, emmc, serial (Thanks Fabio Estevan)
+- reordered the series to have documentation before dts. (Thanks
+  Krzystof Kozlowski)
+- Link to v1: https://lore.kernel.org/r/20250523-fpg-nxp-imx93-frdm-v1-0-546b2d342855@pengutronix.de
 
-Therefore, considering the overall structure, it is more appropriate to
-remove unnecessary locks and n_vclocks checks in ptp_vclock_in_use().
+---
+Fabian Pflug (2):
+      dt-bindings: arm: fsl: add i.MX93 11x11 FRDM board
+      arm64: dts: freescale: add support for NXP i.MX93 FRDM
+
+ Documentation/devicetree/bindings/arm/fsl.yaml     |   1 +
+ arch/arm64/boot/dts/freescale/Makefile             |   1 +
+ arch/arm64/boot/dts/freescale/imx93-11x11-frdm.dts | 613 +++++++++++++++++++++
+ 3 files changed, 615 insertions(+)
+---
+base-commit: 94305e83eccb3120c921cd3a015cd74731140bac
+change-id: 20250523-fpg-nxp-imx93-frdm-5cc180a1fda9
+
+Best regards,
+-- 
+Fabian Pflug <f.pflug@pengutronix.de>
+
 
