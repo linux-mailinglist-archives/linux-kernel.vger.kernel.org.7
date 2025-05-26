@@ -1,223 +1,83 @@
-Return-Path: <linux-kernel+bounces-662390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-662392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 527B7AC3A00
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 08:36:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64D9EAC3A06
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 08:39:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0487F3A8803
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 06:36:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79C903B4748
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 06:39:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36A711DDA32;
-	Mon, 26 May 2025 06:36:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC3AB1DDA0C;
+	Mon, 26 May 2025 06:39:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UbnZFV9t"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="QOHdLoa+"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47CD11C84DF
-	for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 06:36:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AC861DE4C3
+	for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 06:39:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748241409; cv=none; b=A4tgR8vOB7MuhPvv2T1AufPEf/ulu+eNoVj9Vsu32u1K72UvC3Wvrjetal/oPrjMcCzF1WksMLPeOF75eyBU+kSjmeTs6fZIV/f4hrH3QswecjFWnQSK9rHOYCideMuLEB5ZG4d7UJF2aBoCY8U0Vu2MbYOYvENyFXbPYpC7SWk=
+	t=1748241559; cv=none; b=bfaHiv8nxcHmAeCBbH4olfFjdhwlKn0mosPcgCeW6s966UESDNQyeg96N8MfWmarrMep1rOpADoFnGuA/simzrDE+Xkz+EkXZK0zF2n6/QZizXL86xVDenf6EaJzmzDFckwCzpnuJZ29NxyPfnU+tGjAkoofXG4TIFCnJ2tMsuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748241409; c=relaxed/simple;
-	bh=f357TMpsKFIO6MjcV4osUpKN3OM2rvj7EyZMQSoPwis=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=gqJ2JlEM55qzhZ5Z+bDMHKZwfYolzxIATC+TduEH4i5Mn+T/W3W6Zy5JRG6j3viQ7QFnN6Rl0pVDprau81aDcfAp1Xrab/IdPuw2YadF07ohkXEJZ8nOskdsKVUUpPnW/hunvDfv4fGmRWOkkmuWgUEm8GfhSCb39wTuxi2kDSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UbnZFV9t; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-441ab63a415so21830735e9.3
-        for <linux-kernel@vger.kernel.org>; Sun, 25 May 2025 23:36:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1748241405; x=1748846205; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=szPoFZo1qtuOcko9W28Xe98h6q8n7Lwdut0b0uqIg+c=;
-        b=UbnZFV9tiL9yGztFM6D/TyxjDp87qOmSJ2plMzcPXhdpd56So8WAbjasGMKpNeDZ16
-         En95eYR+Pkvv1hy8T6rqm1xggx6vxl0hskXHUOHkHIUzVgkwZtnjueg1SknTejHbyOpx
-         AZAvlZzTQe4q9zqm2zQKX2bn8fMu+nRClvxwpteoFFsPA7Qf07mO4RwfMpbiQGjED4Ym
-         8U7vMGndeuQHKSgqLheSQ2T673wM0jY22n5+32VevImk5x1QpJbJxLrf0z3TyLX1xrdF
-         G2YbocOU/AnXM662Y08fLIsm1auwsOn7kMKQ3NHMnd0v6sCe57CGoYMqLifQeozKZYnS
-         hCEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748241405; x=1748846205;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=szPoFZo1qtuOcko9W28Xe98h6q8n7Lwdut0b0uqIg+c=;
-        b=bRTIGJNFjPn7bvjmdMRVgN6KrLO7lJwJC/h3yzI4LxY7p3xLxq+di6nesZXY5y9JFv
-         Q1KCUJkBFCDPz4rEP0hVLGEVW800jFm1kJRaKmRZ5hPtTjdhvVo2Uo5MiuTwFZOu8os2
-         5dIG6I7Q2kzB5KIHl8Xwu/wO5XD0KRosLhsM+21PDaO6ynosMMWriEoIIhXLIXhLwR6Z
-         GxKHTfFd72QbjKrb7RekxOrA38ks0+X9Z6fz7e0HgsGtikaEzQ682sgAUTOW7UHSaYzm
-         pH0sfVRKEo1BhC8eSQ0q0WaBqDLSNqpDDZc06QMwHOtaXvk3Y9tjt6BXc2jflrdD/Q15
-         2erg==
-X-Forwarded-Encrypted: i=1; AJvYcCUgCQAIqUjOMN285v4KSTFczN90BC3S+hZe5u+hjE38VcazwIscf/rvprj4Fx1eIVYtU705FGQGeXrXrdw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNFVTKOc9uISlABcjcRv9cCe73WRqGpt2TVavite17gGEvHb+m
-	Uw9SJ26yMdOC6nxgEBa2Bv9egr8rDnMz4pGgAEntgHRyyQJ63neBiaoZ3XGdjYtlxNg=
-X-Gm-Gg: ASbGncuIFBaxNy7GllDBnJIcHlaghqrimFZaqEdwQmxxrBOsvkllZ/M25BkLihvd/j/
-	12V5WmcL3AUCK+wdb1Xmq2qUaOHOuv7Axkv/fp7RF2+sjreUgR5qzHJRIsm+3nhBxomAfxhyuvE
-	FkfAU14WemXdfL/qbzdq4EedJCYm3IUDRO+FH6It7mbr37Q1hoY1881wZH4OqCjhkhUC0cH8yR5
-	9Lk3CZGThIrbORZ7ZOShmvDIJ3UVLj43nnioqAJhyYlLdG2mScHsJMRJQvSeQpITRO1LVsRIqoG
-	p8Q0FPzFuNntBE7lmvJy31P5pAcCj72KAxwe8pvRp7z94DfpnQ0ZjBpp
-X-Google-Smtp-Source: AGHT+IEQ7uO7eq3sWoX6vR13FTdVqyDvylkH1GTJLSx4FN8jLcvB+d2mvQA5tQ2N/TYUDL6/KQ9IHw==
-X-Received: by 2002:a05:600c:3b19:b0:442:e9eb:cba2 with SMTP id 5b1f17b1804b1-44c8f25dab7mr78164895e9.0.1748241405368;
-        Sun, 25 May 2025 23:36:45 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a4d10e98f8sm4698986f8f.42.2025.05.25.23.36.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 25 May 2025 23:36:44 -0700 (PDT)
-Date: Mon, 26 May 2025 09:36:41 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev, Rafal Bilkowski <rafalbilkowski@gmail.com>,
-	netdev@vger.kernel.org
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, dsahern@kernel.org,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	Rafal Bilkowski <rafalbilkowski@gmail.com>
-Subject: Re: [PATCH]    net: ipv6: sanitize RPL SRH cmpre/cmpre fields to fix
- taint issue
-Message-ID: <202505251717.YSYmRdLZ-lkp@intel.com>
+	s=arc-20240116; t=1748241559; c=relaxed/simple;
+	bh=dzPA0wCJq6nCRh4A0bzOMqEcZWel0GiR+aFE6GArilk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=XhZg6XVcKC2lmUjhQrxB+SRLW0T0fX5GoYJMf41x+Tj3T5AFM4rIHeMOZxjHpZmxEFNB7SqaG7G8iWpZLk/wWcQhhe1v+p0NyXDZKmQ3Dz0FcE1X6BEYx8FrbzNbU8RDuwU0KkBWjyWQBrxytNW3WsGcCGAHZ4PHaYrvUKcPFw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=QOHdLoa+; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Type:MIME-Version:Message-ID:Date:References:
+	In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=dzPA0wCJq6nCRh4A0bzOMqEcZWel0GiR+aFE6GArilk=; b=QOHdLoa+cMuzjijaD4C2Un/WJA
+	Zy7G8no7Gw6z7waXbmUsbiI5Aqb8+oWMCrrpLs7njYvL2VZSkyBCE6yesW12DYF/7YYENJOfkOc0z
+	7CUBMRIWngFXb28oQs7zSOYlrADyTp6zysCjHolIuvjd7x4+hL2yIzRPRVDRnVDmtWJ98mqcqA7uO
+	J9sgTj0RNp3h0rdvaOyTVl/5tv4R9SlA2azbZ0zqO0+9oFnduXFTBUQMP9Hr5R9zMpg52VJ59Wehw
+	5NE1vt+EaP/cVIhWVH4wapifII/PM2BcrItX6CHeB/qBmKzlY9I2mC6jQ4LKdA2gADJR4Bzly6DS8
+	bRQAbHgw==;
+Received: from 53.red-81-38-30.dynamicip.rima-tde.net ([81.38.30.53] helo=localhost)
+	by fanzine2.igalia.com with utf8esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1uJRUA-00DCdJ-5m; Mon, 26 May 2025 08:38:58 +0200
+From: Ricardo =?utf-8?Q?Ca=C3=B1uelo?= Navarro <rcn@igalia.com>
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Lorenzo Stoakes
+ <lorenzo.stoakes@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, Jann Horn
+ <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>, revest@google.com,
+ kernel-dev@igalia.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ Oscar Salvador <osalvador@suse.de>
+Subject: Re: [PATCH v2] mm: fix copy_vma() error handling for hugetlb mappings
+In-Reply-To: <fs2zd6syrdpyrsqkfmzjjz3y3rricscyr3bnx5trnr6p5nbhmy@l6zyiaccoknt>
+References: <20250523-warning_in_page_counter_cancel-v2-1-b6df1a8cfefd@igalia.com>
+ <fs2zd6syrdpyrsqkfmzjjz3y3rricscyr3bnx5trnr6p5nbhmy@l6zyiaccoknt>
+Date: Mon, 26 May 2025 08:38:57 +0200
+Message-ID: <87frgrc1vi.fsf@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250524055159.32982-1-rafalbilkowski@gmail.com>
+Content-Type: text/plain
 
-Hi Rafal,
+Hi Liam, thanks for reviewing:
 
-kernel test robot noticed the following build warnings:
+On Fri, May 23 2025 at 13:45:47, "Liam R. Howlett" <Liam.Howlett@oracle.com> wrote:
 
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> nit: mremap(), do you need the ()? (is it literally this function or the
+> call path?)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Rafal-Bilkowski/net-ipv6-sanitize-RPL-SRH-cmpre-cmpre-fields-to-fix-taint-issue/20250524-135351
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/klassert/ipsec.git master
-patch link:    https://lore.kernel.org/r/20250524055159.32982-1-rafalbilkowski%40gmail.com
-patch subject: [PATCH]    net: ipv6: sanitize RPL SRH cmpre/cmpre fields to fix taint issue
-config: parisc-randconfig-r072-20250525 (https://download.01.org/0day-ci/archive/20250525/202505251717.YSYmRdLZ-lkp@intel.com/config)
-compiler: hppa-linux-gcc (GCC) 12.4.0
+The mremap call path. This function isn't called directly by mremap()
+but it may be called by some of the helper functions in the mremap path,
+and I suppose the specific callers are prone to change in the future.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202505251717.YSYmRdLZ-lkp@intel.com/
-
-smatch warnings:
-net/ipv6/exthdrs.c:511 ipv6_rpl_srh_rcv() error: uninitialized symbol 'hdr'.
-net/ipv6/exthdrs.c:547 ipv6_rpl_srh_rcv() warn: impossible condition '(hdr->cmpri > 15) => (0-15 > 15)'
-net/ipv6/exthdrs.c:547 ipv6_rpl_srh_rcv() warn: impossible condition '(hdr->cmpre > 15) => (0-15 > 15)'
-net/ipv6/exthdrs.c:550 ipv6_rpl_srh_rcv() warn: impossible condition '(hdr->pad > 15) => (0-15 > 15)'
-net/ipv6/exthdrs.c:555 ipv6_rpl_srh_rcv() warn: 'n' unsigned <= 0
-
-vim +/hdr +511 net/ipv6/exthdrs.c
-
-8610c7c6e3bd64 Alexander Aring     2020-03-27  482  static int ipv6_rpl_srh_rcv(struct sk_buff *skb)
-8610c7c6e3bd64 Alexander Aring     2020-03-27  483  {
-8610c7c6e3bd64 Alexander Aring     2020-03-27  484  	struct ipv6_rpl_sr_hdr *hdr, *ohdr, *chdr;
-8610c7c6e3bd64 Alexander Aring     2020-03-27  485  	struct inet6_skb_parm *opt = IP6CB(skb);
-8610c7c6e3bd64 Alexander Aring     2020-03-27  486  	struct net *net = dev_net(skb->dev);
-8610c7c6e3bd64 Alexander Aring     2020-03-27  487  	struct inet6_dev *idev;
-8610c7c6e3bd64 Alexander Aring     2020-03-27  488  	struct ipv6hdr *oldhdr;
-8610c7c6e3bd64 Alexander Aring     2020-03-27  489  	unsigned char *buf;
-8610c7c6e3bd64 Alexander Aring     2020-03-27  490  	int accept_rpl_seg;
-8610c7c6e3bd64 Alexander Aring     2020-03-27  491  	int i, err;
-8610c7c6e3bd64 Alexander Aring     2020-03-27  492  	u64 n = 0;
-8610c7c6e3bd64 Alexander Aring     2020-03-27  493  	u32 r;
-8610c7c6e3bd64 Alexander Aring     2020-03-27  494  
-8610c7c6e3bd64 Alexander Aring     2020-03-27  495  	idev = __in6_dev_get(skb->dev);
-8610c7c6e3bd64 Alexander Aring     2020-03-27  496  
-8610c7c6e3bd64 Alexander Aring     2020-03-27  497  	accept_rpl_seg = net->ipv6.devconf_all->rpl_seg_enabled;
-8610c7c6e3bd64 Alexander Aring     2020-03-27  498  	if (accept_rpl_seg > idev->cnf.rpl_seg_enabled)
-8610c7c6e3bd64 Alexander Aring     2020-03-27  499  		accept_rpl_seg = idev->cnf.rpl_seg_enabled;
-8610c7c6e3bd64 Alexander Aring     2020-03-27  500  
-8610c7c6e3bd64 Alexander Aring     2020-03-27  501  	if (!accept_rpl_seg) {
-8610c7c6e3bd64 Alexander Aring     2020-03-27  502  		kfree_skb(skb);
-8610c7c6e3bd64 Alexander Aring     2020-03-27  503  		return -1;
-8610c7c6e3bd64 Alexander Aring     2020-03-27  504  	}
-8610c7c6e3bd64 Alexander Aring     2020-03-27  505  
-8610c7c6e3bd64 Alexander Aring     2020-03-27  506  looped_back:
-045bd21f380952 Rafal Bilkowski     2025-05-24  507  
-045bd21f380952 Rafal Bilkowski     2025-05-24  508  	if (!pskb_may_pull(skb, skb_transport_offset(skb) + sizeof(struct ipv6_rpl_sr_hdr)))
-045bd21f380952 Rafal Bilkowski     2025-05-24  509  		goto error;
-045bd21f380952 Rafal Bilkowski     2025-05-24  510  	// Check if there is enough memory available for the header and hdrlen is in valid range
-045bd21f380952 Rafal Bilkowski     2025-05-24 @511  	if (skb_tailroom(skb) < ((hdr->hdrlen + 1) << 3) ||
-
-Where is hdr initialized?  Is part of the commit missing?
-
-045bd21f380952 Rafal Bilkowski     2025-05-24  512  	    hdr->hdrlen == 0 ||
-045bd21f380952 Rafal Bilkowski     2025-05-24  513  	    hdr->hdrlen > U8_MAX)
-045bd21f380952 Rafal Bilkowski     2025-05-24  514  		goto error;
-045bd21f380952 Rafal Bilkowski     2025-05-24  515  
-8610c7c6e3bd64 Alexander Aring     2020-03-27  516  	hdr = (struct ipv6_rpl_sr_hdr *)skb_transport_header(skb);
-8610c7c6e3bd64 Alexander Aring     2020-03-27  517  
-8610c7c6e3bd64 Alexander Aring     2020-03-27  518  	if (hdr->segments_left == 0) {
-8610c7c6e3bd64 Alexander Aring     2020-03-27  519  		if (hdr->nexthdr == NEXTHDR_IPV6) {
-8610c7c6e3bd64 Alexander Aring     2020-03-27  520  			int offset = (hdr->hdrlen + 1) << 3;
-8610c7c6e3bd64 Alexander Aring     2020-03-27  521  
-8610c7c6e3bd64 Alexander Aring     2020-03-27  522  			skb_postpull_rcsum(skb, skb_network_header(skb),
-8610c7c6e3bd64 Alexander Aring     2020-03-27  523  					   skb_network_header_len(skb));
-ac9d8a66e41d55 Kuniyuki Iwashima   2023-06-14  524  			skb_pull(skb, offset);
-8610c7c6e3bd64 Alexander Aring     2020-03-27  525  			skb_postpull_rcsum(skb, skb_transport_header(skb),
-8610c7c6e3bd64 Alexander Aring     2020-03-27  526  					   offset);
-8610c7c6e3bd64 Alexander Aring     2020-03-27  527  
-8610c7c6e3bd64 Alexander Aring     2020-03-27  528  			skb_reset_network_header(skb);
-8610c7c6e3bd64 Alexander Aring     2020-03-27  529  			skb_reset_transport_header(skb);
-8610c7c6e3bd64 Alexander Aring     2020-03-27  530  			skb->encapsulation = 0;
-8610c7c6e3bd64 Alexander Aring     2020-03-27  531  
-8610c7c6e3bd64 Alexander Aring     2020-03-27  532  			__skb_tunnel_rx(skb, skb->dev, net);
-8610c7c6e3bd64 Alexander Aring     2020-03-27  533  
-8610c7c6e3bd64 Alexander Aring     2020-03-27  534  			netif_rx(skb);
-8610c7c6e3bd64 Alexander Aring     2020-03-27  535  			return -1;
-8610c7c6e3bd64 Alexander Aring     2020-03-27  536  		}
-8610c7c6e3bd64 Alexander Aring     2020-03-27  537  
-8610c7c6e3bd64 Alexander Aring     2020-03-27  538  		opt->srcrt = skb_network_header_len(skb);
-8610c7c6e3bd64 Alexander Aring     2020-03-27  539  		opt->lastopt = opt->srcrt;
-8610c7c6e3bd64 Alexander Aring     2020-03-27  540  		skb->transport_header += (hdr->hdrlen + 1) << 3;
-8610c7c6e3bd64 Alexander Aring     2020-03-27  541  		opt->nhoff = (&hdr->nexthdr) - skb_network_header(skb);
-8610c7c6e3bd64 Alexander Aring     2020-03-27  542  
-8610c7c6e3bd64 Alexander Aring     2020-03-27  543  		return 1;
-8610c7c6e3bd64 Alexander Aring     2020-03-27  544  	}
-8610c7c6e3bd64 Alexander Aring     2020-03-27  545  
-045bd21f380952 Rafal Bilkowski     2025-05-24  546  	// Check if cmpri and cmpre are valid and do not exceed 15
-
-These comments are pointless.  It's just explaining what an if statement
-does but it doesn't explain why 15 is chosen.  #MagicNumber
-
-045bd21f380952 Rafal Bilkowski     2025-05-24 @547  	if (hdr->cmpri > 15 || hdr->cmpre > 15)
-045bd21f380952 Rafal Bilkowski     2025-05-24  548  		goto error;
-
-I don't normally report these because it's fine to add pointless
-if statements if it makes the code more readable.  But that's
-not really what's happening here based on the commit message.
-
-045bd21f380952 Rafal Bilkowski     2025-05-24  549  	// Check if pad value is valid and does not exceed 15
-045bd21f380952 Rafal Bilkowski     2025-05-24 @550  	if (hdr->pad > 15)
-045bd21f380952 Rafal Bilkowski     2025-05-24  551  		goto error;
-045bd21f380952 Rafal Bilkowski     2025-05-24  552  
-8610c7c6e3bd64 Alexander Aring     2020-03-27  553  	n = (hdr->hdrlen << 3) - hdr->pad - (16 - hdr->cmpre);
-045bd21f380952 Rafal Bilkowski     2025-05-24  554  	// Check if n is non-negative
-                                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-n is unsigned so it can't be negative.
-
-045bd21f380952 Rafal Bilkowski     2025-05-24 @555  	if (n <= 0)
-045bd21f380952 Rafal Bilkowski     2025-05-24  556  		goto error;
-045bd21f380952 Rafal Bilkowski     2025-05-24  557  
-8610c7c6e3bd64 Alexander Aring     2020-03-27  558  	r = do_div(n, (16 - hdr->cmpri));
-8610c7c6e3bd64 Alexander Aring     2020-03-27  559  	/* checks if calculation was without remainder and n fits into
-8610c7c6e3bd64 Alexander Aring     2020-03-27  560  	 * unsigned char which is segments_left field. Should not be
-8610c7c6e3bd64 Alexander Aring     2020-03-27  561  	 * higher than that.
-8610c7c6e3bd64 Alexander Aring     2020-03-27  562  	 */
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
-
+Cheers,
+Ricardo
 
