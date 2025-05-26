@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-662798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-662810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 114F2AC3FC0
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 14:55:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 357A8AC3FED
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 14:59:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C7D61895715
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 12:56:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EFBB3B7008
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 12:58:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CB38202C4E;
-	Mon, 26 May 2025 12:55:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37C8D213E83;
+	Mon, 26 May 2025 12:56:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KMVJZhag"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CLYz56j0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C8971F8AD3;
-	Mon, 26 May 2025 12:55:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75260212B18;
+	Mon, 26 May 2025 12:56:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748264138; cv=none; b=cyA1iZjj54Oys61qUmTtMOXgdQ+lpMQpZsCDDeGa/xdNRSRYnKLAU0JP7Rzx+0IAvbCdjOChcuPeZ3tJb5C8VPnfV5FjvEoFMUTOTi0Pd5RluZAF7OebERrBH9S6YdRiflAXbdkU26mSzvRT/Xte2KuHx9TnYmUcfKtkcvgn8Xk=
+	t=1748264190; cv=none; b=lHOgz3mWyLGrdOo9fB3Kj8jFc/AJTZE/Bxt4txNr1ShbXyGwu2m031b+VFFYSkTX/nzZn7LW+gPwlF0StOmz7wvF8DBq669PPhuDf1+u9HU56b6VYy+dy9RPXorUBBvwbIU81u8C5Cyx1xmmBfTnSw/Zc7hmsyNMqfQWB0Mxobg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748264138; c=relaxed/simple;
-	bh=bExfwfw/4XWLYxbzMhE/s2vE70ANp/mcnfz5QFrmCek=;
+	s=arc-20240116; t=1748264190; c=relaxed/simple;
+	bh=l59WKKDfJ0RH6gEgZq+UPJuZyE1FJc4Ihgcl6cumYeU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IlFjJYWeyGxtDW+pJlyNgc7c30eaurgr9kT8kBTrUrvAaE6z7Z0g5NQffnZciaVV18KPp6NOM6FGJIw3viKLLJKlB3XFQUtYP9go9OwXZEzdFbNn+Eu6y5IjhFjC14U9GdxywC1er42+dbRGmjB6az9OxtpDs83cIw4pT+xCLAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KMVJZhag; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09AF7C4CEE7;
-	Mon, 26 May 2025 12:55:32 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=SCU4Nwl67c9MyzDwfTXebErAJjbvHsYWfqo6A+GqQG04nd3Ovw01Ia4c0t9Mba22cR5inlSbNKd/Hsohw3Lx1j7SNwlrz0supcBY4DSXWHYgVw2OiaFPprbjB5npMlBm5H1ufrpR7IfZVNwL0mUrYYbI8zWpwK2go5ATrbQ6Rmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CLYz56j0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B442C4CEED;
+	Mon, 26 May 2025 12:56:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748264138;
-	bh=bExfwfw/4XWLYxbzMhE/s2vE70ANp/mcnfz5QFrmCek=;
+	s=k20201202; t=1748264190;
+	bh=l59WKKDfJ0RH6gEgZq+UPJuZyE1FJc4Ihgcl6cumYeU=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=KMVJZhagqDWLuK7twueF+MZeVg44ZGNrF5jWEgnH7K4epGjF5S0eXGhaeddjJw1ua
-	 beXzya9wCrBY0gI2JUaN3aVHGInII8Q6rg6XTC38o2Uad3UZ5QUNiPIRjX60eief3C
-	 ZmWSiRTNbgLTy91FIAYFeZ8MKW/34tAHzORqMtwoDCTgR5oDaHd52Qq2To0lBJldzU
-	 G54NbcBBEJxCrmmQqDF9QrIsZAMXkLjUtkhKaEM5LcUGc+Kx9xXvdrBBqSwXJlX6Rd
-	 AjDXhpww1+6Yc0EB1e/EQVwqUqV6DolffmhqzI7RgqV5SyEZiN6SdaoSpf8mBKODjF
-	 bnVCcs2Y2+whg==
-Message-ID: <9e00f85e-c000-40c8-b1b3-4ac085e5b9d1@kernel.org>
-Date: Mon, 26 May 2025 14:55:31 +0200
+	b=CLYz56j07cuQ1L1ahEjb8OQaoeRurF1YV7Iedv/cr5vXjozzpivcSgWBU3mGZLgZC
+	 nPB8yAXh8SfWQyqUyCgOkaVc2RQGr5ygbPwTTFTfFYJjBco1wdzU3jkfXStV14BLfh
+	 1k5P7jpONEtlSbDDvrqFJBRSRyDc6hisV5XcE8Ui4xlqwHMQk/U3u/kwPt07UPqFyu
+	 Ko4xAVSIHnOEyuZsKEGPPjOSzM/IgyaXCXhb0sNacrF8C98N8GbgQLS6reZlqYw9Fl
+	 t7V/gzt1Hsx1ev8/WE1C/Qr7ofbjSd5lFmVywCCM9JqkY1NQqcxpHjsea8EGtTO6UV
+	 nWE2vVuTQwJzg==
+Message-ID: <6b71bbef-84f6-4255-b8b2-cf50c5183235@kernel.org>
+Date: Mon, 26 May 2025 14:56:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,26 +49,21 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] dt-bindings: net: qca,ar803x: Add IPQ5018 Internal GE
- PHY support
-To: George Moussalem <george.moussalem@outlook.com>,
- Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
- Russell King <linux@armlinux.org.uk>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Florian Fainelli <f.fainelli@gmail.com>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org
-References: <20250525-ipq5018-ge-phy-v1-0-ddab8854e253@outlook.com>
- <20250525-ipq5018-ge-phy-v1-1-ddab8854e253@outlook.com>
- <aa3b2d08-f2aa-4349-9d22-905bbe12f673@kernel.org>
- <DS7PR19MB888328937A1954DF856C150B9D65A@DS7PR19MB8883.namprd19.prod.outlook.com>
+Subject: Re: [PATCH v2] spi: dt-bindings: cdns,qspi-nor: Update
+ minItems/maxItems of resets for Cadence OSPI controller
+To: "Mahapatra, Amit Kumar" <amit.kumar-mahapatra@amd.com>,
+ Conor Dooley <conor@kernel.org>
+Cc: "broonie@kernel.org" <broonie@kernel.org>,
+ "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+ <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "git (AMD-Xilinx)" <git@amd.com>,
+ "amitrkcian2002@gmail.com" <amitrkcian2002@gmail.com>
+References: <20250522104745.327675-1-amit.kumar-mahapatra@amd.com>
+ <20250522-dropout-hertz-6f1db9256655@spud>
+ <IA0PR12MB769903933CC9200FD082143BDC65A@IA0PR12MB7699.namprd12.prod.outlook.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -114,72 +109,29 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <DS7PR19MB888328937A1954DF856C150B9D65A@DS7PR19MB8883.namprd19.prod.outlook.com>
+In-Reply-To: <IA0PR12MB769903933CC9200FD082143BDC65A@IA0PR12MB7699.namprd12.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 26/05/2025 08:43, George Moussalem wrote:
->>> +  qca,dac:
->>> +    description:
->>> +      Values for MDAC and EDAC to adjust amplitude, bias current settings,
->>> +      and error detection and correction algorithm. Only set in a PHY to PHY
->>> +      link architecture to accommodate for short cable length.
->>> +    $ref: /schemas/types.yaml#/definitions/uint32-array
->>> +    items:
->>> +      - items:
->>> +          - description: value for MDAC. Expected 0x10, if set
->>> +          - description: value for EDAC. Expected 0x10, if set
+On 26/05/2025 09:07, Mahapatra, Amit Kumar wrote:
+>>>    - if:
+>>> @@ -132,11 +139,11 @@ properties:
+>>>      maxItems: 1
+>>>
+>>>    resets:
+>>> -    minItems: 2
+>>> +    minItems: 1
 >>
->> If this is fixed to 0x10, then this is fully deducible from compatible.
->> Drop entire property.
+>> I think you're still missing one of the things Krzysztof requested on v1, cos you
+>> reduce minItems for all platforms without restricting it back to 2 for non-versal
+>> platforms.
 > 
-> as mentioned to Andrew, I can move the required values to the driver 
-> itself, but a property would still be required to indicate that this PHY 
-> is connected to an external PHY (ex. qca8337 switch). In that case, the 
-> values need to be set. Otherwise, not..
+> I believe we can remove the "resets" and corresponding "reset-names"
+> properties from here, as their default minItems/maxItems are already
+> taken care of in the else block [1].
 > 
-> Would qcom,phy-to-phy-dac (boolean) do?
-
-Seems fine to me.
-
-> 
->>
->>> +      - maxItems: 1
->>> +
->>> +  qca,eth-ldo-enable:
->>
->> qcom,tcsr-syscon to match property already used.
-> 
-> to make sure I understand correctly, rename it to qcom,tcsr-syscon?
-
-Yes
-
-> 
->>
->>> +    description:
->>> +      Register in TCSR to enable the LDO controller to supply
->>> +      low voltages to the common ethernet block (CMN BLK).
->>> +    $ref: /schemas/types.yaml#/definitions/phandle-array
->>> +    items:
->>> +      - items:
->>> +          - description: phandle of TCSR syscon
->>> +          - description: offset of TCSR register to enable the LDO controller
->>> +      - maxItems: 1
->> You listed two items, but second is just one item? Drop.
-> 
-> What is expected is one item that has two values, in this case: <&tcsr 
-> 0x019475c4>
-
-I know.
-
-> 
-> I could move the offset to the driver itself as it's a fixed offset, so 
-> ultimately the property would become:
-> 
-> qcom,tcsr-syscon = <&tscr>;
-> 
-> agreed?
-No. Just fix the syntax.
+> [1] https://github.com/torvalds/linux/blob/0ff41df1cb268fc69e703a08a57ee14ae967d0ca/Documentation/devicetree/bindings/spi/cdns%2Cqspi-nor.yaml#L39
+I don't see anything fixed there.
 
 Best regards,
 Krzysztof
