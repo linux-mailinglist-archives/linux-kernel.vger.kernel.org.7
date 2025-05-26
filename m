@@ -1,60 +1,72 @@
-Return-Path: <linux-kernel+bounces-662544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-662546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC02BAC3C2A
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 10:57:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2B52AC3C34
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 10:59:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C98E175412
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 08:57:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E3B27A6EB5
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 08:58:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 603C21E3DE5;
-	Mon, 26 May 2025 08:56:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0C1A1EF391;
+	Mon, 26 May 2025 08:59:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="tDSS/uYK"
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Mo5iOhRd"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 402611DF27D;
-	Mon, 26 May 2025 08:56:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9914A2AEFE;
+	Mon, 26 May 2025 08:59:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748249817; cv=none; b=nxQdCx/UaY3iVWqqZsGPiK7LKbsxG1VZQHY3xEJN4h0huUSwm+KeIjWn9DCx2kS7ZEoZgaaORmnsaYzbG7P1so41y7VNqfWmzB0e/4d1wv+Ijx2LCGwCdB7m6TlWOoxiSzmJTc76ySszSL4rPIB8nXOg200DYDWCiH9Xlu0ytgw=
+	t=1748249962; cv=none; b=ck/zR01SpHfefEo0woQZKnPzzoLKDQexd99GXnTk5nAAthhjqPUrMkgiiPxpsI4mr1PjDaJJU1hLhQFt2PDIwNuNTBEC/8ktx29v6xBbj130yMO1I4XfG8IVYl/zpliz0inZXNDujNyRye4pdJysnn7Q+8HRf8wXTXSJzTLVL54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748249817; c=relaxed/simple;
-	bh=ACaCXTsX/JV/G9Somxok0XhPX+3Q4WN2diZrG8Ds1/Y=;
+	s=arc-20240116; t=1748249962; c=relaxed/simple;
+	bh=BdA9mPuHJ0+Hh9B8jPgulgQ8/U/ggWA26Ja0q9N75E8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OFcQGDF8TGzUOEFaBgNJHLl04S8L3wcm6UHMvmWBvSrvYiPgE+uLe6J5RKBnp/ILkY4tMwXFmnS5ya2Fv5M4q38V/v2bBP5UTo7Z9p2u6WTWygLSFQOSFYJK5gOdkzQPEHl4KkRvzInMn1Kvxc5BxA7/Pum4WCaMWii69uQdwgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=tDSS/uYK; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=N+ed7TRO7YVkIfVE/BMRhHjFPLqVh2IhEmuljMHZeB4=; b=tDSS/uYKGc5bHRQrlQXGCsw+38
-	viE8Z7m6eL53Tudjdjecm3gQ4oOpoLXZBGhr+sGE5yCfBEcLbyh6sOrqwiXYBxkKmCv6JULHqJWCG
-	lwKCGNibhiUSCD42U2msCim6q0I/kv0bdGndiMdSkYimzEsu/hIbteAeTKaEI5TCCJ57Hwe1O1SLU
-	DYsq9n4PBMrXhGfgdQvAbbwWWwKgUh959bZjtpsCERLsJ5iYMgqJb8zOoorqRiN7c/nJPkfpyiksC
-	iVgWwk2BtBPIcum7Ur+BQKdxrf2y6VdVlks3F/Nj9sbRfscR7XgDengG1X15pTTjeegxRmQeFBGwm
-	eykWelTw==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1uJTdW-008zzs-11;
-	Mon, 26 May 2025 16:56:47 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Mon, 26 May 2025 16:56:46 +0800
-Date: Mon, 26 May 2025 16:56:46 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: syzbot <syzbot+4851c19615d35f0e4d68@syzkaller.appspotmail.com>
-Cc: davem@davemloft.net, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: [PATCH] crypto: shash - Fix buffer overrun in import function
-Message-ID: <aDQszmcfKfEt4Xdd@gondor.apana.org.au>
-References: <683428c8.a70a0220.29d4a0.0801.GAE@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JH05zei8wzwxEdg6yiioCxm99hQIk9FdLnFiHD0CtV98zRAnWDjd007Z7nl+9/rTDskedGtOZENRQczF/JvdTbjZQ6Ixxq2N1hK+ooqMJ2YbzIL48l9ASnG2/9aGLklx98snrAfpWckoiV6fu+lsCt/uLwtx5NFn3ma+JAtlN1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Mo5iOhRd; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1748249961; x=1779785961;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=BdA9mPuHJ0+Hh9B8jPgulgQ8/U/ggWA26Ja0q9N75E8=;
+  b=Mo5iOhRd3ecPEG1H8/lATWarZ8Oh/dKjFHad7XeXIO7F3QXzf2if21z2
+   7+hZNHG6E8axiFkIBic9vuCb+f9BZdNNAxEcWfWdc5QhwtXA1Zj9cQRco
+   GubB4UvoRqF67rmOWXdvDLD0J5Nj8cLIk7JrzO7lDDgFUNiXxZ5iUmg6d
+   xyp15rHEeBHkq1qaviGn6eosB+8kmhnYWIkKM7vewGopkgUVYq589i6sc
+   RC3jL3z318xfQadlfXXD7DLOC1mBcL+oPIW55No5LP8NuruNWW9ppGpIi
+   VhWi1lC31mOrkEcVB7Y65Mnp/L2swjqOs3ycrBir0ownek9RH/TC0xKSj
+   g==;
+X-CSE-ConnectionGUID: OQ5JYd+9QhKfx0qm07k4DQ==
+X-CSE-MsgGUID: 2lyc4xocTmO6KKkZ8jUrGg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11444"; a="60468911"
+X-IronPort-AV: E=Sophos;i="6.15,315,1739865600"; 
+   d="scan'208";a="60468911"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 May 2025 01:59:20 -0700
+X-CSE-ConnectionGUID: BJtMHkLOQhiTL9+A1un3Tg==
+X-CSE-MsgGUID: xx6T1i4oRE6sWLGokSRPsA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,315,1739865600"; 
+   d="scan'208";a="165472427"
+Received: from mev-dev.igk.intel.com ([10.237.112.144])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 May 2025 01:59:17 -0700
+Date: Mon, 26 May 2025 10:58:39 +0200
+From: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
+To: Wentao Liang <vulab@iscas.ac.cn>
+Cc: steffen.klassert@secunet.com, herbert@gondor.apana.org.au,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, horms@kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] net: af_key: Add error check in set_sadb_address()
+Message-ID: <aDQtPxmS3leVRJew@mev-dev.igk.intel.com>
+References: <20250525155350.1948-1-vulab@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,56 +75,63 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <683428c8.a70a0220.29d4a0.0801.GAE@google.com>
+In-Reply-To: <20250525155350.1948-1-vulab@iscas.ac.cn>
 
-On Mon, May 26, 2025 at 01:39:36AM -0700, syzbot wrote:
+On Sun, May 25, 2025 at 11:53:50PM +0800, Wentao Liang wrote:
+> The function set_sadb_address() calls the function
+> pfkey_sockaddr_fill(), but does not check its return value.
+> A proper implementation can be found in set_sadb_kmaddress().
 > 
-> syzbot found the following issue on:
+> Add an error check for set_sadb_address(), return error code
+> if the function fails.
 > 
-> HEAD commit:    176e917e010c Add linux-next specific files for 20250523
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=175c1ad4580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=e7902c752bef748
-> dashboard link: https://syzkaller.appspot.com/bug?extid=4851c19615d35f0e4d68
-> compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14f92170580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17bd88e8580000
+> Fixes: e5b56652c11b ("key: Share common code path to fill sockaddr{}.")
+> Cc: stable@vger.kernel.org # v2.6
+> Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+> ---
+>  net/key/af_key.c | 14 ++++++++------
+>  1 file changed, 8 insertions(+), 6 deletions(-)
+> 
+> diff --git a/net/key/af_key.c b/net/key/af_key.c
+> index c56bb4f451e6..537c9604e356 100644
+> --- a/net/key/af_key.c
+> +++ b/net/key/af_key.c
+> @@ -3474,15 +3474,17 @@ static int set_sadb_address(struct sk_buff *skb, int sasize, int type,
+>  	switch (type) {
+>  	case SADB_EXT_ADDRESS_SRC:
+>  		addr->sadb_address_prefixlen = sel->prefixlen_s;
+> -		pfkey_sockaddr_fill(&sel->saddr, 0,
+> -				    (struct sockaddr *)(addr + 1),
+> -				    sel->family);
+> +		if (!pfkey_sockaddr_fill(&sel->saddr, 0,
+> +					 (struct sockaddr *)(addr + 1),
+> +					 sel->family))
+> +			return -EINVAL;
+>  		break;
+>  	case SADB_EXT_ADDRESS_DST:
+>  		addr->sadb_address_prefixlen = sel->prefixlen_d;
+> -		pfkey_sockaddr_fill(&sel->daddr, 0,
+> -				    (struct sockaddr *)(addr + 1),
+> -				    sel->family);
+> +		if (!pfkey_sockaddr_fill(&sel->daddr, 0,
+> +					 (struct sockaddr *)(addr + 1),
+> +					 sel->family))
+> +			return -EINVAL;
+>  		break;
+>  	default:
+>  		return -EINVAL;
 
-This patch should fix the bug:
+There are few other calls to pfkey_sockaddr_fill() without checking, but
+family is already checked in such case, so it is fine.
 
----8<---
-Only set the partial block length to zero if the algorithm is
-block-only.  Otherwise the descriptor context could be empty,
-e.g., for digest_null.
+Reviewed-by: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
 
-Reported-by: syzbot+4851c19615d35f0e4d68@syzkaller.appspotmail.com
-Fixes: 7650f826f7b2 ("crypto: shash - Handle partial blocks in API")
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+I am not sure if it should be a fix. If family is set there is no
+problem. Probably it is set in all cases. Maybe you should target it to
+net-next, but as I said, I am not sure.
 
-diff --git a/crypto/shash.c b/crypto/shash.c
-index 37537d7995c7..4721f5f134f4 100644
---- a/crypto/shash.c
-+++ b/crypto/shash.c
-@@ -257,12 +257,13 @@ static int __crypto_shash_import(struct shash_desc *desc, const void *in,
- 	if (crypto_shash_get_flags(tfm) & CRYPTO_TFM_NEED_KEY)
- 		return -ENOKEY;
- 
--	plen = crypto_shash_blocksize(tfm) + 1;
--	descsize = crypto_shash_descsize(tfm);
- 	ss = crypto_shash_statesize(tfm);
--	buf[descsize - 1] = 0;
--	if (crypto_shash_block_only(tfm))
-+	if (crypto_shash_block_only(tfm)) {
-+		plen = crypto_shash_blocksize(tfm) + 1;
- 		ss -= plen;
-+		descsize = crypto_shash_descsize(tfm);
-+		buf[descsize - 1] = 0;
-+	}
- 	if (!import) {
- 		memcpy(buf, in, ss);
- 		return 0;
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Thanks
+
+> -- 
+> 2.42.0.windows.2
 
