@@ -1,167 +1,220 @@
-Return-Path: <linux-kernel+bounces-662836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-662834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6457AC4030
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 15:20:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26ECDAC4028
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 15:19:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CAFE1898EA3
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 13:20:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C91473A67A3
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 May 2025 13:19:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBECD202F8D;
-	Mon, 26 May 2025 13:20:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE2BF202F8F;
+	Mon, 26 May 2025 13:19:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="ocong8TV"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DKqssMFa"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8593419DF7A
-	for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 13:20:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A51844207F
+	for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 13:19:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748265636; cv=none; b=d7MEtJKRZFCnAsvKkwLv8omYgccB3+hEjyZxFW9QByFN/e/OTdyjKOwQY4KoBmUogvcIaY4+1/qrdzg/cTx9qXG7XSh3J4RU/wX6GhcQDQCoY9QtOJBKyLIGX8d8reScCj3pbKzh3CexYF0f7zntNOwxsjT9mZSNcdAF8Rew3Ok=
+	t=1748265563; cv=none; b=FAIi6nTuiVOiOZLdZ4nnUF2RDDIAVQ1oSGjzeQAI8AV4Vbjx0Y36LeZWHhvj6ovXqzOdWxFUW1YkXqBf6z7ANW6Lbf1aDCjufHMmXpPyN770zpgifRjfo5hyLZpVURZVBS1++gk9PNXSp2qrUFovhUBtpjirCZ5bDM689jvgHz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748265636; c=relaxed/simple;
-	bh=FA+FFymajfUy4pOqjSAWA3X/OMrBghhQSgqCnZeHplw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=SB3W9HlTurIhoivoAegDWtB/8RlFBty4B8/+kedGVI4kqG693yfUQvzl0E8oF+fZ9gk213OqvZuQdq3+T49zTKcBkqRnokIC54X5AxF1MchmLz1pXtt2+vjPYE3uczF4UWv9JRVtghxR53JHO6OxfTR9ekRME/HS2afZbMoyP4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=ocong8TV; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-440685d6afcso28331565e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 06:20:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1748265632; x=1748870432; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=3Ej9FiKr0JkEdWsFsmolvJ2gLB0Q5mF9UscCZJ16sQU=;
-        b=ocong8TViw1zo0oNQZth390gQrSEj0zbazD8gF6dXQ1l33/36QDNm2ZwhGkiOtQZFg
-         Mi8I+LcJFfkqCs7Zrew9j1PYpqDK6ot86C/Sl2mpbJlzzl04mqpo5lh7ioK6VEkyGONI
-         GF9HPMrxGrbJPIipUOQJzHQMU7QHLTFaE3h5n6od7F+9Owx9mlzEyfd9CWoz1Y4uGimq
-         j51hBJfE6wOJw0RyqscPJlMEVcm9OLG+W+WxvJWUs/WdOV/6oFKy+4NiGKHk4uqH1AOn
-         lzqSzrIewrosoBSFUxtGCJQboSQIBpaBxJZph5wgHNCVVrpagNKe0ejW6HbDpe5Hnq4m
-         ZKvA==
+	s=arc-20240116; t=1748265563; c=relaxed/simple;
+	bh=TnHMtSIQdfgTrSYZfOIn+bJceWWCtXySHQoZZwR3tJc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XfbfIWkVqf+f+fFq2+0ouErFIICMiiWMxTcKE+X7UltWImks/E/tJSQBnUUInZnSiZl7KGD9bH5/4llTJZv+SK0jxxxUTCM9vDOBdEz4aKTZqUefK3flfEnVCq3KNDxiqNtoufss+QgwQEQPniAOj4edJVPa7mL8Q4Ety0yCUJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DKqssMFa; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1748265560;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2/tBZmmo1EqsgCeZ8q0clS1poQRevKNeOHcK0UlnsVk=;
+	b=DKqssMFaywngTvHAzKoNo8E3Oab342JwLHPqAOAeCcCkEAp851ZDAxAI5qQj7QP6fjgqAE
+	SCe8fJlmqajvUsXRnP9Oxg/RgXKE2U/LIJFA2Zhnlnoh9T2wuWAk+vA2Cr8oW4G3117hrW
+	ZfTj3EYkfGDbVfY5zWeERLrpRsNleFs=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-554-Z--LIX2LObmUaCd-6Pjx3w-1; Mon, 26 May 2025 09:19:19 -0400
+X-MC-Unique: Z--LIX2LObmUaCd-6Pjx3w-1
+X-Mimecast-MFC-AGG-ID: Z--LIX2LObmUaCd-6Pjx3w_1748265558
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-ac79e4764e5so237036466b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 06:19:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748265632; x=1748870432;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3Ej9FiKr0JkEdWsFsmolvJ2gLB0Q5mF9UscCZJ16sQU=;
-        b=uMXSd1M/RLIIywoLXDxHrm80zzDY5SVFZh79bYsuGHUT5SFp3s4DmqU8Qq1YFr0mTv
-         RZ5DDe7JffuwzzzS9wXgTceG1Vk+e17uJ6rqf14AZdwV3X7dSHV0JmsFexMTyPqeJvVU
-         YWHpS0Jr5l1CWz7H/KsovHHu2mHUlFGepLavpETyAuUCW39xFkuHQWekvoYBvKojsjxA
-         IGCBeLzFFO/KpyO+SGx8V9JZJ7I0i77llVWSV9bneFlYRDrI0C/HyAvz9+kKOlzUGBwB
-         d2RoHhm8as1qBIf+VFsUrL1u7/xcMVtqQ87rCQgK4CfXE9gnHdc0cq4WEsZCCzxwF/BY
-         rE2w==
-X-Forwarded-Encrypted: i=1; AJvYcCX5NDlUE5oHPCm1Qre/gEqRji03hS8T/d8f14eZxmOqFOtXQoyFl8Hg3Mpva16T7mtFD88s6JnZlePYm6I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/g0qQjf6sJ5WrHguWqltssUdfAALHexfqGrPZN3KqLytCLK35
-	rqkUSZAFXIc0qT7vyzaVg3B7FK2GDt+FizvcxnuRYPH74Bz8YhLP8gCf5TijKpBhVLg=
-X-Gm-Gg: ASbGncuvNBOlxUFML2bmpIsY4cmIxMK/eDZiMczVyGadkagUKDcwBaR13pUxBsiqHlI
-	zphgCMZMX/vwSAEYapPaNkyT5geIpZZ/2WZWYheCPEUiqdGckiVqPi2EYtTvA3vAxRGOCYhrTeT
-	wroHHgh9NVynQjJUyBYPVE3u049nKFCYSJBNwU+EdSHmA/3ORpOlzOnN1xVm69EotaVoY3/3+c+
-	DHv6gc29BCuXnQ3l3dWr9P0433udxhCM4qZkLGxcoZO1VAHCSWF7/aMThTDPbvYzu8nHG1EzKl8
-	/CueyH1gXSnUbn3iEKT+T4x32Eey2CzhMTioj3GsCw0awBiFL4wDbKp35rOJnA17hIuruUPQLg1
-	Xxiyqk8FjutCXGJYH82f9h/mIZVTbcrM=
-X-Google-Smtp-Source: AGHT+IEuz33WELmldIakkzi+3/fUP8upZSU2yYSV4bJxcgAOZc9F6u0AC/YiVsjAsgx/Vbe9PrzSXg==
-X-Received: by 2002:a05:600c:1385:b0:43d:3df:42d8 with SMTP id 5b1f17b1804b1-44c93da7c08mr68123765e9.6.1748265631739;
-        Mon, 26 May 2025 06:20:31 -0700 (PDT)
-Received: from [192.168.0.2] (host-80-116-51-117.retail.telecomitalia.it. [80.116.51.117])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-447f7ca2dd9sm232876545e9.37.2025.05.26.06.20.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 May 2025 06:20:30 -0700 (PDT)
-From: Angelo Dureghello <adureghello@baylibre.com>
-X-Google-Original-From: Angelo Dureghello <adureghello@baylibre.org>
-Date: Mon, 26 May 2025 15:19:08 +0200
-Subject: [PATCH v2] dt-bindings: iio: adc: adi,ad7606: fix dt_schema
- validation warning
+        d=1e100.net; s=20230601; t=1748265558; x=1748870358;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2/tBZmmo1EqsgCeZ8q0clS1poQRevKNeOHcK0UlnsVk=;
+        b=dlYEz4Y53fRV4o/AU4bIaEDC83SvuxcQXo/Jwl14gzxC/H12yHYzHm42f6BGMSZGnF
+         WdbI60pY/R9C7l+5hrfIWLqbDaFLrk7IVpg9ZE+J12dICvmVR5H5FXT87QCy7taKGAuv
+         HMQ5aBcWR3AgryRTaq/PmEMuqRkFLwEYGhgkL2xb61ksiJNAp+xFMSf3a1AuWflZCZ0Y
+         cqvZlnKgjkzE0fF03McqdNvm9CZn5ZrrTNo9C96r7R+98ZKabZXkz+wfjaMWFzrMmu+o
+         8OlWaCU+7Mao3i/7TYqILoVg5qrCNaqFET3sblLdcxunYBMqxVIg06UczomePhoGycfD
+         uGbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWMgYHYQq600iqGhJoStqwDoio0e0l6LAjEpyR/KZwQyaBaFJPnEJ8h5ojO62qjM4WgSQfd5STAKA/JhE4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwV6sX9AMqZ7HIJ8wXpmwZcHhuHw3dCKLApSWGpPy27nJNm/TCR
+	58g1+LD3DuUb+nDJHQGfzCN2Hoxnn6wYVdmwPPf3yw2LLPDl9jJVQfz/PKyiIXX8IFGyb5fiRpR
+	iM/EMs1fYYdlW/4MUhtQ+ukdyWezudFNky/zvCxzPVNbWo59qnNXIu9634yUfYsv4aw==
+X-Gm-Gg: ASbGnctZ/iNiTxQztvDuVd1D8L7I+8OO4HBHK6C0VfGcpXUeGR4mfbt3aXrUBuUL825
+	zpjZoyGdVh3CFNfGKN82EQ5YDQOVZhenZ6Xn2+8QQx/WCaxFYTT3mX4XgjkYe3OxQiJPoAxQ5ak
+	Q3jRbMqhlC5ZG1K0Y8HpeOB4eyoustEpVDrwiYVqbSgFVRife+TQYY/nVunUzmwFebUfmJPcyTs
+	fXp+hmwnTYhsnATP76UT2O7M/Z0qLuhGCboX74mwg4VmuwEmgILoddJBrKg6iPVhU9LERtkfHn8
+	nL2T2t2BROkKEgU=
+X-Received: by 2002:a17:907:7e93:b0:ad4:d135:cf68 with SMTP id a640c23a62f3a-ad85b1d7ce3mr797700866b.59.1748265557833;
+        Mon, 26 May 2025 06:19:17 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEXuqTVhM5WgSsTu7DeZ7j8SWBqOpvYfIvtpCQyF5ulgJbeJfGnJEfO/Jqx5e0CG2jkVYd8zg==
+X-Received: by 2002:a17:907:7e93:b0:ad4:d135:cf68 with SMTP id a640c23a62f3a-ad85b1d7ce3mr797698066b.59.1748265557383;
+        Mon, 26 May 2025 06:19:17 -0700 (PDT)
+Received: from [10.40.98.122] ([78.108.130.194])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad52d04f263sm1671863966b.1.2025.05.26.06.19.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 26 May 2025 06:19:16 -0700 (PDT)
+Message-ID: <c8d83994-603d-4d25-aa25-e9a893692fea@redhat.com>
+Date: Mon, 26 May 2025 15:19:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 4/4] media: uvcvideo: Auto-set UVC_QUIRK_MSXU_META
+To: Ricardo Ribalda <ribalda@chromium.org>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250404-uvc-meta-v5-0-f79974fc2d20@chromium.org>
+ <20250404-uvc-meta-v5-4-f79974fc2d20@chromium.org>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20250404-uvc-meta-v5-4-f79974fc2d20@chromium.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250526-wip-bl-ad7606-dtschema-fixes-v2-1-9bd56d039489@baylibre.com>
-X-B4-Tracking: v=1; b=H4sIAEtqNGgC/42NTQqDMBBGryKz7pQkJopdeY/iIjFjHfCPRGxFv
- HtTT9Dlex+874BIgSnCIzsg0MaR5ymBumXQ9nZ6EbJPDEooI4zK8c0LugGtLwtRoF9j29NoseM
- PRTRUWJdrRULnkBJLoGtIhWeTuOe4zmG/3jb5s3+GN4kSfSV12TllZVXVzu4Du0D3dh6hOc/zC
- 8C0qQ7LAAAA
-X-Change-ID: 20250523-wip-bl-ad7606-dtschema-fixes-5e6ab342e043
-To: Nuno Sa <nuno.sa@analog.com>, Lars-Peter Clausen <lars@metafoo.de>, 
- Michael Hennerich <Michael.Hennerich@analog.com>, 
- Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
- Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
- Michael Hennerich <michael.hennerich@analog.com>, 
- devicetree@vger.kernel.org, Angelo Dureghello <adureghello@baylibre.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1960;
- i=adureghello@baylibre.com; h=from:subject:message-id;
- bh=luRRUAmuf+DebA1gbJsvFSTK+6YkNQgeGlpopVKHTIA=;
- b=owGbwMvMwCXGf3bn1e/btlsznlZLYsgwyQrikMv/5S2z+MzMnsjzXjvDBWfNPOj+XHf+0x+mD
- hprvZIfdJSyMIhxMciKKbLUJUaYhN4OlVJewDgbZg4rE8gQBi5OAZhIQQEjw2VXqcfTqnIaWWd1
- 6vcW5bcv4Hqx2dpZdaPiajU3UfZPjxgZWjICNb2TQ0z/st05kPamQrNhT3rhkX2Fz7oKdRXZr59
- jAgA=
-X-Developer-Key: i=adureghello@baylibre.com; a=openpgp;
- fpr=703CDFAD8B573EB00850E38366D1CB9419AF3953
 
-From: Angelo Dureghello <adureghello@baylibre.com>
+Hi,
 
-Fix following dt_schema warning when offload is used:
+On 4-Apr-25 08:37, Ricardo Ribalda wrote:
+> If the camera supports the MSXU_CONTROL_METADATA control, auto set the
+> MSXU_META quirk.
+> 
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 
-  DTC [C] arch/arm/boot/dts/xilinx/zynq-zed-adv7511-ad7606.dtb
-/home/angelo/dev-baylibre/linux-iio/arch/arm/boot/dts/xilinx/zynq-zed-adv7511-ad7606.dtb: adc@0: 'oneOf' conditional failed, one must be fixed:
-	'interrupts' is a required property
-	'io-backends' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/adc/adi,ad7606.yaml#
+Thanks, patch looks good to me:
 
-There isn't any reason that we couldn't have interrupts wired up at the
-same time we are using io-backends or SPI offload, so dropping off the
-related "oneOf" block entirely.
+Reviewed-by: Hans de Goede <hansg@kernel.org>
 
-Fixes: ccf8c3f106a2 ("dt-bindings: iio: adc: adi,ad7606: add SPI offload properties")
-Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
----
-Fix dt_schema validation warning.
+Regards,
 
-Link: https://lore.kernel.org/linux-iio/20250408-wip-bl-ad3552r-fixes-v4-0-b33c0264bd78@baylibre.com
----
-Changes in v2:
-- Change removing the related oneOf block. 
-- Link to v1: https://lore.kernel.org/r/20250523-wip-bl-ad7606-dtschema-fixes-v1-1-d9147fb2a199@baylibre.com
----
- Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml | 6 ------
- 1 file changed, 6 deletions(-)
+Hans
 
-diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
-index 29f12d650442b8ff2eb455306ce59a0e87867ddd..1a5209139e1338f803c66ad2b4d63ad53cc11d96 100644
---- a/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
-+++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
-@@ -223,12 +223,6 @@ allOf:
-       - required:
-           - pwms
- 
--  - oneOf:
--      - required:
--          - interrupts
--      - required:
--          - io-backends
--
-   - if:
-       properties:
-         compatible:
 
----
-base-commit: 3964c6e5877f054497ffccc7d00f8f7add307d0d
-change-id: 20250523-wip-bl-ad7606-dtschema-fixes-5e6ab342e043
 
-Best regards,
--- 
-Angelo Dureghello <adureghello@baylibre.com>
+> ---
+>  drivers/media/usb/uvc/uvc_metadata.c | 54 ++++++++++++++++++++++++++++++++++++
+>  include/linux/usb/uvc.h              |  3 ++
+>  2 files changed, 57 insertions(+)
+> 
+> diff --git a/drivers/media/usb/uvc/uvc_metadata.c b/drivers/media/usb/uvc/uvc_metadata.c
+> index fe2678fc795d7fd5a64e8113199012f34c419176..776d280f34afad515594a873acf075acf0438304 100644
+> --- a/drivers/media/usb/uvc/uvc_metadata.c
+> +++ b/drivers/media/usb/uvc/uvc_metadata.c
+> @@ -10,6 +10,7 @@
+>  #include <linux/list.h>
+>  #include <linux/module.h>
+>  #include <linux/usb.h>
+> +#include <linux/usb/uvc.h>
+>  #include <linux/videodev2.h>
+>  
+>  #include <media/v4l2-ioctl.h>
+> @@ -187,11 +188,64 @@ static const struct v4l2_file_operations uvc_meta_fops = {
+>  	.mmap = vb2_fop_mmap,
+>  };
+>  
+> +static const u8 uvc_msxu_guid[16] = UVC_GUID_MSXU_1_5;
+> +
+> +#define MSXU_CONTROL_METADATA 0x9
+> +static int uvc_enable_msxu(struct uvc_device *dev)
+> +{
+> +	u32 *data __free(kfree) = NULL;
+> +	struct uvc_entity *entity;
+> +
+> +	list_for_each_entry(entity, &dev->entities, list) {
+> +		int ret;
+> +
+> +		if (memcmp(entity->guid, uvc_msxu_guid, sizeof(entity->guid)))
+> +			continue;
+> +
+> +		if (!data)
+> +			data = kmalloc(sizeof(*data), GFP_KERNEL);
+> +		if (!data)
+> +			return -ENOMEM;
+> +
+> +		ret = uvc_query_ctrl(dev, UVC_GET_CUR, entity->id,
+> +				     dev->intfnum, MSXU_CONTROL_METADATA,
+> +				     data, sizeof(*data));
+> +		if (ret)
+> +			continue;
+> +
+> +		if (*data) {
+> +			dev->quirks |= UVC_QUIRK_MSXU_META;
+> +			return 0;
+> +		}
+> +
+> +		ret = uvc_query_ctrl(dev, UVC_GET_MAX, entity->id,
+> +				     dev->intfnum, MSXU_CONTROL_METADATA,
+> +				     data, sizeof(*data));
+> +		if (ret || !*data)
+> +			continue;
+> +
+> +		ret = uvc_query_ctrl(dev, UVC_SET_CUR, entity->id,
+> +				     dev->intfnum, MSXU_CONTROL_METADATA,
+> +				     data, sizeof(*data));
+> +		if (!ret) {
+> +			dev->quirks |= UVC_QUIRK_MSXU_META;
+> +			return 0;
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  int uvc_meta_register(struct uvc_streaming *stream)
+>  {
+>  	struct uvc_device *dev = stream->dev;
+>  	struct video_device *vdev = &stream->meta.vdev;
+>  	struct uvc_video_queue *queue = &stream->meta.queue;
+> +	int ret;
+> +
+> +	ret = uvc_enable_msxu(dev);
+> +	if (ret)
+> +		return ret;
+>  
+>  	stream->meta.format = V4L2_META_FMT_UVC;
+>  
+> diff --git a/include/linux/usb/uvc.h b/include/linux/usb/uvc.h
+> index bce95153e5a65613a710d7316fc17cf5462b5bce..ee19e9f915b8370c333c426dc1ee4202c7b75c5b 100644
+> --- a/include/linux/usb/uvc.h
+> +++ b/include/linux/usb/uvc.h
+> @@ -29,6 +29,9 @@
+>  #define UVC_GUID_EXT_GPIO_CONTROLLER \
+>  	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, \
+>  	 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x03}
+> +#define UVC_GUID_MSXU_1_5 \
+> +	{0xdc, 0x95, 0x3f, 0x0f, 0x32, 0x26, 0x4e, 0x4c, \
+> +	 0x92, 0xc9, 0xa0, 0x47, 0x82, 0xf4, 0x3b, 0xc8}
+>  
+>  #define UVC_GUID_FORMAT_MJPEG \
+>  	{ 'M',  'J',  'P',  'G', 0x00, 0x00, 0x10, 0x00, \
+> 
 
 
