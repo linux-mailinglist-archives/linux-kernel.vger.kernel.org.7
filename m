@@ -1,119 +1,115 @@
-Return-Path: <linux-kernel+bounces-663393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-663395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBFF3AC47BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 07:43:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C8DBBAC47C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 07:45:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2EB057A260B
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 05:42:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D28487A1821
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 05:44:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7397E199FBA;
-	Tue, 27 May 2025 05:43:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 159351D7E5C;
+	Tue, 27 May 2025 05:45:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dr4z9nrn"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="RuqfKSZE"
+Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21B051922F4
-	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 05:43:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E718D3594A;
+	Tue, 27 May 2025 05:45:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748324623; cv=none; b=OiP7RGV7PddaK4aFc+J5K9ky5hUUPZy8tEjMz8HM4o+bhFbUWwkHuCPeSieOokNW+4bhfH416HtcJhnH2C5xBhTfmPjWJ5C5Q9puFaJId02CWnijBU9685HxybbMbtfSPc3Sv3FWXbJebgfMhAoSYfRy7upOGb/eb3qBLpitQH0=
+	t=1748324722; cv=none; b=qBVgI2p4dBExH4qbAn7EbA3jpdRrhECD7RygUMHnB+mkmZMu5ZF4hW4wbVnGrTttaewK3R508Ho2Fftx0YIe9kFiPgxjDr8J4xKPqAEvYd+0nzhyz6C/ClFRzzKh0HiUpiwz/8An9gi7P1tJe0TuxZ9muVHHFgDwQ9C4HjuGCgQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748324623; c=relaxed/simple;
-	bh=OURZMg8Ef8IXmiVjiF4H1Y+g5xJnfN2ZoAXJr2sOcMo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=bqruZBGhHNKl3Y+HH4noLbMVHaaTmqVuWHCEHS/V3kCCsRzdLlLvIlllGERCCWc1JTdicwwXNziU8FRfgRIYpfWViQfjRdNSjLk2fsDtNsZYVUW/V1dgM07snrG+NQ9tbqKiE/zca0rklO7IZJHscmIP1ZIc7am4zdLrHYjSQeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dr4z9nrn; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-acacb8743a7so530577666b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 22:43:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1748324620; x=1748929420; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vLieAIh94J6gkKijZufmzKxSpC/oK+MIvZ8kzKh+soM=;
-        b=dr4z9nrnFfW1YHAtSRwrr0JW2yRqbJuhTT1drF3mHpkrNsy5e06zIWP+yK0f9YYOpG
-         u4U8Ukjqen3Xfq23ch10KLXaVEeFBE9haJ08NxswCqIAz8CchlFozxFAmKEr527ZGTfk
-         OJBoZe4o8v2URYsAhSqwoSogsGNWu3QoNyx59vIuJmwzwXB88s+HhaDSX4VpopnngLO3
-         31dB27sdU0jsmG6q5m7nOb3gmzKgZispgZtMNk98sbKVEyzRjgwodGi/Q7My/PRu899b
-         wEH0p3W1qrKnv1id4XxNMBxDV+qWuNjE+HX2X51Hh/hWx8kiG8yuDWNa2xpivuDFZBks
-         FJOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748324620; x=1748929420;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vLieAIh94J6gkKijZufmzKxSpC/oK+MIvZ8kzKh+soM=;
-        b=nTjYl3sRDDZ6ip9/vp51Da9T1ThwBD4wyt4zs3ViOu4ELUCF2kavkbhnBtjAYPps0g
-         MgRLBGiANYfT6M3PWCyZUmnW84kvz6lGai1AVBBaweqgWW3MjAWuthkwDYpxtvMYDcaX
-         Zz8f7kDzFzN1iAmvq34SBOsPd4iuXwbSOgqW+UdH+/RPB1llGeEYBoG1zOJMqCaXPQsC
-         h+ZkwUM71U6t89Frkhq3AShhU7PqRE6B03nEefZl3Lb1MHgjoeiiguhy0n0DwmjdjUxB
-         muN+pMiqTeukRKm8Q1YNsQ0LhtbXn5C3VEjSPyYSmISHGQsRG3munVhL/grsQg3afoYI
-         mUYw==
-X-Forwarded-Encrypted: i=1; AJvYcCXsenjpatiRHxQzoDHhpgYZ5HX7YvxwRY9qLhR4ckIOTCIjv6zO2jRk3RTaKJnKPUY1/V/Mp20/HpOodBw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJiva4iGL3RRWLvx9IRmQmlPvWIBwrLBqJhcUT572vjt10YIf5
-	wX/e27+npFFPxTtTjIdtoqyzT26kyAuQOvigTNe9eUdEZKgJSlHoWEEPtKY+gzBwjsc=
-X-Gm-Gg: ASbGnct7iLKOd2jAEsDeReda1ZYjiYd8Q480qP0Z3l6+S3jid/xIUPj0kEmYu4Jg+4X
-	Sc4Cb5qBymeKtUllI72JuZTNk5VRa9n50CdVoXpo16+FCTtY6XBOTOU1/Q1jp7Ud5ChxfzcWJ0T
-	fujau56dpWd1gIMuiJi73Ht2RS5i7eAHrFIDYZVfmt/eZF64sPfbwXQB/nbFKb7SgneVNILbqCf
-	V4bB+/9b645SY5BOsUFVelzCUqoisgrtdgARGt2rpczZwIC0s/rGC+h4ULXMG/ngqjcvH4cEpfK
-	aznMPXUCRIICnY99NhHRp9qi/Av0q8lq0y3BKQ7B5NP8zLvitxjpydc=
-X-Google-Smtp-Source: AGHT+IFmKrrq1O4ANeu08c17wZM+Eb8aGpytrPGvsys0BX7ope/iR0SZAmtj4dLBdx62Ecb4ClacwA==
-X-Received: by 2002:a17:907:608b:b0:ad8:91e4:a92b with SMTP id a640c23a62f3a-ad891e4ab65mr54007466b.30.1748324620384;
-        Mon, 26 May 2025 22:43:40 -0700 (PDT)
-Received: from localhost ([41.210.143.148])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-ad88523a96bsm142443866b.73.2025.05.26.22.43.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 May 2025 22:43:39 -0700 (PDT)
-Date: Tue, 27 May 2025 08:43:34 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Zaid Alali <zaidal@os.amperecomputing.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
-	James Morse <james.morse@arm.com>, Tony Luck <tony.luck@intel.com>,
-	Borislav Petkov <bp@alien8.de>, Sudeep Holla <sudeep.holla@arm.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
-	Jon Hunter <jonathanh@nvidia.com>, Ira Weiny <ira.weiny@intel.com>,
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH next] ACPI: APEI: EINJ: Clean up on error in einj_probe()
-Message-ID: <aDVRBok33LZhXcId@stanley.mountain>
+	s=arc-20240116; t=1748324722; c=relaxed/simple;
+	bh=UwirAYtlq4PYk8TsYpItR7qKlQL3pnxC3ACBwNJOxXE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iBwqh9UUkqMerWQgisLqeSbxJaU8lkiCFOqAMgNw9LYn7W1js4IoNoUWhVYfHKfGoRA9sNGx0z7YyXlSssdVreBLojJ5kRV+N5UWyD9Q/j1ZgjmUusPer2kMGKtW+R6uc/oBUPJFGpxwU6SnrTC/Ff0EJNUxCKxIjdZwvb5LqDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=RuqfKSZE; arc=none smtp.client-ip=80.12.242.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+ ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
+	by smtp.orange.fr with ESMTPA
+	id Jn6TuvW38K8x9Jn6TuJ1uT; Tue, 27 May 2025 07:44:04 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1748324645;
+	bh=XaSDramaQ4ealF19zsjhv/7XrCvZ3oUf+OpS7nGNI+E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=RuqfKSZEr3CG4BWdedgN5eVB3GxhSwHwxSTbYH9h7RUR5j4mU7wXvS51e1Eh7spnr
+	 VZEt6ixH2w73IfHBCz5gbF34YZwiMMuv7x1QVLLUUCUT+p7r4eF18zjdglLAoJjfde
+	 DueN8tNY+/fcyYDpvtdPpXgf5+K7jCKExyhWjWb1DJe+Zn0X2ljOpOrEXOib0oNTwO
+	 ssnhI8HZFd+1ocoiNCg7SDPLh4//RcuYV9+AUWMlULPgxE8SC60zHwDLXa0DJMeCDe
+	 ZT6vkRllvZ0LUWkTBi4kM1dsd1X72xNeKq97GF7SJ1LGiThP56Rytoh3UjKmXv3Ycd
+	 LAW+0luDsoOxQ==
+X-ME-Helo: [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Tue, 27 May 2025 07:44:05 +0200
+X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
+Message-ID: <be687d2d-4c16-46d6-8828-b0e4866d91de@wanadoo.fr>
+Date: Tue, 27 May 2025 07:43:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] net: dwmac-rk: No need to check the return value of the
+ phy_power_on()
+To: =?UTF-8?B?5p2O5ZOy?= <sensor1010@163.com>, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
+ jonas@kwiboo.se, rmk+kernel@armlinux.org.uk, david.wu@rock-chips.com,
+ wens@csie.org, jan.petrous@oss.nxp.com
+Cc: netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250526161621.3549-1-sensor1010@163.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20250526161621.3549-1-sensor1010@163.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Call acpi_put_table() before returning the error code.
+Le 26/05/2025 à 18:16, 李哲 a écrit :
+> since the return value of the phy_power_on() function is always 0,
+> checking its return value is redundant.
 
-Fixes: e54b1dc1c4f0 ("ACPI: APEI: EINJ: Remove redundant calls to einj_get_available_error_type()")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/acpi/apei/einj-core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Can you elaborate why?
 
-diff --git a/drivers/acpi/apei/einj-core.c b/drivers/acpi/apei/einj-core.c
-index ca3484dac5c4..fea11a35eea3 100644
---- a/drivers/acpi/apei/einj-core.c
-+++ b/drivers/acpi/apei/einj-core.c
-@@ -766,7 +766,7 @@ static int __init einj_probe(struct faux_device *fdev)
- 
- 	rc = einj_get_available_error_type(&available_error_type);
- 	if (rc)
--		return rc;
-+		goto err_put_table;
- 
- 	rc = -ENOMEM;
- 	einj_debug_dir = debugfs_create_dir("einj", apei_get_debugfs_dir());
--- 
-2.47.2
+Looking at  (1], I think that it is obvious that non-0 values can be 
+returned.
+
+
+CJ
+
+[1]: 
+https://elixir.bootlin.com/linux/v6.15/source/drivers/phy/phy-core.c#L305
+
+> 
+> Signed-off-by: 李哲 <sensor1010@163.com>
+> ---
+>   drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c | 6 +-----
+>   1 file changed, 1 insertion(+), 5 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
+> index 700858ff6f7c..6e8b10fda24d 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
+> @@ -1839,11 +1839,7 @@ static int rk_gmac_powerup(struct rk_priv_data *bsp_priv)
+>   		dev_err(dev, "NO interface defined!\n");
+>   	}
+>   
+> -	ret = phy_power_on(bsp_priv, true);
+> -	if (ret) {
+> -		gmac_clk_enable(bsp_priv, false);
+> -		return ret;
+> -	}
+> +	phy_power_on(bsp_priv, true);
+>   
+>   	pm_runtime_get_sync(dev);
+>   
 
 
