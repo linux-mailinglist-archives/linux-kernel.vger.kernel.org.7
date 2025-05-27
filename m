@@ -1,83 +1,71 @@
-Return-Path: <linux-kernel+bounces-664224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-664226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7086AC541D
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 18:56:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBDFCAC5406
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 18:54:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FB513AC18C
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 16:54:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F3F54A214F
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 16:54:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E93B728001E;
-	Tue, 27 May 2025 16:54:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 215D5280331;
+	Tue, 27 May 2025 16:54:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OZx1aWw9"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UcyIVsIc"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3A7F1EA91
-	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 16:54:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDDD428030B
+	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 16:54:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748364861; cv=none; b=ep1EV3i3rgLP33yCC1MZ9KAi0oCWe+EYKp6nH79Z1xE4EdFyhbSo8/Y38x/BYjSkilek521djBWMwfcuDWFMajP27ec6Knzjr4fZzJLLu2+zePakZ2E+JtNggzPXuy+6aX6l1ScJ6i46oKfpXRXEgp05gAKTSVX+G5GQq4K1y7w=
+	t=1748364865; cv=none; b=f5zcp8wrXOA24wrvycKsoZ54DK0JsCQyKlefEqHOiiigEc8qxZFEyAshweym4JHDyNDIdD+4x4K/X4+iooVODVlNENbZWq9+Ail+99SXaqUtkyMNNTXCaj+YO4DG4wm3a2ytxYaMvLcyYcMLxmC29SpIlJNbBAxVNHP+EJj8v1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748364861; c=relaxed/simple;
-	bh=A95d2GIq0LGINxNTQ0X0jagdj93BeIbcxsmEXG6311M=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qVEgMT/8lxQf2xSk+M3niehho0cV5C5071IKVJBev5llbkbDlh4vCTkSBVDsc0TiqQC7buTCXy5D0dE5GCtZt7G0GoY8cK4pMoCIgXd8g/jpl2/G9h6WBKRlIevcjeZ1F2+X4OdVeNXDKfZEMFAfIc8DMrwTLRjhAmCnPlzQbcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OZx1aWw9; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-742c3d06de3so3718501b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 09:54:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748364859; x=1748969659; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=bzYNkPFcMltrg6TL9/1vuS1CMZo3Xbc2uegEKuHwEG4=;
-        b=OZx1aWw9Qp3F4wdqn8KVKtx0M/LyTOddJcZLMbCv7Rg6+ljj+swDMDuMowa9YUqNJ6
-         06KnFZToxannjWsc6WgtJnBHOXDUNfXpZEL/Z6CoTwEurJj4tNGY/6mjaQyMqawKh18G
-         iHlGFP3H4y4bXFzIH/TTTJyC7ls2lBtBEZaJCaP4xXT7v6Cw/+qRj9LDu08298ixS6dp
-         cQGf6+OXpllfglYgabvtIRcZ+b4RPFr3VRno50tgjCShrutaRKT4rIPG22D6CB6D3AjH
-         votiEWDYfabsBkiJfd0bwM8B4HGRj2LOwYkzVtmcGP+lsXIoq/NPQD6ce6mjMWnC8/8N
-         /ARw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748364859; x=1748969659;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bzYNkPFcMltrg6TL9/1vuS1CMZo3Xbc2uegEKuHwEG4=;
-        b=WEXYkAel33EFslu1NfoJ7H0FgkbSnwg69b80ZLvhIY4HuG5HZHoT60OJx7avwLey0F
-         XOFcUirZ3vt9Uce//cspNIxgyO7u207JHaSGyFZXlZfExPeP6d7RawUFyfodZ6Z9pJNK
-         5Aydt4f1tX4nCvNIetyp8cI1wpV8yONq+HKgGl0yeapaXWYwP9WU2NK/g8Hcl2bDUwx5
-         IBQHbZQUV19F/UMGSpZi/aPBznQKAuuzK3FmmLgGqQnTGMpAegvSHAOdmrTSo7EWtwIC
-         phGVF2mF9x/TsBdaGD+G7ttoBnXMFH0eV452Q7bJaAr3T40+MAzc57kCVKde7k7laR7/
-         NLLA==
-X-Gm-Message-State: AOJu0YwJRIKx3R1bLM13g3GNgfid+sBXtQfvenyk7+7TOxcHgo6qMXp4
-	LrXeVEztceBBVvWJYIdSHnBhPZ8LEtEinMuuvR/02TZyArzZaa0ksj6+VfvpQg==
-X-Gm-Gg: ASbGnctTFcqQjeD8kq6Tlq/U2yucpNDLIjeEo5VOUNVCkx/CRGaWY3gjfYFP7lMqQv3
-	biReC5C+hcJwBQBYWQvz1GV0mn0TAZlg2B9+kIHSB93yqQ1pO42vwO2pkDVOQIxs8B+xZ9FtNC/
-	6T/gOKAemI9joAxd6e86fmbSis9/q4a8c51QPS38PPoKrZ6worg+bjP2hElHNvSjnho+L4TblHI
-	9uBnwkUm+LHDf9N6ghQYGrIJjy5Cbu5K/ADad1Adp1OpBWTOKNfmMTlshqfe+h+r0DaizZgEiSh
-	6ofyYcu/0T1vzMPHGxztb/Qxms1k18NTQEGoUybeqhgW+c9UzWPiTCFwKFbcz2Sw+SOnJnCHDSb
-	zL0tRCCrousA0rGEP7TsEgse+HQrRA21wJHm0qnJWHPY=
-X-Google-Smtp-Source: AGHT+IFAEB/+zE1/tZp07UbvN9K23fTJlwCsIOkdRtfStGH7X1oSnvSjdzdlzt+6dEvD1qydvxUmKQ==
-X-Received: by 2002:a05:6a00:3d15:b0:736:2a73:6756 with SMTP id d2e1a72fcca58-745fe0701e2mr20685892b3a.21.1748364858662;
-        Tue, 27 May 2025 09:54:18 -0700 (PDT)
-Received: from daehojeong-desktop.mtv.corp.google.com ([2a00:79e0:2e14:7:76b7:939a:4a34:9771])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74628cc6b74sm1463827b3a.135.2025.05.27.09.54.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 May 2025 09:54:18 -0700 (PDT)
-From: Daeho Jeong <daeho43@gmail.com>
-To: linux-kernel@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net,
-	kernel-team@android.com
-Cc: Daeho Jeong <daehojeong@google.com>
-Subject: [PATCH v3] mkfs.f2fs: ensure zone size is a multiple of segment size
-Date: Tue, 27 May 2025 09:54:11 -0700
-Message-ID: <20250527165411.3724453-1-daeho43@gmail.com>
-X-Mailer: git-send-email 2.49.0.1151.ga128411c76-goog
+	s=arc-20240116; t=1748364865; c=relaxed/simple;
+	bh=faAyvJ7qDtqhrtzmWY1tEA3zcdDuNWETrdnIodiVYnE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=X83V/cwcJJHftK1Jt56jyAiVcWR+9TjsmSk38YnVastIdhgj4B3pSIQppFBcIly/xjlQ2w03iankVdsv9Bzxsk9pLM+hpyg3UeDTE5FigtrTCcd8iseC9ZwjJqrwvocPrSk5oEwz7kk+A5EDWshjEVHIxoXei+x1RPmBh2c/9dU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UcyIVsIc; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1748364862;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=0Azkfo/3THlNlvSSf9IUNcPc6ss/iGQ5ilgF0zN91Xs=;
+	b=UcyIVsIcUZXcdvuhuKqcgpTpHUbIoDQAXcR/yBD0Tu29RHnsrN6/vaipqKrsbZKQh3F0tP
+	kQ4Xz5CmFsebMMT/wAGc1PUt7i9qUzhGFNmzmtCtsjjp3H18lasZZKsB+p9oNqlX7GsZ/t
+	F38U6gXQGYD9UEfNTz8eNl5FY8zLBFU=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-616-Sqm02QwTM5e5RmxdKn-jFg-1; Tue,
+ 27 May 2025 12:54:19 -0400
+X-MC-Unique: Sqm02QwTM5e5RmxdKn-jFg-1
+X-Mimecast-MFC-AGG-ID: Sqm02QwTM5e5RmxdKn-jFg_1748364858
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AAEA419560BC;
+	Tue, 27 May 2025 16:54:17 +0000 (UTC)
+Received: from fedora (unknown [10.44.34.177])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 3CF3930001B0;
+	Tue, 27 May 2025 16:54:14 +0000 (UTC)
+Received: by fedora (sSMTP sendmail emulation); Tue, 27 May 2025 18:54:12 +0200
+From: "Jerome Marchand" <jmarchan@redhat.com>
+To: bpf@vger.kernel.org
+Cc: Martin KaFai Lau <martin.lau@linux.dev>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Jerome Marchand <jmarchan@redhat.com>
+Subject: [PATCH] bpf: Specify access type of bpf_sysctl_get_name args
+Date: Tue, 27 May 2025 18:54:12 +0200
+Message-ID: <20250527165412.533335-1-jmarchan@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,37 +73,42 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-From: Daeho Jeong <daehojeong@google.com>
+The second argument of bpf_sysctl_get_name() helper is a pointer to a
+buffer that is being written to. However that isn't specify in the
+prototype.
 
-Otherwise, it doesn't work with a crash.
+Until commit 37cce22dbd51a ("bpf: verifier: Refactor helper access
+type tracking"), all helper accesses were considered as a possible
+write access by the verifier, so no big harm was done. However, since
+then, the verifier might make wrong asssumption about the content of
+that address which might lead it to make faulty optimizations (such as
+removing code that was wrongly labeled dead). This is what happens in
+test_sysctl selftest to the tests related to sysctl_get_name.
 
-Signed-off-by: Daeho Jeong <daehojeong@google.com>
+Correctly mark the second argument of bpf_sysctl_get_name() as
+ARG_PTR_TO_UNINIT_MEM.
+
+Signed-off-by: Jerome Marchand <jmarchan@redhat.com>
 ---
-v3: make the condition to be a multiple of segment size
-v2: relocate the code
----
- lib/libf2fs.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ kernel/bpf/cgroup.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/lib/libf2fs.c b/lib/libf2fs.c
-index d2579d7..7a9245e 100644
---- a/lib/libf2fs.c
-+++ b/lib/libf2fs.c
-@@ -1347,6 +1347,12 @@ int f2fs_get_f2fs_info(void)
- 			}
- 			c.zone_blocks = c.devices[i].zone_blocks;
- 		}
-+		if (!c.zone_blocks ||
-+				(c.zone_blocks % DEFAULT_BLOCKS_PER_SEGMENT)) {
-+			MSG(0, "\tError: zone size should be a multiple of "
-+				"segment size\n");
-+			return -1;
-+		}
- 
- 		/*
- 		 * Align sections to the device zone size and align F2FS zones
+diff --git a/kernel/bpf/cgroup.c b/kernel/bpf/cgroup.c
+index 84f58f3d028a3..09c02a592d24a 100644
+--- a/kernel/bpf/cgroup.c
++++ b/kernel/bpf/cgroup.c
+@@ -2104,7 +2104,7 @@ static const struct bpf_func_proto bpf_sysctl_get_name_proto = {
+ 	.gpl_only	= false,
+ 	.ret_type	= RET_INTEGER,
+ 	.arg1_type	= ARG_PTR_TO_CTX,
+-	.arg2_type	= ARG_PTR_TO_MEM,
++	.arg2_type	= ARG_PTR_TO_UNINIT_MEM,
+ 	.arg3_type	= ARG_CONST_SIZE,
+ 	.arg4_type	= ARG_ANYTHING,
+ };
 -- 
-2.49.0.1151.ga128411c76-goog
+2.49.0
 
 
