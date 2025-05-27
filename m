@@ -1,99 +1,117 @@
-Return-Path: <linux-kernel+bounces-664116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-664118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECE7DAC520A
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 17:30:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B17D7AC520C
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 17:31:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4EC43AB7C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 15:29:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D6E11BA2260
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 15:31:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FA2F27AC49;
-	Tue, 27 May 2025 15:29:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F282027A139;
+	Tue, 27 May 2025 15:31:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VJdhWEyw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cPWnp4re"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F868253B4C;
-	Tue, 27 May 2025 15:29:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE9FC25634
+	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 15:31:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748359798; cv=none; b=HClO7PZ7PIBEWojZCguv9DCv5EXmHQwyRoAHF6/qwROO7mW1Ki+dYlssDZDRSlQlVSf2kOP+5K2saqio+WQ+sWTq86gevzDGH5PVPktnqPh4WH0WM6O+xFWXu0MRM6xPiOrbxmNgezVmBKcLuHoUK+b+meqf8rA19LJm7bThSo0=
+	t=1748359864; cv=none; b=MpxnZv8ETk5vZVArkUF7a7C8sIhXtiRfYzE5oZLDkeo4aHN5AaTAFAEkla2QdZy1mCW+B+3As8HFIU19R+HrgOepXvjoh41DznVBAIAROuU9fFmk2iKHss818rwZeqqjwUbkmgA/eHkIsJk6k8yDBJUbUv6vNwAQ5ADZy5Z+1ac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748359798; c=relaxed/simple;
-	bh=Vk53fYt1nW4pK+qZUNUp633gvpFt+L8UJhtfUNw23gw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Z5S0Y+TuOfVOlC3qaKCHFN3ussmuOYkrEP/P78NeMnrw2NMh/byO7zBA6EKSYZpN+ghvkY+ztFEaI7JeVtxHa6Eg+GaNrTlA5uOEgBeNSsBPq+fi+xJT5HyYFSdrUF+9SNH868rfbg3Ita+edeBk65Fk73sJRHuu05gdUnHm6Gg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VJdhWEyw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BEC8C4CEE9;
-	Tue, 27 May 2025 15:29:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748359798;
-	bh=Vk53fYt1nW4pK+qZUNUp633gvpFt+L8UJhtfUNw23gw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=VJdhWEywDMnzdI0MAPmPF6BwluSLZkutQF14TOWNJAq6P7cVJWblLBbHtxEQBvi+A
-	 u8sgJ/vn4S3iod8x7dkHgMnne50S+s8BRqJ7NROIKLaPyDZtmvshtfPKxPAHvWlUrl
-	 jG6AY3zA11iAkQ2R/GxO8igePkbZHnWtRCeEsbetDBX7mWN2y4Z2rHi5QAlaoL4BcW
-	 vhls81ic+zyqSqfBYdwU4jJhH/II+nj8BEvjg2JA+V7Cuq3bvrxc0mtL5VRQzmp2ED
-	 63Oawz6EPtsOi8rCpM9FlVj7l443ZMtUamcKHqIimMJ38u51yn/fOtIpFPH9WzHrbQ
-	 uTDejf0vw9dhQ==
-Date: Tue, 27 May 2025 08:29:56 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Saeed Mahameed <saeed@kernel.org>
-Cc: Tariq Toukan <tariqt@nvidia.com>, "David S. Miller"
- <davem@davemloft.net>, Paolo Abeni <pabeni@redhat.com>, Eric Dumazet
- <edumazet@google.com>, Andrew Lunn <andrew+netdev@lunn.ch>, Saeed Mahameed
- <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>, Richard Cochran
- <richardcochran@gmail.com>, Alexei Starovoitov <ast@kernel.org>, Daniel
- Borkmann <daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>, netdev@vger.kernel.org,
- linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
- bpf@vger.kernel.org, Moshe Shemesh <moshe@nvidia.com>, Mark Bloch
- <mbloch@nvidia.com>, Gal Pressman <gal@nvidia.com>, Cosmin Ratiu
- <cratiu@nvidia.com>, Dragos Tatulea <dtatulea@nvidia.com>
-Subject: Re: [PATCH net-next V2 06/11] net/mlx5e: SHAMPO: Separate pool for
- headers
-Message-ID: <20250527082956.12e57fe5@kernel.org>
-In-Reply-To: <aC-ugDzGHB_WqKew@x130>
-References: <1747950086-1246773-1-git-send-email-tariqt@nvidia.com>
-	<1747950086-1246773-7-git-send-email-tariqt@nvidia.com>
-	<20250522153013.62ac43be@kernel.org>
-	<aC-ugDzGHB_WqKew@x130>
+	s=arc-20240116; t=1748359864; c=relaxed/simple;
+	bh=2erwN6Y7H2+Ivj/8faORZ/7jI/V9kK53sZr1lymHRL0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gv9wqRXi4o14tpwv6HlxndApFGVf3qYr3kBXUnro6Ea3C8htAdQXazSDjwUQW5Nfyt0zR2NkjuKJdn2P432N3rTqEHsUz1pDnlsva3P3vhyUTDoeFu8JvA3p+sik/VT+1IISGWtWYnhGlp/ZabHmH/asVi7k7PegDITEczX7tY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cPWnp4re; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1748359861;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=k3Iaq3MntvjDln6IzJbTGvcMOmcLmVF70dqmVM6voj4=;
+	b=cPWnp4re9Wd28CIKcoBlAJ4qP7fnhWFJo+kxuqPhz+mta/HHYV1Bm4344qO1mH5LI1aSMe
+	fHJZizK2kJxYbDT3wvPpCtD6tKgz++eC9QU8tfzbDeEmhCVZbFmFqN3t60EDUnsKomMYgi
+	XwKsO2AAQAVupYuRe3CPjd1+UtsuerI=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-327-UvECuc6FMziKTV6uLV0KJg-1; Tue,
+ 27 May 2025 11:30:57 -0400
+X-MC-Unique: UvECuc6FMziKTV6uLV0KJg-1
+X-Mimecast-MFC-AGG-ID: UvECuc6FMziKTV6uLV0KJg_1748359855
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 03A201945109;
+	Tue, 27 May 2025 15:30:55 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.44.32.4])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 25C7519560A3;
+	Tue, 27 May 2025 15:30:49 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Tue, 27 May 2025 17:30:14 +0200 (CEST)
+Date: Tue, 27 May 2025 17:30:08 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Pu Lehui <pulehui@huaweicloud.com>
+Cc: mhiramat@kernel.org, peterz@infradead.org, akpm@linux-foundation.org,
+	Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, vbabka@suse.cz,
+	jannh@google.com, pfalcato@suse.de, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, pulehui@huawei.com
+Subject: Re: [RFC PATCH v2 1/2] mm/mremap: Fix uprobe anon page be
+ overwritten when expanding vma during mremap
+Message-ID: <20250527153007.GD8333@redhat.com>
+References: <20250527132351.2050820-1-pulehui@huaweicloud.com>
+ <20250527132351.2050820-2-pulehui@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250527132351.2050820-2-pulehui@huaweicloud.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Thu, 22 May 2025 16:08:48 -0700 Saeed Mahameed wrote:
-> On 22 May 15:30, Jakub Kicinski wrote:
-> >On Fri, 23 May 2025 00:41:21 +0300 Tariq Toukan wrote:  
-> >> Allocate a separate page pool for headers when SHAMPO is enabled.
-> >> This will be useful for adding support to zc page pool, which has to be
-> >> different from the headers page pool.  
-> >
-> >Could you explain why always allocate a separate pool?  
+Not that this is really important, but the test-case looks broken,
+
+On 05/27, Pu Lehui wrote:
+>
+> #define _GNU_SOURCE
+> #include <fcntl.h>
+> #include <unistd.h>
+> #include <syscall.h>
+> #include <sys/mman.h>
+> #include <linux/perf_event.h>
 > 
-> Better flow management, 0 conditional code on data path to alloc/return
-> header buffers, since in mlx5 we already have separate paths to handle
-> header, we don't have/need bnxt_separate_head_pool() and
-> rxr->need_head_pool spread across the code.. 
-> 
-> Since we alloc and return pages in bulks, it makes more sense to manage
-> headers and data in separate pools if we are going to do it anyway for 
-> "undreadable_pools", and when there's no performance impact.
+> int main(int argc, char *argv[])
+> {
+>     int fd = open(FNAME, O_RDWR|O_CREAT, 0600);
 
-I think you need to look closer at the bnxt implementation.
-There is no conditional on the buffer alloc path. If the head and
-payload pools are identical we simply assign the same pointer to 
-(using mlx5 naming) page_pool and hd_page_pool.
+FNAME is not defined
 
-Your arguments are not very convincing, TBH.
-The memory sitting in the recycling rings is very much not free.
+>     struct perf_event_attr attr = {
+>         .type = 9,
+
+Cough ;) Yes I too used perf_event_attr.type == 9 when I wrote another
+test-case. Because I am lazy and this is what I see in
+/sys/bus/event_source/devices/uprobe/type on my machine.
+
+But me should not assume that perf_pmu_register(&perf_uprobe) -> idr_alloc()
+will return 9.
+
+>     write(fd, "x", 1);
+
+looks unnecessary.
+
+Oleg.
+
 
