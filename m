@@ -1,167 +1,174 @@
-Return-Path: <linux-kernel+bounces-663516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-663521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1E14AC4935
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 09:19:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92E94AC494D
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 09:22:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A484188E597
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 07:19:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3124F3ACF9A
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 07:21:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE3A222617F;
-	Tue, 27 May 2025 07:19:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFA3E229B39;
+	Tue, 27 May 2025 07:21:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rqCSX3EB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BdxKKiDk"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B51C22578C;
-	Tue, 27 May 2025 07:19:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA2A01EA7DF;
+	Tue, 27 May 2025 07:21:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748330369; cv=none; b=p5hMwJkyfFCXHfkW14uYu5uS8FVPaFdjTTuZ/yxyXKslTwGGf/qzkHXe3yiUmhP00gxLUoThJy3g+vQCO+5gTlvXiio4rqRxJTaZ9oh405Ej4kvHJH9UQDY36QmiQH5fz6z8ZfdwOm1+XfKeektIe+MfsyUjGjPCP22Y5TrV5PU=
+	t=1748330464; cv=none; b=kovsc0hvTfD36hZx3h25zxh1OSstQEP92rvb9s6f+M2Oz8gh1rA1xTzVVbAMHIFznt1QUsQd5AqDOiVpQ6VXnmzT5vGUQZ3i/IAZ1tFN0Lo7BPanLUsL/bnmrNX2wPpbMCs7X88aJjq5kZJXPRYEdfO4dUxIdl27ZodWwhpkzqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748330369; c=relaxed/simple;
-	bh=aXpE9FJ9Lj7B7fcorEbSAoxcZqJtxq0ES595G1wW60k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j+cruAgBxwTb57xoXY9ZfKI6lg3awO5T8YNrtYAbg4gFODsCz3+sC4ejIMPmYnEbInfNZwIeyieufZKqbu6ztkRPMbt+qxyyB+89mdM4bINQPdvuGCIkr5GpJHfSNwI8ZhJCoJoQdOft0YTwZZjDg+AHCGmIcx6uqux9yEUa55I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rqCSX3EB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E89AC4CEE9;
-	Tue, 27 May 2025 07:19:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748330368;
-	bh=aXpE9FJ9Lj7B7fcorEbSAoxcZqJtxq0ES595G1wW60k=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=rqCSX3EBgK2QIymTVki/wrovWS1QCX8pMXWsNIONS2HrldqYgximqSaGD6ai+GuyS
-	 SHiXGSdMRSQGZKjoApzHrbGbhJHyzP6/d5yDMWlMUQSt7ylAbPNCD2HhbDw4TlY55r
-	 A+c6cySe5K8MjhfoYXaOvrHeOs8BeliV2OcH/f3IxeKnkzOpScfgb4/hpgp7cN4Tkj
-	 kwh9XsIkRdGp7CFYTAOM8nbzhEA/bUpgpzwLY4XyUihKAfcSCcIo/qpX/HevT7ASe8
-	 3EL7vVuJASAXwZXCPNzIGS648nnlHYGRqzKoi8e1bUCdkQM9QuZsS5UG4pFycdzfw/
-	 x0mgyQ0AhDWMA==
-Message-ID: <15dcde73-3c0e-4cc9-934f-4dbabd92905e@kernel.org>
-Date: Tue, 27 May 2025 09:19:22 +0200
+	s=arc-20240116; t=1748330464; c=relaxed/simple;
+	bh=L0e9W9YV1UaeqxD6hL087tuo3eB/tosYyT7whElV4h8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ru0fdFWMqsyGxoa9lZrz/2Xnd6lWw2+JBLXwir7Exa+o/kY2Jo/JLc4JkyWlMgYti5pfM4p3XBH+/1na7MOjK130ErpwKe0N72tSQQjBrrgmaZAxmFAdM7EBG8YiG/f0Sir8gxxaUXFp7xV9NBanLcuRQj1pXnKpZq56c9zwnuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BdxKKiDk; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54QMC8Gh027572;
+	Tue, 27 May 2025 07:20:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=vXLWBrAPHYOKMWfPcah4/KdLo/tLyhzeM4q
+	gkaB9mcc=; b=BdxKKiDkVCge7N7uMfFzqUwFH2grKdhUWjY5gQwFUiDqgnnSKb3
+	d8slv0LdE89CLhmBVkWMVeYio+OysKCozNanR/cMlR9J3kkeGkY4Gfgl1hHflrq2
+	qllk96kpUhyCIRCaFre8KSTFAa9aWeIf2s3TvX6rbMtE7wMxWnd6HoWcOg4AJZAF
+	uI23R1POS1J3OLe2iQxMbVk4nYG3eL2D0in3ck6sP0FnxFv/NaZGstBsdqtXYKGo
+	ilFzedaLuCvTHSNbYJGJNL+dmAfPSQ+rCwleau1LYBARgc3Moqln5qbRYcKTtAod
+	x8+DKhgdN9h7zwK4+h43JMVaA2OTvSREAgQ==
+Received: from aptaippmta01.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46u6g8wyur-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 27 May 2025 07:20:44 +0000 (GMT)
+Received: from pps.filterd (APTAIPPMTA01.qualcomm.com [127.0.0.1])
+	by APTAIPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 54R7HXcY028192;
+	Tue, 27 May 2025 07:20:41 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 46u76kypsq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 27 May 2025 07:20:41 +0000
+Received: from APTAIPPMTA01.qualcomm.com (APTAIPPMTA01.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 54R7KfRJ031372;
+	Tue, 27 May 2025 07:20:41 GMT
+Received: from cse-cd02-lnx.ap.qualcomm.com (cse-cd02-lnx.qualcomm.com [10.64.75.246])
+	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 54R7KeXC031363
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 27 May 2025 07:20:41 +0000
+Received: by cse-cd02-lnx.ap.qualcomm.com (Postfix, from userid 4438065)
+	id 6970534FD; Tue, 27 May 2025 15:20:39 +0800 (CST)
+From: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
+To: lpieralisi@kernel.org, kwilczynski@kernel.org,
+        manivannan.sadhasivam@linaro.org, robh@kernel.org, bhelgaas@google.com,
+        krzk+dt@kernel.org, neil.armstrong@linaro.org, abel.vesa@linaro.org,
+        kw@linux.com, conor+dt@kernel.org, vkoul@kernel.org, kishon@kernel.org,
+        andersson@kernel.org, konradybcio@kernel.org
+Cc: linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, quic_qianyu@quicinc.com,
+        quic_krichai@quicinc.com, quic_vbadigan@quicinc.com,
+        Ziyue Zhang <quic_ziyuzhan@quicinc.com>
+Subject: [PATCH v5 0/4] pci: qcom: Add QCS615 PCIe support
+Date: Tue, 27 May 2025 15:20:32 +0800
+Message-Id: <20250527072036.3599076-1-quic_ziyuzhan@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/4] dt-bindings: crypto: fsl,sec-v4.0: Add power
- domains for iMX8QM and iMX8QXP
-To: John Ernberg <john.ernberg@actia.se>, =?UTF-8?Q?Horia_Geant=C4=83?=
- <horia.geanta@nxp.com>, Pankaj Gupta <pankaj.gupta@nxp.com>,
- Gaurav Jain <gaurav.jain@nxp.com>, Herbert Xu <herbert@gondor.apana.org.au>,
- "David S . Miller" <davem@davemloft.net>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Frank Li <Frank.li@nxp.com>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>,
- Thomas Richard <thomas.richard@bootlin.com>,
- "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "imx@lists.linux.dev" <imx@lists.linux.dev>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-References: <20250527071552.1424997-1-john.ernberg@actia.se>
- <20250527071552.1424997-4-john.ernberg@actia.se>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250527071552.1424997-4-john.ernberg@actia.se>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=d4b1yQjE c=1 sm=1 tr=0 ts=683567cc cx=c_pps
+ a=nuhDOHQX5FNHPW3J6Bj6AA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=dt9VzEwgFbYA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=COk6AnOGAAAA:8
+ a=Vf7fM4WGy8ubjBm1pJIA:9 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: mbQNpZT7pHYL6pgp6u0sCGvDrPGO6Oy1
+X-Proofpoint-GUID: mbQNpZT7pHYL6pgp6u0sCGvDrPGO6Oy1
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI3MDA1OCBTYWx0ZWRfX7c2mdtG64O8t
+ ItVoKgHe6GhJE0GjG0qQwZcPUzU81REzrrPEy1XM11IyburPiXK7pTDgkv6+CmVBri+SOHmtb5p
+ pBE+edxy3vFystk+0IoxD6ZyIlbWfpVrWR4TcyyGDYJqFQP0X++R2dm3B1PV5K8jwIFMKpFoF6H
+ UDE3+goBaZXuslhMvGeUoHRNob7NWW5NXyrduRszRegs0gs3qTemVymz+4FmARu6s7rteXMl0Xj
+ BMHhkA3Dua1FzREXH5JmK304i6qhWWfGbzqtYIZiI907Ux4Jxefvr2fG9kOTCvduua4lfiD3zIv
+ LkG+wBEffw7CVF3l228xPJc8EbqutcUfLjBmI9SwPa5QAJJZYt6R3o854zkHnWOCZiRghwJ9BqX
+ p+dtZhPcW3bSPPRD7EOAz0p91r826o3iEEmiGfRhuD4maZ3vMI3ItceTXO13r4y/4DOftxor
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-27_03,2025-05-26_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 suspectscore=0 malwarescore=0 phishscore=0 mlxlogscore=633
+ lowpriorityscore=0 priorityscore=1501 bulkscore=0 spamscore=0 clxscore=1015
+ impostorscore=0 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505160000
+ definitions=main-2505270058
 
-On 27/05/2025 09:16, John Ernberg wrote:
-> 
-> diff --git a/Documentation/devicetree/bindings/crypto/fsl,sec-v4.0.yaml b/Documentation/devicetree/bindings/crypto/fsl,sec-v4.0.yaml
-> index 75afa441e019..a3c938eb553e 100644
-> --- a/Documentation/devicetree/bindings/crypto/fsl,sec-v4.0.yaml
-> +++ b/Documentation/devicetree/bindings/crypto/fsl,sec-v4.0.yaml
-> @@ -48,6 +48,9 @@ properties:
->                - fsl,imx6ul-caam
->                - fsl,sec-v5.0
->            - const: fsl,sec-v4.0
-> +      - items:
-> +          - const: fsl,imx8qm-caam
+This series adds document, phy, configs support for PCIe in QCS615.
 
-That's part of previous enum, no?
+This series depend on the dt-bindings change
+https://lore.kernel.org/all/20250521-topic-8150_pcie_drop_clocks-v1-0-3d42e84f6453@oss.qualcomm.com/
 
-> +          - const: fsl,sec-v4.0
->        - const: fsl,sec-v4.0
->  
->    reg:
-> @@ -77,6 +80,9 @@ properties:
->    interrupts:
->      maxItems: 1
->  
-> +  power-domains:
-> +    maxItems: 1
-> +
->    fsl,sec-era:
->      description: Defines the 'ERA' of the SEC device.
->      $ref: /schemas/types.yaml#/definitions/uint32
-> @@ -108,6 +114,9 @@ patternProperties:
->            - items:
->                - const: fsl,sec-v5.0-job-ring
->                - const: fsl,sec-v4.0-job-ring
-> +          - items:
-> +              - const: fsl,imx8qm-job-ring
+Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+Signed-off-by: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
+---
+Have following changes:
+	- Add a new Document the QCS615 PCIe Controller
+	- Add configurations in devicetree for PCIe, including registers, clocks, interrupts and phy setting sequence.
+	- Add configurations in devicetree for PCIe, platform related gpios, PMIC regulators, etc.
 
-Combine with previous entry into enum.
+Changes in v5:
+- Drop qcs615-pcie.yaml and use sm8150, as qcs615 is the downgraded
+  version of sm8150, which can share the same yaml.
+- Drop compatible enrty in driver and use sm8150's enrty (Krzysztof)
+- Fix the DT format problem (Konrad)
+- Link to v4: https://lore.kernel.org/all/20250507031559.4085159-1-quic_ziyuzhan@quicinc.com/
 
-> +              - const: fsl,sec-v4.0-job-ring
->            - const: fsl,sec-v4.0-job-ring
->  
+Changes in v4:
+- Fixed compile error found by kernel test robot(Krzysztof)
+- Update DT format (Konrad & Krzysztof)
+- Remove QCS8550 compatible use QCS615 compatible only (Konrad)
+- Update phy dt bindings to fix the dtb check errors.
+- Link to v3: https://lore.kernel.org/all/20250310065613.151598-1-quic_ziyuzhan@quicinc.com/
+
+Changes in v3:
+- Update qcs615 dt-bindings to fit the qcom-soc.yaml (Krzysztof & Dmitry)
+- Removed the driver patch and using fallback method (Mani)
+- Update DT format, keep it same with the x1e801000.dtsi (Konrad)
+- Update DT commit message (Bojor)
+- Link to v2: https://lore.kernel.org/all/20241122023314.1616353-1-quic_ziyuzhan@quicinc.com/
+
+Changes in v2:
+- Update commit message for qcs615 phy
+- Update qcs615 phy, using lowercase hex
+- Removed redundant function
+- split the soc dtsi and the platform dts into two changes
+- Link to v1: https://lore.kernel.org/all/20241118082619.177201-1-quic_ziyuzhan@quicinc.com/
+
+Krishna chaitanya chundru (2):
+  arm64: dts: qcom: qcs615: enable pcie
+  arm64: dts: qcom: qcs615-ride: Enable PCIe interface
+
+Ziyue Zhang (2):
+  dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy: Update pcie phy bindings
+    for QCS615
+  dt-bindings: PCI: qcom,pcie-sm8150: document qcs615
+
+ .../bindings/pci/qcom,pcie-sm8150.yaml        |   7 +-
+ .../phy/qcom,sc8280xp-qmp-pcie-phy.yaml       |   2 +-
+ arch/arm64/boot/dts/qcom/qcs615-ride.dts      |  42 +++++
+ arch/arm64/boot/dts/qcom/qcs615.dtsi          | 146 ++++++++++++++++++
+ 4 files changed, 195 insertions(+), 2 deletions(-)
 
 
+base-commit: ac12494a238dba00fe8d1459fcf565f9877960f1
+-- 
+2.34.1
 
-Best regards,
-Krzysztof
 
