@@ -1,132 +1,113 @@
-Return-Path: <linux-kernel+bounces-664207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-664209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B83CAC532C
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 18:41:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C21DCAC5331
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 18:42:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AF81172EFA
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 16:42:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C096172459
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 16:42:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12AC027FB22;
-	Tue, 27 May 2025 16:41:49 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A0CF27FD48;
+	Tue, 27 May 2025 16:42:21 +0000 (UTC)
+Received: from mail-m49197.qiye.163.com (mail-m49197.qiye.163.com [45.254.49.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C696527FB0C
-	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 16:41:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B107027F756;
+	Tue, 27 May 2025 16:42:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748364108; cv=none; b=q9eh4+GOAhs8BkfRPCLLzU/vObfe3deqVZLsrPHgB43WuDPTFYwrvfMvBy+aFtNbzWEnlUUn2MRJEN9Yoi9F2eP1KU+QGATjPbLrS4AduXKmtyCqmhUKFHwHDwsmRG7b/dmSs/3kdtH7HTmF++Sw6mBoV6eS24uu72c2inlnbIE=
+	t=1748364141; cv=none; b=X3rwn6FICJY/Ftc4rUHY4ASC1tVD68ljYroqKNHO410gFBObbGb4S5iTBlRFdymJOLckNLjmAc3DvV+0CWgFOzta1hbMOdvKZL/4YEz3p74F64JtQ7mKxZ1VV0cGq6JZ6alBXzFKg9yoDNFg5sWjsNQz/10Hb5kNtD0vv5UZspg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748364108; c=relaxed/simple;
-	bh=4tnOYGjqks8PWbRfbKPEZttiQM5neLtKjOpQESFmv4E=;
+	s=arc-20240116; t=1748364141; c=relaxed/simple;
+	bh=v23pZK4+LlSG8HcZ3RIjXmtSlwRxRLp+kl3Bg1oL4OI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UjlQ6N6SQ6x9AVtJ89mw2Z+zs3tGvMl/fMjdbpyGLRRloStIwfrJYyvzHsykXzxoD3u+dvcRu3S74YEBjZK6JSwADXTpkwmT/eC1KqQYIUUvg1Lx9sJRWGpCeoC2F3g2psvAubJlGQ1TIlHdNO7WyOTK1DpEpQDeVpZ27CjBDUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4b6JLc4LPXzYQv3Q
-	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 00:41:44 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id B50701A018D
-	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 00:41:43 +0800 (CST)
-Received: from [10.67.109.184] (unknown [10.67.109.184])
-	by APP2 (Coremail) with SMTP id Syh0CgDXk2ZG6zVo+FlUNg--.42217S2;
-	Wed, 28 May 2025 00:41:43 +0800 (CST)
-Message-ID: <82692c51-a599-49ee-8830-f5c7afbd6b14@huaweicloud.com>
-Date: Wed, 28 May 2025 00:41:42 +0800
+	 In-Reply-To:Content-Type; b=iHRkHqT7ROQ0og/Uh7XVNb+t/x9X1sLLd0H5BlwRHFW1yhkVD3Kf71ndylIt6Tolxih+sh45N/pdYMEr7IpngMlYekbtg/SSnpBQvEY63yljA+qvJwoO2vz1QKJ/nv5LQD+lfioKwQq+nL+fKZ8WL7SnQ1yoVbvBU95tmRWMhwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=whut.edu.cn; spf=pass smtp.mailfrom=whut.edu.cn; arc=none smtp.client-ip=45.254.49.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=whut.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=whut.edu.cn
+Received: from [198.18.0.1] (10.88.157.134 [34.28.57.145])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 1697939e2;
+	Wed, 28 May 2025 00:42:00 +0800 (GMT+08:00)
+Message-ID: <d855eedf-099f-4396-a79b-ee51b3bf24cb@whut.edu.cn>
+Date: Wed, 28 May 2025 00:41:56 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v2 1/2] mm/mremap: Fix uprobe anon page be overwritten
- when expanding vma during mremap
+User-Agent: Betterbird (Linux)
+Subject: Re: [PATCH v4 2/4] dt-bindings: soc: spacemit: Add K1 MBUS controller
+To: Rob Herring <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>,
+ Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexandre Ghiti <alex@ghiti.fr>, linux-usb@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+ spacemit@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20250526-b4-k1-dwc3-v3-v4-0-63e4e525e5cb@whut.edu.cn>
+ <20250526-b4-k1-dwc3-v3-v4-2-63e4e525e5cb@whut.edu.cn>
+ <20250527-energetic-pink-cricket-a282fd@kuoka>
+ <aDWeQfqKfxrgTA__@jean.localdomain> <20250527162539.GA423198-robh@kernel.org>
 Content-Language: en-US
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Oleg Nesterov <oleg@redhat.com>
-Cc: mhiramat@kernel.org, peterz@infradead.org, akpm@linux-foundation.org,
- Liam.Howlett@oracle.com, vbabka@suse.cz, jannh@google.com, pfalcato@suse.de,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, pulehui@huawei.com
-References: <20250527132351.2050820-1-pulehui@huaweicloud.com>
- <20250527132351.2050820-2-pulehui@huaweicloud.com>
- <20250527153007.GD8333@redhat.com>
- <b16e6120-9f02-4a3a-8f85-394ea55bf516@lucifer.local>
-From: Pu Lehui <pulehui@huaweicloud.com>
-In-Reply-To: <b16e6120-9f02-4a3a-8f85-394ea55bf516@lucifer.local>
+From: Ze Huang <huangze@whut.edu.cn>
+In-Reply-To: <20250527162539.GA423198-robh@kernel.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:Syh0CgDXk2ZG6zVo+FlUNg--.42217S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7uryrCrWfArWDuFy5tFyfXrb_yoW8Jw1kpF
-	Wqya15KFs5trWUJwn2y34Ut3Wrt393Jr43XF90q34UAFZ0qFnagFW8JFWY9F1q9rs7K3WY
-	va98Gr93XFy2vaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Sb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6x
-	kF7I0E14v26r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE
-	5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeV
-	CFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xKxwCY1x02
-	62kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwCFI7
-	km07C267AKxVWUXVWUAwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r10
-	6r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxV
-	WUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG
-	6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr
-	1UYxBIdaVFxhVjvjDU0xZFpf9x07UG-eOUUUUU=
-X-CM-SenderInfo: psxovxtxl6x35dzhxuhorxvhhfrp/
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlDSExPVkMaT0IeTUJLHxpCQ1YeHw5VEwETFhoSFy
+	QUDg9ZV1kYEgtZQVlIT1VJQ1VOTFVKT05ZV1kWGg8SFR0UWUFZT0tIVUpLSUJNS0pVSktLVUtZBg
+	++
+X-HM-Tid: 0a97129f4caf03a1kunm0054c905d0011
+X-HM-MType: 10
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PhA6Qio4LTErDFY4NysBEhIM
+	LRdPChpVSlVKTE9DSE1PSkhJQ0hMVTMWGhIXVRMOGhUcAR47DBMOD1UeHw5VGBVFWVdZEgtZQVlI
+	T1VJQ1VOTFVKT05ZV1kIAVlBSElDSzcG
 
-
-
-On 2025/5/27 23:33, Lorenzo Stoakes wrote:
-> On Tue, May 27, 2025 at 05:30:08PM +0200, Oleg Nesterov wrote:
->> Not that this is really important, but the test-case looks broken,
->>
->> On 05/27, Pu Lehui wrote:
+On 5/28/25 12:25 AM, Rob Herring wrote:
+> On Tue, May 27, 2025 at 07:13:05PM +0800, Ze Huang wrote:
+>> On Tue, May 27, 2025 at 08:51:19AM +0200, Krzysztof Kozlowski wrote:
+>>> On Mon, May 26, 2025 at 10:40:18PM GMT, Ze Huang wrote:
+>>>> Some devices on the SpacemiT K1 SoC perform DMA through a memory bus
+>>>> (MBUS) that is not their immediate parent in the device tree. This bus
+>>>> uses a different address mapping than the CPU.
+>>>>
+>>>> To express this topology properly, devices are expected to use the
+>>>> interconnects with name "dma-mem" to reference the MBUS controller.
+>>> I don't get it, sorry. Devices performing DMA through foo-bar should use
+>>> dmas property for foo-bar DMA controller. Interconnects is not for that.
 >>>
->>> #define _GNU_SOURCE
->>> #include <fcntl.h>
->>> #include <unistd.h>
->>> #include <syscall.h>
->>> #include <sys/mman.h>
->>> #include <linux/perf_event.h>
->>>
->>> int main(int argc, char *argv[])
->>> {
->>>      int fd = open(FNAME, O_RDWR|O_CREAT, 0600);
+>> Hi Krzysztof,
 >>
->> FNAME is not defined
+>> Sorry for not clarifying this earlier - let me provide some context.
 >>
->>>      struct perf_event_attr attr = {
->>>          .type = 9,
+>> The purpose of this node is to describe the address translation used for DMA
+>> device to memory transactions. I’m using the "interconnects" property with the
+>> reserved name "dma-mem" [1] in consumer devices to express this relationship.
+>> The actual translation is handled by the `of_translate_dma_address()` [2].
+>> This support was introduced in the series linked in [3].
 >>
->> Cough ;) Yes I too used perf_event_attr.type == 9 when I wrote another
->> test-case. Because I am lazy and this is what I see in
->> /sys/bus/event_source/devices/uprobe/type on my machine.
+>> This setup is similar to what we see on platforms like Allwinner sun5i,
+>> sun8i-r40, and NVIDIA Tegra. [4][5]
 >>
->> But me should not assume that perf_pmu_register(&perf_uprobe) -> idr_alloc()
->> will return 9.
->>
->>>      write(fd, "x", 1);
->>
->> looks unnecessary.
->>
->> Oleg.
->>
-> 
-> While I agree we should probably try to do this nicely, in defence of Pu I think
-> this is adapted from the syzkaller horror show :P and that code does tend to
-> just insert random integers etc.
-> 
-> It would be good to refine this into something more robust if possible and
-> ideally add as a self-test, however!
+>> I considered reusing the existing Allwinner MBUS driver and bindings.
+>> However, the Allwinner MBUS includes additional functionality such as
+>> bandwidth monitoring and frequency control - features that are either
+>> absent or undocumented on the SpacemiT K1 SoC.
+> The interconnect binding is for when you have those software controls.
+> If you only have address translation, then 'dma-ranges' in a parent node
+> is all you need.
+>
+> Rob
 
-Yeah, just trying to make the commit message more compact, but miss a 
-lot. Will do better next.
-
+Different devices on the SoC may have distinct DMA address translations.
+A common dma-ranges in the parent node may not represent this accurately.
 
