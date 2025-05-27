@@ -1,112 +1,132 @@
-Return-Path: <linux-kernel+bounces-663549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-663551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37A85AC49DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 10:04:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D3A48AC49DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 10:04:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7537189C2D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 08:04:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FB6A189C56A
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 08:04:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6808B24888D;
-	Tue, 27 May 2025 08:03:52 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BCAC248F45;
+	Tue, 27 May 2025 08:04:20 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12FAA16F841;
-	Tue, 27 May 2025 08:03:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B7181C6FFE;
+	Tue, 27 May 2025 08:04:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748333032; cv=none; b=It+wXIWCIOXDAUAA2jY1PJ9oKfpUa/xw+d5tjRrO86/ZDmXBIA52CCGeHhGCxExMNI7cNjjUrPvSFoFnpgun99k7bQDJ95Su/CwxjQRgYN2wd3nfasodKS35nxvf3FzFxhAWKs4qf2L8NANQfzpyaKIbUWgKDDoADzRYegYk1+E=
+	t=1748333059; cv=none; b=nZMoEAGuEd0Ih7zUg2RzfLkGudQr1tWTiofnsLzREL5yMZU0dFF07d8F+zyVPJscyCkPIyzw/5H2y3iwpRZzjmavWMfyd1os9Qg3iHXAsPwGWZguoSlQE+Cvl/e+1kbiyaOv4j2sbq/9ViomOpHn2EXLQVT+LTwnnoIPkhtCGb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748333032; c=relaxed/simple;
-	bh=ESHuVTrp+zD7KCJNAsBiTIPJxxySJ2aqqY36GgXQE24=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=pUt2AQn52wO1qH/Osx48korrDlf20jA1wHaOfTMMAffmjTz6djzHuAdytw0BnJgRiOs/j4R4/zF4kx3F0vtpbKCB7B0gi/TKiyB3mGUNaU6Q5Q20te9/jQ6s9sozpOKX1CdSIunnXt4ejTqRXFdfvNPAQSzuCsHStF67YUO/YNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4b64rT1z3Pz4f3jLy;
-	Tue, 27 May 2025 16:03:21 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 852561A1518;
-	Tue, 27 May 2025 16:03:46 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgD3Wl_hcTVoBB6eNg--.22750S3;
-	Tue, 27 May 2025 16:03:46 +0800 (CST)
-Subject: Re: [PATCH 11/23] md/md-bitmap: make method bitmap_ops->daemon_work
- optional
-To: Hannes Reinecke <hare@suse.de>, Yu Kuai <yukuai1@huaweicloud.com>,
- hch@lst.de, xni@redhat.com, colyli@kernel.org, song@kernel.org
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-raid@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
- johnny.chenyi@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <20250524061320.370630-1-yukuai1@huaweicloud.com>
- <20250524061320.370630-12-yukuai1@huaweicloud.com>
- <a1691267-304d-4a3f-898b-2f8901031d2c@suse.de>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <c7e108a6-c788-d3d9-346c-9db134ae9ae2@huaweicloud.com>
-Date: Tue, 27 May 2025 16:03:45 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1748333059; c=relaxed/simple;
+	bh=wMXqsnC04f3eA9JrWhsMw8ctnhdT+ZgnkM8z3aQak24=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pG0TyJpBss6D3IwNnciiS8BNion/m5NdeOYyql4ThYrPrRWmsABg3nSGCk//eLk5/NYpi30l0FL4cVXMAOr0e+cfxF40QTuVyuWI7Upm1X/KrhOKtIcnmoClVdN0UpDgi+3OpD+mjzf/EgZRZZr60u0P4SqjFhLfhVm0tBTN7EA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 25e3e3383ad111f0b29709d653e92f7d-20250527
+X-CTIC-Tags:
+	HR_CC_AS_FROM, HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CTE_8B
+	HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_DIGIT_LEN
+	HR_FROM_NAME, HR_SJ_DIGIT_LEN, HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER
+	HR_SJ_NOR_SYM, HR_SJ_PHRASE, HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT
+	HR_TO_DOMAIN_COUNT, HR_TO_NO_NAME, IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED
+	SA_TRUSTED, SA_EXISTED, SN_TRUSTED, SN_EXISTED, SPF_NOPASS
+	DKIM_NOPASS, DMARC_NOPASS
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:430fe6b6-c717-4130-a8d5-b87a3da13ead,IP:0,U
+	RL:0,TC:0,Content:0,EDM:25,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:20
+X-CID-INFO: VERSION:1.1.45,REQID:430fe6b6-c717-4130-a8d5-b87a3da13ead,IP:0,URL
+	:0,TC:0,Content:0,EDM:25,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:20
+X-CID-META: VersionHash:6493067,CLOUDID:0a3e5fd3c7b86344b70babc19b985428,BulkI
+	D:2505271604021D5AQ85T,BulkQuantity:0,Recheck:0,SF:17|19|38|66|78|102,TC:n
+	il,Content:0|50,EDM:5,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil
+	,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD
+X-UUID: 25e3e3383ad111f0b29709d653e92f7d-20250527
+X-User: xiaopei01@kylinos.cn
+Received: from localhost.localdomain [(10.44.16.150)] by mailgw.kylinos.cn
+	(envelope-from <xiaopei01@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 2038246648; Tue, 27 May 2025 16:04:00 +0800
+From: Pei Xiao <xiaopei01@kylinos.cn>
+To: johannes@sipsolutions.net,
+	linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Pei Xiao <xiaopei01@kylinos.cn>
+Subject: [PATCH v2] wifi: iwlwifi: cfg:  Limit cb_size to valid range
+Date: Tue, 27 May 2025 16:03:55 +0800
+Message-Id: <7b373a4426070d50b5afb3269fd116c18ce3aea8.1748332709.git.xiaopei01@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <a1691267-304d-4a3f-898b-2f8901031d2c@suse.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgD3Wl_hcTVoBB6eNg--.22750S3
-X-Coremail-Antispam: 1UD129KBjvdXoWrZr4UXF47GFyUAFWruFy8Xwb_yoWfWrc_u3
-	4rAF9Ikr17tFsava12kanxZrZxXr4rC34jqayUtryjq3s5X34DWF9rZ3sFv3yxJFWrA3W7
-	CrZxW342yrsrujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbfAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
-	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
-	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7V
-	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
-	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6x
-	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAI
-	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x
-	0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUb_Ma5UUUUU==
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Hi,
+on arm64 defconfig build failed with gcc-8:
 
-在 2025/05/27 14:19, Hannes Reinecke 写道:
-> On 5/24/25 08:13, Yu Kuai wrote:
->> From: Yu Kuai <yukuai3@huawei.com>
->>
->> daemon_work() will be called by daemon thread, on the one hand, daemon
->> thread doesn't have strict wake-up time; on the other hand, too much
->> work are put to daemon thread, like handle sync IO, handle failed
->> or specail normal IO, handle recovery, and so on. Hence daemon thread
->> may be too busy to clear dirty bits in time.
->>
->> Make bitmap_ops->daemon_work() optional and following patches will use
->> separate async work to clear dirty bits for the new bitmap.
->>
-> Why not move it to a workqueue in general?
-> The above argument is valid even for the current implementation, no?
+drivers/net/wireless/intel/iwlwifi/pcie/ctxt-info.c:208:3:
+include/linux/bitfield.h:195:3: error: call to '__field_overflow'
+declared with attribute error: value doesn't fit into mask
+   __field_overflow();     \
+   ^~~~~~~~~~~~~~~~~~
+include/linux/bitfield.h:215:2: note: in expansion of macro '____MAKE_OP'
+  ____MAKE_OP(u##size,u##size,,)
+  ^~~~~~~~~~~
+include/linux/bitfield.h:218:1: note: in expansion of macro '__MAKE_OP'
+ __MAKE_OP(32)
 
-Yes, and however, I'll prefer not to touch current implementaion :(
-This is trivial comparing to other flaws like global spinlock.
+Limit cb_size to valid range to fix it.
 
-Thanks,
-Kuai
+Signed-off-by: Pei Xiao <xiaopei01@kylinos.cn>
+---
+Changes in v2:
+use if(WARN_ON())
+---
+ drivers/net/wireless/intel/iwlwifi/pcie/ctxt-info.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-> 
-> Cheers,
-> 
-> Hannes
+diff --git a/drivers/net/wireless/intel/iwlwifi/pcie/ctxt-info.c b/drivers/net/wireless/intel/iwlwifi/pcie/ctxt-info.c
+index cb36baac14da..4f2be0c1bd97 100644
+--- a/drivers/net/wireless/intel/iwlwifi/pcie/ctxt-info.c
++++ b/drivers/net/wireless/intel/iwlwifi/pcie/ctxt-info.c
+@@ -166,7 +166,7 @@ int iwl_pcie_ctxt_info_init(struct iwl_trans *trans,
+ 	struct iwl_trans_pcie *trans_pcie = IWL_TRANS_GET_PCIE_TRANS(trans);
+ 	struct iwl_context_info *ctxt_info;
+ 	struct iwl_context_info_rbd_cfg *rx_cfg;
+-	u32 control_flags = 0, rb_size;
++	u32 control_flags = 0, rb_size, cb_size;
+ 	dma_addr_t phys;
+ 	int ret;
+ 
+@@ -202,11 +202,12 @@ int iwl_pcie_ctxt_info_init(struct iwl_trans *trans,
+ 		rb_size = IWL_CTXT_INFO_RB_SIZE_4K;
+ 	}
+ 
+-	WARN_ON(RX_QUEUE_CB_SIZE(iwl_trans_get_num_rbds(trans)) > 12);
++	cb_size = RX_QUEUE_CB_SIZE(iwl_trans_get_num_rbds(trans));
++	if (WARN_ON(cb_size > 12))
++		cb_size = 12;
++
+ 	control_flags = IWL_CTXT_INFO_TFD_FORMAT_LONG;
+-	control_flags |=
+-		u32_encode_bits(RX_QUEUE_CB_SIZE(iwl_trans_get_num_rbds(trans)),
+-				IWL_CTXT_INFO_RB_CB_SIZE);
++	control_flags |= u32_encode_bits(cb_size, IWL_CTXT_INFO_RB_CB_SIZE);
+ 	control_flags |= u32_encode_bits(rb_size, IWL_CTXT_INFO_RB_SIZE);
+ 	ctxt_info->control.control_flags = cpu_to_le32(control_flags);
+ 
+-- 
+2.25.1
 
 
