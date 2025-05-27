@@ -1,198 +1,210 @@
-Return-Path: <linux-kernel+bounces-664574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-664578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAA2CAC5D94
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 01:03:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 71855AC5DA1
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 01:13:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11ACD168214
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 23:02:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 062DF17624B
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 23:13:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4704D2192F4;
-	Tue, 27 May 2025 23:01:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B113921771A;
+	Tue, 27 May 2025 23:13:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="RG+F30VA"
-Received: from mail-il1-f225.google.com (mail-il1-f225.google.com [209.85.166.225])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k+6miZQs"
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 350F3218EBA
-	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 23:01:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.225
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74131D531;
+	Tue, 27 May 2025 23:13:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748386904; cv=none; b=MufaEmt90N+6EGgBlsbRQMs597QbFcL8U8nq8Lv3I4sXpj9iR0JepAaT0lgYBpV9AcKkocPZ3R0veHJU/6OUK66e4aeojXlb+DMn9dI8YrBSA4tp0TJ8dTWwo0pG0c+2pIKyeKVkX3IxxnZIbPwo+fAdi69srVP2g2BvltE6/aE=
+	t=1748387589; cv=none; b=BBovjRmu8dqjULqI9nXx52WHosKGm769zcFV4edL37tBzmOVGdgvbqbzK1gyhOkvPLNItk5bbSGWuLvl509ts66wWFUh2bPpafQVbipvoZybtG5w7eglnIT+NDi8NPEoSRJIBjld51ImC3VbbgLIa3Vn6zx3SLbYOpz+C+GCqtY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748386904; c=relaxed/simple;
-	bh=Dig0OUZkUl5vE5F40iqhcNPgmSU4xHuO/wqfXO7v978=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=PVfXbYoTOSviYtCuEhrxOUH3oA+Sg3nCth+77XtidIds8x07poalg/XvvW+rhARoaqjY+w61iQp2XNmJP2rpkQrtQ0de9cIbVOPUjOD+JtrgcD+6S+eysjsq1Qy75/mpbuoWPxMYjf3lHKLRbQynTnKRkaXmT05oreWnoQfWIPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=RG+F30VA; arc=none smtp.client-ip=209.85.166.225
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-il1-f225.google.com with SMTP id e9e14a558f8ab-3dd87b83302so2655615ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 16:01:39 -0700 (PDT)
+	s=arc-20240116; t=1748387589; c=relaxed/simple;
+	bh=OM1S+xzckocQDitzE0xcXk70w3a+Vur86a4Jg3bhIvM=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JzYrVcJ1vE7tQBmLdesR4O5i/amHWJYMqN22WhtViAZ3VXaoPw/L2XVjNyUeSjFe+Ghdpvz0EdHg7BJR1RW3362pwxYcO/rzqdhpuuvHlaByZY4g964c9CUCZzbAE0o1Dy8ssEKFd0Gz7ifs2gb75pGGXxBGMx+AV/msjyRztmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k+6miZQs; arc=none smtp.client-ip=209.85.222.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7c7913bab2cso356009885a.0;
+        Tue, 27 May 2025 16:13:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1748386899; x=1748991699; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jAsa4vGSGhbQUBqDQbGCceYtmCgXKGpcXMsuwinXv+c=;
-        b=RG+F30VAatBu/8eE88aSq5TpDRdxCCzMxv7scGodzzWQ4VByWThwwEAj2lxtP1EOdG
-         WpA0NA66TlMleGd4yAoTBhzIiqY75bTkoNzovQdnqNdPew7JzeSJWR6w4dcipV+cuyzy
-         VH+NiV2E0z8Zl7mpnDLT/kcyiJF3qm0C4sOXf50gW6Q6DlHfqEJ8/y9bBx1l7W7yB+Cw
-         UicjU0wk73EJz6QHP9OGF9VlrEIByXeqgOHbQbtZWwyIOvTQxGcyWHdVgz0aKe3drCBl
-         kMQdhXY93gG8GsmXTwOw+h3ZqTx7idpHu9GPD05GxQlZYSnVZTW/28Ql1CwNXtqsi2kY
-         VPtg==
+        d=gmail.com; s=20230601; t=1748387586; x=1748992386; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:feedback-id:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FIeb9xQX45ddiIg6LlYezmAJ/ENKsPdd/luEvBzS8mQ=;
+        b=k+6miZQslTq8Ha6ySvqvfKYRcw6cDqjH16/FS2hHmeL0lcc6iNu1DNYrYQO4m+OWrn
+         +sDg/qNlMjtzs8g3JcdBLdXSK3tlfPJZFpJ5h/vR6/ZyYkLlHifDNkOoQTmwYOmmm6+j
+         5T88PaEqK3jMbe/hXFPFT7njldiXjdmf29vBFVPvkyopznC3geqlEJ0+8Be/gHk/hwe5
+         61RdXIGq2ekIS9L3YvyzQvZOYkmRdIMyLMHOm4jQEhg5rhyywg2fyfOm7lWb5fZG3ggg
+         nf8lrmaVEsGAnbwzt9zy8AIhfelSAydXH9yaqMWsxzeE2+BiHBh2LNEk6KxQGUpG/EXB
+         2asA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748386899; x=1748991699;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1748387586; x=1748992386;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:feedback-id:message-id:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=jAsa4vGSGhbQUBqDQbGCceYtmCgXKGpcXMsuwinXv+c=;
-        b=jbluqLZzmA2dMycG7IxZX0eTsnFHzMstiB5tWc5Vyw+mNS1rTAnpUK0k7nVPgZTg0g
-         tF4u2Smd81fIEvV8Cf+EYlzhxfjWoYAjXk3qd8YoKQsypFyxQhntpY6Zcot1hTyITvAB
-         WqWlVoXrbbeL86ZKx1hZ0ixXERSICoNnxXb+9hCcoYas+j0OoNxETEgzQnfhxBRsV6JM
-         1EExNbHADPw7N3fDU+pTQUNyrXyJ+2gQ6HKuIcW8hx5ZknPV9ehVq8cnzfXfYUs+68E0
-         rbfhA22L4Om+NJs0mttybblQpu6VY21l7uYwlOOVLGN/DCuSW3qxwPpm6sjQV4vxXm2w
-         FC6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX9SMTjdCvuiUGkXiUqtWuyYkkneyD6g2SyEBn9QT1i0LYJqVUkA/KuryQ1zpGIGcbhmuzjHAM2+5IHyL4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4392iPnMHJeCocPHzh3xpFzBjCUBHBlqtZIX8/XGj2x1KGQpc
-	3gSFr75cgSA0m3f2Q9w0iEu05k2NJEGYihFEqDa52TToQugBu/FGvahuTfUbLsUwe2knhHpTMQE
-	RNPPpxI8/yogkaLRPWKBP/eMQU/2pdqWxAo47
-X-Gm-Gg: ASbGncu88YD2cuRqW9Z3D1zQ5vCkK3lPgGprcQ3MhG24PS+LTo00InBSlobjqqexfYI
-	RxJkeDW7Jd3eaMronI+zO9mlLBsNdJGs2HxQSJNtrfVek6OnSlCs77mw05Vhwahu+sbPqsLRJPk
-	OML8IxGgnvAT3jhMPv2NRg3jt+ugpdHo3kWoh9vLG4QFV+shU/BM2VfHt0vsmS5HhLk6DfH1eel
-	pWwVkA5C2zUVTV38hyaRnYyECN4Y4y1Fbac7vM5OqpoSRiv5W27lxH6v1TSPGciD9rnVkfGOSh+
-	6fzr5tIalypxpuzGz2+5wOzCgdayk4KFOGR075xngHnP7Q==
-X-Google-Smtp-Source: AGHT+IHAa3L6pqwarpZSZxaEtNuL9OzSbgUval9F/ufullU3Up5cwONiGk6mYEcbpNd8+wa8Usva18dxIi1/
-X-Received: by 2002:a05:6e02:1709:b0:3d9:34c8:54ce with SMTP id e9e14a558f8ab-3dc9b705b34mr154783995ab.18.1748386898746;
-        Tue, 27 May 2025 16:01:38 -0700 (PDT)
-Received: from c7-smtp-2023.dev.purestorage.com ([208.88.159.129])
-        by smtp-relay.gmail.com with ESMTPS id e9e14a558f8ab-3dd89c0e368sm158675ab.69.2025.05.27.16.01.37
+        bh=FIeb9xQX45ddiIg6LlYezmAJ/ENKsPdd/luEvBzS8mQ=;
+        b=VqvnX+6ZpbqrVRQBmMxG23Xwqa63ngmTEV8Rsi++GgIHBAUK+JEPa409gIZQFZbhov
+         EKb5fJpKHRHwggmV1Y8zDdJypVa5nph85m46XfcyqQUhZMp8yFUXAJmh1hhGQ+/3vH5E
+         AaZDUTYr5Q6fvsKLx0mq8HbeauIQ1Oi9HJHmmTiA2G+RieD0odWWFtKdhqCffHcmTy7Z
+         oUlFI0/DtndRAAMtbNsEiKRN6L4FnPD/TqDhrcZjuBMYdxlUvPiAVsHwmx6Xrkl8H/ta
+         8i0OvRB6Cv3tNGwtoYG11cMd0n2aFu2PDXBj24t6dEtfPAeIMyrLGvHtmydcRbbJYoyW
+         MC1g==
+X-Forwarded-Encrypted: i=1; AJvYcCUQz8oiOJk86KqNpqd4/wW9RfSeyxjWUsq3+8VFFLL5Wqba+GcXJHuoWoTFcsSQnOWbk8Lv0+3MMRoqY2s=@vger.kernel.org, AJvYcCVZSMyqoZVjce4z64pb/c/HcteV2pBk1IfJrrQ+E21EvbaIyW3kz5adkRAMYRDeaxYMG5//vdC9YTYUGX7k7tk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqXIjFcHcd97rpWXmvUfNpKttrFJxi8ZRKKIqDsaJ+WodJa8DE
+	krFATkhk6julRTXslFUnls64fM9boZ+Uuvqn+S6bXs78zrqZBMfHQuLv
+X-Gm-Gg: ASbGnctn74EKkvqqpj/XmBtfotszK2pFBxFPZE3KjaxXCogGR9W/uQiRmdy5iy3nrsA
+	JVt7RisLckqdZeQfH0tLp7MP6ancVsZbBSZmNuY9XH3MdH63gsMIN3KF9qItyqaon/ZiMehbgfx
+	PtLIeBga5x7B5m0qwWM4Qd0UqB+pj6WZxNB4sEISMe/lsJATa92WUVkYb+nieb+mTaeb3+fx9bc
+	qhufxjD2oEsKGRM8qvcvEwkWZg5Hl2RUuVFb52MpPe4tj/pph/QtH6E0x5XYLJj56VBg6OAojZ5
+	nKJikiqCtb+QwTrg+XXmrY2D0VPYAOLjkcIYOyPt9ch9DgLALoURx5gMdIXwesKn/c7GSmigphI
+	XIRZbdSZZKvwBO0bzdnPnztFvGz93UTWa33mhpHf2DJbj5pkFdRJr
+X-Google-Smtp-Source: AGHT+IGWY2d2x+KNXNMe3IAPU+UGaqKwbqvFKAE2sokZBPcfOpPqd8K09nKee4n60Y1gUyvahQwNiA==
+X-Received: by 2002:a05:620a:3190:b0:7c5:4eee:5409 with SMTP id af79cd13be357-7ceecc3c64amr2536285385a.48.1748387586193;
+        Tue, 27 May 2025 16:13:06 -0700 (PDT)
+Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7cfc5d485f0sm434885a.102.2025.05.27.16.13.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 May 2025 16:01:38 -0700 (PDT)
-X-Relaying-Domain: purestorage.com
-Received: from dev-ushankar.dev.purestorage.com (dev-ushankar.dev.purestorage.com [IPv6:2620:125:9007:640:7:70:36:0])
-	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id 4C62E340A4D;
-	Tue, 27 May 2025 17:01:36 -0600 (MDT)
-Received: by dev-ushankar.dev.purestorage.com (Postfix, from userid 1557716368)
-	id 4A532E539B9; Tue, 27 May 2025 17:01:36 -0600 (MDT)
-From: Uday Shankar <ushankar@purestorage.com>
-Date: Tue, 27 May 2025 17:01:31 -0600
-Subject: [PATCH v7 8/8] Documentation: ublk: document UBLK_F_PER_IO_DAEMON
+        Tue, 27 May 2025 16:13:05 -0700 (PDT)
+Message-ID: <68364701.050a0220.48858.0017@mx.google.com>
+X-Google-Original-Message-ID: <aDZG_3X-4O6fpsPd@winterfell.>
+Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
+	by mailfauth.phl.internal (Postfix) with ESMTP id C9A941200043;
+	Tue, 27 May 2025 19:13:04 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-03.internal (MEProxy); Tue, 27 May 2025 19:13:04 -0400
+X-ME-Sender: <xms:AEc2aDze-ZPaS9Yi2VaBWHH43BYyrrFX2R_f4x29i6mzvEhbyzeu7A>
+    <xme:AEc2aLSjU65h9JJw_gSy7l9CAVl8aHKVNKGq7S-GbNz_ubajm83wDS8gsK3GjepEB
+    n7QO4x2TcH4U_sgNg>
+X-ME-Received: <xmr:AEc2aNXDAFh7jDw4zJ8RRFk7YtqtFUaLY9HWmoZVuuxDhKTPKepUb51P-S796Q>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgddvudeijeculddtuddrgeefvddrtd
+    dtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggft
+    fghnshhusghstghrihgsvgdpuffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftd
+    dtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhf
+    gggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquh
+    hnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrthhtvghrnhepffdtiefhieeg
+    tddvueeuffeiteevtdegjeeuhffhgfdugfefgefgfedtieeghedvnecuffhomhgrihhnpe
+    hgihhthhhusgdrtghomhenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgr
+    ihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqd
+    eiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhl
+    rdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohepudehpdhmohguvgepsh
+    hmthhpohhuthdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdr
+    uhhkpdhrtghpthhtoheprghlihgtvghrhihhlhesghhoohhglhgvrdgtohhmpdhrtghpth
+    htohepohhjvggurgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepghhrvghgkhhhsehl
+    ihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtoheprghrnhgusegrrhhnug
+    gsrdguvgdprhgtphhtthhopegrkhhpmheslhhinhhugidqfhhouhhnuggrthhiohhnrdho
+    rhhgpdhrtghpthhtohepghgrrhihsehgrghrhihguhhordhnvghtpdhrtghpthhtohepsg
+    hjohhrnhefpghghhesphhrohhtohhnmhgrihhlrdgtohhmpdhrtghpthhtohepsggvnhhn
+    ohdrlhhoshhsihhnsehprhhothhonhdrmhgv
+X-ME-Proxy: <xmx:AEc2aNgrhKv5TMpiYUexu3roT9yUv9kV0nsRRV3stHj-zWPU_OEZQQ>
+    <xmx:AEc2aFB_Dr4lgNjoQHv9l8wC6_AcmYiJwdluAtbl6f5kFNdAar11-w>
+    <xmx:AEc2aGKxNDHTyOoRhAGyExtG1X7iOwAPn0QRkVkisAlYi9qbH49hOw>
+    <xmx:AEc2aEAkwz9zdL_UkN9V4c5IA7UZdplFrHb_tGbYNMhxTb9ZkOEOzA>
+    <xmx:AEc2aBy8WGzyDHjvssNEFka21z1Tf8cEXia-FVHO9evOi4Cm-sAsYJ6D>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 27 May 2025 19:13:04 -0400 (EDT)
+Date: Tue, 27 May 2025 16:13:03 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] uaccess: rust: use newtype for user pointers
+References: <20250527-userptr-newtype-v2-1-a789d266f6b0@google.com>
+ <20250527221211.GB2023217@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250527-ublk_task_per_io-v7-8-cbdbaf283baa@purestorage.com>
-References: <20250527-ublk_task_per_io-v7-0-cbdbaf283baa@purestorage.com>
-In-Reply-To: <20250527-ublk_task_per_io-v7-0-cbdbaf283baa@purestorage.com>
-To: Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>, 
- Caleb Sander Mateos <csander@purestorage.com>, 
- Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>, 
- Jonathan Corbet <corbet@lwn.net>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, linux-doc@vger.kernel.org, 
- Uday Shankar <ushankar@purestorage.com>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250527221211.GB2023217@ZenIV>
 
-Explain the restrictions imposed on ublk servers in two cases:
-1. When UBLK_F_PER_IO_DAEMON is set (current ublk_drv)
-2. When UBLK_F_PER_IO_DAEMON is not set (legacy)
+On Tue, May 27, 2025 at 11:12:11PM +0100, Al Viro wrote:
+> On Tue, May 27, 2025 at 01:53:12PM +0000, Alice Ryhl wrote:
+> > In C code we use sparse with the __user annotation to detect cases where
+> > a user pointer is mixed up with other things. To replicate that, we
+> > introduce a new struct UserPtr that serves the same purpose using the
+> > newtype pattern.
+> > 
+> > The UserPtr type is not marked with #[derive(Debug)], which means that
+> > it's not possible to print values of this type. This avoids ASLR
+> > leakage.
+> > 
+> > The type is added to the prelude as it is a fairly fundamental type
+> > similar to c_int. The wrapping_add() method is renamed to
+> > wrapping_byte_add() for consistency with the method name found on raw
+> > pointers.
+> 
+> That's considerably weaker than __user, though - with
+> 	struct foo {struct bar x; struct baz y[2]; };
 
-Remove most references to per-queue daemons, as the new
-UBLK_F_PER_IO_DAEMON feature renders that concept obsolete.
+Translate to Rust this is:
 
-Signed-off-by: Uday Shankar <ushankar@purestorage.com>
----
- Documentation/block/ublk.rst | 35 ++++++++++++++++++++++++-----------
- 1 file changed, 24 insertions(+), 11 deletions(-)
+    struct Foo {
+        x: Bar,
+	y: Baz[2],
+    }
 
-diff --git a/Documentation/block/ublk.rst b/Documentation/block/ublk.rst
-index 854f823b46c2add01d0b65ba36aecd26c45bb65d..c368e1081b4111c581567058f87ecb52db08758b 100644
---- a/Documentation/block/ublk.rst
-+++ b/Documentation/block/ublk.rst
-@@ -115,15 +115,15 @@ managing and controlling ublk devices with help of several control commands:
- 
- - ``UBLK_CMD_START_DEV``
- 
--  After the server prepares userspace resources (such as creating per-queue
--  pthread & io_uring for handling ublk IO), this command is sent to the
-+  After the server prepares userspace resources (such as creating I/O handler
-+  threads & io_uring for handling ublk IO), this command is sent to the
-   driver for allocating & exposing ``/dev/ublkb*``. Parameters set via
-   ``UBLK_CMD_SET_PARAMS`` are applied for creating the device.
- 
- - ``UBLK_CMD_STOP_DEV``
- 
-   Halt IO on ``/dev/ublkb*`` and remove the device. When this command returns,
--  ublk server will release resources (such as destroying per-queue pthread &
-+  ublk server will release resources (such as destroying I/O handler threads &
-   io_uring).
- 
- - ``UBLK_CMD_DEL_DEV``
-@@ -208,15 +208,15 @@ managing and controlling ublk devices with help of several control commands:
-   modify how I/O is handled while the ublk server is dying/dead (this is called
-   the ``nosrv`` case in the driver code).
- 
--  With just ``UBLK_F_USER_RECOVERY`` set, after one ubq_daemon(ublk server's io
--  handler) is dying, ublk does not delete ``/dev/ublkb*`` during the whole
-+  With just ``UBLK_F_USER_RECOVERY`` set, after the ublk server exits,
-+  ublk does not delete ``/dev/ublkb*`` during the whole
-   recovery stage and ublk device ID is kept. It is ublk server's
-   responsibility to recover the device context by its own knowledge.
-   Requests which have not been issued to userspace are requeued. Requests
-   which have been issued to userspace are aborted.
- 
--  With ``UBLK_F_USER_RECOVERY_REISSUE`` additionally set, after one ubq_daemon
--  (ublk server's io handler) is dying, contrary to ``UBLK_F_USER_RECOVERY``,
-+  With ``UBLK_F_USER_RECOVERY_REISSUE`` additionally set, after the ublk server
-+  exits, contrary to ``UBLK_F_USER_RECOVERY``,
-   requests which have been issued to userspace are requeued and will be
-   re-issued to the new process after handling ``UBLK_CMD_END_USER_RECOVERY``.
-   ``UBLK_F_USER_RECOVERY_REISSUE`` is designed for backends who tolerate
-@@ -241,10 +241,11 @@ can be controlled/accessed just inside this container.
- Data plane
- ----------
- 
--ublk server needs to create per-queue IO pthread & io_uring for handling IO
--commands via io_uring passthrough. The per-queue IO pthread
--focuses on IO handling and shouldn't handle any control & management
--tasks.
-+The ublk server should create dedicated threads for handling I/O. Each
-+thread should have its own io_uring through which it is notified of new
-+I/O, and through which it can complete I/O. These dedicated threads
-+should focus on IO handling and shouldn't handle any control &
-+management tasks.
- 
- The's IO is assigned by a unique tag, which is 1:1 mapping with IO
- request of ``/dev/ublkb*``.
-@@ -265,6 +266,18 @@ with specified IO tag in the command data:
-   destined to ``/dev/ublkb*``. This command is sent only once from the server
-   IO pthread for ublk driver to setup IO forward environment.
- 
-+  Once a thread issues this command against a given (qid,tag) pair, the thread
-+  registers itself as that I/O's daemon. In the future, only that I/O's daemon
-+  is allowed to issue commands against the I/O. If any other thread attempts
-+  to issue a command against a (qid,tag) pair for which the thread is not the
-+  daemon, the command will fail. Daemons can be reset only be going through
-+  recovery.
-+
-+  The ability for every (qid,tag) pair to have its own independent daemon task
-+  is indicated by the ``UBLK_F_PER_IO_DAEMON`` feature. If this feature is not
-+  supported by the driver, daemons must be per-queue instead - i.e. all I/Os
-+  associated to a single qid must be handled by the same task.
-+
- - ``UBLK_IO_COMMIT_AND_FETCH_REQ``
- 
-   When an IO request is destined to ``/dev/ublkb*``, the driver stores
+> 	struct foo __user *p;
 
--- 
-2.34.1
+UserPtr should probably be generic over pointee, so:
 
+    pub struct UserPtr<T>(*mut c_void, PhantomData<*mut T>);
+
+and
+
+    let p: UserPtr<Foo> = ...;
+
+> 	void f(struct bar __user *);
+
+and this is:
+
+    pub fn f(bar: UserPtr<Bar>)
+
+and the checking should work, a (maybe unrelated) tricky part though..
+
+> sparse does figure out that f(&p->y[1]) is a type error - &p->y[1] is
+
+In Rust, you will need to play a little unsafe game to get &p->y[1]:
+
+    let foo_ptr: *mut Foo = p.as_mut_ptr();
+    let y_ptr: *mut Baz = unsafe { addr_of_mut!((*foo_ptr).y[1]) };
+    let y: UserPtr<Baz> = unsafe { UserPtr::from_ptr(y_ptr) };
+
+passing y to f() will get a type mismatch, so the detection/checking
+works. To avoid the unsafe game we need field projection [1].
+
+> struct baz __user * and f() expects struct bar __user *.
+> 
+> It's not just mixing userland pointers with other things - it's not mixing
+> userland pointers to different types, etc.
+> 
+
+In short, with UserPtr generic over pointee, we can have the similar
+detection as sparse.
+
+[1]: https://github.com/rust-lang/rfcs/pull/3735
+
+Regards,
+Boqun
+
+> In practice I've seen quite a few brainos caught by that...
 
