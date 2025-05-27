@@ -1,81 +1,57 @@
-Return-Path: <linux-kernel+bounces-663665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-663671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10675AC4B9E
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 11:35:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A2DEAC4BB1
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 11:43:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF2DB16CFF7
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 09:35:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 309583A8B6E
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 09:43:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD94A24EF8B;
-	Tue, 27 May 2025 09:35:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b6KQf48D"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4A0F2505A5;
+	Tue, 27 May 2025 09:43:50 +0000 (UTC)
+Received: from Atcsqr.andestech.com (60-248-80-70.hinet-ip.hinet.net [60.248.80.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E78282494F5
-	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 09:35:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57FDA22A4E2
+	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 09:43:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.248.80.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748338537; cv=none; b=IDdw9iFOqctzhUrfN8kd/OulEHvuCMXFpuWZ5MZuQCsCEnoDe1P8W6Xx7Ig7piqCzWvjfynySkk0vdsEglyITdxXR9b6iN2rTy6Fdrl3Y5mFqPHe85Kthp+PcH+Uq26MRz+rC+/wyivW+Tsh5hgsr0Q5KyZBQ81+DRaSu4GT+GM=
+	t=1748339030; cv=none; b=cwVT8OHg81sXeDvWSb2gNPsg+714hOzykPOKO2yeVxqH6bY0gLDaZ3HWfxtkFtB6+a8csEWGFxDIwcwBw71br9czCXFlSYf0YD8tOSDVHzg8bxjieBU1YM6CeEVW6fORDWbPMJWCqvTd5CCkQBmeKmJTxqCp9t/R8/I7Ip1F+oI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748338537; c=relaxed/simple;
-	bh=Wnm3koRQ8G5EYdhIQvsrDwQZTREYgxacjvE+VsFjNO0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SI2EQaCrOM85RohHlw+TclUKfiA6pBoTtPkREKR5+e4Ce6oHg8s0fRyUvECgywxoqP0IoP/b7eP5O06cBxi1igumDW+0re64tm2OiszmvJY02qqSW2W3vespDM22p3OKX/9+O9UpV8BykCLLj8VyFdLbsIs6tRgk80IE9H13QRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b6KQf48D; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-af5085f7861so1555327a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 02:35:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748338535; x=1748943335; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6993xgkMSdnABYekvT8YV7euLLfszrK5W5NkvKD+kRg=;
-        b=b6KQf48DLdlM5gsD4RxS0gQmgP8jAQsB/Ff9q6Rca+WF1Lq8lfckqQ43uieKwO/DVY
-         ldAHsgfPFVw/yTYCx8AQrJ2uqzFnR3Ju+hGeRiLPzvcGVnLsTfUrchF4bVvBBxBGzwKA
-         OinH6ei/tBunF7oijqboxhEs1vwqM5yyY7mSsl3Pzak/crYV9OdnnNzXl/MMAsiY0tgs
-         wYA3OAKcf5YWsQGsg9eT3bOgtiP8AQovToJwbpBx2NX72r3lWIRSPAXdb+qhJY5xm4PI
-         c2uUOnfjwgGnQL+nHDsPOuPsU/jUBM4cUlkj5DY4NsjUMEFUa6hfCobYIT+E2MldX0Hu
-         4GkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748338535; x=1748943335;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6993xgkMSdnABYekvT8YV7euLLfszrK5W5NkvKD+kRg=;
-        b=KZm5c0ugdY9P78Ez9lpJC2zDdRFXBSqsnkoLU+aHVmsOk8aeo9I4q6rxCwvMDkDaG8
-         CF0Mvzi86vn+7vB+m3SKMWVlZQ1Tk6VSIdDxpxI7d8Zq9DjvArxWli/a5wfyFy2ZcLpw
-         TcM1Rlpzxms0STwL2NCQWbRJcpy4kt3nl9RKlhHK25T360PZYHhxOfwsrDBm1PINiyBO
-         jpAag+UfJx1A4mwxZPNDUWJ+J7eCatuq1qlSfUTR6gdmPp1k4R+UyxtDJ7Rj5EUmG885
-         38LYM/ORYkx6gdpRoW3oiVYgd61HifJGA8LwmFhzemmNSBXRWeggILcg+xeCnPDvyLzi
-         ofIA==
-X-Gm-Message-State: AOJu0YwLPPtkuTcWu2cNLjLuNm6KlTUKGBUpvmkFeUx1c5qLUOmbUFS+
-	xOL6sbDMv3vzOXv2hTYGe/Yvc85kl3/lKnQxGaWYvfYST8ilRXzgoQ6N
-X-Gm-Gg: ASbGnctKRY/p3K9QJdWLzO2QcY8ff2FA7y/GSfiVUFVt26329fT4AvMkoLCexdizATh
-	9KVpmfHZ4Xwy1qU9qMIEX7yuidRFVO4HTdlnP3W2Yj03nTDM0NeojF6L+ecY7V4aDvtvJdl6sg3
-	ssNPfMDVtmsog4PyW2lkjRxpXIB+vmwNS7nGLIcjCVAyq5TgYqCyTbganjPVbpiwTbgRjO+zjOb
-	Q79VshzzyMG/wU2M/27xShKdsAELwKmn8TasLpRyXsOIE73vVktxb5PlCiwLMatXf9t+mbNZ3vh
-	IgWA0AERYXinXP6yiOPez6Rgajv60BPDIJJBf4aGa0dezytuQsePF5wkqA==
-X-Google-Smtp-Source: AGHT+IHOtK+6iCHvraosQLQ8K27/Xw8ttnakSw2C25MhOYjco0nnORqPYSAihSX0HWBxXvDz2WR0Lg==
-X-Received: by 2002:a17:90b:4d84:b0:311:b3e7:fb2c with SMTP id 98e67ed59e1d1-311b3e7fcd0mr1793621a91.13.1748338535059;
-        Tue, 27 May 2025 02:35:35 -0700 (PDT)
-Received: from gye-ThinkPad-T590.. ([39.120.225.141])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30f365b2d80sm13795313a91.4.2025.05.27.02.35.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 May 2025 02:35:34 -0700 (PDT)
-From: Gyeyoung Baek <gye976@gmail.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org,
-	Gyeyoung Baek <gye976@gmail.com>
-Subject: [PATCH] irq: Fix uninitialized pointers
-Date: Tue, 27 May 2025 18:35:30 +0900
-Message-ID: <20250527093530.958801-1-gye976@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1748339030; c=relaxed/simple;
+	bh=jf1Sif/8EOJ2zS9yNCRkbVUsWGn9SWm/3FhJjJi4h9o=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=G9/Y4gZx1cl55KN/NUZoy8nnxjAznqFLAQYqXOwjnZxjSgTKrbSShl/XmVcOHDR1CtfaFCUa650n19JOFX41hb1i9qQHAzN9Sv7c9yXTCbPEaVB0UffgoHm+DBxxMZFd8YyQnzU146W/XKwZ5X2nJJgDQ/fMA2rNyki+yaeUo4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=andestech.com; spf=pass smtp.mailfrom=andestech.com; arc=none smtp.client-ip=60.248.80.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=andestech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=andestech.com
+Received: from Atcsqr.andestech.com (localhost [127.0.0.2] (may be forged))
+	by Atcsqr.andestech.com with ESMTP id 54R9aZpN061000
+	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 17:36:35 +0800 (+08)
+	(envelope-from ben717@andestech.com)
+Received: from mail.andestech.com (ATCPCS31.andestech.com [10.0.1.89])
+	by Atcsqr.andestech.com with ESMTPS id 54R9ZbEc060798
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 27 May 2025 17:35:37 +0800 (+08)
+	(envelope-from ben717@andestech.com)
+Received: from swlinux02.andestech.com (10.0.15.183) by ATCPCS31.andestech.com
+ (10.0.1.89) with Microsoft SMTP Server id 14.3.498.0; Tue, 27 May 2025
+ 17:35:37 +0800
+From: Ben Zong-You Xie <ben717@andestech.com>
+To:
+CC: <tglx@linutronix.de>, <mingo@redhat.com>, <peterz@infradead.org>,
+        <dvhart@infradead.org>, <dave@stgolabs.net>, <andrealmeid@igalia.com>,
+        <shuah@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-kselftest@vger.kernel.org>, <tim609@andestech.com>,
+        Ben Zong-You Xie
+	<ben717@andestech.com>,
+        Cynthia Huang <cynthia@andestech.com>
+Subject: [PATCH] selftests: futex: define SYS_futex on 32-bit architectures with 64-bit time_t
+Date: Tue, 27 May 2025 17:35:36 +0800
+Message-ID: <20250527093536.3646143-1-ben717@andestech.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,33 +59,46 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-DKIM-Results: atcpcs31.andestech.com; dkim=none;
+X-DNSRBL: 
+X-SPAM-SOURCE-CHECK: pass
+X-MAIL:Atcsqr.andestech.com 54R9aZpN061000
 
-Fix uninitialized `ops` member's pointers to avoid kernel Oops in `irq_sim_request_resources()`.
+glibc does not define SYS_futex for 32-bit architectures using 64-bit
+time_t e.g. riscv32, therefore this test fails to compile since it does not
+find SYS_futex in C library headers. Define SYS_futex as SYS_futex_time64
+in this situation to ensure successful compilation and compatibility.
 
-Signed-off-by: Gyeyoung Baek <gye976@gmail.com>
+Signed-off-by: Ben Zong-You Xie <ben717@andestech.com>
+Signed-off-by: Cynthia Huang <cynthia@andestech.com>
 ---
- kernel/irq/irq_sim.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ tools/testing/selftests/futex/include/futextest.h | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/kernel/irq/irq_sim.c b/kernel/irq/irq_sim.c
-index 1a3d483548e2..67fd1de5d197 100644
---- a/kernel/irq/irq_sim.c
-+++ b/kernel/irq/irq_sim.c
-@@ -222,8 +222,12 @@ struct irq_domain *irq_domain_create_sim_full(struct fwnode_handle *fwnode,
- 	work_ctx->pending = no_free_ptr(pending);
- 	work_ctx->user_data = data;
+diff --git a/tools/testing/selftests/futex/include/futextest.h b/tools/testing/selftests/futex/include/futextest.h
+index ddbcfc9b7bac..7a5fd1d5355e 100644
+--- a/tools/testing/selftests/futex/include/futextest.h
++++ b/tools/testing/selftests/futex/include/futextest.h
+@@ -47,6 +47,17 @@ typedef volatile u_int32_t futex_t;
+ 					 FUTEX_PRIVATE_FLAG)
+ #endif
  
--	if (ops)
-+	if (ops) {
- 		memcpy(&work_ctx->ops, ops, sizeof(*ops));
-+	} else {
-+		work_ctx->ops.irq_sim_irq_released = NULL;
-+		work_ctx->ops.irq_sim_irq_requested = NULL;
-+	}
- 
- 	return no_free_ptr(work_ctx)->domain;
- }
++/*
++ * SYS_futex is expected from system C library, in glibc some 32-bit
++ * architectures (e.g. RV32) are using 64-bit time_t, therefore it doesn't have
++ * SYS_futex defined but just SYS_futex_time64. Define SYS_futex as
++ * SYS_futex_time64 in this situation to ensure the compilation and the
++ * compatibility.
++ */
++#if !defined(SYS_futex) && defined(SYS_futex_time64)
++#define SYS_futex SYS_futex_time64
++#endif
++
+ /**
+  * futex() - SYS_futex syscall wrapper
+  * @uaddr:	address of first futex
 -- 
-2.43.0
+2.34.1
 
 
