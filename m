@@ -1,141 +1,197 @@
-Return-Path: <linux-kernel+bounces-664512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-664514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0AC7AC5C8F
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 23:56:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5FD3AC5CC0
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 00:02:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1DC74A6ACD
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 21:57:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B09443B06AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 22:02:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E69E31C4A0A;
-	Tue, 27 May 2025 21:56:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C752C216392;
+	Tue, 27 May 2025 22:02:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ONsPtj/9"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EM20J+T/"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A00A420E00C
-	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 21:56:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 689B72144D2;
+	Tue, 27 May 2025 22:02:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748383014; cv=none; b=VAMD+aEulMGPJ4qEcIBMvyyEjOTRbLchns+k9fPL98ZWHMrrSDoijpPQZu53HMyK6ZbKtJqUbkqp0irPXnYhEBjoWIfXrNgD28FW0boTgOJ64ltQEeQybTHJdcNS1vI0/KRR8klJnmO5o0ACh1QDTBzm4gzSJUabaqLgQ6B4HCE=
+	t=1748383338; cv=none; b=ZnyONmPjk0vJAsNARHZlVuwGcvAyWVEHNHH9uSd8cuhcaidvJ8s+f8T6aZTFp9iKWtQDPz7dgisCWrsZ5xuFnvMGlWAIcycQYRuMu8LPFLGpkpKvoykMXUb7mkQrYbUtprYF+5gfPTVJLXIfKLvHGHXvRglzMC1+9xLYon+B+KY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748383014; c=relaxed/simple;
-	bh=H6RdSfdrrWnEqfuvZ74jCpn12+bkjOdAgwdgoViDX0c=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=irRWPQWr357SOpdlK3Og5Uhsr7CAK3XKzLtPandV5oSWr18RNEoBI6an6eCyWz8bdeZMl0hHl4cMXuHi4/tYGocoU6vKGZZmB3LrbHm0PfDfNZfpQpFCxVoFXh/7sZU8LV5wdzor+0dHNizxEitF53Wgr5zrVd7fCj97LpAmynI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ONsPtj/9; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-442f97af707so20875e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 14:56:52 -0700 (PDT)
+	s=arc-20240116; t=1748383338; c=relaxed/simple;
+	bh=ug75B5/nEVNJLBeNACxh9fxs20rN0S2FsbQ2QOmoeBQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Tflhr9boTaFkPqLiFjid6vRGU9Mc8zEFL2fkxblYKfVwsyRMVkwvqKgXiKw6p7dED3++RrrFtzOaFGBj6Ku1hGNlL74gMsJqWBkS6v1clGrPqFn8ttV8G2QsE61DREOShiEWiUKBEpDFIeAjLACKo8BF06pCC0rVT6KmgHIZHQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EM20J+T/; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3a4c9024117so236573f8f.0;
+        Tue, 27 May 2025 15:02:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1748383011; x=1748987811; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=SgGQJnneg6KUhe9rF0gnPBXorTfQGxnTid6H5S2Xibw=;
-        b=ONsPtj/9xvVDlgMSe1pDwakYRjZ8Yt+LWYitdjPCqosifL9gELVhqOe1HHI//v8gki
-         8GLDtZzY0ogKiG+ckZiYL2DAs3yH36x+HsRnedf8oxY3rTSUdfftEa4APuyHcvXax9rB
-         HekX0+C20pOW0z6c3TRtfcKzpElkJUKDfvvacZ1091MjeVs0iPIbl9XEk101nMOZJ0Ea
-         ofdSLs4/kF6ntjD6Dv5tJA/9NrLVZlrziUs7EP+doYg3eDkVlfrr6W4lqE1P1e+yIiQq
-         pJiheR7cBuBzGBo30F6bIPGonPK6kR4Tm9O4JOXzt1Sw1W9LVL+DznAIfhGIhBSKfSXO
-         GaEQ==
+        d=gmail.com; s=20230601; t=1748383334; x=1748988134; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=45g7cTsi43/UtEC2z2Icfcjh5OvH49gjNKxt8eXISRs=;
+        b=EM20J+T/cRC56lzVO1HXrbICY8OJTQCZPWLM1Ljp0a75NI5Kubr7zATKeC8PMy2faN
+         kmUu26xgVSSl7TLwhT5uqTOTq/A098+F/R8lk1gH10NZyxpcT19Ax1doBWNuoQL/5Oxd
+         4r7/dT07EQqR6JWNRlT7FUZRiC0rnWULOSplPMBy05NsF6XLFSY/aPP1fGG6pBPn/xCo
+         MsgcoNdlmp7yMu2Zqe3WjAHKAEq1S6qzquMSjTdaYMh41TfZATA/LDJnk/3iZJegrAdn
+         oMT1Qt54qTxvd2yG7I8XAK/qRIuUPmwcaueIQkqniW+9RJp+cUmxV4DwAgz/qvp393X8
+         t65Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748383011; x=1748987811;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SgGQJnneg6KUhe9rF0gnPBXorTfQGxnTid6H5S2Xibw=;
-        b=cTONirswLnoQc4SOEpppfGcI5LIff1WcHgtpFTouIOscEEumAtA5ZHiA5Ar9WaDfTU
-         Q3YoLEAvoHbKEley3qMHtKaQ3AedHuVsJQqZwI59eveO0gsIJFZ+xv2W2H/ey4l+sBHn
-         KU6TRtyHHyZTl6d89ZdTgH583gLhtBNI/fM2R/AfwwPphPtAI5css0SB0mMkKNQQc63G
-         avRUke6jr7GicUzKI3iV1TpNgapVJPn8vrLivKfLGMF0ynzAyrEyaIlL+RiHXFLoFlUV
-         XDYmsp8kjmkhkjjGu3DE7zvILlAAy+oH8KKKFX+qggX1Evd455wqthLcEMo9qX+CFVul
-         T8qA==
-X-Gm-Message-State: AOJu0YwhsEViK5UcGzgRcGivgX/i2s6AxofSBBGAueDMo2zNYLU7TOxI
-	dSH/fq07F3Av615zxYvqqI+U3M9X/Sz0pHjmRhBw/q3P5rkjk2xa+j8oDr1yhlA0Ow==
-X-Gm-Gg: ASbGncvMchzyCX52k47HKJe8fmxX47KsBv5JQENc6X+LdhtKKcrbCO+uzMxRdzNu6pw
-	NEqjJIU3WsE3EQTNc3miBc3oIuTHTsS1Pp0JDq3h/qSa68u4bXokSsVixY9ru2bedetvdyDD1y9
-	+e4O7PUnAmbt+VZgCewXi02NIxe5CXckdLS1HbbdBsEynIN6PMpi1sAOsb9VRXI4KbdxDyjIwDz
-	7WqRj6MxCD9jUnVzjFP4TPBUtMqOaCGJrWmM/FFzytaIT737YRsox0BSyXt9wutMTgxVxi+JR1C
-	+CZRR2ryaEees4hqcCNY6xac/YIFz4OqFeS6hitgre3Q72bcPg==
-X-Google-Smtp-Source: AGHT+IFc5zVbxRie7OQxz5PhnK1JAeCame84zsTiWiDmjtg1n8m7Q8BRoeHguQ3XnLsuaip8xI/4ow==
-X-Received: by 2002:a05:600c:45ce:b0:43d:409c:6142 with SMTP id 5b1f17b1804b1-44fd30e21b1mr510345e9.0.1748383010568;
-        Tue, 27 May 2025 14:56:50 -0700 (PDT)
-Received: from localhost ([2a00:79e0:9d:4:8e02:75c1:e352:cd00])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-450064a1ac4sm1241745e9.12.2025.05.27.14.56.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 May 2025 14:56:50 -0700 (PDT)
-From: Jann Horn <jannh@google.com>
-Date: Tue, 27 May 2025 23:56:42 +0200
-Subject: [PATCH] x86/mm: Limit INVLPGB to VA in invlpgb_flush_addr_nosync()
+        d=1e100.net; s=20230601; t=1748383334; x=1748988134;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=45g7cTsi43/UtEC2z2Icfcjh5OvH49gjNKxt8eXISRs=;
+        b=QtBNKlDH1MhL0AMz43/13hWLo6xFztC/wsJJGkWHOuh6y8iMWNelTeTLqp6aCycnyK
+         PtS1dWaMiCFLHbaRQJ0ZfXXHdOHcc/riGLhE19xVu7FxyMJmpvQMy7HJ2uK9grzdwDgx
+         246ikgSwFHXN4s+9QvZm/FaMtdjJrt9Vy5SNR9yqTgW4wucC3fJZr9dorvmUdV2OgvNv
+         LDlpYx+hdt87aGEg/Q+nW1z+0DZ72afREmVOsAY9sjrD7VpZzJWy3Ejj3lA5F/3WoWPo
+         FLJPPfrgKXLSqmHVigGR9WsrgdBqruMNNRAQrJFobcMMMF1Zy5yQld7U3p1vk4HO1FV0
+         7yUg==
+X-Forwarded-Encrypted: i=1; AJvYcCUZ4qL74VNpUVmpvXdzfPjkR5g2xsV1xvmyqGPiyLctNMBLV7yVgDh6+AfZXM45O5vMTG2KLndmkqSG@vger.kernel.org, AJvYcCUkgrCh22QX0dVfSmVOE+8zBx/Mn0HB+lxnK6abbyEWjdAPT1ccxXK0URBak59iqDTh8yIW2MoIGwO2VTzv@vger.kernel.org, AJvYcCVtaA83He2qptbBqmxl4kqMEbPgKrU98dW3mpgGMssAxHmyq/1Z3gh7/bRcDTGiqNB2yZ4DcpMbZ3K9fgSdU358Vqo=@vger.kernel.org, AJvYcCW0H8l/9jwXdp0atlfxHPPX4C+zZknqRw6aBOseZywdbOkycwNeKb/21PrDJvU3DJ47ahUqZK22jSoG@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGzXWQ2q6+JHtv7smJ2ZNDwAxcoDIi7MknQsyRlrNuHbYUeIm8
+	9UCnWAQ/0Y+B2ifjF2UToW495gdOC9aB2hHAQ1lUThc6eHS2gjMkMwCgmEmJd294L0RqcbpN7Ml
+	5fCT/D3avMFHXoyiRXoVsdc2e3Ue7kPM=
+X-Gm-Gg: ASbGnctSoC0UuT2lMh0rveg6R4Ak0iuEPQTV1t1GrO9yb4gBUJ/uuS74/+sAPiSuw0p
+	m7ixnMCc1qRm5uhDW9D5+5xePc1HyC3Ma6l8CV9HVWyLITVeBWfLAOc9b1kx0po+DC7RSKk79HY
+	Tsj2uSWnGmK3hCodwP4wha/Wxxw7j1HiJG7I2CZ5Q0dd2OeQhdhmYL+TCfjjZ8q46WZg==
+X-Google-Smtp-Source: AGHT+IFV2BFPgujhQs4DdxUDNb0iFOQ+SgBxmAaYbPCrwwOVCCCvsVFgokrJDqO5z7MDKzRcAoB+dMACMrcQtNTeHsY=
+X-Received: by 2002:a05:6000:2087:b0:3a3:70ab:b274 with SMTP id
+ ffacd0b85a97d-3a4e5e5e733mr1937547f8f.12.1748383334572; Tue, 27 May 2025
+ 15:02:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250527-x86-overbroad-invlpgb-v1-1-64ca98aa2a3a@google.com>
-X-B4-Tracking: v=1; b=H4sIABk1NmgC/x3MTQqAIBBA4avErBsw7f8q0SJrqoHQGEGE6O5Jy
- 2/x3gOBhCnAWDwgFDmwdxlVWcB6Lu4g5C0btNKNanSHqW/RRxIrftmQXbzuw6Kp90GZdSBtDeT
- 2Fto5/d9pft8Po7i4j2cAAAA=
-X-Change-ID: 20250527-x86-overbroad-invlpgb-34f903c9e2b3
-To: Rik van Riel <riel@surriel.com>, Borislav Petkov <bp@alien8.de>, 
- Ingo Molnar <mingo@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>, 
- Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, Jann Horn <jannh@google.com>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1748383006; l=1544;
- i=jannh@google.com; s=20240730; h=from:subject:message-id;
- bh=H6RdSfdrrWnEqfuvZ74jCpn12+bkjOdAgwdgoViDX0c=;
- b=LlUTfSF9TgfmJn97RSUv3H9eY1zpnykhquCEBz3jgZngzgmAQSk49U/P0fkCjicp83AA7aVwn
- B+TwVhAZt7wDhoAmzDQlgDHXF9Iut3tRFQ6DlYM2mRU6bYj0mgOSl0K
-X-Developer-Key: i=jannh@google.com; a=ed25519;
- pk=AljNtGOzXeF6khBXDJVVvwSEkVDGnnZZYqfWhP1V+C8=
+References: <20250512184302.241417-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250512184302.241417-3-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdV9NM3SPeZAxDnh=ez0uBvt9077_64oJe9A727p1r9QOg@mail.gmail.com>
+In-Reply-To: <CAMuHMdV9NM3SPeZAxDnh=ez0uBvt9077_64oJe9A727p1r9QOg@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Tue, 27 May 2025 23:01:48 +0100
+X-Gm-Features: AX0GCFv-92KbzruYA4EmbsOqV1BnynHkN1flWzPNsQopGLMTzP2wm88SqFOuVcU
+Message-ID: <CA+V-a8svK52e-o=EYR=+NH4BZU42A8ytwdVkmG9JB+3Gfvuoaw@mail.gmail.com>
+Subject: Re: [PATCH v5 2/4] clk: renesas: r9a09g057: Add clock and reset
+ entries for DSI and LCDC
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Fabrizio Castro <fabrizio.castro.jz@renesas.com>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, Magnus Damm <magnus.damm@gmail.com>, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The intent of invlpgb_flush_addr_nosync() is to flush a specific virtual
-address range, but INVLPGB_FLAG_VA is not set.
-If I understand AMD's documentation correctly, this means this will flush
-the entire TLB (except entries for guest ASIDs).
-That's safe, but seems like an unintentionally broad flush.
-Fix it by setting INVLPGB_FLAG_VA.
+Hi Geert,
 
-Fixes: b7aa05cbdc52 ("x86/mm: Add INVLPGB support code")
-Signed-off-by: Jann Horn <jannh@google.com>
----
-I am not entirely sure about this; Rik, can you confirm if this was an
-oversight, or if there's actually a reason for not passing
-INVLPGB_FLAG_VA here?
-I feel a bit uncomfortable touching TLB flushing and narrowing a flush
-there...
----
- arch/x86/include/asm/tlb.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Thank you for the review.
 
-diff --git a/arch/x86/include/asm/tlb.h b/arch/x86/include/asm/tlb.h
-index 866ea78ba156..e257201a141a 100644
---- a/arch/x86/include/asm/tlb.h
-+++ b/arch/x86/include/asm/tlb.h
-@@ -153,7 +153,8 @@ static inline void invlpgb_flush_all(void)
- /* Flush addr, including globals, for all PCIDs. */
- static inline void invlpgb_flush_addr_nosync(unsigned long addr, u16 nr)
- {
--	__invlpgb(0, 0, addr, nr, PTE_STRIDE, INVLPGB_FLAG_INCLUDE_GLOBAL);
-+	__invlpgb(0, 0, addr, nr, PTE_STRIDE,
-+			INVLPGB_FLAG_VA | INVLPGB_FLAG_INCLUDE_GLOBAL);
- }
- 
- /* Flush all mappings for all PCIDs except globals. */
+On Fri, May 23, 2025 at 3:46=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
+k.org> wrote:
+>
+> Hi Prabhakar, Fabrizio,
+>
+> On Mon, 12 May 2025 at 20:43, Prabhakar <prabhakar.csengg@gmail.com> wrot=
+e:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Add clock and reset entries for the DSI and LCDC peripherals.
+> >
+> > Co-developed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> > Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Thanks for your patch!
+>
+> > --- a/drivers/clk/renesas/r9a09g057-cpg.c
+> > +++ b/drivers/clk/renesas/r9a09g057-cpg.c
+>
+> > @@ -58,6 +60,9 @@ enum clk_ids {
+> >         CLK_SMUX2_GBE0_RXCLK,
+> >         CLK_SMUX2_GBE1_TXCLK,
+> >         CLK_SMUX2_GBE1_RXCLK,
+> > +       CLK_DIV_PLLETH_LPCLK,
+>
+> CLK_CDIV4_PLLETH_LPCLK?
+>
+Agreed, I'll rename it as above.
 
----
-base-commit: b1456f6dc167f7f101746e495bede2bac3d0e19f
-change-id: 20250527-x86-overbroad-invlpgb-34f903c9e2b3
+> > +       CLK_CSDIV_PLLETH_LPCLK,
+>
+> CLK_PLLETH_LPCLK_GEAR?
+>
+Agreed, I'll rename it as above.
 
--- 
-Jann Horn <jannh@google.com>
+> > +       CLK_PLLDSI_SDIV2,
+>
+> CLK_PLLDSI_GEAR?
+>
+Agreed, I'll rename it as above.
 
+> >         CLK_PLLGPU_GEAR,
+> >
+> >         /* Module Clocks */
+>
+> > @@ -148,6 +182,12 @@ static const struct cpg_core_clk r9a09g057_core_cl=
+ks[] __initconst =3D {
+> >         DEF_SMUX(".smux2_gbe0_rxclk", CLK_SMUX2_GBE0_RXCLK, SSEL0_SELCT=
+L3, smux2_gbe0_rxclk),
+> >         DEF_SMUX(".smux2_gbe1_txclk", CLK_SMUX2_GBE1_TXCLK, SSEL1_SELCT=
+L0, smux2_gbe1_txclk),
+> >         DEF_SMUX(".smux2_gbe1_rxclk", CLK_SMUX2_GBE1_RXCLK, SSEL1_SELCT=
+L1, smux2_gbe1_rxclk),
+> > +       DEF_FIXED(".cdiv4_plleth_lpclk", CLK_DIV_PLLETH_LPCLK, CLK_PLLE=
+TH, 1, 4),
+> > +       DEF_CSDIV(".plleth_lpclk_gear", CLK_CSDIV_PLLETH_LPCLK, CLK_DIV=
+_PLLETH_LPCLK,
+> > +                 CSDIV0_DIVCTL2, dtable_16_128),
+> > +
+> > +       DEF_PLLDSI_DIV(".plldsi_sdiv2", CLK_PLLDSI_SDIV2, CLK_PLLDSI,
+>
+> ".plldsi_gear", CLK_PLLDSI_GEAR ...
+>
+Agreed, I'll rename it as above.
+
+Cheers,
+Prabhakar
+
+>
+> > +                      CSDIV1_DIVCTL2, dtable_2_32),
+> >
+> >         DEF_DDIV(".pllgpu_gear", CLK_PLLGPU_GEAR, CLK_PLLGPU, CDDIV3_DI=
+VCTL1, dtable_2_64),
+> >
+>
+> The rest LGTM.
+>
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
+8k.org
+>
+> In personal conversations with technical people, I call myself a hacker. =
+But
+> when I'm talking to journalists I just say "programmer" or something like=
+ that.
+>                                 -- Linus Torvalds
 
