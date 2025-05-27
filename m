@@ -1,115 +1,120 @@
-Return-Path: <linux-kernel+bounces-664377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-664388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BE7DAC5AB9
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 21:30:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39200AC5AE0
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 21:38:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F7414A58C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 19:30:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D4543A6CF2
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 19:38:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A3F6289E3F;
-	Tue, 27 May 2025 19:30:42 +0000 (UTC)
-Received: from cantor.telenet-ops.be (cantor.telenet-ops.be [195.130.132.48])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF19A28A3FE;
+	Tue, 27 May 2025 19:38:30 +0000 (UTC)
+Received: from mail.aaazen.com (99-33-87-210.lightspeed.sntcca.sbcglobal.net [99.33.87.210])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 345981922F4
-	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 19:30:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CEFB2701D6;
+	Tue, 27 May 2025 19:38:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.33.87.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748374241; cv=none; b=o1+wQ3nPmtgk1ieCja6LaypTRgjgDItAye7t35W29K9oE4YTe8BIfRVnPn9f3XRfczpUyUn8uOSHHb/7UcJnl5hRdRXzh2icFPPUPSRrwy6gvXGpUonnc2Z2RDwczIqugnii2lRqZci9v5Jpu6oKUyWcAP2tor+didFzgAH09Mc=
+	t=1748374710; cv=none; b=Ai/OcACPVEC2E7DgBV7c4IYN6bnJc+ZIyT84r1qykpmbOJVyBJESYUIG33e+lozLAm/8eqV6qHJScUIlmAfT2bnn0ng1BeAt63wf3JRj+ksANYSBy2BAiUBJHrroSBVdYa9n0bVhShM+JOVZwMRrfdn8Fu02HRkJkmjaQHCobs8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748374241; c=relaxed/simple;
-	bh=QpNV285BTS/KBng6Vcq4utezeQCjGo6G6reZO+F6LiE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Uqyz2+jUhCSH+JM9yoDvSySgsxg+a8m+ymWrMwkB+nNxBuxfC81UWwigooMScgtf1tQWz9LNU7uyLY9xh+QJP9+CKxcSlODiZT8gaUAeFUgEP8pd9RTVGz/6TYInEJjfCc6erL91Rttmk6YsenuCGy0H5hyfFlOFZHkzIQ365oA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-	by cantor.telenet-ops.be (Postfix) with ESMTPS id 4b6N5L3FrFz4x2YN
-	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 21:30:30 +0200 (CEST)
-Received: from ramsan2 ([IPv6:2a02:1810:ac12:ed80:9962:836e:244b:c4d7])
-	by albert.telenet-ops.be with cmsmtp
-	id uKWM2E0050Y7Yez06KWM4k; Tue, 27 May 2025 21:30:23 +0200
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan2 with esmtp (Exim 4.97)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1uK00C-00000003oHh-1fbh;
-	Tue, 27 May 2025 21:30:20 +0200
-Received: from geert by rox.of.borg with local (Exim 4.97)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1uK00C-00000003Wf4-1DCX;
-	Tue, 27 May 2025 21:30:20 +0200
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Jian Shen <shenjian15@huawei.com>,
-	Salil Mehta <salil.mehta@huawei.com>,
-	Jijie Shao <shaojijie@huawei.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] [net-next] hns3: Demote load and progress messages to debug level
-Date: Tue, 27 May 2025 21:30:15 +0200
-Message-ID: <0df556d6b5208e4e5f0597c66e196775b45dac60.1748357693.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1748374710; c=relaxed/simple;
+	bh=KPnnEbEzDg1iO5SPzFnVAGmm/vw403K+t6jriv7b9v4=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=nYlwrkhsYmVtl4qJnckQE7V34SDwAYs4aKdEy436PSUUypCdwDYG1GEvxvSu/Ce9aJr+Zhd7sUoZ85+iUbS0PbA8F2jfKmSQWtKgIVb9U6SXDTe22WC2RsLIAcD4cNVzt8b9IiAJwXiMufykuWO5c/oWUq0lhm+8ZoeYMcISKow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aaazen.com; spf=pass smtp.mailfrom=aaazen.com; arc=none smtp.client-ip=99.33.87.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aaazen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aaazen.com
+Received: from localhost (localhost [127.0.0.1])
+	by thursday.test (OpenSMTPD) with ESMTP id a4d15d45;
+	Tue, 27 May 2025 12:31:47 -0700 (PDT)
+Date: Tue, 27 May 2025 12:31:47 -0700 (PDT)
+From: Richard Narron <richard@aaazen.com>
+X-X-Sender: richard@thursday.test
+To: Guenter Roeck <linux@roeck-us.net>
+cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+    Linux stable <stable@vger.kernel.org>, 
+    Linux kernel <linux-kernel@vger.kernel.org>, 
+    Linus Torvalds <torvalds@linux-foundation.org>, 
+    Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, 
+    Dave Hansen <dave.hansen@linux.intel.com>
+Subject: Re: [PATCH 5.15 00/59] 5.15.184-rc1 review
+In-Reply-To: <0f597436-5da6-4319-b918-9f57bde5634a@roeck-us.net>
+Message-ID: <67f03e41-245e-202-f0df-687cc4d9a915@aaazen.com>
+References: <20250520125753.836407405@linuxfoundation.org> <0f597436-5da6-4319-b918-9f57bde5634a@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+On Fri, 23 May 2025, Guenter Roeck wrote:
 
-No driver should spam the kernel log when merely being loaded.
-The message in hclge_init() is clearly a debug message.
+> On 5/20/25 06:49, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 5.15.184 release.
+> > There are 59 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> >
+> > Responses should be made by Thu, 22 May 2025 12:57:37 +0000.
+> > Anything received after that time might be too late.
+> >
+>
+> Build reference: v5.15.184
+> Compiler version: x86_64-linux-gcc (GCC) 12.4.0
+> Assembler version: GNU assembler (GNU Binutils) 2.40
+>
+> Configuration file workarounds:
+>     "s/CONFIG_FRAME_WARN=.*/CONFIG_FRAME_WARN=0/"
+>
+> Building i386:defconfig ... passed
+> Building i386:allyesconfig ... failed
+> --------------
+> Error log:
+> x86_64-linux-ld: arch/x86/kernel/static_call.o: in function
+> `__static_call_transform':
+> static_call.c:(.ref.text+0x46): undefined reference to `cpu_wants_rethunk_at'
+> make[1]: [Makefile:1234: vmlinux] Error 1 (ignored)
+> --------------
+> Building i386:allmodconfig ... failed
+> --------------
+> Error log:
+> x86_64-linux-ld: arch/x86/kernel/static_call.o: in function
+> `__static_call_transform':
+> static_call.c:(.ref.text+0x46): undefined reference to `cpu_wants_rethunk_at'
+> make[1]: [Makefile:1234: vmlinux] Error 1 (ignored)
+> --------------
+>
+> In v5.15.y, cpu_wants_rethunk_at is only built if CONFIG_STACK_VALIDATION=y,
+> but that is not supported for i386 builds. The dummy function in
+> arch/x86/include/asm/alternative.h doesn't take that dependency into account.
+>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Alternatively, the printing in hns3_init_module() could be removed
-completely, but that would make hns3_driver_string[] and
-hns3_copyright[] unused, which HiSilicon legal may object against?
----
- drivers/net/ethernet/hisilicon/hns3/hns3_enet.c         | 4 ++--
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+I found this bug too using the Slackware 15.0 32-bit kernel
+configuration.
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-index b03b8758c7774ec2..5c8c62ea6ac0429f 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-@@ -5961,8 +5961,8 @@ static int __init hns3_init_module(void)
- {
- 	int ret;
- 
--	pr_info("%s: %s - version\n", hns3_driver_name, hns3_driver_string);
--	pr_info("%s: %s\n", hns3_driver_name, hns3_copyright);
-+	pr_debug("%s: %s - version\n", hns3_driver_name, hns3_driver_string);
-+	pr_debug("%s: %s\n", hns3_driver_name, hns3_copyright);
- 
- 	client.type = HNAE3_CLIENT_KNIC;
- 	snprintf(client.name, HNAE3_CLIENT_NAME_LENGTH, "%s",
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-index 3e28a08934abd2e1..6bfff77ea7e67e8d 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -12904,7 +12904,7 @@ static struct hnae3_ae_algo ae_algo = {
- 
- static int __init hclge_init(void)
- {
--	pr_info("%s is initializing\n", HCLGE_NAME);
-+	pr_debug("%s is initializing\n", HCLGE_NAME);
- 
- 	hclge_wq = alloc_workqueue("%s", WQ_UNBOUND, 0, HCLGE_NAME);
- 	if (!hclge_wq) {
--- 
-2.43.0
+Here is a simple work around patch, but there may be a better solution...
 
+--- arch/x86/kernel/static_call.c.orig	2025-05-22 05:08:28.000000000 -0700
++++ arch/x86/kernel/static_call.c	2025-05-27 10:25:27.630496538 -0700
+@@ -81,9 +81,12 @@
+ 		break;
+
+ 	case RET:
++
++#ifdef CONFIG_64BIT
+ 		if (cpu_wants_rethunk_at(insn))
+ 			code = text_gen_insn(JMP32_INSN_OPCODE, insn, x86_return_thunk);
+ 		else
++#endif
+ 			code = &retinsn;
+ 		break;
+
+--------------
+Richard Narron
 
