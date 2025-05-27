@@ -1,114 +1,271 @@
-Return-Path: <linux-kernel+bounces-664163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-664161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5396AC52B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 18:11:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACA69AC52B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 18:10:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AB491BA2991
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 16:11:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAA6917C630
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 16:10:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD30327FB2A;
-	Tue, 27 May 2025 16:10:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ECD127E7C6;
+	Tue, 27 May 2025 16:10:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="QhB0Z72r"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rECuIYBJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67E5B27EC78
-	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 16:10:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E67F9269B08
+	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 16:10:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748362249; cv=none; b=fRUVdIrSwAZCXC3CJ6/ANamIf+8Q3Oa4+K3/D2nMA/Tm34jTaxGSoSSOmmhWgbLiAj3X3/ujxntrxCog2m7yS3qiI3pzAyOVEeVpzqkBHkc9k8OzzLk0spfvFxIVhA+QIk67dUCwKhsuatpfasgNPsDaEA6k0ac3xe2nIuRfqxw=
+	t=1748362235; cv=none; b=R/WoFg+VAYhZ3Ug/kR+Vdrv1SKM8C/USgyw7naT3wEJWXYd8Uie/pKhKgkkcZwGmnASXrXc8bZzMAxqU/BLVIkSYeYArasHNqRHvfGPzZ82lH8lAQZMBtklTXM+Ec+pEIB7eVCluhKohq8VqxA0cUOgl2b04FSJcbN8yDzBrrJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748362249; c=relaxed/simple;
-	bh=C+jtZ6M73CB86PrCh9GgPsh2zWr6HUxw7D8YoYK3uw4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=asCopckpEvCQSo39BHZHgx1jWQDAPWdgD6kkIkkWqyJwLo50enMjrJKkuCORw6cuAQiLCVmm4WR5vtRNQD13seCGpBgaNTcNNC7JnbQg9vS++PUIl0efxm/AdnJexVFP0JG3TD7ks5qxE/dGCudztgV/4BYD+VJ+eBU8mRjPJdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=QhB0Z72r; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-30effbfaf4aso39718381fa.3
-        for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 09:10:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1748362245; x=1748967045; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=C+jtZ6M73CB86PrCh9GgPsh2zWr6HUxw7D8YoYK3uw4=;
-        b=QhB0Z72rpGSMmz4oezKHETPxEVn6IUmud14dt7OGQHEIG+E5GQR7EvlicXP0tU6srw
-         pDTXYLBO7pT6BRHt3b6Snv+5bW9T5HJu/b6qY3GAMwl/YmoAiVLyLQO6S64ZelDC31Fa
-         OMKa3BoGXX6Qiqbqg4aNJN91uz5TUDf1IJZtk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748362245; x=1748967045;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=C+jtZ6M73CB86PrCh9GgPsh2zWr6HUxw7D8YoYK3uw4=;
-        b=Gr15vfM7RGY9vfmnIUKWzTJCXAcLLaVR0NVL172U18kmgnvklfXoEUtsj2HTMFlJIX
-         XUKyGyylL9jjlal+bVqxmDZ93fAeo5OjGF+bUQoiH6OTkRza8bVcK+KEAF00dDOXnT3C
-         Q3Me/cJq7LvkkofO6BNutAtHZcvw8pz1WffakboXolJCyOFI9fwuvt3Oj7pvL/8h9X/k
-         FsLcvc/3Xf7+feBieNOyiclzZ6rhwaoWuf0Id82KUphxN25hrwbOCQ9b6IU2B6umFHjh
-         jLog6XNVhxn0hV6Jo4SY4jVKmkikG1H+6US9z13h8nPndgjJq6tpfOGa86x80DVXCeY6
-         nB1w==
-X-Forwarded-Encrypted: i=1; AJvYcCXs+W3VV9UaQlAKNmryQ6Wj2+NkohsRRSmJ3rB6eXExe1WSHzGMF3hCoCKgCuWbNEvUu3CqTOoz45OQH9o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyaYRqlfIAgHtcxAY3evMbFwvIPjVmZNB5WTW3kDW+rOnhxpqFT
-	lqpy7C8MK9Cy+3WGJDi+N2Cao4u4bw6OMtZUzYFQG3yKYILhN29rLvvb5tLfKpysilPSw8q4skF
-	jnU6dMq5Oh2i52MvNJ+zrF2Qz8t7/9Nqkb3iz5JRL
-X-Gm-Gg: ASbGncu1h3EuDCzThKQUHhHXfJd/c6CD6RWfZ61o8B5fN+r5F2hWf0MaPDpxyiTt2u/
-	7tlVG0v+LpHl4I7H0pDiagSPco7G5473Bsr+mwEEsbjqxDu0RjzwGVg0l9N1QmwLFVi+/lfOhh9
-	KkslZNSTXSgkslHN35OZD6EQvPyNVAounKKGMrrySPkRdj
-X-Google-Smtp-Source: AGHT+IHnxXSpwPQJnq00c7CWCY+PUWCLeRzCHONa/qE7pZ0tlcnlmLKnoWAnQH1ws4NnK/iqPjFX0jR0V3/BiQ03ZfA=
-X-Received: by 2002:a05:651c:3137:b0:30d:626e:d004 with SMTP id
- 38308e7fff4ca-3295b9c6dc1mr42932431fa.20.1748362245432; Tue, 27 May 2025
- 09:10:45 -0700 (PDT)
+	s=arc-20240116; t=1748362235; c=relaxed/simple;
+	bh=x02CK+8qrbvy4LwdV881C8rJPLJYRgJj2LP6IK2gJ5U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XRglOTH/katZzUTGgxzwrYs2S08tQO0U7rnRYQJrynt4ehQ7MVs/fxUIXU3ZMnmzEzkifeZ/iWb1+ValBmrZiMJRqKrs6nbJNGhp3ulTlReq52Ni5ZcQc466GVrPm1zLd3H+pDZ+qg1hH8apbQws746Mqv+SYMRDAT/Xg0JHgFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rECuIYBJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7B5BC4CEE9;
+	Tue, 27 May 2025 16:10:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748362234;
+	bh=x02CK+8qrbvy4LwdV881C8rJPLJYRgJj2LP6IK2gJ5U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rECuIYBJfhCMLhOQr4xdq8+9OdV0x7uoz1jAIY0WoBAVhU5UwLCkeiWkTs08SWR+E
+	 ZWGe9Zf0JD/h8HQ/z58OIqh+hYIis4E8vvgSujoQpHwPpzvLGEQytmmyCM+vEMei26
+	 /2WNclsqVSGV7YvcHMWBlG3Fec8qD+5s82DaXano8MDGX2WP+E2Rn+Gvk50fkBzgdg
+	 JphSEDN3BIM5Opkw689sFzziuU7KL8Vjmj1HgjtxW4lwj6afr04cH09nP+b7sDoHhv
+	 FF1BsNlKR3BCV/ERXzKav9GhOlTWzf33Cgbc4oBbEphuhL836rD3MgqSQGj9oJW4/T
+	 mcBgI19c8drcw==
+Date: Tue, 27 May 2025 18:10:31 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Anusha Srivatsa <asrivats@redhat.com>, 
+	Paul Kocialkowski <paulk@sys-base.io>, Dmitry Baryshkov <lumag@kernel.org>, 
+	=?utf-8?B?SGVydsOp?= Codina <herve.codina@bootlin.com>, Hui Pu <Hui.Pu@gehealthcare.com>, 
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 3/3] drm/tests: bridge: add KUnit tests for
+ devm_drm_bridge_alloc()
+Message-ID: <20250527-smiling-peacock-from-uranus-dc032f@houat>
+References: <20250516-drm-bridge-alloc-doc-test-v8-0-7e356fd58ba5@bootlin.com>
+ <20250516-drm-bridge-alloc-doc-test-v8-3-7e356fd58ba5@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250513210504.1866-1-ronak.doshi@broadcom.com>
- <20250515070250.7c277988@kernel.org> <71d0fbf8-00f7-4e0b-819d-d0b6efb01f03@redhat.com>
-In-Reply-To: <71d0fbf8-00f7-4e0b-819d-d0b6efb01f03@redhat.com>
-From: Ronak Doshi <ronak.doshi@broadcom.com>
-Date: Tue, 27 May 2025 09:10:27 -0700
-X-Gm-Features: AX0GCFv-bntr7V3eITdVmyrlk7O4Ra37b0K8G5XqblYoHppcZ27xPhxwkEjCxzQ
-Message-ID: <CAP1Q3XTLbk0XgAJOUSGv03dXfPxcUR=VFt=mXiqP9rjc9yhVrw@mail.gmail.com>
-Subject: Re: [PATCH net] vmxnet3: correctly report gso type for UDP tunnels
-To: Paolo Abeni <pabeni@redhat.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org, 
-	Guolin Yang <guolin.yang@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="y2prcnw7nnkz2dsu"
+Content-Disposition: inline
+In-Reply-To: <20250516-drm-bridge-alloc-doc-test-v8-3-7e356fd58ba5@bootlin.com>
+
+
+--y2prcnw7nnkz2dsu
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v8 3/3] drm/tests: bridge: add KUnit tests for
+ devm_drm_bridge_alloc()
+MIME-Version: 1.0
 
-On Mon, May 19, 2025 at 12:30=E2=80=AFAM Paolo Abeni <pabeni@redhat.com> wr=
-ote:
->
-> If otherwise the traffic goes into the UDP tunnel rx path, such
-> processing will set the needed field correctly and no issue could/should
-> be observed AFAICS.
->
-> @Ronak: I think the problem pre-exists this specific patch, but since
-> you are fixing the relevant offload, I think it should be better to
-> address the problem now.
->
-Can we apply this fix which unblocks one of our customer case and address t=
-his
-concern as a separate patch as it has been there for a while and it
-has a workaround
-of enabling tnl segmentation on the redirected interface? I think it
-might require quite
-some change in vmxnet3 to address this concern and can be done as a
-different patch.
-Meanwhile, I will raise an internal (broadcom) PR for recreating this
-specific issue.
+On Fri, May 16, 2025 at 06:48:39PM +0200, Luca Ceresoli wrote:
+> Add KUnit tests for the newly introduced devm_drm_bridge_alloc().
+>=20
+> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+>=20
+> ---
+>=20
+> Changed in v8:
+>  - rebase on new patch converting drm_bridge_test.c to
+>    devm_drm_bridge_alloc()
+>  - add check that bridge is removed (thanks to the .destroy callback)
+>  - add a check with get/put
+>=20
+> Changed in v7:
+>  - rebase on current drm-misc-next, which now has a drm_bridge_test.c file
+>  - cleanup commit message
+>=20
+> Changed in v6:
+>  - update to new devm_drm_bridge_alloc() API
+>  - remove drm_test_drm_bridge_put test, not straightforward to write with
+>    the new API and the current notification mechanism
+>  - do not allocate a drm_device: a bridge is allocated without one
+>  - rename some identifiers for easier code reading
+>=20
+> This patch was added in v5.
+> ---
+>  drivers/gpu/drm/tests/drm_bridge_test.c | 84 +++++++++++++++++++++++++++=
+++++++
+>  1 file changed, 84 insertions(+)
+>=20
+> diff --git a/drivers/gpu/drm/tests/drm_bridge_test.c b/drivers/gpu/drm/te=
+sts/drm_bridge_test.c
+> index f3a625c536f610dc8560b56531056df7c613f564..32db3a82fe6d14a3e9d6536bc=
+f4b19f1bc65969a 100644
+> --- a/drivers/gpu/drm/tests/drm_bridge_test.c
+> +++ b/drivers/gpu/drm/tests/drm_bridge_test.c
+> @@ -8,6 +8,7 @@
+>  #include <drm/drm_bridge_helper.h>
+>  #include <drm/drm_kunit_helpers.h>
+> =20
+> +#include <kunit/device.h>
+>  #include <kunit/test.h>
+> =20
+>  /*
+> @@ -21,6 +22,7 @@ struct dummy_drm_bridge {
+>  	unsigned int enable_count;
+>  	unsigned int disable_count;
+>  	struct drm_bridge bridge;
+> +	void *data;
+>  };
+> =20
+>  struct drm_bridge_init_priv {
+> @@ -422,11 +424,93 @@ static struct kunit_suite drm_bridge_helper_reset_c=
+rtc_test_suite =3D {
+>  	.test_cases =3D drm_bridge_helper_reset_crtc_tests,
+>  };
+> =20
+> +struct drm_bridge_alloc_test_ctx {
 
-Thanks,
-Ronak
+drm_bridge_alloc_priv
+
+> +	struct device *dev;
+> +	struct dummy_drm_bridge *dummy_br;
+> +	bool destroyed;
+
+This can be in drm_bridge_priv
+
+> +};
+> +
+> +static void dummy_drm_bridge_destroy(struct drm_bridge *bridge)
+> +{
+> +	struct dummy_drm_bridge *dummy_br =3D bridge_to_dummy_bridge(bridge);
+> +	struct drm_bridge_alloc_test_ctx *ctx =3D (struct drm_bridge_alloc_test=
+_ctx *)dummy_br->data;
+> +
+> +	ctx->destroyed =3D true;
+> +}
+> +
+> +static const struct drm_bridge_funcs drm_bridge_dummy_funcs =3D {
+> +	.destroy =3D dummy_drm_bridge_destroy,
+> +};
+
+And same here, you don't need to create yet another function set, just
+add it to the existing ones.
+
+> +static int drm_test_bridge_alloc_init(struct kunit *test)
+> +{
+> +	struct drm_bridge_alloc_test_ctx *ctx;
+> +
+> +	ctx =3D kunit_kzalloc(test, sizeof(*ctx), GFP_KERNEL);
+> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ctx);
+> +
+> +	ctx->dev =3D kunit_device_register(test, "drm-bridge-dev");
+> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ctx->dev);
+> +
+> +	test->priv =3D ctx;
+> +
+> +	ctx->dummy_br =3D devm_drm_bridge_alloc(ctx->dev, struct dummy_drm_brid=
+ge, bridge,
+> +					      &drm_bridge_dummy_funcs);
+> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ctx->dummy_br);
+> +
+> +	ctx->dummy_br->data =3D ctx;
+> +
+> +	KUNIT_ASSERT_FALSE(test, ctx->destroyed);
+> +
+> +	return 0;
+> +}
+> +
+> +static void drm_test_drm_bridge_alloc_basic(struct kunit *test)
+
+You need a comment explaining what this test is about
+
+> +{
+> +	struct drm_bridge_alloc_test_ctx *ctx =3D test->priv;
+> +
+> +	KUNIT_ASSERT_FALSE(test, ctx->destroyed);
+> +
+> +	kunit_device_unregister(test, ctx->dev);
+> +	KUNIT_ASSERT_TRUE(test, ctx->destroyed);
+
+EXPECT
+
+> +}
+> +
+> +static void drm_test_drm_bridge_alloc_get_put(struct kunit *test)
+
+Comment here
+
+> +{
+> +	struct drm_bridge_alloc_test_ctx *ctx =3D test->priv;
+> +
+> +	KUNIT_ASSERT_FALSE(test, ctx->destroyed);
+> +
+> +	drm_bridge_get(&ctx->dummy_br->bridge);
+> +	KUNIT_ASSERT_FALSE(test, ctx->destroyed);
+
+EXPECT
+
+> +	kunit_device_unregister(test, ctx->dev);
+> +	KUNIT_ASSERT_FALSE(test, ctx->destroyed);
+
+Ditto
+
+> +	drm_bridge_put(&ctx->dummy_br->bridge);
+> +	KUNIT_ASSERT_TRUE(test, ctx->destroyed);
+
+Ditto
+
+> +}
+> +
+> +static struct kunit_case drm_bridge_alloc_tests[] =3D {
+> +	KUNIT_CASE(drm_test_drm_bridge_alloc_basic),
+> +	KUNIT_CASE(drm_test_drm_bridge_alloc_get_put),
+> +	{ }
+> +};
+> +
+> +static struct kunit_suite drm_bridge_alloc_test_suite =3D {
+> +	.name =3D "drm_bridge_alloc",
+> +	.init =3D drm_test_bridge_alloc_init,
+> +	.test_cases =3D drm_bridge_alloc_tests,
+> +};
+> +
+>  kunit_test_suites(
+>  	&drm_bridge_get_current_state_test_suite,
+>  	&drm_bridge_helper_reset_crtc_test_suite,
+> +	&drm_bridge_alloc_test_suite,
+>  );
+> =20
+>  MODULE_AUTHOR("Maxime Ripard <mripard@kernel.org>");
+> +MODULE_AUTHOR("Luca Ceresoli <luca.ceresoli@bootlin.com>");
+> +
+>  MODULE_DESCRIPTION("Kunit test for drm_bridge functions");
+>  MODULE_LICENSE("GPL");
+
+Looks good otherwise, thanks
+Maxime
+
+--y2prcnw7nnkz2dsu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaDXj9wAKCRAnX84Zoj2+
+dr/BAX9uVwJKf3m4xtOc++ZZUCTKyhY/iUGf628qH7SRN1zyikZiRnX73TsiKBLo
+cep1bTwBf3Q9JBwvbW2AhtZ2UjUQnjSjjUXHK3pq5H8+oF2Q9CjoqHsfz9LpopfL
+9H5lA102Ww==
+=+xu1
+-----END PGP SIGNATURE-----
+
+--y2prcnw7nnkz2dsu--
 
