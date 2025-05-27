@@ -1,179 +1,223 @@
-Return-Path: <linux-kernel+bounces-664447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-664449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B54EAC5B9B
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 22:49:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 342AAAC5BA6
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 22:50:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16E993B54F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 20:49:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A9637AC6E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 20:49:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7034A20C029;
-	Tue, 27 May 2025 20:49:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 265C020C00D;
+	Tue, 27 May 2025 20:50:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="UsuwHtTT"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JXKVHqUV"
+Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35A7B20B812
-	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 20:49:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56AFC202C30
+	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 20:50:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748378986; cv=none; b=pvg5ph4kMAvxcpdipTEs3gnSD6miXdKje8MCfk9DwHIs8N50sqRdMY4xpr74AA0CUKJ+x1hEXGA+LRTtU0uKZbIMlif3WRoa+5AlGtP5VLG6ECRFq5AwGalu3c4qCyXbrOf31ydls0wGihQa2QuEYgjHX6YgrHpLYcfBuWwUfdU=
+	t=1748379049; cv=none; b=LKmZ2AT0sZqxpWSP0m0tQgRRaa4lu1cOSxhJFA9ylN7l83q/XwTOUuhfkAjLmkS09545sO44sUOsxtD+bLGHEKa6XiP6X0ooH3e1l9w/SvDqKAU3Wzq8QPqhlLgTVVzBb0+GuNXttsVfEFJ+TX/tj6NO8Q5d4BESy4Z7QLSwFuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748378986; c=relaxed/simple;
-	bh=r3whjUIUpRdHK1V4b5tOyVHJGvxYVniojff5RrS+ur4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b6MMQySJvWfr7HKLNknoGfpxuHgN8C4udYFxEmN5yeBy1JMlQuzLXsCOTJ1qiGw352qOdtXrQwWy52zpBuk0Mhk0uKKqfcL95ucxX2IZqMWMPRl8PMLuicDsibMXkrhl1aAdYbaeOY8WZ6VcxQbY34Sux3AgiPL/RQWfgQM9Zno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=UsuwHtTT; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54RIBrC2002117
-	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 20:49:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	l/O2p+x2xSIF9G83bk2qKzG3F5MRhPuwnk3uawbQiMA=; b=UsuwHtTT+19r7X8+
-	9xmaaZgI+E0BIU70xalEcDbNCLUWA3zODGfnv3/ro6F7QXVxsRWDTWwby1mIIJfB
-	W8z2bntkGEeR9PFuJqqDMH8dlrAKdVUw3qxjFFb7O3+F98T+bWjAh4Lo/WqA8gj5
-	Ymffg0F32lHihXoT7GeEg3BRyPZu3RX70+mdjrzLjgji3SKwywfI7V6RDMuUWHpP
-	mWhc8g6vUvxkgPjIMvMfEXVvLpnVcuQI2qNMFUHlKJAEHQgo+yn6w/111Xgrpv8S
-	ARkHdfBTbl8Y2ByIpLAcep8iN4/qLAK91a8pqvU4NgKeovig8qb5MvcwvKY7fvSV
-	N//IMg==
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46wavksxed-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 20:49:44 +0000 (GMT)
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7c54734292aso102842985a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 13:49:44 -0700 (PDT)
+	s=arc-20240116; t=1748379049; c=relaxed/simple;
+	bh=trD6KtQO0saqCALL8fa0XS+Fe0+p0+rW4uwTKveEimk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=ld7b5FhCzi7/jwftxK4zPccAz8ML6zgUgXo5jS2cxn00hTJ4VB+ke/m3D5uBOmw9SVDK3qGQmUmlrA0rzlUiYKjzyH3dfj6d1NigThw2p/4K1z/pLrQqxu+rhWEOHxxZ3nOhe350YzO6ZOEigj+LoRbhmxag0stth2VfUnU1Uh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JXKVHqUV; arc=none smtp.client-ip=209.85.166.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-3da76aea6d5so11585ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 13:50:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1748379045; x=1748983845; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/yg78/YNDfk4qRmPOviB0ojUMAFS7yO2rfR7kV/GP/g=;
+        b=JXKVHqUVLB9MaCe4sFyfZ8qALZVfYwjE6M1ENmcMXIW2CLLosu+oVgyArNbToxEt6i
+         qoST3+5yr7FytduANEajl24AT9qQIp3KCwa3dQ2Ov7617rfPmVsh1LPKlNzS5kP2z4ah
+         AkbYsaompdceUUDCr3st4eUTxxI4JuMMYf/resVADJqf0nPz61BupvELMuE6ZfkDRbkU
+         SnWn2bz7NLQe2fBT8+xVLU9W31r0ldacLxgSVy3G5Ix1FUIzBEj1/fBpx7NR1DpToihN
+         Fdz0qe67EtyzEnKxwxEk3NND6x7x43UEGhLKEo4OBlB+Mc1q+8C0/wyMjrVTxBg4j0mg
+         eRBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748378983; x=1748983783;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=l/O2p+x2xSIF9G83bk2qKzG3F5MRhPuwnk3uawbQiMA=;
-        b=v5GS2bfCmOQFsonUG7DhMRQi3H4GrmeiBLgtnxMQ9UGVhYtsG9xcdn00ex43r522Gc
-         tkYCIqMAgpevkw9amWI5MBT92CI8YD2pdxjV70Cv+VDlo6y60yASey4lNZL5RyUZQ13l
-         NFKYyMNtHpWQBZezD8AXsR4fOH+fjiGDV5rK4vr9c7rmAG4hgFGEp5rFaZqKJ1XaqQ1r
-         amb5lkkLw908Mm2fqaux/JV23CB7H7D5dRbAiT+mHPy+bC2IhOEf2DZACWJoD+iNAC/H
-         3wqBbsiKAFv/2QAm24J7ot1KTQ98bSc4qg02icCu21ZudmSOCvI4erCymVVxqOn8n6wi
-         LScw==
-X-Forwarded-Encrypted: i=1; AJvYcCVMErigNyNhD0o2ftGQWA8Su5z4S2k+9e4zDvRZdvqFsKw+iiKkyVyARUHzT2r2cRjTC3Zr4p9dv6G/05A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLU+rYHkLTlxAyqhIjxWHTTg+eNwt/Lk14ZVfclVCao0iXY6Dj
-	pqX7lkA0TzspWXBy/LisB6dgUAUAAL+XTPG0Rw7coRC0c2frjtw3sNAc5VLhYXiZnb4axuN5qlQ
-	oDVZQjzVAk753DOyVr471FNTUNN6ZcfFUPLOcMIrc4JGZ9PgNu2zqDRLdfIHKnD0vFIA=
-X-Gm-Gg: ASbGncuf4k9T98iZ+Sp1HHooXrek5blsTBM3aswF+wjQNW4Yh8JY2IH0BNZgKZdX5Em
-	98O0kioPQYGn163ll1KM/4Xett4dc5ZXzXHbAS3AeoDAz1g2lXBnQgMLvUipI6huTL4BHUJNmIQ
-	9jCeTayXQmlYR+cLoZh9C0BpCVZOegtdzts5nlH+hKvCHOepS09GkH47nmnBfTPNZ9VHTammO6n
-	afPdQChSgV91gKFbBScACIAro4koGqDx/XS2G3cXRAa1MrJsGr0Gyjkd/b7rfaVZYu0N0XPULg5
-	Ox+LrFy5xN7cWe6uGfC1I/sRzttsV8zTLbMQCMPJikwyDHJPqu5IKc0smfltLRV99Q==
-X-Received: by 2002:a05:620a:28c9:b0:7c5:ba85:357e with SMTP id af79cd13be357-7ceecb95729mr796618585a.3.1748378982914;
-        Tue, 27 May 2025 13:49:42 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH+Ja5XuujBwuUP9ccKnyssxrFJe/lbLz9Lqf/caKcpdJ8XAsoYbJmo6SDfbvW/t6c1zMYunQ==
-X-Received: by 2002:a05:620a:28c9:b0:7c5:ba85:357e with SMTP id af79cd13be357-7ceecb95729mr796615885a.3.1748378982465;
-        Tue, 27 May 2025 13:49:42 -0700 (PDT)
-Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad89f2508b7sm8518366b.132.2025.05.27.13.49.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 27 May 2025 13:49:41 -0700 (PDT)
-Message-ID: <b4e1ea54-ff3c-408e-8716-f48001ec9113@oss.qualcomm.com>
-Date: Tue, 27 May 2025 22:49:38 +0200
+        d=1e100.net; s=20230601; t=1748379045; x=1748983845;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/yg78/YNDfk4qRmPOviB0ojUMAFS7yO2rfR7kV/GP/g=;
+        b=vqSGkPA4fBCxM14GYPWiLHGckqJ5Le6/KFUb+o/pP1b6ikWuUvth9sN/BUzX3KDu8C
+         oM7RXl+9HVUmCzBaBZn/5mI8gcFhiMrJVGfLRG5HxbS119Gq/N1fNLSM690p6nRtn7rU
+         jPrUpLc3xnvA5v/BaPRNUlcby25uRICi+U5P/PkByJvu0kCHldW7bGBBpPORAmEVeSe0
+         oU1otLSE3q4KPSW/X4qdYXczCKZhttBPP96PZ5yaReBdVFytboWqu1aAayOVawJiZZHS
+         1TiXuxExfGmNHDsXEdpu2j0svU7fqh/zSS0rqG/DGDMm6eUtSoukIMxOJ1i3Oe04fdlt
+         ld3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVIHH4qRehJg1VvWH1hTbhUWNC36CUja/AEw/PjpExTt3c1oaPzg5ErrxgVvBLBrAaCbJ2cSKTdfp7okl4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzAgLaijHju/4eWcIjI3jVL24RLc4mYHIKZSne7gG5a5BOnr61t
+	ghpvXv4vRH6MdX1mjYbO0ZkOiT77eKVGIZx1KrisMbaF0cay/vi7Lmdvh4SeySb0mpo5eUDfPDU
+	O+WK/PTqPLzcXGuEpSWw+M5hClL4LcJSav/sxBhB6
+X-Gm-Gg: ASbGnctzefhanBoRbPpiy/K943ciZsyOPzUHjc22b3Sa4URnngTsf418WMvBT/P7dpz
+	SkdRVoHjyW8wOixuWqVHlpK9cF6QupmDTckcvJLT9cFHYHJh4ppVsWCMF+e4OAqtw9EwA4hNfdW
+	ilzQao/cSkHni2rajmEdOe0A7iUMeA4YHFMRkV9Z8fayUawOKPO76hAfzBTYL8RbM37LBPovBU
+X-Google-Smtp-Source: AGHT+IE/1T4kZf05oCu4sfIETu9/i2DgQZVrCIQBbMPl3WP/1lslJa5mXkQgfThkOpftvtd6CrCAYg36F6e8ogwjHkI=
+X-Received: by 2002:a05:6e02:170a:b0:3dc:7e01:6f6a with SMTP id
+ e9e14a558f8ab-3dd88fbc93cmr887775ab.26.1748379045105; Tue, 27 May 2025
+ 13:50:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 7/8] drm/msm/dp: Retry Link Training 2 with lower pattern
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Xiangxu Yin <quic_xiangxuy@quicinc.com>
-Cc: Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar
- <quic_abhinavk@quicinc.com>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Kuogee Hsieh <quic_khsieh@quicinc.com>, Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski
- <brgl@bgdev.pl>, quic_lliu6@quicinc.com,
-        quic_fangez@quicinc.com, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-phy@lists.infradead.org, linux-gpio@vger.kernel.org
-References: <20241129-add-displayport-support-for-qcs615-platform-v1-0-09a4338d93ef@quicinc.com>
- <20241129-add-displayport-support-for-qcs615-platform-v1-7-09a4338d93ef@quicinc.com>
- <CAA8EJpoN1qBHyZrQJT_=e_26+tcaKRnSrhtxrK6zBP4BwpL=Hg@mail.gmail.com>
- <b4345b9e-62c6-470d-b1b0-4758cef7f175@quicinc.com>
- <xlmgdysjah3ueypdrdu5b6botvidb2wn4rfm4qpeysclscmuwy@vpfv2ymprblj>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <xlmgdysjah3ueypdrdu5b6botvidb2wn4rfm4qpeysclscmuwy@vpfv2ymprblj>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: Ka48idWdM7oFsSfO0hP3rGl2bMtaQlMM
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI3MDE3NiBTYWx0ZWRfX7GUXAFO8S+UN
- FRwz5+4DSGJJurS9bs3R3uefoNGFTMdaVXxBHf28tZXn7RHXxMz4VS5srIt892RuMS5Huz1C+ST
- EXhT8uJ+3SKwEQpCxLFuxPivXeeZVkFJoa35TAisx/drP0hVlK0q0qWKyFznSUa2uVfNJ12nPY9
- w14+c4r3QnG3ixmHAoIQBWyWJa4zYvR/BQNwdAi2MwkwvI2/9dgrBIV81DeFAHkLEgeGPa2pfJh
- w1Gn152sgRTnz/56e6wPasi4Zuhp4Th7Qv1YqOd/Rzvu/zHXIcbZhMLWvYm45VBoHgM6Yjj4hS2
- z9bHsvD7waPwVPNIdHMhpajD2EDtJhL7f+N3sRBdTWIsWuaTQXONASfZwvPpGvJQ0EaMPk4Ge3/
- IV9yu1KZ/3G2XCe5AC1YiFWcVC1scOkljAuYkrw5nC5dyMjN/c0fNUSQxO77iYZ+LOMgRUOO
-X-Authority-Analysis: v=2.4 cv=fMk53Yae c=1 sm=1 tr=0 ts=68362568 cx=c_pps
- a=qKBjSQ1v91RyAK45QCPf5w==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=COk6AnOGAAAA:8 a=OAqA0DyV7igbTOjjZJsA:9
- a=QEXdDO2ut3YA:10 a=NFOGd7dJGGMPyQGDc5-O:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: Ka48idWdM7oFsSfO0hP3rGl2bMtaQlMM
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-27_10,2025-05-27_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 adultscore=0 impostorscore=0 phishscore=0 suspectscore=0
- spamscore=0 priorityscore=1501 lowpriorityscore=0 clxscore=1015 mlxscore=0
- mlxlogscore=999 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505160000
- definitions=main-2505270176
+References: <20250416045117.876775-1-irogers@google.com>
+In-Reply-To: <20250416045117.876775-1-irogers@google.com>
+From: Ian Rogers <irogers@google.com>
+Date: Tue, 27 May 2025 13:50:32 -0700
+X-Gm-Features: AX0GCFtk6Ncs2e_GqsHxj_DiWhthI06H5P6Wv7pGvMZ2M9nALUnx3gSubJEv234
+Message-ID: <CAP-5=fU3VW1MjHMiaPG+JirLCCunMC6bEWpsJ3h0E7bTDkh9cA@mail.gmail.com>
+Subject: Re: [PATCH v8 0/4] Prefer sysfs/JSON events also when no PMU is provided
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
+	Ze Gao <zegao2021@gmail.com>, Weilin Wang <weilin.wang@intel.com>, 
+	Dominique Martinet <asmadeus@codewreck.org>, 
+	Jean-Philippe Romain <jean-philippe.romain@foss.st.com>, Junhao He <hejunhao3@huawei.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Aditya Bodkhe <Aditya.Bodkhe1@ibm.com>, Leo Yan <leo.yan@arm.com>, 
+	Thomas Falcon <thomas.falcon@intel.com>, Atish Patra <atishp@rivosinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 12/3/24 3:07 PM, Dmitry Baryshkov wrote:
-> On Tue, Dec 03, 2024 at 04:13:22PM +0800, Xiangxu Yin wrote:
->>
->>
->> On 11/29/2024 9:53 PM, Dmitry Baryshkov wrote:
->>> On Fri, 29 Nov 2024 at 09:59, Xiangxu Yin <quic_xiangxuy@quicinc.com> wrote:
->>>>
->>>> Add a mechanism to retry Link Training 2 by lowering the pattern level
->>>> when the link training #2 first attempt fails. This approach enhances
->>>> compatibility, particularly addressing issues caused by certain hub
->>>> configurations.
->>>
->>> Please reference corresponding part of the standard, describing this lowering.
->>>
->> Per DisplayPort 1.4a specification Section 3.5.1.2 and Table 3-10, while the standard doesn't explicitly define a TPS downgrade mechanism, it does specify:
-> 
-> Anything in DP 2.1?
-> 
->> - All devices shall support TPS1 and TPS2
->> - HDR2-capable devices shall support TPS3
->> - HDR3-capable devices shall support TPS4
->> While these capabilities are explicitly defined DPCD for sink devices, source device capabilities are less strictly defined, with the minimum requirement being support for TPS1 and TPS2.
->> In QCS615 DP phy is only supporting to HBR2, we observed a critical interoperability scenario with a DP->HDMI bridge. When link training at TPS4 consistently failed, downgrading to the next lower training pattern successfully established the link and display output successfully.
-> 
-> Any other driver doing such TPS lowering? Or maybe we should be
-> selecting TPS3 for HBR2-only devices?
+On Tue, Apr 15, 2025 at 9:51=E2=80=AFPM Ian Rogers <irogers@google.com> wro=
+te:
+>
+> At the RISC-V summit the topic of avoiding event data being in the
+> RISC-V PMU kernel driver came up. There is a preference for sysfs/JSON
+> events being the priority when no PMU is provided so that legacy
+> events maybe supported via json. Originally Mark Rutland also
+> expressed at LPC 2023 that doing this would resolve bugs on ARM Apple
+> M? processors, but James Clark more recently tested this and believes
+> the driver issues there may not have existed or have been resolved. In
+> any case, it is inconsistent that with a PMU event names avoid legacy
+> encodings, but when wildcarding PMUs (ie without a PMU with the event
+> name) the legacy encodings have priority.
+>
+> The situation is further inconsistent as legacy events are case
+> sensitive, so on Intel that provides a sysfs instructions event, the
+> instructions event without a PMU and lowercase is legacy while with
+> uppercase letters it matches with sysfs which is case insensitive. Are
+> there legacy events with upper case letters? Yes there are, the cache
+> ones mix case freely:
+>
+> L1-dcache|l1-d|l1d|L1-data|L1-icache|l1-i|l1i|L1-instruction|LLC|L2|dTLB|=
+d-tlb|Data-TLB|iTLB|i-tlb|Instruction-TLB|branch|branches|bpu|btb|bpc|node
+>
+> meaning LLC that means L2 (which is wrong) both match as part of a
+> legacy cache name but llc and l2 would only match sysfs/json
+> events. The whole thing just points at the ridiculous nature of legacy
+> events and why we'd want them to be preffered I don't know. Why should
+> case of a letter or having a PMU prefix impact the encoding in the
+> perf_event_attr?
+>
+> The patch doing this work was reverted in a v6.10 release candidate
+> as, even though the patch was posted for weeks and had been on
+> linux-next for weeks without issue, Linus was in the habit of using
+> explicit legacy events with unsupported precision options on his
+> Neoverse-N1. This machine has SLC PMU events for bus and CPU cycles
+> where ARM decided to call the events bus_cycles and cycles, the latter
+> being also a legacy event name. ARM haven't renamed the cycles event
+> to a more consistent cpu_cycles and avoided the problem. With these
+> changes the problematic event will now be skipped, a large warning
+> produced, and perf record will continue for the other PMU events. This
+> solution was proposed by Arnaldo.
+>
+> v8: Change removing of failed to open events that are tracking so that
+>     the tracking moves to the next event. Make software events able to
+>     specified with a PMU. Change the perf_api_probe to not load all
+>     PMUs through scanning, specify a PMU when parsing events.
+>
+> v7: Expand cover letter, fix a missed core_ok check in the v6
+>     rebase. Note, as with v6 there is an alternate series that
+>     prioritizes legacy events but that is silly and I'd prefer we
+>     didn't do it.
+>
+> v6: Rebase of v5 (dropping already merged patches):
+>     https://lore.kernel.org/lkml/20250109222109.567031-1-irogers@google.c=
+om/
+>     that unusually had an RFC posted for it:
+>     https://lore.kernel.org/lkml/Z7Z5kv75BMML2A1q@google.com/
+>     Note, this patch conflicts/contradicts:
+>     https://lore.kernel.org/lkml/20250312211623.2495798-1-irogers@google.=
+com/
+>     that I posted so that we could either consistently prioritize
+>     sysfs/json (these patches) or legacy events (the other
+>     patches). That lack of event printing and encoding inconsistency
+>     is most prominent in the encoding of events like "instructions"
+>     which on hybrid are reported as "cpu_core/instructions/" but
+>     "instructions" before these patches gets a legacy encoding while
+>     "cpu_core/instructions/" gets a sysfs/json encoding. These patches
+>     make "instructions" always get a sysfs/json encoding while the
+>     alternate patches make it always get a legacy encoding.
+>
+> v5: Follow Namhyung's suggestion and ignore the case where command
+>     line dummy events fail to open alongside other events that all
+>     fail to open. Note, the Tested-by tags are left on the series as
+>     v4 and v5 were changing an error case that doesn't occur in
+>     testing but was manually tested by myself.
+>
+> v4: Rework the no events opening change from v3 to make it handle
+>     multiple dummy events. Sadly an evlist isn't empty if it just
+>     contains dummy events as the dummy event may be used with "perf
+>     record -e dummy .." as a way to determine whether permission
+>     issues exist. Other software events like cpu-clock would suffice
+>     for this, but the using dummy genie has left the bottle.
+>
+>     Another problem is that we appear to have an excessive number of
+>     dummy events added, for example, we can likely avoid a dummy event
+>     and add sideband data to the original event. For auxtrace more
+>     dummy events may be opened too. Anyway, this has led to the
+>     approach taken in patch 3 where the number of dummy parsed events
+>     is computed. If the number of removed/failing-to-open non-dummy
+>     events matches the number of non-dummy events then we want to
+>     fail, but only if there are no parsed dummy events or if there was
+>     one then it must have opened. The math here is hard to read, but
+>     passes my manual testing.
+>
+> v3: Make no events opening for perf record a failure as suggested by
+>     James Clark and Aditya Bodkhe <Aditya.Bodkhe1@ibm.com>. Also,
+>     rebase.
+>
+> v2: Rebase and add tested-by tags from James Clark, Leo Yan and Atish
+>     Patra who have tested on RISC-V and ARM CPUs, including the
+>     problem case from before.
 
-Bump, this patch looks interesting and I'd like to see it revisited if
-it's correct
+Ping. Thanks,
+Ian
 
-Konrad
+> Ian Rogers (4):
+>   perf record: Skip don't fail for events that don't open
+>   perf parse-events: Reapply "Prefer sysfs/JSON hardware events over
+>     legacy"
+>   perf parse-events: Allow software events to be terms
+>   perf perf_api_probe: Avoid scanning all PMUs, try software PMU first
+>
+>  tools/perf/builtin-record.c      | 63 +++++++++++++++++++---
+>  tools/perf/util/parse-events.c   | 47 +++++++++++++----
+>  tools/perf/util/parse-events.h   |  3 +-
+>  tools/perf/util/parse-events.l   | 90 ++++++++++++++++++--------------
+>  tools/perf/util/parse-events.y   | 85 ++++++++++++++++++++++--------
+>  tools/perf/util/perf_api_probe.c | 27 +++++++---
+>  tools/perf/util/pmu.c            |  9 ++--
+>  7 files changed, 235 insertions(+), 89 deletions(-)
+>
+> --
+> 2.49.0.777.g153de2bbd5-goog
+>
 
