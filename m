@@ -1,95 +1,110 @@
-Return-Path: <linux-kernel+bounces-663559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-663561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAE3EAC49FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 10:18:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 131ECAC4A05
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 10:19:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8381D173D64
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 08:18:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EB2C3B715F
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 08:19:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D2DC248F62;
-	Tue, 27 May 2025 08:18:08 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A234248F4F;
+	Tue, 27 May 2025 08:19:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="XJSkoORp"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DBC61F461A;
-	Tue, 27 May 2025 08:18:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F9A7248F7B;
+	Tue, 27 May 2025 08:19:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748333887; cv=none; b=h9CRm8etf2fwvSgO8OFjxoDFsnMH8ErO+mycZgGNIVWN9v+tS7ZeuQJ9tOeUEo4LsBDaJRr0c5WjiozsK5utQ18kdHp22QEW9/OA531/L89NYvRHsytGUCBO4PMn9ku3KedAMMfwgPzLDstcg/J7T4iN/1TnVP5Hs6mnmhbnbZo=
+	t=1748333961; cv=none; b=bRoGgSMNO+ZXSPgP3i3cFwnaNbpoJcRdz+j8kE+QmJkdjNFrTAOZMHTbYXoJXWNiX93hXujhO4fzggTDT0RzZVL+bejf9Vn2w+LzeVheRQFNEplQHoiP1zKrdeo/3T8rcISD75DXAZBGo5RQClZAI9IGxEKqBRcNUDLyC8hB0d0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748333887; c=relaxed/simple;
-	bh=bR1NuJphAxo4BEJpVZ4xCM+6Jt7sJuBR86KzC2aYtBM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uK4tvbaHsSSEclgrCvDcwPQfA2XKKXbKMO4UT17d0EXt/5W80TwqEm3n25ktiqBC7hbQoeoxuU4Xtxod/mi+9u0wivwGdNIvwbJav3pGUl4FdLkLhl+rHUXk/9zZTblcxnvA7JWGCtzaTwWv3Law5cW90EFLtJoBDCludxYJsL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
-X-CSE-ConnectionGUID: VJo24VmvR6e64SbxaNe4mw==
-X-CSE-MsgGUID: zhYtAfAtT323/g+JfeW+Iw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11445"; a="52933868"
-X-IronPort-AV: E=Sophos;i="6.15,317,1739865600"; 
-   d="scan'208";a="52933868"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2025 01:18:05 -0700
-X-CSE-ConnectionGUID: geUUSBLSSiK3T9WXN98Feg==
-X-CSE-MsgGUID: D//pKkMBTkWNOvMc7764yw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,317,1739865600"; 
-   d="scan'208";a="146591285"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2025 01:18:03 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andy@kernel.org>)
-	id 1uJpVY-000000017B4-2NXj;
-	Tue, 27 May 2025 11:18:00 +0300
-Date: Tue, 27 May 2025 11:18:00 +0300
-From: Andy Shevchenko <andy@kernel.org>
-To: maudspierings@gocontroll.com
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Christian Heusel <christian@heusel.eu>,
-	Linus Walleij <linus.walleij@linaro.org>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v4] iio: common: st_sensors: Fix use of uninitialize
- device structs
-Message-ID: <aDV1OF6EKqLMl2D8@smile.fi.intel.com>
-References: <20250527-st_iio_fix-v4-1-12d89801c761@gocontroll.com>
+	s=arc-20240116; t=1748333961; c=relaxed/simple;
+	bh=67wQRKtVM5keRFapdcfKxty20pRLIrAxSi0JD7ah7II=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bBsD1PGCCtqFhsTY1m3O/GdMiRyqowGDbO+CkcGRaBiKZB557gx7TgiGnVsjbh2Gy/NNb10vH4QI+hUoj2Vk9bia87qHe3VmGMWZeM+W2nnQclqk2tocoAn6fVBbccE7hWQqy1z25sbsWcF8Sd10Flhp+RR+vJKfGMlF3jJCZ+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=XJSkoORp; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1748333953;
+	bh=IkH/TjEBQZFcqklxj9RA7ACaXu1fGvMgB4+ZHug+VWs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=XJSkoORpg0nunY/AMe6ymS3VeMtzR2WFIHRZCND3xjFlID73t3pDL3wkC1zAidtVi
+	 umc9A2Raq5KIyejSDDFk4zut5MNUkimG/V3FiC6acBipVxlmGYb8fiiqR1Psd0ms59
+	 MbW+MWLn9h2FszHQSZIYM4cxbtLKAFL6unScOr17kcZlV89039n6Mc0X27B9+M99D2
+	 I+vBUfAbnnfCWePFBq2hHlPspMh6QS0fU86okW+fls4/m4x7OUHoF+CCgGgSeo51h6
+	 /I6nccr6QhWpPyWiyx8zxKh2gDeVWe/Ekg7kVSXgt3i3Y1NgZ7j7/lkPXJcza8d57L
+	 5WU6gKYneTWsQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4b65Bm5xPdz4x0L;
+	Tue, 27 May 2025 18:19:12 +1000 (AEST)
+Date: Tue, 27 May 2025 18:19:11 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Dave Airlie <airlied@redhat.com>, DRI <dri-devel@lists.freedesktop.org>
+Cc: Ben Skeggs <bskeggs@nvidia.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build warning after merge of the drm tree
+Message-ID: <20250527181911.2c497df5@canb.auug.org.au>
+In-Reply-To: <20250521204911.0266f4d3@canb.auug.org.au>
+References: <20250521204911.0266f4d3@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250527-st_iio_fix-v4-1-12d89801c761@gocontroll.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: multipart/signed; boundary="Sig_/mFdbfBKYirkcxtm6N5Vc7HN";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Tue, May 27, 2025 at 08:36:08AM +0200, Maud Spierings via B4 Relay wrote:
-> From: Maud Spierings <maudspierings@gocontroll.com>
-> 
-> Throughout the various probe functions &indio_dev->dev is used before it
-> is initialized. This caused a kernel panic in st_sensors_power_enable()
-> when the call to devm_regulator_bulk_get_enable() fails and then calls
-> dev_err_probe() with the uninitialized device.
-> 
-> This seems to only cause a panic with dev_err_probe(), dev_err(),
-> dev_warn() and dev_info() don't seem to cause a panic, but are fixed
-> as well.
-> 
-> The issue is reported and traced here: [1]
+--Sig_/mFdbfBKYirkcxtm6N5Vc7HN
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-FWIW,
-Reviewed-by: Andy Shevchenko <andy@kernel.org>
+Hi all,
 
--- 
-With Best Regards,
-Andy Shevchenko
+On Wed, 21 May 2025 20:49:11 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> After merging the drm tree, today's linux-next build (htmldocs) produced
+> this warning:
+>=20
+> Error: Cannot open file drivers/gpu/drm/nouveau/nvkm/subdev/gsp/r535.c
+>=20
+> Introduced by commit
+>=20
+>   c472d828348c ("drm/nouveau/gsp: move subdev/engine impls to subdev/gsp/=
+rm/r535/")
 
+I am still seeing this error.
 
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/mFdbfBKYirkcxtm6N5Vc7HN
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmg1dX8ACgkQAVBC80lX
+0GwXFAf/U0NsocTa0gniqfcIPGqqv2TLXUaC3tF+r60wLVcFlRMWcTMYXw4Om4RW
+DI9aLEM4m6j5dWHN1NM6TJ+JX4u+kExVOwXFAkTlfuyiP/qarW9rReFlcnek71pA
+LQGJVTtMPPC/H0nv0MMs3Wpki35DR3ZZEPeUDiEDhVKiL+Q9XT25hwhkiHXuv2eg
+jHwPbTD01RN32m0ehThJTOkZ3pzs66qm2XuxqOkhaUc4gb9baG0E1niDIbeh3L5Z
+xehxJhYzU2G6A3/AnGhUNip2+xPSc4XjTCRlma/UBdmyckcLMDYX4OebOET3b3DC
+V3MXvcJxAqWP85maNwstVu0hOVmfdA==
+=hQIZ
+-----END PGP SIGNATURE-----
+
+--Sig_/mFdbfBKYirkcxtm6N5Vc7HN--
 
