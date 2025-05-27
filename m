@@ -1,40 +1,41 @@
-Return-Path: <linux-kernel+bounces-664006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-664009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 416C1AC5099
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 16:15:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D9DDAC509F
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 16:15:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E60041BA01DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 14:15:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C06ED17FF5F
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 14:15:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48AE2278E51;
-	Tue, 27 May 2025 14:14:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A242727A10F;
+	Tue, 27 May 2025 14:14:55 +0000 (UTC)
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A5BA27602C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A6B5277808
 	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 14:14:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748355293; cv=none; b=mOlrhA8YpodcSz3VSf+Olz4iqRyLnGLSk2ECmudhmvmBXYH/UCeEkh7FaKa6e4iOOWH2HRRhf8dYEo9oJ/EKw4CnzGwgIuhfn9ahT8SDxgRo4UI0eL2NCwNI8oa8d3YRpgYMDak+fgCQToTYvL/ZNumfEdr76zJOU0hRpWAyoWw=
+	t=1748355295; cv=none; b=aafrNiBEaiI3wRkQ9D3+DHz2x40JroPsPadDzW5fgsv43lMO7li2KFM7ZL4Tpq8BZORWc5pMztaMx7fkCMEopbV2+mvDxNMbHOh83iWMg+f+ottu0ReoWy6tHHs2kRVWG/sLGFWEquhA6C/tIY0DbCVdbkxsVdceglgp6daq2j8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748355293; c=relaxed/simple;
-	bh=KMl1KC7Db42hpXmXH1RgdBzgy+eRoovV4TcmHv0IoBE=;
+	s=arc-20240116; t=1748355295; c=relaxed/simple;
+	bh=peiJyurqLp3tI+dD9Pn5GKyW4tfCigbVpvCbR5h9q0Y=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=nQEtGezwkDIxY/bOhGt19rZm23UmzH7E/XE3Bz6SR/1s4QSs2BRBVwrVaXBA2Tf1Mc8w/oul3x5LIciF6tSiWLvJh+9548aW1nknfAft53MydXWNNpEhV03ymmTkWF6J7lJNrFTRERdgYGECiHTzwDcxIxuoP/u61dasbGIfIKA=
+	 In-Reply-To:To:Cc; b=LZkDOIXiKO36tR3zzSGaduBhHyvP7O+EuGdKVvi4l4VI+kevqzLdUEkME5H2xmwwNKCCS/jVrQAaZUgh5Z13+oC5I7pX3hRA67E4UU/Rd22Lk/fB1+ji85MNg/9rhGnjLSJZ/OrzDrq5nFo3bSwsWf2K0d1F3KZkiP19Ae7M3oo=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
 Received: from dude05.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::54])
 	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
 	(envelope-from <p.zabel@pengutronix.de>)
-	id 1uJv4f-0002Ne-QK; Tue, 27 May 2025 16:14:37 +0200
+	id 1uJv4f-0002Ne-LQ; Tue, 27 May 2025 16:14:37 +0200
 From: Philipp Zabel <p.zabel@pengutronix.de>
-Date: Tue, 27 May 2025 16:14:34 +0200
-Subject: [PATCH RFC 4/4] drm/mipi-dsi: Drop MIPI_DSI_MODE_VSYNC_FLUSH flag
+Date: Tue, 27 May 2025 16:14:32 +0200
+Subject: [PATCH RFC 2/4] drm/panel: samsung-s6d7aa0: Drop
+ MIPI_DSI_MODE_VSYNC_FLUSH flag
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -43,7 +44,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250527-dsi-vsync-flush-v1-4-9b4ea4578729@pengutronix.de>
+Message-Id: <20250527-dsi-vsync-flush-v1-2-9b4ea4578729@pengutronix.de>
 References: <20250527-dsi-vsync-flush-v1-0-9b4ea4578729@pengutronix.de>
 In-Reply-To: <20250527-dsi-vsync-flush-v1-0-9b4ea4578729@pengutronix.de>
 To: Inki Dae <inki.dae@samsung.com>, 
@@ -66,29 +67,27 @@ X-SA-Exim-Mail-From: p.zabel@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Drop the unused MIPI_DSI_MODE_VSYNC_FLUSH flag. Whether or not a display
-FIFO flush on vsync is required to avoid sending garbage to the panel is
-not a property of the DSI link, but of the integration between display
-controller and DSI host bridge.
+Drop the MIPI_DSI_MODE_VSYNC_FLUSH flag from DSI mode_flags.
+It has no effect anymore.
 
 Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
 ---
- include/drm/drm_mipi_dsi.h | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/gpu/drm/panel/panel-samsung-s6d7aa0.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/drm/drm_mipi_dsi.h b/include/drm/drm_mipi_dsi.h
-index b37860f4a895c25ef8ba1c5b3f44827ef53aa100..369b0d8830c3d14a4fc1e8e38d5fa55f04ca143e 100644
---- a/include/drm/drm_mipi_dsi.h
-+++ b/include/drm/drm_mipi_dsi.h
-@@ -130,8 +130,6 @@ struct mipi_dsi_host *of_find_mipi_dsi_host_by_node(struct device_node *node);
- #define MIPI_DSI_MODE_VIDEO_NO_HBP	BIT(6)
- /* disable hsync-active area */
- #define MIPI_DSI_MODE_VIDEO_NO_HSA	BIT(7)
--/* flush display FIFO on vsync pulse */
--#define MIPI_DSI_MODE_VSYNC_FLUSH	BIT(8)
- /* disable EoT packets in HS mode */
- #define MIPI_DSI_MODE_NO_EOT_PACKET	BIT(9)
- /* device supports non-continuous clock behavior (DSI spec 5.6.1) */
+diff --git a/drivers/gpu/drm/panel/panel-samsung-s6d7aa0.c b/drivers/gpu/drm/panel/panel-samsung-s6d7aa0.c
+index 93f11e2e9398782ed10c70159c25fbd5d9f4eb4c..986b3a71a17458cb60bc81338dcce1b24b3c8d85 100644
+--- a/drivers/gpu/drm/panel/panel-samsung-s6d7aa0.c
++++ b/drivers/gpu/drm/panel/panel-samsung-s6d7aa0.c
+@@ -244,7 +244,7 @@ static const struct s6d7aa0_panel_desc s6d7aa0_lsl080al02_desc = {
+ 	.init_func = s6d7aa0_lsl080al02_init,
+ 	.off_func = s6d7aa0_lsl080al02_off,
+ 	.drm_mode = &s6d7aa0_lsl080al02_mode,
+-	.mode_flags = MIPI_DSI_MODE_VSYNC_FLUSH | MIPI_DSI_MODE_VIDEO_NO_HFP,
++	.mode_flags = MIPI_DSI_MODE_VIDEO_NO_HFP,
+ 	.bus_flags = 0,
+ 
+ 	.has_backlight = false,
 
 -- 
 2.39.5
