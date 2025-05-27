@@ -1,203 +1,220 @@
-Return-Path: <linux-kernel+bounces-663998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-664000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A880CAC506E
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 16:02:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE350AC507C
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 16:05:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A9E6165997
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 14:02:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 573B7189F961
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 14:05:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EC7A274FEE;
-	Tue, 27 May 2025 14:02:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDEE8277808;
+	Tue, 27 May 2025 14:05:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="BAk2Pbd/"
-Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="MowcQnY1"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80DDF1A256B
-	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 14:02:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A1211C3F02;
+	Tue, 27 May 2025 14:05:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748354530; cv=none; b=LIBhDzX2KOFm7BZheqWCcbAU95I55rZ7RW9bZ6Pf6QYzAVymK6MYX/tODLo7uC/By/JtVRW1reHqck2LqRw3IbZryMRcTbk8tyC1Pcy9Pksx/cQ5FO76QZldtNoMdJiPKIltFLHwJosr+jnQTLEwUbQ3qhmyus+bvrbbK9Cjp5w=
+	t=1748354723; cv=none; b=VVQSkTms2fM4bgeaNVlxWG0w3JeUDqrneB3N4SMfF3HXmYnr5lBVEl1FzkWRwtguuPfmfOZoAvlLVOsHaVD5E45gpzmTBZXoKyGeMwEr4D8eeF6UthnIUCjAmHYLWCM8K777HIY4RYF9pbdJUKT0XmNcy4DBzWNx/RDBJJBTl/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748354530; c=relaxed/simple;
-	bh=yo0oZBlfMtOYp40SB2fAqqqKfsg0rNIT7m84sU2j4s4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RkbRwVBXEwoQVjTTDHkl/jrI/3hz2Y8eo0Q/NWWVKIsK3hVXEiXTIhRB2854o+j7rE2zqb0XaSDPCG4KWirsjvBKUkPi7EAkzAPywMFYcOqLMmjGsZfp7PQOO1/1CCrClCbrrNwoEtbtkUU8qAGU9LPyev+lSmmTxxHmGdQwKs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=BAk2Pbd/; arc=none smtp.client-ip=95.215.58.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 27 May 2025 16:01:56 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1748354526;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1RLjeN+B9ynhfLIpwmZXtdB5HF0huSI0hOjSO/VoOEo=;
-	b=BAk2Pbd/JJPysmSNfFdWpiFzw1ZbscmqwYi0OO5P4uUbbl/cxRm+cE67R9CUmG77lSWEKN
-	OIVxcR42DttYY+yGY3ybCgCJFgSCcRgI8cMZvgho5su03pe8ri6GZRqnaWb6SeVn/uRWGy
-	JEB9XIELPgnKUhyf/iGlS86pm8X460E=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Nicolas Schier <nicolas.schier@linux.dev>
-To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>, Willy Tarreau <w@1wt.eu>,
-	Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>,
-	Brendan Higgins <brendan.higgins@linux.dev>,
-	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
-	Shuah Khan <shuah@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH v2 01/11] kbuild: userprogs: add nolibc support
-Message-ID: <20250527-fearless-impala-of-poetry-8acc3a@l-nschier-aarch64>
-References: <20250407-kunit-kselftests-v2-0-454114e287fd@linutronix.de>
- <20250407-kunit-kselftests-v2-1-454114e287fd@linutronix.de>
- <20250522-fluorescent-liberal-pigeon-0404ed@l-nschier-aarch64>
- <20250526163610-88b7aae6-7be4-4a02-be20-ec7fe74cbf31@linutronix.de>
+	s=arc-20240116; t=1748354723; c=relaxed/simple;
+	bh=2n1ZM3arUGbqx8ZX9aDvQp7nDYqI1RxWGWHq39fNLrM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=nlGbw53s7i8YQ4K+WbLUb++6hprQPvLX4VkARNoKJCO5bmCP/7JnYUZarmOAXcuvdelH8XtWrDuoUDJwDcfT14I9b7tUK9nM+3Ss5K7VMzOQy92BC57B2q2JtxV2FhJeu7jW15Xn9+3Zx1Gp7Vq7EdQEMTt9etFSAqoL7Q1Ght0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=MowcQnY1; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54RCJftD010084;
+	Tue, 27 May 2025 16:05:09 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	9RneKTUgHV8QMOt165N0ghvpuDHAQ12Fmh+L+mVFhiE=; b=MowcQnY11g1gANZG
+	Kz6qQJlw2baLFjg1snTrCdCc8Av4npmRHmQS6lrBFxwEfU1Uo4DX/YPNFgWLxju7
+	RG2sNCENxmvcPNGTdi84JR89FIplB5z7e/i4nle2zKzJkUvfx2Wl12tIZpCVuSII
+	/wImUKQXv/uk8MhegSTR0/Vr2CBIJSZcGRMAaXEEmsOXslof5Ev2HtaB+u1sLkCz
+	lL/Pu3qAT/bmHTD5LyzKYsCoPS63XmM27j8ucHyGK6KNSzygt14pkRjTIA/DH0n0
+	O9NhYY/exwuLIu6gg4/Jer/qTrkIO9qirvlwn0JpB+Elr0qjFoHh+ZTs79eI+0Tf
+	61qcWA==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 46u388v8cv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 27 May 2025 16:05:09 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 002E040046;
+	Tue, 27 May 2025 16:04:10 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 4EF27AFB4E3;
+	Tue, 27 May 2025 16:03:25 +0200 (CEST)
+Received: from [10.48.86.139] (10.48.86.139) by SHFDAG1NODE3.st.com
+ (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 27 May
+ 2025 16:03:24 +0200
+Message-ID: <61011ea7-6cad-463e-9666-706fe56d98ce@foss.st.com>
+Date: Tue, 27 May 2025 16:03:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250526163610-88b7aae6-7be4-4a02-be20-ec7fe74cbf31@linutronix.de>
-Organization: AVM GmbH
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/5] ARM: dts: stm32: fullfill diversity with OPP for
+ STM32M15x SOCs
+To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark
+ Brown <broonie@kernel.org>
+CC: <devicetree@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20250527-stm32mp157f-dk2-v1-0-8aef885a4928@foss.st.com>
+ <20250527-stm32mp157f-dk2-v1-1-8aef885a4928@foss.st.com>
+ <eec2a1db-717e-46f2-a988-6beefab7b699@kernel.org>
+Content-Language: en-US
+From: Amelie Delaunay <amelie.delaunay@foss.st.com>
+In-Reply-To: <eec2a1db-717e-46f2-a988-6beefab7b699@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE3.st.com
+ (10.75.129.71)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-27_07,2025-05-27_01,2025-03-28_01
 
-On Mon, May 26, 2025 at 04:40:17PM +0200, Thomas Weißschuh wrote:
-> On Mon, May 26, 2025 at 04:19:53PM +0200, Nicolas Schier wrote:
-> > On Mon, Apr 07, 2025 at 09:42:38AM +0200, Thomas Weißschuh wrote:
-> > > Userprogs are built with the regular kernel compiler $CC.
-> > > A kernel compiler does not necessarily contain a libc which is required
-> > > for a normal userspace application.
-> > > However the kernel tree does contain a minimal libc implementation
-> > > "nolibc" which can be used to build userspace applications.
-> > > 
-> > > Introduce support to build userprogs against nolibc instead of the
-> > > default libc of the compiler, which may not exist.
-> > > 
-> > > Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
-> > > 
-> > > ---
-> > > This could probably be moved out of the generic kbuild makefiles.
-> > > I think the ergonimics would suffer and this functionality could be
-> > > used by other users of userprogs.
-> > > 
-> > > Also this does currently not support out-of-tree builds.
-> > 
-> > (out-of-tree == external kmods;  out-of-source == build-dir != source-dir)
-> > 
-> > you probably meant out-of-source.
-> 
-> I *did* mean out-of-tree.
-> 
-> Out-of-source already works with the current patchset. It is the default setup of kunit.py.
-> 
-> > > For that tools/include/nolibc/*.h and usr/include/*.h would need to be
-> > > installed into the build directory.
-> > 
-> > Out-of-source builds could be achieved by adding 'headers' as 
-> > dependency, see below.
-> > 
-> > > ---
-> > >  Documentation/kbuild/makefiles.rst | 12 ++++++++++++
-> > >  scripts/Makefile.userprogs         | 16 +++++++++++++---
-> > >  2 files changed, 25 insertions(+), 3 deletions(-)
-> > > 
-> > > diff --git a/Documentation/kbuild/makefiles.rst b/Documentation/kbuild/makefiles.rst
-> > > index 3b9a8bc671e2e92126857059e985d6e5b2c43fd4..f905a6f77c965311c491cfd7ab3103185af7e82e 100644
-> > > --- a/Documentation/kbuild/makefiles.rst
-> > > +++ b/Documentation/kbuild/makefiles.rst
-> > > @@ -970,6 +970,18 @@ When linking bpfilter_umh, it will be passed the extra option -static.
-> > >  
-> > >  From command line, :ref:`USERCFLAGS and USERLDFLAGS <userkbuildflags>` will also be used.
-> > >  
-> > > +Bulding userprogs against nolibc
-> > 
-> > Bulding -> Building
-> 
-> Ack.
-> 
-> > > +--------------------------------
-> > > +
-> > > +Not all kernel toolchains provide a libc.
-> > > +Simple userprogs can be built against a very simple libc call "nolibc" provided
-> > > +by the kernel source tree.
-> > > +
-> > > +Example::
-> > > +
-> > > +  # lib/kunit/Makefile
-> > > +  uapi-preinit-nolibc := $(CONFIG_ARCH_HAS_NOLIBC)
-> > > +
-> > >  When userspace programs are actually built
-> > >  ------------------------------------------
-> > >  
-> > > diff --git a/scripts/Makefile.userprogs b/scripts/Makefile.userprogs
-> > > index f3a7e1ef3753b54303718fae97f4b3c9d4eac07c..a1447c02b948901631098b585f5cf4d3ea383a57 100644
-> > > --- a/scripts/Makefile.userprogs
-> > > +++ b/scripts/Makefile.userprogs
-> > > @@ -16,10 +16,20 @@ user-csingle	:= $(addprefix $(obj)/, $(user-csingle))
-> > >  user-cmulti	:= $(addprefix $(obj)/, $(user-cmulti))
-> > >  user-cobjs	:= $(addprefix $(obj)/, $(user-cobjs))
-> > >  
-> > > +user-libgcc     := $(call try-run,$(CC) -Werror $(KBUILD_USERCFLAGS) -lgcc -x c -shared /dev/null -o "$$TMP",-lgcc)
-> > > +
-> > > +user_nolibc_ccflags := -nostdlib -nostdinc -static -fno-ident -fno-asynchronous-unwind-tables \
-> > > +		      -ffreestanding -fno-stack-protector \
-> > > +		      -isystem $(objtree)/usr/include -include $(srctree)/tools/include/nolibc/nolibc.h -isystem $(srctree)/tools/include/nolibc/
-> > > +user_nolibc_ldflags := -nostdlib -nostdinc -static
-> > > +user_nolibc_ldlibs  := $(user-libgcc)
-> > > +
-> > >  user_ccflags	= -Wp,-MMD,$(depfile) $(KBUILD_USERCFLAGS) $(userccflags) \
-> > > -			$($(target-stem)-userccflags)
-> > > -user_ldflags	= $(KBUILD_USERLDFLAGS) $(userldflags) $($(target-stem)-userldflags)
-> > > -user_ldlibs	= $(userldlibs) $($(target-stem)-userldlibs)
-> > > +			$($(target-stem)-userccflags) $(if $($(target-stem)-nolibc),$(user_nolibc_ccflags))
-> > > +user_ldflags	= $(KBUILD_USERLDFLAGS) $(userldflags) $($(target-stem)-userldflags) \
-> > > +			$(if $($(target-stem)-nolibc),$(user_nolibc_ldflags))
-> > > +user_ldlibs	= $(userldlibs) $($(target-stem)-userldlibs) \
-> > > +			$(if $($(target-stem)-nolibc),$(user_nolibc_ldlibs))
-> > >  
-> > >  # Create an executable from a single .c file
-> > >  quiet_cmd_user_cc_c = CC [U]  $@
-> > 
-> > Adding another hunk for scripts/Makefile.userprogs would allow to build
-> > out-of-source:
-> > 
-> > @@ -39,5 +49,5 @@ $(call multi_depend, $(user-cmulti), , -objs)
-> >  # Create .o file from a .c file
-> >  quiet_cmd_user_cc_o_c = CC [U]  $@
-> >        cmd_user_cc_o_c = $(CC) $(user_ccflags) -c -o $@ $<
-> > -$(user-cobjs): $(obj)/%.o: $(src)/%.c FORCE
-> > +$(user-cobjs): $(obj)/%.o: $(src)/%.c headers FORCE
-> >         $(call if_changed_dep,user_cc_o_c)
-> > 
-> > But I am unsure if it is ok to add 'headers' as a build dependency for 
-> > userprogs.  For me, it feels a bit odd, but I think it really makes 
-> > sense here.
-> 
-> Currently this dependency is encoded in Kconfig.
-> If CONFIG_HEADERS_INSTALL=y then the headers are installed in the 'prepare'
-> phase and already available when building any userprog.
-> To me this seems like the easier and nicer implementation.
 
-I am sure, I had an out-of-source test build that failed due to missing 
-header files -- but I can't reproduce it any more and yes, 
-CONFIG_HEADERS_INSTALL should really be enough and better in several 
-ways.
 
-Sorry for the noice.
+On 5/27/25 15:12, Krzysztof Kozlowski wrote:
+> On 27/05/2025 15:03, Amelie Delaunay wrote:
+>> From: Alexandre Torgue <alexandre.torgue@foss.st.com>
+>>
+>> This commit creates new files to manage security features and supported OPP
+>> on STM32MP15x SOCs. On STM32MP15xY, "Y" gives information:
+>>   -Y = A means no cryp IP and no secure boot + A7-CPU@650MHz.
+>>   -Y = C means cryp IP + optee + secure boot + A7-CPU@650MHz.
+>>   -Y = D means no cryp IP and no secure boot + A7-CPU@800MHz.
+>>   -Y = F means cryp IP + optee + secure boot + A7-CPU@800MHz.
+>>
+>> It fullfills the initial STM32MP15x SoC diversity introduced by
+>> commit 0eda69b6c5f9 ("ARM: dts: stm32: Manage security diversity
+>> for STM32M15x SOCs").
+>>
+>> Signed-off-by: Alexandre Torgue <alexandre.torgue@foss.st.com>
+>> Signed-off-by: Amelie Delaunay <amelie.delaunay@foss.st.com>
+>> ---
+>>   arch/arm/boot/dts/st/stm32mp15xa.dtsi |  5 +++++
+>>   arch/arm/boot/dts/st/stm32mp15xc.dtsi |  4 +++-
+>>   arch/arm/boot/dts/st/stm32mp15xd.dtsi |  5 +++++
+>>   arch/arm/boot/dts/st/stm32mp15xf.dtsi | 20 ++++++++++++++++++++
+>>   4 files changed, 33 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/arm/boot/dts/st/stm32mp15xa.dtsi b/arch/arm/boot/dts/st/stm32mp15xa.dtsi
+>> new file mode 100644
+>> index 0000000000000000000000000000000000000000..cb55f5966f74011d12d7a5c6ad047569d25d4e98
+>> --- /dev/null
+>> +++ b/arch/arm/boot/dts/st/stm32mp15xa.dtsi
+>> @@ -0,0 +1,5 @@
+>> +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-3-Clause)
+>> +/*
+>> + * Copyright (C) STMicroelectronics 2025 - All Rights Reserved
+>> + * Author: Alexandre Torgue <alexandre.torgue@foss.st.com> for STMicroelectronics.
+> 
+> You create entirely empty, unused file. There is literally no benefit of
+> this file, no impact, just more files to handle.
+> 
 
-Kind regards,
-Nicolas
+Indeed, this one is not useful and will be dropped in v2, as it won't be 
+populated with cpufreq/thermal updates due to fixed cpu clock frequency.
+
+>> + */
+>> diff --git a/arch/arm/boot/dts/st/stm32mp15xc.dtsi b/arch/arm/boot/dts/st/stm32mp15xc.dtsi
+>> index 97465717f932fc223647af76e88a6182cf3c870f..4d30a2a537f15c1e145635b090de0f0222526579 100644
+>> --- a/arch/arm/boot/dts/st/stm32mp15xc.dtsi
+>> +++ b/arch/arm/boot/dts/st/stm32mp15xc.dtsi
+>> @@ -1,9 +1,11 @@
+>> -// SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
+>> +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-3-Clause)
+> 
+> License change is not explained in commit msg and anyway should be
+> separate commit with acks/sobs from all copyright holders. You also need
+> to CC them (Cc e.g. Gatien).
+> 
+
+License change is not needed, good to know how it should have been done. 
+Since stm32mp15xa.dtsi will be dropped in v2, this file won't be updated 
+and the license won't change.
+
+>>   /*
+>>    * Copyright (C) STMicroelectronics 2019 - All Rights Reserved
+>>    * Author: Alexandre Torgue <alexandre.torgue@st.com> for STMicroelectronics.
+>>    */
+>>   
+>> +#include "stm32mp15xa.dtsi"
+>> +
+>>   &etzpc {
+>>   	cryp1: cryp@54001000 {
+>>   		compatible = "st,stm32mp1-cryp";
+>> diff --git a/arch/arm/boot/dts/st/stm32mp15xd.dtsi b/arch/arm/boot/dts/st/stm32mp15xd.dtsi
+>> new file mode 100644
+>> index 0000000000000000000000000000000000000000..cb55f5966f74011d12d7a5c6ad047569d25d4e98
+>> --- /dev/null
+>> +++ b/arch/arm/boot/dts/st/stm32mp15xd.dtsi
+>> @@ -0,0 +1,5 @@
+>> +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-3-Clause)
+>> +/*
+>> + * Copyright (C) STMicroelectronics 2025 - All Rights Reserved
+>> + * Author: Alexandre Torgue <alexandre.torgue@foss.st.com> for STMicroelectronics.
+>> + */
+> 
+> Same problems.
+> 
+
+This file won't be empty, it will be populated with cpufreq/thermal 
+updates because STM32MP15xD and STM32MP15xF have dynamic CPU frequency 
+scaling.
+
+>> diff --git a/arch/arm/boot/dts/st/stm32mp15xf.dtsi b/arch/arm/boot/dts/st/stm32mp15xf.dtsi
+>> new file mode 100644
+>> index 0000000000000000000000000000000000000000..5f6a2952125d00d468e2e4012024f02380cfaa49
+>> --- /dev/null
+>> +++ b/arch/arm/boot/dts/st/stm32mp15xf.dtsi
+>> @@ -0,0 +1,20 @@
+>> +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-3-Clause)
+>> +/*
+>> + * Copyright (C) STMicroelectronics 2025 - All Rights Reserved
+>> + * Author: Alexandre Torgue <alexandre.torgue@foss.st.com> for STMicroelectronics.
+>> + */
+>> +
+>> +#include "stm32mp15xd.dtsi"
+>> +
+>> +/ {
+>> +	soc {
+>> +		cryp1: cryp@54001000 {
+>> +			compatible = "st,stm32mp1-cryp";
+>> +			reg = <0x54001000 0x400>;
+>> +			interrupts = <GIC_SPI 79 IRQ_TYPE_LEVEL_HIGH>;
+>> +			clocks = <&rcc CRYP1>;
+>> +			resets = <&rcc CRYP1_R>;
+>> +			status = "disabled";
+>> +		};
+>> +	};
+>> +};
+>>
+> 
+> 
+> Best regards,
+> Krzysztof
+
+Regards,
+Amelie
 
