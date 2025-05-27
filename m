@@ -1,130 +1,107 @@
-Return-Path: <linux-kernel+bounces-663913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-663920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E329AC4F35
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 15:05:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52345AC4F4E
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 15:07:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 098DF18866DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 13:05:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 029C63B89B1
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 13:06:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A6AC26FDB3;
-	Tue, 27 May 2025 13:05:31 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F09652741CD;
+	Tue, 27 May 2025 13:06:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iAoARr4A"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75CB9269CF6
-	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 13:05:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 504A1270EAB;
+	Tue, 27 May 2025 13:06:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748351131; cv=none; b=ApHlb/fzE5Kttteyb3yHa6Ifqw0XP1RXjVX1UKlhKg8gVtoeo+WNlbFBTwhfzGUOwSckMNI39oTDgvnmFIWIEs3G73PgCko3NUfTbETYLUFSCCuDIVzMIxI0HgXfcBnIJHfTOyM3qJRXTHGzT4LS/GjfdEGImOSC1PE35Esob6s=
+	t=1748351187; cv=none; b=kes1J+4acKnN6SnC3kkv8JvoQaMPM3OcUa0NiTq8lZQ7IUOPBtKOYxBgbvK0Hft3/AaZWM9AuEwFH25BDvmryK1xNfQPn9xssesqpuIjvMjut8FgeqMBn99vijhcwEYHXRqlbQXVQlFPhCs8KDegAhDwj8c4FSLO6GVE24DtXbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748351131; c=relaxed/simple;
-	bh=cFA/dkYyvc3X1Y7GQyzohC1dFXVFvAzkHJAS97M1O70=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=uwABt8DS6OzeUDvAyMXJZu/L2OHiqNcOdopCrnn0SjQfXblPN7Qy3LouaE4w28QjAUl1EdTxgmbZJMVMRATPHB9Jfx3RZHp48X8XEBXT1YI7ObTTZvwlXr+JXSojNNXLicKcqx80ymf1rymN5lcj4wq1W0JISsJvT/Z435Ie89o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4b6CVm4T0kz13Lsf;
-	Tue, 27 May 2025 21:03:28 +0800 (CST)
-Received: from kwepemg100001.china.huawei.com (unknown [7.202.181.18])
-	by mail.maildlp.com (Postfix) with ESMTPS id D126C140134;
-	Tue, 27 May 2025 21:05:11 +0800 (CST)
-Received: from [10.67.121.183] (10.67.121.183) by
- kwepemg100001.china.huawei.com (7.202.181.18) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 27 May 2025 21:05:11 +0800
-Message-ID: <86bcc70b-f41f-45d3-967e-c6190c6ceadd@huawei.com>
-Date: Tue, 27 May 2025 21:05:10 +0800
+	s=arc-20240116; t=1748351187; c=relaxed/simple;
+	bh=gojxfHrjWmS0e9hNZaNQ2ayB5aaFbe2vzQ0a9DpKHjs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=umu9azRCRGtACGMZHiHLzja6qsIhNSJzy250qxJG0HAxPqSOWz0ag44H38b6aXxqS5hC/kXf10rUlyrLxnJ9bE+UAmHHiKskl1/BlVHKWkWeJGtARcDFl9TTDy3phSwMx1grgS8hq3eKtgH2yEJQtfbSt/vfuscKSkLz7/lo6rc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iAoARr4A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55F0FC4CEEB;
+	Tue, 27 May 2025 13:06:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748351186;
+	bh=gojxfHrjWmS0e9hNZaNQ2ayB5aaFbe2vzQ0a9DpKHjs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iAoARr4A9icD0AIxyWaEUIwljB5URMOSsdFWRVVlRKVqQyA0Sj1cms2FkfA2pDFBh
+	 sf3qYeLY6D52jG7XDDe+OQvJ8HdyTzlOVBMdAN80XIDBr3BKr+XYXFsMajt4NsXCk6
+	 ah9hpe4Dh8ZCBX4HlLOms4x6+yr163FMSUJD9LXn1drJJg2fFNxvA0uHi+DT13YMSn
+	 eDkP1RSlBVwMIvJRb79alQNbvsaO4fuu/vC+OoJ2JjgphhKtfaLAhG54HKMIsu0YK2
+	 lwFV3e8tkRAm3svzXBuy+D2vUgrilUWZHZHfc9gZM12kV3KQ07AAvx5UxlH/Vl55fS
+	 a7RzFznorVpLA==
+Date: Tue, 27 May 2025 14:06:22 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Shuah Khan <shuah@kernel.org>, David Hildenbrand <david@redhat.com>,
+	linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/4] selftests/mm: Report unique test names for each cow
+ test
+Message-ID: <d09e1347-bf13-48f9-91df-2b90f6d15a16@sirena.org.uk>
+References: <20250522-selftests-mm-cow-dedupe-v1-0-713cee2fdd6d@kernel.org>
+ <20250522-selftests-mm-cow-dedupe-v1-3-713cee2fdd6d@kernel.org>
+ <3745cced-199a-4c9f-a282-d9587f2edd41@lucifer.local>
+ <3729c741-fd02-41f9-9668-7575871e7acb@sirena.org.uk>
+ <675ce51b-a218-4fe9-a571-56387d72fffb@lucifer.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] KVM: arm64: Make HCX writable from userspace
-To: Oliver Upton <oliver.upton@linux.dev>
-CC: <maz@kernel.org>, <yuzenghui@huawei.com>,
-	<linux-arm-kernel@lists.infradead.org>, <kvmarm@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, <wangzhou1@hisilicon.com>,
-	<shameerali.kolothum.thodi@huawei.com>, <liuyonglong@huawei.com>,
-	<jiangkunkun@huawei.com>
-References: <20250325121126.1380681-1-yangjinqian1@huawei.com>
- <Z-LX5H5mjGyTQ9N4@linux.dev>
-From: Jinqian Yang <yangjinqian1@huawei.com>
-In-Reply-To: <Z-LX5H5mjGyTQ9N4@linux.dev>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- kwepemg100001.china.huawei.com (7.202.181.18)
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="4/1W5cdaGZgna//I"
+Content-Disposition: inline
+In-Reply-To: <675ce51b-a218-4fe9-a571-56387d72fffb@lucifer.local>
+X-Cookie: New customers only.
 
 
-> Hi Jinqian,
->
-> On Tue, Mar 25, 2025 at 08:11:26PM +0800, Jinqian Yang wrote:
->> Allow userspace to modify guest visible value for HCX in
->> ID_AA64MMFR1_EL1.
->>
->> Signed-off-by: Jinqian Yang <yangjinqian1@huawei.com>
->
-> This is fine, but I would rather we handle all the features like FEAT_HCX
-> instead of a trickle of one-off patches.
->
-> So, could you please:
->
-> - Identify all of the features that describe an *EL2* feature which
->   we've exposed to non-nested VMs
->
-> - Implement patch(es) to make those fields writable (i.e. allow them to
->   be downgraded)
->
-> - Add corresponding test cases to the set_id_regs selftest
->
-> Thanks,
-> Oliver
->
-Hi Oliver，
+--4/1W5cdaGZgna//I
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Thanks for the detailed explantation!
+On Tue, May 27, 2025 at 12:53:30PM +0100, Lorenzo Stoakes wrote:
+> On Tue, May 27, 2025 at 12:49:57PM +0100, Mark Brown wrote:
+> > On Tue, May 27, 2025 at 11:08:05AM +0100, Lorenzo Stoakes wrote:
+> > > On Thu, May 22, 2025 at 06:38:52PM +0100, Mark Brown wrote:
+> >
+> > > >  	ret = setup_comm_pipes(&comm_pipes);
+> > > >  	if (ret) {
+> > > > -		ksft_test_result_fail("pipe() failed\n");
+> > > > +		log_test_result(KAFT_FAIL);
+> > >
+> > > Looks like a typo here :) Should be KSFT not KAFT.
 
-During our testing of cross-generation live migration, we encountered
-an issue that requires applying the patch. The problem arises when two
-chips have inconsistent FEAT_HCX. To ensure consistent virtual machine
-behavior before and after migration, we need to make FEAT_HCX writable,
-thereby aligning the feature flags across source and destination hosts.
+Somewhat impressively clang is managing to build this perfectly happily
+locally which also isn't helping, I can't figure out why.  Can't see a
+system include with it.
 
+--4/1W5cdaGZgna//I
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Above is the context of this patch. I will revise this patch following your
-suggestions, but I need to confirm: does the term *EL2* feature specifically
-refer to capabilities related to ​​HCRX_EL2​​ and ​​HCR_EL2​​?
+-----BEGIN PGP SIGNATURE-----
 
-Jinqian
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmg1uM0ACgkQJNaLcl1U
+h9CaVAf+JhWl++5YMVRG9vFo1ImCJZI5FYFQ7mJZ5LUojovZL3fv7CYCLupNXGmR
+tCOTQ6FtIL/9a2jCABBUqzlvFTec7adrYq3pKPbsm7X1FjeAFG/VymJ47iUx299+
+Wk25StVVUHt+nsouPYCvP2CNIyHHtq9W6mqMiwRzHViGS7zh+DZT9/v8g58+//9t
+ePRYSCwChmsBG3/PLIyxD+ZAv9zeqyKYb75ByuwR3qPzL97t9kUIMB1/YjWw9X+I
+88GoCkig69ASPINvlnAYmJ3cTGsDR7tliKVajf5mRZL0wiUyHeMrdSr6KdjsimNt
+3AR+MJOFZrNpw44eodNmUopXcMdn9w==
+=N4RT
+-----END PGP SIGNATURE-----
 
-
->> ---
->>  arch/arm64/kvm/sys_regs.c | 1 -
->>  1 file changed, 1 deletion(-)
->>
->> diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
->> index 82430c1e1dd0..b105f156bdf6 100644
->> --- a/arch/arm64/kvm/sys_regs.c
->> +++ b/arch/arm64/kvm/sys_regs.c
->> @@ -2666,7 +2666,6 @@ static const struct sys_reg_desc 
->> sys_reg_descs[] = {
->>                      ID_AA64MMFR0_EL1_TGRAN16_2 |
->>                      ID_AA64MMFR0_EL1_ASIDBITS)),
->>      ID_WRITABLE(ID_AA64MMFR1_EL1, ~(ID_AA64MMFR1_EL1_RES0 |
->> -                    ID_AA64MMFR1_EL1_HCX |
->>                      ID_AA64MMFR1_EL1_TWED |
->>                      ID_AA64MMFR1_EL1_XNX |
->>                      ID_AA64MMFR1_EL1_VH |
->> -- 
->> 2.33.0
->>
->
+--4/1W5cdaGZgna//I--
 
