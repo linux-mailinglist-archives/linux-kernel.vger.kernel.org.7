@@ -1,114 +1,131 @@
-Return-Path: <linux-kernel+bounces-663688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-663689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53269AC4BFD
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 12:06:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AE45AC4C01
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 12:08:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C1C83A8C79
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 10:06:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 862193A5693
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 10:07:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A44EB255F5E;
-	Tue, 27 May 2025 10:06:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A3B5253F2D;
+	Tue, 27 May 2025 10:08:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="nYrmYq/+"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WpbHddE6"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C633D253B60;
-	Tue, 27 May 2025 10:06:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 898891F7098
+	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 10:07:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748340380; cv=none; b=pDR68rpan4swdjBlRG7f7voVIlF+358GVqOMfSYrSmDft3MpbHDEd4cX2W8oN2opusE58JgWXfytBn+BsshXvjNEz/rJB2tITUaCe98z7uyWnkLs+riZtjlf0aOrh9QJrysrqMgXITOmuOYR6X0yNdtgWKTIqvJFU0SPXUicI30=
+	t=1748340479; cv=none; b=eJWlYBxbcpfBL6psf+2ZUZN2rDQqsmNtJ3wLWL7DsmJ/m3H4QfrcLxIcGGQOZ19CaiwjQnzBOjRNDcrEZNKntp+gMEEnoDkehTqm0f4KmYNLNKgpoDh5kQUqAQ+jP6DOn4GgZwuf7LA0fxRgCQI6Y7xl6/sGR6V+CyxuNxenkWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748340380; c=relaxed/simple;
-	bh=SWutLzW2f0QowHEeX6Fe3tjpE4LQ738nisqkiqbIlys=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=aZWTzulEG5j7+QLUwB6EsyBbU1/OcTkR641LmX37gJ0y3JbqvjI6IllN9C3sKs5qa07gfO+ZcEm3nW4ab2IgkedRS6OOteGyLNdipoSKe08FSL0ih3yrn0F5R86xQgejnLxCOaKaf/skezOGWlYgBiCkPLMWwGeHC8G1T+WTW+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=nYrmYq/+; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 4CDE71FD77;
-	Tue, 27 May 2025 10:06:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1748340375;
+	s=arc-20240116; t=1748340479; c=relaxed/simple;
+	bh=LUDY5+QY3OOzomPMaC6ZSG6wDrqxfZg2mOMfJ6GeXy8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XdfhQoWxOEGDBYnpNnHzoff67B+z9CA1CnhOlvw2eySobCoaIYOJbNClTEgE6nOM4eqcSQBPf13wHfOxBplEp1zCeaH4xSeEs7HV8Ks//coHtkAEsjtZ5To4QECJDiW6TEab/hUGfr6N5A/BQSNtUn3ujZIaunf1jFqThq1NCeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WpbHddE6; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1748340476;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=AHN+uDsSXaJTkD0laSVsn0A5Nrq0eTHXt3UKaa7Mqnc=;
-	b=nYrmYq/+92zawj6+lX9PdBhCrVDmQ1u+KN1e/25bQ/jqN1TV7Litbr5z7PhU3HApE33vW4
-	TT/ZyzJjsCYILkLI5EyQJXBWK1JuYCvlU0b0dj7p8JsZ9w7Puj4Mnx5/Hilyr7dcHN8dYJ
-	XZBgLIKewusiawvMz1lOz9pGHufISFZ3Efza9UOhoOqayEpGP/alVN+CB7apFpOEUa6t/y
-	B8D12jzYjagNp2sF+XfPk8YYm3CgK5MQb5yQ5jnSJtSyl9NYCb7dhNoAi6GhZIRRySXsUQ
-	U0MT2SiHeG/9V4zteRFnDfViSuVbHXshR9o+5rnsUUcfaRH89JrNrwiVfn6qqw==
-From: =?utf-8?q?Alexis_Lothor=C3=A9_=28eBPF_Foundation=29?= <alexis.lothore@bootlin.com>
-Date: Tue, 27 May 2025 12:06:04 +0200
-Subject: [PATCH bpf-next v3 2/2] selftests/bpf: enable many-args tests for
- arm64
+	bh=XiWsmRysyzgIQdsMsmY38sFE/BQsReFRNj9TE4URjNA=;
+	b=WpbHddE6/q0jr5ms5MEu/opdDmB8k+zDUzETOI4SZ4hhxapODEoA2mj23c+2nI2VZeV2Gt
+	cqFxM9oRKSV/X18N4122qTt8wkF8ccGSxJCHQm8yh8UkbxxZopwJmJkGyyOR09SMX7w/Lf
+	imrEb64umUK5varGnR+/+Mi/pAELdao=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-669-FOg4vKxUNWGH701gs1TKSw-1; Tue, 27 May 2025 06:07:55 -0400
+X-MC-Unique: FOg4vKxUNWGH701gs1TKSw-1
+X-Mimecast-MFC-AGG-ID: FOg4vKxUNWGH701gs1TKSw_1748340474
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3a4cceb558aso1287634f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 03:07:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748340474; x=1748945274;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XiWsmRysyzgIQdsMsmY38sFE/BQsReFRNj9TE4URjNA=;
+        b=WWyMEjVrs3m4dEbfG4oj15m+ppvNBkyyjp/tGVXhh2BcoLpBcrFo7Q9IMyiMeavtPC
+         QzuNGdn36nIe5FKj9BPyLDkerhWwqg/HD6dJrwI3k6TJoICS6GUvDLnwZ2KigMqjh3l3
+         tCJmRiDWsgGHpjrchvuJs96xh2qrUzHjaUKF+SVrJGbyIvjHyC2S8B/1AvbkvDqIZ/Wf
+         1B++MHqonYdhIQK7rc/zBddZIwMZRMgtkw5eE8P6inrxzHSKmk7ExPI76Yk6h7EOH1pp
+         bWdTv/3LROwBjcDbDiEOPoruwc6JH8BTr2dDWIjyMDxGDXBwZ50VcrbSeW8MwjCncEHV
+         cdaA==
+X-Forwarded-Encrypted: i=1; AJvYcCWmGpvpvbins2tzsPUIUVZuqRO1Aj0++1XzSsFMTz3lj2twLUnOlbzKkmndzXEdKIDFzz6kU1DXBf1kqCw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxERmw7HkJOODxnkIk/zsvKAKkemtJwaNrS3TfsArKVp1blfJhn
+	aOjXtuH8bJnjrYYe7yzSEP/+ruNx5NZD6uobWmc2+Ou2YmfC4B1LL8G6eIbfuEHhXyqXxlVoK3N
+	GQ5uFgzy1u3UNB45LChFD0JCPFspvGUZu1k86wxEwE+WwO6aljRiM793uNowO7cZ42LetZ+7IUt
+	5b
+X-Gm-Gg: ASbGncu19HjgCNebKMDfaKRalk2pRgX9WGM8nMnGLBnMfBWBGIl9xbk4pak7P5aQtdu
+	Bi04cxLZpQF1beut/ZFJxqaz2lHm3YI1QV4vz6wUy4kVLf8r+Y/lSlOMdvdix2JQH7dZUWsJ54P
+	S4t+XK8xYSUQOrqzvP+CxsnWPdg9Aj19eiITOQWhLoIi829CAZ9FD90Mdb+7Y4wttpwyydvw9Z3
+	6P7oA75aEAZx87Vr/jgHhGslXKqP6FrwREMvFx3tBFzFAI9funiZnxYR82fwx802HJTYlUJXOz/
+	XD4wsPnA4u8o3htsuaY=
+X-Received: by 2002:a05:6000:4211:b0:3a3:7bad:29cb with SMTP id ffacd0b85a97d-3a4cb499ce9mr12013381f8f.52.1748340474091;
+        Tue, 27 May 2025 03:07:54 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFLNHWzaadRk4BeFT9N8GXrWjrNdkIG2aaLNq2H8vKxDSQ3pCejWiKsjDOLcOZjjg0kw5/fXQ==
+X-Received: by 2002:a05:6000:4211:b0:3a3:7bad:29cb with SMTP id ffacd0b85a97d-3a4cb499ce9mr12013335f8f.52.1748340473655;
+        Tue, 27 May 2025 03:07:53 -0700 (PDT)
+Received: from ?IPV6:2a0d:3344:2728:e810::f39? ([2a0d:3344:2728:e810::f39])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4d0eeec5dsm8369268f8f.46.2025.05.27.03.07.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 27 May 2025 03:07:53 -0700 (PDT)
+Message-ID: <dbcb476d-9bfd-42bd-bef8-8085baa05063@redhat.com>
+Date: Tue, 27 May 2025 12:06:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250527-many_args_arm64-v3-2-3faf7bb8e4a2@bootlin.com>
-References: <20250527-many_args_arm64-v3-0-3faf7bb8e4a2@bootlin.com>
-In-Reply-To: <20250527-many_args_arm64-v3-0-3faf7bb8e4a2@bootlin.com>
-To: Alexei Starovoitov <ast@kernel.org>, 
- Daniel Borkmann <daniel@iogearbox.net>, 
- John Fastabend <john.fastabend@gmail.com>, 
- Andrii Nakryiko <andrii@kernel.org>, 
- Martin KaFai Lau <martin.lau@linux.dev>, 
- Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
- Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
- Jiri Olsa <jolsa@kernel.org>, Puranjay Mohan <puranjay@kernel.org>, 
- Xu Kuohai <xukuohai@huaweicloud.com>, 
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
- Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- Florent Revest <revest@chromium.org>
-Cc: Bastien Curutchet <bastien.curutchet@bootlin.com>, 
- ebpf@linuxfoundation.org, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kselftest@vger.kernel.org, 
- linux-stm32@st-md-mailman.stormreply.com, 
- =?utf-8?q?Alexis_Lothor=C3=A9_=28eBPF_Foundation=29?= <alexis.lothore@bootlin.com>
-X-Mailer: b4 0.14.2
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgddvtddtleculddtuddrgeefvddrtddtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephfffufggtgfgkfhfjgfvvefosehtkeertdertdejnecuhfhrohhmpeetlhgvgihishcunfhothhhohhrroculdgvuefrhfcuhfhouhhnuggrthhiohhnmdcuoegrlhgvgihishdrlhhothhhohhrvgessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepleejkeetffefveelgeeklefhtefhgfeigeduveffjeehleeifeefjedtudejgeeunecukfhppedvrgdtvdemkeegvdekmehfleegtgemvgdttdemmeguieehnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddvmeekgedvkeemfhelgegtmegvtddtmeemugeihedphhgvlhhopegludelvddrudeikedruddrudeljegnpdhmrghilhhfrhhomheprghlvgigihhsrdhlohhthhhorhgvsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeeftddprhgtphhtthhopehsohhngheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohephhgrohhluhhosehgohhoghhlvgdrtghomhdprhgtphhtthhopehthhhomhgrshdrphgvthgriiiiohhnihessghoohhtlhhinhdrtghomhdprhgtphhtthhop
- ehsughfsehfohhmihgthhgvvhdrmhgvpdhrtghpthhtohepsghpfhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehjohhlshgrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhkvghrnhgvlheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehpuhhrrghnjhgrhieskhgvrhhnvghlrdhorhhg
-X-GND-Sasl: alexis.lothore@bootlin.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v2 1/3] queue_api: add subqueue variant
+ netif_subqueue_sent
+To: Gur Stavi <gur.stavi@huawei.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Simon Horman <horms@kernel.org>,
+ Fan Gong <gongfan1@huawei.com>
+References: <cover.1747896423.git.gur.stavi@huawei.com>
+ <19057ca470251f5c48d90f379edafdb639278339.1747896423.git.gur.stavi@huawei.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <19057ca470251f5c48d90f379edafdb639278339.1747896423.git.gur.stavi@huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Now that support for up to 12 args is enabled for tracing programs on
-ARM64, enable the existing tests for this feature on this architecture.
+On 5/22/25 8:54 AM, Gur Stavi wrote:
+> diff --git a/include/net/netdev_queues.h b/include/net/netdev_queues.h
+> index ba2eaf39089b..7b6656ee549f 100644
+> --- a/include/net/netdev_queues.h
+> +++ b/include/net/netdev_queues.h
+> @@ -294,6 +294,14 @@ netdev_txq_completed_mb(struct netdev_queue *dev_queue,
+>  		netif_txq_try_stop(_txq, get_desc, start_thrs);		\
+>  	})
+>  
+> +#define netif_subqueue_sent(dev, idx, bytes)				\
+> +	({								\
+> +		struct netdev_queue *_txq;				\
+> +									\
+> +		_txq = netdev_get_tx_queue(dev, idx);			\
+> +		netdev_tx_sent_queue(_txq, bytes);			\
+> +	})
 
-Signed-off-by: Alexis Lothoré (eBPF Foundation) <alexis.lothore@bootlin.com>
----
-Changes in v2:
-- keep tracing struct tests disabled, as structs passed on stack are not
-  handled by the new revision
----
- tools/testing/selftests/bpf/DENYLIST.aarch64 | 2 --
- 1 file changed, 2 deletions(-)
+The above could be (and should be) a static inline function. Note that
+(most of) the existing queue API helper are macros to allow quering the
+tx ring without using indirect calls/function pointers.
 
-diff --git a/tools/testing/selftests/bpf/DENYLIST.aarch64 b/tools/testing/selftests/bpf/DENYLIST.aarch64
-index 6d8feda27ce9de07d77d6e384666082923e3dc76..12e99c0277a8cbf9e63e8f6d3a108c8a1208407b 100644
---- a/tools/testing/selftests/bpf/DENYLIST.aarch64
-+++ b/tools/testing/selftests/bpf/DENYLIST.aarch64
-@@ -1,3 +1 @@
--fentry_test/fentry_many_args                     # fentry_many_args:FAIL:fentry_many_args_attach unexpected error: -524
--fexit_test/fexit_many_args                       # fexit_many_args:FAIL:fexit_many_args_attach unexpected error: -524
- tracing_struct/struct_many_args                  # struct_many_args:FAIL:tracing_struct_many_args__attach unexpected error: -524
+Thanks,
 
--- 
-2.49.0
+Paolo
 
 
