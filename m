@@ -1,163 +1,177 @@
-Return-Path: <linux-kernel+bounces-663501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-663506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E3CAAC48FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 09:03:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1766FAC4914
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 09:13:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C2053A8700
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 07:02:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7348173E4B
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 07:13:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AB2272614;
-	Tue, 27 May 2025 07:02:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2A3F1FC7D2;
+	Tue, 27 May 2025 07:13:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Yi4dtCcf"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="rclJDp+J"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EBCE1F9A8B
-	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 07:02:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87408A927;
+	Tue, 27 May 2025 07:13:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748329361; cv=none; b=JQ5d6+KJZVafQF06KME/+vGQeEROIryZth0sJ5FqO/F2YsCzM70oiBZllOBdjb1FKln8ltoMn581+2Ydcp0ESMd/PASwdpYa8HO2kiiimTmBrnuyotM4qJh6IZV09QRNVecK+1SVT5SgtY3sH+PZdITg/MoZ8sdnFjhOIkH7XO0=
+	t=1748330008; cv=none; b=MpIkKDafAaMfPEawl419FxOQOfgCpcRUoVx2khj+F6UCjIHYXN1Wz7jx64at62W9dtfF0/e17weZa7M2tEk9g2bqcpMgNT8mW8xctahy5APiWdgboWsHuxFoQOAfBFWw3GG87Mah7q6UTkrtmScbSYn1hKldTz4PFSzM50RpN0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748329361; c=relaxed/simple;
-	bh=uerM567QcQCVqLcNbyZwn68Uozgpe9FXmx2lyhpHDvY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lOz74JHhT/XpbE5fdCQ+tUEJZc+muEUKgg6DgV2u1xW6j5GKlgZYr0ARcXViHCVjCDjlqOcJWiLjvMjiJLLr8kXnsmVpLCAGb8UX3x/t+UB/uPcIF1D0Zq4/lgC0miv/wzcKEa5mxjS54LSAe2BhMi/i/y7qpBZu6x7tLzSyqG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Yi4dtCcf; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1748329358;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lPj65lDKBn8X+w6dITxUNDiVhmFCDqyup7L8wrKjKWs=;
-	b=Yi4dtCcf+bzMTess/9cd0O1keZtHM/VSd5wGkglld6w41j+37osuioI1u1JYegBohXH+Tr
-	MWhOIASd/ULT+e3Di4pDa7FAAEfMOTIL69v5ghtyUOgiOkG4kVW/TpbxgcwRDf8zwn8gJ+
-	8XVZs0OUCuihB5n9uy0TxRDJgrJA1jo=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-561-rg2SgysuNz-_wlNw9Xleag-1; Tue, 27 May 2025 03:02:34 -0400
-X-MC-Unique: rg2SgysuNz-_wlNw9Xleag-1
-X-Mimecast-MFC-AGG-ID: rg2SgysuNz-_wlNw9Xleag_1748329354
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3a4d51e563eso789091f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 00:02:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748329353; x=1748934153;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lPj65lDKBn8X+w6dITxUNDiVhmFCDqyup7L8wrKjKWs=;
-        b=k9SlHrX9a6dGeOuA41UreLHrq6cqA8nGvsV5t4u+8KdARUz3dStsxqkKnG0Ii9OuNI
-         6fhYT8s0LATliFjDJ7PiiTl2iFBOkE/Ed6n5WsdnoQgfos2Fh/Z31qxXUNHl67+zvhVX
-         ZeQg5dNFZ4Gjws4J80NDmQA60KrIKvPspTsm2CXmj4W81Khux0jDUvSEVJBQGv0yEtO9
-         5LZG3mM8Xve7iLMCqU8HpLeDOdCm1GSv4g/eU7Zm5I5OuBicR019wsVyVyQx6FA6p9Ls
-         5Mjt7aHn9PjGMMsvgPHq2Gyv2xDkzXqZ7AZDCO0qn70/LsOV/1yCs/JTk2m3Hv7c7bTq
-         l5Ug==
-X-Forwarded-Encrypted: i=1; AJvYcCVXwfWMnCZggh/ctP4GTod/SQyQH7Eo43MT/qfRdw6bwEWaJ6SXn2g7o0Mgg3yUBIVIg/AFqaDzWOEIfpY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAtVb/Yy2vIgJE4oyX1T3NE+KFJvb7zJ8YL8k7bQEe5Uf7zwz7
-	1KXH2s22OM7VmvBNNCJxDueMUzKEY2tBoj1jGj1ipjXU9XgbjEFFgy5g9XfKYXIh29eaU1RmtCE
-	jiCicm+8NQSvzhgKEhnyesx1EXrVeMilzsrmyAcjBGJpiv4kXLElHW5WgS7gpYSxIfw==
-X-Gm-Gg: ASbGnctybPO53+RkmbYWy25tFT01XKW+Bv+eUI++oVGiri22lUYlhVG3AazHW1uyXpv
-	+rpiUhZKz/LgMPMzOSgrB1G8wlHAebyc1GqlNPaaG+dFuolCc6LzBKEnnMHOBmAO4mzs/xKo+KY
-	Hn89CEQrfHd7bl6tZjhP7YMhAybI9uAt60q6DpfZmWvuNFzIudJrYqUWDOtrNRk4kSMmPfr3w9w
-	emZbQT+yGkUrsNrYXVDDZx63VUArRE0NU5DBLNNolt953tWJbjI/eJJOeVZRdLaEtB9j1z/dujo
-	io5A26ZO/gPYQCmhLfds9/WkOmAwKQDIJNEP8dOjoAGSD24w2UJicLepn6I=
-X-Received: by 2002:a5d:5543:0:b0:3a4:cf66:efbb with SMTP id ffacd0b85a97d-3a4cf66f1f6mr7608615f8f.57.1748329353536;
-        Tue, 27 May 2025 00:02:33 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGex5mHhM/OYaq2gRKUAD/HxHUJY3MptMrHBU8jm/eQhY8uxpjEvS25/QUCzUXZRuezIVGAwQ==
-X-Received: by 2002:a5d:5543:0:b0:3a4:cf66:efbb with SMTP id ffacd0b85a97d-3a4cf66f1f6mr7608571f8f.57.1748329353087;
-        Tue, 27 May 2025 00:02:33 -0700 (PDT)
-Received: from ?IPV6:2a0d:3344:2728:e810:827d:a191:aa5f:ba2f? ([2a0d:3344:2728:e810:827d:a191:aa5f:ba2f])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4cc52ab88sm9930473f8f.11.2025.05.27.00.02.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 27 May 2025 00:02:32 -0700 (PDT)
-Message-ID: <e1429351-3c9b-40e0-b50d-de6527d0a05b@redhat.com>
-Date: Tue, 27 May 2025 09:02:28 +0200
+	s=arc-20240116; t=1748330008; c=relaxed/simple;
+	bh=TNjh/wuX5iT/K8itYz4k8cQk43YjRqP9QbGeqWfxOqs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=iDE7Fsk8/d/WNpyYJWFhOl5arJhj4ztAjEnBc1VQxlCI6cxLQmZLdF3hdZFwxNRQJ9ZJmQiqtOsuElmhIawWSc3YFa1IE26Jnd9DtGp3SSARgKdsu93ikj1rwR59hEqwGttGf34OLXd2CYpnuEczBPHRBpo0DEwYPwEAK2+qQhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=rclJDp+J; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1748330007; x=1779866007;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=TNjh/wuX5iT/K8itYz4k8cQk43YjRqP9QbGeqWfxOqs=;
+  b=rclJDp+J92ES0aKAS7FWCAznuc85TD8xq8nJQ9rGtVmBO8ZddtiKEs8N
+   4npbgTxiVgbyG91UwpGxNgDXE+1pB5WplF6syr1UnztegG8gs//GLz02c
+   xLf+//8OPCSUENmL7dgj7pLJQZ5ev2Lx5x7B5/NwDAp0hj7huE4/rzW5y
+   MLa25QGe0EDCjKBUuGvGG3QcIXpSB7Z9pfiQ9nXaHbh/T78iWerJhCaIb
+   spuUKarM90kq7TMg967Fr2sX2HbUqOLpAfzcTTug3uJpAjHX73THXr1Wg
+   s0LJY2EfM+54pEaxoeRkwOa6rWdpLSZoKDQVxH9yUSlusqVcAEQE9rV5X
+   g==;
+X-CSE-ConnectionGUID: 1ZW92RbUSnGn2JVxkn6AyA==
+X-CSE-MsgGUID: G21TlYkQSkmY8JgtFPgYoQ==
+X-IronPort-AV: E=Sophos;i="6.15,317,1739862000"; 
+   d="scan'208";a="273468961"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 27 May 2025 00:13:20 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Tue, 27 May 2025 00:13:07 -0700
+Received: from DEN-DL-M31836.microchip.com (10.10.85.11) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
+ 15.1.2507.44 via Frontend Transport; Tue, 27 May 2025 00:13:05 -0700
+From: Horatiu Vultur <horatiu.vultur@microchip.com>
+To: <UNGLinuxDriver@microchip.com>, <andrew+netdev@lunn.ch>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Horatiu Vultur
+	<horatiu.vultur@microchip.com>
+Subject: [PATCH net] net: lan966x: Make sure to insert the vlan tags also in host mode
+Date: Tue, 27 May 2025 09:08:50 +0200
+Message-ID: <20250527070850.3504582-1-horatiu.vultur@microchip.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v2 8/8] net: core: Convert
- dev_set_mac_address_user() to use struct sockaddr_storage
-To: Kees Cook <kees@kernel.org>, Kuniyuki Iwashima <kuniyu@amazon.com>
-Cc: Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
- Jason Wang <jasowang@redhat.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Simon Horman <horms@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Cosmin Ratiu <cratiu@nvidia.com>,
- Vladimir Oltean <vladimir.oltean@nxp.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Kory Maincent <kory.maincent@bootlin.com>, Maxim Georgiev
- <glipus@gmail.com>, netdev@vger.kernel.org,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
- Chaitanya Kulkarni <kch@nvidia.com>,
- Mike Christie <michael.christie@oracle.com>,
- Max Gurtovoy <mgurtovoy@nvidia.com>, Maurizio Lombardi
- <mlombard@redhat.com>, Dmitry Bogdanov <d.bogdanov@yadro.com>,
- Mingzhe Zou <mingzhe.zou@easystack.cn>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- "Dr. David Alan Gilbert" <linux@treblig.org>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>, Lei Yang
- <leiyang@redhat.com>, Ido Schimmel <idosch@nvidia.com>,
- Samuel Mendoza-Jonas <sam@mendozajonas.com>,
- Paul Fertser <fercerpav@gmail.com>, Alexander Aring <alex.aring@gmail.com>,
- Stefan Schmidt <stefan@datenfreihafen.org>,
- Miquel Raynal <miquel.raynal@bootlin.com>, Hayes Wang
- <hayeswang@realtek.com>, Douglas Anderson <dianders@chromium.org>,
- Grant Grundler <grundler@chromium.org>, Jay Vosburgh <jv@jvosburgh.net>,
- "K. Y. Srinivasan" <kys@microsoft.com>,
- Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
- Dexuan Cui <decui@microsoft.com>, Jiri Pirko <jiri@resnulli.us>,
- Aleksander Jan Bajkowski <olek2@wp.pl>, Philipp Hahn <phahn-oss@avm.de>,
- Eric Biggers <ebiggers@google.com>, Ard Biesheuvel <ardb@kernel.org>,
- Al Viro <viro@zeniv.linux.org.uk>, Ahmed Zaki <ahmed.zaki@intel.com>,
- Alexander Lobakin <aleksander.lobakin@intel.com>,
- Xiao Liang <shaw.leon@gmail.com>, linux-kernel@vger.kernel.org,
- linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
- target-devel@vger.kernel.org, linux-wpan@vger.kernel.org,
- linux-usb@vger.kernel.org, linux-hyperv@vger.kernel.org,
- linux-hardening@vger.kernel.org
-References: <20250521204310.it.500-kees@kernel.org>
- <20250521204619.2301870-8-kees@kernel.org>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20250521204619.2301870-8-kees@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On 5/21/25 10:46 PM, Kees Cook wrote:
-> diff --git a/net/core/dev_ioctl.c b/net/core/dev_ioctl.c
-> index fff13a8b48f1..616479e71466 100644
-> --- a/net/core/dev_ioctl.c
-> +++ b/net/core/dev_ioctl.c
-> @@ -572,9 +572,11 @@ static int dev_ifsioc(struct net *net, struct ifreq *ifr, void __user *data,
->  		return dev_set_mtu(dev, ifr->ifr_mtu);
->  
->  	case SIOCSIFHWADDR:
-> -		if (dev->addr_len > sizeof(struct sockaddr))
-> +		if (dev->addr_len > sizeof(ifr->ifr_hwaddr))
->  			return -EINVAL;
-> -		return dev_set_mac_address_user(dev, &ifr->ifr_hwaddr, NULL);
-> +		return dev_set_mac_address_user(dev,
-> +						(struct sockaddr_storage *)&ifr->ifr_hwaddr,
-> +						NULL);
+When running these commands on DUT (and similar at the other end)
+ip link set dev eth0 up
+ip link add link eth0 name eth0.10 type vlan id 10
+ip addr add 10.0.0.1/24 dev eth0.10
+ip link set dev eth0.10 up
+ping 10.0.0.2/24
 
-Side note for a possible follow-up: the above pattern is repeated a
-couple of times: IMHO consolidating it into an helper would be nice.
-Also such helper could/should explicitly convert ifr->ifr_hwaddr to
-sockaddr_storage and avoid the cast.
+The ping will fail.
 
-/P
+The reason why is failing is because, the network interfaces for lan966x
+have a flag saying that the HW can insert the vlan tags into the
+frames(NETIF_F_HW_VLAN_CTAG_TX). Meaning that the frames that are
+transmitted don't have the vlan tag inside the skb data, but they have
+it inside the skb. We already get that vlan tag and put it in the IFH
+but the problem is that we don't configure the HW to rewrite the frame
+when the interface is in host mode.
+The fix consists in actually configuring the HW to insert the vlan tag
+if it is different than 0.
+
+Fixes: 6d2c186afa5d ("net: lan966x: Add vlan support.")
+Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
+---
+ .../ethernet/microchip/lan966x/lan966x_main.c |  1 +
+ .../ethernet/microchip/lan966x/lan966x_main.h |  1 +
+ .../microchip/lan966x/lan966x_switchdev.c     |  1 +
+ .../ethernet/microchip/lan966x/lan966x_vlan.c | 21 +++++++++++++++++++
+ 4 files changed, 24 insertions(+)
+
+diff --git a/drivers/net/ethernet/microchip/lan966x/lan966x_main.c b/drivers/net/ethernet/microchip/lan966x/lan966x_main.c
+index 427bdc0e4908c..7001584f1b7a6 100644
+--- a/drivers/net/ethernet/microchip/lan966x/lan966x_main.c
++++ b/drivers/net/ethernet/microchip/lan966x/lan966x_main.c
+@@ -879,6 +879,7 @@ static int lan966x_probe_port(struct lan966x *lan966x, u32 p,
+ 	lan966x_vlan_port_set_vlan_aware(port, 0);
+ 	lan966x_vlan_port_set_vid(port, HOST_PVID, false, false);
+ 	lan966x_vlan_port_apply(port);
++	lan966x_vlan_port_rew_host(port);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/net/ethernet/microchip/lan966x/lan966x_main.h b/drivers/net/ethernet/microchip/lan966x/lan966x_main.h
+index 1f9df67f05044..4f75f06883693 100644
+--- a/drivers/net/ethernet/microchip/lan966x/lan966x_main.h
++++ b/drivers/net/ethernet/microchip/lan966x/lan966x_main.h
+@@ -497,6 +497,7 @@ void lan966x_vlan_port_apply(struct lan966x_port *port);
+ bool lan966x_vlan_cpu_member_cpu_vlan_mask(struct lan966x *lan966x, u16 vid);
+ void lan966x_vlan_port_set_vlan_aware(struct lan966x_port *port,
+ 				      bool vlan_aware);
++void lan966x_vlan_port_rew_host(struct lan966x_port *port);
+ int lan966x_vlan_port_set_vid(struct lan966x_port *port,
+ 			      u16 vid,
+ 			      bool pvid,
+diff --git a/drivers/net/ethernet/microchip/lan966x/lan966x_switchdev.c b/drivers/net/ethernet/microchip/lan966x/lan966x_switchdev.c
+index 1c88120eb291a..bcb4db76b75cd 100644
+--- a/drivers/net/ethernet/microchip/lan966x/lan966x_switchdev.c
++++ b/drivers/net/ethernet/microchip/lan966x/lan966x_switchdev.c
+@@ -297,6 +297,7 @@ static void lan966x_port_bridge_leave(struct lan966x_port *port,
+ 	lan966x_vlan_port_set_vlan_aware(port, false);
+ 	lan966x_vlan_port_set_vid(port, HOST_PVID, false, false);
+ 	lan966x_vlan_port_apply(port);
++	lan966x_vlan_port_rew_host(port);
+ }
+ 
+ int lan966x_port_changeupper(struct net_device *dev,
+diff --git a/drivers/net/ethernet/microchip/lan966x/lan966x_vlan.c b/drivers/net/ethernet/microchip/lan966x/lan966x_vlan.c
+index fa34a739c748e..f158ec6ab10cc 100644
+--- a/drivers/net/ethernet/microchip/lan966x/lan966x_vlan.c
++++ b/drivers/net/ethernet/microchip/lan966x/lan966x_vlan.c
+@@ -149,6 +149,27 @@ void lan966x_vlan_port_set_vlan_aware(struct lan966x_port *port,
+ 	port->vlan_aware = vlan_aware;
+ }
+ 
++/* When the interface is in host mode, the interface should not be vlan aware
++ * but it should insert all the tags that it gets from the network stack.
++ * The tags are no in the data of the frame but actually in the skb and the ifh
++ * is confiured already to get this tag. So what we need to do is to update the
++ * rewriter to insert the vlan tag for all frames which have a vlan tag
++ * different than 0.
++ */
++void lan966x_vlan_port_rew_host(struct lan966x_port *port)
++{
++	struct lan966x *lan966x = port->lan966x;
++	u32 val;
++
++	/* Tag all frames except when VID == DEFAULT_VLAN */
++	val = REW_TAG_CFG_TAG_CFG_SET(1);
++
++	/* Update only some bits in the register */
++	lan_rmw(val,
++		REW_TAG_CFG_TAG_CFG,
++		lan966x, REW_TAG_CFG(port->chip_port));
++}
++
+ void lan966x_vlan_port_apply(struct lan966x_port *port)
+ {
+ 	struct lan966x *lan966x = port->lan966x;
+-- 
+2.34.1
 
 
