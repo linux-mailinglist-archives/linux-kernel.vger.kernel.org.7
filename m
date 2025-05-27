@@ -1,202 +1,205 @@
-Return-Path: <linux-kernel+bounces-663810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-663807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E6E0AC4DCA
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 13:41:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AFD6AC4DBF
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 13:39:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54DAF1895015
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 11:41:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6715517EE42
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 11:39:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8E8A25A323;
-	Tue, 27 May 2025 11:41:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Bbuyqjym"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46E702566E9;
+	Tue, 27 May 2025 11:39:08 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6471219D07A;
-	Tue, 27 May 2025 11:41:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95FBC4A0A;
+	Tue, 27 May 2025 11:39:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748346098; cv=none; b=H2pdqofn1mKZUYk0l/uFlrFbfRcGKG73U87icduQUXY6khgPsxxK6v0qx1vctTwZd1SFUp9FiqDMWElijiY8vNSr7zgE3g3S22/ZJqoPMxf2C/VeRMHKaspiUCRnU1K5X4Zo+KivMjYT5FEyh3aNroYx5LHPrTtlA30ZoLZeGqM=
+	t=1748345947; cv=none; b=AL4rKv6VMdVCCssV0n1kQehdWucYnLEWce0g7Ido535z+yb+ADz4gr3v3Jfxc+uUKr66wQ6XLyhJQ+cG5kmj3pmFLPSf2Wpr/Php75koy+8p+VhJRhuKF0t+d0KbqGDGyUouU3ZC20KPK49E9qxv9TkPCT5mPxbiMYBeDMXAJlc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748346098; c=relaxed/simple;
-	bh=W5E3Xu6pVeg4WGDqRtohIYctx/gK/C6GG/OwK5hM5A4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mrU7sGgYd8csN2xcPnEFVVw14FySm5AcSla0UsuW7QgGYMnurZbCLttMa1G1FPO1zQpOUW52JxNHkCmpRFwZszi9C8b1P+XBWhTWNimO9Lc45AHm4MFMLNYSRjH9JmIP5xQ+9z+423Vlow+r0He4G3S1kECOSACsxCZCCdUakL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Bbuyqjym; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1748346096; x=1779882096;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=W5E3Xu6pVeg4WGDqRtohIYctx/gK/C6GG/OwK5hM5A4=;
-  b=BbuyqjympMNyPwv2MjJ+Y0uT24Zjuqe27Er6nWmWLUy4W2Xnx7RAecrT
-   JmTVqm9OkhGwps1/MW3r+iNUjdZkcGbTFgauoQx5PYbUf+VcFwqZgHnwz
-   hUQKEE3QQNc3lJnYKCFGgY9vSb4rr/k0GcKATRcDqbgmsr+XWgNb3rkMh
-   W55PvZULxrc4wQY+IlIqrPuBrrD40rY0TXzYS9Dtz+0axDuyEIEbdSJtI
-   rMTcWGCnOCEO8/gOmsaKykm9186BEEFt+pZzxFFHGiaS29ZkhFN4933Mt
-   5F6Z0wk9QpH/hD4D21vlbtIE+V4P5HhCgOK91NkFCRXuwXfnyPu2+vZYr
-   g==;
-X-CSE-ConnectionGUID: hmcyEDVTRUShTqj4PJv1vA==
-X-CSE-MsgGUID: YjOZKVT5RGmUL1k0ZbVgbA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11445"; a="61385808"
-X-IronPort-AV: E=Sophos;i="6.15,318,1739865600"; 
-   d="scan'208";a="61385808"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2025 04:41:35 -0700
-X-CSE-ConnectionGUID: Bs/edGu0Tde6lrxtkstj2A==
-X-CSE-MsgGUID: XtLu7GQ6T3+4Ynx8hbYSEw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,318,1739865600"; 
-   d="scan'208";a="143749122"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2025 04:41:30 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1uJsgQ-000000019Z8-21f1;
-	Tue, 27 May 2025 14:41:26 +0300
-Date: Tue, 27 May 2025 14:41:26 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Anup Patel <apatel@ventanamicro.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Len Brown <lenb@kernel.org>, Sunil V L <sunilvl@ventanamicro.com>,
-	Rahul Pathak <rpathak@ventanamicro.com>,
-	Leyfoon Tan <leyfoon.tan@starfivetech.com>,
-	Atish Patra <atish.patra@linux.dev>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Anup Patel <anup@brainfault.org>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 06/23] mailbox: Allow controller specific mapping
- using fwnode
-Message-ID: <aDWk5kIN3lkB0Jw2@smile.fi.intel.com>
-References: <20250525084710.1665648-1-apatel@ventanamicro.com>
- <20250525084710.1665648-7-apatel@ventanamicro.com>
+	s=arc-20240116; t=1748345947; c=relaxed/simple;
+	bh=v8uyg8afEdAi69p+DRGtrXU2w+DDZuGr3H1wT8pqhrQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=diuUqIlH1R3u3eL26QmZpU1UXkZ6gJ2Aj9QCZmxGpGnP93vIqSe5XxId9zCxReBuLCVTKOwATx4BObQqseXSPtTrQn+uM+O4N1IZ6MKaF+gaT2jWV0r5kUkS20GMFAL8VQQwyaj/CutxRylk8HjCJUxwvo+YVsLHNxzALwxZ6+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4b69bv1vjlznfgc;
+	Tue, 27 May 2025 19:37:47 +0800 (CST)
+Received: from dggemv712-chm.china.huawei.com (unknown [10.1.198.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id B945F1402C4;
+	Tue, 27 May 2025 19:39:01 +0800 (CST)
+Received: from kwepemq200002.china.huawei.com (7.202.195.90) by
+ dggemv712-chm.china.huawei.com (10.1.198.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 27 May 2025 19:39:01 +0800
+Received: from localhost.localdomain (10.175.104.82) by
+ kwepemq200002.china.huawei.com (7.202.195.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 27 May 2025 19:39:00 +0800
+From: Dong Chenchen <dongchenchen2@huawei.com>
+To: <hawk@kernel.org>, <ilias.apalodimas@linaro.org>, <davem@davemloft.net>,
+	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
+	<horms@kernel.org>, <almasrymina@google.com>, <linyunsheng@huawei.com>,
+	<toke@redhat.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<zhangchangzhong@huawei.com>, Dong Chenchen <dongchenchen2@huawei.com>,
+	<syzbot+204a4382fcb3311f3858@syzkaller.appspotmail.com>
+Subject: [PATCH net v2] page_pool: Fix use-after-free in page_pool_recycle_in_ring
+Date: Tue, 27 May 2025 19:41:52 +0800
+Message-ID: <20250527114152.3119109-1-dongchenchen2@huawei.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250525084710.1665648-7-apatel@ventanamicro.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemq200002.china.huawei.com (7.202.195.90)
 
-On Sun, May 25, 2025 at 02:16:53PM +0530, Anup Patel wrote:
-> Introduce optional fw_node() callback which allows a mailbox controller
-> driver to provide controller specific mapping using fwnode.
-> 
-> The Linux OF framework already implements fwnode operations for the
-> Linux DD framework so the fw_xlate() callback works fine with device
-> tree as well.
+syzbot reported a uaf in page_pool_recycle_in_ring:
 
-...
+BUG: KASAN: slab-use-after-free in lock_release+0x151/0xa30 kernel/locking/lockdep.c:5862
+Read of size 8 at addr ffff8880286045a0 by task syz.0.284/6943
 
->  struct mbox_chan *mbox_request_channel(struct mbox_client *cl, int index)
->  {
-> +	struct fwnode_reference_args fwspec;
+CPU: 0 UID: 0 PID: 6943 Comm: syz.0.284 Not tainted 6.13.0-rc3-syzkaller-gdfa94ce54f41 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:378 [inline]
+ print_report+0x169/0x550 mm/kasan/report.c:489
+ kasan_report+0x143/0x180 mm/kasan/report.c:602
+ lock_release+0x151/0xa30 kernel/locking/lockdep.c:5862
+ __raw_spin_unlock_bh include/linux/spinlock_api_smp.h:165 [inline]
+ _raw_spin_unlock_bh+0x1b/0x40 kernel/locking/spinlock.c:210
+ spin_unlock_bh include/linux/spinlock.h:396 [inline]
+ ptr_ring_produce_bh include/linux/ptr_ring.h:164 [inline]
+ page_pool_recycle_in_ring net/core/page_pool.c:707 [inline]
+ page_pool_put_unrefed_netmem+0x748/0xb00 net/core/page_pool.c:826
+ page_pool_put_netmem include/net/page_pool/helpers.h:323 [inline]
+ page_pool_put_full_netmem include/net/page_pool/helpers.h:353 [inline]
+ napi_pp_put_page+0x149/0x2b0 net/core/skbuff.c:1036
+ skb_pp_recycle net/core/skbuff.c:1047 [inline]
+ skb_free_head net/core/skbuff.c:1094 [inline]
+ skb_release_data+0x6c4/0x8a0 net/core/skbuff.c:1125
+ skb_release_all net/core/skbuff.c:1190 [inline]
+ __kfree_skb net/core/skbuff.c:1204 [inline]
+ sk_skb_reason_drop+0x1c9/0x380 net/core/skbuff.c:1242
+ kfree_skb_reason include/linux/skbuff.h:1263 [inline]
+ __skb_queue_purge_reason include/linux/skbuff.h:3343 [inline]
 
-+ property.h (if not done yet)
+root cause is:
 
-> -	int ret;
-> +	int i, ret;
+page_pool_recycle_in_ring
+  ptr_ring_produce
+    spin_lock(&r->producer_lock);
+    WRITE_ONCE(r->queue[r->producer++], ptr)
+      //recycle last page to pool
+				page_pool_release
+				  page_pool_scrub
+				    page_pool_empty_ring
+				      ptr_ring_consume
+				      page_pool_return_page  //release all page
+				  __page_pool_destroy
+				     free_percpu(pool->recycle_stats);
+				     free(pool) //free
 
-Why is 'i' signed?
+     spin_unlock(&r->producer_lock); //pool->ring uaf read
+  recycle_stat_inc(pool, ring);
 
-> -	if (!dev || !dev->of_node) {
-> -		pr_debug("%s: No owner device node\n", __func__);
-> +	if (!dev || !dev->fwnode) {
+page_pool can be free while page pool recycle the last page in ring.
+Add producer-lock barrier to page_pool_release to prevent the page
+pool from being free before all pages have been recycled.
 
-Do not dereference fwnode directly. Use dev_fwnode.
+recycle_stat_inc() is empty when CONFIG_PAGE_POOL_STATS is not
+enabled, which will trigger Wempty-body build warning. Add definition
+for pool stat macro to fix warning.
 
-> +		pr_debug("%s: No owner %s\n", __func__, !dev ? "device" : "fwnode");
+Suggested-by: Jakub Kacinski <kuba@kernel.org>
+Link: https://lore.kernel.org/netdev/20250513083123.3514193-1-dongchenchen2@huawei.com
+Fixes: ff7d6b27f894 ("page_pool: refurbish version of page_pool code")
+Reported-by: syzbot+204a4382fcb3311f3858@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=204a4382fcb3311f3858
+Signed-off-by: Dong Chenchen <dongchenchen2@huawei.com>
+Reviewed-by: Toke Høiland-Jørgensen <toke@redhat.com>
+Reviewed-by: Mina Almasry <almasrymina@google.com>
+---
+Changes in v2:
+ - Change the return type from int to bool
+ - Fix Wempty-body warn of recycle_stat_inc
+---
+ net/core/page_pool.c | 27 ++++++++++++++-------------
+ 1 file changed, 14 insertions(+), 13 deletions(-)
 
-Use positive conditional.
-
-__func__ is redundant it debug messages. With Dynamic Debug enabled it may be
-switched at run-time.
-
->  		return ERR_PTR(-ENODEV);
->  	}
->  
-> -	ret = of_parse_phandle_with_args(dev->of_node, "mboxes", "#mbox-cells",
-> -					 index, &spec);
-> +	ret = fwnode_property_get_reference_args(dev->fwnode, "mboxes",
-
-	struct fwnode_handle *fwnode = dev_fwnode(dev);
-
-> +						 "#mbox-cells", 0, index, &fwspec);
->  	if (ret) {
->  		dev_dbg(dev, "%s: can't parse \"mboxes\" property\n", __func__);
->  		return ERR_PTR(ret);
->  	}
-
-> +	memset(&spec, 0, sizeof(spec));
-> +	if (dev->of_node) {
-
-What is this check for?
-
-> +		spec.np = to_of_node(fwspec.fwnode);
-> +		spec.args_count = fwspec.nargs;
-> +		for (i = 0; i < spec.args_count; i++)
-> +			spec.args[i] = fwspec.args[i];
-> +	}
-> +
->  	mutex_lock(&con_mutex);
->  
->  	chan = ERR_PTR(-EPROBE_DEFER);
-> -	list_for_each_entry(mbox, &mbox_cons, node)
-> -		if (mbox->dev->of_node == spec.np) {
-> +	list_for_each_entry(mbox, &mbox_cons, node) {
-> +		if (mbox->fw_xlate && mbox->dev->fwnode == fwspec.fwnode) {
-> +			chan = mbox->fw_xlate(mbox, &fwspec);
-> +			if (!IS_ERR(chan))
-> +				break;
-> +		} else if (mbox->of_xlate && mbox->dev->of_node == spec.np) {
->  			chan = mbox->of_xlate(mbox, &spec);
->  			if (!IS_ERR(chan))
->  				break;
->  		}
-
-
-		if (!IS_ERR(...))
-			break;
-
-is common.
-
-
-> +	}
-
-...
-
-> +fw_mbox_index_xlate(struct mbox_controller *mbox,
-> +		    const struct fwnode_reference_args *sp)
-
-One line?
-
+diff --git a/net/core/page_pool.c b/net/core/page_pool.c
+index 7745ad924ae2..862ec1dc48df 100644
+--- a/net/core/page_pool.c
++++ b/net/core/page_pool.c
+@@ -153,9 +153,9 @@ u64 *page_pool_ethtool_stats_get(u64 *data, const void *stats)
+ EXPORT_SYMBOL(page_pool_ethtool_stats_get);
+ 
+ #else
+-#define alloc_stat_inc(pool, __stat)
+-#define recycle_stat_inc(pool, __stat)
+-#define recycle_stat_add(pool, __stat, val)
++#define alloc_stat_inc(...)	do { } while (0)
++#define recycle_stat_inc(...)	do { } while (0)
++#define recycle_stat_add(...)	do { } while (0)
+ #endif
+ 
+ static bool page_pool_producer_lock(struct page_pool *pool)
+@@ -707,19 +707,16 @@ void page_pool_return_page(struct page_pool *pool, netmem_ref netmem)
+ 
+ static bool page_pool_recycle_in_ring(struct page_pool *pool, netmem_ref netmem)
+ {
+-	int ret;
+-	/* BH protection not needed if current is softirq */
+-	if (in_softirq())
+-		ret = ptr_ring_produce(&pool->ring, (__force void *)netmem);
+-	else
+-		ret = ptr_ring_produce_bh(&pool->ring, (__force void *)netmem);
++	bool in_softirq, ret;
+ 
+-	if (!ret) {
++	/* BH protection not needed if current is softirq */
++	in_softirq = page_pool_producer_lock(pool);
++	ret = !__ptr_ring_produce(&pool->ring, (__force void *)netmem);
++	if (ret)
+ 		recycle_stat_inc(pool, ring);
+-		return true;
+-	}
++	page_pool_producer_unlock(pool, in_softirq);
+ 
+-	return false;
++	return ret;
+ }
+ 
+ /* Only allow direct recycling in special circumstances, into the
+@@ -1091,10 +1088,14 @@ static void page_pool_scrub(struct page_pool *pool)
+ 
+ static int page_pool_release(struct page_pool *pool)
+ {
++	bool in_softirq;
+ 	int inflight;
+ 
+ 	page_pool_scrub(pool);
+ 	inflight = page_pool_inflight(pool, true);
++	/* Acquire producer lock to make sure producers have exited. */
++	in_softirq = page_pool_producer_lock(pool);
++	page_pool_producer_unlock(pool, in_softirq);
+ 	if (!inflight)
+ 		__page_pool_destroy(pool);
+ 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.25.1
 
 
