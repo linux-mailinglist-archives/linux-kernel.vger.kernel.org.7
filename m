@@ -1,120 +1,167 @@
-Return-Path: <linux-kernel+bounces-664554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-664555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0CF0AC5D1F
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 00:28:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AC50AC5D2B
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 00:36:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8AED1767E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 22:27:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F09EA4A5EE0
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 22:36:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDF3621CC45;
-	Tue, 27 May 2025 22:26:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE9D921771A;
+	Tue, 27 May 2025 22:36:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hLMSalmk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="d5s+Qbk8"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7E2E219307;
-	Tue, 27 May 2025 22:26:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB576213E85
+	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 22:36:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748384785; cv=none; b=VKU8PSmIn7dJoZrNMahRtAok+8/C+/gnS9R3YPU0mKjiRMx94IggknZZqnNFI+c/Jed0xjOYgM3C8hJ3mIRWB7EvZ9SBK68diN8LG3GjNIR2nJejEjd2jFG1Tu5mJgj22jamCBZq7VbK7bgpbAs5WUI9omvaomv34LnoVyBtaOQ=
+	t=1748385380; cv=none; b=bSy2Se7y7Mr7z+h5VAKAWGKzkGd0wQw+8Myj22zjq5xHxo/un5h9pfH3C2ZT1ceyvF9dO0oNjajBhZdUTOdb14GSxT/3yUJd4ENtnwhDD4/ILwmrdzVlG7K/FqDfb+LAltLGaEvvKxP5AnfFSZ0+RshtQGY2zcQPLR1eu+WEJrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748384785; c=relaxed/simple;
-	bh=zRmRsJT6zhzDSuXbgOvOnJhhy3nPlwowYHwtO5D0rxY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=fm8CxduPV4XU9BDRfE+Wt4ruNmARXAKrqHDOpmSH5qYkU1udaGSVzwIkoYrHXBUbJEuxZojzukrEy97nchpG/tdhqsCDgj5ekc8W1SuqMrerbgoJRImt6hjxh6Ai591eqSljZ/VN/qv972qPqrui5Znc+Vu3G1Upc6hvfkhGP6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hLMSalmk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 1CA8AC4CEF9;
-	Tue, 27 May 2025 22:26:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748384785;
-	bh=zRmRsJT6zhzDSuXbgOvOnJhhy3nPlwowYHwtO5D0rxY=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=hLMSalmkULYK2vdY3477xLMhfHSkQHSZ+Gor8HRAXuUZHyK/LVeZ1bcun6O/6uJRw
-	 UddWzglc3/rSWSGujxmUs+ttJs4D/lHYBy6LIcMo1EU9fNMXBM96+dtWVXJjR95MIw
-	 rEhGoOM5ECr+8awiD+sU9q2p+IqdyU27I6T9Q+O5rBKRqjV+g+t1IQYqcJzhAUPCQd
-	 7erBcdrzvAFaOWmEiT+Q1xobk7uFfOc2wiI+EaIxm9MoO9dRKl4FRtLqFcyorAqPbU
-	 RyBkx6sUasrVeoe5nAJ2U8GIrVewUUHla0r56f/j49auBRmyenOF0CJoPuxuUF9U7q
-	 1tTVijC01Fcvg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12927C5B543;
-	Tue, 27 May 2025 22:26:25 +0000 (UTC)
-From: Samuel Kayode via B4 Relay <devnull+samuel.kayode.savoirfairelinux.com@kernel.org>
-Date: Tue, 27 May 2025 18:25:38 -0400
-Subject: [PATCH v3 6/6] MAINTAINERS: add an entry for pf1550 mfd driver
+	s=arc-20240116; t=1748385380; c=relaxed/simple;
+	bh=40TT6223RMHNBfkiH6pSJ4DCwFeYRyONDlM+ZtHOYFQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=TozXani8IYavDeZeej51MeNO2FU7sLCvzhHb5SNI4BhyMX5ks5GCv9WlRdKFE5a5KsjGtMBVVRkqwFAk60dpIWz7xKGAt4758zHx228v20XG4QgqnrPMjHpO41smSDBbvp7+TlF2T29bDZN7EahdmIE3nJPXPsqnXi9Xh3AECZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=d5s+Qbk8; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-742af84818cso2341266b3a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 15:36:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1748385376; x=1748990176; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=se5I//8uzLIZZ2Ua7ZTNM1QkZa6yES7oyoqw0SgUaKU=;
+        b=d5s+Qbk8w3KB5HsnZiGVyMHmhmocJ3LWPIQmxX5kogA4DPnsW/23M8SffDLc7qmmEH
+         NiyWn+7d6yT5t+ktsTPLZB0AFR6edHZerWCfr7szbFHww143eCXeF8taF0LWMAmSrcdN
+         LkTtPYwWRmZPNWjkKldH248dICF/7KUE870uSiyDI+HgUSrcm7RISAN2D5h5cNL8ktPy
+         hio6n/wPA3tOMqgdt72D6nq7zkb/X3+w5lIcpVzdThods73Wzj5rDKrI2uaCz04QmaON
+         /qTBla11FH2SCnLJjqxGDeXeP7UOH3aHv+8mU1lC4HkJq4Ygw1sFW9q3BBM1z1G8nGKb
+         rapw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748385376; x=1748990176;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=se5I//8uzLIZZ2Ua7ZTNM1QkZa6yES7oyoqw0SgUaKU=;
+        b=uSCOY7Ve1ibU6y+MKWjVfMdxenwo8ZaWFqVFpUWMNsxhfnHY0Pv4Nfw32XUt+V1TGM
+         N8CG8LJduJOFzmDudyZ16qulfAaRWdBx2IAVd9nQvF7Lx0plZPY5R8iigivljx3bqVY3
+         B4Z5ZhWhVL111100gG3JH7FUoo35UyqpIXDMqO1urlJuxOR8GTbKlmP1n1Fqy13Pj/1J
+         F8N43iAflBpn7sbyfiHjv5yixkwCDkPP4jsW3otbjVYDHmjFyJXr2fYuVmyvSOXZH0db
+         SOx1h9gDaCB6/4079pK2ZoOzZQKLjED03OG/lEWIUC9zkeQSNdP2VDJtVxNybzWmH+KB
+         kbqg==
+X-Forwarded-Encrypted: i=1; AJvYcCWvwQUFJTj/ulkpIW4BIe0xCwo/6ndz7GQ2b6ZIXhho4bZqpORp9FJ1G0gwPUihVou5zdDgGFzTaSXaIQ8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1D/DIH0EA78YxVJZKXkAr6zD1o3GXeUmhYrUhSk981LwIztZI
+	2U5Xfu+Y0VBN10F9X4Hv/0mB6kVXE9qsZ2v0VWd88YKLM8+wInW2PL7BULEZ316dzIs=
+X-Gm-Gg: ASbGncu5qUXJ0IJYBIMkCc8cMt9rt8G1QYJSJhhzl8aUOkKjJoMowkywduG2K5oPqpY
+	XwpZ1xdT//HmnrhazqsFEU1ZNH3VOYDKJcwVKyciilxsd/vyfj31Q7/ZvpPIFwxJe1g3KN2hIVg
+	RzfqVMCgcRxi8Ew49ss0cf5Tfkirz2+f9xPqnqEcZotJwCo7A2DAMOc55tFfOQ/sfOVICgTM2Pr
+	4U8pQaB3RA3tElEqHbuy/dtd+Widv0ldx/vyY6fzlWWSUEMjVAyWtkluLJqPTbqu54oTXeAwbLq
+	WQv8jWUy1E5puK7lUZ5yAvqIWSilb8+xkhGfzYRxk08PewyuATux2TNZhvsgw8ZRTBlZv0S62FE
+	38xzgL3UunOhRRyczOYo2rUE=
+X-Google-Smtp-Source: AGHT+IHaiHE641xxzDMfr1wkDbFGsdFxw8FhdTQVBDaoFZF5b72J7tD+yg5+vydr3p3YDm6cayOlWg==
+X-Received: by 2002:a05:6a20:2d0c:b0:215:e60b:3bd2 with SMTP id adf61e73a8af0-2188c37d5eamr24296081637.30.1748385375862;
+        Tue, 27 May 2025 15:36:15 -0700 (PDT)
+Received: from ?IPv6:2600:1700:6476:1430:dc04:52d5:a995:1c97? ([2600:1700:6476:1430:dc04:52d5:a995:1c97])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b2cc40d6ee6sm119850a12.67.2025.05.27.15.36.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 May 2025 15:36:14 -0700 (PDT)
+Message-ID: <ca3b43ff02fd76ae4d2f2c2b422b550acadba614.camel@dubeyko.com>
+Subject: Re: [PATCH v2 2/3] hfs: correct superblock flags
+From: Viacheslav Dubeyko <slava@dubeyko.com>
+To: Yangtao Li <frank.li@vivo.com>, glaubitz@physik.fu-berlin.de
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Slava.Dubeyko@ibm.com
+Date: Tue, 27 May 2025 15:36:13 -0700
+In-Reply-To: <20250519165214.1181931-2-frank.li@vivo.com>
+References: <20250519165214.1181931-1-frank.li@vivo.com>
+	 <20250519165214.1181931-2-frank.li@vivo.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1 (by Flathub.org) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250527-pf1550-v3-6-45f69453cd51@savoirfairelinux.com>
-References: <20250527-pf1550-v3-0-45f69453cd51@savoirfairelinux.com>
-In-Reply-To: <20250527-pf1550-v3-0-45f69453cd51@savoirfairelinux.com>
-To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
- Mark Brown <broonie@kernel.org>, 
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
- Sebastian Reichel <sre@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-input@vger.kernel.org, linux-pm@vger.kernel.org, 
- Samuel Kayode <samuel.kayode@savoirfairelinux.com>, eballetbo@gmail.com, 
- abelvesa@linux.com, b38343@freescale.com, yibin.gong@nxp.com, 
- Abel Vesa <abelvesa@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1748384783; l=966;
- i=samuel.kayode@savoirfairelinux.com; s=20250527;
- h=from:subject:message-id;
- bh=P6wBCq9GpDy9ARq/1XDkixCcTLLaGUgI/CZwwZXFs4U=;
- b=CMM65Np1ztt3CDZ3fr0531DlK7o56shRW0QR18RIdCbHunxQHohl+CRzQyfw4eqtad36pcNA4
- phTgtEvDAJqAacrrbw5sE8JntLuWRivHi1X8f9j+5lqHuUJf59VCn1x
-X-Developer-Key: i=samuel.kayode@savoirfairelinux.com; a=ed25519;
- pk=TPSQGQ5kywnnPyGs0EQqLajLFbdDu17ahXz8/gxMfio=
-X-Endpoint-Received: by B4 Relay for
- samuel.kayode@savoirfairelinux.com/20250527 with auth_id=412
-X-Original-From: Samuel Kayode <samuel.kayode@savoirfairelinux.com>
-Reply-To: samuel.kayode@savoirfairelinux.com
 
-From: Samuel Kayode <samuel.kayode@savoirfairelinux.com>
+On Mon, 2025-05-19 at 10:52 -0600, Yangtao Li wrote:
+> We don't support atime updates of any kind,
+> because hfs actually does not have atime.
+>=20
+> =C2=A0=C2=A0 dirCrDat:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 LongInt;=C2=A0=C2=A0=
+=C2=A0 {date and time of creation}
+> =C2=A0=C2=A0 dirMdDat:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 LongInt;=C2=A0=C2=A0=
+=C2=A0 {date and time of last modification}
+> =C2=A0=C2=A0 dirBkDat:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 LongInt;=C2=A0=C2=A0=
+=C2=A0 {date and time of last backup}
+>=20
+> =C2=A0=C2=A0 filCrDat:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 LongInt;=C2=A0=C2=A0=
+=C2=A0 {date and time of creation}
+> =C2=A0=C2=A0 filMdDat:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 LongInt;=C2=A0=C2=A0=
+=C2=A0 {date and time of last modification}
+> =C2=A0=C2=A0 filBkDat:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 LongInt;=C2=A0=C2=A0=
+=C2=A0 {date and time of last backup}
+>=20
+> W/O patch(xfstest generic/003):
+>=20
+> =C2=A0+ERROR: access time has changed for file1 after remount
+> =C2=A0+ERROR: access time has changed after modifying file1
+> =C2=A0+ERROR: change time has not been updated after changing file1
+> =C2=A0+ERROR: access time has changed for file in read-only filesystem
+>=20
+> W/ patch(xfstest generic/003):
+>=20
+> =C2=A0+ERROR: access time has not been updated after accessing file1 firs=
+t
+> time
+> =C2=A0+ERROR: access time has not been updated after accessing file2
+> =C2=A0+ERROR: access time has changed after modifying file1
+> =C2=A0+ERROR: change time has not been updated after changing file1
+> =C2=A0+ERROR: access time has not been updated after accessing file3
+> second time
+> =C2=A0+ERROR: access time has not been updated after accessing file3 thir=
+d
+> time
+>=20
 
-Add MAINTAINERS entry for pf1550 PMIC.
+I am slightly confused by comment. Does it mean that the fix introduces
+more errors? It looks like we need to have more clear explanation of
+the fix here.
 
-Signed-off-by: Samuel Kayode <samuel.kayode@savoirfairelinux.com>
----
- MAINTAINERS | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+> Signed-off-by: Yangtao Li <frank.li@vivo.com>
+> ---
+> =C2=A0fs/hfs/super.c | 2 +-
+> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/fs/hfs/super.c b/fs/hfs/super.c
+> index fe09c2093a93..9fab84b157b4 100644
+> --- a/fs/hfs/super.c
+> +++ b/fs/hfs/super.c
+> @@ -331,7 +331,7 @@ static int hfs_fill_super(struct super_block *sb,
+> struct fs_context *fc)
+> =C2=A0	sbi->sb =3D sb;
+> =C2=A0	sb->s_op =3D &hfs_super_operations;
+> =C2=A0	sb->s_xattr =3D hfs_xattr_handlers;
+> -	sb->s_flags |=3D SB_NODIRATIME;
+> +	sb->s_flags |=3D SB_NOATIME;
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 830ef5f9d86487a599236a2392e422f0e424a313..2be65383c3c7b1c1487577d23bff483aa437c4c8 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -17688,6 +17688,16 @@ F:	Documentation/devicetree/bindings/clock/imx*
- F:	drivers/clk/imx/
- F:	include/dt-bindings/clock/imx*
- 
-+NXP PF1550 PMIC MFD DRIVER
-+M:	Samuel Kayode <samuel.kayode@savoirfairelinux.com>
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/mfd/pf1550.yaml
-+F:	drivers/input/misc/pf1550-onkey.c
-+F:	drivers/mfd/pf1550.c
-+F:	drivers/power/supply/pf1550-charger.c
-+F:	drivers/regulator/pf1550-regulator.c
-+F:	include/linux/mfd/pfd1550.h
-+
- NXP PF8100/PF8121A/PF8200 PMIC REGULATOR DEVICE DRIVER
- M:	Jagan Teki <jagan@amarulasolutions.com>
- S:	Maintained
+I believe we need to have two flags here:
 
--- 
-2.49.0
+s->s_flags |=3D SB_NODIRATIME | SB_NOATIME;
 
 
+Thanks,
+Slava.
+
+> =C2=A0	mutex_init(&sbi->bitmap_lock);
+> =C2=A0
+> =C2=A0	res =3D hfs_mdb_get(sb);
 
