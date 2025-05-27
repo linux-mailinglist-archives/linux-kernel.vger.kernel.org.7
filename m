@@ -1,98 +1,109 @@
-Return-Path: <linux-kernel+bounces-663937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-663939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21E32AC4F88
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 15:20:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 123D8AC4F92
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 15:21:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E19821BA0D25
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 13:20:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5AFD1BA11A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 13:21:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 470742749CA;
-	Tue, 27 May 2025 13:19:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29A0927146B;
+	Tue, 27 May 2025 13:21:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IqQ0+p/W"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SvSYCtDq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D7612741B6;
-	Tue, 27 May 2025 13:19:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8036C139E;
+	Tue, 27 May 2025 13:21:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748351997; cv=none; b=sPvllsr+j7o/7ce1kAswDQsmv7y4acYeULtWhOz7WHwxQoZrcUZ5ETQbC37qdn/yPqDK8uW+yX3CugJgNl7nEL+Z7T/hSf+WQLiqLBudMi/IUiim6bfjvubTa7PYw7AXjxCRiRHwB/uMI9SgYWXsmado+VBbW1mfWCSLbaJtM/A=
+	t=1748352079; cv=none; b=uSIGwVjgLhWjmsYhZn0CcvQx3y8lRTLGyMj7GVTEP2LzZ/tlzgnror8KrQT2DOS0T7GSCuKIVdVXKeu4HrX1INwjRc0V9rSSYDRUqP2RI/U5dk/leRt91XZBGrr9a0b2tV+1UFPczOChmnbuIlA6GNzzrLKEJBFWvpbvUooIofE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748351997; c=relaxed/simple;
-	bh=p0d+3bGE6JxCPUmnuQ1SY0iA51qNIt+mDfBJ/Fs+YzE=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=AQgtD7ibIXoSNQNFogEikBH7pwzFCKvxS7IEzXd8K3BkXvsUyo/jUw2KqK39nUUpYdQPMcM7g8GmVfvazls9LQB639LfKfQNrwvyPCZhWfimje1pDLvqjN7AUte1LpHAshZSgwqX++8r+3FflBm3+kDGutFF9CMT1SEo+HwC2WE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IqQ0+p/W; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 776D9C4CEE9;
-	Tue, 27 May 2025 13:19:57 +0000 (UTC)
+	s=arc-20240116; t=1748352079; c=relaxed/simple;
+	bh=fp9luBBetLAP0B/DgHuAdGyoO1Vry5JUr7H5DC4G4HI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iETVDwob/C286q9t3JpbjL7WMUKP/qdzhsUTnMIFwXMmySWJ9dORveMaTkYOkuxsWteh0Bgyp1y1huuJrBddmNsnG58ox1DQ6up+RO5w9LE4uPr9vA28uDwltV0eFgHIY0Snylj44W4k6jEJbubrvT70BwmwkCMVnylj/rSjQHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SvSYCtDq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EFCEC4CEEB;
+	Tue, 27 May 2025 13:21:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748351997;
-	bh=p0d+3bGE6JxCPUmnuQ1SY0iA51qNIt+mDfBJ/Fs+YzE=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=IqQ0+p/WibI2sjdUcs4j9Cwgi26wOb3DcDT0o85cLvAaYp1VfV+52kY77Z+yqY4ZF
-	 HO6FP/xibAt5WlKled7j2ekmKINSFhNIaLGfKTO8L1+D8dwMhVqOkoyRoT6ItcsVOp
-	 TEb1GAQB9qbb+gk4BkpNCdElfmV5Um/45fKRO9YGtOYEowXLhl67U8ruOpyqLVV8TT
-	 zmiyL3md4y/B9JmB1zc8JNdRkvUVGtaEr3Q9CZCA27Z024h4Dnkb3SBQdjD0A6lgzt
-	 0jOMv+Vvjty37fB80/8H0ScnMIkk+w+ML3bjgz7lVVzwPW3lrsjpozg02qiqMqawzR
-	 914Rt17K14iGQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAEED380AAE2;
-	Tue, 27 May 2025 13:20:32 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1748352079;
+	bh=fp9luBBetLAP0B/DgHuAdGyoO1Vry5JUr7H5DC4G4HI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=SvSYCtDqgahkC+5NUsg3f9lwPIdRRKsBkCr3P1gUQUXmFcwUjDnv5FY6Uvm+RT+U0
+	 6eoYz1korr1a+9BwDMEdgCl3M2Du0/gMjzQIb/3NYwDVbsr5sz0OU/Fi5CWuLGwIKn
+	 tgtwE/oNTr85+y9RNhZeN6tfHCxGLRmfy1C45rFWj9BZ758wCuUe8u8vNmNLi90a56
+	 sBWJN1RuNFN1RoWn6DABasgaMqD092fY7BGgluR4sEGyQXuVG00u11dzRQ7fqF+WPB
+	 O70jGDftMLfGXFZ12OrFFEcvcHn0Yv1bBN4D5x41T81f/tYf64rof0/tpoG9xwnmkJ
+	 dCr+hSusFc3FQ==
+Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-401be80368fso398453b6e.1;
+        Tue, 27 May 2025 06:21:19 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU5IJjAQ752QasvZw13Su0JfPl4ukOrNohlwYgXmUAIpbyVeZsO6dLm2JE99Hc0JyHQBgRjbOVACEJSWIlt@vger.kernel.org, AJvYcCUB2ipMIIHfctMD3epx4VNAhQ5Izi8vSvPOWSsKJoNCIHfEa6GeSgL3eOv2EA9Z4KeynbN1p7kVMVJXCg==@vger.kernel.org, AJvYcCVKoCkdb0KbYsLLrDkGh5zbFAdOCE/k9NZNQWoe16wjknvdVUFlYgacfRUPYuAig1ukSfF+vO4o8yIyIEsYPpM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0SOUrjGU+SYEeZ9LkbxrJZGZAKkR54+HpyfcZXkYcGVrkUG8g
+	vOTkp/R2EO0wRSJ/givmwTvou0MCWRdNVg1Q330JQyKXtmMHnYZRZQvKT4NvgWR86ci2RET4jf4
+	CDACkTBldoSjkYdsOECFr3IKrcbnPyUQ=
+X-Google-Smtp-Source: AGHT+IGh97Bf/315jIDDLCVQau8WC5fWsBAGJ/xi73UpowPj2sPBAO+dga4Q2MnB2Vokwwb9oIyCR4/b7oelhXZX1dI=
+X-Received: by 2002:a05:6808:7006:b0:3fa:daa:dd8e with SMTP id
+ 5614622812f47-4064686c16bmr7438233b6e.35.1748352078738; Tue, 27 May 2025
+ 06:21:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] Bluetooth: hci_qca: move the SoC type check to the right
- place
-From: patchwork-bot+bluetooth@kernel.org
-Message-Id: 
- <174835203174.1634553.14732152604532181599.git-patchwork-notify@kernel.org>
-Date: Tue, 27 May 2025 13:20:31 +0000
-References: <20250527074737.21641-1-brgl@bgdev.pl>
-In-Reply-To: <20250527074737.21641-1-brgl@bgdev.pl>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: marcel@holtmann.org, luiz.dentz@gmail.com, krzysztof.kozlowski@linaro.org,
- chharry@google.com, bgodavar@qti.qualcomm.com, jiatingw@qti.qualcomm.com,
- vincentch@google.com, linux-bluetooth@vger.kernel.org,
- linux-kernel@vger.kernel.org, bartosz.golaszewski@linaro.org,
- stable@vger.kernel.org
+References: <aDVRBok33LZhXcId@stanley.mountain>
+In-Reply-To: <aDVRBok33LZhXcId@stanley.mountain>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 27 May 2025 15:21:07 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0im_642kBUqryy=70-+JikM+dhg=w=Shc3Df4HKPhDCsA@mail.gmail.com>
+X-Gm-Features: AX0GCFtQtSn0J7mIK2LqJJVYnxD13WNcOWk7YSKyky1S9-K_McoA751MogP26pY
+Message-ID: <CAJZ5v0im_642kBUqryy=70-+JikM+dhg=w=Shc3Df4HKPhDCsA@mail.gmail.com>
+Subject: Re: [PATCH next] ACPI: APEI: EINJ: Clean up on error in einj_probe()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Zaid Alali <zaidal@os.amperecomputing.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Len Brown <lenb@kernel.org>, James Morse <james.morse@arm.com>, Tony Luck <tony.luck@intel.com>, 
+	Borislav Petkov <bp@alien8.de>, Sudeep Holla <sudeep.holla@arm.com>, 
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
+	Jon Hunter <jonathanh@nvidia.com>, Ira Weiny <ira.weiny@intel.com>, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello:
+On Tue, May 27, 2025 at 7:43=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro=
+.org> wrote:
+>
+> Call acpi_put_table() before returning the error code.
+>
+> Fixes: e54b1dc1c4f0 ("ACPI: APEI: EINJ: Remove redundant calls to einj_ge=
+t_available_error_type()")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/acpi/apei/einj-core.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/acpi/apei/einj-core.c b/drivers/acpi/apei/einj-core.=
+c
+> index ca3484dac5c4..fea11a35eea3 100644
+> --- a/drivers/acpi/apei/einj-core.c
+> +++ b/drivers/acpi/apei/einj-core.c
+> @@ -766,7 +766,7 @@ static int __init einj_probe(struct faux_device *fdev=
+)
+>
+>         rc =3D einj_get_available_error_type(&available_error_type);
+>         if (rc)
+> -               return rc;
+> +               goto err_put_table;
+>
+>         rc =3D -ENOMEM;
+>         einj_debug_dir =3D debugfs_create_dir("einj", apei_get_debugfs_di=
+r());
+> --
 
-This patch was applied to bluetooth/bluetooth-next.git (master)
-by Luiz Augusto von Dentz <luiz.von.dentz@intel.com>:
-
-On Tue, 27 May 2025 09:47:37 +0200 you wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> 
-> Commit 3d05fc82237a ("Bluetooth: qca: set power_ctrl_enabled on NULL
-> returned by gpiod_get_optional()") accidentally changed the prevous
-> behavior where power control would be disabled without the BT_EN GPIO
-> only on QCA_WCN6750 and QCA_WCN6855 while also getting the error check
-> wrong. We should treat every IS_ERR() return value from
-> devm_gpiod_get_optional() as a reason to bail-out while we should only
-> set power_ctrl_enabled to false on the two models mentioned above. While
-> at it: use dev_err_probe() to save a LOC.
-> 
-> [...]
-
-Here is the summary with links:
-  - Bluetooth: hci_qca: move the SoC type check to the right place
-    https://git.kernel.org/bluetooth/bluetooth-next/c/8df2c74d466c
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Applied, thanks!
 
