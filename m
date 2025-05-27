@@ -1,179 +1,114 @@
-Return-Path: <linux-kernel+bounces-664054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-664056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E59AAC5137
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 16:47:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A3AD5AC513F
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 16:48:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94A8D3BAB4D
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 14:46:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA9759C0DB2
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 14:47:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7888C27A124;
-	Tue, 27 May 2025 14:46:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SkJg5R/6"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA6C027A90A;
+	Tue, 27 May 2025 14:46:35 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A90717FAC2
-	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 14:46:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1FA427A463;
+	Tue, 27 May 2025 14:46:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748357175; cv=none; b=Npv+4/mY3IggcZWdJfL2a6qy3s2/LZD/1ysPl5rja44mFmikE5VY73FgDMyIGPWg3gsOqBZ6PgjF62saEbFX81v2meYEXMVdK1ztl+CLqpIGoAwMk3KNG4q0sOeGU1rlrsBD2dWzvVU/Zuso3inyofw2hcZij2qt+yyjUEYDPyY=
+	t=1748357195; cv=none; b=toVqPhw7e59+9L5g0TQyhPdkhy7c/zwgmCoqKQdAFuDqrMKg1bIhwVIXwyKMgUmDD0vD9lM9j2ReS4NhYzdDM8PS8s6XC408oQEPzzYcd2rdTDfCSgmsGJ/Z9zf+Aa9rERXsSojBDCxBtEIxbLh0pPhVU/B5hTEqOiacv+gGOTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748357175; c=relaxed/simple;
-	bh=UQp09avFH8xgeYerTkwf4UoPXmwKxzIXnY83QqUxR54=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=C0rzwerHRq6nUSZFTV4PYOqWm30+SJTLYnhM5DoBMxdB7U5i8ehmKFQeW/PeObaNA7wz78lBD6HyG1fPBARl/RBoAzi59qTBOwDkq5yWNOIXOT7TltIQIkhc8K49z9e7XgWXKHvAOSjyUep4FyN8KqYZ88OmK/qX00acWQWYhe4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SkJg5R/6; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1748357173;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sa/wIGm5nRAZlTb1UlvruTlcCiWXHo8pM4cZQoZaSZU=;
-	b=SkJg5R/6eE01OAdewVcD4RUxX68km4xlFGMYLRhUJxA/axTBw66pruko4Z+pKSbKz+ci2O
-	cLbGXBSyNpC1R/hCJrjulePLjA/0rrplCcbdGx3gtnXCe+DM5QEPj5Sv+2nkQ06yXwA6ry
-	qd3Bxi9BW4rXySrNh4sGrMlUqLXN03w=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-246-2LoxhscaOcCIARcKL32Hjw-1; Tue,
- 27 May 2025 10:46:09 -0400
-X-MC-Unique: 2LoxhscaOcCIARcKL32Hjw-1
-X-Mimecast-MFC-AGG-ID: 2LoxhscaOcCIARcKL32Hjw_1748357167
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	s=arc-20240116; t=1748357195; c=relaxed/simple;
+	bh=seleYDxgE1umOn/0JRERNNOYBgsMY4pZhxEpoY2e0pY=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=uofwjebXIzFgmlTAl1qaoEB+N5NzRaWcLu2cBx2Agi08POm79956SH8nQwkXu9fsS51LEVB8PztL6MYBCyZ/SGIeChzIFctlmKsDqCcuchc6vw/bnPQxgEIsLZHyboVs7iV+bGfrbbsT9gyRMmeZG/i/mACWph8ixOTPEsOOwSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [141.14.220.36] (g36.guest.molgen.mpg.de [141.14.220.36])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6144D1955D88;
-	Tue, 27 May 2025 14:46:07 +0000 (UTC)
-Received: from dobby.home.kraxel.org (unknown [10.45.226.108])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7E33C18003FC;
-	Tue, 27 May 2025 14:46:03 +0000 (UTC)
-Received: by dobby.home.kraxel.org (Postfix, from userid 1000)
-	id 4D2CC44FBC4; Tue, 27 May 2025 16:46:01 +0200 (CEST)
-From: Gerd Hoffmann <kraxel@redhat.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Ard Biesheuvel <ardb@kernel.org>
-Cc: kvm@vger.kernel.org,
-	linux-coco@lists.linux.dev,
-	Gerd Hoffmann <kraxel@redhat.com>,
-	linux-kernel@vger.kernel.org,
-	linux-efi@vger.kernel.org
-Subject: [PATCH 2/2] x86/sev: let sev_es_efi_map_ghcbs map the caa pages too
-Date: Tue, 27 May 2025 16:45:45 +0200
-Message-ID: <20250527144546.42981-2-kraxel@redhat.com>
-In-Reply-To: <20250527144546.42981-1-kraxel@redhat.com>
-References: <20250527144546.42981-1-kraxel@redhat.com>
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 7C27061E6478F;
+	Tue, 27 May 2025 16:45:54 +0200 (CEST)
+Message-ID: <f9d9774b-c566-43c1-90a0-f982826c1667@molgen.mpg.de>
+Date: Tue, 27 May 2025 16:45:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Intel-wired-lan] [PATCH v2 1/1] e1000e: fix heap overflow in
+ e1000_set_eeprom()
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+To: Mikael Wessel <post@mikaelkw.online>
+Cc: netdev@vger.kernel.org, intel-wired-lan@lists.osuosl.org,
+ torvalds@linuxfoundation.org, anthony.l.nguyen@intel.com,
+ przemyslaw.kitszel@intel.com, andrew@lunn.ch, kuba@kernel.org,
+ pabeni@redhat.com, security@kernel.org, stable@vger.kernel.org,
+ davem@davemloft.net, edumazet@google.com, linux-kernel@vger.kernel.org
+References: <20250527085612.11354-1-post@mikaelkw.online>
+ <20250527085612.11354-2-post@mikaelkw.online>
+ <7eed2cf1-5d54-4669-9e31-96707a116f01@molgen.mpg.de>
+Content-Language: en-US
+In-Reply-To: <7eed2cf1-5d54-4669-9e31-96707a116f01@molgen.mpg.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-OVMF EFI firmware needs access to the CAA page to do SVSM protocol
-calls.  So add that to sev_es_efi_map_ghcbs and also rename the function
-to reflect the additional job it is doing now.
+[one addition]
 
-Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
----
- arch/x86/coco/sev/core.c       | 14 ++++++++++++--
- arch/x86/include/asm/sev.h     |  4 ++--
- arch/x86/platform/efi/efi_64.c |  2 +-
- 3 files changed, 15 insertions(+), 5 deletions(-)
+Am 27.05.25 um 16:43 schrieb Paul Menzel:
+> Dear Mikael,
+> 
+> 
+> Thank you for your patch.
+> 
+> Am 27.05.25 um 10:56 schrieb Mikael Wessel:
+>> The ETHTOOL_SETEEPROM ioctl copies user data into a kmalloc'ed buffer
+>> without validating eeprom->len and eeprom->offset.  A CAP_NET_ADMIN
+>> user can overflow the heap and crash the kernel or gain code execution.
+>>
+>> Validate length and offset before memcpy().
+>>
+>> Fixes: bc7f75fa9788 ("[E1000E]: New pci-express e1000 driver 
+>> (currently for ICH9 devices only)")
+>> Reported-by: Mikael Wessel <post@mikaelkw.online>
+>> Signed-off-by: Mikael Wessel <post@mikaelkw.online>
+>> Cc: stable@vger.kernel.org
+>> ---
+>>   drivers/net/ethernet/intel/e1000e/ethtool.c | 3 +++
+>>   1 file changed, 3 insertions(+)
+>>
+>> diff --git a/drivers/net/ethernet/intel/e1000e/ethtool.c b/drivers/ 
+>> net/ethernet/intel/e1000e/ethtool.c
+>> index 9364bc2b4eb1..98e541e39730 100644
+>> --- a/drivers/net/ethernet/intel/e1000e/ethtool.c
+>> +++ b/drivers/net/ethernet/intel/e1000e/ethtool.c
+>> @@ -596,6 +596,9 @@ static int e1000_set_eeprom(struct net_device 
+>> *netdev,
+>>       for (i = 0; i < last_word - first_word + 1; i++)
+>>           le16_to_cpus(&eeprom_buff[i]);
+>> +        if (eeprom->len > max_len ||
+>> +            eeprom->offset > max_len - eeprom->len)
+>> +                return -EINVAL;
+> 
+> I think you used spaces instead of tabs for indentation. It’d be great 
+> if you could fix this, and send v3 tomorrow. Running `scripts/ 
+> checkpatch.pl` with the patch as an argument, should catch these things.
 
-diff --git a/arch/x86/coco/sev/core.c b/arch/x86/coco/sev/core.c
-index 145f594d7e6b..1cf2a8757ad6 100644
---- a/arch/x86/coco/sev/core.c
-+++ b/arch/x86/coco/sev/core.c
-@@ -1466,11 +1466,13 @@ int __init sev_es_setup_ap_jump_table(struct real_mode_header *rmh)
-  * This is needed by the OVMF UEFI firmware which will use whatever it finds in
-  * the GHCB MSR as its GHCB to talk to the hypervisor. So make sure the per-cpu
-  * runtime GHCBs used by the kernel are also mapped in the EFI page-table.
-+ *
-+ * When running under SVSM the CCA page is needed too, so map it as well.
-  */
--int __init sev_es_efi_map_ghcbs(pgd_t *pgd)
-+int __init sev_es_efi_map_ghcbs_caas(pgd_t *pgd)
- {
- 	struct sev_es_runtime_data *data;
--	unsigned long address, pflags;
-+	unsigned long address, pflags, pflags_enc;
- 	int cpu;
- 	u64 pfn;
- 
-@@ -1478,6 +1480,7 @@ int __init sev_es_efi_map_ghcbs(pgd_t *pgd)
- 		return 0;
- 
- 	pflags = _PAGE_NX | _PAGE_RW;
-+	pflags_enc = cc_mkenc(pflags);
- 
- 	for_each_possible_cpu(cpu) {
- 		data = per_cpu(runtime_data, cpu);
-@@ -1487,6 +1490,13 @@ int __init sev_es_efi_map_ghcbs(pgd_t *pgd)
- 
- 		if (kernel_map_pages_in_pgd(pgd, pfn, address, 1, pflags))
- 			return 1;
-+
-+		address = per_cpu(svsm_caa_pa, cpu);
-+		if (address) {
-+			pfn = address >> PAGE_SHIFT;
-+			if (kernel_map_pages_in_pgd(pgd, pfn, address, 1, pflags_enc))
-+				return 1;
-+		}
- 	}
- 
- 	return 0;
-diff --git a/arch/x86/include/asm/sev.h b/arch/x86/include/asm/sev.h
-index ba7999f66abe..6b4f8b55e214 100644
---- a/arch/x86/include/asm/sev.h
-+++ b/arch/x86/include/asm/sev.h
-@@ -410,7 +410,7 @@ static __always_inline void sev_es_nmi_complete(void)
- 	    cc_platform_has(CC_ATTR_GUEST_STATE_ENCRYPT))
- 		__sev_es_nmi_complete();
- }
--extern int __init sev_es_efi_map_ghcbs(pgd_t *pgd);
-+extern int __init sev_es_efi_map_ghcbs_caas(pgd_t *pgd);
- extern void sev_enable(struct boot_params *bp);
- 
- /*
-@@ -491,7 +491,7 @@ static inline void sev_es_ist_enter(struct pt_regs *regs) { }
- static inline void sev_es_ist_exit(void) { }
- static inline int sev_es_setup_ap_jump_table(struct real_mode_header *rmh) { return 0; }
- static inline void sev_es_nmi_complete(void) { }
--static inline int sev_es_efi_map_ghcbs(pgd_t *pgd) { return 0; }
-+static inline int sev_es_efi_map_ghcbs_caas(pgd_t *pgd) { return 0; }
- static inline void sev_enable(struct boot_params *bp) { }
- static inline int pvalidate(unsigned long vaddr, bool rmp_psize, bool validate) { return 0; }
- static inline int rmpadjust(unsigned long vaddr, bool rmp_psize, unsigned long attrs) { return 0; }
-diff --git a/arch/x86/platform/efi/efi_64.c b/arch/x86/platform/efi/efi_64.c
-index a4b4ebd41b8f..1136c576831f 100644
---- a/arch/x86/platform/efi/efi_64.c
-+++ b/arch/x86/platform/efi/efi_64.c
-@@ -215,7 +215,7 @@ int __init efi_setup_page_tables(unsigned long pa_memmap, unsigned num_pages)
- 	 * When SEV-ES is active, the GHCB as set by the kernel will be used
- 	 * by firmware. Create a 1:1 unencrypted mapping for each GHCB.
- 	 */
--	if (sev_es_efi_map_ghcbs(pgd)) {
-+	if (sev_es_efi_map_ghcbs_caas(pgd)) {
- 		pr_err("Failed to create 1:1 mapping for the GHCBs!\n");
- 		return 1;
- 	}
--- 
-2.49.0
+Should a warning/error be logged if the condition is true?
 
+>>       memcpy(ptr, bytes, eeprom->len);
+>>       for (i = 0; i < last_word - first_word + 1; i++)
+> 
+> 
+> Kind regards,
+> 
+> Paul
 
