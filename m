@@ -1,158 +1,184 @@
-Return-Path: <linux-kernel+bounces-664017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-664020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E2A9AC50C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 16:22:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A10C1AC50C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 16:23:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5455F3B52A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 14:21:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DE021626C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 14:23:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 727F9279782;
-	Tue, 27 May 2025 14:22:11 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1D5A278153;
+	Tue, 27 May 2025 14:23:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="bI9fyVba"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FBE727603C
-	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 14:22:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B018F19CD16
+	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 14:23:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748355731; cv=none; b=Xze8RXBG1rygRb195zIZv7pAfuhfpn53V80jsBOwN8DYGKv9f6Bk0CXwOwIlbBGEKI+w8s/D/TNpHlaUJ5WQfq4YpsA0E9OVLiU7bIMm++3llCUP7ZsoA8e05m89ud/upRcR1P7nHNnfAAmIbzfwasQuO+qvz6Hs8CBB4HyoFAM=
+	t=1748355825; cv=none; b=bfDd+jy55ls316ckuhq7smv6ve6vF09SxyUoEHSuFIplgVSlW+Ze6IH8tdGf9PebXLdwwg0boPRnDBm2Da4EoBvtQg5qR/6Ff7adMp8iDnWe9LlaJNeCZlGImC3K+BeyqkIONTcVtX4rKOJEzXKU6bsuAgHC0bpZq74+wBNZjgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748355731; c=relaxed/simple;
-	bh=sTLfjTBukU2SRCiKeBwjv6o8LNmKOJIeBM8Hz5UTxdg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=HdOYEssc/W8RVrWrVxrbny09Dip0S5LAImW1hrt60XiG4vuu4D1n+KJROpQ+j79+AlQNxjHRKukznr5WhwkbsMWrg8qidcuYUmg2LQdOwmg1auHEajqb949tEpNsmbNhNmyjC93Qbw5LLgRbSuvtgytLLTpdY+otCBdRXEeSH3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from dude05.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::54])
-	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1uJvBp-00048s-7E; Tue, 27 May 2025 16:22:01 +0200
-From: Philipp Zabel <p.zabel@pengutronix.de>
-Date: Tue, 27 May 2025 16:21:48 +0200
-Subject: [PATCH 2/2] drm/bridge: samsung-dsim: Use HZ_PER_MHZ macro from
- units.h
+	s=arc-20240116; t=1748355825; c=relaxed/simple;
+	bh=1b2v/c0DKM/AjXvU+XYHFgHzNKVCeFNe8WzHm7DLXTU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PgP62ifQK8naFNfPb4hQGWEknH9n5+Wi9xKZN5aqlNN7AXfDyYZwf3oNoNs76n9fPw8H4Kj7TlewN3WtDBiyz+cSyjEKxrkmvBcTxFvCqryulKYvU3a+sSJzGXQDWSpT5MV82bnVKel72dASRQAHgDhkzX/BmGLQeCq4PX+0lFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=bI9fyVba; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3a4c4e6a0ccso2620341f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 07:23:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1748355821; x=1748960621; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6n1uaYpmB1kOr6JIFMyXy+K3N7piDSdguvD1FRtdHTo=;
+        b=bI9fyVbaB8ZfsKj2gRTdDuSX7t/6BLWjPsHS8ScCaBJn0sGxVWN0tR5Bu+2Vbfh3py
+         Domz8EA7qqN4PmVHQ7QD9T9Ibb1/cm/Wy4hYI18zgfNoSX2uDtkmKDslv0km33QKwU53
+         sAPhyktjvtroSOcS2oklRdNfsfDTVHVHSo8BVix4QDYQQXCzOG5pcTJ+46qXlxxXSGx4
+         1b/D6nI9q39iyzoAFG5fGb9HFbqWUs2Zs63X3l2kSDXxFoSDLb6xISpGfvFDvSY6Jczq
+         9LIaSqqNHVRV7p/3LWToot+jEU8QlWnV9M+PkqYPMqYZw8gcUpryxPCPegw5ujcZkowd
+         qajw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748355821; x=1748960621;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6n1uaYpmB1kOr6JIFMyXy+K3N7piDSdguvD1FRtdHTo=;
+        b=DfIJ9Po/wD8a7pvLo5o4Zc2eWT5sH7Xo13Ft6iwQOXQRlBa9lYrLyuRdiqsg+A2NxJ
+         bvWw44zs3qZdLMeuoBiMpunNP+UwYj3tv6QT7Q5hAvNpnMtBkkcGMdcNBz5H2grVayvo
+         Wd3ONTyNlb8N+qFKSX/nOUBszagTk7g9GrgaemByvgwCfFXwqMJ7tde17Ieq1Ukyv4r9
+         DzQ6E1jPYmpQLJPXLWmY547qn3uxxJkAefvoE2b4GWya8thRL87hNRNRN7rXxGsuYler
+         Ea7WArA6IvdeW67ttna/AL8wLV7xus2HtrVAAim7MMr5pNucfxPX8HzeXfGXSSCLhixI
+         kRig==
+X-Forwarded-Encrypted: i=1; AJvYcCWBkDapZkLzCRUPurjPQvXc9MWcYONueE2XtoHtetg2+mrpTtI5eb2kOBgwvqQEckIed1TIYdzxo6F5Bx0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2JzCJO0Ulm38rIen2m8wupGViK25i3DTfIAL6fDRoGoPJ0H5M
+	AqjwNQE9OPcmt5dwq+QE18B72g+K6AlkchnzJD1F8WWiouVGIfTxAzyq+EgjASLgS3E=
+X-Gm-Gg: ASbGncsySf21W1liJpRo7I/FwX6SQlTpUIFAPRq3lbdYoBuvydfeaxKOjksDzJU1gAU
+	DtnsyjijVNqy03OCukcyFmgDM/BkR6u8JeIyHfsVbrKzjE4/ps5N/pmhZgdCKPrqnoKwXT7o7PX
+	S6xZ/t2eUFNTf3EzR8/zB1hELzLcAyb1gAqL57vtMwB7kVhtxqYqzOdEPKb14isFe8W7vxoov9Y
+	3dtX3GwWF421Y6JYzXmkPrI/Nl910L/HgkLK6UiuOmjuY5u+FJpYV7Qn+5j002enbx3Am8/uMkj
+	rwB0oR15dKLyOlDP04v4YQJGywsIxN/+ucRquya4XBeY1F44uTJ+cg==
+X-Google-Smtp-Source: AGHT+IELC1IttHHKpQxPobF04n1BxV0zFn5416xOB8lAZHST6vgiJpJWp1f8e/ECPlHN8aFnCXiRFw==
+X-Received: by 2002:a05:6000:250f:b0:3a4:cfbf:51c3 with SMTP id ffacd0b85a97d-3a4cfbf5539mr11042240f8f.10.1748355820879;
+        Tue, 27 May 2025 07:23:40 -0700 (PDT)
+Received: from dhcp48.suse.cz ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4c73a4284sm12100719f8f.85.2025.05.27.07.23.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 May 2025 07:23:40 -0700 (PDT)
+From: Petr Pavlu <petr.pavlu@suse.com>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Petr Pavlu <petr.pavlu@suse.com>
+Subject: [PATCH] genksyms: Fix enum consts from a reference affecting new values
+Date: Tue, 27 May 2025 16:22:11 +0200
+Message-ID: <20250527142318.14175-1-petr.pavlu@suse.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250527-samsung-dsim-v1-2-5be520d84fbb@pengutronix.de>
-References: <20250527-samsung-dsim-v1-0-5be520d84fbb@pengutronix.de>
-In-Reply-To: <20250527-samsung-dsim-v1-0-5be520d84fbb@pengutronix.de>
-To: Inki Dae <inki.dae@samsung.com>, 
- Jagan Teki <jagan@amarulasolutions.com>, 
- Marek Szyprowski <m.szyprowski@samsung.com>, 
- Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- kernel@pengutronix.de, Philipp Zabel <p.zabel@pengutronix.de>
-X-Mailer: b4 0.14.2
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:1101:1d::54
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 
-Drop the custom MHZ macro and replace it with HZ_PER_MHZ.
+Enumeration constants read from a symbol reference file can incorrectly
+affect new enumeration constants parsed from an actual input file.
 
-Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+Example:
+
+ $ cat test.c
+ enum { E_A, E_B, E_MAX };
+ struct bar { int mem[E_MAX]; };
+ int foo(struct bar *a) {}
+ __GENKSYMS_EXPORT_SYMBOL(foo);
+
+ $ cat test.c | ./scripts/genksyms/genksyms -T test.0.symtypes
+ #SYMVER foo 0x070d854d
+
+ $ cat test.0.symtypes
+ E#E_MAX 2
+ s#bar struct bar { int mem [ E#E_MAX ] ; }
+ foo int foo ( s#bar * )
+
+ $ cat test.c | ./scripts/genksyms/genksyms -T test.1.symtypes -r test.0.symtypes
+ <stdin>:4: warning: foo: modversion changed because of changes in enum constant E_MAX
+ #SYMVER foo 0x9c9dfd81
+
+ $ cat test.1.symtypes
+ E#E_MAX ( 2 ) + 3
+ s#bar struct bar { int mem [ E#E_MAX ] ; }
+ foo int foo ( s#bar * )
+
+The __add_symbol() function includes logic to handle the incrementation of
+enumeration values, but this code is also invoked when reading a reference
+file. As a result, the variables last_enum_expr and enum_counter might be
+incorrectly set after reading the reference file, which later affects
+parsing of the actual input.
+
+Fix the problem by splitting the logic for the incrementation of
+enumeration values into a separate function process_enum() and call it from
+__add_symbol() only when processing non-reference data.
+
+Fixes: e37ddb825003 ("genksyms: Track changes to enum constants")
+Signed-off-by: Petr Pavlu <petr.pavlu@suse.com>
 ---
- drivers/gpu/drm/bridge/samsung-dsim.c | 26 ++++++++++++--------------
- 1 file changed, 12 insertions(+), 14 deletions(-)
+ scripts/genksyms/genksyms.c | 25 +++++++++++++++++++------
+ 1 file changed, 19 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/samsung-dsim.c b/drivers/gpu/drm/bridge/samsung-dsim.c
-index 1dfc9710bee5134e0e0114ce52f673c21564b11b..b7fd5870eba7e4bef3f420ae7cf6de1a700eb41d 100644
---- a/drivers/gpu/drm/bridge/samsung-dsim.c
-+++ b/drivers/gpu/drm/bridge/samsung-dsim.c
-@@ -19,6 +19,7 @@
- #include <linux/of.h>
- #include <linux/phy/phy.h>
- #include <linux/platform_device.h>
-+#include <linux/units.h>
- 
- #include <video/mipi_display.h>
- 
-@@ -557,10 +558,6 @@ static void samsung_dsim_reset(struct samsung_dsim *dsi)
- 	samsung_dsim_write(dsi, DSIM_SWRST_REG, reset_val);
+diff --git a/scripts/genksyms/genksyms.c b/scripts/genksyms/genksyms.c
+index 8b0d7ac73dbb..d05c01eb721b 100644
+--- a/scripts/genksyms/genksyms.c
++++ b/scripts/genksyms/genksyms.c
+@@ -181,13 +181,9 @@ static int is_unknown_symbol(struct symbol *sym)
+ 			strcmp(defn->string, "{") == 0);
  }
  
--#ifndef MHZ
--#define MHZ	(1000 * 1000)
--#endif
--
- static unsigned long samsung_dsim_pll_find_pms(struct samsung_dsim *dsi,
- 					       unsigned long fin,
- 					       unsigned long fout,
-@@ -574,8 +571,8 @@ static unsigned long samsung_dsim_pll_find_pms(struct samsung_dsim *dsi,
- 	u16 _m, best_m;
- 	u8 _s, best_s;
- 
--	p_min = DIV_ROUND_UP(fin, (driver_data->pll_fin_max * MHZ));
--	p_max = fin / (driver_data->pll_fin_min * MHZ);
-+	p_min = DIV_ROUND_UP(fin, (driver_data->pll_fin_max * HZ_PER_MHZ));
-+	p_max = fin / (driver_data->pll_fin_min * HZ_PER_MHZ);
- 
- 	for (_p = p_min; _p <= p_max; ++_p) {
- 		for (_s = 0; _s <= 5; ++_s) {
-@@ -590,8 +587,8 @@ static unsigned long samsung_dsim_pll_find_pms(struct samsung_dsim *dsi,
- 
- 			tmp = (u64)_m * fin;
- 			do_div(tmp, _p);
--			if (tmp < driver_data->min_freq  * MHZ ||
--			    tmp > driver_data->max_freq * MHZ)
-+			if (tmp < driver_data->min_freq  * HZ_PER_MHZ ||
-+			    tmp > driver_data->max_freq * HZ_PER_MHZ)
- 				continue;
- 
- 			tmp = (u64)_m * fin;
-@@ -634,7 +631,7 @@ static unsigned long samsung_dsim_set_pll(struct samsung_dsim *dsi,
- 		 * limit.
- 		 */
- 		fin = clk_get_rate(clk_get_parent(dsi->pll_clk));
--		while (fin > driver_data->pll_fin_max * MHZ)
-+		while (fin > driver_data->pll_fin_max * HZ_PER_MHZ)
- 			fin /= 2;
- 		clk_set_rate(dsi->pll_clk, fin);
- 
-@@ -660,10 +657,11 @@ static unsigned long samsung_dsim_set_pll(struct samsung_dsim *dsi,
- 
- 	if (driver_data->has_freqband) {
- 		static const unsigned long freq_bands[] = {
--			100 * MHZ, 120 * MHZ, 160 * MHZ, 200 * MHZ,
--			270 * MHZ, 320 * MHZ, 390 * MHZ, 450 * MHZ,
--			510 * MHZ, 560 * MHZ, 640 * MHZ, 690 * MHZ,
--			770 * MHZ, 870 * MHZ, 950 * MHZ,
-+			100 * HZ_PER_MHZ, 120 * HZ_PER_MHZ, 160 * HZ_PER_MHZ,
-+			200 * HZ_PER_MHZ, 270 * HZ_PER_MHZ, 320 * HZ_PER_MHZ,
-+			390 * HZ_PER_MHZ, 450 * HZ_PER_MHZ, 510 * HZ_PER_MHZ,
-+			560 * HZ_PER_MHZ, 640 * HZ_PER_MHZ, 690 * HZ_PER_MHZ,
-+			770 * HZ_PER_MHZ, 870 * HZ_PER_MHZ, 950 * HZ_PER_MHZ,
- 		};
- 		int band;
- 
-@@ -723,7 +721,7 @@ static int samsung_dsim_enable_clock(struct samsung_dsim *dsi)
- 	esc_div = DIV_ROUND_UP(byte_clk, dsi->esc_clk_rate);
- 	esc_clk = byte_clk / esc_div;
- 
--	if (esc_clk > 20 * MHZ) {
-+	if (esc_clk > 20 * HZ_PER_MHZ) {
- 		++esc_div;
- 		esc_clk = byte_clk / esc_div;
+-static struct symbol *__add_symbol(const char *name, enum symbol_type type,
+-			    struct string_list *defn, int is_extern,
+-			    int is_reference)
++static struct string_list *process_enum(const char *name, enum symbol_type type,
++					struct string_list *defn)
+ {
+-	unsigned long h;
+-	struct symbol *sym;
+-	enum symbol_status status = STATUS_UNCHANGED;
+ 	/* The parser adds symbols in the order their declaration completes,
+ 	 * so it is safe to store the value of the previous enum constant in
+ 	 * a static variable.
+@@ -225,6 +221,23 @@ static struct symbol *__add_symbol(const char *name, enum symbol_type type,
+ 			return NULL;
  	}
+ 
++	return defn;
++}
++
++static struct symbol *__add_symbol(const char *name, enum symbol_type type,
++			    struct string_list *defn, int is_extern,
++			    int is_reference)
++{
++	unsigned long h;
++	struct symbol *sym;
++	enum symbol_status status = STATUS_UNCHANGED;
++
++	if ((type == SYM_ENUM_CONST || type == SYM_ENUM) && !is_reference) {
++		defn = process_enum(name, type, defn);
++		if (defn == NULL)
++			return NULL;
++	}
++
+ 	h = crc32(name);
+ 	hash_for_each_possible(symbol_hashtable, sym, hnode, h) {
+ 		if (map_to_ns(sym->type) != map_to_ns(type) ||
 
+base-commit: 914873bc7df913db988284876c16257e6ab772c6
 -- 
-2.39.5
+2.43.0
 
 
