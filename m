@@ -1,205 +1,205 @@
-Return-Path: <linux-kernel+bounces-664070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-664072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01C8DAC516A
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 16:57:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FDC9AC5173
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 16:58:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD13D3A117B
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 14:57:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA7463BB3D4
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 14:57:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C9E0279919;
-	Tue, 27 May 2025 14:57:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46F0727A460;
+	Tue, 27 May 2025 14:57:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b="kQLal2Vq"
-Received: from BN8PR05CU002.outbound.protection.outlook.com (mail-eastus2azon11011009.outbound.protection.outlook.com [52.101.57.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fhAw9Kqr"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7F4927602B;
-	Tue, 27 May 2025 14:57:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.57.9
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748357839; cv=fail; b=C2QbPG5n3+1GXN3YHjlfTYrCmEOLFFV+hTE8ig/3rN7423oivA/4UHrIUo70NYI+41LJJ8JhhNh5JFUAT4Vy6PlB9xB4UIZWnA6oLALBvqzQhmV1PhmUGj9oIAOchPxwD8sPPRNbQH/NQC2llWPtO0AEF5EhlVT61lkAuHYW64s=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748357839; c=relaxed/simple;
-	bh=NdSqPqiSL8SQQ/E/M/4HWWWAKimrpns7m/v09P6y1Dw=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=tHw7MDbaAOuo4iEpBxmJ3fqf/Oa/AL30jL3pzNBkRDgvArGukW05DLL0U7opXkm6rGNMXvl9wZHD9VFRBGyz16iOfJJQiJV1cRRzKUWRj7IA2wlsHeTossRWas00Z541cc1NbS1gMs3QaSvAO7NMzuwGscGpbWKV9obM2Z+Wr34=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com; spf=pass smtp.mailfrom=altera.com; dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b=kQLal2Vq; arc=fail smtp.client-ip=52.101.57.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altera.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qczB4FAYpYxyGSzmxCaTeGO5QXauSDWNfd00Nv3YU4f9YcePGcUufdnFog0Oo+Q1InoinCJyhAlJaJyhqEIoaQ7upK4YZXgaZt2EHL2GmzXMhcKbxhlzfZoQ98oTggroNB4x9QYnlUWCmNNdl0ZJZlzPa5313HBZ26NkHvYpPyD6QdxCjbojzeCPtYkHpTY3beed2zOWfENk39DwVR09y8kUb9AgfWtW/LGjS7VvtnchDlkfA8d9YB783UughPBugR078FXIQ8LzhQz3g8kCb9ZSpFj0wYXw454UBkPBxrUzI4NRlZpGONnpsflo4NPcSv/v0N1K75JwsFmaRfW5mg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LD+6+duKStMzOkvkMkAAAyLt+80jnN9uGjA5enAVxe0=;
- b=LyJv7iAT2TU6+SvIjIrVZ9X11rQGomcP3ia7gInt/CwFbBEt0kLgqhKJ5xUIzbVmTG37vyvp0VCeERfHfFRYNmXzETnthR7l4ny5qdQC+o20qiUrNU2vgTLZw0oCwKQ7WuZxf89/QZab6KJgdo+fpkKLO2aF4YJqkgfKne6Y0nAo/3YwQi1rDyppu/cs75CzDpc1MSOBENeeIR6xDD1KOcUgIhGhJu1aL/B1ts158j8gsZhCELeLRs/4vH4NVtxV8B+9yEhzsSg7iyXhdH5FuPhMzoCC5KmjMM+bmsk9M78DFdaR9o/2TqAmIUCwwUW/1jDL+2Rvl2deVel8Oyabhw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=altera.com; dmarc=pass action=none header.from=altera.com;
- dkim=pass header.d=altera.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=altera.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LD+6+duKStMzOkvkMkAAAyLt+80jnN9uGjA5enAVxe0=;
- b=kQLal2VqRvCmmph62mHBOZuBwiTVXaNDtlIxB87c4Qsp6uJvSjnIPMpGom7BUr/zVYUZlyiErNURU4WmS0kTlhgVVspDBKLfGbpeWJxaahmvrsyvwDd2QqQSNCCuGFawn4toAL6+VrYqwLZdtM1iVh2OiorIRPyL9+VS4gLfuYsUICAEzL2xiDxMxWrko2UPMdco5erPqLofgLKAKxuzc6Ga7MGtv87pBjeJCk4yf6LLhrlZY6AzwFqdM6vJsw/uYrTLthk3ZiC8JmfDmxSh2utWMiT6oOjN7igOEkEAaUiOCleI8FJcDFuqnnOioJqev8IR/C4DWB+ZokMeHS/QaA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=altera.com;
-Received: from BYAPR03MB3461.namprd03.prod.outlook.com (2603:10b6:a02:b4::23)
- by CH5PR03MB7959.namprd03.prod.outlook.com (2603:10b6:610:20f::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.27; Tue, 27 May
- 2025 14:57:13 +0000
-Received: from BYAPR03MB3461.namprd03.prod.outlook.com
- ([fe80::706b:dd15:bc81:313c]) by BYAPR03MB3461.namprd03.prod.outlook.com
- ([fe80::706b:dd15:bc81:313c%7]) with mapi id 15.20.8769.025; Tue, 27 May 2025
- 14:57:12 +0000
-From: Matthew Gerlach <matthew.gerlach@altera.com>
-To: dinguyen@kernel.org,
-	bp@alien8.de,
-	tony.luck@intel.com,
-	james.morse@arm.com,
-	mchehab@kernel.org,
-	rric@kernel.org,
-	tthayer@opensource.altera.com,
-	linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>,
-	stable@kernel.org,
-	Matthew Gerlach <matthew.gerlach@altera.com>
-Subject: [PATCH] EDAC/altera: Use correct width with writes to INTTEST register.
-Date: Tue, 27 May 2025 07:57:07 -0700
-Message-Id: <20250527145707.25458-1-matthew.gerlach@altera.com>
-X-Mailer: git-send-email 2.35.3
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SJ0PR05CA0041.namprd05.prod.outlook.com
- (2603:10b6:a03:33f::16) To BYAPR03MB3461.namprd03.prod.outlook.com
- (2603:10b6:a02:b4::23)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B78F42798E6;
+	Tue, 27 May 2025 14:57:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748357871; cv=none; b=bqyuucQ06WB3oZEjNTS3pM3BqhhfPaionBMD2mlXlIPKcjPPYpUQpX3JmnOfyXk54tZbMhpHhWGU+vXHBujfANo9vhjHsIQd83Y/IBC1W2HORveumxpepH2YAvFAS1suC6XD3cOh2HmYH8um+PhcGVKbMrRdzNzPu8/s6yTbmg4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748357871; c=relaxed/simple;
+	bh=si/3D/lqAp5z97oyh3H7Ttrei9OF36F1phtFBwnKSQE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FpRpsKGhmhqQjAaLxArtw/0F+POVcK/beT4BmGqyiIr+8bAY2n/+c0GZQJM6qjzbaknppD63WQlApVxV8AWY4CicwYzlNJZcNL6GHSyM5Q9KD+gRyldKkg1GZKrDtXfdbK4FaXJPYMHMhrXESQ3a8kSyTzA7kXvJvE/n0O3w06w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fhAw9Kqr; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-30f30200b51so36628581fa.3;
+        Tue, 27 May 2025 07:57:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748357868; x=1748962668; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SNE3eNQigcgAPplki00LvwTSib7PfNi6+3iBJNr9+88=;
+        b=fhAw9Kqr7Zb/809HyPBiQNKjRIKXzu0HwWwyhYLtt98exSLsMpzdXm+fiFWgYHR2Aj
+         AjJg4Wgd4hjKMukqVAnmtvfsYZA1DN/YhBgTB222JylLvgfRAM2gcAV87f4W2XDZg58/
+         RDo2U+HVo+WWLujhQ8ssw5KDYA6dtO4tulg7t1RjoJmZzZY1xly+k996XERpo4dI/lbv
+         gLCK5AAyaB8xRVGQXkMJonUVKKZi9cvpq3mYU8dpBiBdeoySddI6BNcjagXY7OOugUvj
+         JyYRtUP+ojpyw2LkGklM0rdqdToblJKT+qFHUwx/2uKHFne+zUI2JzpYKDS3Qck2hWQC
+         +cxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748357868; x=1748962668;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SNE3eNQigcgAPplki00LvwTSib7PfNi6+3iBJNr9+88=;
+        b=w8tWlA6LBXg5f3uzmWEDjwYQ3Rr8U1JNHaheFQwUVbeTeul8grWA5NfbPrYz2y2yz7
+         PRyF6NI0BSvR0gE3fviGxzTrpuHTlyfElWoY25pIc7ZobyValFMt4xlmwsIYrooYyvxX
+         yqubnTVnBcnzQq6pdM0MdvvNIU0gyRdBBnwbcszDm5L6DTmvHqcmh6SkC6Tw7b8lfayZ
+         MLvv3LI9CqexbX2ciaGwMGUbJE0Rz2KtzDFFdcn1HGfsv83R5nFph6PGVG3uE52+L5NT
+         SRp0IFDs1+iKAnMmCY0aQAPgrAMllwvJ/gO7HeP0VJEOXvDTA/NAAR41N1PbKiSixpsD
+         0z0g==
+X-Forwarded-Encrypted: i=1; AJvYcCUNAfzms8ShxzK8AprRSOIWxWaFFwdFwya0rLrBPdTFfkczLP2Fm5O0Y+9vFQElU9WrZy8rWfrL8tstXcQ=@vger.kernel.org, AJvYcCV4VuLf3CGUzY0qTtWYkqU4ujymEt0TQ0hV62hdUS/maWv3Fm3zdHgjNZFTao9/Gz+UBmj9voxbBZ0M@vger.kernel.org, AJvYcCVO2Pq4WGiTgdCRKSuyb2bYOqThS95PreUPZiuTLzEdj36mYt+mE0SWuh741j6mJKxmEpRBZoRHAtKUSRjC@vger.kernel.org, AJvYcCWCftjuKhBxAh1+o+DE0TGXw/WPlwKHrqgOQWDEWQKj8wnXNKQnRc9emvV0P5kcBh4J29Rxcr+F@vger.kernel.org, AJvYcCWHpJFsRqU7ha4pNDnFPP7WIINau4XHyx/FB2B7TYWij53uirMS5Y3WeKGmf9PBG/3o8h0AKAMj+K4x8kqvLtg=@vger.kernel.org, AJvYcCWfOZRnZk7cg6GPd4TcY0Cm31D6GPnt9OEkyorqo9LS4AaN2KKLG2eoxRIaMIVxrXaXf9oyp3hxh5AZ5unr7EGD@vger.kernel.org, AJvYcCX2wqzDGcLBnHLPfhPdVwX4d+TP8Or33havnSaDCePx6v9WH6Xfq5dmV9g1tvJXKvmEUfHeiq6HeObD@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4LYTwl5CyyMfPYxh99YwFTU+uINXZ9k/A8+SlzoADFxUg0Sdd
+	A5DdEfq0wmK6njqhsm6CNKqRx6FHmNyctHQgGqkxEc4KJggF0Idm+4ziW2BoOC4DItw4ev3T4rp
+	sQDIC97TO09Akva7p0O0c/Q4dt9hPC6A=
+X-Gm-Gg: ASbGncuxt4TNLbesUhcDviTqFRFg21sp379DQvM7Vn0XGWydTiUBCFXlCjTpR21LGkY
+	uSiNcLFo4QNNztG63iC2nbz4BUNBmTMFQiyfk+376EuMktoYXaZHBFoC45700Qu5uMrD7JoE0BF
+	SyeeqC8+JEtq7PPt5NxXldMAjm+hd90cZCUbvbwFbAFi2/HYEx
+X-Google-Smtp-Source: AGHT+IGMpsgNs0H0v36WCubbxlinvgNLfiVk9IX6EmewrCYJWnUCTsflWg1QTkNc19iE0AzQz3ot/ZAJjdnwjF/SkXc=
+X-Received: by 2002:a2e:8a93:0:b0:32a:604c:504e with SMTP id
+ 38308e7fff4ca-32a604c5122mr6252591fa.38.1748357867433; Tue, 27 May 2025
+ 07:57:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BYAPR03MB3461:EE_|CH5PR03MB7959:EE_
-X-MS-Office365-Filtering-Correlation-Id: e48d1a8d-458f-4e9a-011f-08dd9d2ec27e
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?q+Ji65XiBnQyRKFpO9dtWlT1ri9CXJ6kkYTpSiRolImXFIM6/Uq7l8+TjmRg?=
- =?us-ascii?Q?CGGC8AaVtSP4H3eGmAbLHtB+GfBeUsCMhcXb2Zw+MaWJKLX4at+1DwirfJEF?=
- =?us-ascii?Q?59gqWqO0G6sJS/hMbFP6RlwaN+Yxw8qY/DIJwuml7BsRAT5hd1YAS3IvFBLP?=
- =?us-ascii?Q?zE0Oakp+HZhGzSpb4/l2h09/Sk77/wr0GCLi0JhBCDLD32PtigdBIySgFlB3?=
- =?us-ascii?Q?zI3q1c8oUGjdRo4TGukFBfTP0jgjHiMvzmlHFbHLn/8y6q9vHshIlfNFVZXX?=
- =?us-ascii?Q?mbwd7zGmOPXalk7/EO0jJJBhPlmFdJwCQ0kS25ZtEl9yLKJl/oVZY4+PMX+3?=
- =?us-ascii?Q?rhDlwCjGU7FO6FODLex4NfuT04uODyiniePZuee8DI+3fOJ+xhO6Mko3rl1n?=
- =?us-ascii?Q?2Ctl325YLngGUiyEC2AY3RYedtkTX3O8eaavwv9hLR+RwQGOkfqNjrW8vuKe?=
- =?us-ascii?Q?R3zjbFYHASWYOregGu+rMaHE7UDExZ9ujli8GAoUPiHisN0hlUhnM8zAdKbo?=
- =?us-ascii?Q?q2TwOI10d776/kL+H4a47WwzoBwtyvnLvGjhQUAWN5Kkx7Ga08NRTIWD1ixG?=
- =?us-ascii?Q?GkXcvHzcpZ3qlqLlz3PVGXWs8we6Mb+AAEOfPkrHz5F8aIfEtusJAV1VYAem?=
- =?us-ascii?Q?rp3r9W749nsP2cC0oybY7Uanoh93TRmKIEUlxVmyjk5NRJJod0NY03PStehD?=
- =?us-ascii?Q?zn0pXWA47QEqebaI38id3GM46mUp4d6n0zCH6u0ronQ9jUUnMjs3Vi2ZhCZ1?=
- =?us-ascii?Q?lKCGrgJe5n2lV9XebZE37qfI5D21oKbA7oyBstm+LwyKpiJBpsNXQAs7+Low?=
- =?us-ascii?Q?ENpcEnPEF5DtFYVb97YSBGvh8aEcBDIx3v+xl+9LWhLTCDXo8o+QqO2GlulN?=
- =?us-ascii?Q?IGIY06ygzvYjDfA9Cih+vMR/zemh6leqWHQhVuAr8PRLWZpkP1bvfpO7ecyU?=
- =?us-ascii?Q?tcFfi2vmF+YeLD6x5BGKtuZSmWTRjB7woDWvyrXJR4BKigqmGUceYiLEM7AP?=
- =?us-ascii?Q?uby4m0uz1roMmUvvh24rFfAhfoJEzbAmtD/HxwPAOMBD/+DA95NhNZw5wfj0?=
- =?us-ascii?Q?6s/CyvzsHHtAgdfZXjZm3FjOgdAXr9RHObg1Ks3le6eYfxJBpwgsUgmz3xVW?=
- =?us-ascii?Q?GMMVk1Mr4sLgtf+01oTieyVdQtjQfiKUqcFc8SknzuI23zXlYhiUAsZAMNnT?=
- =?us-ascii?Q?a3kYaWhDIsD5tf2y+TRyv9PVN4SIdm5djYeEVPXAAVe34bBjZRUeQa1wMqxO?=
- =?us-ascii?Q?tqUmm5xvHXW91185FJj2LCHH7wskKn9vZZUrizpaZYg+CQYW7ysANkh128OA?=
- =?us-ascii?Q?/tCs/UUs3EZapI12I0K2mc79JJnZ3v4a8oW0Fpw3gF93OgRuYlnMB7DVA9be?=
- =?us-ascii?Q?d/8p89B7h+7tu63rUpAONCmyz35ABq/3BEvHfPRWTqrlAw+Lvgu3Ih9XLQ9/?=
- =?us-ascii?Q?gF0yLLvOrF0=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR03MB3461.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?W+gyN2yLyOsQHyIghM2ThRq4AQ28huGKUS3KxB0S5XlO52kI+qWo6pWNvUe1?=
- =?us-ascii?Q?PSjy2c1qXzEAXIyM4x/Q7c2xppvY9qoGeEG8jRKATVkQk7+mAuUdDYGJlTax?=
- =?us-ascii?Q?4l8CGXbu+GQmSHafWzBg6da5/+YOKcONaebk8T6tLbzgYZuYywX/OJoGYj0n?=
- =?us-ascii?Q?h+wJGD2dw23N7jB/FDai0dMIWY1SQx2KPUzMPFy97KLNvSgaW6LtJkmEI64p?=
- =?us-ascii?Q?7MrUpH6EJuCLVqN25xeHh3+5CHm7qR6qg8U1a9qc7eOcB97ezXc7iBM0JIsn?=
- =?us-ascii?Q?9MParF9iYIWestGPoFZUwy/v+rEv4b1Ap2r23ZbWp8RXMebXZMxwfzw6tP85?=
- =?us-ascii?Q?N+hgsk4MWwe3Z4FAP6PJ1+qsR0j+rydrMyXzpys4Ca8FDwrOFlRYsW245JN1?=
- =?us-ascii?Q?Ekr+XlTrkB2p/vEETgv/VRKfoqSD2KpyEUuqBaDdwabOJclrt39wSuV/6phP?=
- =?us-ascii?Q?BWbaMMjxEk7G65T1PMtT6DtLWio4kgZCQJavzwAynSNo/Z2bUx9Z92zJA/lY?=
- =?us-ascii?Q?coNP6xdKNceXziJnbHgqYihGq7Edesy1n0b/Llz4fR+uHEri94WfdDdXutqH?=
- =?us-ascii?Q?weda8AWpHWpS8uXcZ6crZIttHG2OJWDFRODirANmG7/6LctD7q7quFOBIhTx?=
- =?us-ascii?Q?pZLOxeEeAI0q6FTQSxVuQhFuVbqZ625f+Qh/4rlALNLzdqrZBbaQIUGGrjdC?=
- =?us-ascii?Q?rzz6/R3Sgk1SnSwczu+OcMFwy6BfUN3Vk6xFu1j6hs0Gc5eLmnTyirpeM3Xc?=
- =?us-ascii?Q?DVGZdykoNc+BaDAeFxNWyZ1ILG0GWGmcUAhSdGtyrA8At8RTmPW4e0Joj5RG?=
- =?us-ascii?Q?/BDpY4OYfZhJg47Kko+PPj9FVP/qedXbiPMjfpfw+X4bJYCflHxqoLcJC3dZ?=
- =?us-ascii?Q?xowB3A3nS4rRir20QWQhv5P5cXSjX6p+zMtLLVK1Fz6wX2hDMZ5BRZzIU6BP?=
- =?us-ascii?Q?GiTJKj1Lvuh8C9fVwyj4C2iEKWqq7LGjjDAyM2dL8lnT6q4wOAHxMXQb3ojt?=
- =?us-ascii?Q?fZ6hNmpwA46qy1+/qOsBjMZ3NWfxGsxT8m6j0HKo875dvFf3HNgo/4uYwq2k?=
- =?us-ascii?Q?ZvBuZjAJ0v5LuN1CbqzhHyCi6uTmyrFEkx4CiNvze6+3TI0vinm9znYxXHtV?=
- =?us-ascii?Q?fqASAwnXgO4Tt//52RYaMvMzgGHP6i5QaEDn509KmF3b5ua1VctNlxSqQ70J?=
- =?us-ascii?Q?9bYjP2po80dJ5QNmMV5HXs38scyNxs8ha/DW7RzchjgtGoRgyo12R1YbtVEz?=
- =?us-ascii?Q?9YJ/Z2AIg8dijVRi6suCYMr2OHRnD1FZi5dGDSDnXSMcg7DTfjn5hRkBgHOH?=
- =?us-ascii?Q?KFclKUMFgY68/0ZSkA+ES8FZRX6BFOXfINNxh89YRrZStZ7FiGkW7lzlWFiz?=
- =?us-ascii?Q?nhAGQam7tRPy0dS+kbQfuhWN7WxWhYmc890n22NuzYtdieO2BC8Zy4KVFNTr?=
- =?us-ascii?Q?b3gKyuUvGZnchV1nbwIN2K7fzkWi1dCX+qRDF/HXEMxKwl9Cd/9RW0Stvgzb?=
- =?us-ascii?Q?rWpqluZtJDgs43B/yELq4XnIDCmFV9yZlImb3HiZrOdAYsp4o8L+dtRdtEfr?=
- =?us-ascii?Q?vZHfN8nTF2F0rU8L96P19st33qmftql+lAgI15/cJmA5RMNe3vOnNMbw9GI3?=
- =?us-ascii?Q?hw=3D=3D?=
-X-OriginatorOrg: altera.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e48d1a8d-458f-4e9a-011f-08dd9d2ec27e
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR03MB3461.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 May 2025 14:57:12.8181
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: fbd72e03-d4a5-4110-adce-614d51f2077a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: P4/969yXp+M2eqirMPx8Gto551ZYXx7QfTvWHTmBcgsCeO3Kl1DHodMmqXmaNKlhghMoPdVnJWie5NGVGKzZt3gHyGCYgga51QoYWnsrkg0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH5PR03MB7959
+References: <20250524-cstr-core-v10-0-6412a94d9d75@gmail.com>
+ <20250524-cstr-core-v10-2-6412a94d9d75@gmail.com> <DA66BBX1PDGI.10NHLG3D4CIT7@kernel.org>
+ <CAJ-ks9m48gmar0WWP9WknV2JLqkKNU0X4nwXaQ+JdG+b-EcVxA@mail.gmail.com> <CAH5fLgiUhvp9P7oSf4Rtv5jK1SNebW9-r5YFHVzCZjEwaR=Mjg@mail.gmail.com>
+In-Reply-To: <CAH5fLgiUhvp9P7oSf4Rtv5jK1SNebW9-r5YFHVzCZjEwaR=Mjg@mail.gmail.com>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Tue, 27 May 2025 10:57:11 -0400
+X-Gm-Features: AX0GCFv2oY8lzrXQtwfj6_dQyq0RFoGjtHhR6-NzX_hnZZ_7RGNdHOXxleigo1M
+Message-ID: <CAJ-ks9=prR2TNFhqip8MsjtTWKkoUhoMG75v2mSLF1UaRNwJLg@mail.gmail.com>
+Subject: Re: [PATCH v10 2/5] rust: support formatting of foreign types
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Benno Lossin <lossin@kernel.org>, Michal Rostecki <vadorovsky@protonmail.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
+	Rae Moar <rmoar@google.com>, Danilo Krummrich <dakr@kernel.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, 
+	FUJITA Tomonori <fujita.tomonori@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Saravana Kannan <saravanak@google.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, 
+	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, Andrew Lunn <andrew@lunn.ch>, 
+	Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Jens Axboe <axboe@kernel.dk>, 
+	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
+	dri-devel@lists.freedesktop.org, netdev@vger.kernel.org, 
+	devicetree@vger.kernel.org, llvm@lists.linux.dev, linux-pci@vger.kernel.org, 
+	nouveau@lists.freedesktop.org, linux-block@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>
+On Tue, May 27, 2025 at 8:44=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> w=
+rote:
+>
+> On Tue, May 27, 2025 at 12:18=E2=80=AFAM Tamir Duberstein <tamird@gmail.c=
+om> wrote:
+> > > > +}
+> > > > +
+> > > > +fn make_ident<'a, T: IntoIterator<Item =3D &'a str>>(
+> > > > +    span: Span,
+> > > > +    names: T,
+> > > > +) -> impl Iterator<Item =3D TokenTree> + use<'a, T> {
+> > > > +    names.into_iter().flat_map(move |name| {
+> > > > +        [
+> > > > +            TokenTree::Punct(Punct::new(':', Spacing::Joint)),
+> > > > +            TokenTree::Punct(Punct::new(':', Spacing::Alone)),
+> > > > +            TokenTree::Ident(Ident::new(name, span)),
+> > > > +        ]
+> > > > +    })
+> > > > +}
+> > > > diff --git a/rust/macros/lib.rs b/rust/macros/lib.rs
+> > > > index d31e50c446b0..fa956eaa3ba7 100644
+> > > > --- a/rust/macros/lib.rs
+> > > > +++ b/rust/macros/lib.rs
+> > > > @@ -10,6 +10,7 @@
+> > > >  mod quote;
+> > > >  mod concat_idents;
+> > > >  mod export;
+> > > > +mod fmt;
+> > > >  mod helpers;
+> > > >  mod kunit;
+> > > >  mod module;
+> > > > @@ -196,6 +197,24 @@ pub fn export(attr: TokenStream, ts: TokenStre=
+am) -> TokenStream {
+> > > >      export::export(attr, ts)
+> > > >  }
+> > > >
+> > > > +/// Like [`core::format_args!`], but automatically wraps arguments=
+ in [`kernel::fmt::Adapter`].
+> > > > +///
+> > > > +/// This macro allows generating `core::fmt::Arguments` while ensu=
+ring that each argument is wrapped
+> > > > +/// with `::kernel::fmt::Adapter`, which customizes formatting beh=
+avior for kernel logging.
+> > > > +///
+> > > > +/// Named arguments used in the format string (e.g. `{foo}`) are d=
+etected and resolved from local
+> > > > +/// bindings. All positional and named arguments are automatically=
+ wrapped.
+> > > > +///
+> > > > +/// This macro is an implementation detail of other kernel logging=
+ macros like [`pr_info!`] and
+> > > > +/// should not typically be used directly.
+> > > > +///
+> > > > +/// [`kernel::fmt::Adapter`]: ../kernel/fmt/struct.Adapter.html
+> > > > +/// [`pr_info!`]: ../kernel/macro.pr_info.html
+> > > > +#[proc_macro]
+> > > > +pub fn fmt(input: TokenStream) -> TokenStream {
+> > >
+> > > I'm wondering if we should name this `format_args` instead in order t=
+o
+> > > better communicate that it's a replacement for `core::format_args!`.
+> >
+> > Unfortunately that introduces ambiguity in cases where
+> > kernel::prelude::* is imported because core::format_args is in core's
+> > prelude.
+>
+> I'm pretty sure that glob imports are higher priority than the core
+> prelude? Or is this because there are macros that now incorrectly use
+> kernel::prelude::format_args when they should use the one from core?
 
-On SoCFPGA platform INTTEST register only supports 16-bit write based on
-the HW design, writing 32-bit to INTTEST register triggers SError to CPU.
-Use 16-bit write for INITTEST register.
+compiler says no, e.g.:
 
-Fixes: c7b4be8db8bc ("EDAC, altera: Add Arria10 OCRAM ECC support")
-Cc: stable@kernel.org
-Signed-off-by: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>
-Signed-off-by: Matthew Gerlach <matthew.gerlach@altera.com>
----
- drivers/edac/altera_edac.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/edac/altera_edac.c b/drivers/edac/altera_edac.c
-index 20333608b983..cae52c654a15 100644
---- a/drivers/edac/altera_edac.c
-+++ b/drivers/edac/altera_edac.c
-@@ -1746,9 +1746,9 @@ altr_edac_a10_device_trig(struct file *file, const char __user *user_buf,
- 
- 	local_irq_save(flags);
- 	if (trig_type == ALTR_UE_TRIGGER_CHAR)
--		writel(priv->ue_set_mask, set_addr);
-+		writew(priv->ue_set_mask, set_addr);
- 	else
--		writel(priv->ce_set_mask, set_addr);
-+		writew(priv->ce_set_mask, set_addr);
- 
- 	/* Ensure the interrupt test bits are set */
- 	wmb();
-@@ -1778,7 +1778,7 @@ altr_edac_a10_device_trig2(struct file *file, const char __user *user_buf,
- 
- 	local_irq_save(flags);
- 	if (trig_type == ALTR_UE_TRIGGER_CHAR) {
--		writel(priv->ue_set_mask, set_addr);
-+		writew(priv->ue_set_mask, set_addr);
- 	} else {
- 		/* Setup read/write of 4 bytes */
- 		writel(ECC_WORD_WRITE, drvdata->base + ECC_BLK_DBYTECTRL_OFST);
--- 
-2.35.3
-
+error[E0659]: `format_args` is ambiguous
+    --> rust/doctests_kernel_generated.rs:8783:25
+     |
+8783 |     kernel::kunit::info(format_args!("    #
+rust_doctest_kernel_workqueue_rs_3.location:
+rust/kernel/workqueue.rs:77\n"));
+     |                         ^^^^^^^^^^^ ambiguous name
+     |
+     =3D note: ambiguous because of a conflict between a name from a
+glob import and an outer scope during import or macro resolution
+     =3D note: `format_args` could refer to a macro from prelude
+note: `format_args` could also refer to the macro imported here
+    --> rust/doctests_kernel_generated.rs:8772:9
+     |
+8772 |     use kernel::prelude::*;
+     |         ^^^^^^^^^^^^^^^^^^
+     =3D help: consider adding an explicit import of `format_args` to disam=
+biguate
 
