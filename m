@@ -1,270 +1,281 @@
-Return-Path: <linux-kernel+bounces-664074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-664071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 432E2AC5172
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 16:58:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7704EAC5169
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 16:57:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D083D1BA2090
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 14:58:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FFFD188744D
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 14:57:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F38D2741B0;
-	Tue, 27 May 2025 14:58:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="J+OchjSh"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1974527A459;
+	Tue, 27 May 2025 14:57:25 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B16AF248886
-	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 14:58:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90C4227602B;
+	Tue, 27 May 2025 14:57:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748357905; cv=none; b=hWX+V2K2XwMQor9hoFr7ZIUQw4afvHlR27PEs4glhpJUd9MMN3K+sJGy+XyC97MY+2tlbYyIvV3TF3UYxHbA2pjn1MDcAS4ZMPD9uSUujQLXT626dz3xNVRjD6whD74aQZ9LOfgCpkXUAckxdrr0k5qYZX1WzCTJCxv+KOcXZuE=
+	t=1748357844; cv=none; b=fD7Je6ix2JjTN6rTOtj83/mS758KU33UZmH4I9pQOqBaAg/HEar7huS4G0Bm0yrML7oaTDIB6D31my4fcOjsHBh0Z0D5EK0C61RDa9b42L2z/8ZHWvQDceowJ2iclixfRXMNeKlCuPkNqYpSKh4vTLxhrGtug5WxjRfuL2xa6to=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748357905; c=relaxed/simple;
-	bh=5KZ01cXmZZIAaYImWDvgsbkwoDslnM3yMqZ9dLsYJ4U=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=nUGxfYzcDciujYNjVbBZ4UrvKOlFfdBCL0pFM/rS1fc5Xc0ZesiRuilrOIPCnCWrczQ3TjSv5Sz5X4LqRkNX8k2+3o67UT9+9rXN354dUtDtVy7OVEGsShi5XUuIGJ7fDslY4Es8aXd0AcYjirLr95ABXwGXBQI96hnCDUcvmr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=J+OchjSh; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1748357895;
-	bh=5KZ01cXmZZIAaYImWDvgsbkwoDslnM3yMqZ9dLsYJ4U=;
-	h=Date:From:To:Cc:Subject:From;
-	b=J+OchjSh/1mTBga4GEWVfpMgQ7Pmfix2AqVk8soXlGp4RVmIL2Bljzswm9BFzlZC9
-	 XHseSji9MH2pnVUP8tJ44HKAFQ3+Vsn+ncgCsDFAM8xRu0XXi7nr8uKmlykG5/bDhJ
-	 X3sFCgyHPOhwOeMhuBQM7ZCe8O2zleY2FP/zjsWM=
-Date: Tue, 27 May 2025 16:58:14 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
-	Willy Tarreau <w@1wt.eu>, Shuah Khan <shuah@kernel.org>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] nolibc updates for v6.16-rc1
-Message-ID: <3d0f7e83-7d64-41cb-9909-9d84406d8f2e@t-8ch.de>
+	s=arc-20240116; t=1748357844; c=relaxed/simple;
+	bh=pL9Fegy02fmCCz6cEn5sWFto9TtfYVeB589+kYHMg78=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=CyuV+PYVmQnE8mOgGBxoN0KUwYmO9M+MmhO0iT3PrFhpVhmgUIwmieJB4urc9ROhbFNqpnyJ1yFmOCIo4dJM3/A1VELHEWtPb8iEYzPNGRyPFrm1e0vmEuMdBgV33QDmalwweJ31GTIfCvbgSUF3Fb6VQMDII6JQzE1DTqA+0ds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42A2EC4CEE9;
+	Tue, 27 May 2025 14:57:23 +0000 (UTC)
+Date: Tue, 27 May 2025 10:58:20 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Vincent Donnefort <vdonnefort@google.com>
+Subject: [PATCH] ring-buffer: Move cpus_read_lock() outside of buffer->mutex
+Message-ID: <20250527105820.0f45d045@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Linus,
+From: Steven Rostedt <rostedt@goodmis.org>
 
-The following changes since commit 0af2f6be1b4281385b618cb86ad946eded089ac8:
+Running a modified trace-cmd record --nosplice where it does a mmap of the
+ring buffer when '--nosplice' is set, caused the following lockdep splat:
 
-  Linux 6.15-rc1 (2025-04-06 13:11:33 -0700)
+ ======================================================
+ WARNING: possible circular locking dependency detected
+ 6.15.0-rc7-test-00002-gfb7d03d8a82f #551 Not tainted
+ ------------------------------------------------------
+ trace-cmd/1113 is trying to acquire lock:
+ ffff888100062888 (&buffer->mutex){+.+.}-{4:4}, at: ring_buffer_map+0x11c/0xe70
 
-are available in the Git repository at:
+ but task is already holding lock:
+ ffff888100a5f9f8 (&cpu_buffer->mapping_lock){+.+.}-{4:4}, at: ring_buffer_map+0xcf/0xe70
 
-  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/nolibc/linux-nolibc.git/ tags/nolibc-20250526-for-6.16-1
+ which lock already depends on the new lock.
 
-for you to fetch changes up to 869c788909b93a78ead1ca28c42b95eeb0779215:
+ the existing dependency chain (in reverse order) is:
 
-  selftests: harness: Stop using setjmp()/longjmp() (2025-05-21 15:32:37 +0200)
+ -> #5 (&cpu_buffer->mapping_lock){+.+.}-{4:4}:
+        __mutex_lock+0x192/0x18c0
+        ring_buffer_map+0xcf/0xe70
+        tracing_buffers_mmap+0x1c4/0x3b0
+        __mmap_region+0xd8d/0x1f70
+        do_mmap+0x9d7/0x1010
+        vm_mmap_pgoff+0x20b/0x390
+        ksys_mmap_pgoff+0x2e9/0x440
+        do_syscall_64+0x79/0x1c0
+        entry_SYSCALL_64_after_hwframe+0x76/0x7e
 
-This is the first pull coming directly from the nolibc maintainers.
-Previous pulls where prepared by Shuah and Paul, many thanks to them.
+ -> #4 (&mm->mmap_lock){++++}-{4:4}:
+        __might_fault+0xa5/0x110
+        _copy_to_user+0x22/0x80
+        _perf_ioctl+0x61b/0x1b70
+        perf_ioctl+0x62/0x90
+        __x64_sys_ioctl+0x134/0x190
+        do_syscall_64+0x79/0x1c0
+        entry_SYSCALL_64_after_hwframe+0x76/0x7e
 
-----------------------------------------------------------------
-nolibc changes for v6.16
+ -> #3 (&cpuctx_mutex){+.+.}-{4:4}:
+        __mutex_lock+0x192/0x18c0
+        perf_event_init_cpu+0x325/0x7c0
+        perf_event_init+0x52a/0x5b0
+        start_kernel+0x263/0x3e0
+        x86_64_start_reservations+0x24/0x30
+        x86_64_start_kernel+0x95/0xa0
+        common_startup_64+0x13e/0x141
 
-Highlights:
+ -> #2 (pmus_lock){+.+.}-{4:4}:
+        __mutex_lock+0x192/0x18c0
+        perf_event_init_cpu+0xb7/0x7c0
+        cpuhp_invoke_callback+0x2c0/0x1030
+        __cpuhp_invoke_callback_range+0xbf/0x1f0
+        _cpu_up+0x2e7/0x690
+        cpu_up+0x117/0x170
+        cpuhp_bringup_mask+0xd5/0x120
+        bringup_nonboot_cpus+0x13d/0x170
+        smp_init+0x2b/0xf0
+        kernel_init_freeable+0x441/0x6d0
+        kernel_init+0x1e/0x160
+        ret_from_fork+0x34/0x70
+        ret_from_fork_asm+0x1a/0x30
 
-* New supported architectures: m68k, SPARC (32 and 64 bit)
-* Compatibility with kselftest_harness.h
-* A more robust mechanism to include all of nolibc from each header
-* Split existing features into new headers to simplify adoption
-* Compatibility with UBSAN and it is used in the testsuite
-* Many small new features focussing on usage in kselftests
+ -> #1 (cpu_hotplug_lock){++++}-{0:0}:
+        cpus_read_lock+0x2a/0xd0
+        ring_buffer_resize+0x610/0x14e0
+        __tracing_resize_ring_buffer.part.0+0x42/0x120
+        tracing_set_tracer+0x7bd/0xa80
+        tracing_set_trace_write+0x132/0x1e0
+        vfs_write+0x21c/0xe80
+        ksys_write+0xf9/0x1c0
+        do_syscall_64+0x79/0x1c0
+        entry_SYSCALL_64_after_hwframe+0x76/0x7e
 
-----------------------------------------------------------------
-Daniel Palmer (1):
-      tools/nolibc: Add m68k support
+ -> #0 (&buffer->mutex){+.+.}-{4:4}:
+        __lock_acquire+0x1405/0x2210
+        lock_acquire+0x174/0x310
+        __mutex_lock+0x192/0x18c0
+        ring_buffer_map+0x11c/0xe70
+        tracing_buffers_mmap+0x1c4/0x3b0
+        __mmap_region+0xd8d/0x1f70
+        do_mmap+0x9d7/0x1010
+        vm_mmap_pgoff+0x20b/0x390
+        ksys_mmap_pgoff+0x2e9/0x440
+        do_syscall_64+0x79/0x1c0
+        entry_SYSCALL_64_after_hwframe+0x76/0x7e
 
-Jemmy Wong (1):
-      tools/nolibc/types.h: fix mismatched parenthesis in minor()
+ other info that might help us debug this:
 
-Thomas Weißschuh (81):
-      selftests/nolibc: drop unnecessary sys/io.h include
-      selftests/nolibc: drop dependency from sysroot to defconfig
-      selftests/nolibc: only consider XARCH for CFLAGS when requested
-      tools/nolibc: Add support for SPARC
-      tools/nolibc: drop manual stack pointer alignment
-      tools/nolibc: add __nolibc_has_feature()
-      tools/nolibc: add __nolibc_aligned() and __nolibc_aligned_as()
-      tools/nolibc: disable function sanitizer for _start_c()
-      tools/nolibc: properly align dirent buffer
-      tools/nolibc: fix integer overflow in i{64,}toa_r() and
-      selftests/nolibc: disable ubsan for smash_stack()
-      selftests/nolibc: enable UBSAN if available
-      tools/nolibc: prepare for headers in subdirectories
-      tools/nolibc: add elf.h
-      tools/nolibc: move open() and friends to fcntl.h
-      tools/nolibc: move getauxval() to sys/auxv.h
-      tools/nolibc: move mmap() and friends to sys/mman.h
-      tools/nolibc: move stat() and friends to sys/stat.h
-      tools/nolibc: move syscall() to sys/syscall.h
-      tools/nolibc: move gettimeofday() to sys/time.h
-      tools/nolibc: add sys/types.h shim
-      tools/nolibc: move wait() and friends to sys/wait.h
-      tools/nolibc: handle intmax_t/uintmax_t in printf
-      tools/nolibc: use intmax definitions from compiler
-      tools/nolibc: use pselect6_time64 if available
-      tools/nolibc: use ppoll_time64 if available
-      tools/nolibc: add tolower() and toupper()
-      tools/nolibc: add _exit()
-      tools/nolibc: add setpgrp()
-      tools/nolibc: implement waitpid() in terms of waitid()
-      Revert "selftests/nolibc: use waitid() over waitpid()"
-      tools/nolibc: add dprintf() and vdprintf()
-      tools/nolibc: add getopt()
-      tools/nolibc: allow different write callbacks in printf
-      tools/nolibc: allow limiting of printf destination size
-      tools/nolibc: add snprintf() and friends
-      selftests/nolibc: use snprintf() for printf tests
-      selftests/nolibc: rename vfprintf test suite
-      selftests/nolibc: add test for snprintf() truncation
-      tools/nolibc: implement width padding in printf()
-      tools/nolibc: add target to check header usability
-      tools/nolibc: include nolibc.h early from all header files
-      selftests/nolibc: always run nolibc header check
-      tools/nolibc: move poll() to poll.h
-      tools/nolibc: use poll-related definitions from UAPI headers
-      tools/nolibc: add strstr()
-      tools/nolibc: add %m printf format
-      tools/nolibc: add more stat() variants
-      tools/nolibc: add mremap()
-      tools/nolibc: add getrandom()
-      tools/nolibc: add abs() and friends
-      tools/nolibc: add support for access() and faccessat()
-      tools/nolibc: add clock_getres(), clock_gettime() and clock_settime()
-      tools/nolibc: add timer functions
-      tools/nolibc: add timerfd functionality
-      tools/nolibc: add difftime()
-      tools/nolibc: add namespace functionality
-      tools/nolibc: add fopen()
-      tools/nolibc: fall back to sys_clock_gettime() in gettimeofday()
-      tools/nolibc: implement wait() in terms of waitpid()
-      tools/nolibc: move ioctl() to sys/ioctl.h
-      tools/nolibc: move mount() to sys/mount.h
-      tools/nolibc: move prctl() to sys/prctl.h
-      tools/nolibc: move reboot() to sys/reboot.h
-      tools/nolibc: move getrlimit() and friends to sys/resource.h
-      tools/nolibc: move makedev() and friends to sys/sysmacros.h
-      tools/nolibc: move uname() and friends to sys/utsname.h
-      tools/nolibc: move NULL and offsetof() to sys/stddef.h
-      selftests/nolibc: drop include guards around standard headers
-      selftests: harness: Add kselftest harness selftest
-      selftests: harness: Use C89 comment style
-      selftests: harness: Ignore unused variant argument warning
-      selftests: harness: Mark functions without prototypes static
-      selftests: harness: Remove inline qualifier for wrappers
-      selftests: harness: Remove dependency on libatomic
-      selftests: harness: Implement test timeouts through pidfd
-      selftests: harness: Don't set setup_completed for fixtureless tests
-      selftests: harness: Move teardown conditional into test metadata
-      selftests: harness: Add teardown callback to test metadata
-      selftests: harness: Add "variant" and "self" to test metadata
-      selftests: harness: Stop using setjmp()/longjmp()
+ Chain exists of:
+   &buffer->mutex --> &mm->mmap_lock --> &cpu_buffer->mapping_lock
 
- MAINTAINERS                                        |   1 +
- tools/include/nolibc/Makefile                      |  34 +-
- tools/include/nolibc/arch-aarch64.h                |   1 -
- tools/include/nolibc/arch-arm.h                    |   2 -
- tools/include/nolibc/arch-i386.h                   |   2 -
- tools/include/nolibc/arch-loongarch.h              |   7 -
- tools/include/nolibc/arch-m68k.h                   | 141 +++++++
- tools/include/nolibc/arch-powerpc.h                |   2 -
- tools/include/nolibc/arch-riscv.h                  |   1 -
- tools/include/nolibc/arch-sparc.h                  | 191 ++++++++++
- tools/include/nolibc/arch-x86_64.h                 |   1 -
- tools/include/nolibc/arch.h                        |   4 +
- tools/include/nolibc/compiler.h                    |   9 +
- tools/include/nolibc/crt.h                         |   5 +
- tools/include/nolibc/ctype.h                       |   6 +-
- tools/include/nolibc/dirent.h                      |  10 +-
- tools/include/nolibc/elf.h                         |  15 +
- tools/include/nolibc/errno.h                       |   6 +-
- tools/include/nolibc/fcntl.h                       |  69 ++++
- tools/include/nolibc/getopt.h                      | 101 +++++
- tools/include/nolibc/math.h                        |  31 ++
- tools/include/nolibc/nolibc.h                      |  21 +
- tools/include/nolibc/poll.h                        |  55 +++
- tools/include/nolibc/sched.h                       |  50 +++
- tools/include/nolibc/signal.h                      |   6 +-
- tools/include/nolibc/std.h                         |   6 +-
- tools/include/nolibc/stddef.h                      |  24 ++
- tools/include/nolibc/stdint.h                      |   4 +-
- tools/include/nolibc/stdio.h                       | 167 +++++++-
- tools/include/nolibc/stdlib.h                      |  54 ++-
- tools/include/nolibc/string.h                      |  40 +-
- tools/include/nolibc/sys.h                         | 423 ++-------------------
- tools/include/nolibc/sys/auxv.h                    |  41 ++
- tools/include/nolibc/sys/ioctl.h                   |  29 ++
- tools/include/nolibc/sys/mman.h                    |  82 ++++
- tools/include/nolibc/sys/mount.h                   |  37 ++
- tools/include/nolibc/sys/prctl.h                   |  36 ++
- tools/include/nolibc/sys/random.h                  |  34 ++
- tools/include/nolibc/sys/reboot.h                  |  34 ++
- tools/include/nolibc/sys/resource.h                |  53 +++
- tools/include/nolibc/sys/stat.h                    |  94 +++++
- tools/include/nolibc/sys/syscall.h                 |  19 +
- tools/include/nolibc/sys/sysmacros.h               |  20 +
- tools/include/nolibc/sys/time.h                    |  49 +++
- tools/include/nolibc/sys/timerfd.h                 |  87 +++++
- tools/include/nolibc/sys/types.h                   |   7 +
- tools/include/nolibc/sys/utsname.h                 |  42 ++
- tools/include/nolibc/sys/wait.h                    | 116 ++++++
- tools/include/nolibc/time.h                        | 189 ++++++++-
- tools/include/nolibc/types.h                       |  32 +-
- tools/include/nolibc/unistd.h                      |  40 +-
- tools/testing/selftests/Makefile                   |   1 +
- tools/testing/selftests/kselftest_harness.h        | 170 ++++-----
- .../testing/selftests/kselftest_harness/.gitignore |   2 +
- tools/testing/selftests/kselftest_harness/Makefile |   7 +
- .../selftests/kselftest_harness/harness-selftest.c | 136 +++++++
- .../kselftest_harness/harness-selftest.expected    |  64 ++++
- .../kselftest_harness/harness-selftest.sh          |  13 +
- tools/testing/selftests/nolibc/Makefile            |  28 +-
- .../testing/selftests/nolibc/nolibc-test-linkage.c |   2 -
- tools/testing/selftests/nolibc/nolibc-test.c       | 331 +++++++++++++---
- tools/testing/selftests/nolibc/run-tests.sh        |   7 +
- 62 files changed, 2629 insertions(+), 662 deletions(-)
- create mode 100644 tools/include/nolibc/arch-m68k.h
- create mode 100644 tools/include/nolibc/arch-sparc.h
- create mode 100644 tools/include/nolibc/elf.h
- create mode 100644 tools/include/nolibc/fcntl.h
- create mode 100644 tools/include/nolibc/getopt.h
- create mode 100644 tools/include/nolibc/math.h
- create mode 100644 tools/include/nolibc/poll.h
- create mode 100644 tools/include/nolibc/sched.h
- create mode 100644 tools/include/nolibc/stddef.h
- create mode 100644 tools/include/nolibc/sys/auxv.h
- create mode 100644 tools/include/nolibc/sys/ioctl.h
- create mode 100644 tools/include/nolibc/sys/mman.h
- create mode 100644 tools/include/nolibc/sys/mount.h
- create mode 100644 tools/include/nolibc/sys/prctl.h
- create mode 100644 tools/include/nolibc/sys/random.h
- create mode 100644 tools/include/nolibc/sys/reboot.h
- create mode 100644 tools/include/nolibc/sys/resource.h
- create mode 100644 tools/include/nolibc/sys/stat.h
- create mode 100644 tools/include/nolibc/sys/syscall.h
- create mode 100644 tools/include/nolibc/sys/sysmacros.h
- create mode 100644 tools/include/nolibc/sys/time.h
- create mode 100644 tools/include/nolibc/sys/timerfd.h
- create mode 100644 tools/include/nolibc/sys/types.h
- create mode 100644 tools/include/nolibc/sys/utsname.h
- create mode 100644 tools/include/nolibc/sys/wait.h
- create mode 100644 tools/testing/selftests/kselftest_harness/.gitignore
- create mode 100644 tools/testing/selftests/kselftest_harness/Makefile
- create mode 100644 tools/testing/selftests/kselftest_harness/harness-selftest.c
- create mode 100644 tools/testing/selftests/kselftest_harness/harness-selftest.expected
- create mode 100755 tools/testing/selftests/kselftest_harness/harness-selftest.sh
+  Possible unsafe locking scenario:
+
+        CPU0                    CPU1
+        ----                    ----
+   lock(&cpu_buffer->mapping_lock);
+                                lock(&mm->mmap_lock);
+                                lock(&cpu_buffer->mapping_lock);
+   lock(&buffer->mutex);
+
+  *** DEADLOCK ***
+
+ 2 locks held by trace-cmd/1113:
+  #0: ffff888106b847e0 (&mm->mmap_lock){++++}-{4:4}, at: vm_mmap_pgoff+0x192/0x390
+  #1: ffff888100a5f9f8 (&cpu_buffer->mapping_lock){+.+.}-{4:4}, at: ring_buffer_map+0xcf/0xe70
+
+ stack backtrace:
+ CPU: 5 UID: 0 PID: 1113 Comm: trace-cmd Not tainted 6.15.0-rc7-test-00002-gfb7d03d8a82f #551 PREEMPT
+ Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+ Call Trace:
+  <TASK>
+  dump_stack_lvl+0x6e/0xa0
+  print_circular_bug.cold+0x178/0x1be
+  check_noncircular+0x146/0x160
+  __lock_acquire+0x1405/0x2210
+  lock_acquire+0x174/0x310
+  ? ring_buffer_map+0x11c/0xe70
+  ? ring_buffer_map+0x11c/0xe70
+  ? __mutex_lock+0x169/0x18c0
+  __mutex_lock+0x192/0x18c0
+  ? ring_buffer_map+0x11c/0xe70
+  ? ring_buffer_map+0x11c/0xe70
+  ? function_trace_call+0x296/0x370
+  ? __pfx___mutex_lock+0x10/0x10
+  ? __pfx_function_trace_call+0x10/0x10
+  ? __pfx___mutex_lock+0x10/0x10
+  ? _raw_spin_unlock+0x2d/0x50
+  ? ring_buffer_map+0x11c/0xe70
+  ? ring_buffer_map+0x11c/0xe70
+  ? __mutex_lock+0x5/0x18c0
+  ring_buffer_map+0x11c/0xe70
+  ? do_raw_spin_lock+0x12d/0x270
+  ? find_held_lock+0x2b/0x80
+  ? _raw_spin_unlock+0x2d/0x50
+  ? rcu_is_watching+0x15/0xb0
+  ? _raw_spin_unlock+0x2d/0x50
+  ? trace_preempt_on+0xd0/0x110
+  tracing_buffers_mmap+0x1c4/0x3b0
+  __mmap_region+0xd8d/0x1f70
+  ? ring_buffer_lock_reserve+0x99/0xff0
+  ? __pfx___mmap_region+0x10/0x10
+  ? ring_buffer_lock_reserve+0x99/0xff0
+  ? __pfx_ring_buffer_lock_reserve+0x10/0x10
+  ? __pfx_ring_buffer_lock_reserve+0x10/0x10
+  ? bpf_lsm_mmap_addr+0x4/0x10
+  ? security_mmap_addr+0x46/0xd0
+  ? lock_is_held_type+0xd9/0x130
+  do_mmap+0x9d7/0x1010
+  ? 0xffffffffc0370095
+  ? __pfx_do_mmap+0x10/0x10
+  vm_mmap_pgoff+0x20b/0x390
+  ? __pfx_vm_mmap_pgoff+0x10/0x10
+  ? 0xffffffffc0370095
+  ksys_mmap_pgoff+0x2e9/0x440
+  do_syscall_64+0x79/0x1c0
+  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+ RIP: 0033:0x7fb0963a7de2
+ Code: 00 00 00 0f 1f 44 00 00 41 f7 c1 ff 0f 00 00 75 27 55 89 cd 53 48 89 fb 48 85 ff 74 3b 41 89 ea 48 89 df b8 09 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 76 5b 5d c3 0f 1f 00 48 8b 05 e1 9f 0d 00 64
+ RSP: 002b:00007ffdcc8fb878 EFLAGS: 00000246 ORIG_RAX: 0000000000000009
+ RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fb0963a7de2
+ RDX: 0000000000000001 RSI: 0000000000001000 RDI: 0000000000000000
+ RBP: 0000000000000001 R08: 0000000000000006 R09: 0000000000000000
+ R10: 0000000000000001 R11: 0000000000000246 R12: 0000000000000000
+ R13: 00007ffdcc8fbe68 R14: 00007fb096628000 R15: 00005633e01a5c90
+  </TASK>
+
+The issue is that cpus_read_lock() is taken within buffer->mutex. The
+memory mapped pages are taken with the mmap_lock held. The buffer->mutex
+is taken within the cpu_buffer->mapping_lock. There's quite a chain with
+all these locks, where the deadlock can be fixed by moving the
+cpus_read_lock() outside the taking of the buffer->mutex.
+
+Cc: stable@vger.kernel.org
+Fixes: 117c39200d9d7 ("ring-buffer: Introducing ring-buffer mapping functions")
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+---
+ kernel/trace/ring_buffer.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
+
+diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
+index 8134ae64d7f8..241acb470c42 100644
+--- a/kernel/trace/ring_buffer.c
++++ b/kernel/trace/ring_buffer.c
+@@ -2849,6 +2849,12 @@ int ring_buffer_resize(struct trace_buffer *buffer, unsigned long size,
+ 	if (nr_pages < 2)
+ 		nr_pages = 2;
+ 
++	/*
++	 * Keep CPUs from coming online while resizing to synchronize
++	 * with new per CPU buffers being created.
++	 */
++	guard(cpus_read_lock)();
++
+ 	/* prevent another thread from changing buffer sizes */
+ 	mutex_lock(&buffer->mutex);
+ 	atomic_inc(&buffer->resizing);
+@@ -2893,7 +2899,6 @@ int ring_buffer_resize(struct trace_buffer *buffer, unsigned long size,
+ 			cond_resched();
+ 		}
+ 
+-		cpus_read_lock();
+ 		/*
+ 		 * Fire off all the required work handlers
+ 		 * We can't schedule on offline CPUs, but it's not necessary
+@@ -2933,7 +2938,6 @@ int ring_buffer_resize(struct trace_buffer *buffer, unsigned long size,
+ 			cpu_buffer->nr_pages_to_update = 0;
+ 		}
+ 
+-		cpus_read_unlock();
+ 	} else {
+ 		cpu_buffer = buffer->buffers[cpu_id];
+ 
+@@ -2961,8 +2965,6 @@ int ring_buffer_resize(struct trace_buffer *buffer, unsigned long size,
+ 			goto out_err;
+ 		}
+ 
+-		cpus_read_lock();
+-
+ 		/* Can't run something on an offline CPU. */
+ 		if (!cpu_online(cpu_id))
+ 			rb_update_pages(cpu_buffer);
+@@ -2981,7 +2983,6 @@ int ring_buffer_resize(struct trace_buffer *buffer, unsigned long size,
+ 		}
+ 
+ 		cpu_buffer->nr_pages_to_update = 0;
+-		cpus_read_unlock();
+ 	}
+ 
+  out:
+-- 
+2.47.2
+
 
