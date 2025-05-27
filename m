@@ -1,128 +1,209 @@
-Return-Path: <linux-kernel+bounces-664342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-664343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15ABDAC5A52
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 20:57:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C6B9AC5A54
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 21:02:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 872047AC8AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 18:55:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 808E58A23C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 19:02:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 813DC280A57;
-	Tue, 27 May 2025 18:56:57 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38A701C6FEC;
+	Tue, 27 May 2025 19:02:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gboex4u2"
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26F1C280A35;
-	Tue, 27 May 2025 18:56:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE46D1990A7
+	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 19:02:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748372217; cv=none; b=LDVUFwEyfjaT+gQwxApKi4914P5wE0IrpVZFA/YsiYzciWGN4XbNN77irXux7936f9K6cKOyiWzAKk40yMPi2Wh+TmjvqGlr/tr4abJqVbVu1+iTPFByyH8+ne+fixkf7BP5LyQJ+n+usKMn4u5Cf3Sb+CBE6/9We4SqjNE8FOE=
+	t=1748372570; cv=none; b=EkcR5Dlyc1I2GNBfQqetknrYPJ+3eGyU/w2gyhweG6OcNzbHIGb/SxsutW1xe8ue08637ciT6NSin9085Zim8TyEQ7bbtfRxDfoWtbxVNRTBqmOKmTVlbbuXjEFwCW9UCjQaE4b5BYdILsJIFb5SvOFddPpmlztz3qV7VeS8b58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748372217; c=relaxed/simple;
-	bh=UzBD2LFNDaxTf0HiFaUy6eYRVbl/5f/e2WlI2942kQo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=uXiclFTnngGxysmOj+0IOwP3Y5hqrrHO8McadPkTVqonN+wtJYFwErHpfuBqX3158F6+3ClnVOYyBpAmCq4FLxPVWExpVa8D7V1ePgcNQr4OvAbcOw8rrBa6rOawydxzBPVirjGELnWB9b4cGUEQxGjh8B1cLksN0CoEiCU9Hsc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12585C4CEEB;
-	Tue, 27 May 2025 18:56:55 +0000 (UTC)
-Date: Tue, 27 May 2025 14:57:53 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>
-Subject: [PATCH] ring-buffer: Remove jump to out label in
- ring_buffer_swap_cpu()
-Message-ID: <20250527145753.6b45d840@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1748372570; c=relaxed/simple;
+	bh=qc9K1487mDId4n8hDI2Zz9cGxZ+yStXtUqmOpy/e/Yo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JKecaIh7tWuPl/xfrxXefgjBdvxWHm6mh709u3beoJWjeCP8UUnxtfiNpolgAHKkxfAf5J6ol51Lwmf/luvvcaAq/VJwMl82kBuya092ctcTmtUi+5j9JtaAqch2PDE7FUwPdiwjWymcf63w0KlB21si5dW3aRmouKCbztS43JM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gboex4u2; arc=none smtp.client-ip=209.85.222.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7c5f720c717so19021885a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 12:02:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748372568; x=1748977368; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/ZyIDN9dRHZ7H2gbq+aiFHzFC56nerxuUqfJsbZggCk=;
+        b=gboex4u2JK2gCcaF6fAQ71Chv2dEq1yCO+I4/ddHd6LpVpnUN1jkVcxKJOK8cPw8Qu
+         /KNuV8QyGoSF6EkXyBGKepskAKLVgEnfmS/GDnhwyMlJUSNEWNbRWGNpxTymRXOYs/dy
+         uhpyk9XDh6ZKnzgfXIKH02gJoAdhKHhDHuIZysU0CVN4iyTFYueczoo4LuDmaDWYqpVB
+         4j4Av9kfScxyrZIB6SufhN8EmPf0Nmtx9pVM+anITFTl1YIHDAGNloyPs6ckbgLktFLy
+         PI9hz0RR9SasmQNW27xYP72tBBt6PqJb1wg+QwthEoro2Bmr+oeLAw0zqKiU1t8cZMeT
+         rw1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748372568; x=1748977368;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/ZyIDN9dRHZ7H2gbq+aiFHzFC56nerxuUqfJsbZggCk=;
+        b=mYDwGjY49odSBAfcYZ4jCE8wKtE6hYwrl3glI5iX1XaOPchl39i6hgljeC3lmkyETB
+         ewCpMvv1Np48iVp3QBdScBv8IvA1HtFiFD4EeBI9Pbh8zXa20Xn6hPAR8DsmdURo3m+8
+         7jlYJVkue4t1e8MT6P9HfHrrq+drCO5qCGQe6wX15bViPTcz1p4mPiaoRaZrAnQD4bC5
+         IkLEtn50hvEq6476yBmSTGg39kQfxETEt16P8eGp1MTNkHj+QmnsOFqnVf42vhKRnNu5
+         zGNsTjdpzJx2D8yeZfsrhzXovJREQjMD1aRVQX8PPzVntj3vD0Ir5TZaK+6UB7/wxKF9
+         eI6w==
+X-Gm-Message-State: AOJu0YwTWrRBowDgb+qlmQq6s9weJrJAMdqgaomAYCAm9R7tQ/KfgJjs
+	bbIapr/Lp0b5EIT6fL31od3PIjPwh8gIvzHG7fZsl7ZmTi4ulF9xy91Xdd5G2cAb
+X-Gm-Gg: ASbGnctxE41/vs+0B+bqTMFjs522irO5qM6PQoHEej9Xs0F+4zqsnuyTnwoK0VrXuHH
+	f5iP3I69kGFZisKkuOUBi1poW7fSCDSXlW4SGRNazR/maBcTaLyl2m49Cd9+aEH/zprL6/bgLCS
+	I9l0Ece8K08VaRCDpR1q+WR/PwJI089O1D9FQEop1Q6q4XQDUASFydn4AhJAnGvdIBiQxUVdorr
+	fd4JwAWRQ8unJxR8VRhx/s043a3Qa/TDeEOwWqUuUoKVAfpzjFsft5+c9EAMVPnm+lWcc+BbSs6
+	e5Bk6E0J+W6b/WVNK3dpRHVKq5d/ZM0FcxgIVJyh1c+C4+625zY=
+X-Google-Smtp-Source: AGHT+IHd53OqY0ivtZJePj8KxPCjbVj4oc4Ce9pQyaHwdEAUKC4TpVIZh9DF4Bmxm4VaAAzFNVDRNA==
+X-Received: by 2002:a05:620a:2723:b0:7c7:c1f8:34eb with SMTP id af79cd13be357-7cf06d88bf9mr238055485a.23.1748372567697;
+        Tue, 27 May 2025 12:02:47 -0700 (PDT)
+Received: from pop-os.. ([201.49.69.163])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4e59cee6cf8sm12909137.13.2025.05.27.12.02.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 May 2025 12:02:47 -0700 (PDT)
+From: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
+To: apw@canonical.com,
+	joe@perches.com,
+	dwaipayanray1@gmail.com,
+	lukas.bulwahn@gmail.com
+Cc: linux-kernel@vger.kernel.org,
+	Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
+Subject: [RESEND PATCH] checkpatch: check format of Vec<String> in modules
+Date: Tue, 27 May 2025 16:02:39 -0300
+Message-Id: <20250527190239.143112-1-trintaeoitogc@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-From: Steven Rostedt <rostedt@goodmis.org>
+Implement a check to ensure that the author, firmware, and alias fields
+of the module! macro are properly formatted.
 
-The function ring_buffer_swap_cpu() has a bunch of jumps to the label out
-that simply returns "ret". There's no reason to jump to a label that
-simply returns a value. Just return directly from there.
+* If the array contains more than one value, enforce vertical
+  formatting.
+* If the array contains only one value, it may be formatted on a single
+  line
+* If the array is not indentation aligned, enforce indentation alignment
 
-This goes back to almost the beginning when commit 8aabee573dff
-("ring-buffer: remove unneeded get_online_cpus") was introduced. That
-commit removed a put_online_cpus() from that label, but never updated all
-the jumps to it that now no longer needed to do anything but return a
-value.
-
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+Signed-off-by: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
 ---
- kernel/trace/ring_buffer.c | 23 +++++++++--------------
- 1 file changed, 9 insertions(+), 14 deletions(-)
+ scripts/checkpatch.pl | 77 +++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 77 insertions(+)
 
-diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-index 897ce51d3bbf..e2aa90dc8d9e 100644
---- a/kernel/trace/ring_buffer.c
-+++ b/kernel/trace/ring_buffer.c
-@@ -6309,37 +6309,33 @@ int ring_buffer_swap_cpu(struct trace_buffer *buffer_a,
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index b3b1939ccd19..5fe90fba29b6 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -2778,6 +2778,12 @@ sub process {
+ 	$realcnt = 0;
+ 	$linenr = 0;
+ 	$fixlinenr = -1;
++
++	my %array_parse_module;
++	my $expected_spaces;
++	my $spaces;
++	my $herevet_space_add;
++
+ 	foreach my $line (@lines) {
+ 		$linenr++;
+ 		$fixlinenr++;
+@@ -2854,6 +2860,11 @@ sub process {
+ 			$realfile =~ s@^([^/]*)/@@ if (!$file);
+ 			$in_commit_log = 0;
+ 			$found_file = 1;
++
++			%array_parse_module = ();
++			$expected_spaces = undef;
++			$spaces = undef;
++
+ 		} elsif ($line =~ /^\+\+\+\s+(\S+)/) {
+ 			$realfile = $1;
+ 			$realfile =~ s@^([^/]*)/@@ if (!$file);
+@@ -3570,6 +3581,72 @@ sub process {
+ # ignore non-hunk lines and lines being removed
+ 		next if (!$hunk_line || $line =~ /^-/);
  
- 	if (!cpumask_test_cpu(cpu, buffer_a->cpumask) ||
- 	    !cpumask_test_cpu(cpu, buffer_b->cpumask))
--		goto out;
-+		return -EINVAL;
- 
- 	cpu_buffer_a = buffer_a->buffers[cpu];
- 	cpu_buffer_b = buffer_b->buffers[cpu];
- 
- 	/* It's up to the callers to not try to swap mapped buffers */
--	if (WARN_ON_ONCE(cpu_buffer_a->mapped || cpu_buffer_b->mapped)) {
--		ret = -EBUSY;
--		goto out;
--	}
-+	if (WARN_ON_ONCE(cpu_buffer_a->mapped || cpu_buffer_b->mapped))
-+		return -EBUSY;
- 
- 	/* At least make sure the two buffers are somewhat the same */
- 	if (cpu_buffer_a->nr_pages != cpu_buffer_b->nr_pages)
--		goto out;
-+		return -EINVAL;
- 
- 	if (buffer_a->subbuf_order != buffer_b->subbuf_order)
--		goto out;
--
--	ret = -EAGAIN;
-+		return -EINVAL;
- 
- 	if (atomic_read(&buffer_a->record_disabled))
--		goto out;
-+		return -EAGAIN;
- 
- 	if (atomic_read(&buffer_b->record_disabled))
--		goto out;
-+		return -EAGAIN;
- 
- 	if (atomic_read(&cpu_buffer_a->record_disabled))
--		goto out;
-+		return -EAGAIN;
- 
- 	if (atomic_read(&cpu_buffer_b->record_disabled))
--		goto out;
-+		return -EAGAIN;
- 
- 	/*
- 	 * We can't do a synchronize_rcu here because this
-@@ -6376,7 +6372,6 @@ int ring_buffer_swap_cpu(struct trace_buffer *buffer_a,
- out_dec:
- 	atomic_dec(&cpu_buffer_a->record_disabled);
- 	atomic_dec(&cpu_buffer_b->record_disabled);
--out:
- 	return ret;
- }
- EXPORT_SYMBOL_GPL(ring_buffer_swap_cpu);
++# check if the field is about author, firmware or alias from module! macro and find malformed arrays
++		my $inline = 0;
++		my $key = "";
++		my $add_line = $line =~ /^\+/;
++
++		if ($line =~ /\b(authors|alias|firmware)\s*:\s*\[/) {
++			$inline = 1;
++			$array_parse_module{$1} = 1;
++		}
++
++		my @keys = keys %array_parse_module;
++		if (@keys) {
++			$key = $keys[0];
++		}
++
++		if (!$expected_spaces && !$add_line && $key && !$inline) {
++			if ($line =~ /^([\t ]+)(\s)/) {
++				$expected_spaces = $1;
++			}
++		}
++
++		if ($add_line && $key) {
++			my $herevet = "$here\n" . cat_vet($rawline) . "\n";
++
++			my $counter = () = $line =~ /"/g;
++			my $more_than_one = $counter > 2;
++			if ($more_than_one) {
++				WARN("ARRAY_MODULE_MACRO",
++				     "Prefer each array element on a separate line\n". $herevet);
++			} elsif ($inline && $line !~ /\]/ && $line !~ /,/ && $line =~ /"/) {
++				WARN("ARRAY_MODULE_MACRO",
++				     "Prefer to declare ] on the same line\n" . $herevet);
++			} elsif (!$inline && $line =~ /\]/ && $line =~ /\"/) {
++				WARN("ARRAY_MODULE_MACRO",
++				     "Prefer a new line after the last value and before ]\n" . $herevet);
++			} elsif ($inline && $line =~ /,/ && $line !~ /\]/) {
++				WARN("ARRAY_MODULE_MACRO",
++				     "Prefer a new line after [\n" . $herevet);
++			}
++
++			my $line_cmp = $line;
++			$line_cmp =~ s/\+/ /;
++			$spaces = -1;
++			if ($line_cmp =~ /^([\t ]+)(\s)/) {
++				$spaces = $1;
++			}
++
++			$herevet_space_add = $herevet;
++		}
++
++		if ($expected_spaces && $spaces) {
++			if ($spaces ne $expected_spaces) {
++				WARN("ARRAY_MODULE_MACRO",
++				     "Prefer aligned parameters\n" . $herevet_space_add);
++			}
++
++			$spaces = undef;
++		}
++
++		#END OF ANALYZE FIELD
++		if ($line =~ /\]/) {
++			delete $array_parse_module{$key};
++			$expected_spaces = undef;
++			$spaces = undef;
++		}
++
+ #trailing whitespace
+ 		if ($line =~ /^\+.*\015/) {
+ 			my $herevet = "$here\n" . cat_vet($rawline) . "\n";
 -- 
-2.47.2
+2.34.1
 
 
