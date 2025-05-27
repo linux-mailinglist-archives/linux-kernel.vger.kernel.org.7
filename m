@@ -1,115 +1,111 @@
-Return-Path: <linux-kernel+bounces-663941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-663948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72751AC4F95
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 15:21:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE607AC4FA7
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 15:24:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42D4517EEEE
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 13:21:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4CDE97AD765
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 13:23:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19DC9271478;
-	Tue, 27 May 2025 13:21:40 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C32A271479;
+	Tue, 27 May 2025 13:24:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fqtRhEH/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB196271455
-	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 13:21:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D916B271453;
+	Tue, 27 May 2025 13:24:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748352099; cv=none; b=K56ztEcUNyTmTxfzZj1MCRDsjNnwIjsaTb2aKTHDX0WyLCel9byjoGxcIon0zb9sQnGeanV2gnbIQ+CNvrebYfwJ4DkVZ/GXm1omc5WpCHLG2AzmZnoBdlil3PEQVTO+w1l5hJl1Qrk3LrdKibi0IpkMFztgsuuN+uoGGqwiwis=
+	t=1748352253; cv=none; b=oBTCZTeInC5pNeCKXZ/+tEooDPM99r45x1taHPrzsBqEMHHmL2zJpWYfvKo/Hp60jL4XE5guhxWazFEjWtdt5tNd0N9usDx4yO7GXTsRJdskl32hWEFdZeAZSDknRPDPy141Em0fIUu/evo7G6y0+7eCo4yZjN7spsAHCPhasRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748352099; c=relaxed/simple;
-	bh=Q0RuftWqRTmI0z/0mzNToBYq8HBDJeREEk0wzhDz2Ik=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=spFBLJzTWTDnOeBrr2wKTKJN3kMniKQgkLRinlEL+uvSRvOWskArBlBqph1zfFgxmPF8uqhsFfoRX6j8DHuahvehvmAjxPlA5piPuXB3LqvabbXnokKF6X0/O0QpcJQTQ1w2oUUsqCZb9L2Q0NYN4WebEIq4TBLzNe8krkx4Kn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4b6CvF6h0Xz4f3k68
-	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 21:21:13 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id 0F5D01A018D
-	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 21:21:34 +0800 (CST)
-Received: from ultra.huawei.com (unknown [10.90.53.71])
-	by APP3 (Coremail) with SMTP id _Ch0CgBX98FavDVoK9fhNQ--.12329S4;
-	Tue, 27 May 2025 21:21:33 +0800 (CST)
-From: Pu Lehui <pulehui@huaweicloud.com>
-To: mhiramat@kernel.org,
-	oleg@redhat.com,
-	peterz@infradead.org,
-	akpm@linux-foundation.org,
-	Liam.Howlett@oracle.com,
-	lorenzo.stoakes@oracle.com,
-	vbabka@suse.cz,
-	jannh@google.com,
-	pfalcato@suse.de
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	pulehui@huawei.com
-Subject: [RFC PATCH v2 2/2] mm/mremap: Expose abnormal new_pte during move_ptes
-Date: Tue, 27 May 2025 13:23:51 +0000
-Message-Id: <20250527132351.2050820-3-pulehui@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250527132351.2050820-1-pulehui@huaweicloud.com>
-References: <20250527132351.2050820-1-pulehui@huaweicloud.com>
+	s=arc-20240116; t=1748352253; c=relaxed/simple;
+	bh=XsBlf7WXvfFgBBQgPmdHNCENHxGOBUYgPaG33bCFV2I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Pff1wgtCeZ9hw5GvnVP6IhMMHiyr1qCRyaFEPktvGFFE4DB3Q4l6SczUVHO/5oMiINVusOmpSmR+ruTBmUQTEJpmRr2vPaAeJleupMCYWwz8Na/1ntv4E8cUOQP0m4CfvVPCkEgNbn189zBHG0ieJ9wMFh4r+1acVDjVTorVXCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fqtRhEH/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 475BCC4CEEB;
+	Tue, 27 May 2025 13:24:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748352252;
+	bh=XsBlf7WXvfFgBBQgPmdHNCENHxGOBUYgPaG33bCFV2I=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=fqtRhEH/KwDS7n/mqOOQVqEBY6MGx98uyAF8s7ki4VK5k0fuKT2DOPEh1Tq2NAKQ3
+	 gutNaa5VbFvu2bh/IeRbhcRlXUPgHmlmMKNF/iaRsgTsl+ah6EX2RpKiuRo7h/Vi+W
+	 159+0fblOSlCsaS/EBjVvQG0naZVAc0KQw8UHYT6gWI1kLC1sSS/xzGQ/6oyAybWyn
+	 eUCg+JZCzwODXqMVVoDzPN2PM8CEDYX8wh2DIEBLpM0pYep/i+zs2nCgdLCN9hu51+
+	 UnOYRyI3FWEtsAML1RJWQazkA7XGmZhQ8Bnr71LQyVEs4CP/v9MbTsm+kBJC4Ln5dZ
+	 evnWMvWd8K03w==
+Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-60634f82d1aso609116eaf.3;
+        Tue, 27 May 2025 06:24:12 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUGvOdQ72h6wEnZuux33cqKDHK/MmX7rBM6VBNMAgvjwytY830sKb38vhM/3hKaQ1HikI/LPvj1RZ7WMvf6go8=@vger.kernel.org, AJvYcCW/k7/LUlue9V9MJ7jXeWqg8ZbumbGGe37HbNxJmcd5WmZJtNAhBjDUAZ77F9aoM7w6LnRx9PM4fov2ew==@vger.kernel.org, AJvYcCX0TacuVU8nMUpRlO7cUUOH1SSX6pkIZxIK42mtyrsr4Be+iyGaforcGHt7YbgWb5wWu2FmxJip1wPHhMVq@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSAra744b2eyH1PdTe8LpzDI2WnF5OsMLH9frNcj0WlM3UKJ40
+	0bJgLIGqHULs6aT0hmTGG4pDXso+1KZUNuAhAmSf3L/IcmGMQs1VNMmRREEJTlbTCMQXZUAtEji
+	yIiydhXqbLekbAc4bEg6i5BDWEVdwGJg=
+X-Google-Smtp-Source: AGHT+IELYeDaU2ll10Eg0xztB9NjW3N3H4cq+fFMup4Th1x9ZCLSD/Z6plyAOjeWBCbgiRXcA6Zzs0BAVs44XuW3ulE=
+X-Received: by 2002:a05:6808:3388:b0:404:dd07:9703 with SMTP id
+ 5614622812f47-40646845720mr7583667b6e.26.1748352251633; Tue, 27 May 2025
+ 06:24:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_Ch0CgBX98FavDVoK9fhNQ--.12329S4
-X-Coremail-Antispam: 1UD129KBjvdXoW7Wr43Kry8tF13uF47ZFy5Arb_yoWfJrgE9r
-	4Fqr95tr4DAr1vyw15Cwn8urZIkw1qgr18XFnxtr92yr4kJan3ur929rWkZa9ruryj9rZ8
-	Wr4kJrWIgr1UKjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbDAYFVCjjxCrM7AC8VAFwI0_Wr0E3s1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l82xGYIkIc2x26280x7IE14v26r15M2
-	8IrcIa0xkI8VCY1x0267AKxVW5JVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK
-	021l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r
-	4UJVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx
-	0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWU
-	JVW8JwACjcxG0xvY0x0EwIxGrwACI402YVCY1x02628vn2kIc2xKxwCY1x0262kKe7AKxV
-	WUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E
-	14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIx
-	kGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAF
-	wI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r
-	4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UCZXrU
-	UUUU=
-X-CM-SenderInfo: psxovxtxl6x35dzhxuhorxvhhfrp/
+References: <aDVTfEm-Jch7FuHG@stanley.mountain>
+In-Reply-To: <aDVTfEm-Jch7FuHG@stanley.mountain>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 27 May 2025 15:24:00 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0hWKbC2eEe-ce55PN0k4bYnPJ3D+AdPgxJNAcr8Q6rkGQ@mail.gmail.com>
+X-Gm-Features: AX0GCFujLpZi6ezYoap5dx0_78ckA3aKaC73qWQ4kqyXsu9mPW5BJV8is4VBcpA
+Message-ID: <CAJZ5v0hWKbC2eEe-ce55PN0k4bYnPJ3D+AdPgxJNAcr8Q6rkGQ@mail.gmail.com>
+Subject: Re: [PATCH next] ACPI: MRRM: Silence error code static checker warning
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Tony Luck <tony.luck@intel.com>, "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Pu Lehui <pulehui@huawei.com>
+On Tue, May 27, 2025 at 7:54=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro=
+.org> wrote:
+>
+> The error code is not set correctly on if kasprintf() fails.  On the
+> first iteration it would return -EINVAL and subsequent iterations
+> would return success.  Set it to -ENOMEM.
+>
+> In real life, this allocation will not fail and if it did the system
+> will not boot so this change is mostly to silence static checker warnings
+> more than anything else.
+>
+> Fixes: 04f53540f791 ("ACPI: MRRM: Add /sys files to describe memory range=
+s")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/acpi/acpi_mrrm.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/acpi/acpi_mrrm.c b/drivers/acpi/acpi_mrrm.c
+> index 2f22f013959a..70088cdfde13 100644
+> --- a/drivers/acpi/acpi_mrrm.c
+> +++ b/drivers/acpi/acpi_mrrm.c
+> @@ -156,8 +156,10 @@ static __init int add_boot_memory_ranges(void)
+>
+>         for (int i =3D 0; i < mrrm_mem_entry_num; i++) {
+>                 name =3D kasprintf(GFP_KERNEL, "range%d", i);
+> -               if (!name)
+> +               if (!name) {
+> +                       ret =3D -ENOMEM;
+>                         break;
+> +               }
+>
+>                 kobj =3D kobject_create_and_add(name, pkobj);
+>
+> --
 
-When executing move_ptes, the new_pte must be NULL, otherwise it will be
-overwritten by the old_pte, and cause the abnormal new_pte to be leaked.
-In order to make this problem to be more explicit, let's add
-WARN_ON_ONCE when new_pte is not NULL.
-
-Suggested-by: Oleg Nesterov <oleg@redhat.com>
-Signed-off-by: Pu Lehui <pulehui@huawei.com>
----
- mm/mremap.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/mm/mremap.c b/mm/mremap.c
-index 83e359754961..adb3a111b5c1 100644
---- a/mm/mremap.c
-+++ b/mm/mremap.c
-@@ -237,6 +237,8 @@ static int move_ptes(struct pagetable_move_control *pmc,
- 
- 	for (; old_addr < old_end; old_pte++, old_addr += PAGE_SIZE,
- 				   new_pte++, new_addr += PAGE_SIZE) {
-+		WARN_ON_ONCE(!pte_none(*new_pte))
-+
- 		if (pte_none(ptep_get(old_pte)))
- 			continue;
- 
--- 
-2.34.1
-
+Applied, thanks!
 
