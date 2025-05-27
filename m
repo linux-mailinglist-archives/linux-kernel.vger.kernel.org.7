@@ -1,192 +1,108 @@
-Return-Path: <linux-kernel+bounces-664051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-664055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0019AC512C
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 16:46:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D19D7AC513A
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 16:47:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 838B01BA1BF9
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 14:46:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6F144A05CA
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 14:47:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFA1727A139;
-	Tue, 27 May 2025 14:45:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6389327B519;
+	Tue, 27 May 2025 14:46:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b="iSgy0law"
-Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02on2059.outbound.protection.outlook.com [40.107.241.59])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cPJ5qlIX"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61B49185E7F;
-	Tue, 27 May 2025 14:45:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.241.59
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748357157; cv=fail; b=r3RBx8x+Fbv57oeksoYHft1h3IfmcI+xB7IYQI6NdgPT24LFIDpT5REYOsxHOondPD6USg4Jol3LzLrtHWqT94rAZ347XBmuHLw13D1m2wTEINt31Pg8GuzaHLHHTEswuqrjTWkDmbJcbbefhTCA9BYIDHKQrpnOzWtfbv87G20=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748357157; c=relaxed/simple;
-	bh=nziuJKMVozVMRXsy26glePr3KqK5bWYZsGNEZSH6Flc=;
-	h=From:To:CC:Subject:In-Reply-To:Message-ID:Date:MIME-Version:
-	 Content-Type; b=epmjWLdWuMvdh/qTyVHv5AbW3VcdcCh3O6nD6N5irVf6ZS777f0uOmx3nNd9BmjWtLF0tETYf4V9A4wf4ncVhQN/xU/Pq+XAvdvX/da8QdQgpbQPc5eFp370aOVGNZ6A3CWMWwQkCY+/ZFtUF3b5fyLQdO0Jgwj/le5Ogumv/F0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com; spf=pass smtp.mailfrom=axis.com; dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b=iSgy0law; arc=fail smtp.client-ip=40.107.241.59
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axis.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SgiWpUemfEDlSpz0ER/LbnBXrdTCVxS29DVfqt0Sar2O+qAgTBxHHmVfillL/Kq9FqSsULfJ3sfdw6bHhNDOmjl/Mi+paLdpTgjRTwyggR+aBD8qVgvfJqQNBOTUOryGk8BcmBPDqJymJVzu2VuDeGMs0sv/9FN7uw6G7HJPOrZ+s7FbMAAS5UnXsjt4IIEwXBacNV5Ff4QDiFe4KT9JCtTQBTv2A8iLan2OGVg3wCRGRrM24IVRCDInjNRf4oHzjcOjYeRH8LqiN07veqnRln5mG6XX1D8/0cKazIGI2zxM+LbbnzPwmYpHv00t6gdUGpGag7CoIoc7ywl/pYY06A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RAzDZy7BlcLXZDGEB+MaYbT+/wxZeK0tYMX/+d/TL/o=;
- b=L57wh7Mdwkq5oKoY6Cy1N9CvoB86GTy/LIWpST/0n1S0Y0U0ctO/hAwumQwi8mESSB7WN7X2+bcOgkJ8f++ocTyL/3zaOTVaCXwGau+bODpZDlwnS+R2czuzr62lWzLAHjZs2aiccDlrsmTcjOb21u9OOP80JhqEdvUz8VrF/q44gNtVjvxnXv9WqjlbEPROqDmOkr7sILPollNC/XagPmKcm087YX2L+l5F0B9gauDUXOFOLiS91CMzbZ5x9Vmv35wCfqP7BK+5tKwca5kftiGwlr/54xP/b0BkO64X1Yvp0pxiwsYgZZzmEUWfLL5nVGN2o+pE+BGSzBVvhxZ2qw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 195.60.68.100) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=axis.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=axis.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axis.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RAzDZy7BlcLXZDGEB+MaYbT+/wxZeK0tYMX/+d/TL/o=;
- b=iSgy0lawUQtQkAk6alESlDnMy3HuyNV677nChWGBySa9jMg1O43QyfORW30kfJVXOa+cCuT8laCVxwxy/spLfgseFepObCWzN5a0ylBZzOBsh12IeoR6vCxK9Zk2h3FbeW1ie15c0HjR91C+Dl3XAGr5qgpN/El2+LCiDzCcMFo=
-Received: from CWLP265CA0330.GBRP265.PROD.OUTLOOK.COM (2603:10a6:401:57::30)
- by DB9PR02MB7004.eurprd02.prod.outlook.com (2603:10a6:10:22e::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.26; Tue, 27 May
- 2025 14:45:51 +0000
-Received: from AM4PEPF00027A6A.eurprd04.prod.outlook.com
- (2603:10a6:401:57:cafe::83) by CWLP265CA0330.outlook.office365.com
- (2603:10a6:401:57::30) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8769.26 via Frontend Transport; Tue,
- 27 May 2025 14:45:51 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 195.60.68.100)
- smtp.mailfrom=axis.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=axis.com;
-Received-SPF: Pass (protection.outlook.com: domain of axis.com designates
- 195.60.68.100 as permitted sender) receiver=protection.outlook.com;
- client-ip=195.60.68.100; helo=mail.axis.com; pr=C
-Received: from mail.axis.com (195.60.68.100) by
- AM4PEPF00027A6A.mail.protection.outlook.com (10.167.16.88) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8769.18 via Frontend Transport; Tue, 27 May 2025 14:45:51 +0000
-Received: from pc52311-2249 (10.4.0.13) by se-mail01w.axis.com (10.20.40.7)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.44; Tue, 27 May
- 2025 16:45:43 +0200
-From: Waqar Hameed <waqar.hameed@axis.com>
-To: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>
-CC: <kernel@axis.com>, <linux-iio@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH 4/4] iio: Remove unused macro definition for driver and IRQ
- name
-In-Reply-To: <cover.1748356671.git.waqar.hameed@axis.com>
-User-Agent: a.out
-Message-ID: <0dec4fe7b2bdc90d06163ac75a53b97d4ae31c21.1748356671.git.waqar.hameed@axis.com>
-Date: Tue, 27 May 2025 16:45:42 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3D2B27A459
+	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 14:46:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748357181; cv=none; b=H2D5F0wd7gZG/i5suW4Bfrr8UPeSCXb2kcUTOU6IZUD8ww+V2AA2tweTVcdkpAQhnR3pDca5zBEf6lgF29kLkF+CEkNwrzZdmDN2pPmN4aon9g9aN1zO3W7K7kpGV4rMtw1QUm8DF6hhpjA9JZn/MelbVbpY9zN+27sRx5hWtbA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748357181; c=relaxed/simple;
+	bh=j+1FYl1eH47hvev1VnD13nxIOLXyM7N6wIPD+7tAisw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=p/jrkK/tui2kRCo/4FgdeEPl424yZuOCdGKMm4WeLaOFvXtntcGcyQnfjnI0YMPPD5sLJr9Y0fUj/3Rc4uni9T0ccX8RCI/0nrasO5DvWBJiiRtDF/xbpvSVRl3kF+/vgafX5KuZxNNgFlFoAvfmwUHjCiZgM1Oh+X2WZl5stqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cPJ5qlIX; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1748357176;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=TYvH6opew6c0SfiVsSSap4M4b37BCRrFIqizknsdu/Q=;
+	b=cPJ5qlIXc99eKk7rSUVTJvQ+oq0zWVInia/K0aQLCLR9i/dfo+GwM26vmoVnQSoY0XV7jO
+	i6pKccaOz4hlPyihH44m660sgAcLZXRzd7ywamRlQwkDtFx+IEkdiMFuWRPLTNqLq+8X4i
+	fyZ766isqkIKTIGpea8bwKx4kHAeF1I=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-516-Senl8kZHMmmjF5SAdGBHUw-1; Tue,
+ 27 May 2025 10:46:09 -0400
+X-MC-Unique: Senl8kZHMmmjF5SAdGBHUw-1
+X-Mimecast-MFC-AGG-ID: Senl8kZHMmmjF5SAdGBHUw_1748357168
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C6B0919560BB;
+	Tue, 27 May 2025 14:46:07 +0000 (UTC)
+Received: from dobby.home.kraxel.org (unknown [10.45.226.108])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 247183000717;
+	Tue, 27 May 2025 14:46:03 +0000 (UTC)
+Received: by dobby.home.kraxel.org (Postfix, from userid 1000)
+	id D2E7044FBC2; Tue, 27 May 2025 16:46:00 +0200 (CEST)
+From: Gerd Hoffmann <kraxel@redhat.com>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>
+Cc: kvm@vger.kernel.org,
+	linux-coco@lists.linux.dev,
+	Gerd Hoffmann <kraxel@redhat.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] x86/sev/vc: fix efi runtime instruction emulation
+Date: Tue, 27 May 2025 16:45:44 +0200
+Message-ID: <20250527144546.42981-1-kraxel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: se-mail01w.axis.com (10.20.40.7) To se-mail01w.axis.com
- (10.20.40.7)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM4PEPF00027A6A:EE_|DB9PR02MB7004:EE_
-X-MS-Office365-Filtering-Correlation-Id: d49a8a9f-53eb-43a7-6d4e-08dd9d2d2d48
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?FDQ3pbJEbMiBcYGAB55OpgQ6Lrcqdk33PuNP0lWSdyShl0R2b7PmVibUxEvx?=
- =?us-ascii?Q?lQPVBawYhk1oz1fRpYJsoBIDYeVkp597Qop2U2nOxtxFqsmcA4IOqwB2e57/?=
- =?us-ascii?Q?0zrxSzzn3PsYBWUXQK65jglJJ8eF3F3a7cZa7QmEYom6w+6ddDQvPOTOskgs?=
- =?us-ascii?Q?zOmFygLKC9xzrxllUlsY7xzX91zzep4m+FCoQud+kVSqbSBIVai1m679YFCe?=
- =?us-ascii?Q?TGhTu7en557k/pBAJIPXiYl8z4ZOfExmwRkVNj6RyLxh0Nj8ZpzHi7bLFXTl?=
- =?us-ascii?Q?Jcvu80OQ56Yy/TptVWQqth5eTluC4NA+WqliSpKM45jyyQcxSYitRBr3ncAq?=
- =?us-ascii?Q?PkIMnue6cxIX/AFV8xyo7ZTYBTsxRFCc9vyIO47C4DZ0/MJxmBCeyMRxpR25?=
- =?us-ascii?Q?wKQVuZRJxdZKVXMFgx29YgszdWtJQhQnctt5qy5vi692iS/MwVJaWa1hK9Nx?=
- =?us-ascii?Q?wJSu+ueZrGwuPSS9aBuaz7yT2wKyOjUUf+/Zjv6JDfB1gqNT4iD3dEm4KTJo?=
- =?us-ascii?Q?tyMY17O4ZXiBMVWnB5zzo4u+IE4Lc9Ifm3F11el0I/Vddob8SXiw8H/Car4r?=
- =?us-ascii?Q?/FoYepFT7XKdbUdrrQmiGV9jIpqCUYvU4rzWwJW4R4znUFTkHQTqwG7j82hN?=
- =?us-ascii?Q?N7qcZ9NtE3rAvOp4n9ZQtKr6wLv3urkCjJXHFRIn/XJkfH1IDVx9PCbhcCAD?=
- =?us-ascii?Q?lGf+JqKuCH9OpYUrszBw5DbdHxogQJQ23rt+xCgMYtqMS6wSgx52zyD8k5SO?=
- =?us-ascii?Q?JqHmotEsM74uDUrdq48n5SVB4095tdW3dRYn5ikVFrSLY0VM+t57/rRNIJUs?=
- =?us-ascii?Q?CYoAvaajRc1xunGZrX7sGD2ateOZs1qSm97g3CzHJuOnshGUkQ8B6AN80xVM?=
- =?us-ascii?Q?MhnhGI53uO2wYkowrJrFUY+lo/C3VErk10wRTl4k5JQkhdmvkjmUS173ZsTn?=
- =?us-ascii?Q?W2M9Y/l26UIX8/3IoFdA0hOrJOfv0641mNKaMWQd0aLOYt3fAzgKfz5X45nf?=
- =?us-ascii?Q?jxfBG871pL1v9FldZ4l3mOzGJ8NmTBrcVkhzwvLWeMfcAW53iNb4EFxr0yTh?=
- =?us-ascii?Q?YuLfEJeaZ+IiHzxiYYE3bn+G/DVE5hEdZsdpRkcoH93JB+a+SvuWVYbbRFYN?=
- =?us-ascii?Q?nh53aJRsjQqL2KftCC8iB+rn856qm5JhaBVhHLEK+WC9ozfsalo33Quyza5L?=
- =?us-ascii?Q?pmhj/a6S53NkMlyvFfoNaPv++CMNbS2Q0gtgVT1X6G2YbThqu1tNKawdgn1r?=
- =?us-ascii?Q?nWk8mG8tOjrHzd8EsynRGV4ppn7uriayzZv700HkqtyLJfrJlUPfTJ4yarbN?=
- =?us-ascii?Q?4xBRCUaUco/iFJPDYFInZsJlOm+/StttWVqcYl7zUxAKSgHosBPJu1si17Ah?=
- =?us-ascii?Q?Frci7ykCL5cpM6npnf2c0oj1nyxY1g8IjnGuVYepTJXIJnpIYlqIJT0gngc3?=
- =?us-ascii?Q?18kdOOlIJvIkSn/Q44wrJyqId4Mvue+EyWle7H08ZxU8y0GIRVpFn/gyfpb7?=
- =?us-ascii?Q?GN8/rYV916BQwYT9mvznYedcwa1PTqBoFNos?=
-X-Forefront-Antispam-Report:
-	CIP:195.60.68.100;CTRY:SE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.axis.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: axis.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 May 2025 14:45:51.4865
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d49a8a9f-53eb-43a7-6d4e-08dd9d2d2d48
-X-MS-Exchange-CrossTenant-Id: 78703d3c-b907-432f-b066-88f7af9ca3af
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=78703d3c-b907-432f-b066-88f7af9ca3af;Ip=[195.60.68.100];Helo=[mail.axis.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	AM4PEPF00027A6A.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR02MB7004
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-These macro definitions are completely unused. Remove them.
+In case efi_mm is active go use the userspace instruction decoder which
+supports fetching instructions from active_mm.  This is needed to make
+instruction emulation work for EFI runtime code, so it can use cpuid
+and rdmsr.
 
-Signed-off-by: Waqar Hameed <waqar.hameed@axis.com>
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
 ---
- drivers/iio/accel/bma180.c             | 3 ---
- drivers/iio/accel/bmc150-accel-core.c  | 2 --
- drivers/iio/magnetometer/bmc150_magn.c | 2 --
- 3 files changed, 7 deletions(-)
+ arch/x86/coco/sev/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/iio/accel/bma180.c b/drivers/iio/accel/bma180.c
-index aa664a923f91..61349e47a209 100644
---- a/drivers/iio/accel/bma180.c
-+++ b/drivers/iio/accel/bma180.c
-@@ -29,9 +29,6 @@
- #include <linux/iio/trigger_consumer.h>
- #include <linux/iio/triggered_buffer.h>
+diff --git a/arch/x86/coco/sev/core.c b/arch/x86/coco/sev/core.c
+index 36beaac713c1..145f594d7e6b 100644
+--- a/arch/x86/coco/sev/core.c
++++ b/arch/x86/coco/sev/core.c
+@@ -346,7 +346,7 @@ static enum es_result __vc_decode_kern_insn(struct es_em_ctxt *ctxt)
  
--#define BMA180_DRV_NAME "bma180"
--#define BMA180_IRQ_NAME "bma180_event"
--
- enum chip_ids {
- 	BMA023,
- 	BMA150,
-diff --git a/drivers/iio/accel/bmc150-accel-core.c b/drivers/iio/accel/bmc150-accel-core.c
-index 546839d386a9..be5fbb0c5d29 100644
---- a/drivers/iio/accel/bmc150-accel-core.c
-+++ b/drivers/iio/accel/bmc150-accel-core.c
-@@ -25,8 +25,6 @@
- 
- #include "bmc150-accel.h"
- 
--#define BMC150_ACCEL_DRV_NAME			"bmc150_accel"
--
- #define BMC150_ACCEL_REG_CHIP_ID		0x00
- 
- #define BMC150_ACCEL_REG_INT_STATUS_2		0x0B
-diff --git a/drivers/iio/magnetometer/bmc150_magn.c b/drivers/iio/magnetometer/bmc150_magn.c
-index b757ed55e99e..4b665635260c 100644
---- a/drivers/iio/magnetometer/bmc150_magn.c
-+++ b/drivers/iio/magnetometer/bmc150_magn.c
-@@ -28,8 +28,6 @@
- 
- #include "bmc150_magn.h"
- 
--#define BMC150_MAGN_DRV_NAME			"bmc150_magn"
--
- #define BMC150_MAGN_REG_CHIP_ID			0x40
- #define BMC150_MAGN_CHIP_ID_VAL			0x32
- 
+ static enum es_result vc_decode_insn(struct es_em_ctxt *ctxt)
+ {
+-	if (user_mode(ctxt->regs))
++	if (user_mode(ctxt->regs) || current->active_mm == &efi_mm)
+ 		return __vc_decode_user_insn(ctxt);
+ 	else
+ 		return __vc_decode_kern_insn(ctxt);
 -- 
-2.39.5
+2.49.0
 
 
