@@ -1,92 +1,135 @@
-Return-Path: <linux-kernel+bounces-664195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-664198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EADFAC5315
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 18:33:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF83DAC5319
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 18:36:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D77061701CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 16:33:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC9781BA33CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 16:36:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEE1527F747;
-	Tue, 27 May 2025 16:33:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9355327FD50;
+	Tue, 27 May 2025 16:35:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AU9Aj7SA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b="fMQEveMS"
+Received: from mout01.posteo.de (mout01.posteo.de [185.67.36.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43DEF27B4EB;
-	Tue, 27 May 2025 16:33:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE4A127FB1E
+	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 16:35:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748363605; cv=none; b=A5/CmYhhW6+QQSNpJEgVxqKKXaP0a4e5+Ef3gQYrQJ6jrgcN9NqrHUwhF24Vv6kAnzPsV1xACYwndupOnR3nHL0tH8ogJi4tV3/uAJGIPjAnzjxqCE57f7DszXLwxjwke0s3Sg+rQ8+SQC514MSfeMmkyY58GAdXtqReGssRVyY=
+	t=1748363756; cv=none; b=W+bb7RiCrDQcAM/4rBiSXcQviJWWHtkuvjBax+jXtFUmOp6aaW918uwP/UuD1mozuBW3QRWcQA3oXDt1om9Exr29APztigdhJFZa44POAEKaB0dERA63Pw48MC+xYeicxqTXss73CCsNAFJakbyCKxkXiKVKRy5hwiHqOTf49Lo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748363605; c=relaxed/simple;
-	bh=HyTgDh5cAO8OPW/g7S/tq4DLh5jwNnJ4nud2y1OhePo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=U/fsv9L5mDyBybc6QSLjltEbgmQ/7SY++96QwhANN/xg3hhgzsbTXBzQgmrD7A+MFcGI6bf7FZjdH3MKvk7cg3czaALyxz8neo1bpEv62smC6M27u+AY7p29/PPAgeATgiOTVf+DhWgf/Z4JgdkOlltm4kuvRHCYMDdJoCQjXNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AU9Aj7SA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 775B8C4CEEB;
-	Tue, 27 May 2025 16:33:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748363605;
-	bh=HyTgDh5cAO8OPW/g7S/tq4DLh5jwNnJ4nud2y1OhePo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=AU9Aj7SADaSoc+uZXgHtW/H9MASQFJVMRJSss02BgBXgDMf9veat6k//j50RnUg1v
-	 IYfUIhvR+Mhihs0EtAoAts4TTj2/D5QrWsqVB/5s8o+AW3UFNZhvuISisUB/Z9MxWr
-	 ely09CCkHQk+qA4SAo9BBJRlQHm+v+e1INxdSG0d1NNNZBTuqEVvxK6/bu4WwPRgnO
-	 Jr+asmIt1W0G+f1+u/4/dI6q3g1fyc8IQtq2No4RUdV61XsCl3ECBCZnGUOfy1pPf0
-	 nGsTiHAjVNwKVPKt2IO63e/1gBxWF5HfbKAsygvMBfwowR+JH2zbBjfb545XP9y9LD
-	 iKl6UNwYaoPpg==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>,  Pratyush Yadav
- <pratyush@kernel.org>,  Michael Walle <mwalle@kernel.org>,  Miquel Raynal
- <miquel.raynal@bootlin.com>,  Richard Weinberger <richard@nod.at>,
-  Vignesh Raghavendra <vigneshr@ti.com>,  linux-kernel@vger.kernel.org,
-  kernel-janitors@vger.kernel.org,  linux-mtd@lists.infradead.org
-Subject: Re: [PATCH] mtd: spi-nor: Constify struct spi_nor_fixups
-In-Reply-To: <aa641732ba707ce3690217825c3ca7373ffde4f9.1748191985.git.christophe.jaillet@wanadoo.fr>
-References: <aa641732ba707ce3690217825c3ca7373ffde4f9.1748191985.git.christophe.jaillet@wanadoo.fr>
-Date: Tue, 27 May 2025 18:33:22 +0200
-Message-ID: <mafs0iklmrp2l.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1748363756; c=relaxed/simple;
+	bh=DJJFUpsUiCre1lpkV+ag5+41okCtVww+DKaXdPxtYo4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=rsCZ8bjkzYUPGaf3BfGHkw90SBt6BSCRTYcsKvWe2TqVY/xgJIPjlKh60dnfFMcb3z0IRg2qBEPrygVvs+8Mg9yZu0SH0nOj2tP34gtCKjVdxqJBD2g4wLJJ8PnVBnVdKFvtPYFXlHPT86TEcSlcJMcjVtmQKFLNUv2uNzJfdS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net; spf=pass smtp.mailfrom=posteo.net; dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b=fMQEveMS; arc=none smtp.client-ip=185.67.36.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.net
+Received: from submission (posteo.de [185.67.36.169]) 
+	by mout01.posteo.de (Postfix) with ESMTPS id 15FC3240027
+	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 18:35:52 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.net; s=2017;
+	t=1748363752; bh=DJJFUpsUiCre1lpkV+ag5+41okCtVww+DKaXdPxtYo4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Message-Id:To:Cc:From;
+	b=fMQEveMS6YXkn2kove67MVSKiIRhLI93AXEMfPn8C7e7CTScmOMpO7WVIISOsua5H
+	 jx2LMTAq31ebaNFwS6S7GukwPvRo43NqmqsWgje6jHlMPV1qxrc59tFipWYWM2q37z
+	 cXTR7SItHm987dX7ugxWrbYjR5aGc+GLy/IMVrH6Y92gEIvskMQjoJFPy7O2hNwCKQ
+	 pS3MJ5VACdTPsjoZpqLUf3OkUjMp2ep73+ILxko8zFh0JQHgKWBP7WnfY7akvL6uV8
+	 fyoZikZ4Q5oGJXwimhg7uKA3Squn6DyzpoxQ8b/F+CwCwe4VbmF790MtJWfc4LjaHo
+	 +v/cUyPWDkZiA==
+Received: from customer (localhost [127.0.0.1])
+	by submission (posteo.de) with ESMTPSA id 4b6JCn4RLSz9rxB;
+	Tue, 27 May 2025 18:35:49 +0200 (CEST)
+From: Charalampos Mitrodimas <charmitro@posteo.net>
+Date: Tue, 27 May 2025 16:35:44 +0000
+Subject: [PATCH net v2] net: tipc: fix refcount warning in
+ tipc_aead_encrypt
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250527-net-tipc-warning-v2-1-df3dc398a047@posteo.net>
+X-B4-Tracking: v=1; b=H4sIAN/pNWgC/32NQQ6CMBBFr0Jm7Rg6ggZX3MOwqO0As2mbtkEN6
+ d2tHMDl+/n//R0SR+EE92aHyJsk8a4CnRowq3YLo9jKQC31bU9XdJwxSzD40tGJW/Bpdav1YPq
+ OCOosRJ7lfSgfU+VVUvbxczxs6pf+kW0KFXY3mi9Vae0wj8GnzP5cmzCVUr4XFhFrsQAAAA==
+X-Change-ID: 20250526-net-tipc-warning-bda0aa9c5422
+To: Jon Maloy <jmaloy@redhat.com>, "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+ Wang Liang <wangliang74@huawei.com>
+Cc: netdev@vger.kernel.org, tipc-discussion@lists.sourceforge.net, 
+ linux-kernel@vger.kernel.org, 
+ syzbot+f0c4a4aba757549ae26c@syzkaller.appspotmail.com, 
+ Charalampos Mitrodimas <charmitro@posteo.net>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1748363744; l=2206;
+ i=charmitro@posteo.net; s=20250526; h=from:subject:message-id;
+ bh=DJJFUpsUiCre1lpkV+ag5+41okCtVww+DKaXdPxtYo4=;
+ b=TsWLAtMEAVd3acno/f6j4+FGh2WOq/xu3qWINDjy+sYNDbRGDPdX48d/h24TnjC2WHYfxJfOL
+ tgC3tNTWyNzC2Qbk98aD/0ab/KG+HwVn4n5T1IKMDTDQNVU8M8XrZ7H
+X-Developer-Key: i=charmitro@posteo.net; a=ed25519;
+ pk=PNHEh5o1dcr5kfKoZhfwdsfm3CxVfRje7vFYKIW0Mp4=
 
-On Sun, May 25 2025, Christophe JAILLET wrote:
+syzbot reported a refcount warning [1] caused by calling get_net() on
+a network namespace that is being destroyed (refcount=0). This happens
+when a TIPC discovery timer fires during network namespace cleanup.
 
-> 'struct spi_nor_fixups' are not modified in this driver.
->
-> Constifying these structures moves some data to a read-only section, so
-> increases overall security, especially when the structure holds some
-> function pointers.
->
-> On a x86_64, with allmodconfig, as an example:
-> Before:
-> ======
->    text	   data	    bss	    dec	    hex	filename
->   23304	  13168	      0	  36472	   8e78	drivers/mtd/spi-nor/micron-st.o
->
-> After:
-> =====
->    text	   data	    bss	    dec	    hex	filename
->   23560	  12912	      0	  36472	   8e78	drivers/mtd/spi-nor/micron-st.o
->
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+The recently added get_net() call in commit e279024617134 ("net/tipc:
+fix slab-use-after-free Read in tipc_aead_encrypt_done") attempts to
+hold a reference to the network namespace. However, if the namespace
+is already being destroyed, its refcount might be zero, leading to the
+use-after-free warning.
 
-Acked-by: Pratyush Yadav <pratyush@kernel.org>
+Replace get_net() with maybe_get_net(), which safely checks if the
+refcount is non-zero before incrementing it. If the namespace is being
+destroyed, return -ENODEV early, after releasing the bearer reference.
 
-[...]
+[1]: https://lore.kernel.org/all/68342b55.a70a0220.253bc2.0091.GAE@google.com/T/#m12019cf9ae77e1954f666914640efa36d52704a2
 
+Reported-by: syzbot+f0c4a4aba757549ae26c@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/all/68342b55.a70a0220.253bc2.0091.GAE@google.com/T/#m12019cf9ae77e1954f666914640efa36d52704a2
+Fixes: e27902461713 ("net/tipc: fix slab-use-after-free Read in tipc_aead_encrypt_done")
+Signed-off-by: Charalampos Mitrodimas <charmitro@posteo.net>
+---
+Changes in v2:
+- Return "-ENODEV" instead of "-ENXIO".
+- Link to v1: https://lore.kernel.org/r/20250526-net-tipc-warning-v1-1-472f3aa9dd9f@posteo.net
+---
+ net/tipc/crypto.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/net/tipc/crypto.c b/net/tipc/crypto.c
+index 8584893b478510dc1ddda321ed06054de327609b..79f91b6ca8c8477208f13d41a37af24e7aa94577 100644
+--- a/net/tipc/crypto.c
++++ b/net/tipc/crypto.c
+@@ -818,7 +818,11 @@ static int tipc_aead_encrypt(struct tipc_aead *aead, struct sk_buff *skb,
+ 	}
+ 
+ 	/* Get net to avoid freed tipc_crypto when delete namespace */
+-	get_net(aead->crypto->net);
++	if (!maybe_get_net(aead->crypto->net)) {
++		tipc_bearer_put(b);
++		rc = -ENODEV;
++		goto exit;
++	}
+ 
+ 	/* Now, do encrypt */
+ 	rc = crypto_aead_encrypt(req);
+
+---
+base-commit: 49fffac983ac52aea0ab94914be3f56bcf92d5dc
+change-id: 20250526-net-tipc-warning-bda0aa9c5422
+
+Best regards,
 -- 
-Regards,
-Pratyush Yadav
+Charalampos Mitrodimas <charmitro@posteo.net>
+
 
