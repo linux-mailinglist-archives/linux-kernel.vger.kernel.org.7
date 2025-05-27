@@ -1,41 +1,45 @@
-Return-Path: <linux-kernel+bounces-663436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-663429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 162D2AC4842
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 08:19:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83EDEAC4823
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 08:12:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4C3E178F51
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 06:19:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 335243B3714
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 06:11:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F7E91E0B91;
-	Tue, 27 May 2025 06:19:16 +0000 (UTC)
-Received: from isrv.corpit.ru (isrv.corpit.ru [86.62.121.231])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC11A1F0995;
+	Tue, 27 May 2025 06:12:00 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5A4F1DF725;
-	Tue, 27 May 2025 06:19:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=86.62.121.231
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79608B652;
+	Tue, 27 May 2025 06:11:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748326755; cv=none; b=TGBdOTcL79DC2A19rGO7fbiufoRxodZOvl03ADe8kmWps/HQJr2kTPaIsYItjTOSFEBXeyTTuvA1ILqoDMk3Ngfl2XqUjLN1ANpWvPwXIh/CevwFd+/vJXLkA+jdFrAzbD4aRNjDBfko29XfnW4slBVUoPQjrb4Tx74R/opmHJQ=
+	t=1748326320; cv=none; b=GhRWF3lPX+yIXOZxrKC1/ZZTV1slpOsfA1Tl0oeNWKiY7dI77joVuanyS/wHE/bbk3xDIB2DXmW9Etc/hN8KTp7Xjozbq/w96sN+o1rrs9JVtKeE96k7xfKJzQCxm0StOx+z87EiA0b7I0HMhDDGHOthCT3OpYJt5wUYjJqTDME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748326755; c=relaxed/simple;
-	bh=sO85Dob4Qg2aUxALW8xdkBm7FE0Q0TcdGiHlh18QOZE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=R4vzjbTEcqySNgKvwb6QBQAekiuW9dLA4skT8rqhOFiuvzhF5Ux9wI2Wu3gllgqaD81Erz1aoqx/DoJVzM4mlHDV/JrcZ9srmkBdcVswChj+/xdl4qaqi9SNPxnNmfGw+Ev0XfLphdZ3YYTDuBfYM77erxHHkr3gphYKjsnwIF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tls.msk.ru; spf=pass smtp.mailfrom=tls.msk.ru; arc=none smtp.client-ip=86.62.121.231
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tls.msk.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tls.msk.ru
-Received: from tsrv.corpit.ru (tsrv.tls.msk.ru [192.168.177.2])
-	by isrv.corpit.ru (Postfix) with ESMTP id 8BF5712554B;
-	Tue, 27 May 2025 09:11:32 +0300 (MSK)
-Received: from [192.168.177.130] (mjt.wg.tls.msk.ru [192.168.177.130])
-	by tsrv.corpit.ru (Postfix) with ESMTP id 7E1A721734F;
-	Tue, 27 May 2025 09:11:36 +0300 (MSK)
-Message-ID: <2636618a-5000-449a-bc2d-f7bf253bf26d@tls.msk.ru>
-Date: Tue, 27 May 2025 09:11:36 +0300
+	s=arc-20240116; t=1748326320; c=relaxed/simple;
+	bh=gRdJv37lrMrcCZ+KWi5q9/Izfk6U28QqmceU4zJjZIY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=q0PlWJZF7QZbslTVBIppbS9Z8HqIiw0EH7wL/M7truRdgCQjtfxgely9qGAbI/6nUzaP89L0A+v5JnKODjPQdRdoMDp9z53HMyzC28W3XWbAidpZ8LEIRtNg5mIqYWEC/ylqJc1WMm5hzsaaE2yqQZEuXy/rUGLQTTPILqeCRyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4b62Kl757lz1d1KP;
+	Tue, 27 May 2025 14:10:03 +0800 (CST)
+Received: from kwepemg500008.china.huawei.com (unknown [7.202.181.45])
+	by mail.maildlp.com (Postfix) with ESMTPS id 834511402E0;
+	Tue, 27 May 2025 14:11:45 +0800 (CST)
+Received: from [127.0.0.1] (10.174.177.71) by kwepemg500008.china.huawei.com
+ (7.202.181.45) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 27 May
+ 2025 14:11:44 +0800
+Message-ID: <2e0a6686-f953-4a38-87e1-612a61825103@huawei.com>
+Date: Tue, 27 May 2025 14:11:44 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -43,75 +47,59 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Fix comment for virtio-9p
-To: dancer@debian.org, mst@redhat.com
-Cc: qemu-devel@nongnu.org, adelva@google.com, uekawa@chromium.org,
- linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
- kvm@vger.kernel.org
-References: <20250527041123.840063-1-dancer@debian.org>
-Content-Language: en-US, ru-RU
-From: Michael Tokarev <mjt@tls.msk.ru>
-Autocrypt: addr=mjt@tls.msk.ru; keydata=
- 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
-In-Reply-To: <20250527041123.840063-1-dancer@debian.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH v1] ext4: remove unused EXT_STATS macro from
+ ext4_extents.h
+To: Baolin Liu <liubaolin12138@163.com>, <tytso@mit.edu>,
+	<adilger.kernel@dilger.ca>
+CC: <linux-ext4@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Baolin Liu
+	<liubaolin@kylinos.cn>, Yang Erkun <yangerkun@huawei.com>
+References: <20250527053805.1550912-1-liubaolin12138@163.com>
+Content-Language: en-US
+From: Baokun Li <libaokun1@huawei.com>
+In-Reply-To: <20250527053805.1550912-1-liubaolin12138@163.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
+ kwepemg500008.china.huawei.com (7.202.181.45)
 
-27.05.2025 07:11, dancer@debian.org wrote:
-> From: Junichi Uekawa <uekawa@chromium.org>
-> 
-> virtio-9p is not a console protocol, it's a file sharing protocol. Seems
-> like an artifact of old copy-and-paste error.
+On 2025/5/27 13:38, Baolin Liu wrote:
+> From: Baolin Liu <liubaolin@kylinos.cn>
+>
+> The EXT_STATS macro in fs/ext4/ext4_extents.h has been defined
+> but never used in the codebase since its introduction. This patch
+> removes it.
+>
+> Analysis:
+> 1. No references found in fs/ext4/ or other kernel code.
+> 2. No impact on compilation or functionality.
+> 3. Git history shows it was never utilized.
+>
+> Signed-off-by: Baolin Liu <liubaolin@kylinos.cn>
+Good spotting! Feel free to add:
 
-> -#define VIRTIO_ID_9P			9 /* 9p virtio console */
-> +#define VIRTIO_ID_9P			9 /* virtio 9p */
+Reviewed-by: Baokun Li <libaokun1@huawei.com>
+> ---
+>   fs/ext4/ext4_extents.h | 7 -------
+>   1 file changed, 7 deletions(-)
+>
+> diff --git a/fs/ext4/ext4_extents.h b/fs/ext4/ext4_extents.h
+> index 26435f3a3094..c484125d963f 100644
+> --- a/fs/ext4/ext4_extents.h
+> +++ b/fs/ext4/ext4_extents.h
+> @@ -30,13 +30,6 @@
+>    */
+>   #define CHECK_BINSEARCH__
+>   
+> -/*
+> - * If EXT_STATS is defined then stats numbers are collected.
+> - * These number will be displayed at umount time.
+> - */
+> -#define EXT_STATS_
+> -
+> -
+>   /*
+>    * ext4_inode has i_block array (60 bytes total).
+>    * The first 12 bytes store ext4_extent_header;
 
-While the old one was obviously wrong, I don't think the new
-wording makes much sense, since it merely repeats the name of
-the constant :)
 
-How about "virtio 9p file sharing protocol" instead ? :)
-
-/mjt
 
