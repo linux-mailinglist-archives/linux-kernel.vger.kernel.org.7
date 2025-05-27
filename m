@@ -1,176 +1,396 @@
-Return-Path: <linux-kernel+bounces-663803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-663805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECF31AC4DBC
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 13:39:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76D24AC4DB8
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 13:38:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19E3C1BA067C
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 11:38:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4B657A218C
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 11:37:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F41526B970;
-	Tue, 27 May 2025 11:36:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ozuEJlbG"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC16A25A323;
+	Tue, 27 May 2025 11:37:34 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D12C6269CF6
-	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 11:36:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC46425D91B
+	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 11:37:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748345817; cv=none; b=uv8h7mFy94dfP1HkhamGC/bqH86Hl+4sQZDqYLuhN5M0VfUDIFVkuktxlndnXqJF5vMl7DJ//jAatMt5t4k1PnC0TcrIaJ1/45a+UBKTTemoslbNOgRUIJONUs3qeOle8tV3fXEomdxafFsVcjZT3XDiSClvjYYTtN4LfGqyUtw=
+	t=1748345854; cv=none; b=Y1sqV65MBqQ3DA91mUHtAHSoUxlSzON2ZyOk2dYEUs1mprx5bWZSaNPETOcoTL83GUb1OKCgrZdayJ0cQkKwQuxdgKXNRcKhYfjqj0NtM/s1OxHi2lQtWwl085ntCD2adV0B0wXj2aeoRvJjYF/wlOTleNYP9DVzhzz/kJdWCUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748345817; c=relaxed/simple;
-	bh=fvEjZ/8XvmiIw/x1T49zRGL66s1CZIgvsgbv4p02D5Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=K87NY8Dc7ppqHuiwexWDIBItf/w2i88xbZFB9SD/G+Yo1yS4HhAgCuG0wcg77efyvimRAKS9vFwKC5oJ1EdE++OILrPln6DBbySE/tGoG8pHCCZXQNId7NJsE+ERRLW+HZ+np7h+DQTam3vKptTfITPwFPWkW9dRUfT7dBdLGCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ozuEJlbG; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54R4Jd4S012234
-	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 11:36:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	mLM+GWekrBtrawNMm2D4lJztX2o4sPffJMDli9j9kAM=; b=ozuEJlbG24ADssOl
-	uWUZZ/KEib2FdpiwXYbHvI6ct2aj2WaVAfNQNrrcuB4F9JvzMbVuRCS+t7fCFJh2
-	GZulqrY4WSSBlAnTpGT6aR2vBKuYcv2nR7StyUg7JZYfp3BFeLqzYo4MOECFuI2h
-	LY9qEEm233lZYigL3v466Q+XhrM1eFCisGhBH+EjyGYduzBONiQj4BrxIIcMb6AI
-	V5VNtQ5ra7K5bxylbN+xoORE/n6sm5VzCWl6NMXIL4wcP7RmBXzqfBJWp4Lbr96v
-	PnjqiCQT0wdVod1YvDyjx+T4W9ErvpprGnAHV7rLi5qdQrFPuegfxgKfF3dFbr0U
-	gvhgcw==
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46w69193fq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 11:36:54 +0000 (GMT)
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6fab2c3c664so787176d6.3
-        for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 04:36:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748345813; x=1748950613;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mLM+GWekrBtrawNMm2D4lJztX2o4sPffJMDli9j9kAM=;
-        b=TkX4J0gKO2HL/be2fI3yp1lA7VEFTHRigsSa3lO+iGZZjINfDQzOXQk5NlJtyuTr7N
-         H4BtLHz1Mama5alKWrIit+zjlGiq7T9AxOnO0gw7NAqDdq5Mt345KYoeCTRv3WYS9fgv
-         WYyCveNoGD7x2DqdzbkYtHirVTgSJC9ce2Q+gpAyGcNa6jUJIEhSKhN7iDefgrU+D1/+
-         3o9H0S8h9fY7SIqmUbQVgaBb+wqFOQebCr7NL9IzEDw71nDX9gVViIZtPs2mRqW19tF2
-         q45rWw/xzwNA79sjjl6+Yas0NqBM/CkCHCD5p1V0ImCk01LZ588gOTSyfNPOzmZVXmhL
-         xE1A==
-X-Forwarded-Encrypted: i=1; AJvYcCVZbtyZQ6zsr463HR6PZiDtdfkUyxDYYovO0jN8eypAKyu+xpn44ezrcOSo1JEuPI6r26etSmptFteL32U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/UtnbxEiKIu9Ogytj4b4tvhntTdlL4dVjAo4Za/tMcMs6WTSJ
-	e6sP+AnyY9nG5AbNXM1TL80bSYZzGQmkueTnmZmttTZLK3qlT6/Ce4KoOqTzl7B3AyIQzouVF6K
-	sPD/xMcQWNJYxc6mFphbWrI+hv0mBt7wKQOZQ52lR6eQeG4eYwqu2OZTC+df+21b2ZZ0=
-X-Gm-Gg: ASbGncuN+qkiPbRAUe8JbmPSUdDEDsu1lq94ovfymy0ijq7F8DLjaXk0isKTpdqp4hI
-	lopVdgi8QgxcMRK111XjZcDXwIHltOmDudlf9OY48D6asSXpJrcH5oPLQc0i4AqPPr0dKFUhomY
-	pXxKzhKcUaxWxt7MFqR1V+ukr0FL3+eYRjLk8btnzyD66kAGIHohiBXS9jk/HGZnEgLrsPmTbjo
-	jZ7AILBSauAkhwmwsYJPq+/GNE1pCTNyyVzojMrceZ4c0L4AAEfAwCnqaZ53GHubaqLYj3B4Wjw
-	Y/oQ+GVyvfGP2Qp3p6ATqMKM1cU0Vr8RQCxSxXhCGUqQUtIH2kLNcDRLC8F48cmJww==
-X-Received: by 2002:a05:6214:2586:b0:6f7:d0b9:793b with SMTP id 6a1803df08f44-6fa9d34ba15mr66049836d6.8.1748345813613;
-        Tue, 27 May 2025 04:36:53 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGwP18XRKy8jlsk+tWNpk1oV00GPmvN6UNYhfqRCLVDbAvK7pSH3h1WanmxrHiy5RUbYnfabQ==
-X-Received: by 2002:a05:6214:2586:b0:6f7:d0b9:793b with SMTP id 6a1803df08f44-6fa9d34ba15mr66049676d6.8.1748345813242;
-        Tue, 27 May 2025 04:36:53 -0700 (PDT)
-Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad52d439655sm1854813666b.92.2025.05.27.04.36.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 27 May 2025 04:36:52 -0700 (PDT)
-Message-ID: <e7ee4653-194c-417a-9eda-2666e9f5244d@oss.qualcomm.com>
-Date: Tue, 27 May 2025 13:36:49 +0200
+	s=arc-20240116; t=1748345854; c=relaxed/simple;
+	bh=lFkT+5/G0QzkQCrHD/MZR2cgD5qBXMfmgDOLXrIwqpI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eZjZFEloI6ROPTX8/sYrUro6KKisz/ZCXavdYK9dsgOKT+wVrgMb+0I9WG/nwy9Bneyc2tKjF07H1ZcJdo9l9dIiY81uuY7SLGgvLBtSX6Ta2NSLQiaS6Bq2IjoT+aCrAs22CPF53ockFPw7ngHPMg0/58ZvF4X2HVOb9vsOUnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1uJscK-0006US-6f; Tue, 27 May 2025 13:37:12 +0200
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1uJscI-000PZg-1p;
+	Tue, 27 May 2025 13:37:10 +0200
+Received: from pengutronix.de (p5b1645f7.dip0.t-ipconnect.de [91.22.69.247])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 3364C41A77F;
+	Tue, 27 May 2025 11:37:10 +0000 (UTC)
+Date: Tue, 27 May 2025 13:37:09 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Elaine Zhang <zhangqing@rock-chips.com>
+Cc: kernel@pengutronix.de, mailhol.vincent@wanadoo.fr, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, heiko@sntech.de, cl@rock-chips.com, 
+	kever.yang@rock-chips.com, linux-can@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v6 3/4] net: can: rockchip: add can for RK3576 Soc
+Message-ID: <20250527-sage-python-of-variation-1c7759-mkl@pengutronix.de>
+References: <20250526062559.2061311-1-zhangqing@rock-chips.com>
+ <20250526062559.2061311-4-zhangqing@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v2 1/3] dt-bindings: sram: qcom,imem: Allow
- modem-tables
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Andrew Lunn <andrew+netdev@lunn.ch>,
-        "David S. Miller"
- <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Alex Elder <elder@kernel.org>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        Alex Elder <elder@riscstar.com>
-References: <20250527-topic-ipa_imem-v2-0-6d1aad91b841@oss.qualcomm.com>
- <20250527-topic-ipa_imem-v2-1-6d1aad91b841@oss.qualcomm.com>
- <97724a4d-fad5-4e98-b415-985e5f19f911@kernel.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <97724a4d-fad5-4e98-b415-985e5f19f911@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=WfoMa1hX c=1 sm=1 tr=0 ts=6835a3d6 cx=c_pps
- a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=EUspDBNiAAAA:8 a=ee_2aqc6AAAA:8
- a=zoJKnCTf_W_lU4eZxPEA:9 a=QEXdDO2ut3YA:10 a=pJ04lnu7RYOZP9TFuWaZ:22
- a=VOpmJXOdbJOWo2YY3GeN:22
-X-Proofpoint-GUID: xYlPH0pMKGwJ0-FnzoW_EJbc3A1HvfAZ
-X-Proofpoint-ORIG-GUID: xYlPH0pMKGwJ0-FnzoW_EJbc3A1HvfAZ
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI3MDA5NCBTYWx0ZWRfX4VphTV2mdHS4
- /I2F2IQGV4AWm4SHZMiRLhNGs4dy0B3AvV7RRHe2na2tlGFgFSxb+ueaVGyEmK6yeVoTYjFP6hC
- e2SUuPkd8ccmwWg9l1ZptczLFRngHAy1dQP0mQtyBmoAv82jvGNYoBPVO6BTMxNyfaweewNsgKz
- s/80XwQnv1F3elkHhldnL9Q+U7dsMXZiIR1RPV2La3e+oaKR0NQDLH1pGOEHG5k8+D1Kwox21y9
- iHGNui5FRMXPxfvri3NU2trpKPIuFzgEG/F6Rbppc8OlZCUKppzdd5njAFKaASXVnuVvJZ3Mys5
- ICur3HGuaG3SxJG+xyGaJtO2h/vpU23xkwHr4e9N21nxHGjYik4dwbZbSg7YorPfG7iO1M7Psr+
- +uj8UnBS+mhPlZ8WrEF/YYrCnsDtbwYp4628NgRLAGREB9B448UZzketTL+mAg9JSV0o/lTp
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-27_05,2025-05-27_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 phishscore=0 mlxlogscore=999 priorityscore=1501 mlxscore=0
- bulkscore=0 adultscore=0 spamscore=0 suspectscore=0 malwarescore=0
- clxscore=1015 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505160000
- definitions=main-2505270094
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="wm5rma25slqeowsj"
+Content-Disposition: inline
+In-Reply-To: <20250526062559.2061311-4-zhangqing@rock-chips.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On 5/27/25 1:35 PM, Krzysztof Kozlowski wrote:
-> On 27/05/2025 13:26, Konrad Dybcio wrote:
->> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
->>
->> The IP Accelerator hardware/firmware owns a sizeable region within the
->> IMEM, ominously named 'modem-tables', presumably having to do with some
->> internal IPA-modem specifics.
->>
->> It's not actually accessed by the OS, although we have to IOMMU-map it
->> with the IPA device, so that presumably the firmware can act upon it.
->>
->> Allow it as a subnode of IMEM.
->>
->> Reviewed-by: Alex Elder <elder@riscstar.com>
->> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
->> ---
->>  Documentation/devicetree/bindings/sram/qcom,imem.yaml | 3 +++
->>  1 file changed, 3 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/sram/qcom,imem.yaml b/Documentation/devicetree/bindings/sram/qcom,imem.yaml
->> index 2711f90d9664b70fcd1e2f7e2dfd3386ed5c1952..7c882819222dc04190db357ac6f9a3a35137cc9e 100644
->> --- a/Documentation/devicetree/bindings/sram/qcom,imem.yaml
->> +++ b/Documentation/devicetree/bindings/sram/qcom,imem.yaml
->> @@ -51,6 +51,9 @@ properties:
->>      $ref: /schemas/power/reset/syscon-reboot-mode.yaml#
->>  
->>  patternProperties:
->> +  "^modem-tables@[0-9a-f]+$":
->> +    description: Region reserved for the IP Accelerator
-> 
-> Missing additionalProperties: false, which would point you that this is
-> incomplete (or useless because empty).
 
-How do I describe a 'stupid' node that is just a reg?
+--wm5rma25slqeowsj
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v6 3/4] net: can: rockchip: add can for RK3576 Soc
+MIME-Version: 1.0
 
-Konrad
+Hey,
+
+here's a partial review.
+
+On 26.05.2025 14:25:58, Elaine Zhang wrote:
+> Is new controller, new register layout and Bit position definition:
+> Support CAN and CANFD protocol, ISO 11898-1
+> Support transmit or receive error count
+> Support acceptance filter, more functional
+> Support interrupt and all interrupt can be masked
+> Support error code check
+> Support self test\silent\loop-back mode
+> Support auto retransmission mode
+> Support auto bus on after bus-off state
+> Support 2 transmit buffers
+> Support Internal Storage Mode
+> Support DMA
+>=20
+> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+> ---
+>  .../net/can/rockchip/rockchip_canfd-core.c    | 453 ++++++++++++++++++
+>  drivers/net/can/rockchip/rockchip_canfd-rx.c  | 111 +++++
+>  drivers/net/can/rockchip/rockchip_canfd-tx.c  |  27 ++
+>  drivers/net/can/rockchip/rockchip_canfd.h     | 267 +++++++++++
+>  4 files changed, 858 insertions(+)
+>=20
+> diff --git a/drivers/net/can/rockchip/rockchip_canfd-core.c b/drivers/net=
+/can/rockchip/rockchip_canfd-core.c
+> index c21ca4c1fb9a..92e260cb2527 100644
+> --- a/drivers/net/can/rockchip/rockchip_canfd-core.c
+> +++ b/drivers/net/can/rockchip/rockchip_canfd-core.c
+> @@ -31,6 +31,8 @@ static const char *__rkcanfd_get_model_str(enum rkcanfd=
+_model model)
+>  		return "rk3568v2";
+>  	case RKCANFD_MODEL_RK3568V3:
+>  		return "rk3568v3";
+> +	case RKCANFD_MODEL_RK3576:
+> +		return "rk3576";
+>  	}
+> =20
+>  	return "<unknown>";
+> @@ -176,6 +178,30 @@ static void rkcanfd_get_berr_counter_corrected(struc=
+t rkcanfd_priv *priv,
+>  		    !!(reg_state & RKCANFD_REG_STATE_ERROR_WARNING_STATE));
+>  }
+> =20
+> +static void rk3576canfd_get_berr_counter_corrected(struct rkcanfd_priv *=
+priv,
+> +						   struct can_berr_counter *bec)
+> +{
+
+Is the rk3576 affected by this problem?
+
+> +	struct can_berr_counter bec_raw;
+> +	u32 reg_state;
+> +
+> +	bec->rxerr =3D rkcanfd_read(priv, RK3576CANFD_REG_RXERRORCNT);
+> +	bec->txerr =3D rkcanfd_read(priv, RK3576CANFD_REG_TXERRORCNT);
+> +	bec_raw =3D *bec;
+> +
+> +	if (!bec->rxerr && !bec->txerr)
+> +		*bec =3D priv->bec;
+> +	else
+> +		priv->bec =3D *bec;
+> +
+> +	reg_state =3D rkcanfd_read(priv, RKCANFD_REG_STATE);
+> +	netdev_vdbg(priv->ndev,
+> +		    "%s: Raw/Cor: txerr=3D%3u/%3u rxerr=3D%3u/%3u Bus Off=3D%u Warning=
+=3D%u\n",
+> +		    __func__,
+> +		    bec_raw.txerr, bec->txerr, bec_raw.rxerr, bec->rxerr,
+> +		    !!(reg_state & RK3576CANFD_REG_STATE_BUS_OFF_STATE),
+> +		    !!(reg_state & RK3576CANFD_REG_STATE_ERROR_WARNING_STATE));
+> +}
+> +
+>  static int rkcanfd_get_berr_counter(const struct net_device *ndev,
+>  				    struct can_berr_counter *bec)
+>  {
+> @@ -206,6 +232,11 @@ static void rkcanfd_chip_interrupts_disable(const st=
+ruct rkcanfd_priv *priv)
+>  	rkcanfd_write(priv, RKCANFD_REG_INT_MASK, RKCANFD_REG_INT_ALL);
+>  }
+> =20
+> +static void rk3576canfd_chip_interrupts_disable(const struct rkcanfd_pri=
+v *priv)
+> +{
+> +	rkcanfd_write(priv, RK3576CANFD_REG_INT_MASK, RK3576CANFD_REG_INT_ALL);
+> +}
+> +
+>  static void rkcanfd_chip_fifo_setup(struct rkcanfd_priv *priv)
+>  {
+>  	u32 reg;
+> @@ -220,6 +251,72 @@ static void rkcanfd_chip_fifo_setup(struct rkcanfd_p=
+riv *priv)
+>  	netdev_reset_queue(priv->ndev);
+>  }
+> =20
+> +static void rk3576canfd_chip_fifo_setup(struct rkcanfd_priv *priv)
+> +{
+> +	u32 ism =3D 0, water =3D 0;
+
+no need to init as 0
+
+> +
+> +	ism =3D RK3576CANFD_REG_STR_CTL_ISM_SEL_CANFD_FIXED;
+> +	water =3D RK3576CANFD_ISM_WATERMASK_CANFD;
+> +
+> +	/* internal sram mode */
+
+personally I would prefer:
+
+reg_ism =3D FIELD_PREP(RK3576CANFD_REG_STR_CTL_ISM_SEL,
+                    RK3576CANFD_REG_STR_CTL_ISM_SEL_CANFD_FIXED) |
+          RK3576CANFD_REG_STR_CTL_STORAGE_TIMEOUT_MODE;
+
+> +	rkcanfd_write(priv, RK3576CANFD_REG_STR_CTL,
+> +		      (FIELD_PREP(RK3576CANFD_REG_STR_CTL_ISM_SEL, ism) |
+> +		      RK3576CANFD_REG_STR_CTL_STORAGE_TIMEOUT_MODE));
+
+reg_water =3D RK3576CANFD_ISM_WATERMASK_CANFD;
+
+> +	rkcanfd_write(priv, RK3576CANFD_REG_STR_WTM, water);
+> +	WRITE_ONCE(priv->tx_head, 0);
+> +	WRITE_ONCE(priv->tx_tail, 0);
+> +	netdev_reset_queue(priv->ndev);
+> +}
+> +
+> +static int rk3576canfd_atf_config(struct rkcanfd_priv *priv, int mode)
+
+With the proposed cleanup, this will become a void function.
+
+> +{
+> +	u32 id[10] =3D {0};
+
+What's the use of this array?
+
+> +	u32 dlc =3D 0, dlc_over =3D 0;
+> +
+> +	switch (mode) {
+
+It's called with RK3576CANFD_REG_ATFM_MASK_SEL_MASK_MODE only...
+
+> +	case RK3576CANFD_REG_ATFM_MASK_SEL_MASK_MODE:
+> +		rkcanfd_write(priv, RK3576CANFD_REG_ATF0, id[0]);
+
+why not call it with 0x0?
+
+> +		rkcanfd_write(priv, RK3576CANFD_REG_ATF1, id[1]);
+
+create:
+
+#define RK3576CANFD_REG_ATF(n) (0x700 + (n) << 2)
+
+and use a for loop
+
+> +		rkcanfd_write(priv, RK3576CANFD_REG_ATF2, id[2]);
+> +		rkcanfd_write(priv, RK3576CANFD_REG_ATF3, id[3]);
+> +		rkcanfd_write(priv, RK3576CANFD_REG_ATF4, id[4]);
+> +		rkcanfd_write(priv, RK3576CANFD_REG_ATFM0, RK3576CANFD_REG_ATFM_ID);
+> +		rkcanfd_write(priv, RK3576CANFD_REG_ATFM1, RK3576CANFD_REG_ATFM_ID);
+> +		rkcanfd_write(priv, RK3576CANFD_REG_ATFM2, RK3576CANFD_REG_ATFM_ID);
+> +		rkcanfd_write(priv, RK3576CANFD_REG_ATFM3, RK3576CANFD_REG_ATFM_ID);
+> +		rkcanfd_write(priv, RK3576CANFD_REG_ATFM4, RK3576CANFD_REG_ATFM_ID);
+> +		break;
+> +	case RK3576CANFD_REG_ATFM_MASK_SEL_LIST_MODE:
+> +		rkcanfd_write(priv, RK3576CANFD_REG_ATF0, id[0]);
+> +		rkcanfd_write(priv, RK3576CANFD_REG_ATF1, id[1]);
+> +		rkcanfd_write(priv, RK3576CANFD_REG_ATF2, id[2]);
+> +		rkcanfd_write(priv, RK3576CANFD_REG_ATF3, id[3]);
+> +		rkcanfd_write(priv, RK3576CANFD_REG_ATF4, id[4]);
+> +		rkcanfd_write(priv, RK3576CANFD_REG_ATFM0, id[5] | RK3576CANFD_REG_ATF=
+M_MASK_SEL);
+> +		rkcanfd_write(priv, RK3576CANFD_REG_ATFM1, id[6] | RK3576CANFD_REG_ATF=
+M_MASK_SEL);
+> +		rkcanfd_write(priv, RK3576CANFD_REG_ATFM2, id[7] | RK3576CANFD_REG_ATF=
+M_MASK_SEL);
+> +		rkcanfd_write(priv, RK3576CANFD_REG_ATFM3, id[8] | RK3576CANFD_REG_ATF=
+M_MASK_SEL);
+> +		rkcanfd_write(priv, RK3576CANFD_REG_ATFM4, id[9] | RK3576CANFD_REG_ATF=
+M_MASK_SEL);
+> +		break;
+> +	default:
+> +		rkcanfd_write(priv, RK3576CANFD_REG_ATF_CTL, RK3576CANFD_REG_ATF_CTL_A=
+TF_DIS_ALL);
+> +		return -EINVAL;
+> +	}
+> +
+> +	if (dlc) {
+> +		if (dlc_over)
+
+both are 0, please remove the dead code
+
+> +			rkcanfd_write(priv, RK3576CANFD_REG_ATF_DLC,
+> +				      dlc | RK3576CANFD_REG_ATF_DLC_ATF_DLC_EN);
+> +		else
+> +			rkcanfd_write(priv, RK3576CANFD_REG_ATF_DLC,
+> +				      dlc | RK3576CANFD_REG_ATF_DLC_ATF_DLC_EN |
+> +				      RK3576CANFD_REG_ATF_DLC_ATF_DLC_MODE);
+> +	}
+> +	rkcanfd_write(priv, RK3576CANFD_REG_ATF_CTL, 0);
+> +
+> +	return 0;
+> +}
+> +
+>  static void rkcanfd_chip_start(struct rkcanfd_priv *priv)
+>  {
+>  	u32 reg;
+> @@ -285,6 +382,68 @@ static void rkcanfd_chip_start(struct rkcanfd_priv *=
+priv)
+>  		   rkcanfd_read(priv, RKCANFD_REG_MODE));
+>  }
+> =20
+> +static void rk3576canfd_chip_start(struct rkcanfd_priv *priv)
+> +
+> +{
+> +	u32 reg;
+> +
+> +	rkcanfd_chip_set_reset_mode(priv);
+> +
+> +	/* Receiving Filter: accept all */
+> +	rk3576canfd_atf_config(priv, RK3576CANFD_REG_ATFM_MASK_SEL_MASK_MODE);
+> +
+> +	/* enable:
+> +	 * - CAN_FD: enable CAN-FD
+> +	 * - AUTO_RETX_MODE: auto retransmission on TX error
+> +	 * - COVER_MODE: RX-FIFO overwrite mode, do not send OVERLOAD frames
+> +	 * - RXSTX_MODE: Receive Self Transmit data mode
+> +	 * - WORK_MODE: transition from reset to working mode
+> +	 */
+
+please adjust the comments
+
+> +	reg =3D rkcanfd_read(priv, RKCANFD_REG_MODE);
+> +	priv->reg_mode_default =3D reg | RKCANFD_REG_MODE_WORK_MODE;
+> +
+> +	if (priv->can.ctrlmode & CAN_CTRLMODE_LOOPBACK) {
+> +		priv->reg_mode_default |=3D RKCANFD_REG_MODE_LBACK_MODE;
+> +		rkcanfd_write(priv, RK3576CANFD_REG_ERROR_MASK,
+> +			      RK3576CANFD_REG_ERROR_MASK_ACK_ERROR);
+> +	}
+> +
+> +	/* mask, i.e. ignore:
+> +	 * - TIMESTAMP_COUNTER_OVERFLOW_INT - timestamp counter overflow interr=
+upt
+> +	 * - TX_ARBIT_FAIL_INT - TX arbitration fail interrupt
+> +	 * - OVERLOAD_INT - CAN bus overload interrupt
+> +	 * - TX_FINISH_INT - Transmit finish interrupt
+> +	 */
+> +	priv->reg_int_mask_default =3D RK3576CANFD_REG_INT_RX_FINISH_INT;
+
+please adjust the comments
+
+> +
+> +	/* Do not mask the bus error interrupt if the bus error
+> +	 * reporting is requested.
+> +	 */
+> +	if (!(priv->can.ctrlmode & CAN_CTRLMODE_BERR_REPORTING))
+> +		priv->reg_int_mask_default |=3D RKCANFD_REG_INT_ERROR_INT;
+> +
+> +	memset(&priv->bec, 0x0, sizeof(priv->bec));
+> +
+> +	priv->devtype_data.fifo_setup(priv);
+
+Why do you need a callback here? You're already know you're a
+rk3576canfd, here.
+
+> +
+> +	rkcanfd_write(priv, RK3576CANFD_REG_AUTO_RETX_CFG,
+> +		      RK3576CANFD_REG_AUTO_RETX_CFG_AUTO_RETX_EN);
+> +
+> +	rkcanfd_write(priv, RK3576CANFD_REG_BRS_CFG,
+> +		      RK3576CANFD_REG_BRS_CFG_BRS_NEGSYNC_EN |
+> +		      RK3576CANFD_REG_BRS_CFG_BRS_POSSYNC_EN);
+> +
+> +	rkcanfd_set_bittiming(priv);
+> +
+> +	priv->devtype_data.interrupts_disable(priv);
+> +	rkcanfd_chip_set_work_mode(priv);
+> +
+> +	priv->can.state =3D CAN_STATE_ERROR_ACTIVE;
+> +
+> +	netdev_dbg(priv->ndev, "%s: reg_mode=3D0x%08x\n", __func__,
+> +		   rkcanfd_read(priv, RKCANFD_REG_MODE));
+> +}
+> +
+
+more later...
+
+regards,
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--wm5rma25slqeowsj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmg1o+IACgkQDHRl3/mQ
+kZwlcAgAp0JdNemXDYJQP2NtGDnnNFQoPnjeNpkF+YvkXizqgIxjzLfewpIZf3Be
+MA2WfFN/ewOwBAX7TrBfWAoCiRqc4mdHlupNO5VrKflNq4cQXRkbSoB9Q2xl3SQX
+VFTUeyJDd5i/N1kGYa8iXDVQ5I3T9eNjlCmKqP9PwrXkQHAyKlfu17u1nW7Uf4GS
+h8ebrFhb5FlTtanZY5+GL7Qlngg0lEaYdqcvOx0JyepgNugewSmTcWf1QSUnwx7h
+bQF4IoVm12zELwQRPalBgC2qX/nwXeZKOi1i4GTzVMZvqqPSba7JOMYgnCNZagK3
+AHtBIhG91hPtC0ykR3IYV3LbR3SWcg==
+=wAW9
+-----END PGP SIGNATURE-----
+
+--wm5rma25slqeowsj--
 
