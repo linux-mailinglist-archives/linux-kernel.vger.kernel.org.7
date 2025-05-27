@@ -1,286 +1,169 @@
-Return-Path: <linux-kernel+bounces-664435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-664439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DA4DAC5B76
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 22:40:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B775AC5B82
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 22:41:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9B548A1A48
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 20:40:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 980B27B118C
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 20:40:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD92F20C00B;
-	Tue, 27 May 2025 20:40:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E13B620C005;
+	Tue, 27 May 2025 20:40:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RbUOLzTy"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sm0iTUnq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 033532F5E
-	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 20:40:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4350420C47F;
+	Tue, 27 May 2025 20:40:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748378420; cv=none; b=hSxUHnsTJmgN2/RM9PiVBpPJUS8aZirYgVLkip6HESCnrMPzTPjTie4Vt+Wk0lO2gT2a6apM6+qXPH0Fdd19iDdod2GLZ0GFfvCHNdPADTGkXHLaJWSilJT2Z17aXUeaDOD+RRjC22eeYKva4H1TKRDgbgGObz5oYBCcuJIYUi4=
+	t=1748378440; cv=none; b=hc5mWF8k+/U94Fojta3bRL0iJHH8v0LwI35Rkd0S3C0QzFzz6hO03o5ECMNVUXoDzm2Qvwk84SGkAwPZezYVSAc6StdzHAw4ZCNdIIKuKyB3aGBPmeHb1JRobGC4TyLADqfZ2hEjJ7C33kM/oVDwSCQ8jg06FDARLADXuKDvk5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748378420; c=relaxed/simple;
-	bh=X9iiZNXtXw5g3CbfG+bUNwF6YH2n4JPbFjaQJQxs/CQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CHBQ5LG5T2hwp5KRL5mmX2tY2UaI4lxEBzKVUnW0VF6v+7HQJlBS4uHlnlOlEQvY3Ku/bjiZ8Ud/tEwHCbhsMn9sqEqgIzJRPyGlmYNfWr0HySxnSswllKQ9KIgLmLjBGrj5ODCVirpyCgwlbOH4pFC/Msyndo7oksQZNZNdSi4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RbUOLzTy; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5f438523d6fso851a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 13:40:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1748378417; x=1748983217; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=91mdXzjYrGvaj7Dh9A9yl2QArCWVP/eA86xKiPghOcI=;
-        b=RbUOLzTy4ATV2qSJGLf4VnJRJtuyofI5/DeL1bhxp0Ue4+VM9kTYUDOdTYHDN8etUK
-         tBTZNECSDkaBPI4B4c4jfSDtThBABtwOTM0X8CEGeLmXeMs71rpNKrnG7W4IjABcuVny
-         55vt5I4B3oefTsb2kIwwfLEPAm5rgT4EqZLGf+lP9Mj3OY3KMAM5Op/ytBqlhNs+yeIk
-         bTI1KtzsIl835IHe97pwQ/BdElr09BcLcX0QwzTguyJxo2OgCFmkWYqo7Xxn7bmv9iHB
-         bvqtUSD/CvsmiH8Z8uhexyEisdZOsiC1H2jv8rfmVrDyylZTfud6UMIxKdzYXMeLYTC5
-         Ngzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748378417; x=1748983217;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=91mdXzjYrGvaj7Dh9A9yl2QArCWVP/eA86xKiPghOcI=;
-        b=USIwNr215LVOyNZUMNNMkg+cEtsX4oDEcU/bTn+wTBIoCy0Px1xGmWutrw9eeG8UAh
-         cr9Qu5jzH0JULJXnunVGBSipj3BbrlE74V4IaanMXxpIQjcGclazr+B0LsXMjcq6MMta
-         H7DzcapBNB2ru7odawYVRrTtltFhg2YQT0tY+DJdSRWLina8liTe2CUVDHwpS0KLxMfY
-         bTNtmM86YqoNAgSNWivBnNcywusynrqGSUzRjiRsdIUAvlZq2MQgYfWJddATFBVGowx7
-         ip8b6mpNx0dNs0iveDxpueFYzwmEBjhPB59z7f1Xk83jriNRCGAVON5PT7oYWWLHg8SY
-         a8KA==
-X-Forwarded-Encrypted: i=1; AJvYcCVr6sdhkgt4eY1OnTBYGKFHZUZIdA7YUrNIOhx4RZ3SzVqfDbfPk7g89EEzn2bqrAPp6yRfnGJ/RPQA0hI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyy6Fnozufp+MfsGfSIKa/H1iv1uDelJjoLDBoKchO1P0/6q7Jm
-	jNNyw/7VfDLL3vGLp3wydkUm/QfW55pFvX4TKg2MXD1J3DwYSsRKsDsQRlBuKCB7UzdCg6st6oo
-	XV9LwtGsX5tBlYbPlW8Vw4azTzTu7GYIlHYM/NM1B
-X-Gm-Gg: ASbGnct6g2DqdTHd6j7pxLKXJYXwlj0Ga/d1fQsbeCPz8wBqR0zZXcjfMm+DZ9n1nOk
-	oHv/uyhnyDrLAK/FQ+b8k/cste9tHko9Ix7NLSPAgduyk1i8c9lmvft2z3cuv1BtzWedPE2sKSO
-	WVzL953+a6qM9pouRAt+wm7RlaPJy8Hg/mbAnDxJ5tpx0unHVbn6aVN7roo+deAgSQ7tH2q+e8
-X-Google-Smtp-Source: AGHT+IEyQdVjEh01ByN1Gy4wyq+UouMQztZNI3UXZcPd8rFwNBK7jeF6QdKgHLHKDSNEfhZEV1rUngjqYE7RKwuOyXI=
-X-Received: by 2002:aa7:cfd4:0:b0:600:9008:4a40 with SMTP id
- 4fb4d7f45d1cf-60515940cd3mr27335a12.4.1748378417078; Tue, 27 May 2025
- 13:40:17 -0700 (PDT)
+	s=arc-20240116; t=1748378440; c=relaxed/simple;
+	bh=IpMb7V0sAlt8/QPGelTGeOsg+wTJq9WrQx/D96Ll6L0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=JudgtvU6Jz+2Tc4tQ5c/f9IR0Z/MpaDazJntTpSS23bqW5jXh2p3dbXQ5C1dyt4DG34kSmIJxzxTN4cX8WUJA7pY471IbCXnPeXAErVCUdsv32/+CUzdWQDabWpbzBCv2Iai0Z/TZ3OaQLOLpWlp0zwVJJHkxVoCd1b1k4obNNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sm0iTUnq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D512C4CEED;
+	Tue, 27 May 2025 20:40:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748378439;
+	bh=IpMb7V0sAlt8/QPGelTGeOsg+wTJq9WrQx/D96Ll6L0=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=sm0iTUnqpGSTq1Y8Dz5W4NuIK65PfDjOitYRyTrKZBDPC0JP6klw4PqLhkFilRAOz
+	 XToWo8EkeK7/NWoNBbA3WUAGrbS0MaLPwRPNIs+hWfFln8hV84EsWdeCbTvtjJhmK8
+	 hCL7xjvblRYHkhlGB7FAo3pEXGo4DS71hhQh6jDZiEmYiH84M3Zb4OcH5d470z8aj+
+	 /6nQPe6PdEs0c9jwgoeqghuVshAPfifKFcCjxA1zev0LWx/6enBIAWKOPGIZXBj/Rk
+	 b7XVYPc8cVR22ioaG32IRDWLpgnbwTxNOpQttnLfYr7g8aTJZOw1yAl4fY3hk9zKJm
+	 1Rj9uI/htbwCQ==
+From: Konrad Dybcio <konradybcio@kernel.org>
+Date: Tue, 27 May 2025 22:40:06 +0200
+Subject: [PATCH v3 4/6] phy: qcom: qmp-combo: introduce QMPPHY_MODE
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250527044145.13153-1-21cnbao@gmail.com> <93385672-927f-4de5-a158-fc3fc0424be0@lucifer.local>
-In-Reply-To: <93385672-927f-4de5-a158-fc3fc0424be0@lucifer.local>
-From: Lokesh Gidra <lokeshgidra@google.com>
-Date: Tue, 27 May 2025 13:40:05 -0700
-X-Gm-Features: AX0GCFvsqylKcHHDepKynOdNf6b-SwzsoF1wjU3y-l44a5LLCSguH4yWv1a1Tvw
-Message-ID: <CA+EESO6_RBX=nvrWO46aR7Q7xibh8fM-BX2p7_ihcbYyMfpVYQ@mail.gmail.com>
-Subject: Re: [PATCH RFC] mm: use per_vma lock for MADV_DONTNEED
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Barry Song <21cnbao@gmail.com>, akpm@linux-foundation.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Barry Song <v-songbaohua@oppo.com>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, David Hildenbrand <david@redhat.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Tangquan Zheng <zhengtangquan@oppo.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250527-topic-4ln_dp_respin-v3-4-f9a0763ec289@oss.qualcomm.com>
+References: <20250527-topic-4ln_dp_respin-v3-0-f9a0763ec289@oss.qualcomm.com>
+In-Reply-To: <20250527-topic-4ln_dp_respin-v3-0-f9a0763ec289@oss.qualcomm.com>
+To: Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
+ linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1748378414; l=3132;
+ i=konrad.dybcio@oss.qualcomm.com; s=20230215; h=from:subject:message-id;
+ bh=BRtYMDxSKD4x12RQQ6A5MlAQlMhQmTMBNmxjgiW2Chw=;
+ b=gQjg8nQnAUGrwjxRU5MiHRlAjrYVku3MgKHySByvAkjXbgEBmybkXtq15P0JmJOAklP46JIbY
+ d+KUTZoZGb2DSdRn60uujm0YfyMJeo5RFaR/mkgpb4gOO3WQyVEeRzj
+X-Developer-Key: i=konrad.dybcio@oss.qualcomm.com; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
-Thanks a lot, Barry. This was overdue.
+From: Neil Armstrong <neil.armstrong@linaro.org>
 
-On Tue, May 27, 2025 at 2:20=E2=80=AFAM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
->
-> Overall - thanks for this, and I'm not sure why we didn't think of doing
-> this sooner :P this seems like a super valid thing to try to use the vma
-> lock with.
->
-> I see you've cc'd Suren who has the most expertise in this and can
-> hopefully audit this and ensure all is good, but from the process address
-> doc (see below), I think we're good to just have the VMA stabilised for a
-> zap.
->
-> On Tue, May 27, 2025 at 04:41:45PM +1200, Barry Song wrote:
-> > From: Barry Song <v-songbaohua@oppo.com>
-> >
-> > Certain madvise operations, especially MADV_DONTNEED, occur far more
-> > frequently than other madvise options, particularly in native and Java
-> > heaps for dynamic memory management.
+Introduce an enum for the QMP Combo PHY modes, use it in the
+QMP commmon phy init function and default to COMBO mode.
 
-Actually, it would be great if you can also optimize the MADV_FREE
-case. There are quite a few performance critical situations where
-MADV_FREE is performed and are done within a single VMA.
->
-> Ack yeah, I have gathered that this is the case previously.
->
-> >
-> > Currently, the mmap_lock is always held during these operations, even w=
-hen
-> > unnecessary. This causes lock contention and can lead to severe priorit=
-y
-> > inversion, where low-priority threads=E2=80=94such as Android's HeapTas=
-kDaemon=E2=80=94
-> > hold the lock and block higher-priority threads.
->
-> That's very nasty... we definitely want to eliminate as much mmap_lock
-> contention as possible.
->
-> >
-> > This patch enables the use of per-VMA locks when the advised range lies
-> > entirely within a single VMA, avoiding the need for full VMA traversal.=
- In
-> > practice, userspace heaps rarely issue MADV_DONTNEED across multiple VM=
-As.
->
-> Yeah this single VMA requirement is obviously absolutely key.
->
-> As per my docs [0] actually, for zapping a single VMA, 'The VMA need only=
- be
-> kept stable for this operation.' (I had to look this up to remind myself =
-:P)
->
-> [0]: https://kernel.org/doc/html/latest/mm/process_addrs.html
->
-> So we actually... should be good here, locking-wise.
->
-> >
-> > Tangquan=E2=80=99s testing shows that over 99.5% of memory reclaimed by=
- Android
-> > benefits from this per-VMA lock optimization. After extended runtime,
-> > 217,735 madvise calls from HeapTaskDaemon used the per-VMA path, while
-> > only 1,231 fell back to mmap_lock.
+Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+[konrad: some renaming and rewording]
+Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+---
+ drivers/phy/qualcomm/phy-qcom-qmp-combo.c | 44 +++++++++++++++++++++++++++----
+ 1 file changed, 39 insertions(+), 5 deletions(-)
 
-I am quite confident that this pattern is not limited to
-HeapTaskDaemon. For instance, I'm sure the Scudo allocator must also
-be calling MADV_DONTNEED within single VMAs.
->
-> Thanks, this sounds really promising!
->
-> I take it then you have as a result, heavily tested this change?
->
-> >
-> > To simplify handling, the implementation falls back to the standard
-> > mmap_lock if userfaultfd is enabled on the VMA, avoiding the complexity=
- of
-> > userfaultfd_remove().
->
-> Oh GOD do I hate how we implement uffd. Have I ever mentioned that? Well,
-> let me mention it again...
->
-> >
-> > Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-> > Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> > Cc: David Hildenbrand <david@redhat.com>
-> > Cc: Vlastimil Babka <vbabka@suse.cz>
-> > Cc: Jann Horn <jannh@google.com>
-> > Cc: Suren Baghdasaryan <surenb@google.com>
-> > Cc: Lokesh Gidra <lokeshgidra@google.com>
-> > Cc: Tangquan Zheng <zhengtangquan@oppo.com>
-> > Signed-off-by: Barry Song <v-songbaohua@oppo.com>
-> > ---
-> >  mm/madvise.c | 34 ++++++++++++++++++++++++++++++++++
-> >  1 file changed, 34 insertions(+)
-> >
-> > diff --git a/mm/madvise.c b/mm/madvise.c
-> > index 8433ac9b27e0..da016a1d0434 100644
-> > --- a/mm/madvise.c
-> > +++ b/mm/madvise.c
-> > @@ -1817,6 +1817,39 @@ int do_madvise(struct mm_struct *mm, unsigned lo=
-ng start, size_t len_in, int beh
-> >
-> >       if (madvise_should_skip(start, len_in, behavior, &error))
-> >               return error;
-> > +
-> > +     /*
-> > +      * MADV_DONTNEED is commonly used with userspace heaps and most o=
-ften
-> > +      * affects a single VMA. In these cases, we can use per-VMA locks=
- to
-> > +      * reduce contention on the mmap_lock.
-> > +      */
-> > +     if (behavior =3D=3D MADV_DONTNEED || behavior =3D=3D MADV_DONTNEE=
-D_LOCKED) {
->
-> So firstly doing this here means process_madvise() doesn't get this benef=
-it, and
-> we're inconsistent between the two which we really want to avoid.
->
-> But secondly - we definitely need to find a better way to do this :) this
-> basically follows the 'ignore the existing approach and throw in an if
-> (special case) { ... }' pattern that I feel we really need to do all we c=
-an
-> to avoid in the kernel.
->
-> This lies the way of uffd, hugetlb, and thus horrors beyond imagining.
->
-> I can see why you did this as this is kind of special-cased a bit, and we
-> already do this kind of thing all over the place but let's try to avoid
-> this here.
->
-> So I suggest:
->
-> - Remove any code for this from do_madvise() and thus make it available t=
-o
->   process_madvise() also.
->
-> - Try to avoid the special casing here as much as humanly possible :)
->
-> - Update madvise_lock()/unlock() to get passed a pointer to struct
->   madvise_behavior to which we can add a boolean or even better I think -
->   an enum indicating which lock type was taken (this can simplify
->   madvise_unlock() also).
->
-> - Update madvise_lock() to do all of the checks below, we already
->   effectively do a switch (behavior) so it's not so crazy to do this. And
->   you can also do the fallthrough logic there.
->
-> - Obviously madvise_unlock() can be updated to do vma_end_read().
->
-> > +             struct vm_area_struct *prev, *vma;
-> > +             unsigned long untagged_start, end;
-> > +
-> > +             untagged_start =3D untagged_addr(start);
-> > +             end =3D untagged_start + len_in;
-> > +             vma =3D lock_vma_under_rcu(mm, untagged_start);
-> > +             if (!vma)
-> > +                     goto lock;
-> > +             if (end > vma->vm_end || userfaultfd_armed(vma)) {
-> > +                     vma_end_read(vma);
-> > +                     goto lock;
-> > +             }
-> > +             if (unlikely(!can_modify_vma_madv(vma, behavior))) {
-> > +                     error =3D -EPERM;
-> > +                     vma_end_read(vma);
-> > +                     goto out;
-> > +             }
-> > +             madvise_init_tlb(&madv_behavior, mm);
-> > +             error =3D madvise_dontneed_free(vma, &prev, untagged_star=
-t,
-> > +                             end, &madv_behavior);
-> > +             madvise_finish_tlb(&madv_behavior);
-> > +             vma_end_read(vma);
-> > +             goto out;
-> > +     }
-> > +
-> > +lock:
-> >       error =3D madvise_lock(mm, behavior);
-> >       if (error)
-> >               return error;
-> > @@ -1825,6 +1858,7 @@ int do_madvise(struct mm_struct *mm, unsigned lon=
-g start, size_t len_in, int beh
-> >       madvise_finish_tlb(&madv_behavior);
-> >       madvise_unlock(mm, behavior);
-> >
-> > +out:
-> >       return error;
-> >  }
-> >
-> > --
-> > 2.39.3 (Apple Git-146)
-> >
->
-> Cheers, Lorenzo
+diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-combo.c b/drivers/phy/qualcomm/phy-qcom-qmp-combo.c
+index 26480d63322b22eca9637392f888bfbe440c2a13..b34ad92021a656b39562e2685a1e7a0a93660a35 100644
+--- a/drivers/phy/qualcomm/phy-qcom-qmp-combo.c
++++ b/drivers/phy/qualcomm/phy-qcom-qmp-combo.c
+@@ -61,6 +61,12 @@
+ 
+ #define PHY_INIT_COMPLETE_TIMEOUT		10000
+ 
++enum qmpphy_mode {
++	QMPPHY_MODE_USB3DP = 0,
++	QMPPHY_MODE_DP_ONLY,
++	QMPPHY_MODE_USB3_ONLY,
++};
++
+ /* set of registers with offsets different per-PHY */
+ enum qphy_reg_layout {
+ 	/* PCS registers */
+@@ -1685,6 +1691,7 @@ struct qmp_combo {
+ 
+ 	struct mutex phy_mutex;
+ 	int init_count;
++	enum qmpphy_mode qmpphy_mode;
+ 
+ 	struct phy *usb_phy;
+ 	enum phy_mode phy_mode;
+@@ -2817,12 +2824,33 @@ static int qmp_combo_com_init(struct qmp_combo *qmp, bool force)
+ 	if (qmp->orientation == TYPEC_ORIENTATION_REVERSE)
+ 		val |= SW_PORTSELECT_VAL;
+ 	writel(val, com + QPHY_V3_DP_COM_TYPEC_CTRL);
+-	writel(USB3_MODE | DP_MODE, com + QPHY_V3_DP_COM_PHY_MODE_CTRL);
+ 
+-	/* bring both QMP USB and QMP DP PHYs PCS block out of reset */
+-	qphy_clrbits(com, QPHY_V3_DP_COM_RESET_OVRD_CTRL,
+-			SW_DPPHY_RESET_MUX | SW_DPPHY_RESET |
+-			SW_USB3PHY_RESET_MUX | SW_USB3PHY_RESET);
++	switch (qmp->qmpphy_mode) {
++	case QMPPHY_MODE_USB3DP:
++		writel(USB3_MODE | DP_MODE, com + QPHY_V3_DP_COM_PHY_MODE_CTRL);
++
++		/* bring both QMP USB and QMP DP PHYs PCS block out of reset */
++		qphy_clrbits(com, QPHY_V3_DP_COM_RESET_OVRD_CTRL,
++				SW_DPPHY_RESET_MUX | SW_DPPHY_RESET |
++				SW_USB3PHY_RESET_MUX | SW_USB3PHY_RESET);
++		break;
++
++	case QMPPHY_MODE_DP_ONLY:
++		writel(DP_MODE, com + QPHY_V3_DP_COM_PHY_MODE_CTRL);
++
++		/* bring QMP DP PHY PCS block out of reset */
++		qphy_clrbits(com, QPHY_V3_DP_COM_RESET_OVRD_CTRL,
++				SW_DPPHY_RESET_MUX | SW_DPPHY_RESET);
++		break;
++
++	case QMPPHY_MODE_USB3_ONLY:
++		writel(USB3_MODE, com + QPHY_V3_DP_COM_PHY_MODE_CTRL);
++
++		/* bring QMP USB PHY PCS block out of reset */
++		qphy_clrbits(com, QPHY_V3_DP_COM_RESET_OVRD_CTRL,
++				SW_USB3PHY_RESET_MUX | SW_USB3PHY_RESET);
++		break;
++	}
+ 
+ 	qphy_clrbits(com, QPHY_V3_DP_COM_SWI_CTRL, 0x03);
+ 	qphy_clrbits(com, QPHY_V3_DP_COM_SW_RESET, SW_RESET);
+@@ -3833,6 +3861,12 @@ static int qmp_combo_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto err_node_put;
+ 
++	/*
++	 * The hw default is USB3_ONLY, but USB3+DP mode lets us more easily
++	 * check both sub-blocks' init tables for blunders at probe time.
++	 */
++	qmp->qmpphy_mode = QMPPHY_MODE_USB3DP;
++
+ 	qmp->usb_phy = devm_phy_create(dev, usb_np, &qmp_combo_usb_phy_ops);
+ 	if (IS_ERR(qmp->usb_phy)) {
+ 		ret = PTR_ERR(qmp->usb_phy);
+
+-- 
+2.49.0
+
 
