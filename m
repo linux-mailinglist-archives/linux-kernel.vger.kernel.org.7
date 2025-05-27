@@ -1,165 +1,187 @@
-Return-Path: <linux-kernel+bounces-663271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-663274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C0D1AC461B
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 04:13:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DA85BAC4624
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 04:17:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5C141895799
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 02:13:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6467D18931DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 02:17:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88E55158520;
-	Tue, 27 May 2025 02:12:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FD5070800;
+	Tue, 27 May 2025 02:17:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="nCZOxiq4"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="GIKvtmEH"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A1FF3BBF2;
-	Tue, 27 May 2025 02:12:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDF701E49F
+	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 02:17:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748311976; cv=none; b=CjnesIcfUaX0tNtEIpgxwUBDrdZGVS9urU3ZhENsTp/nDsHGl/ac7HNZSy1l0lkbjLEh6aR/Oofxzb8ikOMbymM6PBAL8coP6g0TzAWswuWcTORq8qTOuY2iBtfMFpxobr8PivRWRgFgOKFrXpt2NIoJX/6qEdrAzNRprsSUm9Q=
+	t=1748312224; cv=none; b=icYAB7RtrmUwXViDc/C0AG8mbdePVHPY5wkrQMRTg23RVSubZ5aNDttrGZ0kRS/URJEni7S8Ne4vfXyEtNMmFRG1AfTaB7IislTYpoPe6PSbHERQR9lqZL+Yy8v4kcBJdCKqTpyb/jZArtUj43HMLuWsZNCktyJclOtxJvIIZO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748311976; c=relaxed/simple;
-	bh=lVbYnc3aORFwAR2thA4ZyWVY4Gb7NMvj+BaiCpe6tok=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=A+jELKLmNK7IvEgbgU5Gauw3mSaBFxeCMCk1lHjNb6GCDZF6qjzpRhEihmYngyOiJ/kMeRroQCusb64jSyEzm4RDhhgsF0uOKx1/8H8gftlc75eYdpKmuJ5dmPpGqnEs3RwYv+cCY3149Vp13f8aAtYwzaa2rwkwxlLJHoBdyso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=nCZOxiq4; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 15aca2243aa011f0813e4fe1310efc19-20250527
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=39oY+EqTrg+DjuuiSY4guCZe6xayDWOMD5dz4cNUHLo=;
-	b=nCZOxiq4K1QUr9S9dvPTts/z5WTdPNnlnLBya5AEe7vUCdfZFPngIofLwOL9ueoFZJQEQ6BoyaAx9X46Ww/LH0ucPzz2XbdvjXcOOuK91u8XCTF4aLwblTkf/VW6dHJwbYUQAey4htRgNecVlCTKoUd7edEQMqbVRG+m39eS/Jk=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.2.1,REQID:09912d76-31a4-411e-86c3-4b535cd831f1,IP:0,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
-	elease,TS:0
-X-CID-META: VersionHash:0ef645f,CLOUDID:b66c0158-abad-4ac2-9923-3af0a8a9a079,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:-3,IP:ni
-	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 15aca2243aa011f0813e4fe1310efc19-20250527
-Received: from mtkmbs13n1.mediatek.inc [(172.21.101.193)] by mailgw01.mediatek.com
-	(envelope-from <shiming.cheng@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1889938853; Tue, 27 May 2025 10:12:48 +0800
-Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- mtkmbs13n2.mediatek.inc (172.21.101.108) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.39; Tue, 27 May 2025 10:12:45 +0800
-Received: from mbjsdccf07.gcn.mediatek.inc (10.15.20.246) by
- mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1258.39 via Frontend Transport; Tue, 27 May 2025 10:12:44 +0800
-From: Shiming Cheng <shiming.cheng@mediatek.com>
-To: <willemdebruijn.kernel@gmail.com>, <willemb@google.com>,
-	<edumazet@google.com>, <davem@davemloft.net>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <matthias.bgg@gmail.com>
-CC: <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<shiming.cheng@mediatek.com>, <lena.wang@mediatek.com>
-Subject: [PATCH net v3] t: fix udp gso skb_segment after pull from frag_list
-Date: Tue, 27 May 2025 10:15:47 +0800
-Message-ID: <20250527021611.23846-1-shiming.cheng@mediatek.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1748312224; c=relaxed/simple;
+	bh=BYUqYKU7Zb50udk1adRc49TsZfwdyy5RxDIFvL7Jf1Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ArKF/B1ptmZP2VLa6xh95+6rkjY3QI/qOCIffYHmSS664p6nGBJQ8dfLszDJeWiEuTSZ7GMsrIHUj+CPHjsbo3TDeTdohZ7bs0o1URqUGd/dT88f8+0nsWppJ9vmLUfOaffESJAIQBDQJFNE3nJZ6fL+K7pbQMNT6Abxkgs0BkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=GIKvtmEH; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-309fac646adso2993932a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 19:17:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1748312221; x=1748917021; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ACVoLlaU3ur0JkZbezUkrwCZbhnGFLL9/FLncuMO858=;
+        b=GIKvtmEHLm5Y2j9bWCu8Qva6MscPgCiRC5+sxRtS51MZj9taf0f5gkpeOMuQ+3geRy
+         gM+jb1b1iK4sMm5KuwvcEtUk5GRfw5IzF1oilSULtHzFmKVsA2m4mKvPZnqOS8lrlOlt
+         7r7lPIjcp3rcI+vWQW+zMC/iM4FN/QjOMk0+Fp7c1QS/ZFeBVbZTMC76LigKvMh3uQvi
+         u0J+z815EdiDmN2g8jt9OKAs+igKRb8o3UUHY0WbOW9J3q8dID14paPTaidtqUtSGBSl
+         ML9e3geN+ffFNR01FKbeWr+rihg5gauJDXju5sXV1naN8GC9YdGTBHORH27rRHyS1ria
+         oqyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748312221; x=1748917021;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ACVoLlaU3ur0JkZbezUkrwCZbhnGFLL9/FLncuMO858=;
+        b=M/+BqnHmDHZXAZDCSAqedBDAO3DsIcgj7PwNb4aqJGEoTPT+p0wxMAKN05EPyIGQNP
+         +6MVDY2LUmWHiB+OgCrO9UgUZbp+CPq5RK/U3I8Lg7S10ryEaC5bL7v2PtKuTd5dqIXX
+         rk/N8aXGSCH384RtWGaE2s+ZQvq4+zkblEvBE4acCXgjeHpniOxe8O8Z05elds3DEkFz
+         XOgRA+pg0i8rrvhF2qBpFdXcp7fJNUT3kF8DJNGtWzl2Bwzm8E23idJOvRuOIyoXxxYd
+         62xI2pd7Q9drvPlKHaUh2zOMm8yTMyMHZ1F3zUtTR1IrvxPvnNyuQh9LsqRcOZqpgv2B
+         A9VQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVGvrw3mCQvHDTe1aqq2k7Wo8cioNDm8hZjqmlFjnt+DDjKpURCZOtJRA9z+KZX+IYpNV34OFeEjl5/X7I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzcIajk1XA3aHnnCqsVeA94CZeze0JxV6Tr7Salfm9i1wsMJhhG
+	zfSRMznH8T+SNUV+FgWOX5xe30HIf6wqBrGeE84z7GQcUGCRI5UssO+af8rxABMBfI0=
+X-Gm-Gg: ASbGncsCedcfb4fCKtbTcWBqf39rjPKrgpQ7sKEl3p1XZlx7uqASzhQ8FwPcfQjhjgw
+	Xn3TplQeqEvGvrfDBRig1NLuUnytW4Rlcb9kwSFOoXiXItP82YmVQB44QHDA3LXsrLfeMfhbQA6
+	LxtVhzdhbvFmOYab8TBj/yNYElsyLtPEfrZrIsm8KZaPx9b6Z55FRPiNnKVTvWuSVuEtz4RO6Sl
+	z8t32Skrgjc/ATZR3d2tTJB0EQM9jd83nvMdmhn0QCoAj3wrGQQKSqjO4AEBm4wcVA1+le5ezcs
+	RS0bGDtHa4jwEiCt9FrwApO7IYYCxpy/tGjKotIxkMEasvREZTaxX+SIfVH1cjk9z8/OHadLDps
+	rxppKniJwSg==
+X-Google-Smtp-Source: AGHT+IHWBMMotqfr4nsNp8lecmYtympKIxi+YGDbxrUsOSHbOUbLc2e8psMU4hZPvStlhj++SdmhTg==
+X-Received: by 2002:a17:90b:3851:b0:311:9cdf:a8a4 with SMTP id 98e67ed59e1d1-3119cdfabb5mr3964084a91.8.1748312220844;
+        Mon, 26 May 2025 19:17:00 -0700 (PDT)
+Received: from [10.68.122.90] ([63.216.146.178])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3111934af89sm5187730a91.28.2025.05.26.19.16.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 26 May 2025 19:17:00 -0700 (PDT)
+Message-ID: <1c734a50-1ada-40a1-833d-4b94b9849c96@bytedance.com>
+Date: Tue, 27 May 2025 10:16:54 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-MTK: N
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm, list_lru: refactor the locking code
+To: Kairui Song <kasong@tencent.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Johannes Weiner <hannes@cmpxchg.org>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Chengming Zhou <zhouchengming@bytedance.com>,
+ Muchun Song <muchun.song@linux.dev>, linux-kernel@vger.kernel.org,
+ kernel test robot <lkp@intel.com>, Julia Lawall <julia.lawall@inria.fr>,
+ linux-mm@kvack.org
+References: <20250526180638.14609-1-ryncsn@gmail.com>
+From: Qi Zheng <zhengqi.arch@bytedance.com>
+In-Reply-To: <20250526180638.14609-1-ryncsn@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Detect invalid geometry due to pull from frag_list, and pass to
-regular skb_segment. If only part of the fraglist payload is pulled
-into head_skb, it will always cause exception when splitting
-skbs by skb_segment. For detailed call stack information, see below.
 
-Valid SKB_GSO_FRAGLIST skbs
-- consist of two or more segments
-- the head_skb holds the protocol headers plus first gso_size
-- one or more frag_list skbs hold exactly one segment
-- all but the last must be gso_size
 
-Optional datapath hooks such as NAT and BPF (bpf_skb_pull_data) can
-modify fraglist skbs, breaking these invariants.
+On 5/27/25 2:06 AM, Kairui Song wrote:
+> From: Kairui Song <kasong@tencent.com>
+> 
+> Cocci is confused by the try lock then release RCU and return logic
+> here. So separate the try lock part out into a standalone helper. The
+> code is easier to follow too.
+> 
+> No feature change, fixes:
+> 
+> cocci warnings: (new ones prefixed by >>)
+>>> mm/list_lru.c:82:3-9: preceding lock on line 77
+>>> mm/list_lru.c:82:3-9: preceding lock on line 77
+>     mm/list_lru.c:82:3-9: preceding lock on line 75
+>     mm/list_lru.c:82:3-9: preceding lock on line 75
+> 
+> Reported-by: kernel test robot <lkp@intel.com>
+> Reported-by: Julia Lawall <julia.lawall@inria.fr>
+> Closes: https://lore.kernel.org/r/202505252043.pbT1tBHJ-lkp@intel.com/
+> Signed-off-by: Kairui Song <kasong@tencent.com>
+> ---
+>   mm/list_lru.c | 34 +++++++++++++++++++---------------
+>   1 file changed, 19 insertions(+), 15 deletions(-)
+> 
+> diff --git a/mm/list_lru.c b/mm/list_lru.c
+> index 490473af3122..ec48b5dadf51 100644
+> --- a/mm/list_lru.c
+> +++ b/mm/list_lru.c
+> @@ -60,30 +60,34 @@ list_lru_from_memcg_idx(struct list_lru *lru, int nid, int idx)
+>   	return &lru->node[nid].lru;
+>   }
+>   
+> +static inline bool lock_list_lru(struct list_lru_one *l, bool irq)
+> +{
+> +	if (irq)
+> +		spin_lock_irq(&l->lock);
+> +	else
+> +		spin_lock(&l->lock);
+> +	if (unlikely(READ_ONCE(l->nr_items) == LONG_MIN)) {
+> +		if (irq)
+> +			spin_unlock_irq(&l->lock);
+> +		else
+> +			spin_unlock(&l->lock);
+> +		return false;
+> +	}
+> +	return true;
+> +}
+> +
+>   static inline struct list_lru_one *
+>   lock_list_lru_of_memcg(struct list_lru *lru, int nid, struct mem_cgroup *memcg,
+>   		       bool irq, bool skip_empty)
+>   {
+>   	struct list_lru_one *l;
+> -	long nr_items;
+>   
+>   	rcu_read_lock();
+>   again:
+>   	l = list_lru_from_memcg_idx(lru, nid, memcg_kmem_id(memcg));
+> -	if (likely(l)) {
+> -		if (irq)
+> -			spin_lock_irq(&l->lock);
+> -		else
+> -			spin_lock(&l->lock);
+> -		nr_items = READ_ONCE(l->nr_items);
+> -		if (likely(nr_items != LONG_MIN)) {
+> -			rcu_read_unlock();
+> -			return l;
+> -		}
+> -		if (irq)
+> -			spin_unlock_irq(&l->lock);
+> -		else
+> -			spin_unlock(&l->lock);
+> +	if (likely(l) && lock_list_lru(l, irq)) {
+> +		rcu_read_unlock();
+> +		return l;
+>   	}
+>   	/*
+>   	 * Caller may simply bail out if raced with reparenting or
 
-In extreme cases they pull one part of data into skb linear. For UDP,
-this  causes three payloads with lengths of (11,11,10) bytes were
-pulled tail to become (12,10,10) bytes.
+And the code readability has also been improved.
 
-The skbs no longer meets the above SKB_GSO_FRAGLIST conditions because
-payload was pulled into head_skb, it needs to be linearized before pass
-to regular skb_segment.
+Reviewed-by: Qi Zheng <zhengqi.arch@bytedance.com>
 
-    skb_segment+0xcd0/0xd14
-    __udp_gso_segment+0x334/0x5f4
-    udp4_ufo_fragment+0x118/0x15c
-    inet_gso_segment+0x164/0x338
-    skb_mac_gso_segment+0xc4/0x13c
-    __skb_gso_segment+0xc4/0x124
-    validate_xmit_skb+0x9c/0x2c0
-    validate_xmit_skb_list+0x4c/0x80
-    sch_direct_xmit+0x70/0x404
-    __dev_queue_xmit+0x64c/0xe5c
-    neigh_resolve_output+0x178/0x1c4
-    ip_finish_output2+0x37c/0x47c
-    __ip_finish_output+0x194/0x240
-    ip_finish_output+0x20/0xf4
-    ip_output+0x100/0x1a0
-    NF_HOOK+0xc4/0x16c
-    ip_forward+0x314/0x32c
-    ip_rcv+0x90/0x118
-    __netif_receive_skb+0x74/0x124
-    process_backlog+0xe8/0x1a4
-    __napi_poll+0x5c/0x1f8
-    net_rx_action+0x154/0x314
-    handle_softirqs+0x154/0x4b8
+Thanks!
 
-    [118.376811] [C201134] rxq0_pus: [name:bug&]kernel BUG at net/core/skbuff.c:4278!
-    [118.376829] [C201134] rxq0_pus: [name:traps&]Internal error: Oops - BUG: 00000000f2000800 [#1] PREEMPT SMP
-    [118.470774] [C201134] rxq0_pus: [name:mrdump&]Kernel Offset: 0x178cc00000 from 0xffffffc008000000
-    [118.470810] [C201134] rxq0_pus: [name:mrdump&]PHYS_OFFSET: 0x40000000
-    [118.470827] [C201134] rxq0_pus: [name:mrdump&]pstate: 60400005 (nZCv daif +PAN -UAO)
-    [118.470848] [C201134] rxq0_pus: [name:mrdump&]pc : [0xffffffd79598aefc] skb_segment+0xcd0/0xd14
-    [118.470900] [C201134] rxq0_pus: [name:mrdump&]lr : [0xffffffd79598a5e8] skb_segment+0x3bc/0xd14
-    [118.470928] [C201134] rxq0_pus: [name:mrdump&]sp : ffffffc008013770
 
-Fixes: a1e40ac5b5e9 ("net: gso: fix udp gso fraglist segmentation after pull from frag_list")
-Signed-off-by: Shiming Cheng <shiming.cheng@mediatek.com>
----
- net/ipv4/udp_offload.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/net/ipv4/udp_offload.c b/net/ipv4/udp_offload.c
-index a5be6e4ed326..ec05bb7d1e22 100644
---- a/net/ipv4/udp_offload.c
-+++ b/net/ipv4/udp_offload.c
-@@ -273,6 +273,7 @@ struct sk_buff *__udp_gso_segment(struct sk_buff *gso_skb,
- 	bool copy_dtor;
- 	__sum16 check;
- 	__be16 newlen;
-+	int ret = 0;
- 
- 	mss = skb_shinfo(gso_skb)->gso_size;
- 	if (gso_skb->len <= sizeof(*uh) + mss)
-@@ -301,6 +302,9 @@ struct sk_buff *__udp_gso_segment(struct sk_buff *gso_skb,
- 		if (skb_pagelen(gso_skb) - sizeof(*uh) == skb_shinfo(gso_skb)->gso_size)
- 			return __udp_gso_segment_list(gso_skb, features, is_ipv6);
- 
-+		ret = __skb_linearize(gso_skb);
-+		if (ret)
-+			return ERR_PTR(ret);
- 		 /* Setup csum, as fraglist skips this in udp4_gro_receive. */
- 		gso_skb->csum_start = skb_transport_header(gso_skb) - gso_skb->head;
- 		gso_skb->csum_offset = offsetof(struct udphdr, check);
--- 
-2.45.2
 
 
