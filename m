@@ -1,93 +1,92 @@
-Return-Path: <linux-kernel+bounces-664340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-664341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A128AC5A4E
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 20:55:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 392AEAC5A51
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 20:57:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4F4D3A93C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 18:55:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF4733B3FD0
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 18:56:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49CAC280A27;
-	Tue, 27 May 2025 18:55:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4234628033E;
+	Tue, 27 May 2025 18:56:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OLqN274I"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="enHxrF7u"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0FFC1CD0C;
-	Tue, 27 May 2025 18:55:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E5191CAA6C;
+	Tue, 27 May 2025 18:56:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748372130; cv=none; b=MVVzd7nklDTl+EE/GUyAJ9Fc+oBb24kF8Htvefue04NShsubpfrHsOffJiFD2/BTGTljqR8Gyvxez28mYDT7dFP1SsYbKs4j0ELylbkQWJuKrBJEgyrxsmW0u3C9CaOfB90cT8854VXL3721mEJSljlnYhLxnT3yfWDMeo2ZpP0=
+	t=1748372215; cv=none; b=DGO7mlqvGca2HGSnN+HwvtQoS4Oo7NktuSJqrqrhVJ23l7eR6/aaBOD7EbIGW8+vY4PaeWN4jqJ7FnPpSc+rl2c3zE8HAqJq4dJGbHHgopOME6GXsk2dyG7du9brmd/jd08OJNqTla1TamzbU4ivag5cc+7sD/SndacQNiiLSVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748372130; c=relaxed/simple;
-	bh=HDXaCTsUxEdeY81YLhMA8pdmocB2sFdW0FN8Boejtr4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aea6C1HJ3W5ONA4ds/hc/Thya1JTeHbaB+H2r2cmqdBNVWnFPmFJ8UF67H7hjQ3G9rwVlfddJBM52T2tO4W9o8u0C4URcEsbcSzbVPFuJIhyihMnjBzZcVQO/WEv0rtlqYtTceTCnqhv2zcbNRe4qrQ7nWsQ1MnYN5O+Avb7N7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OLqN274I; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF64EC4CEE9;
-	Tue, 27 May 2025 18:55:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748372130;
-	bh=HDXaCTsUxEdeY81YLhMA8pdmocB2sFdW0FN8Boejtr4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OLqN274IqOQEL6R+W3wIgKDhhrztXA7SN+u5J3uyZ3Er3XRnvdAhTcbq73OTp2+kE
-	 +9H+RR/ftd5da6wd6nPZP1iRFT9MwsSXJj152DmolnR5v5PsYfqq5AFs/VRmVia/Q0
-	 zdt9jrgL9SKAZg5ew6artpcDLlyGjw5pmwm4A8kbNLQlKcq1+jmEtsqOiVpfWSeOK2
-	 rZNrTFtTJrsP5J8i/zp/pPqssAzvLmotHU5aWdVuquDWNQ941T2VnX8m2hDwaUis5q
-	 cI/8m8IUZogR+LIyO54IvHz/q52mBsUcNmYfe6Aa/6ND0lr0cSB7RqowXXuXaQPDiH
-	 T5R03iVy5pXKw==
-Date: Tue, 27 May 2025 08:55:28 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Jason Xing <kerneljasonxing@gmail.com>
-Cc: torvalds@linux-foundation.org, mpatocka@redhat.com,
-	linux-kernel@vger.kernel.org, dm-devel@lists.linux.dev,
-	msnitzer@redhat.com, ignat@cloudflare.com, damien.lemoal@wdc.com,
-	bob.liu@oracle.com, houtao1@huawei.com, peterz@infradead.org,
-	mingo@kernel.org, netdev@vger.kernel.org, allen.lkml@gmail.com,
-	kernel-team@meta.com, Eric Dumazet <edumazet@google.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	David Ahern <dsahern@kernel.org>, Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Subject: Re: [PATCH 6/8] net: tcp: tsq: Convert from tasklet to BH workqueue
-Message-ID: <aDYKoA8lpX_Zxrhh@slm.duckdns.org>
-References: <20240130091300.2968534-1-tj@kernel.org>
- <20240130091300.2968534-7-tj@kernel.org>
- <CAL+tcoCKqs1m4bAWTWv9aoQKs7ZpC5PXtMS2ooi6xEB6CbxN1w@mail.gmail.com>
+	s=arc-20240116; t=1748372215; c=relaxed/simple;
+	bh=Kt8hkX+NOPAFYRRZ6dPid588poe6O6S4SmENjGduciw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=okpXTOTFk09Inyfb4pohIvDsVmVYk51OcqNcN32M/ob5iv1DscttUaC+dFaNngZISjTtoUfeUj/PrASb52sOQuBsigh5gqVmcX2e1WF1i90oSFDlRUUugl2TMhtw5q+UwO1zJ8ZQ8wuksJQoQNmI+uDkzy7XACn2nGM4MXyoPbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=enHxrF7u; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description;
+	bh=Pb4HbvNRtURyWEvutH1i+CzUZEMMh0LESQbc8k3392o=; b=enHxrF7uEtbtabCB14gJloa3oC
+	YOpcz05+IPBUmTEjtm71S1S9k1l1RHbJNuFnWcf2xP4m8MOZoYggOY1ibY+gXKlRg1Vfn2H6PD6vj
+	eCHNXdkhKKrXxVny1FCdARigBW74ARx8mX4qrNCSaljaMW4PMnuPndwFwISjG2eJTR7PEuufzRB/Z
+	kvj3N9ASMzHtOQGY7XGE9EuyihM46dyuAYJyBIIyqk/o1ccu5TrLqvnxUSen/lmbV/k/z2ufC8MBg
+	dOMoMT+QPbVnU4xEhwoSM1WiYMhpslwumtAB5UE+FrzBtVnVdugnsHX8uKZtQzHCQYTwEGUDq4M+G
+	6WwQBwqQ==;
+Received: from [50.53.25.54] (helo=[192.168.254.17])
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uJzTl-0000000Cl5K-2m6Z;
+	Tue, 27 May 2025 18:56:49 +0000
+Message-ID: <04577a46-9add-420c-b181-29bad582026d@infradead.org>
+Date: Tue, 27 May 2025 11:56:45 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAL+tcoCKqs1m4bAWTWv9aoQKs7ZpC5PXtMS2ooi6xEB6CbxN1w@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: Tree for May 27 (drivers/platform/x86/amd/amd_isp4.c)
+To: Stephen Rothwell <sfr@canb.auug.org.au>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>,
+ Pratap Nirujogi <pratap.nirujogi@amd.com>,
+ Benjamin Chan <benjamin.chan@amd.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ "open list:AMD HETERO CORE HARDWARE FEEDBACK DRIVER"
+ <platform-driver-x86@vger.kernel.org>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+References: <20250527203231.3c6c0b9d@canb.auug.org.au>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20250527203231.3c6c0b9d@canb.auug.org.au>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello,
 
-On Sun, May 25, 2025 at 11:51:55AM +0800, Jason Xing wrote:
-> Sorry to revive the old thread! I noticed this change because I've
-> been doing an investigation around TSQ recently. I'm very cautious
-> about the change in the core/sensitive part of the networking area
-> because it might affect some corner cases beyond our limited test,
-> even though I've tested many rounds and no regression results
-> (including the latency between tcp_wfree and tcp_tsq_handler) show up.
-> My main concern is what the exact benefit/improvement it could bring
-> with the change applied since your BH workqueue commit[1] says the
-> tasklet mechanism has some flaws. I'd like to see if I can
-> reproduce/verify it.
 
-There won't be any behavioral benefits. It's mostly that it'd be great to
-get rid of tasklets with something which is more generic, so if BH workqueue
-doesn't regress, we want to keep moving users to BH workqueue until all
-tasklet users are gone and then remove tasklet.
+On 5/27/25 3:32 AM, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20250526:
+> 
 
-Thanks.
+on x86_64, when
+# CONFIG_MODULES is not set
+
+../drivers/platform/x86/amd/amd_isp4.c: In function 'is_isp_i2c_adapter':
+../drivers/platform/x86/amd/amd_isp4.c:154:35: error: invalid use of undefined type 'struct module'
+  154 |         return !strcmp(adap->owner->name, "i2c_designware_amdisp");
+      |                                   ^~
+
 
 -- 
-tejun
+~Randy
+
 
