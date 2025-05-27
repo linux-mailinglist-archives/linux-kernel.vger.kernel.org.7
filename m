@@ -1,102 +1,140 @@
-Return-Path: <linux-kernel+bounces-663822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-663824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16AFFAC4DEC
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 13:55:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A4F0AC4DF1
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 13:56:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2AEA3BC0FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 11:54:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1B2D3ABC67
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 11:56:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C423B26658A;
-	Tue, 27 May 2025 11:54:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FN/4b7q6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9AB9262FD2;
+	Tue, 27 May 2025 11:56:51 +0000 (UTC)
+Received: from smtp-bc08.mail.infomaniak.ch (smtp-bc08.mail.infomaniak.ch [45.157.188.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D1C625FA1D;
-	Tue, 27 May 2025 11:54:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6299252900
+	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 11:56:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748346896; cv=none; b=N9u3sjJ5tivlAP53jLByeZj35e1Oa2r60FU2GQAV+tbmZTALumtpzb2g9Bp0IEyxPKYfPo5LtGIYeDNU2h5FCSQKCvvTA0AX8fJYLYj8+0zk/8uiPXmrj9LA4Zjt5RAA9EfA5UF+d31y//iVUDCIfEo0M0HtRVmgvnJfJ96ZsqY=
+	t=1748347011; cv=none; b=IEw0BCd+aZ5q6KH9nAfNj+gkylBrR++ZdvpVrEJia2Nwq1H3g3BHktipcH8k7mAYlUIQ+xElcShv3KW3QaX1Oj3LVchhUGr35F6ydDhNaf6t3Fq8aJiFX8wKPkVlipoRpUHTRVoEpMGzwLgvxinOKZu6bi1jlh3Ijm8qN0Mo2rE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748346896; c=relaxed/simple;
-	bh=IUjsVUHoLW+jbfDN7gXz+vjDPdWp+GcouAig6th4mUE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ibKCxbA0oa0Hg74a+V9PH+IReMAmW4aoVxiSH8v/90gERDrCcHPh38PZ+YNDXjXv/jw0VEk5HyrjLt2UlKQh1CgJ1PLTXEaRmNLGA5EcTUqbLAl0KUGMbCUaQq1UW6IJO647xv0gSfpXm2QlCLP/bvnuzymu69IAhNepjWDNiBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FN/4b7q6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9288EC4CEEB;
-	Tue, 27 May 2025 11:54:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748346895;
-	bh=IUjsVUHoLW+jbfDN7gXz+vjDPdWp+GcouAig6th4mUE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FN/4b7q65B2O6Krre7dKF0xYdOlmPrBhzwRAR8nLPnwGsFacJtLy2NKo0Ftu/R/ut
-	 V+2uB5OFHUI/L0rTRPcV6Ebo10poTqSaT4QWjM1gxPNDFtL0JIW67zrRgcFEaHnV2z
-	 AvYD2v5WB8OCjC2KHxg6B1fU3OG4Nq40312xE709Q/2v3UHd8x8/lgdezdMmHLo85r
-	 6dIMfAO9GnSEZkpOelen0osMCirqjdqZajr6+jTSHNymzQQhUzquQXou7UNhM3iXME
-	 pd2wYQJ2tOSvkg86S0w9kiUM6mGFNYHOZoy53a0MsMAQQ/blydz5oyKj+sgVZpvgPV
-	 OK+a5vFIuEPfA==
-Date: Tue, 27 May 2025 13:54:49 +0200
-From: Alexey Gladkov <legion@kernel.org>
-To: James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: Petr Pavlu <petr.pavlu@suse.com>, Luis Chamberlain <mcgrof@kernel.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Daniel Gomez <da.gomez@samsung.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
-	linux-kbuild@vger.kernel.org, Khalid Aziz <khalid@gonehiking.org>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	linux-scsi <linux-scsi@vger.kernel.org>
-Subject: Re: [PATCH v3 1/6] scsi: Define MODULE_DEVICE_TABLE only if necessary
-Message-ID: <aDWoCU2YrxaCBi42@example.org>
-References: <cover.1748335606.git.legion@kernel.org>
- <628e85f1b7e9d0423a8b83ac3150b3e151c9c4e3.1748335606.git.legion@kernel.org>
- <f361faffc1863358e8fda98f994f6a49b6f0d4c9.camel@HansenPartnership.com>
+	s=arc-20240116; t=1748347011; c=relaxed/simple;
+	bh=xIO6hrqs+VZXl85J+lCqT5C+UwY6Zhg2KGVoBNq4/2I=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=JWKHWUnSw0Un74ooUIIjPZZu+M3q32r/R2avqY+CoLCQtdbVAlwCUGBV5GytI1hFSRBExeRYC6rpa+FC7Oz89WnHWKsAAtS69LlpTe0B73SjkZP+yrRFwvbc30Rt4Kdx+edCmVFK50QD8RsoejAx6sH9MCtDAagv/pyvBrJIwHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0leil.net; spf=pass smtp.mailfrom=0leil.net; arc=none smtp.client-ip=45.157.188.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0leil.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=0leil.net
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4b6B1p536tzjYD;
+	Tue, 27 May 2025 13:56:46 +0200 (CEST)
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4b6B1m5HnLzfFg;
+	Tue, 27 May 2025 13:56:44 +0200 (CEST)
+From: Quentin Schulz <foss+kernel@0leil.net>
+Date: Tue, 27 May 2025 13:56:23 +0200
+Subject: [PATCH net v2] net: stmmac: platform: guarantee uniqueness of
+ bus_id
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <f361faffc1863358e8fda98f994f6a49b6f0d4c9.camel@HansenPartnership.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250527-stmmac-mdio-bus_id-v2-1-a5ca78454e3c@cherry.de>
+X-B4-Tracking: v=1; b=H4sIAGaoNWgC/32NQQ6CMBBFr0Jm7RimlSCuvIchprSDnUXBtJVIC
+ He34QAu3//572+QOAonuFUbRF4kyTwVUKcKrDfTi1FcYVC1aupGEaYcgrEYnMw4fNJTHGrSQ3u
+ xbdtpDWX4jjzK95A+YOIMfQm9pDzH9Tha6Kj+ORdCwo6uRluiYVT2bj3HuJ4dQ7/v+w+TF1Rru
+ QAAAA==
+X-Change-ID: 20250521-stmmac-mdio-bus_id-313b74c77933
+To: Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>
+Cc: Jakob Unterwurzacher <jakob.unterwurzacher@cherry.de>, 
+ Heiko Stuebner <heiko@sntech.de>, netdev@vger.kernel.org, 
+ linux-stm32@st-md-mailman.stormreply.com, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Quentin Schulz <quentin.schulz@cherry.de>
+X-Mailer: b4 0.14.2
+X-Infomaniak-Routing: alpha
 
-On Tue, May 27, 2025 at 07:28:59AM -0400, James Bottomley wrote:
-> On Tue, 2025-05-27 at 11:07 +0200, Alexey Gladkov wrote:
-> > Define MODULE_DEVICE_TABLE only if a structure is defined for it.
-> > 
-> > drivers/scsi/BusLogic.c:3735:26: error: use of undeclared identifier
-> > 'blogic_pci_tbl'
-> >  3735 | MODULE_DEVICE_TABLE(pci, blogic_pci_tbl);
-> 
-> Well, a) need to cc the scsi list
+From: Quentin Schulz <quentin.schulz@cherry.de>
 
-Sorry. I miss it.
+bus_id is currently derived from the ethernetX alias. If one is missing
+for the device, 0 is used. If ethernet0 points to another stmmac device
+or if there are 2+ stmmac devices without an ethernet alias, then bus_id
+will be 0 for all of those.
 
-> and b) how is this possible when
-> MODULE_DEVICE_TABLE() has an empty definition if MODULE isn't defined
-> (so the guard you move should be over an empty statement)?
+This is an issue because the bus_id is used to generate the mdio bus id
+(new_bus->id in drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
+stmmac_mdio_register) and this needs to be unique.
 
-In the next patch:
+This allows to avoid needing to define ethernet aliases for devices with
+multiple stmmac controllers (such as the Rockchip RK3588) for multiple
+stmmac devices to probe properly.
 
-[PATCH v3 4/6] modpost: Create modalias for builtin modules
+Obviously, the bus_id isn't guaranteed to be stable across reboots if no
+alias is set for the device but that is easily fixed by simply adding an
+alias if this is desired.
 
-I remove this condition for the MODULE_DEVICE_TABLE macro and it will be
-always defined.
+Fixes: 25c83b5c2e82 ("dt:net:stmmac: Add support to dwmac version 3.610 and 3.710")
+Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
+---
+Unsure if I should cc stable since people who encountered that issue for
+sure had to add an ethernet alias to make things work with their DT so
+shouldn't be too much of an actual issue?
 
-I put the drivers/scsi/BusLogic.c change before these changes to avoid
-errors. Besides, even an empty macro uses a structure name that is not
-defined (if MODULE isn't defined). This seems wrong in any case.
+Based on Paolo's feedback, have a Fixes tag regardless of the answer to
+the above question.
+---
+Changes in v2:
+- added Fixes tag,
+- Link to v1: https://lore.kernel.org/r/20250521-stmmac-mdio-bus_id-v1-1-918a3c11bf2c@cherry.de
+---
+ drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
+index c73eff6a56b87a3783c91b2ffbf5807a27df303f..15205a47cafc276442c3759a36d115d8da1fe51d 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
+@@ -430,6 +430,7 @@ stmmac_probe_config_dt(struct platform_device *pdev, u8 *mac)
+ 	struct device_node *np = pdev->dev.of_node;
+ 	struct plat_stmmacenet_data *plat;
+ 	struct stmmac_dma_cfg *dma_cfg;
++	static int bus_id = -ENODEV;
+ 	int phy_mode;
+ 	void *ret;
+ 	int rc;
+@@ -465,8 +466,14 @@ stmmac_probe_config_dt(struct platform_device *pdev, u8 *mac)
+ 	of_property_read_u32(np, "max-speed", &plat->max_speed);
+ 
+ 	plat->bus_id = of_alias_get_id(np, "ethernet");
+-	if (plat->bus_id < 0)
+-		plat->bus_id = 0;
++	if (plat->bus_id < 0) {
++		if (bus_id < 0)
++			bus_id = of_alias_get_highest_id("ethernet");
++		/* No ethernet alias found, init at -1 so first bus_id is 0 */
++		if (bus_id < 0)
++			bus_id = -1;
++		plat->bus_id = ++bus_id;
++	}
+ 
+ 	/* Default to phy auto-detection */
+ 	plat->phy_addr = -1;
+
+---
+base-commit: 4a95bc121ccdaee04c4d72f84dbfa6b880a514b6
+change-id: 20250521-stmmac-mdio-bus_id-313b74c77933
+
+Best regards,
 -- 
-Rgrds, legion
+Quentin Schulz <quentin.schulz@cherry.de>
 
 
