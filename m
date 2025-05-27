@@ -1,97 +1,114 @@
-Return-Path: <linux-kernel+bounces-664160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-664163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C407BAC52B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 18:10:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5396AC52B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 18:11:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43AE89E0B30
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 16:10:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AB491BA2991
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 16:11:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FB6E27EC7D;
-	Tue, 27 May 2025 16:10:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD30327FB2A;
+	Tue, 27 May 2025 16:10:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r0fgQBgQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="QhB0Z72r"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59F4B269B08;
-	Tue, 27 May 2025 16:10:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67E5B27EC78
+	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 16:10:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748362226; cv=none; b=FAqKumfRQxtdheTe2GMebgfENQ5+NAiRS4K50YBW+4kfzQVeGc1VuQk0OMCXC+0IjAUDPNc0K4YbF5QRKhHzbLDeX/ENfHCQUAqSTKYyqHJkqpdvBX5ugpTGr24quvtwBGPbs3D0hO87hVEcCY/VM89SXt2AHLa6qB4FqrcSOpA=
+	t=1748362249; cv=none; b=fRUVdIrSwAZCXC3CJ6/ANamIf+8Q3Oa4+K3/D2nMA/Tm34jTaxGSoSSOmmhWgbLiAj3X3/ujxntrxCog2m7yS3qiI3pzAyOVEeVpzqkBHkc9k8OzzLk0spfvFxIVhA+QIk67dUCwKhsuatpfasgNPsDaEA6k0ac3xe2nIuRfqxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748362226; c=relaxed/simple;
-	bh=L0a2IxCIeRqxZGEsyOFuSQpdCJEYvGEy+T/gO+GHS8c=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ts/6pU95A9IkgVvwjyDOmC2/L4bIOdZY/Hnou5g72pXz8lxuu0Q2g0jYasMnvxTc/1hX8n2PhoZEDkHy3v0b6V0glV62iG0+uHKfGfHUTfKW8wfCQRf97CnrJJOcL86eEVfJP28mpEMDa6qp7ayEktGarISRt23w4etfkwwHdRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r0fgQBgQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA844C4CEE9;
-	Tue, 27 May 2025 16:10:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748362225;
-	bh=L0a2IxCIeRqxZGEsyOFuSQpdCJEYvGEy+T/gO+GHS8c=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=r0fgQBgQjNHnfAqa4fhCcy5yshCrXhruDaGYITxVhsVJEiMfATbNcRec88o3oFbfQ
-	 L/Ipn372JPPWj0eF6brlcIvMcSKJZ6rJVbBJ7vnNO7U6HsqR86GpEJvHCEslR+B1a4
-	 slHgMUlLK1XPUluaurEOUfSC4Kq9QgjyShNlgj0kn9R13VHf6ikyulI90exYUe/VgE
-	 T+9++4YQ432cUtjVcUkHrNXuic7XLV/2wNpyMCU6Etk58rokI0NShYvvsbrUukr1rm
-	 jiylE1ECg+Q61j9M5MdNZJ2/MMp23FvrHlw1qrsB+v8RURyQjR/038S+MAySx3Jh+q
-	 ZhvzJrvPnErzQ==
-Date: Tue, 27 May 2025 09:10:23 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Saeed Mahameed <saeed@kernel.org>
-Cc: Tariq Toukan <tariqt@nvidia.com>, "David S. Miller"
- <davem@davemloft.net>, Paolo Abeni <pabeni@redhat.com>, Eric Dumazet
- <edumazet@google.com>, Andrew Lunn <andrew+netdev@lunn.ch>, Saeed Mahameed
- <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>, Richard Cochran
- <richardcochran@gmail.com>, Alexei Starovoitov <ast@kernel.org>, Daniel
- Borkmann <daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>, netdev@vger.kernel.org,
- linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
- bpf@vger.kernel.org, Moshe Shemesh <moshe@nvidia.com>, Mark Bloch
- <mbloch@nvidia.com>, Gal Pressman <gal@nvidia.com>, Cosmin Ratiu
- <cratiu@nvidia.com>, Dragos Tatulea <dtatulea@nvidia.com>
-Subject: Re: [PATCH net-next V2 11/11] net/mlx5e: Support ethtool
- tcp-data-split settings
-Message-ID: <20250527091023.206faecb@kernel.org>
-In-Reply-To: <aC-xAK0Unw2XE-2T@x130>
-References: <1747950086-1246773-1-git-send-email-tariqt@nvidia.com>
-	<1747950086-1246773-12-git-send-email-tariqt@nvidia.com>
-	<20250522155518.47ab81d3@kernel.org>
-	<aC-xAK0Unw2XE-2T@x130>
+	s=arc-20240116; t=1748362249; c=relaxed/simple;
+	bh=C+jtZ6M73CB86PrCh9GgPsh2zWr6HUxw7D8YoYK3uw4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=asCopckpEvCQSo39BHZHgx1jWQDAPWdgD6kkIkkWqyJwLo50enMjrJKkuCORw6cuAQiLCVmm4WR5vtRNQD13seCGpBgaNTcNNC7JnbQg9vS++PUIl0efxm/AdnJexVFP0JG3TD7ks5qxE/dGCudztgV/4BYD+VJ+eBU8mRjPJdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=QhB0Z72r; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-30effbfaf4aso39718381fa.3
+        for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 09:10:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1748362245; x=1748967045; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=C+jtZ6M73CB86PrCh9GgPsh2zWr6HUxw7D8YoYK3uw4=;
+        b=QhB0Z72rpGSMmz4oezKHETPxEVn6IUmud14dt7OGQHEIG+E5GQR7EvlicXP0tU6srw
+         pDTXYLBO7pT6BRHt3b6Snv+5bW9T5HJu/b6qY3GAMwl/YmoAiVLyLQO6S64ZelDC31Fa
+         OMKa3BoGXX6Qiqbqg4aNJN91uz5TUDf1IJZtk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748362245; x=1748967045;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=C+jtZ6M73CB86PrCh9GgPsh2zWr6HUxw7D8YoYK3uw4=;
+        b=Gr15vfM7RGY9vfmnIUKWzTJCXAcLLaVR0NVL172U18kmgnvklfXoEUtsj2HTMFlJIX
+         XUKyGyylL9jjlal+bVqxmDZ93fAeo5OjGF+bUQoiH6OTkRza8bVcK+KEAF00dDOXnT3C
+         Q3Me/cJq7LvkkofO6BNutAtHZcvw8pz1WffakboXolJCyOFI9fwuvt3Oj7pvL/8h9X/k
+         FsLcvc/3Xf7+feBieNOyiclzZ6rhwaoWuf0Id82KUphxN25hrwbOCQ9b6IU2B6umFHjh
+         jLog6XNVhxn0hV6Jo4SY4jVKmkikG1H+6US9z13h8nPndgjJq6tpfOGa86x80DVXCeY6
+         nB1w==
+X-Forwarded-Encrypted: i=1; AJvYcCXs+W3VV9UaQlAKNmryQ6Wj2+NkohsRRSmJ3rB6eXExe1WSHzGMF3hCoCKgCuWbNEvUu3CqTOoz45OQH9o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyaYRqlfIAgHtcxAY3evMbFwvIPjVmZNB5WTW3kDW+rOnhxpqFT
+	lqpy7C8MK9Cy+3WGJDi+N2Cao4u4bw6OMtZUzYFQG3yKYILhN29rLvvb5tLfKpysilPSw8q4skF
+	jnU6dMq5Oh2i52MvNJ+zrF2Qz8t7/9Nqkb3iz5JRL
+X-Gm-Gg: ASbGncu1h3EuDCzThKQUHhHXfJd/c6CD6RWfZ61o8B5fN+r5F2hWf0MaPDpxyiTt2u/
+	7tlVG0v+LpHl4I7H0pDiagSPco7G5473Bsr+mwEEsbjqxDu0RjzwGVg0l9N1QmwLFVi+/lfOhh9
+	KkslZNSTXSgkslHN35OZD6EQvPyNVAounKKGMrrySPkRdj
+X-Google-Smtp-Source: AGHT+IHnxXSpwPQJnq00c7CWCY+PUWCLeRzCHONa/qE7pZ0tlcnlmLKnoWAnQH1ws4NnK/iqPjFX0jR0V3/BiQ03ZfA=
+X-Received: by 2002:a05:651c:3137:b0:30d:626e:d004 with SMTP id
+ 38308e7fff4ca-3295b9c6dc1mr42932431fa.20.1748362245432; Tue, 27 May 2025
+ 09:10:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250513210504.1866-1-ronak.doshi@broadcom.com>
+ <20250515070250.7c277988@kernel.org> <71d0fbf8-00f7-4e0b-819d-d0b6efb01f03@redhat.com>
+In-Reply-To: <71d0fbf8-00f7-4e0b-819d-d0b6efb01f03@redhat.com>
+From: Ronak Doshi <ronak.doshi@broadcom.com>
+Date: Tue, 27 May 2025 09:10:27 -0700
+X-Gm-Features: AX0GCFv-bntr7V3eITdVmyrlk7O4Ra37b0K8G5XqblYoHppcZ27xPhxwkEjCxzQ
+Message-ID: <CAP1Q3XTLbk0XgAJOUSGv03dXfPxcUR=VFt=mXiqP9rjc9yhVrw@mail.gmail.com>
+Subject: Re: [PATCH net] vmxnet3: correctly report gso type for UDP tunnels
+To: Paolo Abeni <pabeni@redhat.com>
+Cc: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org, 
+	Guolin Yang <guolin.yang@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 22 May 2025 16:19:28 -0700 Saeed Mahameed wrote:
-> >Why are you modifying wanted_features? wanted_features is what
-> >*user space* wanted! You should probably operate on hw_features ?
-> >Tho, may be cleaner to return an error and an extack if the user
-> >tries to set HDS and GRO to conflicting values.
-> >  
-> 
-> hw_features is hw capabilities, it doesn't mean on/off.. so no we can't
-> rely on that.
-> 
-> To enable TCP_DATA_SPLIT we tie it to GRO_HW, so we enable GRO_HW when
-> TCP_DATA_SPLIT is set to on and vise-versa. I agree not the cleanest.. 
-> But it is good for user-visibility as you would see both ON if you query
-> from user, which is the actual state. This is the only way to set HW_GRO
-> to on by driver and not lose previous state when we turn the other bit
-> on/off.
+On Mon, May 19, 2025 at 12:30=E2=80=AFAM Paolo Abeni <pabeni@redhat.com> wr=
+ote:
+>
+> If otherwise the traffic goes into the UDP tunnel rx path, such
+> processing will set the needed field correctly and no issue could/should
+> be observed AFAICS.
+>
+> @Ronak: I think the problem pre-exists this specific patch, but since
+> you are fixing the relevant offload, I think it should be better to
+> address the problem now.
+>
+Can we apply this fix which unblocks one of our customer case and address t=
+his
+concern as a separate patch as it has been there for a while and it
+has a workaround
+of enabling tnl segmentation on the redirected interface? I think it
+might require quite
+some change in vmxnet3 to address this concern and can be done as a
+different patch.
+Meanwhile, I will raise an internal (broadcom) PR for recreating this
+specific issue.
 
-   features = on
-hw_features = off
-
-is how we indicate the feature is "on [fixed]"
-Tho, I'm not sure how much precedent there is for making things fixed
-at runtime.
+Thanks,
+Ronak
 
