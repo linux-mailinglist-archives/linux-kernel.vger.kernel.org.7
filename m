@@ -1,96 +1,253 @@
-Return-Path: <linux-kernel+bounces-664027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-664029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 462EFAC50DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 16:26:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AF43AC50E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 16:27:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BD8C1BA1B28
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 14:26:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B83233BABAB
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 14:27:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C980E278170;
-	Tue, 27 May 2025 14:25:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84DB5279795;
+	Tue, 27 May 2025 14:27:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="d4n14CIS"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rhg8qCsA"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE948274FCE
-	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 14:25:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F04D3248F5D
+	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 14:27:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748355947; cv=none; b=JYjwO88j6bLenR2aky83bT50pka6PEq5Y1txtuR8knex/4xuF/HePkJAHcdgtuHSeijtrQxDXhlhktyLhtoWjOM3uf0b1i1ay8l+jhlf5z4m7mRA4FqSSn2h2cHOmkqsMl71qYg0fkVUbJWEyma7rjgCgEmUnD2rctDwfg235fs=
+	t=1748356040; cv=none; b=Knpdkh28SGC5o0ZjUVUdT6vZuS9wGfnMi8WygM6mc9pbtUnh/bjm6gIeBMaYg/5P11tcGIYZqcOye56RlECmJgmez05x2BvHLIhDd+szh7dFVdENGl9AEhgS/Iu4poSkFTVG4W5gkfhc2hqDPnHhXuYJEpLwXCm7LaT5FoJlOPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748355947; c=relaxed/simple;
-	bh=mldJUrKgfFN8zdljUcCIL3/0i4R+2SUupokDF837c4E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r3QYhB8OuYR/vWGYHm1BA8ckSMBgUkabi83wgtxC0IQCQPBNmnzL9PJQS05IElxyCpIzH0z0zztuZN3y1rbMDYps8FLqDe0e1DQvgpccSPwwP48ioYDnNTDIfHd91brQABEmllpSIuyN+aIbCG/LJr3S24aYvdBmHNXLABq7+Cg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=d4n14CIS; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1748355943;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6m6fUwYqNmUe829wAUeva9RRwS1btD4mQ76FCpQtbQ8=;
-	b=d4n14CIST2ddZ2nGIevHHNQQoK1zHA6/j7Cl9OGHYP5+C+luMwVP3d0Rr1Ect0Fl+uJEmo
-	TMSsXSl2NPTkkSHbT5ZCG1A3oOXturyW/6njza//+pF5Ga+aFejADF8wxYRQF8n9S5ALNe
-	VLlCWFTZKffzmdrtxl29D5AsqgC5kvM=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-219-5B1KHdJfMTOPo6wkkgDXBA-1; Tue,
- 27 May 2025 10:25:37 -0400
-X-MC-Unique: 5B1KHdJfMTOPo6wkkgDXBA-1
-X-Mimecast-MFC-AGG-ID: 5B1KHdJfMTOPo6wkkgDXBA_1748355936
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B425F18004AD;
-	Tue, 27 May 2025 14:25:35 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.44.32.4])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 91C1F18001D8;
-	Tue, 27 May 2025 14:25:30 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Tue, 27 May 2025 16:24:54 +0200 (CEST)
-Date: Tue, 27 May 2025 16:24:48 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Pu Lehui <pulehui@huaweicloud.com>
-Cc: mhiramat@kernel.org, peterz@infradead.org, akpm@linux-foundation.org,
-	Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, vbabka@suse.cz,
-	jannh@google.com, pfalcato@suse.de, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, pulehui@huawei.com
-Subject: Re: [RFC PATCH v2 2/2] mm/mremap: Expose abnormal new_pte during
- move_ptes
-Message-ID: <20250527142448.GB8333@redhat.com>
-References: <20250527132351.2050820-1-pulehui@huaweicloud.com>
- <20250527132351.2050820-3-pulehui@huaweicloud.com>
+	s=arc-20240116; t=1748356040; c=relaxed/simple;
+	bh=Xv/dRmh0m35JE7egUOEw1JFCjRd6AcJU6uN69FdDKXM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=A9oTQpE7QQm46wNnt0x0r1WTpPTRU7ecjA4aMRurqksXlbadXoLC2rnL+sF1S9pRMV9GSWHa4tvHqsgO1C4QMinaHlOrm9oTXuYubTOpvurN+9wxn1kMA9YiQoW0elH12z2B0pyNQhMDjV9OrB1V8BZ6sKZkS7JzjPDgB0QftjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rhg8qCsA; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-601a67c6e61so23278a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 07:27:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1748356037; x=1748960837; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pHYrUZynmF1+LQe/MzD5OkoDbTa7T8UCiEl2TMfrPDY=;
+        b=rhg8qCsA/eBR5yyDY6VEMeHSUlqo4veFiEi3wVOQZZWujmrYx/sWHNnxAyG4aIed18
+         1rakhbDcaB/aU/xaftFSB+2jbhmQVKmPHyBHtGMMqqQyphxeRMQApAt9FN93e3fm6pc8
+         S1wCtcsKY5UjQyoPyRtZbL+ROvjQE8m8uCHiPmnBDUIe1pa0VYAgP82XQmNIIfIby/P9
+         UTd0xU7CPrl1UT552XYrbY4PGFxkvk05m/nZaSoFay+VOO4pPXH2RfA3qVO8d0dxytLn
+         jZ2h7TDaj0INEHnYOCiDy3rJKlOfEFlaziplGZsuymHXV2oOTu3hSqbsUh2vaJ/7G8K4
+         57VA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748356037; x=1748960837;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pHYrUZynmF1+LQe/MzD5OkoDbTa7T8UCiEl2TMfrPDY=;
+        b=rkHpDHhhxp4O58etLffHblEOJlekKwWLZsLDB62Qne4ZO6vdy4sC7vI3PLuxCI+hcO
+         QMg4PPgh6NAvV2DcQp8boKRbQLWRECYUWLQ7wNxSmJj06KyRRJtnrFsdO9Sc0wPDKit7
+         +DQHdURPw1syXSpaL+0IRz87ryUOdQhz/9M0u0NCVS9LMIbdSM9eilnjbL5igAVfMxH2
+         hADWrt/J7tvx42a8FHLcYJ3QfS7tUMaiVSdk03rXmOAT15mWkuWOTtndrDJIaXdhuhvV
+         JzgYLev/BxW0mJr0eIxo+Wx57RIVT1RVu/PN7uzjU1k6bHr7tURVgnAxnnBZGUa1eNQm
+         V/MQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUWo/wWQicz7ypS2L4oH+AO/iQfBPw0ImXkEY59MUOcvrS7omIk+ONEJcS55S1q74NJGXR24o8HXAO7/uk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPLBxkwVV9dJDYUqy+BQZQvnwTnGRvXkQOZbBkASo1Cpf3Bgs7
+	v3K52EcK7/xVxyK1fam0DPV+bYcKCRSnDL3myO632Dz6iUjAP91moA5U00ix7XtW0jt86K7K6pU
+	nATIOWcXQtaNOd7qCn99bU8EA13uXuINKIdnN2lpd
+X-Gm-Gg: ASbGnctwI90Igxa7/Ibq2qf9XcHIZGdprAV0Hpii78GWKfgoAQWrRrflLZcY77kqsRo
+	3E7kK5ibnGklJtlOID2zmBHhyFBxoxOFlH6MJaUYifGGybnXXW2mSEndWJiIYdV4DhzyqQ2LycN
+	cQHhYAie+U6/W9B2nEPhXGQLpNpCIdGwOcvk7SiXuckzekVgIsOvcnoyG7S+Us/6t2QzaUtbo=
+X-Google-Smtp-Source: AGHT+IH3iurEiivqwpCv3LwpNAc4Cm+HyZ9vRYcSUb+hOOoZJ5uP01DiVo2wrGQiamywl+YIBIWvHAqsiUIGKo4wZLY=
+X-Received: by 2002:a05:6402:1a2e:b0:604:60a6:7852 with SMTP id
+ 4fb4d7f45d1cf-60460a6795amr171058a12.5.1748356036937; Tue, 27 May 2025
+ 07:27:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250527132351.2050820-3-pulehui@huaweicloud.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+References: <20250221184417.27954-2-gnoack3000@gmail.com> <20250221184417.27954-3-gnoack3000@gmail.com>
+ <20250227.Aequah6Avieg@digikod.net> <20250228.b3794e33d5c0@gnoack.org>
+ <20250304.aroh3Aifiiz9@digikod.net> <20250310.990b29c809af@gnoack.org>
+In-Reply-To: <20250310.990b29c809af@gnoack.org>
+From: Jann Horn <jannh@google.com>
+Date: Tue, 27 May 2025 16:26:40 +0200
+X-Gm-Features: AX0GCFvpK-91ujELkNn_E3icY72n1WDjfluE1dOc7gEjoj7KJvFFFzWqMEN0thE
+Message-ID: <CAG48ez0pWg3OTABfCKRk5sWrURM-HdJhQMcWedEppc_z1rrVJw@mail.gmail.com>
+Subject: Re: [RFC 1/2] landlock: Multithreading support for landlock_restrict_self()
+To: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack3000@gmail.com>
+Cc: Paul Moore <paul@paul-moore.com>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	sergeh@kernel.org, David Howells <dhowells@redhat.com>, Kees Cook <keescook@chromium.org>, 
+	linux-security-module@vger.kernel.org, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, linux-kernel@vger.kernel.org, 
+	Peter Newman <peternewman@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 05/27, Pu Lehui wrote:
+On Mon, Mar 10, 2025 at 2:04=E2=80=AFPM G=C3=BCnther Noack <gnoack3000@gmai=
+l.com> wrote:
+> Hello Paul and Serge!
 >
-> @@ -237,6 +237,8 @@ static int move_ptes(struct pagetable_move_control *pmc,
+> On Tue, Mar 04, 2025 at 09:25:51PM +0100, Micka=C3=ABl Sala=C3=BCn wrote:
+> > On Fri, Feb 28, 2025 at 06:33:55PM +0100, G=C3=BCnther Noack wrote:
+> > > Hello!
+> > >
+> > > Thanks for the review!
+> > >
+> > > I'm adding David Howells to this thread as well.  David, maybe you ca=
+n
+> > > help us and suggest a appropriate way to update the struct cred acros=
+s
+> > > multiple threads?
 >
->  	for (; old_addr < old_end; old_pte++, old_addr += PAGE_SIZE,
->  				   new_pte++, new_addr += PAGE_SIZE) {
-> +		WARN_ON_ONCE(!pte_none(*new_pte))
+> Paul and Serge, since you are volunteering to take ownership of
+> credentials, maybe you can advise on what is the best approach here?
+>
+> To summarize the approaches that I have been discussing with Micka=C3=ABl=
+:
+>
+> Approach 1: Use the creds API thread-by-thread (implemented here)
+>
+>   * Each task calls prepare_creds() and commit_creds() on its own, in
+>     line with the way the API is designed to be used (from a single
+>     task).
+>   * Task work gets scheduled with a pseudo-signal and the task that
+>     invoked the syscall is waiting for all of them to return.
+>   * Task work can fail at the beginning due to prepare_creds(), in
+>     which case all tasks have to abort_creds(). Additional
+>     synchronization is needed for that.
+>
+>   Drawback: We need to grab the system-global task lock to prevent new
+>   thread creation and also grab the per-process signal lock to prevent
+>   races with other creds accesses, for the entire time as we wait for
+>   each task to do the task work.
 
-it seems you forgot to add ";" after WARN_ON_ONCE ;)
+The tasklist_lock and the siglock cant be used while we're waiting,
+they're not sleepable locks. Also, copy_process() currently copies
+creds to the new task with copy_creds() without holding any locks yet.
 
-Oleg.
+I think one way to implement this option without introducing new locks
+in core kernel code would be to have the thread initiating the
+credential change do this in three separate steps:
 
+ - loop over the other threads under RCU (for searching for new
+threads to send task work to)
+ - allocate state for threads (outside RCU, in sleepable context)
+ - wait until all threads are in task work
+
+
+I guess that might look roughly like this, as a rough sketch:
+
+
+struct landlock_sync_state {
+  atomic_t num_threads_entered;
+  atomic_t num_threads_done;
+  bool abort;
+  wait_queue_head_t wq_for_initiator;
+  wait_queue_head_t wq_for_others;
+};
+struct landlock_tw_state {
+  struct task_struct *task;
+  struct callback_head work;
+  struct landlock_sync_state *shared;
+};
+
+size_t num_threads_signalled =3D 0;
+size_t num_threads_allocated =3D 0;
+size_t num_threads_to_allocate;
+struct landlock_tw_state **thread_works =3D NULL;
+struct landlock_sync_state state;
+bool all_threads_signalled =3D false;
+while (true) {
+  /* scan for threads we haven't sent task work to yet */
+  rcu_read_lock();
+  num_threads_to_allocate =3D 0;
+  for_each_thread(current, thread) {
+    /*
+     * this PF_EXITING check is a bit dodgy but not much worse than
+     * what seccomp already does
+    */
+    if (thread =3D=3D current || (READ_ONCE(thread->flags) & PF_EXITING))
+      continue;
+
+    for (int i=3D0; i<num_threads_signalled; i++) {
+      if (thread_works[i]->task =3D=3D thread)
+        goto next_thread;
+    }
+
+    all_threads_signalled =3D false;
+    if (num_threads_allocated > num_threads_signalled) {
+      struct landlock_tw_state *ltws =3D thread_works[num_threads_signalled=
+];
+
+      ltws->task =3D thread;
+      ltws->shared =3D &state;
+      if (task_work_add(thread, &ltws->work, TWA_SIGNAL) =3D=3D 0)
+        num_threads_signalled++;
+    } else {
+      num_threads_to_allocate++;
+    }
+
+next_thread:;
+  }
+  rcu_read_unlock();
+
+  if (all_threads_signalled)
+    break; /* success */
+
+  /*
+   * If we need state for more threads, allocate it now and immediately ret=
+ry.
+   * Normally we only need to go through this path once, more if we race wi=
+th
+   * clone().
+   */
+  if (num_threads_to_allocate) {
+    size_t new_count =3D num_threads_allocated + num_threads_to_allocate;
+    struct landlock_tw_state **reallocd =3D kvrealloc(thread_works,
+size_mul(sizeof(struct landlock_tw_state*), new_count), GFP_KERNEL);
+    if (!reallocd)
+      goto bailout;
+    thread_works =3D reallocd;
+    continue;
+  }
+
+  /* wait for all the threads we signalled */
+  if (wait_event_interruptible(&state.wq_for_initiator,
+          atomic_read(&state.num_threads_entered) =3D=3D num_threads_signal=
+led))
+    goto bailout;
+
+  /*
+   * Now loop at least once more to check that none of the threads called
+   * clone() in the meantime.
+   */
+  all_threads_signalled =3D true;
+}
+
+/* success */
+
+/* ... coordinate the cred prepare and commit across threads here ... */
+
+bailout:
+for (int i=3D0; i<num_threads_signalled; i++) {
+  if (task_work_cancel(thread_works[i].task, &thread_works[i].work))
+    atomic_inc(&state.num_threads_done);
+}
+WRITE_ONCE(state.abort, true);
+wake_up(&state.wq_for_others);
+wait_event(&state.wq_for_initiator,
+atomic_read(&state.num_threads_done) =3D=3D num_threads_signalled);
+
+
+This would be somewhat complex, but at least it would keep the
+complexity isolated in the code for updating creds across tasks, so I
+think this would be reasonable.
 
