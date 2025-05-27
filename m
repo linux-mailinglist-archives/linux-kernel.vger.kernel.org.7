@@ -1,192 +1,165 @@
-Return-Path: <linux-kernel+bounces-663273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-663271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DBF9AC4620
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 04:15:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C0D1AC461B
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 04:13:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF20F18958C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 02:15:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5C141895799
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 02:13:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5B4315DBC1;
-	Tue, 27 May 2025 02:15:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88E55158520;
+	Tue, 27 May 2025 02:12:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="a+FoRMfv"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="nCZOxiq4"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D4D58488
-	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 02:15:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A1FF3BBF2;
+	Tue, 27 May 2025 02:12:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748312136; cv=none; b=JIRA8IffMaFn1+45eKwdyOzKPIwjTmH+jrDzUfkn1i5rJTMbhHtmxISxSfW3s1t0ppkNEHZ2oiNqGa0hKu1+aTXcMPk///fFt1CEpTdmxfuQXgZc22iWJCco88xS2F83BbjQ/i+zzzoCgNeBeHNGzXUcZZPPpo5wqdzx32WdBS4=
+	t=1748311976; cv=none; b=CjnesIcfUaX0tNtEIpgxwUBDrdZGVS9urU3ZhENsTp/nDsHGl/ac7HNZSy1l0lkbjLEh6aR/Oofxzb8ikOMbymM6PBAL8coP6g0TzAWswuWcTORq8qTOuY2iBtfMFpxobr8PivRWRgFgOKFrXpt2NIoJX/6qEdrAzNRprsSUm9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748312136; c=relaxed/simple;
-	bh=gy+iSnN6BujU+OyUD34gHbKI/Tlhhz3bicJScmZmV4w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Pclq39K4hZXQu7GFqT8XbNn5YJrSYH1cfwZwOu8Vvp+zW/pggmvhgDS+Asbj/WOaLw8KMl7T1gGIgdsM7vzmeLtEKzI0E3tBRTn1HCmkbh9Wyydr4Thh7R0xB4p+AjO4iRxeVzE8/pitQYnbR1jie6AikWAGGip23K48FxO5XQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=a+FoRMfv; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1748312131;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AqRgYOufLjDdRZWStx7NgUNbciHlTK6MFqY+ZAN1g3w=;
-	b=a+FoRMfvWKfAw8P95KLsikvCDeRnbjEMT4IVCJt4aO4FYInBHCGHDL/p6s79682lAleeDz
-	i9TC1YXCxMvAH4YMpxlmurSLubmEje9tyHWwf8VSRtYdJlsK/aG9A/JDdtOhioS1HcOjm+
-	TqMr8YzoOd/BQYtzad4krgAQDOzfii4=
-Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com
- [209.85.215.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-256-3Pu9PFBZNRq-DEZMfTU6Mg-1; Mon, 26 May 2025 22:15:29 -0400
-X-MC-Unique: 3Pu9PFBZNRq-DEZMfTU6Mg-1
-X-Mimecast-MFC-AGG-ID: 3Pu9PFBZNRq-DEZMfTU6Mg_1748312128
-Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-b26e120e300so2934897a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 19:15:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748312128; x=1748916928;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=AqRgYOufLjDdRZWStx7NgUNbciHlTK6MFqY+ZAN1g3w=;
-        b=k5vCDD/y5fY1/qsHwZK31rmeYdUF31qiAhSMAsRpYf4x46h66sFTWKHFIPi0pAKBBq
-         4nM/NSxj0dR0rxA+WfBTwhXZopxLlJZSsZy0b2GuUzKu5Pelr7ySvzk0K7PJ3ROmTbpC
-         3xvmb16HFU7Ly7wxxK0UVpPRnas8tdtGW+7QEdDKZTZDSmTLVd8iwUJ8FRbFXWUborXY
-         jrh7/uVoshI3NWOCZkLvPPWhOttyIOSv2CmA48uBQnc+GUFhbo2hfnoePMh1duuvk0aF
-         vYkqgHH0ugNew+8lds1w8mNeAifqTV/bgUmPO26hp5zRoM6yTC2x8uSQY+ZIPIQy6W+c
-         CEDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW9UGdBa2UDX6yhEa4R6KLZ2lUBEj91aR4jEpHQ/2LICXnrwD+zpnZ9USIYhpIjYWdc04AYxVwLySRfcFc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjJso5qFuMgf8CQB4cv5UpDEO6lxv9BkB25nq4tkYp87qGw32s
-	vK6CXeyuvBN/Hqfo1fTYaTAjqnxP/S3BT9PNynnb/zmRaOcUkpOodAES7bp7wfCP0VvGY6Wf7pM
-	mWr8ec7dKuD2527h7X+yuMA5NvkeAZDFM6aEQ0KpH2AliyGkHW2jGu5ervijq6xLwRA==
-X-Gm-Gg: ASbGncvo6vuZvV/NIkj3CsJf8n1yG+4uXXBoaxPX2jE9MKpPZashVCBzg0cSnGgKBJq
-	KpKt1sppxzHlVnSujfPCvuKTuApiBJUeTMslDN3Jaej0Udh5fgWuX9Jw8P9thUlEDq6kanbKP2x
-	xUpfp1oPwhIzdflz2QpfJrkTtZ1Agxb9NBHK44HZnxhreEUf8VFLktMo0aJp1JjLvld7QSQHhCK
-	/5Tx1sdumbIqujVQy5O3/1UjK+SA3ZrVrj0rwbhWKrVez9ivdAo8ndJJZlgOOoZrfbScRJEqFAd
-	VkwCHlt2YisYZ7VtgQ==
-X-Received: by 2002:a05:6a20:6a27:b0:1f5:87dc:a315 with SMTP id adf61e73a8af0-2188c248679mr18075187637.12.1748312128438;
-        Mon, 26 May 2025 19:15:28 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHZtFbzmoFlt/XhE3Pxh8zcJdcRCqZVAb26w0MA+nQY12h9skjxs6x3NA1DvJXIdMKSt04fMA==
-X-Received: by 2002:a05:6a20:6a27:b0:1f5:87dc:a315 with SMTP id adf61e73a8af0-2188c248679mr18075153637.12.1748312128057;
-        Mon, 26 May 2025 19:15:28 -0700 (PDT)
-Received: from [10.72.120.5] ([209.132.188.88])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b26eaf8db5csm17773423a12.34.2025.05.26.19.15.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 May 2025 19:15:27 -0700 (PDT)
-Message-ID: <560ae765-3fa1-42b7-a71c-e078e52e64fd@redhat.com>
-Date: Tue, 27 May 2025 10:15:20 +0800
+	s=arc-20240116; t=1748311976; c=relaxed/simple;
+	bh=lVbYnc3aORFwAR2thA4ZyWVY4Gb7NMvj+BaiCpe6tok=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=A+jELKLmNK7IvEgbgU5Gauw3mSaBFxeCMCk1lHjNb6GCDZF6qjzpRhEihmYngyOiJ/kMeRroQCusb64jSyEzm4RDhhgsF0uOKx1/8H8gftlc75eYdpKmuJ5dmPpGqnEs3RwYv+cCY3149Vp13f8aAtYwzaa2rwkwxlLJHoBdyso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=nCZOxiq4; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 15aca2243aa011f0813e4fe1310efc19-20250527
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=39oY+EqTrg+DjuuiSY4guCZe6xayDWOMD5dz4cNUHLo=;
+	b=nCZOxiq4K1QUr9S9dvPTts/z5WTdPNnlnLBya5AEe7vUCdfZFPngIofLwOL9ueoFZJQEQ6BoyaAx9X46Ww/LH0ucPzz2XbdvjXcOOuK91u8XCTF4aLwblTkf/VW6dHJwbYUQAey4htRgNecVlCTKoUd7edEQMqbVRG+m39eS/Jk=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.2.1,REQID:09912d76-31a4-411e-86c3-4b535cd831f1,IP:0,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:0
+X-CID-META: VersionHash:0ef645f,CLOUDID:b66c0158-abad-4ac2-9923-3af0a8a9a079,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:-3,IP:ni
+	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 15aca2243aa011f0813e4fe1310efc19-20250527
+Received: from mtkmbs13n1.mediatek.inc [(172.21.101.193)] by mailgw01.mediatek.com
+	(envelope-from <shiming.cheng@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1889938853; Tue, 27 May 2025 10:12:48 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ mtkmbs13n2.mediatek.inc (172.21.101.108) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.39; Tue, 27 May 2025 10:12:45 +0800
+Received: from mbjsdccf07.gcn.mediatek.inc (10.15.20.246) by
+ mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1258.39 via Frontend Transport; Tue, 27 May 2025 10:12:44 +0800
+From: Shiming Cheng <shiming.cheng@mediatek.com>
+To: <willemdebruijn.kernel@gmail.com>, <willemb@google.com>,
+	<edumazet@google.com>, <davem@davemloft.net>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <matthias.bgg@gmail.com>
+CC: <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<shiming.cheng@mediatek.com>, <lena.wang@mediatek.com>
+Subject: [PATCH net v3] t: fix udp gso skb_segment after pull from frag_list
+Date: Tue, 27 May 2025 10:15:47 +0800
+Message-ID: <20250527021611.23846-1-shiming.cheng@mediatek.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 07/23] md/md-bitmap: delay registration of bitmap_ops
- until creating bitmap
-To: Yu Kuai <yukuai1@huaweicloud.com>
-Cc: hch@lst.de, colyli@kernel.org, song@kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-raid@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
- johnny.chenyi@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <20250524061320.370630-1-yukuai1@huaweicloud.com>
- <20250524061320.370630-8-yukuai1@huaweicloud.com>
- <CALTww2_03_fVt+KMcmtbGw-kcRsLLpAG7W62e3y0W9SpvhUVtg@mail.gmail.com>
- <12a61dcf-ad39-48e8-132f-c49979b9012b@huaweicloud.com>
-From: Xiao Ni <xni@redhat.com>
-In-Reply-To: <12a61dcf-ad39-48e8-132f-c49979b9012b@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK: N
 
+Detect invalid geometry due to pull from frag_list, and pass to
+regular skb_segment. If only part of the fraglist payload is pulled
+into head_skb, it will always cause exception when splitting
+skbs by skb_segment. For detailed call stack information, see below.
 
-在 2025/5/26 下午3:57, Yu Kuai 写道:
-> Hi,
->
-> 在 2025/05/26 14:52, Xiao Ni 写道:
->> On Sat, May 24, 2025 at 2:18 PM Yu Kuai <yukuai1@huaweicloud.com> wrote:
->>>
->>> From: Yu Kuai <yukuai3@huawei.com>
->>>
->>> Currently bitmap_ops is registered while allocating mddev, this is fine
->>> when there is only one bitmap_ops, however, after introduing a new
->>> bitmap_ops, user space need a time window to choose which bitmap_ops to
->>> use while creating new array.
->>
->> Could you give more explanation about what the time window is? Is it
->> between setting llbitmap by bitmap_type and md_bitmap_create?
->
-> The window after this patch is that user can write the new sysfs after
-> allocating mddev, and before running the array.
+Valid SKB_GSO_FRAGLIST skbs
+- consist of two or more segments
+- the head_skb holds the protocol headers plus first gso_size
+- one or more frag_list skbs hold exactly one segment
+- all but the last must be gso_size
 
+Optional datapath hooks such as NAT and BPF (bpf_skb_pull_data) can
+modify fraglist skbs, breaking these invariants.
 
-Thanks for the explanation. Is it ok to add it in the commit log message?
+In extreme cases they pull one part of data into skb linear. For UDP,
+this  causes three payloads with lengths of (11,11,10) bytes were
+pulled tail to become (12,10,10) bytes.
 
->>
->>>
->>> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
->>> ---
->>>   drivers/md/md.c | 86 
->>> +++++++++++++++++++++++++++++++------------------
->>>   1 file changed, 55 insertions(+), 31 deletions(-)
->>>
->>> diff --git a/drivers/md/md.c b/drivers/md/md.c
->>> index 4eb0c6effd5b..dc4b85f30e13 100644
->>> --- a/drivers/md/md.c
->>> +++ b/drivers/md/md.c
->>> @@ -674,39 +674,50 @@ static void no_op(struct percpu_ref *r) {}
->>>
->>>   static bool mddev_set_bitmap_ops(struct mddev *mddev)
->>>   {
->>> +       struct bitmap_operations *old = mddev->bitmap_ops;
->>> +       struct md_submodule_head *head;
->>> +
->>> +       if (mddev->bitmap_id == ID_BITMAP_NONE ||
->>> +           (old && old->head.id == mddev->bitmap_id))
->>> +               return true;
->>> +
->>>          xa_lock(&md_submodule);
->>> -       mddev->bitmap_ops = xa_load(&md_submodule, mddev->bitmap_id);
->>> +       head = xa_load(&md_submodule, mddev->bitmap_id);
->>>          xa_unlock(&md_submodule);
->>>
->>> -       if (!mddev->bitmap_ops) {
->>> -               pr_warn_once("md: can't find bitmap id %d\n", 
->>> mddev->bitmap_id);
->>> +       if (WARN_ON_ONCE(!head || head->type != MD_BITMAP)) {
->>> +               pr_err("md: can't find bitmap id %d\n", 
->>> mddev->bitmap_id);
->>>                  return false;
->>>          }
->>>
->>> +       if (old && old->group)
->>> +               sysfs_remove_group(&mddev->kobj, old->group);
->>
->> I think you're handling a competition problem here. But I don't know
->> how the old/old->group is already created when creating an array.
->> Could you explain this?
->
-> It's not possible now, this is because I think we want to be able to
-> switch existing array with old bitmap to new bitmap.
+The skbs no longer meets the above SKB_GSO_FRAGLIST conditions because
+payload was pulled into head_skb, it needs to be linearized before pass
+to regular skb_segment.
 
+    skb_segment+0xcd0/0xd14
+    __udp_gso_segment+0x334/0x5f4
+    udp4_ufo_fragment+0x118/0x15c
+    inet_gso_segment+0x164/0x338
+    skb_mac_gso_segment+0xc4/0x13c
+    __skb_gso_segment+0xc4/0x124
+    validate_xmit_skb+0x9c/0x2c0
+    validate_xmit_skb_list+0x4c/0x80
+    sch_direct_xmit+0x70/0x404
+    __dev_queue_xmit+0x64c/0xe5c
+    neigh_resolve_output+0x178/0x1c4
+    ip_finish_output2+0x37c/0x47c
+    __ip_finish_output+0x194/0x240
+    ip_finish_output+0x20/0xf4
+    ip_output+0x100/0x1a0
+    NF_HOOK+0xc4/0x16c
+    ip_forward+0x314/0x32c
+    ip_rcv+0x90/0x118
+    __netif_receive_skb+0x74/0x124
+    process_backlog+0xe8/0x1a4
+    __napi_poll+0x5c/0x1f8
+    net_rx_action+0x154/0x314
+    handle_softirqs+0x154/0x4b8
 
-Can we add the check of old when we really want it?
+    [118.376811] [C201134] rxq0_pus: [name:bug&]kernel BUG at net/core/skbuff.c:4278!
+    [118.376829] [C201134] rxq0_pus: [name:traps&]Internal error: Oops - BUG: 00000000f2000800 [#1] PREEMPT SMP
+    [118.470774] [C201134] rxq0_pus: [name:mrdump&]Kernel Offset: 0x178cc00000 from 0xffffffc008000000
+    [118.470810] [C201134] rxq0_pus: [name:mrdump&]PHYS_OFFSET: 0x40000000
+    [118.470827] [C201134] rxq0_pus: [name:mrdump&]pstate: 60400005 (nZCv daif +PAN -UAO)
+    [118.470848] [C201134] rxq0_pus: [name:mrdump&]pc : [0xffffffd79598aefc] skb_segment+0xcd0/0xd14
+    [118.470900] [C201134] rxq0_pus: [name:mrdump&]lr : [0xffffffd79598a5e8] skb_segment+0x3bc/0xd14
+    [118.470928] [C201134] rxq0_pus: [name:mrdump&]sp : ffffffc008013770
 
-Regards
+Fixes: a1e40ac5b5e9 ("net: gso: fix udp gso fraglist segmentation after pull from frag_list")
+Signed-off-by: Shiming Cheng <shiming.cheng@mediatek.com>
+---
+ net/ipv4/udp_offload.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Xiao
-
->
-> Thanks,
-> Kuai
->
->>
->> Regards
->> Xiao
->
+diff --git a/net/ipv4/udp_offload.c b/net/ipv4/udp_offload.c
+index a5be6e4ed326..ec05bb7d1e22 100644
+--- a/net/ipv4/udp_offload.c
++++ b/net/ipv4/udp_offload.c
+@@ -273,6 +273,7 @@ struct sk_buff *__udp_gso_segment(struct sk_buff *gso_skb,
+ 	bool copy_dtor;
+ 	__sum16 check;
+ 	__be16 newlen;
++	int ret = 0;
+ 
+ 	mss = skb_shinfo(gso_skb)->gso_size;
+ 	if (gso_skb->len <= sizeof(*uh) + mss)
+@@ -301,6 +302,9 @@ struct sk_buff *__udp_gso_segment(struct sk_buff *gso_skb,
+ 		if (skb_pagelen(gso_skb) - sizeof(*uh) == skb_shinfo(gso_skb)->gso_size)
+ 			return __udp_gso_segment_list(gso_skb, features, is_ipv6);
+ 
++		ret = __skb_linearize(gso_skb);
++		if (ret)
++			return ERR_PTR(ret);
+ 		 /* Setup csum, as fraglist skips this in udp4_gro_receive. */
+ 		gso_skb->csum_start = skb_transport_header(gso_skb) - gso_skb->head;
+ 		gso_skb->csum_offset = offsetof(struct udphdr, check);
+-- 
+2.45.2
 
 
