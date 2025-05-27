@@ -1,889 +1,516 @@
-Return-Path: <linux-kernel+bounces-663695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-663687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55993AC4C14
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 12:15:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E687AC4BFC
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 12:06:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3D283B4539
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 10:15:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF2B817C782
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 10:06:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D670F1EF0BB;
-	Tue, 27 May 2025 10:15:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CCB8255F5C;
+	Tue, 27 May 2025 10:06:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZFRLuybj"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Mg+ytl/a"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E219101FF;
-	Tue, 27 May 2025 10:15:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BC0E2494C2;
+	Tue, 27 May 2025 10:06:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748340928; cv=none; b=PrLFiBu1wbEaD71aNVk3zpFDwNrDMgkbUjg5xF78AhM1FNALXKflrjUYwK3P1/khKbqVzjO+xaQg866UzmD33B2FveToa1B1jSOWZ8bi/3IOTCs+JPJ+4nU6c7Evu7JrJd8p379tGt2p2erqHNrwYTcwUhK2+NKLhzpQ0u814XM=
+	t=1748340379; cv=none; b=bKzYEHuYC3LNc/3XUU5G7114qYH4Rckyvy4rRCCYfgEIWItQ9NgyvNNu353mq1teYUrteOTbjEzskoYLbPz/6QaWiLbDQv26tWbd5oFtlFe+T0ETozpWxsXmkrnG6bKFn+NMP93fstx1SFXCkP2Xy9mMMnhcGqAqJnYOMtBL0Os=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748340928; c=relaxed/simple;
-	bh=vIPe6uoYgAdJdhhT/k1YM4/MWQEP6qtUvRhi9Uio3Lo=;
-	h=From:To:Cc:Date:Subject:Message-ID:MIME-Version:Content-Type; b=Cuu7IYepFfdE8MtxcbYpf3FULaf22S5Tk7w6RWAuIYeMQyOiRmhLhawLhu9NbAsqZYF8h114vmYLEIy6a+HQJNO40HS7VfLnIPgmRWcHAzKigAa2ca+Lb4P1Z45UmeN+Df/ht6Kc9TdMBUGJG5X8qf1pdqYkjr026qxgAMEhwGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZFRLuybj; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1748340926; x=1779876926;
-  h=from:to:cc:date:subject:message-id:mime-version:
-   content-transfer-encoding;
-  bh=vIPe6uoYgAdJdhhT/k1YM4/MWQEP6qtUvRhi9Uio3Lo=;
-  b=ZFRLuybjDC7voNcufUrYVMcR/jDMyrEX2wFMKEoMx9oi7y0VNPKE/uD1
-   qC7iwtPFYYW0/Cazoz3lAG2jyx4ekdFQsEshAmAVI8cQGe0NcOJV2OyNy
-   qgmcklrXOVWQ2LtcZaXOfPtEASNjKRNNq6aYJb+rINFc3bhqYz3693fzb
-   8GQVZMJVPNN6KnHupey4hQn8i+xR8Io3xUtEUmyIuEAUfMSiokUi8onnb
-   mW94sOO38oKXOR0v/9IUcRaTPLHa0qIw9YDtcBStqSJ6n5AD/hlGkx49l
-   i4ANNczgAQ+upUlLyLMoFEYVD1KBHRWLqyBTqrLjOZoaOObw4w4b/zCwv
-   g==;
-X-CSE-ConnectionGUID: dTgXykEVS/eHFb8SgzgtSg==
-X-CSE-MsgGUID: /Ztf4OkdQfeB1l8H5GiP+g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11445"; a="50203305"
-X-IronPort-AV: E=Sophos;i="6.15,318,1739865600"; 
-   d="scan'208";a="50203305"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2025 03:15:22 -0700
-X-CSE-ConnectionGUID: 0283Y79lTnWokBg7+mTd7Q==
-X-CSE-MsgGUID: R3RTAr77SKuIFcTY+aX45g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,318,1739865600"; 
-   d="scan'208";a="143102095"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.158])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2025 03:15:18 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, PDx86 <platform-driver-x86@vger.kernel.org>, Hans de Goede <hdegoede@redhat.com>, Andy Shevchenko <andy@kernel.org>, Pavel Machek <pavel@ucw.cz>, Guenter Roeck <linux@roeck-us.net>, Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>, Sebastian Reichel <sre@kernel.org>
-Date: Tue, 27 May 2025 12:44:35 +0300
-Subject: [GIT PULL] platform-drivers-x86 for v6.16-1
-Message-ID: <pdx86-pr-20250527124435-2181824944@linux.intel.com>
+	s=arc-20240116; t=1748340379; c=relaxed/simple;
+	bh=VuCr9Fs3Bac/+TuXubR5Apia0q4aNmhS/LpSuTnnN/U=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=Ci+PscODwdpUKiQEG4Sr46SW/2HrfMHa6GeNVljpBWhOt7tvlmfyeQuLaYvnxcOvXsmeH+QeYod9m8u9E/uE4KhmLapRj+lmPbdY8/U5MgFx6pxUU/QPsz5WTkdLhMv+F4TMfl+JPfgdOlXCg102UR92aKTSPvwL4bj0Lvkla7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Mg+ytl/a; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id C53C31FD76;
+	Tue, 27 May 2025 10:06:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1748340374;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Z957RjxT4uqf0nNlE4qCnpWpXPKWGLktP1f/MgOjYv0=;
+	b=Mg+ytl/avkiTiO1VcoKFkXaSfcJNp/E54w4FnddhUS3f8R3jwudafVAr4HIAIeZnxjkPBM
+	yo4EVIJoieuK/v44IS1jKogIydNZAXKPn7Yz8fl4f7hYt1+zsI6KZrS7saZYM+T3y1ytnG
+	hlaVIu3rRReJQ8utzQAu/ZTKH/dNqt6wcA7wN7Lg3e+VqrvgCBKqnqwp1iXS3c93jYExSf
+	BtWa6+11t8fMsg4aaFEGzq2Rmhr/FJSbkn//V3m61+DWJcQekqIfsNAuuAQn3aWBYx2Q5p
+	kamCSY8nDGAtu+xLtI6ZR5ACp1ztqL7rqCZ+eezkQ10FQ7V57lgm4yJTsFrJSQ==
+From: =?utf-8?q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>
+Date: Tue, 27 May 2025 12:06:03 +0200
+Subject: [PATCH bpf-next v3 1/2] bpf, arm64: Support up to 12 function
+ arguments
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+Message-Id: <20250527-many_args_arm64-v3-1-3faf7bb8e4a2@bootlin.com>
+References: <20250527-many_args_arm64-v3-0-3faf7bb8e4a2@bootlin.com>
+In-Reply-To: <20250527-many_args_arm64-v3-0-3faf7bb8e4a2@bootlin.com>
+To: Alexei Starovoitov <ast@kernel.org>, 
+ Daniel Borkmann <daniel@iogearbox.net>, 
+ John Fastabend <john.fastabend@gmail.com>, 
+ Andrii Nakryiko <andrii@kernel.org>, 
+ Martin KaFai Lau <martin.lau@linux.dev>, 
+ Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+ Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Puranjay Mohan <puranjay@kernel.org>, 
+ Xu Kuohai <xukuohai@huaweicloud.com>, 
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+ Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ Florent Revest <revest@chromium.org>
+Cc: Bastien Curutchet <bastien.curutchet@bootlin.com>, 
+ ebpf@linuxfoundation.org, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kselftest@vger.kernel.org, 
+ linux-stm32@st-md-mailman.stormreply.com, 
+ =?utf-8?q?Alexis_Lothor=C3=A9_=28eBPF_Foundation=29?= <alexis.lothore@bootlin.com>, 
+ Xu Kuohai <xukuohai@huawei.com>
+X-Mailer: b4 0.14.2
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgddvtddtleculddtuddrgeefvddrtddtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephfffufggtgfgkfhfjgfvvefosehtkeertdertdejnecuhfhrohhmpeetlhgvgihishcunfhothhhohhrrocuoegrlhgvgihishdrlhhothhhohhrvgessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeevgefhteffuefhheekkeelffffvdeugffgveejffdtvdffudehtedtieevteetnecukfhppedvrgdtvdemkeegvdekmehfleegtgemvgdttdemmeguieehnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddvmeekgedvkeemfhelgegtmegvtddtmeemugeihedphhgvlhhopegludelvddrudeikedruddrudeljegnpdhmrghilhhfrhhomheprghlvgigihhsrdhlohhthhhorhgvsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeefuddprhgtphhtthhopehsohhngheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohephhgrohhluhhosehgohhoghhlvgdrtghomhdprhgtphhtthhopehthhhomhgrshdrphgvthgriiiiohhnihessghoohhtlhhinhdrtghomhdprhgtphhtthhopehsughfsehfohhmihgthhgvvhdrmhgvpdhrt
+ ghpthhtohepsghpfhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehjohhlshgrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhkvghrnhgvlheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehpuhhrrghnjhgrhieskhgvrhhnvghlrdhorhhg
+X-GND-Sasl: alexis.lothore@bootlin.com
+
+From: Xu Kuohai <xukuohai@huawei.com>
+
+Currently ARM64 bpf trampoline supports up to 8 function arguments.
+According to the statistics from commit
+473e3150e30a ("bpf, x86: allow function arguments up to 12 for TRACING"),
+there are about 200 functions accept 9 to 12 arguments, so adding support
+for up to 12 function arguments.
+
+Due to bpf only supporting function arguments up to 16 bytes, according to
+AAPCS64, starting from the first argument, each argument is first
+attempted to be loaded to 1 or 2 smallest registers from x0-x7, if there
+are no enough registers to hold the entire argument, then all remaining
+arguments starting from this one are pushed to the stack for passing.
+There are some non-trivial cases for which it is not possible to
+correctly read arguments from/write arguments to the stack: for example
+struct variables may have custom packing/alignment attributes that are
+invisible in BTF info. Such cases are denied for now to make sure not to
+read incorrect values.
+
+Signed-off-by: Xu Kuohai <xukuohai@huawei.com>
+Co-developed-by: Alexis Lothoré (eBPF Foundation) <alexis.lothore@bootlin.com>
+Signed-off-by: Alexis Lothoré (eBPF Foundation) <alexis.lothore@bootlin.com>
+---
+Changes in v3:
+- switch back -EOPNOTSUPP to -ENOTSUPP
+- fix comment style
+- remove useless round_up calls
+- group initializations for arg_aux structure
+
+Changes in v2:
+- refuse attachment to functions passing structs on stack
+- use simpler alignment rules for args passed on stack, assuming that
+  exotic types are denied either by the verifier and/or the trampoline
+  generation code
+---
+ arch/arm64/net/bpf_jit_comp.c | 225 ++++++++++++++++++++++++++++++++----------
+ 1 file changed, 171 insertions(+), 54 deletions(-)
+
+diff --git a/arch/arm64/net/bpf_jit_comp.c b/arch/arm64/net/bpf_jit_comp.c
+index 70d7c89d3ac907798e86e0051e7b472c252c1412..b5c3ab6235362cf660da4b02d7381509fc17dcdf 100644
+--- a/arch/arm64/net/bpf_jit_comp.c
++++ b/arch/arm64/net/bpf_jit_comp.c
+@@ -2064,7 +2064,7 @@ bool bpf_jit_supports_subprog_tailcalls(void)
+ }
+ 
+ static void invoke_bpf_prog(struct jit_ctx *ctx, struct bpf_tramp_link *l,
+-			    int args_off, int retval_off, int run_ctx_off,
++			    int bargs_off, int retval_off, int run_ctx_off,
+ 			    bool save_ret)
+ {
+ 	__le32 *branch;
+@@ -2106,7 +2106,7 @@ static void invoke_bpf_prog(struct jit_ctx *ctx, struct bpf_tramp_link *l,
+ 	branch = ctx->image + ctx->idx;
+ 	emit(A64_NOP, ctx);
+ 
+-	emit(A64_ADD_I(1, A64_R(0), A64_SP, args_off), ctx);
++	emit(A64_ADD_I(1, A64_R(0), A64_SP, bargs_off), ctx);
+ 	if (!p->jited)
+ 		emit_addr_mov_i64(A64_R(1), (const u64)p->insnsi, ctx);
+ 
+@@ -2131,7 +2131,7 @@ static void invoke_bpf_prog(struct jit_ctx *ctx, struct bpf_tramp_link *l,
+ }
+ 
+ static void invoke_bpf_mod_ret(struct jit_ctx *ctx, struct bpf_tramp_links *tl,
+-			       int args_off, int retval_off, int run_ctx_off,
++			       int bargs_off, int retval_off, int run_ctx_off,
+ 			       __le32 **branches)
+ {
+ 	int i;
+@@ -2141,7 +2141,7 @@ static void invoke_bpf_mod_ret(struct jit_ctx *ctx, struct bpf_tramp_links *tl,
+ 	 */
+ 	emit(A64_STR64I(A64_ZR, A64_SP, retval_off), ctx);
+ 	for (i = 0; i < tl->nr_links; i++) {
+-		invoke_bpf_prog(ctx, tl->links[i], args_off, retval_off,
++		invoke_bpf_prog(ctx, tl->links[i], bargs_off, retval_off,
+ 				run_ctx_off, true);
+ 		/* if (*(u64 *)(sp + retval_off) !=  0)
+ 		 *	goto do_fexit;
+@@ -2155,23 +2155,125 @@ static void invoke_bpf_mod_ret(struct jit_ctx *ctx, struct bpf_tramp_links *tl,
+ 	}
+ }
+ 
+-static void save_args(struct jit_ctx *ctx, int args_off, int nregs)
++struct arg_aux {
++	/* how many args are passed through registers, the rest of the args are
++	 * passed through stack
++	 */
++	int args_in_regs;
++	/* how many registers are used to pass arguments */
++	int regs_for_args;
++	/* how much stack is used for additional args passed to bpf program
++	 * that did not fit in original function registers
++	 */
++	int bstack_for_args;
++	/* home much stack is used for additional args passed to the
++	 * original function when called from trampoline (this one needs
++	 * arguments to be properly aligned)
++	 */
++	int ostack_for_args;
++};
++
++static int calc_arg_aux(const struct btf_func_model *m,
++			 struct arg_aux *a)
+ {
+-	int i;
++	int stack_slots, nregs, slots, i;
++
++	/* verifier ensures m->nr_args <= MAX_BPF_FUNC_ARGS */
++	for (i = 0, nregs = 0; i < m->nr_args; i++) {
++		slots = (m->arg_size[i] + 7) / 8;
++		if (nregs + slots <= 8) /* passed through register ? */
++			nregs += slots;
++		else
++			break;
++	}
++
++	a->args_in_regs = i;
++	a->regs_for_args = nregs;
++	a->ostack_for_args = 0;
++	a->bstack_for_args = 0;
+ 
+-	for (i = 0; i < nregs; i++) {
+-		emit(A64_STR64I(i, A64_SP, args_off), ctx);
+-		args_off += 8;
++	/* the rest arguments are passed through stack */
++	for (; i < m->nr_args; i++) {
++		/* We can not know for sure about exact alignment needs for
++		 * struct passed on stack, so deny those
++		 */
++		if (m->arg_flags[i] & BTF_FMODEL_STRUCT_ARG)
++			return -ENOTSUPP;
++		stack_slots = (m->arg_size[i] + 7) / 8;
++		a->bstack_for_args += stack_slots * 8;
++		a->ostack_for_args = a->ostack_for_args + stack_slots * 8;
++	}
++
++	return 0;
++}
++
++static void clear_garbage(struct jit_ctx *ctx, int reg, int effective_bytes)
++{
++	if (effective_bytes) {
++		int garbage_bits = 64 - 8 * effective_bytes;
++#ifdef CONFIG_CPU_BIG_ENDIAN
++		/* garbage bits are at the right end */
++		emit(A64_LSR(1, reg, reg, garbage_bits), ctx);
++		emit(A64_LSL(1, reg, reg, garbage_bits), ctx);
++#else
++		/* garbage bits are at the left end */
++		emit(A64_LSL(1, reg, reg, garbage_bits), ctx);
++		emit(A64_LSR(1, reg, reg, garbage_bits), ctx);
++#endif
+ 	}
+ }
+ 
+-static void restore_args(struct jit_ctx *ctx, int args_off, int nregs)
++static void save_args(struct jit_ctx *ctx, int bargs_off, int oargs_off,
++		      const struct btf_func_model *m,
++		      const struct arg_aux *a,
++		      bool for_call_origin)
+ {
+ 	int i;
++	int reg;
++	int doff;
++	int soff;
++	int slots;
++	u8 tmp = bpf2a64[TMP_REG_1];
++
++	/* store arguments to the stack for the bpf program, or restore
++	 * arguments from stack for the original function
++	 */
++	for (reg = 0; reg < a->regs_for_args; reg++) {
++		emit(for_call_origin ?
++		     A64_LDR64I(reg, A64_SP, bargs_off) :
++		     A64_STR64I(reg, A64_SP, bargs_off),
++		     ctx);
++		bargs_off += 8;
++	}
+ 
+-	for (i = 0; i < nregs; i++) {
+-		emit(A64_LDR64I(i, A64_SP, args_off), ctx);
+-		args_off += 8;
++	soff = 32; /* on stack arguments start from FP + 32 */
++	doff = (for_call_origin ? oargs_off : bargs_off);
++
++	/* save on stack arguments */
++	for (i = a->args_in_regs; i < m->nr_args; i++) {
++		slots = (m->arg_size[i] + 7) / 8;
++		/* verifier ensures arg_size <= 16, so slots equals 1 or 2 */
++		while (slots-- > 0) {
++			emit(A64_LDR64I(tmp, A64_FP, soff), ctx);
++			/* if there is unused space in the last slot, clear
++			 * the garbage contained in the space.
++			 */
++			if (slots == 0 && !for_call_origin)
++				clear_garbage(ctx, tmp, m->arg_size[i] % 8);
++			emit(A64_STR64I(tmp, A64_SP, doff), ctx);
++			soff += 8;
++			doff += 8;
++		}
++	}
++}
++
++static void restore_args(struct jit_ctx *ctx, int bargs_off, int nregs)
++{
++	int reg;
++
++	for (reg = 0; reg < nregs; reg++) {
++		emit(A64_LDR64I(reg, A64_SP, bargs_off), ctx);
++		bargs_off += 8;
+ 	}
+ }
+ 
+@@ -2194,17 +2296,21 @@ static bool is_struct_ops_tramp(const struct bpf_tramp_links *fentry_links)
+  */
+ static int prepare_trampoline(struct jit_ctx *ctx, struct bpf_tramp_image *im,
+ 			      struct bpf_tramp_links *tlinks, void *func_addr,
+-			      int nregs, u32 flags)
++			      const struct btf_func_model *m,
++			      const struct arg_aux *a,
++			      u32 flags)
+ {
+ 	int i;
+ 	int stack_size;
+ 	int retaddr_off;
+ 	int regs_off;
+ 	int retval_off;
+-	int args_off;
+-	int nregs_off;
++	int bargs_off;
++	int nfuncargs_off;
+ 	int ip_off;
+ 	int run_ctx_off;
++	int oargs_off;
++	int nfuncargs;
+ 	struct bpf_tramp_links *fentry = &tlinks[BPF_TRAMP_FENTRY];
+ 	struct bpf_tramp_links *fexit = &tlinks[BPF_TRAMP_FEXIT];
+ 	struct bpf_tramp_links *fmod_ret = &tlinks[BPF_TRAMP_MODIFY_RETURN];
+@@ -2213,31 +2319,38 @@ static int prepare_trampoline(struct jit_ctx *ctx, struct bpf_tramp_image *im,
+ 	bool is_struct_ops = is_struct_ops_tramp(fentry);
+ 
+ 	/* trampoline stack layout:
+-	 *                  [ parent ip         ]
+-	 *                  [ FP                ]
+-	 * SP + retaddr_off [ self ip           ]
+-	 *                  [ FP                ]
++	 *                    [ parent ip         ]
++	 *                    [ FP                ]
++	 * SP + retaddr_off   [ self ip           ]
++	 *                    [ FP                ]
+ 	 *
+-	 *                  [ padding           ] align SP to multiples of 16
++	 *                    [ padding           ] align SP to multiples of 16
+ 	 *
+-	 *                  [ x20               ] callee saved reg x20
+-	 * SP + regs_off    [ x19               ] callee saved reg x19
++	 *                    [ x20               ] callee saved reg x20
++	 * SP + regs_off      [ x19               ] callee saved reg x19
+ 	 *
+-	 * SP + retval_off  [ return value      ] BPF_TRAMP_F_CALL_ORIG or
+-	 *                                        BPF_TRAMP_F_RET_FENTRY_RET
++	 * SP + retval_off    [ return value      ] BPF_TRAMP_F_CALL_ORIG or
++	 *                                          BPF_TRAMP_F_RET_FENTRY_RET
++	 *                    [ arg reg N         ]
++	 *                    [ ...               ]
++	 * SP + bargs_off     [ arg reg 1         ] for bpf
+ 	 *
+-	 *                  [ arg reg N         ]
+-	 *                  [ ...               ]
+-	 * SP + args_off    [ arg reg 1         ]
++	 * SP + nfuncargs_off [ arg regs count    ]
+ 	 *
+-	 * SP + nregs_off   [ arg regs count    ]
++	 * SP + ip_off        [ traced function   ] BPF_TRAMP_F_IP_ARG flag
+ 	 *
+-	 * SP + ip_off      [ traced function   ] BPF_TRAMP_F_IP_ARG flag
++	 * SP + run_ctx_off   [ bpf_tramp_run_ctx ]
+ 	 *
+-	 * SP + run_ctx_off [ bpf_tramp_run_ctx ]
++	 *                    [ stack arg N       ]
++	 *                    [ ...               ]
++	 * SP + oargs_off     [ stack arg 1       ] for original func
+ 	 */
+ 
+ 	stack_size = 0;
++	oargs_off = stack_size;
++	if (flags & BPF_TRAMP_F_CALL_ORIG)
++		stack_size +=  a->ostack_for_args;
++
+ 	run_ctx_off = stack_size;
+ 	/* room for bpf_tramp_run_ctx */
+ 	stack_size += round_up(sizeof(struct bpf_tramp_run_ctx), 8);
+@@ -2247,13 +2360,14 @@ static int prepare_trampoline(struct jit_ctx *ctx, struct bpf_tramp_image *im,
+ 	if (flags & BPF_TRAMP_F_IP_ARG)
+ 		stack_size += 8;
+ 
+-	nregs_off = stack_size;
++	nfuncargs_off = stack_size;
+ 	/* room for args count */
+ 	stack_size += 8;
+ 
+-	args_off = stack_size;
++	bargs_off = stack_size;
+ 	/* room for args */
+-	stack_size += nregs * 8;
++	nfuncargs = a->regs_for_args + a->bstack_for_args / 8;
++	stack_size += 8 * nfuncargs;
+ 
+ 	/* room for return value */
+ 	retval_off = stack_size;
+@@ -2300,11 +2414,11 @@ static int prepare_trampoline(struct jit_ctx *ctx, struct bpf_tramp_image *im,
+ 	}
+ 
+ 	/* save arg regs count*/
+-	emit(A64_MOVZ(1, A64_R(10), nregs, 0), ctx);
+-	emit(A64_STR64I(A64_R(10), A64_SP, nregs_off), ctx);
++	emit(A64_MOVZ(1, A64_R(10), nfuncargs, 0), ctx);
++	emit(A64_STR64I(A64_R(10), A64_SP, nfuncargs_off), ctx);
+ 
+-	/* save arg regs */
+-	save_args(ctx, args_off, nregs);
++	/* save args for bpf */
++	save_args(ctx, bargs_off, oargs_off, m, a, false);
+ 
+ 	/* save callee saved registers */
+ 	emit(A64_STR64I(A64_R(19), A64_SP, regs_off), ctx);
+@@ -2320,7 +2434,7 @@ static int prepare_trampoline(struct jit_ctx *ctx, struct bpf_tramp_image *im,
+ 	}
+ 
+ 	for (i = 0; i < fentry->nr_links; i++)
+-		invoke_bpf_prog(ctx, fentry->links[i], args_off,
++		invoke_bpf_prog(ctx, fentry->links[i], bargs_off,
+ 				retval_off, run_ctx_off,
+ 				flags & BPF_TRAMP_F_RET_FENTRY_RET);
+ 
+@@ -2330,12 +2444,13 @@ static int prepare_trampoline(struct jit_ctx *ctx, struct bpf_tramp_image *im,
+ 		if (!branches)
+ 			return -ENOMEM;
+ 
+-		invoke_bpf_mod_ret(ctx, fmod_ret, args_off, retval_off,
++		invoke_bpf_mod_ret(ctx, fmod_ret, bargs_off, retval_off,
+ 				   run_ctx_off, branches);
+ 	}
+ 
+ 	if (flags & BPF_TRAMP_F_CALL_ORIG) {
+-		restore_args(ctx, args_off, nregs);
++		/* save args for original func */
++		save_args(ctx, bargs_off, oargs_off, m, a, true);
+ 		/* call original func */
+ 		emit(A64_LDR64I(A64_R(10), A64_SP, retaddr_off), ctx);
+ 		emit(A64_ADR(A64_LR, AARCH64_INSN_SIZE * 2), ctx);
+@@ -2354,7 +2469,7 @@ static int prepare_trampoline(struct jit_ctx *ctx, struct bpf_tramp_image *im,
+ 	}
+ 
+ 	for (i = 0; i < fexit->nr_links; i++)
+-		invoke_bpf_prog(ctx, fexit->links[i], args_off, retval_off,
++		invoke_bpf_prog(ctx, fexit->links[i], bargs_off, retval_off,
+ 				run_ctx_off, false);
+ 
+ 	if (flags & BPF_TRAMP_F_CALL_ORIG) {
+@@ -2368,7 +2483,7 @@ static int prepare_trampoline(struct jit_ctx *ctx, struct bpf_tramp_image *im,
+ 	}
+ 
+ 	if (flags & BPF_TRAMP_F_RESTORE_REGS)
+-		restore_args(ctx, args_off, nregs);
++		restore_args(ctx, bargs_off, a->regs_for_args);
+ 
+ 	/* restore callee saved register x19 and x20 */
+ 	emit(A64_LDR64I(A64_R(19), A64_SP, regs_off), ctx);
+@@ -2428,14 +2543,16 @@ int arch_bpf_trampoline_size(const struct btf_func_model *m, u32 flags,
+ 		.idx = 0,
+ 	};
+ 	struct bpf_tramp_image im;
++	struct arg_aux  aaux;
+ 	int nregs, ret;
+ 
+ 	nregs = btf_func_model_nregs(m);
+-	/* the first 8 registers are used for arguments */
+-	if (nregs > 8)
+-		return -ENOTSUPP;
+ 
+-	ret = prepare_trampoline(&ctx, &im, tlinks, func_addr, nregs, flags);
++	ret = calc_arg_aux(m, &aaux);
++	if (ret < 0)
++		return ret;
++
++	ret = prepare_trampoline(&ctx, &im, tlinks, func_addr, m, &aaux, flags);
+ 	if (ret < 0)
+ 		return ret;
+ 
+@@ -2462,9 +2579,10 @@ int arch_prepare_bpf_trampoline(struct bpf_tramp_image *im, void *ro_image,
+ 				u32 flags, struct bpf_tramp_links *tlinks,
+ 				void *func_addr)
+ {
+-	int ret, nregs;
+-	void *image, *tmp;
+ 	u32 size = ro_image_end - ro_image;
++	struct arg_aux aaux;
++	void *image, *tmp;
++	int ret;
+ 
+ 	/* image doesn't need to be in module memory range, so we can
+ 	 * use kvmalloc.
+@@ -2480,13 +2598,12 @@ int arch_prepare_bpf_trampoline(struct bpf_tramp_image *im, void *ro_image,
+ 		.write = true,
+ 	};
+ 
+-	nregs = btf_func_model_nregs(m);
+-	/* the first 8 registers are used for arguments */
+-	if (nregs > 8)
+-		return -ENOTSUPP;
+ 
+ 	jit_fill_hole(image, (unsigned int)(ro_image_end - ro_image));
+-	ret = prepare_trampoline(&ctx, im, tlinks, func_addr, nregs, flags);
++	ret = calc_arg_aux(m, &aaux);
++	if (ret)
++		goto out;
++	ret = prepare_trampoline(&ctx, im, tlinks, func_addr, m, &aaux, flags);
+ 
+ 	if (ret > 0 && validate_code(&ctx) < 0) {
+ 		ret = -EINVAL;
+
+-- 
+2.49.0
 
-Hi Linus,
-
-Here is the main PDx86 PR for v6.16.
-
-A KNOWN CONFLICT:
-
-x86 tree that seems to be already merged into your tree renamed:
-  arch/x86/include/asm/{amd_hsmp.h => amd/hsmp.h}
-which has to be adjusted also in drivers/platform/x86/amd/hsmp/hwmon.c
-(a newly introduced file in this PR) while merging.
-
-The changes are mostly business as usual. Besides pdx86 changes, there
-are a few power supply changes needed for related pdx86 features, move
-of oxpec driver from hwmon (oxp-sensors) to pdx86, and one FW version
-warning to hid-asus. I'm expecting Pavel might want object the approach
-used in the tuxedo driver, I largely relied on my co-maintainer Hans'
-opinion on what to do with that change as he was much more familiar with
-that discussion, and the pros and cons of each approach.
-
-Highlights:
-
- - alienware-wmi-wmax:
-
-   - Add HWMON support
-
-   - Add ABI and admin-guide documentation
-
-   - Expose GPIO debug methods through debug FS
-
-   - Support manual fan control and "custom" thermal profile
-
- - amd/hsmp:
-
-   - Add sysfs files to show HSMP telemetry
-
-   - Report power readings and limits via hwmon
-
- - amd/isp4: Add AMD ISP platform config for OV05C10
-
- - asus-wmi:
-
-   - Refactor Ally suspend/resume to work better with older FW
-
-   - hid-asus: check ROG Ally MCU version and warn about old FW versions
-
- - dasharo-acpi: Add driver for Dasharo devices supporting fans and
-                 temperatures monitoring
-
- - dell-ddv:
-
-   - Expose the battery health and manufacture date to userspace using
-     power supply extensions
-
-   - Implement the battery matching algorithm
-
- - dell-pc:
-
-  - Improve error propagation
-
-  - Use faux device
-
- - int3472:
-
-   - Add delays to avoid GPIO regulator spikes
-
-   - Add handshake pin support
-
-   - Make regulator supply name configurable and allow registering more
-     than 1 GPIO regulator
-
-   - Map mt9m114 powerdown pin to powerenable
-
- - intel/pmc: Add separate SSRAM Telemetry driver
-
- - intel-uncore-freq: Add attributes to show agent types and die ID
-
- - ISST:
-
-   - Support SST-TF revision 2 (allows more cores per bucket)
-
-   - Support SST-PP revision 2 (fabric 1 frequencies)
-
-   - Remove unnecessary SST MSRs restore (the package retains MSRs
-     despite CPU offlining)
-
- - mellanox: Add support for SN2201, SN4280, SN5610, and SN5640
-
- - mellanox: mlxbf-pmc: Support additional PMC blocks
-
- - oxpec:
-
-   - Add OneXFly variants
-
-   - Add support for charge limit, charge thresholds, and turbo LED
-
-   - Distinguish current X1 variants to avoid unwanted matching to new
-     variants
-
-   - Follow hwmon conventions
-
-   - Move from hwmon/oxp-sensors to platform/x86 to match the enlarged
-     scope
-
- - power: supply: 
-
-   - Add inhibit-charge-awake (needed by oxpec)
-
-   - Add additional battery health status values ("blown fuse" and "cell
-     imbalance") (needed by dell-ddv)
-
- - powerwell-ec: Add driver for Portwell EC supporting GPIO and watchdog
-
- - thinkpad-acpi: Support camera shutter switch hotkey
-
- - tuxedo: Add virtual LampArray for TUXEDO NB04 devices
-
- - tools/power/x86/intel-speed-select:
-
-   - Support displaying SST-PP revision 2 fields
-
-   - Skip uncore frequency update on newer generations of CPUs
-
- - Miscellaneous cleanups / refactoring / improvements
-
-Regards, i.
-
-
-The following changes since commit 0af2f6be1b4281385b618cb86ad946eded089ac8:
-
-  Linux 6.15-rc1 (2025-04-06 13:11:33 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git tags/platform-drivers-x86-v6.16-1
-
-for you to fetch changes up to 9c96808f10d84156b5e98e16176b725ec5a1386f:
-
-  thermal/drivers/acerhdf: Constify struct thermal_zone_device_ops (2025-05-26 15:31:27 +0300)
-
-----------------------------------------------------------------
-platform-drivers-x86 for v6.16-1
-
-Highlights:
-
- - alienware-wmi-wmax:
-
-   - Add HWMON support
-
-   - Add ABI and admin-guide documentation
-
-   - Expose GPIO debug methods through debug FS
-
-   - Support manual fan control and "custom" thermal profile
-
- - amd/hsmp:
-
-   - Add sysfs files to show HSMP telemetry
-
-   - Report power readings and limits via hwmon
-
- - amd/isp4: Add AMD ISP platform config for OV05C10
-
- - asus-wmi:
-
-   - Refactor Ally suspend/resume to work better with older FW
-
-   - hid-asus: check ROG Ally MCU version and warn about old FW versions
-
- - dasharo-acpi: Add driver for Dasharo devices supporting fans and
-                 temperatures monitoring
-
- - dell-ddv:
-
-   - Expose the battery health and manufacture date to userspace using
-     power supply extensions
-
-   - Implement the battery matching algorithm
-
- - dell-pc:
-
-  - Improve error propagation
-
-  - Use faux device
-
- - int3472:
-
-   - Add delays to avoid GPIO regulator spikes
-
-   - Add handshake pin support
-
-   - Make regulator supply name configurable and allow registering more
-     than 1 GPIO regulator
-
-   - Map mt9m114 powerdown pin to powerenable
-
- - intel/pmc: Add separate SSRAM Telemetry driver
-
- - intel-uncore-freq: Add attributes to show agent types and die ID
-
- - ISST:
-
-   - Support SST-TF revision 2 (allows more cores per bucket)
-
-   - Support SST-PP revision 2 (fabric 1 frequencies)
-
-   - Remove unnecessary SST MSRs restore (the package retains MSRs
-     despite CPU offlining)
-
- - mellanox: Add support for SN2201, SN4280, SN5610, and SN5640
-
- - mellanox: mlxbf-pmc: Support additional PMC blocks
-
- - oxpec:
-
-   - Add OneXFly variants
-
-   - Add support for charge limit, charge thresholds, and turbo LED
-
-   - Distinguish current X1 variants to avoid unwanted matching to new
-     variants
-
-   - Follow hwmon conventions
-
-   - Move from hwmon/oxp-sensors to platform/x86 to match the enlarged
-     scope
-
- - power: supply:
-
-   - Add inhibit-charge-awake (needed by oxpec)
-
-   - Add additional battery health status values ("blown fuse" and "cell
-     imbalance") (needed by dell-ddv)
-
- - powerwell-ec: Add driver for Portwell EC supporting GPIO and watchdog
-
- - thinkpad-acpi: Support camera shutter switch hotkey
-
- - tuxedo: Add virtual LampArray for TUXEDO NB04 devices
-
- - tools/power/x86/intel-speed-select:
-
-   - Support displaying SST-PP revision 2 fields
-
-   - Skip uncore frequency update on newer generations of CPUs
-
- - Miscellaneous cleanups / refactoring / improvements
-
-The following is an automated shortlog grouped by driver:
-
-ABI: testing: sysfs-class-oxp:
- -  add missing documentation
- -  add tt_led attribute documentation
-
-Add AMD ISP platform config for OV05C10:
- - Add AMD ISP platform config for OV05C10
-
-alienware-wmi-wmax:
- -  Add a DebugFS interface
- -  Add HWMON support
- -  Add support for manual fan control
- -  Add support for the "custom" thermal profile
- -  Expose GPIO debug methods
- -  Fix awcc_hwmon_fans_init() label logic
- -  Fix uninitialized bitmap in awcc_hwmon_fans_init()
- -  Improve ID processing
- -  Improve internal AWCC API
- -  Improve platform profile probe
- -  Modify supported_thermal_profiles[]
- -  Rename thermal related symbols
-
-amd/hsmp: acpi:
- -  Add sysfs files to display HSMP telemetry
-
-amd/hsmp:
- -  fix building with CONFIG_HWMON=m
- -  Report power via hwmon sensors
- -  Use a single DRIVER_VERSION for all hsmp modules
-
-arm64: huawei-gaokun-ec:
- -  Remove unneeded semicolon
-
-asus-wmi:
- -  fix build without CONFIG_SUSPEND
- -  Refactor Ally suspend/resume
-
-Avoid -Wflex-array-member-not-at-end warning:
- - Avoid -Wflex-array-member-not-at-end warning
-
-barco-p50:
- -  use new GPIO line value setter callbacks
-
-dell-ddv:
- -  Expose the battery health to userspace
- -  Expose the battery manufacture date to userspace
- -  Implement the battery matching algorithm
-
-dell-pc:
- -  Propagate errors when detecting feature support
- -  Transition to faux device
- -  Use non-atomic bitmap operations
-
-docs: ABI:
- -  Fix "aassociated" to "associated"
-
-Documentation/ABI:
- -  Add new attribute for mlxreg-io sysfs interfaces
-
-Documentation: ABI:
- -  Add sysfs platform and debugfs ABI documentation for alienware-wmi
-
-Documentation: admin-guide: laptops:
- -  Add documentation for alienware-wmi
-
-Documentation: admin-guide: pm:
- -  Add documentation for agent_types
- -  Add documentation for die_id
-
-Documentation: wmi: alienware-wmi:
- -  Add GPIO control documentation
-
-Documentation: wmi:
- -  Improve and update alienware-wmi documentation
-
-Do not enable by default during compile testing:
- - Do not enable by default during compile testing
-
-hid-asus:
- -  check ROG Ally MCU version and warn
-
-hwmon:
- -  (oxp-sensors) Add all OneXFly variants
- -  (oxp-sensors) Distinguish the X1 variants
-
-int0002:
- -  use new GPIO line value setter callbacks
-
-int3472:
- -  Add handshake pin support
- -  Add skl_int3472_register_clock() helper
- -  Avoid GPIO regulator spikes
- -  Debug log when remapping pins
- -  Drop unused gpio field from struct int3472_gpio_regulator
- -  Export int3472_discrete_parse_crs()
- -  For mt9m114 sensors map powerdown to powerenable
- -  Make regulator supply name configurable
- -  Move common.h to public includes, symbols to INTEL_INT3472
- -  Prepare for registering more than 1 GPIO regulator
- -  Remove unused sensor_config struct member
- -  Rework AVDD second sensor quirk handling
- -  Stop setting a supply-name for GPIO regulators
- -  Stop using devm_gpiod_get()
-
-intel/pmc:
- -  Convert index variables to be unsigned
- -  Create Intel PMC SSRAM Telemetry driver
- -  Improve pmc_core_get_lpm_req()
- -  Move error handling to init function
- -  Move PMC Core related functions
- -  Move PMC devid to core.h
- -  Remove unneeded header file inclusion
- -  Remove unneeded io operations
- -  Rename core_ssram to ssram_telemetry
- -  Use devm for mutex_init
-
-intel: power-domains:
- -  Add interface to get Linux die ID
-
-intel-uncore-freq:
- -  Add attributes to show agent types
- -  Add attributes to show die_id
-
-intel/vsec:
- -  Change return type of intel_vsec_register
-
-Introduce dasharo-acpi platform driver:
- - Introduce dasharo-acpi platform driver
-
-ISST:
- -  Do Not Restore SST MSRs on CPU Online Operation
- -  Support SST-PP revision 2
- -  Support SST-TF revision 2
- -  Update minor version
-
-mellanox:
- -  Cosmetic changes to improve code style
- -  Introduce support of Nvidia smart switch
- -  Rename field to improve code readability
-
-mlxbf-pmc:
- -  Support additional PMC blocks
-
-mlx-platform:
- -  Add support for new Nvidia system
-
-mlxreg-dpu:
- -  Add initial support for Nvidia DPU
- -  Fix smatch warnings
-
-nvsw-sn2200:
- -  Add support for new system flavour
- -  Fix .items in nvsw_sn2201_busbar_hotplug
-
-oxpec:
- -  Add a lower bounds check in oxp_psy_ext_set_prop()
- -  Add charge threshold and behaviour to OneXPlayer
- -  Add support for the OneXPlayer G1
- -  Add turbo led support to X1 devices
- -  Adhere to sysfs-class-hwmon and enable pwm on 2
- -  Convert defines to using tabs
- -  Follow reverse xmas convention for tt_toggle
- -  Make turbo val apply a bitmask
- -  Move fan speed read to separate function
- -  Move hwmon/oxp-sensors to platform/x86
- -  Move pwm_enable read to its own function
- -  Move pwm value read/write to separate functions
- -  Rename ec group to tt_toggle
- -  Rename rval to ret in tt_toggle
-
-portwell-ec:
- -  Add GPIO and WDT driver for Portwell EC
-
-power: supply:
- -  add inhibit-charge-awake to charge_behaviour
-
-power: supply: core:
- -  Add additional health status values
-
-silicom:
- -  use new GPIO line value setter callbacks
-
-sony-laptop:
- -  Remove unused sony laptop camera code
-
-thermal/drivers/acerhdf:
- -  Constify struct thermal_zone_device_ops
-
-thinkpad-acpi:
- -  Add support for new hotkey for camera shutter switch
-
-tools/power/x86/intel-speed-select:
- -  Skip uncore frequency update
- -  Support SST PP revision 2 fields
- -  v1.23 release
-
-tuxedo:
- -  Add virtual LampArray for TUXEDO NB04 devices
- -  Prevent invalid Kconfig state
-
-Use strscpy()/scnprintf() with acpi_device_name/class():
- - Use strscpy()/scnprintf() with acpi_device_name/class()
-
-Merges:
- -  Merge branch 'fixes' into for-next
- -  Merge branch 'intel-sst' of https://github.com/spandruvada/linux-kernel into for-next
-
-----------------------------------------------------------------
-Antheas Kapenekakis (18):
-      hwmon: (oxp-sensors) Distinguish the X1 variants
-      hwmon: (oxp-sensors) Add all OneXFly variants
-      platform/x86: oxpec: Move hwmon/oxp-sensors to platform/x86
-      ABI: testing: sysfs-class-oxp: add missing documentation
-      ABI: testing: sysfs-class-oxp: add tt_led attribute documentation
-      platform/x86: oxpec: Rename ec group to tt_toggle
-      platform/x86: oxpec: Add turbo led support to X1 devices
-      platform/x86: oxpec: Move pwm_enable read to its own function
-      platform/x86: oxpec: Move pwm value read/write to separate functions
-      platform/x86: oxpec: Move fan speed read to separate function
-      platform/x86: oxpec: Adhere to sysfs-class-hwmon and enable pwm on 2
-      platform/x86: oxpec: Follow reverse xmas convention for tt_toggle
-      power: supply: add inhibit-charge-awake to charge_behaviour
-      platform/x86: oxpec: Add charge threshold and behaviour to OneXPlayer
-      platform/x86: oxpec: Rename rval to ret in tt_toggle
-      platform/x86: oxpec: Convert defines to using tabs
-      platform/x86: oxpec: Make turbo val apply a bitmask
-      platform/x86: oxpec: Add support for the OneXPlayer G1
-
-Armin Wolf (6):
-      platform/x86: msi-wmi-platform: Rename "data" variable
-      platform/x86: msi-wmi-platform: Workaround a ACPI firmware bug
-      power: supply: core: Add additional health status values
-      platform/x86: dell-ddv: Implement the battery matching algorithm
-      platform/x86: dell-ddv: Expose the battery manufacture date to userspace
-      platform/x86: dell-ddv: Expose the battery health to userspace
-
-Arnd Bergmann (1):
-      platform/x86/amd/hsmp: fix building with CONFIG_HWMON=m
-
-Bartosz Golaszewski (3):
-      platform/x86: barco-p50: use new GPIO line value setter callbacks
-      platform/x86: int0002: use new GPIO line value setter callbacks
-      platform/x86: silicom: use new GPIO line value setter callbacks
-
-Chen Ni (1):
-      platform: arm64: huawei-gaokun-ec: Remove unneeded semicolon
-
-Christophe JAILLET (1):
-      thermal/drivers/acerhdf: Constify struct thermal_zone_device_ops
-
-Dan Carpenter (1):
-      platform/x86: oxpec: Add a lower bounds check in oxp_psy_ext_set_prop()
-
-David E. Box (1):
-      platform/x86: intel_pmc_ipc: add option to build without ACPI
-
-David Thompson (1):
-      mlxbf-bootctl: use sysfs_emit_at() in secure_boot_fuse_state_show()
-
-Denis Arefev (1):
-      asus-laptop: Fix an uninitialized variable
-
-Dr. David Alan Gilbert (1):
-      platform/x86/sony-laptop: Remove unused sony laptop camera code
-
-Gašper Nemgar (1):
-      platform/x86: ideapad-laptop: add support for some new buttons
-
-Gustavo A. R. Silva (1):
-      platform/x86: Avoid -Wflex-array-member-not-at-end warning
-
-Hans de Goede (17):
-      platform/x86: x86-android-tablets: Add "9v" to Vexia EDU ATLA 10 tablet symbols
-      platform/x86: x86-android-tablets: Add Vexia Edu Atla 10 tablet 5V data
-      platform/x86: int3472: Add skl_int3472_register_clock() helper
-      platform/x86: int3472: Stop setting a supply-name for GPIO regulators
-      platform/x86: int3472: Drop unused gpio field from struct int3472_gpio_regulator
-      platform/x86: int3472: Rework AVDD second sensor quirk handling
-      platform/x86: int3472: Make regulator supply name configurable
-      platform/x86: int3472: Avoid GPIO regulator spikes
-      platform/x86: int3472: Prepare for registering more than 1 GPIO regulator
-      platform/x86: int3472: Add handshake pin support
-      platform/x86: int3472: Debug log when remapping pins
-      platform/x86: asus-wmi: Fix wlan_ctrl_by_user detection
-      platform/x86: int3472: Move common.h to public includes, symbols to INTEL_INT3472
-      platform/x86: int3472: Stop using devm_gpiod_get()
-      platform/x86: int3472: Export int3472_discrete_parse_crs()
-      platform/x86: int3472: Remove unused sensor_config struct member
-      platform/x86: int3472: For mt9m114 sensors map powerdown to powerenable
-
-Ilpo Järvinen (3):
-      platform/x86: Use strscpy()/scnprintf() with acpi_device_name/class()
-      Merge branch 'fixes' into for-next
-      Merge branch 'intel-sst' of https://github.com/spandruvada/linux-kernel into for-next
-
-John Chau (1):
-      platform/x86: thinkpad_acpi: Support also NEC Lavie X1475JAS
-
-Krzysztof Kozlowski (1):
-      platform: Do not enable by default during compile testing
-
-Kurt Borja (23):
-      platform/x86: alienware-wmi-wmax: Rename thermal related symbols
-      platform/x86: alienware-wmi-wmax: Improve ID processing
-      platform/x86: alienware-wmi-wmax: Improve internal AWCC API
-      platform/x86: alienware-wmi-wmax: Modify supported_thermal_profiles[]
-      platform/x86: alienware-wmi-wmax: Improve platform profile probe
-      platform/x86: alienware-wmi-wmax: Add support for the "custom" thermal profile
-      platform/x86: alienware-wmi-wmax: Add HWMON support
-      platform/x86: alienware-wmi-wmax: Add support for manual fan control
-      platform/x86: alienware-wmi-wmax: Add a DebugFS interface
-      Documentation: wmi: Improve and update alienware-wmi documentation
-      Documentation: admin-guide: laptops: Add documentation for alienware-wmi
-      Documentation: ABI: Add sysfs platform and debugfs ABI documentation for alienware-wmi
-      platform/x86: alienware-wmi-wmax: Add G-Mode support to Alienware m16 R1
-      platform/x86: alienware-wmi-wmax: Extend support to more laptops
-      platform/x86: alienware-wmi-wmax: Fix uninitialized variable due to bad error handling
-      platform/x86: alienware-wmi-wmax: Add support for Alienware m15 R7
-      platform/x86: dell-pc: Propagate errors when detecting feature support
-      platform/x86: dell-pc: Use non-atomic bitmap operations
-      platform/x86: dell-pc: Transition to faux device
-      platform/x86: alienware-wmi-wmax: Fix uninitialized bitmap in awcc_hwmon_fans_init()
-      platform/x86: alienware-wmi-wmax: Fix awcc_hwmon_fans_init() label logic
-      platform/x86: alienware-wmi-wmax: Expose GPIO debug methods
-      Documentation: wmi: alienware-wmi: Add GPIO control documentation
-
-Luke D. Jones (2):
-      hid-asus: check ROG Ally MCU version and warn
-      platform/x86: asus-wmi: Refactor Ally suspend/resume
-
-Luke Jones (1):
-      platform/x86: asus-wmi: fix build without CONFIG_SUSPEND
-
-Mario Limonciello (4):
-      platform/x86: amd: pmf: Fix STT limits
-      platform/x86/amd: pmc: Require at least 2.5 seconds between HW sleep cycles
-      drivers/platform/x86/amd: pmf: Check for invalid sideloaded Smart PC Policies
-      drivers/platform/x86/amd: pmf: Check for invalid Smart PC Policies
-
-Michał Kopeć (1):
-      platform/x86: Introduce dasharo-acpi platform driver
-
-Nathan Chancellor (1):
-      platform: mellanox: nvsw-sn2200: Fix .items in nvsw_sn2201_busbar_hotplug
-
-Nitin Joshi (1):
-      platform/x86: thinkpad-acpi: Add support for new hotkey for camera shutter switch
-
-Pavel Nikulin (1):
-      platform/x86: asus-wmi: Disable OOBE state after resume from hibernation
-
-Pratap Nirujogi (1):
-      platform/x86: Add AMD ISP platform config for OV05C10
-
-Runhua He (1):
-      platform/x86/amd/pmc: Declare quirk_spurious_8042 for MECHREVO Wujie 14XA (GX4HRXL)
-
-Saranya Gopal (1):
-      platform/x86/intel: hid: Add Pantherlake support
-
-Shouye Liu (1):
-      platform/x86/intel-uncore-freq: Fix missing uncore sysfs during CPU hotplug
-
-Shravan Kumar Ramani (1):
-      platform/mellanox: mlxbf-pmc: Support additional PMC blocks
-
-Srinivas Pandruvada (12):
-      platform/x86: ISST: Support SST-TF revision 2
-      platform/x86: ISST: Support SST-PP revision 2
-      platform/x86: ISST: Update minor version
-      platform/x86: ISST: Do Not Restore SST MSRs on CPU Online Operation
-      tools/power/x86/intel-speed-select: Support SST PP revision 2 fields
-      tools/power/x86/intel-speed-select: Skip uncore frequency update
-      tools/power/x86/intel-speed-select: v1.23 release
-      platform/x86/intel-uncore-freq: Add attributes to show agent types
-      Documentation: admin-guide: pm: Add documentation for agent_types
-      platform/x86/intel: power-domains: Add interface to get Linux die ID
-      platform/x86/intel-uncore-freq: Add attributes to show die_id
-      Documentation: admin-guide: pm: Add documentation for die_id
-
-Suma Hegde (4):
-      platform/x86/amd/hsmp: Make amd_hsmp and hsmp_acpi as mutually exclusive drivers
-      platform/x86/amd/hsmp: Use a single DRIVER_VERSION for all hsmp modules
-      platform/x86/amd/hsmp: Report power via hwmon sensors
-      platform/x86/amd/hsmp: acpi: Add sysfs files to display HSMP telemetry
-
-Sumanth Gavini (1):
-      docs: ABI: Fix "aassociated" to "associated"
-
-Vadim Pasternak (8):
-      platform/mellanox: Rename field to improve code readability
-      platform/mellanox: mlxreg-dpu: Add initial support for Nvidia DPU
-      platform: mellanox: Introduce support of Nvidia smart switch
-      platform: mellanox: Cosmetic changes to improve code style
-      platform: mellanox: mlx-platform: Add support for new Nvidia system
-      platform: mellanox: nvsw-sn2200: Add support for new system flavour
-      Documentation/ABI: Add new attribute for mlxreg-io sysfs interfaces
-      platform/mellanox: mlxreg-dpu: Fix smatch warnings
-
-Werner Sembach (2):
-      platform/x86/tuxedo: Add virtual LampArray for TUXEDO NB04 devices
-      platform/x86/tuxedo: Prevent invalid Kconfig state
-
-Xi Pardee (11):
-      platform/x86:intel/pmc: Move PMC Core related functions
-      platform/x86:intel/pmc: Rename core_ssram to ssram_telemetry
-      platform/x86:intel/pmc: Move PMC devid to core.h
-      platform/x86:intel/pmc: Convert index variables to be unsigned
-      platform/x86:intel/pmc: Remove unneeded header file inclusion
-      platform/x86:intel/pmc: Remove unneeded io operations
-      platform/x86:intel/vsec: Change return type of intel_vsec_register
-      platform/x86:intel/pmc: Create Intel PMC SSRAM Telemetry driver
-      platform/x86:intel/pmc: Use devm for mutex_init
-      platform/x86:intel/pmc: Move error handling to init function
-      platform/x86:intel/pmc: Improve pmc_core_get_lpm_req()
-
-Yen-Chi Huang (1):
-      platform/x86: portwell-ec: Add GPIO and WDT driver for Portwell EC
-
- Documentation/ABI/stable/sysfs-driver-mlxreg-io    |   98 +
- Documentation/ABI/testing/debugfs-alienware-wmi    |   64 +
- Documentation/ABI/testing/sysfs-bus-wmi            |    2 +-
- Documentation/ABI/testing/sysfs-class-power        |   13 +-
- .../ABI/testing/sysfs-platform-alienware-wmi       |   14 +
- Documentation/ABI/testing/sysfs-platform-oxp       |   25 +
- .../admin-guide/laptops/alienware-wmi.rst          |  127 +
- Documentation/admin-guide/laptops/index.rst        |    1 +
- .../pm/intel_uncore_frequency_scaling.rst          |   10 +
- Documentation/arch/x86/amd_hsmp.rst                |   30 +
- Documentation/hwmon/index.rst                      |    1 -
- Documentation/hwmon/oxp-sensors.rst                |   89 -
- Documentation/wmi/devices/alienware-wmi.rst        |  425 +--
- Documentation/wmi/devices/dell-wmi-ddv.rst         |   46 +-
- Documentation/wmi/devices/msi-wmi-platform.rst     |    4 +
- MAINTAINERS                                        |   30 +-
- drivers/hid/hid-asus.c                             |  111 +-
- drivers/hwmon/Kconfig                              |   11 -
- drivers/hwmon/Makefile                             |    1 -
- drivers/hwmon/oxp-sensors.c                        |  716 ----
- drivers/platform/arm64/Kconfig                     |    2 +-
- drivers/platform/arm64/huawei-gaokun-ec.c          |    2 +-
- drivers/platform/mellanox/Kconfig                  |   13 +
- drivers/platform/mellanox/Makefile                 |    1 +
- drivers/platform/mellanox/mlx-platform.c           | 3640 ++++++++++++++------
- drivers/platform/mellanox/mlxbf-bootctl.c          |    4 +-
- drivers/platform/mellanox/mlxbf-pmc.c              |  155 +-
- drivers/platform/mellanox/mlxreg-dpu.c             |  613 ++++
- drivers/platform/mellanox/mlxreg-hotplug.c         |    8 +-
- drivers/platform/mellanox/nvsw-sn2201.c            |  112 +-
- drivers/platform/surface/Kconfig                   |    2 +-
- drivers/platform/x86/Kconfig                       |   40 +
- drivers/platform/x86/Makefile                      |   12 +
- drivers/platform/x86/acerhdf.c                     |    4 +-
- drivers/platform/x86/amd/Kconfig                   |   11 +
- drivers/platform/x86/amd/Makefile                  |    1 +
- drivers/platform/x86/amd/amd_isp4.c                |  311 ++
- drivers/platform/x86/amd/hsmp/Kconfig              |    2 +
- drivers/platform/x86/amd/hsmp/Makefile             |    1 +
- drivers/platform/x86/amd/hsmp/acpi.c               |  270 +-
- drivers/platform/x86/amd/hsmp/hsmp.c               |   25 +-
- drivers/platform/x86/amd/hsmp/hsmp.h               |   10 +
- drivers/platform/x86/amd/hsmp/hwmon.c              |  121 +
- drivers/platform/x86/amd/hsmp/plat.c               |   12 +-
- drivers/platform/x86/amd/pmc/pmc-quirks.c          |    7 +
- drivers/platform/x86/amd/pmc/pmc.c                 |    7 +-
- drivers/platform/x86/amd/pmf/auto-mode.c           |    4 +-
- drivers/platform/x86/amd/pmf/cnqf.c                |    8 +-
- drivers/platform/x86/amd/pmf/core.c                |   14 +
- drivers/platform/x86/amd/pmf/pmf.h                 |    1 +
- drivers/platform/x86/amd/pmf/sps.c                 |   12 +-
- drivers/platform/x86/amd/pmf/tee-if.c              |   29 +-
- drivers/platform/x86/asus-laptop.c                 |    9 +-
- drivers/platform/x86/asus-wmi.c                    |  162 +-
- drivers/platform/x86/barco-p50-gpio.c              |   10 +-
- drivers/platform/x86/dasharo-acpi.c                |  360 ++
- drivers/platform/x86/dell/Kconfig                  |    3 +-
- drivers/platform/x86/dell/alienware-wmi-wmax.c     | 1159 ++++++-
- drivers/platform/x86/dell/dell-pc.c                |   67 +-
- drivers/platform/x86/dell/dell-wmi-ddv.c           |  246 +-
- drivers/platform/x86/eeepc-laptop.c                |    4 +-
- drivers/platform/x86/ideapad-laptop.c              |   16 +
- drivers/platform/x86/intel/hid.c                   |   21 +-
- drivers/platform/x86/intel/int0002_vgpio.c         |    7 +-
- drivers/platform/x86/intel/int3472/Makefile        |    3 +-
- .../platform/x86/intel/int3472/clk_and_regulator.c |  173 +-
- drivers/platform/x86/intel/int3472/common.c        |    9 +-
- drivers/platform/x86/intel/int3472/discrete.c      |   69 +-
- .../platform/x86/intel/int3472/discrete_quirks.c   |   21 +
- drivers/platform/x86/intel/int3472/led.c           |    3 +-
- drivers/platform/x86/intel/int3472/tps68470.c      |    3 +-
- drivers/platform/x86/intel/pmc/Kconfig             |    4 +
- drivers/platform/x86/intel/pmc/Makefile            |    8 +-
- drivers/platform/x86/intel/pmc/arl.c               |   13 +-
- drivers/platform/x86/intel/pmc/core.c              |  240 +-
- drivers/platform/x86/intel/pmc/core.h              |   22 +-
- drivers/platform/x86/intel/pmc/core_ssram.c        |  332 --
- drivers/platform/x86/intel/pmc/mtl.c               |   10 +-
- drivers/platform/x86/intel/pmc/ssram_telemetry.c   |  204 ++
- drivers/platform/x86/intel/pmc/ssram_telemetry.h   |   24 +
- .../x86/intel/speed_select_if/isst_if_common.c     |   21 -
- .../x86/intel/speed_select_if/isst_tpmi_core.c     |  103 +-
- drivers/platform/x86/intel/tpmi_power_domains.c    |   34 +-
- drivers/platform/x86/intel/tpmi_power_domains.h    |    1 +
- .../uncore-frequency/uncore-frequency-common.c     |   34 +
- .../uncore-frequency/uncore-frequency-common.h     |   20 +-
- .../intel/uncore-frequency/uncore-frequency-tpmi.c |   49 +
- .../x86/intel/uncore-frequency/uncore-frequency.c  |   13 +-
- drivers/platform/x86/intel/vsec.c                  |    9 +-
- drivers/platform/x86/msi-wmi-platform.c            |   99 +-
- drivers/platform/x86/oxpec.c                       | 1054 ++++++
- drivers/platform/x86/panasonic-laptop.c            |    4 +-
- drivers/platform/x86/portwell-ec.c                 |  291 ++
- drivers/platform/x86/silicom-platform.c            |   11 +-
- drivers/platform/x86/sony-laptop.c                 |  175 +-
- drivers/platform/x86/thinkpad_acpi.c               |   51 +-
- drivers/platform/x86/topstar-laptop.c              |    4 +-
- drivers/platform/x86/tuxedo/Kconfig                |    8 +
- drivers/platform/x86/tuxedo/Makefile               |    8 +
- drivers/platform/x86/tuxedo/nb04/Kconfig           |   17 +
- drivers/platform/x86/tuxedo/nb04/Makefile          |   10 +
- drivers/platform/x86/tuxedo/nb04/wmi_ab.c          |  923 +++++
- drivers/platform/x86/tuxedo/nb04/wmi_util.c        |   91 +
- drivers/platform/x86/tuxedo/nb04/wmi_util.h        |  109 +
- drivers/platform/x86/x86-android-tablets/dmi.c     |   14 +-
- drivers/platform/x86/x86-android-tablets/other.c   |  124 +-
- .../x86/x86-android-tablets/x86-android-tablets.h  |    3 +-
- drivers/platform/x86/xo15-ebook.c                  |   10 +-
- drivers/power/supply/power_supply_sysfs.c          |    9 +-
- drivers/power/supply/test_power.c                  |    1 +
- include/linux/intel_vsec.h                         |    5 +-
- include/linux/platform_data/mlxreg.h               |    4 +-
- include/linux/platform_data/x86/asus-wmi.h         |   19 +
- .../linux/platform_data/x86/int3472.h              |   73 +-
- include/linux/platform_data/x86/intel_pmc_ipc.h    |    4 +
- include/linux/power_supply.h                       |    3 +
- include/linux/sony-laptop.h                        |   39 -
- include/uapi/linux/isst_if.h                       |   26 +
- tools/power/x86/intel-speed-select/isst-config.c   |   15 +-
- .../power/x86/intel-speed-select/isst-core-tpmi.c  |   12 +
- tools/power/x86/intel-speed-select/isst-display.c  |   20 +
- tools/power/x86/intel-speed-select/isst.h          |    3 +
- 122 files changed, 10677 insertions(+), 3320 deletions(-)
- create mode 100644 Documentation/ABI/testing/debugfs-alienware-wmi
- create mode 100644 Documentation/ABI/testing/sysfs-platform-alienware-wmi
- create mode 100644 Documentation/ABI/testing/sysfs-platform-oxp
- create mode 100644 Documentation/admin-guide/laptops/alienware-wmi.rst
- delete mode 100644 Documentation/hwmon/oxp-sensors.rst
- delete mode 100644 drivers/hwmon/oxp-sensors.c
- create mode 100644 drivers/platform/mellanox/mlxreg-dpu.c
- create mode 100644 drivers/platform/x86/amd/amd_isp4.c
- create mode 100644 drivers/platform/x86/amd/hsmp/hwmon.c
- create mode 100644 drivers/platform/x86/dasharo-acpi.c
- create mode 100644 drivers/platform/x86/intel/int3472/discrete_quirks.c
- delete mode 100644 drivers/platform/x86/intel/pmc/core_ssram.c
- create mode 100644 drivers/platform/x86/intel/pmc/ssram_telemetry.c
- create mode 100644 drivers/platform/x86/intel/pmc/ssram_telemetry.h
- create mode 100644 drivers/platform/x86/oxpec.c
- create mode 100644 drivers/platform/x86/portwell-ec.c
- create mode 100644 drivers/platform/x86/tuxedo/Kconfig
- create mode 100644 drivers/platform/x86/tuxedo/Makefile
- create mode 100644 drivers/platform/x86/tuxedo/nb04/Kconfig
- create mode 100644 drivers/platform/x86/tuxedo/nb04/Makefile
- create mode 100644 drivers/platform/x86/tuxedo/nb04/wmi_ab.c
- create mode 100644 drivers/platform/x86/tuxedo/nb04/wmi_util.c
- create mode 100644 drivers/platform/x86/tuxedo/nb04/wmi_util.h
- rename drivers/platform/x86/intel/int3472/common.h => include/linux/platform_data/x86/int3472.h (59%)
- delete mode 100644 include/linux/sony-laptop.h
 
