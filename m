@@ -1,161 +1,333 @@
-Return-Path: <linux-kernel+bounces-663426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-663428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32700AC481D
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 08:10:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1E82AC4820
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 08:10:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B56217A65CB
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 06:08:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90BC8189A508
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 06:10:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02C851EA7DF;
-	Tue, 27 May 2025 06:09:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2620A1F3B89;
+	Tue, 27 May 2025 06:10:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="BWa0YSLn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Buo/oC0y";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="3AMFIqmR";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Buo/oC0y";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="3AMFIqmR"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A3E9193402;
-	Tue, 27 May 2025 06:09:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C1301EF0B9
+	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 06:10:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748326193; cv=none; b=mhntWHqrdlDOfG1UtmqeYHkfRX8WrVFUbT4QHw0NfVkK0Xor8YxW//lR1zkpy8IqmyYv9I80UN09Gq9vU2oBzJfWwmwDbuBQAMvwru6VbHaFxtrEeIJi6oQADpUscbGcjEVzqBzY2wS9RTSSHWx7Q+zK4phjSpQTPVmptBJwmEQ=
+	t=1748326215; cv=none; b=i18DBKOg+GFhr7niGNkNY4SY7JkJgZXkx5EXacfOiBpOeD0u6F3j/LcwT+EYqJsG91oxMDcwnFEoyxdED9hlVmef0F92zaORDAgQi786OqmmUcOuW/CDxWeoHbouy9wwWB+817lkD7GSk8Ig05csx+ZBmmWdb4kCkVDiasje5C8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748326193; c=relaxed/simple;
-	bh=qOXDVrUaiO2l8wZl4UUJ7YeBOkFqYNSPmNtXngQ0I0U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VM86qY2NjEGNlC7i95n9Bw381AU0fo9YEf2dOF9qMHx1zEfRANYZAdUMvVquts8RibP5vgLg/fZZb+vJ3pnrrjO3wGIJC3yGRpNtg3g9oMInvc4vnyKSvPA5RrtSNZGW1h5+vutVFC9dDgO2klOAoXiVMl5u4OmRat94MDwjfHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=BWa0YSLn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC49CC4CEEA;
-	Tue, 27 May 2025 06:09:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1748326192;
-	bh=qOXDVrUaiO2l8wZl4UUJ7YeBOkFqYNSPmNtXngQ0I0U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BWa0YSLnW7rqZQo1X6vmYMR9QzV3ZkmpIQRnOulB6lbtvOvbQjjfKPLIt3VHSLFTe
-	 5XlzgQAwXbKqi1+ZdCPTHqTw4+LLEO9ZdedWn2/ojKLopt7W7rYwZYmAx880/7gH6K
-	 HtV78t3jj8PJo8HVbahmsXe4xGPjVs+JUgs30MCo=
-Date: Tue, 27 May 2025 08:09:48 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: clingfei <clf700383@gmail.com>
-Cc: elder@kernel.org, keescook@chromium.org, johan@kernel.org,
-	vireshk@kernel.org, greybus-dev@lists.linaro.org,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] greybus: Avoid fake flexible array for response data
-Message-ID: <2025052727-goliath-freedom-102d@gregkh>
-References: <20250527050635.946553-1-clf700383@gmail.com>
- <2025052700-ungodly-vitality-d86d@gregkh>
- <CADPKJ-64_fod0ObZsg_prtB4u+ZA6shZ6AnXqn4vxK1NGxHgkQ@mail.gmail.com>
+	s=arc-20240116; t=1748326215; c=relaxed/simple;
+	bh=eI4C9G5xJzpBpNASfpC2+tN2SrDq2IXni/3Kbzv9u7o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rUXC5FUEeF4G6XpBz6u1I3aTepMsDs81ILLpkz1BJ5NE4wK5xMmUXR+WzFjA3viw2qq1fAfNl5+vnoFj+Ik4b9scvuiS09UCb3WM7et2RCgCDt+/NQPo+2w9o7gDbbLMnIgYUVzeq/PE07nyU08CgOK8pMa/r60/LzTGEiXu+wA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Buo/oC0y; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=3AMFIqmR; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Buo/oC0y; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=3AMFIqmR; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 84FE121E79;
+	Tue, 27 May 2025 06:10:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1748326211; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LzbgYeMiACS2U3RQ6hcLbsfyT0tPPC71RPXXgfPSUik=;
+	b=Buo/oC0yeazYNNpmu1E/rP62D5tdOEXSEbL0Rc/4oO8utdY3mpjE9tTAJfOsd8KwXCk1eC
+	iDnqaAe9gjjNVPeNN+XpdAfA3vFo6hNSz3ZvEDEZjdOXi6g2EqujjLGkBL79ZUQAE/HtVb
+	bEeE9Kj/FP9mJsvTj3CpTk8jMelNqZw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1748326211;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LzbgYeMiACS2U3RQ6hcLbsfyT0tPPC71RPXXgfPSUik=;
+	b=3AMFIqmR2GrtSlhTTSn9edGSb6pJKOLw3FM+ygxMdfNRIJ11xzruPKCPnWVrReuGc/AljY
+	tvXizJiiyZytQeAA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="Buo/oC0y";
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=3AMFIqmR
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1748326211; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LzbgYeMiACS2U3RQ6hcLbsfyT0tPPC71RPXXgfPSUik=;
+	b=Buo/oC0yeazYNNpmu1E/rP62D5tdOEXSEbL0Rc/4oO8utdY3mpjE9tTAJfOsd8KwXCk1eC
+	iDnqaAe9gjjNVPeNN+XpdAfA3vFo6hNSz3ZvEDEZjdOXi6g2EqujjLGkBL79ZUQAE/HtVb
+	bEeE9Kj/FP9mJsvTj3CpTk8jMelNqZw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1748326211;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LzbgYeMiACS2U3RQ6hcLbsfyT0tPPC71RPXXgfPSUik=;
+	b=3AMFIqmR2GrtSlhTTSn9edGSb6pJKOLw3FM+ygxMdfNRIJ11xzruPKCPnWVrReuGc/AljY
+	tvXizJiiyZytQeAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BE7A0136E0;
+	Tue, 27 May 2025 06:10:10 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id xLnHLEJXNWinFwAAD6G6ig
+	(envelope-from <hare@suse.de>); Tue, 27 May 2025 06:10:10 +0000
+Message-ID: <23b75e25-fa2f-4d12-8d96-6de01e43ad49@suse.de>
+Date: Tue, 27 May 2025 08:10:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 06/23] md/md-bitmap: add a new sysfs api bitmap_type
+To: Yu Kuai <yukuai1@huaweicloud.com>, hch@lst.de, xni@redhat.com,
+ colyli@kernel.org, song@kernel.org, yukuai3@huawei.com
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-raid@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
+ johnny.chenyi@huawei.com
+References: <20250524061320.370630-1-yukuai1@huaweicloud.com>
+ <20250524061320.370630-7-yukuai1@huaweicloud.com>
+Content-Language: en-US
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <20250524061320.370630-7-yukuai1@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CADPKJ-64_fod0ObZsg_prtB4u+ZA6shZ6AnXqn4vxK1NGxHgkQ@mail.gmail.com>
+X-Spamd-Result: default: False [-1.51 / 50.00];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-0.997];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	R_RATELIMIT(0.00)[to_ip_from(RLf34csc5ba3ztc71of6h9nuns)];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:dkim,suse.de:mid,huawei.com:email];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Queue-Id: 84FE121E79
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -1.51
 
-On Tue, May 27, 2025 at 01:50:42PM +0800, clingfei wrote:
-> Greg KH <gregkh@linuxfoundation.org> 于2025年5月27日周二 13:15写道：
-> >
-> > On Tue, May 27, 2025 at 01:06:35PM +0800, clingfei wrote:
-> > > We want to get rid of zero size arrays and use flexible arrays instead.
-> > > However, in this case the struct is just one flexible array of u8 which
-> > > adds no value. Just use a pointer instead.
-> >
-> > Not true at all, sorry, it does "add value".  Please read the greybus
-> > specification if you have questions about this.
-> >
-> > >
-> > > v1: https://lore.kernel.org/all/202505262032.507AD8E0DC@keescook/
-> >
-> > Please read our documentation for how to properly version kernel patches
+On 5/24/25 08:13, Yu Kuai wrote:
+> From: Yu Kuai <yukuai3@huawei.com>
 > 
-> Sorry, I will read it.
-> >
-> > >
-> > > Signed-off-by: clingfei <clf700383@gmail.com>
-> >
-> > Also, we need a "full"name, not an email alias.
-> >
-> > > ---
-> > >  drivers/staging/greybus/i2c.c             | 12 ++++--------
-> > >  include/linux/greybus/greybus_protocols.h |  3 ---
-> > >  2 files changed, 4 insertions(+), 11 deletions(-)
-> > >
-> > > diff --git a/drivers/staging/greybus/i2c.c b/drivers/staging/greybus/i2c.c
-> > > index 14f1ff6d448c..b248d6717b71 100644
-> > > --- a/drivers/staging/greybus/i2c.c
-> > > +++ b/drivers/staging/greybus/i2c.c
-> > > @@ -144,15 +144,14 @@ gb_i2c_operation_create(struct gb_connection *connection,
-> > >  }
-> > >
-> > >  static void gb_i2c_decode_response(struct i2c_msg *msgs, u32 msg_count,
-> > > -                                struct gb_i2c_transfer_response *response)
-> > > +                                u8 *data)
-> > >  {
-> > >       struct i2c_msg *msg = msgs;
-> > > -     u8 *data;
-> > >       u32 i;
-> > >
-> > > -     if (!response)
-> > > +     if (!data)
-> > >               return;
-> > > -     data = response->data;
-> > > +
-> > >       for (i = 0; i < msg_count; i++) {
-> > >               if (msg->flags & I2C_M_RD) {
-> > >                       memcpy(msg->buf, data, msg->len);
-> > > @@ -188,10 +187,7 @@ static int gb_i2c_transfer_operation(struct gb_i2c_device *gb_i2c_dev,
-> > >
-> > >       ret = gb_operation_request_send_sync(operation);
-> > >       if (!ret) {
-> > > -             struct gb_i2c_transfer_response *response;
-> > > -
-> > > -             response = operation->response->payload;
-> > > -             gb_i2c_decode_response(msgs, msg_count, response);
-> > > +             gb_i2c_decode_response(msgs, msg_count, operation->response->payload);
-> > >               ret = msg_count;
-> > >       } else if (!gb_i2c_expected_transfer_error(ret)) {
-> > >               dev_err(dev, "transfer operation failed (%d)\n", ret);
-> > > diff --git a/include/linux/greybus/greybus_protocols.h b/include/linux/greybus/greybus_protocols.h
-> > > index 820134b0105c..6a35c78b967b 100644
-> > > --- a/include/linux/greybus/greybus_protocols.h
-> > > +++ b/include/linux/greybus/greybus_protocols.h
-> > > @@ -678,9 +678,6 @@ struct gb_i2c_transfer_request {
-> > >       __le16                          op_count;
-> > >       struct gb_i2c_transfer_op       ops[];          /* op_count of these */
-> > >  } __packed;
-> > > -struct gb_i2c_transfer_response {
-> > > -     __u8                            data[0];        /* inbound data */
-> > > -} __packed;
-> >
-> > As I said before, you can't just delete structures that are exported to
-> > userspace without breaking things.  Why is this change acceptable to do
-> > that?
-> >
-> > And how was any of this tested?
-> >
-> > greg k-h
+> The api will be used by mdadm to set bitmap_ops while creating new array
+> or assemble array, prepare to add a new bitmap.
 > 
-> Could you please give some examples that will be broken by this change?
+> Currently available options are:
+> 
+> cat /sys/block/md0/md/bitmap_type
+> none [bitmap]
+> 
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+> ---
+>   Documentation/admin-guide/md.rst | 73 ++++++++++++++----------
+>   drivers/md/md.c                  | 96 ++++++++++++++++++++++++++++++--
+>   drivers/md/md.h                  |  2 +
+>   3 files changed, 135 insertions(+), 36 deletions(-)
+> 
+[ .. ]
+> diff --git a/drivers/md/md.c b/drivers/md/md.c
+> index 311e52d5173d..4eb0c6effd5b 100644
+> --- a/drivers/md/md.c
+> +++ b/drivers/md/md.c
+> @@ -672,13 +672,18 @@ static void active_io_release(struct percpu_ref *ref)
+>   
+>   static void no_op(struct percpu_ref *r) {}
+>   
+> -static void mddev_set_bitmap_ops(struct mddev *mddev, enum md_submodule_id id)
+> +static bool mddev_set_bitmap_ops(struct mddev *mddev)
+>   {
+>   	xa_lock(&md_submodule);
+> -	mddev->bitmap_ops = xa_load(&md_submodule, id);
+> +	mddev->bitmap_ops = xa_load(&md_submodule, mddev->bitmap_id);
+>   	xa_unlock(&md_submodule);
+> -	if (!mddev->bitmap_ops)
+> -		pr_warn_once("md: can't find bitmap id %d\n", id);
+> +
+> +	if (!mddev->bitmap_ops) {
+> +		pr_warn_once("md: can't find bitmap id %d\n", mddev->bitmap_id);
+> +		return false;
+> +	}
+> +
+> +	return true;
+>   }
+>   
+>   static void mddev_clear_bitmap_ops(struct mddev *mddev)
+> @@ -688,8 +693,10 @@ static void mddev_clear_bitmap_ops(struct mddev *mddev)
+>   
+>   int mddev_init(struct mddev *mddev)
+>   {
+> -	/* TODO: support more versions */
+> -	mddev_set_bitmap_ops(mddev, ID_BITMAP);
+> +	mddev->bitmap_id = ID_BITMAP;
+> +
+> +	if (!mddev_set_bitmap_ops(mddev))
+> +		return -EINVAL;
+>   
+>   	if (percpu_ref_init(&mddev->active_io, active_io_release,
+>   			    PERCPU_REF_ALLOW_REINIT, GFP_KERNEL)) {
+> @@ -4155,6 +4162,82 @@ new_level_store(struct mddev *mddev, const char *buf, size_t len)
+>   static struct md_sysfs_entry md_new_level =
+>   __ATTR(new_level, 0664, new_level_show, new_level_store);
+>   
+> +static ssize_t
+> +bitmap_type_show(struct mddev *mddev, char *page)
+> +{
+> +	struct md_submodule_head *head;
+> +	unsigned long i;
+> +	ssize_t len = 0;
+> +
+> +	if (mddev->bitmap_id == ID_BITMAP_NONE)
+> +		len += sprintf(page + len, "[none] ");
+> +	else
+> +		len += sprintf(page + len, "none ");
+> +
+> +	xa_lock(&md_submodule);
+> +	xa_for_each(&md_submodule, i, head) {
+> +		if (head->type != MD_BITMAP)
+> +			continue;
+> +
+> +		if (mddev->bitmap_id == head->id)
+> +			len += sprintf(page + len, "[%s] ", head->name);
+> +		else
+> +			len += sprintf(page + len, "%s ", head->name);
+> +	}
+> +	xa_unlock(&md_submodule);
+> +
+> +	len += sprintf(page + len, "\n");
+> +	return len;
+> +}
+> +
+> +static ssize_t
+> +bitmap_type_store(struct mddev *mddev, const char *buf, size_t len)
+> +{
+> +	struct md_submodule_head *head;
+> +	enum md_submodule_id id;
+> +	unsigned long i;
+> +	int err;
+> +
+> +	if (mddev->bitmap_ops)
+> +		return -EBUSY;
+> +
+Why isn't this protected by md_submodule lock?
+The lock is taken when updating ->bitmap_ops, so I would
+have expected it to be taken when checking it ...
 
-Have you searched all userspace tools to verify that they do not use
-this structure definition?  You are removing a user/kernel api here,
-something that we do not do without researching that no existing user in
-the world will not break.
+> +	err = kstrtoint(buf, 10, &id);
+> +	if (!err) {
+> +		if (id == ID_BITMAP_NONE) {
+> +			mddev->bitmap_id = id;
+> +			return len;
+> +		}
+> +
+> +		xa_lock(&md_submodule);
+> +		head = xa_load(&md_submodule, id);
+> +		xa_unlock(&md_submodule);
+> +
+> +		if (head && head->type == MD_BITMAP) {
+> +			mddev->bitmap_id = id;
+> +			return len;
+> +		}
+> +	}
+> +
+> +	if (cmd_match(buf, "none")) {
+> +		mddev->bitmap_id = ID_BITMAP_NONE;
+> +		return len;
+> +	}
+> +
+That is odd coding. The 'if (!err)' condition above might
+fall through to here, but then we already now that it cannot
+match 'none'.
+Please invert the logic, first check for 'none', and only
+call kstroint if the match failed.
 
-> And I am not sure how this should be tested. It seems that it will not
-> have any negative impact on functionality.
+> +	xa_lock(&md_submodule);
+> +	xa_for_each(&md_submodule, i, head) {
+> +		if (head->type == MD_BITMAP && cmd_match(buf, head->name)) {
+> +			mddev->bitmap_id = head->id;
+> +			xa_unlock(&md_submodule);
+> +			return len;
+> +		}
+> +	}
+> +	xa_unlock(&md_submodule);
+> +	return -ENOENT;
+> +}
+> +
+> +static struct md_sysfs_entry md_bitmap_type =
+> +__ATTR(bitmap_type, 0664, bitmap_type_show, bitmap_type_store);
+> +
+>   static ssize_t
+>   layout_show(struct mddev *mddev, char *page)
+>   {
+> @@ -5719,6 +5802,7 @@ __ATTR(serialize_policy, S_IRUGO | S_IWUSR, serialize_policy_show,
+>   static struct attribute *md_default_attrs[] = {
+>   	&md_level.attr,
+>   	&md_new_level.attr,
+> +	&md_bitmap_type.attr,
+>   	&md_layout.attr,
+>   	&md_raid_disks.attr,
+>   	&md_uuid.attr,
+> diff --git a/drivers/md/md.h b/drivers/md/md.h
+> index 13e3f9ce1b79..bf34c0a36551 100644
+> --- a/drivers/md/md.h
+> +++ b/drivers/md/md.h
+> @@ -40,6 +40,7 @@ enum md_submodule_id {
+>   	ID_CLUSTER,
+>   	ID_BITMAP,
+>   	ID_LLBITMAP,	/* TODO */
+> +	ID_BITMAP_NONE,
+>   };
+>   
+>   struct md_submodule_head {
+> @@ -565,6 +566,7 @@ struct mddev {
+>   	struct percpu_ref		writes_pending;
+>   	int				sync_checkers;	/* # of threads checking writes_pending */
+>   
+> +	enum md_submodule_id		bitmap_id;
+>   	void				*bitmap; /* the bitmap for the device */
+>   	struct bitmap_operations	*bitmap_ops;
+>   	struct {
 
-I would strongly recommend, that if you can not test this, that you not
-make the change :)
+Cheers,
 
-good luck!
-
-greg k-h
+Hannes
+-- 
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
