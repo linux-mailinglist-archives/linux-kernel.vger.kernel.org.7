@@ -1,177 +1,142 @@
-Return-Path: <linux-kernel+bounces-663506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-663503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1766FAC4914
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 09:13:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90456AC4909
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 09:09:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7348173E4B
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 07:13:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01CC63B9A8B
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 07:09:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2A3F1FC7D2;
-	Tue, 27 May 2025 07:13:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C992C1FA14E;
+	Tue, 27 May 2025 07:09:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="rclJDp+J"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TYFeAfEC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87408A927;
-	Tue, 27 May 2025 07:13:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CF1472614;
+	Tue, 27 May 2025 07:09:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748330008; cv=none; b=MpIkKDafAaMfPEawl419FxOQOfgCpcRUoVx2khj+F6UCjIHYXN1Wz7jx64at62W9dtfF0/e17weZa7M2tEk9g2bqcpMgNT8mW8xctahy5APiWdgboWsHuxFoQOAfBFWw3GG87Mah7q6UTkrtmScbSYn1hKldTz4PFSzM50RpN0w=
+	t=1748329782; cv=none; b=dMCgiR/60C/TaZ6yFtUKrDczyOvn50SZJCCkl7CTu+SGH38ntwgEta32G5cJ8Dbe3BCqCYS5XR8VovVzbwhPsBbEf7Y1H4uknkpC2Ulsi6hjve139sxcNxL/cCwokQbf9cnQmxw+G5iq1toeyW+/OFl3RP3MPdOQ/5j3ic3hWkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748330008; c=relaxed/simple;
-	bh=TNjh/wuX5iT/K8itYz4k8cQk43YjRqP9QbGeqWfxOqs=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=iDE7Fsk8/d/WNpyYJWFhOl5arJhj4ztAjEnBc1VQxlCI6cxLQmZLdF3hdZFwxNRQJ9ZJmQiqtOsuElmhIawWSc3YFa1IE26Jnd9DtGp3SSARgKdsu93ikj1rwR59hEqwGttGf34OLXd2CYpnuEczBPHRBpo0DEwYPwEAK2+qQhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=rclJDp+J; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1748330007; x=1779866007;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=TNjh/wuX5iT/K8itYz4k8cQk43YjRqP9QbGeqWfxOqs=;
-  b=rclJDp+J92ES0aKAS7FWCAznuc85TD8xq8nJQ9rGtVmBO8ZddtiKEs8N
-   4npbgTxiVgbyG91UwpGxNgDXE+1pB5WplF6syr1UnztegG8gs//GLz02c
-   xLf+//8OPCSUENmL7dgj7pLJQZ5ev2Lx5x7B5/NwDAp0hj7huE4/rzW5y
-   MLa25QGe0EDCjKBUuGvGG3QcIXpSB7Z9pfiQ9nXaHbh/T78iWerJhCaIb
-   spuUKarM90kq7TMg967Fr2sX2HbUqOLpAfzcTTug3uJpAjHX73THXr1Wg
-   s0LJY2EfM+54pEaxoeRkwOa6rWdpLSZoKDQVxH9yUSlusqVcAEQE9rV5X
-   g==;
-X-CSE-ConnectionGUID: 1ZW92RbUSnGn2JVxkn6AyA==
-X-CSE-MsgGUID: G21TlYkQSkmY8JgtFPgYoQ==
-X-IronPort-AV: E=Sophos;i="6.15,317,1739862000"; 
-   d="scan'208";a="273468961"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 27 May 2025 00:13:20 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Tue, 27 May 2025 00:13:07 -0700
-Received: from DEN-DL-M31836.microchip.com (10.10.85.11) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
- 15.1.2507.44 via Frontend Transport; Tue, 27 May 2025 00:13:05 -0700
-From: Horatiu Vultur <horatiu.vultur@microchip.com>
-To: <UNGLinuxDriver@microchip.com>, <andrew+netdev@lunn.ch>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Horatiu Vultur
-	<horatiu.vultur@microchip.com>
-Subject: [PATCH net] net: lan966x: Make sure to insert the vlan tags also in host mode
-Date: Tue, 27 May 2025 09:08:50 +0200
-Message-ID: <20250527070850.3504582-1-horatiu.vultur@microchip.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1748329782; c=relaxed/simple;
+	bh=2kl6mZ8cHvpAb73D3F/4DvVrjl1/RRlL4LaE/e1S4FA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OYpas981bgCwfiAUARiO7J9kVXgaPEf8Ck9xFuFD9EfujJLCdz8oLlnb8UNMulOIlp3hlKzOJKd8FKRA/Jz2dog8Q/IOOX2zXCwXYR3ymdpX/1+rdB3RUyi1cj5BFnfyMwSczhbkAPImzS4EREorh0PY267pkphiT1eXBBGQI2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TYFeAfEC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F637C4CEEA;
+	Tue, 27 May 2025 07:09:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748329781;
+	bh=2kl6mZ8cHvpAb73D3F/4DvVrjl1/RRlL4LaE/e1S4FA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TYFeAfECVkICnTDcOgCfhzMZ29ALQmjrjRTTsWrpq01JDFCyZVZ6pvptYGUwV8pS7
+	 9APSZljthBK39hGBNGK/FDWkMmeK8P7tMfzn9BjdOdiuBsHlilz6J9lDL4VtGiIH8W
+	 COY+wkKgZOs1oEj5ws2rqPhaWPgljkvKaA8lRgBxsW6bpZ/hE8oVHTbMZU65OQUO1o
+	 FgwtXV/ibURPygPZdzauMIjOoDUyBwWYv3WYPOp4l72XD8rCSpDRu5MIvrYrMGo7A6
+	 LE4S6WCOVxoVlvnpTLoeeapY/KZc0kFMBZlgAxpI60RQ319+Mxi2SsGCDvBT7sXzEr
+	 yMXJD0Y+U7vOQ==
+Date: Tue, 27 May 2025 09:09:02 +0200
+From: Joel Granados <joel.granados@kernel.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Kees Cook <kees@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, Wen Yang <wen.yang@linux.dev>
+Subject: Re: [PATCH] kernel/sysctl-test: Unregister sysctl table after test
+ completion
+Message-ID: <b4jjhqsjnen4ifcccd4qu4tqq2wtqdglouslx26jbwhydgz7qn@lgeb7jltrt4d>
+References: <20250522013211.3341273-1-linux@roeck-us.net>
+ <ce50a353-e501-4a22-9742-188edfa2a7b2@roeck-us.net>
+ <yaadrvxr76up6j2cixi5hhrxrb4yd6rfus7n3pvh3fv42ahk32@vwiphrfdvj57>
+ <d2c93db4-6406-47ec-9096-479aa7d7fd23@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="e3wot27uafm4acze"
+Content-Disposition: inline
+In-Reply-To: <d2c93db4-6406-47ec-9096-479aa7d7fd23@roeck-us.net>
 
-When running these commands on DUT (and similar at the other end)
-ip link set dev eth0 up
-ip link add link eth0 name eth0.10 type vlan id 10
-ip addr add 10.0.0.1/24 dev eth0.10
-ip link set dev eth0.10 up
-ping 10.0.0.2/24
 
-The ping will fail.
+--e3wot27uafm4acze
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The reason why is failing is because, the network interfaces for lan966x
-have a flag saying that the HW can insert the vlan tags into the
-frames(NETIF_F_HW_VLAN_CTAG_TX). Meaning that the frames that are
-transmitted don't have the vlan tag inside the skb data, but they have
-it inside the skb. We already get that vlan tag and put it in the IFH
-but the problem is that we don't configure the HW to rewrite the frame
-when the interface is in host mode.
-The fix consists in actually configuring the HW to insert the vlan tag
-if it is different than 0.
+On Fri, May 23, 2025 at 08:54:44AM -0700, Guenter Roeck wrote:
+> On 5/23/25 08:01, Joel Granados wrote:
+> > On Thu, May 22, 2025 at 11:53:15AM -0700, Guenter Roeck wrote:
+> > > On Wed, May 21, 2025 at 06:32:11PM -0700, Guenter Roeck wrote:
+> > > > One of the sysctl tests registers a valid sysctl table. This operat=
+ion
+> > > > is expected to succeed. However, it does not unregister the table a=
+fter
+> > > > executing the test. If the code is built as module and the module is
+> > > > unloaded after the test, the next operation trying to access the ta=
+ble
+> > > > (such as 'sysctl -a') will trigger a crash.
+> > > >=20
+> > > > Unregister the registered table after test completiion to solve the
+> > > > problem.
+> > > >=20
+> > >=20
+> > > Never mind, I just learned that a very similar patch has been submitt=
+ed
+> > > last December or so but was rejected, and that the acceptable (?) fix=
+ seems
+> > > to be stalled.
+> > >=20
+> > > Sorry for the noise.
+> > >=20
+> > > Guenter
+> >=20
+> > Hey Guenter
+> >=20
+> > It is part of what is getting sent for 6.16 [1]
+> > That test will move out of kunit into self-test.
+> >=20
+>=20
+> Yes, I was pointed to that. The version I have seen seems to assume that
+> the test is running as module, because the created sysctl entry is removed
+> in the module exit function. If built into the kernel, it would leave
+> the debug entry in place after the test is complete. Also, it moves
+> the affected set of tests out of the kunit infrastructure. Is that accura=
+te
+> or a misunderstanding on my side ?
+You have understood correctly. That is what the sysctl selftest does at lea=
+st.
+It all runs together with tools/testing/sefltests/sysctl/*. The idea is
+to use CONFIG_TEST_SYSCTL only for testing purposes.
 
-Fixes: 6d2c186afa5d ("net: lan966x: Add vlan support.")
-Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
----
- .../ethernet/microchip/lan966x/lan966x_main.c |  1 +
- .../ethernet/microchip/lan966x/lan966x_main.h |  1 +
- .../microchip/lan966x/lan966x_switchdev.c     |  1 +
- .../ethernet/microchip/lan966x/lan966x_vlan.c | 21 +++++++++++++++++++
- 4 files changed, 24 insertions(+)
+Best
 
-diff --git a/drivers/net/ethernet/microchip/lan966x/lan966x_main.c b/drivers/net/ethernet/microchip/lan966x/lan966x_main.c
-index 427bdc0e4908c..7001584f1b7a6 100644
---- a/drivers/net/ethernet/microchip/lan966x/lan966x_main.c
-+++ b/drivers/net/ethernet/microchip/lan966x/lan966x_main.c
-@@ -879,6 +879,7 @@ static int lan966x_probe_port(struct lan966x *lan966x, u32 p,
- 	lan966x_vlan_port_set_vlan_aware(port, 0);
- 	lan966x_vlan_port_set_vid(port, HOST_PVID, false, false);
- 	lan966x_vlan_port_apply(port);
-+	lan966x_vlan_port_rew_host(port);
- 
- 	return 0;
- }
-diff --git a/drivers/net/ethernet/microchip/lan966x/lan966x_main.h b/drivers/net/ethernet/microchip/lan966x/lan966x_main.h
-index 1f9df67f05044..4f75f06883693 100644
---- a/drivers/net/ethernet/microchip/lan966x/lan966x_main.h
-+++ b/drivers/net/ethernet/microchip/lan966x/lan966x_main.h
-@@ -497,6 +497,7 @@ void lan966x_vlan_port_apply(struct lan966x_port *port);
- bool lan966x_vlan_cpu_member_cpu_vlan_mask(struct lan966x *lan966x, u16 vid);
- void lan966x_vlan_port_set_vlan_aware(struct lan966x_port *port,
- 				      bool vlan_aware);
-+void lan966x_vlan_port_rew_host(struct lan966x_port *port);
- int lan966x_vlan_port_set_vid(struct lan966x_port *port,
- 			      u16 vid,
- 			      bool pvid,
-diff --git a/drivers/net/ethernet/microchip/lan966x/lan966x_switchdev.c b/drivers/net/ethernet/microchip/lan966x/lan966x_switchdev.c
-index 1c88120eb291a..bcb4db76b75cd 100644
---- a/drivers/net/ethernet/microchip/lan966x/lan966x_switchdev.c
-+++ b/drivers/net/ethernet/microchip/lan966x/lan966x_switchdev.c
-@@ -297,6 +297,7 @@ static void lan966x_port_bridge_leave(struct lan966x_port *port,
- 	lan966x_vlan_port_set_vlan_aware(port, false);
- 	lan966x_vlan_port_set_vid(port, HOST_PVID, false, false);
- 	lan966x_vlan_port_apply(port);
-+	lan966x_vlan_port_rew_host(port);
- }
- 
- int lan966x_port_changeupper(struct net_device *dev,
-diff --git a/drivers/net/ethernet/microchip/lan966x/lan966x_vlan.c b/drivers/net/ethernet/microchip/lan966x/lan966x_vlan.c
-index fa34a739c748e..f158ec6ab10cc 100644
---- a/drivers/net/ethernet/microchip/lan966x/lan966x_vlan.c
-+++ b/drivers/net/ethernet/microchip/lan966x/lan966x_vlan.c
-@@ -149,6 +149,27 @@ void lan966x_vlan_port_set_vlan_aware(struct lan966x_port *port,
- 	port->vlan_aware = vlan_aware;
- }
- 
-+/* When the interface is in host mode, the interface should not be vlan aware
-+ * but it should insert all the tags that it gets from the network stack.
-+ * The tags are no in the data of the frame but actually in the skb and the ifh
-+ * is confiured already to get this tag. So what we need to do is to update the
-+ * rewriter to insert the vlan tag for all frames which have a vlan tag
-+ * different than 0.
-+ */
-+void lan966x_vlan_port_rew_host(struct lan966x_port *port)
-+{
-+	struct lan966x *lan966x = port->lan966x;
-+	u32 val;
-+
-+	/* Tag all frames except when VID == DEFAULT_VLAN */
-+	val = REW_TAG_CFG_TAG_CFG_SET(1);
-+
-+	/* Update only some bits in the register */
-+	lan_rmw(val,
-+		REW_TAG_CFG_TAG_CFG,
-+		lan966x, REW_TAG_CFG(port->chip_port));
-+}
-+
- void lan966x_vlan_port_apply(struct lan966x_port *port)
- {
- 	struct lan966x *lan966x = port->lan966x;
--- 
-2.34.1
+--=20
 
+Joel Granados
+
+--e3wot27uafm4acze
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQGzBAABCgAdFiEErkcJVyXmMSXOyyeQupfNUreWQU8FAmg1ZQQACgkQupfNUreW
+QU+OAQv/V1ZJFq0pVYdYgiAa0W/hjXiIh9ws1bAGjfLJAlSJ40RWutdMZmyOEQ7K
+BKqU30gCRrHONClpGVDRi4CTCtz1cOHp4eiUNEih0DwIP12Zn9AF+l99prjoZT3J
+P6adglM/p5LwebgVHgBXqZtv494zpAfaqJH/0hbOCi2UydOSVq6r69HXtfyvJHuA
+5/i00EyPwaCuisH1EGF6Qo2B/nVtVsHMG2AMJn0xrgKsNsTFPVkk2DG1XnxVHooq
+y/agzjdtFenY1VPj4cHtLfqWsLbHEaoGED1885fj1SgLQGigJXRBiUDS0Cgaw+tl
+il+pfeahaKjYvDSMtlH8WDeuqcB2uYQDxmx/fi8ksCsWw/fdvC9oaGssPis7/oHp
+ma3yTjV4cGK7q9JE2jHyNbH+hZwPUstYhb/1SVUIv6m/Oe1vnKpTtMnhcJdSde36
+K/9I3RFQn9IijeU7UzkPzIj6KoN/p3kTPtrBMO1UOV/BMQ+fEWI9uO3PpHgRFT4O
+E50WrQYa
+=Wz1u
+-----END PGP SIGNATURE-----
+
+--e3wot27uafm4acze--
 
