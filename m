@@ -1,218 +1,164 @@
-Return-Path: <linux-kernel+bounces-664010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-664013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 930A5AC50A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 16:16:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 034E1AC50AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 16:18:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D92943A3B0D
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 14:16:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B300A16DF65
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 14:17:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 114BF268685;
-	Tue, 27 May 2025 14:16:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7984827814B;
+	Tue, 27 May 2025 14:17:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="OlShzInC"
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2077.outbound.protection.outlook.com [40.107.102.77])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="gWmeq+dR"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8627D2DCC0C
-	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 14:16:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.77
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748355392; cv=fail; b=C2KJVoWbZA8VEsSMEuANj1s9Hc7dTsSW2evs3+RyPrxpswWavYHwZk+L0cucicHhGey1ll+fLU5u5NbJn+wttuqvVbjjFoy9QVdkbPFesxEYmRtIavsZeE6eiU5o/wKmbXb2i3Q361rbbfgv3LkqKI71Di4yowOc0d+cuH/LJ+k=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748355392; c=relaxed/simple;
-	bh=az/q7PVweb3Jgp+PuLiyOoFdmihW5AOnMzE/EaHyRXM=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=dVv9pyQqycy3S2ObZvVmUP9UW8+3kIXolkOTn/arhAtPi0o99NBVIUmnLiC4IjYzZ+1wuyiZenFntoTC/U4m4PsYQLvRf7TLJnR5xS07O3rC1o0xzZqayhLxYvUmv64FxlOgnCYEDxFJnqAAEatNfFaMA/eFoYQADVuj+wLHfdg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=OlShzInC; arc=fail smtp.client-ip=40.107.102.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=L/d1JFYuWDd+JzpjpbFtAqyUnaSHerAmjZsHuUdm3UK4AMj5mNM/6HNP/rHt+9TEurM40NERKyCHb+tBQDYv8qxayP2xKre6A/cYHf21oAP9oPkxCofF85rhU/O+pGeP+ft1qXhNheHPNVhfVeJnRCq1IJMzlyLaTxDGVqtY0LM8Yzqvniow5maUiFNLbpN4tLGH7xXQM95xFhiuc58CQm1/ClDN+T8hg/W9XKpEdtsCFwpFr/Ey9ESm58giZYCF25DzfT4K2s+NgFZyxs2/cRnCTz5r6G6rKh9XICdZ/RvZ6aa3h2gJvQu6+hdP4g7Kr0xMjHeOknjOAcq9dWqhhQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RZNQPvjb6nm/pMSHLzROcSVoHoormQMEN4kIFjMt500=;
- b=vgHcv+yP/X78NODdlIofgUF2WW+m9ObEVaeZPPvYWo2WNAsEdhqFeqBVqEOA0ogslTnF0Et0GaH6XkvAKObQ8RRx3jSF4ocXLbL1eAlhyosDQsLTc9tCU/GFEoRU0oK6D3D/oSmtMeinNkiMi/yH6AXtMpXks0p8IBdBJ3rvBrS5p+yaAgDlos1497sVT5YQZryqZt6Q1D07dVyw+XrPpjtziw+jJNJzOFlyh6LA0oAxaZ9Jy21ZyCnHvQ+znW7oliwh+PsGiICjUZsUnOJyuW2DhHOUIkNdM2A9AOzaEp41TF/u0Ifw2bRAIiTlJbZ6JhVgQoiV61XGup8k+SPQiw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RZNQPvjb6nm/pMSHLzROcSVoHoormQMEN4kIFjMt500=;
- b=OlShzInCYtSA58nmdwFs6aLlWo/Dw0nMUqGviR31LiDsdoyN4u8Bm9v+kT2ZfzBRvwkgY+kLiDJMQNG2k36s/9dPHlx99zv6u9wQPlpUFtsw/lFxhN+UjNU5FEgE13ZsgGGuZ7fabm7bz2oRhpLM1o7baEyMjyLs9+wH50rETu8=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from CH3PR12MB8658.namprd12.prod.outlook.com (2603:10b6:610:175::8)
- by IA1PR12MB7542.namprd12.prod.outlook.com (2603:10b6:208:42e::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.22; Tue, 27 May
- 2025 14:16:28 +0000
-Received: from CH3PR12MB8658.namprd12.prod.outlook.com
- ([fe80::d5cc:cc84:5e00:2f42]) by CH3PR12MB8658.namprd12.prod.outlook.com
- ([fe80::d5cc:cc84:5e00:2f42%7]) with mapi id 15.20.8769.022; Tue, 27 May 2025
- 14:16:27 +0000
-Message-ID: <5f309bc0-8e43-40ab-a103-f22954422adb@amd.com>
-Date: Tue, 27 May 2025 19:46:18 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/7] sched/fair: Take care of group/affinity/sched_class
- change for throttled task
-To: Aaron Lu <ziqianlu@bytedance.com>
-Cc: Peter Zijlstra <peterz@infradead.org>,
- Valentin Schneider <vschneid@redhat.com>, Ben Segall <bsegall@google.com>,
- Josh Don <joshdon@google.com>, Ingo Molnar <mingo@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>, Xi Wang <xii@google.com>,
- linux-kernel@vger.kernel.org, Juri Lelli <juri.lelli@redhat.com>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>,
- Chengming Zhou <chengming.zhou@linux.dev>,
- Chuyi Zhou <zhouchuyi@bytedance.com>, Jan Kiszka <jan.kiszka@siemens.com>,
- Florian Bezdeka <florian.bezdeka@siemens.com>
-References: <20250520104110.3673059-1-ziqianlu@bytedance.com>
- <20250520104110.3673059-5-ziqianlu@bytedance.com>
- <20250522120336.GI39944@noisy.programming.kicks-ass.net>
- <20250522124840.GC672414@bytedance>
- <20250523145942.GL39944@noisy.programming.kicks-ass.net>
- <20250526113352.GA2993700@bytedance> <20250527065836.GA3373486@bytedance>
- <8501f4a8-8480-477e-8ab1-1d7796b978f1@amd.com>
- <20250527114245.GA3578119@bytedance>
-Content-Language: en-US
-From: K Prateek Nayak <kprateek.nayak@amd.com>
-In-Reply-To: <20250527114245.GA3578119@bytedance>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BM1PR01CA0155.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:b00:68::25) To CH3PR12MB8658.namprd12.prod.outlook.com
- (2603:10b6:610:175::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 530B3258CF5;
+	Tue, 27 May 2025 14:17:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748355457; cv=none; b=R2qBCTAW8XjlllVsZKEkWYAWIfSdqYuVSBcbS+r4tJ8GODfXCr+atplE/BVvUzhfTIxlZvEhjP+SjIVLih7XnCOT9RGslaUM0trdKssQcoadmV2wtFNk1aTJgFE3hzEPc1RmNkgBuSXA52WsFc9YZmDWn3bxnWKpJeWn5OZGf+U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748355457; c=relaxed/simple;
+	bh=ahFl9aCQqEQb7ktYvVw2ExzugFahjZxmir57oh1c2Lc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mDYMNKYG4buX7/PYV2EZyRJASq0DCLVxjK4btwTlshTEKnX8Rlr4OVjrlb5OPQanqJYn7lpFOZ+YX6Rg7qLJZ+gzai97h46Lhwtaa8aj01rqTP63+GR8f5N+VOlhzD/rp3XU4AxthUnyevdMno0gvJhQalRg8N3jCwA6ZmK2g40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=gWmeq+dR; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54R3ZVhm025612;
+	Tue, 27 May 2025 14:17:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=/gzvDF
+	7B6Gpe874ER1+xVQsIaOStUNi32ktHp53rVmA=; b=gWmeq+dRJWBX0BS5VbHuEX
+	g7i9HlXi1e79dSGX9PFLF3ir9TD0kCBWoEViA8DxF8zSSUk6BstkRPSoEJpInI5U
+	GKaM38yQ2qSegGYcAsbNs3ViZyMCCpYq3jEd2XpZPf9VX5Xm3tyAgeux9zuGyoJs
+	efB6CZLjSAu9F0f7ww9TxN8OKh1u7MQVSb8KiQtz1IT+HwnwQSpgGDmaMaNpHvN1
+	ozX2FADbWWoEcZwpD7MXXgDmGLXwhTTadfSC8kDG0i5x3YF6vq7GwB6SN8veBP6Z
+	WI8Y8EYlrnJ28t0ItqIfJD+QXlgpV+RDl/94UQs3R66PHT8qDNUR3mRy2H9RCxIg
+	==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46u5ucpsfm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 27 May 2025 14:17:02 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 54RD4rwR016174;
+	Tue, 27 May 2025 14:17:01 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 46uru0k2ru-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 27 May 2025 14:17:01 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 54REGwO559703688
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 27 May 2025 14:16:58 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E670A2004B;
+	Tue, 27 May 2025 14:16:57 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6CB7120043;
+	Tue, 27 May 2025 14:16:57 +0000 (GMT)
+Received: from [9.152.222.246] (unknown [9.152.222.246])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 27 May 2025 14:16:57 +0000 (GMT)
+Message-ID: <0219c58d-6375-4f98-84bc-9c65c1570aa0@linux.ibm.com>
+Date: Tue, 27 May 2025 16:16:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8658:EE_|IA1PR12MB7542:EE_
-X-MS-Office365-Filtering-Correlation-Id: 44c9ab15-9437-4c9a-b010-08dd9d2911c1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ZmRubHU5emUyRjl0S0JsSEcyVXMzWS9LeDZ3ZnVhR25sbHdNV0RNVGJoYjI0?=
- =?utf-8?B?Y3FPWE00YUVqakx2MVVjZjJtT0IwNG5RWWpQc0FsSlB6azlvZ3ZnYjZlbjNC?=
- =?utf-8?B?VDArNlNJVnYyVWo4V0lZY3dTM2lsR1drcmo4Z2xVNjRHd21rNUdNZC9BTFZi?=
- =?utf-8?B?eEYxcE84VGhUVFpWRXZ5WDhsTWpMdDVZYVRacnFiM2Q0cGxHSGgrMzNLN3R2?=
- =?utf-8?B?ZERVUHhYVU1jY2hjZTVpNlJvN25XenBhZlczVlM2UVhhejVyTGNiUXlOQ2I0?=
- =?utf-8?B?Z1k2cTJPOTd4d1NRaUZFczcvTjIvRThvQloyK2VxWThCLzBwZXNtZkFaQ2F4?=
- =?utf-8?B?a2YvSVJ3Vlc3SXV0d3p5Nnh3RXNvbjVHU29RdjF3c0xMQnNBaXc5Y1E5eVVo?=
- =?utf-8?B?RFB4Ymh3b2FrNmY5ZkdmYXowVVFOSFpsQzZZaDZ4Y0kwVHpDYXdoNUd3SnJn?=
- =?utf-8?B?VjZkSjJvbGc5VS9LZVJaZHBpYzMrSjFLbEJvOTRKY2dlZnNJSjFDSUpSdjVY?=
- =?utf-8?B?U3RlUGU4bUwvWGJvbWNMYkpndmdOUVJNUzdrOUxOMUdicVpWQThVdzRaZjVI?=
- =?utf-8?B?M1VISUN4YkEwSjlPNWtxVWVWNlpUNWJRbHBHWXJ5WUU3N0J6MFM3NTkzYzFk?=
- =?utf-8?B?V0xaOXl4c2EreHNVZ1pOQW5xa2JBaUdTa2Y3eGpZeW00UUVHME8wRk85bUNo?=
- =?utf-8?B?UUhFNUFRdTZXZ3R5MERpT1RCS1FYWFhOeFBNWDRjRWVBQkg2cmtYYkdCQkZn?=
- =?utf-8?B?NXBySVhXREo0N01pOGR6WGxzUFNoaDNmU1hlV2l2bUljcURaL2JrRCsyeEZB?=
- =?utf-8?B?OTZYRGRvbFBVMWFjbVlwUjRFa3RLVGxvOTRzWnlhUkNYOFpONHo4SWFSRURU?=
- =?utf-8?B?UHErRXl3TXg0bno1THByazRGbGFBYW9BUmpaMVJKVmdaUkZkcUZsQ0VYMWhV?=
- =?utf-8?B?SGdMTm4rdUpPNzU2bFNTNHQ4UkVwVkVKME54enZuaEU2MXFuK216ekR3SjBB?=
- =?utf-8?B?OWRIb1pEckRzakxnTTNuUnY4dmZYL3B1eFREOXNhVXhPaENCc1dleFhPZHRB?=
- =?utf-8?B?d1U5a1NEY2g0N3NlWmI3dHdLcGx0OENsbjZNM1FveU10KzZEUFd1M2lYOVZa?=
- =?utf-8?B?Wi9WVnlyK1orai9Wd294azZvdlhBSURwMVVjc1hvS1VRU3F1WlNIenBML252?=
- =?utf-8?B?UVdMdHZRaDJJSlNBTjRFTStQZ3hQMGpmMVdsbjdSNHVaM2wwNlFxMXRkRi9p?=
- =?utf-8?B?dHY2eTVrVWkxb0NuZytOT1NiUUs5Vy96NlFWaGNNNjBVNEVRTThRNE5OZU56?=
- =?utf-8?B?cHBEL29vYW5CTVY0aTF4bFBadFBmWEd3ZVhTUzB4NVhiaWNRckpsQ2MvUm1P?=
- =?utf-8?B?SDdGU1ZvdjV5K2w5NU9wWnVjTTBDSTErMnNmejBDQ0lpcXNCU0F5QjRGS1JV?=
- =?utf-8?B?ZCtHTnhVZ1R3YkRRbmZlVW5JT05ZY3IvNkovR0RNOGNGd0JvM1lHck5Fc2hh?=
- =?utf-8?B?NnI2a01DOUY5M3d3Y2t5b0lkanAydU9WWHhWMnpEK2tTSm9kSGU1QWtUTXla?=
- =?utf-8?B?TFV5bHJpSlRXdGs3cmF0WW41ZTk5VEJvZzkvTFFHclNLK1VJUDNCOTlrUmpN?=
- =?utf-8?B?a2p5REVmWVkzYm50RGxWUmVuTUZQZmFnWG1vRytMK29TZEFFSDVUYzJocWxu?=
- =?utf-8?B?RkUza0xsODdzb2lzZVRGZitTTDRpSUtrM3ZCWk94dDBkNnhFZ0RTY3AwcGw1?=
- =?utf-8?B?TEdrNzB2K09oOE5FSzdoVXBwRXBWOWlUOFg2TGFYUGdaN0JTWEF0R3FpNzVJ?=
- =?utf-8?B?Z2JWT2xXTEhCV0d1TEFTWkt0UkRSYXpHVU1OV2dQdzFVWTYxVkQ2VDVCVUpo?=
- =?utf-8?B?WWo0eFdSUUJOMHdqWXFHV3oxUXBjTXZpb0xGbi9BWVZ5dWptVlZyaWpqSW9B?=
- =?utf-8?Q?SaCQRyjOTv0=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8658.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?YzJsWG1ZWWdveWJ2bVFVcFNEZDMranZ0a01rZDBRUGpkd2Z1ZHYrNmI3bmtE?=
- =?utf-8?B?MEtIdFF2STNpUmg2Si9rNXVlV1pheFFJZDUrREpsZW40RFJrQmNHQ3ZabGNw?=
- =?utf-8?B?MkZKRUhhOWN6N0NiN1BINXFsNStPR1BhdnhoMXNYTVF6Q2J2aUxWU0dmOXJj?=
- =?utf-8?B?MXNodVBXTWJ6bEJMS0dFWkx3czF6d29MV0cwVHduWkVXR0Jwak1BaXNPbGI4?=
- =?utf-8?B?MU44VGhMMmhxMGoveFhURmFXVG1wL2lUTk0wWGpvSzNISFRjNW4vQm9ZRXlM?=
- =?utf-8?B?SjNPU25BaE1MWEM4bjNRU1g0OWR1MTZKMHV4ZWU2TUlBdWtWd3VGd3E1d0pG?=
- =?utf-8?B?dGd5SGRqK3JDM3Q5bzBtMXBIYytNS2IycHhidWdIYmhhZjU3aDhTaUFldWJP?=
- =?utf-8?B?OXd4dHFMcHIwdFNFNlhKMUdHMTZJSDk0Nkhna1djN1BVWWJuZSszT2tNWVFt?=
- =?utf-8?B?UjcxKzNaU0VqZEF5WDlhTGsreHFJSFNQSU5hMGNsSUVjRFR2Z1BIUyt3a0Jh?=
- =?utf-8?B?RGszNkhDTVQ4akl6eGRaVjlkZ1dYM3lJLzRIMHRjS3JWclVISDJmbVhnM2lY?=
- =?utf-8?B?dDFqRFZCWURlci94RnErWERRODJ4NDFIRW10dVJaaDNuT25mTFNZYy9xZjdB?=
- =?utf-8?B?dzVaSis2cjM3U2tjVFoxMWRXVGs1eFduNloxZit5ZmRpQlBBd2l0WkhibzBV?=
- =?utf-8?B?QzQ3Y0lFTWhHZ1M0SWxUZXpyTk9WU3hoMFRPK1ArQUQ0bnZNM0ZZSCtCUEFy?=
- =?utf-8?B?SWwrcGhMVzJZeFdvMm9aZVlUWCticWEvdWJJTVRXZm5VUzUwSXpkeTNWUk9k?=
- =?utf-8?B?enBGTjZ3elYvbWNjclBvT0UvbHJ0Q0JpRUhMNXdFOVViRHhNeFNPOVJ4UW9M?=
- =?utf-8?B?YWdUVUgrcm9ncVJkOWJlTUI2Q2pybm5PNXFwblNjTmcxdUZPT3pvN0JKYXZ1?=
- =?utf-8?B?b0QxRGlwTUxwK0RHWlFWcEdDRzYvaWtXdVlSMHU4Z3JvWlFiMktGZFNWbjli?=
- =?utf-8?B?MjNiUHpSSmw5bDR1SEZtUytlTWk4Zk9HTlNHM25jN3l5czgvcGNlYjZxTW9x?=
- =?utf-8?B?N0dIZ3ZCbm1GeHh2Z3RJaDRpc1RRa25vbmpBay9yZFV5Sy9XT0syRVZmcUc2?=
- =?utf-8?B?RGIwWXl6eHI0cFAvQXhGZWtleTFjbXM3TURISkwwMkR2STVleHh2WmVONlZP?=
- =?utf-8?B?U1ArV2VnbWdLaXZWQnRXOWJEQTA1clUrNCs0WUZlMHJXa3ZyQmFjZmwrTnZU?=
- =?utf-8?B?bEFjb3V2NGo5NXFHemJLMkc0NFEyckNhS29ZTkVaR0FUM2p3MDg1UGRhY3U2?=
- =?utf-8?B?SWtNbTBYYm9mdWJNMDlJVVpNb2pGbzY1SXcvOVVEQkZrTjRVNzFDRW5vVldN?=
- =?utf-8?B?b2twTkRnOGYwbnNvSXlabnlqc2NZakhFTFhHVTFaVCtBblBKOFVQWDNveC9w?=
- =?utf-8?B?bzRMMzdIa0NXRytEcjhYSzdYVmV5Z3kxWkM1WVdaNUorQm1QNG9USC9BSnVK?=
- =?utf-8?B?Y0VSZHFmN2hrV3FyMXFUcENUNlo4UDMyN3Y0QlNiZEdHcE82cTVLTG9ySlNQ?=
- =?utf-8?B?V0taZXZ3dEFVQ2dGbnAreExGTnZuaUQ1ZE45TmR5a21XMUdSYkdoYkZZakZv?=
- =?utf-8?B?eTJzNUk3WGcxa2dKbjhQY3VvZ3pxRXMxS01vYmxabExqVlVCVTJkNElRQjlo?=
- =?utf-8?B?N1FwaDMyMXBUNkl6MVBUN1Z1eU5vS2hlMTRHMHA3cGRDbnlDZWhWWlpySUFr?=
- =?utf-8?B?b2NuV1VqcXJsTjdPZE1NbUxMTGpGWkZyVFdpbllXQU9lRjYwUDlnRlJaMEh3?=
- =?utf-8?B?a1Z5WE42YVhQYmdIdjBDTXVER3dMem5qOXFVcHFqMHJpdjJWdjBuZkkyejZ4?=
- =?utf-8?B?empoZjQwNUU2dUJFWTh1eEJid0dPdmlFakhWejNhZ0cwWlJlMUIvRVZmNFdj?=
- =?utf-8?B?Q0V1d1dBS2dxTFloai92ZDBLZVRqK0lqNDdqVWZxdUZtTFdGSmZhSGYwQlBD?=
- =?utf-8?B?eENIeXZHV3NFMmZRcEdtN1dTZC9YcmxNS1JZTXBtaWRDWFFXb1lNanBaTEJ1?=
- =?utf-8?B?RlRacmdWNGVYTEJrWXhTbkdCVXpGR2hBSCtMWGVCZ2JldEdMU01iUkNENm12?=
- =?utf-8?Q?4bXkQdgEJTTHCpT/YDR5fNVR/?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 44c9ab15-9437-4c9a-b010-08dd9d2911c1
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8658.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 May 2025 14:16:27.8620
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: vsS7NcNAIh0VqvkcVvZV6HxbjccZScbq0avnpCw65OfOa4FbyjyHRlH8Mu9pmvomVIwXJKN+tuvpdaAHh6C9Jg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB7542
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6/6] x86/vdso: Enable sframe generation in VDSO
+To: Steven Rostedt <rostedt@goodmis.org>,
+        Josh Poimboeuf
+ <jpoimboe@kernel.org>,
+        Indu Bhagat <indu.bhagat@oracle.com>, linux-kernel@vger.kernel.org,
+        linux-trace-kernel@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Andrew Morton <akpm@linux-foundation.org>, x86@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>
+References: <20250425023750.669174660@goodmis.org>
+ <20250425024023.173709192@goodmis.org>
+Content-Language: en-US
+From: Jens Remus <jremus@linux.ibm.com>
+Organization: IBM Deutschland Research & Development GmbH
+In-Reply-To: <20250425024023.173709192@goodmis.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 7oosbzVA6NumzN8mRLM6lgUJM9bg-qYL
+X-Proofpoint-GUID: 7oosbzVA6NumzN8mRLM6lgUJM9bg-qYL
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI3MDExNSBTYWx0ZWRfX8PfJfOKfRNYv /xwu3Lc58d9K5KexAtv+cxtyW+Ex/AuVKG5X8TLWnGcl/AmPc5Yf9Y1dR11pIHYE2J6QcxSvRHk GqZzt63+u3Lj8HXub2EN1CUMnwgz3bDyeaOiYtTPU2vpmbQotv7XPF8Uf30JIF4doix67XcwQ6P
+ HKxt1gSG7GZ9s+C6Te8pMwvwTntCHFpdkhoNHXJRORuJk1mrpKTc63jP9yWCv5Y7hGb8G38mSXg KqEmXBkKz5UnsJu/DY0IGeKcseYhxW52eiHco2J0MDozvGOqW/ONN+B+mn7xFMM/POCyIpya+O4 gK0gMSj6BcyXF5acxvVoIlcdZ+iMo6g12gyr2MQqEcYKAIVYw24LqL52QusONZhLY8IBKX97phT
+ WKa7JKwfiE5biT0HUB73IujEVxnNfwlweGwSbA9P+LO2tCnMS9OavPg34+rN3KHxS8fD8AD+
+X-Authority-Analysis: v=2.4 cv=fJM53Yae c=1 sm=1 tr=0 ts=6835c95e cx=c_pps a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=VwQbUJbxAAAA:8 a=meVymXHHAAAA:8 a=VnNF1IyMAAAA:8 a=0MvmVg10__VCTnNSAJcA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=2JgSa4NbpEOStq-L5dxp:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-27_07,2025-05-27_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
+ priorityscore=1501 bulkscore=0 adultscore=0 mlxlogscore=999 suspectscore=0
+ phishscore=0 clxscore=1011 lowpriorityscore=0 malwarescore=0
+ impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505160000
+ definitions=main-2505270115
 
-On 5/27/2025 5:24 PM, Aaron Lu wrote:
-> Hi Prateek,
+On 25.04.2025 04:37, Steven Rostedt wrote:
+> From: Josh Poimboeuf <jpoimboe@kernel.org>
 > 
-> On Tue, May 27, 2025 at 04:49:36PM +0530, K Prateek Nayak wrote:
-> ... ...
->> Since we now have an official per-task throttle indicator, what are your
->> thoughts on reusing "p->se.group_node" for throttled_limbo_list?
->>
+> Enable sframe generation in the VDSO library so kernel and user space
+> can unwind through it.
 > 
-> I'm not sure. I can easily get confused when I see se.group_node and
-> thought it was something related with rq->cfs_tasks :) Maybe using a
-> union could make it look better?
+> Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> ---
+> Changes since v5: https://lore.kernel.org/20250422183722.919601983@goodmis.org
 > 
-> Anyway, if space is a concern then this is a good way to do it, thanks
-> for the suggestion. I'll leave it to Peter to decide.
+> - Replace $(comma) with a comma in the Makefile
+>   (Jens Remus)
 
-Ack! Was just trying something out. I don't think space is actually a
-worry (yet!) looking at the amount of members behind
-CONFIG_CFS_BANDWIDTH :)
+> diff --git a/arch/x86/entry/vdso/Makefile b/arch/x86/entry/vdso/Makefile
 
-Union is a good idea but if space is not a concern, it is great as is.
+> @@ -47,13 +47,17 @@ quiet_cmd_vdso2c = VDSO2C  $@
+>  $(obj)/vdso-image-%.c: $(obj)/vdso%.so.dbg $(obj)/vdso%.so $(obj)/vdso2c FORCE
+>  	$(call if_changed,vdso2c)
+>  
+> +ifeq ($(CONFIG_AS_SFRAME),y)
+> +  SFRAME_CFLAGS := -Wa,-gsframe
 
+Nit: The GNU assembler (GAS) option as of "as --help" and "man as" is
+"--gsframe" (with two dashes).  But as GAS uses getopt_long_only() it
+accepts long options prefixed with "--" as well as "-".  I don't have
+any preference.
+
+> +endif
+> +
+
+Regards,
+Jens
 -- 
-Thanks and Regards,
-Prateek
+Jens Remus
+Linux on Z Development (D3303)
++49-7031-16-1128 Office
+jremus@de.ibm.com
 
-> 
-> Best wishes,
-> Aaron
+IBM
+
+IBM Deutschland Research & Development GmbH; Vorsitzender des Aufsichtsrats: Wolfgang Wendt; Geschäftsführung: David Faller; Sitz der Gesellschaft: Böblingen; Registergericht: Amtsgericht Stuttgart, HRB 243294
+IBM Data Privacy Statement: https://www.ibm.com/privacy/
 
 
