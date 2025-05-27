@@ -1,116 +1,113 @@
-Return-Path: <linux-kernel+bounces-663900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-663906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1ECAEAC4F05
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 14:58:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF446AC4F18
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 15:00:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 891D13AF304
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 12:58:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C90C1BA0932
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 13:01:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A17E26C3B5;
-	Tue, 27 May 2025 12:58:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6437127146E;
+	Tue, 27 May 2025 13:00:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HtsUKHsQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b="q3xlNA0K"
+Received: from jpms-ob01.noc.sony.co.jp (jpms-ob01.noc.sony.co.jp [211.125.140.164])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D356C2ED;
-	Tue, 27 May 2025 12:58:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9446526FDBB;
+	Tue, 27 May 2025 13:00:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.125.140.164
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748350701; cv=none; b=u2Lyh7CMHjhRV+myQ1O9F5GNLj8BELKsvxI/DbdWbk6/4UVxImu4bChmHiTqNwpNhC8QE8bF1OO4djujVpH4d8U4wnLWmnyo4E9P4+/j85fgm26gUCWkMcy5xv6j8eS17aPdUj/DbTqy86xzacI5wXeM3J1ovn6icm2U/bC054E=
+	t=1748350819; cv=none; b=HS1bKVfkiIxfNnI6DM6WfenGMNRA0MqWU5QYBKeVk441CjH28uJ1YzSphV7t0qRxUlF+qs684cukhdobGCL3Y43cslsaSlRZpxlOJ+SmOmK3oA7sFRMYOLLpW+aFEew2XwYiL5j4MI0+6awdTFDsPX3Svbi4PuwIQxl7+Hurtn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748350701; c=relaxed/simple;
-	bh=8fNDXQ9wNkxnXTzRMl64ky9f5IhJbEJPvtSA4rQu8oo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VCNOg56tk8oyMOWkyGlr5Xvb8VySdhez1tYX3OC8OupF2Rh0DSg4iDye+wWR4++uoMg8HyR0uv+O/n3h961bbXJJBLyV8ccGsR97ljwDj+TsThuM4GbdiRRv88IhXOkrNP/QmOs0hX7H+3rIFBUWy/EsMKr0r2cCNClQUh7RPpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HtsUKHsQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21406C4CEE9;
-	Tue, 27 May 2025 12:58:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748350701;
-	bh=8fNDXQ9wNkxnXTzRMl64ky9f5IhJbEJPvtSA4rQu8oo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HtsUKHsQ7+VxZL8ojRcD/mnflUdEpiNYKZwYClWneoIiTZD/aUWHMkdelCAb2cz0f
-	 qZFQlbZ5nGCug/ibS2U1yGRciENLlTLfMeSevBY7Dhwt1DDQrWcysjcKHCLkiu5teZ
-	 j0IUQfeQy6w/GdTg0o+Z2QBahfhMcYoAtgRsB5hsqePLuD3PBhdbY1UAe+dgNJSYtd
-	 ma3gC2EbBX/fRguzBM1jtW/WgzI4VBn+DD+DXg/KZcauI/3zNoayBB8Ms7/LyeDGTC
-	 XJnapivJ+nwrYwYC2Eu9BBhaIU/TNNvt98pjYcQtA2X+7dtarrGw80S9Nk51JITyYV
-	 cIVHhwsQAZB3w==
-Date: Tue, 27 May 2025 14:58:14 +0200
-From: Alexey Gladkov <legion@kernel.org>
-To: James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: Petr Pavlu <petr.pavlu@suse.com>, Luis Chamberlain <mcgrof@kernel.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Daniel Gomez <da.gomez@samsung.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
-	linux-kbuild@vger.kernel.org, Khalid Aziz <khalid@gonehiking.org>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	linux-scsi <linux-scsi@vger.kernel.org>
-Subject: Re: [PATCH v3 1/6] scsi: Define MODULE_DEVICE_TABLE only if necessary
-Message-ID: <aDW25htH2tMzqtqH@example.org>
-References: <cover.1748335606.git.legion@kernel.org>
- <628e85f1b7e9d0423a8b83ac3150b3e151c9c4e3.1748335606.git.legion@kernel.org>
- <f361faffc1863358e8fda98f994f6a49b6f0d4c9.camel@HansenPartnership.com>
- <aDWoCU2YrxaCBi42@example.org>
- <65d96116e06d73fe4e219a595820d610e74290c9.camel@HansenPartnership.com>
+	s=arc-20240116; t=1748350819; c=relaxed/simple;
+	bh=6AiBnz+NtthXTl7ipClTn38s9n5ZuPe1WkRCyxo4yFc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ln3PXDDAnlwHX20JKmpXoDS6+ZO1u8ssg39rG2NfiQXFXdOb8ObmTV2bWVxgXPHlEhsL+60PNkheF98uFlk1RtzCJwxzOE/RNwTVJ+rjFxVFR1L8ZS9XJFw6z4panTfGS2fI+tMKL8KlRtlxcSDpEHBEvMH0sBfprYOiMt8Buo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com; spf=pass smtp.mailfrom=sony.com; dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b=q3xlNA0K; arc=none smtp.client-ip=211.125.140.164
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sony.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=sony.com; s=s1jp; t=1748350817; x=1779886817;
+  h=from:subject:date:message-id:mime-version:
+   content-transfer-encoding:to:cc;
+  bh=2UYaaE2+OTCkjb9XKZqJZIC2PXKJNvGod0gjUbVzluY=;
+  b=q3xlNA0KKVH8AA73Qv/1pDYRJG6ouhuGLdLlZhf1vpa/qet3jeBNNw9O
+   qRUyt3v6w53LCKE9qXjze/4+G8bfSX2yjfPR8zN5ifar03RGw90WdsKlZ
+   73CGcN6UKihAxFYjcxcskxIH3RHVAJSsdYOqxb/vy14TWjyKsnD+ck3Wb
+   YzDsBvq/Fo4LOlAKMB+UX+dA1FnOtbkbylzHB5D/hxJUahmR9sLR4dOgk
+   VlaymKENvFi9t/bzsBR3RXWSEQu0AP++CKGNnfKHKKR+664epjJ4LfJrD
+   cWQJaFRJ/0A8gMYuL5DF2ydvVlETo0q1dYeDqnQQlMPG8sQJxBQS2N5r2
+   w==;
+Received: from unknown (HELO jpmta-ob1.noc.sony.co.jp) ([IPv6:2001:cf8:0:6e7::6])
+  by jpms-ob01.noc.sony.co.jp with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2025 22:00:14 +0900
+X-IronPort-AV: E=Sophos;i="6.15,318,1739804400"; 
+   d="scan'208";a="564893578"
+Received: from unknown (HELO [127.0.1.1]) ([IPv6:2001:cf8:1:573:0:dddd:6b3e:119e])
+  by jpmta-ob1.noc.sony.co.jp with ESMTP; 27 May 2025 22:00:14 +0900
+From: Shashank Balaji <shashank.mahadasyam@sony.com>
+Subject: [PATCH v2 0/2] cpufreq: userspace: add CPUFREQ_GOV_STRICT_TARGET
+ flag
+Date: Tue, 27 May 2025 21:59:08 +0900
+Message-Id: <20250527-userspace-governor-doc-v2-0-0e22c69920f2@sony.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <65d96116e06d73fe4e219a595820d610e74290c9.camel@HansenPartnership.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABy3NWgC/4WNQQ7CIBBFr9LM2jEUxKAr72G6oDC2LGQaUGLTc
+ HexF3D5fvLe3yBTCpTh2m2QqIQcODaQhw7cbONEGHxjkEJqoaXEdxPyYh3hxIVS5ISeHZqzMsK
+ PdlReQ5OXRI/w2cP3ofEc8ovTuv+U/rf+TZYee3TGCmVIXYQ53TLH9ej4CUOt9Qu/UAUFuwAAA
+ A==
+X-Change-ID: 20250522-userspace-governor-doc-86380dbab3d5
+To: "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Viresh Kumar <viresh.kumar@linaro.org>, Jonathan Corbet <corbet@lwn.net>
+Cc: linux-pm@vger.kernel.org, linux-doc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Shinya Takumi <shinya.takumi@sony.com>, 
+ 20250522-userspace-governor-doc-v1-1-c8a038e39084@sony.com, 
+ Shashank Balaji <shashank.mahadasyam@sony.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1158;
+ i=shashank.mahadasyam@sony.com; h=from:subject:message-id;
+ bh=6AiBnz+NtthXTl7ipClTn38s9n5ZuPe1WkRCyxo4yFc=;
+ b=owGbwMvMwCV2mPH4Ij++H1mMp9WSGDJMt8d8OvJWer1tQL9Y06ONd/OzS15Uv+ORlJNUrn1TL
+ m6sfk+7o5SFQYyLQVZMkeWdzLoLB60sm74eZ/gGM4eVCWQIAxenAExk4mSG32x37z/zmTPhCGdc
+ hEj0o3NyjEYRttsP6LKy/I18dujq/RmMDBscVs44adPTe+fAj113BRZHPztkYzXhQqLnPIaKfw1
+ svxkA
+X-Developer-Key: i=shashank.mahadasyam@sony.com; a=openpgp;
+ fpr=EE1CAED0C13A3982F5C700F6C301C7A24E0EF86A
 
-On Tue, May 27, 2025 at 07:58:27AM -0400, James Bottomley wrote:
-> On Tue, 2025-05-27 at 13:54 +0200, Alexey Gladkov wrote:
-> > On Tue, May 27, 2025 at 07:28:59AM -0400, James Bottomley wrote:
-> > > On Tue, 2025-05-27 at 11:07 +0200, Alexey Gladkov wrote:
-> > > > Define MODULE_DEVICE_TABLE only if a structure is defined for it.
-> > > > 
-> > > > drivers/scsi/BusLogic.c:3735:26: error: use of undeclared
-> > > > identifier
-> > > > 'blogic_pci_tbl'
-> > > >  3735 | MODULE_DEVICE_TABLE(pci, blogic_pci_tbl);
-> > > 
-> > > Well, a) need to cc the scsi list
-> > 
-> > Sorry. I miss it.
-> > 
-> > > and b) how is this possible when MODULE_DEVICE_TABLE() has an empty
-> > > definition if MODULE isn't defined (so the guard you move should be
-> > > over an empty statement)?
-> > 
-> > In the next patch:
-> > 
-> > [PATCH v3 4/6] modpost: Create modalias for builtin modules
-> > 
-> > I remove this condition for the MODULE_DEVICE_TABLE macro and it will
-> > be always defined.
-> 
-> Well, why?  If there's a reason for the table to always exist, wouldn't
-> the best fix then be to remove the module guards from the PCI table in
-> the buslogic ... they only really exist to prevent a defined but not
-> used error which it sounds like you're getting rid of?
+In-Reply-To: 20250522-userspace-governor-doc-v1-1-c8a038e39084@sony.com
+Signed-off-by: Shashank Balaji <shashank.mahadasyam@sony.com>
+---
+Changes in v2:
+- Instead of modifying the documentation to say that variation in frequency is
+possible despite setting scaling_setspeed, add the CPUFREQ_GOV_STRICT_TARGET
+flag to the userspace governor to make its behaviour match the expectation when
+used with the intel_pstate driver with HWP enabled
+- Mention in the documentation that variation in frequency due to hardware
+factors is possible
+- Link to v1: https://lore.kernel.org/r/20250522-userspace-governor-doc-v1-1-c8a038e39084@sony.com
 
-I wanted to keep the original logic and remove the build error. Before my
-changes blogic_pci_tbl was only used when the module was built separately
-(MODULE case).
+---
+Shashank Balaji (2):
+      cpufreq: userspace: set CPUFREQ_GOV_STRICT_TARGET flag
+      cpufreq, docs: userspace: mention variation in freq due to hw coordination
 
-But yes, you are right. In this case, it would be more appropriate to
-remove the MODULE condition at all since MODULE_DEVICE_TABLE always
-makes sense after my changes.
+ Documentation/admin-guide/pm/cpufreq.rst | 4 +++-
+ drivers/cpufreq/cpufreq_userspace.c      | 1 +
+ 2 files changed, 4 insertions(+), 1 deletion(-)
+---
+base-commit: 914873bc7df913db988284876c16257e6ab772c6
+change-id: 20250522-userspace-governor-doc-86380dbab3d5
 
+Best regards,
 -- 
-Rgrds, legion
+Shashank Balaji <shashank.mahadasyam@sony.com>
 
 
