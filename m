@@ -1,138 +1,91 @@
-Return-Path: <linux-kernel+bounces-663615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-663628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36680AC4AD3
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 10:56:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED3E5AC4B12
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 11:06:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F383F17CEFE
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 08:56:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6D8717CFD5
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 09:06:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 954E82475F2;
-	Tue, 27 May 2025 08:55:41 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80CA724DD16;
+	Tue, 27 May 2025 09:06:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=mikaelkw.online header.i=@mikaelkw.online header.b="QipSeslw"
+Received: from dispatch1-eu1.ppe-hosted.com (dispatch1-eu1.ppe-hosted.com [185.132.181.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73B0E142E6F;
-	Tue, 27 May 2025 08:55:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A455724A055;
+	Tue, 27 May 2025 09:06:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.181.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748336141; cv=none; b=u2HKcAvzaJ5vF6nIAmIiXIIov683kn8I+M1RkLQSpQDw3SkflGY4w5hxuWGaFmBl1jC0inxE7yELsf1NtHBmrFErzd6wcQnDsULav7mpsBjUm8i1WFJDkC0VT57hQcGPWVXJ3EoFCQFojxNFT+rProKspWmMkRlGf8cpauKwO6A=
+	t=1748336763; cv=none; b=tr0eC2bf2YneYo/sMStQU96XhBwN43IR+qJ7m9oRvfiJiPvWkM76TOPX+XHpZZ3VOilhndU1kn/NT2jTHqE3UlGLlyvLHJvraZDLbnW3A0z2Mxk728rDTSdN94W0r4+XeEaG0YTXyejy2XElHHU9pmijHfdd8ij4RcJOmOBQM/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748336141; c=relaxed/simple;
-	bh=aJIF+fqz29XOXPB5Pt16zi4q6rP09wVcco+skS8uyjY=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=JmC7zYl9ndJ/TiU173D02p9H8DqAXDp0EklQ0ULbbvqw1QTkHmwHPw6FVmNKVXmP8yp2MnCOA8Ke8744gq4Bc4jEKB5oym2I7dXXVSW+ontxxh2jpHA88TCCBydtxRIwxsfq0ui5+Qv/cAlhuYbZGLaAUev1IlXHtKfPhC6eij8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4b660F5Xbrz4f3jY1;
-	Tue, 27 May 2025 16:55:09 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 0DA641A0DAA;
-	Tue, 27 May 2025 16:55:35 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgAXe18EfjVoi+6hNg--.29395S3;
-	Tue, 27 May 2025 16:55:34 +0800 (CST)
-Subject: Re: [PATCH 15/23] md/md-llbitmap: implement llbitmap IO
-To: Christoph Hellwig <hch@lst.de>, Yu Kuai <yukuai1@huaweicloud.com>
-Cc: xni@redhat.com, colyli@kernel.org, song@kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-raid@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
- johnny.chenyi@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <20250524061320.370630-1-yukuai1@huaweicloud.com>
- <20250524061320.370630-16-yukuai1@huaweicloud.com>
- <20250527082709.GA32108@lst.de>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <6eea2fad-f405-ed20-73f3-c26542b401bf@huaweicloud.com>
-Date: Tue, 27 May 2025 16:55:32 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1748336763; c=relaxed/simple;
+	bh=YuauqPOASLhHRtpX+GMSrLmgXOwq9QAmqyQcVsESSz4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=buDiFnIhK0opZR6G1B8Sx4exsRwIUcbr8n1804vOigBwn+UwG494ZBgG1Ha7j76YHY4wHAMaUxlapaiZAm6U8CRAfLtRexaxS9P/BKnBCh1CFZe7cAPwqMQyZZ222pkLg7+YtXqdsJT4/nZnIhPyrrPtZ2tAjc8cAH5R3bAjPVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mikaelkw.online; spf=pass smtp.mailfrom=mikaelkw.online; dkim=pass (2048-bit key) header.d=mikaelkw.online header.i=@mikaelkw.online header.b=QipSeslw; arc=none smtp.client-ip=185.132.181.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mikaelkw.online
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mikaelkw.online
+Received: from dispatch1-eu1.ppe-hosted.com (ip6-localhost [127.0.0.1])
+	by dispatch1-eu1.ppe-hosted.com (PPE Hosted ESMTP Server) with ESMTP id DDC803455F0;
+	Tue, 27 May 2025 08:56:57 +0000 (UTC)
+Received: from engine.ppe-hosted.com (unknown [10.70.45.140])
+	by dispatch1-eu1.ppe-hosted.com (PPE Hosted ESMTP Server) with ESMTPS id 56B0D600B1;
+	Tue, 27 May 2025 08:56:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mikaelkw.online;
+ h=cc:cc:content-transfer-encoding:content-transfer-encoding:date:date:from:from:message-id:message-id:mime-version:mime-version:subject:subject:to:to;
+ s=pp-selector; bh=XVzcGbWpERYMml1uLAWk5RU7kc71sGLeR0bD1usT3/w=;
+ b=QipSeslw/Ris0Qm4/HLYTGkoc/1pPRw5gLk8WoXClJZ8joMQFaeNuAzmdIuekbe0C5+sfZfb/s98b6n9TKvqq3jqp/NMMDkUts3mLOWFLoE3LVHfLv+GcHEUOgkz6OEge8ou1fGX2MLl/KzeHsItKD/cNHQh2j6P5sN+M4oNAdgIkiH0yubtGlige+ciKD7m8JePc7nN+5I/LOB5Dogd/MnwkwTNb2b2WKoG8R8Oor+tmBb5G8Q5wdRbQmXVBh6d8iI+Syo9az4KJsIJ8QX73ZqXBgR3eSdk6UHjTRYqcaq3Le0bwcvk5vOt9rQ8chzYThTZTJDZYe35NDkGdiBjeg==
+X-Virus-Scanned: Proofpoint Essentials engine
+Received: from test-ubuntu-rev3.. (78-26-16-15.network.trollfjord.no [78.26.16.15])
+	by mx1-eu1.ppe-hosted.com (PPE Hosted ESMTP Server) with ESMTP id A2542B00069;
+	Tue, 27 May 2025 08:56:47 +0000 (UTC)
+From: Mikael Wessel <post@mikaelkw.online>
+To: netdev@vger.kernel.org
+Cc: intel-wired-lan@lists.osuosl.org,
+	torvalds@linuxfoundation.org,
+	anthony.l.nguyen@intel.com,
+	przemyslaw.kitszel@intel.com,
+	andrew@lunn.ch,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	security@kernel.org,
+	stable@vger.kernel.org,
+	davem@davemloft.net,
+	edumazet@google.com,
+	linux-kernel@vger.kernel.org,
+	Mikael Wessel <post@mikaelkw.online>
+Subject: [PATCH v2 net 0/1] e1000e: fix heap overflow in e1000_set_eeprom()
+Date: Tue, 27 May 2025 10:56:11 +0200
+Message-ID: <20250527085612.11354-1-post@mikaelkw.online>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250527082709.GA32108@lst.de>
-Content-Type: text/plain; charset=gbk; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAXe18EfjVoi+6hNg--.29395S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7Zr18WF45uFy8GF1Dur4UArb_yoW8Gr1xpF
-	4rWFy3GFn5JF10gwn7GryYgF1fKa1ktry3Crn8A3s3u3s0vrn3tFs7KFWUC3s3Wrn8JFs2
-	q3W5K398Ja1qv3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBF14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
-	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7V
-	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
-	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6x
-	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAI
-	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x
-	0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUqeHgUUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+X-MDID: 1748336210-GI2fiDH3N2w8
+X-PPE-STACK: {"stack":"eu1"}
+X-MDID-O:
+ eu1;fra;1748336210;GI2fiDH3N2w8;<post@mikaelkw.online>;7544ea0f74a3697a45f5192d6efff48c
+X-PPE-TRUSTED: V=1;DIR=OUT;
 
-Hi,
+v2: patch the correct write helper and add bounds-checking; v1
+    mistakenly guarded e1000_get_eeprom() (read path).
 
-ÔÚ 2025/05/27 16:27, Christoph Hellwig Ð´µÀ:
-> FYI, I still find splitting the additioon of the new md-llbitmap.c into
-> multiple patches not helpful for reviewing it.  I'm mostly reviewing
-> the applied code and hope I didn't forget to place anything into the
-> right mail.
-> 
->> diff --git a/drivers/md/md-llbitmap.c b/drivers/md/md-llbitmap.c
->> new file mode 100644
->> index 000000000000..1a01b6777527
->> --- /dev/null
->> +++ b/drivers/md/md-llbitmap.c
->> @@ -0,0 +1,571 @@
->> +// SPDX-License-Identifier: GPL-2.0-or-later
->> +
->> +#ifdef CONFIG_MD_LLBITMAP
-> 
-> Please don't ifdef the entire code in a sourc file, instead just compile
-> it conditionally:
-> 
-> 
-> md-mod-y        += md.o md-bitmap.o
-> md-mod-$(CONFIG_MD_LLBITMAP) += md-llbitmap.o
-> 
+---
 
-Thanks for the suggestion, this is indeed better.
+Mikael Wessel (1):
+  e1000e: fix heap overflow in e1000_set_eeprom()
 
->> +	BitNeedSync,
->> +	/* data is synchronizing */
->> +	BitSyncing,
->> +	nr_llbitmap_state,
-> 
-> Any reason nr_llbitmap_state, doesn't follow the naming scheme of the other
-> bits,?
+ drivers/net/ethernet/intel/e1000e/ethtool.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-I'm following the enum name(enum llbitmap_state) here, because this is
-the number to total bits, not a meaningful bit.
-
-Do you prefer a name like BitStateCount?
-
-Thanks,
-Kuai
-
-> 
->> +	BitmapActionStale,
->> +	nr_llbitmap_action,
-> 
-> Same here?
-> 
->> +			if (rdev->raid_disk < 0 || test_bit(Faulty, &rdev->flags))
-> 
-> Overly long line.
-> .
-> 
-
+-- 
+2.48.1
 
