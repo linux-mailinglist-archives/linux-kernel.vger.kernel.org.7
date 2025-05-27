@@ -1,205 +1,274 @@
-Return-Path: <linux-kernel+bounces-664451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-664448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6440BAC5BA8
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 22:52:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BFA1AAC5BA5
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 22:50:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBE6D3B60AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 20:52:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 131783B4309
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 20:49:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 934FC20C02A;
-	Tue, 27 May 2025 20:52:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE355210F4D;
+	Tue, 27 May 2025 20:49:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xgio8Z0s"
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fZrC8roU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0FE812B93;
-	Tue, 27 May 2025 20:52:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2D5520C48D;
+	Tue, 27 May 2025 20:49:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748379135; cv=none; b=YAgXgjLb0KOqwzBMg564h48lmlvJRhS/81dUFHlI133jyttquuf6Jk5Dw38Fbh193RgFwELlCF6lE9BzToc6BONi7CLXgtF9C7M+szOP1KQeFcR6efNaXXDbW3LT2PDq7UJKiZqJj6i24dAennw8HFzNFTeIJtMWThGseEUUxyw=
+	t=1748378989; cv=none; b=a9d/+pNEMA0ffKJsr4TGJm2vZpMd17BR1jK+sTWs52sJXlLY0oHCupzSeEXpNyC+kgeofUsuxHTis4bDjaXrRQfJRSx8EPFOottVDFBU6U9v7t7LvPGZBuwa/doSz+LShq+lmU51XCm6Fy8iPOJW3w5XZKrZQReF0igFPGhQSAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748379135; c=relaxed/simple;
-	bh=e39syxMfWcpndgEllNrUQx6K9DL82OtNwwFXdrGad5k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kYGlV3XCOUuEwhvvaE4ZLNwD9S0AgRnvadXqHgopDVGFU/oFDO9YuLzw54kAujYbsJ7wBIBzZ+VvT3jKUxR49UfqWJQcHr0OdDPhXxbmJ+n1tG/wASespvz/T495L1eLz1cNRVTlGCzhOsFdAMeS7zzEqOS80O4Iex8py55Yxic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xgio8Z0s; arc=none smtp.client-ip=209.85.222.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7c597760323so358136385a.3;
-        Tue, 27 May 2025 13:52:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748379133; x=1748983933; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=LKaeKldw1Ck2sQZVVbHbkbW9fD7EOZAjJqusQZCOfK4=;
-        b=Xgio8Z0sAC+F6+k71ICwupOqh5okMW34KQfHd7ZG9cZZ4ATUdcybebel9VChciJjcB
-         0ggOyVGPzVZzF1ltwjN7Wwxs/ouOe5NahEoOFTmWl48eqEIrBBD0AudwriE3BQgSYhpx
-         q7iR0O+ZV8pRLjYwaKVxfEAgP79AOuNZRRFToP3nDLnitsach0onnnHu9tJEyYW4Vwym
-         R6LhpESX4euEmtILbqoE4caXPiVETa/uiCeoxaqqm28F6A+95RKCx8o6OBP0xFRva3jO
-         Ii2K9dbsYDQD5OjToNBcpABmNnJStk4Ttg2u/uufqsdVWq7zV/i9BYIaVSlsk1+njFhi
-         6QVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748379133; x=1748983933;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LKaeKldw1Ck2sQZVVbHbkbW9fD7EOZAjJqusQZCOfK4=;
-        b=DaQsA1+4+A4JUqOpNevSK/jhMsiDFja0zpJ/duKx1ng2YrjEGiDW5v/iYEVh6UJyva
-         ePXF2fvmIxYM1J39ZnkUtj2Hmf8OvpZyE5BpLOo7U4IiqS/IygzqENDo3yxXEPxTIyx0
-         sL10dWkmySEPf7NdhQNtKNT7hFX5TMRvMzfUUPxzx7OfKW2ajmQcejMKDRlJ3kQn0P8v
-         J+/D1kNVurF4QxNGztu4PsxI8/CGFGae2g8Ge8zAJY3ykE3/aqESspgSdokjyR93IQjg
-         07uNbGunYunGfT97eV8MrgSX5Wrby2qgVDeNt4sDtFxMvHcFmdMN6HGgtwlS8S8YewGe
-         e5Zw==
-X-Forwarded-Encrypted: i=1; AJvYcCUfRcMapPwhcnjMbDCvYtN2CNe7QAYbPfsmk2GORDdQIHel9Q7mNfH+FShQ4dBwZQ1TqRgjUNBS/9gGLLJ5Xzw=@vger.kernel.org, AJvYcCVtQm5EUUkymzZOVT+dCLW22+iDO/RNCDykIhTNixwtu6RQiE/zN6u+5DV9edrjQcrU+bonUtoBRPhtKjQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXxa94W2VhN8vQBrxppzP5nluywRm8KmW09f5U+vo3Xb1U4GF0
-	xEg9oQsRI/Tu03sDzR+E2fdbT2HZ+/oWXHRCy6m8d8u7YmAgRQpvFuK5
-X-Gm-Gg: ASbGncvVAB7nry2v6Uop6+Tcbpsg3qoMzBv0xHvV3ME3nJKQFYURMBOdVoRRuUEpbge
-	ImqYVCI/no+J8votuMg/LSod/BFRjV06JJszk57HXGCazqMcWWPI5PAUAh3ap2gafZoCJMnFjQl
-	IpJjagBaFFEBxL/ORhjX0QaQJVdNOFuNHjX3EnhVJTdJf29niKeB6HfN6cfgTopU36hlq/KE/D+
-	AUapVOgx6C6UVZxPSyYccKcuiye/4mi5K5M3RUVGVhwfhuk2qUPOzO7kFXAde7UYo9l6WVw2FDR
-	cpXcBxPOQWd2ZnzqVUy90zFoo/jhWAmtNQfBegx7+i6S/3VSeFKZkDrs9Xkm3Q==
-X-Google-Smtp-Source: AGHT+IFZ1sRYmlR6BfN6LmxOk0C/pi199cbv60eWY5qfBWmLGtScRn+2PpYVAP+BaHApXJZOI9VX6w==
-X-Received: by 2002:a05:622a:5905:b0:48c:3fc2:e055 with SMTP id d75a77b69052e-49f4625c7a7mr255056601cf.2.1748379132708;
-        Tue, 27 May 2025 13:52:12 -0700 (PDT)
-Received: from localhost.localdomain ([2607:fea8:54de:2200::dd7])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a2f927db8bsm1012551cf.18.2025.05.27.13.52.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 May 2025 13:52:12 -0700 (PDT)
-From: Albin Babu Varghese <albinbabuvarghese20@gmail.com>
-To: ojeda@kernel.org
-Cc: alex.gaynor@gmail.com,
-	boqun.feng@gmail.com,
-	gary@garyguo.net,
-	bjorn3_gh@protonmail.com,
-	lossin@kernel.org,
-	a.hindborg@kernel.org,
-	aliceryhl@google.com,
-	tmgross@umich.edu,
-	dakr@kernel.org,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Albin Babu Varghese <albinbabuvarghese20@gmail.com>
-Subject: [PATCH v2] rust/list: replace unwrap() with ? in doctest examples
-Date: Tue, 27 May 2025 16:49:28 -0400
-Message-ID: <20250527204928.5117-1-albinbabuvarghese20@gmail.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1748378989; c=relaxed/simple;
+	bh=AU9LU7Nfj9orPVkMVTA/U57FFt4iUo111sXVjNeMwhA=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=TmzW9J53YcyJkfpPhzh+9+U74GOtRw3GOd0YLQaAx/WqFPfd1VUohIc9yei/6Jp7A84LrtPExhLvTuJ+kAY/bZieQM2NEfEE7Bc5JDZS30KSyziuVYqqvAtwf50vxyyIwSgH67KWp8flCrypk5MCp01eu/2PRjDKV3hh/Q5IIaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fZrC8roU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 926C0C4CEE9;
+	Tue, 27 May 2025 20:49:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748378989;
+	bh=AU9LU7Nfj9orPVkMVTA/U57FFt4iUo111sXVjNeMwhA=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=fZrC8roUMokBYhflU/jyR8KKzKXFLL0o3LZTrRmKy1rZn7MPtTMJKlmei9wGWFtKx
+	 awwyhFAbRLFB/rdLuB9QzwI5TrILJVlQ3x8gcyZw2qp4xV9pc6qacWH7KVoRDzn21O
+	 AuqlrgQPpPJPQqS48ObY/2BDrx2trlDnhwFnd3NytpV9aPvnv5KIJF50yMGDeTrhc1
+	 L/zRSIE1TY3Vtv6/1CaynsrFDTRo4pc3C0ObsCZrtks1PVTGAwp4yg6FCH6oBHDIUb
+	 9ALlGXQbcEWzWDDjL7+aE7/dbeemgdE984ysWfkZWCXv4hSv6k2Bra0ejPACNkkFNY
+	 ggYxYHyAsAymw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 27 May 2025 22:49:36 +0200
+Message-Id: <DA78MDRNCNB8.X69904APMYCB@kernel.org>
+Cc: "Michal Rostecki" <vadorovsky@protonmail.com>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
+ <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "Brendan Higgins"
+ <brendan.higgins@linux.dev>, "David Gow" <davidgow@google.com>, "Rae Moar"
+ <rmoar@google.com>, "Danilo Krummrich" <dakr@kernel.org>, "Maarten
+ Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
+ <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "David
+ Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, "Luis Chamberlain" <mcgrof@kernel.org>, "Russ Weight"
+ <russ.weight@linux.dev>, "FUJITA Tomonori" <fujita.tomonori@gmail.com>,
+ "Rob Herring" <robh@kernel.org>, "Saravana Kannan" <saravanak@google.com>,
+ "Peter Zijlstra" <peterz@infradead.org>, "Ingo Molnar" <mingo@redhat.com>,
+ "Will Deacon" <will@kernel.org>, "Waiman Long" <longman@redhat.com>,
+ "Nathan Chancellor" <nathan@kernel.org>, "Nick Desaulniers"
+ <nick.desaulniers+lkml@gmail.com>, "Bill Wendling" <morbo@google.com>,
+ "Justin Stitt" <justinstitt@google.com>, "Andrew Lunn" <andrew@lunn.ch>,
+ "Heiner Kallweit" <hkallweit1@gmail.com>, "Russell King"
+ <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>, "Eric
+ Dumazet" <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>, "Paolo
+ Abeni" <pabeni@redhat.com>, "Bjorn Helgaas" <bhelgaas@google.com>, "Arnd
+ Bergmann" <arnd@arndb.de>, "Jens Axboe" <axboe@kernel.dk>,
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+ <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-kselftest@vger.kernel.org>, <kunit-dev@googlegroups.com>,
+ <dri-devel@lists.freedesktop.org>, <netdev@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <llvm@lists.linux.dev>,
+ <linux-pci@vger.kernel.org>, <nouveau@lists.freedesktop.org>,
+ <linux-block@vger.kernel.org>
+Subject: Re: [PATCH v10 2/5] rust: support formatting of foreign types
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Tamir Duberstein" <tamird@gmail.com>
+X-Mailer: aerc 0.20.1
+References: <20250524-cstr-core-v10-0-6412a94d9d75@gmail.com>
+ <20250524-cstr-core-v10-2-6412a94d9d75@gmail.com>
+ <DA66BBX1PDGI.10NHLG3D4CIT7@kernel.org>
+ <CAJ-ks9m48gmar0WWP9WknV2JLqkKNU0X4nwXaQ+JdG+b-EcVxA@mail.gmail.com>
+ <DA6GSMHMLRFM.YH9RGZWLY2X4@kernel.org>
+ <CAJ-ks9nTf4dCoDdg4+YSkXM1sJsZ-0vuSC7wybc2JMAoGemhXQ@mail.gmail.com>
+In-Reply-To: <CAJ-ks9nTf4dCoDdg4+YSkXM1sJsZ-0vuSC7wybc2JMAoGemhXQ@mail.gmail.com>
 
-Using `unwrap()` in kernel doctests can cause panics on error and may
-give newcomers the mistaken impression that panicking is acceptable
-in kernel code.
+On Tue May 27, 2025 at 5:02 PM CEST, Tamir Duberstein wrote:
+> On Mon, May 26, 2025 at 7:01=E2=80=AFPM Benno Lossin <lossin@kernel.org> =
+wrote:
+>> On Tue May 27, 2025 at 12:17 AM CEST, Tamir Duberstein wrote:
+>> > On Mon, May 26, 2025 at 10:48=E2=80=AFAM Benno Lossin <lossin@kernel.o=
+rg> wrote:
+>> >> On Sat May 24, 2025 at 10:33 PM CEST, Tamir Duberstein wrote:
+>> >> > +impl_display_forward!(
+>> >> > +    bool,
+>> >> > +    char,
+>> >> > +    core::panic::PanicInfo<'_>,
+>> >> > +    crate::str::BStr,
+>> >> > +    fmt::Arguments<'_>,
+>> >> > +    i128,
+>> >> > +    i16,
+>> >> > +    i32,
+>> >> > +    i64,
+>> >> > +    i8,
+>> >> > +    isize,
+>> >> > +    str,
+>> >> > +    u128,
+>> >> > +    u16,
+>> >> > +    u32,
+>> >> > +    u64,
+>> >> > +    u8,
+>> >> > +    usize,
+>> >> > +    {<T: ?Sized>} crate::sync::Arc<T> {where crate::sync::Arc<T>: =
+fmt::Display},
+>> >> > +    {<T: ?Sized>} crate::sync::UniqueArc<T> {where crate::sync::Un=
+iqueArc<T>: fmt::Display},
+>> >> > +);
+>> >>
+>> >> If we use `{}` instead of `()`, then we can format the contents
+>> >> differently:
+>> >>
+>> >>     impl_display_forward! {
+>> >>         i8, i16, i32, i64, i128, isize,
+>> >>         u8, u16, u32, u64, u128, usize,
+>> >>         bool, char, str,
+>> >>         crate::str::BStr,
+>> >>         fmt::Arguments<'_>,
+>> >>         core::panic::PanicInfo<'_>,
+>> >>         {<T: ?Sized>} crate::sync::Arc<T> {where Self: fmt::Display},
+>> >>         {<T: ?Sized>} crate::sync::UniqueArc<T> {where Self: fmt::Dis=
+play},
+>> >>     }
+>> >
+>> > Is that formatting better? rustfmt refuses to touch it either way.
+>>
+>> Yeah rustfmt doesn't touch macro parameters enclosed in `{}`. I think
+>> it's better.
+>
+> OK, but why? This seems entirely subjective.
 
-Replace all `.unwrap()` calls in `kernel::list`
-examples with `.ok_or(EINVAL)?` so that errors are properly propagated.
+If more types are added to the list, it will grow over one screen size.
+With my formatting, leaving related types on a single line, that will
+only happen much later.
 
-Closes: https://github.com/Rust-for-Linux/linux/issues/1164
-Suggested-by: Miguel Ojeda <ojeda@kernel.org>
-Reviewed-by: Benno Lossin <lossin@kernel.org>
-Link: https://github.com/Rust-for-Linux/linux/issues/1164
-Signed-off-by: Albin Babu Varghese <albinbabuvarghese20@gmail.com>
+>> >> > +/// Please see [`crate::fmt`] for documentation.
+>> >> > +pub(crate) fn fmt(input: TokenStream) -> TokenStream {
+>> >> > +    let mut input =3D input.into_iter();
+>> >> > +
+>> >> > +    let first_opt =3D input.next();
+>> >> > +    let first_owned_str;
+>> >> > +    let mut names =3D BTreeSet::new();
+>> >> > +    let first_lit =3D {
+>> >> > +        let Some((mut first_str, first_lit)) =3D (match first_opt.=
+as_ref() {
+>> >> > +            Some(TokenTree::Literal(first_lit)) =3D> {
+>> >> > +                first_owned_str =3D first_lit.to_string();
+>> >> > +                Some(first_owned_str.as_str()).and_then(|first| {
+>> >> > +                    let first =3D first.strip_prefix('"')?;
+>> >> > +                    let first =3D first.strip_suffix('"')?;
+>> >> > +                    Some((first, first_lit))
+>> >> > +                })
+>> >> > +            }
+>> >> > +            _ =3D> None,
+>> >> > +        }) else {
+>> >> > +            return first_opt.into_iter().chain(input).collect();
+>> >> > +        };
+>> >>
+>> >> This usage of let-else + match is pretty confusing and could just be =
+a
+>> >> single match statement.
+>> >
+>> > I don't think so. Can you try rewriting it into the form you like?
+>>
+>>     let (mut first_str, first_lit) match first_opt.as_ref() {
+>>         Some(TokenTree::Literal(lit)) if lit.to_string().starts_with('"'=
+) =3D> {
+>>             let contents =3D lit.to_string();
+>>             let contents =3D contents.strip_prefix('"').unwrap().strip_s=
+uffix('"').unwrap();
+>>             ((contents, lit))
+>>         }
+>>         _ =3D> return first_opt.into_iter().chain(input).collect(),
+>>     };
+>
+> What happens if the invocation is utterly malformed, e.g.
+> `fmt!("hello)`? You're unwrapping here, which I intentionally avoid.
+
+That example won't even survive lexing (macros always will get valid
+rust tokens as input). If a literal begins with a `"`, it also will end
+with one AFAIK.
+
+>> Yes it will error like that, but if we do the replacement only when the
+>> syntax is correct, there also will be compile errors because of a
+>> missing `Display` impl, or is that not the case?
+>
+> I'm not sure - I would guess syntax errors "mask" typeck errors.
+
+I checked and it seems to be so, that's good.
+
+>> >> > +                    first_str =3D rest;
+>> >> > +                    continue;
+>> >> > +                }
+>> >> > +                let name =3D name.split_once(':').map_or(name, |(n=
+ame, _)| name);
+>> >> > +                if !name.is_empty() && !name.chars().all(|c| c.is_=
+ascii_digit()) {
+>> >> > +                    names.insert(name);
+>> >> > +                }
+>> >> > +                break;
+>> >> > +            }
+>> >> > +        }
+>> >> > +        first_lit
+>> >>
+>> >> `first_lit` is not modified, so could we just the code above it into =
+a
+>> >> block instead of keeping it in the expr for `first_lit`?
+>> >
+>> > As above, can you suggest the alternate form you like better? The
+>> > gymnastics here are all in service of being able to let malformed
+>> > input fall through to core::format_args which will do the hard work of
+>> > producing good diagnostics.
+>>
+>> I don't see how this is hard, just do:
+>>
+>>     let (first_str, first_lit) =3D ...;
+>
+> It requires you to unwrap, like you did above, which is what I'm
+> trying to avoid.
+
+How so? What do you need to unwrap?
+
+>> >> > +    };
+>> >> > +
+>> >> > +    let first_span =3D first_lit.span();
+>> >> > +    let adapt =3D |expr| {
+>> >> > +        let mut borrow =3D
+>> >> > +            TokenStream::from_iter([TokenTree::Punct(Punct::new('&=
+', Spacing::Alone))]);
+>> >> > +        borrow.extend(expr);
+>> >> > +        make_ident(first_span, ["kernel", "fmt", "Adapter"])
+>> >> > +            .chain([TokenTree::Group(Group::new(Delimiter::Parenth=
+esis, borrow))])
+>> >>
+>> >> This should be fine with using `quote!`:
+>> >>
+>> >>     quote!(::kernel::fmt::Adapter(&#expr))
+>> >
+>> > Yeah, I have a local commit that uses quote_spanned to remove all the
+>> > manual constructions.
+>>
+>> I don't think that you need `quote_spanned` here at all. If you do, then
+>> let me know, something weird with spans is going on then.
+>
+> You need to give idents a span, so each of `kernel`, `fmt`, and
+> `adapter` need a span. I *could* use `quote!` and get whatever span it
+> uses (mixed_site) but I'd rather retain control.
+
+Please use `quote!` if it works. No need to make this more complex than
+it already is. If it doesn't work then that's another story.
+
 ---
-Changes in v2:
-- Fixed patch formatting issues
-- Link to v1: https://lore.kernel.org/rust-for-linux/20250525225925.14797-1-albinbabuvarghese20@gmail.com/ 
----
- rust/kernel/list.rs | 38 +++++++++++++++++++-------------------
- 1 file changed, 19 insertions(+), 19 deletions(-)
-
-diff --git a/rust/kernel/list.rs b/rust/kernel/list.rs
-index c391c30b80f8..fe58a3920e70 100644
---- a/rust/kernel/list.rs
-+++ b/rust/kernel/list.rs
-@@ -82,9 +82,9 @@
- /// // [15, 10, 30]
- /// {
- ///     let mut iter = list.iter();
--///     assert_eq!(iter.next().unwrap().value, 15);
--///     assert_eq!(iter.next().unwrap().value, 10);
--///     assert_eq!(iter.next().unwrap().value, 30);
-+///     assert_eq!(iter.next().ok_or(EINVAL)?.value, 15);
-+///     assert_eq!(iter.next().ok_or(EINVAL)?.value, 10);
-+///     assert_eq!(iter.next().ok_or(EINVAL)?.value, 30);
- ///     assert!(iter.next().is_none());
- ///
- ///     // Verify the length of the list.
-@@ -93,9 +93,9 @@
- ///
- /// // Pop the items from the list using `pop_back()` and verify the content.
- /// {
--///     assert_eq!(list.pop_back().unwrap().value, 30);
--///     assert_eq!(list.pop_back().unwrap().value, 10);
--///     assert_eq!(list.pop_back().unwrap().value, 15);
-+///     assert_eq!(list.pop_back().ok_or(EINVAL)?.value, 30);
-+///     assert_eq!(list.pop_back().ok_or(EINVAL)?.value, 10);
-+///     assert_eq!(list.pop_back().ok_or(EINVAL)?.value, 15);
- /// }
- ///
- /// // Insert 3 elements using `push_front()`.
-@@ -107,9 +107,9 @@
- /// // [30, 10, 15]
- /// {
- ///     let mut iter = list.iter();
--///     assert_eq!(iter.next().unwrap().value, 30);
--///     assert_eq!(iter.next().unwrap().value, 10);
--///     assert_eq!(iter.next().unwrap().value, 15);
-+///     assert_eq!(iter.next().ok_or(EINVAL)?.value, 30);
-+///     assert_eq!(iter.next().ok_or(EINVAL)?.value, 10);
-+///     assert_eq!(iter.next().ok_or(EINVAL)?.value, 15);
- ///     assert!(iter.next().is_none());
- ///
- ///     // Verify the length of the list.
-@@ -118,8 +118,8 @@
- ///
- /// // Pop the items from the list using `pop_front()` and verify the content.
- /// {
--///     assert_eq!(list.pop_front().unwrap().value, 30);
--///     assert_eq!(list.pop_front().unwrap().value, 10);
-+///     assert_eq!(list.pop_front().ok_or(EINVAL)?.value, 30);
-+///     assert_eq!(list.pop_front().ok_or(EINVAL)?.value, 10);
- /// }
- ///
- /// // Push `list2` to `list` through `push_all_back()`.
-@@ -135,9 +135,9 @@
- ///     // list: [15, 25, 35]
- ///     // list2: []
- ///     let mut iter = list.iter();
--///     assert_eq!(iter.next().unwrap().value, 15);
--///     assert_eq!(iter.next().unwrap().value, 25);
--///     assert_eq!(iter.next().unwrap().value, 35);
-+///     assert_eq!(iter.next().ok_or(EINVAL)?.value, 15);
-+///     assert_eq!(iter.next().ok_or(EINVAL)?.value, 25);
-+///     assert_eq!(iter.next().ok_or(EINVAL)?.value, 35);
- ///     assert!(iter.next().is_none());
- ///     assert!(list2.is_empty());
- /// }
-@@ -809,11 +809,11 @@ fn next(&mut self) -> Option<ArcBorrow<'a, T>> {
- /// merge_sorted(&mut list, list2);
- ///
- /// let mut items = list.into_iter();
--/// assert_eq!(items.next().unwrap().value, 10);
--/// assert_eq!(items.next().unwrap().value, 11);
--/// assert_eq!(items.next().unwrap().value, 12);
--/// assert_eq!(items.next().unwrap().value, 13);
--/// assert_eq!(items.next().unwrap().value, 14);
-+/// assert_eq!(items.next().ok_or(EINVAL)?.value, 10);
-+/// assert_eq!(items.next().ok_or(EINVAL)?.value, 11);
-+/// assert_eq!(items.next().ok_or(EINVAL)?.value, 12);
-+/// assert_eq!(items.next().ok_or(EINVAL)?.value, 13);
-+/// assert_eq!(items.next().ok_or(EINVAL)?.value, 14);
- /// assert!(items.next().is_none());
- /// # Result::<(), Error>::Ok(())
- /// ```
---- 
-Thanks,
-Albin
+Cheers,
+Benno
 
