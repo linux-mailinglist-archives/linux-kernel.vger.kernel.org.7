@@ -1,82 +1,84 @@
-Return-Path: <linux-kernel+bounces-664023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-664025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E78D3AC50D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 16:24:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 130D9AC50D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 16:25:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 137B5163486
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 14:24:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCED41BA19C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 14:25:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75FC3278E5A;
-	Tue, 27 May 2025 14:24:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BFF1279912;
+	Tue, 27 May 2025 14:24:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PIadMwCr"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="isNa4KZP"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4538F27876E
-	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 14:24:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E0362798EA
+	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 14:24:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748355887; cv=none; b=lYS6H6ZOXmQL4USJ+yZmoQhgHg35YjlRUozzQMeyd8I60atGiiIsPp6U1Fg/yno8pDdFUHQHTqFl0upyr9T5QA4YYyH9HtOk9m2Dbotq43yDZlpFHh2l8AGn1w9JdcQFDg8afAhk8L/SVyFyc+8LEQx4qXijY8i8C7uZk1w5lgo=
+	t=1748355892; cv=none; b=V3dEOUCT6cxxj5Taiu4dgx7lgn367QU7EbbSo4Lh2pD+IXD4zK+voqTtjx1m12hh6RbTEFLJFen3/zG2L295ks7COwE873E5W5P/8+Libghk8sgzMlxyMsLyPBwq5w6a/kLpzvWG8uWNpjRn3PYhL4/i8nrH0PRPMNowgi+MB68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748355887; c=relaxed/simple;
-	bh=+SSxOMMFNEUYqXyhOMZxzDFcaBj3MIuICtYi5zenoUk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KURnFdMOIsdDzTA3kTfPucvtTa/A/824FRz+S3hGLrfOUds96nhIXg09xaSYb7IXY5BpRC7ouA5RSJWsvVTdIXZcGOwUQhi4c0QnFilL/CUD7LjthqA/u5HzZPBchB7iCrCRds+YZ+b08J6EUMwHgnkUF3LJ39F+L+ZWU0o8kiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PIadMwCr; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1748355892; c=relaxed/simple;
+	bh=VzQyPkruYWrDZAOkmL/UT3N0xShjKnGR9pQJo0jQ/Qk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ebsgMFyyFqrhEb+3dW+EOfLsn03asjk8QmV71MeUi169m+tP9f3Lhcetf2QC2US0+h0mE8KR+wRSNzOFar+vKVpmwCtyri2TB34U5byUfwO17HENWnn3Lc6POhGWpCBYE75V6C3jfKYxxa0DUI6KJa+KV/XzJWbX8KAqsI6PSj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=isNa4KZP; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1748355885;
+	s=mimecast20190719; t=1748355890;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=+M4G1HOIYzO3zH6634YUQensr31XqNL9E1Ubp3gcMeM=;
-	b=PIadMwCroN4I5ZpYD/FMKQ3Qa383bHOvIOvwrWKzPHx8uVBY6Ndt8/yD5RWfyLGMaf8IB8
-	oTotT9ve9BqgZWz9jNjGVekbZbqiWgD/Qjy6ofH6b+F4ZzxP9ClVNpDFmkgAzsjwNEsON5
-	L6Z4qDPNCda/J+esoBn1AdWL62GI2Ns=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AdRsO2Uefrz8JMO751IFZEkS7KH/EcFqwNDUBdHYAOY=;
+	b=isNa4KZPJ+VcGx5frg6XDT2aeQuCkcjf7q/qz7kVN7I5Rnqwb5LCSvTVCsD/0WbRHj4KFH
+	EzeohJ4+ScecvrX8JENo1MQjKYEv8sUFOBlPg4jBcehzlz1QjAHc0HSE5p3+bBAEMm+QYB
+	eBue7dM1Lb6STGcDg+2eGcy4LB6SYDI=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-553-ehx7C9IJNmm4g9XchLr9yQ-1; Tue, 27 May 2025 10:24:43 -0400
-X-MC-Unique: ehx7C9IJNmm4g9XchLr9yQ-1
-X-Mimecast-MFC-AGG-ID: ehx7C9IJNmm4g9XchLr9yQ_1748355883
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-442f4a3851fso25272675e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 07:24:43 -0700 (PDT)
+ us-mta-595-bSzCGlofNZWSY0a_gsoM7A-1; Tue, 27 May 2025 10:24:45 -0400
+X-MC-Unique: bSzCGlofNZWSY0a_gsoM7A-1
+X-Mimecast-MFC-AGG-ID: bSzCGlofNZWSY0a_gsoM7A_1748355885
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-43eed325461so22322205e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 07:24:45 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748355883; x=1748960683;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+M4G1HOIYzO3zH6634YUQensr31XqNL9E1Ubp3gcMeM=;
-        b=t54GXpKgs1x2KN+ndtwgnCoZ/g60dN/M61SJ270lW7a3jkae6ofWtvC8bPxTBzJCje
-         KxPdqw5bC6Y9W0mb88/+NCpf886es36bVyz1XoxJxk4fVTZKuyyjnoy5FGDD6eHDV1lS
-         z5uiQi+VERCa8aaFBNWRn+pWYXnzTnv38ONj/pmCtOYGret/VdoWxVRn+Jciv+CK2lED
-         n3BlVGR/PzfdVZ+88d6HB4B87xWLe1HnpxwdiLhIvw1MblrmdiIrd8Fn4IAw57ATLFoF
-         Rt+IdVnB9445fZkUeDkL2RQMBy8pXHwWR4p/jnY+zA8Xu4PJD3mc8TIX8vEE2ZJ2jbyc
-         ZdpA==
-X-Forwarded-Encrypted: i=1; AJvYcCUVHwTHDlkLiF2jxv/NTaySi1HqUYt8lCUfYx0Ga6tlX6cHvHTo6fMwXHxmX4Xdk9Ke/NzRrPpQ9eFD7g0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxb3DUSlYwPaB4qbBEZFpLLVmEqJQ10GTs3AROnvK/Td83h8cxU
-	6ftDla2rzp+h57G9mNX1jGikjsj+aupqZYHdtQeV9/91++X6WdeAsB9Z1AI7WywJBFnOvHID8Lu
-	uZd7c/uKJ3IosYVZiy0M5XqaZnHxtRCTzZl66QKOlj9UcUQObuuqFif9n6fE8KJQwyQ==
-X-Gm-Gg: ASbGnctDwFMSZk7N6GaGoW9VURSPAwA2pI3Sphnql9jVN0BJuSS2CZtuO/0TwF3p8HF
-	WVKsIWV/6LUmopHoyYhmSC5HnpZbgY+olcCasq9lLd7b90loU2WKOGZ8Ke1vXMNnkH+3UE2AzGR
-	CSFSRSUXXibjkl5+EZwJfL636E/gNCiWCeDB1kRiN38HqZFPVftomeOPaKJTT0x2/CBnxoa1hu+
-	oaFNwO2SkvrZIcYI4InMaSR7glE1o22qlLuSWXnKGb9n7xCCsXZXn4qkn6PWUERXDPS7AWSEonb
-	jtam6wC6gTEcaGMja/DODF6uMRPPuyd4bFblQJHN8+CHqOKoG/NxVu8CGxc0dJpw27rqGQ95Cg=
+        d=1e100.net; s=20230601; t=1748355884; x=1748960684;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AdRsO2Uefrz8JMO751IFZEkS7KH/EcFqwNDUBdHYAOY=;
+        b=rFk1xQbwHjETWg5oAsV4cEzB8mzydhAAdAuXtyg4/DK/8mKd1TeVKum9wjzvFcwFp1
+         XWRJ14dXW6OozhBaW3W06rlseGy0MeU64OLlXiq1mOWtACYPVLZUEtOfvP2XAKuWIeWI
+         e2hTaqwvI5JQEfww3uvItv5z3kcZ8qSbLOKlapttr/ih0QGsej/d5zsH4sSqgxGhq5na
+         LDTqx1HITyCpNpSHd3AwJjs0A2KuRWoE7gZpYERZLrYPp5Czmmgr7KI6CURmJyG2BfKL
+         me3vNylLiqeZbyhFo9xn4ozRSz9Q714TkgK/Qx4ZvoWSL74wBi2QCXiTjOmfizsF2Jfm
+         Okfw==
+X-Forwarded-Encrypted: i=1; AJvYcCWdnwSaQbUIw/c9/qzhusYYPL93QhdbZ5tvOf7Nixt5Fr0/D+l5pZnxk58NrGYk0ED+0HwbDDPM6+cV7Xw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxcU+jcaZbIGjMEOurzmAktc30vywClUqnRxzp1ieKa1tOs4xYO
+	Caifc3N/Q5LsPNvESf/0eOATUEmTXhwxCHIKidMvaO7lpNQX++L9voGT4k+MfFqwrFg6EX8henA
+	0XFevT6aWIqHK63s/2AsoV6ORJjdIauaIcScubFnNQddQf0PS7COkGDFCUTftF0eMUQ==
+X-Gm-Gg: ASbGnctCXxX5U0GrtPjLWvWVveCNmsCg19F5RVdiYrTcpqqxBaHHZBGkHLAYigyRWps
+	QlKxSGmhraaCiXS8pp7KVPbvUlSXaWmoQSRs7NI608D0ivh6vKKpNUyKY/zz1B/Fru8kceNe8kj
+	eXv/5QjeKEyBfX22Kn5klejpGmsDG+iBfJYQymatQfHk9ck9UfY0N2CLHqNhTW1tnEHysdXPCnP
+	lgKWrT/V5cVXFA2oYjcEF6PxjpMRymQxDBGzwy9Dt3UPKD6AnyCo/yZZkmZmy6b1RePzEvzt2I0
+	ukBwPaAk7uY18VHtF5obq1+l+INN5wM6LJ9ryLsFn7rMX+Jz3oNnGtoCW/Fw8ZzzaTWi4Ikzhg=
 	=
-X-Received: by 2002:a05:600c:3ca6:b0:44a:b478:1387 with SMTP id 5b1f17b1804b1-44c9465c97cmr126923845e9.17.1748355882717;
-        Tue, 27 May 2025 07:24:42 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF2Y1uyM7+4XnYXdfaOr89AGuzVgzEd4y5M+LgOhzm3Rp5mg6OEofI/yliTAkfcRwsyfx9W9g==
-X-Received: by 2002:a05:600c:3ca6:b0:44a:b478:1387 with SMTP id 5b1f17b1804b1-44c9465c97cmr126923535e9.17.1748355882319;
-        Tue, 27 May 2025 07:24:42 -0700 (PDT)
+X-Received: by 2002:a05:600c:35d3:b0:43d:4e9:27ff with SMTP id 5b1f17b1804b1-44c93016587mr106055835e9.7.1748355884572;
+        Tue, 27 May 2025 07:24:44 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGA8HR0A+QTW5CLIzzWpCQrdDEVxcSOCyoGFkafJofsp5nJGXbEA7AFPSlzJnet1RbsnO2sOA==
+X-Received: by 2002:a05:600c:35d3:b0:43d:4e9:27ff with SMTP id 5b1f17b1804b1-44c93016587mr106055565e9.7.1748355884133;
+        Tue, 27 May 2025 07:24:44 -0700 (PDT)
 Received: from rh.fritz.box (p200300f6af1bce00e6fe5f11c0a7f4a1.dip0.t-ipconnect.de. [2003:f6:af1b:ce00:e6fe:5f11:c0a7:f4a1])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-447f73d3edcsm278766415e9.20.2025.05.27.07.24.41
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-447f73d3edcsm278766415e9.20.2025.05.27.07.24.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 May 2025 07:24:42 -0700 (PDT)
+        Tue, 27 May 2025 07:24:43 -0700 (PDT)
 From: Sebastian Ott <sebott@redhat.com>
 To: Marc Zyngier <maz@kernel.org>,
 	Oliver Upton <oliver.upton@linux.dev>
@@ -91,10 +93,12 @@ Cc: Colton Lewis <coltonlewis@google.com>,
 	linux-kernel@vger.kernel.org,
 	linux-kselftest@vger.kernel.org,
 	Sebastian Ott <sebott@redhat.com>
-Subject: [PATCH v2 0/3] KVM: arm64: selftests: arch_timer_edge_cases fixes
-Date: Tue, 27 May 2025 16:24:31 +0200
-Message-ID: <20250527142434.25209-1-sebott@redhat.com>
+Subject: [PATCH v2 1/3] KVM: arm64: selftests: fix help text for arch_timer_edge_cases
+Date: Tue, 27 May 2025 16:24:32 +0200
+Message-ID: <20250527142434.25209-2-sebott@redhat.com>
 X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250527142434.25209-1-sebott@redhat.com>
+References: <20250527142434.25209-1-sebott@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -103,38 +107,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Some small fixes for arch_timer_edge_cases that I stumbled upon
-while debugging failures for this selftest on ampere-one.
+Fix the help text for arch_timer_edge_cases to show the correct
+option for setting the wait time.
 
-Changes since v1: modified patch 3 based on suggestions from Marc.
+Signed-off-by: Sebastian Ott <sebott@redhat.com>
+---
+ tools/testing/selftests/kvm/arm64/arch_timer_edge_cases.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I've done some tests with this on various machines - seems to be all
-good, however on ampere-one I now hit this in 10% of the runs:
-==== Test Assertion Failure ====
-  arm64/arch_timer_edge_cases.c:481: timer_get_cntct(timer) >= DEF_CNT + (timer_get_cntfrq() * (uint64_t)(delta_2_ms) / 1000)
-  pid=166657 tid=166657 errno=4 - Interrupted system call
-     1  0x0000000000404db3: test_run at arch_timer_edge_cases.c:933
-     2  0x0000000000401f9f: main at arch_timer_edge_cases.c:1062
-     3  0x0000ffffaedd625b: ?? ??:0
-     4  0x0000ffffaedd633b: ?? ??:0
-     5  0x00000000004020af: _start at ??:?
-  timer_get_cntct(timer) >= DEF_CNT + msec_to_cycles(delta_2_ms)
-
-This is not new, it was just hidden behind the other failure. I'll
-try to figure out what this is about (seems to be independent of
-the wait time)..
-
-
-Sebastian Ott (3):
-  KVM: arm64: selftests: fix help text for arch_timer_edge_cases
-  KVM: arm64: selftests: fix thread migration in arch_timer_edge_cases
-  KVM: arm64: selftests: arch_timer_edge_cases - determine effective counter width
-
- .../kvm/arm64/arch_timer_edge_cases.c         | 37 ++++++++++++-------
- 1 file changed, 24 insertions(+), 13 deletions(-)
-
-
-base-commit: 0ff41df1cb268fc69e703a08a57ee14ae967d0ca
+diff --git a/tools/testing/selftests/kvm/arm64/arch_timer_edge_cases.c b/tools/testing/selftests/kvm/arm64/arch_timer_edge_cases.c
+index a36a7e2db434..c4716e0c1438 100644
+--- a/tools/testing/selftests/kvm/arm64/arch_timer_edge_cases.c
++++ b/tools/testing/selftests/kvm/arm64/arch_timer_edge_cases.c
+@@ -986,7 +986,7 @@ static void test_print_help(char *name)
+ 	pr_info("\t-b: Test both physical and virtual timers (default: true)\n");
+ 	pr_info("\t-l: Delta (in ms) used for long wait time test (default: %u)\n",
+ 	     LONG_WAIT_TEST_MS);
+-	pr_info("\t-l: Delta (in ms) used for wait times (default: %u)\n",
++	pr_info("\t-w: Delta (in ms) used for wait times (default: %u)\n",
+ 		WAIT_TEST_MS);
+ 	pr_info("\t-p: Test physical timer (default: true)\n");
+ 	pr_info("\t-v: Test virtual timer (default: true)\n");
 -- 
 2.49.0
 
