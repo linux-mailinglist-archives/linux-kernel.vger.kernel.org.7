@@ -1,85 +1,87 @@
-Return-Path: <linux-kernel+bounces-663394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-663396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC850AC47BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 07:44:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8870AC47C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 07:45:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72DE21893B80
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 05:44:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEB923B9AA7
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 05:45:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F4FC1DEFE9;
-	Tue, 27 May 2025 05:44:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 674991F0E58;
+	Tue, 27 May 2025 05:45:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FRJdog+i"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="R0hd4Lo3"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C1851922F4
-	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 05:44:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 185DD1EB5CE
+	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 05:45:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748324662; cv=none; b=Lc/bPRf1qIuJZEk/Zt/C0RT6SPlevMF4ldxiJ8WyuIIpXLKbc5J4pa4cA1nBNlOmCLvlgLqYTBbdZy33AVRjLMC+PKO8UkPb9FYt5+QC2cJ9mE6z2kRoAFuTqPupc13M35MHxMS+MwRFt5ZN2gVBBtZJKgcqD7REzPX3PkGvRH8=
+	t=1748324728; cv=none; b=e1GuFLSYtSTp95hdhp5BTdaY4ATh7nfE2J9Uc3mkKMkuP4+rRuW8ELtEa32ECDNfc3/Tce6HbpDWDnBP7PEWRjWTgHPKqc6Lgl1arwfA1KKuNckoMeKo0eS4z4YyymXhZRghhwMLZj2qqSamTGVeBSpRVnWDIUazpRt2428+qn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748324662; c=relaxed/simple;
-	bh=kyCBYxH7qeEldqqPRBTiasx1ddRJHWTby1mXwGA30Ck=;
+	s=arc-20240116; t=1748324728; c=relaxed/simple;
+	bh=0h4MToyMZi6FE1TFu8zlRTj8kxMLKoCJQR+vUO1Zo+U=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=kHJAJQ0D5INnjUhFdXfB74VR+y9CV3ecrTZvwam63dfarGrKhsAJVeDPqmiBDgJfOiej/w0dhsg+9MFzAvzgwLqCccDUyloMdBxVsvK2ZyD1tcfcSSXjgAU1xt97nrGY8iJQ4RUkryDXyq6HxKPt5+velJFPBJnkzswc0ZX1TwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FRJdog+i; arc=none smtp.client-ip=209.85.208.42
+	 Content-Disposition; b=l6z8zF9U3Lxyhnlcc/x2FqzyKP81t/k4+Gu4u3higst1fzrB5oZmQHJMLxrj3TQl0XP92eLaosn0Mhf7ZkzdPa2HMcNx7c4nQlaIJ1KIf5ngzru5/c9FmwiZI4tABWgTHL0KvRb8v/FYzVaO0R1wOELFg0xp/n3iI5tlAg7a4Ik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=R0hd4Lo3; arc=none smtp.client-ip=209.85.218.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-602346b1997so4447960a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 22:44:19 -0700 (PDT)
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ad51ef2424bso585536666b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 22:45:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1748324658; x=1748929458; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1748324725; x=1748929525; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=eUL8lDW22vLb7RElzsLP3i8M2Oe2Xcske9JV5C/6kUQ=;
-        b=FRJdog+i5C9rTNFQQRXx1XIPcPhMCarQH045+DXvxAW54Kux5KP8mfk/0JyGrtMkBO
-         9/bZmw+FlznDOpdOCCFmp4HuWZ+B9NDtg5FkA/hV4F9gR3sZt5PTI7PlPhKU4Y9aEnfx
-         ZJTk/YURVKQ1rrd4/QU4pMwZ9ztNTQEs4BEQGbT11bUo1xS/qod57XCxAG6WwOOR06uM
-         nzHrbbXvYeGAkAcJtrgYN1cILl40RuPYuD6JTZPnMYOZzT76KAXCJjnA/6xL9LAWFfip
-         SfoeJ+VAJMy0DQAqd/yT7l4k+aJhnuqmHiCuLEANOVdxnB4P834CRLNtXubawAWBEgEo
-         bshQ==
+        bh=vAdJ/cT5QBHscP2gZxi7G3d4bBHjxu/r9X+j+h7O9D0=;
+        b=R0hd4Lo3WYkT3Iyk5DCwvJIBTQndAZkhtQgNYIRb8n/+FrN+xHMqPB8Xu0mnwJlNq6
+         qpp1SAPXiAZ5HrxCXJLia/M+U0qCs8RwArRXvuoHDyZh3hMZ4SOfFWxu2ngzB1VBtam9
+         HZNp56aStJbmWCMLUWm28z3ogTeUJ468dCM5iaaqu9VvJrWRvTbCDeC4I7uiVd4WQo9c
+         Igr6mnLkeTrJfj8LsgCbHCUHM4EUZ3tbC+jtgwqCAMr9Uc/CjiTHrPQktgE4X00kVEcl
+         sqXScoa+MOEt8CZ/5Em33aGru5kiv4Yfw+pBQfHOdnPOCJ1qHrCfSbz5dRw/6x6MvHzS
+         +5Jw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748324658; x=1748929458;
+        d=1e100.net; s=20230601; t=1748324725; x=1748929525;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eUL8lDW22vLb7RElzsLP3i8M2Oe2Xcske9JV5C/6kUQ=;
-        b=Mdif5KoSQI8QmE3rElfdh1ZT1Hu0zZu+hX+lX8y1abdIL3zn+GCseRpZDttBUHuJBw
-         hdJj/A8rqzar8jGcwAe+DzbKNswZoVzMnWupsGQMqhU3qZQrx8MFE5tHweOstkWa7KQ6
-         LGne8YbAKd2nS/kTpuw3K45aMqZHdUliLf1tFubhVH7XWrThE+8KwZTLn8jJsqBA0FjP
-         ckjKhZqhQYEB+Pb2hzUwMQaMY432uo2QFbNT48GAo92czPIwuGN6aY3+/8do3fiaS7Hr
-         4APbCDAWen50F06qUzKaY6Hv+76Snl0VQAIqcfMcgycnBTSCv6tHBJ58JYmgAokhWxEj
-         Meuw==
-X-Forwarded-Encrypted: i=1; AJvYcCW9VBudecuLAXau6LGi7yrNmntEM/sUlhHt+HAR2QprSg7k97gxgovjQ66TspC/u9yWgvnjlYgr9FJmuhs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXLNhPZJvXcxKwTQPURCAojqf+YX5uTZInNoxstejd5NtPKKHA
-	+skMBVevLmWKDGKklsa6JV+Vc5homO1zVksuYpn4VlqvspTeBTmBaxSHPjcOCOh5uV4=
-X-Gm-Gg: ASbGncvbZrhN88gtBPdFNU0nHYYlAc2u8vBlP+6bV658ManlR3394ciHIvP7tPYUxg0
-	sSdoVt4G65AP2fcOH+EZAcOy98phJdcz7ONxBMLlk6cl4784Evet4i39orrY30FjT8t08GjbaNs
-	xaK6vSSR/pVlcfVA/ohUPhAqbewY5CVWniOkbo5s47klz6oAAbPfBwo16VExGy7Ya1FyawASzlI
-	RxgToZdp0Gwsbgju8cMm+9USM66A10GDnm1MP1Wu+tLz2yHl/lbOVpSsWHytdo/mBtxEHpV7wzM
-	v2EyZQVDxteB+P9kgemJKp4XPwPIJd+7uiJCgoMBM6xtJAyBpCdpFuomClnZnvMVfn6OejVK+O+
-	AIxHpoOeQdA==
-X-Google-Smtp-Source: AGHT+IE46/UjJ5dKUXhWdkEtnSF7wnOr5rN4gbE3tyVKEXYOZCsNu8RVbstqI21IkhEz384O/W1Jhw==
-X-Received: by 2002:a17:907:7207:b0:ad8:9428:6a32 with SMTP id a640c23a62f3a-ad894286ce1mr15686366b.26.1748324658434;
-        Mon, 26 May 2025 22:44:18 -0700 (PDT)
+        bh=vAdJ/cT5QBHscP2gZxi7G3d4bBHjxu/r9X+j+h7O9D0=;
+        b=Ezb2xzqCRxI9EmOUBnmwnWxGGaWm0I3ZEE/ksYOwC0H5b4fciB1fS29Iaax7iNcgE4
+         qFul1TzVXMWUPnAOvnHgNpryeZvcAj/dXtTJPFPJPIOO+iwk3eX7o0DPzyMfKWdu7K0C
+         aoekX+T2KcNDpfPFHJoRZnZHkiUwjkRFpLewkyjlJFC5csluBP8A8sgjQFCApo1blP20
+         pfgUA/ivGD9s6s4NFN+/DGzqaWJwLPyVqznfzKBrGYxVAw58SGB8jCr7h0OYJzT6XjKY
+         DRVpTxTJq6zEYVBA0IGXG41wqNVYSMi6707hGHF/TQNOCqGhKv708IBkUUvc4mjSqC/J
+         XyJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWoH7Ol/awjwK4mYiZe481fRm1ddSt2V/1HZy/mIsfr02VoYxN3ZrL5sZl3YSnOHSAjg4nvJpdTy3VGg4s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxbmp6p0Mkio+C7JRtQV60e5He/AJd+y2Pr+fCeWJbqXQ12mLvG
+	iZBKXJF2oaeG7CC9dx9yynxKYIsg89C4kBB8rqYt6NwPIGbIM83+wgS0v8wFthy2T0c=
+X-Gm-Gg: ASbGncseVlvkN0KHybHfrwSD7HRIkr9B1wEewhSSWyuzUWsQZ72QbhyYz15mRIcZ+du
+	VLARuQzD9+ZnsvML8o+ltSQntshELrbGAJz0X/XrfsGaryKWFwaqH1yRZ9r6yxvg55KGa+4R4Ph
+	I7zAPJkzhOokOZNu1cKRCuHux5dF4d1lxAHhJw0HyzrRpDIMJi6rh9eRk5r3qdDkzAx2VRmTmBR
+	cFCEcM7+tADAANv6jDSM3pNqP/tGbxWZhkXGzDIP67+hYKlXA4bcStGGiKD9hX/PEi7dYRBX/py
+	e8AQsyfr/P5HxXiFyOWVe/L7vKJJ3iuHD0hISpwbDUgyftNgNL7+wcQIBnqxpzFbtcNAXYBIct0
+	=
+X-Google-Smtp-Source: AGHT+IFjfjGDL9+pR2wI6u63W8YFLk9uDG95aJV/jaoLvZt0KxL00PabZAJ4WGFqwimBN1PB88AkOg==
+X-Received: by 2002:a17:906:f58b:b0:ad2:499d:dfdb with SMTP id a640c23a62f3a-ad85b1bd259mr1048071866b.26.1748324725279;
+        Mon, 26 May 2025 22:45:25 -0700 (PDT)
 Received: from localhost (hf94.n1.ips.mtn.co.ug. [41.210.143.148])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-ad88d0556a4sm62772266b.34.2025.05.26.22.44.17
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-ad52d047749sm1788284566b.8.2025.05.26.22.45.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 May 2025 22:44:18 -0700 (PDT)
-Date: Tue, 27 May 2025 08:44:14 +0300
+        Mon, 26 May 2025 22:45:24 -0700 (PDT)
+Date: Tue, 27 May 2025 08:45:21 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Cosmin Tanislav <demonsingur@gmail.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] regulator: max20086: Fix refcount leak in
- max20086_parse_regulators_dt()
-Message-ID: <aDVRLqgJWMxYU03G@stanley.mountain>
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH next] cpuidle: psci: Fix uninitialized variable in
+ dt_idle_state_present()
+Message-ID: <aDVRcfU8O8sez1x7@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,50 +92,40 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-There is a missing call to of_node_put() if devm_kcalloc() fails.
-Fix this by changing the code to use cleanup.h magic to drop the
-refcount.
+If the first cpu_node = of_cpu_device_node_get() fails then the cleanup.h
+code will try to free "state_node" but it hasn't been initialized yet.
+Declare the device_nodes where they are initialized to fix this.
 
-Fixes: 6b0cd72757c6 ("regulator: max20086: fix invalid memory access")
+Fixes: 5836ebeb4a2b ("cpuidle: psci: Avoid initializing faux device if no DT idle states are present")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/regulator/max20086-regulator.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/cpuidle/cpuidle-psci.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/regulator/max20086-regulator.c b/drivers/regulator/max20086-regulator.c
-index b4fe76e33ff2..fcdd2d0317a5 100644
---- a/drivers/regulator/max20086-regulator.c
-+++ b/drivers/regulator/max20086-regulator.c
-@@ -5,6 +5,7 @@
- // Copyright (C) 2022 Laurent Pinchart <laurent.pinchart@idesonboard.com>
- // Copyright (C) 2018 Avnet, Inc.
+diff --git a/drivers/cpuidle/cpuidle-psci.c b/drivers/cpuidle/cpuidle-psci.c
+index 3c2756a539c4..4e1ba35deda9 100644
+--- a/drivers/cpuidle/cpuidle-psci.c
++++ b/drivers/cpuidle/cpuidle-psci.c
+@@ -456,14 +456,13 @@ static struct faux_device_ops psci_cpuidle_ops = {
  
-+#include <linux/cleanup.h>
- #include <linux/err.h>
- #include <linux/gpio/consumer.h>
- #include <linux/i2c.h>
-@@ -133,11 +134,11 @@ static int max20086_regulators_register(struct max20086 *chip)
- static int max20086_parse_regulators_dt(struct max20086 *chip, bool *boot_on)
+ static bool __init dt_idle_state_present(void)
  {
- 	struct of_regulator_match *matches;
--	struct device_node *node;
- 	unsigned int i;
- 	int ret;
+-	struct device_node *cpu_node __free(device_node);
+-	struct device_node *state_node __free(device_node);
+-
+-	cpu_node = of_cpu_device_node_get(cpumask_first(cpu_possible_mask));
++	struct device_node *cpu_node __free(device_node) =
++			of_cpu_device_node_get(cpumask_first(cpu_possible_mask));
+ 	if (!cpu_node)
+ 		return false;
  
--	node = of_get_child_by_name(chip->dev->of_node, "regulators");
-+	struct device_node *node __free(device_node) =
-+		of_get_child_by_name(chip->dev->of_node, "regulators");
- 	if (!node) {
- 		dev_err(chip->dev, "regulators node not found\n");
- 		return -ENODEV;
-@@ -153,7 +154,6 @@ static int max20086_parse_regulators_dt(struct max20086 *chip, bool *boot_on)
+-	state_node = of_get_cpu_state_node(cpu_node, 0);
++	struct device_node *state_node __free(device_node) =
++			of_get_cpu_state_node(cpu_node, 0);
+ 	if (!state_node)
+ 		return false;
  
- 	ret = of_regulator_match(chip->dev, node, matches,
- 				 chip->info->num_outputs);
--	of_node_put(node);
- 	if (ret < 0) {
- 		dev_err(chip->dev, "Failed to match regulators\n");
- 		return -EINVAL;
 -- 
 2.47.2
+
 
