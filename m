@@ -1,127 +1,153 @@
-Return-Path: <linux-kernel+bounces-663965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-663972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED454AC4FF6
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 15:37:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A007FAC500F
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 15:39:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A254B17F436
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 13:37:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D35A166340
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 13:38:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D377B2749E5;
-	Tue, 27 May 2025 13:36:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A2712749E5;
+	Tue, 27 May 2025 13:38:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b="h1NH0MNe"
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="WNpIQmMi"
+Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FC7C2749CA
-	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 13:36:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1F10267AED;
+	Tue, 27 May 2025 13:38:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748353013; cv=none; b=kdaYyiGE1QfImEPgUkSCicfwEfxp0dPAb5moZ0dtHDfoeYABQOptOK7y0X2Wd4s8mivpgyzNotDdPKX7k5Um6i4rOpfXpjRvkbSUE/j8jxba3aSHqlGaG5YjK/N1nFMLrdB/rnTqPdXfdmqI37bJvtZOV97v7i4LljwXUJDH9lY=
+	t=1748353127; cv=none; b=Bom30fpitAgUCfRfh1av67BoJNXzatcRW8rTOR0y6jAQMK4aC12jVNIz3Q7YcDeR6D6cN9c+0XvI7n7Yki+LrdclnUr/nIooMltJLcx2LcukhZtp6lX7GfpCrNZa/p6C1/k7A1/i26cQCzt0i3Ii6cQTP9TnMH1ypw2es56DvP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748353013; c=relaxed/simple;
-	bh=AvTQfs3820KktS4EpY0ACK+ekFwY17It+Jl26bW88XA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TluzvW4R83i+0vNwCG59V6UUL/1TU/vyWUdk4tAhkuiFfaz/tMsOXx+e/Z2t+rzC3cpidedQ44JVN4Be2e20zHULJSClDPfUxCxoy6oPYoa59JLgjlzA5mf9cm60brfLw92pVZP2Whw9GGCCpjH5Yntbph2w6GhDkzyKLU2Mxf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org; spf=pass smtp.mailfrom=fooishbar.org; dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b=h1NH0MNe; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fooishbar.org
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-476af5479feso31809651cf.2
-        for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 06:36:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fooishbar.org; s=google; t=1748353009; x=1748957809; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ish6o0Bhh995IK2wzs6updBAdJ3S2zxHBcJqrswtQm8=;
-        b=h1NH0MNeS550ipTUdVLzbpSdk/a+xeQDkmN6SrZKv4NR/Xn2qT2Tt1CVztlvBH5VxU
-         yVGioDCU7jz3gclD8eY9RHtc0w5cpyvi0Qk1+rho3QrFucOZOBLGi1GjonFLKb7gXhBL
-         /JKo2mX1GC9QZQjA+b41bSn7dpofuDCxiiovN01+gUCkiR92uRS426MSB+rkASqLiiyv
-         orfsxV7bXbOjdnLDZDSonaGBVVmod3cUX2UbzmYoziyrIrmHTV0TML+1DGQu8XN1pIU9
-         i460Xg9FLMmBMUSRwFyFcZLxJMJHQ2QK7RtBcKAdF1WnE1nNKR0cTXyKeCJIw0uEdp6V
-         pAAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748353009; x=1748957809;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ish6o0Bhh995IK2wzs6updBAdJ3S2zxHBcJqrswtQm8=;
-        b=uhXYz72a1xxt9UPslYCmh/QNPRLCl9CdrneN2BNRGxjyF2gQtksm8Dv7jett1mfiCq
-         6wGQPvhsI/Ff/+Qfo3OI5Yw1lgqGiJDl5Sb6ZUDP8sPUBeTx63XW6YKZElQvMcUUXfxp
-         7TTMEdA7W2zFcL2c+pqkVECxcKtObOh/MOwcK1yt+8UJn3FF279eKfDzc50haVpptgVf
-         CUkIt5Pq1DjZTiWiwee5OBDbfvtlpUf1nPdzi+8PxZfJK59E1bfxIXf283kjk3oQ3bKP
-         Lu+J0bICT7MGyhQArtbxYV3awUALhnV5WKcWdqRpYeJ4Oy23bFaVH4l3SCo3ehiPe9Gt
-         PV0g==
-X-Forwarded-Encrypted: i=1; AJvYcCU3ml7L14dZF2FudrhV1OB7yDGnjDtXerucffjZFC9QyDOnACpZjUwEAj99xqpNoACjGzxOx8yh8GV28XI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyb0vSXcPmdzeK2IRx4fc5TA+r1a1B5wbfqPYlKk+/vUQ6IQD15
-	NEPkE8wRGuzL7ccaaSlNeei2XRiriyKFoNrN81Fxfr7S/SSebah9Xj44hnLXHbKuLKscDZMHkcm
-	snrLHa6k8ZjQqC4zDcXnM2WvM+913b6SgNa5vjtcPig==
-X-Gm-Gg: ASbGnctaLydPs1EaYIMp58lveN9A0NW0fe9j12YpA5+f3n/2CLL/TIWGDcGdYKB3NTT
-	EsfLcYJt+7VLALsP08YLKzBIFVIoqLWTVW82DItXzAy8MRN0lXLJofbMu31dXuJqGZ7tSMsVpXD
-	/6J5YbQCUFKbo8B7GXH1AkkIrSreFcZA==
-X-Google-Smtp-Source: AGHT+IHr4jwrHqEJczRvGQzuN87CsS5C28zJXtY9UXRLqVMsScrfx0niqPKTlAIrCpVv2931fOLgMYPlwCUzMNEDANw=
-X-Received: by 2002:a05:622a:1f8e:b0:476:8eb5:1669 with SMTP id
- d75a77b69052e-49f4781ed76mr216619901cf.32.1748353009174; Tue, 27 May 2025
- 06:36:49 -0700 (PDT)
+	s=arc-20240116; t=1748353127; c=relaxed/simple;
+	bh=YAK22hh9bF0xUHaZ37cM77JZCPU+tfEdr966jOJvfXM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=vFPkcTPmUqAWQ98j+E5JlK5ZuF0E8v5+ufk+L+gWXwNqEYVlIFFW5qdHjznkGkKhkaQpgb+avyH158XqLIR+PcSldacPzY9gZmmh0aXRdP0+M71xEY7dbelU95Qsdd2lsd8ZeRaZ1tX9RtTuNJBXfYqWMKjaUx1UQp0Wiea46/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=WNpIQmMi; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54RBw2xZ002122;
+	Tue, 27 May 2025 15:38:20 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	G8Ua6pTVZVcQk45Vtse+7jeBJIEk6dgYvFzDSEU8xck=; b=WNpIQmMicdz4CkGh
+	l4ItB+PvWAGucajYF5iwdkXyXW5x0sCd/uwj6HQvwEdKDFALbMSaop27sGgjcqqX
+	Sq2LU4oJt1HFFK1jivnqP3el78O4HKDDCk7QF+VHf3MeImw+qv3cf0qQJiz1i0DA
+	7kdqsm37saO1vqXi3UNdJ1yJ737PKsdQCzEfkXvuglxfq+POJkDua5gHZNgHrPkw
+	vlmOpEySaJ/eUFsOukTJgJvb4nA4Hs/8cPggy5qTyM2YX8i+VKXos65gX2Mbq+0D
+	LUHKWJd/IxGSJQ7Fkfkg2387Q84UB1O8uu3bueGYA3BTmOHbTivK/K8xsrdbtENU
+	95iHzw==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 46w54hjs1w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 27 May 2025 15:38:20 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 1A4D840053;
+	Tue, 27 May 2025 15:37:16 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 9ED31AEF6B9;
+	Tue, 27 May 2025 15:36:42 +0200 (CEST)
+Received: from [10.48.87.141] (10.48.87.141) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 27 May
+ 2025 15:36:42 +0200
+Message-ID: <661af124-3072-4dcf-b613-ec3e48549626@foss.st.com>
+Date: Tue, 27 May 2025 15:36:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250525051639.68753-2-krzysztof.kozlowski@linaro.org>
- <CAPj87rMjAv-UphvFuQjop60o=wHrkfs4-XOM=JqH7f8Kk5dyVg@mail.gmail.com> <e462cdc4-7243-4cef-bd1d-a0ef551b3a87@kernel.org>
-In-Reply-To: <e462cdc4-7243-4cef-bd1d-a0ef551b3a87@kernel.org>
-From: Daniel Stone <daniel@fooishbar.org>
-Date: Tue, 27 May 2025 14:36:37 +0100
-X-Gm-Features: AX0GCFvEuF0JQkg3QiWt8vTrQrmgkUnYilTb6_QdjwVCLuie3br5KvhEpdyYryI
-Message-ID: <CAPj87rNZPub=hEs+86JNfR-iqiuRYGGGKGsYyXtE1aUt8dEyUA@mail.gmail.com>
-Subject: Re: [PATCH] media: dt-bindings: mediatek: Constrain iommus
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, dri-devel@lists.freedesktop.org, 
-	linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Input: gpio-keys - fix a sleep while atomic with
+ PREEMPT_RT
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+CC: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Clark Williams
+	<clrkwllms@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Paul Cercueil
+	<paul@crapouillou.net>, <linux-input@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-rt-devel@lists.linux.dev>,
+        Fabrice
+ Gasnier <fabrice.gasnier@foss.st.com>
+References: <20250526-gpio_keys_preempt_rt-v1-1-09ddadf8e19d@foss.st.com>
+ <20250526141321.FcXEgnV4@linutronix.de>
+Content-Language: en-US
+From: Gatien CHEVALLIER <gatien.chevallier@foss.st.com>
+In-Reply-To: <20250526141321.FcXEgnV4@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-27_06,2025-05-27_01,2025-03-28_01
 
-Hi,
+Hello Sebastian,
 
-On Sun, 25 May 2025 at 11:51, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> On 25/05/2025 12:48, Daniel Stone wrote:
-> > On Sun, 25 May 2025 at 06:16, Krzysztof Kozlowski
-> > <krzysztof.kozlowski@linaro.org> wrote:
-> >> --- a/Documentation/devicetree/bindings/display/mediatek/mediatek,ovl-2l.yaml
-> >> +++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,ovl-2l.yaml
-> >> @@ -45,9 +45,8 @@ properties:
-> >>        - description: OVL-2L Clock
-> >>
-> >>    iommus:
-> >> -    description:
-> >> -      This property should point to the respective IOMMU block with master port as argument,
-> >> -      see Documentation/devicetree/bindings/iommu/mediatek,iommu.yaml for details.
-> >> +    minItems: 1
-> >> +    maxItems: 2
-> >
-> > The comment removals are not documented in the commit message, and
-> > it's not clear why removing information and references would be a good
-> > thing.
-> It's obvious, isn't? The consumer shall not define which provider has to
-> use or how many cells provider has.
+On 5/26/25 16:13, Sebastian Andrzej Siewior wrote:
+> On 2025-05-26 15:56:29 [+0200], Gatien Chevallier wrote:
+>> From: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
+>>
+>> When enabling PREEMPT_RT, the gpio_keys_irq_timer() callback runs in
+>> hard irq context, but the input_event() takes a spin_lock, which isn't
+>> allowed there as it is converted to a rt_spin_lock().
+>>
+>> [ 4054.289999] BUG: sleeping function called from invalid context at kernel/locking/spinlock_rt.c:48
+>> [ 4054.290028] in_atomic(): 1, irqs_disabled(): 1, non_block: 0, pid: 0, name: swapper/0
+>> ...
+>> [ 4054.290195]  __might_resched+0x13c/0x1f4
+>> [ 4054.290209]  rt_spin_lock+0x54/0x11c
+>> [ 4054.290219]  input_event+0x48/0x80
+>> [ 4054.290230]  gpio_keys_irq_timer+0x4c/0x78
+>> [ 4054.290243]  __hrtimer_run_queues+0x1a4/0x438
+>> [ 4054.290257]  hrtimer_interrupt+0xe4/0x240
+>> [ 4054.290269]  arch_timer_handler_phys+0x2c/0x44
+>> [ 4054.290283]  handle_percpu_devid_irq+0x8c/0x14c
+>> [ 4054.290297]  handle_irq_desc+0x40/0x58
+>> [ 4054.290307]  generic_handle_domain_irq+0x1c/0x28
+>> [ 4054.290316]  gic_handle_irq+0x44/0xcc
+>>
+>> Considering the gpio_keys_irq_isr() can run in any context, e.g. it can
+>> be threaded, it seems there's no point in requesting the timer isr to
+>> run in hard irq context.
+>>
+>> So relax the hrtimer not to use the hard context. This requires the
+>> spin_lock to be added back in gpio_keys_irq_timer().
+> 
+> Why does it? This needs to be explained or it deserves an independent
+> patch/ fix. This flag change makes not difference on !PREEMPT_RT and so
+> should be the requirements for locking here.
+> 
 
-If you feel the change is good, then document it in the commit
-message, and ideally also use separate commits rather than throwing in
-unrelated changes into a commit which does not explain anything.
-Again, the kernel documentation explains how you can structure your
-commits in a better way.
+Can you elaborate on "This flag change makes not difference on
+!PREEMPT_RT" please? IIUC,this makes the callback not run in hard IRQ
+context, even in !PREEMPT_RT, no?
 
-Cheers,
-Daniel
+Regarding the need of the spin_lock: gpio_keys_irq_timer() and
+gpio_keys_irq_isr() appear to access the same resources. Can't we
+have a concurrent access on it from:
+HR timer interrupt // GPIO interrupt?
+
+But looking back at the patch, this situation does not depend on
+the HRTIMER_MODE_REL_HARD flag. So maybe it should be addressed
+separately.
+
+On the other hand, I should use the new
+guard(spinlock_irqsave)(&bdata->lock);
+
+>> Fixes: 019002f20cb5 ("Input: gpio-keys - use hrtimer for release timer")
+>> Suggested-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+>> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
+>> Signed-off-by: Gatien Chevallier <gatien.chevallier@foss.st.com>
+> 
+> Sebastian
 
