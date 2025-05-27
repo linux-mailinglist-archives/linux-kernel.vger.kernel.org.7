@@ -1,49 +1,39 @@
-Return-Path: <linux-kernel+bounces-663701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-663696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71B6FAC4C33
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 12:22:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78500AC4C18
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 12:19:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1680B3BBBFF
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 10:22:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E0DC18965E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 10:19:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FE032512D7;
-	Tue, 27 May 2025 10:22:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=aruba.it header.i=@aruba.it header.b="S0m9jXq5"
-Received: from smtpcmd0756.aruba.it (smtpcmd0756.aruba.it [62.149.156.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BECA253B73
-	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 10:22:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.149.156.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D38925484A;
+	Tue, 27 May 2025 10:19:29 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79F6728E0F;
+	Tue, 27 May 2025 10:19:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748341353; cv=none; b=eahQi5y6ac1meh1j6ASRCbi3cqFGLf1kKUfE1CaGVgWszYB1cqU3U/v4LOQEmb859xfjVSvaMy3hYBgzN/xNkqf//DuUnKNut9W76UJ1MxhrG6VW3YtWC9L86SPv0TNs1hlQYw8t2zBLOBv9zlYFKJK1dPtZ9xkCp8vOojNk6Ok=
+	t=1748341168; cv=none; b=Cc7AYVam4Gpo5XNkXvC1uCKBbykwfXc9SbzNxkSM1nGLGkmOtwGZqqtbZUCUJpIMuajTCLjcftaBQgKdLUqCw+Z2iFcmCOXCQyDSXQpU9Ui0Ioyn5gOFk6I7jN7JsYcnaWfx1p9fhGZ2rrHVUaoGxF3SOxfC1TzFtsd1RSAjPxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748341353; c=relaxed/simple;
-	bh=CCmDBe2cHO/aj6GjU1F7qAtsjhmTjEzQv7ntUYfF+dA=;
+	s=arc-20240116; t=1748341168; c=relaxed/simple;
+	bh=+uTkxRwUDOSNmznElaxhvN1iqbqNmStXvWtDR98aiXY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Tk9SnealqhgDc5teBnHUijsRvSSDulJp3inX42h6f79nRPTWd1Yz5M6LZ4PSjsLHOK1NBFhnO5bS64gpmYKLgcL1piK8olYCUH3M7SlG8VCEg0b8GtDvxOmBfnTAM8GH5yHK9X2RuCkkhCf7xo1hgb6UEpa2r2D7Tp6Q98RrY5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=enneenne.com; spf=pass smtp.mailfrom=enneenne.com; dkim=temperror (0-bit key) header.d=aruba.it header.i=@aruba.it header.b=S0m9jXq5; arc=none smtp.client-ip=62.149.156.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=enneenne.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=enneenne.com
-Received: from [192.168.1.58] ([79.0.204.227])
-	by Aruba SMTP with ESMTPSA
-	id JrOuu1Mg9t6p9JrOvuf7yy; Tue, 27 May 2025 12:19:17 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aruba.it; s=a1;
-	t=1748341157; bh=CCmDBe2cHO/aj6GjU1F7qAtsjhmTjEzQv7ntUYfF+dA=;
-	h=Date:MIME-Version:Subject:To:From:Content-Type;
-	b=S0m9jXq5TWiK7ybu9uri0Zz1LwNmk4wuJ68g6WXZtGP4sXVj8sNx8IFzxRd15oK9D
-	 5IMXpPJ2rWJlepW+Bw2usSKQB0BXQuVxytSd5A2mWY3DF9wyU5sMDSgqv8YKMj87IY
-	 E6mOx+TfolgLZF98oIh4YL7xVWEjpmFxeJnzE+U+y5Lx/Zi1p829jWaFbttm3XE8oY
-	 /pxzAYlkVTdZ25VRZv2m+vsNdRBsSdn7n9wzxnOWxJTUaYVYpF06nysl6aucmlwHgY
-	 JkPpHw+ddPj1YrJylDlQvMxoa9X2Ly+cTnOqUEYnGNSXNFokp8D8raiTKlcGC5uMk6
-	 3kJG24aZ+VUhA==
-Message-ID: <20ba69f0-7ed9-48e7-8239-74a55c993c0b@enneenne.com>
-Date: Tue, 27 May 2025 12:19:16 +0200
+	 In-Reply-To:Content-Type; b=V1odD9tfLrvzPJCJeLyylH1iQuLTTMizzpNLJuDrw0lJJZqesBUbieNKO1/Qm0v4+ElUqBL/6Asq6z3vvE74I0gP91sN7HVjBUYq0pidzhT7+r8471t0BDtwt6yzU6PakodUqylDWvAeflBIiDWRobbOZFK2oi67sjLc38vQXAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A4FE114BF;
+	Tue, 27 May 2025 03:19:09 -0700 (PDT)
+Received: from [10.57.46.233] (unknown [10.57.46.233])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 7E2653F5A1;
+	Tue, 27 May 2025 03:19:23 -0700 (PDT)
+Message-ID: <4d54e620-abb9-4a36-bab0-3970c7e30a5f@arm.com>
+Date: Tue, 27 May 2025 11:19:22 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,75 +41,77 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] pps: clients: gpio: fix interrupt handling order in
- remove path
-Content-Language: en-US
-To: "Farber, Eliav" <farbere@amazon.com>
-Cc: "Chocron, Jonathan" <jonnyc@amazon.com>,
- "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
- "mschmidt@redhat.com" <mschmidt@redhat.com>,
- "calvin@wbinvd.org" <calvin@wbinvd.org>,
- "tglx@linutronix.de" <tglx@linutronix.de>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <d6358648c5b9420d8202bb9c23ac1824@amazon.com>
-From: Rodolfo Giometti <giometti@enneenne.com>
-In-Reply-To: <d6358648c5b9420d8202bb9c23ac1824@amazon.com>
+Subject: Re: [PATCH v6 2/2] coresight: add coresight Trace Network On Chip
+ driver
+Content-Language: en-GB
+To: Leo Yan <leo.yan@arm.com>, Yuanfang Zhang <quic_yuanfang@quicinc.com>
+Cc: Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ kernel@oss.qualcomm.com, linux-arm-msm@vger.kernel.org,
+ coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250522-trace-noc-v6-0-f5a9bcae90ee@quicinc.com>
+ <20250522-trace-noc-v6-2-f5a9bcae90ee@quicinc.com>
+ <3a19197d-b534-458c-b4d7-51fd9d2c954d@arm.com>
+ <40599afc-4342-467c-87d8-3f53cbcfd242@quicinc.com>
+ <20250523085655.GD2566836@e132581.arm.com>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <20250523085655.GD2566836@e132581.arm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CMAE-Envelope: MS4xfFzSurw6zXn+B64069VKGDJ13c6fpEMW36yi1QY0PdUgpc0HVLtIEny5UwT1FlTkXm521Tb5gQFMAtFPZUXQ7w5BWyVp/TN8bAbP5sylm0Rxy3l8Fmxw
- jAH1z4oZ5WLi+i4IoHADljsWvTTYACYMk3Oy8vVALnpN//4d3GHiIS/xtnS492WRXSmGQlTqNgPnr3GapIweex+KY2WgTWnMVJtySp/UM9OQFE0LDlJm/5Wy
- marv0ds7ryQjL2VXkkzdPvuhghz1ol4t6o3TY0CJRSyHaskxY5L4HSmiul10AYhCys60TkaICGD3Z9//pmQIvG5Rlaiekdk2il3AuqCOPLPM/fOs+By9/5rS
- ylSEljaKsE9R1AweZYgOLAq5XQHcyg==
 
-On 27/05/25 11:11, Farber, Eliav wrote:
->>> @@ -228,6 +228,7 @@ static void pps_gpio_remove(struct platform_device *pdev)
->>>    {
->>>        struct pps_gpio_device_data *data = platform_get_drvdata(pdev);
+On 23/05/2025 09:56, Leo Yan wrote:
+> On Fri, May 23, 2025 at 04:08:58PM +0800, Yuanfang Zhang wrote:
+> 
+> [...]
+> 
+>>>> +static int trace_noc_init_default_data(struct trace_noc_drvdata *drvdata)
+>>>> +{
+>>>> +    int atid;
+>>>> +
+>>>> +    atid = coresight_trace_id_get_system_id();
+>>>> +    if (atid < 0)
+>>>> +        return atid;
+>>>> +
+>>>> +    drvdata->atid = atid;
 >>>
->>> +     free_irq(data->irq, data);
+>>> Do you need to expose this via sysfs ? Otherwise, how can you map
+>>> a trace to a TNOC at decoding ?
 >>
->> Why not just use devm_free_irq()?
+>> yes, need to expose the atid via sysfs, but it better to expose it on source driver which connect with
+>> this TNOC. so dont expose it on this driver.
+
+But why ? How does that work ? The packets that come via TNOC 
+(irrespective of the source(s)) will have the same ATID as that of the 
+TNOC. So :
+
+1) How does it help if the source exports the ID that was allocated in 
+the TNOC driver ?
+
+2) How does the source driver know the TraceID for exposing via sysfs ?
+Does it expose its own traceid ?
+
 > 
-> As far as I understand, the main purpose of devm_*() is to provide
-> hands-off resource management. devm_request_irq() is intended to
-> eliminate the need for explicit cleanup in the remove() function by
-> automatically freeing the IRQ after remove() returns.
-
-In linux/kernel/irq/devres.c we can read:
-
-/**
-  *      devm_free_irq - free an interrupt
-  *      @dev: device to free interrupt for
-  *      @irq: Interrupt line to free
-  *      @dev_id: Device identity to free
-  *
-  *      Except for the extra @dev argument, this function takes the
-  *      same arguments and performs the same function as free_irq().
-  *      This function instead of free_irq() should be used to manually
-  *      free IRQs allocated with devm_request_irq().
-  */
-
-> In my opinion, calling devm_free_irq() undermines the benefit of using
-> devm_request_irq() in the first place. If I need to explicitly free the
-> IRQ during remove(), then I’m no longer relying on devm’s automatic
-> cleanup - I’m effectively reverting to manual resource management while
-> still using devm-style registration, which I find unnecessary.
+> If so, why the ID is not maintained in coresight_path::trace_id?
 > 
-> That said, if you still favor devm_free_irq(), I’ll revise the patch
-> accordingly.
+> A source device allocates ID and maintains in coresight path, then
+> this ID is passed (when enabling the link) to TNOC driver to consume it.
 
-Since devm_free_irq() works exactly as free_irq() and can be used to manually 
-free IRQs allocated with devm_request_irq(), I think it is less invasive. Isn't 
-it? :-)
+Good question, since we have the "path" maintaining the TraceID, we
+should use that here for the TNOC. But the other question is, can there 
+be multiple sources connected to a single TNOC ? (I am guessing, yes!. 
+And thus it may not work with what you are proposing.
 
-Ciao,
+Cheers
+Suzuki
 
-Rodolfo
 
--- 
-GNU/Linux Solutions                  e-mail: giometti@enneenne.com
-Linux Device Driver                          giometti@linux.it
-Embedded Systems                     phone:  +39 349 2432127
-UNIX programming
+> 
+> Thanks,
+> Leo
+
+
 
 
