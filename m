@@ -1,137 +1,125 @@
-Return-Path: <linux-kernel+bounces-664149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-664151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2AC9AC527B
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 17:58:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47EF4AC528C
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 18:00:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4A058A0D75
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 15:58:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02E991BA31DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 15:59:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1996C27E1C3;
-	Tue, 27 May 2025 15:58:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="gTF4MeJv"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F62D2741DC;
-	Tue, 27 May 2025 15:58:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 324B027F178;
+	Tue, 27 May 2025 15:58:39 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 073B227A92C
+	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 15:58:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748361492; cv=none; b=p7LJCRN4cQjCB1JHl8pFan5BVIVautOUfNQuyYvUR1dwAgj9808qZ8Rc0aqm7gFta2HvxGwAbsfDvL5K247kl0rQjgfcP1Q19CDuGtRjxZpZ6SCwyuecfxyW68fN2/jRGoL8hpS2eicMURAZNeNadh+pZN/gukFnrwJLrbw1n2U=
+	t=1748361518; cv=none; b=r6j7dRkkOolglI4cRV9KrTsF1xqtYLr2jmGPEXA45ePTG8WDU5VGrFCMSAZyD2Cod/TX9OlMTnR51oHMe1QcIpNnBGk8/2+hSpvZhqIrasDU+t7FqfSpA4xAKmMlsvJ2Z4vF+FlRDHMWsps4uGqpOmdKGKJMkga4haC9bmG1GUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748361492; c=relaxed/simple;
-	bh=6zLPd0/W1bzf98poY04UCdVCM4Eyy10eh4IQwBNNFa4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=Lmco//o0q3CzeZ+FvnJx5MFKGXhy4yDzeVRp0Znusq4GRRVdlo50n52AVBHzY4FwBHDxmjgLNEaKYI1I0SkTaBvPO8l88O37X0OU7vrR5pMtBL74QbA29pR1/q0Iw2lXjfOe1ama6F8ieIc9O63iiY8xkVq71a6b+qaboPcGZEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=gTF4MeJv; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1134)
-	id B03CA206B778; Tue, 27 May 2025 08:58:10 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com B03CA206B778
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1748361490;
-	bh=9vyIcw/j3U4kYU223Umd1U4i7224+q4yAjNPR7hv21M=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=gTF4MeJvTwM0N9ergIk0aMrAHEOtQ8gQLJFYc3V+UNQnjvwOyzfYTPu8cu7L6XxsK
-	 RZ2zCkrdMGwETayH0nfr3n2T8ITiaO8s0v6AGOKfXDPwdBlmiSnpGY/832FwL/h00f
-	 y6p/ocCpbZAfSnfbCuc0vwW9ue9c1qGeeZXtD6PU=
-From: Shradha Gupta <shradhagupta@linux.microsoft.com>
-To: Bjorn Helgaas <bhelgaas@google.com>,
-	Rob Herring <robh@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=EF=BF=BD=7EDski?= <kw@linux.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Dexuan Cui <decui@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Michael Kelley <mhklinux@outlook.com>
-Cc: Shradha Gupta <shradhagupta@linux.microsoft.com>,
-	linux-hyperv@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Nipun Gupta <nipun.gupta@amd.com>,
-	Yury Norov <yury.norov@gmail.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Jonathan Cameron <Jonathan.Cameron@huwei.com>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Long Li <longli@microsoft.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Konstantin Taranov <kotaranov@microsoft.com>,
-	Simon Horman <horms@kernel.org>,
-	Leon Romanovsky <leon@kernel.org>,
-	Maxim Levitsky <mlevitsk@redhat.com>,
-	Erni Sri Satya Vennela <ernis@linux.microsoft.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	netdev@vger.kernel.org,
-	linux-rdma@vger.kernel.org,
-	Paul Rosswurm <paulros@microsoft.com>,
-	Shradha Gupta <shradhagupta@microsoft.com>
-Subject: [PATCH v4 2/5] PCI: hv: Allow dynamic MSI-X vector allocation
-Date: Tue, 27 May 2025 08:58:09 -0700
-Message-Id: <1748361489-25415-1-git-send-email-shradhagupta@linux.microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1748361453-25096-1-git-send-email-shradhagupta@linux.microsoft.com>
-References: <1748361453-25096-1-git-send-email-shradhagupta@linux.microsoft.com>
+	s=arc-20240116; t=1748361518; c=relaxed/simple;
+	bh=61A8ZZzlXfCu/SUZbAzP0EpUdS/Qz7fRFXmHVMVqQJg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q3n++Itaz5j/fo3jVYCIJ9fJYbtYsBaYOIfBenNBteQdXxWjIfU81P8lhIOFlCn1SZSybkciiU5ReAhltcgJYOTrJQaZQQ9n1pHyXzvxZ3leBNFv8vkjkWRfTvsML/ljDnIvOlyPeFcOdzw97Wo1csmme2vbR7a4V1HpbEZRzuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1uJwgz-0004eD-Ic; Tue, 27 May 2025 17:58:17 +0200
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1uJwgx-000Rc3-37;
+	Tue, 27 May 2025 17:58:15 +0200
+Received: from pengutronix.de (p5b1645f7.dip0.t-ipconnect.de [91.22.69.247])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 8E8EB41AA8E;
+	Tue, 27 May 2025 15:58:15 +0000 (UTC)
+Date: Tue, 27 May 2025 17:58:15 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Elaine Zhang <zhangqing@rock-chips.com>
+Cc: kernel@pengutronix.de, mailhol.vincent@wanadoo.fr, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, heiko@sntech.de, cl@rock-chips.com, 
+	kever.yang@rock-chips.com, linux-can@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v6 0/4] rockchip: add can for RK3576 Soc
+Message-ID: <20250527-steady-dormouse-of-culture-c45bd6-mkl@pengutronix.de>
+References: <20250526062559.2061311-1-zhangqing@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="pckthsx2tg77kzdv"
+Content-Disposition: inline
+In-Reply-To: <20250526062559.2061311-1-zhangqing@rock-chips.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Allow dynamic MSI-X vector allocation for pci_hyperv PCI controller
-by adding support for the flag MSI_FLAG_PCI_MSIX_ALLOC_DYN and using
-pci_msix_prepare_desc() to prepare the MSI-X descriptors.
 
-Feature support added for both x86 and ARM64
+--pckthsx2tg77kzdv
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v6 0/4] rockchip: add can for RK3576 Soc
+MIME-Version: 1.0
 
-Signed-off-by: Shradha Gupta <shradhagupta@linux.microsoft.com>
-Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
----
- Changes in v4:
- * use the same prepare_desc() callback for arm and x86
----
- Changes in v3:
- * Add arm64 support
----
- Changes in v2:
- * split the patch to keep changes in PCI and pci_hyperv controller
-   seperate
- * replace strings "pci vectors" by "MSI-X vectors"
----
- drivers/pci/controller/pci-hyperv.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletions(-)
+On 26.05.2025 14:25:55, Elaine Zhang wrote:
+> rk3576 can is a new controller,new register layout and Bit position
+> definition:
+> Support CAN and CANFD protocol.
+> Support Dma.
+>=20
+> There are major differences from the previous rk3568.
+> All errata on the rk3568 have been fixed and redesigned.
 
-diff --git a/drivers/pci/controller/pci-hyperv.c b/drivers/pci/controller/pci-hyperv.c
-index ac27bda5ba26..0c790f35ad0e 100644
---- a/drivers/pci/controller/pci-hyperv.c
-+++ b/drivers/pci/controller/pci-hyperv.c
-@@ -2063,6 +2063,7 @@ static struct irq_chip hv_msi_irq_chip = {
- static struct msi_domain_ops hv_msi_ops = {
- 	.msi_prepare	= hv_msi_prepare,
- 	.msi_free	= hv_msi_free,
-+	.prepare_desc	= pci_msix_prepare_desc,
- };
- 
- /**
-@@ -2084,7 +2085,7 @@ static int hv_pcie_init_irq_domain(struct hv_pcibus_device *hbus)
- 	hbus->msi_info.ops = &hv_msi_ops;
- 	hbus->msi_info.flags = (MSI_FLAG_USE_DEF_DOM_OPS |
- 		MSI_FLAG_USE_DEF_CHIP_OPS | MSI_FLAG_MULTI_PCI_MSI |
--		MSI_FLAG_PCI_MSIX);
-+		MSI_FLAG_PCI_MSIX | MSI_FLAG_PCI_MSIX_ALLOC_DYN);
- 	hbus->msi_info.handler = FLOW_HANDLER;
- 	hbus->msi_info.handler_name = FLOW_NAME;
- 	hbus->msi_info.data = hbus;
--- 
-2.34.1
+Can you configure the IP core for CAN-2.0 a.k.a. CAN-CC only mode, so
+that it only receives CAN-CC frames only and not CAN-FD?
 
+What happens if you configure register RKCAN_STR_CTL, ism_sel to 2'b01:
+CAN Fixed and receive a CAN-FD frame?
+
+Is there a more detailed description to "2'b00: Flexible; cover_mode
+must disable" and "2'b11: Mixed. cover_mode must disable"?
+
+regards,
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--pckthsx2tg77kzdv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmg14RQACgkQDHRl3/mQ
+kZyZQgf7BB/yyOkv3ry1psGUXvjfa6oVbkh/JVbPbds5HJPB50UhBhjmhbGKPq30
+r4BTF8f4ZEPWK+cEbibjbBdW5DXR4VLJ1bMX4C2f53uDNua+5Z3C6TLq1R5IvDoy
+PDvwfcRTEba9Oivuu9TNEpsV7hMN9opc4UORUId8yU/2vco4Pt3bQSUlbm9iRgMk
+hrWJFWQ+YyEEiJfhVp7V5CarGiEB64ALiK7y8CTESWtc1IWINpFb7raFMF2RvSMW
+/oVTymupsa9ltY8nVa+Mz7o4BXe1wG2ReXfn2QIB+S7+nN+ZGF2PMl/V4a1s9ByH
+kBPX9qhW+6hvLQgeDJhzgFmF9bYpTQ==
+=y8iK
+-----END PGP SIGNATURE-----
+
+--pckthsx2tg77kzdv--
 
