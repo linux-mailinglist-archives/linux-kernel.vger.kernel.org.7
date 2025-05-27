@@ -1,151 +1,180 @@
-Return-Path: <linux-kernel+bounces-663800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-663802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D98BCAC4DAE
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 13:37:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15E90AC4DB5
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 13:38:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D37C53AA761
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 11:37:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 866BF8A03D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 11:37:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EB49262FF6;
-	Tue, 27 May 2025 11:35:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BB642698A2;
+	Tue, 27 May 2025 11:35:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H24qxVBj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jg0vm1Xn"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92D6C2609D4;
-	Tue, 27 May 2025 11:35:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05E102561AA;
+	Tue, 27 May 2025 11:35:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748345715; cv=none; b=POVPEyjd9TIQHxZYOguafOK1Zc2eiEPAydDgHDJiEiJOqWxqFp35rAMg3wyGX3JbGvCSo4oPWeQkPvwEC9R1neFK1LNGJMBtBbg1693Xw+GoaPq+eUNzPuMaj0NHu4y6I1T/NxYs5lHR8q6QyItd9n7zAznt+UhU4dHMksLAS4k=
+	t=1748345748; cv=none; b=A1c39U96+GHlqVLaNzOD1wl69qwtROREkbtz9CmYTHe7Di/tZ/5SyLCuOPucj9as6u9ikNmpAuxxeWiE6M8LbjwClIYPIcEQDAOpWjh1Fylr6PNcb4ZWo4icCaFi8+Ks4BEgrwZXzR0DJHekiUyMJC0BprA4RgMI+9LLbAbxCdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748345715; c=relaxed/simple;
-	bh=lC6bklQVqxj5e8hsAXKJkptZrA4f8Lkn6BG5IBTSDjw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FE6ifwhYePam6mgdpTnwxuuMbuVO9agBvYgazhEZTmd66i9VK2k0w5Mq3ttLjVP1toTkwtugKZDVbGb3agaykdkqFyVP3zLdDYHI3nmDf0WFtNYU0q+TbYcpbjzuFKgzlERc9bdDY5108/tziNqrdOEvUABxbVIWR9Q7UMcG84s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H24qxVBj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75B4DC4CEE9;
-	Tue, 27 May 2025 11:35:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748345715;
-	bh=lC6bklQVqxj5e8hsAXKJkptZrA4f8Lkn6BG5IBTSDjw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=H24qxVBjb+0faPnrA0aSdT2LxyRGSYAyhZs4VlccFIy1pnrXSwfvjfWQogf3UqTg0
-	 lHPeesVCan3Vwts9HfacitX8dqlJZBc8+scq8BTYXogqEuF2BpT/yxjd3EIYMfgQhP
-	 nRXbK5vvWUXksLn4JWLT8ViV2pL8jpzEyzX6wYhH+etrLjcN2F6K7EfzhsH+dRMIGt
-	 uHT3RvVf0L7f5y2WKQMmDujE6qiIy/P5NBJfEGG0FfGqzVE0N22h3PTM4AzIk+7n5g
-	 joMkOMBE+tucZd/PH6yBOKE4qCSWtP21XiXLIu2ehFzFPJdT4M1y95ivN8X10YX7Cx
-	 ReCWDI3IcUW/A==
-Message-ID: <97724a4d-fad5-4e98-b415-985e5f19f911@kernel.org>
-Date: Tue, 27 May 2025 13:35:09 +0200
+	s=arc-20240116; t=1748345748; c=relaxed/simple;
+	bh=z65Y2e/Dh7HyN3o6KU7EP7XljBRoTyLBz68cMHVqb5A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QvZnLIqOC5i1DS8bPRV/EWJuaBOtd+8w1LeH723MjzHlUd80nsS4OSS47h+c8IUoUYmLTO/76p3xKoNRZl0Ub+CLjK6RkOOtPfIPiltmBkKcQ4/33RooaeFSurT7m+ba1l2gWSvG3E2ztZZeWmQdywwXm5+P4PPQB+R2maFrkbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jg0vm1Xn; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3a365a6804eso2010478f8f.3;
+        Tue, 27 May 2025 04:35:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748345745; x=1748950545; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=j2a3a7a8KQwqodQOiSF1tyIx8rv44vXyG3Dt7UPKGe0=;
+        b=Jg0vm1XnpM6rq3aKjTrXM0AxF+gs0dshZVBodWClE/Fczb2gu8nDskrtGVhTuJyGz8
+         z7D/0FkQ055cCDp/iMoO3gpmYMYz6xs1Pnm84gsyDnEgu/652FbeuqqHXzxC0zd73qrl
+         xTYQIbu1EN64rJmgopqPbIJUWmnk389AdA5w/TsCPDkSDrwSn/x2QyRz+/YYB5SNw2JD
+         cX5jdAkloTdmfU4Sm4ewCc68YjXwc38L3DoxrUH0xjC9HUKZl9BRgXqn1TEStW0IsQGD
+         ETmEqPda958gs1HwgJqNP5Tzxw3lVIYnZPT2vZslmV5GsMY8AbhLP8gQ0/LvR05yzstv
+         R0Zw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748345745; x=1748950545;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=j2a3a7a8KQwqodQOiSF1tyIx8rv44vXyG3Dt7UPKGe0=;
+        b=H6DKek4X19HfAhMSCkmOxiXqZTNXjKtHDAdTJ/DRvxeR8vAfUGXNPrCXzwgW6vdvhG
+         jO++Xx9YYWZMuqx4fFTPOYV8np7t07NopZPG5/1GFInpAUjfD4ZQaYsYOnK9GjnGsVZN
+         TCnuXaOdRQ+JhwU83mpspfm3iVqpPP0C+IXkUKjBHGnA5xuJaVxY31sheoyb8l7CsiSZ
+         YF5FopuxchjMRGhIF/m81ljACkoOfCWG2Yf4L5acmdfvpfLSmaHQp9ObbCMfHnG6QbcL
+         JRvU8ZIkYtKp+xer3Cqj8xrx1U5TA3x5b5GO7CbQ6TIDCSy+bcanHzoeQFEHpGDiuDHC
+         raxg==
+X-Forwarded-Encrypted: i=1; AJvYcCUDBz4NKY1bGZA2HnzRyGmzp8Cei4T2bmJvNg+CKPCd776yPeYFGgpJ+6Feqd7Hc12enBGYxQGmQZGX2Ldd@vger.kernel.org, AJvYcCWPMFbUTIfR5nBMPFGdWx8ClVTviA/uUXWVsUL+5Uu+za7bYSFLJ3JMkqcP+ldmDQlxQBfV0MkdpOHRV2tXMW3S53k=@vger.kernel.org, AJvYcCXFqri8UdBPpuJt3NxvsytLhiK3VVt8paK5Z3AZUkh4VyHxu+NBaS3dHYuwbx1/Bk7nciOjPyov5Fii@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAYArTUvbFwv5eeCs3Aop8ExmjbpTCCAMYYbsri1bdknmpFMzF
+	HNQlispOjNMbK9fnLruzjqK2fGZvSFI6u69MAieXei1CI8pzE3b0pGCxw2NyjyhZEpalASf8NDH
+	WGhIDfZ/3RhNOx9iiLLaJeYbSxAYYNUk=
+X-Gm-Gg: ASbGncu4s91BezPMPJ15SQCBYM8rI4HyzNNAYdM6QGlDIaxpuapnAYQDidSymrbPiKN
+	2vnKGuSRjoxVbVINUoHMnwMRTXMPu3LinVcyjHNZL7RTwjp8PxPHz2cXCLbSqUkDq1JAdAwqwu9
+	zPkgjJA2T1Bgwc7S591f/rk/wUyHpAB2bs9yw=
+X-Google-Smtp-Source: AGHT+IHNOg1R0JT0llzXDUDD94dpx7ihBl1W2G0V4mU4/blhfFYVc3CYqdd00jfYdbUklGcT45QUAjA/dYwCjm3haac=
+X-Received: by 2002:a05:6000:2909:b0:3a3:5c05:d98b with SMTP id
+ ffacd0b85a97d-3a4cb44533fmr10822254f8f.5.1748345745019; Tue, 27 May 2025
+ 04:35:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v2 1/3] dt-bindings: sram: qcom,imem: Allow
- modem-tables
-To: Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Alex Elder <elder@kernel.org>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Alex Elder <elder@riscstar.com>
-References: <20250527-topic-ipa_imem-v2-0-6d1aad91b841@oss.qualcomm.com>
- <20250527-topic-ipa_imem-v2-1-6d1aad91b841@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250527-topic-ipa_imem-v2-1-6d1aad91b841@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250515183104.330964-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250515183104.330964-3-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdWC0MGokCwP7gXg+kxfQP0LAqxzb2jAdepwyN2WiCFt7Q@mail.gmail.com>
+In-Reply-To: <CAMuHMdWC0MGokCwP7gXg+kxfQP0LAqxzb2jAdepwyN2WiCFt7Q@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Tue, 27 May 2025 12:35:18 +0100
+X-Gm-Features: AX0GCFviWKnZo61Ynxf4kM6_pzPJ3PD8VGeb8xzezsuIu06KO6mxkChQmmtKof4
+Message-ID: <CA+V-a8v6hBveByhgsx2g1Lv=UVeBuMMDjzYkXmqyc5Wzo_=LEw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] arm64: dts: renesas: r9a09g057h44-rzv2h-evk: Enable
+ USB2.0 support
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 27/05/2025 13:26, Konrad Dybcio wrote:
-> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> 
-> The IP Accelerator hardware/firmware owns a sizeable region within the
-> IMEM, ominously named 'modem-tables', presumably having to do with some
-> internal IPA-modem specifics.
-> 
-> It's not actually accessed by the OS, although we have to IOMMU-map it
-> with the IPA device, so that presumably the firmware can act upon it.
-> 
-> Allow it as a subnode of IMEM.
-> 
-> Reviewed-by: Alex Elder <elder@riscstar.com>
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> ---
->  Documentation/devicetree/bindings/sram/qcom,imem.yaml | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/sram/qcom,imem.yaml b/Documentation/devicetree/bindings/sram/qcom,imem.yaml
-> index 2711f90d9664b70fcd1e2f7e2dfd3386ed5c1952..7c882819222dc04190db357ac6f9a3a35137cc9e 100644
-> --- a/Documentation/devicetree/bindings/sram/qcom,imem.yaml
-> +++ b/Documentation/devicetree/bindings/sram/qcom,imem.yaml
-> @@ -51,6 +51,9 @@ properties:
->      $ref: /schemas/power/reset/syscon-reboot-mode.yaml#
->  
->  patternProperties:
-> +  "^modem-tables@[0-9a-f]+$":
-> +    description: Region reserved for the IP Accelerator
+Hi Geert,
 
-Missing additionalProperties: false, which would point you that this is
-incomplete (or useless because empty).
+Thank you for the review.
 
-Best regards,
-Krzysztof
+On Fri, May 23, 2025 at 9:13=E2=80=AFAM Geert Uytterhoeven <geert@linux-m68=
+k.org> wrote:
+>
+> Hi Prabhakar,
+>
+> On Thu, 15 May 2025 at 20:31, Prabhakar <prabhakar.csengg@gmail.com> wrot=
+e:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Enable USB2.0 support on the RZ/V2H EVK board, CN3 supports
+> > host only operation and CN2 supports host/function operation.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Thanks for your patch!
+>
+> > --- a/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts
+> > +++ b/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts
+>
+> > @@ -303,6 +326,28 @@ sd1_cd {
+> >                         pinmux =3D <RZV2H_PORT_PINMUX(9, 4, 14)>; /* SD=
+1_CD */
+> >                 };
+> >         };
+> > +
+> > +       usb20_pins: usb20 {
+> > +               vbus {
+> > +                       pinmux =3D <RZV2H_PORT_PINMUX(9, 5, 14)>; /* VB=
+US */
+> > +               };
+> > +
+> > +               ovc {
+>
+> Moving up to preserve sort order.
+>
+Thank you for taking care of this (and below).
+
+Cheers,
+Prabhakar
+
+> > +                       pinmux =3D  <RZV2H_PORT_PINMUX(9, 6, 14)>; /* O=
+VC */
+> > +                       bias-pull-up;
+> > +               };
+> > +       };
+> > +
+> > +       usb21_pins: usb21 {
+> > +               vbus {
+> > +                       pinmux =3D <RZV2H_PORT_PINMUX(6, 6, 14)>; /* VB=
+US */
+> > +               };
+> > +
+> > +               ovc {
+>
+> Moving up to preserve sort order.
+>
+> > +                       pinmux =3D <RZV2H_PORT_PINMUX(6, 7, 14)>; /* OV=
+C */
+> > +                       bias-pull-up;
+> > +               };
+> > +       };
+> >  };
+> >
+> >  &qextal_clk {
+>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> i.e. will queue in renesas-devel for v6.17 with the above fixed.
+>
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
+8k.org
+>
+> In personal conversations with technical people, I call myself a hacker. =
+But
+> when I'm talking to journalists I just say "programmer" or something like=
+ that.
+>                                 -- Linus Torvalds
 
