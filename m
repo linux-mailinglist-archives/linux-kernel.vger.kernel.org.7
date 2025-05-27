@@ -1,189 +1,158 @@
-Return-Path: <linux-kernel+bounces-664335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-664337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F283AC5A42
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 20:50:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AE3DAC5A47
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 20:51:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A84EE8A38F5
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 18:50:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28D643A83DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 18:51:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01E91248F74;
-	Tue, 27 May 2025 18:50:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F07E928032B;
+	Tue, 27 May 2025 18:51:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nh//koH/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HzfGkpsk"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E9821E32B7
-	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 18:50:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 460C41F561D;
+	Tue, 27 May 2025 18:51:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748371823; cv=none; b=Lnaf2I/4fNuTVHgri0UzAu40yPrLmGDjyxbHtZUWaVX2656NNlabUH5OVyi11cMqqkgmQfahUToFRy9Vlujk+vgMe0dVE8vy01H1MBzwBrHmNBq1dHqkG9ZsbTn+pkmgSqRgQwd937mULaZ8eR3fkUhGiT4bjBbI61GOijU437o=
+	t=1748371895; cv=none; b=NNNrQjs2fJLr1GlM+yhLbhY517F3fGconXXPbzVEC743Zy6yqX1D1xz+pz4x0du8n/fTiinP00t4dE4zcX4S5uwm7SvnugO9upNIIUelvt4d6DcpCcFEDQGBUtBT1tOWlAld5HLIFGHRqz6YE1Jncejzq4YcqusECYjN4nAKQVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748371823; c=relaxed/simple;
-	bh=6arYoFIhtasrIwdyo9c3OArXFmv3IflHhEXcgqbsST4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=arsl1eZv7BMzNUh74PrgH4xGcfrY1Yy6NiVXkdaF6hS6k3y7LUH1o9UpteeRGVGJNwJtqD1in9PZvjhBnXusJIEApWTRiYJk7nQvWG6xVV3d1CXwEuEvXr/12Juw+NQp+dGo3C+Zx4h+4FlXP5OZ4CLvW4UDOPQsB4qOnbQbMD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nh//koH/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92D47C4CEE9;
-	Tue, 27 May 2025 18:50:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748371822;
-	bh=6arYoFIhtasrIwdyo9c3OArXFmv3IflHhEXcgqbsST4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=nh//koH/ba3SjdfBFtVrFMJwyd7JBy+pCyzJQ9VGsAIFjCAeP8Ezw5ZCw5dukdW8i
-	 yiqLOww0NWNom+jP0HdCk6Z3ulLcjU2RAItZsQShxg05tM7QxBowPlN88AiTAXzEVS
-	 8ZE8Wd8Hnu3LnSOdk3DEVkYfE5gomZA5OQOuOAGexADIZPjeSVlu2neEkB1ekJb7d7
-	 uEFRPoDefHgXAdXeTaoLpveKPAvj37K9JLlAMbDAjD7/TuLYJvlYxGwHo7v7vZcjte
-	 zlRH545AGA6GXUSrsapmyGb929Oikz5Bk9zarB385sqYnmVWGtMF8mMLrV1uFs9wsc
-	 eSOS8CdVaitEA==
-From: SeongJae Park <sj@kernel.org>
-To: Bharata B Rao <bharata@amd.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	Jonathan.Cameron@huawei.com,
-	dave.hansen@intel.com,
-	gourry@gourry.net,
-	hannes@cmpxchg.org,
-	mgorman@techsingularity.net,
-	mingo@redhat.com,
-	peterz@infradead.org,
-	raghavendra.kt@amd.com,
-	riel@surriel.com,
-	rientjes@google.com,
-	weixugc@google.com,
-	willy@infradead.org,
-	ying.huang@linux.alibaba.com,
-	ziy@nvidia.com,
-	dave@stgolabs.net,
-	nifan.cxl@gmail.com,
-	joshua.hahnjy@gmail.com,
-	xuezhengchu@huawei.com,
-	yiannis@zptcorp.com,
-	akpm@linux-foundation.org,
-	david@redhat.com
-Subject: Re: [RFC PATCH v0 0/2] Batch migration for NUMA balancing
-Date: Tue, 27 May 2025 11:50:19 -0700
-Message-Id: <20250527185019.12457-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <ad5e9cdc-9bdd-4824-9c11-171bfcc39b38@amd.com>
-References: 
+	s=arc-20240116; t=1748371895; c=relaxed/simple;
+	bh=DorkWvyQFhqHg576mXMVfLHslqa0f+WRYlVMyLIbaPs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AvG1gfXrMki3oOYR1fY+JH+1iINwQZ+hBbllySapDeIj2DWDblS3JOHP3sw2++XRIFPsuGumYEwesQ1by+YA4ZxGzweNPYODz5LdZS6Zaijh6FyD9FaKkMRIYOPFx0I/I/u0JBDw3v4CIqodDjWtha2ozayzsyJhwM5AeX6bvHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HzfGkpsk; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-742c5eb7d1cso4046004b3a.3;
+        Tue, 27 May 2025 11:51:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748371892; x=1748976692; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=/lDH/3PwgjT3x6eE2j8PwCN44/PwlqgIbgZX0zmflFg=;
+        b=HzfGkpskdiAyltV2CpXj9js1f5FGjAHdPNKJszJ2aU+S5gsZd4prZBaGZO4H/diva7
+         ZzlFoz5XPHzOlbmMTJDC9TJgGdqN9KHCes1ez0Du4vBJjkov2bfGSb21652enEXbE+tr
+         dJCkGW/XfiTrm3gl6H5cfZO8kSBMcsyiNmsP/4+jAB3YMZelPQtTtyP88be5WqkueZhD
+         /kf8nd3wa816766aKD1b73K3uI5OuSYMgrgM3ki0mO/PRiwaZEvfROe4phcv3q+xQDvV
+         dHx0jAv/aKXXE2hp+9Jch1yjdprSFeYH/OxEanjuU8+tgZZe1gAgnHti3785A2YwiQKX
+         tW1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748371892; x=1748976692;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/lDH/3PwgjT3x6eE2j8PwCN44/PwlqgIbgZX0zmflFg=;
+        b=K2d/uQ+dM+FaSvrOF4E/8hEUBvwfaL/Sdz33BvVQ3sEAwYXtE1FLk71OGjE0bp0v4R
+         SUxkxg6vPDd/XILpSGo+o7ZVzVhgXTRiU/aMTvH9Vnw6lm2PridGpNWpB5P907vDeauM
+         xDiR4/YWKwL+VHHs7PPnWTHKp7PfCVJxFvPDPrAhmxI2nxpU7P7/8hCmbQEbI/as+1x2
+         1OP4BmloBDG8+vIko1KAXAFI+zabtBNZHtOE/0AudhaeH9YBIg/UV3N164RpU65utW/J
+         nqg2yKEjEhb7/ffmT9cXaAsCQBPxVv0sZhKc8rtAIpCxrPIhISfnWN0UrzyzPlt8sp4T
+         kOrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU2/SPuvTjK/xIWFPfXt+3cOLULUjwXIXrPOiRh12yOEjgGMeGLsjQnMWTOkhoBrYfe8uCkGOoU@vger.kernel.org, AJvYcCXeEpXpxDSYUSiJPjdQp6Cv8zpMwEo+GyMg2SE4rB96lvxzGObeCMinU8Xe16h8qp8I3HrcVLyfZ9yUe4U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxX5UWY/Zq9d77XR7lmNF8PUNI9gINowWRvLA4OAT3BDHj0Qa56
+	S8qhNVRCI7jo3fk/odZYYz/ywDH9GlOPIdGt/pMuwOUk98vsuu6DPwie
+X-Gm-Gg: ASbGncvyGq0+1JthKzdQh7qGDNvLaW2JGqMaiSw5uoKb4CW4V+cIGCOhZ8ONOhHq1MT
+	0TKr6y8OHCuxqlidq/cS7HzXCVx+7xCYieV5LK8f7Sm+Z8726pjZ4syZesgLhzziAbJBuKwC63b
+	fOByEgL54+4Nnf2agw1QKJr+9+bT4xXe6Z3QXaGxUnmBcZ2LYCwu43ocC/kTj0uLvKtfr1kijXg
+	BJjTRA1Ri6eAobx1xWomo+EVILYhjz5AsvFekF+4BsVp83hrawYiXnrhu48iSjwzbMyC4r0PdyR
+	ahqZ+a94rkQypv0ziGAs8MGPLcuxkIDYXLjC53bMkLOd/S+3zUW+H4kdG1RIH+0JYimZ5RVP+Ri
+	2ibs=
+X-Google-Smtp-Source: AGHT+IHW/7KgqhIztkSadBJ7OGmMIVFY4IapTEGDwtHiO71g3kGv7EzLqGkXWRBbN8FENeoIkZa21g==
+X-Received: by 2002:a05:6a00:240e:b0:740:595a:f9bf with SMTP id d2e1a72fcca58-745fde9d5e0mr20545357b3a.3.1748371892418;
+        Tue, 27 May 2025 11:51:32 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74628cc6b99sm1526133b3a.124.2025.05.27.11.51.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 27 May 2025 11:51:31 -0700 (PDT)
+Message-ID: <55df493e-7862-4847-b5ca-60d90e4bbc62@gmail.com>
+Date: Tue, 27 May 2025 11:51:28 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.14 000/783] 6.14.9-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+References: <20250527162513.035720581@linuxfoundation.org>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+Autocrypt: addr=f.fainelli@gmail.com; keydata=
+ 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
+ WlfRzlpjIPmdjgoicA==
+In-Reply-To: <20250527162513.035720581@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, 26 May 2025 10:50:02 +0530 Bharata B Rao <bharata@amd.com> wrote:
-
-> Hi SJ,
+On 5/27/25 09:16, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.14.9 release.
+> There are 783 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> On 22-May-25 12:15 AM, SeongJae Park wrote:
-> > Hi Bharata,
-> > 
-> > On Wed, 21 May 2025 13:32:36 +0530 Bharata B Rao <bharata@amd.com> wrote:
-> > 
-> >> Hi,
-> >>
-> >> This is an attempt to convert the NUMA balancing to do batched
-> >> migration instead of migrating one folio at a time. The basic
-> >> idea is to collect (from hint fault handler) the folios to be
-> >> migrated in a list and batch-migrate them from task_work context.
-> >> More details about the specifics are present in patch 2/2.
-> >>
-> >> During LSFMM[1] and subsequent discussions in MM alignment calls[2],
-> >> it was suggested that separate migration threads to handle migration
-> >> or promotion request may be desirable. Existing NUMA balancing, hot
-> >> page promotion and other future promotion techniques could off-load
-> >> migration part to these threads. Or if we manage to have a single
-> >> source of hotness truth like kpromoted[3], then that too can hand
-> >> over migration requests to the migration threads. I am envisaging
-> >> that different hotness sources like kmmscand[4], MGLRU[5], IBS[6]
-> >> and CXL HMU would push hot page info to kpromoted, which would
-> >> then isolate and push the folios to be promoted to the migrator
-> >> thread.
-> > 
-> > I think (or, hope) it would also be not very worthless or rude to mention other
-> > existing and ongoing works that have potentials to serve for similar purpose or
-> > collaborate in future, here.
-> > 
-> > DAMON is designed for a sort of multi-source access information handling.  In
-> > LSFMM, I proposed[1] damon_report_access() interface for making it easier to be
-> > extended for more types of access information.  Currenlty damon_report_access()
-> > is under early development.  I think this has a potential to serve something
-> > similar to your single source goal.
-> > 
-> > Also in LSFMM, I proposed damos_add_folio() for a case that callers want to
-> > utilize DAMON worker thread (kdamond) as an asynchronous memory
-> > management operations execution thread while using its other features such as
-> > [auto-tuned] quotas.  I think this has a potential to serve something similar
-> > to your migration threads.  I haven't started damos_add_folio() development
-> > yet, though.
-> > 
-> > I remember we discussed about DAMON on mailing list and in LSFMM a bit, on your
-> > session.  IIRC, you were also looking for a time to see if there is a chance to
-> > use DAMON in some way.  Due to the technical issue, we were unable to discuss
-> > on the two new proposals on my LSFMM session, and it has been a bit while since
-> > our last discussion.  So if you don't mind, I'd like to ask if you have some
-> > opinions or comments about these.
-> > 
-> > [1] https://lwn.net/Articles/1016525/
+> Responses should be made by Thu, 29 May 2025 16:22:51 +0000.
+> Anything received after that time might be too late.
 > 
-> Since this patchset was just about making the migration batched and 
-> async for NUMAB, I didn't mention DAMON as an alternative here.
-
-I was thinking a clarification like this could be useful for readers though,
-since you were mentioning the future work together.  Thank you for clarifying.
-
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.14.9-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.14.y
+> and the diffstat can be found below.
 > 
-> One of the concerns I always had about DAMON when it is considered as 
-> replacement for existing hot page migration is its current inability to 
-> gather and maintain hot page info at per-folio granularity.
+> thanks,
+> 
+> greg k-h
 
-I think this is a very valid concern.  But I don't think DAMON should be a
-_replacement_.  Rather, I'm looking for a chance to make existing approaches
-help each other.  For example, I recommend running DAMON-based memory
-tiering[1] together with the LRU-based demotion.  I think there is no reason to
-discourage using it together with NUMAB-2 based promotion, if the folio
-granularity is a real issue.  That is, still NUMAB-2 will do synchronous
-promotion, but DAMON will do it asynchronously, so the amount of synchronous
-promotions and its overhead will reduce.
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
 
-I didn't encourage using NUMB-2 based promotion together with DAMON-based
-memory tiering[1] not because I show a problem at such co-usage, but just
-because I found no clear benefit of that from my test setup.  In theory, I
-think running those together makes sense.
-
-That said, we're also making efforts for overcoming the folio-granularity issue
-on DAMON side, too.  We implemented page-level filters that motivated by SK
-hynix' test results, and developed monitoring intervals auto-tuning for overall
-monitoring results accuracy.  We proposed damon_report_access() and
-damos_add_folios() as yet another opportunitis to better deal with the issue.
-I was curious about your opinion to damon_report_access() and
-damos_add_folios() for the reason.  I understand that could be out of the scope
-of this patch series, though.
-
-> How much 
-> that eventually matters to the workloads has to be really seen.
-
-Cannot agree more.  Nonetheless, as mentioned abovely, my test setup[1] didn't
-show the problem.  That said, I'm not really convinced with my test setup, and
-I don't think the test setup is good for verifying the problem.  Hence I'm
-trying to make a better test setup for this.  I'll share more of the new setup
-if I make some progress.  I will also be more than happy to learn about other's
-test setup if they have a good one or suggestions.
-
-[1] https://lore.kernel.org/20250420194030.75838-1-sj@kernel.org
-
-
-Thanks,
-SJ
-
-[...]
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
 
