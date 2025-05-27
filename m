@@ -1,388 +1,290 @@
-Return-Path: <linux-kernel+bounces-663721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-663725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12F7CAC4C6A
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 12:49:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A857AAC4C72
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 12:51:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA92D3B1AB2
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 10:49:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CC4A3B6CDC
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 10:50:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D9B2255F3B;
-	Tue, 27 May 2025 10:49:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF8F72580CF;
+	Tue, 27 May 2025 10:51:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="uva1W8If"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="fGqTiKeB";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="NRvK15yA"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DD1D3C30
-	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 10:49:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748342988; cv=none; b=GRPRFCmaluBD7QKPxeINd0bitWwP7mIRFewpbC0SAYMqlqpaSjrxPkqgptisFrakta+s1oKta7N0NCBgSugTK48LJ75rIN+NSV+0XC9M+E6CTISjGUM5AxF+imuHrOMDXXowvnkmoGZSG1ykEbkCE3Zwf5mJwB0f+wTSEWg0u0E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748342988; c=relaxed/simple;
-	bh=87bMWFw5fW7cmVTCnZjZOok36lX00VtOoZVeAovCiwE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=tH334CCaVM7xpOV55sYk3DKRgvkoRUt2X7M/ImaiuP7cZl+p6VY7ZxxGRZh6fd6isLDw6ZQnVqgh8/x40/Jre+z47nAsjdPdbXq2DusWKqp9LGDtTNgbttY94LSA5H2G7rlz1plxagEm9i3j9WmSTFdXTIVnDbmHdNO1bVxI+f8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=uva1W8If; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 54RAnIlc1727564;
-	Tue, 27 May 2025 05:49:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1748342958;
-	bh=7bl5VdywnS3i96TmdOmRzwUwd4apUGYUmvI14ouERyg=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=uva1W8Ifvj8YiVQELyYOB5r+FBMziJVPZFRq3QpMOReZA9VEvWB+dy94c59II2aPE
-	 mzYHHKxZnwGl0VCmdYT/jF7cixhnBQtehCQp2Gk2c9+/pJxMLw4E9nNvuX28ejDSm2
-	 EDOmAa93AfIDEsvAHC/xQGItCNSwzeEhbFQcYqjU=
-Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 54RAnIRP2774315
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Tue, 27 May 2025 05:49:18 -0500
-Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 27
- May 2025 05:49:17 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 27 May 2025 05:49:17 -0500
-Received: from [10.24.72.182] (jayesh-hp-z2-tower-g5-workstation.dhcp.ti.com [10.24.72.182])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 54RAnA73061377;
-	Tue, 27 May 2025 05:49:11 -0500
-Message-ID: <05948e1c-fa08-4aca-b705-b2e3a228f758@ti.com>
-Date: Tue, 27 May 2025 16:19:10 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5BF625743B
+	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 10:51:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748343065; cv=fail; b=lpTqyJrQoMbfHS56cxfG3fcpw03DX290KiT0k4Z9iYVzXMmhIEhsd056YAUsOUwM8m0aK5y/PiAj+/etVqx6JBjBfQgyGfAr6NsiuZA3IFqsBTSij/27QDlqz9unmWuLY+hyaDxyvmTsslyLkRbVUcmiMuX1ML8run3ZpZwvwr8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748343065; c=relaxed/simple;
+	bh=uxpU702TVckPw+n42Z1TTV0SMO+SGc1bTE4ndGrMbrY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=S9Ua+B+8tR15wjYRlzwxVmWhJE5ynF0j/SnQrYVH/j6d/rT3wxo0fXKnn6zGcVpdOUNTSoBChGMOvpq84bIEFWsS2wRRIYtEu8rmeaSnnhKYhg19hrsLiFHeWQh1gId6F1x9xPM2KTXYuG0nhfEfFqrtb1Mv2ndMGiREL+sAu+U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=fGqTiKeB; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=NRvK15yA; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54R69bK2023661;
+	Tue, 27 May 2025 10:50:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=siQUPLE31O98FVd9cR
+	qHafRKcQqp/S661Z5e966tbJo=; b=fGqTiKeBekGiEH3xurJusa3PzRSdZ9NHaY
+	FGaMloJSl92qWFz3Sz5IfqTOldZ+cLHqXLDVe+RA3HPOp08GDV1sgvv1GqrTG+Kq
+	Zd9pAxSDqegX8EOmzT3NBSefq11MAtiAIIiqPn4OW90aO5ZxyqUjmBQ9upBSMdJa
+	bEY2cIrlOnCgmljOT3E7Fi0dgxLV0Tzmc6zhGtrWtQqF0Sd+FQ69ESGQq0OHljbg
+	2kawhxnQDSOgvQcQngu+6NumGby36B0zEsdaOBSj0m+xuC+B8vtGqq06Uw3eo6Ll
+	wY11Z5AKgeHFzfh5tgJGrgzzQ6w1DA5BF/Qpsdtmycg7ZiU0neZg==
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 46v0yktyhx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 27 May 2025 10:50:15 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 54R8wJhS028540;
+	Tue, 27 May 2025 10:50:14 GMT
+Received: from bn8pr05cu002.outbound.protection.outlook.com (mail-eastus2azon11011057.outbound.protection.outlook.com [52.101.57.57])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 46u4j8qrej-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 27 May 2025 10:50:14 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=hgufCSHI7ckUuN8CjvfqnZHlLd3gfWcNrQH3eZp1yuhDIPP42cMb0PimJQJG6p1nude5155otKnhij7Kg8hTcwFHi0YSsUZkcWzrrwsrqfQCp9D/KGcWKjnoQ5Dvpapy+AcRVz621MIt6cwexJ/oD+cLjWH0rc23FKln1paKgCcfbiwt9KpfdHwFB28v1FDX5RoPgW7OWQzxt6iAy1Da7RNuCCV9BJj4CdGQwLM4lEuaFchfdCpfxAsrG2OLoMnDhqV5d7dCpdLZs+XstIdeQ1D57SxHa2rGG5NSJ+wd+iuY4Pl+IUeZy3Mp4RIu19enlIy2KxBGyv3o7AxW7f25ug==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=siQUPLE31O98FVd9cRqHafRKcQqp/S661Z5e966tbJo=;
+ b=ixdGLbL4BMWTOsgdDvY1MHmSKHiFPfq11QgT24lMMuBQVi9YNKvahsQvw7oIGlAzi/3Z4UE2YV5mjLqh5a8L0uOTYWWX+0+cQBndhOqLoCI6fbPP1tJWYaweYY9n3vDAU9q8NinuJ551Mq+M/BCj0R7UTmYgojUACuABcMHmh4YGim9O/glza4vLW14NOn/gZD6nzs6hDe7GCO8v4KJObgf4VFRm7V8qC7WAJ5EUW8s33PXDErMeSmD9GkVWSJ53JrqM7kO3lcTO2gxUht52oia6rRY3ttCL4nnc2n4EGgeu8IhCO3qtvZOw5f1Bg2iJhqIDapsDC8ZxHSEF8dxl6Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=siQUPLE31O98FVd9cRqHafRKcQqp/S661Z5e966tbJo=;
+ b=NRvK15yAuKRJVFxjFF3/7SKscUqefkVoZC+tOJ5P4z/o4yRoH19WsVKQBvD4s7dNqLxneFlfhjLZ17SMr1RYt54mIobDYFDNjfN+uM9gIlvfGKCDlVNS224qrZJWnljMSZTad5U1t0GFfiZbwwKXyi8e3P3zEU/5bGqnIfLd+WA=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by PH0PR10MB5846.namprd10.prod.outlook.com (2603:10b6:510:14c::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8746.38; Tue, 27 May
+ 2025 10:50:11 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%5]) with mapi id 15.20.8746.030; Tue, 27 May 2025
+ 10:50:11 +0000
+Date: Tue, 27 May 2025 11:50:09 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Dev Jain <dev.jain@arm.com>
+Cc: akpm@linux-foundation.org, Liam.Howlett@oracle.com, vbabka@suse.cz,
+        jannh@google.com, pfalcato@suse.de, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, david@redhat.com, peterx@redhat.com,
+        ryan.roberts@arm.com, mingo@kernel.org, libang.li@antgroup.com,
+        maobibo@loongson.cn, zhengqi.arch@bytedance.com, baohua@kernel.org,
+        anshuman.khandual@arm.com, willy@infradead.org, ioworker0@gmail.com,
+        yang@os.amperecomputing.com, baolin.wang@linux.alibaba.com,
+        ziy@nvidia.com, hughd@google.com
+Subject: Re: [PATCH v3 0/2] Optimize mremap() for large folios
+Message-ID: <8df598a2-4147-4f96-b683-23e0957fc769@lucifer.local>
+References: <20250527075049.60215-1-dev.jain@arm.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250527075049.60215-1-dev.jain@arm.com>
+X-ClientProxiedBy: LO4P265CA0146.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:2c4::18) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v2 1/3] drm/bridge: cadence: cdns-mhdp8546-core:
- Remove legacy support for connector initialisation in bridge
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-CC: <jonas@kwiboo.se>, <jernej.skrabec@gmail.com>,
-        <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-        <tzimmermann@suse.de>, <airlied@gmail.com>, <simona@ffwll.ch>,
-        <lumag@kernel.org>, <jani.nikula@intel.com>, <andy.yan@rock-chips.com>,
-        <linux@treblig.org>, <viro@zeniv.linux.org.uk>, <yamonkar@cadence.com>,
-        <sjakhade@cadence.com>, <linux-kernel@vger.kernel.org>,
-        <devarsht@ti.com>, <dianders@chromium.org>, <andrzej.hajda@intel.com>,
-        <neil.armstrong@linaro.org>, <rfoss@kernel.org>,
-        <Laurent.pinchart@ideasonboard.com>, <dri-devel@lists.freedesktop.org>,
-        <alexander.stein@ew.tq-group.com>
-References: <20250521073237.366463-1-j-choudhary@ti.com>
- <20250521073237.366463-2-j-choudhary@ti.com>
- <ea92f925-7778-477b-aeab-604407260de8@ideasonboard.com>
- <dedc889f-ffa2-420b-8b23-c6fff11cdf30@ti.com>
- <c888a352-a243-4555-9ab5-99614974afdd@ideasonboard.com>
-Content-Language: en-US
-From: Jayesh Choudhary <j-choudhary@ti.com>
-In-Reply-To: <c888a352-a243-4555-9ab5-99614974afdd@ideasonboard.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|PH0PR10MB5846:EE_
+X-MS-Office365-Filtering-Correlation-Id: f0f8b37d-ce94-4ddb-3dc7-08dd9d0c4149
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?ioAaNzxgLXeVOTS6SiATGQmk1Qbns5misvso8fLjWYdPZhcCD3SaiJzR1uqt?=
+ =?us-ascii?Q?WDwH1SLdtQlRntt4VX9GMlQSp0bhEkzcZeCIqUr+SThF6RV2vlm9LxOPZT1j?=
+ =?us-ascii?Q?xyqoNwkxHx0luabEYCXEccq1xXaD53dD5lm5ai56AcYfvnxlvD6NasGFn//a?=
+ =?us-ascii?Q?vtmwlzCXbgDIMUgR2pKFZ/1GD/4rS/WJnO+7MFt+qZS0AhzF5XzXijKWdOeW?=
+ =?us-ascii?Q?9cUMgM/Xhv+IgvuL3PD+Cv5dKyshWMCVsgiPHN6EnrUHzre2M5FkHckOzVCD?=
+ =?us-ascii?Q?VNPhNTrHt6GWTvXCT4hgyJy2Lj0vMQKNBKeaTo+KlmgJuWlNFWlSGCUHEjqh?=
+ =?us-ascii?Q?zPDUBU9rmHGmwna2sx47WvP7uZWjMP5Kedw2fargVLgMHlaoEfK7tMhvoVKD?=
+ =?us-ascii?Q?fvoXlnOx9NkAeZBbd1jlZiEg9mZ4Yu2NQSD/m+TkqbEWl1ppz7m5zLubd8TF?=
+ =?us-ascii?Q?9Xjhjh+5BLJWy24Y2F/gG32vruhRUHJPNb5G5HVbnoFmRWSUu2lzVWVq20OR?=
+ =?us-ascii?Q?qHwPInVzvffMUUyRKUZKJGwoA+VhBLvf2ni0ATicICnatYEYLfeDFo6Q5hyd?=
+ =?us-ascii?Q?9ueRxs3QXRwO5LyXsZvTeAXJSesOYRPuLhdiE0gz7A09Mt636jv3ngvakYLb?=
+ =?us-ascii?Q?RN68dCfGEJV0yaM9WKI01ghh7qfcHyUXMQsqx+iqXSxedtLgsxcGUE8rB/WM?=
+ =?us-ascii?Q?QTGQlfTOiz2ZjHF8Rs9w5nLrGTzOQYA+1V5JM9tO+w7z7RwYvbk8xoP0KD7u?=
+ =?us-ascii?Q?oqZ0eGUtLfk6ZQvt2LgNo9TttCTPGxZve8UpaetiDOob01/Eg/c+mVbt/MTN?=
+ =?us-ascii?Q?9HpJJYCOPEEmssyPXeP9QzPtPYHcnFncjpwryQ/NYqpDIq1+/V1DB/3BfI+O?=
+ =?us-ascii?Q?vrb22XWJO1FY+SjNWePhkS0QkH0xS6KFr4BI2w0wKDDvqjwCO7YId9Tb4u4v?=
+ =?us-ascii?Q?Zqii1u0vEoMI8KtUIytbPcl+b60t3kTAMYq5CzJ11shK22SFijRCVB7roBI6?=
+ =?us-ascii?Q?StGe1abGgQcElj0Vr12Yp/ht3B/jmkytd/JRV+3JUP2n73CYueE0pKmcpGpS?=
+ =?us-ascii?Q?Z7cS0TbMIuzv74/whwoTjLmkWRBO7iB1x7tKpVjb4x0xhzF5w5k/cv4Q0YlM?=
+ =?us-ascii?Q?r2gPL9DZ/M5WaD+b0lQViuBbZXej0wwJxNU19qdsSjN2PcNdrW56XJVHJbMw?=
+ =?us-ascii?Q?NZRc4MOs+sPjGn+N/JVtPboZF5BbawkImkaS/BueceRqkIscSb2ljqznicoG?=
+ =?us-ascii?Q?rWJX15/jPvm/0juMvXjfPRpGxsU70WmhgmXeKypSKgemPeyWuEHVUxjGc46n?=
+ =?us-ascii?Q?ACcExX+wIJZ79QNYoMlsChlB7hbXda3xYFgqKOqdlI8NCvEzILc0tobCoVuO?=
+ =?us-ascii?Q?Qe7y3xKjmB99rW9baOCZlXxvUJkGYz9nPGTA6jy/HcAXRpR6cPcJ+qe9LYC0?=
+ =?us-ascii?Q?OiTjmVm9+j8=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?GM30kelwm6EqysnGDcif2JolWoouEPniS0WM6jdlrVCbQcfRwiHKP8T7eS0i?=
+ =?us-ascii?Q?y8aPDHtrfBFe3T8e5kaHCe95H0+3y0L+wgjVxlxqf4iDW3nDD00WboJtjLtQ?=
+ =?us-ascii?Q?NyLaKrtyzTZR7O8jqA41saO9NJGtWWohMdmYvL52p/EzWJTTEd/7fAYkl7fZ?=
+ =?us-ascii?Q?WkKddr+LBngWTSe5AYy4k4HHxSkemPgEzH7cOkasOV67EM7i2ZuIeN68orOu?=
+ =?us-ascii?Q?AZ0JR42z43QjOWJS5i45JpjJ0+iFb8qj/40R9CI0g6NRmg5IQnUGYERoPP4U?=
+ =?us-ascii?Q?LMQFRwUVUaPpUYWhSEFrC00PTGa0hysXcqyjwya8p2Kuclus2+kf2FwyYeXY?=
+ =?us-ascii?Q?vcRwovncbrvJCIcqZ2lN4WsuirBRaROjqW0i8XsDWsJYhgPpwjUh5mSzL/O+?=
+ =?us-ascii?Q?iTr4BtfEoTsWQeXX/XqaIAuYi2EqDSgM6l3MXmV+Xs8H8XnB3evbFMUKDXZI?=
+ =?us-ascii?Q?bZDg/ASGPgVrprhJUoCyCyTImY1F2n1rIIcIsYB8qJ3IX6kw4HUwTf8dybfn?=
+ =?us-ascii?Q?cTgf6uCpFi40OhzgewSZ9OPPdRhugNm2fuTXLfJLwRYmez96lAFiaMOYCc7Z?=
+ =?us-ascii?Q?OVxzbXu6j4gDrXGQ7+F2RBiH01zHWHc8TVgWAMFypPb1CsSubP+1qWzjpduk?=
+ =?us-ascii?Q?QC8kwKJ2GGr1Cqk8fUNaHYEBvq2OV6jYEF44cKhDwpkACZ5fgdvEBOE1jVNj?=
+ =?us-ascii?Q?8Z4ElIH4avrPGSlELf8ScVDhPn8VDL/vbjYd9xBuHc4SVb4+8iPwlHGDluf0?=
+ =?us-ascii?Q?QzyJNTUCGF3TNKMbSyjgQA2UocXvkSvX8zXOUQkZlXliEu/5Rjv0hsyD8Paw?=
+ =?us-ascii?Q?7gdEUaKcks1CcZvwoDINYTS6ypAfwktu3cBDcDH9B2i5sqqrgAFRF2wEnX8C?=
+ =?us-ascii?Q?V6L1ny148LeMbIVLrfaK4jbBaIKji+dRh6Wn3E6zgpooelyLlMoXLzjRrBHC?=
+ =?us-ascii?Q?ceCeL2fcecZdu5C9CRIFcMInylGrmU5xcKcmogl//zDQOodDJk58htLM2e/T?=
+ =?us-ascii?Q?HKgxoM1qOfQKxLTHRoiI61Uovd+Z6j3Zjwp9QDybqlh/Rvmzzb017ZYzf0+z?=
+ =?us-ascii?Q?SvRYFnGlhOZR2RVhK0twOJjETIlc7e+F97Nyu0wH9G3EtvMxsVEZ42/qhDtr?=
+ =?us-ascii?Q?KwYGimRpwSNVS/x+mc9tUi2LPyh31U6iYWBvPMlMHC4xz6tkEIGWVaF853Of?=
+ =?us-ascii?Q?IaEMXzgI/Ph4VEP6PmV/Hi6Wpi1qb2GVGP9SxmyADyWCjHLfZ4D+i01QlJD6?=
+ =?us-ascii?Q?A7bKtXS+MZpRt5/GHQPHOk5FQvzjwlB8469Si9Td0Mk1HiPHYY/9o19ZPs16?=
+ =?us-ascii?Q?U/U/i/553v4/xUmQr0nM2GqESchVs3EFcOjnnVZXhY6iVv0BDLOtbOWbVGmA?=
+ =?us-ascii?Q?2EHEhH80wyctvGdkpr18Fwj5B6Pn8zqb8Ii7S0fiL5zgjwnu2eFUqM9vgeZz?=
+ =?us-ascii?Q?WEHehTrA2QF5C3IFtv5dz/ggS/eT7s2p9bh1qbaXSdsx6St0FwjVGt7I0VeR?=
+ =?us-ascii?Q?DGnkAWEs7hgxRsCLn0uC91te4bS3W6eGqbCSYRDoGbbUnCMfxfYKudlUO3G4?=
+ =?us-ascii?Q?5m9RYcSU8P51m79obG3uDJ07aDS7hG7evNtLQax0fnOdYnrOAk5/dgC8M5qH?=
+ =?us-ascii?Q?KQ=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	5K3TnkliNqnaJNF8IdM6I/AC+jB9ZdXdehrvrt9O3C7FuULxI9hUMwomK125N5MzWhg/zwR+x5evs8wCYk6BOgSU7V+4W0K9G9PfMfIzGPvU+FhwO+0IVROezEFJ42YGywNShKndQyz456ptiGWyUHgx6jjvdyj8D6Msq8j3QyWpe7UKcdgtmejLj9QENGj6zFYyp9jBHdLe7fwWhWpcejrykv+NexqRf2zuMpwgi4HDPYU+bl1WQhnknqTthr8Ok6P1rM3meIk4S/ayFxlCHCBRZTR+XfXYcyZq0DFw9wlxpV8TW+whin3rEusGQr2mT4PAsWvTRe4xV2SlbqjVMgjb2MmwjQoCP4Rz4cUtAvh/GE8vheGyQ7WY8ZJGTavj0r97FLFGxUm2NOdxve/w73f61PX+3DlxWhN12xHHdaqSkLUwFkI9iIhPtseo8WdQ6pYj2/4uMCyi4EstTDe5enM9zrghjilAE+fj7e4cytx2SbpPlrtVCpgCXR2bWOGy8zDwmNPh3Rf8GRi0EzwwDsnMQ+D1WGFeWKOTDBTX7vQhNR4ZjyIdke5OX856JcnCwwqZ7hD+YLzeJYTLNK4YKBAe4al7f+6YILPToZeNGh0=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f0f8b37d-ce94-4ddb-3dc7-08dd9d0c4149
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 May 2025 10:50:11.7776
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: aHMgSvNRZheq4qZ91QrWRlJxZv5wYEBTQGhAIZisxrXywlEEnLAzJQSdwpApqiCJGwbrQ/J2DqSiDG2/+7ETQodvBD1xqDX4SjIZQCk2zSk=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR10MB5846
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-27_05,2025-05-26_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phishscore=0 suspectscore=0
+ adultscore=0 malwarescore=0 bulkscore=0 mlxscore=0 mlxlogscore=736
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
+ definitions=main-2505270088
+X-Proofpoint-GUID: FaCKFLbxgz5k1HYVaSCXnBA0sM9MVW2s
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI3MDA4OCBTYWx0ZWRfXxkuzM/nN8/dr QBLjIKwNXwmtjlK7d+BVqshvoPUtlFU+G0MVBYbGvlkOj8IgLxEdl478WgzonacCRQ840qQziF9 ONeSWAT+mAItuHdu4B0U7FJbkWxVO63XSwO55mgJeVV9yuQtveqZO823his8g9plyohd0yPIfBU
+ zZC6fF2sPwk6RGkbLk9vYHKgtfTfAo7s938qMNW+2vZkoddz9PWcP6MmKTXMpqVcfeKHVZprckM jI9sAAM2vR60hiypauYraTXUX2OcjT05U4c5z1hKRHZGdRZ0HugvYMia385Skbg/341R3z6ekIr NYWpCHcYmtfD7aMoCb4qIKduVrh60N/zysmec6/17bWxAG5ZAtwB7BbFRhLcQiRTCWDjBNMxRyw
+ 59DFHE4rms9PIc4eP0VvgR7LzX+a6pQZGfIWDQgu3BQQw+6QOuEeju+3olmNMVDJI7EpFE77
+X-Proofpoint-ORIG-GUID: FaCKFLbxgz5k1HYVaSCXnBA0sM9MVW2s
+X-Authority-Analysis: v=2.4 cv=N7MpF39B c=1 sm=1 tr=0 ts=683598e7 cx=c_pps a=XiAAW1AwiKB2Y8Wsi+sD2Q==:117 a=XiAAW1AwiKB2Y8Wsi+sD2Q==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=dt9VzEwgFbYA:10 a=GoEa3M9JfhUA:10 a=1vCDX5nvQsokeVuML4UA:9 a=CjuIK1q_8ugA:10
 
+I seem to recall we agreed you'd hold off on this until the mprotect work
+was done :>) I see a lot of review there and was expecting a respin, unless
+I'm mistaken?
 
+At any rate we're in the merge window now so it's maybe not quite as
+important now :)
 
-On 27/05/25 14:47, Tomi Valkeinen wrote:
-> Hi,
-> 
-> On 27/05/2025 11:41, Jayesh Choudhary wrote:
->> Hello Tomi,
->>
->> On 27/05/25 13:08, Tomi Valkeinen wrote:
->>> Hi,
->>>
->>> On 21/05/2025 10:32, Jayesh Choudhary wrote:
->>>> Now that we have DBANC framework, remove the connector initialisation
->>>> code
->>>> as that piece of code is not called if DRM_BRIDGE_ATTACH_NO_CONNECTOR
->>>> flag
->>>> is used. Only TI K3 platforms consume this driver and tidss (their
->>>> display
->>>> controller) has this flag set. So this legacy support can be dropped.
->>>>
->>>
->>> Why is the series RFC? Does it not work? Is there something here you're
->>> not comfortable with?
->>
->> These changes work without any issue.
->>
->> I was a little doubtful about the second patch so kept it as RFC.
-> 
-> You should explain why the series/patch is RFC, unless it's somehow
-> obvious. In this series I didn't see any TODOs or open questions or
-> anything.
-> 
+We're pretty close to this being done anyway, just need some feedback on
+points raised (obviously David et al. may have further comments).
 
-Oh okay. Got it. Will drop RFC prefix in v3.
+Thanks, Lorenzo
 
->>>
->>>> Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
->>>> ---
->>>>    .../drm/bridge/cadence/cdns-mhdp8546-core.c   | 186 +++---------------
->>>>    1 file changed, 25 insertions(+), 161 deletions(-)
->>>>
->>>> diff --git a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c b/
->>>> drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
->>>> index b431e7efd1f0..66bd916c2fe9 100644
->>>> --- a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
->>>> +++ b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
->>>> @@ -1444,56 +1444,6 @@ static const struct drm_edid
->>>> *cdns_mhdp_edid_read(struct cdns_mhdp_device *mhdp,
->>>>        return drm_edid_read_custom(connector,
->>>> cdns_mhdp_get_edid_block, mhdp);
->>>>    }
->>>>    -static int cdns_mhdp_get_modes(struct drm_connector *connector)
->>>> -{
->>>> -    struct cdns_mhdp_device *mhdp = connector_to_mhdp(connector);
->>>> -    const struct drm_edid *drm_edid;
->>>> -    int num_modes;
->>>> -
->>>> -    if (!mhdp->plugged)
->>>> -        return 0;
->>>> -
->>>> -    drm_edid = cdns_mhdp_edid_read(mhdp, connector);
->>>> -
->>>> -    drm_edid_connector_update(connector, drm_edid);
->>>> -
->>>> -    if (!drm_edid) {
->>>> -        dev_err(mhdp->dev, "Failed to read EDID\n");
->>>> -        return 0;
->>>> -    }
->>>> -
->>>> -    num_modes = drm_edid_connector_add_modes(connector);
->>>> -    drm_edid_free(drm_edid);
->>>> -
->>>> -    /*
->>>> -     * HACK: Warn about unsupported display formats until we deal
->>>> -     *       with them correctly.
->>>> -     */
->>>> -    if (connector->display_info.color_formats &&
->>>> -        !(connector->display_info.color_formats &
->>>> -          mhdp->display_fmt.color_format))
->>>> -        dev_warn(mhdp->dev,
->>>> -             "%s: No supported color_format found (0x%08x)\n",
->>>> -            __func__, connector->display_info.color_formats);
->>>> -
->>>> -    if (connector->display_info.bpc &&
->>>> -        connector->display_info.bpc < mhdp->display_fmt.bpc)
->>>> -        dev_warn(mhdp->dev, "%s: Display bpc only %d < %d\n",
->>>> -             __func__, connector->display_info.bpc,
->>>> -             mhdp->display_fmt.bpc);
->>>> -
->>>> -    return num_modes;
->>>> -}
->>>> -
->>>> -static int cdns_mhdp_connector_detect(struct drm_connector *conn,
->>>> -                      struct drm_modeset_acquire_ctx *ctx,
->>>> -                      bool force)
->>>> -{
->>>> -    struct cdns_mhdp_device *mhdp = connector_to_mhdp(conn);
->>>> -
->>>> -    return cdns_mhdp_detect(mhdp);
->>>> -}
->>>> -
->>>>    static u32 cdns_mhdp_get_bpp(struct cdns_mhdp_display_fmt *fmt)
->>>>    {
->>>>        u32 bpp;
->>>> @@ -1547,114 +1497,6 @@ bool cdns_mhdp_bandwidth_ok(struct
->>>> cdns_mhdp_device *mhdp,
->>>>        return true;
->>>>    }
->>>>    -static
->>>> -enum drm_mode_status cdns_mhdp_mode_valid(struct drm_connector *conn,
->>>> -                      const struct drm_display_mode *mode)
->>>> -{
->>>> -    struct cdns_mhdp_device *mhdp = connector_to_mhdp(conn);
->>>> -
->>>> -    mutex_lock(&mhdp->link_mutex);
->>>> -
->>>> -    if (!cdns_mhdp_bandwidth_ok(mhdp, mode, mhdp->link.num_lanes,
->>>> -                    mhdp->link.rate)) {
->>>> -        mutex_unlock(&mhdp->link_mutex);
->>>> -        return MODE_CLOCK_HIGH;
->>>> -    }
->>>> -
->>>> -    mutex_unlock(&mhdp->link_mutex);
->>>> -    return MODE_OK;
->>>> -}
->>>> -
->>>> -static int cdns_mhdp_connector_atomic_check(struct drm_connector *conn,
->>>> -                        struct drm_atomic_state *state)
->>>> -{
->>>> -    struct cdns_mhdp_device *mhdp = connector_to_mhdp(conn);
->>>> -    struct drm_connector_state *old_state, *new_state;
->>>> -    struct drm_crtc_state *crtc_state;
->>>> -    u64 old_cp, new_cp;
->>>> -
->>>> -    if (!mhdp->hdcp_supported)
->>>> -        return 0;
->>>> -
->>>> -    old_state = drm_atomic_get_old_connector_state(state, conn);
->>>> -    new_state = drm_atomic_get_new_connector_state(state, conn);
->>>> -    old_cp = old_state->content_protection;
->>>> -    new_cp = new_state->content_protection;
->>>> -
->>>> -    if (old_state->hdcp_content_type != new_state->hdcp_content_type &&
->>>> -        new_cp != DRM_MODE_CONTENT_PROTECTION_UNDESIRED) {
->>>> -        new_state->content_protection =
->>>> DRM_MODE_CONTENT_PROTECTION_DESIRED;
->>>> -        goto mode_changed;
->>>> -    }
->>>> -
->>>> -    if (!new_state->crtc) {
->>>> -        if (old_cp == DRM_MODE_CONTENT_PROTECTION_ENABLED)
->>>> -            new_state->content_protection =
->>>> DRM_MODE_CONTENT_PROTECTION_DESIRED;
->>>> -        return 0;
->>>> -    }
->>>> -
->>>> -    if (old_cp == new_cp ||
->>>> -        (old_cp == DRM_MODE_CONTENT_PROTECTION_DESIRED &&
->>>> -         new_cp == DRM_MODE_CONTENT_PROTECTION_ENABLED))
->>>> -        return 0;
->>>> -
->>>> -mode_changed:
->>>> -    crtc_state = drm_atomic_get_new_crtc_state(state, new_state->crtc);
->>>> -    crtc_state->mode_changed = true;
->>>> -
->>>> -    return 0;
->>>> -}
->>>> -
->>>> -static const struct drm_connector_helper_funcs
->>>> cdns_mhdp_conn_helper_funcs = {
->>>> -    .detect_ctx = cdns_mhdp_connector_detect,
->>>> -    .get_modes = cdns_mhdp_get_modes,
->>>> -    .mode_valid = cdns_mhdp_mode_valid,
->>>> -    .atomic_check = cdns_mhdp_connector_atomic_check,
->>>> -};
->>>> -
->>>> -static const struct drm_connector_funcs cdns_mhdp_conn_funcs = {
->>>> -    .fill_modes = drm_helper_probe_single_connector_modes,
->>>> -    .atomic_duplicate_state =
->>>> drm_atomic_helper_connector_duplicate_state,
->>>> -    .atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
->>>> -    .reset = drm_atomic_helper_connector_reset,
->>>> -    .destroy = drm_connector_cleanup,
->>>> -};
->>>> -
->>>> -static int cdns_mhdp_connector_init(struct cdns_mhdp_device *mhdp)
->>>> -{
->>>> -    u32 bus_format = MEDIA_BUS_FMT_RGB121212_1X36;
->>>> -    struct drm_connector *conn = &mhdp->connector;
->>>> -    struct drm_bridge *bridge = &mhdp->bridge;
->>>> -    int ret;
->>>> -
->>>> -    conn->polled = DRM_CONNECTOR_POLL_HPD;
->>>> -
->>>> -    ret = drm_connector_init(bridge->dev, conn, &cdns_mhdp_conn_funcs,
->>>> -                 DRM_MODE_CONNECTOR_DisplayPort);
->>>> -    if (ret) {
->>>> -        dev_err(mhdp->dev, "Failed to initialize connector with
->>>> drm\n");
->>>> -        return ret;
->>>> -    }
->>>> -
->>>> -    drm_connector_helper_add(conn, &cdns_mhdp_conn_helper_funcs);
->>>> -
->>>> -    ret = drm_display_info_set_bus_formats(&conn->display_info,
->>>> -                           &bus_format, 1);
->>>> -    if (ret)
->>>> -        return ret;
->>>> -
->>>> -    ret = drm_connector_attach_encoder(conn, bridge->encoder);
->>>> -    if (ret) {
->>>> -        dev_err(mhdp->dev, "Failed to attach connector to encoder\n");
->>>> -        return ret;
->>>> -    }
->>>> -
->>>> -    if (mhdp->hdcp_supported)
->>>> -        ret = drm_connector_attach_content_protection_property(conn,
->>>> true);
->>>> -
->>>> -    return ret;
->>>> -}
->>>> -
->>>>    static int cdns_mhdp_attach(struct drm_bridge *bridge,
->>>>                    struct drm_encoder *encoder,
->>>>                    enum drm_bridge_attach_flags flags)
->>>> @@ -1671,9 +1513,11 @@ static int cdns_mhdp_attach(struct drm_bridge
->>>> *bridge,
->>>>            return ret;
->>>>          if (!(flags & DRM_BRIDGE_ATTACH_NO_CONNECTOR)) {
->>>> -        ret = cdns_mhdp_connector_init(mhdp);
->>>> -        if (ret)
->>>> -            goto aux_unregister;
->>>> +        ret = -EINVAL;
->>>> +        dev_err(mhdp->dev,
->>>> +            "Connector initialisation not supported in bridge_attach
->>>> %d\n",
->>>> +            ret);
->>>> +        goto aux_unregister;
->>>>        }
->>>>          spin_lock(&mhdp->start_lock);
->>>> @@ -2158,6 +2002,25 @@ static const struct drm_edid
->>>> *cdns_mhdp_bridge_edid_read(struct drm_bridge *brid
->>>>        return cdns_mhdp_edid_read(mhdp, connector);
->>>>    }
->>>>    +static enum drm_mode_status
->>>> +cdns_mhdp_bridge_mode_valid(struct drm_bridge *bridge,
->>>> +                const struct drm_display_info *info,
->>>> +                const struct drm_display_mode *mode)
->>>> +{
->>>> +    struct cdns_mhdp_device *mhdp = bridge_to_mhdp(bridge);
->>>> +
->>>> +    mutex_lock(&mhdp->link_mutex);
->>>> +
->>>> +    if (!cdns_mhdp_bandwidth_ok(mhdp, mode, mhdp->link.num_lanes,
->>>> +                    mhdp->link.rate)) {
->>>> +        mutex_unlock(&mhdp->link_mutex);
->>>> +        return MODE_CLOCK_HIGH;
->>>> +    }
->>>> +
->>>> +    mutex_unlock(&mhdp->link_mutex);
->>>> +    return MODE_OK;
->>>> +}
->>>> +
->>>>    static const struct drm_bridge_funcs cdns_mhdp_bridge_funcs = {
->>>>        .atomic_enable = cdns_mhdp_atomic_enable,
->>>>        .atomic_disable = cdns_mhdp_atomic_disable,
->>>> @@ -2172,6 +2035,7 @@ static const struct drm_bridge_funcs
->>>> cdns_mhdp_bridge_funcs = {
->>>>        .edid_read = cdns_mhdp_bridge_edid_read,
->>>>        .hpd_enable = cdns_mhdp_bridge_hpd_enable,
->>>>        .hpd_disable = cdns_mhdp_bridge_hpd_disable,
->>>> +    .mode_valid = cdns_mhdp_bridge_mode_valid,
->>>>    };
->>>>      static bool cdns_mhdp_detect_hpd(struct cdns_mhdp_device *mhdp,
->>>> bool *hpd_pulse)
->>>
->>> Why do you need to add bridge mode_valid() when removing the legacy
->>> non-DRM_BRIDGE_ATTACH_NO_CONNECTOR code?
->>
->> Okay. Then I will add the bridge mode_valid as a separate patch.
-> 
-> Well, it was a question =). But indeed my thought was that it sounded
-> like material for a separate patch. Is it more of a fix for the
-> DRM_BRIDGE_ATTACH_NO_CONNECTOR case?
-> 
->   Tomi
-> 
+On Tue, May 27, 2025 at 01:20:47PM +0530, Dev Jain wrote:
+> Currently move_ptes() iterates through ptes one by one. If the underlying
+> folio mapped by the ptes is large, we can process those ptes in a batch
+> using folio_pte_batch(), thus clearing and setting the PTEs in one go.
+> For arm64 specifically, this results in a 16x reduction in the number of
+> ptep_get() calls (since on a contig block, ptep_get() on arm64 will iterate
+> through all 16 entries to collect a/d bits), and we also elide extra TLBIs
+> through get_and_clear_full_ptes, replacing ptep_get_and_clear.
 
-Yes this is a fix for DBANC case.
-Without mode_valid, I can see a lot of modes getting propagated which
-are not even supported by display monitor.
-Since mode_valid was added to connector_funcs in the initial commit, I
-will use that commit for "Fixes:" tag
+OK this is more general than the stuff in 2/2, so you are doing this work
+for page-table split large folios also.
 
-Warm Regards,
-Jayesh
+I do think this _should_ be fine for that unless I've missed something. At
+any rate I've commented on this in 2/2.
+
+>
+> Mapping 1M of memory with 64K folios, memsetting it, remapping it to
+> src + 1M, and munmapping it 10,000 times, the average execution time
+> reduces from 1.9 to 1.2 seconds, giving a 37% performance optimization,
+> on Apple M3 (arm64). No regression is observed for small folios.
+>
+> The patchset is based on mm-unstable (6ebffe676fcf).
+>
+> Test program for reference:
+>
+> #define _GNU_SOURCE
+> #include <stdio.h>
+> #include <stdlib.h>
+> #include <unistd.h>
+> #include <sys/mman.h>
+> #include <string.h>
+> #include <errno.h>
+>
+> #define SIZE (1UL << 20) // 1M
+>
+> int main(void) {
+>     void *new_addr, *addr;
+>
+>     for (int i = 0; i < 10000; ++i) {
+>         addr = mmap((void *)(1UL << 30), SIZE, PROT_READ | PROT_WRITE,
+>                     MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+>         if (addr == MAP_FAILED) {
+>                 perror("mmap");
+>                 return 1;
+>         }
+>         memset(addr, 0xAA, SIZE);
+>
+>         new_addr = mremap(addr, SIZE, SIZE, MREMAP_MAYMOVE | MREMAP_FIXED, addr + SIZE);
+>         if (new_addr != (addr + SIZE)) {
+>                 perror("mremap");
+>                 return 1;
+>         }
+>         munmap(new_addr, SIZE);
+>     }
+>
+> }
+>
+> v2->v3:
+>  - Refactor mremap_folio_pte_batch, drop maybe_contiguous_pte_pfns, fix
+>    indentation (Lorenzo), fix cover letter description (512K -> 1M)
+>
+> v1->v2:
+>  - Expand patch descriptions, move pte declarations to a new line,
+>    reduce indentation in patch 2 by introducing mremap_folio_pte_batch(),
+>    fix loop iteration (Lorenzo)
+>  - Merge patch 2 and 3 (Anshuman, Lorenzo)
+>  - Fix maybe_contiguous_pte_pfns (Willy)
+>
+> Dev Jain (2):
+>   mm: Call pointers to ptes as ptep
+>   mm: Optimize mremap() by PTE batching
+>
+>  mm/mremap.c | 57 +++++++++++++++++++++++++++++++++++++++--------------
+>  1 file changed, 42 insertions(+), 15 deletions(-)
+>
+> --
+> 2.30.2
+>
 
