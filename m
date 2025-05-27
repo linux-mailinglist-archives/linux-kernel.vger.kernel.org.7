@@ -1,56 +1,55 @@
-Return-Path: <linux-kernel+bounces-663858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-663859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AE6EAC4E73
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 14:13:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A9D7AC4E72
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 14:13:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D7223BE2E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 12:12:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E50E37AEAF1
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 12:11:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 240A0271456;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA8F6271477;
 	Tue, 27 May 2025 12:11:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="EFJ/TVyM"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="p4vMYG9R"
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A434526A0FF
-	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 12:11:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7473326F46F
+	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 12:11:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748347890; cv=none; b=QWXYDeCpmMq7xl+kcHFYkWbYtA1XTwCo6n2Dk3sUPnIOoolxojuCiLKUzzhpavhnwlzHXFlWPlsbpJ6TcH5n/sf1tNgyOBDjfujHHFgjRX000uaNWGHUkAUA5d5P6d4Cq1x9NLbr1qkxxuIat5opCmjZoInHaU0oB00zy6GcuAI=
+	t=1748347891; cv=none; b=h17gknZCLg2gQrIDqLwKzwBzgFYkqZwz7uCm+txvj1m9OXgMhQgdcs/XOsoH0Ih44YNHaBd+VIxM0nfub+kt+JdWkaztFxJvY1H4+PBxBAsIZ/N7hDziAv1zPxmmO3DCOfILx2amrPKE8pZXaXFHiXoEMImo5sf3q21CDgVx1+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748347890; c=relaxed/simple;
-	bh=V8rTl9ii8sCL9VzDqwU9C3Ust3q3I9zLhb7qtia09Sk=;
+	s=arc-20240116; t=1748347891; c=relaxed/simple;
+	bh=NruFgDuKcybA47PQbjsX1kS5Pj95cphmU3z7U+LSFiQ=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=jjoRHUxPZCxAidTaF0jjPPXJMKb5J4fbQIlc+Pc/tBeQLfjVaDOGRXDgBgYMbeQBm2/Di8sHMIEXudlM+l5c/hFQoffM2YbEi5MgxTxfj+ZxtJQHgo9gsRVC18OU5Pp5vmQwfG6vV7khOdsW9kzoc2fr3wNRrOQKYA53blxmJVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=EFJ/TVyM; arc=none smtp.client-ip=148.251.105.195
+	 In-Reply-To:To:Cc; b=ClkY+QbYQv7+GTnhxMQlcmuyNVZc7bcfPSznNdZlRiKm1HUshbZGC0mFrnmYgeEp/DLt7HYIIMYzWQrJclGt99IEdh0W+E1R7IT6A1ymJACo4/z/FUIbast22n9A73QR/HNxN2UeXhXDmYbRXciCktR3m/hqs3EZPqKpbG95+lU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=p4vMYG9R; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
 	s=mail; t=1748347887;
-	bh=V8rTl9ii8sCL9VzDqwU9C3Ust3q3I9zLhb7qtia09Sk=;
+	bh=NruFgDuKcybA47PQbjsX1kS5Pj95cphmU3z7U+LSFiQ=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=EFJ/TVyM8H/ViO+gnxF/M8OgAN0dx0CFAS/dAVNXa7v/vJQVeqUrgi5k8yzCmp47/
-	 daucDwbi097rQJL1E8J4b05JgkId7MidV0v9n5OEFJfD4agobPiXjFOAN2NTfqK4vy
-	 G/+73W42dpiprrpuqDbqeSMW/I28EWnaubP60huM78XvPAhPAsLpdE7cyPTKaAgl5A
-	 MnInmC+lbojUtH3Xv3JTwtfCvUVCQdJwEMtK82+jNGpwfB1i+SQHyxK4JJDXSXxSAm
-	 cA3eunW85FYt9FP7xVRksB8NFAQT0mUEyJsoZvEED5+zxncYxhHTEEsoX++52pwBXa
-	 FB1056264bXmw==
+	b=p4vMYG9Rh57T4duGrZ6KfXVGLOH4S6eZYLNFHtyMzg1zG3HoFPRcecPP1qpMYNv4/
+	 D8kY4QgYa2VL4FZQtS2fEo5/eDkp8UHFPA7a413V6Jh9W1ohxEiTPv5kwxnC1dtugA
+	 lW3GnOnjzoA8dzFr6jsPbEPkQ6VD7ryufue9GbAEqDWvSfGTg+b03B9QxAeVzEmSAb
+	 UDUCz1gFs7/8VVgQqAutTiGN3OwKOAJj6OCWebhBxvv5LXV6zIZPdcj9Z2oe5GJ8Cs
+	 Spx2RQBqHqROXyOFlkORJBAFmLS6kj4o99enm9p/EWsGsAxif5I5D5pntLfW6mbLrJ
+	 atI92u7ehEuEA==
 Received: from localhost (unknown [82.76.59.134])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with UTF8SMTPSA id BDF4117E09FA;
-	Tue, 27 May 2025 14:11:26 +0200 (CEST)
+	by bali.collaboradmins.com (Postfix) with UTF8SMTPSA id 96D0717E3789;
+	Tue, 27 May 2025 14:11:27 +0200 (CEST)
 From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Date: Tue, 27 May 2025 15:11:14 +0300
-Subject: [PATCH v5 06/19] drm/connector: hdmi: Use YUV420 output format as
- an RGB fallback
+Date: Tue, 27 May 2025 15:11:15 +0300
+Subject: [PATCH v5 07/19] drm/tests: hdmi: Replace '[_]MHz' with 'mhz'
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,7 +58,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250527-hdmi-conn-yuv-v5-6-74c9c4a8ac0c@collabora.com>
+Message-Id: <20250527-hdmi-conn-yuv-v5-7-74c9c4a8ac0c@collabora.com>
 References: <20250527-hdmi-conn-yuv-v5-0-74c9c4a8ac0c@collabora.com>
 In-Reply-To: <20250527-hdmi-conn-yuv-v5-0-74c9c4a8ac0c@collabora.com>
 To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
@@ -72,45 +71,51 @@ Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org,
  linux-kernel@vger.kernel.org
 X-Mailer: b4 0.14.2
 
-Try to make use of YUV420 when computing the best output format and
-RGB cannot be supported for any of the available color depths.
+Improve consistency throughout drm_hdmi_state_helper_test.c by replacing
+the two occurrences of '[_]MHz' substring with 'mhz'.
 
+As a bonus, this also helps getting rid of checkpatch.pl complaint:
+
+  CHECK: Avoid CamelCase: <reject_100_MHz_connector_hdmi_funcs>
+
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
 ---
- drivers/gpu/drm/display/drm_hdmi_state_helper.c | 18 ++++++++++++++----
- 1 file changed, 14 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/display/drm_hdmi_state_helper.c b/drivers/gpu/drm/display/drm_hdmi_state_helper.c
-index a9733a2e1b632e02f535c5ece64762f8ed9e4af2..2c641add743466841cb2e777a07633dc5686ccd8 100644
---- a/drivers/gpu/drm/display/drm_hdmi_state_helper.c
-+++ b/drivers/gpu/drm/display/drm_hdmi_state_helper.c
-@@ -649,12 +649,22 @@ hdmi_compute_config(const struct drm_connector *connector,
- 				       8, connector->max_bpc);
- 	int ret;
+diff --git a/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c b/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c
+index 7ffd666753b10bc991894e238206a3c5328d0e23..c8dc6fa0f925e35e9903a18bac7f78f9d8165960 100644
+--- a/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c
++++ b/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c
+@@ -89,15 +89,15 @@ static const struct drm_connector_hdmi_funcs reject_connector_hdmi_funcs = {
+ };
  
--	/*
--	 * TODO: Add support for YCbCr420 output for HDMI 2.0 capable
--	 * devices, for modes that only support YCbCr420.
--	 */
- 	ret = hdmi_compute_format_bpc(connector, conn_state, mode, max_bpc,
- 				      HDMI_COLORSPACE_RGB);
-+	if (ret) {
-+		if (connector->ycbcr_420_allowed) {
-+			ret = hdmi_compute_format_bpc(connector, conn_state,
-+						      mode, max_bpc,
-+						      HDMI_COLORSPACE_YUV420);
-+			if (ret)
-+				drm_dbg_kms(connector->dev,
-+					    "YUV420 output format doesn't work.\n");
-+		} else {
-+			drm_dbg_kms(connector->dev,
-+				    "YUV420 output format not allowed for connector.\n");
-+			ret = -EINVAL;
-+		}
-+	}
- 
- 	return ret;
+ static enum drm_mode_status
+-reject_100MHz_connector_tmds_char_rate_valid(const struct drm_connector *connector,
++reject_100mhz_connector_tmds_char_rate_valid(const struct drm_connector *connector,
+ 					     const struct drm_display_mode *mode,
+ 					     unsigned long long tmds_rate)
+ {
+ 	return (tmds_rate > 100ULL * 1000 * 1000) ? MODE_BAD : MODE_OK;
  }
+ 
+-static const struct drm_connector_hdmi_funcs reject_100_MHz_connector_hdmi_funcs = {
+-	.tmds_char_rate_valid	= reject_100MHz_connector_tmds_char_rate_valid,
++static const struct drm_connector_hdmi_funcs reject_100mhz_connector_hdmi_funcs = {
++	.tmds_char_rate_valid	= reject_100mhz_connector_tmds_char_rate_valid,
+ };
+ 
+ static int dummy_connector_get_modes(struct drm_connector *connector)
+@@ -1934,7 +1934,7 @@ static void drm_test_check_mode_valid_reject_rate(struct kunit *test)
+ 	priv = drm_kunit_helper_connector_hdmi_init_funcs(test,
+ 							  BIT(HDMI_COLORSPACE_RGB),
+ 							  8,
+-							  &reject_100_MHz_connector_hdmi_funcs);
++							  &reject_100mhz_connector_hdmi_funcs);
+ 	KUNIT_ASSERT_NOT_NULL(test, priv);
+ 
+ 	conn = &priv->connector;
 
 -- 
 2.49.0
