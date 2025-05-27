@@ -1,99 +1,159 @@
-Return-Path: <linux-kernel+bounces-663435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-663437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F3BDAC4840
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 08:19:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F89EAC4846
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 08:20:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F31F3B85F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 06:18:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0284A3B93DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 06:19:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E73331E0B91;
-	Tue, 27 May 2025 06:18:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 519E71A275;
+	Tue, 27 May 2025 06:20:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MvbMzv+9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="WSUnWPX3";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="pGeF4BMo";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ZDoq0b1l";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="KjuKmOrQ"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4779B3C2F;
-	Tue, 27 May 2025 06:18:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B0E71AC44D
+	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 06:19:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748326736; cv=none; b=IEfB+EAgy9r0f1gytZRuWbKw3iLepyYyTwc7iKUZQelUSWqaQ3lmBJQKphgSViHsXqadOjIMqae3gttxbZonaZiyw3pt1aZhZsdb+4ck3rR8a3boexITTnONcErYRxyJu7DtTs34oXIfrx11hixYXT3jCq+J8GQkalEeZRX5fxU=
+	t=1748326801; cv=none; b=H8ItHb49HWxJQQT1oxkE9IhM5cVBCtbIZOisbduc5e9bhvEJEFKPoCQTadQ5zz1XagXAEMvRk/Ae4FWOnY2zZipe4LDtzIgSddqXpAU2ilnBG8es6wQYrNoOiBo0aDzHoSHQzYZW52B+4OEienXruExUIXYBZwyq0VcI9m/Vvhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748326736; c=relaxed/simple;
-	bh=09RqvVHkA4jz4eqLTGLvP2nGn8NGNbT2uJ9xt+xPbgk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aduvCDOJqmzqkm5dcK3DRQ6DjIDGwq7ap+BVjQmFdbxXv9tod6ke3ehZLhB0HO6FhyTXGRAdziIWuiSFOYExfqTR+ht2kBLJxdq5U9jLyHdGuL9HNF/BnBe7ShORsKnwUZ+Jv2w5qbeL2IcgrQ1Bf3IXiWqU+Dr5aawloHz8uqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MvbMzv+9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 186E7C4CEEA;
-	Tue, 27 May 2025 06:18:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748326735;
-	bh=09RqvVHkA4jz4eqLTGLvP2nGn8NGNbT2uJ9xt+xPbgk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MvbMzv+9U3ltIoMS75HV/Cn+Oy84J48Vg5O9JYfY2q5pQTMrfBUtInCeZcnp2Yre+
-	 M4eeTGet1CugFz0f1/5yg60jgwYK0eSo75GBgjbtcb35fXQ9xPsbUzUA9o1BD352+0
-	 AExg/8UAV90R/XqLlDMFmhvevijgRV1MzzDHJ3ryTMTncVD8BfG55uWJ61ZKKtpt94
-	 XLqfJrZbi7UL1XCeqoeEBmuH0Fnl3V3WLkXcYrdqpy4yesPeymDrBRgh3uDz2stfls
-	 83tfIgbs8Wea/GgJb2eq/oGFs/QQSTRTmklq1HG9YVA6Wz2UcfEsnz+D0WUvU0p6Uh
-	 FQ8l9H0RE+sDw==
-Date: Tue, 27 May 2025 08:18:52 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	"open list:IRQCHIP DRIVERS" <linux-kernel@vger.kernel.org>, 
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, imx@lists.linux.dev
-Subject: Re: [PATCH 1/1] dt-bindings: interrupt-controller: Add
- arm,armv7m-nvic and fix #interrupt-cells
-Message-ID: <20250527-olive-kakapo-of-action-a8d68a@kuoka>
-References: <20250523143637.536759-1-Frank.Li@nxp.com>
+	s=arc-20240116; t=1748326801; c=relaxed/simple;
+	bh=gOVl/UxJqzGqyN7iE9TUHcu1Ycvob5Uw/zyvqptWjKI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GZz+SehhZIdGsxkn3pb+xQ+kvljYS3VMulSFv84SUDvkrZ+7L7F8Z3xjbn8ixCh3ndc+N4WtB7x53IbvgeBxcUhoPQTccTIEjbyc7ahks1/kTXDnyuDdK2HFEe+BDYkVWb813zF8QsEIx8nxZAI2QRhRs8ATMlq2M6CreXF03U4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=WSUnWPX3; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=pGeF4BMo; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ZDoq0b1l; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=KjuKmOrQ; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 6C0EA21E79;
+	Tue, 27 May 2025 06:19:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1748326798; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=F9oLdOGdMiTlLo4FcXmV6p6DfCR2IxVmo9Bbr5NzW4w=;
+	b=WSUnWPX3e34c/mAqFJbTL+M3ToBvoKWnjdIHEj739CNHZQZgzVieM8a6MMlBOvn5FJL+nG
+	WayC4G+GBFtS5984MWWGiT91c0nqWT955TyYDE3LDyMIiFWEEc5xgwFIqQ+rAx109Z1KSj
+	exzeR7u1xGDIMMuwQuSrLSEAv6PKY/c=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1748326798;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=F9oLdOGdMiTlLo4FcXmV6p6DfCR2IxVmo9Bbr5NzW4w=;
+	b=pGeF4BMoVHUE2hkg4SAO7L9soNvPkBrozRad1A0XtcidoBC1EdZvPKjBOJWu7ivOMax7Xd
+	OKTOYNldwwq3avAQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1748326797; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=F9oLdOGdMiTlLo4FcXmV6p6DfCR2IxVmo9Bbr5NzW4w=;
+	b=ZDoq0b1lI1gonw25o1UZGaB7/QaESoLdXpLPEvwJ0xtzr80C2Lc8dWmUP88w2JhjEtVLqi
+	J+mMH2EpX+uJJoEIPgId1Vj2C5+BeEih2n8IFWQq/QYEuqlOumyhu5+IzbwKmW90hD0+sC
+	HQ49ejJ2UpEL3q2ZMwhO6RCQlCxo2Uk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1748326797;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=F9oLdOGdMiTlLo4FcXmV6p6DfCR2IxVmo9Bbr5NzW4w=;
+	b=KjuKmOrQP3a52dxHTiFawIHyBx+1z8JzBsbo6TQYxZN0ALBAbXIcgZuzF7D9Uj6LnIIMgF
+	jC3uN9nLFI7JS6Aw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E89E7136E0;
+	Tue, 27 May 2025 06:19:56 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id /YqdNoxZNWhsGgAAD6G6ig
+	(envelope-from <hare@suse.de>); Tue, 27 May 2025 06:19:56 +0000
+Message-ID: <a1691267-304d-4a3f-898b-2f8901031d2c@suse.de>
+Date: Tue, 27 May 2025 08:19:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250523143637.536759-1-Frank.Li@nxp.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 11/23] md/md-bitmap: make method bitmap_ops->daemon_work
+ optional
+To: Yu Kuai <yukuai1@huaweicloud.com>, hch@lst.de, xni@redhat.com,
+ colyli@kernel.org, song@kernel.org, yukuai3@huawei.com
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-raid@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
+ johnny.chenyi@huawei.com
+References: <20250524061320.370630-1-yukuai1@huaweicloud.com>
+ <20250524061320.370630-12-yukuai1@huaweicloud.com>
+Content-Language: en-US
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <20250524061320.370630-12-yukuai1@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-4.29 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.19)[-0.969];
+	MIME_GOOD(-0.10)[text/plain];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:mid,huawei.com:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -4.29
+X-Spam-Level: 
 
-On Fri, May 23, 2025 at 10:36:36AM GMT, Frank Li wrote:
-> According to existed dts arch/arm/boot/dts/armv7-m.dtsi, compatible string
-
-and drivers... more important btw.
-
-> should be arm,armv7m-nvic, #interrupt-cells is 1 and
-> arm,num-irq-priority-bits is optional property.
+On 5/24/25 08:13, Yu Kuai wrote:
+> From: Yu Kuai <yukuai3@huawei.com>
 > 
-> Fix below CHECK_DTB warning:
+> daemon_work() will be called by daemon thread, on the one hand, daemon
+> thread doesn't have strict wake-up time; on the other hand, too much
+> work are put to daemon thread, like handle sync IO, handle failed
+> or specail normal IO, handle recovery, and so on. Hence daemon thread
+> may be too busy to clear dirty bits in time.
 > 
-> arch/arm/boot/dts/nxp/vf/vf610m4-cosmic.dtb: /interrupt-controller@e000e100:
->     failed to match any schema with compatible: ['arm,armv7m-nvic']
+> Make bitmap_ops->daemon_work() optional and following patches will use
+> separate async work to clear dirty bits for the new bitmap.
 > 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
->  .../devicetree/bindings/interrupt-controller/arm,nvic.yaml  | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/interrupt-controller/arm,nvic.yaml b/Documentation/devicetree/bindings/interrupt-controller/arm,nvic.yaml
-> index d89eca956c5fa..a08632804d052 100644
-> --- a/Documentation/devicetree/bindings/interrupt-controller/arm,nvic.yaml
-> +++ b/Documentation/devicetree/bindings/interrupt-controller/arm,nvic.yaml
-> @@ -17,6 +17,7 @@ description:
->  properties:
->    compatible:
->      enum:
-> +      - arm,armv7m-nvic
->        - arm,v6m-nvic
->        - arm,v7m-nvic
+Why not move it to a workqueue in general?
+The above argument is valid even for the current implementation, no?
 
-You need to drop (or deprecate if it is used) old compatible.
+Cheers,
 
-Best regards,
-Krzysztof
-
+Hannes
+-- 
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
