@@ -1,178 +1,212 @@
-Return-Path: <linux-kernel+bounces-663579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-663577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC53CAC4A44
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 10:27:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E86ACAC4A37
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 10:26:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B658E188822A
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 08:27:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65C19189D975
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 08:26:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 234AD24C692;
-	Tue, 27 May 2025 08:25:37 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 862C8253950;
+	Tue, 27 May 2025 08:25:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="R+g+c6WW"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F2DC24BC09;
-	Tue, 27 May 2025 08:25:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E106724DD1A;
+	Tue, 27 May 2025 08:25:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748334336; cv=none; b=dEbb+97HXKGCQSlQmdpXpZAdGeo1LLjr2FoNA5uitKqppGdfyODYgVFpBg3F8N5O9npe4yoYkMW6jnRSoUtM3jjTrrSU6BRVx2WJJSKyf0Ao6/6Ii909tzCHqAF4T0T40IyUsFKv5N1aTYe+7vpe81251VvEJxznyYbLd60d1dY=
+	t=1748334327; cv=none; b=RJVKKDFkqg28glR2PEl9v3f4ihsffc463UUdwRmmmRVa6jU5b4MbFWqKWKKMmGXtt3UMkx/onP3itnz7HHiDr8Cur1mwzQLzU8RmtbC2KZ+nL0CTlwwD4mjg8qiKOGmsoKskZupHYEN7NoyA2TBHfNij1hvpJ2FxFLBhB0bQgAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748334336; c=relaxed/simple;
-	bh=lF0fH/CcTAKBcrZbNRqHAOvKHyMZ3rKqL2ZNyw3DfZo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MJetO38wYiBdY1DFPScaPdgkbtUgWlyrv9Ok8wct78sDmOFhwkJJa54sXsaZFJx5i2ruR6LHMIWhwGouHZP2irsb0mmA3UskfOH/5WzuYM2peGAe1OIiMBat0NOs3sXfArFE9TMc4t1KNGJ3CATMTgwQmGoVScKT/t6+Fr0pt3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 2590c2fe3ad411f0b29709d653e92f7d-20250527
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:0172e8e5-1cbf-4d9b-a76d-b519d316b39c,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6493067,CLOUDID:9db441d4c2ed8449c5036e642977de72,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:81|82|102,TC:nil,Content:0|50,EDM:-3,IP:
-	nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,L
-	ES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 2590c2fe3ad411f0b29709d653e92f7d-20250527
-Received: from node4.com.cn [(10.44.16.170)] by mailgw.kylinos.cn
-	(envelope-from <aichao@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 1846934354; Tue, 27 May 2025 16:25:28 +0800
-Received: from node4.com.cn (localhost [127.0.0.1])
-	by node4.com.cn (NSMail) with SMTP id C228016001F52;
-	Tue, 27 May 2025 16:25:27 +0800 (CST)
-X-ns-mid: postfix-683576F5-5122252692
-Received: from kylin-pc.. (unknown [172.25.130.133])
-	by node4.com.cn (NSMail) with ESMTPA id 7548716001F49;
-	Tue, 27 May 2025 08:25:23 +0000 (UTC)
-From: Ai Chao <aichao@kylinos.cn>
-To: perex@perex.cz,
-	tiwai@suse.com,
-	johannes@sipsolutions.net,
-	kuninori.morimoto.gx@renesas.com,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	jbrunet@baylibre.com,
-	neil.armstrong@linaro.org,
-	khilman@baylibre.com,
-	martin.blumenstingl@googlemail.com,
-	shengjiu.wang@gmail.com,
-	Xiubo.Lee@gmail.com,
-	festevam@gmail.com,
-	nicoleotsuka@gmail.com,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	srinivas.kandagatla@linaro.org
-Cc: linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-amlogic@lists.infradead.org,
-	imx@lists.linux.dev,
-	kernel@pengutronix.de,
-	linux-arm-msm@vger.kernel.org,
-	Ai Chao <aichao@kylinos.cn>
-Subject: [PATCH v3 6/6] ASoC: qcom: Use helper function for_each_child_of_node_scoped()
-Date: Tue, 27 May 2025 16:24:46 +0800
-Message-ID: <20250527082446.2265500-7-aichao@kylinos.cn>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20250527082446.2265500-1-aichao@kylinos.cn>
-References: <20250527082446.2265500-1-aichao@kylinos.cn>
+	s=arc-20240116; t=1748334327; c=relaxed/simple;
+	bh=7+tp4GAq7YcVLgb/nQO83VDp/Ph/4sBIBC7Fet0/G4Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YtS8KMF/+4iKA8yMIPG0g1C8JPRrwp/eHheB3aQuV5v72jwrbFHgbyHONr8ts80i4KraWKuwwI54OCX1qs4SPiwEn7EFmLgRJmBFw5n5BA6EPHJAHlFF9tvMqIeRb2VPJlJaf0D8yVlfG4OGAoPfyO5jSvvP2gCHWFqTK1hyhEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=R+g+c6WW; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1748334326; x=1779870326;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=7+tp4GAq7YcVLgb/nQO83VDp/Ph/4sBIBC7Fet0/G4Y=;
+  b=R+g+c6WWeINMYvifGEjiogVsodnC3Cwj1lZjiqSgRPxCdd+iGtwFBMfl
+   vE8ktwM7PwdfFSeG7j0jR+zIjIumCjrGPo9oZcLR67TqjWygBsLhZrUdU
+   AArTtJ/ld429HbZv4xQKqNqLU+PAXS28/b/X/95vQgpGXpsUxaM32Nxwm
+   HhkvjKCpRX6K7/Or/HR0uYVxHa1LWdZz+e5MMjiuYjAaD/OXK2ex9QAfa
+   sg3nxKm+U/4+WATDTPUhkUBAy3Ao2vCIV2ElSPpFiKOMKpLBt6Z2NScq+
+   /F5JhyopuY1d/i8P4kcUptFxcsS08CVl2Ld/a/eOhVJyXt99wHVSJLtdU
+   A==;
+X-CSE-ConnectionGUID: FUyDjo0hRje9mdlb4z3vEA==
+X-CSE-MsgGUID: Agt1fEfcTgehgOR7bZ8gSg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11445"; a="37936934"
+X-IronPort-AV: E=Sophos;i="6.15,317,1739865600"; 
+   d="scan'208";a="37936934"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2025 01:25:25 -0700
+X-CSE-ConnectionGUID: mRqJkLNKQwGmhGK/5+3FxQ==
+X-CSE-MsgGUID: 7rh8kbY3Qla2LSYp38kAgg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,317,1739865600"; 
+   d="scan'208";a="179901149"
+Received: from unknown (HELO [10.238.11.3]) ([10.238.11.3])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2025 01:25:05 -0700
+Message-ID: <9483e9e3-9b29-49c6-adcc-04fe45ac28fd@linux.intel.com>
+Date: Tue, 27 May 2025 16:25:01 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v2 02/51] KVM: guest_memfd: Introduce and use
+ shareability to guard faulting
+To: Ackerley Tng <ackerleytng@google.com>
+Cc: kvm@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ x86@kernel.org, linux-fsdevel@vger.kernel.org, aik@amd.com,
+ ajones@ventanamicro.com, akpm@linux-foundation.org, amoorthy@google.com,
+ anthony.yznaga@oracle.com, anup@brainfault.org, aou@eecs.berkeley.edu,
+ bfoster@redhat.com, brauner@kernel.org, catalin.marinas@arm.com,
+ chao.p.peng@intel.com, chenhuacai@kernel.org, dave.hansen@intel.com,
+ david@redhat.com, dmatlack@google.com, dwmw@amazon.co.uk,
+ erdemaktas@google.com, fan.du@intel.com, fvdl@google.com, graf@amazon.com,
+ haibo1.xu@intel.com, hch@infradead.org, hughd@google.com,
+ ira.weiny@intel.com, isaku.yamahata@intel.com, jack@suse.cz,
+ james.morse@arm.com, jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com,
+ jhubbard@nvidia.com, jroedel@suse.de, jthoughton@google.com,
+ jun.miao@intel.com, kai.huang@intel.com, keirf@google.com,
+ kent.overstreet@linux.dev, kirill.shutemov@intel.com,
+ liam.merwick@oracle.com, maciej.wieczor-retman@intel.com,
+ mail@maciej.szmigiero.name, maz@kernel.org, mic@digikod.net,
+ michael.roth@amd.com, mpe@ellerman.id.au, muchun.song@linux.dev,
+ nikunj@amd.com, nsaenz@amazon.es, oliver.upton@linux.dev,
+ palmer@dabbelt.com, pankaj.gupta@amd.com, paul.walmsley@sifive.com,
+ pbonzini@redhat.com, pdurrant@amazon.co.uk, peterx@redhat.com,
+ pgonda@google.com, pvorel@suse.cz, qperret@google.com,
+ quic_cvanscha@quicinc.com, quic_eberman@quicinc.com,
+ quic_mnalajal@quicinc.com, quic_pderrin@quicinc.com,
+ quic_pheragu@quicinc.com, quic_svaddagi@quicinc.com, quic_tsoni@quicinc.com,
+ richard.weiyang@gmail.com, rick.p.edgecombe@intel.com, rientjes@google.com,
+ roypat@amazon.co.uk, rppt@kernel.org, seanjc@google.com, shuah@kernel.org,
+ steven.price@arm.com, steven.sistare@oracle.com, suzuki.poulose@arm.com,
+ tabba@google.com, thomas.lendacky@amd.com, usama.arif@bytedance.com,
+ vannapurve@google.com, vbabka@suse.cz, viro@zeniv.linux.org.uk,
+ vkuznets@redhat.com, wei.w.wang@intel.com, will@kernel.org,
+ willy@infradead.org, xiaoyao.li@intel.com, yan.y.zhao@intel.com,
+ yilun.xu@intel.com, yuzenghui@huawei.com, zhiquan1.li@intel.com
+References: <cover.1747264138.git.ackerleytng@google.com>
+ <b784326e9ccae6a08388f1bf39db70a2204bdc51.1747264138.git.ackerleytng@google.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <b784326e9ccae6a08388f1bf39db70a2204bdc51.1747264138.git.ackerleytng@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The for_each_child_of_node_scoped() helper provides a scope-based
-clean-up functionality to put the device_node automatically.
 
-Signed-off-by: Ai Chao <aichao@kylinos.cn>
----
- sound/soc/qcom/lpass-cpu.c       | 3 +--
- sound/soc/qcom/qdsp6/q6afe-dai.c | 3 +--
- sound/soc/qcom/qdsp6/q6asm-dai.c | 4 +---
- 3 files changed, 3 insertions(+), 7 deletions(-)
 
-diff --git a/sound/soc/qcom/lpass-cpu.c b/sound/soc/qcom/lpass-cpu.c
-index 242bc16da36d..62f49fe46273 100644
---- a/sound/soc/qcom/lpass-cpu.c
-+++ b/sound/soc/qcom/lpass-cpu.c
-@@ -1046,7 +1046,6 @@ static unsigned int of_lpass_cpu_parse_sd_lines(str=
-uct device *dev,
- static void of_lpass_cpu_parse_dai_data(struct device *dev,
- 					struct lpass_data *data)
- {
--	struct device_node *node;
- 	int ret, i, id;
-=20
- 	/* Allow all channels by default for backwards compatibility */
-@@ -1056,7 +1055,7 @@ static void of_lpass_cpu_parse_dai_data(struct devi=
-ce *dev,
- 		data->mi2s_capture_sd_mode[id] =3D LPAIF_I2SCTL_MODE_8CH;
- 	}
-=20
--	for_each_child_of_node(dev->of_node, node) {
-+	for_each_child_of_node_scoped(dev->of_node, node) {
- 		ret =3D of_property_read_u32(node, "reg", &id);
- 		if (ret || id < 0) {
- 			dev_err(dev, "valid dai id not found: %d\n", ret);
-diff --git a/sound/soc/qcom/qdsp6/q6afe-dai.c b/sound/soc/qcom/qdsp6/q6af=
-e-dai.c
-index 7d9628cda875..64735f2adf8f 100644
---- a/sound/soc/qcom/qdsp6/q6afe-dai.c
-+++ b/sound/soc/qcom/qdsp6/q6afe-dai.c
-@@ -962,10 +962,9 @@ static const struct snd_soc_component_driver q6afe_d=
-ai_component =3D {
- static void of_q6afe_parse_dai_data(struct device *dev,
- 				    struct q6afe_dai_data *data)
- {
--	struct device_node *node;
- 	int ret;
-=20
--	for_each_child_of_node(dev->of_node, node) {
-+	for_each_child_of_node_scoped(dev->of_node, node) {
- 		unsigned int lines[Q6AFE_MAX_MI2S_LINES];
- 		struct q6afe_dai_priv_data *priv;
- 		int id, i, num_lines;
-diff --git a/sound/soc/qcom/qdsp6/q6asm-dai.c b/sound/soc/qcom/qdsp6/q6as=
-m-dai.c
-index a400c9a31fea..d7680dd3a3bb 100644
---- a/sound/soc/qcom/qdsp6/q6asm-dai.c
-+++ b/sound/soc/qcom/qdsp6/q6asm-dai.c
-@@ -1236,10 +1236,8 @@ static int of_q6asm_parse_dai_data(struct device *=
-dev,
- {
- 	struct snd_soc_dai_driver *dai_drv;
- 	struct snd_soc_pcm_stream empty_stream;
--	struct device_node *node;
- 	int ret, id, dir, idx =3D 0;
-=20
--
- 	pdata->num_dais =3D of_get_child_count(dev->of_node);
- 	if (!pdata->num_dais) {
- 		dev_err(dev, "No dais found in DT\n");
-@@ -1253,7 +1251,7 @@ static int of_q6asm_parse_dai_data(struct device *d=
-ev,
-=20
- 	memset(&empty_stream, 0, sizeof(empty_stream));
-=20
--	for_each_child_of_node(dev->of_node, node) {
-+	for_each_child_of_node_scoped(dev->of_node, node) {
- 		ret =3D of_property_read_u32(node, "reg", &id);
- 		if (ret || id >=3D MAX_SESSIONS || id < 0) {
- 			dev_err(dev, "valid dai id not found:%d\n", ret);
---=20
-2.47.1
+On 5/15/2025 7:41 AM, Ackerley Tng wrote:
+> Track guest_memfd memory's shareability status within the inode as
+> opposed to the file, since it is property of the guest_memfd's memory
+> contents.
+>
+> Shareability is a property of the memory and is indexed using the
+> page's index in the inode. Because shareability is the memory's
+> property, it is stored within guest_memfd instead of within KVM, like
+> in kvm->mem_attr_array.
+>
+> KVM_MEMORY_ATTRIBUTE_PRIVATE in kvm->mem_attr_array must still be
+> retained to allow VMs to only use guest_memfd for private memory and
+> some other memory for shared memory.
+>
+> Not all use cases require guest_memfd() to be shared with the host
+> when first created. Add a new flag, GUEST_MEMFD_FLAG_INIT_PRIVATE,
+> which when set on KVM_CREATE_GUEST_MEMFD, initializes the memory as
+> private to the guest, and therefore not mappable by the
+> host. Otherwise, memory is shared until explicitly converted to
+> private.
+>
+> Signed-off-by: Ackerley Tng <ackerleytng@google.com>
+> Co-developed-by: Vishal Annapurve <vannapurve@google.com>
+> Signed-off-by: Vishal Annapurve <vannapurve@google.com>
+> Co-developed-by: Fuad Tabba <tabba@google.com>
+> Signed-off-by: Fuad Tabba <tabba@google.com>
+> Change-Id: If03609cbab3ad1564685c85bdba6dcbb6b240c0f
+> ---
+>   Documentation/virt/kvm/api.rst |   5 ++
+>   include/uapi/linux/kvm.h       |   2 +
+>   virt/kvm/guest_memfd.c         | 124 ++++++++++++++++++++++++++++++++-
+>   3 files changed, 129 insertions(+), 2 deletions(-)
+>
+> diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
+> index 86f74ce7f12a..f609337ae1c2 100644
+> --- a/Documentation/virt/kvm/api.rst
+> +++ b/Documentation/virt/kvm/api.rst
+> @@ -6408,6 +6408,11 @@ belonging to the slot via its userspace_addr.
+>   The use of GUEST_MEMFD_FLAG_SUPPORT_SHARED will not be allowed for CoCo VMs.
+>   This is validated when the guest_memfd instance is bound to the VM.
+>   
+> +If the capability KVM_CAP_GMEM_CONVERSIONS is supported, then the 'flags' field
+> +supports GUEST_MEMFD_FLAG_INIT_PRIVATE.
 
+It seems that the sentence is stale?
+Didn't find the definition of KVM_CAP_GMEM_CONVERSIONS.
+
+> Setting GUEST_MEMFD_FLAG_INIT_PRIVATE
+> +will initialize the memory for the guest_memfd as guest-only and not faultable
+> +by the host.
+> +
+[...]
+>   
+>   static int kvm_gmem_init_fs_context(struct fs_context *fc)
+> @@ -549,12 +645,26 @@ static const struct inode_operations kvm_gmem_iops = {
+>   static struct inode *kvm_gmem_inode_make_secure_inode(const char *name,
+>   						      loff_t size, u64 flags)
+>   {
+> +	struct kvm_gmem_inode_private *private;
+>   	struct inode *inode;
+> +	int err;
+>   
+>   	inode = alloc_anon_secure_inode(kvm_gmem_mnt->mnt_sb, name);
+>   	if (IS_ERR(inode))
+>   		return inode;
+>   
+> +	err = -ENOMEM;
+> +	private = kzalloc(sizeof(*private), GFP_KERNEL);
+> +	if (!private)
+> +		goto out;
+> +
+> +	mt_init(&private->shareability);
+
+shareability is defined only when CONFIG_KVM_GMEM_SHARED_MEM enabled, should be done within CONFIG_KVM_GMEM_SHARED_MEM .
+
+
+> +	inode->i_mapping->i_private_data = private;
+> +
+> +	err = kvm_gmem_shareability_setup(private, size, flags);
+> +	if (err)
+> +		goto out;
+> +
+>   	inode->i_private = (void *)(unsigned long)flags;
+>   	inode->i_op = &kvm_gmem_iops;
+>   	inode->i_mapping->a_ops = &kvm_gmem_aops;
+> @@ -566,6 +676,11 @@ static struct inode *kvm_gmem_inode_make_secure_inode(const char *name,
+>   	WARN_ON_ONCE(!mapping_unevictable(inode->i_mapping));
+>   
+>   	return inode;
+> +
+> +out:
+> +	iput(inode);
+> +
+> +	return ERR_PTR(err);
+>   }
+>   
+>
+[...]
 
