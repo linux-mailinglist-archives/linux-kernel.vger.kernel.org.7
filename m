@@ -1,187 +1,225 @@
-Return-Path: <linux-kernel+bounces-664201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-664203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95F93AC5321
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 18:38:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70312AC5324
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 18:39:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D33233BE85F
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 16:37:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F220D1BA2B65
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 16:39:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A1EA27FB1E;
-	Tue, 27 May 2025 16:37:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EA4827FD4B;
+	Tue, 27 May 2025 16:39:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MmZYfj3A"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TyBy5ip0"
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C245279910;
-	Tue, 27 May 2025 16:37:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFA97279910;
+	Tue, 27 May 2025 16:39:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748363877; cv=none; b=DWiAB7ceuCHJF8AZI7NguH/48Pb/g0KwDg5juDS96WTbj1gbo10RdUhP+ildMQhwvg1aJD2+xwA4WmuLeEosjysnSpGKlddFbV1lwP7P+EYeHahr5Bo4rZ+b0leZI+YJMS0J9woTyZKJn/TDBHT2B4qIXxdNT27Q4vb4Imlsre0=
+	t=1748363943; cv=none; b=uItQpHJaeQ+8fLaB3PbH0hCLkST7kZObQt23nCMa7Pr9m25I8DDTdvrrBMLbK4fAnWgw8BWNRiyzKu62u0eDSrwy2ofIE0VEbYbuRcHMXtnsTPjimMCHUZ02wq81IAHmwZSNs3fbPrcZ9w7DbiWWnQ+9qZMG1h9aoqRkddI5KZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748363877; c=relaxed/simple;
-	bh=cbKKCkqWwj5R3NhfMsFzcH80Kv1e6XNU0rpPm2F+hog=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sVLG7LDGNgeI0zNrmYgRrH51jZiVgcX4774uX7MwUolKgSxUJB0aBDaWmgQX/0Wwk27hrOo61kK/1rR36vk76v3VEOUBk5PC9vTdijubWQJhh/InyxtOYbrVfa+Ekd0ZB14QArmBJu1P3pfdab7mRPYNMaPVa6vDEzbZiK1Gb9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MmZYfj3A; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1748363876; x=1779899876;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=cbKKCkqWwj5R3NhfMsFzcH80Kv1e6XNU0rpPm2F+hog=;
-  b=MmZYfj3AmSqb5GCgy1+WeVKwkR+1mkPC9CoKMCERwOQpyt4IGc1K2/UN
-   9nN/tkBLfCP6XE6xRUxDnQD5SgkDsIjC227Go/tAqneZj94mrmoPWd0IK
-   Y/PqVNUH0FLtuQIglv96vsbXHZb3VNL/bOnfCdNC30GVsYfbdp5w8YFNz
-   GzYMwGzoUaJajJrmUtt211r/Z4MRrPbM890BF9n5FbkVqI7E5/Ar5aO7b
-   X4SsN7I8M9iNwFvCiLhTnz0k5fbbjs8ylEuFprSCW3TG3mQSJbKWiteUL
-   c36V6ao0NM9jvzVd50hA+dCqtXBW6ULjOQmBcsvnWCk9tdR4W2ZUkzeE/
-   A==;
-X-CSE-ConnectionGUID: n82G4WRoQM6FAic1j1Xs4w==
-X-CSE-MsgGUID: C36ke6zxQ+ypUYW86XDHVg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11446"; a="61714972"
-X-IronPort-AV: E=Sophos;i="6.15,318,1739865600"; 
-   d="scan'208";a="61714972"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2025 09:37:54 -0700
-X-CSE-ConnectionGUID: OUcSBdMeQOWnHX/hgemOrg==
-X-CSE-MsgGUID: 5kud2WDqSQK4loLjiAmDkw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,318,1739865600"; 
-   d="scan'208";a="180092453"
-Received: from spandruv-desk1.amr.corp.intel.com (HELO [10.125.109.244]) ([10.125.109.244])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2025 09:37:50 -0700
-Message-ID: <626be90e-fa54-4ae9-8cad-d3b7eb3e59f7@intel.com>
-Date: Tue, 27 May 2025 09:37:50 -0700
+	s=arc-20240116; t=1748363943; c=relaxed/simple;
+	bh=rZQjfSJILa0p9mfWNefpFQfo1fRe/4rlRyiLEuMTGbQ=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PCp2YrzBaAKmt72aEPxkTZjY0UC9GUt2vAH/TSdVftaMEE1qXCvYMkG3TmLqWfLrtaecoiPCUWs6t7JtjMvk9bQ0hfL8YEkz4TLgk621o4kz+KFSrL/oBxvQ5/PyiD84vlXJb7Gzq29371Wl+jopg9aWCbTlvR3L7vdBPgXq96c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TyBy5ip0; arc=none smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-477296dce8dso32357911cf.3;
+        Tue, 27 May 2025 09:39:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748363940; x=1748968740; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:feedback-id:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vfddXWQjibZTKBKNGGDcZrogNXqSxDWqL62QdR5c3kQ=;
+        b=TyBy5ip0DVcvJGlg7IDA236ny3R3a/a3Rhp+Uh6DSjvbz/gQZiSE+S6BNNuSd4qosc
+         JLQuB/w9w/j/lDtM/a73eLFX6Srh3KHBW5Tsls+rzF4jMte0GjjHFVV5dXqj/1RpftrD
+         3UHtsDem7UwUBuDAzaETSkOINbiC3WL9KVuZaVcK1tKX4pGWYfkApGOhNX6FZnAtnBFT
+         ISTw2u0Fr8hdKlhUzvh6I2g5mBOVj4QgEmI/cszA9SvUL+p/3kWkt36XsvHnLl7Ba+kl
+         w5bNehsH7I9Ox+6qQJGRAhzU3U8oli89RlP/iFFHF1AZhobYr1txw+1sD81kCecWkhnW
+         FVRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748363940; x=1748968740;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:feedback-id:message-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vfddXWQjibZTKBKNGGDcZrogNXqSxDWqL62QdR5c3kQ=;
+        b=WxNXQnMbtoBS9U8QXBTxJTXf9a554CJoj8bo3FWLJXutDqIjqmmQoZvV2RYBv6Nssd
+         aCdNzj3OgWFmECfPu2xyEdJChwLs2wTKqOcyQhBXFPioZQbpBuEc3cGIVhIqy/VtFU+d
+         Gw33FsqxPNVveOBwmI4ns8c/PWE1Z+mMpVaNYFHpKNBr2BOQV00KPAPUwSeRtIRhXIsF
+         niAnC7S/mHsUUWcYKmHf6Kxuf/rR32tc/uBYNFiYe9wrX+7LQWq+iE4lSZfxpEnYbged
+         0HONnJStVDPXIirP6sH3DeedBupdQKzyisZkPMReofG9omz8hK3siXtmwEqTaS4GA2tx
+         KJoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVAVFb+5dvVBuCwAsSPUTrjIKW58AE+RQHQxUt5SP1uXs2WNKn9wlfNRFUXAAel8wK2X1Onpx2CGIfy75Shngs=@vger.kernel.org, AJvYcCWPmpnkPVnsrAPLXO5X5bT+GTbRW9W4dYkfIbX/AfgWfCPkJZg7vHfbouRklEUNAQ2PFQurpatWEPkxojVL@vger.kernel.org, AJvYcCWdYm9a9sHumHVaSX2SxzdMTK4UQVZufz8pSBfgK66fxMBbcQY8qEnZ+9UxsQHCc7EGW0TivMpUCXQYGC9XIR8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyB3IEBWA4s6Ndzkmk19CHBgHShfotyGVte+QpwafOAeU9r9knx
+	VYuRkmeTfQq55KLPvCCCyfR93DleauhygxQImLDVJIBoFcXvP0mrlP2H
+X-Gm-Gg: ASbGnctWS1BAGnK0/ENrTWzwIWtT6TVIwO4FsAhFDcejBQqwezqLXBRETZ/FiEdBa56
+	ssas4zirIWBO3fsCjzuK+vO8RicRb/fvIGPp1WvSYzKE3vwaf2Twjohy3zOUTfNH96vj9Nj5Rpv
+	fdEkAtnWHSajJr/dyH2lEC0YuO20/+Q+nwhSS+bSi4d/RQm6yJO5eImSbBjXPM7BfGbFFDQfQ7g
+	qc/gwfZ52sDir639KEUQuPHxFxBM45bSxBHC7/j/ynUGukKT4jf2bJynpANavptfVV8MYkt5H93
+	0T6vXh6lKtUn9YdCXYuy8ch+JkAV/9wf4v1N5BGnALx6lTzEQ835ENRpQ5K7aOszClapyQHUB/E
+	RNYnhDRMTNpSD7c1zv9WNNoQqZSbVGdlcJSl9XVjfqQ==
+X-Google-Smtp-Source: AGHT+IFuyJn0HW6EUxmfq5bmO3813CO0NIxsIdhk+LTmdfzK05Upiz7d1opR40QJWZTn1ek7TxuJtw==
+X-Received: by 2002:a05:622a:2616:b0:494:a23a:cadf with SMTP id d75a77b69052e-49f47b05cfdmr219085081cf.32.1748363940558;
+        Tue, 27 May 2025 09:39:00 -0700 (PDT)
+Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-494ae528713sm168824091cf.71.2025.05.27.09.38.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 May 2025 09:39:00 -0700 (PDT)
+Message-ID: <6835eaa4.c80a0220.2baf57.d14b@mx.google.com>
+X-Google-Original-Message-ID: <aDXqosNN0g0EtHzf@winterfell.>
+Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 870801200043;
+	Tue, 27 May 2025 12:38:59 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-01.internal (MEProxy); Tue, 27 May 2025 12:38:59 -0400
+X-ME-Sender: <xms:o-o1aPeyYsc3-i7arpsKxc_4kTqrYD_hv9IMbIBvplBTeJ97DmgScQ>
+    <xme:o-o1aFM5egdliNM-d929Mc3IAMuXhkg0iHiYEKhpu8nEF1x1FH5hRIXkFFq8Z6gSK
+    SQTMZgQDuUTrQ6uuQ>
+X-ME-Received: <xmr:o-o1aIhSb8g2a6EsncHRtkJFsrt8vOvWd4bCKE5qF6VlfCBSXCwkiBhg8cdrFA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgddvtdekkeculddtuddrgeefvddrtd
+    dtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggft
+    fghnshhusghstghrihgsvgdpuffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftd
+    dtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhf
+    gggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquh
+    hnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrthhtvghrnhephedugfduffff
+    teeutddvheeuveelvdfhleelieevtdeguefhgeeuveeiudffiedvnecuvehluhhsthgvrh
+    fuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhp
+    rghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddujeejkeehheehvddqsg
+    hoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdrnhgrmhgvpdhnsggp
+    rhgtphhtthhopedukedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepsghqvgesgh
+    hoohhglhgvrdgtohhmpdhrtghpthhtohephihurhihrdhnohhrohhvsehgmhgrihhlrdgt
+    ohhmpdhrtghpthhtohepkhgvvghssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlih
+    hnuhigsehrrghsmhhushhvihhllhgvmhhovghsrdgukhdprhgtphhtthhopehvihhrvghs
+    hhdrkhhumhgrrheslhhinhgrrhhordhorhhgpdhrtghpthhtohepohhjvggurgeskhgvrh
+    hnvghlrdhorhhgpdhrtghpthhtoheprghlvgigrdhgrgihnhhorhesghhmrghilhdrtgho
+    mhdprhgtphhtthhopehgrghrhiesghgrrhihghhuohdrnhgvthdprhgtphhtthhopegsjh
+    horhhnfegpghhhsehprhhothhonhhmrghilhdrtghomh
+X-ME-Proxy: <xmx:o-o1aA_Az6WUnTs_97ubNWmht2V2Q1d_1iISWP0vZoapCUjEg1CQ6g>
+    <xmx:o-o1aLsEGoxTKiZCoNOHbr6TQO9Xe1qEzsTFWxPPuxP53TcD1igifA>
+    <xmx:o-o1aPGhng6OQrXJs9GlKmqmp8p2hDuWirTezTrluNgiuWiD-xe-FQ>
+    <xmx:o-o1aCML03kDGqUF_y1oWRiUh3DjiQARTw8QgSWjsHcvzVFTLAvhqA>
+    <xmx:o-o1aMP80SHazLzuACLC7ErsGCiVjxlcY0fptLKwUvHODX3nhwd7bmN4>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 27 May 2025 12:38:58 -0400 (EDT)
+Date: Tue, 27 May 2025 09:38:58 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Burak Emir <bqe@google.com>
+Cc: Yury Norov <yury.norov@gmail.com>, Kees Cook <kees@kernel.org>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	"Gustavo A . R . Silva" <gustavoars@kernel.org>,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v9 2/5] rust: add bindings for bitops.h
+References: <20250526150141.3407433-1-bqe@google.com>
+ <20250526150141.3407433-3-bqe@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC 2/3] mm: add STATIC_PMD_ZERO_PAGE config option
-To: Pankaj Raghav <p.raghav@samsung.com>,
- Suren Baghdasaryan <surenb@google.com>, Ryan Roberts <ryan.roberts@arm.com>,
- Vlastimil Babka <vbabka@suse.cz>, Baolin Wang
- <baolin.wang@linux.alibaba.com>, Borislav Petkov <bp@alien8.de>,
- Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
- Zi Yan <ziy@nvidia.com>, Mike Rapoport <rppt@kernel.org>,
- Dave Hansen <dave.hansen@linux.intel.com>, Michal Hocko <mhocko@suse.com>,
- David Hildenbrand <david@redhat.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Thomas Gleixner <tglx@linutronix.de>, Nico Pache <npache@redhat.com>,
- Dev Jain <dev.jain@arm.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Jens Axboe <axboe@kernel.dk>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-block@vger.kernel.org, willy@infradead.org, x86@kernel.org,
- linux-fsdevel@vger.kernel.org, "Darrick J . Wong" <djwong@kernel.org>,
- mcgrof@kernel.org, gost.dev@samsung.com, kernel@pankajraghav.com, hch@lst.de
-References: <20250527050452.817674-1-p.raghav@samsung.com>
- <20250527050452.817674-3-p.raghav@samsung.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
- oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
- 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
- ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
- VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
- iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
- c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
- pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
- ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
- QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzUVEYXZpZCBDaHJp
- c3RvcGhlciBIYW5zZW4gKEludGVsIFdvcmsgQWRkcmVzcykgPGRhdmUuaGFuc2VuQGludGVs
- LmNvbT7CwXgEEwECACIFAlQ+9J0CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEGg1
- lTBwyZKwLZUP/0dnbhDc229u2u6WtK1s1cSd9WsflGXGagkR6liJ4um3XCfYWDHvIdkHYC1t
- MNcVHFBwmQkawxsYvgO8kXT3SaFZe4ISfB4K4CL2qp4JO+nJdlFUbZI7cz/Td9z8nHjMcWYF
- IQuTsWOLs/LBMTs+ANumibtw6UkiGVD3dfHJAOPNApjVr+M0P/lVmTeP8w0uVcd2syiaU5jB
- aht9CYATn+ytFGWZnBEEQFnqcibIaOrmoBLu2b3fKJEd8Jp7NHDSIdrvrMjYynmc6sZKUqH2
- I1qOevaa8jUg7wlLJAWGfIqnu85kkqrVOkbNbk4TPub7VOqA6qG5GCNEIv6ZY7HLYd/vAkVY
- E8Plzq/NwLAuOWxvGrOl7OPuwVeR4hBDfcrNb990MFPpjGgACzAZyjdmYoMu8j3/MAEW4P0z
- F5+EYJAOZ+z212y1pchNNauehORXgjrNKsZwxwKpPY9qb84E3O9KYpwfATsqOoQ6tTgr+1BR
- CCwP712H+E9U5HJ0iibN/CDZFVPL1bRerHziuwuQuvE0qWg0+0SChFe9oq0KAwEkVs6ZDMB2
- P16MieEEQ6StQRlvy2YBv80L1TMl3T90Bo1UUn6ARXEpcbFE0/aORH/jEXcRteb+vuik5UGY
- 5TsyLYdPur3TXm7XDBdmmyQVJjnJKYK9AQxj95KlXLVO38lczsFNBFRjzmoBEACyAxbvUEhd
- GDGNg0JhDdezyTdN8C9BFsdxyTLnSH31NRiyp1QtuxvcqGZjb2trDVuCbIzRrgMZLVgo3upr
- MIOx1CXEgmn23Zhh0EpdVHM8IKx9Z7V0r+rrpRWFE8/wQZngKYVi49PGoZj50ZEifEJ5qn/H
- Nsp2+Y+bTUjDdgWMATg9DiFMyv8fvoqgNsNyrrZTnSgoLzdxr89FGHZCoSoAK8gfgFHuO54B
- lI8QOfPDG9WDPJ66HCodjTlBEr/Cwq6GruxS5i2Y33YVqxvFvDa1tUtl+iJ2SWKS9kCai2DR
- 3BwVONJEYSDQaven/EHMlY1q8Vln3lGPsS11vSUK3QcNJjmrgYxH5KsVsf6PNRj9mp8Z1kIG
- qjRx08+nnyStWC0gZH6NrYyS9rpqH3j+hA2WcI7De51L4Rv9pFwzp161mvtc6eC/GxaiUGuH
- BNAVP0PY0fqvIC68p3rLIAW3f97uv4ce2RSQ7LbsPsimOeCo/5vgS6YQsj83E+AipPr09Caj
- 0hloj+hFoqiticNpmsxdWKoOsV0PftcQvBCCYuhKbZV9s5hjt9qn8CE86A5g5KqDf83Fxqm/
- vXKgHNFHE5zgXGZnrmaf6resQzbvJHO0Fb0CcIohzrpPaL3YepcLDoCCgElGMGQjdCcSQ+Ci
- FCRl0Bvyj1YZUql+ZkptgGjikQARAQABwsFfBBgBAgAJBQJUY85qAhsMAAoJEGg1lTBwyZKw
- l4IQAIKHs/9po4spZDFyfDjunimEhVHqlUt7ggR1Hsl/tkvTSze8pI1P6dGp2XW6AnH1iayn
- yRcoyT0ZJ+Zmm4xAH1zqKjWplzqdb/dO28qk0bPso8+1oPO8oDhLm1+tY+cOvufXkBTm+whm
- +AyNTjaCRt6aSMnA/QHVGSJ8grrTJCoACVNhnXg/R0g90g8iV8Q+IBZyDkG0tBThaDdw1B2l
- asInUTeb9EiVfL/Zjdg5VWiF9LL7iS+9hTeVdR09vThQ/DhVbCNxVk+DtyBHsjOKifrVsYep
- WpRGBIAu3bK8eXtyvrw1igWTNs2wazJ71+0z2jMzbclKAyRHKU9JdN6Hkkgr2nPb561yjcB8
- sIq1pFXKyO+nKy6SZYxOvHxCcjk2fkw6UmPU6/j/nQlj2lfOAgNVKuDLothIxzi8pndB8Jju
- KktE5HJqUUMXePkAYIxEQ0mMc8Po7tuXdejgPMwgP7x65xtfEqI0RuzbUioFltsp1jUaRwQZ
- MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
- hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
- vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
-In-Reply-To: <20250527050452.817674-3-p.raghav@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250526150141.3407433-3-bqe@google.com>
 
-> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> index 055204dc211d..96f99b4f96ea 100644
-> --- a/arch/x86/Kconfig
-> +++ b/arch/x86/Kconfig
-> @@ -152,6 +152,7 @@ config X86
->  	select ARCH_WANT_OPTIMIZE_HUGETLB_VMEMMAP	if X86_64
->  	select ARCH_WANT_HUGETLB_VMEMMAP_PREINIT if X86_64
->  	select ARCH_WANTS_THP_SWAP		if X86_64
-> +	select ARCH_WANTS_STATIC_PMD_ZERO_PAGE if X86_64
-
-I don't think this should be the default. There are lots of little
-x86_64 VMs sitting around and 2MB might be significant to them.
-
-> +config ARCH_WANTS_STATIC_PMD_ZERO_PAGE
-> +	bool
-> +
-> +config STATIC_PMD_ZERO_PAGE
-> +	def_bool y
-> +	depends on ARCH_WANTS_STATIC_PMD_ZERO_PAGE
-> +	help
-> +	  Typically huge_zero_folio, which is a PMD page of zeroes, is allocated
-> +	  on demand and deallocated when not in use. This option will always
-> +	  allocate huge_zero_folio for zeroing and it is never deallocated.
-> +	  Not suitable for memory constrained systems.
-
-"Static" seems like a weird term to use for this. I was really expecting
-to see a 2MB object that gets allocated in .bss or something rather than
-a dynamically allocated page that's just never freed.
-
->  menuconfig TRANSPARENT_HUGEPAGE
->  	bool "Transparent Hugepage Support"
->  	depends on HAVE_ARCH_TRANSPARENT_HUGEPAGE && !PREEMPT_RT
-> diff --git a/mm/memory.c b/mm/memory.c
-> index 11edc4d66e74..ab8c16d04307 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -203,9 +203,17 @@ static void put_huge_zero_page(void)
->  	BUG_ON(atomic_dec_and_test(&huge_zero_refcount));
->  }
+On Mon, May 26, 2025 at 03:01:31PM +0000, Burak Emir wrote:
+> Makes atomic set_bit and clear_bit inline functions as well as the
+> non-atomic variants __set_bit and __clear_bit available to Rust.
+> Adds a new MAINTAINERS section BITOPS API BINDINGS [RUST].
+> 
+> Suggested-by: Alice Ryhl <aliceryhl@google.com>
+> Suggested-by: Yury Norov <yury.norov@gmail.com>
+> Signed-off-by: Burak Emir <bqe@google.com>
+> Acked-by: Yury Norov [NVIDIA] <yury.norov@gmail.com>
+> ---
+>  MAINTAINERS            |  5 +++++
+>  rust/helpers/bitops.c  | 23 +++++++++++++++++++++++
+>  rust/helpers/helpers.c |  1 +
+>  3 files changed, 29 insertions(+)
+>  create mode 100644 rust/helpers/bitops.c
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 86cae0ca5287..04d6727e944c 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -4141,6 +4141,11 @@ F:	include/linux/bitops.h
+>  F:	lib/test_bitops.c
+>  F:	tools/*/bitops*
 >  
-> +/*
-> + * If STATIC_PMD_ZERO_PAGE is enabled, @mm can be NULL, i.e, the huge_zero_folio
-> + * is not associated with any mm_struct.
-> +*/
+> +BITOPS API BINDINGS [RUST]
+> +M:	Yury Norov <yury.norov@gmail.com>
+> +S:	Maintained
+> +F:	rust/helpers/bitops.c
+> +
+>  BLINKM RGB LED DRIVER
+>  M:	Jan-Simon Moeller <jansimon.moeller@gmx.de>
+>  S:	Maintained
+> diff --git a/rust/helpers/bitops.c b/rust/helpers/bitops.c
+> new file mode 100644
+> index 000000000000..1fe9e3b23a39
+> --- /dev/null
+> +++ b/rust/helpers/bitops.c
+> @@ -0,0 +1,23 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +#include <linux/bitops.h>
+> +
+> +void rust_helper___set_bit(unsigned int nr, unsigned long *addr)
 
-I get that callers have to handle failure. But isn't this pretty nasty
-for mm==NULL callers to be *guaranteed* to fail? They'll generate code
-for the success case that will never even run.
+Why "unsigned int" instead of "unsigned long"? The C API uses
+"unsigned long" and in the Rust API, you uses "usize" for `nbits` and
+`index`s, therefore using "unsigned int" only introduces unnecessary "as
+u32" casting IMO, am I missing something here?
 
+Regards,
+Boqun
+
+> +{
+> +	__set_bit(nr, addr);
+> +}
+> +
+> +void rust_helper___clear_bit(unsigned int nr, unsigned long *addr)
+> +{
+> +	__clear_bit(nr, addr);
+> +}
+> +
+> +void rust_helper_set_bit(unsigned int nr, volatile unsigned long *addr)
+> +{
+> +	set_bit(nr, addr);
+> +}
+> +
+> +void rust_helper_clear_bit(unsigned int nr, volatile unsigned long *addr)
+> +{
+> +	clear_bit(nr, addr);
+> +}
+> diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
+> index 92721d165e35..4de8ac390241 100644
+> --- a/rust/helpers/helpers.c
+> +++ b/rust/helpers/helpers.c
+> @@ -8,6 +8,7 @@
+>   */
+>  
+>  #include "bitmap.c"
+> +#include "bitops.c"
+>  #include "blk.c"
+>  #include "bug.c"
+>  #include "build_assert.c"
+> -- 
+> 2.49.0.1151.ga128411c76-goog
+> 
 
