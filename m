@@ -1,278 +1,266 @@
-Return-Path: <linux-kernel+bounces-663798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-663796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1821BAC4DA6
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 13:37:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5167AC4DA3
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 13:36:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16217188A299
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 11:37:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B4717AE50F
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 11:35:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5557C274FF5;
-	Tue, 27 May 2025 11:34:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6532527146F;
+	Tue, 27 May 2025 11:34:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OPsvpfSD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="heYFPjK0"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 723662749CB;
-	Tue, 27 May 2025 11:34:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A04052701A4;
+	Tue, 27 May 2025 11:33:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748345643; cv=none; b=A9EGI09CeiiGUlziCHKfCqDc1lzPtl6uD4IytqvUFzEKwBP9u48+uUIJoKi+mUBAP869VWEM/OifWkng0prvuK1vTZCs0fjc9reYozGQIRGYdbydNLXWAMYvOUvwy8ok4/gjUTnNQAbCocVlyYF4NEQPlLdcneZ47+lq2os7oVs=
+	t=1748345640; cv=none; b=k8tMo7eWNYVmP+RnDhH8LFt0s40QwXC3PrJZ8FmeFxlSOv4xr7YkkktD/7BvLsv9i/rymIus3gkx5CHwST+i/kaJY43rK2AEBjszd65uxobGRJJAhe8FHx164aEdi/QVA8681tai5C37f7xJGDLnGYyugh4+FKM9ahYNChMTyK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748345643; c=relaxed/simple;
-	bh=YTLYU9LWSJhsBRbF0nwekUco3urr9nhUJqZ1xPPWD6I=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=gUVoY+zbCfau2kBjSFnEWEIONUWYCUJa7FKH419TkFIH76MpzRLPIKMKZfOtr5qHlF+L4DLb6uvsvpxUSNSaaixe+1dzNfdNQL4AYhltyrVOeaZlj2pxSeTDSmC11CCNorbKAS3lykXpPZ2/eiHhRrbELxyAdsDBlEfTeE3QItA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OPsvpfSD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9480DC4CEEB;
-	Tue, 27 May 2025 11:34:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748345643;
-	bh=YTLYU9LWSJhsBRbF0nwekUco3urr9nhUJqZ1xPPWD6I=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=OPsvpfSDXqVNMHu6O72FeusLJj/fe/bJsamEvSE117gXDT+bqkiXRWfandboGlnnX
-	 OAEwVtmCXHq6aZL790iu1Ek31lvbZFvlzDM2DTgRyrbpEq9QzuDQv9jaTi2SVm6oZO
-	 GJXV/sCT/xPM+lInvjKiOZpjSFb0kwk1D3pn6HcdDJWejzsH+jmquukuhn7ksJkKnK
-	 /YmTRxe7fhajBK6EynaFK+imu0U3K/xkZd+1pWe1zxXxMI79KsAHUvfWxb4lF1KZRf
-	 XEYVD1A4wACGg2gQNI9t8pAeuXGGCc1efWUhX7leW/fCUBCHwaQTln2qTBdhrLfu8M
-	 Qiag53s0Be5LQ==
-From: Jeff Layton <jlayton@kernel.org>
-Date: Tue, 27 May 2025 07:33:40 -0400
-Subject: [PATCH v10 9/9] ref_tracker: eliminate the ref_tracker_dir name
- field
+	s=arc-20240116; t=1748345640; c=relaxed/simple;
+	bh=FhE857sNlui17Q6Yip1QmHEqZKc56oFYs8TlkWSU6A0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M8HcYc8aOzEGf1oTTYddnQKpIaQgggSQWTKUJPQ6q3pag1HYDuOehz9RdH3PlpTpuEsec7fGddJ7l8bowOfF8ZiyeNrJqpvyBe2Z45wEyiBXPabOTPmx+o9yw7vpfyfsQqki+sGA40yWpyj5rqJP4ORZ8hLxbO3n+J4lvY9Ln4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=heYFPjK0; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1748345638; x=1779881638;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=FhE857sNlui17Q6Yip1QmHEqZKc56oFYs8TlkWSU6A0=;
+  b=heYFPjK0Bm22LlBx2JTljZoVMks8JKQ3pGpqEgWtzw6rLNuPiuSXcEWv
+   Bs3rkDS5KRccLsL/u5chZ5jHGODC1Heq3QuqEInkZaMtpGli7Da4/fbTr
+   Bn1TWTj6C5yWHvGpFK3F30Y7iUeJiRNfddBkZVYUEOcZORqZYmna5p5fk
+   +i17NhvQPNM7eUCYjda/Zf5PWQvDdzQGRQ1oTSI1c6f8pShtN6vP8uvtt
+   sks5usfgZRUYic+w5GMIREviAZbaWKdIXu1HOfDPphmARmpnQfisyuHHG
+   ENgylLO6ExJu6bRdJTDX5J7VEfhz5hFUKroU0y636YoHH+QsG3mZBWyiM
+   Q==;
+X-CSE-ConnectionGUID: QP4nazT9S9eOH51MrGBc0g==
+X-CSE-MsgGUID: ZRbVaIfUSROtcmZIPYjXug==
+X-IronPort-AV: E=McAfee;i="6700,10204,11445"; a="61385026"
+X-IronPort-AV: E=Sophos;i="6.15,318,1739865600"; 
+   d="scan'208";a="61385026"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2025 04:33:57 -0700
+X-CSE-ConnectionGUID: Cub3cRe+ROW5XmgHsdWjRg==
+X-CSE-MsgGUID: tbehL1KcSUqP7EwsbrOvLw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,318,1739865600"; 
+   d="scan'208";a="165971321"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2025 04:33:51 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1uJsZ1-000000019UT-2iJS;
+	Tue, 27 May 2025 14:33:47 +0300
+Date: Tue, 27 May 2025 14:33:47 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Anup Patel <apatel@ventanamicro.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Len Brown <lenb@kernel.org>, Sunil V L <sunilvl@ventanamicro.com>,
+	Rahul Pathak <rpathak@ventanamicro.com>,
+	Leyfoon Tan <leyfoon.tan@starfivetech.com>,
+	Atish Patra <atish.patra@linux.dev>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Anup Patel <anup@brainfault.org>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 13/23] irqchip: Add driver for the RPMI system MSI
+ service group
+Message-ID: <aDWjG9jAJ7kSaC9b@smile.fi.intel.com>
+References: <20250525084710.1665648-1-apatel@ventanamicro.com>
+ <20250525084710.1665648-14-apatel@ventanamicro.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250527-reftrack-dbgfs-v10-9-dc55f7705691@kernel.org>
-References: <20250527-reftrack-dbgfs-v10-0-dc55f7705691@kernel.org>
-In-Reply-To: <20250527-reftrack-dbgfs-v10-0-dc55f7705691@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Simon Horman <horms@kernel.org>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Jani Nikula <jani.nikula@linux.intel.com>, 
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, 
- Rodrigo Vivi <rodrigo.vivi@intel.com>, 
- Tvrtko Ursulin <tursulin@ursulin.net>
-Cc: Kuniyuki Iwashima <kuniyu@amazon.com>, Qasim Ijaz <qasdev00@gmail.com>, 
- Nathan Chancellor <nathan@kernel.org>, Andrew Lunn <andrew@lunn.ch>, 
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
- dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, 
- Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7499; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=YTLYU9LWSJhsBRbF0nwekUco3urr9nhUJqZ1xPPWD6I=;
- b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBoNaMX37lKKv9qM6qZoSFnMypTHz5HKkasSkcfe
- 6vmfAFXGX2JAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaDWjFwAKCRAADmhBGVaC
- FQBDEACwwKWpXOrarJH08FEBs3PI31pyaNaGC834qIenHT3CSwcg9OyQ/26xJZBHeMVaI3YOwB4
- W5satPonKqkZi9rLGOHlMEnSYvxoHqSHFv16PZaLZztxu+Pt5iuvDxrnd8/oRMlhyjsYMR07Q+Q
- Jk9S2uZIflWaIkdtre0sAm/ImHVrYJSD4hoxKx5/vZMTfqo4BHDY5nUd8XaRt8e/oXkxjMAoUqC
- 40oUr6gTBFUF5GXMaJZxO3eTj2DhREdWB4fgJY7RdH5JemF1cJcBidBfgQhD0EQyGBX/adeD1+3
- ZKYyIYUo/Ek8JCxjxXPol5puEC+TUlOZWkNefAB/eptzr+0p/W8p97cg13X9zb4B0PXTC2pcz3Q
- GVcpCV0qfYMSfbH7F1/3KPSKcFQIsmZsXgyPTOji2lDI9z7ASsSYRd1QDr9DeS3M8j6rcy2kGpy
- U7GfxOr8Fiwba1ekQsyCgHzopDbOrJ1HebmVLKG2FuYWUzp3h4XQy923o4N7xPNjqVBTrWkueAt
- tW7XiIOCI9AKto/byQI/cSqN25Z4aJ2zfZnEBv4m54vsjZYnGkwzn5pmEZoEHgknd/Z76g/zU8c
- 7cOLpEEZ6LTGRAF4bF7hb19+gAF3UPPtfWbljLPs7axNcNqp7uL3N3yVUGO8UcUHlvtDcvk2VNc
- SXR/qw3S6HRW3kA==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250525084710.1665648-14-apatel@ventanamicro.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Now that we have dentries and the ability to create meaningful symlinks
-to them, don't keep a name string in each tracker. Switch the output
-format to print "class@address", and drop the name field.
+On Sun, May 25, 2025 at 02:17:00PM +0530, Anup Patel wrote:
+> The RPMI specification defines a system MSI service group which
+> allows application processors to receive MSIs upon system events
+> such as graceful shutdown/reboot request, CPU hotplug event, memory
+> hotplug event, etc.
+> 
+> Add an irqchip driver for the RISC-V RPMI system MSI service group
+> to directly receive system MSIs in Linux kernel.
 
-Also, add a kerneldoc header for ref_tracker_dir_init().
+...
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- drivers/gpu/drm/display/drm_dp_tunnel.c |  2 +-
- drivers/gpu/drm/i915/intel_runtime_pm.c |  2 +-
- drivers/gpu/drm/i915/intel_wakeref.c    |  2 +-
- include/linux/ref_tracker.h             | 20 ++++++++++++++------
- lib/ref_tracker.c                       |  6 +++---
- lib/test_ref_tracker.c                  |  2 +-
- net/core/dev.c                          |  2 +-
- net/core/net_namespace.c                |  4 ++--
- 8 files changed, 24 insertions(+), 16 deletions(-)
+> +#include <linux/device.h>
 
-diff --git a/drivers/gpu/drm/display/drm_dp_tunnel.c b/drivers/gpu/drm/display/drm_dp_tunnel.c
-index b9c12b8bf2a3e400b6d8e9d184145834c603b9e1..1205a4432eb4142344fb6eed1cb5ba5b21ec6953 100644
---- a/drivers/gpu/drm/display/drm_dp_tunnel.c
-+++ b/drivers/gpu/drm/display/drm_dp_tunnel.c
-@@ -1920,7 +1920,7 @@ drm_dp_tunnel_mgr_create(struct drm_device *dev, int max_group_count)
- 	}
- 
- #ifdef CONFIG_DRM_DISPLAY_DP_TUNNEL_STATE_DEBUG
--	ref_tracker_dir_init(&mgr->ref_tracker, 16, "drm_dptun", "dptun");
-+	ref_tracker_dir_init(&mgr->ref_tracker, 16, "drm_dptun");
- #endif
- 
- 	for (i = 0; i < max_group_count; i++) {
-diff --git a/drivers/gpu/drm/i915/intel_runtime_pm.c b/drivers/gpu/drm/i915/intel_runtime_pm.c
-index 3fdab3b44c08cea16ac2f73aafc2bea2ffbb19e7..c12b5d0e16fa363f3caede372e7a2031676aa7b5 100644
---- a/drivers/gpu/drm/i915/intel_runtime_pm.c
-+++ b/drivers/gpu/drm/i915/intel_runtime_pm.c
-@@ -60,7 +60,7 @@ static struct drm_i915_private *rpm_to_i915(struct intel_runtime_pm *rpm)
- static void init_intel_runtime_pm_wakeref(struct intel_runtime_pm *rpm)
- {
- 	ref_tracker_dir_init(&rpm->debug, INTEL_REFTRACK_DEAD_COUNT,
--			     "intel_runtime_pm", dev_name(rpm->kdev));
-+			     "intel_runtime_pm");
- }
- 
- static intel_wakeref_t
-diff --git a/drivers/gpu/drm/i915/intel_wakeref.c b/drivers/gpu/drm/i915/intel_wakeref.c
-index 5269e64c58a49884f5d712557546272bfdeb8417..615fb77809291be34d94600fdd4d919461a22720 100644
---- a/drivers/gpu/drm/i915/intel_wakeref.c
-+++ b/drivers/gpu/drm/i915/intel_wakeref.c
-@@ -114,7 +114,7 @@ void __intel_wakeref_init(struct intel_wakeref *wf,
- 			 "wakeref.work", &key->work, 0);
- 
- #if IS_ENABLED(CONFIG_DRM_I915_DEBUG_WAKEREF)
--	ref_tracker_dir_init(&wf->debug, INTEL_REFTRACK_DEAD_COUNT, "intel_wakeref", name);
-+	ref_tracker_dir_init(&wf->debug, INTEL_REFTRACK_DEAD_COUNT, "intel_wakeref");
- #endif
- }
- 
-diff --git a/include/linux/ref_tracker.h b/include/linux/ref_tracker.h
-index ddc5a7b2bd84692bbc1e1ae67674ec2c6857e1ec..5878e7fce712930700054033ff5f21547e75224f 100644
---- a/include/linux/ref_tracker.h
-+++ b/include/linux/ref_tracker.h
-@@ -24,7 +24,6 @@ struct ref_tracker_dir {
- 	struct dentry		*dentry;
- 	struct dentry		*symlink;
- #endif
--	char			name[32];
- #endif
- };
- 
-@@ -48,10 +47,21 @@ void ref_tracker_dir_symlink(struct ref_tracker_dir *dir, const char *fmt, ...)
- 
- #endif /* CONFIG_DEBUG_FS */
- 
-+/**
-+ * ref_tracker_dir_init - initialize a ref_tracker dir
-+ * @dir: ref_tracker_dir to be initialized
-+ * @quarantine_count: max number of entries to be tracked
-+ * @class: pointer to static string that describes object type
-+ *
-+ * Initialize a ref_tracker_dir. If debugfs is configured, then a file
-+ * will also be created for it under the top-level ref_tracker debugfs
-+ * directory.
-+ *
-+ * Note that @class must point to a static string.
-+ */
- static inline void ref_tracker_dir_init(struct ref_tracker_dir *dir,
- 					unsigned int quarantine_count,
--					const char *class,
--					const char *name)
-+					const char *class)
- {
- 	INIT_LIST_HEAD(&dir->list);
- 	INIT_LIST_HEAD(&dir->quarantine);
-@@ -65,7 +75,6 @@ static inline void ref_tracker_dir_init(struct ref_tracker_dir *dir,
- 	dir->dentry = NULL;
- 	dir->symlink = NULL;
- #endif
--	strscpy(dir->name, name, sizeof(dir->name));
- 	ref_tracker_dir_debugfs(dir);
- 	stack_depot_init();
- }
-@@ -90,8 +99,7 @@ int ref_tracker_free(struct ref_tracker_dir *dir,
- 
- static inline void ref_tracker_dir_init(struct ref_tracker_dir *dir,
- 					unsigned int quarantine_count,
--					const char *class,
--					const char *name)
-+					const char *class)
- {
- }
- 
-diff --git a/lib/ref_tracker.c b/lib/ref_tracker.c
-index 5e84e5fd78e147a036d4adb511e657da07866a55..5fb384dd919e1f1ad632eaf595b954118bcfddab 100644
---- a/lib/ref_tracker.c
-+++ b/lib/ref_tracker.c
-@@ -123,7 +123,7 @@ __ref_tracker_dir_pr_ostream(struct ref_tracker_dir *dir,
- 	stats = ref_tracker_get_stats(dir, display_limit);
- 	if (IS_ERR(stats)) {
- 		pr_ostream(s, "%s%s@%p: couldn't get stats, error %pe\n",
--			   s->prefix, dir->name, dir, stats);
-+			   s->prefix, dir->class, dir, stats);
- 		return;
- 	}
- 
-@@ -134,14 +134,14 @@ __ref_tracker_dir_pr_ostream(struct ref_tracker_dir *dir,
- 		if (sbuf && !stack_depot_snprint(stack, sbuf, STACK_BUF_SIZE, 4))
- 			sbuf[0] = 0;
- 		pr_ostream(s, "%s%s@%p has %d/%d users at\n%s\n", s->prefix,
--			   dir->name, dir, stats->stacks[i].count,
-+			   dir->class, dir, stats->stacks[i].count,
- 			   stats->total, sbuf);
- 		skipped -= stats->stacks[i].count;
- 	}
- 
- 	if (skipped)
- 		pr_ostream(s, "%s%s@%p skipped reports about %d/%d users.\n",
--			   s->prefix, dir->name, dir, skipped, stats->total);
-+			   s->prefix, dir->class, dir, skipped, stats->total);
- 
- 	kfree(sbuf);
- 
-diff --git a/lib/test_ref_tracker.c b/lib/test_ref_tracker.c
-index d263502a4c1db248f64a66a468e96c8e4cffab25..b983ceb12afcb84ad60360a1e6fec0072e78ef79 100644
---- a/lib/test_ref_tracker.c
-+++ b/lib/test_ref_tracker.c
-@@ -64,7 +64,7 @@ static int __init test_ref_tracker_init(void)
- {
- 	int i;
- 
--	ref_tracker_dir_init(&ref_dir, 100, "selftest", "selftest");
-+	ref_tracker_dir_init(&ref_dir, 100, "selftest");
- 
- 	timer_setup(&test_ref_tracker_timer, test_ref_tracker_timer_func, 0);
- 	mod_timer(&test_ref_tracker_timer, jiffies + 1);
-diff --git a/net/core/dev.c b/net/core/dev.c
-index bac9d29486556023cd99f5101b96b052acb9ba70..a062912525ee573504a9cc252f71aed22693d24f 100644
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -11713,7 +11713,7 @@ struct net_device *alloc_netdev_mqs(int sizeof_priv, const char *name,
- 
- 	dev->priv_len = sizeof_priv;
- 
--	ref_tracker_dir_init(&dev->refcnt_tracker, 128, "netdev", name);
-+	ref_tracker_dir_init(&dev->refcnt_tracker, 128, "netdev");
- #ifdef CONFIG_PCPU_DEV_REFCNT
- 	dev->pcpu_refcnt = alloc_percpu(int);
- 	if (!dev->pcpu_refcnt)
-diff --git a/net/core/net_namespace.c b/net/core/net_namespace.c
-index 39b01af90d240df48827e5c3159c3e2253e0a44d..c03757e39c8a334d307fa1b5cc8f03ad3a8df0e0 100644
---- a/net/core/net_namespace.c
-+++ b/net/core/net_namespace.c
-@@ -403,8 +403,8 @@ static __net_init void preinit_net(struct net *net, struct user_namespace *user_
- {
- 	refcount_set(&net->passive, 1);
- 	refcount_set(&net->ns.count, 1);
--	ref_tracker_dir_init(&net->refcnt_tracker, 128, "net_refcnt", "net_refcnt");
--	ref_tracker_dir_init(&net->notrefcnt_tracker, 128, "net_notrefcnt", "net_notrefcnt");
-+	ref_tracker_dir_init(&net->refcnt_tracker, 128, "net_refcnt");
-+	ref_tracker_dir_init(&net->notrefcnt_tracker, 128, "net_notrefcnt");
- 
- 	get_random_bytes(&net->hash_mix, sizeof(u32));
- 	net->dev_base_seq = 1;
+Perhaps I missed something, but devm_kzalloc() is in device/devres.h. Do you
+need it for something else?
+
+> +#include <linux/dev_printk.h>
+> +#include <linux/irq.h>
+> +#include <linux/irqdomain.h>
+> +#include <linux/mailbox_client.h>
+> +#include <linux/mailbox/riscv-rpmi-message.h>
+> +#include <linux/module.h>
+> +#include <linux/msi.h>
+> +#include <linux/of_irq.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/types.h>
+
+> +#include <vdso/bits.h>
+
+Just make it linux/bits.h as vdso is for user space libvdso and related.
+
+But
+
++ asm/byteorder.h
+
+...
+
+> +static void rpmi_sysmsi_irq_mask(struct irq_data *d)
+> +{
+> +	struct rpmi_sysmsi_priv *priv = irq_data_get_irq_chip_data(d);
+
+Declare temporary variable for hwirq and do irqd_to_hwirq() only once.
+
+> +	int ret;
+> +
+> +	ret = rpmi_sysmsi_set_msi_state(priv, irqd_to_hwirq(d), 0);
+> +	if (ret) {
+> +		dev_warn(priv->dev, "Failed to mask hwirq %lu (error %d)\n",
+> +			 irqd_to_hwirq(d), ret);
+> +	}
+> +	irq_chip_mask_parent(d);
+> +}
+
+...
+
+> +static void rpmi_sysmsi_irq_unmask(struct irq_data *d)
+
+Ditto.
+
+...
+
+> +static void rpmi_sysmsi_set_desc(msi_alloc_info_t *arg, struct msi_desc *desc)
+> +{
+> +	arg->desc = desc;
+> +	arg->hwirq = (u32)desc->data.icookie.value;
+
+Hmm... Why do you need an explicit casting?
+
+> +}
+
+...
+
+> +	if (WARN_ON(fwspec->param_count < 1))
+
++ bug.h
+
+> +		return -EINVAL;
+
++ errno.h (but actually you need err.h due to PTR_ERR() et al.)
+
+...
+
+> +static int rpmi_sysmsi_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct rpmi_sysmsi_priv *priv;
+> +	int rc;
+
+Be consistent with variable naming for the same (semantically) stuff.
+
+> +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+> +	if (!priv)
+> +		return -ENOMEM;
+> +	priv->dev = dev;
+
+> +	platform_set_drvdata(pdev, priv);
+
+How is being used?
+
+> +
+> +	/* Setup mailbox client */
+> +	priv->client.dev		= priv->dev;
+> +	priv->client.rx_callback	= NULL;
+> +	priv->client.tx_block		= false;
+> +	priv->client.knows_txdone	= true;
+> +	priv->client.tx_tout		= 0;
+> +
+> +	/* Request mailbox channel */
+> +	priv->chan = mbox_request_channel(&priv->client, 0);
+> +	if (IS_ERR(priv->chan))
+> +		return PTR_ERR(priv->chan);
+> +
+> +	/* Get number of system MSIs */
+> +	rc = rpmi_sysmsi_get_num_msi(priv);
+> +	if (rc < 1) {
+> +		mbox_free_channel(priv->chan);
+> +		if (rc)
+> +			return dev_err_probe(dev, rc, "Failed to get number of system MSIs\n");
+> +		else
+> +			return dev_err_probe(dev, -ENODEV, "No system MSIs found\n");
+> +	}
+> +	priv->nr_irqs = rc;
+> +
+> +	/* Set the device MSI domain if not available */
+> +	if (!dev_get_msi_domain(dev)) {
+> +		/*
+> +		 * The device MSI domain for OF devices is only set at the
+> +		 * time of populating/creating OF device. If the device MSI
+> +		 * domain is discovered later after the OF device is created
+> +		 * then we need to set it explicitly before using any platform
+> +		 * MSI functions.
+> +		 */
+
+> +		if (is_of_node(dev_fwnode(dev)))
+> +			of_msi_configure(dev, to_of_node(dev_fwnode(dev)));
+
+		if (dev_of_node(dev))
+			of_msi_configure(dev, dev_of_node(dev));
+
+> +		if (!dev_get_msi_domain(dev)) {
+> +			mbox_free_channel(priv->chan);
+> +			return -EPROBE_DEFER;
+> +		}
+> +	}
+> +
+> +	if (!msi_create_device_irq_domain(dev, MSI_DEFAULT_DOMAIN,
+> +					  &rpmi_sysmsi_template,
+> +					  priv->nr_irqs, priv, priv)) {
+> +		mbox_free_channel(priv->chan);
+> +		return dev_err_probe(dev, -ENOMEM, "failed to create MSI irq domain\n");
+> +	}
+> +
+> +	dev_info(dev, "%u system MSIs registered\n", priv->nr_irqs);
+> +	return 0;
+> +}
 
 -- 
-2.49.0
+With Best Regards,
+Andy Shevchenko
+
 
 
