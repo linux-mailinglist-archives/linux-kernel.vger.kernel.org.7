@@ -1,110 +1,128 @@
-Return-Path: <linux-kernel+bounces-663922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-663924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 654D5AC4F55
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 15:08:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CBD09AC4F5A
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 15:09:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B4B7189A346
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 13:08:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0244F1895D0B
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 13:09:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B863027056E;
-	Tue, 27 May 2025 13:08:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65373270EA4;
+	Tue, 27 May 2025 13:09:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="gy7K2xp2"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GIUfW36J"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EBBF1BF33F;
-	Tue, 27 May 2025 13:08:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFEB41DF254;
+	Tue, 27 May 2025 13:09:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748351314; cv=none; b=rJtfk94jRbhMCT2ZjPnasKayYekG4EYzTwrRKMwmg+g3NmjHq5S5aFzJcBd8725NKyq5L42L61MPRHX00lNLNQk+DXdd/KOxHUrPZHSi+JqoHJOFVNDXHx4jkzxYQv3w51oEXeaD03Lqp0BjSR1/o3MOo9nsI0kdhbDRXgS4CsM=
+	t=1748351365; cv=none; b=bNiJV60Z/YaCXyM/k+GK5jIJw4Q2Hd6U79ebXDpDUTsFcRTJwmL7u9xkimcKuKasojF83pjFjqVzyrXSvOYFvD42mJFa4xA3DIJF/SLDGEOF4aZ/6GCVRDjSS3TCIBzsD6ijRL0e/giWcltgi+fA9juHkStlDM8xUpRb4YgPgKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748351314; c=relaxed/simple;
-	bh=GyqnFA67vNMTN7nBS4yxcioiT5LHr0wB3N3vtXA1fCM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kACdCE9Mcyd/VbTFrHXx+aXrTFbKUq8YOAodviUu4x85JEjurpIZDsHfxY2dEX1E166OilnWw3qRJ233TV0PKYVPS58kuy0PRJqgrpdveM1ZooTMz4wUwn2MU4jzbHQb/16rAQYjsuTS06L+JM/A7Yzk2bKeKsjetOe01PNUaec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=gy7K2xp2; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=4bN0OqR1WicbAsGpg+98F6Jxk6N5NYo/HvpHfvT3B+Y=; b=gy7K2xp2EulUgSavLtvFA+S4En
-	PmyS+rHoXBivo3sZDakMNfe0jgxPTbD1PO7rEmmi8dvZ2cjCk5YBFZ9WJRiweg+8REBWi7AyI7TvY
-	+DOro/bwZ30pjC4J3opv35bvs6p9t/p3sOJbYwHmgG6W1merhzgWmJ1r4QsM8Urt47uk=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uJu2V-00E4qc-Uh; Tue, 27 May 2025 15:08:19 +0200
-Date: Tue, 27 May 2025 15:08:19 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: George Moussalem <george.moussalem@outlook.com>
-Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 1/5] dt-bindings: net: qca,ar803x: Add IPQ5018 Internal
- GE PHY support
-Message-ID: <0c57cff8-c730-49cd-b056-ce8fd17c5253@lunn.ch>
-References: <20250525-ipq5018-ge-phy-v1-0-ddab8854e253@outlook.com>
- <20250525-ipq5018-ge-phy-v1-1-ddab8854e253@outlook.com>
- <aa3b2d08-f2aa-4349-9d22-905bbe12f673@kernel.org>
- <DS7PR19MB888328937A1954DF856C150B9D65A@DS7PR19MB8883.namprd19.prod.outlook.com>
- <9e00f85e-c000-40c8-b1b3-4ac085e5b9d1@kernel.org>
- <df414979-bdd2-41dc-b78b-b76395d5aa35@oss.qualcomm.com>
- <DS7PR19MB88834D9D5ADB9351E40EBE5A9D64A@DS7PR19MB8883.namprd19.prod.outlook.com>
- <82484d59-df1c-4d0a-b626-2320d4f63c7e@oss.qualcomm.com>
- <DS7PR19MB88838F05ADDD3BDF9B08076C9D64A@DS7PR19MB8883.namprd19.prod.outlook.com>
+	s=arc-20240116; t=1748351365; c=relaxed/simple;
+	bh=/1X8b2Yqe7zoD0J2HHL7aZvUuRibP3oiKjaMMMz21ZY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KCEUnnK4OenZQc4iGEQ7SpHJQiaVXGlp3UpQ0TBcADAakR3oeM68fAJEhWAkPLcEBWct4IswBLxxmweYRH0LfPM23lAUu99el8bs6+kdMgdJ/FJmdRmp+dtH9XFwFWMO7Uq4Os0p6CYeMWiPBzrnIv5Tffh8RZ+DjOX1kWXERyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GIUfW36J; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03EAEC4CEE9;
+	Tue, 27 May 2025 13:09:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748351364;
+	bh=/1X8b2Yqe7zoD0J2HHL7aZvUuRibP3oiKjaMMMz21ZY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=GIUfW36JSn0HfPXog+nk1fPTmjpozOgLdwQ48eezCzo36dcbP2B/9O/2wQR5yDjAH
+	 3ZffdSF8o9Z+AgDWAa/DuV91Zz8W1mEAsgdWrK/Q0gFxdBDZC3od+SI7hfiGp0uBoO
+	 NwZPRLT88oTCdWKVIa696KGGh1TQIRFkJIJ4ZBg3TI51yDnAEbjyJb2xQs8cxF7jRR
+	 1H7L1s1jhqsyqxyTmJPceqoKiT73d9YdmKFSe5MTGmZ0RcN8FRsQU/nlzDwnm7Udw3
+	 9yoZnvXfCcN74efrLAgojvsmmGRPncPh31mSbtXG1tQv87IzV3MxRo6B6CXcpy1/bE
+	 7TgHSM1hMt7nQ==
+Message-ID: <79fac1e2-c90f-49b0-9f9c-357c994b27ad@kernel.org>
+Date: Tue, 27 May 2025 15:09:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DS7PR19MB88838F05ADDD3BDF9B08076C9D64A@DS7PR19MB8883.namprd19.prod.outlook.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/5] dt-bindings: arm: stm32: add STM32MP157F-DK2 board
+ compatible
+To: Amelie Delaunay <amelie.delaunay@foss.st.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>,
+ Conor Dooley <conor.dooley@microchip.com>
+References: <20250527-stm32mp157f-dk2-v1-0-8aef885a4928@foss.st.com>
+ <20250527-stm32mp157f-dk2-v1-4-8aef885a4928@foss.st.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250527-stm32mp157f-dk2-v1-4-8aef885a4928@foss.st.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-> > > > > > Would qcom,phy-to-phy-dac (boolean) do?
-> > > > > 
-> > > > > Seems fine to me.
-> > > > 
-> > > > Can the driver instead check for a phy reference?
-> > > 
-> > > Do you mean using the existing phy-handle DT property or create a new DT property called 'qcom,phy-reference'? Either way, can add it for v2.
-> > 
-> > I'm not sure how this is all wired up. Do you have an example of a DT
-> > with both configurations you described in your reply to Andrew?
+On 27/05/2025 15:03, Amelie Delaunay wrote:
+> From: Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>
+> 
+> Add the "st,stm32mp157f-dk2" compatible string to the STM32 SoC
+> bindings. The MP157F is functionally similar to the MP157C.
+> 
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-When a SoC interface is connected to a switch, the SoC interface has
-no real knowledge it is actually connected to a switch. All it knows
-is it has a link peer, and it does not know if that peer is 1cm away
-or 100m. It does nothing different.
+How did you get Ack on something which is v1? Cover letter does not
+explain any history here.
 
-The switch has a phandle to the SoC interface, so it knows a bit more,
-but it would be a bit around about for the SoC interface to search the
-whole device tree to see if there is a switch with a phandle pointing
-to it. So for me, a bool property indicating a short 'cable' is the
-better solution.
-
-	Andrew
+Best regards,
+Krzysztof
 
