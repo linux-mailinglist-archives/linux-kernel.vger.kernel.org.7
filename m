@@ -1,161 +1,93 @@
-Return-Path: <linux-kernel+bounces-664336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-664340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D04B4AC5A45
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 20:51:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A128AC5A4E
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 20:55:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EBFA16CED2
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 18:51:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4F4D3A93C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 18:55:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B57B5255F3C;
-	Tue, 27 May 2025 18:51:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49CAC280A27;
+	Tue, 27 May 2025 18:55:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OLqN274I"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BB611E261F;
-	Tue, 27 May 2025 18:51:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0FFC1CD0C;
+	Tue, 27 May 2025 18:55:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748371880; cv=none; b=gFKC+Uj5Tnc8ZQ7/PRpyVIfsEUgbh5BjkUTqyolafeWBv9pg+sIzPndaWTxIqnlSz2cO9cCbSCtwAp2mMFn9yBQ2tyrFLmvGSn9b+CdDVpXkwu7Jgc16PiwSzyB/c3QCFuLIBh2fd8pRUHjUMV5ZfNwdIQZpI5C6i58vmEGDWe4=
+	t=1748372130; cv=none; b=MVVzd7nklDTl+EE/GUyAJ9Fc+oBb24kF8Htvefue04NShsubpfrHsOffJiFD2/BTGTljqR8Gyvxez28mYDT7dFP1SsYbKs4j0ELylbkQWJuKrBJEgyrxsmW0u3C9CaOfB90cT8854VXL3721mEJSljlnYhLxnT3yfWDMeo2ZpP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748371880; c=relaxed/simple;
-	bh=8VZ7/Xn+9sR8KFVasT/gNOAEm+NveTB+cVvhv3Bcz4E=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=fI3N3+wKQBZMnGjlnsiAtjv9cNEd8zHA0ugu7AFQRfnzibTpz0NPk55qhIK3J/Zb+uSlqQ/5Y+hTFHhp+cuiJ6+dDQkSA44co78PqVLwCtxygPuOUjjJCKXVvMEnlRoPpAJfpDt6bjwUMIi+5kZbI5OC8KVfLJS4eEfH4MDr3Tw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D9B4C4CEE9;
-	Tue, 27 May 2025 18:51:18 +0000 (UTC)
-Date: Tue, 27 May 2025 14:52:16 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>
-Subject: [PATCH] ring-buffer: Simplify ring_buffer_read_page() with guard()
-Message-ID: <20250527145216.0187cf36@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1748372130; c=relaxed/simple;
+	bh=HDXaCTsUxEdeY81YLhMA8pdmocB2sFdW0FN8Boejtr4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aea6C1HJ3W5ONA4ds/hc/Thya1JTeHbaB+H2r2cmqdBNVWnFPmFJ8UF67H7hjQ3G9rwVlfddJBM52T2tO4W9o8u0C4URcEsbcSzbVPFuJIhyihMnjBzZcVQO/WEv0rtlqYtTceTCnqhv2zcbNRe4qrQ7nWsQ1MnYN5O+Avb7N7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OLqN274I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF64EC4CEE9;
+	Tue, 27 May 2025 18:55:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748372130;
+	bh=HDXaCTsUxEdeY81YLhMA8pdmocB2sFdW0FN8Boejtr4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OLqN274IqOQEL6R+W3wIgKDhhrztXA7SN+u5J3uyZ3Er3XRnvdAhTcbq73OTp2+kE
+	 +9H+RR/ftd5da6wd6nPZP1iRFT9MwsSXJj152DmolnR5v5PsYfqq5AFs/VRmVia/Q0
+	 zdt9jrgL9SKAZg5ew6artpcDLlyGjw5pmwm4A8kbNLQlKcq1+jmEtsqOiVpfWSeOK2
+	 rZNrTFtTJrsP5J8i/zp/pPqssAzvLmotHU5aWdVuquDWNQ941T2VnX8m2hDwaUis5q
+	 cI/8m8IUZogR+LIyO54IvHz/q52mBsUcNmYfe6Aa/6ND0lr0cSB7RqowXXuXaQPDiH
+	 T5R03iVy5pXKw==
+Date: Tue, 27 May 2025 08:55:28 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Jason Xing <kerneljasonxing@gmail.com>
+Cc: torvalds@linux-foundation.org, mpatocka@redhat.com,
+	linux-kernel@vger.kernel.org, dm-devel@lists.linux.dev,
+	msnitzer@redhat.com, ignat@cloudflare.com, damien.lemoal@wdc.com,
+	bob.liu@oracle.com, houtao1@huawei.com, peterz@infradead.org,
+	mingo@kernel.org, netdev@vger.kernel.org, allen.lkml@gmail.com,
+	kernel-team@meta.com, Eric Dumazet <edumazet@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	David Ahern <dsahern@kernel.org>, Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Subject: Re: [PATCH 6/8] net: tcp: tsq: Convert from tasklet to BH workqueue
+Message-ID: <aDYKoA8lpX_Zxrhh@slm.duckdns.org>
+References: <20240130091300.2968534-1-tj@kernel.org>
+ <20240130091300.2968534-7-tj@kernel.org>
+ <CAL+tcoCKqs1m4bAWTWv9aoQKs7ZpC5PXtMS2ooi6xEB6CbxN1w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAL+tcoCKqs1m4bAWTWv9aoQKs7ZpC5PXtMS2ooi6xEB6CbxN1w@mail.gmail.com>
 
-From: Steven Rostedt <rostedt@goodmis.org>
+Hello,
 
-The function ring_buffer_read_page() had two gotos. One was simply
-returning "ret" and the other was unlocking the reader_lock.
+On Sun, May 25, 2025 at 11:51:55AM +0800, Jason Xing wrote:
+> Sorry to revive the old thread! I noticed this change because I've
+> been doing an investigation around TSQ recently. I'm very cautious
+> about the change in the core/sensitive part of the networking area
+> because it might affect some corner cases beyond our limited test,
+> even though I've tested many rounds and no regression results
+> (including the latency between tcp_wfree and tcp_tsq_handler) show up.
+> My main concern is what the exact benefit/improvement it could bring
+> with the change applied since your BH workqueue commit[1] says the
+> tasklet mechanism has some flaws. I'd like to see if I can
+> reproduce/verify it.
 
-There's no reason to use goto to simply return the "ret" variable. Instead
-just return the value.
+There won't be any behavioral benefits. It's mostly that it'd be great to
+get rid of tasklets with something which is more generic, so if BH workqueue
+doesn't regress, we want to keep moving users to BH workqueue until all
+tasklet users are gone and then remove tasklet.
 
-The jump to the unlocking of the reader_lock can be replaced by
-guard(raw_spinlock_irqsave)(&cpu_buffer->reader_lock).
+Thanks.
 
-With these two changes the "ret" variable is no longer used and can be
-removed. The return value on non-error is what was read and is stored in
-the "read" variable.
-
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- kernel/trace/ring_buffer.c | 28 +++++++++++-----------------
- 1 file changed, 11 insertions(+), 17 deletions(-)
-
-diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-index 0b21d64e90c8..897ce51d3bbf 100644
---- a/kernel/trace/ring_buffer.c
-+++ b/kernel/trace/ring_buffer.c
-@@ -6535,38 +6535,37 @@ int ring_buffer_read_page(struct trace_buffer *buffer,
- 	struct buffer_data_page *bpage;
- 	struct buffer_page *reader;
- 	unsigned long missed_events;
--	unsigned long flags;
- 	unsigned int commit;
- 	unsigned int read;
- 	u64 save_timestamp;
--	int ret = -1;
- 
- 	if (!cpumask_test_cpu(cpu, buffer->cpumask))
--		goto out;
-+		return -1;
- 
- 	/*
- 	 * If len is not big enough to hold the page header, then
- 	 * we can not copy anything.
- 	 */
- 	if (len <= BUF_PAGE_HDR_SIZE)
--		goto out;
-+		return -1;
- 
- 	len -= BUF_PAGE_HDR_SIZE;
- 
- 	if (!data_page || !data_page->data)
--		goto out;
-+		return -1;
-+
- 	if (data_page->order != buffer->subbuf_order)
--		goto out;
-+		return -1;
- 
- 	bpage = data_page->data;
- 	if (!bpage)
--		goto out;
-+		return -1;
- 
--	raw_spin_lock_irqsave(&cpu_buffer->reader_lock, flags);
-+	guard(raw_spinlock_irqsave)(&cpu_buffer->reader_lock);
- 
- 	reader = rb_get_reader_page(cpu_buffer);
- 	if (!reader)
--		goto out_unlock;
-+		return -1;
- 
- 	event = rb_reader_event(cpu_buffer);
- 
-@@ -6600,7 +6599,7 @@ int ring_buffer_read_page(struct trace_buffer *buffer,
- 		if (full &&
- 		    (!read || (len < (commit - read)) ||
- 		     cpu_buffer->reader_page == cpu_buffer->commit_page))
--			goto out_unlock;
-+			return -1;
- 
- 		if (len > (commit - read))
- 			len = (commit - read);
-@@ -6609,7 +6608,7 @@ int ring_buffer_read_page(struct trace_buffer *buffer,
- 		size = rb_event_ts_length(event);
- 
- 		if (len < size)
--			goto out_unlock;
-+			return -1;
- 
- 		/* save the current timestamp, since the user will need it */
- 		save_timestamp = cpu_buffer->read_stamp;
-@@ -6667,7 +6666,6 @@ int ring_buffer_read_page(struct trace_buffer *buffer,
- 		if (reader->real_end)
- 			local_set(&bpage->commit, reader->real_end);
- 	}
--	ret = read;
- 
- 	cpu_buffer->lost_events = 0;
- 
-@@ -6694,11 +6692,7 @@ int ring_buffer_read_page(struct trace_buffer *buffer,
- 	if (commit < buffer->subbuf_size)
- 		memset(&bpage->data[commit], 0, buffer->subbuf_size - commit);
- 
-- out_unlock:
--	raw_spin_unlock_irqrestore(&cpu_buffer->reader_lock, flags);
--
-- out:
--	return ret;
-+	return read;
- }
- EXPORT_SYMBOL_GPL(ring_buffer_read_page);
- 
 -- 
-2.47.2
-
+tejun
 
