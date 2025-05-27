@@ -1,291 +1,164 @@
-Return-Path: <linux-kernel+bounces-663257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-663260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A760AC45E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 03:27:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F599AC45EC
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 03:31:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBB2616A8E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 01:27:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C82F189AF3F
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 01:31:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96FDD136347;
-	Tue, 27 May 2025 01:27:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="qDl1Wzgm"
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2040.outbound.protection.outlook.com [40.107.95.40])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA68CBA2E
-	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 01:27:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.40
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748309240; cv=fail; b=Jii7aqPwFw8rKzfogZyYB/Kf2KtKrMsQaRO40roV43hJeO2SynL05yjf54CQgZVrpYvrMycDUSuYx/s1rAk21jwOqGdPuo6Fx2snnb56q258akmt/OFDaUUZLPgda1KgWNDivULPmHqMOyQla5x3FWEGjxdYPt7Y3anoH9gvlJo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748309240; c=relaxed/simple;
-	bh=OaesTcuurd8YanFWF2D/BG5x00UjX3qNPWyW+tMgx9o=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=kqKqRAV++3GOhkl9XMACglBdvdqcYXq4hlfBlxlcs+6lptykpNwRelRg3JE5X3J0/qt/CNnKx5EmTGvWJppHWeKDpO8UbaVN4EjpXwlYtEqyHWfJ+uB28ibqvYXXEqmveh4P8cVsalRnDpz4g2vi9PC9B3ZuSx+EtijRVlSyFjs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=qDl1Wzgm; arc=fail smtp.client-ip=40.107.95.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=DqMMiXfw8DVWKlVeDErcJYY4YUtZrLaqTCzhD+q2er/iSEevxYeVXn8pESt7zuxSQy0B1cbX6SoHsaMMiGuxxhlPnOoq+GjynQdy3abojL5Z0Z7vxiSIAaVMSkds8xwEfrgy/9WGjGb1ESHa9G4iYlZ5ZRlobmOCk9Zu9qxyI/k4v/virsuYEqcKC98qGLGwLgkLJnOwXoBkPeBn1JuaZODDBByeaxw8Dy7QdzeQUi3mS4thoj6Y53TnBxTF/NBuWXOJT2sggNTR2bfRHYSU9NYKwRCcMOfnkAeaQ2YpsyF/xayTaji3aeCfPD60+++1nXwChLylddARaFDDnZlVGQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LLA71ldIQOXsCKrLzzfm+LPt8myDPkE9MkNW+HffgQQ=;
- b=wAFoUDtIzY90fraB/QUqT0gVCdWxX1lw0sRALzFeVOBgB9FarJHAxY2hmvGvrFfVB/pCGYho0U3qbS5ESUjtR9pBiA2dFAEbp7Ql4JSPJiRBDrGtms6SJA+2xryEFPNMyurd7X/9izJEIJhMcuoKvNolNPRMSO16i7iu0fLe1JAYf3UrO6q8hLe70hrthX0NhtZV4446aYxbEqfP1OXHcG7guzeqxPsg8Id5lyoXNhfSZ1lTRteizQUnsTkBWKTHJjKEupeff1MVj8jCChm6l+BoDAUnigRiBi9D20budp8I9G8YocjLBgQmTI4BPCIjv22x27wvM9WqB4mWHfHg6w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LLA71ldIQOXsCKrLzzfm+LPt8myDPkE9MkNW+HffgQQ=;
- b=qDl1WzgmW0ICDz1KJBH0aspFXt7e3H17X4mxJxbDfNDvvG2ma2nwi5ri2gJnLpeUjO99RQBLxyNHKcXMk13jhJvvIwE7ORpxl/BUqvPkKUB4fGHYGPAgSl6FWWOxNfRSMLmRzIbl7q97Hz44Uc3gxT8INHXZ6t9SnV7TTJg0YrLGaKshHJ6wxNz20ZeIH30hf+5MWO+gNbqiAJqTlmk0v350onBANiurUk2wo40HkUbM147mv5vtKF+aq0HP9Ojh/yPN8YaArp7QrWCvOHgYw5qrIfJyr7hj5fxCQxSz2vRRQuUCpPbrqKbohavxsqQ0bqyBDeVBUGJBggHH1e8zAQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
- MN6PR12MB8470.namprd12.prod.outlook.com (2603:10b6:208:46d::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.21; Tue, 27 May
- 2025 01:27:14 +0000
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a%4]) with mapi id 15.20.8769.022; Tue, 27 May 2025
- 01:27:13 +0000
-From: Zi Yan <ziy@nvidia.com>
-To: "Huang, Ying" <ying.huang@linux.alibaba.com>
-Cc: David Hildenbrand <david@redhat.com>, Bharata B Rao <bharata@amd.com>,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- Jonathan.Cameron@huawei.com, dave.hansen@intel.com, gourry@gourry.net,
- hannes@cmpxchg.org, mgorman@techsingularity.net, mingo@redhat.com,
- peterz@infradead.org, raghavendra.kt@amd.com, riel@surriel.com,
- rientjes@google.com, sj@kernel.org, weixugc@google.com, willy@infradead.org,
- dave@stgolabs.net, nifan.cxl@gmail.com, joshua.hahnjy@gmail.com,
- xuezhengchu@huawei.com, yiannis@zptcorp.com, akpm@linux-foundation.org
-Subject: Re: [RFC PATCH v0 2/2] mm: sched: Batch-migrate misplaced pages
-Date: Mon, 26 May 2025 21:27:10 -0400
-X-Mailer: MailMate (2.0r6255)
-Message-ID: <4B786FED-0247-4105-B9F0-F2E3D865D0FC@nvidia.com>
-In-Reply-To: <87a56yc0mj.fsf@DESKTOP-5N7EMDA>
-References: <20250521080238.209678-1-bharata@amd.com>
- <20250521080238.209678-3-bharata@amd.com>
- <62cef618-123c-4ffa-b45a-c38b65d2a5a3@redhat.com>
- <AE28D27C-58C2-41A4-B553-50049E963745@nvidia.com>
- <5d6b92d8-251f-463b-adde-724ea25b2d89@redhat.com>
- <996B013E-4143-4182-959F-356241BE609A@nvidia.com>
- <382839fc-ea63-421a-8397-72cb35dd8052@redhat.com>
- <FF2F9A08-9BD8-4207-901D-AC9B21443BF6@nvidia.com>
- <dbc7c66b-24c9-49f4-8988-a7eec1280ca8@redhat.com>
- <94BF4806-ABCD-4D01-8577-9E138A634815@nvidia.com>
- <87a56yc0mj.fsf@DESKTOP-5N7EMDA>
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: MN0P220CA0002.NAMP220.PROD.OUTLOOK.COM
- (2603:10b6:208:52e::31) To DS7PR12MB9473.namprd12.prod.outlook.com
- (2603:10b6:8:252::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2536614AD2B;
+	Tue, 27 May 2025 01:31:30 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 397C88F58;
+	Tue, 27 May 2025 01:31:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748309489; cv=none; b=HQRF03dTym5aJeICQi3AY/8L/JBWeib5pjgFkMQ3wpb8cJsZx24M1KJhsKai7ilqhx9q1IKv+Ad1ZHXnJrbP5HZxaHqE+J5FkJJ3wWR+4Bl3mi6eBtT/dS7Ax5AYA2r3ME3ZFx1ojH3ECL8XCWCE2sW5YiUYzK7UM8eF+KJFIVY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748309489; c=relaxed/simple;
+	bh=pm3Pc32Zf4LoF+JccJiR/o/mHSX4HrNhTRUfRVe+RHw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XjOXV+EnVn0Q3Ssp/dbVYEmmuUUOddEq/TgIWRXEFIDP+n5NxfspkZdqo/WUpJR9ArEHqrNXubuyqhT196gbowKroJO/2bp1AayMYaOtYGCMDpjKJYIW78SgWFcNGrc2+VT0EVwuhgJmf+eNphB0awAmdGvWr7rutyt3wAf80Pc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-669ff7000002311f-dc-683515e91fbd
+Date: Tue, 27 May 2025 10:31:16 +0900
+From: Byungchul Park <byungchul@sk.com>
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: Mina Almasry <almasrymina@google.com>, willy@infradead.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, kernel_team@skhynix.com, kuba@kernel.org,
+	ilias.apalodimas@linaro.org, harry.yoo@oracle.com, hawk@kernel.org,
+	akpm@linux-foundation.org, davem@davemloft.net,
+	john.fastabend@gmail.com, andrew+netdev@lunn.ch, toke@redhat.com,
+	tariqt@nvidia.com, edumazet@google.com, pabeni@redhat.com,
+	saeedm@nvidia.com, leon@kernel.org, ast@kernel.org,
+	daniel@iogearbox.net, david@redhat.com, lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org,
+	surenb@google.com, mhocko@suse.com, horms@kernel.org,
+	linux-rdma@vger.kernel.org, bpf@vger.kernel.org,
+	vishal.moola@gmail.com
+Subject: Re: [PATCH 18/18] mm, netmem: remove the page pool members in struct
+ page
+Message-ID: <20250527013116.GA37906@system.software.com>
+References: <20250523032609.16334-1-byungchul@sk.com>
+ <20250523032609.16334-19-byungchul@sk.com>
+ <CAHS8izM-ee5C8W2D2x9ChQz667PQEaYFOtgKZcFCMT4HRHL0fQ@mail.gmail.com>
+ <20250526013744.GD74632@system.software.com>
+ <cae26eaa-66cf-4d1f-ae13-047fb421824a@gmail.com>
+ <20250527010226.GA19906@system.software.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|MN6PR12MB8470:EE_
-X-MS-Office365-Filtering-Correlation-Id: cce80a0e-403c-45c8-e6f5-08dd9cbd9bc2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?KTruqQ33D2+fuIpcNLJdwnhL6HpA2dpqzwH9Mnc6nGbA9vwBHZ5r/0yFXnZc?=
- =?us-ascii?Q?jXZSga+A3aZU2rIne0Ko1CEGPsRzf/hnx0fPDn+rH6JYsqmogsot5/4vbrv8?=
- =?us-ascii?Q?0tbrQ3Ub3Is/2hH8fV9xWkutNJwkMRMW1q6QOz/CGMQCtm6FNrA/sw20rwcN?=
- =?us-ascii?Q?4pvBOAktciHsYYlkVep9DRN3UsHv2C98cOPVbj3cFrWMrDuI9jrxDDed8xGI?=
- =?us-ascii?Q?NDKeLBCQoqXfVQ5rQtGeGv6HHXCJRvlzyGvvGX90GMG8LtHHolG0bf6ivtIx?=
- =?us-ascii?Q?6l0mQnbf8B66EmmWth4qTIctdIwYjoos6L2G7KWHMhFPDxoE6fqF/7jpqsX/?=
- =?us-ascii?Q?jMcva9mywqiRG6NulVp4wwQhMmDnxVhdwWwfjrpqBCrB6oPRW2NQDqGISRLa?=
- =?us-ascii?Q?+7QTBr6jTXkrYq7xSMdpipg+OXCvg07jP1+upgMB/+OtexB3Us+Bn8fEL5ei?=
- =?us-ascii?Q?u/sRPL/PD5tl4SvtTI48AUA0qDOADTyQLFQ5QLt5SPrfOUbCaFmn7kUOlAtW?=
- =?us-ascii?Q?3L/nMFbb3pVYbRWXzyUylxxTWfCp0ZU0eykhbllEO5HzFwEYZ8CPhaWLcBC+?=
- =?us-ascii?Q?le+0tSEz7ynQBl9gqBIDkNqdZ7zaasvgPcNIB/fRSRPkZF3k4Kuh568f+VNs?=
- =?us-ascii?Q?BNQOhgjI6QHiRYIH6dgSWWjyLIFh+PRBLtKI4q/T4hTorYBKVhNgXoWiRM2Y?=
- =?us-ascii?Q?dpAmp24pBJ2KHoGUCRUiY7Os8mwa1vlRm1Q1Br/nB8r3mpqU+jXSTD0sBm1t?=
- =?us-ascii?Q?+uF8mLNFeVfjRx40oKGrCvMSMGMnPcDv5fzrvSi1X+QcO4u09Un6B0z8WnUu?=
- =?us-ascii?Q?CpeLN4KYlw6iNfsZVTm/5ixxArtiH0C906FU0shXVEcJIizpHBeJ5uF3imYa?=
- =?us-ascii?Q?fTJkcdzAhaFJCjqm4ZuIoJhM2Zx1p+NuF8czvBEAA45id0kr0Bz/c+Z0UOaH?=
- =?us-ascii?Q?fmN2UsgvvBcZ/G6HDscfIBE9Of8b3O/2ZGt2dUYE/R5jGw40Okpf9wdhlQlp?=
- =?us-ascii?Q?iE/VVCedp4PXjR07VfHtHljbZYeqeyjjilYnF9KEAfGsBoGfBYJibfSvysLo?=
- =?us-ascii?Q?LsV3GjmQNCZp8mNOfhaj7KIgba1Wenf0ow6/esnFwrze2VIJdPEHpOarmRHD?=
- =?us-ascii?Q?33SkqslRaBas1nrKVQWbozotOhlWKwmUGE71xq7ADxo8pd4LfkLCbbdyJjEf?=
- =?us-ascii?Q?bVMRSd6/pXXVmBK6/BxJLktPmqqa5WYzkZ782Q0BGP/8LJDkuqm4UqTDYFE3?=
- =?us-ascii?Q?aaMra7pRENUqkna2uqYERSgxZuYklYuP3WrWQa0upykRI4vDkeeGiF7TJeDH?=
- =?us-ascii?Q?ugqqud1RnSE53X6qOK9qyu6gnSX66AAriUIvyJFTTyZ5gUOv0/gb0C8NONY5?=
- =?us-ascii?Q?GUy7rhHEMARfka9Q2W3A/HQpkJ6tOoU1fmq8ojT3E6YCW0uhJzRhAqjpDBhY?=
- =?us-ascii?Q?gKfq+CyMRng=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?8IeT8ylpsiDv65rCEfkXxc2AMFNyQ4BpLlwMXZoozVbrcrx6Uhobx/zEUejj?=
- =?us-ascii?Q?spRQfzf3686YRybz4l95xszfO8Ld3NK25YqvkQVaN93+lk1qEjoW7owVKGVY?=
- =?us-ascii?Q?debmkM2vkjYgwjskWGKLXO+zI9iRXb7jL/sdO4b8XyC7QbcSjBDKzgcbCRj2?=
- =?us-ascii?Q?egeQ0L1igWUpoj1n5SLp8fNQOYCwl6GDLTFzqrsVL3RDm+2GY0NaD6LnmS3J?=
- =?us-ascii?Q?CEFJWCEW9677hRL/+EWYCrKXNqZrV9Rdy/zf36/q0feG6j32KAPGajC/ncPN?=
- =?us-ascii?Q?1n48rAD/MpzZoGKPETrL2SF15f1ACUAB+1fWKLJz1zpqv5bL9nszeafNi75H?=
- =?us-ascii?Q?2+LzBybi9K4bGQPg0scFgp88WT8lKG/RAvKC04AAWTCMCi5eE6JMmfZg6/Yu?=
- =?us-ascii?Q?ApBjkhy753DREiUo0MUwEvKxxT4RxsUUnI0V3UraruaS7R7pZJ1ua1Jal4ns?=
- =?us-ascii?Q?TG2Vy7lr1NU9eN0dQsUDRCtab6q/2grtUfpERSkLPGujm0Ma51VhxbrtKSnB?=
- =?us-ascii?Q?NTHljEtvhN/BWoRXeMLIoWQRRfNCaeUdcISV+Rf9OK5Prxo2wsW88m7QUKyB?=
- =?us-ascii?Q?cZMVMvQtQQuopv+Xs+XeErbjE+dN5b8GldL8xyw3JrxvnDxOoAmjRsAsDIo5?=
- =?us-ascii?Q?Z58mwuSmbeGk283b8ByP6m76gpSogrMFYZgvJY2msDBJUOzc2OXD2ccibui7?=
- =?us-ascii?Q?hOO205znyvGCOCBG6LLLf77OWnShco4QCKQuCKMmhjYdWCR2Is64TTWfXLG0?=
- =?us-ascii?Q?ZHIc0D5vA/l8LClH8G9cgFBVrqXM+mreGA1SVvyQ1EZrwrNhPE2cm1SQYO90?=
- =?us-ascii?Q?ApR0YNhvYtT9Ak60Jffo/AeewvEw85eGajDZugh3XeKjUeMwcN4PRhg90/gC?=
- =?us-ascii?Q?1ZzIRRLIWPtK1DLTOdUwtwr99PYtEQSci0mwai36NCQ0wmotW7aleirDRu5O?=
- =?us-ascii?Q?0iQ+IskOTilxtuFKc2QIy7Sm5l+6ymppkZ7iHC4YlzG8xpmn3wi2thPnWXri?=
- =?us-ascii?Q?W9tYHZAtNzd8Br7nIgDtDTwwzM8YE1j89lM58ljuZqAzTmWH87lJG9MIxjSR?=
- =?us-ascii?Q?RmWxcFDt5r7kU5GQ1YEsTGQIzsbOj8mz2+mwxOaKb9ydEd7tbH8Zoso0Piow?=
- =?us-ascii?Q?/tYXsMcvIYn1ePWa2L3K77WK1UMebkNOt4M6pTj7FDM7RmDnLRW7zOvM2fGi?=
- =?us-ascii?Q?0a3DbGld5w3CaQV+p9v0Fj0TxxBZwoMZKSweP1t5i9WrCBeodQNtdUxlI22f?=
- =?us-ascii?Q?NynqbJbgjjenvbtDk+3yF9RCNJ3o9iXWp4lCMGKvR8f5/Wxk+DWHLeZHf1jy?=
- =?us-ascii?Q?AGHRMe7V7o4DjXM8as25gCkqK6SWdSYMbRJxodod7VnWYKmrhf8ShbVSmqJj?=
- =?us-ascii?Q?Y7VweDu6smCqCzEDbU9sU2nkgJqyZGRRCVs3pwRUBPont6BeekotT/iEywiV?=
- =?us-ascii?Q?u1bS6k7tAqf4xPxbitPrLLjcX/BxbBJhND8w6/TUotYnraI9YKUASlK2uSAt?=
- =?us-ascii?Q?Lzd5USViLeWJBtowXINBiwEybg6rjrchCtXZ5w+XoVCAlnN0Z/hYA5ZdMEpv?=
- =?us-ascii?Q?+nE891QY0Ho9vz/sprFMDlSq5rao75Cnaj9Hi7l9?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cce80a0e-403c-45c8-e6f5-08dd9cbd9bc2
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 May 2025 01:27:13.4125
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: XJRu+Jgf89AqcyOulWmNE462BjAiUXDT/0usP3nJGA+VMsU76KLK6+c0IhNKN0/E
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN6PR12MB8470
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250527010226.GA19906@system.software.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SfUzMcRzHfX/PHWdfh3w9jDkzW1YeVvNB0sbmN6OhZsOGW/3W3XQnV1Ia
+	OzQPTQnN6hy7hh5OHCfXSaITMm2uQ64HHaXGlKe49WDFjxn/vfd6vz/vz+ePj0CrjrFTBJ0h
+	VTIaNElqTsEoescUhb6fGKGdX5u3GCz2cg4u96dDyWsXCxabE8G3gVYe+uoecXChKECD5WkW
+	A9/tgzR0PezgwV/czUD1kUoaOk7Uc5CTNUTDQVcpBR5nLgv5g5doqDS95uFZlYWD9vIRFrrd
+	OQw8Npcx4M+NhofWYAg86UFQZ6+kIHD8HAenvVYOOrP8CLz3Oxg4eyAXgb3Gx8JQv4WLnilW
+	lDVT4i3zK160OnaLN0pDxGyflxYdtmOc6Ph6ihfbmqo5sb5giBFvufooMefQR0780tXCiJ9q
+	XnCiveIFIzZY63ixzzF9Hd6siEyQknRpknFe1HaF1tv1jk8+ODa9p6WVM6ECRTYKEggOJx6T
+	g/6rXfmNKBsJAoNnk6rueBlzeA7x+QZ+RybgueTDSzefjRQCjXtYYj/iZGRjPI4jz98U8vKs
+	EgN52TlJxipcRZGTz1bLWonHkceFb3/HaRxCfMPvKTlO46mkZFiQcRBeTPxfrlGynohnkXvO
+	R5S8iuAygdy2nWP/nDmZ1Jb6mDyEzf/Vmv+rNf+rtSLahlQ6Q5peo0sKD9NmGHTpYfE79Q70
+	60GK9/3Y4kJfPbFuhAWkHqP0SOFaFatJS8nQuxERaPUEpTPvF1ImaDL2Ssad24y7k6QUN5oq
+	MOpJyoWBPQkqnKhJlXZIUrJk/OtSQtAUE8rt71iUHHq1qLOeWw8bYjwRnRvHVZx5Hhdt6L9T
+	aDilDH41eobfuSTqYtPdFdfDE1d1bz0/EvM5ZAE3LWxtvu16cGZ7E7MrbfNN7/5lzcMx+uTY
+	4Ss7apT32xoyFx1tPTr28Nrm6KVsVuiam/wWZk3jHp4Ki2wctSnSsfxBIK7h7cpeNZOi1SwI
+	oY0pmp98m5tjHAMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTYRzGe885O+e4nLya1sGCYt01rcjqH4pYBL34IRICTSJdemijeWkz
+	06AwlURT06zQtWIlZS5jsWROEaklXkjQNGtlNdPUiVLZxWqa1gmivj38nuf37eFpv0kmkNek
+	Zoi6VJVWycoZ+d7wvJDxgK3qTZWzQWC01LFw53sW1AzaZWA02xB8+THAwefWdhaqr0/TYOzO
+	Z+CrxUPDSNsQB65boww0FzTQMHS+g4WS/Bkacu23KXh0tVMGPbZSGVz03KShIWeQg74mIwtv
+	6uZlMOooYaDTUMuAqzQK2kyLYfrxJIJWSwMF08VXWajoNbEwnO9C0PtoiIErZ0oRWFqcMpj5
+	bmSjlKS+9gVFGg2vOWKyHif3bweRImcvTazmQpZYP13gyKtnzSzpqJxhSKP9M0VK8t6zZGrk
+	JUM+tPSzpNr9kSKW+n6GdJlauX2+8fKIZFGryRR1GyMT5ereETeXnuuTNflygM1BlfIi5MUL
+	OEywX3yCihDPM3i10DSaJGEWrxWczh+0lP1xsDDx3MEVITlP40mZYCmwMVKxCO8Xnr6t4iRX
+	gUF4PrxEwn64iRLK+6KlrMC+QmfVuz9zGgcJzrlxSprTeKlQM8dL2AvvEFxT9ygpB+CVwgNb
+	O1WGFIb/bMN/tuGfbUK0GflrUjNTVBrt1lD9UXV2qiYrNCktxYp+f+DWqdlyO/rSt8eBMI+U
+	3ooeMUztJ1Nl6rNTHEjgaaW/wlb2GymSVdknRV1agu64VtQ70FKeUS5RRMeKiX74iCpDPCqK
+	6aLub0vxXoE5qLu9Yx0T820ivC0mPinMa316hPemhws+1B4ez9f3b/vp9ozvOqZNDunJqVm+
+	/dyaWX/vhupY7PmadmPKThIix2Kjg6sqggfVyV3vWqoPHpk3R3iu+caNXfZ5srtwC05bZU+w
+	3l3sCkiRxw2c3nCoeNlY+E732UsrWFn9AfeJXJ+JhUpGr1ZtDqJ1etUvF08Tpf8CAAA=
+X-CFilter-Loop: Reflected
 
-On 26 May 2025, at 21:18, Huang, Ying wrote:
-
-> Zi Yan <ziy@nvidia.com> writes:
->
->> On 26 May 2025, at 5:29, David Hildenbrand wrote:
->>
->>> On 22.05.25 19:30, Zi Yan wrote:
->>>> On 22 May 2025, at 13:21, David Hildenbrand wrote:
->>>>
->>>>> On 22.05.25 18:38, Zi Yan wrote:
->>>>>> On 22 May 2025, at 12:26, David Hildenbrand wrote:
->>>>>>
->>>>>>> On 22.05.25 18:24, Zi Yan wrote:
->>>>>>>> On 22 May 2025, at 12:11, David Hildenbrand wrote:
->>>>>>>>
->>>>>>>>> On 21.05.25 10:02, Bharata B Rao wrote:
->>>>>>>>>> Currently the folios identified as misplaced by the NUMA
->>>>>>>>>> balancing sub-system are migrated one by one from the NUMA
->>>>>>>>>> hint fault handler as and when they are identified as
->>>>>>>>>> misplaced.
->>>>>>>>>>
->>>>>>>>>> Instead of such singe folio migrations, batch them and
->>>>>>>>>> migrate them at once.
->>>>>>>>>>
->>>>>>>>>> Identified misplaced folios are isolated and stored in
->>>>>>>>>> a per-task list. A new task_work is queued from task tick
->>>>>>>>>> handler to migrate them in batches. Migration is done
->>>>>>>>>> periodically or if pending number of isolated foios exceeds
->>>>>>>>>> a threshold.
->>>>>>>>>
->>>>>>>>> That means that these pages are effectively unmovable for
->>>>>>>>> other purposes (CMA, compaction, long-term pinning, whatever)
->>>>>>>>> until that list was drained.
->>>>>>>>>
->>>>>>>>> Bad.
->>>>>>>>
->>>>>>>> Probably we can mark these pages and when others want to migrate=
- the page,
->>>>>>>> get_new_page() just looks at the page's target node and get a ne=
-w page from
->>>>>>>> the target node.
->>>>>>>
->>>>>>> How do you envision that working when CMA needs to migrate this e=
-xact page to a different location?
->>>>>>>
->>>>>>> It cannot isolate it for migration because ... it's already isola=
-ted ... so it will give up.
->>>>>>>
->>>>>>> Marking might not be easy I assume ...
->>>>>>
->>>>>> I guess you mean we do not have any extra bit to indicate this pag=
-e is isolated,
->>>>>> but it can be migrated. My point is that if this page is going to =
-be migrated
->>>>>> due to other reasons, like CMA, compaction, why not migrate it to =
-the target
->>>>>> node instead of moving it around within the same node.
->>>>>
->>>>> I think we'd have to identify that
->>>>>
->>>>> a) This page is isolate for migration (could be isolated for other
->>>>>     reasons)
->>>>>
->>>>> b) The one responsible for the isolation is numa code (could be som=
-eone
->>>>>     else)
->>>>>
->>>>> c) We're allowed to grab that page from that list (IOW sync against=
-
->>>>>     others, and especially also against), to essentially "steal" th=
-e
->>>>>     isolated page.
->>>>
->>>> Right. c) sounds like adding more contention to the candidate list.
->>>> I wonder if we can just mark the page as migration candidate (using
->>>> a page flag or something else), then migrate it whenever CMA,
->>>> compaction, long-term pinning and more look at the page.
->>>
->>> I mean, all these will migrate the page either way, no need to add an=
-other flag for that.
->>>
->>> I guess what you mean, indicating that the migration destination
->>> should be on a different node than the current one.
->>
->> Yes.
->>
->>>
->>> Well, and for the NUMA scanner (below) to find which pages to migrate=
-=2E
->>>
->>> ... to be this raises some questions: like, if we don't migrate
->>> immediately, could that information ("migrate this page") actually
->>> now be wrong? I guess a way to
->>
->> Could be. So it is better to evaluate the page before the actual migra=
-tion, in
->> case the page is no longer needed in a remote node.
->>
->>> obtain the destination node would suffice: if the destination node
->>> matches, no need to migrate from that NUMA scanner.
->>
->> Right. The destination node could be calculated by certain metric like=
- most recent
->> accesses or last remote node access time.
->
-> Do we have the necessary information available?  last_cpupid have eithe=
-r
-> last accessing CPU or last scanning timestamp, not both.  Any other
-> information source?
-
-Not at the moment. A unified page access information framework
-is probably needed. The recent LSFMM has a related discussion[1]. We
-also have a biweekly discussion on it[2].
-
-[1] https://lwn.net/Articles/1016722/
-[2] https://lore.kernel.org/linux-mm/ae6e7b19-f221-9a5d-a3eb-799ed271de11=
-@google.com/
-
-Best Regards,
-Yan, Zi
+On Tue, May 27, 2025 at 10:02:26AM +0900, Byungchul Park wrote:
+> On Mon, May 26, 2025 at 05:58:10PM +0100, Pavel Begunkov wrote:
+> > struct net_iov {
+> > 	unsigned long flags_padding;
+> > 	union {
+> > 		struct {
+> > 			// same layout as in page + build asserts;
+> > 			...
+> > 			struct page_pool *pp;
+> > 			...
+> > 		};
+> > 		struct netmem_desc desc;
+> > 	};
+> > };
+> > 
+> > struct netmem_desc *page_to_netmem_desc(struct page *page)
+> > {
+> > 	return &page->netmem_desc;
+> 
+> page will not have any netmem things in it after this, that matters.
+						   ^
+						   this patch series
+	Byungchul
+> 
+> > }
+> > 
+> > struct netmem_desc *netmem_to_desc(netmem_t netmem)
+> > {
+> > 	if (netmem_is_page(netmem))
+> > 		return page_to_netmem_desc(netmem_to_page(netmem);
+> > 	return &netmem_to_niov(netmem)->desc;
+> > }
+> > 
+> > The compiler should be able to optimise the branch in netmem_to_desc(),
+> > but we might need to help it a bit.
+> > 
+> > 
+> > Then, patch 2 ... N convert page pool and everyone else accessing
+> > those page fields directly to netmem_to_desc / etc.
+> > 
+> > And the final patch replaces the struct group in the page with a
+> > new field:
+> > 
+> > struct netmem_desc {
+> > 	struct page_pool *pp;
+> > 	...
+> > };
+> > 
+> > struct page {
+> > 	unsigned long flags_padding;
+> > 	union {
+> > 		struct netmem_desc desc;
+> 		^
+> 		should be gone.
+> 
+> 	Byungchul
+> > 		...
+> > 	};
+> > };
+> > 
+> > net_iov will drop its union in a later series to avoid conflicts.
+> > 
+> > btw, I don't think you need to convert page pool to netmem for this
+> > to happen, so that can be done in a separate unrelated series. It's
+> > 18 patches, and netdev usually requires it to be no more than 15.
+> > 
+> > -- 
+> > Pavel Begunkov
 
