@@ -1,181 +1,218 @@
-Return-Path: <linux-kernel+bounces-663926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-663928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71E77AC4F60
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 15:11:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 231ABAC4F66
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 15:13:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DF7417E718
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 13:12:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D83D11894FB7
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 13:13:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9A79270554;
-	Tue, 27 May 2025 13:11:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90F40271449;
+	Tue, 27 May 2025 13:13:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MVviRJxl"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qOzwl26J"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD9B426A0F4
-	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 13:11:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7ADF1E4BE;
+	Tue, 27 May 2025 13:12:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748351513; cv=none; b=nr9eYoaDXWy13HDoJUvmYSPUJVCR2SHYIqH9/GNIhz23eENkXEgRoy0a7knOaRbdgEZAFItCpiQzOQIc7dv/VEDFpYwSErfkUDRe5IE4pkbPnGKraU9tEaf4lCW2usaYjSPV3kG04aothFMo/0yW+4EPBK0UyhXahiNR4NQnMn0=
+	t=1748351579; cv=none; b=Rny4z/1bMinTPYcITp4vYoR5u5OowlDVftyAmIQRtO4SKHEHkC8mShaXijEndRiAzs0Vq/v8VXjmEyFoPAMKZZ826LtiHqebo1C6Z6vB4W0/x/zDhUJy48ljyzYdvZoU0mZyO7Bwg0KJotVWGA2GF4oAqbIS7+imdTcBAA/DMAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748351513; c=relaxed/simple;
-	bh=SiMzsb1VfHm5J4WodUT7EnpYMmNCsCwdyj3bk/ztlDo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BjL4SiJau6/gQO6O/yhyL2sLJ3l+qdHYljl4NeooG/WuVq+ZRuzz1WyjD35kmipdAUVhi9J7qpcs5OZDrQ+GZdP7lIG4bW4FHMmGZzBiT6hL4biGjZsKoCBE54m9Jso8BAZte2NOOVB4LlsGJayjGj7eXBnjNw0dnekHu71Nzxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MVviRJxl; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1748351510;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BzTHRlzQzEXlYnuCuknzHPGDh3G3DQ1P973u+hYfSqw=;
-	b=MVviRJxlKVS+z3YV31BTK+fXcvZSHxRhGo8uzWYB8O/9h73x9kjqJEjQHO2Wy5e8M8gJCT
-	IWme3GFgogS1/V7RjNAGQ9OyHZHDES8qtATOKbTNnYn5SNdBnLfRU4g9u9DIPBBsdTl4rQ
-	MPTGFAKXhzDswtNRq6laHoGeiryhhUs=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-471-eB8TPnLyNLGZCybrafh7dQ-1; Tue, 27 May 2025 09:11:49 -0400
-X-MC-Unique: eB8TPnLyNLGZCybrafh7dQ-1
-X-Mimecast-MFC-AGG-ID: eB8TPnLyNLGZCybrafh7dQ_1748351508
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3a4d81f7adeso1487339f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 06:11:49 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748351508; x=1748956308;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BzTHRlzQzEXlYnuCuknzHPGDh3G3DQ1P973u+hYfSqw=;
-        b=fs0TqFOrwtFYbObZGRRvsE4ey5QBP2MngCSqqSg/6TR7PaStQN3wu3bvYh84dIZqgS
-         F3YSFSvf9XPZngP8DIZd3oT2kxDj0AgtMIauYnl19C9B5cJu6Mqa8ZEQOPEC3KTp3QNs
-         D4dUG4ZgZX47Qzr02g2Jcf+TOJPEfq9qcBctsBsBsrHVvTAML3TOvDp0LYT5JNhl9FrG
-         03DiJTw9gVFBuQMVHJmmS9eYHLNcfRXhlrSa3UFAel+MlgOrbABl/5xffSEri25Ox8Uk
-         wlgOb8lfTmgOro9iJXztlT3JjSkKLdpP4IxT5QTcYYBIgaAVWq2rvKLJ1Y1k+8kzcKrc
-         16+g==
-X-Forwarded-Encrypted: i=1; AJvYcCVsvpsMNabuR02wmglybDR01pn4z3kusaucRekaip7BFExriw89Ia5jY4Wnch0lRddcLGBdnt2zExGsUDA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBx7dEKjChA9qVdWGF2QrbcMwq/4xHkf9kQlKmhRniVDnP3Ao8
-	3aUiTOklU/TWjhNPxy2vbt7L45iKBVFKaNQavoQx5OG2KsVR2m2I0rIsuoosjnMGZvC/0DeEOin
-	Sam3XrJUjAbZ1wjq1Rwbc1/vqRxfXw4aL2dlfXoRhRGJcfFxaFhnX0p3dsEsl7p5brA==
-X-Gm-Gg: ASbGncv7gOdU6I7475ZhTws18JR7FNr8JQkL3opiJoMksg3c9BrevD4jwox3iad8X0I
-	eJqgfKQBdeuQqOH/FXzmZLxuFJ/yoiQTNV0Ox6TGYYbw5xZLP1WA7GnUHWlsWWaXRQf15gNckuT
-	jQK/mmQfVOHyOAhtGww7acrDRyw0w95F3ZXvmE5TuCYydVFvzVgj5F8d4laWR1f0uDYIWDd76dX
-	UDJlu6CmRFgH5MrIe29T8OXNhAgKxyYOOByODdF6y2NJ+082HCFDk1+CXO/uQSIIBCpLm8ukMcI
-	Sn4K5i/Grp0glbhNaoXmBMDDEDf3n4O4qvvK8V1vFA==
-X-Received: by 2002:a5d:5846:0:b0:3a4:dd63:4ad8 with SMTP id ffacd0b85a97d-3a4dd634d63mr5309801f8f.20.1748351508248;
-        Tue, 27 May 2025 06:11:48 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEGwzfscWQod+IIooOxsiygxTezSJ1KyM1UcawxlKgs8fMFxR+Ub74ZW0DStChnY332ZRPPxQ==
-X-Received: by 2002:a5d:5846:0:b0:3a4:dd63:4ad8 with SMTP id ffacd0b85a97d-3a4dd634d63mr5309755f8f.20.1748351507735;
-        Tue, 27 May 2025 06:11:47 -0700 (PDT)
-Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.57.104])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4e57da10csm507739f8f.22.2025.05.27.06.11.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 May 2025 06:11:46 -0700 (PDT)
-Date: Tue, 27 May 2025 15:11:45 +0200
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Shashank Balaji <shashank.mahadasyam@sony.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Peter Zijlstra <peterz@infradead.org>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Shinya Takumi <shinya.takumi@sony.com>
-Subject: Re: [PATCH] sched_deadline, docs: add affinity setting with cgroup2
- cpuset controller
-Message-ID: <aDW6EckuCFTZfPZ8@jlelli-thinkpadt14gen4.remote.csb>
-References: <20250522-sched-deadline-cpu-affinity-v1-1-2172c683acac@sony.com>
+	s=arc-20240116; t=1748351579; c=relaxed/simple;
+	bh=dzGbsJp//zG7Ib4jWbLdhkmBxjqHy4GxwjXSB0ekCFg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Nemh4/SvrrGVKlcCVE3s/KuU+URDXBcgznagRX07TiF/DVBWw16U3NOfXA2jzLR4nPcn1puA7CjtmcvyldMrDHy2Lb3+zfin4HUB63rYO+KhyYKrDMJEVvuF7rSSDwgNpmx3uIKk/tz9Em/XWOz+iTy8+5AjjPltLjswH2xjDms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qOzwl26J; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A14DC4CEE9;
+	Tue, 27 May 2025 13:12:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748351579;
+	bh=dzGbsJp//zG7Ib4jWbLdhkmBxjqHy4GxwjXSB0ekCFg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=qOzwl26JN6O+y041qoX9r0mMR044QBRYuwDcw0qzQmN1G3G38vHvbkM1xjuuIZQke
+	 ExKpA99O4IBzVhvQF0VMFkqNgxtTOJNzHYyi95jv81cTKAHBqpdikYp7OqyzpZ5IMQ
+	 2nKBrcz11JWiGg+Hfkf212qytSXEZwK6jfKoKitW0DQ/rQMdyHpdygpKCiZdxST6ss
+	 Wr77GYqoxufgtwQEhXUCopGDbk6CwVf5o+EHDKMbYvgLsJLFUbcRhk+MmdPMYksEuT
+	 Xa7YPqgr2d7qUwFlD7YFI2d/Z6ykzyqQNkH3L7PmzOi49BAbpYlOV5ZjW38scOi0t9
+	 9aZYbxzzuWO0Q==
+Message-ID: <eec2a1db-717e-46f2-a988-6beefab7b699@kernel.org>
+Date: Tue, 27 May 2025 15:12:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250522-sched-deadline-cpu-affinity-v1-1-2172c683acac@sony.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/5] ARM: dts: stm32: fullfill diversity with OPP for
+ STM32M15x SOCs
+To: Amelie Delaunay <amelie.delaunay@foss.st.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250527-stm32mp157f-dk2-v1-0-8aef885a4928@foss.st.com>
+ <20250527-stm32mp157f-dk2-v1-1-8aef885a4928@foss.st.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
+ QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
+ +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
+ ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
+ 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
+ hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
+ tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
+ 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
+ naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
+ hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
+ whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
+ qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
+ RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
+ Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
+ H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
+ dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
+ AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
+ jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
+ zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
+ XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
+In-Reply-To: <20250527-stm32mp157f-dk2-v1-1-8aef885a4928@foss.st.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello!
-
-On 22/05/25 17:06, Shashank Balaji wrote:
-> Setting the cpu affinity mask of a SCHED_DEADLINE process using the cgroup v1
-> cpuset controller is already detailed. Add similar information for cgroup v2's
-> cpuset controller.
-
-Thanks a lot for working on this. Really appreaciated.
-
-> Signed-off-by: Shashank Balaji <shashank.mahadasyam@sony.com>
-> ---
->  Documentation/scheduler/sched-deadline.rst | 29 +++++++++++++++++++++++------
->  1 file changed, 23 insertions(+), 6 deletions(-)
+On 27/05/2025 15:03, Amelie Delaunay wrote:
+> From: Alexandre Torgue <alexandre.torgue@foss.st.com>
 > 
-> diff --git a/Documentation/scheduler/sched-deadline.rst b/Documentation/scheduler/sched-deadline.rst
-> index a727827b8dd52710f880c2b92d3a8224c259873c..e3d7968ff6c3c43f87e249dbcb309619dbd616bf 100644
-> --- a/Documentation/scheduler/sched-deadline.rst
-> +++ b/Documentation/scheduler/sched-deadline.rst
-> @@ -20,7 +20,8 @@ Deadline Task Scheduling
->        4.3 Default behavior
->        4.4 Behavior of sched_yield()
->      5. Tasks CPU affinity
-> -      5.1 SCHED_DEADLINE and cpusets HOWTO
-> +      5.1 Using cgroup v1 cpuset controller
-> +      5.2 Using cgroup v2 cpuset controller
->      6. Future plans
->      A. Test suite
->      B. Minimal main()
-> @@ -671,12 +672,15 @@ Deadline Task Scheduling
->  5. Tasks CPU affinity
->  =====================
+> This commit creates new files to manage security features and supported OPP
+> on STM32MP15x SOCs. On STM32MP15xY, "Y" gives information:
+>  -Y = A means no cryp IP and no secure boot + A7-CPU@650MHz.
+>  -Y = C means cryp IP + optee + secure boot + A7-CPU@650MHz.
+>  -Y = D means no cryp IP and no secure boot + A7-CPU@800MHz.
+>  -Y = F means cryp IP + optee + secure boot + A7-CPU@800MHz.
+> 
+> It fullfills the initial STM32MP15x SoC diversity introduced by
+> commit 0eda69b6c5f9 ("ARM: dts: stm32: Manage security diversity
+> for STM32M15x SOCs").
+> 
+> Signed-off-by: Alexandre Torgue <alexandre.torgue@foss.st.com>
+> Signed-off-by: Amelie Delaunay <amelie.delaunay@foss.st.com>
+> ---
+>  arch/arm/boot/dts/st/stm32mp15xa.dtsi |  5 +++++
+>  arch/arm/boot/dts/st/stm32mp15xc.dtsi |  4 +++-
+>  arch/arm/boot/dts/st/stm32mp15xd.dtsi |  5 +++++
+>  arch/arm/boot/dts/st/stm32mp15xf.dtsi | 20 ++++++++++++++++++++
+>  4 files changed, 33 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/boot/dts/st/stm32mp15xa.dtsi b/arch/arm/boot/dts/st/stm32mp15xa.dtsi
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..cb55f5966f74011d12d7a5c6ad047569d25d4e98
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/st/stm32mp15xa.dtsi
+> @@ -0,0 +1,5 @@
+> +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-3-Clause)
+> +/*
+> + * Copyright (C) STMicroelectronics 2025 - All Rights Reserved
+> + * Author: Alexandre Torgue <alexandre.torgue@foss.st.com> for STMicroelectronics.
+
+You create entirely empty, unused file. There is literally no benefit of
+this file, no impact, just more files to handle.
+
+> + */
+> diff --git a/arch/arm/boot/dts/st/stm32mp15xc.dtsi b/arch/arm/boot/dts/st/stm32mp15xc.dtsi
+> index 97465717f932fc223647af76e88a6182cf3c870f..4d30a2a537f15c1e145635b090de0f0222526579 100644
+> --- a/arch/arm/boot/dts/st/stm32mp15xc.dtsi
+> +++ b/arch/arm/boot/dts/st/stm32mp15xc.dtsi
+> @@ -1,9 +1,11 @@
+> -// SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
+> +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-3-Clause)
+
+License change is not explained in commit msg and anyway should be
+separate commit with acks/sobs from all copyright holders. You also need
+to CC them (Cc e.g. Gatien).
+
+>  /*
+>   * Copyright (C) STMicroelectronics 2019 - All Rights Reserved
+>   * Author: Alexandre Torgue <alexandre.torgue@st.com> for STMicroelectronics.
+>   */
 >  
-> - -deadline tasks cannot have an affinity mask smaller that the entire
-> - root_domain they are created on. However, affinities can be specified
-> - through the cpuset facility (Documentation/admin-guide/cgroup-v1/cpusets.rst).
-> + Deadline tasks cannot have a cpu affinity mask smaller than the root domain they
-> + are created on. So, using ``sched_setaffinity(2)`` won't work. Instead, the
-> + the deadline task should be created in a restricted root domain. This can be
-> + done using the cpuset controller of either cgroup v1 (deprecated) or cgroup v2.
-> + See :ref:`Documentation/admin-guide/cgroup-v1/cpusets.rst <cpusets>` and
-> + :ref:`Documentation/admin-guide/cgroup-v2.rst <cgroup-v2>` for more information.
->  
-> -5.1 SCHED_DEADLINE and cpusets HOWTO
-> -------------------------------------
-> +5.1 Using cgroup v1 cpuset controller
-> +-------------------------------------
->  
->   An example of a simple configuration (pin a -deadline task to CPU0)
->   follows (rt-app is used to create a -deadline task)::
-> @@ -695,6 +699,19 @@ Deadline Task Scheduling
->     rt-app -t 100000:10000:d:0 -D5 # it is now actually superfluous to specify
->  				  # task affinity
->  
-> +5.2 Using cgroup v2 cpuset controller
-> +-------------------------------------
+> +#include "stm32mp15xa.dtsi"
 > +
-> + Assuming the cgroup v2 root is mounted at ``/sys/fs/cgroup``.
+>  &etzpc {
+>  	cryp1: cryp@54001000 {
+>  		compatible = "st,stm32mp1-cryp";
+> diff --git a/arch/arm/boot/dts/st/stm32mp15xd.dtsi b/arch/arm/boot/dts/st/stm32mp15xd.dtsi
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..cb55f5966f74011d12d7a5c6ad047569d25d4e98
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/st/stm32mp15xd.dtsi
+> @@ -0,0 +1,5 @@
+> +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-3-Clause)
+> +/*
+> + * Copyright (C) STMicroelectronics 2025 - All Rights Reserved
+> + * Author: Alexandre Torgue <alexandre.torgue@foss.st.com> for STMicroelectronics.
+> + */
+
+Same problems.
+
+> diff --git a/arch/arm/boot/dts/st/stm32mp15xf.dtsi b/arch/arm/boot/dts/st/stm32mp15xf.dtsi
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..5f6a2952125d00d468e2e4012024f02380cfaa49
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/st/stm32mp15xf.dtsi
+> @@ -0,0 +1,20 @@
+> +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-3-Clause)
+> +/*
+> + * Copyright (C) STMicroelectronics 2025 - All Rights Reserved
+> + * Author: Alexandre Torgue <alexandre.torgue@foss.st.com> for STMicroelectronics.
+> + */
 > +
-> +   cd /sys/fs/cgroup
-> +   echo '+cpuset' > cgroup.subtree_control
-> +   mkdir deadline_group
-> +   echo 0 > deadline_group/cpuset.cpus
-> +   echo 'root' > deadline_group/cpuset.cpus.partition
-> +   echo $$ > deadline_group/cgroup.procs
-> +   rt-app -t 100000:10000:d:0 -D5
+> +#include "stm32mp15xd.dtsi"
+> +
+> +/ {
+> +	soc {
+> +		cryp1: cryp@54001000 {
+> +			compatible = "st,stm32mp1-cryp";
+> +			reg = <0x54001000 0x400>;
+> +			interrupts = <GIC_SPI 79 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&rcc CRYP1>;
+> +			resets = <&rcc CRYP1_R>;
+> +			status = "disabled";
+> +		};
+> +	};
+> +};
+> 
 
-Sadly, the example with cgroup v1 was made at a time when rt-app still
-supported command line parameters like the above. I believe nowadays
-that is not the case anymore and one needs to create a json file
-describing the task to run it with rt-app.
 
-I would say we should update both examples to use something a little
-more generic, e.g.,
-
-# chrt --deadline --sched-runtime 10000000 --sched-period 100000000 0 yes >/dev/null &
-
-What do you think?
-
-Best,
-Juri
-
+Best regards,
+Krzysztof
 
