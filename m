@@ -1,40 +1,41 @@
-Return-Path: <linux-kernel+bounces-664016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-664018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE700AC50BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 16:22:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5D2DAC50C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 16:22:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A66A3B35D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 14:21:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D52233B9BDC
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 14:22:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFF5727876E;
-	Tue, 27 May 2025 14:22:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A92F527979A;
+	Tue, 27 May 2025 14:22:11 +0000 (UTC)
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB31526C3A9
-	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 14:22:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D14E4275864
+	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 14:22:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748355730; cv=none; b=ayfC81dKjsORztFNfpwpYlUVGXcpdeefNhIrQI6vcb7O84T+XFhpYPEQMq6UkOdnzy+lV7rCrifx8NUwz/Tj+Ra+TSEZPlkCuyoPAJhpG1of9F2oakGKu4S9dzgrnudj77gc9NhLyJn2xQ0gSEGHkcn4VWUTN4i4RuGabtK84rs=
+	t=1748355731; cv=none; b=J+DfVfd/GRoTNji87RBCmuzdUe6FYbLK1sQtTsVm5D5T1C0prcU1Ewlcl9O7M8O7v5TmYS/T5BS26R7SyxtkQdkjqOdBfqipOJIWmhSe4UEArYi0LizVRrxYMrDYU9hZxQAQcbUk+Fo6U15g5ZleRrXseU0Wum+GvRgUND6q+Mg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748355730; c=relaxed/simple;
-	bh=FG+7I0grQiHY2grVhSfeYv+z2r9fJ/zchWiOdeNz9SM=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=fFatgCetxuQ1Ybn4cW9uyazq7kX94NotHUV6/eZWEYC9R6HZzDoU3NMAE6EUICb0xpvOMQ3jlT6aZ8WCsjqB3DawRwpEC66KnHyTLlD13ehuQbRyANwatC/F4R+/WNsneAkC7DTU6+yaqmNVeVf0SCgHeYaWWmUauxH2v1/Hl/0=
+	s=arc-20240116; t=1748355731; c=relaxed/simple;
+	bh=Spt9rmFVuUSVrZwGg2CbBOduRTvfvOdyEp+fTnns0Mw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=imtFE+NbfqYagp5GqD5yItfT2TmlD6NXPILXNbNN+hGN4RoIuADPmCvWwirX3/GmU0iqfuR6Fcdw0aa3rhwySeMug+e4r7MLE73YR4O4DHSJFDhVyl8jUPKnCYAx1hqNKN4AmAV95smiohD4EShrbfVeAPwBtc8n/+aUX0ls+Zo=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
 Received: from dude05.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::54])
 	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
 	(envelope-from <p.zabel@pengutronix.de>)
-	id 1uJvBo-00048s-US; Tue, 27 May 2025 16:22:00 +0200
+	id 1uJvBp-00048s-5N; Tue, 27 May 2025 16:22:01 +0200
 From: Philipp Zabel <p.zabel@pengutronix.de>
-Subject: [PATCH 0/2] drm/bridge: samsung-dsim: Small cleanups
-Date: Tue, 27 May 2025 16:21:46 +0200
-Message-Id: <20250527-samsung-dsim-v1-0-5be520d84fbb@pengutronix.de>
+Date: Tue, 27 May 2025 16:21:47 +0200
+Subject: [PATCH 1/2] drm/bridge: samsung-dsim: use while loop in
+ samsung_dsim_transfer_start
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -43,10 +44,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAHrKNWgC/x3MQQqAIBBA0avIrBPMEqGrRAvN0WaRhUMRSHdPW
- r7F/xUYCyHDJCoUvInpyA19J2DdXE4oKTSDVtooo61kt/OVkwxMu9Te4eBHE6310JKzYKTn383
- L+35gJF9MXgAAAA==
-X-Change-ID: 20250527-samsung-dsim-2bae3b45f77b
+Message-Id: <20250527-samsung-dsim-v1-1-5be520d84fbb@pengutronix.de>
+References: <20250527-samsung-dsim-v1-0-5be520d84fbb@pengutronix.de>
+In-Reply-To: <20250527-samsung-dsim-v1-0-5be520d84fbb@pengutronix.de>
 To: Inki Dae <inki.dae@samsung.com>, 
  Jagan Teki <jagan@amarulasolutions.com>, 
  Marek Szyprowski <m.szyprowski@samsung.com>, 
@@ -65,23 +65,88 @@ X-SA-Exim-Mail-From: p.zabel@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Replace an open-coded goto-again construct with a while loop and a
-custom MHZ macro with the common HZ_PER_MHZ.
+Turn the open-coded goto-again construct into a while loop, to make
+samsung_dsim_transfer_start() a bit shorter and easier to read.
+
+Hold the spinlock when looping back around and avoid the duplicated
+list_empty() check.
 
 Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
 ---
-Philipp Zabel (2):
-      drm/bridge: samsung-dsim: use while loop in samsung_dsim_transfer_start
-      drm/bridge: samsung-dsim: Use HZ_PER_MHZ macro from units.h
+ drivers/gpu/drm/bridge/samsung-dsim.c | 51 +++++++++++++++--------------------
+ 1 file changed, 21 insertions(+), 30 deletions(-)
 
- drivers/gpu/drm/bridge/samsung-dsim.c | 77 +++++++++++++++--------------------
- 1 file changed, 33 insertions(+), 44 deletions(-)
----
-base-commit: 99764593528f9e0ee9509f9e4a4eb21db99d0681
-change-id: 20250527-samsung-dsim-2bae3b45f77b
+diff --git a/drivers/gpu/drm/bridge/samsung-dsim.c b/drivers/gpu/drm/bridge/samsung-dsim.c
+index 0014c497e3fe7d8349a119dbdda30d65d816cccf..1dfc9710bee5134e0e0114ce52f673c21564b11b 100644
+--- a/drivers/gpu/drm/bridge/samsung-dsim.c
++++ b/drivers/gpu/drm/bridge/samsung-dsim.c
+@@ -1235,43 +1235,34 @@ static void samsung_dsim_transfer_start(struct samsung_dsim *dsi)
+ {
+ 	unsigned long flags;
+ 	struct samsung_dsim_transfer *xfer;
+-	bool start = false;
+ 
+-again:
+ 	spin_lock_irqsave(&dsi->transfer_lock, flags);
+ 
+-	if (list_empty(&dsi->transfer_list)) {
++	while (!list_empty(&dsi->transfer_list)) {
++		xfer = list_first_entry(&dsi->transfer_list,
++					struct samsung_dsim_transfer, list);
++
+ 		spin_unlock_irqrestore(&dsi->transfer_lock, flags);
+-		return;
++
++		if (xfer->packet.payload_length &&
++		    xfer->tx_done == xfer->packet.payload_length)
++			/* waiting for RX */
++			return;
++
++		samsung_dsim_send_to_fifo(dsi, xfer);
++
++		if (xfer->packet.payload_length || xfer->rx_len)
++			return;
++
++		xfer->result = 0;
++		complete(&xfer->completed);
++
++		spin_lock_irqsave(&dsi->transfer_lock, flags);
++
++		list_del_init(&xfer->list);
+ 	}
+ 
+-	xfer = list_first_entry(&dsi->transfer_list,
+-				struct samsung_dsim_transfer, list);
+-
+ 	spin_unlock_irqrestore(&dsi->transfer_lock, flags);
+-
+-	if (xfer->packet.payload_length &&
+-	    xfer->tx_done == xfer->packet.payload_length)
+-		/* waiting for RX */
+-		return;
+-
+-	samsung_dsim_send_to_fifo(dsi, xfer);
+-
+-	if (xfer->packet.payload_length || xfer->rx_len)
+-		return;
+-
+-	xfer->result = 0;
+-	complete(&xfer->completed);
+-
+-	spin_lock_irqsave(&dsi->transfer_lock, flags);
+-
+-	list_del_init(&xfer->list);
+-	start = !list_empty(&dsi->transfer_list);
+-
+-	spin_unlock_irqrestore(&dsi->transfer_lock, flags);
+-
+-	if (start)
+-		goto again;
+ }
+ 
+ static bool samsung_dsim_transfer_finish(struct samsung_dsim *dsi)
 
-Best regards,
 -- 
-Philipp Zabel <p.zabel@pengutronix.de>
+2.39.5
 
 
