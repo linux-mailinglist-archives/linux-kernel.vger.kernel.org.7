@@ -1,145 +1,185 @@
-Return-Path: <linux-kernel+bounces-664515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-664517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D469AC5CC2
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 00:05:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEB12AC5CCA
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 00:08:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FE991BC1714
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 22:05:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2AA1C7A1E5E
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 22:07:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9E39215F6C;
-	Tue, 27 May 2025 22:05:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AD8D215F4B;
+	Tue, 27 May 2025 22:08:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VDRSrObS"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="OZ8GVL53"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77FB01F63C1;
-	Tue, 27 May 2025 22:05:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B22AD2153C7;
+	Tue, 27 May 2025 22:08:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748383507; cv=none; b=W1iw029NeLWMvNstO+Kqa5MvySK5dAmcz/nCl7TmXFYhshJP01aRIsHY254acyhism1YDCY09JNIx8vMBidYUDKhEQI1DQUjaROQTsHzqWwxlaKqHXkm/4T2hzu6HPi037AWraaIZiOcEEorbAT0jtJ3yGnGcwJ3VxTXGqikgK8=
+	t=1748383727; cv=none; b=BlNp/XPk7z8D46uXXt/R9hfudVZYbzfZ4m7eCgaEfIXOOc8FyC5Y5E0eRv2oHzhIf6eFb4yZa7vltwJTuHqSfFIxgOgx3+BGjL79LlnhX6XVVFNuavNNij/D0GC5+B92TzVU+tYwRVMEiaI9R5pj9cCPXanXvcT+CN7Tca0u+2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748383507; c=relaxed/simple;
-	bh=oSRAwBLVtyo7MIa7mWnSvmOppYtBygtu0bkYdFD9SZg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kh7XP3hvCJJjFuEnJlchIWNZ7/kVsGqqcQ4MMzhfKOIV6wVw5gbu7aBjjdsGUaOHcw5AfiajUxdDnq6WFk37XCgHfn+5qqoEcntuqUwHeKbZNiSIxvOiKwvh8pLzJQYOSC70U1exsMNPWx3j9aIFNC6SIUAbCnD05Jexe4fmU1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VDRSrObS; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1748383506; x=1779919506;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=oSRAwBLVtyo7MIa7mWnSvmOppYtBygtu0bkYdFD9SZg=;
-  b=VDRSrObSpZT93zx0VqATrW+N6tRKozhmHLILDRlyvUb97Qq7z3TvMPuk
-   Ng2HZ2swWEix//Kb2y3Rh4prVm5BVPumpS3um3a73aFi9PF4JvjUpQlA8
-   zrT76GqV2i1I6PktW4LwwcHkeKJH3iocq9AjWdMn8l9/6edafpBt9mJFD
-   TY26SVYXqkm9cXBN5bMnR6l+YEqoSD7j2julWpg+R3EDkMlXbZxbYB7+k
-   ntNnlf7Xik1DLR5+pWj5hEuv3bV54iav8/yH8uF3pEb/BQOdisV0amX/S
-   7klKzrk8z4lITHuIfRDmOu+GI/dUNuS3zUHq6fjLO23E2z7geVs8Ov9uc
-   w==;
-X-CSE-ConnectionGUID: J61LZUnsSTWSFU2PAxXMwA==
-X-CSE-MsgGUID: vDPUdB1UQSaWFEy2Q+pOQw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11446"; a="54190106"
-X-IronPort-AV: E=Sophos;i="6.15,319,1739865600"; 
-   d="scan'208";a="54190106"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2025 15:05:05 -0700
-X-CSE-ConnectionGUID: vN2U/7HCRkmKRQoDU70FuQ==
-X-CSE-MsgGUID: RbdNF3YxT5ed0VBlicVDHQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,319,1739865600"; 
-   d="scan'208";a="173973947"
-Received: from lbogdanm-mobl3.ger.corp.intel.com (HELO rpedgeco-desk4..) ([10.124.221.92])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2025 15:05:04 -0700
-From: Rick Edgecombe <rick.p.edgecombe@intel.com>
-To: pbonzini@redhat.com
-Cc: kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lkp@intel.com,
-	xiaoyao.li@intel.com,
-	kai.huang@intel.com,
-	seanjc@google.com,
-	x86@kernel.org,
-	dave.hansen@intel.com,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>
-Subject: [PATCH] x86/tdx: Always inline tdx_tdvpr_pa()
-Date: Tue, 27 May 2025 15:04:53 -0700
-Message-ID: <20250527220453.3107617-1-rick.p.edgecombe@intel.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1748383727; c=relaxed/simple;
+	bh=nfbvpQXSErwoMt1fAZCaoWf2Wp0M63j9GJB+h1tYXu4=;
+	h=Message-ID:Subject:From:To:Cc:Content-Type:Date:MIME-Version; b=Ln2kuqZviZZF2lcY2vPqJdYcdY1K/Ga2/wiMnA808OpehbxY65hw/sgcKxpxc5GBhIzjTsmAUaAZnDkxEwp6ioPEI5snI6GfYr18g8zqPelr3xihyUjoDvrfl7vEd73FtV0Z40Ja9L5/xWadUDGqm19uvZOmq5zctGHaQsLaeP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=OZ8GVL53; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54RGHQ6a017244;
+	Tue, 27 May 2025 22:08:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pp1; bh=WhGjwuAmWq7QvhA7Pl1DzvvUw0nA
+	pFVIUNFIHpnkn68=; b=OZ8GVL531rZZf13wfPiH6b6foiKTMAu7/M4sSwznO45U
+	v2/ArXD9321GCp9x+Th/71lpydcHCEMSMgGxKuB5hVIGHw4dHYKtsVx3ytZ9IpsR
+	htTU6caxGWeSTH3kpVkWt8ieh5kLTTOkZg54qMIC9G7E8oESXFQvhj9/67N+IEIY
+	5H8MSbIOq0OA06LxHi0yiHbgMms/2n1MAbQUq7YgICsjv0ZiqzyIFOtwY4iI32pf
+	pjb/eghca7PeS+ZZwogEQlTxI58szSZl5QPA8q56rd/cESLzE8ZiU467QF2dMtqD
+	YT3wUT3Zw4hUYNI4uEtRTwfqt1XxVZzL2lNTWpo8BA==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46wgsghg98-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 27 May 2025 22:08:37 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 54RLgb9w028983;
+	Tue, 27 May 2025 22:08:36 GMT
+Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 46usepvmam-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 27 May 2025 22:08:36 +0000
+Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
+	by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 54RM8a6828836492
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 27 May 2025 22:08:36 GMT
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 367135805D;
+	Tue, 27 May 2025 22:08:36 +0000 (GMT)
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id EB19E58052;
+	Tue, 27 May 2025 22:08:35 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.31.96.173])
+	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 27 May 2025 22:08:35 +0000 (GMT)
+Message-ID: <283be073924bd046f180880b5912338744550884.camel@linux.ibm.com>
+Subject: [GIT PULL] integrity: subsystem fixes for v6.16
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-integrity <linux-integrity@vger.kernel.org>,
+        linux-kernel	
+ <linux-kernel@vger.kernel.org>,
+        Roberto Sassu
+ <roberto.sassu@huaweicloud.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Tue, 27 May 2025 18:08:35 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: piJ-QIMhxf0-6imdi4PFOEZEAgO9UKuo
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI3MDE4NiBTYWx0ZWRfX9mGqTff/zw63 cafc2TsnVimEQNhOTBNNoqh17rAWGSIArlfUpzXPE/2kaRYwbxVda1CoociwFntrbgEaPlXK+1H Mj16t22fezjKabHPTR7Gzu8J/8Zo5iM13jqI5FzpOoDFRFNzMD0RWvAurBu4l2dN6fo9tetcaNm
+ DMSdMXlvTSX3z2CIyWvHaQDn2rWSabXwaKLRXkwHTRUOMfP6iLqH/xh3pcKeL8UfhVhu9NtdYZN h2BejZBbdN47Kq24vLlgClBgqEcpELMmCW6xFWUnIouX1fM+eO2HwrtbbEGjQqVm35hqssYZERJ ilI+PRgHbP1X2nKwbF8SjYZv024/ACm7SZ+RGbWDxt+gWvx24zMaYAl13KmM034pmOpAuv2BV9D
+ 3KXNpwqNv8swqT2G/Sk7jbFcpDQ5jF/Kdo3hYZNT16ypEAd+FWTCIm9wOePsJ8U+DZ9uMCxp
+X-Authority-Analysis: v=2.4 cv=bZRrUPPB c=1 sm=1 tr=0 ts=683637e5 cx=c_pps a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=VwQbUJbxAAAA:8 a=ADT_KZKfxQbkmW_C2EoA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: piJ-QIMhxf0-6imdi4PFOEZEAgO9UKuo
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-27_10,2025-05-27_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 adultscore=0
+ mlxscore=0 suspectscore=0 impostorscore=0 bulkscore=0 phishscore=0
+ lowpriorityscore=0 mlxlogscore=999 malwarescore=0 spamscore=0
+ priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505160000
+ definitions=main-2505270186
 
-In some cases tdx_tdvpr_pa() is not fully inlined into tdh_vp_enter(),
-which causes the following warning:
+Hi Linus,
 
-  vmlinux.o: warning: objtool: tdh_vp_enter+0x8: call to tdx_tdvpr_pa() leaves .noinstr.text section
+Carrying the IMA measurement list across kexec is not a new feature, but is
+updated to address a couple of issues:
+                                          =20
+- Carrying the IMA measurement list across kexec required knowing apriori a=
+ll
+the file measurements between the "kexec load" and "kexec execute" in order=
+ to
+measure them before the "kexec load".  Any delay between the "kexec load" a=
+nd
+"kexec exec" exacerbated the problem.
+                                                                           =
+    =20
+- Any file measurements post "kexec load" were not carried across kexec,
+resulting in the measurement list being out of sync with the TPM PCR.
+                                                                           =
+   =20
+With these changes, the buffer for the IMA measurement list is still alloca=
+ted
+at "kexec load", but copying the IMA measurement list is deferred to after
+quiescing the TPM.
 
-tdh_vp_enter() is marked noinstr and so can't accommodate the function
-being outlined. Previously this didn't cause issues because the compiler
-inlined the function. However, newer Clang compilers are deciding to
-outline it.
+Two new kexec critical data records are defined.
 
-So mark the function __always_inline to force it to be inlined. This
-would leave the similar function tdx_tdr_pa() looking a bit asymmetric
-and odd, as it is marked inline but actually doesn't need to be inlined.
-So somewhat opportunistically remove the inline from tdx_tdr_pa() so that
-it is clear that it does not need to be inlined, unlike tdx_tdvpr_pa().
+Note:                                                                      =
+    =20
+- The IMA kexec segment hash is not calculated or verified.              =
+=20
+                                                                           =
+    =20
+thanks,                                                                    =
+    =20
+                                                                           =
+    =20
+Mimi                                                                       =
+   =20
 
-tdx_tdvpr_pa() uses page_to_phys() which can make further calls to
-outlines functions, but not on x86 following commit cba5d9b3e99d
-("x86/mm/64: Make SPARSEMEM_VMEMMAP the only memory model").
 
-Fixes: 69e23faf82b4 ("x86/virt/tdx: Add SEAMCALL wrapper to enter/exit TDX guest")
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202505240530.5KktQ5mX-lkp@intel.com/
-Suggested-by: Sean Christopherson <seanjc@google.com>
-Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-Reviewed-by: Kai Huang <kai.huang@intel.com>
----
-Previous discussion here:
-https://lore.kernel.org/kvm/20250526204523.562665-1-pbonzini@redhat.com/
+The following changes since commit b4432656b36e5cc1d50a1f2dc15357543add530e=
+:
 
-FWIW, I'm ok with the flatten version of the fix too, but posting this
-just to speed things along in case.
+  Linux 6.15-rc4 (2025-04-27 15:19:23 -0700)
 
-And note, for full correctness, this and the flatten fix will depend on
-the queued tip commit:
-https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/commit/?id=cba5d9b3e99d6268d7909a65c2bd78f4d195aead
+are available in the Git repository at:
 
----
- arch/x86/virt/vmx/tdx/tdx.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+  https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git=
+/ tags/integrity-v6.16
 
-diff --git a/arch/x86/virt/vmx/tdx/tdx.c b/arch/x86/virt/vmx/tdx/tdx.c
-index f5e2a937c1e7..626cc2f37dec 100644
---- a/arch/x86/virt/vmx/tdx/tdx.c
-+++ b/arch/x86/virt/vmx/tdx/tdx.c
-@@ -1496,12 +1496,12 @@ void tdx_guest_keyid_free(unsigned int keyid)
- }
- EXPORT_SYMBOL_GPL(tdx_guest_keyid_free);
- 
--static inline u64 tdx_tdr_pa(struct tdx_td *td)
-+static u64 tdx_tdr_pa(struct tdx_td *td)
- {
- 	return page_to_phys(td->tdr_page);
- }
- 
--static inline u64 tdx_tdvpr_pa(struct tdx_vp *td)
-+static __always_inline u64 tdx_tdvpr_pa(struct tdx_vp *td)
- {
- 	return page_to_phys(td->tdvpr_page);
- }
--- 
-2.49.0
+for you to fetch changes up to fe3aebf27dc1875b2a0d13431e2e8cf3cf350cca:
+
+  ima: do not copy measurement list to kdump kernel (2025-05-14 06:40:09 -0=
+400)
+
+----------------------------------------------------------------
+integrity-v6.16
+
+----------------------------------------------------------------
+Steven Chen (10):
+      ima: rename variable the seq_file "file" to "ima_kexec_file"
+      ima: define and call ima_alloc_kexec_file_buf()
+      kexec: define functions to map and unmap segments
+      ima: kexec: skip IMA segment validation after kexec soft reboot
+      ima: kexec: define functions to copy IMA log at soft boot
+      ima: kexec: move IMA log copy from kexec load to execute
+      ima: verify if the segment size has changed
+      ima: make the kexec extra memory configurable
+      ima: measure kexec load and exec events as critical data
+      ima: do not copy measurement list to kdump kernel
+
+ include/linux/ima.h                |   3 +
+ include/linux/kexec.h              |   9 ++
+ kernel/kexec_core.c                |  54 ++++++++++
+ kernel/kexec_file.c                |  33 ++++++-
+ security/integrity/ima/Kconfig     |  11 +++
+ security/integrity/ima/ima.h       |   6 ++
+ security/integrity/ima/ima_kexec.c | 196 ++++++++++++++++++++++++++++++---=
+----
+ security/integrity/ima/ima_queue.c |   5 +
+ 8 files changed, 283 insertions(+), 34 deletions(-)
 
 
