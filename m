@@ -1,91 +1,111 @@
-Return-Path: <linux-kernel+bounces-664361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-664362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32EEBAC5A88
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 21:15:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E422BAC5A8C
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 21:17:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 036434A79C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 19:15:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 182C61BA7B9F
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 19:17:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC04F28030F;
-	Tue, 27 May 2025 19:15:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A9FB280035;
+	Tue, 27 May 2025 19:17:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jU612YZ+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="jk53t04T"
+Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46D3538FA3
-	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 19:15:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55C53193077;
+	Tue, 27 May 2025 19:17:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748373348; cv=none; b=ap9r+ysOHsbWoOkpsfMSxbRLbJomuswKK5wMpCR8WCu+0sqbyE8YWXwzy0LneC6n1Y5B7bIf9CLFQ6lYfr5EsspfKU0e66rni3u4Grhstw8nqlDxV98mkazmd5WaHGl8j0avtwl1uuly64RkxueoLzgHrc7JP9vwoby2+7nn/Pc=
+	t=1748373447; cv=none; b=lPRK4FTe2y+/U/nxNSiGzf4MgwqI0t/ncNMQ30jpbBr4VvneFZ/EgcgGiBE0+NTSkk1rYK3lsGkDHF1lhjImTp04AplDhZwcaBNH4zaiUbVpR9oC5RStu1tRe3WH0TLaVr756bNJ157zqDEctmuYumvV5arTi15NzIFxFtijbSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748373348; c=relaxed/simple;
-	bh=SpVIqG0mFa2jfTzzNyCYGdB1l6HNNt3btuEg0gV3Fy4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=rX75QeNV4HsSPwczGDXpd2oZOpDl/J6E93mzglaJw9Yv/WG1x3pKd8xxf4f7h0IvyNUk7bnzL+x7VZOsiHASDNH7w+y7qZ8x3U698yOL77weocPIotoa4H9LUZrXcBhsl+bvhpbtocEmAp7IB5SLOtFHcwrxqmyC530Z8EThMp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jU612YZ+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99B0DC4CEED;
-	Tue, 27 May 2025 19:15:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748373347;
-	bh=SpVIqG0mFa2jfTzzNyCYGdB1l6HNNt3btuEg0gV3Fy4=;
-	h=Date:From:To:Cc:Subject:From;
-	b=jU612YZ+ljNv09Q9R4tVgTFBDSCkpt9fBp1S/3C/GfpZ5BhPbd4iLT7xzn/jM//3D
-	 Je5uSDgmtjVyvXSG4/t1Com+gkybmoZJv0/qIEgU2HttAxig6chy9foTr8cWNnVGbF
-	 2EIlm+eDWC8y14ePfs1t6dFeZCviS5HGBRYB04L3Mjxbx4Fa6mcb2IOMEdf41980Eo
-	 WZFmNtAY3SNllj1qTfAr+eh8sUYe+vz0hNBgZFezIc5fJDJSp9KkBUU8ZfX4qwCelv
-	 BUnh8W1G+YDCUurQeG7gCuEmAZiktGhF5kR+Uk5JJYSyJWtZo5wUj4Pk+55onP3SBi
-	 91x57chXELuug==
-Date: Tue, 27 May 2025 09:15:46 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, Lai Jiangshan <jiangshanlai@gmail.com>
-Subject: [GIT PULL] workqueue: Changes for v6.16
-Message-ID: <aDYPYnzk3zsrCFYn@slm.duckdns.org>
+	s=arc-20240116; t=1748373447; c=relaxed/simple;
+	bh=whL84rT5cgB0gTkk/wdEmU1XcUHt3i2RXeLFKm8nK6A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I/gOayRTjzw0I2qtJgaJDtY4dratqiiYNLBiyQCqgHYKdPmyw6mmdJocxHmqULtohUpIWY80dZUom6NdEs+FoTK3hTAfbobhfLBQWFIJziGiQAVVXOQP0umP/DI9e7iaAI/2gnolJdMuuRr8jJ2ubjV+8aMirNG1rjt61q55BoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=jk53t04T; arc=none smtp.client-ip=83.149.199.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
+Received: from localhost (unknown [10.10.165.23])
+	by mail.ispras.ru (Postfix) with ESMTPSA id 6B781407616F;
+	Tue, 27 May 2025 19:17:13 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 6B781407616F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
+	s=default; t=1748373433;
+	bh=4K/5g0rz8lGjbxpjjfKHeGpy/D2jGPVIXZxPSOkdpBk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jk53t04T4Bj2Jrn/ZlSQH45/VJNFdX3l1EdgKE7krvlnZouNwYt+FspIVKSK5vEkk
+	 PlQMJtoffqbvVZSkwfD+Rq8gZ0LWpbLVp8ubhO91Wx5L2TVcq6nyhlsqCjFxm5Wo2u
+	 lBfdofVwMGcWTsihG4laHjAFjZB9l91ezi+ko2bo=
+Date: Tue, 27 May 2025 22:17:13 +0300
+From: Fedor Pchelkin <pchelkin@ispras.ru>
+To: Stanislaw Gruszka <stf_xl@wp.pl>
+Cc: Johannes Berg <johannes@sipsolutions.net>, 
+	Alexei Safin <a.safin@rosa.ru>, lvc-project@linuxtesting.org, netdev@vger.kernel.org, 
+	Kalle Valo <kvalo@kernel.org>, linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, "David S . Miller" <davem@davemloft.net>
+Subject: Re: [PATCH v2] wifi: iwlegacy: Check rate_idx range after addition
+Message-ID: <5woqb2ipm4scei365wlo4rupczolhwtbwnw2djhkvi6qcrz2q2@eykv3a3v62lu>
+References: <20250424185244.3562-1-a.safin@rosa.ru>
+ <20250427063900.GA48509@wp.pl>
+ <d57qkj2tj4bgfobgzbhcb4bceh327o35mgamy2yyfuvolg4ymo@7p7hbpyg5bxi>
+ <20250517074040.GA96365@wp.pl>
+ <hrpy3omokg5zvrqnchx4jvp26bvfgdrashkmrjonsyz5b64aaz@6d5kn7z7x73q>
+ <20250525144524.GA172583@wp.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+In-Reply-To: <20250525144524.GA172583@wp.pl>
 
-The following changes since commit 8ffd015db85fea3e15a77027fda6c02ced4d2444:
+On Sun, 25. May 16:45, Stanislaw Gruszka wrote:
+> Limit rate_idx to IL_LAST_OFDM_RATE for 5GHz band for thinkable case
+> the index is incorrect.
+> 
+> Reported-by: Fedor Pchelkin <pchelkin@ispras.ru>
+> Reported-by: Alexei Safin <a.safin@rosa.ru>
+> Signed-off-by: Stanislaw Gruszka <stf_xl@wp.pl>
+> ---
+> v1 -> v2: 
+>  - just add check one possible case the index could be incorrect,
+>    instead of doing broader changes.
+> 
+>  drivers/net/wireless/intel/iwlegacy/4965-mac.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/wireless/intel/iwlegacy/4965-mac.c b/drivers/net/wireless/intel/iwlegacy/4965-mac.c
+> index dc8c408902e6..4d2148147b94 100644
+> --- a/drivers/net/wireless/intel/iwlegacy/4965-mac.c
+> +++ b/drivers/net/wireless/intel/iwlegacy/4965-mac.c
+> @@ -1575,8 +1575,11 @@ il4965_tx_cmd_build_rate(struct il_priv *il,
+>  	    || rate_idx > RATE_COUNT_LEGACY)
+>  		rate_idx = rate_lowest_index(&il->bands[info->band], sta);
+>  	/* For 5 GHZ band, remap mac80211 rate indices into driver indices */
+> -	if (info->band == NL80211_BAND_5GHZ)
+> +	if (info->band == NL80211_BAND_5GHZ) {
+>  		rate_idx += IL_FIRST_OFDM_RATE;
+> +		if (rate_idx > IL_LAST_OFDM_RATE)
+> +			rate_idx = IL_LAST_OFDM_RATE;
+> +	}
+>  	/* Get PLCP rate for tx_cmd->rate_n_flags */
+>  	rate_plcp = il_rates[rate_idx].plcp;
+>  	/* Zero out flags for this packet */
+> -- 
+> 2.25.4
+> 
 
-  Linux 6.15-rc2 (2025-04-13 11:54:49 -0700)
+Thanks, Stanislaw!
 
-are available in the Git repository at:
+To my mind, it looks reasonable. FWIW,
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tj/wq.git/ tags/wq-for-6.16
-
-for you to fetch changes up to 23227e71b69af95e421e263302d13f426c548155:
-
-  workqueue: fix typo in comment (2025-05-05 13:43:16 -1000)
-
-----------------------------------------------------------------
-workqueue: Changes for v6.16
-
-Fix statistic update race condition and a couple documentation updates.
-
-----------------------------------------------------------------
-Guan-Chun Wu (1):
-      workqueue: fix typo in comment
-
-Jiayuan Chen (1):
-      workqueue: Fix race condition in wq->stats incrementation
-
-Philipp Stanner (1):
-      workqueue: Better document teardown for delayed_work
-
- include/linux/workqueue.h |  2 +-
- kernel/workqueue.c        | 15 ++++++++++++++-
- 2 files changed, 15 insertions(+), 2 deletions(-)
-
--- 
-tejun
+Reviewed-by: Fedor Pchelkin <pchelkin@ispras.ru>
 
