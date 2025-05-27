@@ -1,116 +1,127 @@
-Return-Path: <linux-kernel+bounces-663820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-663823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4344AC4DE5
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 13:54:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5C09AC4DEE
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 13:55:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EE471BA00A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 11:54:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11BED7AA130
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 11:54:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11D882620C1;
-	Tue, 27 May 2025 11:54:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC99F267B1F;
+	Tue, 27 May 2025 11:54:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=geotab.com header.i=@geotab.com header.b="mylwXSrm"
-Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="afnkOonQ"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B22BF2356C4
-	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 11:54:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 898CA2356C4
+	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 11:54:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748346856; cv=none; b=dEtvJXKSZiFoli1XOkiU0nyDctreAgnM7g4Dlecwx5+K4D/xz+wLjWI+aNa7uCJ5LFKpWLXA6arkzyuInkuUkvqPIkcpLS+A9hVGt/szhDU1p8XGVi+DMxD2WgGrRnVIt0+J+VFTp4ipjuy92QgD7Jw884DLV5MK4h0yT0hc1eA=
+	t=1748346897; cv=none; b=pXipxj86UvPqugQpC6aRe3o3iilqt5C1t1tBuogjmXPwJ8TFKq5/xSkMJnOkw3Gm4edfkuyhkQOLIFAb88a/95RyEBiaQfsiOK1w1S1/vk75AgYa6mfHwcluyqcak3E7sJ3OdJmaaHCGCFhTvA+S1fxn7uWbAqjuxlpniJK4LNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748346856; c=relaxed/simple;
-	bh=PJ6soXTmDT3YZ0f42M1DkP7vVxsdSiOpE2I2xmRdYq8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tgP5Tqxh4t5J4mik71AAUZQCS1ZVTZYhwMZz5KRKwjVfh1EKv/+BWe3uWa0Bd+zppmqMy+VmumYu0MO+emhcM3g+dKbtcmhhJH970LkQR1a2dxK2ZpCf5nnuv2LnT08Czv7DEs26y0YmrNGgQn6HFtikYU1LyhH3qmA9X3PERLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=geotab.com; spf=pass smtp.mailfrom=geotab.com; dkim=pass (2048-bit key) header.d=geotab.com header.i=@geotab.com header.b=mylwXSrm; arc=none smtp.client-ip=209.85.166.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=geotab.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geotab.com
-Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-85b38fb692fso42732339f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 04:54:14 -0700 (PDT)
+	s=arc-20240116; t=1748346897; c=relaxed/simple;
+	bh=VYl+vCyFrcN1xt8fF4+m11+iBRz4CZ5mcCYoL8oFYzg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VnIY0deVRCZ/8qoj7zKhrhBB3R6iGSKM25PXD1BcjL82OqG67rMaEwpVu8M/LbupKngIrh8qQN28ErHSxSPhUWz4ueumxCQoyktJWUMG9sUipA1NTZ4b5C1PUeJNHWdoIpPlRPLjzW+DRpybl8bla93YpuZnNN5KDLPLeV7C5L4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=afnkOonQ; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2347b7d6aeeso16038045ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 04:54:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=geotab.com; s=google; t=1748346854; x=1748951654; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PJ6soXTmDT3YZ0f42M1DkP7vVxsdSiOpE2I2xmRdYq8=;
-        b=mylwXSrmvX1pNFbF7wpOm8fJnId6kGvzXC93/8ud+/fkidNhjXGPqXhRlm1kkavnaG
-         11EFnHTFkdwE2Y6c5djdTNWsDt0jBeP4lHE8B9fZUilx5ReeuNrCFYNOwloXUgrqJhhb
-         VFdWo8PfmejtkjpPnMRhfNIeZR2CfPEsrB3/fCsOsIVsiCHJD75+sQKjHb/KcVuj7el3
-         75SDrFnW+hgvlRE+7WyD1N7Apt6twkrTveIGqzC/Vu4b2T0S7UNBSsff8FxAO6WuaHrC
-         ED+y7AtnUf253wNOwene4ljdAfxOHb+qlZzj29wnLznliaORNg65MhU2tseCtCFxryq5
-         fY1A==
+        d=bytedance.com; s=google; t=1748346893; x=1748951693; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=VYl+vCyFrcN1xt8fF4+m11+iBRz4CZ5mcCYoL8oFYzg=;
+        b=afnkOonQHV1IwHHgRGgrk3S1+14N1WsH+c9GYL0rrMkiRzdMLz4pmJhOEFk/GGLtqa
+         cjGKHRAWLVDR16fJNQgnBl+4/EWnRKUbqZ8qJOhsIFQyFMfyKqtEsf1AmYJpAC+2fDVu
+         7tmFdTO6z57CuzxMzZD2cGuYs6dRDhwXSqCB260B5QpFRu4SGFVAdmPgbb4MMAoeNtuW
+         EiEzkAcXJDJCSOYpk3fzhyJb6/9BXIEi3Ogrli3Jh4qH2NzkD44Dl6xZe8SSBdy7Kz30
+         +QhMtw30YtFa2qep8o6/xLCVwUKCm1EDWBgKoKRH4Nm4Z/GJkxullAe/jD3SzSQljsKr
+         eprg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748346854; x=1748951654;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PJ6soXTmDT3YZ0f42M1DkP7vVxsdSiOpE2I2xmRdYq8=;
-        b=KssKvbGbrU8qp5NDhzHPz36OIoeibmPWKy/1nG5vgO3SBk/g6mQwsJFzMWhZVLaUJ0
-         VjTwD/dTKLvipMUZje55X8HJgMjoY6X3lAEqXWtbGmLy3ZccN67XsbU3+juC61TeQ2vt
-         9VFMJt3LY4K8kMMqepagV+uvRiadBqmlQMb+HTV3dvYUVjgpHmqojdlbzOTL6K6aWlBl
-         X+7Leud9AW4d/OpuVfxbpPeJpEYxF9zWUu8PDWN9gZOe8qnKG546aHGZRFaZq+0/X/7b
-         CdmIEm4HY3AK0Fr3ObNeBC4GsIDQzu2+OoFOF5yXyKX7ITELsWwlA49kuWm/P04MwMjO
-         W00w==
-X-Forwarded-Encrypted: i=1; AJvYcCWi1UFFgF7CMdtCosVhZ6P2FbWLXVZ0VRVHI2/j6HvX9akT2fX4ERXMzT7b4uYijfQmVOeRWVgpu8+/ToY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAt0kLNESzoMEZH5znQuvr1kxAemTY5exXScpCMPwVGZPhFZVK
-	+0Mxq9dHL1yBuBcc6lnkpb/4ttIG7zsoC3lSfhknGnKn9ETsiH8x21zVFxecDcWoEgJNn/9dHZ6
-	BVkvs3Cu6EPMIwh3N+sIOIfMWGwrfG1uAN4RRcQbh2w==
-X-Gm-Gg: ASbGncv92OF23UwTftBdJItaUf5PN6PI7vYF20QsFuxAQzHWcJOML7ASsUzucnCONnj
-	g1AqOBIVTmzD6mFguSQgdzhccSPGs1AGSZEj6L1wbWvN7IcN5OOj75zC/s1zICRPyX5lX8/tLOX
-	w4DQqDb1+n9pFi+4FKJTBkkQVQI6mw3qzG
-X-Google-Smtp-Source: AGHT+IHesfHStYNK+RKnXcpNq0TgXDBWVZ4JQF+Ro/XEGUcvOTT1IJlVJKYa4IT7lXXEAwmx8MsCDzRmQWcsqjvUR8E=
-X-Received: by 2002:a05:6e02:2513:b0:3dc:79fa:ed5b with SMTP id
- e9e14a558f8ab-3dc9b6884fbmr100866225ab.11.1748346853755; Tue, 27 May 2025
- 04:54:13 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1748346893; x=1748951693;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VYl+vCyFrcN1xt8fF4+m11+iBRz4CZ5mcCYoL8oFYzg=;
+        b=ouPHQf9DlDgaPecFGJ/403rz6HCd50Chq0UYHYMXZ+mfFSx2yZw94leAJxZYV3Ljgl
+         3HfbQMlj+cEgGlYaCQA0q22WxljXiC0CAg5tQ4/wOVW8I3SwIC/KJCaYTvURN6WTfYVU
+         hsvo2Gkl67yBajC3g+D0CExuYtHK98tH2PisMWhho4dWDfI5YCKXv0Rb5IeEc4hzEDOa
+         MhIidjNEDRUfH+phfpyeNj3eDvC4CezBm73bbgOx93Mk4XsMmXSq81FxelnCIITkQRES
+         lC83HnGs7eZRIJ17cHt48CsWsCQKJ6oHwyHQkQ4UA8CMkvmEzeb3c7I3y3gz7dvRqLsg
+         awFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVvhBuM5GNht0B2kZvkacUL7p7oo4JYwXxzLIdIhnKz6NQrKahmGzbdNXy+fVbQH1UckIcip7Vv5Di47l8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzP4mg832UD1J1WdIfboY0k+GdUVdNKHuE2NXc5BeqlEGSTQ8VC
+	AOeitwPi4iOw1MMlfzKc78bbs+lfsMdMYFq8TwQufo1HeN0HW7qnYgA4AUqIM4uTbg==
+X-Gm-Gg: ASbGncuqN34tQTb2k2qm0Q80rJouvVlPafFT2aY66kOCGpaKahhrSbiHun12tajPTJt
+	xI6UPWqx8JILXOzjjn0DRDkDdqwrO2odXVTsN+D2iH+HoIbmyDdPsj/2CYwHGF7KcUoHu0y3aPt
+	Qz+5R+T4Phauaipp0SmXKkt3KW8FP4NrMtK68q/Kwq3c+Hn8hsuR3WLz8dZXi9qJDcPzFRKbNru
+	TZ+q95s/mxuBdf28VvbhV2vMthOHFLltvdgUbUlY4IEvDolugsso7MtRZQxwl9LOo7srlL4uOmz
+	2xj3Jux5YhlFYc0iAvDEl6DoYRhPvGcIA2qUapGFca4wloP+vBs=
+X-Google-Smtp-Source: AGHT+IGMLSBCEC1K2AFmTBTG1jYMX3b3vNnIJEkwjTwnkBkTVP2uuG1JMTBetq4tdwf8el06Sl34/w==
+X-Received: by 2002:a17:902:f54e:b0:234:8ac5:3f31 with SMTP id d9443c01a7336-2348ac53fd2mr61286695ad.23.1748346893548;
+        Tue, 27 May 2025 04:54:53 -0700 (PDT)
+Received: from bytedance ([115.190.40.11])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2340934d91asm62983655ad.166.2025.05.27.04.54.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 May 2025 04:54:53 -0700 (PDT)
+Date: Tue, 27 May 2025 19:54:41 +0800
+From: Aaron Lu <ziqianlu@bytedance.com>
+To: K Prateek Nayak <kprateek.nayak@amd.com>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Ben Segall <bsegall@google.com>, Josh Don <joshdon@google.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Xi Wang <xii@google.com>, linux-kernel@vger.kernel.org,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Chuyi Zhou <zhouchuyi@bytedance.com>,
+	Jan Kiszka <jan.kiszka@siemens.com>,
+	Florian Bezdeka <florian.bezdeka@siemens.com>
+Subject: Re: [PATCH 4/7] sched/fair: Take care of group/affinity/sched_class
+ change for throttled task
+Message-ID: <20250527114245.GA3578119@bytedance>
+References: <20250520104110.3673059-1-ziqianlu@bytedance.com>
+ <20250520104110.3673059-5-ziqianlu@bytedance.com>
+ <20250522120336.GI39944@noisy.programming.kicks-ass.net>
+ <20250522124840.GC672414@bytedance>
+ <20250523145942.GL39944@noisy.programming.kicks-ass.net>
+ <20250526113352.GA2993700@bytedance>
+ <20250527065836.GA3373486@bytedance>
+ <8501f4a8-8480-477e-8ab1-1d7796b978f1@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250523-ubx-m9-v3-1-6fa4ef5b7d4a@geotab.com> <dfd63c64-184e-4e48-9344-a3db0612036b@kernel.org>
- <20250527-ubiquitous-super-bison-babfac@kuoka>
-In-Reply-To: <20250527-ubiquitous-super-bison-babfac@kuoka>
-From: Alejandro Enrique <alejandroe1@geotab.com>
-Date: Tue, 27 May 2025 13:54:02 +0200
-X-Gm-Features: AX0GCFvruvCSIpHvq0-b0fqRI9Afm8E-s8eNbMN3vbyOYO0UHqm6wji_D6aB4HQ
-Message-ID: <CAN=L63qT6_kVrSJudv8iecmSit1CveZzFEU-2T7Tdpw_aiM4mQ@mail.gmail.com>
-Subject: Re: [PATCH v3] dt-bindings: gnss: add u-blox,neo-9m compatible
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Johan Hovold <johan@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8501f4a8-8480-477e-8ab1-1d7796b978f1@amd.com>
 
-On Tue, May 27, 2025 at 8:27=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.or=
-g> wrote:
->
-> On Fri, May 23, 2025 at 01:52:06PM GMT, Krzysztof Kozlowski wrote:
-> > On 23/05/2025 13:19, Alejandro Enrique via B4 Relay wrote:
-> > > From: Alejandro Enrique <alejandroe1@geotab.com>
-> > >
-> > > Add compatible for u-blox NEO-9M GPS module.
-> > >
-> > > Signed-off-by: Alejandro Enrique <alejandroe1@geotab.com>
-> > > ---
-> > > This series just add the compatible string for u-blox NEO-9M module,
-> > > using neo-m8 as fallback. I have tested the driver with such a module
-> > > and it is working fine.
-> > > ---
-> >
-> > I assume there is a user somewhere?
->
-> This question is still valid.
->
-> Best regards,
-> Krzysztof
+Hi Prateek,
+
+On Tue, May 27, 2025 at 04:49:36PM +0530, K Prateek Nayak wrote:
+... ...
+> Since we now have an official per-task throttle indicator, what are your
+> thoughts on reusing "p->se.group_node" for throttled_limbo_list?
 >
 
-Yes, I am using it in a board I am working on.
+I'm not sure. I can easily get confused when I see se.group_node and
+thought it was something related with rq->cfs_tasks :) Maybe using a
+union could make it look better?
+
+Anyway, if space is a concern then this is a good way to do it, thanks
+for the suggestion. I'll leave it to Peter to decide.
+
+Best wishes,
+Aaron
 
