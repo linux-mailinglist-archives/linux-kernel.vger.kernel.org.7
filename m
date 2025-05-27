@@ -1,163 +1,136 @@
-Return-Path: <linux-kernel+bounces-663973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-663975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DE1FAC5011
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 15:40:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B7BDAC5014
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 15:40:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E706E7A4BF0
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 13:38:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A653316474B
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 13:40:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD11A2749DE;
-	Tue, 27 May 2025 13:40:03 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0788C274FCF;
+	Tue, 27 May 2025 13:40:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BoZh9I2e"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 541292749E2
-	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 13:39:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62B292749ED
+	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 13:40:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748353203; cv=none; b=kVpQzrqNXu3oULumZ/I5iA7koxkQsy43Kfl2vNcDot+BIHKEyKfnhuQFuOH2md+bUOnzujeQTh+jOIAfhFkC0MG+009kdma0GH4PkkrocWy+jTLwG8tlSJnsYTADS9Nh+FxSj4q+mhonPUBJq1/Ho+yFZFfaYL2Wh1jAxdiDHjk=
+	t=1748353228; cv=none; b=nF6OgYo+uMZBWo3UmaTf+FE+BXjhO05fqSpfzvlac5dw5HwWuzCisKFa6ErAIIovxowuzFaPWFwbzFUXRsntdnvcbJFy4Po/1uy4q0gs6Vdj5iGUSW0n3SG/YSMOAAwqMAgDTV1CUU53T9Wxvu4uMg5m/r+UUpOofsf41JHXGMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748353203; c=relaxed/simple;
-	bh=E7cs+RXQ4xLTlfiJSBnZy00M7xZiQh+K8DvguIHD3yA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ibkm6nShZDJwhw6Q3VVALMn/RNgrSuR12yM9f9RWcezwWp28vYMgVv/RplQqFRqDyyxS4AabKo75H70w+OZwFdtlnRWCmwK1Pi/rCgMqlKhky/mFHQFsRYk/NAaRlzHdMef6rDfZ+d8LKVW4WNoaMGRhAr/4FCm2s4C+eZJIsPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4b6DJL58TQz4f3jYC
-	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 21:39:30 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 031611A159B
-	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 21:39:56 +0800 (CST)
-Received: from [10.67.109.184] (unknown [10.67.109.184])
-	by APP4 (Coremail) with SMTP id gCh0CgBXBlurwDVovl+2Ng--.5058S2;
-	Tue, 27 May 2025 21:39:55 +0800 (CST)
-Message-ID: <03b171c9-0de2-4d25-9d12-6d49d4daa2b5@huaweicloud.com>
-Date: Tue, 27 May 2025 21:39:55 +0800
+	s=arc-20240116; t=1748353228; c=relaxed/simple;
+	bh=NKXxKBLhKHSeCIL8DOxhqdNGPwSsn0FRVfaShuEsJlA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CpwExlcsiqcD74EvOUP07cw/xQUmYMZZtg0G450KQuRQOO2ZApKnWNJn3nYPijjq5UciI5PQiZhbq8UgfUibiHIwhNnLzkyM7MGBgq0F2iJLQimb5y5W2iI6pQh+mcrhZe0bIWwHu2VUG13yXqcBnE1KnnNOpaUtC/QewEF80RE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BoZh9I2e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8075C4CEE9;
+	Tue, 27 May 2025 13:40:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748353227;
+	bh=NKXxKBLhKHSeCIL8DOxhqdNGPwSsn0FRVfaShuEsJlA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BoZh9I2eAjzVq4ZywHMWomwG5MvufiipnhUf/UkFwmxfJ7TpoLQA3CC//3ldEgfyH
+	 wtPNw9V4EBBUq8BfIj+ifbiOHpzyM88DKVZX9SYjChZpEbQoNNOUH5UjFimkqSjBOM
+	 WB2teLi/cDX92ryiXd6rSW+R93GmIIszm/eqMiBhO4CQDvaj3TY8b0O5KQoNNK61Hm
+	 D+7kYmyCUwAKc0ixAAxdAugFEEHHND8sdN7uKf0z3wiLeHp77cdwk9MLJP2YzR0g8P
+	 xSBSdFLd0IHVI0H0FjGq+PpXuvDKwRgLV/1fYuYaDOU/V72LD2I1So3cf/TP5rYqxW
+	 HyApKMwno1gMg==
+Date: Tue, 27 May 2025 14:40:22 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-kernel@vger.kernel.org,
+	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Waiman Long <longman@redhat.com>
+Subject: Re: [PATCH v12 20/21] selftests/futex: Add futex_priv_hash
+Message-ID: <36bdcbe1-5f74-4afb-83dd-89f7348aeb5d@sirena.org.uk>
+References: <20250416162921.513656-1-bigeasy@linutronix.de>
+ <20250416162921.513656-21-bigeasy@linutronix.de>
+ <31869a69-063f-44a3-a079-ba71b2506cce@sirena.org.uk>
+ <20250527122332.M0ucxhwh@linutronix.de>
+ <231a9862-58ea-4a6d-8893-862776d9deca@sirena.org.uk>
+ <20250527124327.5UDnm-ho@linutronix.de>
+ <269b2f41-1405-4cab-9310-11df428e64c6@sirena.org.uk>
+ <20250527132533.lqWBepWy@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] mm/mmap: Fix uprobe anon page be overwritten when
- expanding vma during mremap
-Content-Language: en-US
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- David Hildenbrand <david@redhat.com>
-Cc: Oleg Nesterov <oleg@redhat.com>, mhiramat@kernel.org,
- peterz@infradead.org, Liam.Howlett@oracle.com, akpm@linux-foundation.org,
- vbabka@suse.cz, jannh@google.com, pfalcato@suse.de, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, pulehui@huawei.com
-References: <20250521092503.3116340-1-pulehui@huaweicloud.com>
- <62b5ccf5-f1cd-43c2-b0bc-f542f40c5bdf@redhat.com>
- <afe53868-5542-47d6-8005-71c1b3bec840@huaweicloud.com>
- <13c5fe73-9e11-4465-b401-fc96a22dc5d1@redhat.com>
- <4cbc1e43-ea46-44de-9e2b-1c62dcd2b6d5@huaweicloud.com>
- <20250526154850.GA4156@redhat.com>
- <06bd94c0-fefe-4bdc-8483-2d9b6703c3d6@redhat.com>
- <b84f00c8-966c-46f2-8afe-d09465153217@lucifer.local>
-From: Pu Lehui <pulehui@huaweicloud.com>
-In-Reply-To: <b84f00c8-966c-46f2-8afe-d09465153217@lucifer.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgBXBlurwDVovl+2Ng--.5058S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Zw47Cr43tryfWrW8Gw1fXrb_yoW8ur1Upa
-	y8Ja4jka1UJ348KFnFqF1vqF1Fq3yUtr4UXr15Xry5Awn8tr1xWF4agFW5ua4xZrWktw10
-	vrW2qF9xCay3AFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
-	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IUb
-	mii3UUUUU==
-X-CM-SenderInfo: psxovxtxl6x35dzhxuhorxvhhfrp/
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="lkiLacFJXVqFQ3sk"
+Content-Disposition: inline
+In-Reply-To: <20250527132533.lqWBepWy@linutronix.de>
+X-Cookie: New customers only.
+
+
+--lkiLacFJXVqFQ3sk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, May 27, 2025 at 03:25:33PM +0200, Sebastian Andrzej Siewior wrote:
+> On 2025-05-27 13:59:38 [+0100], Mark Brown wrote:
+
+> >    https://builds.sirena.org.uk/cda95faef7bcf26ba3f54c3cddce66d50116d14=
+6/arm64/defconfig/build.log
+> >    https://builds.sirena.org.uk/cda95faef7bcf26ba3f54c3cddce66d50116d14=
+6/arm64/defconfig/kselftest.tar.xz
+
+> > (note that this is the specific commit that I'm replying to the patch
+
+> Ach, okay. I assumed you had the master branch as of today. The whole
+> KTAP/ machine readable output was added later.
 
 
 
-On 2025/5/27 19:42, Lorenzo Stoakes wrote:
-> On Mon, May 26, 2025 at 08:46:07PM +0200, David Hildenbrand wrote:
->> On 26.05.25 17:48, Oleg Nesterov wrote:
->>> Hi Lehui,
->>>
->>> As I said, I don't understand mm/, so can't comment, but...
->>>
->>> On 05/26, Pu Lehui wrote:
->>>>
->>>> To make things simpler, perhaps we could try post-processing, that is:
->>>>
->>>> diff --git a/mm/mremap.c b/mm/mremap.c
->>>> index 83e359754961..46a757fd26dc 100644
->>>> --- a/mm/mremap.c
->>>> +++ b/mm/mremap.c
->>>> @@ -240,6 +240,11 @@ static int move_ptes(struct pagetable_move_control
->>>> *pmc,
->>>>                   if (pte_none(ptep_get(old_pte)))
->>>>                           continue;
->>>>
->>>> +               /* skip move pte when expanded range has uprobe */
->>>> +               if (unlikely(pte_present(*new_pte) &&
->>>> +                            vma_has_uprobes(pmc->new, new_addr, new_addr +
->>>> PAGE_SIZE)))
-> 
-> This feels like a horrible hack, note that we also move page tables at higher
-> page table levels _anyway_ so this would be broken by that (unless uprobes split
-> huge mappings).
+> > for, not -next.)  It looks like it's something's getting mistbuilt or
+> > there's some logic bug with the argument parsing, if I run the binary
+> > with -h it exits with return code 0 rather than 1.
 
-Got it. Won't do this try...
+> I copied the logic from the other tests in that folder. If you set -h (a
+> valid argument) then it exits with 0. If you an invalid argument it
+> exits with 1.
 
-> 
-> If it's uprobe code that's putting the new PTE in place, then this is
-> just... yeah. I'm with David's suggestion of just disallowing this scenario, I
-> really dislike the idea that we're ok with an invalid condition being ok, only
-> to cover off this one specific case.
-> 
-> 
->>>> +                       continue;
->>>> +
->>>
->>> I was thinking about
->>>
->>> 	WARN_ON(!pte_none(*new_pte))
->>>
->>> at the start of the main loop.
->>>
->>> Obviously not to fix the problem, but rather to make it more explicit.
->>
->> Yeah, WARN_ON_ONCE().
->>
->> We really should fix the code to not install uprobes into the area we are
->> moving.
->>
->> Likely, the correct fix will be to pass the range as well to uprobe_mmap(),
->> and passing that range to build_probe_list().
->>
->> Only when growing using mremap(), we want to call it on the extended range
->> only.
-> 
-> We might be able to implement a simpler version of the proposed patch though
-> which might avoid us needing to do something like this.
-> 
-> Having a look...
-> 
->>
->> --
->> Cheers,
->>
->> David / dhildenb
->>
+Yeah, so it was actually parsing arguments.
 
+> But now that I start the binary myself, it ends the same way. This
+> cures it:
+
+>  	int ret;
+> -	char c;
+> +	int c;
+> =20
+>  	while ((c =3D getopt(argc, argv, "cghv:")) !=3D -1) {
+
+Ah, yes - that'd do it.  Looking at the other tests there they do have c
+as int.
+
+--lkiLacFJXVqFQ3sk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmg1wMYACgkQJNaLcl1U
+h9BHLQf+IKeUMy71KRyZ7siyYFfNYd3lI9daFcqN0hkpy16wx6JIPAL1ITcgYX3W
+N5CAj0Ql/8M8QdioqDgUCxByzidNPDa3kky3dhKkaBztpO6/H0eOsGRN3gqrjFSX
+1NoN/ZTUe+aBoNnjw8cdjKGM6IfMX7c8EWiirSk07Z8YHyOMhcG1gGvC30Wl3L4Y
+F/vfbq7zeESk9u6OGwlH0E1R5hlrWQ9GpvEj1yTcdcUkWcggM0DT2458x0Q/Q9dn
+lSszCg4d4MoeKKGhZrFqHSriNAq8AxBHFt10De0baKf+OX3CYF/OYkXdW7fUgzbW
+qksHO25qb+yDCSfzALC+4B17W78x3g==
+=L7Ov
+-----END PGP SIGNATURE-----
+
+--lkiLacFJXVqFQ3sk--
 
