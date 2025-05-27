@@ -1,131 +1,85 @@
-Return-Path: <linux-kernel+bounces-663479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-663476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEF64AC48AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 08:54:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1346AAC48A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 08:53:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B549C189BD29
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 06:54:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C036D189B214
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 06:53:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C3561FFC55;
-	Tue, 27 May 2025 06:53:49 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85D1E1BD9C9
-	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 06:53:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 817551FBE8C;
+	Tue, 27 May 2025 06:53:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m8TYFJai"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D14402F852;
+	Tue, 27 May 2025 06:53:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748328829; cv=none; b=dIJZozNzruOu5ber7n7hZHUJLIlFehedOLkKqRAJ6cGgXgnupnsckSdL0GFQLU/57EqUVv6q7zxsDZh30+2O6muak94QFW7qN7+HtTD8Rs1Ft/wHU+hZNUfViGhsL6PiunQNlbCIeMmCXQBosc+V8jKID2sDOpMsB2nvWo9dnu8=
+	t=1748328802; cv=none; b=ikrLFDcBlY9qjTybwgSPrbo9XgK+Y20PhfhMBcZbOxRMq/rgcIDozRRO0HSjLmD+tibmR/Yv3DnTR2dLsTY31AYBRs6wPdlvdvpL643qrTsXHPfdBcIczz1O/rboNh8C7XFGf340HzjTmYB/pgIAoGVrLJOGFx3fWfjxJ01w9Q4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748328829; c=relaxed/simple;
-	bh=tAPW5GL4WCf7RRbNcrJY/xuqctJEyDy1i8hbb0T3f/k=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=KqeznQ+fGM0Mo7STa5cIA7LQhAxgpE2yilQ7tUT/JyrS09TDllwAEQFrqfSuNqFpAqcgsmB/br4xk0MHvXbADXEZKDZ5zgEd0WSA2YJrzaSo9UGfjUJ+BrL025SlsUrCR4P2LuQc1l+Dwz0LJFSNxeVtr/UEauxBlcOxgNJGh2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
-X-CSE-ConnectionGUID: Sli80In3SMSdrBeqovBSIA==
-X-CSE-MsgGUID: /g3JsaQcQs+KfsMAS7aXRg==
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 27 May 2025 15:53:40 +0900
-Received: from [127.0.1.1] (unknown [10.226.78.19])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 02D2A4000FA5;
-	Tue, 27 May 2025 15:53:37 +0900 (JST)
-From: Michael Dege <michael.dege@renesas.com>
-Date: Tue, 27 May 2025 08:53:07 +0200
-Subject: [PATCH v2 2/2] phy: renesas: r8a779f0-ether-serdes: add new step
- added to latest datasheet
+	s=arc-20240116; t=1748328802; c=relaxed/simple;
+	bh=kdiH0AXGuvY9XtxMtuYU8wXg/NjMgu8AdKdsundsshE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RMqYKULXzQzmF3QtKFJdLLQtNnl8ERTrreSKSPyIJcQMqnoVxLYpzyzxhHjjd8Dhw43Z/NucfT+Lu99r9BvJgtkJzqWniUrfHfiGwdmvIA1ZEy6T1bpncSaM3iw22S7tC39Hb0B98wjhb1vIOlz4+hjacwDMNIF+XiN5svSbavM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m8TYFJai; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B40ECC4CEEA;
+	Tue, 27 May 2025 06:53:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748328801;
+	bh=kdiH0AXGuvY9XtxMtuYU8wXg/NjMgu8AdKdsundsshE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=m8TYFJaiafMEoqsHW6CNxlG44eo6K7DjL+010aqCJtFWAib1HyStZM5Oq96pfyo1Z
+	 4IrpibWl5tDqGczCJoKw0PxTCTk7A2+pNL21Pjlfnt8He+lIi3sA0M4Rk+QgVH0aL9
+	 LcRntmKt5OyKc43ZhnzbuLVijMC9759CcPN1OzMEE5GTuMXcV+72Uh8wjepgzb2Hb9
+	 ZID9sAf/I61ZbT/2/pJOdSorTG+lmsjKPke/Pz5Pp/7oyr7rRhqXTiatqhdDfS+Iwb
+	 K5xRouXRVjPgl5iggBJ8a2MrTavxORXYQoecg/MOYKzB85NJu06GMaYUR02cY8HztS
+	 OmxbYTpzv1nUg==
+Date: Tue, 27 May 2025 08:53:18 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Ze Huang <huangze@whut.edu.cn>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>, 
+	Thinh Nguyen <Thinh.Nguyen@synopsys.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, linux-usb@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/4] dt-bindings: usb: dwc3: add support for SpacemiT
+ K1
+Message-ID: <20250527-burrowing-adventurous-ermine-dd4eb6@kuoka>
+References: <20250526-b4-k1-dwc3-v3-v4-0-63e4e525e5cb@whut.edu.cn>
+ <20250526-b4-k1-dwc3-v3-v4-1-63e4e525e5cb@whut.edu.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250527-renesas-serdes-update-v2-2-ef17c71cd94c@renesas.com>
-References: <20250527-renesas-serdes-update-v2-0-ef17c71cd94c@renesas.com>
-In-Reply-To: <20250527-renesas-serdes-update-v2-0-ef17c71cd94c@renesas.com>
-To: Vinod Koul <vkoul@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, 
- Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: Michael Dege <michael.dege@renesas.com>, 
- =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
- linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1748328812; l=2378;
- i=michael.dege@renesas.com; s=20250523; h=from:subject:message-id;
- bh=tAPW5GL4WCf7RRbNcrJY/xuqctJEyDy1i8hbb0T3f/k=;
- b=QCGsMKchM+9SNgqcw1BxhpVBF0jzVN4/bilfVt6VylRjq2kz25hq8mmbPu9Q33o7jQbApI+1O
- cQOHMxDt7wmDpatjSl2nOeATJwZEpK7PO8/bY+9QVv2DmWsM7mwOhur
-X-Developer-Key: i=michael.dege@renesas.com; a=ed25519;
- pk=+gYTlVQ3/MlOju88OuKnXA7MlapP4lYqJn1F81HZGSo=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250526-b4-k1-dwc3-v3-v4-1-63e4e525e5cb@whut.edu.cn>
 
-R-Car S4-8 datasheet Rev.1.20 describes some additional register
-settings at the end of the initialization.
+On Mon, May 26, 2025 at 10:40:17PM GMT, Ze Huang wrote:
+> +
+> +  interconnects:
+> +    maxItems: 1
+> +    description:
+> +      On SpacemiT K1, USB performs DMA through bus other than parent DT node.
+> +      The 'interconnects' property explicitly describes this path, ensuring
+> +      correct address translation.
 
-Signed-off-by: Michael Dege <michael.dege@renesas.com>
----
- drivers/phy/renesas/r8a779f0-ether-serdes.c | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+This does not seem write. You mixed DMA with interconnects.
 
-diff --git a/drivers/phy/renesas/r8a779f0-ether-serdes.c b/drivers/phy/renesas/r8a779f0-ether-serdes.c
-index ed83c46f6d00c255852cc5af867c89ab0d0db02a..85a19233f6105e7a309832edee3e6b919eb27eb2 100644
---- a/drivers/phy/renesas/r8a779f0-ether-serdes.c
-+++ b/drivers/phy/renesas/r8a779f0-ether-serdes.c
-@@ -49,6 +49,13 @@ static void r8a779f0_eth_serdes_write32(void __iomem *addr, u32 offs, u32 bank,
- 	iowrite32(data, addr + offs);
- }
- 
-+static u32 r8a779f0_eth_serdes_read32(void __iomem *addr, u32 offs,  u32 bank)
-+{
-+	iowrite32(bank, addr + RENESAS_ETH_SERDES_BANK_SELECT);
-+
-+	return ioread32(addr + offs);
-+}
-+
- static int
- r8a779f0_eth_serdes_reg_wait(struct r8a779f0_eth_serdes_channel *channel,
- 			     u32 offs, u32 bank, u32 mask, u32 expected)
-@@ -319,6 +326,7 @@ static int r8a779f0_eth_serdes_hw_init_late(struct r8a779f0_eth_serdes_channel
- *channel)
- {
- 	int ret;
-+	u32 val;
- 
- 	ret = r8a779f0_eth_serdes_chan_setting(channel);
- 	if (ret)
-@@ -332,6 +340,26 @@ static int r8a779f0_eth_serdes_hw_init_late(struct r8a779f0_eth_serdes_channel
- 
- 	r8a779f0_eth_serdes_write32(channel->addr, 0x03d0, 0x380, 0x0000);
- 
-+	val = r8a779f0_eth_serdes_read32(channel->addr, 0x00c0, 0x180);
-+	r8a779f0_eth_serdes_write32(channel->addr, 0x00c0, 0x180, val | BIT(8));
-+	ret = r8a779f0_eth_serdes_reg_wait(channel, 0x0100, 0x180, BIT(0), 1);
-+	if (ret)
-+		return ret;
-+	r8a779f0_eth_serdes_write32(channel->addr, 0x00c0, 0x180, val & ~BIT(8));
-+	ret = r8a779f0_eth_serdes_reg_wait(channel, 0x0100, 0x180, BIT(0), 0);
-+	if (ret)
-+		return ret;
-+
-+	val = r8a779f0_eth_serdes_read32(channel->addr, 0x0144, 0x180);
-+	r8a779f0_eth_serdes_write32(channel->addr, 0x0144, 0x180, val | BIT(4));
-+	ret = r8a779f0_eth_serdes_reg_wait(channel, 0x0180, 0x180, BIT(0), 1);
-+	if (ret)
-+		return ret;
-+	r8a779f0_eth_serdes_write32(channel->addr, 0x0144, 0x180, val & ~BIT(4));
-+	ret = r8a779f0_eth_serdes_reg_wait(channel, 0x0180, 0x180, BIT(0), 0);
-+	if (ret)
-+		return ret;
-+
- 	return r8a779f0_eth_serdes_monitor_linkup(channel);
- }
- 
 
--- 
-2.25.1
+> +
+> +  interconnect-names:
+> +    const: dma-mem
 
 
