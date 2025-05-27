@@ -1,308 +1,198 @@
-Return-Path: <linux-kernel+bounces-663256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-663258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBB24AC45DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 03:23:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20A17AC45E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 03:27:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 827181899946
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 01:23:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EA703BACDA
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 01:27:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C59F12B17C;
-	Tue, 27 May 2025 01:23:29 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 291872CA9;
-	Tue, 27 May 2025 01:23:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D4AE13D53B;
+	Tue, 27 May 2025 01:27:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bn65vfV2"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98E72134CB
+	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 01:27:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748309008; cv=none; b=BqaTKFKE3WGcEacxJkDyj+RfhutbJdTvb+jUnvKOcTSx5SwhWvzrU6WMsE6CWKnmRw7XPVvn5sObc/T2FDuXpxg0Ig5Fl4+PXvH87grzCvOwXzq/dZfsv7uPqoiLb/qtBxbyFBzCCNDK38DI4gL2+YatRGIUBh/t/7g9VQECRw0=
+	t=1748309242; cv=none; b=Upju5S98FDGBm78aNgc6yzyxPfWkLrTS1hjUY4cmzzZbPj4ZzqpAmUGHNFWQlmBemwGcx1fzWUMsgYPXNmc7WuLPLF+zfAumISLtU5sufFWaEZQZNKwykEA7PlTHyauCwvjNTBTSS0BLnpKFOaNtMGgL/omNcefM6lPgEsSs1uY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748309008; c=relaxed/simple;
-	bh=RCTS5Q8jZ+oF/3rMbSOpe3KLs7/BzUkxofZQFAlY7ts=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=A3dn+CZoH5An+f2ytl5Ez+jIkcMNe1TBvxHXqhW2liy76vESdXzy9emaCBs0ZLod9dTppN2D13JRRCkSQS8pStxrKWIgKcTBVc/wTekLoWySjgoTWJVN/16V1XShZ2LTtbU/ioxJmOBvvOtIJd+JKCasCyDHmQN2xRyXX4QBKDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.24])
-	by gateway (Coremail) with SMTP id _____8AxGHEKFDVoJqb9AA--.17694S3;
-	Tue, 27 May 2025 09:23:22 +0800 (CST)
-Received: from [10.20.42.24] (unknown [10.20.42.24])
-	by front1 (Coremail) with SMTP id qMiowMBxLscEFDVorBn0AA--.43652S3;
-	Tue, 27 May 2025 09:23:18 +0800 (CST)
-Subject: Re: [PATCH v3 2/2] irq/irq-loongarch-ir:Add Redirect irqchip support
-To: Thomas Gleixner <tglx@linutronix.de>, chenhuacai@kernel.org,
- kernel@xen0n.name, corbet@lwn.net, alexs@kernel.org, si.yanteng@linux.dev,
- jiaxun.yang@flygoat.com, peterz@infradead.org, wangliupu@loongson.cn,
- lvjianmin@loongson.cn, maobibo@loongson.cn, siyanteng@cqsoftware.com.cn,
- gaosong@loongson.cn, yangtiezhu@loongson.cn
-Cc: loongarch@lists.linux.dev, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250523101833.17940-1-zhangtianyang@loongson.cn>
- <20250523101833.17940-3-zhangtianyang@loongson.cn> <87ecwdqct9.ffs@tglx>
-From: Tianyang Zhang <zhangtianyang@loongson.cn>
-Message-ID: <3de9bbc8-9ef0-f187-dae0-659958e21db3@loongson.cn>
-Date: Tue, 27 May 2025 09:22:37 +0800
-User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1748309242; c=relaxed/simple;
+	bh=FFKS18dYV5Y8MHYJB2kMbWfKFB4Nsx/TPtY/OyRPyFU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hLLuiDPLQkFtFjtytQMoAEGg9FxRNNDF8t8sautQoYs9LYUOoLozmuQEh/U0g60uyTVr12w2zwu5HYT4rRx5EGYP8M5um7UI7UTrs/FjYf9rcpkuFEJWRNdBOF2l+jWUIScGNaBqM1+hA2IqGOIG4TW0AQ0q3c4TisynB6n/CAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bn65vfV2; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1748309238;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3x4oTme+lZoqSj5iXtS0M9usiPX4bxGfp/DJRe7z3no=;
+	b=bn65vfV2ryzuOSan4szidsY3WurX5wbW6zLQ2dbE2eDCDNMVx8tatChA0qWGWQjCfZ3Eov
+	fitJnF7loX8kmhas21e1rFQbqEtwKtyDuTS+/FqJTme9cOIUhsBfqRfMOw0PSDV6mzBmjc
+	fGpPxnwJazDNt6CM5WmPRIO11Xu7NFU=
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
+ [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-647-mciw8MSWPMGDrJ7-nzXBVw-1; Mon, 26 May 2025 21:27:17 -0400
+X-MC-Unique: mciw8MSWPMGDrJ7-nzXBVw-1
+X-Mimecast-MFC-AGG-ID: mciw8MSWPMGDrJ7-nzXBVw_1748309236
+Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-acf00f500d2so179132766b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 18:27:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748309236; x=1748914036;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3x4oTme+lZoqSj5iXtS0M9usiPX4bxGfp/DJRe7z3no=;
+        b=hDai+wEfMZLrDAOzIE6xCpePFnwkW+hNZruFsDbVjekj6vZQVZcf3zSQxoFHfJDFYR
+         +HkCYhUsza6T8Iv7KzkAOFCi1avYsnJSxe1fa54QIOVQawgYM0lR0INsZhR2AEHLJHSs
+         J8vGKg0rg9uZtCL0qgr0OlXTEkvsRTz5kCxYRCbKjGjU8oiKCGcjlBcLz6v9MAdvbOVh
+         sgeGNtr/LSLlBQF/g+SLzP0Hsc22bgmHLzHmR1ZEyZDjtCDhSHKCem7J0DasVJshTy8l
+         TpRCN+TsE41hkwBBtQAraOopzfDWUbNZ2K7mi4vGOozJrePfntwejE+i+vXI4kRKY6CG
+         MG2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU7I0+p9XQtbpQaxhJTHlcnoDa+2ANgjZ23ihBlSjZOk5Owg0j+FK9TwRSK41WE7+c+X28HP5yjujwWZGQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyX+2dZZKU5E26QyrYhcApF19cMWKoJfa5UdYE7qkSTVXwgcZr9
+	dbpiqFZjIax2GoABpLWImk01Wr6B/nvT/XYI0ngSuw7/WdYyrs3mfx1a4PVBTTehTJZrtI3Jxn/
+	85O7luiNUS0w0YxfPnhJ5zmCm9iv2FFTxtixBWCzlCGUympJ4D9+qemjD6MacL6JJEd8lH/IPaa
+	3rO5IGLKGnHfBLpiZcBah9FEWgs6+qEjhsSC0Kl5jK
+X-Gm-Gg: ASbGncv6q0geFdAbLEsAAERHyRTL+JHTbcd5dedQ0niLseNFoQhk4wScC3XSSHB8VSo
+	mpGkK4JFTDxet3XQrUNkUdnYXEyB/9GUKIXpgh/t+78IP9JeqNfKEKDqtzXU+nT4e/AHVDw==
+X-Received: by 2002:a17:907:c26:b0:ad4:fb9a:ab36 with SMTP id a640c23a62f3a-ad85b03b2a7mr1022781266b.5.1748309235939;
+        Mon, 26 May 2025 18:27:15 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGoNFm7L9s5ZKvOxaLRZiEkKRCVhf+AcjOxcEfulOX78/o+U1rspOYdTK2k8m/1vEqOWfjdxnI22a2qLEer4Sk=
+X-Received: by 2002:a17:907:c26:b0:ad4:fb9a:ab36 with SMTP id
+ a640c23a62f3a-ad85b03b2a7mr1022780266b.5.1748309235570; Mon, 26 May 2025
+ 18:27:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <87ecwdqct9.ffs@tglx>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-CM-TRANSID:qMiowMBxLscEFDVorBn0AA--.43652S3
-X-CM-SenderInfo: x2kd0wxwld05hdqjqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj93XoW3ArW7AF4rKrykCw13Jr4xuFX_yoWxXFy5pF
-	WUJa12gFWFqrWxWr1Iqr4DZFySvrZ3GrsrJrW8K3Zayas09r1IkF1rWFya9FyrCr15CF1j
-	vr4jqrZrur1DJagCm3ZEXasCq-sJn29KB7ZKAUJUUUUD529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUPIb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
-	xVW8Jr0_Cr1UM2kKe7AKxVWUAVWUtwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
-	AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWU
-	tVWrXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI4
-	8JMxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vI
-	r41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_JF0_Jw1lx2IqxVAqx4xG67
-	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIY
-	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14
-	v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8
-	JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07jnEfOUUU
-	UU=
+References: <20250324054333.1954-1-jasowang@redhat.com> <CAPpAL=x4BWNh__YpzkzpErkseh04FT7WNLmg=xMXtfZ0S9BabQ@mail.gmail.com>
+ <CAJaqyWdtKEYiY2tBB0F477LqxVs8fzaix96551WSMa=KdT3C5Q@mail.gmail.com>
+ <20250518173443-mutt-send-email-mst@kernel.org> <CAPpAL=zhKD7q3OmcR9_nWqMXk1grz0gNJ2Wqk923k4i+kuMfgw@mail.gmail.com>
+In-Reply-To: <CAPpAL=zhKD7q3OmcR9_nWqMXk1grz0gNJ2Wqk923k4i+kuMfgw@mail.gmail.com>
+From: Lei Yang <leiyang@redhat.com>
+Date: Tue, 27 May 2025 09:26:39 +0800
+X-Gm-Features: AX0GCFulx4w1yysYV3ELshmY7Ct7E7TGXNXAtA90EnSMjyBRj3ZkTj5E7rSOd2g
+Message-ID: <CAPpAL=x4vRMXFBvEpwrJv6xUZgYrgB41=d1qdDBzENp0NM4O1Q@mail.gmail.com>
+Subject: Re: [PATCH 00/19] virtio_ring in order support
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Eugenio Perez Martin <eperezma@redhat.com>, Jason Wang <jasowang@redhat.com>, xuanzhuo@linux.alibaba.com, 
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi , Thomas
+On Thu, May 22, 2025 at 3:01=E2=80=AFPM Lei Yang <leiyang@redhat.com> wrote=
+:
+>
+> On Mon, May 19, 2025 at 5:35=E2=80=AFAM Michael S. Tsirkin <mst@redhat.co=
+m> wrote:
+> >
+> > On Wed, Mar 26, 2025 at 07:39:47AM +0100, Eugenio Perez Martin wrote:
+> > > On Mon, Mar 24, 2025 at 3:44=E2=80=AFPM Lei Yang <leiyang@redhat.com>=
+ wrote:
+> > > >
+> > > > QE tested this series of patches with virtio-net regression tests,
+> > > > everything works fine.
+> > > >
+> > >
+> > > Hi Lei,
+> > >
+> > > Is it possible to test this series also with virtio-net-pci,...,in_or=
+der=3Don?
 
-在 2025/5/25 下午5:06, Thomas Gleixner 写道:
-> On Fri, May 23 2025 at 18:18, Tianyang Zhang wrote:
->>   
->> -static void avecintc_sync(struct avecintc_data *adata)
->> +void avecintc_sync(struct avecintc_data *adata)
->>   {
->>   	struct pending_list *plist;
->>   
->> @@ -109,7 +99,7 @@ static int avecintc_set_affinity(struct irq_data *data, const struct cpumask *de
->>   			return -EBUSY;
->>   
->>   		if (cpu_online(adata->cpu) && cpumask_test_cpu(adata->cpu, dest))
->> -			return 0;
->> +			return IRQ_SET_MASK_OK_DONE;
-> This change really wants to be seperate with a proper explanation and
-> not burried inside of this pile of changes.
-Ok, I got it , I will add some annotation info
->
->> +static inline bool invalid_queue_is_full(int node, u32 *tail)
->> +{
->> +	u32 head;
->> +
->> +	head = read_queue_head(node);
-> Please move the initialization into the declaration line:
->
->         u32 head = read_queue...();
->
-> All over the place, where it's the first operation in the code. That
-> makes the code more dense and easier to follow.
-OK I got it , thanks
->
->> +	*tail = read_queue_tail(node);
->> +
->> +	return !!(head == ((*tail + 1) % INVALID_QUEUE_SIZE));
-> What's the !! for? A == B is a boolean expression already.
-Emmm....This is actually a rookie mistake, thanks
->
->> +}
->> +
->> +static void invalid_enqueue(struct redirect_queue *rqueue, struct irde_inv_cmd *cmd)
->> +{
->> +	struct irde_inv_cmd *inv_addr;
->> +	u32 tail;
->> +
->> +	guard(raw_spinlock_irqsave)(&rqueue->lock);
->> +
->> +	while (invalid_queue_is_full(rqueue->node, &tail))
->> +		cpu_relax();
->> +
->> +	inv_addr = (struct irde_inv_cmd *)(rqueue->base + tail * sizeof(struct irde_inv_cmd));
->> +	memcpy(inv_addr, cmd, sizeof(struct irde_inv_cmd));
->> +	tail = (tail + 1) % INVALID_QUEUE_SIZE;
->> +
->> +	/*
->> +	 * The uncache-memory access may have an out of order problem cache-memory access,
->> +	 * so a barrier is needed to ensure tail is valid
->> +	 */
-> This comment does not make sense at all.
->
-> What's the actual uncached vs. cached access problem here? AFAICT it's
-> all about the ordering of the writes:
->
->      You need to ensure that the memcpy() data is visible _before_ the
->      tail is updated, no?
+Virtio-net regression tested pass with virtio-net-pci,...,in_order=3Don.
 
-Yes, the fundamental purpose is to ensure that all data is valid when 
-updating registers.
-
-I will modify the annotation information here. Thank you
-
->> +	wmb();
->> +
->> +	write_queue_tail(rqueue->node, tail);
->> +}
->> +static int redirect_table_free(struct redirect_item *item)
-> That return value is there to be ignored by the only caller, right?
-Let's re evaluate the significance of the return value here, thanks
+Tested-by: Lei Yang <leiyang@redhat.com>
+> > >
+> > > Thanks!
+> >
+> >
+> > Lei, what do you think?
 >
->> +{
->> +	struct redirect_table *ird_table;
->> +	struct redirect_entry *entry;
->> +
->> +	ird_table = item->table;
->> +
->> +	entry = item->entry;
->> +	memset(entry, 0, sizeof(struct redirect_entry));
->> +
->> +	scoped_guard(raw_spinlock_irqsave, &ird_table->lock)
->> +		bitmap_release_region(ird_table->bitmap, item->index, 0);
->> +
->> +	kfree(item->gpid);
->> +
->> +	irde_invlid_entry_node(item);
->> +
->> +	return 0;
->> +}
->> +
->> +static inline void redirect_domain_prepare_entry(struct redirect_item *item,
->> +					struct avecintc_data *adata)
-> Please align the argument in the second line properly:
 >
-> https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#line-breaks
-Ok, I got it , thanks
+> Sure,  I will test it and provide test results ASAP.
 >
->> +
->> +static inline void redirect_ack_irq(struct irq_data *d)
->> +{
->> +}
->> +
->> +static inline void redirect_unmask_irq(struct irq_data *d)
->> +{
->> +}
->> +
->> +static inline void redirect_mask_irq(struct irq_data *d)
->> +{
->> +}
-> These want some explanation why they are empty.
-Ok, I got it , thanks
->
->> +
->> +static struct irq_chip loongarch_redirect_chip = {
->> +	.name			= "REDIRECT",
->> +	.irq_ack		= redirect_ack_irq,
->> +	.irq_mask		= redirect_mask_irq,
->> +	.irq_unmask		= redirect_unmask_irq,
->> +	.irq_set_affinity	= redirect_set_affinity,
->> +	.irq_compose_msi_msg	= redirect_compose_msi_msg,
->> +};
->> +out_free_resources:
->> +	redirect_free_resources(domain, virq, nr_irqs);
->> +	irq_domain_free_irqs_common(domain, virq, nr_irqs);
->> +
->> +	return -EINVAL;
-> -ENOMEM?
-Ok, I got it , thanks
->> +}
->> +
->> +	bitmap = bitmap_zalloc(IRD_ENTRIES, GFP_KERNEL);
->> +	if (!bitmap) {
->> +		pr_err("Node [%d] redirect table bitmap alloc pages failed!\n", node);
->> +		return -ENOMEM;
-> Leaks pages.
-Ok, I got it , thanks
->
->> +	}
->> +
->> +	ird_table->bitmap = bitmap;
->> +	ird_table->nr_ird = IRD_ENTRIES;
->> +	ird_table->node = node;
->> +
->> +	raw_spin_lock_init(&ird_table->lock);
->> +
->> +	if (redirect_queue_init(node))
->> +		return -EINVAL;
-> Leaks pages and bitmap.
-Ok, I got it , thanks
->
->> +
->> +	iocsr_write64(CFG_DISABLE_IDLE, LOONGARCH_IOCSR_REDIRECT_CFG);
->> +	iocsr_write64(__pa(ird_table->table), LOONGARCH_IOCSR_REDIRECT_TBR);
->> +
->> +	return 0;
->> +}
->> +#if defined(CONFIG_ACPI)
-> #ifdef CONFIG_ACPI
-Ok, I got it , thanks
->
->> +static int __init redirect_reg_base_init(void)
->> +{
->> +	acpi_status status;
->> +	uint64_t addr = 0;
-> What's this initialization for?
-
-The initial purpose here was to confirm the validity of the data 
-returned by acpi_evaluate_integer,
-
-but perhaps this is not necessary.
-
-I will confirm again here, thanks
-
->
->> +int __init redirect_acpi_init(struct irq_domain *parent)
->> +{
->> +	struct fwnode_handle *fwnode;
->> +	struct irq_domain *domain;
->> +	int ret;
->> +
->> +	fwnode = irq_domain_alloc_named_fwnode("redirect");
->> +	if (!fwnode) {
->> +		pr_err("Unable to alloc redirect domain handle\n");
->> +		goto fail;
->> +	}
->> +
->> +	domain = irq_domain_create_hierarchy(parent, 0, IRD_ENTRIES, fwnode,
->> +			&redirect_domain_ops, irde_descs);
-> Please align the arguments in the second line properly.
-Ok, I got it , thanks
->> +static int redirect_cpu_online(unsigned int cpu)
->> +{
->> +	int ret, node = cpu_to_node(cpu);
->> +
->> +	if (cpu != cpumask_first(cpumask_of_node(node)))
->> +		return 0;
->> +
->> +	ret = redirect_table_init(node);
->> +	if (ret) {
->> +		redirect_table_fini(node);
->> +		return -EINVAL;
->> +	}
->> +
->> +	return 0;
->> +}
-> So if you unplug all CPUs of a node and then replug the first CPU in the
-> node, then this invokes redirect_table_init() unconditionally, which
-> will unconditionally allocate pages and bitmap again ....
-We need to reconsider here, thank you
->
-> Thanks,
->
->          tglx
-
-Thanks again
-
-     Tianyang
+> Thanks
+> Lei
+> >
+> >
+> > > > Tested-by: Lei Yang <leiyang@redhat.com>
+> > > >
+> > > > On Mon, Mar 24, 2025 at 1:45=E2=80=AFPM Jason Wang <jasowang@redhat=
+.com> wrote:
+> > > > >
+> > > > > Hello all:
+> > > > >
+> > > > > This sereis tries to implement the VIRTIO_F_IN_ORDER to
+> > > > > virtio_ring. This is done by introducing virtqueue ops so we can
+> > > > > implement separate helpers for different virtqueue layout/feature=
+s
+> > > > > then the in-order were implmeented on top.
+> > > > >
+> > > > > Tests shows 5% imporvemnt in RX PPS with KVM guest + testpmd on t=
+he
+> > > > > host.
+> > > > >
+> > > > > Please review.
+> > > > >
+> > > > > Thanks
+> > > > >
+> > > > > Jason Wang (19):
+> > > > >   virtio_ring: rename virtqueue_reinit_xxx to virtqueue_reset_xxx=
+()
+> > > > >   virtio_ring: switch to use vring_virtqueue in virtqueue_poll va=
+riants
+> > > > >   virtio_ring: unify logic of virtqueue_poll() and more_used()
+> > > > >   virtio_ring: switch to use vring_virtqueue for virtqueue resize
+> > > > >     variants
+> > > > >   virtio_ring: switch to use vring_virtqueue for virtqueue_kick_p=
+repare
+> > > > >     variants
+> > > > >   virtio_ring: switch to use vring_virtqueue for virtqueue_add va=
+riants
+> > > > >   virtio: switch to use vring_virtqueue for virtqueue_add variant=
+s
+> > > > >   virtio_ring: switch to use vring_virtqueue for enable_cb_prepar=
+e
+> > > > >     variants
+> > > > >   virtio_ring: use vring_virtqueue for enable_cb_delayed variants
+> > > > >   virtio_ring: switch to use vring_virtqueue for disable_cb varia=
+nts
+> > > > >   virtio_ring: switch to use vring_virtqueue for detach_unused_bu=
+f
+> > > > >     variants
+> > > > >   virtio_ring: use u16 for last_used_idx in virtqueue_poll_split(=
+)
+> > > > >   virtio_ring: introduce virtqueue ops
+> > > > >   virtio_ring: determine descriptor flags at one time
+> > > > >   virtio_ring: factor out core logic of buffer detaching
+> > > > >   virtio_ring: factor out core logic for updating last_used_idx
+> > > > >   virtio_ring: move next_avail_idx to vring_virtqueue
+> > > > >   virtio_ring: factor out split indirect detaching logic
+> > > > >   virtio_ring: add in order support
+> > > > >
+> > > > >  drivers/virtio/virtio_ring.c | 856 ++++++++++++++++++++++++++---=
+------
+> > > > >  1 file changed, 653 insertions(+), 203 deletions(-)
+> > > > >
+> > > > > --
+> > > > > 2.42.0
+> > > > >
+> > > > >
+> > > >
+> >
 
 
