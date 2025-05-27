@@ -1,120 +1,151 @@
-Return-Path: <linux-kernel+bounces-663874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-663876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACAABAC4E82
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 14:15:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 304A5AC4E94
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 14:19:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 776BD17EAE8
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 12:15:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0043817D6DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 12:19:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1B1A268FDD;
-	Tue, 27 May 2025 12:15:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20D41269827;
+	Tue, 27 May 2025 12:19:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="BhtFY4o5"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xX7yzLVz"
+Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA9C01DF254;
-	Tue, 27 May 2025 12:15:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 665F225C71D
+	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 12:18:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748348131; cv=none; b=TE2aODfXTHIVF+g6yRJvWk22fkv5pVQAs4fhPqd8CNG2rgQbVOYHa99DGohmQbIEvUG4+/vUkg+Ww2VIspy62AscJWpehUrCNRNmF60mxdCNajdicz75YpooxsJxmnVd9XvkX7kcKbuHFCCMCx0o0lQ38NhvjhbyiD03Ck/LE04=
+	t=1748348339; cv=none; b=r0RJzXBlFFzwyvEL2raC8Lu3TMSko+IIQY5HFo4RL1INmuWC9ehw89Qagz0nzSt0gDSUl61Iu+yw6tu6FUKr/WO3kwKYXldTA57XGcBccMh4ovubrJ6aka3dzFDyIT+1jJ/GoW/OBIwF0lmZHD5OEDSlenOrdTxZMjDqteGxwqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748348131; c=relaxed/simple;
-	bh=Uyg/JPpzodrTtnK0p+gK6gukgXtp5qciPTkzfWFyzh4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RHoluzsQtUYaYrTKEBsrdGSCYLbxshJkQrHChMyZ3cL7z9mqnmrDrznqhz2InJXXLvX31/aWZhba6pAwdS7cuRVP3JsP+ikQ9WEx/62Opa2EUNsL3QuVC9R67sL46PF0ZjMPc5K0JWOwGVaFhwpgiYNsdU7uKx+4uB6L7uewLZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=BhtFY4o5; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (unknown [145.15.244.208])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id A507D2B3;
-	Tue, 27 May 2025 14:15:01 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1748348101;
-	bh=Uyg/JPpzodrTtnK0p+gK6gukgXtp5qciPTkzfWFyzh4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BhtFY4o5xKFll9hHm5rvN2HNJvHpk9PzNaslqGQ0jvJWehiGQMi44dPybUqo6t7kJ
-	 1wAiP04iIxOc8vsto4/kk/ekdcgrAMgIQdKIwYkyVUj3SaWaPOFSHLdz2M4NR9OkXr
-	 UOKPsbXR2X+IwC2f7NGVLBBYOX1UaZBpkYU80PbI=
-Date: Tue, 27 May 2025 14:15:22 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Cosmin Tanislav <demonsingur@gmail.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] regulator: max20086: Fix refcount leak in
- max20086_parse_regulators_dt()
-Message-ID: <20250527121522.GN12492@pendragon.ideasonboard.com>
-References: <aDVRLqgJWMxYU03G@stanley.mountain>
+	s=arc-20240116; t=1748348339; c=relaxed/simple;
+	bh=86zn2u46JYtNwZO5g1DsbWK8w+q5RR5pXL4APJoYNtE=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=a/p+Ncxu27xqpoE4giBiV9zDZjWI1ImRIM0V5FAxXHGxT5xCN4QjvsfF22YYeGOlfX03BofhSRNRqmwDHJP46pxEOjSA2sAEzrMGAuUOfMRIDDxSlRZEYOKXK7dwGNJfdysi+qX5w5uz5KFapLz6xBrE2RfuGZ4jRuMT8x9MabQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--korneld.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xX7yzLVz; arc=none smtp.client-ip=209.85.221.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--korneld.bounces.google.com
+Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-3a4dcfb3bbcso810125f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 05:18:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1748348335; x=1748953135; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=kVklkqDwNsJQ+fgi/kO5TdjSnCkSRE14ziGkMJqjasc=;
+        b=xX7yzLVzVtRJlK98hk6EN/EfSFIqWaGw2Z+VFBopCaC0DD/T4xcsn9dBIirfKAaL2S
+         Px21qQ34+hscOXUdGkS6L0nphE6CPgEcxwnh0Cd6azgblAJTBaVrorEBdKC91DFpl0iF
+         yMo81rRCbS7NmsEjj/9NwDtcvEDaRB8W/Q7oRf0VOwzpAle5dvB4VBsNWwu84884cWmZ
+         rmS2eeKgKHTbuyga4eoNHN5fLcxehcrG0vlRnvgbHh4MVntRtgC1AyOnSq5XT1Ffm8BS
+         e0Iek1X3Jf0YL8JpNLHa6dmWnx5/n1GzfYG+5LvmUz/DDiLCnJMUR8EplDKrL2ez78kx
+         70Ug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748348335; x=1748953135;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kVklkqDwNsJQ+fgi/kO5TdjSnCkSRE14ziGkMJqjasc=;
+        b=qS0+AIR3QXhdTpKvW1HkYGcDT5C5LZXOayfK9bD6nllk2BF7hA2pTOAxrOP1N28VD2
+         Y5dxDZkoxJC+3zKkPvCNpzGFnKdHzopErpSNQETJuBhqHWt+xeuXyu4z66nwoUyUij27
+         lA36X6wyJlygrA+1SldD+AlInMlc3maNPI5rzNNMnkx0zxXWKbMWFNQUH79p7aIN6Nie
+         ercSizzVfhrh4RwSxNQdddwNhxrfPvISVFuH7VdC9WS3bRG9btRK0TwDN3lR+C5PGAlL
+         peXR2mw4wkDIGdubgv8yw3S1L9ekkB6wMlwHXUbY7F08cPv3d/BTk9sAKupEO3R5iMPL
+         VL+g==
+X-Forwarded-Encrypted: i=1; AJvYcCUL8781D5M7hOoitodsRClZR0uHEJz4AGNrVCp+pbH7CgzQ5mVoCD/W3Ra/KfEWPuGgXuf69TMMWgZzMzs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIxFBckE2V5hEcF5C5reA+wGcz77iOz9stVPsvET2I3fNHYj6L
+	xsEWtSnr1K75YuGa4KIKAuyx2/74AlI+UxH2TvPbfkbQ8LyIcK5kwaNzSP1tciwRiGdmhBthQOQ
+	2it7JvDKkTQ==
+X-Google-Smtp-Source: AGHT+IF+4dI2W1Tz8PmaqeJX0XTKtsVBTKm0orDfRvn6Ll06nNvBREgJXKng13K8rbJ9Xc7pKINOeCL2o2e+
+X-Received: from wmbev15.prod.google.com ([2002:a05:600c:800f:b0:442:faba:ccec])
+ (user=korneld job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6000:1885:b0:3a4:e5bc:9892
+ with SMTP id ffacd0b85a97d-3a4e5bc992fmr426611f8f.21.1748348334751; Tue, 27
+ May 2025 05:18:54 -0700 (PDT)
+Date: Tue, 27 May 2025 12:18:07 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <aDVRLqgJWMxYU03G@stanley.mountain>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.49.0.1151.ga128411c76-goog
+Message-ID: <20250527121807.3597061-1-korneld@google.com>
+Subject: [PATCH] power: supply: qcom_battmgr: Report battery capacity
+From: "=?UTF-8?q?Kornel=20Dul=C4=99ba?=" <korneld@google.com>
+To: Sebastian Reichel <sre@kernel.org>, Bjorn Andersson <andersson@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, chromeos-krk-upstreaming@google.com, 
+	"=?UTF-8?q?Kornel=20Dul=C4=99ba?=" <korneld@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Dan,
+Battery charge can be reported in several different ways. One of them is
+is charge percentage referred to as POWER_SUPPLY_PROP_CAPACITY in the
+power supply API. Currently the driver reports the capacity in this way
+on SM8350, but not on the newer variants referred to as SC8280XP in the
+driver. Although this is not a bug in itself, not reporting the
+percentage can confuse some userspace consumers.
+Mimic what is done in the ACPI driver (drivers/acpi/battery.c) and
+calculate the percentage capacity by dividing the current charge value
+by the full charge. Both values are expressed in either uWh, or
+in uAh.
 
-Thank you for the patch.
+Signed-off-by: Kornel Dul=C4=99ba <korneld@google.com>
+---
+ drivers/power/supply/qcom_battmgr.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-On Tue, May 27, 2025 at 08:44:14AM +0300, Dan Carpenter wrote:
-> There is a missing call to of_node_put() if devm_kcalloc() fails.
-> Fix this by changing the code to use cleanup.h magic to drop the
-> refcount.
-> 
-> Fixes: 6b0cd72757c6 ("regulator: max20086: fix invalid memory access")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+diff --git a/drivers/power/supply/qcom_battmgr.c b/drivers/power/supply/qco=
+m_battmgr.c
+index fe27676fbc7c..5ed5452ab51c 100644
+--- a/drivers/power/supply/qcom_battmgr.c
++++ b/drivers/power/supply/qcom_battmgr.c
+@@ -577,6 +577,8 @@ static int qcom_battmgr_bat_get_property(struct power_s=
+upply *psy,
+ 		val->intval =3D battmgr->status.capacity;
+ 		break;
+ 	case POWER_SUPPLY_PROP_CAPACITY:
++		if (battmgr->status.percent =3D=3D (unsigned int)-1)
++			return -ENODATA;
+ 		val->intval =3D battmgr->status.percent;
+ 		break;
+ 	case POWER_SUPPLY_PROP_TEMP:
+@@ -617,6 +619,7 @@ static const enum power_supply_property sc8280xp_bat_pr=
+ops[] =3D {
+ 	POWER_SUPPLY_PROP_STATUS,
+ 	POWER_SUPPLY_PROP_PRESENT,
+ 	POWER_SUPPLY_PROP_TECHNOLOGY,
++	POWER_SUPPLY_PROP_CAPACITY,
+ 	POWER_SUPPLY_PROP_CYCLE_COUNT,
+ 	POWER_SUPPLY_PROP_VOLTAGE_MAX_DESIGN,
+ 	POWER_SUPPLY_PROP_VOLTAGE_NOW,
+@@ -1063,6 +1066,21 @@ static void qcom_battmgr_sc8280xp_callback(struct qc=
+om_battmgr *battmgr,
+ 		battmgr->ac.online =3D source =3D=3D BATTMGR_CHARGING_SOURCE_AC;
+ 		battmgr->usb.online =3D source =3D=3D BATTMGR_CHARGING_SOURCE_USB;
+ 		battmgr->wireless.online =3D source =3D=3D BATTMGR_CHARGING_SOURCE_WIREL=
+ESS;
++		if (battmgr->info.last_full_capacity !=3D 0) {
++			/*
++			 * 100 * battmgr->status.capacity can overflow a 32bit
++			 * unsigned integer. Do a temporary cast to avoid that.
++			 */
++			battmgr->status.percent =3D
++				(uint64_t)100 * battmgr->status.capacity /
++				battmgr->info.last_full_capacity;
++		} else {
++			/*
++			 * Let the sysfs handler know no data is available at
++			 * this time.
++			 */
++			battmgr->status.percent =3D (unsigned int)-1;
++		}
+ 		break;
+ 	case BATTMGR_BAT_DISCHARGE_TIME:
+ 		battmgr->status.discharge_time =3D le32_to_cpu(resp->time);
+--=20
+2.49.0.1151.ga128411c76-goog
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> ---
->  drivers/regulator/max20086-regulator.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/regulator/max20086-regulator.c b/drivers/regulator/max20086-regulator.c
-> index b4fe76e33ff2..fcdd2d0317a5 100644
-> --- a/drivers/regulator/max20086-regulator.c
-> +++ b/drivers/regulator/max20086-regulator.c
-> @@ -5,6 +5,7 @@
->  // Copyright (C) 2022 Laurent Pinchart <laurent.pinchart@idesonboard.com>
->  // Copyright (C) 2018 Avnet, Inc.
->  
-> +#include <linux/cleanup.h>
->  #include <linux/err.h>
->  #include <linux/gpio/consumer.h>
->  #include <linux/i2c.h>
-> @@ -133,11 +134,11 @@ static int max20086_regulators_register(struct max20086 *chip)
->  static int max20086_parse_regulators_dt(struct max20086 *chip, bool *boot_on)
->  {
->  	struct of_regulator_match *matches;
-> -	struct device_node *node;
->  	unsigned int i;
->  	int ret;
->  
-> -	node = of_get_child_by_name(chip->dev->of_node, "regulators");
-> +	struct device_node *node __free(device_node) =
-> +		of_get_child_by_name(chip->dev->of_node, "regulators");
->  	if (!node) {
->  		dev_err(chip->dev, "regulators node not found\n");
->  		return -ENODEV;
-> @@ -153,7 +154,6 @@ static int max20086_parse_regulators_dt(struct max20086 *chip, bool *boot_on)
->  
->  	ret = of_regulator_match(chip->dev, node, matches,
->  				 chip->info->num_outputs);
-> -	of_node_put(node);
->  	if (ret < 0) {
->  		dev_err(chip->dev, "Failed to match regulators\n");
->  		return -EINVAL;
--- 
-Regards,
-
-Laurent Pinchart
 
