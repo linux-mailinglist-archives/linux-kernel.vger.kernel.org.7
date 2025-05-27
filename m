@@ -1,113 +1,139 @@
-Return-Path: <linux-kernel+bounces-663626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-663629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FDECAC4B0A
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 11:05:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0817AC4B1E
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 11:08:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB82F7A4287
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 09:04:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7ABC2178D24
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 09:08:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 860831EF09D;
-	Tue, 27 May 2025 09:05:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 486FE24DCEB;
+	Tue, 27 May 2025 09:08:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="CZvtfoAE"
-Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kM4G+zTH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E77C24DD10
-	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 09:05:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AEE222688B;
+	Tue, 27 May 2025 09:08:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748336729; cv=none; b=GeUKOnpUJQ/mhG2N70B3hoYBFLMM6kjeQFeVk7QIFbedcSG44Sjv3rnUypDlAGY6Z3pnqb54JeDGi2Qxkqt02kfvMmIXezWJp3xxK4QcPnQvj7gJqFCYkjOEEbDMfCjPVEDS06JA4Vuge54ujyvYJix45adSAI9JGYWhPTiLr9Y=
+	t=1748336891; cv=none; b=DI+G9I1rNIEf30Gc8wqqFeEP5Id6c14IODMqS74Qgv/X+UdEwHGlj6F2M2LltNNxp5TSLxI1QeFujpjFAps9IvkHRTie4t2xmcEw6biDqdTwn7L6Y2JF9Wo3NqNQeCbZ/OgUHc1ahwDAyxXxhmad64BDnLW5I/NxD7QCdw0j1nE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748336729; c=relaxed/simple;
-	bh=CeqyVjYJXY5gNLnSFK8rGhR6vDYi3IcREM2wPzYC82k=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Zw4jfhlLovNMYYU+3s2OP5lu43WcgNmcul3d0Z8arRXLZqCw+VUFkESdt6P7nZQAAP+vl2U9HLvCTNFhGDcEt/EZmafftMcKtbKnt2Y0ugYQkcXB4j+sB9f7rGlmuz7badK3BCQJfsmVb4k0Mp67Nra1Gis4kbCnnqfviDFbOrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=CZvtfoAE; arc=none smtp.client-ip=115.124.30.110
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1748336724; h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	bh=g3UmXVOxJL0IKWUMXDh3p6MkUMRqvLMyZGb15DpuS6c=;
-	b=CZvtfoAEwbUdC+ftJvS5UKsY+pPrkwZ4XUvZ9Ai01M+b2bbeUMR4UH09dE0wepRWwjPY8PPNFF1olTxFC6JgZiTU/YSnNlRHoX9f2SrCGmOkIGUy75Du/QL6g9+YgdKA95u6IF8oa16QpTAMKBb4nY9fXmtrhjoNgvyq4a/iP/Q=
-Received: from DESKTOP-5N7EMDA(mailfrom:ying.huang@linux.alibaba.com fp:SMTPD_---0WbzeqpI_1748336721 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 27 May 2025 17:05:22 +0800
-From: "Huang, Ying" <ying.huang@linux.alibaba.com>
-To: Bharata B Rao <bharata@amd.com>
-Cc: linux-kernel@vger.kernel.org,  linux-mm@kvack.org,
-  Jonathan.Cameron@huawei.com,  dave.hansen@intel.com,  gourry@gourry.net,
-  hannes@cmpxchg.org,  mgorman@techsingularity.net,  mingo@redhat.com,
-  peterz@infradead.org,  raghavendra.kt@amd.com,  riel@surriel.com,
-  rientjes@google.com,  sj@kernel.org,  weixugc@google.com,
-  willy@infradead.org,  ziy@nvidia.com,  dave@stgolabs.net,
-  nifan.cxl@gmail.com,  joshua.hahnjy@gmail.com,  xuezhengchu@huawei.com,
-  yiannis@zptcorp.com,  akpm@linux-foundation.org,  david@redhat.com
-Subject: Re: [RFC PATCH v0 0/2] Batch migration for NUMA balancing
-In-Reply-To: <55c51f34-b41d-49b2-96a2-dcc5f425f966@amd.com> (Bharata B. Rao's
-	message of "Tue, 27 May 2025 14:23:27 +0530")
-References: <20250521080238.209678-1-bharata@amd.com>
-	<87sekrbvyr.fsf@DESKTOP-5N7EMDA>
-	<55c51f34-b41d-49b2-96a2-dcc5f425f966@amd.com>
-Date: Tue, 27 May 2025 17:05:21 +0800
-Message-ID: <87cybua0fi.fsf@DESKTOP-5N7EMDA>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1748336891; c=relaxed/simple;
+	bh=1mVZilj0ei09PTF3v4no8nvYAaUQ6G6EroZGp/VBi4U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oucbnrZK86ySbY5JBWmy2f1sUT2nj0vwfn3VIY7YKhUYaAZAgSyP55GkfCY9zWKOXVWawi/dvZV20pe+PBM3o0lMi6MP1M7LnG0yJLyU8Giq9aq2A9iDv92AfYGDGVwi/RUQZ1mbsnAd2jP7xdxgKfN/nJW5AW07UyxbXwXnyZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kM4G+zTH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B039CC4CEEA;
+	Tue, 27 May 2025 09:08:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748336891;
+	bh=1mVZilj0ei09PTF3v4no8nvYAaUQ6G6EroZGp/VBi4U=;
+	h=From:To:Cc:Subject:Date:From;
+	b=kM4G+zTHgnMRgobV2rm5Je+BnrSfMeK1TIbWYQMXT552VrxR3TVMy2GN7OsJCBkTx
+	 42DUXlwJmh1x/Nd+g2jvOEp4fHW+DB/75W2PaHqf004DWCwha2hans8xfQh0TeEgmW
+	 R1xIvnDThs+MlTDuKSkDAvQ7nwjbP2wuRXq1RdbPbccVaLdLn9GaVf4ag07F3Api69
+	 uQ3p0ij+PtlCZZjFJjGglF47//ZNOFFClrknnFixRjd2QpmTQ+k5Jv9CV4ZRCa8Dyv
+	 CuBi7Jp6SDwafFvdD0EJzlD4ZTggay8KIC/1qxxEsnI9ZpA0z5+r4MFx83nadxYSO7
+	 wV7ikpCr41Gwg==
+From: Alexey Gladkov <legion@kernel.org>
+To: Petr Pavlu <petr.pavlu@suse.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Daniel Gomez <da.gomez@samsung.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas.schier@linux.dev>
+Cc: linux-kernel@vger.kernel.org,
+	linux-modules@vger.kernel.org,
+	linux-kbuild@vger.kernel.org,
+	Alexey Gladkov <legion@kernel.org>
+Subject: [PATCH v3 0/6] Add generated modalias to modules.builtin.modinfo
+Date: Tue, 27 May 2025 11:07:54 +0200
+Message-ID: <cover.1748335606.git.legion@kernel.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+Content-Transfer-Encoding: 8bit
 
-Bharata B Rao <bharata@amd.com> writes:
+The modules.builtin.modinfo file is used by userspace (kmod to be specific) to
+get information about builtin modules. Among other information about the module,
+information about module aliases is stored. This is very important to determine
+that a particular modalias will be handled by a module that is inside the
+kernel.
 
-> On 26-May-25 2:16 PM, Huang, Ying wrote:
->> Hi, Bharata,
->> Bharata B Rao <bharata@amd.com> writes:
->> 
->>> Hi,
->>>
->>> This is an attempt to convert the NUMA balancing to do batched
->>> migration instead of migrating one folio at a time. The basic
->>> idea is to collect (from hint fault handler) the folios to be
->>> migrated in a list and batch-migrate them from task_work context.
->>> More details about the specifics are present in patch 2/2.
->>>
->>> During LSFMM[1] and subsequent discussions in MM alignment calls[2],
->>> it was suggested that separate migration threads to handle migration
->>> or promotion request may be desirable. Existing NUMA balancing, hot
->>> page promotion and other future promotion techniques could off-load
->>> migration part to these threads.
->> What is the expected benefit of the change?
->
-> Initially it is about cleanliness and separation of migration into its
-> own thread/sub-system.
->
->> For code reuse, we can use migrate_misplaced_folio() or
->> migrate_misplaced_folio_batch() in various promotion path.
->
-> That's what I have done in this patchset at least. We thought we could
-> go full length and off-load migration to its own thread.
+There are several mechanisms for creating modalias for modules:
 
-Even if we migrate pages in another thread, the migrated pages will be
-unmapped, copied, remapped during migrating.  That is, the workload
-threads may be stalled to wait for migrating.  So, we need to measure
-the real benefit firstly.
+The first is to explicitly specify the MODULE_ALIAS of the macro. In this case,
+the aliases go into the '.modinfo' section of the module if it is compiled
+separately or into vmlinux.o if it is builtin into the kernel.
 
->> For workload latency influence, per my understanding, PTE scanning
->> is
->> much more serious than migration.  Why not start from that?
->
-> Raghu's PTE A bit scanning is one effort towards that (Removing PTE
-> scanning from task context.
+The second is the use of MODULE_DEVICE_TABLE followed by the use of the
+modpost utility. In this case, vmlinux.o no longer has this information and
+does not get it into modules.builtin.modinfo.
 
----
-Best Regards,
-Huang, Ying
+For example:
+
+$ modinfo pci:v00008086d0000A36Dsv00001043sd00008694bc0Csc03i30
+modinfo: ERROR: Module pci:v00008086d0000A36Dsv00001043sd00008694bc0Csc03i30 not found.
+
+$ modinfo xhci_pci
+name:           xhci_pci
+filename:       (builtin)
+license:        GPL
+file:           drivers/usb/host/xhci-pci
+description:    xHCI PCI Host Controller Driver
+
+The builtin module is missing alias "pci:v*d*sv*sd*bc0Csc03i30*" which will be
+generated by modpost if the module is built separately.
+
+To fix this it is necessary to add the generated by modpost modalias to
+modules.builtin.modinfo.
+
+Fortunately modpost already generates .vmlinux.export.c for exported symbols. It
+is possible to use this file to create a '.modinfo' section for builtin modules.
+The modules.builtin.modinfo file becomes a composite file. One part is extracted
+from vmlinux.o, the other part from .vmlinux.export.o.
+
+Notes:
+- v3:
+  * Add `Reviewed-by` tag to patches from Petr Pavlu.
+  * Rebase to v6.15.
+  * v2: https://lore.kernel.org/all/20250509164237.2886508-1-legion@kernel.org/
+
+- v2:
+  * Drop patch for mfd because it was already applied and is in linux-next.
+  * The generation of aliases for builtin modules has been redone as
+    suggested by Masahiro Yamada.
+  * Rebase to v6.15-rc5-136-g9c69f8884904
+  * v1: https://lore.kernel.org/all/cover.1745591072.git.legion@kernel.org/
+
+Alexey Gladkov (6):
+  scsi: Define MODULE_DEVICE_TABLE only if necessary
+  modules: Add macros to specify modinfo prefix
+  modpost: Make mod_device_table aliases more unique
+  modpost: Create modalias for builtin modules
+  kbuild: Move modules.builtin.modinfo to another makefile
+  kbuild: Create modules.builtin.modinfo for modpost results
+
+ drivers/scsi/BusLogic.c     |  2 +-
+ include/linux/module.h      | 21 +++++++++++-----
+ include/linux/moduleparam.h |  7 ++++--
+ scripts/Makefile.vmlinux    | 48 +++++++++++++++++++++++++++++++++++++
+ scripts/Makefile.vmlinux_o  | 26 +-------------------
+ scripts/mod/file2alias.c    | 34 ++++++++++++++++++++++----
+ scripts/mod/modpost.c       | 13 +++++++++-
+ scripts/mod/modpost.h       |  2 ++
+ 8 files changed, 114 insertions(+), 39 deletions(-)
+
+-- 
+2.49.0
+
 
