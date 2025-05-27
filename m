@@ -1,140 +1,90 @@
-Return-Path: <linux-kernel+bounces-664329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-664331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FE33AC5A30
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 20:43:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DB66AC5A34
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 20:45:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A61F17AFA51
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 18:42:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45BE44A62C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 18:45:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D878280A5F;
-	Tue, 27 May 2025 18:43:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SAJg/lTs"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84B631E32B7;
+	Tue, 27 May 2025 18:45:27 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88CDF27C854;
-	Tue, 27 May 2025 18:43:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28C1D1AC44D;
+	Tue, 27 May 2025 18:45:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748371392; cv=none; b=RUWDeZlQUqpCC++jbTqovwYlNKI6HMjdEpYe0pCKLNrK2kHaAtAhT7hiVB3Pdm+6OhJosNOSB2s+0KxLp5bLC015sUOPWp2CkkKUtpxEIFHuBSS66q/2RXHyuhoOXQqXp+bQP8fBDSDabkxFDNEuOk1E9Iwntvu1dyD3ToFayu4=
+	t=1748371527; cv=none; b=hSqZ6R3EkvB2MlGJuURaEk3F/6xjY9MifjhMkFw5F1Tx4crlDDgW/2U6hFdEfVj5oJ3ocwDzQXX6a/NfaOrywWcxZM3soxDLg552gtvCXKEoUUlEYkHk4LJT7sAOLvRYNkqnmdF2Vqpe5fO/5UFEAr221Y/YVuzj7HhfL384gko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748371392; c=relaxed/simple;
-	bh=unrEi+Z8Vcid2frmRc00TpoL+pz62h5Wsf8KIjX1MAI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mfV8VJxNi/USAC+PEZeRUtNWnRYUO4jmF+ImjSIVibgz88fh9BeTUWJtpk9tP4U1A9FIosoix8bCpgwOY3HF8tTM5yS0BxCrsBSNSorpnIeJXBxo8oNH0BfDl7//Hbjpbr88kcZ/DmkJujm7JNlB1hv11DcmMHK5zWx/6RYhcmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SAJg/lTs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1049DC4CEEA;
-	Tue, 27 May 2025 18:43:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748371392;
-	bh=unrEi+Z8Vcid2frmRc00TpoL+pz62h5Wsf8KIjX1MAI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SAJg/lTsHFPpMmZvVmP+0XJugy76N/WOctdJIssWWs7qNHSBbzmSYg8xkWQak4g5C
-	 LfZgHKgxVCZb8p0qamVGEV/1YiZTk2afQEafhl37cp97dLgGRdjvi7trKjD2XXdMuP
-	 LbrGzfua9UHyhqt54e4WAAnlTo1NpBqK2l+IKnh1JQUdMKF4EbO60uwu4lUOeBUiiD
-	 wKIfF3Uo87tWndWoi9LDxjhMwmt61Lxnq3QWSMVbr06JAV1rHQ9XUs10fwb75pWBr3
-	 anGW5bNZOirMCaMIcgBCgcjqJ5Vcm09HGhEIuw7KuVAzISErwpzi7uyi2a2hStymIg
-	 Mw76bx9c3WLMA==
-Date: Tue, 27 May 2025 11:43:08 -0700
-From: Kees Cook <kees@kernel.org>
-To: Paolo Abeni <pabeni@redhat.com>
-Cc: Kuniyuki Iwashima <kuniyu@amazon.com>,
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Simon Horman <horms@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Cosmin Ratiu <cratiu@nvidia.com>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Kory Maincent <kory.maincent@bootlin.com>,
-	Maxim Georgiev <glipus@gmail.com>, netdev@vger.kernel.org,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-	Chaitanya Kulkarni <kch@nvidia.com>,
-	Mike Christie <michael.christie@oracle.com>,
-	Max Gurtovoy <mgurtovoy@nvidia.com>,
-	Maurizio Lombardi <mlombard@redhat.com>,
-	Dmitry Bogdanov <d.bogdanov@yadro.com>,
-	Mingzhe Zou <mingzhe.zou@easystack.cn>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Lei Yang <leiyang@redhat.com>, Ido Schimmel <idosch@nvidia.com>,
-	Samuel Mendoza-Jonas <sam@mendozajonas.com>,
-	Paul Fertser <fercerpav@gmail.com>,
-	Alexander Aring <alex.aring@gmail.com>,
-	Stefan Schmidt <stefan@datenfreihafen.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Hayes Wang <hayeswang@realtek.com>,
-	Douglas Anderson <dianders@chromium.org>,
-	Grant Grundler <grundler@chromium.org>,
-	Jay Vosburgh <jv@jvosburgh.net>,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	Jiri Pirko <jiri@resnulli.us>,
-	Aleksander Jan Bajkowski <olek2@wp.pl>,
-	Philipp Hahn <phahn-oss@avm.de>, Eric Biggers <ebiggers@google.com>,
-	Ard Biesheuvel <ardb@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
-	Ahmed Zaki <ahmed.zaki@intel.com>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Xiao Liang <shaw.leon@gmail.com>, linux-kernel@vger.kernel.org,
-	linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
-	target-devel@vger.kernel.org, linux-wpan@vger.kernel.org,
-	linux-usb@vger.kernel.org, linux-hyperv@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH net-next v2 8/8] net: core: Convert
- dev_set_mac_address_user() to use struct sockaddr_storage
-Message-ID: <202505271142.EA78EAB04@keescook>
-References: <20250521204310.it.500-kees@kernel.org>
- <20250521204619.2301870-8-kees@kernel.org>
- <e1429351-3c9b-40e0-b50d-de6527d0a05b@redhat.com>
+	s=arc-20240116; t=1748371527; c=relaxed/simple;
+	bh=qbR1nvMOL/0w3B8hpSA7B5j6lT4nrk8IfSqFKcJ8hN0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Gyqg4uqbHL1zPfh/n3rv3g3+BLW+wpNG3llh+tTgMVR7bkgbwOYgMGQZ0TR97B468Wsff9KmxhHlPTHfDRso6ve9a/5xXdz3THAbV8e7cyvw/gii46JVrsFUcBg+5JuS4Fdf7MfBeUzD4qb+BZJj49s6T4thIZBwCWA6AIAiMZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E91DAC4CEE9;
+	Tue, 27 May 2025 18:45:25 +0000 (UTC)
+Date: Tue, 27 May 2025 14:46:23 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>
+Subject: [PATCH] ring-buffer: Simplify reset_disabled_cpu_buffer() with use
+ of guard()
+Message-ID: <20250527144623.77a9cc47@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e1429351-3c9b-40e0-b50d-de6527d0a05b@redhat.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, May 27, 2025 at 09:02:28AM +0200, Paolo Abeni wrote:
-> On 5/21/25 10:46 PM, Kees Cook wrote:
-> > diff --git a/net/core/dev_ioctl.c b/net/core/dev_ioctl.c
-> > index fff13a8b48f1..616479e71466 100644
-> > --- a/net/core/dev_ioctl.c
-> > +++ b/net/core/dev_ioctl.c
-> > @@ -572,9 +572,11 @@ static int dev_ifsioc(struct net *net, struct ifreq *ifr, void __user *data,
-> >  		return dev_set_mtu(dev, ifr->ifr_mtu);
-> >  
-> >  	case SIOCSIFHWADDR:
-> > -		if (dev->addr_len > sizeof(struct sockaddr))
-> > +		if (dev->addr_len > sizeof(ifr->ifr_hwaddr))
-> >  			return -EINVAL;
-> > -		return dev_set_mac_address_user(dev, &ifr->ifr_hwaddr, NULL);
-> > +		return dev_set_mac_address_user(dev,
-> > +						(struct sockaddr_storage *)&ifr->ifr_hwaddr,
-> > +						NULL);
-> 
-> Side note for a possible follow-up: the above pattern is repeated a
-> couple of times: IMHO consolidating it into an helper would be nice.
+From: Steven Rostedt <rostedt@goodmis.org>
 
-Yeah, I will look at that.
+Use guard(raw_spinlock_irqsave)() in reset_disabled_cpu_buffer() to
+simplify the locking.
 
-> Also such helper could/should explicitly convert ifr->ifr_hwaddr to
-> sockaddr_storage and avoid the cast.
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+---
+ kernel/trace/ring_buffer.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
-It's UAPI, so it looked verrrry painful to change.
-
+diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
+index 10a4b26929ae..0b21d64e90c8 100644
+--- a/kernel/trace/ring_buffer.c
++++ b/kernel/trace/ring_buffer.c
+@@ -6112,21 +6112,16 @@ rb_reset_cpu(struct ring_buffer_per_cpu *cpu_buffer)
+ /* Must have disabled the cpu buffer then done a synchronize_rcu */
+ static void reset_disabled_cpu_buffer(struct ring_buffer_per_cpu *cpu_buffer)
+ {
+-	unsigned long flags;
+-
+-	raw_spin_lock_irqsave(&cpu_buffer->reader_lock, flags);
++	guard(raw_spinlock_irqsave)(&cpu_buffer->reader_lock);
+ 
+ 	if (RB_WARN_ON(cpu_buffer, local_read(&cpu_buffer->committing)))
+-		goto out;
++		return;
+ 
+ 	arch_spin_lock(&cpu_buffer->lock);
+ 
+ 	rb_reset_cpu(cpu_buffer);
+ 
+ 	arch_spin_unlock(&cpu_buffer->lock);
+-
+- out:
+-	raw_spin_unlock_irqrestore(&cpu_buffer->reader_lock, flags);
+ }
+ 
+ /**
 -- 
-Kees Cook
+2.47.2
+
 
