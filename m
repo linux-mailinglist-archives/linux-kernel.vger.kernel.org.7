@@ -1,123 +1,136 @@
-Return-Path: <linux-kernel+bounces-664004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-664008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50A66AC5090
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 16:13:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F51BAC509E
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 16:15:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3F6D3B9277
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 14:13:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90558179DD9
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 14:15:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCEB6278143;
-	Tue, 27 May 2025 14:13:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dkn/sBqo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 302C82798F3;
+	Tue, 27 May 2025 14:14:55 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25F771DF254;
-	Tue, 27 May 2025 14:13:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A53C275864
+	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 14:14:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748355203; cv=none; b=f1Yji/Hmpq2F8D8VlX/Nzy4hk0Iw1T0Nt+51wlvBYrqCCuc8nWzVMNLCEu5dSNw1g6jPo57JJK81/gbZK8Z9iTDZm3xxGiELmhdLbLym3nX0lkhtFT6n6yrNwwPswnDEj7zROo5Ww25IkdvGd78pOftyY8OyxNAhpsN9Qno6CIg=
+	t=1748355294; cv=none; b=upqtwNCh/OjRH/uPvpuc3dLcLY+vKtwz7PFkxhGRYLULi+fXHtC05DClJChnmFqaC/VASOTbDVtlsfvS7+7YtwIbzEGeW5sZPyeEygyRM50kryDfFg75JDHUBFvofZMxzLQfH+Fhn7qI0239TTAL/hUBJ2E++By0CRJouECz6DU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748355203; c=relaxed/simple;
-	bh=s1/Fl3iRmGCQlCudqjCG+PZ70PcwovATM6h2BAyhIz8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WKCPVFvKKAfL+2q7UjOl4sliNWnmopPrFxURJw/4VhEnDlehGHgs5QP/rMyVZIcVWA9fsMox/E3EzEReLDNPvKiF2VhF+e4hMbc50hv7ypZ5fdLdk0W/iEDJT7uDB5HtksZicUlwrB1fIA14sj9NdW8IAnKu4b9omNx/4yinJ3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dkn/sBqo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4886C4CEED;
-	Tue, 27 May 2025 14:13:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748355202;
-	bh=s1/Fl3iRmGCQlCudqjCG+PZ70PcwovATM6h2BAyhIz8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Dkn/sBqocoIftLHlFTZ2LSlb4tK30ZM9SKUm8A/A+h5H7XH2GqTiTqzc/tYvAejl0
-	 LwGIrtc//qPJNWvU51AoNto0CnTUxzaHfxd6wY7i/6WskrxAZv9vI5rXySLi47l9ha
-	 FTFaDaYQgxEexSY6vd5F1CAiXEuTXtpbisYVWW2EU9ddhinJhoOJCrXYqKL1PS/ETU
-	 FdErHUk5oVgvfzMcfbxPOIV0UKzqiEQJk+Of/8t05Fb8LoS5gWg6m9uGNfT6bhnL0I
-	 oFYM+7YuUq8g7x7Kbsqc8D0O2fy5PiLCrmYrhVNKMZV/daF9cXkTOZFMpu9/icjRNv
-	 UG4yWwL98RTMA==
-Date: Tue, 27 May 2025 15:13:16 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Jacky Chou <jacky_chou@aspeedtech.com>
-Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
-	"andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"edumazet@google.com" <edumazet@google.com>,
-	"kuba@kernel.org" <kuba@kernel.org>,
-	"pabeni@redhat.com" <pabeni@redhat.com>,
-	"robh@kernel.org" <robh@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"joel@jms.id.au" <joel@jms.id.au>,
-	"andrew@codeconstruct.com.au" <andrew@codeconstruct.com.au>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"sboyd@kernel.org" <sboyd@kernel.org>,
-	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-	BMC-SW <BMC-SW@aspeedtech.com>
-Subject: Re: [net 1/4] dt-bindings: net: ftgmac100: Add resets property
-Message-ID: <20250527-sandy-uninvited-084d071c4418@spud>
-References: <20250520092848.531070-1-jacky_chou@aspeedtech.com>
- <20250520092848.531070-2-jacky_chou@aspeedtech.com>
- <20250520-creature-strenuous-e8b1f36ab82d@spud>
- <SEYPR06MB51346A27CD1C50C2922FE30C9D64A@SEYPR06MB5134.apcprd06.prod.outlook.com>
+	s=arc-20240116; t=1748355294; c=relaxed/simple;
+	bh=I5aLatGpguRDg0LB9Scn1LjNWZ+bViwOhsHQD3l6ri8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=PdZ/yIos0FoQlS/vAd82x4t3dy0xbuJ4BsBOP5qmc/fi0D9YkaIhSte4xvf975yEOG9eWp+mMwxnGGewLnFy7Zs51h2dx1dx/9xvnFZaaxBUWog4AhA3hKGk16hMi0ZfCONZL9MUuEUc9N+G0EQbWP+aRmAvK00Fgiv/guk6ouU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from dude05.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::54])
+	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1uJv4f-0002Ne-CC; Tue, 27 May 2025 16:14:37 +0200
+From: Philipp Zabel <p.zabel@pengutronix.de>
+Subject: [PATCH RFC 0/4] drm/bridge: samsung-dsim: Stop controlling vsync
+ display FIFO flush in panels
+Date: Tue, 27 May 2025 16:14:30 +0200
+Message-Id: <20250527-dsi-vsync-flush-v1-0-9b4ea4578729@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="oF1MzhfhQDns9knz"
-Content-Disposition: inline
-In-Reply-To: <SEYPR06MB51346A27CD1C50C2922FE30C9D64A@SEYPR06MB5134.apcprd06.prod.outlook.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMbINWgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDUyNz3ZTiTN2y4sq8ZN20nNLiDF2LNIvkZEvDRLM0AxMloK6CotS0zAq
+ widFKQW7OSrG1tQAtEmGyZgAAAA==
+X-Change-ID: 20250527-dsi-vsync-flush-8f8cc91a6f04
+To: Inki Dae <inki.dae@samsung.com>, 
+ Jagan Teki <jagan@amarulasolutions.com>, 
+ Marek Szyprowski <m.szyprowski@samsung.com>, 
+ Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Artur Weber <aweber.kernel@gmail.com>, 
+ Jessica Zhang <quic_jesszhan@quicinc.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ kernel@pengutronix.de, Philipp Zabel <p.zabel@pengutronix.de>
+X-Mailer: b4 0.14.2
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:1101:1d::54
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
+This series enables the vsync flush feature in the samsung-dsim driver
+unconditionally and removes the MIPI_DSI_MODE_VSYNC_FLUSH flag.
 
---oF1MzhfhQDns9knz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Background: I've recently seen shifted display issues on two different
+i.MX8MM boards (mxsfb + samsung-dsim) with different DSI panels.
+The symptoms were horizonally shifted display contents, with a stable
+offset, in about 0.1 to 0.6 percent of modesets.
+Enabling the MIPI_DSI_MODE_VSYNC_FLUSH flag in the panels' mode_flags
+fixed the issue in both cases.
 
-On Tue, May 27, 2025 at 02:20:48AM +0000, Jacky Chou wrote:
-> Hi Conor Dooley,
->=20
-> Thank you for your reply
->=20
-> > > +  resets:
-> > > +    maxItems: 1
-> > > +    description:
-> > > +      Optional reset control for the MAC controller (e.g. Aspeed
-> > > + SoCs)
-> >=20
-> > If only aspeed socs support this, then please restrict to just your pro=
-ducts.
-> >=20
->=20
-> The reset function is optional in driver.
-> If there is reset function in the other SoC, it can also uses the reset p=
-roperty in their SoC.
+The samsung-dsim driver is the only DSI bridge driver that uses this
+flag: If the flag is absent, the driver sets the DSIM_MFLUSH_VS bit in
+the DSIM_CONFIG_REG register, which disables the vsync flush feature.
+The reset value of this bit is cleared (vsync flush is default-enabled).
+According to the i.MX8MM reference manual,
 
-"if", sure. But you don't know about any other SoCs, so please restrict
-it to the systems that you do know have a reset.
+    "It needs that Main display FIFO should be flushed for deleting
+     garbage data."
 
---oF1MzhfhQDns9knz
-Content-Type: application/pgp-signature; name="signature.asc"
+This appears to match the comment in mxsfb_reset_block() in mxsfb_kms.c:
 
------BEGIN PGP SIGNATURE-----
+    /*
+     * It seems, you can't re-program the controller if it is still
+     * running. This may lead to shifted pictures (FIFO issue?), so
+     * first stop the controller and drain its FIFOs.
+     */
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaDXIfAAKCRB4tDGHoIJi
-0gH9AQCRLkHk3neNHshJkYAPhnXtXcmS1T4OLHZhP/AyJZlligEAroQq3M9Xp8gF
-CRE717jgbijLXCXCNR11jW1nOPCN7g4=
-=2CfM
------END PGP SIGNATURE-----
+Now I wonder why the bit is controlled by a flag in the panel drivers.
+Whether the display controller pushes up to a FIFO worth of garbage data
+into the DSI bridge during initialization seems to be a property of the
+display controller / DSI bridge integration (whether this is due to
+hardware or driver bugs), not a specific requirement of the panel.
+Surely no panel needs to receive a partial line of garbage data in front
+of the first frame?
 
---oF1MzhfhQDns9knz--
+Instead of adding the flag to every panel connected to affected SoCs,
+the vsync flush feature could just be enabled unconditionally.
+Clearing an already-empty display FIFO should have no effect, unless
+I'm missing something? With that, the MIPI_DSI_MODE_VSYNC_FLUSH flag
+would not be used anymore and could be removed.
+
+regards
+Philipp
+
+Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+---
+Philipp Zabel (4):
+      drm/bridge: samsung-dsim: Always flush display FIFO on vsync pulse
+      drm/panel: samsung-s6d7aa0: Drop MIPI_DSI_MODE_VSYNC_FLUSH flag
+      drm/panel: samsung-s6e8aa0: Drop MIPI_DSI_MODE_VSYNC_FLUSH flag
+      drm/mipi-dsi: Drop MIPI_DSI_MODE_VSYNC_FLUSH flag
+
+ drivers/gpu/drm/bridge/samsung-dsim.c         | 2 --
+ drivers/gpu/drm/panel/panel-samsung-s6d7aa0.c | 2 +-
+ drivers/gpu/drm/panel/panel-samsung-s6e8aa0.c | 2 +-
+ include/drm/drm_mipi_dsi.h                    | 2 --
+ 4 files changed, 2 insertions(+), 6 deletions(-)
+---
+base-commit: 99764593528f9e0ee9509f9e4a4eb21db99d0681
+change-id: 20250527-dsi-vsync-flush-8f8cc91a6f04
+
+Best regards,
+-- 
+Philipp Zabel <p.zabel@pengutronix.de>
+
 
