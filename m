@@ -1,182 +1,162 @@
-Return-Path: <linux-kernel+bounces-663667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-663669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AC02AC4BA6
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 11:41:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 02B50AC4BAC
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 11:42:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 345D4189EAF1
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 09:41:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A015189730C
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 09:43:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73194253350;
-	Tue, 27 May 2025 09:41:33 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9E79252900;
+	Tue, 27 May 2025 09:42:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="BL5pdBHW"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D0E342A99
-	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 09:41:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA88B242D79;
+	Tue, 27 May 2025 09:42:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748338893; cv=none; b=q7TADaHApezg4nLKQEHb0IyWQT7cU0hsRgmdolcFwrBLFSVJLvJ3zlbz87FbQ5tY3ShFuukTaUR6JBEHI1Bl2BcZvOIlp75304rGQgQZhBsr2CjM89crbFv4DXVB/nLId2w+4uUHr6EjNI7V7/nfs9ZpZUD5hItZAMyHuDyl67Q=
+	t=1748338963; cv=none; b=dFMybekVwl9x/UGqz5DESDtcWkOJ3+yZWWyfwlTC/FM2zilYWoS/y1fXJItJAmnK77UfOz2aKJ6cy1XAe8883eV7bH/XP6UCF9whus10uTDDY+8ea03KMhIsEsPe98T3H2gFPjel01VS9dKIg8XUesiX3qghxrJAgFsHNCD8eZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748338893; c=relaxed/simple;
-	bh=BvfLCWLKtUc42lEyt2dP0lPcBtM8AqwZ8FVxhVV74Lw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=n78Se3JyHG8qtLBh5+1EIvyqqOV2I0Vje75zAATeW5TlnnCQiw4QRhMC7xNokpm9LrgeNK1Zh7S0eGSSkwh1pkYs3ZMoe96FbednCS2WXaJCMxQZ+aikE3Fjgn7x7NRaKzfsWBh8wKMaatQxuBx9xf3/AYkAYv7e+f41Dr85Y9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: c0847c9c3ade11f0b29709d653e92f7d-20250527
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:a3a82dc2-b9ed-4292-8936-57660e22f4fd,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6493067,CLOUDID:143b49f66f96d30bb8fa05e212c91928,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|52,EDM:
-	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
-	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: c0847c9c3ade11f0b29709d653e92f7d-20250527
-Received: from node4.com.cn [(10.44.16.170)] by mailgw.kylinos.cn
-	(envelope-from <xiaopei01@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 1153599882; Tue, 27 May 2025 17:41:23 +0800
-Received: from node4.com.cn (localhost [127.0.0.1])
-	by node4.com.cn (NSMail) with SMTP id 5C89916001F49;
-	Tue, 27 May 2025 17:41:23 +0800 (CST)
-X-ns-mid: postfix-683588C3-3076933288
-Received: from [10.42.13.56] (unknown [10.42.13.56])
-	by node4.com.cn (NSMail) with ESMTPA id 88E6016001F55;
-	Tue, 27 May 2025 09:41:21 +0000 (UTC)
-Message-ID: <b71a4ff3-8013-47e0-b2ac-2c5b3d8f8afc@kylinos.cn>
-Date: Tue, 27 May 2025 17:41:21 +0800
+	s=arc-20240116; t=1748338963; c=relaxed/simple;
+	bh=KhLIfsYnelNEZ8D4w+wbh5tXAw8K5vPBHj/PfGFuEGU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=saQN1FQLmIPP1GFBCNVqgu51z2Cbu26aWEKWXjZoVRs6V/GVfVF+TYzOhBTDGJJtURgLtm0bpXKka9s7oEeGVu6PUu+WL65AkIJrbrAWsBLRW1C3TjmA3HFxCd0lT8xNxlfHHUHuvcv/82JiN8GCsAc8CIxl+Sy8xPibDa/REPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=BL5pdBHW; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1748338954;
+	bh=KhLIfsYnelNEZ8D4w+wbh5tXAw8K5vPBHj/PfGFuEGU=;
+	h=Date:From:To:Cc:Subject:From;
+	b=BL5pdBHW0cWlmr6VI4l9qvutlZejMLKMI+vO0D7WqOI7GhBfQrp836GRm2dmKI763
+	 WEdrm+gI/qH0yH/1HyzajC4uLO1TTYIPkm0XYzmAiQsoHJjfWKUF1rkAP36WGcpmtn
+	 8/3C+njwYhaOnEJqfLpKaNpNh5VzS2ngJGfMaTGvRWoRhFIQS8GS0UyYFKDVV9tcZb
+	 mwWEMezqIqZLrq9J4xXnv8hL8Gz0zfuJyp06GCvKme70bXsWEd588Z9p3q2sQiKPjP
+	 SRroyjCKsiD+0JxQFss0dOdEcC9BjwjcmQqJSbsSTSKkEnFZjdNmk32YQZWkU1OVZQ
+	 JKdXDfUgq2V7A==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4b672y01Xcz4x0L;
+	Tue, 27 May 2025 19:42:33 +1000 (AEST)
+Date: Tue, 27 May 2025 19:42:33 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the rust tree
+Message-ID: <20250527194233.552bf9f5@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] devres: Move remaining devm_alloc_percpu and
- devm_device_add_group to devres.h
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
- rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org
-References: <5ac1e2a127c9df7233ca8ba0696ebb08960d0fc3.1747903894.git.xiaopei01@kylinos.cn>
- <aC8en60QI0MwnXxM@smile.fi.intel.com>
-From: Pei Xiao <xiaopei01@kylinos.cn>
-In-Reply-To: <aC8en60QI0MwnXxM@smile.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; boundary="Sig_/Fqq3u70AekdL/=.rP=N9tj7";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/Fqq3u70AekdL/=.rP=N9tj7
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
-=E5=9C=A8 2025/5/22 20:54, Andy Shevchenko =E5=86=99=E9=81=93:
-> On Thu, May 22, 2025 at 05:01:26PM +0800, Pei Xiao wrote:
->> Since commit f5e5631df596("devres: Move devm_*_action*() APIs to
->> devres.h"), But devm_alloc_percpu() and devm_device_add_group didn't b=
-e
->> moved.
->>
->> so move it.The changes improve header organization by keeping all
->> resource-managed device APIs in the dedicated devres.h header,
->> reducing cross-header dependencies and making the interfaces
->> easier to locate.
-> Thanks for the patch, my comments below.
->
-> ...
->
->> -/**
->> - * devm_alloc_percpu - Resource-managed alloc_percpu
->> - * @dev: Device to allocate per-cpu memory for
->> - * @type: Type to allocate per-cpu memory for
->> - *
->> - * Managed alloc_percpu. Per-cpu memory allocated with this function =
-is
->> - * automatically freed on driver detach.
->> - *
->> - * RETURNS:
->> - * Pointer to allocated memory on success, NULL on failure.
->> - */
->> -#define devm_alloc_percpu(dev, type)      \
->> -	((typeof(type) __percpu *)__devm_alloc_percpu((dev), sizeof(type), \
->> -						      __alignof__(type)))
->> -
->> -void __percpu *__devm_alloc_percpu(struct device *dev, size_t size,
->> -				   size_t align);
->> -void devm_free_percpu(struct device *dev, void __percpu *pdata);
-> Don't you need to cleanup the header inclusions as well?
+After merging the rust tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-no, I think we don't need to cleanup .
+x86_64-linux-gnu-ld: vmlinux.o: in function `kernel::alloc::kvec::tests::ku=
+nit_rust_wrapper_test_kvec_retain':
+(.text+0x1bd7194): undefined reference to `kunit_unary_assert_format'
+x86_64-linux-gnu-ld: (.text+0x1bd71a1): undefined reference to `__kunit_do_=
+failed_assertion'
+x86_64-linux-gnu-ld: (.text+0x1bd71ae): undefined reference to `__kunit_abo=
+rt'
+x86_64-linux-gnu-ld: vmlinux.o: in function `kernel::kunit::tests::kunit_ru=
+st_wrapper_rust_test_kunit_in_kunit_test':
+(.text+0x1bd75eb): undefined reference to `kunit_unary_assert_format'
+x86_64-linux-gnu-ld: (.text+0x1bd75f8): undefined reference to `__kunit_do_=
+failed_assertion'
+x86_64-linux-gnu-ld: (.text+0x1bd7605): undefined reference to `__kunit_abo=
+rt'
+x86_64-linux-gnu-ld: vmlinux.o: in function `kernel::str::tests::kunit_rust=
+_wrapper_test_cstr_to_str':
+(.text+0x1bd7e01): undefined reference to `kunit_unary_assert_format'
+x86_64-linux-gnu-ld: (.text+0x1bd7e0e): undefined reference to `__kunit_do_=
+failed_assertion'
+x86_64-linux-gnu-ld: (.text+0x1bd7e1b): undefined reference to `__kunit_abo=
+rt'
+x86_64-linux-gnu-ld: vmlinux.o: in function `kernel::str::tests::kunit_rust=
+_wrapper_test_cstr_to_str_invalid_utf8':
+(.text+0x1bd81a0): undefined reference to `kunit_unary_assert_format'
+x86_64-linux-gnu-ld: (.text+0x1bd81ad): undefined reference to `__kunit_do_=
+failed_assertion'
+x86_64-linux-gnu-ld: (.text+0x1bd81ba): undefined reference to `__kunit_abo=
+rt'
+x86_64-linux-gnu-ld: vmlinux.o: in function `kernel::str::tests::kunit_rust=
+_wrapper_test_cstr_display':
+(.text+0x1bd9728): undefined reference to `kunit_unary_assert_format'
+x86_64-linux-gnu-ld: (.text+0x1bd9735): undefined reference to `__kunit_do_=
+failed_assertion'
+x86_64-linux-gnu-ld: (.text+0x1bd9742): undefined reference to `__kunit_abo=
+rt'
+x86_64-linux-gnu-ld: vmlinux.o: in function `kernel::str::tests::kunit_rust=
+_wrapper_test_cstr_display_all_bytes':
+(.text+0x1bda03c): undefined reference to `kunit_unary_assert_format'
+x86_64-linux-gnu-ld: (.text+0x1bda049): undefined reference to `__kunit_do_=
+failed_assertion'
+x86_64-linux-gnu-ld: (.text+0x1bda056): undefined reference to `__kunit_abo=
+rt'
+x86_64-linux-gnu-ld: vmlinux.o: in function `kernel::str::tests::kunit_rust=
+_wrapper_test_cstr_debug':
+(.text+0x1bdb598): undefined reference to `kunit_unary_assert_format'
+x86_64-linux-gnu-ld: (.text+0x1bdb5a5): undefined reference to `__kunit_do_=
+failed_assertion'
+x86_64-linux-gnu-ld: (.text+0x1bdb5b2): undefined reference to `__kunit_abo=
+rt'
+x86_64-linux-gnu-ld: vmlinux.o: in function `kernel::str::tests::kunit_rust=
+_wrapper_test_bstr_display':
+(.text+0x1bdcf82): undefined reference to `kunit_unary_assert_format'
+x86_64-linux-gnu-ld: (.text+0x1bdcf8f): undefined reference to `__kunit_do_=
+failed_assertion'
+x86_64-linux-gnu-ld: (.text+0x1bdcf9c): undefined reference to `__kunit_abo=
+rt'
+x86_64-linux-gnu-ld: vmlinux.o: in function `kernel::str::tests::kunit_rust=
+_wrapper_test_bstr_debug':
+(.text+0x1bde962): undefined reference to `kunit_unary_assert_format'
+x86_64-linux-gnu-ld: (.text+0x1bde96f): undefined reference to `__kunit_do_=
+failed_assertion'
+x86_64-linux-gnu-ld: (.text+0x1bde97c): undefined reference to `__kunit_abo=
+rt'
 
-#include <linux/lockdep.h> include #include <asm/percpu.h>
+Caused by one of the latest commits in the rust tree.
 
-only move #include <asm/percpu.h> to linux/device/devres.h for
+I have used the rust tree from next-20250526 for today.
 
-build error.
+--=20
+Cheers,
+Stephen Rothwell
 
-> ...
->
->> -int __must_check devm_device_add_group(struct device *dev,
->> -				       const struct attribute_group *grp);
-> I'm not sure about this. The percpu seems standalone piece, but this ha=
-s
-> relations with the other group related definitions just above.
+--Sig_/Fqq3u70AekdL/=.rP=N9tj7
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-I'm also not sure if this devm_device_add_group needs to be moved,=C2=A0
+-----BEGIN PGP SIGNATURE-----
 
-which is why I haven't replied to you yet
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmg1iQkACgkQAVBC80lX
+0Gyv5Af/ahfLD9rAgW7coAZSHeKW/v5H0002DdHHrJA0cK3Heuu5K9EsNyzYkv9k
+wWGi4i8fgZajp/53zHPgB9DQZL/WSAbpx9MIvya4cr4kFKCuX1u2NcZOTWLei+0m
+Nu4jhFLi+o2sC4QDkNIq4SsDtIuELrQmsCjx6ekiPYe12Do1lH0TfNNo9PFFbjo4
+1sy3MdHQBAbxOHqN/9DFmrVSgEba1xRg/ZtEJ15KM9JpqrS707BUd9uek/hYb8DC
+ZC9zpFoASjSty5dcLcIgGbLAKDZNUZ8PYUpGX19Ug6uCbTcVG+IcRZs6vsmCpzY7
+EGo1iuSg5nKvHC0b3NmQYaRiF0Fs0A==
+=2wLw
+-----END PGP SIGNATURE-----
 
-> ...
->
->> +#include <linux/sysfs.h>
-it's redundant.
->> +#include <asm/percpu.h>
-> What for are these new inclusions, please?
-for percpu.
-> ...
->
->> +/**
->> + * devm_alloc_percpu - Resource-managed alloc_percpu
->> + * @dev: Device to allocate per-cpu memory for
->> + * @type: Type to allocate per-cpu memory for
->> + *
->> + * Managed alloc_percpu. Per-cpu memory allocated with this function =
-is
->> + * automatically freed on driver detach.
->> + *
->> + * RETURNS:
-> Please, check that all of the kernel-doc are in align (using same style=
-).
-ok.
->> + * Pointer to allocated memory on success, NULL on failure.
->> + */
->> +#define devm_alloc_percpu(dev, type)      \
->> +	((typeof(type) __percpu *)__devm_alloc_percpu((dev), sizeof(type), \
->> +						      __alignof__(type)))
-> Just make it one line. it will be less than 100.
-get it.
->> +void __percpu *__devm_alloc_percpu(struct device *dev, size_t size,
->> +				   size_t align);
-> Ditto.
->
-get it.
->> +void devm_free_percpu(struct device *dev, void __percpu *pdata);
-> Please, take your time to understand what is behind the __percpu and
-> why the asm/percpu.h is redundant here.
-
-If this header file is missing, there will be a compilation error.=C2=A0
-
-Which header file should I include?
-
-I've found that including=C2=A0<asm/percpu.h>=C2=A0does resolve my compil=
-ation issue.
-
-Thanks for you help.
-
-Pei.
-
+--Sig_/Fqq3u70AekdL/=.rP=N9tj7--
 
