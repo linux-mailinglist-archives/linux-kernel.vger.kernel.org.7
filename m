@@ -1,164 +1,223 @@
-Return-Path: <linux-kernel+bounces-664013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-664011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 034E1AC50AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 16:18:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FC45AC50A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 16:17:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B300A16DF65
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 14:17:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B159A17A0A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 14:17:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7984827814B;
-	Tue, 27 May 2025 14:17:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CC83274FD6;
+	Tue, 27 May 2025 14:17:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="gWmeq+dR"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LURkryTu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 530B3258CF5;
-	Tue, 27 May 2025 14:17:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D97A22DCC0C;
+	Tue, 27 May 2025 14:17:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748355457; cv=none; b=R2qBCTAW8XjlllVsZKEkWYAWIfSdqYuVSBcbS+r4tJ8GODfXCr+atplE/BVvUzhfTIxlZvEhjP+SjIVLih7XnCOT9RGslaUM0trdKssQcoadmV2wtFNk1aTJgFE3hzEPc1RmNkgBuSXA52WsFc9YZmDWn3bxnWKpJeWn5OZGf+U=
+	t=1748355428; cv=none; b=Jzo5YEhcyWjFpomVHC6UHrdn7QTckH4Jhy8KckU/FjV+lkQFEaGrPQeq2pIb+MbuVhe8CX5B0axsCHRHgLbnh+C9DO3hKYT8cciZuqA4Va5LKNqUCx5hyJ3TCbUS7OyBzDgmQhx4JQyIhzb8stf3clYEUz3piHPylmP1KkHw21M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748355457; c=relaxed/simple;
-	bh=ahFl9aCQqEQb7ktYvVw2ExzugFahjZxmir57oh1c2Lc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mDYMNKYG4buX7/PYV2EZyRJASq0DCLVxjK4btwTlshTEKnX8Rlr4OVjrlb5OPQanqJYn7lpFOZ+YX6Rg7qLJZ+gzai97h46Lhwtaa8aj01rqTP63+GR8f5N+VOlhzD/rp3XU4AxthUnyevdMno0gvJhQalRg8N3jCwA6ZmK2g40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=gWmeq+dR; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54R3ZVhm025612;
-	Tue, 27 May 2025 14:17:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=/gzvDF
-	7B6Gpe874ER1+xVQsIaOStUNi32ktHp53rVmA=; b=gWmeq+dRJWBX0BS5VbHuEX
-	g7i9HlXi1e79dSGX9PFLF3ir9TD0kCBWoEViA8DxF8zSSUk6BstkRPSoEJpInI5U
-	GKaM38yQ2qSegGYcAsbNs3ViZyMCCpYq3jEd2XpZPf9VX5Xm3tyAgeux9zuGyoJs
-	efB6CZLjSAu9F0f7ww9TxN8OKh1u7MQVSb8KiQtz1IT+HwnwQSpgGDmaMaNpHvN1
-	ozX2FADbWWoEcZwpD7MXXgDmGLXwhTTadfSC8kDG0i5x3YF6vq7GwB6SN8veBP6Z
-	WI8Y8EYlrnJ28t0ItqIfJD+QXlgpV+RDl/94UQs3R66PHT8qDNUR3mRy2H9RCxIg
-	==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46u5ucpsfm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 27 May 2025 14:17:02 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 54RD4rwR016174;
-	Tue, 27 May 2025 14:17:01 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 46uru0k2ru-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 27 May 2025 14:17:01 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 54REGwO559703688
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 27 May 2025 14:16:58 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E670A2004B;
-	Tue, 27 May 2025 14:16:57 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6CB7120043;
-	Tue, 27 May 2025 14:16:57 +0000 (GMT)
-Received: from [9.152.222.246] (unknown [9.152.222.246])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 27 May 2025 14:16:57 +0000 (GMT)
-Message-ID: <0219c58d-6375-4f98-84bc-9c65c1570aa0@linux.ibm.com>
-Date: Tue, 27 May 2025 16:16:57 +0200
+	s=arc-20240116; t=1748355428; c=relaxed/simple;
+	bh=QSI9xpdPjt2cu7QbFv5alW6FAXC6hJzKmw9uIJmaT0w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rH3qTDl6H4C3MQ9NguDO5Uwo9PH01XMZKSvfKEZTDiqXlb3iNj4Hx448Gku2/Nhpg5gGoT7gcqVkpXFZcyYr+X/SeI5d2lC5OIYbnj4ItnB695IzX4fRf/jEm6g5xynPHkGaEeqr8LSWJJVvOsbAxrr1WjEILUNkM6dgcJ2y2Mk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LURkryTu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAFBCC4CEE9;
+	Tue, 27 May 2025 14:17:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748355428;
+	bh=QSI9xpdPjt2cu7QbFv5alW6FAXC6hJzKmw9uIJmaT0w=;
+	h=From:To:Cc:Subject:Date:From;
+	b=LURkryTu0jC8GKWUlAOskqna2q1eIsXw2Fs0CzO3fihwnnlvGIIH4a/1glUyv1vYb
+	 tMIQ4fWQX5vLOF3iszLF7EoyBLGB8Dz+0MXYAEEdPJP9R/3LVFwXMtlTmOEv4AvKgv
+	 mp9G99dfrotMsxYTr9x5szoI2YF4focKIZcrNRaWg1JpsaadlRQ0/Ap92bBwSJkYJh
+	 Z11rYMJQnuzMgTbu3m4eNBIZUk6qKcmIurmAqSKyFXbxIEkjY9Dy274R/saefGoteD
+	 JpAqRY96ulh8vg2VLCKy0TohfEN2ZQowneeTucyXYxO7jHidYdrM5WLcEpaAvPLDwh
+	 WRVgI4mvqyVKA==
+From: cel@kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: <linux-kernel@vger.kernel.org>,
+	<linux-nfs@vger.kernel.org>,
+	Jeff Layton <jlayton@kernel.org>
+Subject: [GIT PULL] NFSD changes for v6.16
+Date: Tue, 27 May 2025 10:17:06 -0400
+Message-ID: <20250527141706.388993-1-cel@kernel.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/6] x86/vdso: Enable sframe generation in VDSO
-To: Steven Rostedt <rostedt@goodmis.org>,
-        Josh Poimboeuf
- <jpoimboe@kernel.org>,
-        Indu Bhagat <indu.bhagat@oracle.com>, linux-kernel@vger.kernel.org,
-        linux-trace-kernel@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Andrew Morton <akpm@linux-foundation.org>, x86@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>
-References: <20250425023750.669174660@goodmis.org>
- <20250425024023.173709192@goodmis.org>
-Content-Language: en-US
-From: Jens Remus <jremus@linux.ibm.com>
-Organization: IBM Deutschland Research & Development GmbH
-In-Reply-To: <20250425024023.173709192@goodmis.org>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 7oosbzVA6NumzN8mRLM6lgUJM9bg-qYL
-X-Proofpoint-GUID: 7oosbzVA6NumzN8mRLM6lgUJM9bg-qYL
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI3MDExNSBTYWx0ZWRfX8PfJfOKfRNYv /xwu3Lc58d9K5KexAtv+cxtyW+Ex/AuVKG5X8TLWnGcl/AmPc5Yf9Y1dR11pIHYE2J6QcxSvRHk GqZzt63+u3Lj8HXub2EN1CUMnwgz3bDyeaOiYtTPU2vpmbQotv7XPF8Uf30JIF4doix67XcwQ6P
- HKxt1gSG7GZ9s+C6Te8pMwvwTntCHFpdkhoNHXJRORuJk1mrpKTc63jP9yWCv5Y7hGb8G38mSXg KqEmXBkKz5UnsJu/DY0IGeKcseYhxW52eiHco2J0MDozvGOqW/ONN+B+mn7xFMM/POCyIpya+O4 gK0gMSj6BcyXF5acxvVoIlcdZ+iMo6g12gyr2MQqEcYKAIVYw24LqL52QusONZhLY8IBKX97phT
- WKa7JKwfiE5biT0HUB73IujEVxnNfwlweGwSbA9P+LO2tCnMS9OavPg34+rN3KHxS8fD8AD+
-X-Authority-Analysis: v=2.4 cv=fJM53Yae c=1 sm=1 tr=0 ts=6835c95e cx=c_pps a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=VwQbUJbxAAAA:8 a=meVymXHHAAAA:8 a=VnNF1IyMAAAA:8 a=0MvmVg10__VCTnNSAJcA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=2JgSa4NbpEOStq-L5dxp:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-27_07,2025-05-27_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
- priorityscore=1501 bulkscore=0 adultscore=0 mlxlogscore=999 suspectscore=0
- phishscore=0 clxscore=1011 lowpriorityscore=0 malwarescore=0
- impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505160000
- definitions=main-2505270115
 
-On 25.04.2025 04:37, Steven Rostedt wrote:
-> From: Josh Poimboeuf <jpoimboe@kernel.org>
-> 
-> Enable sframe generation in the VDSO library so kernel and user space
-> can unwind through it.
-> 
-> Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
-> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> ---
-> Changes since v5: https://lore.kernel.org/20250422183722.919601983@goodmis.org
-> 
-> - Replace $(comma) with a comma in the Makefile
->   (Jens Remus)
+The following changes since commit 82f2b0b97b36ee3fcddf0f0780a9a0825d52fec3:
 
-> diff --git a/arch/x86/entry/vdso/Makefile b/arch/x86/entry/vdso/Makefile
+  Linux 6.15-rc6 (2025-05-11 14:54:11 -0700)
 
-> @@ -47,13 +47,17 @@ quiet_cmd_vdso2c = VDSO2C  $@
->  $(obj)/vdso-image-%.c: $(obj)/vdso%.so.dbg $(obj)/vdso%.so $(obj)/vdso2c FORCE
->  	$(call if_changed,vdso2c)
->  
-> +ifeq ($(CONFIG_AS_SFRAME),y)
-> +  SFRAME_CFLAGS := -Wa,-gsframe
+are available in the Git repository at:
 
-Nit: The GNU assembler (GAS) option as of "as --help" and "man as" is
-"--gsframe" (with two dashes).  But as GAS uses getopt_long_only() it
-accepts long options prefixed with "--" as well as "-".  I don't have
-any preference.
+  https://git.kernel.org/pub/scm/linux/kernel/git/cel/linux.git tags/nfsd-6.16
 
-> +endif
-> +
+for you to fetch changes up to 425364dc49f050b6008b43408aa96d42105a9c1d:
 
-Regards,
-Jens
--- 
-Jens Remus
-Linux on Z Development (D3303)
-+49-7031-16-1128 Office
-jremus@de.ibm.com
+  xdrgen: Fix code generated for counted arrays (2025-05-16 10:58:48 -0400)
 
-IBM
+----------------------------------------------------------------
+NFSD 6.16 Release Notes
 
-IBM Deutschland Research & Development GmbH; Vorsitzender des Aufsichtsrats: Wolfgang Wendt; Geschäftsführung: David Faller; Sitz der Gesellschaft: Böblingen; Registergericht: Amtsgericht Stuttgart, HRB 243294
-IBM Data Privacy Statement: https://www.ibm.com/privacy/
+The marquee feature for this release is that the limit on the
+maximum rsize and wsize has been raised to 4MB. The default remains
+at 1MB, but risk-seeking administrators now have the ability to try
+larger I/O sizes with NFS clients that support them. Eventually the
+default setting will be increased when we have confidence that this
+change will not have negative impact.
 
+With v6.16, NFSD now has its own debugfs file system where we can
+add experimental features and make them available outside of our
+development community without impacting production deployments. The
+first experimental setting added is one that makes all NFS READ
+operations use vfs_iter_read() instead of the NFSD splice actor. The
+plan is to eventually retire the splice actor, as that will enable a
+number of new capabilities such as the use of struct bio_vec from the
+top to the bottom of the NFSD stack.
+
+Jeff Layton contributed a number of observability improvements. The
+use of dprintk() in a number of high-traffic code paths has been
+replaced with static trace points.
+
+This release sees the continuation of efforts to harden the NFSv4.2
+COPY operation. Soon, the restriction on async COPY operations can
+be lifted.
+
+Many thanks to the contributors, reviewers, testers, and bug
+reporters who participated during the v6.16 development cycle.
+
+----------------------------------------------------------------
+Chuck Lever (32):
+      NFSD: OFFLOAD_CANCEL should mark an async COPY as completed
+      NFSD: Shorten CB_OFFLOAD response to NFS4ERR_DELAY
+      NFSD: Implement CB_SEQUENCE referring call lists
+      NFSD: Implement CB_SEQUENCE referring call lists
+      NFSD: Record each NFSv4 call's session slot index
+      NFSD: Add /sys/kernel/debug/nfsd
+      NFSD: Add experimental setting to disable the use of splice read
+      MAINTAINERS: Update Neil Brown's email address
+      svcrdma: Unregister the device if svc_rdma_accept() fails
+      NFSD: Implement FATTR4_CLONE_BLKSIZE attribute
+      NFSD: Use sockaddr instead of a generic array
+      NFSD: Add a Call equivalent to the NFSD_TRACE_PROC_RES macros
+      svcrdma: Reduce the number of rdma_rw contexts per-QP
+      sunrpc: Add a helper to derive maxpages from sv_max_mesg
+      sunrpc: Remove backchannel check in svc_init_buffer()
+      sunrpc: Replace the rq_pages array with dynamically-allocated memory
+      sunrpc: Replace the rq_bvec array with dynamically-allocated memory
+      NFSD: Use rqstp->rq_bvec in nfsd_iter_read()
+      NFSD: De-duplicate the svc_fill_write_vector() call sites
+      SUNRPC: Export xdr_buf_to_bvec()
+      NFSD: Use rqstp->rq_bvec in nfsd_iter_write()
+      SUNRPC: Remove svc_fill_write_vector()
+      SUNRPC: Remove svc_rqst :: rq_vec
+      sunrpc: Adjust size of socket's receive page array dynamically
+      svcrdma: Adjust the number of entries in svc_rdma_recv_ctxt::rc_pages
+      svcrdma: Adjust the number of entries in svc_rdma_send_ctxt::sc_pages
+      sunrpc: Remove the RPCSVC_MAXPAGES macro
+      NFSD: Remove NFSD_BUFSIZE
+      NFSD: Remove NFSSVC_MAXBLKSIZE_V2 macro
+      NFSD: Add a "default" block size
+      SUNRPC: Bump the maximum payload size for the server
+      xdrgen: Fix code generated for counted arrays
+
+Eric Biggers (1):
+      nfsd: use SHA-256 library API instead of crypto_shash API
+
+Guoqing Jiang (1):
+      nfsd: remove redundant WARN_ON_ONCE in nfsd4_write
+
+Jeff Layton (19):
+      nfsd: add commit start/done tracepoints around nfsd_commit()
+      sunrpc: add info about xprt queue times to svc_xprt_dequeue tracepoint
+      sunrpc: allow SOMAXCONN backlogged TCP connections
+      nfsd: add a tracepoint for nfsd_setattr
+      nfsd: add a tracepoint to nfsd_lookup_dentry
+      nfsd: add nfsd_vfs_create tracepoints
+      nfsd: add tracepoint to nfsd_symlink
+      nfsd: add tracepoint to nfsd_link()
+      nfsd: add tracepoints for unlink events
+      nfsd: add tracepoint to nfsd_rename
+      nfsd: add tracepoint to nfsd_readdir
+      nfsd: add tracepoint for getattr and statfs events
+      nfsd: remove old v2/3 create path dprintks
+      nfsd: remove old v2/3 SYMLINK dprintks
+      nfsd: remove old LINK dprintks
+      nfsd: remove REMOVE/RMDIR dprintks
+      nfsd: remove dprintks for v2/3 RENAME events
+      nfsd: remove legacy READDIR dprintks
+      nfsd: remove legacy dprintks from GETATTR and STATFS codepaths
+
+Li Lingfeng (1):
+      nfsd: Initialize ssc before laundromat_work to prevent NULL dereference
+
+Long Li (2):
+      sunrpc: update nextcheck time when adding new cache entries
+      sunrpc: fix race in cache cleanup causing stale nextcheck time
+
+Maninder Singh (2):
+      NFSD: unregister filesystem in case genl_register_family() fails
+      NFSD: fix race between nfsd registration and exports_proc
+
+NeilBrown (1):
+      nfsd: nfsd4_spo_must_allow() must check this is a v4 compound request
+
+Olga Kornievskaia (1):
+      nfsd: fix access checking for NLM under XPRTSEC policies
+
+ .mailmap                                           |   2 +
+ MAINTAINERS                                        |   2 +-
+ fs/nfsd/Kconfig                                    |   2 +-
+ fs/nfsd/Makefile                                   |   1 +
+ fs/nfsd/debugfs.c                                  |  47 ++++
+ fs/nfsd/export.c                                   |   3 +-
+ fs/nfsd/nfs3proc.c                                 |  68 +----
+ fs/nfsd/nfs4callback.c                             | 132 ++++++++-
+ fs/nfsd/nfs4proc.c                                 |  35 ++-
+ fs/nfsd/nfs4recover.c                              |  61 +----
+ fs/nfsd/nfs4state.c                                |  40 +--
+ fs/nfsd/nfs4xdr.c                                  |  21 +-
+ fs/nfsd/nfsctl.c                                   |  25 +-
+ fs/nfsd/nfsd.h                                     |  34 +--
+ fs/nfsd/nfsproc.c                                  |  48 +---
+ fs/nfsd/nfssvc.c                                   |   8 +-
+ fs/nfsd/nfsxdr.c                                   |   4 +-
+ fs/nfsd/state.h                                    |  23 ++
+ fs/nfsd/trace.h                                    | 302 ++++++++++++++++++++-
+ fs/nfsd/vfs.c                                      |  90 ++++--
+ fs/nfsd/vfs.h                                      |  10 +-
+ fs/nfsd/xdr4.h                                     |   4 +
+ fs/nfsd/xdr4cb.h                                   |   5 +-
+ include/linux/sunrpc/svc.h                         |  46 ++--
+ include/linux/sunrpc/svc_rdma.h                    |   6 +-
+ include/linux/sunrpc/svc_xprt.h                    |   1 +
+ include/linux/sunrpc/svcsock.h                     |   4 +-
+ include/trace/events/sunrpc.h                      |  13 +-
+ include/trace/misc/fs.h                            |  21 ++
+ net/sunrpc/cache.c                                 |  17 +-
+ net/sunrpc/svc.c                                   |  80 ++----
+ net/sunrpc/svc_xprt.c                              |  11 +-
+ net/sunrpc/svcsock.c                               |  17 +-
+ net/sunrpc/xdr.c                                   |   1 +
+ net/sunrpc/xprtrdma/svc_rdma_recvfrom.c            |   8 +-
+ net/sunrpc/xprtrdma/svc_rdma_rw.c                  |   2 +-
+ net/sunrpc/xprtrdma/svc_rdma_sendto.c              |  16 +-
+ net/sunrpc/xprtrdma/svc_rdma_transport.c           |  15 +-
+ .../C/pointer/encoder/variable_length_array.j2     |   2 +
+ .../C/struct/encoder/variable_length_array.j2      |   2 +
+ .../C/union/decoder/variable_length_array.j2       |   2 +
+ 41 files changed, 849 insertions(+), 382 deletions(-)
+ create mode 100644 fs/nfsd/debugfs.c
 
