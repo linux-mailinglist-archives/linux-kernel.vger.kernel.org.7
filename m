@@ -1,126 +1,129 @@
-Return-Path: <linux-kernel+bounces-663546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-663550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48750AC49CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 10:00:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D9BAAC49DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 10:04:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74E0D3BC58F
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 08:00:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 15D187A6D81
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 08:02:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 646AE24BBF0;
-	Tue, 27 May 2025 08:00:25 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 300AF23DEB6;
+	Tue, 27 May 2025 08:04:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=temperror (0-bit key) header.d=aruba.it header.i=@aruba.it header.b="l3ZoZbD1"
+Received: from smtpdh19-2.aruba.it (smtpdh19-2.aruba.it [62.149.155.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88A7B24A05D;
-	Tue, 27 May 2025 08:00:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EAC31FC7C5
+	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 08:04:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.149.155.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748332825; cv=none; b=tk0nf2IyGwCNFr13QJ64u5ZhWOpkj+KF0Lnz/Bd0/dlygIwxxQGxIjMomoqFvvd5n8ZxdDf5hJwaw3z+sDzfqo5qVxk3rGAUe+5c6YOhE5TrSf2Lu2mUAnkKf67Gm+GS2WLKSVxAlw+D2QKH9ZNp88OldQkhzUKPXK+RsL7bi3w=
+	t=1748333046; cv=none; b=JcH9uNF/hGsXUppXYPS+9iJrXHj0EDnh+7loBkPIFIwiy98BjqSkP+8zmPNkfqeT2/4cVHNrN2BTopD4y0WXdQ2b5QqOvJHUYFzqa/TnwkO3BhcZu+cKeOpRT/1OPfVg+fEbuXF13wz2LO4YduAOHltY7EK6UGEbE2rlOmI6LFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748332825; c=relaxed/simple;
-	bh=r8RDJjk6vpZqacJc4pUOWihZY636pGcpae8WpRMJJlg=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=rsefPZUZxF3SjLPhcefZ2DZAgvfuEJ6rfD1DkkoM+C9jYqlRoblNrkMwGO85hZxSlOUdsnfHOX4hZg010Au4Lv9W4TXrkB29zRvnK3lQHE2PidoEDswaDH2FibyUc8VW0hvmLq3jpyF/NI+kgjZD/qSC6PYJuetTtmr4Qm6U2i8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4b64mz10dxzYQv8P;
-	Tue, 27 May 2025 16:00:19 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 434CA1A07E8;
-	Tue, 27 May 2025 16:00:18 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgAHa18QcTVoZ9udNg--.29916S3;
-	Tue, 27 May 2025 16:00:18 +0800 (CST)
-Subject: Re: [PATCH 10/23] md: add a new recovery_flag
- MD_RECOVERY_LAZY_RECOVER
-To: Hannes Reinecke <hare@suse.de>, Yu Kuai <yukuai1@huaweicloud.com>,
- hch@lst.de, xni@redhat.com, colyli@kernel.org, song@kernel.org
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-raid@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
- johnny.chenyi@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <20250524061320.370630-1-yukuai1@huaweicloud.com>
- <20250524061320.370630-11-yukuai1@huaweicloud.com>
- <d41f0296-45b9-4264-adc8-f41601b36edd@suse.de>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <2c120387-cf9e-23e5-9442-ffcf320cf611@huaweicloud.com>
-Date: Tue, 27 May 2025 16:00:16 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1748333046; c=relaxed/simple;
+	bh=Uq/9D10lXbzi1KS9peiBWoTnlesyT7braxLVqsqImiQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jb7C8gjpTWFtudC3UPP5KJfUqNQ/xd/5AlvjG+CwhziLyQ848Gt91i4VjFhFJKtrDGywK8YncoMEFYfiqX7za4uiUS1Au3V8esqWfBHV8oAWEnu4vN0A5iCZEHn5bxSZuj7FIDkgcruwq2wt3waIS1wpbPlzweulkY1BdPIH5eQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=enneenne.com; spf=pass smtp.mailfrom=enneenne.com; dkim=temperror (0-bit key) header.d=aruba.it header.i=@aruba.it header.b=l3ZoZbD1; arc=none smtp.client-ip=62.149.155.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=enneenne.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=enneenne.com
+Received: from [192.168.1.58] ([79.0.204.227])
+	by Aruba SMTP with ESMTPSA
+	id JpEwuS0HSvoVFJpEwu7YT6; Tue, 27 May 2025 10:00:51 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aruba.it; s=a1;
+	t=1748332851; bh=Uq/9D10lXbzi1KS9peiBWoTnlesyT7braxLVqsqImiQ=;
+	h=Date:MIME-Version:Subject:To:From:Content-Type;
+	b=l3ZoZbD1NkzS4NsmBPcoCgSRCouxgptrPuA9hatTIHVH1frCQXcbXQ+kaIGHED3EW
+	 G+da3/apX5FnecjGp0rYRLgS3RFdymWqLg7PAyGGqo/2DjTY+NfjO8/XHbIZsSH9bc
+	 cAEDyt7sdhl6M/Czve4zxlYFyGOFe+aTk3cSWgJwnZsvgLmLftiKrHwFvKIXir2f9K
+	 exkA5nIEjf8gINWTb6NH5QGPBtCdMcuZRl26B+2CtKOZSj8MwVyVV7IplVlpTqipxF
+	 xvDPoiVhHPch/mTEfwkijflPy70hac0p1bSda+CvfoO7+Bj5bhb06tDI7KPRgfKCzk
+	 QiuVqiddkCe6Q==
+Message-ID: <64886460-b8b2-4ad7-bf87-b3b98971e355@enneenne.com>
+Date: Tue, 27 May 2025 10:00:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <d41f0296-45b9-4264-adc8-f41601b36edd@suse.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAHa18QcTVoZ9udNg--.29916S3
-X-Coremail-Antispam: 1UD129KBjvdXoW7Xry5GF4rAF4fGr1UWFyfWFg_yoWkAFXE9a
-	1DZa47Ww15GF4Sy3ZIyr13urW09r4UW34YqFW3tr1rJryDJr9xXF1rArZYvw1kGa90kanr
-	A397ZrWxCrsFgjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbfAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
-	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
-	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7V
-	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
-	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6x
-	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAI
-	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x
-	0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VU13ku3UUUUU==
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] pps: clients: gpio: fix interrupt handling order in
+ remove path
+Content-Language: en-US
+To: Eliav Farber <farbere@amazon.com>
+Cc: jonnyc@amazon.com, gregkh@linuxfoundation.org, mschmidt@redhat.com,
+ calvin@wbinvd.org, u.kleine-koenig@pengutronix.de, tglx@linutronix.de,
+ linux-kernel@vger.kernel.org
+References: <20250527053355.37185-1-farbere@amazon.com>
+From: Rodolfo Giometti <giometti@enneenne.com>
+In-Reply-To: <20250527053355.37185-1-farbere@amazon.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4xfPLB87f2GF6duPKGLDNszVPAXhyDtTVOTuWPHUOeKOlYaNpn4s6uQxgaVzGB7pnSb1kQNebc9DgbGK7c29qM9WJskmQ2BcrnL3FJ8C8Y1oMbfjljl60g
+ lK17rk0zGA5zEe+HuRdYTF3TmqN7k0dbhgXSdi6/gwCldxO8DWWHfjrvvJ1N7NuKr/Z4QA/+wxWCpVzTZtKWGXuDjnyLNy1i/zEGvRVJq1GXzgwpd7BjqdNa
+ eQqacTOGXMPEVNr+HREC9MMD4mokcnIL3jTAnyuUcewKBsKwQ4zicbG+N1BQODXdCJKnEZSXavN7WXZDeGliT9CElM6dim1HTN9yx8SFTPIdZu198Ef9E7lQ
+ /KJ6uIzN1nvOCy+GlOUhipBRFTwOLziV/JqbzOS2gK2LwSgzGGyvM9kTNXm/qukmCdcCK2F5ZRfGQqMhKY9rty6hRa8+aQ==
 
-Hi,
-
-在 2025/05/27 14:17, Hannes Reinecke 写道:
-> On 5/24/25 08:13, Yu Kuai wrote:
->> From: Yu Kuai <yukuai3@huawei.com>
->>
->> This flag is used by llbitmap in later patches to skip raid456 initial
->> recover and delay building initial xor data to first write.
->>
->> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
->> Reviewed-by: Christoph Hellwig <hch@lst.de>
->> ---
->>   drivers/md/md.c | 12 +++++++++++-
->>   drivers/md/md.h |  2 ++
->>   2 files changed, 13 insertions(+), 1 deletion(-)
->>
-> Wouldn't it be enough to check for the 'blocks_synced' callback to check
-> if the array supports lazy recovery?
-
-I think no, just to check the array supports lazy recovery is not
-enough, we still have to distinguish the normal recovery and the lazy
-recovery by new bitmap. For example:
-
-+		if (test_bit(MD_RECOVERY_LAZY_RECOVER, &mddev->recovery) &&
-+		    start == MaxSector)
-+			start = 0;
-
-For normal recovery, there is nothing to do, and for lazy recovery,
-we'll register a new sync_thread later to recover bits that are
-written the first time.
-
-Thanks,
-Kuai
-
+On 27/05/25 07:33, Eliav Farber wrote:
+> The interrupt handler in pps_gpio_probe() is registered after calling
+> pps_register_source() using devm_request_irq(). However, in the
+> corresponding remove function, pps_unregister_source() is called before
+> the IRQ is freed, since devm-managed resources are released after the
+> remove function completes.
 > 
-> Otherwise:
+> This creates a potential race condition where an interrupt may occur
+> after the PPS source is unregistered but before the handler is removed,
+> possibly leading to a kernel panic.
 > 
-> Reviewed-by: Hannes Reinecke <hare@suse.de>
+> To prevent this, switch from devm-managed IRQ registration to manual
+> management by using request_irq() and calling free_irq() explicitly in
+> the remove path before unregistering the PPS source. This ensures the
+> interrupt handler is safely removed before deactivating the PPS source.
 > 
-> Cheers,
+> Signed-off-by: Eliav Farber <farbere@amazon.com>
+> ---
+>   drivers/pps/clients/pps-gpio.c | 5 +++--
+>   1 file changed, 3 insertions(+), 2 deletions(-)
 > 
-> Hannes
+> diff --git a/drivers/pps/clients/pps-gpio.c b/drivers/pps/clients/pps-gpio.c
+> index 374ceefd6f2a..2866636b0554 100644
+> --- a/drivers/pps/clients/pps-gpio.c
+> +++ b/drivers/pps/clients/pps-gpio.c
+> @@ -210,8 +210,8 @@ static int pps_gpio_probe(struct platform_device *pdev)
+>   	}
+>   
+>   	/* register IRQ interrupt handler */
+> -	ret = devm_request_irq(dev, data->irq, pps_gpio_irq_handler,
+> -			get_irqf_trigger_flags(data), data->info.name, data);
+> +	ret = request_irq(data->irq, pps_gpio_irq_handler,
+> +			  get_irqf_trigger_flags(data), data->info.name, data);
+>   	if (ret) {
+>   		pps_unregister_source(data->pps);
+>   		dev_err(dev, "failed to acquire IRQ %d\n", data->irq);
+> @@ -228,6 +228,7 @@ static void pps_gpio_remove(struct platform_device *pdev)
+>   {
+>   	struct pps_gpio_device_data *data = platform_get_drvdata(pdev);
+>   
+> +	free_irq(data->irq, data);
+
+Why not just use devm_free_irq()?
+
+>   	pps_unregister_source(data->pps);
+>   	timer_delete_sync(&data->echo_timer);
+>   	/* reset echo pin in any case */
+
+Ciao,
+
+Rodolfo
+
+-- 
+GNU/Linux Solutions                  e-mail: giometti@enneenne.com
+Linux Device Driver                          giometti@linux.it
+Embedded Systems                     phone:  +39 349 2432127
+UNIX programming
 
 
