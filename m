@@ -1,281 +1,113 @@
-Return-Path: <linux-kernel+bounces-664071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-664075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7704EAC5169
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 16:57:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 117B9AC5174
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 16:59:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FFFD188744D
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 14:57:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C71241893219
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 14:59:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1974527A459;
-	Tue, 27 May 2025 14:57:25 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85ADA25A627;
+	Tue, 27 May 2025 14:58:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="E0sBSGU7"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90C4227602B;
-	Tue, 27 May 2025 14:57:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62A0019E7F9
+	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 14:58:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748357844; cv=none; b=fD7Je6ix2JjTN6rTOtj83/mS758KU33UZmH4I9pQOqBaAg/HEar7huS4G0Bm0yrML7oaTDIB6D31my4fcOjsHBh0Z0D5EK0C61RDa9b42L2z/8ZHWvQDceowJ2iclixfRXMNeKlCuPkNqYpSKh4vTLxhrGtug5WxjRfuL2xa6to=
+	t=1748357933; cv=none; b=srk7yClHF+GLc6Ly7USk5lhlJjV22sfj7hgeIEsPgegILv3UoIWlfGnAqqvdA6ithDxRnqJJKnAjYJOTLczEStDKuvpxCCNbXH6pSFr178Y4wBbGkNjzny0kpoEvJUo0Xxx+18Ts6bCXtplwKZwUY/u/DW0MNuJ+G1o90H6Uyns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748357844; c=relaxed/simple;
-	bh=pL9Fegy02fmCCz6cEn5sWFto9TtfYVeB589+kYHMg78=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=CyuV+PYVmQnE8mOgGBxoN0KUwYmO9M+MmhO0iT3PrFhpVhmgUIwmieJB4urc9ROhbFNqpnyJ1yFmOCIo4dJM3/A1VELHEWtPb8iEYzPNGRyPFrm1e0vmEuMdBgV33QDmalwweJ31GTIfCvbgSUF3Fb6VQMDII6JQzE1DTqA+0ds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42A2EC4CEE9;
-	Tue, 27 May 2025 14:57:23 +0000 (UTC)
-Date: Tue, 27 May 2025 10:58:20 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Vincent Donnefort <vdonnefort@google.com>
-Subject: [PATCH] ring-buffer: Move cpus_read_lock() outside of buffer->mutex
-Message-ID: <20250527105820.0f45d045@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1748357933; c=relaxed/simple;
+	bh=msfafbvKH8k+6WrHApRJMu1ZHQUoHobjRRMKVSbWuVM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GJxdUSmn9sxxtursse5xsHIxHeQky2G3EoWVYQwtoqULvstp1TMibP/whsX/fXDSJoFx8Pmbm4AuaF1uML2nuyDTMmyKMBzlbXGhIX0p8rJrZRg7qQ/O0zCl2BFk9J53/M/FG2nWj1BX0Tmz1kWo/QFq9kb1JWmc9laQygeUvKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=E0sBSGU7; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-ad1b94382b8so583624166b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 07:58:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1748357929; x=1748962729; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Xn/HpegMj8KBA7WUvuVnYcNPpUCOy6S5/PQDziNope8=;
+        b=E0sBSGU7cZdsRIMiHupdAEb7/+qLB3YoqYVSPfTJG17Ry0oj/fV58mTPzNPKhoxOin
+         Dhqs7BZ+GnJHcTj7/F9C4iVZmaerMZpXyBZkkL6pVG1NEuDCoMxb41fWxpmqlQgegjqo
+         YLRfKaVCNZkwrlNQ62YE1vbU2ZtgmLn58EwU8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748357929; x=1748962729;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Xn/HpegMj8KBA7WUvuVnYcNPpUCOy6S5/PQDziNope8=;
+        b=Ec4/ALGf3p0pPZfEDRejgtPDgtdIxqOd3q7B/0ErKTOSCwdrh5mQP1eV3LO8Mc+kl3
+         zcPUQhhQn+x85XOXseic9fPQvsg5JGlvdGJR0oUNR7hUk0gHOxBzDcqGYyhUQ2AYl7W3
+         hPM+kCn94oQ9BpQA//hDwI1PhNH1WDK3nMUHAe1bNrxZmztYj4tYnxn3ALEC6y0wQFj4
+         u7tGSjKlYRTY84UE34csrjnU9IvVK2VgKA+KfiYpuCpSAZR4Y6IvX6W22aY7lvhN94f1
+         g/IlVv7AcxXylO3PFXbqh5iBdKJbRxfffVDUdFp5gXHiJPegULKMQLCSbmJy187r7fQp
+         jizQ==
+X-Gm-Message-State: AOJu0Yzd9AGSfJy5ThRsdCce1W/y412owbT+9VRaGcsqkdUMu7twu6k6
+	s7q3EJZZQmkXIm8VzZo2cRM0E6NVRVqZ8TrMi6p/WR5FUxU5bcc/sMfzI6dC6cOjJZf99HaVPMf
+	WtzTp/mE=
+X-Gm-Gg: ASbGncu25gXTV5zajmCJ319KykJJNAyJJqhIX+AX7B+CmnYhrgdm4blEU++d5Kp1jPW
+	5JjY2VX7dPeeZDFzNqhJGbfEYVWRtcWuGFiXlIGcBraCn6S9NAJtjDiQu044bE1x/MMcgCi2TDb
+	p/N5M1/RgDZKN1niWqvgPOprNwRE4Tw/sOY4jjJEITAarrqr/4L7qVV68EpptZIzeXphlEHZWBl
+	jGWZoWx4djm91MtlshalXrjFgZW8nGIVSo9wN4A62Y0JT/gJIgAUMUW1jl2MyRmrL9KM9eNIsuy
+	9iWYJeiiI7fOF2Hgr2rMH4ztiPuV0plQV1eDOc/aTno7vJdRaENhxS5B80bQM13fOfdplfosfYJ
+	BfMHSbDtyYWQawo/4HynDUv8MZzER+c5X/ia0
+X-Google-Smtp-Source: AGHT+IFp3bX6MoL2rcSenMXmlWKAp46s2IDn6Uz3aktoiO4d2BJxo/YFfYBC9qQJAubGVQBXexrAtQ==
+X-Received: by 2002:a17:907:97c5:b0:ad5:d597:561e with SMTP id a640c23a62f3a-ad85b2f62d2mr1182229366b.56.1748357929122;
+        Tue, 27 May 2025 07:58:49 -0700 (PDT)
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com. [209.85.208.43])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad52d4f945bsm1833415566b.184.2025.05.27.07.58.48
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 27 May 2025 07:58:48 -0700 (PDT)
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-60179d8e65fso6054399a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 07:58:48 -0700 (PDT)
+X-Received: by 2002:a05:6402:350e:b0:601:89d4:969f with SMTP id
+ 4fb4d7f45d1cf-602db4b1b2cmr10652767a12.32.1748357927364; Tue, 27 May 2025
+ 07:58:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <CAK7LNAQezLBpYLqJ+=ONqoYKwdaw0_eywN9O26LTnifGq_g+tg@mail.gmail.com>
+ <CAHk-=wg2YAc1TrqWB9HhKDWHGzrqeP9=uiW9hzU5p1oApcdAKA@mail.gmail.com> <CAK7LNARY48483tOLUf01-d_VnQh+K=-e+SLEeAqMaZfZC0YjLA@mail.gmail.com>
+In-Reply-To: <CAK7LNARY48483tOLUf01-d_VnQh+K=-e+SLEeAqMaZfZC0YjLA@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 27 May 2025 07:58:31 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiSDWVRT6A1cTkzVFaodhnVPmbtnDtaOe573y=HsDHkzg@mail.gmail.com>
+X-Gm-Features: AX0GCFs_p7G6msogOW1YvWXgUShzebeCrbjAaYZ9oPQ1gVzmAtgd8KBOQ0T1aqs
+Message-ID: <CAHk-=wiSDWVRT6A1cTkzVFaodhnVPmbtnDtaOe573y=HsDHkzg@mail.gmail.com>
+Subject: Re: [GIT PULL] Kbuild fixes for v6.15-rc7
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-From: Steven Rostedt <rostedt@goodmis.org>
+On Mon, 26 May 2025 at 23:28, Masahiro Yamada <masahiroy@kernel.org> wrote:
+>
+> However, building the kernel in Fedora 42 is 30% slower
+> than in Fedora 41.
+>
+> So, maybe, this is because you recently upgraded your OS to Fedora 42.
 
-Running a modified trace-cmd record --nosplice where it does a mmap of the
-ring buffer when '--nosplice' is set, caused the following lockdep splat:
+Yeah, so that explains all - or at least most - of it.
 
- ======================================================
- WARNING: possible circular locking dependency detected
- 6.15.0-rc7-test-00002-gfb7d03d8a82f #551 Not tainted
- ------------------------------------------------------
- trace-cmd/1113 is trying to acquire lock:
- ffff888100062888 (&buffer->mutex){+.+.}-{4:4}, at: ring_buffer_map+0x11c/0xe70
+There's probably a small amount of "the kernel keeps growing, so build
+inevitably slow down anyway", but yeah, it's probably just the slower
+compiler that is what I notice.
 
- but task is already holding lock:
- ffff888100a5f9f8 (&cpu_buffer->mapping_lock){+.+.}-{4:4}, at: ring_buffer_map+0xcf/0xe70
+Thanks for checking for me,
 
- which lock already depends on the new lock.
-
- the existing dependency chain (in reverse order) is:
-
- -> #5 (&cpu_buffer->mapping_lock){+.+.}-{4:4}:
-        __mutex_lock+0x192/0x18c0
-        ring_buffer_map+0xcf/0xe70
-        tracing_buffers_mmap+0x1c4/0x3b0
-        __mmap_region+0xd8d/0x1f70
-        do_mmap+0x9d7/0x1010
-        vm_mmap_pgoff+0x20b/0x390
-        ksys_mmap_pgoff+0x2e9/0x440
-        do_syscall_64+0x79/0x1c0
-        entry_SYSCALL_64_after_hwframe+0x76/0x7e
-
- -> #4 (&mm->mmap_lock){++++}-{4:4}:
-        __might_fault+0xa5/0x110
-        _copy_to_user+0x22/0x80
-        _perf_ioctl+0x61b/0x1b70
-        perf_ioctl+0x62/0x90
-        __x64_sys_ioctl+0x134/0x190
-        do_syscall_64+0x79/0x1c0
-        entry_SYSCALL_64_after_hwframe+0x76/0x7e
-
- -> #3 (&cpuctx_mutex){+.+.}-{4:4}:
-        __mutex_lock+0x192/0x18c0
-        perf_event_init_cpu+0x325/0x7c0
-        perf_event_init+0x52a/0x5b0
-        start_kernel+0x263/0x3e0
-        x86_64_start_reservations+0x24/0x30
-        x86_64_start_kernel+0x95/0xa0
-        common_startup_64+0x13e/0x141
-
- -> #2 (pmus_lock){+.+.}-{4:4}:
-        __mutex_lock+0x192/0x18c0
-        perf_event_init_cpu+0xb7/0x7c0
-        cpuhp_invoke_callback+0x2c0/0x1030
-        __cpuhp_invoke_callback_range+0xbf/0x1f0
-        _cpu_up+0x2e7/0x690
-        cpu_up+0x117/0x170
-        cpuhp_bringup_mask+0xd5/0x120
-        bringup_nonboot_cpus+0x13d/0x170
-        smp_init+0x2b/0xf0
-        kernel_init_freeable+0x441/0x6d0
-        kernel_init+0x1e/0x160
-        ret_from_fork+0x34/0x70
-        ret_from_fork_asm+0x1a/0x30
-
- -> #1 (cpu_hotplug_lock){++++}-{0:0}:
-        cpus_read_lock+0x2a/0xd0
-        ring_buffer_resize+0x610/0x14e0
-        __tracing_resize_ring_buffer.part.0+0x42/0x120
-        tracing_set_tracer+0x7bd/0xa80
-        tracing_set_trace_write+0x132/0x1e0
-        vfs_write+0x21c/0xe80
-        ksys_write+0xf9/0x1c0
-        do_syscall_64+0x79/0x1c0
-        entry_SYSCALL_64_after_hwframe+0x76/0x7e
-
- -> #0 (&buffer->mutex){+.+.}-{4:4}:
-        __lock_acquire+0x1405/0x2210
-        lock_acquire+0x174/0x310
-        __mutex_lock+0x192/0x18c0
-        ring_buffer_map+0x11c/0xe70
-        tracing_buffers_mmap+0x1c4/0x3b0
-        __mmap_region+0xd8d/0x1f70
-        do_mmap+0x9d7/0x1010
-        vm_mmap_pgoff+0x20b/0x390
-        ksys_mmap_pgoff+0x2e9/0x440
-        do_syscall_64+0x79/0x1c0
-        entry_SYSCALL_64_after_hwframe+0x76/0x7e
-
- other info that might help us debug this:
-
- Chain exists of:
-   &buffer->mutex --> &mm->mmap_lock --> &cpu_buffer->mapping_lock
-
-  Possible unsafe locking scenario:
-
-        CPU0                    CPU1
-        ----                    ----
-   lock(&cpu_buffer->mapping_lock);
-                                lock(&mm->mmap_lock);
-                                lock(&cpu_buffer->mapping_lock);
-   lock(&buffer->mutex);
-
-  *** DEADLOCK ***
-
- 2 locks held by trace-cmd/1113:
-  #0: ffff888106b847e0 (&mm->mmap_lock){++++}-{4:4}, at: vm_mmap_pgoff+0x192/0x390
-  #1: ffff888100a5f9f8 (&cpu_buffer->mapping_lock){+.+.}-{4:4}, at: ring_buffer_map+0xcf/0xe70
-
- stack backtrace:
- CPU: 5 UID: 0 PID: 1113 Comm: trace-cmd Not tainted 6.15.0-rc7-test-00002-gfb7d03d8a82f #551 PREEMPT
- Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
- Call Trace:
-  <TASK>
-  dump_stack_lvl+0x6e/0xa0
-  print_circular_bug.cold+0x178/0x1be
-  check_noncircular+0x146/0x160
-  __lock_acquire+0x1405/0x2210
-  lock_acquire+0x174/0x310
-  ? ring_buffer_map+0x11c/0xe70
-  ? ring_buffer_map+0x11c/0xe70
-  ? __mutex_lock+0x169/0x18c0
-  __mutex_lock+0x192/0x18c0
-  ? ring_buffer_map+0x11c/0xe70
-  ? ring_buffer_map+0x11c/0xe70
-  ? function_trace_call+0x296/0x370
-  ? __pfx___mutex_lock+0x10/0x10
-  ? __pfx_function_trace_call+0x10/0x10
-  ? __pfx___mutex_lock+0x10/0x10
-  ? _raw_spin_unlock+0x2d/0x50
-  ? ring_buffer_map+0x11c/0xe70
-  ? ring_buffer_map+0x11c/0xe70
-  ? __mutex_lock+0x5/0x18c0
-  ring_buffer_map+0x11c/0xe70
-  ? do_raw_spin_lock+0x12d/0x270
-  ? find_held_lock+0x2b/0x80
-  ? _raw_spin_unlock+0x2d/0x50
-  ? rcu_is_watching+0x15/0xb0
-  ? _raw_spin_unlock+0x2d/0x50
-  ? trace_preempt_on+0xd0/0x110
-  tracing_buffers_mmap+0x1c4/0x3b0
-  __mmap_region+0xd8d/0x1f70
-  ? ring_buffer_lock_reserve+0x99/0xff0
-  ? __pfx___mmap_region+0x10/0x10
-  ? ring_buffer_lock_reserve+0x99/0xff0
-  ? __pfx_ring_buffer_lock_reserve+0x10/0x10
-  ? __pfx_ring_buffer_lock_reserve+0x10/0x10
-  ? bpf_lsm_mmap_addr+0x4/0x10
-  ? security_mmap_addr+0x46/0xd0
-  ? lock_is_held_type+0xd9/0x130
-  do_mmap+0x9d7/0x1010
-  ? 0xffffffffc0370095
-  ? __pfx_do_mmap+0x10/0x10
-  vm_mmap_pgoff+0x20b/0x390
-  ? __pfx_vm_mmap_pgoff+0x10/0x10
-  ? 0xffffffffc0370095
-  ksys_mmap_pgoff+0x2e9/0x440
-  do_syscall_64+0x79/0x1c0
-  entry_SYSCALL_64_after_hwframe+0x76/0x7e
- RIP: 0033:0x7fb0963a7de2
- Code: 00 00 00 0f 1f 44 00 00 41 f7 c1 ff 0f 00 00 75 27 55 89 cd 53 48 89 fb 48 85 ff 74 3b 41 89 ea 48 89 df b8 09 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 76 5b 5d c3 0f 1f 00 48 8b 05 e1 9f 0d 00 64
- RSP: 002b:00007ffdcc8fb878 EFLAGS: 00000246 ORIG_RAX: 0000000000000009
- RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fb0963a7de2
- RDX: 0000000000000001 RSI: 0000000000001000 RDI: 0000000000000000
- RBP: 0000000000000001 R08: 0000000000000006 R09: 0000000000000000
- R10: 0000000000000001 R11: 0000000000000246 R12: 0000000000000000
- R13: 00007ffdcc8fbe68 R14: 00007fb096628000 R15: 00005633e01a5c90
-  </TASK>
-
-The issue is that cpus_read_lock() is taken within buffer->mutex. The
-memory mapped pages are taken with the mmap_lock held. The buffer->mutex
-is taken within the cpu_buffer->mapping_lock. There's quite a chain with
-all these locks, where the deadlock can be fixed by moving the
-cpus_read_lock() outside the taking of the buffer->mutex.
-
-Cc: stable@vger.kernel.org
-Fixes: 117c39200d9d7 ("ring-buffer: Introducing ring-buffer mapping functions")
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- kernel/trace/ring_buffer.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
-
-diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-index 8134ae64d7f8..241acb470c42 100644
---- a/kernel/trace/ring_buffer.c
-+++ b/kernel/trace/ring_buffer.c
-@@ -2849,6 +2849,12 @@ int ring_buffer_resize(struct trace_buffer *buffer, unsigned long size,
- 	if (nr_pages < 2)
- 		nr_pages = 2;
- 
-+	/*
-+	 * Keep CPUs from coming online while resizing to synchronize
-+	 * with new per CPU buffers being created.
-+	 */
-+	guard(cpus_read_lock)();
-+
- 	/* prevent another thread from changing buffer sizes */
- 	mutex_lock(&buffer->mutex);
- 	atomic_inc(&buffer->resizing);
-@@ -2893,7 +2899,6 @@ int ring_buffer_resize(struct trace_buffer *buffer, unsigned long size,
- 			cond_resched();
- 		}
- 
--		cpus_read_lock();
- 		/*
- 		 * Fire off all the required work handlers
- 		 * We can't schedule on offline CPUs, but it's not necessary
-@@ -2933,7 +2938,6 @@ int ring_buffer_resize(struct trace_buffer *buffer, unsigned long size,
- 			cpu_buffer->nr_pages_to_update = 0;
- 		}
- 
--		cpus_read_unlock();
- 	} else {
- 		cpu_buffer = buffer->buffers[cpu_id];
- 
-@@ -2961,8 +2965,6 @@ int ring_buffer_resize(struct trace_buffer *buffer, unsigned long size,
- 			goto out_err;
- 		}
- 
--		cpus_read_lock();
--
- 		/* Can't run something on an offline CPU. */
- 		if (!cpu_online(cpu_id))
- 			rb_update_pages(cpu_buffer);
-@@ -2981,7 +2983,6 @@ int ring_buffer_resize(struct trace_buffer *buffer, unsigned long size,
- 		}
- 
- 		cpu_buffer->nr_pages_to_update = 0;
--		cpus_read_unlock();
- 	}
- 
-  out:
--- 
-2.47.2
-
+               Linus
 
