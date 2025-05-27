@@ -1,95 +1,97 @@
-Return-Path: <linux-kernel+bounces-664347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-664349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3731AC5A5B
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 21:04:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F234AC5A5F
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 21:05:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73331169B25
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 19:04:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B5D87B07A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 19:04:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0246428033E;
-	Tue, 27 May 2025 19:04:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB4AF28136B;
+	Tue, 27 May 2025 19:05:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FoVICZlC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="GGLAubnk"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BD6A1990A7;
-	Tue, 27 May 2025 19:04:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EFDC1F8F04;
+	Tue, 27 May 2025 19:05:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748372687; cv=none; b=fsCRWTgXT6fRuiBye80b+JKOxyaqOiDGt2UXCZk9ZFLRjqdYXWiL8Sy4dXkSc4QJnLR286+ah7PVL5sbkyPccZldIXnXkGKYU9Ypkq+RE7LSJUG83FMMuPK3yF12mdhFK3dhxJiupESKVTpfphAW+MFhnB0tzm+E69/rYyDL5AE=
+	t=1748372717; cv=none; b=AxDOrH4xKm7pNEuSCdBEyb0R30CkY8EbgT3VBHFkEfBUNlmIs/1JwiqA0xcvNCa3yHxFs5UjkaDpww0F+NNBisXakL/vTOgkhnkT+MsL/cJxYZGqkPMWr1ZTkFC6l9f5DkEe47ZzCjAKCh19Pm+e91NBjRTCehJfj1wulAjpH44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748372687; c=relaxed/simple;
-	bh=MwRofHnla/VucXUYUgL45YwvUyP3cAoOdQAxIpjk/CI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J+sjbZgK37EvNiH0DtvJbGfdAhIrqIOx2O8vZGshaSr5tjg3kjdODMd0ahu7wWRXbPZBik7WtUrlkAo7hYHdtcSS1/Ll53s7tbb2E/HYS4QB3QKpGOYfIq7dGtpMJN3pMkHc5dobM4S40ftIM4HHPs0tT57oAq87msV+eJhaMK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FoVICZlC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABBACC4CEE9;
-	Tue, 27 May 2025 19:04:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748372686;
-	bh=MwRofHnla/VucXUYUgL45YwvUyP3cAoOdQAxIpjk/CI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FoVICZlCHB8xSxvLnEzulZSHz5/U1iOGrgZWk6lvGV359Dq1EXdx6rH3sIOuXum7d
-	 Nk9r6dmpR+NLJR7JNhpgfdJLFhG/qbqXlaR7pm1OCpPdoCD4PljoXzfxNc6byYz2ac
-	 O+nSE0Zlw3wo4HObz1WbCwjMdENnGrBp4WYmuDTBcvJmqLFtu488iXWDnbJm8+449D
-	 9kx/2EoyiZELVnIpdeZaDGvTgJNhXCgjrS5IfjP5yS7odBZuQx4RlSkzLYO/MWyNPO
-	 iLj1KFUKMa4tZ72M7zoJ69wCIDCaLICz3bxTqUS0rFIkvOJJD/IG+GCQTIFnp3YtBG
-	 I/Qk0ANn8Q5iw==
-Date: Tue, 27 May 2025 09:04:45 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Zhongkun He <hezhongkun.hzk@bytedance.com>
-Cc: Waiman Long <llong@redhat.com>, cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org, muchun.song@linux.dev,
-	Johannes Weiner <hannes@cmpxchg.org>
-Subject: Re: [External] Re: [PATCH] cpuset: introduce non-blocking
- cpuset.mems setting option
-Message-ID: <aDYMzfYYSS8ly1Nt@slm.duckdns.org>
-References: <8029d719-9dc2-4c7d-af71-4f6ae99fe256@redhat.com>
- <CACSyD1Mmt54dVRiBibcGsum_rRV=_SwP=dxioAxq=EDmPRnY2Q@mail.gmail.com>
- <aC4J9HDo2LKXYG6l@slm.duckdns.org>
- <CACSyD1MvwPT7i5_PnEp32seeb7X_svdCeFtN6neJ0=QPY1hDsw@mail.gmail.com>
- <aC90-jGtD_tJiP5K@slm.duckdns.org>
- <CACSyD1P+wuSP2jhMsLHBAXDxGoBkWzK54S5BRzh63yby4g0OHw@mail.gmail.com>
- <aDCnnd46qjAvoxZq@slm.duckdns.org>
- <CACSyD1OWe-PkUjmcTtbYCbLi3TrxNQd==-zjo4S9X5Ry3Gwbzg@mail.gmail.com>
- <aDEdYIEpu_7o6Kot@slm.duckdns.org>
- <CACSyD1N2CjY-yqcSg+Q6KHKGzzQnio9HjwUHutup+FEX08wg0g@mail.gmail.com>
+	s=arc-20240116; t=1748372717; c=relaxed/simple;
+	bh=3+NtFlmtXfUy839svZeeGU9OBD1iYnlGA4I+ECBvv9c=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YJe8iKz+wQyHVOCrAFbGxng0EfF033dfxyGTXG3WKK5vnS0XCzI3knBfOXd2yttsuDR8PMPuPG3ObTI97ohzOIh12u/pzjgi69b8HyWfrwxpUNyW409peVqZrA63FY3JLiEcT8Xshe5KKW5ZbJLdKF5MNdhOLIdOiVLzPTlVmCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=GGLAubnk; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 54RJ4t293043645;
+	Tue, 27 May 2025 14:04:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1748372695;
+	bh=VcCP5sL9rJHfMN4liqC6MuWZiSWMlAhVNHDNS4foVfg=;
+	h=From:To:CC:Subject:Date;
+	b=GGLAubnkSWIH0+nEECy1q4toh4BMWOeckgibF8+Qe3PS1Oi7I6OmzzsV+yhOvCauP
+	 QiWIZzb8lmsRCLU806SN5tOllfo/FMm0ym6D3scT8C+e1HtYvHXx/cef8iUojRBKuF
+	 Ej8WcDXqNDGv+3NzF4FWn0cIeugRdPU1IH361MuU=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 54RJ4t3t930893
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Tue, 27 May 2025 14:04:55 -0500
+Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 27
+ May 2025 14:04:54 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 27 May 2025 14:04:55 -0500
+Received: from DMZ007XYY.dhcp.ti.com (dmz007xyy.dhcp.ti.com [128.247.29.251])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 54RJ4tcP3540893;
+	Tue, 27 May 2025 14:04:55 -0500
+From: Shree Ramamoorthy <s-ramamoorthy@ti.com>
+To: <aaro.koskinen@iki.fi>, <andreas@kemnade.info>, <khilman@baylibre.com>,
+        <rogerq@kernel.org>, <tony@atomide.com>, <lee@kernel.org>,
+        <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <m-leonard@ti.com>, <praneeth@ti.com>, <afd@ti.com>
+Subject: [PATCH 0/2] TI TPS65214 & TPS65215: Update MFD Cell Structs
+Date: Tue, 27 May 2025 14:04:53 -0500
+Message-ID: <20250527190455.169772-1-s-ramamoorthy@ti.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACSyD1N2CjY-yqcSg+Q6KHKGzzQnio9HjwUHutup+FEX08wg0g@mail.gmail.com>
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hello,
+The patches updates the GPIO compatible string for the TPS65214 & TPS65215
+MFD cell struct based on a system design change made after driver
+development. TPS65215 & TPS65219 now share the same GPIO count 2 GPOs and
+1 GPIO), instead of TPS65214 & TPS65215. TPS65215 will reuse the TPS65219
+GPIO compatible string, instead of TPS65214. TPS65214 still has 1 GPO and
+1 GPIO.
 
-On Sat, May 24, 2025 at 10:09:36AM +0800, Zhongkun He wrote:
-> On Sat, May 24, 2025 at 9:14 AM Tejun Heo <tj@kernel.org> wrote:
-> Per my understanding,  the interface of migration rate is far more complex.
-> To slow down the migration, moving it to the userspace can also help determine
-> when to carry out this operation.
+TPS65214 Datasheet: https://www.ti.com/lit/gpn/TPS65214
+TPS65214 TRM: https://www.ti.com/lit/pdf/slvud30
+TPS65215 TRM: https://www.ti.com/lit/pdf/slvucw5/
 
-(cc'ing Johannes for mm)
+Shree Ramamoorthy (2):
+  mfd: tps65219: Update TPS65214 MFD cell's GPIO compatible string
+  mfd: tps65219: Update TPS65215's MFD cell GPIO compatible string
 
-The user interface can be pretty simple. It can just be an approximate
-bandwidth of scan or migration, but yeah, I don't know whether this is going
-to be too complex. Pacing migration from user side isn't trivial either,
-tho. If this is something necessary, it'd be nice if kernel can provide
-something relatively simple to use and can cover most usecases.
-
-Johannes, what do you think?
-
-Thanks.
+ drivers/mfd/tps65219.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 -- 
-tejun
+2.43.0
+
 
