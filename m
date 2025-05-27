@@ -1,288 +1,216 @@
-Return-Path: <linux-kernel+bounces-663595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-663597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05860AC4A76
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 10:43:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AE96AC4A79
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 10:44:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B7643A56B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 08:42:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6F0D3B5719
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 08:44:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D89D42505BB;
-	Tue, 27 May 2025 08:42:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C43CB24C07D;
+	Tue, 27 May 2025 08:44:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GOTYUoiP"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jhsbScrG"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D98A224DCEB;
-	Tue, 27 May 2025 08:42:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C6AA1CEAD6;
+	Tue, 27 May 2025 08:44:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748335342; cv=none; b=QkdCZCik7XLINvs7rW1ak50xTGHHko9ipCmlPbVTIOcX2wvYGswTdu0QKNad5FtOy799DsrUz5nH6tzStF/wbcaEQc2Esl9F1VMjQhnQymxOPveO/VBi2iafJbBdOPnZnl3JVkh7WhKpYdohSFCJvgtL3YdHVMObG+6wiqPouVc=
+	t=1748335471; cv=none; b=nsz3Fsv2gccKYqpgbu2qNMLKG3pb9qvUeJdkcv9vnyVvjQdWrEzwhNSieYGkgGpjStRqfsVwCTGtucRkY6PotTgtPQBjFTXHU5AgdV6o9dub/sTiDlcWD5n5PHTF8p1l4Vy0j47M87dOcAhJWfWdosAYcXPYWun41+zj2xr2XzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748335342; c=relaxed/simple;
-	bh=nVndev4+WoZyI/KcSKGCk0rfEs2ZhIK7wjjPQBbZ4nc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=A0MYRsx5QQkwP+eO77Rg5mkBdNJYD9qgXCDypBwQhKUSs7ye769u/Op9hz1imv2aq8vo+9h01sJSdrK0VLJ+DkZf1SlWF7gMFdVLqZ8EKz/IfAfu7xUtXsXUUMtM+FA/uocLIZt8nUG4CFYlnLQbOGPTKrE9U0cbJjyibNq3cVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GOTYUoiP; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54R3FSFK005190;
-	Tue, 27 May 2025 08:42:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	fos2bFgEpclUexn4EAdi3t6B56RBfPVmqrRk0f9F3Dc=; b=GOTYUoiPjqD7WzK9
-	4OkxRP1RBDhI1TFPhmZ5wBCxUdUFE2oJ2w9AdVpKfCR6pMgiT47VrCqQU6CMK/PS
-	8ISjYKYran6OhjuXHthvnIINqWTHX4up8/MFT3L2KX7V3yEPTMuB8U3AZAXTVssC
-	VTOTc4tZmYyFg+OIzWoV8M54S6a+KBSRvRSaQxOfesww5VAVH5NkWiuttq0kyy+7
-	2msSdGGlYpA8VcN7xMoGOkH1rFD3hcehubDzlByfaC3Xh1ditS3NGqfOYTe2/a0i
-	5pIhtYrdTqw/VlhKR0KCbPp270YYU148WiMVnDwN1xsOiaTB+xduXMV4xY3Bjlib
-	uor6ww==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46u79p66n7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 27 May 2025 08:42:12 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 54R8gBSg006172
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 27 May 2025 08:42:11 GMT
-Received: from hu-rajkbhag-blr.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 27 May 2025 01:42:09 -0700
-From: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
-Date: Tue, 27 May 2025 14:11:45 +0530
-Subject: [PATCH wireless-next v2 3/3] wifi: mac80211: Allow scan on a radio
- while operating on DFS on another radio
+	s=arc-20240116; t=1748335471; c=relaxed/simple;
+	bh=LDUja/soH89gEGH4sh7r6gwl6Kbwv9oCc2U3NgLy3do=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=LV3rxkolS29/EqnY6u6LvET0mCsZ7riTfc+ZF//pJjLpYlVyGcUvhJgt+bcqF1ztepDLdycihi3A0cDmBHaJRK4ygi1BNQcjeNKFxP8/2AsBi4Bz+MUNiDjdFCPpi6u0EBiXnxAyWSSHKVeaVAMXEzdeA28g9tAny3jgSh/jPBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jhsbScrG; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1748335470; x=1779871470;
+  h=message-id:date:mime-version:subject:from:to:cc:
+   references:in-reply-to:content-transfer-encoding;
+  bh=LDUja/soH89gEGH4sh7r6gwl6Kbwv9oCc2U3NgLy3do=;
+  b=jhsbScrGTEcoulm7Yi6lwJCuSG1V14hQnwMza4AShf7VBfFiAlSjszLV
+   LQ0V2byjq30WEdzSSRe0bW33+GiWCozSTo5oxzN+0A4B4TyjbgA0Tr4Lx
+   ES8Hx5ARzpeU9go9lTXmoyk5/8FFAjMGR8f77CzzXUbi4RLzRswkb8zcf
+   jxdJFkgZzhpRT+K2HcZglZoY9NmevMYKYUB2RePXGYof39StBsqp+3o8L
+   tTNSiLWkhx32Wn0qhQ8mz8Wo6M+eRc0VwRkJJO3JZ3oKuZFycUxafhR1b
+   +QNvVDTSHTW1y8obBfF19rHsHl9+jbs25NYIZTIlvNPqv5yLCjWrtIbOw
+   A==;
+X-CSE-ConnectionGUID: H3JVI5mvReW55Bvhm+yX1g==
+X-CSE-MsgGUID: vYRgGU9YRcmdBtFPXvZxbQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11445"; a="67732379"
+X-IronPort-AV: E=Sophos;i="6.15,317,1739865600"; 
+   d="scan'208";a="67732379"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2025 01:44:28 -0700
+X-CSE-ConnectionGUID: JMWUB66JSwiPLT/caKW45g==
+X-CSE-MsgGUID: 6r760WWXS2u+N35uVyKcmQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,317,1739865600"; 
+   d="scan'208";a="173670439"
+Received: from unknown (HELO [10.238.11.3]) ([10.238.11.3])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2025 01:44:01 -0700
+Message-ID: <9157f2d4-62f0-41c2-a755-80233b534b42@linux.intel.com>
+Date: Tue, 27 May 2025 16:43:57 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250527-mlo-dfs-acs-v2-3-92c2f37c81d9@quicinc.com>
-References: <20250527-mlo-dfs-acs-v2-0-92c2f37c81d9@quicinc.com>
-In-Reply-To: <20250527-mlo-dfs-acs-v2-0-92c2f37c81d9@quicinc.com>
-To: Johannes Berg <johannes@sipsolutions.net>
-CC: <linux-wireless@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        "Raj
- Kumar Bhagat" <quic_rajkbhag@quicinc.com>
-X-Mailer: b4 0.14.2
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: qXe7aIMwYLZaiGbWwLD9zryKQQkK90CY
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI3MDA3MCBTYWx0ZWRfX+Ie01IDg6rpG
- DdD642z8QDb76Fy+CuqvvzoCL6MwQE09tXRniBaCZH0LLlixBxBc4JyWXnw6IhJyQwNqu9yV1LR
- d6edjNheATqzVtVU/N5BNQIa67/OOWKFtpV5O5wQ831xtvageziEGiCx+k4HIx/yoDq3L+Wk8W5
- xHqcG61VcZvk5H1N3c2dJg/5sC3PfthddHJLmoq1llZLpYM5j2Eex9lXbwTq9kEomWPszwsfQq2
- aWa7w6MGUbKVJmGDmvHLJDLbwmbaJt3+ELxOwpX6eCfuzreY7Nn4pNdwaWmT5xyweyGl0ZPQbwX
- tuEBKuC3DLlI7INNqieLKAS/NygvvrlnOwTqkinQ8zNyuw2yY95yFS6uC5tboAcKf6UBKmi4d2J
- vsqDr//g1bhrb6me7UFCa2SIrpAG0zl4ZeNY2rol88rmiYb5IpMCTpEHo43Guj9uEBAIk2Wa
-X-Authority-Analysis: v=2.4 cv=HNnDFptv c=1 sm=1 tr=0 ts=68357ae4 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=COk6AnOGAAAA:8
- a=6kngQRzwmQaPL7Ky5oUA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: qXe7aIMwYLZaiGbWwLD9zryKQQkK90CY
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-27_04,2025-05-26_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 suspectscore=0 malwarescore=0 lowpriorityscore=0 adultscore=0
- priorityscore=1501 mlxlogscore=999 phishscore=0 mlxscore=0 spamscore=0
- bulkscore=0 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505160000
- definitions=main-2505270070
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v2 02/51] KVM: guest_memfd: Introduce and use
+ shareability to guard faulting
+From: Binbin Wu <binbin.wu@linux.intel.com>
+To: Ackerley Tng <ackerleytng@google.com>
+Cc: kvm@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ x86@kernel.org, linux-fsdevel@vger.kernel.org, aik@amd.com,
+ ajones@ventanamicro.com, akpm@linux-foundation.org, amoorthy@google.com,
+ anthony.yznaga@oracle.com, anup@brainfault.org, aou@eecs.berkeley.edu,
+ bfoster@redhat.com, brauner@kernel.org, catalin.marinas@arm.com,
+ chao.p.peng@intel.com, chenhuacai@kernel.org, dave.hansen@intel.com,
+ david@redhat.com, dmatlack@google.com, dwmw@amazon.co.uk,
+ erdemaktas@google.com, fan.du@intel.com, fvdl@google.com, graf@amazon.com,
+ haibo1.xu@intel.com, hch@infradead.org, hughd@google.com,
+ ira.weiny@intel.com, isaku.yamahata@intel.com, jack@suse.cz,
+ james.morse@arm.com, jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com,
+ jhubbard@nvidia.com, jroedel@suse.de, jthoughton@google.com,
+ jun.miao@intel.com, kai.huang@intel.com, keirf@google.com,
+ kent.overstreet@linux.dev, kirill.shutemov@intel.com,
+ liam.merwick@oracle.com, maciej.wieczor-retman@intel.com,
+ mail@maciej.szmigiero.name, maz@kernel.org, mic@digikod.net,
+ michael.roth@amd.com, mpe@ellerman.id.au, muchun.song@linux.dev,
+ nikunj@amd.com, nsaenz@amazon.es, oliver.upton@linux.dev,
+ palmer@dabbelt.com, pankaj.gupta@amd.com, paul.walmsley@sifive.com,
+ pbonzini@redhat.com, pdurrant@amazon.co.uk, peterx@redhat.com,
+ pgonda@google.com, pvorel@suse.cz, qperret@google.com,
+ quic_cvanscha@quicinc.com, quic_eberman@quicinc.com,
+ quic_mnalajal@quicinc.com, quic_pderrin@quicinc.com,
+ quic_pheragu@quicinc.com, quic_svaddagi@quicinc.com, quic_tsoni@quicinc.com,
+ richard.weiyang@gmail.com, rick.p.edgecombe@intel.com, rientjes@google.com,
+ roypat@amazon.co.uk, rppt@kernel.org, seanjc@google.com, shuah@kernel.org,
+ steven.price@arm.com, steven.sistare@oracle.com, suzuki.poulose@arm.com,
+ tabba@google.com, thomas.lendacky@amd.com, usama.arif@bytedance.com,
+ vannapurve@google.com, vbabka@suse.cz, viro@zeniv.linux.org.uk,
+ vkuznets@redhat.com, wei.w.wang@intel.com, will@kernel.org,
+ willy@infradead.org, xiaoyao.li@intel.com, yan.y.zhao@intel.com,
+ yilun.xu@intel.com, yuzenghui@huawei.com, zhiquan1.li@intel.com
+References: <cover.1747264138.git.ackerleytng@google.com>
+ <b784326e9ccae6a08388f1bf39db70a2204bdc51.1747264138.git.ackerleytng@google.com>
+ <9483e9e3-9b29-49c6-adcc-04fe45ac28fd@linux.intel.com>
+Content-Language: en-US
+In-Reply-To: <9483e9e3-9b29-49c6-adcc-04fe45ac28fd@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Currently, in multi-radio wiphy cases, if one radio is operating on a DFS
-channel, -EBUSY is returned even when a scan is requested on a different
-radio. Because of this, an MLD AP with one radio (link) on a DFS channel
-and Automatic Channel Selection (ACS) on another radio (link) cannot be
-brought up.
 
-In multi-radio wiphy cases, multiple radios are grouped under a single
-wiphy. Hence, if a radio is operating on a DFS channel and a scan is
-requested on a different radio of the same wiphy, the scan can be allowed
-simultaneously without impacting the DFS operations.
 
-Add logic to check the underlying radio used for the requested scan. If the
-radio on which DFS is already running is not being used, allow the scan
-operation; otherwise, return -EBUSY.
+On 5/27/2025 4:25 PM, Binbin Wu wrote:
+>
+>
+> On 5/15/2025 7:41 AM, Ackerley Tng wrote:
+>> Track guest_memfd memory's shareability status within the inode as
+>> opposed to the file, since it is property of the guest_memfd's memory
+>> contents.
+>>
+>> Shareability is a property of the memory and is indexed using the
+>> page's index in the inode. Because shareability is the memory's
+>> property, it is stored within guest_memfd instead of within KVM, like
+>> in kvm->mem_attr_array.
+>>
+>> KVM_MEMORY_ATTRIBUTE_PRIVATE in kvm->mem_attr_array must still be
+>> retained to allow VMs to only use guest_memfd for private memory and
+>> some other memory for shared memory.
+>>
+>> Not all use cases require guest_memfd() to be shared with the host
+>> when first created. Add a new flag, GUEST_MEMFD_FLAG_INIT_PRIVATE,
+>> which when set on KVM_CREATE_GUEST_MEMFD, initializes the memory as
+>> private to the guest, and therefore not mappable by the
+>> host. Otherwise, memory is shared until explicitly converted to
+>> private.
+>>
+>> Signed-off-by: Ackerley Tng <ackerleytng@google.com>
+>> Co-developed-by: Vishal Annapurve <vannapurve@google.com>
+>> Signed-off-by: Vishal Annapurve <vannapurve@google.com>
+>> Co-developed-by: Fuad Tabba <tabba@google.com>
+>> Signed-off-by: Fuad Tabba <tabba@google.com>
+>> Change-Id: If03609cbab3ad1564685c85bdba6dcbb6b240c0f
+>> ---
+>>   Documentation/virt/kvm/api.rst |   5 ++
+>>   include/uapi/linux/kvm.h       |   2 +
+>>   virt/kvm/guest_memfd.c         | 124 ++++++++++++++++++++++++++++++++-
+>>   3 files changed, 129 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
+>> index 86f74ce7f12a..f609337ae1c2 100644
+>> --- a/Documentation/virt/kvm/api.rst
+>> +++ b/Documentation/virt/kvm/api.rst
+>> @@ -6408,6 +6408,11 @@ belonging to the slot via its userspace_addr.
+>>   The use of GUEST_MEMFD_FLAG_SUPPORT_SHARED will not be allowed for CoCo VMs.
+>>   This is validated when the guest_memfd instance is bound to the VM.
+>>   +If the capability KVM_CAP_GMEM_CONVERSIONS is supported, then the 'flags' field
+>> +supports GUEST_MEMFD_FLAG_INIT_PRIVATE.
+>
+> It seems that the sentence is stale?
+> Didn't find the definition of KVM_CAP_GMEM_CONVERSIONS.
+Aha! It's a typo, should be KVM_CAP_GMEM_CONVERSION.
 
-Signed-off-by: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
----
- net/mac80211/chan.c        | 30 +++++++++++++++++++++++++++---
- net/mac80211/ieee80211_i.h |  3 ++-
- net/mac80211/offchannel.c  |  5 ++++-
- net/mac80211/scan.c        | 20 +++++++++++++-------
- 4 files changed, 46 insertions(+), 12 deletions(-)
 
-diff --git a/net/mac80211/chan.c b/net/mac80211/chan.c
-index 3aaf5abf1acc13008a0472672c826d495c80407c..94c83f58e23d0666af881e5e0c981cca17231bfd 100644
---- a/net/mac80211/chan.c
-+++ b/net/mac80211/chan.c
-@@ -644,15 +644,39 @@ ieee80211_find_chanctx(struct ieee80211_local *local,
- 	return NULL;
- }
- 
--bool ieee80211_is_radar_required(struct ieee80211_local *local)
-+bool ieee80211_is_radar_required(struct ieee80211_local *local,
-+				 struct cfg80211_scan_request *req)
- {
-+	struct wiphy *wiphy = local->hw.wiphy;
- 	struct ieee80211_link_data *link;
-+	struct ieee80211_channel *chan;
-+	int radio_idx;
- 
- 	lockdep_assert_wiphy(local->hw.wiphy);
- 
-+	if (!req)
-+		return false;
-+
- 	for_each_sdata_link(local, link) {
--		if (link->radar_required)
--			return true;
-+		if (link->radar_required) {
-+			if (wiphy->n_radio < 2)
-+				return true;
-+
-+			chan = link->conf->chanreq.oper.chan;
-+			radio_idx = cfg80211_get_radio_idx_by_chan(wiphy, chan);
-+			/*
-+			 * The radio index (radio_idx) is expected to be valid,
-+			 * as it's derived from a channel tied to a link. If
-+			 * it's invalid (i.e., negative), return true to avoid
-+			 * potential issues with radar-sensitive operations.
-+			 */
-+			if (radio_idx < 0)
-+				return true;
-+
-+			if (ieee80211_is_radio_idx_in_scan_req(wiphy, req,
-+							       radio_idx))
-+				return true;
-+		}
- 	}
- 
- 	return false;
-diff --git a/net/mac80211/ieee80211_i.h b/net/mac80211/ieee80211_i.h
-index 7719d6c307fed5f44c9a5e35b8250c31daa6f523..9b9c7209878b076c5c3c09a78d067cf54d2d95a6 100644
---- a/net/mac80211/ieee80211_i.h
-+++ b/net/mac80211/ieee80211_i.h
-@@ -2712,7 +2712,8 @@ void ieee80211_recalc_chanctx_min_def(struct ieee80211_local *local,
- 				      struct ieee80211_chanctx *ctx,
- 				      struct ieee80211_link_data *rsvd_for,
- 				      bool check_reserved);
--bool ieee80211_is_radar_required(struct ieee80211_local *local);
-+bool ieee80211_is_radar_required(struct ieee80211_local *local,
-+				 struct cfg80211_scan_request *req);
- bool ieee80211_is_radio_idx_in_scan_req(struct wiphy *wiphy,
- 					struct cfg80211_scan_request *scan_req,
- 					int radio_idx);
-diff --git a/net/mac80211/offchannel.c b/net/mac80211/offchannel.c
-index 2b9abc27462eb5a41f47523d1653c7f27137588d..686d9f6e9b527acaa3500e8d99d5ca513bb1025e 100644
---- a/net/mac80211/offchannel.c
-+++ b/net/mac80211/offchannel.c
-@@ -567,6 +567,7 @@ static int ieee80211_start_roc_work(struct ieee80211_local *local,
- {
- 	struct ieee80211_roc_work *roc, *tmp;
- 	bool queued = false, combine_started = true;
-+	struct cfg80211_scan_request *req;
- 	int ret;
- 
- 	lockdep_assert_wiphy(local->hw.wiphy);
-@@ -612,9 +613,11 @@ static int ieee80211_start_roc_work(struct ieee80211_local *local,
- 		roc->mgmt_tx_cookie = *cookie;
- 	}
- 
-+	req = wiphy_dereference(local->hw.wiphy, local->scan_req);
-+
- 	/* if there's no need to queue, handle it immediately */
- 	if (list_empty(&local->roc_list) &&
--	    !local->scanning && !ieee80211_is_radar_required(local)) {
-+	    !local->scanning && !ieee80211_is_radar_required(local, req)) {
- 		/* if not HW assist, just queue & schedule work */
- 		if (!local->ops->remain_on_channel) {
- 			list_add_tail(&roc->list, &local->roc_list);
-diff --git a/net/mac80211/scan.c b/net/mac80211/scan.c
-index 7b8da40a912d020f229a74c67bd5a57fb513a72d..e37a1281291e92b66bf983e8582adfbf50696b4f 100644
---- a/net/mac80211/scan.c
-+++ b/net/mac80211/scan.c
-@@ -587,7 +587,8 @@ static int ieee80211_start_sw_scan(struct ieee80211_local *local,
- 	return 0;
- }
- 
--static bool __ieee80211_can_leave_ch(struct ieee80211_sub_if_data *sdata)
-+static bool __ieee80211_can_leave_ch(struct ieee80211_sub_if_data *sdata,
-+				     struct cfg80211_scan_request *req)
- {
- 	struct ieee80211_local *local = sdata->local;
- 	struct ieee80211_sub_if_data *sdata_iter;
-@@ -595,7 +596,7 @@ static bool __ieee80211_can_leave_ch(struct ieee80211_sub_if_data *sdata)
- 
- 	lockdep_assert_wiphy(local->hw.wiphy);
- 
--	if (!ieee80211_is_radar_required(local))
-+	if (!ieee80211_is_radar_required(local, req))
- 		return true;
- 
- 	if (!regulatory_pre_cac_allowed(local->hw.wiphy))
-@@ -611,9 +612,10 @@ static bool __ieee80211_can_leave_ch(struct ieee80211_sub_if_data *sdata)
- }
- 
- static bool ieee80211_can_scan(struct ieee80211_local *local,
--			       struct ieee80211_sub_if_data *sdata)
-+			       struct ieee80211_sub_if_data *sdata,
-+			       struct cfg80211_scan_request *req)
- {
--	if (!__ieee80211_can_leave_ch(sdata))
-+	if (!__ieee80211_can_leave_ch(sdata, req))
- 		return false;
- 
- 	if (!list_empty(&local->roc_list))
-@@ -628,15 +630,19 @@ static bool ieee80211_can_scan(struct ieee80211_local *local,
- 
- void ieee80211_run_deferred_scan(struct ieee80211_local *local)
- {
-+	struct cfg80211_scan_request *req;
-+
- 	lockdep_assert_wiphy(local->hw.wiphy);
- 
- 	if (!local->scan_req || local->scanning)
- 		return;
- 
-+	req = wiphy_dereference(local->hw.wiphy, local->scan_req);
- 	if (!ieee80211_can_scan(local,
- 				rcu_dereference_protected(
- 					local->scan_sdata,
--					lockdep_is_held(&local->hw.wiphy->mtx))))
-+					lockdep_is_held(&local->hw.wiphy->mtx)),
-+				req))
- 		return;
- 
- 	wiphy_delayed_work_queue(local->hw.wiphy, &local->scan_work,
-@@ -733,10 +739,10 @@ static int __ieee80211_start_scan(struct ieee80211_sub_if_data *sdata,
- 	    !(sdata->vif.active_links & BIT(req->tsf_report_link_id)))
- 		return -EINVAL;
- 
--	if (!__ieee80211_can_leave_ch(sdata))
-+	if (!__ieee80211_can_leave_ch(sdata, req))
- 		return -EBUSY;
- 
--	if (!ieee80211_can_scan(local, sdata)) {
-+	if (!ieee80211_can_scan(local, sdata, req)) {
- 		/* wait for the work to finish/time out */
- 		rcu_assign_pointer(local->scan_req, req);
- 		rcu_assign_pointer(local->scan_sdata, sdata);
 
--- 
-2.34.1
+>
+>> Setting GUEST_MEMFD_FLAG_INIT_PRIVATE
+>> +will initialize the memory for the guest_memfd as guest-only and not faultable
+>> +by the host.
+>> +
+> [...]
+>>     static int kvm_gmem_init_fs_context(struct fs_context *fc)
+>> @@ -549,12 +645,26 @@ static const struct inode_operations kvm_gmem_iops = {
+>>   static struct inode *kvm_gmem_inode_make_secure_inode(const char *name,
+>>                                 loff_t size, u64 flags)
+>>   {
+>> +    struct kvm_gmem_inode_private *private;
+>>       struct inode *inode;
+>> +    int err;
+>>         inode = alloc_anon_secure_inode(kvm_gmem_mnt->mnt_sb, name);
+>>       if (IS_ERR(inode))
+>>           return inode;
+>>   +    err = -ENOMEM;
+>> +    private = kzalloc(sizeof(*private), GFP_KERNEL);
+>> +    if (!private)
+>> +        goto out;
+>> +
+>> +    mt_init(&private->shareability);
+>
+> shareability is defined only when CONFIG_KVM_GMEM_SHARED_MEM enabled, should be done within CONFIG_KVM_GMEM_SHARED_MEM .
+>
+>
+>> + inode->i_mapping->i_private_data = private;
+>> +
+>> +    err = kvm_gmem_shareability_setup(private, size, flags);
+>> +    if (err)
+>> +        goto out;
+>> +
+>>       inode->i_private = (void *)(unsigned long)flags;
+>>       inode->i_op = &kvm_gmem_iops;
+>>       inode->i_mapping->a_ops = &kvm_gmem_aops;
+>> @@ -566,6 +676,11 @@ static struct inode *kvm_gmem_inode_make_secure_inode(const char *name,
+>>       WARN_ON_ONCE(!mapping_unevictable(inode->i_mapping));
+>>         return inode;
+>> +
+>> +out:
+>> +    iput(inode);
+>> +
+>> +    return ERR_PTR(err);
+>>   }
+>>
+> [...]
+>
 
 
