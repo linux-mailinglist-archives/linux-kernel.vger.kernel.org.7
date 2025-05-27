@@ -1,228 +1,85 @@
-Return-Path: <linux-kernel+bounces-664222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-664225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B534AC53F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 18:53:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4E0AAC5404
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 18:54:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72B651BA4356
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 16:54:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 535264A151F
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 16:54:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20E4A280000;
-	Tue, 27 May 2025 16:53:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8CF9280036;
+	Tue, 27 May 2025 16:54:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lzQ5EWua"
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="V3LAt2cT"
+Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0C2A27F737
-	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 16:53:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E321A27E1CA;
+	Tue, 27 May 2025 16:54:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748364822; cv=none; b=m7z2Ur+SJ+XL16cMTrK+pt42iFM10UEO9CjABJP6jnj+C8O8zsraE6mttDCNjzAs8Ky5enlgy56YKbFieZ0hLgI6wmsHL7g/2KDOvtTEccsaW0oZOdyLTnEOklbekkMblW6s83zi+fFQSyCLC7IXKpCKg4SduoY3Wr+W2cGanDw=
+	t=1748364862; cv=none; b=aUygPp7cvAGqjf9Y3QoO7qXt6qDeeYosXv0wqO8rbVUcQLCagtm0/jRrOgm6zfpYjcbDldf04z+/rF5ZnFA3PDHsOPHwb6fmtmXSJqjEQYW5ioDIiR3Pb8dcJ23DVcQWYsQLaNrt2QAK19EaYmJIbuQqiqB5TzwShCioYz9NxS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748364822; c=relaxed/simple;
-	bh=/+mJueTcwzJnxfUyrN6qtZ9wFPaasq0r/I7p2x6WXUU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=D70lVk/qbg+GpOpA2jCRME0X1m2WK4HgdY/wbBDqBLq2MN76IaQ4v0rYQxcraNscQ6Cy4hEMu+7WmWoxyAg30oQG1MYt3km8xFh1M2lq6fmICgrb+JLYuCxzsvULqcXsApxJnNePrAXD/WysEulY4OoY6RqoRK5WDAYJ+NTUu4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lzQ5EWua; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4774193fdffso52302541cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 09:53:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1748364819; x=1748969619; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cIF16cjUFV3ZsiCDhB3+Sm+ikqlHDW6+DhFShdpult8=;
-        b=lzQ5EWuaw1fbv7cnAEJQ12/FGsT027YoA2SCoDyyiKp+RZ5PFVOQ7G00/AGei5fhV9
-         JDEdX+fCjoZsueF5TIPwiZRX32WkHAASupb6iHMO69WL8nKHoE6HmX6gltoc0PfJ9CpZ
-         13k0FSZi6kDaDDiNcsb9rtCxkevReUWaykQ+rvgiAFHKbmpkTi8+6TdRUVSbeYyegK8x
-         hFS1g5z3IKr0HLtZmzwxpnnnd12kGYb7QrKT6X7dYFi2fP94eLB13DayrfGOlXqqd4m5
-         kNbFhL670RjlXdFxXlxrw9NaELCI74DV1Z3sVt2GqdXeGz5jJrlrT+TGQnbYeGu8dGon
-         zoEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748364819; x=1748969619;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cIF16cjUFV3ZsiCDhB3+Sm+ikqlHDW6+DhFShdpult8=;
-        b=RXfjXDMRxlWIC6dGy/yvJ/gJYhLXNQpSlwjdluBHLc4MRDtSsSvSQld2geNYtz7bCy
-         jI/t+NmT09Mw+ifTGOUVpwXzNNhctFq26KdR6BagKHXPNCVXLy4yMzVV5qqkDgCi1lpJ
-         WopRUjtTMqUpP++xdzLFfdjXu/m0pSGVcfJnm1u3UCXOuUEg4Px/8lmSwF89SghnOqBq
-         x+DL4KniZBzlxNyt8WpG/0TOExsEVJSeSkNERlKXM3z4/ZAR/Rt3i1Hs0o76pYkCKjOi
-         /D7b/kv/P1WADBZh1KOXc8U3iz1lS9OJP8nAUWAK0Pe+X6ZXdBGlIVee8rhWm6vb8VEF
-         a6nQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW3V4veEI3QgUp2Tg63jpjax/dpkAddk5fEqdJMKRHfiNsqa1lQhAkTM/NAXiJp1uem8pJYleUN1cdi1+Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwW7zZCSmMrQ7Szkjnt1+O/qwSPLg+Wko1SubZPngzs4EjNLR8D
-	hiS4MzUSnf4RC9e9vt+Z3RDxgVQe8Y3ECLhNTiIm+qhGSx56VaLDS6vIjdmcfglgwZYNUSVt6ML
-	xsmssqETobsrvBC3k9syziuvxBVaOoQqiacrA+ROy
-X-Gm-Gg: ASbGncs/DJhxVqINe7FQGPNqtE5pjTIXpQXS2p3M0CLkBrqGtyx5JcTj/FDoZP/djQ4
-	3zAoXY0ubokrGIxlKlkxzyBoNjS8k1swCXhleXixx8Sdwd4aASClCBDdMDDWTzPi1a1q6ASs/Px
-	xtybIz7tUi8JaE/DG62YbdT3lNlVn3nqHPqNlZbqdcS14h
-X-Google-Smtp-Source: AGHT+IGOVup33wYIMODjDjhZVEP6vy2HF6m2q4apgA6nEaPhlb8nmtWkfGEB1yr2n8kL+JhC8OndZwIrygPLx6jGAsA=
-X-Received: by 2002:a05:622a:4c17:b0:47b:4d3:5d12 with SMTP id
- d75a77b69052e-49f47de69a1mr234209671cf.49.1748364819234; Tue, 27 May 2025
- 09:53:39 -0700 (PDT)
+	s=arc-20240116; t=1748364862; c=relaxed/simple;
+	bh=q09drV1QvIieRDj3Wy4m4RjhA6SAaqk0Go0ylNHT83E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dGC3dAjtPfQ8f1JvvkSXOjIGrd/UueZPs0fuDalTKk8g9gq2clGsIsxXgxqyH5XRW4o/QiqCDGA18OclFlO2sneafLriJtNz3gndgXyZTesmjxQ5O+86YtPF/m0vU+1+MLKv+NqBNl+W1m5Xa8AE5O2lhRN0u+fFDvPMHwsj5lQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=V3LAt2cT; arc=none smtp.client-ip=95.215.58.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 27 May 2025 09:54:10 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1748364856;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=X7Eb1eNV+fnCUrZVOjpa1doj7OVOazrVC783oZlElww=;
+	b=V3LAt2cT1G77bgMqInkvtG2L0r9PGJojdIuvBjSb9ErjNwewzXtEzEI5joRteaHtu35Dh0
+	EGIYZhxAhIsP8OSxVCaW/v7FGW6j+KPBo4BP/zhN9GwU9IY33M6LMZPgPnnP7sWFrQqAPf
+	dfEpZnqX5bpdqU+784fLRfdX4/P5NSc=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Breno Leitao <leitao@debian.org>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Muchun Song <muchun.song@linux.dev>, 
+	Andrew Morton <akpm@linux-foundation.org>, Chen Ridong <chenridong@huawei.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Michal Hocko <mhocko@suse.com>, cgroups@vger.kernel.org, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-team@meta.com, 
+	Michael van der Westhuizen <rmikey@meta.com>, Usama Arif <usamaarif642@gmail.com>, 
+	Pavel Begunkov <asml.silence@gmail.com>, Rik van Riel <riel@surriel.com>
+Subject: Re: [PATCH] memcg: Always call cond_resched() after fn()
+Message-ID: <zxorog2mv54v5dpl5cmmkd3j4hznyxbj435hjtbtzljwspm6mt@tj446cjrclcg>
+References: <20250523-memcg_fix-v1-1-ad3eafb60477@debian.org>
+ <ucarls72c6j7xzhdjsbb2wj5ovlzthatmh7kzwhepvudszap4h@xetgnupdm5ui>
+ <aDWN9mP3wPQnwo4m@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250114190709.1.Ia17111747d0450169dbe902e5d7ef25912a9338e@changeid>
- <87a5bsh27o.fsf@intel.com> <CAMCVhVOagmBOj5UOr_HdohPApSAuprsObBm107X0q_1UfvSU_w@mail.gmail.com>
-In-Reply-To: <CAMCVhVOagmBOj5UOr_HdohPApSAuprsObBm107X0q_1UfvSU_w@mail.gmail.com>
-From: Jonathan Denose <jdenose@google.com>
-Date: Tue, 27 May 2025 11:53:28 -0500
-X-Gm-Features: AX0GCFscBYeJUL9UQGWT4MYv3EMeVnwe6ivZFeKx6NRoEUN4Z0ec3DV-VJ7qOWc
-Message-ID: <CAMCVhVNH0KMEFDX85Sp0zFxgccKvVigsHebXAnvpNi4W6jK3fA@mail.gmail.com>
-Subject: Re: [PATCH] drm/i915/display: Add skip link check quirk
-To: Jani Nikula <jani.nikula@linux.intel.com>, LKML <linux-kernel@vger.kernel.org>
-Cc: rodrigo.vivi@intel.com, intel-gfx@lists.freedesktop.org, 
-	David Airlie <airlied@gmail.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, 
-	Simona Vetter <simona@ffwll.ch>, Tvrtko Ursulin <tursulin@ursulin.net>, dri-devel@lists.freedesktop.org, 
-	intel-xe@lists.freedesktop.org, imre.deak@intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aDWN9mP3wPQnwo4m@gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Jan 15, 2025 at 9:47=E2=80=AFAM Jonathan Denose <jdenose@google.com=
-> wrote:
->
-> On Wed, Jan 15, 2025 at 3:10=E2=80=AFAM Jani Nikula <jani.nikula@linux.in=
-tel.com> wrote:
-> >
-> > On Tue, 14 Jan 2025, Jonathan Denose <jdenose@google.com> wrote:
-> > > The display on the Advantech UTC124G3PWWW0E-ES worked fine until comm=
-it
-> > > "drm/i915/dp: Recheck link state after modeset" was introduced. After
-> > > this commit the display flickers intermittently as the driver code
-> > > initiates the delayed link recheck in an infinite loop.
-> > >
-> > > To resolve this issue for the Advantech device, add a quirk to skip o=
-ver
-> > > the delayed link recheck.
-> >
-> > It would be better to try to get at the root cause first, instead of
-> > blindly skipping required parts. The code's complicated enough without
-> > quirks, and removing them afterwards is very difficult.
-> >
-> > Please file a bug according to [1], and attach full dmesg with debugs
-> > enabled.
->
-> I filed a bug with the full dmesg a few weeks ago:
-> https://gitlab.freedesktop.org/drm/i915/kernel/-/issues/13344
->
-> > Cc: Imre
-> >
-> > BR,
-> > Jani.
-> >
-> >
-> >
-> > [1] https://drm.pages.freedesktop.org/intel-docs/how-to-file-i915-bugs.=
-html
-> >
-> >
-> >
-> > >
-> > > Signed-off-by: Jonathan Denose <jdenose@google.com>
-> > > ---
-> > >
-> > >  drivers/gpu/drm/i915/display/intel_dp_link_training.c | 4 +++-
-> > >  drivers/gpu/drm/i915/display/intel_quirks.c           | 8 ++++++++
-> > >  drivers/gpu/drm/i915/display/intel_quirks.h           | 1 +
-> > >  3 files changed, 12 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/drivers/gpu/drm/i915/display/intel_dp_link_training.c b/=
-drivers/gpu/drm/i915/display/intel_dp_link_training.c
-> > > index 397cc4ebae526..7804ad38b00cd 100644
-> > > --- a/drivers/gpu/drm/i915/display/intel_dp_link_training.c
-> > > +++ b/drivers/gpu/drm/i915/display/intel_dp_link_training.c
-> > > @@ -32,6 +32,7 @@
-> > >  #include "intel_encoder.h"
-> > >  #include "intel_hotplug.h"
-> > >  #include "intel_panel.h"
-> > > +#include "intel_quirks.h"
-> > >
-> > >  #define LT_MSG_PREFIX                        "[CONNECTOR:%d:%s][ENCO=
-DER:%d:%s][%s] "
-> > >  #define LT_MSG_ARGS(_intel_dp, _dp_phy)      (_intel_dp)->attached_c=
-onnector->base.base.id, \
-> > > @@ -1622,7 +1623,8 @@ void intel_dp_start_link_train(struct intel_ato=
-mic_state *state,
-> > >               lt_dbg(intel_dp, DP_PHY_DPRX, "Forcing link training fa=
-ilure\n");
-> > >       } else if (passed) {
-> > >               intel_dp->link.seq_train_failures =3D 0;
-> > > -             intel_encoder_link_check_queue_work(encoder, 2000);
-> > > +             if (!intel_has_quirk(display, QUIRK_SKIP_LINK_CHECK))
-> > > +                     intel_encoder_link_check_queue_work(encoder, 20=
-00);
-> > >               return;
-> > >       }
-> > >
-> > > diff --git a/drivers/gpu/drm/i915/display/intel_quirks.c b/drivers/gp=
-u/drm/i915/display/intel_quirks.c
-> > > index 28f497ae785bb..d472a5f21f8b9 100644
-> > > --- a/drivers/gpu/drm/i915/display/intel_quirks.c
-> > > +++ b/drivers/gpu/drm/i915/display/intel_quirks.c
-> > > @@ -78,6 +78,12 @@ static void quirk_fw_sync_len(struct intel_dp *int=
-el_dp)
-> > >       drm_info(display->drm, "Applying Fast Wake sync pulse count qui=
-rk\n");
-> > >  }
-> > >
-> > > +static void quirk_skip_link_check(struct intel_display *display)
-> > > +{
-> > > +     intel_set_quirk(display, QUIRK_SKIP_LINK_CHECK);
-> > > +     drm_info(display->drm, "Applying skip link check quirk\n");
-> > > +}
-> > > +
-> > >  struct intel_quirk {
-> > >       int device;
-> > >       int subsystem_vendor;
-> > > @@ -229,6 +235,8 @@ static struct intel_quirk intel_quirks[] =3D {
-> > >       { 0x3184, 0x1019, 0xa94d, quirk_increase_ddi_disabled_time },
-> > >       /* HP Notebook - 14-r206nv */
-> > >       { 0x0f31, 0x103c, 0x220f, quirk_invert_brightness },
-> > > +     /* Advantech UTC124G3PWWW0E-ES */
-> > > +     {0x5a85, 0x8086, 0x2212, quirk_skip_link_check},
-> > >  };
-> > >
-> > >  static const struct intel_dpcd_quirk intel_dpcd_quirks[] =3D {
-> > > diff --git a/drivers/gpu/drm/i915/display/intel_quirks.h b/drivers/gp=
-u/drm/i915/display/intel_quirks.h
-> > > index cafdebda75354..9e8f2816a4fba 100644
-> > > --- a/drivers/gpu/drm/i915/display/intel_quirks.h
-> > > +++ b/drivers/gpu/drm/i915/display/intel_quirks.h
-> > > @@ -20,6 +20,7 @@ enum intel_quirk_id {
-> > >       QUIRK_LVDS_SSC_DISABLE,
-> > >       QUIRK_NO_PPS_BACKLIGHT_POWER_HOOK,
-> > >       QUIRK_FW_SYNC_LEN,
-> > > +     QUIRK_SKIP_LINK_CHECK,
-> > >  };
-> > >
-> > >  void intel_init_quirks(struct intel_display *display);
-> >
-> > --
-> > Jani Nikula, Intel
-> --
-> Jonathan
+On Tue, May 27, 2025 at 03:03:34AM -0700, Breno Leitao wrote:
+> 
+> Not sure I followed you here. __oom_kill_process is doing the following:
+> 
+>   static void __oom_kill_process(struct task_struct *victim, const char *message)
+>   {
+> 	...
+>         pr_err("%s: Killed process %d (%s) total-vm:%lukB, anon-rss:%lukB, file-rss:%lukB, shmem-rss:%lukB, UID:%u pgtables:%lukB oom_score_adj:%hd\n",
+> 
+> 
+> Would you use a buffer to print to, and them flush it at the same time
+> (with pr_err()?)
+> 
 
-Hello,
-
-After discussing on the mailing list, Imre found that it was a link
-status reporting issue and followed up with some patches at [1]. Are
-these patches closer to what you'd be looking for since they more
-directly address the root cause?
-
-[1]: https://gitlab.freedesktop.org/drm/i915/kernel/-/issues/13344#note_277=
-3364
-
---=20
-Jonathan
+Something similar to what mem_cgroup_print_oom_meminfo() does with
+seq_buf.
 
