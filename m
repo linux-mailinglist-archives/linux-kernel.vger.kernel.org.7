@@ -1,199 +1,154 @@
-Return-Path: <linux-kernel+bounces-663969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-663971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5762AC5008
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 15:38:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4D56AC500C
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 15:39:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0646D166EB6
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 13:37:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B3B73B164C
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 13:38:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 485DC275861;
-	Tue, 27 May 2025 13:37:36 +0000 (UTC)
-Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60AB42749CB;
+	Tue, 27 May 2025 13:38:12 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8C7A2741BC
-	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 13:37:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FF162749CA
+	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 13:38:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748353055; cv=none; b=IV6b8GqQ85FiSs3miptK7IFhyn7RFgRO6Pj2P7g0zbpTeWtJoHrg0nHeYlzuA4E1R3jkC6Cw4BMV80RdlYlrLwS4gua9UkQ+bwwZtRUXDU9UyverYzdgeaVrTGp+o1MJV5gW0Lb2OggO2Cx6B7JmVvkQmund09RnEhYzGcu3PbI=
+	t=1748353092; cv=none; b=paCgzr3ZK604TjJBOw6m72O/BDPlRYll4Nln6n0Qr+ajm0MoB4NENN0Bzk0V4dTgxxRDRIIKQVHDhCkHH/dB3moZSt1kfWPzdPHtDi+EJAt5XvYAFRk6LgzYUjwZ252jmodObal8oAQ+L374mT2GU/6CIZiekIYvtAfYlH5dXX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748353055; c=relaxed/simple;
-	bh=lkaAvlqrC2g3iGkCUuii5W10Di5fl/UKXiMCltLNGBI=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=E+nCawmmJitnCy5BRI/8Yvd8iKOApuOY3iG2kgc/HwLeEzFZ69sJKxSCPkEt74fKqNS+uTcEI9QyWOvtCntkxbYb8lftffGIWPXNn9AyS6UlBOXCv53IZsYVwExIlA7/TKp0dzQIxwQUXN6gzblGzkZnyYJY9u9fiLRFdm5o7WQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-86463467dddso281578439f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 06:37:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748353053; x=1748957853;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1py+DZ00oyprkVc+fla+24rh0dRjdu53vtBg26tccdo=;
-        b=mkZ4/SnyIq/qDfe+vR6Fztg/7EI4Www+K8DZmT8qAEGYNvR3ypIYLBxkL2fHIxu8Ze
-         39iflzY3Cvldl3FRpsEx8RBn9t3gd3boq72/l+59ehvbBQPcukSbwFM107XotbQiKJB1
-         kAnlpKawJYQkBPthyT/06CfwBP05Xi2QklRN/XtmpeD0MQNS9ZMzJy+LmIG8uW31ixw7
-         xyINcYdhQq7AaXfg4Xl9/A/CYOzlGgN/Y6AFd5er0u8mxD0dxw5Dc+h27wAFFWSPbfuX
-         Np8XPsjbVE+qNqFZrDBq2P9P+JMVBv1Aj8V2wQw3vXbzzt92RYrMYuJtX59eEPoCysrK
-         onGA==
-X-Forwarded-Encrypted: i=1; AJvYcCWF/v56ajuHtSyTDvNvpHj8NDk19b1MVbqn4bgNZKNmIfH+Q1ebGX+dkqIF4DcC6LM4PVAWO4kWz1oInSk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWvfo+mLFzfGqUX3wdl47VH/zstYexsQfenNuNCWmx8oZ3DWyc
-	YQTbcpX8jhG+9ddrx8lK9bN0OnWolzuPklTc0+lPyrV2kT3XVwyYrVUP7tNZGhfKscngVGViGs6
-	rDmhXbtbhcoOvBwSHfLxztt/MlPSAQ4gL+DUCkYYmGLUS6vnt32hqcWM8fEg=
-X-Google-Smtp-Source: AGHT+IHdbMEwKKnSrAAWp9WJoD6Pkfj9S+jcbGbdg4O4YoCpSQaOks7NJu+irfJruvpaLyymr000eUHQSzT+i9eb+zocGnOyME+j
+	s=arc-20240116; t=1748353092; c=relaxed/simple;
+	bh=yA9jjn66m7hHeKAY6NL326WUBnit5kXQLwaCQSgdp38=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NPVFx+LtF9NBOh8xrGLjrBQRHzQcRZTQLIpvY/kVQytlj3fZ2GKMT6K7hXuxj9ge0Z/pmKqNsjhIaP+S9g6S2M5+ekj1XZwoXuTAFWyUHBrznt/5eUWkn2RbFEvwppX79/Ag/nW3NKLdiifMiqN7ZHw5Bm9O7+yH/KUNkcpZoj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4b6DGB0t1Rz4f3lDF
+	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 21:37:38 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id DE9EF1A1BEF
+	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 21:38:04 +0800 (CST)
+Received: from [10.67.109.184] (unknown [10.67.109.184])
+	by APP1 (Coremail) with SMTP id cCh0CgCX_Hw7wDVo7Z3VNQ--.8983S2;
+	Tue, 27 May 2025 21:38:04 +0800 (CST)
+Message-ID: <57533126-eb30-4b56-bc4d-2f27514ae5ad@huaweicloud.com>
+Date: Tue, 27 May 2025 21:38:03 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:4191:b0:867:6c90:4867 with SMTP id
- ca18e2360f4ac-86cbb91658cmr1572338539f.14.1748353052928; Tue, 27 May 2025
- 06:37:32 -0700 (PDT)
-Date: Tue, 27 May 2025 06:37:32 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6835c01c.a70a0220.253bc2.00b7.GAE@google.com>
-Subject: [syzbot] [mm?] [cgroups?] general protection fault in refill_obj_stock
-From: syzbot <syzbot+5dd4e428fa723938e6fd@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, cgroups@vger.kernel.org, hannes@cmpxchg.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, mhocko@kernel.org, 
-	muchun.song@linux.dev, roman.gushchin@linux.dev, shakeel.butt@linux.dev, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] mm/mmap: Fix uprobe anon page be overwritten when
+ expanding vma during mremap
+Content-Language: en-US
+To: David Hildenbrand <david@redhat.com>, Oleg Nesterov <oleg@redhat.com>
+Cc: lorenzo.stoakes@oracle.com, mhiramat@kernel.org, peterz@infradead.org,
+ Liam.Howlett@oracle.com, akpm@linux-foundation.org, vbabka@suse.cz,
+ jannh@google.com, pfalcato@suse.de, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, pulehui@huawei.com
+References: <20250521092503.3116340-1-pulehui@huaweicloud.com>
+ <62b5ccf5-f1cd-43c2-b0bc-f542f40c5bdf@redhat.com>
+ <afe53868-5542-47d6-8005-71c1b3bec840@huaweicloud.com>
+ <13c5fe73-9e11-4465-b401-fc96a22dc5d1@redhat.com>
+ <4cbc1e43-ea46-44de-9e2b-1c62dcd2b6d5@huaweicloud.com>
+ <20250526154850.GA4156@redhat.com>
+ <06bd94c0-fefe-4bdc-8483-2d9b6703c3d6@redhat.com>
+From: Pu Lehui <pulehui@huaweicloud.com>
+In-Reply-To: <06bd94c0-fefe-4bdc-8483-2d9b6703c3d6@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgCX_Hw7wDVo7Z3VNQ--.8983S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7CFyrKFWDAFW8tw13uF1UAwb_yoW8ZFy8pa
+	48ta45JFyUJry8Jr1DJF1Utry0qr1Utw4UJr1rXFy5Awn8tr1jqFWYqFZ0gry5JrWktw15
+	Jr1UXwnruay7JFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
+	v3UUUUU
+X-CM-SenderInfo: psxovxtxl6x35dzhxuhorxvhhfrp/
 
-Hello,
+Hi David,
 
-syzbot found the following issue on:
+On 2025/5/27 2:46, David Hildenbrand wrote:
+> On 26.05.25 17:48, Oleg Nesterov wrote:
+>> Hi Lehui,
+>>
+>> As I said, I don't understand mm/, so can't comment, but...
+>>
+>> On 05/26, Pu Lehui wrote:
+>>>
+>>> To make things simpler, perhaps we could try post-processing, that is:
+>>>
+>>> diff --git a/mm/mremap.c b/mm/mremap.c
+>>> index 83e359754961..46a757fd26dc 100644
+>>> --- a/mm/mremap.c
+>>> +++ b/mm/mremap.c
+>>> @@ -240,6 +240,11 @@ static int move_ptes(struct pagetable_move_control
+>>> *pmc,
+>>>                  if (pte_none(ptep_get(old_pte)))
+>>>                          continue;
+>>>
+>>> +               /* skip move pte when expanded range has uprobe */
+>>> +               if (unlikely(pte_present(*new_pte) &&
+>>> +                            vma_has_uprobes(pmc->new, new_addr, 
+>>> new_addr +
+>>> PAGE_SIZE)))
+>>> +                       continue;
+>>> +
+>>
+>> I was thinking about
+>>
+>>     WARN_ON(!pte_none(*new_pte))
+>>
+>> at the start of the main loop.
+>>
+>> Obviously not to fix the problem, but rather to make it more explicit.
+> 
+> Yeah, WARN_ON_ONCE().
+> 
+> We really should fix the code to not install uprobes into the area we 
+> are moving.
+Alright, so let's try this direction.
 
-HEAD commit:    914873bc7df9 Merge tag 'x86-build-2025-05-25' of git://git..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12dcf882580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=231a962e5fdb804b
-dashboard link: https://syzkaller.appspot.com/bug?extid=5dd4e428fa723938e6fd
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> 
+> Likely, the correct fix will be to pass the range as well to 
+> uprobe_mmap(), and passing that range to build_probe_list().
 
-Unfortunately, I don't have any reproducer for this issue yet.
+It will be great. But IIUC, the range we expand to is already included 
+when entering uprobe_mmap and also build_probe_list.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/ecae640d0786/disk-914873bc.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/d451e50efeae/vmlinux-914873bc.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/8f7363263e49/bzImage-914873bc.xz
+copy_vma
+     vma_merge_new_range
+         vma_expand
+             commit_merge
+                 vma_set_range(vma, vmg->start, vmg->end, vmg->pgoff);
+                 vmg_adjust_set_range(vmg); <-- adjust with new range
+                 vma_complete
+                     uprobe_mmap
+move_page_tables
+     move_ptes
+         set_pte_at(mm, new_addr, new_pte, pte);
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+5dd4e428fa723938e6fd@syzkaller.appspotmail.com
+> 
+> Only when growing using mremap(), we want to call it on the extended 
+> range only.
+> 
 
-Oops: general protection fault, probably for non-canonical address 0xffff11019a0ac400: 0000 [#1] SMP KASAN NOPTI
-KASAN: maybe wild-memory-access in range [0xfff8a80cd0562000-0xfff8a80cd0562007]
-CPU: 0 UID: 0 PID: 13104 Comm: dhcpcd Not tainted 6.15.0-syzkaller-01972-g914873bc7df9 #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-RIP: 0010:percpu_ref_get_many include/linux/percpu-refcount.h:205 [inline]
-RIP: 0010:percpu_ref_get include/linux/percpu-refcount.h:222 [inline]
-RIP: 0010:obj_cgroup_get include/linux/memcontrol.h:760 [inline]
-RIP: 0010:replace_stock_objcg mm/memcontrol.c:2772 [inline]
-RIP: 0010:refill_obj_stock+0x1e1/0x7d0 mm/memcontrol.c:2950
-Code: 02 00 00 48 b8 00 00 00 00 00 fc ff df 4c 89 e2 48 c1 ea 03 80 3c 02 00 0f 85 96 05 00 00 49 8b 04 24 a8 03 0f 85 23 03 00 00 <65> 48 ff 00 e8 a6 40 ff ff 49 8d 7c 24 18 be 04 00 00 00 48 89 7c
-RSP: 0018:ffffc90002e27928 EFLAGS: 00010046
-RAX: ffff888075701400 RBX: ffffffff93a8a0c0 RCX: 0000000028853866
-RDX: 1ffff1100d2a5000 RSI: ffffffff8bf4fb80 RDI: ffffffff8dcf8da0
-RBP: ffffffff908687e4 R08: 85b13f40d71cc5de R09: 0000000000000001
-R10: 0000000000000000 R11: 0000000000000001 R12: ffff888069528000
-R13: 0000000000000078 R14: ffff8880b84350c0 R15: ffff8880b8435108
-FS:  0000000000000000(0000) GS:ffff8881249ab000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000563fcc194660 CR3: 000000004f19d000 CR4: 0000000000350ef0
-Call Trace:
- <TASK>
- obj_cgroup_uncharge mm/memcontrol.c:3013 [inline]
- __memcg_slab_free_hook+0x23d/0x610 mm/memcontrol.c:3100
- memcg_slab_free_hook mm/slub.c:2205 [inline]
- slab_free mm/slub.c:4639 [inline]
- kmem_cache_free+0x37e/0x4d0 mm/slub.c:4744
- anon_vma_chain_free mm/rmap.c:147 [inline]
- unlink_anon_vmas+0x173/0x820 mm/rmap.c:421
- free_pgtables+0x2d4/0x810 mm/memory.c:391
- exit_mmap+0x3fb/0xb90 mm/mmap.c:1295
- __mmput+0x12a/0x410 kernel/fork.c:1381
- mmput+0x62/0x70 kernel/fork.c:1404
- exit_mm kernel/exit.c:595 [inline]
- do_exit+0xa3a/0x2c70 kernel/exit.c:947
- do_group_exit+0xd3/0x2a0 kernel/exit.c:1108
- __do_sys_exit_group kernel/exit.c:1119 [inline]
- __se_sys_exit_group kernel/exit.c:1117 [inline]
- __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:1117
- x64_sys_call+0x1530/0x1730 arch/x86/include/generated/asm/syscalls_64.h:232
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xcd/0x260 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fad55e056c5
-Code: Unable to access opcode bytes at 0x7fad55e0569b.
-RSP: 002b:00007ffdf148a868 EFLAGS: 00000206 ORIG_RAX: 00000000000000e7
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007fad55e056c5
-RDX: 00000000000000e7 RSI: ffffffffffffff88 RDI: 0000000000000001
-RBP: 00007ffdf148ae78 R08: 0000563fee1c62c0 R09: 0000000000000002
-R10: 00000000000000e0 R11: 0000000000000206 R12: 00007ffdf148a8b0
-R13: 0000563fee1c7950 R14: 00007ffdf148aaf0 R15: 00007ffdf148a8a0
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:percpu_ref_get_many include/linux/percpu-refcount.h:205 [inline]
-RIP: 0010:percpu_ref_get include/linux/percpu-refcount.h:222 [inline]
-RIP: 0010:obj_cgroup_get include/linux/memcontrol.h:760 [inline]
-RIP: 0010:replace_stock_objcg mm/memcontrol.c:2772 [inline]
-RIP: 0010:refill_obj_stock+0x1e1/0x7d0 mm/memcontrol.c:2950
-Code: 02 00 00 48 b8 00 00 00 00 00 fc ff df 4c 89 e2 48 c1 ea 03 80 3c 02 00 0f 85 96 05 00 00 49 8b 04 24 a8 03 0f 85 23 03 00 00 <65> 48 ff 00 e8 a6 40 ff ff 49 8d 7c 24 18 be 04 00 00 00 48 89 7c
-RSP: 0018:ffffc90002e27928 EFLAGS: 00010046
-RAX: ffff888075701400 RBX: ffffffff93a8a0c0 RCX: 0000000028853866
-RDX: 1ffff1100d2a5000 RSI: ffffffff8bf4fb80 RDI: ffffffff8dcf8da0
-RBP: ffffffff908687e4 R08: 85b13f40d71cc5de R09: 0000000000000001
-R10: 0000000000000000 R11: 0000000000000001 R12: ffff888069528000
-R13: 0000000000000078 R14: ffff8880b84350c0 R15: ffff8880b8435108
-FS:  0000000000000000(0000) GS:ffff8881249ab000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000563fcc194660 CR3: 000000004f19d000 CR4: 0000000000350ef0
-----------------
-Code disassembly (best guess), 1 bytes skipped:
-   0:	00 00                	add    %al,(%rax)
-   2:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
-   9:	fc ff df
-   c:	4c 89 e2             	mov    %r12,%rdx
-   f:	48 c1 ea 03          	shr    $0x3,%rdx
-  13:	80 3c 02 00          	cmpb   $0x0,(%rdx,%rax,1)
-  17:	0f 85 96 05 00 00    	jne    0x5b3
-  1d:	49 8b 04 24          	mov    (%r12),%rax
-  21:	a8 03                	test   $0x3,%al
-  23:	0f 85 23 03 00 00    	jne    0x34c
-* 29:	65 48 ff 00          	incq   %gs:(%rax) <-- trapping instruction
-  2d:	e8 a6 40 ff ff       	call   0xffff40d8
-  32:	49 8d 7c 24 18       	lea    0x18(%r12),%rdi
-  37:	be 04 00 00 00       	mov    $0x4,%esi
-  3c:	48                   	rex.W
-  3d:	89                   	.byte 0x89
-  3e:	7c                   	.byte 0x7c
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
