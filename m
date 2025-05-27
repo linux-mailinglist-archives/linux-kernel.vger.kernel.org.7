@@ -1,158 +1,259 @@
-Return-Path: <linux-kernel+bounces-663976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-663978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F85DAC5015
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 15:40:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F201AC501F
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 15:44:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBD6D1886119
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 13:41:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26B53170D02
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 13:44:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 972022750E9;
-	Tue, 27 May 2025 13:40:36 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E0CA274FD6;
+	Tue, 27 May 2025 13:44:47 +0000 (UTC)
+Received: from mail-pl1-f207.google.com (mail-pl1-f207.google.com [209.85.214.207])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 260A8274FE9;
-	Tue, 27 May 2025 13:40:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 598A3267AED
+	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 13:44:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748353236; cv=none; b=d41fq9xz4WF97CJRKL79OSyMKe7U5sbmdoLf2K0LzeEuKdCWryEnOn4/GRLNlypI33kob3D8QgGbKjD7oYEE0GF1DX6z4mkNt6pzutIrojPJN5Kyu7FI4NyqsS4f5Ev76+WeGf1mQ1fWAeSWLZTaOdMT9yt7I1TzNMHJBtAkKyY=
+	t=1748353487; cv=none; b=bATSjLI9Tjxgpa00SBXrYrbfQmix40iCjcIQMsXb9MFkqTvFraTT99dev3ibXp4aqwjjfNIT5KGsJWXSB+wIU9uJWHXGeT3i4aw0auVPf0ciKXy90a+WSlibRfEe0GmiQYSKLCNsOGjvK2YO65OdiqyI49KFxvUGbxymsmKX7dI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748353236; c=relaxed/simple;
-	bh=jwje34nB6gKyQoKpfDGgc2ECy7vWfnVq2EpNyYhTPuc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CDnhHKMAvlWhMPBevZgu1kmYNnQ4Vo0j7MxoNmwcjytm1DbQsqLa6DApKMhUOlk2FouhBsXTTy46IhEKMIqjtgWa00aMaw8XHVqzrXbEL9SfC2IWK+Me09897B9a6oPWFPX11t7L5LVrpu7ALwhbIhk4H/FbFfigk+8CVqm63TY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF84DC4CEE9;
-	Tue, 27 May 2025 13:40:33 +0000 (UTC)
-Date: Tue, 27 May 2025 09:41:31 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: yebin <yebin@huaweicloud.com>
-Cc: mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
- mark.rutland@arm.com, linux-trace-kernel@vger.kernel.org,
- linux-kernel@vger.kernel.org, yebin10@huawei.com
-Subject: Re: [PATCH 1/2] ftrace: fix UAF when lookup kallsym after ftrace
- disabled
-Message-ID: <20250527094131.1f4a92ab@gandalf.local.home>
-In-Reply-To: <6833C4F1.3030300@huaweicloud.com>
-References: <20250523083945.3390587-1-yebin@huaweicloud.com>
-	<20250523083945.3390587-2-yebin@huaweicloud.com>
-	<20250523135452.626d8dcd@gandalf.local.home>
-	<6833C4F1.3030300@huaweicloud.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1748353487; c=relaxed/simple;
+	bh=xFr03H+Ak52yurWUvO7RyYjKfcHsP+87Mrfjhd4Nkk0=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=rOy9P57gZMU3OG20P7liIt6nWoxLUgVPwqz3miixF66XlUzDTxx0MW/DqP9njKI2hnTwbu9SH5DCpx3YG1E/D0KlIfLdhx+anLrPxR+UVxqUQDT4SkHpQCuEca+GviQ8stK4wo4WhaDvKl1+iHS6m4uLw2v5HPwOOomEgLhfYBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.214.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-pl1-f207.google.com with SMTP id d9443c01a7336-2346818ddceso30329305ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 06:44:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748353484; x=1748958284;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=LnauR2bJYxpR1/dneWiXonBkmAsI4iVDu7A9+fVdo+o=;
+        b=OH6V0f2KRvPLLzYb3HypuhjKxH4HW7SEyfgPKwNm407aTIhkdaZZlYCMggUh+zYmpC
+         +yB5RyXdPZ0GJGx0GdzcuoUEaXKwLULuk8QtzlYCo79E07TK5PG6Mul2vrYNHR2fGtjJ
+         m93s7+SUhQe5dROxy37CHeEkEXv+9hB+9q+ilmSOzCV6iKDJyJkJKfSBz6R0E+B3rHPH
+         yxGkE6ttbuSqqinFXxw4u8OtGMPmJQ3tBTLEKIzImeXjfAzMqwOPo5Ef61V/+AzKns4r
+         zOXTfgkH0NlLxn0YRl/QEyZWyXNtPazyBwUqhX2i6zYSKtRuL6PaXti8CHVkjGtwahst
+         9cLg==
+X-Forwarded-Encrypted: i=1; AJvYcCX3VbFcu540PgEuyVrMdVDme7b576iBc3aqkJQnbFvCZ+02j8YFOS3u2DjoVD8UD2tcfmJHH/HdSQnJJ7Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQhnFWd+jgk5ZJB/8oPaSWdv+qErdxKs5w0jtgpBEqotPQUJqI
+	55WbfMI7zpcIydFmBVbAN2/RImP3EHhOI7mJzj00DGi2+I9Lg265LqRlDWXdzVrrwHQhpIU0XcE
+	A7TkXvKBfJGiIR2l2sZ9TWmlXBpVwk6QrlOA4jzW3irWSkHCjVa+Ivh+EsTw=
+X-Google-Smtp-Source: AGHT+IHUieZUH6jOwhgq7Ra47fjESi7n3L8KVFsqYLl9NuheC0NoYyiIhox6qK4DPZyyKDGvTIP6e+1d+P7Ex7vyhHgbZz7IilrL
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6602:4896:b0:864:657e:caec with SMTP id
+ ca18e2360f4ac-86cbb88d3f7mr1091862439f.10.1748353474180; Tue, 27 May 2025
+ 06:44:34 -0700 (PDT)
+Date: Tue, 27 May 2025 06:44:34 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6835c1c2.a70a0220.253bc2.00b8.GAE@google.com>
+Subject: [syzbot] [fs?] KASAN: slab-use-after-free Read in send_sigio
+From: syzbot <syzbot+c92740e8b0e38efece9d@syzkaller.appspotmail.com>
+To: amir73il@gmail.com, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 26 May 2025 09:33:37 +0800
-yebin <yebin@huaweicloud.com> wrote:
+Hello,
 
-> On 2025/5/24 1:54, Steven Rostedt wrote:
-> > On Fri, 23 May 2025 16:39:44 +0800
-> > Ye Bin <yebin@huaweicloud.com> wrote:
-> >  
-> >> Above issue may happens as follow:
-> >> (1) Add kprobe trace point;
-> >> (2) insmod test.ko;
-> >> (3) Trigger ftrace disabled;  
-> >
-> > This is the bug. How was ftrace_disabled triggered? That should never
-> > happen. Was test.ko buggy?
-> >  
-> Yes. The following warning is reported during concurrent registration 
-> between register_kprobe() and live patch, causing ftrace_disabled.
-> 
-> WARNING: CPU: 56 PID: 2769 at kernel/trace/ftrace.c:2612 
-> ftrace_modify_all_code+0x116/0x140
+syzbot found the following issue on:
 
-OK, so it is a buggy module.
+HEAD commit:    5723cc3450bc Merge tag 'dmaengine-fix-6.15' of git://git.k..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=148a12d4580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ea35e429f965296e
+dashboard link: https://syzkaller.appspot.com/bug?extid=c92740e8b0e38efece9d
+compiler:       Debian clang version 20.1.2 (++20250402124445+58df0ef89dd6-1~exp1~20250402004600.97), Debian LLD 20.1.2
 
-> >> (4) rmmod test.ko;
-> >> (5) cat /proc/kallsyms; --> Will trigger UAF as test.ko already removed;
-> >> ftrace_mod_get_kallsym()
-> >> ...
-> >> strscpy(module_name, mod_map->mod->name, MODULE_NAME_LEN);
-> >> ...
-> >>
-> >> As ftrace_release_mod() judge 'ftrace_disabled' is true will return, and
-> >> 'mod_map' will remaining in ftrace_mod_maps. 'mod_map' has no chance to
-> >> release. Therefore, this also causes residual resources to accumulate.
-> >> To solve above issue, unconditionally clean up'mod_map'.
-> >>
-> >> Fixes: aba4b5c22cba ("ftrace: Save module init functions kallsyms symbols for tracing")  
-> >
-> > This is *not* a fix. ftrace_disabled gets set when a bug is triggered. If
-> > this prevents ftrace_disabled from getting set, then it would be a fix. But
-> > if something else happens when ftrace_disabled is set, it just fixes a
-> > symptom and not the bug itself.
-> >  
-> There are multiple causes for triggering ftrace_disabled. I agree that 
+Unfortunately, I don't have any reproducer for this issue yet.
 
-Yes, just like there's multiple causes for BUG_ON() ;-)
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/68366eed8771/disk-5723cc34.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/bd760cf09e4a/vmlinux-5723cc34.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/4d909adbad7f/bzImage-5723cc34.xz
 
-The ftrace_disable is used to help keep the system from being totally
-corrupted. When it triggers, the best thing to do is a reboot.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+c92740e8b0e38efece9d@syzkaller.appspotmail.com
 
-> aba4b5c22cba is not faulty. However, the incorporation of this patch 
-> will cause problems due to triggering ftrace_disabled. The generation of 
-> ftrace_disabled is beyond our control. This is related to the user. What 
-> we can do is even if there are no additional derivative problems.
+==================================================================
+BUG: KASAN: slab-use-after-free in __raw_read_lock_irqsave include/linux/rwlock_api_smp.h:160 [inline]
+BUG: KASAN: slab-use-after-free in _raw_read_lock_irqsave+0xaf/0x100 kernel/locking/spinlock.c:236
+Read of size 1 at addr ffff88807b547520 by task syz.9.317/9218
 
-Well, when a user inserts a module, then they become a kernel developer too ;-)
+CPU: 1 UID: 0 PID: 9218 Comm: syz.9.317 Not tainted 6.15.0-rc6-syzkaller-00346-g5723cc3450bc #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:408 [inline]
+ print_report+0xb4/0x290 mm/kasan/report.c:521
+ kasan_report+0x118/0x150 mm/kasan/report.c:634
+ __kasan_check_byte+0x2a/0x40 mm/kasan/common.c:557
+ kasan_check_byte include/linux/kasan.h:399 [inline]
+ lock_acquire+0x8d/0x360 kernel/locking/lockdep.c:5840
+ __raw_read_lock_irqsave include/linux/rwlock_api_smp.h:160 [inline]
+ _raw_read_lock_irqsave+0xaf/0x100 kernel/locking/spinlock.c:236
+ send_sigio+0x38/0x370 fs/fcntl.c:907
+ dnotify_handle_event+0x169/0x440 fs/notify/dnotify/dnotify.c:113
+ fsnotify_handle_event fs/notify/fsnotify.c:350 [inline]
+ send_to_group fs/notify/fsnotify.c:424 [inline]
+ fsnotify+0x1671/0x1a80 fs/notify/fsnotify.c:641
+ __fsnotify_parent+0x3fe/0x540 fs/notify/fsnotify.c:287
+ do_sendfile+0x558/0x7d0 fs/read_write.c:1381
+ __do_sys_sendfile64 fs/read_write.c:1429 [inline]
+ __se_sys_sendfile64+0x13e/0x190 fs/read_write.c:1415
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xf6/0x210 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f2e0918e969
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f2e06ff6038 EFLAGS: 00000246 ORIG_RAX: 0000000000000028
+RAX: ffffffffffffffda RBX: 00007f2e093b5fa0 RCX: 00007f2e0918e969
+RDX: 0000000000000000 RSI: 0000000000000006 RDI: 0000000000000007
+RBP: 00007f2e09210ab1 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000fffa83 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f2e093b5fa0 R15: 00007ffee7bcf658
+ </TASK>
 
-> >  
-> >> Signed-off-by: Ye Bin <yebin10@huawei.com>
-> >> ---
-> >>   kernel/trace/ftrace.c | 3 ---
-> >>   1 file changed, 3 deletions(-)
-> >>
-> >> diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-> >> index a3d4dfad0cbc..ff5d9d73a4a7 100644
-> >> --- a/kernel/trace/ftrace.c
-> >> +++ b/kernel/trace/ftrace.c
-> >> @@ -7438,9 +7438,6 @@ void ftrace_release_mod(struct module *mod)
-> >>
-> >>   	mutex_lock(&ftrace_lock);
-> >>
-> >> -	if (ftrace_disabled)
-> >> -		goto out_unlock;
-> >> -  
-> >
-> > Here you delete the check, and the next patch you have:
-> >
-> > +	if (ftrace_disabled || (mod && !mod->num_ftrace_callsites)) {
-> > +		mutex_unlock(&ftrace_lock);
-> > +		return;
-> > +	}
-> > +
-> >  
-> The second patch I added judgment when initializing 'mod_map' in 
-> ftrace_free_mem(). The first patch removes the judgment when 
-> ftrace_release_mod() releases'mod_map'. The logic modified by the two 
-> patches is isolated.
+Allocated by task 9218:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
+ poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
+ __kasan_kmalloc+0x93/0xb0 mm/kasan/common.c:394
+ kasan_kmalloc include/linux/kasan.h:260 [inline]
+ __kmalloc_cache_noprof+0x230/0x3d0 mm/slub.c:4358
+ kmalloc_noprof include/linux/slab.h:905 [inline]
+ kzalloc_noprof include/linux/slab.h:1039 [inline]
+ file_f_owner_allocate+0x7e/0x110 fs/fcntl.c:103
+ fcntl_dirnotify+0x207/0x690 fs/notify/dnotify/dnotify.c:318
+ do_fcntl+0x6c7/0x1910 fs/fcntl.c:539
+ __do_sys_fcntl fs/fcntl.c:591 [inline]
+ __se_sys_fcntl+0xc8/0x150 fs/fcntl.c:576
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xf6/0x210 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-Actually I think both patches are buggy.
+Freed by task 9217:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
+ kasan_save_free_info+0x46/0x50 mm/kasan/generic.c:576
+ poison_slab_object mm/kasan/common.c:247 [inline]
+ __kasan_slab_free+0x62/0x70 mm/kasan/common.c:264
+ kasan_slab_free include/linux/kasan.h:233 [inline]
+ slab_free_hook mm/slub.c:2380 [inline]
+ slab_free mm/slub.c:4642 [inline]
+ kfree+0x193/0x440 mm/slub.c:4841
+ __fput+0x53f/0xa70 fs/file_table.c:471
+ task_work_run+0x1d4/0x260 kernel/task_work.c:227
+ resume_user_mode_work+0x5e/0x80 include/linux/resume_user_mode.h:50
+ exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:329 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x9a/0x120 kernel/entry/common.c:218
+ do_syscall_64+0x103/0x210 arch/x86/entry/syscall_64.c:100
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-When ftrace_disabled is set, we don't know the state of the code and we do
-not want to do *any* more text modification. That's what ftrace_disable
-means. Something went wrong with text modification and any more changes can
-cause a bigger problem.
+The buggy address belongs to the object at ffff88807b547500
+ which belongs to the cache kmalloc-96 of size 96
+The buggy address is located 32 bytes inside of
+ freed 96-byte region [ffff88807b547500, ffff88807b547560)
 
-We don't add "exceptions".
+The buggy address belongs to the physical page:
+page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x7b547
+anon flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
+page_type: f5(slab)
+raw: 00fff00000000000 ffff88801a041280 0000000000000000 dead000000000001
+raw: 0000000000000000 0000000000200020 00000000f5000000 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 0, migratetype Unmovable, gfp_mask 0x52cc0(GFP_KERNEL|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 5823, tgid 5823 (syz-executor), ts 94438608453, free_ts 94438238312
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1d8/0x230 mm/page_alloc.c:1714
+ prep_new_page mm/page_alloc.c:1722 [inline]
+ get_page_from_freelist+0x21c7/0x22a0 mm/page_alloc.c:3684
+ __alloc_frozen_pages_noprof+0x181/0x370 mm/page_alloc.c:4966
+ alloc_pages_mpol+0x232/0x4a0 mm/mempolicy.c:2301
+ alloc_slab_page mm/slub.c:2450 [inline]
+ allocate_slab+0x8a/0x3b0 mm/slub.c:2618
+ new_slab mm/slub.c:2672 [inline]
+ ___slab_alloc+0xbfc/0x1480 mm/slub.c:3858
+ __slab_alloc mm/slub.c:3948 [inline]
+ __slab_alloc_node mm/slub.c:4023 [inline]
+ slab_alloc_node mm/slub.c:4184 [inline]
+ __kmalloc_cache_node_noprof+0x29a/0x3d0 mm/slub.c:4366
+ kmalloc_node_noprof include/linux/slab.h:928 [inline]
+ __get_vm_area_node+0x13f/0x300 mm/vmalloc.c:3127
+ __vmalloc_node_range_noprof+0x2f1/0x12c0 mm/vmalloc.c:3805
+ __vmalloc_node_noprof mm/vmalloc.c:3908 [inline]
+ vzalloc_noprof+0x79/0x90 mm/vmalloc.c:3981
+ alloc_counters+0xd3/0x6d0 net/ipv4/netfilter/ip_tables.c:799
+ copy_entries_to_user net/ipv4/netfilter/ip_tables.c:821 [inline]
+ get_entries net/ipv4/netfilter/ip_tables.c:1022 [inline]
+ do_ipt_get_ctl+0xaac/0x1180 net/ipv4/netfilter/ip_tables.c:1668
+ nf_getsockopt+0x26e/0x290 net/netfilter/nf_sockopt.c:116
+ ip_getsockopt+0x1c4/0x220 net/ipv4/ip_sockglue.c:1777
+ do_sock_getsockopt+0x35d/0x650 net/socket.c:2357
+ __sys_getsockopt net/socket.c:2386 [inline]
+ __do_sys_getsockopt net/socket.c:2393 [inline]
+ __se_sys_getsockopt net/socket.c:2390 [inline]
+ __x64_sys_getsockopt+0x1a5/0x250 net/socket.c:2390
+page last free pid 5823 tgid 5823 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1258 [inline]
+ __free_frozen_pages+0xb05/0xcd0 mm/page_alloc.c:2721
+ vfree+0x1a6/0x330 mm/vmalloc.c:3384
+ copy_entries_to_user net/ipv4/netfilter/ip_tables.c:866 [inline]
+ get_entries net/ipv4/netfilter/ip_tables.c:1022 [inline]
+ do_ipt_get_ctl+0xebc/0x1180 net/ipv4/netfilter/ip_tables.c:1668
+ nf_getsockopt+0x26e/0x290 net/netfilter/nf_sockopt.c:116
+ ip_getsockopt+0x1c4/0x220 net/ipv4/ip_sockglue.c:1777
+ do_sock_getsockopt+0x35d/0x650 net/socket.c:2357
+ __sys_getsockopt net/socket.c:2386 [inline]
+ __do_sys_getsockopt net/socket.c:2393 [inline]
+ __se_sys_getsockopt net/socket.c:2390 [inline]
+ __x64_sys_getsockopt+0x1a5/0x250 net/socket.c:2390
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xf6/0x210 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-If you are worried about unloading modules when ftrace_disable is set, what
-is a much safer solution is to up the module count of all modules that have
-any ftrace callsites active, and prevent those modules from being removed.
+Memory state around the buggy address:
+ ffff88807b547400: 00 00 00 00 00 00 00 00 00 00 00 00 fc fc fc fc
+ ffff88807b547480: fa fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
+>ffff88807b547500: fa fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
+                               ^
+ ffff88807b547580: fa fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
+ ffff88807b547600: fa fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
+==================================================================
 
-Again, the only solution to a ftrace_disable being set is a full reboot.
 
--- Steve
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
