@@ -1,47 +1,80 @@
-Return-Path: <linux-kernel+bounces-664328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-664330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 877CDAC5A29
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 20:42:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2734FAC5A32
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 20:43:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42F0E16A24E
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 18:42:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B48654A6154
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 18:43:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F2B827C856;
-	Tue, 27 May 2025 18:42:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F10E4281529;
+	Tue, 27 May 2025 18:43:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RUGZU5xH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EG3302Cf"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A718110E0;
-	Tue, 27 May 2025 18:42:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC830CA5E;
+	Tue, 27 May 2025 18:43:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748371333; cv=none; b=pKIms999KHykmN7o06RKNum7fM4WJ+K81u2c0tHm8KAF3UL+yvdubhfPAmREUDNS5v/A4oDbZklPJ7DfCvDoujGbMAXcdLo5BKxAnxmxRqogGLH7eOOW+qlKiNVlgHtrd44+s6LpZSj+hLifx9pMOYbVMzG/IZGbjsVmh4KUnjg=
+	t=1748371393; cv=none; b=Wc8UrMmikTWe0B90qPFCwnAvjP/n/8If1aeCGsipGJDXZeyhXzFVKsVsPkYjR7QFar28IasNAWABhxEAJ64u7IEPQ6MWU9KXl5xWYKOsQ5tBdebZd7PqmeP77GdMuYWOYWZQcm1A1GU/tm03rdnmMOEB6bpk/yPA22+/BIu9wDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748371333; c=relaxed/simple;
-	bh=J2F2a7oDIb8i++RtPJjzNyagYxJNmyPAATFCaksPPZo=;
+	s=arc-20240116; t=1748371393; c=relaxed/simple;
+	bh=Uxxqi3lPyUurFuC0j85HtbPTxOM5XN/7nIKsNvQYQOU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=P1lMYacjWTosri2nPqMgKTDjkWNqTsBbfW4/mkfqXPlnbDoJGCen/AJFStbkNfWXHfqouD6hI3TXT6isk1KmphGdkmJllOXDR2TjLiLP+Ocmlgmf7pyEt6aNt/F2hcp8z3fGPignGoXZ5h2qGj2Ahia4HVIrhFfg9ig72vE6KfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RUGZU5xH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB86EC4CEE9;
-	Tue, 27 May 2025 18:42:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748371333;
-	bh=J2F2a7oDIb8i++RtPJjzNyagYxJNmyPAATFCaksPPZo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=RUGZU5xHrhJpqzE0iB2oP+pG2PNC63M8DcwQ+tIk06JhDsJVyqXK3giOBStyCDZ2A
-	 Qn9Zb2AzT41bqJLLlL/zCptYYpKlVRPDIopZi5rHgboUc5Aqg53ZeOFCpz6aI6lELS
-	 9WDmut8gFVqPc7PmjPDOPJjuAEtp4SpS43rjKWgIsQIMF0xSoa6emb/8y/D7usGCEL
-	 cZzo3+J46+/1mE4LXAkm5mB98ZsRPIclQWmrlrh05/D4qqEvAkibXNP7tjKQ/xuuMp
-	 /aW+51YpZKRHFR4udkQBJ3G6l6NmAZw1ewlbzcb3aFF0NFOcIS9kFUtGSmWG9BUaw6
-	 nHxCO7YA/YTxQ==
-Message-ID: <b2ed96a4-a236-4ea2-9e02-6896ff03caaa@kernel.org>
-Date: Tue, 27 May 2025 20:42:07 +0200
+	 In-Reply-To:Content-Type; b=EdelZwiWP2vvuDujFuDIllsFXD2ebErqFPcts5RsAoJskFQVcLZ/vExPtd0YxdKbaG5II+bLYvOKYF/DF/VaiWy52blNJLxcgqOS2+LqrbcG2+uN2uXpZihb7WAU/RbTNs0dyj2Odspdo4ShkcdxnI7ajoH5sNyQH/H0i2G7EZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EG3302Cf; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2346765d5b0so23142655ad.2;
+        Tue, 27 May 2025 11:43:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748371391; x=1748976191; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=FWrKohcnIv85cbuc7n+x+VuRl8U7VNcTKUXVw5gcCyU=;
+        b=EG3302CfL4bXPiYCRQeqJksbN4SsRd3EFQiGWxIYz3acmt6/ptmWdAuqMwOYxBc3zC
+         C/llbnmZsKNn1kTFYgihm8ftpVX18nQCSkJH8RrvXXUDY9iwS3qy4RSVZgywQJYNvXJ8
+         F12y8x0jDZcEBaDx12TJbEUXy1gWfHEyQ4narZsauW0nU1uiTzJ5KxHggDxSoclkmnCQ
+         ZDnmLaJ5X1Dg5bYxuBJykfNdb+bFkWPVEEnfLwhpnrQD2NCc3wFzFug8mB88uh+oe2Hc
+         6/UKm+rjmNiyIUCYBiZvbBEeNVYREnej3GX8KixNTFU1kdpzqmVbc6c3Y6FdY8O5ePbi
+         Eclg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748371391; x=1748976191;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FWrKohcnIv85cbuc7n+x+VuRl8U7VNcTKUXVw5gcCyU=;
+        b=ISJdd0ABN6baKClNwFewaR+5ZVuiBeKm+FDctL8vK5f7D2K6YzO1UQtBIBq4PGp8BX
+         qwF+GdjvHvaJ4BAfiZcllE5LJZ+k3pw+48w9ll+EpFii0aF66vpACYkE+tIYbHRh+Emd
+         hoxmtlGXakHw7fVCo6ad3UOnxqYdGYF4gCIjfro2wpZfgAUYifb0kEyBF+35/KXnxRD5
+         q1VbvPFi5yCrtww/MmcbzX6k77yd3GLGnCnJuTAX9l+S6xfbY8HwSySvC9qHLXJEEQBY
+         mepysc5nlzCR+k4wrhLJof4322U9RGtmrHlqqO7D/rXlfmREDuDqzV/JvjMTS5zFSlMJ
+         sgiw==
+X-Forwarded-Encrypted: i=1; AJvYcCVTX66SMqN3iL4JS1IaAeOoiYuZKHSoCpqfkM88z3xbjvbHByhJEHfUipAeaH+uKmh0RthH7gbvPzi3+4I=@vger.kernel.org, AJvYcCXNSQ6OluEfNYSMhXvW0oS8YpHg3iptz9ZkbQit7Jq67cktVT6bo9xpuSIziTEcxKTD6c1cC1ab@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJH0NyzuHgfs0+Am91V6vmcnLMdSXocPHv61VzxHbQ6rDPHgRC
+	dIDE0+MSrOMIo2xwZUR1PEaCVf8jubIxcq8jdxJw2jDp46y9kKabPs0g
+X-Gm-Gg: ASbGncuB79iG/Su2Z7+RU+lEgyd44+CNtkJ/SGG2rTmUCx13pORihpw1P1ZeW0UjKPj
+	a1LnlFrg6UTVj1NpvnmftHXa9Ms9u7ZlYhR10JF1gnHibvyVd9UEm14u7vfEZHm9yU7HUVXFqfy
+	DBbwgGkrVKO+jxcbIfNAy9Cilx+ZMCRY20L/cE3ltgzmSjNtuDlTy58uzsIXheUfzi0zJARasF6
+	O9zIaMum4BvWgwvesRxrm/UDaW5TroQjozwG4Zv8COQWmSyGRn0y3THKZILIQ30tCItYwE0uSHb
+	VFDV5MPobJEeVhYR+QtgsptaNmitQ40ENrS0/Z3ZdQOCLDij6PNAIP2KJLWyZ9pv5eddJGCeR7s
+	lrww=
+X-Google-Smtp-Source: AGHT+IHHLop+I3d2LLaRp2FvvBzEHmDqyuZgu12OgR8qf1sVE+wWQIcUtegupgCHhzscV46TJyW2NA==
+X-Received: by 2002:a17:902:cf4c:b0:211:e812:3948 with SMTP id d9443c01a7336-23414e9fbdfmr214016845ad.0.1748371391025;
+        Tue, 27 May 2025 11:43:11 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23411640a62sm64868345ad.200.2025.05.27.11.43.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 27 May 2025 11:43:10 -0700 (PDT)
+Message-ID: <dd48cfbe-ebbb-4e36-8df6-ad35f2b1c1fa@gmail.com>
+Date: Tue, 27 May 2025 11:43:06 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,150 +82,77 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: (subset) [PATCH v12 00/19] Support spread spectrum clocking for
- i.MX8M PLLs
-To: Dario Binacchi <dario.binacchi@amarulasolutions.com>,
- Abel Vesa <abel.vesa@linaro.org>
-Cc: linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>,
- Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- linux-amarula@amarulasolutions.com, Abel Vesa <abelvesa@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Fabio Estevam <festevam@gmail.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Rob Herring <robh@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- devicetree@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- Michael Nazzareno Trimarchi <michael@amarulasolutions.com>
-References: <20250424062154.2999219-1-dario.binacchi@amarulasolutions.com>
- <174643143452.2950397.16722215892279685541.b4-ty@linaro.org>
- <CABGWkvq=pXhrzyCV2ABvQ3uwx4qKYL_G9280p5ECb8nsJ859yw@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 6.12 000/626] 6.12.31-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+References: <20250527162445.028718347@linuxfoundation.org>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <CABGWkvq=pXhrzyCV2ABvQ3uwx4qKYL_G9280p5ECb8nsJ859yw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Florian Fainelli <f.fainelli@gmail.com>
+Autocrypt: addr=f.fainelli@gmail.com; keydata=
+ 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
+ WlfRzlpjIPmdjgoicA==
+In-Reply-To: <20250527162445.028718347@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 23/05/2025 17:19, Dario Binacchi wrote:
-> Hello Abel,
+On 5/27/25 09:18, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.12.31 release.
+> There are 626 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> On Mon, May 5, 2025 at 9:52 AM Abel Vesa <abel.vesa@linaro.org> wrote:
->>
->>
->> On Thu, 24 Apr 2025 08:21:30 +0200, Dario Binacchi wrote:
->>> This version keeps the version v9 patches that can be merged and
->>> removes the patches that will need to be modified in case Peng's
->>> PR https://github.com/devicetree-org/dt-schema/pull/154 is accepted.
->>> The idea is to speed up the merging of the patches in the series
->>> that have already been reviewed and are not dependent on the
->>> introduction of the assigned-clocks-sscs property, and postpone
->>> the patches for spread spectrum to a future series once it becomes
->>> clear what needs to be done.
->>>
->>> [...]
->>
->> Applied, thanks!
+> Responses should be made by Thu, 29 May 2025 16:22:51 +0000.
+> Anything received after that time might be too late.
 > 
-> I was surprised to see that the series has been removed from linux-next.
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.31-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Did you miss entire email thread explaining why? I think you never
-answered to several emails in this thread... and we - including myself -
-sent them a lot.
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
 
-> 
-> It’s been 8 months since the first version dated September 28, 2024.
-> The most critical phase was version 3 -
-> https://lore.kernel.org/all/20241106090549.3684963-1-dario.binacchi@amarulasolutions.com/
-> -
-> where two key issues emerged:
-> 
->  1 The CCM design is flawed because "in the current design, CCM is
->    taken as the producer of CLK_IMX8M_VIDEO_PLL, not the consumer."
-> 
->  2 A driver for anatop needs to be implemented because "using clocks
->    to replace fsl,ssc-clocks is possible under CCM mode, but you need
->    to develop the fsl,imx8mm-anatop clock driver."
-> 
-> These development guidelines, agreed upon with Krzysztof and Peng,
-> enabled a coherent implementation of both the DT bindings and the
-> code. The following versions, from v4 to v8, were necessary to
-> review and refine those implementations, bringing us to January 2025.
-> 
-> At that point, Peng opened a separate pull request -
-> https://github.com/devicetree-org/dt-schema/pull/154 -
-> for the definition of general-purpose DT bindings for spread spectrum
-> handling, which ended up invalidating mine.
-> 
-> While waiting for his pull request to be accepted, I submitted version 9,
-> trying to at least get the patches for the anatop driver merged,
-> eventually reaching version 12.
-> 
-> This final version was merged, but then a few days ago it was dropped.
-
-And explained why. There were bug reports which you completely ignored.
-
-> 
-> As it stands now:
-> 
-> - We still don’t have proper spread spectrum handling
-> - Peng’s pull request has been stalled since February 20
-> - We don’t have a driver for anatop
-> - The CCM design remains flawed
-> - Not even the first 4 patches of the series were merged — these were
->   simply a replication for i.MX8MM and i.MX8MP of patch
->   bedcf9d1dcf88 ("clk: imx: rename video\_pll1 to video\_pll"), which
->   was already merged some time ago.
-> 
-> Could you please let me know if you're still interested in this series?
-> If so, could you suggest how to resolve the issues that led you to drop it?
-
-
-You got several replies what is wrong. Can you respond to these instead
-of coming now surprised?
-
-Best regards,
-Krzysztof
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
 
