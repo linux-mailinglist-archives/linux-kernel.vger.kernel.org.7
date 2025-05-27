@@ -1,95 +1,56 @@
-Return-Path: <linux-kernel+bounces-663611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-663613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66502AC4ABF
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 10:54:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 430FAAC4AC7
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 10:55:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21297189DD90
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 08:54:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0ADA817CE88
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 08:55:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA80D2475F2;
-	Tue, 27 May 2025 08:54:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2EC424DCEB;
+	Tue, 27 May 2025 08:54:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="kUS6EvQK";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="77nFOA09";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="kUS6EvQK";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="77nFOA09"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="JfWEZ/Dw"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52E6C248F7B
-	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 08:54:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 777C024BBEE
+	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 08:54:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748336045; cv=none; b=lHWwI8xFFBTpkve9ZSJYLr293nFPvBP26UyghVlR/h+Mk4Q1bTKJonWyI6ZfJpS6fPv6cigpKXQi4nG+bvkLfw9tWyt22PC9EuxS6LAVZVrZSxCAxBvAh/3wFY36afR2bwSXpFu2DpzAbf1P5WSFo3ISjMEtJO1ZmBt73YXSPG8=
+	t=1748336096; cv=none; b=cVG4pkl9+cHReOT0Fqb61eWwb1TdqV2kfExEUThPuOAWa/ccIClVZ2JVFBuH5iv17akCodTPSpwU2kKEX5vDy04QwB9SfWqeDhDR5xng+01uk7mB+a+dBSUWw2QDxs8bbpDy4Lp0lhnOa3sH4abjW/Zat1zNfPTYVaxDyK7H5Rw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748336045; c=relaxed/simple;
-	bh=XF5VzNvpeKGlQPwfHqmEm5o0Bq1rCBURjliIbksP/e8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OFQeNQXYn7jzCO7W/v7x9tSAqBDkwD9f/ISYDwSLgwxiqZV+bTaWUiENMznpy9Jvc+mb6wcCPpxyXqy+O4QuBfhfsMxOEzABKL8OYgZ5gIucN429VaGJJuTRCx/rG7iLl2DjWejpl2rC9Hp0RUpHT4ZG9lLsyhVPFago6MkSf74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=kUS6EvQK; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=77nFOA09; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=kUS6EvQK; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=77nFOA09; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 49B8421A21;
-	Tue, 27 May 2025 08:54:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1748336041; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1uFQ6WQesoTLzcyfD02l0QPHNSPhDb59xUd8IZZfyQM=;
-	b=kUS6EvQK08gjvUAwJMu9nzib34qgXcyY+Ek6VIZ10FYCSgapJPAcrUhQQQ9jVX4A5LEK/M
-	XctTJxELBEHjkXAXuuKKMtZC1vkFMeNHNxaxcyC79falwqjUwnjukXcisaHJichpiiWCjr
-	Fz7xQHbR8iex+h0YH59ap4/IsoOmoeg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1748336041;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1uFQ6WQesoTLzcyfD02l0QPHNSPhDb59xUd8IZZfyQM=;
-	b=77nFOA09xZOr8vwKXTWIgx4RlVM9tLjb2RMwNQq4zXUps3bfJIQn8Y3AmMCtO0yIoedoon
-	oGC1Hw8Af3Fk6aCw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=kUS6EvQK;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=77nFOA09
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1748336041; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1uFQ6WQesoTLzcyfD02l0QPHNSPhDb59xUd8IZZfyQM=;
-	b=kUS6EvQK08gjvUAwJMu9nzib34qgXcyY+Ek6VIZ10FYCSgapJPAcrUhQQQ9jVX4A5LEK/M
-	XctTJxELBEHjkXAXuuKKMtZC1vkFMeNHNxaxcyC79falwqjUwnjukXcisaHJichpiiWCjr
-	Fz7xQHbR8iex+h0YH59ap4/IsoOmoeg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1748336041;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1uFQ6WQesoTLzcyfD02l0QPHNSPhDb59xUd8IZZfyQM=;
-	b=77nFOA09xZOr8vwKXTWIgx4RlVM9tLjb2RMwNQq4zXUps3bfJIQn8Y3AmMCtO0yIoedoon
-	oGC1Hw8Af3Fk6aCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C177B1388B;
-	Tue, 27 May 2025 08:54:00 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Q1XCLqh9NWiPTAAAD6G6ig
-	(envelope-from <hare@suse.de>); Tue, 27 May 2025 08:54:00 +0000
-Message-ID: <25c23f9d-4fa0-4cad-9c96-43c25e018113@suse.de>
-Date: Tue, 27 May 2025 10:54:00 +0200
+	s=arc-20240116; t=1748336096; c=relaxed/simple;
+	bh=FDhUkvstbN2kfBz+VcptLoIi6UpV5Y68pHLLt3pGpUU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=r9lL0VGYjLIJiXyx3pEtp3sYcHbIzKSUYuq6ZhuOTIjRBTvSxGu+zpF/rdf8AdMDmmflWz/MM/lyjBYn27i65q8Io+BmTFiA3uUpk8+dbUTi1isNEezZdBN0rtuUdljwjEro6Byx+JwbuGO61eIZPBUcFAMheKJe2+a8sw1Hc0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=JfWEZ/Dw; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250527085445euoutp016734407717ac263a2cf2e938a43b49bf~DVmgrKVuT0593305933euoutp01e
+	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 08:54:45 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250527085445euoutp016734407717ac263a2cf2e938a43b49bf~DVmgrKVuT0593305933euoutp01e
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1748336085;
+	bh=YNWmGS5CMUNgwusCiMiRXuZnmCjMkDyxd0GsI2VazJQ=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=JfWEZ/DwFr/HpuY6L8CtkXw78pLFB92zehs/NA+Kg5p014u2tgYsbhxhiEFKym5OP
+	 eIIweHXnQNBY8TCPT9AI85m99e/LXnt228fF4roIkCyAsUQhvyuGCapDUBhugriBYW
+	 BSN7ACs2nsOWCy7UpB52cwLXqD8nAO5fy/mIgpMk=
+Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250527085445eucas1p214ecce3d8b8769c58f3eab2b0b73df93~DVmgGT1os0889508895eucas1p28;
+	Tue, 27 May 2025 08:54:45 +0000 (GMT)
+Received: from [106.210.136.40] (unknown [106.210.136.40]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250527085444eusmtip1bab9c1b6732e4f053faaa518fb79ee9b~DVmfOH2Pq0318603186eusmtip1l;
+	Tue, 27 May 2025 08:54:44 +0000 (GMT)
+Message-ID: <0dc42c81-a082-4fce-a447-32995b75f1c9@samsung.com>
+Date: Tue, 27 May 2025 10:54:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,107 +58,95 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 07/23] md/md-bitmap: delay registration of bitmap_ops
- until creating bitmap
-To: Yu Kuai <yukuai1@huaweicloud.com>, hch@lst.de, xni@redhat.com,
- colyli@kernel.org, song@kernel.org
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-raid@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
- johnny.chenyi@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <20250524061320.370630-1-yukuai1@huaweicloud.com>
- <20250524061320.370630-8-yukuai1@huaweicloud.com>
- <d2fabdfd-229d-4043-ad27-61bac1e1f6d2@suse.de>
- <d95b41a0-c1aa-8b8b-d959-05e41eee3a7f@huaweicloud.com>
-Content-Language: en-US
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <d95b41a0-c1aa-8b8b-d959-05e41eee3a7f@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH RFC 5/6] riscv: dts: thead: Add PVT node
+To: Drew Fustini <drew@pdp7.com>
+Cc: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, Miguel Ojeda
+	<ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng
+	<boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Benno Lossin
+	<benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, Alice
+	Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo
+	Krummrich <dakr@kernel.org>, Guo Ren <guoren@kernel.org>, Fu Wei
+	<wefu@redhat.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Paul Walmsley
+	<paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
+	<aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, Marek Szyprowski
+	<m.szyprowski@samsung.com>, linux-kernel@vger.kernel.org,
+	linux-pwm@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org
+Content-Language: pl
+From: "Michal Wilczynski/Kernel (PLT) /SRPOL/Engineer/Samsung Electronics"
+	<m.wilczynski@samsung.com>
+In-Reply-To: <aDVxDJi0KkWXiPCK@x1>
 Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:dkim,suse.de:mid,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: 49B8421A21
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -4.51
+X-CMS-MailID: 20250527085445eucas1p214ecce3d8b8769c58f3eab2b0b73df93
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250524211525eucas1p244963b69e0531c95a9052e4a7a1d1e01
+X-EPHeader: CA
+X-CMS-RootMailID: 20250524211525eucas1p244963b69e0531c95a9052e4a7a1d1e01
+References: <20250524-rust-next-pwm-working-fan-for-sending-v1-0-bdd2d5094ff7@samsung.com>
+	<CGME20250524211525eucas1p244963b69e0531c95a9052e4a7a1d1e01@eucas1p2.samsung.com>
+	<20250524-rust-next-pwm-working-fan-for-sending-v1-5-bdd2d5094ff7@samsung.com>
+	<aDVxDJi0KkWXiPCK@x1>
 
-On 5/27/25 09:53, Yu Kuai wrote:
-> Hi,
-> 
-> 在 2025/05/27 14:13, Hannes Reinecke 写道:
->> On 5/24/25 08:13, Yu Kuai wrote:
->>> From: Yu Kuai <yukuai3@huawei.com>
->>>
->>> Currently bitmap_ops is registered while allocating mddev, this is fine
->>> when there is only one bitmap_ops, however, after introduing a new
->>> bitmap_ops, user space need a time window to choose which bitmap_ops to
->>> use while creating new array.
->>>
-[ .. ]
->>> @@ -6093,11 +6104,6 @@ struct mddev *md_alloc(dev_t dev, char *name)
->>>           return ERR_PTR(error);
->>>       }
->>> -    if (md_bitmap_registered(mddev) && mddev->bitmap_ops->group)
->>> -        if (sysfs_create_group(&mddev->kobj, mddev->bitmap_ops->group))
->>> -            pr_warn("md: cannot register extra bitmap attributes for 
->>> %s\n",
->>> -                mdname(mddev));
->>> -
->>>       kobject_uevent(&mddev->kobj, KOBJ_ADD);
->>>       mddev->sysfs_state = sysfs_get_dirent_safe(mddev->kobj.sd, 
->>> "array_state");
->>>       mddev->sysfs_level = sysfs_get_dirent_safe(mddev->kobj.sd, 
->>> "level");
+
+W dniu 27.05.2025 o 10:00, Drew Fustini pisze:
+> On Sat, May 24, 2025 at 11:14:59PM +0200, Michal Wilczynski wrote:
+>> Add PVT DT node for thermal sensor.
 >>
->> But now you've killed udev event processing.
->> Once the 'add' event is sent _all_ sysfs attributes must be present,
->> otherwise you'll have a race condition where udev is checking for
->> attributes which are present only later.
+>> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+>> ---
+>>   arch/riscv/boot/dts/thead/th1520.dtsi | 11 +++++++++++
+>>   1 file changed, 11 insertions(+)
 >>
->> So when moving things around ensure to move the kobject_uevent() call, 
->> too.
-> 
-> I do not expect the bitmap entries are checked by udev, otherwise this
-> set can introduce regressions since the bitmap entries are no longer
-> existed after using the new biltmap.
-> 
-> And the above KOBJ_ADD uevent is used for mddev->kobj, right? In this
-> case, we're creating new entries under mddev->kobj, should this be
-> KOBJ_CHANGE?
-> 
-Yes, please.
+>> diff --git a/arch/riscv/boot/dts/thead/th1520.dtsi b/arch/riscv/boot/dts/thead/th1520.dtsi
+>> index f24e12d7259fabcfbdc2dfa966d759db06684ab4..faf5c3aaf209b24cd99ddc377a88e08a8cce24fe 100644
+>> --- a/arch/riscv/boot/dts/thead/th1520.dtsi
+>> +++ b/arch/riscv/boot/dts/thead/th1520.dtsi
+>> @@ -648,6 +648,17 @@ padctrl_aosys: pinctrl@fffff4a000 {
+>>   			thead,pad-group = <1>;
+>>   		};
+>>   
+>> +		pvt: pvt@fffff4e000 {
+>> +			compatible = "moortec,mr75203";
+>> +			reg = <0xff 0xfff4e000 0x0 0x80>,
+>> +			      <0xff 0xfff4e080 0x0 0x100>,
+>> +			      <0xff 0xfff4e180 0x0 0x680>,
+>> +			      <0xff 0xfff4e800 0x0 0x600>;
+>> +			reg-names = "common", "ts", "pd", "vm";
+>> +			clocks = <&aonsys_clk>;
+>> +			#thermal-sensor-cells = <1>;
+>> +		};
+>> +
+>>   		gpio@fffff52000 {
+>>   			compatible = "snps,dw-apb-gpio";
+>>   			reg = <0xff 0xfff52000 0x0 0x1000>;
+>>
+>> -- 
+>> 2.34.1
+>>
+> I found that on my lpi4a that boot while hang after applying this patch.
+> I think that it is related to clocks as boot finished okay when using
+> clk_ignore_unused on the kernel cmdline. Do you happen have that in your
+> kernel cmdline?
 
-Cheers,
+Right I had that option enabled, that's why I've missed this. Thanks for
 
-Hannes
--- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+letting me know ! I'll remove this option for future testing.
+
+>
+> I need to investigate further to understand which clocks are causing the
+> problem.
+
+
+No problem I can look into that as well, most likely towards the end
+
+of the week as I'm travelling and don't have access to the board.
+
+
+>
+> Thanks,
+> Drew
+>
 
