@@ -1,324 +1,138 @@
-Return-Path: <linux-kernel+bounces-663310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-663312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DBE7AC468A
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 04:44:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E42DAAC4693
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 04:48:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64F351883F48
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 02:44:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 626121892658
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 02:49:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FB9519C546;
-	Tue, 27 May 2025 02:44:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EF4D1AC44D;
+	Tue, 27 May 2025 02:48:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="jEvbqhWM"
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2071.outbound.protection.outlook.com [40.107.212.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="cBaG4EKJ"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 706ED6DCE1;
-	Tue, 27 May 2025 02:44:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.71
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748313845; cv=fail; b=BpZb8WjXeXsldWEewl5CmEGRTTGvgScTQQD9+rESKGJMzmJEWCZ59qAUJC7RsdiQvJ0KNpW216ZmtjXAGjIcWmMd3boNfZZfYWf9/sfD+ggjrLrepaIE5OuWcKTdaSOKzwwMR26eBwliKBDhvaYQEy4QUfVfE3mx8LMNi0pamIc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748313845; c=relaxed/simple;
-	bh=mlDhSCZt0blgVIUM/INt7erieDmMhnZ3XZA0+sIYwtM=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=dF9Jn684907iM/Kbwydrsusy4ytPp2G2ZmGF69asREBbGlA38JCB/wBmBR40LFvj4Aal6Cl5ON7t0qqU72UgUvS9MVeFCv4x1DGYpCJQj2FbscIleETBLRk3H3z05vlM3P7SJhLfgLZ7nvGUUeSM8Im7WQhG8lrpzf2ZSZwoia0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=jEvbqhWM; arc=fail smtp.client-ip=40.107.212.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=c/11ZePx8EOw49SgZEZQEmi1uvPiXwqaeLlI7nyYz0W4XXtxCxVrpyGC8MHoRPzBZyLWYSGn8dBtdwOLE1wOGcswliB4wNuaRPd0EjeE7rFSxXgC5gxvBPTnEGQ/sP/X+zJyd4yP/v9sgDhLvWFPIGM594UQhnhesFsAPTh3BvzPnKk6s6YBxKUaAFkXL7AbxU78suR3P0ctyliITjbTdbrAex31p5xE/lWmDpgIEcg2USJlWI6AO81mMOcA0MXZ1JFsUQYiEsr2EJPmqcti4vWAvKSR0Tmiv3Mnc5YcpMOe2wqNM9YW+WOTIMg5q8BR34umbYUW01eSxeWjlwXhiA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CohgG8X3oY6VlsRxKPHeKg13MakJu134xguWgPhh38Q=;
- b=gezsQEhmXFZdNgAGsEKgSjWwiC5RknxsVKcMUJiD38bLOVZaMe2exYGE8KtAO45YYBg8yidui+eOvGj/v5ItQZvHM54nISSuBhYa+nktCob32kzcw2YTbqOUEfWuKPPKcC4bNXfI9fZL4y49VxmeB5R2PWSHnVXHIAT6fjxUoreOlPk1BcV8/gvXyuw3RmgM6M+J+Ajnxr+JC91VYtN8C6QETopQxDY+DYFKWoGcIRLb5Vy6nxPIDofhpGA7P3adqDi5DtrO5E04CDjuiDs9wJUCbmiMZ5iaiIfZpl9Yj3Z1AOYryIhCtCdtZ9TIiH5nHqYGYyGp6ycBNAObSr1HKQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CohgG8X3oY6VlsRxKPHeKg13MakJu134xguWgPhh38Q=;
- b=jEvbqhWMY5A32V86XZBVxrtgzS/O2zSPqaSfMl18zHwGErC6LZtjURsPPnVOzbaTNt0R7MbC7WnF5G+4Ha3fZmRHU8Zd9BCdmHS2ZC9UR80jx7+mp/lXaWCn3N1oT1DfMteh6xXcD0NSVQ1d5jg+dAr6GiGJeDbkedhbSeAPFs0=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM4PR12MB8476.namprd12.prod.outlook.com (2603:10b6:8:17e::15)
- by SA3PR12MB7806.namprd12.prod.outlook.com (2603:10b6:806:31d::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.20; Tue, 27 May
- 2025 02:44:00 +0000
-Received: from DM4PR12MB8476.namprd12.prod.outlook.com
- ([fe80::2ed6:28e6:241e:7fc1]) by DM4PR12MB8476.namprd12.prod.outlook.com
- ([fe80::2ed6:28e6:241e:7fc1%5]) with mapi id 15.20.8769.022; Tue, 27 May 2025
- 02:44:00 +0000
-Message-ID: <cf68299c-2409-4728-a4d2-c1e9c15ecbdf@amd.com>
-Date: Mon, 26 May 2025 20:43:57 -0600
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/amd/display: Constify struct timing_generator_funcs
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>,
- Rodrigo Siqueira <siqueira@igalia.com>,
- Alex Deucher <alexander.deucher@amd.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-References: <7dd73263342c1093f3e86ae5841a53c1e3739b5e.1748105447.git.christophe.jaillet@wanadoo.fr>
-Content-Language: en-US
-From: Alex Hung <alex.hung@amd.com>
-In-Reply-To: <7dd73263342c1093f3e86ae5841a53c1e3739b5e.1748105447.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: YQZPR01CA0128.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:c01:87::26) To DM4PR12MB8476.namprd12.prod.outlook.com
- (2603:10b6:8:17e::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD702139579
+	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 02:48:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748314114; cv=none; b=KuqpiOfi4ezf3optAYWkqX7uAqhoPQgUaxh4iWzboLd93ZJB6XEFPrqXLPgJZTpvQ5sIfxwvX1xqn+BOM/M9C/OlebPQIUTSCTtcJ+DGdGELjponolkPJsJCdKT2KIcZj7Wpr9oMomcLbxUNDsq8S0MZ0XaBpI5bfEleiuTOr0Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748314114; c=relaxed/simple;
+	bh=1sIkGvLRc4q9F0wAGlww0AgdOxuNbiq/W5VJZQg3ebE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ANzjniqIsUe7a1pnNz+RyxiUbirMaN8yTICaSok23gkoZa6VhwIy9CeKSoKGCsBW8AnX4RyqSxSSKmUexycRAfld8lKwE42MbKDmJ5Juyfpk0ssyrxbNY4quozUEffF9l//Dnyyp50JbfDoebjPEeBmJlgHdo4LA/aVt/m4ANhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=cBaG4EKJ; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ad1f6aa2f84so566647666b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 26 May 2025 19:48:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1748314110; x=1748918910; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vxISWGK2XQPkm4Hhr1US0gvD1FZ3zYyiGOuHAQJE5eo=;
+        b=cBaG4EKJNl3cuWB6pIdbTLbU184LMPx1S8Le/UTPlp9DXIT30STkIaS18O1u3dGVlH
+         OzQYiG6Lxb7QkaC4Ss6xiXLamwysKiCmv5hTntRJY4/oFKT3VoRV2TMRukOA8BZYe1gk
+         tXRxLO3X/i+dvdzQ0DsjlzPcoODAdIbATiDjchNRO5f1BA0tyF1h3V9HNyvwZ2d23av8
+         PgUWib1fFQ8MxDAXmJjWUyoAx3XMeT7Kqw1kPDoe+wenMN3M0K0ZfdZvY2rZKJ6QDoAv
+         DeN6fKLGUu1bw35d5DoaqDhx4DAGNsUwAbqYs8v9K1f7MEINOliAyJ/l5H1LxJOG/9vq
+         LNcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748314110; x=1748918910;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vxISWGK2XQPkm4Hhr1US0gvD1FZ3zYyiGOuHAQJE5eo=;
+        b=ny6R0CT0MByxpvS8bEGobY813ZFVdr1eVQSdUWWy60rLAQwzv+dQObzDMpSy6gZV8I
+         aOW9C4yBsNt8Io6Q8TRfAITE0Dy5Jtr7DbbjCK8YdhwwJ/320UL9wdB+vztlWmngLELB
+         SJKFRN+s4z7mYg3Tpic6kkKT46pjyxbqnp1HnYuTCsC+8mWP1aUD9aR3PdTJK0mhi5rg
+         f7jeJkSAcH/4k4ShsTptiVNODOy7OdSSQiZzNUHZa5tiMqMu6/PspGxL5Ef/ZGtNoXaE
+         B1CHKjnHWmJRxtkOLb+pQQE6EstWylDjjWOMWDnerHqERG2oCgjtj8ZTdtbQTJSJLF9M
+         SUzg==
+X-Forwarded-Encrypted: i=1; AJvYcCUPhrcwsHSBEMHTHDFliGOcer1NMiiuCbJi4wBzn2dFHr0ONlR/e7bqv4IAMnL07b/IYrzo/OqVE55bqfQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwaX2d8KQVrRxSyiv/AEo8Fb+2QRqLvMTHi37Rx5BGYugYdGo11
+	c0OjQbmYN6ZXQSCQS4GM8XS5/z9r8pqO6Aysvll1fct0u71ef2bbLdwUpSoTJ8WTqsxFW3a9LRP
+	zSXcdh4aMkcLiquOh4k26EINrIjRHR/4V8ME6J43Zow==
+X-Gm-Gg: ASbGncsckGMoLKxclNiNpFpT9gBGW/bHfViTrpa4ORJ6Y7EbGmULLyznAX/4uRiAZyY
+	4IUcup1oS2yuP9Nkm/bjWBhFLL1EipjIpQWeTgairdCqPsT4WFuaNvC81JKW9ymiHD4DB15Nzee
+	J7zn9bhH32p2Wuc/UDatvAxHE2985Lk92teQ==
+X-Google-Smtp-Source: AGHT+IGlQnBA51IfLDQtlV4Tsj0DcivukafO3WpRjoRYo7aZ2XNkgT/ISpHO9OKoKdboUS/Oi+TdrQgc1gVBGNRrhUg=
+X-Received: by 2002:a17:907:9303:b0:ad1:d0e7:a698 with SMTP id
+ a640c23a62f3a-ad8596d8c4emr1099084466b.2.1748314109982; Mon, 26 May 2025
+ 19:48:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB8476:EE_|SA3PR12MB7806:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6ed2a339-ec2e-497a-9301-08dd9cc855d9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?SnkxS3R3VVNNZzZFNUNtWVNyT0ZWUjM5YVZYTDlFaFhNUm1BYmNsOGdwTEF3?=
- =?utf-8?B?RHJ0VWx5OFhkR2t6OUU1b0h2d0EzWWV1NUZQeEdRNFE3ZWl3cWUwNG1rQ0lo?=
- =?utf-8?B?ZFFXQkhEaG5vRm1YUE5rRC9INjhXd0RGeHFrSkpwNWI4TXh3SWxiVmdITXh0?=
- =?utf-8?B?ZVE3UllEeGRFck1MQUVSdlVWd1hYdnJOK3pFSmExM2NvNWt3UHRFamR4MTBp?=
- =?utf-8?B?SnlXankva2tWTjJRYTlmSDBYdEN5bVFqSjRKYStzQ1ByamRpWCt5eHU1N1Bl?=
- =?utf-8?B?VGRKRktCcmwweUk1RW41eUl0QTgrQTEzZkc4M09Hc29rSXdPTUExdUFjM3Fp?=
- =?utf-8?B?Ty9FQ3VuVUJkVlFDRGwrblhlVFJUNjJod25SNU9FUHhnNEtoLzI1QVpKaWdU?=
- =?utf-8?B?SjFVQnVBMVdQalNnK3NIQkVlTjNtNHhIeU8rMTZMc2tsa2ZFZU42QytHRTc3?=
- =?utf-8?B?RzMyQXMvWDc5SmlXalc3d1JoOGsxdEJzREFiNnJMNUgwQ1AvL09HbjBySHNz?=
- =?utf-8?B?SkNidU9udmwrRmdpM3BKclFBMzlsNWppd0VZUDZUdkxxaHduRU5CRGJQU1BT?=
- =?utf-8?B?OUV3bDF5TTlEdVBVajhGSldhNlp1aHUxdS90dngrb0FRNnVBa2VYUFplakR6?=
- =?utf-8?B?Kzl6NUIzZG1NVXgyZnZra1g4U2IwRUJFNW9vdDRDbGpGdytYa084eko3TEVJ?=
- =?utf-8?B?SkJRV20yQXBKZDFWNTV1S2d1bWhQZzNUT1pqTno2aWRjbjdHaXlsOU1vNjAx?=
- =?utf-8?B?NWp3NWJIMjRyY096L3lFdDJJS09ESzhaM1B3aHdTR3ZiZHg3ZVJEZG5DQjBq?=
- =?utf-8?B?SVZtNytwQnlXT3lkUysvelM2ZDNWRzRrZVdoYmNOQktZRTAxRnFKMy9BdXg0?=
- =?utf-8?B?SGlyeXdTMWhJWjMyRlFZTk1WejRkZThFNC9IK1o5eE10dHpBV0lPZm1xVjRr?=
- =?utf-8?B?eEl5VkxSYkFvUzJSRDJ6c293ZU9SMHBJRVBpVDNzWnJCams1RWNFSm9pR0tC?=
- =?utf-8?B?dUtkV21GWHR1T2pPbFVGbUV1U2VUSDAzbXZUNXFLdC9XUVArOFZwWWRYN1Vz?=
- =?utf-8?B?VFU1NWN3clhSTWQ5NDJzblRWNnR2SDhyM1FVM3YwcG5wb1FtU1NZeHdEWTM5?=
- =?utf-8?B?bWhHejA2U1g5ZFM3T21wVEVOOWZ5YVExR0NHNWdGUkZGZVlyQVlPVlMrekcw?=
- =?utf-8?B?bmVQQWlyT2FPdEpTWVgxZURNYkxmY0Q3UHRGS1NXekUwdWVVTXhVVUQvM3NO?=
- =?utf-8?B?UHcwam1XUUpNbWtGSFdRM2x5bFRxTlQzQVNuVmFEdlhHbFRWMU5KVm81MS9v?=
- =?utf-8?B?anVUSnROS2dIdFFGaW5rbCtoSy8rb2dIZ2NUb01lQnhidFdSbzdUU0xDUzU4?=
- =?utf-8?B?SEN6dTN4amZoWWNDdzNlSlYwSGlRbmV0eWtJWTZpNWNBem85d3dyaTgxejVZ?=
- =?utf-8?B?a2k3QXE3NWJEUlBQSWg1dGhXeVNzTUR1TDNOSDd6VElhQmp3bDI0dk1XbU1a?=
- =?utf-8?B?TlFIZzRkOWJHWDU4RkxGdU1QMmtzTTRCTDM3ZUN6SldMWFRDcGJDK3ZtSDVI?=
- =?utf-8?B?VHUyZVBRMVhKS1BMRndiVWFFeW8vLzhFMGtQTW1XU3ozK3hUU0NUUmthTk45?=
- =?utf-8?B?VFk1LzBKb0VjdnJyR3BCSEtYWXV3R2p4QVdtTnF4RDNGbzVSZnVxbXlmK05p?=
- =?utf-8?B?d3k3ZnNZUzY5b01UMnMrMUZDNXFKTDhsY3dyemUzdXJQdnNGQzQwZmJsL01D?=
- =?utf-8?B?aDFMc3FQTGdKeHZpaUZ0K3lhaEZXdUhDdXRpVDBtamRiSG9MNkpOc1c1dnJW?=
- =?utf-8?B?SGlSOG1JWWp0V21KSkpJTTdxTnREbUdsaDBYbTh5SVF1bkxxbDhWcExQdnMx?=
- =?utf-8?B?Vi9mYXVYM0t2aDY2K2RRNDRjdDlINTJpWFhBRmpDYkl2QXJLZm5iZ1hQYjMw?=
- =?utf-8?Q?DzuVz8HnMlA=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB8476.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?QklHV1VSZU9yVUFVazE5T040UzJReENmVzdYcU80MFAzVE4wMTZFUzV0Q3JG?=
- =?utf-8?B?UkhRWmNXY3pPMWFFRlV4dGswMkE1a2kva0ZHZWZFT2wwWURLWVI3akx4Wkxh?=
- =?utf-8?B?SWRQYnMvSFJZUkRGZ2hKR1JHRFdBbjJSOEFKT1JKalB4MGxHVHV1a3ZCQ294?=
- =?utf-8?B?MVJKN09JbEt6RjFBVjVKM2Q4Ujdpc1J6YllZQ3Jvd0E2NEhGZy9UWWFVUEtU?=
- =?utf-8?B?Rnl0dTByM1JibDFRZGdlRElXaTNoL2pMRERoRXlxNVNoS2R5d1BWdFJHclp6?=
- =?utf-8?B?WnFGd0xYNEtqU2Fqa2szSXhuRlFaV3YxZW1jTlZSVHhZNHdtdmVnT045K3hR?=
- =?utf-8?B?S1ZXWGtFeFNROXd3Qi9SMXZ4d0g0QmlxR2c5NGZWY1cyZTJrZG1ubU5EQU1H?=
- =?utf-8?B?ci9sLzNBRUZzSWN5NlBwRGkzKy9GLzZueFBoQjVqRytrT3ZXR3hscXJQYnFV?=
- =?utf-8?B?eVE5VXdlRStIVS9zaU93V1g2aE9pa0ZVTXN0bmx1K01ERUFTWkxuOUhlN2wr?=
- =?utf-8?B?S0dJNlpzSDQvWTdadWRpYVFIREpaK29SLzV3Z1lxVFQzQ2N4WFZpSWdvQVg3?=
- =?utf-8?B?UjRZQXZVMkpycUFhSDlxeHZuVkU3YS9Ib0JHeGVxZW5yMklaZVlNc3FzVWxk?=
- =?utf-8?B?SjQrNGNCblZaYkdtU0t4ZDZacXpSYkpSR2tmellWWWRnSld4QkJGSWIyK0d1?=
- =?utf-8?B?ZFBmS2FUZmk2TzNZTENnVFNnSGljSE80eFEzdkNJYmRjSGd2QVhkeTBaT1VS?=
- =?utf-8?B?Yis3c0ZQT0cyT1NhbTNyNld5OVMvWXFhTE9pQWVQUk1HUG1Ia0tUSW4wMXFX?=
- =?utf-8?B?R3pHcW02SEZPMW93WUJZU1gyY3dLb3p6bHF4VEhMc1FpK0pQZmlUbTJFYVdC?=
- =?utf-8?B?YW1QZTNPSW1tRXNab2RoODJQWHlYdHY5bTFxMDRsWHlmWCs5MzF6Y1VYTGpn?=
- =?utf-8?B?RkJDak9wcHV2bXFwR2JJMmd4VnNzZ3FNblI5b1FnK2ZPcTRMN3RnYXJnMkFJ?=
- =?utf-8?B?UmdKdDBXc3pveENwYzkvRFVhRzJhN2hFREZ3UlgyV1BnelBHZ1psMllieDRS?=
- =?utf-8?B?c281ejlSdURtdVoyQi9Pb0orRCt1RnRVVjUrZFZkbzc3YTRuWFp3U3MvOGpa?=
- =?utf-8?B?WE5PUU1FUG1MODlxZ0UwVS9tcnVRcENTMmExTm9ZNHZXeHZVZmpReTcvWHRH?=
- =?utf-8?B?aWFacW14NjlZY2k1eHV1WExNRmIvSy9HTittckp6Q2xoTEV5TzdmYVA3RmU3?=
- =?utf-8?B?M1RVdFJRVVpIeXdqZkdGdGxUTHQxQUJqOFdjZlhqZ05aVWcrdEhRODVoSGpK?=
- =?utf-8?B?N01IanJrZDZURmdFSUJ1R3l4TjJHZEFMWVN6YWRlWDNaTWdTTEhrM0R4NHdZ?=
- =?utf-8?B?Qmt0amV0VGFIMHhpNzJrdU1xU1lRdzZtNG9lRmx6TzdnamJ2SzlFNmhKbHhm?=
- =?utf-8?B?Mm51bzF4RGxuaWJSd09HUmp3VkpwV3E1ZEVacHM0dFdaYm52dmFWbzRvUVA4?=
- =?utf-8?B?MThPc093TUJsR09VVC9vYkRKTnVlQklBbVl2T0xwOHRONkxLWHovMk9Kd3FF?=
- =?utf-8?B?V0hUa2RRL1RqclgwT2xGMWdVVzl6S0FndGN6K2lYaXNhRmtjQldYa3V1UTNp?=
- =?utf-8?B?dzNwc2llbzFRdTdQSnV2MXNDMzF6aUhBeFFyRzhyUjF2Ryt6d25xYXBBNUlG?=
- =?utf-8?B?ODRQa3B3aDVGZXhrU0RhNnZNZTAraVhsYVg2N3hBdnYvRUkxdE1iM1VZQm9Q?=
- =?utf-8?B?TFNMUjBLWXN6NUJ2SlV2cVlYYXFNMVlaK0ZRbERnSVpwYjR2cWFTSFNxMkRo?=
- =?utf-8?B?aGJnYVdlRjIwWlpHKzMyZ25nNm5KVFo2NVFwcTQzbmtNZE9TZFFHVnJmYWJD?=
- =?utf-8?B?M21iQno4VnVwYk9RaTJjRCtQenRCeGtkeEJIUy9xelV2TGI1K3VQOW1qdFE2?=
- =?utf-8?B?dVc4YU02cjdtVCtsOGlBSjdOZnpkN0xVeTAweFU3RG9Sd2dMTG1IbHhZd3Ay?=
- =?utf-8?B?VmFqS1dsK1prejB5dklBWk5IZUJmSlFzMnJuMmdCbmp3dllNa254TVk3MXFD?=
- =?utf-8?B?UWdKaUpPOGU1YitjMVNCbUhSVExIQWp3RzRyODlYNlhHajZwelhUMnR5eWps?=
- =?utf-8?Q?oMAnJlA7BTzsl8hIx8OwVmXQp?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6ed2a339-ec2e-497a-9301-08dd9cc855d9
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB8476.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 May 2025 02:44:00.5918
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: jBB0mx0u15ZwBevKuBULPXn022yeLG8QiQfGrrbqbAnglfDxV+Umh8JEQxOBq2lwphP1MteMo1x9nq+NGuUncA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB7806
+References: <20250429085048.1310409-1-guodong@riscstar.com>
+ <20250429085048.1310409-5-guodong@riscstar.com> <paasmwjel652r25nxobidydtpxfjy7emerilmwqhvhtgrrtg6v@gowpzqdzvlfz>
+ <20250526215243-GYA53128@gentoo>
+In-Reply-To: <20250526215243-GYA53128@gentoo>
+From: Guodong Xu <guodong@riscstar.com>
+Date: Tue, 27 May 2025 10:48:18 +0800
+X-Gm-Features: AX0GCFvI_6k3vBVjk-TWBpWmMUcHskFmulTKZz7Kxcz7kFRTgK5PHEc_K-e3F1M
+Message-ID: <CAH1PCMZhS4_u3nTdAQDfTTRVJ_61n-OYjmMuv2m4DHYDzGE0XA@mail.gmail.com>
+Subject: Re: [PATCH v3 4/6] riscv: dts: spacemit: add pwm14_1 pinctrl setting
+To: Yixun Lan <dlan@gentoo.org>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
+	alex@ghiti.fr, p.zabel@pengutronix.de, drew@pdp7.com, inochiama@gmail.com, 
+	geert+renesas@glider.be, heylenay@4d2.org, tglx@linutronix.de, 
+	hal.feng@starfivetech.com, unicorn_wang@outlook.com, duje.mihanovic@skole.hr, 
+	heikki.krogerus@linux.intel.com, elder@riscstar.com, 
+	linux-pwm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	spacemit@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Alex Hung <alex.hung@amd.com>
+On Tue, May 27, 2025 at 5:52=E2=80=AFAM Yixun Lan <dlan@gentoo.org> wrote:
+>
+> Hi Guodong, Uwe,
+>
+> On 18:54 Mon 26 May     , Uwe Kleine-K=C3=B6nig wrote:
+> > On Tue, Apr 29, 2025 at 04:50:46PM +0800, Guodong Xu wrote:
+> > > diff --git a/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi b/arch/risc=
+v/boot/dts/spacemit/k1-pinctrl.dtsi
+> > > index 283663647a86..195eb8874f3c 100644
+> > > --- a/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi
+> > > +++ b/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi
+> > > @@ -20,4 +20,11 @@ uart0-2-pins {
+> > >                     drive-strength =3D <32>;
+> > >             };
+> > >     };
+> > > +   pwm14_1_cfg: pwm14-1-cfg {
+> > > +           pwm14-1-pins {
+> > > +                   pinmux =3D <K1_PADCONF(44, 4)>;
+> > > +                   bias-pull-up =3D <0>;
+> > > +                   drive-strength =3D <32>;
+> > > +           };
+> > > +   };
+> >
+> > There is a newline expected before the pwm14-1-cfg node, isn't there?
+> >
+> Right, I could amend this and fix it while applying this patch
+> (so if there is no other serious issue, no need to resend)
+>
 
-On 5/24/25 10:51, Christophe JAILLET wrote:
-> 'struct timing_generator_funcs' are not modified in these drivers.
-> 
-> Constifying these structures moves some data to a read-only section, so
-> increases overall security, especially when the structure holds some
-> function pointers.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> This is NOT compile tested, because apparently some .h files are missing on
-> my system ("reg_helper.h")
-> 
-> However, I've checked how these struct timing_generator_funcs are used.
-> They end in "struct optc->base.funcs" which is a
-> "const struct timing_generator_funcs", so evething should be fine.
-> ---
->   drivers/gpu/drm/amd/display/dc/optc/dcn20/dcn20_optc.c   | 2 +-
->   drivers/gpu/drm/amd/display/dc/optc/dcn201/dcn201_optc.c | 2 +-
->   drivers/gpu/drm/amd/display/dc/optc/dcn30/dcn30_optc.c   | 2 +-
->   drivers/gpu/drm/amd/display/dc/optc/dcn301/dcn301_optc.c | 2 +-
->   drivers/gpu/drm/amd/display/dc/optc/dcn31/dcn31_optc.c   | 2 +-
->   drivers/gpu/drm/amd/display/dc/optc/dcn314/dcn314_optc.c | 2 +-
->   drivers/gpu/drm/amd/display/dc/optc/dcn32/dcn32_optc.c   | 2 +-
->   drivers/gpu/drm/amd/display/dc/optc/dcn35/dcn35_optc.c   | 2 +-
->   drivers/gpu/drm/amd/display/dc/optc/dcn401/dcn401_optc.c | 2 +-
->   9 files changed, 9 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/amd/display/dc/optc/dcn20/dcn20_optc.c b/drivers/gpu/drm/amd/display/dc/optc/dcn20/dcn20_optc.c
-> index 81857ce6d68d..e7a90a437fff 100644
-> --- a/drivers/gpu/drm/amd/display/dc/optc/dcn20/dcn20_optc.c
-> +++ b/drivers/gpu/drm/amd/display/dc/optc/dcn20/dcn20_optc.c
-> @@ -502,7 +502,7 @@ void optc2_get_last_used_drr_vtotal(struct timing_generator *optc, uint32_t *ref
->   	REG_GET(OTG_DRR_CONTROL, OTG_V_TOTAL_LAST_USED_BY_DRR, refresh_rate);
->   }
->   
-> -static struct timing_generator_funcs dcn20_tg_funcs = {
-> +static const struct timing_generator_funcs dcn20_tg_funcs = {
->   		.validate_timing = optc1_validate_timing,
->   		.program_timing = optc1_program_timing,
->   		.setup_vertical_interrupt0 = optc1_setup_vertical_interrupt0,
-> diff --git a/drivers/gpu/drm/amd/display/dc/optc/dcn201/dcn201_optc.c b/drivers/gpu/drm/amd/display/dc/optc/dcn201/dcn201_optc.c
-> index f2415eebdc09..772a8bfb949c 100644
-> --- a/drivers/gpu/drm/amd/display/dc/optc/dcn201/dcn201_optc.c
-> +++ b/drivers/gpu/drm/amd/display/dc/optc/dcn201/dcn201_optc.c
-> @@ -129,7 +129,7 @@ static void optc201_get_optc_source(struct timing_generator *optc,
->   	*num_of_src_opp = 1;
->   }
->   
-> -static struct timing_generator_funcs dcn201_tg_funcs = {
-> +static const struct timing_generator_funcs dcn201_tg_funcs = {
->   		.validate_timing = optc201_validate_timing,
->   		.program_timing = optc1_program_timing,
->   		.setup_vertical_interrupt0 = optc1_setup_vertical_interrupt0,
-> diff --git a/drivers/gpu/drm/amd/display/dc/optc/dcn30/dcn30_optc.c b/drivers/gpu/drm/amd/display/dc/optc/dcn30/dcn30_optc.c
-> index 78b58a449fa4..ee4665aa49e9 100644
-> --- a/drivers/gpu/drm/amd/display/dc/optc/dcn30/dcn30_optc.c
-> +++ b/drivers/gpu/drm/amd/display/dc/optc/dcn30/dcn30_optc.c
-> @@ -357,7 +357,7 @@ void optc3_tg_init(struct timing_generator *optc)
->   	optc1_clear_optc_underflow(optc);
->   }
->   
-> -static struct timing_generator_funcs dcn30_tg_funcs = {
-> +static const struct timing_generator_funcs dcn30_tg_funcs = {
->   		.validate_timing = optc1_validate_timing,
->   		.program_timing = optc1_program_timing,
->   		.setup_vertical_interrupt0 = optc1_setup_vertical_interrupt0,
-> diff --git a/drivers/gpu/drm/amd/display/dc/optc/dcn301/dcn301_optc.c b/drivers/gpu/drm/amd/display/dc/optc/dcn301/dcn301_optc.c
-> index 65e9089b7f31..38f85bc2681a 100644
-> --- a/drivers/gpu/drm/amd/display/dc/optc/dcn301/dcn301_optc.c
-> +++ b/drivers/gpu/drm/amd/display/dc/optc/dcn301/dcn301_optc.c
-> @@ -109,7 +109,7 @@ void optc301_setup_manual_trigger(struct timing_generator *optc)
->   			OTG_TRIGA_CLEAR, 1);
->   }
->   
-> -static struct timing_generator_funcs dcn30_tg_funcs = {
-> +static const struct timing_generator_funcs dcn30_tg_funcs = {
->   		.validate_timing = optc1_validate_timing,
->   		.program_timing = optc1_program_timing,
->   		.setup_vertical_interrupt0 = optc1_setup_vertical_interrupt0,
-> diff --git a/drivers/gpu/drm/amd/display/dc/optc/dcn31/dcn31_optc.c b/drivers/gpu/drm/amd/display/dc/optc/dcn31/dcn31_optc.c
-> index ef536f37b4ed..4f1830ba619f 100644
-> --- a/drivers/gpu/drm/amd/display/dc/optc/dcn31/dcn31_optc.c
-> +++ b/drivers/gpu/drm/amd/display/dc/optc/dcn31/dcn31_optc.c
-> @@ -315,7 +315,7 @@ void optc31_read_otg_state(struct timing_generator *optc,
->   	s->otg_double_buffer_control = REG_READ(OTG_DOUBLE_BUFFER_CONTROL);
->   }
->   
-> -static struct timing_generator_funcs dcn31_tg_funcs = {
-> +static const struct timing_generator_funcs dcn31_tg_funcs = {
->   		.validate_timing = optc1_validate_timing,
->   		.program_timing = optc1_program_timing,
->   		.setup_vertical_interrupt0 = optc1_setup_vertical_interrupt0,
-> diff --git a/drivers/gpu/drm/amd/display/dc/optc/dcn314/dcn314_optc.c b/drivers/gpu/drm/amd/display/dc/optc/dcn314/dcn314_optc.c
-> index 0e603bad0d12..4a2caca37255 100644
-> --- a/drivers/gpu/drm/amd/display/dc/optc/dcn314/dcn314_optc.c
-> +++ b/drivers/gpu/drm/amd/display/dc/optc/dcn314/dcn314_optc.c
-> @@ -192,7 +192,7 @@ static void optc314_set_h_timing_div_manual_mode(struct timing_generator *optc,
->   }
->   
->   
-> -static struct timing_generator_funcs dcn314_tg_funcs = {
-> +static const struct timing_generator_funcs dcn314_tg_funcs = {
->   		.validate_timing = optc1_validate_timing,
->   		.program_timing = optc1_program_timing,
->   		.setup_vertical_interrupt0 = optc1_setup_vertical_interrupt0,
-> diff --git a/drivers/gpu/drm/amd/display/dc/optc/dcn32/dcn32_optc.c b/drivers/gpu/drm/amd/display/dc/optc/dcn32/dcn32_optc.c
-> index 2cdd19ba634b..b2b226bcd871 100644
-> --- a/drivers/gpu/drm/amd/display/dc/optc/dcn32/dcn32_optc.c
-> +++ b/drivers/gpu/drm/amd/display/dc/optc/dcn32/dcn32_optc.c
-> @@ -297,7 +297,7 @@ static void optc32_set_drr(
->   	optc32_setup_manual_trigger(optc);
->   }
->   
-> -static struct timing_generator_funcs dcn32_tg_funcs = {
-> +static const struct timing_generator_funcs dcn32_tg_funcs = {
->   		.validate_timing = optc1_validate_timing,
->   		.program_timing = optc1_program_timing,
->   		.setup_vertical_interrupt0 = optc1_setup_vertical_interrupt0,
-> diff --git a/drivers/gpu/drm/amd/display/dc/optc/dcn35/dcn35_optc.c b/drivers/gpu/drm/amd/display/dc/optc/dcn35/dcn35_optc.c
-> index 4cfc6c0fa147..72bff94cb57d 100644
-> --- a/drivers/gpu/drm/amd/display/dc/optc/dcn35/dcn35_optc.c
-> +++ b/drivers/gpu/drm/amd/display/dc/optc/dcn35/dcn35_optc.c
-> @@ -428,7 +428,7 @@ static void optc35_set_long_vtotal(
->   	}
->   }
->   
-> -static struct timing_generator_funcs dcn35_tg_funcs = {
-> +static const struct timing_generator_funcs dcn35_tg_funcs = {
->   		.validate_timing = optc1_validate_timing,
->   		.program_timing = optc1_program_timing,
->   		.setup_vertical_interrupt0 = optc1_setup_vertical_interrupt0,
-> diff --git a/drivers/gpu/drm/amd/display/dc/optc/dcn401/dcn401_optc.c b/drivers/gpu/drm/amd/display/dc/optc/dcn401/dcn401_optc.c
-> index 382ac18e7854..ff79c38287df 100644
-> --- a/drivers/gpu/drm/amd/display/dc/optc/dcn401/dcn401_optc.c
-> +++ b/drivers/gpu/drm/amd/display/dc/optc/dcn401/dcn401_optc.c
-> @@ -459,7 +459,7 @@ bool optc401_wait_update_lock_status(struct timing_generator *tg, bool locked)
->   	return true;
->   }
->   
-> -static struct timing_generator_funcs dcn401_tg_funcs = {
-> +static const struct timing_generator_funcs dcn401_tg_funcs = {
->   		.validate_timing = optc1_validate_timing,
->   		.program_timing = optc1_program_timing,
->   		.setup_vertical_interrupt0 = optc1_setup_vertical_interrupt0,
+Thanks, Yixun.
 
+By the way, do you plan to take patches 3 and 4 of this series into
+your tree? They only apply if the SpacemiT reset patchset is applied
+first.
+
+BR,
+Guodong
+
+> --
+> Yixun Lan (dlan)
 
