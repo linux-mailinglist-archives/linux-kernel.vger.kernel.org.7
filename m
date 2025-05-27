@@ -1,85 +1,62 @@
-Return-Path: <linux-kernel+bounces-663658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-663660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A200AC4B8A
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 11:29:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7C50AC4B91
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 11:30:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AAE616FD7F
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 09:29:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A8A3189EAA0
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 09:30:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C45C2253355;
-	Tue, 27 May 2025 09:28:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C04A5248F4B;
+	Tue, 27 May 2025 09:30:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GcnF3O2+"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="WL9qwxY3"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C4D324A06E
-	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 09:28:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE4D11EF080
+	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 09:30:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748338139; cv=none; b=ovwyhPTkcg6xYmxERmecGCYae6Yha/nkQh3RtpH1HSSuKC3/0Th7NqAzP+4Ao4O/tIJZKgcDIv+Y2aISdaun6pWk12sAd/RaCJrs5de/AN3VNeSwUH+SHwXRGhmIko9H+yVp1v7Ud2zREa41LBDnXmRCDutvgheKRtVIbuavBsg=
+	t=1748338223; cv=none; b=QgyNYO2+cHmcNl53I5fLikVYdjOl9YqG6CwwnQLAE365WKhM7bbpIGbV5TArvuDjFi2nvBUbqDqzh1ar5RVWRiY6H4rSUeK4K8vXXdziqUpMVnVgCC1k6tsUAawmJ8Huo+vsy5Iw0LNghpckJI5Tcqb7XpDY49SpzT0up+3Ytdc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748338139; c=relaxed/simple;
-	bh=jYEhg75W17+LrrRp5ozft0smLaCDvCUlIDdgZkc8Maw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JhvNwvfhRIXFAauGQNR0SfFuuwuVkaNewVTIPIABOd3uQzIOyw4cXtUie1LwyTx3w0iEgTrDafeC8pARynWKPHVcI3Ytb2j5iI36CdWEJj5s5hhVJYQea+isKurT2oZEfq0fG1Hp2L0T1Z82gCfP+yiCkoDup4bjyRGt0sEFUV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GcnF3O2+; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1748338136;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=d2VX9MfL1HCTriT+S3B9Z1XwLwg3XDZQ+O6lDXv3bE4=;
-	b=GcnF3O2+DhFxEc9GW8lAH0adS9eRHDdbK9qujz628jaSAOdvosEvbho12Xw395xCiZK7QJ
-	ZuNvrRLEIXoPnMFelBvsL+tT5Epk9WZA2rq5QV+0bRaQpSPM57k+CDAgKIDNfHrL9rZLNk
-	bbO6XtMt6TTIrBsKgyVLTUpUr6ZXJ8c=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-663-WQwunQL9OwCx4OcmC_POgg-1; Tue, 27 May 2025 05:28:54 -0400
-X-MC-Unique: WQwunQL9OwCx4OcmC_POgg-1
-X-Mimecast-MFC-AGG-ID: WQwunQL9OwCx4OcmC_POgg_1748338133
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-43e9b0fd00cso15797265e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 02:28:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748338133; x=1748942933;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=d2VX9MfL1HCTriT+S3B9Z1XwLwg3XDZQ+O6lDXv3bE4=;
-        b=M93JvT43JAH6ptIEaBYv23DYBV9AQJ8Pwy98+iGyqCe9pe4IuD87ZBolCtd0EaKejf
-         8KO6VW37T9WHFCC2Ugu2ffNelyR5GKHsa4jXA2tHGRVI4n42MgUasWsUSBuztqzagiZF
-         epKMwu5OzPVYESZUoxDcnlQY1rFF5R5msDzPOP/H+8UcOJtBaQx9aOmeKUUMhESUCQQU
-         wj/v0+kuwJXaPZFqvR7ubZA7U7z87YMTKGWjEykafaGoDpD2fYubSHGJ7ED7QHYAOi2c
-         QQQhuF4Yqb3Ms4ceUlAncNUGC1TrzySewjHiskPTQk1iYcNFxnp7y9zj1vnDdo0+9mPD
-         632A==
-X-Forwarded-Encrypted: i=1; AJvYcCWk6EYcCmqVyQIkdM74tw9JfhMsXpAUrz7YAtSRgO+YSWE2mdJXIN3yFcuyItiB2/DX6LdLjUr2c/zQNIc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcEIXkxj56iC/PmDYfPN3qvHCiq0NJE5t2Ty4XWjkVj1j/i9Zc
-	4ZJh248Im6sFnPqRVLKeTd+D8BuBWkC9OXLb2kyxRJKEFwTDzXoOFyQtjRT3L0zC1/zgk/WZ0xG
-	vXTM9zchPxoJRuEAh3hq0MXi+z8ybGawrh+vFZEVC1LGU1+0WQSAu8vB8J4P+Fcrx6A==
-X-Gm-Gg: ASbGncsgi5kYPuX0xlYmTy/cvbUcttUomjPG+5DsSoNWuL2Wx47hKV3iVWcA65OKsXE
-	pdlHCuUMWDQ9X5wK2LSy1OucCVb56UBmqtARCM1sw2Q7MqSojWX/mmJVVukwWCzUbCMQc0Rt6GT
-	oG2PTxJJe3PZ8fYPYkaAdCvEDrgzFKPko3bN1tujay82tm29gbQwWNZv0Jp0zwVtAPRyrSizIwb
-	44oKRWTseKa1TmU15HHD+cEqiqvhP7rGNpUSf8KYVV8/9TInTorFiC2qunvwq4v05UUcPYAP2qA
-	Uy6wpFZ6jTLpaOvA+iQ=
-X-Received: by 2002:a05:600c:1d0a:b0:43d:186d:a4bf with SMTP id 5b1f17b1804b1-44c77bf3aa2mr98283955e9.0.1748338133538;
-        Tue, 27 May 2025 02:28:53 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFW/XvOutq354S3u3kVQy6maNZpndfNYmmZuqtvnQwyMkFCqY+qleAw2OpAQBAisEp90oBu4Q==
-X-Received: by 2002:a05:600c:1d0a:b0:43d:186d:a4bf with SMTP id 5b1f17b1804b1-44c77bf3aa2mr98283485e9.0.1748338133127;
-        Tue, 27 May 2025 02:28:53 -0700 (PDT)
-Received: from ?IPV6:2a0d:3344:2728:e810::f39? ([2a0d:3344:2728:e810::f39])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4e4c4739csm290454f8f.0.2025.05.27.02.28.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 27 May 2025 02:28:52 -0700 (PDT)
-Message-ID: <ea6b8065-76e4-45c8-a51f-858abab4d639@redhat.com>
-Date: Tue, 27 May 2025 11:28:50 +0200
+	s=arc-20240116; t=1748338223; c=relaxed/simple;
+	bh=sB9xR3cKKWn4f7IDdazNBd8ovkMqjRc0juOL1gZ3NyM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=jwwbaQvC4pwGwheqLmLWfzs3yLiImTdPpmyi6lvYM0UF+r/ywXXjqqUlzguTeMoI1szX/AwUFWR6rLNyHX57zqOWlP4Vf/anfM36xr5XOVYKdiA9evdm3sELPuPzitiw08jTa+zTZdpLD2Bm3JbFO6eAvaqwymhXNww6Pf30ceg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=WL9qwxY3; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 54R9TnLi1777039;
+	Tue, 27 May 2025 04:29:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1748338189;
+	bh=ieQsVkqgTPNVC6qcp5sh7wlGb2uHgPAdxT9ELF8P2rs=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=WL9qwxY3VunOl8MypxEGbPG5qUanOgcsrPzumT4DzdwwV2pJmCTaFr88XmmLq4wdK
+	 68n0YSQPvA+idOYRMEsjaObP5Y3IFO2KNtYBwoQT+dcgm1biiYeZGen22S15Jjde+m
+	 XZMbh0ZlSsFF/P658av5rYe2gnA86Q5xLTppkvNs=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 54R9TmMi2773008
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Tue, 27 May 2025 04:29:48 -0500
+Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 27
+ May 2025 04:29:47 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 27 May 2025 04:29:47 -0500
+Received: from [10.24.72.182] (jayesh-hp-z2-tower-g5-workstation.dhcp.ti.com [10.24.72.182])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 54R9Tdg83274135;
+	Tue, 27 May 2025 04:29:40 -0500
+Message-ID: <493afc6c-59a0-4f6b-9a9e-568dd2eff873@ti.com>
+Date: Tue, 27 May 2025 14:59:39 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,58 +64,229 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next,v5] net: mana: Add handler for hardware servicing
- events
-To: Haiyang Zhang <haiyangz@microsoft.com>, linux-hyperv@vger.kernel.org,
- netdev@vger.kernel.org
-Cc: decui@microsoft.com, stephen@networkplumber.org, kys@microsoft.com,
- paulros@microsoft.com, olaf@aepfle.de, vkuznets@redhat.com,
- davem@davemloft.net, wei.liu@kernel.org, edumazet@google.com,
- kuba@kernel.org, leon@kernel.org, longli@microsoft.com,
- ssengar@linux.microsoft.com, linux-rdma@vger.kernel.org,
- daniel@iogearbox.net, john.fastabend@gmail.com, bpf@vger.kernel.org,
- ast@kernel.org, hawk@kernel.org, tglx@linutronix.de,
- shradhagupta@linux.microsoft.com, andrew+netdev@lunn.ch,
- kotaranov@microsoft.com, horms@kernel.org, linux-kernel@vger.kernel.org
-References: <1747873343-3118-1-git-send-email-haiyangz@microsoft.com>
+Subject: Re: [RFC PATCH v2 2/3] drm/bridge: cadence: cdns-mhdp8546*: Change
+ drm_connector from pointer to structure
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+CC: <jonas@kwiboo.se>, <jernej.skrabec@gmail.com>,
+        <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+        <tzimmermann@suse.de>, <airlied@gmail.com>, <simona@ffwll.ch>,
+        <lumag@kernel.org>, <jani.nikula@intel.com>, <andy.yan@rock-chips.com>,
+        <mordan@ispras.ru>, <linux@treblig.org>, <viro@zeniv.linux.org.uk>,
+        <yamonkar@cadence.com>, <sjakhade@cadence.com>,
+        <quentin.schulz@free-electrons.com>, <jsarha@ti.com>,
+        <linux-kernel@vger.kernel.org>, <devarsht@ti.com>,
+        <dianders@chromium.org>, <andrzej.hajda@intel.com>,
+        <neil.armstrong@linaro.org>, <rfoss@kernel.org>,
+        <Laurent.pinchart@ideasonboard.com>, <dri-devel@lists.freedesktop.org>,
+        <alexander.stein@ew.tq-group.com>
+References: <20250521073237.366463-1-j-choudhary@ti.com>
+ <20250521073237.366463-3-j-choudhary@ti.com>
+ <19dd2795-c693-4c1a-989c-8b3bc2b3cdfd@ideasonboard.com>
 Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <1747873343-3118-1-git-send-email-haiyangz@microsoft.com>
-Content-Type: text/plain; charset=UTF-8
+From: Jayesh Choudhary <j-choudhary@ti.com>
+In-Reply-To: <19dd2795-c693-4c1a-989c-8b3bc2b3cdfd@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On 5/22/25 2:22 AM, Haiyang Zhang wrote:
-> @@ -400,6 +448,33 @@ static void mana_gd_process_eqe(struct gdma_queue *eq)
->  		eq->eq.callback(eq->eq.context, eq, &event);
->  		break;
->  
-> +	case GDMA_EQE_HWC_FPGA_RECONFIG:
-> +		dev_info(gc->dev, "Recv MANA service type:%d\n", type);
-> +
-> +		if (gc->in_service) {
-> +			dev_info(gc->dev, "Already in service\n");
-> +			break;
-> +		}
-> +
-> +		if (!try_module_get(THIS_MODULE)) {
-> +			dev_info(gc->dev, "Module is unloading\n");
-> +			break;
-> +		}
-> +
-> +		mns_wk = kzalloc(sizeof(*mns_wk), GFP_ATOMIC);
-> +		if (!mns_wk) {
-> +			module_put(THIS_MODULE);
-> +			break;
-> +		}
-> +
-> +		dev_info(gc->dev, "Start MANA service type:%d\n", type);
-> +		gc->in_service = true;
-> +		mns_wk->pdev = to_pci_dev(gc->dev);
-> +		pci_dev_get(mns_wk->pdev);
+Hello Tomi,
 
-Acquiring both the device and the module reference is confusing and
-likely unnecessary. pci_dev_get() should suffice.
+On 27/05/25 13:28, Tomi Valkeinen wrote:
+> Hi,
+> 
+> On 21/05/2025 10:32, Jayesh Choudhary wrote:
+>> After adding DBANC framework, mhdp->connector is not initialised during
+>> bridge calls. But the asyncronous work scheduled depends on the connector.
+>> We cannot get to drm_atomic_state in these asyncronous calls running on
+>> worker threads. So we need to store the data that we need in mhdp bridge
+>> structure.
+>> Like other bridge drivers, use drm_connector pointer instead of structure
+>> and make appropriate changes to the conditionals and assignments related
+>> to mhdp->connector.
+>> Also, in the atomic enable call, move the connector  and connector state
+>> calls above, so that we do have a connector before we can retry the
+>> asyncronous work in case of any failure.
+>>
+> 
+> I don't quite understand this patch. You change the mhdp->connector to a
+> pointer, which is set at bridge_enable and cleared at bridge_disable.
+> Then you change the "mhdp->connector.dev" checks to "mhdp->connector".
+> 
+> So, now in e.g. cdns_mhdp_fw_cb(), we check for mhdp->connector, which
+> is set at bridge_enable(). Can we ever have the bridge enabled before
+> the fb has been loaded? What is the check even supposed to do there?
+> 
+> Another in cdns_mhdp_hpd_work(), it checks for mhdp->connector. So...
+> HPD code behaves differently based on if the bridge has been enabled or
+> not? What is it supposed to do?
+> 
+> Isn't the whole "if (mhdp->connector.dev)" code for the legacy
+> non-DRM_BRIDGE_ATTACH_NO_CONNECTOR case?
+> 
+>   Tomi
 
-/P
+I misinterpreted your comment in v1[0] regarding finding the connector
+from the current state in cdns_mhdp_modeset_retry_fn() and I missed
+this. I was more focused on finding a connector for that function.
 
+For the current code, in all the conditionals involving mhdp->connector,
+we are entering else statements as connector is not initialised.
+So I will just drop if statements in cdns_mhdp_fw_cb() and
+cdns_mhdp_hpd_work() (like you said, its legacy case) while still having
+mhdp->connector as pointer as we need it for
+cdns_mhdp_modeset_retry_fn() and in cdns-mhdp8546-hdcp driver.
+
+That should be okay?
+
+[0]: 
+https://lore.kernel.org/all/e76f94b9-b138-46e7-bb18-b33dd98c9abb@ideasonboard.com/
+
+Warm Regards,
+Jayesh
+
+
+> 
+>> Fixes: fb43aa0acdfd ("drm: bridge: Add support for Cadence MHDP8546 DPI/DP bridge")
+>> Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
+>> ---
+>>   .../drm/bridge/cadence/cdns-mhdp8546-core.c   | 28 +++++++++----------
+>>   .../drm/bridge/cadence/cdns-mhdp8546-core.h   |  2 +-
+>>   .../drm/bridge/cadence/cdns-mhdp8546-hdcp.c   |  8 +++---
+>>   3 files changed, 19 insertions(+), 19 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
+>> index 66bd916c2fe9..5388e62f230b 100644
+>> --- a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
+>> +++ b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
+>> @@ -740,7 +740,7 @@ static void cdns_mhdp_fw_cb(const struct firmware *fw, void *context)
+>>   	bridge_attached = mhdp->bridge_attached;
+>>   	spin_unlock(&mhdp->start_lock);
+>>   	if (bridge_attached) {
+>> -		if (mhdp->connector.dev)
+>> +		if (mhdp->connector)
+>>   			drm_kms_helper_hotplug_event(mhdp->bridge.dev);
+>>   		else
+>>   			drm_bridge_hpd_notify(&mhdp->bridge, cdns_mhdp_detect(mhdp));
+>> @@ -1759,17 +1759,25 @@ static void cdns_mhdp_atomic_enable(struct drm_bridge *bridge,
+>>   	struct cdns_mhdp_device *mhdp = bridge_to_mhdp(bridge);
+>>   	struct cdns_mhdp_bridge_state *mhdp_state;
+>>   	struct drm_crtc_state *crtc_state;
+>> -	struct drm_connector *connector;
+>>   	struct drm_connector_state *conn_state;
+>>   	struct drm_bridge_state *new_state;
+>>   	const struct drm_display_mode *mode;
+>>   	u32 resp;
+>> -	int ret;
+>> +	int ret = 0;
+>>   
+>>   	dev_dbg(mhdp->dev, "bridge enable\n");
+>>   
+>>   	mutex_lock(&mhdp->link_mutex);
+>>   
+>> +	mhdp->connector = drm_atomic_get_new_connector_for_encoder(state,
+>> +								   bridge->encoder);
+>> +	if (WARN_ON(!mhdp->connector))
+>> +		goto out;
+>> +
+>> +	conn_state = drm_atomic_get_new_connector_state(state, mhdp->connector);
+>> +	if (WARN_ON(!conn_state))
+>> +		goto out;
+>> +
+>>   	if (mhdp->plugged && !mhdp->link_up) {
+>>   		ret = cdns_mhdp_link_up(mhdp);
+>>   		if (ret < 0)
+>> @@ -1789,15 +1797,6 @@ static void cdns_mhdp_atomic_enable(struct drm_bridge *bridge,
+>>   	cdns_mhdp_reg_write(mhdp, CDNS_DPTX_CAR,
+>>   			    resp | CDNS_VIF_CLK_EN | CDNS_VIF_CLK_RSTN);
+>>   
+>> -	connector = drm_atomic_get_new_connector_for_encoder(state,
+>> -							     bridge->encoder);
+>> -	if (WARN_ON(!connector))
+>> -		goto out;
+>> -
+>> -	conn_state = drm_atomic_get_new_connector_state(state, connector);
+>> -	if (WARN_ON(!conn_state))
+>> -		goto out;
+>> -
+>>   	if (mhdp->hdcp_supported &&
+>>   	    mhdp->hw_state == MHDP_HW_READY &&
+>>   	    conn_state->content_protection ==
+>> @@ -1857,6 +1856,7 @@ static void cdns_mhdp_atomic_disable(struct drm_bridge *bridge,
+>>   		cdns_mhdp_hdcp_disable(mhdp);
+>>   
+>>   	mhdp->bridge_enabled = false;
+>> +	mhdp->connector = NULL;
+>>   	cdns_mhdp_reg_read(mhdp, CDNS_DP_FRAMER_GLOBAL_CONFIG, &resp);
+>>   	resp &= ~CDNS_DP_FRAMER_EN;
+>>   	resp |= CDNS_DP_NO_VIDEO_MODE;
+>> @@ -2157,7 +2157,7 @@ static void cdns_mhdp_modeset_retry_fn(struct work_struct *work)
+>>   
+>>   	mhdp = container_of(work, typeof(*mhdp), modeset_retry_work);
+>>   
+>> -	conn = &mhdp->connector;
+>> +	conn = mhdp->connector;
+>>   
+>>   	/* Grab the locks before changing connector property */
+>>   	mutex_lock(&conn->dev->mode_config.mutex);
+>> @@ -2234,7 +2234,7 @@ static void cdns_mhdp_hpd_work(struct work_struct *work)
+>>   	int ret;
+>>   
+>>   	ret = cdns_mhdp_update_link_status(mhdp);
+>> -	if (mhdp->connector.dev) {
+>> +	if (mhdp->connector) {
+>>   		if (ret < 0)
+>>   			schedule_work(&mhdp->modeset_retry_work);
+>>   		else
+>> diff --git a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.h b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.h
+>> index bad2fc0c7306..b297db53ba28 100644
+>> --- a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.h
+>> +++ b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.h
+>> @@ -375,7 +375,7 @@ struct cdns_mhdp_device {
+>>   	 */
+>>   	struct mutex link_mutex;
+>>   
+>> -	struct drm_connector connector;
+>> +	struct drm_connector *connector;
+>>   	struct drm_bridge bridge;
+>>   
+>>   	struct cdns_mhdp_link link;
+>> diff --git a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-hdcp.c b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-hdcp.c
+>> index 42248f179b69..59f18c3281ef 100644
+>> --- a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-hdcp.c
+>> +++ b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-hdcp.c
+>> @@ -394,7 +394,7 @@ static int _cdns_mhdp_hdcp_disable(struct cdns_mhdp_device *mhdp)
+>>   	int ret;
+>>   
+>>   	dev_dbg(mhdp->dev, "[%s:%d] HDCP is being disabled...\n",
+>> -		mhdp->connector.name, mhdp->connector.base.id);
+>> +		mhdp->connector->name, mhdp->connector->base.id);
+>>   
+>>   	ret = cdns_mhdp_hdcp_set_config(mhdp, 0, false);
+>>   
+>> @@ -445,7 +445,7 @@ static int cdns_mhdp_hdcp_check_link(struct cdns_mhdp_device *mhdp)
+>>   
+>>   	dev_err(mhdp->dev,
+>>   		"[%s:%d] HDCP link failed, retrying authentication\n",
+>> -		mhdp->connector.name, mhdp->connector.base.id);
+>> +		mhdp->connector->name, mhdp->connector->base.id);
+>>   
+>>   	ret = _cdns_mhdp_hdcp_disable(mhdp);
+>>   	if (ret) {
+>> @@ -487,13 +487,13 @@ static void cdns_mhdp_hdcp_prop_work(struct work_struct *work)
+>>   	struct cdns_mhdp_device *mhdp = container_of(hdcp,
+>>   						     struct cdns_mhdp_device,
+>>   						     hdcp);
+>> -	struct drm_device *dev = mhdp->connector.dev;
+>> +	struct drm_device *dev = mhdp->connector->dev;
+>>   	struct drm_connector_state *state;
+>>   
+>>   	drm_modeset_lock(&dev->mode_config.connection_mutex, NULL);
+>>   	mutex_lock(&mhdp->hdcp.mutex);
+>>   	if (mhdp->hdcp.value != DRM_MODE_CONTENT_PROTECTION_UNDESIRED) {
+>> -		state = mhdp->connector.state;
+>> +		state = mhdp->connector->state;
+>>   		state->content_protection = mhdp->hdcp.value;
+>>   	}
+>>   	mutex_unlock(&mhdp->hdcp.mutex);
+> 
 
