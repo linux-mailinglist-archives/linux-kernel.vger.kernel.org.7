@@ -1,158 +1,84 @@
-Return-Path: <linux-kernel+bounces-664165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-664170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31900AC52BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 18:13:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBD7AAC52C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 18:14:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6144C7AC187
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 16:11:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21D3A1BA307D
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 16:14:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF87C2CCC0;
-	Tue, 27 May 2025 16:12:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1085F27FD70;
+	Tue, 27 May 2025 16:13:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sbfWOvHs"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gCM4Afd7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BDB927A477;
-	Tue, 27 May 2025 16:12:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67D932CCC0;
+	Tue, 27 May 2025 16:13:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748362374; cv=none; b=acVriErwERVkvpCMdGt22GtVdzO2Km8p2EW1X/J1SyWUKkKWnOYUK7/hm/Vxenc8tteBkIBuruJ0kyNzpOS/zrE891/qbmyVoQq+ruXTFgDga7opywiEBp9+Kiciom0sRK28p07e9KpthbE5ZtcKCmfJ36lKXGB03jSsT70wo3Q=
+	t=1748362405; cv=none; b=CS31QJOov/fLASMvV5LsOYaHqBxOzltQe22dctI1SBS2aKPChn1wj8Zh5Kgt/P1bsEHn6LzcFwGKhaZK/Gj0oTBHqnhyJ6Tt9EQPNpMUGsI9Uxsv8xINjqwd74ndxqkaW3uSJr0jZHqArl7fhwWBd4XE9cnK0Eygsl07DM6pSC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748362374; c=relaxed/simple;
-	bh=GxIVaZFoqlqVil+CtwcC9E7UETK3do70uNSXMXX3VqA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HNT/eMeaLcGlG60c/aGW+XETqNIgwWAnr3tHheojOM8jZUI3WhkPNzBFj/LfTIdSrno7cfOFRCFgLiABJs9cKeoksZ1dSxJVbc9uXbVR9mXbJin+xYV2P7tqaY2KgxHFVtSYHJfAM7sTIZ4jA3/8LATjxDxsHWIUKN+8QpPHMUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sbfWOvHs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A04FC4CEE9;
-	Tue, 27 May 2025 16:12:53 +0000 (UTC)
+	s=arc-20240116; t=1748362405; c=relaxed/simple;
+	bh=+rOhBA3MDB0wclaiXc132kW6TF3NIYNXXbvmM/76Yu4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=na2BdyytHK58hGbC0UwoPtYPKj1Jv7L6qlZm4ZEvrFFWJr0PBEE/cCiLxYF1GWsYC2aXccydVJsgVVnExjBiWHETvonPf+4uXTWG8ZDLKlcuq+V7Cqk0JnraEXOA0Xs9tmi3fjJyVv9B1VXMmbng+tGH8q84C64XqRIrQcoMnSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gCM4Afd7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D2DEC4CEEB;
+	Tue, 27 May 2025 16:13:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748362373;
-	bh=GxIVaZFoqlqVil+CtwcC9E7UETK3do70uNSXMXX3VqA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sbfWOvHspa/22c/b2iPREaHWPEsd/SvfFekDE82YWtzInTaUiNIe3/Wp6r7vjCyC9
-	 QvOWuYYo6tVYBMay0pCQEkfktEgQefIxMtiV6qrcPuBzntjwJtl3rP8iupnOmAPn/y
-	 QziHnHrRc12xIlOGheI/zZmzSFkGCjgjGBNByLbLxyeFEdbtkNLfY+zdc3lk+UgunT
-	 FtDU3RHgtmd0Wdwl0CeAm+1oWJykMUQBmJMnpr8yE3PU/pisGguLSAqKvXv8O84xnz
-	 d8+5DNd2PgcwGlUPg8moCOuKPIk/GPgT9fYbILICLqfOoQftrCFNU8NpqH0iRX9rrD
-	 IosYhNC+pjCgA==
-Date: Tue, 27 May 2025 18:12:51 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Chris Packham <chris.packham@alliedtelesis.co.nz>
-Cc: jdelvare@suse.com, linux@roeck-us.net, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, linux-hwmon@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org
-Subject: Re: [PATCH v7 1/3] dt-bindings: hwmon: Add adt7475 fan/pwm properties
-Message-ID: <jzxu6mcbxf5zwyirnb2jjpm2i7sln3v5mz3gyhc5xhpqexicvb@atrcjvh7wuh5>
-References: <20240722221737.3407958-1-chris.packham@alliedtelesis.co.nz>
- <20240722221737.3407958-2-chris.packham@alliedtelesis.co.nz>
+	s=k20201202; t=1748362405;
+	bh=+rOhBA3MDB0wclaiXc132kW6TF3NIYNXXbvmM/76Yu4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=gCM4Afd7hOao43lcgZKa5wIrqBtufzW6FH4r94YSR+xFhMj2+EW0AERgnc5R8R5DE
+	 r9KH2tPwU8ZeIJ6I0/UxA9R1Z0FsmJA0R77pWJk8FZ333XU+SJkQDFMZW4WRp3fWa4
+	 /e0rpZxTsYxRQlBRE6+B2CLzgB9+1io/WelunIbc+kNl+e+GiQuRdkqIhzYuTTIO3i
+	 P5mjSBjLKovKN/OU1uVQDt9r+DRyHlM89pSXCc+gCyCiYMBEBkwLCrMaVtqVoYgYLC
+	 Z+R8UVtFkBkxV6o4Z3pKq1jqWt9/JtAWvayCUjGzOSGMHMmYpUT2umT/Vhmmvbz4ks
+	 1R1G5eZulcb2A==
+From: Pratyush Yadav <pratyush@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>,  Pratyush Yadav
+ <pratyush@kernel.org>,  Michael Walle <mwalle@kernel.org>,  Miquel Raynal
+ <miquel.raynal@bootlin.com>,  Richard Weinberger <richard@nod.at>,
+  Vignesh Raghavendra <vigneshr@ti.com>,  Rob Herring <robh@kernel.org>,
+  Krzysztof Kozlowski <krzk+dt@kernel.org>,  Conor Dooley
+ <conor+dt@kernel.org>,  linux-mtd@lists.infradead.org (open list:SPI NOR
+ SUBSYSTEM),  devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND
+ FLATTENED DEVICE TREE BINDINGS),  linux-kernel@vger.kernel.org (open
+ list),  imx@lists.linux.dev
+Subject: Re: [PATCH 1/1] dt-bindings: mtd: jedec,spi-nor: Add atmel,at26*
+ compatible string
+In-Reply-To: <20250523155258.546003-1-Frank.Li@nxp.com>
+References: <20250523155258.546003-1-Frank.Li@nxp.com>
+Date: Tue, 27 May 2025 18:13:22 +0200
+Message-ID: <mafs0r00arpzx.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="llkyqi6gjk3ekkpa"
-Content-Disposition: inline
-In-Reply-To: <20240722221737.3407958-2-chris.packham@alliedtelesis.co.nz>
+Content-Type: text/plain
 
+On Fri, May 23 2025, Frank Li wrote:
 
---llkyqi6gjk3ekkpa
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v7 1/3] dt-bindings: hwmon: Add adt7475 fan/pwm properties
-MIME-Version: 1.0
+> Add atmel,at26* compatible string to fix below CHECK_DTB warning:
+>
+> arch/arm/boot/dts/nxp/vf/vf610-twr.dtb: /soc/bus@40000000/spi@4002c000/at26df081a@0:
+>     failed to match any schema with compatible: ['atmel,at26df081a']
 
-Hello,
+Is there any problem with setting the compatible to "jedec,spi-nor" in
+the DTS instead? If not, it would better to do that instead.
 
-On Tue, Jul 23, 2024 at 10:17:35AM +1200, Chris Packham wrote:
-> Add fan child nodes that allow describing the connections for the
-> ADT7475 to the fans it controls. This also allows setting some
-> initial values for the pwm duty cycle and frequency.
->=20
-> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
-> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
->=20
-> Notes:
->     Changes in v7:
->     - None
->     Changes in v6:
->     - Collect r-by from Rob
->     Changes in v5:
->     - Use nanoseconds for PWM frequency and duty cycle as per existing
->       conventions for PWMs
->     - Set flags to 0 in example to match adi,pwm-active-state setting
->     Changes in v4:
->     - 0 is not a valid frequency value
->     Changes in v3:
->     - Use the pwm provider/consumer bindings
->     Changes in v2:
->     - Document 0 as a valid value (leaves hardware as-is)
->=20
->  .../devicetree/bindings/hwmon/adt7475.yaml    | 35 ++++++++++++++++++-
->  1 file changed, 34 insertions(+), 1 deletion(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/hwmon/adt7475.yaml b/Docum=
-entation/devicetree/bindings/hwmon/adt7475.yaml
-> index 051c976ab711..df2b5b889e4d 100644
-> --- a/Documentation/devicetree/bindings/hwmon/adt7475.yaml
-> +++ b/Documentation/devicetree/bindings/hwmon/adt7475.yaml
-> @@ -51,6 +51,24 @@ properties:
->        enum: [0, 1]
->        default: 1
-> =20
-> +  "#pwm-cells":
-> +    const: 4
+[...]
 
-I asked to add support for #pwm-cells =3D <4> to the pwm core in reply to
-v4 (see
-https://lore.kernel.org/linux-pwm/drqvaon5lb2ei3jqofutbr6demibyfdhbmr24sva2=
-7gzpqdnon@fxa7rpl33iih/).
-
-I'm unhappy to see this merged anyhow in combination with ad-hoc parsing
-of the pwm properties in the driver :-\
-
-> +    description: |
-> +      Number of cells in a PWM specifier.
-> +      - 0: The PWM channel
-> +      - 1: The PWM period in nanoseconds
-> +           - 90909091 (11 Hz)
-> +           - 71428571 (14 Hz)
-> +           - 45454545 (22 Hz)
-> +           - 34482759 (29 Hz)
-> +           - 28571429 (35 Hz)
-> +           - 22727273 (44 Hz)
-> +           - 17241379 (58 Hz)
-> +           - 11363636 (88 Hz)
-> +           - 44444 (22 kHz)
-> +      - 2: PWM flags 0 or PWM_POLARITY_INVERTED
-> +      - 3: The default PWM duty cycle in nanoseconds
-> +
-
-Best regards
-Uwe
-
---llkyqi6gjk3ekkpa
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmg15H8ACgkQj4D7WH0S
-/k7FWQgAtEqgUb6AwUFfIVAEycbfhSikddkDLarrnlLWy0J4LF4ItrZ7Oc6f3OGt
-/fpPJhO71bh/r5bePC2Svv1FmrCcvMhTBdGtdIjfvMhKzi7/ApLl/dM6v7UmA7y4
-nwPpuLXoUUcs0jhJE9NS6gti8x2g8P+BOlZrV8uinozmYIZUmvL3vNI6w2SOQWE6
-D46gwlmJ4u/8ykOFgf9/5E2lzEHJLd0/W7fGSDpoEynHsfiLNPOGWc1cycZtf2jt
-tYgmu5gKM21/UWRNbZIGzgZfZjtN+fKYwtuQimt2CP08IUmstAKzxLjPJ1ApQ6TZ
-TJpJrnrv/xQ57RrAh1qRyRcygshP3A==
-=3n4L
------END PGP SIGNATURE-----
-
---llkyqi6gjk3ekkpa--
+-- 
+Regards,
+Pratyush Yadav
 
