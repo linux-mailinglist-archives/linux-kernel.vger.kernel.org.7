@@ -1,95 +1,41 @@
-Return-Path: <linux-kernel+bounces-663428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-663436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1E82AC4820
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 08:10:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 162D2AC4842
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 08:19:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90BC8189A508
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 06:10:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4C3E178F51
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 06:19:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2620A1F3B89;
-	Tue, 27 May 2025 06:10:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Buo/oC0y";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="3AMFIqmR";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Buo/oC0y";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="3AMFIqmR"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F7E91E0B91;
+	Tue, 27 May 2025 06:19:16 +0000 (UTC)
+Received: from isrv.corpit.ru (isrv.corpit.ru [86.62.121.231])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C1301EF0B9
-	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 06:10:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5A4F1DF725;
+	Tue, 27 May 2025 06:19:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=86.62.121.231
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748326215; cv=none; b=i18DBKOg+GFhr7niGNkNY4SY7JkJgZXkx5EXacfOiBpOeD0u6F3j/LcwT+EYqJsG91oxMDcwnFEoyxdED9hlVmef0F92zaORDAgQi786OqmmUcOuW/CDxWeoHbouy9wwWB+817lkD7GSk8Ig05csx+ZBmmWdb4kCkVDiasje5C8=
+	t=1748326755; cv=none; b=TGBdOTcL79DC2A19rGO7fbiufoRxodZOvl03ADe8kmWps/HQJr2kTPaIsYItjTOSFEBXeyTTuvA1ILqoDMk3Ngfl2XqUjLN1ANpWvPwXIh/CevwFd+/vJXLkA+jdFrAzbD4aRNjDBfko29XfnW4slBVUoPQjrb4Tx74R/opmHJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748326215; c=relaxed/simple;
-	bh=eI4C9G5xJzpBpNASfpC2+tN2SrDq2IXni/3Kbzv9u7o=;
+	s=arc-20240116; t=1748326755; c=relaxed/simple;
+	bh=sO85Dob4Qg2aUxALW8xdkBm7FE0Q0TcdGiHlh18QOZE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rUXC5FUEeF4G6XpBz6u1I3aTepMsDs81ILLpkz1BJ5NE4wK5xMmUXR+WzFjA3viw2qq1fAfNl5+vnoFj+Ik4b9scvuiS09UCb3WM7et2RCgCDt+/NQPo+2w9o7gDbbLMnIgYUVzeq/PE07nyU08CgOK8pMa/r60/LzTGEiXu+wA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Buo/oC0y; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=3AMFIqmR; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Buo/oC0y; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=3AMFIqmR; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 84FE121E79;
-	Tue, 27 May 2025 06:10:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1748326211; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LzbgYeMiACS2U3RQ6hcLbsfyT0tPPC71RPXXgfPSUik=;
-	b=Buo/oC0yeazYNNpmu1E/rP62D5tdOEXSEbL0Rc/4oO8utdY3mpjE9tTAJfOsd8KwXCk1eC
-	iDnqaAe9gjjNVPeNN+XpdAfA3vFo6hNSz3ZvEDEZjdOXi6g2EqujjLGkBL79ZUQAE/HtVb
-	bEeE9Kj/FP9mJsvTj3CpTk8jMelNqZw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1748326211;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LzbgYeMiACS2U3RQ6hcLbsfyT0tPPC71RPXXgfPSUik=;
-	b=3AMFIqmR2GrtSlhTTSn9edGSb6pJKOLw3FM+ygxMdfNRIJ11xzruPKCPnWVrReuGc/AljY
-	tvXizJiiyZytQeAA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="Buo/oC0y";
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=3AMFIqmR
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1748326211; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LzbgYeMiACS2U3RQ6hcLbsfyT0tPPC71RPXXgfPSUik=;
-	b=Buo/oC0yeazYNNpmu1E/rP62D5tdOEXSEbL0Rc/4oO8utdY3mpjE9tTAJfOsd8KwXCk1eC
-	iDnqaAe9gjjNVPeNN+XpdAfA3vFo6hNSz3ZvEDEZjdOXi6g2EqujjLGkBL79ZUQAE/HtVb
-	bEeE9Kj/FP9mJsvTj3CpTk8jMelNqZw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1748326211;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LzbgYeMiACS2U3RQ6hcLbsfyT0tPPC71RPXXgfPSUik=;
-	b=3AMFIqmR2GrtSlhTTSn9edGSb6pJKOLw3FM+ygxMdfNRIJ11xzruPKCPnWVrReuGc/AljY
-	tvXizJiiyZytQeAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BE7A0136E0;
-	Tue, 27 May 2025 06:10:10 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id xLnHLEJXNWinFwAAD6G6ig
-	(envelope-from <hare@suse.de>); Tue, 27 May 2025 06:10:10 +0000
-Message-ID: <23b75e25-fa2f-4d12-8d96-6de01e43ad49@suse.de>
-Date: Tue, 27 May 2025 08:10:10 +0200
+	 In-Reply-To:Content-Type; b=R4vzjbTEcqySNgKvwb6QBQAekiuW9dLA4skT8rqhOFiuvzhF5Ux9wI2Wu3gllgqaD81Erz1aoqx/DoJVzM4mlHDV/JrcZ9srmkBdcVswChj+/xdl4qaqi9SNPxnNmfGw+Ev0XfLphdZ3YYTDuBfYM77erxHHkr3gphYKjsnwIF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tls.msk.ru; spf=pass smtp.mailfrom=tls.msk.ru; arc=none smtp.client-ip=86.62.121.231
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tls.msk.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tls.msk.ru
+Received: from tsrv.corpit.ru (tsrv.tls.msk.ru [192.168.177.2])
+	by isrv.corpit.ru (Postfix) with ESMTP id 8BF5712554B;
+	Tue, 27 May 2025 09:11:32 +0300 (MSK)
+Received: from [192.168.177.130] (mjt.wg.tls.msk.ru [192.168.177.130])
+	by tsrv.corpit.ru (Postfix) with ESMTP id 7E1A721734F;
+	Tue, 27 May 2025 09:11:36 +0300 (MSK)
+Message-ID: <2636618a-5000-449a-bc2d-f7bf253bf26d@tls.msk.ru>
+Date: Tue, 27 May 2025 09:11:36 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,237 +43,75 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 06/23] md/md-bitmap: add a new sysfs api bitmap_type
-To: Yu Kuai <yukuai1@huaweicloud.com>, hch@lst.de, xni@redhat.com,
- colyli@kernel.org, song@kernel.org, yukuai3@huawei.com
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-raid@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
- johnny.chenyi@huawei.com
-References: <20250524061320.370630-1-yukuai1@huaweicloud.com>
- <20250524061320.370630-7-yukuai1@huaweicloud.com>
-Content-Language: en-US
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20250524061320.370630-7-yukuai1@huaweicloud.com>
+Subject: Re: [PATCH] Fix comment for virtio-9p
+To: dancer@debian.org, mst@redhat.com
+Cc: qemu-devel@nongnu.org, adelva@google.com, uekawa@chromium.org,
+ linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
+ kvm@vger.kernel.org
+References: <20250527041123.840063-1-dancer@debian.org>
+Content-Language: en-US, ru-RU
+From: Michael Tokarev <mjt@tls.msk.ru>
+Autocrypt: addr=mjt@tls.msk.ru; keydata=
+ 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
+In-Reply-To: <20250527041123.840063-1-dancer@debian.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-1.51 / 50.00];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-0.997];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	R_RATELIMIT(0.00)[to_ip_from(RLf34csc5ba3ztc71of6h9nuns)];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:dkim,suse.de:mid,huawei.com:email];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: 84FE121E79
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -1.51
+Content-Transfer-Encoding: 7bit
 
-On 5/24/25 08:13, Yu Kuai wrote:
-> From: Yu Kuai <yukuai3@huawei.com>
+27.05.2025 07:11, dancer@debian.org wrote:
+> From: Junichi Uekawa <uekawa@chromium.org>
 > 
-> The api will be used by mdadm to set bitmap_ops while creating new array
-> or assemble array, prepare to add a new bitmap.
-> 
-> Currently available options are:
-> 
-> cat /sys/block/md0/md/bitmap_type
-> none [bitmap]
-> 
-> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
-> ---
->   Documentation/admin-guide/md.rst | 73 ++++++++++++++----------
->   drivers/md/md.c                  | 96 ++++++++++++++++++++++++++++++--
->   drivers/md/md.h                  |  2 +
->   3 files changed, 135 insertions(+), 36 deletions(-)
-> 
-[ .. ]
-> diff --git a/drivers/md/md.c b/drivers/md/md.c
-> index 311e52d5173d..4eb0c6effd5b 100644
-> --- a/drivers/md/md.c
-> +++ b/drivers/md/md.c
-> @@ -672,13 +672,18 @@ static void active_io_release(struct percpu_ref *ref)
->   
->   static void no_op(struct percpu_ref *r) {}
->   
-> -static void mddev_set_bitmap_ops(struct mddev *mddev, enum md_submodule_id id)
-> +static bool mddev_set_bitmap_ops(struct mddev *mddev)
->   {
->   	xa_lock(&md_submodule);
-> -	mddev->bitmap_ops = xa_load(&md_submodule, id);
-> +	mddev->bitmap_ops = xa_load(&md_submodule, mddev->bitmap_id);
->   	xa_unlock(&md_submodule);
-> -	if (!mddev->bitmap_ops)
-> -		pr_warn_once("md: can't find bitmap id %d\n", id);
-> +
-> +	if (!mddev->bitmap_ops) {
-> +		pr_warn_once("md: can't find bitmap id %d\n", mddev->bitmap_id);
-> +		return false;
-> +	}
-> +
-> +	return true;
->   }
->   
->   static void mddev_clear_bitmap_ops(struct mddev *mddev)
-> @@ -688,8 +693,10 @@ static void mddev_clear_bitmap_ops(struct mddev *mddev)
->   
->   int mddev_init(struct mddev *mddev)
->   {
-> -	/* TODO: support more versions */
-> -	mddev_set_bitmap_ops(mddev, ID_BITMAP);
-> +	mddev->bitmap_id = ID_BITMAP;
-> +
-> +	if (!mddev_set_bitmap_ops(mddev))
-> +		return -EINVAL;
->   
->   	if (percpu_ref_init(&mddev->active_io, active_io_release,
->   			    PERCPU_REF_ALLOW_REINIT, GFP_KERNEL)) {
-> @@ -4155,6 +4162,82 @@ new_level_store(struct mddev *mddev, const char *buf, size_t len)
->   static struct md_sysfs_entry md_new_level =
->   __ATTR(new_level, 0664, new_level_show, new_level_store);
->   
-> +static ssize_t
-> +bitmap_type_show(struct mddev *mddev, char *page)
-> +{
-> +	struct md_submodule_head *head;
-> +	unsigned long i;
-> +	ssize_t len = 0;
-> +
-> +	if (mddev->bitmap_id == ID_BITMAP_NONE)
-> +		len += sprintf(page + len, "[none] ");
-> +	else
-> +		len += sprintf(page + len, "none ");
-> +
-> +	xa_lock(&md_submodule);
-> +	xa_for_each(&md_submodule, i, head) {
-> +		if (head->type != MD_BITMAP)
-> +			continue;
-> +
-> +		if (mddev->bitmap_id == head->id)
-> +			len += sprintf(page + len, "[%s] ", head->name);
-> +		else
-> +			len += sprintf(page + len, "%s ", head->name);
-> +	}
-> +	xa_unlock(&md_submodule);
-> +
-> +	len += sprintf(page + len, "\n");
-> +	return len;
-> +}
-> +
-> +static ssize_t
-> +bitmap_type_store(struct mddev *mddev, const char *buf, size_t len)
-> +{
-> +	struct md_submodule_head *head;
-> +	enum md_submodule_id id;
-> +	unsigned long i;
-> +	int err;
-> +
-> +	if (mddev->bitmap_ops)
-> +		return -EBUSY;
-> +
-Why isn't this protected by md_submodule lock?
-The lock is taken when updating ->bitmap_ops, so I would
-have expected it to be taken when checking it ...
+> virtio-9p is not a console protocol, it's a file sharing protocol. Seems
+> like an artifact of old copy-and-paste error.
 
-> +	err = kstrtoint(buf, 10, &id);
-> +	if (!err) {
-> +		if (id == ID_BITMAP_NONE) {
-> +			mddev->bitmap_id = id;
-> +			return len;
-> +		}
-> +
-> +		xa_lock(&md_submodule);
-> +		head = xa_load(&md_submodule, id);
-> +		xa_unlock(&md_submodule);
-> +
-> +		if (head && head->type == MD_BITMAP) {
-> +			mddev->bitmap_id = id;
-> +			return len;
-> +		}
-> +	}
-> +
-> +	if (cmd_match(buf, "none")) {
-> +		mddev->bitmap_id = ID_BITMAP_NONE;
-> +		return len;
-> +	}
-> +
-That is odd coding. The 'if (!err)' condition above might
-fall through to here, but then we already now that it cannot
-match 'none'.
-Please invert the logic, first check for 'none', and only
-call kstroint if the match failed.
+> -#define VIRTIO_ID_9P			9 /* 9p virtio console */
+> +#define VIRTIO_ID_9P			9 /* virtio 9p */
 
-> +	xa_lock(&md_submodule);
-> +	xa_for_each(&md_submodule, i, head) {
-> +		if (head->type == MD_BITMAP && cmd_match(buf, head->name)) {
-> +			mddev->bitmap_id = head->id;
-> +			xa_unlock(&md_submodule);
-> +			return len;
-> +		}
-> +	}
-> +	xa_unlock(&md_submodule);
-> +	return -ENOENT;
-> +}
-> +
-> +static struct md_sysfs_entry md_bitmap_type =
-> +__ATTR(bitmap_type, 0664, bitmap_type_show, bitmap_type_store);
-> +
->   static ssize_t
->   layout_show(struct mddev *mddev, char *page)
->   {
-> @@ -5719,6 +5802,7 @@ __ATTR(serialize_policy, S_IRUGO | S_IWUSR, serialize_policy_show,
->   static struct attribute *md_default_attrs[] = {
->   	&md_level.attr,
->   	&md_new_level.attr,
-> +	&md_bitmap_type.attr,
->   	&md_layout.attr,
->   	&md_raid_disks.attr,
->   	&md_uuid.attr,
-> diff --git a/drivers/md/md.h b/drivers/md/md.h
-> index 13e3f9ce1b79..bf34c0a36551 100644
-> --- a/drivers/md/md.h
-> +++ b/drivers/md/md.h
-> @@ -40,6 +40,7 @@ enum md_submodule_id {
->   	ID_CLUSTER,
->   	ID_BITMAP,
->   	ID_LLBITMAP,	/* TODO */
-> +	ID_BITMAP_NONE,
->   };
->   
->   struct md_submodule_head {
-> @@ -565,6 +566,7 @@ struct mddev {
->   	struct percpu_ref		writes_pending;
->   	int				sync_checkers;	/* # of threads checking writes_pending */
->   
-> +	enum md_submodule_id		bitmap_id;
->   	void				*bitmap; /* the bitmap for the device */
->   	struct bitmap_operations	*bitmap_ops;
->   	struct {
+While the old one was obviously wrong, I don't think the new
+wording makes much sense, since it merely repeats the name of
+the constant :)
 
-Cheers,
+How about "virtio 9p file sharing protocol" instead ? :)
 
-Hannes
--- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+/mjt
 
