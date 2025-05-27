@@ -1,105 +1,52 @@
-Return-Path: <linux-kernel+bounces-664283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-664279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE5CBAC5978
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 19:57:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07043AC5967
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 19:56:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C65BD4C19F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 17:57:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 255899E0DF4
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 17:56:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2FF8285401;
-	Tue, 27 May 2025 17:56:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFE9B28030A;
+	Tue, 27 May 2025 17:56:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Iw3b9Nie"
-Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F5D1Fj32"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52ECD281512;
-	Tue, 27 May 2025 17:56:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 425652566;
+	Tue, 27 May 2025 17:56:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748368587; cv=none; b=n1KfPrBA4VMd/VOrbJsH5etiB93B7INL1fYKbjpBVFwqBJieywWACIYNc3uKZMGGCYqmpoI7eaCkzWw9RdoPSDTrawB0sKtw6VQ6ErclWNa4uQYGg6nIro21qlq9rmwuwW2WiJJ/ceFakGrfOGS5jmsB9U/yE3w8mCiRQnJiKDo=
+	t=1748368581; cv=none; b=LUWsPu3Y9Uur/owOtO8OqMRKWbf+zQZJXcqPM4EeKHTKWFMazLq/h13w0UxO5UqpuJh489PFwQ5TNTWlmbhP2UUpihBlqp67MVzVj0KI4hnwAzb1SbVPa3YhanZjzK2+3ugG8DKR8X87BwOzkDLUkno+tIDAkksWXCAKzzj/PZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748368587; c=relaxed/simple;
-	bh=ysE5VQEeovJqr9bZqisHWPRj0Fb3prPMdXXWvIA1Iwg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ASu6YF+JnWDq7E9pSIxzwLO4OI1F/ksm+dUz7VfeStXTC/y8NWercjqax6LdWDV0kEEVvERGIewYVAX/0VU7mo3GyuUW2F/xzIBLTPmM1rGtswOwmL8AE/bm0OZth+wO1pN3ayh28J03rnxRT5kwUF9oSSTfJVO3ZqW7OjeOCc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Iw3b9Nie; arc=none smtp.client-ip=209.85.166.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-3dd24c86779so21821185ab.1;
-        Tue, 27 May 2025 10:56:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748368584; x=1748973384; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=75t1KQGtX7DtR0KwXgxMTDEvGLkyel42aN9/Vltyf4E=;
-        b=Iw3b9Nie2JoZxmHvOcNo3WoQF6i3w7LILz1pxGBHuJ15zLENaXcVghKqG7TWKWZU0R
-         Ja3H7gEQE2JH+KdsDcGRd9KnjhhrQBDVmwS99Qt3OWElleszuPqIdZLBIaJDYByIcWzy
-         iYuRanEQMwc/xLGvCorXiTQ7pxmc8cpnFdfgTDzQ55JqzSPTsWjMZmCKJwlAZ4doxynv
-         xiAPEBo0SaS01NHQWj793mZwnOegfL7d3I4pzgzc6L5p5VcNr0NknJhNV2AsTChzbuqP
-         3mz90avhGjIMlqTftgskbTLnApqg8Ryt54O4I2kzDsPqNYjL69A622qGQtFiSpQgDKwz
-         KCUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748368584; x=1748973384;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=75t1KQGtX7DtR0KwXgxMTDEvGLkyel42aN9/Vltyf4E=;
-        b=PgDitu8B9yBpavw5Egd16MksUacrBQtyc0QuVbbb5kUp79sCHT61ebSHTjzyvuZtNh
-         Pv2q78u0VDoHLGW9NgvtOoQPuRG+zWymX/mWgzRemKKVGSdYFtVYIChjDd2WqyutCtbL
-         S/316XMzGTtGUbNoGweGL2uSaMsJpIWoD5TpCcvyRTYSDCEthhNmqvhOSxPJlAcZ210l
-         Vs1NtVvak5Y8UG2uOHvr7Ou35cfPHSN2ZtQDOMnVEqnaWhpwlRcQDPUIJ49masldSq7u
-         rPkcIqJJnQCBKu98upvu8RpOAv0dL82vupuNVgZ89mxfUn26VZne0wcZCUa8MQ27RrTz
-         rcPg==
-X-Forwarded-Encrypted: i=1; AJvYcCUvDjoPI4Yeu6PwwH5tYDm7Z3rvGINGVNgwJpX1okubw6leeN+E0rXOW1Z5vsALJ+gewbLqhqRiMs7HrZ54@vger.kernel.org, AJvYcCWeuALSc6LQsQ2+7wEqInQS8rSyJFOB9qISlLzfM4YXBZomvwVLvFUgh4QTfXKH+F6pmWHcHzscCV7H@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/5kRqnZsisOMErJJmPhYOYKHo5wXVdhwKjC3E94SGfdkNS4nM
-	DWhYwviB90rUrfat6eiHFPAUUotTYNMqOiE2Kqc/RaUrANXbIJCfMTf7xnET+1guKas=
-X-Gm-Gg: ASbGncvIPKhYNdCVEtO1gTu9sjT9SswMJip+IMYxnCPKb2Q2nOPDQjO5amPCU4yw6ut
-	fWQtzsLOuKlLymBeigWxxcgbxgpmKZ8F/ClptT7CV37/UOF0f5FpZsC+6ukf2rVAUknq3asaYcX
-	mCIY486k/h/swX5LVWnNCwaotjfNpjtBtFt0UXjW9Qa7l7l6A+ZXDQzKUe0uDa7Qk/D3C60caqH
-	Km9udmBoL9ZyRYCcFjj+9n4DTmZmQLyENnF9/SNmZR3bpQj+R8mrj5g8zCslvexThTRj1Ivy9zE
-	M7rhUb9Pg4xBSDrHY02qLBgHU/I/EqLW8bvll5B+E3zZaM4LLE3Neom4Pc0T3MkD3ql7hPlOGBz
-	RopWkIh1RrngoaxOaP/9y7oHAonutYw==
-X-Google-Smtp-Source: AGHT+IEG1Ty/l3Gh00PtWxsgabl40eUie4mjzIcYjsL+B8so87NPY18sPvIj6HQRx+VZNV4Xgx4J1g==
-X-Received: by 2002:a05:6e02:144d:b0:3d5:8923:faa5 with SMTP id e9e14a558f8ab-3dc9b6aa36dmr108298815ab.10.1748368584073;
-        Tue, 27 May 2025 10:56:24 -0700 (PDT)
-Received: from james-x399.localdomain (97-118-146-220.hlrn.qwest.net. [97.118.146.220])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3dc82e014f4sm38082275ab.40.2025.05.27.10.56.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 May 2025 10:56:23 -0700 (PDT)
-From: James Hilliard <james.hilliard1@gmail.com>
-To: netdev@vger.kernel.org
-Cc: linux-sunxi@lists.linux.dev,
-	James Hilliard <james.hilliard1@gmail.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Maxime Ripard <mripard@kernel.org>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/3] dt-bindings: net: sun8i-emac: Add AC300 EMAC1 nvmem phy selection
-Date: Tue, 27 May 2025 11:55:56 -0600
-Message-Id: <20250527175558.2738342-3-james.hilliard1@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250527175558.2738342-1-james.hilliard1@gmail.com>
-References: <20250527175558.2738342-1-james.hilliard1@gmail.com>
+	s=arc-20240116; t=1748368581; c=relaxed/simple;
+	bh=eG389LQ+Xp78SjC4Ihx0dxZG+lEE3vE/NvkzUBfztsM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nksTc6VpR16cG8081VvdXSb34DTA1KrWXWRP3xgD0nFxs6kT5KLuvfATpiyYxeQPZbfK8hCBr9wRolF3Gxk+3rDiv8MyYgVj1e4KsbIeFieWcrHvhNITb+SWt4HJF3De048sSyIcvJ757ahWuEeg946T6HFsOIVkwk+d+I1a45o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F5D1Fj32; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A16AC4CEE9;
+	Tue, 27 May 2025 17:56:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748368581;
+	bh=eG389LQ+Xp78SjC4Ihx0dxZG+lEE3vE/NvkzUBfztsM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=F5D1Fj32VEUl3B6sNEwIPhTfO1xnxcw6t0cKI2opKKyIOBremDZgnT0mZx0kni2vd
+	 7RxuW+QnS9LAo8AHydgrVQvXFr2KfKDMuPuTdft0lO17rM/syFfkzRrp5KrtfOPJ2G
+	 xYn1NsX8xPYgitF9yx8X/QLJm2JgGVgVVqR/h5qNW2jc0OdKFEzuDCDxCeAzE9RGsC
+	 XnNLkReQHBuIddieg7Z8lYO+wqOiMZo//+Iz79NJXNibG7H453s9CAr6ij2f1+lh1s
+	 MlQV95bPPKOYGPInuQmdMo/mIKhAd3avTN3l0F7osZzXKUKWP9va17NOwGC2SpCgWr
+	 L/99FuX0cKWBQ==
+From: Masahiro Yamada <masahiroy@kernel.org>
+To: linux-kbuild@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>
+Subject: [PATCH] kconfig: introduce menu type enum
+Date: Wed, 28 May 2025 02:56:15 +0900
+Message-ID: <20250527175616.2450667-1-masahiroy@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -108,202 +55,153 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The Allwinner H616 EMAC1 can be connected to an copackaged AC200
-or AC300 PHY depending upon the variant.
+Currently, menu->prompt->type is checked to distinguish "comment"
+(P_COMMENT) and "menu" (P_MENU) entries from regular "config" entries.
+This is odd because P_COMMENT and P_MENU are not properties.
 
-Add a new allwinner,sun50i-h616-emac1 compatible and example, support
-for the allwinner,sun50i-h616-emac1 EMAC1 MAC will be added later on.
+This commit introduces menu type enum to distinguish menu types more
+naturally.
 
-Add nvmem-cells and nvmem-cell-names properties for the ac300 efuse
-based phy selection.
-
-Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
 ---
-Changes v1 -> v2:
-  - fix dt_binding_check
----
- .../net/allwinner,sun8i-a83t-emac.yaml        | 75 ++++++++++++++++++-
- .../bindings/net/ethernet-controller.yaml     | 26 +++++--
- .../devicetree/bindings/net/snps,dwmac.yaml   |  2 +
- 3 files changed, 94 insertions(+), 9 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/net/allwinner,sun8i-a83t-emac.yaml b/Documentation/devicetree/bindings/net/allwinner,sun8i-a83t-emac.yaml
-index 7fe0352dff0f..3a8c31dd9ae7 100644
---- a/Documentation/devicetree/bindings/net/allwinner,sun8i-a83t-emac.yaml
-+++ b/Documentation/devicetree/bindings/net/allwinner,sun8i-a83t-emac.yaml
-@@ -18,6 +18,7 @@ properties:
-       - const: allwinner,sun8i-r40-gmac
-       - const: allwinner,sun8i-v3s-emac
-       - const: allwinner,sun50i-a64-emac
-+      - const: allwinner,sun50i-h616-emac1
-       - items:
-           - enum:
-               - allwinner,sun20i-d1-emac
-@@ -58,7 +59,6 @@ required:
-   - clock-names
-   - resets
-   - reset-names
--  - phy-handle
-   - phy-mode
-   - syscon
+ scripts/kconfig/expr.h   | 11 +++++++++++
+ scripts/kconfig/lkc.h    |  2 +-
+ scripts/kconfig/menu.c   |  5 +++--
+ scripts/kconfig/parser.y | 12 ++++++------
+ 4 files changed, 21 insertions(+), 9 deletions(-)
+
+diff --git a/scripts/kconfig/expr.h b/scripts/kconfig/expr.h
+index 21578dcd4292..fe2231e0e6a4 100644
+--- a/scripts/kconfig/expr.h
++++ b/scripts/kconfig/expr.h
+@@ -205,15 +205,26 @@ struct property {
+ 	for (st = sym->prop; st; st = st->next) \
+ 		if (st->text)
  
-@@ -73,6 +73,7 @@ allOf:
-               - allwinner,sun8i-h3-emac
-               - allwinner,sun8i-v3s-emac
-               - allwinner,sun50i-a64-emac
-+              - allwinner,sun50i-h616-emac1
++enum menu_type {
++	M_CHOICE,  // "choice"
++	M_COMMENT, // "comment"
++	M_IF,      // "if"
++	M_MENU,    // "mainmenu", "menu", "menuconfig"
++	M_NORMAL,  // others, i.e., "config"
++};
++
+ /*
+  * Represents a node in the menu tree, as seen in e.g. menuconfig (though used
+  * for all front ends). Each symbol, menu, etc. defined in the Kconfig files
+  * gets a node. A symbol defined in multiple locations gets one node at each
+  * location.
+  *
++ * @type: type of the menu entry
+  * @choice_members: list of choice members with priority.
+  */
+ struct menu {
++	enum menu_type type;
++
+ 	/* The next menu node at the same level */
+ 	struct menu *next;
  
-     then:
-       properties:
-@@ -189,6 +190,42 @@ allOf:
-             - mdio-parent-bus
-             - mdio@1
+diff --git a/scripts/kconfig/lkc.h b/scripts/kconfig/lkc.h
+index b8ebc3094a23..fbc907f75eac 100644
+--- a/scripts/kconfig/lkc.h
++++ b/scripts/kconfig/lkc.h
+@@ -81,7 +81,7 @@ void _menu_init(void);
+ void menu_warn(const struct menu *menu, const char *fmt, ...);
+ struct menu *menu_add_menu(void);
+ void menu_end_menu(void);
+-void menu_add_entry(struct symbol *sym);
++void menu_add_entry(struct symbol *sym, enum menu_type type);
+ void menu_add_dep(struct expr *dep);
+ void menu_add_visibility(struct expr *dep);
+ struct property *menu_add_prompt(enum prop_type type, const char *prompt,
+diff --git a/scripts/kconfig/menu.c b/scripts/kconfig/menu.c
+index 6587ac86d0d5..7d48a692bd27 100644
+--- a/scripts/kconfig/menu.c
++++ b/scripts/kconfig/menu.c
+@@ -15,7 +15,7 @@
  
-+  - if:
-+      not:
-+        properties:
-+          compatible:
-+            contains:
-+              enum:
-+                - allwinner,sun50i-h616-emac1
-+
-+    then:
-+      required:
-+        - phy-handle
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - allwinner,sun50i-h616-emac1
-+
-+    then:
-+      properties:
-+        nvmem-cells: true
-+
-+        nvmem-cell-names: true
-+
-+        phys:
-+          maxItems: 2
-+
-+        phy-names:
-+          items:
-+            - const: ac200
-+            - const: ac300
-+
-+        mdio:
-+          $ref: mdio.yaml#
-+
- unevaluatedProperties: false
+ static const char nohelp_text[] = "There is no help available for this option.";
  
- examples:
-@@ -321,4 +358,40 @@ examples:
-         };
-     };
+-struct menu rootmenu;
++struct menu rootmenu = { .type = M_MENU };
+ static struct menu **last_entry_ptr;
  
-+  - |
-+    ethernet@5030000 {
-+        compatible = "allwinner,sun50i-h616-emac1";
-+        syscon = <&syscon>;
-+        reg = <0x05030000 0x10000>;
-+        interrupts = <0 15 4>;
-+        interrupt-names = "macirq";
-+        resets = <&ccu 31>;
-+        reset-names = "stmmaceth";
-+        clocks = <&ccu 83>;
-+        clock-names = "stmmaceth";
-+        phys = <&ac200_rmii_phy>, <&ac300_rmii_phy>;
-+        phy-names = "ac200", "ac300";
-+        phy-mode = "rgmii";
-+        nvmem-cells = <&ephy_acx00>;
-+        nvmem-cell-names = "ac300";
-+
-+        mdio {
-+            compatible = "snps,dwmac-mdio";
-+            #address-cells = <1>;
-+            #size-cells = <0>;
-+
-+            ac300_rmii_phy: ac300-ethernet-phy@0 {
-+              #phy-cells = <0>;
-+              compatible = "ethernet-phy-ieee802.3-c22";
-+              reg = <0>;
-+            };
-+
-+            ac200_rmii_phy: ac200-ethernet-phy@1 {
-+              #phy-cells = <0>;
-+              compatible = "ethernet-phy-ieee802.3-c22";
-+              reg = <1>;
-+            };
-+        };
-+    };
-+
- ...
-diff --git a/Documentation/devicetree/bindings/net/ethernet-controller.yaml b/Documentation/devicetree/bindings/net/ethernet-controller.yaml
-index a2d4c626f659..710e651851e5 100644
---- a/Documentation/devicetree/bindings/net/ethernet-controller.yaml
-+++ b/Documentation/devicetree/bindings/net/ethernet-controller.yaml
-@@ -45,14 +45,6 @@ properties:
-     description:
-       Specifies maximum speed in Mbit/s supported by the device.
+ /**
+@@ -65,12 +65,13 @@ void _menu_init(void)
+ 	last_entry_ptr = &rootmenu.list;
+ }
  
--  nvmem-cells:
--    maxItems: 1
--    description:
--      Reference to an nvmem node for the MAC address
--
--  nvmem-cell-names:
--    const: mac-address
--
-   phy-connection-type:
-     description:
-       Specifies interface type between the Ethernet device and a physical
-@@ -260,6 +252,24 @@ dependencies:
-   pcs-handle-names: [pcs-handle]
+-void menu_add_entry(struct symbol *sym)
++void menu_add_entry(struct symbol *sym, enum menu_type type)
+ {
+ 	struct menu *menu;
  
- allOf:
-+  - if:
-+      not:
-+        properties:
-+          compatible:
-+            contains:
-+              enum:
-+                - allwinner,sun50i-h616-emac1
-+
-+    then:
-+      properties:
-+        nvmem-cells:
-+          maxItems: 1
-+          description:
-+            Reference to an nvmem node for the MAC address
-+
-+        nvmem-cell-names:
-+          const: mac-address
-+
-   - if:
-       properties:
-         phy-mode:
-diff --git a/Documentation/devicetree/bindings/net/snps,dwmac.yaml b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
-index 78b3030dc56d..a6dfed00c48f 100644
---- a/Documentation/devicetree/bindings/net/snps,dwmac.yaml
-+++ b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
-@@ -56,6 +56,7 @@ properties:
-         - allwinner,sun8i-r40-gmac
-         - allwinner,sun8i-v3s-emac
-         - allwinner,sun50i-a64-emac
-+        - allwinner,sun50i-h616-emac1
-         - amlogic,meson6-dwmac
-         - amlogic,meson8b-dwmac
-         - amlogic,meson8m2-dwmac
-@@ -620,6 +621,7 @@ allOf:
-                 - allwinner,sun8i-r40-gmac
-                 - allwinner,sun8i-v3s-emac
-                 - allwinner,sun50i-a64-emac
-+                - allwinner,sun50i-h616-emac1
-                 - loongson,ls2k-dwmac
-                 - loongson,ls7a-dwmac
-                 - ingenic,jz4775-mac
+ 	menu = xmalloc(sizeof(*menu));
+ 	memset(menu, 0, sizeof(*menu));
++	menu->type = type;
+ 	menu->sym = sym;
+ 	menu->parent = current_menu;
+ 	menu->filename = cur_filename;
+diff --git a/scripts/kconfig/parser.y b/scripts/kconfig/parser.y
+index 68372d3ff325..e9c3c664e925 100644
+--- a/scripts/kconfig/parser.y
++++ b/scripts/kconfig/parser.y
+@@ -139,7 +139,7 @@ stmt_list_in_choice:
+ 
+ config_entry_start: T_CONFIG nonconst_symbol T_EOL
+ {
+-	menu_add_entry($2);
++	menu_add_entry($2, M_NORMAL);
+ 	printd(DEBUG_PARSE, "%s:%d:config %s\n", cur_filename, cur_lineno, $2->name);
+ };
+ 
+@@ -173,7 +173,7 @@ config_stmt: config_entry_start config_option_list
+ 
+ menuconfig_entry_start: T_MENUCONFIG nonconst_symbol T_EOL
+ {
+-	menu_add_entry($2);
++	menu_add_entry($2, M_MENU);
+ 	printd(DEBUG_PARSE, "%s:%d:menuconfig %s\n", cur_filename, cur_lineno, $2->name);
+ };
+ 
+@@ -246,7 +246,7 @@ choice: T_CHOICE T_EOL
+ {
+ 	struct symbol *sym = sym_lookup(NULL, 0);
+ 
+-	menu_add_entry(sym);
++	menu_add_entry(sym, M_CHOICE);
+ 	menu_set_type(S_BOOLEAN);
+ 	INIT_LIST_HEAD(&current_entry->choice_members);
+ 
+@@ -315,7 +315,7 @@ default:
+ if_entry: T_IF expr T_EOL
+ {
+ 	printd(DEBUG_PARSE, "%s:%d:if\n", cur_filename, cur_lineno);
+-	menu_add_entry(NULL);
++	menu_add_entry(NULL, M_IF);
+ 	menu_add_dep($2);
+ 	$$ = menu_add_menu();
+ };
+@@ -338,7 +338,7 @@ if_stmt_in_choice: if_entry stmt_list_in_choice if_end
+ 
+ menu: T_MENU T_WORD_QUOTE T_EOL
+ {
+-	menu_add_entry(NULL);
++	menu_add_entry(NULL, M_MENU);
+ 	menu_add_prompt(P_MENU, $2, NULL);
+ 	printd(DEBUG_PARSE, "%s:%d:menu\n", cur_filename, cur_lineno);
+ };
+@@ -376,7 +376,7 @@ source_stmt: T_SOURCE T_WORD_QUOTE T_EOL
+ 
+ comment: T_COMMENT T_WORD_QUOTE T_EOL
+ {
+-	menu_add_entry(NULL);
++	menu_add_entry(NULL, M_COMMENT);
+ 	menu_add_prompt(P_COMMENT, $2, NULL);
+ 	printd(DEBUG_PARSE, "%s:%d:comment\n", cur_filename, cur_lineno);
+ };
 -- 
-2.34.1
+2.43.0
 
 
