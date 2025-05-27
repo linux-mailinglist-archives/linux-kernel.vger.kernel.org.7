@@ -1,56 +1,56 @@
-Return-Path: <linux-kernel+bounces-663856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-663857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D11A2AC4E69
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 14:12:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0ED71AC4E6E
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 14:12:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B43A18927D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 12:12:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D31711798F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 May 2025 12:12:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8686B26FD95;
-	Tue, 27 May 2025 12:11:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ABCB267AED;
+	Tue, 27 May 2025 12:11:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="CfMsGv9k"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ZmvPCFbg"
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2347C269806
-	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 12:11:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A45B26A08C
+	for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 12:11:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748347888; cv=none; b=JeWJdUdHbxwd1I9yzhROIwvIXR/AG+x7VqsjQbs0dLWiGWo8G0zhXJU3IBVzsk6YPwl/iaxB+z9piKZT2wkdyxK7me3xNwSQ6sU/NLP1CXMutA8d6x0bVw36JzbBGDmW82SXIrV5WuHdVmvPCbjE0vZ5CmDw7xuKWNuYRcC3APc=
+	t=1748347890; cv=none; b=qn/YacHoC0eRndS7F14eclccnjI9550tj3RCAggx+oZy8XjVZLR5Qe0jy+H8v3/lO8NCz5/de3eJ2opfFcpP7k2m22t3sn8CXTV7Xi2FWJRdj1UgpNrdarpO0nEocfQmoVIpAqO0c6V2Z4f7P2EC4sGCmx3Shs/aK5lC+qYge4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748347888; c=relaxed/simple;
-	bh=nijtXNzysgHLE928c8E4bJ3fEU89OD4M7b36fpgO9SI=;
+	s=arc-20240116; t=1748347890; c=relaxed/simple;
+	bh=60Q9YGJFxkYXokTEGw8Vd2judhNXO2bs3vTtJNqz7ow=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=D86w22MvMr6YEEe6dIdVHx3z+WHX1Dj2BeFVfvnuuD3tBrzKV6LE41BiX5FN0B4Xg5+8NBcyD37zehonKwrfE95TooOE1JtGvNf6o948BQJ9J7aMkf5lrBWs5m4WYt36CpEt7ncgrg5pZE2LjUa05XO9obGcoxgX0NvS2jPoZA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=CfMsGv9k; arc=none smtp.client-ip=148.251.105.195
+	 In-Reply-To:To:Cc; b=P64Z8uuDZyNidRuxdywLZf1mBCgavrkfNem+/kzO29g8V6fnWCrFaDVAx0S/s4sLYC6OL9YQX1tm3UUE5lcXVv0G1kOgu9EczBNVhM5Z2GiAw6ce5LKayxhayuhtAYUJG/25sFejF0Mwg36ecgLmTPmf32EQvSd7E5s5KUnmodo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ZmvPCFbg; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1748347885;
-	bh=nijtXNzysgHLE928c8E4bJ3fEU89OD4M7b36fpgO9SI=;
+	s=mail; t=1748347886;
+	bh=60Q9YGJFxkYXokTEGw8Vd2judhNXO2bs3vTtJNqz7ow=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=CfMsGv9kZInhHbdfDUdwGhHCl2qSm19UN7WZWqGPIEuzk3Ic8KhqkfN4Ytoz1rCnP
-	 6lCNCLMEgdv5vWqvXQYxX8t0jULGhMrEgIWWo9VdPyg/gjyMWci5lPMPgDO7sMTgxK
-	 80LC/8hr9VcgdOvguE+a6weuZ8DKdc/SwhqK3uVj90Angf8FjDVMqC2NGoV7sTGDSo
-	 833FwIC2b/PKR9RNlBgWzarRWjyvdzHJ4pOVw5sfC+TT7k8sBoFSIXM34JOMOhD0d0
-	 XjAyRxEq4nH0fMYurqLD358VZnL52/fmx6E+5qSHtX6bsZYPnCTwSbeppKukRIXe7Z
-	 5IAALtMWs7yKg==
+	b=ZmvPCFbgVH6RLKJFItoD4yCwK42ZSHp5TojE4SjO/iPH4CkRGzPI2NJvJHwI065B9
+	 MFNd2B8Wmzj5VTVnYhkZYoinElbdQZJn6V3gT6DvtUhSqjWmcRqABLtRtPzyC+ZH5I
+	 Cg2eU45N9wKmjjjUrm50mNTzfnTvOl+yLU+W100Ig4hEXGY4G2+VQojSlaUdSXvNOg
+	 quyYw/rFGg19uf85wEkLgNDkQndth0QraCWHejF6eL4xqCv3gLWND/oVhXdbgjsjrY
+	 Dp4XByf28V/p9qMCXCLs+nR4jGJcoYH74XsPicMRwd6fl7nMgO9B2jgpzfHxW+BuNv
+	 P0ehoz4Y3vF8A==
 Received: from localhost (unknown [82.76.59.134])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with UTF8SMTPSA id 1721017E378D;
+	by bali.collaboradmins.com (Postfix) with UTF8SMTPSA id DA57317E056F;
 	Tue, 27 May 2025 14:11:25 +0200 (CEST)
 From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Date: Tue, 27 May 2025 15:11:12 +0300
-Subject: [PATCH v5 04/19] drm/connector: hdmi: Add missing bpc debug info
- to hdmi_try_format_bpc()
+Date: Tue, 27 May 2025 15:11:13 +0300
+Subject: [PATCH v5 05/19] drm/connector: hdmi: Factor out bpc and format
+ computation logic
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,7 +59,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250527-hdmi-conn-yuv-v5-4-74c9c4a8ac0c@collabora.com>
+Message-Id: <20250527-hdmi-conn-yuv-v5-5-74c9c4a8ac0c@collabora.com>
 References: <20250527-hdmi-conn-yuv-v5-0-74c9c4a8ac0c@collabora.com>
 In-Reply-To: <20250527-hdmi-conn-yuv-v5-0-74c9c4a8ac0c@collabora.com>
 To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
@@ -72,43 +72,115 @@ Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org,
  linux-kernel@vger.kernel.org
 X-Mailer: b4 0.14.2
 
-The very first debug message in hdmi_try_format_bpc() is incomplete, as
-it doesn't provide the given bpc in addition to the tried format.
+In preparation to support fallback to an alternative output format, e.g.
+YUV420, when RGB cannot be used for any of the available color depths,
+move the bpc try loop out of hdmi_compute_config() and, instead, make it
+part of hdmi_compute_format(), while adding a new parameter to the
+latter holding the output format to be checked and eventually set.
 
-Add the missing debug information and drop the now redundant message
-from hdmi_compute_config().
+Since this helper now also changes hdmi.output_bpc in addition to
+hdmi.output_format, highlight the extended functionality by renaming it
+to hdmi_compute_format_bpc().
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+This improves code reusability and further extensibility, without
+introducing any functional changes.
+
+Reviewed-by: Maxime Ripard <mripard@kernel.org>
 Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
 ---
- drivers/gpu/drm/display/drm_hdmi_state_helper.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/display/drm_hdmi_state_helper.c | 60 ++++++++++++-------------
+ 1 file changed, 30 insertions(+), 30 deletions(-)
 
 diff --git a/drivers/gpu/drm/display/drm_hdmi_state_helper.c b/drivers/gpu/drm/display/drm_hdmi_state_helper.c
-index b05099c18f64a9cf1acecbfca8c9117b753117e4..45a650b461abdfa50787a92a9d65f48c97f317a7 100644
+index 45a650b461abdfa50787a92a9d65f48c97f317a7..a9733a2e1b632e02f535c5ece64762f8ed9e4af2 100644
 --- a/drivers/gpu/drm/display/drm_hdmi_state_helper.c
 +++ b/drivers/gpu/drm/display/drm_hdmi_state_helper.c
-@@ -579,8 +579,9 @@ hdmi_try_format_bpc(const struct drm_connector *connector,
+@@ -606,45 +606,22 @@ hdmi_try_format_bpc(const struct drm_connector *connector,
+ }
+ 
+ static int
+-hdmi_compute_format(const struct drm_connector *connector,
+-		    struct drm_connector_state *conn_state,
+-		    const struct drm_display_mode *mode,
+-		    unsigned int bpc)
+-{
+-	struct drm_device *dev = connector->dev;
+-
+-	/*
+-	 * TODO: Add support for YCbCr420 output for HDMI 2.0 capable
+-	 * devices, for modes that only support YCbCr420.
+-	 */
+-	if (hdmi_try_format_bpc(connector, conn_state, mode, bpc, HDMI_COLORSPACE_RGB)) {
+-		conn_state->hdmi.output_format = HDMI_COLORSPACE_RGB;
+-		return 0;
+-	}
+-
+-	drm_dbg_kms(dev, "Failed. No Format Supported for that bpc count.\n");
+-
+-	return -EINVAL;
+-}
+-
+-static int
+-hdmi_compute_config(const struct drm_connector *connector,
+-		    struct drm_connector_state *conn_state,
+-		    const struct drm_display_mode *mode)
++hdmi_compute_format_bpc(const struct drm_connector *connector,
++			struct drm_connector_state *conn_state,
++			const struct drm_display_mode *mode,
++			unsigned int max_bpc, enum hdmi_colorspace fmt)
+ {
  	struct drm_device *dev = connector->dev;
- 	int ret;
- 
--	drm_dbg_kms(dev, "Trying %s output format\n",
--		    drm_hdmi_connector_get_output_format_name(fmt));
-+	drm_dbg_kms(dev, "Trying %s output format with %u bpc\n",
-+		    drm_hdmi_connector_get_output_format_name(fmt),
-+		    bpc);
- 
- 	if (!sink_supports_format_bpc(connector, info, mode, fmt, bpc)) {
- 		drm_dbg_kms(dev, "%s output format not supported with %u bpc\n",
-@@ -639,8 +640,6 @@ hdmi_compute_config(const struct drm_connector *connector,
+-	unsigned int max_bpc = clamp_t(unsigned int,
+-				       conn_state->max_bpc,
+-				       8, connector->max_bpc);
+ 	unsigned int bpc;
  	int ret;
  
  	for (bpc = max_bpc; bpc >= 8; bpc -= 2) {
--		drm_dbg_kms(dev, "Trying with a %d bpc output\n", bpc);
--
- 		ret = hdmi_compute_format(connector, conn_state, mode, bpc);
- 		if (ret)
+-		ret = hdmi_compute_format(connector, conn_state, mode, bpc);
+-		if (ret)
++		ret = hdmi_try_format_bpc(connector, conn_state, mode, bpc, fmt);
++		if (!ret)
  			continue;
+ 
+ 		conn_state->hdmi.output_bpc = bpc;
++		conn_state->hdmi.output_format = fmt;
+ 
+ 		drm_dbg_kms(dev,
+ 			    "Mode %ux%u @ %uHz: Found configuration: bpc: %u, fmt: %s, clock: %llu\n",
+@@ -656,9 +633,32 @@ hdmi_compute_config(const struct drm_connector *connector,
+ 		return 0;
+ 	}
+ 
++	drm_dbg_kms(dev, "Failed. %s output format not supported for any bpc count.\n",
++		    drm_hdmi_connector_get_output_format_name(fmt));
++
+ 	return -EINVAL;
+ }
+ 
++static int
++hdmi_compute_config(const struct drm_connector *connector,
++		    struct drm_connector_state *conn_state,
++		    const struct drm_display_mode *mode)
++{
++	unsigned int max_bpc = clamp_t(unsigned int,
++				       conn_state->max_bpc,
++				       8, connector->max_bpc);
++	int ret;
++
++	/*
++	 * TODO: Add support for YCbCr420 output for HDMI 2.0 capable
++	 * devices, for modes that only support YCbCr420.
++	 */
++	ret = hdmi_compute_format_bpc(connector, conn_state, mode, max_bpc,
++				      HDMI_COLORSPACE_RGB);
++
++	return ret;
++}
++
+ static int hdmi_generate_avi_infoframe(const struct drm_connector *connector,
+ 				       struct drm_connector_state *conn_state)
+ {
 
 -- 
 2.49.0
