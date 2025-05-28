@@ -1,269 +1,74 @@
-Return-Path: <linux-kernel+bounces-666237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74EE2AC7413
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 00:30:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2F35AC73F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 00:26:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B30029E8CEC
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 22:30:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9072E4E846F
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 22:26:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37FE922DF9D;
-	Wed, 28 May 2025 22:26:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IWN6bbv3"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 237982222A0;
+	Wed, 28 May 2025 22:26:29 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77EC3221FC0;
-	Wed, 28 May 2025 22:26:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA7D2221F2E
+	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 22:26:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748471208; cv=none; b=U9GVhCanlBoSuqOd4JoEJM3SwpKKwVR5WP+nvSWe+uNjjSEWk+GDSKMYpDZ8djVJSRJx+1p8BKYbk7xGmVj8hXNYPpg29ZYdhNivrMzmcRdcRDDKM68R8EMq56g90Vjb3ijrxePcHvj+5W83/JqLFI/+O3O6MC+Ago1jZqqhzlE=
+	t=1748471188; cv=none; b=CqWK5wnu7DsmIS9bdvv6Rl00l+jvXugDKmKdiJoPKOdjotBiv0wqlC7XdO+ylr8lI7MHs0c5m+MutoU5W1nHC6NJsRIzvk4f8KZrw16K3QGaeF++VlgVfklS0APcoPykxQp16qL2ShzvNzDpRXRO1CECDwSzVryk2K1E8SgkYzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748471208; c=relaxed/simple;
-	bh=rhY89p3QLjKKxBhAfsOf/vrOTPNyUThFp058gpN3hhs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FAK4Vhr3tMVxAX/bK7GAkOXSXT9Idcq8kLYxnFXhNYG7Xhr+YuHUqpoAtQI3yE7HBshVxOk0sTwRPHgAWPE3uzT5vI6QiuPkifmKx2Qin+GCcjUqfXl0lhXClJ4Xb1+vtuAWQoucShjLvwYBFEoHiJ9dhMGEk/+rwHJbdjsHkAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IWN6bbv3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D380DC4CEEE;
-	Wed, 28 May 2025 22:26:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748471208;
-	bh=rhY89p3QLjKKxBhAfsOf/vrOTPNyUThFp058gpN3hhs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=IWN6bbv3xpc11cQKUuM4O2zDoxiWWjAp6EaCj0hMnr8NAL2RtZ0mfwV2y4E/Gl4bx
-	 DWIHJ21sxrVmxKC7SFKpJua9S3GRNcdcCIiMkTYzWGNuVvoGB0Rw+1SqNvII2FVngX
-	 wC9HlM7teDCn7Iu6d3eFJqhToqeDHzwueaE4IVUJiIDyrkEpRD7Q4MyC/T4Wk/9ijT
-	 YohqPGKHyerB5aWiQncwTXcu+BJ1qkzRsKUeJceWIzK1/V72IhSs9t1JoM8mkc7sB9
-	 ZTdIhRIa0K1tkeh2oP17N6mUoT2Ox6F3+6eb6cJuuBTgD22eWpAiAf84qPNWhCPyNj
-	 ddgSpkel4oIwQ==
-From: Song Liu <song@kernel.org>
-To: bpf@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Cc: kernel-team@meta.com,
-	andrii@kernel.org,
-	eddyz87@gmail.com,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	martin.lau@linux.dev,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	kpsingh@kernel.org,
-	mattbobrowski@google.com,
-	amir73il@gmail.com,
-	repnop@google.com,
-	jlayton@kernel.org,
-	josef@toxicpanda.com,
-	mic@digikod.net,
-	gnoack@google.com,
-	Song Liu <song@kernel.org>
-Subject: [PATCH bpf-next 4/4] selftests/bpf: Add tests for bpf path iterator
-Date: Wed, 28 May 2025 15:26:23 -0700
-Message-ID: <20250528222623.1373000-5-song@kernel.org>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20250528222623.1373000-1-song@kernel.org>
-References: <20250528222623.1373000-1-song@kernel.org>
+	s=arc-20240116; t=1748471188; c=relaxed/simple;
+	bh=MZjUkKHS1vCjdXkfYflxs7Zno0iAOCiqgPK5E4whLTY=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=DZoa2DygKyh+e6vVz+qFT8e7Sfnu/d+38UNqeeeKKx5vJ0c/VR721ZaxCW3avJ8eE6cVfPAtNMgQl2vFlLDhGUmF+aLIgCEk9wDEXx+Pp0xcCGAdzP8s6RlnAUM0smzUhN+ZN6iyFHUbRpioo17mNQgK32sAwHIe4sCM5VqsndY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46007C4CEE3;
+	Wed, 28 May 2025 22:26:28 +0000 (UTC)
+Received: from rostedt by gandalf with local (Exim 4.98.2)
+	(envelope-from <rostedt@goodmis.org>)
+	id 1uKPFB-0000000AoxW-1bEI;
+	Wed, 28 May 2025 18:27:29 -0400
+Message-ID: <20250528222704.623477429@goodmis.org>
+User-Agent: quilt/0.68
+Date: Wed, 28 May 2025 18:27:04 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Subject: [for-next][PATCH 00/10] ring-buffer: Updates for v6.16
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Add tests for bpf path iterator, including test cases similar to real
-workload (call bpf_path_d_path and bpf_get_dentry_xattr), and test cases
-where the verifier rejects invalid use of the iterator.
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+ring-buffer/for-next
 
-Signed-off-by: Song Liu <song@kernel.org>
----
- .../testing/selftests/bpf/bpf_experimental.h  |   6 +
- .../selftests/bpf/prog_tests/path_iter.c      |  12 ++
- tools/testing/selftests/bpf/progs/path_iter.c | 134 ++++++++++++++++++
- 3 files changed, 152 insertions(+)
- create mode 100644 tools/testing/selftests/bpf/prog_tests/path_iter.c
- create mode 100644 tools/testing/selftests/bpf/progs/path_iter.c
+Head SHA1: 1e83735aeb8330a23dd6020cd917ef12dd7ee56e
 
-diff --git a/tools/testing/selftests/bpf/bpf_experimental.h b/tools/testing/selftests/bpf/bpf_experimental.h
-index 6535c8ae3c46..e9eb2b105eb2 100644
---- a/tools/testing/selftests/bpf/bpf_experimental.h
-+++ b/tools/testing/selftests/bpf/bpf_experimental.h
-@@ -591,4 +591,10 @@ extern int bpf_iter_kmem_cache_new(struct bpf_iter_kmem_cache *it) __weak __ksym
- extern struct kmem_cache *bpf_iter_kmem_cache_next(struct bpf_iter_kmem_cache *it) __weak __ksym;
- extern void bpf_iter_kmem_cache_destroy(struct bpf_iter_kmem_cache *it) __weak __ksym;
- 
-+struct bpf_iter_path;
-+extern int bpf_iter_path_new(struct bpf_iter_path *it, struct path *start,
-+			     enum bpf_path_iter_mode mode) __weak __ksym;
-+extern struct path *bpf_iter_path_next(struct bpf_iter_path *it) __weak __ksym;
-+extern void bpf_iter_path_destroy(struct bpf_iter_path *it) __weak __ksym;
-+
- #endif
-diff --git a/tools/testing/selftests/bpf/prog_tests/path_iter.c b/tools/testing/selftests/bpf/prog_tests/path_iter.c
-new file mode 100644
-index 000000000000..3c99c24fbd96
---- /dev/null
-+++ b/tools/testing/selftests/bpf/prog_tests/path_iter.c
-@@ -0,0 +1,12 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2025 Meta Platforms, Inc. and affiliates. */
-+
-+#include <test_progs.h>
-+#include <bpf/libbpf.h>
-+#include <bpf/btf.h>
-+#include "path_iter.skel.h"
-+
-+void test_path_iter(void)
-+{
-+	RUN_TESTS(path_iter);
-+}
-diff --git a/tools/testing/selftests/bpf/progs/path_iter.c b/tools/testing/selftests/bpf/progs/path_iter.c
-new file mode 100644
-index 000000000000..d5733c797a3f
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/path_iter.c
-@@ -0,0 +1,134 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2025 Meta Platforms, Inc. and affiliates. */
-+
-+#include "vmlinux.h"
-+#include <bpf/bpf_helpers.h>
-+#include <bpf/bpf_tracing.h>
-+#include "bpf_misc.h"
-+#include "bpf_experimental.h"
-+
-+char _license[] SEC("license") = "GPL";
-+
-+char path_name[256];
-+char xattr_val[64];
-+
-+static __always_inline void access_path_dentry(struct path *p)
-+{
-+	struct bpf_dynptr ptr;
-+	struct dentry *dentry;
-+
-+	if (!p)
-+		return;
-+
-+	bpf_dynptr_from_mem(xattr_val, sizeof(xattr_val), 0, &ptr);
-+	bpf_path_d_path(p, path_name, sizeof(path_name));
-+
-+	dentry = p->dentry;
-+	if (dentry)
-+		bpf_get_dentry_xattr(dentry, "user.xattr", &ptr);
-+}
-+
-+SEC("lsm.s/file_open")
-+__success
-+int BPF_PROG(open_code, struct file *f)
-+{
-+	struct bpf_iter_path path_it;
-+	struct path *p;
-+	int ret;
-+
-+	ret = bpf_iter_path_new(&path_it, &f->f_path, BPF_PATH_ITER_MODE_PARENT);
-+	if (ret) {
-+		bpf_iter_path_destroy(&path_it);
-+		return 0;
-+	}
-+
-+	p = bpf_iter_path_next(&path_it);
-+	access_path_dentry(p);
-+	bpf_iter_path_destroy(&path_it);
-+
-+	return 0;
-+}
-+
-+SEC("lsm.s/file_open")
-+__success
-+int BPF_PROG(for_each, struct file *f)
-+{
-+	struct path *p;
-+
-+	bpf_for_each(path, p, &f->f_path, BPF_PATH_ITER_MODE_PARENT)
-+		access_path_dentry(p);
-+
-+	return 0;
-+}
-+
-+SEC("lsm.s/file_open")
-+__failure __msg("Unreleased reference")
-+int BPF_PROG(missing_destroy, struct file *f)
-+{
-+	struct bpf_iter_path path_it;
-+
-+	bpf_iter_path_new(&path_it, &f->f_path, BPF_PATH_ITER_MODE_PARENT);
-+
-+	return 0;
-+}
-+
-+SEC("lsm.s/file_open")
-+__failure __msg("expected an initialized iter_path")
-+int BPF_PROG(missing_new, struct file *f)
-+{
-+	struct bpf_iter_path path_it;
-+
-+	bpf_iter_path_destroy(&path_it);
-+	return 0;
-+}
-+
-+SEC("lsm.s/file_open")
-+__failure __msg("expected uninitialized iter_path")
-+int BPF_PROG(new_twice, struct file *f)
-+{
-+	struct bpf_iter_path path_it;
-+
-+	bpf_iter_path_new(&path_it, &f->f_path, BPF_PATH_ITER_MODE_PARENT);
-+	bpf_iter_path_new(&path_it, &f->f_path, BPF_PATH_ITER_MODE_PARENT);
-+	bpf_iter_path_destroy(&path_it);
-+	return 0;
-+}
-+
-+SEC("lsm.s/file_open")
-+__failure __msg("expected an initialized iter_path")
-+int BPF_PROG(destroy_twice, struct file *f)
-+{
-+	struct bpf_iter_path path_it;
-+
-+	bpf_iter_path_new(&path_it, &f->f_path, BPF_PATH_ITER_MODE_PARENT);
-+	bpf_iter_path_destroy(&path_it);
-+	bpf_iter_path_destroy(&path_it);
-+	return 0;
-+}
-+
-+SEC("lsm.s/file_open")
-+__success
-+int BPF_PROG(reuse_path_iter, struct file *f)
-+{
-+	struct bpf_iter_path path_it;
-+
-+	bpf_iter_path_new(&path_it, &f->f_path, BPF_PATH_ITER_MODE_PARENT);
-+	bpf_iter_path_destroy(&path_it);
-+	bpf_iter_path_new(&path_it, &f->f_path, BPF_PATH_ITER_MODE_PARENT);
-+	bpf_iter_path_destroy(&path_it);
-+	return 0;
-+}
-+
-+SEC("lsm.s/file_open")
-+__failure __msg("invalid read from stack off")
-+int BPF_PROG(invalid_read_path_iter, struct file *f)
-+{
-+	struct bpf_iter_path path_it;
-+	struct bpf_iter_path path_it_2;
-+
-+
-+	bpf_iter_path_new(&path_it, &f->f_path, BPF_PATH_ITER_MODE_PARENT);
-+	path_it_2 = path_it;
-+	bpf_iter_path_destroy(&path_it_2);
-+	return 0;
-+}
--- 
-2.47.1
 
+Masami Hiramatsu (Google) (1):
+      tracing: Reset last-boot buffers when reading out all cpu buffers
+
+Steven Rostedt (9):
+      ring-buffer: Move cpus_read_lock() outside of buffer->mutex
+      ring-buffer: Do not trigger WARN_ON() due to a commit_overrun
+      ring-buffer: Allow reserve_mem persistent ring buffers to be mmapped
+      ring-buffer: Removed unnecessary if() goto out where out is the next line
+      ring-buffer: Remove jump to out label in ring_buffer_swap_cpu()
+      ring-buffer: Simplify reset_disabled_cpu_buffer() with use of guard()
+      ring-buffer: Simplify ring_buffer_read_page() with guard()
+      ring-buffer: Make ring_buffer_{un}map() simpler with guard(mutex)
+      ring-buffer: Simplify functions with __free(kfree) to free allocations
+
+----
+ kernel/trace/ring_buffer.c | 213 ++++++++++++++++++++++++---------------------
+ kernel/trace/trace.c       |  26 +++++-
+ 2 files changed, 134 insertions(+), 105 deletions(-)
 
