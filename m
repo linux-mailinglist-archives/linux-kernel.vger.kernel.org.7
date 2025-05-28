@@ -1,156 +1,214 @@
-Return-Path: <linux-kernel+bounces-665772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21230AC6D80
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 18:08:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08C4EAC6D85
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 18:09:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2728E9E5490
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 16:08:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CBC41BA5F28
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 16:09:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBBAB28C865;
-	Wed, 28 May 2025 16:08:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDB3828CF5B;
+	Wed, 28 May 2025 16:09:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DTP6sStv"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="jATkvto2"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 964C1214A69
-	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 16:08:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FCA728C011
+	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 16:09:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748448510; cv=none; b=YD0w7FO960JQN4avh7zsdSyP+UA97bbuEBPN4bXkLZKt5kCJt2gexivGTgOYZfjJEDLal31Bh8r8ytig9GTS4mSNut6CrMxo+eIg9RNbEb7fSdThzsTZU4Sgx0LSEU2gZ2oat4jhtYiXMfKGxBaQYKev6/Fs3CPtVDRUPElX3qQ=
+	t=1748448561; cv=none; b=SKmu/hquBbH+xKFQK1RtkGUBDFZGerMzXdoetN9YNwv8r2vi2syqIUOSdokn4TiMfU+OCZaxcdRLYK0anBk+zNO6ibcnSemu6DJxKfhViw7r0boEiad5kZdggR4W1T2UUQtwzbG0g+zSdB48GEJ70UOY0ALCE6h6RF790US+lwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748448510; c=relaxed/simple;
-	bh=LibnRIxltzpbANK+z/ZCNtTGSZsFrtMBHyUPR93lW28=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ZaAfV1OTAu1hQmyQI2BhwFRoHF21fYoT4f//JCx33En1Up744HVVqnPAmdvHSfJb8i4fGTKPbS3LgzguMgmvvDrXswPIo8YR9ZZacuOYAiGYnkAJ92QvXWxc2TcmCBuWfTVixoie0YWPjCzPgSkfphOZ11GZ/qnCRRlPLdJ4Oz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DTP6sStv; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1748448507;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ELCjKD+gxUuR3aRJg9A9JbOeDRYY9q3dgElqJB30ab4=;
-	b=DTP6sStvhnHjYESwgyTmF0GG2suoJ3+RMxOQTNERnl+bzK/BONvH4ML3HpR7zqu4b//hBx
-	zTmYt095F80Ywm+X7wjc7dnjJpssjlgmzjxCIKPSLNY/a9dHs2SQUDBxW2w2MuihwzATSD
-	rlVx9I046oTc+bGKVqmpa0OHWW0Z5eg=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-332-gHVqQf4uMKmuXeGvCOi_ZQ-1; Wed, 28 May 2025 12:08:26 -0400
-X-MC-Unique: gHVqQf4uMKmuXeGvCOi_ZQ-1
-X-Mimecast-MFC-AGG-ID: gHVqQf4uMKmuXeGvCOi_ZQ_1748448505
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7ceb5b5140eso851423185a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 09:08:26 -0700 (PDT)
+	s=arc-20240116; t=1748448561; c=relaxed/simple;
+	bh=np8r8DuK6ohXYj94bzpiLLJFXyF2GOtaPunqIgAdjGE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tdovY5HV8ZM6G1q6txgaSr3urknZ0pHTxVsqhpvPThj/Y2WET5El1cEPvWcUD1SjlUyZg/Z57NH/e/U+pLxPDve+dfXutWFYjCcwA2N+mEPZX2NOwJT36hN1nZrePCiIM8FFlrljv+JAY+XpbO9y4zLKLi9I+T60A+4j7oHZkjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=jATkvto2; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54S6qBiS021217
+	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 16:09:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=0ebk4FuXKBEehQnwIzWbtceY
+	5Eq5Hvk7/WPMviultPQ=; b=jATkvto2sObAkLZQpbEMzNj94YJNvCCQ5aSCVBDh
+	XTcWBQ2FjoLXpexqv68kpBzYdad4VozIQcq3xnzDnh6oCeqRE8Cx37JVopqaGCqO
+	2e7+CzGS4hS53+T6kLKboYju65mFsKpiovPevzTkySJTgNlZNKvX8jHhUERZMyDU
+	wlvDVWhnuJ5fzjf03HI1Q4z3j9BX8326ajLkaGaemlnbNYlpSHbXua0nIeutZnFq
+	9/aamuWTykZFzcQRz+i0Cs067IbHC+doHuMPO34fglInHZ9aFUBEm5H7MQH+x7tB
+	DOe0PnSFAaOqW9g/u3KXCnXVfQ0qYOolg1U13yusYooq+A==
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46vmgcy8k2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 16:09:17 +0000 (GMT)
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-311e7d05931so881886a91.1
+        for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 09:09:17 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748448505; x=1749053305;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ELCjKD+gxUuR3aRJg9A9JbOeDRYY9q3dgElqJB30ab4=;
-        b=cEggGdTnHfT9/kn6XeuLbhKamRn9DB19sElFqYtjB+Uh2X2qHL765LOrH8OlzY7zBY
-         Ci4CpcnZi3DiqRVM8TsogsFHUHY6LSfKIhF3TDeU8S+bNq759R6TEBxo8fzao2SP6J3E
-         fapoKzWIqHTXIvztSmFgTzRuVI36MU0/Iw71uvvk7cOTPyfbUpQhVypk50lWSFSOLkd+
-         /oTuWE8XcEviPdxIms810fcUPsKvugqpJUhHg87SWmEYGcOtGLd01wgs6hZS8MNewHOs
-         wGP7WD16Vgj0YmAhVV8jWgMO2/J9BaMU0XQ7SgmqXdS7iVPOqTg93NjiwVt7mp1DPJKX
-         2wug==
-X-Forwarded-Encrypted: i=1; AJvYcCXDxUbTPnwWFUG/ivamIbYRkKdYuEEHF89NaGJhiMllJ5GxUGkR0fi1JYnqyL78iTgtjxXfoVDMDqYurXc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwppMfMTZAXunfGIbWhbGjgmTaZH3wl7W3MmiYqRHPrkGbs2R0O
-	u17fC1dJX8GJil/whvqrOkRqxK0WSF/D+9cdwrKWKiAiby4RG24FnvoTYU9DPxyY6g07cbxcXvh
-	Tc5uh+5Tpo8YEd/J/Ka45nUt/+/lTB8o4T83vFjxqBWB5p26RfhW+fK2/tgCGSR9C9w==
-X-Gm-Gg: ASbGncudBTWhiuu29GyTqNtKX8Gnc4iHFaJpQS3pEElLbM3TxRE37XX1JlxIu4wJj+I
-	mNmVLpb8lW8ogiobX2O1Jx21sAR0Ne6noLCDtkXL37syNw614fuAfOCWV+e7XhwvorL6D7jRohu
-	bH4F5mYJej3Ibn58r+7/AVd6G9ma356RxB/PMPIqco2XTVXdftrSgKD0ZBxejiLvqNWWMq+opVV
-	QjGjDmNLkD4ettVBqLYl6q/XIKnE5VCfk/KmFgrDxfGjaMvR0vwqYZJcVYMDgh10HrhSYswaPwN
-	XITKHs6hfQz9mPKM31H2oDvJ7YNNyNao65cf8yhAfERLxyvZAalYo8d814s=
-X-Received: by 2002:a05:620a:424d:b0:7c5:962b:e87c with SMTP id af79cd13be357-7ceecc296f9mr2823528785a.44.1748448505351;
-        Wed, 28 May 2025 09:08:25 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGwBg64uo0z4Bgibxmg+9R08YonGSy0ylNwRuFxVQIAkQT9OnjwXxcnU1GDcfo/I0jNy+NrwQ==
-X-Received: by 2002:a05:620a:424d:b0:7c5:962b:e87c with SMTP id af79cd13be357-7ceecc296f9mr2823520385a.44.1748448504590;
-        Wed, 28 May 2025 09:08:24 -0700 (PDT)
-Received: from ?IPv6:2607:fea8:fc01:8d8d:5c3d:ce6:f389:cd38? ([2607:fea8:fc01:8d8d:5c3d:ce6:f389:cd38])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7cfb8210270sm87017585a.31.2025.05.28.09.08.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 May 2025 09:08:24 -0700 (PDT)
-Message-ID: <fadc8e044c3b18984b0ca4a88ef214feb779034d.camel@redhat.com>
-Subject: Re: [PATCH] rust: add helper for mutex_trylock
-From: mlevitsk@redhat.com
-To: Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org, 
-	kvm@vger.kernel.org
-Cc: rust-for-linux@vger.kernel.org, ojeda@kernel.org, Stephen Rothwell
-	 <sfr@canb.auug.org.au>
-Date: Wed, 28 May 2025 12:08:23 -0400
-In-Reply-To: <20250528083431.1875345-1-pbonzini@redhat.com>
-References: <20250528083431.1875345-1-pbonzini@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+        d=1e100.net; s=20230601; t=1748448556; x=1749053356;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0ebk4FuXKBEehQnwIzWbtceY5Eq5Hvk7/WPMviultPQ=;
+        b=Lm9Rq6o3M6H8gcG4MUZ69ovKz1teVi8H2WcT7ZPZDmh7SQNS7+O2N/VnRKn5kKUqtS
+         ogV0MEp3IESWfMe1/Zs6CgOjPjwGwMzp4EAy0KINgaE0mogfO/ioA3bpqGDq+WIo2iJh
+         o7ITJKETkZclGHu/Gr36bm0BULdJ7iY+R1Ysod+oM1D1sg1PiAz7t+sgP9ULEMyM5lr+
+         DxdevPHSgS8vUs3Pm73EIY2ZuisXlMcRnBdQ/HjhO6rVvW9pgFGyKhmPbwP7xXZzYip2
+         /CHEPhkHS8+kIZkurYoc6kUL+MalsZJdFOa8LVEK9m3e+8OzbXGvhOxtyhSWvZRPUljW
+         U1RA==
+X-Forwarded-Encrypted: i=1; AJvYcCXero8QKQWSuPgRH+4NMPY0I6f4CL7RJTI3PcmzotpNpcFTXWS6ou0DJovM8KDcfHQm29ngCqSsSt24pLY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCsl2jtrFYaabDvsqhxbenQJj0em3RBV62fSzxgoZJA7gBeizP
+	9yOiEgmiFLcUwMNR6fJwq0zfvjElAu1rDf2tONDyNMSt6sfBQlfq5m+xwqnKxQDKA0irGwUhhEh
+	EosvRLCWzyVt8TidhZBS2jzJJaUgRG51MTOFsUpuEuJGcSu0gMYgUd/eLK8D3vgY18OYY/5fCC5
+	8t9Wcqy3CIF+uPcclEew5chU6vjky+qoXij3LGZAmB1A==
+X-Gm-Gg: ASbGnct21pIUj7C2k2QfpAcs9pKsqJTfHXOYtyfXiBwJ1hr2HqO9qtSpIfpJtmjLN9s
+	pODLEAwL/ySh1gDq94344H3/VxeLxaCB3k/BXcHDn5NjRMZFbvDEQhwrvbxibylnExhz0bPF6oB
+	6lYfBU8AUfVO6q26wwb30zUZ0=
+X-Received: by 2002:a17:90b:1fc8:b0:311:e8cc:4264 with SMTP id 98e67ed59e1d1-311e8cc4409mr5694233a91.12.1748448556270;
+        Wed, 28 May 2025 09:09:16 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEEyU9Na6w19P6vBrFWsatyjVSIe0mXXTuG1XS0eEc1904ZaykvV6ov/DP09T7xW5vDmnuTXfgVmAxcYzfANhw=
+X-Received: by 2002:a17:90b:1fc8:b0:311:e8cc:4264 with SMTP id
+ 98e67ed59e1d1-311e8cc4409mr5694169a91.12.1748448555821; Wed, 28 May 2025
+ 09:09:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250527081447.304-1-kernel@airkyi.com> <e2dnvpbze4xuubggduqr3p5nnhg7huk3dnpdcb6tldxbrn2qtn@bfsewz5trfv3>
+ <bc321a71-1934-4889-bd8e-3bb593c8feba@rock-chips.com>
+In-Reply-To: <bc321a71-1934-4889-bd8e-3bb593c8feba@rock-chips.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Date: Wed, 28 May 2025 19:09:04 +0300
+X-Gm-Features: AX0GCFsUqNN07CMI1cNHp3U4iz8XhLlLFw-nWKQWlciyho8w9zoePiczSCHemug
+Message-ID: <CAO9ioeXLSQyBFuedtt4=_OjEWZW6T9HaaYr8_NiNy2eh4yw-qg@mail.gmail.com>
+Subject: Re: [PATCH v3] drm/rockchip: cdn-dp: Convert to drm bridge
+To: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+Cc: Chaoyi Chen <kernel@airkyi.com>, Sandy Huang <hjc@rock-chips.com>,
+        Heiko Stuebner <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-ORIG-GUID: 58mJwtDytTaUbJZ_gQkG0UH_n-9L1uiu
+X-Proofpoint-GUID: 58mJwtDytTaUbJZ_gQkG0UH_n-9L1uiu
+X-Authority-Analysis: v=2.4 cv=Ws4rMcfv c=1 sm=1 tr=0 ts=6837352d cx=c_pps
+ a=vVfyC5vLCtgYJKYeQD43oA==:117 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10
+ a=VwQbUJbxAAAA:8 a=ePr-TV-LAAAA:8 a=s8YR1HE3AAAA:8 a=RRhK3aCThXU4g2SLoiEA:9
+ a=QEXdDO2ut3YA:10 a=rl5im9kqc5Lf4LNbBjHf:22 a=uGDpjx9DKq9E8W49yboe:22
+ a=jGH_LyMDp9YhSvY-UuyI:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI4MDE0MSBTYWx0ZWRfX7lkxnAUo4n1V
+ PuMlGKh5k9tMVoC7eU/TXnEuSaEXA/1xfp8VpC/NCpOxKrJFKlU/zZAToL8LfXgCzcHjEM1uxTs
+ bbhTVfZ4O1cbkE/F9RGXTl5BZGtr6x/rE3EIQCP9azxH3y29cvrMEA97Htgvj6Nn9zA234s2ns/
+ l/XEPNOiJceRKvfXGt9TBmBegDkvOiRmVcIaDCRf+pQxSrIYOMIZKaZtXYOWfYwbSykmPcu5zQ0
+ 1/v/5FocDKrtIist/ZylRmRemicYoiwVbBuBCFveeSReBr9tzG7wtKdrM0DjicrVQdZjTT9upLE
+ GLCr5jQ/Elqo7Vm4ewOnMF7VocdQ/TMqxA6YpbfA06ADfSEkkHBMPVRi8RNv/pYaLWDrl7fe6oH
+ VpLzg93oPmg12BSjszg/2pfbOEHSUkCs7bmFf0+zaCsptQttxIptr3Peb8ML4B/Fd9aCpc/V
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-28_08,2025-05-27_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 clxscore=1015 impostorscore=0 spamscore=0 adultscore=0
+ phishscore=0 mlxlogscore=966 priorityscore=1501 malwarescore=0
+ lowpriorityscore=0 bulkscore=0 mlxscore=0 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505160000 definitions=main-2505280141
 
-On Wed, 2025-05-28 at 10:34 +0200, Paolo Bonzini wrote:
-> After commit c5b6ababd21a ("locking/mutex: implement mutex_trylock_nested=
-",
-> currently in the KVM tree) mutex_trylock() will be a macro when lockdep i=
-s
-> enabled.=C2=A0 Rust therefore needs the corresponding helper.=C2=A0 Just =
-add it and
-> the rust/bindings/bindings_helpers_generated.rs Makefile rules will do
-> their thing.
->=20
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+On Wed, 28 May 2025 at 04:57, Chaoyi Chen <chaoyi.chen@rock-chips.com> wrote:
+>
+> Hi Dmitry,
+>
+> On 2025/5/28 4:25, Dmitry Baryshkov wrote:
+> > On Tue, May 27, 2025 at 04:14:47PM +0800, Chaoyi Chen wrote:
+> >> From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+> >>
+> >> Convert it to drm bridge driver, it will be convenient for us to
+> >> migrate the connector part to the display driver later.
+> >> Considering that some code depend on the connector, the following
+> >> changes have been made:
+> >> - Only process edid in &drm_bridge_funcs.edid_read(), so no need to
+> >> store additional edid info.
+> >> - Now cdn_dp_get_sink_capability() only focused on reading DPCD_REV.
+> >> - Update bpc info in cdn_dp_bridge_atomic_enable() instead of
+> >> cdn_dp_encoder_mode_set(). Actually, the bpc data will be used in
+> >> cdn_dp_bridge_atomic_enable().
+> >> - Switch to use DRM_BRIDGE_OP_DP_AUDIO helpers.
+> >>
+> >> This patch also convert to use devm_drm_bridge_alloc() API.
+> >>
+> >> Tested with RK3399 EVB IND board.
+> >>
+> >> Signed-off-by: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+> >> ---
+> >>
+> >> Changes in v3:
+> >> - Link to V2: https://lore.kernel.org/all/20250523011310.120-1-kernel@airkyi.com/
+> >> - Switch to use DRM_BRIDGE_OP_DP_AUDIO helpers
+> >> - Remove the dependency for connector
+> >> - Remove the extra stored edid
+> >> - Code cleanup
+> >>
+> >> Changes in v2:
+> >> - Link to V1: https://lore.kernel.org/all/20250507035148.415-1-kernel@airkyi.com/
+> >> - Use drm_atomic_get_new_connector_for_encoder() to get connector
+> >> - Convert to use devm_drm_bridge_alloc() API
+> >> - Fix typo: cdn_dp_connector_edid_read -> cdn_dp_bridge_edid_read
+> >>
+> >>   drivers/gpu/drm/rockchip/cdn-dp-core.c | 279 ++++++++++---------------
+> >>   drivers/gpu/drm/rockchip/cdn-dp-core.h |   9 +-
+> >>   2 files changed, 110 insertions(+), 178 deletions(-)
+> >>
+> >
+> >> @@ -595,16 +546,41 @@ static bool cdn_dp_check_link_status(struct cdn_dp_device *dp)
+> >>   static void cdn_dp_audio_handle_plugged_change(struct cdn_dp_device *dp,
+> >>                                             bool plugged)
+> >>   {
+> >> -    if (dp->codec_dev)
+> >> -            dp->plugged_cb(dp->codec_dev, plugged);
+> >> +    if (dp->sink_has_audio)
+> >> +            drm_connector_hdmi_audio_plugged_notify(dp->connector, plugged);
+> > I'd say, notify always and let userspace figure it out via the ELD. Then
+> > you shouldn't need sink_has_audio. This would match the behaviour of
+> > HDMI drivers.
+>
+> Oh, I find that there are similar usages in qcom msm driver. Is there
+> any more progress?
+
+For msm driver it is required as DSP requires HDMI to be plugged for
+the audio path to work.
+
+>
+>
+> >
+> >>   }
+> >>
+> > [...]
+> >
+> >> @@ -705,8 +681,6 @@ static int cdn_dp_encoder_atomic_check(struct drm_encoder *encoder,
+> >>
+> >>   static const struct drm_encoder_helper_funcs cdn_dp_encoder_helper_funcs = {
+> >>      .mode_set = cdn_dp_encoder_mode_set,
+> >> -    .enable = cdn_dp_encoder_enable,
+> >> -    .disable = cdn_dp_encoder_disable,
+> >>      .atomic_check = cdn_dp_encoder_atomic_check,
+> > Nit: for the future cleanup, it should probably be possible to get rid
+> > of these encoder ops too by moving them to the bridge ops.
+>
+> Interesting, have these patches been submitted upstream yet?
+
+Everything is already there, see drm_bridge_funcs::mode_set() and
+drm_bridge_funcs::atomic_check().
 
 
-Hi,
-Sorry for that.=C2=A0
-
-Next time I'll check rust bindings as well, I never had to deal with them b=
-efore.
-
-Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
-
-Best regards,
-	Maxim Levitsky
-
-
-> ---
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Ok to apply to the KVM tree?
->=20
-> =C2=A0rust/helpers/mutex.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 =
-5 +++++
-> =C2=A01 files changed, 5 insertions(+)
->=20
-> diff a/rust/helpers/mutex.c b/rust/helpers/mutex.c
-> index 06575553eda5,06575553eda5..9ab29104bee1
-> --- a/rust/helpers/mutex.c
-> +++ b/rust/helpers/mutex.c
-> @@ -7,6 +7,11 @@ void rust_helper_mutex_lock(struct mute
-> =C2=A0	mutex_lock(lock);
-> =C2=A0}
-> =C2=A0
-> +int rust_helper_mutex_trylock(struct mutex *lock)
-> +{
-> +	return mutex_trylock(lock);
-> +}
-> +
-> =C2=A0void rust_helper___mutex_init(struct mutex *mutex, const char *name=
-,
-> =C2=A0			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct lock_class_key *key)
-> =C2=A0{
->=20
->=20
-
+-- 
+With best wishes
+Dmitry
 
