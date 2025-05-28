@@ -1,101 +1,230 @@
-Return-Path: <linux-kernel+bounces-665197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5528EAC657C
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 11:15:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AADEFAC6580
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 11:17:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 250684E04E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 09:15:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB23C189F82A
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 09:17:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03044275866;
-	Wed, 28 May 2025 09:15:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BF0027585C;
+	Wed, 28 May 2025 09:16:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="pn4kTPQj"
-Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="AVq7ARmD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89CCD2750FA
-	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 09:15:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B00661ACEAC;
+	Wed, 28 May 2025 09:16:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748423723; cv=none; b=VT+qKKLTcBU7h0xwxK/JjcxtNeubMEbSc35TLdJs1sjZZGtgGbtDpewN5+fvfpnezRURhhIMnP5r5wec2fKgYl7lpx2x/c6IeDn5Tiogbgd9/t/5KKRhhUzCV06P/qy91WKpZ8fSxhqWsJ+U4mPbyUw6XM3uaooynTroKPajOYo=
+	t=1748423814; cv=none; b=b3jAhYheWQgxpCdL56Xvs9bsNFVxqk8qa/86ywBedkwNXoaPncMlilxa2Z3ryA1tP/x+RrwFsCQwxanl/zOcwVRjx7EOFYxAlP5PCpeT6q3iizJEAH6SpGLnbFSNk/DvJSaNguJAtfpKKpeaXMqNtf9LpuegqAZb29neGsWASx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748423723; c=relaxed/simple;
-	bh=4cXf7MErAkLA9U3B2oNG6s7tbUnnuq7wfLX8Cx+1mvM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=H1uWw7KIPfpmNQAKCbcrmLeo/AH846cpErVHqLsTjr57sqcKlCX2CDlndEopC7H+Pvp6GgFmzjlXV76RtWknCUivRKIlWCMpfxszdaag0t2EoXQaYzm324uj7Q4KAdrEc4SnJAFLKa/EBkWSPEaM4n5jZdzxcAvvRadA3hNIln0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=pn4kTPQj; arc=none smtp.client-ip=91.218.175.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <0b328692-f333-4bba-9572-6f3c86dbed29@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1748423709;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FI9HKlKAfdwWrEKUw5etibdxZ+5o3KFvUbDhmI3SbF0=;
-	b=pn4kTPQjC7e1P+nXW2gDru2pUb+AApmOIFcvMaQQcceHjVel2fhXM4qGNuOjhIe8RJ3Tuh
-	h/pNN3yQAx9UsrZwpptM2jrubF5d11fQiql17wRMxC5c7x1plULl8WB2aidGKwNaCq3y3D
-	+NCJy9gWuRc8lQu3Isla4IudqVTf/Mg=
-Date: Wed, 28 May 2025 17:14:16 +0800
+	s=arc-20240116; t=1748423814; c=relaxed/simple;
+	bh=E1VZlDayTeelg1Va8WrCJ2LwubtDxVbGxcQBYhQLuH4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dqlDrOyTjl8+LcZrjCyDdtsVhGHsXntKPAqrkvGQtQS6h042VQT5HCNogz8e9Nx7bqKvjPFmidC/hehYUKxJyG6LbfNj8Mln/tihhF8Yw4gg3kRdMZOQuRCGpSGgi65GmyOW7X4Oq1zTB5DUw9hWNDGnyOsjyYNzClggnI/VQH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=AVq7ARmD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88697C4CEED;
+	Wed, 28 May 2025 09:16:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1748423813;
+	bh=E1VZlDayTeelg1Va8WrCJ2LwubtDxVbGxcQBYhQLuH4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AVq7ARmDM8BqK4z0G9TBY50sVK2I71L2ScZQ/xaP23Yn+1bmLKuOJYL6MGR0QHqH8
+	 YCoYun0bPvXSHEx3pVw2BifFv4XIv3JULTGhQm87rocfMtUlVx0m/vHge8NBkxhseF
+	 OkkqIpOsAaToHIisnXY3FlTV1mNfd9G4ZVvXK0tc=
+Date: Wed, 28 May 2025 11:14:58 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Guan-Yu Lin <guanyulin@google.com>
+Cc: mathias.nyman@intel.com, gargaditya08@live.com, kekrby@gmail.com,
+	jeff.johnson@oss.qualcomm.com, quic_zijuhu@quicinc.com,
+	andriy.shevchenko@linux.intel.com, ben@decadent.org.uk,
+	broonie@kernel.org, quic_wcheng@quicinc.com,
+	krzysztof.kozlowski@linaro.org, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v13 2/4] usb: add apis for offload usage tracking
+Message-ID: <2025052808-shown-sitting-1ff9@gregkh>
+References: <20250528090849.2095085-1-guanyulin@google.com>
+ <20250528090849.2095085-3-guanyulin@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v10 0/5] Add Loongson Security Engine chip driver
-To: Huacai Chen <chenhuacai@kernel.org>, Qunqin Zhao <zhaoqunqin@loongson.cn>
-Cc: lee@kernel.org, herbert@gondor.apana.org.au, jarkko@kernel.org,
- linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
- davem@davemloft.net, linux-crypto@vger.kernel.org, peterhuewe@gmx.de,
- jgg@ziepe.ca, linux-integrity@vger.kernel.org
-References: <20250528065944.4511-1-zhaoqunqin@loongson.cn>
- <CAAhV-H7hBksA2P+vfMbpDVnbjW1Mo09Out_wOQLgLRXPLaFCfA@mail.gmail.com>
- <cda7ef56-87b3-6594-c2b6-2a4f5a1b63ce@loongson.cn>
- <CAAhV-H557CLtoF23nbRQaoDPdzuM5xgsS-+-1p_VeX0OreG2vQ@mail.gmail.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yanteng Si <si.yanteng@linux.dev>
-In-Reply-To: <CAAhV-H557CLtoF23nbRQaoDPdzuM5xgsS-+-1p_VeX0OreG2vQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250528090849.2095085-3-guanyulin@google.com>
 
-在 5/28/25 4:17 PM, Huacai Chen 写道:
-> On Wed, May 28, 2025 at 4:06 PM Qunqin Zhao <zhaoqunqin@loongson.cn> wrote:
->>
->>
->> 在 2025/5/28 下午3:17, Huacai Chen 写道:
->>> Hi, Qunqin,
->>>
->>> As I said before, why the patch "MAINTAINERS: Add entry for Loongson
->>> Security Module driver" is missing?
->>
->> Hi, Huacai
->>
->> https://lore.kernel.org/all/8e55801a-a46e-58d5-cf84-2ee8a733df9a@loongson.cn/
-> Sorry, I missed this email. But if you put all files in one entry, you
-> can merge Patch-3 and Patch-5 as the last patch (then you will also
-> not meet the 5 patches limit).
-
-We are cutting the foot to fit the shoe. Sigh...
-
-
-Thanks,
-Yanteng
+On Wed, May 28, 2025 at 09:04:07AM +0000, Guan-Yu Lin wrote:
+> Introduce offload_usage and corresponding apis to track offload usage
+> on each USB device. Offload denotes that there is another co-processor
+> accessing the USB device via the same USB host controller. To optimize
+> power usage, it's essential to monitor whether the USB device is
+> actively used by other co-processor. This information is vital when
+> determining if a USB device can be safely suspended during system power
+> state transitions.
 > 
-> Huacai
+> Signed-off-by: Guan-Yu Lin <guanyulin@google.com>
+> ---
+>  drivers/usb/core/driver.c | 125 ++++++++++++++++++++++++++++++++++++++
+>  drivers/usb/core/usb.c    |   1 +
+>  drivers/usb/host/Kconfig  |  11 ++++
+>  include/linux/usb.h       |  18 ++++++
+>  4 files changed, 155 insertions(+)
 > 
->>
->> Thanks,
->>
->> Qunqin.
->>
->>>
->>> Huacai
+> diff --git a/drivers/usb/core/driver.c b/drivers/usb/core/driver.c
+> index 460d4dde5994..0690619454fe 100644
+> --- a/drivers/usb/core/driver.c
+> +++ b/drivers/usb/core/driver.c
+> @@ -2036,6 +2036,131 @@ int usb_disable_usb2_hardware_lpm(struct usb_device *udev)
+>  
+>  #endif /* CONFIG_PM */
+>  
+> +#if IS_ENABLED(CONFIG_USB_XHCI_SIDEBAND_SUSPEND)
+
+ifdef in .c files are messy and hard to maintain.
+
+Also, why is an xhci-specific option enabling/disabling core USB
+functions like this?  Shouldn't it be a generic USB config option name
+instead?
+
+> +
+> +/**
+> + * usb_offload_get - increment the offload_usage of a USB device
+> + * @udev: the USB device to increment its offload_usage
+> + *
+> + * Incrementing the offload_usage of a usb_device indicates that offload is
+> + * enabled on this usb_device; that is, another entity is actively handling USB
+> + * transfers. This information allows the USB driver to adjust its power
+> + * management policy based on offload activity.
+> + *
+> + * Return: 0 on success. A negative error code otherwise.
+> + */
+> +int usb_offload_get(struct usb_device *udev)
+> +{
+> +	int ret;
+> +
+> +	usb_lock_device(udev);
+> +	if (udev->state == USB_STATE_NOTATTACHED) {
+> +		ret = -ENODEV;
+> +		goto unlock_device;
+
+Shouldn't we using the guard logic here instead?  That would make all of
+this look much simpler and easier to maintain over time.
+
+> +	} else if (udev->state == USB_STATE_SUSPENDED ||
+> +		   udev->offload_at_suspend) {
+> +		ret = -EBUSY;
+> +		goto unlock_device;
+> +	}
+> +
+> +	/*
+> +	 * offload_usage could only be modified when the device is active, since
+> +	 * it will alter the suspend flow of the device.
+> +	 */
+> +	ret = usb_autoresume_device(udev);
+> +
+> +	if (ret < 0)
+
+Why the blank line?
+
+> +		goto unlock_device;
+> +
+> +	udev->offload_usage++;
+> +	usb_autosuspend_device(udev);
+> +
+> +unlock_device:
+> +	usb_unlock_device(udev);
+> +
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(usb_offload_get);
+> +
+> +/**
+> + * usb_offload_put - drop the offload_usage of a USB device
+> + * @udev: the USB device to drop its offload_usage
+> + *
+> + * The inverse operation of usb_offload_get, which drops the offload_usage of
+> + * a USB device. This information allows the USB driver to adjust its power
+> + * management policy based on offload activity.
+> + *
+> + * Return: 0 on success. A negative error code otherwise.
+> + */
+> +int usb_offload_put(struct usb_device *udev)
+> +{
+> +	int ret;
+> +
+> +	usb_lock_device(udev);
+> +	if (udev->state == USB_STATE_NOTATTACHED) {
+> +		ret = -ENODEV;
+> +		goto unlock_device;
+> +	} else if (udev->state == USB_STATE_SUSPENDED ||
+> +		   udev->offload_at_suspend) {
+> +		ret = -EBUSY;
+> +		goto unlock_device;
+> +	}
+> +
+> +	/*
+> +	 * offload_usage could only be modified when the device is active, since
+> +	 * it will alter the suspend flow of the device.
+> +	 */
+> +	ret = usb_autoresume_device(udev);
+> +
+> +	if (ret < 0)
+> +		goto unlock_device;
+> +
+> +	/* Drop the count when it wasn't 0, ignore the operation otherwise. */
+> +	if (udev->offload_usage)
+> +		udev->offload_usage--;
+> +	usb_autosuspend_device(udev);
+> +
+> +unlock_device:
+> +	usb_unlock_device(udev);
+> +
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(usb_offload_put);
+> +
+> +/**
+> + * usb_offload_check - check offload activities on a USB device
+> + * @udev: the USB device to check its offload activity.
+> + *
+> + * Check if there are any offload activity on the USB device right now. This
+> + * information could be used for power management or other forms of resource
+> + * management.
+> + *
+> + * The caller must hold @udev's device lock. In addition, the caller should
+> + * ensure downstream usb devices are all either suspended or marked as
+> + * "offload_at_suspend" to ensure the correctness of the return value.
+> + *
+> + * Returns true on any offload activity, false otherwise.
+> + */
+> +bool usb_offload_check(struct usb_device *udev)
+> +{
+> +	struct usb_device *child;
+> +	bool active;
+> +	int port1;
+> +
+> +	usb_hub_for_each_child(udev, port1, child) {
+> +		usb_lock_device(child);
+> +		active = usb_offload_check(child);
+> +		usb_unlock_device(child);
+> +		if (active)
+> +			return true;
+> +	}
+> +
+> +	return !!udev->offload_usage;
+
+I think you forgot to mark this function as requiring that the lock be
+held, right?  Just documenting it isn't going to be simple to notice or
+maintain over time...
+
+thanks,
+
+greg k-h
 
