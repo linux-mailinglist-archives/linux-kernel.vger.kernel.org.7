@@ -1,137 +1,192 @@
-Return-Path: <linux-kernel+bounces-665137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48843AC64C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 10:53:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D677AC64C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 10:52:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D88D2189ECB0
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 08:53:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15D1716820D
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 08:52:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 057092749E3;
-	Wed, 28 May 2025 08:52:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAB9F2741D4;
+	Wed, 28 May 2025 08:52:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="cS4r3ONy"
-Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="V+IJMmF7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9863A2741CB;
-	Wed, 28 May 2025 08:52:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 167FF26A0BF;
+	Wed, 28 May 2025 08:52:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748422368; cv=none; b=Cx9Aqz+pjeovAOyiRvZCLiLAuzmgAMdrBMG1xZjHh8jEnVP44m87I3i6XHWMDCxNWmCeyd54tzxCxYdLiDsV5InJygiiklw+eoagVh/bD1TMhTYGTJGfxwpfeiz30XgEZzFFrjrNyVn7i86MjjXZVtKGieeTgsr7f6tcAjFtMtY=
+	t=1748422357; cv=none; b=dCxE6zCVX7RUwYy/tAiWORiamv94eIpn8WLTTdTEPA+g6+6NEZdS7vw9GkkN9wuMdwhoBcmsIC4zYxhd65+zWaqJCNhaiOPE0rdALkvc7X8eNUbATGCWWzJuWqda8yOgKfSmCcFISO/616ScCVrMKIOKgoXuLk+Dv/tGpsdVg0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748422368; c=relaxed/simple;
-	bh=Lq6l31yiSMMK/xdjQj1gbpL696ZQySei7rEcLc6UYxY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=Jg1ifmVEnouDnIo8GusICzN0YV6X3KLbddcfpFifrnWh4ihpfal47IB8PbOy763x2DSXUeSLmQNhCWe+N+jXwRw6kd8uo9NGqEF9Sb+Bjwa1hnyiVvgltXkllIEQlFhOM5Himkhoydti7P0NRoGNtKvv9W5NvrWy7ZlBwyAKNa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=cS4r3ONy; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54S7QF2Y009472;
-	Wed, 28 May 2025 10:52:35 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	1q8t38OgoK6y/zM/IA/ohu5Xp9gm8cLA+K2Vfs233T8=; b=cS4r3ONym/e0p/Td
-	2dcite+5KsLUKLqa7c1X9V/Y4MgD5nMJROPUoxOati3bIXxJO2M7DgECsP7f98Fn
-	LFPw09FYECs+4cgvwhCvRqL8g94wVzjU5h1DdZjuFuKGen0dwBLCeL1FgTq67ZLe
-	F7SRjnyUHVBF4wNFa9nVFxZT/xNLRTu0D4DIpMg67QExBftjlnwPkjCM1ndBrCxt
-	UdUno1qqECEieH4wqjorcbul8r1vqzIh/5jWyaLH3h8taTO5wa595Q6of9zQRvXz
-	E1mndoLcYjpaQ7wX6y3iBE72/i3FlJ7ES43QbcGl1iXWY9i+PBWc1jWEbcVd6qUt
-	y+F0+Q==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 46w54hpk50-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 28 May 2025 10:52:35 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 82E2840058;
-	Wed, 28 May 2025 10:51:37 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id B5E56B5CB48;
-	Wed, 28 May 2025 10:50:29 +0200 (CEST)
-Received: from localhost (10.48.87.141) by SHFDAG1NODE1.st.com (10.75.129.69)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 28 May
- 2025 10:50:29 +0200
-From: Gatien Chevallier <gatien.chevallier@foss.st.com>
-Date: Wed, 28 May 2025 10:50:22 +0200
-Subject: [PATCH v2 2/2] Input: gpio-keys - fix possible concurrent access
- in gpio_keys_irq_timer()
+	s=arc-20240116; t=1748422357; c=relaxed/simple;
+	bh=BmYME872G2HKJBR/wdLI4h4RnelU/w385HSGJ/Nngpg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rmM7beHYHsy1Tegwa2TM0ePuiERwfEBHqxaETkjEz1NiihG/48MIsOaDPYwVueW+Gu2Y/9nHzxevbKynd/jEQFg+LUiFEQprwCM6UUJ4oXX0TRZImXIZwggaQbUVOFrNAg13bwSoCAUsGRDuvjZwB2pvrRVYjoscvmO9D/E9ZUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=V+IJMmF7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8B18C4CEED;
+	Wed, 28 May 2025 08:52:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1748422356;
+	bh=BmYME872G2HKJBR/wdLI4h4RnelU/w385HSGJ/Nngpg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=V+IJMmF7A9LPOcBmCxMUAACufm6xiV1ZyHyycFYXdgE0lWfb5gG6zjebdjGlk8wSG
+	 YzcJTlmtH7nWSId+lwsWhxNY3pMgO7X6/Qlfn+R2zocZOLyc05Rooj67UP9n8oyq3e
+	 195jqT4JP5wo63S+2nq0DOj6NiIO48+Bu7kRr3y0=
+Date: Wed, 28 May 2025 10:50:42 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+	Arnd Bergmann <arnd@arndb.de>, linux-s390@vger.kernel.org,
+	Linux trace kernel <linux-trace-kernel@vger.kernel.org>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Anders Roxell <anders.roxell@linaro.org>,
+	Akihiko Odaki <akihiko.odaki@daynix.com>
+Subject: Re: [PATCH 6.14 000/783] 6.14.9-rc1 review
+Message-ID: <2025052824-turret-crank-48ee@gregkh>
+References: <20250527162513.035720581@linuxfoundation.org>
+ <CA+G9fYsvuqySTdV0Yqi3i-cyBh6j4Rw2_ze46RSUPrz0sbA2Xg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250528-gpio_keys_preempt_rt-v2-2-3fc55a9c3619@foss.st.com>
-References: <20250528-gpio_keys_preempt_rt-v2-0-3fc55a9c3619@foss.st.com>
-In-Reply-To: <20250528-gpio_keys_preempt_rt-v2-0-3fc55a9c3619@foss.st.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Sebastian Andrzej Siewior
-	<bigeasy@linutronix.de>,
-        Clark Williams <clrkwllms@kernel.org>,
-        Steven
- Rostedt <rostedt@goodmis.org>,
-        Paul Cercueil <paul@crapouillou.net>
-CC: <linux-input@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-rt-devel@lists.linux.dev>,
-        Gatien Chevallier
-	<gatien.chevallier@foss.st.com>,
-        <fabrice.gasnier@foss.st.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1038;
- i=gatien.chevallier@foss.st.com; h=from:subject:message-id;
- bh=Lq6l31yiSMMK/xdjQj1gbpL696ZQySei7rEcLc6UYxY=;
- b=owEB7QES/pANAwAKAar3Rq6G8cMoAcsmYgBoNs5T4Vq1P8ueyaGWzJlUYoXPnFIJkgY0WeH7v
- CH+bKFd6UmJAbMEAAEKAB0WIQRuDsu+jpEBc9gaoV2q90auhvHDKAUCaDbOUwAKCRCq90auhvHD
- KHCUDAC50vawQKeXvCRGZprN5RXqhIWQ9otbid3yqHqCkTF5gflpnjlgE6cVgdLNerDsXMV1TpP
- UH+f8gW9peFNbnb0Kb20n4uQLfpg0KUU437HOcYF9PT0QbD/89k7mqqMeEHl44NAhe37iQs/9eY
- ct7NacXxqtA//vRZmu51Yr4LumaX2Ku8ghbKP8xsFcpZHnBRwADEPaMMlcDBDCXDOmu50oD4ay4
- 6jgaB174PviS9ToQ5X72r4aE9SnsDREOTY4ko2e43sSIGjZk45currgZt72yxlvPEDZ1nxQij99
- E1zp6W6FF2A34OVW0iX/1G4Mjp9gkGIUZ53gK/JewYQyyphzjJTp6rB8HgLO1sPtLYQGl1jidJU
- KeRCUYYZt4tDTeokOTpsv9Q54CkBw/5wvUp4AgPnTpUNIJGhp4OKPXGkoKsQ2mRIq94HPcKVBhy
- u3+s2+IZllX6D7CRPNxNNgs1N2wfr5uofbGeZo5fl0PctFfcDF16OvP4pmcjd349z7WUM=
-X-Developer-Key: i=gatien.chevallier@foss.st.com; a=openpgp;
- fpr=6E0ECBBE8E910173D81AA15DAAF746AE86F1C328
-X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-28_04,2025-05-27_01,2025-03-28_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+G9fYsvuqySTdV0Yqi3i-cyBh6j4Rw2_ze46RSUPrz0sbA2Xg@mail.gmail.com>
 
-gpio_keys_irq_isr() and gpio_keys_irq_timer() access the same resources.
-There could be a concurrent access if a GPIO interrupt occurs in parallel
-of a HR timer interrupt.
+On Wed, May 28, 2025 at 12:40:10AM +0530, Naresh Kamboju wrote:
+> On Tue, 27 May 2025 at 22:48, Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> >
+> > This is the start of the stable review cycle for the 6.14.9 release.
+> > There are 783 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> >
+> > Responses should be made by Thu, 29 May 2025 16:22:51 +0000.
+> > Anything received after that time might be too late.
+> >
+> > The whole patch series can be found in one patch at:
+> >         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.14.9-rc1.gz
+> > or in the git tree and branch at:
+> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.14.y
+> > and the diffstat can be found below.
+> >
+> > thanks,
+> >
+> > greg k-h
+> 
+> Regressions on S390 defconfig builds failing with gcc-13, gcc-8 and
+> clang-20 and clang-nightly tool chains on 6.14.9-rc1.
+> 
+> Regression Analysis:
+>  - New regression? Yes
+>  - Reproducible? Yes
+> 
+> Build regression: S390 defconfig crash_dump.c use of undeclared
+> identifier 'NN_PRSTATUS'
+> 
+> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> 
+> 
+> Build log:
+> ---------
+> arch/s390/kernel/crash_dump.c:312:8: error: use of undeclared
+> identifier 'NN_PRFPREG'
+>   312 |         ptr = nt_init(ptr, PRFPREG, nt_fpregset);
+>       |               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> arch/s390/kernel/crash_dump.c:274:56: note: expanded from macro 'nt_init'
+>   274 |         nt_init_name(buf, NT_ ## type, &(desc), sizeof(desc),
+> NN_ ## type)
+>       |
+> ^~~~~~~~~~~
+> <scratch space>:85:1: note: expanded from here
+>    85 | NN_PRFPREG
+>       | ^~~~~~~~~~
+> arch/s390/kernel/crash_dump.c:313:8: error: use of undeclared
+> identifier 'NN_S390_TIMER'
+>   313 |         ptr = nt_init(ptr, S390_TIMER, sa->timer);
+>       |               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> arch/s390/kernel/crash_dump.c:274:56: note: expanded from macro 'nt_init'
+>   274 |         nt_init_name(buf, NT_ ## type, &(desc), sizeof(desc),
+> NN_ ## type)
+>       |
+> ^~~~~~~~~~~
+> <scratch space>:87:1: note: expanded from here
+>    87 | NN_S390_TIMER
+>       | ^~~~~~~~~~~~~
+> arch/s390/kernel/crash_dump.c:314:8: error: use of undeclared
+> identifier 'NN_S390_TODCMP'
+>   314 |         ptr = nt_init(ptr, S390_TODCMP, sa->todcmp);
+>       |               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> arch/s390/kernel/crash_dump.c:274:56: note: expanded from macro 'nt_init'
+>   274 |         nt_init_name(buf, NT_ ## type, &(desc), sizeof(desc),
+> NN_ ## type)
+>       |
+> ^~~~~~~~~~~
+> <scratch space>:89:1: note: expanded from here
+>    89 | NN_S390_TODCMP
+>       | ^~~~~~~~~~~~~~
+> arch/s390/kernel/crash_dump.c:315:8: error: use of undeclared
+> identifier 'NN_S390_TODPREG'
+>   315 |         ptr = nt_init(ptr, S390_TODPREG, sa->todpreg);
+>       |               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> arch/s390/kernel/crash_dump.c:274:56: note: expanded from macro 'nt_init'
+>   274 |         nt_init_name(buf, NT_ ## type, &(desc), sizeof(desc),
+> NN_ ## type)
+>       |
+> ^~~~~~~~~~~
+> <scratch space>:91:1: note: expanded from here
+>    91 | NN_S390_TODPREG
+>       | ^~~~~~~~~~~~~~~
+> arch/s390/kernel/crash_dump.c:316:8: error: use of undeclared
+> identifier 'NN_S390_CTRS'
+>   316 |         ptr = nt_init(ptr, S390_CTRS, sa->ctrs);
+>       |               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> arch/s390/kernel/crash_dump.c:274:56: note: expanded from macro 'nt_init'
+>   274 |         nt_init_name(buf, NT_ ## type, &(desc), sizeof(desc),
+> NN_ ## type)
+>       |
+> ^~~~~~~~~~~
+> 
+> ## Source
+> * kernel version: 6.14.9-rc1
+> * git tree: https://kernel.googlesource.com/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+> * git sha: 10804dbee7fa8cfb895bbffcc7be97d8221748b6
+> * git describe: v6.14.8-784-g10804dbee7fa
+> * project details:
+> https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.14.y/build/v6.14.8-784-g10804dbee7fa/
+> * architecture: S390
+> * toolchain: gcc-8, gcc-13, clang-20, clang-nightly
+> * config : defconfig
+> * Build config:
+> https://storage.tuxsuite.com/public/linaro/lkft/builds/2xgl51jcJfVGQZw8dKSuEJNFtd4/config
+> * Build: https://storage.tuxsuite.com/public/linaro/lkft/builds/2xgl51jcJfVGQZw8dKSuEJNFtd4/
+> 
+> ## Boot log
+> * Build log: https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.14.y/build/v6.14.8-784-g10804dbee7fa/testrun/28574235/suite/build/test/gcc-13-defconfig/log
+> * Build details:
+> https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.14.y/build/v6.14.8-784-g10804dbee7fa/testrun/28574235/suite/build/test/gcc-13-defconfig/details/
+> * Build history:
+> https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.14.y/build/v6.14.8-784-g10804dbee7fa/testrun/28574235/suite/build/test/gcc-13-defconfig/history/
+> 
+> ## Steps to reproduce
+>  - tuxmake --runtime podman --target-arch s390 --toolchain gcc-13
+> --kconfig defconfig
 
-Guard back those resources with a spinlock.
+Thanks, offending patch is now removed.
 
-Fixes: 019002f20cb5 ("Input: gpio-keys - use hrtimer for release timer")
-Signed-off-by: Gatien Chevallier <gatien.chevallier@foss.st.com>
----
- drivers/input/keyboard/gpio_keys.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/input/keyboard/gpio_keys.c b/drivers/input/keyboard/gpio_keys.c
-index d884538107c9654d21e37fa20e0b3b6cd9a25ee4..f9db86da0818b24d3b6611b4d4e23c96846dbf18 100644
---- a/drivers/input/keyboard/gpio_keys.c
-+++ b/drivers/input/keyboard/gpio_keys.c
-@@ -449,6 +449,8 @@ static enum hrtimer_restart gpio_keys_irq_timer(struct hrtimer *t)
- 						      release_timer);
- 	struct input_dev *input = bdata->input;
- 
-+	guard(spinlock_irqsave)(&bdata->lock);
-+
- 	if (bdata->key_pressed) {
- 		input_report_key(input, *bdata->code, 0);
- 		input_sync(input);
-
--- 
-2.25.1
-
+greg k-h
 
