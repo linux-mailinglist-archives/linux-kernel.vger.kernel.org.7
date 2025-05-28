@@ -1,219 +1,168 @@
-Return-Path: <linux-kernel+bounces-665028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93A1EAC639E
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 10:05:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C1686AC63AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 10:07:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C32316DFBE
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 08:05:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A17974E0670
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 08:07:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56C60246764;
-	Wed, 28 May 2025 08:05:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WpRqsxLE"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18D36217679;
-	Wed, 28 May 2025 08:04:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B53324679B;
+	Wed, 28 May 2025 08:06:48 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2F3224728C;
+	Wed, 28 May 2025 08:06:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748419499; cv=none; b=ra1/guNrpt3gUYcVxn3Pm7+NkwuiOI9do3faYXhGpc3ExGIw+TfZh2PKtj2GBhdrSgrCjOM/p59/xH7VcIDY1ZfQe5hfl36kxaNv8B5NpguTX2pfwVzaPd8d5Az8rvqG5eIEMTMA21WzgjZYlLd4LczKGidgVfODBrS8+GYWKUM=
+	t=1748419607; cv=none; b=LCfZydscWsw9ZO4NZikABE6LZjd8CjQG/2ROnVCtNeyIaAAo3D+qjJhCtO0ibNLyqGmSmgwSuzUZ7bBlCRnzoV8YDPZiQVrZX0sTEcFkd7Xhzo9fuS65qb5RchK5kseY6164qnitk0Uxj6cKtS84EWxB/+TaxHjXepqUTbY2kIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748419499; c=relaxed/simple;
-	bh=zvk+/0pOBB6n96MopJf2kYiRrFww4RvKm0+5MlficmA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hWupNrP4RtYbm3CjEU4tfmtOZDo8+KAiJfsGOiPGdM3rq5kpBYz0QwZnimTLLU0bB7YiP7uhSJc3v1QoYLVqcgP3yabPg45S1MuGceIvbosWO8wWMIJyughk6tOv/nthSwo/FiuwCHyngkW3ifSzm3fseBDg6lBY7+6e4Mmhtnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WpRqsxLE; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1748419498; x=1779955498;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=zvk+/0pOBB6n96MopJf2kYiRrFww4RvKm0+5MlficmA=;
-  b=WpRqsxLE0fqpqsst422z/Tq2rzisuo9Bkb/HudTVO5w2BThmaFtIA7b7
-   VH4gxyehConApYL8jcLvQtONp+LJz22YzS/edeoQBcTKSJ63ssElkY9Jw
-   WisD3rK51n4FpNbTWbTMOjOd/TYNFa06wIHGI5zk6nRDc6ljpV19TVdEy
-   nzVeZODzVQitPC3WT/RScz18I8z0T/dX6sK8mrY40M1iUoIwRNHsdvcRD
-   /Q4pPzfO3Sow9oqZJ10iJ24CM9WOHaCTbenX5d5e9Gsk3C3KbyTI/aICa
-   RWrN2ZQSc+LDYXXKw+NtG/6Kn0hePbNlln1Fpah3OH9yijjgLRSJABXqe
-   w==;
-X-CSE-ConnectionGUID: f1b05I5ZT/64CMmDa7z1RQ==
-X-CSE-MsgGUID: rMUIiL02TCOzQ1M87RoHKw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11446"; a="50428456"
-X-IronPort-AV: E=Sophos;i="6.15,320,1739865600"; 
-   d="scan'208";a="50428456"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2025 01:04:56 -0700
-X-CSE-ConnectionGUID: 2JaN/U7vSq2pjZYvQ5ifTg==
-X-CSE-MsgGUID: 0swEWbnRSVKrGb0smiqn7Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,320,1739865600"; 
-   d="scan'208";a="174057105"
-Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.247.1]) ([10.124.247.1])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2025 01:04:54 -0700
-Message-ID: <7cc5cd92-1854-4e0e-93b7-e4eee5991334@intel.com>
-Date: Wed, 28 May 2025 16:04:51 +0800
+	s=arc-20240116; t=1748419607; c=relaxed/simple;
+	bh=Utmj1w9gpAnryKiUXD1QajcvknvGJPR2n8w8hmdFaHw=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=WV7VtxIwCtEDy9H64c7/sS0VzJJCK9+mu/f9a/LbUJFa1aT5sqVTRQfxeTC3uOL1m1Dv+8S9WM6USAwUymTmKA/Rp5EXJJjkEKWY/YE4UnkiHlI4piyB4dHgpP5DQIx+lq+PiwzCAI+m/oWCRRfsxymgEQkZ9AtiGRCd/csqsoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.164])
+	by gateway (Coremail) with SMTP id _____8Bx22oRxDZo5Mb_AA--.49226S3;
+	Wed, 28 May 2025 16:06:41 +0800 (CST)
+Received: from [10.20.42.164] (unknown [10.20.42.164])
+	by front1 (Coremail) with SMTP id qMiowMDxfRsLxDZolYv3AA--.27101S2;
+	Wed, 28 May 2025 16:06:38 +0800 (CST)
+Subject: Re: [PATCH v10 0/5] Add Loongson Security Engine chip driver
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: lee@kernel.org, herbert@gondor.apana.org.au, jarkko@kernel.org,
+ linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
+ davem@davemloft.net, linux-crypto@vger.kernel.org, peterhuewe@gmx.de,
+ jgg@ziepe.ca, linux-integrity@vger.kernel.org
+References: <20250528065944.4511-1-zhaoqunqin@loongson.cn>
+ <CAAhV-H7hBksA2P+vfMbpDVnbjW1Mo09Out_wOQLgLRXPLaFCfA@mail.gmail.com>
+From: Qunqin Zhao <zhaoqunqin@loongson.cn>
+Message-ID: <cda7ef56-87b3-6594-c2b6-2a4f5a1b63ce@loongson.cn>
+Date: Wed, 28 May 2025 16:05:39 +0800
+User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/4] KVM: x86/mmu: Dynamically allocate shadow MMU's
- hashed page list
-To: Sean Christopherson <seanjc@google.com>,
- Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Vipin Sharma <vipinsh@google.com>, James Houghton <jthoughton@google.com>
-References: <20250523001138.3182794-1-seanjc@google.com>
- <20250523001138.3182794-3-seanjc@google.com>
+In-Reply-To: <CAAhV-H7hBksA2P+vfMbpDVnbjW1Mo09Out_wOQLgLRXPLaFCfA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-From: Xiaoyao Li <xiaoyao.li@intel.com>
-In-Reply-To: <20250523001138.3182794-3-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:qMiowMDxfRsLxDZolYv3AA--.27101S2
+X-CM-SenderInfo: 52kd01pxqtx0o6or00hjvr0hdfq/
+X-Coremail-Antispam: 1Uk129KBj93XoWxXF4ktFWfCry3XFyrXw18Zwc_yoW5ZF47pF
+	45Ca9xCr4UJF47C3s3t34rCFyrZ3s3Jr9rKa9rXw15ur9rAa4xXrW7AFyUCFW7ZF1rGry2
+	vFWxCF43uF15AacCm3ZEXasCq-sJn29KB7ZKAUJUUUU7529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUPFb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v2
+	6rxl6s0DM2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYI
+	kI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUAVWU
+	twAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMx
+	k0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vIr41l
+	4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_JF0_Jw1lx2IqxVAqx4xG67AKxV
+	WUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI
+	7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r
+	1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI
+	42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUcpBTUUUUU
 
-On 5/23/2025 8:11 AM, Sean Christopherson wrote:
-> Dynamically allocate the (massive) array of hashed lists used to track
-> shadow pages, as the array itself is 32KiB, i.e. is an order-3 allocation
-> all on its own, and is *exactly* an order-3 allocation.  Dynamically
-> allocating the array will allow allocating "struct kvm" using kvmalloc(),
-> and will also allow deferring allocation of the array until it's actually
-> needed, i.e. until the first shadow root is allocated.
-> 
-> Opportunistically use kvmalloc() for the hashed lists, as an order-3
-> allocation is (stating the obvious) less likely to fail than an order-4
-> allocation, and the overhead of vmalloc() is undesirable given that the
-> size of the allocation is fixed.
-> 
-> Cc: Vipin Sharma <vipinsh@google.com>
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->   arch/x86/include/asm/kvm_host.h |  4 ++--
->   arch/x86/kvm/mmu/mmu.c          | 23 ++++++++++++++++++++++-
->   arch/x86/kvm/x86.c              |  5 ++++-
->   3 files changed, 28 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-> index 330cdcbed1a6..9667d6b929ee 100644
-> --- a/arch/x86/include/asm/kvm_host.h
-> +++ b/arch/x86/include/asm/kvm_host.h
-> @@ -1343,7 +1343,7 @@ struct kvm_arch {
->   	bool has_private_mem;
->   	bool has_protected_state;
->   	bool pre_fault_allowed;
-> -	struct hlist_head mmu_page_hash[KVM_NUM_MMU_PAGES];
-> +	struct hlist_head *mmu_page_hash;
->   	struct list_head active_mmu_pages;
->   	/*
->   	 * A list of kvm_mmu_page structs that, if zapped, could possibly be
-> @@ -2006,7 +2006,7 @@ void kvm_mmu_vendor_module_exit(void);
->   
->   void kvm_mmu_destroy(struct kvm_vcpu *vcpu);
->   int kvm_mmu_create(struct kvm_vcpu *vcpu);
-> -void kvm_mmu_init_vm(struct kvm *kvm);
-> +int kvm_mmu_init_vm(struct kvm *kvm);
->   void kvm_mmu_uninit_vm(struct kvm *kvm);
->   
->   void kvm_mmu_init_memslot_memory_attributes(struct kvm *kvm,
-> diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-> index cbc84c6abc2e..41da2cb1e3f1 100644
-> --- a/arch/x86/kvm/mmu/mmu.c
-> +++ b/arch/x86/kvm/mmu/mmu.c
-> @@ -3882,6 +3882,18 @@ static int mmu_alloc_direct_roots(struct kvm_vcpu *vcpu)
->   	return r;
->   }
->   
-> +static int kvm_mmu_alloc_page_hash(struct kvm *kvm)
-> +{
-> +	typeof(kvm->arch.mmu_page_hash) h;
 
-Out of curiousity, it is uncommon in KVM to use typeof() given that we 
-know what the type actually is. Is there some specific reason?
+在 2025/5/28 下午3:17, Huacai Chen 写道:
+> Hi, Qunqin,
+>
+> As I said before, why the patch "MAINTAINERS: Add entry for Loongson
+> Security Module driver" is missing?
 
-anyway, it works.
+Hi, Huacai
 
-Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
+https://lore.kernel.org/all/8e55801a-a46e-58d5-cf84-2ee8a733df9a@loongson.cn/
 
-> +
-> +	h = kvcalloc(KVM_NUM_MMU_PAGES, sizeof(*h), GFP_KERNEL_ACCOUNT);
-> +	if (!h)
-> +		return -ENOMEM;
-> +
-> +	kvm->arch.mmu_page_hash = h;
-> +	return 0;
-> +}
-> +
->   static int mmu_first_shadow_root_alloc(struct kvm *kvm)
->   {
->   	struct kvm_memslots *slots;
-> @@ -6675,13 +6687,19 @@ static void kvm_mmu_zap_all_fast(struct kvm *kvm)
->   		kvm_tdp_mmu_zap_invalidated_roots(kvm, true);
->   }
->   
-> -void kvm_mmu_init_vm(struct kvm *kvm)
-> +int kvm_mmu_init_vm(struct kvm *kvm)
->   {
-> +	int r;
-> +
->   	kvm->arch.shadow_mmio_value = shadow_mmio_value;
->   	INIT_LIST_HEAD(&kvm->arch.active_mmu_pages);
->   	INIT_LIST_HEAD(&kvm->arch.possible_nx_huge_pages);
->   	spin_lock_init(&kvm->arch.mmu_unsync_pages_lock);
->   
-> +	r = kvm_mmu_alloc_page_hash(kvm);
-> +	if (r)
-> +		return r;
-> +
->   	if (tdp_mmu_enabled)
->   		kvm_mmu_init_tdp_mmu(kvm);
->   
-> @@ -6692,6 +6710,7 @@ void kvm_mmu_init_vm(struct kvm *kvm)
->   
->   	kvm->arch.split_desc_cache.kmem_cache = pte_list_desc_cache;
->   	kvm->arch.split_desc_cache.gfp_zero = __GFP_ZERO;
-> +	return 0;
->   }
->   
->   static void mmu_free_vm_memory_caches(struct kvm *kvm)
-> @@ -6703,6 +6722,8 @@ static void mmu_free_vm_memory_caches(struct kvm *kvm)
->   
->   void kvm_mmu_uninit_vm(struct kvm *kvm)
->   {
-> +	kvfree(kvm->arch.mmu_page_hash);
-> +
->   	if (tdp_mmu_enabled)
->   		kvm_mmu_uninit_tdp_mmu(kvm);
->   
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index f9f798f286ce..d204ba9368f8 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -12787,7 +12787,9 @@ int kvm_arch_init_vm(struct kvm *kvm, unsigned long type)
->   	if (ret)
->   		goto out;
->   
-> -	kvm_mmu_init_vm(kvm);
-> +	ret = kvm_mmu_init_vm(kvm);
-> +	if (ret)
-> +		goto out_cleanup_page_track;
->   
->   	ret = kvm_x86_call(vm_init)(kvm);
->   	if (ret)
-> @@ -12840,6 +12842,7 @@ int kvm_arch_init_vm(struct kvm *kvm, unsigned long type)
->   
->   out_uninit_mmu:
->   	kvm_mmu_uninit_vm(kvm);
-> +out_cleanup_page_track:
->   	kvm_page_track_cleanup(kvm);
->   out:
->   	return ret;
+Thanks,
+
+Qunqin.
+
+>
+> Huacai
+>
+> On Wed, May 28, 2025 at 2:59 PM Qunqin Zhao <zhaoqunqin@loongson.cn> wrote:
+>> The Loongson Security Engine chip supports RNG, SM2, SM3 and SM4
+>> accelerator engines. Each engine have its own DMA buffer provided
+>> by the controller. The kernel cannot directly send commands to the
+>> engine and must first send them to the controller, which will
+>> forward them to the corresponding engine. Based on these engines,
+>> TPM2 have been implemented in the chip, then let's treat TPM2 itself
+>> as an engine.
+>>
+>> v10: mfd: Cleanned up coding style.
+>>       crypto: Unlimited tfm
+>>       tpm: Added error check
+>>
+>> v9: Moved the base driver back to drivers/mfd. Cleanned up coding style.
+>>
+>> v8: Like Lee said, the base driver goes beyond MFD scope. Since these
+>>      are all encryption related drivers and SM2, SM3, and SM4 drivers
+>>      will be added to the crypto subsystem in the future, the base driver
+>>      need to be changed when adding these drivers. Therefore, it may be
+>>      more appropriate to place the base driver within the crypto
+>>      subsystem.
+>>
+>>      Removed complete callback in all driver. Removed the concepts of
+>>      "channel", "msg" and "request" as they may be confusing. Used
+>>
+>> v7: Addressed Huacai's comments.
+>>
+>> v6: mfd :MFD_LS6000SE -> MFD_LOONGSON_SE,  ls6000se.c -> loongson-se.c
+>>
+>>      crypto :CRYPTO_DEV_LS6000SE_RNG -> CRYPTO_DEV_LOONGSON_RNG,
+>>      ls6000se-rng.c ->loongson-rng.c
+>>
+>>      tpm: TCG_LSSE -> TCG_LOONGSON, tpm_lsse.c ->tpm_loongson.c
+>>
+>> v5: Registered "ls6000se-rng" device in mfd driver
+>>
+>>
+>> Qunqin Zhao (5):
+>>    mfd: Add support for Loongson Security Engine chip controller
+>>    crypto: loongson - add Loongson RNG driver support
+>>    MAINTAINERS: Add entry for Loongson crypto driver
+>>    tpm: Add a driver for Loongson TPM device
+>>    MAINTAINERS: Add tpm_loongson.c to LOONGSON CRYPTO DRIVER entry
+>>
+>>   MAINTAINERS                            |   9 +
+>>   drivers/char/tpm/Kconfig               |   9 +
+>>   drivers/char/tpm/Makefile              |   1 +
+>>   drivers/char/tpm/tpm_loongson.c        |  84 ++++++++
+>>   drivers/crypto/Kconfig                 |   1 +
+>>   drivers/crypto/Makefile                |   1 +
+>>   drivers/crypto/loongson/Kconfig        |   5 +
+>>   drivers/crypto/loongson/Makefile       |   1 +
+>>   drivers/crypto/loongson/loongson-rng.c | 211 +++++++++++++++++++++
+>>   drivers/mfd/Kconfig                    |  11 ++
+>>   drivers/mfd/Makefile                   |   2 +
+>>   drivers/mfd/loongson-se.c              | 253 +++++++++++++++++++++++++
+>>   include/linux/mfd/loongson-se.h        |  53 ++++++
+>>   13 files changed, 641 insertions(+)
+>>   create mode 100644 drivers/char/tpm/tpm_loongson.c
+>>   create mode 100644 drivers/crypto/loongson/Kconfig
+>>   create mode 100644 drivers/crypto/loongson/Makefile
+>>   create mode 100644 drivers/crypto/loongson/loongson-rng.c
+>>   create mode 100644 drivers/mfd/loongson-se.c
+>>   create mode 100644 include/linux/mfd/loongson-se.h
+>>
+>>
+>> base-commit: c89756bcf406af313d191cfe3709e7c175c5b0cd
+>> --
+>> 2.45.2
+>>
+>>
 
 
