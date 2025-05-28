@@ -1,95 +1,85 @@
-Return-Path: <linux-kernel+bounces-664991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-664993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0F46AC6306
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 09:31:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4702EAC630C
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 09:32:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BDF316ABE4
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 07:31:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36AA43AE419
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 07:31:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 277961FDE01;
-	Wed, 28 May 2025 07:31:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B18AA2459C4;
+	Wed, 28 May 2025 07:31:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Q3/36YLo";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="8GtYJkOY";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Q3/36YLo";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="8GtYJkOY"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YKuCL8M5"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DE1C24500E
-	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 07:31:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63A89245022
+	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 07:31:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748417475; cv=none; b=epuo4kzTW2rEvZ57m5KJQxznysl7b4b+qlGjo8u5bJGh10UucbCHJZx5sZxQVJjMOGqFAb4gMYt/TPyZRLAK3xW93LdKK5ODP+MHtqYll9/CuRHilUwCRxN4dRjfXKAQPNn2zA245n2ZbvfRTg0u04Bjpb6ftu5uTcOIM852e0Q=
+	t=1748417491; cv=none; b=KjPb+2WEkYB/wvMItGDpgT0qT7CdUOWDAg49ue3tj/x+r4A5tUSQDJ1H6oWdAd/nWCwZIFoJsgOdcqa4lAnHHecGas8nM1e00+WLJeCGsls0u7MtLwdeF7T2Cyv/4Xy07PBhRht0lra5hMh1bgtYISxC8NfUSlvnB8D3SwPAfD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748417475; c=relaxed/simple;
-	bh=lGbLr6D1aheHcW2X3Xg29PhTlsJPrCPfnRVZ2ym3TNM=;
+	s=arc-20240116; t=1748417491; c=relaxed/simple;
+	bh=UvIexZRUn+BGBcUY9tnDQQ7cZOqImj0Tt0QmErOJPf4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Q5gG0OJLzH8iH4oR6ZemXDTBpPkNBYTxASB7O8nKgn63pJmuaaGsRJiv/VS7qMc7wO9et+ZIXbqZ30RbFacEq4j+OykyH8HgNDEsafxPByyaAmKqrm4MtnI8z9ycjdW1n3pL0MKkzqwInVzSp7xUcD3fFLapuOqJrZW1Jns2TYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Q3/36YLo; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=8GtYJkOY; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Q3/36YLo; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=8GtYJkOY; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 7FE2D21BD7;
-	Wed, 28 May 2025 07:31:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1748417471; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	 In-Reply-To:Content-Type; b=daxcxHzXGS5yah68WQVCFMc8zYeqazMtha0Qd+AqcGpJZKvOGCXLqzpKLIbgPi2V0em0HdNtjY2c7zddnpi7OHFroXRPPgnG9i8nV5l/ZeEjkp/rg1emgHxv6ZlZLA6XV5po4HpUwTO8rRo7IGrtKrkdD1JsImbPDJhZgmxCJFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YKuCL8M5; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1748417488;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=3cLvsiR5HGJqXLAU8I0S9Yms2OS7UD/1yznj6XcMooQ=;
-	b=Q3/36YLo82PZshOTF1jFfx5SGtO/T+YZyRTOrd/OtUQF+A30JTtTayHHIf09NHtvj1Mpew
-	aU440zEP42bbdGdGdHSOIepfn/hPBaWafK46lth47Q9TYWsK1+bJj/CIPSaZimUW87nOUk
-	yxtQmase0bFQTfPV6t9LHS+QNTjlarc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1748417471;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=3cLvsiR5HGJqXLAU8I0S9Yms2OS7UD/1yznj6XcMooQ=;
-	b=8GtYJkOY6PSQRAY+v/vmltoXBVqg+gTfRtE9OcFh5thPho0Lq3wGfzcjQqDk8X5Fh++Df8
-	+/5Z/pDCGmHIXBBw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="Q3/36YLo";
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=8GtYJkOY
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1748417471; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=3cLvsiR5HGJqXLAU8I0S9Yms2OS7UD/1yznj6XcMooQ=;
-	b=Q3/36YLo82PZshOTF1jFfx5SGtO/T+YZyRTOrd/OtUQF+A30JTtTayHHIf09NHtvj1Mpew
-	aU440zEP42bbdGdGdHSOIepfn/hPBaWafK46lth47Q9TYWsK1+bJj/CIPSaZimUW87nOUk
-	yxtQmase0bFQTfPV6t9LHS+QNTjlarc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1748417471;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=3cLvsiR5HGJqXLAU8I0S9Yms2OS7UD/1yznj6XcMooQ=;
-	b=8GtYJkOY6PSQRAY+v/vmltoXBVqg+gTfRtE9OcFh5thPho0Lq3wGfzcjQqDk8X5Fh++Df8
-	+/5Z/pDCGmHIXBBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 54B92136E3;
-	Wed, 28 May 2025 07:31:11 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id grFXFL+7NmhNRgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 28 May 2025 07:31:11 +0000
-Message-ID: <f5f5b4c6-90b1-4736-acfe-e4a6dbf4bb3f@suse.cz>
-Date: Wed, 28 May 2025 09:31:11 +0200
+	 in-reply-to:in-reply-to:references:references;
+	bh=NnNK+PMtqB0rA55xSs019Lt6frpG94moy6NPZkqGYPI=;
+	b=YKuCL8M5WMZT2/XOTG4zsyCbhCDIIqOJeSGrPmUbBZfmTYRW7uXSv7Xxkqx1QVkJ1LUWca
+	bX9OvwK690DqpLLeJZmZoJ/qcSi4hhZ2W+3xBGb5B84nbwyC8oYxzKalFHBVYLdBPDDWxq
+	CwV19C3urr1r0iiWs4aWR6aHz8pnCQQ=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-375-gKnOC9X2MUm3QcNFmjE_yA-1; Wed, 28 May 2025 03:31:25 -0400
+X-MC-Unique: gKnOC9X2MUm3QcNFmjE_yA-1
+X-Mimecast-MFC-AGG-ID: gKnOC9X2MUm3QcNFmjE_yA_1748417484
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-43d4d15058dso30876495e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 00:31:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748417484; x=1749022284;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NnNK+PMtqB0rA55xSs019Lt6frpG94moy6NPZkqGYPI=;
+        b=vLfwCNySB/xMOgqJOVUrUXH8IV+Pz/6QPcUCTWaJ6reYgKU+goy7wWesLiqbQR6c7c
+         8jvCLwIofGiiJQi9RlkLLrEqyGPr5tTx2sqfLUVfmzCSr8/KDYNqrLxlEWRL3u7/UHyB
+         yj9EKohf1JPfkVcO0MWCvi7Kc9wyyEu87JfRsi8xDzmFLK9JHmIzqMJqcGsAb63O5AoX
+         me1aSQzWSLGcz83R7dEjx/nF5tF7gpznYTkWYTEQtXx5OFOo/pH1j7tYJZzwjggDwo8V
+         JN28osLpnpmbdFI18mATiZGFuWnCTWCV66GtlkOgxepHMWzTSMuFyYmHni0492EfkqM+
+         rdSA==
+X-Forwarded-Encrypted: i=1; AJvYcCV4dIBNR81UtcnA5rvtjzmdMh0pa7Mp4QXEDDGn13LLEdGeeRXNs1qsV8YTLz3OgpMKa5dA2jJORdFD4+Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlK7Rbxo1eHsAXjy4A1P1L/3d7G0k+QeD2+f2ey+fdA1/vOe3/
+	3DhY7mTY+NKL+Ic6k0Ju1KOT34RgrdiqOZDbaojuhMI3Hd4yWMKI1BsvdD5AfLf2rLMROeQiR5s
+	kEryKZeH37wHiozrD9RSt9tSVL0cb4wAHc7jSZx+C2qGpzfyPNbxe5pChf0pcWOd5mQ==
+X-Gm-Gg: ASbGncvxetWwAVcjvf2fsalLt9vXUcgWacqN+5k/7tEOlbsUeBF4iRwzyaTIwOV2Kvn
+	WsF1wyZPHLH70fEUlLIsOupyKuUiuLl3O8UIwTbR7iRRQTdfYOoaJu8tT6bnkYFyuFtcCus6kU9
+	XAo72YJIyhNICc7ntxiqMjKe5qvgGgyYJsvu5BSPRptaQgYZZ/ZkS232qdkErDPBsFiem6KsFit
+	q/2cSmvfZHHSbBQpWpJLiKH7DBp1scAhcN6JPjr01mTJp6S3sPNceVvkf8sSRIAva4LLtPqbJ63
+	Tn3/kBKTrAqHKbCUK7eZtFsXJ9PWBxvqEbbApZddA8TiFCUCea4/H8HaoY4=
+X-Received: by 2002:a05:600c:4fd6:b0:442:e9ec:4654 with SMTP id 5b1f17b1804b1-44c91cc3dc0mr138588435e9.8.1748417484072;
+        Wed, 28 May 2025 00:31:24 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGdJu619yR1tj683v5lEJt4BlhCq4Yc5mhZCTSaskqgJ5HAGUteqarVvWl0xRjxTsnjM5kpEw==
+X-Received: by 2002:a05:600c:4fd6:b0:442:e9ec:4654 with SMTP id 5b1f17b1804b1-44c91cc3dc0mr138588065e9.8.1748417483603;
+        Wed, 28 May 2025 00:31:23 -0700 (PDT)
+Received: from ?IPV6:2a0d:3344:2728:e810:827d:a191:aa5f:ba2f? ([2a0d:3344:2728:e810:827d:a191:aa5f:ba2f])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45006498c83sm12303485e9.5.2025.05.28.00.31.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 28 May 2025 00:31:23 -0700 (PDT)
+Message-ID: <8b3cdc35-8bcc-41f6-84ec-aee50638b929@redhat.com>
+Date: Wed, 28 May 2025 09:31:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,139 +87,86 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6] mm: Add CONFIG_PAGE_BLOCK_ORDER to select page block
- order
-To: Juan Yescas <jyescas@google.com>, David Hildenbrand <david@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Mike Rapoport
- <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
- Michal Hocko <mhocko@suse.com>, Zi Yan <ziy@nvidia.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, tjmercier@google.com,
- isaacmanjarres@google.com, kaleshsingh@google.com, masahiroy@kernel.org,
- Minchan Kim <minchan@kernel.org>
-References: <20250520225945.991229-1-jyescas@google.com>
- <28a2881d-fd33-44d9-a212-adeb8600e15b@redhat.com>
- <CAJDx_rjyLXxFxCG3QENN23+Xcao=_jeLTDZho0xrLm5i=Sc9GQ@mail.gmail.com>
+Subject: Re: [PATCH net-next v12 00/13] Add support for PSE budget evaluation
+ strategy
+To: Kory Maincent <kory.maincent@bootlin.com>, Andrew Lunn <andrew@lunn.ch>,
+ Oleksij Rempel <o.rempel@pengutronix.de>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+ Donald Hunter <donald.hunter@gmail.com>, Rob Herring <robh@kernel.org>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, Simon Horman <horms@kernel.org>,
+ Heiner Kallweit <hkallweit1@gmail.com>, Russell King
+ <linux@armlinux.org.uk>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
+ linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>,
+ Dent Project <dentproject@linuxfoundation.org>, kernel@pengutronix.de,
+ Maxime Chevallier <maxime.chevallier@bootlin.com>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+References: <20250524-feature_poe_port_prio-v12-0-d65fd61df7a7@bootlin.com>
 Content-Language: en-US
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <CAJDx_rjyLXxFxCG3QENN23+Xcao=_jeLTDZho0xrLm5i=Sc9GQ@mail.gmail.com>
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20250524-feature_poe_port_prio-v12-0-d65fd61df7a7@bootlin.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-1.51 / 50.00];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_TLS_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,suse.cz:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[16];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from]
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: 7FE2D21BD7
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -1.51
 
-On 5/21/25 18:51, Juan Yescas wrote:
-> On Tue, May 20, 2025 at 11:47 PM David Hildenbrand <david@redhat.com> wrote:
->> > -#define pageblock_order              MIN_T(unsigned int, HUGETLB_PAGE_ORDER, MAX_PAGE_ORDER)
->> > +#define pageblock_order              MIN_T(unsigned int, HUGETLB_PAGE_ORDER, PAGE_BLOCK_ORDER)
->> >
->> >   #endif /* CONFIG_HUGETLB_PAGE_SIZE_VARIABLE */
->> >
->> >   #elif defined(CONFIG_TRANSPARENT_HUGEPAGE)
->> >
->> > -#define pageblock_order              MIN_T(unsigned int, HPAGE_PMD_ORDER, MAX_PAGE_ORDER)
->> > +#define pageblock_order              MIN_T(unsigned int, HPAGE_PMD_ORDER, PAGE_BLOCK_ORDER)
->>
->> Wait, why are we using the MIN_T in that case? If someone requests 4 MiB, why would we reduce
->> it to 2 MiB even though MAX_PAGE_ORDER allows for it?
->>
-> I don't have the context for that change. I think Vlastimil might know
-> why it is needed:
+On 5/24/25 12:56 PM, Kory Maincent wrote:
+> From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
 > 
-> That change was introduced in this patch:
-> https://lore.kernel.org/all/20240426040258.AD47FC113CD@smtp.kernel.org/
-
-Well the intention was always that pageblock order should be lowered to pmd
-order when THPs are enabled as then compaction/anti-fragmentation can better
-help them being successfully allocated. And when it turned out this was not
-true without having also CONFIG_HUGETLB_PAGE enabled, I considered it a bug.
-
-At the time there was not a proposal to make the pageblock order fully
-configurable, so it was just about having the best possible heuristic. Now
-we could let the new config override that, but since the main intention here
-is to make pageblock order smaller and not larger, it doesn't seem that urgent.
-
-But if we go that way we should make sure the defaults (user doesn't
-override MAX_PAGE_ORDER) still result in pageblock_order match PMD_ORDER
-with hugepages/THPs enabled, and not become accidentally larger.
-
-> Thanks
-> Juan
+> This series brings support for budget evaluation strategy in the PSE
+> subsystem. PSE controllers can set priorities to decide which ports should
+> be turned off in case of special events like over-current.
 > 
->>
->> Maybe we really have to clean all that up first :/
->>
->> --
->> Cheers,
->>
->> David / dhildenb
->>
+> This patch series adds support for two budget evaluation strategy.
+> 1. Static Method:
+> 
+>    This method involves distributing power based on PD classification.
+>    It’s straightforward and stable, the PSE core keeping track of the
+>    budget and subtracting the power requested by each PD’s class.
+> 
+>    Advantages: Every PD gets its promised power at any time, which
+>    guarantees reliability.
+> 
+>    Disadvantages: PD classification steps are large, meaning devices
+>    request much more power than they actually need. As a result, the power
+>    supply may only operate at, say, 50% capacity, which is inefficient and
+>    wastes money.
+> 
+> 2. Dynamic Method:
+> 
+>    To address the inefficiencies of the static method, vendors like
+>    Microchip have introduced dynamic power budgeting, as seen in the
+>    PD692x0 firmware. This method monitors the current consumption per port
+>    and subtracts it from the available power budget. When the budget is
+>    exceeded, lower-priority ports are shut down.
+> 
+>    Advantages: This method optimizes resource utilization, saving costs.
+> 
+>    Disadvantages: Low-priority devices may experience instability.
+> 
+> The UAPI allows adding support for software port priority mode managed from
+> userspace later if needed.
+> 
+> Patches 1-2: Add support for interrupt event report in PSE core, ethtool
+> 	     and ethtool specs.
+> Patch 3: Adds support for interrupt and event report in TPS23881 driver.
+> Patches 4,5: Add support for PSE power domain in PSE core and ethtool.
+> Patches 6-8: Add support for budget evaluation strategy in PSE core,
+> 	     ethtool and ethtool specs.
+> Patches 9-11: Add support for port priority and power supplies in PD692x0
+> 	      drivers.
+> Patches 12,13: Add support for port priority in TPS23881 drivers.
+> 
+> Signed-off-by: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
+
+I'm sorry, even if this has been posted (just) before the merge window,
+I think an uAPI extension this late is a bit too dangerous, please
+repost when net-next will reopen after the merge window.
+
+Thanks,
+
+Paolo
 
 
