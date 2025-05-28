@@ -1,94 +1,106 @@
-Return-Path: <linux-kernel+bounces-664645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-664647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10716AC5E8F
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 02:54:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93448AC5E92
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 02:55:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A802A7ADEEC
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 00:51:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BF181BC2A79
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 00:55:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7CE71F1507;
-	Wed, 28 May 2025 00:50:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76641154BE2;
+	Wed, 28 May 2025 00:55:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ohzwb4ss"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HkzxjemR"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 407741EDA1A;
-	Wed, 28 May 2025 00:50:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D111E1862;
+	Wed, 28 May 2025 00:55:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748393403; cv=none; b=ADyzDNURhOHl9rLAvAizxIFzG02c5l5LrV8dXXl3kuUGcuTKzFb1C9oLPtB6Nwra5OQ7ziTxFnWCOTIMNDnNEnCEkK2sEQfPM/SRbBQJ0/Q6Ap8ccUTfcCoxBXCZP/zQZEx+hmhceK5JQi8R0c5ErbfDBRtm2MDpZIUOiKsWyac=
+	t=1748393723; cv=none; b=am7N33b69qMEQhm7P9j0ks3+H76PC1FbxxEVW1x6Eu1ilUjhB4wHW84w41GSMF9qWEBFanfP2INxLY18Gz+Xw+wcz5WZEY/pdeILNrhoCAptEyhdH3i0J/2OwCNRcKSmrXyCrDpq1qkgV6+PpiF1ufb0oRSQCke5RsdtkY7WDw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748393403; c=relaxed/simple;
-	bh=BMCmWb2ynIXZqRnDMx69qdloJH8+yrmhOU04LrvIXjY=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=u7mjZdzSoUHCTTqMcvhtyEYe7ilMk1XzhFGdbUz2aMpZ3VS6Y6onbRzFKS1qovByt5pugVjozGdbDQgDZLd5yN0cg9VVoHNFuwJtdGl2QbNKgTA9jmctlpNGRyDckgu/dKNojnq1Dh16OK6mGK5RyGOxRxY+L5xzDsiPzMsT/p0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ohzwb4ss; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A901C4CEEF;
-	Wed, 28 May 2025 00:50:03 +0000 (UTC)
+	s=arc-20240116; t=1748393723; c=relaxed/simple;
+	bh=REIF4VIRmjb8CyUwrD/mNL6EjChVwJh6vGRUfbRS6MY=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=d9AgJAEiznzrrq9hgib4yl2UXDwioOook7miHVBb0GS5Gcb5qJ80VWbj4WQs80YnqgnVI8y7H0eXHXyo+vfC43DYLLYxDP4V9j8RAU5Csctjt7hKuYGaC6Smmxo2RAQfK9PS7Bjz3ajuwLoY7Vu12VEakptkXN1oS9rGoI87hFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HkzxjemR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36232C4CEE9;
+	Wed, 28 May 2025 00:55:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748393403;
-	bh=BMCmWb2ynIXZqRnDMx69qdloJH8+yrmhOU04LrvIXjY=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=Ohzwb4ssaJXThawsCmHOB7ANabKE32WukfoMPN7a/JadOevWTOic5DqTO1zvl/bm9
-	 JJv362eA3diAtkwpm2hJTuA6xXHP30tQqvksOSdbwJFz6MuI9dv2MAr6DzasEc2Rwk
-	 P/GxOZKVpSyzwncZzBkfFEGBBpTWux8cPbsG65YItUMtyY1j6sPNzkiQsvtG/N2KWj
-	 T1+Sq/quFdek4HoVuXzAMqdIbbwa9axiF3qurn9lZP35mg/q8I0afoj7K6032imGdN
-	 vbQ7ytNllhZ/8AOjzagaDbpPE+cB2TKLstzXX4906qqh92qBmcVofERy4nSySVXNcy
-	 mVfVtTmJuZs1A==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 714A3380AAE2;
-	Wed, 28 May 2025 00:50:38 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1748393723;
+	bh=REIF4VIRmjb8CyUwrD/mNL6EjChVwJh6vGRUfbRS6MY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=HkzxjemRmczAcQB9NmoIV8oiDzsmWOzh+aY5Obo8yhpFoQ99iUOeCzgFQeu9AfrnB
+	 b22nbmCPVN05RBf9cV6H1s/MAsTYY08+V8JEvxr9LcvXS4UNourtVrmSNn27b+y97x
+	 oezxdwEHCTDGSI/KE/29Vr8Zeo510+nRLTUqpycfzwxwxtMiCjJQ0wqGkkIt8+IjBs
+	 /hZtKspbX1m0y02rPNuKMT04zagYGT8TId1dWn7mJ1D1IM2u07OhldxQApS5+vTscL
+	 osCT7EZNKCrJQP9IG11WzQDJYPV2ZXM8cpmePxFqwld+10cy+Bj1CHxWsE1EGxkjxt
+	 +xotiPDECgCtg==
+Date: Wed, 28 May 2025 09:55:20 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Vincent Donnefort <vdonnefort@google.com>
+Subject: Re: [PATCH] ring-buffer: Do not trigger WARN_ON() due to a
+ commit_overrun
+Message-Id: <20250528095520.b4f236a354d9f15d65e7c2fe@kernel.org>
+In-Reply-To: <20250527161130.26276a41@gandalf.local.home>
+References: <20250527121140.0e7f0565@gandalf.local.home>
+	<20250527161130.26276a41@gandalf.local.home>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net v5] net/mlx5: Add error handling in
- mlx5_query_nic_vport_node_guid()
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174839343724.1843884.1696625892386200258.git-patchwork-notify@kernel.org>
-Date: Wed, 28 May 2025 00:50:37 +0000
-References: <20250524163425.1695-1-vulab@iscas.ac.cn>
-In-Reply-To: <20250524163425.1695-1-vulab@iscas.ac.cn>
-To: Wentao Liang <vulab@iscas.ac.cn>
-Cc: saeedm@nvidia.com, leon@kernel.org, tariqt@nvidia.com,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
- linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello:
+On Tue, 27 May 2025 16:11:30 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-This patch was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Sun, 25 May 2025 00:34:25 +0800 you wrote:
-> The function mlx5_query_nic_vport_node_guid() calls the function
-> mlx5_query_nic_vport_context() but does not check its return value.
-> A proper implementation can be found in mlx5_nic_vport_query_local_lb().
+> On Tue, 27 May 2025 12:11:40 -0400
+> Steven Rostedt <rostedt@goodmis.org> wrote:
 > 
-> Add error handling for mlx5_query_nic_vport_context(). If it fails, free
-> the out buffer via kvfree() and return error code.
+> > But there just happens to be one scenario where this can legitimately
+> > happen. That is on a commit_overrun. A commit overrun is when an interrupt
+> > preempts an event being written to the buffer and then the interrupt adds
+> > so many new events that it fills and wraps the buffer back to the commit.
+> > Any new events would then be dropped and be reported as "missed_events".
 > 
-> [...]
+> I'll probably update the commit log, but the way I triggered this was to run:
+> 
+>  # perf record -o perf-test.dat -a -- trace-cmd record --nosplice  -e all -p function hackbench 50
 
-Here is the summary with links:
-  - [net,v5] net/mlx5: Add error handling in mlx5_query_nic_vport_node_guid()
-    https://git.kernel.org/netdev/net/c/c6bb8a21cdad
+Hmm, so this runs 3 commands, hackbench, which is traced by trace-cmd, which
+is traced by perf.
 
-You are awesome, thank you!
+> 
+> Which causes perf to trigger a bunch of interrupts while trace-cmd enables
+> function tracing and all events. This is on a debug kernel that has
+> lockdep, KASAN and interrupt and preemption disabling events enabled.
+
+Ah, that is the full-set of the interrupt and tracing :)
+
+Thanks,
+
+> 
+> Basically, this causes a lot to be traced in an interrupt. Enough to fill
+> 1.4 megs of the tracing buffer with events in interrupts before a single
+> event could be recorded.
+> 
+> I've never triggered this when those extreme conditions were not there.
+> 
+> -- Steve
+
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
