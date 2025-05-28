@@ -1,271 +1,253 @@
-Return-Path: <linux-kernel+bounces-665186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCB5BAC6543
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 11:10:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BD363AC6524
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 11:04:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FE383ACEF6
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 09:10:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A8E09E7951
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 09:04:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F552277009;
-	Wed, 28 May 2025 09:09:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5D95246796;
+	Wed, 28 May 2025 09:04:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hMet6rKD"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="j1Yf1CsJ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="L4S6W4h9";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="j1Yf1CsJ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="L4S6W4h9"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CD7E7F7FC
-	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 09:09:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BB802CA8
+	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 09:04:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748423368; cv=none; b=levRGFq7Eb0tHa99rqriKDVSqWKsCjKzLuwB9ubSZJ97AUJnQ3kKcqBXpjUJDSAgfJlHpeDONcFmfbZFOa/RHhrvZwQuOQ0cB52x9te3Kg9I/Nhsa5OC165+hzlbq7o40ltmh0IHyo8/kUi2wwLCaKklCr6LMbefPeSXXTQ5XOU=
+	t=1748423087; cv=none; b=szzu159L+f/A+McTQn7ASgiOMD++MSdePrXK0fIneoZlZBJhifBIdQRcqvUfdu2EOuBR1kMtGUJ3KSz15cBKfyFpRTltPnW2lh4QOXvqC7uztKVwLNlKd/fqE18ZFISUXKQ6jk4ao2911T5Ftt68hNKhwoKrV7tr2tK8dAIQDg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748423368; c=relaxed/simple;
-	bh=jrMgYnui/1hVK+NOX5Q9Qlx3CZm/zQKpCUr+Qb1NX1U=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=sa8cMy8xxmF5mLxJ6WCwge27t+0y7bESzVPf6apId0901BmennEy4+wdnaOMsKaIGUbl6fOVrXxr4zENZtJfUqyxyi81RZUrZ0LIvTBn2u2HFfyinXsZEB42/N0HAxUplMcgjuO4kEGYH+7DzcUyeraeyVsHvploekN7k8x+IOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--guanyulin.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hMet6rKD; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--guanyulin.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-7394772635dso3029731b3a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 02:09:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1748423367; x=1749028167; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/SiziDgdhNeZTL9A0KOfLtmGGL2LYblCSJ9A9F+7hHo=;
-        b=hMet6rKDQp02StRyefZt204NNzuJTySC0kS+4gDTz/L3Fkpaid8lPtnm8pwoyaRSGH
-         mXRn4lMGICDH9JtcgtuEjDSTHkW7Omp6raXGERATKLqmP4avsGVoHBWOavsArPOZAzDN
-         piRUT/p5HZVEZN4UO0lPFQ8tGd3iejSTK2GANayC0jaamFWuurwUFec/GhJRrhB8aOkH
-         3OAQ++irqNkV3ahEi5ATo7OgxbC55iZ6BDhfhqsRtguASu0JA2/rpjKgtvF3aJEVJ/GA
-         pVDRTbiEfdhnCrlPtOf7FSYX3h17+sOv/JsjJhcyvEq9fOOCeHzTvA/Sb5Ux8DInpXKg
-         /LyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748423367; x=1749028167;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/SiziDgdhNeZTL9A0KOfLtmGGL2LYblCSJ9A9F+7hHo=;
-        b=dumrXBxcQuDVrn/8m1+w83H+538kIt/zTEU7jKUWqJx6n/XJ2SYffAQ2d26JRp6JGs
-         fgFtZuMkg0ZurbogZcvOCgf9dzClFKbGcbimfTahWTKoSrh4KvMAgTyY8JMpZ5YeWQ8V
-         fCCzFApnrFjCQWgv4Wr69RqwpCuG9F+Jprs3j/rywuofTYFe4QVuh+nRBE9V4oegwKxI
-         KIHEFMayIPE3+PVfJoUSfXVMWriJWFEGmu5exquQxck8MLvA7hoISd6JxQaNSSjzjwl/
-         9s6lvy9LV26jUaRQpwc6RF3gDJBtLS/5HxXZVo4ixD1jSIBlism5f9NzKVgG7kTRtZom
-         X8pg==
-X-Forwarded-Encrypted: i=1; AJvYcCWLtU92zuh2FPgzH9rXAzp8cDTLFot8HB00PYQV0ZF0chDAx1S/gAKDUd2fnvgHu/lT2xUesR90Zv7AHPA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/4/cQJnOxGEwo0MF1keoCwidDRvO+OFhLwsIQFxYDr8ua8ETO
-	+Ajrye2XZqFijQqyC7lgYyBXhgegzhPxZ6iiWe2J2vdUs2fSILi3rVR6ZylZDjD5YIeO2UB3435
-	H3JYPctiLjJSoxhZQIA==
-X-Google-Smtp-Source: AGHT+IGvGoiywFWqdw4XJjxAetPAW/GhM6SbBtnJ9W3r2UvhsnuVYFnszlWmq+mdtc9aesIlyy/EHaQ3B5KWm8Q=
-X-Received: from pgbdl13.prod.google.com ([2002:a05:6a02:d0d:b0:b2c:45e5:996d])
- (user=guanyulin job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a21:b85:b0:216:1c88:df46 with SMTP id adf61e73a8af0-2188bf2c994mr25447975637.0.1748423366730;
- Wed, 28 May 2025 02:09:26 -0700 (PDT)
-Date: Wed, 28 May 2025 09:04:09 +0000
-In-Reply-To: <20250528090849.2095085-1-guanyulin@google.com>
+	s=arc-20240116; t=1748423087; c=relaxed/simple;
+	bh=BCPmWotxYnhiVhx8a88cIXNIaYc00lx469hJzboFrXs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HffNhSgHwmVbslEW/uTQRD3PvYvEFoJybo+37ar3gP/x1TguPhnLW1lY5nG8dBF/RVJY5UxccXd2dZgvGXq3WL5A6TS86nYZrFRBvW9t/zxunV79Yza2A0l1+7rgNsNlwGGKoO+XNzp+MzIp8/8B23PRz+dzuKEreDDUT+Yqbng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=j1Yf1CsJ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=L4S6W4h9; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=j1Yf1CsJ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=L4S6W4h9; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 722BD21B47;
+	Wed, 28 May 2025 09:04:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1748423083; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=DF79ZmvEmJitEx8ite1iCdEbm7wTvePAxSFygteHMdE=;
+	b=j1Yf1CsJ2czzv8SEmdmmEikG0WBJyhQN5WRlv9EeRI72uIhlx0InHeIxRddVEH1NuL4u/e
+	/KA/D/YltvH6m0lGqDZXN1cWcV9mkNjU1PJbnVuE94w/C2jo2iZjh99vL2MOVaJ1JMJ+2E
+	KgOW0mb8EGm805Ao9kQ2gU42ddFTs68=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1748423083;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=DF79ZmvEmJitEx8ite1iCdEbm7wTvePAxSFygteHMdE=;
+	b=L4S6W4h9Y5RwnEOjLgk6d6WaqNNsVWbiAV6zgLp05J5C8JiAUKfG+b+WQIeTEM1bx1/Ryk
+	aiCsoCGwSaw7SCDA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=j1Yf1CsJ;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=L4S6W4h9
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1748423083; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=DF79ZmvEmJitEx8ite1iCdEbm7wTvePAxSFygteHMdE=;
+	b=j1Yf1CsJ2czzv8SEmdmmEikG0WBJyhQN5WRlv9EeRI72uIhlx0InHeIxRddVEH1NuL4u/e
+	/KA/D/YltvH6m0lGqDZXN1cWcV9mkNjU1PJbnVuE94w/C2jo2iZjh99vL2MOVaJ1JMJ+2E
+	KgOW0mb8EGm805Ao9kQ2gU42ddFTs68=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1748423083;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=DF79ZmvEmJitEx8ite1iCdEbm7wTvePAxSFygteHMdE=;
+	b=L4S6W4h9Y5RwnEOjLgk6d6WaqNNsVWbiAV6zgLp05J5C8JiAUKfG+b+WQIeTEM1bx1/Ryk
+	aiCsoCGwSaw7SCDA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 53FEE136E0;
+	Wed, 28 May 2025 09:04:43 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id kP5uE6vRNmgeZAAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Wed, 28 May 2025 09:04:43 +0000
+Message-ID: <7faca175-64c2-4a12-9340-37eaeeb8bd3e@suse.cz>
+Date: Wed, 28 May 2025 11:04:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250528090849.2095085-1-guanyulin@google.com>
-X-Mailer: git-send-email 2.49.0.1164.gab81da1b16-goog
-Message-ID: <20250528090849.2095085-5-guanyulin@google.com>
-Subject: [PATCH v13 4/4] usb: host: enable USB offload during system sleep
-From: Guan-Yu Lin <guanyulin@google.com>
-To: gregkh@linuxfoundation.org, mathias.nyman@intel.com, gargaditya08@live.com, 
-	kekrby@gmail.com, jeff.johnson@oss.qualcomm.com, quic_zijuhu@quicinc.com, 
-	andriy.shevchenko@linux.intel.com, ben@decadent.org.uk, broonie@kernel.org, 
-	quic_wcheng@quicinc.com, krzysztof.kozlowski@linaro.org
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Guan-Yu Lin <guanyulin@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/1] local_lock: Minor improvements of local_trylock*()
+ documentation
+Content-Language: en-US
+To: Leonardo Bras <leobras@redhat.com>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Jakub Kicinski <kuba@kernel.org>,
+ Alexei Starovoitov <ast@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org
+References: <20250521174726.578303-1-leobras@redhat.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <20250521174726.578303-1-leobras@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:dkim,suse.cz:mid,suse.cz:email];
+	URIBL_BLOCKED(0.00)[suse.cz:dkim,suse.cz:mid,suse.cz:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 722BD21B47
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Score: -4.51
 
-Sharing a USB controller with another entity via xhci-sideband driver
-creates power management complexities. To prevent the USB controller
-from being inadvertently deactivated while in use by the other entity, a
-usage-count based mechanism is implemented. This allows the system to
-manage power effectively, ensuring the controller remains available
-whenever needed.
-In order to maintain full functionality of an offloaded USB devices,
-several changes are made within the suspend flow of such devices:
-- skip usb_suspend_device() so that the port/hub are still active for
-  USB transfers via offloaded path.
-- not suspending the endpoints which are used by USB interfaces marked
-  with needs_remote_wakeup. Namely, skip usb_suspend_interface() and
-  usb_hcd_flush_endpoint() on associated USB interfaces. This reserves a
-  pending interrupt urb during system suspend for handling the interrupt
-  transfer, which is necessary since remote wakeup doesn't apply in the
-  offloaded USB devices when controller is still active.
-- not flushing the endpoints of actively offloaded USB devices. Given
-  that the USB devices is used by another entity, unilaterally flush the
-  endpoint might lead to unexpected behavior on another entity.
-- not suspending the xhci controller. This is done by skipping the
-  suspend/resume callbacks in the xhci platform driver.
+On 5/21/25 19:47, Leonardo Bras wrote:
+> Fix local_trylock_init() documentation, as it was mentioning the non-try
+> helper instead, and use the opportunity to make clear the try_lock*() needs
+> to receive a local_trylock_t variable as parameter.
+> 
+> Signed-off-by: Leonardo Bras <leobras@redhat.com>
 
-Signed-off-by: Guan-Yu Lin <guanyulin@google.com>
----
- drivers/usb/core/driver.c    | 50 +++++++++++++++++++++++++++++++-----
- drivers/usb/host/xhci-plat.c | 19 ++++++++++++++
- drivers/usb/host/xhci-plat.h |  1 +
- 3 files changed, 64 insertions(+), 6 deletions(-)
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
 
-diff --git a/drivers/usb/core/driver.c b/drivers/usb/core/driver.c
-index 0690619454fe..9670c10f4ade 100644
---- a/drivers/usb/core/driver.c
-+++ b/drivers/usb/core/driver.c
-@@ -1420,11 +1420,28 @@ static int usb_suspend_both(struct usb_device *udev, pm_message_t msg)
- 			udev->state == USB_STATE_SUSPENDED)
- 		goto done;
- 
-+	if (msg.event == PM_EVENT_SUSPEND && usb_offload_check(udev)) {
-+		dev_dbg(&udev->dev, "device offloaded, skip suspend.\n");
-+		udev->offload_at_suspend = 1;
-+	}
-+
- 	/* Suspend all the interfaces and then udev itself */
- 	if (udev->actconfig) {
- 		n = udev->actconfig->desc.bNumInterfaces;
- 		for (i = n - 1; i >= 0; --i) {
- 			intf = udev->actconfig->interface[i];
-+			/*
-+			 * Don't suspend interfaces with remote wakeup while
-+			 * the controller is active. This preserves pending
-+			 * interrupt urbs, allowing interrupt events to be
-+			 * handled during system suspend.
-+			 */
-+			if (udev->offload_at_suspend &&
-+			    intf->needs_remote_wakeup) {
-+				dev_dbg(&intf->dev,
-+					"device offloaded, skip suspend.\n");
-+				continue;
-+			}
- 			status = usb_suspend_interface(udev, intf, msg);
- 
- 			/* Ignore errors during system sleep transitions */
-@@ -1435,7 +1452,8 @@ static int usb_suspend_both(struct usb_device *udev, pm_message_t msg)
- 		}
- 	}
- 	if (status == 0) {
--		status = usb_suspend_device(udev, msg);
-+		if (!udev->offload_at_suspend)
-+			status = usb_suspend_device(udev, msg);
- 
- 		/*
- 		 * Ignore errors from non-root-hub devices during
-@@ -1480,9 +1498,11 @@ static int usb_suspend_both(struct usb_device *udev, pm_message_t msg)
- 	 */
- 	} else {
- 		udev->can_submit = 0;
--		for (i = 0; i < 16; ++i) {
--			usb_hcd_flush_endpoint(udev, udev->ep_out[i]);
--			usb_hcd_flush_endpoint(udev, udev->ep_in[i]);
-+		if (!udev->offload_at_suspend) {
-+			for (i = 0; i < 16; ++i) {
-+				usb_hcd_flush_endpoint(udev, udev->ep_out[i]);
-+				usb_hcd_flush_endpoint(udev, udev->ep_in[i]);
-+			}
- 		}
- 	}
- 
-@@ -1524,17 +1544,35 @@ static int usb_resume_both(struct usb_device *udev, pm_message_t msg)
- 	udev->can_submit = 1;
- 
- 	/* Resume the device */
--	if (udev->state == USB_STATE_SUSPENDED || udev->reset_resume)
--		status = usb_resume_device(udev, msg);
-+	if (udev->state == USB_STATE_SUSPENDED || udev->reset_resume) {
-+		if (!udev->offload_at_suspend)
-+			status = usb_resume_device(udev, msg);
-+		else
-+			dev_dbg(&udev->dev,
-+				"device offloaded, skip resume.\n");
-+	}
- 
- 	/* Resume the interfaces */
- 	if (status == 0 && udev->actconfig) {
- 		for (i = 0; i < udev->actconfig->desc.bNumInterfaces; i++) {
- 			intf = udev->actconfig->interface[i];
-+			/*
-+			 * Interfaces with remote wakeup aren't suspended
-+			 * while the controller is active. This preserves
-+			 * pending interrupt urbs, allowing interrupt events
-+			 * to be handled during system suspend.
-+			 */
-+			if (udev->offload_at_suspend &&
-+			    intf->needs_remote_wakeup) {
-+				dev_dbg(&intf->dev,
-+					"device offloaded, skip resume.\n");
-+				continue;
-+			}
- 			usb_resume_interface(udev, intf, msg,
- 					udev->reset_resume);
- 		}
- 	}
-+	udev->offload_at_suspend = 0;
- 	usb_mark_last_busy(udev);
- 
-  done:
-diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
-index 9843d3ad5cf4..598f1b974347 100644
---- a/drivers/usb/host/xhci-plat.c
-+++ b/drivers/usb/host/xhci-plat.c
-@@ -20,6 +20,7 @@
- #include <linux/acpi.h>
- #include <linux/usb/of.h>
- #include <linux/reset.h>
-+#include <linux/usb/xhci-sideband.h>
- 
- #include "xhci.h"
- #include "xhci-plat.h"
-@@ -483,6 +484,15 @@ static int xhci_plat_suspend_common(struct device *dev)
- 
- static int xhci_plat_suspend(struct device *dev)
- {
-+	struct usb_hcd	*hcd = dev_get_drvdata(dev);
-+	struct xhci_plat_priv *priv = hcd_to_xhci_priv(hcd);
-+
-+	if (xhci_sideband_check(hcd)) {
-+		priv->sideband_at_suspend = 1;
-+		dev_dbg(dev, "sideband instance active, skip suspend.\n");
-+		return 0;
-+	}
-+
- 	return xhci_plat_suspend_common(dev);
- }
- 
-@@ -535,6 +545,15 @@ static int xhci_plat_resume_common(struct device *dev, bool power_lost)
- 
- static int xhci_plat_resume(struct device *dev)
- {
-+	struct usb_hcd	*hcd = dev_get_drvdata(dev);
-+	struct xhci_plat_priv *priv = hcd_to_xhci_priv(hcd);
-+
-+	if (priv->sideband_at_suspend) {
-+		priv->sideband_at_suspend = 0;
-+		dev_dbg(dev, "sideband instance active, skip resume.\n");
-+		return 0;
-+	}
-+
- 	return xhci_plat_resume_common(dev, false);
- }
- 
-diff --git a/drivers/usb/host/xhci-plat.h b/drivers/usb/host/xhci-plat.h
-index fe4f95e690fa..2b32a93d2b76 100644
---- a/drivers/usb/host/xhci-plat.h
-+++ b/drivers/usb/host/xhci-plat.h
-@@ -16,6 +16,7 @@ struct xhci_plat_priv {
- 	const char *firmware_name;
- 	unsigned long long quirks;
- 	bool power_lost;
-+	unsigned sideband_at_suspend:1;
- 	void (*plat_start)(struct usb_hcd *);
- 	int (*init_quirk)(struct usb_hcd *);
- 	int (*suspend_quirk)(struct usb_hcd *);
--- 
-2.49.0.1164.gab81da1b16-goog
+Locking tree (btw the local_lock files are missing in the list of
+MAINTAINERS) or mm since this fixes up changes that went through mm recently?
+
+> ---
+> v1: https://lore.kernel.org/all/20250505170244.253170-1-leobras@redhat.com/
+> RFC: https://lore.kernel.org/all/20250430073610.163846-1-leobras@redhat.com/
+> 
+> 
+>  include/linux/local_lock.h | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/include/linux/local_lock.h b/include/linux/local_lock.h
+> index 16a2ee4f8310b..d8d5e6cfa1151 100644
+> --- a/include/linux/local_lock.h
+> +++ b/include/linux/local_lock.h
+> @@ -45,38 +45,38 @@
+>  /**
+>   * local_unlock_irqrestore - Release a per CPU local lock and restore
+>   *			      interrupt flags
+>   * @lock:	The lock variable
+>   * @flags:      Interrupt flags to restore
+>   */
+>  #define local_unlock_irqrestore(lock, flags)			\
+>  	__local_unlock_irqrestore(lock, flags)
+>  
+>  /**
+> - * local_lock_init - Runtime initialize a lock instance
+> + * local_trylock_init - Runtime initialize a local_trylock_t instance
+>   */
+>  #define local_trylock_init(lock)	__local_trylock_init(lock)
+>  
+>  /**
+>   * local_trylock - Try to acquire a per CPU local lock
+> - * @lock:	The lock variable
+> + * @lock:	The local_trylock_t variable
+>   *
+>   * The function can be used in any context such as NMI or HARDIRQ. Due to
+>   * locking constrains it will _always_ fail to acquire the lock in NMI or
+>   * HARDIRQ context on PREEMPT_RT.
+>   */
+>  #define local_trylock(lock)		__local_trylock(lock)
+>  
+>  /**
+>   * local_trylock_irqsave - Try to acquire a per CPU local lock, save and disable
+>   *			   interrupts if acquired
+> - * @lock:	The lock variable
+> + * @lock:	The local_trylock_t variable
+>   * @flags:	Storage for interrupt flags
+>   *
+>   * The function can be used in any context such as NMI or HARDIRQ. Due to
+>   * locking constrains it will _always_ fail to acquire the lock in NMI or
+>   * HARDIRQ context on PREEMPT_RT.
+>   */
+>  #define local_trylock_irqsave(lock, flags)			\
+>  	__local_trylock_irqsave(lock, flags)
+>  
+>  DEFINE_GUARD(local_lock, local_lock_t __percpu*,
 
 
