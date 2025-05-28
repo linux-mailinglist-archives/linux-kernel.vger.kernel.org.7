@@ -1,121 +1,144 @@
-Return-Path: <linux-kernel+bounces-665421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 952D6AC6902
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 14:17:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4C76AC6908
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 14:17:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E26A67B1DD2
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 12:15:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2EF4A7A4B11
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 12:16:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 724E5283FF8;
-	Wed, 28 May 2025 12:17:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QyVJfX74"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1493A27AC5A;
+	Wed, 28 May 2025 12:17:52 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D05B283C9D;
-	Wed, 28 May 2025 12:17:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EFC4283FFB;
+	Wed, 28 May 2025 12:17:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748434624; cv=none; b=MOLyu7xQ0bXPG0XQJlA0WrhJsfXyyTUDv87f8M7QP3F+BsDan5w1x8xEbld+whyZPSQPTuTG+Uo3tyceRg+Q7MeQKFQun0KkiTyEOhpPqiZAVf69s0pMJkd6vXQNTxB7wTJ1XCOr2KOyaTUULuaR2v9izU1Wjbr2lajO5aq5tU4=
+	t=1748434671; cv=none; b=e3lgBwqDhxbi3RV+150kNMiy2W8CWfYOHYFu3HLiGJvolxTNK9IxUA22a3GJuAYPRadUdZ1gQYwyYAh1tH71WWVMfAVhlHbwNG1fzGPZpMfQmIigFTzIv/nY1RBOqvpAUaV/qxSHARNkxZddd5jXADHfknyuy9MQU4qtTjl4N+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748434624; c=relaxed/simple;
-	bh=zliaatdZSG3ID75nB4njeI5zRcmiAOD/ZqOPCvHelOs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jomh+dpr1Fo9NYoUTrk646lC6hP12bMqiCys/GWxxMWlPrj5OIozVAu03Ft8Fb98H2Sw6U64+G9YSOj80b6GfFpfp352VAgb3min9+HohqC4dymGFEhOPcKHlAmYlvIkiW8xMeE7nXqxy4JESADjdz1rtXl2vv4o28aKNhR+trw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QyVJfX74; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1748434623; x=1779970623;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=zliaatdZSG3ID75nB4njeI5zRcmiAOD/ZqOPCvHelOs=;
-  b=QyVJfX74mr4CeNPW4oHeF1zq3PsJPZHV1k8CGDPq0yVt30UPuUOFSvzV
-   1SibCpVjcHBERq4KClSendu+AYQUx9cLlv5r3IQt2PqaemaEz76PbjTE2
-   Ahg9KxAeMr6fGvYj31BXA6tYnyaQDJ+S9kD7ygpH2UZjoh/qzaau68GgC
-   mWB61P5FTj+aSEMTdW3Cbe4sbnrc/1zI/uNvN2LGJhcyKfKMwv11P3Yed
-   Ra8StP5TMPjrvuAYE0XoI7p/TU6EGlXNJ9Tb2VT5uNqvNRfQioDAe04Nc
-   Dcpbq2CGIj/7oikFgl32ysbtF0jPT0dfI9VEGk29kYg65NQYFjs+wrc2O
-   g==;
-X-CSE-ConnectionGUID: iy6KrfmaQ0ms86CslONP4g==
-X-CSE-MsgGUID: TgcGfzKYTDWZa3ZILSc1GA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11447"; a="68005234"
-X-IronPort-AV: E=Sophos;i="6.15,321,1739865600"; 
-   d="scan'208";a="68005234"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2025 05:17:02 -0700
-X-CSE-ConnectionGUID: zfMKmqs0Qnmx7lKJ9Bpfqw==
-X-CSE-MsgGUID: TNY0VZEKTUW6+mR/lzVwxA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,321,1739865600"; 
-   d="scan'208";a="144192208"
-Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
-  by fmviesa009.fm.intel.com with ESMTP; 28 May 2025 05:17:01 -0700
-Received: from kbuild by 1992f890471c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uKFiM-000Ve0-1S;
-	Wed, 28 May 2025 12:16:58 +0000
-Date: Wed, 28 May 2025 20:16:32 +0800
-From: kernel test robot <lkp@intel.com>
-To: Menglong Dong <menglong8.dong@gmail.com>, alexei.starovoitov@gmail.com,
-	rostedt@goodmis.org, jolsa@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, bpf@vger.kernel.org,
-	Menglong Dong <dongml2@chinatelecom.cn>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH bpf-next 03/25] arm64: implement per-function metadata
- storage for arm64
-Message-ID: <202505282007.0CscfzXZ-lkp@intel.com>
-References: <20250528034712.138701-4-dongml2@chinatelecom.cn>
+	s=arc-20240116; t=1748434671; c=relaxed/simple;
+	bh=nUJBaB2GORIkiCZ1ogLH581aDFQMv2bEy87KDOJq+fU=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=F5oTzWWvxjx/jojq5LBfu2joDRC6jDSe7MNW7dkSpmDkCIoaviA7YGyBTm/5qQPviHiZJEfuruzClwEeD32Jetsdx78kEfTTR1c5rXulTrNmM4OtE21B5de6C2oMpW1/TyXi74BYIYCSGJKQVuKl0rHz0RiUYMqorhnfCsIj02A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4b6pMT2P7fz6L5Bg;
+	Wed, 28 May 2025 20:14:13 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id B80141402F5;
+	Wed, 28 May 2025 20:17:46 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 28 May
+ 2025 14:17:46 +0200
+Date: Wed, 28 May 2025 13:17:44 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Lorenzo Pieralisi <lpieralisi@kernel.org>
+CC: Marc Zyngier <maz@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, "Rob
+ Herring" <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, "Conor
+ Dooley" <conor+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>, "Sascha
+ Bischoff" <sascha.bischoff@arm.com>, Timothy Hayes <timothy.hayes@arm.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Mark Rutland
+	<mark.rutland@arm.com>, Jiri Slaby <jirislaby@kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<devicetree@vger.kernel.org>
+Subject: Re: [PATCH v4 18/26] arm64: smp: Support non-SGIs for IPIs
+Message-ID: <20250528131744.00001544@huawei.com>
+In-Reply-To: <20250513-gicv5-host-v4-18-b36e9b15a6c3@kernel.org>
+References: <20250513-gicv5-host-v4-0-b36e9b15a6c3@kernel.org>
+	<20250513-gicv5-host-v4-18-b36e9b15a6c3@kernel.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250528034712.138701-4-dongml2@chinatelecom.cn>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500002.china.huawei.com (7.191.160.78) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-Hi Menglong,
+On Tue, 13 May 2025 19:48:11 +0200
+Lorenzo Pieralisi <lpieralisi@kernel.org> wrote:
 
-kernel test robot noticed the following build errors:
+> From: Marc Zyngier <maz@kernel.org>
+> 
+> The arm64 arch has relied so far on GIC architectural software
+> generated interrupt (SGIs) to handle IPIs. Those are per-cpu
+> software generated interrupts.
+> 
+> arm64 architecture code that allocates the IPIs virtual IRQs and
+> IRQ descriptors was written accordingly.
+> 
+> On GICv5 systems, IPIs are implemented using LPIs that are not
+> per-cpu interrupts - they are just normal routable IRQs.
+> 
+> Add arch code to set-up IPIs on systems where they are handled
+> using normal routable IRQs.
+> 
+> For those systems, force the IRQ affinity (and make it immutable)
+> to the cpu a given IRQ was assigned to.
+> 
+> Signed-off-by: Marc Zyngier <maz@kernel.org>
+> [timothy.hayes@arm.com: fixed ipi/irq conversion, irq flags]
+> Signed-off-by: Timothy Hayes <timothy.hayes@arm.com>
+> [lpieralisi: changed affinity set-up, log]
+> Signed-off-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+Hi Lorenzo,
 
-[auto build test ERROR on bpf-next/master]
+A few trivial comments inline.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Menglong-Dong/add-per-function-metadata-storage-support/20250528-115819
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git master
-patch link:    https://lore.kernel.org/r/20250528034712.138701-4-dongml2%40chinatelecom.cn
-patch subject: [PATCH bpf-next 03/25] arm64: implement per-function metadata storage for arm64
-config: arm64-randconfig-002-20250528 (https://download.01.org/0day-ci/archive/20250528/202505282007.0CscfzXZ-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 7.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250528/202505282007.0CscfzXZ-lkp@intel.com/reproduce)
+> +
+> +static int ipi_to_irq(int ipi, int cpu)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202505282007.0CscfzXZ-lkp@intel.com/
+Maybe this naming needs a breadcrumb to indicate this only
+applies only to lpi case as it's directly computed in the old ppi code?
+A comment might do the job.
 
-All errors (new ones prefixed by >>):
+> +{
+> +	return ipi_irq_base + (cpu * nr_ipi) + ipi;
+> +}
+> +
+> +static int irq_to_ipi(int irq)
+> +{
+> +	return (irq - ipi_irq_base) % nr_ipi;
+> +}
 
->> aarch64-linux-gcc: error: unrecognized command line option '-fpatchable-function-entry=1,1'
-   make[3]: *** [scripts/Makefile.build:203: scripts/mod/empty.o] Error 1 shuffle=4239289662
->> aarch64-linux-gcc: error: unrecognized command line option '-fpatchable-function-entry=1,1'
-   make[3]: *** [scripts/Makefile.build:98: scripts/mod/devicetable-offsets.s] Error 1 shuffle=4239289662
-   make[3]: Target 'scripts/mod/' not remade because of errors.
-   make[2]: *** [Makefile:1281: prepare0] Error 2 shuffle=4239289662
-   make[2]: Target 'prepare' not remade because of errors.
-   make[1]: *** [Makefile:248: __sub-make] Error 2 shuffle=4239289662
-   make[1]: Target 'prepare' not remade because of errors.
-   make: *** [Makefile:248: __sub-make] Error 2 shuffle=4239289662
-   make: Target 'prepare' not remade because of errors.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> +static void ipi_setup_lpi(int ipi, int ncpus)
+> +{
+> +	for (int cpu = 0; cpu < ncpus; cpu++) {
+> +		int err, irq;
+> +
+> +		irq = ipi_to_irq(ipi, cpu);
+> +
+> +		err = irq_force_affinity(irq, cpumask_of(cpu));
+> +
+Trivial local consistency thing but maybe no blank line here or...
+> +		WARN(err, "Could not force affinity IRQ %d, err=%d\n", irq, err);
+> +
+> +		err = request_irq(irq, ipi_handler, IRQF_NO_AUTOEN, "IPI",
+> +				  &irq_stat);
+> +
+here to match the style in ipi_setup_ppi()
+
+> +		WARN(err, "Could not request IRQ %d, err=%d\n", irq, err);
+> +
+> +		irq_set_status_flags(irq, (IRQ_HIDDEN | IRQ_NO_BALANCING_MASK));
+> +
+> +		get_ipi_desc(cpu, ipi) = irq_to_desc(irq);
+> +	}
+> +}
+
 
