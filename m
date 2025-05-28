@@ -1,266 +1,291 @@
-Return-Path: <linux-kernel+bounces-664718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-664721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7906AC5F90
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 04:34:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 137DBAC5F9C
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 04:36:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9FE07A5FD8
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 02:33:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D6CF4C1FFE
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 02:35:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0196A21E097;
-	Wed, 28 May 2025 02:29:34 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FA901F5402;
-	Wed, 28 May 2025 02:29:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF70D1E25EF;
+	Wed, 28 May 2025 02:30:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="iqtP18d/"
+Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D3133398A
+	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 02:30:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748399372; cv=none; b=InmqW0g+AQ/CIevGQBvKIKCkHJJWn1RWd82x2gYNYFXBuqbmwU4rer3MdzuTsM1F8XtNPWQmirwgqQ2QNr9Qt0SnzLZeL9MA2qHH9y8Mgeu9IjCn5xS2CQDhQYeqQt/YV/3F41+k6pwSLT4XnS8YAVOC5ksBOWsOEcglBnsNqFU=
+	t=1748399442; cv=none; b=btCa/eyQf2OKs6VhlUTHKxYokN6W1UPCKOWItH0HkyRDLbujWid1nOisvDGZHbIH0HUJGpv6RlAWZNpEjht8gIFfORIacASDySNYJwbvcjUoZxXVkqAi/ekYXKdP5cRPdXlZKiCEzjCoBP/l5RcSyUjP/0c5l9JOMBV3rFXCrQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748399372; c=relaxed/simple;
-	bh=lGq2UipE9ii+VzBIB1OV2LQ7d/+hzx80uOFRSAhCtik=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=B6Kew11xUlELwhfbaexPs8kkv6zBa5i+PDh6yQ6YA70mj6Z7YlDK8XOyFuyhLieQeveMSIIdsLb9I5lDu7SQoVknp9o2K0l1EhVrBddPj8UhXs4TuC708h1+tJpV7aDqfYAdaEDk+KGtCcXojy45Zz4L0PJMLqIWpNzkM9o1WyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-669ff7000002311f-bd-683675021852
-From: Byungchul Park <byungchul@sk.com>
-To: willy@infradead.org,
-	netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	kernel_team@skhynix.com,
-	kuba@kernel.org,
-	almasrymina@google.com,
-	ilias.apalodimas@linaro.org,
-	harry.yoo@oracle.com,
-	hawk@kernel.org,
-	akpm@linux-foundation.org,
-	davem@davemloft.net,
-	john.fastabend@gmail.com,
-	andrew+netdev@lunn.ch,
-	asml.silence@gmail.com,
-	toke@redhat.com,
-	tariqt@nvidia.com,
-	edumazet@google.com,
-	pabeni@redhat.com,
-	saeedm@nvidia.com,
-	leon@kernel.org,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	david@redhat.com,
-	lorenzo.stoakes@oracle.com,
-	Liam.Howlett@oracle.com,
-	vbabka@suse.cz,
-	rppt@kernel.org,
-	surenb@google.com,
-	mhocko@suse.com,
-	horms@kernel.org,
-	linux-rdma@vger.kernel.org,
-	bpf@vger.kernel.org,
-	vishal.moola@gmail.com
-Subject: [PATCH v2 16/16] mt76: use netmem descriptor and APIs for page pool
-Date: Wed, 28 May 2025 11:29:11 +0900
-Message-Id: <20250528022911.73453-17-byungchul@sk.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20250528022911.73453-1-byungchul@sk.com>
-References: <20250528022911.73453-1-byungchul@sk.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAAzWRW0hTcRzH/e+cnR2Hy8PSOhrdJikJ3krXjzCTHur/kCH4lg829NSWusm8
-	NIVgXkic08R8CJ0085K3nCzxUsvykloKyVJZpSmKRuQFnZq6zJzR24fP98fn5UcT4j7Sm1Yo
-	0zi1UpYkoYSkcMmtKoCXLpUH62qkYDA1U9C0pYFnM518MDS2I1jf/ioAe/8gBdVVmwQYPuaR
-	sGHaIWB+YFYA03ULJFjyOwiYfThEQVGeg4CcznoejLYX86Fsp5aADu2MAD69NFDwrXmPDwu9
-	RSS8L28gYbo4EgaMR2BzeBFBv6mDB5v6SgoeWY0UzOVNI7D2zZJQkV2MwNRt44Njy0BFnsZt
-	DZ95uKt8SoCN5nT8ot4f62xWApsbCyhsXisV4MkJC4WHHjtI3NVp5+Gi3GUKr85/IfFK9ziF
-	TW3jJB4x9guw3XwimrkpDE/gkhQZnDoo4pZQXrO0glJWAzVLr/cEWqT10yFXmmVC2fnvtXwd
-	og94yH7DqSnGj7XZtgknezAhrH12kNQhIU0wy3x23uDgOYfDzHX2g60COZlkzrDZ+r0DFjFS
-	di5nmPrXP8k2tb4lnH3Xff9uMt6pxUwYu1JoQs4my2wIWIduifh378X21NvIEiQyIpdGJFYo
-	M5JliqTQQHmmUqEJjFclm9H+a+vu/47tRGujMb2IoZHETYRbw+RiviwjNTO5F7E0IfEQ5VyW
-	ysWiBFlmFqdWxanTk7jUXnSMJiVHRec27yWImTuyNC6R41I49f+VR7t6a1HshPt0y06Qy0XV
-	+dKrFaq46jF/fbSr8GlhS+jGGx+rNYpW50sTfJoCItYPbb2y1P2aOitbKbrt5dnXICwoXizQ
-	PZi6cPdnT3+U5/M5/amY3LIr2ilL8O6f4/q+ymqNZcSUkuXrrlMlKulLvmz4ribXVPckZ+za
-	j3VRSXriXJ5NQqbKZSH+hDpV9hcG4DUc1gIAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAAzWRa0hTYRyHe3fOzo7DyXGJHkwIF6ZYmkban5SSinypkD4VFJVLj224TdlU
-	vJDNC0nzVtmH0gkL8zYXExUvYRbTvGRQqJNl3thS/JBT00SdYS7o28PzwO/LjybEDaQ/LVdl
-	cGqVVCGhhKQwIaYojJcZLYto3g0BvdlEQctWNjTOd/NBb+xEsLH9XQDrA0MU1L3aJED/pZiE
-	3+YdAhYG7QKYa1gkobekiwB75TAF5cUuAgq7m3jQXzvCh6+dFXx4vlNPQJd2XgDjb/UUzJr2
-	+LBoKSdhpLqZhLmKOBg0+MLm6E8EA+YuHmyW1VJQNWagwFE8h2Cs305CTUEFAnOfjQ+uLT0V
-	J8Edzd94uKd6RoANbZm4vSkU62xjBG4zPqZw269nAjw92Uvh4RcuEvd0r/NweZGTwmsLUyRe
-	6bNSuG5plYfNHVYSfzYMCK553xTGJnMKeRanPnE2USh7vbyC0tfCs5ff7Qm0SBusQzTNMqfY
-	4fUEHfKgKSaYtdm2CTf7MJHsun2I1CEhTTBOPrugd/Hc4SBzlf1kq0FuJpkgtqBs7x+LmGjW
-	UThKuZllDrMtrR8I977Hvv84neTWYiaKXSk1oydIaEAHjMhHrspSSuWKqHBNqixHJc8OT0pT
-	tqH99xoe7D7tRhvj8RbE0EjiKcKtUTIxX5qlyVFaEEsTEh9R4blomViULM3J5dRpd9WZCk5j
-	QYdoUuInunyDSxQz96UZXCrHpXPq/5VHe/hrUV57WpV13CtzeuJhUHBNxG7KrbywCVeLJz4d
-	8dIUaBo1BTqvpNzxTQm4PqDJNxaWRpy8GBh64YjL4shNrW86aju+vBsbMs+cDxU1+pt/aOOr
-	YsL+lCRPWtMvzR0T6O/NTs8kmLwDVI5Gv0czU86AzjNL/bcbTe/zW3wn3yi9VislpEYmjQwl
-	1BrpX5Rf9Ya5AgAA
-X-CFilter-Loop: Reflected
+	s=arc-20240116; t=1748399442; c=relaxed/simple;
+	bh=cgw3zgYmKScxl2sklQoE1AMEPFW6AHwB7KJ/wN1ji34=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SqIIOxkidQLZHLm+3BVneGB+3yI7lvq+xG7gMkVx5bsGVRUQrmLgBd6OYTvyiXHF6Fi9Rjl3h0WC5ZpDFJcGrtJaE8HSLWQbwMXwQg/ieqf6skc+JL+hyOS2mv+AmabKGLLpmEGIyCY56/AGuGoPtfJuoPfKhlu8fCNyBppJXcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=iqtP18d/; arc=none smtp.client-ip=115.124.30.110
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1748399431; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=4GKIzVM2Fg2/j7DiLGJIHTMBZLOUdWqEOifY6fxsKhY=;
+	b=iqtP18d/R6PNMA26caDr9g2j6Yh0XXjtYjLdOHVFFj4zY5776DntxJgpW7mqVd+M5706Nraz4npyod/qtrdQ4cyacu34JxWgyy4Uv3paWtZFq52sQh9QUXQsyVhi5DCpU6pVufvyelAPuW8+ewjqtGLBt9UC3gm8bQcbJKEPRIU=
+Received: from 30.178.82.30(mailfrom:qinyuntan@linux.alibaba.com fp:SMTPD_---0WcBXhv3_1748399422 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 28 May 2025 10:30:30 +0800
+Message-ID: <c0c4a374-d24e-4896-8adc-4df43249ecd2@linux.alibaba.com>
+Date: Wed, 28 May 2025 10:30:21 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: =?UTF-8?B?TW96aWxsYSBUaHVuZGVyYmlyZCDmtYvor5XniYg=?=
+Subject: Re: [PATCH] x86/resctrl: Remove unnecessary references to cacheinfo
+ in the resctrl subsystem.
+To: "Luck, Tony" <tony.luck@intel.com>
+Cc: "H . Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
+ x86@kernel.org, Reinette Chatre <reinette.chatre@intel.com>
+References: <20250526073744.62520-1-qinyuntan@linux.alibaba.com>
+ <aDYt0eXB4nSawkJr@agluck-desk3>
+From: qinyuntan <qinyuntan@linux.alibaba.com>
+In-Reply-To: <aDYt0eXB4nSawkJr@agluck-desk3>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-To simplify struct page, the effort to separate its own descriptor from
-struct page is required and the work for page pool is on going.
 
-Use netmem descriptor and APIs for page pool in mt76 code.
 
-Signed-off-by: Byungchul Park <byungchul@sk.com>
----
- drivers/net/wireless/mediatek/mt76/dma.c      |  6 ++---
- drivers/net/wireless/mediatek/mt76/mt76.h     | 12 +++++-----
- .../net/wireless/mediatek/mt76/sdio_txrx.c    | 24 +++++++++----------
- drivers/net/wireless/mediatek/mt76/usb.c      | 10 ++++----
- 4 files changed, 26 insertions(+), 26 deletions(-)
+On 5/28/25 5:25 AM, Luck, Tony wrote:
+> On Mon, May 26, 2025 at 03:37:44PM +0800, Qinyun Tan wrote:
+> 
+> Hi Qinyun Tan,
+> 
+>> In the resctrl subsystem's Sub-NUMA Cluster (SNC) mode, the rdt_mon_domain
+>> structure previously relied on the cacheinfo interface to store L3 cache
+>> information (e.g., shared_cpu_map) for monitoring. However, this approach
+>> introduces risks when CPUs go offline:
+>>
+>> 1. Inconsistency: The ci field in rdt_mon_domain was initialized using the
+>> first online CPU of a NUMA node. If this CPU later goes offline, the
+>> shared_cpu_map (managed by the cache subsystem) is cleared, leading to
+>> incorrect or undefined behavior when accessed via rdt_mon_domain.
+>>
+>> 2. Lifecycle dependency: The cacheinfo structure's lifecycle is managed
+>> by the cache subsystem, making it unsafe for resctrl to hold
+>> long-term references.
+> 
+> You are correct. Saving a pointer to the per-cpu cacheinfo leads to
+> the problems that you describe.
+> 
+>> To resolve these issues and align with design principles:
+>>
+>> 1. Replace direct cacheinfo references in struct rdt_mon_domain and struct
+>> rmid_read with the cacheinfo ID (a unique identifier for the L3 cache).
+>>
+>> 2. Use hdr.cpu_mask (already maintained by resctrl) to replace
+>> shared_cpu_map logic for determining valid CPUs for RMID counter reads
+>> via the MSR interface.
+>>
+>> Signed-off-by: Qinyun Tan <qinyuntan@linux.alibaba.com>
+>> ---
+>>   arch/x86/kernel/cpu/resctrl/core.c        | 6 ++++--
+>>   arch/x86/kernel/cpu/resctrl/ctrlmondata.c | 6 +++---
+>>   arch/x86/kernel/cpu/resctrl/internal.h    | 4 ++--
+>>   arch/x86/kernel/cpu/resctrl/monitor.c     | 6 +-----
+>>   arch/x86/kernel/cpu/resctrl/rdtgroup.c    | 6 +++---
+>>   include/linux/resctrl.h                   | 4 ++--
+>>   6 files changed, 15 insertions(+), 17 deletions(-)
+>>
+>> diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
+>> index cf29681d01e04..a0dff742e9e93 100644
+>> --- a/arch/x86/kernel/cpu/resctrl/core.c
+>> +++ b/arch/x86/kernel/cpu/resctrl/core.c
+>> @@ -516,6 +516,7 @@ static void domain_add_cpu_mon(int cpu, struct rdt_resource *r)
+>>   	struct rdt_hw_mon_domain *hw_dom;
+>>   	struct rdt_domain_hdr *hdr;
+>>   	struct rdt_mon_domain *d;
+>> +	struct cacheinfo *ci;
+>>   	int err;
+>>   
+>>   	lockdep_assert_held(&domain_list_lock);
+>> @@ -543,12 +544,13 @@ static void domain_add_cpu_mon(int cpu, struct rdt_resource *r)
+>>   	d = &hw_dom->d_resctrl;
+>>   	d->hdr.id = id;
+>>   	d->hdr.type = RESCTRL_MON_DOMAIN;
+>> -	d->ci = get_cpu_cacheinfo_level(cpu, RESCTRL_L3_CACHE);
+>> -	if (!d->ci) {
+>> +	ci = get_cpu_cacheinfo_level(cpu, RESCTRL_L3_CACHE);
+>> +	if (!ci) {
+>>   		pr_warn_once("Can't find L3 cache for CPU:%d resource %s\n", cpu, r->name);
+>>   		mon_domain_free(hw_dom);
+>>   		return;
+>>   	}
+>> +	d->ci_id = ci->id;
+>>   	cpumask_set_cpu(cpu, &d->hdr.cpu_mask);
+>>   
+>>   	arch_mon_domain_online(r, d);
+>> diff --git a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c b/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
+>> index 0a0ac5f6112ec..f9768669ce806 100644
+>> --- a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
+>> +++ b/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
+>> @@ -690,10 +690,10 @@ int rdtgroup_mondata_show(struct seq_file *m, void *arg)
+>>   		 * one that matches this cache id.
+>>   		 */
+>>   		list_for_each_entry(d, &r->mon_domains, hdr.list) {
+>> -			if (d->ci->id == domid) {
+>> -				rr.ci = d->ci;
+>> +			if (d->ci_id == domid) {
+>> +				rr.ci_id = d->ci_id;
+>>   				mon_event_read(&rr, r, NULL, rdtgrp,
+>> -					       &d->ci->shared_cpu_map, evtid, false);
+>> +					       &d->hdr.cpu_mask, evtid, false);
+> 
+> This change restricts choice of CPUs to execute the read to one of the
+> CPUs in the SNC domain, instead of any that share the L3 cache.
+hdr.cpu_mask is a subset of ci->shared_cpu_map, and using it should have 
+no side effects？>
+>>   				goto checkresult;
+>>   			}
+>>   		}
+>> diff --git a/arch/x86/kernel/cpu/resctrl/internal.h b/arch/x86/kernel/cpu/resctrl/internal.h
+>> index eaae99602b617..91e71db554a9c 100644
+>> --- a/arch/x86/kernel/cpu/resctrl/internal.h
+>> +++ b/arch/x86/kernel/cpu/resctrl/internal.h
+>> @@ -136,7 +136,7 @@ union mon_data_bits {
+>>    *	   domains in @r sharing L3 @ci.id
+>>    * @evtid: Which monitor event to read.
+>>    * @first: Initialize MBM counter when true.
+>> - * @ci:    Cacheinfo for L3. Only set when @d is NULL. Used when summing domains.
+>> + * @ci_id:    Cacheinfo id for L3. Only set when @d is NULL. Used when summing domains.
+>>    * @err:   Error encountered when reading counter.
+>>    * @val:   Returned value of event counter. If @rgrp is a parent resource group,
+>>    *	   @val includes the sum of event counts from its child resource groups.
+>> @@ -150,7 +150,7 @@ struct rmid_read {
+>>   	struct rdt_mon_domain	*d;
+>>   	enum resctrl_event_id	evtid;
+>>   	bool			first;
+>> -	struct cacheinfo	*ci;
+>> +	unsigned int	ci_id;
+>>   	int			err;
+>>   	u64			val;
+>>   	void			*arch_mon_ctx;
+>> diff --git a/arch/x86/kernel/cpu/resctrl/monitor.c b/arch/x86/kernel/cpu/resctrl/monitor.c
+>> index a93ed7d2a1602..bedccd62158c3 100644
+>> --- a/arch/x86/kernel/cpu/resctrl/monitor.c
+>> +++ b/arch/x86/kernel/cpu/resctrl/monitor.c
+>> @@ -620,10 +620,6 @@ static int __mon_event_count(u32 closid, u32 rmid, struct rmid_read *rr)
+>>   		return 0;
+>>   	}
+>>   
+>> -	/* Summing domains that share a cache, must be on a CPU for that cache. */
+>> -	if (!cpumask_test_cpu(cpu, &rr->ci->shared_cpu_map))
+>> -		return -EINVAL;
+>> -
+> 
+> This sanity check that code is executing on a CPU that shares the L3
+> cache has gone. But I don't see any code to replace it based on checking
+> your new "ci_id" field.
+You are right，I will add this check in the next patch.>
+> Should it be something like:
+> 
+> 	struct cacheinfo *ci;
+> 
+> 	ci = get_cpu_cacheinfo_level(cpu, RESCTRL_L3_CACHE);
+> 	if (!ci || ci->id != rr->ci_id)
+> 		return -EINVAL;
+> 
+>>   	/*
+>>   	 * Legacy files must report the sum of an event across all
+>>   	 * domains that share the same L3 cache instance.
+>> @@ -633,7 +629,7 @@ static int __mon_event_count(u32 closid, u32 rmid, struct rmid_read *rr)
+>>   	 */
+>>   	ret = -EINVAL;
+>>   	list_for_each_entry(d, &rr->r->mon_domains, hdr.list) {
+>> -		if (d->ci->id != rr->ci->id)
+>> +		if (d->ci_id != rr->ci_id)
+>>   			continue;
+>>   		err = resctrl_arch_rmid_read(rr->r, d, closid, rmid,
+>>   					     rr->evtid, &tval, rr->arch_mon_ctx);
+>> diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+>> index cc4a54145c83d..075fdca2080d8 100644
+>> --- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+>> +++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+>> @@ -3146,7 +3146,7 @@ static void rmdir_mondata_subdir_allrdtgrp(struct rdt_resource *r,
+>>   	char name[32];
+>>   
+>>   	snc_mode = r->mon_scope == RESCTRL_L3_NODE;
+>> -	sprintf(name, "mon_%s_%02d", r->name, snc_mode ? d->ci->id : d->hdr.id);
+>> +	sprintf(name, "mon_%s_%02d", r->name, snc_mode ? d->ci_id : d->hdr.id);
+>>   	if (snc_mode)
+>>   		sprintf(subname, "mon_sub_%s_%02d", r->name, d->hdr.id);
+>>   
+>> @@ -3171,7 +3171,7 @@ static int mon_add_all_files(struct kernfs_node *kn, struct rdt_mon_domain *d,
+>>   		return -EPERM;
+>>   
+>>   	priv.u.rid = r->rid;
+>> -	priv.u.domid = do_sum ? d->ci->id : d->hdr.id;
+>> +	priv.u.domid = do_sum ? d->ci_id : d->hdr.id;
+>>   	priv.u.sum = do_sum;
+>>   	list_for_each_entry(mevt, &r->evt_list, list) {
+>>   		priv.u.evtid = mevt->evtid;
+>> @@ -3198,7 +3198,7 @@ static int mkdir_mondata_subdir(struct kernfs_node *parent_kn,
+>>   	lockdep_assert_held(&rdtgroup_mutex);
+>>   
+>>   	snc_mode = r->mon_scope == RESCTRL_L3_NODE;
+>> -	sprintf(name, "mon_%s_%02d", r->name, snc_mode ? d->ci->id : d->hdr.id);
+>> +	sprintf(name, "mon_%s_%02d", r->name, snc_mode ? d->ci_id : d->hdr.id);
+>>   	kn = kernfs_find_and_get(parent_kn, name);
+>>   	if (kn) {
+>>   		/*
+>> diff --git a/include/linux/resctrl.h b/include/linux/resctrl.h
+>> index 880351ca3dfcb..c990670d18c02 100644
+>> --- a/include/linux/resctrl.h
+>> +++ b/include/linux/resctrl.h
+>> @@ -145,7 +145,7 @@ struct rdt_ctrl_domain {
+>>   /**
+>>    * struct rdt_mon_domain - group of CPUs sharing a resctrl monitor resource
+>>    * @hdr:		common header for different domain types
+>> - * @ci:			cache info for this domain
+>> + * @ci_id:			cache info id for this domain
+>>    * @rmid_busy_llc:	bitmap of which limbo RMIDs are above threshold
+>>    * @mbm_total:		saved state for MBM total bandwidth
+>>    * @mbm_local:		saved state for MBM local bandwidth
+>> @@ -156,7 +156,7 @@ struct rdt_ctrl_domain {
+>>    */
+>>   struct rdt_mon_domain {
+>>   	struct rdt_domain_hdr		hdr;
+>> -	struct cacheinfo		*ci;
+>> +	unsigned int			ci_id;
+>>   	unsigned long			*rmid_busy_llc;
+>>   	struct mbm_state		*mbm_total;
+>>   	struct mbm_state		*mbm_local;
+>> -- 
+>> 2.43.5
+>>
+> 
+> One other note. Linus just[1] merged the patches that split the
+> architecture independent portions of resctrl into "fs/resctrl"
+> (moving just over 7000 lines out of arch/x86/kernel/cpu/resctrl).
+> 
+> Some parts of this patch touch code that moved. But it should be
+> fairly easy to track the new location as the function names did
+> not change in the move. Please base new version of the patch on
+> upstream.
+> 
+> -Tony
+> 
+> [1] After you wrote this patch, and about 4 hours before I'm writing
+> this reply!Ok. Soon I will rebase the master and then resend thispatch.
 
-diff --git a/drivers/net/wireless/mediatek/mt76/dma.c b/drivers/net/wireless/mediatek/mt76/dma.c
-index 35b4ec91979e..cceff435ec4a 100644
---- a/drivers/net/wireless/mediatek/mt76/dma.c
-+++ b/drivers/net/wireless/mediatek/mt76/dma.c
-@@ -820,10 +820,10 @@ mt76_add_fragment(struct mt76_dev *dev, struct mt76_queue *q, void *data,
- 	int nr_frags = shinfo->nr_frags;
- 
- 	if (nr_frags < ARRAY_SIZE(shinfo->frags)) {
--		struct page *page = virt_to_head_page(data);
--		int offset = data - page_address(page) + q->buf_offset;
-+		netmem_ref netmem = netmem_compound_head(virt_to_netmem(data));
-+		int offset = data - netmem_address(netmem) + q->buf_offset;
- 
--		skb_add_rx_frag(skb, nr_frags, page, offset, len, q->buf_size);
-+		skb_add_rx_frag_netmem(skb, nr_frags, netmem, offset, len, q->buf_size);
- 	} else {
- 		mt76_put_page_pool_buf(data, allow_direct);
- 	}
-diff --git a/drivers/net/wireless/mediatek/mt76/mt76.h b/drivers/net/wireless/mediatek/mt76/mt76.h
-index 5f8d81cda6cd..f075c1816554 100644
---- a/drivers/net/wireless/mediatek/mt76/mt76.h
-+++ b/drivers/net/wireless/mediatek/mt76/mt76.h
-@@ -1795,21 +1795,21 @@ int mt76_rx_token_consume(struct mt76_dev *dev, void *ptr,
- int mt76_create_page_pool(struct mt76_dev *dev, struct mt76_queue *q);
- static inline void mt76_put_page_pool_buf(void *buf, bool allow_direct)
- {
--	struct page *page = virt_to_head_page(buf);
-+	netmem_ref netmem = netmem_compound_head(virt_to_netmem(buf));
- 
--	page_pool_put_full_page(page->pp, page, allow_direct);
-+	page_pool_put_full_netmem(netmem_get_pp(netmem), netmem, allow_direct);
- }
- 
- static inline void *
- mt76_get_page_pool_buf(struct mt76_queue *q, u32 *offset, u32 size)
- {
--	struct page *page;
-+	netmem_ref netmem;
- 
--	page = page_pool_dev_alloc_frag(q->page_pool, offset, size);
--	if (!page)
-+	netmem = page_pool_dev_alloc_netmem(q->page_pool, offset, &size);
-+	if (!netmem)
- 		return NULL;
- 
--	return page_address(page) + *offset;
-+	return netmem_address(netmem) + *offset;
- }
- 
- static inline void mt76_set_tx_blocked(struct mt76_dev *dev, bool blocked)
-diff --git a/drivers/net/wireless/mediatek/mt76/sdio_txrx.c b/drivers/net/wireless/mediatek/mt76/sdio_txrx.c
-index 0a927a7313a6..8663070191a1 100644
---- a/drivers/net/wireless/mediatek/mt76/sdio_txrx.c
-+++ b/drivers/net/wireless/mediatek/mt76/sdio_txrx.c
-@@ -68,14 +68,14 @@ mt76s_build_rx_skb(void *data, int data_len, int buf_len)
- 
- 	skb_put_data(skb, data, len);
- 	if (data_len > len) {
--		struct page *page;
-+		netmem_ref netmem;
- 
- 		data += len;
--		page = virt_to_head_page(data);
--		skb_add_rx_frag(skb, skb_shinfo(skb)->nr_frags,
--				page, data - page_address(page),
--				data_len - len, buf_len);
--		get_page(page);
-+		page = netmem_compound_head(virt_to_netmem(data));
-+		skb_add_rx_frag_netmem(skb, skb_shinfo(skb)->nr_frags,
-+				       netmem, data - netmem_address(netmem),
-+				       data_len - len, buf_len);
-+		get_netmem(netmem);
- 	}
- 
- 	return skb;
-@@ -88,7 +88,7 @@ mt76s_rx_run_queue(struct mt76_dev *dev, enum mt76_rxq_id qid,
- 	struct mt76_queue *q = &dev->q_rx[qid];
- 	struct mt76_sdio *sdio = &dev->sdio;
- 	int len = 0, err, i;
--	struct page *page;
-+	netmem_ref netmem;
- 	u8 *buf, *end;
- 
- 	for (i = 0; i < intr->rx.num[qid]; i++)
-@@ -100,11 +100,11 @@ mt76s_rx_run_queue(struct mt76_dev *dev, enum mt76_rxq_id qid,
- 	if (len > sdio->func->cur_blksize)
- 		len = roundup(len, sdio->func->cur_blksize);
- 
--	page = __dev_alloc_pages(GFP_KERNEL, get_order(len));
--	if (!page)
-+	netmem = page_to_netmem(__dev_alloc_pages(GFP_KERNEL, get_order(len)));
-+	if (!netmem)
- 		return -ENOMEM;
- 
--	buf = page_address(page);
-+	buf = netmem_address(netmem);
- 
- 	sdio_claim_host(sdio->func);
- 	err = sdio_readsb(sdio->func, buf, MCR_WRDR(qid), len);
-@@ -112,7 +112,7 @@ mt76s_rx_run_queue(struct mt76_dev *dev, enum mt76_rxq_id qid,
- 
- 	if (err < 0) {
- 		dev_err(dev->dev, "sdio read data failed:%d\n", err);
--		put_page(page);
-+		put_netmem(netmem);
- 		return err;
- 	}
- 
-@@ -140,7 +140,7 @@ mt76s_rx_run_queue(struct mt76_dev *dev, enum mt76_rxq_id qid,
- 		}
- 		buf += round_up(len + 4, 4);
- 	}
--	put_page(page);
-+	put_netmem(netmem);
- 
- 	spin_lock_bh(&q->lock);
- 	q->head = (q->head + i) % q->ndesc;
-diff --git a/drivers/net/wireless/mediatek/mt76/usb.c b/drivers/net/wireless/mediatek/mt76/usb.c
-index f9e67b8c3b3c..03f0d35981c9 100644
---- a/drivers/net/wireless/mediatek/mt76/usb.c
-+++ b/drivers/net/wireless/mediatek/mt76/usb.c
-@@ -478,7 +478,7 @@ mt76u_build_rx_skb(struct mt76_dev *dev, void *data,
- 
- 	head_room = drv_flags & MT_DRV_RX_DMA_HDR ? 0 : MT_DMA_HDR_LEN;
- 	if (SKB_WITH_OVERHEAD(buf_size) < head_room + len) {
--		struct page *page;
-+		netmem_ref netmem;
- 
- 		/* slow path, not enough space for data and
- 		 * skb_shared_info
-@@ -489,10 +489,10 @@ mt76u_build_rx_skb(struct mt76_dev *dev, void *data,
- 
- 		skb_put_data(skb, data + head_room, MT_SKB_HEAD_LEN);
- 		data += head_room + MT_SKB_HEAD_LEN;
--		page = virt_to_head_page(data);
--		skb_add_rx_frag(skb, skb_shinfo(skb)->nr_frags,
--				page, data - page_address(page),
--				len - MT_SKB_HEAD_LEN, buf_size);
-+		netmem = netmem_compound_head(virt_to_netmem(data));
-+		skb_add_rx_frag_netmem(skb, skb_shinfo(skb)->nr_frags,
-+				       netmem, data - netmem_address(netmem),
-+				       len - MT_SKB_HEAD_LEN, buf_size);
- 
- 		return skb;
- 	}
--- 
-2.17.1
+--
+Thanks
+Qinyun Tan
+
 
 
