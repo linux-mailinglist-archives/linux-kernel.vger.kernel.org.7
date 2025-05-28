@@ -1,77 +1,66 @@
-Return-Path: <linux-kernel+bounces-665626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24B71AC6BB7
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 16:32:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CC3DAC6BBD
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 16:34:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B7FE3B7AF2
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 14:32:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 472BE168DDB
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 14:34:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFB11288C80;
-	Wed, 28 May 2025 14:32:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75BD2288C37;
+	Wed, 28 May 2025 14:34:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="0g0dZYmb"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iz6o/u7S"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DBF8548EE;
-	Wed, 28 May 2025 14:32:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE5C9193077;
+	Wed, 28 May 2025 14:34:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748442762; cv=none; b=WCedmAtR84Y7ZhNRJnvuKaiqnLYWYwE8+dNgzcvct/Gmaggq+Onk7eUrwwEkplL6KWshIqvzkji81KB823BxA4/qFgSWtwGzau3tzhOCVPhoNq62siSnGo6rkOTWlg98MbCwkNsMuuVcoM2kpNkqNgB3xBuIMHEn36mKeGv1uyg=
+	t=1748442858; cv=none; b=Hj418L5PDz9Gf1/fOmAEp6iWhG7kxsRP8Vjz8b6QUxEceOSDdUqghHAMCONjYftWlc4cBy1kSdLd+6RlG7QjT2bLbg60uHEyAU2qLxzcoLGb1GbzDi21DX3NN6iOGOBN4pbkRwgrS9L2E3cqBbaCgLSen4OpfHqCUdizh6Qs8NY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748442762; c=relaxed/simple;
-	bh=1vSCO5vTiinfXc1wGmDJEIBv6Q5jDE79VgZ6H2zNW6E=;
+	s=arc-20240116; t=1748442858; c=relaxed/simple;
+	bh=bD/iZOx/OO0MmzF4E85/i3xPWDZwNRVsc8nz96LYuR4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cz/13QY+huomBUoVAINd9RIn4Ep+nG5bQpXf4ZBj9kwnbe9RhYCDDaQNuJEe/MhpgN1+UYfExxm/Ch2aaVGrwaILBfn6lJ3BhmKZQ1heAMNGPLeTxRrtDzPK0PYFDQnGlWBfUwI4RLOE29Rlv3N5Ch0vaybY2RQ0fIUPw1mZyZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=0g0dZYmb; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=U+FDShjpx6kGEUB2/dQKTjU6xdyCNeX5trpYm619UV4=; b=0g0dZYmb7qFGfQ6Gt46nLap1SM
-	L54LEYGcitbtYKGtm9Fz/qwyr1CXW4N6f2R0fuO8qrUfCyopQMDIvPocpm79WXDEZ6nYQVga+Dxli
-	tsnaCIBD9NDb0B3YXnWZ5FFmDWioIi3kERl1fFLstxdirVcevQWSL3slMVX/xcjm6J5fzLvljyKX6
-	DuK4Lq/+Zgs3yg0vnTiIurv7ny7d2x+Y9Ynr+4A6DwvY/9aZcbAAWJkLUC6TfjccvbKpNqTSjRuog
-	bu18UN9MXxuWyUJKrjjFyQjmJRpewfpkHUvev73LP6t2aRCste0h1QQmVmxs7Gwy0RQL8nQ5uYkcl
-	GCfODJSw==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:38612)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1uKHpN-0000Ns-0k;
-	Wed, 28 May 2025 15:32:21 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1uKHpF-0002UB-2v;
-	Wed, 28 May 2025 15:32:13 +0100
-Date: Wed, 28 May 2025 15:32:13 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: weishangjuan@eswincomputing.com
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
-	vladimir.oltean@nxp.com, yong.liang.choong@linux.intel.com,
-	prabhakar.mahadev-lad.rj@bp.renesas.com, inochiama@gmail.com,
-	jan.petrous@oss.nxp.com, jszhang@kernel.org, p.zabel@pengutronix.de,
-	0x1207@gmail.com, boon.khai.ng@altera.com,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, ningyu@eswincomputing.com,
-	linmin@eswincomputing.com, lizhi2@eswincomputing.com
-Subject: Re: [PATCH v2 2/2] =?iso-8859-1?Q?ethernet?=
- =?iso-8859-1?B?OqBlc3dpbjqgQWRkoGVpYzc3MDCgZXRoZXJuZXSgZHJpdmVy?=
-Message-ID: <aDcebRguDnM7sqVk@shell.armlinux.org.uk>
-References: <20250528041455.878-1-weishangjuan@eswincomputing.com>
- <20250528041634.912-1-weishangjuan@eswincomputing.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=diQsPisY5T4ndQuYQqRKBMZhmfj94te6zwSRlXksSXqxnbfeEU79S35Ccce29EL3MUzHJNmO5yZNHzgNVt69NhLrjmqHebREEBpC0HX8NkzJK1K4wCEFWm6GCJzjZd+1+VwYOr+diq5Ck2txKNiacV4QWWydgKA/MdkD4niQZ6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iz6o/u7S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94BC2C4CEE3;
+	Wed, 28 May 2025 14:34:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748442858;
+	bh=bD/iZOx/OO0MmzF4E85/i3xPWDZwNRVsc8nz96LYuR4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iz6o/u7SG54xss53eKO8vPEeMsmQBvFSsZxs0lpx8xsH7bcPcl4x2z6O9PazMOtgo
+	 yxIfXXtttpo/zAr4CQbPZDf6U1ucqr+T/B9wseTSog9s2LwnP+crfUqPjmN6Qgjj/j
+	 8FQyKpmcrFfS3/M6Hptkbt648JUVg7hGhHbkwa2gLIVi6L5uxfqcPwmwXJTOI5IAQl
+	 xTLpYNifM3+x67pPSeYiITjt0NEeLVB1p3MsRoZ10JF4oY900vlov9f6vW2R8/yuqi
+	 7DzrqGUshosPYRz7M/9M700ZennoVRAeLLFA9uT0Bbf6Shq4kqjMebK9IGP/AOt+lA
+	 wBbg7F5UngOKA==
+Date: Wed, 28 May 2025 16:34:09 +0200
+From: Lorenzo Pieralisi <lpieralisi@kernel.org>
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: Marc Zyngier <maz@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Sascha Bischoff <sascha.bischoff@arm.com>,
+	Timothy Hayes <timothy.hayes@arm.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 19/26] arm64: Add support for GICv5 GSB barriers
+Message-ID: <aDce4TGxUoGGONA3@lpieralisi>
+References: <20250513-gicv5-host-v4-0-b36e9b15a6c3@kernel.org>
+ <20250513-gicv5-host-v4-19-b36e9b15a6c3@kernel.org>
+ <20250528141730.0000232e@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,40 +69,81 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250528041634.912-1-weishangjuan@eswincomputing.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+In-Reply-To: <20250528141730.0000232e@huawei.com>
 
-On Wed, May 28, 2025 at 12:16:25PM +0800, weishangjuan@eswincomputing.com wrote:
-> +static struct clk *dwc_eth_find_clk(struct plat_stmmacenet_data *plat_dat,
-> +				    const char *name)
-> +{
-> +	for (int i = 0; i < plat_dat->num_clks; i++)
-> +		if (strcmp(plat_dat->clks[i].id, name) == 0)
-> +			return plat_dat->clks[i].clk;
-> +
-> +	return NULL;
-> +}
+On Wed, May 28, 2025 at 02:17:30PM +0100, Jonathan Cameron wrote:
+> On Tue, 13 May 2025 19:48:12 +0200
+> Lorenzo Pieralisi <lpieralisi@kernel.org> wrote:
+> 
+> > The GICv5 architecture introduces two barriers instructions
+> > (GSB SYS, GSB ACK) that are used to manage interrupt effects.
+> > 
+> > Rework macro used to emit the SB barrier instruction and implement
+> > the GSB barriers on top of it.
+> > 
+> > Suggested-by: Marc Zyngier <maz@kernel.org>
+> > Signed-off-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
+> > Cc: Will Deacon <will@kernel.org>
+> > Cc: Catalin Marinas <catalin.marinas@arm.com>
+> > Cc: Marc Zyngier <maz@kernel.org>
+> > ---
+> >  arch/arm64/include/asm/barrier.h |  3 +++
+> >  arch/arm64/include/asm/sysreg.h  | 10 +++++++---
+> >  2 files changed, 10 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/arch/arm64/include/asm/barrier.h b/arch/arm64/include/asm/barrier.h
+> > index 1ca947d5c93963d33fe8fb02d6037fc71bd9fd7a..f5801b0ba9e9e7e0433f16ffedf0ec7dfb3e358e 100644
+> > --- a/arch/arm64/include/asm/barrier.h
+> > +++ b/arch/arm64/include/asm/barrier.h
+> > @@ -44,6 +44,9 @@
+> >  						 SB_BARRIER_INSN"nop\n",	\
+> >  						 ARM64_HAS_SB))
+> >  
+> > +#define gsb_ack()	asm volatile(GSB_ACK_BARRIER_INSN : : : "memory")
+> > +#define gsb_sys()	asm volatile(GSB_SYS_BARRIER_INSN : : : "memory")
+> > +
+> >  #ifdef CONFIG_ARM64_PSEUDO_NMI
+> >  #define pmr_sync()						\
+> >  	do {							\
+> > diff --git a/arch/arm64/include/asm/sysreg.h b/arch/arm64/include/asm/sysreg.h
+> > index 2639d3633073de10f5040a7efff059021f847530..e7734f90bb723bfbd8be99f16dd6d6fdc7fa57e8 100644
+> > --- a/arch/arm64/include/asm/sysreg.h
+> > +++ b/arch/arm64/include/asm/sysreg.h
+> > @@ -112,10 +112,14 @@
+> >  /* Register-based PAN access, for save/restore purposes */
+> >  #define SYS_PSTATE_PAN			sys_reg(3, 0, 4, 2, 3)
+> >  
+> > -#define __SYS_BARRIER_INSN(CRm, op2, Rt) \
+> > -	__emit_inst(0xd5000000 | sys_insn(0, 3, 3, (CRm), (op2)) | ((Rt) & 0x1f))
+> > +#define __SYS_BARRIER_INSN(op0, op1, CRn, CRm, op2, Rt)		\
+> > +	__emit_inst(0xd5000000				|	\
+> > +	sys_insn((op0), (op1), (CRn), (CRm), (op2))	|	\
+> > +	((Rt) & 0x1f))
+> 
+> Perhaps indent as something like the following for readbility?
+> #define __SYS_BARRIER_INSN(op0, op1, CRn, CRm, op2, Rt)			\
+> 	__emit_inst(0xd5000000 |					\
+> 		    sys_insn((op0), (op1), (CRn), (CRm), (op2)) |	\
+> 		    ((Rt) & 0x1f))
+> 
 
-Okay, I think this driver is mindless copying of dwmac-dwc-qos-eth.c
-between 24th February and 9th April 2025. I can say this because I added
-this function to that driver and later removed it.
+I can do - even though readability is subjective, this looks nicer to
+me but if possible I'd avoid the churn required if I change it and then
+it is not readable for other people.
 
-Looking at the rest of the code, I doubt this even does anything useful
-(hence "mindless copying") as you're not fetching any clocks into this
-array, and plat_dat->num_clks will be zero here. Thus, this will return
-NULL. Therefore, you haven't thought about whether you need this or not,
-but have just copied dwmac-dwc-qos-eth.c and then modified it until it
-works for you.
+Noted.
 
-You haven't acknowledged where you derived this code from - you've cut
-the header of your source file out, and basically are claiming it to be
-all your own work. I know this is rubbish for the reason I've stated
-above. This is quite simply plagiarism. I am not impressed.
+Thanks,
+Lorenzo
 
-Thus I will end the review here, and simply state that this is not
-acceptable.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+> >  
+> > -#define SB_BARRIER_INSN			__SYS_BARRIER_INSN(0, 7, 31)
+> > +#define SB_BARRIER_INSN			__SYS_BARRIER_INSN(0, 3, 3, 0, 7, 31)
+> > +#define GSB_SYS_BARRIER_INSN		__SYS_BARRIER_INSN(1, 0, 12, 0, 0, 31)
+> > +#define GSB_ACK_BARRIER_INSN		__SYS_BARRIER_INSN(1, 0, 12, 0, 1, 31)
+> >  
+> >  #define SYS_DC_ISW			sys_insn(1, 0, 7, 6, 2)
+> >  #define SYS_DC_IGSW			sys_insn(1, 0, 7, 6, 4)
+> > 
+> 
 
