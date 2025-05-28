@@ -1,47 +1,86 @@
-Return-Path: <linux-kernel+bounces-665182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78AD8AC653B
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 11:09:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3910BAC6540
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 11:10:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 250314A7712
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 09:09:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE2A07B030E
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 09:09:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A559D2749C2;
-	Wed, 28 May 2025 09:09:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0A87275868;
+	Wed, 28 May 2025 09:09:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m8r1S2mw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gSHp6lpT"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B039082899;
-	Wed, 28 May 2025 09:09:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41DD5275859
+	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 09:09:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748423353; cv=none; b=rARDf3XNI8VizeEmfX4q5Vw9pIH8te5iIpn1mKMhzGH8x5mUI7GBsJsORdNtpOpPXOF8CjSlu5Df6pTxAd1UyvXpY9BqfhCO5buvQ3DnuU4lcmavACn1Os8zE2SnOvIYPy22/Zo4QEBdAc/WJT/aQHASA3De5BBF1I1ul/Py42c=
+	t=1748423362; cv=none; b=KS/eOioDBznWG9uDwk9OkrOHJ+N/453fU+Yd6GeeLFkAUlwCTgrYDBjZ04ZBUeAHlDs82oH1s3hfc3iQARBMrRHLnI298we3c3cEqqJ5KlOnqfE8ufQxSRKZIsFAbN1unlJtW8WMYSY5WClHrZETCAOnsnFVmGmlNIg18qg4DNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748423353; c=relaxed/simple;
-	bh=jFv5cQIlrq8mQoRnawATs1ETAgrj4fY1PBOA8kx8G0o=;
+	s=arc-20240116; t=1748423362; c=relaxed/simple;
+	bh=sg20bLNUz/QFXRFaU70PwpcwAVbsKDYF5KqdTjgKZjs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FfhLLQT9BihtBpbNG/d3K8wxyezW7iLN6gWAPAkcKTviMyUjHWqlV0yc9vk4qRvEgarAOGm2b6zOv80T8OAPeyW0Iv67twQRnN9yxKWJJrjnvpVrUZhoanw3DYY+YIOAG4Aq5I0o/7KkKrY/S6wPZyPNtikwke4SA0xTuSPNIjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m8r1S2mw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78ED3C4CEEB;
-	Wed, 28 May 2025 09:09:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748423353;
-	bh=jFv5cQIlrq8mQoRnawATs1ETAgrj4fY1PBOA8kx8G0o=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=m8r1S2mwh4BizzgnesxNNREKtpE3ecaI05IGU7gv/k2HlVti8uDWlnZXelgExrjQI
-	 Q5aNCOynA0v9xjeC1ZXIKrLOhXrqm1iDulHG33NDjK1nlnfuCGid9Fq4fLnFIRicJy
-	 yzfdJN0gZlB793e7XNO+3STmWWg/sLyACYbYX5hB10gOqBmCVW+eUmPA/lcd6hXa3T
-	 BZSG2D8BDVQU7u0X2g2gd+ED/ABWrXEeKpbUuaKN6A6Bfpzsnt4CmQd8/c663AEI3n
-	 YGGMm7wkmtTF2cgUGzRK8SpHrgmZMrTNpV7v+cPKkZrACWU8cEVMNc8hhywEYsl31c
-	 p21fvrqYNZe1A==
-Message-ID: <4c93cea1-a27a-42dc-8248-06b23da3a558@kernel.org>
-Date: Wed, 28 May 2025 11:09:08 +0200
+	 In-Reply-To:Content-Type; b=MCJ7bQcSuIeeWbKuIsiysc21Gg2ZzKsIIQFWhLG77mYUWYENH+o2fcT19TFtTqun8Q/y90uxWG69MfbxgK/FztSCQzxELI/0fbmiQzxM0fflzZB06uODiR96tSuZfUj+vBu40puCQYOk3e+VJ9lk233Q2j0wMKeUSyd+xWsoYyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gSHp6lpT; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1748423358;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=mEQXyKOYvt2g5cMesLCcww4mgZn3lojWLzf+f6VokPI=;
+	b=gSHp6lpT98fEduvUb72p+GDhaDJIbI4UKoOhE4+bJNRgXQYE7GiZNIq41EFB3nFso9+KXV
+	XjzRG0vUnJjXL5Ik3vi3XA6CqI96MMDdDWhTChjEqTxZL8BISCb6T4lxR7DFqlhvyWrLBM
+	B+7qnyTRZwuvlzkWapJ8XXAChCdHVs0=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-57-_QdmW70PPAS7Ovrufazw5A-1; Wed, 28 May 2025 05:09:15 -0400
+X-MC-Unique: _QdmW70PPAS7Ovrufazw5A-1
+X-Mimecast-MFC-AGG-ID: _QdmW70PPAS7Ovrufazw5A_1748423355
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3a371fb826cso1866047f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 02:09:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748423355; x=1749028155;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=mEQXyKOYvt2g5cMesLCcww4mgZn3lojWLzf+f6VokPI=;
+        b=WBCyYiCNyiOdkd82rs/ZGyKHXGY0eHM9pOx4+qviAFxfgQO899xcCqA4auyawlUGIN
+         hURV3g5dVtZvIn+PjYTVcCnA1aiYO0WgvPrROtjWLY1C/9x6whsA3/c9y2mB+MTlsGUS
+         cB2VqumuLqKXUs7FX70fkEr7CEWdrukVbZ6w3SJiO0IsSufSYtsKq+sAIoFP/WqvUOMs
+         RWQmL15FynXwwW8utm3lM5XRCnpW2l4nANZ60X9ziKaw95CQk5s0htaeZoGswK3C9VAy
+         2VjGUaoNkyYIs5t5Hu50ktZYqVei2GTrDr7+2YNVomlocI65kPAXj1fSnZoIOfqCxMgQ
+         SRfA==
+X-Gm-Message-State: AOJu0Yxc79E02e9PoUyQLY+gMEA0BmWVGTpVeXJ5S2T/Y//Zv/DP8doV
+	Ac06Jb0cncYvVv2oHtZha62jXZqtzdKspg6SQrF9PPlR9p5G8fpKXzK7yf3r4rkKUW+idc6iFMk
+	KHUtaOT+uSQa0pQlh1GUe448K3GRlTnLXaIJ1sDO1iNLXa8omPePoxq+98DGviVjI/A==
+X-Gm-Gg: ASbGncsezQUpUcl+6sb9ylSZJm+tvvqIZojRoJX1FRxsHPcefB2kZGvgi5mGqbOKpIq
+	gpcSPYB82NNC5raMY129BNfGuM7kMQk6SUDt9GUrwFpu6MjKztvK4/lS4jVtcxfJ5t4Sq6EAumQ
+	dj+EDuqp4HWKegfyg+7QRSN3tan2Sp33BeN+SSxoxSXm27WVASYb/TUts1nlc+46jwDO8to0rMU
+	GXB2/x0Id3LwLFFg3WJFPTA9uLKy64lqRovRrIpTvCzHcfAyiPbp+ngBfnTEPtSCfRdXwI6EoRW
+	bKTjYDs1asnV9C6y+jXRsBT1flQ45VmoNYAW7m29YuedJtui6XdyaBKxWmrSKZtGCAjq41APyHY
+	uLFF/K2NjzuyxW1+kl4ZpCjdohpQjxoQB0X2eYzs=
+X-Received: by 2002:a05:6000:400f:b0:3a4:e284:1b87 with SMTP id ffacd0b85a97d-3a4e2841ccbmr3513197f8f.18.1748423354716;
+        Wed, 28 May 2025 02:09:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFkD2EIBglWCSiZn4xndJdgWSSjQNyuOFqWDMsi9lfpRG+9nxrnmD06llkP4qkcMkc2YAd7eQ==
+X-Received: by 2002:a05:6000:400f:b0:3a4:e284:1b87 with SMTP id ffacd0b85a97d-3a4e2841ccbmr3513164f8f.18.1748423354262;
+        Wed, 28 May 2025 02:09:14 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f30:ec00:8f7e:58a4:ebf0:6a36? (p200300d82f30ec008f7e58a4ebf06a36.dip0.t-ipconnect.de. [2003:d8:2f30:ec00:8f7e:58a4:ebf0:6a36])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4eac6e5aasm928610f8f.13.2025.05.28.02.09.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 28 May 2025 02:09:13 -0700 (PDT)
+Message-ID: <ce048e11-f79d-44a6-bacc-46e1ebc34b24@redhat.com>
+Date: Wed, 28 May 2025 11:09:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,313 +88,102 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 6/9] arm64: dts: bst: add support for Black Sesame
- Technologies C1200 CDCU1.0 board
-To: Albert Yang <yangzh0906@thundersoft.com>, Arnd Bergmann <arnd@arndb.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Ge Gordon <gordon.ge@bst.ai>
-Cc: BST Linux Kernel Upstream Group <bst-upstream@bstai.top>,
- linux-arm-kernel@lists.infradead.org, soc@lists.linux.dev,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250528085457.481372-1-yangzh0906@thundersoft.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 0/2] x86, mm: minor tlb_flush tracepoint adjustments
+To: Tal Zussman <tz2294@columbia.edu>, Steven Rostedt <rostedt@goodmis.org>,
+ Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Ingo Molnar <mingo@kernel.org>, Rik van Riel <riel@surriel.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
+ <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ x86@kernel.org, Will Deacon <will@kernel.org>,
+ "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>, Nick Piggin
+ <npiggin@gmail.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+References: <20250528-tlb-trace-fix-v1-0-2e94c58f450d@columbia.edu>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250528085457.481372-1-yangzh0906@thundersoft.com>
-Content-Type: text/plain; charset=UTF-8
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20250528-tlb-trace-fix-v1-0-2e94c58f450d@columbia.edu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 28/05/2025 10:54, Albert Yang wrote:
-> Add device tree support for the Black Sesame Technologies (BST) C1200
-> CDCU1.0 ADAS 4C2G platform. This platform is based on the BST C1200 SoC
-> family.
+On 28.05.25 07:35, Tal Zussman wrote:
+> One minor fix and one minor cleanup related to the tlb_flush tracepoint.
 > 
-> The changes include:
-> - Adding a new BST device tree directory
-> - Adding Makefile entries to build the BST platform device trees
-> - Adding the device tree for the BST C1200 CDCU1.0 ADAS 4C2G board
-> 
-> This board features a quad-core Cortex-A78 CPU, and various peripherals
-> including UART, MMC, watchdog timer, and interrupt controller.
-> 
-> Signed-off-by: Ge Gordon <gordon.ge@bst.ai>
-> Signed-off-by: Albert Yang <yangzh0906@thundersoft.com>
-> ---
->  arch/arm64/boot/dts/Makefile                  |   1 +
->  arch/arm64/boot/dts/bst/Makefile              |  10 ++
->  .../dts/bst/bstc1200-cdcu1.0-adas_4c2g.dts    |  44 ++++++
->  arch/arm64/boot/dts/bst/bstc1200.dtsi         | 130 ++++++++++++++++++
->  4 files changed, 185 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/bst/Makefile
->  create mode 100644 arch/arm64/boot/dts/bst/bstc1200-cdcu1.0-adas_4c2g.dts
->  create mode 100644 arch/arm64/boot/dts/bst/bstc1200.dtsi
-> 
-> diff --git a/arch/arm64/boot/dts/Makefile b/arch/arm64/boot/dts/Makefile
-> index 79b73a21ddc2..135965288100 100644
-> --- a/arch/arm64/boot/dts/Makefile
-> +++ b/arch/arm64/boot/dts/Makefile
-> @@ -35,3 +35,4 @@ subdir-y += tesla
->  subdir-y += ti
->  subdir-y += toshiba
->  subdir-y += xilinx
-> +subdir-y += bst
+> As an aside, include/trace/events/tlb.h isn't covered by MAINTAINERS,
+> along with other mm related files under include/trace/events/. Flagging
+> this since I see there's a recent effort to overhaul the mm MAINTAINERS
+> entries.
 
-Don't add to random places or at the end, but place entries in
-alphabetical order.
+Thanks for pointing that out.
 
-> diff --git a/arch/arm64/boot/dts/bst/Makefile b/arch/arm64/boot/dts/bst/Makefile
-> new file mode 100644
-> index 000000000000..64fd43c98275
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/bst/Makefile
-> @@ -0,0 +1,10 @@
-> +ifeq ($(CONFIG_SECOND_KERNEL), )
+It should likely go under "MMU GATHER AND TLB INVALIDATION"
 
-There is no such thing.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 0ecc6063b2b5e..0e88ea5de5b73 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -16509,6 +16509,7 @@ L:      linux-mm@kvack.org
+  S:     Maintained
+  F:     arch/*/include/asm/tlb.h
+  F:     include/asm-generic/tlb.h
++F:     include/trace/events/tlb.h
+  F:     mm/mmu_gather.c
 
-> +
-> +# Enables support for device-tree overlays
-> +DTC_FLAGS := -@
-> +
-> +dtb-$(CONFIG_ARCH_BSTC1200) += bstc1200-cdcu1.0-adas_4c2g.dtb
-> +
-> +endif
-> +
-> +clean-files	:= *.dtb
-
-Why?
-
-> diff --git a/arch/arm64/boot/dts/bst/bstc1200-cdcu1.0-adas_4c2g.dts b/arch/arm64/boot/dts/bst/bstc1200-cdcu1.0-adas_4c2g.dts
-> new file mode 100644
-> index 000000000000..92915e7630ff
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/bst/bstc1200-cdcu1.0-adas_4c2g.dts
-> @@ -0,0 +1,44 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/dts-v1/;
-> +
-> +#include "bstc1200.dtsi"
-> +
-> +/ {
-> +	model = "BST C1200-96 CDCU1.0 4C2G";
-> +
-> +	chosen {
-> +		bootargs = "earlycon=uart8250,mmio32,0x20008000 console=ttyS0,115200n8 rw";
-
-Earlycon is debugging, why do you  need it for general use?
-
-console: redundant
-rw: not suitable for DT
-
-> +		stdout-path = "serial0:115200n8";
-> +	};
-> +
-> +	memory@8c0000000 {
-> +		device_type = "memory";
-> +		reg = <0x8 0x10000000 0x0 0x30000000
-> +		      0x8 0xc0000000 0x1 0x0
-> +		      0xc 0x0 0x0 0x40000000
-> +		      0x8 0x254000 0x0 0x1000
-> +		      0x8 0x151000 0x0 0x1000>;
-
-Multiple entries go into multiple entries <>.
-
-> +	};
-> +
-> +	reserved-memory {
-> +		#address-cells = <0x2>;
-> +		#size-cells = <0x2>;
-> +		ranges;
-> +
-> +		mmc0_reserved: mmc0_region@5160000 {
-
-Follow DTS coding style. Also drop redundant "region"
+  MN88472 MEDIA DRIVER
 
 
-> +			compatible = "shared-dma-pool";
-> +			reg = <0x0 0x5160000 0x0 0x10000>;
-> +			no-map;
-> +		};
-> +	};
-> +};
-> +
-> +&uart0 {
-> +	status = "okay";
-> +};
-> +
-> +&mmc0 {
-> +	status = "okay";
-> +	memory-region = <&mmc0_reserved>;
-> +};
-> +
-> diff --git a/arch/arm64/boot/dts/bst/bstc1200.dtsi b/arch/arm64/boot/dts/bst/bstc1200.dtsi
-> new file mode 100644
-> index 000000000000..6ed2d8cbd720
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/bst/bstc1200.dtsi
-> @@ -0,0 +1,130 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +#include <dt-bindings/interrupt-controller/arm-gic.h>
-> +/ {
-> +	compatible = "bst,c1200";
-> +	#address-cells = <0x2>;
-> +	#size-cells = <0x2>;
+-- 
+Cheers,
 
-These are not hex.
+David / dhildenb
 
-> +
-> +	cpus {
-> +		#address-cells = <0x1>;
-> +		#size-cells = <0x0>;
-
-Same comments
-
-> +
-> +		cpu@0 {
-> +			compatible = "arm,cortex-a78";
-> +			device_type = "cpu";
-> +			enable-method = "psci";
-> +			next-level-cache = <&l2_cache>;
-> +			reg = <0x0>;
-> +			freq-domain = <0x3 0x1>;
-> +		};
-> +
-> +		cpu@1 {
-> +			compatible = "arm,cortex-a78";
-> +			device_type = "cpu";
-> +			enable-method = "psci";
-> +			next-level-cache = <&l2_cache>;
-> +			reg = <0x100>;
-> +			freq-domain = <0x3 0x1>;
-> +		};
-> +
-> +		cpu@2 {
-> +			compatible = "arm,cortex-a78";
-> +			device_type = "cpu";
-> +			enable-method = "psci";
-> +			next-level-cache = <&l2_cache>;
-> +			reg = <0x200>;
-> +			freq-domain = <0x3 0x1>;
-> +		};
-> +
-> +		cpu@3 {
-> +			compatible = "arm,cortex-a78";
-> +			device_type = "cpu";
-> +			enable-method = "psci";
-> +			next-level-cache = <&l2_cache>;
-> +			reg = <0x300>;
-> +			freq-domain = <0x3 0x1>;
-> +		};
-> +
-> +		l2_cache: l2-cache-1 {
-> +			compatible = "cache";
-> +			cache-level = <2>;
-> +			cache-unified;
-> +		};
-> +	};
-> +
-> +	misc_clk: misc_clk {
-
-Follow DTS coding style. Please use name for all fixed clocks which
-matches current format recommendation: 'clock-<freq>' (see also the
-pattern in the binding for any other options).
-
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/clock/fixed-clock.yaml?h=v6.11-rc1
-
-> +		compatible = "fixed-clock";
-> +		#clock-cells = <0x0>;
-> +		clock-frequency = <0x3d0900>;
-
-This is not a hex.
-
-> +	};
-> +
-> +	timer {
-> +		compatible = "arm,armv8-timer";
-> +		interrupt-parent = <&gic>;
-> +		always-on;
-> +		interrupts = <GIC_PPI 0xd (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)
-> +			      GIC_PPI 0xe (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)
-> +			      GIC_PPI 0xb (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)
-> +			      GIC_PPI 0xa (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>;
-> +	};
-> +
-> +	soc: soc@0 {
-> +		compatible = "simple-bus";
-> +		#address-cells = <0x2>;
-> +		#size-cells = <0x2>;
-> +		ranges = <0x0 0x0 0x0 0x0 0xffffffff 0xffffffff>;
-
-Follow DTS coding style
-
-> +
-> +		mmc0: dwmmc0@22200000 {
-
-It does not look like you tested the DTS against bindings. Please run
-`make dtbs_check W=1` (see
-Documentation/devicetree/bindings/writing-schema.rst or
-https://www.linaro.org/blog/tips-and-tricks-for-validating-devicetree-sources-with-the-devicetree-schema/
-for instructions).
-Maybe you need to update your dtschema and yamllint. Don't rely on
-distro packages for dtschema and be sure you are using the latest
-released dtschema.
-
-Node names should be generic. See also an explanation and list of
-examples (not exhaustive) in DT specification:
-https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
-
-
-
-> +			#address-cells = <0x2>;
-> +			#size-cells = <0x0>;
-> +			compatible = "bst,dwcmshc-sdhci";
-> +			reg = <0x0 0x22200000 0x0 0x1000>;
-> +			reg-names = "base";
-
-Order properties according to DTS coding style.
-
-Best regards,
-Krzysztof
 
