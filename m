@@ -1,78 +1,81 @@
-Return-Path: <linux-kernel+bounces-666018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41DDEAC719F
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 21:45:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 666A1AC71B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 21:46:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 118354A7D90
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 19:45:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E90E23AF8F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 19:46:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 073C2221273;
-	Wed, 28 May 2025 19:44:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB316223DC6;
+	Wed, 28 May 2025 19:45:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DkL4T8r9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SXtyFqwr"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CF1F22069F
-	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 19:44:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42DD7220F59;
+	Wed, 28 May 2025 19:45:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748461465; cv=none; b=ZMRiEuCCUevkuCAd7wBUshwTwahs3+XM8akfSJ59NnRK3AoTkcWi7MQR34L+VwCouZPdls0fXXGW1MB0qKb+5p5v1gXRAu8m6HT3IG1Wnt/fK02aYjiVSOwxSSOVHprDU/RSk5kg5Ot8zpv03tPfEZJXC1AEObi//JXSPMnfVjo=
+	t=1748461501; cv=none; b=C7uy85rfURqSREtzNZljs/apTw7sFganztKUJ/tJGr1xqamtn17hCqEoICGAlRRDLHq0tBz2DGlBHVYddqP1sCGq1t3txyntxHWRjjslX9B4Jd6Cc9vCDLJ4CM/hNTAcJ2XnEAYihy7teJempIWD3cAMph7He528ovDKjo1nzHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748461465; c=relaxed/simple;
-	bh=l+FD8tfxx5PXi4a2mxT95JkOscGaL2qMoClkGjO01+o=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=ZVfZkS76/TOTWSp/iFqNQRgng+Xg1Z9lMRLtFJp+Z6hu/lLftETf6BdQpOvESKQsj5kAF3kw035uP4blfvHdHL1qZJ/NbL2sKElA6XmrL0OGCbHHG8O9ATX1V6QnpocNM/JkWZu1EpHmeGaOfvcYYlgHjoSRn7LCgt6QFJaadT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DkL4T8r9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F465C4CEE3;
-	Wed, 28 May 2025 19:44:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748461465;
-	bh=l+FD8tfxx5PXi4a2mxT95JkOscGaL2qMoClkGjO01+o=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=DkL4T8r9MtomB0+Yr/owhYUBgbHG3cekK0R9p0qpl3m4KYyzehzSvQCBkU6aWEX8+
-	 HFs6uaHXsmdFqfHT4J8Mro05aGTUr56mQnH+wojeoIydAm58o6dxbj9KS+v8U9GJaN
-	 rZ8gxvOEHanArMqPJeaIvA9nNtKl0OTkOUKXcKi2+OCgHVIy0dT2DRqN+F2C8CXaM3
-	 XR8uVfX9yXYmTy6ERGU6N/jyijdBPBBedRd5n5b0s+RuhM056flK2P1sTdGZ1IOG11
-	 r5pcecviVjlb5ekIR6PbjrOB73ba9tsDD0tPu8/Ep2weP1W7AlixwXVApU2fHVk/Gz
-	 LzPUhi6rG/95w==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70CF53822D1A;
+	s=arc-20240116; t=1748461501; c=relaxed/simple;
+	bh=BLmCk3jPE0EhM3g0EHTiGDkkAPm+VGJckSWZZUhnQWI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FMwScC8bMNJ874JWgC42K0wRllZPnz1RATFWdYRmNOnDfClv1PFKDmOeQLaNH+VjR77wkpMfSqYCdc/YhB4Pfxjs9EG8WOEYjJIpCeo2QOSze7hMY1UmHsBeY4F9DQ9BKmYcpHVxz0miaRzt0ifGQcJIWQgXfer0Ane3sDOcewc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SXtyFqwr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C44DC4CEE3;
 	Wed, 28 May 2025 19:45:00 +0000 (UTC)
-Subject: Re: [GIT PULL] exfat update for 6.16-rc1
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <CAKYAXd_vDJU-iBpWVC_6VYKH0YOGpZ9m5-9sw-kzDzyTgBAADg@mail.gmail.com>
-References: <CAKYAXd_vDJU-iBpWVC_6VYKH0YOGpZ9m5-9sw-kzDzyTgBAADg@mail.gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAKYAXd_vDJU-iBpWVC_6VYKH0YOGpZ9m5-9sw-kzDzyTgBAADg@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/linkinjeon/exfat.git tags/exfat-for-6.16-rc1
-X-PR-Tracked-Commit-Id: 46a557694b464881b3c2c4a0ba389a6436419a37
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: c69d8e9de00995ebc69392a470da99256127fdf1
-Message-Id: <174846149892.2536722.11099914443521995826.pr-tracker-bot@kernel.org>
-Date: Wed, 28 May 2025 19:44:58 +0000
-To: Namjae Jeon <linkinjeon@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sungjong Seo <sj1557.seo@samsung.com>, "Yuezhang.Mo" <Yuezhang.Mo@sony.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748461500;
+	bh=BLmCk3jPE0EhM3g0EHTiGDkkAPm+VGJckSWZZUhnQWI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=SXtyFqwrZHSc8u0jBRMnnGYlqxS7OwT0Oo7DvKmkxOkU9B4U6bl41ia6khLj5uO+4
+	 ElK4S7VuHvHB6Oyp3vwq2gjeDlE7tZpJfFQtNsRFg0QQKZTzuTzBxlD82soyRGveIt
+	 YWgCPGlyHFdOx0MKkTOsO+w/JnSiv91RtBnpks8SbmGW/+vE04IVCUaih2qPzoI+8v
+	 drgU1nsQNTpnH+Y1ezNlV793qivC2imFnffh99GbclvGYgV7gzytC9y+QBxc7zQY18
+	 4tDxCSjq60zLgYOeuxacMCD3AZMP4fg7/wfcuMP+LYnKNNpyuD2AGizNhYbFC5pJX9
+	 6opnIkACE8Y1A==
+Message-ID: <f5ddb28b-996e-4cbc-ad8d-c0af1c800e28@kernel.org>
+Date: Wed, 28 May 2025 15:44:59 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [GIT PULL] NFSD changes for v6.16
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+ Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
+ Jeff Layton <jlayton@kernel.org>
+References: <20250527141706.388993-1-cel@kernel.org>
+ <CAHk-=wggC6PP9ZNwKY7sEzdsC7h8qySA7pjqAchrYowniADUQg@mail.gmail.com>
+Content-Language: en-US
+From: Chuck Lever <cel@kernel.org>
+Organization: kernel.org
+In-Reply-To: <CAHk-=wggC6PP9ZNwKY7sEzdsC7h8qySA7pjqAchrYowniADUQg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The pull request you sent on Tue, 27 May 2025 21:38:11 +0900:
+On 5/28/25 3:38 PM, Linus Torvalds wrote:
+> On Tue, 27 May 2025 at 07:17, <cel@kernel.org> wrote:
+>>
+>> NFSD 6.16 Release Notes
+> 
+> Pulled - but I have a silly request.
+> 
+> Can you fix your kernel.org email sending setup so that you have a
+> real name, not just your login name?
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/linkinjeon/exfat.git tags/exfat-for-6.16-rc1
+Fixed, I think, in my ~/.gitconfig.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/c69d8e9de00995ebc69392a470da99256127fdf1
-
-Thank you!
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Chuck Lever
 
