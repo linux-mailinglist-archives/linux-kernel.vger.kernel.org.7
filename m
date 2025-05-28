@@ -1,140 +1,241 @@
-Return-Path: <linux-kernel+bounces-665976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6117AC712B
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 20:48:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23077AC7133
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 20:53:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8D2C7B3208
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 18:47:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C40C17C496
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 18:52:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A16F1213E66;
-	Wed, 28 May 2025 18:48:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3293721770A;
+	Wed, 28 May 2025 18:52:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ds8wiysM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XNgJGCuB"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0449E15B102;
-	Wed, 28 May 2025 18:48:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A96E19D8A3;
+	Wed, 28 May 2025 18:52:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748458091; cv=none; b=ePhy1tvWE8K3kYFJ/Q/yY9WVjHX8HCCZVvHrU1fGB3JPG8eq7kly74jkqnMpkxCffTOvNh7cy1k5cnDdt1FFsikD3uLLNWK4yEmN1aaNJc7/rTzG0jm+niyA5a2Z0QSZOni8IYE5TqgHgeUI0w9tkP85k6UbflyuWYOLYrcIziM=
+	t=1748458366; cv=none; b=uH/E/sSZiKqVSGGI1tJytVAPjyXF3ZCIvfuBj2lFVmdkWfmR4cXKww/YXTRpD80DZ9kvIAfu93c+SdF/gmerDvqm6U28RtTgoaA8TTb6tQaauYryq47nMyiAd3x+fHhhgbzstM2fcJEtFiw17Pjex/5Q6SoCIN3t29xxrkEUNM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748458091; c=relaxed/simple;
-	bh=cT3taaq63q3YAPBypBJrgG0qDTsTKYvmsWAT6whtDTQ=;
+	s=arc-20240116; t=1748458366; c=relaxed/simple;
+	bh=9EiOv825mSRNiFjE0XeMDKrJmcaqsyKHCtJE7v/ZnNY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mOJSwUkmbDNB2fQMW0XDGIc31u3lo8p2BR1nGUFPshEYwjqdQCli9ixYGfXympvOyQVLiraDWabN3wvHkNi51NcuQhVTv9Xa9eDkREcIixlGROwgJZvMHS7Rg8Kd+43NQ3KbyN47AwFYO1ZLX9O5q94M/K+DB9OPaMEVFLqsm6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ds8wiysM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC4E1C4CEE3;
-	Wed, 28 May 2025 18:48:09 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=dqoL1ALrhGqHR5egzpv0NYXczoPwtpjAf+r7QKDQUV+swAgu/snvVRq913uVuxye9VdPPPVvSBRojGK1QpISV3BMXgiZT9rqAWVl+SMZrWJDf5jMbDmdOlv8TcrcQAqBqj4j3fP9uEVR8ZXoE+wn0xODf5RD62VmD3orTAlwpw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XNgJGCuB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD512C4CEE3;
+	Wed, 28 May 2025 18:52:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748458090;
-	bh=cT3taaq63q3YAPBypBJrgG0qDTsTKYvmsWAT6whtDTQ=;
+	s=k20201202; t=1748458365;
+	bh=9EiOv825mSRNiFjE0XeMDKrJmcaqsyKHCtJE7v/ZnNY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ds8wiysMk3+oOVEWIhlompRxFmapZ5XRRf5ICyI43r7ow5P3cFUIYKFp4Ra3p+ueV
-	 ScYMapxpx3xHyXqYCgSHLoe+tjAiHGaHn6x4FHNzJzutsUGCaYrblJAUSUxrlxaiF9
-	 X3suxEp9N9ZR3grBp23iWJvkrc8y7qKduhFwDdMOV2eFomlLxsOkedyXFgK+neUwA8
-	 DQIBf1SbKq/IWdS/MO5UgzI3FmSHF40exdeFjefNqbT043o4axRaBvJl6HU52WhE7n
-	 AcxzuarkCEucpiMU+PHwOvZkgY6UNp3YB3aXB8Mmx2jOGVX9xHX4dDXGj1pYa21evV
-	 9uoLZOdMbrzFQ==
-Date: Wed, 28 May 2025 15:48:07 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Athira Rajeev <atrajeev@linux.ibm.com>,
-	Kajol Jain <kjain@linux.ibm.com>, Li Huafei <lihuafei1@huawei.com>,
-	"Steinar H. Gunderson" <sesse@google.com>,
-	James Clark <james.clark@linaro.org>,
-	Stephen Brennan <stephen.s.brennan@oracle.com>,
-	Andi Kleen <ak@linux.intel.com>, Dmitry Vyukov <dvyukov@google.com>,
-	Zhongqiu Han <quic_zhonhan@quicinc.com>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	Krzysztof =?utf-8?Q?=C5=81opatowski?= <krzysztof.m.lopatowski@gmail.com>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	Zixian Cai <fzczx123@gmail.com>,
-	Steve Clevenger <scclevenger@os.amperecomputing.com>,
-	Thomas Falcon <thomas.falcon@intel.com>,
-	Martin Liska <martin.liska@hey.com>,
-	Martin =?utf-8?B?TGnFoWth?= <m.liska@foxlink.cz>,
-	Song Liu <song@kernel.org>, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/9] perf: Default use of build IDs and improvements
-Message-ID: <aDdaZ0TMA5kwZ-iV@x1>
-References: <20250428213409.1417584-1-irogers@google.com>
- <CAP-5=fVy6J+d1aoQwv6TMuybXWAhpeaJOvMmr3-jbsz5ig66kg@mail.gmail.com>
+	b=XNgJGCuBl9eorQXMLxrnde/P4zuefhUNO0j8n3okpO/Bkrrq/Fvn5S5unVZevBcY6
+	 wi4GU1gMtxbVA65CLqSEIpPjW9rzTjDMPddr45KIFgZd+9V4w8j4949xyfBzp5DAOZ
+	 V4XEdRYnKi6VLzZA2lYFWRN0U5QhUNs/1Ewyq/HVee/h8e60+KyxPmYPIwa3RzC+1H
+	 X159GKNd6MiAFHTZ+BQGy5d0D0ELMUJZcGdjmDd5/rtuZqPD6MhqW1VQT5ptXv5Imi
+	 KjceV4iG/0tSKZtNMhm1rcfP40XXNIt/5cEqnFf949Wix9LUyRVRMfEIPCgvMUgykc
+	 +ueSg/LsduAbw==
+Date: Wed, 28 May 2025 19:52:35 +0100
+From: Simon Horman <horms@kernel.org>
+To: Shradha Gupta <shradhagupta@linux.microsoft.com>
+Cc: Dexuan Cui <decui@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Konstantin Taranov <kotaranov@microsoft.com>,
+	Leon Romanovsky <leon@kernel.org>,
+	Maxim Levitsky <mlevitsk@redhat.com>,
+	Erni Sri Satya Vennela <ernis@linux.microsoft.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Michael Kelley <mhklinux@outlook.com>, linux-hyperv@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Nipun Gupta <nipun.gupta@amd.com>,
+	Yury Norov <yury.norov@gmail.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Jonathan Cameron <Jonathan.Cameron@huwei.com>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Kevin Tian <kevin.tian@intel.com>, Long Li <longli@microsoft.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Bjorn Helgaas <bhelgaas@google.com>, Rob Herring <robh@kernel.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Krzysztof =?utf-8?Q?Wilczy=EF=BF=BD~Dski?= <kw@linux.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, netdev@vger.kernel.org,
+	linux-rdma@vger.kernel.org, Paul Rosswurm <paulros@microsoft.com>,
+	Shradha Gupta <shradhagupta@microsoft.com>
+Subject: Re: [PATCH v4 5/5] net: mana: Allocate MSI-X vectors dynamically
+Message-ID: <20250528185235.GJ1484967@horms.kernel.org>
+References: <1748361453-25096-1-git-send-email-shradhagupta@linux.microsoft.com>
+ <1748361543-25845-1-git-send-email-shradhagupta@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fVy6J+d1aoQwv6TMuybXWAhpeaJOvMmr3-jbsz5ig66kg@mail.gmail.com>
+In-Reply-To: <1748361543-25845-1-git-send-email-shradhagupta@linux.microsoft.com>
 
-On Tue, May 27, 2025 at 01:48:43PM -0700, Ian Rogers wrote:
-> On Mon, Apr 28, 2025 at 2:34 PM Ian Rogers <irogers@google.com> wrote:
-> >
-> > Build ID mmap2 events have been available since Linux v5.12 and avoid
-> > certain races. Enable these by default as discussed in:
-> > https://lore.kernel.org/linux-perf-users/CAP-5=fXP7jN_QrGUcd55_QH5J-Y-FCaJ6=NaHVtyx0oyNh8_-Q@mail.gmail.com/
-> >
-> > The dso_id is used to indentify a DSO that may change by being
-> > overwritten. The inode generation isn't present in /proc/pid/maps and
-> > so was already only optionally filled in. With build ID mmap events
-> > the other major, minor and inode varialbes aren't filled in. Change
-> > the dso_id implementation to make optional values explicit, rather
-> > than injecting a dso_id we want to improve it during find operations,
-> > add the buildid to the dso_id for sorting and so that matching fails
-> > when build IDs vary between DSOs.
-> >
-> > Mark the callchain for buildids and not just the sample IP, fixing
-> > missing DSOs.
-> >
-> > Fix sample__for_each_callchain_node to populate the map even when
-> > symbols aren't computed.
-> >
-> > Other minor bits of build_id clean up.
-> >
-> > v3: Ensure the struct build_id is initialized empty prior to use as
-> >     read paths may fail (Namhyung).
-> >
-> > v2: Make marking DSOs still the default even with the defaulted build
-> >     ID mmap. The command line option still disables this to avoid
-> >     regressions. Add callchain patches and jitdump fix.
+On Tue, May 27, 2025 at 08:59:03AM -0700, Shradha Gupta wrote:
+> Currently, the MANA driver allocates MSI-X vectors statically based on
+> MANA_MAX_NUM_QUEUES and num_online_cpus() values and in some cases ends
+> up allocating more vectors than it needs. This is because, by this time
+> we do not have a HW channel and do not know how many IRQs should be
+> allocated.
 > 
-> Ping. Thanks,
-> Ian
+> To avoid this, we allocate 1 MSI-X vector during the creation of HWC and
+> after getting the value supported by hardware, dynamically add the
+> remaining MSI-X vectors.
+> 
+> Signed-off-by: Shradha Gupta <shradhagupta@linux.microsoft.com>
+> Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
 
-⬢ [acme@toolbx perf-tools-next]$        git am ./v3_20250428_irogers_perf_default_use_of_build_ids_and_improvements.mbx
-Applying: perf callchain: Always populate the addr_location map when adding IP
-Applying: perf build-id: Reduce size of "size" variable
-Applying: perf build-id: Truncate to avoid overflowing the build_id data
-Applying: perf build-id: Change sprintf functions to snprintf
-Applying: perf build-id: Mark DSO in sample callchains
-Applying: perf build-id: Ensure struct build_id is empty before use
-Applying: perf dso: Move build_id to dso_id
-Applying: perf jitdump: Directly mark the jitdump DSO
-Applying: perf record: Make --buildid-mmap the default
-error: patch failed: tools/perf/builtin-record.c:3349
-error: tools/perf/builtin-record.c: patch does not apply
-Patch failed at 0009 perf record: Make --buildid-mmap the default
-hint: Use 'git am --show-current-patch=diff' to see the failed patch
-hint: When you have resolved this problem, run "git am --continue".
-hint: If you prefer to skip this patch, run "git am --skip" instead.
-hint: To restore the original branch and stop patching, run "git am --abort".
-hint: Disable this message with "git config set advice.mergeConflict false"
-⬢ [acme@toolbx perf-tools-next]$
+...
 
-- Arnaldo
+> +static int mana_gd_setup_irqs(struct pci_dev *pdev, int nvec)
+> +{
+> +	struct gdma_context *gc = pci_get_drvdata(pdev);
+> +	struct gdma_irq_context *gic;
+> +	int *irqs, *start_irqs, irq;
+> +	unsigned int cpu;
+> +	int err, i;
+> +
+> +	cpus_read_lock();
+> +
+> +	irqs = kmalloc_array(nvec, sizeof(int), GFP_KERNEL);
+> +	if (!irqs) {
+>  		err = -ENOMEM;
+> -		goto free_irq_array;
+> +		goto free_irq_vector;
+>  	}
+>  
+>  	for (i = 0; i < nvec; i++) {
+> -		gic = &gc->irq_contexts[i];
+> +		gic = kzalloc(sizeof(*gic), GFP_KERNEL);
+> +		if (!gic) {
+> +			err = -ENOMEM;
+> +			goto free_irq;
+> +		}
+> +
+>  		gic->handler = mana_gd_process_eq_events;
+>  		INIT_LIST_HEAD(&gic->eq_list);
+>  		spin_lock_init(&gic->lock);
+> @@ -1418,69 +1498,128 @@ static int mana_gd_setup_irqs(struct pci_dev *pdev)
+>  			snprintf(gic->name, MANA_IRQ_NAME_SZ, "mana_q%d@pci:%s",
+>  				 i - 1, pci_name(pdev));
+>  
+> -		irq = pci_irq_vector(pdev, i);
+> -		if (irq < 0) {
+> -			err = irq;
+> -			goto free_irq;
+> +		irqs[i] = pci_irq_vector(pdev, i);
+> +		if (irqs[i] < 0) {
+> +			err = irqs[i];
+> +			goto free_current_gic;
+>  		}
+>  
+> -		if (!i) {
+> -			err = request_irq(irq, mana_gd_intr, 0, gic->name, gic);
+> -			if (err)
+> -				goto free_irq;
+> -
+> -			/* If number of IRQ is one extra than number of online CPUs,
+> -			 * then we need to assign IRQ0 (hwc irq) and IRQ1 to
+> -			 * same CPU.
+> -			 * Else we will use different CPUs for IRQ0 and IRQ1.
+> -			 * Also we are using cpumask_local_spread instead of
+> -			 * cpumask_first for the node, because the node can be
+> -			 * mem only.
+> -			 */
+> -			if (start_irq_index) {
+> -				cpu = cpumask_local_spread(i, gc->numa_node);
+> -				irq_set_affinity_and_hint(irq, cpumask_of(cpu));
+> -			} else {
+> -				irqs[start_irq_index] = irq;
+> -			}
+> -		} else {
+> -			irqs[i - start_irq_index] = irq;
+> -			err = request_irq(irqs[i - start_irq_index], mana_gd_intr, 0,
+> -					  gic->name, gic);
+> -			if (err)
+> -				goto free_irq;
+> -		}
+> +		err = request_irq(irqs[i], mana_gd_intr, 0, gic->name, gic);
+> +		if (err)
+> +			goto free_current_gic;
+
+Jumping to free_current_gic will free start_irqs.
+However, start_irqs isn't initialised until a few lines below.
+
+Flagged by Smatch.
+
+> +
+> +		xa_store(&gc->irq_contexts, i, gic, GFP_KERNEL);
+>  	}
+>  
+> -	err = irq_setup(irqs, nvec - start_irq_index, gc->numa_node, false);
+> +	/* If number of IRQ is one extra than number of online CPUs,
+> +	 * then we need to assign IRQ0 (hwc irq) and IRQ1 to
+> +	 * same CPU.
+> +	 * Else we will use different CPUs for IRQ0 and IRQ1.
+> +	 * Also we are using cpumask_local_spread instead of
+> +	 * cpumask_first for the node, because the node can be
+> +	 * mem only.
+> +	 */
+> +	start_irqs = irqs;
+> +	if (nvec > num_online_cpus()) {
+> +		cpu = cpumask_local_spread(0, gc->numa_node);
+> +		irq_set_affinity_and_hint(irqs[0], cpumask_of(cpu));
+> +		irqs++;
+> +		nvec -= 1;
+> +	}
+> +
+> +	err = irq_setup(irqs, nvec, gc->numa_node, false);
+>  	if (err)
+>  		goto free_irq;
+>  
+> -	gc->max_num_msix = nvec;
+> -	gc->num_msix_usable = nvec;
+>  	cpus_read_unlock();
+> -	kfree(irqs);
+> +	kfree(start_irqs);
+>  	return 0;
+>  
+> +free_current_gic:
+> +	kfree(gic);
+>  free_irq:
+> -	for (j = i - 1; j >= 0; j--) {
+> -		irq = pci_irq_vector(pdev, j);
+> -		gic = &gc->irq_contexts[j];
+> +	for (i -= 1; i >= 0; i--) {
+> +		irq = pci_irq_vector(pdev, i);
+> +		gic = xa_load(&gc->irq_contexts, i);
+> +		if (WARN_ON(!gic))
+> +			continue;
+>  
+>  		irq_update_affinity_hint(irq, NULL);
+>  		free_irq(irq, gic);
+> +		xa_erase(&gc->irq_contexts, i);
+> +		kfree(gic);
+>  	}
+>  
+> -	kfree(gc->irq_contexts);
+> -	gc->irq_contexts = NULL;
+> -free_irq_array:
+> -	kfree(irqs);
+> +	kfree(start_irqs);
+>  free_irq_vector:
+>  	cpus_read_unlock();
+> -	pci_free_irq_vectors(pdev);
+>  	return err;
+>  }
+
+...
 
