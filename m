@@ -1,154 +1,161 @@
-Return-Path: <linux-kernel+bounces-665808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C61E2AC6DF8
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 18:25:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3B1DAC6D7A
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 18:05:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 980891BA5539
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 16:25:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E14116540C
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 16:05:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CF3728C851;
-	Wed, 28 May 2025 16:25:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8932B28C848;
+	Wed, 28 May 2025 16:05:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b="jHwONf8/"
-Received: from sonic306-20.consmr.mail.gq1.yahoo.com (sonic306-20.consmr.mail.gq1.yahoo.com [98.137.68.83])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qSshGpZ6"
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF8CE1632C8
-	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 16:25:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.137.68.83
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D9B7244670
+	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 16:05:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748449535; cv=none; b=DxT0pWt/JuJJFMHVqVx023GQY0u8a6aRx4lT0wPyx41Aveuj8C4jO3ZuLeWD+vpd9T3X8WBymHZ4m8+Q3SLf5krb79C3KlxzuAl5GJ4Ubq5o83Cn8FvzU9phaEFgvpi2hIyL5c5s0NsQaLCs2fmOGDPGy7Msx4hEhClFmJ0sU60=
+	t=1748448324; cv=none; b=Xary9JY+FXAG0GHeEBY8cnfvgQEK3GkG1BtBlquoBE4OQ0Ic2hMEkjJTNnvpL9r270vMvYgZI6uXwOT1LrsgiQU+Y08ClOcY2ENK6wRsk5Q9n96eoElrzF9z0wfzrc2D4OwegjphBC5tKOtlyokn8/wJRNkDly6FYvU0+xuqqns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748449535; c=relaxed/simple;
-	bh=HFxhx5zxugMXnHGPXaZv+GmHaXrwjFwTYGq+wsNop9M=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=sGQhMQJR59RQsHe6mduBYNXmRwTjkEIKTTEuBPn2aK4JK4dkMFX56x3JrI2jp3HUP5LrJap59reOmZx9GT32CROJDfFnB2dj8EruOhFvuxspwWiPtbfuDLELb09vghxA51jOqRzsNCPzanWulXWJyxMyG0I50JsBnsSIIk/g9Zw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aol.com; spf=pass smtp.mailfrom=aol.com; dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b=jHwONf8/; arc=none smtp.client-ip=98.137.68.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aol.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aol.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1748449533; bh=5CSqmFfYZqp9BavGTmNLGt9In65KcvThz/y2RFlvWlI=; h=Subject:From:To:Cc:Date:In-Reply-To:References:From:Subject:Reply-To; b=jHwONf8/0khBRFBHgn3ecyRmITo5nhQgvF3qW+Xx9IH027BQhZS6mUjZeewRq3Qp9OflmQOxhSqpo1pLxDaUqtOIa5YMrPHTgVyBQVgMhe82Gp7AvfvfgUgPuII8l55b1Eu8zCXa5q88ZC4fISxIp5ByJdXuA8b7li9ZpVG8dKnb8veJhr9+DDbsa1Iat/4i9iLiUSo0Xq5Y6/AnN3d1mJl8ZlUsAPY2TBFZNwCxLV5q60Ca/9UQrY9s4KAUzvxNZTev5M1vJrQIL0b1/8dGH8ozrczmiSzRMjRflZeckZ6vbtvCRlFAzsJdC2dIxxw7Dnxb8zqpbrlTTYo/08ZuvQ==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1748449533; bh=/6BCCiNfCDsDPoPDAdS56kCitxE1oPgt3d80I70Ympi=; h=X-Sonic-MF:Subject:From:To:Date:From:Subject; b=mW8QyhYrc3hziZF4+/Zs690s5/h9u7/cUUZAcSmU4Ofqev9k3EXxa9lUT5XqwLSeR5cpaC/PIVr14fv3fn39eyIs0z0dq9rl/tl5ITgVwIizpyyX83JoPseWB2OGk+haNpUAD1/aj3iG8yyO5HZD9gl9jERuQ9fkrvd1n2SUPPDYJHmJ4WqfqfDioWuaBw49caCHcRiyFMjSP/b23LSXU+/SW8wW9nJjuyDMecsJj5DgDk8yL4FP7JEdTUM1Orc+gXXvEAhV6ioECI4YQWDSUMzUXXvSOdcB4DxhmYkd3bdFSyjvPYAfjDX4ySDNxI6ZUK3F2Dry2kHTVyzUdgpmHQ==
-X-YMail-OSG: 2g2I1XYVM1lTAAlNSRPOyQoW2upoamcBBoSek7nmqsAcsCn_V1tRH6bvPDCCJnN
- GdY.ttaLPbNrd8.19pbLDlXCBwNE.UXQGm.gbDsfgig6p3eJCNIAgcr.AeiCqf7oFo75cnlb_H0U
- cvyqcRbfwvcSqjrgA8nmkgdA0PnXIcf.GhErMMSF.k9ZPgO4R3pCKeYPXFxV1n8x.SEcn3j_KaPY
- RZreD_ezL.boJkTfTJ_0KjVQG_XxYzM4kzQatTRLJhwChVnh8tiysg4PnRMlQUESUhcB6iq5SNlQ
- nUnjjJAVk46vlwVGG7Tews1iwwORehV2e8ntDlo2CZH6Jg2CmxBL_aAcV.pbg_lBTdkNN6hSVab_
- w0ua3CLFK.uPsQvnA8BTzzmnblHX49yTxkFy7ehiZYvegQMPqq0JVONbVBVXI.PRRZ_IJu7TfAHG
- 1TLnonaZMvNYeG52KriZW9xc6uUYSG5goY7MIbBFzJ8BOzkrqcq1K4hxp9UYsldnX7yDUAJ63A1Z
- 6aGbz8b_IfO0xFR.H.BYaEomH22YNX4WpK8QTU7xnVxJ44T4SOP6HMKizi5WnkqtjtxuIuF1zz.8
- 3kiU5nTk9LMAOIvLPX9laGY.71KSvcHa2KPjKmKpqrLKBOEvMhqtGuXss2BgeO6P.zKH_rSjXCz5
- CutbViCewc4z0s8BPUZJrjPUCgjj.khQ3P0bIuJ0SmHKJlumO9ZrMiYi9rUQCnsQj7lMNioxlZso
- XtfdR.l8De.GehcRnrvenFojnjOs6Y_ZCvXxwNNSk2weG.E0epzIr0FIjQ7GiDIszDDwh1eRj_H3
- _r_J7N7sLgR0KTH.pfs0oJrhrYfYJbuKSkBWmuKB2dk2yKf6u1qAhXJpHK26OD1nbWk2ZbXJ6fTG
- 3LFBiPkge9TjAmRymyLm4Z.jaNDDouAsgve03NxEifuUm0ae6Kh8q69qB941nqGxz947cdGI9zgV
- DbCyV2Kf7NwaLEtFBWTcmiz5OpAZN0sJnH.QmuyYfxKwB8ixolHfUDuEE5ETbu3xTo5u_h81EwSn
- T8ylxXw7L5OAoJ5Fo288BlE4UYr2UwTHMHE3GHh0KojwzIDyUw7jEwoytp6GL4M8ayTXY_6edVdM
- 0d2cVbIvY5CersxG0L4xR4xaAizsikwF0.rjJUUdnDSVW2iqkbccBdo5rXhZhmZM19v_W2sFYDGV
- 9P.7OA_HDZBMmZ4GhX0bFR0VpS2obizVxHWSTl6lXFCqGMl4CCXYmEP0_wCQlOtqxj.HgtxxXIpf
- hYzbeilXPRBIVt2DWJyBdJAGsxYjtUmk0jH7z.TaE3LhTAivw5x73bpPQhNLtOZA7j6pkkMqs_JH
- TyI4.WsB0jtVbWW03PW44_ayeoKmc_9v5zre01F4ZOwauACDECZWKAD09e6SDhDZiXvLgSbMkGis
- Zbi.QO_i4qYzS45fpC0saNU_G8uf.X69LoWnCn49dwBwwOIjvqdSXNoMdbscUGC8Bd5wuCiMfZjy
- s_kAa5OCrGgvsFft_jh8RD1qic7x9356.3o9PibcBGD1D229OZxpKaacylNRuV_TgV.tURgUbXql
- qpkdD1PhGrUs2paT.7idw09kpbqSOzMGz6MO_1qgV.eypovBM1nqZUKksVgyTNkCNYwFYZpEa6rU
- pxtjRzxcfxSqSW_EZoJkC8tkEq4nBsgEUEZ8UeSy1l7jVlrvh0Qcxsd3plJez_Sl1yoo7iGSg4wM
- EzmijwFwu4qsVi1vTIeOyosvfj2x51VJHWV5628wtsnw0JRi3dt_dc6vOnD5MhuaFUEaogm7bP1z
- G541COMrA1EJij2Lmy.m6C_3p3jdZ6W80drV8MoAYNEPwKb97byS4obENx1IWc_1FrG4a2d_fW0r
- URQGNrRWzrZ0x6TvUvKp8tRFXdGBm4xHif5ROfpCn42kdVkYsPoOxWKg0zhuvfhW8v__eOO2W5Yt
- ypp4wqnyVIvJ3vYSMosPpwrf_8k_j66HdO7V1tFuZGh9QFlGMLuDZEFkT1k2hIYmUTnuMcpYM16T
- 9mp69vuTjy8A8O4m2BJV9xOL_2xCfaAoqiK.atkFBaO_GzFX6z9yCZW.4spCyZBNKNop3sdyPQB.
- oQWEtLVFQnbryxOR99woUH2zkRuvgbKpnUMhPuaNYhgoVZVcJfAJL6VSG51cqhZWLO4kL5zyN7rf
- Jb6b1lxlOu_m_rbb27ldbgMghBEfuY3nCNr8WuPwdmMNcjrUKnB7A4HNOotcmypg_mlUAdxQ0r1S
- LCzcXI0FKVynxrlaVu29dicyLx2lvFhT.q42EQDyTV8IonVBW_j6EA6A-
-X-Sonic-MF: <rubenru09@aol.com>
-X-Sonic-ID: 17b931d1-4a0e-4dbf-bbf2-a809d17f94c0
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.gq1.yahoo.com with HTTP; Wed, 28 May 2025 16:25:33 +0000
-Received: by hermes--production-ir2-858bd4ff7b-th9dj (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID eb482e408247eaa799aba001c4517a6b;
-          Wed, 28 May 2025 15:34:54 +0000 (UTC)
-Message-ID: <7a83ac38b5f2c9d7ec08c04a63299d2eeaa832fe.camel@aol.com>
-Subject: Re: [PATCH RESEND] x86/cpu/intel: replace deprecated strcpy with
- strscpy
-From: Ruben Wauters <rubenru09@aol.com>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
- Borislav Petkov
-	 <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org
-Cc: "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
-Date: Wed, 28 May 2025 16:34:51 +0100
-In-Reply-To: <20250520133549.9964-1-rubenru09@aol.com>
-References: <20250520133549.9964-1-rubenru09.ref@aol.com>
-	 <20250520133549.9964-1-rubenru09@aol.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.0-1 
+	s=arc-20240116; t=1748448324; c=relaxed/simple;
+	bh=DcRREdQ0ZIb5xF00hDHe1rvvAjFzi38y8N1Y5D0c45k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XWQQPDkq6jnyJZlgiXg1Di0naezR+a89cG1IojxKH0QwnVTxJNYuHiIz8pwQGGS8kwZE0HR36rQaW+UHjoDn/R8tuC5102C4ZuyR8vKNS/Tnx/stqQD4lkz8oCJuXEEqLsLIHGe0NbW1g7TkY6MYKs5m+crVpgnjgM1Kl8DeoUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qSshGpZ6; arc=none smtp.client-ip=209.85.219.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e7d925ff60bso3377355276.2
+        for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 09:05:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1748448322; x=1749053122; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=w6tC/IsairDziVWtXhkaDimMYA0/jNvKbB4X1Lbk06g=;
+        b=qSshGpZ6ItWc+JjyMXR2REHAQc/3Pziq99/UpT7Ijf1RBHG0RPIc1TRpPb+A22tglG
+         zUD8QdytkIx5O8U+/Vw+wZNYZ63f2fFKmo+3h7AhAhUwkd8fEiSJ0Pm9BICC73TnlwUo
+         Bn+xHyXgrUd6egnSBpgo8wyrbR6Xzy6ph0MunleESFgCWgtcquwhJSYu1WK4SaccwP/H
+         Fq7xz4hVk7MnYE0ixGsZk+l90k9R8+L/U3n5mlHdRtYRNYahWSXunL1qQaZn0n5RZaiR
+         +gnuJx+lq4/mDapjVAGRW3pyzWSCjqitGKdJBzpowDlzoCYBn+ln4rdNiJbabBrmSlXw
+         J+gw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748448322; x=1749053122;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=w6tC/IsairDziVWtXhkaDimMYA0/jNvKbB4X1Lbk06g=;
+        b=Zf5ZZaDZry4OV16fk6iiit9VSiKtOKJJRR5MVQ8H4IzaJlVdPkSgrU3/q8QXn7UyM8
+         DjQUWbWUw1kLZvnUrpvejKBvHCaBmGnNvtOmrWdXKwDRb9Vzj/iJGP4lk7xXXAXOGD0c
+         2WuCyCWk8b34u6khDjEdsyJDN4eSF5vtf01rYWXo7XaTGN2lDqc/4EbW8X3usiLLV9pQ
+         N32olUcTcEArqu6TXB6GBAwwWaVUBOl3GlcKaLduDto6NKKS8g4LRye1PyW37GAN5tWA
+         Ra+Lb1Kaz2SdV9ewxf7iaOWwWHKwc1Ts7hmuEgevsf8/mRUBOwZ5ikTfrrK5ZvxgXdh7
+         1iaw==
+X-Forwarded-Encrypted: i=1; AJvYcCXXSbVnW7hQHQtdMz48CUzg2mY0/+V3Q9cdn6DbKfFMOAVmGFLGx6zcIXV2ei1MlFDke3IOl0MT1dROgiQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwM+v3xGCOl3UWFPZDEPK8yzWpNhfXcfB1Nd7shr/eWw/r1ZKJw
+	/KzYvperym9x/4WnMj7km/u0KHSiVJ7A2NAb3hpurbpYiG90vWcHq5LZh1D/5KKsskiOdrUUwHv
+	AcSNUUSWN3PcLLGdEQxEkMKq1yz/7WaphlLxBhjMo3w==
+X-Gm-Gg: ASbGncvD00InDeeh1Uao74TvIW3Xbz2TA+LxPZP1vcNqS1FMIBbbyncUxI+CYBqz1n+
+	y9oqEvmZsiaCtGmwimbx7cSUg9i9BTkUbtcHGMpEnpsxOPPExfasEcGgl4hMCS2CowMpLBiQowT
+	pPvqfu8WyLPIeRJOjlDVhcCLvfFEZxd5vgsA==
+X-Google-Smtp-Source: AGHT+IFnwa31CIcmyHHl56Vao4/q5XtrthfioWrNJoyx+lhgVVPWYbbs9O9qtYqlGYN36k/DfrFLU8QJs8LWaKoEyMQ=
+X-Received: by 2002:a05:6902:2203:b0:e7d:b107:d829 with SMTP id
+ 3f1490d57ef6-e7db107e038mr15334137276.34.1748448322260; Wed, 28 May 2025
+ 09:05:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mailer: WebService/1.1.23884 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.aol
+References: <20250526122054.65532-1-claudiu.beznea.uj@bp.renesas.com>
+ <20250526122054.65532-2-claudiu.beznea.uj@bp.renesas.com> <hojdkntm3q5a5ywya7n5i4zy24auko4u6zdqm25infhd44nyfx@x2evb6sc2d45>
+ <111d2d6c-8ac0-40b9-94c3-02f2f64ef9fe@tuxon.dev>
+In-Reply-To: <111d2d6c-8ac0-40b9-94c3-02f2f64ef9fe@tuxon.dev>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 28 May 2025 18:04:45 +0200
+X-Gm-Features: AX0GCFuID4VhGiX2apyC0Knv4lDmWLbvgXL8Xh33MSHxiRPOzOEH1v_hZ2IXp8w
+Message-ID: <CAPDyKFoQYTNBhtBXY-Ds7E0TohtA6558W1Jf3cLsnXDQC74DSg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] PM: domains: Add devres variant for dev_pm_domain_attach()
+To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, gregkh@linuxfoundation.org, 
+	rafael@kernel.org, dakr@kernel.org, len.brown@intel.com, pavel@kernel.org, 
+	jic23@kernel.org, daniel.lezcano@linaro.org, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-iio@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, bhelgaas@google.com, geert@linux-m68k.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 2025-05-20 at 14:26 +0100, Ruben Wauters wrote:
-> strcpy is deprecated due to lack of bounds checking.
-> This patch replaces strcpy with strscpy, the recommended alternative
-> for
-> null terminated strings, to follow best practices.
->=20
-> Signed-off-by: Ruben Wauters <rubenru09@aol.com>
-> ---
-> This patch was reviewed by H. Peter Anvin and (by my understanding)
-> was deemed ok to apply. However this patch has not been applied after
-> 2
-> weeks, so I am resending it. I have not added a Reviewed-by tag as H.
-> Peter Anvin did not do so.
->=20
-> I also wanted to note that while immediately this may not have any
-> effect, any addition or changes to the strings above may possibly
-> overflow the fixed buffer of 64, and the use of strscpy instead of
-> strcpy will help prevent any buffer overflows by copying a max amount
-> of
-> bytes. I do also recognise however that the strings above are
-> unlikely
-> to be added to, as (by my understanding) they'd require intel to
-> release
-> a CPU where the x86_model_id would not be detectable.
->=20
-> I still believe that while the above scenerio may not come to pass,
-> the
-> replacement of a deprecated API with the preferred alternative is
-> good
-> practice and should be done.
-> ---
-> =C2=A0arch/x86/kernel/cpu/intel.c | 2 +-
-> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/arch/x86/kernel/cpu/intel.c
-> b/arch/x86/kernel/cpu/intel.c
-> index 584dd55bf739..b49bba30434d 100644
-> --- a/arch/x86/kernel/cpu/intel.c
-> +++ b/arch/x86/kernel/cpu/intel.c
-> @@ -607,7 +607,7 @@ static void init_intel(struct cpuinfo_x86 *c)
-> =C2=A0		}
-> =C2=A0
-> =C2=A0		if (p)
-> -			strcpy(c->x86_model_id, p);
-> +			strscpy(c->x86_model_id, p);
-> =C2=A0	}
-> =C2=A0#endif
-> =C2=A0
+[...]
 
-Hello
-I was wondering if there was any chance this patch could be applied? is
-there something I need to do to change it so it's fine? is there
-someone else I need to send it to so they can review it?
+> >> +/**
+> >> + * devm_pm_domain_attach - devres-enabled version of dev_pm_domain_attach()
+> >> + * @dev: Device to attach.
+> >> + * @attach_power_on: Use to indicate whether we should power on the device
+> >> + *                   when attaching (true indicates the device is powered on
+> >> + *                   when attaching).
+> >> + * @detach_power_off: Used to indicate whether we should power off the device
+> >> + *                    when detaching (true indicates the device is powered off
+> >> + *                    when detaching).
+> >> + *
+> >> + * NOTE: this will also handle calling dev_pm_domain_detach() for
+> >> + * you during remove phase.
+> >> + *
+> >> + * Returns 0 on successfully attached PM domain, or a negative error code in
+> >> + * case of a failure.
+> >> + */
+> >> +int devm_pm_domain_attach(struct device *dev, bool attach_power_on,
+> >> +                      bool detach_power_off)
+> >
+> > Do we have examples where we power on a device and leave it powered on
+> > (or do not power on device on attach but power off it on detach)? I
+>
+> I haven't found one yet.
+>
+> > believe devm release should strictly mirror the acquisition, so separate
+> > flag is not needed.
+>
+> I was in the middle whether I should do it with 2 flags or only to revert
+> the acquisition.
+>
+> >
+> >
+> >> +{
+> >> +    int ret;
+> >> +
+> >> +    ret = dev_pm_domain_attach(dev, attach_power_on);
+> >> +    if (ret)
+> >> +            return ret;
+> >> +
+> >> +    if (detach_power_off)
+> >> +            return devm_add_action_or_reset(dev, devm_pm_domain_detach_off,
+> >> +                                            dev);
+> >> +
+> >> +    return devm_add_action_or_reset(dev, devm_pm_domain_detach_on, dev);
+> >
+> > Instead of 2 separate cleanup methods maybe define dedicated devres:
+> >
+> > struct dev_pm_domain_devres {
+> >       struct device *dev;
+> >       bool power_off;
+> > }
+> >
+> > ?
+>
+> That was the other option I've thought about but I found the one with 2
+> cleanup methods to be simpler. What would you prefer here?
+>
+> Ulf: could you please let me know what would you prefer here?
 
-I don't want to keep sending and asking about an unwanted patch so if
-this isn't wanted please let me know and I'll move on.
+As it looks like we agreed to use one cleanup method, the struct
+dev_pm_domain_devres seems superfluous to me.
 
-Thank you
+[...]
 
-Ruben Wauters
+Kind regards
+Uffe
 
