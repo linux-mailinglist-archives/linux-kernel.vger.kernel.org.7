@@ -1,78 +1,130 @@
-Return-Path: <linux-kernel+bounces-666020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69490AC71A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 21:45:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C981AC71B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 21:47:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB7317B264A
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 19:44:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 412A33B9702
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 19:46:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB2E4221F04;
-	Wed, 28 May 2025 19:44:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8383E221271;
+	Wed, 28 May 2025 19:45:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VR55tyDg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vLX+uzw0"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 556EE2206B5;
-	Wed, 28 May 2025 19:44:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B203223DC5
+	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 19:45:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748461469; cv=none; b=db4tIeW5w5qb9iRDsKW+/eSftvuk6aOMmQWgbTq90v7UMcH2ZraLGJiXOhHEk35ueOQGlWAhd27N4vzkPCTyyCO7bjYDjtQfhRR5mpkEdsrlVU2JDGZCZ1QMIQ0L9LmoDeATHwTKrJUe+uIn0xBLIzgYu8q6hAuxEOtkvHMqDI4=
+	t=1748461507; cv=none; b=B0oCC8beHNXaeeBBNN8mncV3c5oBxtQjXKGWUQMzB6YcpYwoEsjCPTrwY8dyk+yYRzzRbzGWfjVQAn++UxelA3UU727tlYeG23r/Amd1PF270tvd0niR3GnkhyBcm+aDZ9+j/d6b27ngnGCLykaONAHrLlAOHeIe0JpWbrwonaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748461469; c=relaxed/simple;
-	bh=gkJPuUEBmBa2T6rdVCbOWsZX40AzDjpo93A3cuUkLHc=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=F615pLIQn/UztcZTROEHwbAbHoFBccZmssJYPkmpjVZJoyVXoDkG7T7+lTEbxUWnTKiVDbmW6fb1iu1GNB36AnP4R4wawc7HMStJnJJ7Z1EczAJSyg0+N20ddjJxVEns6caycl4a/8E9rQyc+64sb2vzzcHhKyeCQhU58caa8oc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VR55tyDg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 384D4C4CEE3;
-	Wed, 28 May 2025 19:44:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748461469;
-	bh=gkJPuUEBmBa2T6rdVCbOWsZX40AzDjpo93A3cuUkLHc=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=VR55tyDg8cJPCOkgla4sWmkS85gVbYeq2bGS/BL+MHLNJm9icHxKnoUnV4F4QlsMw
-	 NtroM1IyJyzruJTwND3MFGkKTd1ISP11iSIA3e4U+UJ0zW0kEMBOmSTf6lVx5mjOpS
-	 H5MU1LxHwYTPORtZc8s8vIkCPeZzeUz6AiOEYYr2pqUjB5r88hVZx5nhSqQzUDu6nT
-	 zL6qrBF8HoAGuWYIifnviEPddAVscLeZEzFBf2pJU+o2zWjUMEP6d7NnOSBjeKnpzY
-	 k714cRigrg15zpTlCt1NDChCUwLTZ3sqeCIFDe416f/BsMWudJgS5llI7LmOwK9xB5
-	 TX6H1Z6u5EoNQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70D903822D1A;
-	Wed, 28 May 2025 19:45:04 +0000 (UTC)
-Subject: Re: [GIT PULL] dlm updates for 6.16
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <aDXkbAcJfiMTixT2@redhat.com>
-References: <aDXkbAcJfiMTixT2@redhat.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <aDXkbAcJfiMTixT2@redhat.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/teigland/linux-dlm.git dlm-6.16
-X-PR-Tracked-Commit-Id: 6f8b4788266c7df3b7cfc6c665f663b4c3d09aad
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: b1fd8bd0cc18cd8572ac0da21418cce2ee45e04f
-Message-Id: <174846150291.2536722.1487916114814230281.pr-tracker-bot@kernel.org>
-Date: Wed, 28 May 2025 19:45:02 +0000
-To: David Teigland <teigland@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, gfs2@lists.linux.dev
+	s=arc-20240116; t=1748461507; c=relaxed/simple;
+	bh=KlWZh9mGbhh246BLaQj3a0JEHtlWiPcz6tFTLPrpjyw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=auw4CjRuwlJZVckyhUkbmScuyxoMaqHGeJTyDoXJGi23uoyDh6s3JmBLquzWQD7j4grj8sfnPMbWc66AnRMxMk3NtncutxKL+r+FMNwiJYuy2B8IgZcSBtV2y7IaPXoYyUdHenSWpE7ti+9pqug1r3c2C6g3C63ZXkyJFa6FctU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vLX+uzw0; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3a4db4d1bd7so28898f8f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 12:45:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1748461504; x=1749066304; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6XS2deMVzboP2ASP6uwuuwH3ZN1J3py9R+W7bnWjgpA=;
+        b=vLX+uzw0beHtHa3vJ+3ELXZSzKFIh7CT74/jk1mhRPpg1JFe9v+CjF+P+Rj+iRSI8I
+         nqOTNf3ER3oOI67L/3a0ZMlb1l3TnBb2w8GMejjKdK+YNwEgGeRYh7vjfiHuQZCRqA70
+         c9zJIaCCXtAMmUdbVX+0PpGpOqK0Jwflz8wFs2URuFbhGGJrnGMWByJwGnra0QtpeZN8
+         ublE9G//PWqoST+TV5AymMPhGdTZbI6SzN1zTpMIOo1R9X5XnLEUkhaql3keKPXvQBdV
+         7ljA0qTAtVI8+ydKHfdtCbWWcO9NDVCCx4y1VPrcXn+hCTNck5lbg7zfIQADCh/9qhfF
+         a3JA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748461504; x=1749066304;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6XS2deMVzboP2ASP6uwuuwH3ZN1J3py9R+W7bnWjgpA=;
+        b=Xwu6IDnmv3Ru+ssIp9DgvVeOcfO3E6g3LoAGeKMaYLih2c62VZKhfjs+GHI+BZUYUb
+         7Xp5lTokBnmirRGKKnV11GMBiktkcsAhupKRxauib2ZUnwHXJEQkC6b5D28gbdqPjkzu
+         zD+LYkDzfgwqD8vgbBeer555q9+Mvp25b8e4h4n9QP3ip+BwjaYpCz2lmYUvjDTIlA5Z
+         +hhuZFxrlQwerPlJaxW304+RnLRxUUYSsNTXrI4dLnpv3BfL3NpiN7Y4VYL7ujEPfVmV
+         gjZ/zYIPam6srYmav1h78nKfySFNg/KxumPTZtKsMcnRaxXwxujRX/StJPyTwjiyPkQT
+         kuKA==
+X-Forwarded-Encrypted: i=1; AJvYcCVQfv67IzdiasYBAltg7pEB/JD5FE1PGonERwxzvNuPMKPLd0TGvlXrg3LKWuZS2qwBGo2z4A52LM+BftE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz78s+FMVUE/2IFzYURIJCnB2b3ftw54TivCqIvN/Mx0kJkv1u1
+	9pqyq8Nx6/ADhI07y8lK7QnOSVLIp93lLoLyA8Tbmo+XTdaN64CAsmLqbmQfj0q20Zn+wnXuX22
+	S9wyH
+X-Gm-Gg: ASbGncudyuP0/DQDbI8SQz38xhSrwDQgNyhy7mEnqRy9N+8oipTJ+tcnVzll0Z7a00z
+	AvAA0MJtbjtthcJhOp4wmTEAYSlcSOCRjGTYzG8rPTHPaJOWuFJlT07YBx59RbQ87WvtTIgfaxs
+	IbNny4bOVCUinyfc+iaU6Qj7ONrJTjNbbVm9B2HGgOpufXrezgdv5J/bVJwJIGqmzyIhVfwXVsT
+	PS5SPitcBYp+s6L9SUNjKZ9voXzKXk37bZc9nkCnAr4dFT+AOC+YlTxD0ZiXZ8xdtmgQwotN9EH
+	M3Rv61oJCX/vDTPDxY7vZrOghStSHRlEs/EwSgfXxhWCkuXQ58t9FOOFoU+BVQ==
+X-Google-Smtp-Source: AGHT+IE+6eowk0bQqmDKzrEJsfMBGmbrEBcEQGWsiap3HMgyykC6Bl6Me1m9xy0Xn6tbPw7JfXAGgw==
+X-Received: by 2002:a05:600c:3504:b0:442:fff5:5185 with SMTP id 5b1f17b1804b1-44e90da2cb6mr48842315e9.6.1748461504456;
+        Wed, 28 May 2025 12:45:04 -0700 (PDT)
+Received: from kuoka.. ([178.197.223.125])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-450cfc03147sm416555e9.14.2025.05.28.12.45.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 May 2025 12:45:04 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Mark Brown <broonie@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH] regmap: kunit: Constify regmap_range_cfg array
+Date: Wed, 28 May 2025 21:45:02 +0200
+Message-ID: <20250528194501.567366-2-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=720; i=krzysztof.kozlowski@linaro.org;
+ h=from:subject; bh=KlWZh9mGbhh246BLaQj3a0JEHtlWiPcz6tFTLPrpjyw=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoN2e9H6gpzQchhz5tE2IdHRreCxVO/aVmcn4ee
+ swTaQu63M6JAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaDdnvQAKCRDBN2bmhouD
+ 1zlHD/9on3biqpsKYu0bS6pbEBz/r9Gy3w/3qo259zZNvpn4SjqxBbr9IoQML8N0Ye6BNfYd4UL
+ n7BpdGfP2ToHUXqZcMcMcsYiZLiOBh42RW1plSsa2WdMaPqibG2Ubempl6c6EQV9p8BtZ4q3Oh7
+ li+qdN4ZZq/oo8VZi3gGQIXUDvARTeVUiw/vZJozVfvHVggJao5K2KMd5aXEW8VPlK8WS7JX9SQ
+ f366s8882U2BLPYFiHmKg0qntawzUuN67JGyxhgzGClukjWuJvDZX9gCZ8eTfIDJwwNEzSyiXex
+ BxNuCjP21XqIiDXmeljU5BoktncGzwmJ8K2mQhpp2dyeVgtKE8cieF16SuxLm7irFj43X9Pk1nZ
+ EM+yfJJ0l9Vw0zYC+7XyLwAGQ+T/pG5VC5nJL1kp3at2+9yCaWd2RX2XAQdUgSJbrAW4mGftWCK
+ j+FuNMYBN7EuRr5Vf3iZYkkALCF1kIXUzIwD4U3hMZRy5wNkQpuRVW31xSEFSLF6p4f4PbO14Op
+ 1okbdmQgNPaJDe5eMqqizg/5lYCSbGNY2l1IYWoQaO5oEKol6L3+wE21umRASUd3Zp1kb04m9jz
+ 2k9QZ6s/YMquaND12oWANoWrV8Px1lA95tiGmNlAEPyHxcPd/4xCyS5JG0gTNnlJ4/VUAlgPPo0 qszQNPZj+IFw3IQ==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Transfer-Encoding: 8bit
 
-The pull request you sent on Tue, 27 May 2025 11:12:28 -0500:
+Static 'struct regmap_range_cfg' array is not modified so can be changed
+to const for more safety.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/teigland/linux-dlm.git dlm-6.16
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ drivers/base/regmap/regmap-kunit.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/b1fd8bd0cc18cd8572ac0da21418cce2ee45e04f
-
-Thank you!
-
+diff --git a/drivers/base/regmap/regmap-kunit.c b/drivers/base/regmap/regmap-kunit.c
+index 64ea340950b6..95c5bf2a78ee 100644
+--- a/drivers/base/regmap/regmap-kunit.c
++++ b/drivers/base/regmap/regmap-kunit.c
+@@ -736,7 +736,7 @@ static void stride(struct kunit *test)
+ 	}
+ }
+ 
+-static struct regmap_range_cfg test_range = {
++static const struct regmap_range_cfg test_range = {
+ 	.selector_reg = 1,
+ 	.selector_mask = 0xff,
+ 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.45.2
+
 
