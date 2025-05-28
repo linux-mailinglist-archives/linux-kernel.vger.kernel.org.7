@@ -1,181 +1,78 @@
-Return-Path: <linux-kernel+bounces-666206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 395C5AC73C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 00:16:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 465EEAC73C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 00:15:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA0F74A877D
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 22:16:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B01CA2445C
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 22:15:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16484221FDA;
-	Wed, 28 May 2025 22:16:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81272220F59;
+	Wed, 28 May 2025 22:15:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TGzzzlKp"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SDPOUjyw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0BE1221D96;
-	Wed, 28 May 2025 22:16:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E23418634A;
+	Wed, 28 May 2025 22:15:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748470567; cv=none; b=hQIeEUNhAh6f8F8IentQj7BroDhGH8caobCBXZkF1pacsQe7wM3m5KyhwWvBoAHYnckIB+R/qK+JF/E9UeAqATTxCrHCVdynavc/PFVlMbY1WNPoCDfCuhtX3ACfEDm6bKiIB6mmmQYK63aueEgIkKwQJcUWAP4gAKUMGCnTP6g=
+	t=1748470531; cv=none; b=MC397P/1ffb2VNT0BK+HnSzrr507e0/bpN715KswnZe5HxkXDQvn4+JIYzwNBUI57+SnOy+QY4UJLr7/tMa1Cen22g8+naCkg9LvLhgJV8tEi94grVujiqZYoP0xUjX87LOfuRgLMaNB9OVIuzA7QgjXfyzmPgeNLDpEbOpGuuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748470567; c=relaxed/simple;
-	bh=7gsOR0gNkU5/T2lBGTTXQjhgAghPoA/RiREki0cgJdw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YpbzZoHCKsARV4gmIwD0kE3sC6we2gWse8j34J28JVEZcZWvOpDmfobTBsHOMenv9EgK7j+s+Ro6ogikiv4hfYAqqys72mprTb74D1TVSKt6ec2CWlaryK/OeVSzfuyrOnEm156h/zfLpMR3X4Zbycm9jtHs62GulPpTBzOjiqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TGzzzlKp; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-32a6fc6f1e2so1394631fa.1;
-        Wed, 28 May 2025 15:16:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748470563; x=1749075363; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6Enihz6/HCS20B4CFOBmO5EOpNE5vpE5s80nw+pNvgk=;
-        b=TGzzzlKpZtm/22CmYeRJM8niZ6ZskhUK8HLerqj9nZ3fINz2o4K5tTqQo0TJ/6Kni6
-         xa4T01u/rEwURF24M7mvD5fqEdYQMCnO1wLijki6rE2F2WwfNyFYYUNgFlXEDNz6qljl
-         FfZLcww8n6kXMzG9GX4Uhlwt1ROjNzuFnJfoFV+HbNLpGYiXGgfOkKnJukZHOitQKHHI
-         lXTXXQ50o16b/Bt4+Rq7moPTBfa4kQT94lkSpQ0oHn4cmP8YkmMPjWJjcoBU08JPCAUT
-         NpDlq9/6VBklOW0FtPUqG9bjvIxIy0luGLnz5d4Yl48ln5x0jhvnHRJUDth869jLzB9c
-         /W3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748470563; x=1749075363;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6Enihz6/HCS20B4CFOBmO5EOpNE5vpE5s80nw+pNvgk=;
-        b=m4CXKnmX/+VNDar0hifuGU/A2HtH0yMikwTkT9xnjf+tjZ4hQH43Beej33h+/dcozz
-         GTdjJSI+oTTi5JUOuprIs8+HBhrqwtV6LFJVKBsMUCOnbTwPJEpRkVa3I3ODvKYRWwR0
-         7fQvSQTRp1tiRIfhNJWtVZLYrFWZtZUx2KBj49xVsEBbjO0/OwIWPyU3HxTf6eESc98j
-         32jPnwpWZEoIP2mC9woUebsgVCDmubJN1e7Np4QBjaS0z76ao3jd42QfMKPEs6tcwWGC
-         rikkpgp7duXxldj5vxlWDprEHbJKDGFDSx78jsxwkmxRUrglo2Ijuk8WtRSQjX2GwrGf
-         sOtA==
-X-Forwarded-Encrypted: i=1; AJvYcCVjevCJF/AbWEbdLSiBCmZ6OAIx/zz9eRhf1OfB+DTMT2qZ8ssdzUANJfKZi+emru6XGLynUk1WwtrXAEo=@vger.kernel.org, AJvYcCX9KqBUSLXBUbbtrp+u6VPo6n/CBE6welKwUbUB26jXbvtQoKkOqH4PS4c2HrBtRkS+8ASydpOr6Tgkw4BlreE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyycHsKOCJ6+dKTAEExfBqkjAK3Z7oe/v5osiriPirMzTJ1/1bI
-	wNrdDchCyP99yOfLE7pNY/H0k5SwZ3/buJJ6RUH0k321cHR/FSQc0MUx
-X-Gm-Gg: ASbGncs6oo8A2h9G/+us8t2ARxOOg/X5eZxjlgfPfbxCtyrVHzneYhDZyipxhzzwIAa
-	UHsK7sue7cl/aV2ggtm7NEC/q12J9egi4GgNOLbkrbuywWf3/+hxtb80Bd0J6xaF317XpgQT51+
-	62qHyNZNYhKTCBOL+7xkqr2NOqnPDa5bfWLiRO312mEcDJH/ETTnVVZ8sJRFXPNLnlb2KIQJGZR
-	lu/l5hIe749k4VTvd+EFUlrBJPr9AzTSNQpkYTMSwjX8DCBzRI/iuYPGkXpNSJB1KwhZqhV4uML
-	9G2f6BL0RViPAhuJJXT8SGPeO60dlZcuDHV8WdxRo266HY0xTJRP2Q6sr05VnD+Wx7Tx4dTjZzH
-	xa5XMKJiKWZhsJuZqzZ+XtrLv8+as52bl2X8iAYk=
-X-Google-Smtp-Source: AGHT+IEKeeMrKUS/lOmd1TUP76CFI8k+PQghOOyWCL7sH6eA52cW3EaSl6yniwFeOoZuYVfomlK4Fg==
-X-Received: by 2002:a05:651c:985:b0:32a:81a2:ebb with SMTP id 38308e7fff4ca-32a81a20f8emr6871911fa.1.1748470563272;
-        Wed, 28 May 2025 15:16:03 -0700 (PDT)
-Received: from abj-NUC9VXQNX.. (dsl-hkibng22-54f8dc-251.dhcp.inet.fi. [84.248.220.251])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-32a85b55de7sm156911fa.53.2025.05.28.15.16.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 May 2025 15:16:01 -0700 (PDT)
-From: Abdiel Janulgue <abdiel.janulgue@gmail.com>
-To: jgg@ziepe.ca,
-	acourbot@nvidia.com,
-	dakr@kernel.org,
-	lyude@redhat.com
-Cc: Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Valentin Obst <kernel@valentinobst.de>,
-	linux-kernel@vger.kernel.org (open list),
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	airlied@redhat.com,
-	rust-for-linux@vger.kernel.org,
-	iommu@lists.linux.dev (open list:DMA MAPPING HELPERS),
-	Petr Tesarik <petr@tesarici.cz>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Sui Jingfeng <sui.jingfeng@linux.dev>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Michael Kelley <mhklinux@outlook.com>,
-	Abdiel Janulgue <abdiel.janulgue@gmail.com>
-Subject: [PATCH 2/2] samples: rust: add sample code for scatterlist bindings
-Date: Thu, 29 May 2025 01:14:06 +0300
-Message-ID: <20250528221525.1705117-3-abdiel.janulgue@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250528221525.1705117-1-abdiel.janulgue@gmail.com>
-References: <20250528221525.1705117-1-abdiel.janulgue@gmail.com>
+	s=arc-20240116; t=1748470531; c=relaxed/simple;
+	bh=aDsCpElC2i/bSA+1zi2eQ/hnJoCVt0Alx+eab1BZLhs=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=CJUj/LGEVLdx/pqKR1/PSWSemWhnDORLEloMu0/p1WomjMMlN0HO/pEvvyME2TO56QaTZoTLeOjyCL4t3g37r74m5pYSvFQS/wMBN/CRLt4EmLyzpNL1Q6t555hWzUSqchpEuvomFGVAEfs3w1cXYMh15oTeGH/IpRvh/M95o0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SDPOUjyw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4227C4CEE3;
+	Wed, 28 May 2025 22:15:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748470530;
+	bh=aDsCpElC2i/bSA+1zi2eQ/hnJoCVt0Alx+eab1BZLhs=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=SDPOUjywO+2A4gDrSWqsWzYgSbEiww29Sjxe/w/gFCe5sz1KodharjSA85ijVadSF
+	 PIl46aMabl4iatREt09mqEb7hGM2qqqlo9avdPflA4JOsGdwrhLAs0RSRUkqtQLIgg
+	 /sc5Hg1alihUYokoDJfG5C0WVJ8loEvTup8pDYBkm5zBBBBZU0mDSguG+b03H2b7LS
+	 nVz3RFQ70s95D7pKNzIWiCPLrrkyugk5WUuzOO90WuRldBBQPFDOt2BG8k2mhjI1b5
+	 1zHOBHvnPykDMfk0wD54O11IEBuhzQHrO61Apl4K6ECqn4iIJfrb0AlmNCX8g8gMx8
+	 6v9Q9369kopKg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAFFD3822D1A;
+	Wed, 28 May 2025 22:16:05 +0000 (UTC)
+Subject: Re: [GIT PULL] Crypto Fixes for 6.16
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <aDZ89Fs8Y20_fj2I@gondor.apana.org.au>
+References: <aDZ89Fs8Y20_fj2I@gondor.apana.org.au>
+X-PR-Tracked-List-Id: <linux-crypto.vger.kernel.org>
+X-PR-Tracked-Message-Id: <aDZ89Fs8Y20_fj2I@gondor.apana.org.au>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git tags/v6.16-p2
+X-PR-Tracked-Commit-Id: 0a84874c7e7dde5cdddc80a82093120e924a348b
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 408aa67404405c8519ddee70bc0e6c55daa7c959
+Message-Id: <174847056445.2608061.5885516562298346451.pr-tracker-bot@kernel.org>
+Date: Wed, 28 May 2025 22:16:04 +0000
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Add simple excercises to test the scatterlist bindings.
+The pull request you sent on Wed, 28 May 2025 11:03:16 +0800:
 
-Signed-off-by: Abdiel Janulgue <abdiel.janulgue@gmail.com>
----
- samples/rust/rust_dma.rs | 21 ++++++++++++++++++++-
- 1 file changed, 20 insertions(+), 1 deletion(-)
+> git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git tags/v6.16-p2
 
-diff --git a/samples/rust/rust_dma.rs b/samples/rust/rust_dma.rs
-index 874c2c964afa..8c8f514bb27d 100644
---- a/samples/rust/rust_dma.rs
-+++ b/samples/rust/rust_dma.rs
-@@ -4,11 +4,15 @@
- //!
- //! To make this driver probe, QEMU must be run with `-device pci-testdev`.
- 
--use kernel::{bindings, device::Core, dma::CoherentAllocation, pci, prelude::*, types::ARef};
-+use kernel::{
-+    bindings, device::Core, dma::CoherentAllocation, page::*, pci, prelude::*, scatterlist::*,
-+    types::ARef,
-+};
- 
- struct DmaSampleDriver {
-     pdev: ARef<pci::Device>,
-     ca: CoherentAllocation<MyStruct>,
-+    _sgt: DeviceSGTable,
- }
- 
- const TEST_VALUES: [(u32, u32); 5] = [
-@@ -62,10 +66,24 @@ fn probe(pdev: &pci::Device<Core>, _info: &Self::IdInfo) -> Result<Pin<KBox<Self
-             Ok(())
-         }()?;
- 
-+        let mut len = 0;
-+        let sgt = SGTable::alloc_table(TEST_VALUES.len(), GFP_KERNEL)?;
-+        let sgt = sgt.init(|iter| {
-+            for sg in iter {
-+                sg.set_page(&Page::alloc_page(GFP_KERNEL)?, PAGE_SIZE as u32, 0);
-+                len += 1;
-+            }
-+            Ok(())
-+        })?;
-+        assert_eq!(len, TEST_VALUES.len());
-+        let sgt = sgt.dma_map(pdev.as_ref(), kernel::dma::DmaDataDirection::DmaToDevice)?;
-+
-         let drvdata = KBox::new(
-             Self {
-                 pdev: pdev.into(),
-                 ca,
-+                // Save object to excercise the destructor.
-+                _sgt: sgt,
-             },
-             GFP_KERNEL,
-         )?;
-@@ -77,6 +95,7 @@ fn probe(pdev: &pci::Device<Core>, _info: &Self::IdInfo) -> Result<Pin<KBox<Self
- impl Drop for DmaSampleDriver {
-     fn drop(&mut self) {
-         dev_info!(self.pdev.as_ref(), "Unload DMA test driver.\n");
-+        assert_eq!(self._sgt.iter().count(), TEST_VALUES.len());
- 
-         let _ = || -> Result {
-             for (i, value) in TEST_VALUES.into_iter().enumerate() {
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/408aa67404405c8519ddee70bc0e6c55daa7c959
+
+Thank you!
+
 -- 
-2.43.0
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
