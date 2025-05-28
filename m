@@ -1,129 +1,157 @@
-Return-Path: <linux-kernel+bounces-664977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-664975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43E3EAC62D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 09:21:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 93FA3AC62D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 09:20:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CEEC37A796C
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 07:20:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5749D7A8CF5
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 07:18:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A48E424501D;
-	Wed, 28 May 2025 07:21:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A390A24469F;
+	Wed, 28 May 2025 07:19:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GpvP0Qtu"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FB+mTpCf"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B0B0244695
-	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 07:21:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 560BE1367;
+	Wed, 28 May 2025 07:19:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748416868; cv=none; b=VPnTEtZdbVekH7ORoSc1R7YSvZRvcMhPug1h0ubvuEGG6HhhEtjkBunzDB8ZaYq5HyGmjuuKGCOodzqfrV/5VpM9MYXMWZNFHBr9wwtInUAaA+AZKgLNhjToGzmDKWwjvZBJCoXeEpRSl6BaM4n/09TCMmZhkWGQ8nlgyx2Ht7E=
+	t=1748416794; cv=none; b=gbPEm0fP0Z/LL9MCDB21Pg7+FjMCi/Rj8HXS5KVd0c1/fT7x7Zzahzr8fQ+ZWzwTdtdHwiT3t8aZq8F7jzt2PAO5NOUy7ukphxBWez0E3Fk/2DKfyi+ROuCOp54n0xukIFKGgOLYEuUHY3Ev0rkkirlr1ZS7F65SVF1JQMn/Lgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748416868; c=relaxed/simple;
-	bh=2qHmQEB1E1zkN71QCfVoyToUf5ogIWK0R6isdin/Ad0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nr2KZNcxsaHVNn0IYk/ILzdAIqsukRKmWnxIP6vHkqLQM05e4GyavY9g0DVW35xUkH+dORSGKmI0/BKKvSU5d7OVoVxF9cmm1jbm67pZoUoD829RwTBh0g4S2f3pYEAbQXBooKTMT4z9F4cksChfmKCG3JAJ4I/q1fSHn0PXGPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GpvP0Qtu; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1748416864;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Yb7F8w++tHPp3njA+diY9i2D1I8vF7wYtoKldSCXI70=;
-	b=GpvP0QtuF1mYahqkmTAqPmOLH/B8RLIhD/cn/+l+3BD0e8pctjDUG62jqgcqmlilUFeSYG
-	g+ycD+te2NPKCz8z3WSZoP4X/NCSav5kQ4bVZCTBXfUoEnwGTT/e92JEIWoSLMn1KaDysA
-	BF01WznYj+jHyviukGdRFHlk5pgul/Q=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-688-4xfbBtN1NvWzzN-tDPIIWQ-1; Wed, 28 May 2025 03:21:02 -0400
-X-MC-Unique: 4xfbBtN1NvWzzN-tDPIIWQ-1
-X-Mimecast-MFC-AGG-ID: 4xfbBtN1NvWzzN-tDPIIWQ_1748416861
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-445135eb689so25562455e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 00:21:02 -0700 (PDT)
+	s=arc-20240116; t=1748416794; c=relaxed/simple;
+	bh=ntMPcjZr9Pm033gu7Fx/HPiDio0i+/tdgt6pURKOm3g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=c6AzwIi/EEPINIewO4UBGkPAD1gH8wY6jWwEoeRLlLMSWfdjFPb1CwnUVmyJlKUUnUOpSiaMKH9eflT3LcouWpREqmO6vpW23+uYNN9y2tGQ9s6LNdlR4WfS9cNlG6yqatKZXJ1wBEB96H76MSYhwuOfZaSmWADzlA3DK5+Z3xY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FB+mTpCf; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ac3eb3fdd2eso756682966b.0;
+        Wed, 28 May 2025 00:19:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748416790; x=1749021590; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OUbnFWv1f37Ta+BVjxPt8pmoACrgGpNv4OYgueKntrw=;
+        b=FB+mTpCfdRvwEn1BlHrIVHbShcpMMUmFr6tI6TGzrSEJ59tlIB897ZiAH+fRNBYV4r
+         yZtcxXqa/vmE7KTEf55H5ZdS/G5fgUYYs1hlGaxPu83NR+eSSRHCAvBzv+HbRQYsR9xC
+         Gc7gd1fla9AcvALJhEgFLlKIibWodgprLTjOvTfyUXetovUej3Q1c0Ml9vH+rI/Ua/Ea
+         7YKbG8LL7R2OAc8wRvsIQv+hCRr/w1nur5Y8yd7DxRNGZaxT59dg7keKsCgssHgwmpaD
+         tNh8x72NGXp1P4iU6A3mFiDZxwM+lgAmbQVKKj7yyqGqJ10fagGG4YyymQm4pFNgxeW/
+         4OZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748416861; x=1749021661;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Yb7F8w++tHPp3njA+diY9i2D1I8vF7wYtoKldSCXI70=;
-        b=wIXW2TEuC4Ph1jml0Sy/MtLzHOEWzvnVJcQSYsSPIL5EgLjqASqyKsPRoac+fAbbsH
-         /WzzRMZf+SbxaFu6o0CrW4u+V5hDHQUnEc+6wrwf31MQm4G3FUFiYLRBZVe+vp2xFUTB
-         y7QkZ2IvDO5qpuKmvoIaDu1WCQWFHvvfZw9OfwHtOw5q95XcqjMd0S53BhHuklLTN1Pt
-         sM1yiB+zqrFZt8IHIsYGn1bLNNZYN7JNVNaLKnxsDSzFWxs7cgfj6YjuR4TpGOmlethk
-         4YF3WLK72MF59Lle0hpznPliM9zAxSw8NLLH3ujVdqnSab1X1Z7bYdSpEBJ5hzqSikxZ
-         ubsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW9Ddwp7BE7V2hOiG5KRyAQhqCRIxTjk6L/AMhTbIuINRtkul1foRpt5LdkaKAuhlDqGVOkr5BDfot5VDw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyeLozJg/z3E7k/OgqNbC/OSDHuYEHg8quP9jvhOiOWugnztHkS
-	UzZ1XxHvV7bGAd5/0ZmjZxNp69V+xOxRktavUVWxqTqkJLV092wXkbnGLSCY6sRdIU6QVym/BLJ
-	OWiIr578s5xzKNNyHhmt+hrhhm91sECxgIgY1GXUOa3TJt9L36gjywUAsxnpElfbOUw==
-X-Gm-Gg: ASbGncsZ6NXZLhSTjv2v6PCcHWvJqMKuqqeBdigBImbZJU529lPua/+S2zwVwJGFGky
-	3Ve3FyJPDX5Cn2uNaGQP9c1k/V8nbW4irzmItauQw2H3yLmxDkJ0mpqHaz1VUxsrNq9L2cB4GL3
-	AoNXp1NtSz4EfAlKdAQ6M61c/AzPVyoNW5LbtySKTxgdY26lSLFbY0FHNx3c/rgt5szdiufDR+Q
-	q1fXlTW22gzKXD6e1W3AtHA3g+pFYiBf9SEb1xzCbunDEBncrlEgzAEmM50ps2YmKFJD1Qh5edu
-	g+HGKA==
-X-Received: by 2002:a05:600c:4e0e:b0:43c:fa0e:4713 with SMTP id 5b1f17b1804b1-450725459f7mr9070095e9.2.1748416861124;
-        Wed, 28 May 2025 00:21:01 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHtS9Q0iEWdCKqSBK4rpAPZvD0CQFR0nxD5Boy80MHIXn1Qzua/IJWOZxrhYd51QhCIxJ9zSA==
-X-Received: by 2002:a05:600c:4e0e:b0:43c:fa0e:4713 with SMTP id 5b1f17b1804b1-450725459f7mr9069825e9.2.1748416860757;
-        Wed, 28 May 2025 00:21:00 -0700 (PDT)
-Received: from redhat.com ([2a0d:6fc0:1517:1000:ea83:8e5f:3302:3575])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4507253becasm8466095e9.2.2025.05.28.00.20.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 May 2025 00:20:59 -0700 (PDT)
-Date: Wed, 28 May 2025 03:20:57 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Paolo Abeni <pabeni@redhat.com>
-Cc: Laurent Vivier <lvivier@redhat.com>, netdev@vger.kernel.org,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/3] virtio: Fixes for TX ring sizing and resize error
- reporting
-Message-ID: <20250528031540-mutt-send-email-mst@kernel.org>
-References: <20250521092236.661410-1-lvivier@redhat.com>
- <7974cae6-d4d9-41cc-bc71-ffbc9ce6e593@redhat.com>
+        d=1e100.net; s=20230601; t=1748416790; x=1749021590;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OUbnFWv1f37Ta+BVjxPt8pmoACrgGpNv4OYgueKntrw=;
+        b=IGFX9P/KDK01l754Dxig8VSc4rLfAIRZ5/LO1ImlESVtdqdonANfZJO0PbUdLMwAE8
+         iziT7p3FvZ/30OMe08sHWdm8te7A5xPpcs06XBDImztHvDP0cZf0/VYuyMD6zgaUCaXb
+         +YzdfRYVMAa8tZWPnwoEIGwwMV+WbBITCP78vfzC09a1+DrrkvdKvLQ2wMWtKC8WT81I
+         SQKoIz7RhyplmGSYRI0ZMTnVvVCpMBFKN1VhOe9/9IPdIJ14Zzd12v3rA3BZV+vZAHcT
+         D9NYhzhkgsfXo6A5BCuRYxaKrZXReBpM5mujuK1GogrMJjjS5lldzf6uxlI+l2/wjE1B
+         Ll1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVYVwMYO4KVbW3+957pXKxizbiePZN4RiOkUruL9c4YZEtDpd80vYvsjmPh6kZBeQ7y3f8=@vger.kernel.org, AJvYcCVzvc54lxEiA5dYECfEGbxAMUkzj6vvtoclAtW9Hlmd4NHQ1DIjgdjynv1/E/i6RhGKHynIvzAl@vger.kernel.org, AJvYcCXKZZ1WGMtpdQD+uSQzg9//Ho/mdZ5e3ZSNjildIogi2OBMU2Ms6HZP9PZg9ss8Y5C3ZV5IgzB4NAKF09DG@vger.kernel.org, AJvYcCXU6x0mBro9pOZjX3U7TXOQ4Sk2X+NKgQnb3wSWVA6ncqxbLktPkCKPlgmukSyD3m1D/HmsweiozODNRw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgU1QrPRCTt64/HuuGXR/Ujwr2Dkk812nc537mDTdgQ0ti2j0+
+	9QL0ie8/ygoWP2Whg6InVgNWD381Q+eZiMcSuRsRXqNLxCQxXXD/cOM+
+X-Gm-Gg: ASbGncv+cNgeQY/BocoIccFuN1oNmcPzXiouER6WZc9ABVqUeKQtqE5asw3dvXDaqgP
+	AcnVjBBsYNd7kPtPN3s27MehzFziCxGTeytznvUzw849F7MC8jy8whLlul5Ogc6XcuKoBkNesxi
+	BRaRMKJ3eUqNLg1NZ3LfoR+wIfZFbYJINtMx4DAMiPPWhqmGgcIwXAmgD4WrUpW/+8a/zAPU4d3
+	IFxe2ISSMD2vMNNLJnhF4TtguWBaYf3hs7aBwUkgvLcHnkg1Zmcvp2LfjxM37V0RmPH8TvwHubh
+	hGRdxSZPhq9osKyywfavmIpTS6MYbqEpiJ2wXrmMfRyepUWGiq4Wm4uFt64eEP0=
+X-Google-Smtp-Source: AGHT+IF8u/oWlE6nDqmRdBTJqi0N5ZpxlTVC/BaksAktgdabSWc2dFiSy583FQXlAFD49z4UcobfKw==
+X-Received: by 2002:a17:907:3fa3:b0:ad1:e4e9:6b4f with SMTP id a640c23a62f3a-ad8a1f31b03mr95247266b.36.1748416790119;
+        Wed, 28 May 2025 00:19:50 -0700 (PDT)
+Received: from ?IPV6:2620:10d:c096:325::6f? ([2620:10d:c092:600::1:c447])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad8a1a1322fsm58712266b.80.2025.05.28.00.19.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 28 May 2025 00:19:49 -0700 (PDT)
+Message-ID: <187e12ce-7e25-4fe0-871d-170f22125f8e@gmail.com>
+Date: Wed, 28 May 2025 08:21:00 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7974cae6-d4d9-41cc-bc71-ffbc9ce6e593@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 18/18] mm, netmem: remove the page pool members in struct
+ page
+To: Mina Almasry <almasrymina@google.com>
+Cc: Byungchul Park <byungchul@sk.com>, willy@infradead.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ kernel_team@skhynix.com, kuba@kernel.org, ilias.apalodimas@linaro.org,
+ harry.yoo@oracle.com, hawk@kernel.org, akpm@linux-foundation.org,
+ davem@davemloft.net, john.fastabend@gmail.com, andrew+netdev@lunn.ch,
+ toke@redhat.com, tariqt@nvidia.com, edumazet@google.com, pabeni@redhat.com,
+ saeedm@nvidia.com, leon@kernel.org, ast@kernel.org, daniel@iogearbox.net,
+ david@redhat.com, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
+ vbabka@suse.cz, rppt@kernel.org, surenb@google.com, mhocko@suse.com,
+ horms@kernel.org, linux-rdma@vger.kernel.org, bpf@vger.kernel.org,
+ vishal.moola@gmail.com
+References: <20250523032609.16334-1-byungchul@sk.com>
+ <20250523032609.16334-19-byungchul@sk.com>
+ <CAHS8izM-ee5C8W2D2x9ChQz667PQEaYFOtgKZcFCMT4HRHL0fQ@mail.gmail.com>
+ <20250526013744.GD74632@system.software.com>
+ <cae26eaa-66cf-4d1f-ae13-047fb421824a@gmail.com>
+ <20250527010226.GA19906@system.software.com>
+ <651351db-e3ec-4944-8db5-e63290a578e8@gmail.com>
+ <CAHS8izNYmWTgb+QDA72RYAQaFC15Tfc59tK3Q2d670gHyyKJNQ@mail.gmail.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <CAHS8izNYmWTgb+QDA72RYAQaFC15Tfc59tK3Q2d670gHyyKJNQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, May 28, 2025 at 08:24:32AM +0200, Paolo Abeni wrote:
-> On 5/21/25 11:22 AM, Laurent Vivier wrote:
-> > This patch series contains two fixes and a cleanup for the virtio subsystem.
-> > 
-> > The first patch fixes an error reporting bug in virtio_ring's
-> > virtqueue_resize() function. Previously, errors from internal resize
-> > helpers could be masked if the subsequent re-enabling of the virtqueue
-> > succeeded. This patch restores the correct error propagation, ensuring that
-> > callers of virtqueue_resize() are properly informed of underlying resize
-> > failures.
-> > 
-> > The second patch does a cleanup of the use of '2+MAX_SKB_FRAGS'
-> > 
-> > The third patch addresses a reliability issue in virtio_net where the TX
-> > ring size could be configured too small, potentially leading to
-> > persistently stopped queues and degraded performance. It enforces a
-> > minimum TX ring size to ensure there's always enough space for at least one
-> > maximally-fragmented packet plus an additional slot.
+On 5/27/25 18:38, Mina Almasry wrote:
+...>>>> struct netmem_desc *page_to_netmem_desc(struct page *page)
+>>>> {
+>>>>       return &page->netmem_desc;
+>>>
+>>> page will not have any netmem things in it after this, that matters.
+>>
+>> Ok, the question is where are you going to stash the fields?
+>> We still need space to store them. Are you going to do the
+>> indirection mm folks want?
+>>
 > 
-> @Michael: it's not clear to me if you prefer take this series via your
-> tree or if it should go via net. Please LMK, thanks!
-> 
-> Paolo
+> I think I see some confusion here. I'm not sure indirection is what mm
+> folks want. The memdesc effort has already been implemented for zpdesc
 
-Given 1/3 is in virtio I was going to take it. Just after rc1,
-though.
+To the best of my knowledge, it is. What you're looking at should be
+a temporary state before all other users are converted, after which
+mm will shrink the page in a single patch / small series.
+
+> and ptdesc[1], and the approach they did is very different from this
+> series. zpdesc and ptdesc have created a struct that mirrors the
+> entirety of struct page, not a subfield of struct page with
+> indirection:
+> 
+> https://elixir.bootlin.com/linux/v6.14.3/source/mm/zpdesc.h#L29
+> 
+> I'm now a bit confused, because the code changes in this series do not
+> match the general approach that zpdesc and ptdesc have done.
+
+In my estimation, the only bits that mm needs for a clean final
+patch is a new struct with use case specific fields (i.e. netmem_desc),
+a helper converting a page to it, and that everyone uses the helper
+to access the fields. I'd argue a temporary placeholder in struct
+page is an easier approach than separate overlays, but either is
+fine to me.
+
+> Byungchul, is the deviation in approach from zpdesc and ptdecs
+> intentional? And if so why? Should we follow the zpdesc and ptdesc
+> lead and implement a new struct that mirrors the entirety of struct
+> page?
+> 
+> [1] https://kernelnewbies.org/MatthewWilcox/Memdescs/Path
+
+-- 
+Pavel Begunkov
 
 
