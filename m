@@ -1,200 +1,230 @@
-Return-Path: <linux-kernel+bounces-665821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80D6AAC6E20
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 18:38:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6665AC6E28
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 18:40:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 283EF1BC2C9E
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 16:38:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 853703A85BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 16:39:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4842028D8F8;
-	Wed, 28 May 2025 16:38:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D992E28DB6E;
+	Wed, 28 May 2025 16:39:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="Mt+XyesU"
-Received: from HK3PR03CU002.outbound.protection.outlook.com (mail-eastasiaazon11011054.outbound.protection.outlook.com [52.101.129.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ByvZ4mxD"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F355528CF7F;
-	Wed, 28 May 2025 16:38:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.129.54
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748450288; cv=fail; b=MzKG9t/c0mc1jHX32RUCElbKNN58HJGyqgaMKTPco4M8zIsJPHzjACkbILGOibJH1NUFge1/GK6X4Wktsgmv5pqp8D3dA5RkxylwLFSZEZEepNOiY8JElidCH63SRhX9PdsMgmZT0L9evmpr7YLNVZMhpKjzB9VUvKKjm9hKmE8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748450288; c=relaxed/simple;
-	bh=Yqxkh0sworeC5UMhi11SqhrMb0Mj7pp7oRw/us1MEQc=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=qak/9b2fTqC9eMs1GdEceNdlRzL4qd8/Lvig/25tGYjgUyj2NnrHtVB+TtNehg06NESRRfgDnONHknkI9ZauD8w4CytgYFU3n3IC1H8uDr9TNr97fofli1aG9/I1ydrB9Os8FQXgfTUdisscA5f1h2JnqvcRrYz5Pici2PTmgZk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=Mt+XyesU; arc=fail smtp.client-ip=52.101.129.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kUkr5UN0T7R3EP7DlEWYb1qgcrXKdxePlDiwFejn3Dqe+stiT9UxQWs/QuF9P7WYkjyoSd0K9quvZSO5luR2m/E9KgF5Rk5QPxdwNpOmMAVX9WIziie3NJl+dlzEdC9cpr8hGKSxZqEGmD11mLrC54YnhOWzIbmmUOKYviHCmO2fvke7d+4FUpUQSD0yuyZEIo24ykPWTocA7zBX94v3rDSHRx0FO6r5KI3G3IsdLLhDDEMav+cxmB8EVpeMAg9g5/b/pVxbb7uzkO6/fYUP+a03e3cd4WSJPZDGGGd0lkK03vdJugOZTmb/Ta6fjydq7oWaZbxVxygtkyBiwEiHlg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Yqxkh0sworeC5UMhi11SqhrMb0Mj7pp7oRw/us1MEQc=;
- b=Q5t7J+o3rDiDnw1Y/R1dh8zMk+SSmHbKtcBfscjxi76vRz29gSENVQy61hwUox66xCBrgF6Sx6RIW3spPAZuZPFMd8hCb7j3sQh4Fjj2XnPGESSn6hztx2sRlfT+Ak4kwQVLp0RbYskpcISLT73f+ZsUqj0nniTZIGJebY+lWqUWQTdNaAREp1Op1gJrk6ccdrF2GiFHlQ/LJmC49/Jk+7lv00NNeNS3g0UFp4XSpmDrza9KvLQ1bMVGA158cneDcFXmq/exm+bBgUWh9GZR/4/2l+gQadrPHxzG0Fm1ASFNi6hNNwap+23ALHCeTNdCDwQIhX+IzZEK2eFy0yVG0A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Yqxkh0sworeC5UMhi11SqhrMb0Mj7pp7oRw/us1MEQc=;
- b=Mt+XyesUeKn7oFzLlcI0jM5BKmYwXEVOvfCQsjwbZVLTS7C3A+k/vovd/REhMRUiG49gUXFpsAzsdr8kacf52M9/UWZSiearet7acX0deb0Ek2QaaqODOBNmEdm0m+k2TEMn9K+YpINk4R0A2nLWPE7fQNj4YwRfAjIvie7ExSrDPXyoDKlrjXN9eFA5/M3O7O0z2x/z/XOuK+a+M1BxCqCHdihTLa0z17VlL7JvnSi9lq05csPTIMczU33kSKz+hXJPge9rJQJFkj24lwPeII73i4ZiIcWh15Mxxh3yxPSO9oqixebkW+faDIWmaJsiPmdk+OS3sCVYKkkJCNcfCg==
-Received: from SEZPR06MB5269.apcprd06.prod.outlook.com (2603:1096:101:78::6)
- by TYZPR06MB6190.apcprd06.prod.outlook.com (2603:1096:400:33f::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.27; Wed, 28 May
- 2025 16:37:58 +0000
-Received: from SEZPR06MB5269.apcprd06.prod.outlook.com
- ([fe80::8c74:6703:81f7:9535]) by SEZPR06MB5269.apcprd06.prod.outlook.com
- ([fe80::8c74:6703:81f7:9535%5]) with mapi id 15.20.8769.022; Wed, 28 May 2025
- 16:37:57 +0000
-From: =?utf-8?B?5p2O5oms6Z+s?= <frank.li@vivo.com>
-To: Viacheslav Dubeyko <slava@dubeyko.com>, "glaubitz@physik.fu-berlin.de"
-	<glaubitz@physik.fu-berlin.de>
-CC: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"Slava.Dubeyko@ibm.com" <Slava.Dubeyko@ibm.com>
-Subject:
- =?utf-8?B?5Zue5aSNOiBbUEFUQ0ggdjIgMi8zXSBoZnM6IGNvcnJlY3Qgc3VwZXJibG9j?=
- =?utf-8?Q?k_flags?=
-Thread-Topic: [PATCH v2 2/3] hfs: correct superblock flags
-Thread-Index: AQHbyNuJv/srDI0VbU2+b3+qqSvHfLPnHcmAgAEtSsA=
-Date: Wed, 28 May 2025 16:37:57 +0000
-Message-ID:
- <SEZPR06MB5269D12DE8D4F48AF96E7409E867A@SEZPR06MB5269.apcprd06.prod.outlook.com>
-References: <20250519165214.1181931-1-frank.li@vivo.com>
-	 <20250519165214.1181931-2-frank.li@vivo.com>
- <ca3b43ff02fd76ae4d2f2c2b422b550acadba614.camel@dubeyko.com>
-In-Reply-To: <ca3b43ff02fd76ae4d2f2c2b422b550acadba614.camel@dubeyko.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SEZPR06MB5269:EE_|TYZPR06MB6190:EE_
-x-ms-office365-filtering-correlation-id: 105b1226-8f7f-449f-2d1f-08dd9e0600d4
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?REJjWXdjclVCZk5TNDFodmRpdUhaTXRNdUFkS0dyTHpWRTBsakJrYmNwVFE0?=
- =?utf-8?B?eWgvL2Mwc2lXQlNBTE8weGZucXNJaDBBa21oQjBFWHp1NUk4QitVaGpSaXpM?=
- =?utf-8?B?RERwVGZlRE80dElmalBUcjJkbjhJekt3RmVCNWVPQmQvN0lzYkxENXFiSmhO?=
- =?utf-8?B?bjhqQmhMMlRmeCt1bll4dCtHL1E5ZVA4akZua1dPMEN3NDl0MFVORWYvTTBE?=
- =?utf-8?B?MkIwM0lKM1BYYXZjYmw1WVNFVjArTTA5czladFg5Zk13WFBCSzhLZnBlTXJa?=
- =?utf-8?B?dnVyaWc2Zk85Tk1jM2hxYS9qVkFsY3BzbDZJZVlXc2hWNzJDUzc0d2hRRldP?=
- =?utf-8?B?RUk3LzBmWE0rY3E5bk9iRnpmaThHejBxaTdpbG4zZ2hpRnlaS1NKVmRTNmZ5?=
- =?utf-8?B?b3cxQnB1Vlg2YmM4NmlmbDJ0RG1rOE1sYWF6YW1oL1JZbVZqK2pVT1ZPWGtN?=
- =?utf-8?B?Y3d3SWV3YUFKSVhnWXAwRS9DLzJsemVCNGZQRlBjN0thbmovSDFQbk1qc3Iw?=
- =?utf-8?B?YlJCVlpzUWQ0KzAzdWwvVEN4YndyUy8xTWN2WkhGMXpZNXNPQndhQ21DZ0Y4?=
- =?utf-8?B?aWR0Yy80RkMwdldpcFRWL0ZhVllvMTlXYmJYVmdEOHVzcEIwN01RdE9icUhK?=
- =?utf-8?B?VGkyaWZYcGhIMTJRZTk0ZkJSUzJsSWVHYjhjeUhKU01xVmRzVTN3ZnNHU29r?=
- =?utf-8?B?WTBVbDM5SDBJTnZ4eXpGOTc0L3NlTWovRlFScFY4RGhsUVNzKzNsS0tPNlJy?=
- =?utf-8?B?NG9rM2g4TkYxTUdZNytaa1VtVzBDNUNkOERReDdyTFNIdXBoei9sM3JwNjda?=
- =?utf-8?B?M1VhVG83bGQ2VXNhMDNjRmRPVVlvZFBwd1hZUXFXY0xFKys2V2hpQkZJcXd5?=
- =?utf-8?B?WitBdUxNeGNPVGl4S3pXR2NUTjdZR1EvK0JCejE0QmF2bzUrVjBYUVlpbGZi?=
- =?utf-8?B?YWFrVGY0bVAvUjNibnZ3eEw5TUlpcWJUdFVOLzlUWWV2Z3pWUi9qbmFEeTRN?=
- =?utf-8?B?aTRsSVN1SmhhNVliRktNNXZwN3RKb2pvRGxHK2oxanBuUWRtMHZNbVlhZExB?=
- =?utf-8?B?Ym03cFVockFENXd1bEtxcCtpVDl0blhlNzcwNS9sb3NXNUthandLOURQMkMw?=
- =?utf-8?B?NUtydklNaHliQmZGRFUycHM5TXFySDVmaG5GcEJ2U3N3ZXZESGFSK2puanJD?=
- =?utf-8?B?T0tMVWlldlpMbm9TY2dpVnNuZk9jK2FSWU1wZWxvYllUUHlRc0gwcllMQlJU?=
- =?utf-8?B?V0lSQ1dUR2U3OFAvU09tVVJ1L1AzWDVWTVk2RkhoUkNRZ1krVkNnYjNhUWxR?=
- =?utf-8?B?OFFndDlaUTZVbDBPbG1xQkdwT1hCQWRkWUgzSGxtMzJVOWVQOUVVVWZNaWZi?=
- =?utf-8?B?VGhUNEtiS2JvMzJCR1I0SzIzeTBoSGdCZkphZEl1MGNkMmJEZW5tS3lWTWs4?=
- =?utf-8?B?STJmQUFOeGpRT1NnMGtDVXBIbExFRmI0Y0JGWlRNL3ZDL0tQc1NoUDE2b3hM?=
- =?utf-8?B?MzkwSlJXN0tBR0JtM2lNZmtmWVZ1Z3poSy9vZnI2MmxXUXNQRytyN0FOdld6?=
- =?utf-8?B?Q21oa0tCUHQ0TE0rYnJPcUxOUXV6S2lYY3FLNFRobkpaQWV2R2Z4cVh5amJX?=
- =?utf-8?B?LzRlZ3pwSnYwVFpQbWtrQS80MVNyejBiVVJSdjh0OWJDQ1ZZMlZOZzFMbEg3?=
- =?utf-8?B?KzZzOWZQeVZGMDczdEhwcENTQ1pHZm9KclIybzhibUpCQmU0WG1BaXlvbzNw?=
- =?utf-8?B?bmhqT1pPdjdnZDdMYlk4d3VVMCtvVVB4MEJxa2IyTkIrZmFNTXFML25EZUg4?=
- =?utf-8?B?V2lwT1RhWUxHTkNxNE9yVXo5L1g1VzJqUXhSLzZHQVZyMDRJV0d2U0RUa2kz?=
- =?utf-8?B?bzBjaVFKR1BGZnkrK0dCczhid1RGY21adW0wc3luZnFTMlNRRXpheExZQnpy?=
- =?utf-8?B?eUR6aTFNcUFkVkxVRitYL1RBNWFaYUdGanlKYmtiT2hnSmdEQWVMNktxZUZS?=
- =?utf-8?Q?wBHcgFNDRG4LaWSK4EEg8CugFBQ5AM=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:zh-cn;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5269.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?YjJsakxyazlZUk1zWHhHbEx4M1RoRVFqVlFHNEZDNFUwSE4xNkt4TlhGV2RR?=
- =?utf-8?B?bWdaNURJYmVFOFRnbXhPR3JKWmpuYWx5R1dyd3IvS09CTzFqMm9EQlVhd21j?=
- =?utf-8?B?TG51bkp5Z0xTUXkxT3VrS3RzT2U4aS82Y1dTQXVqK1ZDZGlMSUxFOWtqR3pQ?=
- =?utf-8?B?aFh0ZmEwVk9BUG9ZSGkvTWpkc09HL2kwNHkzejJjNEtwblVXWFNuSjh0bDVa?=
- =?utf-8?B?YU9lTkgvMWFqSnJsZlVHeUNmYTUxdEtvNFBtMUI4OVorNnJQZVlYUVI5MEc4?=
- =?utf-8?B?a0tiT2pFRVdOcGdFZGJCY0tjeWg3TjVTb3lqbnVMNmZ4QUJIVU5RZ2ZZZUtl?=
- =?utf-8?B?M1NJMnNLU1FLbUsybG5VMmE5cWtwVnA3VWpwQ0xuQ2NTbkw0emtlQmgvOGx4?=
- =?utf-8?B?NFJnVjFSckM1QXBVRGVCcnRXNDdqbTJKVnlmYmFmNXBNS0tBczRleTIzTGxW?=
- =?utf-8?B?eFk3eWpDQ2ZmNkk1TE9sUVZlRUZsekY4SVdVdVFibWxpTFMzYzRqOHhaaHpI?=
- =?utf-8?B?c29uQ2ROUjhLS2FnTGxNUGVHaUxMV1R0MGcxcEpqRVJQRy92QWk2RGVBaWpD?=
- =?utf-8?B?aHZJTW04TFJKdmlYbXhHWldCeEs1YVc1WVhFTlUzdnowNkh6YlVmOGpBbDgz?=
- =?utf-8?B?ZytYZ2VJNVRpcWJ1dDRZRFR4U0N6bGVlM2cxMTNrZ2dPLzJTWTF1MkR4bFF3?=
- =?utf-8?B?anNVR0xUdWRDV2VBS0RLakZYdTdvWEMvUGEvaXBXWnYwdE1YcVFwTU1pM0lK?=
- =?utf-8?B?dkgrQjBYeFA2ZFpGWE4rUG9BYmpHYWZHemxIZE0wREFlc2N2U2VpR0hzQ2JS?=
- =?utf-8?B?cHlib1dwQ1p2WlZ4MFNreEpFTTloaTZ3akdPcXdGdGdmbnpWWWltRFo4V1hD?=
- =?utf-8?B?VmJOMDhkRlk3bTE4TlIvdU9FMWNab0Y2dTA0MDA1NGwxbWdnMU1JTzdaNDEy?=
- =?utf-8?B?WjlNbkRBVUZOY2hXT1BxTkNRSVZ2MGhiTEFGQmxGc2o4SG1QZFhSOGMzMHZa?=
- =?utf-8?B?T3lGclQ1SnREdThWK25ZWXg0NHlRc1l3RTdabDZMQTZCVGJhTVR0R3o1aUJz?=
- =?utf-8?B?REdFV1d1Q2VKQTdEYWExcDJOTkl1dTZoVXRIblByZVE1WFgzdFJVTGl3ZGJr?=
- =?utf-8?B?emlCOUZRaU1QOVBjRUxFa3M0c1l0bVlGSVg0R3cyVWo4aXlLSzlHSnN1RHBu?=
- =?utf-8?B?bC9vOEhjeGVSTmxEZU9iaS9ndEtaMERPdlI5S1pxcHVQZkU0OExrTWEwNlVZ?=
- =?utf-8?B?WUdsSEZMa0J2UHhZb0JoT1RpZWZtbHlNanlhRUhJZXhreG1VeTZnb1FMK0Uw?=
- =?utf-8?B?cDFhYUh6SHB6RlVaRWp2cWM1UjZic0FWcGJvRVVvRCtLVEhjQ3BIT0ZreTdv?=
- =?utf-8?B?T2RlaEtqcDJIK2tKTjYvU1U3cm9XRGNWQW50VE1pQTdzaUphNTRsMzJyT25a?=
- =?utf-8?B?VkQ5ZU1TdTNFbWJvSzlEaUJnOWgrMEZCYTRPUDE0WUlmVnRCK3hPdFl5bG1O?=
- =?utf-8?B?M2xQblM4eGtjeFNpNUs1THNkQnl2cDJGYUdoM1prSjZnZUFvZUZnVHJVVEpz?=
- =?utf-8?B?bEhRR3grYzEwVk90K3cyNTJMOU12dlJJM3E1RVdiVmdrOHhJK25jMW9aekN0?=
- =?utf-8?B?aTJzSGEwN09oVWF3eGlSaUg5eXh4UXJaODRLOW5TbGxOL2RSNXZuYllYMnVZ?=
- =?utf-8?B?dEd4VnpzWUNyTXhJMHBxT0xienBPOVBVQWlpNGl3bHVPUktXdUF0Z3R2MGZj?=
- =?utf-8?B?SlpzZkthcGNrNTlLOGxKUTZoU3JEVXlKN1lZQ1Nrd2xManE2SERUaTlqbDMz?=
- =?utf-8?B?UlV6Q3ozam0ycVF1dGVqdThtYUtEY0dXbkxKalluL2FMNkVpYndsWExxRzhP?=
- =?utf-8?B?d2doWHFYeld1THlXdnlPQ0xuWEdzNnNzS3J3K0ZVRlY0dlJkOUJnTzRJRWUv?=
- =?utf-8?B?UjRWRklYT1VHRnovdWxnNVl0Nm1kR2pxdXkwM2RrYk1ZVjZraW9CVndMUjBB?=
- =?utf-8?B?L0laZjNCbjZMaDVlS1pBZmFoQ2RiTzJldlpwMXN3VDI1TThhRnJheXJFUG83?=
- =?utf-8?B?cmFCc1RlNzQzK1Q5T0MxMzNhUlpBNFdud0hxUk1WRlV0aHNqMHp0NUkwNWMr?=
- =?utf-8?Q?lYXY=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F6AA28DB65;
+	Wed, 28 May 2025 16:39:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748450386; cv=none; b=qS4PiT0ywq2BmjsAUZ2hR0Ujha+GzUzqoPVfycpu8uWS4Huhd6XWsikUj6pvMFnGpb1orK7fMTZLqwwikn+NwGsQ49ksOpOFquZaug5gIg7JHqKk5qMq5c41YMb4zy5OaWHBRrtTEByfn+G0XDSkhJYLqewC7fzogyQ9WAI4x/I=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748450386; c=relaxed/simple;
+	bh=PK5I36SR6KPvbVW5o/5/Nxx2H4DZmk3oW5UwCer9tb8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HtDZ/RJUQkARXd3nCu83H0gbj3Har4aWU2EZyxwzXts7bJfDT/6wF55m66a2+u51k/jdPUCLaANSHVGN2XLpQGSftWDUGuXIHGHyMGgUSCwvbfovzh0iVb5H//Xr6ybhQZDThtTlInUyfR+vsRJIQptOXAkbYePUnts527qC2Lo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ByvZ4mxD; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ad883afdf0cso531810266b.0;
+        Wed, 28 May 2025 09:39:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748450382; x=1749055182; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=VKX1pLwdxEywKNCdYX14Pz2UBR1qa4gDnMcpTfxzuao=;
+        b=ByvZ4mxD15OlSA0j06VQ6oQDQ/wCcd9LA3T60RzohzwRaajn/pDtjp88scPFMil3Uc
+         a7d78antlm2MQFGXTnxViJ2yNNjxQhWOw4/KyDvxhhhjl/ns6POnIfAacuTJxZPojTxB
+         KrVqeFR6mGe8DdVH7zc4QepF8P14B7twFP2XXGii7fXI3B/5Q9f4BM9CZn4FFE1sOKCm
+         LnqyikqbnB7VWXgn0EwwFYqe62sNP2IGSs2YyT73ep+H7n7HtisT4zsBJhaW35jcAmur
+         HV/Jf2SIPMCdrtYRG5IaOKciiCBQJTDQkqUWR2VwTDErJBU1QrFH39tNNjCUruqEItPp
+         wGgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748450382; x=1749055182;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VKX1pLwdxEywKNCdYX14Pz2UBR1qa4gDnMcpTfxzuao=;
+        b=ArqsscaoeiZtJC0DmAJdmolqsOvGDatW3QvSZ6Val3q4VgLpFrJoMJTM+txiEQnV2l
+         DA4Z79SKCSh0NY3aw/534aGOyi2cZVGwesilKKDTaIUSlan5yHT9TwJ5OtoKM0jDdc9r
+         vOnC5vsTUx7pHxbgfAPNVA4eVAONDnLw63aoQ6vwHkolXOJaT6M1kLB1g4phdURENHiq
+         cVmH0UdyJaaLerxW3BZtQ6dmsV97SojI4xujWBlfiRvgaUy8/KxqlXVSkeJx8kqf7WOl
+         bu1NrvGTJXSiB6BUPDcK2CZQbzVRd7JClrZG+ZROjI/UacKjZB6PhDLMk0QivP6eiRBu
+         /PFg==
+X-Forwarded-Encrypted: i=1; AJvYcCUGbWcv1P+MQtknStJdYHp8Xi2EAcBpKl1o0SKRTm1lJZyZ17FoyIWXM7bqpMylO+siQcj0Gxvr5mc=@vger.kernel.org, AJvYcCVfKx6cuvkUnxLePRMigMI6m548FXTvUfcWHs9NUK5agpu5BxiBIxSqNltgflCsuVZrK02T1HJqA3vZPX8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJdNVuvNqx/UQxsPnlPb3FsY6Uyf5z45jjVXw7OvMbooGhajta
+	QIP2hXoNFmQ6mBWTn8JrAIiK46Wm2rHRFfCsoEBMl+xJNQH7HmAvzby88IL1lWIiQHVuK1lt3+N
+	3Adyd1PjCOKOdyJ4Khcl9xV2CZ7FGSS4=
+X-Gm-Gg: ASbGncuBSVHE1SC4/01rBvymeSeZVVFe47HjNf9D45tqxz54E0ZxwpFDteuQ2mvr0bT
+	2B8Ab2DqcEHLtbvvzqJVqVlxyenPFCDvfBzDGq9uyHsbKW5mPoDNZSh5/1KBFAYhxDihDaPdnnT
+	iDlxONSd70rfxk2Ogao4Z+0YxC1m/VGiI=
+X-Google-Smtp-Source: AGHT+IHtke/J7pX7aA75Lv72+AWPYtXUnawbwRg8keF4TFoH7myfHumge6n7abfdZpauiHv1YhpnhbXU7KZ+KKW/qZM=
+X-Received: by 2002:a17:907:da3:b0:ad8:9b5d:2c26 with SMTP id
+ a640c23a62f3a-ad89b5d2e87mr425218266b.30.1748450382185; Wed, 28 May 2025
+ 09:39:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5269.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 105b1226-8f7f-449f-2d1f-08dd9e0600d4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 May 2025 16:37:57.6609
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: V8+Jwp7RgJosSOsCbPOt3ClN5xr7somr5iBaFam+c/wWawczA3Fmd/wRCHd3NkP0TtqB1KxDFJJJ11HizIxF0A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB6190
+References: <20250113044107.566-1-gautham.shenoy@amd.com> <aDaB63tDvbdcV0cg@HQ-GR2X1W2P57>
+ <aDb6Mgg3TqyR2IRT@BLRRASHENOY1.amd.com>
+In-Reply-To: <aDb6Mgg3TqyR2IRT@BLRRASHENOY1.amd.com>
+From: Manu Bretelle <chantr4@gmail.com>
+Date: Wed, 28 May 2025 09:39:31 -0700
+X-Gm-Features: AX0GCFutIJtBiXdzMO7ABReyuippZSjiExk3NiGS0UThEwallEw2Do4W0buLZVU
+Message-ID: <CAArYzrJHSFgiiPamMDfp9-nvHr1+SGfQ-tgOpJ5tgR5Wtw+Mnw@mail.gmail.com>
+Subject: Re: [PATCH] acpi-cpufreq: Fix max-frequency computation
+To: "Gautham R. Shenoy" <gautham.shenoy@amd.com>
+Cc: Mario Limonciello <mario.limonciello@amd.com>, 
+	Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>, "Rafael J . Wysocki" <rafael@kernel.org>, 
+	Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Adam Clark <Adam.Clark@amd.com>
+Content-Type: text/plain; charset="UTF-8"
 
-SGkgU2xhdmEsDQoNCj4gSSBhbSBzbGlnaHRseSBjb25mdXNlZCBieSBjb21tZW50LiBEb2VzIGl0
-IG1lYW4gdGhhdCB0aGUgZml4IGludHJvZHVjZXMgbW9yZSBlcnJvcnM/IEl0IGxvb2tzIGxpa2Ug
-d2UgbmVlZCB0byBoYXZlIG1vcmUgY2xlYXIgZXhwbGFuYXRpb24gb2YgdGhlIGZpeCBoZXJlLg0K
-DQpJJ2xsIHVwZGF0ZSBjb21taXQgbXNnLg0KDQo+IHMtPnNfZmxhZ3MgfD0gU0JfTk9ESVJBVElN
-RSB8IFNCX05PQVRJTUU7DQoNCklJVUMsIFNCX05PQVRJTUUgPiBTQl9OT0RJUkFUSU1FLg0KDQpT
-byB3ZSBzaG91bGQgY29ycmVjdCBmbGFncyBpbiBzbWIsIGNlcGguDQoNCjIwOTEgYm9vbCBhdGlt
-ZV9uZWVkc191cGRhdGUoY29uc3Qgc3RydWN0IHBhdGggKnBhdGgsIHN0cnVjdCBpbm9kZSAqaW5v
-ZGUpDQoyMDkyIHsNCjIwOTMgICAgICAgICBzdHJ1Y3QgdmZzbW91bnQgKm1udCA9IHBhdGgtPm1u
-dDsNCjIwOTQgICAgICAgICBzdHJ1Y3QgdGltZXNwZWM2NCBub3csIGF0aW1lOw0KMjA5NQ0KMjA5
-NiAgICAgICAgIGlmIChpbm9kZS0+aV9mbGFncyAmIFNfTk9BVElNRSkNCjIwOTcgICAgICAgICAg
-ICAgICAgIHJldHVybiBmYWxzZTsNCjIwOTgNCjIwOTkgICAgICAgICAvKiBBdGltZSB1cGRhdGVz
-IHdpbGwgbGlrZWx5IGNhdXNlIGlfdWlkIGFuZCBpX2dpZCB0byBiZSB3cml0dGVuDQoyMTAwICAg
-ICAgICAgwqYqIGJhY2sgaW1wcm9wcmVseSBpZiB0aGVpciB0cnVlIHZhbHVlIGlzIHVua25vd24g
-dG8gdGhlIHZmcy4NCjIxMDEgICAgICAgICDCpiovDQoyMTAyICAgICAgICAgaWYgKEhBU19VTk1B
-UFBFRF9JRChtbnRfaWRtYXAobW50KSwgaW5vZGUpKQ0KMjEwMyAgICAgICAgICAgICAgICAgcmV0
-dXJuIGZhbHNlOw0KMjEwNA0KMjEwNSAgICAgICAgIGlmIChJU19OT0FUSU1FKGlub2RlKSkNCjIx
-MDYgICAgICAgICAgICAgICAgIHJldHVybiBmYWxzZTsNCjIxMDcgICAgICAgICBpZiAoKGlub2Rl
-LT5pX3NiLT5zX2ZsYWdzICYgU0JfTk9ESVJBVElNRSkgJiYgU19JU0RJUihpbm9kZS0+aV9tb2Rl
-KSkNCjIxMDggICAgICAgICAgICAgICAgIHJldHVybiBmYWxzZTsNCg0KVGh4LA0KWWFuZ3Rhbw0K
+>
+> No, the patch has a bug. The nominal_frequency returned from the
+> get_max_boost_ratio() function was in MHz, while cpufreq maintains
+> frequencies in KHz due to which the computed max_frequency was
+> incorrect and thus as a fallback, cpufreq reported P0 frequency as the
+> cpuinfo_max_freq.
+>
+> Can you please try the following patch on top of the original one?
+
+Thanks for the quick turnaround Gautham.
+
+I applied this patch on top of a fresh Ubuntu 22.04 5.15.0-140-generic tree and
+confirmed that CPU max MHz reports its original value.
+
+Thanks!
+
+Manu
+
+  $ uname  -r
+  5.15.0-9991-generic
+  $ lscpu
+  Architecture:             x86_64
+    CPU op-mode(s):         32-bit, 64-bit
+    Address sizes:          48 bits physical, 48 bits virtual
+    Byte Order:             Little Endian
+  CPU(s):                   128
+    On-line CPU(s) list:    0-127
+  Vendor ID:                AuthenticAMD
+    Model name:             AMD EPYC 7713P 64-Core Processor
+      CPU family:           25
+      Model:                1
+      Thread(s) per core:   2
+      Core(s) per socket:   64
+      Socket(s):            1
+      Stepping:             1
+      Frequency boost:      enabled
+      CPU max MHz:          3720.7029
+      CPU min MHz:          1500.0000
+      BogoMIPS:             3992.55
+      Flags:                fpu vme de pse tsc msr pae mce cx8 apic
+sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscal
+                            l nx mmxext fxsr_opt pdpe1gb rdtscp lm
+constant_tsc rep_good nopl nonstop_tsc cpuid extd_apicid aperfmperf
+                            rapl pni pclmulqdq monitor ssse3 fma cx16
+pcid sse4_1 sse4_2 movbe popcnt aes xsave avx f16c rdrand lahf_lm
+                            cmp_legacy svm extapic cr8_legacy abm
+sse4a misalignsse 3dnowprefetch osvw ibs skinit wdt tce topoext perf
+                            ctr_core perfctr_nb bpext perfctr_llc
+mwaitx cpb cat_l3 cdp_l3 invpcid_single hw_pstate ssbd mba ibrs ibpb
+                            stibp vmmcall fsgsbase bmi1 avx2 smep bmi2
+erms invpcid cqm rdt_a rdseed adx smap clflushopt clwb sha_ni xs
+                            aveopt xsavec xgetbv1 xsaves cqm_llc
+cqm_occup_llc cqm_mbm_total cqm_mbm_local clzero irperf xsaveerptr rdp
+                            ru wbnoinvd amd_ppin arat npt lbrv
+svm_lock nrip_save tsc_scale vmcb_clean flushbyasid decodeassists
+pausef
+                            ilter pfthreshold v_vmsave_vmload vgif
+v_spec_ctrl umip pku ospke vaes vpclmulqdq rdpid overflow_recov succ
+                            or smca fsrm
+  Virtualization features:
+    Virtualization:         AMD-V
+  Caches (sum of all):
+    L1d:                    2 MiB (64 instances)
+    L1i:                    2 MiB (64 instances)
+    L2:                     32 MiB (64 instances)
+    L3:                     256 MiB (8 instances)
+  NUMA:
+    NUMA node(s):           1
+    NUMA node0 CPU(s):      0-127
+  Vulnerabilities:
+    Gather data sampling:   Not affected
+    Itlb multihit:          Not affected
+    L1tf:                   Not affected
+    Mds:                    Not affected
+    Meltdown:               Not affected
+    Mmio stale data:        Not affected
+    Reg file data sampling: Not affected
+    Retbleed:               Not affected
+    Spec rstack overflow:   Mitigation; safe RET
+    Spec store bypass:      Mitigation; Speculative Store Bypass
+disabled via prctl and seccomp
+    Spectre v1:             Mitigation; usercopy/swapgs barriers and
+__user pointer sanitization
+    Spectre v2:             Mitigation; Retpolines; IBPB conditional;
+IBRS_FW; STIBP always-on; RSB filling; PBRSB-eIBRS Not affected;
+                            BHI Not affected
+    Srbds:                  Not affected
+    Tsx async abort:        Not affected
+
+>
+>
+> ------------------------x8------------------------------------------------
+>
+> From 13d5c28823ed03353059801281d3b22e9f139a8d Mon Sep 17 00:00:00 2001
+> From: "Gautham R. Shenoy" <gautham.shenoy@amd.com>
+> Date: Wed, 28 May 2025 16:43:33 +0530
+> Subject: [PATCH] acpi-cpufreq: Fix nominal_freq units to KHz in get_max_boost_ratio()
+>
+> commit 083466754596 ("cpufreq: ACPI: Fix max-frequency computation")
+> modified get_max_boost_ratio() to return the nominal_freq advertised
+> in the _CPC object for the purposes of computing the maximum
+> frequency. The frequencies advertised in _CPC objects are in MHz but
+> cpufreq expects the frequency to be in KHz. Because the
+> nominal_frequency was not converted to KHz, the cpuinfo_max_frequency
+> that got computed was incorrect and the cpufreq reported the P0
+> frequency as the cpuinfo_max_freq.
+>
+> Fix this by returning nominal_freq in KHz in get_max_boost_ratio()
+>
+> Reported-by: Manu Bretelle <chantr4@gmail.com>
+> Closes: https://lore.kernel.org/lkml/aDaB63tDvbdcV0cg@HQ-GR2X1W2P57/
+> Fixes: 083466754596 ("cpufreq: ACPI: Fix max-frequency computation")
+> Signed-off-by: Gautham R. Shenoy <gautham.shenoy@amd.com>
+
+Tested-by: Manu Bretelle <chantr4@gmail.com>
+
+> ---
+>  drivers/cpufreq/acpi-cpufreq.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/cpufreq/acpi-cpufreq.c b/drivers/cpufreq/acpi-cpufreq.c
+> index d26b610e4f24..76768fe213a9 100644
+> --- a/drivers/cpufreq/acpi-cpufreq.c
+> +++ b/drivers/cpufreq/acpi-cpufreq.c
+> @@ -660,7 +660,7 @@ static u64 get_max_boost_ratio(unsigned int cpu, u64 *nominal_freq)
+>         nominal_perf = perf_caps.nominal_perf;
+>
+>         if (nominal_freq)
+> -               *nominal_freq = perf_caps.nominal_freq;
+> +               *nominal_freq = perf_caps.nominal_freq * 1000;
+>
+>         if (!highest_perf || !nominal_perf) {
+>                 pr_debug("CPU%d: highest or nominal performance missing\n", cpu);
+> --
+> 2.34.1
+>
+>
+> --
+> Thanks and Regards
+> gautham.
 
