@@ -1,78 +1,170 @@
-Return-Path: <linux-kernel+bounces-666089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D28DBAC7252
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 22:41:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27795AC7257
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 22:44:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4F9D1BA3968
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 20:41:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD0A04A6F43
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 20:44:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AC6E22126D;
-	Wed, 28 May 2025 20:40:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 590E922127A;
+	Wed, 28 May 2025 20:44:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PmLcFuZ6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="BJ33AZLZ";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="H+QMa7la"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 064B68F6B
-	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 20:40:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D61D9220F27
+	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 20:44:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748464859; cv=none; b=Z9hO2OWuvqSy+gBwYspzRETYLPkojyU8eXCD2MQ03/E9VIYQ3Cqeu19TFRtmmEpmVA4PLUXfcGWWJzFyrZiu7KJN2djeTYGWxTFJmBvOa9YRgEMgAVzv3DrW/iy9oxh5ZbZ6xl2H2dwnXTq3kGpdB7snNGqct87TkSX/lBNevMI=
+	t=1748465061; cv=none; b=DD8K3DfPy1oMOouchsy3AdauqN1TjV/2WC4aGvLMBg4My0RxxipoF11KRyEp/Gj/9tgzp1+HjjsoTtalvYse2dtd7W7mBvlMIFH8ohrVr7vg/vw070nfWjIHAPkW83TO6ZyyzCmHf1h5g2E4dBY8eySJ1oOEl4q/Ud4i4g5ZlK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748464859; c=relaxed/simple;
-	bh=lqsQF1t3voVLgwBz6PS1Skl2KvnQTvxGw3jOo3ETkPo=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=JzwR/s9Pp3bzzHxUgZmczi+MTpyYqV3MSiNAJjVmUcHIm4K0P0Ns8+BKkakCniLpDkOqCoZOHH81HaAA1jyQUUa1A6cwjfxwwxTrG0GESzeY3a+/P51OdARVdCaouDWE+GOCL3Q+ZBJTdNk9hNyfMdRlQK2F7wkeY5SVqBBbBX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PmLcFuZ6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F689C4CEE3;
-	Wed, 28 May 2025 20:40:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748464858;
-	bh=lqsQF1t3voVLgwBz6PS1Skl2KvnQTvxGw3jOo3ETkPo=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=PmLcFuZ6ZT34Z7HvUg9xyNn+ErLL1x6DQoiz6xU/5XTSUZ0d4eze9yiV85gRi9Zeu
-	 dLY0slHrn6NAOJytmaR3iBkTW4kiY9pgz/MIu521nRRFYASDboSqJl5NmmN2HWyfSQ
-	 9093oS4drd/dZDWanez8+SRwes5H1lCqy4GK066CviTmTMTqjbL8xAgpC8T/7BuHg2
-	 2ob/EG34H+Otm6W42nNLRFOry3iT5HjTTMYxfRrhIZYm4ZU+hQqrstmd4x2txg7EWA
-	 iHMAYSL6cgXgFikDYxhlH2d1A2uvmn/bLwiLYd8hI6YTN1ZbWgyV6MZkgCS/Mgg+kb
-	 OYad1nQvtFnKg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE1B63822D1A;
-	Wed, 28 May 2025 20:41:33 +0000 (UTC)
-Subject: Re: [GIT PULL] jfs updates for v6.16
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <ebb6fd19-0c06-4a71-b900-b99b442a4b8f@oracle.com>
-References: <ebb6fd19-0c06-4a71-b900-b99b442a4b8f@oracle.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <ebb6fd19-0c06-4a71-b900-b99b442a4b8f@oracle.com>
-X-PR-Tracked-Remote: git@github.com:kleikamp/linux-shaggy.git tags/jfs-6.16
-X-PR-Tracked-Commit-Id: 5dff41a86377563f7a2b968aae00d25b4ceb37c9
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 1cbf99e47fef5a0a8cd421487e642283092f07b0
-Message-Id: <174846489254.2577663.632807314466377796.pr-tracker-bot@kernel.org>
-Date: Wed, 28 May 2025 20:41:32 +0000
-To: Dave Kleikamp <dave.kleikamp@oracle.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, "jfs-discussion@lists.sourceforge.net" <jfs-discussion@lists.sourceforge.net>
+	s=arc-20240116; t=1748465061; c=relaxed/simple;
+	bh=sXXLXOGOqT4dO+1XYmVPqJETrWZAlhCPuflWhIPlJrM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=EYorcO7PvTwjjfddvSCAOExY45pJ6tSMh/EjMYJ7b4CuSMMx7QCdNPDLjP3V1ds6EBbN+MlygSzSGIlFiF79TgVSwTRvuMVw3Co9L0HSJfThkJ4t/iUrdnwNO3s6ntujv+nPYiVah8zkgMlFA/dmeovRip2VsN0BNVGpMAyEI/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=BJ33AZLZ; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=H+QMa7la; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id C68411F441;
+	Wed, 28 May 2025 20:44:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1748465058; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sXXLXOGOqT4dO+1XYmVPqJETrWZAlhCPuflWhIPlJrM=;
+	b=BJ33AZLZkZtXqwYJ/6pt64wHTIFfWDob+3HWGok3c2fxxzOYB+vuqiHfyJRojS1j3Tfhkn
+	wUn5xa/MHkPHvYoXM8tsxPyBkKjIbVPGyHT3VL2jAjr+Kb77IYSkF0xwwT0YGpHs4WLLYO
+	GtvNkeJ2BYg/C6AZc9p6J+ZYeLQPAL4=
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1748465057; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sXXLXOGOqT4dO+1XYmVPqJETrWZAlhCPuflWhIPlJrM=;
+	b=H+QMa7la7DJnkJ6ln7zcBNYSmOzLTts8WTTkAOe5VtiY0t1VY5FWM9KSClHp7fZt7f4DzH
+	jj8Z5F0ycft+dUStM7pIDb4W8HYPjH19nPhXW5lk3yQaX3hZ38qHPGXVhoPoM7CjbS5mWj
+	MXoSrY6OcFmp11Ob17ZHiO3+X9fViqw=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 77A34136E0;
+	Wed, 28 May 2025 20:44:17 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id JTVSG6F1N2g6NgAAD6G6ig
+	(envelope-from <mwilck@suse.com>); Wed, 28 May 2025 20:44:17 +0000
+Message-ID: <914a7e9207c028a74d5c579273b4c71b555619d7.camel@suse.com>
+Subject: Re: [PATCH 0/2] dm mpath: Interface for explicit probing of active
+ paths
+From: Martin Wilck <mwilck@suse.com>
+To: Christoph Hellwig <hch@infradead.org>, Benjamin Marzinski
+	 <bmarzins@redhat.com>
+Cc: Kevin Wolf <kwolf@redhat.com>, dm-devel@lists.linux.dev,
+ hreitz@redhat.com, 	mpatocka@redhat.com, snitzer@kernel.org,
+ linux-kernel@vger.kernel.org, Hannes Reinecke <hare@suse.com>
+Date: Wed, 28 May 2025 22:44:16 +0200
+In-Reply-To: <aCrCYbvOJs44Kj5a@infradead.org>
+References: <20250429165018.112999-1-kwolf@redhat.com>
+	 <47dd225b433b0df585a25084a2e793344eeda239.camel@suse.com>
+	 <aCIRUwt5BueQmlMZ@redhat.com>
+	 <d51d6f85b5728648fe9c584f9cb3acee12c4873f.camel@suse.com>
+	 <cc2ec011cf286cb5d119f2378ecbd7b818e46769.camel@suse.com>
+	 <aCW95f8RGpLJZwSA@redhat.com> <aCbUcdew393RZIkV@infradead.org>
+	 <aCdifWdCQCR3Nqb0@redhat.com> <aCrCYbvOJs44Kj5a@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	URIBL_BLOCKED(0.00)[suse.com:mid,imap1.dmz-prg2.suse.org:helo];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:mid]
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
 
-The pull request you sent on Wed, 28 May 2025 14:51:41 -0500:
+On Sun, 2025-05-18 at 22:32 -0700, Christoph Hellwig wrote:
+> On Fri, May 16, 2025 at 12:06:21PM -0400, Benjamin Marzinski wrote:
+> > I've run into SCSI arrays that always act like they were called
+> > with the
+> > ALL_TG_PT flag set (or perhaps they were just configured that way,
+> > I
+> > never could get a straight answer about that).
+>=20
+> Hmm, that's pretty strange.
+>=20
+> > libmpathpersist accepts
+> > this flag, and only sends one registration per initiator & target
+> > device
+> > when it's set, instead of one per initator & target port.
+>=20
+> With "this flag" you mean ALL_TG_PT?
 
-> git@github.com:kleikamp/linux-shaggy.git tags/jfs-6.16
+multipath-tools allows setting the flag "all_tg_pt" in multipath.conf
+for certain storage devices or multipath maps. If this flag is set,
+mpathpersist will always act as if the --param-alltgpt flag was given.
+This means that the REGISTER commands are sent once per initiator port
+(SCSI host) only, instead of once per I_T nexus.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/1cbf99e47fef5a0a8cd421487e642283092f07b0
+By default,=C2=A0the all_tg_pt flag is not set for any device, not even for
+EMC VNX, where Ben observed the described behavior. It seems that
+devices that behave like this are a rare exception.
 
-Thank you!
+> > dm-multipath
+> > currently doesn't have the knowledge necessary to figure out which
+> > devices it needs to send reservations to, even if the kernel PR API
+> > supported this.
+> >=20
+> > But I supposed it could just send the registration normally down
+> > one
+> > path and if that works, it could just ignore the existing key when
+> > it
+> > sends the registration down all the other paths.
+>=20
+> We could add support for a similar flag to the kernel PR API.=C2=A0 The
+> problem is to figure out how to discover support for it.=C2=A0 What does
+> the library do for that currently?
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+dm-multipath has no knowledge about target or initiator ports, and I
+fail to see how we could provide this knowledge to it without adding
+yet another layering violation. Just sending the command once will not
+be sufficient if there are multiple local ports.
+
+Regards
+Martin
 
