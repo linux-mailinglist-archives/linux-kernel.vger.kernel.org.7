@@ -1,74 +1,108 @@
-Return-Path: <linux-kernel+bounces-665811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 275F5AC6DFF
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 18:29:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A57FAC6E11
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 18:31:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63C757A5023
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 16:28:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63AFF3A4EFD
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 16:31:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C36028CF73;
-	Wed, 28 May 2025 16:29:48 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 755DA28CF76;
+	Wed, 28 May 2025 16:31:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gfGKxS8j"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAB8E28641B;
-	Wed, 28 May 2025 16:29:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 848DE286403;
+	Wed, 28 May 2025 16:31:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748449787; cv=none; b=EyY4JJZu5cJNd2Kk2cZeZ7EokZn2xqp+QaXpXhnN5bV346ZPigUEJ4ID3HI18hcrllhOOJh4wJ44TH/Ug6NmkN9PD0CJAQkYcO82FlD3iYvsK2VR83jWC76M4TYXOLSksDk8QTzWuoPlNvcBumm2oT1FAO9PhH1U6rTTc5imv54=
+	t=1748449886; cv=none; b=ASb4ea6/QO7oSO7MyH/k0XkSufhBWJSf52pGzdmtRDYIZyxxU6XjaNUWPdAnPYcYrjvavRPn29/xnracHx/A/vCh3BJSpDtWOUVCZofcIKEd1Nw39aVE1M1m7zrKsXqavHnYZ2OtBZvGi+Dqqce82AyDogCLxe2ZEHvFhIFLUQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748449787; c=relaxed/simple;
-	bh=pujbF8oV8nkU83fk8rqq/LxjCEyaQOIc104Y3Esq8I0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OaFzAoAWqRNSH25q92f7clDK52G6QCQyD2bYcfTHhIcpFFm4NaDiaJyYBb2rsZdQfgFbRzWJm5A5Ph1KYBb6CyL4Etnml6HF9no5FENQXMmebPorIqpzi8TXDMd7/v5P3DPhGXocWrN3lKf9cdvwgF7KcYj22AEoJk6Ql2aZWaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C91E8C4CEE3;
-	Wed, 28 May 2025 16:29:46 +0000 (UTC)
-Date: Wed, 28 May 2025 12:30:46 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>
-Subject: Re: [PATCH] ring-buffer: Removed unnecessary if() goto out where
- out is the next line
-Message-ID: <20250528123046.5577977f@gandalf.local.home>
-In-Reply-To: <20250528093455.e710b3783bbdc93f8be66625@kernel.org>
-References: <20250527155116.227f35be@gandalf.local.home>
-	<20250528093455.e710b3783bbdc93f8be66625@kernel.org>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1748449886; c=relaxed/simple;
+	bh=P3y/C6BOs8zMzpQ9uc5/+S+36UJcguhm1Xu50gAFsj0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fh3v77/vAvdg1MesgFIxvw2EtBaB/z5iXJDRhRCkEmzNOZ0fx8rA7zv6yEOAFdUCUOyh2Sd/D+nw1cmr3H1JfcgIsqzZig+xqU2jDJjMF2UzNTGcUT2iG3zxnlUhNromeP4MKuDbXGcyHKdciocDyHb3b+TXShaSEK5nRcnKVyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gfGKxS8j; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-3120dd42103so34199a91.0;
+        Wed, 28 May 2025 09:31:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748449885; x=1749054685; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=P3y/C6BOs8zMzpQ9uc5/+S+36UJcguhm1Xu50gAFsj0=;
+        b=gfGKxS8js+IcipE13qCnNsD4WTTmaNABuGQj5p3a+uYcIBNQtdDZfa6nkXV1vO9lGr
+         YfokDCAgg9McGXkoPNnxs/uZlNWFGD1buw6/nuaKIK9dCPk+SCU1Sh+f6+HeKvWOFyBT
+         POM4/iNImwXLDxyzYP8dF5PunkEFNc9dhXSxJOkmA+87qeDRk8zYHIWNKDd/msHGIXin
+         01byOLZ/d+J8yb8FWaRNoBMtnpRkoOEYa+X/zCiJzZfWSwCd3ZdwzpKBRMhQYi1a+wTc
+         //Ci6B0dhOgJ62IrUfAxC6lh/a/63UyrqetXsKeLdhHiRpTegIkFAT/ImKQ9Eo7mdLLo
+         CM8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748449885; x=1749054685;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=P3y/C6BOs8zMzpQ9uc5/+S+36UJcguhm1Xu50gAFsj0=;
+        b=YXcFCuwhHBd9a6R5/MQVSdJzumLPMuETTxdBwbjkQKn8ff0ufDlROodo6ceEzgaD9C
+         kieVwLRrcSCS+fh+Dus6Irad3HSptsJpAqlJ8ggzSELdNx5Ospb7Tu9Wr8rGsdfCwYnf
+         1nSxfbLdEYME7YWTbQ76fhbOZ/BfJytTFiNgmrg1MNa0hkpqkj5kD4viWk5GmRJq6c3V
+         NyN5SbRsrwXlZyajjrZc6/0rZGRypUa7vepZmGJhIYTcq/Td7vxL3fg32dzX5SuVYcJe
+         TcQ4gm6A/5tKFkElHghCe+D96kNHf/dpg8EL596uWfXZ4L6KA4/1iB5GcOphK86nfGLR
+         KYxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWn1NM9BUE+eaPgbpXOrq0mQC2qa1rRWbmxCamsR0SYnnS5bxluJxy7FVBU3SZ3jZRVK1xl0AEwCWU+ghU=@vger.kernel.org, AJvYcCXCcVi52v5joIRWVeW461hzyCaxbU0Kw0TQFhd7GDHmB2t0DF0LDgAPeY9ktbUoGdDK4g50tyW5qHaXIGCErgo=@vger.kernel.org, AJvYcCXHEyxWXvnz56CKVhkA9xOlunAD7Mm4vpo9UAOEDkPFlXq6H500y402k77Pjktk3EX0U2d4ObHAxQ+LmcnApmy8@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+82TXlw8vF9KtChKKfxEfMhQiJDWVOd/to2cK7gRW2avUclsJ
+	idOXtviU3SaryFGpPl8eHyNNGbD5HUm61XM0m2siw/KHiG0XI4LVot7qhJ78zbzkNZyQBmM5iBN
+	29JoAVOh+t0vgkimyZ1Id1ocB76oxrRk=
+X-Gm-Gg: ASbGncsa9+GgL+Vm+FJrphlhw9FjsbQCagn1EzUGFi5AyxuQBo3MNGozIKvyGyq73T4
+	+S1ybRxg7CgKIUTpWuT/l1d5/dKc4ZCWn98e1P4osF5a3xJRs+O9280EFYI+dYq95+ej/7n7TCl
+	dMCwgy4PDCQp/6ny8fq5sNHBPNgQEUxc4x
+X-Google-Smtp-Source: AGHT+IHOJrnI/nuLXZHb8+rmB/wiEXoSp/bEqDC6ZUxb34OhLHK0jaWZqJSsxdkkbjCTI3wCGcSjWuYxHiTdVkoMHcs=
+X-Received: by 2002:a17:90b:1d8b:b0:311:e9a6:332e with SMTP id
+ 98e67ed59e1d1-311e9a63395mr1754483a91.0.1748449884630; Wed, 28 May 2025
+ 09:31:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250528155147.2793921-1-y.j3ms.n@gmail.com>
+In-Reply-To: <20250528155147.2793921-1-y.j3ms.n@gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Wed, 28 May 2025 18:31:11 +0200
+X-Gm-Features: AX0GCFtHMn_KuvjvBkIeX53fBiemP9VoNR9r1Lds-yXsvikvU80_bPY6l7Er12s
+Message-ID: <CANiq72==P-Sp=d6N7B=f-_aHak3Gr596Bs-3MmMBs+tw9J_K9Q@mail.gmail.com>
+Subject: Re: [PATCH v2] rust: kunit: use crate-level mapping for `c_void`
+To: Jesung Yang <y.j3ms.n@gmail.com>
+Cc: Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
+	Rae Moar <rmoar@google.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, linux-kselftest@vger.kernel.org, 
+	kunit-dev@googlegroups.com, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 28 May 2025 09:34:55 +0900
-Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
+On Wed, May 28, 2025 at 5:55=E2=80=AFPM Jesung Yang <y.j3ms.n@gmail.com> wr=
+ote:
+>
+> So in sum, I believe it's reasonable to keep the diff unchanged... but
+> I'm happy to adjust if you'd prefer a different approach.
 
-> OK, so this is a kind of cleanup.
+I see this is based on rust-next -- if you rebase the patch on top of
+the latest one, you will see the prelude there :)
 
-Correct, which is why I only added a "Fixes" tag but not a "stable" tag.
+Thanks!
 
-If someone wants to backport this, let them ;-)
-
-> 
-> Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-
-Thanks,
-
--- Steve
-
-> 
-> Thanks,
-> 
-> > Fixes: a389d86f7fd0 ("ring-buffer: Have nested events still record running time stamp")
-> > Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+Cheers,
+Miguel
 
