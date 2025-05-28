@@ -1,79 +1,47 @@
-Return-Path: <linux-kernel+bounces-665005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3679BAC6338
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 09:42:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32CABAC6340
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 09:44:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 735787A1C75
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 07:41:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF3083B708D
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 07:43:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B32D2459EA;
-	Wed, 28 May 2025 07:42:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00BEB2459C6;
+	Wed, 28 May 2025 07:43:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mODGx2LY"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jXtHtHR8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 321951C84B8;
-	Wed, 28 May 2025 07:42:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F9631367;
+	Wed, 28 May 2025 07:43:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748418147; cv=none; b=Pjgxydf2c+YW7+ly/1hh9wF51jdQm040o506zfyg0LrnfRpeobx2qnc1fR2ALy8rUeURTciIykwdP2GEQJOotU6Du+bGAlH2JdJs5y/M7YylWvca1HuLMRqzutSbFYEqtmACRVfWYeMormjsNo7NMEmb78UzWm8HXSaTJH5m9NM=
+	t=1748418233; cv=none; b=JwsAS3A3i0x7rr5zRFBHrrH57/kESQc4MB3QBvzjcYmwbiIX83W9NYNML+2YcvPch0Ro8yEI6k/09cH8yFLA/qfupQrC6L66e1+aGT5F2HusVUGIzWwkZs+btqtyKTlDUyGQ3x3DO7IUmFMl2swZFcNG3VwzQzal2445KhcqaAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748418147; c=relaxed/simple;
-	bh=FBdm3zXl/J+bAroDHqYjB2GcWTFC6T1eJvlgk8gKQ4Q=;
+	s=arc-20240116; t=1748418233; c=relaxed/simple;
+	bh=UDTXmWoYv9/xyJqEAsScTL5vAx1ZZeaAczWfwT05les=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lCogjLbtGVlohnDFOeX6Q0QuL9C4uXzZnuxmIdNukIq0b/3Nm8Skjmyv38/uUheoRejsCJU2X0FVwqfAEILepXNh5CM4vKu7kEPb/2OyXWlIaUj1GNxUkXqa4IzqZmdQPk38rcD4ND3FXdpFKRlWjKetnWlsYdlsggorUndYTno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mODGx2LY; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-60410a9c6dcso7790868a12.1;
-        Wed, 28 May 2025 00:42:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748418144; x=1749022944; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=eLPcSIp/DD1rCYzGKNk0Bn8Y+IA3lzvlJ6bnzdrWQSU=;
-        b=mODGx2LY+DBWGmon66D3fqRwsqxc1wMt7G5QSkHPhAejo4lMVdOiHrCIY6Abf+dQyb
-         W5frfbIeFreU6u1fybJCOs7onz78KBDEH/UzfWdQqNxNn1z+wW9K4bPB0dpC1t8V/yeV
-         lhZWSD1hIjBxrIyhOAz3dBVwW3sPVdyf5gMujXwer12o1lawHJeR7T/RCkaAGo6xAa4/
-         fxvCc0G+KsOlbRGx5BSUX0YKCPER/iSs10WyJmRTD30rpUiPn0FsOHqrvdIjek43cNIn
-         7CuQIarXLuQ4Rkw247uF/KWTzxGr92vB/mAM12idghl4zcEae4pk8CQ9g2EuDMtztT8s
-         16fQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748418144; x=1749022944;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eLPcSIp/DD1rCYzGKNk0Bn8Y+IA3lzvlJ6bnzdrWQSU=;
-        b=uY4KJ/NBOfHG+9aJ4hyYxZUnVhBvfALrHGf0G4R4asj3oHF1MtD9ehbqqalJFZSJtC
-         FBwTWF8vVDwBerewiJ4qqGzgG5LQJKXtBwJhrc/AYTmhC4yA2E2/rLG7gd5TUabLqJAF
-         OwplAx3JWLYpm+0pST7wReyM+637xs1Gd6HUMy44QdnNWoc0R6Mj86H6qpXEFiZAeOdo
-         LwvwLp+0PkcNlc54nW1m78zqnK0etWHXwDS574JUS8eXUUc68cC7YOnGAaooMm1xbnmJ
-         Z+Hv2WyitCIgcZCbPOTBmHd+TbdrD89MKZ2mLBkL2sD5pXkYFEVI3ZNuQbeWjekydTrZ
-         QNow==
-X-Forwarded-Encrypted: i=1; AJvYcCVv1V0ZmN0T45P2wqBmV8qaYQTWwWhwi0QLsCTHJ/eAxtfN83EliWM93NnqT9g1DzQ0ZpcCF9+T@vger.kernel.org, AJvYcCW8+pOTqMxebvuGRHWN2LScJogGqiYt/6xUatN9SU7xZDOYe3eZYtCrG/+GHIUHjsF+JNEOnTPGU5Z1UA==@vger.kernel.org, AJvYcCWxCJxczQYduBz6nQXI20/OVzl68nU14MVOB9IHp0ULQuD+xyDVxKUORkIkzb5cIudzJYc=@vger.kernel.org, AJvYcCXyPCkIEgppOSBUDNAIZltWcXWNxU4ISKiD9vtCkQYlhGcm3KbuYwgyERTxSlPljBo8AXnPSyWrSD4tJDP4@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsSe7HzO15vtYbvZfdYO7ZJ+vT3iNzVPn+HcaR46cIEUA9v1Cq
-	1+TsoxvItqoTB838eiKR+7dh4tbMP8ZsVgM/XYHEenmBAgMhsuGKkVR8
-X-Gm-Gg: ASbGnctBibmbBOqVr/vb5cm3XwzIWA2Zw99VGLnyMG5yHQjxoTIqzMIsw1joUZQvh3U
-	yDUE/qoa5GJsDZMAIfs8abARE+FEYuBUVOM3qxlZlZ2Hz3k4fz0bdOry/BDEyfuc+vzeW42I2/O
-	ZckDIcsTHvqGwhQvBCDYka44Kx5kqXczHBz9zRiVJYuoQdI1FVhqJC5bgJxpi/Z56quQygPMLq6
-	qaqG9bbK6TgKT2ysEsSLsPgJf4XSmNLgQDI9j1hU2+K8PSA/zk/vRTxY5Nluu32getmGReyeMfe
-	DdUCR2kwE93f3c5mQX5yB6FtvJthKTuuYfYuDRenFp/si0esEd7mMDG6Thz27BUXPzxrMU6aHg=
-	=
-X-Google-Smtp-Source: AGHT+IH8GIKLi3J19CB1X7s1vCnZGjRCWQBW0YxLPfQlCr0ZehSV3jt8AiU4iunzA8JJZOzdVmuDew==
-X-Received: by 2002:a17:907:d643:b0:ad5:3055:a025 with SMTP id a640c23a62f3a-ad85b0518aemr1514904966b.6.1748418144007;
-        Wed, 28 May 2025 00:42:24 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:325::6f? ([2620:10d:c092:600::1:c447])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6051d5d991esm392479a12.3.2025.05.28.00.42.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 28 May 2025 00:42:23 -0700 (PDT)
-Message-ID: <4d7a307f-d595-4020-8060-f3bc2f8f72ca@gmail.com>
-Date: Wed, 28 May 2025 08:43:34 +0100
+	 In-Reply-To:Content-Type; b=bvB20nsGBgw9FPMkqrGFa+HgzTCoGVFXHHdD+YulkHP9XisN1BSVEj8kH90IKCCrjk22G3ABMi+BlZXTmX+pYKzINUAlGVKwvdc6mCLs3vs6LqtkaiZ0QsbW7Az9wlpBr4Fu6z2mxq4QmYoHWLLp9NOoWKMQu0ct++WfmV/1lLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jXtHtHR8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A39CC4CEE7;
+	Wed, 28 May 2025 07:43:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748418232;
+	bh=UDTXmWoYv9/xyJqEAsScTL5vAx1ZZeaAczWfwT05les=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=jXtHtHR8IRSjqMfFlBbzEm/QcuoeHsg2WKHcAHv301klgRgl0C+q85BHx7sVM35uM
+	 StgVp4Bh87ZwxrbJpRJx6YP8JpwLiviEW2Rw3BJZo35X7pjAYeE2TYWgk9ytUovO2x
+	 iEgCsFEyR5eM/koJYtXhoc/khCR4pGbL4M5L2KPs0M+b/N7HIgc79epnpTd2dje/qo
+	 JH6G0ENMXeSWvM3YeEZSEtV3RqL0cvNbHnur+yovMhzPaEbra6MyEnZ9RAdcY1PNPj
+	 hE+krx+7lqGKkLmcdgfC7El1BPRnVanW9I3CLKzryptPIKo9DABwoSJjRaCSJwVUoL
+	 HVzSwvfll6MNw==
+Message-ID: <a14be34c-de2a-4bea-9282-1fac7780b9a4@kernel.org>
+Date: Wed, 28 May 2025 09:43:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,71 +49,81 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/18] netmem: introduce struct netmem_desc
- struct_group_tagged()'ed on struct net_iov
-To: Byungchul Park <byungchul@sk.com>, Mina Almasry <almasrymina@google.com>
-Cc: willy@infradead.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, kernel_team@skhynix.com,
- kuba@kernel.org, ilias.apalodimas@linaro.org, harry.yoo@oracle.com,
- hawk@kernel.org, akpm@linux-foundation.org, davem@davemloft.net,
- john.fastabend@gmail.com, andrew+netdev@lunn.ch, toke@redhat.com,
- tariqt@nvidia.com, edumazet@google.com, pabeni@redhat.com,
- saeedm@nvidia.com, leon@kernel.org, ast@kernel.org, daniel@iogearbox.net,
- david@redhat.com, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
- vbabka@suse.cz, rppt@kernel.org, surenb@google.com, mhocko@suse.com,
- horms@kernel.org, linux-rdma@vger.kernel.org, bpf@vger.kernel.org,
- vishal.moola@gmail.com
-References: <20250523032609.16334-1-byungchul@sk.com>
- <20250523032609.16334-2-byungchul@sk.com>
- <20250527025047.GA71538@system.software.com>
- <CAHS8izOJ6BEhiY6ApKuUkKw8+_R_pZ7kKwE9NqzCyC=g_2JGcA@mail.gmail.com>
- <20250528012152.GA2986@system.software.com>
- <CAHS8izMvRrG2wpE7HEyK3t544-wN_h3SC8nGabCoPWj1qCv_ag@mail.gmail.com>
- <20250528050346.GA59539@system.software.com>
+Subject: Re: [PATCH] dt-bindings: timer: xlnx,xps-timer: Make PWM in example
+ usable
+To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Sean Anderson <sean.anderson@seco.com>
+Cc: linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20250527171504.346696-2-u.kleine-koenig@baylibre.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20250528050346.GA59539@system.software.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250527171504.346696-2-u.kleine-koenig@baylibre.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 5/28/25 06:03, Byungchul Park wrote:
-...>> Thus abstractly different things maybe should not share the same
->> in-kernel struct.
->>
->> One thing that maybe could work is if struct net_iov has a field in it
->> which tells us whether it's actually a struct page that can be passed
->> to mm apis, or not a struct page which cannot be passed to mm apis.
->>
->>> Or I should introduce another struct
->>
->> maybe introducing another struct is the answer. I'm not sure. The net
+On 27/05/2025 19:15, Uwe Kleine-König wrote:
+> With #pwm-cells = <0> no usable reference to that PWM can be created.
+> Even though a xlnx,xps-timer device only provides a single PWM line, Linux
+> would fail to determine the right (pwmchip, pwmnumber) combination.
 > 
-> The final form should be like:
+> Fix the example to use the recommended value 3 for #pwm-cells.
 > 
->     struct netmem_desc {
->        struct page_pool *pp;
->        unsigned long dma_addr;
->        atomic_long_t ref_count;
->     };
+> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
+> ---
+>  Documentation/devicetree/bindings/timer/xlnx,xps-timer.yaml | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
->     struct net_iov {
->        struct netmem_desc;
->        enum net_iov_type type;
->        struct net_iov_area *owner;
->        ...
->     };
-> 
-> However, now that overlaying on struct page is required, struct
-> netmem_desc should be almost same as struct net_iov.  So I'm not sure if
-> we should introduce struct netmem_desc as a new struct along with struct
-> net_iov.
+And what about the binding itself? It allows any arbitrary value.
+Setting it to const=3 would not break the ABI, as long as driver does
+not care.
 
-Yes, you should. Mina already explained that net_iov is not the same
-thing as the net specific sub-struct of the page. They have common
-fields, but there are also net_iov (memory provider) specific fields
-as well.
-
--- 
-Pavel Begunkov
-
+Best regards,
+Krzysztof
 
