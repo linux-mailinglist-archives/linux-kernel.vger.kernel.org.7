@@ -1,120 +1,135 @@
-Return-Path: <linux-kernel+bounces-665004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F72FAC632F
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 09:38:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8C26AC632B
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 09:38:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6839416C89A
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 07:38:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0299189E45B
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 07:38:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFFED2451F0;
-	Wed, 28 May 2025 07:38:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 577002459CF;
+	Wed, 28 May 2025 07:37:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Rr4la10C"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JVhkY5BR"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6CAE24469C
-	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 07:38:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22BA344C94;
+	Wed, 28 May 2025 07:37:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748417917; cv=none; b=HRp4G5oa825dfbuneEGtYNwA2X/7GblbQiXf0IBiGTfNPK50OOALsWe76uNWB6QxV5V5pxMvnp6/adSqPnXhH+k5TQT7ZA/76RA6sTqoVbghqZfCygDerYm9iXfmyiRwWMX75dpqQwdem54J8BLcLzC3jkv8COfJXLx43aXdvk8=
+	t=1748417867; cv=none; b=gOzy0mSeQPt0GeXC62m8AhypmGTeVgx5VzIhNO5UDUTxumfHn+8LzjS/0LKCPKg07w/M/xYgjd7ZEpSXe9jDqLU1BJFMLoEj1gIvTFfnZWPnda433yJ1DsLuxH18eIBcLYgULyDe7umCLnIfjpg437/KbTFsx1N3oSvXLl61kI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748417917; c=relaxed/simple;
-	bh=EH+F4iRJI7anYHX3NynlYUSDaVIlMgqBZ6Ur6WFXNAQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YrdT7rsBRrPdWeuliMV68rxUDrKkTG2z43njVCiZfbmoE9fnLzSqc78aU+VzRESuklkBLs8g5u280pP9SiNvW7T5afc5GPcf8ew1Sd9CIkftj0/SBrEKA4H4JBhcN2Vc4adsiZ7yWnYwrFtfwC/DK+MGLI3fNksWxN4r9z/nxmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Rr4la10C; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1748417914;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nIttIbYMTmu8/eguOayC3dSJD20KFYU/EvDlBxz1bX8=;
-	b=Rr4la10CtJneAF19D8vtUN4PLCnI9xIN9Bk4//BRlDMOGhcs4KTG7DJNO3yII+IXPpFqfS
-	l8uSeSdugvqsqI+uk+N+T5FGHvQJ9PKFmYDKMWyLowLO86BhcXXWItPxXIwMViCzHlupAx
-	DmKrFYEE1LSKbOd2fQDuC0Sg/qUqgPU=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-424-qlHoU7GUPsGgzsvwWcraWw-1; Wed,
- 28 May 2025 03:38:31 -0400
-X-MC-Unique: qlHoU7GUPsGgzsvwWcraWw-1
-X-Mimecast-MFC-AGG-ID: qlHoU7GUPsGgzsvwWcraWw_1748417909
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9EC6A1956086;
-	Wed, 28 May 2025 07:38:28 +0000 (UTC)
-Received: from dobby.home.kraxel.org (unknown [10.45.224.91])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 07335180049D;
-	Wed, 28 May 2025 07:38:27 +0000 (UTC)
-Received: by dobby.home.kraxel.org (Postfix, from userid 1000)
-	id D532F4507BC; Wed, 28 May 2025 09:38:24 +0200 (CEST)
-Date: Wed, 28 May 2025 09:38:24 +0200
-From: Gerd Hoffmann <kraxel@redhat.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
-	kvm@vger.kernel.org, linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] x86/sev/vc: fix efi runtime instruction emulation
-Message-ID: <77hywpberfkulac3q3hpupdmdpw2xbmlvzin4ks7xypikravkj@xjpi7gqscs6a>
-References: <20250527144546.42981-1-kraxel@redhat.com>
- <20250527162151.GAaDXmn8O3f_HYgRju@fat_crate.local>
+	s=arc-20240116; t=1748417867; c=relaxed/simple;
+	bh=XFnolhBWMpZsbRKYipyO+ZmWPeaLCtIGk3PDlvRwUU8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FHOmtYg2T0kyRHptj5hH5ImuNxQNml0c6W73AWepaSv3pV05jYCl0YopXNb3cr3gErex/e8vlqNCWOIkYaHtsINPSX+g3wWvNxQakiNpz1EdLOj6D0x1/959Yvu9NqAR6wNPfx/sSk0Hpc44bPQnlMlVDYib5iRLtYnM+Z0AZNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JVhkY5BR; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ad8a6c202ffso11076166b.3;
+        Wed, 28 May 2025 00:37:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748417864; x=1749022664; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=t1dSHMFfDFy764C5jJ4C2GRVs5CFaHPqL3t86S7wFV4=;
+        b=JVhkY5BRx7qQmJx+/VBeOvSc/EUIaTc+Q54GeY996o482my7xqBcaZFib4CCNL3Cig
+         qwXEs2ZrgOBMvQHr+uv8HVfUp5tAJIzOJVWdkue5dUJ3kd5JFjEh7sHWHILBKcMTJJt4
+         CkejnLyH7Sl0lHlRQI16mK/B+xLkWWAqxSsNtCCb9cleegdCPlGho31M9t0dvbd23KSP
+         iJjIRXp+QHm1UjOeHl621qPkCtJoMg8zbutCf0/HBz4AfJS1T3PEyWPw+l8S6j8O7yB8
+         m4FPRmCeoCyq1QBsx1SxYSoJ4Jq8mPPI4m5vfkeFLllmeDUoUnV+ffobXyGz2HQqUDTV
+         Owwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748417864; x=1749022664;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=t1dSHMFfDFy764C5jJ4C2GRVs5CFaHPqL3t86S7wFV4=;
+        b=HfjDug7pFAmBCBm6FNBZyFSfAJ4U35/9PmQOsJT09xmbmyutLVpEez9ufTii6vvMAe
+         vAjDHdoCAPGcAM1EAHHqy49qS6Zyza3QfvFKeYawCI3SgVqAQ11ruZND+USSZ9xlhul3
+         +/RL7LklMx7rH+1bsOBWmgaE+WsrDfiDp7qas0NSORXUAYyAfSmn1aewjVTtsdqsyhl3
+         LN1RH8qxAGjUFM2WTRAb2dsaiGc2ZtJgr0WqfupF6kfaKmhwXp1DvtljFWH5+L3PWQv1
+         b6CfnocQJi9bOnMdOJFJAjg6Wnn6oMvbxiyyhMRpiGbq+x4I8taoJW09j5LFVTAceo+W
+         FfTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUaJoSWp4s7+XhsuBODPYbfOzwewQyGnHhIABrqLk6eZEVodoYi4krWiSh6GAbocCzA98JOX28Ass+AvhRq@vger.kernel.org, AJvYcCUcLn4Wc0wc6cVB80TxO3JJSeBIhYN6OrsyRpoyIkcBppc9ayl5UK0E9qN0Po/UGjP9+kj9A+7S@vger.kernel.org, AJvYcCVGrUZ7t0eJ1w7jkI9cxLy7wJptOh6A472Q3uiUEMtLOEzzqzX/o6ycZVIfGLjCLnsbYpw=@vger.kernel.org, AJvYcCWW6BtUAJbNSfsUVJQy9s8wUt6KrFc3gcBw1tgZa9rrJhXUiIZZbbjwoW4tXFGO/E2WS9oyGaVxBRD0aQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw305KHftbZq7/R32iiy0BYAoJUSonOxg6uUR1tmkpQ29djxXiE
+	k2M47c00+9DB0e8mHDs/zK/sksivwVGqMzJ8PZjxXwfP0feI9rcFWSDW
+X-Gm-Gg: ASbGncusQrFTKW7K4Z336fEb8oHPPK699QcyYUZHpRckOfSNif0GIWIKQaWMUpLW6Nd
+	8CKZOKk1b6sidRwLapKCrijUVHpFmI7cTMIGtXaVJAP+7f6+Q9UyVo5I6R8WE2sx/02BzGU8r9A
+	7xG3735Blo+a0tMk7Ec6R96/ewJpY7QzSNMfbME4z1N8SlX0Yw4FQS0PxlPvH5Izmq+J5SeV+On
+	bfUratGZu9ZcLoNK2J+R7QhYOoOUiVtXHrRcHwgn3AIy6byH0LvfC1hEQdPX2E/XGAASvyx5TIZ
+	lJ7dqHw/h3uLpaUe7JpdEjnvIXZs+9HFih1QSv5asqETg6GEg9NBlLWC3WQjQ8s5KALL6qGRIA=
+	=
+X-Google-Smtp-Source: AGHT+IGVvc9x00EqEBp/+uRhBV0Xy1432qgXuuK+2L3w2LGJ/kw7OOqZ6bGFRPbEXoSuuCXV4u1knw==
+X-Received: by 2002:a17:906:99c2:b0:ad2:4144:2329 with SMTP id a640c23a62f3a-ad85b1205c3mr1472269966b.7.1748417864109;
+        Wed, 28 May 2025 00:37:44 -0700 (PDT)
+Received: from ?IPV6:2620:10d:c096:325::6f? ([2620:10d:c092:600::1:c447])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad8a1b28a5fsm61572066b.90.2025.05.28.00.37.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 28 May 2025 00:37:43 -0700 (PDT)
+Message-ID: <6cf44bd6-325f-407a-aadb-74eb567974ef@gmail.com>
+Date: Wed, 28 May 2025 08:38:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250527162151.GAaDXmn8O3f_HYgRju@fat_crate.local>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 01/18] netmem: introduce struct netmem_desc
+ struct_group_tagged()'ed on struct net_iov
+To: Byungchul Park <byungchul@sk.com>, Mina Almasry <almasrymina@google.com>
+Cc: willy@infradead.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, kernel_team@skhynix.com,
+ kuba@kernel.org, ilias.apalodimas@linaro.org, harry.yoo@oracle.com,
+ hawk@kernel.org, akpm@linux-foundation.org, davem@davemloft.net,
+ john.fastabend@gmail.com, andrew+netdev@lunn.ch, toke@redhat.com,
+ tariqt@nvidia.com, edumazet@google.com, pabeni@redhat.com,
+ saeedm@nvidia.com, leon@kernel.org, ast@kernel.org, daniel@iogearbox.net,
+ david@redhat.com, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
+ vbabka@suse.cz, rppt@kernel.org, surenb@google.com, mhocko@suse.com,
+ horms@kernel.org, linux-rdma@vger.kernel.org, bpf@vger.kernel.org,
+ vishal.moola@gmail.com
+References: <20250523032609.16334-1-byungchul@sk.com>
+ <20250523032609.16334-2-byungchul@sk.com>
+ <20250527025047.GA71538@system.software.com>
+ <CAHS8izOJ6BEhiY6ApKuUkKw8+_R_pZ7kKwE9NqzCyC=g_2JGcA@mail.gmail.com>
+ <20250528012152.GA2986@system.software.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20250528012152.GA2986@system.software.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, May 27, 2025 at 06:21:51PM +0200, Borislav Petkov wrote:
-> On Tue, May 27, 2025 at 04:45:44PM +0200, Gerd Hoffmann wrote:
-> > In case efi_mm is active go use the userspace instruction decoder which
-> > supports fetching instructions from active_mm.  This is needed to make
-> > instruction emulation work for EFI runtime code, so it can use cpuid
-> > and rdmsr.
-> > 
-> > Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
-> > ---
-> >  arch/x86/coco/sev/core.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
+On 5/28/25 02:21, Byungchul Park wrote:
+>>> So..  For now, this is the best option we can pick.  We can do all that
+>>> you told me once struct netmem_desc has it own instance from slab.
+>>>
+>>> Again, it's because the page pool fields (or netmem things) from struct
+>>> page will be gone by this series.
+>>>
+>>> Mina, thoughts?
+>>>
+>>
+>> Can you please post an updated series with the approach you have in
+>> mind? I think this series as-is seems broken vis-a-vie the
+>> _pp_padding_map param move that looks incorrect. Pavel and I have also
+>> commented on patch 18 that removing the ASSERTS seems incorrect as
+>> it's breaking the symmetry between struct page and struct net_iov.
 > 
-> Can you pls explain what the use cases for this and your next patch are?
+> I told you I will fix it.  I will send the updated series shortly for
+> *review*.  However, it will be for review since we know this work can be
+> completed once the next works have been done:
 
-Use case is coconut-svsm providing an uefi variable store and edk2
-runtime code doing svsm protocol calls to send requests to the svsm
-variable store.  edk2 needs a caa page mapping and a working rdmsr
-instruction for that.
+Please don't forget to tag it with "RFC", otherwise nobody will
+assume it's for for review only.
 
-Another less critical but useful case is edk2 debug logging to qemu
-debugcon port.  That needs a working cpuid instruction because edk2
-uses that to figure whenever sev is active and adapt ioport access
-accordingly.
-
-> We'd like to add them to our test pile.
-
-That is a bit difficult right now because there are a number of pieces
-which need to fall into place before this is easily testable.  You need:
-
- * host kernel with vmplanes patch series (for snp vmpl support).
- * coconut svsm with uefi variable store patches.
- * edk2 patches so it talks to svsm for variable access.
- * igvm support patches for qemu.
-
-Hope I didn't forgot something ...
-
-take care,
-  Gerd
+-- 
+Pavel Begunkov
 
 
