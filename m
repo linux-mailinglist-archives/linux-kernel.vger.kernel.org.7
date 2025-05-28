@@ -1,110 +1,167 @@
-Return-Path: <linux-kernel+bounces-664720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-664722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BC45AC5F9A
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 04:36:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66B1BAC5F9F
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 04:37:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D96214C1D6D
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 02:35:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DD07A23014
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 02:35:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA4011E32BE;
-	Wed, 28 May 2025 02:30:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1D2D1F0999;
+	Wed, 28 May 2025 02:31:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hR9nGtMS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TtOvO5v8"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BBD51C5D4B;
-	Wed, 28 May 2025 02:30:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AAD21EF36B
+	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 02:31:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748399418; cv=none; b=L3immMBKuBmTj7RxzVkoOMH924MJM/A82WarLA8GS/Ct/X4YDA65t3kbjENHdfDc4WdiY9MJzDDb15Xih9uEtp0y+ZYOzImzuobtN1M/CwNkF4oke4xrKokhgOR4u5+mfrufu8Dz6YR1dRr1pdzXDWKVt6iS6r3VIugskTVwN2I=
+	t=1748399486; cv=none; b=N3pVj/eMRd7SSK/pXl9M8J58PogheM0JDrrI99uqN+FvqC0waQLYxyaO6Gmo1waprRq1DxPbUVeKK8rBFfue0539TM4NwUQ3QDFSPJEbXLyfTxkzCODkO4JlncRWu1gfaIzrsKVo74Yj+NB7OF85hPFuXophf7HMdcvCsMFw+mY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748399418; c=relaxed/simple;
-	bh=BWCthmiI/S2MepvgN2bdm2wAp5bX/8wGlKNy+opLH+U=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=iPmwk9z6y6KbYHSZjZolqF4/VUWBgSEn6U6p4shKmLosSaBqKi6CYq+9G7tTysU9kylBcXgIv/w3lSZPCEfdbwSy9D6CnqJr59IrlL/9VRngxrr+hJAYarhg95CniAgyxt4Xg+li9EaUqGoyWGNl5TKo2o3vruChOKBl7YSidSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hR9nGtMS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63605C4CEE9;
-	Wed, 28 May 2025 02:30:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748399417;
-	bh=BWCthmiI/S2MepvgN2bdm2wAp5bX/8wGlKNy+opLH+U=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=hR9nGtMSbjWhXxGLl5Kab7PjG50Wkd8+gcZLY1aGEA66MWPgVyxSb7njj9WWn2PDw
-	 XUaeGN1ZQHRibQum7KJR0A4FVXW23bA6c+VPDaFyuLJw+vK7OQ3rbwyS992ULTthbC
-	 jXkAH5niCg09K/FKTYoJC0OVtrKUQaQWeXl9sqJKQgiiCMqmM4uYYcChRyeqJVudV7
-	 UqWKo04HJLnJ/6X0ePU6HilOnSdChZX3mwTqtlkpC08+k573trmVeJA5DlHMHpoZRh
-	 38d7ENzOgJeOo3uMlRXhPEJx0t3B6l/FfqGqaOTpTpNCaXm42BY0KIdQ1mzwmy0WOw
-	 kfA8Y4IoSNr5Q==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADDC23822D1A;
-	Wed, 28 May 2025 02:30:52 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1748399486; c=relaxed/simple;
+	bh=/HzPKugMmaCRrhBJ4YFkeZUX/9qBlQMp0yGEzMrprqI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=KrQ84UvYww2J3Iv6vytIxh8pkSFtSYqgNpXOTA96wVM/b70gLDS4mnLE4z8/toR7S4unExGjPZn0BPHBivtjWdLlw3DKtYcypeDoO74sx2t5SoaQsvAxwUSVZoIv0MYCRN8St9kKBJLpuDKXQLaGmCD0qqyvay/uwRMZZspXkDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TtOvO5v8; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-234b440afa7so8534655ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 19:31:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1748399483; x=1749004283; darn=vger.kernel.org;
+        h=mime-version:message-id:date:user-agent:references:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=BQRgW2zDMDyRpGcNs2f/hIRhslp675QORwh/naIQme4=;
+        b=TtOvO5v8XKmaO+o/YTUpcwQPtoqN2dyq2dO9J6x8fsXr8azbIRrfIBP2GiDDrXp9r0
+         k/Lhm5ibKeRtHzkboUeRk+el23rSQcBBWWlwrEmvMzsUfGCbRksUpQZUBfVToeyudNnq
+         1w5CZoEa+JakijWe/RUOyaKaj0/0jJtkKiSUEXLM3JW7E7rn4zX7X2yJQHDA311CGyxc
+         k5Vod8L53TdBYJnHy12roaMiRDoMRpOtGvTGuVBK49mQqS3UMDVJhTcoHcPXUPcSuQaw
+         qPmlQSv2o0Z9GywslycIWK/MQlqP4klNwiFmJIi81l/yjWDBn3peZRwgJ9mZ9GKeP3Gz
+         LbBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748399483; x=1749004283;
+        h=mime-version:message-id:date:user-agent:references:in-reply-to
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BQRgW2zDMDyRpGcNs2f/hIRhslp675QORwh/naIQme4=;
+        b=HcjPwjuaz4l85a+L/P5oWuwx5Q/VW8HAbdbxtZi+9Pa1YWHy54qbCfiyY91D/c2MaY
+         gAkmJ1IZZ+O5c40A/yizTyg1AtEE4J8LpyDuZ46Uj2FT07rk8RYf8+3dge6joYSbKbm1
+         xMBlBWwgyjt9pL5Fpxc7WJNY1r7JQ/9wjDepHckmxVtB5XnsD/HBupnhLRhAPhx6iee3
+         DF7Iqy05AzOvHw5zCkb5aL/1DMJc+oAkfd82q7mJkMR5zSzVEvDStzB4mQ3uPuORTzEQ
+         +3B6IErTVaa4jZw9FObnNdEsPzwMcElg/gknPToyrt9Yb+5kOLjvF26RQ6SfuLFGjAC5
+         H0mw==
+X-Forwarded-Encrypted: i=1; AJvYcCVyLpUTDbfHAOxSnNMoAZinotReKdM7bjPVNiTMiq/qaueXMx+PAtEsf/nEoiKNS0wW0b+W2VGapvHL0X4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyu1PyaqSoMia1qJ6cfSLjeWfHikxSZMS7ecPUyp/j1djBVbwbw
+	q5cGMMgA2NDivLDvA5tgwd94Xkw8vZmPfc0QdP8m0yesrRxN5lvfPSDVEpLr3T83ctoIl+yuhgC
+	CCO1AUHDf
+X-Gm-Gg: ASbGncvC+WnGAhodjQkupoUlUB8Ja5N9zQtNgeIH3IxaVqwPAMfBXrCG8nPoHl+IAAV
+	q6P/j9NmnmLUlXDPJVMyRnL5ysac/fGYNIDXaC7gVL934bjlEQ5C8iJB6f69sW04yjPBSILEfy4
+	/15AnbVZX0CSBzcVbdbLaz15DYhM1XiHJUqOQgVbvDel4oo82Zwt6zvlvoKcDrBYSLZ8kfNFdfT
+	LSMTacekxYtJAP8hdJilj8t/niewH6iE4yf5/pDPxVCvGKl+vYh4TLldAUduhTiXWjMRM46p7wL
+	WDLkAYXdXKka4wJvP+d/zfM6p6MM2+LHCdtJGxPY4Hzp+obW9Z9+WadWbf5kDq/IA/QaCBD5ALT
+	6TQnaIL3qIrZbRKdyaPBcK7QgwdzLZS5rFqJDg0E4HVOCBa+3
+X-Google-Smtp-Source: AGHT+IE52Y2joor7wjefGN/rIOi1GNEnRj6y0peHvF6A3p0ZaVNxrYsUFOHwWucOb5D5xtlgH28nxQ==
+X-Received: by 2002:a17:903:41cc:b0:22e:b215:1b6 with SMTP id d9443c01a7336-23414fc0524mr198873785ad.28.1748399483313;
+        Tue, 27 May 2025 19:31:23 -0700 (PDT)
+Received: from ynaffit-andsys.c.googlers.com (163.192.16.34.bc.googleusercontent.com. [34.16.192.163])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-234d2fe204asm1343745ad.80.2025.05.27.19.31.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 May 2025 19:31:22 -0700 (PDT)
+From: Tiffany Yang <ynaffit@google.com>
+To: "'Carlos Llamas' via kernel-team" <kernel-team@android.com>
+Cc: Alice Ryhl <aliceryhl@google.com>,  Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>,  =?utf-8?Q?Arve_Hj=C3=B8nnev=C3=A5g?=
+ <arve@android.com>,  Todd
+ Kjos <tkjos@android.com>,  Martijn Coenen <maco@android.com>,  Joel
+ Fernandes <joel@joelfernandes.org>,  Christian Brauner
+ <brauner@kernel.org>,  Carlos Llamas <cmllamas@google.com>,  Suren
+ Baghdasaryan <surenb@google.com>,  Li Li <dualli@google.com>,
+  stable@vger.kernel.org,
+  syzbot+4af454407ec393de51d6@syzkaller.appspotmail.com,  "open
+ list:ANDROID DRIVERS" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] binder: fix yet another UAF in binder_devices
+In-Reply-To: <20250524220758.915028-1-cmllamas@google.com> (via kernel-team's
+	message of "Sat, 24 May 2025 22:07:58 +0000")
+References: <20250524220758.915028-1-cmllamas@google.com>
+User-Agent: mu4e 1.12.8; emacs 30.1
+Date: Wed, 28 May 2025 02:31:21 +0000
+Message-ID: <dbx8o6vdihza.fsf@ynaffit-andsys.c.googlers.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v2 0/8] Devmem TCP minor cleanups and ksft
- improvements
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174839945148.1866481.123828149281878670.git-patchwork-notify@kernel.org>
-Date: Wed, 28 May 2025 02:30:51 +0000
-References: <20250523230524.1107879-1-almasrymina@google.com>
-In-Reply-To: <20250523230524.1107879-1-almasrymina@google.com>
-To: Mina Almasry <almasrymina@google.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, hawk@kernel.org,
- ilias.apalodimas@linaro.org, ncardwell@google.com, kuniyu@amazon.com,
- dsahern@kernel.org, andrew+netdev@lunn.ch, shuah@kernel.org, sdf@fomichev.me,
- ap420073@gmail.com, praan@google.com, shivajikant@google.com
+Content-Type: text/plain
 
-Hello:
+"'Carlos Llamas' via kernel-team" <kernel-team@android.com> writes:
 
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+> Commit e77aff5528a18 ("binderfs: fix use-after-free in binder_devices")
+> addressed a use-after-free where devices could be released without first
+> being removed from the binder_devices list. However, there is a similar
+> path in binder_free_proc() that was missed:
+>
+>   ==================================================================
+>   BUG: KASAN: slab-use-after-free in binder_remove_device+0xd4/0x100
+>   Write of size 8 at addr ffff0000c773b900 by task umount/467
+>   CPU: 12 UID: 0 PID: 467 Comm: umount Not tainted 6.15.0-rc7-00138-g57483a362741 #9 PREEMPT
+>   Hardware name: linux,dummy-virt (DT)
+>   Call trace:
+>    binder_remove_device+0xd4/0x100
+>    binderfs_evict_inode+0x230/0x2f0
+>    evict+0x25c/0x5dc
+>    iput+0x304/0x480
+>    dentry_unlink_inode+0x208/0x46c
+>    __dentry_kill+0x154/0x530
+>    [...]
+>
+>   Allocated by task 463:
+>    __kmalloc_cache_noprof+0x13c/0x324
+>    binderfs_binder_device_create.isra.0+0x138/0xa60
+>    binder_ctl_ioctl+0x1ac/0x230
+>   [...]
+>
+>   Freed by task 215:
+>    kfree+0x184/0x31c
+>    binder_proc_dec_tmpref+0x33c/0x4ac
+>    binder_deferred_func+0xc10/0x1108
+>    process_one_work+0x520/0xba4
+>   [...]
+>   ==================================================================
+>
+> Call binder_remove_device() within binder_free_proc() to ensure the
+> device is removed from the binder_devices list before being kfreed.
+>
+> Cc: stable@vger.kernel.org
+> Fixes: 12d909cac1e1 ("binderfs: add new binder devices to binder_devices")
+> Reported-by: syzbot+4af454407ec393de51d6@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=4af454407ec393de51d6
+> Tested-by: syzbot+4af454407ec393de51d6@syzkaller.appspotmail.com
+> Signed-off-by: Carlos Llamas <cmllamas@google.com>
+> ---
+>  drivers/android/binder.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+> index 682bbe4ad550..c463ca4a8fff 100644
+> --- a/drivers/android/binder.c
+> +++ b/drivers/android/binder.c
+> @@ -5241,6 +5241,7 @@ static void binder_free_proc(struct binder_proc *proc)
+>  			__func__, proc->outstanding_txns);
+>  	device = container_of(proc->context, struct binder_device, context);
+>  	if (refcount_dec_and_test(&device->ref)) {
+> +		binder_remove_device(device);
+>  		kfree(proc->context->name);
+>  		kfree(device);
+>  	}
 
-On Fri, 23 May 2025 23:05:16 +0000 you wrote:
-> v2: https://lore.kernel.org/netdev/20250519023517.4062941-1-almasrymina@google.com/
-> 
-> Changelog:
-> - Collect acks and tested-bys (Thanks!)
-> - Drop the patch that removed ksft_disruptive. That seems to not have
->   any relation to behavior when test fails.
-> - Address comments.
-> 
-> [...]
+Reviewed-by: Tiffany Yang <ynaffit@google.com>
 
-Here is the summary with links:
-  - [net-next,v2,1/8] net: devmem: move list_add to net_devmem_bind_dmabuf.
-    https://git.kernel.org/netdev/net-next/c/88e47c93b3a2
-  - [net-next,v2,2/8] page_pool: fix ugly page_pool formatting
-    https://git.kernel.org/netdev/net-next/c/170ebc60b79a
-  - [net-next,v2,3/8] net: devmem: preserve sockc_err
-    https://git.kernel.org/netdev/net-next/c/85cea17d15c9
-  - [net-next,v2,4/8] net: devmem: ksft: add ipv4 support
-    https://git.kernel.org/netdev/net-next/c/12d31142e63a
-  - [net-next,v2,5/8] net: devmem: ksft: add exit_wait to make rx test pass
-    https://git.kernel.org/netdev/net-next/c/57605ae8e1b6
-  - [net-next,v2,6/8] net: devmem: ksft: add 5 tuple FS support
-    https://git.kernel.org/netdev/net-next/c/243d47a5e1e4
-  - [net-next,v2,7/8] net: devmem: ksft: upgrade rx test to send 1K data
-    https://git.kernel.org/netdev/net-next/c/baa18bc5353f
-  - [net-next,v2,8/8] net: devmem: ncdevmem: remove unused variable
-    https://git.kernel.org/netdev/net-next/c/affffcbb8726
-
-You are awesome, thank you!
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Tiffany Y. Yang
 
