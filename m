@@ -1,47 +1,48 @@
-Return-Path: <linux-kernel+bounces-666226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F11A6AC73FC
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 00:27:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2FF9AC73FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 00:28:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F46D7A7627
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 22:26:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34D039E692A
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 22:27:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5AB1224898;
-	Wed, 28 May 2025 22:26:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81F802253EB;
+	Wed, 28 May 2025 22:26:31 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BAA92222A8
-	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 22:26:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E4CE2222D1
+	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 22:26:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748471189; cv=none; b=ibJevlJw55HtPC9lsANFLTF2rLAolPng1oa2wzzxchjEhJkKcpZf5c9K3vhOa/TTnbaEJNXb3Tw/nctE+5ckg4Cg1F85IgFZsTcXi2sE4ioS0RWoFQXPwbUv6e/u3/Qcu67pEvlsElA90PIYjIxKFYY9dT73r7UBkS3B/BVwBzQ=
+	t=1748471189; cv=none; b=MsF/eYH1phcdX46aKuqWINOYfmGvvdLjK9qDkm3f3nFdRDrpOzYR3N928Ix17NqJDFFz3Mv940N/znx2NYoGBXxlevNxTzsLY05Wc9LVOEjZnXK4AFl7xv8O0eu4L8v+2ZmMMwbmJspWvXygr1R6Jpg0rSQqJSefRwlBiMi76Ks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1748471189; c=relaxed/simple;
-	bh=x2ZdQ+E55F671MXAJwMZKQca4oYCPqwh6Smyb4/yja4=;
+	bh=jZzDn7oxDj4fzCSUFFrLZKm14MUPfbJ+RUxTk8MOn/k=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=hPod/mOtuQFX3lV7vHyJxHF1IZgNrDrG3HmPcA4h0ZIaBr3ARd//sQUJWORwJ/hsbAAiAu2XJYmoDHMm8B6D+G+dvEoFHPFXyMWDv9a4yHeohQa5DixeSF7pgWjBQga2H9P8ULHIyYlaJtO65XiNZa03aVenvmp9IV4tdSA4I+k=
+	 Content-Type; b=eQ3KSBKY0jrJ7f7KP8g9k2JX7h1GtqtCUFKVhYuDJQdiaRmsc6iQaYV3h1WMIK8ko+wV03qLshvRTh44xcOy3Ma++pg9kvwxdPD3QdhjR7dZ595xkH3OAhBj+afVCPinOaOTXQmB54x5Ym0TbyyNj2yzmMOjucQ99wrgNP55P5A=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C449FC4CEEE;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBFDAC4AF0D;
 	Wed, 28 May 2025 22:26:28 +0000 (UTC)
 Received: from rostedt by gandalf with local (Exim 4.98.2)
 	(envelope-from <rostedt@goodmis.org>)
-	id 1uKPFC-0000000AozU-0HV5;
+	id 1uKPFC-0000000Aozy-0zsc;
 	Wed, 28 May 2025 18:27:30 -0400
-Message-ID: <20250528222729.919034654@goodmis.org>
+Message-ID: <20250528222730.087873560@goodmis.org>
 User-Agent: quilt/0.68
-Date: Wed, 28 May 2025 18:27:08 -0400
+Date: Wed, 28 May 2025 18:27:09 -0400
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org
 Cc: Masami Hiramatsu <mhiramat@kernel.org>,
  Mark Rutland <mark.rutland@arm.com>,
  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
  Andrew Morton <akpm@linux-foundation.org>
-Subject: [for-next][PATCH 04/10] tracing: Reset last-boot buffers when reading out all cpu buffers
+Subject: [for-next][PATCH 05/10] ring-buffer: Removed unnecessary if() goto out where out is the next
+ line
 References: <20250528222704.623477429@goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,74 +52,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 
-From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+From: Steven Rostedt <rostedt@goodmis.org>
 
-Reset the last-boot ring buffers when read() reads out all cpu
-buffers through trace_pipe/trace_pipe_raw. This prevents ftrace to
-unwind ring buffer read pointer next boot.
+In the function ring_buffer_discard_commit() there's an if statement that
+jumps to the next line:
 
-Note that this resets only when all per-cpu buffers are empty, and
-read via read(2) syscall. For example, if you read only one of the
-per-cpu trace_pipe, it does not reset it. Also, reading buffer by
-splice(2) syscall does not reset because some data in the reader
-(the last) page.
+	if (rb_try_to_discard(cpu_buffer, event))
+		goto out;
+ out:
+
+This was caused by the change that modified the way timestamps were taken
+in interrupt context, and removed the code between the if statement and
+the goto, but failed to update the conditional logic.
 
 Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Link: https://lore.kernel.org/174792929202.496143.8184644221859580999.stgit@mhiramat.tok.corp.google.com
-Suggested-by: Steven Rostedt <rostedt@goodmis.org>
-Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Link: https://lore.kernel.org/20250527155116.227f35be@gandalf.local.home
+Fixes: a389d86f7fd0 ("ring-buffer: Have nested events still record running time stamp")
+Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- kernel/trace/trace.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+ kernel/trace/ring_buffer.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 73d75cdb7e5b..ecb774cc01ab 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -6610,6 +6610,22 @@ static int tracing_wait_pipe(struct file *filp)
- 	return 1;
- }
+diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
+index e40f5c6d7908..a01fc42f2a13 100644
+--- a/kernel/trace/ring_buffer.c
++++ b/kernel/trace/ring_buffer.c
+@@ -4685,10 +4685,7 @@ void ring_buffer_discard_commit(struct trace_buffer *buffer,
+ 	RB_WARN_ON(buffer, !local_read(&cpu_buffer->committing));
  
-+static bool update_last_data_if_empty(struct trace_array *tr)
-+{
-+	if (!(tr->flags & TRACE_ARRAY_FL_LAST_BOOT))
-+		return false;
-+
-+	if (!ring_buffer_empty(tr->array_buffer.buffer))
-+		return false;
-+
-+	/*
-+	 * If the buffer contains the last boot data and all per-cpu
-+	 * buffers are empty, reset it from the kernel side.
-+	 */
-+	update_last_data(tr);
-+	return true;
-+}
-+
- /*
-  * Consumer reader.
-  */
-@@ -6641,6 +6657,9 @@ tracing_read_pipe(struct file *filp, char __user *ubuf,
- 	}
+ 	rb_decrement_entry(cpu_buffer, event);
+-	if (rb_try_to_discard(cpu_buffer, event))
+-		goto out;
+-
+- out:
++	rb_try_to_discard(cpu_buffer, event);
+ 	rb_end_commit(cpu_buffer);
  
- waitagain:
-+	if (update_last_data_if_empty(iter->tr))
-+		return 0;
-+
- 	sret = tracing_wait_pipe(filp);
- 	if (sret <= 0)
- 		return sret;
-@@ -8167,6 +8186,9 @@ tracing_buffers_read(struct file *filp, char __user *ubuf,
- 
- 	if (ret < 0) {
- 		if (trace_empty(iter) && !iter->closed) {
-+			if (update_last_data_if_empty(iter->tr))
-+				return 0;
-+
- 			if ((filp->f_flags & O_NONBLOCK))
- 				return -EAGAIN;
- 
+ 	trace_recursive_unlock(cpu_buffer);
 -- 
 2.47.2
 
