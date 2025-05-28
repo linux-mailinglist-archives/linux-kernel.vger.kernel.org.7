@@ -1,102 +1,194 @@
-Return-Path: <linux-kernel+bounces-665102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34F9CAC646D
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 10:27:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A1AAAC6481
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 10:30:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D2831886B45
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 08:25:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A73763AB93D
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 08:29:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0950C2459EA;
-	Wed, 28 May 2025 08:25:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F30D268C5D;
+	Wed, 28 May 2025 08:30:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="120hax49"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="HqzETtbx"
+Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58C871FE455;
-	Wed, 28 May 2025 08:25:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2DF9268C7F;
+	Wed, 28 May 2025 08:30:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.120
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748420734; cv=none; b=sapfSW9/tjuRcfGx4Suy5ZO/udfrSKh5whurpJ4LCpz9C14ih3paVg8vnMm+yP34ha9R8tRQFJ/Ij6JRRqDovZ9fYeV+IkRdGkesZzyulINDSvKipWoSec2LtwQ/Wc9+VrJQhAinTTf6BI+F26o8XpaYDgk7RPFp75qpCVLqdtU=
+	t=1748421006; cv=none; b=daP3He3F/l79GbRzv85c6/MVnFvfK+ps2Og4GXqeGqYE8OFUvif+pqsDP6VFMENaNMn/XpIq8ID8DGfUj5ZgFcPdXnwJXzn5AAvvq3f35/aknokrYGRK7Orm17T2Y493eGdf5jjIDmOFPTpJ5KKvAv1nPCPS/HV0YS/7otf0LQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748420734; c=relaxed/simple;
-	bh=MvFZJxUfFQsW/FlI8iMRyvLJVfgFhJUqUX3GDopno+E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XjCslrRPe5y0/oKm7+fyHCJKB6qGDcVBYhovimngXLhjDDiTbQliTsCowwveWINWr/EEuzUDBiGNjKsDqIPFqdIvyTt50+UTYlJ6S6iEGlF/rmd5WejDY5MMSPTPHqfUS+jaFH0OzdQVqqxea7atHos7FtAZPWZaXz9/4XikMyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=120hax49; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4124EC4CEED;
-	Wed, 28 May 2025 08:25:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1748420733;
-	bh=MvFZJxUfFQsW/FlI8iMRyvLJVfgFhJUqUX3GDopno+E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=120hax49fZxd5ZM0jw23OWbPlzIj1QoLQRrt6auTmlr4+IRQO+jgKyZKggvwcP4Ib
-	 ZtXpA2e33LBgrFWZzWSgBs7qnArflmda327RbMd30qiE4ffgulfxGr7WOMnhr7eykS
-	 g/xr/++ZBlvzAQre97OV+qVcHrYbMLWvemWIQ1Kc=
-Date: Wed, 28 May 2025 10:23:39 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Max Staudt <max@enpas.org>
-Cc: Jiri Slaby <jirislaby@kernel.org>, linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] tty: Register device *after* creating the cdev for a
- tty
-Message-ID: <2025052801-human-aversion-3518@gregkh>
-References: <20250526112523.23122-1-max@enpas.org>
+	s=arc-20240116; t=1748421006; c=relaxed/simple;
+	bh=/Ow1PmBI4yy/CopXyfAdNlFq6FA7vnRAq4zgFhQTxKw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=hGStCR5LNi5yNyQT4PtE7qr+XFd+cGFhiv0tt7kNUhw9sMN25MYQKa8pewlKY6onWKG8CtuXwQLLSU9iijsmgkGNH+JCnQKc0KCEdOjA0MicCMCpcwdnY4FahB3Nwb9lD9i6ZnunyOHfMXySx4v4lByzpYUL/Ch5tWgpG5/8ZUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=HqzETtbx; arc=none smtp.client-ip=185.125.188.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from 2001-b400-e281-d348-7542-b73b-b580-4415.emome-ip6.hinet.net (unknown [10.101.200.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 775C73F796;
+	Wed, 28 May 2025 08:23:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1748420640;
+	bh=AstLYq3VMdkE8US+TLkn18adQxf0vcyp/yq783YeBek=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc;
+	b=HqzETtbxp9eSvSjd4i+6yFEnSZEb1i9MEzQcHtZ7FoLQF476btywbmOYZgbqxhPHh
+	 Lxvb/WY6lVhCBQtUWs+inJsmeQ1835urs+4znbxuqWoQSl8v5Tqr5t2cZFXgwOkzvK
+	 fa30jjEkYkTqJRJteD135smOcUuFk51YVSVzZCs3+skQc7eirzxEqyHkxAwQdYyN9F
+	 pdJuM/SENumq5xo/yFmME1FTQGbvKq8qwvGc7AXDl47ssvH5tlJnVmDpG352kwNinz
+	 mkxP/ZpNxit7Pdp/9fVDHEW0iEJsnTlI7P1tlbbi3VYM8eHMxJ4aRUIaC5NbkS2ggB
+	 H87eJbr6P/Low==
+From: "Yo-Jung (Leo) Lin" <leo.lin@canonical.com>
+Date: Wed, 28 May 2025 16:23:40 +0800
+Subject: [PATCH] i2c: i801: Do not instantiate spd5118 under SPD Write
+ Disable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250526112523.23122-1-max@enpas.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250528-for-upstream-not-instantiate-spd5118-v1-1-8216e2d38918@canonical.com>
+X-B4-Tracking: v=1; b=H4sIAAvINmgC/x3NwQrCMAyA4VcZORtos7WIryIeOpdpDrYl6UQYe
+ /cVj9/l/3cwVmGD27CD8ldMSu7wlwGe75RfjLJ0AzkKLlDEtShu1Zpy+mAuDSVbS7lJaoxWl+D
+ 9Fac4EoV5nGJy0FNVeZXff3N/HMcJlOgKb3YAAAA=
+To: Jean Delvare <jdelvare@suse.com>, Andi Shyti <andi.shyti@kernel.org>, 
+ Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Guenter Roeck <linux@roeck-us.net>, 
+ "Chia-Lin Kao (AceLan)" <acelan.kao@canonical.com>, 
+ linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ "Yo-Jung Lin (Leo)" <leo.lin@canonical.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3638; i=leo.lin@canonical.com;
+ h=from:subject:message-id; bh=/Ow1PmBI4yy/CopXyfAdNlFq6FA7vnRAq4zgFhQTxKw=;
+ b=owEBbQKS/ZANAwAKAV8XsZZKKe6GAcsmYgBoNsgdiyPwpuPkoaBHvJPCxpFGouM9JGEIYo+Kx
+ dhDZaHqswyJAjMEAAEKAB0WIQQzqV4kW+yguuqHrw5fF7GWSinuhgUCaDbIHQAKCRBfF7GWSinu
+ hjv9D/9ln2uf0BMDipKtSG5gJLMIsM2aDUV2VLoqJkm2bTaI3BIX0EckM7cI/Cpw+zecR2+eo2b
+ 7JWz9I8LjrD+l/BlI1hNXR9Z32XousFTKB0QZX9N6Bt/lhwY1a1uVwuj/Yq//irnPtA2l0zGbBg
+ ubyyqSPNBGu9TML/BVFRrtWCAL6X37HqqrFhkNBck9Lpxx1husx/+VQRsujad3leL3qaDEAVMKi
+ QHrL56I6yMfVTuTTyz6Xad6Q4si8ZpLZmkU1CxWY2/5fBrgX48Gnrc95A2n5hB3BGZ8nUGBBE5l
+ DzHrFA7IE/ReqwyKZTbLcEnGg/4Xq0NGTOkw9TNbXm7/4NrQ9CyzcKvtX/f9/aVfrmIzUC0cGY0
+ 7XMtGH98dexr5gTU2zgLSdIJJgmq5xid8WFFJLpIlk7B5jwHr8AvHqCubBXYWX7X5Mibazr47gg
+ CS1Yv00UsyJfWIfIAWNpYaEJSFMCwJGD3NMrGNZQtjct1vnLqavLPIWGC4CtAaktyFKdmtgb/pq
+ BMk7Eha4H3H5Myg/Wc2/Jy34kQ625BO13BAU/Zl4f64TVL6AiJKMMg0zRgGU728K5flvEp/OWan
+ K4r9Z75wwQYH9CPxCUEfvFjrYqsn9VmZJYLlEw5JtabzY+koEBo5D8SHZQx8SeS+ehkabIjOTjb
+ CDJPnYLWbAJcXpg==
+X-Developer-Key: i=leo.lin@canonical.com; a=openpgp;
+ fpr=33A95E245BECA0BAEA87AF0E5F17B1964A29EE86
 
-On Mon, May 26, 2025 at 08:25:23PM +0900, Max Staudt wrote:
-> This change makes the tty device file available only after the tty's
-> backing character device is ready.
-> 
-> Since 6a7e6f78c235975cc14d4e141fa088afffe7062c, the class device is
-> registered before the cdev is created, and userspace may pick it up,
-> yet open() will fail because the backing cdev doesn't exist yet.
-> Userspace is racing the bottom half of tty_register_device_attr() here,
-> specifically the call to tty_cdev_add().
-> 
-> dev_set_uevent_suppress() was used to work around this, but this fails
-> on embedded systems that rely on bare devtmpfs rather than udev.
-> On such systems, the device file is created as part of device_add(),
-> and userspace can pick it up via inotify, irrespective of uevent
-> suppression.
-> 
-> So let's undo the existing patch, and create the cdev first, and only
-> afterwards register the class device in the kernel's device tree.
-> 
-> However, this restores the original race of the cdev existing before the
-> class device is registered, and an attempt to open it during this time
-> will lead to tty->dev being assigned NULL by alloc_tty_struct().
-> 
-> alloc_tty_struct() is called via tty_init_dev() when the tty is firstly
-> opened, and is entered with tty_mutex held, so let's lock the critical
-> section in tty_register_device_attr() with the same global mutex.
-> This guarantees that tty->dev can be assigned a sane value.
+If SPD Write Disable bit in the SMBus is enabled, writing data to
+addresses from 0x50 to 0x57 is forbidden. This may lead to the
+following issues for spd5118 devices:
 
-As 0-day points out, I think this adds a new locking issue :(
+  1) Writes to the sensor hwmon sysfs attributes will always result
+     in ENXIO.
 
-But it's really hard to detect this, as you are doing both a revert and
-a change in the same commit.  Can you make this as 2 patches, one that
-does the revert which would be "easy" to review, and the second one that
-does the new fix?  That way we can detect what is going on easier.
+  2) During system-wide resume, errors may occur during regcache sync,
+     resulting in the following error messages:
 
-> Fixes: 6a7e6f78c235 ("tty: close race between device register and open")
-> Signed-off-by: Max Staudt <max@enpas.org>
+     kernel: spd5118 1-0050: failed to write b = 0: -6
+     kernel: spd5118 1-0050: pm: dpm_run_callback(): spd5118_resume [spd5118] returns -6
+     kernel: spd5118 1-0050: pm: failed to resume async: error -6
 
-You also forgot to add cc: stable on this :(
+  3) nvmem won't be usable, because writing to the page selector becomes
+     impossible.
 
-thanks,
+Also, BIOS vendors may choose to set the page to a value != 0 after a board
+reset. This will make the sensor not functional unless its MR11 register
+can be changed, which is impossible due to writes being disabled.
 
-greg k-h
+To address these issues, don't instantiate it at all if the SPD Write Disable
+bit is set.
+
+Signed-off-by: Yo-Jung Lin (Leo) <leo.lin@canonical.com>
+---
+This is intended to be the fixed version of the second patch in the
+following patch series[1]:
+
+[PATCH v2 0/2] i2c: i801: don't instantiate spd5118 under SPD Write Disable
+
+The original version got reverted due to breaking i386 defconfig build.
+However the first patch in that series didn't. To avoid the first patch in
+the series being repeatedly sent and applied, this is sent as a separate
+patch. 
+
+Also not pulling Reviewed-by from Guenter because the patch differs from
+what was originally reviewed.
+
+[1] https://lore.kernel.org/all/20250430-for-upstream-i801-spd5118-no-instantiate-v2-0-2f54d91ae2c7@canonical.com/
+---
+ drivers/i2c/busses/i2c-i801.c | 28 +++++++++++++++++++++++-----
+ 1 file changed, 23 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/i2c/busses/i2c-i801.c b/drivers/i2c/busses/i2c-i801.c
+index a7f89946dad4..de17532402b9 100644
+--- a/drivers/i2c/busses/i2c-i801.c
++++ b/drivers/i2c/busses/i2c-i801.c
+@@ -1157,6 +1157,27 @@ static void dmi_check_onboard_devices(const struct dmi_header *dm, void *adap)
+ 	}
+ }
+ 
++static void __i801_register_spd(struct i801_priv *priv)
++{
++	if (priv->original_hstcfg & SMBHSTCFG_SPD_WD)
++		i2c_register_spd_write_disable(&priv->adapter);
++	else
++		i2c_register_spd_write_enable(&priv->adapter);
++}
++
++#ifdef CONFIG_I2C_I801_MUX
++static void i801_register_spd(struct i801_priv *priv)
++{
++	if (!priv->mux_pdev)
++		__i801_register_spd(priv);
++}
++#else
++static void i801_register_spd(struct i801_priv *priv)
++{
++	__i801_register_spd(priv);
++}
++#endif
++
+ /* Register optional targets */
+ static void i801_probe_optional_targets(struct i801_priv *priv)
+ {
+@@ -1177,10 +1198,7 @@ static void i801_probe_optional_targets(struct i801_priv *priv)
+ 		dmi_walk(dmi_check_onboard_devices, &priv->adapter);
+ 
+ 	/* Instantiate SPD EEPROMs unless the SMBus is multiplexed */
+-#ifdef CONFIG_I2C_I801_MUX
+-	if (!priv->mux_pdev)
+-#endif
+-		i2c_register_spd_write_enable(&priv->adapter);
++	i801_register_spd(priv);
+ }
+ #else
+ static void __init input_apanel_init(void) {}
+@@ -1283,7 +1301,7 @@ static int i801_notifier_call(struct notifier_block *nb, unsigned long action,
+ 		return NOTIFY_DONE;
+ 
+ 	/* Call i2c_register_spd for muxed child segments */
+-	i2c_register_spd_write_enable(to_i2c_adapter(dev));
++	__i801_register_spd(priv);
+ 
+ 	return NOTIFY_OK;
+ }
+
+---
+base-commit: 176e917e010cb7dcc605f11d2bc33f304292482b
+change-id: 20250526-for-upstream-not-instantiate-spd5118-463225b346a0
+
+Best regards,
+-- 
+Yo-Jung (Leo) Lin <leo.lin@canonical.com>
+
 
