@@ -1,111 +1,105 @@
-Return-Path: <linux-kernel+bounces-664732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-664737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C01CAC5FE3
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 05:13:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 461CDAC5FF3
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 05:18:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CBC307AF206
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 03:12:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 104501BA487C
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 03:18:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0DD91E1A3B;
-	Wed, 28 May 2025 03:13:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZWyu1Vbv"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DDE01DE8BF;
+	Wed, 28 May 2025 03:17:58 +0000 (UTC)
+Received: from smtpbguseast2.qq.com (smtpbguseast2.qq.com [54.204.34.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D545E84D08
-	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 03:13:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F6FC79FE;
+	Wed, 28 May 2025 03:17:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748401992; cv=none; b=nDGHO1ckjmVlmAwHMBttMJGSxszuM9WmUGebkL1Nptwd6yZ+oKjpE6PrY9WSPtiwAA92etEsp8ZJ92V5E/PoU9kwLuVzi3GH7EuQdt45kMJk+H42hlGUBskFve6SVV+VzXyzpfUJ9HMGZqtv04AjU7ym9Z1EwqUh4vcqbEUn1a8=
+	t=1748402277; cv=none; b=WC5T6xehQqCmVexw4pR7P1NgeiJOs4JjM89jhJR7Y3BAcm8NFR6jI8/eYue0ssyRpZ6OLKmgvNcLN0ZUfhUpbATXNA0g3EKVq2ghofn2tFkmUAiM9ex6K0SwlRVG7eVxaBcLWjzKJywrBKTIw1jWESh0t3g89NGeSdCmFvy0pRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748401992; c=relaxed/simple;
-	bh=zzZKAu+ekb5wfUFWFWxFj7mtfUTDEeQOhI9SgqQhXNE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nyZb7WTkzhq4PZQMxPpq8yIgJPo0K4d0SrpG6m3r1rqDnXUp5ONjMiA/AM+gmSyKiLT1OX5M85T8UbTUusTfBLbzzZtaY/jsrPOOLNy++hOzlXtnC/zXhotFqwJrhuX5M46xvc4o/D/LBg8chCIssQyYEG+yTVyPSZOfkyzhz7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZWyu1Vbv; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2348ac8e0b4so69695ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 20:13:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1748401990; x=1749006790; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zzZKAu+ekb5wfUFWFWxFj7mtfUTDEeQOhI9SgqQhXNE=;
-        b=ZWyu1Vbv2ejyjuwmvqu1s5LfjEB+ZlDCoQcWYYNoKJEIHuwynv37TA4DSBtp1UaZ0S
-         zuJRuTA+hcMV3KHX4mCcQuBv+9ATmxDFcW1KDMbqI3vgmdVEBlR3+86X/gnC/kjumIqo
-         hpUv4Z8VF64uiEztKO29w91LCXXBm7SB4I/vRih3EVRgbicfFWwMWAnptFa45ZrwtrwA
-         3Vkq3epp/y39JSoFZA72R55fuSQflQs7VGkORFX/afLDoMqhcUcxbL+A3PXGw+R8XuYt
-         ehXEjMr3F8JgaNKtCttMdDn0q/wht2A2DHeROq5FlhKDhmnDC1MRv7OnIiWcp7MKB8g9
-         uv2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748401990; x=1749006790;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zzZKAu+ekb5wfUFWFWxFj7mtfUTDEeQOhI9SgqQhXNE=;
-        b=Cxav2taHvBNo2R/CgsE/UYFEs+ktgNxgZiVtNj3wBCiouutP6XiQwXGGUvPK+PtDXU
-         BhBkJj9CyT2ZuaaJyUF8llFBMWgZZU/sn9CZ2WdB7ylYD8hroKTgHcx2pgKoIZCXhYTV
-         cfbp/tNyORuXJq84AOw3LupMpT3eJoa5HnrrK04dth/iak8QlaUBrfdkyAWwoKe4sTr4
-         knbsYK2kWbcGENtOFF1Xaz5s6/XYBDSQj570712c0o5JiX3dIBOvobJjdWFTv8O7H8xI
-         zcFV5QnvqsnHQ5DKPJJKmHmfv4SLtRgsQn55tiTvptmNSEEFkp0ylHMUTrr1jdHiBmVr
-         0Q/w==
-X-Forwarded-Encrypted: i=1; AJvYcCUb9DpDqW/057RHNPeBgAY00FVtNRbqKEIqrSbl2RPQrZnSRr6N6oecqE5K5iNTzYLI+g29bQEiwlvXAao=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3wNERW0doZ7JsD5iTkIej6meBE+S8MK+uteXm+5c3tBlPT9xj
-	mispZDlGXNSPBNUgwfjtXTjFo/ujh6lQw961GFyZw3+KHjGVbwkqvzT697Quw5AH3n/BewYNZvK
-	PWxQGJvfEvire++RU6cIrMYvLf8lFDDKrXMu8vLHl
-X-Gm-Gg: ASbGncv9Qb5Dwafl6N0sdq9oGubZQ+hbRfhF25qARZZTGHXwtCU+OC8ti/ffLIpX9X2
-	EAxO69eeoyr5AsF6Ywra+5hqAIlXSA5CRK2ajqW4L0f+jU/0/mZTI0D8MF+UdJKZS19AeYoij8S
-	8hIi34VWYWALSyidAZvVAhdFdxE9qFuH+vNK6foYO2k96N
-X-Google-Smtp-Source: AGHT+IEDUY7riFOOR08zN+pI5SwQ05vmhq98GyByeU8awQ87xrmYDNUTemcQa8sUY7rtO1VWlklZOkyX7GAf8CRHf1k=
-X-Received: by 2002:a17:902:f785:b0:22e:766f:d66e with SMTP id
- d9443c01a7336-234c5256552mr1833575ad.12.1748401989824; Tue, 27 May 2025
- 20:13:09 -0700 (PDT)
+	s=arc-20240116; t=1748402277; c=relaxed/simple;
+	bh=mzfW20sFFR6D/60o4wNJyAxellP62F05rai/LV6m27o=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IiOcFioFU5pMbhwbrjpmsklIe1OlxVUaDkhzLnJ2y5v8w75r7U4KRd7mBreSwt726zqBYa3hrvTF3XAoUphERlmpdVUH1a7PdLjuux/V71EdeD1D6qIbWAVNvhhrKrE2zOZJFT77U23aVR/1Qogj6n9COmM4Km4NEolEETP+PBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chenxiaosong.com; spf=pass smtp.mailfrom=chenxiaosong.com; arc=none smtp.client-ip=54.204.34.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chenxiaosong.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chenxiaosong.com
+X-QQ-mid: zesmtpsz6t1748402170t6248cb72
+X-QQ-Originating-IP: rpHufvYFYUJ0bTcomXzGOi8T7Xf90nx7Je9QKh+gAm8=
+Received: from localhost.localdomain ( [116.128.244.171])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Wed, 28 May 2025 11:16:08 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 13204632789230215609
+From: chenxiaosong@chenxiaosong.com
+To: sfrench@samba.org,
+	pc@manguebit.com,
+	ronniesahlberg@gmail.com,
+	sprasad@microsoft.com,
+	tom@talpey.com,
+	bharathsm@microsoft.com
+Cc: linux-cifs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	ChenXiaoSong <chenxiaosong@kylinos.cn>
+Subject: [PATCH] smb/client: use sock_create_kern() in generic_ip_connect()
+Date: Wed, 28 May 2025 11:15:31 +0800
+Message-Id: <20250528031531.171356-1-chenxiaosong@chenxiaosong.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250528022911.73453-1-byungchul@sk.com> <20250528022911.73453-4-byungchul@sk.com>
-In-Reply-To: <20250528022911.73453-4-byungchul@sk.com>
-From: Mina Almasry <almasrymina@google.com>
-Date: Tue, 27 May 2025 20:12:56 -0700
-X-Gm-Features: AX0GCFstQ8TSymZiP1u3KsDOqDNDhSVZvkeBqi3jCf2XyHkp_VooW3rcyXYh7Xo
-Message-ID: <CAHS8izO_ypBm4htYOZ6mDqn5hge5S_3DBKHHTdEW7ay86MsSZg@mail.gmail.com>
-Subject: Re: [PATCH v2 03/16] page_pool: use netmem alloc/put APIs in __page_pool_alloc_page_order()
-To: Byungchul Park <byungchul@sk.com>
-Cc: willy@infradead.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, kernel_team@skhynix.com, kuba@kernel.org, 
-	ilias.apalodimas@linaro.org, harry.yoo@oracle.com, hawk@kernel.org, 
-	akpm@linux-foundation.org, davem@davemloft.net, john.fastabend@gmail.com, 
-	andrew+netdev@lunn.ch, asml.silence@gmail.com, toke@redhat.com, 
-	tariqt@nvidia.com, edumazet@google.com, pabeni@redhat.com, saeedm@nvidia.com, 
-	leon@kernel.org, ast@kernel.org, daniel@iogearbox.net, david@redhat.com, 
-	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz, 
-	rppt@kernel.org, surenb@google.com, mhocko@suse.com, horms@kernel.org, 
-	linux-rdma@vger.kernel.org, bpf@vger.kernel.org, vishal.moola@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpsz:chenxiaosong.com:qybglogicsvrsz:qybglogicsvrsz4a-0
+X-QQ-XMAILINFO: MFdGPHhuqhNoOWNRcEyLWJrL0qUXQ3qT5D5wx9m9puYNGgcNX7WDrIde
+	tGaNwEqrTnQ0H8TwUPhIdP84AE6PDxCup4Qn+9812XVGpHJUyPhvAAoe1SDCzxNlpXmemXh
+	CdVj6a4ye8i4w4+l7Mr9VTv3ErR+LC5Vl7QhoaN0jRFdAC0rRtoxqtb3cTspGTi8ddivmGz
+	TkTBVzIlJznwcOItOwaW1QGcj34EsiKxwMh0a3I3N3BV6lw6d/JxzQE8kz/WU1gOFccFQFk
+	CVN+E8wAMb1WDXMHL5X02URyweeWvXjZhW0jw/fDT6ZaX7T9N/uwYtVdt+JHjE61m1tjFse
+	rwYQaWkvKbZ8hFzGw/Xd7NgWnvI8POe+wO6s3drekwdQ9pdlMT2Zjmm0Ud5CjBFPCtcyCmV
+	asMcbfrd9XIPLZaWM9oHn2Mnuz223oddrbnPJ46KbXBnKeSUua7sZGGqSc0BDdxe9TnKbrt
+	8UckOOfnAxl+IV2dkS388/IQPKI3kx4oMoOqG2YRjNK4MCJivA+hYmasLJqDlPXmVY+4m6c
+	ROO1M0IIsLA8PCCvrBe+iJQSl5k0+yDJERj5etgBUSmITQKiijQXsZ+Woqh4JvN4jPtxZU4
+	UftMYDh913DvsxdcQNo5zbFWT8xM4k+a+rOvjmwvPp7Is7PtZwcpprQ5pRXacmrnEiA0am5
+	FUhBr5A7PSU91Wd5Y9inIZqpSfBlsfPd7k1GsZu4KF1IYgN3l9orJ6svb4Xzj9xItV4+P9Z
+	m7ILVyyBaDZuH3UL/aJBrmRBJAL1NyIdV4x7wesVFK1EY/66DNuG7T+eWCg2lEHMspGekEf
+	N2Toet4ogmlG6LhD1RV1Q7JX8SmLYRjUGQlN5CxarGbUsyrHd/B2fs4p1m7skBl6mYE5Pr+
+	kHws3JYDW3qYrp0Dm3anK+rqQA/R7U6Ha8Z3N5CvQitPMsIS0OP+8CRN1mlnmuEA5heXg+u
+	icMqxmcP9bPcfStimvnX8ST26fe0nux16nNBtXJ5Xlo7ab3a9f7/m/mp2mQrglKm7VPc=
+X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+X-QQ-RECHKSPAM: 0
 
-On Tue, May 27, 2025 at 7:29=E2=80=AFPM Byungchul Park <byungchul@sk.com> w=
-rote:
->
-> Use netmem alloc/put APIs instead of page alloc/put APIs and make it
-> return netmem_ref instead of struct page * in
-> __page_pool_alloc_page_order().
->
-> Signed-off-by: Byungchul Park <byungchul@sk.com>
+From: ChenXiaoSong <chenxiaosong@kylinos.cn>
 
-Reviewed-by: Mina Almasry <almasrymina@google.com>
+Change __sock_create() to sock_create_kern() for explicitness.
 
---=20
-Thanks,
-Mina
+Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+---
+ fs/smb/client/connect.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/fs/smb/client/connect.c b/fs/smb/client/connect.c
+index 6bf04d9a5491..3275f2ff84cb 100644
+--- a/fs/smb/client/connect.c
++++ b/fs/smb/client/connect.c
+@@ -3350,8 +3350,7 @@ generic_ip_connect(struct TCP_Server_Info *server)
+ 		struct net *net = cifs_net_ns(server);
+ 		struct sock *sk;
+ 
+-		rc = __sock_create(net, sfamily, SOCK_STREAM,
+-				   IPPROTO_TCP, &server->ssocket, 1);
++		rc = sock_create_kern(net, sfamily, SOCK_STREAM, IPPROTO_TCP, &server->ssocket);
+ 		if (rc < 0) {
+ 			cifs_server_dbg(VFS, "Error %d creating socket\n", rc);
+ 			return rc;
+-- 
+2.34.1
+
 
