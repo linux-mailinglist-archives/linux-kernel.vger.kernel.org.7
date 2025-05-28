@@ -1,148 +1,184 @@
-Return-Path: <linux-kernel+bounces-665138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60423AC64CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 10:53:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5056AAC65FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 11:29:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDBDB4E1D16
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 08:53:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 115D14E1D0E
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 09:29:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B85632741D3;
-	Wed, 28 May 2025 08:53:22 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4558B277814;
+	Wed, 28 May 2025 09:29:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=thundersoft.com header.i=@thundersoft.com header.b="X92BVYze"
+Received: from mail-m32100.qiye.163.com (mail-m32100.qiye.163.com [220.197.32.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 458DE2741A1;
-	Wed, 28 May 2025 08:53:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F2151C3F36;
+	Wed, 28 May 2025 09:29:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748422402; cv=none; b=YLXiEXJswgvAAlFwr+vG6XIrWzGxMyBBkAeVWVOs16RS4gJJpNJFg2ONf/TKSWqyZ73C7MRCNow8wINw3uI0QpsN0PUy6gbNKrNmxTOn4v3aaB4RmkMxEURR4XgIPmmJB0lM1kwGFIBUJZUEb7TkhfHEDaj9sK76kCiBSfj0tt8=
+	t=1748424589; cv=none; b=q2DMjPpysX2ygLcp5mehR44nMh0ZUiipKpr1A2/iBL8js7OiD20T0X94bkQl9MLYKbzcTOQs+4OYtXVXu0bNzmjschAR13K56+pUIpWfK9nDj8wnKq3yF007GkYCfSamONPU385SupG41Qdy8sAeTtyiVxn8yGwSapxphNwxdBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748422402; c=relaxed/simple;
-	bh=yr+rQ5aWKC/egFb1TRG5obKOEortLDCSq545ScIw1ck=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MoZGaBpHig0fRqTEi/b5pBYgePEidtK5UjjWuX730H+WReWJ4IqQ5ltDgKT9g+tJz+HmYxgP7vKH0V2dn8F+wpWriAFieLJvI2Lx55bqINbDYxLw4gE9n95gZfhzYfuk0dXWlyeqV+yRMLPkmiiREMpG/lI9F38E3J4K1uNiJWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4b6jvV5KRDzKHMls;
-	Wed, 28 May 2025 16:53:10 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 2ED4B1A0359;
-	Wed, 28 May 2025 16:53:09 +0800 (CST)
-Received: from [10.174.176.88] (unknown [10.174.176.88])
-	by APP4 (Coremail) with SMTP id gCh0CgBXu1_yzjZoQc0JNw--.57278S3;
-	Wed, 28 May 2025 16:53:08 +0800 (CST)
-Message-ID: <f177a0e4-c2da-40b7-9d47-8968f3c2bc50@huaweicloud.com>
-Date: Wed, 28 May 2025 16:53:06 +0800
+	s=arc-20240116; t=1748424589; c=relaxed/simple;
+	bh=yWhuVxMPiOKdsI/vKCGMniZKg4uK/kBT2UHZ49fzVi4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pZA1R/9rTKaoTPWsKZng3nSD24zuVd7I2CGhUjccc6RfY7dMWv62QYTlF7or02LdH9I7hEYj23l0X3ONN3dQTkaENKoAwpKXPF0VWq3k2ySwpGg4j6fQ5yVDakUD99sKCaZDM30D7xR2fnoeL4yQkUf7T87dt8Pt9HbCp2zFmOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thundersoft.com; spf=pass smtp.mailfrom=thundersoft.com; dkim=pass (1024-bit key) header.d=thundersoft.com header.i=@thundersoft.com header.b=X92BVYze; arc=none smtp.client-ip=220.197.32.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thundersoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thundersoft.com
+Received: from localhost.localdomain (unknown [117.184.129.134])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 16b13e7e0;
+	Wed, 28 May 2025 16:54:07 +0800 (GMT+08:00)
+From: Albert Yang <yangzh0906@thundersoft.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Ge Gordon <gordon.ge@bst.ai>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Adrian Hunter <adrian.hunter@intel.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	=?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
+	Junhao Xie <bigfoot@classfun.cn>,
+	Kever Yang <kever.yang@rock-chips.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	BST Linux Kernel Upstream Group <bst-upstream@bstai.top>,
+	linux-mmc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Victor Shih <victor.shih@genesyslogic.com.tw>,
+	Shan-Chun Hung <shanchun1218@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Peter Robinson <pbrobinson@gmail.com>,
+	Ben Chuang <ben.chuang@genesyslogic.com.tw>,
+	soc@lists.linux.dev,
+	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	=?UTF-8?q?N=C3=ADcolas=20F=20=2E=20R=20=2E=20A=20=2E=20Prado?= <nfraprado@collabora.com>,
+	Taniya Das <quic_tdas@quicinc.com>,
+	Eric Biggers <ebiggers@google.com>,
+	Ross Burton <ross.burton@arm.com>,
+	Elinor Montmasson <elinor.montmasson@savoirfairelinux.com>,
+	Albert Yang <yangzh0906@thundersoft.com>
+Subject: [PATCH v1 0/9] arm64: Introduce Black Sesame Technologies C1200 SoC and CDCU1.0 board 
+Date: Wed, 28 May 2025 16:54:03 +0800
+Message-Id: <20250528085403.481055-1-yangzh0906@thundersoft.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [QUESTION] cachefiles: Recovery concerns with on-demand loading
- after unexpected power loss
-To: Gao Xiang <hsiangkao@linux.alibaba.com>,
- Zizhi Wo <wozizhi@huaweicloud.com>, netfs@lists.linux.dev,
- dhowells@redhat.com, jlayton@kernel.org, brauner@kernel.org
-Cc: jefflexu@linux.alibaba.com, zhujia.zj@bytedance.com,
- linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, libaokun1@huawei.com, yangerkun@huawei.com,
- houtao1@huawei.com, yukuai3@huawei.com
-References: <20250528080759.105178-1-wozizhi@huaweicloud.com>
- <d0e08cbf-c6e4-4ecd-bcaf-40c426279c4f@linux.alibaba.com>
-From: Zizhi Wo <wozizhi@huaweicloud.com>
-In-Reply-To: <d0e08cbf-c6e4-4ecd-bcaf-40c426279c4f@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBXu1_yzjZoQc0JNw--.57278S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7Cw1UJFWUGw18JFWkCr43GFg_yoW8uw47pF
-	WrCw1UK3ykJ3Z7KrZ7ZF4xuFyrt3s3XF45Jw1YqrWktrs8CF1IgrWaqr15KFWDurn7W3y2
-	q34jv3srAwnxAFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvE14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7
-	v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF
-	1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIx
-	AIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI
-	42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWI
-	evJa73UjIFyTuYvjfUonmRUUUUU
-X-CM-SenderInfo: pzr2x6tkl6x35dzhxuhorxvhhfrp/
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlDQ0gdVk1KGRhIGksfTUlNS1YVFAkWGhdVEwETFh
+	oSFyQUDg9ZV1kYEgtZQVlKSkxVSkNPVUpJQlVKSE9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpOTE5VSk
+	tLVUpCS0tZBg++
+X-HM-Tid: 0a971619533c09cckunm56b16e873977ff
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PxA6PQw4QzExLkg8UQ4POg8#
+	MhUaCTxVSlVKTE9DT0lJT05LS0JNVTMWGhIXVQIaFRwBE0tCS007DxMOFR8eCQgUHQ9VGBQWRVlX
+	WRILWUFZSkpMVUpDT1VKSUJVSkhPWVdZCAFZQU1LTU83Bg++
+DKIM-Signature:a=rsa-sha256;
+	b=X92BVYze+FDykM3ZBObdOjojJQdlAV/2cTwFjvMT6/Xgl+LBFpnnRmsVeWD2scpXayORmz8+50gqzdjr1gNbbReYh/8o5rT662nj8gQ6IDydF+kW+TT58ZO0myp6ezLKEn5ZS4CyzQ8goN/RWjGTyxBPofsBe9CPgz/ExxoIK60=; c=relaxed/relaxed; s=default; d=thundersoft.com; v=1;
+	bh=aq3WV+O2bYKN04nPLa/IM/y7JcSQg3FEsNEEzJZKpcs=;
+	h=date:mime-version:subject:message-id:from;
 
+Black Sesame Technologies C1200 is a high-performance Armv8 SoC designed for automotive
+and industrial applications. The CDCU1.0 (Central Domain Control Unit) board is the
+development platform built by Black Sesame Technologies. You can find more information
+about the SoC and related boards at:
+https://bst.ai
 
+Currently, to run the upstream kernel on the CDCU1.0 board, you need to use the
+bootloader provided by Black Sesame Technologies. The board supports various
+interfaces including MMC/SD card, which is implemented using the BST C1200 DWCMSHC
+SDHCI controller.
 
-在 2025/5/28 16:35, Gao Xiang 写道:
-> Hi Zizhi,
-> 
-> On 2025/5/28 16:07, Zizhi Wo wrote:
->> Currently, in on-demand loading mode, cachefiles first calls
->> cachefiles_create_tmpfile() to generate a tmpfile, and only during the 
->> exit
->> process does it call 
->> cachefiles_commit_object->cachefiles_commit_tmpfile to
->> create the actual dentry and making it visible to users.
->>
->> If the cache write is interrupted unexpectedly (e.g., by system crash or
->> power loss), during the next startup process, cachefiles_look_up_object()
->> will determine that no corresponding dentry has been generated and will
->> recreate the tmpfile and pull the complete data again!
->>
->> The current implementation mechanism appears to provide per-file 
->> atomicity.
->> For scenarios involving large image files (where significant amount of
->> cache data needs to be written), this re-pulling process after an
->> interruption seems considerable overhead?
->>
->> In previous kernel versions, cache dentry were generated during the
->> LOOK_UP_OBJECT process of the object state machine. Even if power was 
->> lost
->> midway, the next startup process could continue pulling data based on the
->> previously downloaded cache data on disk.
->>
->> What would be the recommended way to handle this situation? Or am I
->> thinking about this incorrectly? Would appreciate any feedback and 
->> guidance
->> from the community.
-> 
-> As you can see, EROFS fscache feature was marked as deprecated
-> since per-content hooks already support the same use case.
-> 
-> the EROFS fscache support will be removed after I make
-> per-content hooks work in erofs-utils, which needs some time
-> because currently I don't have enough time to work on the
-> community stuff.
-> 
-> Thanks,
-> Gao Xiang
+In this series, we add initial SoC and board support for kernel building. The series
+includes:
 
-Thanks for your reply.
+Patch 1: Add Black Sesame Technologies vendor prefix in vendor-prefixes.yaml
+- Adds "bst" vendor prefix for Black Sesame Technologies Co., Ltd.
+- Required for device tree bindings to properly identify BST hardware
 
-Indeed, the subsequent implementations have moved to using fanotify.
-Moreover, based on evaluation, this approach could indeed lead to
-performance improvements.
+Patch 2: Add device tree bindings for BST SoC platforms
+- Creates new binding file Documentation/devicetree/bindings/arm/bst.yaml
+- Defines compatible strings for BST C1200 family and C1200 CDCU1.0 board
+- Documents BST's focus on automotive-grade SoCs for ADAS applications
 
-However, in our current use case, we are still working with a kernel
-version that only supports the fscache-based approach, so this issue
-still exists for us. :(
+Patch 3: Add ARCH_BST configuration for BST silicon support
+- Adds Kconfig option for BST architecture support
+- Enables building kernel for BST platforms
 
-Thanks,
-Zizhi Wo
+Patch 4: Add device tree binding for BST DWCMSHC SDHCI controller
+- Documents the BST C1200 SDHCI controller binding
+- Required for MMC/SD card support on BST platforms
 
-> 
->>
->> Thanks,
->> Zizhi Wo
-> 
+Patch 5: Add BST C1200 SDHCI controller driver
+- Implements the MMC host controller driver for BST C1200
+- Enables SD card support on BST platforms
+
+Patch 6: Add device tree support for BST C1200 CDCU1.0 board
+- Adds device tree source files for C1200 SoC and CDCU1.0 board
+- Configures hardware components including MMC controller
+
+Patch 7: Enable BST SoC in arm64 defconfig
+- Adds ARCH_BST configuration to default arm64 config
+
+Patch 8: Enable BST C1200 DWCMSHC controller in defconfig
+- Enables MMC controller driver in default arm64 config
+
+Patch 9: Update MAINTAINERS for BST support
+- Adds maintainer information for BST ARM SoC support
+- Consolidates BST-related entries
+
+Albert Yang (9):
+  dt-bindings: vendor-prefixes: Add Black Sesame Technologies Co., Ltd.
+  dt-bindings: arm: add Black Sesame Technologies (bst) SoC
+  arm64: Kconfig: add ARCH_BST for bst silicons
+  dt-bindings: mmc: add binding for BST DWCMSHC SDHCI controller
+  mmc: sdhci: add Black Sesame Technologies BST C1200 controller driver
+  arm64: dts: bst: add support for Black Sesame Technologies C1200
+    CDCU1.0 board
+  arm64: defconfig: Enable BST SoC
+  arm64: defconfig: enable BST C1200 DWCMSHC SDHCI controller
+  MAINTAINERS: add and consolidate Black Sesame Technologies (BST) ARM
+    SoC support
+
+ .../devicetree/bindings/arm/bst.yaml          |  34 +
+ .../bindings/mmc/bst,dwcmshc-sdhci.yaml       | 115 +++
+ .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
+ MAINTAINERS                                   |  10 +
+ arch/arm64/Kconfig.platforms                  |  19 +
+ arch/arm64/boot/dts/Makefile                  |   1 +
+ arch/arm64/boot/dts/bst/Makefile              |  10 +
+ .../dts/bst/bstc1200-cdcu1.0-adas_4c2g.dts    |  44 +
+ arch/arm64/boot/dts/bst/bstc1200.dtsi         | 130 +++
+ arch/arm64/configs/defconfig                  |   3 +
+ drivers/mmc/host/Kconfig                      |  11 +
+ drivers/mmc/host/Makefile                     |   1 +
+ drivers/mmc/host/sdhci-of-bst-c1200.c         | 920 ++++++++++++++++++
+ 13 files changed, 1300 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/bst.yaml
+ create mode 100644 Documentation/devicetree/bindings/mmc/bst,dwcmshc-sdhci.yaml
+ create mode 100644 arch/arm64/boot/dts/bst/Makefile
+ create mode 100644 arch/arm64/boot/dts/bst/bstc1200-cdcu1.0-adas_4c2g.dts
+ create mode 100644 arch/arm64/boot/dts/bst/bstc1200.dtsi
+ create mode 100644 drivers/mmc/host/sdhci-of-bst-c1200.c
+
+-- 
+2.25.1
 
 
