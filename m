@@ -1,236 +1,139 @@
-Return-Path: <linux-kernel+bounces-666289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 643F4AC74B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 01:57:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D6FCAC74BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 02:00:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53EEA1894069
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 23:57:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E5044E8290
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 00:00:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D17C826868A;
-	Wed, 28 May 2025 23:56:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F8E013BC0C;
+	Thu, 29 May 2025 00:00:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gX+ZAPf2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n+Isr71s"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ABE222F775;
-	Wed, 28 May 2025 23:56:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 948F9268685;
+	Thu, 29 May 2025 00:00:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748476612; cv=none; b=nMU/boJCDAlunxY5IPZQ5oScjzag6aJcbKs/1vOIcOpdzOTT1alTPU6LyJjBYQpsXykd7UtzmiK9UAKKUuDhGi0uLxchP6vIfWsufzaXfIgbniP+3+DWz/kkJang9jPGV7GzCIcTECZHRUEfEucPjWSJGIuPB0LoryR6YVB9cVU=
+	t=1748476810; cv=none; b=rRjKWXMMbYT2b5vnCc+u+ETNa9+y5KtSrEJdMft6kpJ8y7lcxIMGqUIvXvmM6KbVi9SZg5rBfWfIDZ3L4HWc/lS0wYniAI//qB9NR+TJCIg08gjSyCnoA//A9nVW8Gs2ngfQa0063TEHP5B5piWo2oTiZ0nYiITB7AdfTWBXRMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748476612; c=relaxed/simple;
-	bh=domoQ2WEo/v1iV79MDw5+2KwD8eHeSnei6MfxgMxz20=;
+	s=arc-20240116; t=1748476810; c=relaxed/simple;
+	bh=aZqOxp92Ys+aIo+jdyqdVvFWBEXiUqE+1611Mk1Hygg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XVHP4mYuqJqf9TCYWiqmYw1dqbeAyBjVv1xkERsQrqL9JwA3CAematx+CHciJKtsgT6OQcTDK97XIXVsMrd293Tkk5AKBpRhx4QJyhN5DBqXwlmaCF2qGhjB+nHjZI/wSquBigsxDxNS2dpphUObTIbCcsQfsIDIZNXnPNc+WAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gX+ZAPf2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 976B1C4CEE3;
-	Wed, 28 May 2025 23:56:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748476611;
-	bh=domoQ2WEo/v1iV79MDw5+2KwD8eHeSnei6MfxgMxz20=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gX+ZAPf28219dyQQWDTgBMjp0WVlvu/GEkPTfZAjB4OZWW2uhjrYDVq0Hh5MUqBp7
-	 5xHg31YzsuOZn16xPl3Hn5/k6Q+/FMtIudqYj5fwjFFfMxXrZrwE9DQiQE7vre46Gv
-	 KZzzkJIhrkyZY/jHWQkCfPT8dSALsIZWJepsMVKAWf+EqWL5ksGUKLLuvPx7jUnQy9
-	 fs2SrKF2FgU14B1ehFMb2Qh10dzqfibgBARe8AWWzswq6YLbHIww8j8WtVdWD5kHxN
-	 S9Ti+XP2wvJ87RbWLURjuxDSKu9scA4FdNtSDKeS/yB9FRcWnIEilvWLeTIofL1Y7B
-	 ooAodzFNZIDKg==
-Date: Wed, 28 May 2025 16:56:48 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Athira Rajeev <atrajeev@linux.ibm.com>,
-	Kajol Jain <kjain@linux.ibm.com>, Li Huafei <lihuafei1@huawei.com>,
-	"Steinar H. Gunderson" <sesse@google.com>,
-	James Clark <james.clark@linaro.org>,
-	Stephen Brennan <stephen.s.brennan@oracle.com>,
-	Andi Kleen <ak@linux.intel.com>, Dmitry Vyukov <dvyukov@google.com>,
-	Zhongqiu Han <quic_zhonhan@quicinc.com>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	Krzysztof =?utf-8?Q?=C5=81opatowski?= <krzysztof.m.lopatowski@gmail.com>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	Zixian Cai <fzczx123@gmail.com>,
-	Steve Clevenger <scclevenger@os.amperecomputing.com>,
-	Thomas Falcon <thomas.falcon@intel.com>,
-	Martin Liska <martin.liska@hey.com>,
-	Martin =?utf-8?B?TGnFoWth?= <m.liska@foxlink.cz>,
-	Song Liu <song@kernel.org>, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 9/9] perf record: Make --buildid-mmap the default
-Message-ID: <aDeiwDeDLXaLjlVN@google.com>
-References: <20250428213409.1417584-1-irogers@google.com>
- <20250428213409.1417584-10-irogers@google.com>
- <aDd0Wqy6yw6Tu0vg@google.com>
- <CAP-5=fUMiWu5gSfBSTq+OnTRQ2E2gCw6gi7dmOxeTD-+UyYtFw@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fKl63tRHqTCIUgXHQAzsci1TTjnea0aqqHgUZgI9KfsoH2PHwa20JQ2BzYsOaVKIg/GFDhQg7vSK0BjE5LrMAiekZWD27jXQQnJ/b6osSpqpnDzKy+H2C/GK32xtpDUcyMzNUwouE4ZwXcXQEoNuDi2+cN5/XG8WWw7wnRlse78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n+Isr71s; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1748476809; x=1780012809;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=aZqOxp92Ys+aIo+jdyqdVvFWBEXiUqE+1611Mk1Hygg=;
+  b=n+Isr71sqOBEEw9qACn4/TykcsjO/9BnZuBogwJcaKaj6ThUuzPVVCGk
+   BGDNmRb+I8j0OC0nF/MEGWX8XsEJ7K/lRm4AZe6f83VLzYAD7yRwpp5XM
+   0iHqCy99ZUNISlIxEggnXj8BlVlIhoIxsGvSzS0kLyKaypEMpvgn2KDTC
+   SB5F7yGt/7PPEudP+JxGnuSLfXWd08MqmzXS6chTAoB5sthbYlEOJVm1H
+   hRyocGlik2sdTtxSoBgYnepvUk4rwy9nzopKOM1EXxmq1Vx9SVEV8CrSi
+   Q+/NFyk2d3idbOr35byc5kC3igNyPmIGmQY5ctRHb7D73Dkkiyb+vlhWw
+   w==;
+X-CSE-ConnectionGUID: JFfsWyGkQ66P9zk3wGMdoA==
+X-CSE-MsgGUID: xwqI3S1eRF63VdwR4vWcrQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11447"; a="61577736"
+X-IronPort-AV: E=Sophos;i="6.15,322,1739865600"; 
+   d="scan'208";a="61577736"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2025 17:00:08 -0700
+X-CSE-ConnectionGUID: 1z5J1C5zSuWrDEBzOv7fyQ==
+X-CSE-MsgGUID: MOGkxtCZQeeIz1BS4roItA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,322,1739865600"; 
+   d="scan'208";a="143372266"
+Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 28 May 2025 17:00:05 -0700
+Received: from kbuild by 1992f890471c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uKQgl-000WAi-0E;
+	Thu, 29 May 2025 00:00:03 +0000
+Date: Thu, 29 May 2025 07:59:25 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Yo-Jung (Leo) Lin" <leo.lin@canonical.com>,
+	Jean Delvare <jdelvare@suse.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Wolfram Sang <wsa-dev@sang-engineering.com>
+Cc: oe-kbuild-all@lists.linux.dev, Guenter Roeck <linux@roeck-us.net>,
+	"Chia-Lin Kao (AceLan)" <acelan.kao@canonical.com>,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"Yo-Jung Lin (Leo)" <leo.lin@canonical.com>
+Subject: Re: [PATCH] i2c: i801: Do not instantiate spd5118 under SPD Write
+ Disable
+Message-ID: <202505290728.VsNgBfDO-lkp@intel.com>
+References: <20250528-for-upstream-not-instantiate-spd5118-v1-1-8216e2d38918@canonical.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fUMiWu5gSfBSTq+OnTRQ2E2gCw6gi7dmOxeTD-+UyYtFw@mail.gmail.com>
+In-Reply-To: <20250528-for-upstream-not-instantiate-spd5118-v1-1-8216e2d38918@canonical.com>
 
-On Wed, May 28, 2025 at 01:47:47PM -0700, Ian Rogers wrote:
-> On Wed, May 28, 2025 at 1:38 PM Namhyung Kim <namhyung@kernel.org> wrote:
-> >
-> > On Mon, Apr 28, 2025 at 02:34:08PM -0700, Ian Rogers wrote:
-> > > Support for build IDs in mmap2 perf events has been present since
-> > > Linux v5.12:
-> > > https://lore.kernel.org/lkml/20210219194619.1780437-1-acme@kernel.org/
-> > > Build ID mmap events don't avoid the need to inject build IDs for DSO
-> > > touched by samples as the build ID cache is populated by perf
-> > > record. They can avoid some cases of symbol mis-resolution caused by
-> > > the file system changing from when a sample occurred and when the DSO
-> > > is sought. To disable build ID scanning
-> > >
-> > > Unlike the --buildid-mmap option, this doesn't disable the build ID
-> > > cache but it does disable the processing of samples looking for DSOs
-> > > to inject build IDs for. To disable the build ID cache the -B
-> > > (--no-buildid) option should be used.
-> > >
-> > > Making this option the default was raised on the list in:
-> > > https://lore.kernel.org/linux-perf-users/CAP-5=fXP7jN_QrGUcd55_QH5J-Y-FCaJ6=NaHVtyx0oyNh8_-Q@mail.gmail.com/
-> > >
-> > > Signed-off-by: Ian Rogers <irogers@google.com>
-> > > ---
-> > >  tools/perf/builtin-record.c        | 33 +++++++++++++++++++-----------
-> > >  tools/perf/util/symbol_conf.h      |  2 +-
-> > >  tools/perf/util/synthetic-events.c | 16 +++++++--------
-> > >  3 files changed, 30 insertions(+), 21 deletions(-)
-> > >
-> > > diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-> > > index ba20bf7c011d..7b64013ba8c0 100644
-> > > --- a/tools/perf/builtin-record.c
-> > > +++ b/tools/perf/builtin-record.c
-> > > @@ -169,6 +169,7 @@ struct record {
-> > >       bool                    no_buildid_cache_set;
-> > >       bool                    buildid_all;
-> > >       bool                    buildid_mmap;
-> > > +     bool                    buildid_mmap_set;
-> > >       bool                    timestamp_filename;
-> > >       bool                    timestamp_boundary;
-> > >       bool                    off_cpu;
-> > > @@ -1795,6 +1796,7 @@ record__finish_output(struct record *rec)
-> > >                       data->dir.files[i].size = lseek(data->dir.files[i].fd, 0, SEEK_CUR);
-> > >       }
-> > >
-> > > +     /* Buildid scanning disabled or build ID in kernel and synthesized map events. */
-> > >       if (!rec->no_buildid) {
-> > >               process_buildids(rec);
-> > >
-> > > @@ -2966,6 +2968,8 @@ static int perf_record_config(const char *var, const char *value, void *cb)
-> > >                       rec->no_buildid = true;
-> > >               else if (!strcmp(value, "mmap"))
-> > >                       rec->buildid_mmap = true;
-> > > +             else if (!strcmp(value, "no-mmap"))
-> > > +                     rec->buildid_mmap = false;
-> > >               else
-> > >                       return -1;
-> > >               return 0;
-> > > @@ -3349,6 +3353,7 @@ static struct record record = {
-> > >               .ctl_fd_ack          = -1,
-> > >               .synth               = PERF_SYNTH_ALL,
-> > >       },
-> > > +     .buildid_mmap = true,
-> > >  };
-> > >
-> > >  const char record_callchain_help[] = CALLCHAIN_RECORD_HELP
-> > > @@ -3514,8 +3519,8 @@ static struct option __record_options[] = {
-> > >                  "file", "vmlinux pathname"),
-> > >       OPT_BOOLEAN(0, "buildid-all", &record.buildid_all,
-> > >                   "Record build-id of all DSOs regardless of hits"),
-> > > -     OPT_BOOLEAN(0, "buildid-mmap", &record.buildid_mmap,
-> > > -                 "Record build-id in map events"),
-> > > +     OPT_BOOLEAN_SET(0, "buildid-mmap", &record.buildid_mmap, &record.buildid_mmap_set,
-> > > +                     "Legacy record build-id in map events option which is now the default. Behaves indentically to --no-buildid. Disable with --no-buildid-mmap"),
-> > >       OPT_BOOLEAN(0, "timestamp-filename", &record.timestamp_filename,
-> > >                   "append timestamp to output filename"),
-> > >       OPT_BOOLEAN(0, "timestamp-boundary", &record.timestamp_boundary,
-> > > @@ -4042,19 +4047,23 @@ int cmd_record(int argc, const char **argv)
-> > >               record.opts.record_switch_events = true;
-> > >       }
-> > >
-> > > +     if (!rec->buildid_mmap) {
-> > > +             pr_debug("Disabling build id in synthesized mmap2 events.\n");
-> > > +             symbol_conf.no_buildid_mmap2 = true;
-> > > +     } else if (rec->buildid_mmap_set) {
-> > > +             /*
-> > > +              * Explicitly passing --buildid-mmap disables buildid processing
-> > > +              * and cache generation.
-> > > +              */
-> > > +             rec->no_buildid = true;
-> > > +     }
-> > > +     if (rec->buildid_mmap && !perf_can_record_build_id()) {
-> > > +             pr_warning("Missing support for build id in kernel mmap events. Disable this warning with --no-buildid-mmap\n");
-> > > +             rec->buildid_mmap = false;
-> > > +     }
-> > >       if (rec->buildid_mmap) {
-> > > -             if (!perf_can_record_build_id()) {
-> > > -                     pr_err("Failed: no support to record build id in mmap events, update your kernel.\n");
-> > > -                     err = -EINVAL;
-> > > -                     goto out_opts;
-> > > -             }
-> > > -             pr_debug("Enabling build id in mmap2 events.\n");
-> > > -             /* Enable mmap build id synthesizing. */
-> > > -             symbol_conf.buildid_mmap2 = true;
-> > >               /* Enable perf_event_attr::build_id bit. */
-> > >               rec->opts.build_id = true;
-> > > -             /* Disable build id cache. */
-> > > -             rec->no_buildid = true;
-> > >       }
-> > >
-> > >       if (rec->opts.record_cgroup && !perf_can_record_cgroup()) {
-> > > diff --git a/tools/perf/util/symbol_conf.h b/tools/perf/util/symbol_conf.h
-> > > index cd9aa82c7d5a..7a80d2c14d9b 100644
-> > > --- a/tools/perf/util/symbol_conf.h
-> > > +++ b/tools/perf/util/symbol_conf.h
-> > > @@ -43,7 +43,7 @@ struct symbol_conf {
-> > >                       report_individual_block,
-> > >                       inline_name,
-> > >                       disable_add2line_warn,
-> > > -                     buildid_mmap2,
-> > > +                     no_buildid_mmap2,
-> > >                       guest_code,
-> > >                       lazy_load_kernel_maps,
-> > >                       keep_exited_threads,
-> > > diff --git a/tools/perf/util/synthetic-events.c b/tools/perf/util/synthetic-events.c
-> > > index 69b98023ce74..638d7dd7fa4b 100644
-> > > --- a/tools/perf/util/synthetic-events.c
-> > > +++ b/tools/perf/util/synthetic-events.c
-> > > @@ -532,7 +532,7 @@ int perf_event__synthesize_mmap_events(const struct perf_tool *tool,
-> > >               event->mmap2.pid = tgid;
-> > >               event->mmap2.tid = pid;
-> > >
-> > > -             if (symbol_conf.buildid_mmap2)
-> > > +             if (!symbol_conf.no_buildid_mmap2)
-> >
-> > I find the double negation confusing.  Can we keep it positive?
-> 
-> Agreed double negation is broadly bad. Here I changed buildid_mmap2 to
-> no_buildid_mmap2 to convey that using build ID with mmap2 events was
-> the default and needed opting out of. Getting rid of the 'no_' is of
-> course possible, it will mean all symbol_confs will need to initialize
-> the value to true (which has minor binary size implications), I also
-> think it makes the intention of the code harder to understand.
+Hi Yo-Jung,
 
-Well I think perf record is the only place to set it.  But I won't
-insist on it strongly.  Let's go with negative if you like.
+kernel test robot noticed the following build errors:
 
-Thanks,
-Namhyung
+[auto build test ERROR on 176e917e010cb7dcc605f11d2bc33f304292482b]
 
+url:    https://github.com/intel-lab-lkp/linux/commits/Yo-Jung-Leo-Lin/i2c-i801-Do-not-instantiate-spd5118-under-SPD-Write-Disable/20250528-163253
+base:   176e917e010cb7dcc605f11d2bc33f304292482b
+patch link:    https://lore.kernel.org/r/20250528-for-upstream-not-instantiate-spd5118-v1-1-8216e2d38918%40canonical.com
+patch subject: [PATCH] i2c: i801: Do not instantiate spd5118 under SPD Write Disable
+config: loongarch-randconfig-001-20250529 (https://download.01.org/0day-ci/archive/20250529/202505290728.VsNgBfDO-lkp@intel.com/config)
+compiler: loongarch64-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250529/202505290728.VsNgBfDO-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202505290728.VsNgBfDO-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/i2c/busses/i2c-i801.c: In function 'i801_notifier_call':
+>> drivers/i2c/busses/i2c-i801.c:1304:9: error: implicit declaration of function '__i801_register_spd' [-Wimplicit-function-declaration]
+    1304 |         __i801_register_spd(priv);
+         |         ^~~~~~~~~~~~~~~~~~~
+
+
+vim +/__i801_register_spd +1304 drivers/i2c/busses/i2c-i801.c
+
+  1291	
+  1292	static int i801_notifier_call(struct notifier_block *nb, unsigned long action,
+  1293				      void *data)
+  1294	{
+  1295		struct i801_priv *priv = container_of(nb, struct i801_priv, mux_notifier_block);
+  1296		struct device *dev = data;
+  1297	
+  1298		if (action != BUS_NOTIFY_ADD_DEVICE ||
+  1299		    dev->type != &i2c_adapter_type ||
+  1300		    i2c_root_adapter(dev) != &priv->adapter)
+  1301			return NOTIFY_DONE;
+  1302	
+  1303		/* Call i2c_register_spd for muxed child segments */
+> 1304		__i801_register_spd(priv);
+  1305	
+  1306		return NOTIFY_OK;
+  1307	}
+  1308	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
