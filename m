@@ -1,121 +1,157 @@
-Return-Path: <linux-kernel+bounces-665001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-664962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0D44AC6327
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 09:36:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAD79AC62AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 09:11:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADD433B25B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 07:36:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E24F1BA403A
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 07:11:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A19F244688;
-	Wed, 28 May 2025 07:36:25 +0000 (UTC)
-Received: from mailgw2.hygon.cn (mailgw.hygon.cn [110.188.70.11])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A8E1244690
-	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 07:36:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=110.188.70.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFA6B244692;
+	Wed, 28 May 2025 07:10:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dhbfL5RL"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AD4A24418F
+	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 07:10:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748417785; cv=none; b=P+r5tmLDHB1rcJr7lwQJ765KRTN6CdykDYbdIudB2ooicq/AP9vipZIYP7ASb7CB+rI+OLDppCzv8HYuEHOkHHc9L5B1dcgY12KR03KqlBeUQp4kz3VvjYTk+nPvMdH2ma/tffn5VezhoEgZm/lgE6lKV3lariotceK23TS6MCQ=
+	t=1748416251; cv=none; b=f3QgX6YAKeY/OWc6NR0EfFr3O6nmuEswbNMvir2rzDy+jABglDRX2hnE66vFP7bOQ+icuMb/AIQTwhIiQ5oagLoqnKcyySnIR4+u+vvTix0TWhjBnE/2Bbeb16qAQ40G+4wehNtSZrCoRkWzmqvCHDn46M9wtm5FHd/N2cKmDcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748417785; c=relaxed/simple;
-	bh=EjirPwbF84IP/LlWXtis12M0WD4AyVy/eAmVl1PS2lc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jsGZHgCLdPP8txx9z5aUFr/NmWLqOUPrsVHSKtJQ9JM0sYl4VGk+Wv6NyEL83leEvLJJlqRbfpyv/e0waDGyT7/V8Lz9nvGBH2lXjuJTKaVlHQi0+ZeH3upYN1vKIayew7qxFkbwbeJFwP7RhHoZkawe0709E+S7s1gZDLXdowc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hygon.cn; spf=pass smtp.mailfrom=hygon.cn; arc=none smtp.client-ip=110.188.70.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hygon.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hygon.cn
-Received: from maildlp1.hygon.cn (unknown [127.0.0.1])
-	by mailgw2.hygon.cn (Postfix) with ESMTP id 4b6gk645fJz1YQrG9;
-	Wed, 28 May 2025 15:14:54 +0800 (CST)
-Received: from maildlp1.hygon.cn (unknown [172.23.18.60])
-	by mailgw2.hygon.cn (Postfix) with ESMTP id 4b6gk56gQPz1YQrG9;
-	Wed, 28 May 2025 15:14:53 +0800 (CST)
-Received: from cncheex04.Hygon.cn (unknown [172.23.18.114])
-	by maildlp1.hygon.cn (Postfix) with ESMTPS id 2E9701036;
-	Wed, 28 May 2025 15:14:49 +0800 (CST)
-Received: from jianyong.hygon.cn (172.19.22.175) by cncheex04.Hygon.cn
- (172.23.18.114) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 28 May
- 2025 15:14:47 +0800
-From: Jianyong Wu <wujianyong@hygon.cn>
-To: <mingo@redhat.com>, <peterz@infradead.org>, <juri.lelli@redhat.com>,
-	<vincent.guittot@linaro.org>
-CC: <dietmar.eggemann@arm.com>, <rostedt@goodmis.org>, <bsegall@google.com>,
-	<mgorman@suse.de>, <vschneid@redhat.com>, <linux-kernel@vger.kernel.org>,
-	<wujianyong@hygon.cn>, <jianyong.wu@outlook.com>
-Subject: [PATCH] sched/fair: allow imbalance between LLCs under NUMA
-Date: Wed, 28 May 2025 07:09:49 +0000
-Message-ID: <20250528070949.723754-1-wujianyong@hygon.cn>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1748416251; c=relaxed/simple;
+	bh=xJQPB2jy1v7zTbPkh6FR3Feggx+J19/Zgl2VfQfYFmE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jlFlJ9EoMAqi7Kr8GyOqISBjfn5GPLNzDl0XbWJ5oEZeOav7pY7/zJBcsL4NZ7TZwIcKg9vKQqPr67Y0xll03sBaOXfVmjxvktHTshZQ4lku1Npw7X8/+KI2ayHiPyy3s3DZUii6Htep6VE4y2M73pH7SlqRBQQ8EbsSjMB6g0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dhbfL5RL; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1748416248;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ssZ9dBa9v+HNDbUH5Jeunvi9xbhwLoe63txxouNgBgo=;
+	b=dhbfL5RLeBJu/r3EwTXGdWyYny4zQux79QQHIxELhFyfNvyNL5rRX0OPFV6NB+hATY/vSg
+	gQIIwsWa8zf5kE6jTwkkTOj9Ox1kCuvawp4ay6PdaeWWSlT2jf05HmLpORZM54jX7tunRE
+	tRFzk/nMqSq5jmWwU8d+wzPZMOdHZgs=
+Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
+ [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-517-Itd9GtzDPIS95YHMzLH2Tg-1; Wed, 28 May 2025 03:10:46 -0400
+X-MC-Unique: Itd9GtzDPIS95YHMzLH2Tg-1
+X-Mimecast-MFC-AGG-ID: Itd9GtzDPIS95YHMzLH2Tg_1748416245
+Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-604fe4c3130so957244a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 00:10:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748416245; x=1749021045;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ssZ9dBa9v+HNDbUH5Jeunvi9xbhwLoe63txxouNgBgo=;
+        b=Q3KRInMd04S1nix9+R+1r9q1J7AUpzbtuqoQG8wL5spXA2pfQ4ydzr//1HxUM6bBxh
+         ghXLd2mRw+jbWOAlTG/4HY+CczMTmYV9CFNVD0iMsqtl3x5Np/hzRaRDC8TiixnCyVdJ
+         NVqh6NP64xIgQMSYtouJPQFcwD+kqFZ46OkeXFFZfMxPYHdcaKeTAA40NH1BM1aXphmT
+         M2aAGzDZv15tLWATlvEValnZ8rt26yQ0DjfeZbsTO6+ML70nhhkCfImLrPjMnH+NnTsK
+         xqnsxJdHMYB1sTecKAXQ73uKcol+lIFGGOf2pGQQT95iTRETuMJZaKU1QjyHvGy3NM0L
+         LhzA==
+X-Forwarded-Encrypted: i=1; AJvYcCXBfDAA4j+w1/jvPW86XxBT764clu3fTE/PkOEUpG85lpSfsvINbMKJgLvdBY2kD5nnhqB1llkTtkLocu4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIsJaF75M5inq+cuqAZU95a+ekVprPUJz5j+WdrY+BJSFfSAdI
+	xL0z9QLdEipW1fIAb26w0MAbEvWFxKxRVWpuRmsJKrQwzRvaAC68zKarUaPlalRgHXTubkhIvK+
+	c1QnObI7HOANpmifbxceCBRikDGDJbb71e5gZFbmvUfJWwkLJNmYNnKkrh7QBue1/zDN9dr67x3
+	K5qFhNclzmJaXGAHULfbx6gjB2rJkibei27svepboo
+X-Gm-Gg: ASbGncumRSQoHPnFEmb0gjULZeWgOYskEerclCi/IxgPtRytfVbwFlg6qxCNNnUw1jq
+	uahxR6I00nJbgbHSvd+xlJQjRNojFREdoaL8RKSwtw6QJqDJAYKcqZ+FEJw+uZrvQywKG
+X-Received: by 2002:a05:6402:26c6:b0:601:96b8:afe0 with SMTP id 4fb4d7f45d1cf-602da2fefabmr11888269a12.23.1748416245473;
+        Wed, 28 May 2025 00:10:45 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEhePeWEVZFOz+kI3JlZIyc3qnBTWbWKY31bwy6WgdYOBXQx5QKLLmHYdASVWDKNw5R6TVEFe3x2F1cl46tYTk=
+X-Received: by 2002:a05:6402:26c6:b0:601:96b8:afe0 with SMTP id
+ 4fb4d7f45d1cf-602da2fefabmr11888240a12.23.1748416245102; Wed, 28 May 2025
+ 00:10:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250528064234.12228-1-jasowang@redhat.com>
+In-Reply-To: <20250528064234.12228-1-jasowang@redhat.com>
+From: Eugenio Perez Martin <eperezma@redhat.com>
+Date: Wed, 28 May 2025 09:10:06 +0200
+X-Gm-Features: AX0GCFvrQcz0mEYQCyDO34FgjW8CGt8vHecpgrGd5CfDkSoAIVHfSNiJO934Pvs
+Message-ID: <CAJaqyWd=L75X6umxBzOd1SYfk1vTbBcPMTSmxJZQZ9kMMsbrXg@mail.gmail.com>
+Subject: Re: [PATCH V2 00/19] virtio_ring in order support
+To: Jason Wang <jasowang@redhat.com>
+Cc: mst@redhat.com, xuanzhuo@linux.alibaba.com, virtualization@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: cncheex05.Hygon.cn (172.23.18.115) To cncheex04.Hygon.cn
- (172.23.18.114)
+Content-Transfer-Encoding: quoted-printable
 
-The efficiency gains from co-locating communicating tasks within the same
-LLC are well-established. However, in multi-LLC NUMA systems, the load
-balancer unintentionally sabotages this optimization.
+On Wed, May 28, 2025 at 8:42=E2=80=AFAM Jason Wang <jasowang@redhat.com> wr=
+ote:
+>
+> Hello all:
+>
+> This sereis tries to implement the VIRTIO_F_IN_ORDER to
+> virtio_ring. This is done by introducing virtqueue ops so we can
+> implement separate helpers for different virtqueue layout/features
+> then the in-order were implemented on top.
+>
+> Tests shows 3%-5% imporvment with packed virtqueue PPS with KVM guest
+> testpmd on the host.
+>
+> Changes since V1:
+>
+> - use const global array of function pointers to avoid indirect
+>   branches to eliminate retpoline when mitigation is enabled
+> - fix used length calculation when processing used ids in a batch
+> - fix sparse warnings
+>
+> Please review.
+>
 
-Observe this pattern: On a NUMA node with 4 LLCs, the iperf3 client first
-wakes the server within its initial LLC (e.g., LLC_0). The load balancer
-subsequently migrates the client to a different LLC (e.g., LLC_1). When
-the client next wakes the server, it now targets the server’s placement
-to LLC_1 (the client’s new location). The server then migrates to LLC_1,
-but the load balancer may reallocate the client to another
-LLC (e.g., LLC_2) later. This cycle repeats, causing both tasks to
-perpetually chase each other across all four LLCs — a sustained
-cross-LLC ping-pong within the NUMA node.
+Reviewed-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
 
-Our solution: Permit controlled load imbalance between LLCs on the same
-NUMA node, prioritizing communication affinity over strict balance.
+Thanks!
 
-Impact: In a virtual machine with one socket, multiple NUMA nodes (each
-with 4 LLCs), unpatched systems suffered 3,000+ LLC migrations in 200
-seconds as tasks cycled through all four LLCs. With the patch, migrations
-stabilize at ≤10 instances, largely suppressing the NUMA-local LLC
-thrashing.
-
-Signed-off-by: Jianyong Wu <wujianyong@hygon.cn>
----
- kernel/sched/fair.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
-
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 0fb9bf995a47..749210e6316b 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -11203,6 +11203,22 @@ static inline void calculate_imbalance(struct lb_env *env, struct sd_lb_stats *s
- 		}
- #endif
- 
-+		/* Allow imbalance between LLCs within a single NUMA node */
-+		if (env->sd->child && env->sd->child->flags & SD_SHARE_LLC && env->sd->parent
-+				&& env->sd->parent->flags & SD_NUMA) {
-+			int child_weight = env->sd->child->span_weight;
-+			int llc_nr = env->sd->span_weight / child_weight;
-+			int imb_nr, min;
-+
-+			if (llc_nr > 1) {
-+				/* Let the imbalance not be greater than half of child_weight */
-+				min = child_weight >= 4 ? 2 : 1;
-+				imb_nr = max_t(int, min, child_weight >> 2);
-+				if (imb_nr >= env->imbalance)
-+					env->imbalance = 0;
-+			}
-+		}
-+
- 		/* Number of tasks to move to restore balance */
- 		env->imbalance >>= 1;
- 
--- 
-2.43.0
-
+> Thanks
+>
+> Jason Wang (19):
+>   virtio_ring: rename virtqueue_reinit_xxx to virtqueue_reset_xxx()
+>   virtio_ring: switch to use vring_virtqueue in virtqueue_poll variants
+>   virtio_ring: unify logic of virtqueue_poll() and more_used()
+>   virtio_ring: switch to use vring_virtqueue for virtqueue resize
+>     variants
+>   virtio_ring: switch to use vring_virtqueue for virtqueue_kick_prepare
+>     variants
+>   virtio_ring: switch to use vring_virtqueue for virtqueue_add variants
+>   virtio: switch to use vring_virtqueue for virtqueue_add variants
+>   virtio_ring: switch to use vring_virtqueue for enable_cb_prepare
+>     variants
+>   virtio_ring: use vring_virtqueue for enable_cb_delayed variants
+>   virtio_ring: switch to use vring_virtqueue for disable_cb variants
+>   virtio_ring: switch to use vring_virtqueue for detach_unused_buf
+>     variants
+>   virtio_ring: use u16 for last_used_idx in virtqueue_poll_split()
+>   virtio_ring: introduce virtqueue ops
+>   virtio_ring: determine descriptor flags at one time
+>   virtio_ring: factor out core logic of buffer detaching
+>   virtio_ring: factor out core logic for updating last_used_idx
+>   virtio_ring: factor out split indirect detaching logic
+>   virtio_ring: factor out split detaching logic
+>   virtio_ring: add in order support
+>
+>  drivers/virtio/virtio_ring.c | 896 ++++++++++++++++++++++++++---------
+>  1 file changed, 684 insertions(+), 212 deletions(-)
+>
+> --
+> 2.31.1
+>
+>
 
 
