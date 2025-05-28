@@ -1,88 +1,124 @@
-Return-Path: <linux-kernel+bounces-665480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04F1BAC69CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 14:52:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B7FEAC69D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 14:53:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A428C7A4264
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 12:51:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0F5BA21A70
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 12:52:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BF12284B25;
-	Wed, 28 May 2025 12:52:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 716D328643A;
+	Wed, 28 May 2025 12:52:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KIKZgbMn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qyq82CRO"
+Received: from mail-ej1-f66.google.com (mail-ej1-f66.google.com [209.85.218.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D61428541C;
-	Wed, 28 May 2025 12:52:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11CE328641B;
+	Wed, 28 May 2025 12:52:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748436727; cv=none; b=aaU6bi3PoEfDO1z8rTWMKQ6EWb9JkyyB89eymRJwcADmEeKOZs6GvhA/MpR7qcBC58yy9tRHj/3cMzaoUJG8snAmOc+q+hTDe43ZmW1qteUScrVvR8kYyA561Edo8S6yDAxbfxbwDZJuGgYcf2ttdqnqdDQMkNERMRC+9Quh/NE=
+	t=1748436744; cv=none; b=PYunkI7+QE9LglcHY1LtcsbAZfNDAJ3GI7aoNoKOisqP04PZD7SuZUIovWgvRSMnhgqt56GOzL3fZhkrPRj+7wRe7g0sp3meRrEHGCeEZ0TggOZZiTfc/dkjwz1dZ1ldn4OE1DqT2VpAKyKSQ0wvcKmHaVasMo3qQuT6o7pv/vU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748436727; c=relaxed/simple;
-	bh=Tx1soG5xi0/OQ1HgMXSwNaV5R2DfipanGqwLWjiDG/k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nOXuWOgKnxGeDwLkdjpCLD41uNxR+JoN0uLqYZMvlYbwQbQegzrEIJ4jUJh+IMB1/5PKKHpa+uWT8eaLYmA+vYydX9t0uEyw0VCcjyAYXC7fQ6xJ4Rm2leTIYHqTYGHGV03cK3dHjuGR7QxJotHqSACEONtoU8u2+96mD56cKC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KIKZgbMn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B20C1C4CEEF;
-	Wed, 28 May 2025 12:52:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748436726;
-	bh=Tx1soG5xi0/OQ1HgMXSwNaV5R2DfipanGqwLWjiDG/k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KIKZgbMnYKb8Uv9YpuRtgDyLrpcxf3WqxH0bcjyAmyP5j0Vwn9w3Fntx6TuM6FRL5
-	 /zO0qR/R+ZQODy223sQh4EHiH7xNJ2OcweKJDZK1udEcdDHJvyLhMq33eUq/YWdPVq
-	 IJ7Kl+QNOvi4oAw0Nvrgtvzyazif2lJg1UtYvfumUBxcYeq9SLrHOKi5HH/es1n4eb
-	 eCgtvZKGQTyCaYv2EwD+/bjFbyJu53Rpe6G2tJYaTcx+PvunQgHiAveBhzGvxlHZwQ
-	 AWmH8iXLM/nhowb+OaD/PwPtGyrJy8JH9VoFmynLEncQ4VNiaQiaAnFJwiRk62VHRV
-	 Zmb5qa25Ks0Mw==
-Date: Wed, 28 May 2025 07:52:05 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-Cc: dri-devel@lists.freedesktop.org, Maxime Ripard <mripard@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	David Airlie <airlied@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Simona Vetter <simona@ffwll.ch>, Conor Dooley <conor+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	biju.das.jz@bp.renesas.com, Thomas Zimmermann <tzimmermann@suse.de>,
-	Magnus Damm <magnus.damm@gmail.com>, tomm.merciai@gmail.com,
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND] dt-bindings: gpu: mali-bifrost: Add compatible
- for RZ/G3E SoC
-Message-ID: <174843671875.3661556.2233132513679539264.robh@kernel.org>
-References: <20250528073040.904033-1-tommaso.merciai.xr@bp.renesas.com>
+	s=arc-20240116; t=1748436744; c=relaxed/simple;
+	bh=rSHnMm/I4ZVMAQknHKeTSE6S/3hkTR9sAaQ2wgg/3GU=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=aZpYyNMDXSvoRNJ8G7DNn8tRPe+Dgwgv1/8xkhAyuqCSfNPsWY/Hg2D3Z5lPkVDQo/K0EQycZk16SxIf2c4mDOcOt6vSvLw8CsgEmz5sd220WyWgiwnax/SxdPAcVbZNJdl5XNDoBq6abDhzbd9jzbHzFwovCjeXanUn3HZ5FTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qyq82CRO; arc=none smtp.client-ip=209.85.218.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f66.google.com with SMTP id a640c23a62f3a-ad5740dd20eso683777466b.0;
+        Wed, 28 May 2025 05:52:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748436741; x=1749041541; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Q6gUi0f9uAatD/UfV5AR0D8k7xuPtA+o2t8ZNTCP0J4=;
+        b=Qyq82CROaBL21M2MwV+P90fTXoOJGXXa1D8VBiCp+HPSFf+gYxoZVoaMsjflyAyJmU
+         ViEdmU3pCGKnsGi9qSW4Q6AGH8zO6sZhdSDSSIoYgIQV9nYxwZUAbPnv93FO8r98qG0y
+         xTqLt8CPxWnOQwA6iOMUzCsHo37WLK5eKGT8+WjH9N44cjn01ug44+8V+24oYyITXk6X
+         Nr+XOOphLEDEhLiRCFt2moru0Amd1+1uyteZfvytHlmr1WT7LYOUBHsQ0POUGk2VSCly
+         oJsan4PFdRA4E+z+edTICDULIvU+ypjw10SOUPX0NiWqWQlDXB5ETy9oYWW0RwMC96vo
+         kSdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748436741; x=1749041541;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Q6gUi0f9uAatD/UfV5AR0D8k7xuPtA+o2t8ZNTCP0J4=;
+        b=WfsXzF826uT+7P8pVNJnS0jAzSt3BXLRSQbl3JiNKRVWYr95VvA2aJcPvlYB/PzSn5
+         eAn1xIoXrtRsOuGtgvgQrZImT21kiKt1KwNzPuQD9xxZ4TI6a+NbA+T2xc1ddSOwCW0p
+         VXfKRmSTylHlaywn+JxS8Qkust4KltTyIFB1vJMld9iPFkezsPTiSvCxlxBiYsILH98g
+         KABzCWrf9BHBH4SDNK4Hq6N/ktdNy11itkPyGv/L+eOlJlSr3j86Yn4fUuDMEdGEb1EW
+         ZAMgU+L1DdEzH/DmN6LKaUpgyHlWBVnXp4vPxL78sV4gE6bi7uFWB2A2v+EAH/+Hq/Tl
+         C4+w==
+X-Forwarded-Encrypted: i=1; AJvYcCUuqWGr9RO5R7caYCiuit7q1r8JWXo7pGXDb9PkQHs+WcQWCUiwXCONsHXga611GRs2WYfYMXoBDdP/Fbo=@vger.kernel.org, AJvYcCWXJfsD7Ayhsr43DENRGlfe1BKCsoXhDcZdFTbVoQlau+Ga7IzVfBKaGlxg+D09vAWoDXAKs29r@vger.kernel.org, AJvYcCX9eLg3KDReupqtxyaeE1Ufc9wxEPzW9U5hsGkY2/Es1fqgEpoI56G0OR33d6xw8tNQP8Kiguu1ZRlha1uxqPZ1@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRXFTGc/95UhCpis7ctIwmKGRfxQqx/xbUqOgaG6ozx336P+KO
+	k+zeOQiwADWT48jCJnq1orAcvrOzELCe5w8ItTTXQOEcSF2c6oGZFa7gX/LSUVlpPlx2mmjqZr4
+	Gbr+iotN2sD2BydLoHxbviRdYuhDnZYe2VM7B+5I=
+X-Gm-Gg: ASbGncsz1o3xzk/g6HPZZbvTBkUG+xC7hf7AysvENqOVOqxcGvSkNeBWkMt3y0q7tuU
+	z9qgvPfv/qTKBxdfVZvtnRdeV5W41db8RUSBK5zmWotVywz2RcKOJKtkZYYk9p33jvPfrWK5VDQ
+	NQMUkIIVTe1a3tsgrSQUT+iPb8fk+TGZr0BSnU2EtyaK21
+X-Google-Smtp-Source: AGHT+IH3Z8+NTchkkrhzXIRW9XhN78aZiIFMRJuj2GxLRE0a/FSnwoZZ/z81gAnvkQOnuGdnHPKq/HcUz08E8e439B8=
+X-Received: by 2002:a17:907:2da0:b0:ad8:8d3c:8a73 with SMTP id
+ a640c23a62f3a-ad88d3c8d43mr640644366b.17.1748436741125; Wed, 28 May 2025
+ 05:52:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250528073040.904033-1-tommaso.merciai.xr@bp.renesas.com>
+From: ying chen <yc1082463@gmail.com>
+Date: Wed, 28 May 2025 20:52:09 +0800
+X-Gm-Features: AX0GCFvcMRe9eaU2zLXLzQ3AXlGsNYT_X_RyAVlEYp0RSgrVDkCPnVNhzQh1ogQ
+Message-ID: <CAN2Y7hxscai7JuC0fPE8DZ3QOPzO_KsE_AMCuyeTYRQQW_mA2w@mail.gmail.com>
+Subject: [bug report, linux 6.15-rc4] A large number of connections in the
+ SYN_SENT state caused the nf_conntrack table to be full.
+To: pablo@netfilter.org, kadlec@netfilter.org, fw@strlen.de, 
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
+	netfilter-devel@vger.kernel.org, coreteam@netfilter.org, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+Hello all,
 
-On Wed, 28 May 2025 09:30:40 +0200, Tommaso Merciai wrote:
-> Add a compatible string for the Renesas RZ/G3E SoC variants that
-> include a Mali-G52 GPU. These variants share the same restrictions on
-> interrupts, clocks, and power domains as the RZ/G2L SoC, so extend
-> the existing schema validation accordingly.
-> 
-> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-> ---
->  Documentation/devicetree/bindings/gpu/arm,mali-bifrost.yaml | 2 ++
->  1 file changed, 2 insertions(+)
-> 
+I encountered an "nf_conntrack: table full" warning on Linux 6.15-rc4.
+Running cat /proc/net/nf_conntrack showed a large number of
+connections in the SYN_SENT state.
+As is well known, if we attempt to connect to a non-existent port, the
+system will respond with an RST and then delete the conntrack entry.
+However, when we frequently connect to non-existent ports, the
+conntrack entries are not deleted, eventually causing the nf_conntrack
+table to fill up.
 
-Applied, thanks!
+The problem can be reproduced using the following command:
+hping3 -S -V -p 9007 --flood xx.x.xxx.xxx
 
+~$ cat /proc/net/nf_conntrack
+ipv4     2 tcp      6 112 SYN_SENT src=xx.x.xxx.xxx dst=xx.xx.xx.xx
+sport=2642 dport=9007 src=xx.xx.xx.xx dst=xx.x.xxx.xxx sport=9007
+dport=2642 mark=0 zone=0 use=2
+ipv4     2 tcp      6 111 SYN_SENT src=xx.x.xxx.xxx dst=xx.xx.xx.xx
+sport=11510 dport=9007 src=xx.xx.xx.xx dst=xx.x.xxx.xxx sport=9007
+dport=11510 mark=0 zone=0 use=2
+ipv4     2 tcp      6 111 SYN_SENT src=xx.x.xxx.xxx dst=xx.xx.xx.xx
+sport=28611 dport=9007 src=xx.xx.xx.xx dst=xx.x.xxx.xxx sport=9007
+dport=28611 mark=0 zone=0 use=2
+ipv4     2 tcp      6 112 SYN_SENT src=xx.x.xxx.xxx dst=xx.xx.xx.xx
+sport=62849 dport=9007 src=xx.xx.xx.xx dst=xx.x.xxx.xxx sport=9007
+dport=62849 mark=0 zone=0 use=2
+ipv4     2 tcp      6 111 SYN_SENT src=xx.x.xxx.xxx dst=xx.xx.xx.xx
+sport=3410 dport=9007 src=xx.xx.xx.xx dst=xx.x.xxx.xxx sport=9007
+dport=3410 mark=0 zone=0 use=2
+ipv4     2 tcp      6 111 SYN_SENT src=xx.x.xxx.xxx dst=xx.xx.xx.xx
+sport=44185 dport=9007 [UNREPLIED] src=xx.xx.xx.xx dst=xx.x.xxx.xxx
+sport=9007 dport=44185 mark=0 zone=0 use=2
+ipv4     2 tcp      6 111 SYN_SENT src=xx.x.xxx.xxx dst=xx.xx.xx.xx
+sport=51099 dport=9007 src=xx.xx.xx.xx dst=xx.x.xxx.xxx sport=9007
+dport=51099 mark=0 zone=0 use=2
+ipv4     2 tcp      6 112 SYN_SENT src=xx.x.xxx.xxx dst=xx.xx.xx.xx
+sport=23609 dport=9007 src=xx.xx.xx.xx dst=xx.x.xxx.xxx sport=9007
+dport=23609 mark=0 zone=0 use=2
 
