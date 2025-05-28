@@ -1,239 +1,271 @@
-Return-Path: <linux-kernel+bounces-665282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A88FAC66EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 12:27:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF2FCAC66F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 12:28:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAD2B1747B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 10:27:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 750021782C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 10:28:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54841279331;
-	Wed, 28 May 2025 10:27:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BD1727A11A;
+	Wed, 28 May 2025 10:28:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="koHvMo6l"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b="QWuEu22m"
+Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11010062.outbound.protection.outlook.com [52.101.85.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1CA73398A;
-	Wed, 28 May 2025 10:27:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748428065; cv=none; b=py8vQ3GuDj1yfOQCPLGYZLvyQh7bqhSC+2XsKlO8fIBIAqxbGuM0iVMQTxocWFSFIEwaOILnexwoi6kxsl0AYLmffjvPrd8dOTqXTJgxxigSuJfyoIcva4DBC2F+tFzvYe9qKSrWgZL79+D5EQP5yCVQl3m8tQ68Boxse9/ugAQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748428065; c=relaxed/simple;
-	bh=C5cBFqMtxDyHOh5cYqHPUlKRQ4UDdHA8dzrRsVt0heI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ilwV5goDQzY/8lpY1Wrd0Y/TVIz/JhnkZ3y3mFHTe4QMJcTVWaiEBW5LgWLpG4Lx6JiGRmKXKUgwUYcXx4e++6asejlpVhOd0n5vr6C8xCoLxMlcIJu05Kc+wfhBXRQASqyS+kW99KB0UwpCmJOD4aG1dUMsb6LSOjRpunjg+u8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=koHvMo6l; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54S8eoLT003540;
-	Wed, 28 May 2025 10:27:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=0KymHl1YrZju146WA
-	uwWhH5mwRc0fQXuXhbbB8no0nY=; b=koHvMo6l4fEPv/eEwE4dWKQveDzL6tC4F
-	vSXNGYQnnfyqgLWzdFp8stGHvWsClmuQelzedmsD2se9fymYlsti/YJm1l2Sg+G7
-	ZtIz39s84fRU8kbTQYyOcuMaAGtt6R30jMmArcFV8uqxSO2V9Q+GZ/V6fW9IxnjT
-	cbHOnKKhq0WfnEKAXQ7Ayk3aCMi0qtdlFTzUUNGORyRokcHovH6oOdK4zI2vUelf
-	49awOA/TQldD813tMnEETWFfMFlTGD93iZsxCI8QGTVjuO73jZMoOu57V2kQdB3d
-	CllzG4JZyhJSNGWSmf8hYqvVFwvJ9c+anR6ywOoQFh0XKQZmyWCAg==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46wy690ffu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 28 May 2025 10:27:04 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 54SAHLp7005637;
-	Wed, 28 May 2025 10:27:04 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46wy690ffn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 28 May 2025 10:27:04 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 54S6Hlwi028915;
-	Wed, 28 May 2025 10:27:03 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 46usepy2k5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 28 May 2025 10:27:03 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 54SAQxmb55443928
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 28 May 2025 10:26:59 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5B47C20049;
-	Wed, 28 May 2025 10:26:59 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 878D120040;
-	Wed, 28 May 2025 10:26:58 +0000 (GMT)
-Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 28 May 2025 10:26:58 +0000 (GMT)
-From: Jens Remus <jremus@linux.ibm.com>
-To: rostedt@goodmis.org
-Cc: aahringo@redhat.com, acme@kernel.org, adrian.hunter@intel.com,
-        akpm@linux-foundation.org, alexander.shishkin@linux.intel.com,
-        andrii.nakryiko@gmail.com, beaub@linux.microsoft.com,
-        blakejones@google.com, broonie@kernel.org, fweimer@redhat.com,
-        indu.bhagat@oracle.com, irogers@google.com, jemarch@gnu.org,
-        jolsa@kernel.org, jordalgo@meta.com, jpoimboe@kernel.org,
-        jremus@linux.ibm.com, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, linux-toolchains@vger.kernel.org,
-        linux-trace-kernel@vger.kernel.org, luto@kernel.org,
-        mark.rutland@arm.com, mathieu.desnoyers@efficios.com,
-        mhiramat@kernel.org, mingo@kernel.org, namhyung@kernel.org,
-        peterz@infradead.org, sam@gentoo.org, wnliu@google.com, x86@kernel.org,
-        hca@linux.ibm.com
-Subject: [PATCH] fixup! unwind_user/sframe: Add support for reading .sframe contents
-Date: Wed, 28 May 2025 12:26:55 +0200
-Message-ID: <20250528102655.1455423-1-jremus@linux.ibm.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250424201823.595811743@goodmis.org>
-References: <20250424201823.595811743@goodmis.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 644973398A;
+	Wed, 28 May 2025 10:28:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.62
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748428090; cv=fail; b=iIsFlmnlJvoxBguJGFe2hSRWVrqBu2tQY1Qleazu053Gxsh2w/50WBAokJoB5U7aO3bLYu9zNRpZHw9Chh9kwZVlgFbm9NYfJ50G0IcY0Y6tV9WGxgNFQO6/AjsQBwzGa2ErGzDMqxyqge/JdoSisKIbeZQWdDLMzuSWYUzZR/U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748428090; c=relaxed/simple;
+	bh=TaBmxuT1vDj/cWheJmtriy1OWMOKY4QfDBN4Y+FrX7k=;
+	h=Message-ID:Date:From:Subject:To:Cc:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=eFBmi7+9prB4Q2ypWmw+VL883xev+ZBNGf21xryp4VEBJDpattvqDKUlYuaVDP9a58RjDec30vHjz+znrqMi9MjDFCdOw6ZPdS4mnqH7l8ZEq7NKguGR1hjj0V5QIdSVbTH0uS88A06H1DciJXheCgh94BPG3ItNNy2K46YdKtM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com; spf=pass smtp.mailfrom=altera.com; dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b=QWuEu22m; arc=fail smtp.client-ip=52.101.85.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altera.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=DH1DZzj0NwHNc6e1KYj7EWLD7Ps6FLdC3Ti9b0eXVIDVmBrcQ91mbe1IqAQ59STD7BPGfJuYNEeVHwr6zYjSC/Rur7jL9aohKp+5UbEae9mlEYVcpiHhYyMWNnpQt64bsqZai7RrgfgbiVAzw6z4ZEDh44SpoCThxqCoVZkofMpFrr9C/d62O+NOQtEqT/b+kwGTqiK5Zi/NnsTGOfnh69oH7d7OIBZNkzsColtFGQWvOCj0v9L3i0hyMlayPZyo65utND4sy4EJ2fxqQJGzxtvhx7m5MpEaqZViUZhk9XDdxFbYzlONcfQpokjECgukvoMyOeOANp+XsYCVAEHs0Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ssWFnHgHyycAuwzhntW4yMXjlJoPHlESVcjLoMb9S3g=;
+ b=JdYYu0TaKiU4TvbTDPqUJupiCnlLJe3jk1XIO7i8cYBJqjdrn5aFc0mqya3cPNGtiFA0ANCRnlKpDPcwF2FTXSpx352cM2fHcRUgZXhUq/dxp79d5BvkMf/m+MNDROajJP21xx5kl1NB82McIJAV7nzD+2IAItA50QPH82QNrv5RkEwZV5b+4vNW8VTgJ0mrtpV2vNs2vmAze9wYeG37nc0YhdT+4oVxwHUk1QjTQy1dh/FKX3/RWl9DTHcnjUgC5Qb9aoDX2qvI+sU5CVz6Of59wVzmZLkqJEzZ9SJlAMNCyngx7eHnL7Hz1d9kHfcJs8Jt5AOPt3aetgvfvLfb9Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=altera.com; dmarc=pass action=none header.from=altera.com;
+ dkim=pass header.d=altera.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=altera.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ssWFnHgHyycAuwzhntW4yMXjlJoPHlESVcjLoMb9S3g=;
+ b=QWuEu22mOmO9DVSXrYlijQ59BiN7ib/Z9OqYJ5Qd1jJXsP95uQPZYfWA9VUqQPlN1X8Co2mjDBMAwjX6xQL9jpbfGfr/g6/F1xXtISpVJEcZ8v/3fVadxQNT8D6/xf6ZOg39H78B5kjG4JU3J53jQ1Nqfix8eO8wq0MLVe5PE5q8lo2Z/tEodp3QEBgHzi1ptG/mPX5n7nc5Q5NYASosDNS71t3YBPg1YAwwr1mpk2OjAXfVETfSxeUmXmuHT0hEsgFfSJMUVVvr8g0Jqbd/exMlzheQGvo/zQP4FsAuaFUdi/QXqnR1Kcnph/uLo5/v3ZnsKZVZDmEDH9Af0109Mw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=altera.com;
+Received: from BN9PR03MB6201.namprd03.prod.outlook.com (2603:10b6:408:11e::20)
+ by DM4PR03MB6176.namprd03.prod.outlook.com (2603:10b6:5:39c::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.26; Wed, 28 May
+ 2025 10:28:05 +0000
+Received: from BN9PR03MB6201.namprd03.prod.outlook.com
+ ([fe80::6b16:5fd0:112:ab8e]) by BN9PR03MB6201.namprd03.prod.outlook.com
+ ([fe80::6b16:5fd0:112:ab8e%5]) with mapi id 15.20.8769.021; Wed, 28 May 2025
+ 10:28:05 +0000
+Message-ID: <5d055750-787e-44e8-a498-47258c7ffe70@altera.com>
+Date: Wed, 28 May 2025 15:57:58 +0530
+User-Agent: Mozilla Thunderbird
+From: Mahesh Rao <mahesh.rao@altera.com>
+Subject: Re: [PATCH v3 1/4] firmware: stratix10-svc: Add mutex lock and unlock
+ in stratix10 memory allocation/free
+To: Krzysztof Kozlowski <krzk@kernel.org>, Dinh Nguyen <dinguyen@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Matthew Gerlach <matthew.gerlach@altera.com>,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20250526-sip_svc_upstream-v3-0-6a08a4502de3@altera.com>
+ <20250526-sip_svc_upstream-v3-1-6a08a4502de3@altera.com>
+ <c9c08142-752a-4ce5-a723-9f50486dddb6@kernel.org>
+Content-Language: en-US
+In-Reply-To: <c9c08142-752a-4ce5-a723-9f50486dddb6@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MA0PR01CA0078.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a01:ad::20) To BN9PR03MB6201.namprd03.prod.outlook.com
+ (2603:10b6:408:11e::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=UP3dHDfy c=1 sm=1 tr=0 ts=6836e4f8 cx=c_pps a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17 a=dt9VzEwgFbYA:10 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=CCpqsmhAAAAA:8 a=u0hKKabxG1pr0n04s-QA:9 a=x3xD2gU-9FUA:10
- a=ul9cdbp4aOFLsgKbc677:22
-X-Proofpoint-GUID: AVHS09y03cNbPT7bymJ0m0UlsulVvs2F
-X-Proofpoint-ORIG-GUID: RzZ7FAImJogcA7vgndjTTNRu5cvmUmDK
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI4MDA4NyBTYWx0ZWRfX0tBCRHsHk3YI d4jmrUFtOj9UGpGNwgVHwiY+i8TcUWvRr+cOEfeQIeW0BHyrS7hGpcfkewI8NJ74hgb57E4aOIk s4k+1I0/4om/rmX9oqITunsyszOz5n19NxFD+OCnDMqzxKowOxLrhzIPX60FNuQH6UK+5Z1pPY2
- 8LgRtMnMf2PK0eBkBjUgYPX4qzMsoPjj3PSn21XNdQ3jSSJ4+0HWYUCmAc9cK/F2pJSywILi+HK /bpvZxH0WylO5rzDrAFADD+7YCyAbI+dSOUk3WIDzZPEQzN1cJTCH913I6MpjaH4jipY54T9u8M 1yyw9imN7aAvh53Hlr0cq8RamO6zgZsyGmqiQR8Ts/oH1P9Kbd+KV3vfABAbYFZ7nno8WOtbWzp
- 3cO7Zbw7cR6dmi5/NHg609cZfMS0/R8HJfX0pNsENl3UJYEZFRRIo1aQidkgkUIZvlZwOWzY
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-28_05,2025-05-27_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- lowpriorityscore=0 suspectscore=0 malwarescore=0 impostorscore=0
- mlxlogscore=999 clxscore=1015 priorityscore=1501 bulkscore=0 phishscore=0
- spamscore=0 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505160000
- definitions=main-2505280087
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN9PR03MB6201:EE_|DM4PR03MB6176:EE_
+X-MS-Office365-Filtering-Correlation-Id: a07f2206-2930-4476-0f22-08dd9dd2552b
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?d3BLRlhCYVBxOEtaazJieEh4K2tSakdYc2N3OUthMklpSVJhSURwNGV6N1l2?=
+ =?utf-8?B?NlR2QzNVRVBIWmdIanY1aTRjY1M5Y0xVVEkvalhIR0N6Rkw1ZDRvYzFpOGpR?=
+ =?utf-8?B?d21ycC9SUVpmTXNRMXcvbUxhcDBFWVo3aFhpMGpRM2FwR3cwMmtDZUplb1VS?=
+ =?utf-8?B?SFBSeFVxTnJXVTVyelR6dFZuRDBweXZ4SldhdVdEaVo0b3NqZWN2MUxFVzUr?=
+ =?utf-8?B?b296MEx2SURlYll1d1FtUUFpZEdRQnRaek5yeWtDRVBJU3lxSzR4TWUwdWYy?=
+ =?utf-8?B?ajVDQjhQU1dpb0lwMW5VZUhCb005SStsd0RYNTgzVmdxbU1hYjJYeGYvUGQ2?=
+ =?utf-8?B?ZC9PeUJqbTh5YU9peVR3Tnk5cnowRnMrNXBuSzMvbVppaDFNT1Y1ak8wOHdH?=
+ =?utf-8?B?dmxMWVM2a0x4bGFlM3pKMURYZjR1VEJhMmtuVDl2Y01PdzYzdVIzN3duVkd0?=
+ =?utf-8?B?WStKYXdKQS9mRlZVbFJFelZIMHB1RW9YQW9TNEM4Z0ZFcWpkTFAzaHlzKzI5?=
+ =?utf-8?B?a0FUODZiS0c1OVc3T2I1NU1nbmFEdjJJTHBMWXBMY0tCc0prQ004MVQ3eFpt?=
+ =?utf-8?B?MmpPNWVTVDBCakJVWlc5VURMWTJ6T1pHNUVsditKRjBTZTZoUEx5dVBYU3dL?=
+ =?utf-8?B?NVZ2RFE4TkdCbTVWZjFvUkJBeFZOQWlZNVpaMXhPNG5nOFNwam9JNEFlMVlL?=
+ =?utf-8?B?Q1h6cTk4L3c2dVh2dEQrRmk2bEFSTUFKelBDcWdXVHdoYytVUG9kSUJML1BW?=
+ =?utf-8?B?WXhyVDJnQ21TOEsrSTJsajJ2bVByYjVWSEZOZDQ0VWlCKzIxMjlmNlRBMlBY?=
+ =?utf-8?B?Q2JmKythaUZLVGdqMzA2QTgxRThMZTZDK2pncFc4SHZ1TU1ZMEF1NnJ3elBZ?=
+ =?utf-8?B?TXFxV1FQWG9LZFM2YVI5NldPYVNYczFTYm53M2JlLzJrOWQyRWg5OXFJOEIx?=
+ =?utf-8?B?VU1hayt3aFY5eHd5Zy9tT2crOUVZS3YzN1ZDUW1adUpNc21EMUh3OC9ySFRo?=
+ =?utf-8?B?QUZ5VyswWUtTM256em1PaG9FQkVrRzFaTDhJaEhqbk9NWUZ0VTBSd01WaVE4?=
+ =?utf-8?B?c1dOZEs2UWhqeVpINkFvaWxvQ3Z5RXBkSnd2MXNwUmpRTWhLbEJnZ3BrOGw5?=
+ =?utf-8?B?aE1wRFIzVEpGV09saUpTVzRlOHJPMWpDVTJRRlYvMTBSaFZ2WjFpazhmT0lJ?=
+ =?utf-8?B?MHV5NnRXdkV0VVk3YzgxYzNDV3RYUDAzMmorQ3RFN3lobWFWWjltaDRvRFVM?=
+ =?utf-8?B?dFgzUEtkR1prVlJ4d3U4NzRvZjlOS3JONVFma2Q4Qjl6MGRvSHlwajJETHVF?=
+ =?utf-8?B?cm53Y0M1UGxDdG1Qb1p2eXF4cnNLV0RQS2FRcDVjQjhaQ0xUS2hzTlF3Qmp2?=
+ =?utf-8?B?VXFHRXg0d0RCYjA5Z0JzV1ZzYnBZYTR5SXlWLzM3dHlHT0hkNUh3NERwU3pF?=
+ =?utf-8?B?WXBjWnFuZDNjQ3NDbG8zQjRaVUFCa1loV3phcDRjTGZxdjBTYXZKaTZPdGMz?=
+ =?utf-8?B?L3p1S1JHSFJmZVFpcnVNTnNkWVc2SSt6SitRc0ppS0hkSzg5emhzUEppU1Y3?=
+ =?utf-8?B?RFl3clJzRHVEQVppd3N0MDlsWWtuTGhSUi82VHNQUzB0bElQa2U0V0VhcE5D?=
+ =?utf-8?B?ZTBWT203NC9aeEhCdStjZ1BudFF0YWdiZnIrYk5McUZYVGx5anltRzVkbk1k?=
+ =?utf-8?B?cnBNdXZkL0F5em1vNUp5dWdSdnRUdHJla1NxcERjK1hnc041TFFpVVI2YlJO?=
+ =?utf-8?B?QjRtdWNtVUU0TTZ5R2FoT2N4YXhvNFBQUHRlUHpFQXZHNE55QkNHTHQ5L0F1?=
+ =?utf-8?B?Y1lBbmRlSE9CWlhsM0xBeVkxZlRDcWJVdFBBVXRDUDhxUllLQ0o0NzVTbnZl?=
+ =?utf-8?B?aUtXVm5kQitkZUM4eGxBQWZOL0l3RTdLZDBhcjdsUXVORGFUbTRGMnFsa2k5?=
+ =?utf-8?Q?Ugao42Wf1ek=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR03MB6201.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?SkdaQUQ3aTRQcnBVTmRqaThDSEJPdWZIWGFYNkRJbFRLandkOUQ2emJxOTlO?=
+ =?utf-8?B?OUF1Z2JXdjRjQzVFajRTS2NjbkhIa1VQU0tFR2EwSUtkVjl0VlBDTC9lVDVC?=
+ =?utf-8?B?RmY0Ykc5aDU1aFUrOVlmQXQxZ0FBT3dwajhJVVM1TWRKZmg0eXdUNU9Tem4z?=
+ =?utf-8?B?U1BpbXd6UHJwOHVQcHpobjZkY1dhTDFTY0xpamc1UmFoMHFVaml5a0hFa1Uv?=
+ =?utf-8?B?K2hRdGRsOTVmM0tMTWttWUxCSW94bE55SVV6czlGcnlIN0FXTHNWc3U2YTFm?=
+ =?utf-8?B?ZFBoUWNXZ0RKVzBXWjlhU3F1LzdMUlZWR3RMNzB4THE4NGo2eW5xcTJrRU9l?=
+ =?utf-8?B?YjNlS2psZnVCTEFRb0RoRzhCUFBiOEF5ZVZRUndLNnMrOHA4OUhvUUgzQnNV?=
+ =?utf-8?B?WkIwa3lseGNCbi9LcDhCaFl3bldqRm1mUDYzbVJkWkR4aDJ3aFZFUytvaVhJ?=
+ =?utf-8?B?UVdiN2ZvRUJtWFVDbVpwcVFmYjJhbGdkdFM4c2hNeVo5cG1MR1BVbklDVnZ6?=
+ =?utf-8?B?RkVHYmVDTWp5MjhGVTRrVjRZNGpDTWlQTzRWN2hZamJ6MG82aTJ4TW9KY1Ar?=
+ =?utf-8?B?WHQyQnBaemhSdzVVSEtyNHd4K0dTTWdjUTBscFpZUG1EMEFhbDFQbUI2RSt5?=
+ =?utf-8?B?ZjVsWXFqOU5lMktwVGNNRjFmV3E4S1ZtbEF1NmJJV0ttdGF4RmhMNE55R05j?=
+ =?utf-8?B?UTNtMjBMbm1ZZVFVUmZRN2ZkQ0JZVGppMzR0VjU2Slp1UHVVK1kvQjduKzQ3?=
+ =?utf-8?B?MHUrOXZwVmZiVG10M0pSclI4a1N6QUU4OEYyOEE0WVNwOHdnZnlkcG9mdEN1?=
+ =?utf-8?B?Q0R6dFhLa1hNRDJOQmM1M2Z0cnJOOG4yWlY1U1JhU1RhbTVsQ1o3a0VoUFJB?=
+ =?utf-8?B?ZEd2aUxvMjYvUUU0Y0xRT2F2TXpHSi9rTEJJV29vS0ZsdHRHczcyT3QrVEkw?=
+ =?utf-8?B?MkNEVzFEcXlwNmMvM3NzY3VQYjA5c3kvaVBYWk1kL2VUMXlqT2RDcjZzOVNV?=
+ =?utf-8?B?S0YxWk5NejAxRkhoSlcxdVBKSWpHcFFYdVk1cEpxVXU4M1NYaEl3QTlTbHRJ?=
+ =?utf-8?B?YmRlZFlac01NTGNHQlFjdEVsQ2NiR1lwdGxXT0VYcTlwZXcrWGlIM1dJWnNU?=
+ =?utf-8?B?V3BDaFVQQnNZK1l4dlpveEFIVjFKYjBXRjE3Z0labUU4UDVXZktjYUFQWkdk?=
+ =?utf-8?B?dEtpN0loSEtDSmxkdzB3LzB1RmxhT1J6azNycWFpUXh5NktWN1lFeDFxb1d0?=
+ =?utf-8?B?bk1GaGlhakU0ZnZBL25iVWpsSnV3QWpOWkllT0NSVFlHS2VDV01zYmpDVlho?=
+ =?utf-8?B?YkJJeFViNVNhSjdqM3NRdHN0SldKWlVaYTRHOTJwMk5LS3JsaFNlZnJEQS9j?=
+ =?utf-8?B?c2p3U1Q4UzIzeHdxYWRPTUFycythMFpvMXY3TFRVcUIvTzF5OWVrTkI0Rjgw?=
+ =?utf-8?B?aVRXZ0MvWW1PN0lZTTV6dC8xYXYyZUgxOHlKUGZKZzNiTUNCVW9FbkV4WE1C?=
+ =?utf-8?B?RnYreW5CWkhTcU1sRWk4YitTUlpkTk81NCtRNzRCZWcrckg3TU5vd3RVUGx1?=
+ =?utf-8?B?SU1QRndwS1FQbkFCOHU2OVJzQktocE1lK3lEVmh3SHBmRXNRRmhKMmlYZ3JE?=
+ =?utf-8?B?UFlQRTdwYmZqNFRpUExZQ0dEazFJelVoQnZGUDZTTjBUS0hUZ2x0SHNZRTJ6?=
+ =?utf-8?B?K1RSOG9HUEdxRXNuc3VqVlNWR2Rhb3pQYWtvakh2bnpvQmt6aThPYmh0MXZa?=
+ =?utf-8?B?cUZIakROdk9qRTBGNUZLSGJVTjRLRXlQUjFBSWRBK1grNkY0SGNZL3ZWVUpG?=
+ =?utf-8?B?WVQ5RHF3N0ZQWXFKdEN0WmJmUkE1cFFwbWI3UWZ4aWlVS3Fvd3JtMEQ1Qkpr?=
+ =?utf-8?B?dXRoTVhVN0RnRFROcXZOanZrWVFteGVVVXpDd04vckxjaXdSNFJyakdmMU13?=
+ =?utf-8?B?c2NibmdGV3BnY1Y0ZE9RUE13N052OE5wQUpkaXVhYTFjaWFFOEFQb3I1Ymo2?=
+ =?utf-8?B?b0xiOHowK09XVHlTMDk0TnpsSXN1SjBkbkVvN2RsQllVZFJyWjl0dnNQTCtp?=
+ =?utf-8?B?dndraEN4dE51N0lsREdBTHhiS2dOK3REMkRjamxYb1JuMVpTaXIvU1d1bjds?=
+ =?utf-8?Q?JKmTzX+4/Mj/HJYireoJe6ZmC?=
+X-OriginatorOrg: altera.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a07f2206-2930-4476-0f22-08dd9dd2552b
+X-MS-Exchange-CrossTenant-AuthSource: BN9PR03MB6201.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 May 2025 10:28:05.7802
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: fbd72e03-d4a5-4110-adce-614d51f2077a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: epcnCe3H4SURqm3Gom/uV+ZJDEbwbYigLjL38A/dQAE89zVMAHIKCRxBqpMOLZKiVliDfvAJqAuwDRaIp8Q2jw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR03MB6176
 
----
+Hi Krzysztof,
+	Thanks for reviewing the code.
 
-Notes (jremus):
-    Link: https://lore.kernel.org/all/b35ca3a3-8de5-4d32-8d30-d4e562f6b0de@linux.ibm.com/
-    
-    The struct sframe_fre field ip_off must be u32, as the SFrame FRE start
-    address (sfre_start_address) is unsigned 8-bit, 16-bit, or 32-bit:
-    https://sourceware.org/binutils/docs/sframe-spec.html#SFrame-Frame-Row-Entries
-    
-    When searching for a FRE of a FDE for an IP, the IP offset from function
-    start address (ip_off = ip - (sec->sframe_start + fde->start_addr)) is
-    always positive, as the search for a FDE for the same IP returned a
-    FDE with:  sec->sframe_start + fde->start_addr <= ip
-    This enables comparison against the unsigned FDE ip_off.
-    
-    This fixup includes a proposed fix from Josh (with minor modification
-    due to duplicate macro names) to correctly perform sign extension when
-    reading (un-)signed SFrame FDE/FRE fields:
-    https://lore.kernel.org/all/20250207210614.nks6bxad4jhdulwg@jpoimboe/
+On 27-05-2025 02:19 pm, Krzysztof Kozlowski wrote:
+> On 26/05/2025 08:25, Mahesh Rao via B4 Relay wrote:
+>> From: Mahesh Rao <mahesh.rao@altera.com>
+>>
+>> This commit adds a mutex lock to stratix10_svc_allocate_memory
+>> and stratix10_svc_free_memory functions to ensure
+>> thread safety when allocating and freeing memory.
+>> This prevents potential race conditions and ensures
+>> synchronization.
+>>
+>> Signed-off-by: Mahesh Rao <mahesh.rao@altera.com>
+>> Reviewed-by: Matthew Gerlach <matthew.gerlach@altera.com>
+>> ---
+>>   drivers/firmware/stratix10-svc.c | 29 ++++++++++++++++++++++-------
+>>   1 file changed, 22 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/drivers/firmware/stratix10-svc.c b/drivers/firmware/stratix10-svc.c
+>> index e3f990d888d71829f0ab22b8a59aa7af0316bea0..3d42d4b18b7299d0a9e5110159e06253dfeddf88 100644
+>> --- a/drivers/firmware/stratix10-svc.c
+>> +++ b/drivers/firmware/stratix10-svc.c
+>> @@ -1,6 +1,7 @@
+>>   // SPDX-License-Identifier: GPL-2.0
+>>   /*
+>>    * Copyright (C) 2017-2018, Intel Corporation
+>> + * Copyright (C) 2025, Altera Corporation
+>>    */
+>>   
+>>   #include <linux/completion.h>
+>> @@ -171,6 +172,7 @@ struct stratix10_svc_chan {
+>>   
+>>   static LIST_HEAD(svc_ctrl);
+>>   static LIST_HEAD(svc_data_mem);
+>> +static DEFINE_MUTEX(svc_mem_lock);
+> 
+> You need to document what you are protecting here.
 
- kernel/unwind/sframe.c | 38 +++++++++++++++++++++++++++-----------
- 1 file changed, 27 insertions(+), 11 deletions(-)
+Will make the change
 
-diff --git a/kernel/unwind/sframe.c b/kernel/unwind/sframe.c
-index 3f7cc9bc27eb..8804ac59edfa 100644
---- a/kernel/unwind/sframe.c
-+++ b/kernel/unwind/sframe.c
-@@ -19,7 +19,7 @@
- 
- struct sframe_fre {
- 	unsigned int	size;
--	s32		ip_off;
-+	u32		ip_off;
- 	s32		cfa_off;
- 	s32		ra_off;
- 	s32		fp_off;
-@@ -129,33 +129,48 @@ static __always_inline int __find_fde(struct sframe_section *sec,
- 	return -EFAULT;
- }
- 
--#define __UNSAFE_GET_USER_INC(to, from, type, label)			\
-+#define ____UNSAFE_GET_USER_INC(to, from, type, label)			\
- ({									\
- 	type __to;							\
- 	unsafe_get_user(__to, (type __user *)from, label);		\
- 	from += sizeof(__to);						\
--	to = (typeof(to))__to;							\
-+	to = __to;							\
- })
- 
--#define UNSAFE_GET_USER_INC(to, from, size, label)			\
-+#define __UNSAFE_GET_USER_INC(to, from, size, label, u_or_s)		\
- ({									\
- 	switch (size) {							\
- 	case 1:								\
--		__UNSAFE_GET_USER_INC(to, from, u8, label);		\
-+		____UNSAFE_GET_USER_INC(to, from, u_or_s##8, label);	\
- 		break;							\
- 	case 2:								\
--		__UNSAFE_GET_USER_INC(to, from, u16, label);		\
-+		____UNSAFE_GET_USER_INC(to, from, u_or_s##16, label);	\
- 		break;							\
- 	case 4:								\
--		__UNSAFE_GET_USER_INC(to, from, u32, label);		\
-+		____UNSAFE_GET_USER_INC(to, from, u_or_s##32, label);	\
- 		break;							\
- 	default:							\
--		dbg_sec_uaccess("%d: bad UNSAFE_GET_USER_INC size %u\n",\
-+		dbg_sec_uaccess("%d: bad unsafe_get_user() size %u\n",	\
- 				__LINE__, size);			\
- 		return -EFAULT;						\
- 	}								\
- })
- 
-+#define UNSAFE_GET_USER_UNSIGNED_INC(to, from, size, label)		\
-+	__UNSAFE_GET_USER_INC(to, from, size, label, u)
-+
-+#define UNSAFE_GET_USER_SIGNED_INC(to, from, size, label)		\
-+	__UNSAFE_GET_USER_INC(to, from, size, label, s)
-+
-+#define UNSAFE_GET_USER_INC(to, from, size, label)				\
-+	_Generic(to,								\
-+		 u8:	UNSAFE_GET_USER_UNSIGNED_INC(to, from, size, label),	\
-+		 u16:	UNSAFE_GET_USER_UNSIGNED_INC(to, from, size, label),	\
-+		 u32:	UNSAFE_GET_USER_UNSIGNED_INC(to, from, size, label),	\
-+		 s8:	UNSAFE_GET_USER_SIGNED_INC(to, from, size, label),	\
-+		 s16:	UNSAFE_GET_USER_SIGNED_INC(to, from, size, label),	\
-+		 s32:	UNSAFE_GET_USER_SIGNED_INC(to, from, size, label))
-+
- static __always_inline int __read_fre(struct sframe_section *sec,
- 				      struct sframe_fde *fde,
- 				      unsigned long fre_addr,
-@@ -164,7 +179,8 @@ static __always_inline int __read_fre(struct sframe_section *sec,
- 	unsigned char fde_type = SFRAME_FUNC_FDE_TYPE(fde->info);
- 	unsigned char fre_type = SFRAME_FUNC_FRE_TYPE(fde->info);
- 	unsigned char offset_count, offset_size;
--	s32 ip_off, cfa_off, ra_off, fp_off;
-+	u32 ip_off;
-+	s32 cfa_off, ra_off, fp_off;
- 	unsigned long cur = fre_addr;
- 	unsigned char addr_size;
- 	u8 info;
-@@ -248,9 +264,9 @@ static __always_inline int __find_fre(struct sframe_section *sec,
- 	unsigned long fre_addr;
- 	bool which = false;
- 	unsigned int i;
--	s32 ip_off;
-+	u32 ip_off;
- 
--	ip_off = (s32)(ip - sec->sframe_start) - fde->start_addr;
-+	ip_off = ip - (sec->sframe_start + fde->start_addr);
- 
- 	if (fde_type == SFRAME_FDE_TYPE_PCMASK)
- 		ip_off %= fde->rep_size;
--- 
-2.45.2
+> 
+>>   
+>>   /**
+>>    * svc_pa_to_va() - translate physical address to virtual address
+>> @@ -182,14 +184,17 @@ static LIST_HEAD(svc_data_mem);
+>>   static void *svc_pa_to_va(unsigned long addr)
+>>   {
+>>   	struct stratix10_svc_data_mem *pmem;
+>> +	void *ret = NULL;
+>>   
+>>   	pr_debug("claim back P-addr=0x%016x\n", (unsigned int)addr);
+>> +	mutex_lock(&svc_mem_lock);
+>>   	list_for_each_entry(pmem, &svc_data_mem, node)
+>> -		if (pmem->paddr == addr)
+>> -			return pmem->vaddr;
+>> -
+>> -	/* physical address is not found */
+>> -	return NULL;
+>> +		if (pmem->paddr == addr) {
+>> +			/* physical address is found */
+>> +			ret = pmem->vaddr;
+>> +		}
+>> +	mutex_unlock(&svc_mem_lock);
+>> +	return ret;
+>>   }
+>>   
+>>   /**
+>> @@ -990,13 +995,16 @@ int stratix10_svc_send(struct stratix10_svc_chan *chan, void *msg)
+>>   			p_data->flag = ct->flags;
+>>   		}
+>>   	} else {
+>> +		mutex_lock(&svc_mem_lock);
+>>   		list_for_each_entry(p_mem, &svc_data_mem, node)
+>>   			if (p_mem->vaddr == p_msg->payload) {
+>>   				p_data->paddr = p_mem->paddr;
+>>   				p_data->size = p_msg->payload_length;
+>>   				break;
+>>   			}
+>> +		mutex_unlock(&svc_mem_lock);
+>>   		if (p_msg->payload_output) {
+>> +			mutex_lock(&svc_mem_lock);
+> 
+> Especially that this looks odd.
+
+Shall I combine the both lock invocation together?
+> 
+> 
+> 
+> Best regards,
+> Krzysztof
 
 
