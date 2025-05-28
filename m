@@ -1,106 +1,99 @@
-Return-Path: <linux-kernel+bounces-665162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F585AC650F
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 11:01:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0408AC64E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 10:56:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC3EDA20B43
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 09:00:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE9401BA3705
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 08:56:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99B102749D1;
-	Wed, 28 May 2025 09:00:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 842232749FA;
+	Wed, 28 May 2025 08:55:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=thundersoft.com header.i=@thundersoft.com header.b="RWZpBAh1"
-Received: from mail-m1973179.qiye.163.com (mail-m1973179.qiye.163.com [220.197.31.79])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cLiEK62g";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pQBcE1Ln"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D03D3204863;
-	Wed, 28 May 2025 09:00:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E9992741D5
+	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 08:55:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748422821; cv=none; b=Sp1pmOpo+a1FKaixXjACOByU3JKiiZK2Z/25AFrOfQP9OJafacykcoyHTP357i5pfGWMKwfR9WrkC1yiHw7DrerqSDzp8H6kb04ctpXXmf1h6xEcLtgSQb+aXxD7ScChe2JMpLIfJG1+GhzZadppIgxd2VNlBv6HB5LFRbuMijA=
+	t=1748422528; cv=none; b=RDoPwz7WJ5+/+IxU7ZBmBO8LEbNufS7T/RdP7kvnZnhYq2OMKQcCVEFsZsuAliL8daEqTNeE0bIYf1zqIjgFah83E55oQTQMi2hlkaT05mXpq4JvBYeVh6O+D35OMsNOuJe02F1Ayc/Wod7Qob5t7dztlo3wGMVGOVwLX/0BNbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748422821; c=relaxed/simple;
-	bh=X/MD3G4gZsOjeMD3V8yoxH5wnIUw1/82HNss6FAyon8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MBhnO6QLhDaFTEPK2m1Kg2mYrgBkHLQTpRH0wv3sx1Y6VXN+6f72NF7loDhFvhsBIdKB7nW64iTKKZxOi5yRhDQAkLLxEYP4qmHeUPVTNPZqKHZttG8cCuVG+A34VLua5fxOmV5jV+2EplzL/1eqMHkKQpHkSpTbGpQOLC+RyY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thundersoft.com; spf=pass smtp.mailfrom=thundersoft.com; dkim=pass (1024-bit key) header.d=thundersoft.com header.i=@thundersoft.com header.b=RWZpBAh1; arc=none smtp.client-ip=220.197.31.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thundersoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thundersoft.com
-Received: from localhost.localdomain (unknown [117.184.129.134])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 16b15a660;
-	Wed, 28 May 2025 16:55:06 +0800 (GMT+08:00)
-From: Albert Yang <yangzh0906@thundersoft.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Will Deacon <will@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	linux-kernel@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	BST Linux Kernel Upstream Group <bst-upstream@bstai.top>,
-	Ge Gordon <gordon.ge@bst.ai>,
-	Albert Yang <yangzh0906@thundersoft.com>
-Subject: [PATCH v1 9/9] MAINTAINERS: add and consolidate Black Sesame Technologies (BST) ARM SoC support
-Date: Wed, 28 May 2025 16:55:05 +0800
-Message-Id: <20250528085505.481528-1-yangzh0906@thundersoft.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1748422528; c=relaxed/simple;
+	bh=HtELk90LA0L/aE4oz8Fm3MhpHiBMfmMzvrlqm3b+VVw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HAqPwRzNzgeycc+g6ZlBJ75qt65hU4eiIu5n+cybN5mFrSesTp2x24Skn4Ee+ztUgmLNX4rQq0xfwcqpbXqu5UolaamKNUqHdoxmYc44129aGY5Yi/aOw7IMG3P4p6f6O0RRavUl9OEdKDSuCgUavbZb6DuDmrdf+klddnnhEyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cLiEK62g; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pQBcE1Ln; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1748422525;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=vesH8GfaJYBN1Vl/67VRjZcPODCDdnqQI3NREZ27DTc=;
+	b=cLiEK62gpqattIJ5OH5DMo2/9+RciI5gs1hm/XE9tqJEbY25nHJReTzjI2eUhlpSHFfaKk
+	a61aJP2KAaZDAQLFkyve4ph23JCYvxtQ9H0xKepdkbrEA5ua9KDNoPB93001EsK6vIJUTw
+	kv4n0uBEtvXtUlmSB6C+57ufgiHf1nicsSfSRUsNn8yWyjk1ZEYBjj/+UMzyRcQJG+Knee
+	1QpfKoStaA1fqaUc9qBV0iI3mASP37Qhb9ZDoz01VweWWagD8e0Q3a6jlcEDMgCHfhqTIR
+	vHdzJjZgfwOUcQm8QmbFCJHxWV7yAgafwH7+vY7zgWLNhTNFBF7HOB0raeDulQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1748422525;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=vesH8GfaJYBN1Vl/67VRjZcPODCDdnqQI3NREZ27DTc=;
+	b=pQBcE1LnmLJJ/ZpO7EBqymrxGfINzsIhIzG7FevdSzyER9hA0573CrlTgpNWrS6StLmoTU
+	Ik9DN18St7FUbDAQ==
+To: linux-kernel@vger.kernel.org
+Cc: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Waiman Long <longman@redhat.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: [PATCH 0/3] futex: Fixups for the testsuite and FUTEX_NUMA
+Date: Wed, 28 May 2025 10:55:18 +0200
+Message-ID: <20250528085521.1938355-1-bigeasy@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkaSx9MVkhISEwaShlCGEMfGFYVFAkWGhdVEwETFh
-	oSFyQUDg9ZV1kYEgtZQVlKSkxVSkNPVUpJQlVKSE9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0hVSk
-	tLVUpCS0tZBg++
-X-HM-Tid: 0a97161a390a09cckunm659b5889397f80
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6KxQ6Tio6SDErUUhJUQEaA006
-	Nj8KFA1VSlVKTE9DT0lJTktDS09OVTMWGhIXVQIaFRwBE0tCS007DxMOFR8eCQgUHQ9VGBQWRVlX
-	WRILWUFZSkpMVUpDT1VKSUJVSkhPWVdZCAFZQUlLSEI3Bg++
-DKIM-Signature:a=rsa-sha256;
-	b=RWZpBAh1fGfLMJpoYTt6PtSpELwzLBsjUcJeeW26Ih/RUg/yH4ehq4TnoAsYRitc5c2pwtsACcrssFpQDe1P6JjpFK6JcgyvWSSDNrdzZ7ue1tQJzWf+b1N6gzXArVEBYnbHYKs9grlGA1e6qfghLZ2cOWYvogBYbNke81y/O8k=; c=relaxed/relaxed; s=default; d=thundersoft.com; v=1;
-	bh=SCVFvE+0aCV815j3Mi3WbiNx63axYW383HrgjWVn7Rg=;
-	h=date:mime-version:subject:message-id:from;
+Content-Transfer-Encoding: quoted-printable
 
-Add and consolidate the MAINTAINERS entry for Black Sesame Technologies
-ARM SoC support. This entry covers device tree bindings, drivers, and board
-files for BST SoCs, including MMC, and platform support.
+This is a collection of random fixes related to the recent private
+futex/ NUMA addition:
 
-Signed-off-by: Ge Gordon <gordon.ge@bst.ai>
-Signed-off-by: Albert Yang <yangzh0906@thundersoft.com>
----
- MAINTAINERS | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ - Some of the test fail on ARM due bad command line parsing.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index d48dd6726fe6..05df62c40021 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2373,6 +2373,16 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/arm/blaize.yaml
- F:	arch/arm64/boot/dts/blaize/
- 
-+ARM/BST SOC SUPPORT
-+M:	Ge Gordon <gordon.ge@bst.ai>
-+R:	BST Linux Kernel Upstream Group <bst-upstream@bstai.top>
-+L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/arm/bst.yaml
-+F:	Documentation/devicetree/bindings/mmc/bst,dwcmshc-sdhci.yaml
-+F:	arch/arm64/boot/dts/bst/
-+F:	drivers/mmc/host/sdhci-of-bst-c1200.c
-+
- ARM/CALXEDA HIGHBANK ARCHITECTURE
- M:	Andre Przywara <andre.przywara@arm.com>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
--- 
-2.25.1
+ - The MPOL test fails because the home node was never set.
+
+ - The syzbot used a negative NODE number which was not tested for.
+
+Peter Zijlstra (1):
+  futex: Handle invalid node numbers supplied by user
+
+Sebastian Andrzej Siewior (2):
+  selftests/futex: getopt() requires int as return value.
+  selftests/futex: Set the home_node in futex_numa_mpol
+
+ kernel/futex/core.c                                    |  4 ++--
+ .../selftests/futex/functional/futex_numa_mpol.c       | 10 +++++++---
+ .../selftests/futex/functional/futex_priv_hash.c       |  2 +-
+ 3 files changed, 10 insertions(+), 6 deletions(-)
+
+--=20
+2.49.0
 
 
