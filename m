@@ -1,166 +1,145 @@
-Return-Path: <linux-kernel+bounces-665623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E109BAC6BA7
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 16:28:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 836BFAC6BB9
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 16:33:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4ECBFA21CF0
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 14:28:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D92C0189EC6A
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 14:33:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85B75288C1E;
-	Wed, 28 May 2025 14:28:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63F0E28935F;
+	Wed, 28 May 2025 14:32:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J7V4HdhH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Pd0Ki3/F"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E03E282C60;
-	Wed, 28 May 2025 14:28:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01868289345
+	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 14:32:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748442498; cv=none; b=erLvqAYGRyTxHbErO5UZLPdl1RkFTrka0h0TR1Ywl0pZ0rHk3yq8S7H1CAuGKfhGRFvGyyP76ix+S+VK/lHJVLkMc2nEco3C8pk/Bh0Lqe2oceHWjZ4qsN3wcb/kLpIB2nlkzhLI+lQHIVnYLdSch7nqT6muZQyWLgaBq/nRhbM=
+	t=1748442766; cv=none; b=d5ZSvs1w5eDImzYf6CSv/QiBOnAweXGrtqwjcWMAdW65pSW/ELGJp2JVjYSLgQkOKtJUgOzDm/Izw6/98T3H6JXz0bfrf7sr/dvzUJlxRCRNtsq2Q0qqZt24KVsxjWay9qJZch4NYtMCRP9ZmDcu4OSXLlx4VU7iQN4+ctb1Bnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748442498; c=relaxed/simple;
-	bh=Pj2dKcYrs8qtXXImT3zhxemqWnlmlXzSCeJP/bi3GqI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=flufaKY5SSO0N1It0+X0w7oK0ebvAZsYjw9uqDyavxG7bN896NzbqOXPDOAAP7+P3YUn7m6askAzbRnSmJJV4mkGRFG+M3hd2715VMyeWL7/Y8QaeOPFRy7DEN1rxZKmkGh+nafbvDJ5EmB8qH6L3mWZQyy4I5YKMBRY1rA3ed8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J7V4HdhH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 589E9C4CEE3;
-	Wed, 28 May 2025 14:28:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748442497;
-	bh=Pj2dKcYrs8qtXXImT3zhxemqWnlmlXzSCeJP/bi3GqI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=J7V4HdhH4LP0/xhdufXH7ukurAfnZkeM28NOSeG7dnwmm7xGN2Q21KwDYd99fZser
-	 ENBiRECT9v5o6UwShPCdLRJs5hb76XQNPWD2f/FtHeNJ16IQ1P1atj4YicGXgqoJn1
-	 Qd2um5zkwTUZJ2j0jGLZXafqR8nLyKbFR3akyuxesS0b0jKtOD4xUph+xmh7+49kee
-	 b927Nhc/iraXGDSm+YLrubDnVPbh8ckd6J+rDLrEABHeq1f/+nNRsVK6PeHmm6jOV6
-	 1a5v0NhCdVWXwv5mJEnlDyFrPrmCiExJ30hu90lAAlQ9yyNdZtG+Q+Zw+BxBaQHGoV
-	 bk/5c/9YQyLKA==
-Date: Wed, 28 May 2025 16:28:09 +0200
-From: Lorenzo Pieralisi <lpieralisi@kernel.org>
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: Marc Zyngier <maz@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Sascha Bischoff <sascha.bischoff@arm.com>,
-	Timothy Hayes <timothy.hayes@arm.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 18/26] arm64: smp: Support non-SGIs for IPIs
-Message-ID: <aDcdeWuwCzZ4pA9y@lpieralisi>
-References: <20250513-gicv5-host-v4-0-b36e9b15a6c3@kernel.org>
- <20250513-gicv5-host-v4-18-b36e9b15a6c3@kernel.org>
- <20250528131744.00001544@huawei.com>
+	s=arc-20240116; t=1748442766; c=relaxed/simple;
+	bh=JBYwdCdTyvYoQAXWxDyaQxN2QX3e1Xl53i4v/JIvq8g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kLvbUOKgX6S6YEjLeJzfgdcl0H8Ltx2gN3D2lYFPlUz+c01S7mJwBoBr+N/+eCx5z+uZ7dUz07fGVHkpawK0nTGiHFq2StNDpyq81PY2bQ45C79YGI/fo+Wwj9qupMDPmxIg0DznGnI1OaoQmk8+Yg8PNUFHcz6apx9fZ+AffS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Pd0Ki3/F; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1748442763;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=eBwB1N+lCFgkoewCyl34COuFv/09dqI6TaRz6nP+SHg=;
+	b=Pd0Ki3/FUZK7Ti95N3fpyNAWALh4VmLS7S6lfmLXGgT5wdBN2YbkEL7vN/K0pTefr912Q/
+	fiTp2o2gL0+85LLf3PV8BZfXRO49l1UH0AdcHQuCZfAi0+XqcinaWdaJk9UA7IpkOq98In
+	cV1N+tkGwIgykM59YHnNkiCL34LwL48=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-68-H7OXcgnFOLqjTVayGDFiGA-1; Wed,
+ 28 May 2025 10:32:42 -0400
+X-MC-Unique: H7OXcgnFOLqjTVayGDFiGA-1
+X-Mimecast-MFC-AGG-ID: H7OXcgnFOLqjTVayGDFiGA_1748442761
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 275351955DAD;
+	Wed, 28 May 2025 14:32:36 +0000 (UTC)
+Received: from fedora.redhat.com (unknown [10.45.225.94])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C93EC19560AA;
+	Wed, 28 May 2025 14:32:33 +0000 (UTC)
+From: Tomas Glozar <tglozar@redhat.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-trace-kernel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	John Kacur <jkacur@redhat.com>,
+	Luis Goncalves <lgoncalv@redhat.com>,
+	Tomas Glozar <tglozar@redhat.com>
+Subject: [RFC PATCH 0/2] rtla/timerlat: Implement flexible actions on latency threshold overflow
+Date: Wed, 28 May 2025 16:28:56 +0200
+Message-ID: <20250528142858.185017-1-tglozar@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250528131744.00001544@huawei.com>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Wed, May 28, 2025 at 01:17:44PM +0100, Jonathan Cameron wrote:
-> On Tue, 13 May 2025 19:48:11 +0200
-> Lorenzo Pieralisi <lpieralisi@kernel.org> wrote:
-> 
-> > From: Marc Zyngier <maz@kernel.org>
-> > 
-> > The arm64 arch has relied so far on GIC architectural software
-> > generated interrupt (SGIs) to handle IPIs. Those are per-cpu
-> > software generated interrupts.
-> > 
-> > arm64 architecture code that allocates the IPIs virtual IRQs and
-> > IRQ descriptors was written accordingly.
-> > 
-> > On GICv5 systems, IPIs are implemented using LPIs that are not
-> > per-cpu interrupts - they are just normal routable IRQs.
-> > 
-> > Add arch code to set-up IPIs on systems where they are handled
-> > using normal routable IRQs.
-> > 
-> > For those systems, force the IRQ affinity (and make it immutable)
-> > to the cpu a given IRQ was assigned to.
-> > 
-> > Signed-off-by: Marc Zyngier <maz@kernel.org>
-> > [timothy.hayes@arm.com: fixed ipi/irq conversion, irq flags]
-> > Signed-off-by: Timothy Hayes <timothy.hayes@arm.com>
-> > [lpieralisi: changed affinity set-up, log]
-> > Signed-off-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
-> > Cc: Will Deacon <will@kernel.org>
-> > Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Hi Lorenzo,
-> 
-> A few trivial comments inline.
-> 
-> > +
-> > +static int ipi_to_irq(int ipi, int cpu)
-> 
-> Maybe this naming needs a breadcrumb to indicate this only
-> applies only to lpi case as it's directly computed in the old ppi code?
-> A comment might do the job.
+rtla-timerlat defines the -i and -T options to set a threshold for
+latency, stopping tracing if a sample above the threshold is
+encountered. After tracing is stopped, one of two optional actions can
+be enabled: saving trace output and auto-analysis. Auto-analysis is
+enabled by default, unless --aa-only is supplied, while trace output has
+to be explicitly set with -t/--trace-output.
 
-Maybe rename it to ipi_to_irq_percpu() (similar to what we did for
-set_smp_ipi_range()) and then
+This is an RFC of a feature extending this to a potentionally arbitrary
+action. It adds a new option, -A/--action-on-overflow, that takes
+the action to be performed and optionally, arguments to that action. For
+example:
 
-static int ipi_to_irq(int ipi)
-{
-	ipi_to_irq_percpu(ipi, 0);
-}
+$ rtla timerlat hist -T 10 -A command,exec=date
 
-and use ipi_to_irq() in ppi code ?
+will print the date after stopping tracing. The argument also supports
+trace output, via -A trace (equivalent to -t), and can be specified
+multiple times. See the patch log for more information on the actions
+implemented in the RFC.
 
-Likely overkill, not a big deal anyway.
+The feature was inspired by a case where collecting perf data on rtla
+latency overflow was required, which can be done by sending a signal
+to the perf process. In general, the feature is aiming to allow
+integration with external tooling.
 
-> > +{
-> > +	return ipi_irq_base + (cpu * nr_ipi) + ipi;
-> > +}
-> > +
-> > +static int irq_to_ipi(int irq)
-> > +{
-> > +	return (irq - ipi_irq_base) % nr_ipi;
-> > +}
-> 
-> 
-> > +static void ipi_setup_lpi(int ipi, int ncpus)
-> > +{
-> > +	for (int cpu = 0; cpu < ncpus; cpu++) {
-> > +		int err, irq;
-> > +
-> > +		irq = ipi_to_irq(ipi, cpu);
-> > +
-> > +		err = irq_force_affinity(irq, cpumask_of(cpu));
-> > +
-> Trivial local consistency thing but maybe no blank line here or...
-> > +		WARN(err, "Could not force affinity IRQ %d, err=%d\n", irq, err);
-> > +
-> > +		err = request_irq(irq, ipi_handler, IRQF_NO_AUTOEN, "IPI",
-> > +				  &irq_stat);
-> > +
-> here to match the style in ipi_setup_ppi()
+The RFC contains two patches. The first one clearly distinguishes
+between rtla-timerlat tracing modes with regards to collecting data:
+BPF-only mode, tracefs-only mode, and mixed mode. It is not a hard
+prerequisite of the other patch, but is expected to be useful in
+the implementation of the next version of the patchset. The second one
+contains the actions feature itself.
 
-Done.
+Missing functionality in this RFC expected to be in the final version:
+- Allowing the tracing to continue after the action. This is expected
+to be implemented via either explicitly stopping tracing with "-A stop"
+if needed (and not stopping if any other action is specified), or vice
+versa by explicitly continuing with "-A continue". The latter might be
+better for more meaningful backwards compatibility.
 
-Thanks,
-Lorenzo
+An unresolved question is whether to stop tracing or not during
+the execution of the actions, if the measurement is to continue.
+- Specifying a trace output file, like -t does, e.g. "-A trace,file=a.txt".
+- Converting auto-analysis into an action of this kind.
+- Multiple actions of same kind in one run, e.g.:
+"-A signal,pid=2,num=2 -A signal,pid=3,num=2"
+- Properly handling errors when adding actions.
+- Providing the latency to the exec action command via an environmental
+variable.
+- Plus there are a few minor checkpatch issues.
 
-> > +		WARN(err, "Could not request IRQ %d, err=%d\n", irq, err);
-> > +
-> > +		irq_set_status_flags(irq, (IRQ_HIDDEN | IRQ_NO_BALANCING_MASK));
-> > +
-> > +		get_ipi_desc(cpu, ipi) = irq_to_desc(irq);
-> > +	}
-> > +}
-> 
+Suggestions (e.g. with respect to your own use cases) are most welcome.
+
+Tomas Glozar (2):
+  rtla/timerlat: Introduce enum timerlat_tracing_mode
+  rtla/timerlat: Add action on threshold
+
+ tools/tracing/rtla/src/Build           |   1 +
+ tools/tracing/rtla/src/actions.c       | 155 +++++++++++++++++++++++++
+ tools/tracing/rtla/src/actions.h       |  33 ++++++
+ tools/tracing/rtla/src/timerlat.c      |  66 +++++++++--
+ tools/tracing/rtla/src/timerlat.h      |  22 +++-
+ tools/tracing/rtla/src/timerlat_hist.c |  83 ++++++++-----
+ tools/tracing/rtla/src/timerlat_top.c  |  89 ++++++++------
+ 7 files changed, 375 insertions(+), 74 deletions(-)
+ create mode 100644 tools/tracing/rtla/src/actions.c
+ create mode 100644 tools/tracing/rtla/src/actions.h
+
+-- 
+2.49.0
+
 
