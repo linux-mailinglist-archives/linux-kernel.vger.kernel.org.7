@@ -1,152 +1,156 @@
-Return-Path: <linux-kernel+bounces-664860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-664863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4700AC6181
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 07:59:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ADBCAC618B
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 08:04:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A5FA3A9325
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 05:59:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF69117C0FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 06:04:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F4C220E6ED;
-	Wed, 28 May 2025 05:59:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S1tV9d5S"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82B9284A35;
-	Wed, 28 May 2025 05:59:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C075210F65;
+	Wed, 28 May 2025 06:04:30 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BED81C7009;
+	Wed, 28 May 2025 06:04:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748411953; cv=none; b=EhGVhPSDxdQJYMqtxyHsR5FG4h1nD21ic74ApXGyrogl1WdvQljy7lR7J7LxpVX3S2l2di+hnd4zJa2QhmfNoTs2S8nSESI2pXBZQ7GaS676e8lVKh5tLq5vmTl04MElnjPxEFBuFOD5tcZK2ZUlU6f71vSiZYs0xmYLHrjJnYQ=
+	t=1748412270; cv=none; b=Ru4F60pztkGCWHZ9ls07E5yaKmARuW3ScK/KX+Y5hBFAduFDsaytrQTtsthc0HMvnK5uatTLygXABHzb0smUfWzBbYm8kCpWehLDLlUD3PJRb9dDAWauxznJc7j5NW1JkjRjcmqGGWPnVyl+O5QgXRE35qvp3MJ12QDYeZu6xOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748411953; c=relaxed/simple;
-	bh=UTvNIVWWhnhGQ65MdDP5oOsZnXPxBKSF/A15KmFo3Uk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZA02qKU2oGK0ZAFK7PKDfcnhXCHE0Q8fXgMtR7/WZQDrQ/yz1uaPDvzKSMhpqT6N8SuIvqTLGKD28esEOGeO1eGicADIZDsmbQ963bk8bYAasLhmx057RCUr1V7iUQvc0HyOCa07Bg/mcFNXRuU6qYTA80OrdXPOxwsuhi1TMXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S1tV9d5S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44EC1C4CEE7;
-	Wed, 28 May 2025 05:59:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748411953;
-	bh=UTvNIVWWhnhGQ65MdDP5oOsZnXPxBKSF/A15KmFo3Uk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=S1tV9d5SKxXHN6owAkHT5cjDhewtybgTGpD/nB+1zsItUgDmYnfOK5RmFoS1+xIz+
-	 /GCcgJEOly29rFWfNX9koEVZlh4mKhaPk5FBap5aBSj5P7rpQS+iGMwXWaNcVyJI5b
-	 Rj9bIqoV6n1AcJ4q+OeGb3IZUV0eXX2bO0fy/0Ivp2SAViX68H2rjp7PsbO7JEtduR
-	 0R75NKg+qQ41w8CMm6jv9Pz6rQ7AvIlEgZ5TSlSEuQ/OhSTEsiidswMepYgXh78jCm
-	 WzqhBw7KZUhZ5vYxB4foht1DpHTenpLP+UZbs1HBZPtsNIXjpOGgmkIgaw8Vqx9dh9
-	 xcOe6zEJKX9Pg==
-Message-ID: <f41763a9-0371-4a1d-aa3b-0aadf54c0655@kernel.org>
-Date: Wed, 28 May 2025 07:59:07 +0200
+	s=arc-20240116; t=1748412270; c=relaxed/simple;
+	bh=7IvHI2yD3Ow1/HEpiyk6jSpf6fV/MSVK/eSw5hHlsV8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tu5rLpbb6/Df44Ey6GtEkDpWTKEoO1Wz9VqBQiH5AfYqEP7tlmbneibcEno24L3Hi6uF/HtQpWgMVWlqwQfTr9I4n3y+8dCjEThDg6r7isItNz4rSbLeAhMj1Nh7z7et/IOK/kYR7PgfSzJ5W/GEHDuWtCgr+X2NfFC87zsQp2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-681ff7000002311f-a1-6836a765b53f
+Date: Wed, 28 May 2025 15:04:16 +0900
+From: Byungchul Park <byungchul@sk.com>
+To: Mina Almasry <almasrymina@google.com>
+Cc: willy@infradead.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	kernel_team@skhynix.com, kuba@kernel.org,
+	ilias.apalodimas@linaro.org, harry.yoo@oracle.com, hawk@kernel.org,
+	akpm@linux-foundation.org, davem@davemloft.net,
+	john.fastabend@gmail.com, andrew+netdev@lunn.ch,
+	asml.silence@gmail.com, toke@redhat.com, tariqt@nvidia.com,
+	edumazet@google.com, pabeni@redhat.com, saeedm@nvidia.com,
+	leon@kernel.org, ast@kernel.org, daniel@iogearbox.net,
+	david@redhat.com, lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org,
+	surenb@google.com, mhocko@suse.com, horms@kernel.org,
+	linux-rdma@vger.kernel.org, bpf@vger.kernel.org,
+	vishal.moola@gmail.com
+Subject: Re: [PATCH v2 15/16] netdevsim: use netmem descriptor and APIs for
+ page pool
+Message-ID: <20250528060416.GD9346@system.software.com>
+References: <20250528022911.73453-1-byungchul@sk.com>
+ <20250528022911.73453-16-byungchul@sk.com>
+ <CAHS8izMwUvLYZipvj+0gcK4Ch8EqGu3g00aP488563VD3d9N9g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 07/12] arm64: dts: qcom: sm6115: add LPASS devices
-To: Alexey Klimov <alexey.klimov@linaro.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Srinivas Kandagatla <srini@kernel.org>, Mark Brown <broonie@kernel.org>,
- linux-sound@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Dmitry Baryshkov <lumag@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-gpio@vger.kernel.org
-References: <20250522-rb2_audio_v3-v3-0-9eeb08cab9dc@linaro.org>
- <20250522-rb2_audio_v3-v3-7-9eeb08cab9dc@linaro.org>
- <26afac49-2500-470b-a21a-d57e4ff14fa6@linaro.org>
- <DA735DM0N649.3NLLMFUW7ANNM@linaro.org>
- <b163bb31-2d02-47bb-a7a1-91c1fb007523@linaro.org>
- <DA78C0GLXJDX.2Z7K375XWOZH3@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
- QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
- +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
- ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
- 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
- hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
- tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
- 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
- naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
- hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
- whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
- qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
- RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
- Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
- H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
- dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
- AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
- jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
- zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
- XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <DA78C0GLXJDX.2Z7K375XWOZH3@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHS8izMwUvLYZipvj+0gcK4Ch8EqGu3g00aP488563VD3d9N9g@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SWUwTURSGczvTmaGhZqyIVzQaa1wgERURT1zRB71xiSgPJm5QZbSVUqAs
+	gokGEaJWC+KSYCmm4sKaVKtCUSCKCBgJNhihrFUUeHCLoBUoAS1o5O3L/+fk+x8OR8lMYh9O
+	pYkXtBqFWs5IaMkXz7wlR/KDlMvqakVgNJcwUDyYBPnvrGIwFpUi+DHUzsJATR0Dt246KTC+
+	TqPhp3mYgp7abhYcd3tpqDhbRkF3Zj0D+jQXBanWAhHYSjPEcHX4DgVlKe9YePPYyEBXyZgY
+	eqv1NLw0FNLgyAiGWpM3OF99RlBjLhOB82IuA1eaTAx8SHMgaHreTUPO6QwE5iq7GFyDRiZ4
+	HnlY2Coi5YZOlpgsCeRBgR/R2ZsoYik6zxBL/2WWdDRXMKQ+20WTcuuAiOjPfGXI9542mnyr
+	essQ88O3NGkw1bBkwDInhN8rWRshqFWJgnbp+nCJsvJTOhuTJUtqsVxnU5BeqkMeHOYDceW5
+	XJEOceN8p8/XHdP8ApzrGmXczPCLsN0+RLnZi/fFt6uyxG6meIcYNxqPuXkavwc35P+i3Szl
+	V+GWS51IhyScjC9E+EVmq2iimIpfXv9ITxwvwiM3mii3l+Jn4fxRbiKei888yhl3efC7cEe7
+	cXzDdH4+flpa93emlcNZmybWz8TPCuz0JTTVMElgmCQw/BcYJglMiC5CMpUmMUqhUgf6K5M1
+	qiT/w9FRFvTnb+6eHNlnRf220GrEc0juKSX3ViplYkViXHJUNcIcJfeSpm4IUsqkEYrkE4I2
+	OkyboBbiqtEsjpbPkAY4j0fI+KOKeCFSEGIE7b9WxHn4pKCQdsfqxddWjNjA2a9bmNRmVI1t
+	D9b0Xgi2mdccrPnal3021pTwpNR7SnpBJoRemzI7cm36lvdbY/DnzQnbjr84kB053KPJCWp+
+	ZTqUp15wdMf7oE0X7+/OCO866dpfri+Zu9X2IDm0b0N01Rz/4pDdsdkep8ICKkvWNep2/mTz
+	NuIxOR2nVCz3o7Rxit8vwvoEMwMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SeUiTcRjH+b3XXker12n5ln9E65CM1kHaAx32l/0SigpEiKLe8qWt3LRN
+	RYPCPMhG8+iAXDMWplMLVsszD8TbLmNqaZoTKxudlrczqyWR/314vjyf7/PHw5LyNHoZq9bG
+	ijqtEKVgpJR037aU9aI1WLWxoEQJZts9Bu5OJoB1oIIGc3EZgtGpXgmMNLYwkHd7nARzeyoF
+	Y7ZpEt43D0rAWTBEQfXFchIGM1sZMKa6SUiuKCSgIbeNhhdlGTRcm84noTxpQAIdj8wM9N/7
+	RcNQvZGCNlMRBc6MXdBsWQLjTz4jaLSVEzB+OZeBqw4LA29TnQgcDYMU3LyQgcBW202De9LM
+	7FLgkqIeAlea3kiwxR6HHxYGYkO3g8T24ksMtv+4IsF9L6sZ3HrDTeHKihECG1O+Mvj7+9cU
+	/lbbxeA81zCBbSVdFH5qaZTs9z4k3R4pRqnjRd2GncekqppPaZKYbHnCK3uOJAkZZQbEsjy3
+	hc//sNaAvFiKW83numcZDzNcAN/dPUV62Jdby9+pzaY9THJOmn9uPuVhHy6Cf2qdoDws47by
+	r7LeIAOSsnKuCPFNmT3EXODNt+W8o+aWA/iZWw7S00ty/rx1lp0bL+dTSm/+7fLiDvB9vea/
+	NyzmVvJ1ZS1EFlpommcyzTOZ/ptM80wWRBUjX7U2XiOoo4KU+tOqRK06QXkiWmNHf56j4NxM
+	dgUa7dhdjzgWKRbI8P0glZwW4vWJmnrEs6TCV5YcEqySyyKFxLOiLvqoLi5K1Ncjf5ZS+MnC
+	IsRjcu6kECueFsUYUfcvJVivZUnoQfhL1+aWhnVf2/uBc9Q4t+WFBuwtTu+JWbqUYwt27BcX
+	7Vse61R+6Ty8Z827qsIVbkHN5FR19Zp1LmFr+pFSQ+vuODgzE54coDEOcaGhlUkPf7gel3b6
+	he09eJ1pekY03Zj5uVh7nfSxj31sHxbGX4ccd5Wcn1hV9yQi/EzYBQWlVwmbAkmdXvgNM57y
+	KhgDAAA=
+X-CFilter-Loop: Reflected
 
-On 27/05/2025 22:36, Alexey Klimov wrote:
-> On Tue May 27, 2025 at 7:33 PM BST, Krzysztof Kozlowski wrote:
->> On 27/05/2025 18:32, Alexey Klimov wrote:
->>> On Thu May 22, 2025 at 6:52 PM BST, Krzysztof Kozlowski wrote:
->>>> On 22/05/2025 19:40, Alexey Klimov wrote:
->>>>> The rxmacro, txmacro, vamacro, soundwire nodes, lpass clock controllers
->>>>> are required to support audio playback and audio capture on sm6115 and
->>>>> its derivatives.
->>>>>
->>>>> Cc: Konrad Dybcio <konradybcio@kernel.org>
->>>>> Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
->>>>
->>>> Just keep one CC.
->>>
->>> Question is which one now. Konrad, is it fine to keep your oss.qualcomm.com
->>> email here?
->>>
->>>>> Cc: Srinivas Kandagatla <srini@kernel.org>
->>>>> Co-developed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
->>>>
->>>> Missing SoB.
->>>
->>> IIRC I took Konrad's changes but at this point I don't remember how much was changed.
->>
->> And stripped his SoB?
+On Tue, May 27, 2025 at 08:25:54PM -0700, Mina Almasry wrote:
+> On Tue, May 27, 2025 at 7:29 PM Byungchul Park <byungchul@sk.com> wrote:
+> >
+> > To simplify struct page, the effort to separate its own descriptor from
+> > struct page is required and the work for page pool is on going.
+> >
+> > Use netmem descriptor and APIs for page pool in netdevsim code.
+> >
+> > Signed-off-by: Byungchul Park <byungchul@sk.com>
+> > ---
+> >  drivers/net/netdevsim/netdev.c    | 19 ++++++++++---------
+> >  drivers/net/netdevsim/netdevsim.h |  2 +-
+> >  2 files changed, 11 insertions(+), 10 deletions(-)
+> >
+> > diff --git a/drivers/net/netdevsim/netdev.c b/drivers/net/netdevsim/netdev.c
+> > index af545d42961c..d134a6195bfa 100644
+> > --- a/drivers/net/netdevsim/netdev.c
+> > +++ b/drivers/net/netdevsim/netdev.c
+> > @@ -821,7 +821,7 @@ nsim_pp_hold_read(struct file *file, char __user *data,
+> >         struct netdevsim *ns = file->private_data;
+> >         char buf[3] = "n\n";
+> >
+> > -       if (ns->page)
+> > +       if (ns->netmem)
+> >                 buf[0] = 'y';
+> >
+> >         return simple_read_from_buffer(data, count, ppos, buf, 2);
+> > @@ -841,18 +841,19 @@ nsim_pp_hold_write(struct file *file, const char __user *data,
+> >
+> >         rtnl_lock();
+> >         ret = count;
+> > -       if (val == !!ns->page)
+> > +       if (val == !!ns->netmem)
+> >                 goto exit;
+> >
+> >         if (!netif_running(ns->netdev) && val) {
+> >                 ret = -ENETDOWN;
+> >         } else if (val) {
+> > -               ns->page = page_pool_dev_alloc_pages(ns->rq[0]->page_pool);
+> > -               if (!ns->page)
+> > +               ns->netmem = page_pool_alloc_netmems(ns->rq[0]->page_pool,
+> > +                                                    GFP_ATOMIC | __GFP_NOWARN);
 > 
-> If the memory serves me well there was none.
-Sure, then the last part of my response is applicable (which was below
-above sentence).
+> Can we add a page_pool_dev_alloc_netmems instead of doing this GFP at
+> the callsite? Other drivers will be interested in using
+> _dev_alloc_netmems as well.
 
-Best regards,
-Krzysztof
+Sounds good.  I can add it tho, however, Tariq Toukan might also need
+the API while working on converting to netmem in mlx5.
+
+Since I will re-work on his work done, why don't we ask him to add the
+API so that he, I, and any other drivers can use it?
+
++cc tariqt@nvidia.com
+
+	Byungchul
+> 
+> -- 
+> Thanks,
+> Mina
 
