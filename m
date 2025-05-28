@@ -1,338 +1,349 @@
-Return-Path: <linux-kernel+bounces-665404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA445AC68C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 14:01:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0583EAC69E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 14:56:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E5961763CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 12:01:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B56B5171197
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 12:56:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E101283FD8;
-	Wed, 28 May 2025 12:01:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45DE228641B;
+	Wed, 28 May 2025 12:56:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="iKKrDyF3"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2088.outbound.protection.outlook.com [40.107.100.88])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="l1GgMpk4"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FAC820F090;
-	Wed, 28 May 2025 12:01:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.88
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748433665; cv=fail; b=AGYz8t22PRvfGQfpoiPMGuSe48Cfj3j7XKaokCKKuKHsGPyadrQLRRQFCbgLFa+lQkK0GtepIEhR7oABuHQ+Zb6UvzVY5OA5O5CzH03YjTUVrOCvyT2l7x5H0HWmiDvROb5x18co5pY5bpJPE3hwYxcoJ+RkmxxcYh6DAOorLyI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748433665; c=relaxed/simple;
-	bh=ov9t7hd9jqHTrCPcdUvasqMzbn9awvQF3w3hC0tE1zU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ZM7olAKthMkXTG3gPIUHZDbz52R7vIwj4/7apOrYdhhxR18v11mhGeL7p80BC/DK1fR1fJVR5p78BXLGMga+SFaBfOYaRGlpmcDZJer/R7w44qJBYaGXMhlVpZWkULHKgmxyhLDNBlOUqPG2BIx0NluSiX8rZUkVP1XD5TIDlkc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=iKKrDyF3; arc=fail smtp.client-ip=40.107.100.88
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yUAoAUPzZBdVcA+SLE1nKaUVm85vJ/c3NGvp8MIquhtmFXnzboo8iZtlsIgt+AATjyC8Bu5kX5xschlBDSCj4t2y9vDnGDItyxbmQfGs1+KnCCgFw9dv4FOjZhghKwkm+fz0//e2IasekMjRs0xZrJFL4d7y8OA5A8zMMjsL8GJujPc+39Z2CszMKZ3fCnWAo0quPWVQBVze9rhS7KAVDidrtDoof278lWtC3EA3FDUF0cXv+5noNK+JwiYSgC32qGz7ADYQ4HYMDuUSZAmcpdktF+U4iIyOnnYpRX64jJ9WUohpsl+LQLuyYE3cPukdSAPg6glU+eInYJkDU9Cztg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ov9t7hd9jqHTrCPcdUvasqMzbn9awvQF3w3hC0tE1zU=;
- b=cN1caXCNjLSx2NZ0/1NsakwbySXmqtxOSnCERby5GMXxvXhJNCzz6DuJG8jUfe4UJy8pjHxrnNs4HzALCAWwnLOnfsqQ1b0IWLpcaHmZ7yz0KnT/RT973zJvIJ8DE9CBLlnZoyMwV1QiLML59PX40hNuNZqRTt8SAOh5yxudkrJdsoCpk1mn499DA0x+TnRhzYMw0bfZoaf473QltnhI0rYEUD3/SlXiTexpEQUMFQVX9uVAxX//AKDqjNsK4ZYaLfBVhfZ31cmGG5BiF04/CztgNvD66VGRxbss8cDItnYbA9RbSLpUN340PKAXpoMKrINE9G8A8mw5qVgFFiuORg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ov9t7hd9jqHTrCPcdUvasqMzbn9awvQF3w3hC0tE1zU=;
- b=iKKrDyF3EfsHMs1l++66k5q5+K7pOAbm4uOCZxcbWk1cmb5qqBm5jEwygHh5FHmSDBvkbFVV4gS7zD5dfg0Z8F94UNpJAm/8dL6FRwz+6GCNdWa3uRJ8bR7Nr+75ARuU5kPSKsdM2fMO6SLb5eGjmzDGeHsnLkDwquJrU/tmcjs=
-Received: from BL3PR12MB6571.namprd12.prod.outlook.com (2603:10b6:208:38e::18)
- by BN7PPF7F4CD71A4.namprd12.prod.outlook.com (2603:10b6:40f:fc02::6d6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.19; Wed, 28 May
- 2025 12:00:56 +0000
-Received: from BL3PR12MB6571.namprd12.prod.outlook.com
- ([fe80::4cf2:5ba9:4228:82a6]) by BL3PR12MB6571.namprd12.prod.outlook.com
- ([fe80::4cf2:5ba9:4228:82a6%4]) with mapi id 15.20.8769.025; Wed, 28 May 2025
- 12:00:56 +0000
-From: "Gupta, Suraj" <Suraj.Gupta2@amd.com>
-To: Sean Anderson <sean.anderson@linux.dev>, "andrew+netdev@lunn.ch"
-	<andrew+netdev@lunn.ch>, "davem@davemloft.net" <davem@davemloft.net>,
-	"edumazet@google.com" <edumazet@google.com>, "kuba@kernel.org"
-	<kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>,
-	"vkoul@kernel.org" <vkoul@kernel.org>, "Simek, Michal"
-	<michal.simek@amd.com>, "Pandey, Radhey Shyam" <radhey.shyam.pandey@amd.com>,
-	"horms@kernel.org" <horms@kernel.org>
-CC: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "git (AMD-Xilinx)" <git@amd.com>, "Katakam,
- Harini" <harini.katakam@amd.com>
-Subject: RE: [PATCH net-next] net: xilinx: axienet: Configure and report
- coalesce parameters in DMAengine flow
-Thread-Topic: [PATCH net-next] net: xilinx: axienet: Configure and report
- coalesce parameters in DMAengine flow
-Thread-Index: AQHbzV7yBLISHDn2ME2YaL4j96yisLPmqq6AgABACLA=
-Date: Wed, 28 May 2025 12:00:56 +0000
-Message-ID:
- <BL3PR12MB6571ABA490895FDB8225CAEBC967A@BL3PR12MB6571.namprd12.prod.outlook.com>
-References: <20250525102217.1181104-1-suraj.gupta2@amd.com>
- <679d6810-9e76-425c-9d4e-d4b372928cc3@linux.dev>
-In-Reply-To: <679d6810-9e76-425c-9d4e-d4b372928cc3@linux.dev>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ActionId=9225ba81-881e-4545-bdf7-001001588df5;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ContentBits=0;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Enabled=true;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Method=Standard;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Name=AMD
- Internal Distribution
- Only;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SetDate=2025-05-27T20:05:43Z;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Tag=10,
- 3, 0, 1;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BL3PR12MB6571:EE_|BN7PPF7F4CD71A4:EE_
-x-ms-office365-filtering-correlation-id: fb4ad186-4215-4160-9366-08dd9ddf4dd9
-x-ld-processed: 3dd8961f-e488-4e60-8e11-a82d994e183d,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|366016|1800799024|7416014|38070700018|921020;
-x-microsoft-antispam-message-info:
- =?utf-8?B?YUdReVp2RGpqYzVZYjJtQjdvaUkxUmdXZTJVUUVick1vOEg0elhXYjZjd1pX?=
- =?utf-8?B?aVMzdmV5VHJoWjNUK3hXZzdCL3JNNzFjT3hlTFFEaVZLNis2MnQxQ1NRak5n?=
- =?utf-8?B?NUI4cmNVSjViNXNFMklTTEFjbDMzRlM4anJET0ErRXpTQlZZOVZrV1ZhcWUw?=
- =?utf-8?B?TjhDR0Y3T3NOTStrR2Yza1pKOU90d0tlODdiR0xiMzd4WFNxYkVXSjJiSlU3?=
- =?utf-8?B?YmYwLzF5bnozL0g4YkxVWDdPaTJMZE5GUllFdkRGd0dTTGhjQXpaZ3ZHa0hX?=
- =?utf-8?B?RG1pZXBPY0hsQ0ZxWitUVmhWUjMwYkZvWTRpOGNKRUVyaE1oTTl0a0J1bDB4?=
- =?utf-8?B?RUFkQjFEVzNENkg4TFdRczU2eXR3SThuMUpPelFlVldxa3JNYlV1RTJxRDFi?=
- =?utf-8?B?Ri9iZnl2NVhjR21vVGo1ci9kVnovUFE2dHdtMjZwTnVYTE1kS1Z0UEY5dWtZ?=
- =?utf-8?B?UExITngzelFlYmV5YllLem1jWTFWMGZVaVpNT3NnMWliYzFEVlFGNHdLV05i?=
- =?utf-8?B?SmVnNlVvQTlGd3V1VmN0SGdJWkRxUjlzU2JmTzZpbnBsb2xldUMyckFvVU5q?=
- =?utf-8?B?aE4zNXRxTHdOdGwvcDJVd1oycTA2blVmOWdDVW5uS3VJai9xSlFucHZONnQv?=
- =?utf-8?B?bTJqOGxKbnN1cUR2MWdqNlh1bXZXQUtVLzNGOTI0dEVlajFwZHR0Lzh5Mk01?=
- =?utf-8?B?UEVjeGFjbms5Y2lONElUY21nOTVJRWVWVzlLcTZBOWc4RS9LdkhzMVFHd3Mr?=
- =?utf-8?B?Y2QrK3VBc1RhTmtJSHA2MUxhUlMyYkJCb1MxaGRhKzhaM0RvTHRNaUFnT3d0?=
- =?utf-8?B?OG5YRklRS0tiYnZXdmJZbzBjS2J5RDlVV2E1U0RTOTM0UktsVTNMT040RGU4?=
- =?utf-8?B?R1lOMm90S1B1SWZuUEZOZysvTnJzRUNiWlpMMU05UGJ5eS9oTXNkNTJoc0d3?=
- =?utf-8?B?OVhoNmhzbzhHeGdkMithQUtZVUpDcDA3STZSZXF2TGlncEFmUFRFczArVkhY?=
- =?utf-8?B?Q2V2MVhpUFZqOVpOTG1WeWJhN0JDRE94RzBOeVJaR0VtL0xQTmtKMHRCQVRw?=
- =?utf-8?B?SmFIN0xNaGdtbVVFR3pNNzdVU3l2Mk5ZRkE0R1pVV2xVK3M1UGhaTW9wK29F?=
- =?utf-8?B?bEpQd3RCQzFSbnpIc0ZteTE2M3BvU2FBaHE1M2VqTG5uTjJVZUM2WVN6YVk3?=
- =?utf-8?B?RnRuc0lmS1BZeE5sMmREeDBMaVdNUnVQd1JZUnpmM0lJSHpZTk4rZFZKbkpX?=
- =?utf-8?B?cHBLZ2R4TG5lWGwwUXdYai9FM3p2Q0RpQmtEMGhITU9RTStVU0NtWFlLd3VK?=
- =?utf-8?B?cmpsNU9ldG5sOXJKSHY3M2ZXV2hnNzhIUjJkbmNScnoveXBzMkZ2d2R5ZUdZ?=
- =?utf-8?B?NDlJZlZLalNEQzhpeS9oYzFtVW41WEJsK25sZjBLU2lrakkyNWNERFc4Tk12?=
- =?utf-8?B?Z2VRVzhtNEp4TmxoVTNyMmhEYk0zd3pBMzB4WG5RZ3ZEbUJnV0hpaWVialpz?=
- =?utf-8?B?K0pOeDVieGxVbEFnNEFIWEM2bEgwS3JTdU5sOVhOLzNwekVFS2haNk9MczA2?=
- =?utf-8?B?dUw5MXVsMktQZ0x1OGh4T0pjcmIvMG5GTzduK213QzZRd3NHR3FrUVBnL3Zl?=
- =?utf-8?B?aHhZc01uMk5BMjk2MjhmVjhjZFRGeGVHWWRuRlV4KytpRG9FZFB6dEo2ZGpq?=
- =?utf-8?B?UHYyZmpqMytlWUdYWFFJRW02dTBWT2VSY1NCUGdrQ2pJNnN5UGpjKzV0TzVB?=
- =?utf-8?B?cnArVzExcHgzano2L1p3OHpWR1gvVUpYU2FGOXphOTJyam54NW50MjB4SHh0?=
- =?utf-8?B?aTNmVVNIb21RZk0rSkpGay84S0xKZjRySUZkQkRCUVM5WTUycXlQMGYzbGNE?=
- =?utf-8?B?bVMvWFBqb0Q2cnJ1VkN1TjVVQjRSTGxTUktNTG96Y3VpUHJHWlhqLzMwSTV6?=
- =?utf-8?B?MlNJY0NzSk8xTU9EQTVaSjQyc1IzMGRKaW1oQnVyZ2FmOVV6cGg4SXZwd094?=
- =?utf-8?B?UEJvUERNektleXhEZnlCQWZTRlptRmxMQTJtSUppaER2eVkzb1VqM003RGJN?=
- =?utf-8?Q?Hy7n9A?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL3PR12MB6571.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7416014)(38070700018)(921020);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?WjkvVFMwK1EvL0VXT2lZbW9Fck1yUXZVK2xWWDVtSElmekF3dWNTMnBqNjRw?=
- =?utf-8?B?bUcwU1g3S1N4QnVGdE00T0RBLzUzZWprNkVGK2RnL3ZUY1RxMmxlMGtUdVFk?=
- =?utf-8?B?SkpldkFjeFhsakhmeFI1cU9Dd3oyZlNXbmVEK1lEallhd3pBejRHZDdIcmpU?=
- =?utf-8?B?U2wyT2ZFYktuTmpyMzdPbDM2dHRLSmxUMkl0dmdGZnA2L0lsM0NWNGxFV3p1?=
- =?utf-8?B?RFlReE1uSzA2VGVKWG9zUjBHYWlHWWVHQUFkeXFJL0dCSGxkcmdMZDJlTWho?=
- =?utf-8?B?eUs3b2pSR3FDb0NBem00MmVrRlBIS3NiZC94NWtteU00S05IR1RQWWhGRHk3?=
- =?utf-8?B?dUxZcXBkWWZQejBnV3dtcElCQ3FRUlR3T2VpYkRhVUsydVY2UDBlOFYva2lY?=
- =?utf-8?B?Ly93dXQzdVo1aWJQN3RtL1NhcTRzUU1YZ3VSTmVQZFBtdmhLY25VcVRxOEJW?=
- =?utf-8?B?QmxwSzNvM2hiODZYR2o4a1lRTXNlbE9mTHltTXpkbk10RE1Zb1U1OTQ2bENS?=
- =?utf-8?B?bXhUNkJ6YzhsR3FiL09XcUxzdWNtb2JvNHFFOUpERDN3QkNZUldkelpuSjNm?=
- =?utf-8?B?ZWZSMzdFMXpDSnQ4d3ZqZ3ZmMENzTlJRS3c3V1FIbFlvT29lRnpFOVRQMnBH?=
- =?utf-8?B?N1k2QkR6Q3l1OHp0ZzdpMHBHT1l1VG9ZVk82ckM4d2w3YmlXM25Xb2JyNC96?=
- =?utf-8?B?cGlEUThZTFl4ajZGZnFIbjZzY2pjcnFORU9QRHJadUc3ZjZwWUloRm9XRC9F?=
- =?utf-8?B?TFlseXBHdlZHdmsvdER1MWlCSFdVVnhIK2lSK1JmcUNvM2ZGdHd6M1VCMUNa?=
- =?utf-8?B?SVlSSDM1bjdxU1RNckM1TStCdmFkV1R2ampnSXBnd1JpR2NFZThPTi9OSnV6?=
- =?utf-8?B?SEpTOGFLdCtKbTNFK3VET1o1ZXd3dE9oYW9lcW8rRHEwaHE0cC92SldHeStQ?=
- =?utf-8?B?em5FcnA0RWNXUGFUd3YrYVdYT1RGOTV5RElyc3ZpcVdjaFJkS3d4c1J6TVpQ?=
- =?utf-8?B?VDRuVXdTcGMvV3NzbXU0MTB1SkV3TC9EN3l3eXJJTlpwdG9PYm1JUXRlTy9K?=
- =?utf-8?B?bTZEQm9wZGVvanJrWkhzR002aytqMWI4RW4wS05KM1FIRno4WWFwY2J2V1cr?=
- =?utf-8?B?amkxMk0zRGljYW9yUE9wT1BhR0R5cVk3ZlNSN3ZOTk9leXRlMndPSUxKQm55?=
- =?utf-8?B?R2dGUzl4ZWh5Q3RmQkY0T3luaUNFS3ExWnJpSlVJTUN4SjhKNGxybGNXU0pi?=
- =?utf-8?B?dVNFNHllWFZIdUlkMUo5ekhFbENIRUd1TUxzYXd1YjZrOGQrWlFtdkpwcU9D?=
- =?utf-8?B?UHBydytRVWtCWFNzU1hndnEzSzQ0c1BGWjhzM25aRXN3OXJDaGJSR2tRM2Z5?=
- =?utf-8?B?Z3Y5VDNOUEN3SnBrbzJTdzlJSExhQ2ppc2FDLzBOVlFzbkoySEVLbU1pd2FT?=
- =?utf-8?B?blVSVUdlY0J3cGdnVEhGWmxiMzlUM1NJVituSWp4b25KTVVZTW9OTFpZdzlB?=
- =?utf-8?B?UkZtNDJTV0Zhdnd1ay80WmxITXZUQkZhSWMxZmlVLzIvczNGREFqbmQ1eUN6?=
- =?utf-8?B?QzBXcnRtZ1NmTFRDS3BrMHNZcm5BQkdSbVRiUlB3OE9teHRiR0FjOW9SeDhx?=
- =?utf-8?B?YTFDRWRUeHFoQzdjR2t6Nk9sZWdjd0xCZTBjd2VxblhCejFBVk5tWmxmUUtq?=
- =?utf-8?B?UVN3RjR4dE1VcW8wOG9wMFpWRm1SZWczdEFWQVprM3dkVGtIZFY1V1dUcU8y?=
- =?utf-8?B?Y05JUTRvcGcvQXdreWhocldXUlFweXg0MTd4Z0JGRDB2NDRYdzhhUW9jY2k0?=
- =?utf-8?B?Y0RFK0F1WnNEUW9uUTlmNUREcnFobFZERlpYeVgzQVhxNkNwUStYbEppNlk3?=
- =?utf-8?B?Vmt0c1JkVGpuOHh5Q0EwUW90eHJrOXdLMXlYbm1NUVN6bGx1S0RWMWwzZUZY?=
- =?utf-8?B?UStWcjhsakMxRGdnc2gxd2NDUjY3NzV3cFlSSm9tQWgvR2paRFErOVI0UDk0?=
- =?utf-8?B?RGVPY0pyOGd6ckJIMy9PVUhDWFJ4N2RyTVRKWnNkOG9MWU5MRVFwOXAwR04v?=
- =?utf-8?B?cXN0WDBRR0hLVk0waHU3djVCQlM5ZGlaU0lsVWF2RVFIYWV3bnNSTmNqbElk?=
- =?utf-8?Q?pLls=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B69D421322F
+	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 12:56:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748436976; cv=none; b=CK7vRUlhknkUO2hhyDcaPYArvPp84+pT5Z+27lQNJxbcSdB6ou87sS/JQS6d793MLcjt5p17oX+8X6iQ6IIoBojr/EguJOmyu1LU/GSjvhrtuqu6NsWacbTAIiDDrk0I9mbX3734aktVqIK27OkoBkHAtfIeoooneLvmtGJGKf4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748436976; c=relaxed/simple;
+	bh=wrTsX888SHe2pwLAvDM5IvkLDcqY4EVJA4saPsPNazI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=f73K5nshS8GkxVQpoJh1AnYeM5QgAckO129Vxl9zL7hRnoaS0TqQq/Awur5pQvCo5gNTTpe3W2z1HAke4Mkd8fy+hxX+T/TLqHELWVXpiIveTiIp7CGFgXqB6zV19jVBtp3jPF58xNzyMWlolmoc/WWbC8zRvt5t/Qjtl0V0OyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=l1GgMpk4; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 54SBQ6qt2044934;
+	Wed, 28 May 2025 06:26:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1748431566;
+	bh=Ng5y3IcVaAM8zkZwvKrmrajhf/9Uq276eRu5V1b+gKg=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=l1GgMpk4Cgpdj70UtUfKKl8sKqjDNWPO8pfX3YHpl6W8PsXvxKUfS5ZDOi9byBS+o
+	 kxMP4zAFee6buyhlcWSTqi3kVyE0/IfN+iol6d7OuulduAhSBr11GzPsUiAzWZFrL8
+	 4ZJyARVAa1XwTiaK5w7PipBPuW1LlaOvLu4tGl2c=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 54SBQ6vX3571213
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Wed, 28 May 2025 06:26:06 -0500
+Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 28
+ May 2025 06:26:05 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 28 May 2025 06:26:06 -0500
+Received: from [172.24.227.14] (jayesh-hp-z2-tower-g5-workstation.dhcp.ti.com [172.24.227.14])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 54SBPw66052053;
+	Wed, 28 May 2025 06:25:58 -0500
+Message-ID: <870d036a-0fa0-43e0-8b72-428096173526@ti.com>
+Date: Wed, 28 May 2025 16:55:57 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BL3PR12MB6571.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fb4ad186-4215-4160-9366-08dd9ddf4dd9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 May 2025 12:00:56.5448
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: dc7QGXUttikuC9buSYDtkCqTEHcGkKFmIl5Pdn5VHkkB9/TH9LC0htS6Ai61YTUV6QctHOdG2AbLptkNbYESfA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PPF7F4CD71A4
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v2 2/3] drm/bridge: cadence: cdns-mhdp8546*: Change
+ drm_connector from pointer to structure
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+CC: <jonas@kwiboo.se>, <jernej.skrabec@gmail.com>,
+        <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+        <tzimmermann@suse.de>, <airlied@gmail.com>, <simona@ffwll.ch>,
+        <lumag@kernel.org>, <jani.nikula@intel.com>, <andy.yan@rock-chips.com>,
+        <mordan@ispras.ru>, <linux@treblig.org>, <viro@zeniv.linux.org.uk>,
+        <yamonkar@cadence.com>, <sjakhade@cadence.com>,
+        <quentin.schulz@free-electrons.com>, <jsarha@ti.com>,
+        <linux-kernel@vger.kernel.org>, <devarsht@ti.com>,
+        <dianders@chromium.org>, <andrzej.hajda@intel.com>,
+        <neil.armstrong@linaro.org>, <rfoss@kernel.org>,
+        <Laurent.pinchart@ideasonboard.com>, <dri-devel@lists.freedesktop.org>,
+        <alexander.stein@ew.tq-group.com>
+References: <20250521073237.366463-1-j-choudhary@ti.com>
+ <20250521073237.366463-3-j-choudhary@ti.com>
+ <19dd2795-c693-4c1a-989c-8b3bc2b3cdfd@ideasonboard.com>
+ <493afc6c-59a0-4f6b-9a9e-568dd2eff873@ti.com>
+ <2a15263b-2d36-4c46-be0f-4145069d134f@ti.com>
+ <027ad6e9-5070-43f2-a082-fd498cc6d31d@ideasonboard.com>
+Content-Language: en-US
+From: Jayesh Choudhary <j-choudhary@ti.com>
+In-Reply-To: <027ad6e9-5070-43f2-a082-fd498cc6d31d@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-W0FNRCBPZmZpY2lhbCBVc2UgT25seSAtIEFNRCBJbnRlcm5hbCBEaXN0cmlidXRpb24gT25seV0N
-Cg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBTZWFuIEFuZGVyc29uIDxz
-ZWFuLmFuZGVyc29uQGxpbnV4LmRldj4NCj4gU2VudDogVHVlc2RheSwgTWF5IDI3LCAyMDI1IDk6
-NDcgUE0NCj4gVG86IEd1cHRhLCBTdXJhaiA8U3VyYWouR3VwdGEyQGFtZC5jb20+OyBhbmRyZXcr
-bmV0ZGV2QGx1bm4uY2g7DQo+IGRhdmVtQGRhdmVtbG9mdC5uZXQ7IGVkdW1hemV0QGdvb2dsZS5j
-b207IGt1YmFAa2VybmVsLm9yZzsNCj4gcGFiZW5pQHJlZGhhdC5jb207IHZrb3VsQGtlcm5lbC5v
-cmc7IFNpbWVrLCBNaWNoYWwgPG1pY2hhbC5zaW1la0BhbWQuY29tPjsNCj4gUGFuZGV5LCBSYWRo
-ZXkgU2h5YW0gPHJhZGhleS5zaHlhbS5wYW5kZXlAYW1kLmNvbT47IGhvcm1zQGtlcm5lbC5vcmcN
-Cj4gQ2M6IG5ldGRldkB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5m
-cmFkZWFkLm9yZzsgbGludXgtDQo+IGtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IGdpdCAoQU1ELVhp
-bGlueCkgPGdpdEBhbWQuY29tPjsgS2F0YWthbSwgSGFyaW5pDQo+IDxoYXJpbmkua2F0YWthbUBh
-bWQuY29tPg0KPiBTdWJqZWN0OiBSZTogW1BBVENIIG5ldC1uZXh0XSBuZXQ6IHhpbGlueDogYXhp
-ZW5ldDogQ29uZmlndXJlIGFuZCByZXBvcnQgY29hbGVzY2UNCj4gcGFyYW1ldGVycyBpbiBETUFl
-bmdpbmUgZmxvdw0KPg0KPiBDYXV0aW9uOiBUaGlzIG1lc3NhZ2Ugb3JpZ2luYXRlZCBmcm9tIGFu
-IEV4dGVybmFsIFNvdXJjZS4gVXNlIHByb3BlciBjYXV0aW9uDQo+IHdoZW4gb3BlbmluZyBhdHRh
-Y2htZW50cywgY2xpY2tpbmcgbGlua3MsIG9yIHJlc3BvbmRpbmcuDQo+DQo+DQo+IE9uIDUvMjUv
-MjUgMDY6MjIsIFN1cmFqIEd1cHRhIHdyb3RlOg0KPiA+IEFkZCBzdXBwb3J0IHRvIGNvbmZpZ3Vy
-ZSAvIHJlcG9ydCBpbnRlcnJ1cHQgY29hbGVzY2UgY291bnQgYW5kIGRlbGF5DQo+ID4gdmlhIGV0
-aHRvb2wgaW4gRE1BRW5naW5lIGZsb3cuDQo+ID4gTmV0cGVyZiBudW1iZXJzIGFyZSBub3QgZ29v
-ZCB3aGVuIHVzaW5nIG5vbi1kbWFlbmdpbmUgZGVmYXVsdCB2YWx1ZXMsDQo+ID4gc28gdHVuZWQg
-Y29hbGVzY2UgY291bnQgYW5kIGRlbGF5IGFuZCBkZWZpbmVkIHNlcGFyYXRlIGRlZmF1bHQgdmFs
-dWVzDQo+ID4gaW4gZG1hZW5naW5lIGZsb3cuDQo+ID4NCj4gPiBOZXRwZXJmIG51bWJlcnMgYW5k
-IENQVSB1dGlsaXNhdGlvbiBjaGFuZ2UgaW4gRE1BZW5naW5lIGZsb3cgYWZ0ZXINCj4gPiBpbnRy
-b2R1Y2luZyBjb2FsZXNjaW5nIHdpdGggZGVmYXVsdCBwYXJhbWV0ZXJzOg0KPiA+IGNvYWxlc2Nl
-IHBhcmFtZXRlcnM6DQo+ID4gICAgVHJhbnNmZXIgdHlwZSAgICAgICAgQmVmb3JlKHcvbyBjb2Fs
-ZXNjaW5nKSAgQWZ0ZXIod2l0aCBjb2FsZXNjaW5nKQ0KPiA+IFRDUCBUeCwgQ1BVIHV0aWxpc2F0
-aW9uJSAgICAgIDkyNSwgMjcgICAgICAgICAgICAgICAgIDk0MSwgMjINCj4gPiBUQ1AgUngsIENQ
-VSB1dGlsaXNhdGlvbiUgICAgICA2MDcsIDMyICAgICAgICAgICAgICAgICA3NDEsIDM2DQo+ID4g
-VURQIFR4LCBDUFUgdXRpbGlzYXRpb24lICAgICAgODU3LCAzMSAgICAgICAgICAgICAgICAgOTYw
-LCAyOA0KPiA+IFVEUCBSeCwgQ1BVIHV0aWxpc2F0aW9uJSAgICAgIDc2MiwgMjYgICAgICAgICAg
-ICAgICAgIDc4MywgMTgNCj4gPg0KPiA+IEFib3ZlIG51bWJlcnMgYXJlIG9ic2VydmVkIHdpdGgg
-NHggQ29ydGV4LWE1My4NCj4NCj4gSG93IGRvZXMgdGhpcyBhZmZlY3QgbGF0ZW5jeT8gSSB3b3Vs
-ZCBleHBlY3QgdGhlc2UgUlggc2V0dGluZ3MgdG8gaW5jcmVhc2UgbGF0ZW5jeQ0KPiBhcm91bmQg
-NS0xMHguIEkgb25seSB1c2UgdGhlc2Ugc2V0dGluZ3Mgd2l0aCBESU0gc2luY2UgaXQgd2lsbCBk
-aXNhYmxlIGNvYWxlc2NpbmcNCj4gZHVyaW5nIHBlcmlvZHMgb2YgbGlnaHQgbG9hZCBmb3IgYmV0
-dGVyIGxhdGVuY3kuDQo+DQo+IChvZiBjb3Vyc2UgdGhlIHdheSB0byBmaXggdGhpcyBpbiBnZW5l
-cmFsIGlzIFJTUyBvciBzb21lIG90aGVyIG1ldGhvZCBpbnZvbHZpbmcNCj4gbXVsdGlwbGUgcXVl
-dWVzKS4NCj4NCg0KSSB0b29rIHZhbHVlcyBiZWZvcmUgTkFQSSBhZGRpdGlvbiBpbiBsZWdhY3kg
-ZmxvdyAocnhfdGhyZXNob2xkOiAyNCwgcnhfdXNlYzogNTApIGFzIHJlZmVyZW5jZS4gQnV0IG5l
-dHBlcmYgbnVtYmVycyB3ZXJlIGxvdyB3aXRoIHRoZW0sIHNvIHRyaWVkIHR1bmluZyBib3RoIGFu
-ZCBzZWxlY3RlZCB0aGUgcGFpciB3aGljaCBnaXZlcyBnb29kIG51bWJlcnMuDQoNCj4gPiBTaWdu
-ZWQtb2ZmLWJ5OiBTdXJhaiBHdXB0YSA8c3VyYWouZ3VwdGEyQGFtZC5jb20+DQo+ID4gLS0tDQo+
-ID4gVGhpcyBwYXRjaCBkZXBlbmQgb24gZm9sbG93aW5nIEFYSSBETUEgZG1lbmdpbmUgZHJpdmVy
-IGNoYW5nZXMgc2VudCB0bw0KPiA+IGRtYWVuZ2luZSBtYWlsaW5nIGxpc3QgYXMgcHJlLXJlcXVp
-c2l0IHNlcmllczoNCj4gPiBodHRwczovL2xvcmUua2VybmVsLm9yZy9hbGwvMjAyNTA1MjUxMDE2
-MTcuMTE2ODk5MS0xLXN1cmFqLmd1cHRhMkBhbWQuDQo+ID4gY29tLw0KPiA+IC0tLQ0KPiA+ICBk
-cml2ZXJzL25ldC9ldGhlcm5ldC94aWxpbngveGlsaW54X2F4aWVuZXQuaCAgfCAgNiArKysNCj4g
-PiAuLi4vbmV0L2V0aGVybmV0L3hpbGlueC94aWxpbnhfYXhpZW5ldF9tYWluLmMgfCA1MyArKysr
-KysrKysrKysrKysrKysrDQo+ID4gIDIgZmlsZXMgY2hhbmdlZCwgNTkgaW5zZXJ0aW9ucygrKQ0K
-PiA+DQo+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbmV0L2V0aGVybmV0L3hpbGlueC94aWxpbnhf
-YXhpZW5ldC5oDQo+ID4gYi9kcml2ZXJzL25ldC9ldGhlcm5ldC94aWxpbngveGlsaW54X2F4aWVu
-ZXQuaA0KPiA+IGluZGV4IDVmZjc0MjEwM2JlYi4uY2RmNmNiYjZmMmZkIDEwMDY0NA0KPiA+IC0t
-LSBhL2RyaXZlcnMvbmV0L2V0aGVybmV0L3hpbGlueC94aWxpbnhfYXhpZW5ldC5oDQo+ID4gKysr
-IGIvZHJpdmVycy9uZXQvZXRoZXJuZXQveGlsaW54L3hpbGlueF9heGllbmV0LmgNCj4gPiBAQCAt
-MTI2LDYgKzEyNiwxMiBAQA0KPiA+ICAjZGVmaW5lIFhBWElETUFfREZUX1RYX1VTRUMgICAgICAg
-ICAgNTANCj4gPiAgI2RlZmluZSBYQVhJRE1BX0RGVF9SWF9VU0VDICAgICAgICAgIDE2DQo+ID4N
-Cj4gPiArLyogRGVmYXVsdCBUWC9SWCBUaHJlc2hvbGQgYW5kIGRlbGF5IHRpbWVyIHZhbHVlcyBm
-b3IgU0dETUEgbW9kZSB3aXRoDQo+IERNQUVuZ2luZSAqLw0KPiA+ICsjZGVmaW5lIFhBWElETUFF
-TkdJTkVfREZUX1RYX1RIUkVTSE9MRCAgICAgICAxNg0KPiA+ICsjZGVmaW5lIFhBWElETUFFTkdJ
-TkVfREZUX1RYX1VTRUMgICAgNQ0KPiA+ICsjZGVmaW5lIFhBWElETUFFTkdJTkVfREZUX1JYX1RI
-UkVTSE9MRCAgICAgICAyNA0KPiA+ICsjZGVmaW5lIFhBWElETUFFTkdJTkVfREZUX1JYX1VTRUMg
-ICAgMTYNCj4gPiArDQo+ID4gICNkZWZpbmUgWEFYSURNQV9CRF9DVFJMX1RYU09GX01BU0sgICAw
-eDA4MDAwMDAwIC8qIEZpcnN0IHR4IHBhY2tldCAqLw0KPiA+ICAjZGVmaW5lIFhBWElETUFfQkRf
-Q1RSTF9UWEVPRl9NQVNLICAgMHgwNDAwMDAwMCAvKiBMYXN0IHR4IHBhY2tldCAqLw0KPiA+ICAj
-ZGVmaW5lIFhBWElETUFfQkRfQ1RSTF9BTExfTUFTSyAgICAgMHgwQzAwMDAwMCAvKiBBbGwgY29u
-dHJvbCBiaXRzICovDQo+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbmV0L2V0aGVybmV0L3hpbGlu
-eC94aWxpbnhfYXhpZW5ldF9tYWluLmMNCj4gPiBiL2RyaXZlcnMvbmV0L2V0aGVybmV0L3hpbGlu
-eC94aWxpbnhfYXhpZW5ldF9tYWluLmMNCj4gPiBpbmRleCAxYjdhNjUzYzFmNGUuLmY5YzdkOTBk
-NGVjYiAxMDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJzL25ldC9ldGhlcm5ldC94aWxpbngveGlsaW54
-X2F4aWVuZXRfbWFpbi5jDQo+ID4gKysrIGIvZHJpdmVycy9uZXQvZXRoZXJuZXQveGlsaW54L3hp
-bGlueF9heGllbmV0X21haW4uYw0KPiA+IEBAIC0xNTA1LDYgKzE1MDUsNyBAQCBzdGF0aWMgaW50
-IGF4aWVuZXRfaW5pdF9kbWFlbmdpbmUoc3RydWN0DQo+ID4gbmV0X2RldmljZSAqbmRldikgIHsN
-Cj4gPiAgICAgICBzdHJ1Y3QgYXhpZW5ldF9sb2NhbCAqbHAgPSBuZXRkZXZfcHJpdihuZGV2KTsN
-Cj4gPiAgICAgICBzdHJ1Y3Qgc2tidWZfZG1hX2Rlc2NyaXB0b3IgKnNrYnVmX2RtYTsNCj4gPiAr
-ICAgICBzdHJ1Y3QgZG1hX3NsYXZlX2NvbmZpZyB0eF9jb25maWcsIHJ4X2NvbmZpZzsNCj4gPiAg
-ICAgICBpbnQgaSwgcmV0Ow0KPiA+DQo+ID4gICAgICAgbHAtPnR4X2NoYW4gPSBkbWFfcmVxdWVz
-dF9jaGFuKGxwLT5kZXYsICJ0eF9jaGFuMCIpOyBAQCAtMTUyMCw2DQo+ID4gKzE1MjEsMjIgQEAg
-c3RhdGljIGludCBheGllbmV0X2luaXRfZG1hZW5naW5lKHN0cnVjdCBuZXRfZGV2aWNlICpuZGV2
-KQ0KPiA+ICAgICAgICAgICAgICAgZ290byBlcnJfZG1hX3JlbGVhc2VfdHg7DQo+ID4gICAgICAg
-fQ0KPiA+DQo+ID4gKyAgICAgdHhfY29uZmlnLmNvYWxlc2NlX2NudCA9IFhBWElETUFFTkdJTkVf
-REZUX1RYX1RIUkVTSE9MRDsNCj4gPiArICAgICB0eF9jb25maWcuY29hbGVzY2VfdXNlY3MgPSBY
-QVhJRE1BRU5HSU5FX0RGVF9UWF9VU0VDOw0KPiA+ICsgICAgIHJ4X2NvbmZpZy5jb2FsZXNjZV9j
-bnQgPSBYQVhJRE1BRU5HSU5FX0RGVF9SWF9USFJFU0hPTEQ7DQo+ID4gKyAgICAgcnhfY29uZmln
-LmNvYWxlc2NlX3VzZWNzID0gIFhBWElETUFFTkdJTkVfREZUX1JYX1VTRUM7DQo+DQo+IEkgdGhp
-bmsgaXQgd291bGQgYmUgY2xlYXJlciB0byBqdXN0IGRvIHNvbWV0aGluZyBsaWtlDQo+DQo+ICAg
-ICAgICAgc3RydWN0IGRtYV9zbGF2ZV9jb25maWcgdHhfY29uZmlnID0gew0KPiAgICAgICAgICAg
-ICAgICAgLmNvYWxlc2NlX2NudCA9IDE2LA0KPiAgICAgICAgICAgICAgICAgLmNvYWxlc2NlX3Vz
-ZWNzID0gNSwNCj4gICAgICAgICB9Ow0KPg0KPiBzaW5jZSB0aGVzZSBhcmUgb25seSB1c2VkIG9u
-Y2UuIEFuZCB0aGlzIGVuc3VyZXMgdGhhdCB5b3UgaW5pdGlhbGl6ZSB0aGUgd2hvbGUgc3RydWN0
-Lg0KPg0KPiBCdXQgd2hhdCB0cmVlIGFyZSB5b3UgdXNpbmc/IEkgZG9uJ3Qgc2VlIHRoZXNlIG1l
-bWJlcnMgb24gbmV0LW5leHQgb3IgZG1hZW5naW5lLg0KDQpUaGVzZSBjaGFuZ2VzIGFyZSBwcm9w
-b3NlZCBpbiBzZXBhcmF0ZSBzZXJpZXMgaW4gZG1hZW5naW5lIGh0dHBzOi8vbG9yZS5rZXJuZWwu
-b3JnL2FsbC8yMDI1MDUyNTEwMTYxNy4xMTY4OTkxLTItc3VyYWouZ3VwdGEyQGFtZC5jb20vIGFu
-ZCBJIGRlc2NyaWJlZCBpdCBoZXJlIGJlbG93IG15IFNPQi4NCg0KPg0KPiA+ICsgICAgIHJldCA9
-IGRtYWVuZ2luZV9zbGF2ZV9jb25maWcobHAtPnR4X2NoYW4sICZ0eF9jb25maWcpOw0KPiA+ICsg
-ICAgIGlmIChyZXQpIHsNCj4gPiArICAgICAgICAgICAgIGRldl9lcnIobHAtPmRldiwgIkZhaWxl
-ZCB0byBjb25maWd1cmUgVHggY29hbGVzY2UgcGFyYW1ldGVyc1xuIik7DQo+ID4gKyAgICAgICAg
-ICAgICBnb3RvIGVycl9kbWFfcmVsZWFzZV90eDsNCj4gPiArICAgICB9DQo+ID4gKyAgICAgcmV0
-ID0gZG1hZW5naW5lX3NsYXZlX2NvbmZpZyhscC0+cnhfY2hhbiwgJnJ4X2NvbmZpZyk7DQo+ID4g
-KyAgICAgaWYgKHJldCkgew0KPiA+ICsgICAgICAgICAgICAgZGV2X2VycihscC0+ZGV2LCAiRmFp
-bGVkIHRvIGNvbmZpZ3VyZSBSeCBjb2FsZXNjZSBwYXJhbWV0ZXJzXG4iKTsNCj4gPiArICAgICAg
-ICAgICAgIGdvdG8gZXJyX2RtYV9yZWxlYXNlX3R4Ow0KPiA+ICsgICAgIH0NCj4gPiArDQo+ID4g
-ICAgICAgbHAtPnR4X3JpbmdfdGFpbCA9IDA7DQo+ID4gICAgICAgbHAtPnR4X3JpbmdfaGVhZCA9
-IDA7DQo+ID4gICAgICAgbHAtPnJ4X3JpbmdfdGFpbCA9IDA7DQo+ID4gQEAgLTIxNzAsNiArMjE4
-NywxOSBAQCBheGllbmV0X2V0aHRvb2xzX2dldF9jb2FsZXNjZShzdHJ1Y3QgbmV0X2RldmljZQ0K
-PiAqbmRldiwNCj4gPiAgICAgICBzdHJ1Y3QgYXhpZW5ldF9sb2NhbCAqbHAgPSBuZXRkZXZfcHJp
-dihuZGV2KTsNCj4gPiAgICAgICB1MzIgY3I7DQo+ID4NCj4gPiArICAgICBpZiAobHAtPnVzZV9k
-bWFlbmdpbmUpIHsNCj4gPiArICAgICAgICAgICAgIHN0cnVjdCBkbWFfc2xhdmVfY2FwcyB0eF9j
-YXBzLCByeF9jYXBzOw0KPiA+ICsNCj4gPiArICAgICAgICAgICAgIGRtYV9nZXRfc2xhdmVfY2Fw
-cyhscC0+dHhfY2hhbiwgJnR4X2NhcHMpOw0KPiA+ICsgICAgICAgICAgICAgZG1hX2dldF9zbGF2
-ZV9jYXBzKGxwLT5yeF9jaGFuLCAmcnhfY2Fwcyk7DQo+ID4gKw0KPiA+ICsgICAgICAgICAgICAg
-ZWNvYWxlc2NlLT50eF9tYXhfY29hbGVzY2VkX2ZyYW1lcyA9IHR4X2NhcHMuY29hbGVzY2VfY250
-Ow0KPiA+ICsgICAgICAgICAgICAgZWNvYWxlc2NlLT50eF9jb2FsZXNjZV91c2VjcyA9IHR4X2Nh
-cHMuY29hbGVzY2VfdXNlY3M7DQo+ID4gKyAgICAgICAgICAgICBlY29hbGVzY2UtPnJ4X21heF9j
-b2FsZXNjZWRfZnJhbWVzID0gcnhfY2Fwcy5jb2FsZXNjZV9jbnQ7DQo+ID4gKyAgICAgICAgICAg
-ICBlY29hbGVzY2UtPnJ4X2NvYWxlc2NlX3VzZWNzID0gcnhfY2Fwcy5jb2FsZXNjZV91c2VjczsN
-Cj4gPiArICAgICAgICAgICAgIHJldHVybiAwOw0KPiA+ICsgICAgIH0NCj4gPiArDQo+ID4gICAg
-ICAgZWNvYWxlc2NlLT51c2VfYWRhcHRpdmVfcnhfY29hbGVzY2UgPSBscC0+cnhfZGltX2VuYWJs
-ZWQ7DQo+ID4NCj4gPiAgICAgICBzcGluX2xvY2tfaXJxKCZscC0+cnhfY3JfbG9jayk7DQo+ID4g
-QEAgLTIyMzMsNiArMjI2MywyOSBAQCBheGllbmV0X2V0aHRvb2xzX3NldF9jb2FsZXNjZShzdHJ1
-Y3QgbmV0X2RldmljZQ0KPiAqbmRldiwNCj4gPiAgICAgICAgICAgICAgIHJldHVybiAtRUlOVkFM
-Ow0KPiA+ICAgICAgIH0NCj4gPg0KPiA+ICsgICAgIGlmIChscC0+dXNlX2RtYWVuZ2luZSkgIHsN
-Cj4gPiArICAgICAgICAgICAgIHN0cnVjdCBkbWFfc2xhdmVfY29uZmlnIHR4X2NmZywgcnhfY2Zn
-Ow0KPiA+ICsgICAgICAgICAgICAgaW50IHJldDsNCj4gPiArDQo+ID4gKyAgICAgICAgICAgICB0
-eF9jZmcuY29hbGVzY2VfY250ID0gZWNvYWxlc2NlLT50eF9tYXhfY29hbGVzY2VkX2ZyYW1lczsN
-Cj4gPiArICAgICAgICAgICAgIHR4X2NmZy5jb2FsZXNjZV91c2VjcyA9IGVjb2FsZXNjZS0+dHhf
-Y29hbGVzY2VfdXNlY3M7DQo+ID4gKyAgICAgICAgICAgICByeF9jZmcuY29hbGVzY2VfY250ID0g
-ZWNvYWxlc2NlLT5yeF9tYXhfY29hbGVzY2VkX2ZyYW1lczsNCj4gPiArICAgICAgICAgICAgIHJ4
-X2NmZy5jb2FsZXNjZV91c2VjcyA9IGVjb2FsZXNjZS0+cnhfY29hbGVzY2VfdXNlY3M7DQo+ID4g
-Kw0KPiA+ICsgICAgICAgICAgICAgcmV0ID0gZG1hZW5naW5lX3NsYXZlX2NvbmZpZyhscC0+dHhf
-Y2hhbiwgJnR4X2NmZyk7DQo+ID4gKyAgICAgICAgICAgICBpZiAocmV0KSB7DQo+ID4gKyAgICAg
-ICAgICAgICAgICAgICAgIE5MX1NFVF9FUlJfTVNHKGV4dGFjaywgImZhaWxlZCB0byBzZXQgdHgg
-Y29hbGVzY2UgcGFyYW1ldGVycyIpOw0KPiA+ICsgICAgICAgICAgICAgICAgICAgICByZXR1cm4g
-cmV0Ow0KPiA+ICsgICAgICAgICAgICAgfQ0KPiA+ICsNCj4gPiArICAgICAgICAgICAgIHJldCA9
-IGRtYWVuZ2luZV9zbGF2ZV9jb25maWcobHAtPnJ4X2NoYW4sICZyeF9jZmcpOw0KPiA+ICsgICAg
-ICAgICAgICAgaWYgKHJldCkgew0KPiA+ICsgICAgICAgICAgICAgICAgICAgICBOTF9TRVRfRVJS
-X01TRyhleHRhY2ssICJmYWlsZWQgdG8gc2V0IHJ4IGNvYWxlc2NlDQo+IHBhcmFtZXRlcnMiKTsN
-Cj4gPiArICAgICAgICAgICAgICAgICAgICAgcmV0dXJuIHJldDsNCj4gPiArICAgICAgICAgICAg
-IH0NCj4gPiArICAgICAgICAgICAgIHJldHVybiAwOw0KPiA+ICsgICAgIH0NCj4gPiArDQo+ID4g
-ICAgICAgaWYgKG5ld19kaW0gJiYgIW9sZF9kaW0pIHsNCj4gPiAgICAgICAgICAgICAgIGNyID0g
-YXhpZW5ldF9jYWxjX2NyKGxwLCBheGllbmV0X2RpbV9jb2FsZXNjZV9jb3VudF9yeChscCksDQo+
-ID4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBlY29hbGVzY2UtPnJ4X2NvYWxl
-c2NlX3VzZWNzKTsNCg==
+Hi,
+
+On 27/05/25 17:07, Tomi Valkeinen wrote:
+> Hi,
+> 
+> On 27/05/2025 13:39, Jayesh Choudhary wrote:
+>>
+>>
+>> On 27/05/25 14:59, Jayesh Choudhary wrote:
+>>> Hello Tomi,
+>>>
+>>> On 27/05/25 13:28, Tomi Valkeinen wrote:
+>>>> Hi,
+>>>>
+>>>> On 21/05/2025 10:32, Jayesh Choudhary wrote:
+>>>>> After adding DBANC framework, mhdp->connector is not initialised during
+>>>>> bridge calls. But the asyncronous work scheduled depends on the
+>>>>> connector.
+>>>>> We cannot get to drm_atomic_state in these asyncronous calls running on
+>>>>> worker threads. So we need to store the data that we need in mhdp
+>>>>> bridge
+>>>>> structure.
+>>>>> Like other bridge drivers, use drm_connector pointer instead of
+>>>>> structure
+>>>>> and make appropriate changes to the conditionals and assignments
+>>>>> related
+>>>>> to mhdp->connector.
+>>>>> Also, in the atomic enable call, move the connector  and connector
+>>>>> state
+>>>>> calls above, so that we do have a connector before we can retry the
+>>>>> asyncronous work in case of any failure.
+>>>>>
+>>>>
+>>>> I don't quite understand this patch. You change the mhdp->connector to a
+>>>> pointer, which is set at bridge_enable and cleared at bridge_disable.
+>>>> Then you change the "mhdp->connector.dev" checks to "mhdp->connector".
+>>>>
+>>>> So, now in e.g. cdns_mhdp_fw_cb(), we check for mhdp->connector, which
+>>>> is set at bridge_enable(). Can we ever have the bridge enabled before
+>>>> the fb has been loaded? What is the check even supposed to do there?
+>>>>
+>>>> Another in cdns_mhdp_hpd_work(), it checks for mhdp->connector. So...
+>>>> HPD code behaves differently based on if the bridge has been enabled or
+>>>> not? What is it supposed to do?
+>>>>
+>>>> Isn't the whole "if (mhdp->connector.dev)" code for the legacy
+>>>> non-DRM_BRIDGE_ATTACH_NO_CONNECTOR case?
+>>>>
+>>>>    Tomi
+>>>
+>>> I misinterpreted your comment in v1[0] regarding finding the connector
+>>> from the current state in cdns_mhdp_modeset_retry_fn() and I missed
+>>> this. I was more focused on finding a connector for that function.
+>>>
+>>> For the current code, in all the conditionals involving mhdp->connector,
+>>> we are entering else statements as connector is not initialised.
+>>> So I will just drop if statements in cdns_mhdp_fw_cb() and
+>>> cdns_mhdp_hpd_work() (like you said, its legacy case) while still having
+>>> mhdp->connector as pointer as we need it for
+>>> cdns_mhdp_modeset_retry_fn() and in cdns-mhdp8546-hdcp driver.
+>>>
+>>> That should be okay?
+>>>
+>>> [0]: https://lore.kernel.org/all/e76f94b9-b138-46e7-bb18-
+>>> b33dd98c9abb@ideasonboard.com/
+>>>
+>>> Warm Regards,
+>>> Jayesh
+>>>
+>>>
+>>
+>> Tomi,
+>>
+>> One more thing here. Should this be squashed with the first patch as
+>> this is sort of removing !(DRM_BRIDGE_ATTACH_NO_CONNECTOR) case and
+>> associated changes?
+> 
+> 
+> All the legacy code should be removed in the previous patch, yes. But
+> it's not quite clear to me what's going on here. At least parts of this
+> patch seem to be... fixing some previous code? You move the
+> drm_atomic_get_new_connector_for_encoder() call to be earlier in the
+> bridge_enable. That doesn't sound like removing the legacy code. But
+> it's not quite clear to me why that's done (or why it wasn't needed
+> earlier. or was it?).
+> 
+>   Tomi
+> 
+
+drm_atomic_get_new_connector_for_encoder() call is moved earlier
+in bridge_enable to address the cases when we get error in
+cdns_mhdp_link_up(mhdp) or cdns_mhdp_reg_read(mhdp, CDNS_DPTX_CAR,
+&resp), and we goto 'out' to schedule modeset_retry_work. We need to
+have drm_connector before that if we want to change the connector
+link state here.
+
+In legacy usecase we are not hitting this as attach already initialised
+mhdp->connector before bridge_enable() that would be used by
+cdns_mhdp_modeset_retry_fn() as required.
+
+These errors usually don't hit during bridge_enable calls but in
+one of my boards, I saw cdns_mhdp_link_up() giving error and after
+that the null pointer dereference in cdns_mhdp_modeset_retry_fn()
+while trying to access the mutex there (&conn->dev->mode_config.mutex)
+
+-Jayesh
+
+
+
+>>
+>>>>
+>>>>> Fixes: fb43aa0acdfd ("drm: bridge: Add support for Cadence MHDP8546
+>>>>> DPI/DP bridge")
+>>>>> Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
+>>>>> ---
+>>>>>    .../drm/bridge/cadence/cdns-mhdp8546-core.c   | 28 ++++++++
+>>>>> +----------
+>>>>>    .../drm/bridge/cadence/cdns-mhdp8546-core.h   |  2 +-
+>>>>>    .../drm/bridge/cadence/cdns-mhdp8546-hdcp.c   |  8 +++---
+>>>>>    3 files changed, 19 insertions(+), 19 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c b/
+>>>>> drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
+>>>>> index 66bd916c2fe9..5388e62f230b 100644
+>>>>> --- a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
+>>>>> +++ b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
+>>>>> @@ -740,7 +740,7 @@ static void cdns_mhdp_fw_cb(const struct
+>>>>> firmware *fw, void *context)
+>>>>>        bridge_attached = mhdp->bridge_attached;
+>>>>>        spin_unlock(&mhdp->start_lock);
+>>>>>        if (bridge_attached) {
+>>>>> -        if (mhdp->connector.dev)
+>>>>> +        if (mhdp->connector)
+>>>>>                drm_kms_helper_hotplug_event(mhdp->bridge.dev);
+>>>>>            else
+>>>>>                drm_bridge_hpd_notify(&mhdp->bridge,
+>>>>> cdns_mhdp_detect(mhdp));
+>>>>> @@ -1759,17 +1759,25 @@ static void cdns_mhdp_atomic_enable(struct
+>>>>> drm_bridge *bridge,
+>>>>>        struct cdns_mhdp_device *mhdp = bridge_to_mhdp(bridge);
+>>>>>        struct cdns_mhdp_bridge_state *mhdp_state;
+>>>>>        struct drm_crtc_state *crtc_state;
+>>>>> -    struct drm_connector *connector;
+>>>>>        struct drm_connector_state *conn_state;
+>>>>>        struct drm_bridge_state *new_state;
+>>>>>        const struct drm_display_mode *mode;
+>>>>>        u32 resp;
+>>>>> -    int ret;
+>>>>> +    int ret = 0;
+>>>>>        dev_dbg(mhdp->dev, "bridge enable\n");
+>>>>>        mutex_lock(&mhdp->link_mutex);
+>>>>> +    mhdp->connector = drm_atomic_get_new_connector_for_encoder(state,
+>>>>> +                                   bridge->encoder);
+>>>>> +    if (WARN_ON(!mhdp->connector))
+>>>>> +        goto out;
+>>>>> +
+>>>>> +    conn_state = drm_atomic_get_new_connector_state(state, mhdp-
+>>>>>> connector);
+>>>>> +    if (WARN_ON(!conn_state))
+>>>>> +        goto out;
+>>>>> +
+>>>>>        if (mhdp->plugged && !mhdp->link_up) {
+>>>>>            ret = cdns_mhdp_link_up(mhdp);
+>>>>>            if (ret < 0)
+>>>>> @@ -1789,15 +1797,6 @@ static void cdns_mhdp_atomic_enable(struct
+>>>>> drm_bridge *bridge,
+>>>>>        cdns_mhdp_reg_write(mhdp, CDNS_DPTX_CAR,
+>>>>>                    resp | CDNS_VIF_CLK_EN | CDNS_VIF_CLK_RSTN);
+>>>>> -    connector = drm_atomic_get_new_connector_for_encoder(state,
+>>>>> -                                 bridge->encoder);
+>>>>> -    if (WARN_ON(!connector))
+>>>>> -        goto out;
+>>>>> -
+>>>>> -    conn_state = drm_atomic_get_new_connector_state(state, connector);
+>>>>> -    if (WARN_ON(!conn_state))
+>>>>> -        goto out;
+>>>>> -
+>>>>>        if (mhdp->hdcp_supported &&
+>>>>>            mhdp->hw_state == MHDP_HW_READY &&
+>>>>>            conn_state->content_protection ==
+>>>>> @@ -1857,6 +1856,7 @@ static void cdns_mhdp_atomic_disable(struct
+>>>>> drm_bridge *bridge,
+>>>>>            cdns_mhdp_hdcp_disable(mhdp);
+>>>>>        mhdp->bridge_enabled = false;
+>>>>> +    mhdp->connector = NULL;
+>>>>>        cdns_mhdp_reg_read(mhdp, CDNS_DP_FRAMER_GLOBAL_CONFIG, &resp);
+>>>>>        resp &= ~CDNS_DP_FRAMER_EN;
+>>>>>        resp |= CDNS_DP_NO_VIDEO_MODE;
+>>>>> @@ -2157,7 +2157,7 @@ static void cdns_mhdp_modeset_retry_fn(struct
+>>>>> work_struct *work)
+>>>>>        mhdp = container_of(work, typeof(*mhdp), modeset_retry_work);
+>>>>> -    conn = &mhdp->connector;
+>>>>> +    conn = mhdp->connector;
+>>>>>        /* Grab the locks before changing connector property */
+>>>>>        mutex_lock(&conn->dev->mode_config.mutex);
+>>>>> @@ -2234,7 +2234,7 @@ static void cdns_mhdp_hpd_work(struct
+>>>>> work_struct *work)
+>>>>>        int ret;
+>>>>>        ret = cdns_mhdp_update_link_status(mhdp);
+>>>>> -    if (mhdp->connector.dev) {
+>>>>> +    if (mhdp->connector) {
+>>>>>            if (ret < 0)
+>>>>>                schedule_work(&mhdp->modeset_retry_work);
+>>>>>            else
+>>>>> diff --git a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.h b/
+>>>>> drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.h
+>>>>> index bad2fc0c7306..b297db53ba28 100644
+>>>>> --- a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.h
+>>>>> +++ b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.h
+>>>>> @@ -375,7 +375,7 @@ struct cdns_mhdp_device {
+>>>>>         */
+>>>>>        struct mutex link_mutex;
+>>>>> -    struct drm_connector connector;
+>>>>> +    struct drm_connector *connector;
+>>>>>        struct drm_bridge bridge;
+>>>>>        struct cdns_mhdp_link link;
+>>>>> diff --git a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-hdcp.c b/
+>>>>> drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-hdcp.c
+>>>>> index 42248f179b69..59f18c3281ef 100644
+>>>>> --- a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-hdcp.c
+>>>>> +++ b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-hdcp.c
+>>>>> @@ -394,7 +394,7 @@ static int _cdns_mhdp_hdcp_disable(struct
+>>>>> cdns_mhdp_device *mhdp)
+>>>>>        int ret;
+>>>>>        dev_dbg(mhdp->dev, "[%s:%d] HDCP is being disabled...\n",
+>>>>> -        mhdp->connector.name, mhdp->connector.base.id);
+>>>>> +        mhdp->connector->name, mhdp->connector->base.id);
+>>>>>        ret = cdns_mhdp_hdcp_set_config(mhdp, 0, false);
+>>>>> @@ -445,7 +445,7 @@ static int cdns_mhdp_hdcp_check_link(struct
+>>>>> cdns_mhdp_device *mhdp)
+>>>>>        dev_err(mhdp->dev,
+>>>>>            "[%s:%d] HDCP link failed, retrying authentication\n",
+>>>>> -        mhdp->connector.name, mhdp->connector.base.id);
+>>>>> +        mhdp->connector->name, mhdp->connector->base.id);
+>>>>>        ret = _cdns_mhdp_hdcp_disable(mhdp);
+>>>>>        if (ret) {
+>>>>> @@ -487,13 +487,13 @@ static void cdns_mhdp_hdcp_prop_work(struct
+>>>>> work_struct *work)
+>>>>>        struct cdns_mhdp_device *mhdp = container_of(hdcp,
+>>>>>                                 struct cdns_mhdp_device,
+>>>>>                                 hdcp);
+>>>>> -    struct drm_device *dev = mhdp->connector.dev;
+>>>>> +    struct drm_device *dev = mhdp->connector->dev;
+>>>>>        struct drm_connector_state *state;
+>>>>>        drm_modeset_lock(&dev->mode_config.connection_mutex, NULL);
+>>>>>        mutex_lock(&mhdp->hdcp.mutex);
+>>>>>        if (mhdp->hdcp.value != DRM_MODE_CONTENT_PROTECTION_UNDESIRED) {
+>>>>> -        state = mhdp->connector.state;
+>>>>> +        state = mhdp->connector->state;
+>>>>>            state->content_protection = mhdp->hdcp.value;
+>>>>>        }
+>>>>>        mutex_unlock(&mhdp->hdcp.mutex);
+>>>>
+> 
 
