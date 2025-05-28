@@ -1,71 +1,152 @@
-Return-Path: <linux-kernel+bounces-665579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A7C5AC6B1D
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 15:59:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C159AC6B2F
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 16:01:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22D361BC6BE4
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 13:59:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3C647AF303
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 13:59:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC8982874EC;
-	Wed, 28 May 2025 13:59:02 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27B7C288537;
+	Wed, 28 May 2025 14:00:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RFSEQJLT"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6371320B81D
-	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 13:59:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCAF6288528
+	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 14:00:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748440742; cv=none; b=k6P9QIioK57qxnxGpgksCaeqsrIsoOPf4ZGUGjE/dsLyqgvyZGZWLglX0U4JL+xRI5p6ZfV4IWFznJvP8m2p7tr6Bq6n61bsGxTJ2c+ZGI2jz13d3Qw3imtHd7x3FLv2102azAJzNBWAnHOBgrsIz9oKQ3mzOjN73w0mHTqTJFQ=
+	t=1748440827; cv=none; b=PXsAEsEVTIBschOZsW2DO6Q9P/5JmaPgqBmRaJLu2LDtuw1Jccq+qs+WhOEINrOHUTcdKOfyyugoN27zsa4Robh4nB8qVhbVEvsbHj2cE7N+m4RiActVqHXu0oFiGf/dI0Yw3RNZ1bp7x5twsX3GUdwWRR813vLtau5AW0WhGfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748440742; c=relaxed/simple;
-	bh=lvfyVyNh2GfH/oh2OLT87WzGcnpGXZD/TplYVhyCgNs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lyPRi0htF6CbPjW58cvp8HOuyfWaVl0yA4x1nUnDvr/eW0CU4WxeIjP0WeZ+CbBzgdauuxCdOEQECVxOShF+OBcXr+2TLoOR3pvh23MC3c+E+j5hxwCzHnhdL/of2JJ+e0lcRB1oSyURRucvC+7Pspe2nW5sbQ34B2YqUl/0Zyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 040F4C4CEE3;
-	Wed, 28 May 2025 13:59:00 +0000 (UTC)
-Date: Wed, 28 May 2025 10:00:00 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org, Dietmar
- Eggemann <dietmar.eggemann@arm.com>, Linus Torvalds
- <torvalds@linux-foundation.org>, Shrikanth Hegde <sshegde@linux.ibm.com>,
- Thomas Gleixner <tglx@linutronix.de>, Valentin Schneider
- <vschneid@redhat.com>, Mel Gorman <mgorman@suse.de>, Vincent Guittot
- <vincent.guittot@linaro.org>, Sebastian Andrzej Siewior
- <bigeasy@linutronix.de>
-Subject: Re: [PATCH 00/43] sched: Use the SMP scheduler on UP too
-Message-ID: <20250528100000.0ab0a8b1@gandalf.local.home>
-In-Reply-To: <20250528085813.GX39944@noisy.programming.kicks-ass.net>
-References: <20250528080924.2273858-1-mingo@kernel.org>
-	<20250528085813.GX39944@noisy.programming.kicks-ass.net>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1748440827; c=relaxed/simple;
+	bh=HqmXzcz1Fhb5aWwjj60lQbn31SSuMbIoGTI7rS/zLpk=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=iWbKi01dXZPkDlWj3C6XXNhyNkSp6a2r05vMbZG0Iy/TkeEf2ATaQQXWntS77H58IILeYUbJE6fDPWe6qsgQX8TJYlc/D9HfZL8I9hoJxhzvxNdDmZQY2zrF1VTGOJdW/DoskU1jjbE76m/6aXEWTCpsxlg2uGcm40e92RB/8PU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RFSEQJLT; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-450cd6b511cso1100955e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 07:00:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1748440823; x=1749045623; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uLCejufrq+qP3M9mNyL+ruMGCziYJYfpyzwNMPCLUy4=;
+        b=RFSEQJLTchsvDKMOoRbUNsmbJ6wUxuxW4ZORdFRMio+qgL96Xq2QoeIHjIl9FE9pqJ
+         ACzfpHfFpN7SDblZtnPfJ0dy7YmaG7haut4dAd6nZdtTf6zWOpagMkdkrjRE6F1Z6w91
+         Mmg0jsUZ07xy3h3aUWAVl8pEVkd2CgXTqZURm/x7bfEDaxbpy5Kc6N8gq+opZVA22dAC
+         TWsh/8h7vpZFzdkgKr1hQ5j3q66M8H9BE7l7c/FVMbZM0HnO7vL/MLisCCTkWYnm3783
+         tJtVy4ERTTcD5FDOv5TfrFbR7mSIRfEwBTDXdG+h7Nna0EeksZ0493/kbQ4bDCAE6JXs
+         w9yA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748440823; x=1749045623;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=uLCejufrq+qP3M9mNyL+ruMGCziYJYfpyzwNMPCLUy4=;
+        b=Prz3UBklgWb7cF49PkrmLRQiQEdU8hBcJOB1LQbellHcOrhT+19tJbob27uswirkl5
+         Ac5Mqsw3iLWCPlah5kZl1s2MrN9IQChzHU9kgQC20ojeATgZ9ES9nC+e7SvA/rBgDu70
+         OUWdKK3+EYitB+f6x88Ja6Y+EXXeXjvUOCiBKehZGBP7RWDWfLvaEUANXB84wWd/OyY5
+         TY/zZa31G1x/QJn8lfPt6kcRqDVTAwOhYTmyq2Jd68+nxs0baaXTupiXrqCrvn/kGEo+
+         PHcXE2+BfLhl7zC6seOqhsySW4ordInM0NHyUniXd6vqs3Ny6yrE000f4vrdXLCuo3m3
+         NPJA==
+X-Forwarded-Encrypted: i=1; AJvYcCUlyC8BV7Qk/gYOP/e2qIhqsBZsVNQemKVxIdlXwxzrZHzWDbr5Om1T52Iv3F93HPjlXaZpofgLHCzYUr0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+aIiDkbLVvHKjMaL2qG5C1BTWt9Tl5M+G+0I5jzMrppe7xVtU
+	FdcbBsxP3dIG1oYjPkrZAPhhiOjrP7plFyHELPAFt1efyQ/VQBNYIQ0geXXDn0n7jU0=
+X-Gm-Gg: ASbGncsrmDJTSdpOQ6JAppfnpQirjuZsd13/7hOXV4NivzevH/JRgNdHfgcT/8KLpHU
+	/+c+qXjOnMJc42ji5KW10Ou0lBlBs93AQB5epkXr3f0eNDlVx6l8GGa1Vn+imkeiNqrKuPx3BqT
+	QmkmCFkE46WmltfYYKPL5Un3U0GFq00bhjR4mr8SKLQDyLbD63wmCtioRlPBXBZOEjfZf1qFj8I
+	w7S7EGb+MtYTKHSJpUFOvSt7YMIq8oSAcK3tiloII31LZwgdmxAwM+kb58YOVOJIA4/6ZiI4e1Y
+	a0btGNAsM6NCVVYr7rsrYfi5DIj/YUACt0Mc41YszGLAPZ3nFwQmMTFBfIGbMbZVJn4SK+METbR
+	Jug==
+X-Google-Smtp-Source: AGHT+IG4/Cne7nqOIsE/PY37ws2Wr1tDPTEMkErYoJ1bGl8pKJEeVcseVqH5nyS1AL3VO3u2TuUQQA==
+X-Received: by 2002:a05:600c:6386:b0:442:f4a3:b5f2 with SMTP id 5b1f17b1804b1-45072545b44mr22307925e9.6.1748440822669;
+        Wed, 28 May 2025 07:00:22 -0700 (PDT)
+Received: from localhost ([2a00:2381:fd67:101:6c39:59e6:b76d:825])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-450064aeb6csm23449655e9.24.2025.05.28.07.00.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 28 May 2025 07:00:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 28 May 2025 15:00:21 +0100
+Message-Id: <DA7UJKPSD154.2FRUF06DRZO7K@linaro.org>
+From: "Alexey Klimov" <alexey.klimov@linaro.org>
+To: "Dmitry Baryshkov" <dmitry.baryshkov@oss.qualcomm.com>
+Cc: <robdclark@gmail.com>, <will@kernel.org>, <robin.murphy@arm.com>,
+ <linux-arm-msm@vger.kernel.org>, <joro@8bytes.org>,
+ <iommu@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
+ <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>,
+ <andersson@kernel.org>
+Subject: Re: [PATCH] iommu/arm-smmu-qcom: Add SM6115 MDSS compatible
+X-Mailer: aerc 0.20.0
+References: <20250528003118.214093-1-alexey.klimov@linaro.org>
+ <ehriorde5zbfoo6b7rzemnzegnwqfdobzwyjra755ynk2me2g6@om6g57n26zbp>
+In-Reply-To: <ehriorde5zbfoo6b7rzemnzegnwqfdobzwyjra755ynk2me2g6@om6g57n26zbp>
 
-On Wed, 28 May 2025 10:58:13 +0200
-Peter Zijlstra <peterz@infradead.org> wrote:
+On Wed May 28, 2025 at 9:52 AM BST, Dmitry Baryshkov wrote:
+> On Wed, May 28, 2025 at 01:31:18AM +0100, Alexey Klimov wrote:
+>> Add the SM6115 MDSS compatible to clients compatible list, as it also
+>> needs that workaround.
+>> Without this workaround, for example, QRB4210 RB2 which is based on
+>> SM4250/SM6115 generates a lot of smmu unhandled context faults during
+>> boot:
+>>=20
+>> arm_smmu_context_fault: 116854 callbacks suppressed
+>> arm-smmu c600000.iommu: Unhandled context fault: fsr=3D0x402,
+>> iova=3D0x5c0ec600, fsynr=3D0x320021, cbfrsynra=3D0x420, cb=3D5
+>> arm-smmu c600000.iommu: FSR    =3D 00000402 [Format=3D2 TF], SID=3D0x420
+>> arm-smmu c600000.iommu: FSYNR0 =3D 00320021 [S1CBNDX=3D50 PNU PLVL=3D1]
+>> arm-smmu c600000.iommu: Unhandled context fault: fsr=3D0x402,
+>> iova=3D0x5c0d7800, fsynr=3D0x320021, cbfrsynra=3D0x420, cb=3D5
+>> arm-smmu c600000.iommu: FSR    =3D 00000402 [Format=3D2 TF], SID=3D0x420
+>>=20
+>> and also leads to failed initialisation of lontium lt9611uxc driver
+>> and gpu afterwards:
+>
+> Nit: there is nothing failing the lt9611uxc on its own. binding all MDSS
+> components (triggered by lt9611uxc attaching to the DSI bus) produces
+> the failure.
 
-> You know about unifdef, right :-)
+Oh, I didn't mean to express that something failed in lt9611uxc itself, I
+was just trying to list observed problems.
+Apart from hdmi bridge and gpu the failed component will be soundcard drive=
+r
+since it depends on lt9611uxc.. So, if you have rewording in mind feel free
+to suggest it.
 
-I didn't know about that!
+Or maybe something like this will look better:
+and also failed initialisation of lontium lt9611uxc, gpu and dpu is observe=
+d:
+  (kernel trace as in the original email)
 
-> 
-> $ unifdef -m -DCONFIG_SMP=y kernel/sched/*.[ch] include/linux/sched.h include/linux/sched/*.h
+[..]
 
-Cool!
+>
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+>
+> I'd also propose:
+>
+> Fixes: 3581b7062cec ("drm/msm/disp/dpu1: add support for display on SM611=
+5")
+>
+> This way this is going to be fixed for all platforms using display on
+> SM6115.
 
-Although I wish there was better documentation about it.
+Yes. Thanks. Checkpatch suggested "Fixes" tag but it was unclear when it
+started to horribly fail during boot -- sometime around 6.14 or 6.15 cycle.
 
--- Steve
+Best regards,
+Alexey
 
