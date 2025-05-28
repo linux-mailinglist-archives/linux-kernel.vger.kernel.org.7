@@ -1,117 +1,78 @@
-Return-Path: <linux-kernel+bounces-664627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-664622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C166AC5E55
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 02:32:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A509CAC5E4A
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 02:31:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA09D3A5391
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 00:31:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C0734C0DF8
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 00:30:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEAAE1E1C22;
-	Wed, 28 May 2025 00:30:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77A768634A;
+	Wed, 28 May 2025 00:29:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t091MrYD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KhPHc6ns"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5291972626;
-	Wed, 28 May 2025 00:30:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEFD078F54;
+	Wed, 28 May 2025 00:29:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748392208; cv=none; b=mVpG8Wdt546ieC2pEooJJiHqRe3YJ4/eQEC3MaNZaSajE+8fPxvb2tgZO/kwQETSFVuIm2nUNRBiWSshgqxduy2MOvSg6eztuJWuy8jzztS+a8G6Tlzg32A50WR0LcjqYGgLtYxw1lIKoxTbL7n/1cIvBqXf4WpbYK6X9KJw3Z4=
+	t=1748392188; cv=none; b=SZmtNh6KgbU+PGEMOuF77JaO/jBeESt32L7bu769296BP4v3dyjjMA+ZPzonD9b7AsQ00C4ehAt75B1x+pzOxnX+v3tu5b0vObR45whJNXkeK4+VFlOIKzMcfYurpfa1BViVgxC+GJTrAR8cib2S9Ndp+YayGhsC1HgXVpme/xk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748392208; c=relaxed/simple;
-	bh=tPZMMdKen/ze34Aaff2EmTLJ5SQOS/s4Bb/Jsu8X6YQ=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=WAA35+aIGhuNsJoilMogzvybNNKXwpmLgirZR0lDtt9aCAiS1t2rVBM/q3WBRZuloCfgtBIm5PWwkbbPOA1wq6UUrkSMekUPnPxhAhnIS881e5uH5h1yRpaLNr2x1FKjNQw+TEqmqJW3KbUyhjGusucmUDumAsO26g3uWnY7hy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t091MrYD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C82BDC4CEED;
-	Wed, 28 May 2025 00:30:06 +0000 (UTC)
+	s=arc-20240116; t=1748392188; c=relaxed/simple;
+	bh=OOzw/9gLBVWa3L5a2EoeiGi1y++Ll4vl8Nha9XSA/c0=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=JwdToS/DdM0R4PZFMDJFM6OH9X3dpeAwwHiUOrGbLLPhx5NQAXTtsbOuJFYprQcv62cE6/EZGcwmpivCzs1PtqrPGP0ay/JussqvFcQtIbgcX37/2Xh2a8dss0/I8mabkdn2tqVYFQ0zOhYkdr5clzNcKa9EHd0Oz0+/ZefIP38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KhPHc6ns; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54688C4CEE9;
+	Wed, 28 May 2025 00:29:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748392207;
-	bh=tPZMMdKen/ze34Aaff2EmTLJ5SQOS/s4Bb/Jsu8X6YQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=t091MrYD7XEmFAgWyjVFHpReKtKQmNisaW8/Ede4KzmApfsf7CstGKWpTaDg48Y9z
-	 KUUIxN5BFYGyVwpOAQ8kbYRFs6qy07gkNmWXsT7EG++jKu5UpTPbS3gqLpfjMDQTGk
-	 zI8QuRXUqrXdZpDAdpiEw1o/kYOsxDZ9Q9ffZf2qLnPH1TOPknaBz8ymff9vI534Os
-	 XjkXqolFvKGQybINnit2qDD7dTm7ESF3c4RvMHveOms6D+NIZqexsiu32rGxNXI4gV
-	 OaM2RYCE/vOLDMcP8GePDz1EForQEjTrsh7MY/Wc3p8L1ZDuzLsFKzFFx8539Ge8xS
-	 p0WUg7fOxaCsw==
-Date: Wed, 28 May 2025 09:30:05 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: Re: [PATCH] ring-buffer: Simplify reset_disabled_cpu_buffer() with
- use of guard()
-Message-Id: <20250528093005.486a6fdbaae7976430680baf@kernel.org>
-In-Reply-To: <20250527144623.77a9cc47@gandalf.local.home>
-References: <20250527144623.77a9cc47@gandalf.local.home>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=k20201202; t=1748392188;
+	bh=OOzw/9gLBVWa3L5a2EoeiGi1y++Ll4vl8Nha9XSA/c0=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=KhPHc6nszMV7Id0eXJXtrFexr9SGSNan4blxqfogpeJG0iMoIZ20UA/c1+Lrztc7c
+	 Q0PX8N2nd7vx/yZAW+BucrNriHc8YJTQYYOxaTeG5sqOtIw8Ic68eeEJfDHD+ooz0A
+	 sQ7fniXBEV9pS6iJZ5xYUtnHY+qIzgU5TS/RqwY9hdobue3Qm47GUqig1F63y443AN
+	 hm+GcEoCQhlwGdqVnQxfUDbaQmqT0SsrZjYftDnAcv2LlasfVby+vEBtsfULlLCA5V
+	 X/BHVRrVDY3WHPcXFCXzk4D3wj87JlBWBJJq7h/bGwSgyIVD1rtEVTXwYxrFfqhNtg
+	 g652S277f/PUw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE084380AAE2;
+	Wed, 28 May 2025 00:30:23 +0000 (UTC)
+Subject: Re: [GIT PULL] MMC updates for v6.16
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20250527113353.209435-1-ulf.hansson@linaro.org>
+References: <20250527113353.209435-1-ulf.hansson@linaro.org>
+X-PR-Tracked-List-Id: <linux-mmc.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20250527113353.209435-1-ulf.hansson@linaro.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git tags/mmc-v6.16
+X-PR-Tracked-Commit-Id: d2c6acff6386f43ed307822454b970c831c48f1b
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 35a8b02e071a83dd2d42a8446a00a56f6147dc06
+Message-Id: <174839222228.1837144.18311807369660071021.pr-tracker-bot@kernel.org>
+Date: Wed, 28 May 2025 00:30:22 +0000
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Linus <torvalds@linux-foundation.org>, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 
-On Tue, 27 May 2025 14:46:23 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+The pull request you sent on Tue, 27 May 2025 13:33:53 +0200:
 
-> From: Steven Rostedt <rostedt@goodmis.org>
-> 
-> Use guard(raw_spinlock_irqsave)() in reset_disabled_cpu_buffer() to
-> simplify the locking.
-> 
+> git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git tags/mmc-v6.16
 
-Looks good to me.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/35a8b02e071a83dd2d42a8446a00a56f6147dc06
 
-Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-
-> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> ---
->  kernel/trace/ring_buffer.c | 9 ++-------
->  1 file changed, 2 insertions(+), 7 deletions(-)
-> 
-> diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-> index 10a4b26929ae..0b21d64e90c8 100644
-> --- a/kernel/trace/ring_buffer.c
-> +++ b/kernel/trace/ring_buffer.c
-> @@ -6112,21 +6112,16 @@ rb_reset_cpu(struct ring_buffer_per_cpu *cpu_buffer)
->  /* Must have disabled the cpu buffer then done a synchronize_rcu */
->  static void reset_disabled_cpu_buffer(struct ring_buffer_per_cpu *cpu_buffer)
->  {
-> -	unsigned long flags;
-> -
-> -	raw_spin_lock_irqsave(&cpu_buffer->reader_lock, flags);
-> +	guard(raw_spinlock_irqsave)(&cpu_buffer->reader_lock);
->  
->  	if (RB_WARN_ON(cpu_buffer, local_read(&cpu_buffer->committing)))
-> -		goto out;
-> +		return;
->  
->  	arch_spin_lock(&cpu_buffer->lock);
->  
->  	rb_reset_cpu(cpu_buffer);
->  
->  	arch_spin_unlock(&cpu_buffer->lock);
-> -
-> - out:
-> -	raw_spin_unlock_irqrestore(&cpu_buffer->reader_lock, flags);
->  }
->  
->  /**
-> -- 
-> 2.47.2
-> 
-
+Thank you!
 
 -- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
