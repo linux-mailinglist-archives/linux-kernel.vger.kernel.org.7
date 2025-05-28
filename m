@@ -1,79 +1,101 @@
-Return-Path: <linux-kernel+bounces-665866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 444A8AC6ECC
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 19:10:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56C26AC6ED1
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 19:12:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FFF61BC83D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 17:10:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C9C33A70EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 17:11:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A916E28DF08;
-	Wed, 28 May 2025 17:09:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7FB928E590;
+	Wed, 28 May 2025 17:11:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UvrY54qe"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gtwtvaCF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 119F328DF45
-	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 17:09:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50D7828E57E;
+	Wed, 28 May 2025 17:11:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748452181; cv=none; b=bJ05D+61IKb+IctEO0h65wm13dcNZyW5i5LXxIZGqV7WLaE2lRdzK88t5ybEZbRXhmDm03kBEiUe2PifarZql78XUTX8lSWqh5hpSaOqTlp68yW0EOe7MY6Y/2mbacRGaBmL4FU3WwSiDm6rZPFPxp4UFjoIj4xM0MbiUNXlMaU=
+	t=1748452282; cv=none; b=ZiGEgxvHpCjKG9whf/02iOOs3BQucBkhrroziQrJF/Rb2wHgI/rKpbO8gP8etLNnQv2d1CGMW0zr2v/hg/IJTWlJkNKSYwBtQBD4UuQtA2vsLDh0d8Q7WKR78CPdxNGYIIULOIRegqgOfDbxqPRmQ8C1cZ5pmJtYfit/96DBMrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748452181; c=relaxed/simple;
-	bh=BJ/ZgklTcy9+MXNhe9PBNRegZQfOjXStNiGBkaVuyMU=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=HTTyqZdt1d1TqP3D3mjfKeKlpKjvMDRJ01DPL8H/a9S1tfu7GlLTRLGXqY/RzWWIUPX+FzMRj0PG5px+IIbzdKMAiZXovxY5Hfkiq2hUzvQ7Bjzch/0LKv7S0JmrpnIGMSw9ICJKRpe6jWdiV3xc4deO202jz7pMTNeTExeeM/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UvrY54qe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7F11C4CEEF;
-	Wed, 28 May 2025 17:09:40 +0000 (UTC)
+	s=arc-20240116; t=1748452282; c=relaxed/simple;
+	bh=68VnENCT5sJ2AEdFh4eOwOKX9EsCLWBTdHaZUNKLp/A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jsB0kaL/EJ1Ik8akbdML824CGGz1MVCPmTyl7ZhvRq03/X9zCjBgscSe0AeLa3HUFA78gk9d+sygAEyG1krKTKp7ct9CPnu4/qzQYqjwSmSER+0OI9RdG4v+YKBF9b4Wge7uKPS0VXuu42qZwf9ElLBg/zV4zAE+WxKaSgjhAWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gtwtvaCF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4416C4CEE3;
+	Wed, 28 May 2025 17:11:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748452180;
-	bh=BJ/ZgklTcy9+MXNhe9PBNRegZQfOjXStNiGBkaVuyMU=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=UvrY54qeuqkLPbDgr89sGf0odhUehgJBEFqzF8+2/D1jUoMphYhq5neO/jcBC3yrU
-	 Q3wbfpG8d3kyLKUJHQAQyOuCzimf7HOoqQwh19NVyVM4CkB+j2fb4ebraDlFMBJQAD
-	 dskOuq/7rx5QUagmtvdtm6gLdkacj+QJnWrUvgzUpZ15jAS0DhD3lGW0f4fOGH1yJ6
-	 TeTQ1OFV4mxTfMcz3U8psne4V8mmoTvygrMyuTRFR4kn6N+9tf16QzG8GaCgYVUMC5
-	 /ZiD3d/qtCTfOisdWvE6lck1CAraXOuMwCpaPuCZYioApqdubuJOVjgjNoSXk5f38w
-	 kV7cjxW6PsSLQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 311EE3822D25;
-	Wed, 28 May 2025 17:10:16 +0000 (UTC)
-Subject: Re: [git pull] drm for 6.16-rc1
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <CAPM=9tyv4CODKMbTW0Xwx4xYWgKPA0rMgThLgCy8OkF-DvVTNg@mail.gmail.com>
-References: <CAPM=9tyv4CODKMbTW0Xwx4xYWgKPA0rMgThLgCy8OkF-DvVTNg@mail.gmail.com>
-X-PR-Tracked-List-Id: Direct Rendering Infrastructure - Development
- <dri-devel.lists.freedesktop.org>
-X-PR-Tracked-Message-Id: <CAPM=9tyv4CODKMbTW0Xwx4xYWgKPA0rMgThLgCy8OkF-DvVTNg@mail.gmail.com>
-X-PR-Tracked-Remote: https://gitlab.freedesktop.org/drm/kernel.git tags/drm-next-2025-05-28
-X-PR-Tracked-Commit-Id: f8bb3ed3197966fb60bedcbdc126d2bd5bc0a77f
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: b08494a8f7416e5f09907318c5460ad6f6e2a548
-Message-Id: <174845221480.2474092.12132473999464633723.pr-tracker-bot@kernel.org>
-Date: Wed, 28 May 2025 17:10:14 +0000
-To: Dave Airlie <airlied@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Simona Vetter <simona@ffwll.ch>, dri-devel <dri-devel@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>
+	s=k20201202; t=1748452282;
+	bh=68VnENCT5sJ2AEdFh4eOwOKX9EsCLWBTdHaZUNKLp/A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gtwtvaCFNrBnLSYT0HTL9oBd6k0psK3Lc+RyQIVJsBBZ8dXuFvPsSntbMmBTR710y
+	 VhkR385AUwqHC5KlF4VlSkZ8AzqYo1Jg5OYTnX9xmH6qYyxTI3zSlMZx12h8Qys/ee
+	 zmSUrMj1p26cOM3koYd+ePLbqDQb8tHO9GKuXbh6ydY37XN1oxzwuRo5X64fHhpsbv
+	 xEGJqX9fK4ANUIEFK+iNDXA3Gka68u6O3LTsei0vgAsU/XqUkqAbVQuWjvbxt9SpmG
+	 nVSY/q5HAM80Oxhur2gYc/upf0JW3Y0OGjNs8ZXiXvEjuKsQwKzp1Ri9vEJh/Wus/Q
+	 N5IAn8dmxUz9w==
+Date: Wed, 28 May 2025 14:11:19 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Dapeng Mi <dapeng1.mi@intel.com>
+Subject: Re: [Patch v2] perf tools: Fix incorrect --user-regs comments
+Message-ID: <aDdDt9O1O4gky_st@x1>
+References: <20250403060810.196028-1-dapeng1.mi@linux.intel.com>
+ <35efdc62-fc2b-40c7-9fbd-25fc6028fa6b@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <35efdc62-fc2b-40c7-9fbd-25fc6028fa6b@linux.intel.com>
 
-The pull request you sent on Wed, 28 May 2025 13:51:25 +1000:
+On Wed, May 28, 2025 at 03:03:13PM +0800, Mi, Dapeng wrote:
+> Kindly ping... Thanks.
 
-> https://gitlab.freedesktop.org/drm/kernel.git tags/drm-next-2025-05-28
+Thanks, applied to perf-tools-next,
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/b08494a8f7416e5f09907318c5460ad6f6e2a548
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+- Arnaldo
+ 
+> On 4/3/2025 2:08 PM, Dapeng Mi wrote:
+> > The comment of "--user-regs" option is not correct, fix it.
+> >
+> > "on interrupt," -> "in user space,"
+> >
+> > Fixes: 84c417422798 ("perf record: Support direct --user-regs arguments")
+> > Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+> > Reviewed-by: Ian Rogers <irogers@google.com>
+> > ---
+> >  tools/perf/builtin-record.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+> > index ba20bf7c011d..d56273a0e241 100644
+> > --- a/tools/perf/builtin-record.c
+> > +++ b/tools/perf/builtin-record.c
+> > @@ -3480,7 +3480,7 @@ static struct option __record_options[] = {
+> >  		    "sample selected machine registers on interrupt,"
+> >  		    " use '-I?' to list register names", parse_intr_regs),
+> >  	OPT_CALLBACK_OPTARG(0, "user-regs", &record.opts.sample_user_regs, NULL, "any register",
+> > -		    "sample selected machine registers on interrupt,"
+> > +		    "sample selected machine registers in user space,"
+> >  		    " use '--user-regs=?' to list register names", parse_user_regs),
+> >  	OPT_BOOLEAN(0, "running-time", &record.opts.running_time,
+> >  		    "Record running/enabled time of read (:S) events"),
+> >
+> > base-commit: 35d13f841a3d8159ef20d5e32a9ed3faa27875bc
 
