@@ -1,342 +1,217 @@
-Return-Path: <linux-kernel+bounces-666250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A00E9AC743E
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 00:57:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2452AC7443
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 01:00:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45B721BA2B0B
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 22:57:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F0B64A6463
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 23:00:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5398E221F14;
-	Wed, 28 May 2025 22:57:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ED00223703;
+	Wed, 28 May 2025 23:00:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MYL7yYkS"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Jei24ZVe"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 900732206A7;
-	Wed, 28 May 2025 22:57:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35CDA2222D5
+	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 23:00:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748473026; cv=none; b=Q9TwfH9E2ti6ca6rnyhQ+8jrO+H+ZmE/aLaIvtwGLwEf56SUvTUE0XIgSVxM2NgZexIC3iBeA4A+nKOuhk96luR9nVlifVdPZv9rRbH0eD9l2N3UCEaBHKtV6jdVuO532bIpyiVriV3pCzvzRFrMGSr+tJfi0L5rEFTCvrSBPcs=
+	t=1748473210; cv=none; b=fheWfxlj3SMmDoYeechxlrVIQLUk/wLD+PDpIdqCiKM67oQnuAHG9c11qOl+q7UGbFr/50O1rB3vU7Gbww73dO2oPUW+XsTn0Qwpd1G0kcETQHDWEhnGiUJSjnt3FUDFhkPk5BlefZbh5Fwd4olumG0Ofg1LfCUpdJEHoXkP2EY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748473026; c=relaxed/simple;
-	bh=5ZmfanPQmTtVk2YHRo7PTIkRByqp8zV7HgvMhOjuEaE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FOQpdntWwC7gpkjKMIykEI1yzb7aRUSE+k7xqR9wevlSn6xIYql3+kywtkUdQpGHeKtP5d/QRbGBzCzxjethjmfZNMvpatcHelNIq3ufxFy2P1cvwxrquNL8f+qXzD4fdX+rYJxszdSd1Zzy//WQCzQ6QGRGFgwpGC37vkgvD6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MYL7yYkS; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1748473025; x=1780009025;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=5ZmfanPQmTtVk2YHRo7PTIkRByqp8zV7HgvMhOjuEaE=;
-  b=MYL7yYkSVwcjKDjrKcVF/yWDF9kF+kRn5l0vZmUvSGQ6ETwVChEGsy55
-   /7ApZ1V7WUPOHHKtDRCM4FCV0K4EA/K11IhJ9qfDdwa0y1/iZ9Rm7IsIT
-   4hwcvf8VV+hi+lVOZtmRWVCyuDLBGWO3FGbR7effhxo5Q5lbaJiDmw193
-   ccr1CMfdkyKHsDoAz83vLj6/MF5AF/fuLeRf9J6+uUVv9bJt8TJyF+UNn
-   KAvj1Md3T/6GFjUEDrpbiyZewGY/xsGwm72/jNZh7DIIQqlYOk+YDc/Vv
-   PCexiJidjcR/GMahOSLbXLFK/FXfSJHWk/4j82xVpnXer9ngOgMZnvXS2
-   Q==;
-X-CSE-ConnectionGUID: VJbzP0U2RA2QAfmShlq6CQ==
-X-CSE-MsgGUID: zd8gb344QR+LelUZjFzcfA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11447"; a="61872050"
-X-IronPort-AV: E=Sophos;i="6.15,322,1739865600"; 
-   d="scan'208";a="61872050"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2025 15:57:04 -0700
-X-CSE-ConnectionGUID: waQsBLFURWetypniVRmNwg==
-X-CSE-MsgGUID: K18uDSK1REGKaNJx/2ZpZQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,322,1739865600"; 
-   d="scan'208";a="174259087"
-Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
-  by fmviesa001.fm.intel.com with ESMTP; 28 May 2025 15:56:59 -0700
-Received: from kbuild by 1992f890471c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uKPhh-000W8G-1z;
-	Wed, 28 May 2025 22:56:57 +0000
-Date: Thu, 29 May 2025 06:56:31 +0800
-From: kernel test robot <lkp@intel.com>
-To: Albert Yang <yangzh0906@thundersoft.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Ge Gordon <gordon.ge@bst.ai>
-Cc: oe-kbuild-all@lists.linux.dev,
-	BST Linux Kernel Upstream Group <bst-upstream@bstai.top>,
-	linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Victor Shih <victor.shih@genesyslogic.com.tw>,
-	Shan-Chun Hung <shanchun1218@gmail.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Peter Robinson <pbrobinson@gmail.com>,
-	Ben Chuang <ben.chuang@genesyslogic.com.tw>,
-	Albert Yang <yangzh0906@thundersoft.com>
-Subject: Re: [PATCH v1 5/9] mmc: sdhci: add Black Sesame Technologies BST
- C1200 controller driver
-Message-ID: <202505290615.GZzN5rNL-lkp@intel.com>
-References: <20250528085453.481320-1-yangzh0906@thundersoft.com>
+	s=arc-20240116; t=1748473210; c=relaxed/simple;
+	bh=3ja/7pjhYpVhznAyrWg1GMhS5AjUE5sAaHrB6yPPRtY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ioR8Rc+RgMnIJsUPK20oci/t0qHp45SihBIU4JK3QFGIhrgJaq1VYm5erN5VT4HxXE8A/SNrRKauQDEJ6b4ariXPe51W8R6J4ZkJbIt1DHgXsbFriePlNY3jSDRLL07oKqzmWZwNTL2FMcupjACIAWovFHgecLFwC67l7PZ0mqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Jei24ZVe; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-231ba6da557so39875ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 16:00:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1748473208; x=1749078008; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZyrwrcKgw3GWmOoBKXzsCVfv7qouElSski6VKs1Vde0=;
+        b=Jei24ZVeiOO/DwRUfI3EjEWHjBMTTz0F5y0p7guilGBW/PUm34G3JfSq0fZnfsrVk4
+         y0IYTqhYVWtN7v3jvzJ+P4xdaiYZpVs73paT0OPm+hQdzuI4QVLPgBUFPXzNeWyW9wNC
+         g+z73W449MVvm5wQPBrp43K5C7I8hPXR88O1NWuxlmsJonID53rCUdYlR5TTKUtR16gN
+         nI7Z9Y4mCM/V2f0at7VMgV0Vqgblvy7pejogfGo5bUv2LQdCprcg5oBznFSQg6I1rek8
+         yQp3SgPP2Fe1BAmQlTuziPY8h9qzgJONB4+U33xXWPGm58kGpRfGOkgmQVfdec45cQDk
+         a8Rg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748473208; x=1749078008;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZyrwrcKgw3GWmOoBKXzsCVfv7qouElSski6VKs1Vde0=;
+        b=WGDUhBHBprazOz//viOQZ3wlF+Tdtuo3EbkF47j96sedrt4f7MbLT5CHJdLef6iblf
+         ba88Zf3XTuZ7E/lBq9wb0ud4wKj6UiVKKx+Ev92+ivUBExBcLWDm/t5Fxz7LHw95FnXg
+         qO2EHRmw60ZpeI9rulKdvZPUZ9Gsig3dwKz5tdkCjkrJ/CE1nspIP/GjNOW7IfnQX2fk
+         VFCxjhpoNBtriyzrVvN3D9WPNTCqu6yz7lNHNjlt0E05FEEz+zCeZ7m3TbR8nyZw9d6Y
+         KFytCOcdqqZJPc9TlRE9OpR5qw2XH/yrFP6nQ9I7S3Q5AD1JkLLguCAPPGOO9hmhvMqC
+         qc2g==
+X-Forwarded-Encrypted: i=1; AJvYcCXQB/VQU6yDvWYJTtoIP70XN8S3lgJ8daoAQiFI6aukwP584k3+/SYLla4x4NZA2yYvy4tfAUEXu9lzq5w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUosCGLHTxTJUoiXuApWKqla39Q/VheIkjGuEzjRVZoKtekKys
+	2mUS40RJjygiElaocLBWMyOk2sOA3w2EN0g6ZHqgOFUkfVthtzPX0te6NBSKJFFLg5+RDyJxaJc
+	A3XAYM1hiILIrYPlMNwEt1QQ5gli7S2sewVSKjFDs
+X-Gm-Gg: ASbGncumbBZNfBnPVkC7Ykbml2Gn9K0HNQlz+qd/Jc8SztpKogLkDffN1Fj5tRw82D1
+	oGpUzCH4OTaEn7crlkxV9bsZqgSF4ttxn2cBGnBEGHCHO6N1UWfMx1sSeMvCAUH0l/3jMizhPAv
+	i1CYaMxH14hnvvgWUy7XVi8taoZRljbBVB7MFZw4ZhkvkNrb1EfLiLIVeKDufmoXsNZkx2eHXyr
+	R5oLLU1NNoX
+X-Google-Smtp-Source: AGHT+IF9RSIu2Agv8OM5GN9jL96VyCN37lz85qfAqjUiJLgied1N7IKt/ksuB4tT0CTY5d7MnJAyQVrlMbM7Cymyzco=
+X-Received: by 2002:a17:902:f60d:b0:234:a734:4ab9 with SMTP id
+ d9443c01a7336-23501b91ae9mr1145705ad.20.1748473208055; Wed, 28 May 2025
+ 16:00:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250528085453.481320-1-yangzh0906@thundersoft.com>
+References: <1747950086-1246773-1-git-send-email-tariqt@nvidia.com>
+ <aDXi3VpAOPHQ576e@mini-arch> <izjshibliwhxfqiidy24xmxsq6q6te4ydmcffucwrhikaokqgg@l5tn6arxiwgo>
+ <aDcvfvLMN2y5xkbo@mini-arch>
+In-Reply-To: <aDcvfvLMN2y5xkbo@mini-arch>
+From: Mina Almasry <almasrymina@google.com>
+Date: Wed, 28 May 2025 15:59:55 -0700
+X-Gm-Features: AX0GCFvJK7-EQq9tYH-o39pB6QkCNRWG5v8pYmEJTC9dd4cC3U1cvbbtJbu6Xkw
+Message-ID: <CAHS8izMhCm1+UzmWK2Ju+hbA5U-7OYUcHpdd8yEuQEux3QZ74A@mail.gmail.com>
+Subject: Re: [PATCH net-next V2 00/11] net/mlx5e: Add support for devmem and
+ io_uring TCP zero-copy
+To: Stanislav Fomichev <stfomichev@gmail.com>
+Cc: Dragos Tatulea <dtatulea@nvidia.com>, Tariq Toukan <tariqt@nvidia.com>, 
+	"David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Eric Dumazet <edumazet@google.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>, 
+	Richard Cochran <richardcochran@gmail.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>, 
+	John Fastabend <john.fastabend@gmail.com>, netdev@vger.kernel.org, 
+	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
+	Moshe Shemesh <moshe@nvidia.com>, Mark Bloch <mbloch@nvidia.com>, Gal Pressman <gal@nvidia.com>, 
+	Cosmin Ratiu <cratiu@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Albert,
+On Wed, May 28, 2025 at 8:45=E2=80=AFAM Stanislav Fomichev <stfomichev@gmai=
+l.com> wrote:
+>
+> On 05/28, Dragos Tatulea wrote:
+> > On Tue, May 27, 2025 at 09:05:49AM -0700, Stanislav Fomichev wrote:
+> > > On 05/23, Tariq Toukan wrote:
+> > > > This series from the team adds support for zerocopy rx TCP with dev=
+mem
+> > > > and io_uring for ConnectX7 NICs and above. For performance reasons =
+and
+> > > > simplicity HW-GRO will also be turned on when header-data split mod=
+e is
+> > > > on.
+> > > >
+> > > > Find more details below.
+> > > >
+> > > > Regards,
+> > > > Tariq
+> > > >
+> > > > Performance
+> > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > > >
+> > > > Test setup:
+> > > >
+> > > > * CPU: Intel(R) Xeon(R) Platinum 8380 CPU @ 2.30GHz (single NUMA)
+> > > > * NIC: ConnectX7
+> > > > * Benchmarking tool: kperf [1]
+> > > > * Single TCP flow
+> > > > * Test duration: 60s
+> > > >
+> > > > With application thread and interrupts pinned to the *same* core:
+> > > >
+> > > > |------+-----------+----------|
+> > > > | MTU  | epoll     | io_uring |
+> > > > |------+-----------+----------|
+> > > > | 1500 | 61.6 Gbps | 114 Gbps |
+> > > > | 4096 | 69.3 Gbps | 151 Gbps |
+> > > > | 9000 | 67.8 Gbps | 187 Gbps |
+> > > > |------+-----------+----------|
+> > > >
+> > > > The CPU usage for io_uring is 95%.
+> > > >
+> > > > Reproduction steps for io_uring:
+> > > >
+> > > > server --no-daemon -a 2001:db8::1 --no-memcmp --iou --iou_sendzc \
+> > > >         --iou_zcrx --iou_dev_name eth2 --iou_zcrx_queue_id 2
+> > > >
+> > > > server --no-daemon -a 2001:db8::2 --no-memcmp --iou --iou_sendzc
+> > > >
+> > > > client --src 2001:db8::2 --dst 2001:db8::1 \
+> > > >         --msg-zerocopy -t 60 --cpu-min=3D2 --cpu-max=3D2
+> > > >
+> > > > Patch overview:
+> > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > > >
+> > > > First, a netmem API for skb_can_coalesce is added to the core to be=
+ able
+> > > > to do skb fragment coalescing on netmems.
+> > > >
+> > > > The next patches introduce some cleanups in the internal SHAMPO cod=
+e and
+> > > > improvements to hw gro capability checks in FW.
+> > > >
+> > > > A separate page_pool is introduced for headers. Ethtool stats are a=
+dded
+> > > > as well.
+> > > >
+> > > > Then the driver is converted to use the netmem API and to allow sup=
+port
+> > > > for unreadable netmem page pool.
+> > > >
+> > > > The queue management ops are implemented.
+> > > >
+> > > > Finally, the tcp-data-split ring parameter is exposed.
+> > > >
+> > > > Changelog
+> > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > > >
+> > > > Changes from v1 [0]:
+> > > > - Added support for skb_can_coalesce_netmem().
+> > > > - Avoid netmem_to_page() casts in the driver.
+> > > > - Fixed code to abide 80 char limit with some exceptions to avoid
+> > > > code churn.
+> > >
+> > > Since there is gonna be 2-3 weeks of closed net-next, can you
+> > > also add a patch for the tx side? It should be trivial (skip dma unma=
+p
+> > > for niovs in tx completions plus netdev->netmem_tx=3D1).
+> > >
+> > Seems indeed trivial. We will add it.
+> >
+> > > And, btw, what about the issue that Cosmin raised in [0]? Is it addre=
+ssed
+> > > in this series?
+> > >
+> > > 0: https://lore.kernel.org/netdev/9322c3c4826ed1072ddc9a2103cc6410606=
+65864.camel@nvidia.com/
+> > We wanted to fix this afterwards as it needs to change a more subtle
+> > part in the code that replenishes pages. This needs more thinking and
+> > testing.
+>
+> Thanks! For my understanding: does the issue occur only during initial
+> queue refill? Or the same problem will happen any time there is a burst
+> of traffic that might exhaust all rx descriptors?
+>
 
-kernel test robot noticed the following build warnings:
+Minor: a burst in traffic likely won't reproduce this case, I'm sure
+mlx5 can drive the hardware to line rate consistently. It's more if
+the machine is under extreme memory pressure, I think,
+page_pool_alloc_pages and friends may return ENOMEM, which reproduces
+the same edge case as the dma-buf being extremely small which also
+makes page_pool_alloc_netmems return -ENOMEM.
 
-[auto build test WARNING on robh/for-next]
-[also build test WARNING on arm64/for-next/core soc/for-next krzk/for-next krzk-dt/for-next krzk-mem-ctrl/for-next linus/master v6.15 next-20250528]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Albert-Yang/dt-bindings-vendor-prefixes-Add-Black-Sesame-Technologies-Co-Ltd/20250528-190614
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-patch link:    https://lore.kernel.org/r/20250528085453.481320-1-yangzh0906%40thundersoft.com
-patch subject: [PATCH v1 5/9] mmc: sdhci: add Black Sesame Technologies BST C1200 controller driver
-config: i386-randconfig-002-20250529 (https://download.01.org/0day-ci/archive/20250529/202505290615.GZzN5rNL-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250529/202505290615.GZzN5rNL-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202505290615.GZzN5rNL-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/mmc/host/sdhci-of-bst-c1200.c:64:6: warning: no previous prototype for 'sdhci_bst_print_vendor' [-Wmissing-prototypes]
-      64 | void sdhci_bst_print_vendor(struct sdhci_host *host)
-         |      ^~~~~~~~~~~~~~~~~~~~~~
->> drivers/mmc/host/sdhci-of-bst-c1200.c:153:6: warning: no previous prototype for 'sdhci_enable_bst_clk' [-Wmissing-prototypes]
-     153 | void sdhci_enable_bst_clk(struct sdhci_host *host, unsigned int clk)
-         |      ^~~~~~~~~~~~~~~~~~~~
->> drivers/mmc/host/sdhci-of-bst-c1200.c:245:6: warning: no previous prototype for 'sdhci_set_bst_clock' [-Wmissing-prototypes]
-     245 | void sdhci_set_bst_clock(struct sdhci_host *host, unsigned int clock)
-         |      ^~~~~~~~~~~~~~~~~~~
-   drivers/mmc/host/sdhci-of-bst-c1200.c: In function 'bst_sdhci_execute_tuning':
->> drivers/mmc/host/sdhci-of-bst-c1200.c:323:13: warning: unused variable 'val' [-Wunused-variable]
-     323 |         u32 val;
-         |             ^~~
-   drivers/mmc/host/sdhci-of-bst-c1200.c: At top level:
->> drivers/mmc/host/sdhci-of-bst-c1200.c:507:5: warning: no previous prototype for 'bst_sdhci_setup_host' [-Wmissing-prototypes]
-     507 | int bst_sdhci_setup_host(struct sdhci_host *host)
-         |     ^~~~~~~~~~~~~~~~~~~~
-   drivers/mmc/host/sdhci-of-bst-c1200.c: In function 'bst_sdhci_setup_host':
->> drivers/mmc/host/sdhci-of-bst-c1200.c:515:14: warning: variable 'enable_vqmmc' set but not used [-Wunused-but-set-variable]
-     515 |         bool enable_vqmmc = false;
-         |              ^~~~~~~~~~~~
->> drivers/mmc/host/sdhci-of-bst-c1200.c:513:13: warning: variable 'max_clk' set but not used [-Wunused-but-set-variable]
-     513 |         u32 max_clk;
-         |             ^~~~~~~
-
-
-vim +/sdhci_bst_print_vendor +64 drivers/mmc/host/sdhci-of-bst-c1200.c
-
-    63	
-  > 64	void sdhci_bst_print_vendor(struct sdhci_host *host)
-    65	{
-    66		SDHCI_DUMP_BST("============ SDHCI VENDOR REGISTER DUMP ===========\n");
-    67	
-    68		SDHCI_DUMP_BST("VER_ID:  0x%08x | VER_TPYE:  0x%08x\n",
-    69			       sdhci_readl(host, SDHC_MHSC_VER_ID_R),
-    70			       sdhci_readl(host, SDHC_MHSC_VER_TPYE_R));
-    71		SDHCI_DUMP_BST("MHSC_CTRL:  0x%08x | MBIU_CTRL:  0x%08x\n",
-    72			       sdhci_readw(host, SDHC_MHSC_CTRL_R),
-    73			       sdhci_readw(host, SDHC_MBIU_CTRL_R));
-    74		SDHCI_DUMP_BST("EMMC_CTRL:  0x%08x | BOOT_CTRL: 0x%08x\n",
-    75			       sdhci_readl(host, SDHC_EMMC_CTRL_R),
-    76			       sdhci_readw(host, SDHC_BOOT_CTRL_R));
-    77		SDHCI_DUMP_BST("GP_IN:   0x%08x | GP_OUT: 0x%08x\n",
-    78			       sdhci_readl(host, SDHC_GP_IN_R),
-    79			       sdhci_readb(host, SDHC_GP_OUT_R));
-    80		SDHCI_DUMP_BST("AT_CTRL:     0x%08x | AT_STAT:  0x%08x\n",
-    81			       sdhci_readb(host, SDHC_AT_CTRL_R),
-    82			       sdhci_readb(host, SDHC_AT_STAT_R));
-    83	}
-    84	EXPORT_SYMBOL_GPL(sdhci_bst_print_vendor);
-    85	
-    86	static u32 bst_read_phys_bst(u32 phys_addr)
-    87	{
-    88		u32 phys_addr_page = phys_addr & 0xFFFFE000;
-    89		u32 phys_offset = phys_addr & 0x00001FFF;
-    90		u32 map_size = phys_offset + sizeof(u32);
-    91		u32 ret = 0xDEADBEEF;
-    92		void *mem_mapped = ioremap(phys_addr_page, map_size);
-    93	
-    94		if (mem_mapped) {
-    95			ret = (u32)ioread32(((u8 *)mem_mapped) + phys_offset);
-    96			iounmap(mem_mapped);
-    97		}
-    98	
-    99		return ret;
-   100	}
-   101	
-   102	static void bst_write_phys_bst(u32 phys_addr, u32 value)
-   103	{
-   104		u32 phys_addr_page = phys_addr & 0xFFFFE000;
-   105		u32 phys_offset = phys_addr & 0x00001FFF;
-   106		u32 map_size = phys_offset + sizeof(u32);
-   107		void *mem_mapped = ioremap(phys_addr_page, map_size);
-   108	
-   109		if (mem_mapped) {
-   110			iowrite32(value, ((u8 *)mem_mapped) + phys_offset);
-   111			iounmap(mem_mapped);
-   112		}
-   113	}
-   114	
-   115	static unsigned int bst_get_max_clock(struct sdhci_host *host)
-   116	{
-   117		return host->mmc->f_max;
-   118	}
-   119	
-   120	static unsigned int bst_get_min_clock(struct sdhci_host *host)
-   121	{
-   122		return host->mmc->f_min;
-   123	}
-   124	
-   125	struct rx_ctrl {
-   126		struct {
-   127			u32 rx_revert:1;
-   128			u32 rx_clk_sel_sec:1;
-   129			u32 rx_clk_div:4;
-   130			u32 rx_clk_phase_inner:2;
-   131			u32 rx_clk_sel_first:1;
-   132			u32 rx_clk_phase_out:2;
-   133			u32 rx_clk_en:1;
-   134			u32 res0:20;
-   135		} bit;
-   136		u32 reg;
-   137	};
-   138	
-   139	struct sdmmc_iocfg {
-   140		struct {
-   141			u32 res0:16;
-   142			u32 SC_SDMMC0_PVDD18POCSD0:2;
-   143			u32 SC_SDMMC0_PVDD18POCSD1:2;
-   144			u32 SC_SDMMC0_PVDD18POCSD2:2;
-   145			u32 SC_SDMMC1_PVDD18POCSD0:2;
-   146			u32 SC_SDMMC1_PVDD18POCSD1:2;
-   147			u32 SC_SDMMC1_PVDD18POCSD2:2;
-   148			u32 res1:4;
-   149		} bit;
-   150		u32 reg;
-   151	};
-   152	
- > 153	void sdhci_enable_bst_clk(struct sdhci_host *host, unsigned int clk)
-   154	{
-   155		struct sdhci_pltfm_host *pltfm_host;
-   156		struct dwcmshc_priv *priv;
-   157		unsigned int div;
-   158		u32 val;
-   159		struct rx_ctrl rx_reg;
-   160	
-   161		pltfm_host = sdhci_priv(host);
-   162		priv = sdhci_pltfm_priv(pltfm_host);
-   163		if (clk == 0) {
-   164			div = clk;
-   165		} else if (clk > default_max_freq) {
-   166			div = clk / 1000;
-   167			div = default_max_freq / div;
-   168		} else if (clk < 1500) {
-   169			div = clk;
-   170		} else {
-   171			div = default_max_freq * 100;
-   172			div = div / clk;
-   173			div /= 100;
-   174		}
-   175	
-   176		clk = sdhci_readw(host, SDHCI_CLOCK_CONTROL);
-   177		clk &= ~SDHCI_CLOCK_CARD_EN;
-   178		sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
-   179	
-   180		clk &= ~SDHCI_CLOCK_PLL_EN;
-   181		sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
-   182	
-   183		val = bst_read_phys_bst(priv->phy_crm_reg_base + SDEMMC_CRM_TIMER_DIV_CTRL);
-   184		val &= ~(1 << 8);
-   185		bst_write_phys_bst(priv->phy_crm_reg_base + SDEMMC_CRM_TIMER_DIV_CTRL, val);
-   186	
-   187		val = bst_read_phys_bst(priv->phy_crm_reg_base + SDEMMC_CRM_TIMER_DIV_CTRL);
-   188		val &= ~(0xff);
-   189		val |= 0x20;
-   190		bst_write_phys_bst(priv->phy_crm_reg_base + SDEMMC_CRM_TIMER_DIV_CTRL, val);
-   191	
-   192		val = bst_read_phys_bst(priv->phy_crm_reg_base + SDEMMC_CRM_TIMER_DIV_CTRL);
-   193		val |= 1 << 8;
-   194		bst_write_phys_bst(priv->phy_crm_reg_base + SDEMMC_CRM_TIMER_DIV_CTRL, val);
-   195	
-   196		val = bst_read_phys_bst(priv->phy_crm_reg_base + SDEMMC_CRM_RX_CLK_CTRL);
-   197		val &= ~(1 << 11);
-   198		bst_write_phys_bst(priv->phy_crm_reg_base + SDEMMC_CRM_RX_CLK_CTRL, val);
-   199	
-   200		rx_reg.reg = bst_read_phys_bst(priv->phy_crm_reg_base + SDEMMC_CRM_RX_CLK_CTRL);
-   201	
-   202		rx_reg.bit.rx_revert = 0;
-   203		rx_reg.bit.rx_clk_sel_sec = 1;
-   204		rx_reg.bit.rx_clk_div = 4;
-   205		rx_reg.bit.rx_clk_phase_inner = 2;
-   206		rx_reg.bit.rx_clk_sel_first = 0;
-   207		rx_reg.bit.rx_clk_phase_out = 2;
-   208	
-   209		bst_write_phys_bst(priv->phy_crm_reg_base + SDEMMC_CRM_RX_CLK_CTRL, rx_reg.reg);
-   210	
-   211		val = bst_read_phys_bst(priv->phy_crm_reg_base + SDEMMC_CRM_RX_CLK_CTRL);
-   212		val |= 1 << 11;
-   213		bst_write_phys_bst(priv->phy_crm_reg_base + SDEMMC_CRM_RX_CLK_CTRL, val);
-   214	
-   215		/* Disable clock first */
-   216		val = bst_read_phys_bst(priv->phy_crm_reg_base + SDEMMC_CRM_BCLK_DIV_CTRL);
-   217		val &= ~0x0400;
-   218		bst_write_phys_bst(priv->phy_crm_reg_base + SDEMMC_CRM_BCLK_DIV_CTRL, val);
-   219	
-   220		/* Setup clock divider */
-   221		val = bst_read_phys_bst(priv->phy_crm_reg_base + SDEMMC_CRM_BCLK_DIV_CTRL);
-   222		val &= ~0x03ff;
-   223		val |= div;
-   224		bst_write_phys_bst(priv->phy_crm_reg_base + SDEMMC_CRM_BCLK_DIV_CTRL, val);
-   225	
-   226		/* Enable clock */
-   227		val = bst_read_phys_bst(priv->phy_crm_reg_base + SDEMMC_CRM_BCLK_DIV_CTRL);
-   228		val |= 0x0400;
-   229		bst_write_phys_bst(priv->phy_crm_reg_base + SDEMMC_CRM_BCLK_DIV_CTRL, val);
-   230	
-   231		sdhci_writew(host, (div & 0xff) << 8, SDHCI_CLOCK_CONTROL);
-   232	
-   233		sdhci_writew(host, (div & 0xff) << 8, SDHCI_CLOCK_CONTROL);
-   234		clk = sdhci_readw(host, SDHCI_CLOCK_CONTROL);
-   235		clk |= SDHCI_CLOCK_PLL_EN;
-   236		sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
-   237	
-   238		clk |= SDHCI_CLOCK_CARD_EN;
-   239		sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
-   240	
-   241		clk |= SDHCI_CLOCK_INT_EN;
-   242		sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
-   243	}
-   244	
- > 245	void sdhci_set_bst_clock(struct sdhci_host *host, unsigned int clock)
-   246	{
-   247		if (clock == 0)
-   248			return;
-   249		sdhci_enable_bst_clk(host, clock);
-   250	}
-   251	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+--=20
+Thanks,
+Mina
 
