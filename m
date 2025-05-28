@@ -1,205 +1,121 @@
-Return-Path: <linux-kernel+bounces-664960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42FCFAC62A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 09:09:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0D44AC6327
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 09:36:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0466617A8BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 07:10:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADD433B25B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 07:36:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 151F724395C;
-	Wed, 28 May 2025 07:09:52 +0000 (UTC)
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87C9913B5A9;
-	Wed, 28 May 2025 07:09:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A19F244688;
+	Wed, 28 May 2025 07:36:25 +0000 (UTC)
+Received: from mailgw2.hygon.cn (mailgw.hygon.cn [110.188.70.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A8E1244690
+	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 07:36:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=110.188.70.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748416191; cv=none; b=rNuffwiPNhWFAO8QhPrCrh2Nr95z14roxzWjeEouU089+9d6xdT1VJZtaOviqbBr+dFfK4i8w935F/ei6eUkEx4IIkvO+DppsH1Gu/KKwvE2B/Sh57a8smcxmSGVM07XqcgKrbLU259LqHZKHBQDCkbxQSrfjHuQ4yJ4JsvmUvE=
+	t=1748417785; cv=none; b=P+r5tmLDHB1rcJr7lwQJ765KRTN6CdykDYbdIudB2ooicq/AP9vipZIYP7ASb7CB+rI+OLDppCzv8HYuEHOkHHc9L5B1dcgY12KR03KqlBeUQp4kz3VvjYTk+nPvMdH2ma/tffn5VezhoEgZm/lgE6lKV3lariotceK23TS6MCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748416191; c=relaxed/simple;
-	bh=GMH1Cfon7tp8nzpXUVJJR5JPu+aG6W4IEBYgCCKOYQM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Bzi8Xg5dt60kgu0Qdz4LVu+Pz+s0xxQZd0UteepOVjC02rtWuoFaEpbHR2pBLyjZgduMV7JojlwSZMoI5yklRJvSz7EEnIItNbChxsGGYtLMjDCoCvWVaOxTvo5en5ebJGbqVmyX96dMv7Sa8x0vs9NB4FJCgEyZZ/Mmgw8Jw4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-476ac73c76fso53398561cf.0;
-        Wed, 28 May 2025 00:09:49 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748416187; x=1749020987;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eRJM+2U0wpi1bojafvsrSUpFWh6L8i7gfnVXkXPRlF4=;
-        b=UT5LWPuoHfJevqpwgLPoN5OufFxHQYqn6WyYzUm6gVLhqVqiZLs47r3v9WENZ5zH5j
-         z44Z0MMywGAtLv8sRcnwkXBBgoUZ85O3K8WFx+PnlprOLaZWGbdM4PlcxFOozPy31B0a
-         tOiDzk/eHrrUbH/7fXlfmzMDVgxzERAMZ7xtmW004wYgclHCQ7fPOCUra5/Ng2KwJhmc
-         1K12hs/vSM6OywLoGZeNIMMiKCBw+ceiUaFu2Z1I51ACBJQTavgiRFSqB/mTiDOzfevk
-         5pmhuWFF/8P1hpui6uzEy2UBjPAA2EObbcjU0/5dy+tsSm8bdQoXdJfPGzKTQRwC89V4
-         8wug==
-X-Forwarded-Encrypted: i=1; AJvYcCUzq6lkC662iNhnO7RZNRc5+lxseTp8j5V3ufuZY/Qi01ZSitlhjE2eED2OLQC+WwBZrYIYwe05jSGagtRspeO65QQ=@vger.kernel.org, AJvYcCVz+y19bSnspttgPg5ZHVp3HdEVOGfxFoj5ykbht3dniIkaJIfcy/mypHnN29H9SMjZu+lAzbIGmMsNEpgi@vger.kernel.org, AJvYcCWpQmcmJPrSq1bzayV/bFQ0NLV719ycpZCnm1hD598VEmgdf+DPHq6WTDkfCKhJNaI4Vwt3ZRdIhYLk@vger.kernel.org, AJvYcCXxHn0sVCVNf6hWtPDsTF8a0M453O+5P3/hNOyuLLPMuWnsij3uzIOjOiTR4Tf7TQdiLet1+2UUkxNw@vger.kernel.org
-X-Gm-Message-State: AOJu0YwlGerS3aGc/eiEtX2gueu8K2zLEID65riR/jwiysiTn6FKy8zz
-	GWyDf3NwRJ7+p266maFuOEqXu5gfxHrU8VcmbWpEKuoi1ZiV5ewM5tXTGKe4K9Nm
-X-Gm-Gg: ASbGncsb6/txsFotHhXt58X8SEBWdocEBcmIQZ0RW0ZyB7q9rmHzAU4L/p2oMwD5w51
-	MjNPHR3brvSng7kbWsKh6BfeKJsnt67FLgr4cGtkK9ZZcAObWD5HK9cm/VQqoq8zllpDC/vhERl
-	f7GgPDR+qk+Tdldn3ChX2ilMqfjBTrM2f69fWAThGM+lYPM/MY+UuznpsQplTo2d44AlIQ058oh
-	jiGUYbGx/vzzFRh6GPW2iTEHqtHmlAl/oPb7qcKzmtoWIl2XCrzOh/5e600AGMoW0avXSX73Arp
-	3sNmxICDBuuXs1IbldVAyRn4/AUNx1RBEi3lcmkgrPPNUetUGMKqBtKic8b7T+aZ5I1y6uf07/b
-	YUUZTQ/cBPIe1/Q==
-X-Google-Smtp-Source: AGHT+IFDKnkrGjFBcbFA13AB3RdYAmXCHlML01/xHN6hj7ANBmMIC5VeS+OF8pO1fzkp++2ev7Jv9Q==
-X-Received: by 2002:a05:6122:2207:b0:52a:863f:78dd with SMTP id 71dfb90a1353d-52f2c57fc1cmr12397051e0c.6.1748416176489;
-        Wed, 28 May 2025 00:09:36 -0700 (PDT)
-Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com. [209.85.222.47])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-53066844188sm487992e0c.2.2025.05.28.00.09.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 28 May 2025 00:09:36 -0700 (PDT)
-Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-877d7fa49e0so2599901241.2;
-        Wed, 28 May 2025 00:09:36 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUN4IXP2E4qXgiHaj5kMZ9A5kD7jd9qKp19YQESeZoD848AVxzXozTw/oj0+aFBO2TbnNqsyMOzSoGACnV3@vger.kernel.org, AJvYcCUPj92lyo69BfxiSUnOjI2d7oOQvHvc+85LQGRMrcczzUzOqdvx43dPn2xiiCMG9BdeKhazX+YzRlTV@vger.kernel.org, AJvYcCUtWzRzZZeYEpiAqR0ieA1D+DUKmZnFjMzfDIxG1+7B6dlBWr5j8Bw/iHrOHIiWt9S+ESy91mVNrbzXRJ/kIf3sHgk=@vger.kernel.org, AJvYcCWgWxNUCxuWaAIWRB7RDCyCtZgY2r+HcrkOTvhLrb2YD1DIAbxNY18XnYTzWcNOlWKkyGHeLLqY8tuD@vger.kernel.org
-X-Received: by 2002:a05:6102:32d3:b0:4e2:8b49:9f96 with SMTP id
- ada2fe7eead31-4e42409f765mr12510096137.6.1748416164708; Wed, 28 May 2025
- 00:09:24 -0700 (PDT)
+	s=arc-20240116; t=1748417785; c=relaxed/simple;
+	bh=EjirPwbF84IP/LlWXtis12M0WD4AyVy/eAmVl1PS2lc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jsGZHgCLdPP8txx9z5aUFr/NmWLqOUPrsVHSKtJQ9JM0sYl4VGk+Wv6NyEL83leEvLJJlqRbfpyv/e0waDGyT7/V8Lz9nvGBH2lXjuJTKaVlHQi0+ZeH3upYN1vKIayew7qxFkbwbeJFwP7RhHoZkawe0709E+S7s1gZDLXdowc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hygon.cn; spf=pass smtp.mailfrom=hygon.cn; arc=none smtp.client-ip=110.188.70.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hygon.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hygon.cn
+Received: from maildlp1.hygon.cn (unknown [127.0.0.1])
+	by mailgw2.hygon.cn (Postfix) with ESMTP id 4b6gk645fJz1YQrG9;
+	Wed, 28 May 2025 15:14:54 +0800 (CST)
+Received: from maildlp1.hygon.cn (unknown [172.23.18.60])
+	by mailgw2.hygon.cn (Postfix) with ESMTP id 4b6gk56gQPz1YQrG9;
+	Wed, 28 May 2025 15:14:53 +0800 (CST)
+Received: from cncheex04.Hygon.cn (unknown [172.23.18.114])
+	by maildlp1.hygon.cn (Postfix) with ESMTPS id 2E9701036;
+	Wed, 28 May 2025 15:14:49 +0800 (CST)
+Received: from jianyong.hygon.cn (172.19.22.175) by cncheex04.Hygon.cn
+ (172.23.18.114) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 28 May
+ 2025 15:14:47 +0800
+From: Jianyong Wu <wujianyong@hygon.cn>
+To: <mingo@redhat.com>, <peterz@infradead.org>, <juri.lelli@redhat.com>,
+	<vincent.guittot@linaro.org>
+CC: <dietmar.eggemann@arm.com>, <rostedt@goodmis.org>, <bsegall@google.com>,
+	<mgorman@suse.de>, <vschneid@redhat.com>, <linux-kernel@vger.kernel.org>,
+	<wujianyong@hygon.cn>, <jianyong.wu@outlook.com>
+Subject: [PATCH] sched/fair: allow imbalance between LLCs under NUMA
+Date: Wed, 28 May 2025 07:09:49 +0000
+Message-ID: <20250528070949.723754-1-wujianyong@hygon.cn>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250512184302.241417-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250512184302.241417-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <CAMuHMdU=iuVFo=VJjV7UM-fLTeZk9TwyOJwojOVOSJiniRneHA@mail.gmail.com> <CA+V-a8sOGEEajx9TQsVBb+NeFRUx2eSo81ZdRQMsLzd0Eiox2w@mail.gmail.com>
-In-Reply-To: <CA+V-a8sOGEEajx9TQsVBb+NeFRUx2eSo81ZdRQMsLzd0Eiox2w@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 28 May 2025 09:09:12 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXb5ZCX=U_BR0=AkGtdGkVosty0cGsbKQryTy11Au8H-A@mail.gmail.com>
-X-Gm-Features: AX0GCFtIRfcujL8IE6N7nJft0aU4E80YnjwTZhfb-bY3ejhxAX3pIJektgtGLNo
-Message-ID: <CAMuHMdXb5ZCX=U_BR0=AkGtdGkVosty0cGsbKQryTy11Au8H-A@mail.gmail.com>
-Subject: Re: [PATCH v5 1/4] clk: renesas: rzv2h-cpg: Add support for DSI clocks
-To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc: Fabrizio Castro <fabrizio.castro.jz@renesas.com>, Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, Magnus Damm <magnus.damm@gmail.com>, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: cncheex05.Hygon.cn (172.23.18.115) To cncheex04.Hygon.cn
+ (172.23.18.114)
 
-Hi Prabhakar,
+The efficiency gains from co-locating communicating tasks within the same
+LLC are well-established. However, in multi-LLC NUMA systems, the load
+balancer unintentionally sabotages this optimization.
 
-On Tue, 27 May 2025 at 23:51, Lad, Prabhakar <prabhakar.csengg@gmail.com> w=
-rote:
-> On Fri, May 23, 2025 at 3:45=E2=80=AFPM Geert Uytterhoeven <geert@linux-m=
-68k.org> wrote:
-> > On Mon, 12 May 2025 at 20:43, Prabhakar <prabhakar.csengg@gmail.com> wr=
-ote:
-> > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > >
-> > > Add support for PLLDSI and PLLDSI divider clocks.
-> > >
-> > > Introduce the `renesas-rzv2h-dsi.h` header to centralize and share
-> > > PLLDSI-related data structures, limits, and algorithms between the RZ=
-/V2H
-> > > CPG and DSI drivers.
-> > >
-> > > The DSI PLL is functionally similar to the CPG's PLLDSI, but has slig=
-htly
-> > > different parameter limits and omits the programmable divider present=
- in
-> > > CPG. To ensure precise frequency calculations-especially for milliHz-=
-level
-> > > accuracy needed by the DSI driver-the shared algorithm allows both dr=
-ivers
-> > > to compute PLL parameters consistently using the same logic and input
-> > > clock.
-> > >
-> > > Co-developed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-> > > Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com=
->
+Observe this pattern: On a NUMA node with 4 LLCs, the iperf3 client first
+wakes the server within its initial LLC (e.g., LLC_0). The load balancer
+subsequently migrates the client to a different LLC (e.g., LLC_1). When
+the client next wakes the server, it now targets the server’s placement
+to LLC_1 (the client’s new location). The server then migrates to LLC_1,
+but the load balancer may reallocate the client to another
+LLC (e.g., LLC_2) later. This cycle repeats, causing both tasks to
+perpetually chase each other across all four LLCs — a sustained
+cross-LLC ping-pong within the NUMA node.
 
-> > > +static int rzv2h_cpg_plldsi_div_determine_rate(struct clk_hw *hw,
-> > > +                                              struct clk_rate_reques=
-t *req)
-> > > +{
-> > > +       struct rzv2h_plldsi_div_clk *dsi_div =3D to_plldsi_div_clk(hw=
-);
-> > > +       struct rzv2h_cpg_priv *priv =3D dsi_div->priv;
-> > > +       struct rzv2h_plldsi_parameters *dsi_dividers =3D &priv->pllds=
-i_div_parameters;
-> > > +       u64 rate_millihz;
-> > > +
-> > > +       /*
-> > > +        * Adjust the requested clock rate (`req->rate`) to ensure it=
- falls within
-> > > +        * the supported range of 5.44 MHz to 187.5 MHz.
-> > > +        */
-> > > +       req->rate =3D clamp(req->rate, 5440000UL, 187500000UL);
-> > > +
-> > > +       rate_millihz =3D mul_u32_u32(req->rate, MILLI);
-> > > +       if (rate_millihz =3D=3D dsi_dividers->error_millihz + dsi_div=
-iders->freq_millihz)
-> > > +               goto exit_determine_rate;
-> > > +
-> > > +       if (!rzv2h_dsi_get_pll_parameters_values(priv->dsi_limits,
-> > > +                                                dsi_dividers, rate_m=
-illihz)) {
-> > > +               dev_err(priv->dev,
-> > > +                       "failed to determine rate for req->rate: %lu\=
-n",
-> > > +                       req->rate);
-> > > +               return -EINVAL;
-> > > +       }
-> > > +
-> > > +exit_determine_rate:
-> > > +       req->best_parent_rate =3D req->rate * dsi_dividers->csdiv;
-> >
-> > Shouldn't this also update req->rate with the actual rate?
-> >
-> >     req->rate =3D DIV_ROUND_CLOSEST_ULL(dsi_dividers->freq_millihz, MIL=
-LI);
-> >
-> Agreed, I will update it.
+Our solution: Permit controlled load imbalance between LLCs on the same
+NUMA node, prioritizing communication affinity over strict balance.
 
-I think not updating req->rate may cause clk_get_rate() to return
-an incorrect value (can error_millihz > 1000?).  Any chance this fix
-can simplify the clock handling in the DSI driver?
+Impact: In a virtual machine with one socket, multiple NUMA nodes (each
+with 4 LLCs), unpatched systems suffered 3,000+ LLC migrations in 200
+seconds as tasks cycled through all four LLCs. With the patch, migrations
+stabilize at ≤10 instances, largely suppressing the NUMA-local LLC
+thrashing.
 
-> > Would it help the DSI driver if this clock would provide a
-> > .recalc_accuracy() callback that takes into account the difference
-> > between req->rate and dsi_dividers->freq_millihz?
-> > Or would that be considered abuse of the accuracy concept?
-> >
-> Our understanding is that this describes how precisely a clock keeps
-> time. A clock with 1 ppb accuracy will gain or lose one second in
-> approximately 31.5 million seconds (1 year). In our case the meaning
-> is completely different.
+Signed-off-by: Jianyong Wu <wujianyong@hygon.cn>
+---
+ kernel/sched/fair.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-Yeah, I know...
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 0fb9bf995a47..749210e6316b 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -11203,6 +11203,22 @@ static inline void calculate_imbalance(struct lb_env *env, struct sd_lb_stats *s
+ 		}
+ #endif
+ 
++		/* Allow imbalance between LLCs within a single NUMA node */
++		if (env->sd->child && env->sd->child->flags & SD_SHARE_LLC && env->sd->parent
++				&& env->sd->parent->flags & SD_NUMA) {
++			int child_weight = env->sd->child->span_weight;
++			int llc_nr = env->sd->span_weight / child_weight;
++			int imb_nr, min;
++
++			if (llc_nr > 1) {
++				/* Let the imbalance not be greater than half of child_weight */
++				min = child_weight >= 4 ? 2 : 1;
++				imb_nr = max_t(int, min, child_weight >> 2);
++				if (imb_nr >= env->imbalance)
++					env->imbalance = 0;
++			}
++		}
++
+ 		/* Number of tasks to move to restore balance */
+ 		env->imbalance >>= 1;
+ 
+-- 
+2.43.0
 
-Gr{oetje,eeting}s,
 
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
