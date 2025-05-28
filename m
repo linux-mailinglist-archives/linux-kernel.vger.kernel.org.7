@@ -1,119 +1,322 @@
-Return-Path: <linux-kernel+bounces-664697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-664699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A355AC5F48
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 04:22:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71E7AAC5F47
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 04:22:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B9D87B1933
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 02:21:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E591A1895CD5
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 02:23:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BC501EB9FA;
-	Wed, 28 May 2025 02:21:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4D731DDC33;
+	Wed, 28 May 2025 02:21:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="QS4uLtcO"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="M9TdeUvL"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7102A1CD21C;
-	Wed, 28 May 2025 02:21:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5453137932;
+	Wed, 28 May 2025 02:21:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748398878; cv=none; b=irwg7w2iJpFaTGeuSbLeDIfnCMXVPRRA628gVNddKEbXUS5XgsP+5+M8h7ljMhw/fprAsbirv+Bf1vresEtg52VGcghQr12QFebjxtEKN/EMjKiPjzWjxXLFMseurRDuX9LZUlQUhUafe+JJFGcRzZTHzkUpMj9Z69qgbkijNWo=
+	t=1748398912; cv=none; b=bBm4ZA9DuJJ1T5ChzVKS2y4C1BCSzMTPSVb9aT91+y5dqcN+q/ZxORGMyDHqZufN0gTSf5xYwQj4qDPD63IffPzeWWuIm2S8L3aeTZvya4U6Bn1iOYKhkjISKJ14TN6OioJj8RItil701FNHxXqQR1pcdanuhKMoZlYBc1NrEKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748398878; c=relaxed/simple;
-	bh=5I/TEPawiSZDku2Ey8XJmG+G/QnQu2ve2EN4E058V8w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=m9WxgrR5H0sQDlLootuUlivpf+Y9jqd6So5G54xqncQr9xNq4XVKutE1oBcWA05dpzMs73c+s9IHNlJ4I0F0q2I9denW0qIiGH/PJrIwGKhaSm7+toqwWEoL6cFOad3GFrX4o+rEj1WtdBFZsi63H2u3hTiBR5qs0Oww7xq7gLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=QS4uLtcO; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54S1g2xd010773;
-	Wed, 28 May 2025 02:20:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2025-04-25; bh=04vV7ETGxRQRu3lbl7jrA2zMPlU3f8CteLHTTAqlYfk=; b=
-	QS4uLtcOR4OVI2kU77By0xLW5vVJ/1iMppf5dmB/OljHWbYMsTisl2UUtD1y+Aps
-	rvmn2WaHrY0WClDW5zjPBsSR95aFOMjIuSlava6i3Uv6TZ8WtHRkCgYvW8LhcrCQ
-	1QrPRPmY907DNQZhwFE6NyKefrFe2HN7v7iCcU+A3JgThXca5tRsi0KyF+M7NEx7
-	ct7ooNk+ZC+0NqaMnJfZ6Vn5AxcksMGDadreNSSOkeu6fJIeB1BVKHUAe0IeWx/y
-	rSuVjR83X3LjUp/mn8ZC/pQqJdu7ZYLgeoFA0v/hWIjjobT6SUGu8iJxyg4+r+IC
-	e+nQVYt0WSi9iJ2j41mPtw==
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 46v3pd4qc2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 28 May 2025 02:20:56 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 54S2D8Hx021345;
-	Wed, 28 May 2025 02:20:55 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 46u4jgb22j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 28 May 2025 02:20:55 +0000
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 54S2Kq1C017834;
-	Wed, 28 May 2025 02:20:54 GMT
-Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 46u4jgb21n-7;
-	Wed, 28 May 2025 02:20:54 +0000
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-To: alim.akhtar@samsung.com, avri.altman@wdc.com, bvanassche@acm.org,
-        James.Bottomley@HansenPartnership.com, peter.wang@mediatek.com,
-        minwoo.im@samsung.com, manivannan.sadhasivam@linaro.org,
-        chenyuan0y@gmail.com, cw9316.lee@samsung.com,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "ping.gao" <ping.gao@samsung.com>
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>
-Subject: Re: [PATCH] scsi: ufs: mcq: delete ufshcd_release_scsi_cmd in ufshcd_mcq_abort
-Date: Tue, 27 May 2025 22:20:21 -0400
-Message-ID: <174839736811.456135.18140593406218357928.b4-ty@oracle.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250516083812.3894396-1-ping.gao@samsung.com>
-References: <CGME20250516083723epcas5p216a21ffb81631d35f0a12f7a583ea248@epcas5p2.samsung.com> <20250516083812.3894396-1-ping.gao@samsung.com>
+	s=arc-20240116; t=1748398912; c=relaxed/simple;
+	bh=qb3jRL/0E3NrKIW9DVamyFCMdvGUtKYDx0GQpM67T8c=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=DiXR1IeEVfsbovmd1u787zcIX0XclNRGOZQCtarLAUDmawdw0mxFoDrEPIupLqDIugQHtgUciUI27HFAmKl85NlbQHiyW0HnoJJQos2DJNscoQQTiqt+VTW5b6Q5H+/JvR3LWvFPV7E2p4MEmuEk2SOp/eSUSmBfsypwHIrle+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=M9TdeUvL; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1748398909; x=1779934909;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version:content-transfer-encoding;
+  bh=qb3jRL/0E3NrKIW9DVamyFCMdvGUtKYDx0GQpM67T8c=;
+  b=M9TdeUvL80JuAh0hFZ0cQuLJV5P659BWOYR9O8stYAhX8yYN3CObZppE
+   q9wvwtfWO9GbHqY7JN08uZJ7bE7slBwCBsht0cP9/xmlD921vfgDQQlTB
+   MU18vchZparZ/0z5ub51zxC/7L8dRc506Elt8bbaQLDyPe98lHIzxwkC+
+   JKTSKQ5ggAKmAE0l7QsY4LoQXJExLImDAyPunO3NRXLrjQEnJrsyEhwsm
+   KsJAVkClEDXjabrBIbKWFH5tvxOAyHekDLjRPo56A/7liZEQQCJyOyTXy
+   1i5jQyH/+5AlOPaU2KPGVGNU1HoRuUeyum01J+8m54Ih88AVvvKGH7EyK
+   A==;
+X-CSE-ConnectionGUID: zkHycBu+SoWSDEsoF+wq1g==
+X-CSE-MsgGUID: D54U6OvqRfCkcqo5GB0xkw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11446"; a="60663691"
+X-IronPort-AV: E=Sophos;i="6.15,320,1739865600"; 
+   d="scan'208";a="60663691"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2025 19:21:49 -0700
+X-CSE-ConnectionGUID: uZa9ILcfQcamj6NR0ldV8A==
+X-CSE-MsgGUID: PkzsLG17S5GoUTZwnFJeaQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,320,1739865600"; 
+   d="scan'208";a="142991895"
+Received: from unknown (HELO vcostago-mobl3) ([10.241.225.218])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2025 19:21:49 -0700
+From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+To: Shuai Xue <xueshuai@linux.alibaba.com>, Dave Jiang
+ <dave.jiang@intel.com>, fenghuay@nvidia.com, vkoul@kernel.org
+Cc: dmaengine@vger.kernel.org, colin.i.king@gmail.com,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/2] dmaengine: idxd: Fix race condition between WQ
+ enable and reset paths
+In-Reply-To: <87234fab-081e-4e2e-9ef1-0414b23601ce@linux.alibaba.com>
+References: <20250522063329.51156-1-xueshuai@linux.alibaba.com>
+ <20250522063329.51156-2-xueshuai@linux.alibaba.com>
+ <a03e4f97-2289-4af7-8bfc-ad2d38ec8677@intel.com>
+ <b2153756-a57e-4054-bde2-deb8865c9e59@linux.alibaba.com>
+ <4cd53b91-bd20-46a1-854c-9bf0950ea496@intel.com>
+ <87234fab-081e-4e2e-9ef1-0414b23601ce@linux.alibaba.com>
+Date: Tue, 27 May 2025 19:21:48 -0700
+Message-ID: <874ix5bhkz.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-28_01,2025-05-27_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxscore=0 phishscore=0
- adultscore=0 suspectscore=0 malwarescore=0 mlxlogscore=838 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
- definitions=main-2505280019
-X-Proofpoint-ORIG-GUID: ScLseRK3_Gu0QJtCQHprgQ11Zehu7LOD
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI4MDAxOSBTYWx0ZWRfXwJGdT9vAS9gw 2FnEW580JeC6BxV9w/XCtClFRJQFwU9vYp6V9LcJJMtpVwSE8nIuoSNX+2GPH8dovA0Kuosfsib FldBqpuZTWpGnjXWsiot37UW4CuvTzWdOFR/4fcCu0NudWwLqzgBFJ2aYxPIrkOMic4EOLdgOXV
- PMtTlJ8m+f8hp8FNOf73V7XUT8Sx2Jwb8XWtlfHKgqrgL1EhgM5vBPmPmrlus3C+CXErBrmlQto 3HkRVS80dyeZGmmywGyUbnf4JiLpY7LScXGWTMDOAmX46KzUuILXYp1+I1XTdhu0mreyg/JJgvg iAhy1MRkYH+I9+TRZt9EpCLsNJNuuuqc72VxhUZET/u/+bkZJGdTdYvjZk34s1AiShoaLWju1ks
- T4BI6cdqzoe1OfEFm8J+FM9xfxTpUU5s/EhTAFI+XgDPTmzY4kShs2jewBuM0Qgx+dpPUV+d
-X-Authority-Analysis: v=2.4 cv=UZNRSLSN c=1 sm=1 tr=0 ts=68367308 b=1 cx=c_pps a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=VwQbUJbxAAAA:8 a=EKYD-hqyz3SA5wV0YVEA:9 a=QEXdDO2ut3YA:10 cc=ntf
- awl=host:13207
-X-Proofpoint-GUID: ScLseRK3_Gu0QJtCQHprgQ11Zehu7LOD
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 16 May 2025 16:38:12 +0800, ping.gao wrote:
+Shuai Xue <xueshuai@linux.alibaba.com> writes:
 
-> after ufs UFS_ABORT_TASK process successfully , host will generate
-> mcq irq for abort tag with response OCS_ABORTED
-> ufshcd_compl_one_cqe ->
->     ufshcd_release_scsi_cmd
-> 
-> But in ufshcd_mcq_abort already do ufshcd_release_scsi_cmd, this means
->  __ufshcd_release will be done twice.
-> 
-> [...]
+> =E5=9C=A8 2025/5/23 22:54, Dave Jiang =E5=86=99=E9=81=93:
+>>=20
+>>=20
+>> On 5/22/25 10:20 PM, Shuai Xue wrote:
+>>>
+>>>
+>>> =E5=9C=A8 2025/5/22 22:55, Dave Jiang =E5=86=99=E9=81=93:
+>>>>
+>>>>
+>>>> On 5/21/25 11:33 PM, Shuai Xue wrote:
+>>>>> A device reset command disables all WQs in hardware. If issued while =
+a WQ
+>>>>> is being enabled, it can cause a mismatch between the software and ha=
+rdware
+>>>>> states.
+>>>>>
+>>>>> When a hardware error occurs, the IDXD driver calls idxd_device_reset=
+() to
+>>>>> send a reset command and clear the state (wq->state) of all WQs. It t=
+hen
+>>>>> uses wq_enable_map (a bitmask tracking enabled WQs) to re-enable them=
+ and
+>>>>> ensure consistency between the software and hardware states.
+>>>>>
+>>>>> However, a race condition exists between the WQ enable path and the
+>>>>> reset/recovery path. For example:
+>>>>>
+>>>>> A: WQ enable path=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 B: Reset and reco=
+very path
+>>>>> ------------------=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ------------------------
+>>>>> a1. issue IDXD_CMD_ENABLE_WQ
+>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 b1. i=
+ssue IDXD_CMD_RESET_DEVICE
+>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 b2. c=
+lear wq->state
+>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 b3. c=
+heck wq_enable_map bit, not set
+>>>>> a2. set wq->state =3D IDXD_WQ_ENABLED
+>>>>> a3. set wq_enable_map
+>>>>>
+>>>>> In this case, b1 issues a reset command that disables all WQs in hard=
+ware.
+>>>>> Since b3 checks wq_enable_map before a2, it doesn't re-enable the WQ,
+>>>>> leading to an inconsistency between wq->state (software) and the actu=
+al
+>>>>> hardware state (IDXD_WQ_DISABLED).
+>>>>
+>>>>
+>>>> Would it lessen the complication to just have wq enable path grab the =
+device lock before proceeding?
+>>>>
+>>>> DJ
+>>>
+>>> Yep, how about add a spin lock to enable wq and reset device path.
+>>>
+>>> diff --git a/drivers/dma/idxd/device.c b/drivers/dma/idxd/device.c
+>>> index 38633ec5b60e..c0dc904b2a94 100644
+>>> --- a/drivers/dma/idxd/device.c
+>>> +++ b/drivers/dma/idxd/device.c
+>>> @@ -203,6 +203,29 @@ int idxd_wq_enable(struct idxd_wq *wq)
+>>>  =C2=A0}
+>>>  =C2=A0EXPORT_SYMBOL_GPL(idxd_wq_enable);
+>>>=20=20=20
+>>> +/*
+>>> + * This function enables a WQ in hareware and updates the driver maint=
+ained
+>>> + * wq->state to IDXD_WQ_ENABLED. It should be called with the dev_lock=
+ held
+>>> + * to prevent race conditions with IDXD_CMD_RESET_DEVICE, which could
+>>> + * otherwise disable the WQ without the driver's state being properly
+>>> + * updated.
+>>> + *
+>>> + * For IDXD_CMD_DISABLE_DEVICE, this function is safe because it is on=
+ly
+>>> + * called after the WQ has been explicitly disabled, so no concurrency
+>>> + * issues arise.
+>>> + */
+>>> +int idxd_wq_enable_locked(struct idxd_wq *wq)
+>>> +{
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct idxd_device *idxd =3D wq->=
+idxd;
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int ret;
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 spin_lock(&idxd->dev_lock);
+>>=20
+>> Let's start using the new cleanup macro going forward:
+>> guard(spinlock)(&idxd->dev_lock);
+>>=20
+>> On a side note, there's been a cleanup on my mind WRT this driver's lock=
+ing. I think we can replace idxd->dev_lock with idxd_confdev(idxd) device l=
+ock. You can end up just do:
+>> guard(device)(idxd_confdev(idxd));
+>
+> Then we need to replace the lock from spinlock to mutex lock?
 
-Applied to 6.16/scsi-queue, thanks!
+We still need a (spin) lock that we could hold in interrupt contexts.
 
-[1/1] scsi: ufs: mcq: delete ufshcd_release_scsi_cmd in ufshcd_mcq_abort
-      https://git.kernel.org/mkp/scsi/c/53755903b935
+>
+>>=20
+>> And also drop the wq->wq_lock and replace with wq_confdev(wq) device loc=
+k:
+>> guard(device)(wq_confdev(wq));
+>>=20
+>> If you are up for it that is.
+>
+> We creates a hierarchy: pdev -> idxd device -> wq device.
+> idxd_confdev(idxd) is the parent of wq_confdev(wq) because:
+>
+>      (wq_confdev(wq))->parent =3D idxd_confdev(idxd);
+>
+> Is it safe to grap lock of idxd_confdev(idxd) under hold
+> lock of wq_confdev(wq)?
+>
+> We have mounts of code use spinlock of idxd->dev_lock under
+> hold of wq->wq_lock.
+>
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+I agree with Dave that the locking could be simplified, but I don't
+think that we should hold this series because of that. That
+simplification can be done later.
+
+>>=20
+>>=20
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret =3D idxd_wq_enable_locked(wq);
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 spin_unlock(&idxd->dev_lock);
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return ret;
+>>> +}
+>>> +
+>>>  =C2=A0int idxd_wq_disable(struct idxd_wq *wq, bool reset_config)
+>>>  =C2=A0{
+>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct idxd_device *idxd =
+=3D wq->idxd;
+>>> @@ -330,7 +353,7 @@ int idxd_wq_set_pasid(struct idxd_wq *wq, int pasid)
+>>>=20=20=20
+>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 __idxd_wq_set_pasid_locked(=
+wq, pasid);
+>>>=20=20=20
+>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 rc =3D idxd_wq_enable(wq);
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 rc =3D idxd_wq_enable_locked(wq);
+>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (rc < 0)
+>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 return rc;
+>>>=20=20=20
+>>> @@ -380,7 +403,7 @@ int idxd_wq_disable_pasid(struct idxd_wq *wq)
+>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 iowrite32(wqcfg.bits[WQCFG_=
+PASID_IDX], idxd->reg_base + offset);
+>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 spin_unlock(&idxd->dev_lock=
+);
+>>>=20=20=20
+>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 rc =3D idxd_wq_enable(wq);
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 rc =3D idxd_wq_enable_locked(wq);
+>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (rc < 0)
+>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 return rc;
+>>>=20=20=20
+>>> @@ -644,7 +667,11 @@ int idxd_device_disable(struct idxd_device *idxd)
+>>>=20=20=20
+>>>  =C2=A0void idxd_device_reset(struct idxd_device *idxd)
+>>>  =C2=A0{
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 spin_lock(&idxd->dev_lock);
+>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 idxd_cmd_exec(idxd, IDXD_CM=
+D_RESET_DEVICE, 0, NULL);
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 spin_unlock(&idxd->dev_lock);
+>>> +
+>>>
+>>=20
+>> I think you just need the wq_enable locked and also in idxd_device_clear=
+_state(), extend the lock to the whole function. Locking the reset function=
+ around just the command execute won't protect the wq enable path against t=
+he changing of the software states on the reset side.
+>
+> Quite agreed.
+>
+>>=20
+>> DJ
+>>=20
+>>> (The dev_lock should also apply to idxd_wq_enable(), I did not paste he=
+re)
+>>>
+>>> Also, I found a new bug that idxd_device_config() is called without
+>>> hold idxd->dev_lock.
+>>>> idxd_device_config() explictly asserts the hold of idxd->dev_lock.
+>>>
+>>> +++ b/drivers/dma/idxd/irq.c
+>>> @@ -33,12 +33,17 @@ static void idxd_device_reinit(struct work_struct *=
+work)
+>>>  =C2=A0{
+>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct idxd_device *idxd =
+=3D container_of(work, struct idxd_device, work);
+>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct device *dev =3D &idx=
+d->pdev->dev;
+>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int rc, i;
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int rc =3D 0, i;
+>>>=20=20=20
+>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 idxd_device_reset(idxd);
+>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 rc =3D idxd_device_config(idxd);
+>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (rc < 0)
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 spin_lock(&idxd->dev_lock);
+>> I wonder if you should also just lock the idxd_device_reset() and the id=
+xd_device_enable() as well in this case as you don't anything to interfere =
+with the entire reinit path.
+>
+> During reset, any operation to enable wq should indeed be avoided,
+> but there isn't a suitable lock currently. idxd->dev_lock is a
+> lightweight lock, only used when updating the device state, and
+> it's used while holding wq->wq_lock. Therefore, holding idxd->dev_lock
+> currently cannot form mutual exclusion with wq->wq_lock.
+>
+> And the sub caller of idxd_device_reset(), e.g. idxd_device_clear_state()
+> also spins to hold idxd->dev_lock.
+>
+> A hack way it to grab wq_lock of all wqs before before reinit, but
+> this is hardly elegant (:
+>
+> Thanks.
+> Have a nice holiday!
+>
+> Best regards,
+> Shuai
+>
+
+
+Cheers,
+--=20
+Vinicius
 
