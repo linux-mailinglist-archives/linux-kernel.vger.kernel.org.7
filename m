@@ -1,170 +1,74 @@
-Return-Path: <linux-kernel+bounces-664982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-664984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 765D8AC62EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 09:26:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F24AAC62EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 09:27:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00B463A6B12
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 07:26:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F05B4A3EA3
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 07:27:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA72D24468B;
-	Wed, 28 May 2025 07:26:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6B43244697;
+	Wed, 28 May 2025 07:26:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nsEqO/Rn"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GrFQJ86C"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67BA81367;
-	Wed, 28 May 2025 07:26:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24E2B1FECB1
+	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 07:26:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748417182; cv=none; b=a8k3NqfR1V1h67Ip4t9fS6UwVSHHuPVawIdKRvCS/zZYgk4NnRmhbAE+BCrorze+V62Zlhl8e8I/4klnHYwu4BYg5kFTemu6P5+pUmriKi1AeB8AnCN8jcSF+ZHr/0ZiJe2hAZyKufgl1IWIGYriKwR5RMYlWVEi9rMqMbFchLY=
+	t=1748417212; cv=none; b=MuQBep51TzC+PSWKT3q6vZYdMY4zlIzwLtqoXHiAArQdvzBhiiunA8xnuAnUMjdcXRByIhPDDSNp17exzUSQyydJKO6+JPYK/qvkko4WocSy2D9lqwwBL77cW+XGEkRmC8C/UL42EC00V8esrDgnyxncU3GOqcGEM1idP4r60to=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748417182; c=relaxed/simple;
-	bh=lwmrJEY5WsLS1UvqABzKOknlzeEFM2wNdRqM8lp38+U=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FJkFGh4eeB5/S7tQmVw6Yt6BYer2NonoQ81L+mwEn7SWymlU4foSRVnMKb0O1/twdByavpAgInQj5MNBxOO8scYAbUyLRe3AVcHinwCLeP6EP8gUcvqY+48CHXzpnEbv46ICwCPpmOEuqrNMPm7nwTypTfzHs3ZypReOXzCDnPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nsEqO/Rn; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-442eb5d143eso44420875e9.0;
-        Wed, 28 May 2025 00:26:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748417178; x=1749021978; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YkfWKZJIfL0XCEmcdjSVWnaS0MJDkdIq6iKveQpAWPw=;
-        b=nsEqO/RnNqV6fU5IqV9WODwwJyPiAmaG7xBTyK2/F8YK5ZF/QMJjYrkZIzkH6WiUsa
-         eX2Hj/ctx0xGt6nzMItGnbVQLPMDT9/CEKcnLDcaQkz0YNQZelSFl08JXTAmRsGJ1BkH
-         YWmSZRLIUJtRJqtzdKMVS6cQXvuCAOe7i2Jcgj02RD2Y3lv211jUXZs9FOV4GNKjqP4U
-         yOsM0dfP4LEcl7emxWGC5RyjhxXmLpdOfjAbIC2nN3cST9iuaukwp0FqApKKQ8otZfoq
-         +fRJZs7hzqS1LW+qt+NUUUNMn/XK+V48e9eBtGAP8LLtHmqhvrU4jsJeQqXfvx1GD40m
-         +cow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748417178; x=1749021978;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YkfWKZJIfL0XCEmcdjSVWnaS0MJDkdIq6iKveQpAWPw=;
-        b=tmT0M7mfwM2O0h7qKuSwoQUInnHwkyQBc17nmNSOyl5mye20yjGWzCEx6Zbgn4CgVg
-         itjI4uUCsN03qekP3oZQMlBnx4Al90f2JfrRehU9kqMaaVT+A5J+t1MrEgNYTPdWvU/I
-         5BVVfUamIKMDfdd8NWRquudF66O4LmqKe9CHRoNr6brFQfBnlJSYlv2X9fuhcnHdk6zf
-         o2svq5h4oR7Xw4F9SimRLlmExGh2LN0aGpvEhWOi+ZjNpFhoJ1kWtHiPotEaALHJYvBa
-         fdZ71Zy8cbckrz7obDwXRD9XPKhLMwPhGbx5lCOuvoBASyy6e/pECz2dPhj+b1zHgzM7
-         xMWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUctbisSUUp/YhCotbX37Ks5X0sMWijRXlxrWrAjwCzF1MnQngDcXJ70G9hf77jJiVZzuFs9TPyd42m4wGO@vger.kernel.org, AJvYcCWa74+agDz6lNWMiGg+uSYG1HqMmzFMPt0RAeMEO6LBjJTJSgdi6tAtiJ7F8sKqFht6rI4G8SQikAk2@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPBbIAC2VrOaNlV7BZEWEmxoQVU1YIViQpSLHQ285bjHDHa+f6
-	KUagcRhEdtf9GsbFvFonh3YL65Wve8np4e9zLhk+PKMpZW3XOgfc7Ea4
-X-Gm-Gg: ASbGncsBFi+Na4gkhlXaxKQB+D5q7WZAEUkaw/hyLXAb+8DWov+y5BerjnaJhb+qxpM
-	tSt2AhKi+nHCjMtzfVjYiaYtzYhWakegBinJwpndLGug6Bx+0VYfEdwnM/taMmcqhA+6X/bnyj5
-	uTEMh0oTOB0GF2uuGtnj7NOYNJlAYoSuNbqKb67o/lG+CRrdEYfAJvhEEHK9eyB0dCLBqIJHr4A
-	zgZmejO524rfGUsl8VClpODt7YEFYvx3C4KNTEYU0TIkZGzW9o18mQSyYOQ8zVCbb2n5CToK1Fi
-	nEhLII80pqgD61lPyPj6kEZjHN5KA2/elOylh+BMhc0FjDdEbGAd+W8w7DrGPKn0kinVfR+n8mI
-	Q+A61zRVr8HzQsw==
-X-Google-Smtp-Source: AGHT+IGrRxtjywdSrwG18d4jZWZ2n2ZZGLg+MufrljT6xq4RFcU3buVDPseRz2yhWFDrqogGyddaRg==
-X-Received: by 2002:a05:600c:698e:b0:441:b698:3431 with SMTP id 5b1f17b1804b1-44c932f9329mr120201165e9.28.1748417177340;
-        Wed, 28 May 2025 00:26:17 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4500e1d85b5sm11918585e9.32.2025.05.28.00.26.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 May 2025 00:26:17 -0700 (PDT)
-Date: Wed, 28 May 2025 08:26:14 +0100
-From: David Laight <david.laight.linux@gmail.com>
-To: ChenXiaoSong <chenxiaosong@chenxiaosong.com>
-Cc: Steve French <smfrench@gmail.com>, Kuniyuki Iwashima
- <kuniyu@amazon.com>, pc@manguebit.com, ronniesahlberg@gmail.com,
- sprasad@microsoft.com, tom@talpey.com, bharathsm@microsoft.com,
- linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org, ChenXiaoSong
- <chenxiaosong@kylinos.cn>, Wang Zhaolong <wangzhaolong1@huawei.com>, Enzo
- Matsumiya <ematsumiya@suse.de>
-Subject: Re: [PATCH] smb/client: use sock_create_kern() in
- generic_ip_connect()
-Message-ID: <20250528082614.5ee971d1@pumpkin>
-In-Reply-To: <01BDDAE323133ED0+e7d23f35-c6d8-48a3-8fe6-c23e3a9c64dc@chenxiaosong.com>
-References: <20250528031531.171356-1-chenxiaosong@chenxiaosong.com>
-	<CAH2r5mtAYV925FbL-5GPGvk3wMG5u0027_icNtUw6uZ9yOBqyw@mail.gmail.com>
-	<01BDDAE323133ED0+e7d23f35-c6d8-48a3-8fe6-c23e3a9c64dc@chenxiaosong.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	s=arc-20240116; t=1748417212; c=relaxed/simple;
+	bh=FVKyMWpNPzvSR7svhxr8Oo6IbwStsMjYKVoyHU2gqfc=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=mI0Himf16DA0HTVspmP6IczMtsv18hEIbnvXFY2mzgRBXl5MJQLSzj7sMbMz9/hvRyXTplx9h2fzoviK8MtPeSB0FV1SbHeKRPGJDkF8zrYUjycdxPLxNn4PsB9FKlKlqG3jZpsbMvCdQ/w6HlIb/MILjLlVn0WFMF4p+aHpXvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GrFQJ86C; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FD25C4CEE7;
+	Wed, 28 May 2025 07:26:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748417211;
+	bh=FVKyMWpNPzvSR7svhxr8Oo6IbwStsMjYKVoyHU2gqfc=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=GrFQJ86CJfW3LnlgJQ8p04zT1DZ0xD8I3OkZMnjL+bpnKYTt7LHyY3yeIZD2dlnx/
+	 HWQAVNGak0WqGP6DtIh9b1XSM7bT8nwHmfTKK/AVwy5HbcOkN4fMbcDYquZW2YVMyC
+	 ejBHwf/3zmM9vzlG6vPKq72ALWw6dbeh0S+cSw8Das3nEXe1OCTKJvQo38A3a5RW0+
+	 QPMKGgzlal4AVofLeWm2sSttzrT09TWMeHkWhfEck3A1FJg9JxP3nw1tR3lwWGx/xn
+	 Q5Qxp671UZrJeaSQSChXZBJDS8GbPySKdWJWGGy3uMhQe61hMG81FFI2GiQkmGgNxw
+	 i4L9t6lmyXSYw==
+Message-ID: <c454bb4e-0232-425d-b77f-cddcdfcce4a4@kernel.org>
+Date: Wed, 28 May 2025 15:26:48 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Cc: chao@kernel.org, Daeho Jeong <daehojeong@google.com>
+Subject: Re: [f2fs-dev] [PATCH v3] mkfs.f2fs: ensure zone size is a multiple
+ of segment size
+To: Daeho Jeong <daeho43@gmail.com>, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, kernel-team@android.com
+References: <20250527165411.3724453-1-daeho43@gmail.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20250527165411.3724453-1-daeho43@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 
-On Wed, 28 May 2025 12:09:01 +0800
-ChenXiaoSong <chenxiaosong@chenxiaosong.com> wrote:
-> =E5=9C=A8 2025/5/28 11:39, Steve French =E5=86=99=E9=81=93:
-> > Weren't there issues brought up earlier with using sock_create_kern
-> > due to network namespaces and refcounts?
+On 5/28/25 00:54, Daeho Jeong wrote:
+> From: Daeho Jeong <daehojeong@google.com>
+> 
+> Otherwise, it doesn't work with a crash.
+> 
+> Signed-off-by: Daeho Jeong <daehojeong@google.com>
 
-> This patch is simply a cleanup that wraps the original code for=20
-> explicitness, the last argument of __sock_create(..., 1) specifies that=20
-> the socket is created in kernel space.
+Reviewed-by: Chao Yu <chao@kernel.org>
 
-Except that 'kernel space' doesn't really mean anything.
-IIRC it does two separate things:
-1) Skips some 'permission' checks on the current process.
-2) Doesn't 'hold' the network namespace.
-
-The extra permission checks might be relevant even if the socket is
-only indirectly accessible from a process.
-
-But code like smb doesn't want the extra checks but does need the
-namespace held (or it has to go through 'hoops' to request a callback
-when the namespace is removed and delete the connection from the
-callback).
-
-Maybe there should be a 'kernel_socket()' (cf kernel_sendmsg()) that
-code like smb should use.
-
-	David
-
-
->=20
-> >=20
-> > On Tue, May 27, 2025 at 10:18=E2=80=AFPM <chenxiaosong@chenxiaosong.com=
-> wrote: =20
-> >>
-> >> From: ChenXiaoSong <chenxiaosong@kylinos.cn>
-> >>
-> >> Change __sock_create() to sock_create_kern() for explicitness.
-> >>
-> >> Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
-> >> ---
-> >>   fs/smb/client/connect.c | 3 +--
-> >>   1 file changed, 1 insertion(+), 2 deletions(-)
-> >>
-> >> diff --git a/fs/smb/client/connect.c b/fs/smb/client/connect.c
-> >> index 6bf04d9a5491..3275f2ff84cb 100644
-> >> --- a/fs/smb/client/connect.c
-> >> +++ b/fs/smb/client/connect.c
-> >> @@ -3350,8 +3350,7 @@ generic_ip_connect(struct TCP_Server_Info *serve=
-r)
-> >>                  struct net *net =3D cifs_net_ns(server);
-> >>                  struct sock *sk;
-> >>
-> >> -               rc =3D __sock_create(net, sfamily, SOCK_STREAM,
-> >> -                                  IPPROTO_TCP, &server->ssocket, 1);
-> >> +               rc =3D sock_create_kern(net, sfamily, SOCK_STREAM, IPP=
-ROTO_TCP, &server->ssocket);
-> >>                  if (rc < 0) {
-> >>                          cifs_server_dbg(VFS, "Error %d creating socke=
-t\n", rc);
-> >>                          return rc;
-> >> --
-> >> 2.34.1
-> >>
-> >> =20
-> >=20
-> >  =20
->=20
->=20
-
+Thanks,
 
