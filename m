@@ -1,101 +1,175 @@
-Return-Path: <linux-kernel+bounces-665773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DA51AC6D84
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 18:09:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B6B9AC6D8B
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 18:10:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 377DD4E2DF0
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 16:09:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 585059E4E3C
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 16:09:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C496628C85B;
-	Wed, 28 May 2025 16:09:20 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FFF627817D;
-	Wed, 28 May 2025 16:09:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 312E428CF45;
+	Wed, 28 May 2025 16:09:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ob8KMb7s"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 001F828C854;
+	Wed, 28 May 2025 16:09:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748448560; cv=none; b=tchcmLfnlgpmHPWJy0aK6qhO4hh4S89euPjpN59rhUi4NYtyL/ZWxIE1Mh3TAlxUac+V25SQfeNQh1TGcjwH8lySbaJvJ3cBtK/3pThHfKi8uNdSCZyZ+3g/+NlCi5ZUzPZOU+AL03miVFbrR3dKpBpFNrqFO9ZNc1dGsEbj4yU=
+	t=1748448597; cv=none; b=CHusmOkR7EGBZDrS2jfewd61Y9A7KU0FN95Ffv/xGZrqBIkGZZtJilcFNVtS2G/Xlh91B7uSArQth5LFJc5izhNn9k/xCAvIQhrlaMVdIo+vFznj7qQSOvTyQVu1c2Zv+TBrHY/5GnVyR6LlgVr8+pZ3SPwPFN7lZyPzNHaEQwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748448560; c=relaxed/simple;
-	bh=O2qtelB4US+cJIhzPme3LIw1Jt2jPMgLescTbOZA/UE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jT+NIGTPkbdbfNCpJMihc7xENwkERpzYdQDPBX3PF/o9RTFa7cV0YCs/nidGtl4Cf7T8fhmHUl1Nsi3Ue5Bsk87TTuW8TJ/O5DsfKAc4pVe1vto6Iil6kq2bVXGUYIEKNe5f/p+SSm2fVZ+YCGCqb2UnuhxPsAD1X8jd/LmZiSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1FEFF1A2D;
-	Wed, 28 May 2025 09:09:01 -0700 (PDT)
-Received: from [10.57.48.160] (unknown [10.57.48.160])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 7C4D93F673;
-	Wed, 28 May 2025 09:09:14 -0700 (PDT)
-Message-ID: <4f5c956e-19e7-4df0-b1f2-d8750c0af4d7@arm.com>
-Date: Wed, 28 May 2025 17:09:12 +0100
+	s=arc-20240116; t=1748448597; c=relaxed/simple;
+	bh=4pIzHoj8Wd1R86ms192nvXS2WXmNPmnprRiEWCCPGQM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FDprm9STEEBjtWEACuut1bAQ1IBYDbasLQUtZKyS2szeG1t8To7XKT0O0IYG2AcTjniBjriGgx8+//Z6fu6yScc4mHDywQrg9BMeeVBF42qBRZGX92EifxHTznNnh2TqvkulpIO1l/Z77VxPq4rNn/J/hX60eHmCgUDJFUMIV7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ob8KMb7s; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2349282084bso303095ad.1;
+        Wed, 28 May 2025 09:09:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748448595; x=1749053395; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0ndd+6L/B1sq36+O8/FHu3Tozs8dSSyaGb710UgM7Sw=;
+        b=Ob8KMb7sXw9qOww1CJ+j2EA3BohfJgH+6+eIzgJygYs8Us/xuZVykTg3l1qoiOk94Z
+         kK69CrKS0dPGY4xLxuXuLNdHfWQ0b854d4qCo+bI6I7hSuvi3GfDwTVUIhq/YtDkvmm5
+         ygGCsMuU4eTR9zOwScX7SbRNEyY0GnRIIcU9kcx3SbBXkCE95cLAaBJKdutNOaRn/v7b
+         POxaohp2SJNd+ipVNGgq12RtBIbfZ0SQNtFuUdprB7a0Wx54o2TdnYfjXnquTlAQdydi
+         m4r3AFGACrS5GPVR+blIvfPKHZyAmjUPI8uJcYOj6MrF1CuAbemtXbmskKrGPMjrZhmh
+         DiDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748448595; x=1749053395;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0ndd+6L/B1sq36+O8/FHu3Tozs8dSSyaGb710UgM7Sw=;
+        b=mCZTFt+KRgzPendUq2S+9dmQlPs8s+LB+Fau71547arXwu8zp0+ZO05yh/1jjoJy7a
+         EQWkpEjhQL8/To/6V5zDRNysJUiJc1mcOCe5wqOVObuEkScWPtCrQfzg4jC87OHa0rws
+         H8cEk3KFi6wX8bMpoRdtenoV2ObTrUNRHKd0sdvT8O7bYAXPUeMQIVWejbjjygKBkPVp
+         49kyJ06LkIHBSRS9pNAf0/6FAJ/ZRb8p/pmx/unw+29yLdF8Lvsl3BcVsqY/QiiiA3Jj
+         dvnx7UpqGKkYiU+R6jraxDDADTfwT9szhJwXKS9q5lfaDYzH6zy2OaKvefLyTs+tanDT
+         TheQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW5YC3IgSQNFTFJa89ACBYMYvD1WBJkYwxTDbQ+is/q1NdrRM5flVaj2t8CZFZeZLY57i+a1rx3VEHDyadm+46lnbo=@vger.kernel.org, AJvYcCWPdzGd5Dkb+5YEx600LeUQra2Ze/Fr6S/8qDrrjfP93b8FurWeE9ow40CxGEvCbTM4Ocfs4vriwOQ=@vger.kernel.org, AJvYcCWfphGpcIlN7PPSZFGEZGMGab9uFGF+OfvbkPEWfkzMK+AOTOpwTt6tmoK7ZK6lJf5CmA4ro54tGbjJjLtp@vger.kernel.org, AJvYcCX/kmw5uCT9wJnRNbk77b/ljR+B/Dlt2mbys26QoD+pWkZgC/+lDXHorSgYACj6vPI0tYYHF2X59xA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLxIbHYRuvqJZedLzUXuWYkZrv2YKhUiqcLsymzh0TS6BUcso2
+	p2LKCWgz7RhQAq5VysvFHlPi8Cs8v/wtMlrccjutWYRVbaHJTeC9sfJ4
+X-Gm-Gg: ASbGncslFdsCJMFGXd6GbrebIqOjKBYs1I8Y2Ou9pN9Tpd+dDHBfzSlTtHf/31NIDDd
+	LdYBAUlD06rR4sGkWiooXQQOjdbYhND1i8rhIG5NFMXurba2TAJCzezIc9VpxsENQb2mugpqz0m
+	dqLjlaU6GqSJ1unW0fRkHQKqaGXghglUyrxtWAXvDKdE0vcK8dsAjz72TJa9ZH0r1eDTnIEKbII
+	3P+jRQ7LGC1JHOcTA1jkpHVtAEd+F2eSNSUUjSg7dfVZRiMdpb4qJLX3SXX+BxBCc0Fk6kWcjqL
+	XgXfmXPjnJys+J7g3DXe4yzTrW+R5QwQVJi10DpwuJ24Z67fa8ef
+X-Google-Smtp-Source: AGHT+IEct1Mu/j97rbbxjLzBpmVysIk9gdkVmOYKtsSlG+RsTHJF3YcX0aRp3FdZFqor4oEVwjdt3g==
+X-Received: by 2002:a17:903:4b0d:b0:234:a139:1208 with SMTP id d9443c01a7336-234a139160dmr96789515ad.16.1748448594950;
+        Wed, 28 May 2025 09:09:54 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:a04a:d85e:c794:147c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-234d35acbdasm13535885ad.197.2025.05.28.09.09.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 May 2025 09:09:54 -0700 (PDT)
+Date: Wed, 28 May 2025 09:09:51 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Claudiu Beznea <claudiu.beznea@tuxon.dev>, gregkh@linuxfoundation.org, 
+	rafael@kernel.org, dakr@kernel.org, len.brown@intel.com, pavel@kernel.org, 
+	jic23@kernel.org, daniel.lezcano@linaro.org, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	bhelgaas@google.com, geert@linux-m68k.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH v2 1/2] PM: domains: Add devres variant for
+ dev_pm_domain_attach()
+Message-ID: <rmc7me6rvumr6pcekgp5lsrxtuge5houitn474lkljew2hzdcw@z7wh2vtntvs5>
+References: <20250526122054.65532-1-claudiu.beznea.uj@bp.renesas.com>
+ <20250526122054.65532-2-claudiu.beznea.uj@bp.renesas.com>
+ <hojdkntm3q5a5ywya7n5i4zy24auko4u6zdqm25infhd44nyfx@x2evb6sc2d45>
+ <111d2d6c-8ac0-40b9-94c3-02f2f64ef9fe@tuxon.dev>
+ <CAPDyKFoQYTNBhtBXY-Ds7E0TohtA6558W1Jf3cLsnXDQC74DSg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v21 3/4] KVM: arm64: nvhe: Disable branch generation in
- nVHE guests
-Content-Language: en-GB
-To: "Rob Herring (Arm)" <robh@kernel.org>, Will Deacon <will@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Jonathan Corbet <corbet@lwn.net>,
- Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
- Joey Gouly <joey.gouly@arm.com>, Zenghui Yu <yuzenghui@huawei.com>,
- James Clark <james.clark@linaro.org>,
- Anshuman Khandual <anshuman.khandual@arm.com>, Leo Yan <leo.yan@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- kvmarm@lists.linux.dev
-References: <20250407-arm-brbe-v19-v21-0-ff187ff6c928@kernel.org>
- <20250407-arm-brbe-v19-v21-3-ff187ff6c928@kernel.org>
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <20250407-arm-brbe-v19-v21-3-ff187ff6c928@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPDyKFoQYTNBhtBXY-Ds7E0TohtA6558W1Jf3cLsnXDQC74DSg@mail.gmail.com>
 
-On 07/04/2025 18:41, Rob Herring (Arm) wrote:
-> From: Anshuman Khandual <anshuman.khandual@arm.com>
+On Wed, May 28, 2025 at 06:04:45PM +0200, Ulf Hansson wrote:
+> [...]
 > 
-> While BRBE can record branches within guests, the host recording
-> branches in guests is not supported by perf (though events are).
-> Support for BRBE in guests will supported by providing direct access
-> to BRBE within the guests. That is how x86 LBR works for guests.
-> Therefore, BRBE needs to be disabled on guest entry and restored on
-> exit.
+> > >> +/**
+> > >> + * devm_pm_domain_attach - devres-enabled version of dev_pm_domain_attach()
+> > >> + * @dev: Device to attach.
+> > >> + * @attach_power_on: Use to indicate whether we should power on the device
+> > >> + *                   when attaching (true indicates the device is powered on
+> > >> + *                   when attaching).
+> > >> + * @detach_power_off: Used to indicate whether we should power off the device
+> > >> + *                    when detaching (true indicates the device is powered off
+> > >> + *                    when detaching).
+> > >> + *
+> > >> + * NOTE: this will also handle calling dev_pm_domain_detach() for
+> > >> + * you during remove phase.
+> > >> + *
+> > >> + * Returns 0 on successfully attached PM domain, or a negative error code in
+> > >> + * case of a failure.
+> > >> + */
+> > >> +int devm_pm_domain_attach(struct device *dev, bool attach_power_on,
+> > >> +                      bool detach_power_off)
+> > >
+> > > Do we have examples where we power on a device and leave it powered on
+> > > (or do not power on device on attach but power off it on detach)? I
+> >
+> > I haven't found one yet.
+> >
+> > > believe devm release should strictly mirror the acquisition, so separate
+> > > flag is not needed.
+> >
+> > I was in the middle whether I should do it with 2 flags or only to revert
+> > the acquisition.
+> >
+> > >
+> > >
+> > >> +{
+> > >> +    int ret;
+> > >> +
+> > >> +    ret = dev_pm_domain_attach(dev, attach_power_on);
+> > >> +    if (ret)
+> > >> +            return ret;
+> > >> +
+> > >> +    if (detach_power_off)
+> > >> +            return devm_add_action_or_reset(dev, devm_pm_domain_detach_off,
+> > >> +                                            dev);
+> > >> +
+> > >> +    return devm_add_action_or_reset(dev, devm_pm_domain_detach_on, dev);
+> > >
+> > > Instead of 2 separate cleanup methods maybe define dedicated devres:
+> > >
+> > > struct dev_pm_domain_devres {
+> > >       struct device *dev;
+> > >       bool power_off;
+> > > }
+> > >
+> > > ?
+> >
+> > That was the other option I've thought about but I found the one with 2
+> > cleanup methods to be simpler. What would you prefer here?
+> >
+> > Ulf: could you please let me know what would you prefer here?
 > 
-> For nVHE, this requires explicit handling for guests. Before
-> entering a guest, save the BRBE state and disable the it. When
-> returning to the host, restore the state.
-> 
-> For VHE, it is not necessary. We initialize
-> BRBCR_EL1.{E1BRE,E0BRE}=={0,0} at boot time, and HCR_EL2.TGE==1 while
-> running in the host. We configure BRBCR_EL2.{E2BRE,E0HBRE} to enable
-> branch recording in the host. When entering the guest, we set
-> HCR_EL2.TGE==0 which means BRBCR_EL1 is used instead of BRBCR_EL2.
-> Consequently for VHE, BRBE recording is disabled at EL1 and EL0 when
-> running a guest.
-> 
-> Should recording in guests (by the host) ever be desired, the perf ABI
-> will need to be extended to distinguish guest addresses (struct
-> perf_branch_entry.priv) for starters. BRBE records would also need to be
-> invalidated on guest entry/exit as guest/host EL1 and EL0 records can't
-> be distinguished.
-> 
-> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
-> Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-> Co-developed-by: Rob Herring (Arm) <robh@kernel.org>
-> Tested-by: James Clark <james.clark@linaro.org>
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> As it looks like we agreed to use one cleanup method, the struct
+> dev_pm_domain_devres seems superfluous to me.
 
-Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+I think we agreed that cleanup should mirror the acquisition, that is
+true. But since attaching to the domain has an option to either turn the
+device on or not we still need 2 cleanup branches. They can either be
+implemented with 2 cleanup callbacks or with 1 callback and dedicated
+devres structure.
 
+Thanks.
 
+-- 
+Dmitry
 
