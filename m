@@ -1,219 +1,223 @@
-Return-Path: <linux-kernel+bounces-666253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97D0DAC7447
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 01:04:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AEFBAC7454
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 01:11:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BF8D9E813F
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 23:04:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCC1A502966
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 23:11:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8C7C221FB5;
-	Wed, 28 May 2025 23:04:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06AC2221FA8;
+	Wed, 28 May 2025 23:11:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j/9gpJeQ"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lJrmayNU"
+Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63627188006;
-	Wed, 28 May 2025 23:04:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C48A207A20
+	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 23:11:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748473461; cv=none; b=BFamyE94kwtVXYrs5Xqk1C6TrG2d4V0ycFde2ZcsXHvk1o/HsyIkEbOQrl5GHRnSmhmvWXglaolzr2YupBUXshzZC59hFrgVPoAP2O5E2CyidajZVkdM3zShHrhBePt+4LFwo5vtSvQzxTdp1BvJXzYs7HpJMZtUh7SLA9BtZyg=
+	t=1748473887; cv=none; b=GF/UvQ4s3KJIOEelK2WGOT9Mmexs8qE7et3BM+dXH/7835/uWuJT4mPdryOpr7TFB5gtwV/njJy5nkIzamqRgjznh3uipjgZjIbf4hpam+S5RADqin8qyWJPHeBh0edudMUfsC7F6k5AGrI7ScH2w3SiQuzLa6s6VZj52Gdq324=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748473461; c=relaxed/simple;
-	bh=+ai0y54uuyQ+w+1z+6J2zhVGMb2O/yjgKktck2/hOgY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b3F9CQqR1pda4C0/PlA4qslyoCnf/AiiJt+vAN1HBYCjw/YMJ6Opl8Urns+xGTy10vWB2977zI3Trfh04CnXI6/XNpqMMqbPQNRyu7P8nPY4VU3za3shOV5Gy8g0tD55JrpbOos2+H6V9uWUVsazEhIzOMN5WkI4c6NdDaYTSp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j/9gpJeQ; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-3121aed2435so153367a91.2;
-        Wed, 28 May 2025 16:04:20 -0700 (PDT)
+	s=arc-20240116; t=1748473887; c=relaxed/simple;
+	bh=5kskNdbmd1wbRPsnBB9OjSRJEFOXvFCXuGgfnm1cLRA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=B9lZI+szXa/D/t/3yxCalNDbD0ccM4RSlhXDudcPTbBHTbgfwQInNga8eVGidsMuzB2Ts/kvZWRIzJpwdmuCFr4CZG32nCuFQvkwTfGlrnMjEq2thaFTHSoJG7g9cQgMZTLGUhuKln7lCxlDbxq0VuvRz0AJVi3VH1kN4tAOfBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lJrmayNU; arc=none smtp.client-ip=209.85.166.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-3dd89a85414so81975ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 16:11:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748473459; x=1749078259; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=2sp4j8hUuo5JLsN8/BURvi7Nkc+AGbFgOl/lmj7DHbs=;
-        b=j/9gpJeQlxeNT5EGMc4YYM79tB6k2OlDrqzYDJIANfMcwbomvslQ3GvRkwbjShlaJn
-         BbdQ9qXTq6JN43bGaSkRtR2LAawjFBKSHN5Pi8VlLLfAxjWp3FtPwq/qLa/3WmXGcGb0
-         nX04JOigKcjWuR7tjtp6Dx2poNzoCo3OWAjgo5v7wTT8issXv7LZhywGLSBFgigNWS0D
-         +DXcgltwEVbCTmfHMhXwIH/za+q0oJUmRtJBwt9J/mASJ3RySo117apunxfMNZYCHThq
-         rMoNdCVN1xC9du0qw1aX+0fDl9vgj2dzt5ecRJ0PPdqx3DrhdbQeX1iHFULCbCa0PGSe
-         JJQg==
+        d=google.com; s=20230601; t=1748473884; x=1749078684; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=d7TN5QXJhRSmfoM9Tpxod/qjmd6b/yxgCZaGEbMSEqQ=;
+        b=lJrmayNUwI4B9XoW2GA4RluWFKBEcpold3+664rgEoLkrXDsSOlONc8FyCJp7pD2Lf
+         Z9sL01KS9x61bfuhz5pVwADkp9TUeEI/XSuwNuODzrpHbIFyJxWfBMxlVPQsmgPSefLF
+         b1KLTIuycV0EKjgCU4S1l3YImNWSWYeogSeauQ922VHOVyee9kPNQBndKQK+WHT84b0I
+         kJuJUS7Fxp5FRFaRMc5LzF/+nvdBnMPJcZVqYO6OVGoYDymjYburjycxUVbwqtawpTMF
+         6lvjcirF3koekUICdhzT0a9vMX14yaJ5zxD7OxdCh2caUJLVIYiKuI/850gzKAxGcG3z
+         p8Qg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748473459; x=1749078259;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2sp4j8hUuo5JLsN8/BURvi7Nkc+AGbFgOl/lmj7DHbs=;
-        b=VWmu1N6ie1kOyf1NRJaE91lMnxonVJX7wbcbonPE0cEbs3oFyOboq4yl6barhNmruf
-         4LbckBe6xxJQNSevQBSNKW1Ld09d2G5mGjKBKgDtLyHmcEG6Ap3lbl0VhftQWwwGRWiz
-         zJI/oc1OY4C4x0DYaDwnw0AQrv+h7JVDFGc3NGFZBZRzQUFu4Bgat7vgxufNw2tmktem
-         wvDNP0oq8rzjlYZfLOLf4stHCz9/GSmxlZIInFW9BTwcSdwT3zWcu/3DybuP7nkB0gF9
-         MRN4WjDxE3oL77OwLA05irStUPvH/DgAVAibJyz6jKr7a7zkwhh0RLeEPkY/1SsJ6WNp
-         qo8A==
-X-Forwarded-Encrypted: i=1; AJvYcCUZw67ORkr4SLBCs6OB4/w/jc3QXtlECATarfxBDTm88s+YG8Q91cBGFQpXANiqpGSwoQOaEylIMBux4A==@vger.kernel.org, AJvYcCVMQ1i5eq4Te6F+PbwxxYG4yDKow88fLsezIzwEpdMbJjzApyB5FxzumLvWM5BSoONWdDWHZxjUP9adnwF0@vger.kernel.org, AJvYcCViRt3/9sqgrOVEZo6E0Z73hTf5NyWCsBJhKp8AZ5nbEfH1RrmSpr4icgdlq9zLGYlE+jw=@vger.kernel.org, AJvYcCX3nRLg8hsHpmq+4NKZqcyF5xtaoSCBsBhHmpEEBAYlXHDZlfpY8cQPf0H9SXJLTXndnkWdpxJq@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7KUWPZZeyq+P3g+4OUZiLpLSK4mfjYTtlNWVVs2VBuVfVmZV+
-	uoul0K9R3InwngWoHhJ3ej88bsuoZczL+PQzzt5X6kqIGggUBL1j1gA=
-X-Gm-Gg: ASbGnctkb6qtONqsHTvP/oI7NIkaTSDFMm4Czk5fKpa4NlZYCIyXLboZfJJ8KgObHCi
-	tvtNVLExfaAid73pHSuSGb0tiWF8KWzb6GnE0FnCjWtIC2HLzLsDPJp4ZsQ6KZGAwfaJIAwvF0U
-	qZ7qiiqRSskzKk8tOg2nGIaXIxg4+4HmFfuiV3zBhbAA3eyX5v9BuqHIjx/JimyNt/roJO5Z7Sw
-	r0f0/nZjk7hRQ9tDrnLslZO144JQKr5RBeUWMx+zLx3LOk1j2q/mxqpAgmyZKgtju4bCIdfRzzX
-	5kL3TeYpqsMLVYQ6ZV+xXRAtgmnoMbawNtrqWevSh/v2+ZJvvwRmRuwdN09YvFPJ45r28oxqWB5
-	raQzG5xT8v/JeU6QKA67EbV0=
-X-Google-Smtp-Source: AGHT+IHSxhR7xxHJFY8zi7jWzihGhAcFeIjQGJz3EIUMztBhyJx0Bl4c4FDPLS3+9R0q/l1cSrUJsg==
-X-Received: by 2002:a17:90b:2e83:b0:312:1516:5ef1 with SMTP id 98e67ed59e1d1-3121dc21454mr47908a91.7.1748473459456;
-        Wed, 28 May 2025 16:04:19 -0700 (PDT)
-Received: from localhost (c-73-158-218-242.hsd1.ca.comcast.net. [73.158.218.242])
-        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-3121b93b3c5sm171136a91.39.2025.05.28.16.04.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 May 2025 16:04:19 -0700 (PDT)
-Date: Wed, 28 May 2025 16:04:18 -0700
-From: Stanislav Fomichev <stfomichev@gmail.com>
-To: Mina Almasry <almasrymina@google.com>
-Cc: Dragos Tatulea <dtatulea@nvidia.com>, Tariq Toukan <tariqt@nvidia.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>, netdev@vger.kernel.org,
-	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org, Moshe Shemesh <moshe@nvidia.com>,
-	Mark Bloch <mbloch@nvidia.com>, Gal Pressman <gal@nvidia.com>,
-	Cosmin Ratiu <cratiu@nvidia.com>
-Subject: Re: [PATCH net-next V2 00/11] net/mlx5e: Add support for devmem and
- io_uring TCP zero-copy
-Message-ID: <aDeWcntZgm7Je8TZ@mini-arch>
-References: <1747950086-1246773-1-git-send-email-tariqt@nvidia.com>
- <aDXi3VpAOPHQ576e@mini-arch>
- <izjshibliwhxfqiidy24xmxsq6q6te4ydmcffucwrhikaokqgg@l5tn6arxiwgo>
- <aDcvfvLMN2y5xkbo@mini-arch>
- <CAHS8izMhCm1+UzmWK2Ju+hbA5U-7OYUcHpdd8yEuQEux3QZ74A@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1748473884; x=1749078684;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=d7TN5QXJhRSmfoM9Tpxod/qjmd6b/yxgCZaGEbMSEqQ=;
+        b=LIEXPNXu3VgNy7Yni/g4pjs/J9OZF553hErb0mflH1rhXnZ/dwNzFNxjTx3WCdjWJp
+         Iu9PEUeDChXfWTh1b8N4H814GJegqDGmMwb2DB5R9MA2MPkhAg8+MXF5gMWxqvMNp2Vv
+         QSjnu77vM/aEQe9rkLBf2uXCX9Z+u9jdJWKd93AvVfACIxFvvmIp1U2xXO4TTCPN8xZB
+         elFODW0sGWdJrG5lWl4IngwAIR3gXmgWjdG9FxrJmKhMqqi9KAsYhIhcxPhyr89KE1A9
+         5Mhy/JoBWwObO9XTPV/IyBa0Nwfk3DX9R5hxRNjDHZamMNxqPXr2r9TWAS5CnTvA+lXk
+         JiTA==
+X-Forwarded-Encrypted: i=1; AJvYcCUeE2Jrc5Kyr9NtWkByEMpMPWExp6RDiWKgDbh16QiDl22K8PyJYJuWO57IE8H0znChtmF1gScVpaeXCoY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXPvr2SxDU4C9g4ZpOT7J5htjFss0XQoU5rQjDVBBlPiGa9TLv
+	9KOCkrk8+Owctszhj1AykSJHe4HXyXihEZMIi/ZrHbOw8kjZ/cWC+zuU1Tnc4tQ02LU24Fod4rV
+	VrbdEninHbIQ/bSMWNFs1zUn0L/F1+0EREkFfOd6t
+X-Gm-Gg: ASbGncuy0tYlTl9kDsPJNdlcoEJN/FNg0HBJXdbDzf06R5mfA3Tbt22LFDaBlL8BsoW
+	Q/ujsxMFwQzsRpvbLb8hmPBgkfk1cvljug+IUlRMinyOKrEno2ltkEEOf9PJFihugwPNA4kxqO8
+	gbAvqCclZF92SeZMJ5zG2G5FWvLMuU3PTkgQWffzWJrTp6LDvX/1HAfEFAF7Y0RTiWZzSn015E
+X-Google-Smtp-Source: AGHT+IGom8NrER1VE/kdfIaohwcyFm+hEoJj2YT3ebrUwFisS6NlVU5jYbwNmrwrJXLRXub0bv+so2t3+K4ZboOFJXg=
+X-Received: by 2002:a05:6e02:1a83:b0:3db:831e:1bc3 with SMTP id
+ e9e14a558f8ab-3dd9315c1dcmr544235ab.23.1748473884301; Wed, 28 May 2025
+ 16:11:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHS8izMhCm1+UzmWK2Ju+hbA5U-7OYUcHpdd8yEuQEux3QZ74A@mail.gmail.com>
+References: <20250428213409.1417584-1-irogers@google.com> <20250428213409.1417584-6-irogers@google.com>
+ <aDd06eK7fKFsFsVS@google.com> <CAP-5=fV-cLLpdyoqL8+Jrt3iYU7EbpZZDOyM1kBCc+54gA2Nzg@mail.gmail.com>
+ <aDeLLvBVQnQqJT4b@google.com>
+In-Reply-To: <aDeLLvBVQnQqJT4b@google.com>
+From: Ian Rogers <irogers@google.com>
+Date: Wed, 28 May 2025 16:11:13 -0700
+X-Gm-Features: AX0GCFufqlmUjrJuC0NBNqF7z_kwH0km2z1g4J15ITd67IMLnpSSJlAZbK8v7Ds
+Message-ID: <CAP-5=fWJMFYBtwPeH8DhzUG2jbjJ865sLojDtEc1+HDQZdpPoA@mail.gmail.com>
+Subject: Re: [PATCH v3 5/9] perf build-id: Mark DSO in sample callchains
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	Athira Rajeev <atrajeev@linux.ibm.com>, Kajol Jain <kjain@linux.ibm.com>, 
+	Li Huafei <lihuafei1@huawei.com>, "Steinar H. Gunderson" <sesse@google.com>, 
+	James Clark <james.clark@linaro.org>, Stephen Brennan <stephen.s.brennan@oracle.com>, 
+	Andi Kleen <ak@linux.intel.com>, Dmitry Vyukov <dvyukov@google.com>, 
+	Zhongqiu Han <quic_zhonhan@quicinc.com>, Yicong Yang <yangyicong@hisilicon.com>, 
+	=?UTF-8?Q?Krzysztof_=C5=81opatowski?= <krzysztof.m.lopatowski@gmail.com>, 
+	"Dr. David Alan Gilbert" <linux@treblig.org>, Zixian Cai <fzczx123@gmail.com>, 
+	Steve Clevenger <scclevenger@os.amperecomputing.com>, 
+	Thomas Falcon <thomas.falcon@intel.com>, Martin Liska <martin.liska@hey.com>, 
+	=?UTF-8?Q?Martin_Li=C5=A1ka?= <m.liska@foxlink.cz>, 
+	Song Liu <song@kernel.org>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 05/28, Mina Almasry wrote:
-> On Wed, May 28, 2025 at 8:45 AM Stanislav Fomichev <stfomichev@gmail.com> wrote:
-> >
-> > On 05/28, Dragos Tatulea wrote:
-> > > On Tue, May 27, 2025 at 09:05:49AM -0700, Stanislav Fomichev wrote:
-> > > > On 05/23, Tariq Toukan wrote:
-> > > > > This series from the team adds support for zerocopy rx TCP with devmem
-> > > > > and io_uring for ConnectX7 NICs and above. For performance reasons and
-> > > > > simplicity HW-GRO will also be turned on when header-data split mode is
-> > > > > on.
-> > > > >
-> > > > > Find more details below.
-> > > > >
-> > > > > Regards,
-> > > > > Tariq
-> > > > >
-> > > > > Performance
-> > > > > ===========
-> > > > >
-> > > > > Test setup:
-> > > > >
-> > > > > * CPU: Intel(R) Xeon(R) Platinum 8380 CPU @ 2.30GHz (single NUMA)
-> > > > > * NIC: ConnectX7
-> > > > > * Benchmarking tool: kperf [1]
-> > > > > * Single TCP flow
-> > > > > * Test duration: 60s
-> > > > >
-> > > > > With application thread and interrupts pinned to the *same* core:
-> > > > >
-> > > > > |------+-----------+----------|
-> > > > > | MTU  | epoll     | io_uring |
-> > > > > |------+-----------+----------|
-> > > > > | 1500 | 61.6 Gbps | 114 Gbps |
-> > > > > | 4096 | 69.3 Gbps | 151 Gbps |
-> > > > > | 9000 | 67.8 Gbps | 187 Gbps |
-> > > > > |------+-----------+----------|
-> > > > >
-> > > > > The CPU usage for io_uring is 95%.
-> > > > >
-> > > > > Reproduction steps for io_uring:
-> > > > >
-> > > > > server --no-daemon -a 2001:db8::1 --no-memcmp --iou --iou_sendzc \
-> > > > >         --iou_zcrx --iou_dev_name eth2 --iou_zcrx_queue_id 2
-> > > > >
-> > > > > server --no-daemon -a 2001:db8::2 --no-memcmp --iou --iou_sendzc
-> > > > >
-> > > > > client --src 2001:db8::2 --dst 2001:db8::1 \
-> > > > >         --msg-zerocopy -t 60 --cpu-min=2 --cpu-max=2
-> > > > >
-> > > > > Patch overview:
-> > > > > ================
-> > > > >
-> > > > > First, a netmem API for skb_can_coalesce is added to the core to be able
-> > > > > to do skb fragment coalescing on netmems.
-> > > > >
-> > > > > The next patches introduce some cleanups in the internal SHAMPO code and
-> > > > > improvements to hw gro capability checks in FW.
-> > > > >
-> > > > > A separate page_pool is introduced for headers. Ethtool stats are added
-> > > > > as well.
-> > > > >
-> > > > > Then the driver is converted to use the netmem API and to allow support
-> > > > > for unreadable netmem page pool.
-> > > > >
-> > > > > The queue management ops are implemented.
-> > > > >
-> > > > > Finally, the tcp-data-split ring parameter is exposed.
-> > > > >
-> > > > > Changelog
-> > > > > =========
-> > > > >
-> > > > > Changes from v1 [0]:
-> > > > > - Added support for skb_can_coalesce_netmem().
-> > > > > - Avoid netmem_to_page() casts in the driver.
-> > > > > - Fixed code to abide 80 char limit with some exceptions to avoid
-> > > > > code churn.
-> > > >
-> > > > Since there is gonna be 2-3 weeks of closed net-next, can you
-> > > > also add a patch for the tx side? It should be trivial (skip dma unmap
-> > > > for niovs in tx completions plus netdev->netmem_tx=1).
-> > > >
-> > > Seems indeed trivial. We will add it.
+On Wed, May 28, 2025 at 3:16=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
+wrote:
+>
+> On Wed, May 28, 2025 at 01:54:41PM -0700, Ian Rogers wrote:
+> > On Wed, May 28, 2025 at 1:41=E2=80=AFPM Namhyung Kim <namhyung@kernel.o=
+rg> wrote:
 > > >
-> > > > And, btw, what about the issue that Cosmin raised in [0]? Is it addressed
-> > > > in this series?
-> > > >
-> > > > 0: https://lore.kernel.org/netdev/9322c3c4826ed1072ddc9a2103cc641060665864.camel@nvidia.com/
-> > > We wanted to fix this afterwards as it needs to change a more subtle
-> > > part in the code that replenishes pages. This needs more thinking and
-> > > testing.
+> > > On Mon, Apr 28, 2025 at 02:34:04PM -0700, Ian Rogers wrote:
+> > > > Previously only the sample IP's map DSO would be marked hit for the
+> > > > purposes of populating the build ID cache. Walk the call chain to m=
+ark
+> > > > all IPs and DSOs.
+> > >
+> > > I think this is correct, but I'm afraid it'd also increase the proces=
+sing
+> > > time.  Do you happen to have any numbers?
 > >
-> > Thanks! For my understanding: does the issue occur only during initial
-> > queue refill? Or the same problem will happen any time there is a burst
-> > of traffic that might exhaust all rx descriptors?
-> >
-> 
-> Minor: a burst in traffic likely won't reproduce this case, I'm sure
-> mlx5 can drive the hardware to line rate consistently. It's more if
-> the machine is under extreme memory pressure, I think,
-> page_pool_alloc_pages and friends may return ENOMEM, which reproduces
-> the same edge case as the dma-buf being extremely small which also
-> makes page_pool_alloc_netmems return -ENOMEM.
+> > It increases time spent processing the data file but to get a large
+> > data file I had to run for multiple seconds and I struggled to get the
+> > performance cost of this to be in the milliseconds (ie a tiny fraction
+> > of the record time). Ultimately I found the change imperceptible and
+> > couldn't think of a good command line to make it perceptible.
+>
+> The worst case would be dwarf unwinding.  Maybe we can skip the
+> processing if it takes too long..
 
-What I want to understand is whether the kernel/driver will oops when dmabuf
-runs out of buffers after initial setup. Either traffic burst and/or userspace
-being slow on refill - doesn't matter.
+This doesn't sound unreasonable but is somewhat beyond the scope of
+what I wanted to do here, which relates to migrating from inodes to
+buildids as identifiers for DSOs. It would be useful to get a bug
+report on this being too slow.
+
+> >
+> > If the time is spent populating ~/.debug because more DSOs are marked
+> > then this is fixing a bug and isn't a problem with the patch.
+>
+> Right, it's a good thing.
+>
+> >
+> > My personal opinion is that it is somewhat surprising `perf record` is
+> > post-processing the perf.data file at all, and -B and -N would be my
+> > expected defaults - just as --buildid-mmap implies --no-buildid (-B).
+>
+> Otherwise nobody will run perf buildid-cache to add the info. :)
+
+Right, but we know it is high overhead as we run a number of tests with -B:
+https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.gi=
+t/tree/tools/perf/tests/shell/record_sideband.sh?h=3Dperf-tools-next#n25
+https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.gi=
+t/tree/tools/perf/tests/shell/test_arm_spe.sh?h=3Dperf-tools-next#n94
+
+I agree that populating the buildid cache immediately after perf
+record minimizes a gap where DSOs may change prior to perf report. If
+the DSO changes midway through perf record it doesn't help as the
+buildid information is only computed at the end of perf record.
+
+Isn't there an argument that because we have build IDs we don't care
+about the record to report race any more as debuginfod can find the
+prior version by means of the build ID? What I mean:
+
+Current perf default way:
+1) Run perf record with mmap2 inode rather the buildid data
+1.1) To avoid any DSOs in the perf.data from not being available
+populate the buildid header in the perf.data and the buildid cache at
+the end of perf record
+2) Replace some DSO that's got a sample in the perf.data with a different D=
+SO
+3) Run perf report
+3.1) The DSO's buildid is known via the header and the buildid cache
+already contains the DSO
+
+Current way with -N:
+1) Run perf record with mmap2 inode rather the buildid data
+1.1) To ensure DSOs have buildid data populate the buildid header in
+the perf.data  at the end of perf record
+2) Replace some DSO that's got a sample in the perf.data with a different D=
+SO
+3) Run perf report
+3.1) The DSO's buildid is known via the header, debuginfod can
+populate the buildid cache as needed
+
+With --buildid-mmap:
+1) Run perf record with mmap2 buildid data
+1.1) No need to post process file to gather buildids
+2) Replace some DSO that's got a sample in the perf.data with a different D=
+SO
+3) Run perf report
+3.1) The DSO's buildid is known via the mmap2 events, debuginfod can
+populate the buildid cache as needed
+
+With the current way and the current way with -N there is a race with
+the DSO changing midway through perf record. The buildid mmap closes
+the race.
+With -N and --buildid-mmap the buildid cache is populated based on use
+by a tool trying to read the DSO, rather than ahead of time at the end
+of perf record.
+
+Is the risk of the race that much of an issue? I'm not sure, that's
+why I'd say default to using -B (if we didn't switch to buildid mmaps
+by default, but this series does that). You could opt into to covering
+the race by adding a flag so the data is processed at the end of perf
+record. You could use perf inject to add the build IDs.
+
+As you say there's the cost at the end of perf record and I'm not sure
+it is worth it, which is why I'd expect the default to be to opt into
+having the cost. With --buildid-mmap I'm not seeing a race to cover
+but this series populates the buildid cache as I know you've argued
+that perf record should do this by default.
+
+Thanks,
+Ian
+
+> > I didn't want to modify existing behaviors in these changes, however,
+> > in this case I was just trying to make the existing behavior correct,
+> > similar to fixing the same bug in `perf inject`.
+>
+> Thanks for your work,
+> Namhyung
+>
 
