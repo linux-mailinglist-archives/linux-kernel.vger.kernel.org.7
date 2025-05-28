@@ -1,368 +1,166 @@
-Return-Path: <linux-kernel+bounces-665968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7536AC710D
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 20:38:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8B35AC7115
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 20:39:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18717A2352B
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 18:37:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E9961BC7B6F
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 18:39:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D179C28E569;
-	Wed, 28 May 2025 18:38:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FCC328E59A;
+	Wed, 28 May 2025 18:39:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AeyGfCim"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kf212wuz"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC6DD1D6195;
-	Wed, 28 May 2025 18:38:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D8861D6195;
+	Wed, 28 May 2025 18:39:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748457490; cv=none; b=YlPvLl6Z2554e/2GTRmxbouXbjJEW8KxHLcIbHhsdlMkg0hNkCYYRftAyM54w/GvX1/Ej/H5E9dCo9pbIlglGBE4PO9iT146UmGfoCcpDIeAJh63WuWihKna9VfVsXaReilqaHyUORbxdRrBfkDE93u0T6YxoibNSEJs4/aigkQ=
+	t=1748457569; cv=none; b=JxE2RqaVY06sNc2qKw3sKR3CpBlWBXQxoUQyJudn7fsh5vEYQTNPEzHyvqOlVLeCDN9QUrHu+SsG674AS8bFY5RWh+Yz5h6axl6q7/upZw4sSP+jYznSCoVI9JGKZriv77WRhpj0Xd2IcPYxNeh6PWe4IrSItqrPGdEUyn6ufyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748457490; c=relaxed/simple;
-	bh=W5acOlEAdjgfenO8dPOfN7GtgEzKg0IXWTAug1aAJ2A=;
+	s=arc-20240116; t=1748457569; c=relaxed/simple;
+	bh=CYye3j1lrKBr4+y+Vytan0Y53gu79MOUM2VVYW6GeTg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GSJdSU9pxlQOSCsiAPLLpIN0tm3vDcx1rPHRezlB6tpYRR/FXFPeaRo9lc6XH/6s18uohDRs6UYyc/mFQw/luLfU+3WMDXFsC80Ni2Fu3fgn88V9EQkzJ6XDmEXvsugJADftZTTKDPLzaSRGhl0m0KAHRXRY7hx9fNCNjyla1cQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AeyGfCim; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC58FC4CEE3;
-	Wed, 28 May 2025 18:38:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748457490;
-	bh=W5acOlEAdjgfenO8dPOfN7GtgEzKg0IXWTAug1aAJ2A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AeyGfCimPY2kT4QHRa3RfqddiICw8gUD7MZQyDOto75vRL141UGAWJEf1vuFtyPE/
-	 hcVF1KRPz58f4bFHJwXc/dHDhCgTNc8xmrTbDP8LX+oPC4GQ0x2Bk0xkme3BL56Hoa
-	 cZvYmnw1PvJMfhqXXZ1c1992gX/jTKrtq7wplKixbB01fVlpHY6IdyOrhXbWtR9ByO
-	 IEAggndjvS6rFI66xmre0pDw3m0j4+FS9+3UcxzzlfAnp7Z3fUBA988KQlkQuNXZO8
-	 Ql+hn1Hc6LsJP7SKZBbOJeOWSVp0e9M/97dsp4HVC8DxUaazM9yqrld/DqIOJys4i5
-	 hqq/t5peApKaw==
-Date: Wed, 28 May 2025 11:38:08 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Dmitry Vyukov <dvyukov@google.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org, Andi Kleen <ak@linux.intel.com>
-Subject: Re: [RFC/PATCH] perf report: Support latency profiling in
- system-wide mode
-Message-ID: <aDdYEH3lIYHAB-lk@google.com>
-References: <CACT4Y+aiU-dHVgTKEpyJtn=RUUyYJp8U5BjyWSOHm6b2ODp9cA@mail.gmail.com>
- <aBvwFPRwA2LVQJkO@google.com>
- <CACT4Y+YacgzrUL1uTqxkPOjQm6ryn2R_nPs8dgnrP_iKA9yasQ@mail.gmail.com>
- <aCdo6Vz2MVv3N0kk@google.com>
- <CACT4Y+YHxXjCU2jySTUO5kH=xC8scdzTTuP2qEBc5zMber44Aw@mail.gmail.com>
- <aCveO4qQGy03ow5p@google.com>
- <CACT4Y+YdnQebkGTQJ9yhLs2j12WBYk2ReiBAq5cE+wtu1RRU5A@mail.gmail.com>
- <aC0HH45JCBTchZMc@google.com>
- <CACT4Y+apAJ_m9W=P2hsGvWrGZnTzxB+9qgJg=ujjU8OWCVcUoQ@mail.gmail.com>
- <CACT4Y+Z3Bbn3KcwhjOYAmzHWqRSZ4ywCrw8FNNxj5MrDUzFtVg@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KMfycL/ach1p8mHHl/rYjVzyRKiVPc/jTQdbTMUKSwA+72fwkX851oGM6GNwuLlky2Mmk8ZQxNJQQdmP4+d/bbXqdZ4PdReqVUWuVnR6jQb4BE/Os7vwB63KdME8NVnJlo3MaBaMpXJWlSxqD4JakmNFl+SjOu5824cKyXOJQ1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kf212wuz; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1748457567; x=1779993567;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=CYye3j1lrKBr4+y+Vytan0Y53gu79MOUM2VVYW6GeTg=;
+  b=kf212wuzI3X+RkEAP5FEzfFfi7Z2Syuu0CIPAXnzEHoc3riDEk9RkW7l
+   fvAtYow3Jl421Ay/hfYxdRoZwr9LIrpBgQIVVqCEMYjC7/cAGbA9qPnlA
+   dJQEr0RLJ5d2M3HHDO3YHBFv/pOrM9DRlQLdZk+Tt8BCZ2yB+62sxS0wW
+   qPUORzVZTSGxaVET+LolO2D9IKDKKyT1GSGI/7Wqi2d7F+pY8vHdaBeZJ
+   Z5WYaqUHVijBTwnJMnp4nMS/gLw2SgnEune53M20w8GNYYrybPtHg/ALe
+   KhTwpQfO9hPalrt+Rj1x4hLYbhLYvFogokQRL70mY2TcMYoJmJt2tTkP5
+   g==;
+X-CSE-ConnectionGUID: dk/cM37/Q5Sl82/rtKglzw==
+X-CSE-MsgGUID: mfowhYBBR66oblC/E3VkqA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11447"; a="50651831"
+X-IronPort-AV: E=Sophos;i="6.15,322,1739865600"; 
+   d="scan'208";a="50651831"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2025 11:39:08 -0700
+X-CSE-ConnectionGUID: eUUEklcUQnOp9uavjz+IfQ==
+X-CSE-MsgGUID: gxGbZbAmQ1WKbGCtrvkjYw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,322,1739865600"; 
+   d="scan'208";a="143780102"
+Received: from agluck-desk3.sc.intel.com (HELO agluck-desk3) ([172.25.103.51])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2025 11:38:55 -0700
+Date: Wed, 28 May 2025 11:38:53 -0700
+From: "Luck, Tony" <tony.luck@intel.com>
+To: Zaid Alali <zaidal@os.amperecomputing.com>
+Cc: rafael@kernel.org, lenb@kernel.org, james.morse@arm.com, bp@alien8.de,
+	robert.moore@intel.com, Jonathan.Cameron@huawei.com,
+	ira.weiny@intel.com, Benjamin.Cheatham@amd.com,
+	dan.j.williams@intel.com, arnd@arndb.de, Avadhut.Naik@amd.com,
+	u.kleine-koenig@pengutronix.de, john.allen@amd.com,
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	acpica-devel@lists.linux.dev
+Subject: Re: [PATCH v7 6/9] ACPI: APEI: EINJ: Add einjv2 extension struct
+Message-ID: <aDdYPf-4ru_cC-_D@agluck-desk3>
+References: <20250506213814.2365788-1-zaidal@os.amperecomputing.com>
+ <20250506213814.2365788-7-zaidal@os.amperecomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CACT4Y+Z3Bbn3KcwhjOYAmzHWqRSZ4ywCrw8FNNxj5MrDUzFtVg@mail.gmail.com>
+In-Reply-To: <20250506213814.2365788-7-zaidal@os.amperecomputing.com>
 
-Hello,
-
-On Tue, May 27, 2025 at 09:14:34AM +0200, Dmitry Vyukov wrote:
-> On Wed, 21 May 2025 at 09:30, Dmitry Vyukov <dvyukov@google.com> wrote:
-> >
-> > On Wed, 21 May 2025 at 00:50, Namhyung Kim <namhyung@kernel.org> wrote:
-> > > > > > > Hello,
-> > > > > > >
-> > > > > > > Sorry for the delay.
-> > > > > > >
-> > > > > > > On Thu, May 08, 2025 at 02:24:08PM +0200, Dmitry Vyukov wrote:
-> > > > > > > > On Thu, 8 May 2025 at 01:43, Namhyung Kim <namhyung@kernel.org> wrote:
-> > > > > > > > >
-> > > > > > > > > On Tue, May 06, 2025 at 09:40:52AM +0200, Dmitry Vyukov wrote:
-> > > > > > > > > > On Tue, 6 May 2025 at 09:10, Namhyung Kim <namhyung@kernel.org> wrote:
-> > > > > > > > > > > > > > Where does the patch check that this mode is used only for system-wide profiles?
-> > > > > > > > > > > > > > Is it that PERF_SAMPLE_CPU present only for system-wide profiles?
-> > > > > > > > > > > > >
-> > > > > > > > > > > > > Basically yes, but you can use --sample-cpu to add it.
-> > > > > > > > > > > >
-> > > > > > > > > > > > Are you sure? --sample-cpu seems to work for non-system-wide profiles too.
-> > > > > > > > > > >
-> > > > > > > > > > > Yep, that's why I said "Basically".  So it's not 100% guarantee.
-> > > > > > > > > > >
-> > > > > > > > > > > We may disable latency column by default in this case and show warning
-> > > > > > > > > > > if it's requested.  Or we may add a new attribute to emit sched-switch
-> > > > > > > > > > > records only for idle tasks and enable the latency report only if the
-> > > > > > > > > > > data has sched-switch records.
-> > > > > > > > > > >
-> > > > > > > > > > > What do you think?
-> > > > > > > > > >
-> > > > > > > > > > Depends on what problem we are trying to solve:
-> > > > > > > > > >
-> > > > > > > > > > 1. Enabling latency profiling for system-wide mode.
-> > > > > > > > > >
-> > > > > > > > > > 2. Switch events bloating trace too much.
-> > > > > > > > > >
-> > > > > > > > > > 3. Lost switch events lead to imprecise accounting.
-> > > > > > > > > >
-> > > > > > > > > > The patch mentions all 3 :)
-> > > > > > > > > > But I think 2 and 3 are not really specific to system-wide mode.
-> > > > > > > > > > An active single process profile can emit more samples than a
-> > > > > > > > > > system-wide profile on a lightly loaded system.
-> > > > > > > > >
-> > > > > > > > > True.  But we don't need to care about lightly loaded systems as they
-> > > > > > > > > won't cause problems.
-> > > > > > > > >
-> > > > > > > > >
-> > > > > > > > > > Similarly, if we rely on switch events for system-wide mode, then it's
-> > > > > > > > > > equally subject to the lost events problem.
-> > > > > > > > >
-> > > > > > > > > Right, but I'm afraid practically it'll increase the chance of lost
-> > > > > > > > > in system-wide mode.  The default size of the sample for system-wide
-> > > > > > > > > is 56 byte and the size of the switch is 48 byte.  And the default
-> > > > > > > > > sample frequency is 4000 Hz but it cannot control the rate of the
-> > > > > > > > > switch.  I saw around 10000 Hz of switches per CPU on my work env.
-> > > > > > > > >
-> > > > > > > > > >
-> > > > > > > > > > For problem 1: we can just permit --latency for system wide mode and
-> > > > > > > > > > fully rely on switch events.
-> > > > > > > > > > It's not any worse than we do now (wrt both profile size and lost events).
-> > > > > > > > >
-> > > > > > > > > This can be an option and it'd work well on lightly loaded systems.
-> > > > > > > > > Maybe we can just try it first.  But I think it's better to have an
-> > > > > > > > > option to make it work on heavily loaded systems.
-> > > > > > > > >
-> > > > > > > > > >
-> > > > > > > > > > For problem 2: yes, we could emit only switches to idle tasks. Or
-> > > > > > > > > > maybe just a fake CPU sample for an idle task? That's effectively what
-> > > > > > > > > > we want, then your current accounting code will work w/o any changes.
-> > > > > > > > > > This should help wrt trace size only for system-wide mode (provided
-> > > > > > > > > > that user already enables CPU accounting for other reasons, otherwise
-> > > > > > > > > > it's unclear what's better -- attaching CPU to each sample, or writing
-> > > > > > > > > > switch events).
-> > > > > > > > >
-> > > > > > > > > I'm not sure how we can add the fake samples.  The switch events will be
-> > > > > > > > > from the kernel and we may add the condition in the attribute.
-> > > > > > > > >
-> > > > > > > > > And PERF_SAMPLE_CPU is on by default in system-wide mode.
-> > > > > > > > >
-> > > > > > > > > >
-> > > > > > > > > > For problem 3: switches to idle task won't really help. There can be
-> > > > > > > > > > lots of them, and missing any will lead to wrong accounting.
-> > > > > > > > >
-> > > > > > > > > I don't know how severe the situation will be.  On heavily loaded
-> > > > > > > > > systems, the idle task won't run much and data size won't increase.
-> > > > > > > > > On lightly loaded systems, increased data will likely be handled well.
-> > > > > > > > >
-> > > > > > > > >
-> > > > > > > > > > A principled approach would be to attach a per-thread scheduler
-> > > > > > > > > > quantum sequence number to each CPU sample. The sequence number would
-> > > > > > > > > > be incremented on every context switch. Then any subset of CPU should
-> > > > > > > > > > be enough to understand when a task was scheduled in and out
-> > > > > > > > > > (scheduled in on the first CPU sample with sequence number N, and
-> > > > > > > > > > switched out on the last sample with sequence number N).
-> > > > > > > > >
-> > > > > > > > > I'm not sure how it can help.  We don't need the switch info itself.
-> > > > > > > > > What's needed is when the CPU was idle, right?
-> > > > > > > >
-> > > > > > > > I mean the following.
-> > > > > > > > Each sample has a TID.
-> > > > > > > > We add a SEQ field, which is per-thread and is incremented after every
-> > > > > > > > rescheduling of the thread.
-> > > > > > > >
-> > > > > > > > When we see the last sample for (TID,SEQ), we pretend there is SCHED
-> > > > > > > > OUT event for this thread at this timestamp. When we see the first
-> > > > > > > > sample for (TID,SEQ+1), we pretend there is SCHED IN event for this
-> > > > > > > > thread at this timestamp.
-> > > > > > > >
-> > > > > > > > These SCHED IN/OUT events are not injected by the kernel. We just
-> > > > > > > > pretend they happen for accounting purposes. We may actually
-> > > > > > > > materialize them in the perf tool, or me may just update parallelism
-> > > > > > > > as if they happen.
-> > > > > > >
-> > > > > > > Thanks for the explanation.  But I don't think it needs the SEQ and
-> > > > > > > SCHED IN/OUT generated from it to track lost records.  Please see below.
-> > > > > > >
-> > > > > > > >
-> > > > > > > > With this scheme we can lose absolutely any subset of samples, and
-> > > > > > > > still get very precise accounting. When we lose samples, the profile
-> > > > > > > > of course becomes a bit less precise, but the effect is local and
-> > > > > > > > recoverable.
-> > > > > > > >
-> > > > > > > > If we lose the last/first event for (TID,SEQ), then we slightly
-> > > > > > > > shorten/postpone the thread accounting in the process parallelism
-> > > > > > > > level. If we lose a middle (TID,SEQ), then parallelism is not
-> > > > > > > > affected.
-> > > > > > >
-> > > > > > > I'm afraid it cannot check parallelism by just seeing the current thread.
-> > > > > > > I guess it would need information from other threads even if it has same
-> > > > > > > SEQ.
-> > > > > >
-> > > > > > Yes, we still count parallelism like you do in this patch, we just use
-> > > > > > the SEQ info instead of CPU numbers and explicit switch events.
-> > > > >
-> > > > > I mean after record lost, let's say
-> > > > >
-> > > > >   t1: SAMPLE for TID 1234, seq 10  (parallelism = 4)
-> > > > >   t2: LOST
-> > > > >   t3: SAMPLE for TID 1234, seq 10  (parallelism = ?)
-> > > > >
-> > > > > I don't think we can continue to use parallelism of 4 after LOST even if
-> > > > > it has the same seq because it cannot know if other threads switched on
-> > > > > other CPUs.  Then do we need really the seq?
-> > > >
-> > > > I do not understand the problem you describe.
-> > > > We just keep updating parallelism according to the algorithm I
-> > > > described. It works fine in the presence of lost events.
-> > >
-> > > Do you think it's ok to use 4 if seq is the same?  I'm afraid it'd be
-> > > inaccurate.
-> >
-> > It will be inaccurate briefly for the period of 1 sample if we lost
-> > specifically the last/first sample of a thread scheduling quantum. And
-> > then it will recover and will be precise.
-> >
-> > But it's exactly the same in your scheme, right. If we stopped seeing
-> > events on a CPU due to lost events, we will assume it's not running.
-> >
-> > And generally lost events will always lead to imprecision. That's
-> > unavoidable. It's only important if the imprecision is limited and
-> > proportional to the number of lost events. And this is the case for
-> > the SEQ scheme.
-> >
-> >
-> > > > > > > Also postpone thread accounting can be complex.  I think it should wait
-> > > > > > > for all other threads to get a sample.  Maybe some threads exited and
-> > > > > > > lost too.
-> > > > > >
-> > > > > > Yes, in order to understand what's the last event for (TID,SEQ) we
-> > > > > > need to look ahead and find the event (TID,SEQ+1). The easiest way to
-> > > > > > do it would be to do 2 passes over the trace. That's the cost of
-> > > > > > saving trace space + being resilient to lost events.
-> > > > > >
-> > > > > > Do you see any other issues with this scheme besides requiring 2 passes?
-> > > > >
-> > > > > Well.. 2 pass itself can be a problem due to slowness it'd bring.  Some
-> > > > > people complain about the speed of perf report as of now.
-> > > >
-> > > > Is trace processing CPU-bound or memory-bound? If it's CPU-bound, then
-> > > > the second pass may be OK-ish, since we will need minimal CPU
-> > > > processing during the first pass.
-> > >
-> > > It depends on the size of data, but I guess it's CPU-bound in most cases.
-> > >
-> > > >
-> > > >
-> > > > > I think we can simply reset the parallelism in all processes after LOST
-> > > > > and set current process to the idle task.  It'll catch up as soon as it
-> > > > > sees samples from all CPUs.
-> > > >
-> > > > I guess we can approximate parallelism as you described here:
-> > > >
-> > > > > Hmm.. ok.  Maybe we can save the timestamp of the last sample on each
-> > > > > CPU and clear the current thread after some period (2x of given freq?).
-> > > >
-> > > > We probably don't need to do anything special for lost events in this
-> > > > scheme at all. If the gap caused by lost events is tiny, then we
-> > > > consider nothing happened. If the gap is large enough, then we
-> > > > consider the CPU as idle for the duration of the gap. Either way it
-> > > > will be handled on common grounds.
-> > >
-> > > How do you know if it's tiny?  Do you mean the seq remains after lost?
-> >
-> > I was talking about your scheme based on CPU numbers.
-> >
-> >
-> > > > But tuning of these heuristics + testing and verification may be a bit
-> > > > of a problem. I would hate to end up with a tool which I won't trust.
-> > > >
-> > > > Here:
-> > > > "after some period (2x of given freq?)"
-> > > > do you mean 2x average/median period, or 1/2 average/median period?
-> > > > (2x freq is 1/2 period)
-> > >
-> > > Oh, sorry.  It's 2x period.
-> > >
-> > > >
-> > > > Ideally, we consider a CPU idle after 1/2 period after it switched to
-> > > > the idle task and we stop receiving samples.
-> > > > But on the other hand, we don't want to consider it constantly
-> > > > becoming idle, when it's just doing normal sampling with the normal
-> > > > period...
-> > > >
-> > > > So ideally the algorithm should be something like:
-> > > > let's say average/median sampling period is P
-> > > > we got last sample for CPU X at time T
-> > > > if by time T+2P we have not seen any other sample on CPU X, then
-> > > > consider CPU X idle since T+0.5P
-> > > >
-> > > > But this would also require either 2 passes over the data, or some
-> > > > kind of look ahead similar to the algo I proposed...
-> > >
-> > > I think we can do it in 1 pass.  For each sample,
-> > >
-> > >   for_each_cpu(cpu) {
-> > >       if (current[cpu]->last_timestamp + 2*period < sample->timestamp) {
-> > >           if (current[cpu]->thread != idle) {
-> > >               current[cpu]->thread->parallelism--;
-> > >               current[cpu]->thread = idle;
-> > >           }
-> > >       }
-> > >   }
-> > >
-> > >   leader = machine__findnew_thread(machine, sample->pid);
-> > >   current[sample->cpu]->last_timestamp = sample->timestamp;
-> > >
-> > >   if (current[sample->cpu]->thread != leader) {
-> > >       if (current[sample->cpu]->thread != idle)
-> > >           current[sample->cpu]->thread->parallelism--;
-> > >
-> > >       current[sample->cpu]->thread = leader;
-> > >       leader->parallelism++;
-> > >   }
-> > >
-> > >   sample->parallelism = leader->parallelism;
-> >
-> > As I described, for this simple 1 pass algorithm, I am afraid of imprecision.
-> > The thread has not continued to run for 2 periods. I run for 0-1 period.
-> >
-> >
-> >
-> > > > Also, do we take the median period? or average? do we update it over
-> > > > time (say, if CPU freq changes)? do we count it globally, or per CPU
-> > > > (in case CPUs run at different freqs)?
-> > >
-> > > Oh, perf tools use default frequency of 4000 Hz.
-> >
-> > Is the actual sample rate reasonably precise across time/CPUs?
-> >
-> > > Maybe we can use this
-> > > only for the frequency mode which means user didn't use -c option or
-> > > similar in the event description.
+On Tue, May 06, 2025 at 02:38:10PM -0700, Zaid Alali wrote:
+> Add einjv2 extension struct and EINJv2 error types to prepare
+> the driver for EINJv2 support. ACPI specifications[1] enables
+> EINJv2 by extending set_error_type_with_address struct.
 > 
+> Link: https://github.com/tianocore/edk2/issues/9449 [1]
 > 
-> All-in-all I think the best option for now is using CPU IDs to track
-> parallelism as you suggested, but be more precise with idle detection.
-> 2 passes over the trace may be fine to detect idle points. I see the
-> most time now spent in hist_entry__cmp, which accesses other entries
-> and is like a part of O(N*logN) processing, so a simple O(N) pass
-> shouldn't slow it down much.
-> That's what I would try. But I would also try to assess the precision
-> of this approach by comparing with results of using explicit switch
-> events.
+> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Signed-off-by: Zaid Alali <zaidal@os.amperecomputing.com>
+> ---
+>  drivers/acpi/apei/einj-core.c | 23 +++++++++++++++++++++++
+>  1 file changed, 23 insertions(+)
+> 
+> diff --git a/drivers/acpi/apei/einj-core.c b/drivers/acpi/apei/einj-core.c
+> index ee26df0398fc..60e4f3dc7055 100644
+> --- a/drivers/acpi/apei/einj-core.c
+> +++ b/drivers/acpi/apei/einj-core.c
+> @@ -50,6 +50,28 @@
+>   */
+>  static int acpi5;
+>  
+> +struct syndrome_array {
+> +	union {
+> +		u8	acpi_id[16];
+> +		u8	device_id[16];
+> +		u8	pcie_sbdf[16];
+> +		u8	vendor_id[16];
+> +	} comp_id;
+> +	union {
+> +		u8	proc_synd[16];
+> +		u8	mem_synd[16];
+> +		u8	pcie_synd[16];
+> +		u8	vendor_synd[16];
+> +	} comp_synd;
+> +};
+> +
+> +struct einjv2_extension_struct {
+> +	u32 length;
+> +	u16 revision;
+> +	u16 component_arr_count;
+> +	struct syndrome_array component_arr[] __counted_by(component_arr_count);
+> +};
+> +
+>  struct set_error_type_with_address {
+>  	u32	type;
+>  	u32	vendor_extension;
+> @@ -58,6 +80,7 @@ struct set_error_type_with_address {
+>  	u64	memory_address;
+>  	u64	memory_address_range;
+>  	u32	pcie_sbdf;
+> +	struct	einjv2_extension_struct einjv2_struct;
 
-It's not clear to me how you want to maintain the idle info in the 2
-pass approach.  Please feel free to propose something based on this
-work.
+I can't make this match up with the ACPI v6.5 spec.  The spec defines
+a whole new EINJV2_SET_ERROR_TYPE data structure in table 18.34 that
+is NOT just a simple addition of new fields at the end of the existing
+SET_ERROR_TYPE_WITH_ADDRESS data structure. E.g. the "flags" are now
+in a 3-byte field at offset 5 instead of a 4-byte field at offset 8.
+There is a new "length" field that descibes the total size of the
+structure including the new flex array of syndrome values at the
+end.
 
-Thanks,
-Namhyung
+Shouldn't this look like this?
 
+struct set_error_type_with_address_v2 {
+	u32	type;
+	u8	type_code;
+	u8	flags[3];
+	u32	length;
+	u32	severity;
+	u64	memory_address;
+	u64	memory_address_range;
+	u32	syndrome_count;
+	struct syndrome_array syndrome syndromes[];
+};
+
+>  };
+>  enum {
+>  	SETWA_FLAGS_APICID = 1,
+> -- 
+> 2.43.0
+
+-Tony
 
