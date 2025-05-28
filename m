@@ -1,103 +1,78 @@
-Return-Path: <linux-kernel+bounces-666210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1328AC73CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 00:17:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C34BAC73CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 00:17:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABD114A88F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 22:17:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C7CD4A887F
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 22:17:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 870DC4C81;
-	Wed, 28 May 2025 22:17:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1359D221F14;
+	Wed, 28 May 2025 22:16:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G7muyCJc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UkgkhMnC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9873204680;
-	Wed, 28 May 2025 22:17:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72934221DAD
+	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 22:16:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748470650; cv=none; b=F8brHBzUseHPUMYxomwBWhAkBwTLGAu5zkn67t62ventEvzIMA+WpttW1gTGOTq3lwh2C70NfZbTQzkQVZmc7u+jS+rS/d7RwI/NKVJ8BhQosp1LU/Fu6SnsKqqW0Xi5A8Mbbp9AU901XUz0t8lt5a+XjhiGUDeJPmezXCxAbaE=
+	t=1748470610; cv=none; b=oLd3tIR93d+RHBmEaNalAQ9vO2bT3y47nRtdZLRLO8vzuaJcipDn7slp1JzOD41kiOTYzvj5RIipz2ZkZTCiBp6iRuJjpVSs0W9MR+m1a+a2sXdG1hCl0HDKuPTJHzEfvH7+QLokdfw2Np9bawDuLHRDAndbIewiZFHmCfDU45g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748470650; c=relaxed/simple;
-	bh=zNpLWP0iLRo2SdsjN4iDx0HkI1x+t7mIhg4FFPTD5Tk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=okaPMpdMSRR88dHhooLRCpd2Nn5V5K0JD154qSDZ3IblowMfPx/JYuHQCnLkj5VnTf3YpQnZWdP2JDpIJ+TveAdOWd/w4+qQVdLlxbVhWQk6g62ARUQt/ErCrsw7DLej+nBDvZNc2PJE1Dh/zPPglWXjU5rTWJC5izVFQAJmByo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G7muyCJc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 368E3C4CEE3;
-	Wed, 28 May 2025 22:17:27 +0000 (UTC)
+	s=arc-20240116; t=1748470610; c=relaxed/simple;
+	bh=cPxSzTGZDQ2YU8mWoB8rHUajbc3tMY3oivujdfGm+p8=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=N1ZlpnUM0Lrh679exC8e/NVxb89wORHNFOtNHPYas5FsF3qkDIALpCW4tEafOjsq3W/NCD6azl0lf7JA2oDil9Zd8+3RWlUseCIABXgsAktp3q7NFi+Jrozc4wVH3MJgM710X0prCgXT349lrd7ateDcHEYph+dnkIJ3yKPaIik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UkgkhMnC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5525CC4CEE3;
+	Wed, 28 May 2025 22:16:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748470649;
-	bh=zNpLWP0iLRo2SdsjN4iDx0HkI1x+t7mIhg4FFPTD5Tk=;
-	h=From:To:Cc:Subject:Date:From;
-	b=G7muyCJcjzQJFr92jjgnWBBlpxhlTSkns9tT7dVBsYZ8p066RrwEMoBi52I4Dw0DI
-	 eaRLiDhYqbn6faw+B+Y2GJED9hg08bsaHGlfETA9F75ftIxkrXqIi4OsD5QT9YrZYf
-	 CsaqSf2zXr1M9TJ7oIMBiqykalOfsuUlS5XATez3+9oY1oYBUkrSTNXzSwCuLDw77P
-	 mAIoJS7lnZh5pfi+61KTh5B/5D6Udfk/l7Ahoof46MrGPhVaDAeUDAObZJ7cfpg/mX
-	 uxLm3Rt7vPXY3FPlpscg8hjt7CgYs1Zxxy83Afgeh3cmTznC8ByVXp36g6rIFklFa6
-	 k/AeUR12dZOyg==
-From: sven@kernel.org
-To: soc@lists.linux.dev
-Cc: Sven Peter <sven@kernel.org>,
-	Janne Grunau <j@jannau.net>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Neal Gompa <neal@gompa.dev>,
-	Sven Peter <sven@svenpeter.dev>,
-	asahi@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] MAINTAINERS, mailmap: update Sven Peter's email address
-Date: Thu, 29 May 2025 00:17:18 +0200
-Message-Id: <20250528221718.45204-1-sven@kernel.org>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+	s=k20201202; t=1748470610;
+	bh=cPxSzTGZDQ2YU8mWoB8rHUajbc3tMY3oivujdfGm+p8=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=UkgkhMnCFwveMtsxWVM/e4G+qqySKgXyS8wvOtFlV/987OjuSqtsMZt0mmfObkh/G
+	 KKmZEROfoy3PZuqqvEfR7r/z8XhnZRGsCCwXxw52vltBec4gPqvat12wTa65wlns8T
+	 x1FiLsV68Jp74DwOiMJDSPU2i2IlsMrrmYmS5hUVidK92VXT7ptVWGqiBr5V0Fe6tr
+	 XQZTL/F/JbVKJydOeMjP0UTdzVwBOBDuTXyuxFiCk5hUEIxkLExSWkvC0VBD7nFrM/
+	 ubx1aE+WRXWr8y/rWQevQotlRqpQK3PrE44ddFiLleX+rrYrAjan3Ug3U6oarvpp5+
+	 R5G1P/u75PzKg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70E8C3822D1A;
+	Wed, 28 May 2025 22:17:25 +0000 (UTC)
+Subject: Re: [GIT PULL] nios2: updates for v6.16
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20250528110024.19319-1-dinguyen@kernel.org>
+References: <20250528110024.19319-1-dinguyen@kernel.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20250528110024.19319-1-dinguyen@kernel.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/dinguyen/linux.git nios2_for_v6.16
+X-PR-Tracked-Commit-Id: aa264d9511aa5befa28cf8d9f32fce78fcf1a773
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: bbff27b54e4271a42ea1dba93a76e51165f2dbaa
+Message-Id: <174847064397.2608061.4286591093775936927.pr-tracker-bot@kernel.org>
+Date: Wed, 28 May 2025 22:17:23 +0000
+To: Dinh Nguyen <dinguyen@kernel.org>
+Cc: torvalds@linux-foundation.org, dinguyen@kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-From: Sven Peter <sven@kernel.org>
+The pull request you sent on Wed, 28 May 2025 06:00:24 -0500:
 
-Update my mail address to my new @kernel.org one and also add a mailmap
-entry to make sure everything gets sent there for easier filtering.
+> git://git.kernel.org/pub/scm/linux/kernel/git/dinguyen/linux.git nios2_for_v6.16
 
-Signed-off-by: Sven Peter <sven@kernel.org>
----
- .mailmap    | 1 +
- MAINTAINERS | 2 +-
- 2 files changed, 2 insertions(+), 1 deletion(-)
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/bbff27b54e4271a42ea1dba93a76e51165f2dbaa
 
-diff --git a/.mailmap b/.mailmap
-index 4f7cd8e23177..7a9cd664183a 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -712,6 +712,7 @@ Sven Eckelmann <sven@narfation.org> <sven.eckelmann@gmx.de>
- Sven Eckelmann <sven@narfation.org> <sven.eckelmann@open-mesh.com>
- Sven Eckelmann <sven@narfation.org> <sven.eckelmann@openmesh.com>
- Sven Eckelmann <sven@narfation.org> <sven@open-mesh.com>
-+Sven Peter <sven@kernel.org> <sven@svenpeter.dev>
- Takashi YOSHII <takashi.yoshii.zj@renesas.com>
- Tamizh Chelvam Raja <quic_tamizhr@quicinc.com> <tamizhr@codeaurora.org>
- Taniya Das <quic_tdas@quicinc.com> <tdas@codeaurora.org>
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 96b827049501..b389195fb9cd 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2251,7 +2251,7 @@ F:	sound/soc/codecs/cs42l84.*
- F:	sound/soc/codecs/ssm3515.c
+Thank you!
 
- ARM/APPLE MACHINE SUPPORT
--M:	Sven Peter <sven@svenpeter.dev>
-+M:	Sven Peter <sven@kernel.org>
- M:	Janne Grunau <j@jannau.net>
- R:	Alyssa Rosenzweig <alyssa@rosenzweig.io>
- R:	Neal Gompa <neal@gompa.dev>
---
-2.34.1
-
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
