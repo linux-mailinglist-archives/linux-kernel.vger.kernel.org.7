@@ -1,65 +1,57 @@
-Return-Path: <linux-kernel+bounces-665558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CEA0AC6AE3
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 15:45:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 813B8AC6AE7
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 15:46:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FAAE4E4DF7
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 13:45:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D69C39E6CAB
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 13:45:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACA6520E6EB;
-	Wed, 28 May 2025 13:45:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B46E83C01;
+	Wed, 28 May 2025 13:46:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q8Fh4VjZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fz/vjLJB"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FB37139E;
-	Wed, 28 May 2025 13:45:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BBC174420;
+	Wed, 28 May 2025 13:46:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748439926; cv=none; b=mYKHj+T0dfMmFPXtYlmyqjCJvwHS9VA+2AArUDWed+jfGJyBruWayF3SSZPdzG7IUkDLFs3pq8vKwhDE99hc1YuD4b1Q08m2z4Bt1AHi6kszxwg7Uu5o3SSj7OttRT6wzrpA8zRKoIKv1L4nHCHyC89KlnsGBsOs6dGpwr+R86k=
+	t=1748439970; cv=none; b=A2Eo0kvZOeTBkHfpCM1i5H4N88Q5DSy+EXIWYJghSeXukXtZ2EFdCRc521qosxqSmpPq4DjjYFXtrgQiD5HIRX0MbjErpcQkBsG3Txmkm7ysVx/8DMFcM57nQVYVtqCkrrpriechl87pWTPMvuvOFDBvGtmkuaDC6JijNk4gCh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748439926; c=relaxed/simple;
-	bh=YpI7VKMUnaWy2OYCxLRua4soQ2wih1E7n3F4O5SEpHg=;
+	s=arc-20240116; t=1748439970; c=relaxed/simple;
+	bh=oq6Fac4wS0SHANH2J2t3p21BoUKhwTFerUYFaLqweXU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mSg5oyIJDDaQUWricjs1kWr/jv5gQNUTJxyZL3wfjzFQwqozoZV0l8NvHNvdX4wtH/u3zv9DMy1nIKZcRdRzp8zwVkvmENSiXGlbn7x9M+G1lXfJx1QHN6i9s/ESTKCWDk7BTK6Ksptlho0DJ5oJ+Ndu5i2yxFg1dkLFOhYTtI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q8Fh4VjZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A64CDC4CEE7;
-	Wed, 28 May 2025 13:45:22 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=dnGTjRU5ZeTrEhwqJh0uHYc5ECpvcnQFoXZGTJliwrAGNL7PXXzD+Ph8jxFVxmTgtaImoadVzi2PuFlPd5q9rttE48HM/PQVJv0kJ27BAOaquWSOVIS6YqVgfq882qknOAW2tfi7msytwpaWcA3DRnefFI2kEnI7LdrCm9kxMqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fz/vjLJB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08F8DC4CEE7;
+	Wed, 28 May 2025 13:46:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748439925;
-	bh=YpI7VKMUnaWy2OYCxLRua4soQ2wih1E7n3F4O5SEpHg=;
+	s=k20201202; t=1748439969;
+	bh=oq6Fac4wS0SHANH2J2t3p21BoUKhwTFerUYFaLqweXU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=q8Fh4VjZflZWOyDxuwWeoPAWKpSMpoQGfH3d/UzptDGO0ayaOZLubXxI9zBphBWnx
-	 3IpJaRKCInlxC7w0dzWQwiDw7+DgyZ76zNjiWE6gqVOy+aI6U1AJxjIyxJ1045AKr4
-	 acCGwsvoMUp7L3GGl0fkMZozYOzzXjgr6tH8iiVaz/An2AT5aP6Ekneq8wJn9mK1t4
-	 3CW2M9xJGTyL/iPKHgieqkmLhULPwa9mXsEYCYfv1BPmKnUqdLsyXp4WW/Pl2DLTQ7
-	 LY9TXLQF3+6CIYnMES03m1DTM4CM3UOck4Vxy0w7Rk9bxWtIJlDWTAzMKt0vaOQYsi
-	 /vuUCecnjrf3Q==
-Date: Wed, 28 May 2025 14:45:20 +0100
+	b=Fz/vjLJBco5Nolft1Ameracr5zQZuWlEjDpRrZfwHbbD1CdFkvvu7lcYeOq8Dm1iN
+	 jIRW6PW2JF6IRXEBZU5XemKRYa+DIh+K9Xen+vwLg14fNQpziBW3M3gKUNKlWdc2Pp
+	 vIGsAXGkw4opFX2GH41OOq8IWSrAttIbQbyD6cS1Clirj4qJ0EDFgzBoQuDcA8a+Cp
+	 s0LpDAOSuYh8g0XACgKgFEhHAwyICnrve8/hboDl5wKMyTJLZs4jZ6IB3RBeg+VM3Q
+	 eeit6KsvBpRXCw9DHZ7jFkfJ+I/5S+Yhh/Eq8jApLuptSeFLuUWUe9l1qQHGj8pmxz
+	 FTvC+hUjrxyDg==
+Date: Wed, 28 May 2025 14:46:03 +0100
 From: Conor Dooley <conor@kernel.org>
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH] dt-bindings: phy: renesas,usb2-phy: Document RZ/V2N SoC
- support
-Message-ID: <20250528-taekwondo-selector-997da403fbed@spud>
-References: <20250528133858.168582-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Jianhua Lin <jianhua.lin@mediatek.com>
+Cc: mchehab@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Project_Global_Chrome_Upstream_Group@mediatek.com
+Subject: Re: [PATCH 0/2] Add MT8189 jpeg encoder and decoder compatible
+Message-ID: <20250528-energetic-voltage-b02704c14df8@spud>
+References: <20250528095748.17485-1-jianhua.lin@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,39 +59,37 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="x5utOjCwDC7uVpEq"
+	protocol="application/pgp-signature"; boundary="vv8zY9ORmuVZuCZ/"
 Content-Disposition: inline
-In-Reply-To: <20250528133858.168582-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250528095748.17485-1-jianhua.lin@mediatek.com>
 
 
---x5utOjCwDC7uVpEq
+--vv8zY9ORmuVZuCZ/
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 28, 2025 at 02:38:58PM +0100, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Wed, May 28, 2025 at 05:57:46PM +0800, Jianhua Lin wrote:
+> This series is based on tag: next-20250528, linux-next/master
 >=20
-> Document support for the USB2.0 phy found on the Renesas RZ/V2N
-> (R9A09G056) SoC. The USB2.0 phy is functionally identical to that on the
-> RZ/V2H(P) SoC, so no driver changes are needed. The existing
-> `renesas,usb2-phy-r9a09g057` compatible will be used as a fallback
-> for the RZ/V2N SoC.
->=20
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> jianhua.lin (2):
+>   dt-bindings: media: mediatek-jpeg-encoder: Add MT8189 compatible
+>     string
+>   dt-bindings: media: mediatek-jpeg-decoder: Add MT8189 compatible
+>     string
 
 Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
---x5utOjCwDC7uVpEq
+--vv8zY9ORmuVZuCZ/
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaDcTcAAKCRB4tDGHoIJi
-0jO7AP4pKes/qNTY9Yn16W/MygrNIOvDmAvPi1ZIGUZQOZHyiQEAowAYXVSdz544
-hd3YgUOaEQLB6HYBhRVH2x/O4XH+bg8=
-=FbES
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaDcTmwAKCRB4tDGHoIJi
+0sGYAQC2bzGNx7UyUv973y6yM7B6lHc6xUzFs1DLjDP/D/+C4wEA4pyq+WoirUwj
+3RkNS7UtPhUxDGsw7kjuGUrdy7EvEQs=
+=pFRV
 -----END PGP SIGNATURE-----
 
---x5utOjCwDC7uVpEq--
+--vv8zY9ORmuVZuCZ/--
 
