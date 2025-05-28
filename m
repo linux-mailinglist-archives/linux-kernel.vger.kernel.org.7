@@ -1,311 +1,133 @@
-Return-Path: <linux-kernel+bounces-665393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 707ABAC689B
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 13:49:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B313FAC68A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 13:51:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D752F3AE93B
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 11:48:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04E114E16FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 11:51:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83DD9283CB1;
-	Wed, 28 May 2025 11:49:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jWH8kOyt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93444283CB8;
+	Wed, 28 May 2025 11:50:55 +0000 (UTC)
+Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com [209.85.222.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A78C121578D;
-	Wed, 28 May 2025 11:49:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43BDA1C54A2;
+	Wed, 28 May 2025 11:50:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748432944; cv=none; b=VX2eJVGlc97ap8oRXGyRpJ0fhgNED8Bt1TbInqr5cT4JnTvNFm8/Bk9q4mj0K5P0qmTgz4pfmmfBlt32mW6N2tCMn/b4DwmOrFIfdvGPF9DM+kHVQzizZRjqABcZQCtvuDBz5LQgUK6vEIacc4j3q+xQeLmfg4lZAw4pp4XB7FY=
+	t=1748433055; cv=none; b=Zf1SAP2bp/D7CVL9aN/YfpbWobf1cuEorFLBldB92xKtjrV+5kDvoUlOtb1LUZyH99Erb0sBHa87q/JHmlUpHiBpkzfAvxCw3GfGK2PEibG3J3BxR8BcoG7h+U/bL3cSt0XxP+VU3iyr65kWpR2lopVYy1r+ZAQGQLnuXYd6E70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748432944; c=relaxed/simple;
-	bh=cMZRIRLMM0VSkieLJ1IQwaOz+O4cfkLzSRbY+K9JyQk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ivb4M13/Gv0XwzamOQQu/dwqE4kbUmHV4ZwWP2IWmKTr8bsmmwHA9QZ9Bj+wotChuj+b5eoprCqlSKllcqdK8Fdvp+/kNLfF/6ZTa3jGLbcNcaozOLTaewXGQum3TDQhngfXHQZJKsZbWHr29EI/VNn8Ol36Z5zOJ9U4p/L/rL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jWH8kOyt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D54AC4CEE7;
-	Wed, 28 May 2025 11:49:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748432944;
-	bh=cMZRIRLMM0VSkieLJ1IQwaOz+O4cfkLzSRbY+K9JyQk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=jWH8kOytaHnKNpKoKpfuCHaaGD42tHq8sfDgcl92DzsS5DnN+Q9PuxSl69Z0NKBc8
-	 ewm0U+kZwiZsXwwK/pO9E5lb09OzgKAsqPN+YXhfSm9QOLOC7UE/i27sBxmPY+t3uX
-	 nS7zxr/GqgWZEDHMBix2AVwUwgcmBN/p3Rtdep4oosgKNbNgjvHwcGEL3nKCVtpd4w
-	 pZM1fMqpiKY03QZBQIEQLx65rz91he2qgWkGBoSHQv8Nf2csE1+7w/AlfxRyikpMW+
-	 nlzFWK4rpdaJkncqQ74ydh/chJsBq3Oefv8/CaNn3l+FDugsIhshUH7idR2DbAnxyF
-	 p43YhVntx5RMg==
-Message-ID: <e69145c0-6303-40a1-a33e-9173d72b04e5@kernel.org>
-Date: Wed, 28 May 2025 13:48:59 +0200
+	s=arc-20240116; t=1748433055; c=relaxed/simple;
+	bh=jnBA2vy6brg7qcYWAqNXi9fDqoOzyQWhlaWks6xrX+o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CcCYM/i2KDZjP4h13CHJ0GrOX3WP0PDQINrMffacxRDq88wlHKJuXjoG0WW4G79VRKJQl1auYFpIiJ1ciZIvNztgTBDdZnX0rEmSTP90DIzyfrBvsOa0JW69cN8FfRgLeKNsd7rl/tXaTpFz8OmJocXoqnl76w14W0zGulagpxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f50.google.com with SMTP id a1e0cc1a2514c-87ded9c6eb4so516744241.0;
+        Wed, 28 May 2025 04:50:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748433052; x=1749037852;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qi3vD3S+nX/QcexFRov6QeC8OODrBI1qA67zGZMFfDM=;
+        b=NIBZGFP/sr1yTPkhK+qbb+McT9dLvfPyt2QConmHkcrgI5qO9K0DcMuzBxbbS1zhRd
+         7feLo6E8+5CWhfSUjf60jOD0tSuwm1ivbwyTK0E6qOmtU2koA4QNz/0+3IFYIQyMLPpf
+         5a9/m7U/QRpOOJdvAfTGCBfBVJhkS6w2AZ696HhB+DRSetLzqXXVeVW7MyF+ps9gNdLE
+         NBacGCNVEAxM7NDIejRGednrUtxCa9PhDGz9e+/eQeVH/s4JifaGJkeVjuTr5mlnaV5f
+         tjDpLnZmrX91JlDhYOipnchS92y+hxRM0gMhSoBqr0L8WERfpdQKzzO4Pa18ShYNUSdF
+         VrPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU1Zv6EtTnHgB6Pv0pJ1ghP8uWgXXhPctfe9CUCM//zBvozIdqWsd2uLoMamYD0VVQ3GG1LFIM8wz8TEKwg@vger.kernel.org, AJvYcCVRztj4njCBF1HG+a8qy2RVikol9dPLPPAKOFdP/1olmuBZ6/kx/0F3FbPGTUGX/xyS6jyVBtXWSg7y24WRpJj5mdE=@vger.kernel.org, AJvYcCVW5XSJhVH20sQSXX8CPemKBqZAwFOJHt4jCxpCujTHSHSH9YymFBwie+XI4Xz6B1JW4lY0sDXMKHbY@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZ8XFYZPfFxjx4Ext2PE435owhiXIFhWIdTLQ7o83BzxuMZKyB
+	GOgXSTC/BVpUIGKaz4t8a7gTljDH8ojMRxV+Hr7JeBltdE0xMQ4s0p5ONovnrsGE
+X-Gm-Gg: ASbGnctZyeNgJB8HhalDyAH/X5Yo5BBAGeY2TRzrqkfjCc9P7HkOvqC7ew+YqO9H+pK
+	aWdYCgeFqE7Ref6L21E+lsErRwz+oM5uwNIL3ftLZaia73T+iK+B1KZ6r6UyEoMY5BW/6VGFcpZ
+	iD6mKKF7QxNWWH5Hbgl1CnWP3MWSFa5DoAOjbu3qqpTDLx39WxGkCvKd+wXTUZaMUQxBxAK6RwO
+	EAxTxb44eP5womgcrZZFO326RBg6itk4y5UNue8/LPobSU47NoDvMgew2oSoT66QZAImK1rwmGD
+	zktPAv7hHdJqb0T2I6EGLi535VTndtVz6thYIfM5IwVdsA6KbzQUPqpLfIp4wCIqDEutN+6Fy72
+	oJAlUx2TD2Lqn2Q==
+X-Google-Smtp-Source: AGHT+IFTOsiA6XhyKtFAciT0iUMbIRg2b8jyHZ1IEMyPaiKKYUHSkv18sy/tnHwCyz/dHqT76IVrWw==
+X-Received: by 2002:a67:f288:0:b0:4e1:5132:67c9 with SMTP id ada2fe7eead31-4e597961feamr2712050137.0.1748433051758;
+        Wed, 28 May 2025 04:50:51 -0700 (PDT)
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com. [209.85.222.51])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-87e23df8b53sm243338241.33.2025.05.28.04.50.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 28 May 2025 04:50:51 -0700 (PDT)
+Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-86d6fd581f4so468142241.1;
+        Wed, 28 May 2025 04:50:51 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVV3S/LTEW8bYCzyUwFKZE2wFqVtF4PiTAEn5aq+SrATiL2Vub5FcwuvL/O1ZzKlkQZb2p8YzwkoCSj@vger.kernel.org, AJvYcCVXl7o+1m6p9NdZoJqHjThQgpo4Z9VwcfT0zGqCjkAuNFmkNDPhEnUxBpeikuA/3NOVI1BBYVRR22znfwfv@vger.kernel.org, AJvYcCX/tmRcEhAlQoVgEcJm2Z8A82g6pi1HEfFrcXccxiDdGuOaaUt10SeJUCOg0r+7taTWVPCzEYsczsMB6yQ7sMSIxeQ=@vger.kernel.org
+X-Received: by 2002:a67:f857:0:b0:4e4:3c3a:f163 with SMTP id
+ ada2fe7eead31-4e597db44bcmr2629330137.7.1748433051413; Wed, 28 May 2025
+ 04:50:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 4/9] dt-bindings: mmc: add binding for BST DWCMSHC
- SDHCI controller
-To: Albert Yang <yangzh0906@thundersoft.com>,
- Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Ge Gordon <gordon.ge@bst.ai>
-Cc: BST Linux Kernel Upstream Group <bst-upstream@bstai.top>,
- linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250528085451.481267-1-yangzh0906@thundersoft.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250528085451.481267-1-yangzh0906@thundersoft.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250519215734.577053-1-thierry.bultel.yh@bp.renesas.com> <20250519215734.577053-4-thierry.bultel.yh@bp.renesas.com>
+In-Reply-To: <20250519215734.577053-4-thierry.bultel.yh@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 28 May 2025 13:50:39 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVLktxp5EC1P56Y0SYcMOHsnpMeW+joYTEj4_amoQoHHA@mail.gmail.com>
+X-Gm-Features: AX0GCFvh54g40zEsfgecMYJZc5x8Vr4fnqVT6gNM6K_YWYoSqBMvdXzavV5U1gw
+Message-ID: <CAMuHMdVLktxp5EC1P56Y0SYcMOHsnpMeW+joYTEj4_amoQoHHA@mail.gmail.com>
+Subject: Re: [PATCH 3/3] arm64: dts: renesas: Add pinctrl for renesas RZ/T2H SoC
+To: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+Cc: thierry.bultel@linatsea.fr, linux-renesas-soc@vger.kernel.org, 
+	paul.barker.ct@bp.renesas.com, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 28/05/2025 10:54, Albert Yang wrote:
-> Add device tree binding documentation for the Black Sesame Technologies
-> (BST) DWCMSHC SDHCI controller.
-> 
-> This binding describes the required and optional properties for the
-> bst,dwcmshc-sdhci compatible controller, including register layout,
-> interrupts, bus width, clock configuration, and other controller-specific
-> features.
+Hi Thierry,
 
-Completely redundant paragraph, drop.
+On Mon, 19 May 2025 at 23:57, Thierry Bultel
+<thierry.bultel.yh@bp.renesas.com> wrote:
+> Add pinctrl node for r9a09g077
+>
+> Signed-off-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
 
-A nit, subject: drop second/last, redundant "bindings for". The
-"dt-bindings" prefix is already stating that these are bindings.
-See also:
-https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
+Thanks for your patch!
 
-> 
-> Signed-off-by: Ge Gordon <gordon.ge@bst.ai>
-> Signed-off-by: Albert Yang <yangzh0906@thundersoft.com>
-> ---
->  .../bindings/mmc/bst,dwcmshc-sdhci.yaml       | 115 ++++++++++++++++++
->  1 file changed, 115 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mmc/bst,dwcmshc-sdhci.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/mmc/bst,dwcmshc-sdhci.yaml b/Documentation/devicetree/bindings/mmc/bst,dwcmshc-sdhci.yaml
-> new file mode 100644
-> index 000000000000..429e7f50cdec
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mmc/bst,dwcmshc-sdhci.yaml
-> @@ -0,0 +1,115 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/mmc/bst,dwcmshc-sdhci.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> --- a/arch/arm64/boot/dts/renesas/r9a09g077.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r9a09g077.dtsi
+> @@ -101,6 +101,15 @@ cpg: clock-controller@80280000 {
+>                         #power-domain-cells = <0>;
+>                 };
+>
+> +               pinctrl: pinctrl@812c0000 {
+
+The unit address does not match the first reg property.
+
+> +                       compatible = "renesas,pfc-r9a09g077";
+> +                       reg = <0 0x802c0000 0 0x2000>,
+> +                             <0 0x812c0000 0 0x2000>;
+> +                       gpio-controller;
+> +                       #gpio-cells = <2>;
+> +                       gpio-ranges = <&pinctrl 0 0 287>;
+
+No (optional?) clock, no interrupts...
+
+> +               };
 > +
-> +title: Black Sesame Technologies DWCMSHC SDHCI Controller
-> +
-> +maintainers:
-> +  - Ge Gordon <gordon.ge@bst.ai>
-> +
-> +description: |
-> +  The BST DWCMSHC SDHCI controller is a Synopsys DesignWare Mobile Storage Host
-> +  Controller IP integrated in BST SoCs.
-> +
-> +  This documents the differences between the core properties in mmc.yaml and the
-> +  properties used by the sdhci-bst driver.
+>                 gic: interrupt-controller@83000000 {
+>                         compatible = "arm,gic-v3";
+>                         reg = <0x0 0x83000000 0 0x40000>,
 
-redundant paragraph, drop.
+Gr{oetje,eeting}s,
 
-Missing ref to proper schema. Look how other bindings do it.
-
-> +
-> +properties:
-> +  compatible:
-> +    const: bst,dwcmshc-sdhci
-
-You have to use soc specific compatibles. Just look at other bindings.
-
-> +
-> +  reg-names:
-> +    const: base
-> +    description: Specify the register name
-
-Drop reg-names, useless.
-
-> +
-> +  reg:
-> +    maxItems: 1
-> +    description: Host controller base address
-
-Drop description, redundant.
-
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +    description: One MMC interrupt should be described here
-
-Drop description, redundant.
+                        Geert
 
 
-> +
-> +  interrupt-names:
-> +    items:
-> +      - const: IRQDWMMC0
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Drop interrupt-names
-
-> +
-> +  non-removable:
-> +    type: boolean
-> +    description: Non-removable slot (like eMMC)
-> +
-> +  bus-width:
-> +    description: Number of data lines
-> +    enum: [1, 4, 8]
-> +
-> +  clock-frequency:
-> +    description: Base clock frequency in Hz
-> +
-> +  max-frequency:
-> +    description: Maximum clock frequency in Hz
-> +
-> +  fifo-depth:
-> +    description: |
-> +      FIFO depth in bytes. If this property is not specified, the default value
-> +      of the fifo size is determined from the controller registers.
-> +
-
-All of above are redundant, drop.
-
-> +  mmc_crm_base:
-> +    description: Base address of MMC CRM registers
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +
-> +  mmc_crm_size:
-> +    description: Size of MMC CRM registers
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-
-No clue what are these but they look completely wrong. Why would you
-define address size as different property than reg?
-
-> +
-> +  memory-region:
-> +    maxItems: 1
-> +    description: Specify the MMC DMA buffer range
-> +
-> +  sdhci,auto-cmd12:
-> +    type: boolean
-> +    description: Enable auto CMD12 support
-
-Drop, your compatible defines it, there is no vendor sdhci and this is I
-think legacy
-
-> +
-> +  dma-coherent:
-> +    type: boolean
-> +    description: Enable coherent DMA operations
-
-Drop description, redundant.
-
-> +
-> +required:
-> +  - compatible
-> +  - reg-names
-> +  - reg
-> +  - interrupts
-> +  - interrupt-names
-> +  - non-removable
-> +  - bus-width
-> +  - clock-frequency
-> +  - max-frequency
-> +  - fifo-depth
-> +  - mmc_crm_base
-> +  - mmc_crm_size
-> +
-> +examples:
-> +  - |
-> +    dwmmc0@22200000 {
-
-Never tested
-
-> +        status = "okay";
-
-Drop
-
-> +        compatible = "bst,dwcmshc-sdhci";
-> +        reg-names = "base";
-
-Follow DTS coding style for order and naming style.
-
-> +        reg = <0x0 0x22200000 0x0 0x1000>;
-> +        interrupts = <0x0 0x90 0x4>;
-> +        interrupt-names = "IRQDWMMC0";
-> +        #address-cells = <0x2>;
-> +        #size-cells = <0x0>;
-> +        clock-frequency = <200000000>;
-> +        max-frequency = <200000000>;
-> +        mmc_crm_base = <0x23006000>;
-> +        mmc_crm_size = <0x1000>;
-> +        fifo-depth = <0x400>;
-> +        bus-width = <8>;
-> +        non-removable;
-> +        sdhci,auto-cmd12;
-> +        dma-coherent;
-> +        memory-region = <&mmc_dma_buf>;
-> +    };
-> +
-> +additionalProperties: true
-
-This cannot be true. Do you see any device binding like that? No. This
-means you are doing something completely different. Please do not
-reinvent this but take latest reviewed binding and customize it.
-
-> \ No newline at end of file
-
-You have patch warnings.
-
-Best regards,
-Krzysztof
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
