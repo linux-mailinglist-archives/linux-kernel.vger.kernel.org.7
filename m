@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-665459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C341AC697F
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 14:38:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D8AEAC6982
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 14:38:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61C86171333
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 12:37:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 265E31BC7A92
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 12:38:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9E7A28642F;
-	Wed, 28 May 2025 12:37:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C667286D4B;
+	Wed, 28 May 2025 12:37:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jazg0UmC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ar1XT32k"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18A4428640A;
-	Wed, 28 May 2025 12:37:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B68AF2868AC;
+	Wed, 28 May 2025 12:37:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748435845; cv=none; b=OJgffo5nEFlO1yAVZ2XZJEDUgogqKiEv+JEtxklj1gRwcYdV840Y3P9wv/gS13TH4RB/hM1W6eNPq+AzzxyafcJEVi13eHDN1MgwZXOkbOv8f5I+8AiywOAngM7OOXybrxFpuhvwvSyGtPUxKq73e6YjGb/M4SC++cU5vDJBlhE=
+	t=1748435846; cv=none; b=TIt0jPAIdepA37FSCzxVQtGbjNkVfO16Id8/+4Fx5dLS56QjLUl6tC27kJ3EPoeUvt3bPHeneA/C1Uq/Wl/5azoKeC14ZqeB2hTetJXNNuxDWWVaDlO3muQgWSJGm0KtpqA62TJsnOn1Q6IsINZUeQ+3mfaSOUXQuHLNzmUwhTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748435845; c=relaxed/simple;
-	bh=eUA0BDfpbYKOu7zRQ2U4yKvk2szX91xJ+8ngKIX4azc=;
+	s=arc-20240116; t=1748435846; c=relaxed/simple;
+	bh=lg8sZyhu+VcyjBMvGtdunsncF5V4pCoYU4qY7RIgnBE=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=ih9ivjZCFobunAgOMAHUJTxbw9XydlFkkYdaZcp4f0gYbldGGnoFX5V5F0PRlaJhPNsznrpaDlZPhKiDd6+nK7p0H4pzwB299/Aj8GAw4wPHjHqllmQ77/S3XhquxXXxTS7S8lTl/BXR9FuDQMATsxT9C3xSCu5C3M5ufFbVIj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jazg0UmC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65DBEC4CEE7;
-	Wed, 28 May 2025 12:37:24 +0000 (UTC)
+	 Message-Id:Subject; b=O1DaG/zCO9DTpwPboZQDat4uvZ7sJdP0ItpEDdB86xbI+ScMnORGid9tjNT9QBpNnADSVw/xB2CRLkRV6BOb8Wvazo5QMyGTN5tVMqzu3wBSkb5+4dDDdZpnEozqFg02nu4JLJzCix39SBYPEMszYdNRNgvdO61gmYtaoFlwOnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ar1XT32k; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62FCDC4CEEF;
+	Wed, 28 May 2025 12:37:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748435844;
-	bh=eUA0BDfpbYKOu7zRQ2U4yKvk2szX91xJ+8ngKIX4azc=;
+	s=k20201202; t=1748435846;
+	bh=lg8sZyhu+VcyjBMvGtdunsncF5V4pCoYU4qY7RIgnBE=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=jazg0UmCvQ2wV++PyxuX/XABwG1uLNgiyt9I+MfXiFIAD6pOYtbF4Vr79wA4pE8hH
-	 fEWhbdCgSvmh43nXEUtRK0Amq7+8UrVQ1mNv9fnTcHQ8tHwLWG1Rrj3tdHYIv1KcEe
-	 7gzDcSAYWtZR9gz0Pd9Y8qEHAVXKt5H2eB6SegyOgbvfntjP49qrHfgqsS3DJa6WOa
-	 QKi4t8b5Ve9hmIIBvuIbFEp0EoEYmPdepve4eFn0mlP/GGxKoLr4JyvAnBW05UvBXG
-	 lTngUL4DUoFWPpS2hgMdeijYRw64b6suDmK5eGzP5kMCIIUqvS5fAhHHZUHQJ+YEvq
-	 QlfAE5S3nVhjg==
-Date: Wed, 28 May 2025 07:37:23 -0500
+	b=ar1XT32kc6nKc9+yO0O4pmoQ+wXsKgf/itLWOesD9PbDFfKiCntexhnaw8jQPVJ6Z
+	 bcy1+/TLY0zyD7KICkp+zchf4N2FlYDFJFPx7u/MncCD8JzjHY0zHBWv7poSPhKa19
+	 aUEnrEiUtamygs5sLEOGllRgm+MaPKB/et6ivXfIIJ8EoSVaHtnmQ7UKZAAUq6PCe9
+	 2idRs6QXrGYtyWufMqjDFK/QzttDmFw4fE9HjWUxGMfDf7ebbAEvQdHqMmNRaTZIfy
+	 iDT6LOx0P4ecijsp9LW44EvtJeoWuL+g+0R7ceaGSNIr3AfxQui5GPfWaQcAvtlpHy
+	 oo8SPeQgL/C2A==
+Date: Wed, 28 May 2025 07:37:24 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,41 +50,29 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>
-To: Umer Uddin <umer.uddin@mentallysanemainliners.org>
-In-Reply-To: <20250528105821.158140-1-umer.uddin@mentallysanemainliners.org>
-References: <20250528105821.158140-1-umer.uddin@mentallysanemainliners.org>
-Message-Id: <174843567453.3636707.847885249011261450.robh@kernel.org>
-Subject: Re: [PATCH v1 0/1] Enable CMU_HSI1 for Exynos990
+Cc: devicetree@vger.kernel.org, shawnguo@kernel.org, 
+ linux-kernel@vger.kernel.org, Frank.Li@nxp.com, 
+ linux-arm-kernel@lists.infradead.org, conor+dt@kernel.org, 
+ meng.li@windriver.com
+To: Meng Li <Meng.Li@windriver.com>
+In-Reply-To: <20250528111751.3505224-1-Meng.Li@windriver.com>
+References: <20250528111751.3505224-1-Meng.Li@windriver.com>
+Message-Id: <174843567469.3636722.5654586098186872724.robh@kernel.org>
+Subject: Re: [PATCH] arch: arm64: dts: add big-endian property back into
+ watchdog node
 
 
-On Wed, 28 May 2025 11:58:20 +0100, Umer Uddin wrote:
-> Hi all.
+On Wed, 28 May 2025 19:17:51 +0800, Meng Li wrote:
+> When verifying watchdog feature on NXP ls1046ardb board,
+> it doesn't work. Because the big-endian is deleted by accident,
+> add it back.
 > 
-> This series enables a new clock block (CMU_HSI1) for the Exynos990
-> SoC. This clock block provides clocks for the DesignWare MMC
-> Controller, PCIE subsystem and UFS subsystem.
-> 
-> This patch depends on the following series:
-> 
-> [CMU_HSI1] https://lore.kernel.org/linux-samsung-soc/20250528105252.157533-1-umer.uddin@mentallysanemainliners.org/
-> 
-> Best regards,
-> Umer Uddin.
-> 
-> Umer Uddin (1):
->   arm64: dts: exynos990: Add CMU_HSI1 node
-> 
->  arch/arm64/boot/dts/exynos/exynos990.dtsi | 19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
-> 
-> --
-> 2.47.2
-> 
-> 
+> Fixes: 7c8ffc5555cb ("arm64: dts: layerscape: remove big-endian for mmc nodes")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Meng Li <Meng.Li@windriver.com>
+> ---
+>  arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi | 1 +
+>  1 file changed, 1 insertion(+)
 > 
 
 
@@ -104,17 +92,21 @@ make sure dt-schema is up to date:
 
 This patch series was applied (using b4) to base:
  Base: attempting to guess base-commit...
- Base: tags/next-20250528 (exact match)
+ Base: failed to guess base
 
 If this is not the correct base, please add 'base-commit' tag
 (or use b4 which does this automatically)
 
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/exynos/' for 20250528105821.158140-1-umer.uddin@mentallysanemainliners.org:
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/freescale/' for 20250528111751.3505224-1-Meng.Li@windriver.com:
 
-arch/arm64/boot/dts/exynos/exynos990-c1s.dtb: /soc@0/clock-controller@13000000: failed to match any schema with compatible: ['samsung,exynos990-cmu-hsi1']
-arch/arm64/boot/dts/exynos/exynos990-x1slte.dtb: /soc@0/clock-controller@13000000: failed to match any schema with compatible: ['samsung,exynos990-cmu-hsi1']
-arch/arm64/boot/dts/exynos/exynos990-r8s.dtb: /soc@0/clock-controller@13000000: failed to match any schema with compatible: ['samsung,exynos990-cmu-hsi1']
-arch/arm64/boot/dts/exynos/exynos990-x1s.dtb: /soc@0/clock-controller@13000000: failed to match any schema with compatible: ['samsung,exynos990-cmu-hsi1']
+arch/arm64/boot/dts/freescale/fsl-ls1046a-qds.dtb: watchdog@2ad0000 (fsl,imx21-wdt): big-endian: False schema does not allow True
+	from schema $id: http://devicetree.org/schemas/watchdog/fsl-imx-wdt.yaml#
+arch/arm64/boot/dts/freescale/fsl-ls1046a-frwy.dtb: watchdog@2ad0000 (fsl,imx21-wdt): big-endian: False schema does not allow True
+	from schema $id: http://devicetree.org/schemas/watchdog/fsl-imx-wdt.yaml#
+arch/arm64/boot/dts/freescale/fsl-ls1046a-rdb.dtb: watchdog@2ad0000 (fsl,imx21-wdt): big-endian: False schema does not allow True
+	from schema $id: http://devicetree.org/schemas/watchdog/fsl-imx-wdt.yaml#
+arch/arm64/boot/dts/freescale/fsl-ls1046a-tqmls1046a-mbls10xxa.dtb: watchdog@2ad0000 (fsl,imx21-wdt): big-endian: False schema does not allow True
+	from schema $id: http://devicetree.org/schemas/watchdog/fsl-imx-wdt.yaml#
 
 
 
