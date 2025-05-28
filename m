@@ -1,129 +1,148 @@
-Return-Path: <linux-kernel+bounces-665264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 345FBAC66B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 12:08:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86177AC66C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 12:11:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 027661BA68F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 10:09:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0941D17472F
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 10:12:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D97CE27978B;
-	Wed, 28 May 2025 10:08:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 079E1279789;
+	Wed, 28 May 2025 10:11:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y68g+cv/"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aTg85LV5"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5010279358
-	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 10:08:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11C4927932B;
+	Wed, 28 May 2025 10:11:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748426930; cv=none; b=bdBk4yG2HISrGnYJ1Kl8uL68c+iy5o9t5q/hgvYaTVzEzw0te08/nqt2PkqLqhP1uvMOaEr5TbHAmobjI10etjzW2AV0l474HlTht58aQ6ADbbJ5rKoa3p6O1bVOMBTnRwzmaAY1MqYUCz6nxtntDQM/zhkVpkr0g3R1jk5Uri8=
+	t=1748427113; cv=none; b=vC6nsf3smVWshTzMnxp1FBJLpt3+wZbYpDn4jd9I3BruOD8MXwURzlv1auvpk6o0QhiZNESf6+4NbYe2fDTzBzTsK28HOA4VaoNyfS7GohhFosT8XS6qqWaaWoNwQUBU72WLZ/sFdvM51E/eXuBN5FzL5+lTgbWn1+ob5mAQU38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748426930; c=relaxed/simple;
-	bh=K6LuZnoG9l9tErcwlPRRYLNk1X769nTvgY4Ttx/vpuk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eZCmi19l9iCDqZ3dTVunnbaSy/rW9Zt2bnVti9c2MLqP3RVgeO4icvllgjHJR/2Ag0T5uIWc7XtwV8/WPWUAe0OqxEaLXzvUQLndA0kbfwNPoPKSdp6ZzBC7jpHRcyXwY9lQ6OPSNb6BLleRv0kMqdb4gjE6LXGMIgH4mlfUFOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Y68g+cv/; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-44b1ff82597so38097655e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 03:08:46 -0700 (PDT)
+	s=arc-20240116; t=1748427113; c=relaxed/simple;
+	bh=jQm/Idqdz/CKRY7nuelIqDNot1qzY4oj6ANAyNVprKQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=W1tyYbbEoktQIuPoisPUzkSd7vAmkPQ1gCVozOlznotlG15X1EPlQOpLBrC5G06822iHlm9oRP7oJyH3u5Vk3bKfluC2ngVoIrucYdBM/KqfR3fbXGFY1gl0HRLQEbf+rQanvRZ2Hecheiu0euVGM7WwfT5MUHa7HfxIfmV+wIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aTg85LV5; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-22e16234307so6666465ad.0;
+        Wed, 28 May 2025 03:11:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1748426925; x=1749031725; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=LXZzj7zT/aoC0USaD96wdCURxHjN4LGV2uTI7X0jaRg=;
-        b=Y68g+cv/1zFSGOXRf9CGyDnipoEnK+T3uTvJ8Mi1Kx8YHEFJSRDeyagR2rAxnOj36o
-         6KAxFfv+iJaqfDHu0ktYzz9MBpgMmqwIiCAnmiFKnDKgW2g6CHlfSmIMfQSuVH2iG70K
-         AeM5Z2aCs4sFwb5p7ZYbxESJ7IrRarZYw8+srv85YNKzBOIfrlIT0EOLcivsA5Rr8xY4
-         ooapPIFcnPyWNDHCBDpGyOgaiB+V4/4cKuwD9JdxnALuLGBlKMQCxy3ulSsE6NjLWUlf
-         PvKKDZRDIc70khOla1u0cBpSmlsbJQdFS6QQat3vA+/nI2rJOHrYd5IvsBZemNKbP0Sk
-         A+ag==
+        d=gmail.com; s=20230601; t=1748427111; x=1749031911; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=u1/Vt2mp73cleoni8AtXiYI0r+BUVH7GhRhyE5d0M3E=;
+        b=aTg85LV5XonIN79ZDYiW6eNmJotr+PeHx4/uNCcc3mdfghtSmfTG5kQwvvcgpwMFDd
+         XPyff3ZQCnVmbAwA5vS7AnZww8m1gfFVaK0tsdfMNB9/jWeY7wDBuo/e6qeVWXJ9i7Yq
+         K9Z2wUK9JcM1OJfP8TUEQ20NluMJYslfNmXzIukpfMvzKlDiWLvBh1WyMZtMQs7Av5Z6
+         lVbt8e4+zEE93ZnHt59ZR+buq4rXA1B0lUNMHAC/uMSnHYkTt6WKjKqjsJ7rhaNmDaw1
+         x8hT9Lu8c1iuJviIWXaHwnkXMFQXB6eR8PzEFcuHMdw4CK7RxZ4HEdQc/IGj303gMHGs
+         mFqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748426925; x=1749031725;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LXZzj7zT/aoC0USaD96wdCURxHjN4LGV2uTI7X0jaRg=;
-        b=tBBcH2nR/O3JDhhnjVxvuOtBvWFigeABwuvcKqpJDI7Hcrwz83f78kDLXBg8kIIohW
-         wriFrje6WGZl29uY5JzRKivSVTUrtGL1TOvdf9kIJvMREQzqkFimggOXwjf4S53cfOlf
-         BtQSrm6BMSZ9zAUOnFu+Hs7dXCJ0IZ/R6e2I0mNIZ2OWTAim1lx5ta+xA0QD/i90bTzt
-         tyW5ezypYe4JR0B/Aud1AsAJxs+Ox/oBr/nu0l0bgBFaR05D6Femr52HV7EtRvRcUESP
-         0ALZr3kegRfESlbREYZcQSmMlt8wAocqUqed6EKUZ+7aGx7+46m0QtmUI0evb0P/SE9t
-         yCYw==
-X-Forwarded-Encrypted: i=1; AJvYcCVmaE0ygf5EaDFF0cMvqY7cSo8mumAYQO5gYPI4MRTuf3soTqNW5eUe/xXJpp58dZEPQ1XO7HMfT/NqLjw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGKgyorDD+9o2K6ANFjt+jnhFmmZs6VEkAKYBg1Oi3FlTYKXVy
-	1tPGMc0dfAIVY2NeQ3ow639vLk02N8pGUCGWhG9ZjOrr+4cNaDn6aLzWTfvpB1k2BNI=
-X-Gm-Gg: ASbGncvxQ+gr3VauaEmwzL62sE2o63oGSOG1SVM845UIlrRUY62kmKtMrRJLw+SkPZ8
-	AKRksqQGUREoj7cvVaafZQKChpnwHDIy3P6j/0O1vn0QyZYhSvUo7PTjCiDG5uSgW4+1k61hYvE
-	iUpnaBx4pX/j5jMIoD0lg4f7oYvYEu+Xb8asOyWGgn/x6KHgkL4B1AjdpgFgznnpY7bpl0691oM
-	VC4Ch3g/u25ExvM4tQgVeP53k0Bhl11TwS504TL629MMoEvw/hSCS1qby1kcZNEzArGshvBohkz
-	ZWynF1zsIDtfWMvvBT0T21yF/W4/bySuqXcrQc9cB3q58wPFjkqPx2rI
-X-Google-Smtp-Source: AGHT+IH1cqD8JfGDs8gNDNG0gb2rXylng5BHr1nRy86mzCRj9b/g68TecwmVmLDn832A+JGk0SdlRA==
-X-Received: by 2002:a05:600c:648a:b0:43e:a7c9:8d2b with SMTP id 5b1f17b1804b1-44c92f21e1fmr126046605e9.24.1748426924877;
-        Wed, 28 May 2025 03:08:44 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4500e1d3c94sm16176005e9.28.2025.05.28.03.08.43
+        d=1e100.net; s=20230601; t=1748427111; x=1749031911;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=u1/Vt2mp73cleoni8AtXiYI0r+BUVH7GhRhyE5d0M3E=;
+        b=MPxSwZpNQFNCTPLKkOPclhF4uOCTaww2VpwiEpytq6Bi6PJ0yOeXuIcSqGyiQRD2P9
+         FAZ2lctxtSwHxxirF/QMo1Yx3Ty4gk/+p7JfD7fEGuxy8AaC2HzuE63+FQTJBaY4hT5J
+         TlU11QvVrynSPzCefAwV+Rz14x3SPhSJi+RvseRBBKkRznN6HRZxMYtR6CT3mI7pjdOm
+         Oorwmc4nTFV6sGkP6pEppPdZkGVaSGrPoo44SoMlVdGhz0rn/kUl/N5vXUd2OABZoz+R
+         JsTZxnKwOWmAfR03b1gOjOYWaeyxCZUXFzj+h/gJHu02+DlTeD4Du05vZtTz71MXgJfe
+         3IrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVrcKmCLEtB/WpW4RvAKmRgbvX/s7IS6RY1GPU9XUYNFaSMuFytBUVUXMz7oXyh5Hg/gg8iGsfRFesxMrCd@vger.kernel.org, AJvYcCXp4R+95Fey2A54t7u0KS2e9ZTBhaIfUeDMQduZoD65kBvByNiP8G5UEiAZ4KjtIqFWJtcLS6IJ3Mpa@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVGmU5vT6eZusH8Z5AAddabUdGgOkJfpRKGEvlkb10w/notxI+
+	XXFRvQs4PjQ+dQFejlwtp9wXuAL7ULEGzZP4SHVOiwPihV0TDxKmdF+ZKsE89g==
+X-Gm-Gg: ASbGncvCrz5JHaozvP/3azWIZi2C7ZflyRbdW0nSbPlXH2liSGJGpHGJkdNk7JP4JM+
+	+Wn4aF6mjydGSzNVNPlxrXg6zh36U3S3kbPm32I3/5EowLnvs575oG8MkLxwnzg4vE8j7B7K0b4
+	RAFhJBgoPZFNMaXnlmqCcnLiaAtLw/p6rVyXEXXMybK7QbW2WS068KtNmprjEf4I/RPo21BUcfI
+	/vdA6HiTporgOrMZbHwcPhCfS7CkMTehfG2dcAyrZjwbK6Bdi5AplK/3//LJeCL5wHmfwBLZK5V
+	0hWnpkyi4YcP3sPm7ngW7AVj4UGdXCqLd4UKgzFA6ttPJHu6/9QMNwOI
+X-Google-Smtp-Source: AGHT+IFZgXlqFr/nZJIbvYhr8VBnFB2u+fgWRkPoYOa2czSx/AkDylcuc63qHSavCUSvhb5c85NwtQ==
+X-Received: by 2002:a17:902:f693:b0:234:325:500b with SMTP id d9443c01a7336-234b74f4119mr68932215ad.22.1748427111266;
+        Wed, 28 May 2025 03:11:51 -0700 (PDT)
+Received: from cu.. ([2001:19f0:ac00:4eb8:5400:5ff:fe30:7df3])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-234d358f118sm8453595ad.138.2025.05.28.03.11.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 May 2025 03:08:44 -0700 (PDT)
-Date: Wed, 28 May 2025 13:08:40 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Shawn Hua <shawnhuasz@gmail.com>
-Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
-	gregkh@linuxfoundation.org, philipp.g.hortmann@gmail.com,
-	pkshih@realtek.com, akpm@linux-foundation.org,
-	yixuanhuashawn@berkeley.edu
-Subject: Re: [PATCH] staging: rtl8723bs: fix checkpatch issues in
- rtw_pwrctrl.c
-Message-ID: <aDbgqBKV-bIJXDjN@stanley.mountain>
-References: <20250528091914.2963-1-yixuanhuashawn@berkeley.edu>
+        Wed, 28 May 2025 03:11:50 -0700 (PDT)
+From: Longbin Li <looong.bin@gmail.com>
+To: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Longbin Li <looong.bin@gmail.com>
+Cc: linux-pwm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	sophgo@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: [PATCH v5 0/3] riscv: pwm: sophgo: add pwm support for SG2044
+Date: Wed, 28 May 2025 18:11:35 +0800
+Message-ID: <20250528101139.28702-1-looong.bin@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250528091914.2963-1-yixuanhuashawn@berkeley.edu>
 
-On Wed, May 28, 2025 at 05:19:14PM +0800, Shawn Hua wrote:
-> This patch addresses several style issues in rtw_pwrctrl.c, as reported by checkpat
-> ch.pl. I’ve fixed most warnings and errors, but left CamelCase and one type of CHECK unresolved.
-> 
-> I’m new to kernel development and submitting this for learning purposes. Please let me know if this type of patch is still helpful, or if it should be reworked or dropped.
+This patch adds PWM controller support for four independent
+PWM channel outputs.
 
-Emails and patches should line wrap at 74 characters.
+---
 
-> 
-> Best regards,
-> Shawn Hua
-> -----
+Changes in v5:
 
-Don't start your patch with an email, we don't want that in the git log.
+  - Rename function and variables for clarity.
+  - Modify code style.
 
-> This patch fixes ~80 checkpatch.pl style issues, including spacing, indentation, and alignment.
-> 
-> Remaining issues:
-> - CamelCase warnings were left unchanged to avoid breaking interface consistency across related files.
-> - One CHECK regarding alignment with open parenthesis could not be resolved despite several attempts.
+Changes in v4:
+  You can simply review or test the patches at the link [4].
 
-Don't list the things you haven't done.
+  - add tags for mail.
 
-> 
-> No functional changes were made.
-> 
+Changes in v3:
+  You can simply review or test the patches at the link [3].
 
-This does too many things at once.  Also start with the latest code.
-Some of these are already fixed.
+  - Rename macro definitions to unify naming.
+  - Modify code style.
 
-regards,
-dan carpenter
+Changes in v2:
+  You can simply review or test the patches at the link [2].
 
+  - Modify variable naming and code logic.
+  - update "MODULE_AUTHOR".
+
+Changes in v1:
+  You can simply review or test the patches at the link [1].
+
+Link: https://lore.kernel.org/linux-riscv/20250407072056.8629-1-looong.bin@gmail.com/ [1]
+Link: https://lore.kernel.org/linux-riscv/20250418022948.22853-1-looong.bin@gmail.com/ [2]
+Link: https://lore.kernel.org/linux-riscv/20250424012335.6246-1-looong.bin@gmail.com/ [3]
+Link: https://lore.kernel.org/linux-riscv/20250428013501.6354-1-looong.bin@gmail.com/ [4]
+---
+
+Longbin Li (3):
+  pwm: sophgo: reorganize the code structure
+  pwm: sophgo: add driver for SG2044
+  dt-bindings: pwm: sophgo: add pwm controller for SG2044
+
+ .../bindings/pwm/sophgo,sg2042-pwm.yaml       |   4 +-
+ drivers/pwm/pwm-sophgo-sg2042.c               | 141 +++++++++++++++---
+ 2 files changed, 127 insertions(+), 18 deletions(-)
+
+--
+2.49.0
 
