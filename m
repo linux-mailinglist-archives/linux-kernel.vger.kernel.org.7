@@ -1,167 +1,183 @@
-Return-Path: <linux-kernel+bounces-665931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2D51AC707F
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 19:59:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 53410AC709C
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 20:00:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C69B1BC4E02
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 18:00:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE51E1BC7A1C
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 18:01:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5A1628E612;
-	Wed, 28 May 2025 17:58:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1E9828E5E0;
+	Wed, 28 May 2025 17:59:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Dz3ENNmK"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ge5Nqd/f"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCBD128EA63
-	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 17:58:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A8391B87C0;
+	Wed, 28 May 2025 17:58:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748455101; cv=none; b=IZZ+z8sjvuY6kG+6XwuKvwN6HS7QKBfmJgs9aslrWcQlccBeMUD4L176nkDfaQne6JK6kt8MqGaRBFKS6LyrPuv+59Lx049XyLKb7ZvFyc6OmoOqseKYqNBiLu7UfxxU56BCpkAN0oGjYPBBWDODFdOYb9foQaU1SI3tF+Obj/Y=
+	t=1748455141; cv=none; b=fWETkTAGiEMQigmVKG1nUb0eIre9U0ljtF5EyrsLCBsZRxv/hb+0a9AapyyITT7MAv1+jbzTBglOV4FDLQX4U0n0pC8JWXlqMVDuo/G3OXdyRu6BzlLMWH+HBT5uX3Ufqz5xubZ2H+VaCIS3FZQn3AENc2gqmwDbBkTuCUi50W8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748455101; c=relaxed/simple;
-	bh=0tY2vHO1hSHETEU5NJ28ZPlV9OSEuEIkkxCtmk8GL9A=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=PV15SBUfa/8dbgc0unE0b1AzqccrObXxL00T6jNqBsQP5ky+cNoV72pIovhiW5YhYB/H73aMrIVTAYc4d58z54Chgmfx/iWN+kCxl6qcu4RcCmJK50UoCISXZGFN7f1aWACEHwJ5aTkHrfe1o3bSsLBPbDxqMZALZypLt7RVO4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Dz3ENNmK; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-54998f865b8so1486e87.3
-        for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 10:58:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1748455098; x=1749059898; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iGJ1fPweFHWMTsg0HgqwvAn1DtJjgjoW0O70zAHXxoM=;
-        b=Dz3ENNmKoU+mAMXgz8KIWjqTGBN8zmTObQjYBzI21qU84i+VLiF7YKYLToF5nTOjRk
-         VmNnVcYhbjTF9BmG4rtUHxu8vc95ritG9Am2+O8OQp4F28KNENBECNk5oQUZGyk/YEkD
-         Db5pxNDQcgO8wZ+ftDnMw0n+A9J7HswAOqd74=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748455098; x=1749059898;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iGJ1fPweFHWMTsg0HgqwvAn1DtJjgjoW0O70zAHXxoM=;
-        b=ecrDJYSXZX0M3ghPVMIH3ny39YNrlk6djU/121fXm86rasLDyoiVzHe8daCcf0Q5bd
-         7IbFy9kpmGoDcRsOOb9zVzPKsIVmxRC72vZi9mjpPCcbSWBw9C1fuQMKfdQRChkSJpAO
-         PQllXB4lYeLUVSiWJPCLmDGTeDbmt/YJnotv0vf0TWULTjx6xyqlMH33oUfHcH5bgNxS
-         9rFiykyxeIpzM7kEwiLimnpHWGKoBN44pXQuUGcZpXCYx4v8IExIsprBrja1Qld1C/am
-         rQPWMFWdm9rorTAfnr21rU+t0NHjZtTw/r2Jjf77+7r5E+aFcjvC4xk3EiwUGKIuguEX
-         lVsw==
-X-Forwarded-Encrypted: i=1; AJvYcCUQO2podO6KPcy2LOuLv89dB3s39plaRF6n204rZKqHSVpr5nEMeifV/uMfaOdllsxuW3NYgt2469ZZqSo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxkz7wHU9mNnFnT8F0elgV4dPwhTL+cmYsegUqssXuA0wHkvv8m
-	2DHXXr5YP6IURqXP2h8tXw9Xl0nfSOb9YCnmnREMkT1x9RZuFNLmpnB+fPqvbAhaYg==
-X-Gm-Gg: ASbGncvI9aFhAQ807Wm4VHTt12Z+2tSCxWzdHuD8z8eA2wCtHThXpNIRCqGopM4fk9Q
-	g+Yn3B3d0+yY2gfGnBK4rPJVsaguzexmL+i/MejYkBraQQhHBlgMn/vNDYY2tzTgL1iEqK0LAkJ
-	Zn9njzkJt2BD02ihWu+EY3iJpEhbH+EpzQXzpU6TSnapCKPb2ojDbItSDJ19HGkaHfUulmqdKqR
-	W/aYEcE431wYBnpZazbFmc0lUqLv/QKTCETwYtKdZlc2tpXmb2xBHe/S4W2HVCPRfmTelA4xNwd
-	9E3stGVw+PpdAfO6KGwBX0AHzHLhlXOrrkQ9sh7mNHztcjBqzayEu9CTyFmifNGmlkM+yHImFkL
-	P/lbIFo+iigpxwmytWj3zfe5ulw==
-X-Google-Smtp-Source: AGHT+IHg4uwY5pHE8HQz7g2AWH8xW287i0HnJpxZMDaAgSGjEn7J8TG2eBQXfzqvF/9EN1laDtI8Ew==
-X-Received: by 2002:a05:6512:2388:b0:553:252f:ade9 with SMTP id 2adb3069b0e04-553252fafc9mr3783218e87.4.1748455097777;
-        Wed, 28 May 2025 10:58:17 -0700 (PDT)
-Received: from ribalda.c.googlers.com (90.52.88.34.bc.googleusercontent.com. [34.88.52.90])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5532f62a6eesm376805e87.98.2025.05.28.10.58.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 May 2025 10:58:17 -0700 (PDT)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Wed, 28 May 2025 17:58:04 +0000
-Subject: [PATCH 9/9] media: uvcvideo: Support granular power saving for
- compat syscalls
+	s=arc-20240116; t=1748455141; c=relaxed/simple;
+	bh=dWdT/BynBBuDSCyma1X+cQB7xQLt4r1AGcNl9ltXRbQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=E+mdwKqAXmIF8AHvff1n5fhoEkN0rOV63z4LcqZJ+FWzIYn32EDcf5WihvToZBzFd6bPSHL8ADM4nV6uxlpC+jdYdo8Zb3RgzJXjqd1hWSHAUJUxGZWxHq6e52p7D3SNOraZ7T2cDqn1Wy6HAS8lZwLwLyj9z5aAGckQTJslYkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ge5Nqd/f; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1748455139; x=1779991139;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=dWdT/BynBBuDSCyma1X+cQB7xQLt4r1AGcNl9ltXRbQ=;
+  b=ge5Nqd/fbZj2s6JHiBG448/m4yMMJRHODKngqxJCKWtseWVm17ldlJVE
+   PcEls/ewhNMqTbdbcQw9jJpzI/CyL6EXYG3zIfqmUby34HVZOKLg5OXSc
+   c5nRTNOTqd6Qfh8aIyD7ya/PSUmD/Q51SBzXizAiKu8/KUq7ZA55j1Ijc
+   LRpcTQOcS1mTXUv5Fb6ZhOogKqNmseEwVEjSXBj1uDHeA/bi48t961vx/
+   iLDdWDrZBZW4lmVo2happI7KBdgW/P7nQcSE+mBaTA2nuCMZ58iibebo2
+   eyVu3GkXHxPac3nBVad0nJyTbnlCN9KzFYF5go4GtxtMrJbDeOiIw2VRn
+   Q==;
+X-CSE-ConnectionGUID: BfMO+r4URxe9XcMmBXSYfA==
+X-CSE-MsgGUID: d3mFRUadSrebLDgEqzsqtg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11447"; a="50648745"
+X-IronPort-AV: E=Sophos;i="6.15,321,1739865600"; 
+   d="scan'208";a="50648745"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2025 10:58:58 -0700
+X-CSE-ConnectionGUID: Zy20/L1sTQyvQQjMFfqx/Q==
+X-CSE-MsgGUID: ikwD+7d6Tsi3LwndxkjWXQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,321,1739865600"; 
+   d="scan'208";a="147193272"
+Received: from kanliang-dev.jf.intel.com ([10.165.154.102])
+  by fmviesa003.fm.intel.com with ESMTP; 28 May 2025 10:58:58 -0700
+From: kan.liang@linux.intel.com
+To: peterz@infradead.org,
+	mingo@redhat.com,
+	namhyung@kernel.org,
+	irogers@google.com,
+	mark.rutland@arm.com,
+	linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Cc: eranian@google.com,
+	ctshao@google.com,
+	tmricht@linux.ibm.com,
+	leo.yan@arm.com,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Aishwarya TCV <aishwarya.tcv@arm.com>
+Subject: [PATCH V2] perf: Fix the throttle error of some clock events
+Date: Wed, 28 May 2025 10:58:32 -0700
+Message-Id: <20250528175832.2999139-1-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.38.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250528-uvc-grannular-invert-v1-9-d01581f9cc25@chromium.org>
-References: <20250528-uvc-grannular-invert-v1-0-d01581f9cc25@chromium.org>
-In-Reply-To: <20250528-uvc-grannular-invert-v1-0-d01581f9cc25@chromium.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Hans de Goede <hdegoede@redhat.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Ricardo Ribalda <ribalda@chromium.org>
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: 8bit
 
-Right now we cannot support granular power saving on compat syscalls
-because the VIDIOC_*32 NRs defines are not accessible to drivers.
+From: Kan Liang <kan.liang@linux.intel.com>
 
-Use the video_translate_cmd() helper to convert the compat syscall NRs
-into syscall NRs.
+The Arm CI reports RCU stall, which can be reproduced by the below perf
+command.
+  perf record -a -e cpu-clock -- sleep 2
 
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+The cpu-clock and task_clock are two special SW events, which rely on
+the hrtimer. Instead of invoking the stop(), the HRTIMER_NORESTART is
+returned to stop the timer. Because the hrtimer interrupt handler cannot
+cancel itself, which causes infinite loop.
+
+There may be two ways to fix it.
+- Add a check of MAX_INTERRUPTS in the event_stop. Return immediately if
+the stop is invoked by the throttle.
+- Introduce a PMU flag to track the case. Avoid the event_stop in
+perf_event_throttle() if the flag is detected.
+
+The latter looks more generic. It may be used if there are more other
+cases that want to avoid the stop later. The latter is implemented.
+
+Reported-by: Leo Yan <leo.yan@arm.com>
+Reported-by: Aishwarya TCV <aishwarya.tcv@arm.com>
+Closes: https://lore.kernel.org/lkml/20250527161656.GJ2566836@e132581.arm.com/
+Tested-by: Leo Yan <leo.yan@arm.com>
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
 ---
- drivers/media/usb/uvc/uvc_v4l2.c     | 9 ++-------
- drivers/media/v4l2-core/v4l2-ioctl.c | 3 ++-
- include/media/v4l2-ioctl.h           | 1 +
- 3 files changed, 5 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/media/usb/uvc/uvc_v4l2.c b/drivers/media/usb/uvc/uvc_v4l2.c
-index fcb1b79c214849ce4da96a86a688d777b32cc688..048ee7e01808c8944f9bd46e5df2931b9c146ad5 100644
---- a/drivers/media/usb/uvc/uvc_v4l2.c
-+++ b/drivers/media/usb/uvc/uvc_v4l2.c
-@@ -1282,15 +1282,10 @@ static long uvc_v4l2_pm_ioctl(struct file *file,
- static long uvc_v4l2_unlocked_ioctl(struct file *file,
- 				    unsigned int cmd, unsigned long arg)
- {
--	/*
--	 * For now, we do not support granular power saving for compat
--	 * syscalls.
--	 */
--	if (in_compat_syscall())
--		return uvc_v4l2_pm_ioctl(file, cmd, arg);
-+	unsigned int converted_cmd = video_translate_cmd(cmd);
- 
- 	/* The following IOCTLs do need to turn on the camera. */
--	switch (cmd) {
-+	switch (converted_cmd) {
- 	case UVCIOC_CTRL_QUERY:
- 	case VIDIOC_G_CTRL:
- 	case VIDIOC_G_EXT_CTRLS:
-diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
-index 650dc1956f73d2f1943b56c42140c7b8d757259f..6fbd28f911cf23eec43ef1adcf64bd46ef067c81 100644
---- a/drivers/media/v4l2-core/v4l2-ioctl.c
-+++ b/drivers/media/v4l2-core/v4l2-ioctl.c
-@@ -3245,7 +3245,7 @@ static int check_array_args(unsigned int cmd, void *parg, size_t *array_size,
- 	return ret;
- }
- 
--static unsigned int video_translate_cmd(unsigned int cmd)
-+unsigned int video_translate_cmd(unsigned int cmd)
- {
- #if !defined(CONFIG_64BIT) && defined(CONFIG_COMPAT_32BIT_TIME)
- 	switch (cmd) {
-@@ -3266,6 +3266,7 @@ static unsigned int video_translate_cmd(unsigned int cmd)
- 
- 	return cmd;
- }
-+EXPORT_SYMBOL(video_translate_cmd);
- 
- static int video_get_user(void __user *arg, void *parg,
- 			  unsigned int real_cmd, unsigned int cmd,
-diff --git a/include/media/v4l2-ioctl.h b/include/media/v4l2-ioctl.h
-index c6ec87e88dfef9e6cfe1d1fb587c1600882fb14d..437b9f90714c62e0ba434ce47391ef64d88110aa 100644
---- a/include/media/v4l2-ioctl.h
-+++ b/include/media/v4l2-ioctl.h
-@@ -687,6 +687,7 @@ int v4l2_compat_get_array_args(struct file *file, void *mbuf,
- int v4l2_compat_put_array_args(struct file *file, void __user *user_ptr,
- 			       void *mbuf, size_t array_size,
- 			       unsigned int cmd, void *arg);
-+unsigned int video_translate_cmd(unsigned int cmd);
+Changes since V1:
+- Rebase on top of the latest tip.git
+- Add Tested-by from Leo
+
+ include/linux/perf_event.h |  1 +
+ kernel/events/core.c       | 23 ++++++++++++++++++++---
+ 2 files changed, 21 insertions(+), 3 deletions(-)
+
+diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+index 52dc7cfab0e0..97a747a97a50 100644
+--- a/include/linux/perf_event.h
++++ b/include/linux/perf_event.h
+@@ -305,6 +305,7 @@ struct perf_event_pmu_context;
+ #define PERF_PMU_CAP_EXTENDED_HW_TYPE	0x0100
+ #define PERF_PMU_CAP_AUX_PAUSE		0x0200
+ #define PERF_PMU_CAP_AUX_PREFER_LARGE	0x0400
++#define PERF_PMU_CAP_NO_THROTTLE_STOP	0x0800
  
  /**
-  * typedef v4l2_kioctl - Typedef used to pass an ioctl handler.
-
+  * pmu::scope
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index f34c99f8ce8f..abd19bb571e3 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -2656,7 +2656,22 @@ static void perf_event_unthrottle(struct perf_event *event, bool start)
+ 
+ static void perf_event_throttle(struct perf_event *event)
+ {
+-	event->pmu->stop(event, 0);
++	/*
++	 * Some PMUs, e.g., cpu-clock and task_clock, may rely on
++	 * a special mechanism (hrtimer) to manipulate counters.
++	 * The regular stop doesn't work, since the hrtimer interrupt
++	 * handler cannot cancel itself.
++	 *
++	 * The stop should be avoided for such cases. Let the
++	 * driver-specific code handle it.
++	 *
++	 * The counters will eventually be disabled in the driver-specific
++	 * code. In unthrottle, they still need to be re-enabled.
++	 * There is no handling for PERF_PMU_CAP_NO_THROTTLE_STOP in
++	 * the perf_event_unthrottle().
++	 */
++	if (!(event->pmu->capabilities & PERF_PMU_CAP_NO_THROTTLE_STOP))
++		event->pmu->stop(event, 0);
+ 	event->hw.interrupts = MAX_INTERRUPTS;
+ 	if (event == event->group_leader)
+ 		perf_log_throttle(event, 0);
+@@ -11848,7 +11863,8 @@ static int cpu_clock_event_init(struct perf_event *event)
+ static struct pmu perf_cpu_clock = {
+ 	.task_ctx_nr	= perf_sw_context,
+ 
+-	.capabilities	= PERF_PMU_CAP_NO_NMI,
++	.capabilities	= PERF_PMU_CAP_NO_NMI |
++			  PERF_PMU_CAP_NO_THROTTLE_STOP,
+ 	.dev		= PMU_NULL_DEV,
+ 
+ 	.event_init	= cpu_clock_event_init,
+@@ -11930,7 +11946,8 @@ static int task_clock_event_init(struct perf_event *event)
+ static struct pmu perf_task_clock = {
+ 	.task_ctx_nr	= perf_sw_context,
+ 
+-	.capabilities	= PERF_PMU_CAP_NO_NMI,
++	.capabilities	= PERF_PMU_CAP_NO_NMI |
++			  PERF_PMU_CAP_NO_THROTTLE_STOP,
+ 	.dev		= PMU_NULL_DEV,
+ 
+ 	.event_init	= task_clock_event_init,
 -- 
-2.49.0.1266.g31b7d2e469-goog
+2.38.1
 
 
