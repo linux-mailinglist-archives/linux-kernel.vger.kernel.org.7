@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-665073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9262DAC63FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 10:17:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B566EAC6401
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 10:18:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F1004E2269
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 08:16:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 683E13B039A
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 08:16:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EB6B272E7A;
-	Wed, 28 May 2025 08:11:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33A2C2580D1;
+	Wed, 28 May 2025 08:11:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iPwy8Meu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WgLipuX3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D3EB272E6F
-	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 08:11:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82904272E5D
+	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 08:11:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748419908; cv=none; b=WRLEsWSUPp2uLc9TdFGqOEP89JsV4dRxWaiPYprGgkSvc87xDZM56XA4T7aw31Zqadgybe7jpbTuG1316s366luaS1SnY58pHmtweayddpGa1bnsmAuw6XMFwWlUH5lQMkF99z4bameY7wj1H1hfC/ktmn1kT82P6tyOgv3FP5o=
+	t=1748419912; cv=none; b=qv8plivZZyqeB7R+qLSQDsmB/7YdKbHiuH3ZG8f3Cd3J92FbAc08077ClcAHM93rUnKkA4jDH/NAumQM4+CEWqMZylys5tfSOnKIl47t+RU2w7MxLUWNe/muhDD3+EcDh88lXlI035vfBx6y465bRstHVslmLwWLkMKMbSEwZZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748419908; c=relaxed/simple;
-	bh=L9VeFm6TXPaYNLcRaVe3jedRlD2BYFO33qmbvkTkCBA=;
+	s=arc-20240116; t=1748419912; c=relaxed/simple;
+	bh=ogTWmMEsymIxICRnXFYXfrvFLT7gHSyLw0APjFo2rec=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qAeAVBua++Io1FmJCPU1OPjUjmB126m15XrMNGIDhkTw91vkoDEFOWT0+YUdcayg4payon7nDuefV0d54RkWK+H/rL9p41L+63bhi2U/X707Vlf3mJjClO2d0BdoIAfDgQns9FhqEorSKgik6H8ENYR08XuQuJYEHll1shmQ8jU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iPwy8Meu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 655F1C4CEEB;
-	Wed, 28 May 2025 08:11:45 +0000 (UTC)
+	 MIME-Version; b=lV5sonzSuPMuMJ+mY0alJ/ljQSF/Qs+r2YJGysTYWqaiRM6ZdRQPm10xH5Rf3r+bFszdyv5ImW4B708/aMcOeTwkhl8AoCbc+/kIMMz8vmoInCQRMNmIke2FtEgIsFpoKdflotffSSRTGoz1nnci+KcpmmuPLbeCXymGP+IZKYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WgLipuX3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3FBBC4CEEB;
+	Wed, 28 May 2025 08:11:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748419908;
-	bh=L9VeFm6TXPaYNLcRaVe3jedRlD2BYFO33qmbvkTkCBA=;
+	s=k20201202; t=1748419911;
+	bh=ogTWmMEsymIxICRnXFYXfrvFLT7gHSyLw0APjFo2rec=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=iPwy8Meu7GdH8nXph6bPh7x66XI9JgcgaM/jui9JgYs1EKZbLtS47BxVLQEzrZ3ne
-	 hWGuKeoioFdSDRS5Vh+NxFWN6NkGwSusD0nva6dGASGrH1wbxhWE9O6MpxcNGEMvMQ
-	 HEjs/OO0V6POqJJ4oCeO4oI0h9EIVBNRRkQrLZTpUAMru6FwflDmQINjsoxwZyrNTW
-	 AMGiBnpLGqDS8Q1YLMgB26yHI7Fs/CIQhqSOQ0/hK+8EBpXPFG5/Fb62PQqkOJ0pOp
-	 AVS0rjXla71MrePkxtUeVhk2ZxbdQuHppefZJRndVPWiaugEXkie7H2Uc6X4c4sCwX
-	 tiZXrex5/3OQQ==
+	b=WgLipuX3ICPcvodtpS4mxNu9XzZOz9mXa9srdyNtgk9im7iOqRLT5At6+RPo7gwkj
+	 bLmGsuPsxVL1U7HzTYEp4whussFVO01GVeHIwZEdhNeTCkVwRF33vLkp/9OLCe+kFp
+	 jJ/Frt2ws3Ul6dIm+R8iXUuL41m0fAHCclrrx0J4JBH+CUSiILjgtpsGLa+kxfbWWW
+	 Q5Ubcthy1lCDft6rbtmjjCUwqBlATYK7v4cl+sr+HNuWWqiVrLEwEC0bpqCg4GWaN+
+	 64n6212sYQE/hv5QmjBxIsYp+aw0l/bNLWp0sgkOb9RpU9kV1LQ+41hgFMHGuBnxnD
+	 I+dD64lcUQL2w==
 From: Ingo Molnar <mingo@kernel.org>
 To: linux-kernel@vger.kernel.org
 Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>,
@@ -54,9 +54,9 @@ Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>,
 	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
 	Ingo Molnar <mingo@kernel.org>,
 	Juri Lelli <juri.lelli@redhat.com>
-Subject: [PATCH 34/43] sched/smp: Use the SMP version of the idle scheduling class
-Date: Wed, 28 May 2025 10:09:15 +0200
-Message-ID: <20250528080924.2273858-35-mingo@kernel.org>
+Subject: [PATCH 35/43] sched/smp: Use the SMP version of the stop-CPU scheduling class
+Date: Wed, 28 May 2025 10:09:16 +0200
+Message-ID: <20250528080924.2273858-36-mingo@kernel.org>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20250528080924.2273858-1-mingo@kernel.org>
 References: <20250528080924.2273858-1-mingo@kernel.org>
@@ -82,40 +82,40 @@ Cc: Steven Rostedt <rostedt@goodmis.org>
 Cc: Valentin Schneider <vschneid@redhat.com>
 Cc: Vincent Guittot <vincent.guittot@linaro.org>
 ---
- kernel/sched/idle.c | 4 ----
+ kernel/sched/stop_task.c | 4 ----
  1 file changed, 4 deletions(-)
 
-diff --git a/kernel/sched/idle.c b/kernel/sched/idle.c
-index cb01b063d733..2571ce6908a1 100644
---- a/kernel/sched/idle.c
-+++ b/kernel/sched/idle.c
-@@ -427,7 +427,6 @@ void cpu_startup_entry(enum cpuhp_state state)
-  * idle-task scheduling class.
+diff --git a/kernel/sched/stop_task.c b/kernel/sched/stop_task.c
+index 058dd42e3d9b..7314c8be6e30 100644
+--- a/kernel/sched/stop_task.c
++++ b/kernel/sched/stop_task.c
+@@ -8,7 +8,6 @@
+  * See kernel/stop_machine.c
   */
  
 -#ifdef CONFIG_SMP
  static int
- select_task_rq_idle(struct task_struct *p, int cpu, int flags)
+ select_task_rq_stop(struct task_struct *p, int cpu, int flags)
  {
-@@ -439,7 +438,6 @@ balance_idle(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
+@@ -20,7 +19,6 @@ balance_stop(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
  {
- 	return WARN_ON_ONCE(1);
+ 	return sched_stop_runnable(rq);
  }
 -#endif /* CONFIG_SMP */
  
- /*
-  * Idle tasks are unconditionally rescheduled:
-@@ -526,11 +524,9 @@ DEFINE_SCHED_CLASS(idle) = {
- 	.put_prev_task		= put_prev_task_idle,
- 	.set_next_task          = set_next_task_idle,
+ static void
+ wakeup_preempt_stop(struct rq *rq, struct task_struct *p, int flags)
+@@ -106,11 +104,9 @@ DEFINE_SCHED_CLASS(stop) = {
+ 	.put_prev_task		= put_prev_task_stop,
+ 	.set_next_task          = set_next_task_stop,
  
 -#ifdef CONFIG_SMP
- 	.balance		= balance_idle,
- 	.select_task_rq		= select_task_rq_idle,
+ 	.balance		= balance_stop,
+ 	.select_task_rq		= select_task_rq_stop,
  	.set_cpus_allowed	= set_cpus_allowed_common,
 -#endif
  
- 	.task_tick		= task_tick_idle,
+ 	.task_tick		= task_tick_stop,
  
 -- 
 2.45.2
