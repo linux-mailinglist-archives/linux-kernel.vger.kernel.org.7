@@ -1,347 +1,217 @@
-Return-Path: <linux-kernel+bounces-665822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53C34AC6E23
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 18:39:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6568AC6E3C
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 18:43:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A58F3A4FE8
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 16:39:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDFCE3BDAFB
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 16:42:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A9DF28CF7F;
-	Wed, 28 May 2025 16:39:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D67FC2882A7;
+	Wed, 28 May 2025 16:42:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EaCfKUID"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="kfGWocLV";
+	dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b="IYdfo65I"
+Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9891E2798EB
-	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 16:39:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748450379; cv=none; b=u6lo3yZO1Ne56HIjuatf/YZLaOvA1dWw24e1UCAjyxQ+F6gSWdrS5dfv0Q2qNRhmUgZWFvtbROvZ4b4LaYGOJWotXHYQgLURttHB/Ca8KhIhaY63xvEpw38WejIRCpPKHBieddf8gscPuILOOPIF5amPzP7UPR9oD6XBhxTnq5E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748450379; c=relaxed/simple;
-	bh=9ZFIKNoaGAoZluGUowCky6Ngnpz41IO5N/0CSvVPfsU=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Z5Mo3LQuKWmewmsGiOpYIjcme45YigyIVprHldYES+R7AWF+Q4+SXmcdyzTPCwlusAbkQZFThkG1L0Iwu87xvp1pGWuvDLAPfTZCq9tl8bScn/a1M7IlKqsHJSmE6H1o947L4HwkeFcjIqzzEBYv6eajH50pEbtHOT2arEnXsyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EaCfKUID; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-6c8f99fef10so44121a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 09:39:37 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11A2F28BA8E;
+	Wed, 28 May 2025 16:42:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.149.25
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748450565; cv=fail; b=e4/vPl51kF/8AjtXGy6KhdmDYpaF2h5wRHuGr8lvtwS+M8iknavpWoDA79FfeoUPAQjdM31xaHhKie5QyHiSdA0ojUo4sooF+zB2jj60tF30O/y51/YcMvG5HjX6eDo+qtXyPRKg5lgEMvO/yIINK5rD5/m48eTLhd//zfu8a5g=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748450565; c=relaxed/simple;
+	bh=Dz/oZvHwSBS4vgdeafofvgFbYhhkPSkLrNhNjJL1J4Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dl0HNL2qyiGBn4J9N3h7Dcg/TbqKkqTyS8ngEDwe89w+XQ2ILSkk0C2QS9CiuPzNRFk8YWaKtrYjCS/lVGBGHy5LybTM/5LEPImIOfWcB0s5NHCSo1XP4SK95ssdFkrWtR7ZYu9j1TbDLsTt3fxMjjBqh+iuhO9vBUalbY8dGjQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=kfGWocLV; dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b=IYdfo65I; arc=fail smtp.client-ip=67.231.149.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54SDiAOs031715;
+	Wed, 28 May 2025 11:41:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=PODMain02222019; bh=u08B+em4gzK6P9FvSl
+	eq/IeRx5REGlJAmj6OjBJhsys=; b=kfGWocLV76iX64DqEWbqEOkt64mWbWldJ+
+	r8EuZh5mGmabK6gtUfv6meM1Fwor7UgqZ8Gcq2EnikyKxLePDgW5WgHfUlPr5YCi
+	DQP2IdC5YcBftBjNUc6K8cdW00XWKzR3FWHMjAnXq/qcf/VdR+67SJnyUR1BtdJa
+	AQ9cJ83s6X0oHDp32yEnEbyR7EwWhrHLjpBvHLFCaxVt6OpjtjVVtVpoGB7pfmq9
+	fC/tvQ3rTizAYP1mPrv77mqpEgT4WIbGptP+IrypkbQbDAOo9KJtrNaNkQn+aY0q
+	R3llRnj2+rEAbXj24HHx/YhgGLmxGlz2Ai0dQkn8EzZ/3t5gH7bw==
+Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12on2125.outbound.protection.outlook.com [40.107.237.125])
+	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 46x3msra2b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 28 May 2025 11:41:29 -0500 (CDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=yaZTHDs5t21c2Fnb6GU+D7mSjgmDKVhAuJAr1XS+fb6lY0o9EgwM73D7jOSHpdxk2MAyHvtgWGvTrTtvAqRccExwm/ReDJvl46MLqKGHsvhHBi/zeJdaHfVmQtFwPRc6I2/JhLnxFv5/guo6XTOHGH8fK2PvC/mIrxWE6suxbzkDb4RbkMBU4HEefHetSnSmpiLBki+2arAKCifDOKAYzu7lfAqciJi1v4vC0wSZ1Xkop48vNTY3PmHhjt4wcJ2qTWe6QVSVaN9c9mexjdfqxSy0IXUZ86GeGLLKzzYPC2hTFVQRb1Zl4P3DCRMK68Z7gOLyovO/gpbgZR44AJoyoA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=u08B+em4gzK6P9FvSleq/IeRx5REGlJAmj6OjBJhsys=;
+ b=WqLIbtEmT1N8KPX2UBD4nUzF2nEt4Dp4FgBNkHbgx0WSDu59zmR6cvJUa4iiqO3Hk4J8ZdSkB0IHaZ2Haf9yAX1q5nytGZ6fEXbvPWszQsvU8ecbJkAFg6LhdM7p3pk+BfwPUYHomjmhQBAYB3jK9ci8d2eH4x76sVFsb8y9fv2EGqkRPyVDL60YRYwu/1MGuPDDaG9dm5bmvTPmYlC+TrLabwr1WZDZKlA5XwznJlvuK2RBklgKWNpCvXays5jUeMySdj3QBGc4TytkRJc/Crgpwjs2VXwLoCCtTEow8QqK26DN6ybXwvlf5yXJJauZTCBenIBZMAJvr3OBrbEP0w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 84.19.233.75) smtp.rcpttodomain=amd.com smtp.mailfrom=opensource.cirrus.com;
+ dmarc=fail (p=reject sp=reject pct=100) action=oreject
+ header.from=opensource.cirrus.com; dkim=none (message not signed); arc=none
+ (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1748450377; x=1749055177; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ug/rSTqNkaK2DiSNfaEAiTgoamlZ5in/WoXI2qFgjt4=;
-        b=EaCfKUIDMqq78MjqgxE6vs6E9C91Gx7CFpQCpGpiESrnK4wBxmJOVtUbyE1cTU1C8Z
-         nBKetPvfOsnUXH+LhEcbIUaSY/e9Fd7kkQ9XeRnU+q9x9GmirTjjLz4ja6hsf3iunBpW
-         uzhY1k27QVWNZnG0kyNMuI3tK8ZnnTAtgYKvih61T96IJKIGVoB/L3lqq/PNL8MekqvI
-         9+cf1eIGnBJKX0NCeSv7vBGDPwhy/w5N7N3GxIHRJSC9/enQKMP/9HHCcXY1RwthE2Gc
-         VdGUfEuvc0+rj/Uqhea/h1ytjdiJ6amJveLUzs5c5EURcHd0MQwHDyFLgAqURyn4Uc9U
-         x5mA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748450377; x=1749055177;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ug/rSTqNkaK2DiSNfaEAiTgoamlZ5in/WoXI2qFgjt4=;
-        b=AVezMz5sdGKketrFg869imZfrfPMgz6qlAiHdLsIW6BC496bkmRJ8atEjLOYuQxr5j
-         Po1S1iUzfqT+OwBkDU6rBL6BzNNGvvk/xUF2ELUAAd1mJuaWahUEMhIlzMHopCmz7Bn1
-         m3XyupI84LonNo09xDvPwopnNb3sS1KTue/Utqe6b63WbGczv3Wymuab/460OWUGs8Ag
-         cHGMyLMaZZxKdvTpNZYnA9YEZjYiu6L7En2KrrSvGR70dtiT+AgODQTTmYYcDN94tdYZ
-         HV25obrbj5OPaACTZIm5MFk1EVw8kjJFG9WLykaGHleH3hunvrK1QlKe5H32krUmm2Hu
-         t8lg==
-X-Forwarded-Encrypted: i=1; AJvYcCUYoOyiHX8wlvEPeZGybuW3eKcrdBk8f/1wWFrfoMwTHfH6CGXv5hsF8YEwfAqpUMtyMsxZDXMy8vbv6y0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzn1Cf5rP+gri49wYioFUEfydxZWBwX/IDPVAvRKWIQB/DrcTm/
-	OUzSsnvvTCfx2DxhZ8HngjvlBgIh+edyNRcu4abr1v8WwzUwkFmKqE9yoH/h1knHOpcAsW70Fi9
-	1qDc0A/Nu24KOGVzGyaNZ+rZr8Q==
-X-Google-Smtp-Source: AGHT+IFNpKZD9lN4cOQmrQeE/v6mJ+Aez5Zu8/h2NScD8jBwFV5IrxK/YzUb/E+mnOr3jMtt3fLdteDpb1Js1lKinQ==
-X-Received: from plhs4.prod.google.com ([2002:a17:903:3204:b0:223:5693:a4e9])
- (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:903:1a67:b0:234:d7b2:2ac2 with SMTP id d9443c01a7336-234d7b22c20mr46594455ad.22.1748450376728;
- Wed, 28 May 2025 09:39:36 -0700 (PDT)
-Date: Wed, 28 May 2025 09:39:35 -0700
-In-Reply-To: <aDbswJwGRe5a4Lzf@yzhao56-desk.sh.intel.com>
+ d=cirrus4.onmicrosoft.com; s=selector2-cirrus4-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=u08B+em4gzK6P9FvSleq/IeRx5REGlJAmj6OjBJhsys=;
+ b=IYdfo65IywPdGNiU7yuA3Eye0+K2riFsoZde3T1Tu40iu5ZlvynqHwUGPO3CZmUr/KCvRbAdVd//ps0Ynz+bXCfPc8iHezyH01K1jKruKfgvcx14ojVxq0hkujxPItkaOeb4njj7jbrpvG2H6TeodlzwamiDWkN/FJdsH7nok/g=
+Received: from PH8P220CA0034.NAMP220.PROD.OUTLOOK.COM (2603:10b6:510:348::17)
+ by DM4PR19MB6025.namprd19.prod.outlook.com (2603:10b6:8:6c::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.29; Wed, 28 May
+ 2025 16:41:24 +0000
+Received: from CY4PEPF0000EDD0.namprd03.prod.outlook.com
+ (2603:10b6:510:348:cafe::86) by PH8P220CA0034.outlook.office365.com
+ (2603:10b6:510:348::17) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8792.21 via Frontend Transport; Wed,
+ 28 May 2025 16:41:24 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 84.19.233.75)
+ smtp.mailfrom=opensource.cirrus.com; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=oreject header.from=opensource.cirrus.com;
+Received-SPF: Fail (protection.outlook.com: domain of opensource.cirrus.com
+ does not designate 84.19.233.75 as permitted sender)
+ receiver=protection.outlook.com; client-ip=84.19.233.75;
+ helo=edirelay1.ad.cirrus.com;
+Received: from edirelay1.ad.cirrus.com (84.19.233.75) by
+ CY4PEPF0000EDD0.mail.protection.outlook.com (10.167.241.196) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8769.18
+ via Frontend Transport; Wed, 28 May 2025 16:41:22 +0000
+Received: from ediswmail9.ad.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
+	by edirelay1.ad.cirrus.com (Postfix) with ESMTPS id 71C38406545;
+	Wed, 28 May 2025 16:41:21 +0000 (UTC)
+Received: from opensource.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPS id 4A81E820249;
+	Wed, 28 May 2025 16:41:21 +0000 (UTC)
+Date: Wed, 28 May 2025 17:41:20 +0100
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        Basavaraj Natikar <Basavaraj.Natikar@amd.com>,
+        Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+        Andrew Jeffery <andrew@codeconstruct.com.au>,
+        Joel Stanley <joel@jms.id.au>, Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>, Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>, Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Jonathan =?iso-8859-1?Q?Neusch=E4fer?= <j.neuschaefer@gmx.net>,
+        =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
+        Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+        Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        David Rhodes <david.rhodes@cirrus.com>,
+        Richard Fitzgerald <rf@opensource.cirrus.com>,
+        Lorenzo Bianconi <lorenzo@kernel.org>,
+        Sean Wang <sean.wang@kernel.org>,
+        Jesper Nilsson <jesper.nilsson@axis.com>,
+        Lars Persson <lars.persson@axis.com>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Damien Le Moal <dlemoal@kernel.org>, Vladimir Zapolskiy <vz@mleia.com>,
+        Michal Simek <michal.simek@amd.com>,
+        Emil Renner Berthing <kernel@esmil.dk>,
+        Jianlong Huang <jianlong.huang@starfivetech.com>,
+        Hal Feng <hal.feng@starfivetech.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-sound@vger.kernel.org,
+        patches@opensource.cirrus.com, linux-mediatek@lists.infradead.org,
+        linux-arm-kernel@axis.com, linux-riscv@lists.infradead.org,
+        linux-rtc@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH 16/17] pinctrl: Constify static 'pinctrl_desc'
+Message-ID: <aDc8sEMh2UpcHzVr@opensource.cirrus.com>
+References: <20250528-pinctrl-const-desc-v1-0-76fe97899945@linaro.org>
+ <20250528-pinctrl-const-desc-v1-16-76fe97899945@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <cover.1747264138.git.ackerleytng@google.com> <625bd9c98ad4fd49d7df678f0186129226f77d7d.1747264138.git.ackerleytng@google.com>
- <aDbswJwGRe5a4Lzf@yzhao56-desk.sh.intel.com>
-Message-ID: <diqz34co8zaw.fsf@ackerleytng-ctop.c.googlers.com>
-Subject: Re: [RFC PATCH v2 39/51] KVM: guest_memfd: Merge and truncate on fallocate(PUNCH_HOLE)
-From: Ackerley Tng <ackerleytng@google.com>
-To: Yan Zhao <yan.y.zhao@intel.com>
-Cc: kvm@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	x86@kernel.org, linux-fsdevel@vger.kernel.org, aik@amd.com, 
-	ajones@ventanamicro.com, akpm@linux-foundation.org, amoorthy@google.com, 
-	anthony.yznaga@oracle.com, anup@brainfault.org, aou@eecs.berkeley.edu, 
-	bfoster@redhat.com, binbin.wu@linux.intel.com, brauner@kernel.org, 
-	catalin.marinas@arm.com, chao.p.peng@intel.com, chenhuacai@kernel.org, 
-	dave.hansen@intel.com, david@redhat.com, dmatlack@google.com, 
-	dwmw@amazon.co.uk, erdemaktas@google.com, fan.du@intel.com, fvdl@google.com, 
-	graf@amazon.com, haibo1.xu@intel.com, hch@infradead.org, hughd@google.com, 
-	ira.weiny@intel.com, isaku.yamahata@intel.com, jack@suse.cz, 
-	james.morse@arm.com, jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com, 
-	jhubbard@nvidia.com, jroedel@suse.de, jthoughton@google.com, 
-	jun.miao@intel.com, kai.huang@intel.com, keirf@google.com, 
-	kent.overstreet@linux.dev, kirill.shutemov@intel.com, liam.merwick@oracle.com, 
-	maciej.wieczor-retman@intel.com, mail@maciej.szmigiero.name, maz@kernel.org, 
-	mic@digikod.net, michael.roth@amd.com, mpe@ellerman.id.au, 
-	muchun.song@linux.dev, nikunj@amd.com, nsaenz@amazon.es, 
-	oliver.upton@linux.dev, palmer@dabbelt.com, pankaj.gupta@amd.com, 
-	paul.walmsley@sifive.com, pbonzini@redhat.com, pdurrant@amazon.co.uk, 
-	peterx@redhat.com, pgonda@google.com, pvorel@suse.cz, qperret@google.com, 
-	quic_cvanscha@quicinc.com, quic_eberman@quicinc.com, 
-	quic_mnalajal@quicinc.com, quic_pderrin@quicinc.com, quic_pheragu@quicinc.com, 
-	quic_svaddagi@quicinc.com, quic_tsoni@quicinc.com, richard.weiyang@gmail.com, 
-	rick.p.edgecombe@intel.com, rientjes@google.com, roypat@amazon.co.uk, 
-	rppt@kernel.org, seanjc@google.com, shuah@kernel.org, steven.price@arm.com, 
-	steven.sistare@oracle.com, suzuki.poulose@arm.com, tabba@google.com, 
-	thomas.lendacky@amd.com, usama.arif@bytedance.com, vannapurve@google.com, 
-	vbabka@suse.cz, viro@zeniv.linux.org.uk, vkuznets@redhat.com, 
-	wei.w.wang@intel.com, will@kernel.org, willy@infradead.org, 
-	xiaoyao.li@intel.com, yilun.xu@intel.com, yuzenghui@huawei.com, 
-	zhiquan1.li@intel.com
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250528-pinctrl-const-desc-v1-16-76fe97899945@linaro.org>
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000EDD0:EE_|DM4PR19MB6025:EE_
+X-MS-Office365-Filtering-Correlation-Id: 08f9df47-b677-4a4c-3ecf-08dd9e067b1d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|61400799027|36860700013|82310400026|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?VBEBjkAyTr2kN8QdSs5yBj6FRJ96ftcJDl2LthDFL3T/SWMTgRwHtbQN8eEY?=
+ =?us-ascii?Q?OLN0Bibox3b/rgwbsd9da7jE4g7qYBb+8nacteJM85/WDgW+cTLSnWLTd6Uv?=
+ =?us-ascii?Q?KMOl0gZ14B0eR/D0iiH12Vcp25jRSfuulayJW6coo/ndMs6BmuWqnuyBmeDK?=
+ =?us-ascii?Q?XnIcgp77Nx9/1fZnoZMpB4m0Nu0I+KgxXBav0fWMrsIBb5yXUWqwX0nrjIa9?=
+ =?us-ascii?Q?4jQIl4isCnCRZ/CRS+iImfZXEwQ2wh0H97i/8lnjK4bsBnCV0Zle6ACUwcPO?=
+ =?us-ascii?Q?1kIU4b0hcRNiJHoaA9NnlQc/gEJYshqDkakhKX8vwaTL/GeYjAF6HXWOfBt1?=
+ =?us-ascii?Q?+D2RMaRn/upVD2sfqzTevNuyLrsX/ZPFy9NQd54SGXEfMkJILkj5yG4VJbj2?=
+ =?us-ascii?Q?qiZVLfHvfpa+/R0QDxNzKXa/PhU4Cana0zrsAGqY9UJ7LFl1WP0ilUqFFrDo?=
+ =?us-ascii?Q?r5kg1b6X7rhbg+uKFHLED++FagdzPbdeb//JPO7jbfifIe4OeM0xtT+jqyvi?=
+ =?us-ascii?Q?6XKmeGRI+Qw+b1cq4jODBsmxSN4cEk6DRh2RlC28lvjqze+8YleGxlVyzGha?=
+ =?us-ascii?Q?7RAhHXjvaje1oC+QcyLzAt02gWZtq53wipgSz/LPixeeziTK30nSVF9tBe5K?=
+ =?us-ascii?Q?yepUe1179kfWAFGcKSsI/21i3cKqYZfLALMynD9axBYv732BHPc8b8yJCMwi?=
+ =?us-ascii?Q?JyAjmVaecSFYlDqaJMKsIPiDKj7h55aEDrEZcDT1hnCzHfwpOarrA5cphZAs?=
+ =?us-ascii?Q?XtAFrXOKs2uxWGQcZ0lYKL1yci/3feXheOAPU0MMyFtCepw7NRZWyMcHT+qw?=
+ =?us-ascii?Q?qKqF4tPNVsYBNxxbgKspg8psGTi22YqyrwafZVuggNe+Eu4Fno8P6RqAg2Uu?=
+ =?us-ascii?Q?PNim4XuU1KWYE8juLIvuYLKwgOjo77dr/y6mPLKmL/gFmzX+hvC7CXg88LYe?=
+ =?us-ascii?Q?XLhEnzx/l9dJxXaoYcSI89TgGBroQsRd9lxSEKBSc/TKXmiLozCJIpMzTOcb?=
+ =?us-ascii?Q?bwvUoGObEgtPf+uN3NsWAhEYivhSdBcNbQXcN1ruazynRRku2v4aQaKbRdZI?=
+ =?us-ascii?Q?Z1llvbNHfahNb9fr75cdHFjfjhel5ADtf3dmX3e3d2AMfMK3xLwl5GxrK0+n?=
+ =?us-ascii?Q?D1lDZp6GJT6DZwfSw6oixXuxYnCfZsWVHNWAqmpmzOOThfFImrcQijF5QSam?=
+ =?us-ascii?Q?ciwvf/paT1kBGlTrYLv/5i+2Ts0bv6lDn5hml4xe4T/SuLznBCFMMcWNzjfW?=
+ =?us-ascii?Q?d7vq65hH8i1rbJmGk/1nSMzqOS/rUJXCImh+CF62j+8L4umMfm2FOqMqo/yE?=
+ =?us-ascii?Q?qepxP0zXPJeu/UkucazQRq1fiEpQxlcaZLe3WXJ4QvI0IHXSM+HrQPM1HF+L?=
+ =?us-ascii?Q?+h+tgrbBkknjXWlUzeIDXpLf53QwNUe/TQw4lcTTZtV+MBKHuxlA/OLXQYTS?=
+ =?us-ascii?Q?NYd289wkYBlQ4a/RGBgiG8q5NrJkz8gs0vwIyoIWOU/ctfe+qm+O5woiedZc?=
+ =?us-ascii?Q?yFKY5cggqSIdpbGKguROvrCPub6dOqBSr64G?=
+X-Forefront-Antispam-Report:
+	CIP:84.19.233.75;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:edirelay1.ad.cirrus.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(61400799027)(36860700013)(82310400026)(376014)(7416014);DIR:OUT;SFP:1102;
+X-OriginatorOrg: opensource.cirrus.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 May 2025 16:41:22.6358
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 08f9df47-b677-4a4c-3ecf-08dd9e067b1d
+X-MS-Exchange-CrossTenant-Id: bec09025-e5bc-40d1-a355-8e955c307de8
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=bec09025-e5bc-40d1-a355-8e955c307de8;Ip=[84.19.233.75];Helo=[edirelay1.ad.cirrus.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000EDD0.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR19MB6025
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI4MDE0NSBTYWx0ZWRfX/77eowpPrNJV okq6AGhdh+AeiBWGgUus89iUbeeaBfd7Mg7o+Qg5Aq+ap5mU+ABWR9xIGXXrgUETVF51XLqcO0K EBQ4ZEK0J4mPeaewxak2JSy6cuw7J/uOyD/zRuLQrElfr65RzqbAAQyw3u1wu3ni071nJfxLScB
+ EUbUVDKMobW0SZPK4hVoBDkc7HcqKEFzKLSuLpCJaiRGN5Tw4XYLeD6Ku8nxqwMBmRq2u/TLRBR WebC+iuPrSTvxiAbrYr6GXASv4/sn18IlcmbO9op+iJyx4BN320G9Jg+qd97rHk+F8ADbFjH9Qw NFPsgP23DASexd8l/WwclQNdR7loBCgz+tRZUYx7bPtcBqZ6dXVNs8dHu523n9WXOYpYH3keJLQ
+ QFl8eJF43GCDRdEAUvhvm5SeSj4ZmfcvSHlYGnhPTjXNjWXnpzhJy8uic1W0ZmMl33rpfkNp
+X-Authority-Analysis: v=2.4 cv=Qohe3Uyd c=1 sm=1 tr=0 ts=68373cb9 cx=c_pps a=azKGx87FDiaoMypZd7Lp/w==:117 a=h1hSm8JtM9GN1ddwPAif2w==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=kj9zAlcOel0A:10
+ a=dt9VzEwgFbYA:10 a=RWc_ulEos4gA:10 a=KKAkSRfTAAAA:8 a=w1d2syhTAAAA:8 a=pp8jMgpbGpZJBU6_-_QA:9 a=CjuIK1q_8ugA:10 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-GUID: FhwEZxe0gSqpkkLY4NWltVICs7azydqM
+X-Proofpoint-ORIG-GUID: FhwEZxe0gSqpkkLY4NWltVICs7azydqM
+X-Proofpoint-Spam-Reason: safe
 
-Yan Zhao <yan.y.zhao@intel.com> writes:
+On Wed, May 28, 2025 at 12:41:12PM +0200, Krzysztof Kozlowski wrote:
+> The local static 'struct pinctrl_desc' is not modified, so can be made
+> const for code safety.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
 
-> On Wed, May 14, 2025 at 04:42:18PM -0700, Ackerley Tng wrote:
->> Merge and truncate on fallocate(PUNCH_HOLE), but if the file is being
->> closed, defer merging to folio_put() callback.
->> 
->> Change-Id: Iae26987756e70c83f3b121edbc0ed0bc105eec0d
->> Signed-off-by: Ackerley Tng <ackerleytng@google.com>
->> ---
->>  virt/kvm/guest_memfd.c | 76 +++++++++++++++++++++++++++++++++++++-----
->>  1 file changed, 68 insertions(+), 8 deletions(-)
->> 
->> diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
->> index cb426c1dfef8..04b1513c2998 100644
->> --- a/virt/kvm/guest_memfd.c
->> +++ b/virt/kvm/guest_memfd.c
->> @@ -859,6 +859,35 @@ static int kvm_gmem_restructure_folios_in_range(struct inode *inode,
->>  	return ret;
->>  }
->>  
->> +static long kvm_gmem_merge_truncate_indices(struct inode *inode, pgoff_t index,
->> +					   size_t nr_pages)
->> +{
->> +	struct folio *f;
->> +	pgoff_t unused;
->> +	long num_freed;
->> +
->> +	unmap_mapping_pages(inode->i_mapping, index, nr_pages, false);
->> +
->> +	if (!kvm_gmem_has_safe_refcount(inode->i_mapping, index, nr_pages, &unused))
+For the cs42l43:
 
-Yan, thank you for your reviews!
+Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 
-> Why is kvm_gmem_has_safe_refcount() checked here, but not in
-> kvm_gmem_zero_range() within kvm_gmem_truncate_inode_range() in patch 33?
->
-
-The contract for guest_memfd with HugeTLB pages is that if holes are
-punched in any ranges less than a full huge page, no pages are removed
-from the filemap. Those ranges are only zeroed.
-
-In kvm_gmem_zero_range(), we never remove any folios, and so there is no
-need to merge. If there's no need to merge, then we don't need to check
-for a safe refcount, and can just proceed to zero.
-
-kvm_gmem_merge_truncate_indices() is only used during hole punching and
-not when the file is closed. Hole punch vs file closure is checked using
-mapping_exiting(inode->i_mapping).
-
-During a hole punch, we will only allow truncation if there are no
-unexpected refcounts on any subpages, hence this
-kvm_gmem_has_safe_refcount() check.
-
->> +		return -EAGAIN;
->> +
->
-> Rather than merging the folios, could we simply call kvm_gmem_truncate_indices()
-> instead?
->
-> num_freed = kvm_gmem_truncate_indices(inode->i_mapping, index, nr_pages);
-> return num_freed;
->
-
-We could do this too, but then that would be deferring the huge page
-merging to the folio_put() callback and eventually the kernel worker
-thread.
-
-My goal here is to try to not to defer merging and freeing as much as
-possible so that most of the page/memory operations are
-synchronous, because synchronous operations are more predictable.
-
-As an example of improving predictability, in one of the selftests, I do
-a hole punch and then try to allocate again. Because the merging and
-freeing of the HugeTLB page sometimes takes too long, the allocation
-sometimes fails: the guest_memfd's subpool hadn't yet received the freed
-page back. With a synchronous truncation, the truncation may take
-longer, but the selftest predictably passes.
-
->> +	f = filemap_get_folio(inode->i_mapping, index);
->> +	if (IS_ERR(f))
->> +		return 0;
->> +
->> +	/* Leave just filemap's refcounts on the folio. */
->> +	folio_put(f);
->> +
->> +	WARN_ON(kvm_gmem_merge_folio_in_filemap(inode, f));
->> +
->> +	num_freed = folio_nr_pages(f);
->> +	folio_lock(f);
->> +	truncate_inode_folio(inode->i_mapping, f);
->> +	folio_unlock(f);
->> +
->> +	return num_freed;
->> +}
->> +
->>  #else
->>  
->>  static inline int kvm_gmem_try_split_folio_in_filemap(struct inode *inode,
->> @@ -874,6 +903,12 @@ static int kvm_gmem_restructure_folios_in_range(struct inode *inode,
->>  	return 0;
->>  }
->>  
->> +static long kvm_gmem_merge_truncate_indices(struct inode *inode, pgoff_t index,
->> +					   size_t nr_pages)
->> +{
->> +	return 0;
->> +}
->> +
->>  #endif
->>  
->>  #else
->> @@ -1182,8 +1217,10 @@ static long kvm_gmem_truncate_indices(struct address_space *mapping,
->>   *
->>   * Removes folios beginning @index for @nr_pages from filemap in @inode, updates
->>   * inode metadata.
->> + *
->> + * Return: 0 on success and negative error otherwise.
->>   */
->> -static void kvm_gmem_truncate_inode_aligned_pages(struct inode *inode,
->> +static long kvm_gmem_truncate_inode_aligned_pages(struct inode *inode,
->>  						  pgoff_t index,
->>  						  size_t nr_pages)
->>  {
->> @@ -1191,19 +1228,34 @@ static void kvm_gmem_truncate_inode_aligned_pages(struct inode *inode,
->>  	long num_freed;
->>  	pgoff_t idx;
->>  	void *priv;
->> +	long ret;
->>  
->>  	priv = kvm_gmem_allocator_private(inode);
->>  	nr_per_huge_page = kvm_gmem_allocator_ops(inode)->nr_pages_in_folio(priv);
->>  
->> +	ret = 0;
->>  	num_freed = 0;
->>  	for (idx = index; idx < index + nr_pages; idx += nr_per_huge_page) {
->> -		num_freed += kvm_gmem_truncate_indices(
->> -			inode->i_mapping, idx, nr_per_huge_page);
->> +		if (mapping_exiting(inode->i_mapping) ||
->> +		    !kvm_gmem_has_some_shared(inode, idx, nr_per_huge_page)) {
->> +			num_freed += kvm_gmem_truncate_indices(
->> +				inode->i_mapping, idx, nr_per_huge_page);
->> +		} else {
->> +			ret = kvm_gmem_merge_truncate_indices(inode, idx,
->> +							      nr_per_huge_page);
->> +			if (ret < 0)
->> +				break;
->> +
->> +			num_freed += ret;
->> +			ret = 0;
->> +		}
->>  	}
->>  
->>  	spin_lock(&inode->i_lock);
->>  	inode->i_blocks -= (num_freed << PAGE_SHIFT) / 512;
->>  	spin_unlock(&inode->i_lock);
->> +
->> +	return ret;
->>  }
->>  
->>  /**
->> @@ -1252,8 +1304,10 @@ static void kvm_gmem_zero_range(struct address_space *mapping,
->>   *
->>   * Removes full (huge)pages from the filemap and zeroing incomplete
->>   * (huge)pages. The pages in the range may be split.
->> + *
->> + * Return: 0 on success and negative error otherwise.
->>   */
->> -static void kvm_gmem_truncate_inode_range(struct inode *inode, loff_t lstart,
->> +static long kvm_gmem_truncate_inode_range(struct inode *inode, loff_t lstart,
->>  					  loff_t lend)
->>  {
->>  	pgoff_t full_hpage_start;
->> @@ -1263,6 +1317,7 @@ static void kvm_gmem_truncate_inode_range(struct inode *inode, loff_t lstart,
->>  	pgoff_t start;
->>  	pgoff_t end;
->>  	void *priv;
->> +	long ret;
->>  
->>  	priv = kvm_gmem_allocator_private(inode);
->>  	nr_per_huge_page = kvm_gmem_allocator_ops(inode)->nr_pages_in_folio(priv);
->> @@ -1279,10 +1334,11 @@ static void kvm_gmem_truncate_inode_range(struct inode *inode, loff_t lstart,
->>  		kvm_gmem_zero_range(inode->i_mapping, start, zero_end);
->>  	}
->>  
->> +	ret = 0;
->>  	if (full_hpage_end > full_hpage_start) {
->>  		nr_pages = full_hpage_end - full_hpage_start;
->> -		kvm_gmem_truncate_inode_aligned_pages(inode, full_hpage_start,
->> -						      nr_pages);
->> +		ret = kvm_gmem_truncate_inode_aligned_pages(
->> +			inode, full_hpage_start, nr_pages);
->>  	}
->>  
->>  	if (end > full_hpage_end && end > full_hpage_start) {
->> @@ -1290,6 +1346,8 @@ static void kvm_gmem_truncate_inode_range(struct inode *inode, loff_t lstart,
->>  
->>  		kvm_gmem_zero_range(inode->i_mapping, zero_start, end);
->>  	}
->> +
->> +	return ret;
->>  }
->>  
->>  static long kvm_gmem_punch_hole(struct inode *inode, loff_t offset, loff_t len)
->> @@ -1298,6 +1356,7 @@ static long kvm_gmem_punch_hole(struct inode *inode, loff_t offset, loff_t len)
->>  	pgoff_t start = offset >> PAGE_SHIFT;
->>  	pgoff_t end = (offset + len) >> PAGE_SHIFT;
->>  	struct kvm_gmem *gmem;
->> +	long ret;
->>  
->>  	/*
->>  	 * Bindings must be stable across invalidation to ensure the start+end
->> @@ -1308,8 +1367,9 @@ static long kvm_gmem_punch_hole(struct inode *inode, loff_t offset, loff_t len)
->>  	list_for_each_entry(gmem, gmem_list, entry)
->>  		kvm_gmem_invalidate_begin_and_zap(gmem, start, end);
->>  
->> +	ret = 0;
->>  	if (kvm_gmem_has_custom_allocator(inode)) {
->> -		kvm_gmem_truncate_inode_range(inode, offset, offset + len);
->> +		ret = kvm_gmem_truncate_inode_range(inode, offset, offset + len);
->>  	} else {
->>  		/* Page size is PAGE_SIZE, so use optimized truncation function. */
->>  		truncate_inode_pages_range(inode->i_mapping, offset, offset + len - 1);
->> @@ -1320,7 +1380,7 @@ static long kvm_gmem_punch_hole(struct inode *inode, loff_t offset, loff_t len)
->>  
->>  	filemap_invalidate_unlock(inode->i_mapping);
->>  
->> -	return 0;
->> +	return ret;
->>  }
->>  
->>  static long kvm_gmem_allocate(struct inode *inode, loff_t offset, loff_t len)
->> -- 
->> 2.49.0.1045.g170613ef41-goog
->> 
+Thanks,
+Charles
 
