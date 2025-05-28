@@ -1,155 +1,110 @@
-Return-Path: <linux-kernel+bounces-664858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-664861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A801AC6179
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 07:57:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4173AC6184
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 08:02:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E7EF1887414
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 05:57:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC22317762F
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 06:02:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9526120E6E3;
-	Wed, 28 May 2025 05:56:39 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C5E3382;
-	Wed, 28 May 2025 05:56:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D76620F07E;
+	Wed, 28 May 2025 06:02:45 +0000 (UTC)
+Received: from mail.itouring.de (mail.itouring.de [85.10.202.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 608D9946C;
+	Wed, 28 May 2025 06:02:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.10.202.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748411799; cv=none; b=sBrs2XZ3BOIRRpFMgoWwmUjRc0uiliPXxCcWEy0NF5dXJuYtcuts+nkl07NbkUQ5gk2pxxisCQfmqEeB6L8iRP5k/TQ+Z9lh+QTQTuim6tdwefFvzzWyGXaHrapLI1rF9owvtyCgYELN857dB2XEMRuW2phPBe2msjwc397d7l8=
+	t=1748412164; cv=none; b=H6v6Jd/j3Ylhs0YIYRwKF4fjHVfsO7q2iFcQBocrmXtnz4T9EtPrmdFjsEENCi8ptM/UaUecSx2P6pKjgZVWyukzBy6w2Mb/8IA+9v1MVrMS7ZHZMZMzf2CYK92A0EQAi+ZC2r1zwgKkbnIri4ABsFpyh2eI7xGLjCaz8Exj/wM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748411799; c=relaxed/simple;
-	bh=X99puUxvPH/bppFqEF/37i/DLRj5Pyc7gUk5/d2kbZ8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lXPzY4BQROjl6bRtEZFKhtcPALbYdEwYlIfdZmLqG4cx+siqlSNhOf3sL7wVo+mfXg5ZczzD4AzQ4e8MozdS/tYkAgx2oauj0HslxAOLQyoJ/z4TFqhbE/R4QV2BqEwgQghEKFgaE2YS8sPWgpQ+gHuQVfmebUYXgiFPecdLb5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-669ff7000002311f-e4-6836a58e1e56
-Date: Wed, 28 May 2025 14:56:25 +0900
-From: Byungchul Park <byungchul@sk.com>
-To: Mina Almasry <almasrymina@google.com>
-Cc: willy@infradead.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	kernel_team@skhynix.com, kuba@kernel.org,
-	ilias.apalodimas@linaro.org, harry.yoo@oracle.com, hawk@kernel.org,
-	akpm@linux-foundation.org, davem@davemloft.net,
-	john.fastabend@gmail.com, andrew+netdev@lunn.ch,
-	asml.silence@gmail.com, toke@redhat.com, tariqt@nvidia.com,
-	edumazet@google.com, pabeni@redhat.com, saeedm@nvidia.com,
-	leon@kernel.org, ast@kernel.org, daniel@iogearbox.net,
-	david@redhat.com, lorenzo.stoakes@oracle.com,
-	Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org,
-	surenb@google.com, mhocko@suse.com, horms@kernel.org,
-	linux-rdma@vger.kernel.org, bpf@vger.kernel.org,
-	vishal.moola@gmail.com
-Subject: Re: [PATCH v2 08/16] page_pool: rename
- __page_pool_release_page_dma() to __page_pool_release_netmem_dma()
-Message-ID: <20250528055625.GC9346@system.software.com>
-References: <20250528022911.73453-1-byungchul@sk.com>
- <20250528022911.73453-9-byungchul@sk.com>
- <CAHS8izMmsHa4taaujEbTK5PM+APYsRJzv1LqGESJf2x6BRnxag@mail.gmail.com>
+	s=arc-20240116; t=1748412164; c=relaxed/simple;
+	bh=g+ZXM88JGqJF3j2j/6W/3xccEWWCQ5wx+u00mjIwc1E=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=OnKfhqY3UEF9COHHOxLiofb16zGZoOUNunHw/r3iXBMMF8i0pVKpEZZn+VILbtQMgUL5XxySSlS+TAcXs3uIB+wyoem8C+yVQITG9dddGUx7RG5TiemSdna/bQDF9eHU2iJPK2hWyo/LImxJtM8ZWy8N5AD/03mCTsyh52U/qbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=applied-asynchrony.com; spf=pass smtp.mailfrom=applied-asynchrony.com; arc=none smtp.client-ip=85.10.202.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=applied-asynchrony.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=applied-asynchrony.com
+Received: from tux.applied-asynchrony.com (p5b2e8559.dip0.t-ipconnect.de [91.46.133.89])
+	by mail.itouring.de (Postfix) with ESMTPSA id 82921C939;
+	Wed, 28 May 2025 07:57:26 +0200 (CEST)
+Received: from [192.168.100.221] (hho.applied-asynchrony.com [192.168.100.221])
+	by tux.applied-asynchrony.com (Postfix) with ESMTP id 26B8360191E20;
+	Wed, 28 May 2025 07:57:26 +0200 (CEST)
+Subject: Re: [PATCH v2] eventpoll: Fix priority inversion problem
+To: Nam Cao <namcao@linutronix.de>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ John Ogness <john.ogness@linutronix.de>,
+ Clark Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-rt-devel@lists.linux.dev, linux-rt-users@vger.kernel.org,
+ Joe Damato <jdamato@fastly.com>, Martin Karsten <mkarsten@uwaterloo.ca>,
+ Jens Axboe <axboe@kernel.dk>
+Cc: Frederic Weisbecker <frederic@kernel.org>,
+ Valentin Schneider <vschneid@redhat.com>
+References: <20250523061104.3490066-1-namcao@linutronix.de>
+From: =?UTF-8?Q?Holger_Hoffst=c3=a4tte?= <holger@applied-asynchrony.com>
+Organization: Applied Asynchrony, Inc.
+Message-ID: <3475f3f1-4109-b6ac-6ea6-dadcdec8db1f@applied-asynchrony.com>
+Date: Wed, 28 May 2025 07:57:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHS8izMmsHa4taaujEbTK5PM+APYsRJzv1LqGESJf2x6BRnxag@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SbUhTYRiGeXfOzo7LyXGZvSqUzSKStBLNt5CUqHgLgsrqR0U18tRWOmVT
-	UyNQk6SV86NAm7O21LZMmMzSabJ0iRaV2tKcqSmr/KNZag0/0nKOyH8X93M/XM+PhyaEOq4/
-	LZUls3KZOF5E8Un+N09dSH7ldsnWpkYCaYzVFHo8nYb0w2Yu0lTVAfRzpp+HplrbKVSucy42
-	OnNI9Ms4S6CvbQ4eGno4QqKm3HoCOfJfUigvZ45A2WYDB3XVqbjozmwlgeozh3nofaOGQp+q
-	/3DRiDWPRK/Uj0g0pIpBbVpf5Hw9BlCrsZ6DnLfKKHTbpqXQ55whgGwvHCQqzVIBZLTYuWhu
-	WkPFrMNPHvVxcIN6kIe1phRcawjGSruNwKaqGxQ2TRbx8MCHJgq/LJkjcYN5ioPzro1TeOLr
-	RxJ/t/RQ2Pikh8RvtK08PGVac4g5wY+KY+Olqax8y66zfMn10WZO0sTKNMfzcioTtHkpgQcN
-	mXBYUaviKAG9xD8GY10xyWyABZ11lIspZiO022cIF/swm2CFpZDrYoIZ4sIOzUUXr2SSYXv3
-	+FJfwERCu8Gy2OHTQsYA4Py0heceeMNXd7+Q7uWN8Pc9G+HyEkwA1C/Q7ngtvPa0dMnlwRyG
-	ZdX2JV7FBMHmunaO+2QzDXvfhrnZD7YY7GQB8FYvM6iXGdT/DeplBi0gq4BQKktNEEvjw0Ml
-	6TJpWui5xAQTWHych1d/nzSDya5YK2BoIPIU4JoIiZArTlWkJ1gBpAmRjyA7ertEKIgTp2ew
-	8sQz8pR4VmEFATQpWi0Ic16OEzIXxMnsJZZNYuX/phzawz8T6DO8rtqC9wUGzyij5hXKQqtz
-	oCTy+BXf4gJd2B6/WfpgYonfA+93OzzuNB+o2bXe1B1yk8oodxSMPZataB6tOVXa25Pb0a8f
-	Oc/sLuqT1bZEF+7NqgiSC9OeZQfmLnhGb546U0+HiTMdxfuLdfyoiKz+Y0d3Zh3p6j99VJVw
-	P9spIhUS8bZgQq4Q/wU3diWLNAMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SfUzMcRzHfX9P9+u49nMO35WNHWYYZROfZMSMr/6wjKV57Jbf3Ol6cJd2
-	hS11xKnj8AfXZZeUSnMJPVg76TlM5GHnsXal2SiVnshTVzP999rn/f68Pv98eFp+gvXhNTHx
-	oi5GpVVyUka6JSh1iTl3hdq/f8AfbI4iDm4MG+B6WzkLtsJSBP3f30rgW20DBznZgzTYmo0M
-	DDh+0PCx3i2B1rxOBirTymhwn23kIMM4QkNKeT4FNVlNLDwtNbNw8UcuDWXJbRJ4fs/GwYei
-	Pyx0Vmcw0GQtYKDVHAz19hkw+OgLglpHGQWD6VkcXGixc9BubEXQUuNmIPO4GYHD6WJhZNjG
-	BSvJnYLXFKmwvpcQe8lhcjt/ETG5WmhSUniaIyV95yXk3atKjjReGmFIRfk3imSkdnOk9+Mb
-	hnx1vuRIzqceijjuvGTIY3utJHTqTunq/aJWkyDq/NZESNUnP1dRcb3TDO77OVwyqvc2IZ7H
-	wnLc836bCXnxjDAfn2su5TzMCQuwy/Wd9rBCWIivOS2sh2mhlcVPbAc9PE2Ixw0vusf6MmEl
-	duU7RztSXi7kI/xr2CkZD6bipssdzPjyAvzzSgvtuUsLvvj6b358PBun3s0cu+UlbMVZRa4x
-	ni7MxVWlDdQ55G2dYLJOMFn/m6wTTHbEFCKFJiYhWqXRBizVR6kTYzSGpZGx0SVo9Dnyjv20
-	lKP+55uqkcAj5RQZKQ5Qy1lVgj4xuhphnlYqZClrV6jlsv2qxCRRF7tPd1gr6quRL88oZ8pC
-	dogRcuGAKl6MEsU4UfcvpXgvn2TUGOl7lDJp0rol7fWxdHbVMNwqPq1NCNmN807WiXV7tyn2
-	rd+ekWReP4fuCzNEnDI/bju/ymLURhknz9uz8UbX2ewhPzqooMsyY12cJjyvwnBIfjUlLC5t
-	gz1zV5fPsUfdD5iOM43h4YHEsnjzrPSbQ9vfHn826chvb9O60CTFw0Alo1erli2idXrVXx7P
-	cGYYAwAA
-X-CFilter-Loop: Reflected
+In-Reply-To: <20250523061104.3490066-1-namcao@linutronix.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 
-On Tue, May 27, 2025 at 08:21:32PM -0700, Mina Almasry wrote:
-> On Tue, May 27, 2025 at 7:29 PM Byungchul Park <byungchul@sk.com> wrote:
-> >
-> > Now that __page_pool_release_page_dma() is for releasing netmem, not
-> > struct page, rename it to __page_pool_release_netmem_dma() to reflect
-> > what it does.
-> >
-> > Signed-off-by: Byungchul Park <byungchul@sk.com>
-> > ---
-> >  net/core/page_pool.c | 8 ++++----
-> >  1 file changed, 4 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/net/core/page_pool.c b/net/core/page_pool.c
-> > index fb487013ef00..af889671df23 100644
-> > --- a/net/core/page_pool.c
-> > +++ b/net/core/page_pool.c
-> > @@ -674,8 +674,8 @@ void page_pool_clear_pp_info(netmem_ref netmem)
-> >         netmem_set_pp(netmem, NULL);
-> >  }
-> >
-> > -static __always_inline void __page_pool_release_page_dma(struct page_pool *pool,
-> > -                                                        netmem_ref netmem)
-> > +static __always_inline void __page_pool_release_netmem_dma(struct page_pool *pool,
-> > +                                                          netmem_ref netmem)
-> >  {
-> >         struct page *old, *page = netmem_to_page(netmem);
-> >         unsigned long id;
-> > @@ -722,7 +722,7 @@ static void page_pool_return_netmem(struct page_pool *pool, netmem_ref netmem)
-> >         if (static_branch_unlikely(&page_pool_mem_providers) && pool->mp_ops)
-> >                 put = pool->mp_ops->release_netmem(pool, netmem);
-> >         else
-> > -               __page_pool_release_page_dma(pool, netmem);
-> > +               __page_pool_release_netmem_dma(pool, netmem);
-> >
-> >         /* This may be the last page returned, releasing the pool, so
-> >          * it is not safe to reference pool afterwards.
-> > @@ -1140,7 +1140,7 @@ static void page_pool_scrub(struct page_pool *pool)
-> >                 }
-> >
-> >                 xa_for_each(&pool->dma_mapped, id, ptr)
-> > -                       __page_pool_release_page_dma(pool, page_to_netmem(ptr));
-> > +                       __page_pool_release_netmem_dma(pool, page_to_netmem((struct page *)ptr));
-> 
-> I think this needs to remain page_to_netmem(). This static cast should
+Hello,
 
-Do you mean to ask to revert the casting patch of page_to_netmem()?
+I have been running with v2 on 6.15.0 without any issues so far, but just
+found this in my server's kern.log:
 
-Or leave page_to_netmem(ptr) unchanged?
+May 27 22:02:12 tux kernel: ------------[ cut here ]------------
+May 27 22:02:12 tux kernel: WARNING: CPU: 2 PID: 3011 at fs/eventpoll.c:850 __ep_remove+0x137/0x250
+May 27 22:02:12 tux kernel: Modules linked in: loop nfsd auth_rpcgss oid_registry lockd grace sunrpc sch_fq_codel btrfs nct6775 blake2b_generic nct6775_core xor lzo_compress hwmon_vid i915 raid6_pq zstd_compress x86_pkg_temp_thermal drivetemp lzo_decompress coretemp i2c_algo_bit sha512_ssse3 drm_buddy sha512_generic intel_gtt sha256_ssse3 drm_client_lib sha256_generic libsha256 sha1_ssse3 drm_display_helper sha1_generic wmi_bmof drm_kms_helper aesni_intel mq_deadline ttm usbhid gf128mul libaes drm crypto_simd cryptd i2c_i801 video atlantic i2c_smbus drm_panel_orientation_quirks zlib_deflate i2c_core wmi backlight
+May 27 22:02:12 tux kernel: CPU: 2 UID: 996 PID: 3011 Comm: chrony_exporter Not tainted 6.15.0 #1 PREEMPTLAZY
+May 27 22:02:12 tux kernel: Hardware name: System manufacturer System Product Name/P8Z68-V LX, BIOS 4105 07/01/2013
+May 27 22:02:12 tux kernel: RIP: 0010:__ep_remove+0x137/0x250
+May 27 22:02:12 tux kernel: Code: 48 89 c7 48 85 c0 74 22 48 8d 54 24 08 48 89 fe e8 3e 1c 24 00 48 89 df e8 56 1c 24 00 48 89 c7 4c 39 e8 74 07 48 85 ff 75 de <0f> 0b 4d 85 f6 74 10 48 8b 7c 24 08 48 89 da 4c 89 f6 e8 12 1c 24
+May 27 22:02:12 tux kernel: RSP: 0018:ffffc90002a4be40 EFLAGS: 00010246
+May 27 22:02:12 tux kernel: RAX: 0000000000000000 RBX: ffff888104361710 RCX: ffff8881100f2d00
+May 27 22:02:12 tux kernel: RDX: 0000000000000000 RSI: ffff888100e04800 RDI: 0000000000000000
+May 27 22:02:12 tux kernel: RBP: ffff888367929080 R08: ffff888104361718 R09: ffffffff81575c7b
+May 27 22:02:12 tux kernel: R10: 0000000000000001 R11: 0000000000000000 R12: ffff8881043616c0
+May 27 22:02:12 tux kernel: R13: ffff8883679290a0 R14: 0000000000000000 R15: 0000000000000002
+May 27 22:02:12 tux kernel: FS:  00007fee87df5740(0000) GS:ffff88887c9c4000(0000) knlGS:0000000000000000
+May 27 22:02:12 tux kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+May 27 22:02:12 tux kernel: CR2: 000000c002a33000 CR3: 00000001076f1003 CR4: 00000000000606f0
+May 27 22:02:12 tux kernel: Call Trace:
+May 27 22:02:12 tux kernel:  <TASK>
+May 27 22:02:12 tux kernel:  do_epoll_ctl+0x6ee/0xcf0
+May 27 22:02:12 tux kernel:  ? kmem_cache_free+0x2c5/0x3b0
+May 27 22:02:12 tux kernel:  __x64_sys_epoll_ctl+0x53/0x70
+May 27 22:02:12 tux kernel:  do_syscall_64+0x47/0x100
+May 27 22:02:12 tux kernel:  entry_SYSCALL_64_after_hwframe+0x4b/0x53
+May 27 22:02:12 tux kernel: RIP: 0033:0x55a289d4952e
+May 27 22:02:12 tux kernel: Code: 24 28 44 8b 44 24 2c e9 70 ff ff ff cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc 49 89 f2 48 89 fa 48 89 ce 48 89 df 0f 05 <48> 3d 01 f0 ff ff 76 15 48 f7 d8 48 89 c1 48 c7 c0 ff ff ff ff 48
+May 27 22:02:12 tux kernel: RSP: 002b:000000c0000584d0 EFLAGS: 00000246 ORIG_RAX: 00000000000000e9
+May 27 22:02:12 tux kernel: RAX: ffffffffffffffda RBX: 0000000000000004 RCX: 000055a289d4952e
+May 27 22:02:12 tux kernel: RDX: 0000000000000008 RSI: 0000000000000002 RDI: 0000000000000004
+May 27 22:02:12 tux kernel: RBP: 000000c000058528 R08: 0000000000000000 R09: 0000000000000000
+May 27 22:02:12 tux kernel: R10: 000000c000058514 R11: 0000000000000246 R12: 000000c000058578
+May 27 22:02:12 tux kernel: R13: 000000c00015e000 R14: 000000c000005a40 R15: 0000000000000000
+May 27 22:02:12 tux kernel:  </TASK>
+May 27 22:02:12 tux kernel: ---[ end trace 0000000000000000 ]---
 
-I added the casting '(struct page *)ptr' above to avoid compliler
-warning..  Do you see another warning on it?
+It seems the condition (!n) in __ep_remove is not always true and the WARN_ON triggers.
+This is the first and only time I've seen this. Currently rebuilding with v3.
 
-	Byungchul
+cheers
+Holger
 
-> generate a compiler warning since netmem_ref is a __bitwise.
-> 
-> -- 
-> Thanks,
-> Mina
 
