@@ -1,109 +1,149 @@
-Return-Path: <linux-kernel+bounces-665157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C1D5AC64F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 10:59:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C635AC64F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 10:59:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64C2C9E706A
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 08:58:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F4244E21F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 08:59:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 567332741AC;
-	Wed, 28 May 2025 08:58:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92640274646;
+	Wed, 28 May 2025 08:58:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dyLMTTOm"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b="MaKNQq8j"
+Received: from mailtransmit04.runbox.com (mailtransmit04.runbox.com [185.226.149.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4393A1EB5B
-	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 08:58:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 617BF274654;
+	Wed, 28 May 2025 08:58:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.226.149.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748422705; cv=none; b=iJug9cWfP+lAw5E4IjhaqelZxWDTwnZ+j061XLoGgZRF60jRn54WOEP0aRyzeCRrIAMicbTjKCESv/4ek+u/ZGOkOyZmqW8azTjbaFb6HyjFvKNb4y6Q2ie6ivkK3amejnB1fXpa/35anXydYWkg1OACAnOHoG1yZRT5Mh1syt8=
+	t=1748422735; cv=none; b=qru6ZhiRnJmjwnL/iJWVe4oMXB6L7yeijXAR0x5LaPpm+G0RtAs1lQ/6lWOyPux7Y2sW74QLi3jGupHRLMhi7L6ZqSJ5asNWQ9hZ2S1zMd8ut0nvsVPOzXaq8m5TIHs32VmTDZLrv7JjEgCjDEHN0Z7ps6jQ+DVl2SxptRKa6t0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748422705; c=relaxed/simple;
-	bh=dpY9XFxX4Hy1lUfcsTOGEUIRWm+NLZbPH82t6a86ht0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dvY9RsmGywzaU3uPYDr74z2iSeUKupkm+3I/bE2o1y4iTK9W+0O5uS0y0rd9zT5+d31ta6T04GVGl93Xvhbf0UqhYd9bAmYQnEVXN+08Q1sefre7RZ7nUZ4DKdkRtzepfu9M81T4yoI+cN7uz41pTXReWAO7HwBy3xPD73KyDO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=dyLMTTOm; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=vYNmxvQDWeJYerNgEaZPPT4IzuTtjys5hREGA3peSrk=; b=dyLMTTOmH9qEElCGwMz5i6kNZE
-	Zhupst2sfaCLBXlarKlTs26ch0qUrd3lTu24B4cPyMcr2Oa4Cxe87pR46bZObGcTDYFgVfOTusDxD
-	sj01vkEX9OReMo8THxP3qDDgqkiz04CDSj6wq2aDp/1Uq+FqNF9wqj8RimPZ1YR0ZWYAnrOOG2Emv
-	dVInh8gS9Eubv4kDPgw9SrmLqQ0E89m667FXtixpSe+IvKVA6X4IVmd725wrlibku5uTDOQA+3qvf
-	UKc48PgWx5zYxgwKEFGBxy3+AfYHmm2zEPvw/L6POaOCqWEKqrjhJKSOVyq2oqpqabt1JU/JxdhLd
-	S5bGt30w==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uKCc4-0000000DQ5A-2K6g;
-	Wed, 28 May 2025 08:58:16 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 9BD883005AF; Wed, 28 May 2025 10:58:13 +0200 (CEST)
-Date: Wed, 28 May 2025 10:58:13 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Shrikanth Hegde <sshegde@linux.ibm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: Re: [PATCH 00/43] sched: Use the SMP scheduler on UP too
-Message-ID: <20250528085813.GX39944@noisy.programming.kicks-ass.net>
-References: <20250528080924.2273858-1-mingo@kernel.org>
+	s=arc-20240116; t=1748422735; c=relaxed/simple;
+	bh=MzUEp0oUJyRTES8Tk09QRNnjCyqgfx6IGrtjMCFN3KU=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=MN5kgq0SwQIAa01VCDGUKnvktPZIauPpcSsvI9VIK+7NlJb7kNJN3RkITC3GW4ieZbwJAIVsuedxqzk5L7BF8TlqAhHxf7VBcYYQBDp8vAu8Ab7S/klkZAQ1MyV5p6MaNrjzJyjqSIsAlC3WDXbj89Lsf49akc3V1JSz7v8/qzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co; spf=pass smtp.mailfrom=rbox.co; dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b=MaKNQq8j; arc=none smtp.client-ip=185.226.149.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rbox.co
+Received: from mailtransmit02.runbox ([10.9.9.162] helo=aibo.runbox.com)
+	by mailtransmit04.runbox.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.93)
+	(envelope-from <mhal@rbox.co>)
+	id 1uKCcS-005EpJ-6s; Wed, 28 May 2025 10:58:40 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=rbox.co;
+	s=selector2; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:
+	Cc:To:Subject:From:MIME-Version:Date:Message-ID;
+	bh=0oAb0C7YV1iLSqUTjOfv41zdIB6dGnt2DLCvAuOAkVE=; b=MaKNQq8jnuhuAy7+h9hpsFqAS2
+	J6f45ZwoBeOtZzv/ISfNM+VcpWiZwBdalK4CI5FM6rC5I/+lkNzE7sy08dmFCkHDAuLTl/CkC5Dw/
+	WaeL7VPFr2kzohzYtCEHVtgspofbpRnhcppYM4vHxvgpg8/6GMNefYEHN6fznjA1XbWMeg+Yfr781
+	dHrUKW5/f1JKYDFmfEbVG6BxX9ayvvIOheb5E9iC+o8+hr2Q7NCxSnKV8KAUCaAjd2/A0u0kXol2S
+	jShwzZvK25TDVVxzzq4JN+eT9vhd/JZ/pJ7n5u63RNYiSh8verMOIy1FkEXIBIcIW3ztN21dvj+Ej
+	sB68TCEA==;
+Received: from [10.9.9.74] (helo=submission03.runbox)
+	by mailtransmit02.runbox with esmtp (Exim 4.86_2)
+	(envelope-from <mhal@rbox.co>)
+	id 1uKCcR-0004wx-LN; Wed, 28 May 2025 10:58:39 +0200
+Received: by submission03.runbox with esmtpsa  [Authenticated ID (604044)]  (TLS1.2:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.93)
+	id 1uKCcH-00CuGb-Ac; Wed, 28 May 2025 10:58:29 +0200
+Message-ID: <54959090-440e-49e8-80b3-8eee0ef4582c@rbox.co>
+Date: Wed, 28 May 2025 10:58:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250528080924.2273858-1-mingo@kernel.org>
+User-Agent: Mozilla Thunderbird
+From: Michal Luczaj <mhal@rbox.co>
+Subject: Re: [PATCH net-next] vsock/test: Cover more CIDs in transport_uaf
+ test
+To: Stefano Garzarella <sgarzare@redhat.com>
+Cc: virtualization@lists.linux.dev, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250523-vsock-test-inc-cov-v1-1-fa3507941bbd@rbox.co>
+ <limbmrszio42lvkmalapooflj5miedlszkmnnm4ckmy2upfghw@24vxuhgdji2z>
+ <1f5cc46a-de4c-4361-a706-fc7fe06a7068@rbox.co>
+ <gfmoupl72tjyymhwxcstwpgaabbfaz6f4v6vj4lwwzwssg577c@urkmgn7rapnj>
+ <151bf5fe-c9ca-4244-aa21-8d7b8ff2470f@rbox.co>
+ <skvayogoenhntikkdnqrkkjvqesmpnukjlil6reubrouo45sat@j7zw6lfthfrd>
+Content-Language: pl-PL, en-GB
+In-Reply-To: <skvayogoenhntikkdnqrkkjvqesmpnukjlil6reubrouo45sat@j7zw6lfthfrd>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, May 28, 2025 at 10:08:41AM +0200, Ingo Molnar wrote:
->   sched/smp: Always define sched_domains_mutex_lock()/unlock(), def_root_domain and sched_domains_mutex
->   sched/smp: Make SMP unconditional
->   sched/smp: Always define is_percpu_thread() and scheduler_ipi()
->   sched/smp: Always define rq->hrtick_csd
->   sched/smp: Use the SMP version of try_to_wake_up()
->   sched/smp: Use the SMP version of __task_needs_rq_lock()
->   sched/smp: Use the SMP version of wake_up_new_task()
->   sched/smp: Use the SMP version of sched_exec()
->   sched/smp: Use the SMP version of idle_thread_set_boot_cpu()
->   sched/smp: Use the SMP version of the RT scheduling class
->   sched/smp: Use the SMP version of the deadline scheduling class
->   sched/smp: Use the SMP version of scheduler debugging data
->   sched/smp: Use the SMP version of schedstats
->   sched/smp: Use the SMP version of the scheduler syscalls
->   sched/smp: Use the SMP version of sched_update_asym_prefer_cpu()
->   sched/smp: Use the SMP version of the idle scheduling class
->   sched/smp: Use the SMP version of the stop-CPU scheduling class
->   sched/smp: Use the SMP version of cpu_of()
->   sched/smp: Use the SMP version of is_migration_disabled()
->   sched/smp: Use the SMP version of rq_pin_lock()
->   sched/smp: Use the SMP version of task_on_cpu()
->   sched/smp: Use the SMP version of WF_ and SD_ flag sanity checks
->   sched/smp: Use the SMP version of ENQUEUE_MIGRATED
->   sched/smp: Use the SMP version of add_nr_running()
->   sched/smp: Use the SMP version of double_rq_clock_clear_update()
+On 5/27/25 10:41, Stefano Garzarella wrote:
+> On Mon, May 26, 2025 at 10:44:05PM +0200, Michal Luczaj wrote:
+>> On 5/26/25 16:39, Stefano Garzarella wrote:
+>>> On Mon, May 26, 2025 at 02:51:18PM +0200, Michal Luczaj wrote:
+>>>> On 5/26/25 10:25, Stefano Garzarella wrote:
+>>>>> On Fri, May 23, 2025 at 12:31:16AM +0200, Michal Luczaj wrote:
+>>>>>> Note that having only a virtio transport loaded (without vhost_vsock) is
+>>>>>> unsupported; test will always pass. Depending on transports available, a
+>>>>>
+>>>>> Do you think it might make sense to print a warning if we are in this
+>>>>> case, perhaps by parsing /proc/modules and looking at vsock
+>>>>> dependencies?
+>>>>
+>>>> That'd nice, but would parsing /proc/modules work if a transport is
+>>>> compiled-in (not a module)?
+>>>
+>>> Good point, I think not, maybe we can see something under /sys/module,
+>>> though, I would say let's do best effort without going crazy ;-)
+>>
+>> Grepping through /proc/kallsyms would do the trick. Is this still a sane
+>> ground?
+> 
+> It also depends on a config right?
+> I see CONFIG_KALLSYMS, CONFIG_KALLSYMS_ALL, etc. but yeah, if it's 
+> enabled, it should work for both modules and built-in transports.
 
-You know about unifdef, right :-)
+FWIW, tools/testing/selftests/net/config has CONFIG_KALLSYMS=y, which
+is enough for being able to check symbols like virtio_transport and
+vhost_transport.
 
-$ unifdef -m -DCONFIG_SMP=y kernel/sched/*.[ch] include/linux/sched.h include/linux/sched/*.h
+Administrative query: while net-next is closed, am I supposed to mark this
+series as "RFC" and post v2 for a review as usual, or is it better to just
+hold off until net-next opens?
 
-I'd just run that tool, have changelog include the command and patch be
-the effect.
+>>>>>> +static void test_stream_transport_uaf_client(const struct test_opts *opts)
+>>>>>> +{
+>>>>>> +	bool tested = false;
+>>>>>> +	int cid;
+>>>>>> +
+>>>>>> +	for (cid = VMADDR_CID_HYPERVISOR; cid <= VMADDR_CID_HOST + 1; ++cid)
+>>>>>
+>>>>>> +		tested |= test_stream_transport_uaf(cid);
+>>>>>> +
+>>>>>> +	if (!tested)
+>>>>>> +		fprintf(stderr, "No transport tested\n");
+>>>>>> +
+>>>>>> 	control_writeln("DONE");
+>>>>>
+>>>>> While we're at it, I think we can remove this message, looking at
+>>>>> run_tests() in util.c, we already have a barrier.
+>>>>
+>>>> Ok, sure. Note that console output gets slightly de-synchronised: server
+>>>> will immediately print next test's prompt and wait there.
+>>>
+>>> I see, however I don't have a strong opinion, you can leave it that way
+>>> if you prefer.
+>>
+>> How about adding a sync point to run_tests()? E.g.
+> 
+> Yep, why not, of course in another series :-)
+> 
+> And if you like, you can remove that specific sync point in that series 
+> and check also other tests, but I think we have only that one.
 
-No point in doing this manually bit by bit.
+OK, I'll leave that for later.
+
+Thanks,
+Michal
+
 
