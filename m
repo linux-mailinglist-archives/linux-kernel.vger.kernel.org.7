@@ -1,131 +1,156 @@
-Return-Path: <linux-kernel+bounces-665015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28F05AC6372
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 09:54:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7CA0AC6382
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 09:58:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EF2C3B1A40
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 07:54:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC0824E058F
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 07:58:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F39B246762;
-	Wed, 28 May 2025 07:54:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C85D9246765;
+	Wed, 28 May 2025 07:58:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="O6A6Vlst"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="MZY20TUS"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8868C1DE4F1;
-	Wed, 28 May 2025 07:54:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63D5A1DE4F1;
+	Wed, 28 May 2025 07:58:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748418869; cv=none; b=srIGJiVUufTyZB/lVmkvcAdvHcNoXGEACwybhJ7vDAEf62K0NrNqC1IYXOxhObJJOnfKr7ucWsLTE1OByEGSTLZBe1X/W9JVmJ1e3PXtaed3geHswcX3DnoYMInm+4qqnCoKbjeVDmxAdGfk5VTS1Bl7czYFcU8Of+bSUGB3XnU=
+	t=1748419124; cv=none; b=eAGNdVBBJ99ZfY//uBd7bklEHNmhRxq0pvkpua1MHRmSwXHGix/ukOdQ5FiLhtykyiCqMzg81syxwHddyFVcwTPAMuHyr65TQjzJzFOxKj2u16j3vffH3OerBr1ok6w+RgmvHM6RB1KSWUTTtLsugykkOwE6H6m/x7288eG8x9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748418869; c=relaxed/simple;
-	bh=1eKx/Xcp7Zw3JeZhrqVfQkMnweqpNr9X4J/fm8KiB4w=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BR++rjyl4c7frODnrjlKOHETCVmtlQfYWqZk4BeZCmn55kayoV9cN2J9HggYPHRcOvdrVuKP4lYcenguuYA24zd35VAAD5yxj9EXrwXvJCGYMzqodKep1d0iYyjQN/e5k3wTB5pkRT0BGLdokZyYRLdjhWurt805i++OjRMrvN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=O6A6Vlst; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: f73d93c63b9811f0813e4fe1310efc19-20250528
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=7FlhNB9pTksMToqSnpWt6CkAE6AWRUfjH5SfzBJw+bk=;
-	b=O6A6VlstJHZBqAaw4fXeBxoQgB5x6+o5NkPiAijVhBLASkCS/pi4rxBEuD0wsoh8/j3WYgcuyjKSLE/HXayoE81y+AfmXFo30y3xi5v15ZgXtnIMcsSFiU4CT3YLWIlAgypMcW7KV0VdJFo+uy0ugU5ZmBUx94tckeJfJaiTa7k=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.2.1,REQID:99757d0d-af35-4114-9419-b3566a63de74,IP:0,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
-	elease,TS:0
-X-CID-META: VersionHash:0ef645f,CLOUDID:cf251058-abad-4ac2-9923-3af0a8a9a079,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:-3,IP:ni
-	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: f73d93c63b9811f0813e4fe1310efc19-20250528
-Received: from mtkmbs11n2.mediatek.inc [(172.21.101.187)] by mailgw01.mediatek.com
-	(envelope-from <macpaul.lin@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1576526437; Wed, 28 May 2025 15:54:21 +0800
-Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- MTKMBS14N2.mediatek.inc (172.21.101.76) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.39; Wed, 28 May 2025 15:54:19 +0800
-Received: from mtksitap99.mediatek.inc (10.233.130.16) by
- mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1258.39 via Frontend Transport; Wed, 28 May 2025 15:54:19 +0800
-From: Macpaul Lin <macpaul.lin@mediatek.com>
-To: Felix Fietkau <nbd@nbd.name>, Sean Wang <sean.wang@mediatek.com>, Lorenzo
- Bianconi <lorenzo@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S
- . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
- Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Matthias Brugger
-	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, Bartosz Golaszewski
-	<brgl@bgdev.pl>, <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>
-CC: Bear Wang <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>,
-	Ramax Lo <ramax.lo@mediatek.com>, Macpaul Lin <macpaul.lin@mediatek.com>,
-	Macpaul Lin <macpaul@gmail.com>, <stable@vger.kernel.org>, MediaTek
- Chromebook Upstream <Project_Global_Chrome_Upstream_Group@mediatek.com>,
-	Yanqing Wang <ot_yanqing.wang@mediatek.com>, Biao Huang
-	<biao.huang@mediatek.com>
-Subject: [PATCH] driver: net: ethernet: mtk_star_emac: fix suspend/resume issue
-Date: Wed, 28 May 2025 15:53:51 +0800
-Message-ID: <20250528075351.593068-1-macpaul.lin@mediatek.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1748419124; c=relaxed/simple;
+	bh=GwAIH0J4QxodC4TBbWXZN0g8BBoWbus+4IO1ifLIQZ4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=XEuXVlqt30kJX25hTbl4CGrKlgJfOeG3l9KTiILgvwf7/vOBwh0yoh2wtEvQpBR91g3TnXgSIgu5TuK/MjBEsoxvA3C3Q/68h71kjFxLRPKkfm+7GrXuidy2LDX9oTCU9dhlV1spjvSBiz5XKd9uo+vsNIc1kPyeD7xe6idfDX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=MZY20TUS; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54S5K2Zc023650;
+	Wed, 28 May 2025 09:58:20 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	zs/m0sTwjcc/cPY4fbpGq8K8yrAOAzwWnhRtkFcb4oA=; b=MZY20TUSWorsKXkH
+	iZj2sXs6x5m2C5ADe4PIn1Ww24WqZxmm5Y0Nq3c+oiIck/cUZFB0vYxUbNYoWoPJ
+	yA0aQQ9f/469vaJMc2ScDZV4sNyfRF9faM8D9bqX5d6dVQLeVroAq3nNfLdIl3yz
+	QdFNDPs99aNgY95rsUYhltqttb88A147ZFAEoGPMCW0vz9XHg0G9bvZu+GZDxyLQ
+	xHugAG5+4JAtbTW3JrfktXlgc3LbzcscjNU+ZGj2wxwoAixkC3CyhYy2RtFApu3V
+	EbtGzyxVyKVqvD1LdjJmI0OLhiw4ul+xFt9cMWl6GZ4ocrrVToGUoGG7236MNtbT
+	3X3rTQ==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 46u3hk84u6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 28 May 2025 09:58:20 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 1A40240046;
+	Wed, 28 May 2025 09:57:03 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 9B9E5B27A38;
+	Wed, 28 May 2025 09:55:46 +0200 (CEST)
+Received: from [10.48.87.141] (10.48.87.141) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 28 May
+ 2025 09:55:46 +0200
+Message-ID: <bd6c5a45-f6ee-4cdc-99fe-6af22e30015b@foss.st.com>
+Date: Wed, 28 May 2025 09:55:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-MTK: N
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Input: gpio-keys - fix a sleep while atomic with
+ PREEMPT_RT
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+CC: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Clark Williams
+	<clrkwllms@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Paul Cercueil
+	<paul@crapouillou.net>, <linux-input@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-rt-devel@lists.linux.dev>,
+        Fabrice
+ Gasnier <fabrice.gasnier@foss.st.com>
+References: <20250526-gpio_keys_preempt_rt-v1-1-09ddadf8e19d@foss.st.com>
+ <20250526141321.FcXEgnV4@linutronix.de>
+ <661af124-3072-4dcf-b613-ec3e48549626@foss.st.com>
+ <20250527144159.Dcstk83c@linutronix.de>
+Content-Language: en-US
+From: Gatien CHEVALLIER <gatien.chevallier@foss.st.com>
+In-Reply-To: <20250527144159.Dcstk83c@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-28_04,2025-05-27_01,2025-03-28_01
 
-From: Yanqing Wang <ot_yanqing.wang@mediatek.com>
+Hello Sebastian,
 
-Identify the cause of the suspend/resume hang: netif_carrier_off()
-is called during link state changes and becomes stuck while
-executing linkwatch_work().
+On 5/27/25 16:41, Sebastian Andrzej Siewior wrote:
+> On 2025-05-27 15:36:37 [+0200], Gatien CHEVALLIER wrote:
+>> Hello Sebastian,
+> Hello Gatien,
+> 
+>> Can you elaborate on "This flag change makes not difference on
+>> !PREEMPT_RT" please? IIUC,this makes the callback not run in hard IRQ
+>> context, even in !PREEMPT_RT, no?
+> 
+> If you set
+> - HRTIMER_MODE_REL_HARD
+>    then the callback runs in
+>    - hardirq context on !PREEMPT_RT
+>    - hardirq context on PREEMPT_RT.
+> 
+> - HRTIMER_MODE_REL
+>    then the callback runs in
+>    - hardirq context on !PREEMPT_RT
+>    - preemptible softirq on PREEMPT_RT.
+> 
+> - HRTIMER_MODE_REL_SOFT
+>    then the callback runs in
+>    - softirq context on !PREEMPT_RT
+>    - preemptible softirq on PREEMPT_RT.
+> 
+> Therefore if you switch HRTIMER_MODE_REL_HARD -> HRTIMER_MODE_REL then
+> it is a nop on !PREEMPT_RT.
+> 
 
-To resolve this issue, call netif_device_detach() during the Ethernet
-suspend process to temporarily detach the network device from the
-kernel and prevent the suspend/resume hang.
+Thank you for the details.
 
-Fixes: 8c7bd5a454ff ("net: ethernet: mtk-star-emac: new driver")
-Signed-off-by: Yanqing Wang <ot_yanqing.wang@mediatek.com>
-Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
-Signed-off-by: Biao Huang <biao.huang@mediatek.com>
----
- drivers/net/ethernet/mediatek/mtk_star_emac.c | 4 ++++
- 1 file changed, 4 insertions(+)
+>> Regarding the need of the spin_lock: gpio_keys_irq_timer() and
+>> gpio_keys_irq_isr() appear to access the same resources. Can't we
+>> have a concurrent access on it from:
+>> HR timer interrupt // GPIO interrupt?
+> 
+> Yes, it could.
+> 
+>> But looking back at the patch, this situation does not depend on
+>> the HRTIMER_MODE_REL_HARD flag. So maybe it should be addressed
+>> separately.
+> 
+> Yes, please.
+> 
 
-diff --git a/drivers/net/ethernet/mediatek/mtk_star_emac.c b/drivers/net/ethernet/mediatek/mtk_star_emac.c
-index b175119a6a7d..b83886a41121 100644
---- a/drivers/net/ethernet/mediatek/mtk_star_emac.c
-+++ b/drivers/net/ethernet/mediatek/mtk_star_emac.c
-@@ -1463,6 +1463,8 @@ static __maybe_unused int mtk_star_suspend(struct device *dev)
- 	if (netif_running(ndev))
- 		mtk_star_disable(ndev);
- 
-+	netif_device_detach(ndev);
-+
- 	clk_bulk_disable_unprepare(MTK_STAR_NCLKS, priv->clks);
- 
- 	return 0;
-@@ -1487,6 +1489,8 @@ static __maybe_unused int mtk_star_resume(struct device *dev)
- 			clk_bulk_disable_unprepare(MTK_STAR_NCLKS, priv->clks);
- 	}
- 
-+	netif_device_attach(ndev);
-+
- 	return ret;
- }
- 
--- 
-2.45.2
+Ok, I will do that in V2
 
+>> On the other hand, I should use the new
+>> guard(spinlock_irqsave)(&bdata->lock);
+> 
+> Yes, please. The other instance already does so.
+> 
+> Sebastian
+
+Ok
+
+Best regards,
+Gatien
 
