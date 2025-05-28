@@ -1,78 +1,91 @@
-Return-Path: <linux-kernel+bounces-665731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01DDAAC6CFE
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 17:40:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F0C4AC6D07
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 17:41:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1C2A1BC412E
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 15:41:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FA9B4A84AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 15:41:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AA2A28C5C2;
-	Wed, 28 May 2025 15:40:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mx/0Hbe3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 582C328C5BE;
+	Wed, 28 May 2025 15:41:28 +0000 (UTC)
+Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00EAD28C2CE;
-	Wed, 28 May 2025 15:40:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 463F228C5D0;
+	Wed, 28 May 2025 15:41:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.62.165.209
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748446843; cv=none; b=LLlsCkCKrdX1+p6+wStv7sB9Ka2KGBY1WrIiy33kUT7XYN4klWbQtQgBLv4mF+N8ssHADytDe9x27kRPQpO6SNfK2yDOM4igWNW2ezU8wHX1zDhBWewqp1FWAwXzDt++LtTzx+b01cMO/C/49gnSv2AHRr9d005B5yrrAbPNC80=
+	t=1748446887; cv=none; b=cOOJscMhYiPvARzA/SkTMOen5PRxGzrurXlxb6k8Zpirex1lIWZn3AtXZlGl/7A6bDmgVl5wtIC09/+SKbkfmTmsTatfI6lqSyHHFWfpdOq3ZzTs0iLbXFmnV2AnpFEmqt1Bk/N/DYYElzKdMX8GNSgokclCJb+k6iu9SALYM/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748446843; c=relaxed/simple;
-	bh=id7cLHXlKvI6Bxx1Ngc+Mlov47TqTRZUpUGFtZtWGps=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=eoeHmZIPhy432wwOigwybteAoQyUv6BbY0HsVeBfLXxzYkg8fpqi48IqBjkj88glv+CVN38OoWtBeDaOaWiScPyXaddRtvH6MRsKaSXyY64d8jNJzBONb+7VYkJEDOBM6Pos8NBae2lH5u3YcY8bVzrGtGSQP02PVkukvTYnbl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mx/0Hbe3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79788C4CEE3;
-	Wed, 28 May 2025 15:40:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748446842;
-	bh=id7cLHXlKvI6Bxx1Ngc+Mlov47TqTRZUpUGFtZtWGps=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=Mx/0Hbe3WqpAx49YL7GbWdE5vMwbCryqjC4TJa0Dlw6aJQD62s9gO2QycvvAVzH0C
-	 IFSEwkYzFill2AZzF//88IIwZpVstTRieln6ATt+QBxIV0IXERCF7BfDWhSFtbVJ47
-	 muvoZ1JX1xED2VPPxB6Q1WozSnVUkrminaFT/oHrx4tQaLmNFplupEi5pS/Whrqblq
-	 KzJjTHW2nhdLGpBumfXMFlRwQivzJe3fXbO+Ph+MjfUubo7EPGKpoKGtIEfyQ9WHPi
-	 oX35dA08WSwIAjUvJxNgCePo0NV8fAWympViqMV6PdaUdl0aiT5wUf64kiSSZXH/es
-	 XmEqM1L7UoN9g==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE19B3822D1A;
-	Wed, 28 May 2025 15:41:17 +0000 (UTC)
-Subject: Re: [GIT PULL] lsm/lsm-pr-20250527
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <c033219926c0701369d6477cedda170b@paul-moore.com>
-References: <c033219926c0701369d6477cedda170b@paul-moore.com>
-X-PR-Tracked-List-Id: <linux-security-module.vger.kernel.org>
-X-PR-Tracked-Message-Id: <c033219926c0701369d6477cedda170b@paul-moore.com>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git tags/lsm-pr-20250527
-X-PR-Tracked-Commit-Id: 74e5b13a1b0f10c5a5c6168f6915620a1d369fae
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 1bc8c83af962a7f0e52c1ee254acbcb1d9204a5e
-Message-Id: <174844687686.2439471.285203290127435818.pr-tracker-bot@kernel.org>
-Date: Wed, 28 May 2025 15:41:16 +0000
-To: Paul Moore <paul@paul-moore.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1748446887; c=relaxed/simple;
+	bh=ZoivlCVqrph/MUahm4m/Oxnhfyt3cfki4kCEuld9nAY=;
+	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
+	 Subject:Content-Type; b=hui+KT0DTpVtHv1GNIgkEIPihnvJ45h2Bdc56OACqFakXnNIA+8Uws78B3f+tuFj0JGckp3/BzjnCAi7hP84itED7HUW7tCnAsxKPAMoRoIsbmz7LVty4UaQMS/uw86DnkY8vdiUamqkqUXnL3Sm3iFW3+z6xRVh1D9eUyLSl10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=183.62.165.209
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxct.zte.com.cn (FangMail) with ESMTPS id 4b6tyP6VtLz4x6CZ;
+	Wed, 28 May 2025 23:41:17 +0800 (CST)
+Received: from xaxapp04.zte.com.cn ([10.99.98.157])
+	by mse-fl1.zte.com.cn with SMTP id 54SFfD8v025796;
+	Wed, 28 May 2025 23:41:14 +0800 (+08)
+	(envelope-from xu.xin16@zte.com.cn)
+Received: from mapi (xaxapp02[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Wed, 28 May 2025 23:41:16 +0800 (CST)
+Date: Wed, 28 May 2025 23:41:16 +0800 (CST)
+X-Zmail-TransId: 2afa68372e9cffffffffcdf-075ee
+X-Mailer: Zmail v1.0
+Message-ID: <202505282341166875usqhF9LuBlmx70Sd33jP@zte.com.cn>
+In-Reply-To: <b7f41a3d8a8538d73610ace3e85f92bb20f8eb42.1747844463.git.lorenzo.stoakes@oracle.com>
+References: cover.1747844463.git.lorenzo.stoakes@oracle.com,b7f41a3d8a8538d73610ace3e85f92bb20f8eb42.1747844463.git.lorenzo.stoakes@oracle.com
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+Mime-Version: 1.0
+From: <xu.xin16@zte.com.cn>
+To: <lorenzo.stoakes@oracle.com>
+Cc: <akpm@linux-foundation.org>, <viro@zeniv.linux.org.uk>,
+        <brauner@kernel.org>, <jack@suse.cz>, <Liam.Howlett@oracle.com>,
+        <vbabka@suse.cz>, <jannh@google.com>, <pfalcato@suse.de>,
+        <david@redhat.com>, <chengming.zhou@linux.dev>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <shr@devkernel.io>, <wang.yaxin@zte.com.cn>, <yang.yang29@zte.com.cn>
+Subject: =?UTF-8?B?UmU6IFtQQVRDSCB2MiAxLzRdIG1tOiBrc206IGhhdmUgS1NNIFZNQSBjaGVja3Mgbm90IHJlcXVpcmUgYSBWTUEgcG9pbnRlcg==?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl1.zte.com.cn 54SFfD8v025796
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 68372E9D.000/4b6tyP6VtLz4x6CZ
 
-The pull request you sent on Tue, 27 May 2025 18:57:36 -0400:
+> In subsequent commits we are going to determine KSM eligibility prior to a
+> VMA being constructed, at which point we will of course not yet have access
+> to a VMA pointer.
+> 
+> It is trivial to boil down the check logic to be parameterised on
+> mm_struct, file and VMA flags, so do so.
+> 
+> As a part of this change, additionally expose and use file_is_dax() to
+> determine whether a file is being mapped under a DAX inode.
+> 
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Acked-by: David Hildenbrand <david@redhat.com>
+> Reviewed-by: Chengming Zhou <chengming.zhou@linux.dev>
+> ---
+>  include/linux/fs.h |  7 ++++++-
+>  mm/ksm.c           | 32 ++++++++++++++++++++------------
+>  2 files changed, 26 insertions(+), 13 deletions(-)
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git tags/lsm-pr-20250527
+All looks good to me.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/1bc8c83af962a7f0e52c1ee254acbcb1d9204a5e
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Reviewed-by: Xu Xin <xu.xin16@zte.com.cn>
 
