@@ -1,49 +1,58 @@
-Return-Path: <linux-kernel+bounces-666102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A2C5AC7277
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 22:56:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC98CAC7267
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 22:47:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 735E3A26498
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 20:55:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD6671BC4029
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 20:47:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44ACD220F4D;
-	Wed, 28 May 2025 20:56:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0380E220F3A;
+	Wed, 28 May 2025 20:47:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=damsy.net header.i=@damsy.net header.b="PrCl445E";
-	dkim=permerror (0-bit key) header.d=damsy.net header.i=@damsy.net header.b="2c90E6kF"
-Received: from jeth.damsy.net (jeth.damsy.net [51.159.152.102])
+	dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b="d5usDPDZ"
+Received: from mailtransmit04.runbox.com (mailtransmit04.runbox.com [185.226.149.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C16071E8326;
-	Wed, 28 May 2025 20:56:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.159.152.102
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 840F93B1AB;
+	Wed, 28 May 2025 20:47:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.226.149.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748465766; cv=none; b=SQrR3CTZZomf6BuatMXi/GsdLQ3exkmw7RlW8+F5KqSWM3/z9MJH77fdTA9AJQAzIOQu8HGa/ANjvTcf46tj9EIWYRpWqvVrGxNn8WKuZdXuy47h9cxTuRXW8bPaMgnc6zYom6hakUCCOQCp5I/n1Mtth4P4pv24iKqWm73CC60=
+	t=1748465225; cv=none; b=CZdStSGKz+c8qwdnKu6MX0TPb+OCen9YiLtms3e/7aAqhfVplENXQ6RehBJnSZdIoaVNSIj8iEz9gOcWTSTolbGwKjIGgFJyUxaQ6gDn6MNYsE5D/hQs2JtHr9nv7KiO3woEP9ta9TVHAMald5TyE+jMG5UIo9ph/mKIvwSnUtE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748465766; c=relaxed/simple;
-	bh=/pw2IeZhAu/zfoxxmWbkMLnmxFjDEPWX7diFVk1Bj8U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jVtCyz+Z3JFuW9RfaX2lw7GBK2GjJaEp74InngwwqA9W6XfAp2emWPtGTea5DQu71hwOFAPVFSHTQ5yWwcYxeTek+VlWJlRK4oaAIXPIDCKP+jwiCjJJNnEr4u6E/2VZfBxQjEj4pAXtbcXzw1HIgVeg2WqK0Y+q3cDqh5QfA+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=damsy.net; spf=pass smtp.mailfrom=damsy.net; dkim=pass (2048-bit key) header.d=damsy.net header.i=@damsy.net header.b=PrCl445E; dkim=permerror (0-bit key) header.d=damsy.net header.i=@damsy.net header.b=2c90E6kF; arc=none smtp.client-ip=51.159.152.102
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=damsy.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=damsy.net
-DKIM-Signature: v=1; a=rsa-sha256; s=202408r; d=damsy.net; c=relaxed/relaxed;
-	h=From:To:Subject:Date:Message-ID; t=1748465181; bh=svuVRpYD101PQQjEIYeBfNI
-	7EzQ94IYrrQSyKqrxUdI=; b=PrCl445EpWjPcP+iU8eHEQ/MN+ibguAM/a2ZyXB2QDjmClntHE
-	6iDCnWkc9FcSdu3maFPCzI319Jm9VxI+bCzzEDxuFtToBG9kFjsF7sJ34Q5oXkTVBkjwOs/2VcO
-	QqMD1n/lWtgGlL5R0bIcYhwK7LrKzbTJEZtchodSfo7trin8o9s1M3o1YP77FZ4PVl4jAiw4Hi+
-	hL1fAGqsDYlQFnSms1AaWiLyYIx9G+TzXZPeJds8AeQBWMOa7IN3NaCTrzT84YcQexcR5pulh1x
-	RFRfqQPkf0bORnk1NTGb3LESfmtvLuaCYmA2rt5gQKifiAzocVn0uW7vMJPrNxWQEFg==;
-DKIM-Signature: v=1; a=ed25519-sha256; s=202408e; d=damsy.net; c=relaxed/relaxed;
-	h=From:To:Subject:Date:Message-ID; t=1748465181; bh=svuVRpYD101PQQjEIYeBfNI
-	7EzQ94IYrrQSyKqrxUdI=; b=2c90E6kFhoO7N+OQYfMSedjyoygwYF40Dn3Zf92fw/vkK4L1Do
-	DioSoq6rPw+duTfwZ2sDwRNglm4uwj0U4yAQ==;
-Message-ID: <5e312895-27ed-4ad4-b1c6-55035cdcd112@damsy.net>
-Date: Wed, 28 May 2025 22:46:19 +0200
+	s=arc-20240116; t=1748465225; c=relaxed/simple;
+	bh=fVp99q/7nR/2Qu8kOa163BQ8/bMTec7kquQzdJRIRwg=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=eKeTInWVrS6h2fwfUhHtYR5mrML/lt2ia6vCkYLqAOX9uXgtEEsjxxWBLLW1CFnInS2FCh4+sIlLsGjafeeZckbtIeJEqROnr9FPRlkRsdakCmz+IcPVpV4LBQhPAB+P8VlEoLQka8K4CFNv/yppmPrxDMB2P2GvzkGfRIkWkpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co; spf=pass smtp.mailfrom=rbox.co; dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b=d5usDPDZ; arc=none smtp.client-ip=185.226.149.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rbox.co
+Received: from mailtransmit03.runbox ([10.9.9.163] helo=aibo.runbox.com)
+	by mailtransmit04.runbox.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.93)
+	(envelope-from <mhal@rbox.co>)
+	id 1uKNfw-006kup-PU; Wed, 28 May 2025 22:47:00 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=rbox.co;
+	s=selector2; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:
+	Cc:To:Subject:From:MIME-Version:Date:Message-ID;
+	bh=mHGbDnTnT+lOyuS9ni4kZmOkuGfOKTTj/i53GQlfiKA=; b=d5usDPDZ82aCjqem6aXrDuz4pd
+	GCzPX05k0anzYyu3ogAhKHm719fu9E0pDSswit8b2N/i3B2zfTlYleOIHJ7Qzw9QAWjAOeVz+AnJV
+	/4I8DH8W9xJp8EP2FDd4MGZofmtiAqGPoMZYE9lsNbhqbKkzi9t/mMcYranG5hr8tIy2m4Ob3YRK+
+	5gzZbHJnH9hmOoN6Tk8w7d28wJn0o4FHup7DtZRNO/L1ZQKWP/kdE9ebrCf4tC1xtyJVYm22hbZga
+	xju4WjWu/zg/oLdPuTdIlaXEPYa6loK66DK9G5JedE8ZQoSgQi/DEd8la4IunHkRcdUuHTGEc40Yp
+	e2HuW1EA==;
+Received: from [10.9.9.74] (helo=submission03.runbox)
+	by mailtransmit03.runbox with esmtp (Exim 4.86_2)
+	(envelope-from <mhal@rbox.co>)
+	id 1uKNfw-0005OQ-C3; Wed, 28 May 2025 22:47:00 +0200
+Received: by submission03.runbox with esmtpsa  [Authenticated ID (604044)]  (TLS1.2:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.93)
+	id 1uKNfg-00GL99-0q; Wed, 28 May 2025 22:46:44 +0200
+Message-ID: <1ed7b81c-4c7f-4c4b-9fb5-d231aeeeb5b6@rbox.co>
+Date: Wed, 28 May 2025 22:46:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,127 +60,80 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v11 02/10] drm/sched: Store the drm client_id in
- drm_sched_fence
-To: Lucas De Marchi <lucas.demarchi@intel.com>,
- Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
-Cc: Min Ma <min.ma@amd.com>, Lizhi Hou <lizhi.hou@amd.com>,
- Oded Gabbay <ogabbay@kernel.org>, Felix Kuehling <Felix.Kuehling@amd.com>,
- Alex Deucher <alexander.deucher@amd.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Lucas Stach <l.stach@pengutronix.de>,
- Russell King <linux+etnaviv@armlinux.org.uk>,
- Christian Gmeiner <christian.gmeiner@gmail.com>,
- Frank Binns <frank.binns@imgtec.com>, Matt Coster <matt.coster@imgtec.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Qiang Yu <yuq825@gmail.com>, Rob Clark <robdclark@gmail.com>,
- Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Dmitry Baryshkov <lumag@kernel.org>, Sean Paul <sean@poorly.run>,
- Marijn Suijten <marijn.suijten@somainline.org>, Lyude Paul
- <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>,
- Boris Brezillon <boris.brezillon@collabora.com>,
- Rob Herring <robh@kernel.org>, Steven Price <steven.price@arm.com>,
- Liviu Dudau <liviu.dudau@arm.com>, Matthew Brost <matthew.brost@intel.com>,
- Philipp Stanner <phasta@kernel.org>, Melissa Wen <mwen@igalia.com>,
- =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
- =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- amd-gfx@lists.freedesktop.org, etnaviv@lists.freedesktop.org,
- lima@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
- freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
- intel-xe@lists.freedesktop.org
-References: <20250526125505.2360-1-pierre-eric.pelloux-prayer@amd.com>
- <20250526125505.2360-3-pierre-eric.pelloux-prayer@amd.com>
- <5jnpsmjef5ibegbsbelkfmudv4wagpcfb25nptqs5z4ccitq4c@3bdtrbrrmtil>
-Content-Language: en-US
-From: Pierre-Eric Pelloux-Prayer <pierre-eric@damsy.net>
-In-Reply-To: <5jnpsmjef5ibegbsbelkfmudv4wagpcfb25nptqs5z4ccitq4c@3bdtrbrrmtil>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: Michal Luczaj <mhal@rbox.co>
+Subject: Re: [PATCH net-next] vsock/test: Cover more CIDs in transport_uaf
+ test
+To: Stefano Garzarella <sgarzare@redhat.com>
+Cc: virtualization@lists.linux.dev, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250523-vsock-test-inc-cov-v1-1-fa3507941bbd@rbox.co>
+ <limbmrszio42lvkmalapooflj5miedlszkmnnm4ckmy2upfghw@24vxuhgdji2z>
+ <1f5cc46a-de4c-4361-a706-fc7fe06a7068@rbox.co>
+ <gfmoupl72tjyymhwxcstwpgaabbfaz6f4v6vj4lwwzwssg577c@urkmgn7rapnj>
+ <151bf5fe-c9ca-4244-aa21-8d7b8ff2470f@rbox.co>
+ <skvayogoenhntikkdnqrkkjvqesmpnukjlil6reubrouo45sat@j7zw6lfthfrd>
+ <54959090-440e-49e8-80b3-8eee0ef4582c@rbox.co>
+ <7zqv5toj2qjucy7fvaebbpwj6pth53uunsbapwhgrhwbr5pq5t@gp7h6klhr5sj>
+Content-Language: pl-PL, en-GB
+In-Reply-To: <7zqv5toj2qjucy7fvaebbpwj6pth53uunsbapwhgrhwbr5pq5t@gp7h6klhr5sj>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi,
+On 5/28/25 11:08, Stefano Garzarella wrote:
+> On Wed, May 28, 2025 at 10:58:28AM +0200, Michal Luczaj wrote:
+>> Administrative query: while net-next is closed, am I supposed to mark this
+>> series as "RFC" and post v2 for a review as usual, or is it better to just
+>> hold off until net-next opens?
+> 
+> Whichever you prefer, if you are uncertain about the next version and 
+> want to speed things up with a review while waiting, then go with RFC, 
+> but if you think all comments are resolved and the next version is ready 
+> to be merged, wait for the reopening.
+> Thanks for asking!
 
-Le 28/05/2025 à 21:07, Lucas De Marchi a écrit :
-> On Mon, May 26, 2025 at 02:54:44PM +0200, Pierre-Eric Pelloux-Prayer wrote:
->> drivers/gpu/drm/xe/xe_sched_job.c                |  3 ++-
->> diff --git a/drivers/gpu/drm/xe/xe_sched_job.c b/drivers/gpu/drm/xe/xe_sched_job.c
->> index f0a6ce610948..5921293b25db 100644
->> --- a/drivers/gpu/drm/xe/xe_sched_job.c
->> +++ b/drivers/gpu/drm/xe/xe_sched_job.c
->> @@ -113,7 +113,8 @@ struct xe_sched_job *xe_sched_job_create(struct xe_exec_queue *q,
->>     kref_init(&job->refcount);
->>     xe_exec_queue_get(job->q);
+All right then, I gave RFC a try:
+https://lore.kernel.org/netdev/20250528-vsock-test-inc-cov-v2-0-8f655b40d57c@rbox.co/
+
+>>>>>>>> +static void test_stream_transport_uaf_client(const struct test_opts *opts)
+>>>>>>>> +{
+>>>>>>>> +	bool tested = false;
+>>>>>>>> +	int cid;
+>>>>>>>> +
+>>>>>>>> +	for (cid = VMADDR_CID_HYPERVISOR; cid <= VMADDR_CID_HOST + 1; ++cid)
+>>>>>>>
+>>>>>>>> +		tested |= test_stream_transport_uaf(cid);
+>>>>>>>> +
+>>>>>>>> +	if (!tested)
+>>>>>>>> +		fprintf(stderr, "No transport tested\n");
+>>>>>>>> +
+>>>>>>>> 	control_writeln("DONE");
+>>>>>>>
+>>>>>>> While we're at it, I think we can remove this message, looking at
+>>>>>>> run_tests() in util.c, we already have a barrier.
+>>>>>>
+>>>>>> Ok, sure. Note that console output gets slightly de-synchronised: server
+>>>>>> will immediately print next test's prompt and wait there.
+>>>>>
+>>>>> I see, however I don't have a strong opinion, you can leave it that way
+>>>>> if you prefer.
+>>>>
+>>>> How about adding a sync point to run_tests()? E.g.
+>>>
+>>> Yep, why not, of course in another series :-)
+>>>
+>>> And if you like, you can remove that specific sync point in that series
+>>> and check also other tests, but I think we have only that one.
 >>
->> -    err = drm_sched_job_init(&job->drm, q->entity, 1, NULL);
->> +    err = drm_sched_job_init(&job->drm, q->entity, 1, NULL,
->> +                 q->xef->drm->client_id);
+>> OK, I'll leave that for later.
 > 
-> you can't do this here. xef is only !NULL if it's a job from userspace.
+> Yep, feel free to discard my suggestion, we can fix it later.
 
-sorry about that.
+I was thinking about doing a console-output-beautification series
+with: 1) drop the redundant sync in test_stream_transport_uaf_*, 2) add a
+sync in run_tests(). But I guess we can have the sync dropping part here.
+Definitely less churn this way.
 
-> For in-kernel jobs, xef is NULL and this explodes. Right now this
-> completely breaks xe since one of the very first things we do is
-> to submit a job to save the default context. Example:
-> https://intel-gfx-ci.01.org/tree/intel-xe/xe-3151-56d2b14961751a677ff1f7ff8b93a6c814ce2be3/bat- 
-> bmg-1/igt@xe_module_load@load.html
-> 
->      <4> [] RIP: 0010:xe_sched_job_create+0xbd/0x390 [xe]
->      <4> [] Code: c1 43 18 85 c0 0f 84 6f 02 00 00 8d 50 01 09 c2 0f 88 3e 02 00 00 48 8b 03 48 8b 
-> b3 d8 00 00 00 31 c9 4c 89 ef ba 01 00 00 00 <48> 8b 40 08 4c 8b 40 60 e8 86 64 7c ff 41 89 c4 85 c0 
-> 0f 85 9b 01
->      <4> [] RSP: 0018:ffffc900031972d8 EFLAGS: 00010246
->      <4> [] RAX: 0000000000000000 RBX: ffff88815fc40d00 RCX: 0000000000000000
->      <4> [] RDX: 0000000000000001 RSI: ffff88812e6552a8 RDI: ffff88815f939c40
->      <4> [] RBP: ffffc90003197318 R08: 0000000000000000 R09: 0000000000000000
->      <4> [] R10: 0000000000000000 R11: 0000000000000000 R12: ffffc90003197428
->      <4> [] R13: ffff88815f939c40 R14: ffff88811f054000 R15: ffff88815fc40d00
->      <4> [] FS:  00007681f2948940(0000) GS:ffff8888daf14000(0000) knlGS:0000000000000000
->      <4> [] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->      <4> [] CR2: 0000000000000008 CR3: 0000000118315004 CR4: 0000000000f72ef0
->      <4> [] PKRU: 55555554
->      <4> [] Call Trace:
->      <4> []  <TASK>
->      <4> []  __xe_bb_create_job+0xa2/0x240 [xe]
->      <4> []  ? find_held_lock+0x31/0x90
->      <4> []  ? xa_find_after+0x12c/0x250
->      <4> []  xe_bb_create_job+0x6e/0x380 [xe]
->      <4> []  ? xa_find_after+0x136/0x250
->      <4> []  ? __drm_dev_dbg+0x7d/0xb0
->      <4> []  xe_gt_record_default_lrcs+0x542/0xb00 [xe]
-> 
-> Can we use 0 for in-kernel client since drm_file starts them from 1?
-
-Yes, this is what amdgpu does.
-
-> Like this:
-> 
-> | diff --git a/drivers/gpu/drm/xe/xe_sched_job.c b/drivers/gpu/drm/xe/xe_sched_job.c
-> | index 5921293b25db3..d21bf8f269640 100644
-> | --- a/drivers/gpu/drm/xe/xe_sched_job.c
-> | +++ b/drivers/gpu/drm/xe/xe_sched_job.c
-> | @@ -114,7 +114,7 @@ struct xe_sched_job *xe_sched_job_create(struct xe_exec_queue *q,
-> |         xe_exec_queue_get(job->q);
-> | |         err = drm_sched_job_init(&job->drm, q->entity, 1, NULL,
-> | -                                q->xef->drm->client_id);
-> | +                                q->xef ? q->xef->drm->client_id : 0);
-> |         if (err)
-> |                 goto err_free;
-> 
-> I tested with the above diff and it at least loads...
-
-Thanks for looking into this, the change looks fine to me.
-
-Pierre-Eric
-
-> 
-> Also, I see this in intel-xe mailing list, but I'm not sure why we
-> didn't have any CI results... I will check that.
-> 
-> Lucas De Marchi
+Thanks,
+Michal
 
 
