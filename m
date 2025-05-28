@@ -1,181 +1,146 @@
-Return-Path: <linux-kernel+bounces-665581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 655CAAC6B22
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 16:00:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEBB3AC69D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 14:54:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FE031673A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 14:00:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7663C3B277F
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 12:54:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEBE0288C00;
-	Wed, 28 May 2025 13:59:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50DA2286411;
+	Wed, 28 May 2025 12:54:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="qYmj06y/"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SfDn8l2h"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 359D220B81D;
-	Wed, 28 May 2025 13:59:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4174A214211
+	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 12:54:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748440791; cv=none; b=RvCx9Sxn0FuxKe4sHf3BbFJEbT/gOOTL+OAVuPO9+t7MFvUdh7SovhX3Z258KrgDEdcVrExf41OXf0LPFVmGJxMSNKpiT8+frtODffUVChUhC8fmnTrxxiBuQkdedTAQL/X1nsWMf2F4vH/2Hyq3pFte2ukZg8PuM6nRFRU7HP4=
+	t=1748436866; cv=none; b=tlOTbZXkoJcIeDUyvZKjAkzWlYgzwgpW5vbzoxPf2vVLx0U4CzJnl7FdA9gBUO/usQjEG+wzv4fow66FElDmpgSnFErPYvoO46TjvMoavUqaWF7awI70nnxQ3HtFzgYb4Z0mDUrIQLJPcflg9MoVQzeKKg+KvJgw5r2RlopYX74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748440791; c=relaxed/simple;
-	bh=GidpZsTdS1mvFVZhMXx5AjlxUimuu/0oP04bsW6NDt0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mhJNEsdq6cpUXXqLdqx/J/+WTaMh6l/k3dWRyB6O7dk/CCAKY0hx0THVKFaYBOoEihRtlN+ajYAtG+M3HSR3036ISOQU1DcMRVL4xGPYfxoBTwUfuHA5kVyW8XTjZHNfsxNvz7zeTXKUI+BQzKzAdG4uds6oYFd4RHUk2jOSjKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=qYmj06y/; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from kreacher.localnet (unknown [5.63.189.50])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 9073266808C;
-	Wed, 28 May 2025 14:55:02 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1748436903;
-	bh=GidpZsTdS1mvFVZhMXx5AjlxUimuu/0oP04bsW6NDt0=;
-	h=From:Subject:Date;
-	b=qYmj06y/nV3RBN8Fv+zAmh9NV3LKKLHOdDrbzBcaDhQk9MDi3ifDcpMHQf2gsJgek
-	 va06FTPQm6czxhfAXhJ6WxME+BD34MwmG8DevcNaiMgfRZa/ezDUWxFCwGJTI/HOnj
-	 kf0+6YiXxdlZvGeiiH7CrwKyE/O0xkEIlP1SOEf4MBI2gZjRWPmVxrbyyW9C+c9+bj
-	 aIFguT8ukNOiietqjHyMz026EP+tod/MoqpJ5uk3eC+5LRELvPlu0hkd7xa2HWTRi2
-	 ezbpKTmMfUk13XcC1fy4rc8f6m220KAG2RRJVZKdwDsWgyuTRg/BoxkcyaWLYkEizQ
-	 ntoe97QkZcv0w==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: x86 Maintainers <x86@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
- Len Brown <lenb@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@suse.de>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- Artem Bityutskiy <artem.bityutskiy@linux.intel.com>,
- "Gautham R. Shenoy" <gautham.shenoy@amd.com>, Ingo Molnar <mingo@redhat.com>,
- Todd Brandt <todd.e.brandt@linux.intel.com>
-Subject:
- [PATCH v1 1/2] Revert "x86/smp: Eliminate mwait_play_dead_cpuid_hint()"
-Date: Wed, 28 May 2025 14:53:50 +0200
-Message-ID: <7811828.EvYhyI6sBW@rjwysocki.net>
-In-Reply-To: <2006806.PYKUYFuaPT@rjwysocki.net>
-References: <2006806.PYKUYFuaPT@rjwysocki.net>
+	s=arc-20240116; t=1748436866; c=relaxed/simple;
+	bh=4kzUi/76sU4TOqttKuHGINwdxexMyc5EKBLODsQjbIM=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=d19w4LUtWa+DsTCJ+egS/WTbNTSJWo0H+/kqyNkUED0tyrcfKIzAI2i5r2H5cPCKJ7IntnmAa67uTum9SpZ4jrf8xdwTOlvrHqk9N1vu1U+c6TgUuyegt3DgIWHtjXALBRZ+EOVUpBP3EgXzB5AfKNCGVQch78b3AQuU27sTBnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SfDn8l2h; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-31147652b36so3562156a91.2
+        for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 05:54:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1748436864; x=1749041664; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=xuuvC7M6sC9txYVcxiKR7Nz7uk/ZLoX9CRoOMl5AG9g=;
+        b=SfDn8l2hz+9fZu0Gd0vx2BgA0Dw904zl0x1+/FLzUrd9wBxGOhpRr3JCZkN02wyY/N
+         gIRkJLJ09jR8MSpCPZY1ELkZu+rlZ5UkUNAJ1ujBianemAoDJ4yYynTl75gXWst+lDQl
+         2E7cYi7AmAwdxyj7kMdvEudVBpeZ0qvGJnlPyx0vMSSdeyHRW4hgAS5sznrPiFOzUekS
+         GfuLStDxAKzQPkIlCaYER05LYGgBpVQW+qMYcPT8sGydr9tOn/KShx2uc6QqK/xAAIsA
+         rZDGOZzxsMi7tYAuD3WxoKNXcb0PqBlqEWn56n/KrURGIl00xz8K0++Uzh1kRcLPLtht
+         XccQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748436864; x=1749041664;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xuuvC7M6sC9txYVcxiKR7Nz7uk/ZLoX9CRoOMl5AG9g=;
+        b=lmrrc7uiMu8Lgj5qDQtRiiQdPKaTFH48WmgBVqO1Ia7akLoj34RpT2AyD9f8tP4lwd
+         d1IldvTEa3imoVP7tLNwO+QbbHWX4RSQMCcgxbRI8DkchpUVSxMsZdgD13UAmOBDyuaE
+         S5lQLYypdQ7CpUX55xKbuUJj7uAjHVBR8cHKLvtHiFqlFZVIGBDxl0DCqY3aE71GsJ49
+         cuFg8Yk4dHQ3ttRnOetkcvX33BpGq1l4e6gOd3EBQPhuXdXDWY1v/YY9LnhE0hTzgq9b
+         UZ5x5JB6GEkbTyjIbgnWNQwjW+NpuJU+J2RZr6yqyIDG0uYQb1o7EJgMQBQpluOdxBXv
+         mH0A==
+X-Forwarded-Encrypted: i=1; AJvYcCV0Hu3ixwQ3MgYhHFbU7bNCGWRYoTu9VOcbLir1K+XQS2iEUw/fbyz+QNX85f/c+djRBYGlLPgNVk6yy9Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMvUb+p2iqJMpMncwRmnDSXERdeh3/8N8xjoPjF55Md9S1vMOx
+	xeiWvcjK+sOZwAKGX5DgmR+f1FkIZxvzSzYOkSb1Opf1FkTI8Z2aQtKL7zlzS+W8BYC3b3D0dtO
+	f/3DlAw==
+X-Google-Smtp-Source: AGHT+IHklk6ygB6BrAMAW+vre57cickd20wXmOPZTFQC5U6g6cHQDuc5vbvNaOVhN+qmRiCUV+DfgdMkufQ=
+X-Received: from pjuj14.prod.google.com ([2002:a17:90a:d00e:b0:311:4201:4021])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3911:b0:311:f30b:c18
+ with SMTP id 98e67ed59e1d1-311f30b0ff9mr2383545a91.4.1748436864587; Wed, 28
+ May 2025 05:54:24 -0700 (PDT)
+Date: Wed, 28 May 2025 05:54:22 -0700
+In-Reply-To: <7cc5cd92-1854-4e0e-93b7-e4eee5991334@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 5.63.189.50
-X-CLIENT-HOSTNAME: 5.63.189.50
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: dmFkZTFxkQHn3iCFbbSyiDpq8O8fxHSz0xYZKn6328KRsDmyVOaUGJ5g9Pr88Mn+X1Ui8c/1Qb79P6Egeac0Wd4sy6JCX3KJ8P1U64eCx1OWa9IyZBsPPK141xkOOqyv/1Zw1QatQDlGB1yvkLOMXmCIAxkp70zSNBD+o+hqAg2qBFKsovAAPZZDWVM7txTozblkZF1eJ0XJ7pt6v7XqlFsO0rolzhHpavgnhWYGpyOXvsRTfKUvYlv9wsRDHePo6aQnJXczz+S8EYGfHpo5I4rhmR4dky+Ke+Gndp63BdmPoFR5Kj/OTkj1EaUzRCA+oOB4QoAjMMFv2OYrjxrYTUWJw73TCS0jrhzgA/flO6Xqujmn+vAEAQ+axfmVYpRJVSlP9ZXYBnFqcAdW8TsUL9ksWIhX3xI5Qyei3oWArXep7LaNMMAaiGAQsNPcOjP87pwjeZVreH9GvRVVadL1FlFGq6QbPh5OoIYwyxTOoqMUFY+GsM/USIXxn+9CsKxYs/gVczqEqmhP5FyHJMkFfdcLM1VL7rK394QhEbKO9gw5wZKwrU6KIoegU5gO0xWuDd2WrRAi0gyib3a+NPnePFw1e+mu9WLf+3uErb/F8slWWzvCdxw6R+SvdixosfwcrVPBnpeBo8pWaRJxOF5qNnjUerbLR+2lv7rHfBROzcD4hA0MtA
-X-DCC--Metrics: v370.home.net.pl 1024; Body=12 Fuz1=12 Fuz2=12
+Mime-Version: 1.0
+References: <20250523001138.3182794-1-seanjc@google.com> <20250523001138.3182794-3-seanjc@google.com>
+ <7cc5cd92-1854-4e0e-93b7-e4eee5991334@intel.com>
+Message-ID: <aDcHfuAbPMrhI9As@google.com>
+Subject: Re: [PATCH v4 2/4] KVM: x86/mmu: Dynamically allocate shadow MMU's
+ hashed page list
+From: Sean Christopherson <seanjc@google.com>
+To: Xiaoyao Li <xiaoyao.li@intel.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Vipin Sharma <vipinsh@google.com>, James Houghton <jthoughton@google.com>
+Content-Type: text/plain; charset="us-ascii"
 
-From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+On Wed, May 28, 2025, Xiaoyao Li wrote:
+> On 5/23/2025 8:11 AM, Sean Christopherson wrote:
+> > Dynamically allocate the (massive) array of hashed lists used to track
+> > shadow pages, as the array itself is 32KiB, i.e. is an order-3 allocation
+> > all on its own, and is *exactly* an order-3 allocation.  Dynamically
+> > allocating the array will allow allocating "struct kvm" using kvmalloc(),
+> > and will also allow deferring allocation of the array until it's actually
+> > needed, i.e. until the first shadow root is allocated.
+> > 
+> > Opportunistically use kvmalloc() for the hashed lists, as an order-3
+> > allocation is (stating the obvious) less likely to fail than an order-4
+> > allocation, and the overhead of vmalloc() is undesirable given that the
+> > size of the allocation is fixed.
+> > 
+> > Cc: Vipin Sharma <vipinsh@google.com>
+> > Signed-off-by: Sean Christopherson <seanjc@google.com>
+> > ---
+> >   arch/x86/include/asm/kvm_host.h |  4 ++--
+> >   arch/x86/kvm/mmu/mmu.c          | 23 ++++++++++++++++++++++-
+> >   arch/x86/kvm/x86.c              |  5 ++++-
+> >   3 files changed, 28 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+> > index 330cdcbed1a6..9667d6b929ee 100644
+> > --- a/arch/x86/include/asm/kvm_host.h
+> > +++ b/arch/x86/include/asm/kvm_host.h
+> > @@ -1343,7 +1343,7 @@ struct kvm_arch {
+> >   	bool has_private_mem;
+> >   	bool has_protected_state;
+> >   	bool pre_fault_allowed;
+> > -	struct hlist_head mmu_page_hash[KVM_NUM_MMU_PAGES];
+> > +	struct hlist_head *mmu_page_hash;
+> >   	struct list_head active_mmu_pages;
+> >   	/*
+> >   	 * A list of kvm_mmu_page structs that, if zapped, could possibly be
+> > @@ -2006,7 +2006,7 @@ void kvm_mmu_vendor_module_exit(void);
+> >   void kvm_mmu_destroy(struct kvm_vcpu *vcpu);
+> >   int kvm_mmu_create(struct kvm_vcpu *vcpu);
+> > -void kvm_mmu_init_vm(struct kvm *kvm);
+> > +int kvm_mmu_init_vm(struct kvm *kvm);
+> >   void kvm_mmu_uninit_vm(struct kvm *kvm);
+> >   void kvm_mmu_init_memslot_memory_attributes(struct kvm *kvm,
+> > diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+> > index cbc84c6abc2e..41da2cb1e3f1 100644
+> > --- a/arch/x86/kvm/mmu/mmu.c
+> > +++ b/arch/x86/kvm/mmu/mmu.c
+> > @@ -3882,6 +3882,18 @@ static int mmu_alloc_direct_roots(struct kvm_vcpu *vcpu)
+> >   	return r;
+> >   }
+> > +static int kvm_mmu_alloc_page_hash(struct kvm *kvm)
+> > +{
+> > +	typeof(kvm->arch.mmu_page_hash) h;
+> 
+> Out of curiousity, it is uncommon in KVM to use typeof() given that we know
+> what the type actually is. Is there some specific reason?
 
-Revert commit 96040f7273e2 ("x86/smp: Eliminate mwait_play_dead_cpuid_hint()")
-because it introduced a significant power regression on systems that start
-with "nosmt" in the kernel command line.
+I'm pretty sure it's a leftover from various experiments.  IIRC, I was trying to
+do something odd and was having a hard time getting the type right :-)
 
-Namely, on such systems, SMT siblings permanently go offline early,
-when cpuidle has not been initialized yet, so after the above commit,
-hlt_play_dead() is called for them.  Later on, when the processor
-attempts to enter a deep package C-state, including PC10 which is
-requisite for reaching minimum power in suspend-to-idle, it is not
-able to do that because of the SMT siblings staying in C1 (which
-they have been put into by HLT).
-
-Fixes: 96040f7273e2 ("x86/smp: Eliminate mwait_play_dead_cpuid_hint()")
-Reported-by: Todd Brandt <todd.e.brandt@linux.intel.com>
-Tested-by: Todd Brandt <todd.e.brandt@linux.intel.com>
-Cc: 6.15+ <stable@vger.kernel.org> # 6.15+
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- arch/x86/kernel/smpboot.c |   54 ++++++++++++++++++++++++++++++++++++++++------
- 1 file changed, 47 insertions(+), 7 deletions(-)
-
---- a/arch/x86/kernel/smpboot.c
-+++ b/arch/x86/kernel/smpboot.c
-@@ -1238,10 +1238,6 @@
- 	local_irq_disable();
- }
- 
--/*
-- * We need to flush the caches before going to sleep, lest we have
-- * dirty data in our caches when we come back up.
-- */
- void __noreturn mwait_play_dead(unsigned int eax_hint)
- {
- 	struct mwait_cpu_dead *md = this_cpu_ptr(&mwait_cpu_dead);
-@@ -1288,6 +1284,50 @@
- }
- 
- /*
-+ * We need to flush the caches before going to sleep, lest we have
-+ * dirty data in our caches when we come back up.
-+ */
-+static inline void mwait_play_dead_cpuid_hint(void)
-+{
-+	unsigned int eax, ebx, ecx, edx;
-+	unsigned int highest_cstate = 0;
-+	unsigned int highest_subcstate = 0;
-+	int i;
-+
-+	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD ||
-+	    boot_cpu_data.x86_vendor == X86_VENDOR_HYGON)
-+		return;
-+	if (!this_cpu_has(X86_FEATURE_MWAIT))
-+		return;
-+	if (!this_cpu_has(X86_FEATURE_CLFLUSH))
-+		return;
-+
-+	eax = CPUID_LEAF_MWAIT;
-+	ecx = 0;
-+	native_cpuid(&eax, &ebx, &ecx, &edx);
-+
-+	/*
-+	 * eax will be 0 if EDX enumeration is not valid.
-+	 * Initialized below to cstate, sub_cstate value when EDX is valid.
-+	 */
-+	if (!(ecx & CPUID5_ECX_EXTENSIONS_SUPPORTED)) {
-+		eax = 0;
-+	} else {
-+		edx >>= MWAIT_SUBSTATE_SIZE;
-+		for (i = 0; i < 7 && edx; i++, edx >>= MWAIT_SUBSTATE_SIZE) {
-+			if (edx & MWAIT_SUBSTATE_MASK) {
-+				highest_cstate = i;
-+				highest_subcstate = edx & MWAIT_SUBSTATE_MASK;
-+			}
-+		}
-+		eax = (highest_cstate << MWAIT_SUBSTATE_SIZE) |
-+			(highest_subcstate - 1);
-+	}
-+
-+	mwait_play_dead(eax);
-+}
-+
-+/*
-  * Kick all "offline" CPUs out of mwait on kexec(). See comment in
-  * mwait_play_dead().
-  */
-@@ -1337,9 +1377,9 @@
- 	play_dead_common();
- 	tboot_shutdown(TB_SHUTDOWN_WFS);
- 
--	/* Below returns only on error. */
--	cpuidle_play_dead();
--	hlt_play_dead();
-+	mwait_play_dead_cpuid_hint();
-+	if (cpuidle_play_dead())
-+		hlt_play_dead();
- }
- 
- #else /* ... !CONFIG_HOTPLUG_CPU */
-
-
-
+I'll drop the typeof() in favor of "struct hlist_head *", using typeof here isn't
+justified and IMO makes the code a bit harder to read.
 
