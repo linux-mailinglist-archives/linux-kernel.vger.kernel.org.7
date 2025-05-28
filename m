@@ -1,163 +1,126 @@
-Return-Path: <linux-kernel+bounces-665189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4533AC6548
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 11:11:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F55EAC654A
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 11:11:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 315F43AC896
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 09:11:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6AC967AA054
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 09:10:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E27CC274FF5;
-	Wed, 28 May 2025 09:10:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A20A1275862;
+	Wed, 28 May 2025 09:10:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="en0U7mBt"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3030F244685;
-	Wed, 28 May 2025 09:10:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BDQqpOGv"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04DCB27585C;
+	Wed, 28 May 2025 09:10:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748423435; cv=none; b=NeLukC9IeoAv48FNA55QjOyNo0Kg8nsIiEaaiI7j6QbqUwTY2FdNRKwe8x39FoqkQirHyzviiQ6nDa3R8twy5dYB8bdV8yw/MUtST3Gktpdm38iM19laUcB7sQp6HwtJqaHpnQYGBcWhEw2NF03rn3+JnLBq0oaojWpGiru1KM4=
+	t=1748423444; cv=none; b=teZCqozypTd1iBNIevwmbam2JFC9Vg4+SgbC2MtD/cUCapn2wwdsJQxTOVMM8WN1sNDuhABMSqjkosqVmw9qpFkcgf6hhWJYV7WvZEBmTixPIDhlkpxgUTcMYzWPEkoFCyH9BIjbmisvS99STsQ0HWCONNjs81LAq0HyjRgPUBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748423435; c=relaxed/simple;
-	bh=xnBGQ1NYx0IsAE60uuB1ItLCFPl3GMZu0ylD6d1tDG8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=f0PYWQr/QKdNuQqigPna2GCK4uWVvOZnVLG9+yJ8UpkwujQTVZlqd/js4OzFg8W9eedjeljMRldqdi6wXKdP8hWE4+pATEHdjRkEccjSwCovA3hCUk7iuF2awxRZtUbhx87VWt4QcD4PJbK4cG+klLx3uQEZziHhTSjnShmOwII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=en0U7mBt; arc=none smtp.client-ip=117.135.210.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=ni
-	kVQyuarkXhnQNNlek1hxJpso9eYFJCBOWiuY4s74k=; b=en0U7mBtvi3u1awudd
-	GC9FwvK6uwPFwoRpXIWnz0v2rVCTOovIN3Ec7Jk8JiVF0y0vAMYNq7oW2elboBYS
-	+n66m1RTGwBdxPzacmSGdxbb8Z5iM/cbvCoasLZQiPfGfA0AAwB/IUYIZ4kVus3J
-	cDeO+2aK4f/bCkmhZXpupPVcI=
-Received: from localhost.localdomain (unknown [])
-	by gzsmtp1 (Coremail) with SMTP id PCgvCgBHSJDj0jZoWsqECA--.56162S2;
-	Wed, 28 May 2025 17:09:57 +0800 (CST)
-From: Slark Xiao <slark_xiao@163.com>
-To: manivannan.sadhasivam@linaro.org,
-	johan+linaro@kernel.org,
-	mhi@lists.linux.dev
-Cc: linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Slark Xiao <slark_xiao@163.com>
-Subject: [PATCH] bus: mhi: host: pci_generic: Add Foxconn T99W696
-Date: Wed, 28 May 2025 17:09:50 +0800
-Message-Id: <20250528090950.14868-1-slark_xiao@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1748423444; c=relaxed/simple;
+	bh=af5JUKcthRKAQgniGzokaJiKen7a00vYt3vsaVOT2BQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DIeNe1xujOecDdkRbzTkBkC2YjFH4KHoapvlcz7uXXlc/1gJuIGh4hxP0ak1xxC+kVAjw5WF/el+wBarvmtfg5GkRk9gFr9iTaN/gZmt+MiTHQPs/YXOeI89CNmucxmlP3s6TLTgyYiQmfgNI5DCS7UPMPKQZSUKaLBOnfclFEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BDQqpOGv; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1748423442; x=1779959442;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=af5JUKcthRKAQgniGzokaJiKen7a00vYt3vsaVOT2BQ=;
+  b=BDQqpOGvazRQYzXDMeBL8ZZPmcDXvDpvLFZPj+Lb/kyQopBbrFS7R4Jh
+   iw0N3esyK0cTLifD0WqjMJ69VcInRmVZgATrIJu4WI2WdJscMc2WG5ywC
+   lIMvP32W0stfJBf1Qd/oX+WjOEGcP1tdFI4qA18MMV+HHwOaU7A5QfPUH
+   lZKrQ1xR8T/bnCYr67INx593XyJRCQQThjrzEcT2g7vkPV55Zg6NO7P+I
+   00j6A+bLxsTV1vOytN83FGf6tIS9iJTB89gUE0aDC8bq5Xu81GeebVa2+
+   OZksV10TUFZ+ZdYhSTD+Xvs6Hr1xxY5atpo/rD/A0bPrak3x8uNheAKbj
+   g==;
+X-CSE-ConnectionGUID: QTS/5hW1SYG0w6St1B7Q7g==
+X-CSE-MsgGUID: zvM3jp4iSF+XBCpBebVBXw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11446"; a="50326608"
+X-IronPort-AV: E=Sophos;i="6.15,320,1739865600"; 
+   d="scan'208";a="50326608"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2025 02:10:41 -0700
+X-CSE-ConnectionGUID: Ig1TGYOjTf2XVusvXjCvvQ==
+X-CSE-MsgGUID: 8Uw5VHDBRgSXHe3hgjU49g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,320,1739865600"; 
+   d="scan'208";a="143012443"
+Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
+  by fmviesa006.fm.intel.com with ESMTP; 28 May 2025 02:10:37 -0700
+Received: from kbuild by 1992f890471c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uKCnz-000VTk-01;
+	Wed, 28 May 2025 09:10:35 +0000
+Date: Wed, 28 May 2025 17:10:18 +0800
+From: kernel test robot <lkp@intel.com>
+To: Burak Emir <bqe@google.com>, Yury Norov <yury.norov@gmail.com>,
+	Kees Cook <kees@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Burak Emir <bqe@google.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	"Gustavo A . R . Silva" <gustavoars@kernel.org>,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v9 4/5] rust: add find_bit_benchmark_rust module.
+Message-ID: <202505281613.EHiMAdkN-lkp@intel.com>
+References: <20250526150141.3407433-5-bqe@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:PCgvCgBHSJDj0jZoWsqECA--.56162S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxWF13Cw15KF1UCr1rGr17Jrb_yoWrur15pF
-	WIv3y5trWkJw4Fg3y0y34kKas5Zan3Xr93Krnrtw10g3WYk3y5XrWkt342qFWYv34qqrWI
-	yFykWFy7uanrJr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pRhNVhUUUUU=
-X-CM-SenderInfo: xvod2y5b0lt0i6rwjhhfrp/xtbBDQpbZGg20dYi6gAAsp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250526150141.3407433-5-bqe@google.com>
 
-T99W696 is designed based on Qualcomm SDX61 chip which is a cost
-down chip refer to previous SDX62/SDX65. Though we have a support
-on SDX62/SDX65, we create a new channel config for SDX61 since
-we add a NMEA channel support from this product.
-For new products we are allowed to customize the subVID and
-subPID only.
+Hi Burak,
 
-Signed-off-by: Slark Xiao <slark_xiao@163.com>
----
- drivers/bus/mhi/host/pci_generic.c | 52 ++++++++++++++++++++++++++++++
- 1 file changed, 52 insertions(+)
+kernel test robot noticed the following build errors:
 
-diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/host/pci_generic.c
-index a4a62429c784..76a927ef4e00 100644
---- a/drivers/bus/mhi/host/pci_generic.c
-+++ b/drivers/bus/mhi/host/pci_generic.c
-@@ -490,6 +490,23 @@ static const struct mhi_channel_config mhi_foxconn_sdx55_channels[] = {
- 	MHI_CHANNEL_CONFIG_HW_DL(101, "IP_HW0_MBIM", 128, 3),
- };
- 
-+static const struct mhi_channel_config mhi_foxconn_sdx61_channels[] = {
-+	MHI_CHANNEL_CONFIG_UL(0, "LOOPBACK", 32, 0),
-+	MHI_CHANNEL_CONFIG_DL(1, "LOOPBACK", 32, 0),
-+	MHI_CHANNEL_CONFIG_UL(4, "DIAG", 32, 1),
-+	MHI_CHANNEL_CONFIG_DL(5, "DIAG", 32, 1),
-+	MHI_CHANNEL_CONFIG_UL(12, "MBIM", 32, 0),
-+	MHI_CHANNEL_CONFIG_DL(13, "MBIM", 32, 0),
-+	MHI_CHANNEL_CONFIG_UL(32, "DUN", 32, 0),
-+	MHI_CHANNEL_CONFIG_DL(33, "DUN", 32, 0),
-+	MHI_CHANNEL_CONFIG_UL_FP(34, "FIREHOSE", 32, 0),
-+	MHI_CHANNEL_CONFIG_DL_FP(35, "FIREHOSE", 32, 0),
-+	MHI_CHANNEL_CONFIG_UL(50, "NMEA", 32, 0),
-+	MHI_CHANNEL_CONFIG_DL(51, "NMEA", 32, 0),
-+	MHI_CHANNEL_CONFIG_HW_UL(100, "IP_HW0_MBIM", 128, 2),
-+	MHI_CHANNEL_CONFIG_HW_DL(101, "IP_HW0_MBIM", 128, 3),
-+};
-+
- static struct mhi_event_config mhi_foxconn_sdx55_events[] = {
- 	MHI_EVENT_CONFIG_CTRL(0, 128),
- 	MHI_EVENT_CONFIG_DATA(1, 128),
-@@ -506,6 +523,15 @@ static const struct mhi_controller_config modem_foxconn_sdx55_config = {
- 	.event_cfg = mhi_foxconn_sdx55_events,
- };
- 
-+static const struct mhi_controller_config modem_foxconn_sdx61_config = {
-+	.max_channels = 128,
-+	.timeout_ms = 20000,
-+	.num_channels = ARRAY_SIZE(mhi_foxconn_sdx61_channels),
-+	.ch_cfg = mhi_foxconn_sdx55_channels,
-+	.num_events = ARRAY_SIZE(mhi_foxconn_sdx55_events),
-+	.event_cfg = mhi_foxconn_sdx55_events,
-+};
-+
- static const struct mhi_controller_config modem_foxconn_sdx72_config = {
- 	.max_channels = 128,
- 	.timeout_ms = 20000,
-@@ -615,6 +641,17 @@ static const struct mhi_pci_dev_info mhi_foxconn_dw5934e_info = {
- 	.sideband_wake = false,
- };
- 
-+static const struct mhi_pci_dev_info mhi_foxconn_t99w696_info = {
-+	.name = "foxconn-t99w696",
-+	.edl = "qcom/sdx61/foxconn/prog_firehose_lite.elf",
-+	.edl_trigger = true,
-+	.config = &modem_foxconn_sdx61_config,
-+	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
-+	.dma_data_width = 32,
-+	.mru_default = 32768,
-+	.sideband_wake = false,
-+};
-+
- static const struct mhi_channel_config mhi_mv3x_channels[] = {
- 	MHI_CHANNEL_CONFIG_UL(0, "LOOPBACK", 64, 0),
- 	MHI_CHANNEL_CONFIG_DL(1, "LOOPBACK", 64, 0),
-@@ -863,6 +900,21 @@ static const struct pci_device_id mhi_pci_id_table[] = {
- 	/* Telit FE990A */
- 	{ PCI_DEVICE_SUB(PCI_VENDOR_ID_QCOM, 0x0308, 0x1c5d, 0x2015),
- 		.driver_data = (kernel_ulong_t) &mhi_telit_fe990a_info },
-+	/* Foxconn T99W696.01, Lenovo Generic SKU */
-+	{ PCI_DEVICE_SUB(PCI_VENDOR_ID_QCOM, 0x0308, PCI_VENDOR_ID_FOXCONN, 0xe142),
-+		.driver_data = (kernel_ulong_t) &mhi_foxconn_t99w696_info },
-+	/* Foxconn T99W696.02, Lenovo X1 Carbon SKU */
-+	{ PCI_DEVICE_SUB(PCI_VENDOR_ID_QCOM, 0x0308, PCI_VENDOR_ID_FOXCONN, 0xe143),
-+		.driver_data = (kernel_ulong_t) &mhi_foxconn_t99w696_info },
-+	/* Foxconn T99W696.03, Lenovo X1 2in1 SKU */
-+	{ PCI_DEVICE_SUB(PCI_VENDOR_ID_QCOM, 0x0308, PCI_VENDOR_ID_FOXCONN, 0xe144),
-+		.driver_data = (kernel_ulong_t) &mhi_foxconn_t99w696_info },
-+	/* Foxconn T99W696.04, Lenovo PRC SKU */
-+	{ PCI_DEVICE_SUB(PCI_VENDOR_ID_QCOM, 0x0308, PCI_VENDOR_ID_FOXCONN, 0xe145),
-+		.driver_data = (kernel_ulong_t) &mhi_foxconn_t99w696_info },
-+	/* Foxconn T99W696.00, Foxconn SKU */
-+	{ PCI_DEVICE_SUB(PCI_VENDOR_ID_QCOM, 0x0308, PCI_VENDOR_ID_FOXCONN, 0xe146),
-+		.driver_data = (kernel_ulong_t) &mhi_foxconn_t99w696_info },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_QCOM, 0x0308),
- 		.driver_data = (kernel_ulong_t) &mhi_qcom_sdx65_info },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_QCOM, 0x0309),
+[auto build test ERROR on akpm-mm/mm-nonmm-unstable]
+[also build test ERROR on kees/for-next/hardening kees/for-next/pstore kees/for-next/kspp linus/master v6.15]
+[cannot apply to rust/rust-next next-20250527]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Burak-Emir/rust-add-bindings-for-bitmap-h/20250526-230435
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-nonmm-unstable
+patch link:    https://lore.kernel.org/r/20250526150141.3407433-5-bqe%40google.com
+patch subject: [PATCH v9 4/5] rust: add find_bit_benchmark_rust module.
+config: powerpc-allyesconfig (https://download.01.org/0day-ci/archive/20250528/202505281613.EHiMAdkN-lkp@intel.com/config)
+compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project f819f46284f2a79790038e1f6649172789734ae8)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250528/202505281613.EHiMAdkN-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202505281613.EHiMAdkN-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> error[E0463]: can't find crate for `core`
+
 -- 
-2.25.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
