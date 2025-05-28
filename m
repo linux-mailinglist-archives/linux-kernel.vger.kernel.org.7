@@ -1,146 +1,161 @@
-Return-Path: <linux-kernel+bounces-665483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEBB3AC69D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 14:54:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA926AC69F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 15:02:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7663C3B277F
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 12:54:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D0817A774E
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 13:00:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50DA2286411;
-	Wed, 28 May 2025 12:54:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SfDn8l2h"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EF332857FA;
+	Wed, 28 May 2025 13:01:55 +0000 (UTC)
+Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4174A214211
-	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 12:54:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32BCB3595D;
+	Wed, 28 May 2025 13:01:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748436866; cv=none; b=tlOTbZXkoJcIeDUyvZKjAkzWlYgzwgpW5vbzoxPf2vVLx0U4CzJnl7FdA9gBUO/usQjEG+wzv4fow66FElDmpgSnFErPYvoO46TjvMoavUqaWF7awI70nnxQ3HtFzgYb4Z0mDUrIQLJPcflg9MoVQzeKKg+KvJgw5r2RlopYX74=
+	t=1748437314; cv=none; b=nySrysMTn2BJWq8Tha4AR3ixTAbENfDp4L2p6A7GXcwULDQXJ1a92EVOvHA+xPIJcDA0K/PdGAMHs7VzFwCiL+mGd5V5X9lu3FHeyiP1cxbdERtb/JM7gjD7B72JKqMGokxhw34fvQyzQ60S+7/FhNJc/EH1iinPtlocJTBkESI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748436866; c=relaxed/simple;
-	bh=4kzUi/76sU4TOqttKuHGINwdxexMyc5EKBLODsQjbIM=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=d19w4LUtWa+DsTCJ+egS/WTbNTSJWo0H+/kqyNkUED0tyrcfKIzAI2i5r2H5cPCKJ7IntnmAa67uTum9SpZ4jrf8xdwTOlvrHqk9N1vu1U+c6TgUuyegt3DgIWHtjXALBRZ+EOVUpBP3EgXzB5AfKNCGVQch78b3AQuU27sTBnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SfDn8l2h; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-31147652b36so3562156a91.2
-        for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 05:54:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1748436864; x=1749041664; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xuuvC7M6sC9txYVcxiKR7Nz7uk/ZLoX9CRoOMl5AG9g=;
-        b=SfDn8l2hz+9fZu0Gd0vx2BgA0Dw904zl0x1+/FLzUrd9wBxGOhpRr3JCZkN02wyY/N
-         gIRkJLJ09jR8MSpCPZY1ELkZu+rlZ5UkUNAJ1ujBianemAoDJ4yYynTl75gXWst+lDQl
-         2E7cYi7AmAwdxyj7kMdvEudVBpeZ0qvGJnlPyx0vMSSdeyHRW4hgAS5sznrPiFOzUekS
-         GfuLStDxAKzQPkIlCaYER05LYGgBpVQW+qMYcPT8sGydr9tOn/KShx2uc6QqK/xAAIsA
-         rZDGOZzxsMi7tYAuD3WxoKNXcb0PqBlqEWn56n/KrURGIl00xz8K0++Uzh1kRcLPLtht
-         XccQ==
+	s=arc-20240116; t=1748437314; c=relaxed/simple;
+	bh=y9bMKWA1mUCVhYWK+2mE7dMzU1P7hxUNnWy/QdoIJFY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gvMJtkrodsUI3j++zARCTGRMxpM/JSGvrTEQtyWwl19snFuQt+rpaPqW/AZWWQFfVZl2MUhywxzwREak/+FOx7+8r/EkWzI2ivtoht72z+SmAO9EMvAJTiCycq5XiIxL1L7SWo+e8tioCCFDGxNI8zIGqeFGZS1r3Ws8hfEycLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-2e8f84653c3so4952fac.0;
+        Wed, 28 May 2025 06:01:52 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748436864; x=1749041664;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xuuvC7M6sC9txYVcxiKR7Nz7uk/ZLoX9CRoOMl5AG9g=;
-        b=lmrrc7uiMu8Lgj5qDQtRiiQdPKaTFH48WmgBVqO1Ia7akLoj34RpT2AyD9f8tP4lwd
-         d1IldvTEa3imoVP7tLNwO+QbbHWX4RSQMCcgxbRI8DkchpUVSxMsZdgD13UAmOBDyuaE
-         S5lQLYypdQ7CpUX55xKbuUJj7uAjHVBR8cHKLvtHiFqlFZVIGBDxl0DCqY3aE71GsJ49
-         cuFg8Yk4dHQ3ttRnOetkcvX33BpGq1l4e6gOd3EBQPhuXdXDWY1v/YY9LnhE0hTzgq9b
-         UZ5x5JB6GEkbTyjIbgnWNQwjW+NpuJU+J2RZr6yqyIDG0uYQb1o7EJgMQBQpluOdxBXv
-         mH0A==
-X-Forwarded-Encrypted: i=1; AJvYcCV0Hu3ixwQ3MgYhHFbU7bNCGWRYoTu9VOcbLir1K+XQS2iEUw/fbyz+QNX85f/c+djRBYGlLPgNVk6yy9Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMvUb+p2iqJMpMncwRmnDSXERdeh3/8N8xjoPjF55Md9S1vMOx
-	xeiWvcjK+sOZwAKGX5DgmR+f1FkIZxvzSzYOkSb1Opf1FkTI8Z2aQtKL7zlzS+W8BYC3b3D0dtO
-	f/3DlAw==
-X-Google-Smtp-Source: AGHT+IHklk6ygB6BrAMAW+vre57cickd20wXmOPZTFQC5U6g6cHQDuc5vbvNaOVhN+qmRiCUV+DfgdMkufQ=
-X-Received: from pjuj14.prod.google.com ([2002:a17:90a:d00e:b0:311:4201:4021])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3911:b0:311:f30b:c18
- with SMTP id 98e67ed59e1d1-311f30b0ff9mr2383545a91.4.1748436864587; Wed, 28
- May 2025 05:54:24 -0700 (PDT)
-Date: Wed, 28 May 2025 05:54:22 -0700
-In-Reply-To: <7cc5cd92-1854-4e0e-93b7-e4eee5991334@intel.com>
+        d=1e100.net; s=20230601; t=1748437312; x=1749042112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IbSvaL2uho5iBNc6UnxSmb8ikoxZVNAuMK5QOEf9/rc=;
+        b=BbTRec1bpCnN4rHckQFYX/xiPcs2SeZiLpQA4hYIzslpPo4VIDm23IprF8ZPrxyp8Z
+         go++DU7QhfzytUMRiVqKemrg1NT2TA0Z0TJLiuAZTx91650yOh4m3eJVKJwgHb2j3qU/
+         68CI5+7rkPvkSa9P1v8nZCm9hkMbEr8UDggsqdRxi+oXcS8yTuX//sLXfd89rUDT6s52
+         ZvmHBplLV3IW+O/bqb7xclTT5Y5HnO1RwCkrNjW5nMdAyh5VPTfSMvwDJO2A+Ac11oVx
+         D+BPKtesekyi7fvHO7L4uq8hg+OkfYg78h94ks2fRxqd1K4aHitLX8Js8G+ZrR+hURxr
+         flcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVZLXfTd7UFlxEjHH8O7C7pVO927/oElFlPnlw7HDaTfkqfixZKd86Elk7wGZmQpN+RxKPRid5uDiNUK/ml@vger.kernel.org, AJvYcCWZwOO3VpxZxygy18Vj8uvOH8X/Grwfr7sIBbRnRMFIbTEH/hP7hwzaB/8FQq956QfAnTMPSBkV4SPu@vger.kernel.org, AJvYcCWgZSGL9zOcq02+QzzLQ1SLhRK1C6+cp0z5ChGv8w+nyhaSY1Stx5A5BhYFL3H38cseGEPmKXlUiotW/fk=@vger.kernel.org, AJvYcCWt3MH2kG4BDq3KtqrgHzbVg8gwBrjNxRYNuKqjvcoOJft3U9+aA/TBM7JPqLwA1ID4czCzzQUO1DjXYTM/H4akrmc=@vger.kernel.org, AJvYcCXSoSr0uSSc0Iq5eRHN8eG9AeLbNvjw6hq09REB+FypHQ6PsZ4ReYLMMN4uueSOIcQXD/uTi2RktF5o@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/OQ6bLrzJlcN/AyaUmMpkOkkRv4XCv0uF+Fh9PPwk0TIBcRLi
+	Ev6p9t9krNrfROARyrIggY+5aOaJ/AdReEy+XnnI4GHbMGYFYDpgpbbmWUtrQWjY
+X-Gm-Gg: ASbGncvGVf36xJt0B8A2czpq+epOKCzoihdsQJF7I46vcr8Lb1iuKSzzPohszC5SBs5
+	VJG4KrL4WwF7OQmH47sQwJ6S1Kf4oJ3G2z/iol+uYDKXEjRWFbQcDWDizwKNlPBGPCpemXHfeyo
+	hIsk8cGSZ1TA0n+ZxggSV6N8JkTnAlefzQwyiX5ZtI0jR5hW02t1EhbFStJYY7n1SeFJyG65xxI
+	RcVsnphOnAktY29ASS3qc6XMpSYpo75UmbnFzUW8hBsNcNP3XZVSo6oT8O/C6InU3zfKDbu6Gec
+	1iGvGREWdCowG5GnjJAUrNqtb75SBqb9ksCgyLEwvxbYRes5JMxBmGEj1ivMkcVQBHuZ7gR3gtk
+	XG7KKcqXyoDKu6izi6yOLsN30kzsd
+X-Google-Smtp-Source: AGHT+IFzcGONDX9eh+40zCjEjeFb827OyifAm7A+OIhWfUZ92FQgovECyH9fx8Gqkz32CO+JnAyf/A==
+X-Received: by 2002:a05:6871:e809:b0:29e:6bdb:e362 with SMTP id 586e51a60fabf-2e861e86388mr8793896fac.17.1748437311165;
+        Wed, 28 May 2025 06:01:51 -0700 (PDT)
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com. [209.85.160.178])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a3c0a6443asm5766681cf.4.2025.05.28.06.01.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 28 May 2025 06:01:51 -0700 (PDT)
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4774d68c670so17827391cf.0;
+        Wed, 28 May 2025 06:01:50 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWd/ngvJU7ORBgFZGig8fmQD8V+K9FlzCiIFf4p6nUl5XBhdv3RhLgisfnfy8nD5PfToGe03awvkW/o@vger.kernel.org, AJvYcCXHmFd9VzH/Sti9F6bliEjmWdOvgeIQVtnDmSZrlfm6CiReQt/cdw0WHoY5OWAtiErx61vQWUVOSzhyCbmO@vger.kernel.org, AJvYcCXcAltGmwP5hvB2y5IavOMge3M3Orgi9yRrGvT/mmVjlowIyFXMJd4j+v5WZdT7GWbMNznhs5Zif2RU@vger.kernel.org, AJvYcCXjSqWj6c4ravcAstUXBZn2CNPoquKiP4Yd/pFpcl2rzb/5UKXmrZ6iYMDGqGj/+9DLWGHW7GgNmPJ37l45FkJJla8=@vger.kernel.org, AJvYcCXnQBrVzL9MiiQxR0fSehtVn1NFtO8kV4TUQV/a5ssbmwMwQeCkDCHqu9NJZUpAsaudT3hQQlbcK9WUo4Y=@vger.kernel.org
+X-Received: by 2002:a05:6102:2911:b0:4df:93e0:fb7 with SMTP id
+ ada2fe7eead31-4e42419b8c0mr12541235137.25.1748436893682; Wed, 28 May 2025
+ 05:54:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250523001138.3182794-1-seanjc@google.com> <20250523001138.3182794-3-seanjc@google.com>
- <7cc5cd92-1854-4e0e-93b7-e4eee5991334@intel.com>
-Message-ID: <aDcHfuAbPMrhI9As@google.com>
-Subject: Re: [PATCH v4 2/4] KVM: x86/mmu: Dynamically allocate shadow MMU's
- hashed page list
-From: Sean Christopherson <seanjc@google.com>
-To: Xiaoyao Li <xiaoyao.li@intel.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Vipin Sharma <vipinsh@google.com>, James Houghton <jthoughton@google.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+References: <20250528-pinctrl-const-desc-v1-0-76fe97899945@linaro.org> <20250528-pinctrl-const-desc-v1-14-76fe97899945@linaro.org>
+In-Reply-To: <20250528-pinctrl-const-desc-v1-14-76fe97899945@linaro.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 28 May 2025 14:54:41 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUGDf5n_Fg7pwiPumm95nPUXyH15geAy2ULwY3U+OtZJA@mail.gmail.com>
+X-Gm-Features: AX0GCFu5yojjEPsbiWTwjJJQ5khyE5KBTwGS5B0aqZkGtvZvOhYOGPRkjlMB-4Q
+Message-ID: <CAMuHMdUGDf5n_Fg7pwiPumm95nPUXyH15geAy2ULwY3U+OtZJA@mail.gmail.com>
+Subject: Re: [PATCH 14/17] pinctrl: renesas: Move fixed assignments to
+ 'pinctrl_desc' definition
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Basavaraj Natikar <Basavaraj.Natikar@amd.com>, 
+	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, Andrew Jeffery <andrew@codeconstruct.com.au>, 
+	Joel Stanley <joel@jms.id.au>, Avi Fishman <avifishman70@gmail.com>, 
+	Tomer Maimon <tmaimon77@gmail.com>, Tali Perry <tali.perry1@gmail.com>, 
+	Patrick Venture <venture@google.com>, Nancy Yuen <yuenn@google.com>, 
+	Benjamin Fair <benjaminfair@google.com>, =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>, 
+	=?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>, 
+	Scott Branden <sbranden@broadcom.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	David Rhodes <david.rhodes@cirrus.com>, Richard Fitzgerald <rf@opensource.cirrus.com>, 
+	Charles Keepax <ckeepax@opensource.cirrus.com>, Lorenzo Bianconi <lorenzo@kernel.org>, 
+	Sean Wang <sean.wang@kernel.org>, Jesper Nilsson <jesper.nilsson@axis.com>, 
+	Lars Persson <lars.persson@axis.com>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Damien Le Moal <dlemoal@kernel.org>, 
+	Vladimir Zapolskiy <vz@mleia.com>, Michal Simek <michal.simek@amd.com>, 
+	Emil Renner Berthing <kernel@esmil.dk>, Jianlong Huang <jianlong.huang@starfivetech.com>, 
+	Hal Feng <hal.feng@starfivetech.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-aspeed@lists.ozlabs.org, 
+	openbmc@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, 
+	linux-renesas-soc@vger.kernel.org, linux-sound@vger.kernel.org, 
+	patches@opensource.cirrus.com, linux-mediatek@lists.infradead.org, 
+	linux-arm-kernel@axis.com, linux-riscv@lists.infradead.org, 
+	linux-rtc@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, May 28, 2025, Xiaoyao Li wrote:
-> On 5/23/2025 8:11 AM, Sean Christopherson wrote:
-> > Dynamically allocate the (massive) array of hashed lists used to track
-> > shadow pages, as the array itself is 32KiB, i.e. is an order-3 allocation
-> > all on its own, and is *exactly* an order-3 allocation.  Dynamically
-> > allocating the array will allow allocating "struct kvm" using kvmalloc(),
-> > and will also allow deferring allocation of the array until it's actually
-> > needed, i.e. until the first shadow root is allocated.
-> > 
-> > Opportunistically use kvmalloc() for the hashed lists, as an order-3
-> > allocation is (stating the obvious) less likely to fail than an order-4
-> > allocation, and the overhead of vmalloc() is undesirable given that the
-> > size of the allocation is fixed.
-> > 
-> > Cc: Vipin Sharma <vipinsh@google.com>
-> > Signed-off-by: Sean Christopherson <seanjc@google.com>
-> > ---
-> >   arch/x86/include/asm/kvm_host.h |  4 ++--
-> >   arch/x86/kvm/mmu/mmu.c          | 23 ++++++++++++++++++++++-
-> >   arch/x86/kvm/x86.c              |  5 ++++-
-> >   3 files changed, 28 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-> > index 330cdcbed1a6..9667d6b929ee 100644
-> > --- a/arch/x86/include/asm/kvm_host.h
-> > +++ b/arch/x86/include/asm/kvm_host.h
-> > @@ -1343,7 +1343,7 @@ struct kvm_arch {
-> >   	bool has_private_mem;
-> >   	bool has_protected_state;
-> >   	bool pre_fault_allowed;
-> > -	struct hlist_head mmu_page_hash[KVM_NUM_MMU_PAGES];
-> > +	struct hlist_head *mmu_page_hash;
-> >   	struct list_head active_mmu_pages;
-> >   	/*
-> >   	 * A list of kvm_mmu_page structs that, if zapped, could possibly be
-> > @@ -2006,7 +2006,7 @@ void kvm_mmu_vendor_module_exit(void);
-> >   void kvm_mmu_destroy(struct kvm_vcpu *vcpu);
-> >   int kvm_mmu_create(struct kvm_vcpu *vcpu);
-> > -void kvm_mmu_init_vm(struct kvm *kvm);
-> > +int kvm_mmu_init_vm(struct kvm *kvm);
-> >   void kvm_mmu_uninit_vm(struct kvm *kvm);
-> >   void kvm_mmu_init_memslot_memory_attributes(struct kvm *kvm,
-> > diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-> > index cbc84c6abc2e..41da2cb1e3f1 100644
-> > --- a/arch/x86/kvm/mmu/mmu.c
-> > +++ b/arch/x86/kvm/mmu/mmu.c
-> > @@ -3882,6 +3882,18 @@ static int mmu_alloc_direct_roots(struct kvm_vcpu *vcpu)
-> >   	return r;
-> >   }
-> > +static int kvm_mmu_alloc_page_hash(struct kvm *kvm)
-> > +{
-> > +	typeof(kvm->arch.mmu_page_hash) h;
-> 
-> Out of curiousity, it is uncommon in KVM to use typeof() given that we know
-> what the type actually is. Is there some specific reason?
+Hi Krzysztof,
 
-I'm pretty sure it's a leftover from various experiments.  IIRC, I was trying to
-do something odd and was having a hard time getting the type right :-)
+On Wed, 28 May 2025 at 12:42, Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+> Assign 'struct pinctrl_desc' .pins and .npins members in definition to
+> make clear that number of pins is fixed and have less code in the probe.
+>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-I'll drop the typeof() in favor of "struct hlist_head *", using typeof here isn't
-justified and IMO makes the code a bit harder to read.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+> --- a/drivers/pinctrl/renesas/pinctrl-rzn1.c
+> +++ b/drivers/pinctrl/renesas/pinctrl-rzn1.c
+> @@ -680,6 +680,8 @@ static struct pinctrl_desc rzn1_pinctrl_desc = {
+
+This structure could be made const...
+
+>         .pmxops = &rzn1_pmx_ops,
+>         .confops = &rzn1_pinconf_ops,
+>         .owner = THIS_MODULE,
+> +       .pins = rzn1_pins,
+> +       .npins = ARRAY_SIZE(rzn1_pins),
+>  };
+>
+>  static int rzn1_pinctrl_parse_groups(struct device_node *np,
+> @@ -878,8 +880,6 @@ static int rzn1_pinctrl_probe(struct platform_device *pdev)
+>
+>         ipctl->dev = &pdev->dev;
+>         rzn1_pinctrl_desc.name = dev_name(&pdev->dev);
+
+... if you would replace this assignment by a hardcoded name
+like "pinctrl-rzn1".
+
+> -       rzn1_pinctrl_desc.pins = rzn1_pins;
+> -       rzn1_pinctrl_desc.npins = ARRAY_SIZE(rzn1_pins);
+>
+>         ret = rzn1_pinctrl_probe_dt(pdev, ipctl);
+>         if (ret) {
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
