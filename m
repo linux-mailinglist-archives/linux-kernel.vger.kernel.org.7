@@ -1,135 +1,71 @@
-Return-Path: <linux-kernel+bounces-665582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC68DAC6B25
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 16:00:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A7C5AC6B1D
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 15:59:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 175484E494B
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 14:00:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22D361BC6BE4
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 13:59:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1924C288C9B;
-	Wed, 28 May 2025 14:00:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MQWv9oF3"
-Received: from mail-ej1-f68.google.com (mail-ej1-f68.google.com [209.85.218.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC8982874EC;
+	Wed, 28 May 2025 13:59:02 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C631D2874ED;
-	Wed, 28 May 2025 14:00:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6371320B81D
+	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 13:59:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748440802; cv=none; b=Tr7pMVdOlUWsTJOINw2g2I3Xb6Tu8bLTBmCCjuY52yF9z1/TVD88EZQWru1LZlV18uRPcaDdmSmf/95EbLSwBoVAQAS5NHijvfkS3gqMNn6zrm5RHXblBKGfVhFke50ARam16XYWFKexehH1rgKbvababIzjdjPnb8luQSAkTkw=
+	t=1748440742; cv=none; b=k6P9QIioK57qxnxGpgksCaeqsrIsoOPf4ZGUGjE/dsLyqgvyZGZWLglX0U4JL+xRI5p6ZfV4IWFznJvP8m2p7tr6Bq6n61bsGxTJ2c+ZGI2jz13d3Qw3imtHd7x3FLv2102azAJzNBWAnHOBgrsIz9oKQ3mzOjN73w0mHTqTJFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748440802; c=relaxed/simple;
-	bh=jDWMGCBFBAmmQhAZ09sBNpBGKcM+6Klk14eVZPogPE4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rq5qMXAq9feysE+ds2vx8lr60Y/29CxkDkhyOPz1AH5qGX7uCW2mIm94RnZkfwaTWmGXz69spLSQ/mdz/L5x4m0JfD7dMZHt3wPMdqPSNcfdJNOKn9ulIWWQqw/Oi+At7PMHT8eLpSa0KlXIwsxSx/01P46N4MXkNGRKMzqCqb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MQWv9oF3; arc=none smtp.client-ip=209.85.218.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f68.google.com with SMTP id a640c23a62f3a-ad1d1f57a01so889959566b.2;
-        Wed, 28 May 2025 07:00:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748440799; x=1749045599; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jDWMGCBFBAmmQhAZ09sBNpBGKcM+6Klk14eVZPogPE4=;
-        b=MQWv9oF3OJxBuPiv+p/jXrNVQOYUlf8qLxAkaD7c0wMDRcxjKQgvIaEbZ4eNjFqm64
-         klfIHuzviHKJDt4b1FtBI9QOFdrTzYlOJ0nPZqCZe4BrESLxKXLBuURxQrCoPc+KpnfJ
-         Ms+NHoiFnMRHE0Iub127vebxCMygvjJnIczwoMF3trq7Fpufe0Lm50vhV1qRCYE5em1t
-         5WzvIlFh483OOjyebDJ8BZhPevdnXnuGuoStL7UX4Fmv8Go+j2n932kHH6YAgu2JOpZd
-         5+DsJjD9whx+cRoQkRMHYxZyEaLrC8H5vHdIdRQjaL7uEHKtxqmcXpv7/sge3jz0G7bv
-         P/NQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748440799; x=1749045599;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jDWMGCBFBAmmQhAZ09sBNpBGKcM+6Klk14eVZPogPE4=;
-        b=UtK+5PLmSGY8JJ4lFHiUNsE8es8WGIsbVwgYlk+IVy2C9Dp7KTJmm8Ximh2mrOeH7x
-         crCA5SaOxdVpA3Osqh02EQit1701k5WQYc+4bHuzCgvygNHn+aKJeSqEbGHkDULSG16X
-         G6v1UBiOV3OntT8cs8QJaeVgY1TFKeEf6aPXMLYNfO1fmkWwm4LwrXfmu52U7PncJrCa
-         Dd6CPUMFpFj7Ldp9VrTQa6Hrgyli2NILMKhMWJtQet7LUyVu3slLN98abmB9/jFWsezU
-         Xx+jzMjBMy4oTcSuMx/stbIT1aQmQPQUgrVXxBPNYbqUwSqtK/M99jMdiEBY1FUdEPqH
-         FCzA==
-X-Forwarded-Encrypted: i=1; AJvYcCUU4fEmdhyYZcfEnVYd8+Zi0GgdQ5t31feoBs3UHY4VKk4M/GiKIT1NOkt3qPDW9MfrEWGXcKy/rkwHMj3wYw77@vger.kernel.org, AJvYcCWhX3TAjau1+VynwrvhvVtrO5WfgIVOpFol6PFXNxvXlEMCnzKLcVtygLMmnJptHmbw2PXpZNU7@vger.kernel.org, AJvYcCXG0EupXfXsZpqAuj4yUSaSIgfliv0rAYSozt4a8pvMoIb4CxU5TTcTmzmsDaSFAHiQB4eHCE7q3fEPHWc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFETetvyHEdtW8FG6Uo/kuGab6lleAfuVAy/aF5IHp9CVVFHDX
-	7Xvc9cSYhZ50LTo397cZpmJIrLr4BCMLyPW5DfJuQ9fnowq1gCwYxSbQH5uMrQc/ZoEfpFou4d0
-	pos+mjx0SlgMQl3kz02LuLxi85WZESro=
-X-Gm-Gg: ASbGncsPZO3xiX1QP2bpI3W0oY33ybrjbieuVYI5IWKcEDPjuJEpPczroTC8aZ4yPub
-	FsFdub89sagKe6G4cm6kXsMGtfeErU3DuhJZ1B0LQI4mQFa5K/l2YNX9AY4qAdEjk//LJ6aRkJf
-	vKU+ZoQyv15nZCOqXvXfaNkrs77B2MVIVzog==
-X-Google-Smtp-Source: AGHT+IH8f0JYmjfBUBPYnA648QhneJOatZxwlVfzIb3tmGjf46Ypy+jLXOvc5AiUNS+l6hFGY0ZB0Kl8A0MN+bbpDFI=
-X-Received: by 2002:a17:907:3ea7:b0:ac6:f3f5:3aa5 with SMTP id
- a640c23a62f3a-ad8a1f0d657mr220144066b.16.1748440798781; Wed, 28 May 2025
- 06:59:58 -0700 (PDT)
+	s=arc-20240116; t=1748440742; c=relaxed/simple;
+	bh=lvfyVyNh2GfH/oh2OLT87WzGcnpGXZD/TplYVhyCgNs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lyPRi0htF6CbPjW58cvp8HOuyfWaVl0yA4x1nUnDvr/eW0CU4WxeIjP0WeZ+CbBzgdauuxCdOEQECVxOShF+OBcXr+2TLoOR3pvh23MC3c+E+j5hxwCzHnhdL/of2JJ+e0lcRB1oSyURRucvC+7Pspe2nW5sbQ34B2YqUl/0Zyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 040F4C4CEE3;
+	Wed, 28 May 2025 13:59:00 +0000 (UTC)
+Date: Wed, 28 May 2025 10:00:00 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org, Dietmar
+ Eggemann <dietmar.eggemann@arm.com>, Linus Torvalds
+ <torvalds@linux-foundation.org>, Shrikanth Hegde <sshegde@linux.ibm.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Valentin Schneider
+ <vschneid@redhat.com>, Mel Gorman <mgorman@suse.de>, Vincent Guittot
+ <vincent.guittot@linaro.org>, Sebastian Andrzej Siewior
+ <bigeasy@linutronix.de>
+Subject: Re: [PATCH 00/43] sched: Use the SMP scheduler on UP too
+Message-ID: <20250528100000.0ab0a8b1@gandalf.local.home>
+In-Reply-To: <20250528085813.GX39944@noisy.programming.kicks-ass.net>
+References: <20250528080924.2273858-1-mingo@kernel.org>
+	<20250528085813.GX39944@noisy.programming.kicks-ass.net>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAN2Y7hxscai7JuC0fPE8DZ3QOPzO_KsE_AMCuyeTYRQQW_mA2w@mail.gmail.com>
- <aDcLIh2lPkAWOVCI@strlen.de> <CAN2Y7hzKd+VxWy56q9ad8xwCcHPy5qoEaswZapnF87YkyYMcsA@mail.gmail.com>
- <CANn89iLG4mgzHteS7ARwafw-5KscNv7vBD3zM9J6yZwDq+RbcQ@mail.gmail.com> <5611b12b-d560-cbb8-1d74-d935f60244dd@blackhole.kfki.hu>
-In-Reply-To: <5611b12b-d560-cbb8-1d74-d935f60244dd@blackhole.kfki.hu>
-From: ying chen <yc1082463@gmail.com>
-Date: Wed, 28 May 2025 21:59:47 +0800
-X-Gm-Features: AX0GCFuXGt78Q0HnJTJb2d_BkBMcOhFo-eb4XfPaFy_IvoMd825HFkT-P2HgpDg
-Message-ID: <CAN2Y7hxZdWLfd34LPzhUPZJ-oMksajLMVt5K8B6Gy70e9TXMpw@mail.gmail.com>
-Subject: Re: [bug report, linux 6.15-rc4] A large number of connections in the
- SYN_SENT state caused the nf_conntrack table to be full.
-To: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
-Cc: Eric Dumazet <edumazet@google.com>, Florian Westphal <fw@strlen.de>, pablo@netfilter.org, 
-	kadlec@netfilter.org, davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, 
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, May 28, 2025 at 9:45=E2=80=AFPM Jozsef Kadlecsik
-<kadlec@blackhole.kfki.hu> wrote:
->
-> On Wed, 28 May 2025, Eric Dumazet wrote:
->
-> > On Wed, May 28, 2025 at 6:26=E2=80=AFAM ying chen <yc1082463@gmail.com>=
- wrote:
-> >>
-> >> On Wed, May 28, 2025 at 9:10=E2=80=AFPM Florian Westphal <fw@strlen.de=
-> wrote:
-> >>>
-> >>> ying chen <yc1082463@gmail.com> wrote:
-> >>>> Hello all,
-> >>>>
-> >>>> I encountered an "nf_conntrack: table full" warning on Linux 6.15-rc=
-4.
-> >>>> Running cat /proc/net/nf_conntrack showed a large number of
-> >>>> connections in the SYN_SENT state.
-> >>>> As is well known, if we attempt to connect to a non-existent port, t=
-he
-> >>>> system will respond with an RST and then delete the conntrack entry.
-> >>>> However, when we frequently connect to non-existent ports, the
-> >>>> conntrack entries are not deleted, eventually causing the nf_conntra=
-ck
-> >>>> table to fill up.
-> >>>
-> >>> Yes, what do you expect to happen?
-> >> I understand that the conntrack entry should be deleted immediately
-> >> after receiving the RST reply.
-> >
-> > Then it probably hints that you do not receive RST for all your SYN
-> > packets.
->
-> And Eric has got right: because the states are in SYN_SENT then either th=
-e
-> RST packets were not received or out of the window or invalid from other
-> reasons.
->
-> Best regards,
-> Jozsef
-I also suspect it's due to being "out of the window", but I'm not sure why.
+On Wed, 28 May 2025 10:58:13 +0200
+Peter Zijlstra <peterz@infradead.org> wrote:
+
+> You know about unifdef, right :-)
+
+I didn't know about that!
+
+> 
+> $ unifdef -m -DCONFIG_SMP=y kernel/sched/*.[ch] include/linux/sched.h include/linux/sched/*.h
+
+Cool!
+
+Although I wish there was better documentation about it.
+
+-- Steve
 
