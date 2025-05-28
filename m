@@ -1,152 +1,133 @@
-Return-Path: <linux-kernel+bounces-664756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-664758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61802AC6024
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 05:33:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06302AC6028
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 05:40:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 837661BA35D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 03:33:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2F1617F22B
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 03:40:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE49F1E834F;
-	Wed, 28 May 2025 03:33:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 637991E412A;
+	Wed, 28 May 2025 03:39:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bGgd2hZK"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O+GknRdv"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2C8317A2E3
-	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 03:33:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0135479FE;
+	Wed, 28 May 2025 03:39:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748403191; cv=none; b=pmcO7rnvArdx7i2MZlyWPyt/Yg6TADto9Tnk/4YXqCvbTcQUXD0L0QJYXfGXTvz2aAc1ZxaDsY7gnpOeo6sRTlNZP2CeM5QlEit2zUViypGwMfqjDOMMSlRXJGBoRNrVrNZHY2KYY2SMQKPjCdfnBq/0cH1Ss036YwjW6kw/l4U=
+	t=1748403593; cv=none; b=L3Vrf7SFqs2e+UaCLLmHuvH/YTJpUHltN1uF445DjwiGbL3ZM57ePWbsII5nNGbKQxyWrWqey8TzdnS2vdw4PHZKfzWvwqGYOOdlHUnio7pBI1tSTv3lnTsu1q7FZmDN8s58oCZ88lLtjoqd6g/Gx2185qH6/0M7DcAOTPtCEYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748403191; c=relaxed/simple;
-	bh=4/HY1VdWL+M1HZdhEbLRc98xqnHDG1nzeo/Mnk034c4=;
+	s=arc-20240116; t=1748403593; c=relaxed/simple;
+	bh=ITNiBSM0+JT9vnYQuQVNXjD+6FP9rFnIlOdwWGPSEF8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AE44FovqZ4jkurepzNDFbtTQm/OoZlREjuWBlE+zMuASViwqC3VR274eVf251Jqrcj75YLFcepD4lG+FDMYY2RUeyv/ijqLqlcVlAX9egQSZwGSGcl4E/ENkos94Yk8XOsZpQK4kG1n5wERNnHHgSSdYfeJuasHwBpTvgqRW6oc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bGgd2hZK; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2348a45fc73so109345ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 20:33:09 -0700 (PDT)
+	 To:Cc:Content-Type; b=otxI6xDQjwBchenhjyKaIulPCIVrBaQDkUXka3wbxGLIoJC1nybbFZ5GsrH/bBnU57JR0Vm7mTeNByjnOpwT89SrGPzFE7KyPAJH7HaQHfLz0Hxdf+R4zkLqqtJQdGLdiOMMQPXd+9hng+GQigE/xfWo3kHBFlNfHuoMTeL4fZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O+GknRdv; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-3105ef2a071so45596661fa.1;
+        Tue, 27 May 2025 20:39:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1748403189; x=1749007989; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1748403590; x=1749008390; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=1NvDGJ09/tu5lx6cy96XQEBcqTxbssUzneuCXvKiQ7w=;
-        b=bGgd2hZK+mbqmMG1DxUvm5OUei+trsCojaOYx1FohQe+8kegpLYO/BoNUp7V9HYhsb
-         IvRvjM7UGmWfarcs0WytcMj0ulQV43nvUKBW0fOrvtKzEZjw8k9pBRA/j8/tsQwX9lU9
-         GoBg135/71C+tyg3fQq8BE9/V1UwnGWZqW0b2N/F9+NjQPYx0hz6mCf6P9GmLkUgXlAw
-         5Y+vhCbIdm+wK3S4AcvnjqUGYf6dtRkLVETY4iEQ+QOoMcV+FWQ860+9opfRfTXVnC2V
-         yrq3JH1IVn/a5HKs5qDPdcu2yU/4d4KdXUmHtIGoW+gd86IOlJmARc5IpHJVRA1BBssg
-         eQRw==
+        bh=k97S9wR51qc4/fnvH9KOEJ16r71ViYeaIlgZl3YKvtw=;
+        b=O+GknRdv3j1JXWmrRhpsImFGDitOINitpsGJdfV0alCtO/qZosedmb5RSzq2GMvbPc
+         QM4bH5x4J0ZGPwCzoyUiMIUDJip0x50H4eS1e/1nYoSfr1PCMpY+2ShXrGEjyCX5hxMz
+         UGVl/KEWXgAcQt5EvUEm/Hkpsx36CyNsfzMjfE4fT/F9PcTALTogSx2ESjwBcmSenOwL
+         SVvb/J0FkETUwGLEgVEQIR+I8q2sECxYoIE6Uh8oWc11NxbM60ctQqVn0lCIHXOCaa6z
+         b+94wYcTD2lTm7lBpRWlAOl8lzLUWT9m6GNNzUWpGwkTjyndn4G9wc4dEPPV/QS07IEE
+         Z5KQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748403189; x=1749007989;
+        d=1e100.net; s=20230601; t=1748403590; x=1749008390;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=1NvDGJ09/tu5lx6cy96XQEBcqTxbssUzneuCXvKiQ7w=;
-        b=jJPkIVe+t+aQSDpih22FcLAXatK+3+a9r47q905Hyz1N8HozQYy/QoR/SLA0lEK5in
-         K03BizSjWwWK7Ib2iuZDkPgzenV3t785Xc8MT6P0RkM3thbr10//24TzTX0XzQ6og4JN
-         /0euI5aA8Yy0uZDoJ3QKoY/5vPM+FUI/LFMP/8MW1rqCZl+jYZGZXn6oePHSHIp/ZXdq
-         4sQN3Zq8TP4WDFdkRUja7admJ4Whw7SOeEbZ/Ku0GWSXIBlNBOMHzQfrxuVF6Mgick/o
-         vrjpp7lV5C6WQWXA7n8jdW5peWLtW5Plb8QY5aYqaTpWi73dtAEn5uKybMnOc30HQNCM
-         DVcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWFRqsVtAwEUTOtFL6YPUozPVzcyaLo05BL/QDSUmjGWmkfMwnzpfLpqyjon8xLXUD4IfK4vpkgcAQdn8E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZE/9ovoqDNji4u2UpTTZvduE596FskzGXT1vQnGkWgMaURVUp
-	zAHqNwhrQRYLdacUzOLs0E4mtYTDVg1uUHc6MUb+F40a3f5UqhgwKwqzzmpR+BB6wUR1x9fqXsc
-	DQ7dd4uVQGw+TSD81AVEhCm9sOfTZ1S6UvRzBnIMM
-X-Gm-Gg: ASbGnct1fq8e/MHwal3CKexg/IEIT72z73i3cK7hW91OmDqmfwmuDzKaYYjS03LVpXq
-	aWFF6tN38CMceq7iua2sLPPR9kG8iT9DvuuwFhweYAc1Z+ns8lcn6j2YWtYha8NLVwcuIugUjFq
-	xGyLoPbkaEziLJbWCxrCJgejopkJna1v5ZPk2BUFnuC6Pc
-X-Google-Smtp-Source: AGHT+IGOF0NG3MQmraD43lvm7RYkw+L1ZNMtg/526GYJO8l+kiYo1BH3IU9UVbT9cidKiq8Ig68hPh33Ie4D7QG4Asc=
-X-Received: by 2002:a17:903:24d:b0:234:bca7:2934 with SMTP id
- d9443c01a7336-234c5222e3cmr1866435ad.6.1748403188460; Tue, 27 May 2025
- 20:33:08 -0700 (PDT)
+        bh=k97S9wR51qc4/fnvH9KOEJ16r71ViYeaIlgZl3YKvtw=;
+        b=N4mUjD9ZVdfVvBOtrCe7NyZy1m2etID8/q+ufcYtXN1nIUVp82DeGTjg14k0o0Puka
+         Vi0SsNBRBNbJAC04vtecjnZGRAfEQ5DLSLHp7aLODXtfw9qlnEd49saemVBsdbePnx4w
+         tmfgtpVLQLVTWuIelYE5HU2nTjxRDGRPCN0bRXpD0q0ElaKFoqAyoDBQdgwhF6OVpSOx
+         Dr2p63EM2Rw27ndVBtGNKAH/YP4hBRgn/VxnDuqK/w/JBuS+bJSxf8QHl/hnuvbZb/Bb
+         pCkol4ILHsmeTkXbhA9wKPrBQtFPYPD7J4XhXdM3hmNiZTWmKZu41GskYtsoK23X7wD4
+         3cTA==
+X-Forwarded-Encrypted: i=1; AJvYcCVqmVvREUIO+aGk3g/Lf/HS/iz94Z3tVexsCviFUyXx3QOv1bkd9g+vHOdorlCyNpT9A/UXX+O0rjmF@vger.kernel.org, AJvYcCXqsX00W9ejiFx55zNU/FH32ftUOKG+o5TEh5cnZkN8eCBpcdMFvAmc3Wjm48aaITRZrZiWuY3ATQfun3lz@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzm86tafXASDApgZfT89j70s1S2goXUWcuaB2Zgn+kJPyfXczWp
+	K1wHDdH8J8Ig5yb+Ibh/0z8mOJGfYfs9CuyvL5mO7ccX09PQkxGxJkPBYeDnV3FlQYVxF+KtPuB
+	iAAI2Nk+tvVyYPSENPgwTv49eWdce9g4=
+X-Gm-Gg: ASbGnctLIJDtuyMpiEu7aoCRoJNhcJsINYE8RzPW1hBrf6FsygIDSq5Dfn/TY2S/kJm
+	8t0+Svl5KKmAhLlJVq7YbvnowgSg5r9EbGPXDK5ngk2KGdd+ZqQ/ZAtWR8lPzWqZYzCUCeXliYz
+	SNs+iJChplOXO1QeWH1yaOuo6CZ+rXoULOWyXsNtmPR0sx/ZagVCgJgCb3NJjrcfws6w==
+X-Google-Smtp-Source: AGHT+IEIsd+uvunloDLIb1uC3D1QnCMBn9VDz+WUTsaj2OqUoWw8XlfPOWmq1JhAOND5a/jIHeqlS6sni3hDgI1rTqA=
+X-Received: by 2002:a05:651c:1548:b0:30b:c9cb:47e5 with SMTP id
+ 38308e7fff4ca-3295b9abf22mr50089171fa.8.1748403589739; Tue, 27 May 2025
+ 20:39:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250528022911.73453-1-byungchul@sk.com> <20250528022911.73453-17-byungchul@sk.com>
-In-Reply-To: <20250528022911.73453-17-byungchul@sk.com>
-From: Mina Almasry <almasrymina@google.com>
-Date: Tue, 27 May 2025 20:32:55 -0700
-X-Gm-Features: AX0GCFuJLqKeYzCNk8mzICLO0VU5BcZ2poUiBYEj8luKwtcPAu1yEtAEKuGm8qQ
-Message-ID: <CAHS8izM-hfueYox9Eqti4OsoCafh=pDL2v-6BEJRyt4ay580hQ@mail.gmail.com>
-Subject: Re: [PATCH v2 16/16] mt76: use netmem descriptor and APIs for page pool
-To: Byungchul Park <byungchul@sk.com>
-Cc: willy@infradead.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, kernel_team@skhynix.com, kuba@kernel.org, 
-	ilias.apalodimas@linaro.org, harry.yoo@oracle.com, hawk@kernel.org, 
-	akpm@linux-foundation.org, davem@davemloft.net, john.fastabend@gmail.com, 
-	andrew+netdev@lunn.ch, asml.silence@gmail.com, toke@redhat.com, 
-	tariqt@nvidia.com, edumazet@google.com, pabeni@redhat.com, saeedm@nvidia.com, 
-	leon@kernel.org, ast@kernel.org, daniel@iogearbox.net, david@redhat.com, 
-	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz, 
-	rppt@kernel.org, surenb@google.com, mhocko@suse.com, horms@kernel.org, 
-	linux-rdma@vger.kernel.org, bpf@vger.kernel.org, vishal.moola@gmail.com
+References: <20250528031531.171356-1-chenxiaosong@chenxiaosong.com>
+In-Reply-To: <20250528031531.171356-1-chenxiaosong@chenxiaosong.com>
+From: Steve French <smfrench@gmail.com>
+Date: Tue, 27 May 2025 22:39:37 -0500
+X-Gm-Features: AX0GCFseYEkO9h9MIMfPfbft45khzPT7ofYg9blN_jrcSn2i60KgD6fYt_5tAI4
+Message-ID: <CAH2r5mtAYV925FbL-5GPGvk3wMG5u0027_icNtUw6uZ9yOBqyw@mail.gmail.com>
+Subject: Re: [PATCH] smb/client: use sock_create_kern() in generic_ip_connect()
+To: chenxiaosong@chenxiaosong.com, Kuniyuki Iwashima <kuniyu@amazon.com>
+Cc: pc@manguebit.com, ronniesahlberg@gmail.com, sprasad@microsoft.com, 
+	tom@talpey.com, bharathsm@microsoft.com, linux-cifs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, ChenXiaoSong <chenxiaosong@kylinos.cn>, 
+	David Laight <david.laight.linux@gmail.com>, Wang Zhaolong <wangzhaolong1@huawei.com>, 
+	Enzo Matsumiya <ematsumiya@suse.de>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 27, 2025 at 7:29=E2=80=AFPM Byungchul Park <byungchul@sk.com> w=
-rote:
+Weren't there issues brought up earlier with using sock_create_kern
+due to network namespaces and refcounts?
+
+On Tue, May 27, 2025 at 10:18=E2=80=AFPM <chenxiaosong@chenxiaosong.com> wr=
+ote:
 >
-> To simplify struct page, the effort to separate its own descriptor from
-> struct page is required and the work for page pool is on going.
+> From: ChenXiaoSong <chenxiaosong@kylinos.cn>
 >
-> Use netmem descriptor and APIs for page pool in mt76 code.
+> Change __sock_create() to sock_create_kern() for explicitness.
 >
-> Signed-off-by: Byungchul Park <byungchul@sk.com>
-
-This patch looks fine to me... but this is converting 1 driver to
-netmem. There are hundreds of other drivers in the tree. Are we
-converting all of them to netmem...?
-
-The motivating reason for existing drivers to use netmem is because
-it's an abstract memory type that lets the driver support dma-buf
-memory and io_uring memory:
-
-https://www.kernel.org/doc/Documentation/networking/netmem.rst
-
-This driver does not use the page_pool, doesn't support dma-buf
-memory, or io_uring memory. Moving it to netmem I think will add
-overhead due to the netmem_is_net_iov checks while providing no
-tangible benefit AFAICT. Is your long term plan to convert all drivers
-to netmem? That maybe thousands of lines of code that need to be
-touched :(
-
+> Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
 > ---
->  drivers/net/wireless/mediatek/mt76/dma.c      |  6 ++---
->  drivers/net/wireless/mediatek/mt76/mt76.h     | 12 +++++-----
->  .../net/wireless/mediatek/mt76/sdio_txrx.c    | 24 +++++++++----------
->  drivers/net/wireless/mediatek/mt76/usb.c      | 10 ++++----
->  4 files changed, 26 insertions(+), 26 deletions(-)
+>  fs/smb/client/connect.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 >
-> diff --git a/drivers/net/wireless/mediatek/mt76/dma.c b/drivers/net/wirel=
-ess/mediatek/mt76/dma.c
-> index 35b4ec91979e..cceff435ec4a 100644
-> --- a/drivers/net/wireless/mediatek/mt76/dma.c
-> +++ b/drivers/net/wireless/mediatek/mt76/dma.c
-> @@ -820,10 +820,10 @@ mt76_add_fragment(struct mt76_dev *dev, struct mt76=
-_queue *q, void *data,
->         int nr_frags =3D shinfo->nr_frags;
+> diff --git a/fs/smb/client/connect.c b/fs/smb/client/connect.c
+> index 6bf04d9a5491..3275f2ff84cb 100644
+> --- a/fs/smb/client/connect.c
+> +++ b/fs/smb/client/connect.c
+> @@ -3350,8 +3350,7 @@ generic_ip_connect(struct TCP_Server_Info *server)
+>                 struct net *net =3D cifs_net_ns(server);
+>                 struct sock *sk;
 >
->         if (nr_frags < ARRAY_SIZE(shinfo->frags)) {
-> -               struct page *page =3D virt_to_head_page(data);
-> -               int offset =3D data - page_address(page) + q->buf_offset;
-> +               netmem_ref netmem =3D netmem_compound_head(virt_to_netmem=
-(data));
+> -               rc =3D __sock_create(net, sfamily, SOCK_STREAM,
+> -                                  IPPROTO_TCP, &server->ssocket, 1);
+> +               rc =3D sock_create_kern(net, sfamily, SOCK_STREAM, IPPROT=
+O_TCP, &server->ssocket);
+>                 if (rc < 0) {
+>                         cifs_server_dbg(VFS, "Error %d creating socket\n"=
+, rc);
+>                         return rc;
+> --
+> 2.34.1
+>
+>
 
-It may be worth adding virt_to_head_netmem helper instead of doing
-these 2 calls together everywhere.
 
 --=20
 Thanks,
-Mina
+
+Steve
 
