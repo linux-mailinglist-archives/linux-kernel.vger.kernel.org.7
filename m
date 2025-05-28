@@ -1,78 +1,128 @@
-Return-Path: <linux-kernel+bounces-666203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 465EEAC73C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 00:15:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61367AC73CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 00:17:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B01CA2445C
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 22:15:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0B0D3A675D
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 22:16:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81272220F59;
-	Wed, 28 May 2025 22:15:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B381222584;
+	Wed, 28 May 2025 22:16:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SDPOUjyw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dhofPInb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E23418634A;
-	Wed, 28 May 2025 22:15:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8CBA207A20;
+	Wed, 28 May 2025 22:16:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748470531; cv=none; b=MC397P/1ffb2VNT0BK+HnSzrr507e0/bpN715KswnZe5HxkXDQvn4+JIYzwNBUI57+SnOy+QY4UJLr7/tMa1Cen22g8+naCkg9LvLhgJV8tEi94grVujiqZYoP0xUjX87LOfuRgLMaNB9OVIuzA7QgjXfyzmPgeNLDpEbOpGuuU=
+	t=1748470577; cv=none; b=nHgQNoaTMsfSCSuEziPrSwXqx22l83igxihXbfsFtDt9KIDH0tKzCc4qnkl8R7K7vJBjARhxKbeIXHbVSe9BbcW2Teckhtb7/gfxSIOfhqg+yvaTPIKxHiHC7Am9JfoEWEFYLOFBZwDvT2mMRQSnDGGmDUoFgbhn9pT8OrhuCRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748470531; c=relaxed/simple;
-	bh=aDsCpElC2i/bSA+1zi2eQ/hnJoCVt0Alx+eab1BZLhs=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=CJUj/LGEVLdx/pqKR1/PSWSemWhnDORLEloMu0/p1WomjMMlN0HO/pEvvyME2TO56QaTZoTLeOjyCL4t3g37r74m5pYSvFQS/wMBN/CRLt4EmLyzpNL1Q6t555hWzUSqchpEuvomFGVAEfs3w1cXYMh15oTeGH/IpRvh/M95o0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SDPOUjyw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4227C4CEE3;
-	Wed, 28 May 2025 22:15:30 +0000 (UTC)
+	s=arc-20240116; t=1748470577; c=relaxed/simple;
+	bh=14aYNCNfI06xgQO0opu7LK+XD3fig3/AMaFXaT8jqi8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=brkiRKkc8cZrTqz79slToAL3/c66bMWUei9nadwXSR4JoZlebhPNASNDU/2/NYmjFgclkQYqGgnNCgfQxldASBC00JHeCGCxJOhM+Zqc7mPBwFYywpDiaE/JbjpkYIH+IIoZTLp2hiJspUTjb2QhFzwBYrFh3MiiGMON8rw7idU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dhofPInb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 697DBC4CEE3;
+	Wed, 28 May 2025 22:16:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748470530;
-	bh=aDsCpElC2i/bSA+1zi2eQ/hnJoCVt0Alx+eab1BZLhs=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=SDPOUjywO+2A4gDrSWqsWzYgSbEiww29Sjxe/w/gFCe5sz1KodharjSA85ijVadSF
-	 PIl46aMabl4iatREt09mqEb7hGM2qqqlo9avdPflA4JOsGdwrhLAs0RSRUkqtQLIgg
-	 /sc5Hg1alihUYokoDJfG5C0WVJ8loEvTup8pDYBkm5zBBBBZU0mDSguG+b03H2b7LS
-	 nVz3RFQ70s95D7pKNzIWiCPLrrkyugk5WUuzOO90WuRldBBQPFDOt2BG8k2mhjI1b5
-	 1zHOBHvnPykDMfk0wD54O11IEBuhzQHrO61Apl4K6ECqn4iIJfrb0AlmNCX8g8gMx8
-	 6v9Q9369kopKg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAFFD3822D1A;
-	Wed, 28 May 2025 22:16:05 +0000 (UTC)
-Subject: Re: [GIT PULL] Crypto Fixes for 6.16
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <aDZ89Fs8Y20_fj2I@gondor.apana.org.au>
-References: <aDZ89Fs8Y20_fj2I@gondor.apana.org.au>
-X-PR-Tracked-List-Id: <linux-crypto.vger.kernel.org>
-X-PR-Tracked-Message-Id: <aDZ89Fs8Y20_fj2I@gondor.apana.org.au>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git tags/v6.16-p2
-X-PR-Tracked-Commit-Id: 0a84874c7e7dde5cdddc80a82093120e924a348b
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 408aa67404405c8519ddee70bc0e6c55daa7c959
-Message-Id: <174847056445.2608061.5885516562298346451.pr-tracker-bot@kernel.org>
-Date: Wed, 28 May 2025 22:16:04 +0000
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+	s=k20201202; t=1748470576;
+	bh=14aYNCNfI06xgQO0opu7LK+XD3fig3/AMaFXaT8jqi8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dhofPInbXDWh1B5QlG2a3ED7JdgjQiTBNCjvubn+7PFjm+jbRxTtyDSe8LUnwGvGx
+	 +OyWBcYO8Rl5IPfMbLtZrOpU0rsVaTBrtCAS4o0Zhr0j86YbG8jm6Ote67Ml/rWaXF
+	 qeE+hfzW3Oe5o0svZdwCgmP30J3wEu+4bRsdgw2lIhScVmeY/g2vYHA5Ki6E2XJCUf
+	 YCWQCk/WNac5oJ1tZpqNcD/zFbiIBU0TrPeizuLZDVl4lyhuUN0vrsabaxFyesIy+S
+	 lX08Q4ga8WFvklLVhh1FIaGQGaNGOvoWiXcuzNmEeU5SGgRXoSye2vyT+msw8YpXRl
+	 BidGtghk9kvIg==
+Date: Wed, 28 May 2025 15:16:14 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Athira Rajeev <atrajeev@linux.ibm.com>,
+	Kajol Jain <kjain@linux.ibm.com>, Li Huafei <lihuafei1@huawei.com>,
+	"Steinar H. Gunderson" <sesse@google.com>,
+	James Clark <james.clark@linaro.org>,
+	Stephen Brennan <stephen.s.brennan@oracle.com>,
+	Andi Kleen <ak@linux.intel.com>, Dmitry Vyukov <dvyukov@google.com>,
+	Zhongqiu Han <quic_zhonhan@quicinc.com>,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	Krzysztof =?utf-8?Q?=C5=81opatowski?= <krzysztof.m.lopatowski@gmail.com>,
+	"Dr. David Alan Gilbert" <linux@treblig.org>,
+	Zixian Cai <fzczx123@gmail.com>,
+	Steve Clevenger <scclevenger@os.amperecomputing.com>,
+	Thomas Falcon <thomas.falcon@intel.com>,
+	Martin Liska <martin.liska@hey.com>,
+	Martin =?utf-8?B?TGnFoWth?= <m.liska@foxlink.cz>,
+	Song Liu <song@kernel.org>, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 5/9] perf build-id: Mark DSO in sample callchains
+Message-ID: <aDeLLvBVQnQqJT4b@google.com>
+References: <20250428213409.1417584-1-irogers@google.com>
+ <20250428213409.1417584-6-irogers@google.com>
+ <aDd06eK7fKFsFsVS@google.com>
+ <CAP-5=fV-cLLpdyoqL8+Jrt3iYU7EbpZZDOyM1kBCc+54gA2Nzg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fV-cLLpdyoqL8+Jrt3iYU7EbpZZDOyM1kBCc+54gA2Nzg@mail.gmail.com>
 
-The pull request you sent on Wed, 28 May 2025 11:03:16 +0800:
+On Wed, May 28, 2025 at 01:54:41PM -0700, Ian Rogers wrote:
+> On Wed, May 28, 2025 at 1:41 PM Namhyung Kim <namhyung@kernel.org> wrote:
+> >
+> > On Mon, Apr 28, 2025 at 02:34:04PM -0700, Ian Rogers wrote:
+> > > Previously only the sample IP's map DSO would be marked hit for the
+> > > purposes of populating the build ID cache. Walk the call chain to mark
+> > > all IPs and DSOs.
+> >
+> > I think this is correct, but I'm afraid it'd also increase the processing
+> > time.  Do you happen to have any numbers?
+> 
+> It increases time spent processing the data file but to get a large
+> data file I had to run for multiple seconds and I struggled to get the
+> performance cost of this to be in the milliseconds (ie a tiny fraction
+> of the record time). Ultimately I found the change imperceptible and
+> couldn't think of a good command line to make it perceptible.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git tags/v6.16-p2
+The worst case would be dwarf unwinding.  Maybe we can skip the
+processing if it takes too long..
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/408aa67404405c8519ddee70bc0e6c55daa7c959
+> 
+> If the time is spent populating ~/.debug because more DSOs are marked
+> then this is fixing a bug and isn't a problem with the patch.
 
-Thank you!
+Right, it's a good thing.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+> 
+> My personal opinion is that it is somewhat surprising `perf record` is
+> post-processing the perf.data file at all, and -B and -N would be my
+> expected defaults - just as --buildid-mmap implies --no-buildid (-B).
+
+Otherwise nobody will run perf buildid-cache to add the info. :)
+
+
+> I didn't want to modify existing behaviors in these changes, however,
+> in this case I was just trying to make the existing behavior correct,
+> similar to fixing the same bug in `perf inject`.
+
+Thanks for your work,
+Namhyung
+
 
