@@ -1,124 +1,168 @@
-Return-Path: <linux-kernel+bounces-665074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1EA6AC63FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 10:17:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 804C8AC6406
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 10:19:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C7FE1884A33
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 08:17:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE51D16AD4B
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 08:18:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88372274642;
-	Wed, 28 May 2025 08:11:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7748275100;
+	Wed, 28 May 2025 08:12:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="D+zUWDuL"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bgwepJs5"
+Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13CA7272E5D
-	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 08:11:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4D6B2750F0
+	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 08:12:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748419909; cv=none; b=SdSicsmqyzMi6ZYbCRT6voZDiqLtV9WQI8rLh2ZlawSy+co3QJJL+RCeTYPCtUXIdy9vipu7WrrWZrK36BMZepq0rmTRjlS/+cEVDjMVK5SDb8P+hZPX+SZ+oQ5TiNWfzbymvf1/bGIx8bBw5WiQ9aOtLR9i6CP8aI8+17n6QLM=
+	t=1748419929; cv=none; b=apvl1ow5+NJQTMtZZymjaLIKhHqY4ioTJBS3TA9nMA8g1LIS9/fioKHfG6boaHWPOjXzcHj+gtziNGwHUjQ4qbkt1+ZNIPts/jT/xpAIhOw1nJGjibrofEaJEsTUXbgL3WT1+MDW7b0czvsAdjOUkJVWf3lmUzHSLx24XMoS2mo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748419909; c=relaxed/simple;
-	bh=vaHMQ2ZjJxntFZc5U5J5R37wyOU0aE1VASANrNBzvTU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=V3o1MhNlFCTq2AE4inNz7BVIOq/ITvk/AHcbWnBTUO23wqXmoLibbE5a0xdsRBwjaTEw+90s7GlCPKDyGo/GpKOQxjCHkO5ZeSuMI7Ar5ugoXU+OX0kR92MWKOFAKUGmsCk6inYZH1fMkciofA/FB2WMADZVok3SNoqlxcdjQjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=D+zUWDuL; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3a4dd5f69e7so1830994f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 01:11:46 -0700 (PDT)
+	s=arc-20240116; t=1748419929; c=relaxed/simple;
+	bh=iq49G9wOYggjoDJcANMi0VVctc/wtpWsREH7YqiZsIc=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=g/J9jgH5vIJH5sPEhzOckDqecrVDcQbs/FVJVjQ+HzBjGvSS/aOOEp33ff4Ac/vf4U6g8DbQs/QbmZ1Meuv7CFOcO6rAy1p6U0NBWvvn2csaFotiP37iSq9X96H7FuD5gqHoguNRXPvzj2UqAeUk/+aWzaYiFtNEaUiyuXeBVrM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bgwepJs5; arc=none smtp.client-ip=209.85.166.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-85b3f92c8f8so83822439f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 01:12:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1748419905; x=1749024705; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=z/FCb16iLm7G0e3WCUiTZyQQx/X2uoabvGUpmWxpr2A=;
-        b=D+zUWDuLXuCSyHSpEM6Xa5G8GHzw1Fh0FidaHr98vmF0wMx7IPIeMMaEoBqjoTQ17v
-         FxN2bnHvAz8Z0Ijsxxi5ffVM7v9/F7lmfi6a63Cmgb3RfTU0o7qSAJIX5HQEWC5L/ioI
-         1FhqrHl7h9EDm6+enRbK4ao/QyyF+l7vaiABxGy+3ydVTbaYKV6XoXZxMaaqu747SDuc
-         F2/0qhrK6Wjs7khqLXCH/6SFvdDm8GP1z/6Fu1v2gYXF2BTj7MsDI4lo12DWRGHiL9tg
-         7Z6G4rFf3vBQgblbuvAdYaDBqpxhbzYOBKg3+eCEtHoQkV7ME6fPFFpN4VoCV2F6SE5C
-         kCxQ==
+        d=gmail.com; s=20230601; t=1748419926; x=1749024726; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=LGZqeibOWB7S91gACjnl9P5+C3jb6bhNOrGxwNqaoHA=;
+        b=bgwepJs5V2h7N0dj5v4/zO9pK9kdcIYULXlnCTnp1WrXb0win6OXgnVyazlm+MscxL
+         4Wn6sVC9btEYrcwh/FQzKwYidGxlov8mfohKGutRisFHEcgHtFL6/vKWmur/FpuF21V3
+         DhShe8ZEK+Tk4Op7oHZ8ZaUQABsgGvlImJxiHSH6uuhiK/YIDcXu7JgKVb2EP9D1UYDz
+         /6waZAUESa4KsaUWdCTsKfr449twR2tO0xEeb27G0OnCEpzMJFxZYxtKCV8MPxzAaLJj
+         jYRTuj7w/7XsPLHLRDme6QG+95HHkjG/m7nlhVlS661A1nzaXoLX5fjg3QvLAFizKGEq
+         TRVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748419905; x=1749024705;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=z/FCb16iLm7G0e3WCUiTZyQQx/X2uoabvGUpmWxpr2A=;
-        b=Lkc9QHWiMK374HiGcZFIKLODgf5XXDZYBwtp/s/RLAYn2wfka7Iq7KWvPIw3qxak17
-         IjQqV033ABcDyw9rzKBRxp8IOEB4tla0CuKiYeqsVhaxUSbC9BiltA65j8GTbxaHYSKC
-         +HkYKjHJZZPYopVhPTydZPLgKaSla6BsR+6ipeVJ9tpuaMR6BlomLG5gafAtt3RxYK+g
-         u4L9rwQSTw7weifmgwbv00/4VCW4txJu1xN2rs9YalAiW8oQTEip1QyV4h1Q4ehEb4ZN
-         2GxSL1+JXqSNwywp0sKX0d0PDoNZejmB29jrRVEOnfvv0dWNXJgc/Z6esNLpop23MfdD
-         Hg0w==
-X-Forwarded-Encrypted: i=1; AJvYcCXwyOvRJZInzvEpR0NhhWBVS2Qe1nikpkFpLfCjATXNBV5wcuIG5PWL/fkxtiBsYxJDXtcxDbw/OUUv/P4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxsu+rOQDsBLJzO7NFk+Lc/j1t/LHRXGa+4YISGDB+WQFxkdn4n
-	hG8byb9zfwZRO9Zf1yE8E1odidmCYZz+YLBcK9EKSygMahFz85Eh5uhWkyiW4HsEnKU=
-X-Gm-Gg: ASbGncuZ+F6CtfGR/oDxn835aDVoKMfyriG3S8TcX3pMMi8nfIxT81Ld7qO3C8Acr5G
-	9tIhK00HcqRO7hDlYf/E5M3d7mQWWfRX9B7m0tGABwYvVfi877n5lY2/CaxMnAZhQu/OQkw8T08
-	yiCVjLRAivrZsH/IxksWYe4eWBRdUtjlbn3IXEZwEGr/OjX0fVViJ/iK4ffPmmMUw6ePYzV8/yT
-	QFYrNb/yzYTtJZZCJB3rZYEVsF87yt0CWppBqu+vqN5JIcYwkAhkpFuTjlHndnYjw9u/Kqw0kdR
-	MQVjnz0ZDcjHIRohvuKbDl7MvIB+xLGzdn36gR7zLpmC4H0S/Te9BrPppKPySUf5Jqs=
-X-Google-Smtp-Source: AGHT+IF/wZakUcvuphAcq2wGl7JnOIxHt9unsVJgGESVrVbsKufI2U86TIxeSul0ISFVlHUGaRAdxA==
-X-Received: by 2002:a05:6000:2282:b0:3a3:6958:88dd with SMTP id ffacd0b85a97d-3a4cb436d3amr13082654f8f.23.1748419905264;
-        Wed, 28 May 2025 01:11:45 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a4eac6eb45sm798948f8f.12.2025.05.28.01.11.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 May 2025 01:11:44 -0700 (PDT)
-Date: Wed, 28 May 2025 11:11:41 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Shiju Jose <shiju.jose@huawei.com>
-Cc: Davidlohr Bueso <dave@stgolabs.net>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Li Ming <ming.li@zohomail.com>, Fan Ni <fan.ni@samsung.com>,
-	linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH next] cxl: fix return value in cxlctl_validate_set_features()
-Message-ID: <aDbFPSCujpJLY1if@stanley.mountain>
+        d=1e100.net; s=20230601; t=1748419926; x=1749024726;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=LGZqeibOWB7S91gACjnl9P5+C3jb6bhNOrGxwNqaoHA=;
+        b=sDUgEhgGazVGzH6VzlJfKF3srWWViBD3kxh9UBKG9QSJKcLHhnMzRN77iUN7VpqhSk
+         pVH3enmULwlxhnmcY7/35Flj0SVCctJFwRWOyd36dJqLYhfmwxP5XpFlvWDp27Lm7kIR
+         +ZQAf3wy9Gvhr/hgiXvUUTUBOQtLxS039JHE8a/Hvc/LU35FM12H5SeVXIv71yULptBX
+         eVvLoDDFQAXUhAkV0zexUlTY0qDg5sPK9tt5+P1898in6e0YQdbQAT3UNiaPh7eaO7xM
+         NyqE73dAVjPUAeCuuDYG1OiZtA5Zg7KHw/v/Jii9wdRLVbnod9S1TK4JftbH3s0MrOUb
+         URbQ==
+X-Gm-Message-State: AOJu0YyaIiJZBSagYP6NG8wLiTDjvHtjT9Pz6Ki0k0Bo2mbnes7OhVxf
+	W0fDsDy+eTPy1CKDcPGXA1xBYlPzXxeRJmiHF+dyp/5vHsVcqMKHAfw7Q1PMpQN2EMETKfOm1+P
+	HvnuBSgyw2QIKUvafIcQqi5oUA6ppMSUeN1u/h7/1hw==
+X-Gm-Gg: ASbGncvrlwb1BYt1uIrF+wFetYwnR1ys6Wo6w1HP+Nsh52vnN54P2Q/og5o3TJ2dNXz
+	2PHypnK5sq4Ca3AFrLMTHQgf/25UhdEn1bWRnjgMnWGo2bTc7mvx10zIDolo5JEQAeCX2eyxBvf
+	q/SFtb6G1Ea1PKGDJIvehjsFL/vFwhJ7/q
+X-Google-Smtp-Source: AGHT+IHpFfy1sdCvk3W1Rd9jWY5bWNJkGf0+jjyu1BQLChSZ07zVQ/pkk5+oePaDY+2em+LRUDdvDfvX5Vbfk5O15Sk=
+X-Received: by 2002:a05:6e02:12e8:b0:3db:7b4c:309b with SMTP id
+ e9e14a558f8ab-3dc9b695e1dmr163220745ab.2.1748419926500; Wed, 28 May 2025
+ 01:12:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+From: Andrey Khalturin <andrey.khalturin@gmail.com>
+Date: Wed, 28 May 2025 11:11:55 +0300
+X-Gm-Features: AX0GCFsxCqR5KCgBY-3wMsAyTWPvicMPxDPJwSc_GOhMypD9xcUWmAPUlKhMjFI
+Message-ID: <CAPEB=f0QxT2S9q2znpML35z+YyMVJ7p2kmr2sON+m7eJ=XbMpw@mail.gmail.com>
+Subject: Subject: BUG: Process termination deadlock in exit_aio() vs device release
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-The cxlctl_validate_set_features() function is type bool.  It's supposed
-to return true for valid requests and false for invalid.  However, this
-error path returns ERR_PTR(-EINVAL) which is true when it was intended to
-return false.
+Problem Description
 
-Fixes: f76e0bbc8bc3 ("cxl: Update prototype of function get_support_feature_info()")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/cxl/core/features.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+We have encountered a fundamental deadlock issue in the Linux kernel's
+process termination sequence when using libaio with custom kernel
+modules. The problem manifests when the OOM killer terminates a
+process that has pending asynchronous I/O operations managed by a
+custom kernel module.
+Root Cause Analysis
 
-diff --git a/drivers/cxl/core/features.c b/drivers/cxl/core/features.c
-index 6f2eae1eb126..7c750599ea69 100644
---- a/drivers/cxl/core/features.c
-+++ b/drivers/cxl/core/features.c
-@@ -544,7 +544,7 @@ static bool cxlctl_validate_set_features(struct cxl_features_state *cxlfs,
- 	u32 flags;
- 
- 	if (rpc_in->op_size < sizeof(uuid_t))
--		return ERR_PTR(-EINVAL);
-+		return false;
- 
- 	feat = cxl_feature_info(cxlfs, &rpc_in->set_feat_in.uuid);
- 	if (IS_ERR(feat))
--- 
-2.47.2
+The issue stems from the order of operations in do_exit():
 
+do_exit()
+  -> exit_aio()           // Waits for completion of all AIO operations
+       -> wait_for_completion(&ctx->comp)  // BLOCKS HERE
+  -> exit_files()         // This code is never reached
+       -> close_files()
+         -> filp_close()
+           -> fops->release()  // Custom module's release() never called
+
+This creates an unresolvable circular dependency:
+
+    AIO subsystem waits for all pending operations to complete before proceeding
+    Custom kernel module cannot complete operations because it's
+unaware the process is terminating
+    Module notification (file_operations->release()) only happens
+after AIO cleanup
+    Process cannot exit until AIO operations complete
+
+Scenario Details
+
+    Service process uses libaio to communicate with a custom kernel module
+    OOM killer sends SIGKILL (uncatchable) to the service process
+    Process enters do_exit() but hangs in exit_aio() waiting for
+operation completion
+    Kernel module never receives device close notification via
+release() callback
+    AIO operations remain pending indefinitely, preventing process termination
+
+Current Workarounds
+
+Kernel module developers currently must implement workarounds such as:
+
+    Process state monitoring - checking current->flags & PF_EXITING
+    Timeout mechanisms - forcibly completing operations after timeouts
+    Task work callbacks - using task_work_add() to detect process termination
+
+Proposed Solution
+
+The process termination sequence should be reordered to notify drivers
+before waiting for AIO completion:
+
+do_exit()
+  -> notify_drivers_of_exit()     // Signal all file descriptors about
+termination
+  -> exit_aio()                   // Then wait for AIO completion
+  -> exit_files()                 // Finally close file descriptors
+
+This would allow:
+
+    Kernel modules to receive early notification of process termination
+    Proper cleanup and completion of pending AIO operations
+    Graceful process termination even under memory pressure
+
+Impact
+
+This architectural issue affects:
+
+    Custom kernel modules using asynchronous I/O
+    High-load systems where OOM killer activation is common
+    Any driver that legitimately expects release() notification for cleanup
+
+Environment
+
+    Kernel versions: Affects multiple kernel versions (observed on 5.x
+and 6.x series)
+    Architecture: x86_64
+    Subsystems affected: AIO, VFS, process management
+
+Request
+
+We request consideration of this architectural issue for future kernel
+development. The current design creates an unavoidable deadlock
+scenario for legitimate kernel module implementations that rely on
+proper file descriptor lifecycle notifications.
+
+The fundamental problem is that asynchronous operations should not
+block process termination when the process cannot provide the
+necessary completion signals due to the termination sequence itself.
 
