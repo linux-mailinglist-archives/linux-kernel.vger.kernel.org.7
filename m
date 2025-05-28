@@ -1,48 +1,47 @@
-Return-Path: <linux-kernel+bounces-666228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2FF9AC73FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 00:28:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97925AC7400
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 00:28:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34D039E692A
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 22:27:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE8FD9E83B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 22:27:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81F802253EB;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB8ED225A50;
 	Wed, 28 May 2025 22:26:31 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E4CE2222D1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EEE0222585
 	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 22:26:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748471189; cv=none; b=MsF/eYH1phcdX46aKuqWINOYfmGvvdLjK9qDkm3f3nFdRDrpOzYR3N928Ix17NqJDFFz3Mv940N/znx2NYoGBXxlevNxTzsLY05Wc9LVOEjZnXK4AFl7xv8O0eu4L8v+2ZmMMwbmJspWvXygr1R6Jpg0rSQqJSefRwlBiMi76Ks=
+	t=1748471189; cv=none; b=FJ/YoUymNsz7sZIO7AjI1ospwRZrjcRlKajklpdgyBnySx81sLwpLj2wPTPMWaGOw5DYWpVHcrY3Cq40FBFOSEX+N+cr9qfAtRZgWk/j07eZbCQbUkcmADP1Q2I2Kb6G8pz3nVRdp5djgCwc6gJ1fFWBVwAjnjCY/D7O/SkY7Sw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1748471189; c=relaxed/simple;
-	bh=jZzDn7oxDj4fzCSUFFrLZKm14MUPfbJ+RUxTk8MOn/k=;
+	bh=G9Oggep7KMEniKM/9/dQzsFFXEJn/Af57KWOcQMTfTk=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=eQ3KSBKY0jrJ7f7KP8g9k2JX7h1GtqtCUFKVhYuDJQdiaRmsc6iQaYV3h1WMIK8ko+wV03qLshvRTh44xcOy3Ma++pg9kvwxdPD3QdhjR7dZ595xkH3OAhBj+afVCPinOaOTXQmB54x5Ym0TbyyNj2yzmMOjucQ99wrgNP55P5A=
+	 Content-Type; b=GqE8BhEWSgxoVG6GoOmAFgnCHyAeJwtGLdWQFnjcFb98vh7rPQU/9bpg8Y2uPfG31kD5zYD7KcNmAzHhZgR/mnieRApPWisb+cPfUk70N3EeziFdsqYSGbXO8lJM7K/v7h90UNzLB3iYYr9eSA6NxEaVWJKQ7BRnOxFlzLOTQuQ=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBFDAC4AF0D;
-	Wed, 28 May 2025 22:26:28 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 278B1C4CEF6;
+	Wed, 28 May 2025 22:26:29 +0000 (UTC)
 Received: from rostedt by gandalf with local (Exim 4.98.2)
 	(envelope-from <rostedt@goodmis.org>)
-	id 1uKPFC-0000000Aozy-0zsc;
+	id 1uKPFC-0000000Ap0f-1gg8;
 	Wed, 28 May 2025 18:27:30 -0400
-Message-ID: <20250528222730.087873560@goodmis.org>
+Message-ID: <20250528222730.255593191@goodmis.org>
 User-Agent: quilt/0.68
-Date: Wed, 28 May 2025 18:27:09 -0400
+Date: Wed, 28 May 2025 18:27:10 -0400
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org
 Cc: Masami Hiramatsu <mhiramat@kernel.org>,
  Mark Rutland <mark.rutland@arm.com>,
  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
  Andrew Morton <akpm@linux-foundation.org>
-Subject: [for-next][PATCH 05/10] ring-buffer: Removed unnecessary if() goto out where out is the next
- line
+Subject: [for-next][PATCH 06/10] ring-buffer: Remove jump to out label in ring_buffer_swap_cpu()
 References: <20250528222704.623477429@goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -54,42 +53,83 @@ Content-Type: text/plain; charset=UTF-8
 
 From: Steven Rostedt <rostedt@goodmis.org>
 
-In the function ring_buffer_discard_commit() there's an if statement that
-jumps to the next line:
+The function ring_buffer_swap_cpu() has a bunch of jumps to the label out
+that simply returns "ret". There's no reason to jump to a label that
+simply returns a value. Just return directly from there.
 
-	if (rb_try_to_discard(cpu_buffer, event))
-		goto out;
- out:
-
-This was caused by the change that modified the way timestamps were taken
-in interrupt context, and removed the code between the if statement and
-the goto, but failed to update the conditional logic.
+This goes back to almost the beginning when commit 8aabee573dff
+("ring-buffer: remove unneeded get_online_cpus") was introduced. That
+commit removed a put_online_cpus() from that label, but never updated all
+the jumps to it that now no longer needed to do anything but return a
+value.
 
 Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Link: https://lore.kernel.org/20250527155116.227f35be@gandalf.local.home
-Fixes: a389d86f7fd0 ("ring-buffer: Have nested events still record running time stamp")
+Link: https://lore.kernel.org/20250527145753.6b45d840@gandalf.local.home
 Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- kernel/trace/ring_buffer.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ kernel/trace/ring_buffer.c | 23 +++++++++--------------
+ 1 file changed, 9 insertions(+), 14 deletions(-)
 
 diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-index e40f5c6d7908..a01fc42f2a13 100644
+index a01fc42f2a13..c912ce4c8c89 100644
 --- a/kernel/trace/ring_buffer.c
 +++ b/kernel/trace/ring_buffer.c
-@@ -4685,10 +4685,7 @@ void ring_buffer_discard_commit(struct trace_buffer *buffer,
- 	RB_WARN_ON(buffer, !local_read(&cpu_buffer->committing));
+@@ -6315,37 +6315,33 @@ int ring_buffer_swap_cpu(struct trace_buffer *buffer_a,
  
- 	rb_decrement_entry(cpu_buffer, event);
--	if (rb_try_to_discard(cpu_buffer, event))
+ 	if (!cpumask_test_cpu(cpu, buffer_a->cpumask) ||
+ 	    !cpumask_test_cpu(cpu, buffer_b->cpumask))
+-		goto out;
++		return -EINVAL;
+ 
+ 	cpu_buffer_a = buffer_a->buffers[cpu];
+ 	cpu_buffer_b = buffer_b->buffers[cpu];
+ 
+ 	/* It's up to the callers to not try to swap mapped buffers */
+-	if (WARN_ON_ONCE(cpu_buffer_a->mapped || cpu_buffer_b->mapped)) {
+-		ret = -EBUSY;
+-		goto out;
+-	}
++	if (WARN_ON_ONCE(cpu_buffer_a->mapped || cpu_buffer_b->mapped))
++		return -EBUSY;
+ 
+ 	/* At least make sure the two buffers are somewhat the same */
+ 	if (cpu_buffer_a->nr_pages != cpu_buffer_b->nr_pages)
+-		goto out;
++		return -EINVAL;
+ 
+ 	if (buffer_a->subbuf_order != buffer_b->subbuf_order)
 -		goto out;
 -
-- out:
-+	rb_try_to_discard(cpu_buffer, event);
- 	rb_end_commit(cpu_buffer);
+-	ret = -EAGAIN;
++		return -EINVAL;
  
- 	trace_recursive_unlock(cpu_buffer);
+ 	if (atomic_read(&buffer_a->record_disabled))
+-		goto out;
++		return -EAGAIN;
+ 
+ 	if (atomic_read(&buffer_b->record_disabled))
+-		goto out;
++		return -EAGAIN;
+ 
+ 	if (atomic_read(&cpu_buffer_a->record_disabled))
+-		goto out;
++		return -EAGAIN;
+ 
+ 	if (atomic_read(&cpu_buffer_b->record_disabled))
+-		goto out;
++		return -EAGAIN;
+ 
+ 	/*
+ 	 * We can't do a synchronize_rcu here because this
+@@ -6382,7 +6378,6 @@ int ring_buffer_swap_cpu(struct trace_buffer *buffer_a,
+ out_dec:
+ 	atomic_dec(&cpu_buffer_a->record_disabled);
+ 	atomic_dec(&cpu_buffer_b->record_disabled);
+-out:
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(ring_buffer_swap_cpu);
 -- 
 2.47.2
 
