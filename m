@@ -1,150 +1,131 @@
-Return-Path: <linux-kernel+bounces-665471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72126AC69B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 14:47:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BE6CAC69E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 14:56:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8B349E4A53
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 12:47:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26F761BC4DF9
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 12:56:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA913284B25;
-	Wed, 28 May 2025 12:47:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MnBd9OAr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0578328641F;
+	Wed, 28 May 2025 12:56:05 +0000 (UTC)
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39F3C7E9;
-	Wed, 28 May 2025 12:47:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E39421322F;
+	Wed, 28 May 2025 12:56:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748436467; cv=none; b=GXzDbCwy+eu5xJjYDMR2T/ubKxjYA7ilQGLHWnkj7gp2OFHhrWgk6ge+EAuxr3k2vKN+CmEnhoO7uOWbQUEbtbphT65xyN6wb0w6g1415FmQpUyCBlGBi9EOcFL7DBiXIW9CYUCb9Ri8hC4goeHnncZQuVdDi5wBMYTmZZDKY2o=
+	t=1748436964; cv=none; b=cQl/kupMyDYxygt4tezguJF6IgNAMQ3HQ91FlCfxckK4X0N2/GzsoI10VxY5q74BJDUV2lxRZcovm5uJY3BahVo6tLMosM3kRkFvu7QgMDmiT4CpcrHRmT7L5qCPQoph59DGqK8Js7wn3bsu9XedvLTsN86K4WUFb9BzpZ0nSh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748436467; c=relaxed/simple;
-	bh=5oEXoX22yAUoOjEnWSuham9SHeuLu8axVh5UAaxDY6w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QovOesVhN7lmz+2biDe95t1atm25YmZPyodeF0qInGDnQ6k7AzKbcRM9zwNMyZVUietlIBRCtiAKRzU29Ym6CuTo7T8kcaDq2oK1xy4FSYYiAHZHhtoCwOGkVHRyKeUGXxBuTd6+eGrCRnQoGS1pT9mNJwmhdTkJ8K7e3pAo1us=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MnBd9OAr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EC2DC4CEE7;
-	Wed, 28 May 2025 12:47:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748436466;
-	bh=5oEXoX22yAUoOjEnWSuham9SHeuLu8axVh5UAaxDY6w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MnBd9OArWVsMiwvVioDRZjfX1vjGGefk9ubxzWAbYwlc3ca97MP8cUdRgoASZuipd
-	 sPPEB3XgzM2KbRr7cfT+lKKIXw4xOyJb+N5Ce9RC3LjGdMokyPOUzRnFEf1TIpyB9o
-	 z9Ae/bbZSPZpCcmO14ddAp/Sdi60FWjG52Br6VhJweD2eFaXEEKl/RlhoDHQ+3DuNW
-	 zV0nghLNOQXOEgJXc/kCEmv+szVhafPuC0+1w4qyV9PwPUSRvIbEUjbEQqN+mGZOk5
-	 YJQYYGQaR3L2Tbusczn1fAYAg2RobXjb2nIetErWi2HVWh6oJ3kq5dQ0NDBdhrPmN+
-	 PNUMJN3je8yqQ==
-Date: Wed, 28 May 2025 09:47:43 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
-	James Clark <james.clark@linaro.org>,
-	Howard Chu <howardchu95@gmail.com>,
-	Weilin Wang <weilin.wang@intel.com>,
-	Stephen Brennan <stephen.s.brennan@oracle.com>,
-	Andi Kleen <ak@linux.intel.com>, Dmitry Vyukov <dvyukov@google.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 3/6] perf symbol: Move demangling code out of
- symbol-elf.c
-Message-ID: <aDcF7_pIU5M_XEAs@x1>
-References: <20250527180703.129336-1-irogers@google.com>
- <20250527180703.129336-4-irogers@google.com>
+	s=arc-20240116; t=1748436964; c=relaxed/simple;
+	bh=+PhLsl6QIi9rIQ0T45j63xL9sX0VWjfxjI9Tcf3ANwo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZZzRc1BJFSWy+1J/9kFUHO6qz2+H1CRuLRf7XjNfBsErEoO8V4m+7nPDs48zli8ryNuqsjWgtecwmx/m62KFkRNmi7cSsr/UEJB9HTm6MzX4oPUMt9WZhPCQR/ncwRtw4VHKYl6EPDNtTuc1pZsFErSyIwGsmHKnKc5HeCc4Qnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-47692b9d059so57543271cf.3;
+        Wed, 28 May 2025 05:56:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748436961; x=1749041761;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kpBCbmssZZU2OxX6932Syq4YOVYfQLXpGhSUVPiLHKA=;
+        b=ab6dLn8w6c4GmA3zf/78J4M737G4B/QUoVh9dn1gtnoDGdng+UCBuPnexT8ilI3bJL
+         VItbrTw91zv7kiUDekbCyKKQhjEdVw+aLS9ua/DsQ4qxeCXUpyvu7OhuobfdQSKJbDnE
+         f9FMEKTxQpdQThKdQm3bpLFTDseaJ7xxZ0rXCV+rvSv64T+iBxHPiuULjO7hncf+KV4T
+         sV2WcKA8vhBh/vF92z4S1lQsojxuPbXJCJWdDGEIugAhDno8mQjBHsUtljHQ+XCFb4fa
+         jOY8dieBroDaLwqyglDV1y+TvOdVcn5j7dBNQ1AwaHyrt5OdreEav0NIyF7n4qG9NOOc
+         dbPA==
+X-Forwarded-Encrypted: i=1; AJvYcCUbchEUMvu1435+udPmlc1t7q/NBDQQNqpfLTFQfhYiFBCyvQ6uyKedhgR2cF1NcOZ/i6lxy82U+DTSlX88@vger.kernel.org, AJvYcCUuLHabSiSItSMIdkae9o7ZsMA94meVebHZCXBlRFtoTMQ+EHjjnUsRL+VenVQCZ7kOgw7OoiHo9QU7@vger.kernel.org, AJvYcCVnhUeyf/mb1POKCG/LLnkPEnxl0uA7WxI1reOVtY51+fyPbArS7mlHFXccYkVadZLrd5HA4VZlEy3f@vger.kernel.org, AJvYcCXBp/pNOYFE9Uc1cA/oyijJKjibLKRGDndapGCTqiltba41mfQEXh8SFtdsaxBsIoYce+g59DDLmFdAFgiWtlPq2kQ=@vger.kernel.org, AJvYcCXZLrxo+IhWXKeFae//nGo5g6J7hJZ37Wc93KrVXfli0fh/gsPf5Tl2NteHS8QrjTp7Hx0if5wA6UV/abo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+6LVpOayFVC7AcXs2/N1ypEOTaURZe6OxHuCk8j9GyTXH8yZd
+	1wRQlSypjMh8eos+VmGe9oH2PQFEWsPvf4OmY/APabAl8vMRghWj22nmxISMdruc
+X-Gm-Gg: ASbGncvY2bNUqn3kp0nkfZfxv3NF5NkdKn7g73TJo3LA4I/JRFjz2xbJqCHrPpcxABr
+	RzI68JXTnOYVd4R26in8SozRFcupVtsMcBycGsCCwddeDOSuGJMrP+eguaTdlfUZjK/CZJI3EBt
+	QoHWj6mV6hkD1hUlxumGV75PrDeZNgwEEIEEG/oQoBQ+ODnJW575Zr20S40gMH1HogoNvwyCfCe
+	PDh772oKkL+72jGu50pnClyLlo8NOZEQCLssqG3xbhly6kN5qDO0HzS8NzdaGAfH8Y+N7FCqUak
+	66Z85CS4giZ6wSU5EXqwC8sY0rzpGOf3zgeXIAtG1ZpZHFvL6TyidqPjF4LJnjF9Wm/ecW5Ap9G
+	n0EoO+16U7tgYRdZBsA==
+X-Google-Smtp-Source: AGHT+IHfeApnVHkjrZgUpPXzGnPyaya3Y+pEdPNILryJcS1vH+5VauihlFQrd6UcHdUAWv1LoKoerA==
+X-Received: by 2002:a05:622a:4a0b:b0:494:a447:5bbb with SMTP id d75a77b69052e-49f46657f26mr288348621cf.16.1748436961470;
+        Wed, 28 May 2025 05:56:01 -0700 (PDT)
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com. [209.85.222.179])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a3c80d7838sm5582141cf.64.2025.05.28.05.56.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 28 May 2025 05:56:01 -0700 (PDT)
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7c59e7039eeso601643285a.2;
+        Wed, 28 May 2025 05:56:01 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVMDpqNpfAz8+p88Omw201cvmzEYpO1XjThN/vuPN+7W3K/FOWkfsEvhdSkbZWHi4Fjc2L0I+C1PMby@vger.kernel.org, AJvYcCVqqdjRthiBroK1nefAWRIcvbAG3VaN2FQr9KS/OyY9aKm7AaeAOgir4KMAceJfXEUtptFH+5NkKcAk5PE4@vger.kernel.org, AJvYcCX/xa/dM6zXui3njLrJd33Kiy+uXqcj/Z6z15qDDQMHte5yXt15jm7TIPboZ+2OUzxWrm1OhXCHgw5xOky5jT98o6k=@vger.kernel.org, AJvYcCX8IJhVj/32he8yUgKYpzaONeOX/FhphBPw8ftrDMbjFnGlufp3oMapwogFG47huEM/nuEGgj6ZSrQF@vger.kernel.org, AJvYcCXQ55Xh6nybQB6YHiDYOLIbflIMzgH+XR6c2SjuYDElzBLjKUQoI/sHM+1FihDPeQi0aBAYSjMDmzipwj0=@vger.kernel.org
+X-Received: by 2002:a05:6102:3e94:b0:4dd:b9bc:df71 with SMTP id
+ ada2fe7eead31-4e4240b1619mr13395283137.10.1748436481362; Wed, 28 May 2025
+ 05:48:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250527180703.129336-4-irogers@google.com>
+References: <20250528-pinctrl-const-desc-v1-0-76fe97899945@linaro.org> <20250528-pinctrl-const-desc-v1-4-76fe97899945@linaro.org>
+In-Reply-To: <20250528-pinctrl-const-desc-v1-4-76fe97899945@linaro.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 28 May 2025 14:47:49 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUWqvHGKHqUWf6xdVBzaungUq1Fq=g_+qFQRO5+fq4=vQ@mail.gmail.com>
+X-Gm-Features: AX0GCFtImpXXWdP8CtUa2VgvQDuwNbZqXjPeWpaGOsf8DlxmYUgiiqknnvQgxJg
+Message-ID: <CAMuHMdUWqvHGKHqUWf6xdVBzaungUq1Fq=g_+qFQRO5+fq4=vQ@mail.gmail.com>
+Subject: Re: [PATCH 04/17] pinctrl: Constify pointers to 'pinctrl_desc'
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Basavaraj Natikar <Basavaraj.Natikar@amd.com>, 
+	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, Andrew Jeffery <andrew@codeconstruct.com.au>, 
+	Joel Stanley <joel@jms.id.au>, Avi Fishman <avifishman70@gmail.com>, 
+	Tomer Maimon <tmaimon77@gmail.com>, Tali Perry <tali.perry1@gmail.com>, 
+	Patrick Venture <venture@google.com>, Nancy Yuen <yuenn@google.com>, 
+	Benjamin Fair <benjaminfair@google.com>, =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>, 
+	=?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>, 
+	Scott Branden <sbranden@broadcom.com>, David Rhodes <david.rhodes@cirrus.com>, 
+	Richard Fitzgerald <rf@opensource.cirrus.com>, Charles Keepax <ckeepax@opensource.cirrus.com>, 
+	Lorenzo Bianconi <lorenzo@kernel.org>, Sean Wang <sean.wang@kernel.org>, 
+	Jesper Nilsson <jesper.nilsson@axis.com>, Lars Persson <lars.persson@axis.com>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Damien Le Moal <dlemoal@kernel.org>, 
+	Vladimir Zapolskiy <vz@mleia.com>, Michal Simek <michal.simek@amd.com>, 
+	Emil Renner Berthing <kernel@esmil.dk>, Jianlong Huang <jianlong.huang@starfivetech.com>, 
+	Hal Feng <hal.feng@starfivetech.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-aspeed@lists.ozlabs.org, 
+	openbmc@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, 
+	linux-renesas-soc@vger.kernel.org, linux-sound@vger.kernel.org, 
+	patches@opensource.cirrus.com, linux-mediatek@lists.infradead.org, 
+	linux-arm-kernel@axis.com, linux-riscv@lists.infradead.org, 
+	linux-rtc@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, May 27, 2025 at 11:07:00AM -0700, Ian Rogers wrote:
-> symbol-elf.c is used when building with libelf, symbol-minimal is used
-> otherwise. There is no reason the demangling code with no dependencies
-> on libelf is part of symbol-elf.c so move to symbol.c. This allows
-> demangling tests to pass with NO_LIBELF=1.
+On Wed, 28 May 2025 at 12:41, Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+> Pin controller core code only stores the pointer to
+> 'struct pinctrl_desc' and does not modify it anywhere.  The pointer can
+> be changed to pointer to const which makes the code safer, explicit and
+> later allows constifying 'pinctrl_desc' allocations in individual
+> drivers.
+>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-At this point:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-⬢ [acme@toolbx perf-tools-next]$ alias m='rm -rf ~/libexec/perf-core/ ; make -k O=/tmp/build/$(basename $PWD)/ -C tools/perf install-bin && perf test python && cat /tmp/build/$(basename $PWD)/feature/test-all.make.output'
-⬢ [acme@toolbx perf-tools-next]$ m
-rm: cannot remove '/home/acme/libexec/perf-core/scripts/python/Perf-Trace-Util/lib/Perf/Trace/__pycache__/Core.cpython-313.pyc': Permission denied
-make: Entering directory '/home/acme/git/perf-tools-next/tools/perf'
-  BUILD:   Doing 'make -j32' parallel build
-Warning: Kernel ABI header differences:
-  diff -u tools/arch/arm64/include/asm/cputype.h arch/arm64/include/asm/cputype.h
+Gr{oetje,eeting}s,
 
-Auto-detecting system features:
-...                                   libdw: [ on  ]
-...                                   glibc: [ on  ]
-...                                  libelf: [ on  ]
-...                                 libnuma: [ on  ]
-...                  numa_num_possible_cpus: [ on  ]
-...                                 libperl: [ on  ]
-...                               libpython: [ on  ]
-...                               libcrypto: [ on  ]
-...                             libcapstone: [ on  ]
-...                               llvm-perf: [ on  ]
-...                                    zlib: [ on  ]
-...                                    lzma: [ on  ]
-...                               get_cpuid: [ on  ]
-...                                     bpf: [ on  ]
-...                                  libaio: [ on  ]
-...                                 libzstd: [ on  ]
+                        Geert
 
-  INSTALL libsubcmd_headers
-  INSTALL libperf_headers
-  INSTALL libapi_headers
-  INSTALL libsymbol_headers
-  INSTALL libbpf_headers
-  AR      /tmp/build/perf-tools-next/libpmu-events.a
-  CC      /tmp/build/perf-tools-next/util/symbol-elf.o
-util/symbol-elf.c: In function ‘get_plt_got_name’:
-util/symbol-elf.c:563:21: error: implicit declaration of function ‘demangle_sym’; did you mean ‘dso__demangle_sym’? [-Wimplicit-function-declaration]
-  563 |         demangled = demangle_sym(di->dso, 0, sym_name);
-      |                     ^~~~~~~~~~~~
-      |                     dso__demangle_sym
-util/symbol-elf.c:563:19: error: assignment to ‘char *’ from ‘int’ makes pointer from integer without a cast [-Wint-conversion]
-  563 |         demangled = demangle_sym(di->dso, 0, sym_name);
-      |                   ^
-util/symbol-elf.c: In function ‘dso__synthesize_plt_symbols’:
-util/symbol-elf.c:761:27: error: assignment to ‘char *’ from ‘int’ makes pointer from integer without a cast [-Wint-conversion]
-  761 |                 demangled = demangle_sym(dso, 0, elf_name);
-      |                           ^
-util/symbol-elf.c: In function ‘dso__load_sym_internal’:
-util/symbol-elf.c:1778:27: error: assignment to ‘char *’ from ‘int’ makes pointer from integer without a cast [-Wint-conversion]
- 1778 |                 demangled = demangle_sym(dso, kmodule, elf_name);
-      |                           ^
-make[4]: *** [/home/acme/git/perf-tools-next/tools/build/Makefile.build:85: /tmp/build/perf-tools-next/util/symbol-elf.o] Error 1
-make[3]: *** [/home/acme/git/perf-tools-next/tools/build/Makefile.build:142: util] Error 2
-make[2]: *** [Makefile.perf:798: /tmp/build/perf-tools-next/perf-util-in.o] Error 2
-make[1]: *** [Makefile.perf:290: sub-make] Error 2
-make: *** [Makefile:119: install-bin] Error 2
-make: Leaving directory '/home/acme/git/perf-tools-next/tools/perf'
-⬢ [acme@toolbx perf-tools-next]$
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-- Arnaldo
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
