@@ -1,85 +1,85 @@
-Return-Path: <linux-kernel+bounces-664862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-664864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 941E8AC6187
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 08:04:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87ECDAC618E
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 08:06:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CC629E4A66
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 06:03:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24CEA1BA6594
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 06:06:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C2A01FDA8C;
-	Wed, 28 May 2025 06:04:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7019B20CCF4;
+	Wed, 28 May 2025 06:05:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=columbia.edu header.i=@columbia.edu header.b="btw61md1"
+	dkim=pass (2048-bit key) header.d=columbia.edu header.i=@columbia.edu header.b="NIAVSOt1"
 Received: from mx0b-00364e01.pphosted.com (mx0b-00364e01.pphosted.com [148.163.139.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B6E8170826
-	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 06:04:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A6A4382
+	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 06:05:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.139.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748412251; cv=none; b=lQRKuKa0KbQfn6D5caFF0gURuct5JvFm/NhRjWWFtk1g4El9KmlD/lmLeqIJjsDfDp7WzkczIHjxvrdiyjhzBmLhsuTCJjBUZnd97vLDczwqZxGMShTC/KpbTyR0bknhLtoq/WPJ5fuHDM6atZVz6pEd1Mfmin3vdSl7wnTjmG4=
+	t=1748412355; cv=none; b=UBsoOjKEQZpH7Jo3q8cJzX5+yLOY0zqHyQ3FBNrLZFjELV/6TRPbWFpo2JQGmMRxkVRFdCBMDWiQDNVs1c2HnkRbJgVSeOA/k/mgclM/9QfrbB1qIITxMcEhATNmPoVf+Qdb1LkeHTsgymPhTZBOU5q4E6f73kZ/ieQzGJD2BQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748412251; c=relaxed/simple;
-	bh=qbEfMXw4f6hGtzDMopgPNMAN0mELfSEB7aJDCRd37ag=;
+	s=arc-20240116; t=1748412355; c=relaxed/simple;
+	bh=u4GnJWVjLuTGqbXgtkf1x2zfHjnxuyVndV+7heCn/5s=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=h6DypDHiH5hGuly38Wj8yQSuD7giBT0G8iZtQ1G/QA9BBJ7Qc9sUbK97VLz11XSULGP0Qp4VOw7tLBh/DGKqGDTziNXdz9UM+TNtHKuvmnNLcKVbTnt5XTte4PqlsXffW4pDj2L4KMpmwIC4sXpE6/S33SvA18wvt8lnexp0Yww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=columbia.edu; spf=pass smtp.mailfrom=columbia.edu; dkim=pass (2048-bit key) header.d=columbia.edu header.i=@columbia.edu header.b=btw61md1; arc=none smtp.client-ip=148.163.139.74
+	 In-Reply-To:To:Cc; b=K9hkbYi+028NnMAZPJcSb5uRLigVVKfMzBqt81tgcsleZTYbk87DHZmiAc2x068s9zHmrC6z9iJUqGmX4H26TS1azeJuL1g/gW5P5qu4hAbR+StH7iGGMa1UMYAyQx9FRfuedouCl44H/nj5/wqP96RMPsepuBaEgsz6mQ90Gjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=columbia.edu; spf=pass smtp.mailfrom=columbia.edu; dkim=pass (2048-bit key) header.d=columbia.edu header.i=@columbia.edu header.b=NIAVSOt1; arc=none smtp.client-ip=148.163.139.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=columbia.edu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=columbia.edu
-Received: from pps.filterd (m0167073.ppops.net [127.0.0.1])
-	by mx0b-00364e01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54S0UXEw005891
-	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 01:35:55 -0400
+Received: from pps.filterd (m0167075.ppops.net [127.0.0.1])
+	by mx0b-00364e01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54S5Y4VX025530
+	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 01:35:56 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=columbia.edu; h=cc :
  content-transfer-encoding : content-type : date : from : in-reply-to :
  message-id : mime-version : references : subject : to; s=pps01;
- bh=sp1HTHNp9i8nJGzJLl+MrKoe11bDNbefLMEa4bQ6yek=;
- b=btw61md1ol/I85WxujwDh8AfHaAF1w0IvdnYi13BQNSJyYhfydso0KdAkAdqVFUzJJxa
- DBxcJTzkFOF1ltYx/7BGhIrY7d4u2noxW56WNcSEn2+aoN0SWtL/shlt3CZWwAuPYvF+
- ICGTA0Jvs/j+b+Uw4qWsbUHMZlQhBfv+hU0r3HoO323uQTCiPUJLAz2B4f7fIPKfJuWY
- q2nprnmbQ/2QtegiEOWHMj8jPn7IHL4xJA7LDFpmPJk94L9UOmRFFdiJqOV7avHhOFqU
- eWi8OIg8q4EVgGz5VAh3oxpl1q74axoZ5zh9w5Dp3b8bWcFoJi9Ib0ngg3ybEVHt4LiG WQ== 
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-	by mx0b-00364e01.pphosted.com (PPS) with ESMTPS id 46ua0hr37j-1
+ bh=fe1SF0gP7B1T3vG5mU/w/LphwhnjbUzeEhTplFhLHQw=;
+ b=NIAVSOt1US8wy8tVfB4d//T4g+Ngd4zgAlyOn7Bjl86GRNzVyy/cdz0jn7PPTJONGCCv
+ 77EGAOXrbfes+dwvKUH05kGB0jONEvPKEQ2f3ZFF2s8pwqQyXu4ndGrfB38cUJ2O/Sjm
+ 3azPDmNcdC07qkbcLBW4FE85BiLJu1xSzUgc47E3fk0Nk4Z9k70AA1K73JEDAvlWv+tK
+ ZQKVPbnf/v90Je0bCFqyjqlJKJipJQSAZscfvU0lXK+Bgthmo6rsgSK7qUxgTn9lQIqJ
+ mqKJFdcJSAnpW2aeZHeK7SOUiml/SpF0Jqb2WOC5gfeXZ097aVPamAFXya/6unPdsSi4 mQ== 
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
+	by mx0b-00364e01.pphosted.com (PPS) with ESMTPS id 46uu8pkx65-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 01:35:55 -0400
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7c5e2a31f75so1307145185a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 22:35:55 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 01:35:56 -0400
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7c92425a8b1so91045285a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 22:35:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748410554; x=1749015354;
+        d=1e100.net; s=20230601; t=1748410555; x=1749015355;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=sp1HTHNp9i8nJGzJLl+MrKoe11bDNbefLMEa4bQ6yek=;
-        b=GMuggRvoV+euiQwPPKjcUGiJW7YZKrFF3kY+jcs/3vdMX7t6rcf4fg9t2QeQNlEkeO
-         YCy2Cig/MIy2Ywf5JPVcheGmcKul4RTuLlRrXSPXo7wxK8/RQv5aYyIeN23wZOJTggrY
-         6KyCFZfvgEk1cRGvYLcozMQgclTEVUetNr37CuLOOqTw17dGQxQIBrocZYPWv4lDuLbe
-         gBnVTa0TRKo+2nSUJutpOx0hcO4YuRMVxRa2WWw+VHj44OSGpM9XBeFAqH8GesxJ4dH+
-         Iz04WfQqncZ0Vs6+WL3MQE+PmAswrbbahQ8xSBm/ozCQ25RZr7ACNCD/KabMvnv6rjp2
-         5iEw==
-X-Gm-Message-State: AOJu0YyL/Ash4IkcSCuAcTnmsDcYRnxlgu/IifxjtqugmiRBuk3Q6zci
-	ZIFyuAJFl2xa210dJhE/RZ6omSPqLuj+WbJwX7Lk74jufzrlEyMqE5FDh8hbGt+zly05icftgHL
-	xVPsJr6pDG8oTK/2u8yxttN7dNZNF2ls2qw0LNym0Bt7u52m/m6OvUswl9xcNIA==
-X-Gm-Gg: ASbGncuDyWchEIqX1bivP4ig2G6rPOk3/GerkXx0ZQvTa7VScH6peFJ6iWcbJ3dXGHW
-	F4Tmyd4u6sjgoB0eU7SMDDJ7lprYYgUyRCMcHJvu0GT6MlwS8wSa4D0RlB9ZEtrQUdegaf2gwM2
-	+krnMCrjEDcCRRT69acEUPIhW8E7zPJPqnMgMCNNpIVAQ6ViOXN7Yo2L+eqc2H0d9UcGvPn6qKq
-	KxEjucJ29OnzEE0vvnHL4ULDZ9UwbCpp3OPJzH4yknETMrtBCxjhmb8BVwqYeS+WngI7vICfSbY
-	Ub89qwhZztBlqgyX7jzQKqlUhfp3Dy26/0pDfa05pwiSJKapjphc6xKtCQ==
-X-Received: by 2002:a05:620a:244f:b0:7ca:e971:8335 with SMTP id af79cd13be357-7ceecbad616mr2593459285a.8.1748410554417;
-        Tue, 27 May 2025 22:35:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEnrArbZ+R14YYj/3nPVnHDO2U1t2oUn6i4bFafxorEqiTIqpaF+odMlSpR7iXP+Y7Sko8Saw==
-X-Received: by 2002:a05:620a:244f:b0:7ca:e971:8335 with SMTP id af79cd13be357-7ceecbad616mr2593456585a.8.1748410553995;
-        Tue, 27 May 2025 22:35:53 -0700 (PDT)
+        bh=fe1SF0gP7B1T3vG5mU/w/LphwhnjbUzeEhTplFhLHQw=;
+        b=VoXpQoAEJHd7FWcsgDskKO1Fni8hyzeBEzTsJgD4vZnf3LEDVKhJ6evRdct9w91x6r
+         yexLVwfFPkjWMHG+XymwU43JdamCW2YD3vdg24enQAeyHSm9DoJRCT1eUWidNoocMdyU
+         S34xseez8GYxdHXJMFrtlxmR6RxzWie7sNOUX8JjUuol5EIdZIY6DjOIFLrOiB7hJyo3
+         vGcli0L3W56TWuOps+KExTBnBSeTTrt063LnSsLLiEXg68OkVqRmaiWmTaMFb0ElP0ze
+         ZcTZcFirAY6CqUZ02o10DlOaS8HfbXfsWQQKDqqOwqAol+ynJuVrBL2dB8VQ9kzw8RLa
+         ulSA==
+X-Gm-Message-State: AOJu0Yzfvc4VdmNq/r1FL2og6QhO4GmkBCZLYro5hn4xdIuc6gs5x4GB
+	Iyz/YKsYntyiWx3ozMse4XGwhqHLOMFgdjhaXKB5XAtT3MRNNuA15jGFfiM2S1afYlV1XdFTuiz
+	oZ4eSlKcpa+jR/1PVywpyEbVSjti2RU9vh5mmf8fAXLLTr2b1KnCmiVc7aKVjuQ==
+X-Gm-Gg: ASbGnctw2vFcZvMTB9BsW2JLMVW3Pil2C+vmgNj4I8U2rRGsphCded/syPrRAFWTpp/
+	ZUJK1cO0yLJqq5E9dkaWbzY5UNrqhZo2y36SAg5VOGjM+XzZuzNoK7LImMvilBpuY6Kk/VpDl+T
+	z8H1/ZE+B89ghYHGfKtiotrCwt82CUK8qCGma5QcFsguvvSdhbAYm2+W1yQGNpmuO9VwxKmX7Pz
+	4dBH5twBOSd+9uAwU3YJjrrl4krS5PQwT6Ho9sLbPu4Lba0EP/U0Fw+2luGgjvChoO6IAjfco2v
+	MZNxJkRRV2KURXXZ3nsvOk1p35kKfDp2sXs7XIVoDW9ggiL23+qw6zVIUA==
+X-Received: by 2002:a05:620a:2601:b0:7c9:65cb:6214 with SMTP id af79cd13be357-7cf06d5bd10mr469357185a.17.1748410555529;
+        Tue, 27 May 2025 22:35:55 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF61pX8i34SIykQlgLDQcjKk6sMZRhh/Gcw6X2tklDh3wPlD4onZOxTChntHVEvJ2DiXPhjrw==
+X-Received: by 2002:a05:620a:2601:b0:7c9:65cb:6214 with SMTP id af79cd13be357-7cf06d5bd10mr469355185a.17.1748410555126;
+        Tue, 27 May 2025 22:35:55 -0700 (PDT)
 Received: from [127.0.1.1] (dyn-160-39-33-242.dyn.columbia.edu. [160.39.33.242])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7cfb82001f9sm32382585a.9.2025.05.27.22.35.53
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7cfb82001f9sm32382585a.9.2025.05.27.22.35.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 May 2025 22:35:53 -0700 (PDT)
+        Tue, 27 May 2025 22:35:54 -0700 (PDT)
 From: Tal Zussman <tz2294@columbia.edu>
-Date: Wed, 28 May 2025 01:35:36 -0400
-Subject: [PATCH 1/2] x86/tlb/trace: Export the TLB_REMOTE_WRONG_CPU enum
+Date: Wed, 28 May 2025 01:35:37 -0400
+Subject: [PATCH 2/2] mm: Remove tlb_flush_reason::NR_TLB_FLUSH_REASONS
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,7 +88,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250528-tlb-trace-fix-v1-1-2e94c58f450d@columbia.edu>
+Message-Id: <20250528-tlb-trace-fix-v1-2-2e94c58f450d@columbia.edu>
 References: <20250528-tlb-trace-fix-v1-0-2e94c58f450d@columbia.edu>
 In-Reply-To: <20250528-tlb-trace-fix-v1-0-2e94c58f450d@columbia.edu>
 To: Steven Rostedt <rostedt@goodmis.org>,
@@ -105,53 +105,46 @@ To: Steven Rostedt <rostedt@goodmis.org>,
 Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
         linux-mm@kvack.org, Tal Zussman <tz2294@columbia.edu>
 X-Mailer: b4 0.14.3-dev-d7477
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1748410551; l=1136;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1748410551; l=595;
  i=tz2294@columbia.edu; s=20250528; h=from:subject:message-id;
- bh=qbEfMXw4f6hGtzDMopgPNMAN0mELfSEB7aJDCRd37ag=;
- b=6Xi1Q38KxIyNKkntpq8m0aT6OIo29lk+yXPpyL+z33nU+BFY2ulYAOgkmSfSJDsSawfNu9XTW
- ORAeuLDxnDZASLxFoqIz9hQMiJZeYg1HZUz5uCtuhTZIDZ1dFtKH4Zu
+ bh=u4GnJWVjLuTGqbXgtkf1x2zfHjnxuyVndV+7heCn/5s=;
+ b=/anNJxI6PBsPAb9nL8K3TkHBwTCNxPLHsxU3pP17HIP1qu0oXl7UIZoQn7VyX7NeJ/QtOr3oF
+ /8zzLs/hG/8CmZIF6I/PcKL0dy4c9Ybfey2WxI3CEETNVmDEjA0IC3A
 X-Developer-Key: i=tz2294@columbia.edu; a=ed25519;
  pk=BIj5KdACscEOyAC0oIkeZqLB3L94fzBnDccEooxeM5Y=
-X-Proofpoint-GUID: G-jgWj4r05eTbRYFdQ47uayihfezaEiR
-X-Proofpoint-ORIG-GUID: G-jgWj4r05eTbRYFdQ47uayihfezaEiR
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI4MDA0OCBTYWx0ZWRfX8wi5u4ONG0Oi xJbF2eh/rN2hy4bAOSRPKgDr4IA7qtAWRd0d8PJcLsSXFQ2r6Hhl4Iaw6T4IY3hYmoqps1g52mn wqjz9o1XnIzXocnExGbZEXsyWFzSRynhvc+tplPWOMXOTq8qmPHeCji66Vzx7JCJ5j9suc4upwS
- EYeRneKpP5zo5kfn7UYjIklCNg649GniPBvK7E1IzsvO1qV4fbH/csC2CZx0x37fA97XuX+98pj wWSb4QBhF1HbbRxDCZFzy8opME5MTi0A97l5SLHIUnyTiLUDWwx0AVeWwBn/6AajALZAdGQbo8u cM6z4cAt3lpeCkwR6I1vxDfpUyK7sX9yzjMK0Saye+lpGYe5slvoaD4vEGXOJ3r+858tnR0Yght jA/mFUEt
+X-Proofpoint-GUID: tpLvrnUghPw6fUcReex-8uEwjmje187q
+X-Proofpoint-ORIG-GUID: tpLvrnUghPw6fUcReex-8uEwjmje187q
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI4MDA0OCBTYWx0ZWRfXy3QWy4HLclNb le+6ojGNAhVIuSvlimpbWIf6C7BmxlRODZI0qhH8TMKfGtFVMyX5dau8QSAOS9ydn+5IcSWxgvw Spxa3hp8NO8es0oHb7WuwrJE3hDdn9N1suTr8mAXcf7c8NgauXfrd5pbBwWwVYVzLP1/7b38nk5
+ Nst+dab00XDybEPG6krEeJVObYvKVz9VqSXF/LB5nYF7NcYFNQ7cSINF2/nF+d5JFJ1bQfmJv5z s/VaAoveQqeMX98SFMtEZPlzx8Xz203RFtpwWNC3ggEkJNPvfB53FUbS8hjt7Mv+4Ir6MtEiU19 rOeNwxuyFHtPuLo21oMHYJlzSEOS2+1PI/Hzt2hrFfgPZqhQMgU9PqSR+2nTqcLj3lMAl7iYhIH 4UWkbbEg
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-05-28_03,2025-05-27_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
- impostorscore=0 mlxlogscore=893 phishscore=0 lowpriorityscore=10
- spamscore=0 priorityscore=1501 clxscore=1011 suspectscore=0 bulkscore=10
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2505160000 definitions=main-2505280048
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
+ priorityscore=1501 malwarescore=0 mlxlogscore=732 phishscore=0 spamscore=0
+ mlxscore=0 bulkscore=10 impostorscore=0 lowpriorityscore=10 clxscore=1011
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
+ definitions=main-2505280048
 
-When the TLB_REMOTE_WRONG_CPU enum was introduced for the tlb_flush
-tracepoint, the enum was not exported to userspace. Add it to the
-appropriate macro definition to enable parsing by userspace tools, as
-per [0].
+This has been unused since it was added 11 years ago in commit
+d17d8f9dedb9 ("x86/mm: Add tracepoints for TLB flushes").
 
-[0] Link: https://lore.kernel.org/all/20150403013802.220157513@goodmis.org
-
-Fixes: 2815a56e4b72 ("x86/mm/tlb: Add tracepoint for TLB flush IPI to stale CPU")
 Signed-off-by: Tal Zussman <tz2294@columbia.edu>
 ---
- include/trace/events/tlb.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ include/linux/mm_types.h | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/include/trace/events/tlb.h b/include/trace/events/tlb.h
-index b4d8e7dc38f8..725a75720a23 100644
---- a/include/trace/events/tlb.h
-+++ b/include/trace/events/tlb.h
-@@ -13,7 +13,8 @@
- 	EM(  TLB_REMOTE_SHOOTDOWN,	"remote shootdown" )		\
- 	EM(  TLB_LOCAL_SHOOTDOWN,	"local shootdown" )		\
- 	EM(  TLB_LOCAL_MM_SHOOTDOWN,	"local mm shootdown" )		\
--	EMe( TLB_REMOTE_SEND_IPI,	"remote ipi send" )
-+	EM(  TLB_REMOTE_SEND_IPI,	"remote ipi send" )		\
-+	EMe( TLB_REMOTE_WRONG_CPU,	"remote wrong CPU" )
+diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+index 3e934dc6057c..8b91362fcf8e 100644
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -1539,7 +1539,6 @@ enum tlb_flush_reason {
+ 	TLB_LOCAL_MM_SHOOTDOWN,
+ 	TLB_REMOTE_SEND_IPI,
+ 	TLB_REMOTE_WRONG_CPU,
+-	NR_TLB_FLUSH_REASONS,
+ };
  
- /*
-  * First define the enums in TLB_FLUSH_REASON to be exported to userspace
+ /**
 
 -- 
 2.39.5
