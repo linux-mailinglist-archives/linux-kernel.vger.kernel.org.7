@@ -1,217 +1,260 @@
-Return-Path: <linux-kernel+bounces-665331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23E91AC67C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 12:53:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6161EAC67D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 12:55:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93FD69E1991
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 10:53:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16CB01894B0B
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 10:56:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEC611F4CBE;
-	Wed, 28 May 2025 10:53:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9766D21322F;
+	Wed, 28 May 2025 10:55:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FYTjBW9f"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="WLqBDXLa"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DBDE24469C;
-	Wed, 28 May 2025 10:53:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1AF929408
+	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 10:55:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748429605; cv=none; b=PM5MwgPH5r+kVF18IJG1911vRChLSKIJP364Rk6lofqPJjQxrIaF8yWrCM21MgnHbac2C/Mucba5OYbv2kFO8zBmQev/waEgvtmrUMQgLk27DiRByMzb4jMUsCrGqfETNIuITzDX8Upa0GTwomWcYHOpOV9y/5UpEBHJl08RlIw=
+	t=1748429741; cv=none; b=FWbz+B3O47fLqO5x9i0K+UsigD+ZreK60FFyIRMzj6rnZrEjEp/GdUasq5qRWrxV3adGKrUcz6H1eHTxFvjwiM/pFCanrHgfBitijQNOyBVvvsgM0QFJikl02hFLE17kpPLdcWqZ/yYlByDT5Fhzeqe50zwDXI9jDFplyVGixu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748429605; c=relaxed/simple;
-	bh=0DTV0Ky9bIM8bS7kyApFrZI3E0D6TUzFXijk1QKkznk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CwGFXtaMHtWe7WfeCQq7gmYR5O+gAnWQc5/npWzzi8sspLKXxxQXR33nHS+oOmOdoTRzveEjiK48fAcAhyJ8ryFpGU3QEQS5TQI2ynqY0tgSE0oC0NLTIReacBuEQ3hJNffqnhz8FM4tQEJj0YTx4FCdgQd6C4Jll5dyyDvMJ2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FYTjBW9f; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ad89333d603so282503166b.2;
-        Wed, 28 May 2025 03:53:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748429601; x=1749034401; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NOl96J3LmgA6Ak3DKn38V5XEN+41BOvGEplgp1Zan1A=;
-        b=FYTjBW9fNBdmYWit21d1zPTcLE1M1ZmRFzcNUNnKR7L7kGBUpBJqQ04NOcyZVfnCvD
-         KQCPAATQJGi97uw8iv9rilOcf/M9kDqPkhVoQkw7Kgs+dnNBVq3oitXPzZ7Aj8YBv7ej
-         CVZamFh0936Rr/mXgEzXpXIUUSv5j2SdGWzZ1Wf2z+xcGaQ9vrg9g5Wi4jfGZVLoxHv+
-         DBN/7pmyufk6KMBA26n7RGYLdCcTH89d+G53r+ZEOQVkIkPpHTHlxcbCSFeW1ZGfw62Y
-         5E4VjNGQ68JR9E9Eu8iExnC0dy2U1DyMFkB61WT9OuiPQRAUPkom0u05SHqQO2S/6L/+
-         pQsA==
+	s=arc-20240116; t=1748429741; c=relaxed/simple;
+	bh=SCxngfYK+IOIKRdHrgEoscUNHocL+yQ57wscCRIrBuI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CtcrcL1cQWewScAqJ7lgj8erCFv5eSoNA+or8k3MuB9Z3L4Gx2/dyCaE5LEuC4SfbnOyFni1P2ZrY6YleMg2oDrg/Kvgx64DJvfp+I74anH+qPLF6Ion4gAfoO5Hg0rQCGWYIYXOUIk3FjK5Iz/Pw2u48djOPfWSVFKR7F9EBjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=WLqBDXLa; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54S8aDTV023876
+	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 10:55:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	2GBHIa4UJXy3kvJwaMsOIp36AT4ZgsNjCHuBmMnsGGw=; b=WLqBDXLaETrREYPP
+	k3bqTgo4rPOev8L1bg2YP3zUKL3ZKb/ZbYk2aOckQdMkBvCDvDHTPbAK0IhR7Wjv
+	12r5wFXgoAWjAYkw74SbYE+gmbpqy29x+7rpmMgEm8WCZyASVPYsO6vxBdYVsYsg
+	P4+BgsYx9M5+a/I/xK+XplgbelC1Jxf365V3AIK6OTFyZpKSRusIKbJ4S4HmWsTt
+	0gtsHWF3imOnvSr9sHhysmwT4MkLWmAvXSE2jGkGzbBBkuXpKVh9qjJXwo3/r3s7
+	5uLyOjv1bGFclk/VO6rcG/LGayxuaz3O1JC4IIzV+UlafMX9BvVP/6bYQqL4mxuj
+	X3b5uQ==
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46u6vjt09v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 10:55:39 +0000 (GMT)
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7caee990715so1472030585a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 03:55:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748429601; x=1749034401;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1748429738; x=1749034538;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NOl96J3LmgA6Ak3DKn38V5XEN+41BOvGEplgp1Zan1A=;
-        b=RvgVpcIeley+nKR6wApVqa3UUlr7Qstk/rxHWWinnnz3BAq9EEm/kQhA4lSnLvaR7U
-         1hOhrHtZ2/2l1B9+wkYi6o8iCA1SjrmkzRpdp6HZ2aBbpPUPYizawo0zbsB8hAyCeW5p
-         GLyGq932+ADaZ3+oOkKY2btCmddP1OmAHGo3pV1Xngx6hQ/ZsVUNHplQuCwuzltI+62t
-         qqnwzxmP25e8rN5ZRfPM/VAXeDvy9h/YQVHCLrLmLkGTFdYcLvRTM05zzr99CHeAwVzn
-         7YneWhzYUlh4sqPVdjIeB1Nwf8WUZzNYqezid03zrwQ7mufUMjW4uPfaE842QD6vEQVN
-         NvoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV7e2eNDS1S4gEQ50iSR2j5du9rfgf88HVnA/hvSDwVI+M9VtEPFwjGq0eluIIlQEdI1O3FcJd3wgBTYQ==@vger.kernel.org, AJvYcCVImI3Kh+50Kpy2lZJ8QwJKpAWVE6Dmn6ouziBnacuouTyy7lUwJCbLa0VafGfBm9vNp4g+6hsOn708qNS0@vger.kernel.org, AJvYcCVXIrcYb8LBOids6pAHwyOjyDSgjbWxTAAo/DmGMXd2oXuaKHY8DC0hqNYiXIbyBOMtbOY=@vger.kernel.org, AJvYcCWavx4uumLVoZ5CAP1z1zgfXFDuk/kN29Hdp+yBQd9xi7U8aTS+mPFz0tAvURIz/h52GygYSyvu@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCYOjzEHVr73bNve4IGz0MKOU6G8TUtKSGvgZQIU6OLNBVij/j
-	mAZNksPE/BIVQaRjmdo4Shr/KJztLSdukkkoHcSZXgczYb/IpYHSiXF8
-X-Gm-Gg: ASbGncvA3WujFl53HTHaP9M+YthJ53Tp9/3xhHRAgN42wnuOPXTC/byHQSGRMpwLgmP
-	wp+GaNRCtIbmahxgSTpOT2d9Y7SntxG1ruotuUkx5bS0e2cE1jO9M6NB531a9m5Hnsth0kc0ZHv
-	5+QcQ/RLKMUiJpnMhz/vLm7Hj0UeyFIXxUf9kChynuC3mA3s/penEtzNTn5SmK4ITvU7SVikDKg
-	vIbBXoeh87ldxCht/1wD3xdmRGMSs0fj8k8C1WgCVN+bRpsD0/lalg4JJJ4SIAWDi+a+HPqD2Hz
-	6u41XP0NxKRUEkgwqfr8Hf2s01b19urwNWYGNovohRMy/ucr/TnsifRmmoXkKwWZUbESpO2WsA=
+        bh=2GBHIa4UJXy3kvJwaMsOIp36AT4ZgsNjCHuBmMnsGGw=;
+        b=RdUAuGwogwI+/vlgbRscc3+dv2Q4G91bLyN1qDkTAiTR6nm2tCLIcimkF1+MtzGALa
+         qJvd8OWgzqneI0nR32XbXWMK6RzKhJRinK2TBfEVGZFocFZatcRu9IryWdSzvP4V1JdV
+         4f2tuZEVkCA4KcQHOjXfChibrDQmRDzuxgiM7ilujSF4V8Z7MiQxH+frfEeX16CtZsIa
+         dimf3MNPjZj0SP6CllQEYX6+bSZb5TGW3sUYS7uNZXgkw9qKKVTQLQWyN+4259poBmAY
+         AfkjZbet6F4wUDefWXn8JHhRT5E8q8cNbgEhsAX10kVYGxngOI8FyaoVz1gOynDbQ3oX
+         /hMA==
+X-Forwarded-Encrypted: i=1; AJvYcCUGxS/qlaTz0MWxbBim+lEERmmdQsN14hWJq3iynNhKRjwuJNNTnpPPtf/1h3/l2AscKfP6hjW/AW5Bz1k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQXZ5drMBeGeNNEQ1iFZioVY2aaedtKEkDsjMV+9cAAfSlgey1
+	926IiaJ+hVwmoInts28WjSzfgMj0jkcHoPEg6e6YO9CBtJnvfLrLd/bQcdxgu/YDza5bL2mm0ve
+	nT7VY45dgmS+SZ8capq94XCwlV3mnQ+2nDC6IN4bMkqLn5Qtv7Bd3Q96Dj+Bq4DuCTGk=
+X-Gm-Gg: ASbGncuirhf2SsrCXI77iAV4j10IpjekMUTqF5IBV4qA4sy2bUeOSOgng/ScXY6oSgg
+	YY6UTBOJMjyGj5j1gg6F+5DWfePfqCybCq+gPv3O21APJHYhvU5wAtUf5y8tq3adQOgPUKh+ktf
+	bguFGPzF2I42I74qP9q7w0Yt1l+0uQ5x/ITvG29YZoDKh+CDwLO+K+lSFcGxjPOlZapeQLRZA9d
+	wPq2lHWy2E9oltzlw+uwD7iqfo0Vk7at7MFLO1Aofo16RDH7zirMq4WM3CZq3teA/Y2aNL9BuJ5
+	6GeYIBGOLa/JIVUlGhVX/+ff3uzVWk9DeCI1b2jwPMK1zC0X+tIOfI0RbfgMJxa7AWv0EZqU6KQ
 	=
-X-Google-Smtp-Source: AGHT+IGGeaG2q6yiRCGKlMaEsjWEAbQ2Wph3QFfKs9+YPs2wDpdHuzbueeZ4on9DqutvyWs9sW0vQg==
-X-Received: by 2002:a17:907:c0d:b0:ad8:8ac5:c75e with SMTP id a640c23a62f3a-ad88ac5c8efmr521637866b.60.1748429601091;
-        Wed, 28 May 2025 03:53:21 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:325::6f? ([2620:10d:c092:600::1:c447])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad8a1b477bfsm86531666b.129.2025.05.28.03.53.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 28 May 2025 03:53:20 -0700 (PDT)
-Message-ID: <11568ebd-4c00-463e-a2ca-5c75dbd625ef@gmail.com>
-Date: Wed, 28 May 2025 11:54:32 +0100
+X-Received: by 2002:a05:6214:f04:b0:6f9:51b5:45b4 with SMTP id 6a1803df08f44-6fa9d01b876mr219768006d6.12.1748429737685;
+        Wed, 28 May 2025 03:55:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHHTeW9Oym5KrU5w2CrN6TuqbEYXZSVkhfiP2M2uzBIJxVS46ac7MVbRXMxqQkY4kvIlFReMQ==
+X-Received: by 2002:a05:6214:f04:b0:6f9:51b5:45b4 with SMTP id 6a1803df08f44-6fa9d01b876mr219767476d6.12.1748429737194;
+        Wed, 28 May 2025 03:55:37 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5532f62b2e8sm233345e87.96.2025.05.28.03.55.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 May 2025 03:55:36 -0700 (PDT)
+Date: Wed, 28 May 2025 13:55:34 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Robert Foss <rfoss@kernel.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Anusha Srivatsa <asrivats@redhat.com>,
+        Paul Kocialkowski <paulk@sys-base.io>,
+        Hui Pu <Hui.Pu@gehealthcare.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        dri-devel@lists.freedesktop.org, asahi@lists.linux.dev,
+        linux-kernel@vger.kernel.org, chrome-platform@lists.linux.dev,
+        imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-amlogic@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org,
+        linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH v4] drm/bridge: tc358767: convert to
+ devm_drm_bridge_alloc() API
+Message-ID: <y262e67gi5f53objugljkpyc3lzdaqtw3b7qr4546btqo7ehu4@qp2orsf6xd7t>
+References: <20250528-drm-bridge-convert-to-alloc-api-v4-1-f04e698c9a77@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 12/18] page_pool: use netmem APIs to access page->pp_magic
- in page_pool_page_is_pp()
-To: Byungchul Park <byungchul@sk.com>
-Cc: Mina Almasry <almasrymina@google.com>, willy@infradead.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- kernel_team@skhynix.com, kuba@kernel.org, ilias.apalodimas@linaro.org,
- harry.yoo@oracle.com, hawk@kernel.org, akpm@linux-foundation.org,
- davem@davemloft.net, john.fastabend@gmail.com, andrew+netdev@lunn.ch,
- toke@redhat.com, tariqt@nvidia.com, edumazet@google.com, pabeni@redhat.com,
- saeedm@nvidia.com, leon@kernel.org, ast@kernel.org, daniel@iogearbox.net,
- david@redhat.com, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
- vbabka@suse.cz, rppt@kernel.org, surenb@google.com, mhocko@suse.com,
- horms@kernel.org, linux-rdma@vger.kernel.org, bpf@vger.kernel.org,
- vishal.moola@gmail.com
-References: <20250523032609.16334-13-byungchul@sk.com>
- <CAHS8izN6QAcAr-qkFSYAy0JaTU+hdM56r-ug-AWDGGqLvHkNuQ@mail.gmail.com>
- <20250526022307.GA27145@system.software.com>
- <a4ff25cb-e31f-4ed7-a3b9-867b861b17bd@gmail.com>
- <20250528081403.GA28116@system.software.com>
- <06fca2f8-39f6-4abb-8e0d-bef373d9be0f@gmail.com>
- <20250528091416.GA54984@system.software.com>
- <b7efa56b-e9fd-4ca6-9ecf-0d5f15b8d0c1@gmail.com>
- <20250528093303.GB54984@system.software.com>
- <5494b37d-1af0-488e-904b-2d3cbd0e7dcf@gmail.com>
- <20250528104440.GA13050@system.software.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20250528104440.GA13050@system.software.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250528-drm-bridge-convert-to-alloc-api-v4-1-f04e698c9a77@bootlin.com>
+X-Authority-Analysis: v=2.4 cv=UOXdHDfy c=1 sm=1 tr=0 ts=6836ebab cx=c_pps
+ a=qKBjSQ1v91RyAK45QCPf5w==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=dt9VzEwgFbYA:10 a=e5mUnYsNAAAA:8 a=VwQbUJbxAAAA:8 a=P-IC7800AAAA:8
+ a=EUspDBNiAAAA:8 a=Xa5mcPTA7YjQpW6brCsA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=NFOGd7dJGGMPyQGDc5-O:22 a=Vxmtnl_E_bksehYqCbjh:22 a=d3PnA9EDa4IxuAV0gXij:22
+X-Proofpoint-ORIG-GUID: Fz1d9UxgER7DWMJUKfE4wvaJxo2ZzEpQ
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI4MDA5NSBTYWx0ZWRfX1pUhwoKuYO2r
+ f484r0f0bSJQS0HwX1wyw4QNQIzyD9vclKqq926hzq9ad5kzyLa+LjfTiAMLMTTk9EidT2SMW2i
+ 55eIa8ABxQjnDfM4yTpcu89wN5xZdEMnQbNKTsgc8cSi7gQHBsYwxQEqjpTVMuDMZPSwv1epVLq
+ HA09PBPqPHOv3cYFhrlBjXSwiOKVluEK11ZiIlD2XCfOtEqTRktyD4xI6JD8wB4lYNemrxciosu
+ BLf5C8VKbG1HTYYSKSOrcYjPMvC1KAEcZd3+OmKsZEL3IeDoJwW/+fhlW150Nt9IM1lkd5fetZf
+ SaMwX8k0bgcxe39+uKbyt3Qf/BbK3smrcUBQ4+rJvcIGlFy9xK3m/xCcvYd6k45iwmCkgqdRJZR
+ Wlh/vO9p23zSDbMXlZF+/A8RDBDQ73XImNaWhxUP4Gn4PYtbgMpjfXpYapg+HmxN7AHouKEY
+X-Proofpoint-GUID: Fz1d9UxgER7DWMJUKfE4wvaJxo2ZzEpQ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-28_05,2025-05-27_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 phishscore=0 mlxscore=0 adultscore=0 priorityscore=1501
+ mlxlogscore=999 bulkscore=0 malwarescore=0 impostorscore=0 spamscore=0
+ suspectscore=0 lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505160000 definitions=main-2505280095
 
-On 5/28/25 11:44, Byungchul Park wrote:
-> On Wed, May 28, 2025 at 10:51:29AM +0100, Pavel Begunkov wrote:
->> On 5/28/25 10:33, Byungchul Park wrote:
->>> On Wed, May 28, 2025 at 10:20:29AM +0100, Pavel Begunkov wrote:
->>>> On 5/28/25 10:14, Byungchul Park wrote:
->>>>> On Wed, May 28, 2025 at 10:07:52AM +0100, Pavel Begunkov wrote:
->>>>>> On 5/28/25 09:14, Byungchul Park wrote:
->>>>>>> On Wed, May 28, 2025 at 08:51:47AM +0100, Pavel Begunkov wrote:
->>>>>>>> On 5/26/25 03:23, Byungchul Park wrote:
->>>>>>>>> On Fri, May 23, 2025 at 10:21:17AM -0700, Mina Almasry wrote:
->>>>>>>>>> On Thu, May 22, 2025 at 8:26 PM Byungchul Park <byungchul@sk.com> wrote:
->>>>>>>>>>>
->>>>>>>>>>> To simplify struct page, the effort to seperate its own descriptor from
->>>>>>>>>>> struct page is required and the work for page pool is on going.
->>>>>>>>>>>
->>>>>>>>>>> To achieve that, all the code should avoid accessing page pool members
->>>>>>>>>>> of struct page directly, but use safe APIs for the purpose.
->>>>>>>>>>>
->>>>>>>>>>> Use netmem_is_pp() instead of directly accessing page->pp_magic in
->>>>>>>>>>> page_pool_page_is_pp().
->>>>>>>>>>>
->>>>>>>>>>> Signed-off-by: Byungchul Park <byungchul@sk.com>
->>>>>>>>>>> ---
->>>>>>>>>>>       include/linux/mm.h   | 5 +----
->>>>>>>>>>>       net/core/page_pool.c | 5 +++++
->>>>>>>>>>>       2 files changed, 6 insertions(+), 4 deletions(-)
->>>>>>>>>>>
->>>>>>>>>>> diff --git a/include/linux/mm.h b/include/linux/mm.h
->>>>>>>>>>> index 8dc012e84033..3f7c80fb73ce 100644
->>>>>>>>>>> --- a/include/linux/mm.h
->>>>>>>>>>> +++ b/include/linux/mm.h
->>>>>>>>>>> @@ -4312,10 +4312,7 @@ int arch_lock_shadow_stack_status(struct task_struct *t, unsigned long status);
->>>>>>>>>>>       #define PP_MAGIC_MASK ~(PP_DMA_INDEX_MASK | 0x3UL)
->>>>>>>>>>>
->>>>>>>>>>>       #ifdef CONFIG_PAGE_POOL
->>>>>>>>>>> -static inline bool page_pool_page_is_pp(struct page *page)
->>>>>>>>>>> -{
->>>>>>>>>>> -       return (page->pp_magic & PP_MAGIC_MASK) == PP_SIGNATURE;
->>>>>>>>>>> -}
->>>>>>>>>>
->>>>>>>>>> I vote for keeping this function as-is (do not convert it to netmem),
->>>>>>>>>> and instead modify it to access page->netmem_desc->pp_magic.
->>>>>>>>>
->>>>>>>>> Once the page pool fields are removed from struct page, struct page will
->>>>>>>>> have neither struct netmem_desc nor the fields..
->>>>>>>>>
->>>>>>>>> So it's unevitable to cast it to netmem_desc in order to refer to
->>>>>>>>> pp_magic.  Again, pp_magic is no longer associated to struct page.
->>>>>>>>>
->>>>>>>>> Thoughts?
->>>>>>>>
->>>>>>>> Once the indirection / page shrinking is realized, the page is
->>>>>>>> supposed to have a type field, isn't it? And all pp_magic trickery
->>>>>>>> will be replaced with something like
->>>>>>>>
->>>>>>>> page_pool_page_is_pp() { return page->type == PAGE_TYPE_PP; }
->>>>>>>
->>>>>>> Agree, but we need a temporary solution until then.  I will use the
->>>>>>> following way for now:
->>>>>>
->>>>>> The question is what is the problem that you need another temporary
->>>>>> solution? If, for example, we go the placeholder way, page_pool_page_is_pp()
->>>>>
->>>>> I prefer using the place-holder, but Matthew does not.  I explained it:
->>>>>
->>>>>       https://lore.kernel.org/all/20250528013145.GB2986@system.software.com/
->>>>>
->>>>> Now, I'm going with the same way as the other approaches e.g. ptdesc.
->>>>
->>>> Sure, but that doesn't change my point
->>>
->>> What's your point?  The other appoaches do not use place-holders.  I
->>> don't get your point.
->>>
->>> As I told you, I will introduce a new struct, netmem_desc, instead of
->>> struct_group_tagged() on struct net_iov, and modify the static assert on
->>> the offsets to keep the important fields between struct page and
->>> netmem_desc.
->>>
->>> Then, is that following your point?  Or could you explain your point in
->>> more detail?  Did you say other points than these?
->>
->> Then please read the message again first. I was replying to th
->> aliasing with "lru", and even at the place you cut the message it
->> says "for example", which was followed by "You should be able to
->> do the same with the overlay option.".
+On Wed, May 28, 2025 at 11:29:36AM +0200, Luca Ceresoli wrote:
+> This is the new API for allocating DRM bridges.
 > 
-> With struct_group_tagged() on struct net_iov, no idea about how to.
-> However, it's doable with a new separate struct, struct netmem_desc.
+> Converting this driver is a bit complex because the drm_bridge funcs
+> pointer differs based on the bridge mode. So the current code does:
+> 
+>  * tc_probe()
+>    * devm_kzalloc() private struct embedding drm_bridge
+>    * call tc_probe_bridge_endpoint() which
+>      * parses DT description into struct fields
+>      * computes the mode
+>      * calls different bridge init functions based on the mode
+>        * each sets a different bridge.funcs pointer
+> 
+> The new API expects the funcs pointer to be known at alloc time, which does
+> not fit in the current code structure.
+> 
+> Solve this by splitting tc_probe_bridge_endpoint() in two functions:
+> 
+>  * tc_probe_get_mode(), computing the mode without needing the private
+>    driver structure
+>  * tc_probe_bridge_endpoint(), only initializing the endpoints
+> 
+> So now the mode is known before allocation and so
+> is the funcs pointer, while all other operations are still happening after
+> allocation, directly into the private struct data, as they used to.
+> 
+> The new code flow is:
+> 
+>  * tc_probe()
+>    * tc_probe_get_mode()
+>      * parses DT description
+>      * computes and returns the mode
+>    * based onf the mode, pick the funcs pointer
+>    * devm_drm_bridfge_alloc(..., funcs)
+>    * call tc_probe_bridge_endpoint() which
+>      * calls different bridge init functions based on the mode
+>        * these don't set the funcs pointer, it was done by _alloc
+> 
+> This solution is chosen to minimize the changes in the driver logical code
+> flow. The drawback is we now iterate twice over the endpoints during probe.
+> 
+> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+> ---
+> devm_drm_bridge_alloc() [0] is the new API to allocate and initialize a DRM
+> bridge, and the only one supported from now on. It is the first milestone
+> towards removal of bridges from a still existing DRM pipeline without
+> use-after-free.
+> 
+> The steps in the grand plan [1] are:
+> 
+>  1. ➜ add refcounting to DRM bridges (struct drm_bridge)
+>  2. handle gracefully atomic updates during bridge removal
+>  3. avoid DSI host drivers to have dangling pointers to DSI devices
+>  4. finish the hotplug bridge work, removing the "always-disconnected"
+>     connector, moving code to the core and potentially removing the
+>     hotplug-bridge itself (this needs to be clarified as points 1-3 are
+>     developed)
+> 
+> This series is part of step 1 of the grand plan.
+> 
+> Current tasks in step 1 of the grand plan:
+> 
+>  A. ✔ add new alloc API and refcounting -> (now in drm-misc-next)
+>  B. ➜ convert all bridge drivers to new API (this series)
+>  C. … documentation, kunit tests (v1 under discussion)
+>  D. after (B), add get/put to drm_bridge_add/remove() + attach/detech()
+>  E. after (B), convert accessors; this is a large work and can be done
+>     in chunks
+>  F. debugfs improvements
+> 
+> More info about this series in the v2 cover [2].
+> 
+> Luca
+> 
+> [0] https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/0cc6aadd7fc1e629b715ea3d1ba537ef2da95eec
+> [1] https://lore.kernel.org/lkml/20250206-hotplug-drm-bridge-v6-0-9d6f2c9c3058@bootlin.com/t/#u
+> [2] https://lore.kernel.org/lkml/20250424-drm-bridge-convert-to-alloc-api-v2-0-8f91a404d86b@bootlin.com/
+> ---
+> Changes in v4:
+> - Removed patches already in drm-misc-next -> only 1 left
+> - Improve commit message of patch 1
+> - Link to v3: https://lore.kernel.org/all/20250509-drm-bridge-convert-to-alloc-api-v3-0-b8bc1f16d7aa@bootlin.com/
+> 
+> Changes in v3:
+> - Fixed issues reported for some patches
+> - Added review tags
+> - Removed patches that have been applied
+> - Added revert for the exynos patch, applied by mistake
+> - Update cover with grand plan info and trim some of it
+> - Updated bouncing e-mail address in Cc list
+> - Link to v2: https://lore.kernel.org/lkml/20250424-drm-bridge-convert-to-alloc-api-v2-0-8f91a404d86b@bootlin.com/
+> 
+> Changes in v2:
+> - Improved cover letter with link to commit adding devm_drm_bridge_alloc()
+> - add review tags
+> - fix bugs in zynqmp, vc4 patches
+> - fix patch 1 error code checking
+> - Link to v1: https://lore.kernel.org/r/20250407-drm-bridge-convert-to-alloc-api-v1-0-42113ff8d9c0@bootlin.com
+> ---
+> 
 
-static inline bool page_pool_page_is_pp(struct page *page)
-{
-	pp_magic = page_to_netdesc(page)->pp_magic;
-	return pp_magic == ...;
-}
-
-page_to_netdesc() is either casting directly in case of full page
-overlays, or "&page->netdesc" for the placeholder option.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
 -- 
-Pavel Begunkov
-
+With best wishes
+Dmitry
 
