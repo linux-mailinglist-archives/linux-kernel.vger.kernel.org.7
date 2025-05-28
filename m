@@ -1,135 +1,218 @@
-Return-Path: <linux-kernel+bounces-665098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55494AC6458
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 10:25:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EA97AC645D
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 10:25:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04CF23BF692
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 08:22:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B4F7A219CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 08:23:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B71EF24728C;
-	Wed, 28 May 2025 08:21:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42C3D213253;
+	Wed, 28 May 2025 08:23:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UVgkAInI"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="LqImgGfK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F015E247296;
-	Wed, 28 May 2025 08:21:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 393165464E;
+	Wed, 28 May 2025 08:23:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748420482; cv=none; b=Y6+rfywPhr3Q/rlNxl1ASdmjm7Vm327QJkOmtwfH0xqaYb7PaiA3QsZ2nO+teZpbbNcVBXcvepn0n2YHfYy4vEooekOxA0E926EKZ976BvHVyG0liHWdw6MjVhZJXzJIHnnAtD9vxg6d1NmrctCYUPmmNEVfLC2rkBCbQvikcEk=
+	t=1748420617; cv=none; b=J44wW8mFt5kD2Zb3J046B6APkLVvYUWUSpTv2YK9Jgo7X1EhDBfNYF++sJGw6GzCvBAbS8AStjmLNPdOSBxaoVoeCxGUVLZCMLGm6qj7rdmZmRQGYO7JBns1v59fYrXS28sPC7QCFuOQ74HCL8UBYY3E5XsrachAGqMcyZsyHjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748420482; c=relaxed/simple;
-	bh=sGKmzke5Z6F0v6fJcAe1FvRi3EDDdNzN5+26tdisUec=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UjGeZMf8fHN6b9aMSzSXWBnpz69db0CCIWo4Myph2cglWG0NS+H3Ef/vL8pmoQu/aAjCRz9IotMxXUxbTCrY++ntykZkMfL2dmvThHeeHkS6wp2WdjLGpABl7ZakZafnmIC6xouoUkGzZTyleAzRFJK2z0cW/GvS8Wi5vx0ixFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UVgkAInI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6870DC4CEE7;
-	Wed, 28 May 2025 08:21:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748420481;
-	bh=sGKmzke5Z6F0v6fJcAe1FvRi3EDDdNzN5+26tdisUec=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=UVgkAInI3ghcs5v5rEo9mYLwpqDRbRzRa+R/LYRAMjsJflYqf74QxcRInOjqbJGDE
-	 7D1z/Hh1RjUEZPrLtcEdpGT/FNMMG3flHj1hbQMdCts+aRK7+m1EExPLZuGoXhzHL0
-	 JrWIAG4LC2Gd+ohP8+e8tZCPIAB+x+StOs0rKps5sC0il+LIuzQwlGayABJMikLzux
-	 M9E14ygoBzrTvgERRSwbAHowGhaf7FeV93tgrp5ViL9h74HBx6zN3qIIFaPtNIlHwf
-	 WageSu5t9zi0ziL6/64raHveaRGnkLvrDO06pdzqYd5h+pk/rp1YInNk9Xb58vC4Yb
-	 Vrtl/3SZOrc/w==
-Message-ID: <12a14426-83e3-4dc1-9a55-ce617825746d@kernel.org>
-Date: Wed, 28 May 2025 10:21:16 +0200
+	s=arc-20240116; t=1748420617; c=relaxed/simple;
+	bh=kK59nSQeZRnZhVrcA5DcPYiSMQQqlQStnEkyPKvgl0g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sHTxm7wdBQWlK7SRRBrkIYPvS8PktWJTifL9EL75YTkXbj7ZRijM17hs3g8WOtjj74dNkHSK6mVePGyzjWd3UWAqqwVUql9m79XZqbFXFn5mlNveva3NrgUTXGkPEXEsKq/+rt8eeNvui9NT5tOF2FtUGrZIQtanFIcdPaXN2mU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=LqImgGfK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E121C4CEE7;
+	Wed, 28 May 2025 08:23:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1748420616;
+	bh=kK59nSQeZRnZhVrcA5DcPYiSMQQqlQStnEkyPKvgl0g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LqImgGfKigRFT3Lm1iqjTjeAWQePbq4cmQKEskLdi4tYWPPkTo2gniIlOoPyAbYhB
+	 b7SxgG0+JmBb+WaBdImrYusQXUrQVBIUWQ82k33C6SgIQs01jvPPCJ//xWy/IxRTMP
+	 aJKSHvMrfmQMm9c0JYMJ8bvkmAxhzOnB0WnDmNwE=
+Date: Wed, 28 May 2025 10:21:41 +0200
+From: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+To: Kuen-Han Tsai <khtsai@google.com>
+Cc: Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH v4] usb: dwc3: Abort suspend on soft disconnect failure
+Message-ID: <2025052819-affluent-reputably-83bb@gregkh>
+References: <20250416100515.2131853-1-khtsai@google.com>
+ <20250419012408.x3zxum5db7iconil@synopsys.com>
+ <CAKzKK0qi9Kze76G8NGGoE=-VTrtf47BbTWCA9XWbKK1N=rh9Ew@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/9] dt-bindings: pinctrl: stm32: Introduce HDP
-To: =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>,
- Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org
-References: <20250523-hdp-upstream-v3-0-bd6ca199466a@foss.st.com>
- <20250523-hdp-upstream-v3-2-bd6ca199466a@foss.st.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250523-hdp-upstream-v3-2-bd6ca199466a@foss.st.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAKzKK0qi9Kze76G8NGGoE=-VTrtf47BbTWCA9XWbKK1N=rh9Ew@mail.gmail.com>
 
-On 23/05/2025 14:38, Clément Le Goffic wrote:
-> 'HDP' stands for Hardware Debug Port, it is an hardware block in
-> STMicrolectronics' MPUs that let the user decide which internal SoC's
-> signal to observe.
-> It provides 8 ports and for each port there is up to 16 different
-> signals that can be output.
-> Signals are different for each MPU.
+On Wed, May 28, 2025 at 03:35:15PM +0800, Kuen-Han Tsai wrote:
+> On Sat, Apr 19, 2025 at 9:24 AM Thinh Nguyen <Thinh.Nguyen@synopsys.com> wrote:
+> >
+> > On Wed, Apr 16, 2025, Kuen-Han Tsai wrote:
+> > > When dwc3_gadget_soft_disconnect() fails, dwc3_suspend_common() keeps
+> > > going with the suspend, resulting in a period where the power domain is
+> > > off, but the gadget driver remains connected.  Within this time frame,
+> > > invoking vbus_event_work() will cause an error as it attempts to access
+> > > DWC3 registers for endpoint disabling after the power domain has been
+> > > completely shut down.
+> > >
+> > > Abort the suspend sequence when dwc3_gadget_suspend() cannot halt the
+> > > controller and proceeds with a soft connect.
+> > >
+> > > Fixes: 9f8a67b65a49 ("usb: dwc3: gadget: fix gadget suspend/resume")
+> > > CC: stable@vger.kernel.org
+> > > Signed-off-by: Kuen-Han Tsai <khtsai@google.com>
+> > > ---
+> > >
+> > > Kernel panic - not syncing: Asynchronous SError Interrupt
+> > > Workqueue: events vbus_event_work
+> > > Call trace:
+> > >  dump_backtrace+0xf4/0x118
+> > >  show_stack+0x18/0x24
+> > >  dump_stack_lvl+0x60/0x7c
+> > >  dump_stack+0x18/0x3c
+> > >  panic+0x16c/0x390
+> > >  nmi_panic+0xa4/0xa8
+> > >  arm64_serror_panic+0x6c/0x94
+> > >  do_serror+0xc4/0xd0
+> > >  el1h_64_error_handler+0x34/0x48
+> > >  el1h_64_error+0x68/0x6c
+> > >  readl+0x4c/0x8c
+> > >  __dwc3_gadget_ep_disable+0x48/0x230
+> > >  dwc3_gadget_ep_disable+0x50/0xc0
+> > >  usb_ep_disable+0x44/0xe4
+> > >  ffs_func_eps_disable+0x64/0xc8
+> > >  ffs_func_set_alt+0x74/0x368
+> > >  ffs_func_disable+0x18/0x28
+> > >  composite_disconnect+0x90/0xec
+> > >  configfs_composite_disconnect+0x64/0x88
+> > >  usb_gadget_disconnect_locked+0xc0/0x168
+> > >  vbus_event_work+0x3c/0x58
+> > >  process_one_work+0x1e4/0x43c
+> > >  worker_thread+0x25c/0x430
+> > >  kthread+0x104/0x1d4
+> > >  ret_from_fork+0x10/0x20
+> > >
+> > > ---
+> > > Changelog:
+> > >
+> > > v4:
+> > > - correct the mistake where semicolon was forgotten
+> > > - return -EAGAIN upon dwc3_gadget_suspend() failure
+> > >
+> > > v3:
+> > > - change the Fixes tag
+> > >
+> > > v2:
+> > > - move declarations in separate lines
+> > > - add the Fixes tag
+> > >
+> > > ---
+> > >  drivers/usb/dwc3/core.c   |  9 +++++++--
+> > >  drivers/usb/dwc3/gadget.c | 22 +++++++++-------------
+> > >  2 files changed, 16 insertions(+), 15 deletions(-)
+> > >
+> > > diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
+> > > index 66a08b527165..f36bc933c55b 100644
+> > > --- a/drivers/usb/dwc3/core.c
+> > > +++ b/drivers/usb/dwc3/core.c
+> > > @@ -2388,6 +2388,7 @@ static int dwc3_suspend_common(struct dwc3 *dwc, pm_message_t msg)
+> > >  {
+> > >       u32 reg;
+> > >       int i;
+> > > +     int ret;
+> > >
+> > >       if (!pm_runtime_suspended(dwc->dev) && !PMSG_IS_AUTO(msg)) {
+> > >               dwc->susphy_state = (dwc3_readl(dwc->regs, DWC3_GUSB2PHYCFG(0)) &
+> > > @@ -2406,7 +2407,9 @@ static int dwc3_suspend_common(struct dwc3 *dwc, pm_message_t msg)
+> > >       case DWC3_GCTL_PRTCAP_DEVICE:
+> > >               if (pm_runtime_suspended(dwc->dev))
+> > >                       break;
+> > > -             dwc3_gadget_suspend(dwc);
+> > > +             ret = dwc3_gadget_suspend(dwc);
+> > > +             if (ret)
+> > > +                     return ret;
+> > >               synchronize_irq(dwc->irq_gadget);
+> > >               dwc3_core_exit(dwc);
+> > >               break;
+> > > @@ -2441,7 +2444,9 @@ static int dwc3_suspend_common(struct dwc3 *dwc, pm_message_t msg)
+> > >                       break;
+> > >
+> > >               if (dwc->current_otg_role == DWC3_OTG_ROLE_DEVICE) {
+> > > -                     dwc3_gadget_suspend(dwc);
+> > > +                     ret = dwc3_gadget_suspend(dwc);
+> > > +                     if (ret)
+> > > +                             return ret;
+> > >                       synchronize_irq(dwc->irq_gadget);
+> > >               }
+> > >
+> > > diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
+> > > index 89a4dc8ebf94..630fd5f0ce97 100644
+> > > --- a/drivers/usb/dwc3/gadget.c
+> > > +++ b/drivers/usb/dwc3/gadget.c
+> > > @@ -4776,26 +4776,22 @@ int dwc3_gadget_suspend(struct dwc3 *dwc)
+> > >       int ret;
+> > >
+> > >       ret = dwc3_gadget_soft_disconnect(dwc);
+> > > -     if (ret)
+> > > -             goto err;
+> > > -
+> > > -     spin_lock_irqsave(&dwc->lock, flags);
+> > > -     if (dwc->gadget_driver)
+> > > -             dwc3_disconnect_gadget(dwc);
+> > > -     spin_unlock_irqrestore(&dwc->lock, flags);
+> > > -
+> > > -     return 0;
+> > > -
+> > > -err:
+> > >       /*
+> > >        * Attempt to reset the controller's state. Likely no
+> > >        * communication can be established until the host
+> > >        * performs a port reset.
+> > >        */
+> > > -     if (dwc->softconnect)
+> > > +     if (ret && dwc->softconnect) {
+> > >               dwc3_gadget_soft_connect(dwc);
+> > > +             return -EAGAIN;
+> >
+> > This may make sense to have -EAGAIN for runtime suspend. I supposed this
+> > should be fine for system suspend since it doesn't do anything special
+> > for this error code.
+> >
+> > When you tested runtime suspend, did you observe that the device
+> > successfully going into suspend on retry?
+> >
+> > In any case, I think this should be good. Thanks for the fix:
+> >
+> > Acked-by: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+> >
+> > Thanks,
+> > Thinh
 > 
-> Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
-> ---
->  .../bindings/pinctrl/st,stm32-pinctrl-hdp.yaml     | 187 +++++++++++++++++++++
->  1 file changed, 187 insertions(+)
+> Hi Greg,
 > 
-If there is going to be new version then filename matching compatible,
-so st,stm32-hdp.yaml or st,stm32mp-hdp.yaml (compatible does not have
-pinctrl).
+> It looks like this patch hasn't been cherry-picked into the usb-next
+> branch yet. Am I missing something?
 
+It's somehow not in my queue anymore, sorry.  Can you please resend it
+and I'll pick it up after -rc1 is out.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+thanks,
 
-Best regards,
-Krzysztof
+greg k-h
 
