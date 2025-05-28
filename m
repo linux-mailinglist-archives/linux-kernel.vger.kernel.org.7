@@ -1,192 +1,217 @@
-Return-Path: <linux-kernel+bounces-666050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0711AC71F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 22:13:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BE215AC71F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 22:14:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F25B23A8EC2
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 20:01:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18D1C3B2ABE
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 20:02:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9AD2223DDD;
-	Wed, 28 May 2025 20:00:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB104220F36;
+	Wed, 28 May 2025 20:01:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XaZNYvoG"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="T9nRDjk4"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85E5B2236F3
-	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 20:00:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3A0F1DE8AD
+	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 20:00:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748462424; cv=none; b=N/GtnfsTwg5OIjUPOUOV7CS0DGE1+Ov27b2JrUQ7a0tNcJBzIDJ27Psn4qEAwGifmbWMga9FX8ZQLgkZd9bl4TaGRLFKyG1pTA2DZg8zlQVpwXm5Me3cSm/KcohJOXHyqG7iYGt2TFU8G70pNqQQdwwHzdQj7+JFbsXERgqYQFA=
+	t=1748462460; cv=none; b=m4JIBuzS+mhV5mpgri05wgjH88442bP0M/gYtaV2olkf9x+d0XIul8NALQ+QfUHYWJOnLVMumk3NkG1DsZjXIcK+R7qiCUFnHl7LzDLjYtImUSL5pv77f9NR4FpCQd962LBUtv72oKU2XXNOlgGnkToLs+Rk91YS1s0NfQSQItM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748462424; c=relaxed/simple;
-	bh=vpHnKSsMPwOT5apYVShhmLQTAWNAh/9Zf7Yg24ClShA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Mhg+rrdy8N96cgQJMwhdU+E+Hwkkx4UhK1xl1lvOKslLokT+tVK6DJOzm6VLrNPZaiZ8l+U0FEyRb27gMeiY25Ej7ji28ySVPp+XsUNBtpY+52/BDoMRBDagQQ8dXFOsnAZ+pOd9EEDK2JGRjVEyo31NpPFQI2bJ7CnRW8VuyZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XaZNYvoG; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3a4e749d7b2so37151f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 13:00:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1748462421; x=1749067221; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EhFsa53Dn3tZ/YQodrCRFl/D/vPq2gHvZA39y3H6S1o=;
-        b=XaZNYvoGPgIpE2BoBu5v833ASfjIiQgifzIifW2naDWNwRqiBekhhuWpkliJ4FYBy7
-         7yc+xwEgzCBGXbLMpnFYfIKiQ3t/DQT0EhgN0LGng9j7SU38EVorV0zwEJ0neaxHBDNt
-         xzPfdO+6yGSBMXavDWkd71v55C2WrL/fkZ5XW378szujaOgHkkaODEgbKb818wW023aa
-         LCEhi2qt+ycOZ3C41+Wjm4/fHY35tMyVGAUWN+AyUtC9brUJzHl4dd3ChG0U5SL64dKL
-         c6+cwlXmBhn5qp8MlbbJxDNbx6RQimPOAwjhPNxK7/2Fe6kpjxFs8SA1XOIqZ/J1eYHV
-         VQGA==
+	s=arc-20240116; t=1748462460; c=relaxed/simple;
+	bh=KqrLmv35uoKda9csT1p9zJ9SSwocl++gGV7O1tqD2og=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XN6X0TGDdj6oPu05B91UiNkMIShHaVLm3zdw2Z9mXE4yJMlbWjRoU/dNkA0deLDnsh5yDT0nTHN6LJoioFQBvvkOa2h9coP15kgNFduOkvePxH+BLjUfCyIAkYMoyAeY5L1oT3k5dA1J2SQePLYkWd13k0IUpM7uFKb69NwTgE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=T9nRDjk4; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1748462456;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=93E838XESEujavn6CtgRlZj0LiotNbJUH5vfb4rXjr0=;
+	b=T9nRDjk4krnFMt7k5jMM2WQbt9IUHOOUDCadpkDusFk+yknh4j0SmeAOmnVhs3u4L7j+QD
+	L/6AxQ0Y/gLYM+JRpDO2SDjfXTnotTNFGEgxLHU2HKN2yrxJufZK/aexFDrLS15z+BKoRL
+	RIlL4bARtcPZ52RPjMjTP5EcizHxga4=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-453-8aSjCGm7OOCo9r7F3QSixQ-1; Wed, 28 May 2025 16:00:55 -0400
+X-MC-Unique: 8aSjCGm7OOCo9r7F3QSixQ-1
+X-Mimecast-MFC-AGG-ID: 8aSjCGm7OOCo9r7F3QSixQ_1748462454
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3a3696a0d3aso78663f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 13:00:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748462421; x=1749067221;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EhFsa53Dn3tZ/YQodrCRFl/D/vPq2gHvZA39y3H6S1o=;
-        b=c0AIhszcsn6kB8e+mEwYUwyMqZfdDTi7caOZwd3GjSqDgdXFPhtMRzypKIoa13RHV+
-         mzyStufGaXj5JL669jNBmRxghkR+dnLNz+wRUB48Y4SKQfXHCLSnYnxASCr2VMkYO0Cn
-         TfyCIoLZTl595FXQepZgoULCME26YwTSamUN2RK3rrQKdCFJ7WBw1n1QShXV/sI/c/qR
-         qKCVu/P7TPv3u816Luc1PDDt6HIb4zvv5iUH9OSH3y6NQdD3xozC7CosN3t1RLRvoDYB
-         Me6l6I7HheyHL10uYWt07mW6a1V9bpUsiuLN/DrF5OvCOtRKkrqhssOFma3iadMPwCTI
-         232w==
-X-Forwarded-Encrypted: i=1; AJvYcCVXwGWhZMoYHwN3lO2TFzyis82suYnd6xYgRVfjp3uHjNwezteFi//BFM+66t6cpbh7DB6SAsxLBIsOObA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzck1m1/Qe1n/YTh0AFbs4Gyro3YFIqsi6/0JMScYBqFtFPj8en
-	8ASQnuGDCNUZ0pzGnAI3quDTYPUcXf5O2dwSZCCL3Ukk/rbFlG4yrnkft2stRNNX1gux9JoSqkf
-	aLjTF
-X-Gm-Gg: ASbGncum3tydCdNHt2vMqCve94LmSwhGxdv7/sVTjh8AooPl06aGoGas5/OcqYyFfpw
-	l/+SoopCC+xOkgoRij1ndcFVERKbEnF+4ZzQt2c+QAFkA29quYASQHMk5tRDKHeD6YwESetvDeX
-	HoseOMroM+w0nwGiVPn/2/eJ0TpPYnFskIqLJH9ZZMt52YL68VfXpKsCtlEHrmbt3V084jQ/jIP
-	IOCYW8/Uhy3AEUDDrsealG9nA4LD2Vhx2OVcHCxBrUCGlnBrFNmClWP/5rLKf+m6J8aKd3q7k88
-	iPCs1Cl7C4bmA+6IB/wdhiqn6OxWfwTUS1eftJVJ5Cr3cSmEALP1WEHsUQq4F67akrqyVGU=
-X-Google-Smtp-Source: AGHT+IFgK2K2RWnYXZ98CP7PqDkbOJ7HD/Q61UfK0JTIS6/x1cpTvbtFdyCFL4yZitYpbOagT+DMiA==
-X-Received: by 2002:a05:600c:3b99:b0:439:8c80:6aee with SMTP id 5b1f17b1804b1-44ff4071f7dmr15017665e9.4.1748462420725;
-        Wed, 28 May 2025 13:00:20 -0700 (PDT)
-Received: from [192.168.1.29] ([178.197.223.125])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-44fcbd61553sm53347665e9.0.2025.05.28.13.00.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 May 2025 13:00:20 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Wed, 28 May 2025 22:00:01 +0200
-Subject: [PATCH 7/8] ASoC: codecs: wcd938x: Drop unused variant field
+        d=1e100.net; s=20230601; t=1748462454; x=1749067254;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=93E838XESEujavn6CtgRlZj0LiotNbJUH5vfb4rXjr0=;
+        b=bl2ngmKlOTx486Nq7ahNWq6mgZoCkOhc2b1ssurIeJePOyd9imGTeP494e2kiWK3vq
+         hYPpdYKIZBiL2n+25ua+6O6VUc0PogHeTr5Xq2nq4b3iVmrupThj7qAwo/liIKpBjd45
+         dimdCwHFlK6jYxjrl0g+MN7OoSki86dOE3AyeIfmZQBYBFw26x1GW6wzvNCvy3+jD/3b
+         wrVp03tvRQIMSX8lnuva/mg1Z5Nw887tx/4pVdeqJ1xYijCJ2kYGKCHpVLidoPwhjjR9
+         yJtTXhNOZTxouHEE+PPMjI/p+J0CA9M7iY0CJrt3k48f+rSrtIP7cQ4dXlSHK7wXoMPc
+         zNNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUXLxBMRKiSLe527vAXA1dtsSxylzfHPQLAxc0MBo9BiUbUUUK0ldvS2z1t9oJ8eIg+EqID513F65yNhZA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7UvDlymexahIPZUWVSRwoBppMIYxSrVOHVj3mea1zEq/gnenx
+	KkTd9ExPMuUWG0d8KwwXZ+kKrQnHuGUrg4YTADHYBBlalSAThUoKWmKZNfgLigcVIotpflCmDhj
+	rG2JmFPPtX2Wu9iTrgmPS6CFNQTSPnR84l1ZN9BR3jNQxox/KIOhRbeeB2+tXFkhGxw==
+X-Gm-Gg: ASbGncuOz7AAqCTDrPVbHhICZ0yZ9Tszo2zgUDjFAhd5nl++XXuGwKVKn2g6aOveR0i
+	CCek/x/Jm8iTNB58k5uDJtfzy6o3nqc+kr3GWAxvGOb7W5N4Bts0nlpVUy11MdTVLk+PmoCXZx0
+	3UVidQCgkj2w7mEoVqQprkA5JhX/ZQI/LK718T0yumdo/YvYvG8hvHWUk2M1YzgojdgAmnlTQpk
+	jB4aVU0ZBzIS8ssOUcFCc/RPw94g5K/TXHYTVkmXl06wWJFqDu8vSPQNIOQH0tVlUb9HaiA7G3a
+	/DeZD/YaVPmipARv50hWViDc9mUqV8KMzCdfq/QAoxWZNvZ738TIHvMmphx6cJdRPLeJ1EDddu2
+	7ufv1BZ1Joy3tiAKIo7Kw2YMQn8olIBEcwjxNLR8=
+X-Received: by 2002:a5d:5f8b:0:b0:3a0:bad4:1247 with SMTP id ffacd0b85a97d-3a4cb43214amr14077328f8f.15.1748462453908;
+        Wed, 28 May 2025 13:00:53 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFBqsLwtFcwOenCmYLpxNpkEXnrA8AqUwB7ajvLJSL+i9CQyVRLcPLGZQcSU4LE00ooD3Gfig==
+X-Received: by 2002:a5d:5f8b:0:b0:3a0:bad4:1247 with SMTP id ffacd0b85a97d-3a4cb43214amr14077297f8f.15.1748462453524;
+        Wed, 28 May 2025 13:00:53 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f30:ec00:8f7e:58a4:ebf0:6a36? (p200300d82f30ec008f7e58a4ebf06a36.dip0.t-ipconnect.de. [2003:d8:2f30:ec00:8f7e:58a4:ebf0:6a36])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4eace3278sm2272546f8f.88.2025.05.28.13.00.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 28 May 2025 13:00:53 -0700 (PDT)
+Message-ID: <4cc7e0bb-f247-419d-bf6f-07dc5e88c9c1@redhat.com>
+Date: Wed, 28 May 2025 22:00:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] mm/hugetlb: fix a deadlock with pagecache_folio and
+ hugetlb_fault_mutex_table
+To: Oscar Salvador <osalvador@suse.de>
+Cc: Peter Xu <peterx@redhat.com>, Gavin Guo <gavinguo@igalia.com>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, muchun.song@linux.dev,
+ akpm@linux-foundation.org, mike.kravetz@oracle.com, kernel-dev@igalia.com,
+ stable@vger.kernel.org, Hugh Dickins <hughd@google.com>,
+ Florent Revest <revest@google.com>, Gavin Shan <gshan@redhat.com>
+References: <20250528023326.3499204-1-gavinguo@igalia.com>
+ <aDbXEnqnpDnAx4Mw@localhost.localdomain> <aDcl2YM5wX-MwzbM@x1.local>
+ <629bb87e-c493-4069-866c-20e02c14ddcc@redhat.com>
+ <aDcvplLNH0nGsLD1@localhost.localdomain>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <aDcvplLNH0nGsLD1@localhost.localdomain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250528-asoc-const-unused-v1-7-19a5d07b9d5c@linaro.org>
-References: <20250528-asoc-const-unused-v1-0-19a5d07b9d5c@linaro.org>
-In-Reply-To: <20250528-asoc-const-unused-v1-0-19a5d07b9d5c@linaro.org>
-To: David Rhodes <david.rhodes@cirrus.com>, 
- Richard Fitzgerald <rf@opensource.cirrus.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Support Opensource <support.opensource@diasemi.com>, 
- Oder Chiou <oder_chiou@realtek.com>, Srinivas Kandagatla <srini@kernel.org>, 
- Shengjiu Wang <shengjiu.wang@gmail.com>, Xiubo Li <Xiubo.Lee@gmail.com>, 
- Fabio Estevam <festevam@gmail.com>, Nicolin Chen <nicoleotsuka@gmail.com>
-Cc: linux-sound@vger.kernel.org, patches@opensource.cirrus.com, 
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- linuxppc-dev@lists.ozlabs.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2615;
- i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=vpHnKSsMPwOT5apYVShhmLQTAWNAh/9Zf7Yg24ClShA=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoN2tCjfNAV+kCU10X2cqnxwpT+fWymWyuVDFrl
- /mM6y3R76iJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaDdrQgAKCRDBN2bmhouD
- 17OSD/9sy1aTm6SlmWbrKPTB24a9SyULGvFc6f8kqmmjgsEgGsx7bS2Sshyxn55QGKOe0ABB2oK
- kx0dUHpTHoxUnYz1QLaAVl9uHNHNkZkvFx9YfpJkVSJy1O5nK83aqEunkX9blBQ0c1vnFegsPuk
- 3oygNoAGFieGEpTLsGsHEndt5D+uRBdqWTqwi+BNSom8HvfFN5z21tmO0lRi0dva7fiGwRuED/S
- Fdx+hpru1FRbJcBAUcnycfOdK3Etc3XAw6gX1gYsERZFT3K2llZoggkubN/jbC9AkDEYYsTHJxo
- WwxIT5bD18zwQkirmjAeP4oYZ7bUKxsW8VllKXlpNrvsvqEJ+mubb0RuYO1OyeXyphex198W4GH
- 87yClKM7xjncSPQsTvhavYxQMaNZui6lcQX6Ri8YAuUoIKQns+c7AG5OldMjoKgZC/RnEELjIoP
- UXc6AeQxYyp56GOQ6tna7ra+FoutpkwAXNX80pvSYaygp2Ca2Ol5Zr7y+IKdWXcO0uQdk8HZDjP
- GNnvMh0p7TgTTtxYkn0SO015It+ceZYz91KYO1j9glfiZWOBFnaooLovnMMWvKD9a6hJsLjHeaL
- kmTfNTMgyZWy1hVL4iQ/+vmk6wG33yxjLIUjyLikKYV12gIehXJEahkLId6eIxy7ozrsP9sExAG
- Jpwt+bKhJF86kUw==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
- fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-Member wcd938x_priv.variant is assigned in probe() function and used
-immediately thereafter, thus it can be just a local variable for less
-variables stored in 'struct wcd938x_priv' device-wide state.
+On 28.05.25 17:45, Oscar Salvador wrote:
+> On Wed, May 28, 2025 at 05:09:26PM +0200, David Hildenbrand wrote:
+>> On 28.05.25 17:03, Peter Xu wrote:
+>>> So I'm not 100% sure we need the folio lock even for copy; IIUC a refcount
+>>> would be enough?
+>>
+>> The introducing patches seem to talk about blocking concurrent migration /
+>> rmap walks.
+> 
+> I thought the main reason was because PageLock protects us against writes,
+> so when copying (in case of copying the underlying file), we want the
+> file to be stable throughout the copy?
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- sound/soc/codecs/wcd938x.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+Well, we don't do the same for ordinary pages, why should we do for hugetlb?
 
-diff --git a/sound/soc/codecs/wcd938x.c b/sound/soc/codecs/wcd938x.c
-index 43347c14070ca6dd8035b0c290f0dacb0326122b..5a751056a98a5d4cc5716aafc25af27e3ab22786 100644
---- a/sound/soc/codecs/wcd938x.c
-+++ b/sound/soc/codecs/wcd938x.c
-@@ -168,7 +168,6 @@ struct wcd938x_priv {
- 	u32 tx_mode[TX_ADC_MAX];
- 	int flyback_cur_det_disable;
- 	int ear_rx_path;
--	int variant;
- 	struct gpio_desc *reset_gpio;
- 	struct gpio_desc *us_euro_gpio;
- 	struct mux_control *us_euro_mux;
-@@ -3044,6 +3043,7 @@ static int wcd938x_soc_codec_probe(struct snd_soc_component *component)
- 	struct sdw_slave *tx_sdw_dev = wcd938x->tx_sdw_dev;
- 	struct device *dev = component->dev;
- 	unsigned long time_left;
-+	unsigned int variant;
- 	int ret, i;
- 
- 	time_left = wait_for_completion_timeout(&tx_sdw_dev->initialization_complete,
-@@ -3059,9 +3059,9 @@ static int wcd938x_soc_codec_probe(struct snd_soc_component *component)
- 	if (ret < 0)
- 		return ret;
- 
--	wcd938x->variant = snd_soc_component_read_field(component,
--						 WCD938X_DIGITAL_EFUSE_REG_0,
--						 WCD938X_ID_MASK);
-+	variant = snd_soc_component_read_field(component,
-+					       WCD938X_DIGITAL_EFUSE_REG_0,
-+					       WCD938X_ID_MASK);
- 
- 	wcd938x->clsh_info = wcd_clsh_ctrl_alloc(component, WCD938X);
- 	if (IS_ERR(wcd938x->clsh_info)) {
-@@ -3115,14 +3115,14 @@ static int wcd938x_soc_codec_probe(struct snd_soc_component *component)
- 	disable_irq_nosync(wcd938x->hphl_pdm_wd_int);
- 	disable_irq_nosync(wcd938x->aux_pdm_wd_int);
- 
--	switch (wcd938x->variant) {
-+	switch (variant) {
- 	case WCD9380:
- 		ret = snd_soc_add_component_controls(component, wcd9380_snd_controls,
- 					ARRAY_SIZE(wcd9380_snd_controls));
- 		if (ret < 0) {
- 			dev_err(component->dev,
- 				"%s: Failed to add snd ctrls for variant: %d\n",
--				__func__, wcd938x->variant);
-+				__func__, variant);
- 			goto err_free_aux_pdm_wd_int;
- 		}
- 		break;
-@@ -3132,7 +3132,7 @@ static int wcd938x_soc_codec_probe(struct snd_soc_component *component)
- 		if (ret < 0) {
- 			dev_err(component->dev,
- 				"%s: Failed to add snd ctrls for variant: %d\n",
--				__func__, wcd938x->variant);
-+				__func__, variant);
- 			goto err_free_aux_pdm_wd_int;
- 		}
- 		break;
+See wp_page_copy().
+
+If you have a MAP_PRIVATE mapping of a file and modify the pagecache 
+pages concurrently (write to another MAP_SHARED mapping, write() ...), 
+there are no guarantees about one observing any specific page state.
+
+At least not that I am aware of ;)
+
+
+> 
+>> Maybe also concurrent fallocate(PUNCH_HOLE) is a problem regarding
+>> reservations? Not sure ...
+> 
+> fallocate()->hugetlb_vmdelete_list() tries to grab the vma in write-mode,
+> and hugetlb_wp() grabs the lock in read-mode, so we should be covered?
+
+Yeah, maybe that's the case nowadays. Maybe it wasn't in the past ...
+
+> 
+> Also, hugetlbfs_punch_hole()->remove_inode_hugepages() will try to grab the mutex.
+> 
+> The only fishy thing I see is hugetlbfs_zero_partial_page().
+> 
+> But that is for old_page, and as I said, I thought main reason was to
+> protect us against writes during the copy.
+
+See above, I really wouldn't understand why that is required.
+
+> 
+>> For 2) I am also not sure if we need need the pagecache folio locked; I
+>> doubt it ... but this code is not the easiest to follow.
+>   
+> I have been staring at that code and thinking about potential scenarios
+> for a few days now, and I cannot convice myself that we need
+> pagecache_folio's lock when pagecache_folio != old_folio because as a
+> matter of fact I cannot think of anything it protects us against.
+> 
+> I plan to rework this in a more sane way, or at least less offusctaed, and then
+> Galvin can fire his syzkaller to check whether we are good.
+> 
+
 
 -- 
-2.45.2
+Cheers,
+
+David / dhildenb
 
 
