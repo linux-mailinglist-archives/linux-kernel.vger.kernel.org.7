@@ -1,188 +1,215 @@
-Return-Path: <linux-kernel+bounces-665176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99A3AAC652C
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 11:06:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACA9EAC6532
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 11:07:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B3D64E0400
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 09:06:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 910891BA5BC3
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 09:07:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC29A2741D1;
-	Wed, 28 May 2025 09:06:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Q+xloBN2"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACBA6274651;
+	Wed, 28 May 2025 09:06:57 +0000 (UTC)
+Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0FCE247282
-	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 09:06:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70E781E0DBA;
+	Wed, 28 May 2025 09:06:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748423196; cv=none; b=HuQph0geDGnhgonQwvulS9O8qtSzUpL+icPLfgPERzOleeU3qtA2XUrtKHMftzPzGoG9wnQcPTOhEBzFwjt/TU/fmjDNdp5fFLEUri0Izk6RPBAVLrA9hTGxxLaklztpsrqddGuMSc8LWZ4KE3gSzqHt5wN5R370JtN3jk8MRww=
+	t=1748423217; cv=none; b=tcnDOcFDvZU5pLL/1bPmfkmiEvBqS8yeMs/YntvMJx1Ihl4gC8IBvRsnkz9xu2vB5qdGTLXyMwGy/jEZTzdAmLjwt+kIsda+vb8qOTt9WWr3zDva5vHpYL8e3m73kFMeYve69WQp2E85eTb1+adEsLpZkMKvwjgy/Um73e8TI24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748423196; c=relaxed/simple;
-	bh=4TvTmbiWXB5FhroHsvlg+K8JZ75ZnMsD85mUMetTHRU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WCwdc6gsC+CJ93bPOvo0UUx9LdWV9WfzOCYfPU8TvKwEZEpOSBTcHsp9nV+PqfGhdI9io1trs0TmSjHWbamewPbvJ97g9qs0P73i4PyA1Gfy3kSKltm9grxjbmPFVTVc3yybdUT5tLjfDTQHldTsNyO9c8P+t4jZm9FS8CqZxmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Q+xloBN2; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1748423193;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=0jNfWBnNwI4vmCYyyWkZIC0z1gNt+R1x0CiFYOJERUE=;
-	b=Q+xloBN2Fggr8aZTqHpO/ENONSn9gCNVDzdQn56z+v3DHAvIIU2Q5GhJwMoNch7uSjfejY
-	zpTeDZOhlKTP7UQ7T711QJkLbu+dcE6u0WRF3dvKP7fHZyH2dVPMBuTUvuuRDHb9uRk1IX
-	IiSOOfF3tYZY7JzidniVQre8uwB5kAM=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-351-2Xh6seF3OM2TUf-ZcEBQnA-1; Wed, 28 May 2025 05:06:32 -0400
-X-MC-Unique: 2Xh6seF3OM2TUf-ZcEBQnA-1
-X-Mimecast-MFC-AGG-ID: 2Xh6seF3OM2TUf-ZcEBQnA_1748423191
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-441c122fa56so20602435e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 02:06:32 -0700 (PDT)
+	s=arc-20240116; t=1748423217; c=relaxed/simple;
+	bh=WIrinfMiUyAK0J7pL1G1KsvX4q1r3p0Fe9ePl0u9gtw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lqTj1UL+PpIlSHuva9rg3DE3hwR3yRi2WfUoF7uO23Ykr5lnzLqfDD6pPHLmbLcoX4o0G7xtaVwyEQXg/Y+oB/FjPy7TfxXNwybU2k5xoJC5ackR62gGDsucjzRiNiNdbE0XXxgOkYGqpu10IcUbehMUlmq7JNDsOMA5IP3mAUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-52d9a275c27so2654725e0c.0;
+        Wed, 28 May 2025 02:06:55 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748423191; x=1749027991;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=0jNfWBnNwI4vmCYyyWkZIC0z1gNt+R1x0CiFYOJERUE=;
-        b=H8qITd9SM6urQYo3IMplQTX3/z8wWHjYfXBOADM9oP+EYQNLiTfQIRZG4TLP6dZPha
-         gSudmAjXW4K1yk/TB5ppSLIpdcUcyUyQLN5uB4TUvIklp2SEEY6ZeG83tnIIFEp7Nm34
-         kaFofDP7WDpVjC2haNCHrTGC9N0iPObpMm2FUPKGW2VGr3vm/EqNWKMA9yYRPH5JYHUh
-         5Z7i6Xqy8MsDXrR1Br2nnVyqCc94VY5sjQ7sbIk+/jqWYQoYF6LJRNYUrr2wLOmWJ7zT
-         y3+V38oBAR/AzZfg8pAQCQmWZfcezHcNjzCUaM9qSldLHR9zqsdAv4j5fS6wftJaQJ2w
-         flXw==
-X-Gm-Message-State: AOJu0YxmAFA+pgUOeJ/3VUAodzXZ6tJVunQbgkaFTXdQot3QAZj2OsJM
-	8hbGcSNFU2UZnbjOsqqibor4Ro/Hs5RoODrzI62rEXoQl3lq9w41L2g8AxOWRItNrBvT3r37GLD
-	9ZBmVxCVK7MCvEDzT0FxJ20KH8nc5iqww7fQTToJWIyIiAHe3QrTPfn2VfVzNDcrhzA==
-X-Gm-Gg: ASbGnctnflY1sP5e8sOxg+BuqhuaqK4V/ySrP+8qkbzS4VoPgNsRxhx/QGDKP6U56Ye
-	rwM97Rqx4FgsA1HTVTVgyO85Huq2VZe+ZRsypKPhXJqNKaknwxSNIR71z3ghqYmJFbgMN4mLQHI
-	kXy6WBj0DeBuCUmJq+bZtfZyVO7zngRIQLH/6f+VD7xGvjltIvhGW4lgPaYVLV92DMygIj77e4E
-	vcOGcXFbJLwb6lDevf1T4djlrf2+8DE1n30v2YfKmVkCyES7Fkn9hf+BylJ5ZFmjJpwBDpHega1
-	cbDIlNbr8ZT+Rj8Y4r9t124lPQFDTgAj3Dr/8pkGb6iC8/LbeHd6lldQCf7No1bp8FR94OFWeUc
-	fCWcPTd0k/faG1TQawfM83lss78vRW5nqFKDmptI=
-X-Received: by 2002:a05:6000:1785:b0:3a3:63d3:369a with SMTP id ffacd0b85a97d-3a4cb4602a6mr11987345f8f.25.1748423191186;
-        Wed, 28 May 2025 02:06:31 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFFS2yw6ICITHixIjXBzRYXeXOzAPyp23fKYDFoE4S3dOHqpW1SBJwXLDvJ8JMJEkqZ76misw==
-X-Received: by 2002:a05:6000:1785:b0:3a3:63d3:369a with SMTP id ffacd0b85a97d-3a4cb4602a6mr11987314f8f.25.1748423190772;
-        Wed, 28 May 2025 02:06:30 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f30:ec00:8f7e:58a4:ebf0:6a36? (p200300d82f30ec008f7e58a4ebf06a36.dip0.t-ipconnect.de. [2003:d8:2f30:ec00:8f7e:58a4:ebf0:6a36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4eac7d7a7sm889461f8f.21.2025.05.28.02.06.29
+        d=1e100.net; s=20230601; t=1748423212; x=1749028012;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AYU8Mi90KLdCAAJJaGYDubPex399S/3mu0JP984ggbk=;
+        b=DQc8cR5ylyBmphwLY4m7WQHcYPxnADSQkmwgmZgdwhGYxn/21dZPfTRF+2KxHhfoOw
+         5RYvX1m4Q0lS7k0pq2RvS4FWr9PD36Dkljtl3ltlyQ5/U0XRIdKlOEEMhQzGzdzeNR7o
+         HGZ5x1uq2tNkKLlFSbWbYPlCMyRDWRB0oup7jAtZV+GFP3weErwzXdnkLDB3mDr3dtc7
+         tRy6gKF7jiBQzf2Su2CnFd+mf4IJRSSXpUiSRkIDON4AakqkQNPdhCNqTMBuRgrUewbN
+         lnDjOeliiZHZbAIbsYRLh4O3/02URfWjCfkc6m6EM51ikCb84JXvYJCIoz3y14sMJafQ
+         jvig==
+X-Forwarded-Encrypted: i=1; AJvYcCVWYl73hqtST3XhRU9D5Z57YKpw5mlSK0eKxn2fdo4AgQ/JfiCcHqtjCTp/RI0ACJG779tqmRW4XLSD@vger.kernel.org, AJvYcCW5cGCWXYRusuVd4skgYQEMzjTnTS0Ju/hZZik1JAN5YVskuVUhJAx+wrlVgyNeYcwSui+3WWwbbzkuZGo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzaFgXyD0W1325ymVzwJN01g7g6SpvraHedpXo0rgXlgF+3vaLx
+	1Y6BcNqmha1Ue5eRsfSOEgepjg3kjzS6lMFqojh0lyaVP51ZR3ttmz1sPeYsbkUL
+X-Gm-Gg: ASbGncsE90nfoYut1nLYEITbwgBF3iMrMKCp1og/9Mz+QLqq/5CYp5o+dX504dn1oyh
+	xB+4Mt2ppfL20dncKAgUYNMcI68wZcBZbYIHUia+VgAkvIet12cMAc3wc/tj2S5P6ko1yEmSYjH
+	siBpQC37zEXNyvvlzYr+oBXJwji4xOZiV9/hf0tdSKhKGbp+TS+ROQzciN+kDO7zD55IZb2Y+if
+	DyBAAnQibKDwtM+yiL2Cuscy3KcuqmkQ1vaEBFguynKbUOF+1QuHKU1vdTtbCzB8bn3Fk2pENcV
+	r2f/m/T/Km/s2/YCQ8u+DcidBIPZfE2x5EtkbVtLRZPrh/t4+CT8MMg7cVEGM4GgAZUOiiKyOzI
+	MJRU8kwi/0HV7Bg==
+X-Google-Smtp-Source: AGHT+IHfNVkNJvyzuGOXvU2/5E8q4hXCG5ePgdD3cthNXeuQMw3gnVLwTDUf0eI/hRQz3uPM3fzEOw==
+X-Received: by 2002:a05:6122:3d0d:b0:52f:204d:4752 with SMTP id 71dfb90a1353d-52f2c5ca414mr13253504e0c.11.1748423212554;
+        Wed, 28 May 2025 02:06:52 -0700 (PDT)
+Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com. [209.85.222.53])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-53066972cb4sm592394e0c.39.2025.05.28.02.06.52
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 28 May 2025 02:06:30 -0700 (PDT)
-Message-ID: <23fc6556-6578-44ba-8443-84adecc29d24@redhat.com>
-Date: Wed, 28 May 2025 11:06:29 +0200
+        Wed, 28 May 2025 02:06:52 -0700 (PDT)
+Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-87e049bb3e4so1401443241.0;
+        Wed, 28 May 2025 02:06:52 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV3kqi49IImI4GnQDl7JIHcnHyjwjaITAhYfP4IX2mnZgfUQsv57YoYnww0X/14DZHDCCwZzKQQ/ahjczw=@vger.kernel.org, AJvYcCX2lFC5FU0TQ7qawEiEd1sc0vRLneZvNWlfzwvcpHz86spzlCWvDc7IUcK7z4K1MDQshU8wtbZfFKUz@vger.kernel.org
+X-Received: by 2002:a05:6102:8006:b0:4e5:8d09:7b14 with SMTP id
+ ada2fe7eead31-4e58d097d83mr5192536137.0.1748423212075; Wed, 28 May 2025
+ 02:06:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] mm: Remove tlb_flush_reason::NR_TLB_FLUSH_REASONS
-To: Tal Zussman <tz2294@columbia.edu>, Steven Rostedt <rostedt@goodmis.org>,
- Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Ingo Molnar <mingo@kernel.org>, Rik van Riel <riel@surriel.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
- <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- x86@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- linux-mm@kvack.org
-References: <20250528-tlb-trace-fix-v1-0-2e94c58f450d@columbia.edu>
- <20250528-tlb-trace-fix-v1-2-2e94c58f450d@columbia.edu>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
- dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
- QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
- XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
- Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
- PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
- WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
- UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
- jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
- B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
- ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
- AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl8Ox4kFCRKpKXgACgkQTd4Q
- 9wD/g1oHcA//a6Tj7SBNjFNM1iNhWUo1lxAja0lpSodSnB2g4FCZ4R61SBR4l/psBL73xktp
- rDHrx4aSpwkRP6Epu6mLvhlfjmkRG4OynJ5HG1gfv7RJJfnUdUM1z5kdS8JBrOhMJS2c/gPf
- wv1TGRq2XdMPnfY2o0CxRqpcLkx4vBODvJGl2mQyJF/gPepdDfcT8/PY9BJ7FL6Hrq1gnAo4
- 3Iv9qV0JiT2wmZciNyYQhmA1V6dyTRiQ4YAc31zOo2IM+xisPzeSHgw3ONY/XhYvfZ9r7W1l
- pNQdc2G+o4Di9NPFHQQhDw3YTRR1opJaTlRDzxYxzU6ZnUUBghxt9cwUWTpfCktkMZiPSDGd
- KgQBjnweV2jw9UOTxjb4LXqDjmSNkjDdQUOU69jGMUXgihvo4zhYcMX8F5gWdRtMR7DzW/YE
- BgVcyxNkMIXoY1aYj6npHYiNQesQlqjU6azjbH70/SXKM5tNRplgW8TNprMDuntdvV9wNkFs
- 9TyM02V5aWxFfI42+aivc4KEw69SE9KXwC7FSf5wXzuTot97N9Phj/Z3+jx443jo2NR34XgF
- 89cct7wJMjOF7bBefo0fPPZQuIma0Zym71cP61OP/i11ahNye6HGKfxGCOcs5wW9kRQEk8P9
- M/k2wt3mt/fCQnuP/mWutNPt95w9wSsUyATLmtNrwccz63XOwU0EVcufkQEQAOfX3n0g0fZz
- Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
- T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
- 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
- CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
- NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
- 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
- 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
- lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
- AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
- N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
- AP+DWgUCXw7HsgUJEqkpoQAKCRBN3hD3AP+DWrrpD/4qS3dyVRxDcDHIlmguXjC1Q5tZTwNB
- boaBTPHSy/Nksu0eY7x6HfQJ3xajVH32Ms6t1trDQmPx2iP5+7iDsb7OKAb5eOS8h+BEBDeq
- 3ecsQDv0fFJOA9ag5O3LLNk+3x3q7e0uo06XMaY7UHS341ozXUUI7wC7iKfoUTv03iO9El5f
- XpNMx/YrIMduZ2+nd9Di7o5+KIwlb2mAB9sTNHdMrXesX8eBL6T9b+MZJk+mZuPxKNVfEQMQ
- a5SxUEADIPQTPNvBewdeI80yeOCrN+Zzwy/Mrx9EPeu59Y5vSJOx/z6OUImD/GhX7Xvkt3kq
- Er5KTrJz3++B6SH9pum9PuoE/k+nntJkNMmQpR4MCBaV/J9gIOPGodDKnjdng+mXliF3Ptu6
- 3oxc2RCyGzTlxyMwuc2U5Q7KtUNTdDe8T0uE+9b8BLMVQDDfJjqY0VVqSUwImzTDLX9S4g/8
- kC4HRcclk8hpyhY2jKGluZO0awwTIMgVEzmTyBphDg/Gx7dZU1Xf8HFuE+UZ5UDHDTnwgv7E
- th6RC9+WrhDNspZ9fJjKWRbveQgUFCpe1sa77LAw+XFrKmBHXp9ZVIe90RMe2tRL06BGiRZr
- jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20250528-tlb-trace-fix-v1-2-2e94c58f450d@columbia.edu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250528085453.481320-1-yangzh0906@thundersoft.com>
+In-Reply-To: <20250528085453.481320-1-yangzh0906@thundersoft.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 28 May 2025 11:06:40 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVjR0Ki_vLYtvv1HYpZVdLqUtacG=zs4_ooC0yLnK_CvA@mail.gmail.com>
+X-Gm-Features: AX0GCFv2umrJq54Eu_Z7Pa0M5hU7WaTzckrO6UyfF8NfUyYwIvRhoe3M_guovBM
+Message-ID: <CAMuHMdVjR0Ki_vLYtvv1HYpZVdLqUtacG=zs4_ooC0yLnK_CvA@mail.gmail.com>
+Subject: Re: [PATCH v1 5/9] mmc: sdhci: add Black Sesame Technologies BST
+ C1200 controller driver
+To: Albert Yang <yangzh0906@thundersoft.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Ge Gordon <gordon.ge@bst.ai>, BST Linux Kernel Upstream Group <bst-upstream@bstai.top>, linux-mmc@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Victor Shih <victor.shih@genesyslogic.com.tw>, 
+	Shan-Chun Hung <shanchun1218@gmail.com>, Arnd Bergmann <arnd@arndb.de>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Peter Robinson <pbrobinson@gmail.com>, Ben Chuang <ben.chuang@genesyslogic.com.tw>
+Content-Type: text/plain; charset="UTF-8"
 
-On 28.05.25 07:35, Tal Zussman wrote:
-> This has been unused since it was added 11 years ago in commit
-> d17d8f9dedb9 ("x86/mm: Add tracepoints for TLB flushes").
-> 
-> Signed-off-by: Tal Zussman <tz2294@columbia.edu>
-> ---
->   include/linux/mm_types.h | 1 -
->   1 file changed, 1 deletion(-)
-> 
-> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-> index 3e934dc6057c..8b91362fcf8e 100644
-> --- a/include/linux/mm_types.h
-> +++ b/include/linux/mm_types.h
-> @@ -1539,7 +1539,6 @@ enum tlb_flush_reason {
->   	TLB_LOCAL_MM_SHOOTDOWN,
->   	TLB_REMOTE_SEND_IPI,
->   	TLB_REMOTE_WRONG_CPU,
-> -	NR_TLB_FLUSH_REASONS,
->   };
->   
->   /**
-> 
+Hi Albert,
 
+On Wed, 28 May 2025 at 10:55, Albert Yang <yangzh0906@thundersoft.com> wrote:
+> Add a driver for the DesignWare Mobile Storage Host Controller (DWCMSHC)
+> SDHCI controller found in Black Sesame Technologies C1200 SoCs.
+>
+> The driver provides specialized clock configuration, tuning, voltage
+> switching, and power management for the BST DWCMSHC controller. It also
+> includes support for eMMC boot and memory-mapped I/O for CRM registers.
+>
+> Signed-off-by: Ge Gordon <gordon.ge@bst.ai>
+> Signed-off-by: Albert Yang <yangzh0906@thundersoft.com>
 
-Acked-by: David Hildenbrand <david@redhat.com>
+Thanks for your patch!
+
+> --- a/drivers/mmc/host/Kconfig
+> +++ b/drivers/mmc/host/Kconfig
+> @@ -1112,3 +1112,14 @@ config MMC_LITEX
+>           module will be called litex_mmc.
+>
+>           If unsure, say N.
+> +
+> +config MMC_SDHCI_BST
+> +       tristate "SDHCI OF support for the BST DWC MSHC"
+
+depends on ARCH_BST || COMPILE_TEST
+
+> +       depends on MMC_SDHCI_PLTFM
+> +       depends on OF
+> +       depends on COMMON_CLK
+> +       help
+> +         This selects Synopsys DesignWare Cores Mobile Storage Controller
+> +         support.
+> +         If you have a controller with this interface, say Y or M here.
+> +         If unsure, say N.
+
+> --- /dev/null
+> +++ b/drivers/mmc/host/sdhci-of-bst-c1200.c
+
+> +#define SDEMMC_CRM_BCLK_DIV_CTRL       0x08
+> +#define SDEMMC_CRM_RX_CLK_CTRL         0x14
+> +#define SDEMMC_CRM_TIMER_DIV_CTRL      0x0C
+> +#define SDEMMC_CRM_VOL_CTRL            0x1C
+> +#define DRIVER_NAME                    "sdhci_bst"
+> +#define BST_VOL_STABLE_ON              (0x1 << 7)
+> +#define SDHCI_DUMP_BST(f, x...)                \
+> +       pr_info("%s: " DRIVER_NAME ": " f, mmc_hostname(host->mmc), ##x)
+> +#define SD_3_3V                                0
+> +#define SD_1_8V                                1
+> +#define default_max_freq               200000ul
+> +
+> +void sdhci_bst_print_vendor(struct sdhci_host *host)
+> +{
+> +       SDHCI_DUMP_BST("============ SDHCI VENDOR REGISTER DUMP ===========\n");
+> +
+> +       SDHCI_DUMP_BST("VER_ID:  0x%08x | VER_TPYE:  0x%08x\n",
+> +                      sdhci_readl(host, SDHC_MHSC_VER_ID_R),
+> +                      sdhci_readl(host, SDHC_MHSC_VER_TPYE_R));
+> +       SDHCI_DUMP_BST("MHSC_CTRL:  0x%08x | MBIU_CTRL:  0x%08x\n",
+> +                      sdhci_readw(host, SDHC_MHSC_CTRL_R),
+> +                      sdhci_readw(host, SDHC_MBIU_CTRL_R));
+> +       SDHCI_DUMP_BST("EMMC_CTRL:  0x%08x | BOOT_CTRL: 0x%08x\n",
+> +                      sdhci_readl(host, SDHC_EMMC_CTRL_R),
+> +                      sdhci_readw(host, SDHC_BOOT_CTRL_R));
+> +       SDHCI_DUMP_BST("GP_IN:   0x%08x | GP_OUT: 0x%08x\n",
+> +                      sdhci_readl(host, SDHC_GP_IN_R),
+> +                      sdhci_readb(host, SDHC_GP_OUT_R));
+> +       SDHCI_DUMP_BST("AT_CTRL:     0x%08x | AT_STAT:  0x%08x\n",
+> +                      sdhci_readb(host, SDHC_AT_CTRL_R),
+> +                      sdhci_readb(host, SDHC_AT_STAT_R));
+> +}
+> +EXPORT_SYMBOL_GPL(sdhci_bst_print_vendor);
+
+Why do you need this?
+
+> +
+> +static u32 bst_read_phys_bst(u32 phys_addr)
+> +{
+> +       u32 phys_addr_page = phys_addr & 0xFFFFE000;
+> +       u32 phys_offset = phys_addr & 0x00001FFF;
+> +       u32 map_size = phys_offset + sizeof(u32);
+> +       u32 ret = 0xDEADBEEF;
+> +       void *mem_mapped = ioremap(phys_addr_page, map_size);
+> +
+> +       if (mem_mapped) {
+> +               ret = (u32)ioread32(((u8 *)mem_mapped) + phys_offset);
+> +               iounmap(mem_mapped);
+> +       }
+
+Please do not ioremap()/iounmap() for each register read...
+
+> +
+> +       return ret;
+> +}
+> +
+> +static void bst_write_phys_bst(u32 phys_addr, u32 value)
+> +{
+> +       u32 phys_addr_page = phys_addr & 0xFFFFE000;
+> +       u32 phys_offset = phys_addr & 0x00001FFF;
+> +       u32 map_size = phys_offset + sizeof(u32);
+> +       void *mem_mapped = ioremap(phys_addr_page, map_size);
+> +
+> +       if (mem_mapped) {
+> +               iowrite32(value, ((u8 *)mem_mapped) + phys_offset);
+> +               iounmap(mem_mapped);
+> +       }
+
+or write...
+
+> +}
+
+Aborting review.
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-Cheers,
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-David / dhildenb
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
