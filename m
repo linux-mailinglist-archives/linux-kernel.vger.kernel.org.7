@@ -1,212 +1,219 @@
-Return-Path: <linux-kernel+bounces-665143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3C65AC64DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 10:55:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD691AC64EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 10:58:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB7039E5FFD
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 08:55:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 547B29E7197
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 08:57:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 616222741AC;
-	Wed, 28 May 2025 08:55:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3610D27464A;
+	Wed, 28 May 2025 08:56:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=thundersoft.com header.i=@thundersoft.com header.b="bAE0mei3"
-Received: from mail-m21470.qiye.163.com (mail-m21470.qiye.163.com [117.135.214.70])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="HAC9xmMQ"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 259BA265CD0;
-	Wed, 28 May 2025 08:54:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.214.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B6FC272E44;
+	Wed, 28 May 2025 08:56:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748422499; cv=none; b=nS8JWQ+dOjV8lGdZIsybhkuoA+aKO6PGQgMPCowusISBLDZyWK6ZkcPilXMPmXV2foSly+T68nKJXpTKd+0fR1Mt8kTr1XF/AXi+2aqH7FqNFEcg3C9RE236q/XcyjGNgON3bBp7eyVYLGn1Px7OQJhsjD9CcP6HgZSeJPr3gfE=
+	t=1748422609; cv=none; b=KC35iZAo0Y3K+NEkobUm8+Fw1d4pEVxnAbTvuKZE0YiDWOq6Fz08MHhTDTMN5lupJs1v+jLWFS+pQNHByigU6oundfc2hL19mwLU8w3zMMqAWYoDVuPEqxqWll8ZWd5oXQsTQZhJrhwSeOEFCTk7OG/L+wzxyldsmxzfOq75i/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748422499; c=relaxed/simple;
-	bh=6OrfkisRggUmUjJtD20gSVGc6+cKde6EW/sKfoA/v2Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jG2KIKqlg0CT0L8eF3FvAefOD3ScUU6V1HYN8FhosipqAreLDVxcn8LMPO40UkDLiYiu9LxxLPtptN265ECIQfX7I3vCFX2PrKm0bIqB0ZMl5DYjfUtMlAwWqivXDAlMn/xK5RnIyuUqKhAjIPYiLxjH3IFW2VrKzi4/xRI9fBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thundersoft.com; spf=pass smtp.mailfrom=thundersoft.com; dkim=pass (1024-bit key) header.d=thundersoft.com header.i=@thundersoft.com header.b=bAE0mei3; arc=none smtp.client-ip=117.135.214.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thundersoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thundersoft.com
-Received: from localhost.localdomain (unknown [117.184.129.134])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 16b15a60d;
-	Wed, 28 May 2025 16:54:52 +0800 (GMT+08:00)
-From: Albert Yang <yangzh0906@thundersoft.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Ge Gordon <gordon.ge@bst.ai>
-Cc: BST Linux Kernel Upstream Group <bst-upstream@bstai.top>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mmc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Albert Yang <yangzh0906@thundersoft.com>
-Subject: [PATCH v1 4/9] dt-bindings: mmc: add binding for BST DWCMSHC SDHCI controller
-Date: Wed, 28 May 2025 16:54:51 +0800
-Message-Id: <20250528085451.481267-1-yangzh0906@thundersoft.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1748422609; c=relaxed/simple;
+	bh=svgzjkQYPTqnXKLn5DAC0dIIjJ9S6ZgKgXWz9Lkp8Yg=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lBbPP8uLaJn0ENXkxLRSUysBhItciTerW9T0aHFx+fxAydrAjeBmvFKpzzzaykurgXfy/QXCfm0RJY0uipSPibtdsWZkDrjQ6DfeP2oJDXaxzER+kVOjIz5+lXkFUHK7ziLmEt7KoVLMguLkJcZnQChyL8E4NVFQSrP31/BpGhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=HAC9xmMQ; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1748422607; x=1779958607;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=svgzjkQYPTqnXKLn5DAC0dIIjJ9S6ZgKgXWz9Lkp8Yg=;
+  b=HAC9xmMQnnzDCMV6eALmwOQ6UswppfskB6HV+b0xWXEY5GOVCKdVGJbQ
+   H4PS8zvNQkhYVmn5WnVRJi19BYRsUDJ91TVvf0eGNYjcLQ4JkJF8mQIPB
+   SU4NNrbIOt/3y1aq2bSGC0+7i4ouhR35ecSYGwNTqy7UHclCc9OFfi7pj
+   yO9G0ccbwj+f18HaXtk68mcBJ91dYpNNBJNE1nvFApOI1OQExZ+xLhKok
+   NCuvFJ2cOWPzoz9525QNrUVDjiiw1cqQPpBzMO7IeDU2LYKwvRPJSew4o
+   /7wGsI98paHSLupCSyEYmQYdV+LqqOr5QhY8FkppCT4Z/KbVaVrrNMWow
+   g==;
+X-CSE-ConnectionGUID: hzt0KrMvQKeqIu8ADV+dlA==
+X-CSE-MsgGUID: hkm5CSArRziPKz9w1gSG0A==
+X-IronPort-AV: E=Sophos;i="6.15,320,1739862000"; 
+   d="scan'208";a="209648014"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 28 May 2025 01:56:45 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Wed, 28 May 2025 01:56:37 -0700
+Received: from localhost (10.10.85.11) by chn-vm-ex01.mchp-main.com
+ (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.44 via Frontend
+ Transport; Wed, 28 May 2025 01:56:37 -0700
+Date: Wed, 28 May 2025 10:54:51 +0200
+From: Horatiu Vultur <horatiu.vultur@microchip.com>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+CC: <UNGLinuxDriver@microchip.com>, <andrew+netdev@lunn.ch>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net] net: lan966x: Make sure to insert the vlan tags also
+ in host mode
+Message-ID: <20250528085451.bindv4477g56mfcu@DEN-DL-M31836.microchip.com>
+References: <20250527070850.3504582-1-horatiu.vultur@microchip.com>
+ <20250527103749.66505756@2a02-8440-d111-2026-8d50-1f4f-0da2-e170.rev.sfr.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkaTB0ZVksdSUNITR1DTxgeGVYVFAkWGhdVEwETFh
-	oSFyQUDg9ZV1kYEgtZQVlKSkxVSkNPVUpJQlVKSE9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0hVSk
-	tLVUpCS0tZBg++
-X-HM-Tid: 0a97161a016709cckunm4606c7f3397dab
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Mxw6LCo6PjE#PkgKLg5COTIR
-	LEkKCUJVSlVKTE9DT0lJT0JITUJKVTMWGhIXVQIaFRwBE0tCS007DxMOFR8eCQgUHQ9VGBQWRVlX
-	WRILWUFZSkpMVUpDT1VKSUJVSkhPWVdZCAFZQU9MSUk3Bg++
-DKIM-Signature:a=rsa-sha256;
-	b=bAE0mei3mJMwcZJl4gdhGUEj8pKxMfbikNhy9hrQxxV+RXQM3X6pjhUaT4rl1GO7WzNyaAXsEWIteJjFR37b6ZNSu+XH1aiXTsJlNfuGgHMrtkSALTXadz7fKJfSCk1BtkKd8LiveB4cailNM1bioJtJRmLqqgez7ULqVmeKLqg=; c=relaxed/relaxed; s=default; d=thundersoft.com; v=1;
-	bh=Vb4BX0UJyLUvKF4fET6nq/FFfA6w/RMSx8v+7CHMEsA=;
-	h=date:mime-version:subject:message-id:from;
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+In-Reply-To: <20250527103749.66505756@2a02-8440-d111-2026-8d50-1f4f-0da2-e170.rev.sfr.net>
 
-Add device tree binding documentation for the Black Sesame Technologies
-(BST) DWCMSHC SDHCI controller.
+The 05/27/2025 10:37, Maxime Chevallier wrote:
+> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
+> 
+> Hello Horatiu,
 
-This binding describes the required and optional properties for the
-bst,dwcmshc-sdhci compatible controller, including register layout,
-interrupts, bus width, clock configuration, and other controller-specific
-features.
+Hi Maxime,
 
-Signed-off-by: Ge Gordon <gordon.ge@bst.ai>
-Signed-off-by: Albert Yang <yangzh0906@thundersoft.com>
----
- .../bindings/mmc/bst,dwcmshc-sdhci.yaml       | 115 ++++++++++++++++++
- 1 file changed, 115 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mmc/bst,dwcmshc-sdhci.yaml
+> 
+> On Tue, 27 May 2025 09:08:50 +0200
+> Horatiu Vultur <horatiu.vultur@microchip.com> wrote:
+> 
+> > When running these commands on DUT (and similar at the other end)
+> > ip link set dev eth0 up
+> > ip link add link eth0 name eth0.10 type vlan id 10
+> > ip addr add 10.0.0.1/24 dev eth0.10
+> > ip link set dev eth0.10 up
+> > ping 10.0.0.2/24
+> >
+> > The ping will fail.
+> >
+> > The reason why is failing is because, the network interfaces for lan966x
+> > have a flag saying that the HW can insert the vlan tags into the
+> > frames(NETIF_F_HW_VLAN_CTAG_TX). Meaning that the frames that are
+> > transmitted don't have the vlan tag inside the skb data, but they have
+> > it inside the skb. We already get that vlan tag and put it in the IFH
+> > but the problem is that we don't configure the HW to rewrite the frame
+> > when the interface is in host mode.
+> > The fix consists in actually configuring the HW to insert the vlan tag
+> > if it is different than 0.
+> >
+> > Fixes: 6d2c186afa5d ("net: lan966x: Add vlan support.")
+> > Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
+> > ---
+> >  .../ethernet/microchip/lan966x/lan966x_main.c |  1 +
+> >  .../ethernet/microchip/lan966x/lan966x_main.h |  1 +
+> >  .../microchip/lan966x/lan966x_switchdev.c     |  1 +
+> >  .../ethernet/microchip/lan966x/lan966x_vlan.c | 21 +++++++++++++++++++
+> >  4 files changed, 24 insertions(+)
+> >
+> > diff --git a/drivers/net/ethernet/microchip/lan966x/lan966x_main.c b/drivers/net/ethernet/microchip/lan966x/lan966x_main.c
+> > index 427bdc0e4908c..7001584f1b7a6 100644
+> > --- a/drivers/net/ethernet/microchip/lan966x/lan966x_main.c
+> > +++ b/drivers/net/ethernet/microchip/lan966x/lan966x_main.c
+> > @@ -879,6 +879,7 @@ static int lan966x_probe_port(struct lan966x *lan966x, u32 p,
+> >       lan966x_vlan_port_set_vlan_aware(port, 0);
+> >       lan966x_vlan_port_set_vid(port, HOST_PVID, false, false);
+> >       lan966x_vlan_port_apply(port);
+> > +     lan966x_vlan_port_rew_host(port);
+> >
+> >       return 0;
+> >  }
+> > diff --git a/drivers/net/ethernet/microchip/lan966x/lan966x_main.h b/drivers/net/ethernet/microchip/lan966x/lan966x_main.h
+> > index 1f9df67f05044..4f75f06883693 100644
+> > --- a/drivers/net/ethernet/microchip/lan966x/lan966x_main.h
+> > +++ b/drivers/net/ethernet/microchip/lan966x/lan966x_main.h
+> > @@ -497,6 +497,7 @@ void lan966x_vlan_port_apply(struct lan966x_port *port);
+> >  bool lan966x_vlan_cpu_member_cpu_vlan_mask(struct lan966x *lan966x, u16 vid);
+> >  void lan966x_vlan_port_set_vlan_aware(struct lan966x_port *port,
+> >                                     bool vlan_aware);
+> > +void lan966x_vlan_port_rew_host(struct lan966x_port *port);
+> >  int lan966x_vlan_port_set_vid(struct lan966x_port *port,
+> >                             u16 vid,
+> >                             bool pvid,
+> > diff --git a/drivers/net/ethernet/microchip/lan966x/lan966x_switchdev.c b/drivers/net/ethernet/microchip/lan966x/lan966x_switchdev.c
+> > index 1c88120eb291a..bcb4db76b75cd 100644
+> > --- a/drivers/net/ethernet/microchip/lan966x/lan966x_switchdev.c
+> > +++ b/drivers/net/ethernet/microchip/lan966x/lan966x_switchdev.c
+> > @@ -297,6 +297,7 @@ static void lan966x_port_bridge_leave(struct lan966x_port *port,
+> >       lan966x_vlan_port_set_vlan_aware(port, false);
+> >       lan966x_vlan_port_set_vid(port, HOST_PVID, false, false);
+> >       lan966x_vlan_port_apply(port);
+> > +     lan966x_vlan_port_rew_host(port);
+> >  }
+> >
+> >  int lan966x_port_changeupper(struct net_device *dev,
+> > diff --git a/drivers/net/ethernet/microchip/lan966x/lan966x_vlan.c b/drivers/net/ethernet/microchip/lan966x/lan966x_vlan.c
+> > index fa34a739c748e..f158ec6ab10cc 100644
+> > --- a/drivers/net/ethernet/microchip/lan966x/lan966x_vlan.c
+> > +++ b/drivers/net/ethernet/microchip/lan966x/lan966x_vlan.c
+> > @@ -149,6 +149,27 @@ void lan966x_vlan_port_set_vlan_aware(struct lan966x_port *port,
+> >       port->vlan_aware = vlan_aware;
+> >  }
+> >
+> > +/* When the interface is in host mode, the interface should not be vlan aware
+> > + * but it should insert all the tags that it gets from the network stack.
+> > + * The tags are no in the data of the frame but actually in the skb and the ifh
+>                    not
+> > + * is confiured already to get this tag. So what we need to do is to update the
+>          configured
+> > + * rewriter to insert the vlan tag for all frames which have a vlan tag
+> > + * different than 0.
 
-diff --git a/Documentation/devicetree/bindings/mmc/bst,dwcmshc-sdhci.yaml b/Documentation/devicetree/bindings/mmc/bst,dwcmshc-sdhci.yaml
-new file mode 100644
-index 000000000000..429e7f50cdec
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mmc/bst,dwcmshc-sdhci.yaml
-@@ -0,0 +1,115 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/mmc/bst,dwcmshc-sdhci.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Black Sesame Technologies DWCMSHC SDHCI Controller
-+
-+maintainers:
-+  - Ge Gordon <gordon.ge@bst.ai>
-+
-+description: |
-+  The BST DWCMSHC SDHCI controller is a Synopsys DesignWare Mobile Storage Host
-+  Controller IP integrated in BST SoCs.
-+
-+  This documents the differences between the core properties in mmc.yaml and the
-+  properties used by the sdhci-bst driver.
-+
-+properties:
-+  compatible:
-+    const: bst,dwcmshc-sdhci
-+
-+  reg-names:
-+    const: base
-+    description: Specify the register name
-+
-+  reg:
-+    maxItems: 1
-+    description: Host controller base address
-+
-+  interrupts:
-+    maxItems: 1
-+    description: One MMC interrupt should be described here
-+
-+  interrupt-names:
-+    items:
-+      - const: IRQDWMMC0
-+
-+  non-removable:
-+    type: boolean
-+    description: Non-removable slot (like eMMC)
-+
-+  bus-width:
-+    description: Number of data lines
-+    enum: [1, 4, 8]
-+
-+  clock-frequency:
-+    description: Base clock frequency in Hz
-+
-+  max-frequency:
-+    description: Maximum clock frequency in Hz
-+
-+  fifo-depth:
-+    description: |
-+      FIFO depth in bytes. If this property is not specified, the default value
-+      of the fifo size is determined from the controller registers.
-+
-+  mmc_crm_base:
-+    description: Base address of MMC CRM registers
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+
-+  mmc_crm_size:
-+    description: Size of MMC CRM registers
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+
-+  memory-region:
-+    maxItems: 1
-+    description: Specify the MMC DMA buffer range
-+
-+  sdhci,auto-cmd12:
-+    type: boolean
-+    description: Enable auto CMD12 support
-+
-+  dma-coherent:
-+    type: boolean
-+    description: Enable coherent DMA operations
-+
-+required:
-+  - compatible
-+  - reg-names
-+  - reg
-+  - interrupts
-+  - interrupt-names
-+  - non-removable
-+  - bus-width
-+  - clock-frequency
-+  - max-frequency
-+  - fifo-depth
-+  - mmc_crm_base
-+  - mmc_crm_size
-+
-+examples:
-+  - |
-+    dwmmc0@22200000 {
-+        status = "okay";
-+        compatible = "bst,dwcmshc-sdhci";
-+        reg-names = "base";
-+        reg = <0x0 0x22200000 0x0 0x1000>;
-+        interrupts = <0x0 0x90 0x4>;
-+        interrupt-names = "IRQDWMMC0";
-+        #address-cells = <0x2>;
-+        #size-cells = <0x0>;
-+        clock-frequency = <200000000>;
-+        max-frequency = <200000000>;
-+        mmc_crm_base = <0x23006000>;
-+        mmc_crm_size = <0x1000>;
-+        fifo-depth = <0x400>;
-+        bus-width = <8>;
-+        non-removable;
-+        sdhci,auto-cmd12;
-+        dma-coherent;
-+        memory-region = <&mmc_dma_buf>;
-+    };
-+
-+additionalProperties: true
-\ No newline at end of file
+Well spotted!
+
+> 
+> Just to be extra clear, the doc seems to say that
+> 
+>         REW_TAG_CFG_TAG_CFG_SET(1);
+> 
+> means "Tag all frames, except when VID=PORT_VLAN_CFG.PORT_VID or
+> VID=0."
+> 
+> Another setting for these bits are "Tag all frames except when VID=0",
+> which is what you document in the above comment.
+> 
+> In this case, is there any chance that it would make a difference ?
+
+I don't see how will this make a difference but I will update it to set
+the value of 2 which means VID=0 and also update the comment.
+
+> 
+> > + */
+> > +void lan966x_vlan_port_rew_host(struct lan966x_port *port)
+> > +{
+> > +     struct lan966x *lan966x = port->lan966x;
+> > +     u32 val;
+> > +
+> > +     /* Tag all frames except when VID == DEFAULT_VLAN */
+> > +     val = REW_TAG_CFG_TAG_CFG_SET(1);
+> > +
+> > +     /* Update only some bits in the register */
+> > +     lan_rmw(val,
+> > +             REW_TAG_CFG_TAG_CFG,
+> > +             lan966x, REW_TAG_CFG(port->chip_port));
+> > +}
+> > +
+> >  void lan966x_vlan_port_apply(struct lan966x_port *port)
+> >  {
+> >       struct lan966x *lan966x = port->lan966x;
+> 
+> Sorry for the typo nitpicking, but with that :
+> 
+> Reviewed-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+> 
+> Maxime
+
 -- 
-2.25.1
-
+/Horatiu
 
