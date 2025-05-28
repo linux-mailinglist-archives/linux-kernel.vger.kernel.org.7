@@ -1,202 +1,120 @@
-Return-Path: <linux-kernel+bounces-664613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-664616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2164FAC5E33
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 02:29:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7EC2AC5E3C
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 02:29:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABC28A200F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 00:28:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7AF0A20871
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 00:29:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 488FE6A33B;
-	Wed, 28 May 2025 00:28:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 536BC1898FB;
+	Wed, 28 May 2025 00:29:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dKOcCzO4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A3xTTPGl"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EC48257D;
-	Wed, 28 May 2025 00:28:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E1321367;
+	Wed, 28 May 2025 00:29:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748392136; cv=none; b=lyV0vVlUH85W3zG7cCM4d0KAl15ZGssTfVi5DvEvaoZGn4nLsk1gGK0WlC36drA7u15TZfgyGrUGFMyKNXIs15m5K24sa9Nx88h14VOOiiaLMtzm4FjFNX6tpre4+Qe4Ct0ZL7N/MSbtF4OVK1NWfTZ2nSFlWUbE4NWltSQalEc=
+	t=1748392148; cv=none; b=jZ00bmgBs2PZH0GdmuxKtk37AwJcrrq/nM2WrhNevVPOT9K203iM2ms7WkCaKKb+IW91pLqOa666CSLSHw8KIqdDPnsSTrehwTOyf3eiDMUs3AtB0RelF9lj8c+Key/ry7faVbVMjCkNwPJXI9+i4jA5poP32iNE8gAit496oF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748392136; c=relaxed/simple;
-	bh=aALOo4alZ8rfYTwA9YSKRic4KjG4rxUpZmDPOqt+IlU=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=YeLIYeMEpW//Q1jEP9qKBDqE44CoTj1YrTvpvg5ThZaqFbfoVQSyOTnEzOcaBYQPoZtJ82e92UlWBwdF+ChqGroTxPQPnvxlgdmy3887yGz+YKs8eqFjI3SJPc953Bd+P8efq2G5yyWg9LwbG+3/5REJBW/aEX4DJ5IvitZLBPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dKOcCzO4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9806DC4CEE9;
-	Wed, 28 May 2025 00:28:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748392136;
-	bh=aALOo4alZ8rfYTwA9YSKRic4KjG4rxUpZmDPOqt+IlU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=dKOcCzO4MTvN5uFT/xs380i2Zy0S4gZradxT03RVUqO7YutK8+P5RnLLs+xCU3zfb
-	 Nq/+LwzfXy2UTXLtWs3ESD0hYF2no+eUqaoxXh50MA7u+t2rxH8CUzKrOrXhxWQfGR
-	 vA7PmAGYt3Kge6CHOyWDuXLerJWigQ0B00tUXVcr3JRJ82lgcHv0ljjRWzJni7bF7L
-	 goPldz/P3fNSNVtxztBsB0ojI5oV1fhX4BwgGM1yg6Vb29j9VBBQ2NAgc7Zq2dTL9N
-	 nizltDyXwjsDv9EOopULNL6IIs+JWXpdc0VFKRa65irRj5dFKeL26aIfbLsBipkvu0
-	 TeJJFQjILC71Q==
-Date: Wed, 28 May 2025 09:28:54 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: Re: [PATCH] ring-buffer: Simplify functions with __free(kfree) to
- free allocations
-Message-Id: <20250528092854.2d94f047c5c947a7d1b1ea8b@kernel.org>
-In-Reply-To: <20250527143144.6edc4625@gandalf.local.home>
-References: <20250527143144.6edc4625@gandalf.local.home>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1748392148; c=relaxed/simple;
+	bh=nMSI5ZivnZZiPS/FxHmijcxahzyz2FLO5lWtTyhEHmY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ogaq70If2Yi2maalB8LGGy/TQ/zG2Po7n+qJdQD1Wd22q9CWOBwECxPHOD5LA6fBoHlGM41f2+vTE1OBsPu6f9FlgZjPiRS4Kxaluf8OWWLImuPcaqSroi8w+dRy0iwvzddccGPc+1ouABRLgkvns2a6kJE1IqjnLu58HPHZMfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A3xTTPGl; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-234ade5a819so10429115ad.1;
+        Tue, 27 May 2025 17:29:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748392146; x=1748996946; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=SdHZEyPpnejSK4kS7CITMiqXsuO0ubtElhjRk0W2zlc=;
+        b=A3xTTPGlOsKR3cANTrsLabM5rSwq9s8RdQo5CereHgxs5/clmoVti/KRKI8vnh2ptg
+         cbFOXLPdtgvut9VJAkZo7Z7+3i2vpWPUA4Vnk/EVaskS+TQBVm9wHDtaBXZFDrHntm+l
+         uAgQAH+o2NP/SP0Of95VPXYV9M3Xjk8zZmCQSBDNYHr+ELKkt4v1ENaT4jbZFTWNC8nT
+         B68Y4pjM+00xf44vqILhjGeYg9yHi6Hn1XB3zzMgZvikQs18nTrRCsp7kvR2O2fCrBYV
+         BIiQZQy5emrFpUTrCCd+5ByLQ/h9CApJZUUfJyoZl18jb0Vh0qJqbR7ltL/s65h3ECjS
+         KfeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748392146; x=1748996946;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SdHZEyPpnejSK4kS7CITMiqXsuO0ubtElhjRk0W2zlc=;
+        b=Tv9eylSyPulQ2gUjZ3QpidGv9UIwZOrXws0rUS4nbG8AvBRJHMaAO0ZNt3uoTi0Mqw
+         aDwIBz0uh9sMFVMaL0X+/e+72cbUPP5DJ+r1SP1QQyW8O4wyOGQcbvtndVLoZcW+RiLO
+         g7KMIhIEl2chXl/+W2HznjQVVWwTlXwzn8OCLQ+hAiWIInhBsM713fpjgK/r9tbgApFm
+         HObBgoMp2RT/u3SPTjhgv80Y/noeS9o/vz1VvCfAfn4ts3ut1cCFZMAX0S2KDm4bOt7U
+         F1pUfpUk1AyiJXbhKk5lLUZBAoH1bhziN/EMVmyo23cMohiMzYpwVdlfNq08CcyJmeRg
+         GjOw==
+X-Forwarded-Encrypted: i=1; AJvYcCUcTKukE9SD51U17UbQsKSsvbJvwgbpQbZWgRjX7tJVfqokdCMiO2BGIaQ0c3qxxSlFY5aRUg51rqxKjlt4@vger.kernel.org, AJvYcCV49XwFb5IxcKHl71uPZEKQPzljYHHLbNmKf5ON6vVO4BCnsQrf83MdkuHMxLAY0fLKJ06qf4J2/0vWl+HhaVsE@vger.kernel.org, AJvYcCWYoO/0Ir3dAsnoYKbkaTsNrOe7zWu9lYBXknScHqBvawl6s7CrSVcNmQYdCsbES9rVblAY6mbb@vger.kernel.org, AJvYcCXrY/Air1FxhEnNLC+n/1sJLhLBtOPkABHpCrATFku2A9zLWXoR5KaZKv12bD64v27fFJA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxcEInt9/mh4Dlq+DOZEIFaXS35lNJ5Qlnigq0MJL2/Cncqwk2d
+	rym/4kaWEglG+yJSabDag/HU3rsai0x8rZQ0nbjY72QpRFCbcOSUF7XJ
+X-Gm-Gg: ASbGncvGdNhiWjfxMSw0kQAaDvbPmYZt88CFGMcdwf7GbcmIcDHi+2lNyccEQnFkduB
+	csDx9ABIOq3WidFldCQtmPXCHnpr/uaa/M/2teA0IqgeV19dwYY+PIF8rdvLGkg32VvORWeka0C
+	LsHrhpZvKDMxuedL9danGGwhBaCT4WuupV4g9xR3dSRJ4IrYsMrORWhGnX76j0m3Wy35Rqaccbg
+	8ovwvStr8bOyQfnNIbi0C1RYfTFDf85PeFwxgKB0qtUCq08m0gN9oRW5SDodN2nyAQr/jMtA81K
+	UZZve5E9gPd8wc89njLXXYP9krCkSSgDRKqR4gVnDCcM7vbCb0kIwQBfe2zDvQzXyX1kf6Y=
+X-Google-Smtp-Source: AGHT+IEXiNShvrkwb0WLAlppJy482Bihy90a51Ds7tKinQx6TREEDLNScb5DULzgA/mguTbEfCZWog==
+X-Received: by 2002:a17:903:1a06:b0:234:c22:c65b with SMTP id d9443c01a7336-23414f5b33amr235147555ad.14.1748392146386;
+        Tue, 27 May 2025 17:29:06 -0700 (PDT)
+Received: from devbig793.prn5.facebook.com ([2a03:2880:ff:5::])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-234d35bce89sm63895ad.217.2025.05.27.17.29.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 May 2025 17:29:05 -0700 (PDT)
+Date: Tue, 27 May 2025 17:29:03 -0700
+From: Bobby Eshleman <bobbyeshleman@gmail.com>
+To: Stefano Garzarella <sgarzare@redhat.com>
+Cc: Stefan Hajnoczi <stefanha@redhat.com>, Shuah Khan <shuah@kernel.org>,
+	kvm@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org,
+	virtualization@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH net-next v8] selftests/vsock: add initial vmtest.sh for
+ vsock
+Message-ID: <aDZYzxEOKKY5kKcD@devbig793.prn5.facebook.com>
+References: <20250522-vsock-vmtest-v8-1-367619bef134@gmail.com>
+ <ta2ub5v7txhobccgvpnwsz7cyzcnx6aw74cjlcviosjetuwfhh@7gdahptdpbnd>
+ <aDXMhbqhhUAMe0Oz@devbig793.prn5.facebook.com>
+ <tabqpll3r76jhx2ujayry25a7ujfsikm7tejv5sviayyojlmwz@amcchbc5xiqp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <tabqpll3r76jhx2ujayry25a7ujfsikm7tejv5sviayyojlmwz@amcchbc5xiqp>
 
-On Tue, 27 May 2025 14:31:44 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
-
-> From: Steven Rostedt <rostedt@goodmis.org>
+On Tue, May 27, 2025 at 05:55:13PM +0200, Stefano Garzarella wrote:
+> On Tue, May 27, 2025 at 07:30:29AM -0700, Bobby Eshleman wrote:
+> > On Mon, May 26, 2025 at 01:18:18PM +0200, Stefano Garzarella wrote:
+> > > On Thu, May 22, 2025 at 09:59:07PM -0700, Bobby Eshleman wrote:
 > 
-> The function rb_allocate_pages() allocates cpu_buffer and on error needs
-> to free it. It has a single return. Use __free(kfree) and return directly
-> on errors and have the return use return_ptr(cpu_buffer).
-> 
-> The function alloc_buffer() allocates buffer and on error needs to free
-> it. It has a single return. Use __free(kfree) and return directly on
-> errors and have the return use return_ptr(buffer).
-> 
-> The function __rb_map_vma() allocates a temporary array "pages". Have it
-> use __free() and not worry about freeing it when returning.
+> Yes, that would be great, but anyway for now I would say let's go with this
+> since we're supposed to support these current versions I guess, and this
+> hack at the end I think is doable.
 > 
 
-Looks good to me.
+sgtm!
 
-Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-
-> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> ---
->  kernel/trace/ring_buffer.c | 27 +++++++++------------------
->  1 file changed, 9 insertions(+), 18 deletions(-)
-> 
-> diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-> index f3aa18c89166..10a4b26929ae 100644
-> --- a/kernel/trace/ring_buffer.c
-> +++ b/kernel/trace/ring_buffer.c
-> @@ -2226,7 +2226,7 @@ static int rb_allocate_pages(struct ring_buffer_per_cpu *cpu_buffer,
->  static struct ring_buffer_per_cpu *
->  rb_allocate_cpu_buffer(struct trace_buffer *buffer, long nr_pages, int cpu)
->  {
-> -	struct ring_buffer_per_cpu *cpu_buffer;
-> +	struct ring_buffer_per_cpu *cpu_buffer __free(kfree) = NULL;
->  	struct ring_buffer_cpu_meta *meta;
->  	struct buffer_page *bpage;
->  	struct page *page;
-> @@ -2252,7 +2252,7 @@ rb_allocate_cpu_buffer(struct trace_buffer *buffer, long nr_pages, int cpu)
->  	bpage = kzalloc_node(ALIGN(sizeof(*bpage), cache_line_size()),
->  			    GFP_KERNEL, cpu_to_node(cpu));
->  	if (!bpage)
-> -		goto fail_free_buffer;
-> +		return NULL;
->  
->  	rb_check_bpage(cpu_buffer, bpage);
->  
-> @@ -2318,13 +2318,11 @@ rb_allocate_cpu_buffer(struct trace_buffer *buffer, long nr_pages, int cpu)
->  		rb_head_page_activate(cpu_buffer);
->  	}
->  
-> -	return cpu_buffer;
-> +	return_ptr(cpu_buffer);
->  
->   fail_free_reader:
->  	free_buffer_page(cpu_buffer->reader_page);
->  
-> - fail_free_buffer:
-> -	kfree(cpu_buffer);
->  	return NULL;
->  }
->  
-> @@ -2359,7 +2357,7 @@ static struct trace_buffer *alloc_buffer(unsigned long size, unsigned flags,
->  					 unsigned long scratch_size,
->  					 struct lock_class_key *key)
->  {
-> -	struct trace_buffer *buffer;
-> +	struct trace_buffer *buffer __free(kfree) = NULL;
->  	long nr_pages;
->  	int subbuf_size;
->  	int bsize;
-> @@ -2373,7 +2371,7 @@ static struct trace_buffer *alloc_buffer(unsigned long size, unsigned flags,
->  		return NULL;
->  
->  	if (!zalloc_cpumask_var(&buffer->cpumask, GFP_KERNEL))
-> -		goto fail_free_buffer;
-> +		return NULL;
->  
->  	buffer->subbuf_order = order;
->  	subbuf_size = (PAGE_SIZE << order);
-> @@ -2472,7 +2470,7 @@ static struct trace_buffer *alloc_buffer(unsigned long size, unsigned flags,
->  
->  	mutex_init(&buffer->mutex);
->  
-> -	return buffer;
-> +	return_ptr(buffer);
->  
->   fail_free_buffers:
->  	for_each_buffer_cpu(buffer, cpu) {
-> @@ -2484,8 +2482,6 @@ static struct trace_buffer *alloc_buffer(unsigned long size, unsigned flags,
->   fail_free_cpumask:
->  	free_cpumask_var(buffer->cpumask);
->  
-> - fail_free_buffer:
-> -	kfree(buffer);
->  	return NULL;
->  }
->  
-> @@ -7076,7 +7072,7 @@ static int __rb_map_vma(struct ring_buffer_per_cpu *cpu_buffer,
->  {
->  	unsigned long nr_subbufs, nr_pages, nr_vma_pages, pgoff = vma->vm_pgoff;
->  	unsigned int subbuf_pages, subbuf_order;
-> -	struct page **pages;
-> +	struct page **pages __free(kfree) = NULL;
->  	int p = 0, s = 0;
->  	int err;
->  
-> @@ -7144,10 +7140,8 @@ static int __rb_map_vma(struct ring_buffer_per_cpu *cpu_buffer,
->  		struct page *page;
->  		int off = 0;
->  
-> -		if (WARN_ON_ONCE(s >= nr_subbufs)) {
-> -			err = -EINVAL;
-> -			goto out;
-> -		}
-> +		if (WARN_ON_ONCE(s >= nr_subbufs))
-> +			return -EINVAL;
->  
->  		page = virt_to_page((void *)cpu_buffer->subbuf_ids[s]);
->  
-> @@ -7162,9 +7156,6 @@ static int __rb_map_vma(struct ring_buffer_per_cpu *cpu_buffer,
->  
->  	err = vm_insert_pages(vma, vma->vm_start, pages, &nr_pages);
->  
-> -out:
-> -	kfree(pages);
-> -
->  	return err;
->  }
->  #else
-> -- 
-> 2.47.2
+> BTW, thanks again for this useful work!
+> Stefano
 > 
 
+No problem, happy to help!
 
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Best,
+Bobby
 
