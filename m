@@ -1,214 +1,442 @@
-Return-Path: <linux-kernel+bounces-665934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D6E2AC70A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 20:02:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B375CAC70AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 20:03:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F6E34E60F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 18:02:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5149316F1E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 18:03:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF00420FA90;
-	Wed, 28 May 2025 18:01:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA92028DF55;
+	Wed, 28 May 2025 18:02:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="SBImEGzM"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2055.outbound.protection.outlook.com [40.107.94.55])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="MaeStp27"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 539C4207DE2;
-	Wed, 28 May 2025 18:01:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.55
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748455313; cv=fail; b=pRoDMGa2H+ox3Gz0lOmHxS7ycJD/H8oRry4b5/8iOw+aFaaVrAVYbaeZ4q8a42Pu4C//0lMN2kSyqW0hewa2hbw+IIJHLNkNje0A8c4TMMqQycI4z5xaW7WJnrMt0ZDrpna6awOpkAwGe7v7QFvZnqFuapPia4fr7Sb39cV2MEU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748455313; c=relaxed/simple;
-	bh=PK5rl/1dte9AJyspm42aurn7n9Gi0dznZQenQKMQCeY=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P/N4rKPnuOJqtCTGWVV4QHNh0aWVP7TjlCJlilYWRdyzV9O7M8fTosDkSWHHhFyX3aPPnRYbXylohrYx+RoEMwVHs0cB75laGLjFAm4OgVLeo5H3gKQ2ej0fsCt6FJrrB6rjBA3MNwW7cQjRdTsS0utqnN0mNZ+1/xVTQo5ua0s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=SBImEGzM; arc=fail smtp.client-ip=40.107.94.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=PcUyTZ/tSP9FvYk/OwUff9znqc+kfwvKz/cyswszWN6lvNVcFDe3Xq2r8HCtfHGTl4DTT70sVMUEFXE3zmbsyN/U1xfIUauKhtdNogWkzgTMC/nBRnLz+40G6vSqJdPj4+JKiJ1Y+qrDc0bdFJhnV53dTkM6W/Ae8mqLXOHPihIu2+tFysYpvFJhgzMMapiS6kzKtpIrZ4mG14ZFfuaeDRIVEAI4gSNPY2VpWWnJeChCTlzYlnYX1r+7pRlYd3OGFXwQyhS1j7MXDZ+NPuchYXIgXBqopPmlqti8sGVbMeYyf18h2iTwG9NiEMqExsOzxwRtgWnW08ShQdyjo0dbGQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pxShEtpkvRDBUpu0orOGm4w9j8Q+swviZOJ0wA3ng1M=;
- b=AqBNhBLIIrssEh1ejnx/uN0pJWTahmfge+FlH0DyDZMX4geMSP0TYnizyNPTBklCOg3bIH2zkm91djS2MiaFVlJX4GFHBGaa/SnWAdoPcVWgi4hEc+nKeThOeYmK+IIrOeF9ktQs7/3ypnNSZJfX1c8LjeH1BgV9oPOBadUecCXBLi419RLf2l2rpowK8MkP2Khk6fvvHR2NCXtNtbSm1AuuxVkWJlEye9OoiOVabYswHqwb8YZNks8ywB4v1YI9VInlT9b9KsSxK2QLTbJAxsg47GqiggEitG0gUrppktj86nFanbJs5qQa09C6QRE5c5Z0/6c/e/BJTKx1n/9xHg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pxShEtpkvRDBUpu0orOGm4w9j8Q+swviZOJ0wA3ng1M=;
- b=SBImEGzMVCVBBS7U+JDAlzkUWpGMadVoytiwxRDxSePOc6P8wHOwaak1Q3qpGYTUx+v7E1KaQ2QPlNOL9USrVI5V8zwHq/xRQ1TTIIY6DhLXIR/5tIW/Jwz+ms1KPz/A6LvB/6vdGjyoudsrj2wSJthq91EMGgmRuzaxkJD4hfxI2zpqG7c2ZyDvYv8o6ugnAWkONb0Ch6K9wk/fRVgygjXOFNp1/pHVzXgLEMuuVy0WDHbBrRhp/BODRvfneJuTiYN9iTirCDDWjro3KXRKx1A0nSZsT/tpv4WwDlvg0sXurqzTxlKYP2SlnqOUMBS8HjFT4FFcnbhqdF9ybB1LGQ==
-Received: from BY3PR05CA0021.namprd05.prod.outlook.com (2603:10b6:a03:254::26)
- by PH7PR12MB9223.namprd12.prod.outlook.com (2603:10b6:510:2f2::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.27; Wed, 28 May
- 2025 18:01:49 +0000
-Received: from CO1PEPF000044F5.namprd05.prod.outlook.com
- (2603:10b6:a03:254:cafe::49) by BY3PR05CA0021.outlook.office365.com
- (2603:10b6:a03:254::26) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8792.19 via Frontend Transport; Wed,
- 28 May 2025 18:01:49 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- CO1PEPF000044F5.mail.protection.outlook.com (10.167.241.75) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8769.18 via Frontend Transport; Wed, 28 May 2025 18:01:49 +0000
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 28 May
- 2025 11:01:25 -0700
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail205.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 28 May
- 2025 11:01:25 -0700
-Received: from Asurada-Nvidia (10.127.8.11) by mail.nvidia.com (10.129.68.8)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
- Transport; Wed, 28 May 2025 11:01:23 -0700
-Date: Wed, 28 May 2025 11:01:22 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: "Tian, Kevin" <kevin.tian@intel.com>
-CC: "jgg@nvidia.com" <jgg@nvidia.com>, "corbet@lwn.net" <corbet@lwn.net>,
-	"will@kernel.org" <will@kernel.org>, "bagasdotme@gmail.com"
-	<bagasdotme@gmail.com>, "robin.murphy@arm.com" <robin.murphy@arm.com>,
-	"joro@8bytes.org" <joro@8bytes.org>, "thierry.reding@gmail.com"
-	<thierry.reding@gmail.com>, "vdumpa@nvidia.com" <vdumpa@nvidia.com>,
-	"jonathanh@nvidia.com" <jonathanh@nvidia.com>, "shuah@kernel.org"
-	<shuah@kernel.org>, "jsnitsel@redhat.com" <jsnitsel@redhat.com>,
-	"nathan@kernel.org" <nathan@kernel.org>, "peterz@infradead.org"
-	<peterz@infradead.org>, "Liu, Yi L" <yi.l.liu@intel.com>,
-	"mshavit@google.com" <mshavit@google.com>, "praan@google.com"
-	<praan@google.com>, "zhangzekun11@huawei.com" <zhangzekun11@huawei.com>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>, "linux-doc@vger.kernel.org"
-	<linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org"
-	<linux-tegra@vger.kernel.org>, "linux-kselftest@vger.kernel.org"
-	<linux-kselftest@vger.kernel.org>, "patches@lists.linux.dev"
-	<patches@lists.linux.dev>, "mochs@nvidia.com" <mochs@nvidia.com>,
-	"alok.a.tiwari@oracle.com" <alok.a.tiwari@oracle.com>, "vasant.hegde@amd.com"
-	<vasant.hegde@amd.com>, "dwmw2@infradead.org" <dwmw2@infradead.org>,
-	"baolu.lu@linux.intel.com" <baolu.lu@linux.intel.com>
-Subject: Re: [PATCH v5 13/29] iommufd/viommu: Introduce IOMMUFD_OBJ_HW_QUEUE
- and its related struct
-Message-ID: <aDdPcu50/hfLpRoz@Asurada-Nvidia>
-References: <cover.1747537752.git.nicolinc@nvidia.com>
- <580a36f629402506d232052ddd20ef21ec91d5bc.1747537752.git.nicolinc@nvidia.com>
- <BN9PR11MB5276C599F23964E423CCA2738C98A@BN9PR11MB5276.namprd11.prod.outlook.com>
- <aDDslV6ZJpxJNuaG@Asurada-Nvidia>
- <BN9PR11MB52767BB0CA36643D957BD2CC8C67A@BN9PR11MB5276.namprd11.prod.outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D254228C86C
+	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 18:02:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748455373; cv=none; b=oewhvtcochnIbGEbDxuZwhyIbAWawhawA1MxPzf25QMIoAxKaD3XAuQ46amiQ4w2TB9UxbThof/YpVE4fBKkvsa1B6/6KlcnJPWGv8K+VsXMM7AvBiZgCdMVFOap37IvVnnso6+P+L0KyExMe52KrDbTFeKciEIHNqPu33cApxE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748455373; c=relaxed/simple;
+	bh=gxUDH75Bxi5SvxKp09Z5LhGrAVF3n2fLET8soCrnXhE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BpgTkH8ecZsj+zwRbKRKTCrcbmq4lN3sHES3ym8tyKyDF3HgRJy3bxVNGe1a3HMg2C9B2TU+0sTSYRtueJ99BIEsh05CSAZ+qBjvJotXkpO3p28UEp49iK2CWbemQgQgj1yo0xXuyX/CGGl6VNn/SXm0H2wogtqZgcj26Ke9Vn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=MaeStp27; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54SDpSZd029130
+	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 18:02:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	mt94scoMpGBlHkRfDjr/0ZaH4cqB4nVNpigo9K1BPzI=; b=MaeStp27orB5w35D
+	QO0Llp38kkYe1PnLLuvWzuBuw66WDoKqFgD55Yq/aekHqZHhYWfzcRQ6lYA9X2cg
+	AxRvFj12qWO8JB0OpQgqkjemz3G1CA3UUmn7g0juiro4iGYjy9Q3l+snjC3avDUW
+	9dPLzjqaiYu1nIMS43JD+YhbKTHIa4DYlta/S2f2vp2SA6XLK5TYQeFSkcuisWnL
+	6XLBHR5V98f6WW29lGtZLQ7zdfPshXgnsYco86XnAtO+kYhGBUzR775ofwpz3rA0
+	NBsr/wFAA/FP6ltO8JhyJgGAAprGF2r/EVg5YP+eixt1vU0U2CINetYK+CfQeGA7
+	R/w9Hg==
+Received: from mail-vs1-f71.google.com (mail-vs1-f71.google.com [209.85.217.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46w992n6mw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 18:02:50 +0000 (GMT)
+Received: by mail-vs1-f71.google.com with SMTP id ada2fe7eead31-4e591aa8801so728104137.1
+        for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 11:02:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748455369; x=1749060169;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mt94scoMpGBlHkRfDjr/0ZaH4cqB4nVNpigo9K1BPzI=;
+        b=DjtijEiWnD5JGnTLGUncYTcaKQPt0GxxU2arauIMw0gaGXs4F5FUpE29bHT7TCvHu2
+         cs3XschMuzc7TFMBf8EnZZLOfDatG6z7ZDnNWWSLXdHL5B9LYgEttccClIqP02SLHPRs
+         tUEDXpo6ErCQt6gp8MQhPXUX6df2pHqCr8nF+b+K4SwhVbZU6SQ6UvjQF077JwpDQc9V
+         Rf4esVuMSZO7X8mhJa2EXnxwTW+qoiVG/8Q3GSmstp6tXSi1vsFLY19XcaWhJhNwxKqX
+         CnRZ5fMGBeYbFZTrrzJ/rvstF/4hcukMdJExRimsrOPShBNdZhmdaNPiWunzt3HzWTBD
+         0pOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXc0Ap72OkFPyAl6XDfHLB0Z77FK+s9/jCSsPt6ahKdkv/QmQx1hXylvUssqJNE+By4tTSsqODnze0wj8w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrdmAGvW3x2S/+ujVzMCKki/bv+0OzpJDPqWYf0fWVPFGI4+wD
+	JbFWu90zvJXn6gIYyu7/dCo2rllKG3kpnofk0XDpbbjwS/plVe7Hz0WV4vrw3qLbj+0Vx4xIu7m
+	iGK1BjeXeGurcsdilKXHmdS7o1OA3m5WTNDur4yGCleOxjt2dTutlfYjrAJaO3Ht8tAGlJQnvv2
+	g=
+X-Gm-Gg: ASbGncsdNN9dxNhFXmxJT6rouGKlyUoCPdvW+i0vyHwbJcNkLiiNfDr6zwidNJBLVrH
+	9Unv1qlSZIkVi2kHe6uQLNDyIaxveP8HHcJbqLhSv7QmtqZ/nEY7UWwZhB/N/7hG9vUokIDvWhW
+	6W9DAlP2xj/w8r4f7EUPrDtMRmgsPyxa7qeg8fLN59kSyBh7wevbyGtkpk7uzTE/NDMwzN8RHxo
+	cJm63b6LE9Gy/9sdTW4hQmvJCFGnzmokAHlueU6uFsh/xfmWufVHp/t+CWiK5UV0+QMUlpy0r5Y
+	BJsZIyrA9E5850+qZ/kTSEXFg0eGM6CaQi470qTxP2l5xNIvg7KvCcPsO9t8Fu+TbPmxq6vLb2g
+	2cFIfkj8o3g==
+X-Received: by 2002:a05:620a:2994:b0:7c2:f39d:d0e0 with SMTP id af79cd13be357-7d098762690mr82814785a.3.1748455358440;
+        Wed, 28 May 2025 11:02:38 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IELc/vRTL5HOf4+VrKbUzHnWp0OBTAbQJHqlFy1eblVpmeIMAnJvUcYCEHijRPc3YXDAGhdqg==
+X-Received: by 2002:a9d:6c98:0:b0:735:a98d:a4c9 with SMTP id 46e09a7af769-735acea2225mr244432a34.7.1748455347211;
+        Wed, 28 May 2025 11:02:27 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5532f61ca28sm379055e87.50.2025.05.28.11.02.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 May 2025 11:02:25 -0700 (PDT)
+Date: Wed, 28 May 2025 21:02:22 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Yongxing Mou <quic_yongmou@quicinc.com>
+Cc: Abhinav Kumar <quic_abhinavk@quicinc.com>, Rob Clark <robdclark@gmail.com>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Chandan Uddaraju <chandanu@codeaurora.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Kuogee Hsieh <quic_khsieh@quicinc.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Vara Reddy <quic_varar@quicinc.com>,
+        Rob Clark <robdclark@chromium.org>,
+        Tanmay Shah <tanmay@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Jessica Zhang <quic_jesszhan@quicinc.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH 31/45] drm/msm/dp: add dp_mst_drm to manage DP MST bridge
+ operations
+Message-ID: <n5g44odmls5yg4vwb6rfvdxeyy43d4ba4cahanwxe7f5scw7dv@btvb2crhjlbp>
+References: <20241205-dp_mst-v1-0-f8618d42a99a@quicinc.com>
+ <20241205-dp_mst-v1-31-f8618d42a99a@quicinc.com>
+ <4unizv5vi7ve7qdpzmcxj6vvxwxrpcppg3y72csi7ga2jqwhrm@5eu74nuopyqf>
+ <318ee4bc-b39a-43d3-abcb-22588a9a765c@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <BN9PR11MB52767BB0CA36643D957BD2CC8C67A@BN9PR11MB5276.namprd11.prod.outlook.com>
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000044F5:EE_|PH7PR12MB9223:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1255b6ee-4102-4310-b1a3-08dd9e11b7d8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|376014|7416014|82310400026|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?IpBPmUsFxT0hONmnmAd1KZ31Jru6oUkQrs4+Ta6G9UtEDzy7mmCyO34RjYMI?=
- =?us-ascii?Q?wmts5CimQw5B00QecJz97MQ8HLFAECMnRhzMYE9SIL+MFXY3knv1At/FMPts?=
- =?us-ascii?Q?Z4qcDUsco7SR6KeMrStGDp81Z9niqNQC/ld3ho6uDV6xcpSiJFa9NH1ihdih?=
- =?us-ascii?Q?1OpBwdpP3Pss/43KFFxFeu6dPg7Sv/ZOC11TKrojMe5RVF7RyMxn/owVQkJh?=
- =?us-ascii?Q?uzMwXoSRqKLQg3BghnaU7q05af5RqWSbEwma9H082aFRzYiRkLMk6bFAdOn+?=
- =?us-ascii?Q?ok4B53WU8UP1MzY646bMPWGSjHeGfcpPxuatKyM2pdfr1k7Y+Fi4KNarNjst?=
- =?us-ascii?Q?Y9NQry8FhIy8pYNz5zdpmDaADIeNbBWwPpS4fCI1ioQ5SplWFBnN232Sxb2I?=
- =?us-ascii?Q?jyAHDmp7FNLM4H5A86F4GOl55XlKVGUQwI24RcGu6J7u1oitjEap+iDVWW5Q?=
- =?us-ascii?Q?9ZRfuCJ50HrR8lRIiKhvHsOsEWG5EcTaLvsXbwlZFVpmpcDFX0xaF7I2cPXC?=
- =?us-ascii?Q?76YKbGDJCEWVSFfQk2lbC6fcbuoOnnVHceWOo5xZplGUjhAWt6oPIxQK2eko?=
- =?us-ascii?Q?jlUJSl+/o+jnt+tBl7rVclo0m3UdqPPF5m5tdB81HG+tRZm5voe0Wk/vzv2X?=
- =?us-ascii?Q?/GjksyfaQTFpJB6P9oYTwW5wba+viBB3lVFjb+ylV7NVQJq277wQyodRhH8L?=
- =?us-ascii?Q?3tzMzS3AH7uCt0isZDZ5dYIaaBIUUyhmRBpfbEqXoEwSqCezI7a/U2VsCpDi?=
- =?us-ascii?Q?qV1vCK06ShJiSEBMR3ioeSlsRDoGtZMT+6xWIXzW5viZE0aH/VOtFLYObNQJ?=
- =?us-ascii?Q?lyl/MVF317QLL0983L1hxukNihWFE5Zca0RX6gJCE/xJsiEuK2K8/BxO/2mI?=
- =?us-ascii?Q?3/+erbv2goLtDNFYpkxbJMXXyZvOl04Fgf4Lm052Xc2xXSYpDdjY3szjKBud?=
- =?us-ascii?Q?nwwu31GQl9kkENfTLwTM2zoZQdufmFDcHsY7CJk/wUTkxYHwyqKU6e7yu6Kk?=
- =?us-ascii?Q?gG9VIdhRBGzMivZYgdDre81bUteDXy5aV2zto3kjGWFQ//cBV0DVy3vyiUaO?=
- =?us-ascii?Q?mM2WKRn/ukBss2iee8Gc53qAhGjUUu/ba5EIYWQuvI0iH2K/WzSvF5KH4AMq?=
- =?us-ascii?Q?nV/q30S1Ztyqe2qCJf/E9mO7YAlyDnxVRS3ZVPgz/12PxMsfvlxSOOG/peVW?=
- =?us-ascii?Q?CM/eh9DcC2AQ6AJ6jPbBQNhbEnoMFw7b0ErK3pyvZQIySQvoCA9s88EkM9od?=
- =?us-ascii?Q?jjVhPDtrEdbq31eqd2tyUEmJ0gIHuUM3HvwlFW9JLrnxg4gRi/fqNrHcvJ+t?=
- =?us-ascii?Q?xnrvBC89eCu/l8rQ7iiu4aHbaAm2zBcgwuVhnspCyL6s+mmm47sqgQ3Qy3xo?=
- =?us-ascii?Q?GPrxsIi7LZ0ECQHA2xg4dLfXzm+sPswiKW825CXRbLOWoD07LnU//4JbTbGF?=
- =?us-ascii?Q?0+zVDSYoPgzcFCESVJX3oScmM1rZn0wxLqq5pkB1OSJcuu79OgYMiumvrf8P?=
- =?us-ascii?Q?U/8KT9yNKRsi6quO6LDecjq2FNG3/Oe7+bNs?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(376014)(7416014)(82310400026)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 May 2025 18:01:49.1392
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1255b6ee-4102-4310-b1a3-08dd9e11b7d8
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CO1PEPF000044F5.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB9223
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <318ee4bc-b39a-43d3-abcb-22588a9a765c@quicinc.com>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI4MDE1NyBTYWx0ZWRfXz6+p3gaZlptC
+ jHoTV9ET5lWiIt97SDw9RdIJ/BgiPvtb3uG/A2FHB6sf2ACvbJFiAN2MMaw4JNoYk/R2UqILLeD
+ Ib1a4reQDz7w9okkH+o+0RVMUiWCF6kB5ReQ32HbZKUnIQWfCYndAox5tEvvbvPbcHHGCzXQkCW
+ qf89MyHWtH1XvrRcQFX2eViMO4r/777XI0XqA0WWsuNtC75/28sqaag0hbhZEfTN8B5Cq8RY5el
+ l37blIghXamfTbEiVQIe0Z1BTdnQ21qp76ejfbxwnJVUdV9OrQi9Ir8+l6Q51Mro1boM/H0z51I
+ PIbQyO12aNY3ZOrkUSqgNAEKS32JAFZAaBwNzG4idRjAhHXROUcp3s9h7A3Jb1MMAHBeDhlM0Oi
+ 0SkRFaNOMBYNRaQo4zBE6aYuAlOLMJzO4jacBXm5wx4aNpsaghcsnHZCJnm8qO6FZm7aQiXZ
+X-Authority-Analysis: v=2.4 cv=Fes3xI+6 c=1 sm=1 tr=0 ts=68374fca cx=c_pps
+ a=P2rfLEam3zuxRRdjJWA2cw==:117 a=xqWC_Br6kY4A:10 a=8nJEP1OIZ-IA:10
+ a=dt9VzEwgFbYA:10 a=COk6AnOGAAAA:8 a=AkxkYSyKjySzLiMMLVoA:9 a=3ZKOabzyN94A:10
+ a=wPNLvfGTeEIA:10 a=ODZdjJIeia2B_SHc_B0f:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: AVmbRiY7LcCIpUKbmVE5nhSGqpynRjQn
+X-Proofpoint-ORIG-GUID: AVmbRiY7LcCIpUKbmVE5nhSGqpynRjQn
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-28_09,2025-05-27_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxscore=0 malwarescore=0 impostorscore=0 phishscore=0 clxscore=1015
+ lowpriorityscore=0 bulkscore=0 priorityscore=1501 mlxlogscore=999 spamscore=0
+ adultscore=0 suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505160000
+ definitions=main-2505280157
 
-On Wed, May 28, 2025 at 08:12:41AM +0000, Tian, Kevin wrote:
-> > From: Nicolin Chen <nicolinc@nvidia.com>
-> > Sent: Saturday, May 24, 2025 5:46 AM
+On Tue, May 27, 2025 at 06:29:49PM +0800, Yongxing Mou wrote:
+> 
+> 
+> On 2024/12/6 18:12, Dmitry Baryshkov wrote:
+> > On Thu, Dec 05, 2024 at 08:32:02PM -0800, Abhinav Kumar wrote:
+> > > Add a new file dp_mst_drm to manage the DP MST bridge operations
+> > > similar to the dp_drm file which manages the SST bridge operations.
+> > > Each MST encoder creates one bridge and each bridge is bound to its
+> > > own dp_panel abstraction to manage the operations of its pipeline.
+> > > 
+> > > Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+> > > ---
+> > >   drivers/gpu/drm/msm/Makefile        |   3 +-
+> > >   drivers/gpu/drm/msm/dp/dp_display.h |   2 +
+> > >   drivers/gpu/drm/msm/dp/dp_mst_drm.c | 490 ++++++++++++++++++++++++++++++++++++
+> > >   drivers/gpu/drm/msm/dp/dp_mst_drm.h | 102 ++++++++
+> > >   4 files changed, 596 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/gpu/drm/msm/Makefile b/drivers/gpu/drm/msm/Makefile
+> > > index f274d9430cc311405f890074c1466ffe2ec45ac9..b1e01b3123d9afc4818f059c5d4e7ca70dca3754 100644
+> > > --- a/drivers/gpu/drm/msm/Makefile
+> > > +++ b/drivers/gpu/drm/msm/Makefile
+> > > @@ -142,7 +142,8 @@ msm-display-$(CONFIG_DRM_MSM_DP)+= dp/dp_aux.o \
+> > >   	dp/dp_link.o \
+> > >   	dp/dp_panel.o \
+> > >   	dp/dp_audio.o \
+> > > -	dp/dp_utils.o
+> > > +	dp/dp_utils.o \
+> > > +	dp/dp_mst_drm.o
+> > >   msm-display-$(CONFIG_DRM_MSM_HDMI_HDCP) += hdmi/hdmi_hdcp.o
+> > > diff --git a/drivers/gpu/drm/msm/dp/dp_display.h b/drivers/gpu/drm/msm/dp/dp_display.h
+> > > index 6ab14e969bce0fd07b3a550bae17e99652479232..a5d4893f689c6afbbe622c9b7dfa98d23d754831 100644
+> > > --- a/drivers/gpu/drm/msm/dp/dp_display.h
+> > > +++ b/drivers/gpu/drm/msm/dp/dp_display.h
+> > > @@ -7,6 +7,7 @@
+> > >   #define _DP_DISPLAY_H_
+> > >   #include "dp_panel.h"
+> > > +#include "dp_mst_drm.h"
+> > >   #include <sound/hdmi-codec.h>
+> > >   #include "disp/msm_disp_snapshot.h"
+> > > @@ -26,6 +27,7 @@ struct msm_dp {
+> > >   	bool is_edp;
+> > >   	bool internal_hpd;
+> > > +	struct msm_dp_mst *msm_dp_mst;
+> > >   	hdmi_codec_plugged_cb plugged_cb;
+> > >   	struct msm_dp_audio *msm_dp_audio;
+> > > diff --git a/drivers/gpu/drm/msm/dp/dp_mst_drm.c b/drivers/gpu/drm/msm/dp/dp_mst_drm.c
+> > > new file mode 100644
+> > > index 0000000000000000000000000000000000000000..e66bd1e565aeb4da3d636eb5f4aa75504d60fd40
+> > > --- /dev/null
+> > > +++ b/drivers/gpu/drm/msm/dp/dp_mst_drm.c
+> > > @@ -0,0 +1,490 @@
+> > > +// SPDX-License-Identifier: GPL-2.0-only
+> > > +/*
+> > > + * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+> > > + * Copyright (c) 2018-2021, The Linux Foundation. All rights reserved.
+> > > + */
+> > > +
+> > > +/*
+> > > + * Copyright © 2014 Red Hat.
+> > > + *
+> > > + * Permission to use, copy, modify, distribute, and sell this software and its
+> > > + * documentation for any purpose is hereby granted without fee, provided that
+> > > + * the above copyright notice appear in all copies and that both that copyright
+> > > + * notice and this permission notice appear in supporting documentation, and
+> > > + * that the name of the copyright holders not be used in advertising or
+> > > + * publicity pertaining to distribution of the software without specific,
+> > > + * written prior permission.  The copyright holders make no representations
+> > > + * about the suitability of this software for any purpose.  It is provided "as
+> > > + * is" without express or implied warranty.
+> > > + *
+> > > + * THE COPYRIGHT HOLDERS DISCLAIM ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
+> > > + * INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO
+> > > + * EVENT SHALL THE COPYRIGHT HOLDERS BE LIABLE FOR ANY SPECIAL, INDIRECT OR
+> > > + * CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE,
+> > > + * DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+> > > + * TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
+> > > + * OF THIS SOFTWARE.
+> > > + */
+> > > +
+> > > +#include "dp_mst_drm.h"
+> > > +
+> > > +static struct drm_private_state *msm_dp_mst_duplicate_bridge_state(struct drm_private_obj *obj)
+> > > +{
+> > > +	struct msm_dp_mst_bridge_state *state;
+> > > +
+> > > +	state = kmemdup(obj->state, sizeof(*state), GFP_KERNEL);
+> > > +	if (!state)
+> > > +		return NULL;
+> > > +
+> > > +	__drm_atomic_helper_private_obj_duplicate_state(obj, &state->base);
+> > > +
+> > > +	return &state->base;
+> > > +}
+> > > +
+> > > +static void msm_dp_mst_destroy_bridge_state(struct drm_private_obj *obj,
+> > > +					    struct drm_private_state *state)
+> > > +{
+> > > +	struct msm_dp_mst_bridge_state *priv_state =
+> > > +		to_msm_dp_mst_bridge_priv_state(state);
+> > > +
+> > > +	kfree(priv_state);
+> > > +}
+> > > +
+> > > +static const struct drm_private_state_funcs msm_dp_mst_bridge_state_funcs = {
+> > > +	.atomic_duplicate_state = msm_dp_mst_duplicate_bridge_state,
+> > > +	.atomic_destroy_state = msm_dp_mst_destroy_bridge_state,
+> > > +};
+> > > +
+> > > +/**
+> > > + * dp_mst_find_vcpi_slots() - Find VCPI slots for this PBN value
+> > > + * @mgr: manager to use
+> > > + * @pbn: payload bandwidth to convert into slots.
+> > > + *
+> > > + * Calculate the number of VCPI slots that will be required for the given PBN
+> > > + * value.
+> > > + *
+> > > + * RETURNS:
+> > > + * The total slots required for this port, or error.
+> > > + */
+> > > +static int msm_dp_mst_find_vcpi_slots(struct drm_dp_mst_topology_mgr *mgr, int pbn)
+> > > +{
+> > > +	int num_slots;
+> > > +	struct drm_dp_mst_topology_state *state;
+> > > +
+> > > +	state = to_drm_dp_mst_topology_state(mgr->base.state);
+> > > +	num_slots = DIV_ROUND_UP(pbn, dfixed_trunc(state->pbn_div));
 > > 
-> > On Fri, May 23, 2025 at 07:55:18AM +0000, Tian, Kevin wrote:
-> > > > From: Nicolin Chen <nicolinc@nvidia.com>
-> > > > Sent: Sunday, May 18, 2025 11:22 AM
-> > > >
-> > > > +
-> > > > +enum iommufd_viommu_flags {
-> > > > +	/*
-> > > > +	 * The HW does not go through an address translation table but
-> > > > reads the
-> > > > +	 * physical address space directly: iommufd core should pin the
-> > > > physical
-> > > > +	 * pages backing the queue memory that's allocated for the HW
-> > > > QUEUE, and
-> > > > +	 * ensure those physical pages are contiguous in the physical space.
-> > > > +	 */
-> > > > +	IOMMUFD_VIOMMU_FLAG_HW_QUEUE_READS_PA = 1 << 0,
-> > > > +};
-> > >
-> > > The queue itself doesn't read an address.
-> > >
-> > > What about 'QUEUE_BASE_PA'?
+> > drm_dp_atomic_find_time_slots() uses slightly different maths here, with
+> > the different precision. Can we use the data that is set by that function
+> > instead (payload->time_slots)?
 > > 
-> > But the HW queue object represents the HW feature, not the guest
-> > queue memory. So, it is accurate to say that it reads an address?
+> Note that drm_dp_atomic_find_time_slots all call in atomic_check func, not
+> in other place.So can we call this func in atomic_pre_enable? Also, amg
+> driver also have similar usage pattern.
+
+Well, granted that this function can return ENOSPC, it is an error to
+call it in atomic_pre_enable(). Nothing in atomic_pre_enable() /
+atomic_enable() is allowed to fail.
+
+I think this answers my question: drm_dp_atomic_find_time_slots()
+should be called from atomic_check(), this function must be dropped.
+
+> > > +
+> > > +	/* max. time slots - one slot for MTP header */
+> > > +	if (num_slots > 63)
+> > > +		return -ENOSPC;
+> > > +	return num_slots;
+> > > +}
+> > > +
+> > > +static void _msm_dp_mst_update_timeslots(struct msm_dp_mst *mst,
+> > > +					 struct msm_dp_mst_bridge *mst_bridge,
+> > > +					 struct drm_dp_mst_port *port)
+> > > +{
+> > > +	int i;
+> > > +	struct msm_dp_mst_bridge *msm_dp_bridge;
+> > > +	struct drm_dp_mst_topology_state *mst_state;
+> > > +	struct drm_dp_mst_atomic_payload *payload;
+> > > +	int prev_start = 0;
+> > > +	int prev_slots = 0;
+> > > +
+> > > +	mst_state = to_drm_dp_mst_topology_state(mst->mst_mgr.base.state);
+> > > +	payload = drm_atomic_get_mst_payload_state(mst_state, port);
+> > > +
+> > > +	if (!payload) {
+> > > +		DRM_ERROR("mst bridge [%d] update_timeslots failed, null payload\n",
+> > > +			  mst_bridge->id);
+> > > +		return;
+> > > +	}
+> > > +
+> > > +	for (i = 0; i < mst->max_streams; i++) {
+> > > +		msm_dp_bridge = &mst->mst_bridge[i];
+> > > +		if (mst_bridge == msm_dp_bridge) {
+> > > +			/*
+> > > +			 * When a payload was removed make sure to move any payloads after it
+> > > +			 * to the left so all payloads are aligned to the left.
+> > > +			 */
 > > 
-> > We have this in doc:
-> > - IOMMUFD_OBJ_HW_QUEUE, representing a hardware accelerated queue,
-> > as a subset
-> >   of IOMMU's virtualization features, for the IOMMU HW to directly read or
-> > write
-> >   the virtual queue memory owned by a guest OS. This HW-acceleration
-> > feature can
-> >   ...
+> > Please don't. drm_dp_remove_payload_part2() should take care of that for
+> > us. What is the reason for caching the data if we have to manually
+> > handle the cache?
+> > 
+> MST framework is managing the port's bandwidth, but we have a bridhge for
+> each stream, so we need to keep track of the payload allcation status for
+> each bridge, how much we used and how much we left. So maybe they are manage
+> two different part.
+
+Well, still no. MST topology master should handle all payload
+allocation. If you need any data, enhance its API instead of duplicating
+its functionality.
+
+> > > +			if (payload->vc_start_slot < 0) {
+> > > +				// cache the payload
+> > > +				prev_start = msm_dp_bridge->start_slot;
+> > > +				prev_slots = msm_dp_bridge->num_slots;
+> > > +				msm_dp_bridge->pbn = 0;
+> > > +				msm_dp_bridge->start_slot = 1;
+> > > +				msm_dp_bridge->num_slots = 0;
+> > > +				msm_dp_bridge->vcpi = 0;
+> > > +			} else { //add payload
+> > > +				msm_dp_bridge->pbn = payload->pbn;
+> > > +				msm_dp_bridge->start_slot = payload->vc_start_slot;
+> > > +				msm_dp_bridge->num_slots = payload->time_slots;
+> > > +				msm_dp_bridge->vcpi = payload->vcpi;
+> > > +			}
+> > > +		}
+> > > +	}
+> > > +
+> > > +	// Now commit all the updated payloads
+> > > +	for (i = 0; i < mst->max_streams; i++) {
+> > > +		msm_dp_bridge = &mst->mst_bridge[i];
+> > > +
+> > > +		//Shift payloads to the left if there was a removed payload.
+> > > +		if (payload->vc_start_slot < 0 && msm_dp_bridge->start_slot > prev_start)
+> > > +			msm_dp_bridge->start_slot -= prev_slots;
+> > > +
+> > > +		msm_dp_display_set_stream_info(mst->msm_dp, msm_dp_bridge->msm_dp_panel,
+> > > +					       msm_dp_bridge->id, msm_dp_bridge->start_slot,
+> > > +					       msm_dp_bridge->num_slots,
+> > > +					       msm_dp_bridge->pbn, msm_dp_bridge->vcpi);
+> > > +		drm_dbg_dp(mst->msm_dp->drm_dev,
+> > > +			   "conn:%d vcpi:%d start_slot:%d num_slots:%d, pbn:%d\n",
+> > > +			   DP_MST_CONN_ID(msm_dp_bridge), msm_dp_bridge->vcpi,
+> > > +			   msm_dp_bridge->start_slot,
+> > > +			   msm_dp_bridge->num_slots, msm_dp_bridge->pbn);
+> > > +	}
+> > > +}
+> > > +
+
+[...]
+
+> > > +	struct msm_dp_panel *msm_dp_panel;
+> > > +
+> > > +	int vcpi;
+> > > +	int pbn;
+> > > +	int num_slots;
+> > > +	int start_slot;
+> > 
+> > Which of the fields (including in_use) are long-lived and which are a
+> > part of the current state? Can we move all state ones to bridge's state?
+> > 
+> in_use only used in bridge_init, so it is long-lived. Looking at it together
+> with the next patch, only num_slots changes during atomic_check, so it is in
+> bridge_state. pbn/vcpi/start_slots only change during bridge enable/disable,
+> so they are placed in the bridge.
+
+Let's look how it will look after refactoring. I'd still push all
+changing fields to state. It make a lot of things much easier.
+
+> > > +};
+> > > +
+> > > +struct msm_dp_mst_bridge_state {
+> > > +	struct drm_private_state base;
+> > > +	struct drm_connector *connector;
+> > > +	struct msm_dp_panel *msm_dp_panel;
+> > > +	int num_slots;
+> > > +};
+> > > +
+> > > +struct msm_dp_mst {
+> > > +	bool mst_initialized;
+> > > +	struct drm_dp_mst_topology_mgr mst_mgr;
+> > > +	struct msm_dp_mst_bridge *mst_bridge;
+> > > +	struct msm_dp *msm_dp;
+> > > +	bool mst_session_hpd_state;
+> > > +	u32 max_streams;
+> > > +};
+> > > +
+> > > +struct msm_dp_mst_connector {
+> > > +	struct drm_connector connector;
+> > > +	struct drm_dp_mst_port *mst_port;
+> > > +	struct msm_dp *msm_dp;
+> > > +	struct msm_dp_panel *dp_panel;
+> > > +};
+> > > +
+> > > +#define to_msm_dp_mst_bridge(x)     container_of((x), struct msm_dp_mst_bridge, base)
+> > > +#define to_msm_dp_mst_bridge_priv(x) \
+> > > +		container_of((x), struct msm_dp_mst_bridge, obj)
+> > > +#define to_msm_dp_mst_bridge_priv_state(x) \
+> > > +		container_of((x), struct msm_dp_mst_bridge_state, base)
+> > > +#define to_msm_dp_mst_bridge_state(x) \
+> > > +		to_msm_dp_mst_bridge_priv_state((x)->obj.state)
+> > > +#define to_msm_dp_mst_connector(x) \
+> > > +		container_of((x), struct msm_dp_mst_connector, connector)
+> > > +int msm_dp_mst_drm_bridge_init(struct msm_dp *dp, struct drm_encoder *encoder);
+> > > +
+> > > +#endif /* _DP_MST_DRM_H_ */
+> > > 
+> > > -- 
+> > > 2.34.1
+> > > 
 > > 
 > 
-> Okay. Then ACCESS_PA means both read/write?
 
-OK. IOMMUFD_VIOMMU_FLAG_HW_QUEUE_ACCESS_PA
+-- 
+With best wishes
+Dmitry
 
