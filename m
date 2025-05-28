@@ -1,198 +1,301 @@
-Return-Path: <linux-kernel+bounces-665107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17A92AC6475
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 10:28:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4334EAC647C
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 10:29:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16D5717A0A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 08:28:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BB3218836E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 08:29:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50BF6152E02;
-	Wed, 28 May 2025 08:28:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76735268FDB;
+	Wed, 28 May 2025 08:29:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WEH0pHT0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=fibocomcorp.onmicrosoft.com header.i=@fibocomcorp.onmicrosoft.com header.b="C51BA6xf"
+Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11023138.outbound.protection.outlook.com [40.107.44.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78D252580EC;
-	Wed, 28 May 2025 08:28:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748420886; cv=none; b=EArUe47KnLr+Oq/OQy8uz/dgZRBJNcwHuoB9YHfi+ChQvkXq0u/1mr8vUZgWStzPhX7Yb0O0QpaAO1a6RXWEGMuupZfQdT0mPfp1DVD/nYdeZgC+inp1RZKgQp7yi5bZl75AMQNw5n+E1xY5iZeoYo7GxKg5a2y91n9VhdtMTlU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748420886; c=relaxed/simple;
-	bh=5QawpBClqOpPhhlcu/fH26V+8lDsrsdbWKBN3lHj9ps=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IoJ/j0nXtsAMfcDM+eJ5T3Pcl/hyAtwYez90OZDuRAGcFlLXjduK7Oujq756RLwMjTtnXQFn5hH+3Rt0KcHSdGs1y2dgZ8JJYVJgv46mmx/6dmabfoFt2cXbvNtCgo1gyRNvq+fERuxoB2K7bRL+zciWoEoZDV4/BAKL1pLNKiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WEH0pHT0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F11AFC4CEE7;
-	Wed, 28 May 2025 08:28:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748420885;
-	bh=5QawpBClqOpPhhlcu/fH26V+8lDsrsdbWKBN3lHj9ps=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=WEH0pHT0tuETHSvRnrp4qQjj1fwRWk2zzFKK+wycleRmcuH5nQCGeW+o0qgaG57Jd
-	 eR94B3SZuLL+SfEDMAcBrdlLZmCO940Q+nTRVzwuinHAtHWaPnKonGukAAeL770WjU
-	 iHaUtN/kabQ6gHr1Cx/5NwFPcEI9jYpfIsFuhF5OHXrkoQiLOY0YDtiFryNHMuMmaZ
-	 zDfjgFxWUmoRYIeF5chbsxdFDHkxNwS+BQyyCXn4sjg88QtKueJVYFfh3z8AmUcl3w
-	 8WbeNX6HdOd9VMsdHf50XH976mZFrcAdy45K/vmyrrxBk/50AsJSaQvfDl7Eyj55CB
-	 AKrKtRQhNI/hQ==
-Message-ID: <85866e42-b3d4-462c-8890-e2a354627229@kernel.org>
-Date: Wed, 28 May 2025 10:28:01 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B026024678C;
+	Wed, 28 May 2025 08:29:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.138
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748420945; cv=fail; b=VkDIp+bJrJS3XTwku7pdonMHAdiT712lV+5lwrsET9hnGok16X8zfm/3vqfkTX+Y9qqPbGPx2RPh2vMWkWHGZZyCvdxaz9p3RU5yvjOW7XanbRtSdsfOhdNaC+KosLpiGREkICDcTOsu9Zm65kgJymkJHVcyLV0f8uhw3rAHs0s=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748420945; c=relaxed/simple;
+	bh=TCFTh4KtZ1gvS5e00YUf6X5vNCslAG4EuySuVq5iwlU=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=FWfoGCQr/AgXeoMb9AxrwRzUwC7Exw4dh6nkVFwQP6GLYZiT/DACVU0VrLIuInJQMlUF6+WVDKxetJZxjMktqSu1AlylNjTkhGf4AItpk6uoxYJXT5JmZavbmP+MDu3fJTCBg7Fd9UopDn568NoWrTL+rtXpwpiBwZTBLoQsZQM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fibocom.com; spf=pass smtp.mailfrom=fibocom.com; dkim=pass (1024-bit key) header.d=fibocomcorp.onmicrosoft.com header.i=@fibocomcorp.onmicrosoft.com header.b=C51BA6xf; arc=fail smtp.client-ip=40.107.44.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fibocom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fibocom.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Kgsn6kB462Re/keFhokIW4hISDl+2oxabBBh/7EXkuxwVxMNgGCAncVOssgcBQU0w1d7YlZ0X3EuigoYJDHIioLrw/IXsoFzbYV4a+zCCu0ZzXXimC1ZLi4JC1XHuv+pLHEgzAkMwU1YoApukWcwk76axjHfZsPrtBT8D6FK8LCqKXXKYYnkMJ4CEuwCrl+NwjWBt+oIMD361k/RloyZQpMjTkCStgnBs91xcVnSX8eNIHh5QjTxV6GCr6huaJUaNRMM81yUJdR5UWDnsk7Q0RRAORmIkXQLVS5wgRz17SFtthEaFralqFhGkryhirJzOweRbCiZQsvvtPRsNpFw8g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=lbnMMLdoVLCQg0WlFmP4cGGGe6/ZGh9T8wNo9YUbNs0=;
+ b=jwjk8RMJH0ta2bIUbXq/+SG/OzgMBovOWjekpyh46N/ez3yDTmj+CvOGwu3TSTgZSfcepstDysZMWuf/A9W3lEADK8sg8jkB6aL6+bByCdHeMRJdHBRqEH0WSNYmgtqD/uu7+pd4pkQKBsCwrnZe1aZIVdM1/pid9uPUTjIcIg1X2H0NrFtRu3oe0lhfO7Y8SMwqqm26WiV4+ei1NurxAA1GR5pqN5OefihaOY1tQCWSov0iV7kuBXBLbxtSOwCerYXCuKbZcICWYxOmiGExNdLp22nrNzo4cj2UmpOJja1p/RzpMjlBcj4Xb5fRx4N3mfldbpcvLOT/I/Of3wksUg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=fibocom.com; dmarc=pass action=none header.from=fibocom.com;
+ dkim=pass header.d=fibocom.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=fibocomcorp.onmicrosoft.com; s=selector1-fibocomcorp-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lbnMMLdoVLCQg0WlFmP4cGGGe6/ZGh9T8wNo9YUbNs0=;
+ b=C51BA6xfmtDuSyBJS1L0hshSxI6sq8QXe2Z4ToPF2WlKy1L3xfy83PXxQS5O87N3kv1z9tVjpx0tJ2NZ19GSbEEl1cJrebMkaQdiuzosLYldZ/3Rhx5o0k2vor+BvuYFD+/K5WD5x7evdhQVew67gFZNfU8+Q9uu7qo3T9Jq7vM=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=fibocom.com;
+Received: from SEZPR02MB5782.apcprd02.prod.outlook.com (2603:1096:101:4f::8)
+ by TY0PR02MB6737.apcprd02.prod.outlook.com (2603:1096:405:19::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.24; Wed, 28 May
+ 2025 08:28:53 +0000
+Received: from SEZPR02MB5782.apcprd02.prod.outlook.com
+ ([fe80::4843:bf84:bd17:827e]) by SEZPR02MB5782.apcprd02.prod.outlook.com
+ ([fe80::4843:bf84:bd17:827e%4]) with mapi id 15.20.8769.022; Wed, 28 May 2025
+ 08:28:53 +0000
+From: Jinjian Song <jinjian.song@fibocom.com>
+To: chandrashekar.devegowda@intel.com,
+	chiranjeevi.rapolu@linux.intel.com,
+	haijun.liu@mediatek.com,
+	m.chetan.kumar@linux.intel.com,
+	ricardo.martinez@linux.intel.com,
+	loic.poulain@linaro.org,
+	ryazanov.s.a@gmail.com,
+	johannes@sipsolutions.net,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	angelogioacchino.delregno@collabora.com,
+	linux-arm-kernel@lists.infradead.org,
+	matthias.bgg@gmail.com,
+	corbet@lwn.net,
+	linux-mediatek@lists.infradead.org,
+	helgaas@kernel.org,
+	danielwinkler@google.com,
+	andrew+netdev@lunn.ch,
+	horms@kernel.org,
+	sreehari.kancharla@linux.intel.com,
+	ilpo.jarvinen@linux.intel.com,
+	Jinjian Song <jinjian.song@fibocom.com>
+Subject: [net v2] net: wwan: t7xx: Fix napi rx poll issue
+Date: Wed, 28 May 2025 16:28:27 +0800
+Message-Id: <20250528082827.4654-1-jinjian.song@fibocom.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SY5P282CA0077.AUSP282.PROD.OUTLOOK.COM
+ (2603:10c6:10:201::15) To SEZPR02MB5782.apcprd02.prod.outlook.com
+ (2603:1096:101:4f::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/9] pinctrl: stm32: Introduce HDP driver
-To: =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>,
- Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org
-References: <20250523-hdp-upstream-v3-0-bd6ca199466a@foss.st.com>
- <20250523-hdp-upstream-v3-3-bd6ca199466a@foss.st.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250523-hdp-upstream-v3-3-bd6ca199466a@foss.st.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEZPR02MB5782:EE_|TY0PR02MB6737:EE_
+X-MS-Office365-Filtering-Correlation-Id: d946f2b2-ab9d-4610-c71f-08dd9dc1ad6c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|7416014|376014|1800799024|366016|921020|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?TucaBgMo1P4g3V9IETBtPqQdmEFvvgvIqxh5KCWkKrV0H+AIEysr0d1bBdAR?=
+ =?us-ascii?Q?XHtxbgYPEzjN+Oc9oekxKqebtDhmtMVN34mTsoK/6wWwhTvJy82gzwizOBGr?=
+ =?us-ascii?Q?B3pA7EcFq8bVsESmGsrJMkBmY3/SGQ5auIbHEJUUL9xNzYPoMDMFVMJfRSHy?=
+ =?us-ascii?Q?0eaeHBq1e/CCXWY7vtOK75mMBpFT8er54+HF3EbD3esMCefmfriWGdxBClNq?=
+ =?us-ascii?Q?62hW7kZwVOxjplLOAMqMUNn8Jahr/e2kPikHloi7pkojyWiTYRtNNlKBApO9?=
+ =?us-ascii?Q?KL2l+TdA1uyA4l45jGpNHIs1TXp3S9SCK9Nmexjm/hjmWXLPHm0TquQpjtZe?=
+ =?us-ascii?Q?vRgqvOSlnottu7wo+Reo5ZsSQ5RVVftAXmNpLa9K66vfoiah5mlQSS0eF+HO?=
+ =?us-ascii?Q?tiFhNjsMAdHkspNKC0P/zP+4qiYned5rIdH1WRctIGcJxDLNPKVwFynR/q+v?=
+ =?us-ascii?Q?mNkuZGtw4A+Z1FgbYekn8/feQbDd9w7zvWG0kOlq24C34PWi6uxhldhmUYdV?=
+ =?us-ascii?Q?m8xrl7hWUarbHxXLKrPgriGPszFTXbp+Vc62MFVZdncnOy4VpWf/zxIGhb8s?=
+ =?us-ascii?Q?uCVnNZ0b422oPXDAI1mR/7rq/KI96LSAFKos3dJjP503n0ga/ilS/p4CAhnr?=
+ =?us-ascii?Q?28SyQv8f+yWX4Lg0V2bi6aX1TZ834sbQYu0zJV+CSOC9mF2W3GH2dRj+MHF/?=
+ =?us-ascii?Q?5UAZB4kCrrhNRcpX+fZj5rL5eN7KSAuZjRT2dmPQNecGjk0cFBRzE0mwki9I?=
+ =?us-ascii?Q?CAUQqkDf2WHOjVWJPvAYPpg7dW1h5Zry/mVDcBzLVD3fJgvxlwP4tCd6MKck?=
+ =?us-ascii?Q?oQi3N8DpnNXVgB+PK+hJfGRtnzD9qJ0OL3luiiIcz37SIwUQ5evxULDRELqM?=
+ =?us-ascii?Q?PeDb9s/kweySefnDBxkd+PogAQ7HwKZTCYfgvDt9aPQ1DJfrcdaPzIcoFT+K?=
+ =?us-ascii?Q?DP+zEhwvzWKYuJ2bvaqXp7EuZkpXQSnerRcj3HXA9QKvbi5q3yoMfuBZmsuL?=
+ =?us-ascii?Q?jiSWulMJFyuldS9DXKDb+hRX2CUEosGOjgWdqABugXk7/nAGI5kvtJMcQdP4?=
+ =?us-ascii?Q?iFrXwi7Ztw3tCayPTqOqrdRYmdjXk6HXvMggBURliNI2vUz6xlycJUSl7KmH?=
+ =?us-ascii?Q?hmUcoZpEUdMDddFgK0SIlvIVF3uSXePwj62d2jmtRnOxpCk8Teyj3f4IMKeC?=
+ =?us-ascii?Q?wJ6kd7ajKmHypP/gRUuwc4yvyKLkPuormr0oHzegTWmKWMq5WaAZAvnKCJ/q?=
+ =?us-ascii?Q?sAbAtCMfxY00tPAc10nMTjTGdeHBAf284+5WqaBU6cEFj2xc+ccEEhRfa93n?=
+ =?us-ascii?Q?betQ2ArRV0OQzC2bq7YcKHGfaWKAOLBUR+tJHKOSAZY1PGJpvO9tXWMR3Ilx?=
+ =?us-ascii?Q?b453k3lTqW0KBZ9Q6cG/zos2pJMVEBweQ+UQUlA0SplT2zgcYS4Ymr1CL7G4?=
+ =?us-ascii?Q?fWDWPlIa3ZF+iLFZwHMj/MvGH8We81zNPjYpmCB8jOSKtNhCQZqj4gBMsfS4?=
+ =?us-ascii?Q?i0fuGeqEBznGEjE=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR02MB5782.apcprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(7416014)(376014)(1800799024)(366016)(921020)(38350700014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?QJJc7yjoFYWlusw9cUN/4E0Jw155DExvnbvUAS3UPUqmUxRP2nq4uAHjxSL1?=
+ =?us-ascii?Q?ON3KksIpJpZLoi4sUX1g+Zx62luGHcDugKLBzJJT2ukTDgZrb5/NKUag0Zun?=
+ =?us-ascii?Q?FH+74NkAXXFDjhBkq4L8rGbvZp7zqjZPT02aDPiO0RrADuy7bn0aJVjr23SO?=
+ =?us-ascii?Q?MRYD7QFAjHexAqSX27Va2OYwjZqlnTBgc7Ou+mQp++dWgMPBaBpZrEDyYYR5?=
+ =?us-ascii?Q?cIH/DITam3YvhF6XZULxtb+wMdflQb8PVVdzagWPAiBuUuHlkUvVD2bFOGNS?=
+ =?us-ascii?Q?/noC1Fvm4EZYVNijy0pdQNd9vb96iOQAF16Qhst/ZImWrH4MH/NEY0AlxKLz?=
+ =?us-ascii?Q?t15m9ibCHKqPtdrrqzgGk+Yhy4z/sIjsn6PRr1nCrnsWEjfjnmx1f0aDUAmv?=
+ =?us-ascii?Q?vwjQh2um+H3+Q8C3f5BLUvCHyoBMM8CkSZtbcOppAv2RYPUsYauBNJiivg4h?=
+ =?us-ascii?Q?VURz2ZHTNQ83rZTJbsuQTsdSIvdxgd36P9QAEa7J6wMYsAvjhcjT3HWELGSv?=
+ =?us-ascii?Q?CtScVpATu0SJkVjA7iCEKC0HJylj0YexvPfV/iPqwq/wvPefC6IVD3GPCqzI?=
+ =?us-ascii?Q?wHJgNzW3ERrOuiBSHgs+4A2XCSN75PgcsTe9OJNnJYHD8s7H7wVoDuccte87?=
+ =?us-ascii?Q?E47GKgcMIECvnHEjo4YSnYaFVbL4a2NqbUYB9SOa+MNYnhhGUtWqG+B0xd+4?=
+ =?us-ascii?Q?XPzHls4fDZGfUSO7KA4ipdatE/GKCjJWXgG9IhAPGujYpZTsiVuD6K/yQere?=
+ =?us-ascii?Q?tlEwfOX7TD+LZ38H58k5BetDTJ+7wPZ9CLNOSTS1xBpzZdeP/bQ4h5pIkDVP?=
+ =?us-ascii?Q?RbHuzUhI1bHiYtDLIUvYiDsiN/BEiwa4owgGevrxPESrhHajWWjW/xk8Metn?=
+ =?us-ascii?Q?cPYyLP0dZtD+U7RweQOJtA9DlKOj3VuzsPaK4I/oGKS54n3ZIqAcmvF3eGLQ?=
+ =?us-ascii?Q?5WRt5Ay+eIetYxe58sWbQ6OkL/8tylaKsAptxPa3DBxy3gwuG4y8IoFwaR9d?=
+ =?us-ascii?Q?lpuW9EadWDU/fHZPamjDHZEtHw4re6Jy/afSNPKKBJR88l6nQss1o8+NWBlU?=
+ =?us-ascii?Q?ZkSGqsh4JwWsaiXobNA+4VnTgaeF9LOVNKvpqAjLxccMMJu7uyrkKvmLjmKz?=
+ =?us-ascii?Q?VZf1RS8dao5F0A94WZqPxg9pHHyl/F3tiuqkw7V2SL90me5EltwHYdqs9LFk?=
+ =?us-ascii?Q?k+VCdA9hoU1Z5ow7tRfcOirF8SBESO0S4miL3fhi51GfjStj5naEdIhmvVVR?=
+ =?us-ascii?Q?eW0lAwDPShCTW6A0aFNAilx02h/BUzfbdwfzWdPAFqThms20Ld6Lp8txv8Js?=
+ =?us-ascii?Q?5N+h0DGNPFgj0tHrBC6QlggxYkHMw7WopErimmF9G5pzeR/Vi5F/gtheYsLi?=
+ =?us-ascii?Q?qMo/XYbK2s5319XDfqlaNe/Xoj5rmZScsjK4axHmx3oPhpzTvZyngDddRrPt?=
+ =?us-ascii?Q?itHMZyBWzuQslEXuqPQa8x1FPPlqJlc0f7vC/3G5kYUzWItnj9wlA4SdglgJ?=
+ =?us-ascii?Q?8Zp4ttAx8FFCvppoeldIU/3phxvbFEzUhbN57UmxwglmxuHOF4oyWYDjnWYJ?=
+ =?us-ascii?Q?2BAT9eEPPJf49JNFdB2wI8f2C8NSF3C7Cch40IOLDNF0VaGvdTH7ttrBArom?=
+ =?us-ascii?Q?KA=3D=3D?=
+X-OriginatorOrg: fibocom.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d946f2b2-ab9d-4610-c71f-08dd9dc1ad6c
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR02MB5782.apcprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 May 2025 08:28:52.8754
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 889bfe61-8c21-436b-bc07-3908050c8236
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: jZTqAePmsD7jCRaAcugtiVnEnt0P6TaKFtDCK7txjy5M6FlKPJEFYSpeY4qPsqqUjO148yw3EMnJL+MNy2m21QCTnP2KmRPQ48Zlw5BM4Vo=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY0PR02MB6737
 
-On 23/05/2025 14:38, Clément Le Goffic wrote:
-> This patch introduce the driver for the Hardware Debug Port available on
+When driver handles the napi rx polling requests, the netdev might
+have been released by the dellink logic triggered by the disconnect
+operation on user plane. However, in the logic of processing skb in
+polling, an invalid netdev is still being used, which causes a panic.
 
-"Add driver...", see submitting patches
+BUG: kernel NULL pointer dereference, address: 00000000000000f1
+Oops: 0000 [#1] PREEMPT SMP NOPTI
+RIP: 0010:dev_gro_receive+0x3a/0x620
+[...]
+Call Trace:
+ <IRQ>
+ ? __die_body+0x68/0xb0
+ ? page_fault_oops+0x379/0x3e0
+ ? exc_page_fault+0x4f/0xa0
+ ? asm_exc_page_fault+0x22/0x30
+ ? __pfx_t7xx_ccmni_recv_skb+0x10/0x10 [mtk_t7xx (HASH:1400 7)]
+ ? dev_gro_receive+0x3a/0x620
+ napi_gro_receive+0xad/0x170
+ t7xx_ccmni_recv_skb+0x48/0x70 [mtk_t7xx (HASH:1400 7)]
+ t7xx_dpmaif_napi_rx_poll+0x590/0x800 [mtk_t7xx (HASH:1400 7)]
+ net_rx_action+0x103/0x470
+ irq_exit_rcu+0x13a/0x310
+ sysvec_apic_timer_interrupt+0x56/0x90
+ </IRQ>
 
+Fixes: 5545b7b9f294 ("net: wwan: t7xx: Add NAPI support")
+Signed-off-by: Jinjian Song <jinjian.song@fibocom.com>
+---
+ drivers/net/wwan/t7xx/t7xx_netdev.c | 19 ++++++++++---------
+ 1 file changed, 10 insertions(+), 9 deletions(-)
 
+diff --git a/drivers/net/wwan/t7xx/t7xx_netdev.c b/drivers/net/wwan/t7xx/t7xx_netdev.c
+index 91fa082e9cab..48007384c030 100644
+--- a/drivers/net/wwan/t7xx/t7xx_netdev.c
++++ b/drivers/net/wwan/t7xx/t7xx_netdev.c
+@@ -172,7 +172,7 @@ static void t7xx_ccmni_start(struct t7xx_ccmni_ctrl *ctlb)
+ 	int i;
+ 
+ 	for (i = 0; i < ctlb->nic_dev_num; i++) {
+-		ccmni = ctlb->ccmni_inst[i];
++		ccmni = READ_ONCE(ctlb->ccmni_inst[i]);
+ 		if (!ccmni)
+ 			continue;
+ 
+@@ -192,7 +192,7 @@ static void t7xx_ccmni_pre_stop(struct t7xx_ccmni_ctrl *ctlb)
+ 	int i;
+ 
+ 	for (i = 0; i < ctlb->nic_dev_num; i++) {
+-		ccmni = ctlb->ccmni_inst[i];
++		ccmni = READ_ONCE(ctlb->ccmni_inst[i]);
+ 		if (!ccmni)
+ 			continue;
+ 
+@@ -210,7 +210,7 @@ static void t7xx_ccmni_post_stop(struct t7xx_ccmni_ctrl *ctlb)
+ 		t7xx_ccmni_disable_napi(ctlb);
+ 
+ 	for (i = 0; i < ctlb->nic_dev_num; i++) {
+-		ccmni = ctlb->ccmni_inst[i];
++		ccmni = READ_ONCE(ctlb->ccmni_inst[i]);
+ 		if (!ccmni)
+ 			continue;
+ 
+@@ -302,7 +302,7 @@ static int t7xx_ccmni_wwan_newlink(void *ctxt, struct net_device *dev, u32 if_id
+ 	ccmni->ctlb = ctlb;
+ 	ccmni->dev = dev;
+ 	atomic_set(&ccmni->usage, 0);
+-	ctlb->ccmni_inst[if_id] = ccmni;
++	WRITE_ONCE(ctlb->ccmni_inst[if_id], ccmni);
+ 
+ 	ret = register_netdevice(dev);
+ 	if (ret)
+@@ -321,9 +321,10 @@ static void t7xx_ccmni_wwan_dellink(void *ctxt, struct net_device *dev, struct l
+ 	if (if_id >= ARRAY_SIZE(ctlb->ccmni_inst))
+ 		return;
+ 
+-	if (WARN_ON(ctlb->ccmni_inst[if_id] != ccmni))
++	if (WARN_ON(READ_ONCE(ctlb->ccmni_inst[if_id]) != ccmni))
+ 		return;
+ 
++	WRITE_ONCE(ctlb->ccmni_inst[if_id], NULL);
+ 	unregister_netdevice(dev);
+ }
+ 
+@@ -419,7 +420,7 @@ static void t7xx_ccmni_recv_skb(struct t7xx_ccmni_ctrl *ccmni_ctlb, struct sk_bu
+ 
+ 	skb_cb = T7XX_SKB_CB(skb);
+ 	netif_id = skb_cb->netif_idx;
+-	ccmni = ccmni_ctlb->ccmni_inst[netif_id];
++	ccmni = READ_ONCE(ccmni_ctlb->ccmni_inst[netif_id]);
+ 	if (!ccmni) {
+ 		dev_kfree_skb(skb);
+ 		return;
+@@ -441,7 +442,7 @@ static void t7xx_ccmni_recv_skb(struct t7xx_ccmni_ctrl *ccmni_ctlb, struct sk_bu
+ 
+ static void t7xx_ccmni_queue_tx_irq_notify(struct t7xx_ccmni_ctrl *ctlb, int qno)
+ {
+-	struct t7xx_ccmni *ccmni = ctlb->ccmni_inst[0];
++	struct t7xx_ccmni *ccmni = READ_ONCE(ctlb->ccmni_inst[0]);
+ 	struct netdev_queue *net_queue;
+ 
+ 	if (netif_running(ccmni->dev) && atomic_read(&ccmni->usage) > 0) {
+@@ -453,7 +454,7 @@ static void t7xx_ccmni_queue_tx_irq_notify(struct t7xx_ccmni_ctrl *ctlb, int qno
+ 
+ static void t7xx_ccmni_queue_tx_full_notify(struct t7xx_ccmni_ctrl *ctlb, int qno)
+ {
+-	struct t7xx_ccmni *ccmni = ctlb->ccmni_inst[0];
++	struct t7xx_ccmni *ccmni = READ_ONCE(ctlb->ccmni_inst[0]);
+ 	struct netdev_queue *net_queue;
+ 
+ 	if (atomic_read(&ccmni->usage) > 0) {
+@@ -471,7 +472,7 @@ static void t7xx_ccmni_queue_state_notify(struct t7xx_pci_dev *t7xx_dev,
+ 	if (ctlb->md_sta != MD_STATE_READY)
+ 		return;
+ 
+-	if (!ctlb->ccmni_inst[0]) {
++	if (!READ_ONCE(ctlb->ccmni_inst[0])) {
+ 		dev_warn(&t7xx_dev->pdev->dev, "No netdev registered yet\n");
+ 		return;
+ 	}
+-- 
+2.34.1
 
-> STM32MP platforms. The HDP allows the observation of internal SoC
-> signals by using multiplexers. Each HDP port can provide up to 16
-> internal signals (one of them can be software controlled as a GPO).
-> 
-> Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
-> ---
->  drivers/pinctrl/stm32/Kconfig             |  14 +
->  drivers/pinctrl/stm32/Makefile            |   1 +
->  drivers/pinctrl/stm32/pinctrl-stm32-hdp.c | 720 ++++++++++++++++++++++++++++++
->  3 files changed, 735 insertions(+)
-> 
-> diff --git a/drivers/pinctrl/stm32/Kconfig b/drivers/pinctrl/stm32/Kconfig
-> index 2656d3d3ae40..4b474cfd1f2c 100644
-> --- a/drivers/pinctrl/stm32/Kconfig
-> +++ b/drivers/pinctrl/stm32/Kconfig
-> @@ -57,4 +57,18 @@ config PINCTRL_STM32MP257
->  	depends on OF && HAS_IOMEM
->  	default MACH_STM32MP25
->  	select PINCTRL_STM32
-> +
-> +config PINCTRL_STM32_HDP
-> +	tristate "STMicroelectronics STM32 Hardware Debug Port (HDP) pin control"
-> +	depends on OF && HAS_IOMEM
-> +	default ARM64 || (ARM && CPU_V7)
-
-I just cleaned this up and I still think this should be default for your
-arch, not for every other platform during compile test. See bunch of my
-commits "Do not enable by default during compile testing".
-
-
-> +	select PINMUX
-> +	select GENERIC_PINCONF
-> +	select GPIOLIB
-> +	help
-> +	  The Hardware Debug Port allows the observation of internal signals.
-> +	  It uses configurable multiplexer to route signals in a dedicated observation register.
-> +	  This driver also permits the observation of signals on external SoC pins.
-> +	  It permits the observation of up to 16 signals per HDP line.
-> +
->  endif
-> diff --git a/drivers/pinctrl/stm32/Makefile b/drivers/pinctrl/stm32/Makefile
-> index 7b17464d8de1..98a1bbc7e16c 100644
-> --- a/drivers/pinctrl/stm32/Makefile
-> +++ b/drivers/pinctrl/stm32/Makefile
-> @@ -11,3 +11,4 @@ obj-$(CONFIG_PINCTRL_STM32H743)	+= pinctrl-stm32h743.o
->  obj-$(CONFIG_PINCTRL_STM32MP135) += pinctrl-stm32mp135.o
->  obj-$(CONFIG_PINCTRL_STM32MP157) += pinctrl-stm32mp157.o
->  obj-$(CONFIG_PINCTRL_STM32MP257) += pinctrl-stm32mp257.o
-> +obj-$(CONFIG_PINCTRL_STM32_HDP) += pinctrl-stm32-hdp.o
-> diff --git a/drivers/pinctrl/stm32/pinctrl-stm32-hdp.c b/drivers/pinctrl/stm32/pinctrl-stm32-hdp.c
-> new file mode 100644
-> index 000000000000..e91442eb566b
-> --- /dev/null
-> +++ b/drivers/pinctrl/stm32/pinctrl-stm32-hdp.c
-> @@ -0,0 +1,720 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (C) STMicroelectronics 2025 - All Rights Reserved
-> + * Author: Clément Le Goffic <clement.legoffic@foss.st.com> for STMicroelectronics.
-> + */
-> +#include <linux/bits.h>
-> +#include <linux/clk.h>
-> +#include <linux/gpio/driver.h>
-> +#include <linux/io.h>
-> +#include <linux/of.h>
-> +#include <linux/of_device.h>
-
-Not used.
-
-> +#include <linux/pinctrl/consumer.h>
-> +#include <linux/pinctrl/pinconf-generic.h>
-> +#include <linux/pinctrl/pinctrl.h>
-> +#include <linux/pinctrl/pinmux.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/pm.h>
-> +
-Best regards,
-Krzysztof
 
