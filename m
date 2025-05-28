@@ -1,78 +1,191 @@
-Return-Path: <linux-kernel+bounces-664626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-664628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0D8EAC5E50
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 02:32:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 58E2CAC5E57
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 02:32:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F037EA20235
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 00:30:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89F123A93FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 00:31:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6146E1A262D;
-	Wed, 28 May 2025 00:30:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FA3F433A6;
+	Wed, 28 May 2025 00:31:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p+EdSU9o"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LhFa+PSf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE13D19B3CB
-	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 00:30:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A84D123CB;
+	Wed, 28 May 2025 00:31:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748392203; cv=none; b=T1S1X+u/UfmRHasZP3mL34Q/7oWIYkhldxhaHfAiHkjUZRqHYBxEjswh+7Wd2MdUVxSB735o4pbITeB40l7xdXeGmydCyVDng8Zy6EUWG93kylBveBq//rEPBkWPYNTizHlpI53fFHuaWCx0yl1t4Uwcex+6MQ66hX7IyHDtYq4=
+	t=1748392279; cv=none; b=JZSLO+RHI3EETy27afEgN2cLaLYXT9kfwDx4nvRwFoZIyKkdeAQ7LZdTCiKF2k0P75xXaoGHs2Hp0G1culWZdhBa6mlM0qijUuzZbGNJcN6XB1gmugOFrwXda9pAbEk4QYOxOrpXQWyK/NZ2Rjith/oi//vx5h78Z1i1QfEELiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748392203; c=relaxed/simple;
-	bh=a6OmCGu0jdzkOtKsrnIuPAVy75jO7ZojeqVkL4y93xw=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=nisAM5UgPHhwRB3m07cNtFaxHXHloRygpvap4qnpiMDv0y26eKQGE9fQ8ZFNUE1l3vXVItV9F8qoCX5kOuRqaM/sLLpwA7UPAQ1o1aX/q5bLJ6ldgfJOflgr3IvX1Epn6/9DiHhK4QNoX0B2Tw+6BcwMi0RxaP8LHDsLSv9q6CE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p+EdSU9o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44C58C4CEF3;
-	Wed, 28 May 2025 00:30:03 +0000 (UTC)
+	s=arc-20240116; t=1748392279; c=relaxed/simple;
+	bh=M6A45JnFOKhyL13s3EAIlzuklRV8jx57NggH6mzCtGg=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=owuoTxa4OIlpyJYX3mxlsQUEOASinCqAK2xNdWXzIXZf3p6CuguzSmjBSVSjeGmmCAjSrjI9J5JucVchMXHD+SDn88qazlRpMwvyClxF3hsSKOkfgEPecyoM5z4bleWraiooetINsegg73IdkcBQPDjG5TLhrGuYLw1lELohk48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LhFa+PSf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34089C4CEE9;
+	Wed, 28 May 2025 00:31:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748392203;
-	bh=a6OmCGu0jdzkOtKsrnIuPAVy75jO7ZojeqVkL4y93xw=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=p+EdSU9ow7RZTMGYK+HYJA+Vz7S6OlOPsv4L61w0wpubRQWZKAVRFkVJ9LBAJ7uqA
-	 o5qbbBZ/xW8Kl33i1zepCAAq7xawrbKkrkVdAxfcE5kj8GzdWpXrmlT3Y2e5VuR9hP
-	 ahUZQUCow1hARqNN7OVLEK0L8VI/8BYCfTODMPHHCfQlhTPd/6MRMW0K1B4Hwqpa3N
-	 CTptWiRTNGJ026Ol0+oRpappshYfaGcItM5utKdQhE3l9S13Ki4pBqMzGlvF4TV4BB
-	 oYhwtJpuYRk0DkDKB7YDShb4Lpx+6FwmlSdieFHegcDUPFD3oOIqYwn6AoHTZchMpZ
-	 fi+rMt2AMg2Lg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADC2639F1DE2;
-	Wed, 28 May 2025 00:30:38 +0000 (UTC)
-Subject: Re: [GIT PULL] regulator updates for v6.16
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <aee0fa6dade74217ddb19cabebbc8d75.broonie@kernel.org>
-References: <aee0fa6dade74217ddb19cabebbc8d75.broonie@kernel.org>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <aee0fa6dade74217ddb19cabebbc8d75.broonie@kernel.org>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git tags/regulator-v6.16
-X-PR-Tracked-Commit-Id: dcd711021389c4d19b3310cc37f09813659dfee2
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 350d9ab73654c47ea3cf6214ef2ccd159bf134ad
-Message-Id: <174839223741.1837144.13923210379622052013.pr-tracker-bot@kernel.org>
-Date: Wed, 28 May 2025 00:30:37 +0000
-To: Mark Brown <broonie@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+	s=k20201202; t=1748392279;
+	bh=M6A45JnFOKhyL13s3EAIlzuklRV8jx57NggH6mzCtGg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=LhFa+PSf8KqoIrFCRUq2WFGiIZ+oYlFl1KbnEQyj414uHH7iG4MQDU2ecb9Cp/8f4
+	 70WgrBeA8p9nwH6Huwcgvv+b/3d7Drmn74W1pDtH+FYkSQYRfpeJtA+0mDqCNHF2Go
+	 6mdQYTzoODUKr6PB6/pROqQQBsNiFGyONgROqU5Ik4e5+NPk4bn/0K8vvzhAPBKLpn
+	 +GlKjhcpKTvITvpI+y2ZedpmSKwM0ZXNhQpIPApTNjSiaf14Il2yfFkLjbZw4mxw8k
+	 tiA+pUo2+t6VZpQ43BqE66d/jIfrUzfdPuCosENF084M3zNP/rjzjOZgudGauKodeV
+	 vtQDhlJVL/aBQ==
+Date: Wed, 28 May 2025 09:31:16 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: Re: [PATCH] ring-buffer: Simplify ring_buffer_read_page() with
+ guard()
+Message-Id: <20250528093116.2451fe1b1ebad2f457594c57@kernel.org>
+In-Reply-To: <20250527145216.0187cf36@gandalf.local.home>
+References: <20250527145216.0187cf36@gandalf.local.home>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The pull request you sent on Mon, 26 May 2025 11:30:01 +0100:
+On Tue, 27 May 2025 14:52:16 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git tags/regulator-v6.16
+> From: Steven Rostedt <rostedt@goodmis.org>
+> 
+> The function ring_buffer_read_page() had two gotos. One was simply
+> returning "ret" and the other was unlocking the reader_lock.
+> 
+> There's no reason to use goto to simply return the "ret" variable. Instead
+> just return the value.
+> 
+> The jump to the unlocking of the reader_lock can be replaced by
+> guard(raw_spinlock_irqsave)(&cpu_buffer->reader_lock).
+> 
+> With these two changes the "ret" variable is no longer used and can be
+> removed. The return value on non-error is what was read and is stored in
+> the "read" variable.
+> 
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/350d9ab73654c47ea3cf6214ef2ccd159bf134ad
+Looks good to me.
 
-Thank you!
+Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+
+Thanks!
+
+> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> ---
+>  kernel/trace/ring_buffer.c | 28 +++++++++++-----------------
+>  1 file changed, 11 insertions(+), 17 deletions(-)
+> 
+> diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
+> index 0b21d64e90c8..897ce51d3bbf 100644
+> --- a/kernel/trace/ring_buffer.c
+> +++ b/kernel/trace/ring_buffer.c
+> @@ -6535,38 +6535,37 @@ int ring_buffer_read_page(struct trace_buffer *buffer,
+>  	struct buffer_data_page *bpage;
+>  	struct buffer_page *reader;
+>  	unsigned long missed_events;
+> -	unsigned long flags;
+>  	unsigned int commit;
+>  	unsigned int read;
+>  	u64 save_timestamp;
+> -	int ret = -1;
+>  
+>  	if (!cpumask_test_cpu(cpu, buffer->cpumask))
+> -		goto out;
+> +		return -1;
+>  
+>  	/*
+>  	 * If len is not big enough to hold the page header, then
+>  	 * we can not copy anything.
+>  	 */
+>  	if (len <= BUF_PAGE_HDR_SIZE)
+> -		goto out;
+> +		return -1;
+>  
+>  	len -= BUF_PAGE_HDR_SIZE;
+>  
+>  	if (!data_page || !data_page->data)
+> -		goto out;
+> +		return -1;
+> +
+>  	if (data_page->order != buffer->subbuf_order)
+> -		goto out;
+> +		return -1;
+>  
+>  	bpage = data_page->data;
+>  	if (!bpage)
+> -		goto out;
+> +		return -1;
+>  
+> -	raw_spin_lock_irqsave(&cpu_buffer->reader_lock, flags);
+> +	guard(raw_spinlock_irqsave)(&cpu_buffer->reader_lock);
+>  
+>  	reader = rb_get_reader_page(cpu_buffer);
+>  	if (!reader)
+> -		goto out_unlock;
+> +		return -1;
+>  
+>  	event = rb_reader_event(cpu_buffer);
+>  
+> @@ -6600,7 +6599,7 @@ int ring_buffer_read_page(struct trace_buffer *buffer,
+>  		if (full &&
+>  		    (!read || (len < (commit - read)) ||
+>  		     cpu_buffer->reader_page == cpu_buffer->commit_page))
+> -			goto out_unlock;
+> +			return -1;
+>  
+>  		if (len > (commit - read))
+>  			len = (commit - read);
+> @@ -6609,7 +6608,7 @@ int ring_buffer_read_page(struct trace_buffer *buffer,
+>  		size = rb_event_ts_length(event);
+>  
+>  		if (len < size)
+> -			goto out_unlock;
+> +			return -1;
+>  
+>  		/* save the current timestamp, since the user will need it */
+>  		save_timestamp = cpu_buffer->read_stamp;
+> @@ -6667,7 +6666,6 @@ int ring_buffer_read_page(struct trace_buffer *buffer,
+>  		if (reader->real_end)
+>  			local_set(&bpage->commit, reader->real_end);
+>  	}
+> -	ret = read;
+>  
+>  	cpu_buffer->lost_events = 0;
+>  
+> @@ -6694,11 +6692,7 @@ int ring_buffer_read_page(struct trace_buffer *buffer,
+>  	if (commit < buffer->subbuf_size)
+>  		memset(&bpage->data[commit], 0, buffer->subbuf_size - commit);
+>  
+> - out_unlock:
+> -	raw_spin_unlock_irqrestore(&cpu_buffer->reader_lock, flags);
+> -
+> - out:
+> -	return ret;
+> +	return read;
+>  }
+>  EXPORT_SYMBOL_GPL(ring_buffer_read_page);
+>  
+> -- 
+> 2.47.2
+> 
+
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
