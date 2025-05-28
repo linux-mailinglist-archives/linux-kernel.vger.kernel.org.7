@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-665079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0211AC6404
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 10:19:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 339DAAC6407
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 10:19:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7EC0167BC1
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 08:17:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C456A16C33F
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 08:18:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8F00258CF5;
-	Wed, 28 May 2025 08:12:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 670BB275112;
+	Wed, 28 May 2025 08:12:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iwX1b/+C"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="axgamg/N"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36D20248F6A
-	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 08:12:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C67302750FE
+	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 08:12:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748419926; cv=none; b=CpIb3ruSGfWOCLT1ZemFxhK8XvU1LZw6oLEKQ6f/sQJ+jrxsOw1+w38nQSo06MbJwkVAczwnAkyHFJ5+TQpuIvKfEyNVFLxQhx5ROfxDwZEpbMIo2G1irxUgY4KowS4hLfJGlGCxbdEQyuoPHdy174PmPlCvG3d71T4ApO7tVUE=
+	t=1748419929; cv=none; b=pqejAjrStuS6TSjIheI7PTfidiilMcMfdnB/AmhrHdkxxQOPgIWUfFjashcnGbSvRA5C64AXsFe3QCmm85mrX5IDLqwhgK0Ovn8/7FKg8Ei7sU6fkLaRKYRB/m8VAXAg+p7u62UYCG5e9CZyXDwHw6gjxK724cxQdp03Rqm8wwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748419926; c=relaxed/simple;
-	bh=EWBGbiAoT9c7/GC67CiLl0LDzZ4HPT2SbxPRGmzMgYI=;
+	s=arc-20240116; t=1748419929; c=relaxed/simple;
+	bh=dwYh0Xw5KXdyDJX+1yXvaB7TRm12J+XmblxF+9fR9RY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uRee8a9VydQwLXbUnho3BzVhPAqIUXCnRZrFqNxkf1FYKGAA6eEmkc93TL45Dj9JFPTp6eRnQ0c0B55OJNILcX4NoNvrJ3n+eN6w3TvglEIYzJy8qsAfdZNfQiowdkwqP0KlGR1CSdjXBLs/qYpeO8F477AI6YoRvGEcQAqlDBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iwX1b/+C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BB5AC4CEEB;
-	Wed, 28 May 2025 08:12:02 +0000 (UTC)
+	 MIME-Version; b=FPXBVQ46CueKvUHSst17BDG64NY+ZONVV97xE4KmwLIkCKIe30MBTtqRZ4b2mBxOMykK6NyUtgWwU1su6Jw6Oq8mIxNARmy29Y0chXAXM0kuOBlP8/6kQ+2cYlJuWKmsacCOnQHobD5VtYt9gM5LiuFRStZvqKdpuMyktg9bDv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=axgamg/N; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F09BC4CEEB;
+	Wed, 28 May 2025 08:12:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748419926;
-	bh=EWBGbiAoT9c7/GC67CiLl0LDzZ4HPT2SbxPRGmzMgYI=;
+	s=k20201202; t=1748419929;
+	bh=dwYh0Xw5KXdyDJX+1yXvaB7TRm12J+XmblxF+9fR9RY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=iwX1b/+CZjdfcTZIjSLQ1CxOgkjSd/9P5M3zefKWRKcYC/gESUzVeHYji2rMT3iDc
-	 fR+zJBjxcFBxKLUsAAhUHwzQPC2cY38YKR6J4u+AWFSrUVnAdLE8NhbnLhoiMHRwdi
-	 ocinKFFfRWx1og3EfReT6xHCxSh+tdY8RXvZ2wdTVAeM42h54k0pHeguGzFKIHs7mA
-	 N1PqexnDHyDOo7SLzC+QYOD0ngOm+5m676b6SLK2qD7CsX9I7u7UJyvpXQ+8AYcXIV
-	 UjHJvSrnCvoCZBXUxcyT0SJRTSJQpRLE/eVLZPP+zPqaYl9apuzP2QHqIbGzOq0wfN
-	 Mpn/Ak2OzW2kw==
+	b=axgamg/N1ydx4SoZufnZCMEjgA7/6CYjYYxK0xRRKeC/abnjeUK+xoB2ZMIOP57Uu
+	 UEBNXGKOo1NjmEaBjb5RCiP99WIuJaLjCuKowNbT+O41zCPCCJyn/G+gI+38tIpe2o
+	 n17mq7sZJuwSztAvzbhMt5m0UU4nJivPs7qQ+o3x7NmvvaIXfrt9yJIrO1iYMZqYTX
+	 WvxU0GxCMI7/lSWQhj5zf85JTklziCLUrblEr27BEW0GNThT95gWTMMXasII+u96Ik
+	 H5yXHPzc2q1IM1sxgumHFbc6hEXCPIRT2pRyowikp/GDp47QakyeYik/+j2DvcbOTC
+	 HCFW8HPDB5lmQ==
 From: Ingo Molnar <mingo@kernel.org>
 To: linux-kernel@vger.kernel.org
 Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>,
@@ -54,9 +54,9 @@ Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>,
 	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
 	Ingo Molnar <mingo@kernel.org>,
 	Juri Lelli <juri.lelli@redhat.com>
-Subject: [PATCH 39/43] sched/smp: Use the SMP version of task_on_cpu()
-Date: Wed, 28 May 2025 10:09:20 +0200
-Message-ID: <20250528080924.2273858-40-mingo@kernel.org>
+Subject: [PATCH 40/43] sched/smp: Use the SMP version of WF_ and SD_ flag sanity checks
+Date: Wed, 28 May 2025 10:09:21 +0200
+Message-ID: <20250528080924.2273858-41-mingo@kernel.org>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20250528080924.2273858-1-mingo@kernel.org>
 References: <20250528080924.2273858-1-mingo@kernel.org>
@@ -82,25 +82,25 @@ Cc: Steven Rostedt <rostedt@goodmis.org>
 Cc: Valentin Schneider <vschneid@redhat.com>
 Cc: Vincent Guittot <vincent.guittot@linaro.org>
 ---
- kernel/sched/sched.h | 4 ----
- 1 file changed, 4 deletions(-)
+ kernel/sched/sched.h | 2 --
+ 1 file changed, 2 deletions(-)
 
 diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 28e2847a3584..fbc9d25a3e6c 100644
+index fbc9d25a3e6c..e4aeb1e1c849 100644
 --- a/kernel/sched/sched.h
 +++ b/kernel/sched/sched.h
-@@ -2237,11 +2237,7 @@ static inline int task_current_donor(struct rq *rq, struct task_struct *p)
+@@ -2260,11 +2260,9 @@ static inline int task_on_rq_migrating(struct task_struct *p)
+ #define WF_CURRENT_CPU		0x40 /* Prefer to move the wakee to the current CPU. */
+ #define WF_RQ_SELECTED		0x80 /* ->select_task_rq() was called */
  
- static inline int task_on_cpu(struct rq *rq, struct task_struct *p)
- {
 -#ifdef CONFIG_SMP
- 	return p->on_cpu;
--#else
--	return task_current(rq, p);
+ static_assert(WF_EXEC == SD_BALANCE_EXEC);
+ static_assert(WF_FORK == SD_BALANCE_FORK);
+ static_assert(WF_TTWU == SD_BALANCE_WAKE);
 -#endif
- }
  
- static inline int task_on_rq_queued(struct task_struct *p)
+ /*
+  * To aid in avoiding the subversion of "niceness" due to uneven distribution
 -- 
 2.45.2
 
