@@ -1,332 +1,150 @@
-Return-Path: <linux-kernel+bounces-666185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 927EFAC73A2
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 00:08:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F090BAC7398
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 00:08:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4ABE47B4BAC
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 22:06:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B04EAA2745E
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 22:07:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF7E3223DF5;
-	Wed, 28 May 2025 21:59:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 833A72253B7;
+	Wed, 28 May 2025 21:59:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="vInDF3eo"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cbjd9J45"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECEFD22370F
-	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 21:59:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D322D22370F;
+	Wed, 28 May 2025 21:59:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748469547; cv=none; b=A2ogQTq38j+qshYoJ6KvNNUjLWKNtMZ6Ssst+GwOUoPrKzPuFMfN5mA/TTJ5emRlrZyY5Egy3AbTtv9is2vvvG0dn3fU8cNB2LsjdPreH9Q+UV+RDmRfSiTp5ep5R6+f9/D2fe8GyumHbwObIUryOBx1WvO+Sh2rg+vmh83WgOY=
+	t=1748469561; cv=none; b=e/wAq8TzJE/xSsLTsJKhdy7SED0ABJJgILFEN3xpDHZuzUpsIh/wNHQrBtwkeom1L5/A6T3d8+PwPG3oCxbG0hPsGixotU9mislNhb6nXeWeE9juPNfSHllwtJ4JGlWJ73apPW3u4LKsdNA2PsxxF4ig56uRZMuamy3EV21ETOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748469547; c=relaxed/simple;
-	bh=gzWLmhJuLFB1Ar69s8TsaAQnl/ba30/fxc95H6KJMhI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=IMkeQqwbVLS+yxySt/i8AuCozlwo63FltspFPWpkTQVDQZT3X4WvnkGFhScysmNUGFkk5O6CiaSDZrR47voqioX9hW29wj7oCgPPjWTFy7KMA4sbWzMrBakGG+XDEjdtbfw0U6wDc6QiKzXMPQbEybMn/OGyUDyYb6kBhR24pWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=vInDF3eo; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-742c9563fafso167924b3a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 14:59:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1748469545; x=1749074345; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mQrOFsHtLRbdh4NDBUUICdCoV2WKAutQiNFcBpOyHeA=;
-        b=vInDF3eoiC7vQd5lnsfQhHv8FRdtwUzJrFHvBDsXLUQ2AVNdmYnmetKNgD1T7ZCsM6
-         Y4tZ2ASCuJ+UFlrSMtALA1Tyb/hLhY4Stbzimyu0yx2RaILHMYfcMl2VC8rBy6PIcK7v
-         7484srrCXG4M7P2Ldk7TGrwCuqecE6XUHxPtRA6YDb98Pdg/fKOg0XdSU8aso7+Bk+Uq
-         m61Uw3Ar4lZwYJr6b3fIDYdqI53QsCSUn62DcsuyT3V+P25CEbBX14DmtOnxiR1pf4aO
-         ZmLmrobpnhknxeU3oSXw2F+XCuXjpO4xcH0yPETZLyVT07Ud8oJs/0F03sDcLvR+Te9I
-         TdCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748469545; x=1749074345;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mQrOFsHtLRbdh4NDBUUICdCoV2WKAutQiNFcBpOyHeA=;
-        b=jjbsKka9PaOIIweThH6kJ8N9iAw4T/VKYDgwIFqX5iuRpNB3EVmsNJW2eZ6edhAepI
-         GwcTUTTR2SSD2IXvuXU/gTIamcHwRGCo23C0INTZcuHZ3yOoBmeCqf+oYgIMbZbV/7W8
-         S4A5HAedkaQmyDRbNk/W++4gdksyea8GbuegoR7WQpNlAmuZAxpuLy9OLP7zJhp9D4VV
-         060QC2/0b4GvjyyIPQYsE5dwXlkFbBfSmk2jX0NjNNeZYgmeMO29ohTQc+xA19Hle6ed
-         X37bX7f7Ckq002IcVNAnxovmvb55iou34uJt0feOo0KQNabukpkacLNR6m8eR++iqld4
-         z9xQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWxYYD+AD1ZzefKyjsNNi6gywaSrx/9Vqttjaj+8aDZi0RTzTtQYyJ129t95M9QY5laWYfMPDWtrFxll00=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnOpGSWwlbXd7BDCgRNwOYEGpJMrL4h3KgHNnda7bcpwjfPqf3
-	DJhbmbCxbmq55rsCZNOidvumvYCjejKg9FKzn5l8ADx3rYhiKtirLSX34s2ek3A8Zu8=
-X-Gm-Gg: ASbGnctB07It0JAfwvNPEn8G6OHypqfsG5uk+3s/Jb8Wk/FR458Cl3zaY0HtKFMLgrC
-	HAk4vZhk00StO/Z9GLyHchyTPDbBYshXTyysebu/2pgYC0lLswlRpE8iv/XSBYf4FDjq2DD2Rfk
-	EfBaheFYg6JmmOJBc4qk2/5f4Li40OBQeomhkMSV3bTQ84CtmuaFqC/QLHNj4jWms3UniE+eUG2
-	1InuZlF+qEROBt+UrhaBdk+EMTuC//mykPO2DhDAR5iLnqn1vCsEN6GdGTRGm4GpxMxw0lTKDvo
-	bDRfN4gTg+h6G7xKz8P1Gd3l5c6aECP1Tjkjm+BUrjmv2qSWqg==
-X-Google-Smtp-Source: AGHT+IHBg4RrGwJlNf2gJnu/ZJ3H1DruaZXnsfy7aB2sV1yzQ2S2Up1LiM/kRoyCaMsJH7r9giUA6A==
-X-Received: by 2002:a05:6a00:3d4e:b0:736:7270:4d18 with SMTP id d2e1a72fcca58-746b4041c8fmr5373730b3a.14.1748469545150;
-        Wed, 28 May 2025 14:59:05 -0700 (PDT)
-Received: from localhost ([97.126.182.119])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-747afe96468sm75394b3a.27.2025.05.28.14.59.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 May 2025 14:59:04 -0700 (PDT)
-From: Kevin Hilman <khilman@baylibre.com>
-Date: Wed, 28 May 2025 14:58:52 -0700
-Subject: [PATCH RFC v2 2/2] pmdomain: core: use DT map to support hierarchy
+	s=arc-20240116; t=1748469561; c=relaxed/simple;
+	bh=rTSHTbWhD0fIYsIngS/eYKjGxuLf3+dx2sFLpQ/GdZ4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oWq8ytWUFKTG6sekfOWcCOf7jcjv56su0BsQTghb+UXP1rLxkBUKnlVWCT+aMoUvFv4gpOtd4M/UXsyrY5fXfSu6G40H9R5pr3DBaR5u42zulTzzuutMIbblXqtJaDwQeUtygv8Odlee5mqyXg+R4UsIBn0VRf+DsxXs+e065bM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cbjd9J45; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50B68C4CEE3;
+	Wed, 28 May 2025 21:59:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748469561;
+	bh=rTSHTbWhD0fIYsIngS/eYKjGxuLf3+dx2sFLpQ/GdZ4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Cbjd9J45sepFgn5GqkwPTv4ImwQvkxSKOkk5dGqw3h6OSW/Vb7pCPFRvFKb3GtJM0
+	 gSGanIZX6tlE0026pDYsp3H7s03uSkytwXvkXyI7UIKT3QLXlTWdgQ2vJpsPz3z9Jj
+	 EPceE/0C4VYrxsGQTLKrMYlLQPMixw3DCCLV2mlGUZ4oSuVRZeXQCWO+OldrgI/PfC
+	 LGF185uk/BbMT2fSqcWiAl23fMlM/T3gFnk3eTnHmdrQTAbgF+J+3MA9uHXIVH1gBO
+	 OL8wFKl3BpusYiHl1B/5XniEY1ffF2XlY9IEb7umAkETvKAAsh44sp6yn04ifOVYxY
+	 QK3K9yH3GY1Wg==
+Date: Wed, 28 May 2025 14:59:19 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [RFC PATCH v1] perf build: Fix build for clang's
+ -Wunreachable-code
+Message-ID: <aDeHN4DeYS3i-5jY@google.com>
+References: <20250410202647.1899125-1-irogers@google.com>
+ <Z_mK9BVv16MT7shL@z2>
+ <CAP-5=fWykL-01S=35zz-6JASbM_cQkx6PHdKS7pJAX0=JBTuNQ@mail.gmail.com>
+ <CAP-5=fWFYS7-FcbyJ5Z5U2rqA7eYwwJ4dMf90TUzwJ0Shh2yxA@mail.gmail.com>
+ <aDdU1npHL2Vczhsa@google.com>
+ <CAP-5=fUycjUUWW=hoSSvxfUVPXcqAk5KHnknFuUDOr7+Zf=M2A@mail.gmail.com>
+ <aDdqcfuAuk78eKXD@google.com>
+ <CAP-5=fUX-gSv0q_j59bG19=dnaCPMeATtFgM0bPMSP8DKZWRJQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250528-pmdomain-hierarchy-onecell-v2-2-7885ae45e59c@baylibre.com>
-References: <20250528-pmdomain-hierarchy-onecell-v2-0-7885ae45e59c@baylibre.com>
-In-Reply-To: <20250528-pmdomain-hierarchy-onecell-v2-0-7885ae45e59c@baylibre.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, arm-scmi@vger.kernel.org
-X-Mailer: b4 0.14.3-dev-d7477
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7324; i=khilman@baylibre.com;
- h=from:subject:message-id; bh=gzWLmhJuLFB1Ar69s8TsaAQnl/ba30/fxc95H6KJMhI=;
- b=owEBbQKS/ZANAwAIAVk3GJrT+8ZlAcsmYgBoN4cm2AYE2wJbHBDrB57dgct2NNMJ3jvavEoin
- WbdlSgT2ECJAjMEAAEIAB0WIQR7h0YOFpJ/qfW/8QxZNxia0/vGZQUCaDeHJgAKCRBZNxia0/vG
- ZVbwD/9Ve7gGt+s4kRkVZ38iJYN1bRILml5SNL+qkea8ksbu4ib9fuaMrJHpfDaAlGqVkubDhJW
- mLODpZ3+HeigyPI5rgPyI8wv96J+YNVHeityTv46qmap/KOkVyghslUNaEKF0VUQWvbMQUauFLS
- YYqEp8SyM6ZQjGG2JK+pNBrDrzVZRqhXbTHWd2jTDBgRcjhaHNczGYh/r79VoBEdvBWnIPgQ3Mk
- kBTcJEeGAkK4kHkJPG4QOP9595NYfNCtWLkScRKK68g62nEmvEkJGioA8qYRQvA+Mf7zHeQBJ3F
- +olHgFes4bcaezIRo3UCsXa4mBfvkqhSPKqbTfo7TYn3H7sOuWXdkbdlUQIDl0doe/Q/U8FyoCM
- ZBm1uw9hHvIbFecdWsi9bv1DJKhk6E8gbfTFWgxYS+cpVQaT8O+VWNzQ6CkOh2Rpwv4H3iP3FbI
- IHWq2Ff1JVgj0syByPhWnZFGEcfDcbRVGMl8Sw7K0Sj3sAtHyU6DhiroEDBYqj0JgnI0ggT2Qhq
- CKPAAGd4qgZhKCzmOjEdgCPmxLC9KQgOKPEJrSYqeKmtQ00GUVxC7qlM65iX+zxbFnERi3IVNMB
- ALcmuwLZ23MORFP8KNMTFZYI48643mc4MSXeINLvdq9+eF0OG3pNFRKqmxlcklgnGdEt+CuzMdU
- XcDt5mFCIQ8Dv2Q==
-X-Developer-Key: i=khilman@baylibre.com; a=openpgp;
- fpr=7B87460E16927FA9F5BFF10C5937189AD3FBC665
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fUX-gSv0q_j59bG19=dnaCPMeATtFgM0bPMSP8DKZWRJQ@mail.gmail.com>
 
-Currently, PM domains can only support hierarchy for simple
-providers (e.g. ones with #power-domain-cells = 0).
+On Wed, May 28, 2025 at 01:32:10PM -0700, Ian Rogers wrote:
+> On Wed, May 28, 2025 at 12:56 PM Namhyung Kim <namhyung@kernel.org> wrote:
+> >
+> > On Wed, May 28, 2025 at 11:35:00AM -0700, Ian Rogers wrote:
+> > > On Wed, May 28, 2025 at 11:24 AM Namhyung Kim <namhyung@kernel.org> wrote:
+> > > >
+> > > > On Tue, May 27, 2025 at 01:53:37PM -0700, Ian Rogers wrote:
+> > > > > On Fri, Apr 11, 2025 at 3:14 PM Ian Rogers <irogers@google.com> wrote:
+> > > > > >
+> > > > > > On Fri, Apr 11, 2025 at 2:34 PM Namhyung Kim <namhyung@kernel.org> wrote:
+> > > > > > >
+> > > > > > > Hi Ian,
+> > > > > > >
+> > > > > > > On Thu, Apr 10, 2025 at 01:26:47PM -0700, Ian Rogers wrote:
+> > > > > > > > Clang's unreachable code warning is able to catch bugs like the famous
+> > > > > > > > "goto fail" which gcc's unreachable code warning fails to warn about
+> > > > > > > > (it will complain about misleading indent). The changes here are
+> > > > > > > > sufficient to get perf building with clang with -Wunreachable code,
+> > > > > > > > but they don't really fix any bugs. Posting as an RFC to see if anyone
+> > > > > > > > things this is worth pursuing.
+> > > > > > >
+> > > > > > > I'm not sure if it's useful and don't see what kind of bugs it can
+> > > > > > > address.  The proposed changes don't look like an improvement.
+> > > > > >
+> > > > > > The goto fail case was in OpenSSL the code from a bad merge:
+> > > > > > ```
+> > > > > > if (...)
+> > > > > >   goto fail;
+> > > > > >   goto fail;
+> > > > > > ```
+> > > > > > Meaning the fail path was always taken and checking on the non-fail
+> > > > > > code never executed. Newer GCCs will warn of this because of the
+> > > > > > "misleading indent" but  clang won't. It is easy to imagine similar
+> > > > > > mistakes creeping in, so using compiler warnings to avoid the bug
+> > > > > > could be useful.
+> > > >
+> > > > It doesn't look very convincing to me but it might be valuable in some
+> > > > rare cases.  But the proposed changes - basically replace exit() to
+> > > > __builtin_unreachable() - seem weird.  Why is calling it a problem?  I
+> > > > guess it already has some kind of annotation like "noreturn"?
+> > >
+> > > Yep. The exit is incorrect (depending on your notion of correct, I'd
+> > > go with clang's notion as they've had to consider this for a while) as
+> > > it can never be executed. I've added the __builtin_unreachable() to
+> > > document that you can never get to that statement, as otherwise it can
+> > > make the code readability harder with the code looking like it will
+> > > fall through after calling something like usage_with_options (which is
+> > > noreturn). In unoptimized builds __builtin_unreachable() will fail if
+> > > executed, so it is a bit more active than just a comment.
+> >
+> > Oh I see, usage_with_options() calls exit() inside so any code after
+> > that won't be executed.  Hmm.. isn't it better to remove those codes
+> > then?
+> 
+> Not sure I follow. The patch does remove the code but it replaces it
+> with __builtin_unreachable() to basically state that the code here and
+> below can never be reached. Do you mean remove the exit from
+> usage_with_options? Then we'd need to fix all the callers, which would
+> be a larger patch. Perhaps it should be usage_with_options_and_exit()
+> to make it clearer that the code doesn't return. I was after doing
+> what was minimal for -Wunreachable-code but while trying to keep the
+> code clear.
 
-Add support for oncell providers as well by adding support for a nexus
-node map, as described in section 2.5.1 of the DT spec.
+No, I meant we may not need the __builtin_unreachable() at the callsites.
 
-For example, an SCMI PM domain provider might be a subdomain of
-multiple parent domains. In this example, the parent domains are
-MAIN_PD and WKUP_PD:
+Would it complain this code?
 
-    scmi_pds: protocol@11 {
-        reg = <0x11>;
-        #power-domain-cells = <1>;
-        power-domain-map = <15 &MAIN_PD>,
-                           <19 &WKUP_PD>;
-    };
+  if (some_bad_option_use)
+    usage_with_options(...);
 
-With the new map, child domain 15 (scmi_pds 15) becomes a
-subdomain of MAIN_PD, and child domain 19 (scmi_pds 19) becomes a
-subdomain of WKUP_PD.
+  /* normal code path */
 
-Signed-off-by: Kevin Hilman <khilman@baylibre.com>
----
- drivers/pmdomain/core.c | 166 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 166 insertions(+)
-
-diff --git a/drivers/pmdomain/core.c b/drivers/pmdomain/core.c
-index d6c1ddb807b2..b8e505516f3d 100644
---- a/drivers/pmdomain/core.c
-+++ b/drivers/pmdomain/core.c
-@@ -2441,6 +2441,9 @@ static LIST_HEAD(of_genpd_providers);
- /* Mutex to protect the list above. */
- static DEFINE_MUTEX(of_genpd_mutex);
- 
-+static int of_genpd_parse_domains_map(struct device_node *np,
-+				      struct genpd_onecell_data *data);
-+
- /**
-  * genpd_xlate_simple() - Xlate function for direct node-domain mapping
-  * @genpdspec: OF phandle args to map into a PM domain
-@@ -2635,6 +2638,14 @@ int of_genpd_add_provider_onecell(struct device_node *np,
- 	if (ret < 0)
- 		goto error;
- 
-+	/* Parse power-domains-map property for Nexus node mapping */
-+	ret = of_genpd_parse_domains_map(np, data);
-+	if (ret < 0 && ret != -ENOENT) {
-+		pr_err("Failed to parse power-domains-map for %pOF: %d\n", np, ret);
-+		of_genpd_del_provider(np);
-+		goto error;
-+	}
-+
- 	return 0;
- 
- error:
-@@ -2734,6 +2745,161 @@ static struct generic_pm_domain *genpd_get_from_provider(
- 	return genpd;
- }
- 
-+/**
-+ * of_genpd_parse_domains_map() - Parse power-domains-map property for Nexus mapping
-+ * @np: Device node pointer associated with the PM domain provider.
-+ * @data: Pointer to the onecell data associated with the PM domain provider.
-+ *
-+ * Parse the power-domains-map property to establish parent-child relationships
-+ * for PM domains using Nexus node mapping as defined in the device tree
-+ * specification section v2.5.1.
-+ *
-+ * The power-domains-map property format is:
-+ * power-domains-map = <child_specifier target_phandle [target_specifier]>, ...;
-+ *
-+ * Where:
-+ * - child_specifier: The child domain ID that should be mapped
-+ * - target_phandle: Phandle to the parent PM domain provider
-+ * - target_specifier: Optional arguments for the parent provider (if it has #power-domain-cells > 0)
-+ *
-+ * Returns 0 on success, -ENOENT if property doesn't exist, or negative error code.
-+ */
-+static int of_genpd_parse_domains_map(struct device_node *np,
-+				      struct genpd_onecell_data *data)
-+{
-+	struct of_phandle_args parent_args;
-+	struct generic_pm_domain *parent_genpd, *child_genpd;
-+	u32 *map_entries;
-+	int map_len, child_cells, i, ret;
-+	u32 child_id;
-+
-+	/* Check if power-domains-map property exists */
-+	map_len = of_property_count_u32_elems(np, "power-domains-map");
-+	if (map_len <= 0)
-+		return -ENOENT;
-+
-+	/* Get #power-domain-cells from this node (should be 1 for onecell) */
-+	ret = of_property_read_u32(np, "#power-domain-cells", &child_cells);
-+	if (ret) {
-+		pr_err("Missing #power-domain-cells property for %pOF\n", np);
-+		return ret;
-+	}
-+
-+	if (child_cells != 1) {
-+		pr_err("power-domains-map only supported for #power-domain-cells = 1, got %u for %pOF\n",
-+		       child_cells, np);
-+		return -EINVAL;
-+	}
-+
-+	map_entries = kcalloc(map_len, sizeof(*map_entries), GFP_KERNEL);
-+	if (!map_entries)
-+		return -ENOMEM;
-+
-+	ret = of_property_read_u32_array(np, "power-domains-map", map_entries, map_len);
-+	if (ret) {
-+		pr_err("Failed to read power-domains-map for %pOF: %d\n", np, ret);
-+		goto out_free;
-+	}
-+
-+	/* Parse the map entries */
-+	i = 0;
-+	while (i < map_len) {
-+		struct device_node *parent_np;
-+		u32 parent_cells;
-+
-+		/* Extract child domain ID */
-+		if (i >= map_len) {
-+			pr_err("Incomplete power-domains-map entry at index %d for %pOF\n", i, np);
-+			ret = -EINVAL;
-+			goto out_free;
-+		}
-+		child_id = map_entries[i++];
-+
-+		/* Extract parent phandle */
-+		if (i >= map_len) {
-+			pr_err("Missing parent phandle in power-domains-map at index %d for %pOF\n", i, np);
-+			ret = -EINVAL;
-+			goto out_free;
-+		}
-+		parent_np = of_find_node_by_phandle(map_entries[i++]);
-+		if (!parent_np) {
-+			pr_err("Invalid parent phandle 0x%x in power-domains-map for %pOF\n",
-+			       map_entries[i-1], np);
-+			ret = -EINVAL;
-+			goto out_free;
-+		}
-+
-+		/* Get #power-domain-cells from parent */
-+		ret = of_property_read_u32(parent_np, "#power-domain-cells", &parent_cells);
-+		if (ret) {
-+			pr_err("Missing #power-domain-cells in parent %pOF for %pOF\n", parent_np, np);
-+			of_node_put(parent_np);
-+			goto out_free;
-+		}
-+
-+		/* Build parent_args structure */
-+		parent_args.np = parent_np;
-+		parent_args.args_count = parent_cells;
-+
-+		/* Extract parent specifier arguments if any */
-+		if (parent_cells > 0) {
-+			if (i + parent_cells > map_len) {
-+				pr_err("Insufficient parent specifier args in power-domains-map for %pOF\n", np);
-+				of_node_put(parent_np);
-+				ret = -EINVAL;
-+				goto out_free;
-+			}
-+			memcpy(parent_args.args, &map_entries[i], parent_cells * sizeof(u32));
-+			i += parent_cells;
-+		}
-+
-+		/* Validate child ID is within bounds */
-+		if (child_id >= data->num_domains) {
-+			pr_err("Child ID %u out of bounds (max %u) in power-domains-map for %pOF\n",
-+			       child_id, data->num_domains - 1, np);
-+			of_node_put(parent_np);
-+			ret = -EINVAL;
-+			goto out_free;
-+		}
-+
-+		/* Get the child domain */
-+		child_genpd = data->domains[child_id];
-+		if (!child_genpd) {
-+			pr_err("Child domain %u is NULL in power-domains-map for %pOF\n", child_id, np);
-+			of_node_put(parent_np);
-+			ret = -EINVAL;
-+			goto out_free;
-+		}
-+
-+		/* Get the parent domain */
-+		parent_genpd = genpd_get_from_provider(&parent_args);
-+		of_node_put(parent_np);
-+		if (IS_ERR(parent_genpd)) {
-+			pr_err("Failed to get parent domain for child %u in power-domains-map for %pOF: %ld\n",
-+			       child_id, np, PTR_ERR(parent_genpd));
-+			ret = PTR_ERR(parent_genpd);
-+			goto out_free;
-+		}
-+
-+		/* Establish parent-child relationship */
-+		ret = genpd_add_subdomain(parent_genpd, child_genpd);
-+		if (ret) {
-+			pr_err("Failed to add child domain %u to parent in power-domains-map for %pOF: %d\n",
-+			       child_id, np, ret);
-+			goto out_free;
-+		}
-+
-+		pr_debug("Added child domain %u (%s) to parent %s via power-domains-map for %pOF\n",
-+			 child_id, child_genpd->name, parent_genpd->name, np);
-+	}
-+
-+	ret = 0;
-+
-+out_free:
-+	kfree(map_entries);
-+	return ret;
-+}
-+
- /**
-  * of_genpd_add_device() - Add a device to an I/O PM domain
-  * @genpdspec: OF phandle args to use for look-up PM domain
-
--- 
-2.49.0
+Thanks,
+Namhyung
 
 
