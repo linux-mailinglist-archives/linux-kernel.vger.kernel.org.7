@@ -1,113 +1,197 @@
-Return-Path: <linux-kernel+bounces-665955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84BF2AC70DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 20:25:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C57D9AC70E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 20:25:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C8AA4E0330
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 18:25:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8746E4E649E
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 18:25:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1604C28E57F;
-	Wed, 28 May 2025 18:25:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8439528E59F;
+	Wed, 28 May 2025 18:25:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lm6NlCxb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gSb6Q8lw"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 660921EE7B7;
-	Wed, 28 May 2025 18:25:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 110DD28E56E
+	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 18:25:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748456707; cv=none; b=mdVfVDhB81QmVBynbn2trAbf564azOcTiMj8Y5LJCtVp977tuBaYoDMA5z4NKCD16j4OegShKABpKHj51zo/Y2s2V+uUT8bmVp/6/smfwI8F7s9dolrPCmVnq37jFuqmzCC7lo8w6esfWLMiMFH6LGDPhW84RkxkRecwWKtQE58=
+	t=1748456739; cv=none; b=hCr74COO6qeAA3fg9iDPG3PrqmX0Y6z9yDjiIFzi4NnxBwxW5vrFbhCn6Clg6w5jhReHorw/Clq2CzFNncLDd4QRqsoVHjD9GVIGepg8OvGOPL3PXfyXU7ghXjesa61Uu8b4jgguBSPi6HVpOBR3Qmj246+dSepeKSXZgisT4qw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748456707; c=relaxed/simple;
-	bh=9R7rQjswLIJrPgJWl6lP8SrIEa2p86XfG8Anl84D21U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cEXbjy1D4ncB4JQ+BQY/Ud94SxQL/Brf7+9txqymDITR32wOedAA5BEvwvfl/MRBeO+E2mbmByr6Yahu43H3NTO3sqrqSw6MrH8SZ9cVoo+ZUVkpyKldKErwQH6vgQzXVx4vch97BXDTSJTm4wjT9WRzjJd4tp22hi3NCFEslyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lm6NlCxb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17B4DC4CEEB;
-	Wed, 28 May 2025 18:25:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748456706;
-	bh=9R7rQjswLIJrPgJWl6lP8SrIEa2p86XfG8Anl84D21U=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=lm6NlCxb4vJfwwDcN3M2IJMcH6XVEBaOsoyVhSjaFO6iaP8Fvlf+oxupHzRawfPff
-	 Q8hd7RaxLTWOMi4ZI3RPk2rdJUrOd4tDzZjbV5Ni4ETaLsyBGIWHbitCyhJFG0+3tw
-	 cY2PQXrv743zvL+0Ey9h0Aoe0I8PTQRCspi2+YABHXwzqRv5qp59euZuZFvV9PJWdT
-	 sr2uPrzcpf7DhWTlvHAJJpeE44NYZxC6iPI1nYibsBO2wRTG9VL5imJ9f8FJg3E68B
-	 ZY2oA7BKjVHApGbiHAjegPoQiaFpANf3Uf1q9IHnSFY5R72sX1uIA303KVUJeYVKTe
-	 J5pBf/3lIn1Cg==
-Message-ID: <b8061efa-83ef-4a7a-a39e-0475dce42614@kernel.org>
-Date: Wed, 28 May 2025 14:25:04 -0400
+	s=arc-20240116; t=1748456739; c=relaxed/simple;
+	bh=TrwTeeb3eSq6peBGpyS2fjLOHTgsDFfooNNEDI35gec=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RN3RZG7+piJM5dG9wN0A+YgJ40OdSAVwjb4ssqW9x/XGuucu7unssZi13l+OhJiqtcVcIywkWsWkrvVeMMMOtU1HsqX9bafoR19/Jn/daJRO7VrVPjJ0XHbGB87HqHL0b0ghWs/cw5Pg5lQ27q9roZz9uOUGr5HAiAiNvIru7jg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gSb6Q8lw; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-3114b7e89a6so49043a91.2
+        for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 11:25:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1748456737; x=1749061537; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lVVqFr1BE8q6eml8zA1z0lK7aGNcSUfClXnZn98OgHk=;
+        b=gSb6Q8lw7pXUBBIqXjElAS7OXbzu82FDWVRV3vh6FJWCWMqO45j0aiu9z7xaVFKrPr
+         K9mfYHPbGDYrShdyVXl2hTdJQIw5THDggbaiK8U1FREaSToTACTR4Swjbps8QxZgW854
+         cO/+7Q2Cevo+4StQO+zeeSq6RuILwl7zKGk3DBm7ng4mwaSGOf14GX6vvjzfPo+NiJ7w
+         qgxL253czsdTsjp6p36f13uW0ojgCeGPSwztettCeRJSPzT97SWTp++FwuL6CAyS9zyV
+         7Py6Y09VAIQpiNsze0f8IS7B1D+JR76kAbe6GE6CiTMlZq4gLCqqHhObh9pqjwamfjXW
+         Svag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748456737; x=1749061537;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lVVqFr1BE8q6eml8zA1z0lK7aGNcSUfClXnZn98OgHk=;
+        b=dPcSh550huhN1mSGYYFKxilDJp4yeUj/p0eZDyaEQixGpB7QAco/MEP9zo0iPgfche
+         dsuWRIeVCNntyzY/L7P8a5yjagIkThAkXL0X88g7VIaFk3iS8GdpQj3wUvfjVSDW7pUY
+         gSGR/FUhJQZC3hf5ObJSWc/yqTq2e9GMOHBR5sYedg7JhikEKgP+m4q9Flvq5fKt1bpF
+         EoLhtc/G0Q0LFbHBO204sCmXuZgfg76P3Us9cU0cgv3qJOxwEUzxbY/vN2OJMBfa4jlR
+         2oKrpeWwuyR/xdqVqvjvO+UsM0eZvGAVTsnV4Yvrij50i6He2QCmq+4u7NC6DeEzYaey
+         oADw==
+X-Forwarded-Encrypted: i=1; AJvYcCVfEVDx7h9iSDjC40YZBKSc2v3GJpnSfZUfpXKaeVGLwBUVjHOZGod9oLre9hcmk3LYoYrDykbhGrUZYzs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywomg5bwbv9AXXlHRjz19Xz/L3D9wSng6ZdslTsf40ymaTaR/YU
+	P5nT/TA4rONixReNnRXXMP35PJJRdQNbb23yr/0nPwfwyBlq+Upta20YRfCFW5n1DcXVnK3/0bS
+	ghsEEMNiITU4Z82K2ypCmR3KIDnra5nHJ7Py/Z/OD
+X-Gm-Gg: ASbGncsfKNZe8TyaXxa8B5mCvbr2geNa/P0cXJMtOwonuXltsG+l5T6eqYGY8RRy25C
+	VJckyqkDfuvv6QtJlBxeDXsSmBuQuN6VI42XQsKSNagPQWP+regQ3yTPmUlxWBDkuik/8GLjkfy
+	BvmEOrDGHZkk6X5OKjs8KZlufO6tjO6Kg7fsVpz+mU3R5C6ioccLLwPTom8b+Dvf5oFaocMfacv
+	w==
+X-Google-Smtp-Source: AGHT+IFijwOh+awYdgO4HAk/X8m/A4OWZUBHS7nOP52Vw8xKVE09sTMEC6FE21p5hEzwxtb4ty4X3loZKiHFU1jBNbA=
+X-Received: by 2002:a17:90b:3852:b0:30e:8c5d:8ed with SMTP id
+ 98e67ed59e1d1-3110f31a4fbmr26532549a91.19.1748456737021; Wed, 28 May 2025
+ 11:25:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] nfsd: use threads array as-is in netlink thread set
- interface
-To: Jeff Layton <jlayton@kernel.org>, Olga Kornievskaia
- <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>,
- Tom Talpey <tom@talpey.com>, Steven Rostedt <rostedt@goodmis.org>,
- Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, NeilBrown <neil@brown.name>
-Cc: Chuck Lever <chuck.lever@oracle.com>, Mike Snitzer <snitzer@kernel.org>,
- linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, netdev@vger.kernel.org
-References: <20250527-rpc-numa-v1-0-fa1d98e9a900@kernel.org>
- <174845587080.200069.9203268802136145057.b4-ty@oracle.com>
- <298ef5505e7abb9a0ca5f151090a42f8bf330c43.camel@kernel.org>
-Content-Language: en-US
-From: Chuck Lever <cel@kernel.org>
-Organization: kernel.org
-In-Reply-To: <298ef5505e7abb9a0ca5f151090a42f8bf330c43.camel@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250515220400.1096945-1-dionnaglaze@google.com>
+ <20250515220400.1096945-2-dionnaglaze@google.com> <aCZtdN0LhkRqm1Vn@google.com>
+ <CAAH4kHai8JStj+=HUiPVxbH9P79GorviG2GykEP7jQ=NB2MbUQ@mail.gmail.com> <aC4ZJyRPpX6eLKsC@google.com>
+In-Reply-To: <aC4ZJyRPpX6eLKsC@google.com>
+From: Dionna Amalie Glaze <dionnaglaze@google.com>
+Date: Wed, 28 May 2025 11:25:23 -0700
+X-Gm-Features: AX0GCFte05v61MvXwGYneIeTEvRS5b_Es3A7BflZae2g4_6rbG1Vveaf5-F60xY
+Message-ID: <CAAH4kHZkuD4UsXRGED6qecfAkeFpd8sLc+0osDhnKP4T5VmSYQ@mail.gmail.com>
+Subject: Re: [PATCH v5 1/2] kvm: sev: Add SEV-SNP guest request throttling
+To: Sean Christopherson <seanjc@google.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-coco@lists.linux.dev, Thomas Lendacky <Thomas.Lendacky@amd.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Joerg Roedel <jroedel@suse.de>, Peter Gonda <pgonda@google.com>, 
+	Borislav Petkov <bp@alien8.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 5/28/25 2:22 PM, Jeff Layton wrote:
-> On Wed, 2025-05-28 at 14:11 -0400, cel@kernel.org wrote:
->> From: Chuck Lever <chuck.lever@oracle.com>
->>
->> On Tue, 27 May 2025 20:12:46 -0400, Jeff Layton wrote:
->>> The first patch is probably appropriate for stable. It should fix
->>> problems when someone sets the pool_mode to pernode, without userland
->>> sending down a fully-populated thread array.
->>>
->>> The second patch just adds a couple of new tracepoints that I ended up
->>> using to track this down.
->>>
->>> [...]
->>
->> Applied to nfsd-testing, thanks!
->>
->> [1/2] nfsd: use threads array as-is in netlink interface
->>       commit: b2a9a114a3c7f5abfa2875b70ce9b73525a74291
->> [2/2] sunrpc: new tracepoints around svc thread wakeups
->>       commit: 65b8babe551bddf00aac69bc905f88a4e0371766
->>
-> 
-> My apologies, Chuck. Patch #2 has a bug in it:
-> 
-> +       trace_svc_pool_thread_noidle(pool, rqstp->rq_task->pid);
-> 
-> In the call above, the rqstp will be undefined. That should be:
-> 
-> +       trace_svc_pool_thread_noidle(pool, 0);
-> 
-> You can fix that up in tree, or I can resend if you prefer.
+On Wed, May 21, 2025 at 11:19=E2=80=AFAM Sean Christopherson <seanjc@google=
+.com> wrote:
+>
+> On Fri, May 16, 2025, Dionna Amalie Glaze wrote:
+> > > > @@ -4015,6 +4042,12 @@ static int snp_handle_guest_req(struct vcpu_=
+svm *svm, gpa_t req_gpa, gpa_t resp_
+> > > >
+> > > >       mutex_lock(&sev->guest_req_mutex);
+> > > >
+> > > > +     if (!__ratelimit(&sev->snp_guest_msg_rs)) {
+> > > > +             svm_vmgexit_no_action(svm, SNP_GUEST_ERR(SNP_GUEST_VM=
+M_ERR_BUSY, 0));
+> > > > +             ret =3D 1;
+> > > > +             goto out_unlock;
+> > >
+> > > Can you (or anyone) explain what a well-behaved guest will do in in r=
+esponse to
+> > > BUSY?  And/or explain why KVM injecting an error into the guest is be=
+tter than
+> > > exiting to userspace.
+> >
+> > Ah, I missed this question. The guest is meant to back off and try agai=
+n
+> > after waiting a bit.  This is the behavior added in
+> > https://lore.kernel.org/all/20230214164638.1189804-2-dionnaglaze@google=
+.com/
+>
+> Nice, it's already landed and considered legal VMM behavior.
+>
+> > If KVM returns to userspace with an exit type that the guest request wa=
+s
+> > throttled, then what is user space supposed to do with that?
+>
+> The userspace exit doesn't have to notify userspace that the guest was th=
+rottled,
+> e.g. KVM could exit on _every_ request and let userspace do its own throt=
+tling.
+>
+> I have no idea whether or not that's sane/useful, which is why I'm asking=
+.  The
+> cover letter, changelog, and documentation are all painfully sparse with =
+respect
+> to explaining why *this* uAPI is the right uAPI.
+>
+> > It could wait a bit before trying KVM_RUN again, but with the enlighten=
+ed
+> > method, the guest could at least work on other kernel tasks while it wa=
+its
+> > for its turn to get an attestation report.
+>
+> Nothing prevents KVM from providing userspace a way to communicate VMM_ER=
+R_BUSY,
+> e.g. as done for KVM_EXIT_SNP_REQ_CERTS:
+>
+> https://lore.kernel.org/all/20250428195113.392303-2-michael.roth@amd.com
+>
+> > Perhaps this is me not understanding the preferred KVM way of doing thi=
+ngs.
+>
+> The only real preference at play is to not end up with uAPI and ABI that =
+doesn't
+> fit "everyone's" needs.  It's impossible to fully future-proof KVM's ABI,=
+ but we
+> can at least perform due diligence to ensure we didn't simply pick the th=
+e path
+> of least resistance.
+>
+> The bar gets lowered a tiny bit if we go with a module param (which I thi=
+nk we
+> should do), but I'd still like an explanation of why a fairly simple rate=
+limiting
+> mechanism is the best overall approach.
 
-Fixed.
+Before I send out a revised patchset with changed commit text, what do
+you think about the following
+
+    The AMD-SP is a precious resource that doesn't have a scheduler other
+    than a mutex lock queue. To avoid customers from causing a DoS, a
+    kernel module parameter for rate limiting guest requests is added.
+[Addition:]
+    The kernel module parameter is a lower bound kernel-imposed rate limit
+    for any SEV-SNP VM-initiated guest request. This does not preclude the
+    addition of a new KVM exit type for SEV-SNP guest requests for
+    userspace to impose any additional throttling logic. The default value =
+of
+    0 maintains the previous behavior that there is no imposed rate limit o=
+n
+    guest requests.
 
 
--- 
-Chuck Lever
+We could still ask Michael to change KVM_EXIT_SNP_REQ_CERTS  to
+KVM_EXIT_SNP_GUEST_REQ
+and for the exit structure to include msg_type as well as the
+gfn+npages when the kind is an extended request for an attestation
+report so that we don't need to have two exit types.
+
+Regardless of that change for additional throttling opportunities, I
+think the system-wide imposed lower bound is important for quelling
+noisy neighbors to some degree.
+
+
+--=20
+-Dionna Glaze, PhD, CISSP, CCSP (she/her)
 
