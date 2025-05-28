@@ -1,424 +1,521 @@
-Return-Path: <linux-kernel+bounces-665336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81B8DAC67D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 12:54:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D65DCAC67BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 12:53:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99C221BC6F8A
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 10:54:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 418BA3BE7F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 10:52:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3694C27C145;
-	Wed, 28 May 2025 10:54:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BDA527A108;
+	Wed, 28 May 2025 10:53:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b="2Yk7R9Xo"
-Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KgzlkWPE"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F1A527AC32
-	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 10:54:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.202.193.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5878121420A;
+	Wed, 28 May 2025 10:53:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748429663; cv=none; b=rnMIcdzl//H/bAV5enTRHuY25EnrHBNC5qV2QxzUlqSMJvRiMbATSb2GS0kwUCA+toRnW2DwLO14tn/Y4Fq9CGkpCf1R3lDtH/xm2vHpJ7w6KUWPQuPEtS3ucNbSP9Dw4Efohk/FYkMT/FSSPdvxEBmg5/YO2AskamcB6YmbapA=
+	t=1748429585; cv=none; b=UWA0/DWFB76HDxxKRG5GoySO4cXmOmxdtW4StppU1jvpvS2jtyZrBTYvmJ1AmW7tyA+w8GX+rtfVxchcLqGyrl7SJ85GDXh1eUto28Yd/spazLadqygGcA6ql8Hvh2lDJpzQ9C6M0lPCPN28yH5z8rxrwL35LLv0GofWa4OX6P0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748429663; c=relaxed/simple;
-	bh=0pPylfzDfxShLC+1NXvmbMDM0mKUGGgu8xx79UZwJpw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tnk6hYDlrYH14r/NkhEyQixfwLH6LfYCXuTDkOwgFBfAY5iZwMh3HLBS/wedOtVxTO9P6DBAeIe9cJ8/qBf2RPVFkgNZsKUnfVg13hcpKAzRU1PsKQ/mimxSCT3Al7NpH2GQUTpUkg58gp4r9rgyqKB4EeUPUIvLR74odsxIZ0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org; spf=pass smtp.mailfrom=mentallysanemainliners.org; dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b=2Yk7R9Xo; arc=none smtp.client-ip=34.202.193.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mentallysanemainliners.org
-Authentication-Results: purelymail.com; auth=pass
-DKIM-Signature: a=rsa-sha256; b=2Yk7R9XoMM9siRLnRktw0LMuwLrIRn1j1Z6cgy9JIdD0DZn0wd/55pqoZ+UkCeaU2CgbXd8spYt/z4l1nkDBZ+xCswVRbnnQyo6sAZQYLRMD3lGQbf8jaqEMhgFpagcb4Inx0szqQTSl8U+D1zUd/TJgJd0GEEOGMkyXY04RgRBPXQFciayQwxn3w7Tce/+RDm67dTxcVw7wYI/eY4WPu+ghI0z3Mifpdyr5ohqEKSxTqISAAHqNgoIc8TB00Wp0D2jGrN9CjI/tI+ECDmeMv7IPvknBIIDdifcvUrvsMOH0u70oLPGkN41qHlRipEgrAP9gpwSGaznoP6poFhswsg==; s=purelymail3; d=purelymail.com; v=1; bh=0pPylfzDfxShLC+1NXvmbMDM0mKUGGgu8xx79UZwJpw=; h=Feedback-ID:Received:From:To:Subject:Date;
-Feedback-ID: 68229:10037:null:purelymail
-X-Pm-Original-To: linux-kernel@vger.kernel.org
-Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id -1157235224;
-          (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
-          Wed, 28 May 2025 10:53:49 +0000 (UTC)
-From: Umer Uddin <umer.uddin@mentallysanemainliners.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
+	s=arc-20240116; t=1748429585; c=relaxed/simple;
+	bh=NAQa13db1BCPMZRo+1ORViw4igtX5oFCHLsMQq5GQkc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CUXem8HXlX8xFnyzyhamQw40oPcGdyIus7KFmBS0zNcV/8sYUM018knG1gw459W9jtFG50jGGbbj/rYGvTl+VZVIf9e+xW0YlUK2NR74I2UXeioG1eyD0hG2+TpxsnriNERVN/80igVNu9bn5FSeruQkOWeNaLa++ZQFdWuj9Nc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KgzlkWPE; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1748429583; x=1779965583;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=NAQa13db1BCPMZRo+1ORViw4igtX5oFCHLsMQq5GQkc=;
+  b=KgzlkWPEw9E32usoT3zlpBWAHXWjvPXq9aCNbxzjHjL+8gcd+585rELW
+   Lp8sU8oOB+fSuRGEL1+xwwCNcQkiSpxICJjOqsm01jAisSmjiBTRnCn5t
+   jYy3wKWyxOJwGYHw5zN7tGEM5MmmJjYADtUa7HZtDY9Uqzg7kxggAUswS
+   qPUqUM3LWUHYLx6cuoJWSYbUH+MfndvebemrMGvzWRlsbzspiARjNu9xQ
+   ikahm7TOxGnDMH5qN4CyU0hnRFhHvAWW2s4a4qxEH+F1a+7r+4DTrMu7x
+   4pbKcEJS+BFkvDrt6j+Nkw+ODo5cCMWVJITToVufBcMEJRqFoQyXd21GN
+   A==;
+X-CSE-ConnectionGUID: Uy4VPVUlQOKnv54X9ypo2Q==
+X-CSE-MsgGUID: sScb+9CSQE2lSIXT8Pg0PA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11446"; a="50606312"
+X-IronPort-AV: E=Sophos;i="6.15,320,1739865600"; 
+   d="scan'208";a="50606312"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2025 03:53:02 -0700
+X-CSE-ConnectionGUID: LyqcDhdHSYOoQV332uUgFA==
+X-CSE-MsgGUID: twjzfp7dR5G/KyU02as1yg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,320,1739865600"; 
+   d="scan'208";a="143237950"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2025 03:52:56 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1uKEOy-00000001QBJ-2Avs;
+	Wed, 28 May 2025 13:52:52 +0300
+Date: Wed, 28 May 2025 13:52:52 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Anup Patel <apatel@ventanamicro.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Igor Belwon <igor.belwon@mentallysanemainliners.org>
-Cc: linux-samsung-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Len Brown <lenb@kernel.org>, Sunil V L <sunilvl@ventanamicro.com>,
+	Rahul Pathak <rpathak@ventanamicro.com>,
+	Leyfoon Tan <leyfoon.tan@starfivetech.com>,
+	Atish Patra <atish.patra@linux.dev>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Anup Patel <anup@brainfault.org>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 2/2] clk: samsung: exynos990: Add CMU_HSI1 block
-Date: Wed, 28 May 2025 11:52:52 +0100
-Message-ID: <20250528105252.157533-3-umer.uddin@mentallysanemainliners.org>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250528105252.157533-1-umer.uddin@mentallysanemainliners.org>
-References: <20250528105252.157533-1-umer.uddin@mentallysanemainliners.org>
+Subject: Re: [PATCH v4 07/23] mailbox: Add RISC-V SBI message proxy (MPXY)
+ based mailbox driver
+Message-ID: <aDbrBFcgaJxgBRVZ@smile.fi.intel.com>
+References: <20250525084710.1665648-1-apatel@ventanamicro.com>
+ <20250525084710.1665648-8-apatel@ventanamicro.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-MIME-Autoconverted: from 8bit to quoted-printable by Purelymail
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250525084710.1665648-8-apatel@ventanamicro.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-The CMU_HSI1 block is used for providing clocks for the DesignWare
-MMC Controller, PCIE Subsystem and UFS subsystem, and has six
-dependency clocks from CMU_TOP.
+On Sun, May 25, 2025 at 02:16:54PM +0530, Anup Patel wrote:
+> Add a mailbox controller driver for the new SBI message proxy extension
+> which is part of the SBI v3.0 specification.
 
-Signed-off-by: Umer Uddin <umer.uddin@mentallysanemainliners.org>
----
- drivers/clk/samsung/clk-exynos990.c | 221 ++++++++++++++++++++++++++++
- 1 file changed, 221 insertions(+)
+...
 
-diff --git a/drivers/clk/samsung/clk-exynos990.c b/drivers/clk/samsung/clk-=
-exynos990.c
-index 8d3f193d2..91ecbafcf 100644
---- a/drivers/clk/samsung/clk-exynos990.c
-+++ b/drivers/clk/samsung/clk-exynos990.c
-@@ -20,6 +20,7 @@
- #define CLKS_NR_TOP (CLK_GOUT_CMU_VRA_BUS + 1)
- #define CLKS_NR_HSI0 (CLK_GOUT_HSI0_XIU_D_HSI0_ACLK + 1)
- #define CLKS_NR_PERIS (CLK_GOUT_PERIS_OTP_CON_TOP_OSCCLK + 1)
-+#define CLKS_NR_HSI1 (CLK_MOUT_HSI1_UFS_EMBD_USER + 1)
-=20
- /* ---- CMU_TOP ----------------------------------------------------------=
---- */
-=20
-@@ -1483,6 +1484,222 @@ static void __init exynos990_cmu_peris_init(struct =
-device_node *np)
- CLK_OF_DECLARE(exynos990_cmu_peris, "samsung,exynos990-cmu-peris",
- =09       exynos990_cmu_peris_init);
-=20
-+/* ---- CMU_HSI1 ---------------------------------------------------------=
---- */
-+
-+/* Register Offset definitions for CMU_HSI1 (0x13000000) */
-+#define PLL_CON0_MUX_CLKCMU_HSI1_BUS_USER=09=09=09=09=09=09=09=09=09=09=09=
-=090x0600
-+#define PLL_CON1_MUX_CLKCMU_HSI1_BUS_USER=09=09=09=09=09=09=09=09=09=09=09=
-=090x0604
-+#define PLL_CON0_MUX_CLKCMU_HSI1_MMC_CARD_USER=09=09=09=09=09=09=09=09=09=
-=09=09=090x0610
-+#define PLL_CON1_MUX_CLKCMU_HSI1_MMC_CARD_USER=09=09=09=09=09=09=09=09=09=
-=09=09=090x0614
-+#define PLL_CON0_MUX_CLKCMU_HSI1_PCIE_USER=09=09=09=09=09=09=09=09=09=09=
-=09=090x0620
-+#define PLL_CON1_MUX_CLKCMU_HSI1_PCIE_USER=09=09=09=09=09=09=09=09=09=09=
-=09=090x0624
-+#define PLL_CON0_MUX_CLKCMU_HSI1_UFS_CARD_USER=09=09=09=09=09=09=09=09=09=
-=09=09=090x0630
-+#define PLL_CON1_MUX_CLKCMU_HSI1_UFS_CARD_USER=09=09=09=09=09=09=09=09=09=
-=09=09=090x0634
-+#define PLL_CON0_MUX_CLKCMU_HSI1_UFS_EMBD_USER=09=09=09=09=09=09=09=09=09=
-=09=09=090x0640
-+#define PLL_CON1_MUX_CLKCMU_HSI1_UFS_EMBD_USER=09=09=09=09=09=09=09=09=09=
-=09=09=090x0644
-+#define HSI1_CMU_HSI1_CONTROLLER_OPTION=09=09=09=09=09=09=09=09=09=09=09=
-=09=090x0800
-+#define CLK_CON_GAT_CLK_BLK_HSI1_UID_PCIE_GEN2_IPCLKPORT_PHY_REFCLK_IN=09=
-=09=09=09=09=09=09=09=090x2000
-+#define CLK_CON_GAT_CLK_BLK_HSI1_UID_PCIE_GEN4_0_IPCLKPORT_PCIE_001_PCIE_S=
-UB_CTRL_INST_0_PHY_REFCLK_IN=09=09=09=09=090x2004
-+#define CLK_CON_GAT_GOUT_BLK_HSI1_UID_D_TZPC_HSI1_IPCLKPORT_PCLK=09=09=09=
-=09=09=09=09=09=090x2008
-+#define CLK_CON_GAT_GOUT_BLK_HSI1_UID_GPIO_HSI1_IPCLKPORT_PCLK=09=09=09=09=
-=09=09=09=09=09=090x200c
-+#define CLK_CON_GAT_GOUT_BLK_HSI1_UID_HSI1_CMU_HSI1_IPCLKPORT_PCLK=09=09=
-=09=09=09=09=09=09=090x2010
-+#define CLK_CON_GAT_GOUT_BLK_HSI1_UID_LHM_AXI_P_HSI1_IPCLKPORT_I_CLK=09=09=
-=09=09=09=09=09=09=090x2014
-+#define CLK_CON_GAT_GOUT_BLK_HSI1_UID_LHS_ACEL_D_HSI1_IPCLKPORT_I_CLK=09=
-=09=09=09=09=09=09=09=090x2018
-+#define CLK_CON_GAT_GOUT_BLK_HSI1_UID_MMC_CARD_IPCLKPORT_I_ACLK=09=09=09=
-=09=09=09=09=09=09=090x201c
-+#define CLK_CON_GAT_GOUT_BLK_HSI1_UID_MMC_CARD_IPCLKPORT_SDCLKIN=09=09=09=
-=09=09=09=09=09=090x2020
-+#define CLK_CON_GAT_GOUT_BLK_HSI1_UID_PCIE_GEN2_IPCLKPORT_DBI_ACLK=09=09=
-=09=09=09=09=09=09=090x2024
-+#define CLK_CON_GAT_GOUT_BLK_HSI1_UID_PCIE_GEN2_IPCLKPORT_IEEE1500_WRAPPER=
-_FOR_PCIEG2_PHY_X1_INST_0_I_SCL_APB_PCLK=09=09=090x2028
-+#define CLK_CON_GAT_GOUT_BLK_HSI1_UID_PCIE_GEN2_IPCLKPORT_MSTR_ACLK=09=09=
-=09=09=09=09=09=09=090x202c
-+#define CLK_CON_GAT_GOUT_BLK_HSI1_UID_PCIE_GEN2_IPCLKPORT_PCIE_SUB_CTRL_IN=
-ST_0_I_DRIVER_APB_CLK=09=09=09=09=09=090x2030
-+#define CLK_CON_GAT_GOUT_BLK_HSI1_UID_PCIE_GEN2_IPCLKPORT_PIPE2_DIGITAL_X1=
-_WRAP_INST_0_I_APB_PCLK_SCL=09=09=09=09=090x2034
-+#define CLK_CON_GAT_GOUT_BLK_HSI1_UID_PCIE_GEN2_IPCLKPORT_SLV_ACLK=09=09=
-=09=09=09=09=09=09=090x2038
-+#define CLK_CON_GAT_GOUT_BLK_HSI1_UID_PCIE_GEN4_0_IPCLKPORT_PCIE_001_G4X2_=
-DWC_PCIE_CTL_INST_0_DBI_ACLK_UG=09=09=09=090x203c
-+#define CLK_CON_GAT_GOUT_BLK_HSI1_UID_PCIE_GEN4_0_IPCLKPORT_PCIE_001_G4X2_=
-DWC_PCIE_CTL_INST_0_MSTR_ACLK_UG=09=09=09=090x2040
-+#define CLK_CON_GAT_GOUT_BLK_HSI1_UID_PCIE_GEN4_0_IPCLKPORT_PCIE_001_G4X2_=
-DWC_PCIE_CTL_INST_0_SLV_ACLK_UG=09=09=09=090x2044
-+#define CLK_CON_GAT_GOUT_BLK_HSI1_UID_PCIE_GEN4_0_IPCLKPORT_PCIE_001_PCIE_=
-SUB_CTRL_INST_0_I_DRIVER_APB_CLK=09=09=09=090x2048
-+#define CLK_CON_GAT_GOUT_BLK_HSI1_UID_PCIE_GEN4_0_IPCLKPORT_PCS_PMA_INST_0=
-_PIPE_PAL_PCIE_INST_0_I_APB_PCLK=09=09=09=090x204c
-+#define CLK_CON_GAT_GOUT_BLK_HSI1_UID_PCIE_GEN4_0_IPCLKPORT_PCS_PMA_INST_0=
-_SF_PCIEPHY000X2_LN07LPP_QCH_TM_WRAPPER_INST_0_I_APB_PCLK=090x2050
-+#define CLK_CON_GAT_GOUT_BLK_HSI1_UID_PCIE_IA_GEN2_IPCLKPORT_I_CLK=09=09=
-=09=09=09=09=09=09=090x2054
-+#define CLK_CON_GAT_GOUT_BLK_HSI1_UID_PCIE_IA_GEN4_0_IPCLKPORT_I_CLK=09=09=
-=09=09=09=09=09=09=090x2058
-+#define CLK_CON_GAT_GOUT_BLK_HSI1_UID_PPMU_HSI1_IPCLKPORT_ACLK=09=09=09=09=
-=09=09=09=09=09=090x205c
-+#define CLK_CON_GAT_GOUT_BLK_HSI1_UID_PPMU_HSI1_IPCLKPORT_PCLK=09=09=09=09=
-=09=09=09=09=09=090x2060
-+#define CLK_CON_GAT_GOUT_BLK_HSI1_UID_RSTNSYNC_CLK_HSI1_BUS_IPCLKPORT_CLK=
-=09=09=09=09=09=09=09=090x2064
-+#define CLK_CON_GAT_GOUT_BLK_HSI1_UID_RSTNSYNC_CLK_HSI1_OSCCLK_IPCLKPORT_C=
-LK=09=09=09=09=09=09=09=090x2068
-+#define CLK_CON_GAT_GOUT_BLK_HSI1_UID_SYSMMU_HSI1_IPCLKPORT_CLK_S2=09=09=
-=09=09=09=09=09=09=090x206c
-+#define CLK_CON_GAT_GOUT_BLK_HSI1_UID_SYSREG_HSI1_IPCLKPORT_PCLK=09=09=09=
-=09=09=09=09=09=090x2070
-+#define CLK_CON_GAT_GOUT_BLK_HSI1_UID_UFS_CARD_IPCLKPORT_I_ACLK=09=09=09=
-=09=09=09=09=09=09=090x2074
-+#define CLK_CON_GAT_GOUT_BLK_HSI1_UID_UFS_CARD_IPCLKPORT_I_CLK_UNIPRO=09=
-=09=09=09=09=09=09=09=090x2078
-+#define CLK_CON_GAT_GOUT_BLK_HSI1_UID_UFS_CARD_IPCLKPORT_I_FMP_CLK=09=09=
-=09=09=09=09=09=09=090x207c
-+#define CLK_CON_GAT_GOUT_BLK_HSI1_UID_UFS_EMBD_IPCLKPORT_I_ACLK=09=09=09=
-=09=09=09=09=09=09=090x2080
-+#define CLK_CON_GAT_GOUT_BLK_HSI1_UID_UFS_EMBD_IPCLKPORT_I_CLK_UNIPRO=09=
-=09=09=09=09=09=09=09=090x2084
-+#define CLK_CON_GAT_GOUT_BLK_HSI1_UID_UFS_EMBD_IPCLKPORT_I_FMP_CLK=09=09=
-=09=09=09=09=09=09=090x2088
-+#define CLK_CON_GAT_GOUT_BLK_HSI1_UID_VGEN_LITE_HSI1_IPCLKPORT_CLK=09=09=
-=09=09=09=09=09=09=090x208c
-+#define CLK_CON_GAT_GOUT_BLK_HSI1_UID_XIU_D_HSI1_IPCLKPORT_ACLK=09=09=09=
-=09=09=09=09=09=09=090x2090
-+#define CLK_CON_GAT_GOUT_BLK_HSI1_UID_XIU_P_HSI1_IPCLKPORT_ACLK=09=09=09=
-=09=09=09=09=09=09=090x2094
-+#define DMYQCH_CON_PCIE_GEN2_QCH_REF=09=09=09=09=09=09=09=09=09=09=09=09=
-=090x3000
-+#define DMYQCH_CON_PCIE_GEN4_0_QCH_REF=09=09=09=09=09=09=09=09=09=09=09=09=
-=090x3004
-+#define QCH_CON_D_TZPC_HSI1_QCH=09=09=09=09=09=09=09=09=09=09=09=09=09=090=
-x3024
-+#define QCH_CON_GPIO_HSI1_QCH=09=09=09=09=09=09=09=09=09=09=09=09=09=090x3=
-028
-+#define QCH_CON_HSI1_CMU_HSI1_QCH=09=09=09=09=09=09=09=09=09=09=09=09=090x=
-302c
-+#define QCH_CON_LHM_AXI_P_HSI1_QCH=09=09=09=09=09=09=09=09=09=09=09=09=090=
-x3030
-+#define QCH_CON_LHS_ACEL_D_HSI1_QCH=09=09=09=09=09=09=09=09=09=09=09=09=09=
-0x3034
-+#define QCH_CON_MMC_CARD_QCH=09=09=09=09=09=09=09=09=09=09=09=09=09=090x30=
-38
-+#define QCH_CON_PCIE_GEN2_QCH_APB=09=09=09=09=09=09=09=09=09=09=09=09=090x=
-303c
-+#define QCH_CON_PCIE_GEN2_QCH_DBI=09=09=09=09=09=09=09=09=09=09=09=09=090x=
-3040
-+#define QCH_CON_PCIE_GEN2_QCH_MSTR=09=09=09=09=09=09=09=09=09=09=09=09=090=
-x3044
-+#define QCH_CON_PCIE_GEN2_QCH_PCS=09=09=09=09=09=09=09=09=09=09=09=09=090x=
-3048
-+#define QCH_CON_PCIE_GEN2_QCH_PHY=09=09=09=09=09=09=09=09=09=09=09=09=090x=
-304c
-+#define QCH_CON_PCIE_GEN4_0_QCH_APB=09=09=09=09=09=09=09=09=09=09=09=09=09=
-0x3050
-+#define QCH_CON_PCIE_GEN4_0_QCH_AXI=09=09=09=09=09=09=09=09=09=09=09=09=09=
-0x3054
-+#define QCH_CON_PCIE_GEN4_0_QCH_DBI=09=09=09=09=09=09=09=09=09=09=09=09=09=
-0x3058
-+#define QCH_CON_PCIE_GEN4_0_QCH_PCS_APB=09=09=09=09=09=09=09=09=09=09=09=
-=09=090x305c
-+#define QCH_CON_PCIE_GEN4_0_QCH_PMA_APB=09=09=09=09=09=09=09=09=09=09=09=
-=09=090x3060
-+#define QCH_CON_PCIE_IA_GEN2_QCH=09=09=09=09=09=09=09=09=09=09=09=09=090x3=
-064
-+#define QCH_CON_PCIE_IA_GEN4_0_QCH=09=09=09=09=09=09=09=09=09=09=09=09=090=
-x3068
-+#define QCH_CON_PPMU_HSI1_QCH=09=09=09=09=09=09=09=09=09=09=09=09=09=090x3=
-06c
-+#define QCH_CON_SYSMMU_HSI1_QCH=09=09=09=09=09=09=09=09=09=09=09=09=09=090=
-x3070
-+#define QCH_CON_SYSREG_HSI1_QCH=09=09=09=09=09=09=09=09=09=09=09=09=09=090=
-x3074
-+#define QCH_CON_UFS_CARD_QCH=09=09=09=09=09=09=09=09=09=09=09=09=09=090x30=
-78
-+#define QCH_CON_UFS_CARD_QCH_FMP=09=09=09=09=09=09=09=09=09=09=09=09=090x3=
-07c
-+#define QCH_CON_UFS_EMBD_QCH=09=09=09=09=09=09=09=09=09=09=09=09=09=090x30=
-80
-+#define QCH_CON_UFS_EMBD_QCH_FMP=09=09=09=09=09=09=09=09=09=09=09=09=090x3=
-084
-+#define QCH_CON_VGEN_LITE_HSI1_QCH=09=09=09=09=09=09=09=09=09=09=09=09=090=
-x3088
-+
-+static const unsigned long hsi1_clk_regs[] __initconst =3D {
-+=09PLL_CON0_MUX_CLKCMU_HSI1_BUS_USER,
-+=09PLL_CON1_MUX_CLKCMU_HSI1_BUS_USER,
-+=09PLL_CON0_MUX_CLKCMU_HSI1_MMC_CARD_USER,
-+=09PLL_CON1_MUX_CLKCMU_HSI1_MMC_CARD_USER,
-+=09PLL_CON0_MUX_CLKCMU_HSI1_PCIE_USER,
-+=09PLL_CON1_MUX_CLKCMU_HSI1_PCIE_USER,
-+=09PLL_CON0_MUX_CLKCMU_HSI1_UFS_CARD_USER,
-+=09PLL_CON1_MUX_CLKCMU_HSI1_UFS_CARD_USER,
-+=09PLL_CON0_MUX_CLKCMU_HSI1_UFS_EMBD_USER,
-+=09PLL_CON1_MUX_CLKCMU_HSI1_UFS_EMBD_USER,
-+=09HSI1_CMU_HSI1_CONTROLLER_OPTION,
-+=09CLK_CON_GAT_CLK_BLK_HSI1_UID_PCIE_GEN2_IPCLKPORT_PHY_REFCLK_IN,
-+=09CLK_CON_GAT_CLK_BLK_HSI1_UID_PCIE_GEN4_0_IPCLKPORT_PCIE_001_PCIE_SUB_CT=
-RL_INST_0_PHY_REFCLK_IN,
-+=09CLK_CON_GAT_GOUT_BLK_HSI1_UID_D_TZPC_HSI1_IPCLKPORT_PCLK,
-+=09CLK_CON_GAT_GOUT_BLK_HSI1_UID_GPIO_HSI1_IPCLKPORT_PCLK,
-+=09CLK_CON_GAT_GOUT_BLK_HSI1_UID_HSI1_CMU_HSI1_IPCLKPORT_PCLK,
-+=09CLK_CON_GAT_GOUT_BLK_HSI1_UID_LHM_AXI_P_HSI1_IPCLKPORT_I_CLK,
-+=09CLK_CON_GAT_GOUT_BLK_HSI1_UID_LHS_ACEL_D_HSI1_IPCLKPORT_I_CLK,
-+=09CLK_CON_GAT_GOUT_BLK_HSI1_UID_MMC_CARD_IPCLKPORT_I_ACLK,
-+=09CLK_CON_GAT_GOUT_BLK_HSI1_UID_MMC_CARD_IPCLKPORT_SDCLKIN,
-+=09CLK_CON_GAT_GOUT_BLK_HSI1_UID_PCIE_GEN2_IPCLKPORT_DBI_ACLK,
-+=09CLK_CON_GAT_GOUT_BLK_HSI1_UID_PCIE_GEN2_IPCLKPORT_IEEE1500_WRAPPER_FOR_=
-PCIEG2_PHY_X1_INST_0_I_SCL_APB_PCLK,
-+=09CLK_CON_GAT_GOUT_BLK_HSI1_UID_PCIE_GEN2_IPCLKPORT_MSTR_ACLK,
-+=09CLK_CON_GAT_GOUT_BLK_HSI1_UID_PCIE_GEN2_IPCLKPORT_PCIE_SUB_CTRL_INST_0_=
-I_DRIVER_APB_CLK,
-+=09CLK_CON_GAT_GOUT_BLK_HSI1_UID_PCIE_GEN2_IPCLKPORT_PIPE2_DIGITAL_X1_WRAP=
-_INST_0_I_APB_PCLK_SCL,
-+=09CLK_CON_GAT_GOUT_BLK_HSI1_UID_PCIE_GEN2_IPCLKPORT_SLV_ACLK,
-+=09CLK_CON_GAT_GOUT_BLK_HSI1_UID_PCIE_GEN4_0_IPCLKPORT_PCIE_001_G4X2_DWC_P=
-CIE_CTL_INST_0_DBI_ACLK_UG,
-+=09CLK_CON_GAT_GOUT_BLK_HSI1_UID_PCIE_GEN4_0_IPCLKPORT_PCIE_001_G4X2_DWC_P=
-CIE_CTL_INST_0_MSTR_ACLK_UG,
-+=09CLK_CON_GAT_GOUT_BLK_HSI1_UID_PCIE_GEN4_0_IPCLKPORT_PCIE_001_G4X2_DWC_P=
-CIE_CTL_INST_0_SLV_ACLK_UG,
-+=09CLK_CON_GAT_GOUT_BLK_HSI1_UID_PCIE_GEN4_0_IPCLKPORT_PCIE_001_PCIE_SUB_C=
-TRL_INST_0_I_DRIVER_APB_CLK,
-+=09CLK_CON_GAT_GOUT_BLK_HSI1_UID_PCIE_GEN4_0_IPCLKPORT_PCS_PMA_INST_0_PIPE=
-_PAL_PCIE_INST_0_I_APB_PCLK,
-+=09CLK_CON_GAT_GOUT_BLK_HSI1_UID_PCIE_GEN4_0_IPCLKPORT_PCS_PMA_INST_0_SF_P=
-CIEPHY000X2_LN07LPP_QCH_TM_WRAPPER_INST_0_I_APB_PCLK,
-+=09CLK_CON_GAT_GOUT_BLK_HSI1_UID_PCIE_IA_GEN2_IPCLKPORT_I_CLK,
-+=09CLK_CON_GAT_GOUT_BLK_HSI1_UID_PCIE_IA_GEN4_0_IPCLKPORT_I_CLK,
-+=09CLK_CON_GAT_GOUT_BLK_HSI1_UID_PPMU_HSI1_IPCLKPORT_ACLK,
-+=09CLK_CON_GAT_GOUT_BLK_HSI1_UID_PPMU_HSI1_IPCLKPORT_PCLK,
-+=09CLK_CON_GAT_GOUT_BLK_HSI1_UID_RSTNSYNC_CLK_HSI1_BUS_IPCLKPORT_CLK,
-+=09CLK_CON_GAT_GOUT_BLK_HSI1_UID_RSTNSYNC_CLK_HSI1_OSCCLK_IPCLKPORT_CLK,
-+=09CLK_CON_GAT_GOUT_BLK_HSI1_UID_SYSMMU_HSI1_IPCLKPORT_CLK_S2,
-+=09CLK_CON_GAT_GOUT_BLK_HSI1_UID_SYSREG_HSI1_IPCLKPORT_PCLK,
-+=09CLK_CON_GAT_GOUT_BLK_HSI1_UID_UFS_CARD_IPCLKPORT_I_ACLK,
-+=09CLK_CON_GAT_GOUT_BLK_HSI1_UID_UFS_CARD_IPCLKPORT_I_CLK_UNIPRO,
-+=09CLK_CON_GAT_GOUT_BLK_HSI1_UID_UFS_CARD_IPCLKPORT_I_FMP_CLK,
-+=09CLK_CON_GAT_GOUT_BLK_HSI1_UID_UFS_EMBD_IPCLKPORT_I_ACLK,
-+=09CLK_CON_GAT_GOUT_BLK_HSI1_UID_UFS_EMBD_IPCLKPORT_I_CLK_UNIPRO,
-+=09CLK_CON_GAT_GOUT_BLK_HSI1_UID_UFS_EMBD_IPCLKPORT_I_FMP_CLK,
-+=09CLK_CON_GAT_GOUT_BLK_HSI1_UID_VGEN_LITE_HSI1_IPCLKPORT_CLK,
-+=09CLK_CON_GAT_GOUT_BLK_HSI1_UID_XIU_D_HSI1_IPCLKPORT_ACLK,
-+=09CLK_CON_GAT_GOUT_BLK_HSI1_UID_XIU_P_HSI1_IPCLKPORT_ACLK,
-+=09DMYQCH_CON_PCIE_GEN2_QCH_REF,
-+=09DMYQCH_CON_PCIE_GEN4_0_QCH_REF,
-+=09QCH_CON_D_TZPC_HSI1_QCH,
-+=09QCH_CON_GPIO_HSI1_QCH,
-+=09QCH_CON_HSI1_CMU_HSI1_QCH,
-+=09QCH_CON_LHM_AXI_P_HSI1_QCH,
-+=09QCH_CON_LHS_ACEL_D_HSI1_QCH,
-+=09QCH_CON_MMC_CARD_QCH,
-+=09QCH_CON_PCIE_GEN2_QCH_APB,
-+=09QCH_CON_PCIE_GEN2_QCH_DBI,
-+=09QCH_CON_PCIE_GEN2_QCH_MSTR,
-+=09QCH_CON_PCIE_GEN2_QCH_PCS,
-+=09QCH_CON_PCIE_GEN2_QCH_PHY,
-+=09QCH_CON_PCIE_GEN4_0_QCH_APB,
-+=09QCH_CON_PCIE_GEN4_0_QCH_AXI,
-+=09QCH_CON_PCIE_GEN4_0_QCH_DBI,
-+=09QCH_CON_PCIE_GEN4_0_QCH_PCS_APB,
-+=09QCH_CON_PCIE_GEN4_0_QCH_PMA_APB,
-+=09QCH_CON_PCIE_IA_GEN2_QCH,
-+=09QCH_CON_PCIE_IA_GEN4_0_QCH,
-+=09QCH_CON_PPMU_HSI1_QCH,
-+=09QCH_CON_SYSMMU_HSI1_QCH,
-+=09QCH_CON_SYSREG_HSI1_QCH,
-+=09QCH_CON_UFS_CARD_QCH,
-+=09QCH_CON_UFS_CARD_QCH_FMP,
-+=09QCH_CON_UFS_EMBD_QCH,
-+=09QCH_CON_UFS_EMBD_QCH_FMP,
-+=09QCH_CON_VGEN_LITE_HSI1_QCH,
-+};
-+
-+/* Parent clock list for CMU_HSI1 muxes */
-+PNAME(mout_hsi1_ufs_embd_p) =3D=09=09{ "oscclk",
-+=09=09=09=09=09  "dout_cmu_shared0_div4",
-+=09=09=09=09=09  "dout_cmu_shared2_div2",
-+=09=09=09=09=09  "oscclk" };
-+PNAME(mout_hsi1_ufs_card_p) =3D=09=09{ "oscclk",
-+=09=09=09=09=09  "dout_cmu_shared0_div4",
-+=09=09=09=09=09  "dout_cmu_shared2_div2",
-+=09=09=09=09=09  "oscclk" };
-+PNAME(mout_hsi1_pcie_p) =3D=09=09{ "oscclk", "fout_shared2_pll" };
-+PNAME(mout_hsi1_bus_p) =3D=09=09{ "dout_cmu_shared0_div3",
-+=09=09=09=09=09  "dout_cmu_shared0_div4",
-+=09=09=09=09=09  "dout_cmu_shared1_div4",
-+=09=09=09=09=09  "dout_cmu_shared4_div3",
-+=09=09=09=09=09  "dout_cmu_shared2_div2",
-+=09=09=09=09=09  "fout_mmc_pll",
-+=09=09=09=09=09  "oscclk",
-+=09=09=09=09=09  "oscclk" };
-+PNAME(mout_hsi1_mmc_card_p) =3D=09=09{ "oscclk",
-+=09=09=09=09=09  "fout_shared2_pll",
-+=09=09=09=09=09  "fout_mmc_pll",
-+=09=09=09=09=09  "dout_cmu_shared0_div4" };
-+PNAME(mout_hsi1_bus_user_p) =3D=09=09{ "oscclk", "dout_cmu_hsi1_bus" };
-+PNAME(mout_hsi1_mmc_card_user_p) =3D=09{ "oscclk", "dout_cmu_hsi1_mmc_card=
-" };
-+PNAME(mout_hsi1_pcie_user_p) =3D=09=09{ "oscclk", "dout_cmu_hsi1_pcie" };
-+PNAME(mout_hsi1_ufs_card_user_p) =3D=09{ "oscclk", "dout_cmu_hsi1_ufs_card=
-" };
-+PNAME(mout_hsi1_ufs_embd_user_p) =3D=09{ "oscclk", "dout_cmu_hsi1_ufs_embd=
-" };
-+
-+static const struct samsung_mux_clock hsi1_mux_clks[] __initconst =3D {
-+=09MUX(CLK_MOUT_HSI1_BUS_USER, "mout_hsi1_bus_user",
-+=09    mout_hsi1_bus_user_p, PLL_CON0_MUX_CLKCMU_HSI1_BUS_USER,
-+=09    4, 1),
-+=09MUX(CLK_MOUT_HSI1_MMC_CARD_USER, "mout_hsi1_mmc_card_user",
-+=09    mout_hsi1_mmc_card_user_p, PLL_CON0_MUX_CLKCMU_HSI1_MMC_CARD_USER,
-+=09    4, 1),
-+=09MUX(CLK_MOUT_HSI1_PCIE_USER, "mout_hsi1_pcie_user",
-+=09    mout_hsi1_pcie_user_p, PLL_CON0_MUX_CLKCMU_HSI1_PCIE_USER,
-+=09    4, 1),
-+=09MUX(CLK_MOUT_HSI1_UFS_CARD_USER, "mout_hsi1_ufs_card_user",
-+=09    mout_hsi1_ufs_card_user_p, PLL_CON0_MUX_CLKCMU_HSI1_UFS_CARD_USER,
-+=09    4, 1),
-+=09MUX(CLK_MOUT_HSI1_UFS_EMBD_USER, "mout_hsi1_ufs_embd_user",
-+=09    mout_hsi1_ufs_embd_user_p, PLL_CON0_MUX_CLKCMU_HSI1_UFS_EMBD_USER,
-+=09    4, 1),
-+};
-+
-+static const struct samsung_cmu_info hsi1_cmu_info __initconst =3D {
-+=09.mux_clks =3D hsi1_mux_clks,
-+=09.nr_mux_clks =3D ARRAY_SIZE(hsi1_mux_clks),
-+=09.nr_clk_ids =3D CLKS_NR_HSI1,
-+=09.clk_regs =3D hsi1_clk_regs,
-+=09.nr_clk_regs =3D ARRAY_SIZE(hsi1_clk_regs),
-+=09.clk_name=09=09=3D "bus",
-+};
-+
- /* ----- platform_driver ----- */
-=20
- static int __init exynos990_cmu_probe(struct platform_device *pdev)
-@@ -1501,6 +1718,10 @@ static const struct of_device_id exynos990_cmu_of_ma=
-tch[] =3D {
- =09=09.compatible =3D "samsung,exynos990-cmu-hsi0",
- =09=09.data =3D &hsi0_cmu_info,
- =09},
-+=09{
-+=09=09.compatible =3D "samsung,exynos990-cmu-hsi1",
-+=09=09.data =3D &hsi1_cmu_info,
-+=09},
- =09{ },
- };
-=20
---=20
-2.47.2
+> +#include <asm/sbi.h>
+
+asm/* usually goes after generic linux/* ones. Why here?
+
+> +#include <linux/cpu.h>
+> +#include <linux/err.h>
+> +#include <linux/init.h>
+> +#include <linux/jump_label.h>
+
+> +#include <linux/kernel.h>
+
+What for?
+
+> +#include <linux/mailbox_controller.h>
+> +#include <linux/mailbox/riscv-rpmi-message.h>
+> +#include <linux/mm.h>
+> +#include <linux/module.h>
+> +#include <linux/msi.h>
+> +#include <linux/of_irq.h>
+> +#include <linux/percpu.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/smp.h>
+
+Please, double check that you follow IWYU (Include What You Use) principle and
+have no "proxy" headers.
+
+(E.g., types.h is missing here, but it got included via one of the above, like
+kernel.h)
+
+...
+
+> +
+> +	get_cpu();
+> +
+> +	/* Get the remaining and returned fields to calculate total */
+> +	sret = sbi_ecall(SBI_EXT_MPXY, SBI_EXT_MPXY_GET_CHANNEL_IDS,
+> +			 0, 0, 0, 0, 0, 0);
+> +	if (!sret.error) {
+
+Can it be standard pattern?
+
+	if (error)
+		goto err_put_cpu;
+
+Ditto for other similar cases.
+
+> +		remaining = le32_to_cpu(sdata->remaining);
+> +		returned = le32_to_cpu(sdata->returned);
+> +		*channel_count = remaining + returned;
+> +	}
+> +
+> +	put_cpu();
+> +	return sbi_err_map_linux_errno(sret.error);
+> +}
+
+...
+
+> +static int mpxy_get_channel_ids(u32 channel_count, u32 *channel_ids)
+> +{
+> +	u32 remaining, returned, sidx, start_index = 0, cidx = 0;
+> +	struct mpxy_local *mpxy = this_cpu_ptr(&mpxy_local);
+> +	struct sbi_mpxy_channel_ids_data *sdata = mpxy->shmem;
+> +	struct sbiret sret;
+> +
+> +	if (!mpxy->shmem_active)
+> +		return -ENODEV;
+> +	if (!channel_count || !channel_ids)
+> +		return -EINVAL;
+> +
+> +	get_cpu();
+> +
+> +	do {
+> +		sret = sbi_ecall(SBI_EXT_MPXY, SBI_EXT_MPXY_GET_CHANNEL_IDS,
+> +				 start_index, 0, 0, 0, 0, 0);
+> +		if (sret.error)
+> +			goto done;
+> +
+> +		remaining = le32_to_cpu(sdata->remaining);
+> +		returned = le32_to_cpu(sdata->returned);
+> +
+> +		for (sidx = 0; sidx < returned && cidx < channel_count; sidx++) {
+> +			channel_ids[cidx] = le32_to_cpu(sdata->channel_array[sidx]);
+> +			cidx += 1;
+> +		}
+> +
+> +		start_index = cidx;
+> +
+> +	} while (remaining);
+> +
+> +done:
+
+It sounds to me like an 'err_put_cpu' for the name.
+
+> +	put_cpu();
+> +	return sbi_err_map_linux_errno(sret.error);
+> +}
+
+> +static int mpxy_write_attrs(u32 channel_id, u32 base_attrid, u32 attr_count,
+> +			    u32 *attrs_buf)
+> +{
+> +	struct mpxy_local *mpxy = this_cpu_ptr(&mpxy_local);
+> +	struct sbiret sret;
+> +	u32 i;
+> +
+> +	if (!mpxy->shmem_active)
+> +		return -ENODEV;
+> +	if (!attr_count || !attrs_buf)
+> +		return -EINVAL;
+> +
+> +	get_cpu();
+> +
+> +	for (i = 0; i < attr_count; i++)
+> +		((__le32 *)mpxy->shmem)[i] = cpu_to_le32(attrs_buf[i]);
+
+Don't we have helpers for this? They are suffixed with _array.
+https://elixir.bootlin.com/linux/v6.15-rc6/source/include/linux/byteorder/generic.h#L168
+Don't forget to have asm/byteorder.h being included.
+
+Ditto for the similar case(s).
+
+> +	sret = sbi_ecall(SBI_EXT_MPXY, SBI_EXT_MPXY_WRITE_ATTRS,
+> +			 channel_id, base_attrid, attr_count, 0, 0, 0);
+> +
+> +	put_cpu();
+> +	return sbi_err_map_linux_errno(sret.error);
+> +}
+
+...
+
+> +	msg->error = rc;
+> +	return 0;
+
+What's the point of having int and not void function?
+
+...
+
+> +			       sizeof(mchan->rpmi_attrs) / sizeof(u32),
+> +			       (u32 *)&mchan->rpmi_attrs);
+
+Why casting? What about alignment?
+
+...
+
+> +	while (1) {
+
+Do it as do {} while, it will give an idea that the loop will run at least once
+(without looking into condition), ideally it shouldn't be infinite loop, but it
+might be harder to realise.
+
+> +		rc = mpxy_get_notifications(mchan->channel_id, notif, &data_len);
+> +		if (rc || !data_len)
+> +			break;
+> +
+> +		if (mchan->attrs.msg_proto_id == SBI_MPXY_MSGPROTO_RPMI_ID)
+> +			mpxy_mbox_peek_rpmi_data(chan, mchan, notif, data_len);
+> +
+> +		have_notifications = true;
+> +	}
+
+...
+
+> +static void mpxy_mbox_cleanup_events(struct mpxy_mbox_channel *mchan)
+> +{
+> +	struct device *dev = mchan->mbox->dev;
+> +	int rc;
+> +
+> +	/* Do nothing if events state not supported */
+> +	if (!mchan->have_events_state)
+> +		return;
+> +
+> +	/* Do nothing if events state already disabled */
+> +	if (!mchan->attrs.events_state_ctrl)
+> +		return;
+> +
+> +	/* Disable channel events state */
+> +	mchan->attrs.events_state_ctrl = 0;
+> +	rc = mpxy_write_attrs(mchan->channel_id, SBI_MPXY_ATTR_EVENTS_STATE_CONTROL,
+> +			      1, &mchan->attrs.events_state_ctrl);
+
+> +	if (rc) {
+> +		dev_err(dev, "disable events state failed for MPXY channel 0x%x\n",
+> +			mchan->channel_id);
+> +	}
+
+Redundant {}.
+
+> +}
+
+...
+
+> +static int mpxy_mbox_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct mpxy_mbox_channel *mchan;
+> +	struct mpxy_mbox *mbox;
+> +	int i, msi_idx, rc;
+
+Why is 'i' signed? Also make sure either they use POD (like unsigned int) or
+exact data type the upper limit does or API where you pass it in.
+
+> +	u32 *channel_ids;
+> +
+> +	/*
+> +	 * Initialize MPXY shared memory only once. This also ensures
+> +	 * that SBI MPXY mailbox is probed only once.
+> +	 */
+> +	if (mpxy_shmem_init_done) {
+> +		dev_err(dev, "SBI MPXY mailbox already initialized\n");
+> +		return -EALREADY;
+> +	}
+> +
+> +	/* Probe for SBI MPXY extension */
+> +	if (sbi_spec_version < sbi_mk_version(1, 0) ||
+> +	    sbi_probe_extension(SBI_EXT_MPXY) <= 0) {
+> +		dev_info(dev, "SBI MPXY extension not available\n");
+> +		return -ENODEV;
+> +	}
+> +
+> +	/* Find-out shared memory size */
+> +	mpxy_shmem_size = mpxy_get_shmem_size();
+> +
+> +	/*
+> +	 * Setup MPXY shared memory on each CPU
+> +	 *
+> +	 * Note: Don't cleanup MPXY shared memory upon CPU power-down
+> +	 * because the RPMI System MSI irqchip driver needs it to be
+> +	 * available when migrating IRQs in CPU power-down path.
+> +	 */
+> +	cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "riscv/sbi-mpxy-shmem",
+> +			  mpxy_setup_shmem, NULL);
+> +
+> +	/* Mark as MPXY shared memory initialization done */
+> +	mpxy_shmem_init_done = true;
+> +
+> +	/* Allocate mailbox instance */
+> +	mbox = devm_kzalloc(dev, sizeof(*mbox), GFP_KERNEL);
+> +	if (!mbox)
+> +		return -ENOMEM;
+> +	mbox->dev = dev;
+> +	platform_set_drvdata(pdev, mbox);
+> +
+> +	/* Find-out of number of channels */
+> +	rc = mpxy_get_channel_count(&mbox->channel_count);
+> +	if (rc)
+> +		return dev_err_probe(dev, rc, "failed to get number of MPXY channels\n");
+> +	if (!mbox->channel_count)
+> +		dev_err_probe(dev, -ENODEV, "no MPXY channels available\n");
+> +
+> +	/* Allocate and fetch all channel IDs */
+> +	channel_ids = devm_kcalloc(dev, mbox->channel_count,
+> +				   sizeof(*channel_ids), GFP_KERNEL);
+> +	if (!channel_ids)
+> +		return -ENOMEM;
+> +	rc = mpxy_get_channel_ids(mbox->channel_count, channel_ids);
+> +	if (rc)
+> +		return dev_err_probe(dev, rc, "failed to MPXY channel IDs\n");
+> +
+> +	/* Populate all channels */
+> +	mbox->channels = devm_kcalloc(dev, mbox->channel_count,
+> +				      sizeof(*mbox->channels), GFP_KERNEL);
+> +	if (!mbox->channels)
+> +		return -ENOMEM;
+> +	for (i = 0; i < mbox->channel_count; i++) {
+> +		mchan = &mbox->channels[i];
+> +		mchan->mbox = mbox;
+> +		mchan->channel_id = channel_ids[i];
+> +
+> +		rc = mpxy_read_attrs(mchan->channel_id, SBI_MPXY_ATTR_MSG_PROT_ID,
+> +				     sizeof(mchan->attrs) / sizeof(u32),
+> +				     (u32 *)&mchan->attrs);
+> +		if (rc) {
+> +			return dev_err_probe(dev, rc,
+> +					     "MPXY channel 0x%x read attrs failed\n",
+> +					     mchan->channel_id);
+> +		}
+> +
+> +		if (mchan->attrs.msg_proto_id == SBI_MPXY_MSGPROTO_RPMI_ID) {
+> +			rc = mpxy_mbox_read_rpmi_attrs(mchan);
+> +			if (rc) {
+> +				return dev_err_probe(dev, rc,
+> +						     "MPXY channel 0x%x read RPMI attrs failed\n",
+> +						     mchan->channel_id);
+> +			}
+> +		}
+> +
+> +		mchan->notif = devm_kzalloc(dev, mpxy_shmem_size, GFP_KERNEL);
+> +		if (!mchan->notif)
+> +			return -ENOMEM;
+> +
+> +		mchan->max_xfer_len = min(mpxy_shmem_size, mchan->attrs.msg_max_len);
+> +
+> +		if ((mchan->attrs.capability & SBI_MPXY_CHAN_CAP_GET_NOTIFICATIONS) &&
+> +		    (mchan->attrs.capability & SBI_MPXY_CHAN_CAP_EVENTS_STATE))
+> +			mchan->have_events_state = true;
+> +
+> +		if ((mchan->attrs.capability & SBI_MPXY_CHAN_CAP_GET_NOTIFICATIONS) &&
+> +		    (mchan->attrs.capability & SBI_MPXY_CHAN_CAP_MSI))
+> +			mchan->msi_index = mbox->msi_count++;
+> +		else
+> +			mchan->msi_index = U32_MAX;
+> +		mchan->msi_irq = U32_MAX;
+> +	}
+
+> +	/* Free-up channel IDs */
+> +	devm_kfree(dev, channel_ids);
+
+Just no. This is most likely (99.9%) wrong use of managed resources. This is
+the biggest issue with this patch so far.
+
+> +	/* Initialize mailbox controller */
+> +	mbox->controller.txdone_irq = false;
+> +	mbox->controller.txdone_poll = false;
+> +	mbox->controller.ops = &mpxy_mbox_ops;
+> +	mbox->controller.dev = dev;
+> +	mbox->controller.num_chans = mbox->channel_count;
+> +	mbox->controller.fw_xlate = mpxy_mbox_fw_xlate;
+> +	mbox->controller.chans = devm_kcalloc(dev, mbox->channel_count,
+> +					      sizeof(*mbox->controller.chans),
+> +					      GFP_KERNEL);
+> +	if (!mbox->controller.chans)
+> +		return -ENOMEM;
+> +	for (i = 0; i < mbox->channel_count; i++)
+> +		mbox->controller.chans[i].con_priv = &mbox->channels[i];
+> +
+> +	/* Set the MSI domain if not available */
+> +	if (!dev_get_msi_domain(dev)) {
+> +		/*
+> +		 * The device MSI domain for OF devices is only set at the
+> +		 * time of populating/creating OF device. If the device MSI
+> +		 * domain is discovered later after the OF device is created
+> +		 * then we need to set it explicitly before using any platform
+> +		 * MSI functions.
+> +		 */
+> +		if (is_of_node(dev_fwnode(dev)))
+> +			of_msi_configure(dev, to_of_node(dev_fwnode(dev)));
+> +	}
+> +
+> +	/* Setup MSIs for mailbox (if required) */
+> +	if (mbox->msi_count) {
+> +		mbox->msi_index_to_channel = devm_kcalloc(dev, mbox->msi_count,
+> +							  sizeof(*mbox->msi_index_to_channel),
+> +							  GFP_KERNEL);
+> +		if (!mbox->msi_index_to_channel)
+> +			return -ENOMEM;
+> +
+> +		for (msi_idx = 0; msi_idx < mbox->msi_count; msi_idx++) {
+> +			for (i = 0; i < mbox->channel_count; i++) {
+> +				mchan = &mbox->channels[i];
+> +				if (mchan->msi_index == msi_idx) {
+> +					mbox->msi_index_to_channel[msi_idx] = mchan;
+> +					break;
+> +				}
+> +			}
+> +		}
+> +
+> +		rc = platform_device_msi_init_and_alloc_irqs(dev, mbox->msi_count,
+> +							     mpxy_mbox_msi_write);
+> +		if (rc) {
+> +			return dev_err_probe(dev, rc, "Failed to allocate %d MSIs\n",
+> +					     mbox->msi_count);
+> +		}
+> +
+> +		for (i = 0; i < mbox->channel_count; i++) {
+> +			mchan = &mbox->channels[i];
+> +			if (mchan->msi_index == U32_MAX)
+> +				continue;
+> +			mchan->msi_irq = msi_get_virq(dev, mchan->msi_index);
+> +		}
+> +	}
+> +
+> +	/* Register mailbox controller */
+> +	rc = devm_mbox_controller_register(dev, &mbox->controller);
+> +	if (rc) {
+> +		dev_err_probe(dev, rc, "Registering SBI MPXY mailbox failed\n");
+> +		if (mbox->msi_count)
+> +			platform_device_msi_free_irqs_all(dev);
+> +		return rc;
+> +	}
+> +
+> +	dev_info(dev, "mailbox registered with %d channels\n",
+> +		 mbox->channel_count);
+> +	return 0;
+> +}
+
+...
+
+> +	if (mbox->msi_count)
+
+Is this check really needed?
+
+> +		platform_device_msi_free_irqs_all(mbox->dev);
+> +}
+
+...
+
+> +static const struct of_device_id mpxy_mbox_of_match[] = {
+> +	{.compatible = "riscv,sbi-mpxy-mbox", },
+> +	{},
+
+No comma for the terminator entry.
+You should apply the reviewers' comments on all of your code, not just where it
+was commented.
+
+> +};
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
