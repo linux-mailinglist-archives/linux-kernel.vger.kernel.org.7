@@ -1,93 +1,97 @@
-Return-Path: <linux-kernel+bounces-665374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78620AC6853
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 13:25:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 193F8AC6859
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 13:27:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F50016BC51
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 11:25:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25E101889C43
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 11:27:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF96C27A906;
-	Wed, 28 May 2025 11:25:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF12B280CCD;
+	Wed, 28 May 2025 11:26:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QwoKX6a1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UjWkl7CK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CFE86A33B;
-	Wed, 28 May 2025 11:25:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 136A36A33B;
+	Wed, 28 May 2025 11:26:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748431513; cv=none; b=qjtixVWm9bmM7yqy8xnK2HgYDCWHTJeS40kI6N+2jHoaD3fkiNa3u9ZbSs6cti7Xg/eyXgXnRMtP/6Pjvdm8e0TFrdZVyFmdB6yHNjLSf4go2Y1fvdw1gE/CUe9MonkJqZBFmXIozWHqlCKRSH/CnJh7ckuSkc9eI8BsyKL5OuM=
+	t=1748431605; cv=none; b=d1SJ9yX45fNEVgcq/j9011m730bST23pLbJq3PnGsBEVyP5cj189ZSuMeNXm1Y8OIvd9AraA18KWAPXdvlYmb1I7JOrSlJ8a2blQqUJfU3hfocvglmRkF47nz1+iSEfxEGlusgTUlljzqW9tM34VE2d1RFBrBtwEVOLrDeaa+TE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748431513; c=relaxed/simple;
-	bh=K4InY6t48H5O8zLU+hNLlWosd5sv42G9OLlcDO3H+MM=;
+	s=arc-20240116; t=1748431605; c=relaxed/simple;
+	bh=pHmT7aY2EuaIEdbmRwaEn2IjqMZIspf0OdMtXL6yvTI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ajW3SijWpqoXoaEohr/pNuO5dEHhneN7V8EXC+oOCiY/DaLvVHEZtexml4IeBANUElKPBYJb5TnVY+dUg89kRlJ2QhoiqULBE/qiozj7jglgc2ryieLzFefIuUmObqb3GosXXUsZmwQQsUw9cQUnCGiuXENS39/gZit6cLjre9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QwoKX6a1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E887C4CEE7;
-	Wed, 28 May 2025 11:25:10 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=WLaV8UBhKR2P+63l8A/On2XgwyOygmZsgov9ziAy9QOfsegT3h5960K71f9H42C1sB+P0LtOLYyKIRHcbiJUQj+GyA8TRTV4sPkjM2Un+Ym4gqBu+NzgLbTs46njOv60HpiSZVKIbsnvQXSqSTeh7Xu59cnCvsQaBFu2bmrM5cg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UjWkl7CK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26295C4CEEB;
+	Wed, 28 May 2025 11:26:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748431512;
-	bh=K4InY6t48H5O8zLU+hNLlWosd5sv42G9OLlcDO3H+MM=;
+	s=k20201202; t=1748431603;
+	bh=pHmT7aY2EuaIEdbmRwaEn2IjqMZIspf0OdMtXL6yvTI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QwoKX6a1HAKgzaBvCoyOhIO1pbBz2pF8HqQ6xzKdeassjWxQp/uPE2yINhGaXIjfr
-	 i1BTW4VEIqJDTrxbg1TcM02zEBwplZQsnflyhFFmQ6rcjkq/Fy+K3ucy9antZBM7Zg
-	 4g4d/3F3/o1AMvGRKdJmVZ9WX9hDCeOVS+OBXMxuoyiitH+GopNhwLOXn96RVuKzpL
-	 mt/MBXKlat/QdW+wXlVAjh0NzmwVtlPpl+w+Om/e+RlG07WeHDamx4VTiQ2hm9T4cn
-	 /eVm2oE9s8eXY7zg7krfYb0jKUnvQQt+8NtyJin6kJ8/e1hWedaIf98Hq44+UidJfT
-	 wO6C59/hn4iIg==
-Date: Wed, 28 May 2025 12:25:08 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>
-Cc: Nylon Chen <nylon.chen@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, devicetree@vger.kernel.org,
-	linux-pwm@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	paul.walmsley@sifive.com, samuel.holland@sifive.com
-Subject: Re: [PATCH v14 0/5] Change PWM-controlled LED pin active mode and
- algorithm
-Message-ID: <20250528-obedience-staff-8c7115a1e72c@spud>
-References: <20250509095234.643890-1-nylon.chen@sifive.com>
- <crcfskukqifse6gqrydx2iezargv5frv6dguj3iqdkfm7xxbqh@4v2dvo4zcmbz>
+	b=UjWkl7CK+doLxND9TQQ9oMgSoZsM8IiBhiX8aSR5x/44iEiuxDek4j8a29nV0x0cf
+	 L/7S1EZLTiqs9F0ZEFvDj35L927Tebp3yJr+JJZPOuYZ93qAzUiHQo06j9vsIX3m8j
+	 wb7pxV25/hmuSRh1G0Cb10t6D80Q9XOT81K7SIL1w1STM4CVQExN8PKOy1Ymk2YwVv
+	 khVJT2hv3DmBI0NygvqCNl1H76ch7c1h0xxoHi9qtEx0hVyyFWMgqB2Okk5jIhlcqa
+	 le4Wl6v48aInexCa6qvNTne4wwAHoGFtRSLMB8sT7pYy4VpDhlyNMx4RmvX/xyWHoS
+	 UlhtLAn+swKGg==
+Date: Wed, 28 May 2025 12:26:37 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com
+Subject: Re: [PATCH 6.14 000/783] 6.14.9-rc1 review
+Message-ID: <bedf1595-719d-41be-a002-177bee88da35@sirena.org.uk>
+References: <20250527162513.035720581@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="g+WxYtHMM8gBZU/7"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="nJ6UZCQ6yzhKssSs"
 Content-Disposition: inline
-In-Reply-To: <crcfskukqifse6gqrydx2iezargv5frv6dguj3iqdkfm7xxbqh@4v2dvo4zcmbz>
+In-Reply-To: <20250527162513.035720581@linuxfoundation.org>
+X-Cookie: Keep away from edge.
 
 
---g+WxYtHMM8gBZU/7
-Content-Type: text/plain; charset=iso-8859-1
+--nJ6UZCQ6yzhKssSs
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 28, 2025 at 12:21:45PM +0200, Uwe Kleine-K=F6nig wrote:
-> Hello,
->=20
-> patches 1 and 2 ideally go in together, right? @Conor, does your Ack
-> mean that you're OK with me taking the dts change via my pwm tree?
+On Tue, May 27, 2025 at 06:16:37PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.14.9 release.
+> There are 783 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-That's exactly what an ack from me means, yes.
+Tested-by: Mark Brown <broonie@kernel.org>
 
---g+WxYtHMM8gBZU/7
+--nJ6UZCQ6yzhKssSs
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaDbylAAKCRB4tDGHoIJi
-0o5UAP9VjzL/ZyLA/i/SUt2+q4K+R5tvVDuyf86ESthCZ26OnwEA5B0jDEtRBnoF
-IdZ9OaRAigLh373m9zVKDnSsP1nKCQA=
-=B2ga
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmg28uwACgkQJNaLcl1U
+h9BqzQf+NuJ+Xdh2+/nTyzAPqofhAEuUlVyCo6oMpJJTMVC93FQfoe8oLgBLZaRN
+bngc/9lSBm3GRzrifFVd2E6Hwmo8YLcQKtKbjESp3VX46qRoHIhvdR85DvFPGkDI
+Ys3fplTDudYDGiY6VXNleT6GeH+WKlGt5fypomCpwJ6TtYho5xVQpSQVI9rDbgqD
+aloWb9Y+KxGCqx87nWTzcj6gqvd86XN9QCgngkAVGYU4G+bOWFNv2oHbnuHj56Tr
+AekeoPrvf1g3EJF8xnRdRTPr3Ntm2C/JVKsxBG5G0uVNxd4vmY8gMOiJwTgZ099g
+DCocFGDheAgJrPgdW3vDFrMxUBoDFg==
+=zlKk
 -----END PGP SIGNATURE-----
 
---g+WxYtHMM8gBZU/7--
+--nJ6UZCQ6yzhKssSs--
 
