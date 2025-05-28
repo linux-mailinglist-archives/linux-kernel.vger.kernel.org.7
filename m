@@ -1,168 +1,159 @@
-Return-Path: <linux-kernel+bounces-665572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4029AC6B0B
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 15:53:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 276BAAC6B10
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 15:55:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41F0D1706B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 13:53:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 684C97A8E44
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 13:53:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C59928750D;
-	Wed, 28 May 2025 13:53:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A0CD2882AF;
+	Wed, 28 May 2025 13:55:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="IcMF8OcT"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vor7yCXb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A95C8246774
-	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 13:52:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 053D01A073F
+	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 13:54:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748440379; cv=none; b=m17vcNsZWjE8F04vlgNXjFGWfBNHGU0P4w73LumS8VLG3vh1YlNXNut3+muOzAYG36Vxkn5tRwoiWZkJHEifBnNGzhwUWppyBp/euihZbZV0gGKMQxgrcLz3dqXsR5oALfCsHazRQ9ZQUFIcBKwF4F5v0Qh6pi8VZ1ipvrpyfAE=
+	t=1748440500; cv=none; b=MvCF0ddGf8wvYVBElmrTJlyUfaoCqwcMkQeHAdzKpdsZNdNIRB6wsQHI6QN7UHbp6W2hIA6xgzGVNZEsy6+LDkqM/MK8XNfKJGPQDY3BAmL+FB96dpF2PHd7xJSnjuShyPnRlIwuatdpIcbZhtRVxxjJoZ4qW9lABkl96lqnq0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748440379; c=relaxed/simple;
-	bh=ZM+bfC5Cy6/BIP9OgPrZkki/Bpj6SNjAkFXoj8Ys+Yg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tNNjFWFCO9zxRxVRRWiYSUrEkZiyv+Fzkq8U5tnwpOEBjutO1NhG2nBA7hIHUnCHtXyKf4RBlxHSx3Y5hXFdLeZLNMNhXmgYoRAtOl+tUWCeosmztzPWCovS5TkbxjZQUDf10UImrYKNGjoyznbDUTZz+MdUUxgVjDCCe6mMowY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=IcMF8OcT; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54S82RGs010166
-	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 13:52:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=uBOPP2nWIT9/99XuC1utjy9X
-	r9ENEyP8GmiGj5aqQeY=; b=IcMF8OcTKzpCpORhkdZ+5HMQxFh8cpXzRL8dh9xq
-	vy85syvW/t72U9pzGDYZaEjIibHFwKTEMF0i0+vR7siWRyWVKQ2S/xF6KSbVEAR5
-	NSkywzlZatgJAYnomK4F7tQKUeOTnBkqZW28i2eWw8NA0daK3Sz/Z6Aa6pCmKAhx
-	VqO+ik7C/3DyJJ7aXSdlpdyg4nIk50K2sUFvr0IDJNObnOJqwBvIO855rdX6njbs
-	X9PZjdmjPNWpeyo7sM+kjkIv2JXtJq1ZyvX+2d9oCwAsEkWWbOKLbB8U4Ffl65KH
-	We+JpV+Cn2GBGUAbx/GCHEZn7LEJOTQWqM3qlSrnKZICww==
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46u6vjtep1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 13:52:56 +0000 (GMT)
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6fab1b8d379so23210306d6.0
-        for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 06:52:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748440375; x=1749045175;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uBOPP2nWIT9/99XuC1utjy9Xr9ENEyP8GmiGj5aqQeY=;
-        b=q3mmDpaMuecRq58D6w1xD72KPph0TaxfDh8AqwG8lyHCjXkMsJS5QKcegXLwoSGURP
-         6cs43rsZU15EH0c/iekJEsxunGOfKh0v18ncoPpqeBBivyYcXPlV0kY4xFGUcnA3Lvs4
-         A6kNtJnub4eRgstM/f6sTCSHfjmB8H1WKBrnJvtYPNkNEG2a4/ikAYlFD62H89qfztzO
-         M3rCBqKP2eluwS4Ywo0YhsLU+Em4UCPr9sgX4qbSwIydxIHa2mroIfgsb4sfbyLpMRkO
-         RPlsKy+KF/H2WoggUFw1bhJuugZbMgNlRC6Fq4SgVzPtcGRv+oq9T9rMHZ5K54M0wlAw
-         FMPg==
-X-Forwarded-Encrypted: i=1; AJvYcCVVmJNUB2NxwXGje+wuNe0mRb/WPVVMEQqQBYu8OQgTqfnw6Pk2IzIohTyU2muFlEm76h/ZB3bkx6hTobY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXI5Z8AaGBdziOPg1JNORfsS9RCygOaL56yh01U5zE6tlL/RUe
-	sa6xX98R8tQWDWYAV3GS+eX1ybH0bX53Nxms0g3amRV3uCzdikrRe0kZXkEIxbXX+BSR3GKNbuY
-	tPfnKHMDjQHeHUTNLzo03JsWBWBeRqj5PLzXVSivN+LNFfegPcqJhhL2cq7j9VpmX9J8=
-X-Gm-Gg: ASbGncumby0q4Igi7Cg9RrzgAKtGKORaSb6TCmBDnm542HvqhqZd0RPKcgYmEScEt1h
-	C3KINygTlHCZyYPbQVRG3bKY1imYO676yC9GWoIAJ5znTCXc7i5WWpvh+9cx7E16n4UVfJ6cMjg
-	fQNqwRZM+MHXazNHcRjtKODSzGq4UuzElflHEmgY23zbUDS+TJn3wX/jbwiuycWte9RRP61ETVi
-	ydiVHgSQ7teQ0K6hD7TLgTQb7bo/MEVHq3+H9I7j7HqEzPdYGlU2prEqzPsRf1NNdF1iRCQh0ud
-	vmoAOPx+My1js4fyrd2XgfJq9lPW6mMtM7GwgFmu9Pi6etOdBMNkVjAQDrGZl1gtwM+wN02Mo5k
-	=
-X-Received: by 2002:a05:6214:f0d:b0:6fa:c043:7781 with SMTP id 6a1803df08f44-6fac043c742mr27775706d6.6.1748440375240;
-        Wed, 28 May 2025 06:52:55 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHNkR85opKcDfwQLxCDd6W5iPsD1U2otytKAVtAxdS8qF08guHyXNDqm8ewQIw/BFu5tF2iEA==
-X-Received: by 2002:a05:6214:f0d:b0:6fa:c043:7781 with SMTP id 6a1803df08f44-6fac043c742mr27775336d6.6.1748440374835;
-        Wed, 28 May 2025 06:52:54 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5532f6a5fd9sm291521e87.169.2025.05.28.06.52.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 May 2025 06:52:54 -0700 (PDT)
-Date: Wed, 28 May 2025 16:52:52 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
-        Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
-        jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
-        mripard@kernel.org, tzimmermann@suse.de,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/bridge: analogix_dp: Fix clk-disable removal
-Message-ID: <o3oipiu2hotkdbihnlpamq3lmbpxrlay5tyvmir7qnbqhrdq6u@d52lzumxexva>
-References: <20250527225120.3361663-1-heiko@sntech.de>
+	s=arc-20240116; t=1748440500; c=relaxed/simple;
+	bh=k97NcxBl4V7jw/PvcH6y9RiaFq021QEAdtz1/8OVZ2U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ovUPkGFhrAEhHbH4FzFVykJexCuw9s+5ktyFJ3L7I4lWKSjIx10t6SUMO/qHt9z2aomYD7M+mrHa5wmbqZyhuf7Je/5sGcP40eJqB64C0S3PnDdUjxlALe6LXGUJPgjpLhpIMuBP0bW6lM0H9y+FUa3JGieP8iayH3ND78bpvKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vor7yCXb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88F6BC4AF0B
+	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 13:54:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748440499;
+	bh=k97NcxBl4V7jw/PvcH6y9RiaFq021QEAdtz1/8OVZ2U=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Vor7yCXbUII3CJMh3yiK8Ji+X7/nRgSwsVbGgKIeau3fsDhwBvllBrG0NOn45Nb2O
+	 WE/WwfvlwwQ8Qn1Ihff94T07cw8EnjVz94BkDLK6EUcl/f85WRd69yGFxTSQ9+Okd0
+	 YfGo1DfDUPWj5xVwdL7/+hEA2yD2UObAaycctd9pTkxIx8WqiRQN1kSChJCVLxuAs4
+	 gcaV/pFSr+bn1MnP7pXI4uIGu2kAVX6GwsG6Zpu1N411rGfN7O/06KVlPhMNWTtmZe
+	 F6j0kRQ07HMdLnyf7Q8x9vBi6FmDraVclfoc1qH9ORh7cQfQ9pkoj9KaqzkWAok4KO
+	 DofQhJt3M752w==
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-602039559d8so8975797a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 06:54:59 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUeeLcYySj3sR1bce8rn0ySaPXR4z9TIScqoD/TH69mE97ll1/6TyXfg+x4ADgNZAtQSDjWSQRexkiCQEU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4FUFNJfHYV9QxX8pZEN2IcFshco0xNIi4eTz0UJQv+KN3iVk5
+	qIEt/qQ2mr/MCMFFCCfXbucyID5GeysNAwxB1AiLRtXvyWVcTsEp+NDNFMRlZ6K7caNQLUfsSAO
+	uK8WZ0LJzZXzuhZ2akwQtJ0zzGc4gcyM=
+X-Google-Smtp-Source: AGHT+IEEuH8vRL+51mbmcyHxCEMeNyKwMN7QxI+1DOg59ySqj2dvrjBCrMYw1ofvYnVrmpTtEve02p2f+n5x+8YfqEs=
+X-Received: by 2002:a05:6402:d45:b0:602:ef0a:cef8 with SMTP id
+ 4fb4d7f45d1cf-602ef29d3cfmr11484327a12.18.1748440498076; Wed, 28 May 2025
+ 06:54:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250527225120.3361663-1-heiko@sntech.de>
-X-Authority-Analysis: v=2.4 cv=UOXdHDfy c=1 sm=1 tr=0 ts=68371538 cx=c_pps
- a=oc9J++0uMp73DTRD5QyR2A==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=dt9VzEwgFbYA:10 a=EUspDBNiAAAA:8 a=A2JJf1eg9WQolHiAK1QA:9 a=CjuIK1q_8ugA:10
- a=iYH6xdkBrDN1Jqds4HTS:22
-X-Proofpoint-ORIG-GUID: lfenAXbUKeR4lPDsqtL-4nFN9jmXDDKd
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI4MDEyMSBTYWx0ZWRfXx58qXha9vuE1
- uhie4LYueR1y2BHHjEqJD/ErvERa38pZdkox4KXHa7D3hqwuiVaB01Em7YWUT0Y5ZeugVPbfCWe
- EQdpix2WPgJ3ssOzVkx7YDIYBbDrXs9yZDGOTRjFCCHgyahPEAnW2BBa40vP8wOSBoilgIQC9A3
- MAFa7MxPQdC7Vh5OaJliU1WZz1N0nTMBS5nZ19e0IrdewySmA39F2efQ1JQr/5l5dC3E8Dkhj4I
- UWSAlWUml0OlGQ9cBbyLDoofsJUtVZDCjz7hqEKcun8PpOW2rdZyCljtGcD9f/7HpCpV9yeNL1f
- 5t0YOvwAf2h3iCr12Bj0PTCFJBEGum5dyH+Y9T46Yh216jsHRm9NZxAndzox1zNZWEeMOM8lxsB
- JpI7rrlPTRxZaMfCZzjVaV0wppdnPHSnPzXmH0Et+1siaN9yTkadrL0qn9sLs5afUDCY11iu
-X-Proofpoint-GUID: lfenAXbUKeR4lPDsqtL-4nFN9jmXDDKd
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-28_07,2025-05-27_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 phishscore=0 mlxscore=0 adultscore=0 priorityscore=1501
- mlxlogscore=966 bulkscore=0 malwarescore=0 impostorscore=0 spamscore=0
- suspectscore=0 lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505160000 definitions=main-2505280121
+References: <20250520064936.32291-1-yangtiezhu@loongson.cn>
+ <e005dd551aec8bea185b3d37295876bd75d7b3e4.camel@xry111.site>
+ <a918b221-b7f3-9994-9a7a-d10345aa30df@loongson.cn> <19f4722d5cdb90a207129ee675c7278423cd328c.camel@xry111.site>
+In-Reply-To: <19f4722d5cdb90a207129ee675c7278423cd328c.camel@xry111.site>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Wed, 28 May 2025 21:54:45 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H5GEZu=r=gX4afNB2F4w_LpXa1FwuWdyDE=+pGJNnqxww@mail.gmail.com>
+X-Gm-Features: AX0GCFtlAzfumS6XolzoJ0MKPafRHvauugEExtVKJnN5aI2CpQXMkQBN4tLLIfg
+Message-ID: <CAAhV-H5GEZu=r=gX4afNB2F4w_LpXa1FwuWdyDE=+pGJNnqxww@mail.gmail.com>
+Subject: Re: [RFC PATCH] LoongArch: Do not include larchintrin.h
+To: Xi Ruoyao <xry111@xry111.site>
+Cc: Tiezhu Yang <yangtiezhu@loongson.cn>, loongarch@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 28, 2025 at 12:51:19AM +0200, Heiko Stuebner wrote:
-> Commit 6579a03e68ff ("drm/bridge: analogix_dp: Remove the unnecessary
-> calls to clk_disable_unprepare() during probing") removed the mismatched
-> clock_disable calls from analogix_dp_probe.
-> 
-> But that patch was created and sent before
-> commit e5e9fa9f7aad ("drm/bridge: analogix_dp: Add support to get panel
-> from the DP AUX bus") was merged, so couldn't know about this change.
-> 
-> So in the original patch the last change is
->     if (ret) {
-> 	dev_err(&pdev->dev, "failed to request irq\n");
-> -		goto err_disable_clk;
-> +		return ERR_PTR(ret);
->     }
->     disable_irq(dp->irq);
-> 
->     return dp;
-> -
-> -err_disable_clk:
-> -	clk_disable_unprepare(dp->clock);
-> -	return ERR_PTR(ret);
->  }
->  EXPORT_SYMBOL_GPL(analogix_dp_probe);
-> 
-> the analogix_dp_core.c actually now has the runtime-pm handling between
-> disable_irq() and return do introducing another goto err_clk_disable there.
-> 
-> So remove that one too and return an error pointer, to not create build
-> breakage.
-> 
-> Fixes: 6579a03e68ff ("drm/bridge: analogix_dp: Remove the unnecessary calls to clk_disable_unprepare() during probing")
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> ---
-> When I reviewed the original patch, I failed to see that difference :-(
-> But I do wonder how dim was able to apply the original patch.
-> 
+On Tue, May 27, 2025 at 11:47=E2=80=AFAM Xi Ruoyao <xry111@xry111.site> wro=
+te:
+>
+> On Tue, 2025-05-27 at 11:17 +0800, Tiezhu Yang wrote:
+> > On 2025/5/21 =E4=B8=8B=E5=8D=881:41, Xi Ruoyao wrote:
+> > > On Tue, 2025-05-20 at 14:49 +0800, Tiezhu Yang wrote:
+> > > > larchintrin.h is a system header of compiler, include it in the
+> > > > kernel header may lead to the fatal error "'larchintrin.h' file
+> > > > not found".
+> > > >
+> > > > There are two related cases so far:
+> > > >
+> > > > (1) When compiling samples/bpf, it has been fixed in the latest
+> > > > kernel [1].
+> > > >
+> > > > (2) When running bcc script, it has been fixed in the latest
+> > > > bcc [2] [3], like this:
+> > > >
+> > > > $ /usr/share/bcc/tools/filetop
+> > > > In file included from <built-in>:4:
+> > > > In file included from /virtual/include/bcc/helpers.h:54:
+> > > > In file included from arch/loongarch/include/asm/page.h:7:
+> > > > In file included from arch/loongarch/include/asm/addrspace.h:9:
+> > > > arch/loongarch/include/asm/loongarch.h:11:10: fatal error:
+> > > > 'larchintrin.h' file not found
+> > > >     11 | #include <larchintrin.h>
+> > > >        |          ^~~~~~~~~~~~~~~
+> > > > 1 error generated.
+> > > >
+> > > > Maybe there are same errors for the other unknown projects, it is
+> > > > annoyance to add the include path each time. In order to avoid
+> > > > such
+> > > > errors once and for all, do not include larchintrin.h, just use
+> > > > the
+> > > > builtin functions directly.
+> > >
+> > > Sorry, but in GCC those builtin functions are not documented and may
+> > > subject to change in the future.  Only the larchintrin.h interface
+> > > is
+> > > documented.
+> >
+> > AFAICT, the LoongArch Base Built-in Functions are listed in the GCC
+> > documentation [1], they will not be changed easily and frequently in
+> > my opinion.
+> >
+> > __builtin_loongarch_cpucfg()
+> > __builtin_loongarch_csrrd_w()
+> > __builtin_loongarch_csrrd_d()
+> > __builtin_loongarch_csrwr_w()
+> > __builtin_loongarch_csrwr_d()
+> > __builtin_loongarch_csrxchg_w()
+> > __builtin_loongarch_csrxchg_d()
+> > __builtin_loongarch_iocsrrd_w()
+> > __builtin_loongarch_iocsrrd_d()
+> > __builtin_loongarch_iocsrwr_w()
+> > __builtin_loongarch_iocsrwr_d()
+> >
+> > > Thus if you don't want to rely on GCC for those operations, you may
+> > > need
+> > > to write inline asm...
+> >
+> > so these builtin functions can be used directly and safely.
+>
+> Oops, I mistakenly believed they were like __builtin_lsx_* which are not
+> documented.
+>
+> So yes they can be used directly.
+I don't think so.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+1. csr & iocsr can be only used in kernel mode, if the kernel doesn't
+use the convenient short names, then the short names are totally
+useless.
+2. We get larchintrin.h included by "KBUILD_CFLAGS +=3D -isystem $(shell
+$(CC) -print-file-name=3Dinclude)", and this manner is also used by
+other architectures.
+3. I don't think there will be many projects that need to be modified.
 
--- 
-With best wishes
-Dmitry
+
+Huacai
+
+>
+> --
+> Xi Ruoyao <xry111@xry111.site>
+> School of Aerospace Science and Technology, Xidian University
 
