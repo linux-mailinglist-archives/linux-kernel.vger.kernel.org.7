@@ -1,182 +1,123 @@
-Return-Path: <linux-kernel+bounces-664828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-664801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE53CAC60F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 06:54:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB870AC608F
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 06:09:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 874804A4B31
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 04:54:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2370189E3B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 04:09:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90623208961;
-	Wed, 28 May 2025 04:53:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="EJrYRTqp"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 192291E5B88;
+	Wed, 28 May 2025 04:09:20 +0000 (UTC)
+Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 168AE20C030
-	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 04:53:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0288B1C5F30
+	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 04:09:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.169.211.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748408011; cv=none; b=Z3qOWovqaaig4+6uVsNP3MfWNlsdM3pX/3VyDce2ZJWqgmX17ZXVeKgc6XtlWccTdJcY+aiqUAwNH1xOkVtD3bI+/ajc0todZODKRCDZ3kOgY5n3VfkfUTEdmXf3KvRoOBcbNQKrY9A6tPdklaQSmIVDaA6IK74z/4+Sf4TSL0I=
+	t=1748405359; cv=none; b=kbAa85UFIZatC5IAC+mmGsVphJ/apBGl0ZUiRgz26a5CFpVcW2m2Vle/EO4Iy5FFK3fs9PnC0EXuq6wk6YZ3eE+zOdAu/DT23NFPsmehrbJyO/qv0pKR18FUOVZuOfH32DIcrsdsjRgJpPN2mNA4c9OrY5H1qPviVQLzGDyDnb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748408011; c=relaxed/simple;
-	bh=VB3eq3aBNnjKqYRK+RlhX0GF7OHenCwl9MVAsuqjPq4=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=Yps+cjYrax4ICumnEo8JSazIDgqxuqESO3mSG2OUCM3EnIDGvACaf43CfZKCPnLOMJ/VhRfMCF/VZ+4BWVgldAj58MTMkAm8iQPmYpkqjTcO0ImVFpPKJe6GJtQjLmP72HSpNDchZXtgiHQwzztkhMuKOrNgBP6MyN9h9nhg/xw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=EJrYRTqp; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250528045328epoutp01ed049ad9544b7899351310a44b2dc1f0~Dl9H-uPtc0048500485epoutp01C
-	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 04:53:28 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250528045328epoutp01ed049ad9544b7899351310a44b2dc1f0~Dl9H-uPtc0048500485epoutp01C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1748408008;
-	bh=FdZF5l83khTomcseO+QoMWKGMiLcHWOd9nqmuhm1swA=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=EJrYRTqp/+MYUfnbc2HwU5likBWwHpJ+eK95A9am+3wxwQNbo+QlzgTYFrRz+AhEF
-	 fC9lmU0dmVGakWqw9MjJs28kBPCGOpmnHwePuxgH5cnEP4v0fLpy9fGRHVXC+vBjkB
-	 f4FhFUAiAyBMz5DEy2bP7cUugUb1sGxieRrjnqVg=
-Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
-	20250528045327epcas5p355159aadc57fde03a3cb555653fe9bd6~Dl9HZzFwx0196601966epcas5p3-;
-	Wed, 28 May 2025 04:53:27 +0000 (GMT)
-Received: from epcas5p2.samsung.com (unknown [182.195.38.182]) by
-	epsnrtp03.localdomain (Postfix) with ESMTP id 4b6cZt1bwDz3hhTR; Wed, 28 May
-	2025 04:53:26 +0000 (GMT)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250527104533epcas5p2ce335b06bb6564469fcfd96786de5cbb~DXHP819kQ1647416474epcas5p2I;
-	Tue, 27 May 2025 10:45:33 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20250527104533epsmtrp298f462a0270bbc1d8cee2dbe97f1a7ae~DXHP6vdyF3064030640epsmtrp2d;
-	Tue, 27 May 2025 10:45:33 +0000 (GMT)
-X-AuditID: b6c32a29-566fe7000000223e-7b-683597cd959e
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	C2.54.08766.DC795386; Tue, 27 May 2025 19:45:33 +0900 (KST)
-Received: from FDSFTE462 (unknown [107.122.81.248]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250527104530epsmtip121c695d30e18eef84fe768e5794ed6fa~DXHNDu7CF0476404764epsmtip1H;
-	Tue, 27 May 2025 10:45:30 +0000 (GMT)
-From: "Shradha Todi" <shradha.t@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzk@kernel.org>
-Cc: <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.or>,
-	<linux-kernel@vger.kernel.org>, <linux-phy@lists.infradead.org>,
-	<manivannan.sadhasivam@linaro.org>, <lpieralisi@kernel.org>, <kw@linux.com>,
-	<robh@kernel.org>, <bhelgaas@google.com>, <jingoohan1@gmail.com>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <alim.akhtar@samsung.com>,
-	<vkoul@kernel.org>, <kishon@kernel.org>, <arnd@arndb.de>,
-	<m.szyprowski@samsung.com>, <jh80.chung@samsung.com>
-In-Reply-To: <20250521-competent-honeybee-of-will-3f3ae1@kuoka>
-Subject: RE: [PATCH 09/10] PCI: exynos: Add support for Tesla FSD SoC
-Date: Tue, 27 May 2025 16:15:29 +0530
-Message-ID: <0e2801dbcef4$78fe5ec0$6afb1c40$@samsung.com>
+	s=arc-20240116; t=1748405359; c=relaxed/simple;
+	bh=hlkY2UnwS2X9PoR6gQ2SIXXXnrL2PXxoo85bg6yIUbU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LhWmDmOF0l1Co7ic8wBLQN6UCQA99DBLaqztid30YF228/t0yzfwpyF958LmEtUw9CxsyM76mouzej18FsipUHql9QkdMqf3rRH273AQBTPeqvzMW2TocFkvVQT388yx8Io0bUJtINj/mG8+iqMWtytQQXTSTmZwxUjfvvXfJlI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chenxiaosong.com; spf=pass smtp.mailfrom=chenxiaosong.com; arc=none smtp.client-ip=18.169.211.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chenxiaosong.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chenxiaosong.com
+X-QQ-mid: esmtpsz19t1748405343t0434c731
+X-QQ-Originating-IP: NwjThKqgRnNipc/Nq5ZYdlUS87D/gsFjAfql9alCxk0=
+Received: from [192.168.3.231] ( [116.128.244.171])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Wed, 28 May 2025 12:09:01 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 12572820072714361507
+Message-ID: <01BDDAE323133ED0+e7d23f35-c6d8-48a3-8fe6-c23e3a9c64dc@chenxiaosong.com>
+Date: Wed, 28 May 2025 12:09:01 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQKa2HaEso6x90WQFKmaYw3pYxuT6gLGtKN5Ag2CUBUBvBCtG7IzpxAA
-Content-Language: en-in
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrAIsWRmVeSWpSXmKPExsWy7bCSnO7Z6aYZBpcuSVk8mLeNzeLvpGPs
-	FkuaMizW7D3HZDH/yDlWixu/2lgtVnyZyW5xtPU/s8XLWffYLM6f38Bu0dDzm9Vi0+NrrBaX
-	d81hszg77zibxYRV31gszn5fwGTR8qeFxWLtkbvsFndbOlkt/u/ZwW6x884JZgdRj9+/JjF6
-	7Jx1l91jwaZSj02rOtk87lzbw+bx5Mp0Jo/NS+o9+rasYvQ48nU6i8fnTXIBXFFcNimpOZll
-	qUX6dglcGQcXtTEX7BeueHd1HWsDY6NAFyMHh4SAicTpeaZdjFwcQgK7GSV2H9/H1sXICRSX
-	lPh8cR0ThC0ssfLfc3aIomeMEs2fHjKDJNgEdCSeXPkDZosI6EpsvrEcrIhZYDuLxJmlDxkh
-	Ot4zSrS2bWEFqeIUsJe4NakXrENYwFVix+n3YDaLgKrE0f3TwFbzClhKtBzbygphC0qcnPmE
-	BcRmFtCW6H3YyghjL1v4mhniPAWJn0+XsUJc4SaxYslBqHpxiaM/e5gnMArPQjJqFpJRs5CM
-	moWkZQEjyypGydSC4tz03GLDAsO81HK94sTc4tK8dL3k/NxNjOBEoKW5g3H7qg96hxiZOBgP
-	MUpwMCuJ8G6bYJIhxJuSWFmVWpQfX1Sak1p8iFGag0VJnFf8RW+KkEB6YklqdmpqQWoRTJaJ
-	g1OqgWmnfMa32XIi8zh+mf4yL3j35vz1hfL/Hq3+vzbygrhv/u8ZPSJcH3dqzFy9u+EGA29G
-	fef0lfFCxo8m+E1cvsJ7y6Il+7YZNBfPNTb6fvZMluduXUnjusitiouj815NczijP+fhCjOr
-	e3e85KQ5HU9esMuxWFxnsD/AuUDzZeEUnhsW05Nv7XFb927nW5VrhfXFM5ZpXE4uM3pky+Ih
-	4eh2NDPD5rHPvcRTFbpSyxLPfMrlepDKYd6ek8n18chzCVUug/VLm/bonDtbftK356/5xIOP
-	JlpfVLU5arQp4Ub836IWdYOVz968dvVcWcB6Y9eJIx4zbFfOdYmaeelhTMFWnsibk/axbnlu
-	O4e99cEbJZbijERDLeai4kQAUGU8LXMDAAA=
-X-CMS-MailID: 20250527104533epcas5p2ce335b06bb6564469fcfd96786de5cbb
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-541,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250518193300epcas5p17e954bb18de9169d65e00501b1dcd046
-References: <20250518193152.63476-1-shradha.t@samsung.com>
-	<CGME20250518193300epcas5p17e954bb18de9169d65e00501b1dcd046@epcas5p1.samsung.com>
-	<20250518193152.63476-10-shradha.t@samsung.com>
-	<20250521-competent-honeybee-of-will-3f3ae1@kuoka>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] smb/client: use sock_create_kern() in
+ generic_ip_connect()
+To: Steve French <smfrench@gmail.com>, Kuniyuki Iwashima <kuniyu@amazon.com>
+Cc: pc@manguebit.com, ronniesahlberg@gmail.com, sprasad@microsoft.com,
+ tom@talpey.com, bharathsm@microsoft.com, linux-cifs@vger.kernel.org,
+ linux-kernel@vger.kernel.org, ChenXiaoSong <chenxiaosong@kylinos.cn>,
+ David Laight <david.laight.linux@gmail.com>,
+ Wang Zhaolong <wangzhaolong1@huawei.com>, Enzo Matsumiya <ematsumiya@suse.de>
+References: <20250528031531.171356-1-chenxiaosong@chenxiaosong.com>
+ <CAH2r5mtAYV925FbL-5GPGvk3wMG5u0027_icNtUw6uZ9yOBqyw@mail.gmail.com>
+From: ChenXiaoSong <chenxiaosong@chenxiaosong.com>
+In-Reply-To: <CAH2r5mtAYV925FbL-5GPGvk3wMG5u0027_icNtUw6uZ9yOBqyw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpsz:chenxiaosong.com:qybglogicsvrsz:qybglogicsvrsz4a-0
+X-QQ-XMAILINFO: MprdIpiwXvQIxjQnEQPCDYWZX+Vl58IqfBnwyubUw/SEHUdGliI0RIwg
+	QaKPv6zKwaQHfaYs79BwwmCHWzLOUB8ZWb1FfanDifxZxJ0CH+8xFfRKL+4IgV3xVt60i+0
+	qKEA7299SCh2JMyfmYXpu72Pc4eq0nbgXyQNtO7pL5kxVCF1ME+goWS2XJ4cUXQ3yTXQOEf
+	pOV4S0o90SYnZCLehZGclus+Q7I5Khea6XXOi4ETujwwzssNbsTMWbkxuSiOvx1+CR8Swmo
+	gPsqTDiqn8b06ehROCpYaHGk1VeBoTzDMKI+AnZ+ZUiGIDChh95LG0j9hPE98+DNUyu7u6A
+	pccxc8aarIDO9E2LMJ2SOh2Q6iGJuODBF3kk2c5o8EtTKtjC5hMVQ357vCbO7/XuA0I4ou2
+	MAHWohXe9fMjs4L8/HR6A7+H+L17G1FvhKH78rdtyUij8xQ0LXt9qprGHlEFvwAr/GeWN7u
+	doUSo/2PPdyiOUz0BY7q9YWi/DnI9pSVawesYIXys6eRLQ9SMGKNzZ7VUwOvmDXUlsG6M8f
+	ixKwALhYtMEDK+Q+4pNxm0P1hOHlfKECqbujI7gBK5zH4AOwhDqbsQtIQiQ6eas95kkSBVK
+	eQ8Ur/8HLsAsPDMPP63wVPpyMt7gavOd2CCJx7zfVhnwIZtPNwcHPOb9wsh7iJk7axlgVV8
+	2ISOX/1X3jXfO/QQhwv1IUPMzioKBgektQbWLm2x66X8CML54ep9oCbeWSERvXlPIXVIBSK
+	ZNLgDQNKjI1g3q27TH+1uMglMZ5aBoJhp9I0pX8zA541RrrYj1963X0W0H7yZdxZVyskuI8
+	y6iPVI1tiXGEYHCGqtMza7ulOaf7xsfrZNlLtSD6qgjvMG+z8qSV6mmRTLehn+MaEHy+emO
+	jCEiKtJpU5Lh+lU27ofCKQkA6sk82wf/dCjIo65b0Nkb9/tsKVL07uhYmwOf1arsZNTMoyy
+	9Nx3IG2AJDG8ZJnWdwBTgHuQZ4V/mIfen/7xHIvYjLBOoCLBOZBcAOjvaSUz0KM1Yj3M=
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+X-QQ-RECHKSPAM: 0
 
+This patch is simply a cleanup that wraps the original code for 
+explicitness, the last argument of __sock_create(..., 1) specifies that 
+the socket is created in kernel space.
 
-
-> -----Original Message-----
-> From: Krzysztof Kozlowski <krzk=40kernel.org>
-> Sent: 21 May 2025 15:18
-> To: Shradha Todi <shradha.t=40samsung.com>
-> Cc: linux-pci=40vger.kernel.org; devicetree=40vger.kernel.org; linux-arm-=
-kernel=40lists.infradead.org; linux-samsung-soc=40vger.kernel.or;
-> linux-kernel=40vger.kernel.org; linux-phy=40lists.infradead.org; manivann=
-an.sadhasivam=40linaro.org; lpieralisi=40kernel.org;
-> kw=40linux.com; robh=40kernel.org; bhelgaas=40google.com; jingoohan1=40gm=
-ail.com; krzk+dt=40kernel.org; conor+dt=40kernel.org;
-> alim.akhtar=40samsung.com; vkoul=40kernel.org; kishon=40kernel.org; arnd=
-=40arndb.de; m.szyprowski=40samsung.com;
-> jh80.chung=40samsung.com
-> Subject: Re: =5BPATCH 09/10=5D PCI: exynos: Add support for Tesla FSD SoC
->=20
-> On Mon, May 19, 2025 at 01:01:51AM GMT, Shradha Todi wrote:
-> >  static int exynos_pcie_probe(struct platform_device *pdev)  =7B
-> >  	struct device *dev =3D &pdev->dev;
-> > =40=40 -355,6 +578,26 =40=40 static int exynos_pcie_probe(struct platfo=
-rm_device *pdev)
-> >  	if (IS_ERR(ep->phy))
-> >  		return PTR_ERR(ep->phy);
-> >
-> > +	if (ep->pdata->soc_variant =3D=3D FSD) =7B
-> > +		ret =3D dma_set_mask_and_coherent(dev, DMA_BIT_MASK(36));
-> > +		if (ret)
-> > +			return ret;
-> > +
-> > +		ep->sysreg =3D syscon_regmap_lookup_by_phandle(dev->of_node,
-> > +				=22samsung,syscon-pcie=22);
-> > +		if (IS_ERR(ep->sysreg)) =7B
-> > +			dev_err(dev, =22sysreg regmap lookup failed.=5Cn=22);
-> > +			return PTR_ERR(ep->sysreg);
-> > +		=7D
-> > +
-> > +		ret =3D of_property_read_u32_index(dev->of_node, =22samsung,syscon-p=
-cie=22, 1,
-> > +						 &ep->sysreg_offset);
-> > +		if (ret) =7B
-> > +			dev_err(dev, =22couldn't get the register offset for syscon=21=5Cn=
-=22);
->=20
-> So all MMIO will go via syscon? I am pretty close to NAKing all this, but=
- let's be sure that I got it right - please post your complete DTS
-> for upstream. That's a requirement from me for any samsung drivers - I do=
-n't want to support fake, broken downstream solutions
-> (based on multiple past submissions).
->=20
-
-By all MMIO do you mean DBI read/write? The FSD hardware architecture is su=
-ch that the DBI/ATU/DMA address is at the same offset.
-The syscon register holds the upper bits of the actual address differentiat=
-ing between these 3 spaces. This kind of implementation was done
-to reduce address space for PCI DWC controller. So yes, each DBI/ATU regist=
-er read/write will have syscon write before it to switch address space.
-
-> Best regards,
-> Krzysztof
+在 2025/5/28 11:39, Steve French 写道:
+> Weren't there issues brought up earlier with using sock_create_kern
+> due to network namespaces and refcounts?
+> 
+> On Tue, May 27, 2025 at 10:18 PM <chenxiaosong@chenxiaosong.com> wrote:
+>>
+>> From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+>>
+>> Change __sock_create() to sock_create_kern() for explicitness.
+>>
+>> Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+>> ---
+>>   fs/smb/client/connect.c | 3 +--
+>>   1 file changed, 1 insertion(+), 2 deletions(-)
+>>
+>> diff --git a/fs/smb/client/connect.c b/fs/smb/client/connect.c
+>> index 6bf04d9a5491..3275f2ff84cb 100644
+>> --- a/fs/smb/client/connect.c
+>> +++ b/fs/smb/client/connect.c
+>> @@ -3350,8 +3350,7 @@ generic_ip_connect(struct TCP_Server_Info *server)
+>>                  struct net *net = cifs_net_ns(server);
+>>                  struct sock *sk;
+>>
+>> -               rc = __sock_create(net, sfamily, SOCK_STREAM,
+>> -                                  IPPROTO_TCP, &server->ssocket, 1);
+>> +               rc = sock_create_kern(net, sfamily, SOCK_STREAM, IPPROTO_TCP, &server->ssocket);
+>>                  if (rc < 0) {
+>>                          cifs_server_dbg(VFS, "Error %d creating socket\n", rc);
+>>                          return rc;
+>> --
+>> 2.34.1
+>>
+>>
+> 
+> 
 
 
 
