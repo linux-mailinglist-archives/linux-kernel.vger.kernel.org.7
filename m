@@ -1,124 +1,87 @@
-Return-Path: <linux-kernel+bounces-665378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 376CFAC6860
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 13:28:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 200A3AC6863
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 13:32:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5B183AB9BA
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 11:28:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 988361BA587E
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 11:32:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 316CE280CD3;
-	Wed, 28 May 2025 11:28:35 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C02C7263A;
-	Wed, 28 May 2025 11:28:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B64628368B;
+	Wed, 28 May 2025 11:32:00 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D47036A33B;
+	Wed, 28 May 2025 11:31:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748431714; cv=none; b=F0QHyXyYk1yJT4l5VWL4REIQy5Yr04ROW6QSeO1z5MnWNWCAgaVAsXpQT4a6pLswHZmw+h9yJmUY4VXYdyz2odwy+WUTF/9AWoQ5RwCxemEp3Wr+OfvSi0h1KVPM2fOx6tT5lTsZCCrE3ZHyECWtqFCJMshahzbHylEfCklQXjw=
+	t=1748431920; cv=none; b=iYoEnsP1eQ3bB9VfPm1tyZsisnCuOoZiMG3RDihgJUMjdDjTrYYjiYE0j/OGKXxLFzCnLGI/K5u/ezkf3VytvBCaT4GNUos2a2KymqMIqhvTaQqfT3obbT+tLORD7Feh9yRL5ni39N5nkr25oW43V5KFmXfdQQADC9cIOrslaJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748431714; c=relaxed/simple;
-	bh=Rdwj7CvGValpAUzeiMZcnSBQQBZYEhQiTrlWtf7ChJY=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cu1Zt8yGaG9xnxfS8dm1nihP1Xvt9ylHMwTi7e45SqhmkseDZ4URpVJDm1txoPbqfFbD1VyJZ/DyMm3AASrdRaH4FI9MmP5zomk7KjbbYxMJQi8KQta1BEjY57I5erUN1svk6nwj0HfUTkm6fzmL3BEUo8Aw7OT4ZNfbFX+pAXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4b6nLd5W1Nz6M4sd;
-	Wed, 28 May 2025 19:28:25 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 4B605140113;
-	Wed, 28 May 2025 19:28:28 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 28 May
- 2025 13:28:27 +0200
-Date: Wed, 28 May 2025 12:28:26 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Lorenzo Pieralisi <lpieralisi@kernel.org>
-CC: Marc Zyngier <maz@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, "Rob
- Herring" <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, "Conor
- Dooley" <conor+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>, "Sascha
- Bischoff" <sascha.bischoff@arm.com>, Timothy Hayes <timothy.hayes@arm.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Mark Rutland
-	<mark.rutland@arm.com>, Jiri Slaby <jirislaby@kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<devicetree@vger.kernel.org>
-Subject: Re: [PATCH v4 14/26] arm64/sysreg: Add ICH_HFGITR_EL2
-Message-ID: <20250528122826.0000566c@huawei.com>
-In-Reply-To: <20250513-gicv5-host-v4-14-b36e9b15a6c3@kernel.org>
-References: <20250513-gicv5-host-v4-0-b36e9b15a6c3@kernel.org>
-	<20250513-gicv5-host-v4-14-b36e9b15a6c3@kernel.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1748431920; c=relaxed/simple;
+	bh=M28L9NabqiiiSMq+L/jI0962Wz2oEsat/29mEBFseHU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YuV7YiVqwa3J8q1/EBvRZa0gC8pCD0Qm1zWEzG9dmeh3LZOdPizlntYm+YMXg+xq+V9qNEJYSVZPFGrPDATmzaSAgGHeoSkyFpaaOwn7RKP/QtrKBPlbjpucE55S32f7tSg6qVGbrXbxYAOwCECds6g7HQA7yYdtDQW6NSf2Ftk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9F7621A25;
+	Wed, 28 May 2025 04:31:40 -0700 (PDT)
+Received: from MacBook-Pro.blr.arm.com (unknown [10.164.18.49])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 8666B3F5A1;
+	Wed, 28 May 2025 04:31:54 -0700 (PDT)
+From: Dev Jain <dev.jain@arm.com>
+To: akpm@linux-foundation.org,
+	willy@infradead.org
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	david@redhat.com,
+	anshuman.khandual@arm.com,
+	ryan.roberts@arm.com,
+	Dev Jain <dev.jain@arm.com>
+Subject: [PATCH] xarray: Add a BUG_ON() to ensure caller is not sibling
+Date: Wed, 28 May 2025 17:01:24 +0530
+Message-Id: <20250528113124.87084-1-dev.jain@arm.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-146)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100012.china.huawei.com (7.191.174.184) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Transfer-Encoding: 8bit
 
-On Tue, 13 May 2025 19:48:07 +0200
-Lorenzo Pieralisi <lpieralisi@kernel.org> wrote:
+Suppose xas is pointing somewhere near the end of the multi-entry batch.
+Then it may happen that the computed slot already falls beyond the batch,
+thus breaking the loop due to !xa_is_sibling(), and computing the wrong
+order. Thus ensure that the caller is aware of this by triggering a BUG
+when the entry is a sibling entry.
 
-> Add ICH_HFGITR_EL2 register description to sysreg.
-> 
-> Signed-off-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Marc Zyngier <maz@kernel.org>
+This patch is motivated by code inspection and not a real bug report.
 
-Hi Lorenzo,
+Signed-off-by: Dev Jain <dev.jain@arm.com>
+---
+The patch applies on 6.15 kernel.
 
-> ---
->  arch/arm64/tools/sysreg | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
-> 
-> diff --git a/arch/arm64/tools/sysreg b/arch/arm64/tools/sysreg
-> index 0927754d9fe2c5addbd9693d83b7324f1af66d3e..d2f53fb7929c69895fe8a21ba625d058a844d447 100644
-> --- a/arch/arm64/tools/sysreg
-> +++ b/arch/arm64/tools/sysreg
-> @@ -3616,6 +3616,21 @@ Res0	1
->  Field	0	ICC_APR_EL1
->  EndSysreg
->  
-> +Sysreg	ICH_HFGITR_EL2	3	4	12	9	7
-> +Res0	63:11
-> +Field	10	GICRCDNMIA
-> +Field	9	GICRCDIA
-> +Field	8	GICCDDI
-> +Field	7	GICCDEOI
-> +Field	6	GICCDHM
-> +Field	5	GICCRDRCFG
+ lib/xarray.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-GICCDRCFG in the spec. (you have a bonus R)
-
-Of course the real question was what am I avoiding that made checking these
-against the spec feel like a good idea? :)
-
-FWIW with that fixed,
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-for patches 2 to 14.
-
-> +Field	4	GICCDPEND
-> +Field	3	GICCDAFF
-> +Field	2	GICCDPRI
-> +Field	1	GICCDDIS
-> +Field	0	GICCDEN
-> +EndSysreg
-> +
->  Sysreg	ICH_HCR_EL2	3	4	12	11	0
->  Res0	63:32
->  Field	31:27	EOIcount
-> 
+diff --git a/lib/xarray.c b/lib/xarray.c
+index 9644b18af18d..0f699766c24f 100644
+--- a/lib/xarray.c
++++ b/lib/xarray.c
+@@ -1917,6 +1917,8 @@ int xas_get_order(struct xa_state *xas)
+ 	if (!xas->xa_node)
+ 		return 0;
+ 
++	XA_NODE_BUG_ON(xas->xa_node, xa_is_sibling(xa_entry(xas->xa,
++		       xas->xa_node, xas->xa_offset)));
+ 	for (;;) {
+ 		unsigned int slot = xas->xa_offset + (1 << order);
+ 
+-- 
+2.30.2
 
 
