@@ -1,78 +1,80 @@
-Return-Path: <linux-kernel+bounces-666043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69672AC71DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 22:04:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A784AC71E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 22:05:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F12B1C040B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 20:00:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CD621C04547
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 20:00:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7193A220F28;
-	Wed, 28 May 2025 20:00:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 401E721FF5B;
+	Wed, 28 May 2025 20:00:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="g5hVM02Q"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ybb0kwwi"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFDBC220F36
-	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 20:00:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8D68213244
+	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 20:00:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748462409; cv=none; b=NVV0esu7t7N6xT1gyAYus2ahwq1SD7TCQjOCgqHzs8c0ndsaePoE7Agco43xGpqS8DKK6J77Th2t4CG50iKtJoPI8Bna1ndJPmBlMI9Qq7sGnF5+E/xmsF6bjm9xOunBrYam0ZoJMnWltE0iUjQ7vH809F13osg5EMlGgStJEVI=
+	t=1748462413; cv=none; b=LgHQc38qf9YyLFSOKt8G6nKwVKJArJN8r9uYJ/7fJGs0X5YjQCHtuu9YHA0MoprdF6xXFTx2PxTtwhHL5Lth7VIc5RU6HOBVESSHSpvG1WHBaNo4vOSWVoRp7oOiimiKXZo/zRAmm7i6kH1WvNMgc1mmBaT1g/RaekCxgFlRsjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748462409; c=relaxed/simple;
-	bh=+RSQH1WWEw3OUmjRpYHyCD+79jexEjxzP96wMUdlgH4=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=AbIDBn6Fb8LrzSrkB6ut/w6sHDkpTPngwqOfw99TXQW2Ted8H7n9HOJi6va1Oal3+qK6paz3dutVARWzJORq0U0qDf/BobR/qngrQJAQaV3EtcdpsZQ7QrWdRiD1Evea0uvztCpssTsu4Zs5TjP/0+d12AVAYSAoPlWat/kL0EI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=g5hVM02Q; arc=none smtp.client-ip=209.85.128.54
+	s=arc-20240116; t=1748462413; c=relaxed/simple;
+	bh=Z9SxgzJQKUDvvpklxiiL0R/g7Mpc1YmBxkKUBnHBTw4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=fUpr9+Ym7JwjwxYj1EvXUisGEXCQLDP/SsAY1a2/flA8+OQWlO/EeOiC892lvN6Isl/12wXFLZSJUjyhBGB6bDN0QUzlP421IRqJqINTfkSzaGFPLJXhIAXFhcgbvf2W8Zg1BHs4t5LR669eQSwcE+dPKLMP0Jf/O2UBEKIc+h8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ybb0kwwi; arc=none smtp.client-ip=209.85.221.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-442cd12d28cso88415e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 13:00:07 -0700 (PDT)
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3a4eb4dfd8eso14838f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 13:00:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1748462406; x=1749067206; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6vfW+FfH9s8Rae4vVOChz/TDf82CLWQFderngHSXirY=;
-        b=g5hVM02QoRNDYVleh7OFYDuPLp+SVTHmSDqSbtMrWtbgk7fa+LQo0xUZlVjsAg9ayw
-         3ceOo7VYlqaPCLPwiEBMfRX/oid1+EAVzQClJDiN3ndVIYeRQIl7W453Z5lZzfnTscKe
-         SlkMvpXnEYSxPJGSJWLBLCSK3bDL2o05yhmbwhHv5p5gV+Pijny8TXd7x1lfom2iJdNt
-         Ed67pQgbpHo+zPfFIFVFiJwVtbNvcU0uaEfs/GYk1c8SUYhd0fTL5zTXKjiX15+puGJd
-         4LbyycR0IHQ65qUCdr2YzZ3EelE0TS4MrVqJVduNMJ/5pOSXnx5t9h22gelsCgbf69nH
-         7tXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748462406; x=1749067206;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1748462409; x=1749067209; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=6vfW+FfH9s8Rae4vVOChz/TDf82CLWQFderngHSXirY=;
-        b=CZSmuSGHr0TNFVbO3hPJUVlfbUcsgKxuq6+sXUBns6Uq9HmVnD39aM/KJe4b4/pQ5c
-         eR950Ky9RsqwOt4JalcYta557FsqQvPFEPBLY/QA2uCHbQgYhTTNAz+N9YptJilMPDwQ
-         aSawlpHGW2aATba4LiRi4xy/Rb29Pbb5mVKkI6PQ9C6Asx64kG2+qQXECDVnNq6l2B86
-         2xFyn1b87yTGAWK+bNt7dpmiW7kDL2MRw+a0keCShsvE9zZaxDcb4XSksv/fwLznXnw3
-         Vyo7sA3wrmWEGd38NUX9cXqxokvQzXpg0lR7goDpn2S+/GFQgbq+Uk8O4J3a/gop6JjD
-         G/8w==
-X-Forwarded-Encrypted: i=1; AJvYcCXqy35bn1/0WzPGuE/XmJkAsWnIpcgfpBAc6JuMGWHsFhGjnMT9auKhTgl2OqVJt3Hf/rT7aaj+N1mYl2g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKhkEed4IJHsY1YNv00CLX7KyAISuLtlk8wdNVxQtoCdkh46KF
-	xki1rwvaLTHmASAEOvRqDnyi9U27F3QgOHE2jTY4JwG5Qz52lBvuYLg3Bs4omrBEfb8=
-X-Gm-Gg: ASbGncsej17mnCiWwgpQuIBjY0qt/vpqjD8d2E84rfpS+GlZbK99yqNNOZKLkxMqmci
-	i74PK0+WjZKiIJJ+XrJGxFYw52RbWoXcYUap4Mkt/Rj7yWfoWICzrwSh22ygHb8jqAL7I+lpJzC
-	A4rcEW1ZuR+zYjVqLm+J8T1JPDZRwrR4XjimtAkDTGzH4r+yG5lIvSBME/IGE15is5ZRdPruBZO
-	7fYC2vmf9MkonF7iSGYu1Lza0pt3sTJPB8lZCxMNgkhCqdcGt0a2Pghbyf+SeQG5tpzmbnPeqlb
-	dGObCrfZtqXsmFKLXLuTECgExsjC2OWRfc0KxrgNPu4mXkyQJitx5Kh6ywSxWswecKTeT/4=
-X-Google-Smtp-Source: AGHT+IE1Mm1hj0KXA6UQHYEYpLLI9gqUavUoSQwksygHkZby3xzXc62jj2qjprP5G8oWcOEhnKqxKQ==
-X-Received: by 2002:a05:600c:511b:b0:43b:c0fa:f9c4 with SMTP id 5b1f17b1804b1-44c94c246aemr64196675e9.4.1748462406321;
-        Wed, 28 May 2025 13:00:06 -0700 (PDT)
+        bh=VojE7/1d0sx/36NX9p5/dlSS3t9d1f2yOUDGBM4pW9o=;
+        b=ybb0kwwi2Y+9glsj0rXv8xppUVtwxGEVyzj/M3Tfc6pWs2AV6fUiGKGhkdqw9HzBN0
+         LFcORCMUAnKwTtTrQXKTObgY+O4WYR3gt7Odz7EFAy+d1XAdfkcGp23mYNBUJTRRGV/N
+         TyHPHoZQ9MDPwgL2Rn/jxtDP8reVEsFfNPMA1/2D8fy2848n25qRJ4ME/f64+gMvOMLu
+         E/wj+GgdOA5lmMRzWpSeqQBo9vDez55I6RdBy7igSIff7Q+YS5vSzoh0mXQHpRpHQkUJ
+         SmHlq1fXqYroiaibJ48zUkf3J7s1UISwaRtF/sAhPytkPdc3M1+OPtUJoD0cgYD9KR3a
+         21MQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748462409; x=1749067209;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VojE7/1d0sx/36NX9p5/dlSS3t9d1f2yOUDGBM4pW9o=;
+        b=kel4uRa4CTvE7fsXv2+WK4acPCormyICoepLTqlcZIUYQAX5xIrULPZewl1IjgomQ/
+         WnZpR/9e24kjW9EFC8k8adTH9KJB88awH6ol5ol6mznSLhLTtGIo+d1JZLdFDXeXVDKh
+         +2JC+Ul3omYmxdwuWFV25ph7CxYJEBNVUwNHV2fsgXyHC8ySG6P1obSBEvGquqIRbwaJ
+         5aRsNP8BW2ykq8jhfM8oEdNG5P1xJ97dk6tHrMmQaIEMe6/mwtmrIg/MZO4aCqkyvE0I
+         WH8L6aM6FTBsg3bJJttZJYpYOLvXKOw4ECXgicIBfCfHKEVWkMiimq97+/SzqFMROqGW
+         daTg==
+X-Forwarded-Encrypted: i=1; AJvYcCXrC0Pd2tlc5udbxoPHaNX4rSDjGpgBWaHwYTvcGKRMsHhQKdHEUUTjNIpuD6gqxjoXl6wzlAWafASINH0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOALQvYacnmXK6PdWi5VIJdw//Y+jfFCSe0v/T0gRGPlhjTZpJ
+	UMyp8lse66BDV3NenUSKc0NEz1hO9bFf8gRMLbYgNrC43YWV4TtchF4EwvpuF6Mq8GY=
+X-Gm-Gg: ASbGncuwejkolsMiZmlmO0I9Sn4u3ognJzr/urYOrd9bCndZj2xa9ZTb4I8P2Y5pP4Q
+	67XaGi5hABLBxAwkJMIDxX0TofrJioJ2FNH0mw6B3fc18IEePk/oje0RUC5GYOYuYh76EE+8jaS
+	L509u0GsTwKX+Djnj5BeBsO9Dbw2NXCRMz0ynCLEm0xs91q8b7HFr+fCU9YZXcox6A4xSlkm2Br
+	jMlEcCHu+0zinxYG2Fj5txMPuAcj2j57yeYqEmN2yYHulx1SVVN9tn/BZBokZMz1tl+ijdrqBlP
+	ISyHfveO3lWKQ6PMFdv5Z+SNObudt/hhAxyFm5Ssm+xeVeN6EHJye6rj6V2XWr4QZ7dCyF4=
+X-Google-Smtp-Source: AGHT+IEpJWK04H1Jk2KDz14W33GOaHF4ef97VNekR7RxVVrRDyfOsdZQ8TpRKKVPiZWvjeGWp4YagA==
+X-Received: by 2002:a05:6000:1445:b0:3a4:e482:ec77 with SMTP id ffacd0b85a97d-3a4e482f096mr1978591f8f.9.1748462409096;
+        Wed, 28 May 2025 13:00:09 -0700 (PDT)
 Received: from [192.168.1.29] ([178.197.223.125])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-44fcbd61553sm53347665e9.0.2025.05.28.13.00.04
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-44fcbd61553sm53347665e9.0.2025.05.28.13.00.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 May 2025 13:00:05 -0700 (PDT)
+        Wed, 28 May 2025 13:00:07 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 0/8] ASoC: codecs: More const and unused member cleanups
-Date: Wed, 28 May 2025 21:59:54 +0200
-Message-Id: <20250528-asoc-const-unused-v1-0-19a5d07b9d5c@linaro.org>
+Date: Wed, 28 May 2025 21:59:55 +0200
+Subject: [PATCH 1/8] ASoC: codecs: Constify regmap configuration static
+ variables
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,11 +83,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIADprN2gC/0XOQQ6DIBAF0KsQ1p1EAa1wFeNCYWxZiBbQmhjvX
- tQ2TWbzJ/lvZqMBvcVAFdmox8UGO7oU8huh+tm6B4I1KVOWsSIrWAVtGDXo0YUIs5sDGsiRy05
- wgYLdaepNHnu7nmbdXNnja050vJZ/WZGvW0Injjn1tzaSywIWY2Ba4cQg01gKLqteaq2W/DjUt
- QHTK8NgoyIO1wg/jTb7/gEkqKVZ2wAAAA==
-X-Change-ID: 20250528-asoc-const-unused-1e39b434e427
+Message-Id: <20250528-asoc-const-unused-v1-1-19a5d07b9d5c@linaro.org>
+References: <20250528-asoc-const-unused-v1-0-19a5d07b9d5c@linaro.org>
+In-Reply-To: <20250528-asoc-const-unused-v1-0-19a5d07b9d5c@linaro.org>
 To: David Rhodes <david.rhodes@cirrus.com>, 
  Richard Fitzgerald <rf@opensource.cirrus.com>, 
  Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
@@ -99,79 +99,313 @@ Cc: linux-sound@vger.kernel.org, patches@opensource.cirrus.com,
  linuxppc-dev@lists.ozlabs.org, 
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2348;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=11915;
  i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=+RSQH1WWEw3OUmjRpYHyCD+79jexEjxzP96wMUdlgH4=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoN2s8GaxaeUdgNhIEnN7feOgfCTXlEE/tNIcfQ
- w7fQgJ/0PiJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaDdrPAAKCRDBN2bmhouD
- 1xbAD/wLQHSFVgebaLynwR9dza3iq6tgF1gSzhFhVcuXsg6P0FrtS/lrgOzQT7LszOt/96uK4oz
- IMidlTHwKDQD+qcjRnRxcDYgJFTMPuZnlOGnqA0xoT+MD4djX2sd4sFdWDTeXXvm8EptQ6iyFQc
- OSnOICEE2zWQaDWE6Bws/ggAFo+dF+qm6bVyRsBA4aRbaNqIi9GbzkMtKDOLx9EXooZrUs7lgkg
- asbGuhUkWdq11XX39sP6/WlaqXpHV7WmSwVJg7EZfrLC+v4Fnts6XCnugBiMcUOmOebSOI7927z
- ue6LjpZWd5+K7SbTthbkuEH3SfdE/FnyRCNPp1m/0Yhh+irzaoVTzCA4Av2uIgOcXtOGA5iW3fO
- 9cqwpO5hHeA88z35DAOqACtL0rDv9cHp3JdFPv4PSBtEs2H3ETDCPpeOvDe0egZjA9wVNMVQ87R
- 4SvNhBZVK+/f1GTRsGpINzo11Le+Qly8lSkpXRjyPrxiyJy3CBxyqxYzsC92xddruBz/CfQIoIW
- TB8HJZ+FyR5yZ24zR2dYW9vDrkIs2bwiVoPT9peQChkeozUETrkS/CxLZAp22Wo3CMZ+rBleOWn
- JHuvsXTxZ3QypWNF+pcqdzy1u+Fz+VpdMB0MiF45VP3ia9e/yjMs/9juBjWDx1pmDvz/DS2xCoc
- SSChHiV+h9DSBWQ==
+ bh=Z9SxgzJQKUDvvpklxiiL0R/g7Mpc1YmBxkKUBnHBTw4=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoN2s9T7C7p3EFXVEu7vbd0VKKvStX3mTYGqviF
+ zfaFYYh6cCJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaDdrPQAKCRDBN2bmhouD
+ 1+m4D/4zCtHkWmOUd+xtdQvuOdYkXQyr9ErCPsRRonOTbYo8OT2BekoBNsyX6yQIFayV8RjrDc7
+ HMKEsPwff11fxyCPRo9nEG0MhFBedpLBypjJJR6s94LG7gm99lrtZrlrQJHVGTmSf1/bt+SYtiD
+ 2JmoX4ND99VQ2iJ9GVrApj+/M/Oyiy8Jxb2ET9Cwm8iyBwgIJQKdBN3p22SAS3PQRPGuDYANl6y
+ E5PlQCxrlOpTfRPR8ieo3c4KMldAg/phYnnPuoDCsT2glQn68J+Yf8sOmvee257U9539xqeMmRF
+ Y1zvg5YA/6Azhmvvrq8QwID+pDluLiANMzTZMXDbjkQUsEG3BzM4mHG7pWpJ8r44YYtYri4mgyb
+ jom9+J+c8yPkURdEGIgLUVZj4ciXyMTFn4kBMmKHOPkj3YNiEYI6MtqEsqhL+1aQ5o+9lSNu6qc
+ Yz2LngzoBGXK6jNCULmmAzqk7R4m8PU5Lvtx0PvOuKU+vBXOg+gPVnEDnYEVWDjiPro3vzx4x6/
+ 60eN2wec46edNviz46FVueQz+PR1QEH7UYyvQjmy4LWF3n/aCRcLExbPLRiYwBL8nkCpUWZIGoL
+ TPRDjKLc+PDgn6Q8y2/AS0YmNAKxM+wq885w6ocDeiLYMxWy/FeqElt+ytae235hnhOhMf/+jEe
+ KQ1WZqNJPTrGZCw==
 X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-Make static data const for code safety and drop some unused fields in
-structs.
+Static arrays/structs for regmap configuration like 'struct
+reg_default', 'struct reg_sequence' and others are not modified so can
+be changed to const for more safety.
 
-This is based on for-v6.16 branch in ASoC tree for context in wcd938x
-driver.
-
-Best regards,
-Krzysztof
-
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
-Krzysztof Kozlowski (8):
-      ASoC: codecs: Constify regmap configuration static variables
-      ASoC: fsl: Constify reg_default array
-      ASoC: codecs: wcd9335: Drop unused sido_input_src field
-      ASoC: codecs: wcd934x: Drop unused num_rx_port/num_tx_port fields
-      ASoC: codecs: wcd937x: Drop unused 'struct wcd937x_priv' fields
-      ASoC: codecs: wcd938x: Drop unused 'struct wcd938x_priv' fields
-      ASoC: codecs: wcd938x: Drop unused variant field
-      ASoC: codecs: wcd939x: Drop unused 'struct wcd939x_priv' fields
+ sound/soc/codecs/cs35l36.c        | 2 +-
+ sound/soc/codecs/da7218.c         | 2 +-
+ sound/soc/codecs/da7219.c         | 4 ++--
+ sound/soc/codecs/es8375.c         | 2 +-
+ sound/soc/codecs/max98363.c       | 2 +-
+ sound/soc/codecs/max98373-i2c.c   | 2 +-
+ sound/soc/codecs/max98373-sdw.c   | 2 +-
+ sound/soc/codecs/max98388.c       | 2 +-
+ sound/soc/codecs/max98390.c       | 2 +-
+ sound/soc/codecs/max98396.c       | 4 ++--
+ sound/soc/codecs/max98504.c       | 2 +-
+ sound/soc/codecs/max98520.c       | 2 +-
+ sound/soc/codecs/max98927.c       | 2 +-
+ sound/soc/codecs/rt722-sdca-sdw.c | 2 +-
+ sound/soc/codecs/wcd938x.c        | 2 +-
+ sound/soc/codecs/wsa881x.c        | 4 ++--
+ sound/soc/codecs/wsa883x.c        | 2 +-
+ sound/soc/codecs/wsa884x.c        | 2 +-
+ 18 files changed, 21 insertions(+), 21 deletions(-)
 
- sound/soc/codecs/cs35l36.c        |  2 +-
- sound/soc/codecs/da7218.c         |  2 +-
- sound/soc/codecs/da7219.c         |  4 ++--
- sound/soc/codecs/es8375.c         |  2 +-
- sound/soc/codecs/max98363.c       |  2 +-
- sound/soc/codecs/max98373-i2c.c   |  2 +-
- sound/soc/codecs/max98373-sdw.c   |  2 +-
- sound/soc/codecs/max98388.c       |  2 +-
- sound/soc/codecs/max98390.c       |  2 +-
- sound/soc/codecs/max98396.c       |  4 ++--
- sound/soc/codecs/max98504.c       |  2 +-
- sound/soc/codecs/max98520.c       |  2 +-
- sound/soc/codecs/max98927.c       |  2 +-
- sound/soc/codecs/rt722-sdca-sdw.c |  2 +-
- sound/soc/codecs/wcd9335.c        |  5 -----
- sound/soc/codecs/wcd934x.c        |  4 ----
- sound/soc/codecs/wcd937x.c        |  2 --
- sound/soc/codecs/wcd938x.c        | 18 ++++++++----------
- sound/soc/codecs/wcd939x.c        |  2 --
- sound/soc/codecs/wsa881x.c        |  4 ++--
- sound/soc/codecs/wsa883x.c        |  2 +-
- sound/soc/codecs/wsa884x.c        |  2 +-
- sound/soc/fsl/fsl_asrc.c          |  2 +-
- sound/soc/fsl/fsl_sai.c           |  4 ++--
- 24 files changed, 31 insertions(+), 46 deletions(-)
----
-base-commit: 22d449bcd69e66f25fe847b678738950dcf9301e
-change-id: 20250528-asoc-const-unused-1e39b434e427
-prerequisite-change-id: 20250526-b4-b4-asoc-wcd9395-vdd-px-fixes-0ce64398f9cc:v1
-prerequisite-patch-id: 104000f7254b9cc81be49af9ca584544718e52f1
-prerequisite-patch-id: 230fcd1b712c5a3199e7c9d8250e98e5d55c0a40
-prerequisite-patch-id: ecdbe74955eb7b710f72af1e3cf32ccac52890d5
+diff --git a/sound/soc/codecs/cs35l36.c b/sound/soc/codecs/cs35l36.c
+index b49c6905e8727d7c07fd10e668507ca07bf2cff5..b60697ff7a506dccf3dba1b01faa985761bbbc42 100644
+--- a/sound/soc/codecs/cs35l36.c
++++ b/sound/soc/codecs/cs35l36.c
+@@ -129,7 +129,7 @@ static const struct cs35l36_pll_config cs35l36_pll_sysclk[] = {
+ 	{27000000,	0x3F, 0x0A},
+ };
+ 
+-static struct reg_default cs35l36_reg[] = {
++static const struct reg_default cs35l36_reg[] = {
+ 	{CS35L36_TESTKEY_CTRL,			0x00000000},
+ 	{CS35L36_USERKEY_CTL,			0x00000000},
+ 	{CS35L36_OTP_CTRL1,			0x00002460},
+diff --git a/sound/soc/codecs/da7218.c b/sound/soc/codecs/da7218.c
+index 5f2f67e3bd29240acfa0d53a0892c8e92f711c1f..a7539e1a18939683558accd207b57324a1ce6aeb 100644
+--- a/sound/soc/codecs/da7218.c
++++ b/sound/soc/codecs/da7218.c
+@@ -3033,7 +3033,7 @@ static const struct snd_soc_component_driver soc_component_dev_da7218 = {
+  * Regmap configs
+  */
+ 
+-static struct reg_default da7218_reg_defaults[] = {
++static const struct reg_default da7218_reg_defaults[] = {
+ 	{ DA7218_SYSTEM_ACTIVE, 0x00 },
+ 	{ DA7218_CIF_CTRL, 0x00 },
+ 	{ DA7218_SPARE1, 0x00 },
+diff --git a/sound/soc/codecs/da7219.c b/sound/soc/codecs/da7219.c
+index 3958e88a244563c81b373cab38bc221fc8ba795e..221577574525a5fd60180a4441331d7db88f50e2 100644
+--- a/sound/soc/codecs/da7219.c
++++ b/sound/soc/codecs/da7219.c
+@@ -2312,7 +2312,7 @@ static void da7219_handle_pdata(struct snd_soc_component *component)
+  * Regmap configs
+  */
+ 
+-static struct reg_default da7219_reg_defaults[] = {
++static const struct reg_default da7219_reg_defaults[] = {
+ 	{ DA7219_MIC_1_SELECT, 0x00 },
+ 	{ DA7219_CIF_TIMEOUT_CTRL, 0x01 },
+ 	{ DA7219_SR_24_48, 0x00 },
+@@ -2443,7 +2443,7 @@ static const struct regmap_config da7219_regmap_config = {
+ 	.cache_type = REGCACHE_RBTREE,
+ };
+ 
+-static struct reg_sequence da7219_rev_aa_patch[] = {
++static const struct reg_sequence da7219_rev_aa_patch[] = {
+ 	{ DA7219_REFERENCES, 0x08 },
+ };
+ 
+diff --git a/sound/soc/codecs/es8375.c b/sound/soc/codecs/es8375.c
+index decc86c92427c0c61a1531fb0fed1d9b853449d5..d12b3dc9e1f7fc03b8737e6b001b44c0d51c1b93 100644
+--- a/sound/soc/codecs/es8375.c
++++ b/sound/soc/codecs/es8375.c
+@@ -619,7 +619,7 @@ static bool es8375_writeable_register(struct device *dev, unsigned int reg)
+ 	}
+ }
+ 
+-static struct regmap_config es8375_regmap_config = {
++static const struct regmap_config es8375_regmap_config = {
+ 	.reg_bits = 8,
+ 	.val_bits = 8,
+ 	.max_register = ES8375_REG_MAX,
+diff --git a/sound/soc/codecs/max98363.c b/sound/soc/codecs/max98363.c
+index 950105e5bffdc2c7606e10e7af6f3cf97ece5b4c..fd6830a7579d4860c8bc4fdd26d05698834ddcc2 100644
+--- a/sound/soc/codecs/max98363.c
++++ b/sound/soc/codecs/max98363.c
+@@ -14,7 +14,7 @@
+ 
+ #include "max98363.h"
+ 
+-static struct reg_default max98363_reg[] = {
++static const struct reg_default max98363_reg[] = {
+ 	{MAX98363_R2021_ERR_MON_CTRL, 0x0},
+ 	{MAX98363_R2022_SPK_MON_THRESH, 0x0},
+ 	{MAX98363_R2023_SPK_MON_DURATION, 0x0},
+diff --git a/sound/soc/codecs/max98373-i2c.c b/sound/soc/codecs/max98373-i2c.c
+index 56c4ba1f37826f279df4007b0de36fa932257b8f..f58b8c8625a7061fc9564c9f84dd95d77df33b72 100644
+--- a/sound/soc/codecs/max98373-i2c.c
++++ b/sound/soc/codecs/max98373-i2c.c
+@@ -23,7 +23,7 @@ static const u32 max98373_i2c_cache_reg[] = {
+ 	MAX98373_R20B6_BDE_CUR_STATE_READBACK,
+ };
+ 
+-static struct reg_default max98373_reg[] = {
++static const struct reg_default max98373_reg[] = {
+ 	{MAX98373_R2000_SW_RESET, 0x00},
+ 	{MAX98373_R2001_INT_RAW1, 0x00},
+ 	{MAX98373_R2002_INT_RAW2, 0x00},
+diff --git a/sound/soc/codecs/max98373-sdw.c b/sound/soc/codecs/max98373-sdw.c
+index 6088278e6503dc7ea743ccc439cd6365c7475017..43b52bda6ad5297d856123aa515e0019f4866097 100644
+--- a/sound/soc/codecs/max98373-sdw.c
++++ b/sound/soc/codecs/max98373-sdw.c
+@@ -26,7 +26,7 @@ static const u32 max98373_sdw_cache_reg[] = {
+ 	MAX98373_R20B6_BDE_CUR_STATE_READBACK,
+ };
+ 
+-static struct reg_default max98373_reg[] = {
++static const struct reg_default max98373_reg[] = {
+ 	{MAX98373_R0040_SCP_INIT_STAT_1, 0x00},
+ 	{MAX98373_R0041_SCP_INIT_MASK_1, 0x00},
+ 	{MAX98373_R0042_SCP_INIT_STAT_2, 0x00},
+diff --git a/sound/soc/codecs/max98388.c b/sound/soc/codecs/max98388.c
+index 99986090b4a63a9759763881f3004d0e509e53cd..076f15a9867e13527324354cd6364ade3bca4846 100644
+--- a/sound/soc/codecs/max98388.c
++++ b/sound/soc/codecs/max98388.c
+@@ -18,7 +18,7 @@
+ #include <sound/tlv.h>
+ #include "max98388.h"
+ 
+-static struct reg_default max98388_reg[] = {
++static const struct reg_default max98388_reg[] = {
+ 	{MAX98388_R2000_SW_RESET, 0x00},
+ 	{MAX98388_R2001_INT_RAW1, 0x00},
+ 	{MAX98388_R2002_INT_RAW2, 0x00},
+diff --git a/sound/soc/codecs/max98390.c b/sound/soc/codecs/max98390.c
+index 76296176f9486f72a9d6077a0c69a475e277ed88..a8a282ff9fc5abfbf6c6bdc7fc209ed15bda0cfd 100644
+--- a/sound/soc/codecs/max98390.c
++++ b/sound/soc/codecs/max98390.c
+@@ -23,7 +23,7 @@
+ 
+ #include "max98390.h"
+ 
+-static struct reg_default max98390_reg_defaults[] = {
++static const struct reg_default max98390_reg_defaults[] = {
+ 	{MAX98390_INT_EN1, 0xf0},
+ 	{MAX98390_INT_EN2, 0x00},
+ 	{MAX98390_INT_EN3, 0x00},
+diff --git a/sound/soc/codecs/max98396.c b/sound/soc/codecs/max98396.c
+index c1888cd83dbc6fe2d418012dc1a9b1c58c3ded86..4b4e1fc98a6da5bf3a713133ce974b2f09161ed4 100644
+--- a/sound/soc/codecs/max98396.c
++++ b/sound/soc/codecs/max98396.c
+@@ -16,7 +16,7 @@ static const char * const max98396_core_supplies[MAX98396_NUM_CORE_SUPPLIES] = {
+ 	"dvddio",
+ };
+ 
+-static struct reg_default max98396_reg[] = {
++static const struct reg_default max98396_reg[] = {
+ 	{MAX98396_R2000_SW_RESET, 0x00},
+ 	{MAX98396_R2001_INT_RAW1, 0x00},
+ 	{MAX98396_R2002_INT_RAW2, 0x00},
+@@ -174,7 +174,7 @@ static struct reg_default max98396_reg[] = {
+ 	{MAX98396_R21FF_REVISION_ID, 0x00},
+ };
+ 
+-static struct reg_default max98397_reg[] = {
++static const struct reg_default max98397_reg[] = {
+ 	{MAX98396_R2000_SW_RESET, 0x00},
+ 	{MAX98396_R2001_INT_RAW1, 0x00},
+ 	{MAX98396_R2002_INT_RAW2, 0x00},
+diff --git a/sound/soc/codecs/max98504.c b/sound/soc/codecs/max98504.c
+index 6b6a7ece4cecc3d114da276faf859c8176955300..c94142768c818228aae8b90c636cfd6b496e9859 100644
+--- a/sound/soc/codecs/max98504.c
++++ b/sound/soc/codecs/max98504.c
+@@ -35,7 +35,7 @@ struct max98504_priv {
+ 	unsigned int brownout_release_rate;
+ };
+ 
+-static struct reg_default max98504_reg_defaults[] = {
++static const struct reg_default max98504_reg_defaults[] = {
+ 	{ 0x01,	0},
+ 	{ 0x02,	0},
+ 	{ 0x03,	0},
+diff --git a/sound/soc/codecs/max98520.c b/sound/soc/codecs/max98520.c
+index adf5a898c6df5b10661861f6329ca54db6445f1a..2bf8976c1828210d2e6106f08e571df650640606 100644
+--- a/sound/soc/codecs/max98520.c
++++ b/sound/soc/codecs/max98520.c
+@@ -16,7 +16,7 @@
+ #include <sound/tlv.h>
+ #include "max98520.h"
+ 
+-static struct reg_default max98520_reg[] = {
++static const struct reg_default max98520_reg[] = {
+ 	{MAX98520_R2000_SW_RESET, 0x00},
+ 	{MAX98520_R2001_STATUS_1, 0x00},
+ 	{MAX98520_R2002_STATUS_2, 0x00},
+diff --git a/sound/soc/codecs/max98927.c b/sound/soc/codecs/max98927.c
+index 55cc18451a2d26e0ad72031d5017d68c215240ef..0e9b8970997cf6485a775a3187b1470f93b5c057 100644
+--- a/sound/soc/codecs/max98927.c
++++ b/sound/soc/codecs/max98927.c
+@@ -19,7 +19,7 @@
+ #include <sound/tlv.h>
+ #include "max98927.h"
+ 
+-static struct reg_default max98927_reg[] = {
++static const struct reg_default max98927_reg[] = {
+ 	{MAX98927_R0001_INT_RAW1,  0x00},
+ 	{MAX98927_R0002_INT_RAW2,  0x00},
+ 	{MAX98927_R0003_INT_RAW3,  0x00},
+diff --git a/sound/soc/codecs/rt722-sdca-sdw.c b/sound/soc/codecs/rt722-sdca-sdw.c
+index 609ca0d6c83a1f28c73a0981f2a8f857816e5eb2..70700bdb80a14374321d1d8d8744356484ac01ac 100644
+--- a/sound/soc/codecs/rt722-sdca-sdw.c
++++ b/sound/soc/codecs/rt722-sdca-sdw.c
+@@ -147,7 +147,7 @@ static int rt722_sdca_mbq_size(struct device *dev, unsigned int reg)
+ 	}
+ }
+ 
+-static struct regmap_sdw_mbq_cfg rt722_mbq_config = {
++static const struct regmap_sdw_mbq_cfg rt722_mbq_config = {
+ 	.mbq_size = rt722_sdca_mbq_size,
+ };
+ 
+diff --git a/sound/soc/codecs/wcd938x.c b/sound/soc/codecs/wcd938x.c
+index d9b61eab029af3d4782620ee017fc84fbd26ce0b..342d1f7d5dee3ac2d703e5b5602aef9ca2987158 100644
+--- a/sound/soc/codecs/wcd938x.c
++++ b/sound/soc/codecs/wcd938x.c
+@@ -275,7 +275,7 @@ static const struct regmap_irq wcd938x_irqs[WCD938X_NUM_IRQS] = {
+ 	REGMAP_IRQ_REG(WCD938X_IRQ_HPHR_SURGE_DET_INT, 2, 0x08),
+ };
+ 
+-static struct regmap_irq_chip wcd938x_regmap_irq_chip = {
++static const struct regmap_irq_chip wcd938x_regmap_irq_chip = {
+ 	.name = "wcd938x",
+ 	.irqs = wcd938x_irqs,
+ 	.num_irqs = ARRAY_SIZE(wcd938x_irqs),
+diff --git a/sound/soc/codecs/wsa881x.c b/sound/soc/codecs/wsa881x.c
+index 6627d2da372206eff879f8f3bd5fae9ddc0757d7..d479521a6d504ee45797be8ea99206a4b1787f73 100644
+--- a/sound/soc/codecs/wsa881x.c
++++ b/sound/soc/codecs/wsa881x.c
+@@ -202,7 +202,7 @@
+ 	SOC_SINGLE_EXT_TLV(xname, reg, shift, max, invert, \
+ 			   snd_soc_get_volsw, wsa881x_put_pa_gain, tlv_array)
+ 
+-static struct reg_default wsa881x_defaults[] = {
++static const struct reg_default wsa881x_defaults[] = {
+ 	{ WSA881X_CHIP_ID0, 0x00 },
+ 	{ WSA881X_CHIP_ID1, 0x00 },
+ 	{ WSA881X_CHIP_ID2, 0x00 },
+@@ -346,7 +346,7 @@ static const struct reg_sequence wsa881x_vi_txfe_en_2_0[] = {
+ };
+ 
+ /* Default register reset values for WSA881x rev 2.0 */
+-static struct reg_sequence wsa881x_rev_2_0[] = {
++static const struct reg_sequence wsa881x_rev_2_0[] = {
+ 	{ WSA881X_RESET_CTL, 0x00, 0x00 },
+ 	{ WSA881X_TADC_VALUE_CTL, 0x01, 0x00 },
+ 	{ WSA881X_INTR_MASK, 0x1B, 0x00 },
+diff --git a/sound/soc/codecs/wsa883x.c b/sound/soc/codecs/wsa883x.c
+index f04d99c66f332e18fe4c201f78360416c1607466..13c9d4a6f01537e448a5595f489c1716eb2053f2 100644
+--- a/sound/soc/codecs/wsa883x.c
++++ b/sound/soc/codecs/wsa883x.c
+@@ -572,7 +572,7 @@ static const struct sdw_port_config wsa883x_pconfig[WSA883X_MAX_SWR_PORTS] = {
+ 	},
+ };
+ 
+-static struct reg_default wsa883x_defaults[] = {
++static const struct reg_default wsa883x_defaults[] = {
+ 	{ WSA883X_REF_CTRL, 0xD5 },
+ 	{ WSA883X_TEST_CTL_0, 0x06 },
+ 	{ WSA883X_BIAS_0, 0xD2 },
+diff --git a/sound/soc/codecs/wsa884x.c b/sound/soc/codecs/wsa884x.c
+index fd6ebc25fe894a5981df4e39d10d0f27d21c3a25..07d8a2645404ec49d4b12297d79bbddbe2950a4c 100644
+--- a/sound/soc/codecs/wsa884x.c
++++ b/sound/soc/codecs/wsa884x.c
+@@ -899,7 +899,7 @@ static const struct sdw_port_config wsa884x_pconfig[WSA884X_MAX_SWR_PORTS] = {
+ 	},
+ };
+ 
+-static struct reg_default wsa884x_defaults[] = {
++static const struct reg_default wsa884x_defaults[] = {
+ 	{ WSA884X_BG_CTRL,			0xa5 },
+ 	{ WSA884X_ADC_CTRL,			0x00 },
+ 	{ WSA884X_BOP1_PROG,			0x22 },
 
-Best regards,
 -- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+2.45.2
 
 
