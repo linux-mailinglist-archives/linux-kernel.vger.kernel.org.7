@@ -1,100 +1,274 @@
-Return-Path: <linux-kernel+bounces-665265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51530AC66BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 12:10:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DF9DAC66A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 12:07:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C17239E4A94
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 10:10:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 189B81BA499E
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 10:08:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E1EF2797B5;
-	Wed, 28 May 2025 10:10:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13F1B2798E5;
+	Wed, 28 May 2025 10:07:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=thundersoft.com header.i=@thundersoft.com header.b="Vc6HxHKx"
-Received: from mail-m49202.qiye.163.com (mail-m49202.qiye.163.com [45.254.49.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1JZHIkqL"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F61D171C9;
-	Wed, 28 May 2025 10:10:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 655C3275863
+	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 10:07:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748427022; cv=none; b=cFCe13p0BwFWdPGLEfghV4P/Te6aBD+JPgXokaKVgzVZ4LaE046VW7s1j3UI99XafO6gzrSxW0pDzf2EbTz/FDRTORmMTeDWBwUwyHLiw7Bx7xKmzjmxd5filrN4/EyrFMFRtsVMjdLDB2O4UxOFJ8yveRoFABgP9J+8NrzmO/c=
+	t=1748426862; cv=none; b=neg947vHK/RCy8SqHcEIuHvAAcuB6++6dtzwLCBaiPoaICdOtTeveno6PZDieQCR5dBx81Js6ZUcGMPwQBXo8K/b+GT4jAgdQ6pCQeXHmUH7e6Qmu/1EMYC3Rlo0/xNrFnPoz/s/h7U5jydB8CUpYd2Q91DpH/PXGjPNmfQKCf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748427022; c=relaxed/simple;
-	bh=xyeaaxOwVkanLxqVEwdOLAOwLbiiNhbr/ezVG4Vm0IA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UbnEYB4UwyUZ37qfM/3spaFlqrLThCb4mJrpWzphZZncubG0e2igADOhM9E6DOqQToF7aOkvxGg3wVHpYnKmcN7jm8XIDnwbgfw79Iqc4agdwN9j/Baf1gwbFZLWrbVSOBHL6BxDaI2p8txNl0b4H8KUfWCQfg79D6GDuHvgZXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thundersoft.com; spf=pass smtp.mailfrom=thundersoft.com; dkim=pass (1024-bit key) header.d=thundersoft.com header.i=@thundersoft.com header.b=Vc6HxHKx; arc=none smtp.client-ip=45.254.49.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thundersoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thundersoft.com
-Received: from localhost.localdomain (unknown [117.184.129.134])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 16b15a5e2;
-	Wed, 28 May 2025 16:54:43 +0800 (GMT+08:00)
-From: Albert Yang <yangzh0906@thundersoft.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	=?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
-	Junhao Xie <bigfoot@classfun.cn>,
-	Kever Yang <kever.yang@rock-chips.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Albert Yang <yangzh0906@thundersoft.com>,
-	Ge Gordon <gordon.ge@bst.ai>
-Subject: [PATCH v1 1/9] dt-bindings: vendor-prefixes: Add Black Sesame Technologies Co., Ltd.
-Date: Wed, 28 May 2025 16:54:10 +0800
-Message-Id: <20250528085410.481107-1-yangzh0906@thundersoft.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1748426862; c=relaxed/simple;
+	bh=qQFe6rVqcyQFoEiSf7r6q/+IaWuCcw8oKuk3h3oThjk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cFYPa0bwQPNQEt15BGcIbQiCZr0T8/B3bB2Yu/D3HnRD9v3b1d/7LmdxFvGVZ0rO7y3BXGUSPirvgcHQneKPhAaX2yprQowr9nmHCTvfqLleLER7iSkTlIQN+dWnDd9ZZ0HcToZf/7mHF9rTdiZEe3/EpHHq0Q/fNPE6Ns3QdAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1JZHIkqL; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-55320f715bdso6837e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 03:07:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1748426858; x=1749031658; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hUgR3I1/9djOJDjMSGNUDP/fcCUlqLXDyS64tD1xt3Y=;
+        b=1JZHIkqLWVhOWCdz0fL3pInpVQwVIG15ju/3FQ9RpTHLQKPs96S5efC9/9ML6cPV50
+         q9VifqyjFG+MnrAZe7xPuuJr5K8to72EV8gYXV16SY39NnnkxO2W9MXN28yeLmOEZL6h
+         okUEQPr8FDjNDgA071ZsZZ7hv9VTQIHipAkX5lg1oKU6bmU0L14KaWfFYiPUpEK5z4dv
+         P0Mo4P8XutwhoH5W7FI5/5RF12JGEd7zbmNTBGXrkdyLTvV/63negFJxmyvHhRRk2Ttm
+         9bsqS/2pISTjbWQaRnhlKlRI1XKsN4MGhS48lNPXUfKOm64nIBjMdydgtgDd8x22/NlA
+         tzfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748426858; x=1749031658;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hUgR3I1/9djOJDjMSGNUDP/fcCUlqLXDyS64tD1xt3Y=;
+        b=wN+7mobZzwxETkRSW9SguyJCAomomvV3IxAE3iZNrB6WSIV9XhKYsEjpXeZTlUashe
+         Mt5bp9eX5TWgiGhQOCBtDm0zvgbmWwwpeSEZAJCAK4xOelGSV6PIjxRCoEu5QezWhPoR
+         +dAGTJif+Y8dSccj4XvnUTtXgqDKjK8uzUqtLxUer6UZV04izk4E+JXSX0LnLsqLnNgM
+         wSGpv19EA1QfVJNUXL4q7tM00BkUPXKMYBXySJE+lTgyZDKTVHErp3bO6CtgQIfYieKD
+         dv/w0LaXjGrQcEnG58GS4un9yIauNuDCVSY3l1dp4TvgU8XIVbgOoRlyJbIZD5wcnWPo
+         1Gcw==
+X-Forwarded-Encrypted: i=1; AJvYcCXXlFhb9rQKmRWev4Q5KgalQeUZubemhslMhQXrYoLEuACXOJfvsBE+IRLe+yQRxXExXtKhVUanYNeJOf8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyS27yZiR88czh/KC2TWvC5dNFJVgfy8bJuZwOPOm06ecA86n/X
+	xmQTTQAflx6OyIy7KLoQnYPnpeawWkXbh9iKOTk2n4nL7hb62MgHmw058wycth3G6GO2WUshZuh
+	d11zsW7KO/qmp3LsjFx6VGyIm3NRRr4ZHd+1Qk02T4ywRaMXiYanssODeM6M=
+X-Gm-Gg: ASbGncv0iJjck9h1phCKsSQXMRXnNnD8/ksS+AZTcgoS8lRMuo94eZt144AHgHJCc45
+	RVxFGefSBa6zl9b5zvHgSTwwAekH/4TqOsOWm1PpZZlekrspMWChDNc9fngZslNVbNLF9KIXXwq
+	hvMKMFQtd1xLui09c2rK6/hP2s8aOOS37VSJrFYfuIGfIFuvnbF8IFGoZ0O0JgzqblQ88Hb3A=
+X-Google-Smtp-Source: AGHT+IHFgfvj33yIaJRpjmrIG2/RZ8tg1z4PPfBAXTOJNZYZOUlkuXVbhA7VckM+dh4T6BrZ+JmJGE4kZIR/yrgc69A=
+X-Received: by 2002:ac2:5d6c:0:b0:550:e93a:cfa5 with SMTP id
+ 2adb3069b0e04-5532ef807bfmr142417e87.1.1748426857497; Wed, 28 May 2025
+ 03:07:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkZGktMVk9LSUNOSEpDT0NLTVYVFAkWGhdVEwETFh
-	oSFyQUDg9ZV1kYEgtZQVlKSkxVSkNPVUpJQlVKSE9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpOTE5VSk
-	tLVUpCS0tZBg++
-X-HM-Tid: 0a971619deb409cckunm252380b4397c94
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6NFE6FTo5QzEyNkg8Pgg*OTMU
-	AhgKCxdVSlVKTE9DT0lJT0NPTE5OVTMWGhIXVQIaFRwBE0tCS007DxMOFR8eCQgUHQ9VGBQWRVlX
-	WRILWUFZSkpMVUpDT1VKSUJVSkhPWVdZCAFZQUpDQ043Bg++
-DKIM-Signature:a=rsa-sha256;
-	b=Vc6HxHKxdaJINJLWkxuh5AkJlDgLVvoRfVwosMfILMktKGNtZcea+dJc90EK5Thfy3k7B847x847UQaTptzr6JiBlXoyy1A9xCUEdSG8WUDJrK33sqozGjIUcl7x0s7NSWO1SAsYvPJQHyDmHsiwTCeJ1NRXTmla7GDy4VzFeCM=; c=relaxed/relaxed; s=default; d=thundersoft.com; v=1;
-	bh=AKVDUkNC8XfUMycKiaIoEYEHYmiKh+/8RJhrPb/PC+A=;
-	h=date:mime-version:subject:message-id:from;
+References: <20250416100515.2131853-1-khtsai@google.com> <20250419012408.x3zxum5db7iconil@synopsys.com>
+ <CAKzKK0qi9Kze76G8NGGoE=-VTrtf47BbTWCA9XWbKK1N=rh9Ew@mail.gmail.com> <2025052819-affluent-reputably-83bb@gregkh>
+In-Reply-To: <2025052819-affluent-reputably-83bb@gregkh>
+From: Kuen-Han Tsai <khtsai@google.com>
+Date: Wed, 28 May 2025 18:07:10 +0800
+X-Gm-Features: AX0GCFuXGaTl7wE46Hh7sCuJ_xdh4lOpJTWk67IkPD9e8iv8YV7PJr9cWZPAsPA
+Message-ID: <CAKzKK0rezBC_9zwzkmeejGXtO3W+fTDOKsS26CsvhW+WwKRySA@mail.gmail.com>
+Subject: Re: [PATCH v4] usb: dwc3: Abort suspend on soft disconnect failure
+To: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+Cc: Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"stable@vger.kernel.org" <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Black Sesame Technologies Co., Ltd.s a leading automotive-grade
-computing SoC and SoC-based
-intelligent vehicle solution provider. Link: https://bst.ai/.
+On Wed, May 28, 2025 at 4:23=E2=80=AFPM gregkh@linuxfoundation.org
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Wed, May 28, 2025 at 03:35:15PM +0800, Kuen-Han Tsai wrote:
+> > On Sat, Apr 19, 2025 at 9:24=E2=80=AFAM Thinh Nguyen <Thinh.Nguyen@syno=
+psys.com> wrote:
+> > >
+> > > On Wed, Apr 16, 2025, Kuen-Han Tsai wrote:
+> > > > When dwc3_gadget_soft_disconnect() fails, dwc3_suspend_common() kee=
+ps
+> > > > going with the suspend, resulting in a period where the power domai=
+n is
+> > > > off, but the gadget driver remains connected.  Within this time fra=
+me,
+> > > > invoking vbus_event_work() will cause an error as it attempts to ac=
+cess
+> > > > DWC3 registers for endpoint disabling after the power domain has be=
+en
+> > > > completely shut down.
+> > > >
+> > > > Abort the suspend sequence when dwc3_gadget_suspend() cannot halt t=
+he
+> > > > controller and proceeds with a soft connect.
+> > > >
+> > > > Fixes: 9f8a67b65a49 ("usb: dwc3: gadget: fix gadget suspend/resume"=
+)
+> > > > CC: stable@vger.kernel.org
+> > > > Signed-off-by: Kuen-Han Tsai <khtsai@google.com>
+> > > > ---
+> > > >
+> > > > Kernel panic - not syncing: Asynchronous SError Interrupt
+> > > > Workqueue: events vbus_event_work
+> > > > Call trace:
+> > > >  dump_backtrace+0xf4/0x118
+> > > >  show_stack+0x18/0x24
+> > > >  dump_stack_lvl+0x60/0x7c
+> > > >  dump_stack+0x18/0x3c
+> > > >  panic+0x16c/0x390
+> > > >  nmi_panic+0xa4/0xa8
+> > > >  arm64_serror_panic+0x6c/0x94
+> > > >  do_serror+0xc4/0xd0
+> > > >  el1h_64_error_handler+0x34/0x48
+> > > >  el1h_64_error+0x68/0x6c
+> > > >  readl+0x4c/0x8c
+> > > >  __dwc3_gadget_ep_disable+0x48/0x230
+> > > >  dwc3_gadget_ep_disable+0x50/0xc0
+> > > >  usb_ep_disable+0x44/0xe4
+> > > >  ffs_func_eps_disable+0x64/0xc8
+> > > >  ffs_func_set_alt+0x74/0x368
+> > > >  ffs_func_disable+0x18/0x28
+> > > >  composite_disconnect+0x90/0xec
+> > > >  configfs_composite_disconnect+0x64/0x88
+> > > >  usb_gadget_disconnect_locked+0xc0/0x168
+> > > >  vbus_event_work+0x3c/0x58
+> > > >  process_one_work+0x1e4/0x43c
+> > > >  worker_thread+0x25c/0x430
+> > > >  kthread+0x104/0x1d4
+> > > >  ret_from_fork+0x10/0x20
+> > > >
+> > > > ---
+> > > > Changelog:
+> > > >
+> > > > v4:
+> > > > - correct the mistake where semicolon was forgotten
+> > > > - return -EAGAIN upon dwc3_gadget_suspend() failure
+> > > >
+> > > > v3:
+> > > > - change the Fixes tag
+> > > >
+> > > > v2:
+> > > > - move declarations in separate lines
+> > > > - add the Fixes tag
+> > > >
+> > > > ---
+> > > >  drivers/usb/dwc3/core.c   |  9 +++++++--
+> > > >  drivers/usb/dwc3/gadget.c | 22 +++++++++-------------
+> > > >  2 files changed, 16 insertions(+), 15 deletions(-)
+> > > >
+> > > > diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
+> > > > index 66a08b527165..f36bc933c55b 100644
+> > > > --- a/drivers/usb/dwc3/core.c
+> > > > +++ b/drivers/usb/dwc3/core.c
+> > > > @@ -2388,6 +2388,7 @@ static int dwc3_suspend_common(struct dwc3 *d=
+wc, pm_message_t msg)
+> > > >  {
+> > > >       u32 reg;
+> > > >       int i;
+> > > > +     int ret;
+> > > >
+> > > >       if (!pm_runtime_suspended(dwc->dev) && !PMSG_IS_AUTO(msg)) {
+> > > >               dwc->susphy_state =3D (dwc3_readl(dwc->regs, DWC3_GUS=
+B2PHYCFG(0)) &
+> > > > @@ -2406,7 +2407,9 @@ static int dwc3_suspend_common(struct dwc3 *d=
+wc, pm_message_t msg)
+> > > >       case DWC3_GCTL_PRTCAP_DEVICE:
+> > > >               if (pm_runtime_suspended(dwc->dev))
+> > > >                       break;
+> > > > -             dwc3_gadget_suspend(dwc);
+> > > > +             ret =3D dwc3_gadget_suspend(dwc);
+> > > > +             if (ret)
+> > > > +                     return ret;
+> > > >               synchronize_irq(dwc->irq_gadget);
+> > > >               dwc3_core_exit(dwc);
+> > > >               break;
+> > > > @@ -2441,7 +2444,9 @@ static int dwc3_suspend_common(struct dwc3 *d=
+wc, pm_message_t msg)
+> > > >                       break;
+> > > >
+> > > >               if (dwc->current_otg_role =3D=3D DWC3_OTG_ROLE_DEVICE=
+) {
+> > > > -                     dwc3_gadget_suspend(dwc);
+> > > > +                     ret =3D dwc3_gadget_suspend(dwc);
+> > > > +                     if (ret)
+> > > > +                             return ret;
+> > > >                       synchronize_irq(dwc->irq_gadget);
+> > > >               }
+> > > >
+> > > > diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
+> > > > index 89a4dc8ebf94..630fd5f0ce97 100644
+> > > > --- a/drivers/usb/dwc3/gadget.c
+> > > > +++ b/drivers/usb/dwc3/gadget.c
+> > > > @@ -4776,26 +4776,22 @@ int dwc3_gadget_suspend(struct dwc3 *dwc)
+> > > >       int ret;
+> > > >
+> > > >       ret =3D dwc3_gadget_soft_disconnect(dwc);
+> > > > -     if (ret)
+> > > > -             goto err;
+> > > > -
+> > > > -     spin_lock_irqsave(&dwc->lock, flags);
+> > > > -     if (dwc->gadget_driver)
+> > > > -             dwc3_disconnect_gadget(dwc);
+> > > > -     spin_unlock_irqrestore(&dwc->lock, flags);
+> > > > -
+> > > > -     return 0;
+> > > > -
+> > > > -err:
+> > > >       /*
+> > > >        * Attempt to reset the controller's state. Likely no
+> > > >        * communication can be established until the host
+> > > >        * performs a port reset.
+> > > >        */
+> > > > -     if (dwc->softconnect)
+> > > > +     if (ret && dwc->softconnect) {
+> > > >               dwc3_gadget_soft_connect(dwc);
+> > > > +             return -EAGAIN;
+> > >
+> > > This may make sense to have -EAGAIN for runtime suspend. I supposed t=
+his
+> > > should be fine for system suspend since it doesn't do anything specia=
+l
+> > > for this error code.
+> > >
+> > > When you tested runtime suspend, did you observe that the device
+> > > successfully going into suspend on retry?
+> > >
+> > > In any case, I think this should be good. Thanks for the fix:
+> > >
+> > > Acked-by: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+> > >
+> > > Thanks,
+> > > Thinh
+> >
+> > Hi Greg,
+> >
+> > It looks like this patch hasn't been cherry-picked into the usb-next
+> > branch yet. Am I missing something?
+>
+> It's somehow not in my queue anymore, sorry.  Can you please resend it
+> and I'll pick it up after -rc1 is out.
+>
+> thanks,
+>
+> greg k-h
 
-Signed-off-by: Ge Gordon <gordon.ge@bst.ai>
-Signed-off-by: Albert Yang <yangzh0906@thundersoft.com>
----
- Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+Hi Greg,
 
-diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-index 86f6a19b28ae..963d4ef2ab4d 100644
---- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-@@ -220,6 +220,8 @@ patternProperties:
-     description: Shenzhen BigTree Tech Co., LTD
-   "^bitmain,.*":
-     description: Bitmain Technologies
-+  "^bst,.*":
-+    description: Black Sesame Technologies Co., Ltd.
-   "^blaize,.*":
-     description: Blaize, Inc.
-   "^blutek,.*":
--- 
-2.25.1
+Sent out the v5 patch, which includes Thinh Nguyen's Acked-by tag. Thanks!
+https://lore.kernel.org/linux-usb/20250528100315.2162699-1-khtsai@google.co=
+m/T/#u
 
+Regards,
+Kuen-Han
 
