@@ -1,230 +1,130 @@
-Return-Path: <linux-kernel+bounces-665215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCE1EAC65C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 11:24:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37F74AC65E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 11:26:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9AB0A1BC45FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 09:24:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 896954E3AD3
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 09:25:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8216D278152;
-	Wed, 28 May 2025 09:23:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="MwCo+B4S"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5570D27585C;
-	Wed, 28 May 2025 09:23:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3101E278768;
+	Wed, 28 May 2025 09:25:39 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B261227816E;
+	Wed, 28 May 2025 09:25:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748424194; cv=none; b=nNvmb1MvKBXXBGMCBTQxxUL9oYAZJ/FzcRpakmIk5i+NwUClbni697rX52fZx2y6Xxw8zg5JEK+zmgE7Ve6C5Tiy2O8/YLqwYbwS+rr+MmaXiWRtpTCg1nO/7NcAqqzR4xJidQmce4PcJ1QkxLa23wNtSxJidepBowmOlracw3o=
+	t=1748424338; cv=none; b=rbP6J4bOLx88tpYLz+bSJLzGB5qs2xZb/5aDMAkDvzNxem2t/NMIVtiyHju3pSu5XULCCnWsN2wWPX5PM/2cuse+uosPdZzg4lmPrDNgs+gDRSLs1zk7hbRSNL11Eyqm34u4RVrLAadzSUS8owY4E3mgjTDJjMwHNrbDBfH+IMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748424194; c=relaxed/simple;
-	bh=XwVcsM0Ke27QaXVu4HALsNtN2BuTrzEyaowisRAZRTo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZaERraTyQfFkQLsm9vJjuPQs7NUq5/NVNArclvP3KhoeZhiPNnuPmSflUCTU4SZieWn1JeW8hkwHBLLmJ3I3iVyLYmOdSW2rEH1AfB+YGdRaLPhI5wLcYPgu9WDoqRu031S01HK1/brrEXg+Cep0HaOS79wM+vUuR2+W46COLLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=fail (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=MwCo+B4S reason="signature verification failed"; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 9D2DA40E01AD;
-	Wed, 28 May 2025 09:23:07 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=fail (4096-bit key)
-	reason="fail (body has been altered)" header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 6k1iIRKJfFlA; Wed, 28 May 2025 09:23:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1748424182; bh=si5vjMB3rqYmyMn24gD/zflzQ5T1gxEmIVKPQTemnUs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MwCo+B4SRUadtIe1XUxkBce8rFMI6dulfrRCIQeV3A/qP5P4UrULAs//ut1GGt8+J
-	 9cddGaZsgFOhZ/f7kdnmMZlk8VIDBzPOuasIQm8Qum51RnHfLzrPaGcQMYORD23uhs
-	 yDXcDlf7ilZ+EjBjxFxdDeCXbOjQyT4YAflvjvn0anDy6S305curU6phw351VdLwFo
-	 1tzAj8ndKknisMKZ4HE0bxEnzWlDSyH65EUH4UuFWAOG40AL8G9Aa0He++7W04oP/u
-	 q+rIDZ3iylb9GLu4mlDOxqv4td3pOfZ/3NUvtP7FVrvsqjzBvGgkW0muYsEj/Vk9DK
-	 V3uMCtuXN1CTURb9BADn9kTtTU+Jnf3qBNxhp2+ZiV7vY5dqyU0W09bVkEOyRbeyWO
-	 5acH68wcAQ/Pv8c4IdbW9yZND1szWbqX/o/wyxzDepbSZsdEI4jdUMPGPP9lYeDp5E
-	 sOnn3m7TLbXQan6OtBfgNSxomfAbw7SKLFjkJGbOOB69ME28Fw7sCDaZza7S3lW4YE
-	 YpyiTTDOcSviSuAJCdGI/v6Ig8FUkI5hwGEsblInpI7axuw38BeiQZQ4A48LdpKGFH
-	 dbV06SpVtBjqJAvgf4TMYdMne7uEHnzZuMET81tnV7XWX8G21DLMYjEMGb6uG4Iga9
-	 G1QxEwJ2RSUvJZyJ5OM7ZCXo=
-Received: from zn.tnic (p57969c58.dip0.t-ipconnect.de [87.150.156.88])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 6159540E01B5;
-	Wed, 28 May 2025 09:22:56 +0000 (UTC)
-Date: Wed, 28 May 2025 11:22:50 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Avadhut Naik <avadhut.naik@amd.com>
-Cc: linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
-	avadnaik@amd.com,
-	=?utf-8?Q?=C5=BDilvinas_=C5=BDaltiena?= <zilvinas@natrix.lt>,
-	Yazen Ghannam <yazen.ghannam@amd.com>
-Subject: Re: [PATCH v4] EDAC/amd64: Fix size calculation for Non-Power-of-Two
- DIMMs
-Message-ID: <20250528092250.GAaDbV6oEqvE3279dJ@fat_crate.local>
-References: <20250513192221.784445-1-avadhut.naik@amd.com>
+	s=arc-20240116; t=1748424338; c=relaxed/simple;
+	bh=WPpeY/zBkK9qBadSKYMZngbU/LDpStkIL2YVjLK9fEo=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=gn/SbIuiD2JYFp+1P7Uca/YUMfeZzUX4GCz9dvMvHNIAPy28hqmH7g1lkuPSTsZ2IV5Hs81zbtwcjL1tOXTE/a9hoqk4ngGrjEmYvowMwtW7IbcBboS/VTqDGyPdtXQZyTUR54kZYJXgX1zYwKwhH8pexyWAKqZgd0tqjOAnaFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.164])
+	by gateway (Coremail) with SMTP id _____8AxaeGM1jZoeeD_AA--.40694S3;
+	Wed, 28 May 2025 17:25:32 +0800 (CST)
+Received: from [10.20.42.164] (unknown [10.20.42.164])
+	by front1 (Coremail) with SMTP id qMiowMAxTsWH1jZoY6_3AA--.63172S2;
+	Wed, 28 May 2025 17:25:29 +0800 (CST)
+Subject: Re: [PATCH v10 4/5] tpm: Add a driver for Loongson TPM device
+To: Stefano Garzarella <sgarzare@redhat.com>
+Cc: lee@kernel.org, herbert@gondor.apana.org.au, jarkko@kernel.org,
+ linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
+ davem@davemloft.net, linux-crypto@vger.kernel.org, peterhuewe@gmx.de,
+ jgg@ziepe.ca, linux-integrity@vger.kernel.org,
+ Yinggang Gu <guyinggang@loongson.cn>, Huacai Chen <chenhuacai@loongson.cn>
+References: <20250528065944.4511-1-zhaoqunqin@loongson.cn>
+ <20250528065944.4511-5-zhaoqunqin@loongson.cn>
+ <7ifsmhpubkedbiivcnfrxlrhriti5ksb4lbgrdwhwfxtp5ledc@z2jf6sz4vdgd>
+ <afaeb91a-afb4-428a-2c17-3ea5f098da22@loongson.cn>
+ <gymx5tbghi55gm76ydtuzzd6r522expft36twwtvpkbgcl266a@zelnthnhu7kq>
+From: Qunqin Zhao <zhaoqunqin@loongson.cn>
+Message-ID: <ccb1927d-c06a-9fde-6cbb-652974464f4b@loongson.cn>
+Date: Wed, 28 May 2025 17:24:30 +0800
+User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250513192221.784445-1-avadhut.naik@amd.com>
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <gymx5tbghi55gm76ydtuzzd6r522expft36twwtvpkbgcl266a@zelnthnhu7kq>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-CM-TRANSID:qMiowMAxTsWH1jZoY6_3AA--.63172S2
+X-CM-SenderInfo: 52kd01pxqtx0o6or00hjvr0hdfq/
+X-Coremail-Antispam: 1Uk129KBj93XoW7tr1rXryUJFyfZr13WF1fXwc_yoW8WF1xp3
+	47Way7Gay3Jr48tw1qqa1jyFZF9Fs5Aa1UCas5Xr9ay3s8trnIgF10qrsYgF47uw4xW34f
+	XF45Z39xua4YvrXCm3ZEXasCq-sJn29KB7ZKAUJUUUUx529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUPFb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	GcCE3s1ln4kS14v26r126r1DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2
+	x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r126r1D
+	McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7
+	I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCF
+	x2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C267AKxVW8ZVWrXwC20s026c02F40E14v26r
+	1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij
+	64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr
+	0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26F4j6r4UJwCI
+	42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU4SoGDUUUU
 
-On Tue, May 13, 2025 at 07:20:11PM +0000, Avadhut Naik wrote:
-> Each Chip-Select (CS) of a Unified Memory Controller (UMC) on AMD's
-> modern Zen-based SOCs has an Address Mask and a Secondary Address Mask
-> register associated with it. The amd64_edac module logs DIMM sizes on a
-> per-UMC per-CS granularity during init using these two registers.
->=20
-> Currently, the module primarily considers only the Address Mask registe=
-r
-> for computing DIMM sizes. The Secondary Address Mask register is only
-> considered for odd CS. Additionally, if it has been considered, the
-> Address Mask register is ignored altogether for that CS. For
-> power-of-two DIMMs, this is not an issue since only the Address Mask
 
-What are power-of-two DIMMs?
+在 2025/5/28 下午5:00, Stefano Garzarella 写道:
+> On Wed, May 28, 2025 at 04:42:05PM +0800, Qunqin Zhao wrote:
+>>
+>> 在 2025/5/28 下午3:57, Stefano Garzarella 写道:
+>>>> +    chip = tpmm_chip_alloc(dev, &tpm_loongson_ops);
+>>>> +    if (IS_ERR(chip))
+>>>> +        return PTR_ERR(chip);
+>>>> +    chip->flags = TPM_CHIP_FLAG_TPM2 | TPM_CHIP_FLAG_IRQ;
+>>>
+>>> Why setting TPM_CHIP_FLAG_IRQ?
+>>
+>> When tpm_engine completes  TPM_CC* command,
+>>
+>> the hardware will indeed trigger an interrupt to the kernel.
+>
+> IIUC that is hidden by loongson_se_send_engine_cmd(), that for this 
+> driver is completely synchronous, no?
+>
+>>
+>>>
+>>> IIUC this driver is similar to ftpm and svsm where the send is 
+>>> synchronous so having .status, .cancel, etc. set to 0 should be 
+>>> enough to call .recv() just after send() in tpm_try_transmit(). See 
+>>> commit 980a573621ea ("tpm: Make chip->{status,cancel,req_canceled} 
+>>> opt")
+>> The send callback would wait until the TPM_CC* command complete. We 
+>> don't need a poll.
+>
+> Right, that's what I was saying too, send() is synchronous (as in ftpm 
+> and svsm). The polling in tpm_try_transmit() is already skipped since 
+> we are setting .status = 0, .req_complete_mask = 0, .req_complete_val 
+> = 0, etc. so IMHO this is exactly the same of ftpm and svsm, so we 
+> don't need to set TPM_CHIP_FLAG_IRQ.
 
-The number of DIMMs on the system is a 2^x?
+I see,  but why not skip polling directly in "if (chip->flags & 
+TPM_CHIP_FLAG_IRQ)"  instead of do while?
 
-Their ranks are a power of two?
+And TPM_CHIP_FLAG_IRQ flag can remind us this hardware is "IRQ" not "POLL".
 
-Their combined size is not power of two?
+Thanks,
 
-One can only guess...
+Qunqin.
 
-> register is used.
->=20
-> For non-power-of-two DIMMs, however, the Secondary Address Mask registe=
-r
-> is used in conjunction with the Address Mask register. However, since t=
-he
-> module only considers either of the two registers for a CS, the size
-> computed by the module is incorrect.
+>
+> Thanks,
+> Stefano
 
-Yah, it must be something about the size...
-
-> The Secondary Address Mask register
-> is not considered for even CS, and the Address Mask register is not
-> considered for odd CS.
->=20
-> Introduce a new helper function so that both Address Mask and Secondary
-> Address Mask registers are considered, when valid, for computing DIMM
-> sizes. Furthermore, also rename some variables for greater clarity.
-
-So it is non-power-of-two sized DIMMs?
-
-IOW, DIMMs whose size is not a power of two?
-
-> Fixes: 81f5090db843 ("EDAC/amd64: Support asymmetric dual-rank DIMMs")
-> Reported-by: =C5=BDilvinas =C5=BDaltiena <zilvinas@natrix.lt>
-> Closes: https://lore.kernel.org/dbec22b6-00f2-498b-b70d-ab6f8a5ec87e@na=
-trix.lt
-> Signed-off-by: Avadhut Naik <avadhut.naik@amd.com>
-> Tested-by: =C5=BDilvinas =C5=BDaltiena <zilvinas@natrix.lt>
-> Reviewed-by: Yazen Ghannam <yazen.ghannam@amd.com>
-> Cc: stable@vger.kernel.org
-
-All that changelog stuff...
-
-> ```
-> Changes in v2:
-> 1. Avoid unnecessary variable initialization.
-> 2. Modify commit message to accurately reflect the changes.
-> 3. Move check for non-zero Address Mask register into the new helper.
->=20
-> Changes in v3:
-> 1. Add the missing Closes tag and rearrange tags per tip tree handbook.
-> 3. Slightly modify commit message to properly reflect the SOCs that may
-> encounter this issue.
-> 4. Rebase on top of edac-for-next.
->=20
-> Changes in v4:
-> 1. Rebase on top of edac-for-next.
->=20
-> Links:
-> v1: https://lore.kernel.org/all/20250327210718.1640762-1-avadhut.naik@a=
-md.com/
-> v2: https://lore.kernel.org/all/20250415213150.755255-1-avadhut.naik@am=
-d.com/
-> v3: https://lore.kernel.org/all/20250416222552.1686475-1-avadhut.naik@a=
-md.com/
-> ---
-
-<--- ... goes here, under the --- line so that patch handling tools can i=
-gnore
-it.
-
->  drivers/edac/amd64_edac.c | 57 ++++++++++++++++++++++++---------------
->  1 file changed, 36 insertions(+), 21 deletions(-)
-
-...
-
-> +static int __addr_mask_to_cs_size(u32 addr_mask, u32 addr_mask_sec,
-> +				  unsigned int cs_mode, int csrow_nr, int dimm)
-> +{
-> +	int size;
-> =20
->  	edac_dbg(1, "CS%d DIMM%d AddrMasks:\n", csrow_nr, dimm);
-> -	edac_dbg(1, "  Original AddrMask: 0x%x\n", addr_mask_orig);
-> -	edac_dbg(1, "  Deinterleaved AddrMask: 0x%x\n", addr_mask_deinterleav=
-ed);
-> +	edac_dbg(1, "  Primary AddrMask: 0x%x\n", addr_mask);
-> =20
->  	/* Register [31:1] =3D Address [39:9]. Size is in kBs here. */
-> -	size =3D (addr_mask_deinterleaved >> 2) + 1;
-> +	size =3D calculate_cs_size(addr_mask, cs_mode);
-> +
-> +	edac_dbg(1, "  Secondary AddrMask: 0x%x\n", addr_mask_sec);
-> +	size +=3D calculate_cs_size(addr_mask_sec, cs_mode);
-> =20
->  	/* Return size in MBs. */
->  	return size >> 10;
-> @@ -1270,7 +1284,7 @@ static int umc_addr_mask_to_cs_size(struct amd64_=
-pvt *pvt, u8 umc,
->  				    unsigned int cs_mode, int csrow_nr)
->  {
->  	int cs_mask_nr =3D csrow_nr;
-> -	u32 addr_mask_orig;
-> +	u32 addr_mask =3D 0, addr_mask_sec =3D 0;
->  	int dimm, size =3D 0;
-
-The EDAC tree preferred ordering of variable declarations at the
-beginning of a function is reverse fir tree order::
-
-	struct long_struct_name *descriptive_name;
-	unsigned long foo, bar;
-	unsigned int tmp;
-	int ret;
-
-The above is faster to parse than the reverse ordering::
-
-	int ret;
-	unsigned int tmp;
-	unsigned long foo, bar;
-	struct long_struct_name *descriptive_name;
-
-And even more so than random ordering::
-
-	unsigned long foo, bar;
-	int ret;
-	struct long_struct_name *descriptive_name;
-	unsigned int tmp;
-
---=20
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
 
