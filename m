@@ -1,157 +1,111 @@
-Return-Path: <linux-kernel+bounces-666182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78E6BAC738A
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 00:06:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7698AC73B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 00:10:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E44D1C038DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 22:06:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4FFAE7B49F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 22:08:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2C2323E32B;
-	Wed, 28 May 2025 21:56:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EF00220F2B;
+	Wed, 28 May 2025 22:07:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vsqm8+T9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=illinois.edu header.i=@illinois.edu header.b="pquFUU6P"
+Received: from mx0b-00007101.pphosted.com (mx0b-00007101.pphosted.com [148.163.139.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA6E1220F3A;
-	Wed, 28 May 2025 21:56:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 524F920C02E
+	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 22:07:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.139.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748469412; cv=none; b=JIlPwkt1wqOVSeQfdU1yVSF9QbA1g5dC6iCXD82pKOveT0K40LCDWfPAIgr7n1Cjn3Zf6YJfYkBQl8e17scwrO2jYx24Bjr4c74xRYbTqK29Pf6paec5/DhuiFet0S0esrJkZVRCu82Hb3tmuDNjyReBmhFXhBN5EVRnQ3zc6FI=
+	t=1748470058; cv=none; b=HcYYCJ6X2e0gekwmrLWk3VA+ClxGuqwcywDoJ1+dGcZvgoyyn6v2bT9c7E2yLQbnaNqye3FUpCkJ1VWLr0IsPpEy8Kx6sBwg91ml+XrKjp20bDke5ETHLqUHHmXnJ1XzTvHrK/9hbwjvXtZXItHzeY1vXfwU+z683VlxInH45y0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748469412; c=relaxed/simple;
-	bh=6kk1UuDHJndLmu4iy7P8ROiftYzDAghfNTtHlwXcPF0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=OESaeRU+s93RB9AaE5JHVkkvS2Y0bYlBuV/ZZl2SpW/05ziFsWQQ5VfpF1KEVIxmM8dfoHIrXrK2D2Oaw+oHE7365lpcH9EHWDnSc6pr41nxXtrowcInZIRv4MuD+H/XUshJ+oX9/e69fStt1iDjEvHNgvwdRSZV5XG5SoAi1+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vsqm8+T9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04073C4CEE7;
-	Wed, 28 May 2025 21:56:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748469411;
-	bh=6kk1UuDHJndLmu4iy7P8ROiftYzDAghfNTtHlwXcPF0=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Vsqm8+T9FzN3fDAsOKHhfP9053du97kFAngc3z5uW1+UByAkjDHfqUlcjII6YW49H
-	 l3HhcgPQA/KJ3XTs9t4cGsEaKpmeyxOtlfE7888fE84SXpv2yKLehQQfCRAOQxAjly
-	 s9EKr6aUgsa3kYOyhrNK2XaEpEpKGCV/tJN1+HevSQ7cQk0OeaYJoMAXRFE8rbGI/h
-	 rq6cfLCBUpxQZjslXqw1ZxTTR4xNU1hsjLXYEw24XwLu01P4JFU2CCkqB/bBcKll2X
-	 Uxkc/pgBgpuOE4gv7nUYDyZYG9JO8mffmEZsnhhnnMmkuIuvJz+gxGvpnCkc2+9d/H
-	 LlJAaK4iqZJnA==
-From: Sasha Levin <sashal@kernel.org>
-To: patches@lists.linux.dev,
-	stable@vger.kernel.org
-Cc: Zijun Hu <quic_zijuhu@quicinc.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Sasha Levin <sashal@kernel.org>,
-	viro@zeniv.linux.org.uk,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4] fs/filesystems: Fix potential unsigned integer underflow in fs_name()
-Date: Wed, 28 May 2025 17:56:49 -0400
-Message-Id: <20250528215649.1984033-1-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1748470058; c=relaxed/simple;
+	bh=8Ej1CQfQ7DfMmCY0i3p9U4s2fRLiRdWBUCvMrXo5+4Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=p6YSQdFvq7YeXlwVF1OJf5FvFKd8VPgjK1/Vjv6ugBDFVsOJONXexAL+bl6EPB0JwX5uRV4eAcSSK6BQUTviIEY1Nl8jf8yMOfA1U2LxDElfYlRD7elx4rhM/1oSBzJw4JjTWMCjxIf56SxF+64vUcY3LzOG448y03OnhYKGHBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=illinois.edu; spf=pass smtp.mailfrom=illinois.edu; dkim=pass (2048-bit key) header.d=illinois.edu header.i=@illinois.edu header.b=pquFUU6P; arc=none smtp.client-ip=148.163.139.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=illinois.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=illinois.edu
+Received: from pps.filterd (m0166260.ppops.net [127.0.0.1])
+	by mx0b-00007101.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54SJWMwQ032606;
+	Wed, 28 May 2025 21:36:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=illinois.edu; h=
+	cc:content-transfer-encoding:date:from:in-reply-to:message-id
+	:mime-version:references:subject:to; s=campusrelays; bh=WqZLmxBO
+	4LRIFtRWYHBgzSMaAZwMtDHRa26RcVdkZo0=; b=pquFUU6PojhPIA6AfeLV8q90
+	2K29YVDzwZS1uSEUXUeui2cyOcX8DCAHL7JBrQuoEgYSkjqFixNgXoK8JyoUeiXp
+	xWrxG9Z210mLVOCJK/yjOoED6XdOo6bH88f75y1ldQYZcNepNZafLQZ1t3S2/Y8d
+	sjPGEV7Jl3kRm8Zwzzm2tDB92qNG031ya2lyaxkmNUXa1lXfaSAmNeK04kogMhuz
+	MzXtlwxWOLezMF2JyYIGFS+w7f2M3kL89J2LfuzT6b8AqYn4YkA+QAyhYT+5HHdS
+	UfJRllydjbcN8SqKk7avcV9jjZTJdWzS+m4zciNOZnhDt1kAjOSYTQBK+gwvAg==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0b-00007101.pphosted.com (PPS) with ESMTPS id 46x8qxrueb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 28 May 2025 21:36:04 +0000 (GMT)
+Received: from m0166260.ppops.net (m0166260.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 54SLa3Fh016307;
+	Wed, 28 May 2025 21:36:03 GMT
+Received: from localhost.localdomain (sprlab008.csl.illinois.edu [192.17.97.69])
+	by mx0b-00007101.pphosted.com (PPS) with ESMTP id 46x8qxrue8-1;
+	Wed, 28 May 2025 21:36:03 +0000 (GMT)
+From: Yikang Yue <yikangy2@illinois.edu>
+To: viro@zeniv.linux.org.uk
+Cc: mikulas@artax.karlin.mff.cuni.cz, linux-kernel@vger.kernel.org,
+        yikangy2@illinois.edu, shaobol2@illinois.edu, yiruiz2@illinois.edu,
+        jianh@illinois.edu
+Subject: Re: [PATCH] fs/hpfs: Fix error code for new_inode() failure in mkdir/create/mknod/symlink
+Date: Wed, 28 May 2025 16:36:03 -0500
+Message-ID: <20250528213603.222063-1-yikangy2@illinois.edu>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250504032355.GB2023217@ZenIV>
+References: <20250504032355.GB2023217@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.4.293
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-ORIG-GUID: sIosjSiFkkC39z0WWs8DU4NRfAuepHVs
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI4MDE4OSBTYWx0ZWRfX35+BNqGcCVMA KY8aeOUzdri05zm7IbZsrfLrdu4Kkr8U3TaYQGxDBTbgAySFbb3zmS0lJU+FuwqX0HQ28DQPKMp 44XIU35JGiDiFr/AJRmNFuyAMv9Qj0AwuYZqI0/5Gu2hIW+vXk5fC5ZFDjqPtny9I7yoXSoo1Yl
+ GAiJx8i8PSzBj8iBaQcyaZ5smW/zw2avo6QVHNaFMW66iGy+yQ1QbeU5oylISyXHBZPP1skVgIt Omk05B/qMyJviMLXSuI7vUCEl6CL9b54eZSZ5kJZXJu6LhCteuwuokWyxyfTvW4VYuueefA4Zle pYv3foZrI8JMo1L+DqXzWthsdJmGSdnxIQ1Fw79T4UFIS+vbEOj/HY2yrIW+g+McJuLwowDS70J
+ tSX3oyI/4J0QMTNMw5B/xCQBtXJ7HQvedkbqyZvceCRYr3IT6xGdbVwvUQje1s/9MjbNVTuk
+X-Proofpoint-GUID: NxXk-xSluYr4G8QPjvuuT5k45jLXFqFf
+X-Authority-Analysis: v=2.4 cv=UNzdHDfy c=1 sm=1 tr=0 ts=683781c4 cx=c_pps a=+i0Qcp0HI8C2S+A/gso+oA==:117 a=+i0Qcp0HI8C2S+A/gso+oA==:17 a=dt9VzEwgFbYA:10 a=x7bEGLp0ZPQA:10 a=oxbsytTKRh_yBJMSUh8A:9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-28_11,2025-05-27_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=cautious_plus_nq_notspam policy=cautious_plus_nq score=0 spamscore=0
+ suspectscore=0 malwarescore=0 lowpriorityscore=0 phishscore=0 bulkscore=0
+ impostorscore=0 mlxscore=0 priorityscore=1501 adultscore=0 clxscore=1011
+ mlxlogscore=708 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505160000
+ definitions=main-2505280189
+X-Spam-Score: 0
+X-Spam-OrigSender: yikangy2@illinois.edu
+X-Spam-Bar: 
 
-From: Zijun Hu <quic_zijuhu@quicinc.com>
+Sorry for the late reply.
 
-[ Upstream commit 1363c134ade81e425873b410566e957fecebb261 ]
+On Sun, May 04, 2025 at 03:23:00AM +0000, Al Viro wrote:
+> Frankly, that amount of boilerplate is begging for a helper function...
 
-fs_name() has @index as unsigned int, so there is underflow risk for
-operation '@index--'.
+Could you clarify whether you meant:
+(1) Simplify the patch we already submitted by introducing 
+    a helper function, or
+(2) Simplify the implementations of mkdir/create/mknod/symlink
+    by extracting a common helper?
 
-Fix by breaking the for loop when '@index == 0' which is also more proper
-than '@index <= 0' for unsigned integer comparison.
+For option 1, the current -ENOMEM fix is intentionally minimal,
+but we can certainly wrap the logic in something like:
+hpfs_new_inode(dir->i_sb, &err);
+to conduct the error code assignment within the helper function.
 
-Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
-Link: https://lore.kernel.org/20250410-fix_fs-v1-1-7c14ccc8ebaa@quicinc.com
-Signed-off-by: Christian Brauner <brauner@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
-
-**YES** This commit should be backported to stable kernel trees.
-**Detailed Analysis:** **The Bug:** The `fs_name()` function at
-`fs/filesystems.c:156-174` has a critical unsigned integer underflow
-vulnerability. When the function receives `index=0` as a parameter, the
-loop `for (tmp = file_systems; tmp; tmp = tmp->next, index--)`
-decrements `index` from 0 to `UINT_MAX` (4294967295 on 32-bit systems),
-causing the condition `if (index <= 0 && try_module_get(tmp->owner))` to
-evaluate incorrectly. **The Fix:** The commit changes the logic from: -
-Old: `if (index <= 0 && try_module_get(tmp->owner))` - New: `if (index
-== 0) { if (try_module_get(tmp->owner)) res = 0; break; }` This prevents
-the unsigned integer from wrapping around and provides proper bounds
-checking. **Impact and Severity:** 1. **User-accessible vulnerability**:
-The `fs_name()` function is called through the `sysfs` system call
-(syscall #139) with option 2, making it directly accessible to userspace
-applications. 2. **Potential for exploitation**: An attacker could call
-`sysfs(2, 0, buffer)` to trigger the underflow, potentially causing: -
-Infinite loops in the filesystem list traversal - Unintended module
-reference acquisition - System instability or denial of service 3.
-**Core filesystem subsystem**: This affects the fundamental filesystem
-registration mechanism in the kernel. **Comparison with Similar
-Commits:** This follows the same pattern as the **accepted backport
-examples**: - **Similar to Commit #1 (ntfs3)**: Both fix integer
-overflow/underflow issues that could cause system instability -
-**Similar to Commit #3 (f2fs)**: Both prevent integer arithmetic issues
-in filesystem code - **Similar to Commit #5 (f2fs)**: Both add bounds
-checking to prevent corruption **Stable Tree Criteria:** ✅ **Fixes
-important bug**: Prevents potential system instability and undefined
-behavior ✅ **Small and contained**: Minimal code change, only affects
-one function ✅ **Clear side effects**: No architectural changes, just
-safer bounds checking ✅ **Low regression risk**: The fix makes the
-function more robust without changing expected behavior ✅ **Critical
-subsystem**: Filesystem management is fundamental to kernel operation
-**Conclusion:** This is a textbook example of a commit suitable for
-stable backporting: it fixes a clear bug with security implications in
-core kernel infrastructure, uses a minimal and safe approach, and has no
-risk of introducing regressions. The unsigned integer underflow could
-lead to system instability when triggered through the accessible `sysfs`
-syscall.
-
- fs/filesystems.c | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
-
-diff --git a/fs/filesystems.c b/fs/filesystems.c
-index 5e1a190133738..148073e372acd 100644
---- a/fs/filesystems.c
-+++ b/fs/filesystems.c
-@@ -155,15 +155,19 @@ static int fs_index(const char __user * __name)
- static int fs_name(unsigned int index, char __user * buf)
- {
- 	struct file_system_type * tmp;
--	int len, res;
-+	int len, res = -EINVAL;
- 
- 	read_lock(&file_systems_lock);
--	for (tmp = file_systems; tmp; tmp = tmp->next, index--)
--		if (index <= 0 && try_module_get(tmp->owner))
-+	for (tmp = file_systems; tmp; tmp = tmp->next, index--) {
-+		if (index == 0) {
-+			if (try_module_get(tmp->owner))
-+				res = 0;
- 			break;
-+		}
-+	}
- 	read_unlock(&file_systems_lock);
--	if (!tmp)
--		return -EINVAL;
-+	if (res)
-+		return res;
- 
- 	/* OK, we got the reference, so we can safely block */
- 	len = strlen(tmp->name) + 1;
--- 
-2.39.5
-
+If you had option 2 in mind, our plan would be to
+first correct the other similar error-code inconsistencies and
+then consider extracting a helper function to reduce duplication.
 
