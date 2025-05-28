@@ -1,130 +1,131 @@
-Return-Path: <linux-kernel+bounces-666013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 960B9AC7196
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 21:39:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCD04AC719A
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 21:44:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1264A25047
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 19:39:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C0E34A7BA1
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 19:44:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3F5721325A;
-	Wed, 28 May 2025 19:39:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2D632206BE;
+	Wed, 28 May 2025 19:44:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="WhZEsf61"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PUn7ELU8"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BECA321D3EF
-	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 19:39:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 755B121FF51
+	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 19:44:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748461162; cv=none; b=JjU4MBupmlIOUqu8D4OI+SW1Ld0SJLYKS+sL7LqGgvAWiitTx2yMrHJJXgActkE4rG7D3H15cbzKvMaZ9Ifyj2reqXDP41XT71Wgmx7F6gUIXm/x4IvjOZ7vbRAACd295IaDxDSqjBvPvTDdtwrqy3TQS0jq0meDPftgfdTr5RM=
+	t=1748461453; cv=none; b=VRZZYJbe6Ccj7qJyd9uhl+dJabIku/HCPOEt2szg4Fyz6lkpRsnJV3glWQSz5xa1qGlPKCgqZtnF3N8GhqtXh6PzXyqu10fYn/g8oIrfmaWbTt/mJfeqqlt49Q/oqkBS59GcnOrwkJmc29L6t8UHF/8NOy5xYHzhuagMQW1d+mw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748461162; c=relaxed/simple;
-	bh=6EB90aStD6oZtCtsMlLsrlS/zerOaqvnwH0RivSpcTg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z3ahwf5xPurMTsSyZTw1oiv2rEroaSOtQ9ptpS2aUwJ/WFkOXmBp1U9Hl/5LYQDf50SYQo7tdmqOxlaYSLESsKRZwUJiU1plI8fdhCGWBhuqxchYsNKsYsIyO4MDRzBRrPibniS2tZqyrJzQ+7cSGYz2osiHfuEEhlMR1VyE8L8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=WhZEsf61; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ad8a6c202ffso19466366b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 12:39:18 -0700 (PDT)
+	s=arc-20240116; t=1748461453; c=relaxed/simple;
+	bh=v+7c2ibym+9L4vBuGB864srL601ndzgn07XqfmbWBCM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RoHKhl8EPcRDmN1TgEMdd0xsFFDhEO6yY52iKgthYb7DNdo2OUS4lOF8EeMu2qBxBtgL/8JKW85T3RAunfCM/8RiN1JxJnMIb96mkgKOEXoG5L232t47sAIzeY0zDQdHC6UG4oeLpD/gwcnJAB564gqT0042ELpK3NrBMzjIJ3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PUn7ELU8; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-450828af36aso80635e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 12:44:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1748461157; x=1749065957; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=m8e2i44Gr0oyZcRxefHfwT++nWQEkaT/mt94UZHEUYc=;
-        b=WhZEsf61zNhCjjU0QNczwqWWRA44iVpI8/qqcLlWSnaZ7nwf4ZPBKvExD7iUENeXws
-         TURi+9glAM3buO7a6xwBvyybKE0O1aTUfikSNeCoE/Nl6JqmvrRFF0OzsVLhH2UDOC3E
-         SFaVhiKEaSHjepzy1PzWN7JhXigx2KMBcUHqI=
+        d=linaro.org; s=google; t=1748461450; x=1749066250; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6b6pocI+1kBnlTh2HZkTgqTBwAL4VXspXdzVNai3n8I=;
+        b=PUn7ELU8CIZQSBwJczFoSZnp9pJGMG65S8GCma2zua0j9eBbKKa3OGEsed/94/9YFa
+         7XiTBgqovj1xd4x00wrTHzZGgEC9MsULZlxdrh5yiaGsBowDodHOZvcmywgqu0SYLDOG
+         qHMqG9Ci6vQYgHooRAXKOmeuiFMH2VXkE9p5p/5pgHnpI5DoKTodXg5kV33j8gjiXaev
+         Lpv/SVPXyuLruZIlwUbi4ur6fmBeuNi3yzuYqb7r60LhBJUBpMPFQ90/AYIUNPLNHws2
+         GvYvVsk2VmqGltWHbcipfSJVPKL+999c96cMCoRmBTwLYXtrt4HBZZ7jsh28yOaMD6Yx
+         DvuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748461157; x=1749065957;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1748461450; x=1749066250;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=m8e2i44Gr0oyZcRxefHfwT++nWQEkaT/mt94UZHEUYc=;
-        b=ZMPnCfAhlY2T9sq9vJBUbyuzDDAYxdb7I4JxP5VbaKK+K8JAtGrP8ZGoy51Jcq3ePb
-         ZeH4U9yV1CaqyR9WqIdAa+v5+rXBGItH3I8Bl62sVLotEGHRmi98pPAP7Sf65X+2u5Ov
-         /A4eifxU+LxSgk7jMV2Fu8Cl+aRNEoxCU6rVVMhor76948t9/AXisYIRU+IksdwxVDbI
-         42SBw00Zr+mfd9fNwivIWA24QAi/sKok31eVCoQJ6TR/EG+jmkSIUItufxz8zevHYkt7
-         XOxHZmaNNLcO1N5yyhSHfiOvKShXy1DRWe/ws7mU9PcJFNIhdjypVGfLFycvbJ9vLB5K
-         MzDQ==
-X-Gm-Message-State: AOJu0YzDWAAo9sRGK/Qoe8C7NgxJkJWvOuFARW2HOzLQDObRaadlKx6J
-	xWC0F62CnNpzxstAcEI3rYbpsouADLRpXPPDA0Ab/ekkAsEYB5GTMsTK3N6L8XRogDCGAsH19yu
-	s3tJEngw=
-X-Gm-Gg: ASbGncs23uN3LQvKn1ya8GNGf3pBpPoDCPvPDxV86gThzBx+47P4LbOwtEj6poV5waL
-	Hx6Qw2DhXNEeuoRe6I3djIL58tAnw85EzxjIsH7DxXLcYgOJMVjojTFocvqYMx57ZZYTTGLGkqL
-	i3lJAyYnGGBSYarN8vYQw1Fx2vCqNlfYBcPKbRGDmVST3UQSCiIddOBQP5lm0dCC+W3ysOlS1bz
-	os/iw74T/hT4N5E95dqfkwNXXU2iy6e7LzGzgPlEK0o7TKaoiQhodpX7P2tgUwG5bzc97zHrKSE
-	Mni3Yp/kuDHbObebya099UipvGtkuEo2uCANAoRpq3I42Kj7Q0zqURCLGE8MZ318VUzFmHJaJ7u
-	QKTmPMuI5EcsTX4A8Hzu1ji2nFg==
-X-Google-Smtp-Source: AGHT+IGxjrqCrwK9gD0dj3t7+Edxgrci8lZRKirMp5zTKQ+DwiXhwKaqCqJJ0KU9/GtZ9fLrCxd/nw==
-X-Received: by 2002:a17:906:99c2:b0:ad2:4144:2329 with SMTP id a640c23a62f3a-ad85b1205c3mr1707412966b.7.1748461156768;
-        Wed, 28 May 2025 12:39:16 -0700 (PDT)
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com. [209.85.218.41])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad8a19ad3basm160222966b.6.2025.05.28.12.39.15
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 28 May 2025 12:39:15 -0700 (PDT)
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ad56829fabdso17001466b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 12:39:15 -0700 (PDT)
-X-Received: by 2002:a17:907:971a:b0:ad8:9dba:fb35 with SMTP id
- a640c23a62f3a-ad89dbafba8mr449137366b.40.1748461154850; Wed, 28 May 2025
- 12:39:14 -0700 (PDT)
+        bh=6b6pocI+1kBnlTh2HZkTgqTBwAL4VXspXdzVNai3n8I=;
+        b=xUus6MmojNUdDd4HsqZGrBoW/cH59Mz7/Vc+DstuITVgrrzWqif+iJ29nXEvJ/cplV
+         d406s7YBcsMV8FhkTuOETiq1+N6rRebuo0rQvU1avIEDK/wQZcKpoWY0HnlmWHHNyECt
+         QI0YPNRQQEP7D4hn+aLwPgDOhrLOEy0ioW3D2S6IDDxoJQU1MSbUyFN6Lp+lk98RxvA7
+         h0Z4bG0le0si1V7Wx/lC8BjCxJM0wEdepwHd4WyeFbSNXocz6pF/FUSGhJ+qykrTGkkX
+         4HbMgPNFIkjQpFuyK5+ko9FvcIjuVjLDywl7gAMU8tdI7UXJNrQdOFYpJ5wiHs81gSHr
+         phWg==
+X-Forwarded-Encrypted: i=1; AJvYcCXzQP7vwrta2Uo7JqrL67gvQEKDjYh8rtaTw5VGzYzFtgcRH8pCFe2jUY/k5b9mdnjJof5brKZP5peELgE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJjJiYdB5NhFAQDQUejViMCmC81EMY82hQy9tRP6xfIuRc43v4
+	Pnn42LbDRbAexwwZnWqxLbgNFMPRObrcHswNFx1CVI7dLio/2h1V700aTojTyNX4gtA=
+X-Gm-Gg: ASbGncuFs6DFdGASC2/8tzbvkoPdEweCDpOQaXB6hebuNLHSaZSpLKpMsvoJ81N07Q+
+	79YJBBcZzv9ia06ZWUvftjU4HfEZoNglvMl362zJcjTvVnLoNB9xw05aCsRkjlO3dN0AOVsuNVx
+	39TJC1U0bXmOM1EhXXU5vAC1uC+P23OQ/IwKgJ36WNv4fAGhBPU6kAiISh8JYBbb8nxziXjrIYl
+	rBSvUUictdqErCxdPWDoQaTJ5cxbyW8Q8J8XM2Lhq4dtyvJkbIRkiOzl1C6M09IwJm0HVH2xQhE
+	1Hosy0F4pZDlYvfzFxos1ZVtOYEnrFJlZet8h5asiVOXE47mcROu8smjp10Pkw==
+X-Google-Smtp-Source: AGHT+IHpZIF+SG/qw5FywiMZWZPdXSbwv4KKKCQlkP4nvRsETytm6+Be6Wq6IYWOYMM7+s75isaOrg==
+X-Received: by 2002:a05:600c:138a:b0:43d:301b:5508 with SMTP id 5b1f17b1804b1-44ff400febemr14288445e9.2.1748461449599;
+        Wed, 28 May 2025 12:44:09 -0700 (PDT)
+Received: from kuoka.. ([178.197.223.125])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-450cfc15ad7sm367945e9.18.2025.05.28.12.44.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 May 2025 12:44:08 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: David Rhodes <david.rhodes@cirrus.com>,
+	Richard Fitzgerald <rf@opensource.cirrus.com>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	linux-sound@vger.kernel.org,
+	patches@opensource.cirrus.com,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH] ALSA: hda: cs35l41: Constify regmap_irq_chip
+Date: Wed, 28 May 2025 21:44:03 +0200
+Message-ID: <20250528194402.567062-2-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250527141706.388993-1-cel@kernel.org>
-In-Reply-To: <20250527141706.388993-1-cel@kernel.org>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 28 May 2025 12:38:58 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wggC6PP9ZNwKY7sEzdsC7h8qySA7pjqAchrYowniADUQg@mail.gmail.com>
-X-Gm-Features: AX0GCFuQ-K3drbs-6E94wWPS_IuA71tVG9YGA_q9hwV9_Skek2OUDDsjT8zlJ6Q
-Message-ID: <CAHk-=wggC6PP9ZNwKY7sEzdsC7h8qySA7pjqAchrYowniADUQg@mail.gmail.com>
-Subject: Re: [GIT PULL] NFSD changes for v6.16
-To: Chuck Lever <cel@kernel.org>, Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org, 
-	Jeff Layton <jlayton@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=827; i=krzysztof.kozlowski@linaro.org;
+ h=from:subject; bh=v+7c2ibym+9L4vBuGB864srL601ndzgn07XqfmbWBCM=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoN2eCH3amPl91B4Ck8Do7O+u3Eac8Qh5VuY+wK
+ 5IY9tdu8FeJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaDdnggAKCRDBN2bmhouD
+ 1/QgD/9Gz1c9lI5b1sxDHnXsy3V19uumEXQlOG+gkqYIHX0519danAD8LBM3tIrTG4469FeJomx
+ Z/qeTe589Z93pgPe8gjF4rGoP4seIZ4BqgENvMz8R/wM+zbgK1c6ksHjtI/IdChDHE7LGFbho/+
+ QoHbRBbilWW8lr+s9nUhq1y405dOLjyf7Is6KLMr0FaFujKTkfyYU7vqEQ2e4W2k+9Lo4hLbfBh
+ PQyWLk7UynZPRCsi12TetnqudfzBn6jSMa8KzjY+YnJxLDrMZiiAt+2o2rN7tCOBE8ORql7Tly3
+ 62g4UD1lf2iqY68ndFsignzWYOrYykmXHIa9NU3r/odx8YtJ403sG4pBnPfYU6FD53+/cQLvA6T
+ LaEozrbBGJavgNZZGEWpEpOLR1ck2Ztx5C5XffzW7RJSVPTMv/BVUcLdV45oObWnqXwlLwKBSfB
+ suQeEmH+bsM/SiRwNWvxM0FqT4mUeFW68q55ur4dMVvgRbxPguo9GlW40zX89e5wktnG2Id03MY
+ ivfHr0pVNEOKq3UA21nyE6jRCxrQgb3ydJlCVzeve6Kr7ye5o9E0ZEbcBQ4MLvlnMNP+HWdlezO
+ lJDlsdplUPamGNlP2Icf4utVBPvBUXmR8Aq70laOigh4SlBM7QgurhYmp6mr90Sz8/nAFWrQp/M uMRIWxsLfwzJOKQ==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Transfer-Encoding: 8bit
 
-On Tue, 27 May 2025 at 07:17, <cel@kernel.org> wrote:
->
-> NFSD 6.16 Release Notes
+Static 'struct regmap_irq_chip' is not modified so can be changed to
+const for more safety.
 
-Pulled - but I have a silly request.
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ sound/pci/hda/cs35l41_hda.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Can you fix your kernel.org email sending setup so that you have a
-real name, not just your login name?
+diff --git a/sound/pci/hda/cs35l41_hda.c b/sound/pci/hda/cs35l41_hda.c
+index d9c8872b1866..d5bc81099d0d 100644
+--- a/sound/pci/hda/cs35l41_hda.c
++++ b/sound/pci/hda/cs35l41_hda.c
+@@ -1603,7 +1603,7 @@ static const struct regmap_irq cs35l41_reg_irqs[] = {
+ 	CS35L41_REG_IRQ(IRQ1_STATUS1, AMP_SHORT_ERR),
+ };
+ 
+-static struct regmap_irq_chip cs35l41_regmap_irq_chip = {
++static const struct regmap_irq_chip cs35l41_regmap_irq_chip = {
+ 	.name = "cs35l41 IRQ1 Controller",
+ 	.status_base = CS35L41_IRQ1_STATUS1,
+ 	.mask_base = CS35L41_IRQ1_MASK1,
+-- 
+2.45.2
 
-This is not your fault, btw. I think the kernel.org email sending
-documentation is actively misleading and wrong, with
-
-    https://korg.docs.kernel.org/mail.html
-
-and the 'getsmtppass' output saying that you should do things like
-
-    from  = "[username]@kernel.org"
-
-in your git config (or mutt settings), like you were some kind of bot
-that didn't have an actual name.
-
-Konstantin, can we please get the kernel.org documentation and
-getsmtpass output fixed? We had somebody else who also ended up being
-nameless (Ingo, I think) due to following the documentation a bit too
-slavishly.
-
-We are human. We have actual names. Yes, the email address is
-important for setting up email, but it should be
-
-  Real Name Here <realname@kernel.org>
-
-not *just* the kernel.org user name..
-
-               Linus
 
