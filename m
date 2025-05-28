@@ -1,85 +1,85 @@
-Return-Path: <linux-kernel+bounces-664736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-664738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB17BAC5FF1
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 05:17:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E13A1AC5FF7
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 05:18:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F67C1BA48B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 03:17:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04C7A3BA7F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 03:18:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D313E1E412A;
-	Wed, 28 May 2025 03:17:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 996881E25ED;
+	Wed, 28 May 2025 03:18:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AUtdmK2x"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xFZ7x+ue"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D494D78F3B
-	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 03:17:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5EF112CDBE
+	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 03:18:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748402240; cv=none; b=fIVTiCrw0W63EOkjsn+58Wgti0Gol/GH6ORGppwby23qFvbppzdUU54pb7C7NgfwSILQAKEiZR0BUvCUTsSm/MsPkfUupG+g05WXENObKnf1Lit6ZcQs0OvNlrUQXZcXOzOYK2vF8lNoOzWTC68XhElUPRfEFmyqrFc3yMSV8AQ=
+	t=1748402306; cv=none; b=hpZRXRZDlHLqSUrEy48oKB+P/VRY7F8qsj/FwkLDGAQwe2CCTZCfJwV401G9FrWKoz2bSm9VsbL6cf7n5Y/cmPtwBSBPimdsfbIQ95Bcw/0QLRlXun595vnGQiWte1lEDfFSXcHVAE4sBKrJkWlYwvxB+t9H3sTKI4enSAXS3MY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748402240; c=relaxed/simple;
-	bh=LdFAyeQKVhf9an3e5Ej7+PQMaVUuxTdXfDQvB2CxLPQ=;
+	s=arc-20240116; t=1748402306; c=relaxed/simple;
+	bh=p0o8H/ZWP5ajJApvc49pdLseFqRSuUwEFayifU1/9TM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NeGN6QaLJmje6nSZHiVSNiAcjMqlS//AWiAiqFdHigSYZ85NwFrSgMTypAIRYgVNmaliXhxgnLsncEBgGCIoIj3czpyp9/xgGI4c8snFHNsXcRJF3uTmYfu9fcrIPU6fmn6EbaZ8VJL6oSpu63prFbivCASVyQeBOGrT8fJnfL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AUtdmK2x; arc=none smtp.client-ip=209.85.214.182
+	 To:Cc:Content-Type; b=Q9ahh/RZleg5CMxdxKdIPKLKS2K3CEkWnKOs27gcFP3HxVk57T0wDHi1YvQuYfqDUHrY+z6TvyLn2ZHLymd2pKFeJpFMMi7us9O3fRM0rOxwMr25kro8Q9L6Pk8xWrq7aXi6zujDGkz8sSbLKBLDG7Q2p0zfpykcv2v1nrlT+4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xFZ7x+ue; arc=none smtp.client-ip=209.85.214.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2349068ebc7so134625ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 20:17:18 -0700 (PDT)
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2349068ebc7so134945ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 20:18:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1748402238; x=1749007038; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1748402304; x=1749007104; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=LdFAyeQKVhf9an3e5Ej7+PQMaVUuxTdXfDQvB2CxLPQ=;
-        b=AUtdmK2xipN+sZQV7Qo76/sOfDnoWKgEgP2v40hWsmGmrGxbr0cc9D7EiPHGOS0cXm
-         Wz7EMFD9xV4B3CEUWPGwsIjks/X3EGkJcQql3y/mdnouEwwiaEh8hbthGBlwH2hF6jCP
-         75Xr/+7z67Ad+8aw1BqRB7LxgGX7bcnc399qs4I09LOw+fhcU42bGj2mcluoqmaSv6wD
-         +CsOAqPniJcsIMR2WPzdtjvu7sk43omgmglDfG3e/cDRk0YGqqAIGIAWRjNNbmhmNe5c
-         P2aJH7/rRCZvSVi61dAQYUsgqd1vtEcPXsWdwMFTir3OclYupZU2USsXwEdmlPKCTjPR
-         w2YQ==
+        bh=p0o8H/ZWP5ajJApvc49pdLseFqRSuUwEFayifU1/9TM=;
+        b=xFZ7x+uen24P4ZojJyJX0jgpi8lonQi6MVbcGYpkKXqXdiK8kFJW/+aGMdVAq/PAIB
+         m7A8Rio2Rmkc5Ek4Oia+B/ST52OT5+FoTxjsVvxUqx/76r2K7D4g64Mszm3txZj7XQPV
+         O7qLQLyZYgzAaUG5nVTYK+NVYuxPoP95xcGGyp5OUg7DTLPPPTK/MquRfG93T3ffD/B/
+         PpdLXU6EZZizv+FaYUHKH/MCpNLMZFJapTUJVpGkHBld9fdCUSztexbTXClG/LhFHPBF
+         NwWrYEvLyWQIlJ96NEP1hqgfwwwZWE5tG+9OXXTqBLvnFbJ1TXjqDGpVSOZK6cBgGnek
+         U8DQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748402238; x=1749007038;
+        d=1e100.net; s=20230601; t=1748402304; x=1749007104;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=LdFAyeQKVhf9an3e5Ej7+PQMaVUuxTdXfDQvB2CxLPQ=;
-        b=V392gpSPc3ctU3QIHFbDzFIBBdhjTahUAS1PTT92aBSXPt9i+2F5GoS6wxBuaxVpq1
-         rMY9UpASHGXQP+5O7SPHTkmFaYS7BXP5sDyp0m2Ju4KAcpdDcuACPtkMKKykTqw7oT88
-         1DRNr+wPQczH+HIap3UREGlzqpF4yv9koG9FN8AwSEYMDinH6w59eU81sNLZje+6Ntw/
-         G7TGoN3wvvskbzL9mxdq2Wn3Vram7wh39lK4zBFMC9Uwsnz4rwxbVhw8bmj14wQ1c6bx
-         HG/lP61J2YMBYxBzlIR8Wx5hT1N8pEZFxBE/jOSIQXvgJOQGfHY3M/qbJbCSiBXbp9/N
-         ojfg==
-X-Forwarded-Encrypted: i=1; AJvYcCW6jWKMWaLd0dziRs9+Fd/Kv2QoPdtgdEcsXBNQS0PdYRYID2iE7ClvHKSQyoa+cPbdghRlBiZgXx/bhDo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLnIEjsjNO/pYtmda8ziBgmc4zYeK8MBTcq7E3XTF4G+X+R2vS
-	pVcCb1R6VgTiTuv6Yi2S6o5jCEA8GIHaz+5qaSwWkej/Sy0A25hjSOik8H5BOU/5C9NUIuzbMxb
-	2pxyN+Kd8pJ35DLv0Fitv28cOSFzyO+XDpozJVPMR
-X-Gm-Gg: ASbGncsNTQ8jj8StN5TlS8n5Z80rWWxgERYUY/4+lu/b7ZA7f9bul2JtHUyelG55tsT
-	6PdLJSxSv7xwkDo7l26JMXpjPkmutnLLb0HUiLL3J9Mk8QGJakxaMRygEpJx9Scng1U1HT/Stuk
-	5gn6GEQAGNbk+KGePa1o/A37sOaSv6NA+vng3rI+nEoOd+m/pk/qgaAcY=
-X-Google-Smtp-Source: AGHT+IEnczAUe8aSvzmzngQXQGk0N5lF0CakBmamAAAHOTmJuCP9XYZrHm/qfHgB3Xi0bVS+4KeIoprZZQQkQB9JjsY=
-X-Received: by 2002:a17:902:ea0b:b0:234:bcd0:3d6f with SMTP id
- d9443c01a7336-234cbaf560cmr1132885ad.1.1748402237697; Tue, 27 May 2025
- 20:17:17 -0700 (PDT)
+        bh=p0o8H/ZWP5ajJApvc49pdLseFqRSuUwEFayifU1/9TM=;
+        b=VDfl5ifZhBjtDZ6d7FOAPFcENstdWRDPersDl9vROMr6+MgiNVaz2B1xeqnB4nAc7s
+         M8PU/IB8uZW0MUb+/acpT6AoLWGw0TE3KBu3ttymceqmtof0KdltOFGIeBgLdW6ITGrD
+         SRs1QvZOHXUdzoH74yIvPOCgLPKdPtrlGaL0KTzqcmkQMRWLfx4dU0G3Xqp4UO2Zpgct
+         ZfaGruzCOC0MoyJHeZHJN3LliQ4vf2xh2XVgXC0tiwqWHcfm0JNIq6Si+Y0yTMgVOp3X
+         GVAo78GW1E+5lrNDjGKELHfx/+gkNwWylMMC8Dq0rYqHfAevlUeZ8iqQeBsS/GXyUYuO
+         C+nQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVgm1i6M2YGnlIhQYi+UubQRW9tYc91PtsGzM0a7jmG2dwntEqwMxeBuengfz2lpwL+daCBxdckufdLFwU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0hkiy6bEvZlhJH+n2jwL5Cc7HUq6fJHhIMkrqEIUpl6JTN5Z8
+	K2VefXp86trLFgiSea/bUpmlhdroOkTtdgTSHSGTjyQS+nRMxSDVp6Nys/QWlcpMTKGFBn7bs/m
+	xyw4w2Xc3p0VYS95YFqdsuCwehfJiT5PQxlPWKnqu
+X-Gm-Gg: ASbGncsluYyVMihYK1yLgAMJdlbTh54vplNJD8Nv4KDsP+twnekWHmeiY7qxcE9oS/f
+	a1pR59EmteGONRY8FP3wgK2ETSphYDFd8PQ2Cy5zs23q2ANe6wWq3lQ1frkkoVozgXwuFR49KWh
+	Z0Kz/dm52LbX3MtFBzmwaFgn6Hr3F8yZwYwTXVxNC6HxpU
+X-Google-Smtp-Source: AGHT+IHyBASOmSpQ6jrt38akPkcyDz5ZPwdAwA+jYpxd9Nbay9v2Ysdq8wuVjVilze9WFqafdNaHLI6g1ELAifk2Rao=
+X-Received: by 2002:a17:902:e845:b0:231:ddc9:7b82 with SMTP id
+ d9443c01a7336-234cbe2892cmr1015255ad.13.1748402298919; Tue, 27 May 2025
+ 20:18:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250528022911.73453-1-byungchul@sk.com> <20250528022911.73453-6-byungchul@sk.com>
-In-Reply-To: <20250528022911.73453-6-byungchul@sk.com>
+References: <20250523032609.16334-1-byungchul@sk.com> <20250523032609.16334-7-byungchul@sk.com>
+In-Reply-To: <20250523032609.16334-7-byungchul@sk.com>
 From: Mina Almasry <almasrymina@google.com>
-Date: Tue, 27 May 2025 20:17:04 -0700
-X-Gm-Features: AX0GCFs29uDSGIhRSaJWQiNCOlbuHKz4cCZioyPrXBBoYFAI3Cxm46scEROF8Bo
-Message-ID: <CAHS8izOVbJZfS0r+A1Pi_ZxmrJBfUBZR4fApbd=GWj0AFQ8vcw@mail.gmail.com>
-Subject: Re: [PATCH v2 05/16] page_pool: use netmem alloc/put APIs in __page_pool_alloc_pages_slow()
+Date: Tue, 27 May 2025 20:18:05 -0700
+X-Gm-Features: AX0GCFs9-vI-xN4yFg2bdl4ceoAUrTj04uXSI8vFV9kuA2D-mWZq_A_MtCFBCAU
+Message-ID: <CAHS8izO8fqvXV2_83MVLCxo5z7DepRVaPWS6rymqputuhcrk5A@mail.gmail.com>
+Subject: Re: [PATCH 06/18] page_pool: rename page_pool_return_page() to page_pool_return_netmem()
 To: Byungchul Park <byungchul@sk.com>
 Cc: willy@infradead.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	linux-mm@kvack.org, kernel_team@skhynix.com, kuba@kernel.org, 
@@ -94,13 +94,11 @@ Cc: willy@infradead.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 27, 2025 at 7:29=E2=80=AFPM Byungchul Park <byungchul@sk.com> w=
+On Thu, May 22, 2025 at 8:26=E2=80=AFPM Byungchul Park <byungchul@sk.com> w=
 rote:
 >
-> Use netmem alloc/put APIs instead of page alloc/put APIs in
-> __page_pool_alloc_pages_slow().
->
-> While at it, improved some comments.
+> Now that page_pool_return_page() is for returning netmem, not struct
+> page, rename it to page_pool_return_netmem() to reflect what it does.
 >
 > Signed-off-by: Byungchul Park <byungchul@sk.com>
 
