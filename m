@@ -1,161 +1,122 @@
-Return-Path: <linux-kernel+bounces-665491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA926AC69F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 15:02:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 687B9AC6B1F
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 15:59:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D0817A774E
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 13:00:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B92EA9E03C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 13:59:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EF332857FA;
-	Wed, 28 May 2025 13:01:55 +0000 (UTC)
-Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEA53288519;
+	Wed, 28 May 2025 13:59:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="a9rwiP4Y"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32BCB3595D;
-	Wed, 28 May 2025 13:01:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35A4228643A;
+	Wed, 28 May 2025 13:59:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748437314; cv=none; b=nySrysMTn2BJWq8Tha4AR3ixTAbENfDp4L2p6A7GXcwULDQXJ1a92EVOvHA+xPIJcDA0K/PdGAMHs7VzFwCiL+mGd5V5X9lu3FHeyiP1cxbdERtb/JM7gjD7B72JKqMGokxhw34fvQyzQ60S+7/FhNJc/EH1iinPtlocJTBkESI=
+	t=1748440790; cv=none; b=NAJJeQyJj3GQV2gS74A4bbJKV77RGDvXrhfoAvpSBn3pmdxJejsmi6obdVPrO3gcsJ07r3WmwQ5N7205H827nBhvfJjdhQezngaaHEWWJhfaRrOfzKVnB/ZPPlW8vdyxxo1sUUb0oOQZsl5OxiDhd5/Q8r4vIvGNniSadViIq34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748437314; c=relaxed/simple;
-	bh=y9bMKWA1mUCVhYWK+2mE7dMzU1P7hxUNnWy/QdoIJFY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gvMJtkrodsUI3j++zARCTGRMxpM/JSGvrTEQtyWwl19snFuQt+rpaPqW/AZWWQFfVZl2MUhywxzwREak/+FOx7+8r/EkWzI2ivtoht72z+SmAO9EMvAJTiCycq5XiIxL1L7SWo+e8tioCCFDGxNI8zIGqeFGZS1r3Ws8hfEycLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-2e8f84653c3so4952fac.0;
-        Wed, 28 May 2025 06:01:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748437312; x=1749042112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IbSvaL2uho5iBNc6UnxSmb8ikoxZVNAuMK5QOEf9/rc=;
-        b=BbTRec1bpCnN4rHckQFYX/xiPcs2SeZiLpQA4hYIzslpPo4VIDm23IprF8ZPrxyp8Z
-         go++DU7QhfzytUMRiVqKemrg1NT2TA0Z0TJLiuAZTx91650yOh4m3eJVKJwgHb2j3qU/
-         68CI5+7rkPvkSa9P1v8nZCm9hkMbEr8UDggsqdRxi+oXcS8yTuX//sLXfd89rUDT6s52
-         ZvmHBplLV3IW+O/bqb7xclTT5Y5HnO1RwCkrNjW5nMdAyh5VPTfSMvwDJO2A+Ac11oVx
-         D+BPKtesekyi7fvHO7L4uq8hg+OkfYg78h94ks2fRxqd1K4aHitLX8Js8G+ZrR+hURxr
-         flcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVZLXfTd7UFlxEjHH8O7C7pVO927/oElFlPnlw7HDaTfkqfixZKd86Elk7wGZmQpN+RxKPRid5uDiNUK/ml@vger.kernel.org, AJvYcCWZwOO3VpxZxygy18Vj8uvOH8X/Grwfr7sIBbRnRMFIbTEH/hP7hwzaB/8FQq956QfAnTMPSBkV4SPu@vger.kernel.org, AJvYcCWgZSGL9zOcq02+QzzLQ1SLhRK1C6+cp0z5ChGv8w+nyhaSY1Stx5A5BhYFL3H38cseGEPmKXlUiotW/fk=@vger.kernel.org, AJvYcCWt3MH2kG4BDq3KtqrgHzbVg8gwBrjNxRYNuKqjvcoOJft3U9+aA/TBM7JPqLwA1ID4czCzzQUO1DjXYTM/H4akrmc=@vger.kernel.org, AJvYcCXSoSr0uSSc0Iq5eRHN8eG9AeLbNvjw6hq09REB+FypHQ6PsZ4ReYLMMN4uueSOIcQXD/uTi2RktF5o@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/OQ6bLrzJlcN/AyaUmMpkOkkRv4XCv0uF+Fh9PPwk0TIBcRLi
-	Ev6p9t9krNrfROARyrIggY+5aOaJ/AdReEy+XnnI4GHbMGYFYDpgpbbmWUtrQWjY
-X-Gm-Gg: ASbGncvGVf36xJt0B8A2czpq+epOKCzoihdsQJF7I46vcr8Lb1iuKSzzPohszC5SBs5
-	VJG4KrL4WwF7OQmH47sQwJ6S1Kf4oJ3G2z/iol+uYDKXEjRWFbQcDWDizwKNlPBGPCpemXHfeyo
-	hIsk8cGSZ1TA0n+ZxggSV6N8JkTnAlefzQwyiX5ZtI0jR5hW02t1EhbFStJYY7n1SeFJyG65xxI
-	RcVsnphOnAktY29ASS3qc6XMpSYpo75UmbnFzUW8hBsNcNP3XZVSo6oT8O/C6InU3zfKDbu6Gec
-	1iGvGREWdCowG5GnjJAUrNqtb75SBqb9ksCgyLEwvxbYRes5JMxBmGEj1ivMkcVQBHuZ7gR3gtk
-	XG7KKcqXyoDKu6izi6yOLsN30kzsd
-X-Google-Smtp-Source: AGHT+IFzcGONDX9eh+40zCjEjeFb827OyifAm7A+OIhWfUZ92FQgovECyH9fx8Gqkz32CO+JnAyf/A==
-X-Received: by 2002:a05:6871:e809:b0:29e:6bdb:e362 with SMTP id 586e51a60fabf-2e861e86388mr8793896fac.17.1748437311165;
-        Wed, 28 May 2025 06:01:51 -0700 (PDT)
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com. [209.85.160.178])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a3c0a6443asm5766681cf.4.2025.05.28.06.01.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 28 May 2025 06:01:51 -0700 (PDT)
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4774d68c670so17827391cf.0;
-        Wed, 28 May 2025 06:01:50 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWd/ngvJU7ORBgFZGig8fmQD8V+K9FlzCiIFf4p6nUl5XBhdv3RhLgisfnfy8nD5PfToGe03awvkW/o@vger.kernel.org, AJvYcCXHmFd9VzH/Sti9F6bliEjmWdOvgeIQVtnDmSZrlfm6CiReQt/cdw0WHoY5OWAtiErx61vQWUVOSzhyCbmO@vger.kernel.org, AJvYcCXcAltGmwP5hvB2y5IavOMge3M3Orgi9yRrGvT/mmVjlowIyFXMJd4j+v5WZdT7GWbMNznhs5Zif2RU@vger.kernel.org, AJvYcCXjSqWj6c4ravcAstUXBZn2CNPoquKiP4Yd/pFpcl2rzb/5UKXmrZ6iYMDGqGj/+9DLWGHW7GgNmPJ37l45FkJJla8=@vger.kernel.org, AJvYcCXnQBrVzL9MiiQxR0fSehtVn1NFtO8kV4TUQV/a5ssbmwMwQeCkDCHqu9NJZUpAsaudT3hQQlbcK9WUo4Y=@vger.kernel.org
-X-Received: by 2002:a05:6102:2911:b0:4df:93e0:fb7 with SMTP id
- ada2fe7eead31-4e42419b8c0mr12541235137.25.1748436893682; Wed, 28 May 2025
- 05:54:53 -0700 (PDT)
+	s=arc-20240116; t=1748440790; c=relaxed/simple;
+	bh=keU5ngDbfNyJ99ZyYcjp9U+daYH5n6t4r62lhQZewAM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=F9UnJvPxPqai2o3cztoPz2lCu5YflQE2Z66Lwb2KSLFh/fgbZRcZ+2Qkx43a9r1bsOyboUYJk6ke7TTsyznKd4MLRESqvnzfLm4U18Y3GX0/3RofaS4+3abb8zK0Kh2pZKfvQYBl97JbwaBpv9dY7S/GxWlRel+PqBqBiKZep7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=a9rwiP4Y; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from kreacher.localnet (unknown [5.63.189.50])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 96BD66680C5;
+	Wed, 28 May 2025 14:55:01 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1748436902;
+	bh=keU5ngDbfNyJ99ZyYcjp9U+daYH5n6t4r62lhQZewAM=;
+	h=From:Subject:Date;
+	b=a9rwiP4YBID5AEMl88r98X0/YUjecAMXTGehm+rI8XaSaDPHnfQct6wkChpjCUR2M
+	 1YifvrF2Q3LcSuC5HIqDvTKY2DCp1IPDWJ5qoBN8hti6XCCZM1XTh+o3S4S1ET9/IL
+	 TnFFTfvJG5msYWh8BUHEuQZIJ26ZmqMcpvEqaiOXuQBcffT7b/S86RFFbmizl60+RO
+	 MnzYRJYcGRgpV/dnRppojDMibcZWpy3MvBp6JS/DRIcb/vPoVzvm52mu3jFBlFTFxe
+	 HhGxzUwUZfj1mSd8OCF1nxt42gFsIEWuKMY/4mitvxFnsm7wrDcvZyaUwRAzv4tg1b
+	 9spZzrow5b17w==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: x86 Maintainers <x86@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
+ Len Brown <lenb@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@suse.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ Artem Bityutskiy <artem.bityutskiy@linux.intel.com>,
+ "Gautham R. Shenoy" <gautham.shenoy@amd.com>, Ingo Molnar <mingo@redhat.com>,
+ Todd Brandt <todd.e.brandt@linux.intel.com>
+Subject:
+ [PATCH v1 2/2] x86/smp: Prefer cpuidle_play_dead() to
+ mwait_play_dead_cpuid_hint()
+Date: Wed, 28 May 2025 14:54:49 +0200
+Message-ID: <3633769.iIbC2pHGDl@rjwysocki.net>
+In-Reply-To: <2006806.PYKUYFuaPT@rjwysocki.net>
+References: <2006806.PYKUYFuaPT@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250528-pinctrl-const-desc-v1-0-76fe97899945@linaro.org> <20250528-pinctrl-const-desc-v1-14-76fe97899945@linaro.org>
-In-Reply-To: <20250528-pinctrl-const-desc-v1-14-76fe97899945@linaro.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 28 May 2025 14:54:41 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUGDf5n_Fg7pwiPumm95nPUXyH15geAy2ULwY3U+OtZJA@mail.gmail.com>
-X-Gm-Features: AX0GCFu5yojjEPsbiWTwjJJQ5khyE5KBTwGS5B0aqZkGtvZvOhYOGPRkjlMB-4Q
-Message-ID: <CAMuHMdUGDf5n_Fg7pwiPumm95nPUXyH15geAy2ULwY3U+OtZJA@mail.gmail.com>
-Subject: Re: [PATCH 14/17] pinctrl: renesas: Move fixed assignments to
- 'pinctrl_desc' definition
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Basavaraj Natikar <Basavaraj.Natikar@amd.com>, 
-	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, Andrew Jeffery <andrew@codeconstruct.com.au>, 
-	Joel Stanley <joel@jms.id.au>, Avi Fishman <avifishman70@gmail.com>, 
-	Tomer Maimon <tmaimon77@gmail.com>, Tali Perry <tali.perry1@gmail.com>, 
-	Patrick Venture <venture@google.com>, Nancy Yuen <yuenn@google.com>, 
-	Benjamin Fair <benjaminfair@google.com>, =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>, 
-	=?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>, 
-	Scott Branden <sbranden@broadcom.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	David Rhodes <david.rhodes@cirrus.com>, Richard Fitzgerald <rf@opensource.cirrus.com>, 
-	Charles Keepax <ckeepax@opensource.cirrus.com>, Lorenzo Bianconi <lorenzo@kernel.org>, 
-	Sean Wang <sean.wang@kernel.org>, Jesper Nilsson <jesper.nilsson@axis.com>, 
-	Lars Persson <lars.persson@axis.com>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Damien Le Moal <dlemoal@kernel.org>, 
-	Vladimir Zapolskiy <vz@mleia.com>, Michal Simek <michal.simek@amd.com>, 
-	Emil Renner Berthing <kernel@esmil.dk>, Jianlong Huang <jianlong.huang@starfivetech.com>, 
-	Hal Feng <hal.feng@starfivetech.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-aspeed@lists.ozlabs.org, 
-	openbmc@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, 
-	linux-renesas-soc@vger.kernel.org, linux-sound@vger.kernel.org, 
-	patches@opensource.cirrus.com, linux-mediatek@lists.infradead.org, 
-	linux-arm-kernel@axis.com, linux-riscv@lists.infradead.org, 
-	linux-rtc@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com
+Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 5.63.189.50
+X-CLIENT-HOSTNAME: 5.63.189.50
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: dmFkZTFxkQHn3iCFbbSyiDpq8O8fxHSz0xYZKn6328KRsDmyVOaUGJ5g9Pr88Mn+X1Ui8c/1Qb79P6Egeac0Wd4sy6JCX3KJ8P1U64eCx1OWa9IyZBsPPK141xkOOqyv/1Zw1QatQDlGB1yvkLOMXmCIAxkp70zSNBD+o+hqAg2qBFKsovAAPZZDWVM7txTozblkZF1eJ0XJ7pt6v7XqlFsO0rolzhHpavgnhWYGpyOXvsRTfKUvYlv9wsRDHePo6aQnJXczz+S8EYGfHpo5I4rhmR4dky+Ke+Gndp63BdmPoFR5Kj/OTkj1EaUzRCA+oOB4QoAjMMFv2OYrjxrYTUWJw73Tc20c4APwngYflEi8giQzRlt560/yFzju9koWkC242yDLQqC7sYVR1SeRj/Pv9uNTh+Oe9h9mxtQVLPALHvGM81Vaysotj4uNCPrBIKZKaj+LeTDWutps2VJAGLFbTexMH27DhYJ+SorOA3NUpZMbd15anfnRxafGyaX5ouSUbJenPXRNPCdULXesceieZqGBJEcqxrYGsXN4Y1gx4fuHfsY7W0mRke7t0MZl1qcpy5Dqjff3t4Pp9ajDtI9fs1J/ifowUmZ2P0NBQXP4NiKsUIzfvKMeeMQ3YBxVXxvmdWH366PtoP6liJLj/jpdwS+F94D5sbaqKUMmjsivEd2gbQ
+X-DCC--Metrics: v370.home.net.pl 1024; Body=12 Fuz1=12 Fuz2=12
 
-Hi Krzysztof,
+From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
 
-On Wed, 28 May 2025 at 12:42, Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
-> Assign 'struct pinctrl_desc' .pins and .npins members in definition to
-> make clear that number of pins is fixed and have less code in the probe.
->
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Currently, mwait_play_dead_cpuid_hint() looks up the MWAIT hint of the
+deepest idle state by inspecting CPUID leaf 0x05 with the assumption
+that, if the number of sub-states for a given major C-state is nonzero,
+those sub-states are always represented by consecutive numbers starting
+from 0. This assumption is not based on the documented platform behavior
+and in fact it is not met on recent Intel platforms (eg. Sierra Forest).
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+For this reason, it is better to let the cpuidle driver for the given
+platform put CPUs going offline into appropriate idle state and only
+if that fails, fall back to mwait_play_dead_cpuid_hint(), which may
+still be the next best "play dead" variant if cpuidle is not available.
 
-> --- a/drivers/pinctrl/renesas/pinctrl-rzn1.c
-> +++ b/drivers/pinctrl/renesas/pinctrl-rzn1.c
-> @@ -680,6 +680,8 @@ static struct pinctrl_desc rzn1_pinctrl_desc = {
+For example, when "nosmt" is passed to the kernel in the command line,
+SMT siblings are disabled early, before cpuidle gets ready, but they
+need to be put into sufficiently deep idle states to allow the whole
+processor to reach deep package idle states, like PC10, later on.
 
-This structure could be made const...
+Tested-by: Todd Brandt <todd.e.brandt@linux.intel.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ arch/x86/kernel/smpboot.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
->         .pmxops = &rzn1_pmx_ops,
->         .confops = &rzn1_pinconf_ops,
->         .owner = THIS_MODULE,
-> +       .pins = rzn1_pins,
-> +       .npins = ARRAY_SIZE(rzn1_pins),
->  };
->
->  static int rzn1_pinctrl_parse_groups(struct device_node *np,
-> @@ -878,8 +880,6 @@ static int rzn1_pinctrl_probe(struct platform_device *pdev)
->
->         ipctl->dev = &pdev->dev;
->         rzn1_pinctrl_desc.name = dev_name(&pdev->dev);
+--- a/arch/x86/kernel/smpboot.c
++++ b/arch/x86/kernel/smpboot.c
+@@ -1377,9 +1377,10 @@
+ 	play_dead_common();
+ 	tboot_shutdown(TB_SHUTDOWN_WFS);
+ 
++	/* Each call in the following sequence returns only on errors. */
++	cpuidle_play_dead();
+ 	mwait_play_dead_cpuid_hint();
+-	if (cpuidle_play_dead())
+-		hlt_play_dead();
++	hlt_play_dead();
+ }
+ 
+ #else /* ... !CONFIG_HOTPLUG_CPU */
 
-... if you would replace this assignment by a hardcoded name
-like "pinctrl-rzn1".
 
-> -       rzn1_pinctrl_desc.pins = rzn1_pins;
-> -       rzn1_pinctrl_desc.npins = ARRAY_SIZE(rzn1_pins);
->
->         ret = rzn1_pinctrl_probe_dt(pdev, ipctl);
->         if (ret) {
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
