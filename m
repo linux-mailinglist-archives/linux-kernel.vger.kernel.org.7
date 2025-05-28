@@ -1,105 +1,194 @@
-Return-Path: <linux-kernel+bounces-664903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-664905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A497AC6213
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 08:39:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B34AAC6216
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 08:39:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9B5C3B0491
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 06:38:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73D0F9E7ED4
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 06:38:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D771EEB2;
-	Wed, 28 May 2025 06:37:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B317244699;
+	Wed, 28 May 2025 06:38:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="S7+RhUQH"
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="BKYtFkTR"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64CCD229B1C;
-	Wed, 28 May 2025 06:36:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46F2224467F;
+	Wed, 28 May 2025 06:38:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748414221; cv=none; b=BCwgucbBi8y5TEQtusyQpVlL0zKoQtAOryuARzrw3vHDHV/YbXE2uXxgxSD57kAjnb8Te9hNtz3luuS1OvHkEwf9yvLGg3nllrffQDEXEJXGbRSJ8oRyVZ0Gg751A8P1AtM6EyqQY4BLfcVBqWZDOyDICZAw9VaZLACO+L2d6r4=
+	t=1748414284; cv=none; b=IyYU5bB2+GmHjL31BDF8srRWjL7hw6Ov1c8Nwe26SKtgWxAx7BwISHNfeSuk6qAB0vlq3WaIY94kpup9EXRKVYbSQTlGkKgB6p8XA97I0P1Cog2sDWFyXa5ei4NkUldmG3K5kittChqcO1OiKdUnMnCcORFJ/3IZw1rJfFxQnLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748414221; c=relaxed/simple;
-	bh=11tFUM3TULXoB5cAE/S/6LaR+nrzvNKbNf05E5x2cpI=;
+	s=arc-20240116; t=1748414284; c=relaxed/simple;
+	bh=bB82vmL6a+M31IOUJuuSn5weOdN/FrkXJIDlz5KgiwY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZHvkOj/V/dzm3Kbn6JChYbsEb9LrKAvXAN6U/X05iVrmanin7OXYtI792358ZjdUxoQikJSJ2RrBCHt/yzqSHxIZZlqiMm0ca/Va6VdH8hXaC895rAQ2nTE9Cv4lJycb3aYLz0Dc+hw9cFrcbr9+T8BBnlfChfRrNG8Guk/Z7aU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=S7+RhUQH; arc=none smtp.client-ip=89.58.32.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 8F3A81039728C;
-	Wed, 28 May 2025 08:36:51 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1748414216; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=SJ665PIw+zdBcBYTOJq6QfkF7vfcPN/CAeV7BEmm7b4=;
-	b=S7+RhUQHOwiKrTp/1djB2GauECG924WgiQ1YCnPrYJ5Q6RizcsqOg81FpIL6VVMyLdLKGC
-	56HGjkEZbW2hIBUWEiW2OJh2PKam/S+YA/rR4cWoxWq62vlS50cq8Wr382uMtd9YEoscVw
-	3GVBI1OcCg2kF+q2Tljb848t0FujNuStsxE6UtYcOwZ+UWfR+CqKaXu9RJARqDTs4RqLtu
-	JCRE/Hs6a9wU97TxMJhfYDaQIVY7JacYQgOOyPJvyyBywg/Wd+K7TnD6WnHEXrTbQUTav1
-	jTBZyhLfMFiEe8qkp3xBxJIjJkr7LWETmhyKvOGSG/P6epFty9lsgv6xMmhygA==
-Date: Wed, 28 May 2025 08:36:48 +0200
-From: Pavel Machek <pavel@denx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-Subject: Re: [PATCH 6.12 000/626] 6.12.31-rc1 review
-Message-ID: <aDavAM+eSKEycKrZ@duo.ucw.cz>
-References: <20250527162445.028718347@linuxfoundation.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ga1tK3Dr54eNVjEaG7x4J5TPITtUtpCC1lppvGeQWtowykg/8gGWXgBqKT4hTwkHpkHYZRr4C/Sz+EUKuiawQQrx/RYY7tQTmL43KRDz+65fCSGfUmSNWuKOh4cLOBIgLsMn3VWrXFilVkCFRI7ZmICtFMKpK3Oqueb1QaySBbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=BKYtFkTR; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54S5Zx0t008547;
+	Wed, 28 May 2025 06:37:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=BbSHV62Wuvy5Df5zaV9/pLva8CNc8x
+	+VcthWIwNtRjw=; b=BKYtFkTRw7R76/ZD9BeOohPHmddfU6KSDpBbXh8/Hmj2d3
+	cl65xW+vMHjBdsQrc1ZoE3csck2GaDr9J/ePSSQcnI5WcTNWhAKvBuSrfAJxQUY3
+	b/u3ai9mjhsw/S0Wq+zpVEBmvujlq31VzQ3Ouetxv7zRpscFyxppRklrEW27VC2a
+	n+IKEJboTMUULmkwoRi5FZIbbMf8YTpx1la43SzNOEuq1l5T8+gczgc+NTtNBamr
+	C0ZKfbP88H7xA6qglKR8YQvMcDSkh9Fs0vGL/j2YJCYB8wLNql9ApEh/3CWQUAam
+	KXFlVc3BJGd77JK8PTQ+Ja0qedYtM+d3DTifWB2A==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46wvfb07kq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 28 May 2025 06:37:39 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 54S6WLkA019749;
+	Wed, 28 May 2025 06:37:39 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46wvfb07kj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 28 May 2025 06:37:39 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 54S6FFpc016139;
+	Wed, 28 May 2025 06:37:38 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 46ureuegus-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 28 May 2025 06:37:38 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 54S6bY8O34144544
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 28 May 2025 06:37:34 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 781EC2004B;
+	Wed, 28 May 2025 06:37:34 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C463220040;
+	Wed, 28 May 2025 06:37:33 +0000 (GMT)
+Received: from osiris (unknown [9.152.212.133])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Wed, 28 May 2025 06:37:33 +0000 (GMT)
+Date: Wed, 28 May 2025 08:37:31 +0200
+From: Heiko Carstens <hca@linux.ibm.com>
+To: Lyude Paul <lyude@redhat.com>
+Cc: rust-for-linux@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Boqun Feng <boqun.feng@gmail.com>, linux-kernel@vger.kernel.org,
+        Daniel Almeida <daniel.almeida@collabora.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Arnd Bergmann <arnd@arndb.de>,
+        Juergen Christ <jchrist@linux.ibm.com>,
+        Uros Bizjak <ubizjak@gmail.com>, Brian Gerst <brgerst@gmail.com>,
+        "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)" <linux-arm-kernel@lists.infradead.org>,
+        "open list:S390 ARCHITECTURE" <linux-s390@vger.kernel.org>,
+        "open list:GENERIC INCLUDE/ASM HEADER FILES" <linux-arch@vger.kernel.org>
+Subject: Re: [RFC RESEND v10 02/14] preempt: Introduce __preempt_count_{sub,
+ add}_return()
+Message-ID: <20250528063731.8022B19-hca@linux.ibm.com>
+References: <20250527222254.565881-1-lyude@redhat.com>
+ <20250527222254.565881-3-lyude@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Nx3cPtjHiT/0/nIz"
-Content-Disposition: inline
-In-Reply-To: <20250527162445.028718347@linuxfoundation.org>
-X-Last-TLS-Session-Version: TLSv1.3
-
-
---Nx3cPtjHiT/0/nIz
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250527222254.565881-3-lyude@redhat.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI4MDA1NiBTYWx0ZWRfX0T/cYI9jB324 vSOkEmOl/7vl/+6HuElcS05NMxCHyCHZKZUa7rWQoTV2IKtC+vCc9aIlSWRARa9fqEQABto5bvT zS5vjcJDKYXmd/2xx2JaERYo/JYPMwDyQKNJ/iCvvGY5MfNfA79Ppf84B/iY5viEHG8YAZI5KDD
+ VHwUVyIWDTEPeOowg8agh2dZiByTvUE1CO0alL/yQUebOWcVxr5wJlf5h1s84FuVsh9trNEPsc3 z7R7vBbotBMpN3UTg/WY5qJBin5NB7Vod4IeuPVPysagNK/nLwz583gyxObIoFlbOTrm3LKKvjK BmfxjmphNEAElmmgKkDKPaFjOlCcdIKrFCIaIRXApSeq2ZqHdvjPAh5e2WcdkuXSNLYjqYamdMD
+ yhNZP5Ebc0znmiYKJ2BUvJNzkwqo61fpjv/QXBZHXg6Aq24Uydz1r79z0AEKCIumHaakx+pj
+X-Proofpoint-ORIG-GUID: Po87WT_2gKohl3MVVII4-9DCSMQdYQMn
+X-Authority-Analysis: v=2.4 cv=bt5MBFai c=1 sm=1 tr=0 ts=6836af34 cx=c_pps a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17 a=kj9zAlcOel0A:10 a=dt9VzEwgFbYA:10 a=pGLkceISAAAA:8 a=20KFwNOVAAAA:8 a=sCjic1ysK2PjgQY2DYoA:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-GUID: dwv2dCkek_F3F7nKzn0VlVIce0MIHx1s
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-28_03,2025-05-27_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=796
+ impostorscore=0 malwarescore=0 bulkscore=0 spamscore=0 lowpriorityscore=0
+ suspectscore=0 adultscore=0 priorityscore=1501 phishscore=0 mlxscore=0
+ clxscore=1011 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505160000
+ definitions=main-2505280056
 
-Hi!
+On Tue, May 27, 2025 at 06:21:43PM -0400, Lyude Paul wrote:
+> From: Boqun Feng <boqun.feng@gmail.com>
+> 
+> In order to use preempt_count() to tracking the interrupt disable
+> nesting level, __preempt_count_{add,sub}_return() are introduced, as
+> their name suggest, these primitives return the new value of the
+> preempt_count() after changing it. The following example shows the usage
+> of it in local_interrupt_disable():
+> 
+> 	// increase the HARDIRQ_DISABLE bit
+> 	new_count = __preempt_count_add_return(HARDIRQ_DISABLE_OFFSET);
+> 
+> 	// if it's the first-time increment, then disable the interrupt
+> 	// at hardware level.
+> 	if (new_count & HARDIRQ_DISABLE_MASK == HARDIRQ_DISABLE_OFFSET) {
+> 		local_irq_save(flags);
+> 		raw_cpu_write(local_interrupt_disable_state.flags, flags);
+> 	}
+> 
+> Having these primitives will avoid a read of preempt_count() after
+> changing preempt_count() on certain architectures.
+> 
+> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+> 
+> ---
+> V10:
+> * Add commit message I forgot
+> * Rebase against latest pcpu_hot changes
+> 
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+> ---
+>  arch/arm64/include/asm/preempt.h | 18 ++++++++++++++++++
+>  arch/s390/include/asm/preempt.h  | 19 +++++++++++++++++++
+>  arch/x86/include/asm/preempt.h   | 10 ++++++++++
+>  include/asm-generic/preempt.h    | 14 ++++++++++++++
+>  4 files changed, 61 insertions(+)
 
-> This is the start of the stable review cycle for the 6.12.31 release.
-> There are 626 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+...
 
-CIP testing did not find any problems here:
+> diff --git a/arch/s390/include/asm/preempt.h b/arch/s390/include/asm/preempt.h
+> index 6ccd033acfe52..67a6e265e9fff 100644
+> --- a/arch/s390/include/asm/preempt.h
+> +++ b/arch/s390/include/asm/preempt.h
+> @@ -98,6 +98,25 @@ static __always_inline bool should_resched(int preempt_offset)
+>  	return unlikely(READ_ONCE(get_lowcore()->preempt_count) == preempt_offset);
+>  }
+>  
+> +static __always_inline int __preempt_count_add_return(int val)
+> +{
+> +	/*
+> +	 * With some obscure config options and CONFIG_PROFILE_ALL_BRANCHES
+> +	 * enabled, gcc 12 fails to handle __builtin_constant_p().
+> +	 */
+> +	if (!IS_ENABLED(CONFIG_PROFILE_ALL_BRANCHES)) {
+> +		if (__builtin_constant_p(val) && (val >= -128) && (val <= 127)) {
+> +			return val + __atomic_add_const(val, &get_lowcore()->preempt_count);
+> +		}
+> +	}
+> +	return val + __atomic_add(val, &get_lowcore()->preempt_count);
+> +}
 
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
-6.12.y
+This is still wrong and needs to be changed to:
 
-Tested-by: Pavel Machek (CIP) <pavel@denx.de>
-
-Best regards,
-                                                                Pavel
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---Nx3cPtjHiT/0/nIz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iFwEABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaDavAAAKCRAw5/Bqldv6
-8t5WAJiPHT00Qk81P79QYdubi/RNLnZcAKCrda8uUhMoUPDsTZi9JvkLWiusjw==
-=GP+/
------END PGP SIGNATURE-----
-
---Nx3cPtjHiT/0/nIz--
+static __always_inline int __preempt_count_add_return(int val)
+{
+	return val + __atomic_add(val, &get_lowcore()->preempt_count);
+}
 
