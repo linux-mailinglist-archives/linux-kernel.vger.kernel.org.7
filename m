@@ -1,112 +1,120 @@
-Return-Path: <linux-kernel+bounces-665810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14BBBAC6DFE
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 18:29:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E09FAC6E03
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 18:30:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1AFF4E007A
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 16:29:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB2171BA80A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 16:30:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4005C28CF5F;
-	Wed, 28 May 2025 16:29:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A93F728D8CF;
+	Wed, 28 May 2025 16:30:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="rfpCEm2Z"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q5BpTKer"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3807F2C1A2
-	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 16:29:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C963628C87B;
+	Wed, 28 May 2025 16:30:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748449764; cv=none; b=FJGLgrPbiS3L6FQCBqptqJ6rOCIc2NdN/RSZ1wZ7Dwz7wRfPLdc7Yw5BP9Y0wQ1uGun10Ed+83aXZVGS8Uon8SjUITZjbygN9FZjDr0zlzXo02jIHvMJOQgulXvl/zpQY6K8wlL7HkWlOExPZU5s9cm4TRsCvjsbSDN4tHaRdvg=
+	t=1748449811; cv=none; b=rsTVEku6fpNAG9vJA9/oQlMTsIT32xMBa81Q5H1BcvvAnnBBmR52mbXXfReP17FXzxc06/BRG/6VKFqyqz/R61eBd16+F8xoJ8D8Um+O5hOHe44T5BPF9JGgm1FC48XzS2j0pC7Ftoov+Hxpi2JYGpb2PwHlGg6IqOOt7xf4suM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748449764; c=relaxed/simple;
-	bh=5d80Uts15uFivd8jgpeZQZ5P5BsUBpfqQO8jiCUoymA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K3jMhtcq5Ntf6RjsWzoFdVpl78xRMika3Iko+pxJHsvw+3qilvYEWj7zztQb9DFdHQJqpINSgOAPmYp5FFdaXRns/z85mG4KySY7Xpsq8lz938Xm5HPLA9dy+Pqv/X/AXj6vmtKVED5cynlcO3yE9eqrqDLHxO8rTbqWSgBScVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=rfpCEm2Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2160FC4CEED;
-	Wed, 28 May 2025 16:29:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1748449763;
-	bh=5d80Uts15uFivd8jgpeZQZ5P5BsUBpfqQO8jiCUoymA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rfpCEm2Ziy+wUasElaNpu380P7O6LV4PmCZITEmCIlONqjt9niHMWsL/7gR7nXsvA
-	 GnclRDEqqwxR/dxjM+DN+fVFRnR4PKPEYG6dHpxKqeEZY++SeVJKHqcXygKibRodOt
-	 XyrlgSBBXvshI2mWFEe28aWKvKj7HUoEafrxEtzM=
-Date: Wed, 28 May 2025 18:29:20 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas@t-8ch.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org,
-	Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [GIT PULL] Driver core changes for 6.16-rc1
-Message-ID: <2025052822-cavity-mortality-07d2@gregkh>
-References: <aDcyRMojWUbAllVX@kroah.com>
- <35e4b33f-d9e4-41d6-8a47-644fda5b1b7f@t-8ch.de>
+	s=arc-20240116; t=1748449811; c=relaxed/simple;
+	bh=HHKUmYQYx+MVj6W9eglzPGornr6ttUWJyuK8q87x0h4=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=uonzh1QfDI7EVZgRFMUllVO6eyP8QPeURnHzBFIN2VTl0xq7KBvOmW1AYJzxd0ftC3HnSu/RlNQsGggPLn7oxFVQQb5EbRjJm+nM7izyxWcdLpbknn6OTOuXfBCWHvZmkCF9dZV6ynVXEDLSLeLeuh2jUFsTPsaxEgHmKZYyWpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q5BpTKer; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03A22C4CEE3;
+	Wed, 28 May 2025 16:30:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748449811;
+	bh=HHKUmYQYx+MVj6W9eglzPGornr6ttUWJyuK8q87x0h4=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=Q5BpTKerQXKj/oCa+Z2coUymzeTVRHNlRuCXTGKbTkE1UCGTjPUPEkSsiCJQjO7X1
+	 j0eD5Cu+JeVNhAMdhxpoK4BjKR73YE+7Ocohv5EcY7GgZcY9wsIZtBdq937UkCnQa3
+	 zqrGjY2D6XV7W+ulRlTIKtR52wC6Ng/2PWKn/oRKEhxqKseXvxQP+B28pyTHhcwHC4
+	 v/SVjLVS3+6xAJDIWcZ1PFfluUVEk9ed8HnpQkAcbvLGcJx+gk44awPymP38gqCAfe
+	 6YauEPhQgUOwfw6mpTevElSL+Up083ZM++lpUUygg+iekjWQPQMmWrkW0azjayUyDP
+	 LM6RoNXr3DXiA==
+Date: Wed, 28 May 2025 11:30:09 -0500
+Content-Type: text/plain; charset="iso-8859-2"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <35e4b33f-d9e4-41d6-8a47-644fda5b1b7f@t-8ch.de>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Gaurav Jain <gaurav.jain@nxp.com>, 
+ =?utf-8?q?Horia_Geant=C4=83?= <horia.geanta@nxp.com>, 
+ Thomas Richard <thomas.richard@bootlin.com>, devicetree@vger.kernel.org, 
+ imx@lists.linux.dev, Frank Li <Frank.li@nxp.com>, 
+ linux-arm-kernel@lists.infradead.org, Sascha Hauer <s.hauer@pengutronix.de>, 
+ Conor Dooley <conor+dt@kernel.org>, linux-crypto@vger.kernel.org, 
+ "David S . Miller" <davem@davemloft.net>, linux-kernel@vger.kernel.org, 
+ Pankaj Gupta <pankaj.gupta@nxp.com>, Shawn Guo <shawnguo@kernel.org>, 
+ Fabio Estevam <festevam@gmail.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Herbert Xu <herbert@gondor.apana.org.au>
+To: John Ernberg <john.ernberg@actia.se>
+In-Reply-To: <20250528144259.2603914-4-john.ernberg@actia.se>
+References: <20250528144259.2603914-1-john.ernberg@actia.se>
+ <20250528144259.2603914-4-john.ernberg@actia.se>
+Message-Id: <174844980849.122008.12781867693102871804.robh@kernel.org>
+Subject: Re: [PATCH v3 3/4] dt-bindings: crypto: fsl,sec-v4.0: Add power
+ domains for iMX8QM and iMX8QXP
 
-On Wed, May 28, 2025 at 06:16:21PM +0200, Thomas Weißschuh wrote:
-> Hi Greg,
-> 
-> On 2025-05-28 17:56:52+0200, Greg KH wrote:
-> > The following changes since commit 82f2b0b97b36ee3fcddf0f0780a9a0825d52fec3:
-> > 
-> >   Linux 6.15-rc6 (2025-05-11 14:54:11 -0700)
-> > 
-> > are available in the Git repository at:
-> > 
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/driver-core/driver-core.git tags/driver-core-6.16-rc1
-> > 
-> > for you to fetch changes up to 071d8e4c2a3b0999a9b822e2eb8854784a350f8a:
-> > 
-> >   kernfs: Relax constraint in draining guard (2025-05-21 14:23:13 +0200)
-> > 
-> > ----------------------------------------------------------------
-> > Driver core changes for 6.16-rc1
-> > 
-> > Here are the driver core / kernfs changes for 6.16-rc1.
-> > 
-> > Not a huge number of changes this development cycle, here's the summary
-> > of what is included in here:
-> >   - kernfs locking tweaks, pushing some global locks down into a per-fs
-> >     image lock
-> >   - rust driver core and pci device bindings added for new features.
-> 
-> >   - sysfs const work for bin_attributes.  This churn should now be
-> >     completed for those types of attributes
-> 
-> This is missing the switch away and removal of the transitional
-> struct members, "read_new", "write_new" and "bin_attrs_new".
-> These are the actually churny changes.
-> 
-> I have a branch with those, based on current linux-next/master, at
-> https://git.kernel.org/pub/scm/linux/kernel/git/thomas.weissschuh/linux.git b4/sysfs-const-bin_attr-final
-> 
-> (Has not yet passed 0day, but earlier versions this week did)
-> 
-> Do you want me to resubmit it to you? Now or shortly before the end of
-> the merge window?
 
-Ah, yes, those are still in my "to apply after -rc1 is out" queue, sorry
-about that.  And yes, I'll be glad to take updated versions as things
-have changed.
+On Wed, 28 May 2025 14:43:07 +0000, John Ernberg wrote:
+> NXP SoCs like the iMX8QM, iMX8QXP or iMX8DXP use power domains for
+> resource management.
+> 
+> Allow specifying them for such SoCs.
+> 
+> Signed-off-by: John Ernberg <john.ernberg@actia.se>
+> 
+> ---
+> 
+> v3:
+>  - Fix warnings discovered by Rob Herring's bot
+>  - Declare the compatibles correctly (Krzysztof Kozlowski)
+> 
+> v2:
+>  - Adjust commit message (Frank Li)
+>  - Only allow power-domains when compatible with imx8qm (Frank Li)
+> ---
+>  .../bindings/crypto/fsl,sec-v4.0.yaml         | 45 ++++++++++++++++++-
+>  1 file changed, 44 insertions(+), 1 deletion(-)
+> 
 
-thanks,
+My bot found errors running 'make dt_binding_check' on your patch:
 
-greg k-h
+yamllint warnings/errors:
+./Documentation/devicetree/bindings/crypto/fsl,sec-v4.0.yaml:114:17: [warning] wrong indentation: expected 18 but found 16 (indentation)
+
+dtschema/dtc warnings/errors:
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250528144259.2603914-4-john.ernberg@actia.se
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
