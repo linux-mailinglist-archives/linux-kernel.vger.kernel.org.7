@@ -1,116 +1,192 @@
-Return-Path: <linux-kernel+bounces-665569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E59BAC6B01
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 15:50:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DD18AC6ACF
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 15:42:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5FF93B4856
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 13:50:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6204E7A408B
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 13:41:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD34A288528;
-	Wed, 28 May 2025 13:50:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D47D528853F;
+	Wed, 28 May 2025 13:42:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=blackhole.kfki.hu header.i=@blackhole.kfki.hu header.b="IXiTzO5i"
-Received: from smtp-out.kfki.hu (smtp-out.kfki.hu [148.6.0.50])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GNsjXw9M"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F8DC2853EB;
-	Wed, 28 May 2025 13:50:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.6.0.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A45A288526;
+	Wed, 28 May 2025 13:42:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748440232; cv=none; b=SAe6lk9rAF/G9jjQ/aZXKtTl93B3gv1eeABUUvKOKIgzMfyEEiHVkIkcl7lLQzyiv0zdmaemT2W/h9daXcVEYe9DpA5X613Vhebt2XhGbkIs41VkAKl+ixg1NqvDBYYFodGie61f2RZeGaUqpng3A24l2IQZ9KBU7wRv6f/0qac=
+	t=1748439726; cv=none; b=QxhoyCZGRjS3YQ34/MUdaKqTWRoUr/bHoO4FjWPOo5/GZjr29E5h/uDfoUyWIYbdvsG04hv8yBgLf7+1LB4GpreN61pXEgCMsJBWN2p+Ho5JPaj98w3J6UrG5Huyea4t2c68qfegrerj52dV8HkGhSHJFCQoN7aMuLLnl1dYIGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748440232; c=relaxed/simple;
-	bh=LhTAubIh/5Hl+CIcaPgophp5ZeXXrXTUiUkisse0S+8=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=ZOXrLcwSWE4PgZ/UXCjtbnQunoJHT9SD99zltYbiK6sRhge/BYwdPffeH3+hFnVhGIOFMnFBpq/W44nAC9G/Rm6f1y58IHSb378lbtkyyEH3n9SH9i9liVJ6LOPxaxgYSYVM8metTQxPMR7zgTbs/ltOmiqAhQbWX2Va4lf2/zg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=blackhole.kfki.hu; spf=pass smtp.mailfrom=blackhole.kfki.hu; dkim=pass (1024-bit key) header.d=blackhole.kfki.hu header.i=@blackhole.kfki.hu header.b=IXiTzO5i; arc=none smtp.client-ip=148.6.0.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=blackhole.kfki.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=blackhole.kfki.hu
-Received: from localhost (localhost [127.0.0.1])
-	by smtp1.kfki.hu (Postfix) with ESMTP id CC9A15C001C8;
-	Wed, 28 May 2025 15:41:51 +0200 (CEST)
-Authentication-Results: smtp012.wigner.hu (amavis); dkim=pass (1024-bit key)
- reason="pass (just generated, assumed good)" header.d=blackhole.kfki.hu
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	blackhole.kfki.hu; h=mime-version:references:message-id
-	:in-reply-to:from:from:date:date:received:received:received
-	:received; s=20151130; t=1748439709; x=1750254110; bh=/fG8h8umIg
-	Qf40nj8YywHmoTEtPnasUPoFQqus8jBP8=; b=IXiTzO5iaeYL9q7PkhRaFysSgs
-	hS9M2kyI5eChYASXA82JeUJszt0TltYhlv/o8/gkWGIHtECXjJCUT3gNSmEtXDoj
-	F/VUwbusekwlwpktWUYQjBTcayTroVlZtpvq/kBx7y6n65554Lcso4yM9MK2p4cR
-	0gXh4zL5hhWepBsc8=
-X-Virus-Scanned: Debian amavis at smtp1.kfki.hu
-Received: from smtp1.kfki.hu ([127.0.0.1])
- by localhost (smtp1.kfki.hu [127.0.0.1]) (amavis, port 10026) with ESMTP
- id eU4Vi8ytn2d6; Wed, 28 May 2025 15:41:49 +0200 (CEST)
-Received: from blackhole.kfki.hu (blackhole.szhk.kfki.hu [148.6.240.2])
-	by smtp1.kfki.hu (Postfix) with ESMTP id 6E60A5C001C0;
-	Wed, 28 May 2025 15:41:49 +0200 (CEST)
-Received: by blackhole.kfki.hu (Postfix, from userid 1000)
-	id F1D4234316A; Wed, 28 May 2025 15:41:48 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by blackhole.kfki.hu (Postfix) with ESMTP id EFBAD343169;
-	Wed, 28 May 2025 15:41:48 +0200 (CEST)
-Date: Wed, 28 May 2025 15:41:48 +0200 (CEST)
-From: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
-To: ying chen <yc1082463@gmail.com>
-cc: Florian Westphal <fw@strlen.de>, pablo@netfilter.org, kadlec@netfilter.org, 
-    davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-    pabeni@redhat.com, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, 
-    netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [bug report, linux 6.15-rc4] A large number of connections in
- the SYN_SENT state caused the nf_conntrack table to be full.
-In-Reply-To: <CAN2Y7hzKd+VxWy56q9ad8xwCcHPy5qoEaswZapnF87YkyYMcsA@mail.gmail.com>
-Message-ID: <a752bbbf-08c0-3885-65ba-79577a1ad5a8@blackhole.kfki.hu>
-References: <CAN2Y7hxscai7JuC0fPE8DZ3QOPzO_KsE_AMCuyeTYRQQW_mA2w@mail.gmail.com> <aDcLIh2lPkAWOVCI@strlen.de> <CAN2Y7hzKd+VxWy56q9ad8xwCcHPy5qoEaswZapnF87YkyYMcsA@mail.gmail.com>
+	s=arc-20240116; t=1748439726; c=relaxed/simple;
+	bh=V9S/2REy6SRPwlWHL+UjOecCAm58nBM9YBmNFi5Tywo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=A01xXwPLpDjaqBG5BScIvwppG1CDEPvM1o9dKc7ixDmS7j9vTMG5XJ6VUkQJfgqHPGIWZwMkUDIV9z9AflZbdtKc9hKpV+J5DxFSeuFpYuM7+GldbJziZiZXQT4rEUHf1bxP/gW/yFedc/zXLQteotgWO9Y9d47MQPfBQ1yujGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GNsjXw9M; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C975C4CEF4;
+	Wed, 28 May 2025 13:42:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748439725;
+	bh=V9S/2REy6SRPwlWHL+UjOecCAm58nBM9YBmNFi5Tywo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=GNsjXw9M9L1DpZv3jViNj4XkRdb+mXI+2m/G47jUDBV7WxLPvUEubGj+1ixOIJqRZ
+	 e717/UmjcPxGcIwM1BREjJHjlHf7DQ6xXKLJDrFl1tj04VPf1Nl1KOdgCgSbhZFqe1
+	 fB4uuTK4326ar1JEQv1u6vI97cf23A7RHdJvMGc4fpP8miZY3I2LE258OtWM74XvuF
+	 uyjjxH7Jkv2eBczrYAMXiiQ4xzeMUCcmt8tKkGRjgdQl+plEZu+sAUbi3CzKXza/g/
+	 qkqGVbbTWmfb3tPdTBHScCSnX5dqhvmCdvqDtXY9/jBXm1ah6dywidLzlVPvpGBgkS
+	 H/v7sUXokTZ5Q==
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-604b9c53f6fso6198532a12.2;
+        Wed, 28 May 2025 06:42:05 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUdtAbmoiLXxg2NpIyWwsqEG7J42UhRVk1A0nkoP7m5sJggzseyC6MA5pTNOBf1/DWGFykmxNlfqDDe@vger.kernel.org, AJvYcCV3Cp7hU17NJmrsFwFeoidb7DPFuxPCZA+U+5V2x7u+CFOoBx7oVm/BxLoheOD+YFbn+jjMKpZK2jMxC0A=@vger.kernel.org, AJvYcCX73D11X+0+lxz62B7/QDlmHJzZKFS+UhdTeNPLYr377J6/iIfUa/Clqe0OYO/OSAYnl12xEfZegv8WVLbH@vger.kernel.org, AJvYcCXeW1In+Cg42CG1OuKvYhPAX9K12ySHnulPo+cZGmOlJT8DetDG7/fllGhk3erseAs3bxtqSWVMt50n@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4DhbO8wojG3FVTKyg4jyvKZDfiX283MHZ1cjmS2Yn14jEHpcv
+	Jdzrdkb2lz2MoaatIrqt4gxPcybLDNQxfFBkCdi62TdH2Jl+KveVobuGv6s6nX5IrnHrJjFyBVv
+	YjoU952VBTKI3d3E9cFqlXFOvO/nzsA==
+X-Google-Smtp-Source: AGHT+IF33pDJOIkUnFeeemo7C8vEsrRKhSwUSbgBJjMPDXVeNtNZPzFqXBOHGol2WTjwYaKgOgXZo2D8V9wI8E6hrhc=
+X-Received: by 2002:a17:907:7f09:b0:ad5:23e3:48b6 with SMTP id
+ a640c23a62f3a-ad85b2b586fmr1522153166b.45.1748439724013; Wed, 28 May 2025
+ 06:42:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="110363376-2043345281-1748439708=:6759"
-
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
-
---110363376-2043345281-1748439708=:6759
-Content-Type: text/plain; charset=UTF-8; format=flowed
+References: <20250520-6-10-rocket-v5-0-18c9ca0fcb3c@tomeuvizoso.net> <20250520-6-10-rocket-v5-1-18c9ca0fcb3c@tomeuvizoso.net>
+In-Reply-To: <20250520-6-10-rocket-v5-1-18c9ca0fcb3c@tomeuvizoso.net>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 28 May 2025 08:41:51 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+2mvUDWWvtPSryAiCNJP_=1vNRxARxWTS=-O-LTQO3Dg@mail.gmail.com>
+X-Gm-Features: AX0GCFtEoojAQ2L7InqgVIis2qLVvXMe-zX4FDkooFBAAdsDZZRxWtAdT4YSjTY
+Message-ID: <CAL_Jsq+2mvUDWWvtPSryAiCNJP_=1vNRxARxWTS=-O-LTQO3Dg@mail.gmail.com>
+Subject: Re: [PATCH v5 01/10] dt-bindings: npu: rockchip,rknn: Add bindings
+To: Tomeu Vizoso <tomeu@tomeuvizoso.net>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Heiko Stuebner <heiko@sntech.de>, Oded Gabbay <ogabbay@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Sebastian Reichel <sebastian.reichel@collabora.com>, 
+	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, Jeff Hugo <jeff.hugo@oss.qualcomm.com>, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org, 
+	linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, 28 May 2025, ying chen wrote:
+On Tue, May 20, 2025 at 5:27=E2=80=AFAM Tomeu Vizoso <tomeu@tomeuvizoso.net=
+> wrote:
+>
+> Add the bindings for the Neural Processing Unit IP from Rockchip.
+>
+> v2:
+> - Adapt to new node structure (one node per core, each with its own
+>   IOMMU)
+> - Several misc. fixes from Sebastian Reichel
+>
+> v3:
+> - Split register block in its constituent subblocks, and only require
+>   the ones that the kernel would ever use (Nicolas Frattaroli)
+> - Group supplies (Rob Herring)
+> - Explain the way in which the top core is special (Rob Herring)
+>
+> v4:
+> - Change required node name to npu@ (Rob Herring and Krzysztof Kozlowski)
+> - Remove unneeded items: (Krzysztof Kozlowski)
+> - Fix use of minItems/maxItems (Krzysztof Kozlowski)
+> - Add reg-names to list of required properties (Krzysztof Kozlowski)
+> - Fix example (Krzysztof Kozlowski)
+>
+> v5:
+> - Rename file to rockchip,rk3588-rknn-core.yaml (Krzysztof Kozlowski)
+> - Streamline compatible property (Krzysztof Kozlowski)
+>
+> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+> Signed-off-by: Tomeu Vizoso <tomeu@tomeuvizoso.net>
+> ---
+>  .../bindings/npu/rockchip,rk3588-rknn-core.yaml    | 147 +++++++++++++++=
+++++++
+>  1 file changed, 147 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/npu/rockchip,rk3588-rknn-c=
+ore.yaml b/Documentation/devicetree/bindings/npu/rockchip,rk3588-rknn-core.=
+yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..9eb426367afcbc03c387d43c4=
+b8250cdd1b9ee86
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/npu/rockchip,rk3588-rknn-core.yam=
+l
+> @@ -0,0 +1,147 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/npu/rockchip,rk3588-rknn-core.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Neural Processing Unit IP from Rockchip
+> +
+> +maintainers:
+> +  - Tomeu Vizoso <tomeu@tomeuvizoso.net>
+> +
+> +description:
+> +  Rockchip IP for accelerating inference of neural networks, based on NV=
+IDIA's
+> +  open source NVDLA IP.
+> +
+> +  There is to be a node per each core in the NPU. In Rockchip's design t=
+here
+> +  will be one core that is special and needs to be powered on before any=
+ of the
+> +  other cores can be used. This special core is called the top core and =
+should
+> +  have the compatible string that corresponds to top cores.
 
-> On Wed, May 28, 2025 at 9:10=E2=80=AFPM Florian Westphal <fw@strlen.de>=
- wrote:
->>
->> ying chen <yc1082463@gmail.com> wrote:
->>> Hello all,
->>>
->>> I encountered an "nf_conntrack: table full" warning on Linux 6.15-rc4=
-.
->>> Running cat /proc/net/nf_conntrack showed a large number of
->>> connections in the SYN_SENT state.
->>> As is well known, if we attempt to connect to a non-existent port, th=
-e
->>> system will respond with an RST and then delete the conntrack entry.
->>> However, when we frequently connect to non-existent ports, the
->>> conntrack entries are not deleted, eventually causing the nf_conntrac=
-k
->>> table to fill up.
->>
->> Yes, what do you expect to happen?
-> I understand that the conntrack entry should be deleted immediately=20
-> after receiving the RST reply.
+Is this really a distinction in the h/w? If you change which core is
+the top one in the DT, does it still work?
 
-No, the conntrack entry will be in the CLOSE state with the timeout value=
-=20
-of /proc/sys/net/netfilter/nf_conntrack_tcp_timeout_close
+> +
+> +properties:
+> +  $nodename:
+> +    pattern: '^npu@[a-f0-9]+$'
+> +
+> +  compatible:
+> +    enum:
+> +      - rockchip,rk3588-rknn-core-top
+> +      - rockchip,rk3588-rknn-core
+> +
+> +  reg:
+> +    maxItems: 3
+> +
+> +  reg-names:
+> +    items:
+> +      - const: pc
+> +      - const: cna
+> +      - const: core
+> +
+> +  clocks:
+> +    minItems: 2
+> +    maxItems: 4
+> +
+> +  clock-names:
+> +    items:
+> +      - const: aclk
+> +      - const: hclk
+> +      - const: npu
+> +      - const: pclk
+> +    minItems: 2
 
-Best regards,
-Jozsef
---110363376-2043345281-1748439708=:6759--
+It is odd that the non-top cores only have bus clocks and no module
+clock. But based on the clock names, I'm guessing the aclk/hclk are
+not shared, but the npu and pclk are shared. Since you make the top
+core probe first, then it will enable the shared clocks and the
+non-top cores don't have to worry about them. If so, that is wrong as
+it is letting the software design define the bindings.
+
+Rob
 
