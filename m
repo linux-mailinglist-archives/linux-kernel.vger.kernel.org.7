@@ -1,152 +1,143 @@
-Return-Path: <linux-kernel+bounces-664864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-664848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87ECDAC618E
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 08:06:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E54F5AC6146
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 07:36:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24CEA1BA6594
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 06:06:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF6641BC268D
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 05:36:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7019B20CCF4;
-	Wed, 28 May 2025 06:05:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC9FB202C49;
+	Wed, 28 May 2025 05:36:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=columbia.edu header.i=@columbia.edu header.b="NIAVSOt1"
-Received: from mx0b-00364e01.pphosted.com (mx0b-00364e01.pphosted.com [148.163.139.74])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="u6ZJGhZx"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A6A4382
-	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 06:05:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.139.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE442143C61;
+	Wed, 28 May 2025 05:36:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748412355; cv=none; b=UBsoOjKEQZpH7Jo3q8cJzX5+yLOY0zqHyQ3FBNrLZFjELV/6TRPbWFpo2JQGmMRxkVRFdCBMDWiQDNVs1c2HnkRbJgVSeOA/k/mgclM/9QfrbB1qIITxMcEhATNmPoVf+Qdb1LkeHTsgymPhTZBOU5q4E6f73kZ/ieQzGJD2BQ8=
+	t=1748410587; cv=none; b=Sa8MDjdrlnWgOhu9T8FsSkGukJvrlwibT3R5X6w6iKAzvwwoaqpuIH7iv3vZgpZZCCFM5UAagLxN7ugclXMvPuXQSEVzcZEU+6Am7G83PMmhjwVd+ZnA7PFiwD5w2lI8suWk94pjTaqNpXFo7PSR4r7GeNY7P1tcYx7Q0VzHRPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748412355; c=relaxed/simple;
-	bh=u4GnJWVjLuTGqbXgtkf1x2zfHjnxuyVndV+7heCn/5s=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=K9hkbYi+028NnMAZPJcSb5uRLigVVKfMzBqt81tgcsleZTYbk87DHZmiAc2x068s9zHmrC6z9iJUqGmX4H26TS1azeJuL1g/gW5P5qu4hAbR+StH7iGGMa1UMYAyQx9FRfuedouCl44H/nj5/wqP96RMPsepuBaEgsz6mQ90Gjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=columbia.edu; spf=pass smtp.mailfrom=columbia.edu; dkim=pass (2048-bit key) header.d=columbia.edu header.i=@columbia.edu header.b=NIAVSOt1; arc=none smtp.client-ip=148.163.139.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=columbia.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=columbia.edu
-Received: from pps.filterd (m0167075.ppops.net [127.0.0.1])
-	by mx0b-00364e01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54S5Y4VX025530
-	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 01:35:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=columbia.edu; h=cc :
- content-transfer-encoding : content-type : date : from : in-reply-to :
- message-id : mime-version : references : subject : to; s=pps01;
- bh=fe1SF0gP7B1T3vG5mU/w/LphwhnjbUzeEhTplFhLHQw=;
- b=NIAVSOt1US8wy8tVfB4d//T4g+Ngd4zgAlyOn7Bjl86GRNzVyy/cdz0jn7PPTJONGCCv
- 77EGAOXrbfes+dwvKUH05kGB0jONEvPKEQ2f3ZFF2s8pwqQyXu4ndGrfB38cUJ2O/Sjm
- 3azPDmNcdC07qkbcLBW4FE85BiLJu1xSzUgc47E3fk0Nk4Z9k70AA1K73JEDAvlWv+tK
- ZQKVPbnf/v90Je0bCFqyjqlJKJipJQSAZscfvU0lXK+Bgthmo6rsgSK7qUxgTn9lQIqJ
- mqKJFdcJSAnpW2aeZHeK7SOUiml/SpF0Jqb2WOC5gfeXZ097aVPamAFXya/6unPdsSi4 mQ== 
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-	by mx0b-00364e01.pphosted.com (PPS) with ESMTPS id 46uu8pkx65-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 01:35:56 -0400
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7c92425a8b1so91045285a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 22:35:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748410555; x=1749015355;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fe1SF0gP7B1T3vG5mU/w/LphwhnjbUzeEhTplFhLHQw=;
-        b=VoXpQoAEJHd7FWcsgDskKO1Fni8hyzeBEzTsJgD4vZnf3LEDVKhJ6evRdct9w91x6r
-         yexLVwfFPkjWMHG+XymwU43JdamCW2YD3vdg24enQAeyHSm9DoJRCT1eUWidNoocMdyU
-         S34xseez8GYxdHXJMFrtlxmR6RxzWie7sNOUX8JjUuol5EIdZIY6DjOIFLrOiB7hJyo3
-         vGcli0L3W56TWuOps+KExTBnBSeTTrt063LnSsLLiEXg68OkVqRmaiWmTaMFb0ElP0ze
-         ZcTZcFirAY6CqUZ02o10DlOaS8HfbXfsWQQKDqqOwqAol+ynJuVrBL2dB8VQ9kzw8RLa
-         ulSA==
-X-Gm-Message-State: AOJu0Yzfvc4VdmNq/r1FL2og6QhO4GmkBCZLYro5hn4xdIuc6gs5x4GB
-	Iyz/YKsYntyiWx3ozMse4XGwhqHLOMFgdjhaXKB5XAtT3MRNNuA15jGFfiM2S1afYlV1XdFTuiz
-	oZ4eSlKcpa+jR/1PVywpyEbVSjti2RU9vh5mmf8fAXLLTr2b1KnCmiVc7aKVjuQ==
-X-Gm-Gg: ASbGnctw2vFcZvMTB9BsW2JLMVW3Pil2C+vmgNj4I8U2rRGsphCded/syPrRAFWTpp/
-	ZUJK1cO0yLJqq5E9dkaWbzY5UNrqhZo2y36SAg5VOGjM+XzZuzNoK7LImMvilBpuY6Kk/VpDl+T
-	z8H1/ZE+B89ghYHGfKtiotrCwt82CUK8qCGma5QcFsguvvSdhbAYm2+W1yQGNpmuO9VwxKmX7Pz
-	4dBH5twBOSd+9uAwU3YJjrrl4krS5PQwT6Ho9sLbPu4Lba0EP/U0Fw+2luGgjvChoO6IAjfco2v
-	MZNxJkRRV2KURXXZ3nsvOk1p35kKfDp2sXs7XIVoDW9ggiL23+qw6zVIUA==
-X-Received: by 2002:a05:620a:2601:b0:7c9:65cb:6214 with SMTP id af79cd13be357-7cf06d5bd10mr469357185a.17.1748410555529;
-        Tue, 27 May 2025 22:35:55 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF61pX8i34SIykQlgLDQcjKk6sMZRhh/Gcw6X2tklDh3wPlD4onZOxTChntHVEvJ2DiXPhjrw==
-X-Received: by 2002:a05:620a:2601:b0:7c9:65cb:6214 with SMTP id af79cd13be357-7cf06d5bd10mr469355185a.17.1748410555126;
-        Tue, 27 May 2025 22:35:55 -0700 (PDT)
-Received: from [127.0.1.1] (dyn-160-39-33-242.dyn.columbia.edu. [160.39.33.242])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7cfb82001f9sm32382585a.9.2025.05.27.22.35.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 May 2025 22:35:54 -0700 (PDT)
-From: Tal Zussman <tz2294@columbia.edu>
-Date: Wed, 28 May 2025 01:35:37 -0400
-Subject: [PATCH 2/2] mm: Remove tlb_flush_reason::NR_TLB_FLUSH_REASONS
+	s=arc-20240116; t=1748410587; c=relaxed/simple;
+	bh=pne1TTfnZPdAQCFxseAndDOGOZ6uYICwRuY9HJM6vvo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=bNfEtApniwsGEMX9dFzUVME3Q8W3YCm6hsjmpHJ6IOnU0o6Wgm7mzY5aPYxlM4E3yinftN0KjXkpTkEeC3jnoBzbwwxR5iN0pj/VfZCfQUIesFqiZQha0r3EijF2F2WiqTcozZDwY9cq+MiqEsVpoWMDogVevj5gFAByc3eGHUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=u6ZJGhZx; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 54S5Zu8J3163423;
+	Wed, 28 May 2025 00:35:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1748410556;
+	bh=81TpiA1++zjByF2HZlGUBzrVS6AnGvuIzILUPystUk8=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=u6ZJGhZxic6Qx7udNEomeDnmhbguiXuxjg7Cnb9ZpB2Ev9EELQta7p0s2PPaoj+XJ
+	 bOeDLocvOD4ivzK90+P3PFtTs93e+JTD1+w9S1uwBC8j/0nvYAzcqjB24EtKp241xv
+	 6vchNK0+ae8gdVdKE+5N+ztccj9ri/qMsZAfZWJA=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 54S5ZtGh3200000
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Wed, 28 May 2025 00:35:55 -0500
+Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 28
+ May 2025 00:35:55 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 28 May 2025 00:35:55 -0500
+Received: from [172.24.227.115] (abhilash-hp.dhcp.ti.com [172.24.227.115])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 54S5ZoIk4021202;
+	Wed, 28 May 2025 00:35:51 -0500
+Message-ID: <d02d7c3f-adb7-4dda-8178-19af188ff90a@ti.com>
+Date: Wed, 28 May 2025 11:05:50 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250528-tlb-trace-fix-v1-2-2e94c58f450d@columbia.edu>
-References: <20250528-tlb-trace-fix-v1-0-2e94c58f450d@columbia.edu>
-In-Reply-To: <20250528-tlb-trace-fix-v1-0-2e94c58f450d@columbia.edu>
-To: Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Ingo Molnar <mingo@kernel.org>, Rik van Riel <riel@surriel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Hildenbrand <david@redhat.com>,
-        Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-        Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
-        x86@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Tal Zussman <tz2294@columbia.edu>
-X-Mailer: b4 0.14.3-dev-d7477
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1748410551; l=595;
- i=tz2294@columbia.edu; s=20250528; h=from:subject:message-id;
- bh=u4GnJWVjLuTGqbXgtkf1x2zfHjnxuyVndV+7heCn/5s=;
- b=/anNJxI6PBsPAb9nL8K3TkHBwTCNxPLHsxU3pP17HIP1qu0oXl7UIZoQn7VyX7NeJ/QtOr3oF
- /8zzLs/hG/8CmZIF6I/PcKL0dy4c9Ybfey2WxI3CEETNVmDEjA0IC3A
-X-Developer-Key: i=tz2294@columbia.edu; a=ed25519;
- pk=BIj5KdACscEOyAC0oIkeZqLB3L94fzBnDccEooxeM5Y=
-X-Proofpoint-GUID: tpLvrnUghPw6fUcReex-8uEwjmje187q
-X-Proofpoint-ORIG-GUID: tpLvrnUghPw6fUcReex-8uEwjmje187q
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI4MDA0OCBTYWx0ZWRfXy3QWy4HLclNb le+6ojGNAhVIuSvlimpbWIf6C7BmxlRODZI0qhH8TMKfGtFVMyX5dau8QSAOS9ydn+5IcSWxgvw Spxa3hp8NO8es0oHb7WuwrJE3hDdn9N1suTr8mAXcf7c8NgauXfrd5pbBwWwVYVzLP1/7b38nk5
- Nst+dab00XDybEPG6krEeJVObYvKVz9VqSXF/LB5nYF7NcYFNQ7cSINF2/nF+d5JFJ1bQfmJv5z s/VaAoveQqeMX98SFMtEZPlzx8Xz203RFtpwWNC3ggEkJNPvfB53FUbS8hjt7Mv+4Ir6MtEiU19 rOeNwxuyFHtPuLo21oMHYJlzSEOS2+1PI/Hzt2hrFfgPZqhQMgU9PqSR+2nTqcLj3lMAl7iYhIH 4UWkbbEg
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-28_03,2025-05-27_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
- priorityscore=1501 malwarescore=0 mlxlogscore=732 phishscore=0 spamscore=0
- mlxscore=0 bulkscore=10 impostorscore=0 lowpriorityscore=10 clxscore=1011
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
- definitions=main-2505280048
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] media: dt-bindings: ti,ds90ub960: Add bindings for
+ DS90UB954-Q1
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+CC: <hverkuil@xs4all.nl>, <sakari.ailus@linux.intel.com>,
+        <laurent.pinchart@ideasonboard.com>, <vaishnav.a@ti.com>,
+        <u-kumar1@ti.com>, <jai.luthra@linux.dev>,
+        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <mchehab@kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>
+References: <20250523083655.3876005-1-y-abhilashchandra@ti.com>
+ <20250523083655.3876005-2-y-abhilashchandra@ti.com>
+ <b74ebab7-371e-4bc5-a069-8c72e1eb9161@ideasonboard.com>
+Content-Language: en-US
+From: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
+In-Reply-To: <b74ebab7-371e-4bc5-a069-8c72e1eb9161@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-This has been unused since it was added 11 years ago in commit
-d17d8f9dedb9 ("x86/mm: Add tracepoints for TLB flushes").
+Hi Tomi,
 
-Signed-off-by: Tal Zussman <tz2294@columbia.edu>
----
- include/linux/mm_types.h | 1 -
- 1 file changed, 1 deletion(-)
+Thanks for the review.
 
-diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-index 3e934dc6057c..8b91362fcf8e 100644
---- a/include/linux/mm_types.h
-+++ b/include/linux/mm_types.h
-@@ -1539,7 +1539,6 @@ enum tlb_flush_reason {
- 	TLB_LOCAL_MM_SHOOTDOWN,
- 	TLB_REMOTE_SEND_IPI,
- 	TLB_REMOTE_WRONG_CPU,
--	NR_TLB_FLUSH_REASONS,
- };
- 
- /**
+On 27/05/25 10:30, Tomi Valkeinen wrote:
+> Hi,
+> 
+> On 23/05/2025 11:36, Yemike Abhilash Chandra wrote:
+>> DS90UB954-Q1 is an FPDLink-III deserializer that is mostly register
+>> compatible with DS90UB960-Q1. The main difference is that it supports
+>> half of the RX and TX ports, i.e. 2x FPDLink RX ports and 1x CSI TX
+>> port. Therefore, add support for DS90UB954 within the existing bindings.
+>>
+>> Link: https://www.ti.com/lit/gpn/ds90ub954-q1
+>> Signed-off-by: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
+>> ---
+>>   Documentation/devicetree/bindings/media/i2c/ti,ds90ub960.yaml | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/media/i2c/ti,ds90ub960.yaml b/Documentation/devicetree/bindings/media/i2c/ti,ds90ub960.yaml
+>> index 4dcbd2b039a5..b2d4300d7846 100644
+>> --- a/Documentation/devicetree/bindings/media/i2c/ti,ds90ub960.yaml
+>> +++ b/Documentation/devicetree/bindings/media/i2c/ti,ds90ub960.yaml
+>> @@ -19,6 +19,7 @@ allOf:
+>>   properties:
+>>     compatible:
+>>       enum:
+>> +      - ti,ds90ub954-q1
+>>         - ti,ds90ub960-q1
+>>         - ti,ds90ub9702-q1
+>>   
+> 
+> Does this pass the dt checks? The binding lists ports 0-5 as required.
 
--- 
-2.39.5
+Thanks for pointing this out. It is passing DT checks since we have marked
+port 4 and port 5 as disabled in DT, but I now understand that approach is
+not acceptable.
 
+Ports 0–3 are documented as FPD-Link inputs, but on UB954, only ports 0 
+and 1 are inputs,
+while port 2 is CSI TX. Should I conditionally modify required ports for 
+UB954(0-2) and
+UB960/UB9702 (0-5), even though port 2's description would mismatch?
+(In bindings it would be described as FPD-Link input but it will be 
+modeled as CSI TX in DT).
+
+Alternatively, we can describe the ports block separately for each 
+compatible to
+ensure correctness. Please let me know which approach you prefer.
+
+Thanks and Regards,
+Abhilash Chandra
+
+
+> 
+>   Tomi
+> 
 
