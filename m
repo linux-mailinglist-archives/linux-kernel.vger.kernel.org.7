@@ -1,158 +1,186 @@
-Return-Path: <linux-kernel+bounces-665755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A66DAC6D40
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 17:54:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B75B0AC6D4D
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 17:59:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDB84170480
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 15:54:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB8BD1BC7D4C
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 15:59:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2A1F28C5C2;
-	Wed, 28 May 2025 15:54:44 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AA5F28D858;
+	Wed, 28 May 2025 15:58:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="kpa9c+Ya"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B71B74420;
-	Wed, 28 May 2025 15:54:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7699286436
+	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 15:58:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748447684; cv=none; b=ed9YB+ya4CZEApNJ8fpFyURuSOaBfCROJ9fovHOxg30UizWPvEx4ictFiqIZeMAtAgFWa4tbOGIILOMMPAfrWl6yHYKCeCvl3lQqMY0uveAKwdE4+ypwO98QfPQSN9Nu0M0enGnn3ovR7+4FC+zc8H0kw/5YfQj/pCG55cz7++8=
+	t=1748447927; cv=none; b=mHKfFrn0hw0ecuvh0ZzyxRFtLzW/9YYeMZ8dqdxiSo1K65dIVXuFJMHhltgAVM50Cc1KhWBnh0qAf2smekX0NUtAnCkDOMUjrhF6f2zXUxjQ/dcqxlehJzRpg07L7UUIBJ38OlnuD80s7NfrSQRkWhMmf7yoEG6VmN39FFrCSHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748447684; c=relaxed/simple;
-	bh=Dw/g/lE1rQzkBlq4qZ/qURcgH6xjlgUmtkzi7h8i4P8=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CpR48DMOaLLuiglhPaXw8C5Ko0bwH3NZDIoDisjaKsUDg255VyHxQ0tg7GgIawlfzG8GLIXAsmeFFMasw/SmGfJ9TwQOfX6bzl8gN38pV4dICGEM2OmXuJoVb89XjZwGBuveolR9OJhl4O1O7GsmQfIQ1320gUIZr85euZKISv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4b6v9Z09hfz6H6py;
-	Wed, 28 May 2025 23:50:58 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id E14461400CA;
-	Wed, 28 May 2025 23:54:31 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 28 May
- 2025 17:54:31 +0200
-Date: Wed, 28 May 2025 16:54:29 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Alireza Sanaee <alireza.sanaee@huawei.com>
-CC: <devicetree@vger.kernel.org>, <robh@kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linuxarm@huawei.com>, <mark.rutland@arm.com>,
-	<shameerali.kolothum.thodi@huawei.com>, <krzk@kernel.org>,
-	<dianders@chromium.org>, <catalin.marinas@arm.com>, <suzuki.poulose@arm.com>,
-	<mike.leach@linaro.org>, <james.clark@linaro.org>,
-	<linux-perf-users@vger.kernel.org>, <coresight@lists.linaro.org>,
-	<gshan@redhat.com>, <ruanjinjie@huawei.com>, <saravanak@google.com>
-Subject: Re: [PATCH v3 1/7] of: add infra for finding CPU id from phandle
-Message-ID: <20250528165429.00000d4d@huawei.com>
-In-Reply-To: <20250512080715.82-2-alireza.sanaee@huawei.com>
-References: <20250512080715.82-1-alireza.sanaee@huawei.com>
-	<20250512080715.82-2-alireza.sanaee@huawei.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1748447927; c=relaxed/simple;
+	bh=SU+mU5oQxy8bSSEFYsj0BOipry6meOH69Ie9WgYQZVU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=cNpvCe7x3KGW5BfU9tbWlNWqkE7z/3pZArTlIo9nX9rCL6DaOQLmyIEN/iuQIMOeTHED3gBR1iEUOw92+lSg/9IzS4htLkUTjSJyLX3Oyq7hCSBL+VEyMdOiE9RkkCvb0c+8+gVJpywsWGlZ42dD9FEFDXovpUnGBNIrkRm9IeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=kpa9c+Ya; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A24AFC4CEED;
+	Wed, 28 May 2025 15:58:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1748447927;
+	bh=SU+mU5oQxy8bSSEFYsj0BOipry6meOH69Ie9WgYQZVU=;
+	h=Date:From:To:Cc:Subject:From;
+	b=kpa9c+YaPO8qrDqbTzmKusm3H9dr60VxNUMdOINNKpeSKlRNhQ+DN1tBiNa8tvfu+
+	 Wbxuran5oLhEF2F/X0T3FaSbM4dHxR77qfcQ1j2mAlq+AWau28sA+X1UPs96FsrrnE
+	 yh42uABVH0lME13MVsRlu5Fyct8Kf6NY1RA/orLQ=
+Date: Wed, 28 May 2025 17:56:52 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org,
+	Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: [GIT PULL] Driver core changes for 6.16-rc1
+Message-ID: <aDcyRMojWUbAllVX@kroah.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500012.china.huawei.com (7.191.174.4) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-On Mon, 12 May 2025 09:07:09 +0100
-Alireza Sanaee <alireza.sanaee@huawei.com> wrote:
+The following changes since commit 82f2b0b97b36ee3fcddf0f0780a9a0825d52fec3:
 
-> Get CPU id from phandle. Many drivers get do this by getting hold of CPU
-> node first through a phandle and then find the CPU ID using the relevant
-> function. This commit encapsulates cpu node finding and improves
-> readability.
-> 
-> The API interface requires two parameters, 1) node, 2) pointer to CPU
-> node. API sets the pointer to the CPU node and allows the driver to play
-> with the CPU itself, for logging purposes for instance.
-> 
-> Signed-off-by: Alireza Sanaee <alireza.sanaee@huawei.com>
-> ---
->  drivers/of/cpu.c   | 29 +++++++++++++++++++++++++++++
->  include/linux/of.h |  9 +++++++++
->  2 files changed, 38 insertions(+)
-> 
-> diff --git a/drivers/of/cpu.c b/drivers/of/cpu.c
-> index 5214dc3d05ae..fba17994fc20 100644
-> --- a/drivers/of/cpu.c
-> +++ b/drivers/of/cpu.c
-> @@ -173,6 +173,35 @@ int of_cpu_node_to_id(struct device_node *cpu_node)
->  }
->  EXPORT_SYMBOL(of_cpu_node_to_id);
->  
-> +/**
-> + * of_cpu_phandle_to_id: Get the logical CPU number for a given device_node
-> + *
-> + * @node: Pointer to the device_node containing CPU phandle.
-> + * @cpu_np: Pointer to the device_node for CPU.
-> + * @cpu_idx: The index of the CPU in the list of CPUs.
-> + *
-> + * Return: The logical CPU number of the given CPU device_node or -ENODEV if
-> + * the CPU is not found, or if the node is NULL, it returns -1. On success,
-> + * cpu_np will always point to the retrieved CPU device_node with refcount
-> + * incremented, use of_node_put() on it when done.
-> + */
-> +int of_cpu_phandle_to_id(const struct device_node *node,
-> +			 struct device_node **cpu_np,
-> +			 uint8_t cpu_idx)
-> +{
-> +	if (!node)
-> +		return -1;
-> +
-> +	*cpu_np = of_parse_phandle(node, "cpu", 0);
-> +	if (!*cpu_np)
-> +		*cpu_np = of_parse_phandle(node, "cpus", cpu_idx);
-> +			if (!*cpu_np)
-> +				return -ENODEV;
+  Linux 6.15-rc6 (2025-05-11 14:54:11 -0700)
 
-Indent has gone a bit crazy here.
+are available in the Git repository at:
 
-> +
-> +	return of_cpu_node_to_id(*cpu_np);
-> +}
-> +EXPORT_SYMBOL(of_cpu_phandle_to_id);
-> +
->  /**
->   * of_get_cpu_state_node - Get CPU's idle state node at the given index
->   *
-> diff --git a/include/linux/of.h b/include/linux/of.h
-> index eaf0e2a2b75c..194f1cb0f6c6 100644
-> --- a/include/linux/of.h
-> +++ b/include/linux/of.h
-> @@ -360,6 +360,8 @@ extern const void *of_get_property(const struct device_node *node,
->  extern struct device_node *of_get_cpu_node(int cpu, unsigned int *thread);
->  extern struct device_node *of_cpu_device_node_get(int cpu);
->  extern int of_cpu_node_to_id(struct device_node *np);
-> +extern int of_cpu_phandle_to_id(const struct device_node *np,
-> +				struct device_node **cpu_np, uint8_t cpu_idx);
->  extern struct device_node *of_get_next_cpu_node(struct device_node *prev);
->  extern struct device_node *of_get_cpu_state_node(const struct device_node *cpu_node,
->  						 int index);
-> @@ -662,6 +664,13 @@ static inline int of_cpu_node_to_id(struct device_node *np)
->  	return -ENODEV;
->  }
->  
-> +static inline int of_cpu_phandle_to_id(const struct device_node *np,
-> +				       struct device_node **cpu_np,
-> +				       uint8_t cpu_idx)
-> +{
-> +	return -ENODEV;
-> +}
-> +
->  static inline struct device_node *of_get_next_cpu_node(struct device_node *prev)
->  {
->  	return NULL;
+  git://git.kernel.org/pub/scm/linux/kernel/git/driver-core/driver-core.git tags/driver-core-6.16-rc1
 
+for you to fetch changes up to 071d8e4c2a3b0999a9b822e2eb8854784a350f8a:
+
+  kernfs: Relax constraint in draining guard (2025-05-21 14:23:13 +0200)
+
+----------------------------------------------------------------
+Driver core changes for 6.16-rc1
+
+Here are the driver core / kernfs changes for 6.16-rc1.
+
+Not a huge number of changes this development cycle, here's the summary
+of what is included in here:
+  - kernfs locking tweaks, pushing some global locks down into a per-fs
+    image lock
+  - rust driver core and pci device bindings added for new features.
+  - sysfs const work for bin_attributes.  This churn should now be
+    completed for those types of attributes
+  - auxbus device creation helpers added
+  - fauxbus fix for creating sysfs files after the probe completed
+    properly
+  - other tiny updates for driver core things.
+
+All of these have been in linux-next for over a week with no reported
+issues.
+
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+----------------------------------------------------------------
+Andy Shevchenko (2):
+      devres: Move devm_*_action*() APIs to devres.h
+      devres: Add devm_is_action_added() helper
+
+Dan Carpenter (1):
+      driver core: auxiliary bus: Fix IS_ERR() vs NULL mixup in __devm_auxiliary_device_create()
+
+Danilo Krummrich (10):
+      rust: device: implement impl_device_context_deref!
+      rust: device: implement impl_device_context_into_aref!
+      rust: device: implement device context for Device
+      rust: platform: preserve device context in AsRef
+      rust: pci: preserve device context in AsRef
+      rust: device: implement Bound device context
+      rust: pci: move iomap_region() to impl Device<Bound>
+      rust: devres: require a bound device
+      rust: dma: require a bound device
+      Merge tag 'topic/device-context-2025-04-17' into driver-core-next
+
+Eric Biggers (1):
+      firmware_loader: use SHA-256 library API instead of crypto_shash API
+
+Greg Kroah-Hartman (4):
+      Merge 6.15-rc4 into driver-core-next
+      Merge tag 'gpiod-devm-is-action-added-for-v6.16-rc1' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/brgl/linux into driver-core-next
+      Merge 6.15-rc6 into driver-core-next
+      drivers: hv: fix up const issue with vmbus_chan_bin_attrs
+
+Jerome Brunet (1):
+      driver core: auxiliary bus: add device creation helpers
+
+Jinliang Zheng (2):
+      kernfs: switch global kernfs_idr_lock to per-fs lock
+      kernfs: switch global kernfs_rename_lock to per-fs lock
+
+Johan Hovold (1):
+      component: do not try to unbind unbound components
+
+Kurt Borja (1):
+      driver core: faux: Add sysfs groups after probing
+
+Michael Ellerman (1):
+      Documentation: embargoed-hardware-issues.rst: Remove myself
+
+Michal Koutný (1):
+      kernfs: Relax constraint in draining guard
+
+Raag Jadav (1):
+      devres: simplify devm_kstrdup() using devm_kmemdup()
+
+Thomas Weißschuh (2):
+      sysfs: constify bin_attribute argument of bin_attribute::read/write()
+      sysfs: constify attribute_group::bin_attrs
+
+Timur Tabi (1):
+      docs: debugfs: do not recommend debugfs_remove_recursive
+
+Woody Zhang (1):
+      platform: replace magic number with macro PLATFORM_DEVID_NONE
+
+Zijun Hu (2):
+      software node: Correct a OOB check in software_node_get_reference_args()
+      PM: wakeup: Do not expose 4 device wakeup source APIs
+
+ Documentation/filesystems/debugfs.rst              |  19 ++--
+ .../driver_development_debugging_guide.rst         |   2 +-
+ .../process/embargoed-hardware-issues.rst          |   1 -
+ drivers/base/auxiliary.c                           | 108 +++++++++++++++++++++
+ drivers/base/component.c                           |   3 +-
+ drivers/base/devres.c                              |  20 ++--
+ drivers/base/faux.c                                |  22 ++++-
+ drivers/base/firmware_loader/Kconfig               |   4 +-
+ drivers/base/firmware_loader/main.c                |  34 +------
+ drivers/base/platform.c                            |   2 +-
+ drivers/base/power/wakeup.c                        |  12 +--
+ drivers/base/swnode.c                              |   2 +-
+ drivers/hv/vmbus_drv.c                             |   2 +-
+ fs/kernfs/dir.c                                    |  33 ++++---
+ fs/kernfs/file.c                                   |   3 +-
+ fs/kernfs/kernfs-internal.h                        |  16 ++-
+ fs/sysfs/group.c                                   |   6 +-
+ include/linux/auxiliary_bus.h                      |  17 ++++
+ include/linux/device.h                             |  38 --------
+ include/linux/device/devres.h                      |  41 ++++++++
+ include/linux/pm_wakeup.h                          |  15 ---
+ include/linux/sysfs.h                              |  27 +-----
+ rust/kernel/device.rs                              |  90 ++++++++++++++++-
+ rust/kernel/devres.rs                              |  17 ++--
+ rust/kernel/dma.rs                                 |  14 +--
+ rust/kernel/pci.rs                                 |  33 +++----
+ rust/kernel/platform.rs                            |  32 ++----
+ 27 files changed, 378 insertions(+), 235 deletions(-)
 
