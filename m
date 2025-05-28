@@ -1,156 +1,145 @@
-Return-Path: <linux-kernel+bounces-664766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-664774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57A0EAC6041
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 05:49:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A5FAAC6053
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 05:51:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 435B51BA779F
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 03:49:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B02407B09DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 03:50:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3364D1E766F;
-	Wed, 28 May 2025 03:48:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F78B1EA7F4;
+	Wed, 28 May 2025 03:49:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="PLu+xZcQ"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mP7q0S07"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C08B195FE8;
-	Wed, 28 May 2025 03:48:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2153320AF9A;
+	Wed, 28 May 2025 03:49:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748404118; cv=none; b=ZJmgPEUzfGllx1syMoHACDwPFtK1YGUqkrYbCpw8L5kLLdnXPDjyI+DueyLj+KStR5jQznwIK/5J78XrdkOGscYuzw55Wh4QDtIjDPOUNhkRLb8NZm7JjJexTBi8S6B91cTt9EI8q4HPWK11a/99BquG0Ajw4nhk205Eoq+QOhs=
+	t=1748404193; cv=none; b=XvZRRpTakiwju+gcF08EcG2ApQFvyZGVgvPglbnzRLrwF2bi8gOSrFjBoPqRse6AFd7Id6LNr+vur0VTSk/zeN1rmxrVqzgt7wXhNqOxiHbVWTX6tJDluR1WMmXdv5O6Tj2UrYxpwbgF7IN7HIdZEzfLCKli2f3Y/fkdJUsvDPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748404118; c=relaxed/simple;
-	bh=470LBfrL+F2zu93W1Reu6s6BdVcybnUNr0ivKo7MMVc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=afQ1unhXnI97XOTAfV6w7VYckwlPFD/AaY1Iqv6qUARWs2XZM5HG7CZIFBBOikwBVpDO/b0/z/KGgOIIq12S8TUUu02ODOH0K2SDKJJLDWrcztuIPXkpuo7fi25v2hNNUkCT36XoFMcdHQ8zyjIN0tKdp1ilujk/AvJCorJ+NaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=PLu+xZcQ; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1748404114;
-	bh=e1csxFsr9FKKZP4A5qTJlIDLNv/1tEaWp1fKhEkKVH8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=PLu+xZcQtRqAp8BqCpwa4CFYlGlj9fQ+Sy+wEjzNBwM7BAPyXKHUUJzWSEjdJk38J
-	 rqIP6efhoysc3+ApwPGGROGX85YD0eJISHkXUI2o7F8rUSakv+mQ/Z0TBf6oZzVZt6
-	 dGV88DoqHwy9ggCqwV0Bxo6FSQTcYDDPZP+l3qVWoBO/z0bUTH0U+jUtcq5605sH5q
-	 O04Gtwz8dVQDe3u+JegJQ+KtPdh9Ir4LaVSuEnwNrMUO/2l03xMChpQnB+RQS94KTt
-	 Vt9LXBvJ584uNBeyv0iylbOEp/qfWDpFlyu/JjAIAx3BnPfDcczKC/OQjVaZOFYNEt
-	 Bi7fTA8E7r63w==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4b6b823xpTz4wcd;
-	Wed, 28 May 2025 13:48:34 +1000 (AEST)
-Date: Wed, 28 May 2025 13:48:33 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi
- <lpieralisi@kernel.org>, Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?=
- <kwilczynski@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
- "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>, Philipp Stanner
- <phasta@kernel.org>
-Subject: Re: linux-next: manual merge of the tip tree with the pci tree
-Message-ID: <20250528134833.699ee6da@canb.auug.org.au>
-In-Reply-To: <20250523132343.6f33b625@canb.auug.org.au>
-References: <20250523132343.6f33b625@canb.auug.org.au>
+	s=arc-20240116; t=1748404193; c=relaxed/simple;
+	bh=SStq2Kg36LwwImXTfsqwBrWtQT75EeqyD8rTkP6l/2U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pGKUiwwZW8R7PVcDlqqngZOLcl3C2BibCm7UXYaSKuV7HjCXfzsmfKiefmNo59oW0HulavCL/5y9AFhs58Mq29tuUmy+YWTwmyHzxaU4u1ASdNjEjBs+0jCNf9RxQfcWtU36LCRNM3sxP+QSoHfT6EPjyaCmE1mVONe5EM63wms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mP7q0S07; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1748404192; x=1779940192;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=SStq2Kg36LwwImXTfsqwBrWtQT75EeqyD8rTkP6l/2U=;
+  b=mP7q0S07UhK3bwLgYe2/SMoKo4vK0DlVZdquoMASlRHeMKP2+1Km3iKC
+   BF4+Fb4/7FeOejGMFS7GT+I73dxTUwctN0fK2farVW+fwC5Kd3nUPDWVK
+   AOmR9LKvlIIkmLIkw9N6qsN1xDVR4dOHAqlWRCul9EC2UYyoYrfuTe3a6
+   wUJQq12d/MqnipAVdrSz9mNUbYyJM1KmZA7Fw/yZ0bjPX+2ehRuInmkqz
+   ZsS75J1g54h+dcqoLg+mEm8SZ9j/jwtFo4LA4wfGB/VLNsR2yJEbWffDS
+   izVj3G5EYHOShvw594+PweyqO7l/Bj9mnIS12H9h17kBiZmOKc9BpBEyo
+   w==;
+X-CSE-ConnectionGUID: ixD6mfJOS/+/pSDlCWHgYg==
+X-CSE-MsgGUID: 3aqZBTNiRMGe8k4Mh0vFXg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11446"; a="38036375"
+X-IronPort-AV: E=Sophos;i="6.15,320,1739865600"; 
+   d="scan'208";a="38036375"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2025 20:49:51 -0700
+X-CSE-ConnectionGUID: WZ3w0+xfTH+yxStttC2htA==
+X-CSE-MsgGUID: X5XLgWTTQhi8D5droaSxpQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,320,1739865600"; 
+   d="scan'208";a="148227554"
+Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.247.1]) ([10.124.247.1])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2025 20:49:49 -0700
+Message-ID: <b9c47a7d-80fc-49c7-9bda-3626f72a70a9@intel.com>
+Date: Wed, 28 May 2025 11:49:46 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_//O.hRwo.cDV=Y_hCJsM/Mx8";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] x86/tdx: Always inline tdx_tdvpr_pa()
+To: Rick Edgecombe <rick.p.edgecombe@intel.com>, pbonzini@redhat.com
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, lkp@intel.com,
+ kai.huang@intel.com, seanjc@google.com, x86@kernel.org, dave.hansen@intel.com
+References: <20250527220453.3107617-1-rick.p.edgecombe@intel.com>
+Content-Language: en-US
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <20250527220453.3107617-1-rick.p.edgecombe@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
---Sig_//O.hRwo.cDV=Y_hCJsM/Mx8
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 5/28/2025 6:04 AM, Rick Edgecombe wrote:
+> In some cases tdx_tdvpr_pa() is not fully inlined into tdh_vp_enter(),
+> which causes the following warning:
+> 
+>    vmlinux.o: warning: objtool: tdh_vp_enter+0x8: call to tdx_tdvpr_pa() leaves .noinstr.text section
+> 
+> tdh_vp_enter() is marked noinstr and so can't accommodate the function
+> being outlined. Previously this didn't cause issues because the compiler
+> inlined the function. However, newer Clang compilers are deciding to
+> outline it.
+> 
+> So mark the function __always_inline to force it to be inlined. This
+> would leave the similar function tdx_tdr_pa() looking a bit asymmetric
+> and odd, as it is marked inline but actually doesn't need to be inlined.
+> So somewhat opportunistically remove the inline from tdx_tdr_pa() so that
+> it is clear that it does not need to be inlined, unlike tdx_tdvpr_pa().
+> 
+> tdx_tdvpr_pa() uses page_to_phys() which can make further calls to
+> outlines functions, but not on x86 following commit cba5d9b3e99d
+> ("x86/mm/64: Make SPARSEMEM_VMEMMAP the only memory model").
+> 
+> Fixes: 69e23faf82b4 ("x86/virt/tdx: Add SEAMCALL wrapper to enter/exit TDX guest")
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202505240530.5KktQ5mX-lkp@intel.com/
+> Suggested-by: Sean Christopherson <seanjc@google.com>
+> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> Reviewed-by: Kai Huang <kai.huang@intel.com>
 
-Hi all,
+Reviewed-by: Xiaoyao Li <Xiaoyao.li@intel.com>
 
-On Fri, 23 May 2025 13:23:43 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->=20
-> Today's linux-next merge of the tip tree got a conflict in:
->=20
->   drivers/pci/pci.h
->=20
-> between commits:
->=20
->   51f6aec99cb0 ("PCI: Remove hybrid devres nature from request functions")
->   8e9987485d9a ("PCI: Remove pcim_request_region_exclusive()")
->   dfc970ad6197 ("PCI: Remove function pcim_intx() prototype from pci.h")
->=20
-> from the pci tree and commit:
->=20
->   d5124a9957b2 ("PCI/MSI: Provide a sane mechanism for TPH")
->=20
-> from the tip tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->=20
->=20
-> diff --cc drivers/pci/pci.h
-> index e39a2a5df587,39f368d2f26d..000000000000
-> --- a/drivers/pci/pci.h
-> +++ b/drivers/pci/pci.h
-> @@@ -1105,6 -1059,20 +1105,15 @@@ static inline pci_power_t mid_pci_get_p
+> ---
+> Previous discussion here:
+> https://lore.kernel.org/kvm/20250526204523.562665-1-pbonzini@redhat.com/
+> 
+> FWIW, I'm ok with the flatten version of the fix too, but posting this
+> just to speed things along in case.
+> 
+> And note, for full correctness, this and the flatten fix will depend on
+> the queued tip commit:
+> https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/commit/?id=cba5d9b3e99d6268d7909a65c2bd78f4d195aead
+> 
+> ---
+>   arch/x86/virt/vmx/tdx/tdx.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/x86/virt/vmx/tdx/tdx.c b/arch/x86/virt/vmx/tdx/tdx.c
+> index f5e2a937c1e7..626cc2f37dec 100644
+> --- a/arch/x86/virt/vmx/tdx/tdx.c
+> +++ b/arch/x86/virt/vmx/tdx/tdx.c
+> @@ -1496,12 +1496,12 @@ void tdx_guest_keyid_free(unsigned int keyid)
 >   }
->   #endif
->  =20
->  -int pcim_intx(struct pci_dev *dev, int enable);
->  -int pcim_request_region_exclusive(struct pci_dev *pdev, int bar,
->  -				  const char *name);
->  -void pcim_release_region(struct pci_dev *pdev, int bar);
->  -
-> + #ifdef CONFIG_PCI_MSI
-> + int pci_msix_write_tph_tag(struct pci_dev *pdev, unsigned int index, u1=
-6 tag);
-> + #else
-> + static inline int pci_msix_write_tph_tag(struct pci_dev *pdev, unsigned=
- int index, u16 tag)
-> + {
-> + 	return -ENODEV;
-> + }
-> + #endif
-> +=20
->   /*
->    * Config Address for PCI Configuration Mechanism #1
->    *
+>   EXPORT_SYMBOL_GPL(tdx_guest_keyid_free);
+>   
+> -static inline u64 tdx_tdr_pa(struct tdx_td *td)
+> +static u64 tdx_tdr_pa(struct tdx_td *td)
+>   {
+>   	return page_to_phys(td->tdr_page);
+>   }
+>   
+> -static inline u64 tdx_tdvpr_pa(struct tdx_vp *td)
+> +static __always_inline u64 tdx_tdvpr_pa(struct tdx_vp *td)
+>   {
+>   	return page_to_phys(td->tdvpr_page);
+>   }
 
-This is now a conflict between the pci tree and Linus' tree.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_//O.hRwo.cDV=Y_hCJsM/Mx8
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmg2h5EACgkQAVBC80lX
-0Gwwpgf9G9kiGgWA7BiBIwnL9Cg6W4hxAZwlbrH3uuj7NVe5F/PGCnng576TW8CL
-1S1qaAVtuxvLMsyJQjj1NuhA121WjJXlxpo/3YDRPB3lFAYm8cC8Eb2qBpjLU7jH
-z960BRSk49JE+j3Qk8mS7rmeE5BsaKsBhbo/tv/9bNpKiJY0kRoSnHbO1St9wDaT
-GmQ8fxBAu499SD42gw/gnaiNUpLxMZ4t/9ciPI4T/tTkJxsn/2GS0fhKhX2I873f
-mZB5RP+0875jdIebQA37qUxg8045F33evJUOpYmnEDRksLewwtCQ9+gO0gNa+HY5
-9cSNRaZQIHoSK60OUHcp3SQiKCGJiw==
-=HaEA
------END PGP SIGNATURE-----
-
---Sig_//O.hRwo.cDV=Y_hCJsM/Mx8--
 
