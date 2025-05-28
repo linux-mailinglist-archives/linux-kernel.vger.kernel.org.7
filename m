@@ -1,151 +1,191 @@
-Return-Path: <linux-kernel+bounces-665394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50CFFAC689D
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 13:51:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCE87AC68A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 13:57:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E5EF4E15EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 11:50:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DE091BC63C9
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 11:58:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D943F283CB0;
-	Wed, 28 May 2025 11:50:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C809283FC7;
+	Wed, 28 May 2025 11:57:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y4uRdP2d"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="TnmPfyrV"
+Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 374D51C54A2;
-	Wed, 28 May 2025 11:50:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 430D52836AF
+	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 11:57:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748433045; cv=none; b=QO44BRGDvaX/BtDtGKt1ZqC02sWQ3IJJfE0MkgCS7pADX+o3raEszp7CuO/CIzU3hNbLWoONWhyySanQ/0miD1A8iwpnEJ5aXDnJ+SeVCo/8haAKzcoFcPeltGZ6VUVWrmRUCEftOPXzfcuCeOlUH1B8z/fr239M8+klNWLMG3c=
+	t=1748433462; cv=none; b=mDH2lnhs3+DLCQkL2C+mIbqoMu32XcmDF/hVy7EWsotyerGaVlYu4GbRBb7RrgHVZLePaIYM4x5R3k5DO/pO/X4Lx25yn9AWiy5cZUbsjHUrv8c1Z9P1w4zVTGE6VaWWolJqRJotk6+3OTgxnf25fdGidLe9uytOod7FWceulr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748433045; c=relaxed/simple;
-	bh=pYmp7MzPa8KMqf8s7VdAs2RHMvAaS8POb29yg4AT8vM=;
+	s=arc-20240116; t=1748433462; c=relaxed/simple;
+	bh=sSCKB1E9ELIG2NYqjni8tItp5R5klF/j+oTOOckovfo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nXOhNIZtUKw75f+Ekci3OJFWqDJN8TdvWl3jkLxjE6BVQpqONxbTdwCOIQis++KrlE7h/pSAEbVLvP/5YSxEOZ6NbVt+rZV+EqeV9qGUAxXSY9x9G5lYQRoLgGQQ8lqYtlNmGv8Xet60p7KOIa9pvnZkw2g5v3fmPqx5ghddrnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y4uRdP2d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9866C4CEE7;
-	Wed, 28 May 2025 11:50:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748433043;
-	bh=pYmp7MzPa8KMqf8s7VdAs2RHMvAaS8POb29yg4AT8vM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Y4uRdP2d22ovVXseVEnjBccqoRT2KVrL7bZgLPtqOVYspszPXSNm+vOhlC38MgldO
-	 8Xvd+pAky2k2hj1+GcVi/vYNVnd5YDkwIY/+CDG8T6XWfK+RaD+f6xYvyAiBnjKYDH
-	 XMHn2hNFFrRWQw2Hb7ttoGJhBaYY/lo/nw/hY7uOtBMwIjRexCOoHRB1UOuyoVHw3q
-	 Fsyrkn+6bNsoyS+2yLqSDAaJsWbKDtDgvgXMj+4B21AsSrSBC2iZt+Ueb0WvTW4sb8
-	 1+0ZvTJVzop+O3KcKSGmGxa7dsgNycqEL9NyJj9IDCIveb9gW/HU8SePKlCM9BWvZn
-	 omPb6u61dSCUw==
-Message-ID: <7e02b0ef-2470-454b-81df-810602d8a626@kernel.org>
-Date: Wed, 28 May 2025 13:50:40 +0200
+	 In-Reply-To:Content-Type; b=nj2CLDQo1C2XKNjWEgTsmyrUDr1KwrNE3yBbEJjyx2gSJEEVvZC+7Y98d9y80AsksXZ5kZRBUK3aazYJw8ToO2jxeTVLGao2I2etOotD1ccXeLN7oCQNz2VAdOS+TuXBH6YuYgHi1Nns/XTXb7D4NZFnpPVHSPjso6ygfHCUpb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=TnmPfyrV; arc=none smtp.client-ip=91.218.175.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <7313e3a4-24bf-42be-901d-e85eb260cc0f@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1748433448;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zpupw+BL22wW70OO3ldtdTEci1KOss4N595RFWiCJy4=;
+	b=TnmPfyrVIF0NjlC3AUNCJnSsxqqxgtgCTwUF7OW7oLZki32QTawdrmELLquh2uVwlAcBPj
+	bDIz68KGKSnuyOAYV7kBX5p3DOA6xCVsY98lTTVYaIEG7I2cAHp6gNBRnFS5mVggr4CQJd
+	XfiELFUSiUJizHXpFXqV5xZuVBvxcU4=
+Date: Wed, 28 May 2025 17:26:35 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/4] firmware: stratix10-svc: Add initial support for
- asynchronous communication with Stratix10 service channel
-To: Mahesh Rao <mahesh.rao@altera.com>, Dinh Nguyen <dinguyen@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: Matthew Gerlach <matthew.gerlach@altera.com>,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20250526-sip_svc_upstream-v3-0-6a08a4502de3@altera.com>
- <20250526-sip_svc_upstream-v3-3-6a08a4502de3@altera.com>
- <3a76c7b1-ce02-41eb-a4c0-ae065e9b99f3@kernel.org>
- <0f74ed36-13bd-4b6c-9d5e-f52cc25235f8@altera.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v8 4/4] drm/tidss: Add OLDI bridge support
+To: Michael Walle <mwalle@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+ Jyri Sarha <jyri.sarha@iki.fi>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Thomas Zimmermann <tzimmermann@suse.de>, Maxime Ripard <mripard@kernel.org>,
+ David Airlie <airlied@gmail.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Simona Vetter <simona@ffwll.ch>, Nishanth Menon <nm@ti.com>,
+ Vignesh Raghavendra <vigneshr@ti.com>, Devarsh Thakkar <devarsht@ti.com>,
+ Praneeth Bajjuri <praneeth@ti.com>, Udit Kumar <u-kumar1@ti.com>,
+ Jayesh Choudhary <j-choudhary@ti.com>,
+ Francesco Dolcini <francesco@dolcini.it>,
+ Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+ DRI Development List <dri-devel@lists.freedesktop.org>,
+ Devicetree List <devicetree@vger.kernel.org>,
+ Linux Kernel List <linux-kernel@vger.kernel.org>
+References: <20250525151721.567042-1-aradhya.bhatia@linux.dev>
+ <20250525151721.567042-5-aradhya.bhatia@linux.dev>
+ <DA5ZNDCHXC6M.1CDYDG6KKMAP0@kernel.org>
+ <a98ad2e7-50de-4d04-8d99-2cf77354b1d6@linux.dev>
+ <DA6PRDARLY70.1CILNJ8YLIOA1@kernel.org>
+ <fc77a1e2-be50-43b1-9863-f8ca70445428@linux.dev>
+ <fc5f6000fbe1f01223f8a28a952b40ea@kernel.org>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <0f74ed36-13bd-4b6c-9d5e-f52cc25235f8@altera.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Aradhya Bhatia <aradhya.bhatia@linux.dev>
+In-Reply-To: <fc5f6000fbe1f01223f8a28a952b40ea@kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On 28/05/2025 12:29, Mahesh Rao wrote:
->> ...
->>
->>> +	args.a0 = INTEL_SIP_SMC_ASYNC_POLL;
->>> +	args.a1 =
->>> +		STRATIX10_SIP_SMC_SET_TRANSACTIONID_X1(handle->transaction_id);
->>> +
->>> +	actrl->invoke_fn(actrl, &args, &handle->res);
->>> +
->>> +	data->status = 0;
->>> +	if (handle->res.a0 == INTEL_SIP_SMC_STATUS_OK) {
->>> +		return 0;
->>> +	} else if (handle->res.a0 == INTEL_SIP_SMC_STATUS_BUSY) {
->>> +		dev_dbg(ctrl->dev, "async message is still in progress\n");
->>> +		return -EAGAIN;
->>> +	}
->>> +
->>> +	dev_err(ctrl->dev,
->>> +		"Failed to poll async message ,got status as %ld\n",
->>> +		handle->res.a0);
->>> +	return -EINVAL;
->>> +}
->>> +EXPORT_SYMBOL_GPL(stratix10_svc_async_poll);
->>
->> No, drop entire function. There is no user of it. You cannot add exports
->> for dead code.
+Hi Michael,
+
+On 28/05/25 13:57, Michael Walle wrote:
+> Hi Aradhya,
 > 
-> These functions have been newly introduced for the Stratix10-SVC 
-> platform driver. The client drivers that will utilize these APIs are 
-> currently under development and are planned for inclusion in a 
-> subsequent patch set. Would you prefer that I include a sample client 
-> driver using these APIs in this patch set instead?
+>>>> Something like this.
+>>>>
+>>>> &oldi0 {
+>>>>     // primary oldi
+>>>>     ti,companion-oldi = <&oldi1>;
+>>>> };
+>>>>
+>>>>
+>>>> &oldi1 {
+>>>>     // secondary oldi
+>>>>     ti,secondary-oldi = true;
+>>>>     ti,companion-oldi = <&oldi0>;
+>>>> };
+>>>>
+>>>>
+>>>> If there is no companion for any OLDI dt node, then the OLDI TX will be
+>>>> deemed as acting by itself, and in a single-link mode.
+>>>
+>>> And it's possible to still have these properties and treat them as
+>>> two distinct transmitters? I'm wondering if it's possible to have
+>>> the companion-oldi and secondary-oldi property inside the generic
+>>> SoC dtsi, so you don't have to repeat it in every board dts.
+>>>
+>>> If I read the code correctly, the panel has to have the even and odd
+>>> pixel properties to be detected as dual-link. Correct? Thus it would
+>>> be possible to have
+>>>
+>>> oldi0: oldi@0 {
+>>>      ti,companion-oldi = <&oldi1>;
+>>> };
+>>>
+>>> oldi1: oldi@1 {
+>>>      ti,secondary-oldi;
+>>>      ti,companion-oldi = <&oldi0>;
+>>> };
+>>>
+>>> in the soc.dtsi and in a board dts:
+>>>
+>>> panel {
+>>>     port {
+>>>         remote-endpoint = <&oldi0>;
+>>>     };
+>>> };
+>>
+>> In this case, the secondary OLDI (oldi1) would remain disabled from
+>> soc.dtsi.
+>>
+>> I gave this a quick try. Turns out, of_parse_phandle() is not able to
+>> return an error when primary OLDI tries to find a companion -- which is
+>> important for the driver to detect an absence of any secondary OLDI.
+>>
+>> Since the driver code registers a companion for primary OLDI, and
+>> further does not find the "dual-lvds-{odd,even}-pixels" properties,
+>> the driver ends up trying for a Clone Mode.
+>>
+>> So, for single-link , we'd have to actively delete the "companion-oldi"
+>> property, in the board.dts/panel.dtso.
+> 
+> Last time I've checked you cannot delete nodes or properties in DT
+> overlays. So maybe it's better to make that a board property and don't
+> set it by default in the soc dtsi.
 
-You must have user for every exported symbol. In the same patchset, usually.
+I was not aware that deleting properties was not allowed/possible. So,
+yes, seems like they are better left out of the soc.dtsi! =)
 
+> 
+>> But, say, the disabled-node's phandle parse is circumvented, somehow,
+>> and we don't need to delete the property explicitly.
+>>
+>> There would still be one concern, I am afraid.
+>>
+>> In AM67A DSS (future scope at the moment), the 2 OLDIs can act
+>> independently. Like a 2x Independent Single-Link. Both the OLDI dt nodes
+>> will be enabled.
+> 
+> The first DSS0 can drive two single link displays? Reading your downstream
+> AM67A DSS patches, thats not particular clear:
 
+Not the DSS0 alone. DSS0 and DSS1 can each drive a single link OLDI
+display simultaneously.
 
-Best regards,
-Krzysztof
+> 
+>     The DSS0 HW supports one each of video pipeline (vid) and video-lite
+>     pipeline (vidl1). It outputs OLDI signals on one video port (vp1) and
+>     DPI signals on another (vp2). The video ports are connected to the
+>     pipelines via 2 identical overlay managers (ovr1 and ovr2).
+> 
+> The TRM also doesn't tell much (or I just didn't find it yet).
+> 
+>> So, if the soc.dtsi has them already connected, then the
+>> board.dts/panel.dtso would still need to explicitly delete those
+>> properties to get the 2 OLDI TXes to work independently.
+> 
+> Yeah looks like that should really be a board property.
+> 
+> -michael
+
+-- 
+Regards
+Aradhya
+
 
