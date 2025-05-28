@@ -1,309 +1,107 @@
-Return-Path: <linux-kernel+bounces-665233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4DFEAC661C
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 11:37:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B3BBAC6623
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 11:39:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03FF3188C2ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 09:37:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 458951BA58DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 09:40:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96321278768;
-	Wed, 28 May 2025 09:36:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E084279333;
+	Wed, 28 May 2025 09:39:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fDfAqUJj"
-Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com [209.85.222.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rz0ddtiF"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0791F277819
-	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 09:36:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B99A278E60;
+	Wed, 28 May 2025 09:39:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748425015; cv=none; b=eisI3jtDEbSsf6EwTB3IApFYzsWyo/zNcVtSOdtK1UgPVuXs0eXjXFQaBc/WfVYDKIvOUW8ju6CRYdzdEXzjnuW0JdAsOEXmm0CbSJDzmDNLI2MII45ytC6hqqnj0fFWSsCMV8OA2ZQiYZIr9+hV4ALjAEwuTqrLxpPKn820fQI=
+	t=1748425167; cv=none; b=q07Fr2DQPrXSHnNBudaU5zU7+2lcvrNoSLcQ89Xs02a0eRBlh4L6BVBxWHGpm+FrfiltRs0+RUTYQas9PmEw3jac6WNV3pEMiaFRlOeqVLByeLZ/lK6sVol2M9mEq/W2fF6YAz37SeKt7maQc0VlgJ/UBsIkSYOkHGsdNqjFWuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748425015; c=relaxed/simple;
-	bh=AgYApLVxIa3sGlbNqPoIBAF/ed9Jlp4pZfwvLIU3bNI=;
+	s=arc-20240116; t=1748425167; c=relaxed/simple;
+	bh=y4NzMxD9tmogr+AetKOa3VXWiWOLUF+6spJ2YgI8RsY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Kxr5gogE45f+xlJgZpQZA0cLaf5lxpySO9zjzl3UF3nYKSXPow66tE/Vh2smqbHm1nm+ZDm1JFgU2fmfNfU3RA9A0qZIHS6aJDi77TdcrpUBaNBoLdUwkV8ZHyZuzKwvFSarRe2egY6ne/LnThxRZqcOK29r/2wDQiMw0QWKHwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fDfAqUJj; arc=none smtp.client-ip=209.85.222.43
+	 To:Cc:Content-Type; b=d/jOcDncrth8A9PXbDWjJn4Ta6u9QeF4PExu46N0fJw+9KxvLQ2nNPWIRUFrencDU5Bhw/bEEWNcBuMpDIcgHOHiesQx3fT40CQLwM8uLR5HRoifkQrmlCftY1zPlhWy1zqJIOhE4LS031BzKbKWLsgyuVMIqk395gp5RwwJjik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rz0ddtiF; arc=none smtp.client-ip=209.85.216.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-87e0ce80ed4so1134429241.2
-        for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 02:36:53 -0700 (PDT)
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-311f6be42f1so37547a91.0;
+        Wed, 28 May 2025 02:39:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748425013; x=1749029813; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1748425165; x=1749029965; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=F4H4mltHWA4Hz50a14glpW/QRK0obPDlc6uSYk/4ZI4=;
-        b=fDfAqUJjP5KDOxQKGet0Vx4IVVKPmtzzlEnpHeYcbNXXob4R+O9UerAa5a5K7SqaIi
-         fa4xrIuds3vyYG9QhdXd1vLSneWgKZRhgVvIMHfPpqfkmYpo3Mk9xEpU/Qy6Ih1a28Br
-         NXLch6RtjzyDhlloJbBAq6Ab09kAEaZsl97M4b5pd8BwFNtrlUQz3Ww5x6mWIW1g138P
-         AS0EkLLru5H4qkxdJRO8ktAKQ6oXcBWEaWzMIiQjbtNoJ2ZptnJa0RBvNZFtHskmqRHE
-         tRkJuGwKVD5QjX+1R0EQPOo+5m/fwahmi/MljqgzrKPI93R+FTMazYvIKZZs/eEwWYED
-         vfLA==
+        bh=ZQBoysENhIbgW5/kLFhu2v5G6iCydX7mEkkhpaN14T0=;
+        b=Rz0ddtiF85FovreUueojk0HHigqQKTsz06tTQa32/Sq9vmZnp/LxnW+L8dYn6zhrh1
+         awWf3hm7MTwiTaGVPIuoifcvaadmsxL2ZWJe12TJDbM1xDfGew1h8h60YdBbRyUniHXx
+         v8gDTz3K3eVvDScswnZP2/NhksvgRXx3HGknM4yo9HsWk5Q89Yi6yP+E52xbFsEROAMd
+         IPHfCwxCx+uCV9Wne/tG1SdNzFbhApvPsMZsPMrHCpP3LaMmkPuKIDTbX0ovrL4yT6wn
+         14n316aYxgaBMwEtuFrWdQVkamNxKs4Z+4dcJAy0Vwn5n0BBewLgeCj1JDnwV1+vwEo7
+         AcKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748425013; x=1749029813;
+        d=1e100.net; s=20230601; t=1748425165; x=1749029965;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=F4H4mltHWA4Hz50a14glpW/QRK0obPDlc6uSYk/4ZI4=;
-        b=uweAhvICt7OdZs19pbZXR97AU4CtImr4kIagPaWct/fSFpGo4X18uVV3zxm07tDR5D
-         XGKoTlvlCzdjSoQ6FYCtur69NvcvaOkzJ0q/p/omgBTER/sOeu6qpO8z6Tk2GWGZgIg9
-         NuQnQrf1UXJMnxhbf+0j1Qr7rLYY/lm0LLflP0X7FG2L8HA+lLgUk5mXvgh+X8mTOgtZ
-         piLbOHXikU8n1dUEZsZVOE58rNrnjJKM6CLH2xrHqeJxgjSkq354IbPuEb0x3lGmQjv/
-         jTJKoXbSCAB5i26MWf5vFcEWwSC2d6awnT2+hxqRpIpMr87eqZRg515zAFlmXodpOdX+
-         2oFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUhGeZoqgDbfCKxD36sfA/jzk/4MpGCnVNNK+bYYCp4+HGKJ+bOlGs4a2dW9cPt25QzK9IwWIg+qu0fYa0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzumtuk/P/1eCwDbsKr5rdUTF79eUheqbqZfaSPB8pvzGlYO5Kk
-	QqgSWLYsnsKYp4tHKdWkQuuJ/fL90BtLR267dvl5+ZbzuTmk+q5JuT8hy3f91DRN+iMC/nWh44v
-	r/7YnJH7uku+VEwh4ZowehXX47LnFe3c=
-X-Gm-Gg: ASbGncuz4AlmjN29gufwxV9sOGg5s1NpVq3VRgdxgzEy5bYospoT6qyySPcoYXMQl8m
-	Pyz4fHrv39Q6A9oOEST7rAuMNUBuB56mFUGwz6Ippqyo3LYiVdPLyxwrmM543U0Ii2C8H0NtAbN
-	h2pZgzPJOfX7Z5g8y9zkwTohdLJhF6pIFC0A==
-X-Google-Smtp-Source: AGHT+IFPS3+nOyu5GsyZnyt+mdeoMYzphKgXldIOhAR0xUYhOH++PX1IaDSOYuVo4ytjgwf46RsusX5qk/oLVlEUV7s=
-X-Received: by 2002:a05:6102:161f:b0:4e5:9c06:39d8 with SMTP id
- ada2fe7eead31-4e59c063b13mr1566237137.5.1748425012652; Wed, 28 May 2025
- 02:36:52 -0700 (PDT)
+        bh=ZQBoysENhIbgW5/kLFhu2v5G6iCydX7mEkkhpaN14T0=;
+        b=kHijPsgQeEtHWaK+hC5aVdtMqAJaaL20yxv4lq25hmBon5DIyOCfRQ4aZ3qmUvbIu7
+         Yagpv0bOFUIQsAFQWd5xe4V9xAnlVDTLP6PwHgTyczd7iWTy7dYX4T2GSXnNIYQwPq4L
+         hfzZO3oEg9DqPmBJvkxN4CiXNCutKtJtxS9C7iejPiAocMbzWtkuLAggKBTzA15Wl6TM
+         ufNea0iqOZnkFDYgpzIF3Lb8rKrbi/IwCbkvfoYk1MYMGC4Fhid0b7gK0bc1WxfYNSIk
+         kKutEInZRHwsG1PDHvJRWS+ENaK7HdT2myrE7fc+WJt2wbxW2vxkjiHgspuG9FZMGXMc
+         bf4g==
+X-Forwarded-Encrypted: i=1; AJvYcCWIBczkzF24amG7+kZnVa5Qer7V1XH6E2wKqtNKuUFCeLeI30czmKXwowZnn6YbhVN/Sz8=@vger.kernel.org, AJvYcCWJJr8QHfo7vnfF3ZQ+fc48wDSRcPSTmzIWLBnAUjjIdo0bi4nC+l9eETRFc1Q3X50olvawvoXlFShTndF0LdA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMclseVYDs8yXfqQJm1OjDeBRANAZwph3SGICLbj85aqRrLIfl
+	ISrNwl6NP777R6FCBBwzcKvYgRRurQsy+Qibgq5pZ6OyN6i6tYIlet2RUbOv7yRV7kf6iy5Hg1i
+	ThGjj9+Xrnfcy4LWpxLS2gmcvqdiZheU=
+X-Gm-Gg: ASbGncs5ck6SgfmBs0DqZB1qGxenep35fiwpI7b+Q9Tr1gc6AMbYbPVHtH9KMbg7DJ9
+	qJFccVVw1cUsE0Cj/BZtTgruvVqBz3D2PmzvVJnT1yA8kKK+uV6euP64Q1KxALoB1mHR/X/MxPU
+	8EtcjxPQKvqMNNE/1qGzP5Fr+Zwe5GXZde
+X-Google-Smtp-Source: AGHT+IES7Q+itUfT5wFGMqq1cdttplKaNdUc32Nx59Bv5rwPOYXCpDB88AGK9vWYeBz/+WcV0xKa7x6/E1mxh1Z7838=
+X-Received: by 2002:a17:90b:1e10:b0:311:488:f506 with SMTP id
+ 98e67ed59e1d1-311e1a122b4mr1202559a91.6.1748425164739; Wed, 28 May 2025
+ 02:39:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250527044145.13153-1-21cnbao@gmail.com> <93385672-927f-4de5-a158-fc3fc0424be0@lucifer.local>
-In-Reply-To: <93385672-927f-4de5-a158-fc3fc0424be0@lucifer.local>
-From: Barry Song <21cnbao@gmail.com>
-Date: Wed, 28 May 2025 17:36:40 +0800
-X-Gm-Features: AX0GCFuEZj13XFVajxQytEEJ3CxbWz8WhpholMp_an_EqsoYNNGJof5-x-h5N-o
-Message-ID: <CAGsJ_4yHQLmUF7ZRMjaV7c1JQ9-Sr3ccWMTOBwAyKUSaB7CPhA@mail.gmail.com>
-Subject: Re: [PATCH RFC] mm: use per_vma lock for MADV_DONTNEED
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Barry Song <v-songbaohua@oppo.com>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, David Hildenbrand <david@redhat.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Lokesh Gidra <lokeshgidra@google.com>, 
-	Tangquan Zheng <zhengtangquan@oppo.com>
+References: <20250528083431.1875345-1-pbonzini@redhat.com>
+In-Reply-To: <20250528083431.1875345-1-pbonzini@redhat.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Wed, 28 May 2025 11:39:12 +0200
+X-Gm-Features: AX0GCFvBLnlzWD65XoPoEaCqR8aQRkKJqxadBtl2y6UrWx3JHjZf3XpuLM3RmeQ
+Message-ID: <CANiq72nwM79eGSAt8FjKgoYCJd-bLeTojaQAtg3SECE28uByQQ@mail.gmail.com>
+Subject: Re: [PATCH] rust: add helper for mutex_trylock
+To: Paolo Bonzini <pbonzini@redhat.com>, Boqun Feng <boqun.feng@gmail.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, ojeda@kernel.org, 
+	Stephen Rothwell <sfr@canb.auug.org.au>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 27, 2025 at 5:20=E2=80=AFPM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
+On Wed, May 28, 2025 at 10:34=E2=80=AFAM Paolo Bonzini <pbonzini@redhat.com=
+> wrote:
 >
-> Overall - thanks for this, and I'm not sure why we didn't think of doing
-> this sooner :P this seems like a super valid thing to try to use the vma
-> lock with.
->
-> I see you've cc'd Suren who has the most expertise in this and can
-> hopefully audit this and ensure all is good, but from the process address
-> doc (see below), I think we're good to just have the VMA stabilised for a
-> zap.
->
-> On Tue, May 27, 2025 at 04:41:45PM +1200, Barry Song wrote:
-> > From: Barry Song <v-songbaohua@oppo.com>
-> >
-> > Certain madvise operations, especially MADV_DONTNEED, occur far more
-> > frequently than other madvise options, particularly in native and Java
-> > heaps for dynamic memory management.
->
-> Ack yeah, I have gathered that this is the case previously.
->
-> >
-> > Currently, the mmap_lock is always held during these operations, even w=
-hen
-> > unnecessary. This causes lock contention and can lead to severe priorit=
-y
-> > inversion, where low-priority threads=E2=80=94such as Android's HeapTas=
-kDaemon=E2=80=94
-> > hold the lock and block higher-priority threads.
->
-> That's very nasty... we definitely want to eliminate as much mmap_lock
-> contention as possible.
->
-> >
-> > This patch enables the use of per-VMA locks when the advised range lies
-> > entirely within a single VMA, avoiding the need for full VMA traversal.=
- In
-> > practice, userspace heaps rarely issue MADV_DONTNEED across multiple VM=
-As.
->
-> Yeah this single VMA requirement is obviously absolutely key.
->
-> As per my docs [0] actually, for zapping a single VMA, 'The VMA need only=
- be
-> kept stable for this operation.' (I had to look this up to remind myself =
-:P)
->
-> [0]: https://kernel.org/doc/html/latest/mm/process_addrs.html
->
-> So we actually... should be good here, locking-wise.
->
-> >
-> > Tangquan=E2=80=99s testing shows that over 99.5% of memory reclaimed by=
- Android
-> > benefits from this per-VMA lock optimization. After extended runtime,
-> > 217,735 madvise calls from HeapTaskDaemon used the per-VMA path, while
-> > only 1,231 fell back to mmap_lock.
->
-> Thanks, this sounds really promising!
->
-> I take it then you have as a result, heavily tested this change?
+>         Ok to apply to the KVM tree?
 
-This was extensively tested on an older Android kernel with real devices.
-As you know, running the latest mm-unstable on phones is challenging due
-to hardware driver constraints. However, I believe the reported percentage
-is accurate, since it seems pointless for userspace heaps to free memory
-across two or more VMAs. How could it possibly manage a slab-like system
-spanning multiple VMAs?
+Yeah, looks good to me, thanks!
 
->
-> >
-> > To simplify handling, the implementation falls back to the standard
-> > mmap_lock if userfaultfd is enabled on the VMA, avoiding the complexity=
- of
-> > userfaultfd_remove().
->
-> Oh GOD do I hate how we implement uffd. Have I ever mentioned that? Well,
-> let me mention it again...
->
-> >
-> > Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-> > Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> > Cc: David Hildenbrand <david@redhat.com>
-> > Cc: Vlastimil Babka <vbabka@suse.cz>
-> > Cc: Jann Horn <jannh@google.com>
-> > Cc: Suren Baghdasaryan <surenb@google.com>
-> > Cc: Lokesh Gidra <lokeshgidra@google.com>
-> > Cc: Tangquan Zheng <zhengtangquan@oppo.com>
-> > Signed-off-by: Barry Song <v-songbaohua@oppo.com>
-> > ---
-> >  mm/madvise.c | 34 ++++++++++++++++++++++++++++++++++
-> >  1 file changed, 34 insertions(+)
-> >
-> > diff --git a/mm/madvise.c b/mm/madvise.c
-> > index 8433ac9b27e0..da016a1d0434 100644
-> > --- a/mm/madvise.c
-> > +++ b/mm/madvise.c
-> > @@ -1817,6 +1817,39 @@ int do_madvise(struct mm_struct *mm, unsigned lo=
-ng start, size_t len_in, int beh
-> >
-> >       if (madvise_should_skip(start, len_in, behavior, &error))
-> >               return error;
-> > +
-> > +     /*
-> > +      * MADV_DONTNEED is commonly used with userspace heaps and most o=
-ften
-> > +      * affects a single VMA. In these cases, we can use per-VMA locks=
- to
-> > +      * reduce contention on the mmap_lock.
-> > +      */
-> > +     if (behavior =3D=3D MADV_DONTNEED || behavior =3D=3D MADV_DONTNEE=
-D_LOCKED) {
->
-> So firstly doing this here means process_madvise() doesn't get this benef=
-it, and
-> we're inconsistent between the two which we really want to avoid.
->
-> But secondly - we definitely need to find a better way to do this :) this
-> basically follows the 'ignore the existing approach and throw in an if
-> (special case) { ... }' pattern that I feel we really need to do all we c=
-an
-> to avoid in the kernel.
->
-> This lies the way of uffd, hugetlb, and thus horrors beyond imagining.
->
-> I can see why you did this as this is kind of special-cased a bit, and we
-> already do this kind of thing all over the place but let's try to avoid
-> this here.
->
-> So I suggest:
->
-> - Remove any code for this from do_madvise() and thus make it available t=
-o
->   process_madvise() also.
->
-> - Try to avoid the special casing here as much as humanly possible :)
->
-> - Update madvise_lock()/unlock() to get passed a pointer to struct
->   madvise_behavior to which we can add a boolean or even better I think -
->   an enum indicating which lock type was taken (this can simplify
->   madvise_unlock() also).
->
-> - Update madvise_lock() to do all of the checks below, we already
->   effectively do a switch (behavior) so it's not so crazy to do this. And
->   you can also do the fallthrough logic there.
->
-> - Obviously madvise_unlock() can be updated to do vma_end_read().
+Acked-by: Miguel Ojeda <ojeda@kernel.org>
 
-I=E2=80=99ve definitely considered refactoring madvise_lock, madvise_do_beh=
-avior,
-and madvise_unlock to encapsulate the details of the per-VMA locking and
-mmap_lock handling within those functions:
-madvise_lock(mm, behavior);
-madvise_do_behavior(mm, start, len_in, behavior);
-madvise_unlock(mm, behavior);
+Cc'ing Boqun just in case and so that he is aware. Boqun: this fixes a
+Rust build error on the kvm branch which failed on merging into -next:
 
-However, I=E2=80=99m a bit concerned that this approach might make the code=
- messier
-by introducing extra arguments to handle different code paths. For instance=
-,
-madvise_do_behavior might need an additional parameter to determine whether
-VMA traversal via madvise_walk_vmas is necessary.
+    https://lore.kernel.org/linux-next/20250528152832.3ce43330@canb.auug.or=
+g.au/
 
-That said, I=E2=80=99ll give it a try and see if it actually turns out to b=
-e as ugly
-as I fear.
-
-
->
-> > +             struct vm_area_struct *prev, *vma;
-> > +             unsigned long untagged_start, end;
-> > +
-> > +             untagged_start =3D untagged_addr(start);
-> > +             end =3D untagged_start + len_in;
-> > +             vma =3D lock_vma_under_rcu(mm, untagged_start);
-> > +             if (!vma)
-> > +                     goto lock;
-> > +             if (end > vma->vm_end || userfaultfd_armed(vma)) {
-> > +                     vma_end_read(vma);
-> > +                     goto lock;
-> > +             }
-> > +             if (unlikely(!can_modify_vma_madv(vma, behavior))) {
-> > +                     error =3D -EPERM;
-> > +                     vma_end_read(vma);
-> > +                     goto out;
-> > +             }
-> > +             madvise_init_tlb(&madv_behavior, mm);
-> > +             error =3D madvise_dontneed_free(vma, &prev, untagged_star=
-t,
-> > +                             end, &madv_behavior);
-> > +             madvise_finish_tlb(&madv_behavior);
-> > +             vma_end_read(vma);
-> > +             goto out;
-> > +     }
-> > +
-> > +lock:
-> >       error =3D madvise_lock(mm, behavior);
-> >       if (error)
-> >               return error;
-> > @@ -1825,6 +1858,7 @@ int do_madvise(struct mm_struct *mm, unsigned lon=
-g start, size_t len_in, int beh
-> >       madvise_finish_tlb(&madv_behavior);
-> >       madvise_unlock(mm, behavior);
-> >
-> > +out:
-> >       return error;
-> >  }
-> >
-> > --
-> > 2.39.3 (Apple Git-146)
-> >
->
-> Cheers, Lorenzo
-
-Thanks
-Barry
+Cheers,
+Miguel
 
