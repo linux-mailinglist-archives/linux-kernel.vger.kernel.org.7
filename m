@@ -1,145 +1,243 @@
-Return-Path: <linux-kernel+bounces-664774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-664788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A5FAAC6053
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 05:51:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B95DAC606F
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 05:55:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B02407B09DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 03:50:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02F553BEAE9
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 03:54:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F78B1EA7F4;
-	Wed, 28 May 2025 03:49:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFD291F4727;
+	Wed, 28 May 2025 03:50:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mP7q0S07"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Lg/48r9k"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2153320AF9A;
-	Wed, 28 May 2025 03:49:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CA3E21D00D
+	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 03:50:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748404193; cv=none; b=XvZRRpTakiwju+gcF08EcG2ApQFvyZGVgvPglbnzRLrwF2bi8gOSrFjBoPqRse6AFd7Id6LNr+vur0VTSk/zeN1rmxrVqzgt7wXhNqOxiHbVWTX6tJDluR1WMmXdv5O6Tj2UrYxpwbgF7IN7HIdZEzfLCKli2f3Y/fkdJUsvDPU=
+	t=1748404221; cv=none; b=sp0lYZOl2oyj5vzy6E9bcqNl5jx9++1ZWpT5S6aqVh0W9v5nXJZ7RtET31127d3nBSR0rfkZJZKJNfRCknz8IcGgSdgdXjxmo/XnGc7vt/Pg/vWHN8a021BFbXJFrUwDzxHVTswngp2x+u3p2RT3dWwjyAIAYgyp9n7Bg/bBhoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748404193; c=relaxed/simple;
-	bh=SStq2Kg36LwwImXTfsqwBrWtQT75EeqyD8rTkP6l/2U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pGKUiwwZW8R7PVcDlqqngZOLcl3C2BibCm7UXYaSKuV7HjCXfzsmfKiefmNo59oW0HulavCL/5y9AFhs58Mq29tuUmy+YWTwmyHzxaU4u1ASdNjEjBs+0jCNf9RxQfcWtU36LCRNM3sxP+QSoHfT6EPjyaCmE1mVONe5EM63wms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mP7q0S07; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1748404192; x=1779940192;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=SStq2Kg36LwwImXTfsqwBrWtQT75EeqyD8rTkP6l/2U=;
-  b=mP7q0S07UhK3bwLgYe2/SMoKo4vK0DlVZdquoMASlRHeMKP2+1Km3iKC
-   BF4+Fb4/7FeOejGMFS7GT+I73dxTUwctN0fK2farVW+fwC5Kd3nUPDWVK
-   AOmR9LKvlIIkmLIkw9N6qsN1xDVR4dOHAqlWRCul9EC2UYyoYrfuTe3a6
-   wUJQq12d/MqnipAVdrSz9mNUbYyJM1KmZA7Fw/yZ0bjPX+2ehRuInmkqz
-   ZsS75J1g54h+dcqoLg+mEm8SZ9j/jwtFo4LA4wfGB/VLNsR2yJEbWffDS
-   izVj3G5EYHOShvw594+PweyqO7l/Bj9mnIS12H9h17kBiZmOKc9BpBEyo
-   w==;
-X-CSE-ConnectionGUID: ixD6mfJOS/+/pSDlCWHgYg==
-X-CSE-MsgGUID: 3aqZBTNiRMGe8k4Mh0vFXg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11446"; a="38036375"
-X-IronPort-AV: E=Sophos;i="6.15,320,1739865600"; 
-   d="scan'208";a="38036375"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2025 20:49:51 -0700
-X-CSE-ConnectionGUID: WZ3w0+xfTH+yxStttC2htA==
-X-CSE-MsgGUID: X5XLgWTTQhi8D5droaSxpQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,320,1739865600"; 
-   d="scan'208";a="148227554"
-Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.247.1]) ([10.124.247.1])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2025 20:49:49 -0700
-Message-ID: <b9c47a7d-80fc-49c7-9bda-3626f72a70a9@intel.com>
-Date: Wed, 28 May 2025 11:49:46 +0800
+	s=arc-20240116; t=1748404221; c=relaxed/simple;
+	bh=pHNGUEdpJg3k1wGE10XXKSk7rmW/2Neb5FhAgaRcAsI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rV35ioUL4Y/JK2G1tv/JeFKB4itGFxUXsJ9yhsMW2c2ItYc29CtaGZ6eD+KpwVTdJoMa6SXWfSf5GKt7QnOdBfUunKQLfkbT4MPT+dw+7D6eYY8xxq0sXIRNN3/8C/CM4GQ5TFKkimEATvja69vQYzKOd+gNT9YllYfaSa+AdW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Lg/48r9k; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-742c9907967so4064894b3a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 27 May 2025 20:50:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1748404217; x=1749009017; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=cGgy5iGp9aoxhG6XSqRIfdUfb9DnMNCDo6A3zqvZ/yY=;
+        b=Lg/48r9kFAomPLZSN2xMJ0CTOhxI+uVI53iv6H3I0Z6EZ9jnggyKeJcLJXjbPLPzOg
+         MvtevMqeaJ0QzMnTpMngphSbXAkdtjczK8Jg/CGvAybGTbe+sQxwGm1i07q1JzY855Fd
+         C4QZliM404FU7kD+MxCDOv4TeuJXpX5E25KnjrnP1dOEN0qZ+n401xxp/TMssE6VxpG+
+         b8WTLp12iaJO/nAnXSQXRLp26dFv+n9RFByUfG8/N7KRxMwgjgzSj6dLHT3R9HGLbzZN
+         a6wV77vvUzmTA3s7UGdj4Z96NpafVjDFhwxklUHTxWyyyF+VmuSJ/5Fs+VJrT2fHWwfQ
+         sa/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748404218; x=1749009018;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cGgy5iGp9aoxhG6XSqRIfdUfb9DnMNCDo6A3zqvZ/yY=;
+        b=TVo1tFKW7JJary38Bbic8WWqadzISdYJjq1deyVNtdm7+1WHvY+RaXlme81SU9+qNZ
+         B90TRPcscpO/xAM191JFrXOVgwRQTZCpEz8WIPv/flOuCrpB51ud36Iw0fpQRkVJ/qCx
+         pJrDbs5/G0ALbslDOuR46wfLbNuPqcWR5a18/1N+Cod1Fndu58XSzlaegPZFHqy/FICV
+         eue9BILmCCRO48n0HGh0UIzWPNqM49FRT8zJVi3x3EDCrnGUjrebJJ0nVFHDCNA8Bt+6
+         pIE7EVaHycIVMsYBOlEGEO61/eB8vnX5kMQJ19tc9lwU16ldXfQ1Sty81viNjYhG3JLP
+         IRAw==
+X-Forwarded-Encrypted: i=1; AJvYcCWLf20doBRGpvUtKqi87Gh71+uBUThwor8csxT+tZrRxhupSQ+ZlHwJKzYeqm99hhPmUlRNj/0WZSKOsGw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxtx8kBOL0l8pKzzrsgI+sx9Ue0q6bxPoe373zoAhwO3Wb6YyKm
+	8YdXBVqiujSf59FU8gXsBfY+39LzQ9pL5FhsUvhuLQRV+jLDqdMU2pjRs+StW8CSRQ==
+X-Gm-Gg: ASbGncsF4gplJjHvhxdzu4sjIQHHahiU/PRq8Nk4ZGIGbguUgoiCwTVUmdeaCxBMJBn
+	JfZD0KkFnu/9jmQUCBU94IuhINQbqiwSgeljAFRpABDjGcmm/8bp68he3YwnpnburjPt/BFWbvU
+	OnjADfs9MtURrDnGwOztfOrdeeEiAkbDlnL30BZ4EvmzBW0B4k2TV7tjb8MafeW0ggltv52Ss+n
+	hTVS5bt4syp1zOjSBJhdqZ3tyEXElHTbTt7/u8AOmRrhVeS6TUlAVSBl5LWytWwBVLQwfNd0EAj
+	5AS/1NHSydxjY53NseruvL8mTv3I5OM3A9YD8DKa7XnTb1BQDVi+cv1MWO+ycC0KdWHUZd+sqA=
+	=
+X-Google-Smtp-Source: AGHT+IFUg0ybCkxV9cVD6ImAvsCkPwN2GU+1Gin3HrLAz48XZrqKVx6Y7BYUJ82hEBOb61Pon9+3CA==
+X-Received: by 2002:a05:6a00:3997:b0:740:b5f9:287b with SMTP id d2e1a72fcca58-745fde794a8mr21016644b3a.1.1748404217601;
+        Tue, 27 May 2025 20:50:17 -0700 (PDT)
+Received: from thinkpad ([120.56.198.159])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b2d9872c835sm256519a12.14.2025.05.27.20.50.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 May 2025 20:50:17 -0700 (PDT)
+Date: Wed, 28 May 2025 09:20:12 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Marek Vasut <marek.vasut+renesas@mailbox.org>
+Cc: linux-arm-kernel@lists.infradead.org, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Conor Dooley <conor+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
+	Rob Herring <robh@kernel.org>, Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 2/2] arm64: dts: renesas: r8a779g3: Describe split PCIe
+ clock on V4H Sparrow Hawk
+Message-ID: <b7vnm66igh3b3ahyjqhegnbteij3bj2ypxcq6ccwi4i77k3af6@g62yhfervtvt>
+References: <20250525160513.83029-1-marek.vasut+renesas@mailbox.org>
+ <20250525160513.83029-2-marek.vasut+renesas@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86/tdx: Always inline tdx_tdvpr_pa()
-To: Rick Edgecombe <rick.p.edgecombe@intel.com>, pbonzini@redhat.com
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, lkp@intel.com,
- kai.huang@intel.com, seanjc@google.com, x86@kernel.org, dave.hansen@intel.com
-References: <20250527220453.3107617-1-rick.p.edgecombe@intel.com>
-Content-Language: en-US
-From: Xiaoyao Li <xiaoyao.li@intel.com>
-In-Reply-To: <20250527220453.3107617-1-rick.p.edgecombe@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250525160513.83029-2-marek.vasut+renesas@mailbox.org>
 
-On 5/28/2025 6:04 AM, Rick Edgecombe wrote:
-> In some cases tdx_tdvpr_pa() is not fully inlined into tdh_vp_enter(),
-> which causes the following warning:
+On Sun, May 25, 2025 at 06:04:04PM +0200, Marek Vasut wrote:
+> The V4H Sparrow Hawk board supplies PCIe controller input clock and PCIe
+> bus clock from separate outputs of Renesas 9FGV0441 clock generator chip.
+> Describe this split bus configuration in the board DT. The topology looks
+> as follows:
 > 
->    vmlinux.o: warning: objtool: tdh_vp_enter+0x8: call to tdx_tdvpr_pa() leaves .noinstr.text section
+>  ____________                    _____________
+> | R-Car PCIe |                  | PCIe device |
+> |            |                  |             |
+> |    PCIe RX<|==================|>PCIe TX     |
+> |    PCIe TX<|==================|>PCIe RX     |
+> |            |                  |             |
+> |   PCIe CLK<|======..  ..======|>PCIe CLK    |
+> '------------'      ||  ||      '-------------'
+>                     ||  ||
+>  ____________       ||  ||
+> |  9FGV0441  |      ||  ||
+> |            |      ||  ||
+> |   CLK DIF0<|======''  ||
+> |   CLK DIF1<|==========''
+> |   CLK DIF2<|
+> |   CLK DIF3<|
+> '------------'
 > 
-> tdh_vp_enter() is marked noinstr and so can't accommodate the function
-> being outlined. Previously this didn't cause issues because the compiler
-> inlined the function. However, newer Clang compilers are deciding to
-> outline it.
-> 
-> So mark the function __always_inline to force it to be inlined. This
-> would leave the similar function tdx_tdr_pa() looking a bit asymmetric
-> and odd, as it is marked inline but actually doesn't need to be inlined.
-> So somewhat opportunistically remove the inline from tdx_tdr_pa() so that
-> it is clear that it does not need to be inlined, unlike tdx_tdvpr_pa().
-> 
-> tdx_tdvpr_pa() uses page_to_phys() which can make further calls to
-> outlines functions, but not on x86 following commit cba5d9b3e99d
-> ("x86/mm/64: Make SPARSEMEM_VMEMMAP the only memory model").
-> 
-> Fixes: 69e23faf82b4 ("x86/virt/tdx: Add SEAMCALL wrapper to enter/exit TDX guest")
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202505240530.5KktQ5mX-lkp@intel.com/
-> Suggested-by: Sean Christopherson <seanjc@google.com>
-> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> Reviewed-by: Kai Huang <kai.huang@intel.com>
-
-Reviewed-by: Xiaoyao Li <Xiaoyao.li@intel.com>
-
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
 > ---
-> Previous discussion here:
-> https://lore.kernel.org/kvm/20250526204523.562665-1-pbonzini@redhat.com/
-> 
-> FWIW, I'm ok with the flatten version of the fix too, but posting this
-> just to speed things along in case.
-> 
-> And note, for full correctness, this and the flatten fix will depend on
-> the queued tip commit:
-> https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/commit/?id=cba5d9b3e99d6268d7909a65c2bd78f4d195aead
-> 
+> Cc: Bartosz Golaszewski <brgl@bgdev.pl>
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: Conor Dooley <conor+dt@kernel.org>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
+> Cc: Magnus Damm <magnus.damm@gmail.com>
+> Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-pci@vger.kernel.org
+> Cc: linux-renesas-soc@vger.kernel.org
 > ---
->   arch/x86/virt/vmx/tdx/tdx.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
+>  .../dts/renesas/r8a779g3-sparrow-hawk.dts     | 45 ++++++++++++++++++-
+>  1 file changed, 43 insertions(+), 2 deletions(-)
 > 
-> diff --git a/arch/x86/virt/vmx/tdx/tdx.c b/arch/x86/virt/vmx/tdx/tdx.c
-> index f5e2a937c1e7..626cc2f37dec 100644
-> --- a/arch/x86/virt/vmx/tdx/tdx.c
-> +++ b/arch/x86/virt/vmx/tdx/tdx.c
-> @@ -1496,12 +1496,12 @@ void tdx_guest_keyid_free(unsigned int keyid)
->   }
->   EXPORT_SYMBOL_GPL(tdx_guest_keyid_free);
->   
-> -static inline u64 tdx_tdr_pa(struct tdx_td *td)
-> +static u64 tdx_tdr_pa(struct tdx_td *td)
->   {
->   	return page_to_phys(td->tdr_page);
->   }
->   
-> -static inline u64 tdx_tdvpr_pa(struct tdx_vp *td)
-> +static __always_inline u64 tdx_tdvpr_pa(struct tdx_vp *td)
->   {
->   	return page_to_phys(td->tdvpr_page);
->   }
+> diff --git a/arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk.dts b/arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk.dts
+> index b8698e07add56..7c050a56290fd 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk.dts
+> +++ b/arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk.dts
+> @@ -130,6 +130,13 @@ mini_dp_con_in: endpoint {
+>  		};
+>  	};
+>  
+> +	/* Page 26 / PCIe.0/1 CLK */
+> +	pcie_refclk: clk-x8 {
+> +		compatible = "fixed-clock";
+> +		#clock-cells = <0>;
+> +		clock-frequency = <25000000>;
+> +	};
+> +
+>  	reg_1p2v: regulator-1p2v {
+>  		compatible = "regulator-fixed";
+>  		regulator-name = "fixed-1.2V";
+> @@ -404,6 +411,14 @@ i2c0_mux2: i2c@2 {
+>  			reg = <2>;
+>  			#address-cells = <1>;
+>  			#size-cells = <0>;
+> +
+> +			/* Page 26 / PCIe.0/1 CLK */
+> +			pcie_clk: clk@68 {
+> +				compatible = "renesas,9fgv0441";
+> +				reg = <0x68>;
+> +				clocks = <&pcie_refclk>;
+> +				#clock-cells = <1>;
+> +			};
+>  		};
+>  
+>  		i2c0_mux3: i2c@3 {
+> @@ -487,24 +502,50 @@ msiof1_snd_endpoint: endpoint {
+>  
+>  /* Page 26 / 2230 Key M M.2 */
+>  &pcie0_clkref {
+> -	clock-frequency = <100000000>;
+> +	status = "disabled";
+>  };
+>  
+>  &pciec0 {
+> +	clocks = <&cpg CPG_MOD 624>, <&pcie_clk 0>;
+>  	reset-gpios = <&gpio2 2 GPIO_ACTIVE_LOW>;
+>  	status = "okay";
+> +
+> +	/* PCIe bridge, Root Port */
+> +	pci@0,0 {
 
+PCIe bridge mostly is integrated into the SoC itself. So it should be defined
+in the SoC dtsi. Only the vpcie3v3-supply is board specific, so it should live
+in board dts.
+
+- Mani
+
+> +		#address-cells = <3>;
+> +		#size-cells = <2>;
+> +		reg = <0x0 0x0 0x0 0x0 0x0>;
+> +		compatible = "pciclass,0604";
+> +		device_type = "pci";
+> +		clocks = <&pcie_clk 1>;
+> +		vpcie3v3-supply = <&reg_3p3v>;
+> +		ranges;
+> +	};
+>  };
+>  
+>  /* Page 25 / PCIe to USB */
+>  &pcie1_clkref {
+> -	clock-frequency = <100000000>;
+> +	status = "disabled";
+>  };
+>  
+>  &pciec1 {
+> +	clocks = <&cpg CPG_MOD 625>, <&pcie_clk 2>;
+>  	/* uPD720201 is PCIe Gen2 x1 device */
+>  	num-lanes = <1>;
+>  	reset-gpios = <&gpio2 0 GPIO_ACTIVE_LOW>;
+>  	status = "okay";
+> +
+> +	/* PCIe bridge, Root Port */
+> +	pci@0,0 {
+> +		#address-cells = <3>;
+> +		#size-cells = <2>;
+> +		reg = <0x0 0x0 0x0 0x0 0x0>;
+> +		compatible = "pciclass,0604";
+> +		device_type = "pci";
+> +		clocks = <&pcie_clk 3>;
+> +		vpcie3v3-supply = <&reg_3p3v>;
+> +		ranges;
+> +	};
+>  };
+>  
+>  &pfc {
+> -- 
+> 2.47.2
+> 
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
