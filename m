@@ -1,187 +1,361 @@
-Return-Path: <linux-kernel+bounces-665179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41498AC6535
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 11:09:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78AD8AC653B
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 11:09:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4CB5188C302
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 09:09:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 250314A7712
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 09:09:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 603E1274665;
-	Wed, 28 May 2025 09:08:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A559D2749C2;
+	Wed, 28 May 2025 09:09:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dmx1OJXt"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m8r1S2mw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A6A1247283
-	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 09:08:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B039082899;
+	Wed, 28 May 2025 09:09:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748423335; cv=none; b=oOBL6EjzPx2quqgn4K+AwKvXHzI5QL/td53ByfG5a1Y+fcGky0O9Y8yFgHex6uYV97eS+4ZALaJME3TC5LmxH0DOycrR6B7aGlnCmH7vgRIUUzfZIZkS6P4pnFwvL7UIK/88Jge9K43QHFyeza8K2n2OnhN5Wy7SPphuXxrxeh0=
+	t=1748423353; cv=none; b=rARDf3XNI8VizeEmfX4q5Vw9pIH8te5iIpn1mKMhzGH8x5mUI7GBsJsORdNtpOpPXOF8CjSlu5Df6pTxAd1UyvXpY9BqfhCO5buvQ3DnuU4lcmavACn1Os8zE2SnOvIYPy22/Zo4QEBdAc/WJT/aQHASA3De5BBF1I1ul/Py42c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748423335; c=relaxed/simple;
-	bh=HeRntkvpjTLIxIK7T/7PBTHCgMLMpgZe/nO0/0LPjDw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KPI5oaxh/7VNWegHGLxWv8159Erf7fw6isS3F2wH5HohboNaYLAQzQcNZzjnHH2gpLCXYbSXR0xQ6Y4b3VPFb8Gi8ihiBZ5DGJdZ2g11VSwUsWspFw86kTa7zz9G6huDXSfePUCk9+/q+NwusKeoJhjoY+bjvyrkLGraMbfH3Lw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dmx1OJXt; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1748423333;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=K6fOjoths9BP+7g43cHI3UErFOLHs1REkE1Ir6J/HUc=;
-	b=dmx1OJXtsrMmP2j0NZe11qfMhrxKVJJMk9Lk51XmPi8+zhF2mhRGD2bmGgEbrzWbIXluFh
-	jthkop4QEixr4ez8pCEBKp56i74DES0Cnh3BERRTWS/51+5gE9bSqcXPRK2nGuagNiNp3f
-	nb6+GH9e9UJjjtIFwLL3a6szLURp4bo=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-326-I80m1O3YMQOkNsFovhJAQA-1; Wed, 28 May 2025 05:08:51 -0400
-X-MC-Unique: I80m1O3YMQOkNsFovhJAQA-1
-X-Mimecast-MFC-AGG-ID: I80m1O3YMQOkNsFovhJAQA_1748423330
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-442cd12d151so36689185e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 02:08:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748423330; x=1749028130;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=K6fOjoths9BP+7g43cHI3UErFOLHs1REkE1Ir6J/HUc=;
-        b=lj7oLixR+7vy/AuGwxPtlZJd0W7Rv9qa08OgXkYFTVyvh6DfzTF8rdH/czdQ3KfzSx
-         Tf0uUH99Dl+meltOnTQTW40ASgM47n+JAngiD08MmCe3nkn+b4FPkLQbgZrX6l6f1zR6
-         ogh2uFzyCgiv06Ta7Z5a/xIXHPw9SW8tXs63BZDjXsbg0+t7ty0WyGUKI+sCg9oDzYS/
-         0XsB3buJ7xS4EOyJKg74/kOzQ2Mx5FQi9BR1fISgGpVMq1hHnJLh8ARjV5oHjqI+lpph
-         5vRCSewMoT1dYtH+nAAginbFNg1DYRm6+7/XqQCwXhcgsJ6iT2urYx5x7ONjBdAuvXta
-         J5CA==
-X-Forwarded-Encrypted: i=1; AJvYcCUSam//W/RY5mbimPtAkrS4maiGTgpRPHyyOt+OI5NGCMS6HTjrxlpz+ARtfh0RYTi8e0UEEbcFHrv6AV4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEdGGpOTxKuXTpHeXe//RU6cg1WbhBuTE8CY7nKOkbUiIVacE9
-	Bl2pMj6e9gdZoxGQADPkCaO6s3GEg7TSHhgM8Xnl8wMi2+r0xwu1MfQmZhRnZwHSjGq4Jl0Dnwr
-	OdVPa2ce9Orlb2PeDpubqG8sqTBeMFbSGEzwV087Zkhn5gTCcC3ao1p7YOYfe7RcQ1g==
-X-Gm-Gg: ASbGncuBi2y/K/rbfMgw8RIxQc9yh441dfDHj8EFxs5Yr73HalkhT4mXwbavra697AL
-	ZULbzdZa2EDuVeVaN/nSccvsoDPUhdtfuxZmm6UKadZi6njdAT0gLuW8Ss6O/oshxQce6hxWNOw
-	/dIerZGEY7pAKnLwshTpDXhkvolUMUt7D7rlZR6CnFgdwnclDT3Z/KVk2VaT1oyWbNzwnjUBcbE
-	ZuauKxS84Auhz/jCgRjvNpQORgqB6nkZXNKpUcggLknHmpYcyU6Ur/yNfCfeZ0AbBGHiln3heL9
-	B1oySdvxMAyM9FZ0vJSZjde5FF28C2mKT8vMyE3YhoayIMmeZiuBNV4eWUoc
-X-Received: by 2002:a05:600c:64c6:b0:43d:300f:fa1d with SMTP id 5b1f17b1804b1-44c937d125amr158521955e9.31.1748423329750;
-        Wed, 28 May 2025 02:08:49 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHSUDpB7MCB0r+KZHQbLDKkjrX6HPTl91hhU9m2/A027cB52iPz1nlOjL0WRytjQ2mFsWDovg==
-X-Received: by 2002:a05:600c:64c6:b0:43d:300f:fa1d with SMTP id 5b1f17b1804b1-44c937d125amr158521515e9.31.1748423329064;
-        Wed, 28 May 2025 02:08:49 -0700 (PDT)
-Received: from sgarzare-redhat (host-82-53-134-35.retail.telecomitalia.it. [82.53.134.35])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45006498c72sm14805555e9.2.2025.05.28.02.08.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 May 2025 02:08:48 -0700 (PDT)
-Date: Wed, 28 May 2025 11:08:37 +0200
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Michal Luczaj <mhal@rbox.co>
-Cc: virtualization@lists.linux.dev, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] vsock/test: Cover more CIDs in transport_uaf
- test
-Message-ID: <7zqv5toj2qjucy7fvaebbpwj6pth53uunsbapwhgrhwbr5pq5t@gp7h6klhr5sj>
-References: <20250523-vsock-test-inc-cov-v1-1-fa3507941bbd@rbox.co>
- <limbmrszio42lvkmalapooflj5miedlszkmnnm4ckmy2upfghw@24vxuhgdji2z>
- <1f5cc46a-de4c-4361-a706-fc7fe06a7068@rbox.co>
- <gfmoupl72tjyymhwxcstwpgaabbfaz6f4v6vj4lwwzwssg577c@urkmgn7rapnj>
- <151bf5fe-c9ca-4244-aa21-8d7b8ff2470f@rbox.co>
- <skvayogoenhntikkdnqrkkjvqesmpnukjlil6reubrouo45sat@j7zw6lfthfrd>
- <54959090-440e-49e8-80b3-8eee0ef4582c@rbox.co>
+	s=arc-20240116; t=1748423353; c=relaxed/simple;
+	bh=jFv5cQIlrq8mQoRnawATs1ETAgrj4fY1PBOA8kx8G0o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FfhLLQT9BihtBpbNG/d3K8wxyezW7iLN6gWAPAkcKTviMyUjHWqlV0yc9vk4qRvEgarAOGm2b6zOv80T8OAPeyW0Iv67twQRnN9yxKWJJrjnvpVrUZhoanw3DYY+YIOAG4Aq5I0o/7KkKrY/S6wPZyPNtikwke4SA0xTuSPNIjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m8r1S2mw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78ED3C4CEEB;
+	Wed, 28 May 2025 09:09:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748423353;
+	bh=jFv5cQIlrq8mQoRnawATs1ETAgrj4fY1PBOA8kx8G0o=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=m8r1S2mwh4BizzgnesxNNREKtpE3ecaI05IGU7gv/k2HlVti8uDWlnZXelgExrjQI
+	 Q5aNCOynA0v9xjeC1ZXIKrLOhXrqm1iDulHG33NDjK1nlnfuCGid9Fq4fLnFIRicJy
+	 yzfdJN0gZlB793e7XNO+3STmWWg/sLyACYbYX5hB10gOqBmCVW+eUmPA/lcd6hXa3T
+	 BZSG2D8BDVQU7u0X2g2gd+ED/ABWrXEeKpbUuaKN6A6Bfpzsnt4CmQd8/c663AEI3n
+	 YGGMm7wkmtTF2cgUGzRK8SpHrgmZMrTNpV7v+cPKkZrACWU8cEVMNc8hhywEYsl31c
+	 p21fvrqYNZe1A==
+Message-ID: <4c93cea1-a27a-42dc-8248-06b23da3a558@kernel.org>
+Date: Wed, 28 May 2025 11:09:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <54959090-440e-49e8-80b3-8eee0ef4582c@rbox.co>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 6/9] arm64: dts: bst: add support for Black Sesame
+ Technologies C1200 CDCU1.0 board
+To: Albert Yang <yangzh0906@thundersoft.com>, Arnd Bergmann <arnd@arndb.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Ge Gordon <gordon.ge@bst.ai>
+Cc: BST Linux Kernel Upstream Group <bst-upstream@bstai.top>,
+ linux-arm-kernel@lists.infradead.org, soc@lists.linux.dev,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250528085457.481372-1-yangzh0906@thundersoft.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250528085457.481372-1-yangzh0906@thundersoft.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, May 28, 2025 at 10:58:28AM +0200, Michal Luczaj wrote:
->On 5/27/25 10:41, Stefano Garzarella wrote:
->> On Mon, May 26, 2025 at 10:44:05PM +0200, Michal Luczaj wrote:
->>> On 5/26/25 16:39, Stefano Garzarella wrote:
->>>> On Mon, May 26, 2025 at 02:51:18PM +0200, Michal Luczaj wrote:
->>>>> On 5/26/25 10:25, Stefano Garzarella wrote:
->>>>>> On Fri, May 23, 2025 at 12:31:16AM +0200, Michal Luczaj wrote:
->>>>>>> Note that having only a virtio transport loaded (without vhost_vsock) is
->>>>>>> unsupported; test will always pass. Depending on transports available, a
->>>>>>
->>>>>> Do you think it might make sense to print a warning if we are in this
->>>>>> case, perhaps by parsing /proc/modules and looking at vsock
->>>>>> dependencies?
->>>>>
->>>>> That'd nice, but would parsing /proc/modules work if a transport is
->>>>> compiled-in (not a module)?
->>>>
->>>> Good point, I think not, maybe we can see something under /sys/module,
->>>> though, I would say let's do best effort without going crazy ;-)
->>>
->>> Grepping through /proc/kallsyms would do the trick. Is this still a sane
->>> ground?
->>
->> It also depends on a config right?
->> I see CONFIG_KALLSYMS, CONFIG_KALLSYMS_ALL, etc. but yeah, if it's
->> enabled, it should work for both modules and built-in transports.
->
->FWIW, tools/testing/selftests/net/config has CONFIG_KALLSYMS=y, which
->is enough for being able to check symbols like virtio_transport and
->vhost_transport.
+On 28/05/2025 10:54, Albert Yang wrote:
+> Add device tree support for the Black Sesame Technologies (BST) C1200
+> CDCU1.0 ADAS 4C2G platform. This platform is based on the BST C1200 SoC
+> family.
+> 
+> The changes include:
+> - Adding a new BST device tree directory
+> - Adding Makefile entries to build the BST platform device trees
+> - Adding the device tree for the BST C1200 CDCU1.0 ADAS 4C2G board
+> 
+> This board features a quad-core Cortex-A78 CPU, and various peripherals
+> including UART, MMC, watchdog timer, and interrupt controller.
+> 
+> Signed-off-by: Ge Gordon <gordon.ge@bst.ai>
+> Signed-off-by: Albert Yang <yangzh0906@thundersoft.com>
+> ---
+>  arch/arm64/boot/dts/Makefile                  |   1 +
+>  arch/arm64/boot/dts/bst/Makefile              |  10 ++
+>  .../dts/bst/bstc1200-cdcu1.0-adas_4c2g.dts    |  44 ++++++
+>  arch/arm64/boot/dts/bst/bstc1200.dtsi         | 130 ++++++++++++++++++
+>  4 files changed, 185 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/bst/Makefile
+>  create mode 100644 arch/arm64/boot/dts/bst/bstc1200-cdcu1.0-adas_4c2g.dts
+>  create mode 100644 arch/arm64/boot/dts/bst/bstc1200.dtsi
+> 
+> diff --git a/arch/arm64/boot/dts/Makefile b/arch/arm64/boot/dts/Makefile
+> index 79b73a21ddc2..135965288100 100644
+> --- a/arch/arm64/boot/dts/Makefile
+> +++ b/arch/arm64/boot/dts/Makefile
+> @@ -35,3 +35,4 @@ subdir-y += tesla
+>  subdir-y += ti
+>  subdir-y += toshiba
+>  subdir-y += xilinx
+> +subdir-y += bst
 
-Ok, I see, so let's go in that direction.
+Don't add to random places or at the end, but place entries in
+alphabetical order.
 
->
->Administrative query: while net-next is closed, am I supposed to mark this
->series as "RFC" and post v2 for a review as usual, or is it better to just
->hold off until net-next opens?
+> diff --git a/arch/arm64/boot/dts/bst/Makefile b/arch/arm64/boot/dts/bst/Makefile
+> new file mode 100644
+> index 000000000000..64fd43c98275
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/bst/Makefile
+> @@ -0,0 +1,10 @@
+> +ifeq ($(CONFIG_SECOND_KERNEL), )
 
-Whichever you prefer, if you are uncertain about the next version and 
-want to speed things up with a review while waiting, then go with RFC, 
-but if you think all comments are resolved and the next version is ready 
-to be merged, wait for the reopening.
-Thanks for asking!
+There is no such thing.
 
->
->>>>>>> +static void test_stream_transport_uaf_client(const struct test_opts *opts)
->>>>>>> +{
->>>>>>> +	bool tested = false;
->>>>>>> +	int cid;
->>>>>>> +
->>>>>>> +	for (cid = VMADDR_CID_HYPERVISOR; cid <= VMADDR_CID_HOST + 1; ++cid)
->>>>>>
->>>>>>> +		tested |= test_stream_transport_uaf(cid);
->>>>>>> +
->>>>>>> +	if (!tested)
->>>>>>> +		fprintf(stderr, "No transport tested\n");
->>>>>>> +
->>>>>>> 	control_writeln("DONE");
->>>>>>
->>>>>> While we're at it, I think we can remove this message, looking at
->>>>>> run_tests() in util.c, we already have a barrier.
->>>>>
->>>>> Ok, sure. Note that console output gets slightly de-synchronised: server
->>>>> will immediately print next test's prompt and wait there.
->>>>
->>>> I see, however I don't have a strong opinion, you can leave it that way
->>>> if you prefer.
->>>
->>> How about adding a sync point to run_tests()? E.g.
->>
->> Yep, why not, of course in another series :-)
->>
->> And if you like, you can remove that specific sync point in that series
->> and check also other tests, but I think we have only that one.
->
->OK, I'll leave that for later.
+> +
+> +# Enables support for device-tree overlays
+> +DTC_FLAGS := -@
+> +
+> +dtb-$(CONFIG_ARCH_BSTC1200) += bstc1200-cdcu1.0-adas_4c2g.dtb
+> +
+> +endif
+> +
+> +clean-files	:= *.dtb
 
-Yep, feel free to discard my suggestion, we can fix it later.
+Why?
 
-Thanks,
-Stefano
+> diff --git a/arch/arm64/boot/dts/bst/bstc1200-cdcu1.0-adas_4c2g.dts b/arch/arm64/boot/dts/bst/bstc1200-cdcu1.0-adas_4c2g.dts
+> new file mode 100644
+> index 000000000000..92915e7630ff
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/bst/bstc1200-cdcu1.0-adas_4c2g.dts
+> @@ -0,0 +1,44 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/dts-v1/;
+> +
+> +#include "bstc1200.dtsi"
+> +
+> +/ {
+> +	model = "BST C1200-96 CDCU1.0 4C2G";
+> +
+> +	chosen {
+> +		bootargs = "earlycon=uart8250,mmio32,0x20008000 console=ttyS0,115200n8 rw";
 
+Earlycon is debugging, why do you  need it for general use?
+
+console: redundant
+rw: not suitable for DT
+
+> +		stdout-path = "serial0:115200n8";
+> +	};
+> +
+> +	memory@8c0000000 {
+> +		device_type = "memory";
+> +		reg = <0x8 0x10000000 0x0 0x30000000
+> +		      0x8 0xc0000000 0x1 0x0
+> +		      0xc 0x0 0x0 0x40000000
+> +		      0x8 0x254000 0x0 0x1000
+> +		      0x8 0x151000 0x0 0x1000>;
+
+Multiple entries go into multiple entries <>.
+
+> +	};
+> +
+> +	reserved-memory {
+> +		#address-cells = <0x2>;
+> +		#size-cells = <0x2>;
+> +		ranges;
+> +
+> +		mmc0_reserved: mmc0_region@5160000 {
+
+Follow DTS coding style. Also drop redundant "region"
+
+
+> +			compatible = "shared-dma-pool";
+> +			reg = <0x0 0x5160000 0x0 0x10000>;
+> +			no-map;
+> +		};
+> +	};
+> +};
+> +
+> +&uart0 {
+> +	status = "okay";
+> +};
+> +
+> +&mmc0 {
+> +	status = "okay";
+> +	memory-region = <&mmc0_reserved>;
+> +};
+> +
+> diff --git a/arch/arm64/boot/dts/bst/bstc1200.dtsi b/arch/arm64/boot/dts/bst/bstc1200.dtsi
+> new file mode 100644
+> index 000000000000..6ed2d8cbd720
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/bst/bstc1200.dtsi
+> @@ -0,0 +1,130 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+> +/ {
+> +	compatible = "bst,c1200";
+> +	#address-cells = <0x2>;
+> +	#size-cells = <0x2>;
+
+These are not hex.
+
+> +
+> +	cpus {
+> +		#address-cells = <0x1>;
+> +		#size-cells = <0x0>;
+
+Same comments
+
+> +
+> +		cpu@0 {
+> +			compatible = "arm,cortex-a78";
+> +			device_type = "cpu";
+> +			enable-method = "psci";
+> +			next-level-cache = <&l2_cache>;
+> +			reg = <0x0>;
+> +			freq-domain = <0x3 0x1>;
+> +		};
+> +
+> +		cpu@1 {
+> +			compatible = "arm,cortex-a78";
+> +			device_type = "cpu";
+> +			enable-method = "psci";
+> +			next-level-cache = <&l2_cache>;
+> +			reg = <0x100>;
+> +			freq-domain = <0x3 0x1>;
+> +		};
+> +
+> +		cpu@2 {
+> +			compatible = "arm,cortex-a78";
+> +			device_type = "cpu";
+> +			enable-method = "psci";
+> +			next-level-cache = <&l2_cache>;
+> +			reg = <0x200>;
+> +			freq-domain = <0x3 0x1>;
+> +		};
+> +
+> +		cpu@3 {
+> +			compatible = "arm,cortex-a78";
+> +			device_type = "cpu";
+> +			enable-method = "psci";
+> +			next-level-cache = <&l2_cache>;
+> +			reg = <0x300>;
+> +			freq-domain = <0x3 0x1>;
+> +		};
+> +
+> +		l2_cache: l2-cache-1 {
+> +			compatible = "cache";
+> +			cache-level = <2>;
+> +			cache-unified;
+> +		};
+> +	};
+> +
+> +	misc_clk: misc_clk {
+
+Follow DTS coding style. Please use name for all fixed clocks which
+matches current format recommendation: 'clock-<freq>' (see also the
+pattern in the binding for any other options).
+
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/clock/fixed-clock.yaml?h=v6.11-rc1
+
+> +		compatible = "fixed-clock";
+> +		#clock-cells = <0x0>;
+> +		clock-frequency = <0x3d0900>;
+
+This is not a hex.
+
+> +	};
+> +
+> +	timer {
+> +		compatible = "arm,armv8-timer";
+> +		interrupt-parent = <&gic>;
+> +		always-on;
+> +		interrupts = <GIC_PPI 0xd (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)
+> +			      GIC_PPI 0xe (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)
+> +			      GIC_PPI 0xb (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)
+> +			      GIC_PPI 0xa (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>;
+> +	};
+> +
+> +	soc: soc@0 {
+> +		compatible = "simple-bus";
+> +		#address-cells = <0x2>;
+> +		#size-cells = <0x2>;
+> +		ranges = <0x0 0x0 0x0 0x0 0xffffffff 0xffffffff>;
+
+Follow DTS coding style
+
+> +
+> +		mmc0: dwmmc0@22200000 {
+
+It does not look like you tested the DTS against bindings. Please run
+`make dtbs_check W=1` (see
+Documentation/devicetree/bindings/writing-schema.rst or
+https://www.linaro.org/blog/tips-and-tricks-for-validating-devicetree-sources-with-the-devicetree-schema/
+for instructions).
+Maybe you need to update your dtschema and yamllint. Don't rely on
+distro packages for dtschema and be sure you are using the latest
+released dtschema.
+
+Node names should be generic. See also an explanation and list of
+examples (not exhaustive) in DT specification:
+https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+
+
+
+> +			#address-cells = <0x2>;
+> +			#size-cells = <0x0>;
+> +			compatible = "bst,dwcmshc-sdhci";
+> +			reg = <0x0 0x22200000 0x0 0x1000>;
+> +			reg-names = "base";
+
+Order properties according to DTS coding style.
+
+Best regards,
+Krzysztof
 
