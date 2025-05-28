@@ -1,119 +1,151 @@
-Return-Path: <linux-kernel+bounces-665152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76F39AC64E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 10:56:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 09EABAC64EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 10:57:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BF684E150B
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 08:56:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A29764E28DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 08:57:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65AFD27604E;
-	Wed, 28 May 2025 08:55:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBA03278170;
+	Wed, 28 May 2025 08:55:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XmuaOal6";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VmKWr++m"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E1FcPjnw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 203DE274650
-	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 08:55:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16AFD2741AC;
+	Wed, 28 May 2025 08:55:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748422529; cv=none; b=pLAoFG/kayRJfi6st3t5M0Dx6HGl4Qm5N+b9uxqQfasO9s8Wgnkv423SXo+EokKdiX+godqw2LlBFvLIdSObhPVgyuJvRryCAJZLhvguSvpyxASy5i3Yy4AO3P+5V+OlH/h6O71DWWgZzKZna8Xo6+X+sME3kx6Bd19F2fBsjsc=
+	t=1748422534; cv=none; b=SsGw3mvEi/usQUC55iXM7KemSbVkPCUJKJkG8H/TpW6KoQ+218980uaoo9r8IOskcn75JThibgkm3d8G+HGOr6Zw5uC8Mk4aTYkt0Ifx9oTlhWkagSpk2NZDH3j9hn9pXFUBqdTxcwitITcKw2SZZcj46iD8ATUizSKQNTHB6Nw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748422529; c=relaxed/simple;
-	bh=gG92xEH34NEWfZ8s9BqsyAZsrJjNEhovX+4zgItkEco=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hdGuS9eINHoJlZqjS8Dm4zToKsejN++XRDIpX/NFQHjNPNQgsLWcub5i5mLurMZmEQhkRgiw/u5KyCwSrGyx0kuQaQvy6CIPyYNesChJdb9QFA/lKkPS8ASfIXq51QE/m+In7sPuiGu6Ub6P7tk1DBDBnxVpyClgfSZ8Xqsh0IM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XmuaOal6; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VmKWr++m; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1748422526;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KP9HvpgVHgWnTIXnNHgTJzo+gF4B7NnJsWc70Z9S1Pc=;
-	b=XmuaOal6nFti4ocGc4QJbLpdSuuQkmCKbLmyT1+lIYs2D0VC/VTP7oDnZFCg9EJzfT4Go6
-	0mU1628otu8MNHmi4r3Z+7TW+vOj1k4wVQ6Xuob+QlKycUk1GimAUcY9imn3IKupMfBo6u
-	piogVWRNTU7f1dH/JWh3qN7+t/SMZi79BXwRkb2S2+3xo91gbwXPE2qyFOxnIBCoQlwctl
-	5XH84JL2j6HuIFIa/N3QbkLrgJaQGfqDGCh0n/VobOo8sAXFqENoIbgyMc1PgZcJqsGR4K
-	dTsFrhVyOcdU6BhSZ6Jgt19RMYvp6wnt6urUkhGs2wGW5RQZX1oUKyHBkCR6kA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1748422526;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KP9HvpgVHgWnTIXnNHgTJzo+gF4B7NnJsWc70Z9S1Pc=;
-	b=VmKWr++mLJ84NxOefqHyQSXBxmTzn7gUnWGglZfxR1seI0rDmBj/y3kBCXbU1YY7Aplt5b
-	BEAhhHlqLQGd3dCQ==
-To: linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Waiman Long <longman@redhat.com>,
-	syzbot+9afaf6749e3a7aa1bdf3@syzkaller.appspotmail.com,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH 3/3] futex: Handle invalid node numbers supplied by user
-Date: Wed, 28 May 2025 10:55:21 +0200
-Message-ID: <20250528085521.1938355-4-bigeasy@linutronix.de>
-In-Reply-To: <20250528085521.1938355-1-bigeasy@linutronix.de>
-References: <20250528085521.1938355-1-bigeasy@linutronix.de>
+	s=arc-20240116; t=1748422534; c=relaxed/simple;
+	bh=Ds1jmiTlYH0fpkMu9OyDsilhlkVbX/npUvsczO4YbAE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=duIlFBqomvHUYAy5EJeG8vwtOZaA/g/8bLTzreHbIkmKPLr3Q0gE09k+IhliCGgQaPbJU3w0ThRfh50TZpFhUVXP4vdx/xmcbO2NJlWuPwXyCTC8/CRwzkqqcF0aDRlRdXlNNNJaiYgcIAE0HxJJJaQRZq5jcPaKH9myoamc2TY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E1FcPjnw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 690C5C4CEEB;
+	Wed, 28 May 2025 08:55:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748422533;
+	bh=Ds1jmiTlYH0fpkMu9OyDsilhlkVbX/npUvsczO4YbAE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=E1FcPjnwy+Z+bJX1gi8FQPSB900K+Xj3C0QWEp9vgstNpldp3biFrBcjBIFWVZd9n
+	 FfMirStte3ykoIzrHkQZcuqLS6r/3lGruQ0ahJAa3IXD08ljvNxu5eRWyRpVtCwN4W
+	 Io4J/Y1p2N3UhIgikJEIKxPyYM+LaRcmaFJwk1GoD3gRm7wA2uLXoRJJ2S3dK7FqUs
+	 +ycpEUq7dMmusgvZJfwOgfeiviwtUg1bvcaxj9M2rzPwUnmXe9jX7B0BDsxgUs3NU+
+	 gtl0+UYqXfwbnwHAJNYfzDu/OfWOlgMvJf0cvuU1URBqfHj8uA+wct7qvbzkFX7+Yk
+	 MOBdJBUg+UbmQ==
+Message-ID: <5b7a2102-ff68-4aab-a88d-0c4f9195ef95@kernel.org>
+Date: Wed, 28 May 2025 10:55:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 5/9] ARM: dts: stm32: add Hardware debug port (HDP) on
+ stm32mp13
+To: =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org
+References: <20250523-hdp-upstream-v3-0-bd6ca199466a@foss.st.com>
+ <20250523-hdp-upstream-v3-5-bd6ca199466a@foss.st.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250523-hdp-upstream-v3-5-bd6ca199466a@foss.st.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-From: Peter Zijlstra <peterz@infradead.org>
+On 23/05/2025 14:38, Clément Le Goffic wrote:
+> Add the hdp devicetree node for stm32mp13 SoC family
+> 
+> Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
+> ---
+>  arch/arm/boot/dts/st/stm32mp131.dtsi | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/st/stm32mp131.dtsi b/arch/arm/boot/dts/st/stm32mp131.dtsi
+> index 8512a6e46b33..b0537bcdb9d5 100644
+> --- a/arch/arm/boot/dts/st/stm32mp131.dtsi
+> +++ b/arch/arm/boot/dts/st/stm32mp131.dtsi
+> @@ -951,6 +951,12 @@ dts: thermal@50028000 {
+>  			clocks = <&rcc DTS>;
+>  			clock-names = "pclk";
+>  			#thermal-sensor-cells = <0>;
 
-syzbot used a negative node number which was not rejected early and led
-to invalid memory access in node_possible().
+Why are you enabling it? Commit msg should explain this and this should
+be sparate patch.
 
-Reject negative node numbers except for FUTEX_NO_NODE.
+> +		};
+> +
+> +		hdp: pinctrl@5002a000 {
+> +			compatible = "st,stm32mp131-hdp";
+> +			reg = <0x5002a000 0x400>;
+> +			clocks = <&rcc HDP>;
+>  			status = "disabled";
 
-[bigeasy: Keep the FUTEX_NO_NODE check]
+Why are you disabling it? What is missing?
 
-Reported-by: syzbot+9afaf6749e3a7aa1bdf3@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/all/6835bfe3.a70a0220.253bc2.00b5.GAE@googl=
-e.com/
-Fixes: cec199c5e39bd ("futex: Implement FUTEX2_NUMA")
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
----
- kernel/futex/core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+>  		};
+>  
+> 
 
-diff --git a/kernel/futex/core.c b/kernel/futex/core.c
-index 19a2c65f3d373..1cd3a646c91fd 100644
---- a/kernel/futex/core.c
-+++ b/kernel/futex/core.c
-@@ -583,8 +583,8 @@ int get_futex_key(u32 __user *uaddr, unsigned int flags=
-, union futex_key *key,
- 		if (futex_get_value(&node, naddr))
- 			return -EFAULT;
-=20
--		if (node !=3D FUTEX_NO_NODE &&
--		    (node >=3D MAX_NUMNODES || !node_possible(node)))
-+		if ((node !=3D FUTEX_NO_NODE) &&
-+		    ((unsigned int)node >=3D MAX_NUMNODES || !node_possible(node)))
- 			return -EINVAL;
- 	}
-=20
---=20
-2.49.0
 
+Best regards,
+Krzysztof
 
