@@ -1,126 +1,105 @@
-Return-Path: <linux-kernel+bounces-665568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA325AC6AFF
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 15:50:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CEA0AC6AE3
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 15:45:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DC404E5443
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 13:50:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FAAE4E4DF7
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 13:45:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BEE5288502;
-	Wed, 28 May 2025 13:50:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACA6520E6EB;
+	Wed, 28 May 2025 13:45:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=blackhole.kfki.hu header.i=@blackhole.kfki.hu header.b="APQCFQVk"
-Received: from smtp-out.kfki.hu (smtp-out.kfki.hu [148.6.0.49])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q8Fh4VjZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0528F1F37D3;
-	Wed, 28 May 2025 13:50:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.6.0.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FB37139E;
+	Wed, 28 May 2025 13:45:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748440231; cv=none; b=ZUpZyjw+e87Ke6TTdfoaGxCVT1y2Ksc86HliN9PdK3F3ddpkAfbo4umMT4ffFyLvueXIZCCI2kf0EJB2y8WF9prt0tmqn6x+ZKDmwNEhd4phxX2Iy5rC1bQmXvpbSdJ0npl48YCEW9vHMHZW1dKoI+sDk7hlIluMfP5LpsQULWI=
+	t=1748439926; cv=none; b=mYKHj+T0dfMmFPXtYlmyqjCJvwHS9VA+2AArUDWed+jfGJyBruWayF3SSZPdzG7IUkDLFs3pq8vKwhDE99hc1YuD4b1Q08m2z4Bt1AHi6kszxwg7Uu5o3SSj7OttRT6wzrpA8zRKoIKv1L4nHCHyC89KlnsGBsOs6dGpwr+R86k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748440231; c=relaxed/simple;
-	bh=Mpg9XUQl59h3pBUPCN3zmB3GaCOs4B75IwcrLW4NqHU=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=dtK0e/1HCGUpw8NUeUtfpNUesPk5z+bFzGM5TsuvcHWVfyL16HVqep9iRg4VsCxo/MPwoae9b/3yXGVjAzlHOAjkGKliXtRO7Lw4LlgwvipQrK1k9gUvdNw2IGwuLoRVLE5UGcNQ/0DDodxhLP+1Z2/woPQh3H5S8SW68hnT1oI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=blackhole.kfki.hu; spf=pass smtp.mailfrom=blackhole.kfki.hu; dkim=pass (1024-bit key) header.d=blackhole.kfki.hu header.i=@blackhole.kfki.hu header.b=APQCFQVk; arc=none smtp.client-ip=148.6.0.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=blackhole.kfki.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=blackhole.kfki.hu
-Received: from localhost (localhost [127.0.0.1])
-	by smtp0.kfki.hu (Postfix) with ESMTP id E1F8719201A0;
-	Wed, 28 May 2025 15:45:02 +0200 (CEST)
-Authentication-Results: smtp012.wigner.hu (amavis); dkim=pass (1024-bit key)
- reason="pass (just generated, assumed good)" header.d=blackhole.kfki.hu
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	blackhole.kfki.hu; h=content-id:mime-version:references
-	:message-id:in-reply-to:from:from:date:date:received:received
-	:received:received; s=20151130; t=1748439901; x=1750254302; bh=h
-	8HpPOKmadZTCE9YZDzfLUVOhtwWReeTJejqPLhcSh0=; b=APQCFQVkqQ4hnav5I
-	QB6OUfiOG26fnJRO2a3/UiISo/Rd/E9cFQvj9Mo6JofAC9UNoIZAQfdKGLgjiASD
-	ZktPvu3kIFP58NkjcTWmUpPswyq+9b0NddrmaVTRd0BnED1mrPhbvKl9GSsSmitQ
-	JfU7eO4ulRul6hMa/fQgdqlspU=
-X-Virus-Scanned: Debian amavis at smtp0.kfki.hu
-Received: from smtp0.kfki.hu ([127.0.0.1])
- by localhost (smtp0.kfki.hu [127.0.0.1]) (amavis, port 10026) with ESMTP
- id W5zIGn_boHeP; Wed, 28 May 2025 15:45:01 +0200 (CEST)
-Received: from blackhole.kfki.hu (blackhole.szhk.kfki.hu [148.6.240.2])
-	by smtp0.kfki.hu (Postfix) with ESMTP id 09878192019E;
-	Wed, 28 May 2025 15:45:00 +0200 (CEST)
-Received: by blackhole.kfki.hu (Postfix, from userid 1000)
-	id 90E6C34316A; Wed, 28 May 2025 15:45:00 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by blackhole.kfki.hu (Postfix) with ESMTP id 8F5B1343169;
-	Wed, 28 May 2025 15:45:00 +0200 (CEST)
-Date: Wed, 28 May 2025 15:45:00 +0200 (CEST)
-From: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
-To: Eric Dumazet <edumazet@google.com>
-cc: ying chen <yc1082463@gmail.com>, Florian Westphal <fw@strlen.de>, 
-    pablo@netfilter.org, kadlec@netfilter.org, davem@davemloft.net, 
-    kuba@kernel.org, pabeni@redhat.com, netfilter-devel@vger.kernel.org, 
-    coreteam@netfilter.org, netdev@vger.kernel.org, 
-    linux-kernel@vger.kernel.org
-Subject: Re: [bug report, linux 6.15-rc4] A large number of connections in
- the SYN_SENT state caused the nf_conntrack table to be full.
-In-Reply-To: <CANn89iLG4mgzHteS7ARwafw-5KscNv7vBD3zM9J6yZwDq+RbcQ@mail.gmail.com>
-Message-ID: <5611b12b-d560-cbb8-1d74-d935f60244dd@blackhole.kfki.hu>
-References: <CAN2Y7hxscai7JuC0fPE8DZ3QOPzO_KsE_AMCuyeTYRQQW_mA2w@mail.gmail.com> <aDcLIh2lPkAWOVCI@strlen.de> <CAN2Y7hzKd+VxWy56q9ad8xwCcHPy5qoEaswZapnF87YkyYMcsA@mail.gmail.com> <CANn89iLG4mgzHteS7ARwafw-5KscNv7vBD3zM9J6yZwDq+RbcQ@mail.gmail.com>
+	s=arc-20240116; t=1748439926; c=relaxed/simple;
+	bh=YpI7VKMUnaWy2OYCxLRua4soQ2wih1E7n3F4O5SEpHg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mSg5oyIJDDaQUWricjs1kWr/jv5gQNUTJxyZL3wfjzFQwqozoZV0l8NvHNvdX4wtH/u3zv9DMy1nIKZcRdRzp8zwVkvmENSiXGlbn7x9M+G1lXfJx1QHN6i9s/ESTKCWDk7BTK6Ksptlho0DJ5oJ+Ndu5i2yxFg1dkLFOhYTtI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q8Fh4VjZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A64CDC4CEE7;
+	Wed, 28 May 2025 13:45:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748439925;
+	bh=YpI7VKMUnaWy2OYCxLRua4soQ2wih1E7n3F4O5SEpHg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=q8Fh4VjZflZWOyDxuwWeoPAWKpSMpoQGfH3d/UzptDGO0ayaOZLubXxI9zBphBWnx
+	 3IpJaRKCInlxC7w0dzWQwiDw7+DgyZ76zNjiWE6gqVOy+aI6U1AJxjIyxJ1045AKr4
+	 acCGwsvoMUp7L3GGl0fkMZozYOzzXjgr6tH8iiVaz/An2AT5aP6Ekneq8wJn9mK1t4
+	 3CW2M9xJGTyL/iPKHgieqkmLhULPwa9mXsEYCYfv1BPmKnUqdLsyXp4WW/Pl2DLTQ7
+	 LY9TXLQF3+6CIYnMES03m1DTM4CM3UOck4Vxy0w7Rk9bxWtIJlDWTAzMKt0vaOQYsi
+	 /vuUCecnjrf3Q==
+Date: Wed, 28 May 2025 14:45:20 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH] dt-bindings: phy: renesas,usb2-phy: Document RZ/V2N SoC
+ support
+Message-ID: <20250528-taekwondo-selector-997da403fbed@spud>
+References: <20250528133858.168582-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="110363376-769770083-1748439818=:6759"
-Content-ID: <c1387642-c4d5-c4ae-a0e2-bda921178228@blackhole.kfki.hu>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="x5utOjCwDC7uVpEq"
+Content-Disposition: inline
+In-Reply-To: <20250528133858.168582-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
 
---110363376-769770083-1748439818=:6759
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-ID: <0fe7b6ac-9804-75fc-cbe2-69870eb5e0cf@blackhole.kfki.hu>
+--x5utOjCwDC7uVpEq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, 28 May 2025, Eric Dumazet wrote:
+On Wed, May 28, 2025 at 02:38:58PM +0100, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>=20
+> Document support for the USB2.0 phy found on the Renesas RZ/V2N
+> (R9A09G056) SoC. The USB2.0 phy is functionally identical to that on the
+> RZ/V2H(P) SoC, so no driver changes are needed. The existing
+> `renesas,usb2-phy-r9a09g057` compatible will be used as a fallback
+> for the RZ/V2N SoC.
+>=20
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-> On Wed, May 28, 2025 at 6:26=E2=80=AFAM ying chen <yc1082463@gmail.com>=
- wrote:
->>
->> On Wed, May 28, 2025 at 9:10=E2=80=AFPM Florian Westphal <fw@strlen.de=
-> wrote:
->>>
->>> ying chen <yc1082463@gmail.com> wrote:
->>>> Hello all,
->>>>
->>>> I encountered an "nf_conntrack: table full" warning on Linux 6.15-rc=
-4.
->>>> Running cat /proc/net/nf_conntrack showed a large number of
->>>> connections in the SYN_SENT state.
->>>> As is well known, if we attempt to connect to a non-existent port, t=
-he
->>>> system will respond with an RST and then delete the conntrack entry.
->>>> However, when we frequently connect to non-existent ports, the
->>>> conntrack entries are not deleted, eventually causing the nf_conntra=
-ck
->>>> table to fill up.
->>>
->>> Yes, what do you expect to happen?
->> I understand that the conntrack entry should be deleted immediately
->> after receiving the RST reply.
->
-> Then it probably hints that you do not receive RST for all your SYN=20
-> packets.
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-And Eric has got right: because the states are in SYN_SENT then either th=
-e=20
-RST packets were not received or out of the window or invalid from other=20
-reasons.
+--x5utOjCwDC7uVpEq
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Best regards,
-Jozsef
---110363376-769770083-1748439818=:6759--
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaDcTcAAKCRB4tDGHoIJi
+0jO7AP4pKes/qNTY9Yn16W/MygrNIOvDmAvPi1ZIGUZQOZHyiQEAowAYXVSdz544
+hd3YgUOaEQLB6HYBhRVH2x/O4XH+bg8=
+=FbES
+-----END PGP SIGNATURE-----
+
+--x5utOjCwDC7uVpEq--
 
