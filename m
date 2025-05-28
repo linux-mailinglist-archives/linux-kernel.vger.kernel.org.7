@@ -1,126 +1,150 @@
-Return-Path: <linux-kernel+bounces-665470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C871AC69B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 14:45:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72126AC69B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 14:47:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAF8717F952
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 12:45:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8B349E4A53
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 12:47:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49B6C7E9;
-	Wed, 28 May 2025 12:45:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA913284B25;
+	Wed, 28 May 2025 12:47:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="muAyxPrr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MnBd9OAr"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 913A727A448;
-	Wed, 28 May 2025 12:45:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39F3C7E9;
+	Wed, 28 May 2025 12:47:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748436327; cv=none; b=cqLsoaEY+aZ9gATZe7ArHu9Uhfa5JXVxC0zzlrQAOU7GmIsIkvsAvT+HFInYcxwSMekyppsCRxwP4mdXlPhWkDoyTsA7E/ZiX50KfxbGwtn/z6zws25IOLyeFe2EwlzsYtL+vjvt9gYDHGc0mXzJ3FPTWrep+pVVxuZoRdoz5Xw=
+	t=1748436467; cv=none; b=GXzDbCwy+eu5xJjYDMR2T/ubKxjYA7ilQGLHWnkj7gp2OFHhrWgk6ge+EAuxr3k2vKN+CmEnhoO7uOWbQUEbtbphT65xyN6wb0w6g1415FmQpUyCBlGBi9EOcFL7DBiXIW9CYUCb9Ri8hC4goeHnncZQuVdDi5wBMYTmZZDKY2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748436327; c=relaxed/simple;
-	bh=LmgEcjResPLXXpFob/3Qa7tbGuBJRLI/7Xpku70pX8o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u00MXJy1ZGV1t3bDLfkDQ2f/gdcy9rW25OA3UY++RUqgVuiOubxzQWYojvDZaqdqaW4VPR9P91JsJ+kSwtTBmq+iyFD2Nrdfl/OEpz7BYW57o6cTEgLQb+SzefD8eBY6L+ZIEm91Dft9YqinnZEiUhQj4FvRnhi87raQkS2b7sU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=muAyxPrr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC895C4CEE7;
-	Wed, 28 May 2025 12:45:23 +0000 (UTC)
+	s=arc-20240116; t=1748436467; c=relaxed/simple;
+	bh=5oEXoX22yAUoOjEnWSuham9SHeuLu8axVh5UAaxDY6w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QovOesVhN7lmz+2biDe95t1atm25YmZPyodeF0qInGDnQ6k7AzKbcRM9zwNMyZVUietlIBRCtiAKRzU29Ym6CuTo7T8kcaDq2oK1xy4FSYYiAHZHhtoCwOGkVHRyKeUGXxBuTd6+eGrCRnQoGS1pT9mNJwmhdTkJ8K7e3pAo1us=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MnBd9OAr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EC2DC4CEE7;
+	Wed, 28 May 2025 12:47:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748436327;
-	bh=LmgEcjResPLXXpFob/3Qa7tbGuBJRLI/7Xpku70pX8o=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=muAyxPrrQfAiKqrfximT+GDqOnM4CS0L94Azb4XzOrb1W1jcZp3z3GRc1tB+Y/pL8
-	 ePEXZt64V73V7hVJzxAAlpmdyNUU26wir0mn3oE6bz/OEJRkaiopKzdsxaLRcO4Z2x
-	 hAeaIkgVrQD7r3jO81z2CJ8SxSKed/4b6W0nssW7aXCbqUE0kC4oZKsA1e9t0wrVu0
-	 otDdIZqkS2vkaA4v9TWHuIilfQ28RPEre3jgzaNnOaJ+VaHk0JFwZ+N38gWxbFs8k9
-	 J5eB4+QpcclcMeXw0iZ9M3xSxMcwKGd6RZIwh5fZVqP3wLosvyCEHce7nEvrArw2nA
-	 2zEikJN3ksVeA==
-Message-ID: <bf7281d8-20bb-4013-a0e2-6cdaf4e0349c@kernel.org>
-Date: Wed, 28 May 2025 14:45:22 +0200
+	s=k20201202; t=1748436466;
+	bh=5oEXoX22yAUoOjEnWSuham9SHeuLu8axVh5UAaxDY6w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MnBd9OArWVsMiwvVioDRZjfX1vjGGefk9ubxzWAbYwlc3ca97MP8cUdRgoASZuipd
+	 sPPEB3XgzM2KbRr7cfT+lKKIXw4xOyJb+N5Ce9RC3LjGdMokyPOUzRnFEf1TIpyB9o
+	 z9Ae/bbZSPZpCcmO14ddAp/Sdi60FWjG52Br6VhJweD2eFaXEEKl/RlhoDHQ+3DuNW
+	 zV0nghLNOQXOEgJXc/kCEmv+szVhafPuC0+1w4qyV9PwPUSRvIbEUjbEQqN+mGZOk5
+	 YJQYYGQaR3L2Tbusczn1fAYAg2RobXjb2nIetErWi2HVWh6oJ3kq5dQ0NDBdhrPmN+
+	 PNUMJN3je8yqQ==
+Date: Wed, 28 May 2025 09:47:43 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
+	James Clark <james.clark@linaro.org>,
+	Howard Chu <howardchu95@gmail.com>,
+	Weilin Wang <weilin.wang@intel.com>,
+	Stephen Brennan <stephen.s.brennan@oracle.com>,
+	Andi Kleen <ak@linux.intel.com>, Dmitry Vyukov <dvyukov@google.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 3/6] perf symbol: Move demangling code out of
+ symbol-elf.c
+Message-ID: <aDcF7_pIU5M_XEAs@x1>
+References: <20250527180703.129336-1-irogers@google.com>
+ <20250527180703.129336-4-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] ASoC: tas571x: add support for tas5753
-To: Bram Vlerick <bram.vlerick@openpixelsystems.org>,
- Kevin Cernekee <cernekee@chromium.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>
-Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, peter@korsgaard.com
-References: <20250528-asoc-tas5753-support-v1-0-a50c3f6734ee@openpixelsystems.org>
- <20250528-asoc-tas5753-support-v1-1-a50c3f6734ee@openpixelsystems.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
- QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
- +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
- ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
- 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
- hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
- tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
- 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
- naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
- hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
- whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
- qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
- RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
- Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
- H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
- dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
- AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
- jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
- zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
- XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250528-asoc-tas5753-support-v1-1-a50c3f6734ee@openpixelsystems.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250527180703.129336-4-irogers@google.com>
 
-On 28/05/2025 14:10, Bram Vlerick wrote:
-> Add support for tas5753, device is similar to tas5733 but with added
-> headphone / line driver.
-> 
-> Signed-off-by: Bram Vlerick <bram.vlerick@openpixelsystems.org>
-> ---
->  sound/soc/codecs/tas571x.c | 52 ++++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 52 insertions(+)
-> 
+On Tue, May 27, 2025 at 11:07:00AM -0700, Ian Rogers wrote:
+> symbol-elf.c is used when building with libelf, symbol-minimal is used
+> otherwise. There is no reason the demangling code with no dependencies
+> on libelf is part of symbol-elf.c so move to symbol.c. This allows
+> demangling tests to pass with NO_LIBELF=1.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+At this point:
 
-Best regards,
-Krzysztof
+⬢ [acme@toolbx perf-tools-next]$ alias m='rm -rf ~/libexec/perf-core/ ; make -k O=/tmp/build/$(basename $PWD)/ -C tools/perf install-bin && perf test python && cat /tmp/build/$(basename $PWD)/feature/test-all.make.output'
+⬢ [acme@toolbx perf-tools-next]$ m
+rm: cannot remove '/home/acme/libexec/perf-core/scripts/python/Perf-Trace-Util/lib/Perf/Trace/__pycache__/Core.cpython-313.pyc': Permission denied
+make: Entering directory '/home/acme/git/perf-tools-next/tools/perf'
+  BUILD:   Doing 'make -j32' parallel build
+Warning: Kernel ABI header differences:
+  diff -u tools/arch/arm64/include/asm/cputype.h arch/arm64/include/asm/cputype.h
+
+Auto-detecting system features:
+...                                   libdw: [ on  ]
+...                                   glibc: [ on  ]
+...                                  libelf: [ on  ]
+...                                 libnuma: [ on  ]
+...                  numa_num_possible_cpus: [ on  ]
+...                                 libperl: [ on  ]
+...                               libpython: [ on  ]
+...                               libcrypto: [ on  ]
+...                             libcapstone: [ on  ]
+...                               llvm-perf: [ on  ]
+...                                    zlib: [ on  ]
+...                                    lzma: [ on  ]
+...                               get_cpuid: [ on  ]
+...                                     bpf: [ on  ]
+...                                  libaio: [ on  ]
+...                                 libzstd: [ on  ]
+
+  INSTALL libsubcmd_headers
+  INSTALL libperf_headers
+  INSTALL libapi_headers
+  INSTALL libsymbol_headers
+  INSTALL libbpf_headers
+  AR      /tmp/build/perf-tools-next/libpmu-events.a
+  CC      /tmp/build/perf-tools-next/util/symbol-elf.o
+util/symbol-elf.c: In function ‘get_plt_got_name’:
+util/symbol-elf.c:563:21: error: implicit declaration of function ‘demangle_sym’; did you mean ‘dso__demangle_sym’? [-Wimplicit-function-declaration]
+  563 |         demangled = demangle_sym(di->dso, 0, sym_name);
+      |                     ^~~~~~~~~~~~
+      |                     dso__demangle_sym
+util/symbol-elf.c:563:19: error: assignment to ‘char *’ from ‘int’ makes pointer from integer without a cast [-Wint-conversion]
+  563 |         demangled = demangle_sym(di->dso, 0, sym_name);
+      |                   ^
+util/symbol-elf.c: In function ‘dso__synthesize_plt_symbols’:
+util/symbol-elf.c:761:27: error: assignment to ‘char *’ from ‘int’ makes pointer from integer without a cast [-Wint-conversion]
+  761 |                 demangled = demangle_sym(dso, 0, elf_name);
+      |                           ^
+util/symbol-elf.c: In function ‘dso__load_sym_internal’:
+util/symbol-elf.c:1778:27: error: assignment to ‘char *’ from ‘int’ makes pointer from integer without a cast [-Wint-conversion]
+ 1778 |                 demangled = demangle_sym(dso, kmodule, elf_name);
+      |                           ^
+make[4]: *** [/home/acme/git/perf-tools-next/tools/build/Makefile.build:85: /tmp/build/perf-tools-next/util/symbol-elf.o] Error 1
+make[3]: *** [/home/acme/git/perf-tools-next/tools/build/Makefile.build:142: util] Error 2
+make[2]: *** [Makefile.perf:798: /tmp/build/perf-tools-next/perf-util-in.o] Error 2
+make[1]: *** [Makefile.perf:290: sub-make] Error 2
+make: *** [Makefile:119: install-bin] Error 2
+make: Leaving directory '/home/acme/git/perf-tools-next/tools/perf'
+⬢ [acme@toolbx perf-tools-next]$
+
+- Arnaldo
 
