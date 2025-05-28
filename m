@@ -1,412 +1,173 @@
-Return-Path: <linux-kernel+bounces-665360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C72CFAC682B
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 13:11:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 045B2AC682F
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 13:11:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 717221BC5B7D
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 11:11:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC29E3A403C
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 11:11:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1CBC27C861;
-	Wed, 28 May 2025 11:10:59 +0000 (UTC)
-Received: from unicom145.biz-email.net (unicom145.biz-email.net [210.51.26.145])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5D8227BF6E;
+	Wed, 28 May 2025 11:11:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OaZRuhHa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B18BE279789
-	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 11:10:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.26.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0CA727A929;
+	Wed, 28 May 2025 11:11:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748430659; cv=none; b=tV+qaplTwe5PNdMUUn/7lVfCdRQSm7l1rF8eSs78hcxPYhGI43r6V0AK5CvhOwQVIGvPl2dlFibmiSUz+Zynl1vt620lhtu7bN91EEXJ/BPXr1ITIZW/ZzolRlwEf1FI4SDUIt8kbuimgqaFpwc55SuBNN4fuW3CLdfHRauLdKw=
+	t=1748430683; cv=none; b=h3+SRwyPIGArsmmQfhFl+DUiSWcfOTcVQRzbLXaiq1MHw8L98hW0U4ghGYkgqNIufnOednLTmau7NRUqhEHcM0JZ8Sx1JN6+EC6yLGGDnWEUJlbh0YIviBqwel8Rhd7V9H+w/vt+1C+W0iHKVqwesS5Oq3BE/oFEOSWk5dcJn50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748430659; c=relaxed/simple;
-	bh=5hWjnfe+SC6eqhDVuWyOHQODTUfXYLw2KtzJakqj2sY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lT0jFUa/kR4JuwB63ebptXPgOmT3DgscBAJ2yAiW354kRb7o44BWP6fTcXwz4zudl7xX4nj47GWH+j0RYznP+3ysXY8P/EodI2NafJDPN0dSTla77Sif00GZxWMGccxksyuSP0X65k3+Ev52cezcLbvKfTm7PFTz30QdMcoJnRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.26.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
-Received: from jtjnmail201612.home.langchao.com
-        by unicom145.biz-email.net ((D)) with ASMTP (SSL) id 202505281910510913;
-        Wed, 28 May 2025 19:10:51 +0800
-Received: from vbox.home.langchao.com (10.94.6.79) by
- jtjnmail201612.home.langchao.com (10.100.2.12) with Microsoft SMTP Server id
- 15.1.2507.39; Wed, 28 May 2025 19:10:49 +0800
-From: wangchuanguo <wangchuanguo@inspur.com>
-To: <akpm@linux-foundation.org>, <hannes@cmpxchg.org>, <sj@kernel.org>
-CC: <david@redhat.com>, <mhocko@kernel.org>, <zhengqi.arch@bytedance.com>,
-	<shakeel.butt@linux.dev>, <lorenzo.stoakes@oracle.com>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>, <damon@lists.linux.dev>, wangchuanguo
-	<wangchuanguo@inspur.com>
-Subject: [PATCH 2/2] mm/damon/sysfs-schemes: add use_nodes_of_tier on sysfs-schemes
-Date: Wed, 28 May 2025 19:10:38 +0800
-Message-ID: <20250528111038.18378-3-wangchuanguo@inspur.com>
-X-Mailer: git-send-email 2.39.3
-In-Reply-To: <20250528111038.18378-1-wangchuanguo@inspur.com>
-References: <20250528111038.18378-1-wangchuanguo@inspur.com>
+	s=arc-20240116; t=1748430683; c=relaxed/simple;
+	bh=uHiGp2aq/Wwo8MjyGca1umeJbHorr8RG5qJ5OtNyBN8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Z4kZHAN0b2A1r9/VrGDMbl9yKNHBi4r4vnttmXJjssMqo5NuV3bCABdnn2WZAkRMhjK91GUyjEvyjyVZIF9WicnrPIZgFbcKhrIAdOUAWmWDRqZagyun0xx5KGb3O9AC4dvgAPokI1abfYs9yIdTrge8P5NILaVKpqLtT74rZ1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OaZRuhHa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99D38C4CEE7;
+	Wed, 28 May 2025 11:11:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748430681;
+	bh=uHiGp2aq/Wwo8MjyGca1umeJbHorr8RG5qJ5OtNyBN8=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=OaZRuhHa8huC1wzSUhMu8x3xo1lMiKwEh7R/xjOrdDjT9dlbz1lmF1IM4JkmHB3gD
+	 hgCnfclelMqwd85j8SBn4612NijVVqQbpOcbKEXPUMj7Zk2f2DXddJYQfOxGUDKzH6
+	 TdTWA8/KD2erhhDbDsO0X7n48uuBinmEbnuo9nRd906QRpKQ0iPpHAvX8InYQoRngM
+	 2E/qD2a1eQe7Ffp5Budz+QciPDBIJOno/gS2eIFeYGYE/T9W9FylJdMmZoClI6LChK
+	 tOlVYJtn9mTgwzw94C5yfmSSV+qAopHw5fD/wKQHWkFhrYke8CiNeTqvEFMu/cE/MT
+	 8NfLm7YOnDsoA==
+Message-ID: <3bd1932129f4221a7affc5a6bf1ea5367dcb6a7c.camel@kernel.org>
+Subject: Re: [PATCH] nfsd: Replace simple_strtoul with kstrtoint in
+ expkey_parse
+From: Jeff Layton <jlayton@kernel.org>
+To: Su Hui <suhui@nfschina.com>, chuck.lever@oracle.com, neilb@suse.de, 
+	okorniev@redhat.com, Dai.Ngo@oracle.com, tom@talpey.com
+Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
+Date: Wed, 28 May 2025 07:11:19 -0400
+In-Reply-To: <20250527092548.1931636-1-suhui@nfschina.com>
+References: <20250527092548.1931636-1-suhui@nfschina.com>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1 (3.56.1-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-tUid: 20255281910518f65f22d2065e4c72f8fb32c25b40d2b
-X-Abuse-Reports-To: service@corp-email.com
-Abuse-Reports-To: service@corp-email.com
-X-Complaints-To: service@corp-email.com
-X-Report-Abuse-To: service@corp-email.com
 
-This patch adds use_nodes_of_tier under
-  /sys/kernel/mm/damon/admin/kdamonds/<N>/contexts/<N>/schemes/<N>/
+On Tue, 2025-05-27 at 17:25 +0800, Su Hui wrote:
+> kstrtoint() is better because simple_strtoul() ignores overflow and the
+> type of 'fsidtype' is 'int' rather than 'unsigned long'.
+>=20
+> Signed-off-by: Su Hui <suhui@nfschina.com>
+> ---
+>  fs/nfsd/export.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+>=20
+> diff --git a/fs/nfsd/export.c b/fs/nfsd/export.c
+> index 0363720280d4..1bc9bc20cac3 100644
+> --- a/fs/nfsd/export.c
+> +++ b/fs/nfsd/export.c
+> @@ -83,7 +83,6 @@ static int expkey_parse(struct cache_detail *cd, char *=
+mesg, int mlen)
+>  	struct auth_domain *dom =3D NULL;
+>  	int err;
+>  	int fsidtype;
+> -	char *ep;
+>  	struct svc_expkey key;
+>  	struct svc_expkey *ek =3D NULL;
+> =20
+> @@ -109,8 +108,7 @@ static int expkey_parse(struct cache_detail *cd, char=
+ *mesg, int mlen)
+>  	err =3D -EINVAL;
+>  	if (qword_get(&mesg, buf, PAGE_SIZE) <=3D 0)
+>  		goto out;
+> -	fsidtype =3D simple_strtoul(buf, &ep, 10);
+> -	if (*ep)
+> +	if (kstrtoint(buf, 10, &fsidtype))
+>  		goto out;
+>  	dprintk("found fsidtype %d\n", fsidtype);
+>  	if (key_len(fsidtype)=3D=3D0) /* invalid type */
 
-The 'use_nodes_of_tier' can be used to select nodes within the same memory
-tier of target_nid for DAMOS actions such as DAMOS_MIGRATE_{HOT,COLD}.
-
-Signed-off-by: wangchuanguo <wangchuanguo@inspur.com>
----
- include/linux/damon.h        |  9 ++++++++-
- include/linux/memory-tiers.h |  5 +++++
- mm/damon/core.c              |  6 ++++--
- mm/damon/lru_sort.c          |  3 ++-
- mm/damon/paddr.c             | 19 ++++++++++++-------
- mm/damon/reclaim.c           |  3 ++-
- mm/damon/sysfs-schemes.c     | 31 ++++++++++++++++++++++++++++++-
- mm/memory-tiers.c            | 13 +++++++++++++
- samples/damon/mtier.c        |  3 ++-
- samples/damon/prcl.c         |  3 ++-
- 10 files changed, 80 insertions(+), 15 deletions(-)
-
-diff --git a/include/linux/damon.h b/include/linux/damon.h
-index a4011726cb3b..05eae7fd66ad 100644
---- a/include/linux/damon.h
-+++ b/include/linux/damon.h
-@@ -455,6 +455,7 @@ struct damos_access_pattern {
-  * @quota:		Control the aggressiveness of this scheme.
-  * @wmarks:		Watermarks for automated (in)activation of this scheme.
-  * @target_nid:		Destination node if @action is "migrate_{hot,cold}".
-+ * @use_nodes_of_tier:	Whether to use nodes of the target tier.
-  * @filters:		Additional set of &struct damos_filter for &action.
-  * @ops_filters:	ops layer handling &struct damos_filter objects list.
-  * @last_applied:	Last @action applied ops-managing entity.
-@@ -476,6 +477,10 @@ struct damos_access_pattern {
-  * migrate_cold actions, which means it's only meaningful when @action is either
-  * "migrate_hot" or "migrate_cold".
-  *
-+ * @use_nodes_of_tier is used to select nodes of the target tier for migrating
-+ * when target_nid is out of memory.Similar to @target_nid, this parameter is
-+ * only meaningful when @action is either 'migrate_hot' or 'migrate_cold'.
-+ *
-  * Before applying the &action to a memory region, &struct damon_operations
-  * implementation could check pages of the region and skip &action to respect
-  * &filters
-@@ -519,6 +524,7 @@ struct damos {
- 	union {
- 		int target_nid;
- 	};
-+	bool use_nodes_of_tier;
- 	struct list_head filters;
- 	struct list_head ops_filters;
- 	void *last_applied;
-@@ -896,7 +902,8 @@ struct damos *damon_new_scheme(struct damos_access_pattern *pattern,
- 			unsigned long apply_interval_us,
- 			struct damos_quota *quota,
- 			struct damos_watermarks *wmarks,
--			int target_nid);
-+			int target_nid,
-+			bool use_nodes_of_tier);
- void damon_add_scheme(struct damon_ctx *ctx, struct damos *s);
- void damon_destroy_scheme(struct damos *s);
- int damos_commit_quota_goals(struct damos_quota *dst, struct damos_quota *src);
-diff --git a/include/linux/memory-tiers.h b/include/linux/memory-tiers.h
-index 0dc0cf2863e2..4434f95dfde2 100644
---- a/include/linux/memory-tiers.h
-+++ b/include/linux/memory-tiers.h
-@@ -56,6 +56,7 @@ void mt_put_memory_types(struct list_head *memory_types);
- int next_demotion_node(int node);
- void node_get_allowed_targets(pg_data_t *pgdat, nodemask_t *targets);
- bool node_is_toptier(int node);
-+nodemask_t get_tier_nodemask(int node);
- #else
- static inline int next_demotion_node(int node)
- {
-@@ -71,6 +72,10 @@ static inline bool node_is_toptier(int node)
- {
- 	return true;
- }
-+nodemask_t get_tier_nodemask(int node)
-+{
-+	return NODE_MASK_NONE;
-+}
- #endif
- 
- #else
-diff --git a/mm/damon/core.c b/mm/damon/core.c
-index b217e0120e09..2c0feca8f87b 100644
---- a/mm/damon/core.c
-+++ b/mm/damon/core.c
-@@ -378,7 +378,8 @@ struct damos *damon_new_scheme(struct damos_access_pattern *pattern,
- 			unsigned long apply_interval_us,
- 			struct damos_quota *quota,
- 			struct damos_watermarks *wmarks,
--			int target_nid)
-+			int target_nid,
-+			bool use_nodes_of_tier)
- {
- 	struct damos *scheme;
- 
-@@ -408,6 +409,7 @@ struct damos *damon_new_scheme(struct damos_access_pattern *pattern,
- 	scheme->wmarks.activated = true;
- 
- 	scheme->target_nid = target_nid;
-+	scheme->use_nodes_of_tier = use_nodes_of_tier;
- 
- 	return scheme;
- }
-@@ -1006,7 +1008,7 @@ static int damon_commit_schemes(struct damon_ctx *dst, struct damon_ctx *src)
- 				src_scheme->action,
- 				src_scheme->apply_interval_us,
- 				&src_scheme->quota, &src_scheme->wmarks,
--				NUMA_NO_NODE);
-+				NUMA_NO_NODE, false);
- 		if (!new_scheme)
- 			return -ENOMEM;
- 		err = damos_commit(new_scheme, src_scheme);
-diff --git a/mm/damon/lru_sort.c b/mm/damon/lru_sort.c
-index 4af8fd4a390b..f663b66550dc 100644
---- a/mm/damon/lru_sort.c
-+++ b/mm/damon/lru_sort.c
-@@ -164,7 +164,8 @@ static struct damos *damon_lru_sort_new_scheme(
- 			&quota,
- 			/* (De)activate this according to the watermarks. */
- 			&damon_lru_sort_wmarks,
--			NUMA_NO_NODE);
-+			NUMA_NO_NODE,
-+			false);
- }
- 
- /* Create a DAMON-based operation scheme for hot memory regions */
-diff --git a/mm/damon/paddr.c b/mm/damon/paddr.c
-index e8464f7e0014..e13321cff38f 100644
---- a/mm/damon/paddr.c
-+++ b/mm/damon/paddr.c
-@@ -383,7 +383,7 @@ static unsigned long damon_pa_deactivate_pages(struct damon_region *r,
- 
- static unsigned int __damon_pa_migrate_folio_list(
- 		struct list_head *migrate_folios, struct pglist_data *pgdat,
--		int target_nid)
-+		int target_nid, bool use_nodes_of_tier)
- {
- 	unsigned int nr_succeeded = 0;
- 	nodemask_t allowed_mask = NODE_MASK_NONE;
-@@ -405,6 +405,9 @@ static unsigned int __damon_pa_migrate_folio_list(
- 	if (list_empty(migrate_folios))
- 		return 0;
- 
-+	if (use_nodes_of_tier)
-+		allowed_mask = get_tier_nodemask(target_nid);
-+
- 	/* Migration ignores all cpuset and mempolicy settings */
- 	migrate_pages(migrate_folios, alloc_migrate_folio, NULL,
- 		      (unsigned long)&mtc, MIGRATE_ASYNC, MR_DAMON,
-@@ -415,7 +418,7 @@ static unsigned int __damon_pa_migrate_folio_list(
- 
- static unsigned int damon_pa_migrate_folio_list(struct list_head *folio_list,
- 						struct pglist_data *pgdat,
--						int target_nid)
-+						int target_nid, bool use_nodes_of_tier)
- {
- 	unsigned int nr_migrated = 0;
- 	struct folio *folio;
-@@ -444,7 +447,7 @@ static unsigned int damon_pa_migrate_folio_list(struct list_head *folio_list,
- 
- 	/* Migrate folios selected for migration */
- 	nr_migrated += __damon_pa_migrate_folio_list(
--			&migrate_folios, pgdat, target_nid);
-+			&migrate_folios, pgdat, target_nid, use_nodes_of_tier);
- 	/*
- 	 * Folios that could not be migrated are still in @migrate_folios.  Add
- 	 * those back on @folio_list
-@@ -466,7 +469,7 @@ static unsigned int damon_pa_migrate_folio_list(struct list_head *folio_list,
- }
- 
- static unsigned long damon_pa_migrate_pages(struct list_head *folio_list,
--					    int target_nid)
-+					    int target_nid, bool use_nodes_of_tier)
- {
- 	int nid;
- 	unsigned long nr_migrated = 0;
-@@ -489,13 +492,15 @@ static unsigned long damon_pa_migrate_pages(struct list_head *folio_list,
- 
- 		nr_migrated += damon_pa_migrate_folio_list(&node_folio_list,
- 							   NODE_DATA(nid),
--							   target_nid);
-+							   target_nid,
-+							   use_nodes_of_tier);
- 		nid = folio_nid(lru_to_folio(folio_list));
- 	} while (!list_empty(folio_list));
- 
- 	nr_migrated += damon_pa_migrate_folio_list(&node_folio_list,
- 						   NODE_DATA(nid),
--						   target_nid);
-+						   target_nid,
-+						   use_nodes_of_tier);
- 
- 	memalloc_noreclaim_restore(noreclaim_flag);
- 
-@@ -529,7 +534,7 @@ static unsigned long damon_pa_migrate(struct damon_region *r, struct damos *s,
- 		addr += folio_size(folio);
- 		folio_put(folio);
- 	}
--	applied = damon_pa_migrate_pages(&folio_list, s->target_nid);
-+	applied = damon_pa_migrate_pages(&folio_list, s->target_nid, s->use_nodes_of_tier);
- 	cond_resched();
- 	s->last_applied = folio;
- 	return applied * PAGE_SIZE;
-diff --git a/mm/damon/reclaim.c b/mm/damon/reclaim.c
-index a675150965e0..1b770553bbd2 100644
---- a/mm/damon/reclaim.c
-+++ b/mm/damon/reclaim.c
-@@ -178,7 +178,8 @@ static struct damos *damon_reclaim_new_scheme(void)
- 			&damon_reclaim_quota,
- 			/* (De)activate this according to the watermarks. */
- 			&damon_reclaim_wmarks,
--			NUMA_NO_NODE);
-+			NUMA_NO_NODE,
-+			false);
- }
- 
- static int damon_reclaim_apply_parameters(void)
-diff --git a/mm/damon/sysfs-schemes.c b/mm/damon/sysfs-schemes.c
-index 0f6c9e1fec0b..654e209fd6fd 100644
---- a/mm/damon/sysfs-schemes.c
-+++ b/mm/damon/sysfs-schemes.c
-@@ -1584,6 +1584,7 @@ struct damon_sysfs_scheme {
- 	struct damon_sysfs_stats *stats;
- 	struct damon_sysfs_scheme_regions *tried_regions;
- 	int target_nid;
-+	bool use_nodes_of_tier;
- };
- 
- /* This should match with enum damos_action */
-@@ -1612,6 +1613,7 @@ static struct damon_sysfs_scheme *damon_sysfs_scheme_alloc(
- 	scheme->action = action;
- 	scheme->apply_interval_us = apply_interval_us;
- 	scheme->target_nid = NUMA_NO_NODE;
-+	scheme->use_nodes_of_tier = false;
- 	return scheme;
- }
- 
-@@ -1896,6 +1898,29 @@ static ssize_t target_nid_store(struct kobject *kobj,
- 	return err ? err : count;
- }
- 
-+static ssize_t use_nodes_of_tier_show(struct kobject *kobj,
-+		struct kobj_attribute *attr, char *buf)
-+{
-+	struct damon_sysfs_scheme *scheme = container_of(kobj,
-+			struct damon_sysfs_scheme, kobj);
-+
-+	return sysfs_emit(buf, "%s\n", scheme->use_nodes_of_tier ? "true" : "false");
-+}
-+
-+static ssize_t use_nodes_of_tier_store(struct kobject *kobj,
-+		struct kobj_attribute *attr, const char *buf, size_t count)
-+{
-+	struct damon_sysfs_scheme *scheme = container_of(kobj,
-+			struct damon_sysfs_scheme, kobj);
-+	int err;
-+
-+	err = kstrtobool(buf, &scheme->use_nodes_of_tier);
-+	if (err < 0)
-+		return err;
-+
-+	return err ? err : count;
-+}
-+
- static void damon_sysfs_scheme_release(struct kobject *kobj)
- {
- 	kfree(container_of(kobj, struct damon_sysfs_scheme, kobj));
-@@ -1910,10 +1935,14 @@ static struct kobj_attribute damon_sysfs_scheme_apply_interval_us_attr =
- static struct kobj_attribute damon_sysfs_scheme_target_nid_attr =
- 		__ATTR_RW_MODE(target_nid, 0600);
- 
-+static struct kobj_attribute damon_sysfs_scheme_use_nodes_of_tier_attr =
-+		__ATTR_RW_MODE(use_nodes_of_tier, 0600);
-+
- static struct attribute *damon_sysfs_scheme_attrs[] = {
- 	&damon_sysfs_scheme_action_attr.attr,
- 	&damon_sysfs_scheme_apply_interval_us_attr.attr,
- 	&damon_sysfs_scheme_target_nid_attr.attr,
-+	&damon_sysfs_scheme_use_nodes_of_tier_attr.attr,
- 	NULL,
- };
- ATTRIBUTE_GROUPS(damon_sysfs_scheme);
-@@ -2258,7 +2287,7 @@ static struct damos *damon_sysfs_mk_scheme(
- 
- 	scheme = damon_new_scheme(&pattern, sysfs_scheme->action,
- 			sysfs_scheme->apply_interval_us, &quota, &wmarks,
--			sysfs_scheme->target_nid);
-+			sysfs_scheme->target_nid, sysfs_scheme->use_nodes_of_tier);
- 	if (!scheme)
- 		return NULL;
- 
-diff --git a/mm/memory-tiers.c b/mm/memory-tiers.c
-index fc14fe53e9b7..393f3012a612 100644
---- a/mm/memory-tiers.c
-+++ b/mm/memory-tiers.c
-@@ -299,6 +299,19 @@ bool node_is_toptier(int node)
- 	return toptier;
- }
- 
-+nodemask_t get_tier_nodemask(int node)
-+{
-+	struct memory_tier *memtier;
-+	nodemask_t tier_nodes = NODE_MASK_NONE;
-+
-+	memtier = __node_get_memory_tier(node);
-+	if (!memtier)
-+		return tier_nodes;
-+
-+	tier_nodes = get_memtier_nodemask(memtier);
-+	return tier_nodes;
-+}
-+
- void node_get_allowed_targets(pg_data_t *pgdat, nodemask_t *targets)
- {
- 	struct memory_tier *memtier;
-diff --git a/samples/damon/mtier.c b/samples/damon/mtier.c
-index 36d2cd933f5a..b5d42086b221 100644
---- a/samples/damon/mtier.c
-+++ b/samples/damon/mtier.c
-@@ -105,7 +105,8 @@ static struct damon_ctx *damon_sample_mtier_build_ctx(bool promote)
- 				.weight_age = 100,
- 			},
- 			&(struct damos_watermarks){},
--			promote ? 0 : 1);	/* migrate target node id */
-+			promote ? 0 : 1,	/* migrate target node id */
-+			false);
- 	if (!scheme)
- 		goto free_out;
- 	damon_set_schemes(ctx, &scheme, 1);
-diff --git a/samples/damon/prcl.c b/samples/damon/prcl.c
-index 056b1b21a0fe..445a9f4e0905 100644
---- a/samples/damon/prcl.c
-+++ b/samples/damon/prcl.c
-@@ -88,7 +88,8 @@ static int damon_sample_prcl_start(void)
- 			0,
- 			&(struct damos_quota){},
- 			&(struct damos_watermarks){},
--			NUMA_NO_NODE);
-+			NUMA_NO_NODE,
-+			false);
- 	if (!scheme) {
- 		damon_destroy_ctx(ctx);
- 		return -ENOMEM;
--- 
-2.39.3
-
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
