@@ -1,109 +1,309 @@
-Return-Path: <linux-kernel+bounces-665018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42E5EAC637F
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 09:58:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AE6DAC6384
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 09:59:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 034DE1BC2FAB
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 07:58:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F4523AF665
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 07:59:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3AD524676B;
-	Wed, 28 May 2025 07:58:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81D1C24634F;
+	Wed, 28 May 2025 07:59:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="evO/lKUw"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b="NTABLokc"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 042283C01;
-	Wed, 28 May 2025 07:58:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E582D1F8728
+	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 07:59:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748419109; cv=none; b=i7Nyz41Ro0DpSt79nFRjiR2fpCcaJR0NgU55D+VllbQBiC/hL8PEaucF/NCjsAyv5t6nPd9n0+hw2exazf7zpCMl77IYhC5O95WhI+xbmnf9oWk2iShsy1i59ZE9bqiHZLMlIXmWB6b743NoaPVNTPIJ5/e+WuldMGaK1ltGbpU=
+	t=1748419165; cv=none; b=PLcwO7qv7KOlTrtjKhG06btiNuOCsWUdd8UMxOEa4Wjt98CpTIEuPvgdxQ4C9rnyq3DOhACGkJ71zoCH9Ko9mB4v30Rjjb4Gf0hW3I+rgelPasyy3lFE+ldolU5CcM4nqxOSMEcl9ySyUiGuJuhFKQSLQHk80mWDw/1wy3vtbgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748419109; c=relaxed/simple;
-	bh=EhB0hPfGz22xprRM8wkMV43cCAg/VXZ3QzUsu3SMRdg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D0uO688b8a67swKaZObZNFcF31dTjmBWGoGiPAdhg2EjxSz1J4JJb+qqwgtJVpi7eNlRItc3G4RAWE6GV9thkwNFs+XIeMu00Iw40y5pm6mKY6aOUk63cbCnhkebA4VhPNtxCcKEWUXIOTfbT65ZeZ9/PSPZDMlEYG/+ck2/owE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=evO/lKUw; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=IFyA/Ev6J4dUYbbORf9U6czVrOpgGxA4vABlRFXcEts=; b=evO/lKUw5MnJ7tsXnKrD9jnoqg
-	b+PYF3g+tT3s31UjYVEVLUGD4QbVFxAfDe3jTt6zSBYs+BqcW7L4o5H/4lV7IAFO87k6z8drWy5fa
-	+vScF2jVlpn9cLiY4WYiOtgEi5WgKmCMIPgwHxusoT7b3o06F4DVQjoJZe9dfpVaBHibLWbrJd6IW
-	Gu1oxMalrZustOdJN5UvUSgvwrh1CdrLPzbN+K2eLneCuzGPxEUMaOW3MhnK4aFdt455xrGh5qZC7
-	Zo/NTYKwb6lkek7YVLTY6lXsIjJqz+8AwcuyThkWfOmH+M4By7TooetgF5MUQQ5zdFOoTXrpTeUEt
-	P7lO75mA==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:41916)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1uKBg3-0008Nv-1S;
-	Wed, 28 May 2025 08:58:19 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1uKBfw-0002GD-2Q;
-	Wed, 28 May 2025 08:58:12 +0100
-Date: Wed, 28 May 2025 08:58:12 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: "Abhishek Chauhan (ABC)" <quic_abchauha@quicinc.com>
-Cc: Jitendra Vegiraju <jitendra.vegiraju@broadcom.com>,
-	Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
-	alexandre.torgue@foss.st.com, joabreu@synopsys.com,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, mcoquelin.stm32@gmail.com,
-	bcm-kernel-feedback-list@broadcom.com, richardcochran@gmail.com,
-	ast@kernel.org, daniel@iogearbox.net, hawk@kernel.org,
-	john.fastabend@gmail.com, fancer.lancer@gmail.com,
-	ahalaney@redhat.com, xiaolei.wang@windriver.com,
-	rohan.g.thomas@intel.com, Jianheng.Zhang@synopsys.com,
-	linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, bpf@vger.kernel.org,
-	horms@kernel.org, florian.fainelli@broadcom.com,
-	Sagar Cheluvegowda <quic_scheluve@quicinc.com>
-Subject: Re: [PATCH net-next v6 0/5] net: stmmac: Add PCI driver support for
- BCM8958x
-Message-ID: <aDbCFGIi09h1irho@shell.armlinux.org.uk>
-References: <20241018205332.525595-1-jitendra.vegiraju@broadcom.com>
- <CAMdnO-+FjsRX4fjbCE_RVNY4pEoArD68dAWoEM+oaEZNJiuA3g@mail.gmail.com>
- <67919001-1cb7-4e9b-9992-5b3dd9b03406@quicinc.com>
- <CAMdnO-+HwXf7c=igt2j6VHcki3cYanXpFApZDcEe7DibDz810g@mail.gmail.com>
- <7ac5c034-9e6d-45c4-b20a-2a386b4d9117@quicinc.com>
+	s=arc-20240116; t=1748419165; c=relaxed/simple;
+	bh=lTpKD/0DenivGi6z0137m81o+V5ysUx2nV8K0HXyN9w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=A3rANg0wEutBSXkoPzZFT39L9t1SAjcBSmgE/BwaGCgiJy7RGNpHfWIhHiFDFjMDkPAhNJHYoQJH3TFKIEuh0WtfdvZ6q6LhWJsbkP8SIjZcdyfUlYz1StDl9pZhpH8aY3f/fE8ZJBaPica5oTPboQCVlmcs67nChsPpT0GehS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beagleboard.org; spf=fail smtp.mailfrom=beagleboard.org; dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b=NTABLokc; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beagleboard.org
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=beagleboard.org
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-234d3261631so1889965ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 00:59:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=beagleboard-org.20230601.gappssmtp.com; s=20230601; t=1748419162; x=1749023962; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4S1CZW2QhVODXn5wyDF2trheqRunplrz19cyZTEBaFI=;
+        b=NTABLokcS6bGT9ndtFEYuJl0txh0ugGOYIhMraS0kZ/yi6YQUG+H7LCW2An3TxwZ62
+         Zagryqbby+XSoPd2/7l4WcIawQiCv5VJJ94dEwZMSih6yHbPg+VDEpkjVQJqZ0Emsz2Q
+         EsuhboNkyYKWGWUyZJwBX9dFwyuW6taBOGcTeO+H65P5a2+LHSQpscQOmbsJlpBw3W7W
+         aN8oMG3IW2F5th+IqUAjKXJ4wXR/82hC5cDwmPeY/GB2pZQTAZQvOzC+u4LE9AFeZln8
+         5EPK/YvtFEfPOEvbuTFy6swM87WtEc0kYbPNJ3C+j6oEzcija35KnFLbezE8haHCBwYm
+         vixQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748419162; x=1749023962;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4S1CZW2QhVODXn5wyDF2trheqRunplrz19cyZTEBaFI=;
+        b=En8mK0YgNgAxEwJ0jLiUw8kDxuBqdvYLjwS/uBAMziN32Uvw0iDFxkrk+6+W3iXHkP
+         nLLnsO64nWVVl0Jp3wiWX8G55UtFbOCHZq3V+4JQhbb3SZwNjj2MQoLJOhcn1s5Qzcun
+         5a7c7wUjNwPwkIPsqvNBEpatdlbIWf+mXrrC4Q3mC2EvCbeQQUuO7oszEcCcxH12BnUJ
+         aQeIjPp+nrZKBpoyro46Xm07cu5BzFswwo21GifAczj965CIXsPwhZd00E2froUbbElJ
+         Qq1D4WC/ACICdNS5PZVxc8C7O5HprCTZ7IgXpjgnwbU2uV/TaQGsz+QtCxocjHUllxbY
+         Cs8w==
+X-Forwarded-Encrypted: i=1; AJvYcCUOzAmybdKAHzizj0rMlRWuJ1hf8fSUnF9kDETHcdbjUWxacBMPmp6oEx7kD1xL+hMjIvAhp3IjEj0T09w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZcgpzB2SUwKFP7D63klEgRcMlCFExid2Dea0RgQYQ3PC09dW2
+	o/Nlmwhq6wxtAdrfMiBTRLD6u8RuQXSy/Ho+voJ0Veye8pdFhPi9e5tcTqRtQOfmlw==
+X-Gm-Gg: ASbGnctVqxNmRLt3QledmO3JjQom4ZjbBCqO4LCIbmcK2GAeWfjzXgEvmpYwYCX0yl0
+	nhvdO8R5A24rH0a1p0pw9S05QBt0Urfa7aO15djrkaOB7jBDQxYhrx8Xvuq+cBsKswa4VXq/FYI
+	sBDKhbYvaZHryBCBITf/+ty3T//XfpQOjp/o9eW8e9o7Mw4s9r23UR/U7j8LzW3aDGgQoE5Paer
+	Z0CyoOB+jr/grOi5O1U/yzvR8qBHSayA/KheGmTYBQTrjzLD5mjgRSkN8Zf95OM/7Gjx3ToJuON
+	1agVojERANZej1NuYEpDU8Fj8oxxPJ1ua4nrn/XccnKhthfKoH2J3c5t6/k1fsXscx0K+Q6uS4I
+	Tzs+KHZQiLrAYWfDInadotfY7jjPa
+X-Google-Smtp-Source: AGHT+IFinm210KsgPpT052kUqMgd0kmoXBGoJfUCmTLu114QHHNEhBfzO75J/jBa41z7KGIIueND9g==
+X-Received: by 2002:a17:902:e845:b0:234:bfcb:5c21 with SMTP id d9443c01a7336-234bfcb5d41mr40674185ad.19.1748419161996;
+        Wed, 28 May 2025 00:59:21 -0700 (PDT)
+Received: from ?IPV6:2401:4900:8898:4f57:7796:ebc0:39c1:2cae? ([2401:4900:8898:4f57:7796:ebc0:39c1:2cae])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-234d35ac4e2sm6265415ad.177.2025.05.28.00.59.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 28 May 2025 00:59:21 -0700 (PDT)
+Message-ID: <6c61a101-6ec7-4350-bfa7-5b7d32177818@beagleboard.org>
+Date: Wed, 28 May 2025 13:29:14 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7ac5c034-9e6d-45c4-b20a-2a386b4d9117@quicinc.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/7] dt-bindings: Add support for export-symbols node
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ Herve Codina <herve.codina@bootlin.com>,
+ David Gibson <david@gibson.dropbear.id.au>, Andrew Davis <afd@ti.com>,
+ Geert Uytterhoeven <geert@linux-m68k.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Saravana Kannan <saravanak@google.com>
+Cc: devicetree@vger.kernel.org, devicetree-compiler@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+References: <20250430125154.195498-1-herve.codina@bootlin.com>
+ <20250430125154.195498-2-herve.codina@bootlin.com>
+ <0770a47e-fd2f-4b6f-9a9a-b0d539ace30c@kernel.org>
+Content-Language: en-US
+From: Ayush Singh <ayush@beagleboard.org>
+In-Reply-To: <0770a47e-fd2f-4b6f-9a9a-b0d539ace30c@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, May 27, 2025 at 05:04:52PM -0700, Abhishek Chauhan (ABC) wrote:
-> Thanks Jitendra, I am sorry but just a follow up. 
-> 
-> Do we know if stmmac maintainer are identified now ?
-> 
-> Andrew/Russell - Can you please help us ? 
+On 5/28/25 00:01, Krzysztof Kozlowski wrote:
 
-My mainline work is in abayence at the moment (apart from occasionally
-replying to a few emails from time to time) as I have other commitments
-at the moment. I still have my own patches from before the previous
-merge window that I didn't get around to submitting.
+> On 30/04/2025 14:51, Herve Codina wrote:
+>> An export-symbols node allows to export symbols for symbols resolution
+>> performed when applying a device tree overlay.
+>>
+>> When a device tree overlay is applied on a node having an export-symbols
+>> node, symbols listed in the export-symbols node are used to resolve
+>> undefined symbols referenced from the overlay.
+>
+> I have impression that this is being discussed in three places
+> simultaneously - here, DT spec and DT schema. I don't know how to solve
+> the multiplication, but I will keep answering here, because that's my part.
+>
+>> This allows:
+>>    - Referencing symbols from an device tree overlay without the need to
+>>      know the full base board. Only the connector definition is needed.
+>>
+>>    - Using the exact same overlay on several connectors available on a given
+>>      board.
+>>
+>> For instance, the following description is supported with the
+>> export-symbols node:
+>>   - Base device tree board A:
+>>      ...
+>>      foo_connector: connector1 {
+>>          export-symbols {
+>>             connector = <&foo_connector>;
+>>          };
+>>      };
+>>
+>>      bar_connector: connector2 {
+>>          export-symbols {
+>>             connector = <&bar_connector>;
+>>          };
+>>      };
+>>      ...
+> And what would this mean? Which symbol is exported - foo or bar?
+>
+>>   - Base device tree board B:
+>>      ...
+>>      front_connector: addon-connector {
+>>          export-symbols {
+>>             connector = <&front_connector>;
+>>          };
+>>      };
+> <from my other reply in private>
+> Another problem is that the board DTS should not care about overlays. It
+> feels like breaking encapsulation and I cannot imagine now adding 1000
+> export-symbols, because every i2c, spi, mikrobus or PCI slot could have
+> an overlay applied.
+>
+> You could argue that only few nodes will be exported like this, so only
+> real mikrobus connectors. Then I will argue: look at aliases. People
+> alias everything everywhere, not following the guidelines.
+>
+> If we assume that such overlays are designed for specific boards, thus
+> there will be only one or two exported symbols not 1000, then what is
+> the benefit of export symbols comparing to referencing by full path?
+> </end from my other reply>
 
-Sorry, I'm not in a position to help right now.
+Can you explain how referencing by full path will work in connector + 
+addon board setups?
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+The full path will be dependent on the connector, which means the same 
+addon  board overlay cannot work for different connectors.
+
+
+>
+> And with above assumption - such overlays designed per board - plus my
+> first point about duplicated exports:
+> connector = <&foo_connector>;
+> connector = <&bar_connector>;
+>
+> why not exporting the symbol with the same name? E.g.:
+>
+>       foo_connector: connector1 {
+>           export-symbols {
+>              whatever-property-style = <&foo_connector>;
+>           };
+>       };
+>
+> and overlay:
+>
+>       node {
+>           ...
+>           connector = <&foo_connector>;
+>           ...
+>       };
+
+
+Isn't this overlay tied to `foo_connector`, i.e. it cannot be used with 
+`bar_connector`?
+
+
+>
+> Or even annotation?
+>
+>       foo_connector: connector1 __exported_symbol__ {
+>           ....
+>       };
+>
+>
+>       node {
+>           ...
+>           connector = <&foo_connector>;
+>           ...
+>       };
+>
+> ? This also answers my further question about DTS style (see at the bottom)
+>
+>>      ...
+>>
+>>   - Overlay describing an addon board the can be connected on connectors:
+>>      ...
+>>      node {
+>>          ...
+>>          connector = <&connector>;
+>>          ...
+>>      };
+>>      ...
+>>
+>> Thanks to the export-symbols node, the overlay can be applied on
+>> connector1 or connector2 available on board A but also on
+>> addon-connector available on board B.
+>>
+>> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+>> Tested-by: Ayush Singh <ayush@beagleboard.org>
+> I would argue you cannot test a binding, because testing here is part of
+> a process, but what do I know...
+
+Ahh, I added tested by for the whole patch series to check that the 
+phandle resolution is working. But yes, I have not tested the bindings.
+
+
+>
+>
+>> ---
+>>   .../devicetree/bindings/export-symbols.yaml   | 43 +++++++++++++++++++
+>>   1 file changed, 43 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/export-symbols.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/export-symbols.yaml b/Documentation/devicetree/bindings/export-symbols.yaml
+>> new file mode 100644
+>> index 000000000000..0e404eff8937
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/export-symbols.yaml
+>> @@ -0,0 +1,43 @@
+>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/export-symbols.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Export symbols
+>> +
+>> +maintainers:
+>> +  - Herve Codina <herve.codina@bootlin.com>
+>> +
+>> +description: |
+>> +  An export-symbols node allows to export symbols for symbols resolution
+>> +  performed when applying a device tree overlay.
+>> +
+>> +  When a device tree overlay is applied on a node having an export-symbols
+>> +  node, symbols listed in the export-symbols node are used to resolve undefined
+>> +  symbols referenced from the overlay.
+>> +
+>> +properties:
+>> +  $nodename:
+>> +    const: export-symbols
+>> +
+>> +patternProperties:
+>> +  "^[a-zA-Z_]?[a-zA-Z0-9_]*$":
+> This messes up with coding style which I would prefer keep intact.
+> Basically these properties will be using label style.
+>
+>> +    $ref: /schemas/types.yaml#/definitions/phandle
+>> +    description:
+>> +      A symbol exported in the form <symbol_name>=<phandle>.
+>> +
+>> +additionalProperties: false
+>> +
+> Best regards,
+> Krzysztof
+
+
+Maybe the dt-schema discussion will give a better description of why I 
+need export-symbols or something similar [0].
+
+I have also been trying to move the discussion regarding global vs local 
+scope overlay application for connectors here [1].
+
+
+[0]: 
+https://lore.kernel.org/devicetree-spec/20250411-export-symbols-v3-1-f59368d97063@beagleboard.org/T/#u
+
+[1]: 
+https://lore.kernel.org/linux-devicetree/9c326bb7-e09a-4c21-944f-006b3fad1870@beagleboard.org/
+
+
+Best Regards,
+
+Ayush Sigh
+
 
