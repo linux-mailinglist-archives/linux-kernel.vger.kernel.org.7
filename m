@@ -1,47 +1,48 @@
-Return-Path: <linux-kernel+bounces-666229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E6A0AC73FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 00:28:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AE38AC7401
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 00:28:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C599A205F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 22:27:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCE7C1C0458A
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 22:28:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 893D02253FC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D00CF226170;
 	Wed, 28 May 2025 22:26:31 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79EB1222566
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FDD922371C
 	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 22:26:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748471189; cv=none; b=Lv1iCRljUinOyGnY/5Q58T6x+di1YZ+exLPbafrUatrPoANwZ5saamfwO55Kg+ecK8MxWxVKToMqxQJsrfVChKCYQNOlbkXoaxSqo/iwxKWZb3RtUmohITn9zI6/l+T1qCCeOOvrW2mOWUaM5DJiQq8WZRR7gGJrQvhTjVpv2mk=
+	t=1748471190; cv=none; b=giNt1KAvwl0UVA1TJMhWm/R9m/OiQ2yN3ZdrH/i8K/8djWmoNBKCZ2gmtqSw9KkjGayEm93LFbVk//rpO0rx0RFwlicpdQ2URqNlvMbGAkQ7GQcdjb17vKxWnf7WweijUslJBpzFeUeUFohYFa0yvO4Qs8AUm9p2QXe7HfxU2iM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748471189; c=relaxed/simple;
-	bh=CtF3ZpsikHvLYRw54+HBfRlC8X1EQ0vEmZWVRxaWnXo=;
+	s=arc-20240116; t=1748471190; c=relaxed/simple;
+	bh=U8Bcmh8UVfm+NFcUlSKdEiT3iUt0gxDN8wwdX7ZyfEM=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=rZVm+pqDUdlFPetHD1KM8RHVlScs8XlEUflAHIgVcsz3FYhYbFUfuILld2dGtPKjDwmPRAiaSeDJBd5NJGZryyhscO0QuWPFx/+xGg0U0w0fs+JRQaxZKCDUABHkFz3daTHwKCX5C1wuCPvJCP7QcVC9/gGXzY9FesNUIVIhJo8=
+	 Content-Type; b=rW7LpEfx7CZvS8x+7KNwgSclMOeVg3fSt2CK1GQcZYY2288y2k3vpFmcFe/jRJJHK4gm3gcX8BhcNJm1LQxSt908og5llqpYUP6NwtUDBoqgOoVAbZm/HAnlQe2M8Ckbq8Xt5JjY0bsl53ttL+W8CDVlXkr8M+kNhUfjZGCLXTA=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66BD2C4CEF0;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99527C4CEED;
 	Wed, 28 May 2025 22:26:29 +0000 (UTC)
 Received: from rostedt by gandalf with local (Exim 4.98.2)
 	(envelope-from <rostedt@goodmis.org>)
-	id 1uKPFC-0000000Ap1f-369A;
+	id 1uKPFC-0000000Ap2C-3oIZ;
 	Wed, 28 May 2025 18:27:30 -0400
-Message-ID: <20250528222730.589774070@goodmis.org>
+Message-ID: <20250528222730.759686745@goodmis.org>
 User-Agent: quilt/0.68
-Date: Wed, 28 May 2025 18:27:12 -0400
+Date: Wed, 28 May 2025 18:27:13 -0400
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org
 Cc: Masami Hiramatsu <mhiramat@kernel.org>,
  Mark Rutland <mark.rutland@arm.com>,
  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Subject: [for-next][PATCH 08/10] ring-buffer: Simplify ring_buffer_read_page() with guard()
+ Andrew Morton <akpm@linux-foundation.org>,
+ Vincent Donnefort <vdonnefort@google.com>
+Subject: [for-next][PATCH 09/10] ring-buffer: Make ring_buffer_{un}map() simpler with guard(mutex)
 References: <20250528222704.623477429@goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -53,117 +54,120 @@ Content-Type: text/plain; charset=UTF-8
 
 From: Steven Rostedt <rostedt@goodmis.org>
 
-The function ring_buffer_read_page() had two gotos. One was simply
-returning "ret" and the other was unlocking the reader_lock.
+Convert the taking of the buffer->mutex and the cpu_buffer->mapping_lock
+over to guard(mutex) and simplify the ring_buffer_map() and
+ring_buffer_unmap() functions.
 
-There's no reason to use goto to simply return the "ret" variable. Instead
-just return the value.
-
-The jump to the unlocking of the reader_lock can be replaced by
-guard(raw_spinlock_irqsave)(&cpu_buffer->reader_lock).
-
-With these two changes the "ret" variable is no longer used and can be
-removed. The return value on non-error is what was read and is stored in
-the "read" variable.
-
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
 Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Link: https://lore.kernel.org/20250527145216.0187cf36@gandalf.local.home
-Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Cc: Vincent Donnefort <vdonnefort@google.com>
+Link: https://lore.kernel.org/20250527122009.267efb72@gandalf.local.home
 Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- kernel/trace/ring_buffer.c | 28 +++++++++++-----------------
- 1 file changed, 11 insertions(+), 17 deletions(-)
+ kernel/trace/ring_buffer.c | 35 +++++++++++------------------------
+ 1 file changed, 11 insertions(+), 24 deletions(-)
 
 diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-index 58cca10f482b..931bbcc6640f 100644
+index 931bbcc6640f..ef1cca8125df 100644
 --- a/kernel/trace/ring_buffer.c
 +++ b/kernel/trace/ring_buffer.c
-@@ -6531,38 +6531,37 @@ int ring_buffer_read_page(struct trace_buffer *buffer,
- 	struct buffer_data_page *bpage;
- 	struct buffer_page *reader;
- 	unsigned long missed_events;
--	unsigned long flags;
- 	unsigned int commit;
- 	unsigned int read;
- 	u64 save_timestamp;
--	int ret = -1;
+@@ -7161,36 +7161,34 @@ int ring_buffer_map(struct trace_buffer *buffer, int cpu,
+ {
+ 	struct ring_buffer_per_cpu *cpu_buffer;
+ 	unsigned long flags, *subbuf_ids;
+-	int err = 0;
++	int err;
  
  	if (!cpumask_test_cpu(cpu, buffer->cpumask))
--		goto out;
-+		return -1;
+ 		return -EINVAL;
  
- 	/*
- 	 * If len is not big enough to hold the page header, then
- 	 * we can not copy anything.
- 	 */
- 	if (len <= BUF_PAGE_HDR_SIZE)
--		goto out;
-+		return -1;
+ 	cpu_buffer = buffer->buffers[cpu];
  
- 	len -= BUF_PAGE_HDR_SIZE;
+-	mutex_lock(&cpu_buffer->mapping_lock);
++	guard(mutex)(&cpu_buffer->mapping_lock);
  
- 	if (!data_page || !data_page->data)
--		goto out;
-+		return -1;
-+
- 	if (data_page->order != buffer->subbuf_order)
--		goto out;
-+		return -1;
- 
- 	bpage = data_page->data;
- 	if (!bpage)
--		goto out;
-+		return -1;
- 
--	raw_spin_lock_irqsave(&cpu_buffer->reader_lock, flags);
-+	guard(raw_spinlock_irqsave)(&cpu_buffer->reader_lock);
- 
- 	reader = rb_get_reader_page(cpu_buffer);
- 	if (!reader)
--		goto out_unlock;
-+		return -1;
- 
- 	event = rb_reader_event(cpu_buffer);
- 
-@@ -6596,7 +6595,7 @@ int ring_buffer_read_page(struct trace_buffer *buffer,
- 		if (full &&
- 		    (!read || (len < (commit - read)) ||
- 		     cpu_buffer->reader_page == cpu_buffer->commit_page))
--			goto out_unlock;
-+			return -1;
- 
- 		if (len > (commit - read))
- 			len = (commit - read);
-@@ -6605,7 +6604,7 @@ int ring_buffer_read_page(struct trace_buffer *buffer,
- 		size = rb_event_ts_length(event);
- 
- 		if (len < size)
--			goto out_unlock;
-+			return -1;
- 
- 		/* save the current timestamp, since the user will need it */
- 		save_timestamp = cpu_buffer->read_stamp;
-@@ -6663,7 +6662,6 @@ int ring_buffer_read_page(struct trace_buffer *buffer,
- 		if (reader->real_end)
- 			local_set(&bpage->commit, reader->real_end);
+ 	if (cpu_buffer->user_mapped) {
+ 		err = __rb_map_vma(cpu_buffer, vma);
+ 		if (!err)
+ 			err = __rb_inc_dec_mapped(cpu_buffer, true);
+-		mutex_unlock(&cpu_buffer->mapping_lock);
+ 		return err;
  	}
--	ret = read;
  
- 	cpu_buffer->lost_events = 0;
+ 	/* prevent another thread from changing buffer/sub-buffer sizes */
+-	mutex_lock(&buffer->mutex);
++	guard(mutex)(&buffer->mutex);
  
-@@ -6690,11 +6688,7 @@ int ring_buffer_read_page(struct trace_buffer *buffer,
- 	if (commit < buffer->subbuf_size)
- 		memset(&bpage->data[commit], 0, buffer->subbuf_size - commit);
+ 	err = rb_alloc_meta_page(cpu_buffer);
+ 	if (err)
+-		goto unlock;
++		return err;
  
-- out_unlock:
--	raw_spin_unlock_irqrestore(&cpu_buffer->reader_lock, flags);
+ 	/* subbuf_ids include the reader while nr_pages does not */
+ 	subbuf_ids = kcalloc(cpu_buffer->nr_pages + 1, sizeof(*subbuf_ids), GFP_KERNEL);
+ 	if (!subbuf_ids) {
+ 		rb_free_meta_page(cpu_buffer);
+-		err = -ENOMEM;
+-		goto unlock;
++		return -ENOMEM;
+ 	}
+ 
+ 	atomic_inc(&cpu_buffer->resize_disabled);
+@@ -7218,35 +7216,29 @@ int ring_buffer_map(struct trace_buffer *buffer, int cpu,
+ 		atomic_dec(&cpu_buffer->resize_disabled);
+ 	}
+ 
+-unlock:
+-	mutex_unlock(&buffer->mutex);
+-	mutex_unlock(&cpu_buffer->mapping_lock);
 -
-- out:
--	return ret;
-+	return read;
+-	return err;
++	return 0;
  }
- EXPORT_SYMBOL_GPL(ring_buffer_read_page);
  
+ int ring_buffer_unmap(struct trace_buffer *buffer, int cpu)
+ {
+ 	struct ring_buffer_per_cpu *cpu_buffer;
+ 	unsigned long flags;
+-	int err = 0;
+ 
+ 	if (!cpumask_test_cpu(cpu, buffer->cpumask))
+ 		return -EINVAL;
+ 
+ 	cpu_buffer = buffer->buffers[cpu];
+ 
+-	mutex_lock(&cpu_buffer->mapping_lock);
++	guard(mutex)(&cpu_buffer->mapping_lock);
+ 
+ 	if (!cpu_buffer->user_mapped) {
+-		err = -ENODEV;
+-		goto out;
++		return -ENODEV;
+ 	} else if (cpu_buffer->user_mapped > 1) {
+ 		__rb_inc_dec_mapped(cpu_buffer, false);
+-		goto out;
++		return 0;
+ 	}
+ 
+-	mutex_lock(&buffer->mutex);
++	guard(mutex)(&buffer->mutex);
+ 	raw_spin_lock_irqsave(&cpu_buffer->reader_lock, flags);
+ 
+ 	/* This is the last user space mapping */
+@@ -7261,12 +7253,7 @@ int ring_buffer_unmap(struct trace_buffer *buffer, int cpu)
+ 	rb_free_meta_page(cpu_buffer);
+ 	atomic_dec(&cpu_buffer->resize_disabled);
+ 
+-	mutex_unlock(&buffer->mutex);
+-
+-out:
+-	mutex_unlock(&cpu_buffer->mapping_lock);
+-
+-	return err;
++	return 0;
+ }
+ 
+ int ring_buffer_map_get_reader(struct trace_buffer *buffer, int cpu)
 -- 
 2.47.2
 
