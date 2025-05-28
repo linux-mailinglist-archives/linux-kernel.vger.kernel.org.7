@@ -1,186 +1,206 @@
-Return-Path: <linux-kernel+bounces-665762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B75B0AC6D4D
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 17:59:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0CDFAC6D43
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 17:57:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB8BD1BC7D4C
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 15:59:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BB55172AE7
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 15:57:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AA5F28D858;
-	Wed, 28 May 2025 15:58:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32CDD28C5B8;
+	Wed, 28 May 2025 15:57:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="kpa9c+Ya"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nr6kWEEw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7699286436
-	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 15:58:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EEE3286436;
+	Wed, 28 May 2025 15:57:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748447927; cv=none; b=mHKfFrn0hw0ecuvh0ZzyxRFtLzW/9YYeMZ8dqdxiSo1K65dIVXuFJMHhltgAVM50Cc1KhWBnh0qAf2smekX0NUtAnCkDOMUjrhF6f2zXUxjQ/dcqxlehJzRpg07L7UUIBJ38OlnuD80s7NfrSQRkWhMmf7yoEG6VmN39FFrCSHU=
+	t=1748447831; cv=none; b=na6V1yS9zGNrvZVcnOMCHyPaBr3AhDMHn13JB2u8v6fodMqAy9b9QKBlsk8QQ9nO8HygzUMnM+FgrsOSOtsi9usTdss0v0rZqnukYOotoXzJ5umz3WCkGcVlGO7uCAbk6bDvn1bVkFGnYz5X9Ql96nFoZkPRkS2O9I5RjAseEGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748447927; c=relaxed/simple;
-	bh=SU+mU5oQxy8bSSEFYsj0BOipry6meOH69Ie9WgYQZVU=;
+	s=arc-20240116; t=1748447831; c=relaxed/simple;
+	bh=cunEx1GQ+Vp/hksXrb/eoFZg/bDuO6fnKXClUzKr/m0=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=cNpvCe7x3KGW5BfU9tbWlNWqkE7z/3pZArTlIo9nX9rCL6DaOQLmyIEN/iuQIMOeTHED3gBR1iEUOw92+lSg/9IzS4htLkUTjSJyLX3Oyq7hCSBL+VEyMdOiE9RkkCvb0c+8+gVJpywsWGlZ42dD9FEFDXovpUnGBNIrkRm9IeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=kpa9c+Ya; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A24AFC4CEED;
-	Wed, 28 May 2025 15:58:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1748447927;
-	bh=SU+mU5oQxy8bSSEFYsj0BOipry6meOH69Ie9WgYQZVU=;
+	 Content-Disposition; b=BxCB3PxWLwY1fZhHAS/r9UznnqDWAwSRnINoqCtzccj6/vZuLEZMlUlhK1BJuleZ8L4IKA55wSqSTtMoqbWaTrGwdqeQacmXuIoBsgYdN/QHTRbnCNPFZJMMZLBvojRrhFhHi4JCcnNmRY/VeYcFAbQ6DVcuOX4KwSc13GOxXo8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nr6kWEEw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81A8AC4CEE3;
+	Wed, 28 May 2025 15:57:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748447831;
+	bh=cunEx1GQ+Vp/hksXrb/eoFZg/bDuO6fnKXClUzKr/m0=;
 	h=Date:From:To:Cc:Subject:From;
-	b=kpa9c+YaPO8qrDqbTzmKusm3H9dr60VxNUMdOINNKpeSKlRNhQ+DN1tBiNa8tvfu+
-	 Wbxuran5oLhEF2F/X0T3FaSbM4dHxR77qfcQ1j2mAlq+AWau28sA+X1UPs96FsrrnE
-	 yh42uABVH0lME13MVsRlu5Fyct8Kf6NY1RA/orLQ=
-Date: Wed, 28 May 2025 17:56:52 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org,
-	Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: [GIT PULL] Driver core changes for 6.16-rc1
-Message-ID: <aDcyRMojWUbAllVX@kroah.com>
+	b=Nr6kWEEw6soS8hsA4ePXvWPyPI+PUVJvlTNOxbL8fLYXLSXmRIVvIUjCb/ZRjHMjg
+	 Nf+P234/HSWhq1aIc5c5y539DTTOTyd3QRxFXZzpJMHRqh4VlNHPaAQooz4mQuKbKu
+	 7zYjPS8X0zhxPYplXmkfin0n/17u5ZBDxToUU18B9hP83Blil+h9USSOOT4BDnR1Lx
+	 nqHd1LkgoXLNkAFdBXocOO+CyKnxgbvINSbf7t1irM4mrJgemqkvoqmEBm/wY9ai1m
+	 XharRn5flp7HFNBlzROLzpXJoKFIJnFZIjeiX/71vdM/3N/O3R0DpuyMEpr0Y4d2it
+	 MK+ggwblqeDuA==
+Date: Wed, 28 May 2025 12:57:08 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Namhyung Kim <namhyung@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
+	Bill Wendling <morbo@google.com>,
+	Chaitanya S Prakash <chaitanyas.prakash@arm.com>,
+	Fei Lang <langfei@huawei.com>, Howard Chu <howardchu95@gmail.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	James Clark <james.clark@linaro.org>, Jiri Olsa <jolsa@kernel.org>,
+	Justin Stitt <justinstitt@google.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Stephen Brennan <stephen.s.brennan@oracle.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: [PATCH 1/1] Revert "perf thread: Ensure comm_lock held for comm_list"
+Message-ID: <aDcyVLVpZRui1ole@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
 
-The following changes since commit 82f2b0b97b36ee3fcddf0f0780a9a0825d52fec3:
+This reverts commit 8f454c95817d15ee529d58389612ea4b34f5ffb3.
 
-  Linux 6.15-rc6 (2025-05-11 14:54:11 -0700)
+'perf top' is freezing on exit sometimes, bisected to this one, revert.
 
-are available in the Git repository at:
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+Cc: Bill Wendling <morbo@google.com>
+Cc: Chaitanya S Prakash <chaitanyas.prakash@arm.com>
+Cc: Fei Lang <langfei@huawei.com>
+Cc: Howard Chu <howardchu95@gmail.com>
+Cc: Ian Rogers <irogers@google.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: James Clark <james.clark@linaro.org>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Justin Stitt <justinstitt@google.com>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Nathan Chancellor <nathan@kernel.org>
+Cc: Nick Desaulniers <nick.desaulniers+lkml@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephen Brennan <stephen.s.brennan@oracle.com>
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/util/comm.c   |  2 --
+ tools/perf/util/thread.c | 17 ++++-------------
+ tools/perf/util/thread.h |  9 ++++-----
+ 3 files changed, 8 insertions(+), 20 deletions(-)
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/driver-core/driver-core.git tags/driver-core-6.16-rc1
+diff --git a/tools/perf/util/comm.c b/tools/perf/util/comm.c
+index 9880247a2c3364cb..8aa456d7c2cd2d74 100644
+--- a/tools/perf/util/comm.c
++++ b/tools/perf/util/comm.c
+@@ -24,7 +24,6 @@ static struct comm_strs {
+ static void comm_strs__remove_if_last(struct comm_str *cs);
+ 
+ static void comm_strs__init(void)
+-	NO_THREAD_SAFETY_ANALYSIS /* Inherently single threaded due to pthread_once. */
+ {
+ 	init_rwsem(&_comm_strs.lock);
+ 	_comm_strs.capacity = 16;
+@@ -120,7 +119,6 @@ static void comm_strs__remove_if_last(struct comm_str *cs)
+ }
+ 
+ static struct comm_str *__comm_strs__find(struct comm_strs *comm_strs, const char *str)
+-	SHARED_LOCKS_REQUIRED(comm_strs->lock)
+ {
+ 	struct comm_str **result;
+ 
+diff --git a/tools/perf/util/thread.c b/tools/perf/util/thread.c
+index c202b98b36c29215..415c0e5d1e751a47 100644
+--- a/tools/perf/util/thread.c
++++ b/tools/perf/util/thread.c
+@@ -41,7 +41,6 @@ int thread__init_maps(struct thread *thread, struct machine *machine)
+ }
+ 
+ struct thread *thread__new(pid_t pid, pid_t tid)
+-	NO_THREAD_SAFETY_ANALYSIS /* Allocation/creation is inherently single threaded. */
+ {
+ 	RC_STRUCT(thread) *_thread = zalloc(sizeof(*_thread));
+ 	struct thread *thread;
+@@ -203,29 +202,22 @@ int thread__set_namespaces(struct thread *thread, u64 timestamp,
+ 
+ struct comm *thread__comm(struct thread *thread)
+ {
+-	struct comm *res = NULL;
++	if (list_empty(thread__comm_list(thread)))
++		return NULL;
+ 
+-	down_read(thread__comm_lock(thread));
+-	if (!list_empty(thread__comm_list(thread)))
+-		res = list_first_entry(thread__comm_list(thread), struct comm, list);
+-	up_read(thread__comm_lock(thread));
+-	return res;
++	return list_first_entry(thread__comm_list(thread), struct comm, list);
+ }
+ 
+ struct comm *thread__exec_comm(struct thread *thread)
+ {
+ 	struct comm *comm, *last = NULL, *second_last = NULL;
+ 
+-	down_read(thread__comm_lock(thread));
+ 	list_for_each_entry(comm, thread__comm_list(thread), list) {
+-		if (comm->exec) {
+-			up_read(thread__comm_lock(thread));
++		if (comm->exec)
+ 			return comm;
+-		}
+ 		second_last = last;
+ 		last = comm;
+ 	}
+-	up_read(thread__comm_lock(thread));
+ 
+ 	/*
+ 	 * 'last' with no start time might be the parent's comm of a synthesized
+@@ -241,7 +233,6 @@ struct comm *thread__exec_comm(struct thread *thread)
+ 
+ static int ____thread__set_comm(struct thread *thread, const char *str,
+ 				u64 timestamp, bool exec)
+-	EXCLUSIVE_LOCKS_REQUIRED(thread__comm_lock(thread))
+ {
+ 	struct comm *new, *curr = thread__comm(thread);
+ 
+diff --git a/tools/perf/util/thread.h b/tools/perf/util/thread.h
+index 56e08c8ae005e82b..cd574a896418ac94 100644
+--- a/tools/perf/util/thread.h
++++ b/tools/perf/util/thread.h
+@@ -236,15 +236,14 @@ static inline struct rw_semaphore *thread__namespaces_lock(struct thread *thread
+ 	return &RC_CHK_ACCESS(thread)->namespaces_lock;
+ }
+ 
+-static inline struct rw_semaphore *thread__comm_lock(struct thread *thread)
++static inline struct list_head *thread__comm_list(struct thread *thread)
+ {
+-	return &RC_CHK_ACCESS(thread)->comm_lock;
++	return &RC_CHK_ACCESS(thread)->comm_list;
+ }
+ 
+-static inline struct list_head *thread__comm_list(struct thread *thread)
+-	SHARED_LOCKS_REQUIRED(thread__comm_lock(thread))
++static inline struct rw_semaphore *thread__comm_lock(struct thread *thread)
+ {
+-	return &RC_CHK_ACCESS(thread)->comm_list;
++	return &RC_CHK_ACCESS(thread)->comm_lock;
+ }
+ 
+ static inline u64 thread__db_id(const struct thread *thread)
+-- 
+2.49.0
 
-for you to fetch changes up to 071d8e4c2a3b0999a9b822e2eb8854784a350f8a:
-
-  kernfs: Relax constraint in draining guard (2025-05-21 14:23:13 +0200)
-
-----------------------------------------------------------------
-Driver core changes for 6.16-rc1
-
-Here are the driver core / kernfs changes for 6.16-rc1.
-
-Not a huge number of changes this development cycle, here's the summary
-of what is included in here:
-  - kernfs locking tweaks, pushing some global locks down into a per-fs
-    image lock
-  - rust driver core and pci device bindings added for new features.
-  - sysfs const work for bin_attributes.  This churn should now be
-    completed for those types of attributes
-  - auxbus device creation helpers added
-  - fauxbus fix for creating sysfs files after the probe completed
-    properly
-  - other tiny updates for driver core things.
-
-All of these have been in linux-next for over a week with no reported
-issues.
-
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
-----------------------------------------------------------------
-Andy Shevchenko (2):
-      devres: Move devm_*_action*() APIs to devres.h
-      devres: Add devm_is_action_added() helper
-
-Dan Carpenter (1):
-      driver core: auxiliary bus: Fix IS_ERR() vs NULL mixup in __devm_auxiliary_device_create()
-
-Danilo Krummrich (10):
-      rust: device: implement impl_device_context_deref!
-      rust: device: implement impl_device_context_into_aref!
-      rust: device: implement device context for Device
-      rust: platform: preserve device context in AsRef
-      rust: pci: preserve device context in AsRef
-      rust: device: implement Bound device context
-      rust: pci: move iomap_region() to impl Device<Bound>
-      rust: devres: require a bound device
-      rust: dma: require a bound device
-      Merge tag 'topic/device-context-2025-04-17' into driver-core-next
-
-Eric Biggers (1):
-      firmware_loader: use SHA-256 library API instead of crypto_shash API
-
-Greg Kroah-Hartman (4):
-      Merge 6.15-rc4 into driver-core-next
-      Merge tag 'gpiod-devm-is-action-added-for-v6.16-rc1' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/brgl/linux into driver-core-next
-      Merge 6.15-rc6 into driver-core-next
-      drivers: hv: fix up const issue with vmbus_chan_bin_attrs
-
-Jerome Brunet (1):
-      driver core: auxiliary bus: add device creation helpers
-
-Jinliang Zheng (2):
-      kernfs: switch global kernfs_idr_lock to per-fs lock
-      kernfs: switch global kernfs_rename_lock to per-fs lock
-
-Johan Hovold (1):
-      component: do not try to unbind unbound components
-
-Kurt Borja (1):
-      driver core: faux: Add sysfs groups after probing
-
-Michael Ellerman (1):
-      Documentation: embargoed-hardware-issues.rst: Remove myself
-
-Michal Koutný (1):
-      kernfs: Relax constraint in draining guard
-
-Raag Jadav (1):
-      devres: simplify devm_kstrdup() using devm_kmemdup()
-
-Thomas Weißschuh (2):
-      sysfs: constify bin_attribute argument of bin_attribute::read/write()
-      sysfs: constify attribute_group::bin_attrs
-
-Timur Tabi (1):
-      docs: debugfs: do not recommend debugfs_remove_recursive
-
-Woody Zhang (1):
-      platform: replace magic number with macro PLATFORM_DEVID_NONE
-
-Zijun Hu (2):
-      software node: Correct a OOB check in software_node_get_reference_args()
-      PM: wakeup: Do not expose 4 device wakeup source APIs
-
- Documentation/filesystems/debugfs.rst              |  19 ++--
- .../driver_development_debugging_guide.rst         |   2 +-
- .../process/embargoed-hardware-issues.rst          |   1 -
- drivers/base/auxiliary.c                           | 108 +++++++++++++++++++++
- drivers/base/component.c                           |   3 +-
- drivers/base/devres.c                              |  20 ++--
- drivers/base/faux.c                                |  22 ++++-
- drivers/base/firmware_loader/Kconfig               |   4 +-
- drivers/base/firmware_loader/main.c                |  34 +------
- drivers/base/platform.c                            |   2 +-
- drivers/base/power/wakeup.c                        |  12 +--
- drivers/base/swnode.c                              |   2 +-
- drivers/hv/vmbus_drv.c                             |   2 +-
- fs/kernfs/dir.c                                    |  33 ++++---
- fs/kernfs/file.c                                   |   3 +-
- fs/kernfs/kernfs-internal.h                        |  16 ++-
- fs/sysfs/group.c                                   |   6 +-
- include/linux/auxiliary_bus.h                      |  17 ++++
- include/linux/device.h                             |  38 --------
- include/linux/device/devres.h                      |  41 ++++++++
- include/linux/pm_wakeup.h                          |  15 ---
- include/linux/sysfs.h                              |  27 +-----
- rust/kernel/device.rs                              |  90 ++++++++++++++++-
- rust/kernel/devres.rs                              |  17 ++--
- rust/kernel/dma.rs                                 |  14 +--
- rust/kernel/pci.rs                                 |  33 +++----
- rust/kernel/platform.rs                            |  32 ++----
- 27 files changed, 378 insertions(+), 235 deletions(-)
 
