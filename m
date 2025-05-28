@@ -1,165 +1,161 @@
-Return-Path: <linux-kernel+bounces-665793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1231DAC6DD2
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 18:19:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39D93AC6DD6
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 18:20:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A74DE1C00E40
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 16:19:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F23F1676AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 16:19:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D93828DF18;
-	Wed, 28 May 2025 16:17:30 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 851E928D8DB;
-	Wed, 28 May 2025 16:17:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DA1A28D8DB;
+	Wed, 28 May 2025 16:17:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UwJzwrgl"
+Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E1F91632C8
+	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 16:17:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748449050; cv=none; b=oVfZGBA8oNxIeN0Uay20T5SvhkVniFdt7qH24MJx2SBuTB5sCVGK6omkaOi08VvCB1x29dm8ud8NpbyTn1LOvcMaRk3Jnneu+SIwcdlAgSysaojCa7AQl/OQ9WW972r8XqcwGMDWOtgMWYLxEytLD5jUXr/Ny+YsINxijVMjeME=
+	t=1748449069; cv=none; b=LIr6I3riVfhc8ZFAlG/8Hx38fHU2wjCT5RpT5zJsNxnaHuYZVL4WjUJ5KClRuWKnDEUcxS+Kk8YbG1ZlIs4fII2U9vxQ5Sj52vVG76Xki/SIeRNppKbqygQ1CqbcXLz79/U5i0TZfAwSAVpVukxyOAUimg2T0zmMYaLl2b19Mao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748449050; c=relaxed/simple;
-	bh=UhXhHXqGnsFxg+kHq1kEOUu4fzlnoiBRxONX9YRLNjs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PP2/WPIDvGmrDHa/Tymmd0KC8uyS4uMYfDueEApYwBXvc+ugIpBK/Nw0VDD5SbIhofoJa/UrC4zcxgI+WW8UFBUXj/PpIDKWVB3cWDBQvp0Uuh5uc0VdzzMa2fIrADeNzNts9mObmU19Ly2cT2Bp41V2qoGPl+fp7TVIO2JtCCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2732D1A2D;
-	Wed, 28 May 2025 09:17:11 -0700 (PDT)
-Received: from localhost (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3C3353F673;
-	Wed, 28 May 2025 09:17:27 -0700 (PDT)
-Date: Wed, 28 May 2025 17:17:22 +0100
-From: Leo Yan <leo.yan@arm.com>
-To: kan.liang@linux.intel.com
-Cc: peterz@infradead.org, mingo@redhat.com, namhyung@kernel.org,
-	irogers@google.com, mark.rutland@arm.com,
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	eranian@google.com, ctshao@google.com, tmricht@linux.ibm.com,
-	Aishwarya TCV <aishwarya.tcv@arm.com>
-Subject: Re: [PATCH] perf: Fix the throttle error of some clock events
-Message-ID: <20250528161722.GL2566836@e132581.arm.com>
-References: <20250528144823.2996185-1-kan.liang@linux.intel.com>
+	s=arc-20240116; t=1748449069; c=relaxed/simple;
+	bh=XQvIWAytjBtx5roMruaxdFWO06D+VdCxLVFPTEz9p4U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hU//y/smN7VQY8w/BPywa0vOpTCQRwDs07ck7fDuUUwg+e3y8j18UMsOZQiVLDdsEmjkdUxhF1aVwIdoBlZ4zwy+SE+EIc4MCFWKqeyEF+pKt66Wgh+/C4LZ809ek8uQLsvyQOg5P5ZoQv0aaU6uOpxtNXDsnOJDQwfD351YaXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UwJzwrgl; arc=none smtp.client-ip=209.85.166.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-8644aa73dfcso100671039f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 09:17:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748449066; x=1749053866; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uTzSLuw5Tgn9PujxmjAjgP7UtvlX2ja/Zjw4kSQsqdg=;
+        b=UwJzwrgl3vvA4AQrmVbSI0timBluu6X22E/XaKWb0vkS6jDpY8Wc2ojq3E7uB4gT42
+         bc62vmHVS7HFq4OOAxWPm0Rh1ORJ+MTVhdLWwnCBYWoICEZPC7mNbZIulw5GLBRh2+lK
+         cC0HsyHe+Cec5fceuJxcoob9SpWkLqTg+U1rRvtK7wizwLDEkWKxpK5htDeudwzkE2kN
+         GY+OA8DONSXXWDmJjzFWniOhjvpZPWqoxdy0eOuFBHKY8t1tsLkYRAbXYUjqnJPjnowG
+         4SRpJt7dRHyPiFq43HYfEYDUb/yw2FwBPnuHAq/J0jjGXVujSWLTfZxcX4xe2wpzDPq6
+         WkCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748449066; x=1749053866;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uTzSLuw5Tgn9PujxmjAjgP7UtvlX2ja/Zjw4kSQsqdg=;
+        b=Z4ydEMUMkibhtTA7PIjG8Apq7T49cyqOx05dVQCjufUCzgzOJJLJGBsFJ19TFxsRV/
+         41jSEA+/h/VXkN99LT3+seOGneb67/rvUVixOAjbYSzo4LctrC+jVcP4JE8FCSzy1Zny
+         aksTjtTQFob0yGpO48xSCeR5wvoqrcpZdEJF1ygfSSQnSMaFHbTwra1ZcXpR+Xpe3O3P
+         dz+qCHS+uGnZe4DjUNat2KcwZpTtVS9jUbZVQSJC/1xy3KhtViVcchv78LSXiQJqZl3O
+         8+b3gm3vNZlh+HsLdebJnEpbkilYh4qRNzXw/dvrsTvrAtmYQRWqCIMTb5mbs2TVqk4f
+         +NAw==
+X-Forwarded-Encrypted: i=1; AJvYcCV+m/wnnxPCCWm+cH1fUPVARz6RRJP3x/idHZIA72/SIb/lnjffK9sdY+SfkSJcGiM48VXKVNKFeONwoi4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzdl059PEK9Z8dRQDTu4mHn0UT0sdY6HIjwKb3MBxLLldd2cWaK
+	LwR2BgYxjy4XEDrsJzi3q26xEpdpwXM8G0/s+apMCSVIGFpuZTQTsaEvSwZnLJ2ESFZO0UTauVn
+	/lbjsh7BJIro6A3xk2zet9drtY6xyBdTkoQ==
+X-Gm-Gg: ASbGncu++klrs3XY/tnvg/xLGLpYcstOaObsiMbN9/aldmc3D7rbvVj7lxYIauwLRgl
+	OWc9lQ3fiOnWViYdUV3OI03rTD9hezKXiPw6/BNRXKtlK1h0Y41n7uyXLWuJPSoonbhrZl4JYdm
+	uIZhPDRV3BfYvbOWi5duQpSklCOn9M3lA=
+X-Google-Smtp-Source: AGHT+IFF/umILiMgGZDGCLbJ5sT/qzWVOHlqk/6oUs0GExo2HD46i9Ov/em8Cdr+A78lOfG7WV8hw5tz0sQQvQ//DcA=
+X-Received: by 2002:a17:90b:3ec6:b0:2fe:b774:3ec8 with SMTP id
+ 98e67ed59e1d1-3110f332a9cmr20114781a91.23.1748449055876; Wed, 28 May 2025
+ 09:17:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250528144823.2996185-1-kan.liang@linux.intel.com>
+References: <20250522160954.429333-1-cyrilbur@tenstorrent.com> <2c07d65e-0641-42a0-9eb4-9e42d9325ff2@ghiti.fr>
+In-Reply-To: <2c07d65e-0641-42a0-9eb4-9e42d9325ff2@ghiti.fr>
+From: Andy Chiu <andybnac@gmail.com>
+Date: Thu, 29 May 2025 00:17:24 +0800
+X-Gm-Features: AX0GCFt9_AqO8_XbUCelsbyxCoWk63hdmjOhaTlGWY4wVu0fiMlfSByuwGx24k0
+Message-ID: <CAFTtA3PATS2CT-jax7eTNS=ZqU55CwGr=TeGiNX16ztfp5v9_w@mail.gmail.com>
+Subject: Re: [PATCH] riscv: uaccess: Only restore the CSR_STATUS SUM bit
+To: Alexandre Ghiti <alex@ghiti.fr>
+Cc: Cyril Bur <cyrilbur@tenstorrent.com>, samuel.holland@sifive.com, 
+	ben.dooks@codethink.co.uk, palmer@dabbelt.com, linux-kernel@vger.kernel.org, 
+	jszhang@kernel.org, paul.walmsley@sifive.com, charlie@rivosinc.com, 
+	jrtc27@jrtc27.com, aou@eecs.berkeley.edu, linux-riscv@lists.infradead.org, 
+	Deepak Gupta <debug@rivosinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 28, 2025 at 07:48:23AM -0700, kan.liang@linux.intel.com wrote:
-> From: Kan Liang <kan.liang@linux.intel.com>
-> 
-> The Arm CI reports RCU stall, which can be reproduced by the below perf
-> command.
->   perf record -a -e cpu-clock -- sleep 2
-> 
-> The cpu-clock and task_clock are two special SW events, which rely on
-> the hrtimer. Instead of invoking the stop(), the HRTIMER_NORESTART is
-> returned to stop the timer. Because the hrtimer interrupt handler cannot
-> cancel itself, which causes infinite loop.
-> 
-> There may be two ways to fix it.
-> - Add a check of MAX_INTERRUPTS in the event_stop. Return immediately if
-> the stop is invoked by the throttle.
-> - Introduce a PMU flag to track the case. Avoid the event_stop in
-> perf_event_throttle() if the flag is detected.
-> 
-> The latter looks more generic. It may be used if there are more other
-> cases that want to avoid the stop later. The latter is implemented.
-> 
-> Reported-by: Leo Yan <leo.yan@arm.com>
-> Reported-by: Aishwarya TCV <aishwarya.tcv@arm.com>
+On Tue, May 27, 2025 at 4:39=E2=80=AFAM Alexandre Ghiti <alex@ghiti.fr> wro=
+te:
+>
+> +cc linux-riscv, Andy, Deepak
+>
+> On 5/22/25 18:09, Cyril Bur wrote:
+> > During switch to csrs will OR the value of the register into the
+> > corresponding csr. In this case we're only interested in restoring the
+> > SUM bit not the entire register.
+> >
+> > Fixes: 788aa64c0 ("riscv: save the SR_SUM status over switches")
+> > Signed-off-by: Cyril Bur <cyrilbur@tenstorrent.com>
+> > ---
+> > I've put the Fixes tag in but I assume this will get squashed into the
+> > patch. Either way I hope this works to fix the immediate issue.
+> >
+> >   arch/riscv/kernel/entry.S | 12 ++++++++----
+> >   1 file changed, 8 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
+> > index 00bd0de9faa2..6ed3bd80903d 100644
+> > --- a/arch/riscv/kernel/entry.S
+> > +++ b/arch/riscv/kernel/entry.S
+> > @@ -399,14 +399,18 @@ SYM_FUNC_START(__switch_to)
+> >       REG_S s11, TASK_THREAD_S11_RA(a3)
+> >
+> >       /* save the user space access flag */
+> > -     li    s0, SR_SUM
+> > -     csrr  s1, CSR_STATUS
+> > -     REG_S s1, TASK_THREAD_STATUS_RA(a3)
+> > +     csrr  s0, CSR_STATUS
+> > +     REG_S s0, TASK_THREAD_STATUS_RA(a3)
+> >
+> >       /* Save the kernel shadow call stack pointer */
+> >       scs_save_current
+> > -     /* Restore context from next->thread */
+> > +     /*
+> > +      * Restore context from next->thread. csrs will OR the bits from =
+s0 and
+> > +      * only want to restore the SR_SUM bit
+> > +      */
+> >       REG_L s0,  TASK_THREAD_STATUS_RA(a4)
+> > +     li    s1,  SR_SUM
+> > +     and   s0,  s0, s1
+> >       csrs  CSR_STATUS, s0
+> >       REG_L ra,  TASK_THREAD_RA_RA(a4)
+> >       REG_L sp,  TASK_THREAD_SP_RA(a4)
+>
+> To conclude the discussion we had here
+> https://lore.kernel.org/linux-riscv/aDCtATl2N21fBsyT@debug.ba.rivosinc.co=
+m/#t,
+> in addition to Cyril's patch above, to me we only have to rename the
+> status field into sum and we're good to go. @Andy, @Deepak @Samuel Do
+> you agree?
 
-Thanks for adding me and my colleague's name!
+LGTM, thanks!
 
-> Closes: https://lore.kernel.org/lkml/20250527161656.GJ2566836@e132581.arm.com/
-> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-> ---
->  include/linux/perf_event.h |  1 +
->  kernel/events/core.c       | 23 ++++++++++++++++++++---
->  2 files changed, 21 insertions(+), 3 deletions(-)
-> 
-> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-> index 947ad12dfdbe..66f02f46595c 100644
-> --- a/include/linux/perf_event.h
-> +++ b/include/linux/perf_event.h
-> @@ -303,6 +303,7 @@ struct perf_event_pmu_context;
->  #define PERF_PMU_CAP_AUX_OUTPUT			0x0080
->  #define PERF_PMU_CAP_EXTENDED_HW_TYPE		0x0100
->  #define PERF_PMU_CAP_AUX_PAUSE			0x0200
-> +#define PERF_PMU_CAP_NO_THROTTLE_STOP		0x0400
+Andy
 
-When applying the patch on the top of tip/sched/core, I found it is
-conflict with a new added PERF_PMU_CAP_AUX_PREFER_LARGE.  So need to
-change the PERF_PMU_CAP_NO_THROTTLE_STOP to 0x0800.
-
-With the change, I tested on Arm64 board with two commands:
-
-  perf record -a -e cpu-clock -- sleep 2
-  perf test "perftool-testsuite_report"
-
-Tested-by: Leo Yan <leo.yan@arm.com>
-
-Thanks for quick fixing.
-
->  /**
->   * pmu::scope
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index 8327ab0ee641..4df274705038 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -2655,7 +2655,22 @@ static void perf_event_unthrottle(struct perf_event *event, bool start)
->  
->  static void perf_event_throttle(struct perf_event *event)
->  {
-> -	event->pmu->stop(event, 0);
-> +	/*
-> +	 * Some PMUs, e.g., cpu-clock and task_clock, may rely on
-> +	 * a special mechanism (hrtimer) to manipulate counters.
-> +	 * The regular stop doesn't work, since the hrtimer interrupt
-> +	 * handler cannot cancel itself.
-> +	 *
-> +	 * The stop should be avoided for such cases. Let the
-> +	 * driver-specific code handle it.
-> +	 *
-> +	 * The counters will eventually be disabled in the driver-specific
-> +	 * code. In unthrottle, they still need to be re-enabled.
-> +	 * There is no handling for PERF_PMU_CAP_NO_THROTTLE_STOP in
-> +	 * the perf_event_unthrottle().
-> +	 */
-> +	if (!(event->pmu->capabilities & PERF_PMU_CAP_NO_THROTTLE_STOP))
-> +		event->pmu->stop(event, 0);
->  	event->hw.interrupts = MAX_INTERRUPTS;
->  	perf_log_throttle(event, 0);
->  }
-> @@ -11846,7 +11861,8 @@ static int cpu_clock_event_init(struct perf_event *event)
->  static struct pmu perf_cpu_clock = {
->  	.task_ctx_nr	= perf_sw_context,
->  
-> -	.capabilities	= PERF_PMU_CAP_NO_NMI,
-> +	.capabilities	= PERF_PMU_CAP_NO_NMI |
-> +			  PERF_PMU_CAP_NO_THROTTLE_STOP,
->  	.dev		= PMU_NULL_DEV,
->  
->  	.event_init	= cpu_clock_event_init,
-> @@ -11928,7 +11944,8 @@ static int task_clock_event_init(struct perf_event *event)
->  static struct pmu perf_task_clock = {
->  	.task_ctx_nr	= perf_sw_context,
->  
-> -	.capabilities	= PERF_PMU_CAP_NO_NMI,
-> +	.capabilities	= PERF_PMU_CAP_NO_NMI |
-> +			  PERF_PMU_CAP_NO_THROTTLE_STOP,
->  	.dev		= PMU_NULL_DEV,
->  
->  	.event_init	= task_clock_event_init,
-> -- 
-> 2.38.1
-> 
+>
+> As this is an important fix (along with 2 other fixes, one for thead
+> vector and vdso static values), I'd like to send another PR soon for
+> inclusion in 6.16-rc1, I did not want to delay the second PR any longer.
+>
+> Thanks for your feedbacks,
+>
+> Alex
+>
+>
 
