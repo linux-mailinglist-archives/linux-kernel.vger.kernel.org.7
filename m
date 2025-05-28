@@ -1,136 +1,105 @@
-Return-Path: <linux-kernel+bounces-665210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99044AC65B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 11:22:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EA8BAC65BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 11:23:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0102C172650
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 09:22:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1726E16804C
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 09:23:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D4E2152E02;
-	Wed, 28 May 2025 09:22:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0B41278160;
+	Wed, 28 May 2025 09:22:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ECxbcPC1"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YsAd1fAK"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2323927587D
-	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 09:22:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D5DC275100;
+	Wed, 28 May 2025 09:22:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748424133; cv=none; b=AaDXDCKNck+rNMY+71vcSNKBLClk/t/GF6zNU6uOvmHSiV+rLlYZKHssDsT0i/H0xvKTwOJdn7da9QBDAkGHmdvQSZB00w4Q/+R/VxQLK+Yd4+kJ2zO9CAN8cZVc5Kzo88LevV4lnC+7eNsavOZl9rTmZTI0oTMOLaLLhML3/II=
+	t=1748424168; cv=none; b=AsqVxzG6BX/IFpZ6DRmDM5APicwULjTZiqxBpZ6dZTWN988xWOdouZOvZlq4SJxubGVSsaN+Dp4ZqkdvnfHFXpgpwrxQQrg5oU9Oj+b8cv0RqWpn1hNUs0i/uvKL2NDA5oxngAXoGC5yHuUQabrxJ18MAq9mLITZSchha2EYflM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748424133; c=relaxed/simple;
-	bh=NBrvQMrhx/6hLM6e+tUOgjMzy9y+05NeL0rQjwNG5cg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nntjn2ECDbsyq2NtrIN1GG/62LyCmvfecU8BgrtpqcKJRhq0kXwyMYVuWO4ipKLmfIa9q3DgR2Zuyx3fHjeQGnIaOU4/SlUW39L9YsIHQvd5/Ps7zKu+wWuCO66TYJ1pns7cJ2PZOhDqzafVV45L+iR3WeHHZ3K0d82Qz4vLqaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ECxbcPC1; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3a362e099cfso721019f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 02:22:10 -0700 (PDT)
+	s=arc-20240116; t=1748424168; c=relaxed/simple;
+	bh=Z5HyxWdH0KaGnOZO7JeE8+gXZA+GfoyeQH+lmP4o4As=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UOWDM70C9KrBH0+jrcVkWav40ufS95c8AuwbCqMY8hbQ/3zNuAZNpNF1RTG8e1ZqfUV9HlRszR8TDLuiSABepNpkPk6SzE//QUnW5wHjjTzR/BDpLr4hY6OMq3MDZOuFg05FQADd5wDVVzfaN5A7hU6PVTXc02mgwd34zsYUDzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YsAd1fAK; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ad52d9be53cso639974866b.2;
+        Wed, 28 May 2025 02:22:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1748424129; x=1749028929; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Rx2tOr2eY+H+fF6DPR+iLBfDIJ9wmmt75sHUbD+GTn4=;
-        b=ECxbcPC1ydBl4yLBQgv/GGSpkdnxTqo+47dQCTLN17F3tHi7wbu5/1KtGkvny8tAT1
-         uoXban1vEGgzL55napFURZbapa1c84rVkLwcWOQv0CD5VE9SeM3YFQKvjtzAG9hWsxVT
-         Oy50027rbutS3az3vTy116YKiXYnT5C9+BlcOiXG52EwE6ylTDbJGCZobZgSg9ElBN09
-         S9DlMST/oPLT9AAXoT4cQ7pcgQGquUBpVzr8hmkZ82+ZVQj4bZsZJXl2Dkc1LN6B7FGE
-         PqtTXV4W/oko5hzUDLsDQkYZ6l/Kr2tmzZxkTE9Spu4yu6zgTCcubC2m6n0gslXrNEFn
-         Mb7A==
+        d=gmail.com; s=20230601; t=1748424164; x=1749028964; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Z5HyxWdH0KaGnOZO7JeE8+gXZA+GfoyeQH+lmP4o4As=;
+        b=YsAd1fAKA31OgV/R3qlpxx1gZPIn+r97hykZDGK/LpI+jGcQ8DMflT3uo1nuHfuGuD
+         xgs/HsCCCjRhKA0QJr5IG7UGjlL4Sw4PES8PBTjF/DAdppGVY51ToUM85J1ZPtzVu0eJ
+         sv4af1Vg/5ax7aylfeDgfX5OEOafXWZMJrNDEy3Biq9g9uBx7CubiS3WSsbNL65c5h2/
+         UfL6oy291HvFEQXw6LiRqwkW1WN1hwW3BeuC7cTIF+Km68MK44tlH3JHkQ3rjgOQ17Vt
+         1zNaBdIK3v66AOpARq/TIVEpeCvljG1MbRXJNH3syWO/2OghlFigV19A19q0uHdCCYaa
+         a4hQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748424129; x=1749028929;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Rx2tOr2eY+H+fF6DPR+iLBfDIJ9wmmt75sHUbD+GTn4=;
-        b=ksTDFFkB1OtaS92luvLxMpnJpdg6tyQpaJguuUO/miNuV4ZhOb06mocs1JlJZ4Aibw
-         RKZYWY5AQiYYSXQ+GiG8V5gEWzsPGrusGGXOgrutayLKdFSV3/37OhEia9C7vUFjeJpB
-         h8bG1dAZ1tgyj/6xFkC5Xh81FtVJxqWvxL2Y4Duv1m+XAWLUim23IANFVkVHlItJpwxs
-         Rb0bnXQPIoZndWp7/3lBLWq1wnU5NDRbT+Z9jgnihlO105EWvGFs41Pef3LorXtzzQ81
-         Nf1Cqus9xACL90z1GrRs5v3/xz0mfS6YQpEYTNwNgh7R9pqkb6hIu3OW8EgtZnEMzgF8
-         gfeg==
-X-Forwarded-Encrypted: i=1; AJvYcCVQTYcgf33zFLIJF1XT3sySgN/jN6dXvf/WyyFQ0Qr6RWM5WS5Yb5TruXe4u5ik/uoTesnX6JBli6HzAyg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWHTY0zgF3pAdWraKysl77qvD9m6HjPwv7JGa4lE5n39JRRpAZ
-	vWwx3iPqaSePQTiYrDdc2s7NrIUdt7gn28o4YL3bfFWWNgIjBJrmiVRigpXrzb2aG+E=
-X-Gm-Gg: ASbGnctGBB1qfY6fF1CEPXqoHqjxqo+AM078XCq9OmgU3l4GGgIZtcBBg0DsZL9/ulS
-	7PZerPFuq5qSnutPXyS70ZcW+gxyCtWDi5I9GvPph/MWZvZAS42KIVEj5Xg1oddTSLNDmxCJY9/
-	RGbQg/5dkUK5bVIkuT7M+ImzEbX9Av1FNt3ZT3F21SZhOf02iZBsI6x5KhqeiKU0ao55JK29DCh
-	aUHtjqnMczroXSq71Qs/1HVyjtT+rYivCezeQBUKD64McjT3hvCCV1oXKxliAoJMkuZ+s2K73T3
-	JZiGhIrusw5BhXuQ/cSsNDMFK8AxySHAZUc6dRGpqSWjC8fXoJ8GJijiZtakMA==
-X-Google-Smtp-Source: AGHT+IH5TQnhBjLCtJ2q/cfEBit7Ui0hALJWg1qthF8GaTLBAj1glOoq4NR08mgOFCiTUbTFHl0ZOQ==
-X-Received: by 2002:a05:600c:4752:b0:441:b397:e324 with SMTP id 5b1f17b1804b1-44c93caeb6amr53578465e9.9.1748424129243;
-        Wed, 28 May 2025 02:22:09 -0700 (PDT)
-Received: from kuoka.. ([178.197.223.125])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-450787d3be4sm11249795e9.35.2025.05.28.02.22.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 May 2025 02:22:08 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Patrice Chotard <patrice.chotard@foss.st.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Srinivas Kandagatla <srini@kernel.org>,
-	Mark Brown <broonie@linaro.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] pinctrl: st: Drop unused st_gpio_bank() function
-Date: Wed, 28 May 2025 11:22:02 +0200
-Message-ID: <20250528092201.52132-2-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.45.2
+        d=1e100.net; s=20230601; t=1748424164; x=1749028964;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Z5HyxWdH0KaGnOZO7JeE8+gXZA+GfoyeQH+lmP4o4As=;
+        b=Ud6ZcD5XN2BcY1ZEMEd5xWKMMMagCtNMVHgxXf5ISOOfO+aKaRQI8VND5Xh7SSU/gz
+         1bu7ZV9pR7+chQ7qYZXhLDwA8xxA1S/2wi3I8fPGUcT/e+Qre/KTSLD/sEAmmBICdMNi
+         jNjv4g2BSF7z8ddHncBmfLtV4/QoiZPOhloFWOx7Wsa1uCg7+bgQrae35KoCdvyxTcoC
+         3bHZBOshu8iVWEmzF+6KywQNLipGupLgCG4MwwIt6G/WtG0audvqW5L/eah+BJCP9TsC
+         isXV5vOD9X6JisFBq9m1aU0/bSkz/6Q4Fp9q1a4FuND5X9OJF7y1o8l8/CqZZeI+2E1z
+         pK3w==
+X-Forwarded-Encrypted: i=1; AJvYcCViGr4I26EolfpycoJKLSuOGLlFVT1jWmPULFRhrf/c4iLCOc/GH8tNvS7Fz2nWZhhcXyTs++fD77Z/8fY7@vger.kernel.org, AJvYcCWJUFMjvCp1BZd/x/UHyR2KbAZ9hrY30HcqYcxwC+kIUHxEn/40fo0/9JdRdSS5rONUBRtHwZGOS7o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywud1tloyzEiVXx3uhKtRXG295zJ2B8nQsS7dPYyPAG7JvHOA2B
+	WJf4lPGHW8ZNgQf2UFUT5l2qSJ8O9OOo8ocQTCvknEk2ZG93ZAtm2sMQ1gUgD1cKqz9DC09TxFj
+	4hhhi7sXasgjmKyRafh/kODGeZ5p56TY=
+X-Gm-Gg: ASbGncttv1XUFMyzxdNHRH6qSD3WvkIXxMllIOYS4OKm/OegyQZhnnZHnUBPWlQ62w4
+	/4piCitQE4LJX6rgK/0LgcshvpH0RUJQNFV6PONd/fzJd2273tbNUcW2/JBgIV8bjwIWtzd65an
+	ZkP8u4eE5pMLGGGJ5GNsl3Z0eRoz97+t4DIYw=
+X-Google-Smtp-Source: AGHT+IFKYN9n2rkV2PZefCaqRfYU3re0P4utva0VpHPFE+K2BVhU6PWrUUJ2nKg/dYSV1lYeauSugGZrxtVP3B7ICIU=
+X-Received: by 2002:a17:906:f587:b0:ad8:a2a8:23db with SMTP id
+ a640c23a62f3a-ad8a2a825bbmr104381166b.56.1748424164196; Wed, 28 May 2025
+ 02:22:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=858; i=krzysztof.kozlowski@linaro.org;
- h=from:subject; bh=NBrvQMrhx/6hLM6e+tUOgjMzy9y+05NeL0rQjwNG5cg=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoNtW5SA81tOIk5iN4B9Z+3BqC9/qHt646YY3YJ
- uI9jWgBt8WJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaDbVuQAKCRDBN2bmhouD
- 19i9D/0eBMcTsNOBBePfRl2DZ3L4ypubeOhVG44mTQpYX2zsIdOEgGmwhjuOd077CghdZii0sJk
- qdSkTwdpZ28eXWCuOkwDDskSzmWCaZF/9Ex5OQFRSEsJQe337Ltz4y3+KFb/E5hh09XzvuVMbCG
- aPwR0jTfawKW8vW72lIZ70d/gyNq2gM9/pRpb6Nci1v8b7d1f0RNr623SXEO9fd6ELCz8aKP83k
- mJ3aoCIqhO6iXRbo2mwKoEmdyI5x6qqyWlYZrDsC+UsgNNiPS6nzSUq7Dvbg1i90WdlEylZGv8M
- cl6GK84UxYlWEmYX5abbyMAdsT0O0/MTHOua6jdDgbjZapsX+ypR/cBmzjjcVwVuJvr4j0PYjrX
- pVY5fxYML23Z60GMa+8SSNTHEZgQZ9p+CUqmEdV3KBWStCv5ufMECiXT8tnYpbnWaaUrr9ggYd9
- sB69rRw2YhtFFpAj00TrAkfzVzHyDRBo6LgDCu82aOjC6wInFLqaLOeCSkVEn8NHWgDcGs80eL5
- rILPvqvOCf45rWEOVgDTL/i42dseGOcwN0CjxDZ5p2foOGCt3EYQdn6RewBhkmhviwZIcWA7a3c
- JgiZtccCOEtRxwsNF8G6PLwEecG4yqwi7MZIbcK/AI3iNZIkIx9G41SX9Iy9kjb35LpddAxw/6G eIDbZeugPNeCrQg==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
-Content-Transfer-Encoding: 8bit
+References: <20250528080119.9380-1-gye976@gmail.com>
+In-Reply-To: <20250528080119.9380-1-gye976@gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, 28 May 2025 11:22:07 +0200
+X-Gm-Features: AX0GCFvCaaze7T6kJScaIwxolgrLro7kCQGTu5210iyv7oSEWYbCeoX0cpurpd4
+Message-ID: <CAHp75VdhgftCKAuBuoDJ4d9HcKLqkGJ+bdx5gxQmkCSWO7SBAw@mail.gmail.com>
+Subject: Re: [PATCH v2] iio: trigger: Avoid data race
+To: Gyeyoung Baek <gye976@gmail.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
+	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Static inline st_gpio_bank() function is not referenced:
+On Wed, May 28, 2025 at 10:01=E2=80=AFAM Gyeyoung Baek <gye976@gmail.com> w=
+rote:
+>
+> A data race could occur between `atomic_read()` and `atomic_set()`.
+> Use `atomic_cmpxchg_relaxed()` to group them atomically.
+>
+> Previously the main logic was executed when `use_count` was 0.
+> Now it returns early when `use_count` was not 0.
 
-  pinctrl-st.c:377:19: error: unused function 'st_gpio_bank' [-Werror,-Wunused-function]
+This needs Fixes tag, otherwise LGTM,
+Reviewed-by: Andy Shevchenko <andy@kernel.org>
 
-Fixes: 701016c0cba5 ("pinctrl: st: Add pinctrl and pinconf support.")
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- drivers/pinctrl/pinctrl-st.c | 5 -----
- 1 file changed, 5 deletions(-)
-
-diff --git a/drivers/pinctrl/pinctrl-st.c b/drivers/pinctrl/pinctrl-st.c
-index fe2d52e434db..8a2ef74862d3 100644
---- a/drivers/pinctrl/pinctrl-st.c
-+++ b/drivers/pinctrl/pinctrl-st.c
-@@ -374,11 +374,6 @@ static struct st_pio_control *st_get_pio_control(
- }
- 
- /* Low level functions.. */
--static inline int st_gpio_bank(int gpio)
--{
--	return gpio/ST_GPIO_PINS_PER_BANK;
--}
--
- static inline int st_gpio_pin(int gpio)
- {
- 	return gpio%ST_GPIO_PINS_PER_BANK;
--- 
-2.45.2
-
+--=20
+With Best Regards,
+Andy Shevchenko
 
