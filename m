@@ -1,201 +1,291 @@
-Return-Path: <linux-kernel+bounces-665486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9726AC69E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 14:56:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAA76AC69E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 14:58:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF7E27AC698
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 12:55:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51126A20345
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 12:57:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9675C2868B5;
-	Wed, 28 May 2025 12:56:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60F8328642F;
+	Wed, 28 May 2025 12:57:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qgYYVKsy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZD/wViPJ"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBF9F21322F;
-	Wed, 28 May 2025 12:56:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAF78246774;
+	Wed, 28 May 2025 12:57:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748436967; cv=none; b=Ms4fyhZFCH1+qlp0Hf7HOwHltBU5Bm12a/ug8pTE+kMZzgdn6nfzB52YwFckPZECMpgjf6OsTcGeK+J46GxAxyfz+EKB34DlmhrH2cm8dhiOAT9CB8j4iG2DbVERqd5RdDyGng/vybtbot0AzRKLooZyXZz/CJRzdAAf08V0lfk=
+	t=1748437072; cv=none; b=aOiyjFW1mSsahXWWnRsypFMW4sXHSYkJ9G7suz1f84V/v1F0r2s4M+6IntT4rfLmwQyKPCnUDgUdVg/31Ge2AO0xBq4KkZpTQbVzOMxYmJDXcGgtp99h0P0rH/+vTcLc0stRzqwxX5RWlfuHqqgdvfg/e3Jm04si2sK4kcdRJwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748436967; c=relaxed/simple;
-	bh=ZZ5PY3sUoQIO0CS2xr1nvj/M4VraGiH0oMZykVxMChc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SV+kecochVGJ6rL7pWs9+vNDsYxMtfGBpd/9J46XOWyQxdj9zRgho5gVf1vfqjg9EkdQpWhyyH+EawaWk50eXFzBBOSlQ6GlqPWEPEsKrKRDKbGh9BaHtYTHC1Q3/qDpbadew5kR4vMEGSU+FvbkOISHgvb67pXys+8cGm/8vOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qgYYVKsy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB204C4CEF1;
-	Wed, 28 May 2025 12:56:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748436966;
-	bh=ZZ5PY3sUoQIO0CS2xr1nvj/M4VraGiH0oMZykVxMChc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qgYYVKsyNZvHVIcSC7TXODCukpomzDTeEa9qjbVoVFINev5ukW+0p44PEfIfeV9aU
-	 aI+E4ZuO2djI+JCYHpfsJzhxKc0FxMEjFSQHW6+fc2UIhKQeJzwkdyCdaE20xO8iqE
-	 qqgeZxHL3UVaSRP+zcxTOzVAXVOciQYGL0f0BbTRB8C1KYowXCFPFVxnr3xoKCAbsu
-	 Uzx4OPLzAhY8qqtzFr88WC8At0pQ2CnUmsaaUw1VX1SgNiTFSxINa/n4w2zVi8q4La
-	 nCTiTjeAesKkYswlBIoG6igD5YZWu90Y7SJcS+8tUb7Sjuc2A4BWyLC93kORGAngI7
-	 eITH0kuA0V2Lw==
-Date: Wed, 28 May 2025 09:56:03 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Howard Chu <howardchu95@gmail.com>
-Cc: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
-	James Clark <james.clark@linaro.org>,
-	Weilin Wang <weilin.wang@intel.com>,
-	Stephen Brennan <stephen.s.brennan@oracle.com>,
-	Andi Kleen <ak@linux.intel.com>, Dmitry Vyukov <dvyukov@google.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 6/7] perf test trace_summary: Skip --bpf-summary tests
- if no libbpf
-Message-ID: <aDcH40nLHuEXELjT@x1>
-References: <20250528032637.198960-1-irogers@google.com>
- <20250528032637.198960-7-irogers@google.com>
- <CAH0uvoiEY0kkz09TavHG-KHqtk7UNHyRLfYC382D_yhvrstBGw@mail.gmail.com>
+	s=arc-20240116; t=1748437072; c=relaxed/simple;
+	bh=WpeZQl5vh0yqYxs+79UsHi2F/aa84sVNJqFa7mJ4Avc=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IB4dNENg1rijFIFUott8/NQbFWj6vBfJiS5AYX5aLHRJivp0+fuD1ilNuKVDbnYY9dGDmoJFuwxJX2pOg/1kzhhqwW00KkaEUn7S8D2VYLgQ+JDJtAKOViiP/ZQ9Om3w5nqms84Rs3RS+KRz40CxVmLrUbA6pbyxd21MFxth0GA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZD/wViPJ; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3a36f26584bso2754810f8f.0;
+        Wed, 28 May 2025 05:57:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748437069; x=1749041869; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=qz431+WLyrOYjxIXVQx5eCUQ1G5IA4208Qab297D8GM=;
+        b=ZD/wViPJNg/FqKxbWpXaB/MW2Vt3Z2mb+ngEhaaRURUbC2HtKoDxDeiMAiqup6AS6D
+         wt15zExhb1YZoTd6wn3xvIPT51dmerOpnLOx+9E3duLBi+qebQIGLERs9DyIP8XM7sBj
+         d50+qiZqSb61bnI95Dka58D5fNhwvmwMf7Pm3xNMv2ZtJ15Yr9GtuPddNchgvhqlnI5o
+         NoCyp7Vkxt/RnHTRmQNX3eeUMtqaGBDjjqJZlCt4za4bsp+FsocuwdQVfpnGXqI5qHuQ
+         RxmSqz9rXgbqn40To+GFqM5LDH7pAYSrOW1eg3UZq53J/Q6ZhqNXqZd1J0BjuVYVocqP
+         erQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748437069; x=1749041869;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qz431+WLyrOYjxIXVQx5eCUQ1G5IA4208Qab297D8GM=;
+        b=R3zlYNbA07qBzg4BjsBZmL9Fzaa/JG/Mc7KcgRUzAYIPcEhHgESDskztU3Ws2BDytg
+         baMtI0aRRz8ocnOxAKMi9rRADJRQOXbx52wfaNENDC3ZWQVncc6UcXTzgMxpgK8OKYNf
+         RfsIppfgemuiFoKWyb7h2Lb0lwvztzQKb6huc4P3z0sQI+AkooNGduw8gAV+Z9AKQKyD
+         no+Ice4Ljvv4Fx7lfVnQ0uqwKJKubM95An4Dx2gYbYtDgYsF7+UbzrMJ7fyJN3AR+t0K
+         P1Zl1UnhtMJESeqBCjrQLl4+QVp4XWI1FIkVk8q74jThwKHI8SGnrPxKWDvgCvKLL/aI
+         gtYw==
+X-Forwarded-Encrypted: i=1; AJvYcCUCbdbg0uxCQpZsuVLURmwl5YXjFGjczv8PJ2wC24EwC97P+LouerPC9jS5L66HqeyJDMf76SEumPaJNm7b@vger.kernel.org, AJvYcCVhW7vvMMhIGukeaRDeG62AUgQ86O37SMs1/mjMLfnojt1uQJCGU/en+/Hk25CFVYJ1afVdmKwlscPO@vger.kernel.org, AJvYcCWCBrDvSWQ2XmNao0RuLCvgyIxKbkdGFFJhrpU01WSnXTnBpicv+OEgOTAHMqIIy3l0sOobX6f20/75@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCloU9NTeBZJCrYLrqDfyTP9kfBM+aAdYGiZ7BAPCTU7lY460g
+	AZro3C3aBpbkPhf1oZUxhG3lI6Z8vgj/clbR27XuDdZqEgtuWrd4NgzX
+X-Gm-Gg: ASbGnctAxS2n8S4W0HoJAlwhh9fx29asN2UVtBDQjJ3p84UpsW7arcgqnkkDRbQ5WxV
+	b6c9b2dh2Fjz9DhzlVcG6Ug6sxYyv8vh4waL3Cb1XOfBrmJySyvjiXkz608yLb0VMnFI8jZLU8F
+	m2stwbw2XUedqZF1UaNWhOkR16PhrRjpPq5sx3LB+hi0kuReDpkpzM2O5sVMNY0Ka5yFB+y0l3k
+	FQ93V72xyw2dV09X4879YbAgVKgAVeJ+Vx49qdXnb/NpID/LcO0u4CURBhqMDFycgsyz33DG5Kv
+	lomJ/qzWPoZbn2abWPF+3gfgJigzE4j6TrCJhwPpjfjum5XtbZTAUB121m7G9jrVEZ+5JOLRK/Q
+	+FzCnnjI=
+X-Google-Smtp-Source: AGHT+IEl/pHPv7vigoqckP9ECM+urkLDQK2RF8IW0Ah4JbrbzZh1z1Et6i/TKjhKBeupCdDcJQ72Aw==
+X-Received: by 2002:a5d:584c:0:b0:3a4:d452:fff with SMTP id ffacd0b85a97d-3a4d45211edmr11122707f8f.17.1748437068809;
+        Wed, 28 May 2025 05:57:48 -0700 (PDT)
+Received: from Ansuel-XPS. (93-34-88-225.ip49.fastwebnet.it. [93.34.88.225])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4eac6e615sm1446608f8f.19.2025.05.28.05.57.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 May 2025 05:57:48 -0700 (PDT)
+Message-ID: <6837084c.050a0220.1e474f.3f20@mx.google.com>
+X-Google-Original-Message-ID: <aDcISot-sCztcyqa@Ansuel-XPS.>
+Date: Wed, 28 May 2025 14:57:46 +0200
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Felix Fietkau <nbd@nbd.name>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/5] dt-bindings: clock: airoha: Document support for
+ AN7583 clock
+References: <20250528004924.19970-1-ansuelsmth@gmail.com>
+ <20250528004924.19970-5-ansuelsmth@gmail.com>
+ <f9aebfb8-6312-45db-be12-94580ad412cb@kernel.org>
+ <6836cf62.5d0a0220.35d0aa.2025@mx.google.com>
+ <969c42d7-0a40-4daf-a074-f2713d0d0412@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAH0uvoiEY0kkz09TavHG-KHqtk7UNHyRLfYC382D_yhvrstBGw@mail.gmail.com>
+In-Reply-To: <969c42d7-0a40-4daf-a074-f2713d0d0412@kernel.org>
 
-On Tue, May 27, 2025 at 09:17:25PM -0700, Howard Chu wrote:
-> Hello Ian,
+On Wed, May 28, 2025 at 01:56:54PM +0200, Krzysztof Kozlowski wrote:
+> On 28/05/2025 10:54, Christian Marangi wrote:
+> > On Wed, May 28, 2025 at 09:30:37AM +0200, Krzysztof Kozlowski wrote:
+> >> On 28/05/2025 02:49, Christian Marangi wrote:
+> >>>    - if:
+> >>>        properties:
+> >>>          compatible:
+> >>> @@ -75,6 +78,17 @@ allOf:
+> >>>          reg:
+> >>>            maxItems: 1
+> >>>  
+> >>> +      required:
+> >>> +        - reg
+> >>> +
+> >>> +  - if:
+> >>> +      properties:
+> >>> +        compatible:
+> >>> +          const: airoha,an7583-clock
+> >>> +    then:
+> >>> +      properties:
+> >>> +        reg: false
+> >>
+> >>
+> >> No resources here, so this should be part of parent node.
+> >>
+> > 
+> > Ok hope you can help here. This is another case of "MFD" thing.
+> > 
+> > I was with the idea that it was O.K. to use this with very different
+> > devices. (current scenario Clock controller and MDIO controller)
+> > 
+> > The node structure I had in mind was
+> > 
+> > 		system-controller@1fa20000 {
+> > 			compatible = "airoha,an7583-scu", "syscon", "simple-mfd";
+> > 			reg = <0x0 0x1fb00000 0x0 0x970>;
+> > 
+> > 			scuclk: scuclk {
+> > 				compatible = "airoha,an7583-clock";
+> > 				#clock-cells = <1>;
+> > 				#reset-cells = <1>;
+> > 			};
+> > 
+> > 			mdio {
+> > 				compatible = "airoha,an7583-mdio";
+> > 				#address-cells = <1>;
+> > 				#size-cells = <0>;
+> > 
+> > 				mdio_0: bus@0 {
+> > 					reg = <0>;
+> > 					resets = <&scuclk AN7583_MDIO0>;
+> > 				};
+> > 
+> > 				mdio_1: bus@1 {
+> > 					reg = <1>;
+> > 					resets = <&scuclk AN7583_MDIO1>;
+> > 				};
+> > 			};
+> > 		};
+> > 
+> > But you want
+> > 
+> > system-controller@1fa20000 {
+> >         compatible = "airoha,an7583-scu", "syscon";
+> >         reg = <0x0 0x1fb00000 0x0 0x970>;
+> > 
+> >         #clock-cells = <1>;
+> >         #reset-cells = <1>;
+> > 
 > 
-> On Tue, May 27, 2025 at 8:26 PM Ian Rogers <irogers@google.com> wrote:
-> >
-> > If perf is built without libbpf (e.g. NO_LIBBPF=1) then the
-> > --bpf-summary perf trace tests will fail. Skip the tests as this is
-> > expected behavior.
-> >
-> > Signed-off-by: Ian Rogers <irogers@google.com>
+> mdio could be here just to group the bus (it's pretty common I think),
+> although not sure if compatible is useful then.
 > 
-> Acked-by: Howard Chu <howardchu95@gmail.com>
+> >         mdio_0: bus@0 {
+> >                 reg = <0>;
+> >                 resets = <&scuclk AN7583_MDIO0>;
+> >         };
+> > 
+> >         mdio_1: bus@1 {
+> >                 reg = <1>;
+> >                 resets = <&scuclk AN7583_MDIO1>;
+> >         };
+> > };
+> > 
+> > Again sorry if this question keeps coming around and I can totally
+> > understand if you are getting annoyed by this. The reason I always ask
+> > this is because it's a total PAIN to implement this with the driver
+> > structure due to the old "simple-mfd" model.
+> 
+> ... and Rob was saying multiple times: be careful when adding
+> simple-mfd. If it bites back, then I am sorry, but everyone were warned,
+> weren't they?
+> 
+> What is exactly the pain anyway? You cannot instantiate children from
+> SCU driver?
+>
 
-Thanks, applied to perf-tools-next,
+Answering below since they are related.
 
-BTW, my answers were for v1 but b4 gets v2, for instance, the one that
-is failing:
+> > 
+> > (as again putting everything in a single node conflicts with the OF
+> > principle of autoprobing stuff with compatible property)
+> 
+> I am not sure if I follow. What principle? Where is this principle
+> expressed?
+> 
+> And you do not have in your second example additional compatibles, so
+> even if such principle exists it is not broken: everything autoprobes, I
+> think.
+> 
+> > 
+> 
+>
 
-⬢ [acme@toolbx perf-tools-next]$ b4 am -P3 -ctsl --cc-trailers 20250527180703.129336-5-irogers@google.com
-Grabbing thread from lore.kernel.org/all/20250527180703.129336-5-irogers@google.com/t.mbox.gz
-Breaking thread to remove parents of 20250527180703.129336-1-irogers@google.com
-Checking for newer revisions
-Grabbing search results from lore.kernel.org
-  Added from v2: 8 patches
-Analyzing 21 messages in the thread
-Analyzing 0 code-review messages
-Will use the latest revision: v2
-You can pick other revisions using the -vN flag
-Unknown range value specified: 3
-Checking attestation on all messages, may take a moment...
----
-  ✓ [PATCH v2 3/7] perf symbol: Move demangling code out of symbol-elf.c
-    + Link: https://lore.kernel.org/r/20250528032637.198960-4-irogers@google.com
-    + Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-  ---
-  ✓ Signed: DKIM/google.com
----
-Total patches: 1 (cherrypicked: 3)
----
-Cover: ./v2_20250527_irogers_various_asan_and_test_fixes.cover
- Link: https://lore.kernel.org/r/20250528032637.198960-1-irogers@google.com
- Base: not specified
-       git am ./v2_20250527_irogers_various_asan_and_test_fixes.mbx
-⬢ [acme@toolbx perf-tools-next]$ 
+The principle I'm talking about is one driver for one compatible.
+(to be more precise excluding syscon compatible that is actually
+ignored, if a driver for the compatible is found, any other compatible
+is ignored.)
 
-⬢ [acme@toolbx perf-tools-next]$        git am ./v2_20250527_irogers_various_asan_and_test_fixes.mbx
-Applying: perf symbol: Move demangling code out of symbol-elf.c
-⬢ [acme@toolbx perf-tools-next]$
+This means that declaring multiple compatible as:
 
-⬢ [acme@toolbx perf-tools-next]$ m
-rm: cannot remove '/home/acme/libexec/perf-core/scripts/python/Perf-Trace-Util/lib/Perf/Trace/__pycache__/Core.cpython-313.pyc': Permission denied
-make: Entering directory '/home/acme/git/perf-tools-next/tools/perf'
-  BUILD:   Doing 'make -j32' parallel build
-Warning: Kernel ABI header differences:
-  diff -u tools/arch/arm64/include/asm/cputype.h arch/arm64/include/asm/cputype.h
+compatible = "airoha,clock", "airoha,mdio"
 
-Auto-detecting system features:
-...                                   libdw: [ on  ]
-...                                   glibc: [ on  ]
-...                                  libelf: [ on  ]
-...                                 libnuma: [ on  ]
-...                  numa_num_possible_cpus: [ on  ]
-...                                 libperl: [ on  ]
-...                               libpython: [ on  ]
-...                               libcrypto: [ on  ]
-...                             libcapstone: [ on  ]
-...                               llvm-perf: [ on  ]
-...                                    zlib: [ on  ]
-...                                    lzma: [ on  ]
-...                               get_cpuid: [ on  ]
-...                                     bpf: [ on  ]
-...                                  libaio: [ on  ]
-...                                 libzstd: [ on  ]
+doesn't result in the clock driver and the mdio driver probed but only
+one of the 2 (probably only clock since it does have priority)
 
-  INSTALL libsubcmd_headers
-  INSTALL libperf_headers
-  INSTALL libapi_headers
-  INSTALL libsymbol_headers
-  PERF_VERSION = 6.15.rc7.g50ec05a72bc1
-  LINK    /tmp/build/perf-tools-next/libperf-jvmti.so
-  INSTALL libbpf_headers
-  GEN     perf-archive
-  GEN     perf-iostat
-  CC      /tmp/build/perf-tools-next/util/symbol.o
-  CC      /tmp/build/perf-tools-next/util/header.o
-  CC      /tmp/build/perf-tools-next/util/symbol-elf.o
-  CXX     /tmp/build/perf-tools-next/util/demangle-cxx.o
-util/symbol-elf.c: In function ‘get_plt_got_name’:
-util/symbol-elf.c:563:21: error: implicit declaration of function ‘demangle_sym’; did you mean ‘dso__demangle_sym’? [-Wimplicit-function-declaration]
-  563 |         demangled = demangle_sym(di->dso, 0, sym_name);
-      |                     ^~~~~~~~~~~~
-      |                     dso__demangle_sym
-util/symbol-elf.c:563:19: error: assignment to ‘char *’ from ‘int’ makes pointer from integer without a cast [-Wint-conversion]
-  563 |         demangled = demangle_sym(di->dso, 0, sym_name);
-      |                   ^
-util/symbol-elf.c: In function ‘dso__synthesize_plt_symbols’:
-util/symbol-elf.c:761:27: error: assignment to ‘char *’ from ‘int’ makes pointer from integer without a cast [-Wint-conversion]
-  761 |                 demangled = demangle_sym(dso, 0, elf_name);
-      |                           ^
-util/symbol-elf.c: In function ‘dso__load_sym_internal’:
-util/symbol-elf.c:1778:27: error: assignment to ‘char *’ from ‘int’ makes pointer from integer without a cast [-Wint-conversion]
- 1778 |                 demangled = demangle_sym(dso, kmodule, elf_name);
-      |                           ^
-make[4]: *** [/home/acme/git/perf-tools-next/tools/build/Makefile.build:85: /tmp/build/perf-tools-next/util/symbol-elf.o] Error 1
-make[4]: *** Waiting for unfinished jobs....
-make[3]: *** [/home/acme/git/perf-tools-next/tools/build/Makefile.build:142: util] Error 2
-make[2]: *** [Makefile.perf:798: /tmp/build/perf-tools-next/perf-util-in.o] Error 2
-make[1]: *** [Makefile.perf:290: sub-make] Error 2
-make: *** [Makefile:119: install-bin] Error 2
-make: Leaving directory '/home/acme/git/perf-tools-next/tools/perf'
-⬢ [acme@toolbx perf-tools-next]$
+The "simple-mfd" compatible is just a simple compatible that indicate to
+the OF system that every child (with a compatible) should be also probed.
+And then automagically the driver gets probed.
 
-I can try fixing those up, but I'm concentrated now in getting as much
-low hanging fruits as possible for this merge, and the patches in this
-series were mostly super small and fixed things.
+Now the ""PAIN"" explaination. Not using the "simple-mfd" way with the
+child with compatible and putting everything in the node means having to
+create a dedicated MFD driver that just instruct to manually probe the
+clock and mdio driver. (cause the compatible system can't be used)
 
-- Arnaldo
+So it's 3 driver instead of 2 with the extra effort of MFD driver
+maintainer saying "Why simple-mfd is not used?"
+
+
+There is a solution for this but I always feel it's more of a workaround
+since it doesn't really describe the HW with the DT node.
+
+The workaround is:
+
+		system-controller@1fa20000 {
+                        /* The parent SCU node implement the clock driver */
+                        compatible = "airoha,an7583-scu", "syscon";
+                        reg = <0x0 0x1fb00000 0x0 0x970>;
+
+                        #clock-cells = <1>;
+                        #reset-cells = <1>;
+
+                        /* Clock driver is instructed to probe child */
+                        mdio {
+                                compatible = "airoha,an7583-mdio";
+                                #address-cells = <1>;
+                                #size-cells = <0>;
+
+                                mdio_0: bus@0 {
+                                        reg = <0>;
+                                        resets = <&scuclk AN7583_MDIO0>;
+                                };
+
+                                mdio_1: bus@1 {
+                                        reg = <1>;
+                                        resets = <&scuclk AN7583_MDIO1>;
+                                };
+                        };
+                };
+
+
+But this really moves the probe from the simple-mfd to the clock driver.
+
+So it's either 3 solution
+1. 2 driver + "simple-mfd"
+2. 3 driver + PAIN (due to MFD required driver)
+3. 2 driver + not very correct DT node structure
+
+Maybe option 3. is more acceptable?
+
+The SCU node is mainly clock + reset controller and the MDIO bus is an
+expansion of it?
+
+Hope the long explaination makes sense to you (especially about the
+OF principle thing)
+
+--
+Ansuel
 
