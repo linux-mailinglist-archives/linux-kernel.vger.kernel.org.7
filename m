@@ -1,162 +1,183 @@
-Return-Path: <linux-kernel+bounces-665190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E95CAC6549
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 11:11:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58B83AC654F
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 11:12:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B8F63A5993
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 09:11:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF33B1BA0C68
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 09:12:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87D972750F9;
-	Wed, 28 May 2025 09:10:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C76C8274FC8;
+	Wed, 28 May 2025 09:11:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="n80odNv+"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="dL1hm4/V"
+Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 350FB275111;
-	Wed, 28 May 2025 09:10:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A11627465B;
+	Wed, 28 May 2025 09:10:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748423439; cv=none; b=j3AditVrxyi/VJr3YJ2P4UEjBsIoZ/MOlIqTUA3wRP/983s/Q6fEfwOQioelBK4m9D/4vlivOmuAx/bvSCA6psq+JdZSrI4OYjcDLARgx2FYLAUG8ABYN/8WR2g6bbJmqH9lTrlIKW36iZuk/ZoHz83kRMX+mgGxFvHpKI7uNUQ=
+	t=1748423464; cv=none; b=NrSZk2hILB9j2JLGQ8jF15a2wYO1c3g7Y+Yp8jxFJla/PdTkw3IZBqDD67wWYq4mpBtJfyk7xVod9cOr7RQ12UxGZSpY8XQNkawbXz0L4bQzCZOYfxnE9FyOglCJgYqN1qlKYCf21X/binxLo1aX4UoOQPv2qD7/ALSbd++VdxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748423439; c=relaxed/simple;
-	bh=Ia2GozwV4a8lhyp5neP6FN7joVX9OC4FCSS0RVxVnDA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D5OC3JqKfTsw4r0+XdQP5Cak1dFahiUoze8DYA7CzZixXaZH6o/rTZ5GpA7bXfGujppUHAtlwz5Pa8Fh1li+kveIFxZxfBido1Vz3yzRFLEmCCYFtVRFyBBZDMiGLE4SnKev5FQX9aJ6ypWhunGzjhUN6ZPVC05WgClI7i75ss8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=n80odNv+; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=f6UBhiqU0OYkhGbwcIEcEvBe+Cw0gb40pBFliPLoPzM=; b=n80odNv+N9ONWYA1sCuYXOgxON
-	wVHEbZdcisAMdQq1mjr0VsxZt3IJEp+TxKV/nWSpoajpOCz1zRxwJ9NzgXyKSZRpJVKfXGQ7N7Bcg
-	686Q0qsKPQwPpFgDuUe3utYZZ7CrMl6fptdnNDNpgbQ+ScqWjUaeUMiOOnVKoFnQIi6QIjVzu5l7T
-	ke/r5pSL9I9wOY9RmJ993URFMvBvY3MDG/R+pE3/Y5LacpC4N7FwjpnBrcqeKqt6etQULRZJGnp4E
-	yOXSXJ8jDnqww8d6uuwSQkMb4T2yF5SUxSelCD6OMCMl+f8DSj9jR6OhUFAK1k4UYy5eUxT2ZJhyq
-	8b2ymuRg==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uKCno-0000000DQmJ-19iM;
-	Wed, 28 May 2025 09:10:24 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id D38FB3005AF; Wed, 28 May 2025 11:10:23 +0200 (CEST)
-Date: Wed, 28 May 2025 11:10:23 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Lyude Paul <lyude@redhat.com>
-Cc: rust-for-linux@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-	Boqun Feng <boqun.feng@gmail.com>, linux-kernel@vger.kernel.org,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	David Woodhouse <dwmw@amazon.co.uk>, Jens Axboe <axboe@kernel.dk>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	NeilBrown <neilb@suse.de>,
-	Caleb Sander Mateos <csander@purestorage.com>,
-	Ryo Takakura <ryotkkr98@gmail.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>
-Subject: Re: [RFC RESEND v10 03/14] irq & spin_lock: Add counted interrupt
- disabling/enabling
-Message-ID: <20250528091023.GY39944@noisy.programming.kicks-ass.net>
-References: <20250527222254.565881-1-lyude@redhat.com>
- <20250527222254.565881-4-lyude@redhat.com>
+	s=arc-20240116; t=1748423464; c=relaxed/simple;
+	bh=E13b92T1iobjwwJFKEcVmyQPEeAWMQYjpYx5L+hZ37I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FDPuxWpcufQxTYZpkPCGUcq0MasjtS8ZLJ5wM5pN1xxDtfOgSFu/YLUhCHv7WqHDvJwP8T4S0gXfDBbdeF+ratuwtMqjI0q7AiEWPQ1eHzwpTHw/8aASbevIDXay/BoXjbe4n/y5kZkwVnaklSrzLGd2mu4gLNGCEn2lq1cstJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=dL1hm4/V; arc=none smtp.client-ip=83.149.199.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
+Received: from fedora.. (unknown [5.228.116.177])
+	by mail.ispras.ru (Postfix) with ESMTPSA id 65FD5552F541;
+	Wed, 28 May 2025 09:10:57 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 65FD5552F541
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
+	s=default; t=1748423457;
+	bh=BV+bKfOBlaZWJv7Ls9aF2eYeY1S7uRK0NeDHUw8Em1A=;
+	h=From:To:Cc:Subject:Date:From;
+	b=dL1hm4/Vmsr4xI5AIjQnxz9JxA+rReEoR/HR6/Vl+L4tcnTfjMN8X4Cib5DCcZefP
+	 6QiD/2KKEdZEv4faBXly9GB45iU9H3EbeNvgnVsZx88waV4tVNlLEjW9GZmTI2iGnS
+	 QJbNupL6U9Ydcwpp5RCowdw9p0RsdlFdQitD9fnA=
+From: Fedor Pchelkin <pchelkin@ispras.ru>
+To: Marc Kleine-Budde <mkl@pengutronix.de>,
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
+	Axel Forsman <axfo@kvaser.com>
+Cc: Fedor Pchelkin <pchelkin@ispras.ru>,
+	Jimmy Assarsson <extja@kvaser.com>,
+	linux-can@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org,
+	stable@vger.kernel.org
+Subject: [PATCH] can: kvaser_pciefd: refine error prone echo_skb_max handling logic
+Date: Wed, 28 May 2025 12:10:37 +0300
+Message-ID: <20250528091038.4264-1-pchelkin@ispras.ru>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250527222254.565881-4-lyude@redhat.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, May 27, 2025 at 06:21:44PM -0400, Lyude Paul wrote:
-> From: Boqun Feng <boqun.feng@gmail.com>
-> 
-> Currently the nested interrupt disabling and enabling is present by
-> _irqsave() and _irqrestore() APIs, which are relatively unsafe, for
-> example:
-> 
-> 	<interrupts are enabled as beginning>
-> 	spin_lock_irqsave(l1, flag1);
-> 	spin_lock_irqsave(l2, flag2);
-> 	spin_unlock_irqrestore(l1, flags1);
-> 	<l2 is still held but interrupts are enabled>
-> 	// accesses to interrupt-disable protect data will cause races.
-> 
-> This is even easier to triggered with guard facilities:
-> 
-> 	unsigned long flag2;
-> 
-> 	scoped_guard(spin_lock_irqsave, l1) {
-> 		spin_lock_irqsave(l2, flag2);
-> 	}
-> 	// l2 locked but interrupts are enabled.
-> 	spin_unlock_irqrestore(l2, flag2);
-> 
-> (Hand-to-hand locking critical sections are not uncommon for a
-> fine-grained lock design)
-> 
-> And because this unsafety, Rust cannot easily wrap the
-> interrupt-disabling locks in a safe API, which complicates the design.
-> 
-> To resolve this, introduce a new set of interrupt disabling APIs:
-> 
-> *	local_interrupt_disable();
-> *	local_interrupt_enable();
-> 
-> They work like local_irq_save() and local_irq_restore() except that 1)
-> the outermost local_interrupt_disable() call save the interrupt state
-> into a percpu variable, so that the outermost local_interrupt_enable()
-> can restore the state, and 2) a percpu counter is added to record the
-> nest level of these calls, so that interrupts are not accidentally
-> enabled inside the outermost critical section.
-> 
-> Also add the corresponding spin_lock primitives: spin_lock_irq_disable()
-> and spin_unlock_irq_enable(), as a result, code as follow:
-> 
-> 	spin_lock_irq_disable(l1);
-> 	spin_lock_irq_disable(l2);
-> 	spin_unlock_irq_enable(l1);
-> 	// Interrupts are still disabled.
-> 	spin_unlock_irq_enable(l2);
-> 
-> doesn't have the issue that interrupts are accidentally enabled.
-> 
-> This also makes the wrapper of interrupt-disabling locks on Rust easier
-> to design.
-> 
-> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
-> 
-> ---
-> V10:
-> * Add missing __raw_spin_lock_irq_disable() definition in spinlock.c
-> 
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
+echo_skb_max should define the supported upper limit of echo_skb[]
+allocated inside the netdevice's priv. The corresponding size value
+provided by this driver to alloc_candev() is KVASER_PCIEFD_CAN_TX_MAX_COUNT
+which is 17.
 
-Your SOB is placed wrong, should be below Boqun's. This way it gets
-lost.
+But later echo_skb_max is rounded up to the nearest power of two (for the
+max case, that would be 32) and the tx/ack indices calculated further
+during tx/rx may exceed the upper array boundary. Kasan reported this for
+the ack case inside kvaser_pciefd_handle_ack_packet(), though the xmit
+function has actually caught the same thing earlier.
 
-Also, is there effort planned to fully remove the save/restore variant?
-As before, my main objection is adding variants with overlapping
-functionality while not cleaning up the pre-existing code.
+ BUG: KASAN: slab-out-of-bounds in kvaser_pciefd_handle_ack_packet+0x2d7/0x92a drivers/net/can/kvaser_pciefd.c:1528
+ Read of size 8 at addr ffff888105e4f078 by task swapper/4/0
 
+ CPU: 4 UID: 0 PID: 0 Comm: swapper/4 Not tainted 6.15.0 #12 PREEMPT(voluntary)
+ Call Trace:
+  <IRQ>
+ dump_stack_lvl lib/dump_stack.c:122
+ print_report mm/kasan/report.c:521
+ kasan_report mm/kasan/report.c:634
+ kvaser_pciefd_handle_ack_packet drivers/net/can/kvaser_pciefd.c:1528
+ kvaser_pciefd_read_packet drivers/net/can/kvaser_pciefd.c:1605
+ kvaser_pciefd_read_buffer drivers/net/can/kvaser_pciefd.c:1656
+ kvaser_pciefd_receive_irq drivers/net/can/kvaser_pciefd.c:1684
+ kvaser_pciefd_irq_handler drivers/net/can/kvaser_pciefd.c:1733
+ __handle_irq_event_percpu kernel/irq/handle.c:158
+ handle_irq_event kernel/irq/handle.c:210
+ handle_edge_irq kernel/irq/chip.c:833
+ __common_interrupt arch/x86/kernel/irq.c:296
+ common_interrupt arch/x86/kernel/irq.c:286
+  </IRQ>
+
+Remove echo_skb_max rounding as this may increase it to unexpected values.
+In this sense restore echo_skb_max handling logic prior to commit
+8256e0ca6010 ("can: kvaser_pciefd: Fix echo_skb race").
+
+Found by Linux Verification Center (linuxtesting.org) with Syzkaller.
+
+Fixes: 8256e0ca6010 ("can: kvaser_pciefd: Fix echo_skb race")
+Cc: stable@vger.kernel.org
+Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
+---
+
+Actually the trick with rounding up allows to calculate seq numbers
+efficiently, avoiding a more consuming 'mod' operation used in the
+current patch.
+
+I see tx max size definitely matters only for kvaser_pciefd_tx_avail(),
+but for seq numbers' generation that's not the case - we're free to
+calculate them as would be more convenient, not taking tx max size into
+account. The only downside is that the size of echo_skb[] should
+correspond to the max seq number (not tx max number), so in some
+situations a bit more memory would be consumed than could be.
+
+So another approach to fix the problem would be to precompute the rounded
+up value of echo_skb_max and pass it to alloc_candev() making the size of
+the underlying echo_skb[] sufficient.
+
+If that looks more acceptable, I'll be glad to rework the patch in that
+direction.
+
+ drivers/net/can/kvaser_pciefd.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/net/can/kvaser_pciefd.c b/drivers/net/can/kvaser_pciefd.c
+index f6921368cd14..1ec4ab9510b6 100644
+--- a/drivers/net/can/kvaser_pciefd.c
++++ b/drivers/net/can/kvaser_pciefd.c
+@@ -411,7 +411,6 @@ struct kvaser_pciefd_can {
+ 	void __iomem *reg_base;
+ 	struct can_berr_counter bec;
+ 	u8 cmd_seq;
+-	u8 tx_max_count;
+ 	u8 tx_idx;
+ 	u8 ack_idx;
+ 	int err_rep_cnt;
+@@ -760,7 +759,7 @@ static int kvaser_pciefd_stop(struct net_device *netdev)
+ 
+ static unsigned int kvaser_pciefd_tx_avail(const struct kvaser_pciefd_can *can)
+ {
+-	return can->tx_max_count - (READ_ONCE(can->tx_idx) - READ_ONCE(can->ack_idx));
++	return can->can.echo_skb_max - (READ_ONCE(can->tx_idx) - READ_ONCE(can->ack_idx));
+ }
+ 
+ static int kvaser_pciefd_prepare_tx_packet(struct kvaser_pciefd_tx_packet *p,
+@@ -810,7 +809,7 @@ static netdev_tx_t kvaser_pciefd_start_xmit(struct sk_buff *skb,
+ {
+ 	struct kvaser_pciefd_can *can = netdev_priv(netdev);
+ 	struct kvaser_pciefd_tx_packet packet;
+-	unsigned int seq = can->tx_idx & (can->can.echo_skb_max - 1);
++	unsigned int seq = can->tx_idx % can->can.echo_skb_max;
+ 	unsigned int frame_len;
+ 	int nr_words;
+ 
+@@ -992,10 +991,9 @@ static int kvaser_pciefd_setup_can_ctrls(struct kvaser_pciefd *pcie)
+ 		tx_nr_packets_max =
+ 			FIELD_GET(KVASER_PCIEFD_KCAN_TX_NR_PACKETS_MAX_MASK,
+ 				  ioread32(can->reg_base + KVASER_PCIEFD_KCAN_TX_NR_PACKETS_REG));
+-		can->tx_max_count = min(KVASER_PCIEFD_CAN_TX_MAX_COUNT, tx_nr_packets_max - 1);
++		can->can.echo_skb_max = min(KVASER_PCIEFD_CAN_TX_MAX_COUNT, tx_nr_packets_max - 1);
+ 
+ 		can->can.clock.freq = pcie->freq;
+-		can->can.echo_skb_max = roundup_pow_of_two(can->tx_max_count);
+ 		spin_lock_init(&can->lock);
+ 
+ 		can->can.bittiming_const = &kvaser_pciefd_bittiming_const;
+@@ -1523,7 +1521,7 @@ static int kvaser_pciefd_handle_ack_packet(struct kvaser_pciefd *pcie,
+ 		unsigned int len, frame_len = 0;
+ 		struct sk_buff *skb;
+ 
+-		if (echo_idx != (can->ack_idx & (can->can.echo_skb_max - 1)))
++		if (echo_idx != can->ack_idx % can->can.echo_skb_max)
+ 			return 0;
+ 		skb = can->can.echo_skb[echo_idx];
+ 		if (!skb)
+-- 
+2.49.0
 
 
