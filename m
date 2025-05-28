@@ -1,107 +1,125 @@
-Return-Path: <linux-kernel+bounces-665549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F1C8AC6ABA
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 15:37:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AA84AC6AE5
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 15:46:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E4344E472F
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 13:37:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7F9C1BC7CF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 13:46:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F6FE287517;
-	Wed, 28 May 2025 13:37:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6893520E6EB;
+	Wed, 28 May 2025 13:45:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dfhkTfGA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="scTt5q38"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA12A28641B;
-	Wed, 28 May 2025 13:37:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 618F9548EE;
+	Wed, 28 May 2025 13:45:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748439436; cv=none; b=eeDRetGCGdCJ0Is4DijWiHY55lUWt3+NXmxeqVa0mXFiFWHiK63GHf37PSYsFndzv/W5zrJqeAXl+pM2jnU+pb4SO0KDlyxZFQDBP3cswzkOT+JZLjaDZtXG17dzree5koebMEP4WnG8CNYR01jdN6pbDBAd/9ZyQpkVQD922hA=
+	t=1748439955; cv=none; b=WnimeS+kbFsO4WnCtMxerkCTruznvBz0EEEtYSJXQuAwIOdm4yMZl54KMlNwrLGHdaZNbXstEcnmo2TsxL+t0QqtB+lJuUyvUIF1kCt19JdZ64xtCbD6UvL4BgUzAkTYq+7QEyMlv/PfggB8G2f0+SyladBo/jUjldzTudHDbm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748439436; c=relaxed/simple;
-	bh=nWFmuHlsVICUVjcmX3HASFKYD2geEtzh77n0smErV5s=;
+	s=arc-20240116; t=1748439955; c=relaxed/simple;
+	bh=NhKDJGKersmYwYbpcpxHMhulBIGoduKgjFIZ/h9f4Xo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RHDCDYfMMS+8SK5L4aRZ4g2GU+LP5HP3Gan8YgdeubbcvXUqhzFuYyZGgIie0/xooUpcYVqB9ram7PFtK1nLa2WCC2Y3xmNkzHHMJdH3K+MehW08ZqtDlOtDypYw82awCaIwN4qHJkJNstFDmJKn/mD1akRwNoXt8yFS+OgLuh4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dfhkTfGA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09365C4CEE7;
-	Wed, 28 May 2025 13:37:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748439436;
-	bh=nWFmuHlsVICUVjcmX3HASFKYD2geEtzh77n0smErV5s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dfhkTfGAGj8CW86+wX4vgwR36+FSjwtbRaQmfW3e/KE7u96dkxxYjsZNCilBYOLfP
-	 YxSs5o4KgUFCX4SBmkCEQtIEkEtcRSj0cj5o0J435qnnBBw8Hf9XBYcGJsWeg6JiKb
-	 B+B5+BBMF7k8103mzMvcN243sqa4xsdxrzl9eEuIkG/HdhMkkRvuw3yzuaSN2o1JyM
-	 /Y5YWldpSOSdi71Hu54Hmt8IBJODH7mllMjHWBUGLijUQSCDDR1KLZ5A+D2yv5f8h2
-	 3GVoVUkwNsN5Zsb/CiaYqsHqQKDV6STUlRQpbpCHdJ94zQQuYCeq4pf2N43uT+MB3I
-	 TzPK2g5xiTHzQ==
-Date: Wed, 28 May 2025 14:37:09 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-Cc: linux-kernel@vger.kernel.org, michael@amarulasolutions.com,
-	linux-amarula@amarulasolutions.com,
-	Alexander Stein <alexander.stein@ew.tq-group.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Fabio Estevam <festevam@denx.de>,
-	Francesco Dolcini <francesco.dolcini@toradex.com>,
-	Frank Li <Frank.Li@nxp.com>,
-	Frieder Schrempf <frieder.schrempf@kontron.de>,
-	Heiko Schocher <hs@denx.de>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Marek Vasut <marex@denx.de>,
-	Max Merchel <Max.Merchel@ew.tq-group.com>,
-	Michael Walle <mwalle@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-	Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Tim Harvey <tharvey@gateworks.com>, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 3/4] dt-bindings: arm: fsl: add i.MX28 Amarula rmm
- board
-Message-ID: <20250528-viewless-consumer-ec85e353582f@spud>
-References: <20250528121306.1464830-1-dario.binacchi@amarulasolutions.com>
- <20250528121306.1464830-4-dario.binacchi@amarulasolutions.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LCEgospQB4bkgYCFNtaes4dWdzzphmVPGuvbqvWReomQoQrngOoyPLUZ9RvBDYAuP/dBIKPvqxhj7CQDv18RwVUQDA54BRtsMeFfbQLYVfnk3GdU++iucElUcoTe8lL0ZF/3EMsrMv+o2nIAtZ2OhdCM8oJ0sPwysYF1bXJCyn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=scTt5q38; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=RJTCnxK1El4r0A3ClIoA68ji0JX4Tz5IvIhvEj1UhXI=; b=scTt5q38Q6lSPhAtr0dXmNDhgM
+	ypwqrkoRXPv+Wr1bHPWDqTleGFtWeH8JtWgbfSFW2jYuJXfFy31HjlTskC5j2MxDwzAF5bmkEok7M
+	RvyRjS8LR45QPKIX7+qEZ0SeB70ER9Ka4tjMekrJQMvOJxgj7ARhL0X//KM+m3Ij3/vu3S8TdZVkQ
+	NoU9mTK/gy0ewgbiQHpUP+7HfUV2Yz3cu+6YT6gtwEy7fQ0dZ7nOYGZAY+ozfohpc0UOxo3D+TKyW
+	CCDc7GLIArvxmWTnFGpO9hxQB/u256zJLc9603181iKRgzrkzOletd86sPjCovJleSPuMf2dEy35W
+	/xes/BuQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uKH6J-0000000DhDE-3k3S;
+	Wed, 28 May 2025 13:45:47 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 791A9300263; Wed, 28 May 2025 15:38:07 +0200 (CEST)
+Date: Wed, 28 May 2025 15:38:07 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	x86 Maintainers <x86@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Linux PM <linux-pm@vger.kernel.org>, Len Brown <lenb@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@suse.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Artem Bityutskiy <artem.bityutskiy@linux.intel.com>,
+	"Gautham R. Shenoy" <gautham.shenoy@amd.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Todd Brandt <todd.e.brandt@linux.intel.com>
+Subject: Re: [PATCH v1 0/2] x86/smp: Fix power regression introduced by
+ commit 96040f7273e2
+Message-ID: <20250528133807.GC39944@noisy.programming.kicks-ass.net>
+References: <2006806.PYKUYFuaPT@rjwysocki.net>
+ <20250528131759.GA39944@noisy.programming.kicks-ass.net>
+ <CAJZ5v0i=TWMjPKxGa8eT-prV=dtQo=pwys5amcj3QL9qo=EYyQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="4EGpcGhWdCTivEIc"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250528121306.1464830-4-dario.binacchi@amarulasolutions.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJZ5v0i=TWMjPKxGa8eT-prV=dtQo=pwys5amcj3QL9qo=EYyQ@mail.gmail.com>
 
+On Wed, May 28, 2025 at 03:20:16PM +0200, Rafael J. Wysocki wrote:
+> On Wed, May 28, 2025 at 3:18 PM Peter Zijlstra <peterz@infradead.org> wrote:
+> >
+> > On Wed, May 28, 2025 at 02:53:13PM +0200, Rafael J. Wysocki wrote:
+> > > Hi Everyone,
+> > >
+> > > Commit 96040f7273e2 ("x86/smp: Eliminate mwait_play_dead_cpuid_hint()")
+> > > that shipped in 6.15 introduced a nasty power regression on systems that
+> > > start with "nosmt" in the kernel command line which prevents it from entering
+> > > deep package idle states (for instance, PC10) later on.  Idle power, including
+> > > power in suspend-to-idle, goes up significantly on those systems as a result.
+> > >
+> > > Address this by reverting commit 96040f7273e2 (patch [1/2]) and using a
+> > > different approach, which is to retain mwait_play_dead_cpuid_hint() and
+> > > still prefer it to hlt_play_dead() in case it is needed when cpuidle is
+> > > not available, but prefer cpuidle_play_dead() to it by default (patch [2/2]).
+> >
+> > I don't understand. The revert says the reason it regresses is that it
+> > goes into play_dead before cpuidle is initialized. The fix is then to
+> > call cpuidle first.
+> >
+> > But if cpuidle isn't initialized yet, how does that fix anything?
+> 
+> The revert fixes the bug.
 
---4EGpcGhWdCTivEIc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This is not what I asked.
 
-On Wed, May 28, 2025 at 02:11:40PM +0200, Dario Binacchi wrote:
-> The board includes the following resources:
->  - 256 Mbytes NAND Flash
->  - 128 Mbytes DRAM DDR2
->  - CAN
->  - USB 2.0 high-speed/full-speed
->  - Ethernet MAC
->=20
-> Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+> The other patch does what the reverted commit was supposed to be
+> doing, but differently.
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+No, it does not.
 
---4EGpcGhWdCTivEIc
-Content-Type: application/pgp-signature; name="signature.asc"
+The whole point was that mwait_play_dead did not DTRT because hints are
+stupid and it could not select the deepest C state in an unambiguous
+fashion.
 
------BEGIN PGP SIGNATURE-----
+And now you're restoring that -- code you all argued was fundamentally
+buggered.
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaDcRhQAKCRB4tDGHoIJi
-0l8SAP0XQPahB24PbgqJBY1MivzfYl77mDTy4+oOIaLKmuQlzgD/QExr6pC/YZMk
-vcDtr9EgoxGgshea76kDK5vhCJKg5Q8=
-=AHuM
------END PGP SIGNATURE-----
+Yes is 'fixes' things on old platforms, but it is equally broken on the
+new platforms where you all argued it was broken on. So either way
+around you're going to need to fix those, and this isn't it.
 
---4EGpcGhWdCTivEIc--
+Now, SMT siblings are all AP, by definition. So can't we simply send
+them INIT instead of doing CLI;HLT, that way they drop into
+Wait-for-SIPI and the ucode can sort it out?
 
