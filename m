@@ -1,128 +1,103 @@
-Return-Path: <linux-kernel+bounces-666207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61367AC73CB
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 00:17:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1328AC73CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 00:17:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0B0D3A675D
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 22:16:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABD114A88F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 22:17:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B381222584;
-	Wed, 28 May 2025 22:16:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 870DC4C81;
+	Wed, 28 May 2025 22:17:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dhofPInb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G7muyCJc"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8CBA207A20;
-	Wed, 28 May 2025 22:16:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9873204680;
+	Wed, 28 May 2025 22:17:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748470577; cv=none; b=nHgQNoaTMsfSCSuEziPrSwXqx22l83igxihXbfsFtDt9KIDH0tKzCc4qnkl8R7K7vJBjARhxKbeIXHbVSe9BbcW2Teckhtb7/gfxSIOfhqg+yvaTPIKxHiHC7Am9JfoEWEFYLOFBZwDvT2mMRQSnDGGmDUoFgbhn9pT8OrhuCRU=
+	t=1748470650; cv=none; b=F8brHBzUseHPUMYxomwBWhAkBwTLGAu5zkn67t62ventEvzIMA+WpttW1gTGOTq3lwh2C70NfZbTQzkQVZmc7u+jS+rS/d7RwI/NKVJ8BhQosp1LU/Fu6SnsKqqW0Xi5A8Mbbp9AU901XUz0t8lt5a+XjhiGUDeJPmezXCxAbaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748470577; c=relaxed/simple;
-	bh=14aYNCNfI06xgQO0opu7LK+XD3fig3/AMaFXaT8jqi8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=brkiRKkc8cZrTqz79slToAL3/c66bMWUei9nadwXSR4JoZlebhPNASNDU/2/NYmjFgclkQYqGgnNCgfQxldASBC00JHeCGCxJOhM+Zqc7mPBwFYywpDiaE/JbjpkYIH+IIoZTLp2hiJspUTjb2QhFzwBYrFh3MiiGMON8rw7idU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dhofPInb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 697DBC4CEE3;
-	Wed, 28 May 2025 22:16:15 +0000 (UTC)
+	s=arc-20240116; t=1748470650; c=relaxed/simple;
+	bh=zNpLWP0iLRo2SdsjN4iDx0HkI1x+t7mIhg4FFPTD5Tk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=okaPMpdMSRR88dHhooLRCpd2Nn5V5K0JD154qSDZ3IblowMfPx/JYuHQCnLkj5VnTf3YpQnZWdP2JDpIJ+TveAdOWd/w4+qQVdLlxbVhWQk6g62ARUQt/ErCrsw7DLej+nBDvZNc2PJE1Dh/zPPglWXjU5rTWJC5izVFQAJmByo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G7muyCJc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 368E3C4CEE3;
+	Wed, 28 May 2025 22:17:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748470576;
-	bh=14aYNCNfI06xgQO0opu7LK+XD3fig3/AMaFXaT8jqi8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dhofPInbXDWh1B5QlG2a3ED7JdgjQiTBNCjvubn+7PFjm+jbRxTtyDSe8LUnwGvGx
-	 +OyWBcYO8Rl5IPfMbLtZrOpU0rsVaTBrtCAS4o0Zhr0j86YbG8jm6Ote67Ml/rWaXF
-	 qeE+hfzW3Oe5o0svZdwCgmP30J3wEu+4bRsdgw2lIhScVmeY/g2vYHA5Ki6E2XJCUf
-	 YCWQCk/WNac5oJ1tZpqNcD/zFbiIBU0TrPeizuLZDVl4lyhuUN0vrsabaxFyesIy+S
-	 lX08Q4ga8WFvklLVhh1FIaGQGaNGOvoWiXcuzNmEeU5SGgRXoSye2vyT+msw8YpXRl
-	 BidGtghk9kvIg==
-Date: Wed, 28 May 2025 15:16:14 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Athira Rajeev <atrajeev@linux.ibm.com>,
-	Kajol Jain <kjain@linux.ibm.com>, Li Huafei <lihuafei1@huawei.com>,
-	"Steinar H. Gunderson" <sesse@google.com>,
-	James Clark <james.clark@linaro.org>,
-	Stephen Brennan <stephen.s.brennan@oracle.com>,
-	Andi Kleen <ak@linux.intel.com>, Dmitry Vyukov <dvyukov@google.com>,
-	Zhongqiu Han <quic_zhonhan@quicinc.com>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	Krzysztof =?utf-8?Q?=C5=81opatowski?= <krzysztof.m.lopatowski@gmail.com>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	Zixian Cai <fzczx123@gmail.com>,
-	Steve Clevenger <scclevenger@os.amperecomputing.com>,
-	Thomas Falcon <thomas.falcon@intel.com>,
-	Martin Liska <martin.liska@hey.com>,
-	Martin =?utf-8?B?TGnFoWth?= <m.liska@foxlink.cz>,
-	Song Liu <song@kernel.org>, linux-perf-users@vger.kernel.org,
+	s=k20201202; t=1748470649;
+	bh=zNpLWP0iLRo2SdsjN4iDx0HkI1x+t7mIhg4FFPTD5Tk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=G7muyCJcjzQJFr92jjgnWBBlpxhlTSkns9tT7dVBsYZ8p066RrwEMoBi52I4Dw0DI
+	 eaRLiDhYqbn6faw+B+Y2GJED9hg08bsaHGlfETA9F75ftIxkrXqIi4OsD5QT9YrZYf
+	 CsaqSf2zXr1M9TJ7oIMBiqykalOfsuUlS5XATez3+9oY1oYBUkrSTNXzSwCuLDw77P
+	 mAIoJS7lnZh5pfi+61KTh5B/5D6Udfk/l7Ahoof46MrGPhVaDAeUDAObZJ7cfpg/mX
+	 uxLm3Rt7vPXY3FPlpscg8hjt7CgYs1Zxxy83Afgeh3cmTznC8ByVXp36g6rIFklFa6
+	 k/AeUR12dZOyg==
+From: sven@kernel.org
+To: soc@lists.linux.dev
+Cc: Sven Peter <sven@kernel.org>,
+	Janne Grunau <j@jannau.net>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Neal Gompa <neal@gompa.dev>,
+	Sven Peter <sven@svenpeter.dev>,
+	asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 5/9] perf build-id: Mark DSO in sample callchains
-Message-ID: <aDeLLvBVQnQqJT4b@google.com>
-References: <20250428213409.1417584-1-irogers@google.com>
- <20250428213409.1417584-6-irogers@google.com>
- <aDd06eK7fKFsFsVS@google.com>
- <CAP-5=fV-cLLpdyoqL8+Jrt3iYU7EbpZZDOyM1kBCc+54gA2Nzg@mail.gmail.com>
+Subject: [PATCH] MAINTAINERS, mailmap: update Sven Peter's email address
+Date: Thu, 29 May 2025 00:17:18 +0200
+Message-Id: <20250528221718.45204-1-sven@kernel.org>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fV-cLLpdyoqL8+Jrt3iYU7EbpZZDOyM1kBCc+54gA2Nzg@mail.gmail.com>
 
-On Wed, May 28, 2025 at 01:54:41PM -0700, Ian Rogers wrote:
-> On Wed, May 28, 2025 at 1:41 PM Namhyung Kim <namhyung@kernel.org> wrote:
-> >
-> > On Mon, Apr 28, 2025 at 02:34:04PM -0700, Ian Rogers wrote:
-> > > Previously only the sample IP's map DSO would be marked hit for the
-> > > purposes of populating the build ID cache. Walk the call chain to mark
-> > > all IPs and DSOs.
-> >
-> > I think this is correct, but I'm afraid it'd also increase the processing
-> > time.  Do you happen to have any numbers?
-> 
-> It increases time spent processing the data file but to get a large
-> data file I had to run for multiple seconds and I struggled to get the
-> performance cost of this to be in the milliseconds (ie a tiny fraction
-> of the record time). Ultimately I found the change imperceptible and
-> couldn't think of a good command line to make it perceptible.
+From: Sven Peter <sven@kernel.org>
 
-The worst case would be dwarf unwinding.  Maybe we can skip the
-processing if it takes too long..
+Update my mail address to my new @kernel.org one and also add a mailmap
+entry to make sure everything gets sent there for easier filtering.
 
-> 
-> If the time is spent populating ~/.debug because more DSOs are marked
-> then this is fixing a bug and isn't a problem with the patch.
+Signed-off-by: Sven Peter <sven@kernel.org>
+---
+ .mailmap    | 1 +
+ MAINTAINERS | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
-Right, it's a good thing.
+diff --git a/.mailmap b/.mailmap
+index 4f7cd8e23177..7a9cd664183a 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -712,6 +712,7 @@ Sven Eckelmann <sven@narfation.org> <sven.eckelmann@gmx.de>
+ Sven Eckelmann <sven@narfation.org> <sven.eckelmann@open-mesh.com>
+ Sven Eckelmann <sven@narfation.org> <sven.eckelmann@openmesh.com>
+ Sven Eckelmann <sven@narfation.org> <sven@open-mesh.com>
++Sven Peter <sven@kernel.org> <sven@svenpeter.dev>
+ Takashi YOSHII <takashi.yoshii.zj@renesas.com>
+ Tamizh Chelvam Raja <quic_tamizhr@quicinc.com> <tamizhr@codeaurora.org>
+ Taniya Das <quic_tdas@quicinc.com> <tdas@codeaurora.org>
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 96b827049501..b389195fb9cd 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2251,7 +2251,7 @@ F:	sound/soc/codecs/cs42l84.*
+ F:	sound/soc/codecs/ssm3515.c
 
-> 
-> My personal opinion is that it is somewhat surprising `perf record` is
-> post-processing the perf.data file at all, and -B and -N would be my
-> expected defaults - just as --buildid-mmap implies --no-buildid (-B).
-
-Otherwise nobody will run perf buildid-cache to add the info. :)
-
-
-> I didn't want to modify existing behaviors in these changes, however,
-> in this case I was just trying to make the existing behavior correct,
-> similar to fixing the same bug in `perf inject`.
-
-Thanks for your work,
-Namhyung
+ ARM/APPLE MACHINE SUPPORT
+-M:	Sven Peter <sven@svenpeter.dev>
++M:	Sven Peter <sven@kernel.org>
+ M:	Janne Grunau <j@jannau.net>
+ R:	Alyssa Rosenzweig <alyssa@rosenzweig.io>
+ R:	Neal Gompa <neal@gompa.dev>
+--
+2.34.1
 
 
