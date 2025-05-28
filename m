@@ -1,118 +1,149 @@
-Return-Path: <linux-kernel+bounces-665355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61368AC6819
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 13:08:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A57ACAC681F
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 13:08:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB0989E3C42
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 11:07:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 220AE7B2EBE
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 11:07:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C92D27AC59;
-	Wed, 28 May 2025 11:07:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 240C927B4EF;
+	Wed, 28 May 2025 11:08:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b6qL6lSp"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QqO5PhzB"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5AB818DB03;
-	Wed, 28 May 2025 11:07:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6C9B27A139;
+	Wed, 28 May 2025 11:07:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748430471; cv=none; b=jF/fXKQlaKb4utv8vVjVrilDqnAXffO4HZbxblot5AjwWBXk1ZveeT95b5Vm7roVbQT4+BfOoEqIILxfnWzdMwidVO8ubpk4YecFRfXTEyi4cBMcV6fCvLjVpKYjwkVCReMjYDUm3XpAt2PnTuGa0psnsOQjfcIhBLLjbpJUO/Q=
+	t=1748430481; cv=none; b=i4N0NrLxGL9cz8ohGiqvFZQGXAOCytZAlpILo9GRw6O0sIRT5FuYbm1pC0uOM6Xgs7/B6udwolFmyC8TqIjJ0ynSgHdXzRf0TSAHAjPWW/zpOuKkcQVXCQUf2w3zwq1LpclGlpDZDPCzWEfY7UL2TUvoflgTKntzsUom6ycEZlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748430471; c=relaxed/simple;
-	bh=jF/5ubFo89BoEZAJxrybV/UPR1THG6liaCfHYoxNyQY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sCD3b7z02W1LLpe+huiluNBb2LlcvrSmn+7l1nJeAwW0ptNrRdYFd2I4wOgDIPZuZ5m/mkMOqCYgVUjk2IkcPirUIcPj2Inl7WYnFeonxEobA53jRtCBWEo7cOhLlhSxMZymiZqluusC9+APmLyQQhiZG4O+biMpUEU05qiDPH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b6qL6lSp; arc=none smtp.client-ip=209.85.208.177
+	s=arc-20240116; t=1748430481; c=relaxed/simple;
+	bh=R1Eh8RWRdVlzRqbFs9zMJ1Ckr8QstB1hZzkYJUC8K+Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EnpL5x2RSmZMUBDkjuJahLMi5/FpEpyEldzgL74dIiB5eh4owT0s1kcq6QKStuOZJTpVVm0JHxoFLowwdQZw46Bz6MYlmV3NotTOPkHt05akLyPSzAQ7z11ZkkvdSrLOlf9QMM9oq8z8boj2P6B2nUYN63CCQ4nBbVySPfkFymo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QqO5PhzB; arc=none smtp.client-ip=209.85.218.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-30f30200b51so45438671fa.3;
-        Wed, 28 May 2025 04:07:49 -0700 (PDT)
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ac34257295dso862230666b.2;
+        Wed, 28 May 2025 04:07:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748430468; x=1749035268; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jF/5ubFo89BoEZAJxrybV/UPR1THG6liaCfHYoxNyQY=;
-        b=b6qL6lSp+TO++Yk9IN5BKjSS4hGsMaa0Cm5Hfs2vPno8sKnkhYvB/TA+MQChRulII7
-         I5kPPk01XKd9gqODSidUtUHgcsdbth8HYW8qM//6oVDrIUPx5ddGFs709K+T1tdi0G5i
-         3v8j/s3hC5WFScpDcR2h8aHwxSxsIKmBKME75UHkdQHv1g1In7aU8CuW0rzJCSYo0Ubv
-         5ARDr+gDG1yaNPsiLNn2tWP3kscl2Ho5/rHIdViWqlWh9O0ANX85b/wMzPVBLtZuDWNq
-         QbRX3p7QBGAqOVghobhEEGmb7A9ievWEdPnCP+vhIWvzLYIWzSNMeTKVvcbTpAKahdzE
-         vA5w==
+        d=gmail.com; s=20230601; t=1748430478; x=1749035278; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y0d9IobXiw91z9fWsL1fagf4MsIBeTY/sxiexdnW7zM=;
+        b=QqO5PhzB4fOP6WymG77V6rQj1dIKhtDHPM0s+pB4s6J/ymWPFlra1HOgX3/FjQaJwn
+         V7u9XHEZB082s6g9cYwylOOd9X98dE6mxFGBe68X9jRYOCLGFdF74cm5+69bU+fg3IF2
+         IVqgQbDvcRJWO37rK9JPqVTbNlmGuyDCTV6YuOziJMFTF4zvxBKaJ/OS/Jqhke5AvnVE
+         XYSFD2NqLGTYtRWdCaR5QoRl/qytU2iR4By0tp7SWtDNjpOsyg07Z/73z92WxiAiEY/Y
+         Ut8ytzrEl8knt9a0LpWbAeVWowk/pZDaKMNbw/ZdhEHMvVT+nZ+Boifqdo4QHhPvIBKi
+         Hyeg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748430468; x=1749035268;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jF/5ubFo89BoEZAJxrybV/UPR1THG6liaCfHYoxNyQY=;
-        b=rO02wN9tgThCCmV2QSrwRNoaezEGnAy2+1G70SSW6FEy4hCgn9PLiF+Nwsyl493sSU
-         N3LSJuVo5/6xgY3MSJ0YFs7b11JC5ych0BykIHuOMC0ySXjk8vesr/LIe4ljxe+gQIaY
-         5glrwA0zXdretXeRVQwQQkxB1s7Frlnhznp299gdpL9FuPa0WwsaRAsZtKwR+Tlg2GBl
-         KSImf4OIPNCejcx2tV+8+5cAbR7dyWS7nHyPNZpNoHEyBuvqB0B5H3iA+kK6lcLtF6oi
-         UQM8PObI/zWspjGSKChcc0jcXmpUE1DcaDHMmyA+rFPBF5YFoFbNQCkvxWIA6NAjMQx0
-         iY6g==
-X-Forwarded-Encrypted: i=1; AJvYcCUn8kDdt1nYlMA3GlGQXHSRwVPkDpEdB5Us0kMxpuxKa9MPpMgtc5ePq587umAclyq3Z+9tiPOAQ+6XAOs=@vger.kernel.org, AJvYcCWJcwZgcpSetDLs+yFfVFjVD0ZDtV4yyditiqkiZm3ecwbUQ+FfggYMI3bB4U77wzdsHTaN+0DP8UKtPoQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkdPdOOUUPxbRVbVo7teQuWUyOzQlNtbVCVstuw4Q74Cb0iWqC
-	Hkp6dFTtKJRZxnQEryRHltsRyN7sIFAGCxdq2rlTwJoxV626HJtXM9h7DAMvtRS2rjP5/Dehqdb
-	2E5j2WNLQ2rQBKWXiaAMFN4+F3iFZFEs=
-X-Gm-Gg: ASbGncvdgnt9yCG3nbgmDxw5sfXIEZm4530WufI+v6WnjfzcvFj/QvhDsDaUglhMyxp
-	XjUVXj8VRvJkFgE9UAnsCdkd6M38w4wcar6Muyj3gyaoLqg8jHrPaR0wx3WScmaKO8CoqoeaaOt
-	ytmwT4wyZ+kCNiyDGCUUFGrU+9HBT3rhOexWXf1NszSqUvCa+wO7ozP+j59FDQSlc=
-X-Google-Smtp-Source: AGHT+IE1hcIMK7m1GKoGJB24P7DGefofaI/Vg8OKATdfKWNBjeH6OMyp4e7LeetXAmTIp+kezDsWsaZdJxJ8WU97Ous=
-X-Received: by 2002:a2e:a9ab:0:b0:327:fec0:b85d with SMTP id
- 38308e7fff4ca-3295b9e5920mr57437991fa.21.1748430467655; Wed, 28 May 2025
- 04:07:47 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1748430478; x=1749035278;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Y0d9IobXiw91z9fWsL1fagf4MsIBeTY/sxiexdnW7zM=;
+        b=jCnZIzCpaefnNhMfqF4TOBQlD6THenY5F7/6hVW3VihQ6vl9TOfxTKGrIY93nby8Ag
+         s8RgspB43Wr+hfytAkNSOWfi3kPffGSWvqbkvXICasJeIoz/JEpDIvngYwKk3cOqfKY3
+         O4+oV1p+ncRfwyxhMjS2qWvxDny/yr3J8KAO83IkZdd7d2h7Bbl9IKykPw9Wv8JPBpyu
+         /xtZxdNq0LdJUH188EVh9DUPimAhnkSSI1ou6ywb+H6W66L5ePC9+p2COvD2d3K3qtBn
+         YtDp3eaQ3iXiSuRdg/oU+3oXswdtKlv2c7Gwf6TPO1MARX5E1U8Vx0iZvHMqzDTkW+vq
+         yuQA==
+X-Forwarded-Encrypted: i=1; AJvYcCV0qLidIPmOBN3LjG0GJqeYiEciPC/9c1TyN2UJvkzNJ6TU2MHPNmwagXh2uLdw1/i44eqEB01i@vger.kernel.org, AJvYcCVZ0dPiq2dF5d3VDW0RBYJ73fSdqpWpGQ0R6agdCBfp54Yn/cuBIHmhl0ZcHhRmhYx6wIcaXeyH0nVb@vger.kernel.org, AJvYcCWItNOLnrkyK9o2Ob0pETkp4NyL7qwfoWp2RWOHtqig8gHb+VzX0Hh1cm6Hoj3xyVPOJ/EsZfsB01MGSTmA@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNQPNL0cjhGA3v+kT+cFL5K3x5plyAPF/D6mHmIvDOvWuLs3MY
+	PtppMf42LrP8GWHL46Wmu0pu4keOJO/Jm0XbBCelZ/AVrdYbKUcbH9Gs
+X-Gm-Gg: ASbGncvc/lME3aAIBld3psDO6KqKyU7R3jEGv2fUirD04YcNA2Xj+YN5ctgBSolvE29
+	EFUX2fdjhXiORtb0VAIHv8wqCjG0w/HCtAxGPyoXiEg726jXv5ldrOyuLYUe3KT/nJ1bmLKArgw
+	R5Ywx/qWF/ibcKZLZXbtd34c829sT7sznwsSQOYFvdwIJznoLe+eBSFfJgLRTJUtan3PMwkrRXe
+	OTL/D0u9fuBzV8SRJk9aujMslwPysWNRSEJ5GYwCzqZ4joIdnmYdE7ATaxvB+dGdh0DxI8dtQkP
+	j0LW6HpXqGt0YbatZF1sunlsVYAjQ9au7Mo1LgqxUykn3MrjtAOHCiEm58mZhvvd1PqWuSGO
+X-Google-Smtp-Source: AGHT+IEtyhnn9NHAemtfJzTKjrsDVohoBEwPwSRjHx8mSKQZYwXz0JyxONi4zbTF+2+ejSAk/iafmA==
+X-Received: by 2002:a17:907:7f17:b0:ad5:2137:cc9e with SMTP id a640c23a62f3a-ad85b120246mr1545273566b.3.1748430477700;
+        Wed, 28 May 2025 04:07:57 -0700 (PDT)
+Received: from localhost.localdomain ([2001:b07:aac:705d:5a2:70b0:c9d3:7010])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6051d5d9765sm626908a12.8.2025.05.28.04.07.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 May 2025 04:07:57 -0700 (PDT)
+From: Emanuele Ghidoli <ghidoliemanuele@gmail.com>
+To: Nishanth Menon <nm@ti.com>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Tero Kristo <kristo@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>,
+	Francesco Dolcini <francesco.dolcini@toradex.com>,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH v1] arm64: dts: ti: k3-am62-verdin: Enable pull-ups on I2C buses
+Date: Wed, 28 May 2025 13:07:37 +0200
+Message-ID: <20250528110741.262336-1-ghidoliemanuele@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250412-virtio-media-v3-1-97dc94c18398@gmail.com>
- <20250526141316.7e907032@foz.lan> <20250527102111-mutt-send-email-mst@kernel.org>
- <20250527163927.02924adc@sal.lan> <20250527110444-mutt-send-email-mst@kernel.org>
-In-Reply-To: <20250527110444-mutt-send-email-mst@kernel.org>
-From: Alexandre Courbot <gnurou@gmail.com>
-Date: Wed, 28 May 2025 20:07:34 +0900
-X-Gm-Features: AX0GCFt5INry7hbLxnLIuUw8ffHrRUe_PZb75vuWFFXrALkR7hnpqJJcOCl5zNg
-Message-ID: <CAAVeFuJ-zbbUT3ss5rw-=Sx52aoLxf7BCLz9tPxcA2AY+PX+yQ@mail.gmail.com>
-Subject: Re: [PATCH v3] media: add virtio-media driver
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Hans Verkuil <hverkuil@xs4all.nl>, Albert Esteve <aesteve@redhat.com>, 
-	Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	=?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
-	gurchetansingh@google.com, daniel.almeida@collabora.com, adelva@google.com, 
-	changyeon@google.com, nicolas.dufresne@collabora.com, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	virtualization@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Michael,
+From: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
 
-On Wed, May 28, 2025 at 12:06=E2=80=AFAM Michael S. Tsirkin <mst@redhat.com=
-> wrote:
->
-> On Tue, May 27, 2025 at 04:39:27PM +0200, Mauro Carvalho Chehab wrote:
-> > > It's up to you though.
-> > > I can keep it in next for now, so it gets some coverage by
-> > > tools scanning that tree.
-> >
-> > Sure, feel free to keep it on next if you prefer so. Just
-> > please don't submit it upstream while we don't review and
-> > properly test it.
->
-> No prob. I just want to see it get reviewed and merged.
-> My understanding is, it wasn't because maintainers were
-> not Cc'd so that should be all ironed out now.
-> Alexandre, do you want this in next for now or just drop it?
+Enable internal bias pull-ups on the SoC-side I2C buses that do not have
+external pull resistors populated on the SoM. This ensures proper
+default line levels.
 
-I think it doesn't hurt to give some exposure to this driver, if Mauro
-is ok with it (and it eventually gets merged through the media tree).
+Cc: stable@vger.kernel.org
+Fixes: 316b80246b16 ("arm64: dts: ti: add verdin am62")
+Signed-off-by: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
+---
+ arch/arm64/boot/dts/ti/k3-am62-verdin.dtsi | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/ti/k3-am62-verdin.dtsi b/arch/arm64/boot/dts/ti/k3-am62-verdin.dtsi
+index 1ea8f64b1b3b..bc2289d74774 100644
+--- a/arch/arm64/boot/dts/ti/k3-am62-verdin.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-am62-verdin.dtsi
+@@ -507,16 +507,16 @@ AM62X_IOPAD(0x01ec, PIN_INPUT_PULLUP, 0) /* (A17) I2C1_SDA */ /* SODIMM 12 */
+ 	/* Verdin I2C_2_DSI */
+ 	pinctrl_i2c2: main-i2c2-default-pins {
+ 		pinctrl-single,pins = <
+-			AM62X_IOPAD(0x00b0, PIN_INPUT, 1) /* (K22) GPMC0_CSn2.I2C2_SCL */ /* SODIMM 55 */
+-			AM62X_IOPAD(0x00b4, PIN_INPUT, 1) /* (K24) GPMC0_CSn3.I2C2_SDA */ /* SODIMM 53 */
++			AM62X_IOPAD(0x00b0, PIN_INPUT_PULLUP, 1) /* (K22) GPMC0_CSn2.I2C2_SCL */ /* SODIMM 55 */
++			AM62X_IOPAD(0x00b4, PIN_INPUT_PULLUP, 1) /* (K24) GPMC0_CSn3.I2C2_SDA */ /* SODIMM 53 */
+ 		>;
+ 	};
+ 
+ 	/* Verdin I2C_4_CSI */
+ 	pinctrl_i2c3: main-i2c3-default-pins {
+ 		pinctrl-single,pins = <
+-			AM62X_IOPAD(0x01d0, PIN_INPUT, 2) /* (A15) UART0_CTSn.I2C3_SCL */ /* SODIMM 95 */
+-			AM62X_IOPAD(0x01d4, PIN_INPUT, 2) /* (B15) UART0_RTSn.I2C3_SDA */ /* SODIMM 93 */
++			AM62X_IOPAD(0x01d0, PIN_INPUT_PULLUP, 2) /* (A15) UART0_CTSn.I2C3_SCL */ /* SODIMM 95 */
++			AM62X_IOPAD(0x01d4, PIN_INPUT_PULLUP, 2) /* (B15) UART0_RTSn.I2C3_SDA */ /* SODIMM 93 */
+ 		>;
+ 	};
+ 
+@@ -786,8 +786,8 @@ AM62X_MCU_IOPAD(0x0010, PIN_INPUT, 7) /* (C9) MCU_SPI0_D1.MCU_GPIO0_4 */ /* SODI
+ 	/* Verdin I2C_3_HDMI */
+ 	pinctrl_mcu_i2c0: mcu-i2c0-default-pins {
+ 		pinctrl-single,pins = <
+-			AM62X_MCU_IOPAD(0x0044, PIN_INPUT, 0) /*  (A8) MCU_I2C0_SCL */ /* SODIMM 59 */
+-			AM62X_MCU_IOPAD(0x0048, PIN_INPUT, 0) /* (D10) MCU_I2C0_SDA */ /* SODIMM 57 */
++			AM62X_MCU_IOPAD(0x0044, PIN_INPUT_PULLUP, 0) /*  (A8) MCU_I2C0_SCL */ /* SODIMM 59 */
++			AM62X_MCU_IOPAD(0x0048, PIN_INPUT_PULLUP, 0) /* (D10) MCU_I2C0_SDA */ /* SODIMM 57 */
+ 		>;
+ 	};
+ 
+-- 
+2.43.0
+
 
