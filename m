@@ -1,1052 +1,189 @@
-Return-Path: <linux-kernel+bounces-665146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EA72AC64E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 10:56:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB1A4AC64DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 10:56:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DB2C9E6A22
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 08:55:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A123E9E5FB5
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 08:55:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C706275115;
-	Wed, 28 May 2025 08:55:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48EB32750EF;
+	Wed, 28 May 2025 08:55:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=thundersoft.com header.i=@thundersoft.com header.b="GxGhZHqZ"
-Received: from mail-m1973179.qiye.163.com (mail-m1973179.qiye.163.com [220.197.31.79])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OZwMkE3w"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 927C62459D9;
-	Wed, 28 May 2025 08:54:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9E81274FE5;
+	Wed, 28 May 2025 08:55:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748422505; cv=none; b=eV5cOaBlG9BsYr+zSWej5IUT6AhUOp7l1YpI4SND4zoakFrXKwAxUiSv5TYeszPAKyNUlCJjvt5KS1/onvkm7i358bd3jSETOP00TVQ4pHaquf63yhV31iBsT9JK2FSrpDoMezuq2cRjt+m7NjLxXWw82KRZg1R23XtJ4w4vBxM=
+	t=1748422502; cv=none; b=AjdqUBt0/qr2GdXCOpCdDRGzDTlvFA9JQ9e8UV7cA0Sfa0bxuGteQqsbvswySdaVXaEnKQp0LnMpX2FhLP7TUUoulRHCDUWJDStQwNHVVY2VPn3Hek+oWVo6u9j++Ddrn4uQqBRn2eqcNBxbtmG1CfTHNs/+RAgkkjtwCrRFa38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748422505; c=relaxed/simple;
-	bh=MLBp24wcbgKRPnlptSWQ8hziXhIacRpYpei9LwVTpGU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fhkCoXBX/y6c9KV8Bn4bMJF3kSk9h5EE4VgxC2gK39LAuMbiB4TIVwCF94gqOF2GCKh64ACfv0Mvm25nU55D8A0VAz3wPThigyU0r+EgEMIQYSlqVWrLxe5f6QQ5dVumKLgVtw1rZBd/PGHimltbfmOsAMBzrlXwvEhvamMvWu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thundersoft.com; spf=pass smtp.mailfrom=thundersoft.com; dkim=pass (1024-bit key) header.d=thundersoft.com header.i=@thundersoft.com header.b=GxGhZHqZ; arc=none smtp.client-ip=220.197.31.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thundersoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thundersoft.com
-Received: from localhost.localdomain (unknown [117.184.129.134])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 16b15a620;
-	Wed, 28 May 2025 16:54:55 +0800 (GMT+08:00)
-From: Albert Yang <yangzh0906@thundersoft.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Ge Gordon <gordon.ge@bst.ai>
-Cc: BST Linux Kernel Upstream Group <bst-upstream@bstai.top>,
-	linux-mmc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Victor Shih <victor.shih@genesyslogic.com.tw>,
-	Shan-Chun Hung <shanchun1218@gmail.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Peter Robinson <pbrobinson@gmail.com>,
-	Ben Chuang <ben.chuang@genesyslogic.com.tw>,
-	Albert Yang <yangzh0906@thundersoft.com>
-Subject: [PATCH v1 5/9] mmc: sdhci: add Black Sesame Technologies BST C1200 controller driver
-Date: Wed, 28 May 2025 16:54:53 +0800
-Message-Id: <20250528085453.481320-1-yangzh0906@thundersoft.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1748422502; c=relaxed/simple;
+	bh=UVux7hP9bMnrn8D/4/hQlg1HOvWZ0FYr+0n+VvHDd6g=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D70w4foxOKUbANuQeU3BpN2gh8ekDDpfbkioTEjN2pBNmUhjuIJ9+knK83V6n3CfjEfuGuAL6jMjg426uz5YLYdhATD1qc9x+hQ79zoj6SC7TUY6lYXSO4793hpGWWIJfVlPmdVi63lGv9v2wBTIcKXmVDCeyKXA4n4V5HnTDYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OZwMkE3w; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-442fda876a6so39920375e9.0;
+        Wed, 28 May 2025 01:55:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748422499; x=1749027299; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=X4jr0jEwV3YNS8f7iVKb2L3Icr+a8dnf2UQtf6f1As8=;
+        b=OZwMkE3w5p3YquP5bfzqj05sMAwlSZE8M6Ng46nz4dMYnFhGl2QieMKnSAYB/x8N4P
+         xN3kbMRbMiKMo8N66gxbLfWRlXgVcnn3BsJttC0FBBNyDIgx8o4YDbkrjJ7j7Mf6aYXn
+         XSrrY/1vLZc4HQhs4oLKiWCEX2T2IMq2ryiWxMEOoqjPJ845XvZ7ppyOqC1/qFjNG5Pp
+         tssh/QiRIiyXSuKmTjQUiRJKzhMJ+zATY/SKRcEYEGTQnVIc8wwQLdNWmwpKl1hkDDm6
+         MBXoO9hJ22lDhBgROwmRaAST2I5e79ZcDOHs4JbmbqhKGwHDRRc6pzHqEiCrUDTlDaeH
+         l85Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748422499; x=1749027299;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=X4jr0jEwV3YNS8f7iVKb2L3Icr+a8dnf2UQtf6f1As8=;
+        b=JG3kDHDvarRFDkQKGdEb0MMtGzmxe5U8VfN/7kFbXB2zgo9FZCGMcp4O/6VQw15dv5
+         MeOZAomXorIF0vC99Pc1Xg3OZlquRQhExozAUBEdndDk0us0rQLJFNSaa+OqFEwZsN3u
+         1tFCOqSa5+JulYprgoxoGDZjXBUCL0lk5uxU8bU7hVS/0m7YjAwbltOQ52rWg9LVqCXz
+         uA2mdmUkIuK0VCj3UQZS3I5MKcs/oOsdQn4BiVdG8mLSczIAnU/fMXNvGSLTV+ZXjska
+         /I8hOyt/1a2kXW0eVk994haJD+T1N6ZOqCUFtNfrPu0vvAU6y+FzjFvvdvggtUXHP/MX
+         kg4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUvD8yfp3M6xbBkmIyHPw7ieDz9rf6ttHf2POUjIphl6392WZCEh+svp55uL9q/RRrBt91uesLv4HKdN6nW@vger.kernel.org, AJvYcCW4nZ+PV1cpT4/DmcZVGyDdEgXvTPzE7478xhLRTPooX7Qmihbwm+tbGf0lMsoC9PJoutrh/9jIJhl0@vger.kernel.org, AJvYcCXIjQcI3I2bOoKTEnQqZJ40iyjXcRguR6nOj0EyvCaPBSq6biiexVkB3X6CHbhtqqK+LAZ1qo2RMDb3@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMTIuy+tC++VQzkHgynsk4s6MHs0kKnXp1ZcnnH+9KCF4+lxGf
+	Sp6sdaGK+fU6g0WIBaaI8KMdA99PM1gKCiZQASNXyEwo45nFogTrB4XS
+X-Gm-Gg: ASbGncurlSckx7Elp+9oAxDMOoKPMcz7tCye37ICOe0iZJ39P3UObhnG6FkFgKIvUjX
+	R+D39VbZGEAyEtS0JqaoDkRrtC3XnTvbCu5+/5w1C1hz+JdFUyBHtY4E0+8r5/+KjrpEAXej176
+	hp9eDjQecezMsEWzKF/6l38V4VRW6jJTKSrZfw1cvLKrEroH8ccADRZdh/kCNQpbiVNyuinclul
+	GWVStNZy2WJtCM0ZWRq93tXVFrkG6qkuJoXOr6jPDJnjwGzYulhgi0shWViYbYNv7cbs/onAKRL
+	HhHNWv2B+1QzBdgfRw6Z2ra/NUVzJpR9ZRivKwJEQXtyVdITJ9AFDu6pk8iOd0LrETkDkIwVnD7
+	0eJjk/K8=
+X-Google-Smtp-Source: AGHT+IHzDXo4DKV7NuIB2FHat2ZLCgGieMqt3tp4PCcFaDmAJxHMEYrCP10nDJxLNZ8k0RrjjTbMcg==
+X-Received: by 2002:a05:600c:511d:b0:442:cab1:e092 with SMTP id 5b1f17b1804b1-44c91cc5591mr137161785e9.11.1748422498857;
+        Wed, 28 May 2025 01:54:58 -0700 (PDT)
+Received: from Ansuel-XPS. (93-34-88-225.ip49.fastwebnet.it. [93.34.88.225])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4eacd6e8asm865113f8f.70.2025.05.28.01.54.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 May 2025 01:54:58 -0700 (PDT)
+Message-ID: <6836cf62.5d0a0220.35d0aa.2025@mx.google.com>
+X-Google-Original-Message-ID: <aDbPYDACfIkaZMLj@Ansuel-XPS.>
+Date: Wed, 28 May 2025 10:54:56 +0200
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Felix Fietkau <nbd@nbd.name>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/5] dt-bindings: clock: airoha: Document support for
+ AN7583 clock
+References: <20250528004924.19970-1-ansuelsmth@gmail.com>
+ <20250528004924.19970-5-ansuelsmth@gmail.com>
+ <f9aebfb8-6312-45db-be12-94580ad412cb@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkaHh1DVkpOS0JNHktNQk4fQlYVFAkWGhdVEwETFh
-	oSFyQUDg9ZV1kYEgtZQVlKSkxVSkNPVUpJQlVKSE9ZV1kWGg8SFR0UWUFZT0tIVUpLSUJDQ01VSk
-	tLVUtZBg++
-X-HM-Tid: 0a97161a0bf009cckunma9364565397e19
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6K006Iyo4ATE3CEgNLg8YOR0M
-	PBYwFBhVSlVKTE9DT0lJT0JNQ05IVTMWGhIXVQIaFRwBE0tCS007DxMOFR8eCQgUHQ9VGBQWRVlX
-	WRILWUFZSkpMVUpDT1VKSUJVSkhPWVdZCAFZQUhLTUpNNwY+
-DKIM-Signature:a=rsa-sha256;
-	b=GxGhZHqZBB73a8Va6JfjYP/K3dNSI7VrjYB4kl0I3r+MM/AxrK0gyLUAOX02DXpi+5xcxqLV7FZEP76shajhDUh5jAhYg28Rl3VpgbEhdC9+3h9w/0BUjPqyNNGW5LkT22HysYjdARE0ETWRwIXkziOLh1mlriJTV9XKv41eG+U=; c=relaxed/relaxed; s=default; d=thundersoft.com; v=1;
-	bh=M0KDY3dFlDrx1D5rACr2ExWBLZteeZvGd5a8LSlK7CQ=;
-	h=date:mime-version:subject:message-id:from;
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f9aebfb8-6312-45db-be12-94580ad412cb@kernel.org>
 
-Add a driver for the DesignWare Mobile Storage Host Controller (DWCMSHC)
-SDHCI controller found in Black Sesame Technologies C1200 SoCs.
+On Wed, May 28, 2025 at 09:30:37AM +0200, Krzysztof Kozlowski wrote:
+> On 28/05/2025 02:49, Christian Marangi wrote:
+> >    - if:
+> >        properties:
+> >          compatible:
+> > @@ -75,6 +78,17 @@ allOf:
+> >          reg:
+> >            maxItems: 1
+> >  
+> > +      required:
+> > +        - reg
+> > +
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          const: airoha,an7583-clock
+> > +    then:
+> > +      properties:
+> > +        reg: false
+> 
+> 
+> No resources here, so this should be part of parent node.
+> 
 
-The driver provides specialized clock configuration, tuning, voltage
-switching, and power management for the BST DWCMSHC controller. It also
-includes support for eMMC boot and memory-mapped I/O for CRM registers.
+Ok hope you can help here. This is another case of "MFD" thing.
 
-Signed-off-by: Ge Gordon <gordon.ge@bst.ai>
-Signed-off-by: Albert Yang <yangzh0906@thundersoft.com>
----
- drivers/mmc/host/Kconfig              |  11 +
- drivers/mmc/host/Makefile             |   1 +
- drivers/mmc/host/sdhci-of-bst-c1200.c | 920 ++++++++++++++++++++++++++
- 3 files changed, 932 insertions(+)
- create mode 100644 drivers/mmc/host/sdhci-of-bst-c1200.c
+I was with the idea that it was O.K. to use this with very different
+devices. (current scenario Clock controller and MDIO controller)
 
-diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-index 264e11fa58ea..a5b3c0beeb78 100644
---- a/drivers/mmc/host/Kconfig
-+++ b/drivers/mmc/host/Kconfig
-@@ -1112,3 +1112,14 @@ config MMC_LITEX
- 	  module will be called litex_mmc.
- 
- 	  If unsure, say N.
-+
-+config MMC_SDHCI_BST
-+	tristate "SDHCI OF support for the BST DWC MSHC"
-+	depends on MMC_SDHCI_PLTFM
-+	depends on OF
-+	depends on COMMON_CLK
-+	help
-+	  This selects Synopsys DesignWare Cores Mobile Storage Controller
-+	  support.
-+	  If you have a controller with this interface, say Y or M here.
-+	  If unsure, say N.
-diff --git a/drivers/mmc/host/Makefile b/drivers/mmc/host/Makefile
-index 5147467ec825..08a281009d1d 100644
---- a/drivers/mmc/host/Makefile
-+++ b/drivers/mmc/host/Makefile
-@@ -13,6 +13,7 @@ obj-$(CONFIG_MMC_MXS)		+= mxs-mmc.o
- obj-$(CONFIG_MMC_SDHCI)		+= sdhci.o
- obj-$(CONFIG_MMC_SDHCI_UHS2)	+= sdhci-uhs2.o
- obj-$(CONFIG_MMC_SDHCI_PCI)	+= sdhci-pci.o
-+obj-$(CONFIG_MMC_SDHCI_BST)	        += sdhci-of-bst-c1200.o
- sdhci-pci-y			+= sdhci-pci-core.o sdhci-pci-o2micro.o sdhci-pci-arasan.o \
- 				   sdhci-pci-dwc-mshc.o sdhci-pci-gli.o
- obj-$(CONFIG_MMC_SDHCI_ACPI)	+= sdhci-acpi.o
-diff --git a/drivers/mmc/host/sdhci-of-bst-c1200.c b/drivers/mmc/host/sdhci-of-bst-c1200.c
-new file mode 100644
-index 000000000000..c6d2e6273e96
---- /dev/null
-+++ b/drivers/mmc/host/sdhci-of-bst-c1200.c
-@@ -0,0 +1,920 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Black Sesame Technologies SDHCI driver
-+ *
-+ * Copyright (C) 2024 Black Sesame Technologies. All Rights Reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/delay.h>
-+#include <linux/ktime.h>
-+#include <linux/dmaengine.h>
-+#include <linux/dma-mapping.h>
-+#include <linux/of_reserved_mem.h>
-+#include <linux/regulator/consumer.h>
-+#include "sdhci.h"
-+#include "sdhci-pltfm.h"
-+
-+struct dwcmshc_priv {
-+	u32 phy_crm_reg_base;
-+	u32 phy_crm_reg_size;
-+};
-+
-+#define SDHCI_CLOCK_PLL_EN		0x0008
-+#define SDHCI_TUNING_COUNT		0x20
-+#define SDHCI_VENDOR_PTR_R		0xE8
-+#define MBIU_CTRL			0x510
-+#define BURST_INCR16_EN			BIT(3)
-+#define BURST_INCR8_EN			BIT(2)
-+#define BURST_INCR4_EN			BIT(1)
-+#define BURST_EN			(BURST_INCR16_EN | BURST_INCR8_EN | BURST_INCR4_EN)
-+
-+/* Synopsys vendor specific registers */
-+#define reg_offset_addr_vendor		(sdhci_readw(host, SDHCI_VENDOR_PTR_R))
-+#define SDHC_MHSC_VER_ID_R		(reg_offset_addr_vendor)
-+#define SDHC_MHSC_VER_TPYE_R		(reg_offset_addr_vendor + 0x4)
-+#define SDHC_MHSC_CTRL_R		(reg_offset_addr_vendor + 0x8)
-+#define SDHC_MBIU_CTRL_R		(reg_offset_addr_vendor + 0x10)
-+#define SDHC_EMMC_CTRL_R		(reg_offset_addr_vendor + 0x2C)
-+#define SDHC_BOOT_CTRL_R		(reg_offset_addr_vendor + 0x2E)
-+#define SDHC_GP_IN_R			(reg_offset_addr_vendor + 0x30)
-+#define SDHC_GP_OUT_R			(reg_offset_addr_vendor + 0x34)
-+#define SDHC_AT_CTRL_R			(reg_offset_addr_vendor + 0x40)
-+#define SDHC_AT_STAT_R			(reg_offset_addr_vendor + 0x44)
-+
-+#define SDEMMC_CRM_BCLK_DIV_CTRL	0x08
-+#define SDEMMC_CRM_RX_CLK_CTRL		0x14
-+#define SDEMMC_CRM_TIMER_DIV_CTRL	0x0C
-+#define SDEMMC_CRM_VOL_CTRL		0x1C
-+#define DRIVER_NAME			"sdhci_bst"
-+#define BST_VOL_STABLE_ON		(0x1 << 7)
-+#define SDHCI_DUMP_BST(f, x...)		\
-+	pr_info("%s: " DRIVER_NAME ": " f, mmc_hostname(host->mmc), ##x)
-+#define SD_3_3V				0
-+#define SD_1_8V				1
-+#define default_max_freq		200000ul
-+
-+void sdhci_bst_print_vendor(struct sdhci_host *host)
-+{
-+	SDHCI_DUMP_BST("============ SDHCI VENDOR REGISTER DUMP ===========\n");
-+
-+	SDHCI_DUMP_BST("VER_ID:  0x%08x | VER_TPYE:  0x%08x\n",
-+		       sdhci_readl(host, SDHC_MHSC_VER_ID_R),
-+		       sdhci_readl(host, SDHC_MHSC_VER_TPYE_R));
-+	SDHCI_DUMP_BST("MHSC_CTRL:  0x%08x | MBIU_CTRL:  0x%08x\n",
-+		       sdhci_readw(host, SDHC_MHSC_CTRL_R),
-+		       sdhci_readw(host, SDHC_MBIU_CTRL_R));
-+	SDHCI_DUMP_BST("EMMC_CTRL:  0x%08x | BOOT_CTRL: 0x%08x\n",
-+		       sdhci_readl(host, SDHC_EMMC_CTRL_R),
-+		       sdhci_readw(host, SDHC_BOOT_CTRL_R));
-+	SDHCI_DUMP_BST("GP_IN:   0x%08x | GP_OUT: 0x%08x\n",
-+		       sdhci_readl(host, SDHC_GP_IN_R),
-+		       sdhci_readb(host, SDHC_GP_OUT_R));
-+	SDHCI_DUMP_BST("AT_CTRL:     0x%08x | AT_STAT:  0x%08x\n",
-+		       sdhci_readb(host, SDHC_AT_CTRL_R),
-+		       sdhci_readb(host, SDHC_AT_STAT_R));
-+}
-+EXPORT_SYMBOL_GPL(sdhci_bst_print_vendor);
-+
-+static u32 bst_read_phys_bst(u32 phys_addr)
-+{
-+	u32 phys_addr_page = phys_addr & 0xFFFFE000;
-+	u32 phys_offset = phys_addr & 0x00001FFF;
-+	u32 map_size = phys_offset + sizeof(u32);
-+	u32 ret = 0xDEADBEEF;
-+	void *mem_mapped = ioremap(phys_addr_page, map_size);
-+
-+	if (mem_mapped) {
-+		ret = (u32)ioread32(((u8 *)mem_mapped) + phys_offset);
-+		iounmap(mem_mapped);
-+	}
-+
-+	return ret;
-+}
-+
-+static void bst_write_phys_bst(u32 phys_addr, u32 value)
-+{
-+	u32 phys_addr_page = phys_addr & 0xFFFFE000;
-+	u32 phys_offset = phys_addr & 0x00001FFF;
-+	u32 map_size = phys_offset + sizeof(u32);
-+	void *mem_mapped = ioremap(phys_addr_page, map_size);
-+
-+	if (mem_mapped) {
-+		iowrite32(value, ((u8 *)mem_mapped) + phys_offset);
-+		iounmap(mem_mapped);
-+	}
-+}
-+
-+static unsigned int bst_get_max_clock(struct sdhci_host *host)
-+{
-+	return host->mmc->f_max;
-+}
-+
-+static unsigned int bst_get_min_clock(struct sdhci_host *host)
-+{
-+	return host->mmc->f_min;
-+}
-+
-+struct rx_ctrl {
-+	struct {
-+		u32 rx_revert:1;
-+		u32 rx_clk_sel_sec:1;
-+		u32 rx_clk_div:4;
-+		u32 rx_clk_phase_inner:2;
-+		u32 rx_clk_sel_first:1;
-+		u32 rx_clk_phase_out:2;
-+		u32 rx_clk_en:1;
-+		u32 res0:20;
-+	} bit;
-+	u32 reg;
-+};
-+
-+struct sdmmc_iocfg {
-+	struct {
-+		u32 res0:16;
-+		u32 SC_SDMMC0_PVDD18POCSD0:2;
-+		u32 SC_SDMMC0_PVDD18POCSD1:2;
-+		u32 SC_SDMMC0_PVDD18POCSD2:2;
-+		u32 SC_SDMMC1_PVDD18POCSD0:2;
-+		u32 SC_SDMMC1_PVDD18POCSD1:2;
-+		u32 SC_SDMMC1_PVDD18POCSD2:2;
-+		u32 res1:4;
-+	} bit;
-+	u32 reg;
-+};
-+
-+void sdhci_enable_bst_clk(struct sdhci_host *host, unsigned int clk)
-+{
-+	struct sdhci_pltfm_host *pltfm_host;
-+	struct dwcmshc_priv *priv;
-+	unsigned int div;
-+	u32 val;
-+	struct rx_ctrl rx_reg;
-+
-+	pltfm_host = sdhci_priv(host);
-+	priv = sdhci_pltfm_priv(pltfm_host);
-+	if (clk == 0) {
-+		div = clk;
-+	} else if (clk > default_max_freq) {
-+		div = clk / 1000;
-+		div = default_max_freq / div;
-+	} else if (clk < 1500) {
-+		div = clk;
-+	} else {
-+		div = default_max_freq * 100;
-+		div = div / clk;
-+		div /= 100;
-+	}
-+
-+	clk = sdhci_readw(host, SDHCI_CLOCK_CONTROL);
-+	clk &= ~SDHCI_CLOCK_CARD_EN;
-+	sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
-+
-+	clk &= ~SDHCI_CLOCK_PLL_EN;
-+	sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
-+
-+	val = bst_read_phys_bst(priv->phy_crm_reg_base + SDEMMC_CRM_TIMER_DIV_CTRL);
-+	val &= ~(1 << 8);
-+	bst_write_phys_bst(priv->phy_crm_reg_base + SDEMMC_CRM_TIMER_DIV_CTRL, val);
-+
-+	val = bst_read_phys_bst(priv->phy_crm_reg_base + SDEMMC_CRM_TIMER_DIV_CTRL);
-+	val &= ~(0xff);
-+	val |= 0x20;
-+	bst_write_phys_bst(priv->phy_crm_reg_base + SDEMMC_CRM_TIMER_DIV_CTRL, val);
-+
-+	val = bst_read_phys_bst(priv->phy_crm_reg_base + SDEMMC_CRM_TIMER_DIV_CTRL);
-+	val |= 1 << 8;
-+	bst_write_phys_bst(priv->phy_crm_reg_base + SDEMMC_CRM_TIMER_DIV_CTRL, val);
-+
-+	val = bst_read_phys_bst(priv->phy_crm_reg_base + SDEMMC_CRM_RX_CLK_CTRL);
-+	val &= ~(1 << 11);
-+	bst_write_phys_bst(priv->phy_crm_reg_base + SDEMMC_CRM_RX_CLK_CTRL, val);
-+
-+	rx_reg.reg = bst_read_phys_bst(priv->phy_crm_reg_base + SDEMMC_CRM_RX_CLK_CTRL);
-+
-+	rx_reg.bit.rx_revert = 0;
-+	rx_reg.bit.rx_clk_sel_sec = 1;
-+	rx_reg.bit.rx_clk_div = 4;
-+	rx_reg.bit.rx_clk_phase_inner = 2;
-+	rx_reg.bit.rx_clk_sel_first = 0;
-+	rx_reg.bit.rx_clk_phase_out = 2;
-+
-+	bst_write_phys_bst(priv->phy_crm_reg_base + SDEMMC_CRM_RX_CLK_CTRL, rx_reg.reg);
-+
-+	val = bst_read_phys_bst(priv->phy_crm_reg_base + SDEMMC_CRM_RX_CLK_CTRL);
-+	val |= 1 << 11;
-+	bst_write_phys_bst(priv->phy_crm_reg_base + SDEMMC_CRM_RX_CLK_CTRL, val);
-+
-+	/* Disable clock first */
-+	val = bst_read_phys_bst(priv->phy_crm_reg_base + SDEMMC_CRM_BCLK_DIV_CTRL);
-+	val &= ~0x0400;
-+	bst_write_phys_bst(priv->phy_crm_reg_base + SDEMMC_CRM_BCLK_DIV_CTRL, val);
-+
-+	/* Setup clock divider */
-+	val = bst_read_phys_bst(priv->phy_crm_reg_base + SDEMMC_CRM_BCLK_DIV_CTRL);
-+	val &= ~0x03ff;
-+	val |= div;
-+	bst_write_phys_bst(priv->phy_crm_reg_base + SDEMMC_CRM_BCLK_DIV_CTRL, val);
-+
-+	/* Enable clock */
-+	val = bst_read_phys_bst(priv->phy_crm_reg_base + SDEMMC_CRM_BCLK_DIV_CTRL);
-+	val |= 0x0400;
-+	bst_write_phys_bst(priv->phy_crm_reg_base + SDEMMC_CRM_BCLK_DIV_CTRL, val);
-+
-+	sdhci_writew(host, (div & 0xff) << 8, SDHCI_CLOCK_CONTROL);
-+
-+	sdhci_writew(host, (div & 0xff) << 8, SDHCI_CLOCK_CONTROL);
-+	clk = sdhci_readw(host, SDHCI_CLOCK_CONTROL);
-+	clk |= SDHCI_CLOCK_PLL_EN;
-+	sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
-+
-+	clk |= SDHCI_CLOCK_CARD_EN;
-+	sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
-+
-+	clk |= SDHCI_CLOCK_INT_EN;
-+	sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
-+}
-+
-+void sdhci_set_bst_clock(struct sdhci_host *host, unsigned int clock)
-+{
-+	if (clock == 0)
-+		return;
-+	sdhci_enable_bst_clk(host, clock);
-+}
-+
-+/**
-+ * sdhci_bst_reset - Reset the SDHCI host controller
-+ * @host: SDHCI host controller
-+ * @mask: Reset mask
-+ *
-+ * Performs a reset of the SDHCI host controller with special handling for eMMC.
-+ */
-+static void sdhci_bst_reset(struct sdhci_host *host, u8 mask)
-+{
-+	if (host->mmc->caps2 & MMC_CAP2_NO_SD) {
-+		sdhci_writew(host,
-+			     sdhci_readw(host, SDHC_EMMC_CTRL_R) & (~BIT(2)),
-+			     SDHC_EMMC_CTRL_R);
-+		sdhci_reset(host, mask);
-+		usleep_range(10, 20);
-+		sdhci_writew(host,
-+			     sdhci_readw(host, SDHC_EMMC_CTRL_R) | BIT(2),
-+			     SDHC_EMMC_CTRL_R);
-+	} else {
-+		sdhci_reset(host, mask);
-+	}
-+}
-+
-+/**
-+ * sdhci_bst_timeout - Set timeout value for commands
-+ * @host: SDHCI host controller
-+ * @cmd: MMC command
-+ *
-+ * Sets the timeout control register to maximum value (0xE).
-+ */
-+static void sdhci_bst_timeout(struct sdhci_host *host, struct mmc_command *cmd)
-+{
-+	sdhci_writeb(host, 0xE, SDHCI_TIMEOUT_CONTROL);
-+}
-+
-+/**
-+ * sdhci_bst_set_power - Set power mode and voltage
-+ * @host: SDHCI host controller
-+ * @mode: Power mode to set
-+ * @vdd: Voltage to set
-+ *
-+ * Sets power mode and voltage, also configures MBIU control register.
-+ */
-+static void sdhci_bst_set_power(struct sdhci_host *host, unsigned char mode,
-+				unsigned short vdd)
-+{
-+	sdhci_set_power(host, mode, vdd);
-+	sdhci_writeb(host, 0xF, SDHCI_POWER_CONTROL);
-+	sdhci_writew(host,
-+		     (sdhci_readw(host, MBIU_CTRL) & (~0xf)) | BURST_EN,
-+		     MBIU_CTRL);
-+}
-+
-+/**
-+ * bst_sdhci_execute_tuning - Execute tuning procedure
-+ * @host: SDHCI host controller
-+ * @opcode: Opcode to use for tuning
-+ *
-+ * Performs tuning procedure by trying different values and selecting the best one.
-+ *
-+ * Return: 0 on success, negative errno on failure
-+ */
-+static int bst_sdhci_execute_tuning(struct sdhci_host *host, u32 opcode)
-+{
-+	struct sdhci_pltfm_host *pltfm_host;
-+	struct dwcmshc_priv *priv;
-+	unsigned int clk = 0, timeout;
-+	int ret = 0, error;
-+	int start0 = -1, end0 = -1, best = 0;
-+	int start1 = -1, end1 = -1, flag = 0;
-+	int i;
-+	u32 val;
-+
-+	pltfm_host = sdhci_priv(host);
-+	priv = sdhci_pltfm_priv(pltfm_host);
-+
-+	for (i = 0; i < SDHCI_TUNING_COUNT; i++) {
-+		/* Protected write */
-+		bst_write_phys_bst(priv->phy_crm_reg_base + 0x88, 0x1234abcd);
-+		/* Write tuning value */
-+		bst_write_phys_bst(priv->phy_crm_reg_base + 0x94,
-+				   (1ul << i) - 1);
-+
-+		timeout = 20;
-+		while (!((clk = sdhci_readw(host, SDHCI_CLOCK_CONTROL)) &
-+			SDHCI_CLOCK_INT_STABLE)) {
-+			if (timeout == 0) {
-+				pr_err("%s: Internal clock never stabilised.\n",
-+				       __func__);
-+				return -EBUSY;
-+			}
-+			timeout--;
-+			usleep_range(1000, 1100);
-+		}
-+
-+		ret = mmc_send_tuning(host->mmc, opcode, &error);
-+		if (ret != 0) {
-+			flag = 1;
-+		} else {
-+			if (flag == 0) {
-+				if (start0 == -1)
-+					start0 = i;
-+				end0 = i;
-+			} else {
-+				if (start1 == -1)
-+					start1 = i;
-+				end1 = i;
-+			}
-+		}
-+	}
-+
-+	/* Calculate best tuning value */
-+	if (end0 - start0 >= end1 - start1)
-+		best = ((end0 - start0) >> 1) + start0;
-+	else
-+		best = ((end1 - start1) >> 1) + start1;
-+
-+	if (best < 0)
-+		best = 0;
-+
-+	bst_write_phys_bst(priv->phy_crm_reg_base + 0x94, (1ul << best) - 1);
-+	timeout = 20;
-+
-+	while (!((clk = sdhci_readw(host, SDHCI_CLOCK_CONTROL)) &
-+		SDHCI_CLOCK_INT_STABLE)) {
-+		if (timeout == 0) {
-+			pr_err("%s: Internal clock never stabilised.\n",
-+			       __func__);
-+			return -EBUSY;
-+		}
-+		timeout--;
-+		usleep_range(1000, 1100);
-+	}
-+
-+	return 0;
-+}
-+
-+/**
-+ * sdhci_bst_voltage_switch - Perform voltage switch
-+ * @host: SDHCI host controller
-+ *
-+ * Enables voltage stable power.
-+ */
-+static void sdhci_bst_voltage_switch(struct sdhci_host *host)
-+{
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	struct dwcmshc_priv *priv = sdhci_pltfm_priv(pltfm_host);
-+
-+	/* vol stable power on */
-+	bst_write_phys_bst(priv->phy_crm_reg_base + SDEMMC_CRM_VOL_CTRL,
-+			   BST_VOL_STABLE_ON);
-+}
-+
-+static const struct sdhci_ops sdhci_dwcmshc_ops = {
-+	.set_clock		= sdhci_set_bst_clock,
-+	.set_bus_width		= sdhci_set_bus_width,
-+	.set_uhs_signaling	= sdhci_set_uhs_signaling,
-+	.get_min_clock		= bst_get_min_clock,
-+	.get_max_clock		= bst_get_max_clock,
-+	.reset			= sdhci_bst_reset,
-+	.set_power		= sdhci_bst_set_power,
-+	.set_timeout		= sdhci_bst_timeout,
-+	.platform_execute_tuning = bst_sdhci_execute_tuning,
-+	.voltage_switch		= sdhci_bst_voltage_switch,
-+};
-+
-+static const struct sdhci_pltfm_data sdhci_dwcmshc_pdata = {
-+	.ops = &sdhci_dwcmshc_ops,
-+	.quirks = SDHCI_QUIRK_DELAY_AFTER_POWER |
-+		  SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN |
-+		  SDHCI_QUIRK_INVERTED_WRITE_PROTECT,
-+	.quirks2 = SDHCI_QUIRK2_BROKEN_DDR50 |
-+		   SDHCI_QUIRK2_TUNING_WORK_AROUND |
-+		   SDHCI_QUIRK2_ACMD23_BROKEN,
-+};
-+
-+static void bst_sdhci_allocate_bounce_buffer(struct sdhci_host *host)
-+{
-+	struct mmc_host *mmc = host->mmc;
-+	unsigned int max_blocks;
-+	unsigned int bounce_size;
-+	int ret;
-+
-+	/*
-+	 * Cap the bounce buffer at 64KB. Using a bigger bounce buffer
-+	 * has diminishing returns, this is probably because SD/MMC
-+	 * cards are usually optimized to handle this size of requests.
-+	 */
-+	bounce_size = SZ_32K;
-+	/*
-+	 * Adjust downwards to maximum request size if this is less
-+	 * than our segment size, else hammer down the maximum
-+	 * request size to the maximum buffer size.
-+	 */
-+	if (mmc->max_req_size < bounce_size)
-+		bounce_size = mmc->max_req_size;
-+	max_blocks = bounce_size / 512;
-+
-+	ret = of_reserved_mem_device_init_by_idx(mmc_dev(mmc), mmc_dev(mmc)->of_node, 0);
-+	if (ret) {
-+		dev_err(mmc_dev(mmc), "of_reserved_mem_device_init error\n");
-+		return;
-+	}
-+	host->bounce_buffer = dma_alloc_coherent(mmc_dev(mmc), bounce_size,
-+						 &host->bounce_addr, GFP_KERNEL);
-+
-+	ret = dma_mapping_error(mmc_dev(mmc), host->bounce_addr);
-+	if (ret) {
-+		devm_kfree(mmc_dev(mmc), host->bounce_buffer);
-+		host->bounce_buffer = NULL;
-+		/* Again fall back to max_segs == 1 */
-+		return;
-+	}
-+
-+	host->bounce_buffer_size = bounce_size;
-+
-+	/* Lie about this since we're bouncing */
-+	mmc->max_segs = max_blocks;
-+	mmc->max_seg_size = bounce_size;
-+	mmc->max_req_size = bounce_size;
-+
-+	pr_info("BST reallocate %s bounce up to %u segments into one, max segment size %u bytes\n",
-+		mmc_hostname(mmc), max_blocks, bounce_size);
-+}
-+
-+static int bst_sdhci_set_dma_mask(struct sdhci_host *host)
-+{
-+	struct mmc_host *mmc = host->mmc;
-+	struct device *dev = mmc_dev(mmc);
-+	int ret = -EINVAL;
-+
-+	if (host->quirks2 & SDHCI_QUIRK2_BROKEN_64_BIT_DMA)
-+		host->flags &= ~SDHCI_USE_64_BIT_DMA;
-+
-+	/* Try 64-bit mask if hardware is capable  of it */
-+	if (host->flags & SDHCI_USE_64_BIT_DMA) {
-+		ret = dma_set_mask_and_coherent(dev, DMA_BIT_MASK(64));
-+		if (ret) {
-+			pr_warn("%s: Failed to set 64-bit DMA mask.\n",
-+				mmc_hostname(mmc));
-+			host->flags &= ~SDHCI_USE_64_BIT_DMA;
-+		}
-+	}
-+
-+	/* 32-bit mask as default & fallback */
-+	if (ret) {
-+		ret = dma_set_mask_and_coherent(dev, DMA_BIT_MASK(32));
-+		if (ret)
-+			pr_warn("%s: Failed to set 32-bit DMA mask.\n",
-+				mmc_hostname(mmc));
-+	}
-+
-+	return ret;
-+}
-+
-+int bst_sdhci_setup_host(struct sdhci_host *host)
-+{
-+	struct mmc_host *mmc;
-+	u32 max_current_caps;
-+	unsigned int ocr_avail;
-+	unsigned int override_timeout_clk;
-+	u32 max_clk;
-+	int ret = 0;
-+	bool enable_vqmmc = false;
-+
-+	WARN_ON(!host);
-+	if (!host)
-+		return -EINVAL;
-+
-+	mmc = host->mmc;
-+
-+	/*
-+	 * If there are external regulators, get them. Note this must be done
-+	 * early before resetting the host and reading the capabilities so that
-+	 * the host can take the appropriate action if regulators are not
-+	 * available.
-+	 */
-+	if (!mmc->supply.vqmmc) {
-+		ret = mmc_regulator_get_supply(mmc);
-+		if (ret)
-+			return ret;
-+		enable_vqmmc  = true;
-+	}
-+
-+	pr_info("Version:   0x%08x | Present:  0x%08x\n",
-+		sdhci_readw(host, SDHCI_HOST_VERSION),
-+		sdhci_readl(host, SDHCI_PRESENT_STATE));
-+	pr_info("Caps:      0x%08x | Caps_1:   0x%08x\n",
-+		sdhci_readl(host, SDHCI_CAPABILITIES),
-+		sdhci_readl(host, SDHCI_CAPABILITIES_1));
-+
-+	sdhci_read_caps(host);
-+
-+	override_timeout_clk = host->timeout_clk;
-+
-+	host->flags |= SDHCI_USE_SDMA;
-+
-+	if (host->flags & (SDHCI_USE_SDMA | SDHCI_USE_ADMA)) {
-+		if (host->ops->set_dma_mask)
-+			ret = host->ops->set_dma_mask(host);
-+		else
-+			ret = bst_sdhci_set_dma_mask(host);
-+
-+		if (!ret && host->ops->enable_dma)
-+			ret = host->ops->enable_dma(host);
-+
-+		if (ret) {
-+			pr_warn("%s: No suitable DMA available - falling back to PIO\n",
-+				mmc_hostname(mmc));
-+			host->flags &= ~(SDHCI_USE_SDMA | SDHCI_USE_ADMA);
-+
-+			ret = 0;
-+		}
-+	}
-+
-+	if (host->flags & SDHCI_USE_ADMA) {
-+		dma_addr_t dma;
-+		void *buf;
-+
-+		if (!(host->flags & SDHCI_USE_64_BIT_DMA))
-+			host->alloc_desc_sz = SDHCI_ADMA2_32_DESC_SZ;
-+		else if (!host->alloc_desc_sz)
-+			host->alloc_desc_sz = SDHCI_ADMA2_64_DESC_SZ(host);
-+
-+		host->desc_sz = host->alloc_desc_sz;
-+		host->adma_table_sz = host->adma_table_cnt * host->desc_sz;
-+
-+		host->align_buffer_sz = SDHCI_MAX_SEGS * SDHCI_ADMA2_ALIGN;
-+		/*
-+		 * Use zalloc to zero the reserved high 32-bits of 128-bit
-+		 * descriptors so that they never need to be written.
-+		 */
-+		buf = dma_alloc_coherent(mmc_dev(mmc),
-+					 host->align_buffer_sz + host->adma_table_sz,
-+					 &dma, GFP_KERNEL);
-+		if (!buf) {
-+			pr_warn("%s: Unable to allocate ADMA buffers - falling back to standard DMA\n",
-+				mmc_hostname(mmc));
-+			host->flags &= ~SDHCI_USE_ADMA;
-+		} else if ((dma + host->align_buffer_sz) &
-+			   (SDHCI_ADMA2_DESC_ALIGN - 1)) {
-+			pr_warn("%s: unable to allocate aligned ADMA descriptor\n",
-+				mmc_hostname(mmc));
-+			host->flags &= ~SDHCI_USE_ADMA;
-+			dma_free_coherent(mmc_dev(mmc), host->align_buffer_sz +
-+					  host->adma_table_sz, buf, dma);
-+		} else {
-+			host->align_buffer = buf;
-+			host->align_addr = dma;
-+
-+			host->adma_table = buf + host->align_buffer_sz;
-+			host->adma_addr = dma + host->align_buffer_sz;
-+		}
-+	}
-+
-+	host->max_clk = FIELD_GET(SDHCI_CLOCK_V3_BASE_MASK, host->caps);
-+
-+	host->max_clk *= 1000000;
-+	if (host->max_clk == 0 || host->quirks &
-+			SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN) {
-+		if (!host->ops->get_max_clock) {
-+			pr_err("%s: Hardware doesn't specify base clock frequency.\n",
-+			       mmc_hostname(mmc));
-+			ret = -ENODEV;
-+			goto undma;
-+		}
-+		host->max_clk = host->ops->get_max_clock(host);
-+	}
-+
-+	/*
-+	 * Set host parameters.
-+	 */
-+	max_clk = host->max_clk;
-+
-+	if (host->ops->get_min_clock)
-+		mmc->f_min = host->ops->get_min_clock(host);
-+
-+	if (!(host->quirks & SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK)) {
-+		host->timeout_clk = FIELD_GET(SDHCI_TIMEOUT_CLK_MASK, host->caps);
-+
-+		if (host->caps & SDHCI_TIMEOUT_CLK_UNIT)
-+			host->timeout_clk *= 1000;
-+
-+		if (host->timeout_clk == 0) {
-+			if (!host->ops->get_timeout_clock) {
-+				pr_err("%s: Hardware doesn't specify timeout clock frequency.\n",
-+				       mmc_hostname(mmc));
-+				ret = -ENODEV;
-+				goto undma;
-+			}
-+
-+			host->timeout_clk =
-+				DIV_ROUND_UP(host->ops->get_timeout_clock(host),
-+					     1000);
-+		}
-+
-+		if (override_timeout_clk)
-+			host->timeout_clk = override_timeout_clk;
-+
-+		mmc->max_busy_timeout = host->ops->get_max_timeout_count ?
-+			host->ops->get_max_timeout_count(host) : 1 << 27;
-+		mmc->max_busy_timeout /= host->timeout_clk;
-+	}
-+
-+	mmc->caps |= MMC_CAP_SDIO_IRQ | MMC_CAP_CMD23;
-+	mmc->caps2 |= MMC_CAP2_SDIO_IRQ_NOTHREAD;
-+
-+	if (host->quirks & SDHCI_QUIRK_MULTIBLOCK_READ_ACMD12)
-+		host->flags |= SDHCI_AUTO_CMD12;
-+
-+	/*
-+	 * A controller may support 8-bit width, but the board itself
-+	 * might not have the pins brought out.  Boards that support
-+	 * 8-bit width must set "mmc->caps |= MMC_CAP_8_BIT_DATA;" in
-+	 * their platform code before calling sdhci_add_host(), and we
-+	 * won't assume 8-bit width for hosts without that CAP.
-+	 */
-+	if (!(host->quirks & SDHCI_QUIRK_FORCE_1_BIT_DATA))
-+		mmc->caps |= MMC_CAP_4_BIT_DATA;
-+
-+	if (host->quirks2 & SDHCI_QUIRK2_HOST_NO_CMD23)
-+		mmc->caps &= ~MMC_CAP_CMD23;
-+
-+	if (host->caps & SDHCI_CAN_DO_HISPD)
-+		mmc->caps |= MMC_CAP_SD_HIGHSPEED | MMC_CAP_MMC_HIGHSPEED;
-+
-+	/* Any UHS-I mode in caps implies SDR12 and SDR25 support. */
-+	if (host->caps1 & (SDHCI_SUPPORT_SDR104 | SDHCI_SUPPORT_SDR50 |
-+			   SDHCI_SUPPORT_DDR50))
-+		mmc->caps |= MMC_CAP_UHS_SDR12 | MMC_CAP_UHS_SDR25;
-+
-+	/* SDR104 supports also implies SDR50 support */
-+	if (host->caps1 & SDHCI_SUPPORT_SDR104) {
-+		mmc->caps |= MMC_CAP_UHS_SDR104 | MMC_CAP_UHS_SDR50;
-+		/* SD3.0: SDR104 is supported so (for eMMC) the caps2
-+		 * field can be promoted to support HS200.
-+		 */
-+		if (!(host->quirks2 & SDHCI_QUIRK2_BROKEN_HS200))
-+			mmc->caps2 |= MMC_CAP2_HS200;
-+	}
-+
-+	if ((mmc->caps2 & MMC_CAP2_HSX00_1_2V) &&
-+	    (IS_ERR(mmc->supply.vqmmc) ||
-+	     !regulator_is_supported_voltage(mmc->supply.vqmmc, 1100000,
-+					     1300000)))
-+		mmc->caps2 &= ~MMC_CAP2_HSX00_1_2V;
-+
-+	/* Does the host need tuning for SDR50? */
-+	if (host->caps1 & SDHCI_USE_SDR50_TUNING)
-+		host->flags |= SDHCI_SDR50_NEEDS_TUNING;
-+
-+	/* Driver Type(s) (A, C, D) supported by the host */
-+	if (host->caps1 & SDHCI_DRIVER_TYPE_A)
-+		mmc->caps |= MMC_CAP_DRIVER_TYPE_A;
-+	if (host->caps1 & SDHCI_DRIVER_TYPE_C)
-+		mmc->caps |= MMC_CAP_DRIVER_TYPE_C;
-+	if (host->caps1 & SDHCI_DRIVER_TYPE_D)
-+		mmc->caps |= MMC_CAP_DRIVER_TYPE_D;
-+
-+	/* Initial value for re-tuning timer count */
-+	host->tuning_count = FIELD_GET(SDHCI_RETUNING_TIMER_COUNT_MASK,
-+				       host->caps1);
-+
-+	/*
-+	 * In case Re-tuning Timer is not disabled, the actual value of
-+	 * re-tuning timer will be 2 ^ (n - 1).
-+	 */
-+	if (host->tuning_count)
-+		host->tuning_count = 1 << (host->tuning_count - 1);
-+
-+	/* Re-tuning mode supported by the Host Controller */
-+	host->tuning_mode = FIELD_GET(SDHCI_RETUNING_MODE_MASK, host->caps1);
-+
-+	ocr_avail = 0;
-+
-+	if (host->caps & SDHCI_CAN_VDD_330) {
-+		ocr_avail |= MMC_VDD_32_33 | MMC_VDD_33_34;
-+
-+		mmc->max_current_330 = FIELD_GET(SDHCI_MAX_CURRENT_330_MASK,
-+						 max_current_caps) *
-+						SDHCI_MAX_CURRENT_MULTIPLIER;
-+	}
-+	if (host->caps & SDHCI_CAN_VDD_300) {
-+		ocr_avail |= MMC_VDD_29_30 | MMC_VDD_30_31;
-+
-+		mmc->max_current_300 = FIELD_GET(SDHCI_MAX_CURRENT_300_MASK,
-+						 max_current_caps) *
-+						SDHCI_MAX_CURRENT_MULTIPLIER;
-+	}
-+	if (host->caps & SDHCI_CAN_VDD_180) {
-+		ocr_avail |= MMC_VDD_165_195;
-+
-+		mmc->max_current_180 = FIELD_GET(SDHCI_MAX_CURRENT_180_MASK,
-+						 max_current_caps) *
-+						SDHCI_MAX_CURRENT_MULTIPLIER;
-+	}
-+
-+	/* If OCR set by host, use it instead. */
-+	if (host->ocr_mask)
-+		ocr_avail = host->ocr_mask;
-+
-+	/* If OCR set by external regulators, give it highest prio. */
-+	if (mmc->ocr_avail)
-+		ocr_avail = mmc->ocr_avail;
-+
-+	mmc->ocr_avail = ocr_avail;
-+	mmc->ocr_avail_sdio = ocr_avail;
-+	if (host->ocr_avail_sdio)
-+		mmc->ocr_avail_sdio &= host->ocr_avail_sdio;
-+	mmc->ocr_avail_sd = ocr_avail;
-+	if (host->ocr_avail_sd)
-+		mmc->ocr_avail_sd &= host->ocr_avail_sd;
-+	else /* normal SD controllers don't support 1.8V */
-+		mmc->ocr_avail_sd &= ~MMC_VDD_165_195;
-+	mmc->ocr_avail_mmc = ocr_avail;
-+	if (host->ocr_avail_mmc)
-+		mmc->ocr_avail_mmc &= host->ocr_avail_mmc;
-+
-+	if ((mmc->caps & (MMC_CAP_UHS_SDR12 | MMC_CAP_UHS_SDR25 |
-+			  MMC_CAP_UHS_SDR50 | MMC_CAP_UHS_SDR104 |
-+			  MMC_CAP_UHS_DDR50 | MMC_CAP_1_8V_DDR)) ||
-+	    (mmc->caps2 & (MMC_CAP2_HS200_1_8V_SDR | MMC_CAP2_HS400_1_8V)))
-+		host->flags |= SDHCI_SIGNALING_180;
-+
-+	spin_lock_init(&host->lock);
-+
-+	/*
-+	 * Maximum number of sectors in one transfer. Limited by SDMA boundary
-+	 * size (512KiB). Note some tuning modes impose a 4MiB limit, but this
-+	 * is less anyway.
-+	 */
-+	mmc->max_req_size = 524288;
-+	/*
-+	 * Maximum number of segments. Depends on if the hardware
-+	 * can do scatter/gather or not.
-+	 */
-+	mmc->max_segs = 1;
-+	mmc->max_req_size = min_t(size_t, mmc->max_req_size,
-+				  dma_max_mapping_size(mmc_dev(mmc)));
-+
-+	mmc->max_seg_size = mmc->max_req_size;
-+
-+	mmc->max_blk_size = (host->caps & SDHCI_MAX_BLOCK_MASK) >>
-+			SDHCI_MAX_BLOCK_SHIFT;
-+
-+	mmc->max_blk_size = 512 << mmc->max_blk_size;
-+
-+	/*
-+	 * Maximum block count.
-+	 */
-+	mmc->max_blk_count = (host->quirks & SDHCI_QUIRK_NO_MULTIBLOCK) ? 1 : 65535;
-+
-+	if (mmc->max_segs == 1)
-+		/* This may alter mmc->*_blk_* parameters */
-+		// bst sdhci must reallocate bounce buffer
-+		bst_sdhci_allocate_bounce_buffer(host);
-+
-+	return 0;
-+
-+undma:
-+	if (host->align_buffer)
-+		dma_free_coherent(mmc_dev(mmc), host->align_buffer_sz +
-+				  host->adma_table_sz, host->align_buffer,
-+				  host->align_addr);
-+	host->adma_table = NULL;
-+	host->align_buffer = NULL;
-+
-+	return ret;
-+}
-+
-+static int bst_sdhci_add_host(struct sdhci_host *host)
-+{
-+	int ret;
-+
-+	ret = bst_sdhci_setup_host(host);
-+	if (ret)
-+		return ret;
-+
-+	ret = __sdhci_add_host(host);
-+	if (ret)
-+		goto cleanup;
-+
-+	return 0;
-+
-+cleanup:
-+	sdhci_cleanup_host(host);
-+
-+	return ret;
-+}
-+
-+/**
-+ * dwcmshc_probe - Platform driver probe
-+ * @pdev: Platform device
-+ *
-+ * Initializes the SDHCI host controller and registers it.
-+ *
-+ * Return: 0 on success, negative errno on failure
-+ */
-+static int dwcmshc_probe(struct platform_device *pdev)
-+{
-+	struct sdhci_pltfm_host *pltfm_host;
-+	struct sdhci_host *host;
-+	struct dwcmshc_priv *priv;
-+	int err;
-+
-+	host = sdhci_pltfm_init(pdev, &sdhci_dwcmshc_pdata,
-+				sizeof(struct dwcmshc_priv));
-+	if (IS_ERR(host))
-+		return PTR_ERR(host);
-+
-+	pltfm_host = sdhci_priv(host);
-+	priv = sdhci_pltfm_priv(pltfm_host);
-+
-+	err = mmc_of_parse(host->mmc);
-+	if (err)
-+		goto err_clk;
-+
-+	sdhci_get_of_property(pdev);
-+	device_property_read_u32(&pdev->dev, "mmc_crm_base",
-+				 &priv->phy_crm_reg_base);
-+	device_property_read_u32(&pdev->dev, "mmc_crm_size",
-+				 &priv->phy_crm_reg_size);
-+
-+	err = bst_sdhci_add_host(host);
-+	if (err)
-+		goto err_clk;
-+
-+	return 0;
-+
-+err_clk:
-+	sdhci_pltfm_free(pdev);
-+	return err;
-+}
-+
-+/**
-+ * dwcmshc_remove - Platform driver remove
-+ * @pdev: Platform device
-+ *
-+ * Removes the SDHCI host controller.
-+ *
-+ * Return: 0 on success
-+ */
-+static void dwcmshc_remove(struct platform_device *pdev)
-+{
-+	struct sdhci_host *host = platform_get_drvdata(pdev);
-+
-+	sdhci_remove_host(host, 0);
-+	sdhci_pltfm_free(pdev);
-+}
-+
-+static const struct of_device_id sdhci_dwcmshc_dt_ids[] = {
-+	{ .compatible = "bst,dwcmshc-sdhci" },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, sdhci_dwcmshc_dt_ids);
-+
-+static struct platform_driver sdhci_dwcmshc_driver = {
-+	.driver = {
-+		.name = "sdhci-dwcmshc",
-+		.of_match_table = sdhci_dwcmshc_dt_ids,
-+	},
-+	.probe = dwcmshc_probe,
-+	.remove = dwcmshc_remove,
-+};
-+module_platform_driver(sdhci_dwcmshc_driver);
-+
-+MODULE_DESCRIPTION("SDHCI platform driver for BST DWC MSHC");
-+MODULE_LICENSE("GPL");
-+MODULE_AUTHOR("BST Ltd.");
+The node structure I had in mind was
+
+		system-controller@1fa20000 {
+			compatible = "airoha,an7583-scu", "syscon", "simple-mfd";
+			reg = <0x0 0x1fb00000 0x0 0x970>;
+
+			scuclk: scuclk {
+				compatible = "airoha,an7583-clock";
+				#clock-cells = <1>;
+				#reset-cells = <1>;
+			};
+
+			mdio {
+				compatible = "airoha,an7583-mdio";
+				#address-cells = <1>;
+				#size-cells = <0>;
+
+				mdio_0: bus@0 {
+					reg = <0>;
+					resets = <&scuclk AN7583_MDIO0>;
+				};
+
+				mdio_1: bus@1 {
+					reg = <1>;
+					resets = <&scuclk AN7583_MDIO1>;
+				};
+			};
+		};
+
+But you want
+
+system-controller@1fa20000 {
+        compatible = "airoha,an7583-scu", "syscon";
+        reg = <0x0 0x1fb00000 0x0 0x970>;
+
+        #clock-cells = <1>;
+        #reset-cells = <1>;
+
+        mdio_0: bus@0 {
+                reg = <0>;
+                resets = <&scuclk AN7583_MDIO0>;
+        };
+
+        mdio_1: bus@1 {
+                reg = <1>;
+                resets = <&scuclk AN7583_MDIO1>;
+        };
+};
+
+Again sorry if this question keeps coming around and I can totally
+understand if you are getting annoyed by this. The reason I always ask
+this is because it's a total PAIN to implement this with the driver
+structure due to the old "simple-mfd" model.
+
+(as again putting everything in a single node conflicts with the OF
+principle of autoprobing stuff with compatible property)
+
 -- 
-2.25.1
-
+	Ansuel
 
