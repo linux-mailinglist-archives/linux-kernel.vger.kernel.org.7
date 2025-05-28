@@ -1,114 +1,201 @@
-Return-Path: <linux-kernel+bounces-664950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-664953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C9CEAC6288
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 09:03:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 941C9AC628F
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 09:05:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07AB79E4E23
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 07:03:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C41EA20206
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 07:05:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9291242D98;
-	Wed, 28 May 2025 07:03:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2722B41C72;
+	Wed, 28 May 2025 07:05:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i9TCD5OW"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="eF5bVtXx"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6D501DF26B;
-	Wed, 28 May 2025 07:03:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6069120F087;
+	Wed, 28 May 2025 07:05:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748415801; cv=none; b=BHGoncyYDCKzSXSBQZsjWVqCjJXVwO9oW7gpubpTR3ATtQVmX67du6vtV2ByG+feQWEPtPfPcB0K/pOirbwi6bsI9Dz1/xb/jQA6OjC+HJQUquEfcIcpiWGOCIAXYDXh15wpNMHtxEGoWvC8RwbXhwnibcXK2WSsSIzv9z18NP8=
+	t=1748415910; cv=none; b=ci5LLUtENAr6gSIXHT0r5Nunysn+N5t4fo9KdAIhhJmfnNyGyvjJ/jNI5RA8nT4kKPD2fTLxHg2GQjS93VXIaJ6TLHvNjHWeofL6BSwm8MS/xAFf8dJ2OP8SJmyqc+QUN3iPTY/QRANUY8dAoAIgKR61CZSSe+5Qe91VlDyzDlo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748415801; c=relaxed/simple;
-	bh=lmBB606/RhZ9VkViIQT3U8bRpJxkME4jwKV6IGAFURI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hUDSIZVh5+m10HO9ZpMDrVJwM1w+l4S/kEcG1s37zw8+qi/OGC7UZXbmbisKGyIrBtgap0II5cYBdW/gjHj3/RiUg7OSXnib7iHicISNf90LzQYNIYCkud0s5QUPlTK/+kTjJM1D4HBJdguECoPT4dOewHMa8S0GXzBjc5yDC34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=i9TCD5OW; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1748415800; x=1779951800;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=lmBB606/RhZ9VkViIQT3U8bRpJxkME4jwKV6IGAFURI=;
-  b=i9TCD5OWrBdFFZUDurYIDoJL9GkiAk41SPACTE3lMvkRT7RNM3zRbKLl
-   gXn+PRaEd2eB9C/hjaHvTdfyuZsOEnIsUfB+HRFjuU2yC5IN80RA2yBDi
-   ff6cwB3vyQW3Sr3WvMB7anpgos/t3+wIyCQuC4Mt56SY5RFFZCpry5nU9
-   nwBA9ZhHsqP4PuRfdgvsFOGub5pDj/5SXPbhsXnaXkC3YKI+DhugWq6M6
-   Xlz6ckSXL44O9C+lO6pnt4nJsHJLDG7YaMO34KwLf5fRwwkZ7jGogm3B+
-   z8mj/ccMTzL9oX1QWFUsSRoJ/AkeZ9FEdZTqnftJNZ8TsRF0C1MkYT2Bb
-   A==;
-X-CSE-ConnectionGUID: XPrGdElkTuG27lOsvIFdHw==
-X-CSE-MsgGUID: aSZlMYqFRYK8Oo6VOgNO0A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11446"; a="75818277"
-X-IronPort-AV: E=Sophos;i="6.15,320,1739865600"; 
-   d="scan'208";a="75818277"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2025 00:03:18 -0700
-X-CSE-ConnectionGUID: 66S2hyaASfqzYGfACHdsKg==
-X-CSE-MsgGUID: NPjMyB11T/2HBuhIivlaFg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,320,1739865600"; 
-   d="scan'208";a="180385549"
-Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.245.128]) ([10.124.245.128])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2025 00:03:15 -0700
-Message-ID: <35efdc62-fc2b-40c7-9fbd-25fc6028fa6b@linux.intel.com>
-Date: Wed, 28 May 2025 15:03:13 +0800
+	s=arc-20240116; t=1748415910; c=relaxed/simple;
+	bh=7q2WhUY3sGrbDCrsFXssOt+MLhkRFiK6Br4N8IzOHM8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FAiMC79XUMLxwsJMRltS2+c8h3V9EiH5LkDgkQkcGNKkGplDiis1e75WtyJzrWyR84jw0ZO1ossCDN9xEqROmfgBjfBzAWG61Wf34LIoCn0CS+L9bilwg0dqGKGOGK0wXurwcIl+JPFJy7aQoKIPnml8LD0ijEIGuCvlwpYZhXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=eF5bVtXx; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 147e36ae3b9211f082f7f7ac98dee637-20250528
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=MqiAn4xMWzvpz7Cv23GHwx+M+Be0XsmKUKljJu0u7Hg=;
+	b=eF5bVtXxrGhoV86Cu8+AXFbemaW2+is2jErrTAws0QaLltc1cqxBrgfpKUP9FQGZyHezI9IzQhcSQs2G4K3qRGBSIDUxgbYxu6TVsktzbfS3FIbkS28014T6ggAD0bo6dDT/94ZIKjoyqBINpUxpGHfQePJb+cTLccTm0CAaDms=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.2.1,REQID:a6f7c184-92f4-49bd-97c5-b3174d43f04d,IP:0,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:0
+X-CID-META: VersionHash:0ef645f,CLOUDID:acb23259-eac4-4b21-88a4-d582445d304a,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:-3,IP:ni
+	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 147e36ae3b9211f082f7f7ac98dee637-20250528
+Received: from mtkmbs11n1.mediatek.inc [(172.21.101.185)] by mailgw02.mediatek.com
+	(envelope-from <ot_zhangchao.zhang@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1835244049; Wed, 28 May 2025 15:05:04 +0800
+Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
+ mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.39; Wed, 28 May 2025 15:05:00 +0800
+Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
+ mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1258.39 via Frontend Transport; Wed, 28 May 2025 15:05:01 +0800
+From: Zhangchao Zhang <ot_zhangchao.zhang@mediatek.com>
+To: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg
+	<johan.hedberg@gmail.com>, Luiz Von Dentz <luiz.dentz@gmail.com>
+CC: Sean Wang <sean.wang@mediatek.com>, Deren Wu <deren.Wu@mediatek.com>,
+	Aaron Hou <aaron.hou@mediatek.com>, Chris Lu <chris.lu@mediatek.com>, "Steve
+ Lee" <steve.lee@mediatek.com>, linux-bluetooth
+	<linux-bluetooth@vger.kernel.org>, linux-kernel
+	<linux-kernel@vger.kernel.org>, linux-mediatek
+	<linux-mediatek@lists.infradead.org>, Zhangchao Zhang
+	<ot_zhangchao.zhang@mediatek.com>
+Subject: [PATCH] Bluetooth: BT Driver: mediatek: add gpio pin to reset bt
+Date: Wed, 28 May 2025 15:03:23 +0800
+Message-ID: <20250528070323.14902-1-ot_zhangchao.zhang@mediatek.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Patch v2] perf tools: Fix incorrect --user-regs comments
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Kan Liang <kan.liang@linux.intel.com>
-Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- Dapeng Mi <dapeng1.mi@intel.com>
-References: <20250403060810.196028-1-dapeng1.mi@linux.intel.com>
-Content-Language: en-US
-From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-In-Reply-To: <20250403060810.196028-1-dapeng1.mi@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Kindly ping... Thanks.
+This patch provides some methods btmtk_reset_by_gpio,
+btmtk_reset_by_gpio_work_for mediatek controller.
 
-On 4/3/2025 2:08 PM, Dapeng Mi wrote:
-> The comment of "--user-regs" option is not correct, fix it.
->
-> "on interrupt," -> "in user space,"
->
-> Fixes: 84c417422798 ("perf record: Support direct --user-regs arguments")
-> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
-> Reviewed-by: Ian Rogers <irogers@google.com>
-> ---
->  tools/perf/builtin-record.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-> index ba20bf7c011d..d56273a0e241 100644
-> --- a/tools/perf/builtin-record.c
-> +++ b/tools/perf/builtin-record.c
-> @@ -3480,7 +3480,7 @@ static struct option __record_options[] = {
->  		    "sample selected machine registers on interrupt,"
->  		    " use '-I?' to list register names", parse_intr_regs),
->  	OPT_CALLBACK_OPTARG(0, "user-regs", &record.opts.sample_user_regs, NULL, "any register",
-> -		    "sample selected machine registers on interrupt,"
-> +		    "sample selected machine registers in user space,"
->  		    " use '--user-regs=?' to list register names", parse_user_regs),
->  	OPT_BOOLEAN(0, "running-time", &record.opts.running_time,
->  		    "Record running/enabled time of read (:S) events"),
->
-> base-commit: 35d13f841a3d8159ef20d5e32a9ed3faa27875bc
+The pin is configured in dts files, bluetooth is reset by pulling
+the pin, when an exception or coredump occurs, the above method will
+be used to reset the bluetooth.
+
+Co-developed-by Hao qin <hao.qin@mediatek.com>
+Co-developed-by Chirs lu <chris.lu@mediatek.com>
+Co-developed-by Jiande lu <jiande.lu@mediatek.com>
+Signed-off-by: Zhangchao Zhang <ot_zhangchao.zhang@mediatek.com>
+---
+ drivers/bluetooth/btmtk.c | 59 +++++++++++++++++++++++++++++++++++++++
+ drivers/bluetooth/btmtk.h |  5 ++++
+ 2 files changed, 64 insertions(+)
+
+diff --git a/drivers/bluetooth/btmtk.c b/drivers/bluetooth/btmtk.c
+index 4390fd571dbd..16542c724b40 100644
+--- a/drivers/bluetooth/btmtk.c
++++ b/drivers/bluetooth/btmtk.c
+@@ -6,6 +6,8 @@
+ #include <linux/firmware.h>
+ #include <linux/usb.h>
+ #include <linux/iopoll.h>
++#include <linux/of.h>
++#include <linux/of_gpio.h>
+ #include <linux/unaligned.h>
+ 
+ #include <net/bluetooth/bluetooth.h>
+@@ -109,6 +111,59 @@ static void btmtk_coredump_notify(struct hci_dev *hdev, int state)
+ 	}
+ }
+ 
++static void btmtk_reset_by_gpio_work(struct work_struct *work)
++{
++	struct btmtk_reset_gpio *reset_gpio_data =
++			container_of(work, struct btmtk_reset_gpio, reset_work.work);
++
++	gpio_direction_output(reset_gpio_data->gpio_number, 1);
++	kfree(reset_gpio_data);
++}
++
++static int btmtk_reset_by_gpio(struct hci_dev *hdev)
++{
++	struct btmtk_data *data = hci_get_priv(hdev);
++	struct btmtk_reset_gpio *reset_gpio_data;
++	struct device_node *node;
++	int reset_gpio_number;
++
++	node = of_find_compatible_node(NULL, NULL, "mediatek,usb-bluetooth");
++	if (node) {
++		reset_gpio_number = of_get_named_gpio(node, "reset-gpios", 0);
++		if (!gpio_is_valid(reset_gpio_number)) {
++			bt_dev_warn(hdev, "invalid reset gpio, use SW reset");
++			return -EINVAL;
++		}
++	} else {
++		bt_dev_warn(hdev, "no reset gpio, use SW reet");
++		return -ENODEV;
++	}
++
++	/* Toggle the hard reset line. The Mediatek device is going to
++	 * yank itself off the USB and then replug. The cleanup is handled
++	 * correctly on the way out (standard USB disconnect), and the new
++	 * device is detected cleanly and bound to the driver again like
++	 * it should be.
++	 */
++
++	if (test_and_set_bit(BTMTK_HW_RESET_ACTIVE, &data->flags)) {
++		bt_dev_err(hdev, "last reset failed? Not resetting again");
++		return 0;
++	}
++
++	reset_gpio_data = kzalloc(sizeof(*reset_gpio_data), GFP_KERNEL);
++	if (!reset_gpio_data)
++		return -ENOMEM;
++
++	INIT_DELAYED_WORK(&reset_gpio_data->reset_work, btmtk_reset_by_gpio_work);
++	reset_gpio_data->gpio_number = reset_gpio_number;
++
++	gpio_direction_output(reset_gpio_number, 0);
++	schedule_delayed_work(&reset_gpio_data->reset_work, msecs_to_jiffies(200));
++
++	return 0;
++}
++
+ void btmtk_fw_get_filename(char *buf, size_t size, u32 dev_id, u32 fw_ver,
+ 			   u32 fw_flavor)
+ {
+@@ -364,6 +419,10 @@ void btmtk_reset_sync(struct hci_dev *hdev)
+ 	struct btmtk_data *reset_work = hci_get_priv(hdev);
+ 	int err;
+ 
++	/*Toggle reset gpio if the platform provieds one*/
++	err = btmtk_reset_by_gpio(hdev);
++	if (!err)
++		return;
+ 	hci_dev_lock(hdev);
+ 
+ 	err = hci_cmd_sync_queue(hdev, reset_work->reset_sync, NULL, NULL);
+diff --git a/drivers/bluetooth/btmtk.h b/drivers/bluetooth/btmtk.h
+index 5df7c3296624..8a265ce367d1 100644
+--- a/drivers/bluetooth/btmtk.h
++++ b/drivers/bluetooth/btmtk.h
+@@ -179,6 +179,11 @@ struct btmtk_data {
+ 	spinlock_t isorxlock;
+ };
+ 
++struct btmtk_reset_gpio {
++	struct delayed_work reset_work;
++	int gpio_number;
++};
++
+ typedef int (*wmt_cmd_sync_func_t)(struct hci_dev *,
+ 				   struct btmtk_hci_wmt_params *);
+ 
+-- 
+2.46.0
+
 
