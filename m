@@ -1,246 +1,88 @@
-Return-Path: <linux-kernel+bounces-665663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CEB3AC6C3A
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 16:49:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 07D7CAC6C42
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 16:50:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCF4D1C009AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 14:49:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05B6F1884DCC
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 14:51:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E70228B4E3;
-	Wed, 28 May 2025 14:48:45 +0000 (UTC)
-Received: from mail-qv1-f77.google.com (mail-qv1-f77.google.com [209.85.219.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BED2428B4E3;
+	Wed, 28 May 2025 14:50:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jHYbuvSt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A35D0286D72
-	for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 14:48:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16609286D72;
+	Wed, 28 May 2025 14:50:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748443724; cv=none; b=TdvJEHWbTF1y2n1N89r0ISuGH9lxsmG5uP9MlXhC+V+ILEh3nCJ34QZ4KVbbJ5cWMNWbYI7Adl43C/SJcAIVhW987uDJJigqy/teUmtSGGuv5hUmoKQGgXddcOPFcJrNoJmjW2a/26FxXLEVi1PdlB7mPPRSwb+TX0WwWxrwVTQ=
+	t=1748443838; cv=none; b=KdhltMuaHmR3RNHQAAQzPyl0BfpDE2sFH0exQnIb4qQFGjtOeBeJ4EzwvQbjbGcbUjpLoCw+Km9ajC1SqrvWk9mZ7HFZuPvs9qs+DbTQ+GNZcZ1U5yl0rToO4r2i9YAlavQEavVwk1xqzmermxOksyq8oROBwE6+YHbEZ6wtrVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748443724; c=relaxed/simple;
-	bh=aSQkgtbaIw4kmPNazY/4wGXVxEjN0zpCY0z42x76mdQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=JrWhHcX3EY2c06GxrR5XdjAgDtwrY7mVd1Zr5FMtAllAMl+1JsxcczcjXhmFjV0bO/mGeTy4OM6BK2OOc6KYhgO/OrrYfHrQWmGFYNndfmT5bVeqvjy0b8w7HQA1Avs3BhmSS0EEamce22YMtHIMrv910V92zPGbTPpcTvHv1yo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.219.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-qv1-f77.google.com with SMTP id 6a1803df08f44-6faaf3f1552so40622956d6.1
-        for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 07:48:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748443721; x=1749048521;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4cx32Sj3K02lxj9Rd2CNjxbRCZi+yI5OJOD2QwS+p60=;
-        b=JuOH6wa8fYTder7p+utauw5+FnxCWwo7ToRDhxlRO/0vNOd/dYHJasGtLwV9EZ+Yas
-         KA7dlQaC0M74EqT1Ufo8BZ+hBqiiH0inZaVvlrm53FSc8BQtX0lSfDTJAtxTUeauw6Y7
-         EJVqSgkzUep+62fmleOQbzko9gwsTzL8M/4ZgPTFY9Vm2FAnDYp8EbCrNJKxlvBcJlMX
-         yui3YVomYrJj46sWygXqgucglipJUfFYHjZd2CBbCzW+ysaeRx/ek5RzSL6dsiFk3MsS
-         KHfVT1Ji3vo/5ed7Auw7k7eJNBKSUA6KeYj1cV+66uLUkGMQDo961oa4QKgUS/6gVtJE
-         Ta9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX7U9YfHcXeAJlW6yq+8ZKTQafccWejYFGfx/DBHdKHoweUcDubxrwQgEVrGJuiLUQe/me4E7jjg760S+4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyqEFawvGO0ueIlYNWAz5GQcFemzEkDc8ArSRoWWWXQfzeT7EEC
-	JuhXLccEB6/F5+FNuc/ZEJ9nWrdTP0Iecl5TZTTk246Z1uM03UhyEuceKDv3PI28SQwHa/1BMaS
-	IjjdSyaaMys2C1LfaKjVtXHWcfyMFMvglnYYozlO8mghjum0aiZTOzRgaSmE=
-X-Google-Smtp-Source: AGHT+IHyNdUnFlDInVGodrS7ppM23zNXxx5vyd1O1xHzhAZF56lKu3J3ZIGJXBCUr2NKQDLaFOTt0pjj+esfFRASa9ROXT3BAyXl
+	s=arc-20240116; t=1748443838; c=relaxed/simple;
+	bh=ccOcOcTAk/DHCjdt9j3xtztJfkcF/KpTBh2jMVIYcAU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fdthyPA5q6yJVBm1RCLR3TQW/8Kd/E4vNHFq9Nka9IPym+v/PYgLzCmgN3tmIbl4mGdKJ9rJDNkocnH/Yzibxdh/yzdcle7KEifziPSHILT8dU+teVIYa2pQwlqlq1WY9GHdqAnXei5lUTfyr44DVbSgh89rj2ppsVlhET2e7Hw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jHYbuvSt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74A98C4CEE3;
+	Wed, 28 May 2025 14:50:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748443837;
+	bh=ccOcOcTAk/DHCjdt9j3xtztJfkcF/KpTBh2jMVIYcAU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jHYbuvStpLdCpvHrb1K1Y0yhch/to5cnea+PsRziKlHdOAH8rKMXGyTgRWxmOX0Fb
+	 try2HmWzKMxlMJkrkkVtKq4RkDYmLqSXxvqPlI/C2UmAvEvWT0ZcjcXl8xgIRCk/tQ
+	 YT+pqUIFVZqYSmfg6XElBpP8dlIOhXCh6zO8JjYe7xlwrhMsaoltD2DDusbZWiu0yu
+	 f3ZY7o4B7evTqGV/XB5AYQHXiupMyQoyFoXg/RqUPT/0jViDed4Sp+Xkvm/FpBlr1x
+	 qpX+0VtskL2QumvQ6j89U4XwKNyXyu75N0hnzEd455o0T7KSLV8l5IDa1b9m0PQ+IR
+	 OS4Oh27MgOiHQ==
+Date: Wed, 28 May 2025 15:50:31 +0100
+From: Simon Horman <horms@kernel.org>
+To: Hariprasad Kelam <hkelam@marvell.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Sunil Goutham <sgoutham@marvell.com>,
+	Linu Cherian <lcherian@marvell.com>,
+	Geetha sowjanya <gakula@marvell.com>,
+	Jerin Jacob <jerinj@marvell.com>,
+	Subbaraya Sundeep <sbhatta@marvell.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Ratheesh Kannoth <rkannoth@marvell.com>
+Subject: Re: [net] Octeontx2-af: Skip overlap check for SPI field
+Message-ID: <20250528145031.GD365796@horms.kernel.org>
+References: <20250525095854.1612196-1-hkelam@marvell.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:b94:b0:86a:93c:5548 with SMTP id
- ca18e2360f4ac-86cbb7be930mr2044389139f.3.1748443711224; Wed, 28 May 2025
- 07:48:31 -0700 (PDT)
-Date: Wed, 28 May 2025 07:48:31 -0700
-In-Reply-To: <67ae02b1.050a0220.110943.005e.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6837223f.a70a0220.253bc2.00d1.GAE@google.com>
-Subject: Re: [syzbot] [ocfs2?] possible deadlock in ocfs2_read_folio
-From: syzbot <syzbot+bd316bb736c7dc2f318e@syzkaller.appspotmail.com>
-To: jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
-	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250525095854.1612196-1-hkelam@marvell.com>
 
-syzbot has found a reproducer for the following issue on:
+On Sun, May 25, 2025 at 03:28:54PM +0530, Hariprasad Kelam wrote:
+> Currently, the AF driver scans the mkex profile to identify all
+> supported features. This process also involves checking for any
+> fields that might overlap with each other.
+> 
+> For example, NPC_TCP_SPORT field offset within the key should
+> not overlap with NPC_DMAC/NPC_SIP_IPV4 or any other field.
+> 
+> However, there are situations where some overlap is unavoidable.
+> For instance, when extracting the SPI field, the same key offset might
+> be used by both the AH and ESP layers. This patch addresses this
+> specific scenario by skipping the overlap check and instead, adds
+> a warning message to the user.
+> 
+> Fixes: 12aa0a3b93f3 ("octeontx2-af: Harden rule validation.")
+> Signed-off-by: Hariprasad Kelam <hkelam@marvell.com>
 
-HEAD commit:    c89756bcf406 Merge tag 'pm-6.16-rc1' of git://git.kernel.o..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1201f170580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ded97a85afe9a6c8
-dashboard link: https://syzkaller.appspot.com/bug?extid=bd316bb736c7dc2f318e
-compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=113ae6d4580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12b01df4580000
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-c89756bc.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/b21d74e73303/vmlinux-c89756bc.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/b778ededeb75/bzImage-c89756bc.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/6ca75df782b2/mount_0.gz
-  fsck result: OK (log: https://syzkaller.appspot.com/x/fsck.log?x=14b01df4580000)
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+bd316bb736c7dc2f318e@syzkaller.appspotmail.com
-
-======================================================
-WARNING: possible circular locking dependency detected
-6.15.0-syzkaller-03478-gc89756bcf406 #0 Not tainted
-------------------------------------------------------
-syz-executor341/5408 is trying to acquire lock:
-ffff888046e7a2e0 (&ocfs2_file_ip_alloc_sem_key){++++}-{4:4}, at: ocfs2_read_folio+0x353/0x970 fs/ocfs2/aops.c:287
-
-but task is already holding lock:
-ffff888046e7a7e0 (mapping.invalidate_lock#3){.+.+}-{4:4}, at: filemap_invalidate_lock_shared include/linux/fs.h:932 [inline]
-ffff888046e7a7e0 (mapping.invalidate_lock#3){.+.+}-{4:4}, at: filemap_fault+0x546/0x1200 mm/filemap.c:3391
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #2 (mapping.invalidate_lock#3){.+.+}-{4:4}:
-       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5871
-       down_read+0x46/0x2e0 kernel/locking/rwsem.c:1524
-       filemap_invalidate_lock_shared include/linux/fs.h:932 [inline]
-       filemap_fault+0x546/0x1200 mm/filemap.c:3391
-       ocfs2_fault+0xa4/0x3f0 fs/ocfs2/mmap.c:38
-       __do_fault+0x138/0x390 mm/memory.c:5098
-       do_read_fault mm/memory.c:5518 [inline]
-       do_fault mm/memory.c:5652 [inline]
-       do_pte_missing mm/memory.c:4160 [inline]
-       handle_pte_fault mm/memory.c:5997 [inline]
-       __handle_mm_fault+0x37c5/0x55e0 mm/memory.c:6140
-       handle_mm_fault+0x3f6/0x8c0 mm/memory.c:6309
-       faultin_page mm/gup.c:1193 [inline]
-       __get_user_pages+0x1a78/0x30c0 mm/gup.c:1491
-       populate_vma_page_range+0x26b/0x340 mm/gup.c:1929
-       __mm_populate+0x24c/0x380 mm/gup.c:2032
-       mm_populate include/linux/mm.h:3487 [inline]
-       vm_mmap_pgoff+0x3f0/0x4c0 mm/util.c:584
-       ksys_mmap_pgoff+0x51f/0x760 mm/mmap.c:607
-       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-       do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #1 (&mm->mmap_lock){++++}-{4:4}:
-       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5871
-       __might_fault+0xcc/0x130 mm/memory.c:7151
-       _inline_copy_to_user include/linux/uaccess.h:192 [inline]
-       _copy_to_user+0x2c/0xb0 lib/usercopy.c:26
-       copy_to_user include/linux/uaccess.h:225 [inline]
-       fiemap_fill_next_extent+0x1c0/0x390 fs/ioctl.c:145
-       ocfs2_fiemap+0x888/0xc90 fs/ocfs2/extent_map.c:806
-       ioctl_fiemap fs/ioctl.c:220 [inline]
-       do_vfs_ioctl+0x16d3/0x1990 fs/ioctl.c:841
-       __do_sys_ioctl fs/ioctl.c:905 [inline]
-       __se_sys_ioctl+0x82/0x170 fs/ioctl.c:893
-       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-       do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #0 (&ocfs2_file_ip_alloc_sem_key){++++}-{4:4}:
-       check_prev_add kernel/locking/lockdep.c:3168 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3287 [inline]
-       validate_chain+0xb9b/0x2140 kernel/locking/lockdep.c:3911
-       __lock_acquire+0xab9/0xd20 kernel/locking/lockdep.c:5240
-       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5871
-       down_read+0x46/0x2e0 kernel/locking/rwsem.c:1524
-       ocfs2_read_folio+0x353/0x970 fs/ocfs2/aops.c:287
-       filemap_read_folio+0x117/0x380 mm/filemap.c:2401
-       filemap_fault+0xb16/0x1200 mm/filemap.c:3495
-       ocfs2_fault+0xa4/0x3f0 fs/ocfs2/mmap.c:38
-       __do_fault+0x138/0x390 mm/memory.c:5098
-       do_read_fault mm/memory.c:5518 [inline]
-       do_fault mm/memory.c:5652 [inline]
-       do_pte_missing mm/memory.c:4160 [inline]
-       handle_pte_fault mm/memory.c:5997 [inline]
-       __handle_mm_fault+0x37c5/0x55e0 mm/memory.c:6140
-       handle_mm_fault+0x3f6/0x8c0 mm/memory.c:6309
-       faultin_page mm/gup.c:1193 [inline]
-       __get_user_pages+0x1a78/0x30c0 mm/gup.c:1491
-       populate_vma_page_range+0x26b/0x340 mm/gup.c:1929
-       __mm_populate+0x24c/0x380 mm/gup.c:2032
-       mm_populate include/linux/mm.h:3487 [inline]
-       vm_mmap_pgoff+0x3f0/0x4c0 mm/util.c:584
-       ksys_mmap_pgoff+0x51f/0x760 mm/mmap.c:607
-       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-       do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-other info that might help us debug this:
-
-Chain exists of:
-  &ocfs2_file_ip_alloc_sem_key --> &mm->mmap_lock --> mapping.invalidate_lock#3
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  rlock(mapping.invalidate_lock#3);
-                               lock(&mm->mmap_lock);
-                               lock(mapping.invalidate_lock#3);
-  rlock(&ocfs2_file_ip_alloc_sem_key);
-
- *** DEADLOCK ***
-
-1 lock held by syz-executor341/5408:
- #0: ffff888046e7a7e0 (mapping.invalidate_lock#3){.+.+}-{4:4}, at: filemap_invalidate_lock_shared include/linux/fs.h:932 [inline]
- #0: ffff888046e7a7e0 (mapping.invalidate_lock#3){.+.+}-{4:4}, at: filemap_fault+0x546/0x1200 mm/filemap.c:3391
-
-stack backtrace:
-CPU: 0 UID: 0 PID: 5408 Comm: syz-executor341 Not tainted 6.15.0-syzkaller-03478-gc89756bcf406 #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- print_circular_bug+0x2ee/0x310 kernel/locking/lockdep.c:2046
- check_noncircular+0x134/0x160 kernel/locking/lockdep.c:2178
- check_prev_add kernel/locking/lockdep.c:3168 [inline]
- check_prevs_add kernel/locking/lockdep.c:3287 [inline]
- validate_chain+0xb9b/0x2140 kernel/locking/lockdep.c:3911
- __lock_acquire+0xab9/0xd20 kernel/locking/lockdep.c:5240
- lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5871
- down_read+0x46/0x2e0 kernel/locking/rwsem.c:1524
- ocfs2_read_folio+0x353/0x970 fs/ocfs2/aops.c:287
- filemap_read_folio+0x117/0x380 mm/filemap.c:2401
- filemap_fault+0xb16/0x1200 mm/filemap.c:3495
- ocfs2_fault+0xa4/0x3f0 fs/ocfs2/mmap.c:38
- __do_fault+0x138/0x390 mm/memory.c:5098
- do_read_fault mm/memory.c:5518 [inline]
- do_fault mm/memory.c:5652 [inline]
- do_pte_missing mm/memory.c:4160 [inline]
- handle_pte_fault mm/memory.c:5997 [inline]
- __handle_mm_fault+0x37c5/0x55e0 mm/memory.c:6140
- handle_mm_fault+0x3f6/0x8c0 mm/memory.c:6309
- faultin_page mm/gup.c:1193 [inline]
- __get_user_pages+0x1a78/0x30c0 mm/gup.c:1491
- populate_vma_page_range+0x26b/0x340 mm/gup.c:1929
- __mm_populate+0x24c/0x380 mm/gup.c:2032
- mm_populate include/linux/mm.h:3487 [inline]
- vm_mmap_pgoff+0x3f0/0x4c0 mm/util.c:584
- ksys_mmap_pgoff+0x51f/0x760 mm/mmap.c:607
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f1267d03dd9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 b1 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f1267c97208 EFLAGS: 00000246 ORIG_RAX: 0000000000000009
-RAX: ffffffffffffffda RBX: 00007f1267d90718 RCX: 00007f1267d03dd9
-RDX: 0000000001000003 RSI: 0000000000b36000 RDI: 0000200000000000
-RBP: 00007f1267d90710 R08: 0000000000000006 R09: 0000000000000000
-R10: 0000000000028011 R11: 0000000000000246 R12: 00007f1267d5d624
-R13: 5bf000f24f5ebbca R14: 0000200000000280 R15: 0000200000000000
- </TASK>
-
-
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+Reviewed-by: Simon Horman <horms@kernel.org>
 
