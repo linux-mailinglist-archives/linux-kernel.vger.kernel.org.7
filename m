@@ -1,212 +1,177 @@
-Return-Path: <linux-kernel+bounces-665662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-665664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77A9BAC6C38
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 16:49:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70899AC6C3C
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 16:50:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9CF8A22127
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 14:48:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE5764E3DD1
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 May 2025 14:49:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16CDA28C2B0;
-	Wed, 28 May 2025 14:47:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ADCB28B3F6;
+	Wed, 28 May 2025 14:49:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TRWJecfb"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="O8TFURGt"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2B5A28BA86;
-	Wed, 28 May 2025 14:47:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2294D283683;
+	Wed, 28 May 2025 14:49:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748443650; cv=none; b=Mp2GSfG/RFkczWSdeFw+Rt7r9KF1iWF6sSsTtSBbt+TWBfOhymQmbDthLCDzsVDnDtbcfXrAMjx67Z0pnnrNDGudYmzYhBbeCwN6q/ZYSyCN4SDU84zQOsCj5zBAKTxIh3JX0UP2UhGIH3q6NO9G5seXjbuSxV1m1Gf65sHKdY8=
+	t=1748443747; cv=none; b=UB+XrAuQUulau2zoD0mfaoFBB9JUjNUzJco2pfRQcfgwzmvRMbeaBv/JUnKc68kUUvto1p5I4qZSnQXV2zLpXDqCkc3ANgdv1kp0th8qWfAhBI5+wjWm6Cicb7tbgGDbQu87zcLksnKutOHZ8kBOIVQk+7pvcFHeM34n2D8TLpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748443650; c=relaxed/simple;
-	bh=QVusH8ytRFHR18qIeA5nN1QKmrPz1Ltl6HMFW3sfcwU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RkxUX43hOXzY245A9UyuIqWCS76acINSYdhn1b99jCsak14Ht8Dp+90CfrTwsuAOkY29a6/jrToFpSh7jNlRp4pR2jgInoAVDhYGE5+k4QNdMUQekpEKCSeKnzvGvWnRhjvtYGfdqoD6M5sH04C5jSfQG49o157MkQ8uSWxJd7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TRWJecfb; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b2c4331c50eso1551947a12.3;
-        Wed, 28 May 2025 07:47:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748443648; x=1749048448; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jeSugzNf1/4gi32f7Z56MbpoGgBCaskHwFTFR4uqoEA=;
-        b=TRWJecfbYd0AHt/YA12UK44Aapl8RgHFBBb3rV1YDdWZk6Om1bXoHg40Rlkez6SExf
-         0Gtk3GbnR2GVCch3rfqu4WA00CQa04nA78LUHJyGo/g7qkh5mCifXKsVJHNNAECXzRnp
-         DEtXZz63KfopmcVT6aFKDa/KL3jAESS6Ghla215BPBr3FPOX9Oek4fzT0OdyhNbazRhz
-         QYboeLpbT07qAbZNfYpXq5EP5obHXw3GWE76MqL/xL3QyrQCFqqU3N3rWMOECrPBkXV2
-         IHpJ9hJbVf5RkkpTxua0lMxi0m78/4pBQXlpxFWb+Nowll9peyDwr5r1YDJzahG3mLxz
-         9QMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748443648; x=1749048448;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jeSugzNf1/4gi32f7Z56MbpoGgBCaskHwFTFR4uqoEA=;
-        b=uctRh/ge9l807Onh0VAg56i5TFSjoElW+4j4aFgOsYi/1Ws7jfomscmdzJDYXMWxPk
-         P/DwkUk7MEDIqw4sMdOgRfRJkAiKIe6NT7zF3+sbHKWnSfDNFUkX8m5kvpbTIhjU+gXR
-         36olv6xH1+zRYA9DttTeqdSiAYQYZFlz3kfQxdNbgyowQQlYMlbz7AFQkqklyxrYGOyv
-         85RszpK2Ryh0S3pJA9lFDiuGgR6I9ZS4ljMjB4wEJt9hoNTGoBlv7bBlxoYFjRA3YOmB
-         t7bE89zefwWb3mhpBZlKdJfjiVnHPiJdYOl6V73rUGn4rA5hn3GJ58i+fwjsQNEV6XQe
-         ryzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU+1oQbXSXOQ+GPq+hdFcX/lq9n5i8F+2TMjELSVNJEPUhw/oUplTDZLLHSseORhx1lp47ek8GT553H@vger.kernel.org, AJvYcCUZwIfpW0lpO77dDZySzVnsqhJshRIPInPscQrfQ3QuFFCfEoPAAgZfGc4BxbWSTnUy769JzMM77V9ugVA=@vger.kernel.org, AJvYcCXB+BV9CCLsQl7MBGoxsaCG5ZGvWA4JKJzAEy0rzh+VtLRtTWGjxIGNMrZ8fj63K7lVPow69tZ4Ojs9Wh9H@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8zyp2Txt+B2XNIy2/jR/hjR0vK7+8bl/unPx1cvEWibavKCVh
-	EsvWWDIRdNGAZaq/bOvDpFlaY7lWxAICjlwCQEzeS4a6bBNxQBDIbf7Orn6cUyUmJm+/1I2cdeX
-	HQPFTZLmMhX1W0Lq+YpXpoO/BwiHZFtkCu9IgoH8=
-X-Gm-Gg: ASbGncuNiMzZZv0jRxZFZtuDbaG677HDMx2FHfWa9BEcFWkSZ+xKDLdkOH0wZUG/BBP
-	tK8UiRFLSqAhOVdX1Thgd+S/0Scjmjf5Ix2+22yptt9yjHyZoqfprGMWTgSHIFh2hkhGfP2e9L4
-	T8m4bfrqzb+eTbMQ4JMeFB/09Usle6OYVY
-X-Google-Smtp-Source: AGHT+IHQJXU3p+rSsWqzxaLHSULaSjkoRZugP1vvKeH7LmxHkr7nUsvjweRVqC9eZYhDskDFMsLev7oBi7HQV+tKXmM=
-X-Received: by 2002:a17:90b:4b8b:b0:311:d670:a0e9 with SMTP id
- 98e67ed59e1d1-311d670ad95mr4555012a91.21.1748443647809; Wed, 28 May 2025
- 07:47:27 -0700 (PDT)
+	s=arc-20240116; t=1748443747; c=relaxed/simple;
+	bh=qgnpP9ARO5vVkvXbwXBu8ojEN41fQJiPFTS4KbCc4r4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=b2PAPJtr9Tqd1zsrhiy5v+O/w9XdoVBgFDeoU1WbS4b6YRwjTMwBRiXtiP/rqH0I5HC03zfVw9Ya0VDfECx9Ewf0AXwvDXqpVnYVeSIeN73eHSLdBIXtLHZJccvtV8ac19awtqMxfZxPXPgcOVC+dxXhxGWhbzfnhjI+Ff4YKC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=O8TFURGt; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1748443745; x=1779979745;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=qgnpP9ARO5vVkvXbwXBu8ojEN41fQJiPFTS4KbCc4r4=;
+  b=O8TFURGtyYoTVcKBp4JyEJkon3ANgyOLSPohLhT9NXKRbz5S7IyPNBxj
+   KksH3eNM+3H+JA/ihN4zRdSLHlPXqFW3Y3wFq/aB/pjOOTTjRe4TXLJGK
+   gb5tVfbx9/QCqu54+6EuCW5mtHpOEcSxNObsOzvlXzO6Pu5CDW94O+WmT
+   s9yvb5pkcbazgJmYSwv8piz/eytzMFiYcuJJpTG5/ZWhChw8E6JihEAl5
+   0LEb4HCSYpH8R/clitTSgJ6+boRwt7y6ojmUOZmi0d0cdpLkIRamGp1bF
+   L+pxs3QALjHIn+4DhlGhOb9W0NYWQ3QE5uowB90oMmaQFwhteL+SmlOOz
+   w==;
+X-CSE-ConnectionGUID: zfDymr1KQCeXcf0p2daQBA==
+X-CSE-MsgGUID: 6cChL8bORVWYhVcgtrQVkw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11447"; a="53096993"
+X-IronPort-AV: E=Sophos;i="6.15,321,1739865600"; 
+   d="scan'208";a="53096993"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2025 07:49:04 -0700
+X-CSE-ConnectionGUID: UTg9ayNJTaK/EJuhyyPE+g==
+X-CSE-MsgGUID: TwpyN5IbTV69TFJzmn3hPQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,321,1739865600"; 
+   d="scan'208";a="180491922"
+Received: from kanliang-dev.jf.intel.com ([10.165.154.102])
+  by orviesa001.jf.intel.com with ESMTP; 28 May 2025 07:49:04 -0700
+From: kan.liang@linux.intel.com
+To: peterz@infradead.org,
+	mingo@redhat.com,
+	namhyung@kernel.org,
+	irogers@google.com,
+	mark.rutland@arm.com,
+	linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Cc: eranian@google.com,
+	ctshao@google.com,
+	tmricht@linux.ibm.com,
+	leo.yan@arm.com,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Aishwarya TCV <aishwarya.tcv@arm.com>
+Subject: [PATCH] perf: Fix the throttle error of some clock events
+Date: Wed, 28 May 2025 07:48:23 -0700
+Message-Id: <20250528144823.2996185-1-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.38.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250502150513.4169098-1-m.felsch@pengutronix.de>
- <20250502150513.4169098-8-m.felsch@pengutronix.de> <CAHCN7x+Lu9momgX3Vwp+Yu+Tet5Q=k2vCL83SMLuad24SDchEg@mail.gmail.com>
- <20250502165535.aeb2osq2vnxsudmq@pengutronix.de> <CAHCN7xLecU12XtXFuwfNP+eee+9RLCSB9iErNmk7VFV+WrozJA@mail.gmail.com>
- <7cf3e219758a67d08137ebea5e52a1abad835e65.camel@collabora.com>
-In-Reply-To: <7cf3e219758a67d08137ebea5e52a1abad835e65.camel@collabora.com>
-From: Adam Ford <aford173@gmail.com>
-Date: Wed, 28 May 2025 09:47:14 -0500
-X-Gm-Features: AX0GCFs7evzjkWRmfqngQQTZHj2yQaZWL0ja3DzZVNAah62H09qmX0qG_o41Jko
-Message-ID: <CAHCN7xJJz2cOHBbyT0mr3QTndiB4Z6_Gtgy4k2giJt5qg4fH6A@mail.gmail.com>
-Subject: Re: [RFC PATCH 07/11] arm64: dts: imx8mp: fix VPU_BUS clock setting
-To: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-Cc: Marco Felsch <m.felsch@pengutronix.de>, benjamin.gaignard@collabora.com, 
-	p.zabel@pengutronix.de, mchehab@kernel.org, shawnguo@kernel.org, 
-	Sascha Hauer <s.hauer@pengutronix.de>, kernel@pengutronix.de, festevam@gmail.com, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, paulk@sys-base.io, 
-	hverkuil@xs4all.nl, laurent.pinchart@ideasonboard.com, 
-	sebastian.fricke@collabora.com, ming.qian@nxp.com, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	linux-rockchip@lists.infradead.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, May 28, 2025 at 9:14=E2=80=AFAM Nicolas Dufresne
-<nicolas.dufresne@collabora.com> wrote:
->
-> Hi,
->
-> Le mardi 27 mai 2025 =C3=A0 22:05 -0500, Adam Ford a =C3=A9crit :
-> > On Fri, May 2, 2025 at 11:55=E2=80=AFAM Marco Felsch <m.felsch@pengutro=
-nix.de> wrote:
-> > >
-> > > On 25-05-02, Adam Ford wrote:
-> > > > On Fri, May 2, 2025 at 10:10=E2=80=AFAM Marco Felsch <m.felsch@peng=
-utronix.de> wrote:
-> > > > >
-> > > > > The VPU_PLL clock must be set before the VPU_BUS clock which is d=
-erived
-> > > > > from the VPU_PLL clock else the VPU_BUS clock is 300MHz and not 6=
-00MHz.
-> >
-> > I did verify the current clock rate ends up at 300MHz instead of the
-> > desired 600 or 800MHz, so we should do something.
-> >
->
-> This reminded me of:
->
-> https://patchwork.linuxtv.org/project/linux-media/patch/20250217-b4-hantr=
-o-av1-clock-rate-v2-1-e179fad52641@collabora.com/
->
-> Which also made me discover that this patch wasn't picked despite being m=
-ark accepted. We
-> will favour DT clock settings from here, since its not really managable o=
-therwise, old board
-> will stay like this, otherwise we face backward compatibility issues.
->
-> Note that G2 and VC8K can be run at higher rate, but to be stable, you ne=
-ed
-> to also control voltage and proper cooling, not something we want "by def=
-ault".
+From: Kan Liang <kan.liang@linux.intel.com>
 
-From what I can tell, imx8m_vpu_hw.c doesn't actually set the clock
-rates.  It looks like it just enables and disables them.  I think the
-clocks are all set via the device tree.  The 8MP datasheets list the
-clock rates based on what they call 'nominal' and 'overdrive' which
-determined by some SoC voltages.  600MHz seems reasonable for what NXP
-states as Nominal.  I didn't see any NXP downstream voltage or cooling
-options.
+The Arm CI reports RCU stall, which can be reproduced by the below perf
+command.
+  perf record -a -e cpu-clock -- sleep 2
 
-adam
+The cpu-clock and task_clock are two special SW events, which rely on
+the hrtimer. Instead of invoking the stop(), the HRTIMER_NORESTART is
+returned to stop the timer. Because the hrtimer interrupt handler cannot
+cancel itself, which causes infinite loop.
 
->
-> Nicolas
->
-> >
-> > > > >
-> > > > > Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
-> > > > > ---
-> > > > >  arch/arm64/boot/dts/freescale/imx8mp.dtsi | 4 ++--
-> > > > >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > > > >
-> > > > > diff --git a/arch/arm64/boot/dts/freescale/imx8mp.dtsi b/arch/arm=
-64/boot/dts/freescale/imx8mp.dtsi
-> > > > > index 97b09b647ec7..7f4bdefb3480 100644
-> > > > > --- a/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-> > > > > +++ b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-> > > > > @@ -2289,8 +2289,8 @@ vpumix_blk_ctrl: blk-ctrl@38330000 {
-> > > > >                                  <&clk IMX8MP_CLK_VPU_G2_ROOT>,
-> > > > >                                  <&clk IMX8MP_CLK_VPU_VC8KE_ROOT>=
-;
-> > > > >                         clock-names =3D "g1", "g2", "vc8000e";
-> > > > > -                       assigned-clocks =3D <&clk IMX8MP_CLK_VPU_=
-BUS>, <&clk IMX8MP_VPU_PLL>;
-> > > > > -                       assigned-clock-parents =3D <&clk IMX8MP_V=
-PU_PLL_OUT>;
-> > > > > +                       assigned-clocks =3D <&clk IMX8MP_VPU_PLL>=
-, <&clk IMX8MP_CLK_VPU_BUS>;
-> > > > > +                       assigned-clock-parents =3D <0>, <&clk IMX=
-8MP_VPU_PLL_OUT>;
-> > > > >                         assigned-clock-rates =3D <600000000>, <60=
-0000000>;
-> > > >
-> > > > I think there was a move to make the default be overdrive [1]  and =
-[2]
-> > > > and use a 'nominal' device tree for those who are not in overdrive
-> > > > mode.  According to the TRM, the VPU_BUS_CLK_ROOT, the nominal is
-> > > > 600MHz and the overdrive is 800MHz.  Based on that, I wonder if the
-> > > > values here should be 800MHz and if we should add the nominal value=
-s
-> > > > of 600MHz to the imx8m-nominal.dtsi file.
-> > >
-> > > You're right, Ahamd and Lucas did change this. I will adapt it later =
-on.
-> >
-> > I updated my device tree to run in overdrive mode and ran fluster at
-> > the higher rates:
-> > VPU_G1 - 800MHz,
-> > VPU-G2 - 700MHz
-> > VPU-Bus - 800MHz
-> >
-> > ./fluster.py run -d GStreamer-VP8-V4L2SL-Gst1.0
-> > Ran 57/61 tests successfully               in 5.922 secs
-> > (vs 7.059 secs at nominal speed)
-> >
-> > ./fluster.py run -dGStreamer-H.264-V4L2SL-Gst1.0
-> > Ran 129/135 tests successfully               in 40.107 secs
-> > (vs 45.741 secs at nominal speed)
-> >
-> > If you want, I can submit the clock updates I have for overdrive or
-> > send them to you to save you some time.
-> >
-> > adam
-> >
-> > >
-> > > Regards,
-> > >   Marco
+There may be two ways to fix it.
+- Add a check of MAX_INTERRUPTS in the event_stop. Return immediately if
+the stop is invoked by the throttle.
+- Introduce a PMU flag to track the case. Avoid the event_stop in
+perf_event_throttle() if the flag is detected.
+
+The latter looks more generic. It may be used if there are more other
+cases that want to avoid the stop later. The latter is implemented.
+
+Reported-by: Leo Yan <leo.yan@arm.com>
+Reported-by: Aishwarya TCV <aishwarya.tcv@arm.com>
+Closes: https://lore.kernel.org/lkml/20250527161656.GJ2566836@e132581.arm.com/
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+---
+ include/linux/perf_event.h |  1 +
+ kernel/events/core.c       | 23 ++++++++++++++++++++---
+ 2 files changed, 21 insertions(+), 3 deletions(-)
+
+diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+index 947ad12dfdbe..66f02f46595c 100644
+--- a/include/linux/perf_event.h
++++ b/include/linux/perf_event.h
+@@ -303,6 +303,7 @@ struct perf_event_pmu_context;
+ #define PERF_PMU_CAP_AUX_OUTPUT			0x0080
+ #define PERF_PMU_CAP_EXTENDED_HW_TYPE		0x0100
+ #define PERF_PMU_CAP_AUX_PAUSE			0x0200
++#define PERF_PMU_CAP_NO_THROTTLE_STOP		0x0400
+ 
+ /**
+  * pmu::scope
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 8327ab0ee641..4df274705038 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -2655,7 +2655,22 @@ static void perf_event_unthrottle(struct perf_event *event, bool start)
+ 
+ static void perf_event_throttle(struct perf_event *event)
+ {
+-	event->pmu->stop(event, 0);
++	/*
++	 * Some PMUs, e.g., cpu-clock and task_clock, may rely on
++	 * a special mechanism (hrtimer) to manipulate counters.
++	 * The regular stop doesn't work, since the hrtimer interrupt
++	 * handler cannot cancel itself.
++	 *
++	 * The stop should be avoided for such cases. Let the
++	 * driver-specific code handle it.
++	 *
++	 * The counters will eventually be disabled in the driver-specific
++	 * code. In unthrottle, they still need to be re-enabled.
++	 * There is no handling for PERF_PMU_CAP_NO_THROTTLE_STOP in
++	 * the perf_event_unthrottle().
++	 */
++	if (!(event->pmu->capabilities & PERF_PMU_CAP_NO_THROTTLE_STOP))
++		event->pmu->stop(event, 0);
+ 	event->hw.interrupts = MAX_INTERRUPTS;
+ 	perf_log_throttle(event, 0);
+ }
+@@ -11846,7 +11861,8 @@ static int cpu_clock_event_init(struct perf_event *event)
+ static struct pmu perf_cpu_clock = {
+ 	.task_ctx_nr	= perf_sw_context,
+ 
+-	.capabilities	= PERF_PMU_CAP_NO_NMI,
++	.capabilities	= PERF_PMU_CAP_NO_NMI |
++			  PERF_PMU_CAP_NO_THROTTLE_STOP,
+ 	.dev		= PMU_NULL_DEV,
+ 
+ 	.event_init	= cpu_clock_event_init,
+@@ -11928,7 +11944,8 @@ static int task_clock_event_init(struct perf_event *event)
+ static struct pmu perf_task_clock = {
+ 	.task_ctx_nr	= perf_sw_context,
+ 
+-	.capabilities	= PERF_PMU_CAP_NO_NMI,
++	.capabilities	= PERF_PMU_CAP_NO_NMI |
++			  PERF_PMU_CAP_NO_THROTTLE_STOP,
+ 	.dev		= PMU_NULL_DEV,
+ 
+ 	.event_init	= task_clock_event_init,
+-- 
+2.38.1
+
 
