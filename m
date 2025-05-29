@@ -1,211 +1,129 @@
-Return-Path: <linux-kernel+bounces-666895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34A77AC7D9A
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 14:17:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 773ABAC7D9E
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 14:18:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DA2E3BD6BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 12:16:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1CF69E695F
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 12:17:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3423F2192FD;
-	Thu, 29 May 2025 12:17:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C31F72222D1;
+	Thu, 29 May 2025 12:18:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="JXUzHNaH";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="puK20j0N";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="JXUzHNaH";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="puK20j0N"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ASMqB7f4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7A222AE6F
-	for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 12:17:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2853D21ABC1;
+	Thu, 29 May 2025 12:17:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748521028; cv=none; b=dy4EeShFUOKjXmY12qjfSNX5O6QGBgQC+QLZFXJjzP5Y8jO37fleHhNKm7/Gz4/RFGd9ZDZK/AW/pF99UmWx7HU/Ej8OAvQ2Omr1s+R/6gXhBoK5xwcTL8Vt4eQQ7HWTrXL0rz+5Qyc2p6z8C9jNnoTonO1hgBPfNj/Cr9BY+pg=
+	t=1748521080; cv=none; b=OLevuZiyMG+8TDJvy/pr/UZdk0H22uqY/GNhtxQLe977XvRiQ7wpkmQQ6C6mKq0oyW/ph6DyyRZRHFj81+6n3Tjti+0wFZpZqSGntQCn6+EjCLv3gTqtDdXRgm2NOd+ZSM2Ezc21nCL0NdqN5YeEGAqAYJmFp8riJvka85W4OOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748521028; c=relaxed/simple;
-	bh=5qno7I4dMa09RWSxs2vQbNyyZr0/o35lzcL+Y3Q3L8U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OojSKiVNxgCrScWJzj3GzhyOxvtdaHPl4AG710NT5MyFff7u5GYwPRsg0qj3bcCmcoF8mRukwTMFCOAuCDfNmoW0TA+nf2OGQWvX9RlDAVLjwpTtD4/B1riPIt/qGSQ3cRG5H59SrZzZPJmHocsltStPEkzWm8U3IVP3gwI0KXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=JXUzHNaH; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=puK20j0N; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=JXUzHNaH; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=puK20j0N; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id BBE8E1F38A;
-	Thu, 29 May 2025 12:16:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1748521018; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=EpyOGu51sM3w0txWZkYdWnLmLNbxO0cQeTqdjYPrGMs=;
-	b=JXUzHNaHxeXKFLqBAMrnC1pl5xarJjJvd0ROSn+9sOP1T/VMbee8aH81Dk2l8R/k78KOqo
-	V014KjeN+4QaBsW0r90jIE/MVcCxRU7vbPyYBau10jJUuf/NN0u+RBM3rCexzSkiaXodXf
-	478M8e/fo5i978i39ph0q1MZyLcKEtM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1748521018;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=EpyOGu51sM3w0txWZkYdWnLmLNbxO0cQeTqdjYPrGMs=;
-	b=puK20j0NUQJ5r6UIynWtzgsWNeBDPcA8zMtFj1obYlrdeejykPJpoFNW0DMpHE20OiaP6H
-	UGn+I22C1Z4tp6DA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1748521018; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=EpyOGu51sM3w0txWZkYdWnLmLNbxO0cQeTqdjYPrGMs=;
-	b=JXUzHNaHxeXKFLqBAMrnC1pl5xarJjJvd0ROSn+9sOP1T/VMbee8aH81Dk2l8R/k78KOqo
-	V014KjeN+4QaBsW0r90jIE/MVcCxRU7vbPyYBau10jJUuf/NN0u+RBM3rCexzSkiaXodXf
-	478M8e/fo5i978i39ph0q1MZyLcKEtM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1748521018;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=EpyOGu51sM3w0txWZkYdWnLmLNbxO0cQeTqdjYPrGMs=;
-	b=puK20j0NUQJ5r6UIynWtzgsWNeBDPcA8zMtFj1obYlrdeejykPJpoFNW0DMpHE20OiaP6H
-	UGn+I22C1Z4tp6DA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 97AB413325;
-	Thu, 29 May 2025 12:16:58 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ru+3JDpQOGjNIgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Thu, 29 May 2025 12:16:58 +0000
-Message-ID: <31419fad-89ba-4d97-aeea-ecb6fa5136cf@suse.cz>
-Date: Thu, 29 May 2025 14:16:58 +0200
+	s=arc-20240116; t=1748521080; c=relaxed/simple;
+	bh=T9ZQY4CGugD2MH+iTUeDacs8pgXvAPcZYmxnuyRAiSU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CCtYhs0UmgVO1scFKx3y7GDxR+GvDj75A6cR53+jUaOwTUnjOV2SB0eIu/fGTRXixE4EwBuPDALeNhNAgDsRTECD9elumIuVactNV1qqjr0I17ErTetuaxZzW5xZkUMiwuJTDY+S0LVVr/V0Y57mQL7kmV4aA06BojmwSATzo68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ASMqB7f4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91365C4CEE7;
+	Thu, 29 May 2025 12:17:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748521079;
+	bh=T9ZQY4CGugD2MH+iTUeDacs8pgXvAPcZYmxnuyRAiSU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ASMqB7f4OJsnn10KsXlKeQM/6y2euEGVS1tST7xQP41q2zFYIFm2pMkZYy0KeKxlv
+	 lRyrOX1aodcUCzR/FXUyNQcsj8bPBY7XP+lKehhvIqua5iyr05BmGjtt6STEtWzXOX
+	 2esSec+XG+Iy5UQE4hSECHcaRkfe278g2RlaECY+mljC000Rh33knCq0XcPookZng5
+	 mOhHU8huR6bsWDo29BaNgX6/pYnltWyWmdtlxLPpYmyzIMSRN9Q8T8TFKjgLsaZawi
+	 Bz/yI4DVbNjiqyL8vru1iItVnVjH43YjHF/4CDlhcD5BBTZjdUQaG+e5woFS2c+wbV
+	 rAKKNUd3UN83g==
+Date: Thu, 29 May 2025 13:17:52 +0100
+From: Will Deacon <will@kernel.org>
+To: perlarsen@google.com
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org, sebastianene@google.com,
+	qperret@google.com, qwandor@google.com, arve@android.com,
+	perl@immunant.com, lpieralisi@kernel.org, kernel-team@android.com,
+	tabba@google.com, james.morse@arm.com, armellel@google.com,
+	jean-philippe@linaro.org, ahomescu@google.com
+Subject: Re: [PATCH v4 2/5] KVM: arm64: Zero x4-x7 in ffa_set_retval
+Message-ID: <20250529121751.GB29242@willie-the-truck>
+References: <20250516-virtio-msg-ffa-v4-0-580ee70e5081@google.com>
+ <20250516-virtio-msg-ffa-v4-2-580ee70e5081@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: Strictly check vmstat_text array size
-Content-Language: en-US
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>
-Cc: lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, rppt@kernel.org,
- surenb@google.com, mhocko@suse.com, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Konstantin Khlebnikov <koct9i@gmail.com>
-References: <20250529110541.2960330-1-kirill.shutemov@linux.intel.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <20250529110541.2960330-1-kirill.shutemov@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	MIME_TRACE(0.00)[0:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[oracle.com,kernel.org,google.com,suse.com,kvack.org,vger.kernel.org,gmail.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[intel.com:email,suse.cz:email,suse.cz:mid]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250516-virtio-msg-ffa-v4-2-580ee70e5081@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On 5/29/25 13:05, Kirill A. Shutemov wrote:
-> The /proc/vmstat displays counters from various sources. It is easy to
-> forget to add or remove a label when a new counter is added or removed.
+On Fri, May 16, 2025 at 12:14:01PM +0000, Per Larsen via B4 Relay wrote:
+> From: Per Larsen <perlarsen@google.com>
 > 
-> There is a BUILD_BUG_ON() function that catches missing labels. However,
-> for some reason, it ignores extra labels.
+> FF-A 1.0 references SMCCC 1.2 (reference [4] on page xi). The results of
+> an SMC32/HVC32 are returned in W1-W7 in SMCCC 1.2. However, W4-W7 must be
+> preserved unless they contain results according to the function definition.
 > 
-> Let's make the check strict. This would help to catch issues when
-> a counter is removed.
+> ffa_set_retval is commonly used to report FFA_SUCCESS or FFA_ERROR back to
+> the caller. FFA_SUCCESS requires that x2-x7 must be zero (MBZ) unless a
+> register is explicitly used in the function response. FFA_ERROR requires
+> x3-x7 MBZ.
 > 
-> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> Cc: Konstantin Khlebnikov <koct9i@gmail.com>
-
-Yeah I don't see why it would be necessary to check only for missing labels.
-
-Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
-
+> ffa_set_retval is also used to return results of:
+> - FFA_VERSION which requires x1-x7 MBZ
+> - FFA_MEM_FRAG_TX which returns FFA_MEM_FRAG_RX or FFA_ERROR.
+>   FFA_MEM_FRAG_RAX always requires that x5-x7 MBZ and x4 MBZ
+>   at any virtual FF-A instance (applies to kvm).
+> 
+> Messaging interfaces such as FFA_MSG_SEND_DIRECT_{REQ,REQ2}, will not use
+> ffa_set_retval.
+> 
+> Given the above, it is safe to zero x4-x7 in ffa_set_retval.
+> 
+> Signed-off-by: Per Larsen <perlarsen@google.com>
 > ---
->  mm/vmstat.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  arch/arm64/kvm/hyp/nvhe/ffa.c | 4 ++++
+>  1 file changed, 4 insertions(+)
 > 
-> diff --git a/mm/vmstat.c b/mm/vmstat.c
-> index ae9882063d89..0903adace423 100644
-> --- a/mm/vmstat.c
-> +++ b/mm/vmstat.c
-> @@ -1867,7 +1867,7 @@ static void *vmstat_start(struct seq_file *m, loff_t *pos)
->  	if (*pos >= NR_VMSTAT_ITEMS)
->  		return NULL;
->  
-> -	BUILD_BUG_ON(ARRAY_SIZE(vmstat_text) < NR_VMSTAT_ITEMS);
-> +	BUILD_BUG_ON(ARRAY_SIZE(vmstat_text) != NR_VMSTAT_ITEMS);
->  	fold_vm_numa_events();
->  	v = kmalloc_array(NR_VMSTAT_ITEMS, sizeof(unsigned long), GFP_KERNEL);
->  	m->private = v;
+> diff --git a/arch/arm64/kvm/hyp/nvhe/ffa.c b/arch/arm64/kvm/hyp/nvhe/ffa.c
+> index 2c199d40811efb5bfae199c4a67d8ae3d9307357..b3d016bee404ce3f8c72cc57befb4ef4e6c1657f 100644
+> --- a/arch/arm64/kvm/hyp/nvhe/ffa.c
+> +++ b/arch/arm64/kvm/hyp/nvhe/ffa.c
+> @@ -101,6 +101,10 @@ static void ffa_set_retval(struct kvm_cpu_context *ctxt,
+>  	cpu_reg(ctxt, 1) = res->a1;
+>  	cpu_reg(ctxt, 2) = res->a2;
+>  	cpu_reg(ctxt, 3) = res->a3;
+> +	cpu_reg(ctxt, 4) = 0;
+> +	cpu_reg(ctxt, 5) = 0;
+> +	cpu_reg(ctxt, 6) = 0;
+> +	cpu_reg(ctxt, 7) = 0;
+>  }
 
+Hmm. On reflection, isn't the root of the problem actually that we're
+using SMCCC 1.1 to communicate with TZ, whereas FF-A requires SMCCC 1.2
+(and we even enforce that in hyp_ffa_init())?
+
+If we moved all of the hyp FF-A code over to SMCCC 1.2 unconditionally,
+then we could just assign everything from res back to the CPU context
+without having to worry about zeroing. That would also simplify your
+later patches because we wouldn't have to deal with SMCCC 1.1 at all.
+
+I'm aware that we're carrying a patch in Android to permit SMCCC 1.1,
+but that's only for Pixel 6 iirc and we shouldn't worry about that
+upstream.
+
+Will
 
