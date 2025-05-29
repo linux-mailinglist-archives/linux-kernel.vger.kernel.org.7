@@ -1,86 +1,98 @@
-Return-Path: <linux-kernel+bounces-667161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-667163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 055A8AC812F
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 18:48:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25E5AAC8134
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 18:52:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6FBD4A6CC3
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 16:48:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BAE3E1BC0DCF
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 16:52:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E35A622DA04;
-	Thu, 29 May 2025 16:48:43 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2570D22D4EB;
-	Thu, 29 May 2025 16:48:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06BB022DA01;
+	Thu, 29 May 2025 16:52:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aWAWlH1o"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DADF678F34;
+	Thu, 29 May 2025 16:52:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748537323; cv=none; b=H4px/8ZfmTPni65fVta/DjYF0Ht2p1vEZmCsbiX3wa75qxh0Z+UhXIlLkNHEsPz1J7V/BKboutmI66d8JogX+V9391FHoz2c0GN9d4Z65USK4mX/tln7Uw6VA9Nht3//Xo0/G5UYEOxo8fw/86jSCkhKEH7DTcP9plyZRqVMrtc=
+	t=1748537533; cv=none; b=u/Fjk0Ga+IQzsw57fzNeQAFAGRCI3slvB9zdjciYbYXdgLMbPclrEhbRRiy8h0Y60S6XyVnAT82wxiX1l95u5cQwKGpupi2v2yu64O8uvxkL7YMxYZNtzZYrKn+s4nai4s/caDVqzFB5TxzG8q96a23JEU11TxfsKyuGAszbvdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748537323; c=relaxed/simple;
-	bh=VMJUu7GA7yCr7klV0J6AkeQHLeLdi1qD21FabNndM5w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FnqE45BtVQkLTkDNxYdqOo5G0e6fAQ1e5wKLXV6oRq8ETIkpbuUhDn1J6rB0hEDI0RjzAXldQKhKZK1O4QpxEDApykI3HPrWb9uRB2c1wwNBgRpyt4hXkYZWqi1Y9olaVr2HbaAtMAA8YlothtBLTHOj7Af6BhfK5NA+gY6gl9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BE3211764;
-	Thu, 29 May 2025 09:48:24 -0700 (PDT)
-Received: from localhost (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D3FA03F673;
-	Thu, 29 May 2025 09:48:40 -0700 (PDT)
-Date: Thu, 29 May 2025 17:48:39 +0100
-From: Leo Yan <leo.yan@arm.com>
-To: James Clark <james.clark@linaro.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev
-Subject: Re: [PATCH v2 00/11] perf: arm_spe: Armv8.8 SPE features
-Message-ID: <20250529164839.GN2566836@e132581.arm.com>
-References: <20250529-james-perf-feat_spe_eft-v2-0-a01a9baad06a@linaro.org>
+	s=arc-20240116; t=1748537533; c=relaxed/simple;
+	bh=VHtqptbeURxA2oe07XMZKXucJY1J02Li9OYw/uFS5Pk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=n+2usYPUROPUICTcuR8+BPBdJxp3XSIGlV+YuzZDr9h2ajO+SbI6GFoeshI+su/jdYRo+zVPKXN9qcNLFt9LJih6ZOgPxzNrZk5mAdRx7o64fYSewXinBmXjfLVXCWHpUXH4RGtXZ4McthxBNW8RpSstAM+mpK877CWTH9FdZCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aWAWlH1o; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3a4c4e6a0ccso718545f8f.3;
+        Thu, 29 May 2025 09:52:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748537530; x=1749142330; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=VHtqptbeURxA2oe07XMZKXucJY1J02Li9OYw/uFS5Pk=;
+        b=aWAWlH1oynmMdp9f+W0A5qDEHYcJAV2kZ+8nDZlQQi0E7BRk0f4pHATQfyHSIxQDT7
+         iY2EZh2hz+S+bR8T5mCLNtT0qQxcXoNTGD8q/eoctHuulyIpYadJNos/FoqYwEDlSsLr
+         cT/A9fyFEBeA3FWOJFwFhqmG66IN7nZaVWqZqdUv2ON9eWQYQg1J+NEbg4/bXuy0KIVV
+         iXsDdbvqaxC5uT/fM5+fYSEDzy/RoiMaAZXOFY9VwUkrI0RLkB8web/iq2j0VqjNZPPR
+         HygR2q/zdGJN+xlGri3DOcbGpUIGMvYOGPY0qFUmwk+31fv3Uk2iztK7hevIlGQWoLNW
+         bxyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748537530; x=1749142330;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VHtqptbeURxA2oe07XMZKXucJY1J02Li9OYw/uFS5Pk=;
+        b=tstR5IV/5S7bW5ABQzsaS1iKwxGH0aHUIHA1kjahWZpzyscX4bS3VbrMwFTm8cRmHE
+         1Viwp1+bMspXW81X82eeLIR2mckt9rEABhrFi8UoI+i+XpfrNFPMsG8nHsD0PU+foSAb
+         TgRGyf+LiMHA5YJf1wUQ0Ae/VWD8a5sHuHwP960FpjbBKSFdF7wLbgtVlc6HfXmKY+Yr
+         B7emsRvC3PyVw7iYgERAEF31eSG7JtlPavLluOms1wPe3AWCXXubxBfvZx5xwTbmPaou
+         gMAkD4oX0ZLPUGtYdsjrsn2akqjHSO/XvB51r6VtdnBZon47YqbWUz2UgfIphLwYV7Sq
+         KxgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUdo9IapOPqPFqF3yYVuDAt00fVAAxwbdTI8tYKPy32xLmm5wHEb9C1D2Yc42I6Zr59It1Z5GN6v453cY8=@vger.kernel.org, AJvYcCUivLvnuZZCrs/mUEHaFutIKkW8nCqyj7L6JaTTAg7y8cdeayL5vPIE01izi8szyMo2GgOBOMms0rM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhMRRVP2+dJCnUnAUnKq14KTMU6M88h94H4FPhoSt+6FFo3/T/
+	uWB6/18FE/HbPdX7Gw5Vh3MCA//bs3cx9mjKgcURuMOH1FkcfElVUy8OIWSilIXmdSpI+pFgaBE
+	NSJwu/sofIltLjFHPB2Eet+EEK9iWMCg=
+X-Gm-Gg: ASbGnctR8y9RCTrwLS/HuxopN8uK3H+EEWFZcI1DdYnR8MxhnM8DZQowpRPVobx+VN8
+	BGqy4PKBXZM5jRIK6/sNi3BcqjYeBaV+Zf4OtPfwb8xuhqYpnGVP2p6m+hY4K2pEU0LL/Mwqh9P
+	hWNEhfbr+lf80x4zn5X9Yvb84VHSnmBuA=
+X-Google-Smtp-Source: AGHT+IHiOYVli2u3+XWq32ywtCO1v9x9p1LGinmmvM/+QYOusYp9n19EYKiYmFiV4BKOQkxdgTXw3k4JAwyiiPbm2rY=
+X-Received: by 2002:a05:6000:1a8f:b0:3a4:eec5:441c with SMTP id
+ ffacd0b85a97d-3a4eec544femr3512442f8f.47.1748537529863; Thu, 29 May 2025
+ 09:52:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250529-james-perf-feat_spe_eft-v2-0-a01a9baad06a@linaro.org>
+References: <20250529085143.709-1-gautham.shenoy@amd.com> <CAJZ5v0h27Re4UwoyCrauNfQupojpfwKSOzSppC9mwR-ATWD3Vg@mail.gmail.com>
+ <CAArYzrKT2zMBL54i6AKj1kEASLA3D8W4-d191cuqADaC6NGbjw@mail.gmail.com> <d3926d39-5981-4528-a505-ca478eb3de36@amd.com>
+In-Reply-To: <d3926d39-5981-4528-a505-ca478eb3de36@amd.com>
+From: Manu Bretelle <chantr4@gmail.com>
+Date: Thu, 29 May 2025 09:51:57 -0700
+X-Gm-Features: AX0GCFuu2xjBtxrStVFovQqCLRu32jM_H1ILfNSRjmy3kLlULEi5MPPmNiQOLiU
+Message-ID: <CAArYzr+-Owj2TPax-kFK6wi1bij+58OOLJR5T2uLY6gRHJn8Cg@mail.gmail.com>
+Subject: Re: [PATCH] acpi-cpufreq: Fix nominal_freq units to KHz in get_max_boost_ratio()
+To: "Limonciello, Mario" <Mario.Limonciello@amd.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, "Shenoy, Gautham Ranjal" <gautham.shenoy@amd.com>, 
+	Viresh Kumar <viresh.kumar@linaro.org>, 
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, May 29, 2025 at 12:30:21PM +0100, James Clark wrote:
-> Support 3 new SPE features: FEAT_SPEv1p4 filters, FEAT_SPE_EFT extended
-> filtering, and SPE_FEAT_FDS data source filtering. The features are
-> independent can be applied separately:
-> 
->   * Prerequisite sysreg changes - patches 1 - 2
->   * FEAT_SPEv1p4 - patch 3
->   * FEAT_SPE_EFT - patch 4
->   * FEAT_SPE_FDS - patches 5 - 8
->   * FEAT_SPE_FDS Perf tool changes - patches 9 - 11
-> 
-> The first two features will work with old Perfs but a Perf change to
-> parse the new config4 is required for the last feature.
-
-I tested the load_filter_mask / store_filter_mask (FEAT_SPE_EFT) and
-data_src_filter (SPE_FEAT_FDS), all of them work as expected.
-
-Tested-by: Leo Yan <leo.yan@arm.com>
+> Here is the policy for stable:
+> https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
+>
+> It doesn't explicitly contain a stable tag, but because it has a fixes
+> tag it's very likely that it gets backported by AUTOSEL later.
+>
+>
+Thanks Mario!
 
