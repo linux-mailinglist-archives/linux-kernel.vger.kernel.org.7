@@ -1,206 +1,158 @@
-Return-Path: <linux-kernel+bounces-666654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15421AC7A37
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 10:28:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09634AC7A3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 10:32:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4F331BA61D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 08:28:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5821B3A8353
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 08:31:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 033A821A43D;
-	Thu, 29 May 2025 08:28:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 569FF20C478;
+	Thu, 29 May 2025 08:32:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="UMV40FJ8"
-Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="jI5/L4t3"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 845961EB2F;
-	Thu, 29 May 2025 08:28:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18EDF1FDA7B
+	for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 08:32:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748507290; cv=none; b=Ia6j6ks1QFeFU40ActyF/Gbc//ggKOZHkyJrWAFdKFZ6LtLxVMlYHebFPecxzGfB8rR1XbZbXkiLsK0rzEoVMFUcD9gBpXO0XBVB+OxsbsIHpBWXZ7OWn1J2LxeWsPdFwETfEOVWjktLsGjVMYXuZj1SRpUxI0vplKuS/+Y9IAo=
+	t=1748507529; cv=none; b=hzLy8IxawPv6mFgD2R0gS6iG2f+ud6Mh2pHDJ05KgQnb9qzlB5jy28+UXR6JPuEYwYiFt8iJ1O97l55Se/2TJ2Jlfgx0ZW+Naqk1DG3zudtEnJYAWUnb+U6VMoxG864Bj5/QZY3X1F/YfKuT5v5FehHIzvESD6N74SeG1DcyUn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748507290; c=relaxed/simple;
-	bh=UK+2ozS77qj0vsbMk1/tmVRHT1LAkM8SEGNSjhz+Zio=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ENWvpPrpOAiuCjvv+BxmjF33yrAGfRLtKJ4dUFu+5vDGf5k2NTTvEDvbPqIc1hHuIJABTzFuzueowGmj0i9LfgYjAOQCzt3JtDbuAXXV78XYL3uRZdV1kMX1bNPD06skU5m/OBRa+Lh745Lp4OkyGWQ3+9ab336ZK6nmxu0Ui54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=UMV40FJ8; arc=none smtp.client-ip=115.124.30.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1748507284; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=ngl560kZEKSyWNZckI7eA5BnwDW53BnjR6Q03uPelj0=;
-	b=UMV40FJ83//5fzdJZUBLdggOl5PYA9kKE/hWN+erATQHaerXx41N4cHYMVVTf2vL60g+C04HOhmIQJpuWVnOno4MZSaJ1fnuaBRT3Iebh4hC+JqKGf6T0uKVk3ntCO9G8GB+HPKJe9fHOKsS/kZIjraqobiaIKP4w2Cvrv5hgSs=
-Received: from 30.74.144.146(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WcGcH7v_1748507280 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 29 May 2025 16:28:01 +0800
-Message-ID: <2610143f-3274-47c0-9a11-777be673c186@linux.alibaba.com>
-Date: Thu, 29 May 2025 16:27:59 +0800
+	s=arc-20240116; t=1748507529; c=relaxed/simple;
+	bh=SVloibZzQ4wI3ACpPrgps5nlN9IVxSsCtt4+bvmRtAA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=neYYDPwuV12w787Csq2KoFMJs8vf1Zh0HxtRbjF9Zd/D2dMGoE6RDol+khuVrW6J8p5/6XNdpdJhen6WKaB517Uom2eifyPCrJW70rH8wpfMBYv5VA6V8Fves3AGSb0hGJyfYVudtNMRVtqbcs5y7eeLQWcxSQSHASayDC+6Xfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=jI5/L4t3; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ad574992fcaso111950166b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 01:32:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google; t=1748507526; x=1749112326; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+yd0OdHrM2Itm96/YuqXehoTn8EREnI2dfLKcvCeLuM=;
+        b=jI5/L4t3DHoFHs+OSqhHJ1HNzLil4PI2U3V2qHamws2Hg9ncCEhOqD6fTrxZzkmB4f
+         27k0Nwe7CTb9NZ3OoppPJL1+qfNj/Zp9ysHqoWZD0VcZeBvbBqWkS12EVLdSA6tqMO4j
+         W1/CeGKYpboeQUor7vkPpxCzy+ixD8m3bnbA0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748507526; x=1749112326;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+yd0OdHrM2Itm96/YuqXehoTn8EREnI2dfLKcvCeLuM=;
+        b=AKCm1Nr2eVr0lvl9K4qKSadpg9eqDKIvjV14OCiCfdWAiilZP2usAa7hOMR7fV+lcK
+         3lmcCNm1VVt32BC5ulJmJ388aAQzOL8uUjYnLhfY+aaCPlidNsMNgSHdfgHQ6B3/lrs0
+         gp9foiEWZUabU9VUP1a8lV/oqg8j+PV30Xi9u47ht6zHRzs5ZxeG0tlMIK4Bf6QQdq/T
+         yxq/zhSlvXE+GBiVZkT98Yn+6Ft4f/HdYK+kDLJKqUUqRvwbBnqvvaAJfF+Jyq2o0NQg
+         AuXe3YX0GNhUTglzrWcqb4RdRxBvaQbsp8R+8EUQdwVQZFFSP1ta7X9+DjhJWFZvN/Lz
+         FAPw==
+X-Gm-Message-State: AOJu0YxsiNw79aPBn92mJs3C9pkz+yvUdiXgX9F/7fG90If7XH4D54qd
+	usm3BAY2GRI2+UFRq8EN4RmWSCA6Bc87VCVrYaZaUdULAsM48JybwdjGdcO0HBEomSw2YC/3GFV
+	FX8Z0
+X-Gm-Gg: ASbGnctlp6ZRsv8YGRqpwTRcTEWhS1cGzDbcsZ4nrRKzGRnuSkjopVKWZZf8drkXtlB
+	OvTWeXxEpp8PLzdFKN90d1Vh/+3K9ZHcg4u2SsCZ30mtU4G8j24EIu4TscMtJa3rPo6bM+heYcx
+	TNDBPBu04pN+84OpXCKeVQWBroUJMkbtQ9Rc0c/UUVFHQrOm8hpW+UkWaur4aX8dQ6FpRuVQ1kI
+	T3RzJLykz8ZFxqwcjzbvXhA7TvQSy1C1WUPszmn/pOwl6y90mzlOXCFwRYH91e1eeyOIEZFlJnR
+	eLju30+QgPT9eAeUKPN8Qm1LEuhJdjtupax+Nw8FBYImWGtZeMO6/lXG0Ac1u12A9nlA8PZWKnq
+	BQJUQ5Qm1cNbaE45K
+X-Google-Smtp-Source: AGHT+IHJPmyMvrXWwF+oJ+y1YEj0csZRYNNz7OEbL3/Z3gW/L6Zao3qlTysBk8RNZogBxgTqOB++Gw==
+X-Received: by 2002:a17:907:9611:b0:adb:1b2b:fe1c with SMTP id a640c23a62f3a-adb1b2c0f71mr86246766b.2.1748507526094;
+        Thu, 29 May 2025 01:32:06 -0700 (PDT)
+Received: from dario-ThinkPad-T14s-Gen-2i.. ([2.196.42.248])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ada5d82e87esm100609866b.63.2025.05.29.01.32.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 May 2025 01:32:05 -0700 (PDT)
+From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+To: linux-kernel@vger.kernel.org
+Cc: michael@amarulasolutions.com,
+	linux-amarula@amarulasolutions.com,
+	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+	Alexander Stein <alexander.stein@ew.tq-group.com>,
+	Andreas Kemnade <andreas@kemnade.info>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Fabio Estevam <festevam@denx.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Francesco Dolcini <francesco.dolcini@toradex.com>,
+	Frieder Schrempf <frieder.schrempf@kontron.de>,
+	Heiko Schocher <hs@denx.de>,
+	=?UTF-8?q?Jo=C3=A3o=20Paulo=20Gon=C3=A7alves?= <joao.goncalves@toradex.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Lee Jones <lee@kernel.org>,
+	Marek Vasut <marex@denx.de>,
+	Max Merchel <Max.Merchel@ew.tq-group.com>,
+	Michael Walle <mwalle@kernel.org>,
+	Peng Fan <peng.fan@nxp.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Tim Harvey <tharvey@gateworks.com>,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v3 0/4] Support i.MX28 Amarula rmm board
+Date: Thu, 29 May 2025 10:31:03 +0200
+Message-ID: <20250529083201.2286915-1-dario.binacchi@amarulasolutions.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 06/12] khugepaged: introduce khugepaged_scan_bitmap for
- mTHP support
-To: Nico Pache <npache@redhat.com>
-Cc: David Hildenbrand <david@redhat.com>, David Rientjes
- <rientjes@google.com>, zokeefe@google.com, linux-mm@kvack.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, ziy@nvidia.com,
- lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, ryan.roberts@arm.com,
- dev.jain@arm.com, corbet@lwn.net, rostedt@goodmis.org, mhiramat@kernel.org,
- mathieu.desnoyers@efficios.com, akpm@linux-foundation.org,
- baohua@kernel.org, willy@infradead.org, peterx@redhat.com,
- wangkefeng.wang@huawei.com, usamaarif642@gmail.com, sunnanyong@huawei.com,
- vishal.moola@gmail.com, thomas.hellstrom@linux.intel.com,
- yang@os.amperecomputing.com, kirill.shutemov@linux.intel.com,
- aarcange@redhat.com, raquini@redhat.com, anshuman.khandual@arm.com,
- catalin.marinas@arm.com, tiwai@suse.de, will@kernel.org,
- dave.hansen@linux.intel.com, jack@suse.cz, cl@gentwo.org,
- jglisse@google.com, surenb@google.com, hannes@cmpxchg.org, mhocko@suse.com,
- rdunlap@infradead.org
-References: <20250515032226.128900-1-npache@redhat.com>
- <20250515032226.128900-7-npache@redhat.com>
- <9c54397f-3cbf-4fa2-bf69-ba89613d355f@linux.alibaba.com>
- <CAA1CXcC9MB2Nw4MmGajESfH8DhAsh4QvTj4ABG3+Rg2iPi087w@mail.gmail.com>
- <ed1d1281-ece3-4d2c-8e58-aaeb436d3927@linux.alibaba.com>
- <CAA1CXcAWcahkxzsvK_bcWei6or_gKBjt+97dqhuSem8N7cBAQw@mail.gmail.com>
- <1f00fdc3-a3a3-464b-8565-4c1b23d34f8d@linux.alibaba.com>
- <cf33ff99-ac97-4a33-9df0-01a59d5b8424@redhat.com>
- <e800189d-ad3d-409d-bfba-2c32a6ac66c0@linux.alibaba.com>
- <CAA1CXcAAbPXTHvBoSW5uxo5uH4NnQompMSsE-xG+VHGJhhiCew@mail.gmail.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <CAA1CXcAAbPXTHvBoSW5uxo5uH4NnQompMSsE-xG+VHGJhhiCew@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+The series adds support for i.MX28 Amarula rmm board.
 
+The board includes the following resources:
+ - 256 Mbytes NAND Flash
+ - 128 Mbytes DRAM DDR2
+ - CAN
+ - USB 2.0 high-speed/full-speed
+ - Ethernet MAC
 
-On 2025/5/29 12:02, Nico Pache wrote:
-> On Wed, May 28, 2025 at 8:04 AM Baolin Wang
-> <baolin.wang@linux.alibaba.com> wrote:
->>
->>
->>
->> On 2025/5/28 17:26, David Hildenbrand wrote:
->>> On 22.05.25 11:39, Baolin Wang wrote:
->>>>
->>>>
->>>> On 2025/5/21 18:23, Nico Pache wrote:
->>>>> On Tue, May 20, 2025 at 4:09 AM Baolin Wang
->>>>> <baolin.wang@linux.alibaba.com> wrote:
->>>>>>
->>>>>> Sorry for late reply.
->>>>>>
->>>>>> On 2025/5/17 14:47, Nico Pache wrote:
->>>>>>> On Thu, May 15, 2025 at 9:20 PM Baolin Wang
->>>>>>> <baolin.wang@linux.alibaba.com> wrote:
->>>>>>>>
->>>>>>>>
->>>>>>>>
->>>>>>>> On 2025/5/15 11:22, Nico Pache wrote:
->>>>>>>>> khugepaged scans anons PMD ranges for potential collapse to a
->>>>>>>>> hugepage.
->>>>>>>>> To add mTHP support we use this scan to instead record chunks of
->>>>>>>>> utilized
->>>>>>>>> sections of the PMD.
->>>>>>>>>
->>>>>>>>> khugepaged_scan_bitmap uses a stack struct to recursively scan a
->>>>>>>>> bitmap
->>>>>>>>> that represents chunks of utilized regions. We can then determine
->>>>>>>>> what
->>>>>>>>> mTHP size fits best and in the following patch, we set this
->>>>>>>>> bitmap while
->>>>>>>>> scanning the anon PMD. A minimum collapse order of 2 is used as
->>>>>>>>> this is
->>>>>>>>> the lowest order supported by anon memory.
->>>>>>>>>
->>>>>>>>> max_ptes_none is used as a scale to determine how "full" an order
->>>>>>>>> must
->>>>>>>>> be before being considered for collapse.
->>>>>>>>>
->>>>>>>>> When attempting to collapse an order that has its order set to
->>>>>>>>> "always"
->>>>>>>>> lets always collapse to that order in a greedy manner without
->>>>>>>>> considering the number of bits set.
->>>>>>>>>
->>>>>>>>> Signed-off-by: Nico Pache <npache@redhat.com>
->>>>>>>>
->>>>>>>> Sigh. You still haven't addressed or explained the issues I
->>>>>>>> previously
->>>>>>>> raised [1], so I don't know how to review this patch again...
->>>>>>> Can you still reproduce this issue?
->>>>>>
->>>>>> Yes, I can still reproduce this issue with today's (5/20) mm-new
->>>>>> branch.
->>>>>>
->>>>>> I've disabled PMD-sized THP in my system:
->>>>>> [root]# cat /sys/kernel/mm/transparent_hugepage/enabled
->>>>>> always madvise [never]
->>>>>> [root]# cat
->>>>>> /sys/kernel/mm/transparent_hugepage/hugepages-2048kB/enabled
->>>>>> always inherit madvise [never]
->>>>>>
->>>>>> And I tried calling madvise() with MADV_COLLAPSE for anonymous memory,
->>>>>> and I can still see it collapsing to a PMD-sized THP.
->>>>> Hi Baolin ! Thank you for your reply and willingness to test again :)
->>>>>
->>>>> I didn't realize we were talking about madvise collapse-- this makes
->>>>> sense now. I also figured out why I could "reproduce" it before. My
->>>>> script was always enabling the THP settings in two places, and I only
->>>>> commented out one to test this. But this time I was doing more manual
->>>>> testing.
->>>>>
->>>>> The original design of madvise_collapse ignores the sysfs and
->>>>> collapses even if you have an order disabled. I believe this behavior
->>>>> is wrong, but by design. I spent some time playing around with madvise
->>>>> collapses with and w/o my changes. This is not a new thing, I
->>>>> reproduced the issue in 6.11 (Fedora 41), and I think its been
->>>>> possible since the inception of madvise collapse 3 years ago. I
->>>>> noticed a similar behavior on one of my RFC since it was "breaking"
->>>>> selftests, and the fix was to reincorporate this broken sysfs
->>>>> behavior.
->>>>
->>>> OK. Thanks for the explanation.
->>>>
->>>>> 7d8faaf15545 ("mm/madvise: introduce MADV_COLLAPSE sync hugepage
->>>>> collapse")
->>>>> "This call is independent of the system-wide THP sysfs settings, but
->>>>> will fail for memory marked VM_NOHUGEPAGE."
->>>>>
->>>>> The second condition holds true (and fails for VM_NOHUGEPAGE), but I
->>>>> dont know if we actually want madvise_collapse to be independent of
->>>>> the system-wide.
->>>>
->>>> This design principle surprised me a bit, and I failed to find the
->>>> reason in the commit log. I agree that "never should mean never," and we
->>>> should respect the THP/mTHP sysfs setting. Additionally, for the
->>>> 'shmem_enabled' sysfs interface controlled for shmem/tmpfs, THP collapse
->>>> can still be prohibited through the 'deny' configuration. The rules here
->>>> are somewhat confusing.
->>>
->>> I recall that we decided to overwrite "VM_NOHUGEPAGE", because the
->>> assumption is that the same app that triggered MADV_NOHUGEPAGE triggers
->>> the collapse. So the app decides on its own behavior.
->>>
->>> Similarly, allowing for collapsing in a VM without VM_HUGEPAGE in the
->>> "madvise" mode would be fine.
->>>
->>> But in the "never" case, we should just "never" collapse.
->>
->> OK. Let's fix the "never" case first. Thanks.
-> Great, I will update that in the next version!
+Changes in v3:
+- In imx28-amarula-rmm.dts:
+  - Drop xceiver-supply property from can0 node.
+  - Rearrange the order of specific nodes and properties
+    alphabetically.
 
-I've sent a patchset to fix the MADV_COLLAPSE issue for anonymous memory 
-and shmem [1]. Please have a look.
+Changes in v2:
+- In imx28-amarula-rmm.dts:
+  - Replace '-' with '@' for the pinctrl sub-nodes.
+  - Replace edt,edt-ft5x06 with edt,edt-ft5306.
+  - Drop LCD reset hog pin.
+  - Add correct #address-cells and #size-cells to gpmi node.
+  - Replace edt-ft5x06@38 with touchscreen@38.
+- Drop from commit messages all references to LCD display.
+- Add patch [1/4] "dt-bindings: mfd: convert mxs-lradc bindings to
+  json-schema".
 
-[1] 
-https://lore.kernel.org/all/cover.1748506520.git.baolin.wang@linux.alibaba.com/
+Dario Binacchi (4):
+  dt-bindings: mfd: convert mxs-lradc bindings to json-schema
+  ARM: dts: imx28: add pwm7 muxing options
+  dt-bindings: arm: fsl: add i.MX28 Amarula rmm board
+  ARM: dts: mxs: support i.MX28 Amarula rmm board
+
+ .../devicetree/bindings/arm/fsl.yaml          |   1 +
+ .../devicetree/bindings/mfd/mxs-lradc.txt     |  45 ---
+ .../devicetree/bindings/mfd/mxs-lradc.yaml    | 106 ++++++
+ arch/arm/boot/dts/nxp/mxs/Makefile            |   1 +
+ .../boot/dts/nxp/mxs/imx28-amarula-rmm.dts    | 303 ++++++++++++++++++
+ arch/arm/boot/dts/nxp/mxs/imx28.dtsi          |  10 +
+ 6 files changed, 421 insertions(+), 45 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/mfd/mxs-lradc.txt
+ create mode 100644 Documentation/devicetree/bindings/mfd/mxs-lradc.yaml
+ create mode 100644 arch/arm/boot/dts/nxp/mxs/imx28-amarula-rmm.dts
+
+-- 
+2.43.0
+
+base-commit: 2d1e9b3978bc041336f1bf6c611fbbf435a297f5
+branch: imx28-amarula-rmm
 
