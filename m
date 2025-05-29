@@ -1,100 +1,259 @@
-Return-Path: <linux-kernel+bounces-667009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D2F9AC7F49
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 15:53:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7946AC7F04
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 15:49:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04C76188B2AE
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 13:53:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BBB79E8562
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 13:49:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13C032356C4;
-	Thu, 29 May 2025 13:49:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3805C227EAA;
+	Thu, 29 May 2025 13:49:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mblCNnh7"
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="IKfVtxk9"
+Received: from mail-ed1-f68.google.com (mail-ed1-f68.google.com [209.85.208.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93A8723184B
-	for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 13:49:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 543CF1C84C0
+	for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 13:49:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748526577; cv=none; b=uiCP8wo1bnwMBxzx5MvKxiRSn8xK4v38b8q7Xa0prfT0AtEDcV1bcZpT3oIRL21Q9QQZUvj85WHgeTswwpK9kXIr+saicM8N5DG466VfVZ2cgd2AqYgLrz8Q39l0Gb/alK2n16DXDxzF0UAu99WJPEgT3VX5iBS6jbTI6IMwuzI=
+	t=1748526561; cv=none; b=b7B/CsskD2uz/ov3Ed08XAsciaJpMtvvAYmNpZ22L9Id10cWlvGkG53Hmkr5djxdNyfh8lqt0MXq0rAj6OldXdZx/aLqbNBw1cg4NwOt/v+sQ8bKZDWbDS7EKLeA2lXDNi1j1Jy1VisYbk5vjE8Hs5lXwObJglpvP8D3EobBSFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748526577; c=relaxed/simple;
-	bh=u/EguVCnOE3hQIZ53Xs0JarqHTQpOSsf8AcGao5mjxI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=u/mPl9Fh0SnhK7NsGSe0QU9O6H/vfo7SNcwbV2Q4WGpgSL8Y7PW69C1X8sylf0aXXWlNkW1gbVbkm0CwSsEE4k/nlb65tFekeHPi2NVN6BFM+feEu2l1dvEDAqThgOuPa2PbWIfpRKvpPilrg5Un2GXn7qzsqcHQvwzRdrBd4D8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mblCNnh7; arc=none smtp.client-ip=209.85.219.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6fabe9446a0so11024326d6.2
-        for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 06:49:35 -0700 (PDT)
+	s=arc-20240116; t=1748526561; c=relaxed/simple;
+	bh=4HwF496DgIlfElZuHhFmk8b+VHf8sNsCIAHkC/SFcto=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=GsalC1XfGuZXO5PczY8h0aot+X7rs+beawMDIUN8ARv6dB3Ilgz7akO+crr572Mh6OHPjDe39jytA8stD5DdWAHJTdlOckZIivxp/CTGbRn1+utGQpL9UcY440iE7BMBm/+tDeO96TWGq6eHYELMNdCldqARksV6IqiJfLEYQaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=IKfVtxk9; arc=none smtp.client-ip=209.85.208.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f68.google.com with SMTP id 4fb4d7f45d1cf-604f26055c6so3736733a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 06:49:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748526574; x=1749131374; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=u/EguVCnOE3hQIZ53Xs0JarqHTQpOSsf8AcGao5mjxI=;
-        b=mblCNnh7vsI+hLVKfUE9jg0h64TvHcOxPP0N167U+tyRIn9pV3M/1qOO164i/g0kTa
-         32APWyq1RpIT3NGseYasg5KMmZq34gnSU7KuUhQ74sD7X+Tld6NWowCy62i2cBhjfVk6
-         OYOueQAfysY8NqMD5UZhGfwNHsnLhH2AR/htU3gTnWMUNrWEhjDYONIjpOrV0L5Z5/ZK
-         0Uc4dqtrntRhHTkPJ2l52TQJOdYDw8ifAvROA1OydSesNCzGSI2McogMmaJZs4yWi5g2
-         KJ5nPclUOd1ms68GB8OTiOJm4W7MXQB0y7HecYa53yCWUFCbttJL+fTBm3t4MTlSRSqU
-         zfOw==
+        d=suse.com; s=google; t=1748526556; x=1749131356; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=x7N9IwYBv5E9wg+44t8dlF3HK0phPTpnfhv5ZLvw1io=;
+        b=IKfVtxk9K/CCdFRB+5OpiCP3X56J5OzgoCAFlU/vUd1+YwMzuBl6JibZT5dDvQLZ7a
+         hLDsWBaIclnpAjZyMAa5xLlFRIF3/2DGzmbhFrvqOSYRVys7fH2dFDyANFuRnoDELMj6
+         tXDMRy+j+7VHRTQb5E3gVSvs7zb8Me/XsQThzazsR8yTAlsnlyfMtgkjIciqBNXUoOvt
+         BkAjBkG0w6TNpBksFZqu+cS6UP4cU2sL+Q695+G7evrRa8a0KrljfXHq0BYjc4oVV24I
+         +XCdciwhnSg9gLrUWdJw0De35Nx+0XT0MCGc5wgE2mJAZQ5/3i8Nfjfy+VkBrvPoIiqa
+         7FTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748526574; x=1749131374;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=u/EguVCnOE3hQIZ53Xs0JarqHTQpOSsf8AcGao5mjxI=;
-        b=ic5jNjJ+E0DApsU4IY7nbtL3eNAnIBMlPtIIuC2dTNvuaU2xyE1Nng9KpZVIBkToRn
-         T30zONeVE6BQ/Pd/XUrzSRf5GFL42+MgpXJaa1vIOtOrr3xU7jIGJgamlSKDtyJhGOPA
-         LQG4Dy9CoR86Qcq3msHupt065/WmgXS5y/gyOHAlXSW9nP/RhXAIdn3l20dI43t+tBTr
-         9cORjLZXNz1nSCBuCqZJvTYCuYjePZneL/BmFA2kNs3FOj8fdUmDbkw9DahbrSszVNe7
-         rbmc8fSMkdcKG+OX7p0RNqidEt4PIPhSlqcuqSkCZP4LFIelJ7ABORauR2TZUzTRi5rz
-         P6pQ==
-X-Gm-Message-State: AOJu0YzBDXxFnCmpLosatlxvwFgWwHAvNzPLkKpWJevd5NsITkdItr1F
-	KN9TXJzBfw8DFmlfk4K31bJoOlPmvvWo5pfI05yCNCCAuEQXV/eoc5VcqQ18lg==
-X-Gm-Gg: ASbGncsZSfRbenx/8+UlLKC/LlaAjPejkGADQctdIfD09dal6YUEhqsyYpExgzBP/be
-	vEGd1yAmtgYPGSwvWD9CG63okWS8nj06eNcs3GGcQBR3wBPPg4o0U9e57ZY8eB6iDcj7n519dgQ
-	YxTbTwpeCpQFvfk+Ek1hsbPvJfvIEKl3XfVUdcifwPivLl0fdE1o5JhZXH+nzoB7pPBaEcHVQal
-	DHeGBWYxCIshmQ+Kg+UgTSaqSt6svmipuUcO2ok3NfGzufiJumdYgWA+oE+Q1tU1CC4pJFnnewg
-	zaX6po4Y8mSNarDavQ6uboKU1clNBQf8JkNswEJJUsotCwb0KKp3kQXE1RUDdNR3H/bu8UOkKkq
-	x+uTFmYCdtke1
-X-Google-Smtp-Source: AGHT+IHvAC9XXuIEEupHwgw2KjiC1d+IuhpHj+UY2ta7baUzfvzvbgonFAJYR9FrZ30ZdDkY0lsNFg==
-X-Received: by 2002:ad4:5b8d:0:b0:6fa:c463:fd22 with SMTP id 6a1803df08f44-6fac83dbbf0mr34971166d6.4.1748526574250;
-        Thu, 29 May 2025 06:49:34 -0700 (PDT)
-Received: from VM-Arch (ool-1826d901.dyn.optonline.net. [24.38.217.1])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6fac6e00b78sm9530616d6.75.2025.05.29.06.49.33
+        d=1e100.net; s=20230601; t=1748526556; x=1749131356;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=x7N9IwYBv5E9wg+44t8dlF3HK0phPTpnfhv5ZLvw1io=;
+        b=fw+dTmwFF8A+r01lPZRLgblKRFWEVBnMyf8GT9T8ynUGoU6Y+5NHPAsCloz2RzrF0f
+         oTvzXggvQxR6c8JmiQ/QgUk2RiqbleSMwXSip4Iuwxh2LHz2cQojX75pBldvBgsZ64+c
+         4Tu8CQgx3VbK7r6sKz7djfRtLe4nnZL/kmRIqvDsYEpv1ehYu4PhLkFltn9rcN/po/K0
+         NeE/1MvaRTttYhgFss1U4g2ibTiFOCBHdY0DoKT2/PnewMR1lp4P8TJWsOsG1rATXmiN
+         KqV4gQUnLVUrCApiufgkxVsrC1k1DtLVBUldpun2MelVzlkEgypZBg2PtBlcXeECjsbk
+         L1Rg==
+X-Forwarded-Encrypted: i=1; AJvYcCUzi7B2o7TB3Aie9MkkV4fM9FOwbM/o/IPdA/MbW8SMhcZ0X3XThNGQ2+cgFDRconbBX+fnxeB7hbUbIGc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGDvOy2HYf1rr5mGHiLPq+2PyrHFjjaWT72msXCR9iqVI9qf4X
+	uOe4gpbzo3o6ibakXzAqTPj1ahkGZBJ8oPRgLVPMKnvlpgy+YKRuD6gwILW19GHTw9E=
+X-Gm-Gg: ASbGncvhdueJH4EOTHKpaSOBWAhVbJxFux8vpH5mz+kPcxosy/j7EE/63s1iyK6S4BC
+	/Pau5FKyfwlS9wgu4QdBjmjdyXRnqVTLuZWBsjHsvJr0V+LmSAQYK4CAhMwvGGibI0qBdH37yL4
+	oucG7xSBrjan4sVOX+x6tsbEO6KPiizj4+ro9JtsFhIpdv1qNKGVGtu8iMZ5e8NVA6fwUocDUsP
+	K/ckf5e0tdgMfXkWrGgm1Hm/5CaCLdOAKGvulhGLiFlmBEwzemXTrN0l8WJO6DI4wn8Hos8HDvW
+	6xu2ffYJ85gwGlI/sUZ5iCfOxtmYKhulYITQE+NxW6YmpOUQiIZoL1sFZtg/DVOt98UXOjv6Wtd
+	RuDKx9I07jdSSh9GsqFiINWI8t7wGj2Ux
+X-Google-Smtp-Source: AGHT+IExJkGEZyVgOynKMT3c6h04v8rLffrbr2nLD8TNSpVPvkwYBhMoZvaNRWehDSxPNuf66WwjDg==
+X-Received: by 2002:a05:6402:d08:b0:5f6:d403:fb20 with SMTP id 4fb4d7f45d1cf-60535b7597emr3111333a12.8.1748526556406;
+        Thu, 29 May 2025 06:49:16 -0700 (PDT)
+Received: from localhost (host-87-21-228-106.retail.telecomitalia.it. [87.21.228.106])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60566c2abb4sm13394a12.13.2025.05.29.06.49.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 May 2025 06:49:33 -0700 (PDT)
-Date: Thu, 29 May 2025 09:49:31 -0400
-From: Alex Lanzano <lanzano.alex@gmail.com>
-To: konstantin@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org
-Subject: Issues using lei
-Message-ID: <nbcqso66co3cuuhbn323kduushqvy645xynjgetmcrawfclmzb@nfdor4jrns6z>
+        Thu, 29 May 2025 06:49:16 -0700 (PDT)
+From: Andrea della Porta <andrea.porta@suse.com>
+To: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof Wilczynski <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Saravana Kannan <saravanak@google.com>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Phil Elwell <phil@raspberrypi.com>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	kernel-list@raspberrypi.com,
+	Matthias Brugger <mbrugger@suse.com>
+Subject: [PATCH v12 0/13] Add support for RaspberryPi RP1 PCI device using a DT overlay
+Date: Thu, 29 May 2025 15:50:37 +0200
+Message-ID: <cover.1748526284.git.andrea.porta@suse.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-Hi konstantin,
+*** RESENDING PATCHSET AS V12 SINCE LAST ONE HAS CLOBBERED EMAIL Message-Id ***
 
-A little while ago I read through your blog on lei and found it really
-useful in my workflow with the Linux Kernel. However, recently it seems
-to have stopped working for me. I get the following error when doing
-'lei up --all'
-Exception: Expected block 38874 to be level 2, not 0
+RP1 is an MFD chipset that acts as a south-bridge PCIe endpoint sporting
+a pletora of subdevices (i.e.  Ethernet, USB host controller, I2C, PWM,
+etc.) whose registers are all reachable starting from an offset from the
+BAR address.  The main point here is that while the RP1 as an endpoint
+itself is discoverable via usual PCI enumeraiton, the devices it contains
+are not discoverable and must be declared e.g. via the devicetree.
 
-I'm guessing this has to do with recent protections on lore.kernel.org
-from AI scrapers. I was wondering if you found a workaround?
+This patchset is an attempt to provide a minimum infrastructure to allow
+the RP1 chipset to be discovered and perpherals it contains to be added
+from a devictree overlay loaded during RP1 PCI endpoint enumeration. To
+ensure compatibility with downstream, a devicetree already comprising the
+RP1 node is also provided, so it's not strictly necessary to use the
+dynamically loaded overlay if the devicetree is already fully defined at
+the origin.
+To achieve this modularity, the RP1 node DT definitions are arranged by
+file inclusion as per following schema (the arrow points to the includer,
+see also [9]):
+ 
+ rp1-pci.dtso         rp1.dtso
+     ^                    ^
+     |                    |
+rp1-common.dtsi ----> rp1-nexus.dtsi ----> bcm2712-rpi-5-b.dts
+                                               ^
+                                               |
+                                           bcm2712-rpi-5-b-ovl-rp1.dts
 
-Best regards,
-Alex
+Followup patches should add support for the several peripherals contained
+in RP1.
+
+This work is based upon dowstream drivers code and the proposal from RH
+et al. (see [1] and [2]). A similar approach is also pursued in [3].
+
+The patches are ordered as follows:
+
+-PATCHES 1 to 3: add binding schemas for clock, gpio and RP1 peripherals.
+ They are needed to support the other peripherals, e.g. the ethernet mac
+ depends on a clock generated by RP1 and the phy is reset through the
+ on-board gpio controller.
+
+-PATCH 4 and 5: add clock and gpio device drivers.
+
+-PATCH 6: the devicetree node describing the RP1 chipset. 
+
+-PATCH 7: this is the main patch to support RP1 chipset. It can work
+ either with a fully defined devicetree (i.e. one that already included
+ the rp1 node since boot time) or with a runtime loaded dtb overlay
+ which is linked as binary blob in the driver obj. This duality is
+ useful to comply with both downstream and upstream needs (see [9]).
+ The real dtso is in devicetree folder while the dtso in driver folder is
+ just a placeholder to include the real dtso.
+ In this way it is possible to check the dtso against dt-bindings.
+ The reason why drivers/misc has been selected as containing folder
+ for this driver can be seen in [6], [7] and [8].
+
+-PATCH 8: add the external clock node (used by RP1) to the main dts.
+
+-PATCH 9: the fully fledged devictree containing also the rp1 node.
+ This devicetree is functionally similar to the one downstream is using.
+
+-PATCH 10 (OPTIONAL): this patch introduces a new scenario about how
+ the rp1 node is specified and loaded in DT. On top of the base DT
+ (without rp1 node), the fw loads this overlay and the end result is
+ the same devicetree as in patch 9, which is then passed to the next
+ stage (either the kernel or u-boot/bootloader).
+ While this patch is not strictly necessary and can therefore be dropped
+ (see [10]), it's not introducing much extra work and maybe can come
+ in handy while debugging.
+
+-PATCH 11: add the relevant kernel CONFIG_ options to defconfig.
+
+-PATCH 12: enable CONFIG_OF_OVERLAY in order for 'make defconfig'
+ to produce a configuration valid for the RP1 driver. Without this
+ patch, the user has to explicitly enable it since the misc driver
+ depends on OF_OVERLAY.
+
+-PATCH 13: collect all changes for MAINTAINERS file.
+
+This patchset is also a first attempt to be more agnostic wrt hardware
+description standards such as OF devicetree and ACPI, where 'agnostic'
+means "using DT in coexistence with ACPI", as been already promoted
+by e.g. AL (see [4]). Although there's currently no evidence it will also
+run out of the box on purely ACPI system, it is a first step towards
+that direction.
+
+Many thanks,
+Andrea della Porta
+
+Links:
+- [1]: https://lpc.events/event/17/contributions/1421/attachments/1337/2680/LPC2023%20Non-discoverable%20devices%20in%20PCI.pdf
+- [2]: https://lore.kernel.org/lkml/20230419231155.GA899497-robh@kernel.org/t/
+- [3]: https://lore.kernel.org/all/20240808154658.247873-1-herve.codina@bootlin.com/#t
+- [4]: https://lore.kernel.org/all/73e05c77-6d53-4aae-95ac-415456ff0ae4@lunn.ch/
+- [5]: https://lore.kernel.org/all/20240626104544.14233-1-svarbanov@suse.de/
+- [6]: https://lore.kernel.org/all/20240612140208.GC1504919@google.com/
+- [7]: https://lore.kernel.org/all/83f7fa09-d0e6-4f36-a27d-cee08979be2a@app.fastmail.com/
+- [8]: https://lore.kernel.org/all/2024081356-mutable-everyday-6f9d@gregkh/
+- [9]: https://lore.kernel.org/all/Z87wTfChRC5Ruwc0@apocalypse/
+- [10]: https://lore.kernel.org/all/CAMEGJJ0f4YUgdWBhxvQ_dquZHztve9KO7pvQjoDWJ3=zd3cgcg@mail.gmail.com/#t
+
+CHANGES IN V12 VERSUS V9
+
+
+PATCH RELATED -------------------------------------------------
+
+- Patch 10,11,12: Added: Reviewed-by: Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+
+- Patches reworked to apply cleanly on broadcom/stblinux branches:
+  patch 1,2,3,6,8,9,10 -> devicetree/next
+  patch 11,12 -> defconfig/next
+  patch 4,5,7 -> drivers/next
+  patch 13 -> maintainers/next
+
+- Patch 13: new patch gathering all changes for MAINTAINERS
+
+- Patch 7: Added: Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+
+RP1 CLOCK DRIVER ------------------------------------
+
+- Dropped some WARN_ONCE() lines that are basically useless
+
+- rp1_clock_set_parent() now returns EINVAL in case the parent check
+  is failing. As a result, rp1_clock_set_rate_and_parent() has also
+  been adapted to return rp1_clock_set_parent() retcode.
+
+- Return an ERR_PTR from rp1_register_clock() instead of just NULL
+
+- Dropped some unaesthetic blank lines
+
+- Disabled the builtin locking in regmap since we're already dealing
+  with concurrency in the code
+
+- rp1_clk_probe(): dropped dev_err_probe() as redundant due to commit
+  12a0fd23e870 ("clk: Print an error when clk registration fails")
+
 
