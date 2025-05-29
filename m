@@ -1,121 +1,225 @@
-Return-Path: <linux-kernel+bounces-667447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-667449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B18AAC8575
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 01:50:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 329DCAC857B
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 01:51:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 544B17A9A85
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 23:49:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED37A175522
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 23:50:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 713F724EA9D;
-	Thu, 29 May 2025 23:50:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E521F2586C5;
+	Thu, 29 May 2025 23:50:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="G5B1HEW0"
-Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com [209.85.217.53])
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="kVDTFufO"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C6A2247DEA
-	for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 23:50:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A689246762
+	for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 23:50:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748562611; cv=none; b=NVFR0FNjz5h2F0voQ/FycowimMDVq4RZyRen0iwvzK91V7KAfKyfq64nn2lJpPADQdpdd8YJmcP6343CkMeKpdqVgCorC3GMrZ/UYqxSeCpxCW0pS8VeackTXcDdvqJql4j+1D0lWYIlrlkCWoFRotHvXgV84P+mpfmEGh66tFo=
+	t=1748562623; cv=none; b=qZ81Bb6U9OK5sDyz7C7qsSrvVT9HGmJfwkGQ/E6mwQCviYJlfc3Q4HpDPFIWrmzhtZiyVqOhCdhKa22wWZjUfsFpAqdQR03TJOXVNFByjl80IhRTLUigoBIur4ytMW8aMZoT83kZ7CvrB1HtB98EVltJJMFYNtkOrQ4EUW35vHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748562611; c=relaxed/simple;
-	bh=/jQS5XQrcSTiYiRSc/N6qNicSbjEH5tvMkYg0lH6Wq0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GPgQhIB8RyHc/VXnOc/1plWf+kQByhuZ2O2U5Xw31FCMhfsVRUFKHADHoN09pjZ6c/8bpUh3IbcT3j+Zm8WjfYTpoy4qM7ffNcu1kRtLVs0WZXd/fwmQqvWNLyIuzHQJTxMS9re0P179jq6V8UAzhmQrMsWgvD7jrE9YTUfsxkI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=G5B1HEW0; arc=none smtp.client-ip=209.85.217.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-4e4564178bcso1624874137.1
-        for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 16:50:10 -0700 (PDT)
+	s=arc-20240116; t=1748562623; c=relaxed/simple;
+	bh=CYs1g0ekdBblN/jK1cAIme489gvuXetb79Xt6LZ/mUE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P1WpYhicaGuz251qoJbXN+/GnmwXHe0k41UeqlhoS1KtSbHvLSyHcamrtTn4GcmjdxBlpY/8QI2Sf7fFmxrzNfj2iFm3t5b0wkPDXJMOxm2b/ZhfrG9WupviDgDrnUnMlAKbUQ9zp9miVB1x5k6Qh+SPPZKzKbCUQDffO8aFvYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=kVDTFufO; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-234d2d914bcso10852975ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 16:50:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1748562609; x=1749167409; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/jQS5XQrcSTiYiRSc/N6qNicSbjEH5tvMkYg0lH6Wq0=;
-        b=G5B1HEW02erwdwrVBnU0j7QU3YNmjD8SJE4Infef6tDUNcPJ6erziSn3dZmvYwYa+l
-         Tyraw2OR3WkLv3sJ2l3U/c7F0J6QzNYFWG6vtuASlCuS7CU4QyPTb7s+BhHZIbO92BUI
-         i+iN9/NIdGZp3ig2wV5W7yfwoq0gFF4HVfQJCTwkXyapaDWBsen+oNK/N4TtT9nAQHyw
-         /Lji2GaUwutmzguW/idrIQZG2kavcs7L28AadE35+tHjwYXuk7cFvAxPykZw8Pp44NXi
-         EJv60MaSzjchHE7/m8tqCVoPoWARXuPz46coEj6wKnLxSZZwBdEFxf9RQhXWRcWHFGnn
-         KKag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748562609; x=1749167409;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=fastly.com; s=google; t=1748562621; x=1749167421; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=/jQS5XQrcSTiYiRSc/N6qNicSbjEH5tvMkYg0lH6Wq0=;
-        b=V15PUdx0/BC4ITTXqJ31MVIPwq4cFVSe2vEYMF7GfIthoi0oqx8cigWbhH+mFuRMPU
-         bBLOnLYDQFNKP21Y99p+St5/9d/ZAtm2aSZ2Glsn6Gbe1tDq6sHzgJ1Iel0bWzwraDKQ
-         csw3sP2eunCP780+jI8DS7EDmYPeP5T5cLl3oFcm/k9JKP58yu0Fy7lwdZASuIV+6dQD
-         Tj3u6d/XSX9cWhaMwlfqr8/8XhZnPlF1Beozl2XnQkp5QRuRDpFGeNHoOUu3xXL3KhWS
-         5BvNmcTDfINNnt/iHF5XAjKxv5HWYLvtCz+hHqnVa494qPVgxyNxAOBMoenrNAwCKyhY
-         Gbxw==
-X-Forwarded-Encrypted: i=1; AJvYcCUNRVnkq8aS2XfxhZ+/6xamlb7AJXDPukJ/UzY1N7jBKjYe57wCGJDzlnLa2MPqe3Yv62cY5LrwenchUCc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxP4vgzTQjHIrEgt28B71QGXb0PU4lXX0tlRVlzM+SwZYRp29gF
-	ZRPl5hqf14cZVmcbwsKTYXObfDF2Kb3HaFdbH3n4WV+dgXjD2ifhZu1cuR8NEouq12i+rn09P19
-	cgiA7eCwCefu/guwNCWZFiPJ2cg7I5J2oCdhcpl5u
-X-Gm-Gg: ASbGncsEDqnSWHHoAc3r2p74Bo1JQOBI1OY8Ffxminoq6CcrGmMBoZYnVcL/cuBu2K5
-	LNyCQmU4amj8dgovMr7qJcVh87cLPhmT/8MHnNxdfRX5Tx7aaQ4hrhJiaGytOKENwCcA5b19Z33
-	Ob03YBUH39hbSds7BmiU0sSGWgD4qIwgI/Py/RQayaEnA=
-X-Google-Smtp-Source: AGHT+IFt/ivTuvmPFrz20YmtJKKBjvwFbf5WtZzjBqYQF95rJUwlQrpq5rDMJHRKZAZ1A/zY+qqyl8WgCXnFzYIz3Uc=
-X-Received: by 2002:a05:6102:f9d:b0:4df:e510:242e with SMTP id
- ada2fe7eead31-4e5ac0bc0e6mr7200256137.5.1748562608979; Thu, 29 May 2025
- 16:50:08 -0700 (PDT)
+        bh=HbPqPQiDWRer0P2e/HJQrUigZTmf22Qe/ORDOfEZJcI=;
+        b=kVDTFufOOAXwPirL5C5BaySyE9K7blW6V3EGXnWX1GdNDfNK39RLWabv7ZQJsbE6WY
+         X8xaeEJSYkxi0UCAdZu3HPdDm756gGbpi9lzvJjHQvJVYLeG8g2uciuUEsFH7byWzHuk
+         0nw/5YNuEmDwiER8nvzw+lcldT2zIsxq8h1YI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748562621; x=1749167421;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HbPqPQiDWRer0P2e/HJQrUigZTmf22Qe/ORDOfEZJcI=;
+        b=S0QTLpTi/9cXy/IK6l+YQnGUErEbqHKzAgafXAn8iMXtPK+nJ2wjddiTSXVgCw8ipy
+         lgnqcgiid6OCzA1gdHSqlVF/2NTGg+J2TJyQ3DulaycjZvyuVi4bhR2KMqFTZplofoB7
+         zr+2yQQCOS7UCJ4VPsMiEn9ntgEReyj9Lh9nCfctIbrhXy/u1hgDbPoy+EWzLlCyZ4bJ
+         2iXIhxjF2O1cIq3xOEnuImUxZm3gnABjUSicc2ttmMIiMQ9oR5ImcDq/wvDlpfDY6TB5
+         /ZpWWMQ5ES1xLbHc0Ug3cQBMQkVp3G0IbomoiRYpQxRjDod9GzvCNghotRe/2FFqQ8o6
+         XZMg==
+X-Forwarded-Encrypted: i=1; AJvYcCWb8U6ESyKBUMsVcZgtWQ3DTZZqTiCmc++bo/7M65xeNqgvOM2+xd7IYjS8bA2TpYVTnHfuJ321K8hSKcQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwekbnFDuE5EoZaQlGfLwqFL31Qa7/BE47MrQGnU1gxytBm/Kgy
+	vdEsCU2EXGlqoGCsAMqoBfhr2u07dQEGMeLrNgFK9e79973Yb7wIfppgeACEgxf9/q8=
+X-Gm-Gg: ASbGnctdPcX5CMHRAJd53AngvvHlF6MehM1gOsFbp79gkwWG9qPTYmS7bEgwnR+roJv
+	17qxMi/hcWMereHvCy2i10gvXgeEFOSouGCGhByFDgUqNa5F9YnE50od9EKlB2m705x1pfQ13zw
+	sHYjAaCtbyU2fav5Fqx7c5VZQoaUbs/yY5eOtWE+wsTFHxvUVmpVZ7gYC4tNz/zsFHCoDeQSEBP
+	hLtlQ7qInlJ1UCIpFV6hs0K+5dQyRhOpJE3aX3C7e+wTwPhPjnZGMpNQjwx5/VNZj/qJ7BzjZtO
+	DIUvXTKbuButNHT9p5HvWzlSKv0nWQx2wAOzDmlB8lp44xOTau8T4dxotMIy1dTyoHFMKJzUuWe
+	+yzOXhzuBRqtHcJ8JNJWXAYo=
+X-Google-Smtp-Source: AGHT+IHEsxjJuENX6L+gwyU6IIgM3kSEYP7UoEirxCoFSx20PDVXZPjPogvWOHA0V2n2wPouICBg8g==
+X-Received: by 2002:a17:902:f611:b0:224:76f:9e4a with SMTP id d9443c01a7336-235291f59aamr22225185ad.14.1748562620648;
+        Thu, 29 May 2025 16:50:20 -0700 (PDT)
+Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23506cd36b7sm17379365ad.117.2025.05.29.16.50.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 May 2025 16:50:20 -0700 (PDT)
+Date: Thu, 29 May 2025 16:50:17 -0700
+From: Joe Damato <jdamato@fastly.com>
+To: Jacob Keller <jacob.e.keller@intel.com>
+Cc: John <john.cs.hey@gmail.com>, "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [Bug] "possible deadlock in rtnl_newlink" in Linux kernel v6.13
+Message-ID: <aDjyua1-GYt8mNa1@LQ3V64L9R2>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
+	Jacob Keller <jacob.e.keller@intel.com>,
+	John <john.cs.hey@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+References: <CAP=Rh=OEsn4y_2LvkO3UtDWurKcGPnZ_NPSXK=FbgygNXL37Sw@mail.gmail.com>
+ <c9b62eaa-e05e-4958-bbf5-73b1e3c46b33@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250521222725.3895192-1-blakejones@google.com>
- <20250521222725.3895192-4-blakejones@google.com> <CAP-5=fWZG-N8ZzRh6h1qRuEgFbxTCyEwGu1sZZy+YmnSeGgSSw@mail.gmail.com>
- <CAP_z_Ch2SKwVcSV7ffV1Lbp=6TuKLyofSs1gpfBPMf6mV9-wHA@mail.gmail.com> <CAP-5=fXkfVb4gwuSXr_yZMj8ctPr8LHs-Js7g9hP46dhkU_kQQ@mail.gmail.com>
-In-Reply-To: <CAP-5=fXkfVb4gwuSXr_yZMj8ctPr8LHs-Js7g9hP46dhkU_kQQ@mail.gmail.com>
-From: Blake Jones <blakejones@google.com>
-Date: Thu, 29 May 2025 16:49:57 -0700
-X-Gm-Features: AX0GCFtrqvEMNdjlMwMgn5_lFeqF78T2xXt27TWAAtlEFWOjsQdw1dn9gHfduLI
-Message-ID: <CAP_z_Ci4X=GRJwKyUMUmypO-xvjuRUR-UPce5hzE_vPf2g_RLQ@mail.gmail.com>
-Subject: Re: [PATCH 3/3] perf: collect BPF metadata from new programs, and
- display the new event
-To: Ian Rogers <irogers@google.com>
-Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	Chun-Tse Shao <ctshao@google.com>, Zhongqiu Han <quic_zhonhan@quicinc.com>, 
-	James Clark <james.clark@linaro.org>, Charlie Jenkins <charlie@rivosinc.com>, 
-	Andi Kleen <ak@linux.intel.com>, Dmitry Vyukov <dvyukov@google.com>, Leo Yan <leo.yan@arm.com>, 
-	Yujie Liu <yujie.liu@intel.com>, Graham Woodward <graham.woodward@arm.com>, 
-	Yicong Yang <yangyicong@hisilicon.com>, Ben Gainey <ben.gainey@arm.com>, 
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <c9b62eaa-e05e-4958-bbf5-73b1e3c46b33@intel.com>
 
-On Thu, May 29, 2025 at 4:27=E2=80=AFPM Ian Rogers <irogers@google.com> wro=
-te:
-> It should be okay as you can compare the string against that reported
-> by `perf version`. On my build in `/tmp/perf`:
-> ```
-> $ /tmp/perf/perf version
-> perf version 6.15.rc7.gb9ac06abfde9
-> $ cat /tmp/perf/PERF-VERSION-FILE
-> #define PERF_VERSION "6.15.rc7.gb9ac06abfde9"
-> ```
+On Thu, May 22, 2025 at 04:05:05PM -0700, Jacob Keller wrote:
+> 
+> 
+> On 5/21/2025 5:52 PM, John wrote:
+> > Dear Linux Kernel Maintainers,
+> > 
+> > I hope this message finds you well.
+> > 
+> > I am writing to report a potential vulnerability I encountered during
+> > testing of the Linux Kernel version v6.13.
+> > 
+> > Git Commit: ffd294d346d185b70e28b1a28abe367bbfe53c04 (tag: v6.13)
+> > 
+> > Bug Location: rtnl_newlink+0x86c/0x1dd0 net/core/rtnetlink.c:4011
+> > 
+> > Bug report: https://hastebin.com/share/ajavibofik.bash
+> > 
+> > Complete log: https://hastebin.com/share/derufumuxu.perl
+> > 
+> > Entire kernel config:  https://hastebin.com/share/lovayaqidu.ini
+> > 
+> > Root Cause Analysis:
+> > The deadlock warning is caused by a circular locking dependency
+> > between two subsystems:
+> > 
+> > Path A (CPU 0):
+> > Holds rtnl_mutex in rtnl_newlink() ->
+> > Then calls e1000_close() ->
+> > Triggers e1000_down_and_stop() ->
+> > Calls __cancel_work_sync() ->
+> > Tries to flush adapter->reset_task (-> needs work_completion lock)
+> > 
+> > Path B (CPU 1):
+> > Holds work_completion lock while running e1000_reset_task() ->
+> > Then calls e1000_down() ->
+> > Which tries to acquire rtnl_mutex
+> > These two execution paths result in a circular dependency:
+> > 
+> 
+> I guess this implies you can't cancel_work_sync while holding RTNL lock?
+> Hmm. Or maybe its because calling e1000_down from the e1000_reset_task
+> is a problem.
+> 
+> > CPU 0: rtnl_mutex -> work_completion
+> > CPU 1: work_completion -> rtnl_mutex
+> > 
+> > This violates lock ordering and can lead to a deadlock under contention.
+> > This bug represents a classic case of lock inversion between
+> > networking core (rtnl_mutex) and a device driver (e1000 workqueue
+> > reset`).
+> > It is a design-level concurrency flaw that can lead to deadlocks under
+> > stress or fuzzing workloads.
+> > 
+> > At present, I have not yet obtained a minimal reproducer for this
+> > issue. However, I am actively working on reproducing it, and I will
+> > promptly share any additional findings or a working reproducer as soon
+> > as it becomes available.
+> > 
+> 
+> This is likely a regression in e400c7444d84 ("e1000: Hold RTNL when
+> e1000_down can be called")
+> 
+> @Joe, thoughts?
 
-Oh, nice! I'll switch the test to use that instead.
+Sorry for the delay, was out of the office for a bit. I agree with
+the report that the locking order is problematic and with your
+report that it was introduced by the above commit.
 
-Blake
+I wonder if e1000_down needs to cancel the reset_task at all?
+
+If you look a layer below the original bug report, you'll note that
+e1000_down calls e1000_reinit_locked which itself has the following
+code:
+
+  /* only run the task if not already down */
+  if (!test_bit(__E1000_DOWN, &adapter->flags)) {
+          e1000_down(adapter);
+          e1000_up(adapter);
+  }
+
+So, it seems like the flow in the e1000_down case would be something like this
+(please correct me if I've gotten it wrong):
+
+e1000_down -> e1000_down_and_stop (which sets the __E1000_DOWN bit) ->
+  cancel_work_sync -> e1000_reset_task -> grabs RTNL, calls e1000_reinit_locked
+   e1000_reinit_locked -> checks the bit via the code above and does nothing
+
+I could be totally off here, but it seems like in the e1000_down case, calling
+e1000_reinit_locked is unnecessary since the __E1000_DOWN bit prevents anything
+from happening.
+
+Maybe a potential solution might be to move the cancel_work_sync out of
+e1000_down_and_stop and move it into e1000_remove directly?
+
+Something vaguely like (untested):
+
+diff --git a/drivers/net/ethernet/intel/e1000/e1000_main.c b/drivers/net/ethernet/intel/e1000/e1000_main.c
+index 3f089c3d47b2..62a77b34c9ff 100644
+--- a/drivers/net/ethernet/intel/e1000/e1000_main.c
++++ b/drivers/net/ethernet/intel/e1000/e1000_main.c
+@@ -477,10 +477,6 @@ static void e1000_down_and_stop(struct e1000_adapter *adapter)
+
+        cancel_delayed_work_sync(&adapter->phy_info_task);
+        cancel_delayed_work_sync(&adapter->fifo_stall_task);
+-
+-       /* Only kill reset task if adapter is not resetting */
+-       if (!test_bit(__E1000_RESETTING, &adapter->flags))
+-               cancel_work_sync(&adapter->reset_task);
+ }
+
+ void e1000_down(struct e1000_adapter *adapter)
+@@ -1262,6 +1258,11 @@ static void e1000_remove(struct pci_dev *pdev)
+        bool disable_dev;
+
+        e1000_down_and_stop(adapter);
++
++       /* Only kill reset task if adapter is not resetting */
++       if (!test_bit(__E1000_RESETTING, &adapter->flags))
++               cancel_work_sync(&adapter->reset_task);
++
+        e1000_release_manageability(adapter);
+
+        unregister_netdev(netdev);
 
