@@ -1,171 +1,143 @@
-Return-Path: <linux-kernel+bounces-666730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A24CAC7B0F
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 11:30:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36529AC7B13
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 11:30:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04C05500751
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 09:30:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 253BD1BC6DA7
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 09:31:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4718121CC7F;
-	Thu, 29 May 2025 09:30:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3EFB21D3E4;
+	Thu, 29 May 2025 09:30:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="gpM9dJyt"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RsvQyuoD"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 440E721ABC2
-	for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 09:30:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34FD321CC45;
+	Thu, 29 May 2025 09:30:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748511006; cv=none; b=oU98w0LM1PGeSNDHqsLoxqSTWz2slWVNYiMgrWT9R8/vrfEBHqjwDJXgtPV/18b9u6lCzXkGGO3rX8aVHsoGWzp1lBc+Sbw4ypXVj/hcotmgeGObBXWGv5WPlGC5D5lQlQJuMmJBJr3xcsY53ZqS4FQ5A+2PznkkfUttF1h6U5Q=
+	t=1748511034; cv=none; b=ZxcnYgQUYEh/IbdbY3VgYnXBfr4fj9dbOQkWPAizE1JZ9sCyBp+J7ATxdxld9LDWxXcS64vXeBlkpuMmR8bafbo4Nd3yjZgXOG0erS2ytIDeQLUpKbHdtrGOGEY825k68MFXxk9ePn2tCaeyEHuG5KwG2hoh5Pm6hqw1LHcV4Qg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748511006; c=relaxed/simple;
-	bh=GWZ47weuVjxdmOTn+geA4pg3AEu96U7nGcqiOqrS+FE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mBq1O4l8m/eBaq91kgJ7KYroyCOtOnrwZd+VEDdR2AnzWCcDAbUQSkqmC7TPPa3tk/KOH54zppLuHD2cllRxLI1CR914uIFPMT1iqIihK2AsBir0UVmnzBXFbz89UbWwIOezdgkuViKPpxOZgFT9IvBvGgqGpMSLkrk28ULn1iU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=gpM9dJyt; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54SNM3Ju024736
-	for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 09:30:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	XhIfxMVlQ8L9RT3lT5uUaRfqIAHopMP4V4S1R9fi38M=; b=gpM9dJyt8bVrOwIe
-	LpFoocQC/9ayLPKTKVr1ixHgkCO3/gh4FgJLOmviRgyljkYchTEaXfWcMA1e2Myf
-	S+nGj7iHfRGQ5rAeZGvx9VF/wX9/Bi1fSnnzDEnFk+roiqwMHu7JFApoWZLbPOwB
-	UcGU0hA25GrmSHpEnwj09HpkVrZenD8mzF1NRkzeeeWzcNKhLqoadMwaA7WdydfK
-	GAQZHCVhG1Kf4BCfuBxJIthdwIFrDnOfY9lAikT11DS/dvkI1Fki/7/hZjaGtrHz
-	5WH2fFiG/CNuPVode37PEOv+i9d3M8JNtCvwZD9ra4xWekIPC1BxaE2jg0UkQUI+
-	tNnwkA==
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46u6vjw8hb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 09:30:04 +0000 (GMT)
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6faa33468f2so13814476d6.3
-        for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 02:30:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748511003; x=1749115803;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XhIfxMVlQ8L9RT3lT5uUaRfqIAHopMP4V4S1R9fi38M=;
-        b=WtZ9zRW+Gv/CQAhqYVQO1a5Lwls10/g4lYvZ0YuiXLn1Fe/tLNUr+G2RKlp/IgBuFB
-         pyxHEDxPfzMg/XTq0NUBMs8oZLNcUrTn+9EzbmYtBcdFsnFQ0Rptql+yf+GKUOhNnVAp
-         t9EyjBd91J8ula82Qgi+0yJb5GtVpcfkf2F4OyFDBt4umaJIE6twDavNfCUinicq3aQA
-         qllEjmGOf+l/o0qgaojLBabSkjiuG8aO3rdJj6psQkLkeUCi9VYQHBAK6K1T0mdZuqcA
-         zQzH7YX/6MBlLd3w7chQD06oXncrCTFafH0xYdgntych9Hq9kLuI3Cn87U0aVinXhMdr
-         TveA==
-X-Forwarded-Encrypted: i=1; AJvYcCULWR6xqZknrUrimqHa8ZI9OKs033uMaw6skSVJGkSnnNMImZ+0gZiLqN1RD6NPDfgviHIuDTSWRMOYsz4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMt6QELE3py5yvHghKwdMDyzJ9vWuwe52J472cSFBPpWX4wns3
-	Uy41/Z4hNHNvgMxvZarQJd1LEBOslZyOH//VlrKMxdhhDTg0nezi35lXTDqTybi/9AKiJQoachn
-	GX4fyUBANYiNu9+T6eolJj8i+9+Szz2wM2+A1l7xH8eeA8RfKrvakpVZmzD+jKXlWjUw=
-X-Gm-Gg: ASbGnct1sF9w+diLr0ydjkkzbUCjUTNCYLXIyPmIyKbC7XqvxVZxllTL1NN40GkLB2t
-	MkYO3NdrZnLXA1PSaqgvUXpCFu4Zf2ML/WjsUXJ38f5Vtf3Og+Wh3nRkakQj6vB3AXNzU9mMQD8
-	R7vn9KFYMY9Kij9DdCBkU69RUo9n2r+AHgZtdH3gkB7DrUkUzVwwgym2im56cgtyv+fl8kSPbhG
-	ccozhHNoFFkFptlhnKY0Zou4zxi8jzY2TaepwddURFJFBVnTbVTaJWIRp6vHklrJmyGmWzFjUpY
-	FkMwVKAtjiHcvzDPnPJdlIKc1hl8BQtJ+80cKg==
-X-Received: by 2002:ad4:5c4c:0:b0:6fa:8c15:75c1 with SMTP id 6a1803df08f44-6fac83d3e56mr19275606d6.2.1748511003013;
-        Thu, 29 May 2025 02:30:03 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFuhF0a9JamEH2xvLOnY3n8YKcLhz5fVLRzYE43PyF8jU1JcEPEDxsP9ZS8JS0YOd2Xcle+XQ==
-X-Received: by 2002:ad4:5c4c:0:b0:6fa:8c15:75c1 with SMTP id 6a1803df08f44-6fac83d3e56mr19275296d6.2.1748511002582;
-        Thu, 29 May 2025 02:30:02 -0700 (PDT)
-Received: from [192.168.68.109] ([5.133.47.210])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3a4f009758esm1411669f8f.75.2025.05.29.02.30.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 29 May 2025 02:30:02 -0700 (PDT)
-Message-ID: <89a1a6ea-3939-4d52-a8d4-478347b1867e@oss.qualcomm.com>
-Date: Thu, 29 May 2025 10:30:01 +0100
+	s=arc-20240116; t=1748511034; c=relaxed/simple;
+	bh=P357ogc7f1VbC1UPh+OtIqamhcNuhn+o16OFujjaTpE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GKwWgiE9Nq9ZPtJL0L83vRy731jdhttSXg0XtQx4n8YBTswr5BU9xmit7JQ5INFbkkwq439JpaiJdY4ybXLlYyFuqd9l2La0daBB3inkXYmFS1fdE/Ng1WR+83LGoGQFZVfzQ7Y6VffRroVfltk55GCLprm4YYgFGeXJhXX2BR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=RsvQyuoD; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=EyUAi17+fveJwmfXKTYA2SfmONRajqoVKFlFZ5vAqew=; b=RsvQyuoDa5r1vAzZNCgRC7mJIX
+	Vkb+9ORQn3yJK2oy+5gKoa931eMg3ugwOmZjY8yyd0OWPUmTyaoQeLOZKfbsAEa4ey41qZIPnUqtb
+	W9SS9/9VWK3W7S0iNGwvJwuw0Meh24x0DZNOVTgCCyrq88MCa03kTmuSuePJbV5P9OwNCc0K/WrzM
+	LGCRucP9HGVyl5i+nD5TgM5O03siLtX1SsSjPg6WM4Xl6TAcn6A/SXQ7LMKwZAH5VxufilG7uBPI9
+	4ssNA2kVbN8Vc1NBCwy18tdxWLNpZUCVKW0khmPYUV77YLrD8mJWuvZJfyeFpChPCCIx5y8YaEkor
+	ScwYkU2w==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uKZab-0000000072k-2g8k;
+	Thu, 29 May 2025 09:30:18 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 11894300399; Thu, 29 May 2025 11:30:17 +0200 (CEST)
+Date: Thu, 29 May 2025 11:30:17 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: Sean Christopherson <seanjc@google.com>,
+	"H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, kys@microsoft.com,
+	haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com,
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+	dave.hansen@linux.intel.com, pbonzini@redhat.com, ardb@kernel.org,
+	kees@kernel.org, Arnd Bergmann <arnd@arndb.de>,
+	gregkh@linuxfoundation.org, linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+	linux-efi@vger.kernel.org, samitolvanen@google.com,
+	ojeda@kernel.org, xin@zytor.com
+Subject: Re: [PATCH v2 00/13] objtool: Detect and warn about indirect calls
+ in __nocfi functions
+Message-ID: <20250529093017.GJ31726@noisy.programming.kicks-ass.net>
+References: <20250502084007.GS4198@noisy.programming.kicks-ass.net>
+ <aBUiwLV4ZY2HdRbz@google.com>
+ <20250503095023.GE4198@noisy.programming.kicks-ass.net>
+ <p6mkebfvhxvtqyz6mtohm2ko3nqe2zdawkgbfi6h2rfv2gxbuz@ktixvjaj44en>
+ <20250506073100.GG4198@noisy.programming.kicks-ass.net>
+ <20250506133234.GH4356@noisy.programming.kicks-ass.net>
+ <vukrlmb4kbpcol6rtest3tsw4y6obopbrwi5hcb5iwzogsopgt@sokysuzxvehi>
+ <20250528074452.GU39944@noisy.programming.kicks-ass.net>
+ <20250528163035.GH31726@noisy.programming.kicks-ass.net>
+ <20250528163557.GI31726@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/8] ASoC: codecs: wcd937x: Drop unused 'struct
- wcd937x_priv' fields
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        David Rhodes <david.rhodes@cirrus.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Support Opensource <support.opensource@diasemi.com>,
-        Oder Chiou <oder_chiou@realtek.com>,
-        Srinivas Kandagatla <srini@kernel.org>,
-        Shengjiu Wang <shengjiu.wang@gmail.com>,
-        Xiubo Li <Xiubo.Lee@gmail.com>, Fabio Estevam <festevam@gmail.com>,
-        Nicolin Chen <nicoleotsuka@gmail.com>
-Cc: linux-sound@vger.kernel.org, patches@opensource.cirrus.com,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-References: <20250528-asoc-const-unused-v1-0-19a5d07b9d5c@linaro.org>
- <20250528-asoc-const-unused-v1-5-19a5d07b9d5c@linaro.org>
-Content-Language: en-US
-From: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
-In-Reply-To: <20250528-asoc-const-unused-v1-5-19a5d07b9d5c@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=UOXdHDfy c=1 sm=1 tr=0 ts=6838291c cx=c_pps
- a=wEM5vcRIz55oU/E2lInRtA==:117 a=ZsC4DHZuhs/kKio7QBcDoQ==:17
- a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8
- a=pnj4R_TuY2SD5zWdqewA:9 a=QEXdDO2ut3YA:10 a=OIgjcC2v60KrkQgK7BGD:22
- a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-ORIG-GUID: XoUdba6-yzSufqHR7W24jYLeI6loGSWA
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI5MDA5MSBTYWx0ZWRfX8HKXjKbnqqJA
- macA2waWTWBAnrqvIpPAcVLzarYutqpbUdTgIBDzBslExyVMRNgdgPQn4GDDW6UZPszc0IKVOp0
- /XmZIW1WjztUoZXsLrkXXGgVO2VfSGsdhygbfFwzqzNipqFVZ59mmWUvPh1oyK5vz4cyFUJkqhs
- NcfL+lEgYWMie3mcRN2GkasKXHEsrwjVBaJ87HBCAVmUrpNXujYA677hReDgg6IYDY4zaZLLMHn
- TuaCA8Io8X3QY3nixm6AtlF3Um0h3lUETyc2W82LFpwd6qS9/FtKcSRHBtnDfxPlGuyN24ICpGW
- I553ZP1JsQzf6G8ahfu2YVAD3kWYTkHEHRTkmALhV586KmtvN8jQOxeepJLsaAXrL1ij0OXOg3S
- cjQKS8KCkrWGs4ay+8fAqjmB+bKlO/y6j/3DB6H33dTqxu0mvvCgdaYwARFJ+ZU7Cqfglfsa
-X-Proofpoint-GUID: XoUdba6-yzSufqHR7W24jYLeI6loGSWA
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-29_04,2025-05-29_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 phishscore=0 mlxscore=0 adultscore=0 priorityscore=1501
- mlxlogscore=846 bulkscore=0 malwarescore=0 impostorscore=0 spamscore=0
- suspectscore=0 lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505160000 definitions=main-2505290091
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250528163557.GI31726@noisy.programming.kicks-ass.net>
 
+On Wed, May 28, 2025 at 06:35:58PM +0200, Peter Zijlstra wrote:
+> On Wed, May 28, 2025 at 06:30:35PM +0200, Peter Zijlstra wrote:
+> > On Wed, May 28, 2025 at 09:44:52AM +0200, Peter Zijlstra wrote:
+> > > On Tue, May 06, 2025 at 12:18:49PM -0700, Josh Poimboeuf wrote:
+> > > 
+> > > > Weird, I'm not seeing that.
+> > > 
+> > > I Ate'nt Crazeh...
+> > > 
+> > > https://lore.kernel.org/all/202505280410.2qfTQCRt-lkp@intel.com/T/#u
+> > > 
+> > > I'll go poke at it, see if today is the day I can figure out WTF
+> > > happens.
+> > 
+> > It manages to trip the CFI_UNDEFINED case in op->dest.reg == cfa->base
+> > in update_cfi_state().
+> > 
+> > I figured it ought to tickle the regular 'mov %rbp, %rsp' case above
+> > there, but it doesn't, for some reason it has cfa.base == SP at this
+> > point.
+> > 
+> > This happens... /me looks in scrollback ... at POP_REGS 'pop
+> > %rbp'. ARGH!!
+> > 
 
+More fun!
 
-On 5/28/25 8:59 PM, Krzysztof Kozlowski wrote:
-> 'wcd_regmap_irq_chip' and 'jack' in 'struct wcd937x_priv' are not used
-> at all.
+> > So the sequence of fail is:
+> > 
+> > 	push %rbp
+> > 	mov %rsp, %rbp	# cfa.base = BP
+> > 
+> > 	SAVE
+
+	sub    $0x40,%rsp
+	and    $0xffffffffffffffc0,%rsp
+
+This hits the 'older GCC, drap with frame pointer' case in OP_SRC_AND.
+Which means we then hard rely on the frame pointer to get things right.
+
+However, per all the PUSH/POP_REGS nonsense, BP can get clobbered.
+Specifically the code between the CALL and POP %rbp below are up in the
+air. I don't think it can currently unwind properly there.
+
+> > 	...
+> > 	push %rbp
+> > 	...
+> > 	pop %rbp	# cfa.base = SP
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
-
-Reviewed-by: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
-
---srini
-
->  sound/soc/codecs/wcd937x.c | 2 --
->  1 file changed, 2 deletions(-)
+> This is the POP !drap and dest==base case.
 > 
-> diff --git a/sound/soc/codecs/wcd937x.c b/sound/soc/codecs/wcd937x.c
-> index b9df58b86ce953427e01ffb8c7eb7e52f9c2392a..126a29e0b3ff96c12fdaba2b9344a3040b455e44 100644
-> --- a/sound/soc/codecs/wcd937x.c
-> +++ b/sound/soc/codecs/wcd937x.c
-> @@ -88,10 +88,8 @@ struct wcd937x_priv {
->  	struct wcd_mbhc_intr intr_ids;
->  	struct wcd_clsh_ctrl *clsh_info;
->  	struct irq_domain *virq;
-> -	struct regmap_irq_chip *wcd_regmap_irq_chip;
->  	struct regmap_irq_chip_data *irq_chip;
->  	struct regulator_bulk_data supplies[WCD937X_MAX_BULK_SUPPLY];
-> -	struct snd_soc_jack *jack;
->  	unsigned long status_mask;
->  	s32 micb_ref[WCD937X_MAX_MICBIAS];
->  	s32 pullup_ref[WCD937X_MAX_MICBIAS];
-> 
+> > 	...
+> > 	mov %rbp, %rsp  # UNDEF
+> > 	nop		# FAIL
+> > 	RESTORE
+> > 
+> > Note that the MOV+NOP is the 4 bytes ERETS needs.
 
 
