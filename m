@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-666984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1D31AC7EE6
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 15:38:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B57FAC7EEC
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 15:38:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F309D7A90DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 13:36:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E62B51C026E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 13:38:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AEDC226CE0;
-	Thu, 29 May 2025 13:37:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18EC3227BB6;
+	Thu, 29 May 2025 13:38:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PqKSJ/bt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LmibuwGj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E45B91DB551;
-	Thu, 29 May 2025 13:37:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 472E8226CE7;
+	Thu, 29 May 2025 13:38:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748525848; cv=none; b=fpT+ZDh/U2uCFdaOg2QLiCYClo5j4AM/D4sWPM3fOUisDlSB4l/AxBgCqac+y578g2rT9liRILa+9zj+YffVOfHV/VsCjBsvvDHJh08HAMXp0fZHWicn4P5Y3/gR8lrd8nWKuvdo03deeoVumDovybsP39S2GxwnID3ABB/ryhU=
+	t=1748525895; cv=none; b=ImYb0xgj5CPDnPYOnuswFxuVsSlZWMXwy9E0KrcLC1p7iWybsfQhLOzVCrWJus917d504zFs0jMeg8J3j8ANL37pYVjjkU56wcyYhvXRf1s2uwXsrn8soOwnqVMd+x2VDdnU8vFnc6c8GAmosPLkwx2az3b3ymn4x86SsOhLctA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748525848; c=relaxed/simple;
-	bh=viS6bsZWOokCCrW1OHynzoFWbRQcOiDWmx3SPsFNbPw=;
+	s=arc-20240116; t=1748525895; c=relaxed/simple;
+	bh=z3RAuLwIyuINQ8SMdDHWYwZ5RjodA6MXZTl5mOCso/k=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UZqMKaCqVC74Yaf6jdCmyY+l/pMNs0BeFk294KYvk7DuivyM52/UO4AnkeUt6PKJiDPWg12MFToLIfrBIAilssUMmakypp28tftoUuPoPGUaFf1Bj8yQLDNVSZ99ysF+OYZBtr3JMx/oWLjO0fPaNRLjqysVgdAS1Ba0ilR7Ulw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PqKSJ/bt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FC4DC4CEE7;
-	Thu, 29 May 2025 13:37:24 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=XH5NFKxdBy0LN032vkFAlLcld7uh2ecqG8+LAgi6v6YiuNyRMvrxeSCy+0ZSUasW72ll2Gh9nBPcV5c8AU8vB8RJDJOasDfp6IVbnWZ8VmJNezwLNJIPfqi+OpvRjCabLRkFBx5/qF5pjPdSSuLtBydcQqTH1vTChYdb5N+W5nM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LmibuwGj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 458F3C4CEED;
+	Thu, 29 May 2025 13:38:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748525847;
-	bh=viS6bsZWOokCCrW1OHynzoFWbRQcOiDWmx3SPsFNbPw=;
+	s=k20201202; t=1748525895;
+	bh=z3RAuLwIyuINQ8SMdDHWYwZ5RjodA6MXZTl5mOCso/k=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=PqKSJ/btt0/1v8XTjS2chmk/ha2/eLXyu/K5L+CkDX0y4LB6c3PVVrUDZqZ/ytKqh
-	 m6iDeWoGzYtyL7W+7etG3ik1XhYe34EonzLtVMElranR38UtXjium0Y6UKT+d7yniY
-	 4w2KZGDPY6Onklp+onf8kxQtstRGocvf89mqoL00hMTXCBo9Jm0Vs13eKP7eyCE17w
-	 vYE2IceM7cNEl6vCRka/nNa50Q9eUkiOTafBmTsyzZpcjQmEnCmgXeZUnS5DQxDXOa
-	 lOX7aG5RuBc8hRZ5Rs/HyaOb2BsXHB/SfGU1P33Y/0ZH9s7hzWXzHmZer3Cs26gr4v
-	 1dnj5tjnCInNA==
-Message-ID: <ec227d43-5e0b-4de5-9329-63aa2bffbd99@kernel.org>
-Date: Thu, 29 May 2025 15:37:22 +0200
+	b=LmibuwGjuiKzIEiGjPseWgcbBeQzskbjxFKLY8oOw4uhgNbDmJyMzrfkEXxE0PCFO
+	 +ucsNa3TkzH2ZZv3IHHQTQ/eIszQfufcqrEK1n1oqeJdI4swTpREQsYkB2pyFVMz+8
+	 F6yUZcoEKXnzoepXFIwTGqVCrHJelMq/C6D+gVo6o44zgdRoafnFdEJfDVnWZqSQg0
+	 uBmb+TgaSBKHfDwT9/ThqdW1lgXI7nHtk4U8LXwxcbMRbTnybJDFqaa2DqhtwUuraA
+	 7dSv5tpnJs5jXy7CN/sMg4pRftuddc3KTBw36qrLV4qgpdyYxSY6l+nbRkf3n0paBl
+	 2T8/ENMFUMLvQ==
+Message-ID: <4d2eeedb-0b3e-485c-ba15-82fb78fca4c7@kernel.org>
+Date: Thu, 29 May 2025 15:38:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,14 +49,14 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/13] arm64: dts: ti: k3-am625-beagleplay: Enable
- "cpsw3g" in the board file
+Subject: Re: [PATCH 13/13] arm64: dts: ti: k3-j721s2-mcu-wakeup: Disable
+ "mcu_cpsw" in the SoC file
 To: Siddharth Vadapalli <s-vadapalli@ti.com>, nm@ti.com, vigneshr@ti.com,
  kristo@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
 Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, srk@ti.com
 References: <20250529133443.1252293-1-s-vadapalli@ti.com>
- <20250529133443.1252293-2-s-vadapalli@ti.com>
+ <20250529133443.1252293-14-s-vadapalli@ti.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -102,23 +102,20 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250529133443.1252293-2-s-vadapalli@ti.com>
+In-Reply-To: <20250529133443.1252293-14-s-vadapalli@ti.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 29/05/2025 15:34, Siddharth Vadapalli wrote:
-> In preparation for disabling "cpsw3g" device-tree node in the SoC file,
-> namely "k3-am62-main.dtsi", enable it in the board file. The motivation
-> for this change is that of following the existing convention of disabling
-> nodes in the SoC file and only enabling the required ones in the board
-> file.
-
-
-That's not separate commit. You disable in DTSI and enable in DTS in the
-same one, to avoid any duplicated statuses like in this case (even if
-one is default).
-
-
+> Following the existing convention of disabling nodes in the SoC file and
+> enabling only the required ones in the board file, disable "mcu_cpsw" node.
+> 
+> Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+> ---
+>  arch/arm64/boot/dts/ti/k3-j721s2-mcu-wakeup.dtsi | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+Really all of this is fake split. One line per commit.
 
 Best regards,
 Krzysztof
