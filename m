@@ -1,120 +1,327 @@
-Return-Path: <linux-kernel+bounces-667232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-667245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B114AAC81F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 20:04:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F122EAC821D
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 20:23:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A48A51BC1A6B
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 18:04:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B69A91BC6B7B
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 18:23:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C089222DA10;
-	Thu, 29 May 2025 18:03:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48BFF230D1E;
+	Thu, 29 May 2025 18:23:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="egpOeBWE"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ecMAFBB8"
+Received: from mslow3.mail.gandi.net (mslow3.mail.gandi.net [217.70.178.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C50C1DA5F
-	for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 18:03:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C28A1DA5F;
+	Thu, 29 May 2025 18:23:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748541838; cv=none; b=jc04Xp/zWaAXyOFL7EWObZbhjWNi6OrL5VE8abq8vvdsAb/EC2t4j7btyJ+qPMCYX9mHEXjBQZrJ7iSq0OA9vmyx24r0GqL6iik2ObM9jneMo7+o/RM/EMNAICoCOcH0zbWl7q7f4VtLDd9WM4Z0uKicUHqaDUN3pCqa/BAEG9U=
+	t=1748542998; cv=none; b=aO3bEnmSFjEuyC+AZtqxM1yvUDG9CknTPvZFo3Oif9M+KB0pKmcrPIcKVczpKjPTiFFD9HCiOQWrlKlqZDpqjebrwyEdSX5dMNHVQ1Elvv+xTaex11SCVvvFGIYpEki2AP+cWpHOPxVk6Mre2F5HseONkIDFMA93TXzxuQz/sjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748541838; c=relaxed/simple;
-	bh=kgg1cP0v+5nivc/Kt+ZHPR36i7/NI21O3QWYAgV2xiA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=k4cmVivMkPq2/dqug5cTeLKLINgX1FDshhirLMzldQ0yWHzngQ/riD/nXvHQ+/7lUO185Rcni2inBaNy7PbhQacrCsnu3NJLrT/7SBFOCMR6c6ys3ai+ardRSOPak5ZE/+L6EJSjHUaUocIoT1VgINkEGo2LdVlzq74KZWPFzL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=egpOeBWE; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1748541836; x=1780077836;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=kgg1cP0v+5nivc/Kt+ZHPR36i7/NI21O3QWYAgV2xiA=;
-  b=egpOeBWE4/yN+T3hBNO69gjpyj4pWzbLT55F4iO3AIQiBFzk213XEHr1
-   x3+TVkn3ijwjDaCi311rM0Rww5HUDKI9J9ur6BS5rF5s+YQkvdljaD2Me
-   nGT5+dYZCnhsR0w3jkT3yv4zWWu19VUP5yxwXDvHGnCiJzjZLVLm5Ru8G
-   7ng/rVbPK/wUY207rRxAAnIFHpTuBqNFCxUqDtS9o3asSnS9n5q3THHAt
-   udqFl2323SEWkX3l4BAJnfEZ+96QkfKl78xz2wKDRLcMqWgXs+QZUSF/H
-   3y9nncJ0by/6tzUguXhWhqOu8e2Kzcp/nDrsEpm0EDZJVIxGY0E9irhKx
-   Q==;
-X-CSE-ConnectionGUID: Wfk2RtOSSHG6+6CmlTZe1A==
-X-CSE-MsgGUID: Kk6TeOn+Q42Tcw4NKi6wrA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11448"; a="53244257"
-X-IronPort-AV: E=Sophos;i="6.16,193,1744095600"; 
-   d="scan'208";a="53244257"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2025 11:03:55 -0700
-X-CSE-ConnectionGUID: oMxt29yvRzG0SJOZBvn/lw==
-X-CSE-MsgGUID: fPojTukNSJypzPb2y6o5Sg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,193,1744095600"; 
-   d="scan'208";a="147510831"
-Received: from viggo.jf.intel.com (HELO ray2.sr71.net) ([10.54.77.144])
-  by fmviesa003.fm.intel.com with ESMTP; 29 May 2025 11:03:55 -0700
-From: Dave Hansen <dave.hansen@linux.intel.com>
-To: torvalds@linux-foundation.org
-Cc: x86@kernel.org,
-	linux-kernel@vger.kernel.org,
-	Dave Hansen <dave.hansen@linux.intel.com>
-Subject: [GIT PULL] x86/sgx for 6.16-rc1
-Date: Thu, 29 May 2025 11:03:52 -0700
-Message-Id: <20250529180352.1935517-1-dave.hansen@linux.intel.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1748542998; c=relaxed/simple;
+	bh=u8YmwyVAZLLkn3SGk1Qvanbp3CrGFbZ3j0Nuzo+WD2I=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=r1cfIyCIldIoFlN99Se1V6QSJ2npNBzv3bOwTKVMfNLzc0bPLY3I6QtaVwCxSnln7belUtpYJqoLi2jSMhFTwA0Tg3Byi7X7LpxvXCHnhiJXyRKKvFPCzszypI/9THJR+GigyxNfVMvWa1XhSiDiGAJeYq5CX/egyrZJ/j6zfqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ecMAFBB8; arc=none smtp.client-ip=217.70.178.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::224])
+	by mslow3.mail.gandi.net (Postfix) with ESMTP id B728458A4C8;
+	Thu, 29 May 2025 16:17:48 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id AB09D43B46;
+	Thu, 29 May 2025 16:17:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1748535461;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aQcCCRJcmoJGe/Ytwe0GcZgHDaSsO3JHKK47D+mnI3w=;
+	b=ecMAFBB8gulRYOvzlecnreKo0ztVIWO90fKLAItMRQVCsdXgoqN63xBiKB2FnJpIQvs2RQ
+	u4ZvXw5HJuNQ3LeyYyw9DZpnfwIUD2o0NkPOpfu5bO/OOht5HAPXp+tVR6qEkrhWDKQ1Cg
+	K7LOJbOMUZTmwPjFGJ+K2szY0clYVBVIYDpiB1uHI4S9LeWys82YKyiFvp8iXzknmqyJii
+	v/SOxoDcgsxTqCzbuaUkLQgHDTXkMOTCYnwxCj963SpLskoKaemGwVVJHBZcJI4IJYF4Nr
+	bqoI9aLA8kC6QzsNJhuaWio644A1EvC28rFeWTxhJpHmMmzD9Blf59k63KSPaQ==
+Message-ID: <f7689c91-8586-4223-8b4c-9345881ba961@bootlin.com>
+Date: Thu, 29 May 2025 18:17:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/4] arm64: dts: rockchip: describe I2c Bus 1 and
+ IMX258 world camera on PinePhone Pro
+From: Olivier Benjamin <olivier.benjamin@bootlin.com>
+To: Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+ Nicholas Roth <nicholas@rothemail.net>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>, Shawn Guo
+ <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
+ imx@lists.linux.dev, Dragan Simic <dsimic@manjaro.org>,
+ Ondrej Jirman <megi@xff.cz>
+References: <20250509-camera-v3-0-dab2772d229a@bootlin.com>
+ <20250509-camera-v3-3-dab2772d229a@bootlin.com> <3359896.e9J7NaK4W3@phil>
+ <e8af352a-bfcf-4aa5-b113-e8b845c3a2c6@bootlin.com>
+Content-Language: en-US
+In-Reply-To: <e8af352a-bfcf-4aa5-b113-e8b845c3a2c6@bootlin.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgddvieehkeculddtuddrgeefvddrtddtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffhvfevfhgjtgfgsehtkeertddtvdejnecuhfhrohhmpefqlhhivhhivghruceuvghnjhgrmhhinhcuoeholhhivhhivghrrdgsvghnjhgrmhhinhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhephfdvfeetudfgfedvkeefleehieetvdejtedvuefgvddtvdegiedvjeehgfffleegnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvrgdtudemvgefgeemvggtfeekmedvgegvtdemfhehtggvmehffeegvdemieehkeejmehfieehieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemvgefgeemvggtfeekmedvgegvtdemfhehtggvmehffeegvdemieehkeejmehfieehiedphhgvlhhopeglkffrggeimedvrgdtudemvgefgeemvggtfeekmedvgegvtdemfhehtggvmehffeegvdemieehkeejmehfieehiegnpdhmrghilhhfrhhomhepohhlihhvihgvrhdrsggvnhhjrghmihhnsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvvddprhgtphhtthhopehhvghikhhosehsnhhtvggthhdruggvp
+ dhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhgrtghophhordhmohhnughisehiuggvrghsohhnsghorghrugdrtghomhdprhgtphhtthhopehnihgthhholhgrshesrhhothhhvghmrghilhdrnhgvthdprhgtphhtthhopehmtghhvghhrggssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehsrghkrghrihdrrghilhhusheslhhinhhugidrihhnthgvlhdrtghomh
+X-GND-Sasl: olivier.benjamin@bootlin.com
 
-Hi Linus,
 
-Continuing the trend of a slow dribble of SGX updates, please pull a
-couple x86/sgx changes for 6.16-rc1.
 
-The first one is a no-brainer to use the (simple) SHA-256 library.
+On 5/14/25 06:59, Olivier Benjamin wrote:
+> 
+> 
+> On 5/13/25 20:23, Heiko Stuebner wrote:
+>> Hi Olivier,
+>>
+> Hello Heiko, thanks for having a look!
+> 
+Hi again Heiko,
+>> Am Freitag, 9. Mai 2025, 23:51:39 Mitteleuropäische Sommerzeit schrieb 
+>> Olivier Benjamin:
+>>> Add the description of the rear/world camera (IMX258) on the 
+>>> PinePhone Pro
+>>> to the device dts file.
+>>> It receives commands on the I2C Bus 1 at address 0x1a and transmits data
+>>> over CSI-MIPI.
+>>>
+>>> The I2C address for IMX258 can be found in the IMX258-0AQH5 Software
+>>> Reference Manual, page 24, section 2.3.1: 0b0011010 = 0x1a.
+>>> Section 3 indicates the module has 4 pairs of data lines. While 4-lane
+>>> mode is nominal, 2-lane mode should also be supported.
+>>>
+>>> The pin muxing info was extracted from the PinePhone Pro schematic v1.0
+>>> as well as the RK3399 datasheet revision 1.8.
+>>>
+>>> Table 2-3 in section 2.8 of the RK3399 datasheet contains the mapping
+>>> of IO functions for the SoC pins. Page 52 shows GPIO1_A0, page 54 shows
+>>> GPIO2_D4.
+>>>
+>>> For I2C power, the PinePhone Pro schematic page 11 quadrants A4 and A5:
+>>> RK3399_J.AA8 and RK3399_J.Y8 get power from vcaa1v8_codec, so turn it on
+>>>
+>>> The IMX258 also uses the following regulators, expected by its driver:
+>>>   - vana (2.8V analog), called AVDD2V8_DVP on P.18 q.C1 and derived from
+>>>     VCC1V8_S3 on P.13 q.B2
+>>>   - vdig (1.2V digital core), called DVDD_DVP on P.18 q.C1 and shown on
+>>>     P.18 q.D3 to be equivalent to VCC1V2_DVP derived from VCC3V3_SYS on
+>>>     P.13 q.B3. Note that this regulator's voltage is inconsistently
+>>>     labeled either 1.2V or 1.5V
+>>>
+>>> RK3399_J.AG1 is GPIO4_A1/I2C1_SDA, RK3399_J.Y6 is GPIO4_A2/I2C1_SCL
+>>> This is the default pinctrl "i2c1_xfer" for i2c1 from rk3399-base.
+>>>
+>>> For the reset (RESET) signal:
+>>> page 11 quadrant D2             | p.18 q.C3-4 | p.18 q.C2
+>>> RK3399_E.R25 -> GPIO1_A0 -> Camera_RST -> MIPI_RST0 -> IMX258.12
+>>>
+>>> For the powerdown (PWDN) signal:
+>>> page 11 quadrants B4-5          | p.18 q.C2
+>>> RK3399_G.AF8 -> GPIO2_D4 -> DVP_PDN1_H -> IMX258.14
+>>>
+>>> Helped-by: Dragan Simic <dsimic@manjaro.org>
+>>> Co-developed-by: Ondrej Jirman <megi@xff.cz>
+>>> Signed-off-by: Ondrej Jirman <megi@xff.cz>
+>>> Signed-off-by: Olivier Benjamin <olivier.benjamin@bootlin.com>
+>>
+>> how independent are the devicetree changes from the binding changes?
+>> As the binding change "only" includes other properties.
+>>
+> They are pretty independent: the binding changes are only needed to 
+> suppress warnings on the devicetree.
+> However, the changes to the devicetree are the motivation for the 
+> changes to the binding: the other properties are not strictly necessary 
+> otherwise.
+> 
+Have you had a chance to have a look?
+Are any changes needed in your opinion?
+>> Heiko
+>>
+>>
+>>> ---
+>>>   .../boot/dts/rockchip/rk3399-pinephone-pro.dts     | 94 +++++++++++ 
+>>> +++++++++++
+>>>   1 file changed, 94 insertions(+)
+>>>
+>>> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts b/ 
+>>> arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
+>>> index 
+>>> 04ba4c4565d0a205e2e46d7535c6a3190993621d..588e2d8a049cc649aa227c7a885bd494f23fbdf8 100644
+>>> --- a/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
+>>> +++ b/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
+>>> @@ -114,6 +114,16 @@ vcc3v3_sys: regulator-vcc3v3-sys {
+>>>           vin-supply = <&vcc_sys>;
+>>>       };
+>>> +    avdd2v8_dvp: regulator-avdd2v8-dvp {
+>>> +        compatible = "regulator-fixed";
+>>> +        regulator-name = "avdd2v8_dvp";
+>>> +        regulator-always-on;
+>>> +        regulator-boot-on;
+>>> +        regulator-min-microvolt = <2800000>;
+>>> +        regulator-max-microvolt = <2800000>;
+>>> +        vin-supply = <&vcc3v3_sys>;
+>>> +    };
+>>> +
+>>>       vcca1v8_s3: regulator-vcc1v8-s3 {
+>>>           compatible = "regulator-fixed";
+>>>           regulator-name = "vcca1v8_s3";
+>>> @@ -136,6 +146,16 @@ vcc1v8_codec: regulator-vcc1v8-codec {
+>>>           vin-supply = <&vcc3v3_sys>;
+>>>       };
+>>> +    vcc1v2_dvp: regulator-vcc1v2-dvp {
+>>> +        compatible = "regulator-fixed";
+>>> +        regulator-name = "vcc1v2_dvp";
+>>> +        regulator-always-on;
+>>> +        regulator-boot-on;
+>>> +        regulator-min-microvolt = <1200000>;
+>>> +        regulator-max-microvolt = <1200000>;
+>>> +        vin-supply = <&vcca1v8_s3>;
+>>> +    };
+>>> +
+>>>       wifi_pwrseq: sdio-wifi-pwrseq {
+>>>           compatible = "mmc-pwrseq-simple";
+>>>           clocks = <&rk818 1>;
+>>> @@ -312,6 +332,8 @@ vcc3v0_touch: LDO_REG2 {
+>>>               vcca1v8_codec: LDO_REG3 {
+>>>                   regulator-name = "vcca1v8_codec";
+>>> +                regulator-always-on;
+>>> +                regulator-boot-on;
+>>>                   regulator-min-microvolt = <1800000>;
+>>>                   regulator-max-microvolt = <1800000>;
+>>>               };
+>>> @@ -420,6 +442,46 @@ regulator-state-mem {
+>>>       };
+>>>   };
+>>> +&i2c1 {
+>>> +    clock-frequency = <400000>;
+>>> +    pinctrl-0 = <&i2c1_xfer &cif_clkouta>;
+>>> +    assigned-clocks = <&cru SCLK_CIF_OUT>;
+>>> +    assigned-clock-rates = <24000000>;
+>>> +    status = "okay";
+>>> +
+>>> +    wcam: camera@1a {
+>>> +        compatible = "sony,imx258";
+>>> +        reg = <0x1a>;
+>>> +        clocks = <&cru SCLK_CIF_OUT>; /* MIPI_MCLK0, derived from 
+>>> CIF_CLKO */
+>>> +        clock-names = "xvclk";
+>>> +        pinctrl-names = "default";
+>>> +        pinctrl-0 = <&wcam_rst>;
+>>> +        /* Note: both cameras also depend on vcca1v8_codec to power 
+>>> the I2C bus. */
+>>> +        vif-supply = <&vcc1v8_dvp>;
+>>> +        vana-supply = <&avdd2v8_dvp>;
+>>> +        vdig-supply = <&vcc1v2_dvp>; /* DVDD_DVP is the same as 
+>>> VCC1V2_DVP */
+>>> +        reset-gpios = <&gpio1 RK_PA0 GPIO_ACTIVE_LOW>;
+>>> +        orientation = <1>; /* V4L2_CAMERA_ORIENTATION_BACK */
+>>> +        rotation = <270>;
+>>> +        lens-focus = <&wcam_lens>;
+>>> +
+>>> +        port {
+>>> +            wcam_out: endpoint {
+>>> +                remote-endpoint = <&mipi_in_wcam>;
+>>> +                data-lanes = <1 2 3 4>;
+>>> +                link-frequencies = /bits/ 64 <636000000>;
+>>> +            };
+>>> +        };
+>>> +    };
+>>> +
+>>> +    wcam_lens: camera-lens@c {
+>>> +        compatible = "dongwoon,dw9714";
+>>> +        reg = <0x0c>;
+>>> +        /* Same I2c bus as both cameras, depends on vcca1v8_codec 
+>>> for power. */
+>>> +        vcc-supply = <&vcc1v8_dvp>;
+>>> +    };
+>>> +};
+>>> +
+>>>   &i2c3 {
+>>>       i2c-scl-rising-time-ns = <450>;
+>>>       i2c-scl-falling-time-ns = <15>;
+>>> @@ -462,6 +524,28 @@ &io_domains {
+>>>       status = "okay";
+>>>   };
+>>> +&isp1 {
+>>> +    status = "okay";
+>>> +
+>>> +    ports {
+>>> +        port@0 {
+>>> +            mipi_in_wcam: endpoint@0 {
+>>> +                reg = <0>;
+>>> +                remote-endpoint = <&wcam_out>;
+>>> +                data-lanes = <1 2 3 4>;
+>>> +            };
+>>> +        };
+>>> +    };
+>>> +};
+>>> +
+>>> +&mipi_dphy_rx0 {
+>>> +    status = "okay";
+>>> +};
+>>> +
+>>> +&isp1_mmu {
+>>> +    status = "okay";
+>>> +};
+>>> +
+>>>   &mipi_dsi {
+>>>       status = "okay";
+>>>       clock-master;
+>>> @@ -495,6 +579,10 @@ mipi_in_panel: endpoint {
+>>>       };
+>>>   };
+>>> +&mipi_dsi1 {
+>>> +    status = "okay";
+>>> +};
+>>> +
+>>>   &pmu_io_domains {
+>>>       pmu1830-supply = <&vcc_1v8>;
+>>>       status = "okay";
+>>> @@ -507,6 +595,12 @@ pwrbtn_pin: pwrbtn-pin {
+>>>           };
+>>>       };
+>>> +    camera {
+>>> +        wcam_rst: wcam-rst {
+>>> +            rockchip,pins = <1 RK_PA0 RK_FUNC_GPIO &pcfg_pull_none>;
+>>> +        };
+>>> +    };
+>>> +
+>>>       leds {
+>>>           red_led_pin: red-led-pin {
+>>>               rockchip,pins = <4 RK_PD2 RK_FUNC_GPIO &pcfg_pull_none>;
+>>>
+>>>
+>>
+>>
+>>
+>>
+>>
+> 
 
-For the second one, some folks doing testing noticed that SGX systems
-under memory pressure were inducing fatal machine checks at pretty
-unnerving rates, despite the SGX code having _some_ awareness of
-memory poison. Turns out that the SGX reclaim path was not checking
-for poison _and_ it always accesses memory to copy it around. Make
-sure that poisoned pages are not reclaimed.
+-- 
+Olivier Benjamin, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
---
-
-The following changes since commit b4432656b36e5cc1d50a1f2dc15357543add530e:
-
-  Linux 6.15-rc4 (2025-04-27 15:19:23 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git tags/x86_sgx_for_6.16-rc1
-
-for you to fetch changes up to ed16618c380c32c68c06186d0ccbb0d5e0586e59:
-
-  x86/sgx: Prevent attempts to reclaim poisoned pages (2025-05-15 19:01:45 +0200)
-
-----------------------------------------------------------------
- * Make SGX less likely to induce fatal machine checks
- * Use much more compact SHA-256 library API
-
-----------------------------------------------------------------
-Andrew Zaborowski (1):
-      x86/sgx: Prevent attempts to reclaim poisoned pages
-
-Eric Biggers (1):
-      x86/sgx: Use SHA-256 library API instead of crypto_shash API
-
- arch/x86/Kconfig                 |  3 +--
- arch/x86/kernel/cpu/sgx/driver.h |  1 -
- arch/x86/kernel/cpu/sgx/ioctl.c  | 30 ++----------------------------
- arch/x86/kernel/cpu/sgx/main.c   |  2 ++
- 4 files changed, 5 insertions(+), 31 deletions(-)
 
