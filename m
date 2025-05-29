@@ -1,86 +1,86 @@
-Return-Path: <linux-kernel+bounces-666731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDB04AC7B11
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 11:30:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28C69AC7B17
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 11:31:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76A155009C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 09:30:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 446A09E84EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 09:31:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A44221CA1F;
-	Thu, 29 May 2025 09:30:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BC5321CC57;
+	Thu, 29 May 2025 09:31:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="h1CyIVtc"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="fbe6UJ5z"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EB5521CC4E
-	for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 09:30:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F4DF21C182
+	for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 09:31:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748511024; cv=none; b=I9TBY0LAoWUVC/UyieTlNqVUBE9HBAe9bhtDS1yoApUt5rAZJ9Em+O9r9uINLRcnqyIsSnvfqPeDoBFvS+eZJon+aJj+Nbp1hNF8opPM7bNOrmffBifP12WsucKUZowEfXh/48r8bfm7TMVmw5oMZ1aBL/w42qG3aIE+oa9UR/o=
+	t=1748511074; cv=none; b=UxgODbNpm1jANNPdUEqSgeXs11R+uwPBwHnlWM6aPQ9TV2EdYDU1gKYTR7NFxBUEGAmE6XHtA/x/nDAELT46QX25SEnaybeVyrsy+xLZlk4uZDPKGoWkPOWdFO63EqL2ueb9GnJmQyrgLodjZftf3j1CEVCVCjXpF1budNw9FVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748511024; c=relaxed/simple;
-	bh=oJbshwMwiTS3jx1ryipl5iAEMXIg4CHVBkd8GnK92Bo=;
+	s=arc-20240116; t=1748511074; c=relaxed/simple;
+	bh=Fev/tTEBDwZmfGInxblEiEnDwk6UVMQ7JbICwxD6TnM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dYFOqQeZ0ivTp9jUeLyUiNIMY6Zt777VoJvzJEcAqDz2Utod7yreRxktyaHTjSRoX9aRQov4EqTUFjqa27fJ53ul0Muh3etLLUTOddI2U99Ulz5pb5aH1oquuNg8PbflPIs7tydFoTLUnb+3xTn/Py201KEOlDF2bSUt9I3DfQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=h1CyIVtc; arc=none smtp.client-ip=205.220.168.131
+	 In-Reply-To:Content-Type; b=V8k5rPUw2Xe/qVrT0PvPNK22gFq73DLkfbaXBejPY9z6fRzZZVb4ztzaBoUHqXiMaf7IDVTLWtPmmRzsJn54UucKhRtki9BvfT7qAfEJBG/9oW4++7u+6MIMD7EQn8B00gNsRYVsnf1dpYsnPK8sRkO9zPmWEEM9f2CT4rbNTng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=fbe6UJ5z; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54T2CaDS029201
-	for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 09:30:21 GMT
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54T7eLS9015068
+	for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 09:31:12 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	P6gj5u3aEjDTUd8XsUfvCPJYhhIHSGYHPaBVqASbR8I=; b=h1CyIVtc+vGV/xG2
-	EpTVDD2N4Wink/i+fXnOTip+5nbsgLpaJLUdRMnjxlXFzoMwIi3bAOrk7wgdljwI
-	xfVHPHyYtWjpoMBxprHsGaIjbsDIB+z4IRYOHdB4kQunPiWYnrHZ8pQMqIdII5Wv
-	yqEtCbEBgVaIHtk2yzHo6H3laeCBwtomPCk9qU0wNCg88Lcjg8rTHvDL4pP5icq6
-	8xWUSMzoNlaNfJ7ZX2qVMC7wwv84+e/VV5bYwLpTjxIU5t3/YWcWGlhpMpuCD2QC
-	KinF1ZXejmH7qX9TjklM1YWXsZD/8n4jW2TLE1UjfP8UaaLVC75wSahLASZ5Dc1j
-	8vU0nw==
+	cgGha5/zNQyybd2qE+gxdZyIWTR5HQtp75D/abAxnHs=; b=fbe6UJ5zC1mnN+mY
+	mfRo0gGSQDRrwZ4ppYqLz8Xvf5EWb5rZUA9Uns+cltHmiLyYqPekmfxcBbbps4T2
+	DRDPOlb1XbdiXNWas8PzCYkqfwXVhTsTYdavVw1cfBp6AIYKi5jHVzf4IGMbGV0M
+	3xS5cv9izb5tWo1Toe0KGcBU/mf+m88OriqE4zaQugcKCQ/qtwXL7oPuN3s53404
+	yMAyYfA6pjqmERKVag6BTLhS66zGlij7XzRV15GDwX9SKLbKp3+Jtdi5C4cejP6H
+	6kqGbE/XWzhy+GKVRJKw6uRbrnwhO/NgNAEjO8e36sg+xVdY4jm8afH7eXZ4x772
+	IYj+RQ==
 Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46w992q9hk-1
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46u5ek539a-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 09:30:21 +0000 (GMT)
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7cd06c31ad6so276122485a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 02:30:21 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 09:31:11 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c5f3b8b1a1so127750385a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 02:31:11 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748511020; x=1749115820;
+        d=1e100.net; s=20230601; t=1748511071; x=1749115871;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=P6gj5u3aEjDTUd8XsUfvCPJYhhIHSGYHPaBVqASbR8I=;
-        b=AC1dViT4xjCzrdp1gaolARHQzLmgIKwuJS6je0fvuenqjbgeJSpTc9UTeVBo5hmYGg
-         w2unMVri+8qFFS/Kp4a0enR8V4aDSUf4yzaVkXFgJ+Pk7rAfkYMgpm5faqcbeIUKqbFE
-         GWWPrYo80KDVbzit4CfiE3lBrKQMDF7h/6F4+c5bVJVrP7lQkII96O6fDAWjkPtK16EB
-         v5YhacABqYuZmJfW6kaXcu7CnzapoloprpE76ZP+tM+abo2FCaIdv3JeLMvsGkrMd5m+
-         hvBbaneJWOqCF6CekvLpb19ldekqM7gls2OpUMI6ulYiCFQKDCTsyYf75I0OZCNz8Hhn
-         4+Kg==
-X-Forwarded-Encrypted: i=1; AJvYcCUOsHzZHZSbP3y1M3vp+tcRV8yXk54uscE2t+l2R97yNxb4SrO8NjkmEzcdnlhDxDGKclbQ7Z/u9KE29v4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxI+szDaEGu2uCjVPa85cjafG1/PW9p+eBuFDlnp9u3NoyLVIuK
-	cgZHzYKQPwVbC4TDkxHQyF1AtM7ATkR4ly60ptz6/7NFhOt5Kxl+13mY5WLhRYgYuC2zMJ6x0e1
-	8tPlJm2s4nuVeK8eph4yGEkcyAvN3rHVLKioWQum/V1pPoYm3fWTNbDWupAJt5AVdHPc=
-X-Gm-Gg: ASbGncv/dnFenCoNR3Pov+2T/f1quxmCNPYOpfNISRnQjaOTvuDsg41zN6rD30B8U9t
-	RPEiqWxEcR2jlFQGiNmxeRGQiFyhXKCg6bkLZ7ntFOtVQOdIoy3xBATkelu6cHfhoGqiSFDOnqW
-	awneqRylP24foAJjZ1RHQRs1TZChUT9XS0mHLB5+emyb6XhZwTuGQIkmuEXLm0GjDLYqnXK8Tj4
-	74gbruYFZoz+0Xp2YMQ26wbzbHVSjX4Fm/I1lb4w9cJDhWmR9rtHOsyrvygjkPHl0iwG6ieuCAw
-	8vMs/TQjGFlrFRUshz3iIav/oBfji8bwZgjf3w==
-X-Received: by 2002:a05:620a:31a4:b0:7ce:eb71:f500 with SMTP id af79cd13be357-7d0987e7ec8mr430402785a.28.1748511019853;
-        Thu, 29 May 2025 02:30:19 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHWz2AvGO86BMuA7xGy7C7kufYtby3ybNxEI9G9NE+7JyBgPrSRhr6xuM6E7oQNmqcSWglyyw==
-X-Received: by 2002:a05:620a:31a4:b0:7ce:eb71:f500 with SMTP id af79cd13be357-7d0987e7ec8mr430398585a.28.1748511019468;
-        Thu, 29 May 2025 02:30:19 -0700 (PDT)
+        bh=cgGha5/zNQyybd2qE+gxdZyIWTR5HQtp75D/abAxnHs=;
+        b=dgPD9yJLF1Sr5uUC0YD7P8tYQSMjvvaARNtNl4YZIS+l3H86UQUNnThQwiTyJIXawX
+         xgu5XQeLlpiS28UP+0Vyxh51j1gEeRyrp7NlEpkviCIOXXdLQDqj48vQxDTc2+ssJkq5
+         qr+hrwn4rqlszWOwc0jz29dCWOJCzdYkm6RsAC1GPFVz426G6vTg3E5iRR0I6Ww/5Bmt
+         j+Ggi5ifZ9QgZ4q3OrMURVHRM3sSWY7PY85KtMlxzZW8BMhro6lZMXUvi00ibOf+I9Va
+         rf7zc50DLXKES+xr4PpNKOsFB5pN28qxscmicxbN/Sw8yeYiUaxjOXBiGFINE/sRJR76
+         4lUg==
+X-Forwarded-Encrypted: i=1; AJvYcCX4JkVaHZrch19fNH5SxOan2eWBnqKzjcMKqRUvEPrVJLotQHG8ZMiYVT7JZ39uUZrNlKHgGGZrssSlLpY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBA3Knpr4m/MDinzeek7XSwEaI3Uws1OBIeu8X+9I+0dM3/HjQ
+	U1nS2R+vlz94/q0Q9c6yXKtouQisPq3dTncoRRkbdRPoYHSyyGu/DR4NNv67XlQSQqukdT1w/7J
+	DWtdqoCiiDq1tW2Ff8pHtTbcxpPuDrl+7YOWjm6v5IkKwbZKIRI2Iw2cCYGWug+miK4I=
+X-Gm-Gg: ASbGncvnSTWw/yX3d4KLsYMd+vNR02vWb4Yn1FquRdZu/aaS2j5Lm+KZIfT3yHNCRnZ
+	uJQO5BFfV2h9JMdzFo2K8Yz5JKfWxTwo2AcNQnflW8agwLT9KvGOva05YS9X75M/g6iny3w33MU
+	Tx1s9A6gmtnlB6BnYEixjmUiLdWzGbwkaJUk7jDh6EMSojQJoM6+8++oEUWxfJgFiKD/3amMC9o
+	5tk0sRbDn1g0KN4uZfZEIHx96twbbt6nJjS0pg2QWrW5H29Xt03MMWC45hWvhgBtsjfEKbyMyxn
+	dWlWA2/YYF+bji31pDw3jp2XVjbV65/oHwyWww==
+X-Received: by 2002:a05:620a:17a2:b0:7c5:5003:81b0 with SMTP id af79cd13be357-7ceecc148e2mr2949959085a.23.1748511070994;
+        Thu, 29 May 2025 02:31:10 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFYvgtz0k2cbgNg2ujuBOWlNX7eUienPe0dFgksnmKUQOUTS4hJwPI18fbq2O+AkxbITzVcGA==
+X-Received: by 2002:a05:620a:17a2:b0:7c5:5003:81b0 with SMTP id af79cd13be357-7ceecc148e2mr2949955385a.23.1748511070653;
+        Thu, 29 May 2025 02:31:10 -0700 (PDT)
 Received: from [192.168.68.109] ([5.133.47.210])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3a4efe73eadsm1405830f8f.41.2025.05.29.02.30.18
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3a4f00a0146sm1421757f8f.93.2025.05.29.02.31.09
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 29 May 2025 02:30:19 -0700 (PDT)
-Message-ID: <457c89b4-b491-4653-bc5c-d2bb4b448b86@oss.qualcomm.com>
-Date: Thu, 29 May 2025 10:30:18 +0100
+        Thu, 29 May 2025 02:31:10 -0700 (PDT)
+Message-ID: <43528c55-a0ac-4854-8485-4db3ac1e7cf4@oss.qualcomm.com>
+Date: Thu, 29 May 2025 10:31:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,8 +88,7 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/8] ASoC: codecs: wcd938x: Drop unused 'struct
- wcd938x_priv' fields
+Subject: Re: [PATCH 7/8] ASoC: codecs: wcd938x: Drop unused variant field
 To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         David Rhodes <david.rhodes@cirrus.com>,
         Richard Fitzgerald <rf@opensource.cirrus.com>,
@@ -105,67 +104,112 @@ Cc: linux-sound@vger.kernel.org, patches@opensource.cirrus.com,
         linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         linuxppc-dev@lists.ozlabs.org
 References: <20250528-asoc-const-unused-v1-0-19a5d07b9d5c@linaro.org>
- <20250528-asoc-const-unused-v1-6-19a5d07b9d5c@linaro.org>
+ <20250528-asoc-const-unused-v1-7-19a5d07b9d5c@linaro.org>
 Content-Language: en-US
 From: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
-In-Reply-To: <20250528-asoc-const-unused-v1-6-19a5d07b9d5c@linaro.org>
+In-Reply-To: <20250528-asoc-const-unused-v1-7-19a5d07b9d5c@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI5MDA5MSBTYWx0ZWRfX5/T6i7Z4sPpe
- yuyhSFEQya9IvdXPlkXnlAuCyZL+zlgKa4Mun9ufcq2vE9G6Mdpw5Hp5/6NPwEr0OyuYKclQUfw
- A6hRlbmB6TQWSBR0bHlHXZv27rO/aqUs01Xr/sMCXSlCATGJxKfWUpAhgUNTp+NfNfgq8YpUAsh
- dAGgDnqB/IR7oeLKgvPR5bQD/z5QyHsGA22LkoOu8kziMi5rIrEN/KqVsX06UptbLNEH5vS2IZP
- 7rZEZfW2d7b3BNSE4zMxXvETCMlx624mvyb3LrIvJ3/IpWWgn3Lb+cuvoyzwAz9nhrUPHZe0K8F
- 7cPcGnGT2mXn2p15P/ciGPkRuyg3NohVu7sBmLHOTyWiYahcZI92C4xzdAtEpGyQVWv2bTIhZgb
- uQ8zZOZuW4bRi84z3oEKwwphXGW0t/44NwKjHgdh16OUwggDgBIMBfB9CxNNfPXlwYA8x3+E
-X-Authority-Analysis: v=2.4 cv=Fes3xI+6 c=1 sm=1 tr=0 ts=6838292d cx=c_pps
+X-Authority-Analysis: v=2.4 cv=GIgIEvNK c=1 sm=1 tr=0 ts=6838295f cx=c_pps
  a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=ZsC4DHZuhs/kKio7QBcDoQ==:17
  a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8
- a=ta2c_YJw1Ga9Y8nrc5oA:9 a=QEXdDO2ut3YA:10 a=PEH46H7Ffwr30OY-TuGO:22
+ a=n-EO9A7QzvSfXDX3UpYA:9 a=QEXdDO2ut3YA:10 a=PEH46H7Ffwr30OY-TuGO:22
  a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-GUID: hX2y7RHDtHPvGbL6uQ989T7KsZQIU6VS
-X-Proofpoint-ORIG-GUID: hX2y7RHDtHPvGbL6uQ989T7KsZQIU6VS
+X-Proofpoint-ORIG-GUID: wRinpmZ42RhuPRZYcNE5BAOr04jtGXl3
+X-Proofpoint-GUID: wRinpmZ42RhuPRZYcNE5BAOr04jtGXl3
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI5MDA5MSBTYWx0ZWRfX4LYpgfwbJAyU
+ ZsbhHmwiPGL9TIS/IBuGYF2L6pKG41J7viufpwe7HKJEG6WqWcuBEzxvq6XsUxeqX7S7ghKHXDl
+ CB6knfxYNsA5cpV8kQKXEVMdsOPPVBztlYqqIiVhkjltFVWyw0YUeafDeFMRxsCt/tEEn3HTEXe
+ wugGkYBBF5QFxjp9XXb/kY62H/2PPRfJOByrLdrAU6NEPEdnFFCy/bzEj22ErVUD/cIAmk3YO+d
+ kTP1ymhWoTeU39wQmruUr7EfAJ6w2vPmtJfPQxoevu42xMm4Nf6KtG6RqxC8ZM3eP8rOBYRRp0b
+ hKBv1GBoSjXn+NRkTB7VojN8Y9hBVH3In/1f9nAV40oolOUqw+59e0UwzZaYKYBHl1V/rszZI1h
+ 0+njXSEcUfBneL9H5hR0XMlyvt9TuKUncde+yZUN0cwjMmb9G0PH34Jaln34f4ngHA2QOb0q
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-05-29_04,2025-05-29_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- mlxscore=0 malwarescore=0 impostorscore=0 phishscore=0 clxscore=1015
- lowpriorityscore=0 bulkscore=0 priorityscore=1501 mlxlogscore=846 spamscore=0
- adultscore=0 suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ impostorscore=0 malwarescore=0 bulkscore=0 clxscore=1015 lowpriorityscore=0
+ adultscore=0 priorityscore=1501 mlxscore=0 phishscore=0 spamscore=0
+ suspectscore=0 mlxlogscore=879 classifier=spam authscore=0 authtc=n/a authcc=
  route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505160000
  definitions=main-2505290091
 
 
 
 On 5/28/25 9:00 PM, Krzysztof Kozlowski wrote:
-> 'wcd_regmap_irq_chip' and 'jack' in 'struct wcd938x_priv' are not used
-> at all.
+> Member wcd938x_priv.variant is assigned in probe() function and used
+> immediately thereafter, thus it can be just a local variable for less
+> variables stored in 'struct wcd938x_priv' device-wide state.
 > 
 > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > ---
 
-
 Reviewed-by: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
 
 --srini
->  sound/soc/codecs/wcd938x.c | 2 --
->  1 file changed, 2 deletions(-)
+
+>  sound/soc/codecs/wcd938x.c | 14 +++++++-------
+>  1 file changed, 7 insertions(+), 7 deletions(-)
 > 
 > diff --git a/sound/soc/codecs/wcd938x.c b/sound/soc/codecs/wcd938x.c
-> index 342d1f7d5dee3ac2d703e5b5602aef9ca2987158..43347c14070ca6dd8035b0c290f0dacb0326122b 100644
+> index 43347c14070ca6dd8035b0c290f0dacb0326122b..5a751056a98a5d4cc5716aafc25af27e3ab22786 100644
 > --- a/sound/soc/codecs/wcd938x.c
 > +++ b/sound/soc/codecs/wcd938x.c
-> @@ -159,10 +159,8 @@ struct wcd938x_priv {
->  	struct wcd_mbhc_intr intr_ids;
->  	struct wcd_clsh_ctrl *clsh_info;
->  	struct irq_domain *virq;
-> -	struct regmap_irq_chip *wcd_regmap_irq_chip;
->  	struct regmap_irq_chip_data *irq_chip;
->  	struct regulator_bulk_data supplies[WCD938X_MAX_SUPPLY];
-> -	struct snd_soc_jack *jack;
->  	unsigned long status_mask;
->  	s32 micb_ref[WCD938X_MAX_MICBIAS];
->  	s32 pullup_ref[WCD938X_MAX_MICBIAS];
+> @@ -168,7 +168,6 @@ struct wcd938x_priv {
+>  	u32 tx_mode[TX_ADC_MAX];
+>  	int flyback_cur_det_disable;
+>  	int ear_rx_path;
+> -	int variant;
+>  	struct gpio_desc *reset_gpio;
+>  	struct gpio_desc *us_euro_gpio;
+>  	struct mux_control *us_euro_mux;
+> @@ -3044,6 +3043,7 @@ static int wcd938x_soc_codec_probe(struct snd_soc_component *component)
+>  	struct sdw_slave *tx_sdw_dev = wcd938x->tx_sdw_dev;
+>  	struct device *dev = component->dev;
+>  	unsigned long time_left;
+> +	unsigned int variant;
+>  	int ret, i;
+>  
+>  	time_left = wait_for_completion_timeout(&tx_sdw_dev->initialization_complete,
+> @@ -3059,9 +3059,9 @@ static int wcd938x_soc_codec_probe(struct snd_soc_component *component)
+>  	if (ret < 0)
+>  		return ret;
+>  
+> -	wcd938x->variant = snd_soc_component_read_field(component,
+> -						 WCD938X_DIGITAL_EFUSE_REG_0,
+> -						 WCD938X_ID_MASK);
+> +	variant = snd_soc_component_read_field(component,
+> +					       WCD938X_DIGITAL_EFUSE_REG_0,
+> +					       WCD938X_ID_MASK);
+>  
+>  	wcd938x->clsh_info = wcd_clsh_ctrl_alloc(component, WCD938X);
+>  	if (IS_ERR(wcd938x->clsh_info)) {
+> @@ -3115,14 +3115,14 @@ static int wcd938x_soc_codec_probe(struct snd_soc_component *component)
+>  	disable_irq_nosync(wcd938x->hphl_pdm_wd_int);
+>  	disable_irq_nosync(wcd938x->aux_pdm_wd_int);
+>  
+> -	switch (wcd938x->variant) {
+> +	switch (variant) {
+>  	case WCD9380:
+>  		ret = snd_soc_add_component_controls(component, wcd9380_snd_controls,
+>  					ARRAY_SIZE(wcd9380_snd_controls));
+>  		if (ret < 0) {
+>  			dev_err(component->dev,
+>  				"%s: Failed to add snd ctrls for variant: %d\n",
+> -				__func__, wcd938x->variant);
+> +				__func__, variant);
+>  			goto err_free_aux_pdm_wd_int;
+>  		}
+>  		break;
+> @@ -3132,7 +3132,7 @@ static int wcd938x_soc_codec_probe(struct snd_soc_component *component)
+>  		if (ret < 0) {
+>  			dev_err(component->dev,
+>  				"%s: Failed to add snd ctrls for variant: %d\n",
+> -				__func__, wcd938x->variant);
+> +				__func__, variant);
+>  			goto err_free_aux_pdm_wd_int;
+>  		}
+>  		break;
 > 
 
 
