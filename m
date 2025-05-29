@@ -1,51 +1,93 @@
-Return-Path: <linux-kernel+bounces-666430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9229BAC769E
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 05:45:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 903ABAC767B
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 05:34:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C81073A7C16
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 03:44:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAF279E21FE
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 03:33:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 111B8248894;
-	Thu, 29 May 2025 03:45:00 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD8FF244686;
+	Thu, 29 May 2025 03:34:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="CbPH+b+m"
+Received: from out162-62-57-137.mail.qq.com (out162-62-57-137.mail.qq.com [162.62.57.137])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BE5220B80C;
-	Thu, 29 May 2025 03:44:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E6CF37160;
+	Thu, 29 May 2025 03:34:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.137
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748490299; cv=none; b=HMaNHTahjL7vOM3TLWHU1TTbMw/6r+n10kLYDZ1AOodtuwRrLEXUDh5l0B6PvreILiLf104aPNOB1wslFGcPafxFTLZYy9aht4FOC1cVuKgfDykbS/J3qygBYZ+WAHSFNJGfQ0oIBIqYMX1y2LgOgUwyQBzI2ka6Rpo2MdJMayk=
+	t=1748489649; cv=none; b=jwWPZxHTaE/fF+hDkHgV5ahrYofxW6sTArKTG1n2DXjUsVAlpCyHJPzGlE9PksVa6cbvFEpXSXT6Y4CLpBh9YlX3efHdo6yt16sO5dqkLL43WsEWE+hO8kBsHJ1perc/354rgsw93j7mWBxrzXSCrWZ3yWSc5Oh1JhqHtg/+orI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748490299; c=relaxed/simple;
-	bh=5bS2W4/zEIXzUiFAznWu+80l7WtTaUnP3K/p4gB4oBc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=D9vPN8XCdXMMzVYjd4A4EY1OPDbv2F2stay88FHIXHAFgh6nQ5/P6Yl1gt0SNKkujz2G/J+5o6BdIf1F7X0HxzBakDDMcrbxH6TxPbHisUZ4yNuhcc7PibobhEsgnOcApNUWdTGZByIIGLeaIl0aLPODZjq3QNNPwbIoxlTcHEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4b7BzJ0SgvzvPsl;
-	Thu, 29 May 2025 11:43:08 +0800 (CST)
-Received: from kwepemg500010.china.huawei.com (unknown [7.202.181.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 5D01B180492;
-	Thu, 29 May 2025 11:44:53 +0800 (CST)
-Received: from huawei.com (10.67.174.76) by kwepemg500010.china.huawei.com
- (7.202.181.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 29 May
- 2025 11:44:52 +0800
-From: Yuntao Liu <liuyuntao12@huawei.com>
-To: <linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>
-CC: <airlied@redhat.com>, <jbarnes@virtuousgeek.org>,
-	<benh@kernel.crashing.org>, <bhelgaas@google.com>,
-	<tiago.vignatti@nokia.com>, <liuyuntao12@huawei.com>
-Subject: [PATCH -next] pci:vga fix race condition in vga_arb_write
-Date: Thu, 29 May 2025 03:32:10 +0000
-Message-ID: <20250529033210.182807-1-liuyuntao12@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1748489649; c=relaxed/simple;
+	bh=CBupvWDj+bp8c+zW9n63VQLzHs/I520TET911IbwSbY=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=IoYUiozUh0NNlZ/q2zlXieiVfrzw3XyCUn1KLTNElBkv/+EK/BMuZtFeBiberh9q8wR+z5hA1ecR3FbvC4qIHubYhPCmKkhs4y4gZaOqF2qtD+Y7WDsXDnQkN4Jun4GM+DN4uFOJurMq4YFk1hNL4snSnVeg56XMsAN3J7NzVTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=CbPH+b+m; arc=none smtp.client-ip=162.62.57.137
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1748489634;
+	bh=0yxfgjZsIWQnTUAUtq7liyCcqoh9g0BEu9JK+IiDETg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=CbPH+b+mfvJOlLDU+X4gv8iv/wxOVsJRnq97ZVJLhBswkb0BXU0+Hr/ZvzPcd0ifE
+	 tN8nsGCFXL1YtlnUUDFdzceFsYYcLSDCKfoiTbtUlq1q6guWSNv5grQjp5uBxIbD7F
+	 RIsha4f2wjaEeUqGTk6LtiTyAKAKWY/vx9aZkFJs=
+Received: from NUC10.. ([39.156.73.10])
+	by newxmesmtplogicsvrszgpua8-0.qq.com (NewEsmtp) with SMTP
+	id 8293B21C; Thu, 29 May 2025 11:32:41 +0800
+X-QQ-mid: xmsmtpt1748489561teyck2g0p
+Message-ID: <tencent_97F8B56B340F51DB604B482FEBF012460505@qq.com>
+X-QQ-XMAILINFO: NnYhxYSyuBnLGYxP4juhxZppL5xEnQkJZl/jDuQ+1KvyfyFpE1SifIj+1iHcPr
+	 CerkoZOaWSmDclDEG/vhipekyH7tjamvBg94Hm5I13vVEWsqDAhDhVJp9Dft4s4t3dAGcmIjyHwE
+	 tUkiytTHBzIgyqv98CkSQ260zuPMKNREBVvZ/ObMl0WU9H2K3AMCUM5LxTaUfm6YrJNZWRMxRwSx
+	 0nPaDdZZt0sEa9Mvw/7I8HIp5gbkwe2nLUPKN8eIQNLbhXNjzjN3sQciWPqdVTAVa3vFc6fUp6Rj
+	 j+KpJYdkLApLbDE3JroYsbTkM8ICao8tdLzh07b3EoXCjQeAO97H7lxWu1dhyTa9GhPJyqefgYuO
+	 xfgSfrXfs54a1ZftUQLXjaJPWtVLCaP5jd27OpTcg2eNYDj2KyQny3kramdHr8ITn0gGfREA/g/j
+	 bUbHjGeZu9iDW0vhf5pv6IE3NbS/roFK5CL9khZLibwtvJhVyYWt1lOg15bF44ygaHzb8jYE1WA3
+	 3Rmnj3t6YTa1RrWRb66YAov6AERrGvJyqC0JAHRMaWOaS6V8eQhs8BQVoJCwn3cyeqJT9b9u7xqD
+	 IymO8WkU50kUy/M6e6g3V6q2eZyzgPYn2a8nz2LY2ScvYPRhKOMiC61GGR3X6gOprHfG0B1Ocmge
+	 nBL1kiz5UDUuC99i720N/OLTsFx00CQFCF9tUGsqcevfF4CBGe88cUA2R5QLXZ333cG1OEjpRyUb
+	 p6cJc1Zdgcqse55albhvaTH54YT6+z0WKJEOFR/QQHhiIgxgVxckQofL8myivlEXnEoNROu1nkk+
+	 L78BeeIyHDifRggkqnKYmccm9q259f9Au4x/DdAsmpw2aQp/kSCDfyJkCxAPQi+eAtG3GAZo+D/f
+	 Kk8O3KW5WVUMq7vU3dUjv9l76O8qbapSZSvYEfCGF6UJNEFX/zyp8ZZMDwI/PNcyqTdGbKmHTJc2
+	 tQWrDf5oQd6z2FdRKPjDhEdS/jx+ZaABaZwioqsZowAlxNXJGMpUYle09NgbaCnRCu/OBM2D+SFN
+	 v6K0RPyWK0dS5ntiWddrTdTr7mFMLi6mIzFeevLnkb1Gdl4i5E
+X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+From: Rong Tao <rtoax@foxmail.com>
+To: ast@kernel.org,
+	daniel@iogearbox.net
+Cc: rtoax@foxmail.com,
+	rongtao@cestc.cn,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Mykola Lysenko <mykolal@fb.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Juntong Deng <juntong.deng@outlook.com>,
+	Amery Hung <amery.hung@bytedance.com>,
+	Dave Marchevsky <davemarchevsky@fb.com>,
+	Hou Tao <houtao1@huawei.com>,
+	bpf@vger.kernel.org (open list:BPF [GENERAL] (Safe Dynamic Programs and Tools)),
+	linux-kernel@vger.kernel.org (open list),
+	linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK)
+Subject: [PATCH bpf-next 1/2] bpf: Add bpf_task_cwd_from_pid() kfunc
+Date: Thu, 29 May 2025 11:32:34 +0800
+X-OQ-MSGID: <5af7a0a04f467df05d2e4cd54a0a7ebf396c3888.1748488784.git.rtoax@foxmail.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <cover.1748488784.git.rtoax@foxmail.com>
+References: <cover.1748488784.git.rtoax@foxmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,48 +95,93 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- kwepemg500010.china.huawei.com (7.202.181.71)
 
-The following code has a race condition under concurrency.
+From: Rong Tao <rongtao@cestc.cn>
 
-if (io_state & VGA_RSRC_LEGACY_IO)
-	uc->io_cnt--;
+It is a bit troublesome to get cwd based on pid in bpf program, such as
+bpftrace example [1].
 
-in race condition:
-pre:  uc->io_cnt = 1
-post: uc->io_cnt = 4294967295
+This patch therefore adds a new bpf_task_cwd_from_pid() kfunc which
+allows BPF programs to get cwd from a pid.
 
-move vga_put code below changing uc->io_cnt code.
+[1] https://github.com/bpftrace/bpftrace/issues/3314
 
-Fixes: deb2d2ecd43d ("PCI/GPU: implement VGA arbitration on Linux")
-Signed-off-by: Yuntao Liu <liuyuntao12@huawei.com>
+Signed-off-by: Rong Tao <rongtao@cestc.cn>
 ---
- drivers/pci/vgaarb.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ kernel/bpf/helpers.c | 45 ++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 45 insertions(+)
 
-diff --git a/drivers/pci/vgaarb.c b/drivers/pci/vgaarb.c
-index 78748e8d2dba..2d0e6cf9eef8 100644
---- a/drivers/pci/vgaarb.c
-+++ b/drivers/pci/vgaarb.c
-@@ -1257,13 +1257,13 @@ static ssize_t vga_arb_write(struct file *file, const char __user *buf,
- 			goto done;
- 		}
+diff --git a/kernel/bpf/helpers.c b/kernel/bpf/helpers.c
+index b71e428ad936..0f32fbc997bb 100644
+--- a/kernel/bpf/helpers.c
++++ b/kernel/bpf/helpers.c
+@@ -24,6 +24,10 @@
+ #include <linux/bpf_mem_alloc.h>
+ #include <linux/kasan.h>
+ #include <linux/bpf_verifier.h>
++#include <linux/fs.h>
++#include <linux/fs_struct.h>
++#include <linux/path.h>
++#include <linux/string.h>
  
--		vga_put(pdev, io_state);
--
- 		if (io_state & VGA_RSRC_LEGACY_IO)
- 			uc->io_cnt--;
- 		if (io_state & VGA_RSRC_LEGACY_MEM)
- 			uc->mem_cnt--;
+ #include "../../lib/kstrtox.h"
  
-+		vga_put(pdev, io_state);
+@@ -2643,6 +2647,46 @@ __bpf_kfunc struct task_struct *bpf_task_from_vpid(s32 vpid)
+ 	return p;
+ }
+ 
++/**
++ * bpf_task_cwd_from_pid - Get a task's absolute pathname of the current
++ * working directory from its pid.
++ * @pid: The pid of the task being looked up.
++ * @buf: The array pointed to by buf.
++ * @buf_len: buf length.
++ */
++__bpf_kfunc int bpf_task_cwd_from_pid(s32 pid, char *buf, u32 buf_len)
++{
++	struct path pwd;
++	char kpath[256], *path;
++	struct task_struct *task;
 +
- 		ret_val = count;
- 		goto done;
- 	} else if (strncmp(curr_pos, "trylock ", 8) == 0) {
++	if (!buf || buf_len == 0)
++		return -EINVAL;
++
++	rcu_read_lock();
++	task = pid_task(find_vpid(pid), PIDTYPE_PID);
++	if (!task) {
++		rcu_read_unlock();
++		return -ESRCH;
++	}
++	task_lock(task);
++	if (!task->fs) {
++		task_unlock(task);
++		return -ENOENT;
++	}
++	get_fs_pwd(task->fs, &pwd);
++	task_unlock(task);
++	rcu_read_unlock();
++
++	path = d_path(&pwd, kpath, sizeof(kpath));
++	path_put(&pwd);
++	if (IS_ERR(path))
++		return PTR_ERR(path);
++
++	strncpy(buf, path, buf_len);
++	return 0;
++}
++
+ /**
+  * bpf_dynptr_slice() - Obtain a read-only pointer to the dynptr data.
+  * @p: The dynptr whose data slice to retrieve
+@@ -3314,6 +3358,7 @@ BTF_ID_FLAGS(func, bpf_task_get_cgroup1, KF_ACQUIRE | KF_RCU | KF_RET_NULL)
+ #endif
+ BTF_ID_FLAGS(func, bpf_task_from_pid, KF_ACQUIRE | KF_RET_NULL)
+ BTF_ID_FLAGS(func, bpf_task_from_vpid, KF_ACQUIRE | KF_RET_NULL)
++BTF_ID_FLAGS(func, bpf_task_cwd_from_pid, KF_RET_NULL)
+ BTF_ID_FLAGS(func, bpf_throw)
+ #ifdef CONFIG_BPF_EVENTS
+ BTF_ID_FLAGS(func, bpf_send_signal_task, KF_TRUSTED_ARGS)
 -- 
-2.34.1
+2.49.0
 
 
