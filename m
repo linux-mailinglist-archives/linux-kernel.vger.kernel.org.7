@@ -1,94 +1,130 @@
-Return-Path: <linux-kernel+bounces-666771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0FEBAC7B9F
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 12:10:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE9D7AC7BA2
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 12:10:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16A754E353E
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 10:10:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB7291BC7D5F
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 10:11:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD29628DF36;
-	Thu, 29 May 2025 10:09:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 264E728DB68;
+	Thu, 29 May 2025 10:10:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WTqoxso4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TUcB3wHU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14C5628DEE5;
-	Thu, 29 May 2025 10:09:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 846C1A55
+	for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 10:10:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748513397; cv=none; b=u10Obdlej5vSQIjFDTjuB6Ax/Czxb6bRPUPkfkCl+XwixbmMDRnFn3Jmz8rCtiaQa3vEHjWyBqhrbk0wnVgFudZIwXc4y5WKcCwddTs01gS+A2nU7u5jDpoOCylK+m83Fk8z1ARUGUZ43wbBi4O2c1bVgBej1zSszNb9PEDPLrM=
+	t=1748513453; cv=none; b=cUwQxjByRg1C4yM4P/kgoJJBpmpjrMan81oTZtCpOn/SYsG9/zkhmUtoArFc+biP/0lzlQW+cu9xf9ac26jAysiQjWRRSXyRb1YUKm/O4n6VihNLGoEU/TAdo9FcNy5LDkl3ZSzRLBq9Sx1zKK+uV4g0vE8wBMxgmz9GoETcyTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748513397; c=relaxed/simple;
-	bh=tDDF14MUq91tGPd3QEjRGe6rfJ9pvL7KTNIk3v2tUmc=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=qd1PjlEhEGNfJBrdEmT/bhm0lCm9IzamuYlAVL4kRSzpstT5NSAeex7v0SzIS2lS0MKj3ipelnCgr7Ngi5fi4pXqGW6NaHBZrwAa0ELMM78IkSkovqiusnB/H8mmPGh4PdCtJEf8GfYdlHo6ZfToamPtqHm6jkNP/p9eXEPu/C4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WTqoxso4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74749C4CEED;
-	Thu, 29 May 2025 10:09:56 +0000 (UTC)
+	s=arc-20240116; t=1748513453; c=relaxed/simple;
+	bh=2SPYYnFsmGwjObQFoYHVAiWE4pV7Oa7ae04lMbI5XuU=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ezEQFzZrgA4ZHZ1bSLsUooJ2Xg5FEXS2qEkzA8jfGPos2YdBx+h/KipNrd2Vl2XqSOK++9lrDs9EszHhPcFLZ8irWHoin5VNcMgtS5lkshIg2vtc980k4bkd+mH2M5ilLrNikGx0fcfBIe29xRQi9LUc+c57YQ5aGxDBlc9DGbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TUcB3wHU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE49EC4CEE7;
+	Thu, 29 May 2025 10:10:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748513396;
-	bh=tDDF14MUq91tGPd3QEjRGe6rfJ9pvL7KTNIk3v2tUmc=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=WTqoxso4CTKBegMHxZdxpUhIEORX2gnMGe/DvfocfRGm9lhjh1wktihYM6YhcBePa
-	 KxKPMkU4HPOOUP7MGu2G8RkFIJ3dkx1tYB9TfGw+c+DBaGChd30oKeKSKhyXiW0KcU
-	 jWVXHjNbbmk92p/hk8IP83FKzvapVUWJLpQFggpOamRYMCyk64aECgAvrALdgVddTE
-	 0pwTQNj525am3wvtiGKHMd5BN1C8rCR5xpj4f16p6xLXO3bXcVfNm/4zXLPP+fiYs2
-	 NgbtBcBJUTQAIINGWFWd8Z1/M6Z5rUqCs6KR8DNE8cKw67hBkPkdGEEOWeSsp41z43
-	 lTKqsDMikMb5w==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70D0439F1DEE;
-	Thu, 29 May 2025 10:10:31 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1748513453;
+	bh=2SPYYnFsmGwjObQFoYHVAiWE4pV7Oa7ae04lMbI5XuU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=TUcB3wHUmCVqLoGVnAoDIV50ON/bLiJCsR/YyoPh8q7CfuBzyFrVehALmhf78uCzV
+	 3MyNyUkspKXSiCzx92+WJZ3JtuPxW9taxrrj7LacpOocaOg+e0REJQXBsEiNYFgRqK
+	 MQNXU0tCc7R49U4ijpM+RMpnlYRtvTAbvf6F21UtMBcbHNfsj0ShSXN/15SW3DsNI8
+	 LDPsdcQ8Ox4kuw1UkE64ztiRTl8vgOGyoF80CtAZhkHYMV3h9WP2y7gbdc8oLWiVuc
+	 A517vrwk+Q6hDegIBhp7pGWNJw+XhSc+Ox6gzvPUDWHWgnqE/NirNtwMHS8RYNbltR
+	 cDfHEOpDsz6Hg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1uKaDq-001WiE-HB;
+	Thu, 29 May 2025 11:10:50 +0100
+Date: Thu, 29 May 2025 11:10:50 +0100
+Message-ID: <86bjrbenh1.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Xi Ruoyao <xry111@xry111.site>
+Cc: James Morse <james.morse@arm.com>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	Ben Horgan <ben.horgan@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+	Mingcong Bai <jeffbai@aosc.io>,
+	Shaopeng Tan <tan.shaopeng@fujitsu.com>
+Subject: Re: [PATCH v3] arm64: Add override for MPAM
+In-Reply-To: <86cybrenvx.wl-maz@kernel.org>
+References: <20250516102556.9688-1-xry111@xry111.site>
+	<86cybrenvx.wl-maz@kernel.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] rxrpc: Fix return from none_validate_challenge()
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174851343024.3214659.15855442080815222301.git-patchwork-notify@kernel.org>
-Date: Thu, 29 May 2025 10:10:30 +0000
-References: <10720.1748358103@warthog.procyon.org.uk>
-In-Reply-To: <10720.1748358103@warthog.procyon.org.uk>
-To: David Howells <dhowells@redhat.com>
-Cc: netdev@vger.kernel.org, dan.carpenter@linaro.org,
- marc.dionne@auristor.com, kuba@kernel.org, davem@davemloft.net,
- edumazet@google.com, pabeni@redhat.com, horms@kernel.org,
- linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: xry111@xry111.site, james.morse@arm.com, anshuman.khandual@arm.com, ben.horgan@arm.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, shameerali.kolothum.thodi@huawei.com, jeffbai@aosc.io, tan.shaopeng@fujitsu.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Hello:
-
-This patch was applied to netdev/net.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
-
-On Tue, 27 May 2025 16:01:43 +0100 you wrote:
-> Fix the return value of none_validate_challenge() to be explicitly true
-> (which indicates the source packet should simply be discarded) rather than
-> implicitly true (because rxrpc_abort_conn() always returns -EPROTO which
-> gets converted to true).
+On Thu, 29 May 2025 11:01:54 +0100,
+Marc Zyngier <maz@kernel.org> wrote:
 > 
-> Note that this change doesn't change the behaviour of the code (which is
-> correct by accident) and, in any case, we *shouldn't* get a CHALLENGE
-> packet to an rxnull connection (ie. no security).
+> So you would need to:
 > 
-> [...]
+> - nuke both MPAM and MPAM_frac in their respective ID registers,
+>   ensuring that we effectively advertise the absence of MPAM
+> 
+> - either check for both fields wherever we currently refer only to
+>   MPAM, as what we have today looks fragile, or unconditionally
+>   override both ID fields if the HW actually implements MPAMv0.1.
+> 
+>   I personally think the former is easier to implement.
+> 
+> Note that these would be two separate changes, and that you only need
+> to implement the first one to achieve what you're after for the
+> current level of MPAM support.
 
-Here is the summary with links:
-  - [net-next] rxrpc: Fix return from none_validate_challenge()
-    https://git.kernel.org/netdev/net/c/fd579a2ebbe4
+To be completely clear, the change for this patch could be as simple
+as this:
 
-You are awesome, thank you!
+diff --git a/arch/arm64/kernel/pi/idreg-override.c b/arch/arm64/kernel/pi/idreg-override.c
+index 836e5a9b98d03..bc57b290e5e7b 100644
+--- a/arch/arm64/kernel/pi/idreg-override.c
++++ b/arch/arm64/kernel/pi/idreg-override.c
+@@ -155,6 +155,7 @@ static const struct ftr_set_desc pfr1 __prel64_initconst = {
+ 		FIELD("gcs", ID_AA64PFR1_EL1_GCS_SHIFT, NULL),
+ 		FIELD("mte", ID_AA64PFR1_EL1_MTE_SHIFT, NULL),
+ 		FIELD("sme", ID_AA64PFR1_EL1_SME_SHIFT, pfr1_sme_filter),
++		FIELD("mpam_frac", ID_AA64PFR1_EL1_MPAM_frac_SHIFT, NULL),
+ 		{}
+ 	},
+ };
+@@ -247,7 +248,7 @@ static const struct {
+ 	{ "rodata=off",			"arm64_sw.rodataoff=1" },
+ 	{ "arm64.nolva",		"id_aa64mmfr2.varange=0" },
+ 	{ "arm64.no32bit_el0",		"id_aa64pfr0.el0=1" },
+-	{ "arm64.nompam",		"id_aa64pfr0.mpam=0" },
++	{ "arm64.nompam",		"id_aa64pfr0.mpam=0 id_aa64pfr1.mpam_frac=0" },
+ };
+ 
+ static int __init parse_hexdigit(const char *p, u64 *v)
+
+
+HTH,
+
+	M.
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Without deviation from the norm, progress is not possible.
 
