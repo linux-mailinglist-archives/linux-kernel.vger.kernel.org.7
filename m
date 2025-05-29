@@ -1,139 +1,129 @@
-Return-Path: <linux-kernel+bounces-666708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C437AC7ACE
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 11:14:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5718AC7ADA
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 11:16:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22AA71C015AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 09:14:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FE894E36AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 09:16:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A6D221CC47;
-	Thu, 29 May 2025 09:13:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 430F621C198;
+	Thu, 29 May 2025 09:16:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dm9EHB9D"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="xMwwPT9R"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB0DF219E93;
-	Thu, 29 May 2025 09:13:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EADD82147F5
+	for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 09:15:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748510021; cv=none; b=gQ8AN/g/yy1vAUicL3uiKK08aIxsTB3mQmfYLM5Ndqj8hlLMRc/oifYezbvqpvaDrWZUg6zCFnmmpxlR4gBBp5dAuEfD3gMGxC4SYGVfqOkZRVr0i1/0rlAO9PH4+Pc7a85pH+FBG4ZFIguBoNqCfdSv4LsTFhewMH2so69jU9k=
+	t=1748510161; cv=none; b=GkYXx7kUvEe7lbKSwRmoK3r+aOIJKhzRmQo4j7IVjEFKiQxEjRqSFriO6RIQ4S8ynw0jtlCbtWtruHAga+dbh/8ZV0RHm1Bi94l8iTQkL/7QRfwFYb0KkitVhFtHlUULs828+MJBH/3K0jYXr65Bfd1xyRt27aEbvzAOzOurzgY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748510021; c=relaxed/simple;
-	bh=STUwJDo6edB2rYB+1OgDpYTIjZtzhbvx4FZHvhQiXeA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=m6GlgxjgSZfVjS5k+W38tLBo1GeF3/MGkGNrB+8bmST17DUiPiW0FpEVuuY/htJyvwGUaybONe2i29jWX/nBLOt9004auygibyj1dsQjoh0OrMQ1HlZ0i6JwhVCpoVBLtTRU+4v+noIMloj1TpYBXXGqbQA4pUcVWufFGbI7Afg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dm9EHB9D; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25031C4CEEB;
-	Thu, 29 May 2025 09:13:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748510021;
-	bh=STUwJDo6edB2rYB+1OgDpYTIjZtzhbvx4FZHvhQiXeA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Dm9EHB9Dym1P4YSNVcAw+j4JySIBaRBj7KwkbBbwFOKxXgrLYXFq9wwogw3AMj+SI
-	 5lluzAHzDnczCS2lAy49igbyZhsMt2DXVotzAP7mSgP7OR9JYxwxqzya03OX7JWd7d
-	 6vgU0t14XaCz1aWIMKek65jc/IrpjdSMohOBKqCdWnlWJ5ro6d1VR9iNHphlwJY4+A
-	 xzkhQAoRoMNujsiu9IARLgJepqidJWTYz3+Ugb1Lzsf2Sq4urg6YruSLvYqL/QwtYi
-	 1BPSRCUzgbxOyyqrMqtM4BnOeOhGFJXQZuj9WziJJv8v4Ib2/S8INK5ZbdVxkSrI6T
-	 MBXDD+5xQ8TxA==
-Message-ID: <e5b5a526-e710-4ed3-ae05-7c5bda55e293@kernel.org>
-Date: Thu, 29 May 2025 11:13:37 +0200
+	s=arc-20240116; t=1748510161; c=relaxed/simple;
+	bh=dgQwzlZ78BgpNxIj5EI6KF5CPzlkbHaCeBBTWQKGv/M=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=CLRCWxmUzDR2U8AIQc6AtLQy8N+bYpdKugmz+ilvSUqCztTOA7xy6eaDsKVn2Zh9lTojg3LVzEXFwBgs/JN6qN8vUXt6LaJZEz1vJ8ayBv193BFBwUSRZYWuTh6MD6LkVRI3/Y+H14T+08YsTIrJ4mDdGcHiMIyrEm8n1eAgxLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=xMwwPT9R; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-450d37d4699so1104915e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 02:15:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1748510157; x=1749114957; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ri4BKapRmsthsSzIIgwhod8a8EzAqSCrIVP+j9E6hD4=;
+        b=xMwwPT9R9QelsDYEcjdDnBsV2+gZuw3WE8Tr/QSMsxSWrRBypvsABR0rhNXC8uCiXL
+         rl6ziNmLSosXiiIl46kGUx4pLXtK+VPNLwBA96pt6q90JHZigZy8DwujbSO3vbJXLI6y
+         JxA4LrQcNdcbmXZ/rGGAvk6uhwZvkUeiUyNexR7WhfDs5NBuni209c2IkMC/2GDGhDGW
+         vJfVThmUIMnTuangLjNs/FqKY2rdAfbkQ154+op8LFQ6MbkDrzIGx9Rwfq5JHcKSLDFL
+         Ng4zmoUxOMAxd+gdezPE3M1CpYNkwF240qscVpnrHjA/MlVOM6W6rYuCgRhrwWW58fgM
+         KGTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748510157; x=1749114957;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ri4BKapRmsthsSzIIgwhod8a8EzAqSCrIVP+j9E6hD4=;
+        b=cv5FF39J+ceOMpNIwQLTJaMxGKiTEBOZ2yj8LSVo1FSdOdVA5NtrZJbWe5FFji9jzE
+         6l+GMmkrU3sE8VoNOGW47vSjMRQKi1p02Be73p65RG8TJ+TkVaFB3vUxkx8H9vc33jI0
+         BiGqa9DAHt8RH9AhXwiRPs9QrZfFF+DoiMdwWs1MYenvUkcX556mGXqZqy4Mxaa66X7A
+         IJ++vOkkBA4Fg5xKhek2fKbfNgQINZpqPCdEZqwtTKbcmP81d1QDro/gdo4AWItOTsue
+         pLJ8c3Kf19dKKZ7v4HaBps6Z+zrJyEJromtMRTvBuj/J1PlutuUmzXi/X176eH1swxmw
+         FIWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUGWX/LPDqrsA3eL/wHKzMczxTK6CKbGYd47hSPg+Y2Cd8XLNDoe4LvodWbrvrrUMIx7ae9NY5pAgvo308=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEb0tJvEgvY7YoWQLUbpzaDUABPPOCCzemsRCp0PRUXgdt8a9h
+	K9ABuhyuNPeJ3XIrOdOhWrmw95KlPnpodhh8PsZrmihiCQAOOXHeuMv0QO4+t06DTiuY40iA5nU
+	Xt3n3
+X-Gm-Gg: ASbGnct4wm+cFtC1oENZJc2HGpimSZ03I84THv+ZfJ9ucC6osnIxEzqiutkBRWsoJFE
+	w2nbhou5x3ZaGgsuViva8/5ThRSC0khAWk4aZo/jazALfqlfjAuQKsBEtnENJEFDOL1X62LB8RJ
+	rLTlq/iDfXKYsxyotIclIuTAqmdiVRPaB5DuwXxSkFpCtQv2QtXoDvS23UFL4Ok6zaSYmXvsKv+
+	sBeQK6jSTw7IDnSTXHF6lDK2LAMQRNZvt0mVZGE2oLlBsJh06U9C5nWpL+wsat4HCqr9Q8UJEz+
+	qWzetsrwCskfLeP0AuXZ9ODJTnZJJMA8RgvzemwOoe4DgJVGqkXnDfYL39+DHqKoFWVRrMYw9EK
+	Pogc7WqDM80HKncq4MAvaSX8l6FswfpSF6jTxGz+ysg==
+X-Google-Smtp-Source: AGHT+IEJjdD4jVw4IBSE2F10tS3OahqEngmAPlCUh+JCF/Lrsh11gYsYhNMqeg1R7hRVjK3TitRUug==
+X-Received: by 2002:a05:600c:34d2:b0:439:8c80:6af4 with SMTP id 5b1f17b1804b1-4507256216dmr43854925e9.19.1748510157028;
+        Thu, 29 May 2025 02:15:57 -0700 (PDT)
+Received: from [192.168.0.2] (host-80-116-51-117.retail.telecomitalia.it. [80.116.51.117])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-450cfc348bdsm14318475e9.33.2025.05.29.02.15.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 May 2025 02:15:56 -0700 (PDT)
+From: Angelo Dureghello <adureghello@baylibre.com>
+X-Google-Original-From: Angelo Dureghello <adureghello@baylibre.org>
+Subject: [PATCH 0/2] iio: adc: ad7606: enable Vdrive and Vrefin power
+ supply voltages
+Date: Thu, 29 May 2025 11:13:53 +0200
+Message-Id: <20250529-wip-bl-ad7606-reference-voltages-v1-0-9b8f16ef0f20@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 6/9] ARM: dts: stm32: add Hardware debug port (HDP) on
- stm32mp15
-To: =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>,
- Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org
-References: <20250528-hdp-upstream-v4-0-7e9b3ad2036d@foss.st.com>
- <20250528-hdp-upstream-v4-6-7e9b3ad2036d@foss.st.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250528-hdp-upstream-v4-6-7e9b3ad2036d@foss.st.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFElOGgC/x2NwQqDMBAFf0X23IW4NCn2V0oPMXnqgkRJigriv
+ zd4HBhmTirIikLv5qSMTYsuqUL7aChMPo1gjZVJjFhjpeNdV+5n9vHljOOMARkpgLdl/vkRhcU
+ Nz86Kia0Eqpm1Onrci8/3uv5EBNs2cgAAAA==
+X-Change-ID: 20250529-wip-bl-ad7606-reference-voltages-26f49520d12c
+To: Lars-Peter Clausen <lars@metafoo.de>, 
+ Michael Hennerich <Michael.Hennerich@analog.com>, 
+ Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Andy Shevchenko <andy@kernel.org>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Angelo Dureghello <adureghello@baylibre.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=595;
+ i=adureghello@baylibre.com; h=from:subject:message-id;
+ bh=dgQwzlZ78BgpNxIj5EI6KF5CPzlkbHaCeBBTWQKGv/M=;
+ b=owGbwMvMwCXGf3bn1e/btlsznlZLYsiwUA2RYpptFNLRc25xvkLwRQ/73+wm6cd8lmW8SJl+T
+ m/DyZZtHaUsDGJcDLJiiix1iREmobdDpZQXMM6GmcPKBDKEgYtTACYSsJ6R4fiHFyfPcPnlaXr/
+ 8NmlUHH189aKdztb9HbMDT2TeaBSZTbD/0SN336yDou3TjBU6jFZVWISxsh2kLP3wZWFhtU7r/7
+ VZQMA
+X-Developer-Key: i=adureghello@baylibre.com; a=openpgp;
+ fpr=703CDFAD8B573EB00850E38366D1CB9419AF3953
 
-On 28/05/2025 15:30, Clément Le Goffic wrote:
-> Add the hdp devicetree node for stm32mp15 SoC family
-> 
-> Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
-> ---
->  arch/arm/boot/dts/st/stm32mp151.dtsi | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/st/stm32mp151.dtsi b/arch/arm/boot/dts/st/stm32mp151.dtsi
-> index 0daa8ffe2ff5..b1b568dfd126 100644
-> --- a/arch/arm/boot/dts/st/stm32mp151.dtsi
-> +++ b/arch/arm/boot/dts/st/stm32mp151.dtsi
-> @@ -270,6 +270,13 @@ dts: thermal@50028000 {
->  			status = "disabled";
->  		};
->  
-> +		hdp: pinctrl@5002a000 {
-> +			compatible = "st,stm32mp151-hdp";
-> +			reg = <0x5002a000 0x400>;
-> +			clocks = <&rcc HDP>;
-> +			status = "disabled";
-Same problem.
+Enable Vdrive and Vrefin power supply voltages. Related fdt properties
+are already defined in ad7606 dt_schema.
+
+Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+---
+Angelo Dureghello (2):
+      iio: adc: ad7606: enable Vdrive power supply
+      iio: adc: ad7606: add enabling of optional Vrefin voltage
+
+ drivers/iio/adc/ad7606.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+---
+base-commit: aa1b3efb8425b572d67df2f5d47ee4ed25571428
+change-id: 20250529-wip-bl-ad7606-reference-voltages-26f49520d12c
 
 Best regards,
-Krzysztof
+-- 
+Angelo Dureghello <adureghello@baylibre.com>
+
 
