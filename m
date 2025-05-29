@@ -1,51 +1,57 @@
-Return-Path: <linux-kernel+bounces-666793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3772CAC7BE2
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 12:40:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C882BAC7BD6
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 12:35:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19B4A1BC6E0B
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 10:41:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEBD81C02AB3
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 10:35:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 828F828DF22;
-	Thu, 29 May 2025 10:40:29 +0000 (UTC)
-Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78E9728D8EE;
+	Thu, 29 May 2025 10:35:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ew0s0ZO2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 088BA288C8D;
-	Thu, 29 May 2025 10:40:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA8DC26B2D7;
+	Thu, 29 May 2025 10:35:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748515229; cv=none; b=PJIbWaYU73X6NjNegnAWxkMFG36TmLOm8EFsbHbO8SJ1Og8S9arQTtmuADTKiJRAnZuGhnvEZ5ztJHvAG567qYo9rVJT+IqTd74Iwj+V2dMnYCyCA7slYh4SHiPjYzcGnzjXpGyiKY4Jq4eDKbDZdwqmcyyiZP117JXm1HGaRg8=
+	t=1748514916; cv=none; b=pMNTBGvxcyeJZpYAIbJYLNB7U5ykJqMSplz94D5bqRlmbxXmpe8D3GRE5nSD8KxUqLaRdrgi5IVQjbPzggpcu9+i8UGR6WmvbwzBSVtkSgRPsNAfoGpskv9c+TqQQLF96lzyudAvweNPZHHH+lpOPTFn0dLEX+PGnVHyTaBkW3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748515229; c=relaxed/simple;
-	bh=UxGVSqNYEg/j9JIZ9TzAPE7mlxnvxUd7kLNBw4/t2sA=;
+	s=arc-20240116; t=1748514916; c=relaxed/simple;
+	bh=hB4q6DbdzCPTadexTJ+gJgVNRa0VS7ElVWA1w8+W7As=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KkGtd8iFVZ6RxkL1frM2XUJyOUvsGpvwjDZn0AqnLVdKpfMGUUWI7wDwP1eh9xTz8aBfvM9eMqqHl/YQOGYO38S+9tQGySe7oZHP2xePOJcpq6CMye+SWlHWCCS4SsGU+ug0ObtSIen2AuPVINVOQ+6rJFLccixkZzyaCslAtrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout1.hostsharing.net (Postfix) with ESMTPS id C93712C06670;
-	Thu, 29 May 2025 12:34:36 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id ABF3F25C488; Thu, 29 May 2025 12:34:36 +0200 (CEST)
-Date: Thu, 29 May 2025 12:34:36 +0200
-From: Lukas Wunner <lukas@wunner.de>
-To: grwhyte@linux.microsoft.com
-Cc: linux-pci@vger.kernel.org, shyamsaini@linux.microsoft.com,
-	code@tyhicks.com, Okaya@kernel.org, bhelgaas@google.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] PCI: Reduce delay after FLR of Microsoft MANA devices
-Message-ID: <aDg4PE4Zbzwps71E@wunner.de>
-References: <20250528181047.1748794-1-grwhyte@linux.microsoft.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=X4uLunVwIDTTZUFo5XaQGD+vXb7ELe9zaf/QhR97q2/vGlharn5GWdzgUv7aMhM0ktmsMpk76jnS3d5e6kmi6e3POrsv10C+ThjujCotAi5CyuDArM1iqwrj756QwlChxEpHCnLSWPaYr4SObsbX/rNN8jrvfeZcBSJA/+gX1l4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ew0s0ZO2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03284C4CEE7;
+	Thu, 29 May 2025 10:35:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748514916;
+	bh=hB4q6DbdzCPTadexTJ+gJgVNRa0VS7ElVWA1w8+W7As=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ew0s0ZO2G7P5uoFmPJeKrzjjTlhaa3PAclowyFXYt1AOF32x9wQF6XTp5l3mROQjV
+	 N26phEsrOanKkp3o7sPHuy9g6A5wfcVm4lE1izS4tAu5viLugH2geL1vDedz0Ob8A1
+	 fUenCb+cmuscrMFAuoDZKaIFEpXLZb/kuHPURL0ng5DF7nMtnt0PUtPB4OF9X/3uBB
+	 XsWNNJfYl5cwRZnX5DI2Up5tEKX6DGjExo+fGWxnZMHOdTx/mlL52nEiKr7EVTjDaG
+	 OWTWn69FJdIAxtYJKNuQkA9LL/7y2YHoS7EkVCdES2ZDz0myBdtneMg3ctH2Q+WzrC
+	 wki+c4eM4GPJw==
+Date: Thu, 29 May 2025 11:35:11 +0100
+From: Simon Horman <horms@kernel.org>
+To: Qingfang Deng <dqfext@gmail.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-ppp@vger.kernel.org
+Subject: Re: [PATCH net-next] ppp: convert to percpu netstats
+Message-ID: <20250529103511.GO1484967@horms.kernel.org>
+References: <20250529092109.2303441-1-dqfext@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,25 +60,23 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250528181047.1748794-1-grwhyte@linux.microsoft.com>
+In-Reply-To: <20250529092109.2303441-1-dqfext@gmail.com>
 
-On Wed, May 28, 2025 at 06:10:47PM +0000, grwhyte@linux.microsoft.com wrote:
-> Add a device-specific reset for Microsoft MANA devices with the FLR
-> delay reduced from 100ms to 10ms. While this is not compliant with the pci
-> spec, these devices safely complete the FLR much quicker than 100ms and
-> this can be reduced to optimize certain scenarios
+On Thu, May 29, 2025 at 05:21:08PM +0800, Qingfang Deng wrote:
+> Convert to percpu netstats avoid lock contention when reading netstats.
+> 
+> Signed-off-by: Qingfang Deng <dqfext@gmail.com>
 
-How often do you reset these devices that 90 msec makes a difference?
-What are these "certain scenarios"?
+## Form letter - net-next-closed
 
-There are already "d3hot_delay" and "d3cold_delay" members in
-struct pci_dev.  I'm wondering if it would make sense to add
-another one, say, "flr_delay".  That would allow other devices
-to reduce or lengthen the delay without each of them having to
-duplicate pcie_flr().  The code duplication makes this difficult
-to maintain long-term.
+The merge window for v6.16 has begun and therefore net-next is closed
+for new drivers, features, code refactoring and optimizations. We are
+currently accepting bug fixes only.
 
-Thanks,
+Please repost when net-next reopens after June 8th.
 
-Lukas
+RFC patches sent for review only are obviously welcome at any time.
+
+-- 
+pw-bot: defer
 
