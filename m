@@ -1,159 +1,125 @@
-Return-Path: <linux-kernel+bounces-666931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 504B4AC7E13
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 14:45:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2B7EAC7E18
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 14:46:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 650ECA41E01
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 12:45:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D00FA1BC82E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 12:46:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4510722D4FA;
-	Thu, 29 May 2025 12:42:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6DC32253E1;
+	Thu, 29 May 2025 12:44:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ZS5zncOf"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OfcfmGIR"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4C3722D4E6
-	for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 12:42:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B73B92248AB;
+	Thu, 29 May 2025 12:44:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748522569; cv=none; b=SucIN0bo9vpmtDAiDq0cBB7RKhgL8dX6CIY/IUWD1GV3eC9v96Bv0c/2o+4olp2IMcp09nmI/TI+bEOjLLPOwuR6ltkSXBX1mOhG6JRn1x2B+IwqKYb2SMEUPB0nwAUKVJRO4qxTHYMvAatSY/RbRlKD6EHC55RLM9CpFuxKiG8=
+	t=1748522653; cv=none; b=f7Fiza4bGuLBC9HT4oT1OLwLU6gMIAnpHouJ8dAU0HqBs1MPTCe7+spYtPAQgAcEjqqIGmgF/4V9FZO6AV0GxpD0ZW1pEoRh7iq51U/2Iwa7R/Lc1izALhKL+VHpLKza+sTgdvwPGVxiPIy5ALxA5Ut80mHdsRJCjZRnbin1+Bc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748522569; c=relaxed/simple;
-	bh=Cxv3DdNSTbG6mkWW+XlQDzM5M3k//FCq7uG/9MGjWvM=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cH3SwF3XeApnPkorgrmwTVoe/Rtx06ZnYr6z6YCpx4rysDpVvVXvWCTr4Nj8jQ9TtXkckhWGhlUclk3oZ4aJ6/HTL5TZACQMVS/wkACKErrSwAsrXxF1qZldDq9btpz7VKMYuhDTI8lQrGW6qaO+zFQSi/jsH+MOlRtKpHp43lI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ZS5zncOf; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ad1d1f57a01so152151666b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 05:42:46 -0700 (PDT)
+	s=arc-20240116; t=1748522653; c=relaxed/simple;
+	bh=DU0IJ0+/nwSm/K9hGP4DcuS6ep/cTHu1pVRhL43vVBs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=YI+S1HnZPekuMvQoape8p63/LKKNIzZ0S2CJ9tufLvBhKMWTbhN85eXxEU2yxktbhq68PPaSdrEmc9ACJqeSoFcsFNgQaYqJDhaeV864kGla9cVyppAJ6Jc1gKJs9FjrMhuhDLkW7G536WhBNEuqW3/oOp5vp+oV3+XNisam3II=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OfcfmGIR; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-450cf214200so7074665e9.1;
+        Thu, 29 May 2025 05:44:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1748522565; x=1749127365; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=i8LMEHYmovrRN8zYWQwYy5+2ddqvSDMDQcnZraZcEHI=;
-        b=ZS5zncOfC+K7c9w1dnbJRv6ieLVSoQAPrRkjhVg60LhgyGuVHQ7FO+jREy4JVcZsZf
-         wUaohrPRRPCxex9EznSVNEWLE297C90KV73nVMKFqMaUoXwzqB8HYsvLOM2oQnZ42N0y
-         6VvAp4BryHzZQRTqOPHh6aIIX/Kuue8Sx7e/m3GEhZrkHVMg4ABmRKtP8g20NBD8F1MG
-         NmGmMZBi2Lc4wyI0g4kMyB3Z5QaVpDoORuJbmrAxi8lMGmRhAcjcyAzE91gPRfXIHVFE
-         a7IMY9I+Z0xXgbWV5YLC3bWMRrX65sl2KAtNegTxnaabqfoVoM/fCPEjzxbOzP0NP+NR
-         iR4g==
+        d=gmail.com; s=20230601; t=1748522650; x=1749127450; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Xy9+1WxqxPkcvDSbf/PL1XyrGbcJDd9HZLFKhqLgSaA=;
+        b=OfcfmGIRaxkKqM63wYjLsLfLiy464mxreNY/d0yOFqNe9IUqWYsQj1FwQXS8Njtvra
+         LYbj7R9tUii4jRFpk2gmKdBqcFtwOWnUXJ9TKFptX8cy00foj5oEE/q3afopEuYvZ1vi
+         mGEtEzcDBIbR6l4F4JH7uy5ZOOmdJ9mMDkK4c2RkXSw6OgMMqLEQp3xL5cBwO3GgyUq7
+         IDAxEDkyjwpeUIfoSp0RkXmXjinGoAe4EL/ApkP6sjcdLb1l54ob2SFrWBOJ8iq8L8W0
+         jfs+rp4bBySElS1nagAETKZlRhrZN+5rMD9N1S+31EO65LK/tHXtV6DPTAPwrl+MLgkH
+         e8OA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748522565; x=1749127365;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=i8LMEHYmovrRN8zYWQwYy5+2ddqvSDMDQcnZraZcEHI=;
-        b=u8Uzg/gogB4jiDDPUeBFtsun0r/y4oqo72DzP0E1iIG4gDKRROcndW1IuXGIg83n07
-         BekblYWlrpZCoQzjQIQcXx7YHI8yIBBQow1FHaCtE2jl0TrB0BFBX0PQgcrRUPs/7+lF
-         gM9etAlXsstpiPyLTsHzcj3WtJjogzzmz3xEbiQ74gquuLfNYtmti3M/JcMVBkshr2kk
-         4ErC/36Z+SaFXMW6aQEyUzCAl+AzzB3PGSjUPT6CCxb15DLQZop1lFFQ1qtLRosa96eW
-         XHdIml6XphoJr3q5Zr2LHEvxPSEGraFNWuGzzvyvPSSDdcz42iq10UyT+0cshhoblhOI
-         0wAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUTjqKvB+BTQbLP4ajAvOsIb/TBQ7HkqbsQGliOVRDPsDdeL0qSshwS23fFzkhWDaldsxIRj4ofAxdloVo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNeLaoMVAzKZ1RkZKdyYhZykwaEHYcSDbc6BSbbXlgQOirKBYx
-	eCJ1F9agcyTKfB69GUYoJTw6/Fa8fzwfB90vFv9AS2HFXwYA06nvqk6Li3Hzijl6b9U=
-X-Gm-Gg: ASbGnctumhSLiRO9EI0sRZsv5tjB5QLT8FfdgTlDSaVjxOYQry66POVrPtG7zdfiYOe
-	h/J4Nbt0bjRGN6LhFEw6uiEkqbx1V8NUhfpGaMPdppEDs5qutvxCaKHsKWgylzfG6iEV56mzcE5
-	iGPyZHmBK1zA4b8zFZmHgx+CsDmSzqxQZLFjecd/4LlMKdoEs8i06iQydFGlhgoyhLZPbFKH6fN
-	DTYge6CPkwdEDxMuGByECygIM18V5W6f3c5K8ezkq7V89azv6jpnp1zI4Luzd2akRz03Nkd6vgx
-	u0C+/vIibeDUSWrIgz8mDAJg56RZRMqYRc4ZLr6xpByKQ6LihxeW6cREeP+0XAkD1hcJohrM1ch
-	s0GjFwHeBdhrXZ1HQskTpU9DHtISG9GV0
-X-Google-Smtp-Source: AGHT+IGSKPwPkYLca5xt4DTsp41XrvIAXEH42/7GBMAHBHwSDsKU5tUb2elBTXwGWSigWuI5ixWpNw==
-X-Received: by 2002:a17:907:72cb:b0:ad8:9909:20a3 with SMTP id a640c23a62f3a-ad8a1fcd782mr609032066b.43.1748522564992;
-        Thu, 29 May 2025 05:42:44 -0700 (PDT)
-Received: from localhost (host-87-21-228-106.retail.telecomitalia.it. [87.21.228.106])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ada5d7fed3dsm139572166b.12.2025.05.29.05.42.44
+        d=1e100.net; s=20230601; t=1748522650; x=1749127450;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Xy9+1WxqxPkcvDSbf/PL1XyrGbcJDd9HZLFKhqLgSaA=;
+        b=QIp/RdDb44BawYm05cqNgBBbc6L4Sc/NBn+e7QnmhXv3l2V1v4ASjgKxvuyP2WkpTY
+         YfRwvte9D4xVJBXZ+bKWMxh2z4JxNnmlqwf9exgYzzABh0P3rC58acu6aI0HgSEeEIVd
+         rBIVuwAOQpg7UEN7xE20oR2X1FPmfXJJysQAR+UGCK4msYsyBhw5iXltkE3mTFhe4Y02
+         04WOglgNqcxpIpnZWPEQdQOcH1/eF5IAXKUh6fQjERYUjhKK77fkY7IUxGzJxlTNMRva
+         uQr4JDVc5eEn0f6wEC07+P4oJpXVsK5/EvGoEeCV1vmrDZds+X72Y5Wjiprvj6yTz1ZP
+         dZLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVt3uOowbVtDj2gQu63t8i7SizPWk8QgD4Gy0MPeLs6tHT9Z8w/nPpb/fl/mcEbo+SXk4lxvSrY@vger.kernel.org, AJvYcCWPJxLD249a6MAf8j3AhkSUL+Tl0U01HNFen/+ho/0aoyTiwv265zlYEi49CMY4PL5ftJLOCiZt/PJ0VXc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1MqwaJcM9BbIwRZ8DVkP81IUXv/AfVdQfsG2AJ33cpNs5Njcp
+	10e12/Opy000+7LzVuFVZ0kEZrADu9/8fkxuqG85QqJ37XCTOz0xGrh6
+X-Gm-Gg: ASbGncv2O30L3mClnxYsJFOvdHsAdKTisJ8SIhq9dNMwvzljvx171FJnFKoyt/8ccVB
+	5dSuK4N29uGiq0eUQvsv7FGA+QzxTkbfXEETpA0YoSu+gd1G9nOkDP9UOyeu/6qzzDVq+uvk54l
+	GCOG4P+ttU4WBXLLICh6I6td6E4NTpCO4C7rpek/s7NIl2kglnqCR/i+TjO2dniwK8jaYqVRj2z
+	Djk58nmvhpZp3lSLCNAQpQuzoU63OdwECHIMZGr22v0I9k8XXdOjd2A0Da+ZOLJTA2IGEBHs74+
+	v0loO91Y5B2lRewJISPj6XuO48PhSdk/DSWnuaVjTZCgK3vCqEhreqK4xQL+xltYV0eXeFOPUKF
+	9Rk6rKcjCC3CsyAn4DY8QqeQ+d6yNpZwSzWRCeAiIgQ/CJiRMn7/W
+X-Google-Smtp-Source: AGHT+IFm45df0BWkQmTyGVJH2ytFPDLC0UF5D4hMKR1QOL/2DurqQM0+1Q3vJcgPQRfZYQwJ3uQOng==
+X-Received: by 2002:a05:600c:6216:b0:43c:fa52:7d2d with SMTP id 5b1f17b1804b1-44c955dbdddmr159836115e9.20.1748522649482;
+        Thu, 29 May 2025 05:44:09 -0700 (PDT)
+Received: from skynet.lan (2a02-9142-4580-1200-0000-0000-0000-0008.red-2a02-914.customerbaf.ipv6.rima-tde.net. [2a02:9142:4580:1200::8])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-44fcbe5c4edsm55146915e9.2.2025.05.29.05.44.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 May 2025 05:42:44 -0700 (PDT)
-From: Andrea della Porta <andrea.porta@suse.com>
-To: Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof Wilczynski <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Saravana Kannan <saravanak@google.com>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Phil Elwell <phil@raspberrypi.com>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	kernel-list@raspberrypi.com,
-	Matthias Brugger <mbrugger@suse.com>
-Subject: [PATCH v11 13/13] MAINTAINERS: add Raspberry Pi RP1 section
-Date: Thu, 29 May 2025 14:44:02 +0200
-Message-ID: <20250529124412.26311-8-andrea.porta@suse.com>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <cover.1748522349.git.andrea.porta@suse.com>
-References: <cover.1748522349.git.andrea.porta@suse.com>
+        Thu, 29 May 2025 05:44:08 -0700 (PDT)
+From: =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= <noltari@gmail.com>
+To: florian.fainelli@broadcom.com,
+	jonas.gorski@gmail.com,
+	dgcbueu@gmail.com,
+	andrew@lunn.ch,
+	olteanv@gmail.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= <noltari@gmail.com>
+Subject: [PATCH] net: dsa: tag_brcm: legacy: fix pskb_may_pull length
+Date: Thu, 29 May 2025 14:44:06 +0200
+Message-Id: <20250529124406.2513779-1-noltari@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Raspberry Pi RP1 is a southbridge PCIe device which embeds several
-peripherals.
-Add a new section to cover the main RP1 driver, DTS and specific
-subperipherals (such as clock and pinconf/pinmux/gpio controller).
+BRCM_LEG_PORT_ID was incorrectly used for pskb_may_pull length.
+The correct check is BRCM_LEG_TAG_LEN + VLAN_HLEN, or 10 bytes.
 
-Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+Fixes: 964dbf186eaa ("net: dsa: tag_brcm: add support for legacy tags")
+Signed-off-by: Álvaro Fernández Rojas <noltari@gmail.com>
 ---
- MAINTAINERS | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ net/dsa/tag_brcm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 2b16ba4eb1ce..2add073f5bdf 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -20197,6 +20197,14 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/media/raspberrypi,rp1-cfe.yaml
- F:	drivers/media/platform/raspberrypi/rp1-cfe/
+diff --git a/net/dsa/tag_brcm.c b/net/dsa/tag_brcm.c
+index 8c3c068728e5..fe75821623a4 100644
+--- a/net/dsa/tag_brcm.c
++++ b/net/dsa/tag_brcm.c
+@@ -257,7 +257,7 @@ static struct sk_buff *brcm_leg_tag_rcv(struct sk_buff *skb,
+ 	int source_port;
+ 	u8 *brcm_tag;
  
-+RASPBERRY PI RP1 PCI DRIVER
-+M:	Andrea della Porta <andrea.porta@suse.com>
-+S:	Maintained
-+F:	arch/arm64/boot/dts/broadcom/rp1*.dts*
-+F:	drivers/clk/clk-rp1.c
-+F:	drivers/misc/rp1/
-+F:	drivers/pinctrl/pinctrl-rp1.c
-+
- RC-CORE / LIRC FRAMEWORK
- M:	Sean Young <sean@mess.org>
- L:	linux-media@vger.kernel.org
+-	if (unlikely(!pskb_may_pull(skb, BRCM_LEG_PORT_ID)))
++	if (unlikely(!pskb_may_pull(skb, BRCM_LEG_TAG_LEN + VLAN_HLEN)))
+ 		return NULL;
+ 
+ 	brcm_tag = dsa_etype_header_pos_rx(skb);
 -- 
-2.35.3
+2.39.5
 
 
