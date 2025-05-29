@@ -1,160 +1,198 @@
-Return-Path: <linux-kernel+bounces-666597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D7CFAC7946
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 08:58:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFF29AC794D
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 09:00:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8341E9E5E8A
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 06:58:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 711A450157A
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 07:00:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E874256C87;
-	Thu, 29 May 2025 06:58:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08CCE256C6F;
+	Thu, 29 May 2025 06:59:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="djIWoKe+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MLDR1S8o"
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D737A2550BB;
-	Thu, 29 May 2025 06:58:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3A2A1891A9;
+	Thu, 29 May 2025 06:59:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748501895; cv=none; b=fhc0UsVr+W30IIm7OskxEkrm4I2iocu/PwiIvn3x7sw8dYxu8pSK6gdfktilQB5r0ybBGSSlEVCZi51vUPAO6PlKsvOSBLvJ+UHNfL3pYiHr1q4o/Arcj75DtLR/nmFfJyraCH5s3NIhbA8TibDYFuufZL4YYw4Pr1PPVfMwciU=
+	t=1748501998; cv=none; b=ZsqzYbkwCuzTRgaK/uVqU7oz3EzI4YRw7dyWz2l9+ZBy8TSzwcgO1yczxfxK1XA6PpxEOl+GQy7eEiK+561hq9CTqKFLC1o35EciEcgz/JQiIDpRde3ql+ZexuEzM5/khli4msKARhDBhqb9erLmBgQn2z0X7w7JUZNFHu8NrVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748501895; c=relaxed/simple;
-	bh=wfDpbU6U208CVjpqYiuBakHYUBvP/LaHUQsD+xtsfak=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nFThxTbESLz77X0zNDtIs3tldH6B+HPimAKPq8wfIxFpnkWm47P228iTWWlw/g812uWzyzCc6rcaumCR2ewBrLJSRsBM05UHujxvj61OvjUG3WFklK7Q6q8ykmhsbmnRXMTzaoK9T5GQnpFvuAqZeJOLdbt3ekiFsejxA8sEwak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=djIWoKe+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31465C4CEE7;
-	Thu, 29 May 2025 06:58:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748501894;
-	bh=wfDpbU6U208CVjpqYiuBakHYUBvP/LaHUQsD+xtsfak=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=djIWoKe+t6RKq39EdUesuue/dDb9QwHCJvVKUC3+waBl5Qu/zLdnrYehIY4RJ+9lz
-	 AtIk1v5pr764l1ZEO/gzYwwTAiGB6Yoji06kQbw1ivVLNAJHKpndu9eRTZ7JwPXrTd
-	 VMoWYilgi4P6EBjVMjaKS62UlAPdw9PNF3ZN7Dy7/9ZSnOJBT6gaTJDaoeG7qd6qiJ
-	 BcwqI/NBTMLplenngeBBk9+FDBS1iXq7qQGZL4rNIMaoIztD8ZXwIyNG7NcXA0ay0t
-	 ad0svIRMPpLH18PPio35QcV7ycg3PK4ZC7Xoj3DT96JQ5S45U1YrKaCv3QaHhH31tH
-	 5Hsjj5iajlSaQ==
-Message-ID: <9c8fe115-97e8-4966-b332-6de94015f832@kernel.org>
-Date: Thu, 29 May 2025 08:58:08 +0200
+	s=arc-20240116; t=1748501998; c=relaxed/simple;
+	bh=ztOo2P+Kp25kZal9/S6GtVWn5jxb3IbOCVM//Ldz6T0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=J3xUIre1YBI0tCQtKUnjuSgitgjtvvTwVBKes8XjN2pa5YznqDrSRck4SFlCdJgLKUkdSuBQwQQVAw1q7l4dDVFwG1EpYDy327aFbWPgs4ur+ywIAlEiv3WRkSmBZWu6e/AiG24I0yAU0PvNb4LK6pXF/QEGacif9aF68SWOAO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MLDR1S8o; arc=none smtp.client-ip=209.85.219.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e7da03bb0cdso359667276.3;
+        Wed, 28 May 2025 23:59:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748501996; x=1749106796; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6QrBk1b7GzNv1v3qwcsG2e8o+iQmGaHfk9Jdu6G+hic=;
+        b=MLDR1S8oPRnyeZcN4Y3NfY62xyR2ZoCwWKTUfxl8vYZfDqS9yK8gvdZtzwSdP/kbtL
+         CoF5MioibhcBWfJGvow7Zk8OW+Ar8lGbq1zvbIrKPTjeTCT49gMeK+x/BMM0Ftk2pHre
+         TRGIZJcJcO1qCFWlYL/+6lXXRN+xhg3k0LNSYnFaWzxql3XYVrvxfYC8iLL3lgY2D/rV
+         CZUxP5mbk4pOrwAp2bB4zzcOmOFGK7FX2xL9wuZFmYHCQTksJJkMc9hLYYByu5xKTmKx
+         q7D/oTfoJDK3P+l7Fh0pkJdfpWTmE8dhlrzfnuyRRI3fxnlttERL2TFjREzfHA5yKEhJ
+         mrMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748501996; x=1749106796;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6QrBk1b7GzNv1v3qwcsG2e8o+iQmGaHfk9Jdu6G+hic=;
+        b=ilXo+igjseTfxCriK88VcCdwGFUtQI4zsdNnTldS5+odFzxuLAwYvyeHY0gBWc1yWE
+         tcdIWusI/D3l0mcaUoCFNqSWe/e9SwmgcblEa7s21036D8P2+w+srMFrZraGHorY57Xz
+         xFMVrpPTXZb7HKWafPJurPHmEMmVYM3gFg9D1er+6Q65/LpcjrxLjjAzVF75TYbgEtho
+         AOIbXbk4aSmyRUCsLFFwCEaFx24Ry0obYWXfz37TIVrV2XJrO2pHvB5CicuUFyfttG9g
+         rdD3dFHq7ldN2dl+AYhqKaFmAJ0TT+/4TKE+eP58fu9Q/9WGLkx0yO7GKxdz741W2vBA
+         OXFA==
+X-Forwarded-Encrypted: i=1; AJvYcCU23U887aFPeloAtkOdoLKnNWtY/lum4KyoAaQ6u1/HFqo9wZjwqMAT4vHWdzpRHG/ps67nGycca63afEZm+mWUUA==@vger.kernel.org, AJvYcCUvGF2YcmSkD5td7D7cNQ+4/KZlsFeccUyqs+nIUwhhZTQXgTs4r3xDHdqFEp9Afe4xd8ExTo8KysrG50s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxc7xJvtSY5BTILTR+6fznyn8Aw+h6akRDRPD+WIKoYfnQ8cn9R
+	bFKFH1OUyLdvEQ5b4BJQdDavwqlzByKjzFaZbQkk+UEmRIxcYkdcHjSOQV+gX2qwGD1yCXPkD2x
+	A1puResbWra2YF931DgVYr84A8HI9N8g=
+X-Gm-Gg: ASbGnctIEK5oSnyXw2KJgDGlN5SC3lru7zBhwIPlqlqdKrW03w4WeAtvqW0zfc5OkEE
+	B6R1B0hygNJxMXfcw6nZZndL4Td1ItlVUyIJe/bhLXYk3NiMlHqqpUK1r8l3GuwT+5AXHbJYyM4
+	zvEk4G09jKxvICMxb8wA9HoL4274ImrLU=
+X-Google-Smtp-Source: AGHT+IHaThjw8dKJ98/uoe+DRSmC/l1hnpdyZwjXDuIcqRBU86D/SoMcww9vk3zzSOJdIuAqv5qDhJjNOzOf9lgvyeo=
+X-Received: by 2002:a05:6902:450e:b0:e7d:9007:8685 with SMTP id
+ 3f1490d57ef6-e7d91b453d8mr17018283276.41.1748501995673; Wed, 28 May 2025
+ 23:59:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 02/12] dt-bindings: arm: qcom-soc: ignore "wsa" from
- being selected as SoC component
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Alexey Klimov <alexey.klimov@linaro.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Srinivas Kandagatla <srini@kernel.org>, Mark Brown <broonie@kernel.org>,
- linux-sound@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Dmitry Baryshkov <lumag@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-References: <20250522-rb2_audio_v3-v3-0-9eeb08cab9dc@linaro.org>
- <20250522-rb2_audio_v3-v3-2-9eeb08cab9dc@linaro.org>
- <20250523-fancy-upbeat-stoat-e9ecbd@kuoka>
- <DA7VC87A0OMF.1X5XEWVCHFLE5@linaro.org>
- <7938374e-85fb-42b9-893c-ec3f7274f9c0@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <7938374e-85fb-42b9-893c-ec3f7274f9c0@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250522142551.1062417-1-namhyung@kernel.org> <CAH0uvoiZ2difXdPsjkdLikHTRwYROYUeuCdZ+gQ5uRfQ2rzwGQ@mail.gmail.com>
+ <aC9VoTL_Cv4R7J-j@x1> <aC-hHTgArwlF_zu9@x1> <aDDy4FQe7sBwECL8@google.com>
+In-Reply-To: <aDDy4FQe7sBwECL8@google.com>
+From: Howard Chu <howardchu95@gmail.com>
+Date: Wed, 28 May 2025 23:59:44 -0700
+X-Gm-Features: AX0GCFvUB4AHXHI3CXK5FrvsQphFt_CGfX8AZNCotoRfo_fx8ZZO_f18V0VTW34
+Message-ID: <CAH0uvog_5MToOmfcsEn3+hypPrftSvtQAe+Axe94TLNwgq4HbA@mail.gmail.com>
+Subject: Re: [PATCH] perf test: Add cgroup summary test case for perf trace
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 28/05/2025 18:58, Konrad Dybcio wrote:
-> On 5/28/25 4:37 PM, Alexey Klimov wrote:
->> On Fri May 23, 2025 at 9:12 AM BST, Krzysztof Kozlowski wrote:
->>> On Thu, May 22, 2025 at 06:40:52PM GMT, Alexey Klimov wrote:
->>>> The pattern matching incorrectly selects "wsa" because of "sa" substring
->>>> and evaluates it as a SoC component or block.
->>>>
->>>> Wsa88xx are family of amplifiers and should not be evaluated here.
->>>>
->>>> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
->>>> ---
->>>>  Documentation/devicetree/bindings/arm/qcom-soc.yaml | 2 +-
->>>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/arm/qcom-soc.yaml b/Documentation/devicetree/bindings/arm/qcom-soc.yaml
->>>> index a77d68dcad4e52e4fee43729ac8dc1caf957262e..99521813a04ca416fe90454a811c4a13143efce3 100644
->>>> --- a/Documentation/devicetree/bindings/arm/qcom-soc.yaml
->>>> +++ b/Documentation/devicetree/bindings/arm/qcom-soc.yaml
->>>> @@ -23,7 +23,7 @@ description: |
->>>>  select:
->>>>    properties:
->>>>      compatible:
->>>> -      pattern: "^qcom,.*(apq|ipq|mdm|msm|qcm|qcs|q[dr]u|sa|sar|sc|sd[amx]|sm|x1[ep])[0-9]+.*$"
->>>> +      pattern: "^qcom,(?!.*wsa)(apq|ipq|mdm|msm|qcm|qcs|q[dr]u|sa|sar|sc|sd[amx]|smx1[ep])[0-9]+.*$"
->>>
->>> Why dropping front .*? Are you sure this matches what we want - so
->>> incorrect compatibles? To me it breaks the entire point of this select,
->>> so I am sure you did not test whether it still works. To remind: this is
->>> to select incorrect compatibles.
->>
->> Thanks, great point. I tested it with regular dtbs checks with different
->> dtb files but I didn't check if it selects incorrect compatibles.
-> 
-> Maybe we can introduce a '-' before or after the socname, to also officially
-> disallow using other connecting characters
+Hello Arnaldo and Namhyung,
 
-It is already there.
+On Fri, May 23, 2025 at 3:12=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
+wrote:
+>
+> On Thu, May 22, 2025 at 07:11:41PM -0300, Arnaldo Carvalho de Melo wrote:
+> > On Thu, May 22, 2025 at 01:49:37PM -0300, Arnaldo Carvalho de Melo wrot=
+e:
+> > > On Thu, May 22, 2025 at 08:33:16AM -0700, Howard Chu wrote:
+> > > > $ sudo /tmp/perf/perf test -vv 112
+> > > > 112: perf trace summary:
+> > > > 112: perf trace summary
+> > > > --- start ---
+> > > > test child forked, pid 1574993
+> > > > testing: perf trace -s -- true
+> > > > testing: perf trace -S -- true
+> > > > testing: perf trace -s --summary-mode=3Dthread -- true
+> > > > testing: perf trace -S --summary-mode=3Dtotal -- true
+> > > > testing: perf trace -as --summary-mode=3Dthread --no-bpf-summary --=
+ true
+> > > > testing: perf trace -as --summary-mode=3Dtotal --no-bpf-summary -- =
+true
+> > > > testing: perf trace -as --summary-mode=3Dthread --bpf-summary -- tr=
+ue
+> > > > testing: perf trace -as --summary-mode=3Dtotal --bpf-summary -- tru=
+e
+> > > > testing: perf trace -aS --summary-mode=3Dtotal --bpf-summary -- tru=
+e
+> > > > testing: perf trace -as --summary-mode=3Dcgroup --bpf-summary -- tr=
+ue
+> > > > testing: perf trace -aS --summary-mode=3Dcgroup --bpf-summary -- tr=
+ue
+> > > > ---- end(0) ----
+> > > > 112: perf trace summary                                            =
+  : Ok
+> >
+> > > Thanks, tested and applied to perf-tools-next,
+> >
+> > But then when running all the tests, since this does system wide
+> > tracing, it fails:
+> >
+> > 112: perf trace summary                                              : =
+FAILED!
+> >
+> > It works with the following patch applied, please check and ack/review:
+> >
+> > From 8c868979d886e2e88aa89f4e3d884e1b6450a7b2 Mon Sep 17 00:00:00 2001
+> > From: Arnaldo Carvalho de Melo <acme@redhat.com>
+> > Date: Thu, 22 May 2025 19:01:47 -0300
+> > Subject: [PATCH 1/1] perf tests trace_summary.sh: Run in exclusive mode
+> >
+> > And it is being successfull only when running alone, probably because
+> > there are some tests that add the vfs_getname probe that gets used by
+> > 'perf trace' and alter how it does syscall arg pathname resolution.
+> >
+> > This should be removed or made a fallback to the preferred BPF mode of
+> > getting syscall parameters, but till then, run this in exclusive mode.
+> >
+> > For reference, here are some of the tests that run close to this one:
+> >
+> >   127: perf record offcpu profiling tests                              =
+: Ok
+> >   128: perf all PMU test                                               =
+: Ok
+> >   129: perf stat --bpf-counters test                                   =
+: Ok
+> >   130: Check Arm CoreSight trace data recording and synthesized samples=
+: Skip
+> >   131: Check Arm CoreSight disassembly script completes without errors =
+: Skip
+> >   132: Check Arm SPE trace data recording and synthesized samples      =
+: Skip
+> >   133: Test data symbol                                                =
+: Ok
+> >   134: Miscellaneous Intel PT testing                                  =
+: Skip
+> >   135: test Intel TPEBS counting mode                                  =
+: Skip
+> >   136: perf script task-analyzer tests                                 =
+: Ok
+> >   137: Check open filename arg using perf trace + vfs_getname          =
+: Ok
+> >   138: perf trace summary                                              =
+: Ok
+> >
+> > Cc: Adrian Hunter <adrian.hunter@intel.com>
+> > Cc: Howard Chu <howardchu95@gmail.com>
+> > Cc: Ian Rogers <irogers@google.com>
+> > Cc: James Clark <james.clark@linaro.org>
+> > Cc: Jiri Olsa <jolsa@kernel.org>
+> > Cc: Kan Liang <kan.liang@linux.intel.com>
+> > Cc: Namhyung Kim <namhyung@kernel.org>
+> > Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+>
+> Looks good to me.
+>
+> Acked-by: Namhyung Kim <namhyung@kernel.org>
 
+Nacked (sorry). I think running them tests in parallel is great
+because it points out a problem that perf trace has. Please check out
+this approach: https://lore.kernel.org/linux-perf-users/20250529065537.5299=
+37-1-howardchu95@gmail.com/T/#u
 
-Best regards,
-Krzysztof
+Thanks,
+Howard
 
