@@ -1,173 +1,173 @@
-Return-Path: <linux-kernel+bounces-666376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72FF5AC75E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 04:40:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 09979AC7661
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 05:18:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13F281BA7926
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 02:41:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD2311C078DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 03:18:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9688245025;
-	Thu, 29 May 2025 02:40:39 +0000 (UTC)
-Received: from smtpbgbr1.qq.com (smtpbgbr1.qq.com [54.207.19.206])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6CFE2459DD;
+	Thu, 29 May 2025 03:16:24 +0000 (UTC)
+Received: from CHN02-SH0-obe.outbound.protection.partner.outlook.cn (mail-sh0chn02on2104.outbound.protection.partner.outlook.cn [139.219.146.104])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 558CB2B9AA;
-	Thu, 29 May 2025 02:40:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.19.206
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748486439; cv=none; b=inq7ZNadwGJ9/kJ2WwbV1eTeZ6MVhMu2TRFCsFmrf5V9SqjyGJyLBGX+PZDVXLvHo3UiAOsbayfqNnbeu6J5mLQ9AUd9CA6wqaDZQX78BbeIxNSuI/3UnEHSwR3VWQMgh0rf5Rq/X/+gE2O8P9+6G9CuW07K0yrn03vFoY+fWsc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748486439; c=relaxed/simple;
-	bh=kZkIsj//YnP/gJGA/K2VrDKorBDjNhvFh2BZJpQwTuA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=N0foL5O9FKbA7nOq8ypKDJhvLaWfm9CLDimjPhOdtaqZbGd+4o0le+u7jSHRv1KPi/AA3oseEbUoiqECiq4VBkoDMMfKj0hwR/DdhpK+NkAUXVSR/NOo9u791lhbm6ydcjMzI1TnNqyqg+7cKaLOK1SOcPUFrJL6aKcsSOghoUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com; spf=pass smtp.mailfrom=radxa.com; arc=none smtp.client-ip=54.207.19.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=radxa.com
-X-QQ-mid: esmtpsz20t1748486418t37745060
-X-QQ-Originating-IP: C58kyhMUl+MpUv+PvpsaEsUe55NDqcLZLFJp/428sj8=
-Received: from [127.0.0.1] ( [112.54.164.151])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Thu, 29 May 2025 10:40:13 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 14936503294835675896
-Message-ID: <4E62D52FC6135E5B+a6b1634e-5c66-4db5-bb1e-bf64e2e8d8a2@radxa.com>
-Date: Thu, 29 May 2025 10:40:12 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 239112AD31;
+	Thu, 29 May 2025 03:16:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.146.104
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748488584; cv=fail; b=LudSvMHYqDMHkxNO6fovG0iPsArCIv7Hh2fMxfDG6Q3H6voYI9teJp1y4yQXFm8wO9sTkPPQeHaPtV0YWNopQbG8IJvn7pvJzkwa5lxZiJXvgwt7jxBfAmeTvX65UailJMX5t2U99g1laF2oau2p8WnGdw63RvPZob70IRmWkAU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748488584; c=relaxed/simple;
+	bh=4jX1PWk6yYTxcJL9sDPGjAd2cU4rInZ1jHZf9R6oAMI=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=ThhSUm3AgHQtnwop4hrWnG8hVsqWH7foErPTho6t0ZcIzIPzuA+FAYdrjfXznCI3u99GmjQobd6ctdgROG5dxdzqbV2Hw32m/wMQ4jG2EW9Wmnzl1rmhL31iWenD/WVlyAAaRp+6bBPDpSJol1bQsUsn2RmKc6uY/JUpEkzHhY8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.146.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=starfivetech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=V/sh3YbPPFgL56x4KZLuZ8zdYBxYufaIleu9hPYIqcRqN7bIxOAPgx79EecfiyPk5iKHHMD7uem/WfI9bqcZ7780IhbHbNPQcdM5m1vbk4XR3xuUfvAFvPi1STTvV6cimuuJrabMNPMBJ+7NewQkKiuXYT4We+LjgA5cqAkt6Gx7+u8jlmFDvssbR1HmaMDMgf9FbPjDyzetqehfv29TyTNCHpBlhmHq8x1xPgmu7qQSkkP5uHugkSa+zhlq9Dj0gtuPSPOMyfTwgONQX12Ov9zvM9T3QaZ28yT0xbcJSQMeNFzdDpLNVXcB5SXeVXH+21hBWWKBX3xjofxfGfqr2g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4jX1PWk6yYTxcJL9sDPGjAd2cU4rInZ1jHZf9R6oAMI=;
+ b=kGA9fi47rmiZx9n1xVWNh1loI9svs8VfqC6eIBT0dZJgI/rQEV9OOFzZ7gnn+gafa9xq5ZyQtFc3Y+0mx29GdeQlZY4ls4ScK8tisq1p0DpL/ZyCyyM0okw9QkQ61ama8xzzFH5V17V7T+jkHx7l15tQv/ryNsYCToAvkBuU+Q9F4jEnRDXR6gOf7pxjXHz4uJP8sTbAsU23pSnND1ys54RgCA9syPq2Xr0MTXYKZdWxSK6IFNxfMbZyRIerLYnbEX7MWpLPTBYwTNkFHNO18KFneXYE36caSqWhs5i6Cb9nMpfpA8b9RgBjhI8HLTNpj6QLSrMOCkoC1Kqh9c145w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=starfivetech.com; dmarc=pass action=none
+ header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
+Received: from ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c550:1b::9) by ZQ0PR01MB1015.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c550:e::13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.30; Thu, 29 May
+ 2025 02:41:54 +0000
+Received: from ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn
+ ([fe80::64c5:50d8:4f2c:59aa]) by
+ ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn ([fe80::64c5:50d8:4f2c:59aa%6])
+ with mapi id 15.20.8769.025; Thu, 29 May 2025 02:41:54 +0000
+From: Changhuang Liang <changhuang.liang@starfivetech.com>
+To: "shao.mingyin@zte.com.cn" <shao.mingyin@zte.com.cn>, Walker Chen
+	<walker.chen@starfivetech.com>
+CC: "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"yang.yang29@zte.com.cn" <yang.yang29@zte.com.cn>, "xu.xin16@zte.com.cn"
+	<xu.xin16@zte.com.cn>, "yang.tao172@zte.com.cn" <yang.tao172@zte.com.cn>,
+	"ye.xingchen@zte.com.cn" <ye.xingchen@zte.com.cn>
+Subject:
+ =?utf-8?B?5Zue5aSNOiBwbWRvbWFpbjogc3RhcmZpdmU6IFVzZSBzdHJfb25fb2ZmKCkg?=
+ =?utf-8?B?aGVscGVyIGluIGpoNzExMF9wbXVfc2V0X3N0YXRlKCk=?=
+Thread-Topic: pmdomain: starfive: Use str_on_off() helper in
+ jh7110_pmu_set_state()
+Thread-Index: AQHb0EA3AiAR0kfx2U66FCLwfWKAdrPo4+9Q
+Date: Thu, 29 May 2025 02:41:54 +0000
+Message-ID:
+ <ZQ0PR01MB1302F225EB8C1B1B75D2FD66F2662@ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn>
+References: <20250529102005168oXmW54srQ-rBCEFa12u1U@zte.com.cn>
+In-Reply-To: <20250529102005168oXmW54srQ-rBCEFa12u1U@zte.com.cn>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=starfivetech.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: ZQ0PR01MB1302:EE_|ZQ0PR01MB1015:EE_
+x-ms-office365-filtering-correlation-id: b6552567-143a-447e-6f0f-08dd9e5a5f85
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|41320700013|366016|38070700018;
+x-microsoft-antispam-message-info:
+ GFfPN/AR6yYS5Li+LB56D3WnUvqaNpt0WOO0Aepc9VFGx5ex5RuiY1eQfbhTQOCunePV0170uxeW3hflHNk60cJPgp9Vx5VBFL12rBpjfXl3LSCenBfCFtJu0fKu4HxThsuQSk38uhh0jVG1wuu0SIb7fyAvoxF4M5dHAI+Dp1NSqoWQ5oGTkW5UvjQlhIz2GYxLmNvBSBQccSCjpsOR6vbUoYa5AMmwCmZAq4IcQVRhsoTcn4BeVQxhpUdnYyztn8f1Lpb/UreQiHzkKf4HxtVilNOANoGvDLby4MiYTjQRxrXmAO90vP9vP+MEmyOJdzhgs29EzgV/Y6NQdknAPwTym6KJ/0Efaym8xAKzzjXARW8++K163vJFNzhYK2WFU+eQl85w3gittosCk1olVj2UftjgX3H8ObdWZBdmcwhMI8ffqu9ksaRQvc/a3zz1AAj86Yw8S4FLgNGd5V8IpQxLBf/2zcAfEYLmlub33vy49ho4//Zs6Eeg3jy3AGPoZS3du/OS7msZ7++8HVKV5Axt6Z76SV05W/swjAIW78wRdCG7UwGtTO56PQfIiWNbapziE8cpOnikd5fj8LiWakwpYFDjwsTu25K5vT1JZJU=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:zh-cn;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(41320700013)(366016)(38070700018);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?a1hTdXVHSVhHcEl3MjN6ZkRDeWVLRlJMZjlka3ZsWVFOWldCT0ViNVhKczl2?=
+ =?utf-8?B?MU1qc3IyblBtODkwNGkvZjhmemhoalFvaTZBbFJGVnMvZkJqVE1GUkdreXkr?=
+ =?utf-8?B?Vnp4aXZERFQyTGMzZXRRczRIcDRRYVBWSVRFWEVlOUNudmxtMDVpRi9TYXdJ?=
+ =?utf-8?B?dk84b3o0aUR0ZDlVVFkxNWplaG8wakxucStiOVQ5SDVOdklCU3VNMTdhQ1Bt?=
+ =?utf-8?B?aEJWYTZIUTBHY1JTZzJhbTlCMVpyYXRrVDNXQzhJSndIU1J2dGoxT3Z5MTY3?=
+ =?utf-8?B?cGs5MDZIdDFXQ1lCQzduVU8wa21XNGQwa21zeWNWTUcyVTBrSEpYcnZ1ZUlh?=
+ =?utf-8?B?Ym5CRW9xc0JvNU9KZ2wwNVVXaWZMWXlZQlpWUDVuSkFOSldTVk91OWNwbTRR?=
+ =?utf-8?B?S0k3OXVsMjAySzNCbzdOdkNCa2drRUp0VHAzRFhGVmQyZGFPRndTbk9kR1lo?=
+ =?utf-8?B?RG1HejVyUXorcGJSWWttWHExZS9ma2NsbXB1ZVV6cUVaekpBMVJkQjYzZVR2?=
+ =?utf-8?B?UzVCL2ZRNFphSXYvWkovQ1JZU1R3UDlFZGk1T29qbHJFc2hKUFBHL1VjdXZj?=
+ =?utf-8?B?RWkrU1o1RTcwTkpkMDZZaUZ4SldwaUdSOHk3d1RWWE5IWlduTEo5Vm4xSVJV?=
+ =?utf-8?B?SXRtditLVzlMQjBKWFJQNGNOdWtFSUhjMzdWMzBCSm53V0JqbUlUU0MzSXB5?=
+ =?utf-8?B?dEpBNk5jYllDSXpGNjJJQTc4ZGsxczRTbno5c1grVW5TcGhoUTlhZi8xbkJZ?=
+ =?utf-8?B?TUlpSThPZndBeXZmbXNpa2w0d3VCRmhtazVLcjBRUG5RUEJaQ2k4RXNaQ1Fz?=
+ =?utf-8?B?OE4vWkg1ZTJTdEU2cUFXWDgvOHp4TDlZTmxXcU16UXNPRmNOSXBXUHRRTVRQ?=
+ =?utf-8?B?SjN6RGtYenVDYWQweHVweTZPa2hvQTdEUjE2Q0g2Y2RTWFhpWVlFRFlXZ010?=
+ =?utf-8?B?MkR6ODFQV2hhTXZSOVZNS0F2TGVGeU0xSXF5bmNEMWRFeFdKeTJpQUgySHpK?=
+ =?utf-8?B?UnNRUUdQdmhDZ200ZHc5VWk4eUJQSHBVSWsycVIwb0ljRnU0YURDaWV4aXFj?=
+ =?utf-8?B?dVRTM0hGRnRVZFZsS0VlK1V4ZzVnSFp4R3NWbDZBa1hBNkRxbWgyd0dxZ2ND?=
+ =?utf-8?B?Ui93NWRIdWRVcUhuK2l3WkZlaUl0allsNDVvQVBoK3ovUlhJUzlsd3lnZnlW?=
+ =?utf-8?B?YjZlMUlTWDlLU2ltRTMyTEp4Rk9Zc1NkL3dhODV3bzFKN3NCdzcxSWNqWVBm?=
+ =?utf-8?B?ZzBSbS9MNGtpR0JCc1JkYTdQQzIrRUh3Z21YZm9jaTkvNTdPOHA0UHljelc3?=
+ =?utf-8?B?azJaRVNTUkhsY2NHclNVOWF4Zytzb3ZQS254Ukl4QkhTVC9MOUZObmVORzVF?=
+ =?utf-8?B?SHBub0EySFpRTGY3KzB3Smo1QmpOZzI4WEQvM2ZWYUdxQUhneFdsallNeFFa?=
+ =?utf-8?B?NWNnOFgwc3YweVB2SGFuOWpKa2dyTUFwajNNVTRiMktTMVFzUkFmNUdnaW03?=
+ =?utf-8?B?Y045dmV2TE9vYUg2NURLYlpTYlVCbmpuU1MvRGM5MFgwcjgyZVJyZG5WNkx3?=
+ =?utf-8?B?TUE5ajFQUWY0MmhOdjhHaktNakoyNmJESW1CUHJjdHhXa2RUYlNtUmRjU3J1?=
+ =?utf-8?B?S3RFbFNOTXBQRXBUU1JMQjJYcFhRZWw1YmFIUTVFMWppOTdUSHJxL2NvZTBp?=
+ =?utf-8?B?NWlqYnU5UnJOY1h0K2lnSmU3d1dhbVZDQ3hXQVRqQkRHbmdSTkNYOUdiTTBP?=
+ =?utf-8?B?OXVLTnpKNmg0VjV4WklNL2twU3g0emdLMlIvQ1VsUUpuTFFmclBDREFGQkcw?=
+ =?utf-8?B?U1krZ3V4eTNjQlg4QUhGZnFvQXhLVVdNRVhEeTExS293RThpbERIZ3d2S2JD?=
+ =?utf-8?B?K2ZVT2ZSTjJYRzNaN1U2QmJRamtoSGU4VDZsNTdkN1NBOHYyVkhZS29pN2tH?=
+ =?utf-8?B?bFl0aEo1aEkzekpYNFNsdktqTnpJV3hvcU5odHkyY2F3UWtrdjNsQVg3OEUr?=
+ =?utf-8?B?dE1IY28zZTJaRVBqLzVZUEFpT3g0M25kSVh2YitvWnIrbytvMVNCd2NiQlM4?=
+ =?utf-8?B?R2doemtORWY0S1BuRzVRR0MvbGdZcDlKTEhra1dWYnhpd0VoRkdvNFVvaWVM?=
+ =?utf-8?B?S21pL2lBWnpDWW1kSW5mMWZuYjJPZENDYmEyanhCWmhwc1NwU1duZ0ZSU00v?=
+ =?utf-8?B?VkE9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7] drm/msm/dp: reuse generic HDMI codec implementation
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>,
- Hermes Wu <Hermes.wu@ite.com.tw>, Dmitry Baryshkov <lumag@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org
-References: <20250423-dp-hdmi-audio-v7-1-8407a23e55b2@oss.qualcomm.com>
-From: Xilin Wu <sophon@radxa.com>
-Content-Language: en-US
-In-Reply-To: <20250423-dp-hdmi-audio-v7-1-8407a23e55b2@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpsz:radxa.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: NcPpWZPsRpiEezHEwuGB9fOmbxJWZnNkTUflW7oLyrPm29VNkAu+i4jK
-	lWnakt+QhWUCydglaeEREz1s2bbgJGgrr3q4J+ZKE//DOtRXSUjxeg+kb5Cz7Zha9/VqqUg
-	iIIdbwWw32JCsAQNhwXvQh186dCY32WBmaGQkZSveCN4gENb7IceSJl8Tljz6KklnjtjSDh
-	byt/xg7MhmzWVLkbbQiAdQVsqf0uZ2l2eF530ApBvwg5jBGpMgZ94AkiM1Ek6+6ZIvQF5Sd
-	LMhganmlJ97cE5HKDm/9icSq7jQhuwyspOI5x6uELJaRBS3W/BC/ZILk6e15OfkPqxLv420
-	kH5owwBPOiqBqIT9Fh/7wHoZbbGnRrNLAi3rgevV0smbriyRRBwBfN0U5xagCaaJQFLb38D
-	vpmYPiGJ3wt9E5sPSnMh2nfTnHFfxmqbYddehnPhZPMh7MTWT7+C+aMgmirDfApKWVFfcGw
-	tFQllC6MoLb+fQBKD5M9sxAhJoOfE7M4FlLI605WZGmfmBSoCppl0QN2vN/oKkGC7LhrpM8
-	IxlbyQQ5LesJAlMj3oVghO++rzV6Vc4iQMCSYwowDxIeJIfbEDLzjPEMbliETuCCX2xmVPN
-	rK+/IsuhreKR5zVsqSNrahKG5Kb1mz3kGk/EyOo4+kTu3uA9pzzz/XvGy7rJvPVTyenwgF6
-	n8dn4kX6g/Ns0MXVFoACy2IQONsqbmtE4+ffD96eqFocWc9rrEodet0fbeyZ3RmF6e3H6aT
-	pGGyLLW+hJFD0m0wc5PNjOEDZpd+xvhrUwKgARHokX2W/kY98jL92Gq6zpoBTRn7/xkGdsQ
-	WMNFmWwrwSxot1aQwosjN1ws3cttHCnZy9/nigSK7CUyK/P8Cc4vVG0/gXmDnG6o4KnF6UK
-	c5WELVY3lw94KvZt4ZhIfPEeRoPe0ZFZ56InV6MYjoOC2me99zEqD7Fd/LuWBrNCRnc+TvU
-	Zu1Z7H8LCcDKtRuu1M/9UQYvbOhxY73ssVAfakVuqQ2igIV30ZrNsiSPa
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-X-QQ-RECHKSPAM: 0
+X-OriginatorOrg: starfivetech.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn
+X-MS-Exchange-CrossTenant-Network-Message-Id: b6552567-143a-447e-6f0f-08dd9e5a5f85
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 May 2025 02:41:54.3129
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: IiKJOhUbxzfBT1iSwlTpbPThomMiQhlXGhMkvwi8KvvCsv57s1fNghoLDC2XnTynRvd6DCestKUSApgOaS9J9/kwKl2WdpW5FrVCL/wXyN2r4IVks3TLWBIBu2Zdu70o
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZQ0PR01MB1015
 
-On 2025/4/24 01:52:45, Dmitry Baryshkov wrote:
-> From: Dmitry Baryshkov <lumag@kernel.org>
-> 
-> The MSM DisplayPort driver implements several HDMI codec functions
-> in the driver, e.g. it manually manages HDMI codec device registration,
-> returning ELD and plugged_cb support. In order to reduce code
-> duplication reuse drm_hdmi_audio_* helpers and drm_bridge_connector
-> integration.
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> ---
-> A lot of DisplayPort bridges use HDMI Codec in order to provide audio
-> support. Present DRM HDMI Audio support has been written with the HDMI
-> and in particular DRM HDMI Connector framework support, however those
-> audio helpers can be easily reused for DisplayPort drivers too.
-> 
-> Patches by Hermes Wu that targeted implementing HDMI Audio support in
-> the iTE IT6506 driver pointed out the necessity of allowing one to use
-> generic audio helpers for DisplayPort drivers, as otherwise each driver
-> has to manually (and correctly) implement the get_eld() and plugged_cb
-> support.
-> 
-> Implement necessary integration in drm_bridge_connector and provide an
-> example implementation in the msm/dp driver.
-> ---
-> Changes in v7:
-> - Dropped applied patches
-> - Link to v6: https://lore.kernel.org/r/20250314-dp-hdmi-audio-v6-0-dbd228fa73d7@oss.qualcomm.com
-> 
-> Changes in v6:
-> - Added DRM_BRIDGE_OP_DP_AUDIO and separate set of DisplayPort audio
->    callbacks to the drm_bridge interface (Maxime)
-> - Link to v5: https://lore.kernel.org/r/20250307-dp-hdmi-audio-v5-0-f3be215fdb78@linaro.org
-> 
-> Changes in v5:
-> - Rebased on top of linux-next, also handling HDMI audio piece of the
->    MSM HDMI driver.
-> - Link to v4: https://lore.kernel.org/r/20250301-dp-hdmi-audio-v4-0-82739daf28cc@linaro.org
-> 
-> Changes in v4:
-> - Rebased on linux-next, adding DRM_BRIDGE_OP_HDMI_AUDIO to Synopsys QP
->    HDMI driver.
-> - Drop outdated comment regarding subconnector from the commit message.
-> - Link to v3: https://lore.kernel.org/r/20250219-dp-hdmi-audio-v3-0-42900f034b40@linaro.org
-> 
-> Changes in v3:
-> - Dropped DRM_BRIDGE_OP_DisplayPort, added DRM_BRIDGE_OP_HDMI_AUDIO
->    (Laurent, Maxime)
-> - Dropped the subconnector patch (again)
-> - Link to v2: https://lore.kernel.org/r/20250209-dp-hdmi-audio-v2-0-16db6ebf22ff@linaro.org
-> 
-> Changes in v2:
-> - Added drm_connector_attach_dp_subconnector_property() patches
-> - Link to v1: https://lore.kernel.org/r/20250206-dp-hdmi-audio-v1-0-8aa14a8c0d4d@linaro.org
-> ---
->   drivers/gpu/drm/msm/Kconfig         |   1 +
->   drivers/gpu/drm/msm/dp/dp_audio.c   | 131 ++++--------------------------------
->   drivers/gpu/drm/msm/dp/dp_audio.h   |  27 ++------
->   drivers/gpu/drm/msm/dp/dp_display.c |  28 ++------
->   drivers/gpu/drm/msm/dp/dp_display.h |   6 --
->   drivers/gpu/drm/msm/dp/dp_drm.c     |   8 +++
->   6 files changed, 31 insertions(+), 170 deletions(-)
-> 
-
-This change breaks DP audio on the qcs6490 platform, tested on kernel 
-next-20250528.
-
-[    0.368035] [drm:dpu_kms_hw_init:1173] dpu hardware revision:0x70020000
-[    0.369359] hdmi-audio-codec hdmi-audio-codec.0.auto: 
-hdmi_codec_probe: dai_count 0
-[    0.369362] hdmi-audio-codec hdmi-audio-codec.0.auto: 
-hdmi_codec_probe: Missing hw_params
-[    0.369364] hdmi-audio-codec hdmi-audio-codec.0.auto: 
-hdmi_codec_probe: Invalid parameters
-[    0.369366] hdmi-audio-codec hdmi-audio-codec.0.auto: probe with 
-driver hdmi-audio-codec failed with error -22
-[    0.370536] [drm] Initialized msm 1.12.0 for 
-ae01000.display-controller on minor 0
-
-Manually reverting this change solves the problem.
-
--- 
-Best regards,
-Xilin Wu <sophon@radxa.com>
+SGksIE1pbmd5aW4NCg0KVGhhbmtzIGZvciB5b3VyIHBhdGNoLg0KDQo+IEZyb206IFNoYW8gTWlu
+Z3lpbiA8c2hhby5taW5neWluQHp0ZS5jb20uY24+DQo+IA0KPiBSZW1vdmUgaGFyZC1jb2RlZCBz
+dHJpbmdzIGJ5IHVzaW5nIHRoZSBzdHJfb25fb2ZmKCkgaGVscGVyIGZ1bmN0aW9uLg0KPiANCj4g
+U2lnbmVkLW9mZi1ieTogU2hhbyBNaW5neWluIDxzaGFvLm1pbmd5aW5AenRlLmNvbS5jbj4NCj4g
+LS0tDQo+ICBkcml2ZXJzL3BtZG9tYWluL3N0YXJmaXZlL2poNzF4eC1wbXUuYyB8IDMgKystDQo+
+ICAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pDQo+IA0KPiBk
+aWZmIC0tZ2l0IGEvZHJpdmVycy9wbWRvbWFpbi9zdGFyZml2ZS9qaDcxeHgtcG11LmMNCj4gYi9k
+cml2ZXJzL3BtZG9tYWluL3N0YXJmaXZlL2poNzF4eC1wbXUuYw0KPiBpbmRleCA3NDcyMGMwOWE2
+ZTMuLjMwYzI5YWM5MzkxZiAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9wbWRvbWFpbi9zdGFyZml2
+ZS9qaDcxeHgtcG11LmMNCj4gKysrIGIvZHJpdmVycy9wbWRvbWFpbi9zdGFyZml2ZS9qaDcxeHgt
+cG11LmMNCj4gQEAgLTEyLDYgKzEyLDcgQEANCj4gICNpbmNsdWRlIDxsaW51eC9vZi5oPg0KPiAg
+I2luY2x1ZGUgPGxpbnV4L3BsYXRmb3JtX2RldmljZS5oPg0KPiAgI2luY2x1ZGUgPGxpbnV4L3Bt
+X2RvbWFpbi5oPg0KPiArI2luY2x1ZGUgPGxpbnV4L3N0cmluZ19jaG9pY2VzLmg+DQo+ICAjaW5j
+bHVkZSA8ZHQtYmluZGluZ3MvcG93ZXIvc3RhcmZpdmUsamg3MTEwLXBtdS5oPg0KPiANCj4gIC8q
+IHJlZ2lzdGVyIG9mZnNldCAqLw0KPiBAQCAtMTU1LDcgKzE1Niw3IEBAIHN0YXRpYyBpbnQgamg3
+MTEwX3BtdV9zZXRfc3RhdGUoc3RydWN0DQo+IGpoNzF4eF9wbXVfZGV2ICpwbWQsIHUzMiBtYXNr
+LCBib29sIG9uKQ0KPiANCj4gIAlpZiAocmV0KSB7DQo+ICAJCWRldl9lcnIocG11LT5kZXYsICIl
+czogZmFpbGVkIHRvIHBvd2VyICVzXG4iLA0KPiAtCQkJcG1kLT5nZW5wZC5uYW1lLCBvbiA/ICJv
+biIgOiAib2ZmIik7DQo+ICsJCQlwbWQtPmdlbnBkLm5hbWUsIHN0cl9vbl9vZmYob24pKTsNCj4g
+IAkJcmV0dXJuIC1FVElNRURPVVQ7DQo+ICAJfQ0KPiANCg0KV291bGQgeW91IG1pbmQgYWRqdXN0
+aW5nIHRoaXMgcGFydCBhbmQgc2VuZCBWMj8NCg0KSW4gamg3MXh4LXBtdS5jIGpoNzF4eF9wbXVf
+c2V0X3N0YXRlKCkNCg0KCWlmIChpc19vbiA9PSBvbikgew0KCQlkZXZfZGJnKHBtdS0+ZGV2LCAi
+cG0gZG9tYWluIFslc10gaXMgYWxyZWFkeSAlc2FibGUgc3RhdHVzLlxuIiwNCgkJCXBtZC0+Z2Vu
+cGQubmFtZSwgb24gPyAiZW4iIDogImRpcyIpOw0KCQlyZXR1cm4gMDsNCgl9DQo9PT09Pg0KCWlm
+IChpc19vbiA9PSBvbikgew0KCQlkZXZfZGJnKHBtdS0+ZGV2LCAicG0gZG9tYWluIFslc10gaXMg
+YWxyZWFkeSAlcyBzdGF0dXMuXG4iLA0KCQkJcG1kLT5nZW5wZC5uYW1lLCBzdHJfZW5hYmxlX2Rp
+c2FibGUob24pKTsNCgkJcmV0dXJuIDA7DQoJfQ0KDQpCZXN0IFJlZ2FyZHMsDQpDaGFuZ2h1YW5n
+DQo=
 
