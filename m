@@ -1,173 +1,86 @@
-Return-Path: <linux-kernel+bounces-666609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDC24AC796D
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 09:07:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C3A9AC7971
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 09:09:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A0ABF7A900D
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 07:06:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F167E1C07F41
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 07:10:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30276256C88;
-	Thu, 29 May 2025 07:07:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SlMYABlf"
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C8292571A0;
+	Thu, 29 May 2025 07:09:51 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 187B3C8EB;
-	Thu, 29 May 2025 07:07:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3D4CC8EB;
+	Thu, 29 May 2025 07:09:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748502467; cv=none; b=JSl1rR82WSu2QyXVRsQmFeukbnzv1YhrX+ULRZqK6iPjpzTT23a9EHmzYUKfiE3VpMMfUjQRik5+rK4zSR3cZ7dm+hIi0TZ6yEtlW192Wt/swXJQB2FgeWzP5qyqs7fdT5lqX3td20C0hwTGM8tP6YouuVyU+ou2XUZX1k45hHs=
+	t=1748502590; cv=none; b=k5/omI6eFqEWiOdOyXCOQfFaxKua1wezCwOHumtXIasa8dg4J4AcV/mgP1L1nlhrFTZ8LplhdvheGI5NGHRrtCWIKqwhPbCiIdyAdvIf/WScW//1R9+AEQ5QerjMvSl1nuiECGZPPFzklDbyemP1DJVR1wyEYkEtWv7Mm7OgL0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748502467; c=relaxed/simple;
-	bh=6cIekbriWiWKfaXCYAeZSta271blHf9u+hSq5kD2qLU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iLN3UIYj2X/wEXiD9JECw3WAUZQouXi5yPiQL+nZod9h4CaAnZ5LdUQ/di/zNqrAy7g0RCHHyv/yxuUbsnwS0cH9I7yEWve3Dl3A/qDj5ggqdOmYlDxOL8JLte7+BLA5Gs+vCCKBU2RmBVWZsuppbTpvc2F7ejKvoNZg0JjuBQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SlMYABlf; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e731a56e111so512898276.1;
-        Thu, 29 May 2025 00:07:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748502464; x=1749107264; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZlzqSwcojgI0VbGKS+qdPoR/KI0f7D4BNFlWU3U/FlM=;
-        b=SlMYABlfpapnzZbjZey7RE36bUXAZabI0IjJLr+em511CH/92x5uASEw15iYhIqDxK
-         EGoC2keudxkKPWgyvA5D2YMuu9TqS93lDqlG5Nhau3J88srLsM3+5D0iYcwA19Uvi9pY
-         8fucVTPRwtnewjHDRQb1e1pK/54QLqN1QgknnPY7RPsiQcAkdSRsTMjQYGJN94G78DxW
-         ckfJQGDJW3nehYVD8iUsKbQ9yO4WvO0i/InE4xvNLeZtCE16uy13y+WTJ/jtY7oFjF8E
-         lmEcqxQ5VKZ2wtqrQjLIPLwp3pjmuCffpsPFheYB6kh1oT7sjyjUyi/eBFhKhp/RtriC
-         4U9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748502464; x=1749107264;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZlzqSwcojgI0VbGKS+qdPoR/KI0f7D4BNFlWU3U/FlM=;
-        b=eVk/BoplTAqaAXac7JOQ0RMOLH/vNghaTiot5XnDrovhGl4D+9bCe1YH+ou3+l6yxm
-         YQG68MR9tGyX3OZvpn93elCowfujIE/iQmk/g8+OaOPSD/CYtomu8KHbgs2vFl4ttecR
-         m6BBjFSF9fRDjbmgit7PdqKpsA39XEz23lRDEKjLDELx1O2q6yvPE9XgcN1QEo5Tib/l
-         IikpwE4XHcP5FsEyq4NZoIYUjRiYNSJh+UBszviLMZmQ045GXBYAbdR42GQrhf7mgPua
-         /0gcg+4IPXdMlUjZNGSicdpYnde9i9uI0yOH6nPO3Au0V5taQMfxFgS9qmUg5kQUfJ7d
-         dGow==
-X-Forwarded-Encrypted: i=1; AJvYcCVIiso0oMa6Lr9KFn2ApcwqiXE/0uQie9OT3oSFHjVZmKJSJsD2nkQnXMFHmP50BONPR8kTGdmG8aSgP/k/0P/Neg==@vger.kernel.org, AJvYcCXr40+sxf3HPl0FFmuJGWqjDgXomzEs/3IabxHy8W8WTOk2DxKpXTirzOuJ82GJvV2/RMsXCQ849znoJiY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtbZeY/WY1v4e2kNYZ8ToUQ+88h+bN4n04+RN5OxR/ZUvDlOI5
-	fWnqOun9RlRDv4b6hqtwWv+IMTjTmbP3uXwEI+hmTxC9l3gR6EqZZhIxcCzlOGUJHB2LKC1j2mv
-	kvpKJDIWuejMM+q8lJvZ8thgRHnfpjPQ=
-X-Gm-Gg: ASbGncutmV1/IKr7niZQBGJ6c+eFLCECJcsR5YF47QqbwQPiWEAxtg9GuKNOl/Gxomc
-	Yum07ZBwW7GERO4QL2h653NvabWYti9eHPWBcZmfIpr8I4ZVmOYWBBEQ+J7Bmswc1uhfoNi8507
-	tcGVJKRmCdHYsdK8mmReZTJOGFGTheFac=
-X-Google-Smtp-Source: AGHT+IF2PD3oFwH+ZQPkCKJgOxl/2YbUzJRnx7lBd7GlzLkTmHFvlM+948C0FNI4foXBprodmm3x9TjEwqB8K0rdeU0=
-X-Received: by 2002:a05:6902:705:b0:e7d:9fa6:5fbd with SMTP id
- 3f1490d57ef6-e7d9fa661d8mr21744381276.30.1748502463961; Thu, 29 May 2025
- 00:07:43 -0700 (PDT)
+	s=arc-20240116; t=1748502590; c=relaxed/simple;
+	bh=G4YvY3SQ8tcvLemW64/aRMAXZ2jVYiNApaFxOCAEwng=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=O2GieaNlXNCnpQx5nop95tp+OipQJp4Z9bwmlUo9DouQDjXcSwfqSvfantPHHhhdIaQEoa7pNgrq9AAd1xZfM+Hq+DJdSlUblyXhXW5ir6cv4B7C+bzXYlYAx6DJrLDYL20mjdC2jdmsBw/cq4XZKH1a8g8JX7BxHFZF7Co6CU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from abreu.speedport.ip (p5dc5559d.dip0.t-ipconnect.de [93.197.85.157])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id E7E8B601EBE89;
+	Thu, 29 May 2025 09:09:33 +0200 (CEST)
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: Paul Menzel <pmenzel@molgen.mpg.de>,
+	linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] wifi: mac80211: Add limit to ignore NSS change warning
+Date: Thu, 29 May 2025 09:09:21 +0200
+Message-ID: <20250529070922.3467-1-pmenzel@molgen.mpg.de>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250518190957.58932-1-howardchu95@gmail.com> <CAP-5=fUs9ZVa3z54w1GyKrR=D0YF5GmSZEQ4dh=cKehTPD_w1g@mail.gmail.com>
-In-Reply-To: <CAP-5=fUs9ZVa3z54w1GyKrR=D0YF5GmSZEQ4dh=cKehTPD_w1g@mail.gmail.com>
-From: Howard Chu <howardchu95@gmail.com>
-Date: Thu, 29 May 2025 00:07:33 -0700
-X-Gm-Features: AX0GCFs2lparwpsWTkYFeYSMnbmbNHDg-hi5m0VylnxpQl3BZQy3B72nVEkdAZU
-Message-ID: <CAH0uvojyKi6tN2RfEsG25fn8G5G3iz+pWqjprm9qYaD_sA+i_Q@mail.gmail.com>
-Subject: Re: [PATCH v2 0/5] perf test trace: Reduce test failures and make
- error messages verbose
-To: Ian Rogers <irogers@google.com>
-Cc: acme@kernel.org, mingo@redhat.com, namhyung@kernel.org, 
-	mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org, 
-	adrian.hunter@intel.com, peterz@infradead.org, kan.liang@linux.intel.com, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hello Ian,
+Currently, Linux warns as below:
 
-On Sun, May 18, 2025 at 3:18=E2=80=AFPM Ian Rogers <irogers@google.com> wro=
-te:
->
-> On Sun, May 18, 2025 at 12:10=E2=80=AFPM Howard Chu <howardchu95@gmail.co=
-m> wrote:
-> >
-> > Currently, BTF tests fail constantly, this series fixes two major reaso=
-ns
-> > why they fail, and makes the error messages acquired when using '-vv'
-> > more verbose, so when they fail, one can easily diagnose the problem.
-> >
-> > Before:
-> >     $ sudo /tmp/perf test enum -vv
-> >     107: perf trace enum augmentation tests:
-> >     107: perf trace enum augmentation tests                            =
-  : Running
-> >     --- start ---
-> >     test child forked, pid 783533
-> >     Checking if vmlinux exists
-> >     Tracing syscall landlock_add_rule
-> >     Tracing non-syscall tracepoint syscall
-> >     ---- end(-1) ----
-> >     107: perf trace enum augmentation tests                            =
-  : FAILED!
-> >
-> > After:
-> >     $ sudo /tmp/perf test enum -vv
-> >     107: perf trace enum augmentation tests:
-> >     107: perf trace enum augmentation tests                            =
-  : Running
-> >     --- start ---
-> >     test child forked, pid 851658
-> >     Checking if vmlinux exists
-> >     Tracing syscall landlock_add_rule
-> >     Tracing non-syscall tracepoint timer:hrtimer_setup,timer:hrtimer_st=
-art
-> >     [tracepoint failure] Failed to trace tracepoint timer:hrtimer_setup=
-,timer:hrtimer_start, output:
-> >     event syntax error: 'timer:hrtimer_setup,timer:hrtimer_start'
-> >                          \___ unknown tracepoint
-> >
-> >     Error:  File /sys/kernel/tracing//events/timer/hrtimer_setup not fo=
-und.
-> >     Hint:   Perhaps this kernel misses some CONFIG_ setting to enable t=
-his feature?.
-> >
-> >     Run 'perf list' for a list of valid events
-> >
-> >      Usage: perf trace [<options>] [<command>]
-> >         or: perf trace [<options>] -- <command> [<options>]
-> >         or: perf trace record [<options>] [<command>]
-> >         or: perf trace record [<options>] -- <command> [<options>]
-> >
-> >         -e, --event <event>   event/syscall selector. use 'perf list' t=
-o list available events---- end(-1) ----
-> >     107: perf trace enum augmentation tests                            =
-  : FAILED!
-> >
-> > Changes in v2:
-> > - Add an extra newline after error messages
-> > - Rename the title of patch 3 to 'Stop tracing hrtimer_setup...'
-> > - Take the debug diff for explanation out of patch 5 to make it apply
-> >   normally
-> > - Add base-commit in this cover letter
->
-> Thanks Howard! I did some testing but see failures that may be
-> pre-existing issues:
+    Ignoring NSS change in VHT Operating Mode Notification from cc:d4:2e:bb:59:f4 with invalid nss 4
 
-Again, thank you for spending time testing this series! It has been
-some time... But hopefully this: [1] along with the BTF test v3: [2]
-can resolve the issues.
+For the ignorant reader, it’s unclear, why it’s invalid. Checking the
+code, valid means it’s smaller or equal to `link_sta->op_mode_nss,` so
+add that to the warning.
 
-[1]: https://lore.kernel.org/linux-perf-users/20250529065537.529937-1-howar=
-dchu95@gmail.com/T/#u
-[2]: https://lore.kernel.org/linux-perf-users/20250528191148.89118-1-howard=
-chu95@gmail.com/T/#t
+Signed-off-by: Paul Menzel <pmenzel@molgen.mpg.de>
+---
+ net/mac80211/vht.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Thanks,
-Howard
+diff --git a/net/mac80211/vht.c b/net/mac80211/vht.c
+index c5c5d16ed6c8..9f7938ac4031 100644
+--- a/net/mac80211/vht.c
++++ b/net/mac80211/vht.c
+@@ -672,8 +672,8 @@ u32 __ieee80211_vht_handle_opmode(struct ieee80211_sub_if_data *sdata,
+ 				sta_opmode.changed |= STA_OPMODE_N_SS_CHANGED;
+ 			}
+ 		} else {
+-			pr_warn_ratelimited("Ignoring NSS change in VHT Operating Mode Notification from %pM with invalid nss %d",
+-					    link_sta->pub->addr, nss);
++			pr_warn_ratelimited("Ignoring NSS change in VHT Operating Mode Notification from %pM with invalid nss %d > %d",
++					    link_sta->pub->addr, nss, link_sta->op_mode_nss);
+ 		}
+ 	}
+ 
+-- 
+2.49.0
+
 
