@@ -1,227 +1,175 @@
-Return-Path: <linux-kernel+bounces-666874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9042AC7D4E
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 13:42:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36645AC7CEF
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 13:28:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08C283B46D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 11:42:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA00C177415
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 11:28:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2E8D28EA53;
-	Thu, 29 May 2025 11:42:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ealYKoL0"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5CD528E5F9;
+	Thu, 29 May 2025 11:28:08 +0000 (UTC)
+Received: from ni.piap.pl (ni.piap.pl [195.187.100.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1076D1632C8
-	for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 11:42:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CB3F347B4;
+	Thu, 29 May 2025 11:28:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.187.100.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748518946; cv=none; b=bA2gtuChBiUFnuXHdwA4YPkcm+U7rQySAKpj2Rkp3S5pjut1OooBDbz1qAvCBjSGC7CTnfslWVUzKX4Qobzk5VxwGwZ9vp43XoF5BTPlDX9sgorqU71DZO7I5OY9V0T58/yu96E6K9wHp724m5QMcMysAy0GSuXU7qpotAhJc6o=
+	t=1748518088; cv=none; b=FR8J1OUE3hOnvVCdx7fH8hx68HCRTcSX7u0QgwtJEg/JHkQt4Xas60tEiynaBt2B4yJW06ho0w/vRECdrIOMzzChh14tR7B9h1XUJDhJW6lMe07nHtVGpZyJ77FHzyPoGdsqNH2RZ1vQI/ZuKCYjTI3F3kMADN7IgPtkbxkJDGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748518946; c=relaxed/simple;
-	bh=bMfENQufEvemZOu+eUsLQ0d36rEkoQi1H1y1oZxogNQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Bx9bYed/dkhyYbwzbYqLShsMktIDxve+vcuhtervRYzm2GNq5deu9OI1cs0Hd/ij7gaVu7C6N8q3GT+p1ysnP//g7TmgyUxBG8GJy9tLFQ++UlooN84DYowk6ditbPOAKawPNMRCMG/b4+AowdA0t5yoCr0wZWqxorZGrDswLqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ealYKoL0; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 54TBRSIh2386088;
-	Thu, 29 May 2025 06:27:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1748518048;
-	bh=SjrfzujuIx6mXoh/sKloR0Oj+ExZeeZMWNrjShR1Za4=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=ealYKoL09A6dW2maQoteU//EIZx3YnST3LMmcI3D8lptMcCoK/8DvXn3fE68a3jub
-	 scwNGoqUyrakRQSBSYaYJE3gH/IXL/y01Ebm1RGtoMLGv2Asdzj9kvw+b9ooE+uQBK
-	 nJAfxBaSlSgNcPlqUo865Fsiv0ZinXxpXAQnolZM=
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 54TBRRWv062472
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Thu, 29 May 2025 06:27:27 -0500
-Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 29
- May 2025 06:27:26 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 29 May 2025 06:27:26 -0500
-Received: from [172.24.227.14] (jayesh-hp-z2-tower-g5-workstation.dhcp.ti.com [172.24.227.14])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 54TBRKl71518842;
-	Thu, 29 May 2025 06:27:21 -0500
-Message-ID: <2baf3c31-3edf-4c26-bd44-1d0560134871@ti.com>
-Date: Thu, 29 May 2025 16:57:20 +0530
+	s=arc-20240116; t=1748518088; c=relaxed/simple;
+	bh=PAc90FkBogXphiQNzm6JktCd4gi/msjSow0cS2MEApc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=HJ3a03tJBQHi1ri2iPrtymM0pQefIsjEVGaIEz59EEhVir3in5HVYWLhzcHOBAHr6JuGEXsTOJxdsMG1iK5gftZ9Vxaxi0+twtBhlQ8ghG4Rs7kn6sSCRTw3/EopqQsG8RinsbNE5JeohbzcOgvGZdHvxUoUAs0eMky6NKLVo/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=piap.pl; spf=pass smtp.mailfrom=piap.pl; arc=none smtp.client-ip=195.187.100.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=piap.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=piap.pl
+Received: from t19.piap.pl (OSB1819.piap.pl [10.0.9.19])
+	by ni.piap.pl (Postfix) with ESMTPS id 6F8B5C405A4C;
+	Thu, 29 May 2025 13:27:57 +0200 (CEST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 ni.piap.pl 6F8B5C405A4C
+From: =?utf-8?Q?Krzysztof_Ha=C5=82asa?= <khalasa@piap.pl>
+To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,  Rui Miguel Silva
+ <rmfrfs@gmail.com>,  Martin Kepplinger <martink@posteo.de>,  Purism Kernel
+ Team <kernel@puri.sm>,  Mauro Carvalho Chehab <mchehab@kernel.org>,  Shawn
+ Guo <shawnguo@kernel.org>,  Sascha Hauer <s.hauer@pengutronix.de>,
+  Pengutronix Kernel Team <kernel@pengutronix.de>,  Fabio Estevam
+ <festevam@gmail.com>,  linux-media@vger.kernel.org,  imx@lists.linux.dev,
+  linux-arm-kernel@lists.infradead.org,  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Enable MIPI filtering by DT on i.MX8M*
+In-Reply-To: <jqjptsphbtdtziuucehxutseaz7j4kjiirz2hk77f3dznswvza@avbjjzu3jcam>
+	(Jacopo Mondi's message of "Fri, 23 May 2025 13:33:24 +0200")
+References: <m3h61u9jy2.fsf@t19.piap.pl>
+	<20250509103733.GE28896@pendragon.ideasonboard.com>
+	<m3o6vn8np5.fsf@t19.piap.pl>
+	<iegnn5xoosqpk52hvipcr73aliwhqtsq6r6ctvt5756bhy6yen@rqcdongb7fdf>
+	<m31psg97dy.fsf@t19.piap.pl>
+	<jqjptsphbtdtziuucehxutseaz7j4kjiirz2hk77f3dznswvza@avbjjzu3jcam>
+Sender: khalasa@piap.pl
+Date: Thu, 29 May 2025 13:27:56 +0200
+Message-ID: <m3o6vb64hv.fsf@t19.piap.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] drm/bridge: ti-sn65dsi86: Add HPD for DisplayPort
- connector type
-To: <dianders@chromium.org>, <andrzej.hajda@intel.com>,
-        <neil.armstrong@linaro.org>, <rfoss@kernel.org>,
-        <Laurent.pinchart@ideasonboard.com>, <dri-devel@lists.freedesktop.org>,
-        <tomi.valkeinen@ideasonboard.com>, <max.krummenacher@toradex.com>,
-        <ernestvanhoecke@gmail.com>
-CC: <jonas@kwiboo.se>, <jernej.skrabec@gmail.com>,
-        <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-        <tzimmermann@suse.de>, <airlied@gmail.com>, <simona@ffwll.ch>,
-        <kieran.bingham+renesas@ideasonboard.com>,
-        <linux-kernel@vger.kernel.org>, <max.oss.09@gmail.com>,
-        <devarsht@ti.com>
-References: <20250529110418.481756-1-j-choudhary@ti.com>
-Content-Language: en-US
-From: Jayesh Choudhary <j-choudhary@ti.com>
-In-Reply-To: <20250529110418.481756-1-j-choudhary@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+Hi Jacopo,
+
+Jacopo Mondi <jacopo.mondi@ideasonboard.com> writes:
+
+>> - 10 User Defined 8-bit Data Type 8 packets, line-sized, DT=3D0x37, call=
+ed
+>>   apparently "Vertical OB" by Sony datasheet
+>
+> These are optically black pixels and should probably be discarded by
+> the gasket as well as embedded data ?
+
+Yes, apparently.
+
+>> I hope I got this right, this is straight from oscilloscope (only
+>> checked IDs on IMX462, will confirm IMX290 later but it looks the same).
+>> In 1280x1080p25 mode there are 4 (not 10) "vertical OB" packets, and 720
+>> RGGB lines instead of 1080.
+>
+> Is this correct ? you ask for 1280x1080 and get back 720 lines ?
+
+Well, no, I just checked both modes and these are the differences.
+IOW, nothing unexpected. Wrong copy & paste or so.
+
+>> IMX462 produces just a tiny 2-pixel dot in the left top corner, possibly
+>> shifting some data to the right (I remember it did that, but I can't
+>> observe it now - could be a kernel (driver) version change?).
+>
+> What are those two pixels ? Does the datasheet describes them ?
+
+Nope, I guess it's a silicon bug. It corrupts 3 RAW-12 pixels, though
+(32 bits > 2 * 12 bits).
+
+>>    32EC0138h    2D8000h ISP Dewarp Control Register (ISP_DEWARP_CONTROL)
+>>       ISP ID mode 0, ISP1: DT 0h (unknown), ISP2: DT 2Ch (RAW12) left-ju=
+st mode
+>
+> But this other register has (again) one other filtering option and
+> reading the value here it is set to filter RAW12 (mipi_isp2_data_type)
+>
+> Weirdly enough, I don't see this register being programmed in the
+> mainline gasket driver...
+
+I guess it's drivers/media/platform/rockchip/rkisp1/rkisp1-isp.c:
+
+static int rkisp1_gasket_enable(struct rkisp1_device *rkisp1,
+                                struct media_pad *source)
+{
+...
+        regmap_update_bits(rkisp1->gasket, ISP_DEWARP_CONTROL, mask, val);
+
+Now this register doesn't filter data: if you set it with a different
+value, the data still goes through. It's just processed differently.
+For example, my sensor is 12-bit (in addition to 10-bit). If I set
+ISP_DEWARP_CONTROL to 0xB68 (or 0x368) meaning RAW 14-bit, the image
+only gets darker - ISP thinks it's getting 14-bit samples.
+
+The only filtering (while using ISP) is, apparently, in the ISP
+Configuration Register (MIPI_CSIS_ISPCONFIG_CH0) and subsequently in its
+shadow counterpart. And it somehow may be enabled in CSIS Common Control
+Register (MIPI_CSIS_CMN_CTRL). But if you don't enable it there, the
+data is still filtered (e.g. wrong value in MIPI_CSIS_ISPCONFIG_CH0
+prevents data flow). The filtering is only needed for preventing pixel
+corruption (these 3 pixels).
+
+So it means, for at least i.MX8MP, the DT filtering bit in
+MIPI_CSIS_CMN_CTRL should always be enabled.
+
+>> MIPI_CSI2:
+>>    32E50004h      4705h CSIS Common Control Register (MIPI_CSIS_CMN_CTRL)
+>
+> Do you mean 0x14705 ? I'm asking because Shadow Crtl is BIT(16). Surprisi=
+ngly
+> BIT(14) is marked as reserved in the datasheet version I have
+
+No, it's 0x4705 (usually).
+With 0xFF05 (resulting from write with 0xfffffffd) it's still working
+correctly (with DT filtering). Write 0xfffffbfd (=3D no DT filtering) and
+the magic light pixels in the left top corner reappear. So it means the
+INTERLEAVE_MODE bits (11 and 10) are probably two independent bits, with
+bit 11 probably not used at all.
 
 
+In my copy (i.MX 8M Plus Applications Processor Reference Manual, Rev.
+1, 06/2021), CSIS Common Control Register (MIPI_CSIx_CSIS_COMMON_CTRL):
+- bits 31-17, 15, 13, 12, 7-2 are zero and reserved (though bits 12 and
+  2 are additionally marked "This read-only field is reserved and always
+  has the value 0")
+- bit 14 is reserved and shown as "1"
+- bit 16 is "UPDATE_SHADOW", and it clears itself after a write (unless
+  the pipeline locks up or something alike)
+- bits 11 and 10 are "INTERLEAVE_MODE":
+    Select Interleave mode
+    ISP Configuration register of CH# is used for data interleave.
+      00 CH0 only, no data interleave
+      01 DT (Data type) only
+      10 Reserved
+      11 Reserved
+- bits 9 and 8 are LANE_NUMBER, 0 to 3 means 1 to 4.
+- bit 1 is SW_RESET
+- bit 0 is CSI_EN
 
-On 29/05/25 16:34, Jayesh Choudhary wrote:
-> By default, HPD was disabled on SN65DSI86 bridge. When the driver was
-> added (commit "a095f15c00e27"), the HPD_DISABLE bit was set in pre-enable
-> call which was moved to other function calls subsequently.
-> Later on, commit "c312b0df3b13" added detect utility for DP mode. But with
-> HPD_DISABLE bit set, all the HPD events are disabled[0] and the debounced
-> state always return 1 (always connected state).
-> 
-> Set HPD_DISABLE bit conditionally based on "no-hpd" property.
-> Since the HPD_STATE is reflected correctly only after waiting for debounce
-> time (~100-400ms) and adding this delay in detect() is not feasible
-> owing to the performace impact (glitches and frame drop), remove runtime
-> calls in detect() and add hpd_enable()/disable() bridge hooks with runtime
-> calls, to detect hpd properly without any delay.
-> 
-> [0]: <https://www.ti.com/lit/gpn/SN65DSI86> (Pg. 32)
-> 
-> Fixes: c312b0df3b13 ("drm/bridge: ti-sn65dsi86: Implement bridge connector operations for DP")
-> Cc: Max Krummenacher <max.krummenacher@toradex.com>
-> Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
-> ---
-> 
-> Changelog v2->v3:
-> - Change conditional based on no-hpd property to address [1]
-> - Remove runtime calls in detect() with appropriate comments
-> - Add hpd_enable() and hpd_disable() in drm_bridge_funcs
-> - Not picking up "Tested-by" tag as there are new changes
-> 
-> v2 patch link:
-> <https://lore.kernel.org/all/20250508115433.449102-1-j-choudhary@ti.com/>
-> 
-> [1]: <https://lore.kernel.org/all/mwh35anw57d6nvre3sguetzq3miu4kd43rokegvul7fk266lys@5h2euthpk7vq/>
-> 
-> This would also require dts changes in all the nodes of sn65dsi86
-> to ensure that they have no-hpd property.
+In fact, bit 2 does not "always have the value 0", it's set to 1. Both
+bits 14 and 2 can be reset to 0, though (without apparent change in the
+image).
+--=20
+Krzysztof "Chris" Ha=C5=82asa
 
-DTS patch is posted now:
-<https://lore.kernel.org/all/20250529112423.484232-1-j-choudhary@ti.com/>
-
-> 
->   drivers/gpu/drm/bridge/ti-sn65dsi86.c | 40 +++++++++++++++++++++++----
->   1 file changed, 35 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi86.c b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-> index 60224f476e1d..e9ffc58acf58 100644
-> --- a/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-> +++ b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-> @@ -190,6 +190,7 @@ struct ti_sn65dsi86 {
->   	u8				ln_assign;
->   	u8				ln_polrs;
->   	bool				comms_enabled;
-> +	bool				no_hpd;
->   	struct mutex			comms_mutex;
->   
->   #if defined(CONFIG_OF_GPIO)
-> @@ -352,8 +353,10 @@ static void ti_sn65dsi86_enable_comms(struct ti_sn65dsi86 *pdata,
->   	 * change this to be conditional on someone specifying that HPD should
->   	 * be used.
->   	 */
-> -	regmap_update_bits(pdata->regmap, SN_HPD_DISABLE_REG, HPD_DISABLE,
-> -			   HPD_DISABLE);
-> +
-> +	if (pdata->no_hpd)
-> +		regmap_update_bits(pdata->regmap, SN_HPD_DISABLE_REG, HPD_DISABLE,
-> +				   HPD_DISABLE);
->   
->   	pdata->comms_enabled = true;
->   
-> @@ -1195,9 +1198,17 @@ static enum drm_connector_status ti_sn_bridge_detect(struct drm_bridge *bridge)
->   	struct ti_sn65dsi86 *pdata = bridge_to_ti_sn65dsi86(bridge);
->   	int val = 0;
->   
-> -	pm_runtime_get_sync(pdata->dev);
-> +	/*
-> +	 * The chip won't report HPD right after being powered on as
-> +	 * HPD_DEBOUNCED_STATE reflects correct state only after the
-> +	 * debounce time (~100-400 ms).
-> +	 * So having pm_runtime_get_sync() and immediately reading
-> +	 * the register in detect() won't work, and adding delay()
-> +	 * in detect will have performace impact in display.
-> +	 * So remove runtime calls here.
-> +	 */
-> +
->   	regmap_read(pdata->regmap, SN_HPD_DISABLE_REG, &val);
-> -	pm_runtime_put_autosuspend(pdata->dev);
->   
->   	return val & HPD_DEBOUNCED_STATE ? connector_status_connected
->   					 : connector_status_disconnected;
-> @@ -1220,6 +1231,20 @@ static void ti_sn65dsi86_debugfs_init(struct drm_bridge *bridge, struct dentry *
->   	debugfs_create_file("status", 0600, debugfs, pdata, &status_fops);
->   }
->   
-> +static void ti_sn_bridge_hpd_enable(struct drm_bridge *bridge)
-> +{
-> +	struct ti_sn65dsi86 *pdata = bridge_to_ti_sn65dsi86(bridge);
-> +
-> +	pm_runtime_get_sync(pdata->dev);
-> +}
-> +
-> +static void ti_sn_bridge_hpd_disable(struct drm_bridge *bridge)
-> +{
-> +	struct ti_sn65dsi86 *pdata = bridge_to_ti_sn65dsi86(bridge);
-> +
-> +	pm_runtime_put_sync(pdata->dev);
-> +}
-> +
->   static const struct drm_bridge_funcs ti_sn_bridge_funcs = {
->   	.attach = ti_sn_bridge_attach,
->   	.detach = ti_sn_bridge_detach,
-> @@ -1234,6 +1259,8 @@ static const struct drm_bridge_funcs ti_sn_bridge_funcs = {
->   	.atomic_duplicate_state = drm_atomic_helper_bridge_duplicate_state,
->   	.atomic_destroy_state = drm_atomic_helper_bridge_destroy_state,
->   	.debugfs_init = ti_sn65dsi86_debugfs_init,
-> +	.hpd_enable = ti_sn_bridge_hpd_enable,
-> +	.hpd_disable = ti_sn_bridge_hpd_disable,
->   };
->   
->   static void ti_sn_bridge_parse_lanes(struct ti_sn65dsi86 *pdata,
-> @@ -1322,7 +1349,8 @@ static int ti_sn_bridge_probe(struct auxiliary_device *adev,
->   			   ? DRM_MODE_CONNECTOR_DisplayPort : DRM_MODE_CONNECTOR_eDP;
->   
->   	if (pdata->bridge.type == DRM_MODE_CONNECTOR_DisplayPort)
-> -		pdata->bridge.ops = DRM_BRIDGE_OP_EDID | DRM_BRIDGE_OP_DETECT;
-> +		pdata->bridge.ops = DRM_BRIDGE_OP_EDID | DRM_BRIDGE_OP_DETECT |
-> +				    DRM_BRIDGE_OP_HPD;
->   
->   	drm_bridge_add(&pdata->bridge);
->   
-> @@ -1935,6 +1963,8 @@ static int ti_sn65dsi86_probe(struct i2c_client *client)
->   		return dev_err_probe(dev, PTR_ERR(pdata->refclk),
->   				     "failed to get reference clock\n");
->   
-> +	pdata->no_hpd = of_property_read_bool(dev->of_node, "no-hpd");
-> +
->   	pm_runtime_enable(dev);
->   	pm_runtime_set_autosuspend_delay(pdata->dev, 500);
->   	pm_runtime_use_autosuspend(pdata->dev);
+Sie=C4=87 Badawcza =C5=81ukasiewicz
+Przemys=C5=82owy Instytut Automatyki i Pomiar=C3=B3w PIAP
+Al. Jerozolimskie 202, 02-486 Warszawa
 
