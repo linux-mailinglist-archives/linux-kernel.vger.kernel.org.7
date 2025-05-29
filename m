@@ -1,127 +1,169 @@
-Return-Path: <linux-kernel+bounces-667241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-667239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C282CAC820E
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 20:17:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D966AAC8207
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 20:16:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CC754A6450
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 18:17:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A28B34E4D1C
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 18:16:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A5A6230273;
-	Thu, 29 May 2025 18:17:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CB12230BF0;
+	Thu, 29 May 2025 18:16:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JrvIA3RN"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fvqwBrdI"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E5B91DA5F;
-	Thu, 29 May 2025 18:17:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 542ED2AD31;
+	Thu, 29 May 2025 18:16:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748542669; cv=none; b=a5YvFx6dNSdwB56qyp6QlhON5rn8cQLPKOw8uUCHm5Epm335/yXoEQFEwxgIIPAUF2ASAXvF0jgQ94Lct4krrEoXqGGe2behFIMrbT16G21hzEUynBuyWFYiwZKaZI+OwDM2O0fe7LMvbOTheb+Hf092svI683mi4rlMgbCnV+4=
+	t=1748542576; cv=none; b=q4/0VdAzoUODohX/dGXAgybQFIGwt2SfcQeEB53OVJsgoRPx5ATFE2ffrcTljW/x7GWcVooVdPnBOrZl/0lk8i3fquqnaSPv+yxexU4eL8z6GO0+JvBr6fXSnpNuE9bJihX68RC41j5AquGu1lP8zwW3ffLlUmI0V48GOPOXwhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748542669; c=relaxed/simple;
-	bh=E7t4ziTT3wF/689+gwT++HqhjP1/cK2PxAJ+YqFkDgQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sENaqtnWHJhQRbRLPMKI0PszPC5Wm5tMPJWhQJSIv7TKHfUOAFwO18NixAqPgf0AL5ElJJfRef525sQ+HuZYroTg7cFvQV0LFfo7SRM0cbyCJCff7DhZq93K7AjqSDs8AQuXCOJFIK59J1aY+3jL+arbjRDdKoqZ34fPv9LlaCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JrvIA3RN; arc=none smtp.client-ip=209.85.210.180
+	s=arc-20240116; t=1748542576; c=relaxed/simple;
+	bh=Ndkxafaee8/iJXBR/9wIrvk3wAPeoCIY5F3xoJ8MQeQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P2Z0eXdv/udoD7ZFXYPZHbwLbR8dci5IPsLab39amjSretCTFeBIfDbz9rCoR2gf1CAlsRaEoJ5fr3j87z/C1pa5koGvQFR8wKsEKQ5ivgh3//HPbVC+EPkB0U5xXm3MQxt59DCJZJaP9hUkp+L/z5HTBDaRxa7BLSkBvaoUtNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fvqwBrdI; arc=none smtp.client-ip=209.85.210.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-72d3b48d2ffso980319b3a.2;
-        Thu, 29 May 2025 11:17:47 -0700 (PDT)
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-745fe311741so1335429b3a.0;
+        Thu, 29 May 2025 11:16:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748542667; x=1749147467; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=wECMIUhZX+RAEutiSlsIQW+PxVMgIoUiBXiClAXqQgA=;
-        b=JrvIA3RNrdTgNWUigvXz2wA2oKsXFeOtR5A+1jYv5KcDg0cZm8SW8NbnlhVRMjhHwp
-         +OmoJUH1zHT23brZZRKYFvmP+3e2VJZ7QoZZ+8mhGKnnjFDNCmUZyfvKpwjF3l9JWytz
-         6niIgCimrTD+cqJuz91q/gl2UgCuXZZNW7b9ImlLoMSxrTAh79nb+F1//18DXZWjfQYT
-         r4Mz6iytxO7uUA1bgFqKpwVZjZoU2BqWAYdEw//IMPN/ewESa6Snk47vtlrIpGSXlyBp
-         rCx1vXYj/q0xuZ+8saEyBr31bHyagJq59BsLFdQxRH1kP61R+Qv0AzGmp070P87rUKqp
-         Ddcg==
+        d=gmail.com; s=20230601; t=1748542573; x=1749147373; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=wLWFabGjnu2pjZUWCnlpH8NuxluCsu9GKNAcPMcaZ8M=;
+        b=fvqwBrdIzu3TLGhXH/iIadXVzkROACE+4svgiCk+BlyTO1YrSePeGwswJYcVQPCXpT
+         RfsIo+vo5wf10wdKlPvQyVLJ23Oj1tVoeCeAirUc1kwsHMIn38tdCZQUCegBUgiBtpSV
+         zddMFLJLyax5t6pBPuqkri8MdfqFd8pcYu9Qu1eetMKMzUksP5G8P3jmjzi8q3/OZ05L
+         iG70tfL4mvrELwVLetFusX7kEXti8Z19jct46BEpSjqFh+EQwEh25fm25Nn+Qcnpu4cV
+         B32FsLpxXTWfoJH/O/WA0b9tWizHoyVlK+9+blct44qpzec2Ggu3/FybUbzF30c/Qylz
+         P/Kg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748542667; x=1749147467;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wECMIUhZX+RAEutiSlsIQW+PxVMgIoUiBXiClAXqQgA=;
-        b=CBhpKNswgJndvydmY/Id3hvSifQtH3qQs6jLtfor27eS9PjpQ2lc0bToDibbkashVn
-         ieDTPmvBA/dqer/IuL+hWgGkD6MRL7WPv65/4Sxl8mARwoz9RDZtbDfS6iILe4/Y8Y0y
-         njpxlVjivS+76Jr2l00Oo600Z7MMA4z6qiXj4TxDcMLxONFjMbTAnGYLZQHH2mVVCz07
-         +gniC+p3Rx7ORFaEAzvPAJobjYh1llvEwUDRFRQhSyEJx6S1AL4jtyDF9/IQH5rrEggZ
-         WIkw9yqx0hu3TJj4RtsroOhmZzcjgENkhUx8F1xGAcCb6cyMmZ9REEWlOX8PylVhKtQd
-         y37Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXkMl4EQfdRD2we7EJbK9+IOh5sV97ia2ccTHsUKBpGH/sTBTycBaWwJ1PU4WSzWlCNufKqnkVyoc2pSdI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3LjJ7eK9hoejGc4++kVvyCeYLq1i8ICIsztOlBYCN8sGN+ddp
-	LiBKxij6QkIAKTihZfCpJQm2w3WT4+HtRfTrOmQ9C93jlTs/xGhhFUB2
-X-Gm-Gg: ASbGncu4P2q+nweGn4ZyP9tok/m4rD//4+poo2UDyeZ8DcofL6q1WoJalThwixIF6NW
-	UKXg04LTxTVLCwi5PJsGHYecrmmY5spFSgwuiNIiOlWlbnWpnPmqwuOkEN+U15XosxO3WhdmH1+
-	A115s9Q3aCtBKjwlPfCU1VN8fazWeZsltReQEXztBTYkUOyU2vOmmCljabjMTqONvn8zAlyaZ5b
-	5vIDgqwWPPkbcKLl/bVUyZbIJ7aX4CJ1NWV+1f+Mau6i0ZTu6ARbuj30EcHAZNTgAfO3cI9ibpE
-	pa+SI4/al2Vhv7TzgwvXEVU3vJ92XSB/yavG7E/tyLkclLuUqlg=
-X-Google-Smtp-Source: AGHT+IF/n2OErfZ1Jjo+/rD+yuZf0ShecGAPEnjn9Bm4hpsZ56QyABjH7ecsToaN+1MrSuOTlEwvVg==
-X-Received: by 2002:a05:6a21:4508:b0:206:aa42:8e7c with SMTP id adf61e73a8af0-21ad9548831mr956312637.18.1748542667276;
-        Thu, 29 May 2025 11:17:47 -0700 (PDT)
-Received: from pop-os.. ([2401:4900:1c94:c9cf:cfb1:28a5:fd7:978])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b2eceb9d33csm287056a12.47.2025.05.29.11.17.45
+        d=1e100.net; s=20230601; t=1748542573; x=1749147373;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wLWFabGjnu2pjZUWCnlpH8NuxluCsu9GKNAcPMcaZ8M=;
+        b=k/8nIgsfmgpS0g7cjN59o5SLc7LrXOWjwTjIpGTDPS9a80tj97Rb6jfVKfRGGevqrs
+         Z+q4EcFJNWxjISLJ6mMujB7CMvgwSidN28UQOZD+mE5sAh+H63ZkQNttJNsNy6j8eJEL
+         iekfC4zseNGBWq/UUKyEJp0fRXBCuyM5B1RLg91xWBcoQxIKf57RUAvqJrdH6F7CILDZ
+         4zhmozCQTrm9RxGLCxddn8aAqcNpvcM1io6BuRLakw0doYOWHNNq/YR3ih8MxIdW1yiE
+         qgciETwoz14qgwFjLX9irivuQRczjUWJ1drosNj/qqqbvZNxvT89YYqle9NyUPfuM3Ha
+         vtOA==
+X-Forwarded-Encrypted: i=1; AJvYcCUkGm35seAoYUDC0EXNnFmVP20Sf4BAwyiRNE9OAuHq/RyXaJiTQxgysSjP6mi8wwZY7NpXKi8M@vger.kernel.org, AJvYcCW5gBVhXhR/B1WJ/1I1hsEcDkYdUUDu1NEikJBpBW2wMvwrEAiu2kAU5aGqGXUvKg+vtplnHa4OUndtk6mPRXKv@vger.kernel.org, AJvYcCWXN0hbrhBqN+0uOWZHv42k3iHdHBweTTedNIuPKg+Rx3E+ZOiEWQLogVSGI531LoL2cF19RJLlnh1Sw88=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBGSn11nQ42/niDtu2X7j3cmEjfoXXi0OjU00ySo44I1pV+453
+	mY2OU6PRSF4Hqmn3bGHD8wSq2e8iPnNuB1m3xaV7NYhhWCztXhb5et5r
+X-Gm-Gg: ASbGncs91nPD3h1fEWAXU3lO/w409YREEHOeVVHFVhf4m2Pm6uUrbmCzOEWwmJ6K8ya
+	IPAd0dJEyVDnPBVcZ0OXKLCsD4Zit3c/Xz1wPXPX+dsuup9T7/cphKY4KlxgCn2YTk6/KRThi+K
+	NVHkHXrNouRjHYg+nXf6lKYKEdhEH3VPloq6iaJHPIwODlD12PP9cLp6NsnZHpf/ADSyc6vHr5+
+	D4k4xA4L2ODy1hCVuEorQZPrfHlA1CuW2zStuji6KRTVxwy04iXlUuNvHBUwNOepvmOtGfn+1I3
+	YcJD4EoTdGq4G97YcDU387icMz1JcCTq0WBFQSRN/WakQqWxV3He+0g=
+X-Google-Smtp-Source: AGHT+IHJe1nExEO/Gk3fjmlnSLJlBBab7HsdJ5qF4WOhLnq5aGIP+ewfPH1xG2NndfuxJCuOLv8QZA==
+X-Received: by 2002:a05:6a00:847:b0:740:a52f:9652 with SMTP id d2e1a72fcca58-747bd969f9cmr491255b3a.6.1748542573505;
+        Thu, 29 May 2025 11:16:13 -0700 (PDT)
+Received: from localhost ([129.210.115.104])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-747afe96781sm1630018b3a.29.2025.05.29.11.16.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 May 2025 11:17:46 -0700 (PDT)
-From: Abhinav Ananthu <abhinav.ogl@gmail.com>
-To: wsa+renesas@sang-engineering.com
-Cc: linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzbot+0a36c1fec090c67a9885@syzkaller.appspotmail.com,
-	abhinav.ogl@gmail.com
-Subject: [PATCH] i2c: core: Fix uninit-value in i2c_smbus_xfer_emulated
-Date: Thu, 29 May 2025 23:45:35 +0530
-Message-Id: <20250529181535.15220-1-abhinav.ogl@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        Thu, 29 May 2025 11:16:12 -0700 (PDT)
+Date: Thu, 29 May 2025 11:16:11 -0700
+From: Cong Wang <xiyou.wangcong@gmail.com>
+To: Jiayuan Chen <jiayuan.chen@linux.dev>
+Cc: bpf@vger.kernel.org, Boris Pismenny <borisp@nvidia.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Mykola Lysenko <mykolal@fb.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Shuah Khan <shuah@kernel.org>, Ihor Solodrai <isolodrai@meta.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH bpf-next v1 1/2] bpf,ktls: Fix data corruption when using
+ bpf_msg_pop_data() in ktls
+Message-ID: <aDika2FRd4n+VRmZ@pop-os.localdomain>
+References: <20250523131915.19349-1-jiayuan.chen@linux.dev>
+ <20250523131915.19349-2-jiayuan.chen@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250523131915.19349-2-jiayuan.chen@linux.dev>
 
-BUG: KMSAN: uninit-value in i2c_smbus_xfer_emulated drivers/i2c/i2c-core-smbus.c:481 [inline]
-BUG: KMSAN: uninit-value in __i2c_smbus_xfer+0x23e7/0x2f60
+On Fri, May 23, 2025 at 09:18:58PM +0800, Jiayuan Chen wrote:
+> When sending plaintext data, we initially calculated the corresponding
+> ciphertext length. However, if we later reduced the plaintext data length
+> via socket policy, we failed to recalculate the ciphertext length.
+> 
+> This results in transmitting buffers containing uninitialized data during
+> ciphertext transmission.
+> 
+> This causes uninitialized bytes to be appended after a complete
+> "Application Data" packet, leading to errors on the receiving end when
+> parsing TLS record.
+> 
+> Fixes: d3b18ad31f93 ("tls: add bpf support to sk_msg handling")
+> Reported-by: Cong Wang <xiyou.wangcong@gmail.com>
+> Signed-off-by: Jiayuan Chen <jiayuan.chen@linux.dev>
+> ---
+>  net/tls/tls_sw.c | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+> 
+> diff --git a/net/tls/tls_sw.c b/net/tls/tls_sw.c
+> index fc88e34b7f33..b23a4655be6a 100644
+> --- a/net/tls/tls_sw.c
+> +++ b/net/tls/tls_sw.c
+> @@ -872,6 +872,21 @@ static int bpf_exec_tx_verdict(struct sk_msg *msg, struct sock *sk,
+>  		delta = msg->sg.size;
+>  		psock->eval = sk_psock_msg_verdict(sk, psock, msg);
+>  		delta -= msg->sg.size;
+> +
+> +		if ((s32)delta > 0) {
+> +			/* It indicates that we executed bpf_msg_pop_data(),
+> +			 * causing the plaintext data size to decrease.
+> +			 * Therefore the encrypted data size also needs to
+> +			 * correspondingly decrease. We only need to subtract
+> +			 * delta to calculate the new ciphertext length since
+> +			 * ktls does not support block encryption.
+> +			 */
+> +			if (!WARN_ON_ONCE(!ctx->open_rec)) {
 
-KMSAN reported an uninitialized value access in i2c_smbus_xfer_emulated at
-drivers/i2c/i2c-core-smbus.c:481, triggered during an SMBus transfer via
-i2cdev_ioctl_smbus. The issue occurs because the local buffers msgbuf0 and
-msgbuf1 are not initialized before use, leading to potential undefined
-behavior when their contents are accessed.
+I am wondering if we need to WARN here? Because the code below this
+handles it gracefully:
 
-Initialize msgbuf0 and msgbuf1 with zeros using memset to ensure all buffer
-contents are defined before they are used in the SMBus transfer. This
-prevents the uninitialized value access reported by KMSAN.
+ 931                 bool reset_eval = !ctx->open_rec;
+ 932 
+ 933                 rec = ctx->open_rec;
+ 934                 if (rec) {
+ 935                         msg = &rec->msg_plaintext;
+ 936                         if (!msg->apply_bytes)
+ 937                                 reset_eval = true;
+ 938                 }
+ 939                 if (reset_eval) {
+ 940                         psock->eval = __SK_NONE;
+ 941                         if (psock->sk_redir) {
+ 942                                 sock_put(psock->sk_redir);
+ 943                                 psock->sk_redir = NULL;
+ 944                         }
+ 945                 }
 
-Reported-by: syzbot+0a36c1fec090c67a9885@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=0a36c1fec090c67a9885
-Fixes: 02ddfb981de8 ("KMSAN : Fix uninit-value in i2c_smbus_xfer_emulated")
-Signed-off-by: Abhinav Ananthu <abhinav.ogl@gmail.com>
----
- drivers/i2c/i2c-core-smbus.c | 2 ++
- 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/i2c/i2c-core-smbus.c b/drivers/i2c/i2c-core-smbus.c
-index e73afbefe222..a3ee30b72f75 100644
---- a/drivers/i2c/i2c-core-smbus.c
-+++ b/drivers/i2c/i2c-core-smbus.c
-@@ -332,6 +332,8 @@ static s32 i2c_smbus_xfer_emulated(struct i2c_adapter *adapter, u16 addr,
- 	 */
- 	unsigned char msgbuf0[I2C_SMBUS_BLOCK_MAX+3];
- 	unsigned char msgbuf1[I2C_SMBUS_BLOCK_MAX+2];
-+	memset(msgbuf0, 0, sizeof(msgbuf0));
-+	memset(msgbuf1, 0, sizeof(msgbuf1));
- 	int nmsgs = read_write == I2C_SMBUS_READ ? 2 : 1;
- 	u8 partial_pec = 0;
- 	int status;
--- 
-2.34.1
-
+Thanks for fixing it!
+Cong
 
