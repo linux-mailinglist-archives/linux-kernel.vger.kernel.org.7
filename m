@@ -1,87 +1,118 @@
-Return-Path: <linux-kernel+bounces-666876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEE73AC7D57
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 13:48:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C1A1AC7D5B
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 13:48:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8751A4A5837
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 11:48:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18D421C019C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 11:48:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6159821FF59;
-	Thu, 29 May 2025 11:48:05 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC68D22371E;
+	Thu, 29 May 2025 11:48:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="G3++koYs"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F0C513A3F7
-	for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 11:48:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94956223706
+	for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 11:48:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748519285; cv=none; b=irFPZmmledVayAJuyOWxas0673NEN3tu7+rlK9v/UsjBBcw/KamsZF1LLdu9nXt43xi8YCHmLK7HcYeGFp25cwFZyqv7qyLjnP1Yml/4JSPRStLMJBn9Kn/gDXVbSMe7Q34+oYx4Ij1QMwt5Ha4RnVR1SmiQisRypAlHAKOCIdc=
+	t=1748519293; cv=none; b=c4nVtr78bYk+d8adXLJeQUkM9Kx0jfNGgiVGy1Q6+0oUiuqwABHdAolMry0ztL1d+/pLcYx6cASkd7Qbz3STxXPHIpK/T1ErmWgnI62MV296CfQHvZWlZRxnIZOKQZ+EvEwo/S7WzodaF00w62aSVkUsupea+752Rko6mjIt2mk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748519285; c=relaxed/simple;
-	bh=QQFnAYl2rFbhSZqujWfIHoWDg5HbfftyyXJExKBk4/E=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=LZ+yoArkvDqxGQECO2Z/6N3hODHSLa3dHcY6Oyp63RGH15cTOM1naTLdAO8S+FxDGJ/x44/r7J0qd48ySekORude/jECu8B7Tfw4MqQliZOQL6SxTZowfOYDzhuvqI0E93gZgvyBXwVmanTeI/4jtWgFqVGkH14uyy/IzVqLnjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3dc9d335fffso15793205ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 04:48:03 -0700 (PDT)
+	s=arc-20240116; t=1748519293; c=relaxed/simple;
+	bh=v3hY30nRmImnHwGi0UTTlXOgANRkQjAhzdIRchakAbY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=INL4Sl0bxYz0kXZJLJU5VzzRhA6ndCJY6OD1Nedmj6ckMdeXR8vBe1SryfUaj6eiU0CyisV4O+pvGNq3jw25dOvYkfQ6faMOQ1aMWuKrnwZytm5ChyQDgUtnkNzqI7WFOFEs+ZGLdbxNlE5NB2+z2sg3/RU2z0ayOY4PksDfs/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=G3++koYs; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1748519290;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=S4FAuUtIwDWMT4NYmHX6VvziC3AQhYiVZgYgYuZl1oc=;
+	b=G3++koYsgMv4aQRDVvKqfvipNt94aO57D3OLFmITCQ8g95I+f6VrCr2GeOVePSLdfl4VYM
+	SO5t1PriXD1Zx/WJ3sgzBhtXvX6UvXaZFqlHoj6WcaeDhQVjr3x2+xMUNj4aNVZL8x4VY2
+	nMIlk5/8JCtBffoFNLgNk5oo0vGgDHc=
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
+ [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-580-7LyVvO5uN4OT9bYfRFGIng-1; Thu, 29 May 2025 07:48:09 -0400
+X-MC-Unique: 7LyVvO5uN4OT9bYfRFGIng-1
+X-Mimecast-MFC-AGG-ID: 7LyVvO5uN4OT9bYfRFGIng_1748519289
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7cf6c53390eso81722885a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 04:48:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748519282; x=1749124082;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ql16J6aj6hokHrJ5bV+dg0/DwTT7OO+dWoAaE/YQ+zM=;
-        b=HNyOrdJR8/+uLR9BKeNGHP3GLnIAfTiDyASWRKt/r4fd8SBJZZV103wsJ2jPLb59x5
-         sSwrF0furS/5gh/DjH7WIY10/bl+5BVHUX28Nv3ziKkEv6OeR58czB1rcj+z/C2lzek9
-         K9ZWi2REEBxBPConvkz3WB+G8U3kqK+/6Z6gYfEc7MQwnbFpnBJSYFyEyieb8DkyuADr
-         /FfnbHTnraNnl7G22Wx1X8JrvYbjzptqNVRVHxCiAAcliwuuN642f2JjXB9d0FZEXLey
-         +saydnFDTUtXSRXgZmVsZOhwXjk5k+GI9KAblHxOQO7msPmftSy9Bf+V0Y7NxjaWit89
-         5zZw==
-X-Forwarded-Encrypted: i=1; AJvYcCU1pr4DP6X72BcNJqfFmK8gs3LfvdxUhdbofjX/d82eYocmtTAAjCzApv82wHaqFkBqXHp2IRkXUdb7oI4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1HnN81zY06TN5K+ZaDq88xD2LtNYm11kcbjQfEEHnEYa1FoWg
-	0gi7e/8gbvXTIoP7BC8K60CZ0HqT4/Ydyecbtpr4c9viHw7sck1lxfzcrzSMAbpfx9puPahfQKZ
-	wPoL/qPSHz0wgwfa0u/K+anKbnHvk2A9uFYK1UJbi+Ev+St3bfnrZAiDS9PQ=
-X-Google-Smtp-Source: AGHT+IFREv4+GloQRCuf+3dE97Q5DJwXHZk0WJHlgTeCZ//dy0d4CmPqdhEhtTTq2DBDoH/mAq5eZVGk1utUFP7+qwTaDrODzTnm
+        d=1e100.net; s=20230601; t=1748519289; x=1749124089;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=S4FAuUtIwDWMT4NYmHX6VvziC3AQhYiVZgYgYuZl1oc=;
+        b=w368gTlyLlALi7Q9enQHDU5JHOl0lUteXno6+hQT0ZtC8uGYHRUUHIN1YdO+Tg28Ik
+         AKIH8NR+Lsc7NujQtMJV9lTstgGNBdROjf3XPFJrbyOANypDzYRMbATES/L2eYvrJ+CB
+         0H92vPp1KEuufRhHXL8fVM6Nt5ovPJOdoy/ZkweYuZWgGVc+thEj0dbyIvMZZdPfoOap
+         wykBX/B5CWMww1AL4cblr90C+S+6cC1lAvx5VGYaHZqzRzG6g9+/hLzA8fXgV2mWAKfl
+         Gk8Mv/ybsTTJqpoZQMPYlEInD9aiAx74SHrxXGNL8sx547Fx+sDaDL8kx/DFoMpKfgiS
+         IhqA==
+X-Forwarded-Encrypted: i=1; AJvYcCVx1PMgJG9hTjlSTxoukLA6rFuqQFSUGqLd4rUQipIE1GLNgxeFXYk6LigNJvhx8uv8cbcVpLIIZlwjotM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQrth2Oj32VSrahdo1bI42DF7rRSZdQ0wrPj6lqX3kF4sGvN5X
+	GFpioKUpmg/+pA3DjPf5FbgYCfqhm15XafZbvhI+oVk8Wi6BaA3eTaL+f225i34cT5Y+dfyg/lp
+	UYS/L/KjYn9oERpTqhH6XkuMhy0Ydi01QNssrOoe9QntV8FVoOEbkvqnrkMV4fF63mA==
+X-Gm-Gg: ASbGncvZRkbBswpgyTaUx9Ck1HgfaD0FBeZIuhwICQ+L977gCdyVQeuYFVl7h5YvnWG
+	63AeZ8q8W8gSPvThtRxsNRY+bdeSPEC3Po+7JJhEkA2xuzFYofObcVWMU128JVc2vD/2rk6K3Mz
+	qVeW9QaHyjWtI9h8T4Oj1WdsKa683OEDgCBKSr7GVl8jFOjpkJIYJNlNdIHS3dOuAJlJWzTceXV
+	/JdONA0cdU+4CCpgx49uZGdBK1f18Yo6anGBrg3BipSyN4sLdmnIFELVhhBCRS/0HWSxGuzXH6c
+	B/3rPYI=
+X-Received: by 2002:a05:620a:3723:b0:7ca:f40c:c1c6 with SMTP id af79cd13be357-7ceecbe0761mr3449461185a.44.1748519288736;
+        Thu, 29 May 2025 04:48:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGGz1jWGH1Xl1+iHv8W7jy7T3u04fgOFgKY4M/nMJaXF++uobBUOQZcZvHceBp3q+sYifPF9g==
+X-Received: by 2002:a05:620a:3723:b0:7ca:f40c:c1c6 with SMTP id af79cd13be357-7ceecbe0761mr3449457085a.44.1748519288338;
+        Thu, 29 May 2025 04:48:08 -0700 (PDT)
+Received: from thinkpad2024 ([71.217.74.78])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7d09a10ed2asm83898485a.53.2025.05.29.04.48.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 May 2025 04:48:06 -0700 (PDT)
+Date: Thu, 29 May 2025 07:48:05 -0400
+From: "John B. Wyatt IV" <jwyatt@redhat.com>
+To: Shinji Nomoto <fj5851bi@fujitsu.com>
+Cc: Thomas Renninger <trenn@suse.com>, Shuah Khan <shuah@kernel.org>,
+	John Kacur <jkacur@redhat.com>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] cpupower: Allow control of boost feature on non-x86
+ based systems with boost support.
+Message-ID: <aDhJdTWzDihchywc@thinkpad2024>
+References: <20250522061122.2149188-1-fj5851bi@fujitsu.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1686:b0:3dc:8b57:b759 with SMTP id
- e9e14a558f8ab-3dd944eacb3mr21603175ab.21.1748519282732; Thu, 29 May 2025
- 04:48:02 -0700 (PDT)
-Date: Thu, 29 May 2025 04:48:02 -0700
-In-Reply-To: <CAGR7w80dQ5hTj8ye0DLi7SwT9v53S+anDDpGjQw5suwEdGXVHw@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68384972.a70a0220.1765ec.0187.GAE@google.com>
-Subject: Re: [syzbot] [i2c?] KMSAN: uninit-value in __i2c_smbus_xfer
-From: syzbot <syzbot+0a36c1fec090c67a9885@syzkaller.appspotmail.com>
-To: abhinav.ogl@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250522061122.2149188-1-fj5851bi@fujitsu.com>
 
-Hello,
+Hello Shinji, ty for your patch.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+On Thu, May 22, 2025 at 03:10:57PM +0900, Shinji Nomoto wrote:
+> The cpufreq subsystem has a generic sysfs interface for controlling boost
+> (/sys/devices/system/cpu/cpufreq/boost).
+> The sysfs interface can be used to enable boost control from the cpupower
+> command on non-x86 platforms as well. So, allow boost controlling on
+> non-x86 system if boost sysfs file exists.
 
-Reported-by: syzbot+0a36c1fec090c67a9885@syzkaller.appspotmail.com
-Tested-by: syzbot+0a36c1fec090c67a9885@syzkaller.appspotmail.com
+Did you test this on non-x86 systems? If so, would you please provide
+details on those architectures and systems?
 
-Tested on:
+-- 
+Sincerely,
+John Wyatt
+Software Engineer, Core Kernel
+Red Hat
 
-commit:         90b83efa Merge tag 'bpf-next-6.16' of git://git.kernel..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=178d2482580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1da44e3e5e6013db
-dashboard link: https://syzkaller.appspot.com/bug?extid=0a36c1fec090c67a9885
-compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=10c8ced4580000
-
-Note: testing is done by a robot and is best-effort only.
 
