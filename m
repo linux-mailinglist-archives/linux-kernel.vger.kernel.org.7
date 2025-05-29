@@ -1,128 +1,169 @@
-Return-Path: <linux-kernel+bounces-667313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-667315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B978BAC8355
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 22:46:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB132AC8360
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 22:49:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B21941888718
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 20:47:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6ED26A41B69
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 20:48:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 002B0293444;
-	Thu, 29 May 2025 20:46:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79E2C293471;
+	Thu, 29 May 2025 20:49:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lxke7jHG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hYphrWw4"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5602B1386DA;
-	Thu, 29 May 2025 20:46:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02DA729292C
+	for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 20:49:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748551604; cv=none; b=lh66lg4XY8JZvKOG1llBIbhGkg2/3zKMq3qR+qR10YjQzOqXk50kN89Uz1J5IBdPOsDkS02qhZ11xk75L4CV7Evw4n4y6KAutumt19xpUzSFe5FTKrQ1oriR/KLJKoeei53losTPcbw9eca8nvtA4xw8dMcAxhEb7T0/Op6riw4=
+	t=1748551742; cv=none; b=TIGwRkOa7JfSOVBcfQSjLSSrEhA79PYQGgOOy2g/JKYJsz3ibKV0aWyOS5lfszpHpjOWCmJkxcCWNYkHk65EO9dVDspeCZVyKunLl1YhLtDEyUd2kXCQVmWFvRM4cVEhhamJoy7hXfiwOsxln7cH+vSSXDz6qIg9PdK1/VPKU2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748551604; c=relaxed/simple;
-	bh=nqhtusXOAD2ESeOvweDuRBGoLYSqb/NiBJlRY1flv78=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TL0IaHxlfCeMHCAMQm3X69L7WzNKNZ+tl3ppnW77POXS2q/7RYxTNHLKGtONHRaysUSGp4Qy2jLaMeiQPFukjvKtZsMCJW9pHCEmRDFdm74J18ML9x7UUtnRuyuhlbkKi5UzZEXlzuU7xEyYD6wQVDHDvHKjkgICnA/sF1YVte4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lxke7jHG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56AF8C4CEE7;
-	Thu, 29 May 2025 20:46:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748551603;
-	bh=nqhtusXOAD2ESeOvweDuRBGoLYSqb/NiBJlRY1flv78=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Lxke7jHGpm4yTEelzwyCqQaIX27UmhKUUJef3W6qBcN65mL2Jc9phGQDQzp8DLHN1
-	 a4yIgsBwpwiY8E5JQPtS9L0n2zCob4Ht/PjdITRmWShTBFZjqirJo1hXoQKHqwnXJt
-	 1OCo49FwINd0k8OhfiCSn49iSn8TGMb5O7T0982p65eA4xVx2Giec9nbI/Ghq6aYtf
-	 MH+9uPKWZnlyJKsh5Vs/c/ANXInc81QkFZhacqPV2BAujJl0qfYLBgma+CWJqPABtx
-	 TZAeghZlz2PL8jJOZFVTKgynBuzW/4UzU0Zdt7INeKP4vg3lrAE5tnNxKZEAon/7TB
-	 vE3Ay4oUY2txA==
-Date: Thu, 29 May 2025 17:46:40 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Howard Chu <howardchu95@gmail.com>
-Cc: Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
-	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH] perf test: Add cgroup summary test case for perf trace
-Message-ID: <aDjHsJqV7L24qjvT@x1>
-References: <20250522142551.1062417-1-namhyung@kernel.org>
- <CAH0uvoiZ2difXdPsjkdLikHTRwYROYUeuCdZ+gQ5uRfQ2rzwGQ@mail.gmail.com>
- <aC9VoTL_Cv4R7J-j@x1>
- <aC-hHTgArwlF_zu9@x1>
- <aDDy4FQe7sBwECL8@google.com>
- <CAH0uvog_5MToOmfcsEn3+hypPrftSvtQAe+Axe94TLNwgq4HbA@mail.gmail.com>
+	s=arc-20240116; t=1748551742; c=relaxed/simple;
+	bh=ih8DlvU4tKofltliu46O2s62nPDCCu+VEeNQCQzA6Ko=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Cp1+EPRd//+6bUsR8hDWKzdu1OP9SPeSClb7u0VlD9DLT6oWh+W63SZNsDy2nUAcF48YAjzptQh5ahLwHb4Ob+ZT2CD3+q+/rNR3khWcYknlWVypy4CKT4LQTgBnk9GzkEoW2t+V+ppcyWm5SYU0BEaZQf44B/O8d/Q+ebT86YY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hYphrWw4; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1748551739;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=ZeQ2Vo+oQZDQGCMwwHxe2K14O9sa4zRfd9DC9KDPWg4=;
+	b=hYphrWw4IWfzQguv9/NIp678rvSTmQRyP+NmSnis8tAB4QBye/uaSNsRnBGBANajKi09tV
+	deDQhHhsGEmVexGwQClbX7WffBFQ2qM56k3ZgK2wRTrtUuTE3j46iOhW8Ak6zyUWrtrAvi
+	5zGQ6l/WNL5/0+W8XAeO1lopZSH5qFE=
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com
+ [209.85.166.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-54-fdZkioHSNl6JZ7s3GLWKxA-1; Thu, 29 May 2025 16:48:58 -0400
+X-MC-Unique: fdZkioHSNl6JZ7s3GLWKxA-1
+X-Mimecast-MFC-AGG-ID: fdZkioHSNl6JZ7s3GLWKxA_1748551737
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-8670d8907aaso22614639f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 13:48:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748551737; x=1749156537;
+        h=content-transfer-encoding:mime-version:message-id:subject:cc:to
+         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZeQ2Vo+oQZDQGCMwwHxe2K14O9sa4zRfd9DC9KDPWg4=;
+        b=swZMe3R5pr+kqun8JKAyehUFT6MZhLg1/xGXmSzxbP5J+fCIG6R/Z2sFbQrJf2m75y
+         b8yDS2Jl0Zrkx0a8oYKMDZeRkiuAZ0jRWx2MPtoNajbbXIfDmlv4+7z18QxKFV1Od3gt
+         iPrV3+RPfl6EOMwNeHqUJL4wXfCUmcfpLEQVbp2iBxW+FvkDc2O+Op9M2FbqDVZZpFYP
+         /p82dwgEz0R7orupJLE0+XOVI9w8pPqTHtDgmx8Zud7FFFppOsKnAzNFXOJju/yU+mN8
+         NkHLASqlmV7waW1Q0cINwkcj4P9vR1LlEdXaKOfwEr6H9do3eCRSwwKI4xCNINCJ7MFq
+         40ag==
+X-Gm-Message-State: AOJu0YyxLpQCfTObJY44R/SH3pMa7oHRVh83bxCjaq1koiezJ6XUrL/o
+	ASIanNVRZ/jcKOb7cW/1p/nvh31tcc8qBQ5BTgPaKkjBX3Gn9qrPZEelsxT/9jc6Qe5vfzhParQ
+	oRCtUxyyABjgcdnd+ar/sIwC99MRzECfmGHOvhDpi/4qvM8vh82xmv26KSW991wtmDxh9n++VWg
+	==
+X-Gm-Gg: ASbGnct9tF4iW7Qc/L4zysBj/K9nBlznCMumFzcrlah3mzMIrjR5VubkfEevWFD8qmu
+	Ur0LASpMZMnxIwnHRxeHoHgubq0jNKw39XF80RQz6p9EBehzb5bj8egdjSFp4Tj6tt1KLlarkV/
+	zHcfsaekFiIWdvWOe995DOlwZDyRb5nPiOcXJkHi5gg2CBONVgc1RmiuIcRlG3ShEgzqAG9yMN2
+	trnCmDYffsHIfafdfEGtBpgoKFRsVN5qaX99DEBQBqG43Xi7yejXO3f1WkTpyVWhten5LdQTj/2
+	/0KWlD+Tgumzx5JLVeEsRBU87A==
+X-Received: by 2002:a05:6602:158e:b0:864:3df4:29e9 with SMTP id ca18e2360f4ac-86d026e6e05mr272039f.4.1748551736680;
+        Thu, 29 May 2025 13:48:56 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFs7nGM96u64Rohq1xYaZrhS0fIeg77cLR+/KgxB5GeNDPWvzAH+3nY+R63aPqOG0LhIRDjNA==
+X-Received: by 2002:a05:6602:158e:b0:864:3df4:29e9 with SMTP id ca18e2360f4ac-86d026e6e05mr271739f.4.1748551736317;
+        Thu, 29 May 2025 13:48:56 -0700 (PDT)
+Received: from redhat.com ([38.15.36.11])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-86cf5e4fee3sm43971639f.10.2025.05.29.13.48.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 May 2025 13:48:54 -0700 (PDT)
+Date: Thu, 29 May 2025 14:48:51 -0600
+From: Alex Williamson <alex.williamson@redhat.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: <linux-kernel@vger.kernel.org>, "kvm@vger.kernel.org"
+ <kvm@vger.kernel.org>
+Subject: [GIT PULL] VFIO updates for v6.16-rc1
+Message-ID: <20250529144851.1ce2ce66.alex.williamson@redhat.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAH0uvog_5MToOmfcsEn3+hypPrftSvtQAe+Axe94TLNwgq4HbA@mail.gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, May 28, 2025 at 11:59:44PM -0700, Howard Chu wrote:
-> On Fri, May 23, 2025 at 3:12 PM Namhyung Kim <namhyung@kernel.org> wrote:
-> > On Thu, May 22, 2025 at 07:11:41PM -0300, Arnaldo Carvalho de Melo wrote:
-> > > From 8c868979d886e2e88aa89f4e3d884e1b6450a7b2 Mon Sep 17 00:00:00 2001
-> > > From: Arnaldo Carvalho de Melo <acme@redhat.com>
-> > > Date: Thu, 22 May 2025 19:01:47 -0300
-> > > Subject: [PATCH 1/1] perf tests trace_summary.sh: Run in exclusive mode
+Hi Linus,
 
-> > > And it is being successfull only when running alone, probably because
-> > > there are some tests that add the vfs_getname probe that gets used by
-> > > 'perf trace' and alter how it does syscall arg pathname resolution.
+Please note the diffstat below is generated relative to a trial merge
+against mainline as the merged topic branch from Marek has already been
+pulled via 23022f545610.  Thanks,
 
-> > > This should be removed or made a fallback to the preferred BPF mode of
-> > > getting syscall parameters, but till then, run this in exclusive mode.
+Alex
 
-> > > For reference, here are some of the tests that run close to this one:
+The following changes since commit a5806cd506af5a7c19bcd596e4708b5c464bfd21:
 
-> > >   127: perf record offcpu profiling tests                              : Ok
-> > >   128: perf all PMU test                                               : Ok
-> > >   129: perf stat --bpf-counters test                                   : Ok
-> > >   130: Check Arm CoreSight trace data recording and synthesized samples: Skip
-> > >   131: Check Arm CoreSight disassembly script completes without errors : Skip
-> > >   132: Check Arm SPE trace data recording and synthesized samples      : Skip
-> > >   133: Test data symbol                                                : Ok
-> > >   134: Miscellaneous Intel PT testing                                  : Skip
-> > >   135: test Intel TPEBS counting mode                                  : Skip
-> > >   136: perf script task-analyzer tests                                 : Ok
-> > >   137: Check open filename arg using perf trace + vfs_getname          : Ok
-> > >   138: perf trace summary                                              : Ok
+  Linux 6.15-rc7 (2025-05-18 13:57:29 -0700)
 
-> > Looks good to me.
+are available in the Git repository at:
 
-> > Acked-by: Namhyung Kim <namhyung@kernel.org>
- 
-> Nacked (sorry). I think running them tests in parallel is great
-> because it points out a problem that perf trace has. Please check out
-> this approach: https://lore.kernel.org/linux-perf-users/20250529065537.529937-1-howardchu95@gmail.com/T/#u
+  https://github.com/awilliam/linux-vfio.git tags/vfio-v6.16-rc1
 
-I'm not saying that perf trace shouldn't be used in parallel, but the
-vfs_getname code, IIRC, checks for the existence of that probe to do
-pathname collection (this predates the BPF method by a long time) and
-then counts on it to do.
+for you to fetch changes up to 4518e5a60c7fbf0cdff393c2681db39d77b4f87e:
 
-There are tests that put it in place and then at the end remove it,
-multiple tests.
+  vfio/type1: Fix error unwind in migration dirty bitmap allocation (2025-05-22 10:41:24 -0600)
 
-So there are possible races with that and out of being conservative I
-made it exclusive for the time being.
+----------------------------------------------------------------
+VFIO updates for v6.16-rc1
 
-The plan is to remove that vfs_getname code in builtin-trace.c and then
-the tests, as we have the BPF method that is way better and should allow
-for parallel use.
+ - Remove an outdated DMA unmap optimization that relies on a feature
+   only implemented in AMDv1 page tables. (Jason Gunthorpe)
 
-Probably in the meantime it would be better to mark the vfs_getname ones
-as exclusive tho now that I that I wrote the above explanation... :-\
+ - Fix various migration issues in the hisi_acc_vfio_pci variant
+   driver, including use of a wrong DMA address requiring an update to
+   the migration data structure, resending task completion interrupt
+   after migration to re-sync queues, fixing a write-back cache
+   sequencing issue, fixing a driver unload issue, behaving correctly
+   when the guest driver is not loaded, and avoiding to squash errors
+   from sub-functions. (Longfang Liu)
 
-- Arnaldo
+ - mlx5-vfio-pci variant driver update to make use of the new two-step
+   DMA API for migration, using a page array directly rather than
+   using a page list mapped across a scatter list. (Leon Romanovsky)
+
+ - Fix an incorrect loop index used when unwinding allocation of dirty
+   page bitmaps on error, resulting in temporary failure in freeing
+   unused bitmaps. (Li RongQing)
+
+----------------------------------------------------------------
+Alex Williamson (1):
+      Merge branch 'dma-mapping-for-6.16-two-step-api' of git://git.kernel.org/pub/scm/linux/kernel/git/mszyprowski/linux into v6.16/vfio/next
+
+Jason Gunthorpe (1):
+      vfio/type1: Remove Fine Grained Superpages detection
+
+Leon Romanovsky (3):
+      vfio/mlx5: Explicitly use number of pages instead of allocated length
+      vfio/mlx5: Rewrite create mkey flow to allow better code reuse
+      vfio/mlx5: Enable the DMA link API
+
+Li RongQing (1):
+      vfio/type1: Fix error unwind in migration dirty bitmap allocation
+
+Longfang Liu (6):
+      hisi_acc_vfio_pci: fix XQE dma address error
+      hisi_acc_vfio_pci: add eq and aeq interruption restore
+      hisi_acc_vfio_pci: bugfix cache write-back issue
+      hisi_acc_vfio_pci: bugfix the problem of uninstalling driver
+      hisi_acc_vfio_pci: bugfix live migration function without VF device driver
+      hisi_acc_vfio_pci: update function return values.
+
+ drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c | 121 +++-----
+ drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.h |  14 +-
+ drivers/vfio/pci/mlx5/cmd.c                    | 371 +++++++++++++------------
+ drivers/vfio/pci/mlx5/cmd.h                    |  35 +--
+ drivers/vfio/pci/mlx5/main.c                   |  87 +++---
+ drivers/vfio/vfio_iommu_type1.c                |  51 +++-
+ 6 files changed, 341 insertions(+), 338 deletions(-)
+
 
