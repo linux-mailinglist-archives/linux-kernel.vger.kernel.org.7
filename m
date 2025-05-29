@@ -1,121 +1,143 @@
-Return-Path: <linux-kernel+bounces-666699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFA49AC7AB7
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 11:08:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C090BAC7AAF
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 11:07:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76C651715AD
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 09:08:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90B9B17AD4D
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 09:07:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5BD121CA0F;
-	Thu, 29 May 2025 09:07:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ED2421B9C0;
+	Thu, 29 May 2025 09:07:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="PZJP+2eq"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="C89UAGcE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC0EC21B8F2;
-	Thu, 29 May 2025 09:07:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46D3E19E968;
+	Thu, 29 May 2025 09:07:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748509659; cv=none; b=CXBMNgmQ3160AVhZzARV0kuK+niT3hAtft7/If4ul+a4Thx6aTPEM7sL/t4N9+/bi8/6S+zSS6iGACEnySsRDRmVB9QO4iV233/M6DkSXKWGRKfuJwOKi1pSBAu90N2vCmexE32XxULqUYkRZBoReq0uS+HYJ90qm+39xQ7RQPM=
+	t=1748509649; cv=none; b=sHkjgn4C5LpYhMyrnbaZuKo67a/UF/y/bZNyDH5XJ3SGKOn4Nid/1hyxg2QMoTjDC8Nkyfquev5KE0XX77h6n1QUnSf37AZ8cJeMO8ElnuBhCSfmCvhEZ/QynxhbZZdedbZqua8h/7khwwPG69aN7uFNlRYkNZ9lnoVDrFhrHzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748509659; c=relaxed/simple;
-	bh=5fnbOXRKUx4se88s9yC8uvrgJAfaTLEOaMffCyQMmjc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=TU9ycg6rFDsUQipCHU0Mbhvek9azUnQdtkiYEcnz9lztyq/KrxtWzPTsFR+6MTJqZouCq44FCmo12+tBWJMrxL70ASw5KbmntQxHojyej1yHzxZr90gxaansI4Kivi/8HIyt8Ma8fTQVtt6HkGY/0hheS90SF9XXse91/8Gxk+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=PZJP+2eq; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id E708A43302;
-	Thu, 29 May 2025 09:07:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1748509654;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vP+cBqQl4oU5V6STKgR9qkSDk+GPXxR/Qkbrnuthsrw=;
-	b=PZJP+2eq8AeMj9IpLi1meIJZZuysN3MuFx2xm06qM+HGf2PTvo6TxHv/bDeAj9wfwkrT+4
-	qOeKetKK88G6R7XEcZ4+H75HCJNDD5oyiOkntMNUAo7taylJN5voJdDlIA9SXKx5rwEctb
-	vEqeQxdyePpEXp9h3AcnbZpHfxosPP3PmI3qhz4FJ2Vq5mI0Y2lCrmgt9Sp8Ptp95QIK6A
-	S6yDLki2Y+ole9CwHpj6YLcWDUc9i9Mrfgxhxaw5BhULSTTObgVM0EA2InCtlgZkcK6rgB
-	1r3yHRVkd7Mg/wZsxYsSsGFSgwAQxwIgxo382G4YHjE6DptAmUr9z9ztWhfPbQ==
-From: =?utf-8?q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>
-Date: Thu, 29 May 2025 11:07:24 +0200
-Subject: [PATCH v4 2/2] net: stmmac: make sure that ptp_rate is not 0
- before configuring EST
+	s=arc-20240116; t=1748509649; c=relaxed/simple;
+	bh=OA2B2lq2iE1SHMFUC3X0wRhqzvW5IdLq5T9FRXmrWl8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KGMQoJ8mf9Nl6siTd8k0GjGF1ENkTEpNR8zxb8B+owdBcNLusc2gONlUuRwpwBF8RwD2Emwz6LC1TaNFz3t/LLRYAEJxMm9U0uX0YHs0n+PXhcxLUJ7it0nN7rr4brZqENJYeVI7r/oKgjSvxXg062gBHCsJKs4TaNzKNj28csE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=C89UAGcE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25194C4CEE7;
+	Thu, 29 May 2025 09:07:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1748509648;
+	bh=OA2B2lq2iE1SHMFUC3X0wRhqzvW5IdLq5T9FRXmrWl8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=C89UAGcEN/1d17kRhhFTpVn3kLxukLiaXdKz33551BCdC8Wi3gZ+2iXzUlovBEFCq
+	 6W3tfZFMpLjuARvtbvr8Ja+czc1XRa7AlF2Vij5FxRGF+sxO/YdMuaDLKiLDTw/b/3
+	 8AgKlr+7v1zLxsEzZ+YMfA1BctH8aI/ONsGXYGEE=
+Date: Thu, 29 May 2025 11:07:25 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Xin Chen <quic_cxin@quicinc.com>
+Cc: Rob Herring <robh@kernel.org>, Jiri Slaby <jirislaby@kernel.org>,
+	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+	liulzhao@qti.qualcomm.com, quic_chejiang@quicinc.com,
+	zaiyongc@qti.qualcomm.com, quic_zijuhu@quicinc.com,
+	quic_mohamull@quicinc.com,
+	Panicker Harish <quic_pharish@quicinc.com>
+Subject: Re: [PATCH v1] tty: serdev: serdev-ttyport: Fix use-after-free in
+ ttyport_close() due to uninitialized serport->tty
+Message-ID: <2025052926-net-economist-a016@gregkh>
+References: <20250430111617.1151390-1-quic_cxin@quicinc.com>
+ <2025043022-rumbling-guy-26fb@gregkh>
+ <d388b471-482b-48ba-a504-694529535362@quicinc.com>
+ <2025050851-splatter-thesaurus-f54e@gregkh>
+ <38bf94e1-ebed-4d03-8ea0-4040009e8d31@quicinc.com>
+ <8e171057-b3c3-4808-b49e-f04ffd310b31@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250529-stmmac_tstamp_div-v4-2-d73340a794d5@bootlin.com>
-References: <20250529-stmmac_tstamp_div-v4-0-d73340a794d5@bootlin.com>
-In-Reply-To: <20250529-stmmac_tstamp_div-v4-0-d73340a794d5@bootlin.com>
-To: Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- Jose Abreu <joabreu@synopsys.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Richard Cochran <richardcochran@gmail.com>, 
- Phil Reid <preid@electromag.com.au>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Maxime Chevallier <maxime.chevallier@bootlin.com>, netdev@vger.kernel.org, 
- linux-stm32@st-md-mailman.stormreply.com, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Jose Abreu <Jose.Abreu@synopsys.com>, Yanteng Si <si.yanteng@linux.dev>, 
- =?utf-8?q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>
-X-Mailer: b4 0.14.2
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgddvheejfeculddtuddrgeefvddrtddtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephfffufggtgfgkfhfjgfvvefosehtkeertdertdejnecuhfhrohhmpeetlhgvgihishcunfhothhhohhrrocuoegrlhgvgihishdrlhhothhhohhrvgessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeevgefhteffuefhheekkeelffffvdeugffgveejffdtvdffudehtedtieevteetnecukfhppedvrgdtvdemkeegvdekmehfleegtgemvgdttdemmehfkeehnecuvehluhhsthgvrhfuihiivgepvdenucfrrghrrghmpehinhgvthepvdgrtddvmeekgedvkeemfhelgegtmegvtddtmeemfhekhedphhgvlhhopegludelvddrudeikedruddrvddtkegnpdhmrghilhhfrhhomheprghlvgigihhsrdhlohhthhhorhgvsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeduledprhgtphhtthhopehrihgthhgrrhgutghotghhrhgrnhesghhmrghilhdrtghomhdprhgtphhtthhopehmtghoqhhuvghlihhnrdhsthhmfedvsehgmhgrihhlrdgtohhmpdhrtghpthhtohepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdprhgtphhtthhop
- ehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplfhoshgvrdetsghrvghusehshihnohhpshihshdrtghomhdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtohepjhhorggsrhgvuhesshihnhhophhshihsrdgtohhmpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-GND-Sasl: alexis.lothore@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8e171057-b3c3-4808-b49e-f04ffd310b31@quicinc.com>
 
-If the ptp_rate recorded earlier in the driver happens to be 0, this
-bogus value will propagate up to EST configuration, where it will
-trigger a division by 0.
+On Fri, May 23, 2025 at 10:52:27AM +0800, Xin Chen wrote:
+> 
+> 
+> On 5/14/2025 5:14 PM, Xin Chen wrote:
+> > 
+> > 
+> > On 5/8/2025 5:41 PM, Greg Kroah-Hartman wrote:
+> >> On Thu, May 08, 2025 at 05:29:18PM +0800, Xin Chen wrote:
+> >>>
+> >>> On 4/30/2025 7:40 PM, Greg Kroah-Hartman wrote:
+> >>>> On Wed, Apr 30, 2025 at 07:16:17PM +0800, Xin Chen wrote:
+> >>>>> When ttyport_open() fails to initialize a tty device, serport->tty is not
+> >>>>> --- a/drivers/tty/serdev/serdev-ttyport.c
+> >>>>> +++ b/drivers/tty/serdev/serdev-ttyport.c
+> >>>>> @@ -88,6 +88,10 @@ static void ttyport_write_flush(struct serdev_controller *ctrl)
+> >>>>>  {
+> >>>>>  	struct serport *serport = serdev_controller_get_drvdata(ctrl);
+> >>>>>  	struct tty_struct *tty = serport->tty;
+> >>>>> +	if (!tty) {
+> >>>>> +		dev_err(&ctrl->dev, "tty is null\n");
+> >>>>> +		return;
+> >>>>> +	}
+> >>>>
+> >>>> What prevents tty from going NULL right after you just checked this?
+> >>>
+> >>> First sorry for reply so late for I have a long statutory holidays.
+> >>> Maybe I don't get your point. From my side, there is nothing to prevent it.
+> >>> Check here is to avoid code go on if tty is NULL.
+> >>
+> >> Yes, but the problem is, serport->tty could change to be NULL right
+> >> after you check it, so you have not removed the real race that can
+> >> happen here.  There is no lock, so by adding this check you are only
+> >> reducing the risk of the problem happening, not actually fixing the
+> >> issue so that it will never happen.
+> >>
+> >> Please fix it so that this can never happen.
+> >>
+> > 
+> > Actually I have never thought the race condition issue since the crash I met is
+> > not caused by race condition. It's caused due to Bluetooth driver call
+> > ttyport_close() after ttyport_open() failed. This two action happen one after
+> > another in one thread and it seems impossible to have race condition. And with
+> > my fix the crash doesn't happen again in several test of same case.
+> > 
+> > Let me introduce the complete process for you:
+> >   1) hci_dev_open_sync()->
+> > hci_dev_init_sync()->hci_dev_setup_sync()->hdev->setup()(hci_uart_setup)->qca_setup(),
+> > here in qca_setup(), qca_read_soc_version() fails and goto out, then calls
+> > serdev_device_close() to close tty normally. And then call serdev_device_open()
+> > to retry.
+> >   2) serdev_device_open() fails due to tty_init_dev() fails, then tty gets
+> > released, which means this time the tty has been freed succesfully.
+> >   3) Return back to upper func  hci_dev_open_sync(),
+> > hdev->close()(hci_uart_close) is called. And hci_uart_close calls
+> > hci_uart_flush() and serdev_device_close(). serdev_device_close() tries to close
+> > tty again, it's calltrace is serdev_device_close()->ttyport_close()->tty_lock(),
+> > tty_unlock(), tty_release_struct(). The four funcs hci_uart_flush(), tty_lock(),
+> > tty_unlock(), tty_release_struct() read tty pointer's value, which is invalid
+> > and causes crash.
+> > 
+> 
+> Hi Greg, could you please take some time to review my reply?
 
-Prevent this division by 0 by adding the corresponding check and error
-code.
+I am not disputing the fact that there is a bug here, I'm just saying
+that you can't test for a value and then act on it without a lock
+protecting that action because the value can be changed right after you
+test for it.
 
-Suggested-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Signed-off-by: Alexis Lothoré <alexis.lothore@bootlin.com>
-Fixes: 8572aec3d0dc ("net: stmmac: Add basic EST support for XGMAC")
----
-Changes in v4:
-- rebased on net/main
-Changes in v3:
-- new patch
----
- drivers/net/ethernet/stmicro/stmmac/stmmac_est.c | 5 +++++
- 1 file changed, 5 insertions(+)
+You might not see this in your testing, as you have narrowed the window
+that the value can change, but you have not solved the issue properly,
+right?
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_est.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_est.c
-index c9693f77e1f61fe5c92f95f5e544371445626c4d..ac6f2e3a3fcd2f9ae21913845282ff015cd2f7ec 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_est.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_est.c
-@@ -32,6 +32,11 @@ static int est_configure(struct stmmac_priv *priv, struct stmmac_est *cfg,
- 	int i, ret = 0;
- 	u32 ctrl;
- 
-+	if (!ptp_rate) {
-+		netdev_warn(priv->dev, "Invalid PTP rate");
-+		return -EINVAL;
-+	}
-+
- 	ret |= est_write(est_addr, EST_BTR_LOW, cfg->btr[0], false);
- 	ret |= est_write(est_addr, EST_BTR_HIGH, cfg->btr[1], false);
- 	ret |= est_write(est_addr, EST_TER, cfg->ter, false);
+thanks,
 
--- 
-2.49.0
-
+greg k-h
 
