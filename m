@@ -1,215 +1,185 @@
-Return-Path: <linux-kernel+bounces-666742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B48BAC7B2E
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 11:38:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0D7BAC7B33
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 11:38:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D655550210C
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 09:37:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 881F2A2610E
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 09:37:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4D4C21FF5D;
-	Thu, 29 May 2025 09:37:29 +0000 (UTC)
-Received: from mail.actia.se (mail.actia.se [212.181.117.226])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C85E25E44E;
+	Thu, 29 May 2025 09:38:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NXDg9ThE"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8563A21E0AF;
-	Thu, 29 May 2025 09:37:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.181.117.226
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFA9525CC56
+	for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 09:38:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748511449; cv=none; b=ouwcqFqI8ibPBOvQWWLhsqfJoZkUN0RMjyKp5w1Ai5VgAqklxcIm8IbkxURYxd5b1enWB3LXLxpWZAeQZKrGqYjwEohs/kzWbp7/JnPXB+XWn5Cjxw6g1Tj/WB00pxJv4HjfkxNWe9He2KA8euR0416/nBa6agrRFerYC31i44Q=
+	t=1748511488; cv=none; b=Ove343+u4hr9WHvKwlK5zthzs/E3nTvcHbEHvPlgZnxIGhutykJB7zFxFCRN8AMyxtlbEJ3gCt58CXXZH8Dh99fZVHOwEUnJ2gW5dqzpi672NnMHT2j9oy7vnVS9/fsjf62zQvAfseexjyt676AqpvvVwxfCOMnKb7l1vklQwTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748511449; c=relaxed/simple;
-	bh=0A2hvECib8AzzgAufejxO42tkHm5UBhV7QzN/YWOs3k=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=r6ev5xRjiL8glDpk/M07qtJug/xwXxtgA3kcA8zqirKNSVMWCfL1wMbXfI5h09ap1O21354/jaoVNFP/iYzJDjuacWdMtLrgvRjkNlqFBep+OB+pe9yCm4Ubn49BSoO//0lVUFDJMifurrCRww3nA6MrK41VmufpUPc/IH6aFGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=actia.se; spf=pass smtp.mailfrom=actia.se; arc=none smtp.client-ip=212.181.117.226
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=actia.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=actia.se
-Received: from S036ANL.actianordic.se (10.12.31.117) by S035ANL.actianordic.se
- (10.12.31.116) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 29 May
- 2025 11:37:17 +0200
-Received: from S036ANL.actianordic.se ([fe80::e13e:1feb:4ea6:ec69]) by
- S036ANL.actianordic.se ([fe80::e13e:1feb:4ea6:ec69%3]) with mapi id
- 15.01.2507.039; Thu, 29 May 2025 11:37:17 +0200
-From: John Ernberg <john.ernberg@actia.se>
-To: Rob Herring <robh@kernel.org>
-CC: =?iso-8859-2?Q?Horia_Geant=E3?= <horia.geanta@nxp.com>, Pankaj Gupta
-	<pankaj.gupta@nxp.com>, Gaurav Jain <gaurav.jain@nxp.com>, Herbert Xu
-	<herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
-	"Frank Li" <Frank.li@nxp.com>, Pengutronix Kernel Team
-	<kernel@pengutronix.de>, "Fabio Estevam" <festevam@gmail.com>, Thomas Richard
-	<thomas.richard@bootlin.com>, "linux-crypto@vger.kernel.org"
-	<linux-crypto@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v3 3/4] dt-bindings: crypto: fsl,sec-v4.0: Add power
- domains for iMX8QM and iMX8QXP
-Thread-Topic: [PATCH v3 3/4] dt-bindings: crypto: fsl,sec-v4.0: Add power
- domains for iMX8QM and iMX8QXP
-Thread-Index: AQHbz97TDhLekXOKbkmerT2PfEO8vrPodECAgADE/QA=
-Date: Thu, 29 May 2025 09:37:17 +0000
-Message-ID: <aDgqyF7773LJjjJO@w447anl.localdomain>
-References: <20250528144259.2603914-1-john.ernberg@actia.se>
- <20250528144259.2603914-4-john.ernberg@actia.se>
- <20250528215209.GA862463-robh@kernel.org>
-In-Reply-To: <20250528215209.GA862463-robh@kernel.org>
-Accept-Language: en-US, sv-SE
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-esetresult: clean, is OK
-x-esetid: 37303A2956B14453637562
-Content-Type: text/plain; charset="iso-8859-2"
-Content-ID: <11D1FBF7FEE64642BE637CBA54B3C320@actia.se>
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1748511488; c=relaxed/simple;
+	bh=nidXm6RjwTc3HEwY2WsuPfUBUD+8TIDBoLfPZzX1Ho4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ni6THsmSGmBrS8/5zhsucFkBYxZ2zAZH3Ua21w6XdEvQVg+tKXy9T6KNp/GAKOVpIxAOPtOVMPB6rRknIqWl3I+PL4lYgLN9z4p+A3z5PwqTiBS2+CFX1A1YOUU1nehipx+LOCK3wlfzKZVWhB16SdA3jT1AD1GkGITVSSh8JX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NXDg9ThE; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3a4e57d018cso127227f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 02:38:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1748511485; x=1749116285; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=gQA3tchOGlR5qDPRloAnwGTrIDQ4bOFY7MUhX29PeuI=;
+        b=NXDg9ThEsnN0M37p7RNXKCXJa5JIerSKPnSYyRkmPCxJuwD/EzirFQu8p43taTdAgz
+         mcQzqSphZ84TO2auSVof7ChewaogKVC/qSYxYz6Gs1nHNd+UdZ7xi6H/T4ZAzlwgmXrg
+         D3npIUarxb45d/u2jbhyA2H82rUWOafs+bWLf12ykYqV9xTy7drcK0aGSTZIPx7qPMux
+         YlDNOHUYR+nZETMjrbq33In7os1oSMSEpotbkFZmqKIuCtqn6zygkCGjkMr/iwoBTgSb
+         rXQnQosEwNN85e6F1TLeMqfJyDhBcIe18zDIffwQrA2Xn+66BS2+qFIMoMskLz/BERXg
+         ATog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748511485; x=1749116285;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gQA3tchOGlR5qDPRloAnwGTrIDQ4bOFY7MUhX29PeuI=;
+        b=IbqdcGkJesETUqur9OYRe0yqaby/XVxUm7prL4JURrszEqeH0LnzPN1vpcKZdxytTm
+         WFs3mzwYmZ3QCt1Ps8ZrcFdrpBHwENJBDkt8j7oPjgA2JUnRHO/lF7TQ/3nOhsPkUJeU
+         l4pc9yMqIdMIZ/tQk5IKZPuaA5rNK9sJbKN+2V1lDdUB43Fx9UB9GO1pfgiMTUJg05oy
+         IglMmQBPwsCVk49gbtibumotO+BQwN5c1FS+6hwV9pVNT4FJ+kB50Ud8pZ5osxn2HNGR
+         bHyZtuvHUKZCEjBsYFGlEke+vrIrkXkzSJCG73i7/o8qGsfwe7bCL52FLpnjTmsW3m7a
+         KXUw==
+X-Forwarded-Encrypted: i=1; AJvYcCWfNxgEvHv9/mEggikHoU7aYO5M7XA2X7cgE3Uwp+fDAaK7AXOnC4VntgKCkmIPQ7W2pUGwiLUmB8Cei7g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBPY1db2ptw0wmEFv1aYAKxSH4vBvknRH85i/QkrfBn7fF6Euo
+	9qEf1Bjs9+ZNJl+IhTc/ItEf2c0brHXHc3WuOnjW/7SsA3j18jCEPJ4W24D0SoP/ZoM=
+X-Gm-Gg: ASbGncvd733yZywWusJzI2gxnzXkN6usqM5fPQs1TBaFkKE/vFuxJGFamYTri/pycYX
+	3dBzA/JPPaEvSb6x6x32Ao3ZAMfrh9NFihGwDQ5vfHsY+Ige0giuE1+4fDWUo4Vg+ZKg8mgIwF7
+	pGONVe4TxY5CmZH7kl2RvekBPkNUduchteuO5RyIRaRyKgXQjMdR1Wh28eK5qzAoSw85tq+QKmq
+	QV6WgZa6QfmE4EfdEZEajUrYoYqcPUwOAaUcY8EwOMeA6qzFB++hI6G66uY+787+UHrPeMdniic
+	1snVhn9l0g1J6iBzpnca0BgGmvcm0umbcS5p7bLK2SDompIhdaMJkpNxyNwJ3V6jpEEVSKo=
+X-Google-Smtp-Source: AGHT+IG2KHg1RZohAGcF8Ql9GO6udEqYKqOIjzHEygo2NxgJdK/utVnegk1sAe3vpwYFfGdGIM1yBw==
+X-Received: by 2002:a05:6000:2dc4:b0:3a4:e8c8:fb89 with SMTP id ffacd0b85a97d-3a4e8c8fcc2mr1629165f8f.0.1748511485114;
+        Thu, 29 May 2025 02:38:05 -0700 (PDT)
+Received: from [192.168.1.29] ([178.197.223.125])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4f009f865sm1405197f8f.81.2025.05.29.02.38.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 29 May 2025 02:38:04 -0700 (PDT)
+Message-ID: <60c39c91-4ef7-4a14-8317-da0e2c3aa962@linaro.org>
+Date: Thu, 29 May 2025 11:38:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/8] ASoC: codecs: More const and unused member cleanups
+To: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>,
+ David Rhodes <david.rhodes@cirrus.com>,
+ Richard Fitzgerald <rf@opensource.cirrus.com>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Support Opensource <support.opensource@diasemi.com>,
+ Oder Chiou <oder_chiou@realtek.com>, Srinivas Kandagatla <srini@kernel.org>,
+ Shengjiu Wang <shengjiu.wang@gmail.com>, Xiubo Li <Xiubo.Lee@gmail.com>,
+ Fabio Estevam <festevam@gmail.com>, Nicolin Chen <nicoleotsuka@gmail.com>
+Cc: linux-sound@vger.kernel.org, patches@opensource.cirrus.com,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org
+References: <20250528-asoc-const-unused-v1-0-19a5d07b9d5c@linaro.org>
+ <a4c0d421-9062-4424-a750-ee74e2f0407f@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzTRLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnp5c3p0b2Yua296bG93c2tpQGxpbmFyby5vcmc+wsGUBBMBCgA+AhsD
+ BQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAFiEEm9B+DgxR+NWWd7dUG5NDfTtBYpsFAmgXUEoF
+ CRaWdJoACgkQG5NDfTtBYpudig/+Inb3Kjx1B7w2IpPKmpCT20QQQstx14Wi+rh2FcnV6+/9
+ tyHtYwdirraBGGerrNY1c14MX0Tsmzqu9NyZ43heQB2uJuQb35rmI4dn1G+ZH0BD7cwR+M9m
+ lSV9YlF7z3Ycz2zHjxL1QXBVvwJRyE0sCIoe+0O9AW9Xj8L/dmvmRfDdtRhYVGyU7fze+lsH
+ 1pXaq9fdef8QsAETCg5q0zxD+VS+OoZFx4ZtFqvzmhCs0eFvM7gNqiyczeVGUciVlO3+1ZUn
+ eqQnxTXnqfJHptZTtK05uXGBwxjTHJrlSKnDslhZNkzv4JfTQhmERyx8BPHDkzpuPjfZ5Jp3
+ INcYsxgttyeDS4prv+XWlT7DUjIzcKih0tFDoW5/k6OZeFPba5PATHO78rcWFcduN8xB23B4
+ WFQAt5jpsP7/ngKQR9drMXfQGcEmqBq+aoVHobwOfEJTErdku05zjFmm1VnD55CzFJvG7Ll9
+ OsRfZD/1MKbl0k39NiRuf8IYFOxVCKrMSgnqED1eacLgj3AWnmfPlyB3Xka0FimVu5Q7r1H/
+ 9CCfHiOjjPsTAjE+Woh+/8Q0IyHzr+2sCe4g9w2tlsMQJhixykXC1KvzqMdUYKuE00CT+wdK
+ nXj0hlNnThRfcA9VPYzKlx3W6GLlyB6umd6WBGGKyiOmOcPqUK3GIvnLzfTXR5DOwU0EVUNc
+ NAEQAM2StBhJERQvgPcbCzjokShn0cRA4q2SvCOvOXD+0KapXMRFE+/PZeDyfv4dEKuCqeh0
+ hihSHlaxTzg3TcqUu54w2xYskG8Fq5tg3gm4kh1Gvh1LijIXX99ABA8eHxOGmLPRIBkXHqJY
+ oHtCvPc6sYKNM9xbp6I4yF56xVLmHGJ61KaWKf5KKWYgA9kfHufbja7qR0c6H79LIsiYqf92
+ H1HNq1WlQpu/fh4/XAAaV1axHFt/dY/2kU05tLMj8GjeQDz1fHas7augL4argt4e+jum3Nwt
+ yupodQBxncKAUbzwKcDrPqUFmfRbJ7ARw8491xQHZDsP82JRj4cOJX32sBg8nO2N5OsFJOcd
+ 5IE9v6qfllkZDAh1Rb1h6DFYq9dcdPAHl4zOj9EHq99/CpyccOh7SrtWDNFFknCmLpowhct9
+ 5ZnlavBrDbOV0W47gO33WkXMFI4il4y1+Bv89979rVYn8aBohEgET41SpyQz7fMkcaZU+ok/
+ +HYjC/qfDxT7tjKXqBQEscVODaFicsUkjheOD4BfWEcVUqa+XdUEciwG/SgNyxBZepj41oVq
+ FPSVE+Ni2tNrW/e16b8mgXNngHSnbsr6pAIXZH3qFW+4TKPMGZ2rZ6zITrMip+12jgw4mGjy
+ 5y06JZvA02rZT2k9aa7i9dUUFggaanI09jNGbRA/ABEBAAHCwXwEGAEKACYCGwwWIQSb0H4O
+ DFH41ZZ3t1Qbk0N9O0FimwUCaBdQXwUJFpZbKgAKCRAbk0N9O0Fim07TD/92Vcmzn/jaEBcq
+ yT48ODfDIQVvg2nIDW+qbHtJ8DOT0d/qVbBTU7oBuo0xuHo+MTBp0pSTWbThLsSN1AuyP8wF
+ KChC0JPcwOZZRS0dl3lFgg+c+rdZUHjsa247r+7fvm2zGG1/u+33lBJgnAIH5lSCjhP4VXiG
+ q5ngCxGRuBq+0jNCKyAOC/vq2cS/dgdXwmf2aL8G7QVREX7mSl0x+CjWyrpFc1D/9NV/zIWB
+ G1NR1fFb+oeOVhRGubYfiS62htUQjGLK7qbTmrd715kH9Noww1U5HH7WQzePt/SvC0RhQXNj
+ XKBB+lwwM+XulFigmMF1KybRm7MNoLBrGDa3yGpAkHMkJ7NM4iSMdSxYAr60RtThnhKc2kLI
+ zd8GqyBh0nGPIL+1ZVMBDXw1Eu0/Du0rWt1zAKXQYVAfBLCTmkOnPU0fjR7qVT41xdJ6KqQM
+ NGQeV+0o9X91X6VBeK6Na3zt5y4eWkve65DRlk1aoeBmhAteioLZlXkqu0pZv+PKIVf+zFKu
+ h0At/TN/618e/QVlZPbMeNSp3S3ieMP9Q6y4gw5CfgiDRJ2K9g99m6Rvlx1qwom6QbU06ltb
+ vJE2K9oKd9nPp1NrBfBdEhX8oOwdCLJXEq83vdtOEqE42RxfYta4P3by0BHpcwzYbmi/Et7T
+ 2+47PN9NZAOyb771QoVr8A==
+In-Reply-To: <a4c0d421-9062-4424-a750-ee74e2f0407f@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Rob,
+On 29/05/2025 11:33, Srinivas Kandagatla wrote:
+> 
+> 
+> On 5/28/25 8:59 PM, Krzysztof Kozlowski wrote:
+>> Make static data const for code safety and drop some unused fields in
+>> structs.
+>>
+>> This is based on for-v6.16 branch in ASoC tree for context in wcd938x
+>> driver.
+>>
+>> Best regards,
+>> Krzysztof
+>>
+>> ---
+>> Krzysztof Kozlowski (8):
+>>       ASoC: codecs: Constify regmap configuration static variables
+>>       ASoC: fsl: Constify reg_default array
+>>       ASoC: codecs: wcd9335: Drop unused sido_input_src field
+>>       ASoC: codecs: wcd934x: Drop unused num_rx_port/num_tx_port fields
+>>       ASoC: codecs: wcd937x: Drop unused 'struct wcd937x_priv' fields
+>>       ASoC: codecs: wcd938x: Drop unused 'struct wcd938x_priv' fields
+>>       ASoC: codecs: wcd938x: Drop unused variant field
+>>       ASoC: codecs: wcd939x: Drop unused 'struct wcd939x_priv' fields
+> 
+> 
+> Thanks Krzysztof for the cleanups, its surprising to see so many unused
+> stuct members in qcom codecs. Did you use any static analysis tool to do
+> this or was this manually done?
 
-On Wed, May 28, 2025 at 04:52:09PM -0500, Rob Herring wrote:
-> On Wed, May 28, 2025 at 02:43:07PM +0000, John Ernberg wrote:
-> > NXP SoCs like the iMX8QM, iMX8QXP or iMX8DXP use power domains for
-> > resource management.
-> >=20
-> > Allow specifying them for such SoCs.
-> >=20
-> > Signed-off-by: John Ernberg <john.ernberg@actia.se>
-> >=20
-> > ---
-> >=20
-> > v3:
-> >  - Fix warnings discovered by Rob Herring's bot
-> >  - Declare the compatibles correctly (Krzysztof Kozlowski)
-> >=20
-> > v2:
-> >  - Adjust commit message (Frank Li)
-> >  - Only allow power-domains when compatible with imx8qm (Frank Li)
-> > ---
-> >  .../bindings/crypto/fsl,sec-v4.0.yaml         | 45 ++++++++++++++++++-
-> >  1 file changed, 44 insertions(+), 1 deletion(-)
-> >=20
-> > diff --git a/Documentation/devicetree/bindings/crypto/fsl,sec-v4.0.yaml=
- b/Documentation/devicetree/bindings/crypto/fsl,sec-v4.0.yaml
-> > index 75afa441e019..a4ada0e2d97c 100644
-> > --- a/Documentation/devicetree/bindings/crypto/fsl,sec-v4.0.yaml
-> > +++ b/Documentation/devicetree/bindings/crypto/fsl,sec-v4.0.yaml
-> > @@ -46,6 +46,7 @@ properties:
-> >        - items:
-> >            - enum:
-> >                - fsl,imx6ul-caam
-> > +              - fsl,imx8qm-caam
-> >                - fsl,sec-v5.0
-> >            - const: fsl,sec-v4.0
-> >        - const: fsl,sec-v4.0
-> > @@ -77,6 +78,9 @@ properties:
-> >    interrupts:
-> >      maxItems: 1
-> > =20
-> > +  power-domains:
-> > +    maxItems: 1
-> > +
-> >    fsl,sec-era:
-> >      description: Defines the 'ERA' of the SEC device.
-> >      $ref: /schemas/types.yaml#/definitions/uint32
-> > @@ -106,7 +110,9 @@ patternProperties:
-> >                - const: fsl,sec-v5.0-job-ring
-> >                - const: fsl,sec-v4.0-job-ring
-> >            - items:
-> > -              - const: fsl,sec-v5.0-job-ring
-> > +              - enum:
-> > +                - fsl,imx8qm-job-ring
-> > +                - fsl,sec-v5.0-job-ring
-> >                - const: fsl,sec-v4.0-job-ring
-> >            - const: fsl,sec-v4.0-job-ring
-> > =20
-> > @@ -116,6 +122,9 @@ patternProperties:
-> >        interrupts:
-> >          maxItems: 1
-> > =20
-> > +      power-domains:
-> > +        maxItems: 1
-> > +
-> >        fsl,liodn:
-> >          description:
-> >            Specifies the LIODN to be used in conjunction with the ppid-=
-to-liodn
-> > @@ -212,6 +221,40 @@ required:
-> >    - reg
-> >    - ranges
-> > =20
-> > +allOf:
-> > +  - if:
-> > +      properties:
-> > +        compatible:
-> > +          contains:
-> > +            const: fsl,imx8qm-caam
-> > +    then:
-> > +      required:
-> > +        - power-domains
-> > +    else:
-> > +      properties:
-> > +        power-domains: false
-> > +
-> > +  - if:
->=20
-> This 'if' belongs under the '^jr@[0-9a-f]+$' subschema which will then=20
-> remote a level here.
->=20
+No, only the tool between seat and keyboard. I should find something
+better (more automated), because every 3 months I discover a new unused
+field. :) I think now I cleaned them for good, but some new cases are
+added when some code is dropped or simplified.
 
-This is what I had in v2 [1], which your bot pointed out is an unexpected
-if-statement [2]. Or should I have wrapped it in an allOf: even though it
-was a single if:?
-
-    jernberg % pip install --upgrade dtschema
-    Requirement already satisfied: dtschema in ./.venv/lib/python3.13/site-=
-packages (2025.2)
-
-[1]: https://lore.kernel.org/linux-crypto/20250527071552.1424997-4-john.ern=
-berg@actia.se/
-[2]: https://lore.kernel.org/linux-crypto/174833819381.3537254.550804710081=
-7417003.robh@kernel.org/
-
-Would you mind also letting me know the command line you run validation
-with in the CI? I didn't see the v2 (at first, needed W=3D1 for that) nor
-the v3 complaint in my runs before sending.
-
-Thanks! // John Ernberg
-
-> > +      patternProperties:
-> > +        '^jr@[0-9a-f]+$':
-> > +          type: object
-> > +          properties:
-> > +            compatible:
-> > +              contains:
-> > +                const: fsl,imx8qm-job-ring
-> > +    then:
-> > +      patternProperties:
-> > +        '^jr@[0-9a-f]+$':
-> > +          type: object
-> > +          required:
-> > +            - power-domains
-> > +    else:
-> > +      patternProperties:
-> > +        '^jr@[0-9a-f]+$':
-> > +          type: object
-> > +          properties:
-> > +            power-domains: false
-> > +
-> >  additionalProperties: false
-> > =20
-> >  examples:
-> > --=20
-> > 2.49.0=
+Best regards,
+Krzysztof
 
