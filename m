@@ -1,100 +1,81 @@
-Return-Path: <linux-kernel+bounces-666428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B04D1AC7698
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 05:44:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC950AC76C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 05:55:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C76FA7A3E10
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 03:42:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB0EA3B6F0B
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 03:54:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E3C9247DE1;
-	Thu, 29 May 2025 03:43:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF6DC253B43;
+	Thu, 29 May 2025 03:54:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="GkHcaWNq"
-Received: from mail-pl1-f196.google.com (mail-pl1-f196.google.com [209.85.214.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BkALzi+B"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2ADD24EA85
-	for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 03:43:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA051248F57;
+	Thu, 29 May 2025 03:54:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748490204; cv=none; b=By5mPWsABAVvXwRxZ4sZ2IqsyxilyU9Ar6mOuBJ4yJ0UTokTD88vLgC6ywIKM87C0y9CwJFtjDPc9dO+bKdEikaLbV8dRkQeuoZgcqPgcfkqiFEBPyKIKnpnPDhmcJq+WmnmbgQ8cPFKl7XmP7DuXUb1StL6V/yyhCZXIesHN6Q=
+	t=1748490876; cv=none; b=L2svgzwkx96AthpfvXLkBVFcuXg/QmlWHZc4p+MCh2H6A3c85aR3sYEE4jn/vmWm3ZqqsHCr6aWoqgcQkDohBubimD2IJJau5SZe3C/pQ1e1ALlZplT6eHJb5qlTDYN+9SeMaLpmFbnSSHZvST0PLMGVitUFrPNRQcghnqqvcWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748490204; c=relaxed/simple;
-	bh=flsrf78ADstduszuNfIIsFasVeoYk0NLoNIljnBjXqI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=mNSUiWZvNqplARIQOdB+tjJgWrUIKUATM8TGKILyMnfAvP+XBRgDLgvrYc4eIZxC1DAnbuObK+HySOenb7YbZV6opzTjFotWqqkwcCTaJ2A3lgI3vyllDParbcC3/ReL4hbQ8pvdBb7aGvwHcFScDF90ssHBEPdq+IFWxIiReK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=GkHcaWNq; arc=none smtp.client-ip=209.85.214.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-pl1-f196.google.com with SMTP id d9443c01a7336-23508d30142so1290475ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 20:43:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1748490201; x=1749095001; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=E7f3IyERhfqlZ+9BGF7A4Kt5h9pzQNTOt7gsFORfraM=;
-        b=GkHcaWNqB3uf2Dku/frlVWBLunpSO/ZkqI/sJDlR2zIYBQjIAesFOGLs+weES9F6Vi
-         XIMN0Hgx+9I4IsnIkmMqjUEaYxbuuutWHf6FBMcRSJFck1xycY4u3ArkfwH7T5zBrZAk
-         Bpr5VFh0dmytno/nbJmWY7SKncJUJpSI+ZzD9YcNWCAHCDIKYLYBvRqiL8eFLLKrOikY
-         KOq0S1zdQlJgMFgi45NddXxd88sAFisarW6wb/b0gaxDSvUToIvOK+yZSQ6IkZTRyOKv
-         YDQGI9JyLHZXtFNyHdAt3P2/TTrzzP06ohqZH7S8bwwa2m/eJVA2WODi68q6P0/ljGXG
-         tC2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748490201; x=1749095001;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=E7f3IyERhfqlZ+9BGF7A4Kt5h9pzQNTOt7gsFORfraM=;
-        b=vAwEHHXNr1JAgXGv4/8K1yUbiNJLg97ni66kz6Kbtr7t0/FCphWClDuVMcVFrgg121
-         +jIkJgpbq/yVUQbWKeIU+acI1o/Ed/0SNO74pyNhAXiyNj+7DoXOjCg79oIIIzzd/Qa5
-         Gxxu8mgXaSB5pOPRgVryDQJSQFPNig7Hb4dILvKvAwUrcLtPS1QtRCNd2Gab2827zPr2
-         L61KjoCSXaHPU0y0VS94hBKD7Xfj3fRUJX6tddAx+wCSYtYezfROAD9SD3Yk6bssPHwz
-         tRk0jSCxmMeHV5UCH2dFlbsUebdXvZnVwm+4p497sw6uYa6oPArqPW6R8a0vKi7M1IU3
-         R/MQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWg5gAhe0Y7EUj/J1VVNK0vLLivxSLxdC3LzBdi2j4176mGEhqHSjUpMhsraIKq7l4j73XO1VXpCA9ywd8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7B0GVReWL2urMq4Jpjf/LURPqiqM6IISFsddPDdhW9KPNt4KX
-	P8WXAvjkyEyORgDeEgzS1G9xFJqzTy8y/+UyHoS1jJwZW7kmBB4Vp08iGHiKTxo2sBs3zNmWiFu
-	fLG8inLnoaIZgWnQ=
-X-Gm-Gg: ASbGncs470Z46MKxBQzq2IokaImZ0RKKi/UP4jSiz8Du3hxx5wdECszRAgyk3rlTYV3
-	ULU0XC5OCvB3bBzVh+NEZpb43MboXIURveJiuaeni0JRW0R41mP+JqR9Qr/LbVJqfvV3gbiA9ui
-	j0edH199NdPIbpuaano/1PnMBAMWpEz7BOyLcj4bTDiw45t5NkrWAY8IbK+1nvYyZs1uRlp8lhh
-	jnp0by+EQlbRjIG9V9WAZCCGf6HYkIKuoPEoAznfziu7EusAXoHx0PUTLQqpUm1XVjWIg6N9Pfh
-	yrb7HGtcLjkrUFk+TW0jXW/sOYXUqtkATXNNqGM2hbz6A914u6N5jY05RtpbZT4kCNWgzhRjYkr
-	25Klt8qssPDE4
-X-Google-Smtp-Source: AGHT+IH5Y8EDMppSiMya4T548VEwYkSKhJqKlchdDU2Hj4M6cj23ihri+hOVMR8Z2nfo6I1IKGtyrQ==
-X-Received: by 2002:a17:903:4283:b0:234:bfcb:5c1d with SMTP id d9443c01a7336-234bfcb5cd4mr70545935ad.40.1748490201163;
-        Wed, 28 May 2025 20:43:21 -0700 (PDT)
-Received: from hsinchu36-syssw02.internal.sifive.com ([210.176.154.34])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23506bd92c7sm3425905ad.62.2025.05.28.20.43.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 May 2025 20:43:20 -0700 (PDT)
-From: Nylon Chen <nylon.chen@sifive.com>
-To: Conor Dooley <conor@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-Cc: linux-riscv@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pwm@vger.kernel.org,
-	Nylon Chen <nylon.chen@sifive.com>,
-	kernel test robot <lkp@intel.com>,
-	Zong Li <zong.li@sifive.com>
-Subject: [PATCH v15 3/3] pwm: sifive: fix rounding and idempotency issues in apply and get_state
-Date: Thu, 29 May 2025 11:53:41 +0800
-Message-Id: <20250529035341.51736-4-nylon.chen@sifive.com>
+	s=arc-20240116; t=1748490876; c=relaxed/simple;
+	bh=P51RspfzGpdHpBrfvugI3IiiMtsKcraElLsLNaeJz80=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=t3UP5zLIPEZqzQRE7YqlKb8k3cteBF1JyInomIShhc4mECu9sga1tsmW7Li92rBx4uo2ECMBtfuFMhpV4JyupI3l+yCIvmgiCbnrepm9RzTfzys6KfWVuQbDZJ7gyiLKNvd9VpgJx64ah7pzdRli7b9YM6UbuecO9ifPioOoVME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BkALzi+B; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54SJAJQl005112;
+	Thu, 29 May 2025 03:54:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=1G2vijzDb6ASBTZNBwxt3G7LThp+7H8Yhyj
+	ZoGVmMpg=; b=BkALzi+BrUtJaA9Q0qee+6ZSX8Q4Ki3E2kuDjbp5tuDpjVuVdtT
+	5q0vaWG9TAOqZC9DSTT+qxCDyjw49Ap5l55zNQn1fLjAb2Ug2emHiquR5yYt7OOI
+	3/Yj1OlY4vHIzOBTUt4F897fZAWlnPliUxtRCABnYFNJib3uiX4PnNegsJDcccID
+	VCbs2AmLAt6o1r51O9NJJ9X6rwo8ONRfUug50g9rUJF8VJQLMmSHqgIMgKg1omvc
+	luvOp6T1p/BdAGzyjF2zaXPJpKTOH2YhxA9T0Rr148AZA9FlCH9fz+2mY3jxkfYB
+	MNSbxKS2e3cWNTHvX8swHVMtfoSAdOZnHkA==
+Received: from aptaippmta02.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46x8d7920m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 29 May 2025 03:54:23 +0000 (GMT)
+Received: from pps.filterd (APTAIPPMTA02.qualcomm.com [127.0.0.1])
+	by APTAIPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 54T3sKRf011609;
+	Thu, 29 May 2025 03:54:20 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 46u76mdp1x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 29 May 2025 03:54:20 +0000
+Received: from APTAIPPMTA02.qualcomm.com (APTAIPPMTA02.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 54T3sK29011592;
+	Thu, 29 May 2025 03:54:20 GMT
+Received: from cse-cd02-lnx.ap.qualcomm.com (cse-cd02-lnx.qualcomm.com [10.64.75.246])
+	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 54T3sJjV011587
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 29 May 2025 03:54:20 +0000
+Received: by cse-cd02-lnx.ap.qualcomm.com (Postfix, from userid 4438065)
+	id 5F6C83151; Thu, 29 May 2025 11:54:18 +0800 (CST)
+From: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
+To: lpieralisi@kernel.org, kwilczynski@kernel.org,
+        manivannan.sadhasivam@linaro.org, robh@kernel.org, bhelgaas@google.com,
+        krzk+dt@kernel.org, neil.armstrong@linaro.org, abel.vesa@linaro.org,
+        kw@linux.com, conor+dt@kernel.org, vkoul@kernel.org, kishon@kernel.org,
+        andersson@kernel.org, konradybcio@kernel.org
+Cc: linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, quic_qianyu@quicinc.com,
+        quic_krichai@quicinc.com, quic_vbadigan@quicinc.com,
+        Ziyue Zhang <quic_ziyuzhan@quicinc.com>
+Subject: [PATCH v1 0/4] pci: qcom: drop unrelated clock and add link_down reset for sa8775p
+Date: Thu, 29 May 2025 11:54:12 +0800
+Message-Id: <20250529035416.4159963-1-quic_ziyuzhan@quicinc.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250529035341.51736-1-nylon.chen@sifive.com>
-References: <20250529035341.51736-1-nylon.chen@sifive.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -102,77 +83,61 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: w3Wy0xEt0JrtV_tt5G3n9cJWMJg4-yDg
+X-Proofpoint-ORIG-GUID: w3Wy0xEt0JrtV_tt5G3n9cJWMJg4-yDg
+X-Authority-Analysis: v=2.4 cv=X8pSKHTe c=1 sm=1 tr=0 ts=6837da6f cx=c_pps
+ a=nuhDOHQX5FNHPW3J6Bj6AA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=dt9VzEwgFbYA:10 a=COk6AnOGAAAA:8 a=MwwM2Iz_yP08XZX32zwA:9
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI5MDAzNSBTYWx0ZWRfX8rkUVQ1/IPvw
+ vg5KGfckWU1Bus4jiCNegTL7B9W2GvQZswXl8R9aOP2hmhJMLVqiX4JLkVOfir4bBuTjYKKdQUQ
+ xrnrk3d71gb3AwoHinG7JIMK6MyMoNxTufNmW4vMDzpSTfMZ8G985p+/xtyORPjapINI3TwleKN
+ FHsVRYwCCmc1GdKP/1ZguNI2Iqzr8a1C/kvF8BiS2YXEI4MBE5fgA/+D1w2NmdnrB44Zh6/amOJ
+ QTlXb1YfLna1zSKIKopjWrsahXCqY9agoxy7yaVyRKCkaDeLmSSYk6remrI4/OjpPjPn1h3mQaN
+ 9BLiYeEi8NnPV1ZIpeCWy6Lo8oYUZAU+9nExlcr6Q5mmNyulwsBCeK8gL6M4vQ/U+rcHAwelT/B
+ VVkbuI0FbMeAnF7C1G3ZFvhgnTmxO95VPyFDH2V20rRZW9MOdLyQ6FpWq+y43dYEKf2S289m
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-29_01,2025-05-27_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 mlxscore=0 lowpriorityscore=0 phishscore=0 spamscore=0
+ adultscore=0 impostorscore=0 bulkscore=0 mlxlogscore=862 suspectscore=0
+ clxscore=1015 malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505160000
+ definitions=main-2505290035
 
-This fix ensures consistent rounding and avoids mismatches
-between applied and reported PWM values that could trigger false
-idempotency failures in debug checks
+This series drop gcc_aux_clock in pcie phy, the pcie aux clock should 
+be gcc_phy_aux_clock. And sa8775p platform support link_down reset in
+hardware, so add it for both pcie0 and pcie1 to provide a better user
+experience.
 
-This change ensures:
-- real_period is now calculated using DIV_ROUND_UP_ULL() to avoid underestimation.
-- duty_cycle is rounded up to match the fractional computation in apply()
-- apply() truncates the result to compensate for get_state's rounding up logic
+Have follwing changes:
+  - Update pcie phy bindings for sa8775p.
+  - Document link_down reset.
+  - Remove aux clock from pcie phy.
+  - Add link_down reset for pcie.
 
-These fixes resolve issues like:
-.apply is supposed to round down duty_cycle (requested: 360/504000, applied: 361/504124)
-.apply is not idempotent (ena=1 pol=0 1739692/4032985) -> (ena=1 pol=0 1739630/4032985)
-
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202505080303.dBfU5YMS-lkp@intel.com/
-Co-developed-by: Zong Li <zong.li@sifive.com>
-Signed-off-by: Zong Li <zong.li@sifive.com>
-Signed-off-by: Nylon Chen <nylon.chen@sifive.com>
+Signed-off-by: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
 ---
- drivers/pwm/pwm-sifive.c | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/pwm/pwm-sifive.c b/drivers/pwm/pwm-sifive.c
-index f3694801d3ee..4a07315b0744 100644
---- a/drivers/pwm/pwm-sifive.c
-+++ b/drivers/pwm/pwm-sifive.c
-@@ -118,7 +118,7 @@ static void pwm_sifive_update_clock(struct pwm_sifive_ddata *ddata,
- 
- 	/* As scale <= 15 the shift operation cannot overflow. */
- 	num = (unsigned long long)NSEC_PER_SEC << (PWM_SIFIVE_CMPWIDTH + scale);
--	ddata->real_period = div64_ul(num, rate);
-+	ddata->real_period = DIV_ROUND_UP_ULL(num, rate);
- 	dev_dbg(ddata->parent,
- 		"New real_period = %u ns\n", ddata->real_period);
- }
-@@ -143,8 +143,8 @@ static int pwm_sifive_get_state(struct pwm_chip *chip, struct pwm_device *pwm,
- 		state->enabled = false;
- 
- 	state->period = ddata->real_period;
--	state->duty_cycle =
--		(u64)duty * ddata->real_period >> PWM_SIFIVE_CMPWIDTH;
-+	state->duty_cycle = DIV_ROUND_UP_ULL((u64)duty * ddata->real_period,
-+					     (1U << PWM_SIFIVE_CMPWIDTH));
- 	state->polarity = PWM_POLARITY_NORMAL;
- 
- 	return 0;
-@@ -159,7 +159,8 @@ static int pwm_sifive_apply(struct pwm_chip *chip, struct pwm_device *pwm,
- 	unsigned long long num;
- 	bool enabled;
- 	int ret = 0;
--	u32 frac, inactive;
-+	u64 frac;
-+	u32 inactive;
- 
- 	if (state->polarity != PWM_POLARITY_NORMAL)
- 		return -EINVAL;
-@@ -178,9 +179,11 @@ static int pwm_sifive_apply(struct pwm_chip *chip, struct pwm_device *pwm,
- 	 * consecutively
- 	 */
- 	num = (u64)duty_cycle * (1U << PWM_SIFIVE_CMPWIDTH);
--	frac = DIV64_U64_ROUND_CLOSEST(num, state->period);
-+	frac = num;
-+	do_div(frac, state->period);
- 	/* The hardware cannot generate a 0% duty cycle */
--	frac = min(frac, (1U << PWM_SIFIVE_CMPWIDTH) - 1);
-+	frac = min(frac, (u64)(1U << PWM_SIFIVE_CMPWIDTH) - 1);
-+	/* pwmcmp register must be loaded with the inactive(invert the duty) */
- 	inactive = (1U << PWM_SIFIVE_CMPWIDTH) - 1 - frac;
- 
- 	mutex_lock(&ddata->lock);
+Ziyue Zhang (4):
+  dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy: Update pcie phy bindings
+    for sa8775p
+  dt-bindings: PCI: qcom,pcie-sa8775p: document link_down reset
+  arm64: dts: qcom: sa8775p: remove aux clock from pcie phy
+  arm64: dts: qcom: sa8775p: add link_down reset for pcie
+
+ .../bindings/pci/qcom,pcie-sa8775p.yaml       | 13 ++++--
+ .../phy/qcom,sc8280xp-qmp-pcie-phy.yaml       |  4 +-
+ arch/arm64/boot/dts/qcom/sa8775p.dtsi         | 42 ++++++++++++-------
+ 3 files changed, 37 insertions(+), 22 deletions(-)
+
+
+base-commit: 3be1a7a31fbda82f3604b6c31e4f390110de1b46
 -- 
 2.34.1
 
