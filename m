@@ -1,113 +1,93 @@
-Return-Path: <linux-kernel+bounces-667025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-667026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEAADAC7F99
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 16:21:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB47EAC7F9A
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 16:23:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2ADE43ABEF2
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 14:21:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA89A4A2E9A
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 14:23:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC75D18991E;
-	Thu, 29 May 2025 14:21:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64DF721B1B9;
+	Thu, 29 May 2025 14:22:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=permerror (0-bit key) header.d=ltec.ch header.i=@ltec.ch header.b="/tg5MDE3";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=ltec.ch header.i=@ltec.ch header.b="Z4Vam7we"
-Received: from mail.ltec.ch (mail.ltec.ch [95.143.48.181])
+	dkim=pass (2048-bit key) header.d=computerix.info header.i=@computerix.info header.b="KJTsZ9E1"
+Received: from www74.your-server.de (www74.your-server.de [213.133.104.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CC0C1DC075;
-	Thu, 29 May 2025 14:21:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.143.48.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBB7721A92F;
+	Thu, 29 May 2025 14:22:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.133.104.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748528504; cv=none; b=l03DUdqSS8CrhRcPVdFYrqdeffELZMsJt+iF+aTLBYWzjt2GMLN/SKVhTF66Qz359GIN3Yn3S+LorN6e5fThmVe2RBoiVuqsf+Hr1xdm37B2ZSZl9d6RWGJSRwLfPv6MK6Wfyrt5edQ0CBGul2W5AqIXhMUXso8gQmljLM2UPek=
+	t=1748528573; cv=none; b=HAvZ5df6jOIN+eEPBMjFde5Zlj7sxPpWedXgCUV/xkx5+hEQmu5EQP4EVfDW1eQbYmFOlXhxVI+6qhOKwokhwisorom8B21CXbVrXP8ijx4Cr8tJqHHetNUmtLTYwTzXEJu5GYxHVZPAoo8wyNyez78L3eJN9C5vxTgBogbApWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748528504; c=relaxed/simple;
-	bh=pnOeuLVvoGhxI9QE7V69Klv9q3SpI04PooUYZCiq2UM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=e9Qm7ADkTNB4T3U47VkcnBEUIlzXWcrztcR9EhHFWbxRAPyuPgUGlf+4dTw+hQ0EBoTMHK6zxSL2yllhtY6Q5x/rCniwUdr9FlW/s8hm76mXFboiXZCNMJ6eMSObHNJm/tpc/JXbkg0osE7802QV/G1iKlqz8vRY0mjFmJ5PtGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ltec.ch; spf=pass smtp.mailfrom=ltec.ch; dkim=permerror (0-bit key) header.d=ltec.ch header.i=@ltec.ch header.b=/tg5MDE3; dkim=pass (2048-bit key) header.d=ltec.ch header.i=@ltec.ch header.b=Z4Vam7we; arc=none smtp.client-ip=95.143.48.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ltec.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ltec.ch
-DKIM-Signature: v=1; a=ed25519-sha256; q=dns/txt; c=relaxed/relaxed; d=ltec.ch
-	; s=ec-sel; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
-	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=20lWbhN2MmPbIZRs+wuEiLtogdwAF/uD3/PsgRMN/1s=; b=/tg5MDE3pEY3MSfpL3xu6MuU3d
-	XFU1r8nwL3BzB2TRBTgLj26yntHPnpQKN6/TCYERatd+AExBQmG/rMdBMuDg==;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=ltec.ch;
-	s=rsa-sel; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
-	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=20lWbhN2MmPbIZRs+wuEiLtogdwAF/uD3/PsgRMN/1s=; b=Z4Vam7weU0qIZwRgq7MHz7oBz8
-	RqVtemlvRIzhMaTr8nCgknEpBLKpWDGzZlIwk2zsZG0LYyha6IDeJzLbcn4ghkvmVFigj6gPCaDvV
-	eyX2W02zVc5WKxgw6QUUwsCGNfR7QbC8K27vJyCiFQRQMyoaUaMPNmmxKFgzs6Mcf2IeOEiYJMfjf
-	LpupnPMdZeHUS5XgbKMMfSDHrj9YNwbAI3qVWUKd9uZyhs+QNrqzMfPjLBeyaYMdi7DsshOvOu9bg
-	LfZGmqBo8UMcaMUt9H26Lig/cOd5iDw0BrohhR3n+kYsVmqGPlliQSxZaSlpxWT0yZfVWwjMzy/d5
-	hZ6UsojA==;
-Received: from nebula.ltec ([172.27.11.2] helo=localhost.localdomain)
-	by mail.ltec.ch with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	s=arc-20240116; t=1748528573; c=relaxed/simple;
+	bh=qiyOkuxkDLaVuva6le+oFT4pru956z5G6GA0i0W+tZw=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=JehwVddRWBSXlRBHT/EBdBxHe5WL5oGQnfgIn/wdLv/V7EHrw1vQSrwUWwOXg+91E+4FylsorQOYzkHb6xxHxAy5Xpn3Y/V8vEgm0wxUCDBiyzqUCXzbxHMxjAfbuw2go3bE5Ecd7cdZjcb3kWTg2L1l6g0h6vn8AC+LawxNd+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=computerix.info; spf=pass smtp.mailfrom=computerix.info; dkim=pass (2048-bit key) header.d=computerix.info header.i=@computerix.info header.b=KJTsZ9E1; arc=none smtp.client-ip=213.133.104.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=computerix.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=computerix.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=computerix.info; s=default2306; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:References:Cc:To:Subject:From:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=OXDybIQBmXMpeFMEFGOD4VW3cLSDlCP2Z3a8Ye6iNLQ=; b=KJTsZ9E19rLZ2Hv0Doq26jf+WW
+	o52fpbKB0fiTIAbsxiZ13lh5/lA+MS9t0KSwucv6tWlDlUjajdeoNR/u5CpA1qSpgxMd5UJcIgY4d
+	0xQXXvzq6cG/CU4Ya10+ei++/YfW5XZlM/uFcKAFrl1WSckgwVHVceah8WQhZGtAvupgg/3rHmNNt
+	IwFhfoPtpfLnRoGvgjSzZpG/Zr7kIoLigu+3+FDoOyuYG4v+ZIJBh1aM8fmKQR+rql1lKu4QdyJgE
+	MLtRHupisWMRKWWJIxBapdpGYU7vWxiESTRTGcYo4pSzZqLJAdYY7Wpkr6Rbg8EvOHCDaRGLF7TjF
+	0CX8Ywkg==;
+Received: from sslproxy02.your-server.de ([78.47.166.47])
+	by www74.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <klaus.kusche@computerix.info>)
+	id 1uKdkG-000EUE-2J;
+	Thu, 29 May 2025 15:56:32 +0200
+Received: from localhost ([127.0.0.1])
+	by sslproxy02.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
 	(Exim 4.96)
-	(envelope-from <fb@ltec.ch>)
-	id 1uKdhJ-006Vmc-0W;
-	Thu, 29 May 2025 15:53:29 +0200
-From: Felix Brack <fb@ltec.ch>
-To: tony@atomide.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	linux-omap@vger.kernel.org,
-	devicetree@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	fb@ltec.ch
-Subject: [PATCH] ARM: dts: am335x-pdu001: Fix RS-485 transceiver switching
-Date: Thu, 29 May 2025 15:53:24 +0200
-Message-ID: <20250529135324.182868-1-fb@ltec.ch>
-X-Mailer: git-send-email 2.43.0
+	(envelope-from <klaus.kusche@computerix.info>)
+	id 1uKdkF-000AvE-2P;
+	Thu, 29 May 2025 15:56:32 +0200
+Message-ID: <21cc4282-ca3d-49a5-809f-96351662ba41@computerix.info>
+Date: Thu, 29 May 2025 15:56:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+From: Klaus Kusche <klaus.kusche@computerix.info>
+Subject: 6.15.0: objtool "unexpected end of section" errors with clang 20.1.5
+ and lto
+To: Nathan Chancellor <nathan@kernel.org>,
+ Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: peterz@infradead.org, linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+ Nick Desaulniers <ndesaulniers@google.com>
+References: <b248a0fb-e182-42e3-abf5-83945ee992f6@computerix.info>
+ <20250113214122.g4lluwpzj3tnamx3@jpoimboe>
+ <20250113235835.vqgvb7cdspksy5dn@jpoimboe> <20250114095159.GA1580513@ax162>
+Content-Language: en-US
+In-Reply-To: <20250114095159.GA1580513@ax162>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: klaus.kusche@computerix.info
+X-Virus-Scanned: Clear (ClamAV 1.0.7/27652/Thu May 29 10:46:15 2025)
 
-The wiring of the RS-485 transceiver of UART0 of the PDU-001 board
-allows sending or receiving date exclusively. In other words: no
-character transmitted will ever be received.
-Hence the tx-filter counter in the OMAP serial driver can't work
-correctly as it relies on receiving the transmitted characters.
-This in turn will prevent reception of data unless we disable the
-tx-filter counter.
-This patch disables the tx-filter counter by enabling the DTS setting
-rs485-rx-during-tx. This might sound like the opposite to be done but
-it uses the enabling of rs485-rx-during-tx not for receiving the data
-transmitted but for disabling the tx-fiter counter.
 
-Tested-by: Felix Brack <fb@ltec.ch>
-Signed-off-by: Felix Brack <fb@ltec.ch>
----
- arch/arm/boot/dts/ti/omap/am335x-pdu001.dts | 1 +
- 1 file changed, 1 insertion(+)
+Hello,
 
-diff --git a/arch/arm/boot/dts/ti/omap/am335x-pdu001.dts b/arch/arm/boot/dts/ti/omap/am335x-pdu001.dts
-index ded19e24e666..6c96840fe8be 100644
---- a/arch/arm/boot/dts/ti/omap/am335x-pdu001.dts
-+++ b/arch/arm/boot/dts/ti/omap/am335x-pdu001.dts
-@@ -258,6 +258,7 @@ &uart0 {
- 
- 	rts-gpio = <&gpio1 9 GPIO_ACTIVE_HIGH>;
- 	rs485-rts-active-high;
-+	rs485-rx-during-tx;
- 	rs485-rts-delay = <0 0>;
- 	linux,rs485-enabled-at-boot-time;
- 
--- 
-2.43.0
+Compiling 6.15.0 with clang 20.1.5 and full lto, 
+I got several error messages "unexpected end of section".
 
+See https://bugzilla.kernel.org/show_bug.cgi?id=220174
+
+(kernel .config attached to bugzilla bug)
+
+Klaus Kusche
 
