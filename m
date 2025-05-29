@@ -1,121 +1,49 @@
-Return-Path: <linux-kernel+bounces-666811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9851DAC7C3C
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 12:51:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F35FEAC7C45
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 12:52:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8AB1A26E6D
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 10:50:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DCC69E0FFF
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 10:52:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6D2A290BC8;
-	Thu, 29 May 2025 10:48:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7049D28E607;
+	Thu, 29 May 2025 10:49:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Q3CtZRCJ"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ev8XGIlR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A503A28F957
-	for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 10:48:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD00328DF38;
+	Thu, 29 May 2025 10:49:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748515698; cv=none; b=qD+SATz5FA2sYxCjLGydMOSsuBWbnAODPyt1friwFKUJvGQxwyzxnqaCqvgSMaXtUx92ZVfq34JUgRftL6KZltv+wWbe1X/T6TXBGIwA8FDffMcmYf38rxllu/L0cn3XhnoxUJiuRizlPFGkxb78l2wII1oH8OtlnuzGdTah+80=
+	t=1748515794; cv=none; b=s08HoU/T1XUmy/EJ/8M3tBG0wYiuTJfKcJwkzgH9Y1hKPmEk25qjIKxt8GSqZbm/pObmyRrWqrgvnzAxgNAvyhQSlMY/1E/OuqpkjPFdCoJR6WVbkhUDxBDCG7GUe4xFACSaNbYBd2/zV4hsTtoHsdU2vHJkQpliKIxU2pk9I84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748515698; c=relaxed/simple;
-	bh=Cxv3DdNSTbG6mkWW+XlQDzM5M3k//FCq7uG/9MGjWvM=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ogf7fBrgditU1QdEJebVFuuVnKZ7MaDyIQ6wsWMwcc3eGbgCtJkdmuSPtIeHkh7WGPwdmhyjH2jtOfgnPI81clN5vuuUHkJCvMicywZlGgga4gU4HdD2yABSzFH2tT/pPDsNI5xx3SE36eKAiB0TN9D23BDDfJU8qr4ckg9ciok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Q3CtZRCJ; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-acb39c45b4eso106472466b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 03:48:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1748515694; x=1749120494; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=i8LMEHYmovrRN8zYWQwYy5+2ddqvSDMDQcnZraZcEHI=;
-        b=Q3CtZRCJowoXIw9k5V+3iZoCTdugPF58iaqdfcqz80heP0XsjGP0ABOSveurgOuHYE
-         GHm89aeuaU7zghhvq9/WpfhwyhDFWfsHIiBIpUc8JZcguiJTz3BJ1cqwpyGZS8dhzP4F
-         drGimBhYTxl3t3ALgQMncORgvKX9iE4HO4/S45E822yfoGb2EPnmH0fCz3x0DD5MAOSc
-         ezPmAq4UAUU+JbT7igdYJmMiAWShIssFwVNUlFlIUPLwewCpL/bC8H75h8z21TcPBl2z
-         77ZhBj0KvUfYH9+5oOfpBpMnenj70rKWikvl9R0Pp8fwbkUS1ju5hH2DHoIozYrLH1Gd
-         xKSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748515694; x=1749120494;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=i8LMEHYmovrRN8zYWQwYy5+2ddqvSDMDQcnZraZcEHI=;
-        b=EReW0Bfms9t7XA9ooaw6GQaoA3msdnx18O2auny6cr00cZSLZW/aB8zB7tJGxFglHG
-         N20bBFvIGq3To/1JPlflsRmeYwCnVU+Bc4IXnPS7a91v7REL6NKPI8D5QAqEmXLAsJaN
-         b3lxpI3sXmRKE4HDvI0rVpiDI5Sot3EuOf0wnuXzs3TjxM06DLtzV5SZ8dhnjdRY4G5L
-         1Pdwh7yqAmXgNAnTt+vFtXDPWXPbSYVwOyC8Fe8yCNaS558rICuHampDekxWQKxEkqwW
-         wV+ECqfIyotvnmoG1b1rFdbEOOhNczViCdU/J70ZI3enUpLtnoZReMDT40XRNDEerjdC
-         NHoA==
-X-Forwarded-Encrypted: i=1; AJvYcCWnbMb+J4SY0Xfh8hK/wMkf8F8G20sXq+RRfH8vQ+d/2ie2dclZipQBLxA6d4Di2hcVt3Jk6RXf7Utz+VA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/8rtqr3uxnJ9OWpYO0Gpz7b3sPT+0O/iG+0YfUAXmmb2vw/aw
-	5L+aL2zz88KaIH25bB2W0Ms5XZeERooc8ft3PVIYDtah4kwxJ5hJqIFZqtVd9KpCZqM=
-X-Gm-Gg: ASbGnct7qr9x7sPWvGaufN0nJclbsLEqK8rspQyJUMYQxm9urSl7L+1ZMR/KLU/bett
-	YBDONSTNnhSy4GusYDGjpgQx7XsXOgUPNihcsPaeh9dq2SjW1hO78qf5EDpcWUwV+jQEeLJ+1xG
-	qQyrbj1v0mEb4pjr6DrzPlnwLbWtP4HNhNtPgPCKvqBvs63z9EW3QLbhKMoh1ZClAtyCOIl1OkX
-	Kj5GYFv9WElq7ML/a/ST+ThmVIhZ8JXMjmF9iJaki+MzFs2P+NZSVq1YuQ6VMauVCx6LlKkZu7g
-	d7gl7vja3Ke03ZjGsyW/sqIUQ0X2SVv7e0KE9C5cbMbNwJshA51Wie6X0sfxvihalkXXmJhLCiy
-	kmRgroJ9k0ACvExh0IZ76ag==
-X-Google-Smtp-Source: AGHT+IFh2Bjt/nqjLOv5kZdMBtyzXg8Cp6AwiLw6gyh2kIz8WiLSbkCwXlnCYcseB95A5qV9519CkQ==
-X-Received: by 2002:a17:906:c152:b0:aca:c38d:fef0 with SMTP id a640c23a62f3a-ad8a1da7029mr467304966b.0.1748515693881;
-        Thu, 29 May 2025 03:48:13 -0700 (PDT)
-Received: from localhost (host-87-21-228-106.retail.telecomitalia.it. [87.21.228.106])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ada6ad6aa17sm120147166b.175.2025.05.29.03.48.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 May 2025 03:48:13 -0700 (PDT)
-From: Andrea della Porta <andrea.porta@suse.com>
-To: Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof Wilczynski <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Saravana Kannan <saravanak@google.com>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Phil Elwell <phil@raspberrypi.com>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	kernel-list@raspberrypi.com,
-	Matthias Brugger <mbrugger@suse.com>
-Subject: [PATCH v10] MAINTAINERS: add Raspberry Pi RP1 section
-Date: Thu, 29 May 2025 12:49:30 +0200
-Message-ID: <20250529104940.23053-8-andrea.porta@suse.com>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <cover.1748514765.git.andrea.porta@suse.com>
-References: <cover.1748514765.git.andrea.porta@suse.com>
+	s=arc-20240116; t=1748515794; c=relaxed/simple;
+	bh=kP+ItR+ZhfBHSCRX9z/XmYHxCmXQM664CNPpLcFD+bk=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=Q8KahWd1RUHhlGaDVnthoWK4wD2znbWrdFisxp6g+H4T4sIzJwSXbyBiygtRCmwOoy6g+2pLhCvu4ApyXVXgWZtNuH7DlUpMUOh/uf1eFb/olCAxhtEtyhrHbp9IkvFuzKkAS9b7p6Kltg0S25QTMWq1b4xgJnWDJypV6doRzvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ev8XGIlR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 324DDC4CEEB;
+	Thu, 29 May 2025 10:49:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748515794;
+	bh=kP+ItR+ZhfBHSCRX9z/XmYHxCmXQM664CNPpLcFD+bk=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=Ev8XGIlRAO/IW4Zp24DZZkIKagA4e0JBHBLpdAIiI4UobxLfjOBdtyUU/G3/zDxgu
+	 d7Wv7BrjLYZHoc8lTNf5lLIbDtSf4gpVvmQLY7pLNFuDg1vV2Pgs4QejGhHmK1B78U
+	 Rp4nTMWGQf6YyHwdmwN8dxGQvq5nb1xNjhHsNuTjOPRCf5FzfG5ReA5FW5Vj5UNvWP
+	 9RL3zMIpaaLcLtz6EBN97pMFvZqVBvCJ5NGimL+EIvhWn/U0lOintgTpyg87JKOye3
+	 9q9j731d+Sa0+hu7hsHbAqGEy+QkHCwLegZWcDoUpdKue/0GuQlfjoACJIF2Tgwxnr
+	 z9wb6IJStN7jQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33CD3380664F;
+	Thu, 29 May 2025 10:50:29 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -123,37 +51,46 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v2 net] net/mlx4_en: Prevent potential integer overflow
+ calculating Hz
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174851582800.3224950.5138416129241395167.git-patchwork-notify@kernel.org>
+Date: Thu, 29 May 2025 10:50:28 +0000
+References: <aDbFHe19juIJKjsb@stanley.mountain>
+In-Reply-To: <aDbFHe19juIJKjsb@stanley.mountain>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: eugenia@mellanox.com, tariqt@nvidia.com, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ ogerlitz@mellanox.com, matanb@mellanox.com, netdev@vger.kernel.org,
+ linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
 
-Raspberry Pi RP1 is a southbridge PCIe device which embeds several
-peripherals.
-Add a new section to cover the main RP1 driver, DTS and specific
-subperipherals (such as clock and pinconf/pinmux/gpio controller).
+Hello:
 
-Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
----
- MAINTAINERS | 8 ++++++++
- 1 file changed, 8 insertions(+)
+This patch was applied to netdev/net.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 2b16ba4eb1ce..2add073f5bdf 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -20197,6 +20197,14 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/media/raspberrypi,rp1-cfe.yaml
- F:	drivers/media/platform/raspberrypi/rp1-cfe/
- 
-+RASPBERRY PI RP1 PCI DRIVER
-+M:	Andrea della Porta <andrea.porta@suse.com>
-+S:	Maintained
-+F:	arch/arm64/boot/dts/broadcom/rp1*.dts*
-+F:	drivers/clk/clk-rp1.c
-+F:	drivers/misc/rp1/
-+F:	drivers/pinctrl/pinctrl-rp1.c
-+
- RC-CORE / LIRC FRAMEWORK
- M:	Sean Young <sean@mess.org>
- L:	linux-media@vger.kernel.org
+On Wed, 28 May 2025 11:11:09 +0300 you wrote:
+> The "freq" variable is in terms of MHz and "max_val_cycles" is in terms
+> of Hz.  The fact that "max_val_cycles" is a u64 suggests that support
+> for high frequency is intended but the "freq_khz * 1000" would overflow
+> the u32 type if we went above 4GHz.  Use unsigned long long type for the
+> mutliplication to prevent that.
+> 
+> Fixes: 31c128b66e5b ("net/mlx4_en: Choose time-stamping shift value according to HW frequency")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> 
+> [...]
+
+Here is the summary with links:
+  - [v2,net] net/mlx4_en: Prevent potential integer overflow calculating Hz
+    https://git.kernel.org/netdev/net/c/54d34165b4f7
+
+You are awesome, thank you!
 -- 
-2.35.3
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
