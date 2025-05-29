@@ -1,372 +1,277 @@
-Return-Path: <linux-kernel+bounces-666938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50D1EAC7E25
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 14:48:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E2C0AC7E2A
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 14:51:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D512188A901
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 12:49:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66DDE3B3025
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 12:51:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8E12225407;
-	Thu, 29 May 2025 12:48:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 167B52248B4;
+	Thu, 29 May 2025 12:51:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="pPsWKm43"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IK9kc6oG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E66AF21CFE0;
-	Thu, 29 May 2025 12:48:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CCE01E492;
+	Thu, 29 May 2025 12:51:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748522915; cv=none; b=QplM3+rvqSNk3zIKFtm3NDzQWWMXKdxmxdU90SkhoWS4mJSR99D3pKnqEQF16F9SQ1e8V6T5yDaq7G6IrrxiF/Jv7JkJWRohc5iBDXfoFeHpvzH6UrroJ2pBdT44DjbN7BfH7ZBTAQRzQAO8AIFlabUTUYiJtJ/VlHVhr7AoJ6I=
+	t=1748523081; cv=none; b=UEdKW5zB4S9JBCnmsT/6YzbrhMtw0pHgsfdUCErtR7F2zqODLDqw0Af9/07HofcC+tsQeX+rxMtYFMCfLNParD0kVZLLoLZpLzoMOetok7aHqcdUWI/rkfoqdfNGY17MfwDmyKQZQ87ZuBONg7CSM4qC8+dkkybE3mv1fls9nJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748522915; c=relaxed/simple;
-	bh=kb1V5rUXK7gOblUM5pHVDe1Qxjoy9ECqpnWozYjRmxM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ar1qmdX+KNIFf8nnHm7yCHLEzR5dmi0LadG513BAkfqxosSNgHsoW+YPrx3URWZo9HpxlywJhz4sYz5R9fuiCceD7MQARx+k3DrB2a8tb0CLpflfm7NJFdNezDhZBqeqjleD58yCUdN1inMTJ3GEcSD5Ycfw9l6fW4m3oe+IcT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=pPsWKm43; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 54TCmPHy91428909, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1748522905; bh=2IT6HXW0M58UhOVk/j2nV0dAkkycG5LOxJ1YCdIVOG0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Transfer-Encoding:Content-Type;
-	b=pPsWKm43c9ARsXHfCgKTm9gib6GXjhPDraQZxY1T6KwmPyKDie5rtAOj65B4WMKtV
-	 O9nX23i9ExK29hAyWK0KWwlB2340YVyl92j1iM0B2XC0IFyzmWlM9PJFPPkpBCD3L4
-	 sR0GIRq4zne9GNUizqTfyQv3eSzm8qX+5bJrNwW/aLIJEHZjWbaOljibijQojTkZfw
-	 14ZMDcjsTFEuDFwLjB+wLy1fbLsPtPPSqZSW2zTdbkgbFFXTHMnUvuFSgJghDnaF2c
-	 FtyF91DMMyUA+RWrDHkmKm2dF1W/D5UzXQSTB22VwTd+XHT2qle2IIWRT/QWsDa6oK
-	 91KjpkqU5xwcw==
-Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
-	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 54TCmPHy91428909
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 29 May 2025 20:48:25 +0800
-Received: from RTEXDAG02.realtek.com.tw (172.21.6.101) by
- RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 29 May 2025 20:48:26 +0800
-Received: from localhost.localhost (172.21.132.53) by RTEXDAG02.realtek.com.tw
- (172.21.6.101) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Thu, 29 May
- 2025 20:48:25 +0800
-From: Hilda Wu <hildawu@realtek.com>
-To: <marcel@holtmann.org>
-CC: <luiz.dentz@gmail.com>, <linux-bluetooth@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <max.chou@realtek.com>,
-        <alex_lu@realsil.com.cn>
-Subject: [PATCH 2/2] Bluetooth: btrtl: Add enhanced download support
-Date: Thu, 29 May 2025 20:48:16 +0800
-Message-ID: <20250529124816.4186320-3-hildawu@realtek.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250529124816.4186320-1-hildawu@realtek.com>
-References: <20250529124816.4186320-1-hildawu@realtek.com>
+	s=arc-20240116; t=1748523081; c=relaxed/simple;
+	bh=N/k5MREBZu4ktJEu5uoYfUk/XOC53RtuRUTknxcukAI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VjduhDbzSmqt49X90qvUiKdJf6UrGhyPVQwhH7X9TMiWrqLkFES5tV8p6DDhk56gsbaF7Eg1q+z1qGLIMfiNRU4nUA57gUXybEwz0RbykvVTfADY3Mt3u4RF7kib6MTBz5RG6RMG3JEong1dlSlz+GWX6F+mqaF64iIvII08QDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IK9kc6oG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D782C4CEE7;
+	Thu, 29 May 2025 12:51:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748523079;
+	bh=N/k5MREBZu4ktJEu5uoYfUk/XOC53RtuRUTknxcukAI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IK9kc6oGUgxlgbKvaQ0nUCSs5sBdVtDfgA5KQGSTuN23+qm/4xuYAPC+g+EPi9CNR
+	 UKrm7kUUqzLXZH5kdozgjU9QWgfdX7s9YhSAZrrephnvPRNmZhKCtwTTidizK01jFr
+	 GGk+Jju5D/fejd5JAUkb0LeWXPiw2RtAyE1us9h9rmOgvuEgS2Zs9cGFZedUQ3z/5f
+	 /z7ziZvChpgVmoFNAfM95fdfGqlBQuAvqWCW/jsu9BPAdAC8/lRT+eeRyww5onSNu+
+	 JuzylCnj9V7lU6XVmF/iWY5N9LfLmCHUHCpjX2U0hSb3jWw09v2j683d3Ic42HWin7
+	 wxb4Kp6RFXjXw==
+Date: Thu, 29 May 2025 07:51:17 -0500
+From: Rob Herring <robh@kernel.org>
+To: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Cc: linux-kernel@vger.kernel.org, michael@amarulasolutions.com,
+	linux-amarula@amarulasolutions.com,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Fabio Estevam <festevam@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Lee Jones <lee@kernel.org>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 1/4] dt-bindings: mfd: convert mxs-lradc bindings to
+ json-schema
+Message-ID: <20250529125117.GA2750225-robh@kernel.org>
+References: <20250529083201.2286915-1-dario.binacchi@amarulasolutions.com>
+ <20250529083201.2286915-2-dario.binacchi@amarulasolutions.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: RTEXH36505.realtek.com.tw (172.21.6.25) To
- RTEXDAG02.realtek.com.tw (172.21.6.101)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250529083201.2286915-2-dario.binacchi@amarulasolutions.com>
 
-Add an enhanced download mode for firmware format v3.
-Use ACL to speed up firmware downloads.
+On Thu, May 29, 2025 at 10:31:04AM +0200, Dario Binacchi wrote:
+> Convert the Freescale MXS Low-Resoulution ADC (LRADC) device tree
+> binding documentation to json-schema.
+> 
+> The clocks and #io-channel-cells properties have also been added; They
+> are present in the respective SoC DTSI files but were missing from the
+> old mxs-lradc.txt file.
+> 
+> Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+> 
+> ---
+> 
+> Changes in v3:
+> - Add Reviewed-by tag of Conor Dooley
+> 
+>  .../devicetree/bindings/mfd/mxs-lradc.txt     |  45 --------
+>  .../devicetree/bindings/mfd/mxs-lradc.yaml    | 106 ++++++++++++++++++
+>  2 files changed, 106 insertions(+), 45 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/mfd/mxs-lradc.txt
+>  create mode 100644 Documentation/devicetree/bindings/mfd/mxs-lradc.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/mxs-lradc.txt b/Documentation/devicetree/bindings/mfd/mxs-lradc.txt
+> deleted file mode 100644
+> index 755cbef0647d..000000000000
+> --- a/Documentation/devicetree/bindings/mfd/mxs-lradc.txt
+> +++ /dev/null
+> @@ -1,45 +0,0 @@
+> -* Freescale MXS LRADC device driver
+> -
+> -Required properties:
+> -- compatible: Should be "fsl,imx23-lradc" for i.MX23 SoC and "fsl,imx28-lradc"
+> -              for i.MX28 SoC
+> -- reg: Address and length of the register set for the device
+> -- interrupts: Should contain the LRADC interrupts
+> -
+> -Optional properties:
+> -- fsl,lradc-touchscreen-wires: Number of wires used to connect the touchscreen
+> -                               to LRADC. Valid value is either 4 or 5. If this
+> -                               property is not present, then the touchscreen is
+> -                               disabled. 5 wires is valid for i.MX28 SoC only.
+> -- fsl,ave-ctrl: number of samples per direction to calculate an average value.
+> -                Allowed value is 1 ... 32, default is 4
+> -- fsl,ave-delay: delay between consecutive samples. Allowed value is
+> -                 2 ... 2048. It is used if 'fsl,ave-ctrl' > 1, counts at
+> -                 2 kHz and its default is 2 (= 1 ms)
+> -- fsl,settling: delay between plate switch to next sample. Allowed value is
+> -                1 ... 2047. It counts at 2 kHz and its default is
+> -                10 (= 5 ms)
+> -
+> -Example for i.MX23 SoC:
+> -
+> -	lradc@80050000 {
+> -		compatible = "fsl,imx23-lradc";
+> -		reg = <0x80050000 0x2000>;
+> -		interrupts = <36 37 38 39 40 41 42 43 44>;
+> -		fsl,lradc-touchscreen-wires = <4>;
+> -		fsl,ave-ctrl = <4>;
+> -		fsl,ave-delay = <2>;
+> -		fsl,settling = <10>;
+> -	};
+> -
+> -Example for i.MX28 SoC:
+> -
+> -	lradc@80050000 {
+> -		compatible = "fsl,imx28-lradc";
+> -		reg = <0x80050000 0x2000>;
+> -		interrupts = <10 14 15 16 17 18 19 20 21 22 23 24 25>;
+> -		fsl,lradc-touchscreen-wires = <5>;
+> -		fsl,ave-ctrl = <4>;
+> -		fsl,ave-delay = <2>;
+> -		fsl,settling = <10>;
+> -	};
+> diff --git a/Documentation/devicetree/bindings/mfd/mxs-lradc.yaml b/Documentation/devicetree/bindings/mfd/mxs-lradc.yaml
+> new file mode 100644
+> index 000000000000..90391b02c715
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mfd/mxs-lradc.yaml
+> @@ -0,0 +1,106 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/mfd/mxs-lradc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Freescale MXS Low-Resoulution ADC (LRADC)
+> +
+> +maintainers:
+> +  - Dario Binacchi <dario.binacchi@amarulasolutions.com>
+> +
+> +description: |
 
-Signed-off-by: Alex Lu <alex_lu@realsil.com.cn>
-Signed-off-by: Hilda Wu <hildawu@realtek.com>
----
- drivers/bluetooth/btrtl.c | 205 +++++++++++++++++++++++++++++++++++++-
- drivers/bluetooth/btrtl.h |   5 +
- 2 files changed, 208 insertions(+), 2 deletions(-)
+Don't need '|' unless there is formatting to preserve. 
 
-diff --git a/drivers/bluetooth/btrtl.c b/drivers/bluetooth/btrtl.c
-index 0e6332a45ced..2c6239091a68 100644
---- a/drivers/bluetooth/btrtl.c
-+++ b/drivers/bluetooth/btrtl.c
-@@ -108,6 +108,8 @@ struct btrtl_device_info {
- 	u32 opcode;
- 	u8 fw_type;
- 	u8 key_id;
-+	u16 handle;
-+	u16 acldata_pkt_len;
- 	struct list_head patch_subsecs;
- 	struct list_head patch_images;
- };
-@@ -1310,6 +1312,178 @@ static int rtl_check_download_state(struct hci_dev *hdev,
- 	return 0;
- }
- 
-+struct hci_rp_enhanced_download_mode {
-+	__u8 status;
-+	__u8 reserved1;
-+	__le16 handle;
-+	__le16 acldata_pkt_len;
-+	__u8 reserved2;
-+} __packed;
-+
-+static int btrtl_enhanced_download_mode_enable(struct hci_dev *hdev,
-+					struct btrtl_device_info *btrtl_dev)
-+{
-+	struct hci_rp_enhanced_download_mode *ev;
-+	struct sk_buff *skb;
-+	u16 opcode = 0xfc1f;
-+	u8 val = 1;
-+	int ret = -EINVAL;
-+
-+	skb = __hci_cmd_sync(hdev, opcode, 1, &val, HCI_CMD_TIMEOUT);
-+	if (IS_ERR(skb)) {
-+		bt_dev_err(hdev, "send %04x error (%lu)", opcode, PTR_ERR(skb));
-+		return -EIO;
-+	}
-+	if (skb->len != sizeof(*ev)) {
-+		bt_dev_err(hdev, "got invalid cmd complete, %u %lu", skb->len,
-+			   sizeof(*ev));
-+		goto err;
-+	}
-+	ev = (struct hci_rp_enhanced_download_mode *)skb->data;
-+	if (ev->status) {
-+		bt_dev_err(hdev, "got invalid status 0x%02x", ev->status);
-+		goto err;
-+	}
-+	btrtl_dev->handle = le16_to_cpu(ev->handle);
-+	btrtl_dev->acldata_pkt_len = le16_to_cpu(ev->acldata_pkt_len);
-+	kfree_skb(skb);
-+
-+	bt_dev_info(hdev, "enhanced download mode enabled, handle %04x, acl %u",
-+		    btrtl_dev->handle, btrtl_dev->acldata_pkt_len);
-+
-+	return 0;
-+err:
-+	kfree_skb(skb);
-+	return ret;
-+}
-+
-+struct rtl_acl_download_rp {
-+	__u8 subevent;
-+	__u8 index;
-+	__le16 handle;
-+	__le32 loaded_len;
-+} __packed;
-+
-+static int rtl_acl_download_firmware(struct hci_dev *hdev,
-+				     struct btrtl_device_info *btrtl_dev,
-+				     const unsigned char *data, int fw_len)
-+{
-+	struct btrealtek_data *btrtl_data = hci_get_priv(hdev);
-+	int frag_num = fw_len / RTL_FRAG_LEN + 1;
-+	int frag_len = RTL_FRAG_LEN;
-+	int ret = 0;
-+	int i;
-+	int j = 0;
-+	struct sk_buff *skb;
-+	struct rtl_acl_download_rp *rp;
-+	u16 max_payload_len;
-+	struct hci_acl_hdr *hdr;
-+	u8 index;
-+
-+	if (is_v3_fw(btrtl_dev->fw_type))
-+		j = 1;
-+
-+	btrtl_data->dlreq_status = 0;
-+	btrtl_data->dlreq_result = 0;
-+	btrtl_data->dlreq_rsp = NULL;
-+	max_payload_len = (btrtl_dev->acldata_pkt_len - 1) & ~0x3;
-+
-+	for (i = 0; i < frag_num; i++) {
-+		index = j++;
-+		if (index == 0x7f)
-+			j = 1;
-+
-+		if (i == (frag_num - 1) && !is_v3_fw(btrtl_dev->fw_type)) {
-+			index |= 0x80; /* data end */
-+			frag_len = fw_len % max_payload_len;
-+		}
-+		rtl_dev_dbg(hdev, "acl download fw (%d/%d). index = %d", i,
-+			    frag_num, index);
-+
-+		skb = bt_skb_alloc(sizeof(*hdr) + 1 + frag_len, GFP_KERNEL);
-+		if (!skb)
-+			return -ENOMEM;
-+		hdr = (struct hci_acl_hdr *)skb_put(skb, sizeof(*hdr));
-+		hdr->handle = cpu_to_le16(btrtl_dev->handle | 0x8000);
-+		hdr->dlen = cpu_to_le16(1 + frag_len);
-+		*(u8 *)skb_put(skb, 1) = index;
-+		memcpy(skb_put(skb, frag_len), data, frag_len);
-+
-+		hci_skb_pkt_type(skb) = HCI_ACLDATA_PKT;
-+
-+		btrtl_data->dlreq_status = HCI_REQ_PEND;
-+
-+		ret = hdev->send(hdev, skb);
-+		if (ret < 0) {
-+			bt_dev_err(hdev, "sending frame failed (%d)", ret);
-+			goto err;
-+		}
-+
-+		ret = wait_event_interruptible_timeout(btrtl_data->dlreq_wait_q,
-+				btrtl_data->dlreq_status != HCI_REQ_PEND,
-+				HCI_INIT_TIMEOUT);
-+		if (ret == -ERESTARTSYS)
-+			goto out;
-+
-+		switch (btrtl_data->dlreq_status) {
-+		case HCI_REQ_DONE:
-+			ret = -bt_to_errno(btrtl_data->dlreq_result);
-+			break;
-+
-+		case HCI_REQ_CANCELED:
-+			ret = -btrtl_data->dlreq_result;
-+			break;
-+
-+		default:
-+			ret = -ETIMEDOUT;
-+			break;
-+		}
-+
-+		btrtl_data->dlreq_status = 0;
-+		btrtl_data->dlreq_result = 0;
-+		skb = btrtl_data->dlreq_rsp;
-+		btrtl_data->dlreq_rsp = NULL;
-+
-+		bt_dev_dbg(hdev, "end: err %d", ret);
-+
-+		if (ret < 0) {
-+			bt_dev_err(hdev, "wait on complete err (%d)", ret);
-+			goto err;
-+		}
-+
-+		if (!skb)
-+			return -ENODATA;
-+
-+		if (skb->len != sizeof(*rp)) {
-+			rtl_dev_err(hdev, "acl download fw event len mismatch");
-+			ret = -EIO;
-+			goto err;
-+		}
-+		rp = (struct rtl_acl_download_rp *)skb->data;
-+		if ((btrtl_dev->handle & 0xfff) != le16_to_cpu(rp->handle)) {
-+			rtl_dev_err(hdev, "handle mismatch (%04x %04x)",
-+				    btrtl_dev->handle & 0xfff,
-+				    le16_to_cpu(rp->handle));
-+			ret = -EINVAL;
-+			goto err;
-+		}
-+		if (index != rp->index) {
-+			rtl_dev_err(hdev, "index mismatch (%u, %u)", index,
-+				    rp->index);
-+			ret = -EINVAL;
-+			goto err;
-+		}
-+
-+		kfree_skb(skb);
-+		data += frag_len;
-+	}
-+out:
-+	return ret;
-+err:
-+	kfree_skb(skb);
-+	return ret;
-+}
-+
- static int rtl_finalize_download(struct hci_dev *hdev,
- 				 struct btrtl_device_info *btrtl_dev)
- {
-@@ -1394,6 +1568,7 @@ static int rtl_download_firmware_v3(struct hci_dev *hdev,
- 	struct rtl_section_patch_image *image, *tmp;
- 	struct rtl_rp_dl_v3 *rp;
- 	struct sk_buff *skb;
-+	u8 enh_dl = 0;
- 	u8 *fw_data;
- 	int fw_len;
- 	int ret = 0;
-@@ -1408,6 +1583,16 @@ static int rtl_download_firmware_v3(struct hci_dev *hdev,
- 		}
- 	}
- 
-+	switch (btrtl_dev->project_id) {
-+	case CHIP_ID_8852C:
-+	case CHIP_ID_8922D:
-+		if (!btrtl_enhanced_download_mode_enable(hdev, btrtl_dev))
-+			enh_dl = 1;
-+		break;
-+	default:
-+		break;
-+	}
-+
- 	list_for_each_entry_safe(image, tmp, &btrtl_dev->patch_images, list) {
- 		rtl_dev_dbg(hdev, "image (%04x:%02x)", image->image_id,
- 			    image->index);
-@@ -1446,8 +1631,13 @@ static int rtl_download_firmware_v3(struct hci_dev *hdev,
- 		rtl_dev_dbg(hdev, "fw_data %p, image buf %p, len %u", fw_data,
- 			    image->image_data, image->image_len);
- 
--		ret = rtl_download_firmware(hdev, btrtl_dev->fw_type, fw_data,
--					    fw_len);
-+		if (enh_dl)
-+			ret = rtl_acl_download_firmware(hdev, btrtl_dev,
-+							fw_data, fw_len);
-+		else
-+			ret = rtl_download_firmware(hdev, btrtl_dev->fw_type,
-+						    fw_data, fw_len);
-+
- 		kvfree(fw_data);
- 		if (ret < 0) {
- 			rtl_dev_err(hdev, "download firmware failed (%d)", ret);
-@@ -1707,6 +1897,7 @@ struct btrtl_device_info *btrtl_initialize(struct hci_dev *hdev,
- 
- 	INIT_LIST_HEAD(&btrtl_dev->patch_subsecs);
- 	INIT_LIST_HEAD(&btrtl_dev->patch_images);
-+	init_waitqueue_head(&btrtl_data->dlreq_wait_q);
- 
- check_version:
- 	ret = btrtl_read_chip_id(hdev, &chip_id);
-@@ -2026,6 +2217,7 @@ EXPORT_SYMBOL_GPL(btrtl_shutdown_realtek);
- 
- int btrtl_recv_event(struct hci_dev *hdev, struct sk_buff *skb)
- {
-+	struct btrealtek_data *btrtl_data = hci_get_priv(hdev);
- 	struct hci_event_hdr *hdr = (void *)skb->data;
- 
- 	if (skb->len > HCI_EVENT_HDR_SIZE && hdr->evt == 0xff &&
-@@ -2034,6 +2226,15 @@ int btrtl_recv_event(struct hci_dev *hdev, struct sk_buff *skb)
- 		    btrealtek_test_and_clear_flag(hdev, REALTEK_DOWNLOADING)) {
- 			btrealtek_wake_up_flag(hdev, REALTEK_DOWNLOADING);
- 			return 0;
-+		} else if (skb->data[2] == 0x2a) {
-+			if (btrtl_data->dlreq_status == HCI_REQ_PEND) {
-+				btrtl_data->dlreq_result = 0;
-+				btrtl_data->dlreq_status = HCI_REQ_DONE;
-+				skb_pull(skb, sizeof(*hdr));
-+				btrtl_data->dlreq_rsp = skb;
-+				wake_up_interruptible(&btrtl_data->dlreq_wait_q);
-+			}
-+			return 0;
- 		}
- 	}
- 
-diff --git a/drivers/bluetooth/btrtl.h b/drivers/bluetooth/btrtl.h
-index ea3537b9d4fd..781ac845944e 100644
---- a/drivers/bluetooth/btrtl.h
-+++ b/drivers/bluetooth/btrtl.h
-@@ -203,6 +203,11 @@ struct btrealtek_data {
- 	DECLARE_BITMAP(flags, __REALTEK_NUM_FLAGS);
- 
- 	struct rtl_dump_info rtl_dump;
-+
-+	wait_queue_head_t	dlreq_wait_q;
-+	__u32                   dlreq_status;
-+	__u32                   dlreq_result;
-+	struct sk_buff          *dlreq_rsp;
- };
- 
- #define btrealtek_set_flag(hdev, nr)					\
--- 
-2.34.1
+> +  The LRADC provides 16 physical channels of 12-bit resolution
+> +  for analog-to-digital conversion and includes an integrated
+> +  4-wire/5-wire touchscreen controller.
 
+Wrap lines at 80 char.
+
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - enum:
+> +          - fsl,imx23-lradc
+> +          - fsl,imx28-lradc
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    minItems: 1
+> +
+> +  interrupts:
+> +    minItems: 9
+> +    maxItems: 13
+
+Please describe what each interrupt is. Unless they are all the same 
+(e.g. 1 interrupt per ADC channel), you need to list them out.
+
+> +
+> +  fsl,lradc-touchscreen-wires:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: |
+> +      Number of wires used to connect the touchscreen to LRADC.
+> +      If this property is not present, then the touchscreen is disabled.
+
+Don't need '|'. Unless this is supposed to be 2 paragraphs. In that 
+case, add a blank line between paragraphs. Same comment on the rest.
+
+> +
+> +  fsl,ave-ctrl:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    minimum: 1
+> +    maximum: 32
+> +    default: 4
+> +    description: |
+> +      Number of samples per direction to calculate an average value.
+> +
+> +  fsl,ave-delay:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    minimum: 2
+> +    maximum: 2048
+> +    default: 2
+> +    description: |
+> +      Delay between consecutive samples.
+> +      It is used if 'fsl,ave-ctrl' > 1, counts at 2 kHz and its
+> +      default value (i. e. 2) is 1 ms.
+> +
+> +  fsl,settling:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    minimum: 1
+> +    maximum: 2047
+> +    default: 10
+> +    description: |
+> +      Delay between plate switch to next sample.
+> +      It counts at 2 kHz and its default (i. e. 10) is 5 ms.
+> +
+> +  "#io-channel-cells":
+> +    const: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - interrupts
+> +
+> +if:
+> +  properties:
+> +    compatible:
+> +      contains:
+> +        enum:
+> +          - fsl,imx23-lradc
+> +then:
+> +  properties:
+> +    fsl,lradc-touchscreen-wires:
+> +      const: 4
+> +else:
+> +  properties:
+> +    fsl,lradc-touchscreen-wires:
+> +      enum: [4, 5]
+
+Move this constraint to the top level and drop the 'else'.
+
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    lradc@80050000 {
+> +        compatible = "fsl,imx23-lradc";
+> +        reg = <0x80050000 0x2000>;
+> +        interrupts = <36>, <37>, <38>, <39>, <40>,
+> +                     <41>, <42>, <43>, <44>;
+> +        clocks = <&clks 26>;
+> +        #io-channel-cells = <1>;
+> +        fsl,lradc-touchscreen-wires = <4>;
+> +        fsl,ave-ctrl = <4>;
+> +        fsl,ave-delay = <2>;
+> +        fsl,settling = <10>;
+> +    };
+> -- 
+> 2.43.0
+> 
 
