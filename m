@@ -1,174 +1,241 @@
-Return-Path: <linux-kernel+bounces-666346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 796D8AC7592
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 03:55:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 603E2AC759B
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 04:03:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35C134E7547
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 01:55:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 910D2A2650C
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 02:02:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB0A6223DC4;
-	Thu, 29 May 2025 01:55:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5710242922;
+	Thu, 29 May 2025 02:03:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="QfCk+LRw"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e+zDEbXI"
+Received: from mail-oo1-f41.google.com (mail-oo1-f41.google.com [209.85.161.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34873221282;
-	Thu, 29 May 2025 01:55:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FDF113AA2F;
+	Thu, 29 May 2025 02:03:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748483744; cv=none; b=dFW6VunVaQIOeVRfeRBx6nIvJDkF0JkFKhFXsxuzfoLzkbznEutAmrFfAs+7481Cyuth/taZ2zeDVGaZlIiJQpioaeOPXR+Tvil1XQabxlHPmS+JKmSCTrgf7jk/ecK1Fkk0AukmNWKZlu7jQSI3boiD7el3B6c6t7niDqpNGhw=
+	t=1748484185; cv=none; b=rOEhauJd4XWxlKlJeBMS455OxslWKW7wtlOFU2hkzAa0VvX7PVg4mlJSIZzG2T0YM7GqEJoTgVruP1gzVzM2aSURDECFaAoqVO3XlzMPB6q0usmhR2aW6qyJSmkgbZDh4L05k/GS0m7sCSF/OIJk6DUb8x7B2sFoCxD6PDPNN/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748483744; c=relaxed/simple;
-	bh=2f3kjvWeAd20nfuwqqUZcCAzBN5Ws0T9JFZD87GbyPg=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QdYpWPhs3OFvztIyqHt+Si+uG9t3phLNB6fqX1qawBeMLkSi/mIX5fKahhbUaUj3m5iwgflkzXYcrYxSggUcrsWGBAnjaMsTK8OkvrYvwziDAavWScZPnZWHImW+9l+MGJvDGyrtAQyc98cwSPOs5ofv5l/j3ky5KEMrZa9zEcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=QfCk+LRw; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 02d79d983c3011f0813e4fe1310efc19-20250529
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=XGdCMb97AOaJQbILqnVuvTpYQ1ygZZt8YRJIz6NBzos=;
-	b=QfCk+LRwcbXGiYlOKW2HbUrbEhLXgR7VDZco87xkW2w37L3TBaF6DwhVwXB0par5QhTOQJKlLuztUs1H8SgXs/1muYYT0ZCpRuHJzewraeAua6crfM+lJ4t1YxjzBHmcMb1khZ8zPiHvT4LCAvmpGcGrK8/AoreN5cuwm96xYbI=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.2.1,REQID:3727f5cc-5f4f-4237-9d2b-8e2681082e4a,IP:0,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
-	elease,TS:0
-X-CID-META: VersionHash:0ef645f,CLOUDID:633e65f1-2ded-45ed-94e2-b3e9fa87100d,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:-3,IP:ni
-	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 02d79d983c3011f0813e4fe1310efc19-20250529
-Received: from mtkmbs13n1.mediatek.inc [(172.21.101.193)] by mailgw01.mediatek.com
-	(envelope-from <shiming.cheng@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1667375727; Thu, 29 May 2025 09:55:35 +0800
-Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
- MTKMBS14N2.mediatek.inc (172.21.101.76) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.39; Thu, 29 May 2025 09:55:32 +0800
-Received: from mbjsdccf07.gcn.mediatek.inc (10.15.20.246) by
- mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1258.39 via Frontend Transport; Thu, 29 May 2025 09:55:31 +0800
-From: Shiming Cheng <shiming.cheng@mediatek.com>
-To: <willemdebruijn.kernel@gmail.com>, <willemb@google.com>,
-	<edumazet@google.com>, <davem@davemloft.net>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <matthias.bgg@gmail.com>
-CC: <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<shiming.cheng@mediatek.com>, <lena.wang@mediatek.com>
-Subject: [PATCH net v5] net: fix udp gso skb_segment after pull from frag_list
-Date: Thu, 29 May 2025 09:58:56 +0800
-Message-ID: <20250529015901.3814-1-shiming.cheng@mediatek.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1748484185; c=relaxed/simple;
+	bh=DIN6LIQaAOvcQ53vfc9A5k02oK5pSKpsJOPM8n2POLc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=M2d8Pe38co4NEIRtaZhl8Z3mRHxuJ4G5aQXAnb5pJEZka6neyqBJc70Xv53BaBoJYEme/MXkbBRydZYIyq0DdKQS6PkzuxqYoxaJLMUAV6+bXMzmTDJshFuLLsyDSYNbA53AK8FTHXiz361J4s8HMcanrUJnqOdzxVmIPYjRPmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e+zDEbXI; arc=none smtp.client-ip=209.85.161.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-609e7f27c66so133725eaf.0;
+        Wed, 28 May 2025 19:03:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748484182; x=1749088982; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=R1egAo3iwBvxZqJdXFnwcv60q/WxRGcWuQcEWMsX+k0=;
+        b=e+zDEbXIWnVQhmOtleQy/wzry7GNEd6raeHIr0d/o6I3WxfvrHIEbW0jhU3YorlULc
+         Y1+peSnpcanatoCfKaXwzqahreS5LKCjcdz5E61/r+jeSvWy4AkGi+cPovSawXLzHe5A
+         WAQAr+BMKHRxQnwPAS6l8IZ0bzQOajABCbOhOVZaZVCMU8IKWlqzUx+1RmZB0QEyEMM+
+         3d4G5SRIZTOlGqgDmL7UCwgpE3X7AoMmxZg2HRy3Ekp92Ks2mWGlqrRvr84FSDcTPBxu
+         0Mze2zPrwIfZcuCJrhu+iT+cLAbsEWEPH6WfwDET4ivE3RO5Eg9nPgvoWKs97VbE6nz6
+         760A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748484182; x=1749088982;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=R1egAo3iwBvxZqJdXFnwcv60q/WxRGcWuQcEWMsX+k0=;
+        b=htdwL/YX+lZZKhO9rk2yh/wx4caUXhKAXKsJ95CqFEe9O2+BW2yPLjf98Qn0FHd/ek
+         QJuQ7Df5NLly37AiWE039VLLolj6l6zB1nSuJQktM1UHUio7IBRPrLU88voMmRq9H33+
+         rafuOvoUBSg8b+bWvVl4DeVZKPIBS16h3414uVEas8VLx0uCbVo1x+t7pff1Xxw+GDrg
+         rPhDwHc5NKZwMuL6aO8u5Kn49yVh4COsSnezGUgHl1/RvRJephq7xQXy2IFQduf2nue+
+         SA5EXX7iZD6mXx1Gj5bA8t4wg7orxcKbXUHkJOmJ8HMjOehQv6HkH4gEIoaC8d9yAK79
+         zaxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVUF0D6YCYTMyisiHrapD0c4M05ofuKsGA6k2aBo3AM1Nu+0q/H6+XnjSRWRV5QacMdocY=@vger.kernel.org, AJvYcCVcTJxS/gMw/Rh0MIIs20xZxr0naPTZiv3DvDE1i9ifYPHX4ofRu8M8PVCcEPd9n5o0SdvKzmqdNnwLDgO2@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRO9Mu0Hqdhh0ZvxKJAZvp5a2PAZEz7Umbbk/0mV+TiVmiqWTB
+	eY/AB41ZtE1kUKqk9+FrbJJurJebIp8y5F4QCHEF5QjRd64JuMetohhMJWWkZCdqOjvFjI88fzF
+	e0FtecOlJAWZTxYhqlcSass06r+NnJ0A=
+X-Gm-Gg: ASbGncvx4xlEPZFoQE3UBCnaXmnI5mk2V1/DlL3EWzBdYWpiwKyr407s+7uph7ZcB9V
+	wEEJaAHno93xVe/JSxn+2P1HadrezhIA57/Aq/wAQYg2INpL/SjWHAytVGn8yaNN9XOlheSBrwT
+	8emj8F6RYWfm0zcfOyqCWpsq4jlvQW8yRsOr3GpP1jsyY=
+X-Google-Smtp-Source: AGHT+IH0mfeDH3IFQ2Mw4l8ARan0BJrAfAyJQiogfmzdX/eyo4H5wdRxQMSJ66duRYCi67pL0zjvLOz0YNbhUglnQQc=
+X-Received: by 2002:a05:6871:20d:b0:2c1:62ba:cd7c with SMTP id
+ 586e51a60fabf-2e861df8abamr10614260fac.15.1748484182330; Wed, 28 May 2025
+ 19:03:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-MTK: N
+References: <20250528104032.1237415-1-jianghaoran@kylinos.cn>
+In-Reply-To: <20250528104032.1237415-1-jianghaoran@kylinos.cn>
+From: Hengqi Chen <hengqi.chen@gmail.com>
+Date: Thu, 29 May 2025 10:02:51 +0800
+X-Gm-Features: AX0GCFujo6dWfpQa5SiUb5FoezkhVXHsP8VZTM4lE4ANnYjcbdoIqPK4PV8GCUw
+Message-ID: <CAEyhmHTg3xNMBrSxXQj96pvfD83t6_RHRT_GGtbBzOpAKztDpw@mail.gmail.com>
+Subject: Re: [PATCH] LoongArch: BPF: Optimize the calculation method of
+ jmp_offset in the emit_bpf_tail_call function
+To: jianghaoran@kylinos.cn
+Cc: loongarch@lists.linux.dev, bpf@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel@xen0n.name, chenhuacai@kernel.org, 
+	yangtiezhu@loongson.cn, haoluo@google.com, jolsa@kernel.org, sdf@fomichev.me, 
+	kpsingh@kernel.org, john.fastabend@gmail.com, yonghong.song@linux.dev, 
+	song@kernel.org, eddyz87@gmail.com, martin.lau@linux.dev, andrii@kernel.org, 
+	daniel@iogearbox.net
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Commit a1e40ac5b5e9 ("net: gso: fix udp gso fraglist segmentation after
-pull from frag_list") detected invalid geometry in frag_list skbs and
-redirects them from skb_segment_list to more robust skb_segment. But some
-packets with modified geometry can also hit bugs in that code. We don't
-know how many such cases exist. Addressing each one by one also requires
-touching the complex skb_segment code, which risks introducing bugs for
-other types of skbs. Instead, linearize all these packets that fail the
-basic invariants on gso fraglist skbs. That is more robust.
+Hi Haoran,
 
-If only part of the fraglist payload is pulled into head_skb, it will
-always cause exception when splitting skbs by skb_segment. For detailed
-call stack information, see below.
+On Wed, May 28, 2025 at 6:40=E2=80=AFPM Haoran Jiang <jianghaoran@kylinos.c=
+n> wrote:
+>
+> For a ebpf subprog JIT=EF=BC=8Cthe last call bpf_int_jit_compile function=
+ will
+> directly enter the skip_init_ctx process. At this point, out_offset =3D -=
+1,
+> the jmp_offset in emit_bpf_tail_call is calculated
+> by #define jmp_offset (out_offset - (cur_offset)) is a negative number,
+> which does not meet expectations.The final generated assembly as follow.
+>
+> 54:     bgeu            $a2, $t1, -8        # 0x0000004c
+> 58:     addi.d          $a6, $s5, -1
+> 5c:     bltz            $a6, -16            # 0x0000004c
+> 60:     alsl.d          $t2, $a2, $a1, 0x3
+> 64:     ld.d            $t2, $t2, 264
+> 68:     beq             $t2, $zero, -28     # 0x0000004c
+>
+> Before apply this patch, the follow test case will reveal soft lock issue=
+s.
+>
+> cd tools/testing/selftests/bpf/
+> ./test_progs --allow=3Dtailcalls/tailcall_bpf2bpf_1
+>
+> dmesg:
+> watchdog: BUG: soft lockup - CPU#2 stuck for 26s! [test_progs:25056]
+>
 
-Valid SKB_GSO_FRAGLIST skbs
-- consist of two or more segments
-- the head_skb holds the protocol headers plus first gso_size
-- one or more frag_list skbs hold exactly one segment
-- all but the last must be gso_size
+This is a known issue. Does this change pass all tailcall tests ?
+If not, please refer to the tailcall hierarchy patchset([1]).
+We should address it once and for all. Thanks.
 
-Optional datapath hooks such as NAT and BPF (bpf_skb_pull_data) can
-modify fraglist skbs, breaking these invariants.
+  [1]: https://lore.kernel.org/bpf/20240714123902.32305-1-hffilwlqm@gmail.c=
+om/
 
-In extreme cases they pull one part of data into skb linear. For UDP,
-this  causes three payloads with lengths of (11,11,10) bytes were
-pulled tail to become (12,10,10) bytes.
-
-The skbs no longer meets the above SKB_GSO_FRAGLIST conditions because
-payload was pulled into head_skb, it needs to be linearized before pass
-to regular skb_segment.
-
-    skb_segment+0xcd0/0xd14
-    __udp_gso_segment+0x334/0x5f4
-    udp4_ufo_fragment+0x118/0x15c
-    inet_gso_segment+0x164/0x338
-    skb_mac_gso_segment+0xc4/0x13c
-    __skb_gso_segment+0xc4/0x124
-    validate_xmit_skb+0x9c/0x2c0
-    validate_xmit_skb_list+0x4c/0x80
-    sch_direct_xmit+0x70/0x404
-    __dev_queue_xmit+0x64c/0xe5c
-    neigh_resolve_output+0x178/0x1c4
-    ip_finish_output2+0x37c/0x47c
-    __ip_finish_output+0x194/0x240
-    ip_finish_output+0x20/0xf4
-    ip_output+0x100/0x1a0
-    NF_HOOK+0xc4/0x16c
-    ip_forward+0x314/0x32c
-    ip_rcv+0x90/0x118
-    __netif_receive_skb+0x74/0x124
-    process_backlog+0xe8/0x1a4
-    __napi_poll+0x5c/0x1f8
-    net_rx_action+0x154/0x314
-    handle_softirqs+0x154/0x4b8
-
-    [118.376811] [C201134] rxq0_pus: [name:bug&]kernel BUG at net/core/skbuff.c:4278!
-    [118.376829] [C201134] rxq0_pus: [name:traps&]Internal error: Oops - BUG: 00000000f2000800 [#1] PREEMPT SMP
-    [118.470774] [C201134] rxq0_pus: [name:mrdump&]Kernel Offset: 0x178cc00000 from 0xffffffc008000000
-    [118.470810] [C201134] rxq0_pus: [name:mrdump&]PHYS_OFFSET: 0x40000000
-    [118.470827] [C201134] rxq0_pus: [name:mrdump&]pstate: 60400005 (nZCv daif +PAN -UAO)
-    [118.470848] [C201134] rxq0_pus: [name:mrdump&]pc : [0xffffffd79598aefc] skb_segment+0xcd0/0xd14
-    [118.470900] [C201134] rxq0_pus: [name:mrdump&]lr : [0xffffffd79598a5e8] skb_segment+0x3bc/0xd14
-    [118.470928] [C201134] rxq0_pus: [name:mrdump&]sp : ffffffc008013770
-
-Fixes: a1e40ac5b5e9 ("net: gso: fix udp gso fraglist segmentation after pull from frag_list")
-Signed-off-by: Shiming Cheng <shiming.cheng@mediatek.com>
----
- net/ipv4/udp_offload.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/net/ipv4/udp_offload.c b/net/ipv4/udp_offload.c
-index a5be6e4ed326..59ddb85c858c 100644
---- a/net/ipv4/udp_offload.c
-+++ b/net/ipv4/udp_offload.c
-@@ -273,6 +273,7 @@ struct sk_buff *__udp_gso_segment(struct sk_buff *gso_skb,
- 	bool copy_dtor;
- 	__sum16 check;
- 	__be16 newlen;
-+	int ret = 0;
- 
- 	mss = skb_shinfo(gso_skb)->gso_size;
- 	if (gso_skb->len <= sizeof(*uh) + mss)
-@@ -301,6 +302,10 @@ struct sk_buff *__udp_gso_segment(struct sk_buff *gso_skb,
- 		if (skb_pagelen(gso_skb) - sizeof(*uh) == skb_shinfo(gso_skb)->gso_size)
- 			return __udp_gso_segment_list(gso_skb, features, is_ipv6);
- 
-+		ret = __skb_linearize(gso_skb);
-+		if (ret)
-+			return ERR_PTR(ret);
-+
- 		 /* Setup csum, as fraglist skips this in udp4_gro_receive. */
- 		gso_skb->csum_start = skb_transport_header(gso_skb) - gso_skb->head;
- 		gso_skb->csum_offset = offsetof(struct udphdr, check);
--- 
-2.45.2
-
+> Signed-off-by: Haoran Jiang <jianghaoran@kylinos.cn>
+> ---
+>  arch/loongarch/net/bpf_jit.c | 28 +++++++++-------------------
+>  1 file changed, 9 insertions(+), 19 deletions(-)
+>
+> diff --git a/arch/loongarch/net/bpf_jit.c b/arch/loongarch/net/bpf_jit.c
+> index fa1500d4aa3e..d85490e7de89 100644
+> --- a/arch/loongarch/net/bpf_jit.c
+> +++ b/arch/loongarch/net/bpf_jit.c
+> @@ -208,9 +208,7 @@ bool bpf_jit_supports_far_kfunc_call(void)
+>         return true;
+>  }
+>
+> -/* initialized on the first pass of build_body() */
+> -static int out_offset =3D -1;
+> -static int emit_bpf_tail_call(struct jit_ctx *ctx)
+> +static int emit_bpf_tail_call(int insn, struct jit_ctx *ctx)
+>  {
+>         int off;
+>         u8 tcc =3D tail_call_reg(ctx);
+> @@ -220,9 +218,8 @@ static int emit_bpf_tail_call(struct jit_ctx *ctx)
+>         u8 t2 =3D LOONGARCH_GPR_T2;
+>         u8 t3 =3D LOONGARCH_GPR_T3;
+>         const int idx0 =3D ctx->idx;
+> -
+> -#define cur_offset (ctx->idx - idx0)
+> -#define jmp_offset (out_offset - (cur_offset))
+> +       int tc_ninsn =3D 0;
+> +       int jmp_offset =3D 0;
+>
+>         /*
+>          * a0: &ctx
+> @@ -232,8 +229,11 @@ static int emit_bpf_tail_call(struct jit_ctx *ctx)
+>          * if (index >=3D array->map.max_entries)
+>          *       goto out;
+>          */
+> +       tc_ninsn =3D insn ? ctx->offset[insn+1] - ctx->offset[insn] :
+> +               ctx->offset[0];
+>         off =3D offsetof(struct bpf_array, map.max_entries);
+>         emit_insn(ctx, ldwu, t1, a1, off);
+> +       jmp_offset =3D tc_ninsn - (ctx->idx - idx0);
+>         /* bgeu $a2, $t1, jmp_offset */
+>         if (emit_tailcall_jmp(ctx, BPF_JGE, a2, t1, jmp_offset) < 0)
+>                 goto toofar;
+> @@ -243,6 +243,7 @@ static int emit_bpf_tail_call(struct jit_ctx *ctx)
+>          *       goto out;
+>          */
+>         emit_insn(ctx, addid, REG_TCC, tcc, -1);
+> +       jmp_offset =3D tc_ninsn - (ctx->idx - idx0);
+>         if (emit_tailcall_jmp(ctx, BPF_JSLT, REG_TCC, LOONGARCH_GPR_ZERO,=
+ jmp_offset) < 0)
+>                 goto toofar;
+>
+> @@ -254,6 +255,7 @@ static int emit_bpf_tail_call(struct jit_ctx *ctx)
+>         emit_insn(ctx, alsld, t2, a2, a1, 2);
+>         off =3D offsetof(struct bpf_array, ptrs);
+>         emit_insn(ctx, ldd, t2, t2, off);
+> +       jmp_offset =3D tc_ninsn - (ctx->idx - idx0);
+>         /* beq $t2, $zero, jmp_offset */
+>         if (emit_tailcall_jmp(ctx, BPF_JEQ, t2, LOONGARCH_GPR_ZERO, jmp_o=
+ffset) < 0)
+>                 goto toofar;
+> @@ -263,22 +265,11 @@ static int emit_bpf_tail_call(struct jit_ctx *ctx)
+>         emit_insn(ctx, ldd, t3, t2, off);
+>         __build_epilogue(ctx, true);
+>
+> -       /* out: */
+> -       if (out_offset =3D=3D -1)
+> -               out_offset =3D cur_offset;
+> -       if (cur_offset !=3D out_offset) {
+> -               pr_err_once("tail_call out_offset =3D %d, expected %d!\n"=
+,
+> -                           cur_offset, out_offset);
+> -               return -1;
+> -       }
+> -
+>         return 0;
+>
+>  toofar:
+>         pr_info_once("tail_call: jump too far\n");
+>         return -1;
+> -#undef cur_offset
+> -#undef jmp_offset
+>  }
+>
+>  static void emit_atomic(const struct bpf_insn *insn, struct jit_ctx *ctx=
+)
+> @@ -916,7 +907,7 @@ static int build_insn(const struct bpf_insn *insn, st=
+ruct jit_ctx *ctx, bool ext
+>         /* tail call */
+>         case BPF_JMP | BPF_TAIL_CALL:
+>                 mark_tail_call(ctx);
+> -               if (emit_bpf_tail_call(ctx) < 0)
+> +               if (emit_bpf_tail_call(i, ctx) < 0)
+>                         return -EINVAL;
+>                 break;
+>
+> @@ -1342,7 +1333,6 @@ struct bpf_prog *bpf_int_jit_compile(struct bpf_pro=
+g *prog)
+>         if (tmp_blinded)
+>                 bpf_jit_prog_release_other(prog, prog =3D=3D orig_prog ? =
+tmp : orig_prog);
+>
+> -       out_offset =3D -1;
+>
+>         return prog;
+>
+> --
+> 2.43.0
+>
 
