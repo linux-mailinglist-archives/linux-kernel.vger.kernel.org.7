@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-666471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B39F6AC7739
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 06:41:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81BD9AC773B
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 06:42:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D4011BC7F2E
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 04:41:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67899188F4C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 04:42:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F1122571BF;
-	Thu, 29 May 2025 04:40:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9B2325333E;
+	Thu, 29 May 2025 04:40:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jntMQ+WY"
-Received: from mail-oi1-f201.google.com (mail-oi1-f201.google.com [209.85.167.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="akzxj4MY"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E2D0256C70
-	for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 04:40:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E45A256C8D
+	for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 04:40:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748493622; cv=none; b=K71if5Ew39Kxbg46Kt0RHLqHlFXC/OXtKxkINXUC6Rfz+75LUAWRxqe2T5M3aEKjbYWZXDSy4fceXI/GAjp+FcJ1ZGDX2XlIEIUInnR/+Zb7Pd1Hpm0vW9PBeUIxhwH+s9+OUYmG641mCBYegVAcgWCZ4U39d2ccl+TsQYCEUiY=
+	t=1748493624; cv=none; b=DEcBTE++Fcl4qfJ6/hQAZWEV/FGaz9pklPa9uFQolyPCHUSNjzn+2kiFaUqPTiaKjfvTa4/F2FKkgvaFX9wBxqNSTCiutzKct6hyJiz6NkY423xh//tNFiXsSvZwyahCdSiyeeJIvDjDD3M+I7MeIK/aGU20sEqtiix0f8x5LZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748493622; c=relaxed/simple;
-	bh=hrgDm6073NKSgZmuRNrlZjmYOWa6YgnSkn2Bjf0yw1Q=;
+	s=arc-20240116; t=1748493624; c=relaxed/simple;
+	bh=Q1uRBMFZYS5F140wA+v8aYFwjrydrw1AvH4/PqfK9G4=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=ln/wZSf/4jIkuuQryEe76U+0rrBBPEpg1wrMMBbGtC5TWYNBYd/3U9DVs6CYxugUUnxO5iT44SvR0r87NKHuqUB33Jthh1+RKxftpuoEh+Aty4WRhqBYb48taqJPavE6RDq+i3zBYk2EJnp5Dpk1J3wg/MZp29WHBRMHf/oN0Ew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jntMQ+WY; arc=none smtp.client-ip=209.85.167.201
+	 To:Content-Type; b=nDhK9v7o9SaYbqw4b/NUkF2qPxyfSkAF0BRgz9p7wZC4DTxsL4dFXUXRGemeY7nU/E7m4DDFEf1QA3r2jjWj1FUOK7QouMhJkp+1LUvPCDAWqof7qQ/kOy/UqupC5heXLiA1nj3hLGq03IqOF+0G61eFOyrJR9+ZtpvcnVSvFSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=akzxj4MY; arc=none smtp.client-ip=209.85.210.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-oi1-f201.google.com with SMTP id 5614622812f47-401c6c3a679so467004b6e.3
-        for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 21:40:19 -0700 (PDT)
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-740270e168aso431852b3a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 21:40:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1748493618; x=1749098418; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1748493621; x=1749098421; darn=vger.kernel.org;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=G/4nfLMgZpzjPI0//QABIjXhhHcB64OFKqXFaV6Z4bE=;
-        b=jntMQ+WY/GCPbVZjfuuuBlRthumNRhAxTVC9dDsEDmR17S/jhslrtCbY4U0xVYqtSg
-         3estE5aWVstMBLIABRmBinDJC8agNDPiYA4WbaMRErzAPWjOqGzvn5ko6gZovZLAGaSr
-         lB7sxJ+ay4xY+g1kNxadfj8KmIGdKMspIyXCAyzklYTkkDOAX3dWRLEVfdl4v3tNDwjA
-         pS8dnxZZZNSCSH15l8yw0b64kXRJ7Csal2QdvXUp2TOCfFGlOFdSrTqfCSZeXBLoltM2
-         lIIL/zyFVSBKPyzucawkw6BVeDtl/GEjASGDIQE7WCxHKR2tD+dTXTESguw3oqOKlHzG
-         9tYg==
+        bh=Nh4f4Q5P2Uu09J3PTG3V/XvH5B9vJjtYVZWZH6R++/0=;
+        b=akzxj4MY+3w1Q+xIKEr3esnZEUWzBg15r0uVh2S5jbU4lTOamBgpTsHKuGBv1BZJiv
+         wYL1QNOrsmOhOyoRWdoqZFz+EaxfdwJ4FGQEqvT1ig4OB2Q9X6HjCnYLKKkTD40ozftF
+         zzly+VBidLBH9ue1abni+6uEx8HKacmuWOavnf2Pc++oRQcoapO9Y38Pla85rPRZWQyW
+         32dvxKt6O4+Ah+a+w5IBswKjv9gIHaIMXkL/9ccAP7ht26YLoodyp8tGzEp4E5Y9RdKw
+         L4BJAUWL3zz6eJw1hXL5YHb/BOZrYN/ORqfCFPdRqcMpi/zWEGV6X022xvnsQtb5GGXn
+         MFLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748493618; x=1749098418;
+        d=1e100.net; s=20230601; t=1748493621; x=1749098421;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=G/4nfLMgZpzjPI0//QABIjXhhHcB64OFKqXFaV6Z4bE=;
-        b=TuMqaEDki7K1oMkgpVvI6u/VZBuQpCsKS3JNeOSySzGAzHyLbDPMUyYRwpC8wEgHpB
-         yBm6TRTKszQPIvzFS2TNhtfd6MCykdPZ6y1jgesDvXXIVNx0DiqzOElQG16V0yG2Ygck
-         TvdGaacq3hIh/vP0ThcFy8wTLMOFAXzKn6hVxzfHJdwCbSvbmM5kOT3NUfaCwhkS87We
-         9VL9QNeXBNb8hqBr1eKkVhYiW8eZJ1CG5POOU8fKQ3mAKlw2q66DnbepNCVDUb9NFsXG
-         r/a8k+vH4nLhPVJGPrVIDG4jt4cygTsjUkrJrb24mtO5waMg8Wi53iWs42KHAGXvbVHj
-         ibsg==
-X-Forwarded-Encrypted: i=1; AJvYcCWttAw2RQGik4ZIw1lfvZmZ9ELj121bkAn6s6s3MXNTxajLSfw9kPw156Inp7PoypFG7i1dDiV9DT4h/B8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YygBUYfto7WumC4Q3zvF7msA6OT/cwkfjB3wdUZ4tlHTAHtruwN
-	XC/YuzzzMf99BJWjLixYgewDnZKSKXfIhzYRF8Y4xXZ2YWYUAkxK9uJS4y02ga8OsbxZQTkbiMh
-	lkV2nmK/qRQ==
-X-Google-Smtp-Source: AGHT+IENFligdelPdiwHRPX0P9XtMn74tYe9bLeP7jO9zz9croZ9oZmT7qzbt5nQGNBRog7N7al92g6G0Oe1
-X-Received: from oabut1.prod.google.com ([2002:a05:6870:ad81:b0:2bc:6267:d082])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6808:80b2:b0:400:32b9:7926
- with SMTP id 5614622812f47-406468101b9mr10531127b6e.6.1748493618533; Wed, 28
- May 2025 21:40:18 -0700 (PDT)
-Date: Wed, 28 May 2025 21:39:42 -0700
+        bh=Nh4f4Q5P2Uu09J3PTG3V/XvH5B9vJjtYVZWZH6R++/0=;
+        b=JCR8Zo3zvBUFb7lZZS8BKqLU4PDxmihPUMNSens5yxtkJ8TKq5CUBWg9mTkwaP6SuQ
+         ALbTbgtUCOkZOm0itntZErPb0pp/uTVgM/gtMajhWsd4dVQYrXO0l8U68RRnr3Hhp68V
+         70+MpJhyX0BQ72GC6wgI1QOoLH66cjSfuJmkMczwlHYw+fiXI8v8l7kTNcwqhyvXCISt
+         rVLCrHJ996LCXx1LKENmVIZF2ZiRJYZmriIGpGY5FEFt3D6CgSQ9aVfYtaMyL4NXodJP
+         cm8bT7nuQ9JWX0Wc0hGrWHtfH11BkxELZYm0rIw7p3IEA2cmA7R6rO1S80/aXD12lNEk
+         Cnxw==
+X-Forwarded-Encrypted: i=1; AJvYcCUd4YApiuOYNu7lFgfHqn3uoUpXf6K7cbaZLlkjNqrPCCz/PYpHQO+DNb2MUryAqP2ukfmtmFn0b7such8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxy31ZLbL4v1Q2LHmK/obou8hGbWSf9oeTPlA0f9uRCj/Jig9Qd
+	r5rZ8rB7O/xvH5U/DxTuo/2Zll0fLenIHqrxNKixRqAQRop14D1YYJuIN4Jur2/9j+EZnq9nLGq
+	cQKCmyxcAaQ==
+X-Google-Smtp-Source: AGHT+IGziB7ibXDmgEM1rV5Hwh8omHMrGC8fCcT/zylBJob0QYesPj3EbQjeRgQCUAKGRssdk5nAQP/ierOR
+X-Received: from pfoi12.prod.google.com ([2002:aa7:87cc:0:b0:73e:665:360])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:1893:b0:736:a540:c9ad
+ with SMTP id d2e1a72fcca58-747b0e74e04mr1366323b3a.20.1748493620499; Wed, 28
+ May 2025 21:40:20 -0700 (PDT)
+Date: Wed, 28 May 2025 21:39:43 -0700
 In-Reply-To: <20250529044000.759937-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,9 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250529044000.759937-1-irogers@google.com>
 X-Mailer: git-send-email 2.49.0.1204.g71687c7c1d-goog
-Message-ID: <20250529044000.759937-7-irogers@google.com>
-Subject: [PATCH v4 06/24] perf build-id: Ensure struct build_id is empty
- before use
+Message-ID: <20250529044000.759937-8-irogers@google.com>
+Subject: [PATCH v4 07/24] perf dso: Move build_id to dso_id
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -104,246 +103,859 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	linux-perf-users@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
 
-If a build ID is read then not all code paths may ensure it is empty
-before use. Initialize the build_id to be zero-ed unless there is
-clear initialization such as a call to build_id__init.
+The dso_id previously contained the major, minor, inode and inode
+generation information from a mmap2 event - the inode generation would
+be zero when reading from /proc/pid/maps. The build_id was in the
+dso. With build ID mmap2 events these fields wouldn't be initialized
+which would largely mean the special empty case where any dso would
+match for equality. This isn't desirable as if a dso is replaced we
+want the comparison to yield a difference.
+
+To support detecting the difference between DSOs based on build_id,
+move the build_id out of the DSO and into the dso_id. The dso_id is
+also stored in the DSO so nothing is lost. Capture in the dso_id what
+parts have been initialized and rename dso_id__inject to
+dso_id__improve_id so that it is clear the dso_id is being improved
+upon with additional information. With the build_id in the dso_id, use
+memcmp to compare for equality.
 
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/perf/bench/inject-buildid.c  | 2 +-
- tools/perf/builtin-buildid-cache.c | 8 ++++----
- tools/perf/tests/pe-file-parsing.c | 2 +-
- tools/perf/tests/sdt.c             | 2 +-
- tools/perf/util/build-id.c         | 6 +++---
- tools/perf/util/debuginfo.c        | 2 +-
- tools/perf/util/probe-event.c      | 3 ++-
- tools/perf/util/probe-finder.c     | 3 ++-
- tools/perf/util/symbol-minimal.c   | 2 +-
- tools/perf/util/symbol.c           | 5 +++--
- tools/perf/util/synthetic-events.c | 2 +-
- 11 files changed, 20 insertions(+), 17 deletions(-)
+ tools/perf/builtin-buildid-list.c       |   2 +-
+ tools/perf/builtin-inject.c             |  36 ++++----
+ tools/perf/builtin-report.c             |  11 ++-
+ tools/perf/include/perf/perf_dlfilter.h |   2 +-
+ tools/perf/tests/symbols.c              |   4 +-
+ tools/perf/util/build-id.c              |   4 +-
+ tools/perf/util/dso.c                   | 109 +++++++++++++-----------
+ tools/perf/util/dso.h                   |  75 ++++++++--------
+ tools/perf/util/dsos.c                  |  18 ++--
+ tools/perf/util/machine.c               |  28 +++---
+ tools/perf/util/map.c                   |  13 ++-
+ tools/perf/util/map.h                   |   5 +-
+ tools/perf/util/sort.c                  |  27 +++---
+ tools/perf/util/synthetic-events.c      |  18 ++--
+ 14 files changed, 197 insertions(+), 155 deletions(-)
 
-diff --git a/tools/perf/bench/inject-buildid.c b/tools/perf/bench/inject-buildid.c
-index f55c07e4be94..aad572a78d7f 100644
---- a/tools/perf/bench/inject-buildid.c
-+++ b/tools/perf/bench/inject-buildid.c
-@@ -80,7 +80,7 @@ static int add_dso(const char *fpath, const struct stat *sb __maybe_unused,
- 		   int typeflag, struct FTW *ftwbuf __maybe_unused)
+diff --git a/tools/perf/builtin-buildid-list.c b/tools/perf/builtin-buildid-list.c
+index ba8ba0303920..151cd84b6dfe 100644
+--- a/tools/perf/builtin-buildid-list.c
++++ b/tools/perf/builtin-buildid-list.c
+@@ -31,7 +31,7 @@ static int buildid__map_cb(struct map *map, void *arg __maybe_unused)
+ 
+ 	memset(bid_buf, 0, sizeof(bid_buf));
+ 	if (dso__has_build_id(dso))
+-		build_id__snprintf(dso__bid_const(dso), bid_buf, sizeof(bid_buf));
++		build_id__snprintf(dso__bid(dso), bid_buf, sizeof(bid_buf));
+ 	printf("%s %16" PRIx64 " %16" PRIx64, bid_buf, map__start(map), map__end(map));
+ 	if (dso_long_name != NULL)
+ 		printf(" %s", dso_long_name);
+diff --git a/tools/perf/builtin-inject.c b/tools/perf/builtin-inject.c
+index 11e49cafa3af..bdd51fc1685c 100644
+--- a/tools/perf/builtin-inject.c
++++ b/tools/perf/builtin-inject.c
+@@ -587,15 +587,17 @@ static int perf_event__repipe_mmap2(const struct perf_tool *tool,
+ 				struct perf_sample *sample,
+ 				struct machine *machine)
  {
- 	struct bench_dso *dso = &dsos[nr_dsos];
--	struct build_id bid;
+-	struct dso_id id;
+-	struct dso_id *dso_id = NULL;
++	struct dso_id id = dso_id_empty;
+ 
+-	if (!(event->header.misc & PERF_RECORD_MISC_MMAP_BUILD_ID)) {
++	if (event->header.misc & PERF_RECORD_MISC_MMAP_BUILD_ID) {
++		build_id__init(&id.build_id, event->mmap2.build_id, event->mmap2.build_id_size);
++	} else {
+ 		id.maj = event->mmap2.maj;
+ 		id.min = event->mmap2.min;
+ 		id.ino = event->mmap2.ino;
+ 		id.ino_generation = event->mmap2.ino_generation;
+-		dso_id = &id;
++		id.mmap2_valid = true;
++		id.mmap2_ino_generation_valid = true;
+ 	}
+ 
+ 	return perf_event__repipe_common_mmap(
+@@ -603,7 +605,7 @@ static int perf_event__repipe_mmap2(const struct perf_tool *tool,
+ 		event->mmap2.pid, event->mmap2.tid,
+ 		event->mmap2.start, event->mmap2.len, event->mmap2.pgoff,
+ 		event->mmap2.flags, event->mmap2.prot,
+-		event->mmap2.filename, dso_id,
++		event->mmap2.filename, &id,
+ 		perf_event__process_mmap2);
+ }
+ 
+@@ -671,19 +673,20 @@ static int perf_event__repipe_tracing_data(struct perf_session *session,
+ static int dso__read_build_id(struct dso *dso)
+ {
+ 	struct nscookie nsc;
 +	struct build_id bid = { .size = 0, };
  
- 	if (typeflag == FTW_D || typeflag == FTW_SL)
+ 	if (dso__has_build_id(dso))
  		return 0;
-diff --git a/tools/perf/builtin-buildid-cache.c b/tools/perf/builtin-buildid-cache.c
-index 3f7739b21148..e936a34b7d37 100644
---- a/tools/perf/builtin-buildid-cache.c
-+++ b/tools/perf/builtin-buildid-cache.c
-@@ -175,7 +175,7 @@ static int build_id_cache__add_kcore(const char *filename, bool force)
- static int build_id_cache__add_file(const char *filename, struct nsinfo *nsi)
- {
- 	char sbuild_id[SBUILD_ID_SIZE];
--	struct build_id bid;
-+	struct build_id bid = { .size = 0, };
- 	int err;
- 	struct nscookie nsc;
- 
-@@ -198,7 +198,7 @@ static int build_id_cache__add_file(const char *filename, struct nsinfo *nsi)
- static int build_id_cache__remove_file(const char *filename, struct nsinfo *nsi)
- {
- 	char sbuild_id[SBUILD_ID_SIZE];
--	struct build_id bid;
-+	struct build_id bid = { .size = 0, };
- 	struct nscookie nsc;
- 
- 	int err;
-@@ -275,7 +275,7 @@ static int build_id_cache__purge_all(void)
- static bool dso__missing_buildid_cache(struct dso *dso, int parm __maybe_unused)
- {
- 	char filename[PATH_MAX];
--	struct build_id bid;
-+	struct build_id bid = { .size = 0, };
- 
- 	if (!dso__build_id_filename(dso, filename, sizeof(filename), false))
- 		return true;
-@@ -303,7 +303,7 @@ static int build_id_cache__fprintf_missing(struct perf_session *session, FILE *f
- static int build_id_cache__update_file(const char *filename, struct nsinfo *nsi)
- {
- 	char sbuild_id[SBUILD_ID_SIZE];
--	struct build_id bid;
-+	struct build_id bid = { .size = 0, };
- 	struct nscookie nsc;
- 
- 	int err;
-diff --git a/tools/perf/tests/pe-file-parsing.c b/tools/perf/tests/pe-file-parsing.c
-index fff58b220c07..30c7da79e109 100644
---- a/tools/perf/tests/pe-file-parsing.c
-+++ b/tools/perf/tests/pe-file-parsing.c
-@@ -24,7 +24,7 @@ static int run_dir(const char *d)
- {
- 	char filename[PATH_MAX];
- 	char debugfile[PATH_MAX];
--	struct build_id bid;
-+	struct build_id bid = { .size = 0, };
- 	char debuglink[PATH_MAX];
- 	char expect_build_id[] = {
- 		0x5a, 0x0f, 0xd8, 0x82, 0xb5, 0x30, 0x84, 0x22,
-diff --git a/tools/perf/tests/sdt.c b/tools/perf/tests/sdt.c
-index 919712899251..de4c7916b40d 100644
---- a/tools/perf/tests/sdt.c
-+++ b/tools/perf/tests/sdt.c
-@@ -28,7 +28,7 @@ static int target_function(void)
- static int build_id_cache__add_file(const char *filename)
- {
- 	char sbuild_id[SBUILD_ID_SIZE];
--	struct build_id bid;
-+	struct build_id bid = { .size = 0, };
- 	int err;
- 
- 	err = filename__read_build_id(filename, &bid);
-diff --git a/tools/perf/util/build-id.c b/tools/perf/util/build-id.c
-index 3386fa8e1e7e..1abd5a670665 100644
---- a/tools/perf/util/build-id.c
-+++ b/tools/perf/util/build-id.c
-@@ -95,7 +95,7 @@ int build_id__snprintf(const struct build_id *build_id, char *bf, size_t bf_size
- int sysfs__snprintf_build_id(const char *root_dir, char *sbuild_id, size_t sbuild_id_size)
- {
- 	char notes[PATH_MAX];
--	struct build_id bid;
-+	struct build_id bid = { .size = 0, };
- 	int ret;
- 
- 	if (!root_dir)
-@@ -112,7 +112,7 @@ int sysfs__snprintf_build_id(const char *root_dir, char *sbuild_id, size_t sbuil
- 
- int filename__snprintf_build_id(const char *pathname, char *sbuild_id, size_t sbuild_id_size)
- {
--	struct build_id bid;
-+	struct build_id bid = { .size = 0, };
- 	int ret;
- 
- 	ret = filename__read_build_id(pathname, &bid);
-@@ -849,7 +849,7 @@ static int filename__read_build_id_ns(const char *filename,
- 
- static bool dso__build_id_mismatch(struct dso *dso, const char *name)
- {
--	struct build_id bid;
-+	struct build_id bid = { .size = 0, };
- 	bool ret = false;
  
  	mutex_lock(dso__lock(dso));
-diff --git a/tools/perf/util/debuginfo.c b/tools/perf/util/debuginfo.c
-index b5deea7cbdf2..a44c70f93156 100644
---- a/tools/perf/util/debuginfo.c
-+++ b/tools/perf/util/debuginfo.c
-@@ -103,7 +103,7 @@ struct debuginfo *debuginfo__new(const char *path)
- 	char buf[PATH_MAX], nil = '\0';
- 	struct dso *dso;
- 	struct debuginfo *dinfo = NULL;
--	struct build_id bid;
-+	struct build_id bid = { .size = 0};
+ 	nsinfo__mountns_enter(dso__nsinfo(dso), &nsc);
+-	if (filename__read_build_id(dso__long_name(dso), dso__bid(dso)) > 0)
+-		dso__set_has_build_id(dso);
++	if (filename__read_build_id(dso__long_name(dso), &bid) > 0)
++		dso__set_build_id(dso, &bid);
+ 	else if (dso__nsinfo(dso)) {
+ 		char *new_name = dso__filename_with_chroot(dso, dso__long_name(dso));
  
- 	/* Try to open distro debuginfo files */
- 	dso = dso__new(path);
-diff --git a/tools/perf/util/probe-event.c b/tools/perf/util/probe-event.c
-index 307ad6242a4e..3c87aa6f7d3b 100644
---- a/tools/perf/util/probe-event.c
-+++ b/tools/perf/util/probe-event.c
-@@ -1063,7 +1063,6 @@ static int sprint_line_description(char *sbuf, size_t size, struct line_range *l
- static int __show_line_range(struct line_range *lr, const char *module,
- 			     bool user)
- {
--	struct build_id bid;
- 	int l = 1;
- 	struct int_node *ln;
- 	struct debuginfo *dinfo;
-@@ -1088,6 +1087,8 @@ static int __show_line_range(struct line_range *lr, const char *module,
- 			ret = -ENOENT;
+-		if (new_name && filename__read_build_id(new_name, dso__bid(dso)) > 0)
+-			dso__set_has_build_id(dso);
++		if (new_name && filename__read_build_id(new_name, &bid) > 0)
++			dso__set_build_id(dso, &bid);
+ 		free(new_name);
  	}
- 	if (dinfo->build_id) {
+ 	nsinfo__mountns_exit(&nsc);
+@@ -732,23 +735,26 @@ static bool perf_inject__lookup_known_build_id(struct perf_inject *inject,
+ 					       struct dso *dso)
+ {
+ 	struct str_node *pos;
+-	int bid_len;
+ 
+ 	strlist__for_each_entry(pos, inject->known_build_ids) {
 +		struct build_id bid;
-+
- 		build_id__init(&bid, dinfo->build_id, BUILD_ID_SIZE);
- 		build_id__sprintf(&bid, sbuild_id);
- 	}
-diff --git a/tools/perf/util/probe-finder.c b/tools/perf/util/probe-finder.c
-index 3cc7c40f5097..1bbb91758316 100644
---- a/tools/perf/util/probe-finder.c
-+++ b/tools/perf/util/probe-finder.c
-@@ -848,7 +848,6 @@ static int probe_point_lazy_walker(const char *fname, int lineno,
- /* Find probe points from lazy pattern  */
- static int find_probe_point_lazy(Dwarf_Die *sp_die, struct probe_finder *pf)
- {
--	struct build_id bid;
- 	char sbuild_id[SBUILD_ID_SIZE] = "";
- 	int ret = 0;
- 	char *fpath;
-@@ -858,6 +857,8 @@ static int find_probe_point_lazy(Dwarf_Die *sp_die, struct probe_finder *pf)
+ 		const char *build_id, *dso_name;
++		size_t bid_len;
  
- 		comp_dir = cu_get_comp_dir(&pf->cu_die);
- 		if (pf->dbg->build_id) {
-+			struct build_id bid;
-+
- 			build_id__init(&bid, pf->dbg->build_id, BUILD_ID_SIZE);
- 			build_id__sprintf(&bid, sbuild_id);
+ 		build_id = skip_spaces(pos->s);
+ 		dso_name = strchr(build_id, ' ');
+ 		bid_len = dso_name - pos->s;
++		if (bid_len > sizeof(bid.data))
++			bid_len = sizeof(bid.data);
+ 		dso_name = skip_spaces(dso_name);
+ 		if (strcmp(dso__long_name(dso), dso_name))
+ 			continue;
+-		for (int ix = 0; 2 * ix + 1 < bid_len; ++ix) {
+-			dso__bid(dso)->data[ix] = (hex(build_id[2 * ix]) << 4 |
+-						  hex(build_id[2 * ix + 1]));
++		for (size_t ix = 0; 2 * ix + 1 < bid_len; ++ix) {
++			bid.data[ix] = (hex(build_id[2 * ix]) << 4 |
++					hex(build_id[2 * ix + 1]));
  		}
-diff --git a/tools/perf/util/symbol-minimal.c b/tools/perf/util/symbol-minimal.c
-index d8da3da01fe6..7fcba821bbe5 100644
---- a/tools/perf/util/symbol-minimal.c
-+++ b/tools/perf/util/symbol-minimal.c
-@@ -345,7 +345,7 @@ int dso__load_sym(struct dso *dso, struct map *map __maybe_unused,
- 		  struct symsrc *runtime_ss __maybe_unused,
- 		  int kmodule __maybe_unused)
- {
--	struct build_id bid;
-+	struct build_id bid = { .size = 0, };
+-		dso__bid(dso)->size = bid_len / 2;
+-		dso__set_has_build_id(dso);
++		bid.size = bid_len / 2;
++		dso__set_build_id(dso, &bid);
+ 		return true;
+ 	}
+ 	return false;
+diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
+index f0299c7ee025..98b1f73c28da 100644
+--- a/tools/perf/builtin-report.c
++++ b/tools/perf/builtin-report.c
+@@ -858,17 +858,24 @@ static int maps__fprintf_task_cb(struct map *map, void *data)
+ 	struct maps__fprintf_task_args *args = data;
+ 	const struct dso *dso = map__dso(map);
+ 	u32 prot = map__prot(map);
++	const struct dso_id *dso_id = dso__id_const(dso);
  	int ret;
- 
- 	ret = fd__is_64_bit(ss->fd);
-diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
-index aa46364f1ab8..dddc02ed8b2f 100644
---- a/tools/perf/util/symbol.c
-+++ b/tools/perf/util/symbol.c
-@@ -1806,7 +1806,6 @@ int dso__load(struct dso *dso, struct map *map)
- 	struct symsrc *syms_ss = NULL, *runtime_ss = NULL;
- 	bool kmod;
- 	bool perfmap;
--	struct build_id bid;
- 	struct nscookie nsc;
- 	char newmapname[PATH_MAX];
- 	const char *map_path = dso__long_name(dso);
-@@ -1867,6 +1866,8 @@ int dso__load(struct dso *dso, struct map *map)
- 	 */
- 	if (!dso__has_build_id(dso) &&
- 	    is_regular_file(dso__long_name(dso))) {
-+		struct build_id bid = { .size = 0, };
++	char buf[SBUILD_ID_SIZE];
 +
- 		__symbol__join_symfs(name, PATH_MAX, dso__long_name(dso));
- 		if (filename__read_build_id(name, &bid) > 0)
- 			dso__set_build_id(dso, &bid);
-@@ -2115,7 +2116,7 @@ static bool filename__readable(const char *file)
++	if (dso_id->mmap2_valid)
++		snprintf(buf, sizeof(buf), "%" PRIu64, dso_id->ino);
++	else
++		build_id__snprintf(&dso_id->build_id, buf, sizeof(buf));
  
- static char *dso__find_kallsyms(struct dso *dso, struct map *map)
+ 	ret = fprintf(args->fp,
+-		"%*s  %" PRIx64 "-%" PRIx64 " %c%c%c%c %08" PRIx64 " %" PRIu64 " %s\n",
++		"%*s  %" PRIx64 "-%" PRIx64 " %c%c%c%c %08" PRIx64 " %s %s\n",
+ 		args->indent, "", map__start(map), map__end(map),
+ 		prot & PROT_READ ? 'r' : '-',
+ 		prot & PROT_WRITE ? 'w' : '-',
+ 		prot & PROT_EXEC ? 'x' : '-',
+ 		map__flags(map) ? 's' : 'p',
+ 		map__pgoff(map),
+-		dso__id_const(dso)->ino, dso__name(dso));
++		buf, dso__name(dso));
+ 
+ 	if (ret < 0)
+ 		return ret;
+diff --git a/tools/perf/include/perf/perf_dlfilter.h b/tools/perf/include/perf/perf_dlfilter.h
+index 16fc4568ac53..2d3540ed3c58 100644
+--- a/tools/perf/include/perf/perf_dlfilter.h
++++ b/tools/perf/include/perf/perf_dlfilter.h
+@@ -87,7 +87,7 @@ struct perf_dlfilter_al {
+ 	__u8  is_64_bit; /* Only valid if dso is not NULL */
+ 	__u8  is_kernel_ip; /* True if in kernel space */
+ 	__u32 buildid_size;
+-	__u8 *buildid;
++	const __u8 *buildid;
+ 	/* Below members are only populated by resolve_ip() */
+ 	__u8 filtered; /* True if this sample event will be filtered out */
+ 	const char *comm;
+diff --git a/tools/perf/tests/symbols.c b/tools/perf/tests/symbols.c
+index ee20a366f32f..b07fdf831868 100644
+--- a/tools/perf/tests/symbols.c
++++ b/tools/perf/tests/symbols.c
+@@ -96,8 +96,8 @@ static int create_map(struct test_info *ti, char *filename, struct map **map_p)
+ 	dso__put(dso);
+ 
+ 	/* Create a dummy map at 0x100000 */
+-	*map_p = map__new(ti->machine, 0x100000, 0xffffffff, 0, NULL,
+-			  PROT_EXEC, 0, NULL, filename, ti->thread);
++	*map_p = map__new(ti->machine, 0x100000, 0xffffffff, 0, &dso_id_empty,
++			  PROT_EXEC, /*flags=*/0, filename, ti->thread);
+ 	if (!*map_p) {
+ 		pr_debug("Failed to create map!");
+ 		return TEST_FAIL;
+diff --git a/tools/perf/util/build-id.c b/tools/perf/util/build-id.c
+index 1abd5a670665..e2b295fe4d2f 100644
+--- a/tools/perf/util/build-id.c
++++ b/tools/perf/util/build-id.c
+@@ -251,7 +251,7 @@ char *__dso__build_id_filename(const struct dso *dso, char *bf, size_t size,
+ 	if (!dso__has_build_id(dso))
+ 		return NULL;
+ 
+-	build_id__snprintf(dso__bid_const(dso), sbuild_id, sizeof(sbuild_id));
++	build_id__snprintf(dso__bid(dso), sbuild_id, sizeof(sbuild_id));
+ 	linkname = build_id_cache__linkname(sbuild_id, NULL, 0);
+ 	if (!linkname)
+ 		return NULL;
+@@ -334,7 +334,7 @@ static int machine__write_buildid_table_cb(struct dso *dso, void *data)
+ 	}
+ 
+ 	in_kernel = dso__kernel(dso) || is_kernel_module(name, PERF_RECORD_MISC_CPUMODE_UNKNOWN);
+-	return write_buildid(name, name_len, dso__bid(dso), args->machine->pid,
++	return write_buildid(name, name_len, &dso__id(dso)->build_id, args->machine->pid,
+ 			     in_kernel ? args->kmisc : args->umisc, args->fd);
+ }
+ 
+diff --git a/tools/perf/util/dso.c b/tools/perf/util/dso.c
+index 97664610c37e..6b99311a5eb2 100644
+--- a/tools/perf/util/dso.c
++++ b/tools/perf/util/dso.c
+@@ -217,7 +217,7 @@ int dso__read_binary_type_filename(const struct dso *dso,
+ 			break;
+ 		}
+ 
+-		build_id__snprintf(dso__bid_const(dso), build_id_hex, sizeof(build_id_hex));
++		build_id__snprintf(dso__bid(dso), build_id_hex, sizeof(build_id_hex));
+ 		len = __symbol__join_symfs(filename, size, "/usr/lib/debug/.build-id/");
+ 		snprintf(filename + len, size - len, "%.2s/%s.debug",
+ 			 build_id_hex, build_id_hex + 2);
+@@ -1382,64 +1382,76 @@ static void dso__set_long_name_id(struct dso *dso, const char *name, bool name_a
+ 
+ static int __dso_id__cmp(const struct dso_id *a, const struct dso_id *b)
  {
--	struct build_id bid;
-+	struct build_id bid = { .size = 0, };
- 	char sbuild_id[SBUILD_ID_SIZE];
- 	bool is_host = false;
+-	if (a->maj > b->maj) return -1;
+-	if (a->maj < b->maj) return 1;
++	if (a->mmap2_valid && b->mmap2_valid) {
++		if (a->maj > b->maj) return -1;
++		if (a->maj < b->maj) return 1;
+ 
+-	if (a->min > b->min) return -1;
+-	if (a->min < b->min) return 1;
++		if (a->min > b->min) return -1;
++		if (a->min < b->min) return 1;
+ 
+-	if (a->ino > b->ino) return -1;
+-	if (a->ino < b->ino) return 1;
+-
+-	/*
+-	 * Synthesized MMAP events have zero ino_generation, avoid comparing
+-	 * them with MMAP events with actual ino_generation.
+-	 *
+-	 * I found it harmful because the mismatch resulted in a new
+-	 * dso that did not have a build ID whereas the original dso did have a
+-	 * build ID. The build ID was essential because the object was not found
+-	 * otherwise. - Adrian
+-	 */
+-	if (a->ino_generation && b->ino_generation) {
++		if (a->ino > b->ino) return -1;
++		if (a->ino < b->ino) return 1;
++	}
++	if (a->mmap2_ino_generation_valid && b->mmap2_ino_generation_valid) {
+ 		if (a->ino_generation > b->ino_generation) return -1;
+ 		if (a->ino_generation < b->ino_generation) return 1;
+ 	}
+-
++	if (build_id__is_defined(&a->build_id) && build_id__is_defined(&b->build_id)) {
++		if (a->build_id.size != b->build_id.size)
++			return a->build_id.size < b->build_id.size ? -1 : 1;
++		return memcmp(a->build_id.data, b->build_id.data, a->build_id.size);
++	}
+ 	return 0;
+ }
+ 
+-bool dso_id__empty(const struct dso_id *id)
+-{
+-	if (!id)
+-		return true;
+-
+-	return !id->maj && !id->min && !id->ino && !id->ino_generation;
+-}
++const struct dso_id dso_id_empty = {
++	{
++		.maj = 0,
++		.min = 0,
++		.ino = 0,
++		.ino_generation = 0,
++	},
++	.mmap2_valid = false,
++	.mmap2_ino_generation_valid = false,
++	{
++		.size = 0,
++	}
++};
+ 
+-void __dso__inject_id(struct dso *dso, const struct dso_id *id)
++void __dso__improve_id(struct dso *dso, const struct dso_id *id)
+ {
+ 	struct dsos *dsos = dso__dsos(dso);
+ 	struct dso_id *dso_id = dso__id(dso);
++	bool changed = false;
+ 
+ 	/* dsos write lock held by caller. */
+ 
+-	dso_id->maj = id->maj;
+-	dso_id->min = id->min;
+-	dso_id->ino = id->ino;
+-	dso_id->ino_generation = id->ino_generation;
+-
+-	if (dsos)
++	if (id->mmap2_valid && !dso_id->mmap2_valid) {
++		dso_id->maj = id->maj;
++		dso_id->min = id->min;
++		dso_id->ino = id->ino;
++		dso_id->mmap2_valid = true;
++		changed = true;
++	}
++	if (id->mmap2_ino_generation_valid && !dso_id->mmap2_ino_generation_valid) {
++		dso_id->ino_generation = id->ino_generation;
++		dso_id->mmap2_ino_generation_valid = true;
++		changed = true;
++	}
++	if (build_id__is_defined(&id->build_id) && !build_id__is_defined(&dso_id->build_id)) {
++		dso_id->build_id = id->build_id;
++		changed = true;
++	}
++	if (changed && dsos)
+ 		dsos->sorted = false;
+ }
+ 
+ int dso_id__cmp(const struct dso_id *a, const struct dso_id *b)
+ {
+-	/*
+-	 * The second is always dso->id, so zeroes if not set, assume passing
+-	 * NULL for a means a zeroed id
+-	 */
+-	if (dso_id__empty(a) || dso_id__empty(b))
++	if (a == &dso_id_empty || b == &dso_id_empty) {
++		/* There is no valid data to compare so the comparison always returns identical. */
+ 		return 0;
++	}
+ 
+ 	return __dso_id__cmp(a, b);
+ }
+@@ -1540,7 +1552,6 @@ struct dso *dso__new_id(const char *name, const struct dso_id *id)
+ 		dso->loaded = 0;
+ 		dso->rel = 0;
+ 		dso->sorted_by_name = 0;
+-		dso->has_build_id = 0;
+ 		dso->has_srcline = 1;
+ 		dso->a2l_fails = 1;
+ 		dso->kernel = DSO_SPACE__USER;
+@@ -1645,15 +1656,14 @@ int dso__swap_init(struct dso *dso, unsigned char eidata)
+ 	return 0;
+ }
+ 
+-void dso__set_build_id(struct dso *dso, struct build_id *bid)
++void dso__set_build_id(struct dso *dso, const struct build_id *bid)
+ {
+-	RC_CHK_ACCESS(dso)->bid = *bid;
+-	RC_CHK_ACCESS(dso)->has_build_id = 1;
++	dso__id(dso)->build_id = *bid;
+ }
+ 
+-bool dso__build_id_equal(const struct dso *dso, struct build_id *bid)
++bool dso__build_id_equal(const struct dso *dso, const struct build_id *bid)
+ {
+-	const struct build_id *dso_bid = dso__bid_const(dso);
++	const struct build_id *dso_bid = dso__bid(dso);
+ 
+ 	if (dso_bid->size > bid->size && dso_bid->size == BUILD_ID_SIZE) {
+ 		/*
+@@ -1672,18 +1682,20 @@ bool dso__build_id_equal(const struct dso *dso, struct build_id *bid)
+ void dso__read_running_kernel_build_id(struct dso *dso, struct machine *machine)
+ {
  	char path[PATH_MAX];
++	struct build_id bid = { .size = 0, };
+ 
+ 	if (machine__is_default_guest(machine))
+ 		return;
+ 	sprintf(path, "%s/sys/kernel/notes", machine->root_dir);
+-	if (sysfs__read_build_id(path, dso__bid(dso)) == 0)
+-		dso__set_has_build_id(dso);
++	sysfs__read_build_id(path, &bid);
++	dso__set_build_id(dso, &bid);
+ }
+ 
+ int dso__kernel_module_get_build_id(struct dso *dso,
+ 				    const char *root_dir)
+ {
+ 	char filename[PATH_MAX];
++	struct build_id bid = { .size = 0, };
+ 	/*
+ 	 * kernel module short names are of the form "[module]" and
+ 	 * we need just "module" here.
+@@ -1694,9 +1706,8 @@ int dso__kernel_module_get_build_id(struct dso *dso,
+ 		 "%s/sys/module/%.*s/notes/.note.gnu.build-id",
+ 		 root_dir, (int)strlen(name) - 1, name);
+ 
+-	if (sysfs__read_build_id(filename, dso__bid(dso)) == 0)
+-		dso__set_has_build_id(dso);
+-
++	sysfs__read_build_id(filename, &bid);
++	dso__set_build_id(dso, &bid);
+ 	return 0;
+ }
+ 
+diff --git a/tools/perf/util/dso.h b/tools/perf/util/dso.h
+index c87564471f9b..3457d713d3c5 100644
+--- a/tools/perf/util/dso.h
++++ b/tools/perf/util/dso.h
+@@ -185,14 +185,33 @@ enum dso_load_errno {
+ #define DSO__DATA_CACHE_SIZE 4096
+ #define DSO__DATA_CACHE_MASK ~(DSO__DATA_CACHE_SIZE - 1)
+ 
+-/*
+- * Data about backing storage DSO, comes from PERF_RECORD_MMAP2 meta events
++/**
++ * struct dso_id
++ *
++ * Data about backing storage DSO, comes from PERF_RECORD_MMAP2 meta events,
++ * reading from /proc/pid/maps or synthesis of build_ids from DSOs. Possibly
++ * incomplete at any particular use.
+  */
+ struct dso_id {
+-	u32	maj;
+-	u32	min;
+-	u64	ino;
+-	u64	ino_generation;
++	/* Data related to the mmap2 event or read from /proc/pid/maps. */
++	struct {
++		u32	maj;
++		u32	min;
++		u64	ino;
++		u64	ino_generation;
++	};
++	/** @mmap2_valid: Are the maj, min and ino fields valid? */
++	bool	mmap2_valid;
++	/**
++	 * @mmap2_ino_generation_valid: Is the ino_generation valid? Generally
++	 * false for /proc/pid/maps mmap event.
++	 */
++	bool	mmap2_ino_generation_valid;
++	/**
++	 * @build_id: A possibly populated build_id. build_id__is_defined checks
++	 * whether it is populated.
++	 */
++	struct build_id build_id;
+ };
+ 
+ struct dso_cache {
+@@ -243,7 +262,6 @@ DECLARE_RC_STRUCT(dso) {
+ 		u64		addr;
+ 		struct symbol	*symbol;
+ 	} last_find_result;
+-	struct build_id	 bid;
+ 	u64		 text_offset;
+ 	u64		 text_end;
+ 	const char	 *short_name;
+@@ -276,7 +294,6 @@ DECLARE_RC_STRUCT(dso) {
+ 	enum dso_swap_type	needs_swap:2;
+ 	bool			is_kmod:1;
+ 	u8		 adjust_symbols:1;
+-	u8		 has_build_id:1;
+ 	u8		 header_build_id:1;
+ 	u8		 has_srcline:1;
+ 	u8		 hit:1;
+@@ -292,6 +309,9 @@ DECLARE_RC_STRUCT(dso) {
+ };
+ 
+ extern struct mutex _dso__data_open_lock;
++extern const struct dso_id dso_id_empty;
++
++int dso_id__cmp(const struct dso_id *a, const struct dso_id *b);
+ 
+ /* dso__for_each_symbol - iterate over the symbols of given type
+  *
+@@ -362,31 +382,11 @@ static inline void dso__set_auxtrace_cache(struct dso *dso, struct auxtrace_cach
+ 	RC_CHK_ACCESS(dso)->auxtrace_cache = cache;
+ }
+ 
+-static inline struct build_id *dso__bid(struct dso *dso)
+-{
+-	return &RC_CHK_ACCESS(dso)->bid;
+-}
+-
+-static inline const struct build_id *dso__bid_const(const struct dso *dso)
+-{
+-	return &RC_CHK_ACCESS(dso)->bid;
+-}
+-
+ static inline struct dso_bpf_prog *dso__bpf_prog(struct dso *dso)
+ {
+ 	return &RC_CHK_ACCESS(dso)->bpf_prog;
+ }
+ 
+-static inline bool dso__has_build_id(const struct dso *dso)
+-{
+-	return RC_CHK_ACCESS(dso)->has_build_id;
+-}
+-
+-static inline void dso__set_has_build_id(struct dso *dso)
+-{
+-	RC_CHK_ACCESS(dso)->has_build_id = true;
+-}
+-
+ static inline bool dso__has_srcline(const struct dso *dso)
+ {
+ 	return RC_CHK_ACCESS(dso)->has_srcline;
+@@ -462,6 +462,16 @@ static inline const struct dso_id *dso__id_const(const struct dso *dso)
+ 	return &RC_CHK_ACCESS(dso)->id;
+ }
+ 
++static inline const struct build_id *dso__bid(const struct dso *dso)
++{
++	return &dso__id_const(dso)->build_id;
++}
++
++static inline bool dso__has_build_id(const struct dso *dso)
++{
++	return build_id__is_defined(dso__bid(dso));
++}
++
+ static inline struct rb_root_cached *dso__inlined_nodes(struct dso *dso)
+ {
+ 	return &RC_CHK_ACCESS(dso)->inlined_nodes;
+@@ -699,9 +709,6 @@ static inline void dso__set_text_offset(struct dso *dso, u64 val)
+ 	RC_CHK_ACCESS(dso)->text_offset = val;
+ }
+ 
+-int dso_id__cmp(const struct dso_id *a, const struct dso_id *b);
+-bool dso_id__empty(const struct dso_id *id);
+-
+ struct dso *dso__new_id(const char *name, const struct dso_id *id);
+ struct dso *dso__new(const char *name);
+ void dso__delete(struct dso *dso);
+@@ -709,7 +716,7 @@ void dso__delete(struct dso *dso);
+ int dso__cmp_id(struct dso *a, struct dso *b);
+ void dso__set_short_name(struct dso *dso, const char *name, bool name_allocated);
+ void dso__set_long_name(struct dso *dso, const char *name, bool name_allocated);
+-void __dso__inject_id(struct dso *dso, const struct dso_id *id);
++void __dso__improve_id(struct dso *dso, const struct dso_id *id);
+ 
+ int dso__name_len(const struct dso *dso);
+ 
+@@ -739,8 +746,8 @@ void dso__sort_by_name(struct dso *dso);
+ 
+ int dso__swap_init(struct dso *dso, unsigned char eidata);
+ 
+-void dso__set_build_id(struct dso *dso, struct build_id *bid);
+-bool dso__build_id_equal(const struct dso *dso, struct build_id *bid);
++void dso__set_build_id(struct dso *dso, const struct build_id *bid);
++bool dso__build_id_equal(const struct dso *dso, const struct build_id *bid);
+ void dso__read_running_kernel_build_id(struct dso *dso,
+ 				       struct machine *machine);
+ int dso__kernel_module_get_build_id(struct dso *dso, const char *root_dir);
+diff --git a/tools/perf/util/dsos.c b/tools/perf/util/dsos.c
+index 47538273915d..0a7645c7fae7 100644
+--- a/tools/perf/util/dsos.c
++++ b/tools/perf/util/dsos.c
+@@ -72,6 +72,7 @@ static int dsos__read_build_ids_cb(struct dso *dso, void *data)
+ {
+ 	struct dsos__read_build_ids_cb_args *args = data;
+ 	struct nscookie nsc;
++	struct build_id bid = { .size = 0, };
+ 
+ 	if (args->with_hits && !dso__hit(dso) && !dso__is_vdso(dso))
+ 		return 0;
+@@ -80,15 +81,15 @@ static int dsos__read_build_ids_cb(struct dso *dso, void *data)
+ 		return 0;
+ 	}
+ 	nsinfo__mountns_enter(dso__nsinfo(dso), &nsc);
+-	if (filename__read_build_id(dso__long_name(dso), dso__bid(dso)) > 0) {
++	if (filename__read_build_id(dso__long_name(dso), &bid) > 0) {
++		dso__set_build_id(dso, &bid);
+ 		args->have_build_id = true;
+-		dso__set_has_build_id(dso);
+ 	} else if (errno == ENOENT && dso__nsinfo(dso)) {
+ 		char *new_name = dso__filename_with_chroot(dso, dso__long_name(dso));
+ 
+-		if (new_name && filename__read_build_id(new_name, dso__bid(dso)) > 0) {
++		if (new_name && filename__read_build_id(new_name, &bid) > 0) {
++			dso__set_build_id(dso, &bid);
+ 			args->have_build_id = true;
+-			dso__set_has_build_id(dso);
+ 		}
+ 		free(new_name);
+ 	}
+@@ -286,7 +287,7 @@ struct dso *dsos__find(struct dsos *dsos, const char *name, bool cmp_short)
+ 	struct dso *res;
+ 
+ 	down_read(&dsos->lock);
+-	res = __dsos__find_id(dsos, name, NULL, cmp_short, /*write_locked=*/false);
++	res = __dsos__find_id(dsos, name, &dso_id_empty, cmp_short, /*write_locked=*/false);
+ 	up_read(&dsos->lock);
+ 	return res;
+ }
+@@ -344,8 +345,8 @@ static struct dso *__dsos__findnew_id(struct dsos *dsos, const char *name, const
+ {
+ 	struct dso *dso = __dsos__find_id(dsos, name, id, false, /*write_locked=*/true);
+ 
+-	if (dso && dso_id__empty(dso__id(dso)) && !dso_id__empty(id))
+-		__dso__inject_id(dso, id);
++	if (dso)
++		__dso__improve_id(dso, id);
+ 
+ 	return dso ? dso : __dsos__addnew_id(dsos, name, id);
+ }
+@@ -436,7 +437,8 @@ struct dso *dsos__findnew_module_dso(struct dsos *dsos,
+ 
+ 	down_write(&dsos->lock);
+ 
+-	dso = __dsos__find_id(dsos, m->name, NULL, /*cmp_short=*/true, /*write_locked=*/true);
++	dso = __dsos__find_id(dsos, m->name, &dso_id_empty, /*cmp_short=*/true,
++			      /*write_locked=*/true);
+ 	if (dso) {
+ 		up_write(&dsos->lock);
+ 		return dso;
+diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
+index b048165b10c1..04062148a9ec 100644
+--- a/tools/perf/util/machine.c
++++ b/tools/perf/util/machine.c
+@@ -1696,21 +1696,21 @@ int machine__process_mmap2_event(struct machine *machine,
+ {
+ 	struct thread *thread;
+ 	struct map *map;
+-	struct dso_id dso_id = {
+-		.maj = event->mmap2.maj,
+-		.min = event->mmap2.min,
+-		.ino = event->mmap2.ino,
+-		.ino_generation = event->mmap2.ino_generation,
+-	};
+-	struct build_id __bid, *bid = NULL;
++	struct dso_id dso_id = dso_id_empty;
+ 	int ret = 0;
+ 
+ 	if (dump_trace)
+ 		perf_event__fprintf_mmap2(event, stdout);
+ 
+ 	if (event->header.misc & PERF_RECORD_MISC_MMAP_BUILD_ID) {
+-		bid = &__bid;
+-		build_id__init(bid, event->mmap2.build_id, event->mmap2.build_id_size);
++		build_id__init(&dso_id.build_id, event->mmap2.build_id, event->mmap2.build_id_size);
++	} else {
++		dso_id.maj = event->mmap2.maj;
++		dso_id.min = event->mmap2.min;
++		dso_id.ino = event->mmap2.ino;
++		dso_id.ino_generation = event->mmap2.ino_generation;
++		dso_id.mmap2_valid = true;
++		dso_id.mmap2_ino_generation_valid = true;
+ 	}
+ 
+ 	if (sample->cpumode == PERF_RECORD_MISC_GUEST_KERNEL ||
+@@ -1722,7 +1722,7 @@ int machine__process_mmap2_event(struct machine *machine,
+ 		};
+ 
+ 		strlcpy(xm.name, event->mmap2.filename, KMAP_NAME_LEN);
+-		ret = machine__process_kernel_mmap_event(machine, &xm, bid);
++		ret = machine__process_kernel_mmap_event(machine, &xm, &dso_id.build_id);
+ 		if (ret < 0)
+ 			goto out_problem;
+ 		return 0;
+@@ -1736,7 +1736,7 @@ int machine__process_mmap2_event(struct machine *machine,
+ 	map = map__new(machine, event->mmap2.start,
+ 			event->mmap2.len, event->mmap2.pgoff,
+ 			&dso_id, event->mmap2.prot,
+-			event->mmap2.flags, bid,
++			event->mmap2.flags,
+ 			event->mmap2.filename, thread);
+ 
+ 	if (map == NULL)
+@@ -1794,8 +1794,8 @@ int machine__process_mmap_event(struct machine *machine, union perf_event *event
+ 		prot = PROT_EXEC;
+ 
+ 	map = map__new(machine, event->mmap.start,
+-			event->mmap.len, event->mmap.pgoff,
+-			NULL, prot, 0, NULL, event->mmap.filename, thread);
++		       event->mmap.len, event->mmap.pgoff,
++		       &dso_id_empty, prot, /*flags=*/0, event->mmap.filename, thread);
+ 
+ 	if (map == NULL)
+ 		goto out_problem_map;
+@@ -3157,7 +3157,7 @@ struct dso *machine__findnew_dso_id(struct machine *machine, const char *filenam
+ 
+ struct dso *machine__findnew_dso(struct machine *machine, const char *filename)
+ {
+-	return machine__findnew_dso_id(machine, filename, NULL);
++	return machine__findnew_dso_id(machine, filename, &dso_id_empty);
+ }
+ 
+ char *machine__resolve_kernel_addr(void *vmachine, unsigned long long *addrp, char **modp)
+diff --git a/tools/perf/util/map.c b/tools/perf/util/map.c
+index 0f6b185f9589..b46c68c24d1c 100644
+--- a/tools/perf/util/map.c
++++ b/tools/perf/util/map.c
+@@ -120,8 +120,8 @@ static void map__init(struct map *map, u64 start, u64 end, u64 pgoff,
+ }
+ 
+ struct map *map__new(struct machine *machine, u64 start, u64 len,
+-		     u64 pgoff, struct dso_id *id,
+-		     u32 prot, u32 flags, struct build_id *bid,
++		     u64 pgoff, const struct dso_id *id,
++		     u32 prot, u32 flags,
+ 		     char *filename, struct thread *thread)
+ {
+ 	struct map *result;
+@@ -132,7 +132,7 @@ struct map *map__new(struct machine *machine, u64 start, u64 len,
+ 	map = zalloc(sizeof(*map));
+ 	if (ADD_RC_CHK(result, map)) {
+ 		char newfilename[PATH_MAX];
+-		struct dso *dso, *header_bid_dso;
++		struct dso *dso;
+ 		int anon, no_dso, vdso, android;
+ 
+ 		android = is_android_lib(filename);
+@@ -189,16 +189,15 @@ struct map *map__new(struct machine *machine, u64 start, u64 len,
+ 		dso__set_nsinfo(dso, nsi);
+ 		mutex_unlock(dso__lock(dso));
+ 
+-		if (build_id__is_defined(bid)) {
+-			dso__set_build_id(dso, bid);
+-		} else {
++		if (!build_id__is_defined(&id->build_id)) {
+ 			/*
+ 			 * If the mmap event had no build ID, search for an existing dso from the
+ 			 * build ID header by name. Otherwise only the dso loaded at the time of
+ 			 * reading the header will have the build ID set and all future mmaps will
+ 			 * have it missing.
+ 			 */
+-			header_bid_dso = dsos__find(&machine->dsos, filename, false);
++			struct dso *header_bid_dso = dsos__find(&machine->dsos, filename, false);
++
+ 			if (header_bid_dso && dso__header_build_id(header_bid_dso)) {
+ 				dso__set_build_id(dso, dso__bid(header_bid_dso));
+ 				dso__set_header_build_id(dso, 1);
+diff --git a/tools/perf/util/map.h b/tools/perf/util/map.h
+index 4262f5a143be..9cadf533a561 100644
+--- a/tools/perf/util/map.h
++++ b/tools/perf/util/map.h
+@@ -173,11 +173,10 @@ struct thread;
+ 	__map__for_each_symbol_by_name(map, sym_name, (pos), idx)
+ 
+ struct dso_id;
+-struct build_id;
+ 
+ struct map *map__new(struct machine *machine, u64 start, u64 len,
+-		     u64 pgoff, struct dso_id *id, u32 prot, u32 flags,
+-		     struct build_id *bid, char *filename, struct thread *thread);
++		     u64 pgoff, const struct dso_id *id, u32 prot, u32 flags,
++		     char *filename, struct thread *thread);
+ struct map *map__new2(u64 start, struct dso *dso);
+ void map__delete(struct map *map);
+ struct map *map__clone(struct map *map);
+diff --git a/tools/perf/util/sort.c b/tools/perf/util/sort.c
+index 45e654653960..7969d64a47bf 100644
+--- a/tools/perf/util/sort.c
++++ b/tools/perf/util/sort.c
+@@ -1746,22 +1746,27 @@ sort__dcacheline_cmp(struct hist_entry *left, struct hist_entry *right)
+ 	if (rc)
+ 		return rc;
+ 	/*
+-	 * Addresses with no major/minor numbers are assumed to be
++	 * Addresses with no major/minor numbers or build ID are assumed to be
+ 	 * anonymous in userspace.  Sort those on pid then address.
+ 	 *
+ 	 * The kernel and non-zero major/minor mapped areas are
+ 	 * assumed to be unity mapped.  Sort those on address.
+ 	 */
++	if (left->cpumode != PERF_RECORD_MISC_KERNEL && (map__flags(l_map) & MAP_SHARED) == 0) {
++		const struct dso_id *dso_id = dso__id_const(l_dso);
+ 
+-	if ((left->cpumode != PERF_RECORD_MISC_KERNEL) &&
+-	    (!(map__flags(l_map) & MAP_SHARED)) && !dso__id(l_dso)->maj && !dso__id(l_dso)->min &&
+-	     !dso__id(l_dso)->ino && !dso__id(l_dso)->ino_generation) {
+-		/* userspace anonymous */
++		if (!dso_id->mmap2_valid)
++			dso_id = dso__id_const(r_dso);
+ 
+-		if (thread__pid(left->thread) > thread__pid(right->thread))
+-			return -1;
+-		if (thread__pid(left->thread) < thread__pid(right->thread))
+-			return 1;
++		if (!build_id__is_defined(&dso_id->build_id) &&
++		    (!dso_id->mmap2_valid || (dso_id->maj == 0 && dso_id->min == 0))) {
++			/* userspace anonymous */
++
++			if (thread__pid(left->thread) > thread__pid(right->thread))
++				return -1;
++			if (thread__pid(left->thread) < thread__pid(right->thread))
++				return 1;
++		}
+ 	}
+ 
+ addr:
+@@ -1786,6 +1791,7 @@ static int hist_entry__dcacheline_snprintf(struct hist_entry *he, char *bf,
+ 	if (he->mem_info) {
+ 		struct map *map = mem_info__daddr(he->mem_info)->ms.map;
+ 		struct dso *dso = map ? map__dso(map) : NULL;
++		const struct dso_id *dso_id = dso ? dso__id_const(dso) : &dso_id_empty;
+ 
+ 		addr = cl_address(mem_info__daddr(he->mem_info)->al_addr, chk_double_cl);
+ 		ms = &mem_info__daddr(he->mem_info)->ms;
+@@ -1794,8 +1800,7 @@ static int hist_entry__dcacheline_snprintf(struct hist_entry *he, char *bf,
+ 		if ((he->cpumode != PERF_RECORD_MISC_KERNEL) &&
+ 		     map && !(map__prot(map) & PROT_EXEC) &&
+ 		     (map__flags(map) & MAP_SHARED) &&
+-		     (dso__id(dso)->maj || dso__id(dso)->min || dso__id(dso)->ino ||
+-		      dso__id(dso)->ino_generation))
++		     (!dso_id->mmap2_valid || (dso_id->maj == 0 && dso_id->min == 0)))
+ 			level = 's';
+ 		else if (!map)
+ 			level = 'X';
 diff --git a/tools/perf/util/synthetic-events.c b/tools/perf/util/synthetic-events.c
-index 68bb7c5fe1b1..b7ebee95536f 100644
+index b7ebee95536f..69b98023ce74 100644
 --- a/tools/perf/util/synthetic-events.c
 +++ b/tools/perf/util/synthetic-events.c
-@@ -368,7 +368,7 @@ static void perf_record_mmap2__read_build_id(struct perf_record_mmap2 *event,
- 					     struct machine *machine,
- 					     bool is_kernel)
- {
--	struct build_id bid;
-+	struct build_id bid = { .size = 0, };
+@@ -372,7 +372,7 @@ static void perf_record_mmap2__read_build_id(struct perf_record_mmap2 *event,
  	struct nsinfo *nsi;
  	struct nscookie nc;
  	struct dso *dso = NULL;
+-	struct dso_id id;
++	struct dso_id dso_id = dso_id_empty;
+ 	int rc;
+ 
+ 	if (is_kernel) {
+@@ -380,12 +380,18 @@ static void perf_record_mmap2__read_build_id(struct perf_record_mmap2 *event,
+ 		goto out;
+ 	}
+ 
+-	id.maj = event->maj;
+-	id.min = event->min;
+-	id.ino = event->ino;
+-	id.ino_generation = event->ino_generation;
++	if (event->header.misc & PERF_RECORD_MISC_MMAP_BUILD_ID) {
++		build_id__init(&dso_id.build_id, event->build_id, event->build_id_size);
++	} else {
++		dso_id.maj = event->maj;
++		dso_id.min = event->min;
++		dso_id.ino = event->ino;
++		dso_id.ino_generation = event->ino_generation;
++		dso_id.mmap2_valid = true;
++		dso_id.mmap2_ino_generation_valid = true;
++	};
+ 
+-	dso = dsos__findnew_id(&machine->dsos, event->filename, &id);
++	dso = dsos__findnew_id(&machine->dsos, event->filename, &dso_id);
+ 	if (dso && dso__has_build_id(dso)) {
+ 		bid = *dso__bid(dso);
+ 		rc = 0;
 -- 
 2.49.0.1204.g71687c7c1d-goog
 
