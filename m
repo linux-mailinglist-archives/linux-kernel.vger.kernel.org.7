@@ -1,100 +1,76 @@
-Return-Path: <linux-kernel+bounces-666547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67D3AAC7869
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 07:54:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFBADAC77BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 07:37:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37FC6165D48
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 05:54:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5FF11C001CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 05:38:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08EDB270EC3;
-	Thu, 29 May 2025 05:44:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71151253B43;
+	Thu, 29 May 2025 05:37:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IYcaHTjF"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=norik.com header.i=@norik.com header.b="bYefAiqF"
+Received: from cpanel.siel.si (cpanel.siel.si [46.19.9.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01FB425CC72;
-	Thu, 29 May 2025 05:44:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78AE44685;
+	Thu, 29 May 2025 05:37:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.19.9.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748497494; cv=none; b=ie2QsBDi19K/kcN3OcmHcw7bG6sU+xGXyeYgwsfYObjCQWWQNzGKRUrNEPFdzWUjg+hu0hI2aAG3NKSekBkpHZrxZ3s/PI8TulcwndhAnGZKim/TxF1LF/SvUrIrMy6/rMu42kk3EZ2I2zi8un+jETVn2RlJlgrMAjLZiOks+xI=
+	t=1748497072; cv=none; b=PAy8kJ+SlTnkuatZaHRrd8/948YPEptb0FS1fMmc+F/U0nEP9qAzGvgO1k+Sp5a79BDsDj4sWvDHrmaQv5qR2XKNRqKxIHlvHxtNFzgY0dNTU/dVU9ymb34aZsYKHAZHfo+lIi5cVCMu6u7ueEUM8lOjdy5XdyhmqogfWkYYVgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748497494; c=relaxed/simple;
-	bh=JfSkXN7VFQD0j241YOoerWnrQ3UAC5/O1OD0Wg9yzYc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=me0yBMz4fFfmOplXQoK3IcDoHR8zZnfVt1kLh1NwMga40z+BWAn/DeT9XhcArkx3/d2z848EY0W+WNHf3o1ZOI6nG7LU66ntXsjxVxWfiCeh3fs1nGtUFTJphEcjljbDbEAojUdls4hd7oL6wWTgz6MN1cTCFNZeTor/39wngtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IYcaHTjF; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1748497493; x=1780033493;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=JfSkXN7VFQD0j241YOoerWnrQ3UAC5/O1OD0Wg9yzYc=;
-  b=IYcaHTjFZV2uxjMVwYXZ5cWhaJdl3ZM4xwOaYUMZMdA+FTpAgc/3rIEr
-   w8/p2EV4MdzqiUo0X9bg+jZyKjnZI4L/3DOIRjuBhTBEf9bv7Hee1kNe2
-   l62zcpNIc5dT5g5VapXycq7aYDoKc9avZFhLTa5VsdPDqdEizkWP4cBTm
-   zCVaseZMGf5VYZGZoEj2VH6g1Um3oaLBeYYuvGPMCXzxg/iIPF1X2EcC7
-   YTtI62GleFp1iv2Oi6q5t9iYZPv7HAeWQ/kTjHp5FCldpX4rhBrV7+8DL
-   igyDdGwoX86wLDw3oKY+qUkcaOAOhkgGl4MVF5Zxtc8sR+C9wGBDI32uX
-   w==;
-X-CSE-ConnectionGUID: PcBxA5VXS4mZ4qHUrZvi8w==
-X-CSE-MsgGUID: 1VeWn4CeT5GikANEUk//3Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11447"; a="67963526"
-X-IronPort-AV: E=Sophos;i="6.15,323,1739865600"; 
-   d="scan'208";a="67963526"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2025 22:44:53 -0700
-X-CSE-ConnectionGUID: VpISARUySKWDHRrKuSvNOg==
-X-CSE-MsgGUID: opx6ComdRiCGYPBNIKpm/g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,323,1739865600"; 
-   d="scan'208";a="144443716"
-Received: from yilunxu-optiplex-7050.sh.intel.com ([10.239.159.165])
-  by fmviesa009.fm.intel.com with ESMTP; 28 May 2025 22:44:46 -0700
-From: Xu Yilun <yilun.xu@linux.intel.com>
-To: kvm@vger.kernel.org,
-	sumit.semwal@linaro.org,
-	christian.koenig@amd.com,
-	pbonzini@redhat.com,
-	seanjc@google.com,
-	alex.williamson@redhat.com,
-	jgg@nvidia.com,
-	dan.j.williams@intel.com,
-	aik@amd.com,
-	linux-coco@lists.linux.dev
-Cc: dri-devel@lists.freedesktop.org,
-	linux-media@vger.kernel.org,
-	linaro-mm-sig@lists.linaro.org,
-	vivek.kasireddy@intel.com,
-	yilun.xu@intel.com,
-	yilun.xu@linux.intel.com,
-	linux-kernel@vger.kernel.org,
-	lukas@wunner.de,
-	yan.y.zhao@intel.com,
-	daniel.vetter@ffwll.ch,
-	leon@kernel.org,
-	baolu.lu@linux.intel.com,
-	zhenzhong.duan@intel.com,
-	tao1.su@intel.com,
-	linux-pci@vger.kernel.org,
-	zhiw@nvidia.com,
-	simona.vetter@ffwll.ch,
-	shameerali.kolothum.thodi@huawei.com,
-	aneesh.kumar@kernel.org,
-	iommu@lists.linux.dev,
-	kevin.tian@intel.com
-Subject: [RFC PATCH 30/30] coco/tdx_tsm: Manage TDX Module enforced operation sequences for Unbind
-Date: Thu, 29 May 2025 13:35:13 +0800
-Message-Id: <20250529053513.1592088-31-yilun.xu@linux.intel.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250529053513.1592088-1-yilun.xu@linux.intel.com>
-References: <20250529053513.1592088-1-yilun.xu@linux.intel.com>
+	s=arc-20240116; t=1748497072; c=relaxed/simple;
+	bh=1uzYDMJBhq4NbstLYfEGy0pxu0w0BMfhBjrDQoG7qZ4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lRTnSpj/Dbay+9kHMpe+6r+zQ82Lt3sLgja06B+YfADF4sxdkiBf9mWf+arF5BdqqMQl02gnj7Xrkjrq9cglJBx/pnsj4Wfh2Bb/QL5V2HXRKXcm6kPGyC+B3/E6CJn3x9P5Zl4T0X8PfHm+yi0+fU6bPYrsAiDSlXH7DLEr3Jc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com; spf=pass smtp.mailfrom=norik.com; dkim=pass (2048-bit key) header.d=norik.com header.i=@norik.com header.b=bYefAiqF; arc=none smtp.client-ip=46.19.9.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=norik.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=norik.com;
+	s=default; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:
+	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=vI79tRtRRtWjdv39D+S2xsWsuTbKWolYzosvzsaZYyM=; b=bYefAiqFosG6XhHVKrFu3dILRZ
+	z/l2z2Q6cpQqWVyRRR8b859o9OHed4pmksRuSJxV9hC75+vQ8aUV5C+nUNGpyjEN0fdsgI2orpYBT
+	yiu+p6LizDU/Cr2RkXyyHJtM5pKuN6TNhcu0EBB8uKc83K8yhfbPf17qycVMxD1U4SLdU9fO6SiDK
+	lFasL3jlpIPA4cQSEI4V7SSKHPpCPSq8bt0E39Hmq3vgKfiy7eDthO2mU8uQTPlVC8VoJfAsNh/f5
+	0snOJxsan+QAMIBoclKm5c5XuG7R3S0TgrePHviDi+aVLhAZzbtu6sqafw1H5kdOealitqt6q0CjG
+	ztlgMZeA==;
+Received: from [89.212.21.243] (port=57730 helo=and-HP-Z4..)
+	by cpanel.siel.si with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <andrej.picej@norik.com>)
+	id 1uKVxW-0031Qh-0j;
+	Thu, 29 May 2025 07:37:41 +0200
+From: Andrej Picej <andrej.picej@norik.com>
+To: Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Marek Vasut <marex@denx.de>
+Cc: Andrej Picej <andrej.picej@norik.com>,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: drm/bridge: ti-sn65dsi83: drop $ref to fix lvds-vod* warnings
+Date: Thu, 29 May 2025 07:36:53 +0200
+Message-Id: <20250529053654.1754926-1-andrej.picej@norik.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -102,64 +78,55 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - cpanel.siel.si
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - norik.com
+X-Get-Message-Sender-Via: cpanel.siel.si: authenticated_id: andrej.picej@norik.com
+X-Authenticated-Sender: cpanel.siel.si: andrej.picej@norik.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-Implement TDX Connect enforced sequences for TSM unbind. The enforced
-sequences are:
+The kernel test robot reported a warning related to the use of "$ref"
+type definitions for custom endpoint properties
+- "ti,lvds-vod-swing-clock-microvolt" and
+- "ti,lvds-vod-swing-data-microvolt".
 
-  1. STOP TDI via TDISP message STOP_INTERFACE
-  2. Private MMIO unmap from Secure EPT
-  3. Trusted Device Context Table cleanup for the TDI
-  4. TDI ownership reclaim and metadata free
+Using "$ref" with "uint32-array" is not correctly handled in this
+context. Removing "$ref" and relying solely on "maxItems: 2" enforces
+the intended requirement of specifying exactly two values, without
+triggering a schema validation warning.
 
-Step 2 is the responsibility of KVM, step 3 is for IOMMU driver. So
-TDX TSM driver needs to invoke TSM handlers for external collaboration.
-
-Signed-off-by: Xu Yilun <yilun.xu@linux.intel.com>
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202505021937.efnQPPqx-lkp@intel.com/
+Signed-off-by: Andrej Picej <andrej.picej@norik.com>
 ---
- drivers/virt/coco/host/tdx_tsm.c | 17 +++++++++++++----
- 1 file changed, 13 insertions(+), 4 deletions(-)
+ .../devicetree/bindings/display/bridge/ti,sn65dsi83.yaml      | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/drivers/virt/coco/host/tdx_tsm.c b/drivers/virt/coco/host/tdx_tsm.c
-index beb65f45b478..66d6019812ca 100644
---- a/drivers/virt/coco/host/tdx_tsm.c
-+++ b/drivers/virt/coco/host/tdx_tsm.c
-@@ -87,6 +87,15 @@ static struct pci_tdi *tdx_tsm_bind(struct pci_dev *pdev,
- {
- 	int ret;
+diff --git a/Documentation/devicetree/bindings/display/bridge/ti,sn65dsi83.yaml b/Documentation/devicetree/bindings/display/bridge/ti,sn65dsi83.yaml
+index 9b5f3f3eab19..e69b6343a8eb 100644
+--- a/Documentation/devicetree/bindings/display/bridge/ti,sn65dsi83.yaml
++++ b/Documentation/devicetree/bindings/display/bridge/ti,sn65dsi83.yaml
+@@ -118,15 +118,11 @@ $defs:
+           ti,lvds-vod-swing-clock-microvolt:
+             description: LVDS diferential output voltage <min max> for clock
+               lanes in microvolts.
+-            $ref: /schemas/types.yaml#/definitions/uint32-array
+-            minItems: 2
+             maxItems: 2
  
-+	if (!pdev->trusted_dma_owner ||
-+	    !pdev->driver->tsm_handler ||
-+	    !pdev->driver->tsm_handler->disable_mmio ||
-+	    !pdev->driver->tsm_handler->recover_mmio ||
-+	    !pdev->driver->tsm_handler->disable_trusted_dma) {
-+		pci_err(pdev, "%s no driver or driver not support bind\n", __func__);
-+		return NULL;
-+	}
-+
- 	struct tdx_tdi *ttdi __free(kfree) =
- 		kzalloc(sizeof(*ttdi), GFP_KERNEL);
- 	if (!ttdi)
-@@ -137,15 +146,15 @@ static struct pci_tdi *tdx_tsm_bind(struct pci_dev *pdev,
- static void tdx_tsm_unbind(struct pci_tdi *tdi)
- {
- 	struct tdx_tdi *ttdi = to_tdx_tdi(tdi);
-+	struct pci_dev *pdev = tdi->pdev;
+           ti,lvds-vod-swing-data-microvolt:
+             description: LVDS diferential output voltage <min max> for data
+               lanes in microvolts.
+-            $ref: /schemas/types.yaml#/definitions/uint32-array
+-            minItems: 2
+             maxItems: 2
  
--	/*
--	 * TODO: In fact devif cannot be freed before TDI's private MMIOs and
--	 * private DMA are unmapped. Will handle this restriction later.
--	 */
- 	tdx_tdi_request(ttdi, TDX_TDI_REQ_STOP);
-+	pdev->driver->tsm_handler->disable_mmio(pdev);
-+	pdev->driver->tsm_handler->disable_trusted_dma(pdev);
- 	tdx_tdi_mmiomt_free(ttdi);
- 	tdx_tdi_devif_free(ttdi);
- 	tdx_tdi_devifmt_free(ttdi);
-+	pdev->driver->tsm_handler->recover_mmio(pdev);
- 	pci_dev_put(ttdi->tdi.dsm_dev);
- 	kfree(ttdi);
- }
+ allOf:
 -- 
-2.25.1
+2.34.1
 
 
