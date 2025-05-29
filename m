@@ -1,205 +1,136 @@
-Return-Path: <linux-kernel+bounces-666828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC38CAC7C70
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 13:13:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D02C6AC7C8F
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 13:17:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8EB74A4AC3
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 11:13:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9FE7A22710
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 11:17:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CC3C28E585;
-	Thu, 29 May 2025 11:13:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B0E8226D1E;
+	Thu, 29 May 2025 11:17:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="axDttq9T"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gWp0Ebs6"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3699D207A0B;
-	Thu, 29 May 2025 11:13:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FA211E8326;
+	Thu, 29 May 2025 11:17:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748517229; cv=none; b=MWuKBexXpjd+3PrmYb2ljcoRBOXtbgx5zk76VV0bvjBosRa5ES6tyG6opRX08ncFaMGpupnJD/CcanYa2xJMJEA+RCSuyyrZ/rhmrdqJwdyTWC6M1bdP3APGPYdz7YmNe/hs5/625OXepwMsE6NuZQ7shXW0s4ANHdgEcsYNQhs=
+	t=1748517444; cv=none; b=q1awiqbD9xPVA3Ntd9aaRmRLQn5mEp08s/Kw+3Nz1IALspAvO/wHeKo22M46OPD8g8ls5MY92ATc6ZQJtmx2iZImJW7/J8fdr4uHU8xyoBQQWFt7RrDde59luwVzOaUyKfQXFZ/ZgqFMJOy2WNsDUDYzs3EfMFVnpYw25exJjFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748517229; c=relaxed/simple;
-	bh=zVRog1dgEdzJSKrjtDJMVJkHH7+/67hn+GXt1AhFJjw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TklVU2ahuxbmmovQ2a3VsnrlhtmSuRjAxqMPys60qOVGLdGMj5NnasmenfHU+dbBMDc5zKXgzDFmsbDVM3esl6Lpyv7V32AszL5E6yg8X0nrux6EEGoLt9PaG6y/m7T+OwJ0snbr/T2xeAJEDRUvZWReY42QTO1TjZMIWXC10/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=axDttq9T; arc=none smtp.client-ip=209.85.221.41
+	s=arc-20240116; t=1748517444; c=relaxed/simple;
+	bh=y1WxNsUaaCQ76I6bmdF7st+6K4OmxaslZfaz5YthJcY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ohGDG3fXOieUaj6HB/fttSRGIVUtu6DL9B/DxkR5WtChpAEqlvgwn8elpaWjwW8+CnIZCEmiKNh6mwYKuzTG+enm5a5wnSsy8fA+i/imMvN5I16vy2jnbkxbVIXVAH/0lNdXl4QVdRK4OfjwBTSPsg7xX15p6Pu4hoy9PCkftGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gWp0Ebs6; arc=none smtp.client-ip=209.85.221.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3a375d758a0so685796f8f.0;
-        Thu, 29 May 2025 04:13:46 -0700 (PDT)
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3a36e0d22c1so471471f8f.2;
+        Thu, 29 May 2025 04:17:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748517225; x=1749122025; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=yK9qxpphezwGnQuF+KskqWcGIK9SoXYFqqQnXtln7Y0=;
-        b=axDttq9TIKJbEp0JH5btXFjWTTP2gNCr4WCQIdFSkWSQ6qeyr6gEAlcDH1kLs5LNk0
-         3ToU0iVu2YDjma44CuXFxeoI4Rr4YwMhEAWy19lAMyLbD6T1tahIc3Xgnerzlp69zCwW
-         qhdxYjaKQ18Gt6+7eonDOQVre/yI5BsfbED4K+yrYcnUEpoulC45m5WIRA/SpJ/xHuX6
-         0tL1wBW3sHr1qttHZFLvaEqNGUE3sOvMyitvsEwdXB4oQDOmQBmc5rwzvGpiuk4Ho32L
-         JvB1WuJPNMwjX8IuwyUJ9ZtAkgRpBL4sgN1UitTJ8X7vwqfCxg/H7KA1Xh3gJ6Rz6GDh
-         OqcQ==
+        d=gmail.com; s=20230601; t=1748517441; x=1749122241; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=nlXDRDgb6NELSEvtZDiZWhvLmZhCjsZFnwl0WjO5hXQ=;
+        b=gWp0Ebs6W9U8dpJyQRC8XeLUxqC7D84gPD74W7M0+02zf/y1aSKfz9c2c5uqy5nKTj
+         QyXhjhm3nDu5BABwVhwNnI2DhwHLpLx05WkgNEeBnW1uPBr4BF8ZqKlU9D5Do/UmEk7g
+         /uZqY/Ijva7zclNWSvsG0oPGfZN3owF5FsrSojN+jic3C0dLI0ExXDgYD+L3p8RD30BH
+         55Azv/0yX3q6QCJ5lGDdAfwrmAvvNNhlnjj0DJToSbpaeYpws/YL4Xs1LQWq8wLhT1f2
+         vy+68j2UL4PpEV/a+54LCFg/suQrOK5Vov3abUvk7BsX/64x0EeO02Fli+Nrc990xpQK
+         OwDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748517225; x=1749122025;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1748517441; x=1749122241;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yK9qxpphezwGnQuF+KskqWcGIK9SoXYFqqQnXtln7Y0=;
-        b=p6ByZdzksjPNVXaWA//b5aNq9sASTl8odVXKphzK1XbdCvYdZIlvojD+/IWoZSiNvP
-         VeY9164RW+7JqmlhoIfomf+qcbu01XGrioX6hVKV8IsBmuDs3mgDeNDe+8/HsPECHZ7F
-         WhnvEUTahS6Vt8pkIdzD+U2CttfwVPYyWNPZBJPQ0pTwllH+BdSlK0d+8UhbLutjhQu/
-         OHoI96nD5G4X6hPVQV75MXi3J+iwiRx24jhn6awUmWARKqqlND9VgwbGt2Cgp+NBe5jC
-         +hmbzMMcZCJdQi02gexO0YASpteGPHZbyq/NQArKD8Lk9lDyNWmtgRPm7r1TQfPe+QVy
-         RN1A==
-X-Forwarded-Encrypted: i=1; AJvYcCVHW/wwfrsp1XJeWg+xBN/ogVbO7gJruNdgbZsPaKodYWr3a4mLk+vWKTwEj9iDgXUkDZp+/NCpQrhk@vger.kernel.org, AJvYcCW4EmdntBMNCz/5ukqucF7gQEKjKFiLoGCgKvoKIweBrkRMkc18qZjChqdyytrHhQkQ9hRyDjvAZ8frRv7A@vger.kernel.org, AJvYcCXUMdB6RN3Xb9ZBJwk4mW19otalvSv1rIS1FBXBY0yKvWGuJU5E6DbgjUzGAupthzKSjnEgLYiZ0lA7u8jBNQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+KZysIifoUYxOAqy66LYm5xlGIP1Jt3QagyaZu/8rg3IQOL+i
-	M7tYkxezKWRR42HH6uL5in39pDFrelL1wksyRmjCiNIBr8LJBgt2sxY=
-X-Gm-Gg: ASbGnct9kW2iTTBmMwFtPyYYkp1sI9RJLDO1jHCQXnQlQ8PA4F1doevnuc74CtVPgH0
-	VHTJhZbA0OwRUBtU54GpKjA3uwNoXIOHEUtWuzWNdtDxEnXdePgsmcdnEuUK+qLcfHRzb+/Rl8o
-	8+fykGMBRVaVZ+mDinrOYMW0Q+1c646TtBB6J47VwVfN7T0jSWfk/+Pxz5CTzPkATTXA1J7j3dC
-	LRb7Y/qem9p7FlCG1XacSF1I+7r3vvWadhzMmPRxU1JvLBUdnCuKgs1NAuw3DjXPHF/M3GNoKGE
-	ydVY7Z84r0WufvRncPvfGD+0ZnZBg/TFxm0+5NqSpQ6BTIvEH5mRYVhe57NrQA==
-X-Google-Smtp-Source: AGHT+IFtVOAYLaqimD0CxC6hc1kQSyzh4mu6P4w2Hy3B/G1NI/FXQGzDsNSqYq4Rk9kil0/t65js7A==
-X-Received: by 2002:a05:6000:4027:b0:39c:1f02:5409 with SMTP id ffacd0b85a97d-3a4cb4619camr15584768f8f.9.1748517225032;
-        Thu, 29 May 2025 04:13:45 -0700 (PDT)
-Received: from [192.168.2.104] ([66.205.92.118])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-450cfc02cf0sm17219285e9.11.2025.05.29.04.13.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 29 May 2025 04:13:44 -0700 (PDT)
-Message-ID: <2df66542-90b7-487e-88bb-5433b500c518@gmail.com>
-Date: Thu, 29 May 2025 13:13:42 +0200
+        bh=nlXDRDgb6NELSEvtZDiZWhvLmZhCjsZFnwl0WjO5hXQ=;
+        b=sldIj30fkUMlIgZqJI/95DyCCJjNabo6kR3aODLkoNS9Ow9t/MP1n2l0gLG5SelLJ/
+         f4BOsJTdbHg+mUes7KRxij8wzM8mO2nxfNaWMVOn5MvjB6qpz6YdJpK8DriGxRsdNCM0
+         J/6CNgEQiTsXHXYBeKNyPX8w56iA1DcSf2aXFU0UI1a/+5kQ9ero1FgcCMVlLHlhWg5Z
+         EKJ3TDzDdgocrBME+EhpiYhhnVGTlqdpQ2ne/DmJQhMreYCIzWOTXxM86R+AL95kZDts
+         vgJEaPJYbC7GNKU5ppMzxdBA1JUclMmUCitnXWF3i+UhwLldxagc9iW55dhoZk/P6cJr
+         S+Og==
+X-Forwarded-Encrypted: i=1; AJvYcCUUArnpJARj+qQ89f8ZegMSQuiMRWR5BimaozoaE0c/B3oxz8hRDEpPEfd/GaI0BoeG2ykVP+Mg6qeTssD1@vger.kernel.org, AJvYcCXyztSpzmF/cPoZHvijBqPw7bqrmQ6wS9EePk1LS6bSE14LBCegZKpmbEP5r1kyJC21AEM4T/JRZUFGLr8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxuh4Cmw59v+MGB+dHTJFtfrqFjs2nCMe2HK/TahgrxC95fMBsm
+	M6rXDX7pHy7VzmfsXOoTGzX4FPmg+q+BpJOEklmB7zXPnkFZqL/AC3NZWEqYvg==
+X-Gm-Gg: ASbGncu8NkANA3g+6yYI5wbXVih5d5zpsO+4zy6bnK7hxfNlRzsQrmAo7KDDHsOgoqB
+	ZcAZ+xEk9q+wxJ8TdS1Ho6k3bm2SzRj3DDcDCKsSY23wyRRtZ/75rhzS+VPRM+Uq4l/mLiEzfFN
+	QQyw7pZKoCtX10ag8FB7csAfnmPOOkFUQGA/aD0gPrShdXj/8WMqkTIlKsUIUU5wuNyr0lq19Zz
+	OFpxr3A9GI5NIU2KK1Oj/cON3RnkR4zONGUabcpgKg9nWpmv8Tzq2B7LfND26RDeCAfjFfykOQY
+	5Z5BuQT/chnV/tYphWGeSHRN+uVzDxQTi+bBcPuqrAwQrnCqHCLpj8hBmwE9Lck=
+X-Google-Smtp-Source: AGHT+IHtgZ/XW+7fRrlSv/HIrfly33pmvCxjkrQUeDtROrJKxEFcueqCNb0ZrPOIgzS/ZWEMVKb0LQ==
+X-Received: by 2002:a05:6000:250f:b0:3a4:eac6:e320 with SMTP id ffacd0b85a97d-3a4eac6e4cfmr5557421f8f.3.1748517440483;
+        Thu, 29 May 2025 04:17:20 -0700 (PDT)
+Received: from Red ([2a01:cb1d:897:7800:4a02:2aff:fe07:1efc])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-450cfc030fcsm16997705e9.15.2025.05.29.04.17.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 May 2025 04:17:19 -0700 (PDT)
+Date: Thu, 29 May 2025 13:17:17 +0200
+From: Corentin Labbe <clabbe.montjoie@gmail.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Klaus Kudielka <klaus.kudielka@gmail.com>,
+	Eric Biggers <ebiggers@kernel.org>, regressions@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+	Boris Brezillon <bbrezillon@kernel.org>,
+	EBALARD Arnaud <Arnaud.Ebalard@ssi.gouv.fr>,
+	Romain Perier <romain.perier@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>, Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: Re: crypto: marvell/cesa - dma_alloc_coherent broken but kmalloc +
+ dma_map_single works
+Message-ID: <aDhCPZwmH515TJav@Red>
+References: <aCmTQoJw6XG1CkuZ@gondor.apana.org.au>
+ <aC1fY6IP-8MzVIbx@gondor.apana.org.au>
+ <aC2aAvX07Aaho08d@gondor.apana.org.au>
+ <aC2uvvzlR89iVFGW@Red>
+ <aC2xTI1ZuXoZjgjX@gondor.apana.org.au>
+ <aC3cF0-bWb-Jiz4i@Red>
+ <aC6TkPM6mOuFwvkD@gondor.apana.org.au>
+ <aC7UbAIDA46olNJL@gondor.apana.org.au>
+ <aC-EGr50MIVJqwVn@Red>
+ <aDbeNYbwhmG6fzUh@gondor.apana.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/6] arm64: qcom: allow up to 4 lanes for the Type-C
- DisplayPort Altmode
-To: Konrad Dybcio <konradybcio@kernel.org>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>,
- linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Krzysztof Kozlowski <krzk@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>
-References: <20250527-topic-4ln_dp_respin-v3-0-f9a0763ec289@oss.qualcomm.com>
-Content-Language: en-US
-From: Alex <alex.vinarskis@gmail.com>
-In-Reply-To: <20250527-topic-4ln_dp_respin-v3-0-f9a0763ec289@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aDbeNYbwhmG6fzUh@gondor.apana.org.au>
 
+Le Wed, May 28, 2025 at 05:58:13PM +0800, Herbert Xu a écrit :
+> On Thu, May 22, 2025 at 10:07:54PM +0200, Corentin Labbe wrote:
+> >
+> > Here is the result:
+> > http://kernel.montjoie.ovh/479404.log
+> > 
+> > I have built by adding also your "crypto: marvell/cesa - Fix engine load inaccuracy"
+> 
+> Please try this patch on top of the current mainline tree.
+> 
+> I've force-enabled the software finalisation code and switched it
+> over to kmalloc + dma_map_single.
+> 
+> Thanks,
+> -- 
 
-On 5/27/25 22:40, Konrad Dybcio wrote:
-> Register a typec mux in order to change the PHY mode on the Type-C
-> mux events depending on the mode and the svid when in Altmode setup.
->
-> The DisplayPort phy should be left enabled if is still powered on
-> by the DRM DisplayPort controller, so bail out until the DisplayPort
-> PHY is not powered off.
->
-> The Type-C Mode/SVID only changes on plug/unplug, and USB SAFE states
-> will be set in between of USB-Only, Combo and DisplayPort Only so
-> this will leave enough time to the DRM DisplayPort controller to
-> turn of the DisplayPort PHY.
->
-> The patchset also includes bindings changes and DT changes.
->
-> This has been successfully tested on an SM8550 board, but the
-> Thinkpad X13s deserved testing between non-PD USB, non-PD DisplayPort,
-> PD USB Hubs and PD Altmode Dongles to make sure the switch works
-> as expected.
->
-> The DisplayPort 4 lanes setup can be check with:
-> $ cat /sys/kernel/debug/dri/ae01000.display-controller/DP-1/dp_debug
-> 	name = msm_dp
-> 	drm_dp_link
-> 		rate = 540000
-> 		num_lanes = 4
-> ...
+Hello
 
+I have tried on top of torvalds/master 90b83efa6701656e02c86e7df2cb1765ea602d07
 
-Hi,
+https://kernel.montjoie.ovh/479785.log
 
-
-Thanks for the respin. Together with `mode-switch;` for x1e80100.dtsi 
-and 4 lane DP change in respective .dts, successfully tested on Asus 
-Zenbook A14 (Parade PS8833 on both Type-C ports).
-
-Tested with:
-
-- Type-C USB3.0 pendrive
-
-- Type-C to DP cable (x4 DP lanes)
-
-- Type-C to HDMI/USB/... dongle (x2 USB3, x2 DP)
-
-All three variants work, in both orientations, on both ports. When 
-switching from x4 DP lanes cable to USB3 pendrive no re-plug was needed, 
-it works right away. Suspend and resume (to my surprise) also works.
-
-
-Tested-by: Aleksandrs Vinarskis <alex.vinarskis@gmail.com> # x1e80100, 
-ps8833
-
-
-Regards,
-
-Alex
-
-
->
-> This patchset depends on [1] to allow broadcasting the type-c mode
-> to the PHY, otherwise the PHY will keep the combo state while the
-> retimer would setup the 4 lanes in DP mode.
->
-> [1] https://lore.kernel.org/all/20240527-topic-sm8x50-upstream-retimer-broadcast-mode-v1-0-79ec91381aba@linaro.org/
-> Changes in v3:
-> - Take the series from Neil
-> - Rebase
-> - Rename many variables
-> - Test on X1E & X13s
-> - Apply a number of small cosmetic/codestyle changes
-> - Remove some unused variables
-> - Some smaller bugfixes
-> - Link to v2: https://lore.kernel.org/lkml/20240527-topic-sm8x50-upstream-phy-combo-typec-mux-v2-0-a03e68d7b8fc@linaro.org/
-> Changes in v2:
-> - Reference usb-switch.yaml in bindings patch
-> - Fix switch/case indenting
-> - Check svid for USB_TYPEC_DP_SID
-> - Fix X13s patch subject
-> - Update SM8650 patch to enable 4 lanes on HDK aswell
-> - Link to v1: https://lore.kernel.org/r/20240229-topic-sm8x50-upstream-phy-combo-typec-mux-v1-0-07e24a231840@linaro.org
->
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> ---
-> Konrad Dybcio (1):
->        phy: qcom: qmp-combo: Rename 'mode' to 'phy_mode'
->
-> Neil Armstrong (5):
->        dt-bindings: phy: qcom,sc8280xp-qmp-usb43dp: Reference usb-switch.yaml to allow mode-switch
->        phy: qcom: qmp-combo: store DP phy power state
->        phy: qcom: qmp-combo: introduce QMPPHY_MODE
->        phy: qcom: qmp-combo: register a typec mux to change the QMPPHY_MODE
->        arm64: dts: qcom: sc8280xp-lenovo-thinkpad-x13: Set up 4-lane DP
->
->   .../phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml         |   7 +-
->   .../dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts     |   6 +-
->   drivers/phy/qualcomm/phy-qcom-qmp-combo.c          | 182 +++++++++++++++++++--
->   3 files changed, 173 insertions(+), 22 deletions(-)
-> ---
-> base-commit: 460178e842c7a1e48a06df684c66eb5fd630bcf7
-> change-id: 20250527-topic-4ln_dp_respin-c6924a8825ce
->
-> Best regards,
+Regards
 
