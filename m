@@ -1,529 +1,682 @@
-Return-Path: <linux-kernel+bounces-666670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64446AC7A5F
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 10:45:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 94B8CAC7A64
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 10:48:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2304E1C03E30
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 08:45:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F4771892358
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 08:49:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82FBB21931B;
-	Thu, 29 May 2025 08:45:32 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6579A19E968;
-	Thu, 29 May 2025 08:45:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04272218AC7;
+	Thu, 29 May 2025 08:48:45 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59D29347B4
+	for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 08:48:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748508331; cv=none; b=QGBsJPmI+GDHgXZTNEKw1zzRqIzQ4HuS+mYmw2SZF7+yAHDE810eepPMu9t4kDrEDX5bWkvlLxSiuN4hjw4NgNLyzwpcMXRrkoaCyghbYiKqjrilrNBu5Vvno6gkPTPK4+Dz2wvhVJ3nHrsCu5M7gxWr41oUmBpzEyCKrcXjreQ=
+	t=1748508523; cv=none; b=CjM4YtWsv9MacA9Fd7UwItXCyEEd8tDKfy2SUDGmPR3QLF96JcMemCHcOwTHABq8lzjoTI3/PagQE25EpGjI6iwm1Aka6ct9aEqP+taTCuUFXIriiYL0V2fcMgHN6Vw9rdmDVGPgJBpva+3bZtppeQ46PxcS8GHFosqIKBc2a0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748508331; c=relaxed/simple;
-	bh=HGP+GxmLpRNBFMxG04enaO8zcOs703mt/ytGfR8mwTE=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eelIu8qBD6d/cGW2LLJJoL5kuV8kw/0jfxeqC0udN8hBOKIKI9ec/CUR7D1PZNkjIgNadA4TrBWvPKEGiibc6z+Kw5mOjF2mhlaMNr+81Uh4zbhXBs4H0D+LET5pK/TVhCO7zY8jWlAz1eyq40ZfQsDC0rmFCJTLEpLL+HM2QMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4b7Kh14wmfz6D9Ln;
-	Thu, 29 May 2025 16:45:21 +0800 (CST)
-Received: from frapeml500003.china.huawei.com (unknown [7.182.85.28])
-	by mail.maildlp.com (Postfix) with ESMTPS id 8452E14037D;
-	Thu, 29 May 2025 16:45:25 +0800 (CST)
-Received: from localhost (10.203.177.99) by frapeml500003.china.huawei.com
- (7.182.85.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 29 May
- 2025 10:45:24 +0200
-Date: Thu, 29 May 2025 09:45:19 +0100
-From: Alireza Sanaee <alireza.sanaee@huawei.com>
-To: Lorenzo Pieralisi <lpieralisi@kernel.org>
-CC: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Marc Zyngier
-	<maz@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, "Will
- Deacon" <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Sascha Bischoff
-	<sascha.bischoff@arm.com>, Timothy Hayes <timothy.hayes@arm.com>, "Liam R.
- Howlett" <Liam.Howlett@oracle.com>, Mark Rutland <mark.rutland@arm.com>, Jiri
- Slaby <jirislaby@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v4 21/26] irqchip/gic-v5: Add GICv5 IRS/SPI support
-Message-ID: <20250529094519.0000460e.alireza.sanaee@huawei.com>
-In-Reply-To: <aDgc7URS+jPBlfQX@lpieralisi>
-References: <20250513-gicv5-host-v4-0-b36e9b15a6c3@kernel.org>
-	<20250513-gicv5-host-v4-21-b36e9b15a6c3@kernel.org>
-	<20250528170318.00001dd8@huawei.com>
-	<aDgc7URS+jPBlfQX@lpieralisi>
-Organization: Huawei
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1748508523; c=relaxed/simple;
+	bh=f4JK6RwkzALWQzanpwyYkABy9RsYhl7CSzx1RLv0Kak=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uRya/dAD6TpoRAVprnxvYN8hUIZEs6nRFqs0ZNSbbAaYX2pLt9HmKi/DiW/hlFKmYadDNdCIjXPc2ONxmz3qlA6bTYEFlpuB2BttI8W0j1dxjih0VQJl+KfQecVlbrPN4TzQWnGgL4NT29NcCg6JNryTFHwcRjzhyaADILDh3iQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0EBFD176A;
+	Thu, 29 May 2025 01:48:23 -0700 (PDT)
+Received: from [10.57.95.14] (unknown [10.57.95.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 051763F694;
+	Thu, 29 May 2025 01:48:37 -0700 (PDT)
+Message-ID: <c44cb356-112d-4dd8-854b-82212ee4815f@arm.com>
+Date: Thu, 29 May 2025 09:48:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100006.china.huawei.com (7.191.160.224) To
- frapeml500003.china.huawei.com (7.182.85.28)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v3 PATCH 0/6] arm64: support FEAT_BBM level 2 and large block
+ mapping when rodata=full
+Content-Language: en-GB
+To: Yang Shi <yang@os.amperecomputing.com>, will@kernel.org,
+ catalin.marinas@arm.com, Miko.Lenczewski@arm.com,
+ scott@os.amperecomputing.com, cl@gentwo.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Dev Jain <dev.jain@arm.com>
+References: <20250304222018.615808-1-yang@os.amperecomputing.com>
+ <3750d3f8-17c6-4bb8-8107-215d442e4ec3@os.amperecomputing.com>
+ <2fb974bb-1470-4a5f-90d5-97456140c98f@arm.com>
+ <22b53cff-00db-48f1-b1e8-b11a54ebb147@os.amperecomputing.com>
+ <4794885d-2e17-4bd8-bdf3-8ac37047e8ee@os.amperecomputing.com>
+ <5c6d9706-7684-4288-b630-c60b3766b13f@arm.com>
+ <4d02978c-03c0-48fe-84eb-0f3fa0c54fea@os.amperecomputing.com>
+ <912c3126-8ba7-4c3a-b168-438f92e89217@arm.com>
+ <2ab5f65c-b9dc-471c-9b61-70d765af285e@os.amperecomputing.com>
+ <239d4e93-7ab6-4fc9-b907-7ca9d71f81fd@arm.com>
+ <1141d96c-f785-48ee-a0f6-9ec658cc11c2@os.amperecomputing.com>
+ <9cdb027c-27db-4195-825d-1d63bec1b69b@os.amperecomputing.com>
+ <e3e6a3e0-3012-4d95-9236-4b4d57c7974c@arm.com>
+ <0769dbcb-bd9e-4c36-b2c1-a624abaeb5ce@os.amperecomputing.com>
+ <e8d74579-2e32-424f-bfed-5d3eb33b0a07@os.amperecomputing.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <e8d74579-2e32-424f-bfed-5d3eb33b0a07@os.amperecomputing.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, 29 May 2025 10:38:05 +0200
-Lorenzo Pieralisi <lpieralisi@kernel.org> wrote:
+On 28/05/2025 18:12, Yang Shi wrote:
+> 
+> 
+> On 5/28/25 8:18 AM, Yang Shi wrote:
+>>
+>>
+>> On 5/28/25 6:13 AM, Ryan Roberts wrote:
+>>> On 28/05/2025 01:00, Yang Shi wrote:
+>>>> Hi Ryan,
+>>>>
+>>>> I got a new spin ready in my local tree on top of v6.15-rc4. I noticed there
+>>>> were some more comments on Miko's BBML2 patch, it looks like a new spin is
+>>>> needed. But AFAICT there should be no significant change to how I advertise
+>>>> AmpereOne BBML2 in my patches. We will keep using MIDR list to check whether
+>>>> BBML2 is advertised or not and the erratum seems still be needed to fix up
+>>>> AA64MMFR2 BBML2 bits for AmpereOne IIUC.
+>>> Yes, I agree this should not impact you too much.
+>>>
+>>>> You also mentioned Dev was working on patches to have __change_memory_common()
+>>>> apply permission change on a contiguous range instead of on page basis (the
+>>>> status quo). But I have not seen the patches on mailing list yet. However I
+>>>> don't think this will result in any significant change to my patches either,
+>>>> particularly the split primitive and linear map repainting.
+>>> I think you would need Dev's series to be able to apply the permissions change
+>>> without needing to split the whole range to pte mappings? So I guess your change
+>>> must either be implementing something similar to what Dev is working on or you
+>>> are splitting the entire range to ptes? If the latter, then I'm not keen on that
+>>> approach.
+>>
+>> I don't think Dev's series is mandatory prerequisite for my patches. IIUC how
+>> the split primitive keeps block mapping if it is fully contained is
+>> independent from how to apply the permissions change on it.
+>> The new spin implemented keeping block mapping if it is fully contained as we
+>> discussed earlier. I'm supposed Dev's series just need to check whether the
+>> mapping is block or not when applying permission change.
+>>
+>> The flow just looks like as below conceptually:
+>>
+>> split_mapping(start, end)
+>> apply_permission_change(start, end)
+>>
+>> The split_mapping() guarantees keep block mapping if it is fully contained in
+>> the range between start and end, this is my series's responsibility. I know
+>> the current code calls apply_to_page_range() to apply permission change and it
+>> just does it on PTE basis. So IIUC Dev's series will modify it or provide a
+>> new API, then __change_memory_common() will call it to change permission.
+>> There should be some overlap between mine and Dev's, but I don't see strong
+>> dependency.
+>>
+>>>
+>>> Regarding the linear map repainting, I had a chat with Catalin, and he reminded
+>>> me of a potential problem; if you are doing the repainting with the machine
+>>> stopped, you can't allocate memory at that point; it's possible a CPU was inside
+>>> the allocator when it stopped. And I think you need to allocate intermediate
+>>> pgtables, right? Do you have a solution to that problem? I guess one approach
+>>> would be to figure out how much memory you will need and pre-allocate prior to
+>>> stoping the machine?
+>>
+>> OK, I don't remember we discussed this problem before. I think we can do
+>> something like what kpti does. When creating the linear map we know how many
+>> PUD and PMD mappings are created, we can record the number, it will tell how
+>> many pages we need for repainting the linear map.
+> 
+> Looking the kpti code further, it looks like kpti also allocates memory with the
+> machine stopped, but it calls memory allocation on cpu 0 only. 
 
-> On Wed, May 28, 2025 at 05:03:18PM +0100, Jonathan Cameron wrote:
-> > On Tue, 13 May 2025 19:48:14 +0200
-> > Lorenzo Pieralisi <lpieralisi@kernel.org> wrote:
-> >   
-> > > The GICv5 Interrupt Routing Service (IRS) component implements
-> > > interrupt management and routing in the GICv5 architecture.
-> > > 
-> > > A GICv5 system comprises one or more IRSes, that together
-> > > handle the interrupt routing and state for the system.
-> > > 
-> > > An IRS supports Shared Peripheral Interrupts (SPIs), that are
-> > > interrupt sources directly connected to the IRS; they do not
-> > > rely on memory for storage. The number of supported SPIs is
-> > > fixed for a given implementation and can be probed through IRS
-> > > IDR registers.
-> > > 
-> > > SPI interrupt state and routing are managed through GICv5
-> > > instructions.
-> > > 
-> > > Each core (PE in GICv5 terms) in a GICv5 system is identified with
-> > > an Interrupt AFFinity ID (IAFFID).
-> > > 
-> > > An IRS manages a set of cores that are connected to it.
-> > > 
-> > > Firmware provides a topology description that the driver uses
-> > > to detect to which IRS a CPU (ie an IAFFID) is associated with.
-> > > 
-> > > Use probeable information and firmware description to initialize
-> > > the IRSes and implement GICv5 IRS SPIs support through an
-> > > SPI-specific IRQ domain.
-> > > 
-> > > The GICv5 IRS driver:
-> > > 
-> > > - Probes IRSes in the system to detect SPI ranges
-> > > - Associates an IRS with a set of cores connected to it
-> > > - Adds an IRQchip structure for SPI handling
-> > > 
-> > > SPIs priority is set to a value corresponding to the lowest
-> > > permissible priority in the system (taking into account the
-> > > implemented priority bits of the IRS and CPU interface).
-> > > 
-> > > Since all IRQs are set to the same priority value, the value
-> > > itself does not matter as long as it is a valid one.
-> > > 
-> > > Co-developed-by: Sascha Bischoff <sascha.bischoff@arm.com>
-> > > Signed-off-by: Sascha Bischoff <sascha.bischoff@arm.com>
-> > > Co-developed-by: Timothy Hayes <timothy.hayes@arm.com>
-> > > Signed-off-by: Timothy Hayes <timothy.hayes@arm.com>
-> > > Signed-off-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
-> > > Cc: Will Deacon <will@kernel.org>
-> > > Cc: Thomas Gleixner <tglx@linutronix.de>
-> > > Cc: Catalin Marinas <catalin.marinas@arm.com>
-> > > Cc: Marc Zyngier <maz@kernel.org>  
-> > 
-> > A few comments inline. Mostly around of cpu phandle parsing.
-> > +CC Ali as there is a comment on his SMT DT patch set inline.
-> > 
-> >   
-> > > ---
-> > >  arch/arm64/include/asm/sysreg.h    |  36 +++
-> > >  drivers/irqchip/Makefile           |   2 +-
-> > >  drivers/irqchip/irq-gic-v5-irs.c   | 433
-> > > +++++++++++++++++++++++++++++++++++++
-> > > drivers/irqchip/irq-gic-v5.c       | 341
-> > > +++++++++++++++++++++++++++-- include/linux/irqchip/arm-gic-v5.h
-> > > | 130 +++++++++++ 5 files changed, 920 insertions(+), 22
-> > > deletions(-)
-> > > 
-> > > diff --git a/arch/arm64/include/asm/sysreg.h
-> > > b/arch/arm64/include/asm/sysreg.h index
-> > > 9d28d408f9c6df24526dd8ecbf3c7d920246b22d..fbac3b6f056ae6fafd64457600d45808e4904ae3
-> > > 100644 --- a/arch/arm64/include/asm/sysreg.h +++
-> > > b/arch/arm64/include/asm/sysreg.h @@ -1082,14 +1082,50 @@
-> > >  /*
-> > >   * Definitions for GICv5 instructions
-> > >   */  
-> >   
-> > >  
-> > > +/* Shift and mask definitions for GIC CDAFF */  
-> > 
-> > Similar comment. Mask definitions seems more accurate to me.  
-> 
-> Fixed.
-> 
-> > > +/* Shift and mask definitions for GIC CDDIS */
-> > > +#define GICV5_GIC_CDDIS_TYPE_MASK	GENMASK_ULL(31, 29)
-> > > +#define GICV5_GIC_CDDIS_TYPE(r)
-> > > FIELD_GET(GICV5_GIC_CDDIS_TYPE_MASK, r) +#define
-> > > GICV5_GIC_CDDIS_ID_MASK		GENMASK_ULL(23, 0)
-> > > +#define GICV5_GIC_CDDIS_ID(r)
-> > > FIELD_GET(GICV5_GIC_CDDIS_ID_MASK, r)  
-> > 
-> > Similar to earlier comment. I'm not sure the shortened forms are
-> > worth the bother.  
-> 
-> Same as previous replies.
-> 
-> > > diff --git a/drivers/irqchip/irq-gic-v5-irs.c
-> > > b/drivers/irqchip/irq-gic-v5-irs.c new file mode 100644
-> > > index
-> > > 0000000000000000000000000000000000000000..8c448487b909c7d3b4e1f95a5bc02b741ecc40b3
-> > > --- /dev/null +++ b/drivers/irqchip/irq-gic-v5-irs.c
-> > > @@ -0,0 +1,433 @@
-> > > +// SPDX-License-Identifier: GPL-2.0-only
-> > > +/*
-> > > + * Copyright (C) 2024-2025 ARM Limited, All Rights Reserved.
-> > > + */
-> > > +
-> > > +#define pr_fmt(fmt)	"GICv5 IRS: " fmt
-> > > +
-> > > +#include <linux/of.h>
-> > > +#include <linux/of_address.h>
-> > > +
-> > > +#include <linux/irqchip.h>
-> > > +#include <linux/irqchip/arm-gic-v5.h>  
-> > 
-> > 
-> >   
-> > > +int gicv5_spi_irq_set_type(struct irq_data *d, unsigned int type)
-> > > +{
-> > > +	struct gicv5_irs_chip_data *irs_data = d->chip_data;
-> > > +	u32 selr, cfgr;
-> > > +	bool level;
-> > > +	int ret;
-> > > +
-> > > +	switch (type) {
-> > > +	case IRQ_TYPE_EDGE_RISING:
-> > > +	case IRQ_TYPE_EDGE_FALLING:
-> > > +		level = false;
-> > > +		break;
-> > > +	case IRQ_TYPE_LEVEL_HIGH:
-> > > +	case IRQ_TYPE_LEVEL_LOW:
-> > > +		level = true;
-> > > +		break;
-> > > +	default:
-> > > +		return -EINVAL;
-> > > +	}
-> > > +
-> > > +	guard(raw_spinlock)(&irs_data->spi_config_lock);
-> > > +
-> > > +	selr = FIELD_PREP(GICV5_IRS_SPI_SELR_ID, d->hwirq);
-> > > +	irs_writel_relaxed(irs_data, selr, GICV5_IRS_SPI_SELR);
-> > > +	ret = gicv5_irs_wait_for_spi_op(irs_data);
-> > > +	if (ret)
-> > > +		return ret;
-> > > +
-> > > +	cfgr = FIELD_PREP(GICV5_IRS_SPI_CFGR_TM, level);
-> > > +
-> > > +	irs_writel_relaxed(irs_data, cfgr, GICV5_IRS_SPI_CFGR);
-> > > +	ret = gicv5_irs_wait_for_spi_op(irs_data);
-> > > +	if (ret)
-> > > +		return ret;
-> > > +
-> > > +	return 0;  
-> > 	return gicv5_irq_wait_for_spi_op()
-> > 
-> > unless more code turns up here in a later patch.  
-> 
-> Ok.
-> 
-> >   
-> > > +}  
-> >   
-> > > +
-> > > +static void __init gicv5_irs_init_bases(struct
-> > > gicv5_irs_chip_data *irs_data,
-> > > +					void __iomem *irs_base,
-> > > +					struct fwnode_handle
-> > > *handle) +{
-> > > +	struct device_node *np = to_of_node(handle);
-> > > +	u32 cr0, cr1;
-> > > +
-> > > +	irs_data->fwnode = handle;
-> > > +	irs_data->irs_base = irs_base;
-> > > +
-> > > +	if (of_property_read_bool(np, "dma-noncoherent")) {
-> > > +		/*
-> > > +		 * A non-coherent IRS implies that some cache
-> > > levels cannot be
-> > > +		 * used coherently by the cores and GIC. Our
-> > > only option is to mark
-> > > +		 * memory attributes for the GIC as
-> > > non-cacheable; by default,
-> > > +		 * non-cacheable memory attributes imply
-> > > outer-shareable
-> > > +		 * shareability, the value written into
-> > > IRS_CR1_SH is ignored.
-> > > +		 */
-> > > +		cr1 = FIELD_PREP(GICV5_IRS_CR1_VPED_WA,
-> > > GICV5_NO_WRITE_ALLOC)	|  
-> > As per earlier comments is this less clear as:
-> > 		cr1 = FIELD_PREP(GICV5_IRS_CR1_VPED_WA, 0)	|
-> > 
-> > To me, seems fine but up to you.
-> >   
-> > > +			FIELD_PREP(GICV5_IRS_CR1_VPED_RA,
-> > > GICV5_NO_READ_ALLOC)	|
-> > > +			FIELD_PREP(GICV5_IRS_CR1_VMD_WA,
-> > > GICV5_NO_WRITE_ALLOC)	|
-> > > +			FIELD_PREP(GICV5_IRS_CR1_VMD_RA,
-> > > GICV5_NO_READ_ALLOC)	|
-> > > +			FIELD_PREP(GICV5_IRS_CR1_VPET_RA,
-> > > GICV5_NO_READ_ALLOC)	|
-> > > +			FIELD_PREP(GICV5_IRS_CR1_VMT_RA,
-> > > GICV5_NO_READ_ALLOC)	|
-> > > +			FIELD_PREP(GICV5_IRS_CR1_IST_WA,
-> > > GICV5_NO_WRITE_ALLOC)	|
-> > > +			FIELD_PREP(GICV5_IRS_CR1_IST_RA,
-> > > GICV5_NO_READ_ALLOC)	|
-> > > +			FIELD_PREP(GICV5_IRS_CR1_IC,
-> > > GICV5_NON_CACHE)		|
-> > > +			FIELD_PREP(GICV5_IRS_CR1_OC,
-> > > GICV5_NON_CACHE);
-> > > +			irs_data->flags |=
-> > > IRS_FLAGS_NON_COHERENT;
-> > > +	} else {
-> > > +		cr1 = FIELD_PREP(GICV5_IRS_CR1_VPED_WA,
-> > > GICV5_WRITE_ALLOC)	|
-> > > +			FIELD_PREP(GICV5_IRS_CR1_VPED_RA,
-> > > GICV5_READ_ALLOC)	|
-> > > +			FIELD_PREP(GICV5_IRS_CR1_VMD_WA,
-> > > GICV5_WRITE_ALLOC)	|
-> > > +			FIELD_PREP(GICV5_IRS_CR1_VMD_RA,
-> > > GICV5_READ_ALLOC)	|
-> > > +			FIELD_PREP(GICV5_IRS_CR1_VPET_RA,
-> > > GICV5_READ_ALLOC)	|
-> > > +			FIELD_PREP(GICV5_IRS_CR1_VMT_RA,
-> > > GICV5_READ_ALLOC)	|
-> > > +			FIELD_PREP(GICV5_IRS_CR1_IST_WA,
-> > > GICV5_WRITE_ALLOC)	|
-> > > +			FIELD_PREP(GICV5_IRS_CR1_IST_RA,
-> > > GICV5_READ_ALLOC)	|
-> > > +			FIELD_PREP(GICV5_IRS_CR1_IC,
-> > > GICV5_WB_CACHE)		|
-> > > +			FIELD_PREP(GICV5_IRS_CR1_OC,
-> > > GICV5_WB_CACHE)		|
-> > > +			FIELD_PREP(GICV5_IRS_CR1_SH,
-> > > GICV5_INNER_SHARE);
-> > > +	}
-> > > +
-> > > +	irs_writel_relaxed(irs_data, cr1, GICV5_IRS_CR1);
-> > > +
-> > > +	cr0 = FIELD_PREP(GICV5_IRS_CR0_IRSEN, 0x1);
-> > > +	irs_writel_relaxed(irs_data, cr0, GICV5_IRS_CR0);
-> > > +	gicv5_irs_wait_for_idle(irs_data);
-> > > +}
-> > > +
-> > > +static int __init gicv5_irs_of_init_affinity(struct device_node
-> > > *node,
-> > > +					     struct
-> > > gicv5_irs_chip_data *irs_data,
-> > > +					     u8 iaffid_bits)
-> > > +{
-> > > +	/*
-> > > +	 * Detect IAFFID<->CPU mappings from the device tree and
-> > > +	 * record IRS<->CPU topology information.
-> > > +	 */
-> > > +	u16 iaffid_mask = GENMASK(iaffid_bits - 1, 0);
-> > > +	u16 *iaffids __free(kfree) = NULL;  
-> > 
-> > See comments in cleanup.h.  Linus has been fairly clear he doesn't
-> > like separating the constructor and destructor like this - just
-> > declare iaffids where you construct it.  
-> 
-> Right.
-> 
-> > > +	int ret, i, ncpus, niaffids;
-> > > +  
-> >   
-> > > +	ncpus = of_property_count_elems_of_size(node, "cpus",
-> > > sizeof(u32));  
-> > 
-> > cpus is a phandle? I think this is going to run into current
-> > discussion on what phandles to CPUs on an SMT system look like (Rob
-> > Herring and Mark Rutland have different views)
-> > https://lore.kernel.org/linux-arm-kernel/20250512080715.82-1-alireza.sanaee@huawei.com/  
-> 
-> I will make sure to steer clear of that then ;-), whatever the outcome
-> the current "cpus" bindings should continue to work as-is, right ?
-> 
-> > Anyhow this doesn't look right to me.
-> > I think it should be of_count_phandle_with_args()   
-> 
-> Aren't they equivalent in functionality if
-> of_count_phandle_with_args() cells_name == NULL ?
-> 
-> I will update the code but if the functionality provided is not the
-> same there is kernel code to fix (it is an example, there are others):
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/irqchip/irq-apple-aic.c?h=v6.15#n903
+Oh yes, I hadn't spotted that. It looks like a special case that may be ok for
+kpti though; it's allocating a fairly small amount of memory (max levels=5 so
+max order=3) and it's doing it with GFP_ATOMIC. So if my understanding of the
+page allocator is correct, then this should be allocated from a per-cpu reserve?
+Which means that it never needs to take a lock that other, stopped CPUs could be
+holding. And GFP_ATOMIC guarrantees that the thread will never sleep, which I
+think is not allowed while the machine is stopped.
 
-I think this is fine, as long as we have always len(reg) == 1 which
-is our current case in the dt.
+> IIUC this
+> guarantees the code will not be called on a CPU which was inside the allocator
+> when it stopped because CPU 0 is running stop_machine().
+
+My concern was a bit more general; if any other CPU was inside the allocator
+holding a lock when the machine was stopped, then if CPU 0 comes along and makes
+a call to the allocator that requires the lock, then we have a deadlock.
+
+All that said, looking at the stop_machine() docs, it says:
+
+ * Description: This causes a thread to be scheduled on every cpu,
+ * each of which disables interrupts.  The result is that no one is
+ * holding a spinlock or inside any other preempt-disabled region when
+ * @fn() runs.
+
+So I think my deadlock concern was unfounded. I think as long as you can
+garrantee that fn() won't try to sleep then you should be safe? So I guess
+allocating from within fn() should be safe as long as you use GFP_ATOMIC?
+
+Thanks,
+Ryan
+
 > 
-> > Potentially with cpu-cells as the argument depending on how that
-> > thread goes.
-> >   
-> > > +	if (ncpus < 0)
-> > > +		return -EINVAL;
-> > > +
-> > > +	niaffids = of_property_count_elems_of_size(node,
-> > > "arm,iaffids",
-> > > +						   sizeof(u16));
-> > > +	if (niaffids != ncpus)
-> > > +		return -EINVAL;
-> > > +  
-> > 	u16 *iaffids __free(kfree) = kcalloc(niaffids,
-> > sizeof(*iaffids), GFP_KERNEL);  
+> My patch already guarantees repainting just run on CPU 0 (the boot CPU) because
+> we just can be sure the boot CPU supports BBML2 so that we can repaint the
+> linear map safely. This also guarantees the "stopped CPU was inside allocator"
+> problem won't happen IIUC.
 > 
-> Maybe I should rewrite this in Rust :)
+> Thanks,
+> Yang
 > 
-> > > +	iaffids = kcalloc(niaffids, sizeof(*iaffids),
-> > > GFP_KERNEL);
-> > > +	if (!iaffids)
-> > > +		return -ENOMEM;
-> > > +
-> > > +	ret = of_property_read_u16_array(node, "arm,iaffids",
-> > > iaffids, niaffids);
-> > > +	if (ret)
-> > > +		return ret;
-> > > +
-> > > +	for (i = 0; i < ncpus; i++) {
-> > > +		struct device_node *cpu_node;
-> > > +		u32 cpu_phandle;
-> > > +		int cpu;
-> > > +
-> > > +		if (of_property_read_u32_index(node, "cpus", i,
-> > > &cpu_phandle))
-> > > +			continue;
-> > > +
-> > > +		cpu_node = of_find_node_by_phandle(cpu_phandle);
-> > >  
-> > 
-> > 		cpu_node = of_parse_phandle(node, "cpus", i);
-> > 
-> > not work here?  
-> 
-> I think it would.
-> 
-> >    
-> > > +		if (WARN_ON(!cpu_node))
-> > > +			continue;
-> > > +
-> > > +		cpu = of_cpu_node_to_id(cpu_node);  
-> > 
-> > If this is all you want then Ali's series gives you a helper
-> > 
-> > 		cpu = of_cpu_phandle_to_id(node, &cpu_node, i);
-> > 
-> > Though even better to have a helper that allows
-> > 		cpu = of_cpu_phandle_to_id(node, NULL, i); and
-> > handles the node put as internally.
-> > 
-> > Ali, any reason we can't do that?  Seems to be a fairly common
-> > pattern.
-> > 
-> > 
-> >    
-> > > +		of_node_put(cpu_node);
-> > > +		if (WARN_ON(cpu < 0))
-> > > +			continue;
-> > > +
-> > > +		if (iaffids[i] & ~iaffid_mask) {
-> > > +			pr_warn("CPU %d iaffid 0x%x exceeds IRS
-> > > iaffid bits\n",
-> > > +				cpu, iaffids[i]);
-> > > +			continue;
-> > > +		}
-> > > +
-> > > +		per_cpu(cpu_iaffid, cpu).iaffid = iaffids[i];
-> > > +		per_cpu(cpu_iaffid, cpu).valid = true;
-> > > +
-> > > +		/* We also know that the CPU is connected to
-> > > this IRS */
-> > > +		per_cpu(per_cpu_irs_data, cpu) = irs_data;
-> > > +	}
-> > > +
-> > > +	return ret;
-> > > +}  
-> >   
-> > > diff --git a/drivers/irqchip/irq-gic-v5.c
-> > > b/drivers/irqchip/irq-gic-v5.c index
-> > > a50982e5d98816d88e4fca37cc0ac31684fb6c76..e58ff345dbfaf840b17ad63c4fdb6c227137cf4b
-> > > 100644 --- a/drivers/irqchip/irq-gic-v5.c +++
-> > > b/drivers/irqchip/irq-gic-v5.c
-> > >
-> > > +
-> > > +static int gicv5_spi_irq_set_irqchip_state(struct irq_data *d,
-> > > +					   enum
-> > > irqchip_irq_state which,
-> > > +					   bool val)
-> > > +{  
-> > 
-> > Similar to previous, I'd call the state parameter state rather than
-> > val.  
-> 
-> Right.
-> 
-> > > diff --git a/include/linux/irqchip/arm-gic-v5.h
-> > > b/include/linux/irqchip/arm-gic-v5.h index
-> > > 4ff0ba64d9840c3844671f7850bb3d81ba2eb1b6..187af307de9170d9569898cb1e50de376a38bd0a
-> > > 100644 --- a/include/linux/irqchip/arm-gic-v5.h +++
-> > > b/include/linux/irqchip/arm-gic-v5.h @@ -5,6 +5,8 @@
-> > >  #ifndef __LINUX_IRQCHIP_ARM_GIC_V5_H
-> > >  #define __LINUX_IRQCHIP_ARM_GIC_V5_H  
-> >   
-> > >  
-> > > +#define GICV5_NO_READ_ALLOC		0b0
-> > > +#define GICV5_READ_ALLOC		0b1
-> > > +#define GICV5_NO_WRITE_ALLOC		0b0
-> > > +#define GICV5_WRITE_ALLOC		0b1  
-> > 
-> > Given these are being written to fields called _RA and _WA
-> > so the defines provide value over 0 and 1 in appropriate places?
-> > Maybe just about. Anyhow, your code so on this up to you.
-> >   
-> > > +
-> > > +#define GICV5_NON_CACHE			0b00
-> > > +#define GICV5_WB_CACHE			0b01
-> > > +#define GICV5_WT_CACHE			0b10
-> > > +
-> > > +#define GICV5_NON_SHARE			0b00
-> > > +#define GICV5_OUTER_SHARE		0b10
-> > > +#define GICV5_INNER_SHARE		0b11
-> > > +
-> > > +#define GICV5_IRS_IDR1			0x0004
-> > > +#define GICV5_IRS_IDR2			0x0008
-> > > +#define GICV5_IRS_IDR5			0x0014
-> > > +#define GICV5_IRS_IDR6			0x0018
-> > > +#define GICV5_IRS_IDR7			0x001c
-> > > +#define GICV5_IRS_CR0			0x0080
-> > > +#define GICV5_IRS_CR1			0x0084
-> > > +#define GICV5_IRS_SPI_SELR		0x0108
-> > > +#define GICV5_IRS_SPI_CFGR		0x0114
-> > > +#define GICV5_IRS_SPI_STATUSR		0x0118
-> > > +#define GICV5_IRS_PE_SELR		0x0140
-> > > +#define GICV5_IRS_PE_STATUSR		0x0144
-> > > +#define GICV5_IRS_PE_CR0		0x0148  
-> > 
-> > Blank line here as this is end of register offsets.  
-> 
-> Yep, fixed it.
-> 
-> Thanks for having a look !
-> Lorenzo
-> 
-> > > +#define GICV5_IRS_IDR1_PRIORITY_BITS	GENMASK(22, 20)
-> > > +#define GICV5_IRS_IDR1_IAFFID_BITS	GENMASK(19, 16)  
-> > 
-> > 
-> >   
+>>
+>>>
+>>>> So I plan to post v4 patches to the mailing list. We can focus on reviewing the
+>>>> split primitive and linear map repainting. Does it sound good to you?
+>>> That works assuming you have a solution for the above.
+>>
+>> I think the only missing part is preallocating page tables for repainting. I
+>> will add this, then post the new spin to the mailing list.
+>>
+>> Thanks,
+>> Yang
+>>
+>>>
+>>> Thanks,
+>>> Ryan
+>>>
+>>>> Thanks,
+>>>> Yang
+>>>>
+>>>>
+>>>> On 5/7/25 2:16 PM, Yang Shi wrote:
+>>>>>
+>>>>> On 5/7/25 12:58 AM, Ryan Roberts wrote:
+>>>>>> On 05/05/2025 22:39, Yang Shi wrote:
+>>>>>>> On 5/2/25 4:51 AM, Ryan Roberts wrote:
+>>>>>>>> On 14/04/2025 22:24, Yang Shi wrote:
+>>>>>>>>> On 4/14/25 6:03 AM, Ryan Roberts wrote:
+>>>>>>>>>> On 10/04/2025 23:00, Yang Shi wrote:
+>>>>>>>>>>> Hi Ryan,
+>>>>>>>>>>>
+>>>>>>>>>>> I know you may have a lot of things to follow up after LSF/MM. Just
+>>>>>>>>>>> gently
+>>>>>>>>>>> ping,
+>>>>>>>>>>> hopefully we can resume the review soon.
+>>>>>>>>>> Hi, I'm out on holiday at the moment, returning on the 22nd April. But
+>>>>>>>>>> I'm very
+>>>>>>>>>> keen to move this series forward so will come back to you next week.
+>>>>>>>>>> (although
+>>>>>>>>>> TBH, I thought I was waiting for you to respond to me... :-| )
+>>>>>>>>>>
+>>>>>>>>>> FWIW, having thought about it a bit more, I think some of the
+>>>>>>>>>> suggestions I
+>>>>>>>>>> previously made may not have been quite right, but I'll elaborate next
+>>>>>>>>>> week.
+>>>>>>>>>> I'm
+>>>>>>>>>> keen to build a pgtable splitting primitive here that we can reuse with
+>>>>>>>>>> vmalloc
+>>>>>>>>>> as well to enable huge mappings by default with vmalloc too.
+>>>>>>>>> Sounds good. I think the patches can support splitting vmalloc page table
+>>>>>>>>> too.
+>>>>>>>>> Anyway we can discuss more after you are back. Enjoy your holiday.
+>>>>>>>> Hi Yang,
+>>>>>>>>
+>>>>>>>> Sorry I've taken so long to get back to you. Here's what I'm currently
+>>>>>>>> thinking:
+>>>>>>>> I'd eventually like to get to the point where the linear map and most
+>>>>>>>> vmalloc
+>>>>>>>> memory is mapped using the largest possible mapping granularity (i.e. block
+>>>>>>>> mappings at PUD/PMD, and contiguous mappings at PMD/PTE level).
+>>>>>>>>
+>>>>>>>> vmalloc has history with trying to do huge mappings by default; it ended up
+>>>>>>>> having to be turned into an opt-in feature (instead of the original opt-out
+>>>>>>>> approach) because there were problems with some parts of the kernel
+>>>>>>>> expecting
+>>>>>>>> page mappings. I think we might be able to overcome those issues on
+>>>>>>>> arm64 with
+>>>>>>>> BBML2.
+>>>>>>>>
+>>>>>>>> arm64 can already support vmalloc PUD and PMD block mappings, and I have a
+>>>>>>>> series (that should make v6.16) that enables contiguous PTE mappings in
+>>>>>>>> vmalloc
+>>>>>>>> too. But these are currently limited to when VM_ALLOW_HUGE is specified.
+>>>>>>>> To be
+>>>>>>>> able to use that by default, we need to be able to change permissions on
+>>>>>>>> sub-regions of an allocation, which is where BBML2 and your series come in.
+>>>>>>>> (there may be other things we need to solve as well; TBD).
+>>>>>>>>
+>>>>>>>> I think the key thing we need is a function that can take a page-aligned
+>>>>>>>> kernel
+>>>>>>>> VA, will walk to the leaf entry for that VA and if the VA is in the
+>>>>>>>> middle of
+>>>>>>>> the leaf entry, it will split it so that the VA is now on a boundary. This
+>>>>>>>> will
+>>>>>>>> work for PUD/PMD block entries and contiguous-PMD/contiguous-PTE
+>>>>>>>> entries. The
+>>>>>>>> function can assume BBML2 is present. And it will return 0 on success, -
+>>>>>>>> EINVAL
+>>>>>>>> if the VA is not mapped or -ENOMEM if it couldn't allocate a pgtable to
+>>>>>>>> perform
+>>>>>>>> the split.
+>>>>>>> OK, the v3 patches already handled page table allocation failure with
+>>>>>>> returning
+>>>>>>> -ENOMEM and BUG_ON if it is not mapped because kernel assumes linear mapping
+>>>>>>> should be always present. It is easy to return -EINVAL instead of BUG_ON.
+>>>>>>> However I'm wondering what usecases you are thinking about? Splitting
+>>>>>>> vmalloc
+>>>>>>> area may run into unmapped VA?
+>>>>>> I don't think BUG_ON is the right behaviour; crashing the kernel should be
+>>>>>> discouraged. I think even for vmalloc under correct conditions we
+>>>>>> shouldn't see
+>>>>>> any unmapped VA. But vmalloc does handle it gracefully today; see (e.g.)
+>>>>>> vunmap_pmd_range() which skips the pmd if its none.
+>>>>>>
+>>>>>>>> Then we can use that primitive on the start and end address of any range
+>>>>>>>> for
+>>>>>>>> which we need exact mapping boundaries (e.g. when changing permissions
+>>>>>>>> on part
+>>>>>>>> of linear map or vmalloc allocation, when freeing part of a vmalloc
+>>>>>>>> allocation,
+>>>>>>>> etc). This way we only split enough to ensure the boundaries are
+>>>>>>>> precise, and
+>>>>>>>> keep larger mappings inside the range.
+>>>>>>> Yeah, makes sense to me.
+>>>>>>>
+>>>>>>>> Next we need to reimplement __change_memory_common() to not use
+>>>>>>>> apply_to_page_range(), because that assumes page mappings only. Dev Jain
+>>>>>>>> has
+>>>>>>>> been working on a series that converts this to use
+>>>>>>>> walk_page_range_novma() so
+>>>>>>>> that we can change permissions on the block/contig entries too. That's not
+>>>>>>>> posted publicly yet, but it's not huge so I'll ask if he is comfortable
+>>>>>>>> with
+>>>>>>>> posting an RFC early next week.
+>>>>>>> OK, so the new __change_memory_common() will change the permission of page
+>>>>>>> table, right?
+>>>>>> It will change permissions of all the leaf entries in the range of VAs it is
+>>>>>> passed. Currently it assumes that all the leaf entries are PTEs. But we will
+>>>>>> generalize to support all the other types of leaf entries too.,
+>>>>>>
+>>>>>>> If I remember correctly, you suggested change permissions in
+>>>>>>> __create_pgd_mapping_locked() for v3. So I can disregard it?
+>>>>>> Yes I did. I think this made sense (in my head at least) because in the
+>>>>>> context
+>>>>>> of the linear map, all the PFNs are contiguous so it kind-of makes sense to
+>>>>>> reuse that infrastructure. But it doesn't generalize to vmalloc because
+>>>>>> vmalloc
+>>>>>> PFNs are not contiguous. So for that reason, I think it's preferable to
+>>>>>> have an
+>>>>>> independent capability.
+>>>>> OK, sounds good to me.
+>>>>>
+>>>>>>> The current code assumes the address range passed in by
+>>>>>>> change_memory_common()
+>>>>>>> is *NOT* physically contiguous so __change_memory_common() handles page
+>>>>>>> table
+>>>>>>> permission on page basis. I'm supposed Dev's patches will handle this
+>>>>>>> then my
+>>>>>>> patch can safely assume the linear mapping address range for splitting is
+>>>>>>> physically contiguous too otherwise I can't keep large mappings inside the
+>>>>>>> range. Splitting vmalloc area doesn't need to worry about this.
+>>>>>> I'm not sure I fully understand the point you're making here...
+>>>>>>
+>>>>>> Dev's series aims to use walk_page_range_novma() similar to riscv's
+>>>>>> implementation so that it can walk a VA range and update the permissions
+>>>>>> on each
+>>>>>> leaf entry it visits, regadless of which level the leaf entry is at. This
+>>>>>> doesn't make any assumption of the physical contiguity of neighbouring leaf
+>>>>>> entries in the page table.
+>>>>>>
+>>>>>> So if we are changing permissions on the linear map, we have a range of
+>>>>>> VAs to
+>>>>>> walk and convert all the leaf entries, regardless of their size. The same
+>>>>>> goes
+>>>>>> for vmalloc... But for vmalloc, we will also want to change the underlying
+>>>>>> permissions in the linear map, so we will have to figure out the contiguous
+>>>>>> pieces of the linear map and call __change_memory_common() for each; there is
+>>>>>> definitely some detail to work out there!
+>>>>> Yes, this is my point. When changing underlying linear map permission for
+>>>>> vmalloc, the linear map address may be not contiguous. This is why
+>>>>> change_memory_common() calls __change_memory_common() on page basis.
+>>>>>
+>>>>> But how Dev's patch work should have no impact on how I implement the split
+>>>>> primitive by thinking it further. It should be the caller's responsibility to
+>>>>> make sure __create_pgd_mapping_locked() is called for contiguous linear map
+>>>>> address range.
+>>>>>
+>>>>>>>> You'll still need to repaint the whole linear map with page mappings for
+>>>>>>>> the
+>>>>>>>> case !BBML2 case, but I'm hoping __create_pgd_mapping_locked() (potentially
+>>>>>>>> with
+>>>>>>>> minor modifications?) can do that repainting on the live mappings;
+>>>>>>>> similar to
+>>>>>>>> how you are doing it in v3.
+>>>>>>> Yes, when repainting I need to split the page table all the way down to PTE
+>>>>>>> level. A simple flag should be good enough to tell
+>>>>>>> __create_pgd_mapping_locked()
+>>>>>>> do the right thing off the top of my head.
+>>>>>> Perhaps it may be sufficient to reuse the NO_BLOCK_MAPPINGS and
+>>>>>> NO_CONT_MAPPINGS
+>>>>>> flags? For example, if you are find a leaf mapping and NO_BLOCK_MAPPINGS
+>>>>>> is set,
+>>>>>> then you need to split it?
+>>>>> Yeah, sounds feasible. Anyway I will figure it out.
+>>>>>
+>>>>>>>> Miko's BBML2 series should hopefully get imminently queued for v6.16.
+>>>>>>> Great! Anyway my series is based on his advertising BBML2 patch.
+>>>>>>>
+>>>>>>>> So in summary, what I'm asking for your large block mapping the linear map
+>>>>>>>> series is:
+>>>>>>>>      - Paint linear map using blocks/contig if boot CPU supports BBML2
+>>>>>>>>      - Repaint linear map using page mappings if secondary CPUs don't
+>>>>>>>> support BBML2
+>>>>>>> OK, I just need to add some simple tweak to split down to PTE level to v3.
+>>>>>>>
+>>>>>>>>      - Integrate Dev's __change_memory_common() series
+>>>>>>> OK, I think I have to do my patches on top of it. Because Dev's patch need
+>>>>>>> guarantee the linear mapping address range is physically contiguous.
+>>>>>>>
+>>>>>>>>      - Create primitive to ensure mapping entry boundary at a given page-
+>>>>>>>> aligned VA
+>>>>>>>>      - Use primitive when changing permissions on linear map region
+>>>>>>> Sure.
+>>>>>>>
+>>>>>>>> This will be mergable on its own, but will also provide a great starting
+>>>>>>>> base
+>>>>>>>> for adding huge-vmalloc-by-default.
+>>>>>>>>
+>>>>>>>> What do you think?
+>>>>>>> Definitely makes sense to me.
+>>>>>>>
+>>>>>>> If I remember correctly, we still have some unsolved comments/questions
+>>>>>>> for v3
+>>>>>>> in my replies on March 17, particularly:
+>>>>>>> https://lore.kernel.org/linux-arm-kernel/2b715836-b566-4a9e-
+>>>>>>> b344-9401fa4c0feb@os.amperecomputing.com/
+>>>>>> Ahh sorry about that. I'll take a look now...
+>>>>> No problem.
+>>>>>
+>>>>> Thanks,
+>>>>> Yang
+>>>>>
+>>>>>> Thanks,
+>>>>>> Ryan
+>>>>>>
+>>>>>>> Thanks,
+>>>>>>> Yang
+>>>>>>>
+>>>>>>>> Thanks,
+>>>>>>>> Ryan
+>>>>>>>>
+>>>>>>>>
+>>>>>>>>> Thanks,
+>>>>>>>>> Yang
+>>>>>>>>>
+>>>>>>>>>> Thanks,
+>>>>>>>>>> Ryan
+>>>>>>>>>>
+>>>>>>>>>>> Thanks,
+>>>>>>>>>>> Yang
+>>>>>>>>>>>
+>>>>>>>>>>>
+>>>>>>>>>>> On 3/13/25 10:40 AM, Yang Shi wrote:
+>>>>>>>>>>>> On 3/13/25 10:36 AM, Ryan Roberts wrote:
+>>>>>>>>>>>>> On 13/03/2025 17:28, Yang Shi wrote:
+>>>>>>>>>>>>>> Hi Ryan,
+>>>>>>>>>>>>>>
+>>>>>>>>>>>>>> I saw Miko posted a new spin of his patches. There are some slight
+>>>>>>>>>>>>>> changes
+>>>>>>>>>>>>>> that
+>>>>>>>>>>>>>> have impact to my patches (basically check the new boot parameter).
+>>>>>>>>>>>>>> Do you
+>>>>>>>>>>>>>> prefer I rebase my patches on top of his new spin right now then
+>>>>>>>>>>>>>> restart
+>>>>>>>>>>>>>> review
+>>>>>>>>>>>>>> from the new spin or review the current patches then solve the new
+>>>>>>>>>>>>>> review
+>>>>>>>>>>>>>> comments and rebase to Miko's new spin together?
+>>>>>>>>>>>>> Hi Yang,
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> Sorry I haven't got to reviewing this version yet, it's in my queue!
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> I'm happy to review against v3 as it is. I'm familiar with Miko's
+>>>>>>>>>>>>> series
+>>>>>>>>>>>>> and am
+>>>>>>>>>>>>> not too bothered about the integration with that; I think it's pretty
+>>>>>>>>>>>>> straight
+>>>>>>>>>>>>> forward. I'm more interested in how you are handling the splitting,
+>>>>>>>>>>>>> which I
+>>>>>>>>>>>>> think is the bulk of the effort.
+>>>>>>>>>>>> Yeah, sure, thank you.
+>>>>>>>>>>>>
+>>>>>>>>>>>>> I'm hoping to get to this next week before heading out to LSF/MM the
+>>>>>>>>>>>>> following
+>>>>>>>>>>>>> week (might I see you there?)
+>>>>>>>>>>>> Unfortunately I can't make it this year. Have a fun!
+>>>>>>>>>>>>
+>>>>>>>>>>>> Thanks,
+>>>>>>>>>>>> Yang
+>>>>>>>>>>>>
+>>>>>>>>>>>>> Thanks,
+>>>>>>>>>>>>> Ryan
+>>>>>>>>>>>>>
+>>>>>>>>>>>>>
+>>>>>>>>>>>>>> Thanks,
+>>>>>>>>>>>>>> Yang
+>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>
+>>>>>>>>>>>>>> On 3/4/25 2:19 PM, Yang Shi wrote:
+>>>>>>>>>>>>>>> Changelog
+>>>>>>>>>>>>>>> =========
+>>>>>>>>>>>>>>> v3:
+>>>>>>>>>>>>>>>         * Rebased to v6.14-rc4.
+>>>>>>>>>>>>>>>         * Based on Miko's BBML2 cpufeature patch (https://
+>>>>>>>>>>>>>>> lore.kernel.org/
+>>>>>>>>>>>>>>> linux-
+>>>>>>>>>>>>>>> arm-kernel/20250228182403.6269-3-miko.lenczewski@arm.com/).
+>>>>>>>>>>>>>>>           Also included in this series in order to have the complete
+>>>>>>>>>>>>>>> patchset.
+>>>>>>>>>>>>>>>         * Enhanced __create_pgd_mapping() to handle split as well
+>>>>>>>>>>>>>>> per
+>>>>>>>>>>>>>>> Ryan.
+>>>>>>>>>>>>>>>         * Supported CONT mappings per Ryan.
+>>>>>>>>>>>>>>>         * Supported asymmetric system by splitting kernel linear
+>>>>>>>>>>>>>>> mapping if
+>>>>>>>>>>>>>>> such
+>>>>>>>>>>>>>>>           system is detected per Ryan. I don't have such system
+>>>>>>>>>>>>>>> to test,
+>>>>>>>>>>>>>>> so the
+>>>>>>>>>>>>>>>           testing is done by hacking kernel to call linear mapping
+>>>>>>>>>>>>>>> repainting
+>>>>>>>>>>>>>>>           unconditionally. The linear mapping doesn't have any
+>>>>>>>>>>>>>>> block and
+>>>>>>>>>>>>>>> cont
+>>>>>>>>>>>>>>>           mappings after booting.
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> RFC v2:
+>>>>>>>>>>>>>>>         * Used allowlist to advertise BBM lv2 on the CPUs which can
+>>>>>>>>>>>>>>> handle TLB
+>>>>>>>>>>>>>>>           conflict gracefully per Will Deacon
+>>>>>>>>>>>>>>>         * Rebased onto v6.13-rc5
+>>>>>>>>>>>>>>>         * https://lore.kernel.org/linux-arm-
+>>>>>>>>>>>>>>> kernel/20250103011822.1257189-1-
+>>>>>>>>>>>>>>> yang@os.amperecomputing.com/
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> RFC v1: https://lore.kernel.org/lkml/20241118181711.962576-1-
+>>>>>>>>>>>>>>> yang@os.amperecomputing.com/
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> Description
+>>>>>>>>>>>>>>> ===========
+>>>>>>>>>>>>>>> When rodata=full kernel linear mapping is mapped by PTE due to arm's
+>>>>>>>>>>>>>>> break-before-make rule.
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> A number of performance issues arise when the kernel linear map is
+>>>>>>>>>>>>>>> using
+>>>>>>>>>>>>>>> PTE entries due to arm's break-before-make rule:
+>>>>>>>>>>>>>>>         - performance degradation
+>>>>>>>>>>>>>>>         - more TLB pressure
+>>>>>>>>>>>>>>>         - memory waste for kernel page table
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> These issues can be avoided by specifying rodata=on the kernel
+>>>>>>>>>>>>>>> command
+>>>>>>>>>>>>>>> line but this disables the alias checks on page table permissions
+>>>>>>>>>>>>>>> and
+>>>>>>>>>>>>>>> therefore compromises security somewhat.
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> With FEAT_BBM level 2 support it is no longer necessary to
+>>>>>>>>>>>>>>> invalidate the
+>>>>>>>>>>>>>>> page table entry when changing page sizes. This allows the kernel to
+>>>>>>>>>>>>>>> split large mappings after boot is complete.
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> This patch adds support for splitting large mappings when FEAT_BBM
+>>>>>>>>>>>>>>> level 2
+>>>>>>>>>>>>>>> is available and rodata=full is used. This functionality will be
+>>>>>>>>>>>>>>> used
+>>>>>>>>>>>>>>> when modifying page permissions for individual page frames.
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> Without FEAT_BBM level 2 we will keep the kernel linear map using
+>>>>>>>>>>>>>>> PTEs
+>>>>>>>>>>>>>>> only.
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> If the system is asymmetric, the kernel linear mapping may be
+>>>>>>>>>>>>>>> repainted
+>>>>>>>>>>>>>>> once
+>>>>>>>>>>>>>>> the BBML2 capability is finalized on all CPUs.  See patch #6 for
+>>>>>>>>>>>>>>> more
+>>>>>>>>>>>>>>> details.
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> We saw significant performance increases in some benchmarks with
+>>>>>>>>>>>>>>> rodata=full without compromising the security features of the
+>>>>>>>>>>>>>>> kernel.
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> Testing
+>>>>>>>>>>>>>>> =======
+>>>>>>>>>>>>>>> The test was done on AmpereOne machine (192 cores, 1P) with 256GB
+>>>>>>>>>>>>>>> memory and
+>>>>>>>>>>>>>>> 4K page size + 48 bit VA.
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> Function test (4K/16K/64K page size)
+>>>>>>>>>>>>>>>         - Kernel boot.  Kernel needs change kernel linear mapping
+>>>>>>>>>>>>>>> permission at
+>>>>>>>>>>>>>>>           boot stage, if the patch didn't work, kernel typically
+>>>>>>>>>>>>>>> didn't
+>>>>>>>>>>>>>>> boot.
+>>>>>>>>>>>>>>>         - Module stress from stress-ng. Kernel module load change
+>>>>>>>>>>>>>>> permission
+>>>>>>>>>>>>>>> for
+>>>>>>>>>>>>>>>           linear mapping.
+>>>>>>>>>>>>>>>         - A test kernel module which allocates 80% of total
+>>>>>>>>>>>>>>> memory via
+>>>>>>>>>>>>>>> vmalloc(),
+>>>>>>>>>>>>>>>           then change the vmalloc area permission to RO, this also
+>>>>>>>>>>>>>>> change
+>>>>>>>>>>>>>>> linear
+>>>>>>>>>>>>>>>           mapping permission to RO, then change it back before
+>>>>>>>>>>>>>>> vfree(). Then
+>>>>>>>>>>>>>>> launch
+>>>>>>>>>>>>>>>           a VM which consumes almost all physical memory.
+>>>>>>>>>>>>>>>         - VM with the patchset applied in guest kernel too.
+>>>>>>>>>>>>>>>         - Kernel build in VM with guest kernel which has this series
+>>>>>>>>>>>>>>> applied.
+>>>>>>>>>>>>>>>         - rodata=on. Make sure other rodata mode is not broken.
+>>>>>>>>>>>>>>>         - Boot on the machine which doesn't support BBML2.
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> Performance
+>>>>>>>>>>>>>>> ===========
+>>>>>>>>>>>>>>> Memory consumption
+>>>>>>>>>>>>>>> Before:
+>>>>>>>>>>>>>>> MemTotal:       258988984 kB
+>>>>>>>>>>>>>>> MemFree:        254821700 kB
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> After:
+>>>>>>>>>>>>>>> MemTotal:       259505132 kB
+>>>>>>>>>>>>>>> MemFree:        255410264 kB
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> Around 500MB more memory are free to use.  The larger the
+>>>>>>>>>>>>>>> machine, the
+>>>>>>>>>>>>>>> more memory saved.
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> Performance benchmarking
+>>>>>>>>>>>>>>> * Memcached
+>>>>>>>>>>>>>>> We saw performance degradation when running Memcached benchmark with
+>>>>>>>>>>>>>>> rodata=full vs rodata=on.  Our profiling pointed to kernel TLB
+>>>>>>>>>>>>>>> pressure.
+>>>>>>>>>>>>>>> With this patchset we saw ops/sec is increased by around 3.5%, P99
+>>>>>>>>>>>>>>> latency is reduced by around 9.6%.
+>>>>>>>>>>>>>>> The gain mainly came from reduced kernel TLB misses.  The kernel TLB
+>>>>>>>>>>>>>>> MPKI is reduced by 28.5%.
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> The benchmark data is now on par with rodata=on too.
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> * Disk encryption (dm-crypt) benchmark
+>>>>>>>>>>>>>>> Ran fio benchmark with the below command on a 128G ramdisk (ext4)
+>>>>>>>>>>>>>>> with
+>>>>>>>>>>>>>>> disk
+>>>>>>>>>>>>>>> encryption (by dm-crypt).
+>>>>>>>>>>>>>>> fio --directory=/data --random_generator=lfsr --norandommap --
+>>>>>>>>>>>>>>> randrepeat 1 \
+>>>>>>>>>>>>>>>           --status-interval=999 --rw=write --bs=4k --loops=1 --
+>>>>>>>>>>>>>>> ioengine=sync \
+>>>>>>>>>>>>>>>           --iodepth=1 --numjobs=1 --fsync_on_close=1 --
+>>>>>>>>>>>>>>> group_reporting --
+>>>>>>>>>>>>>>> thread \
+>>>>>>>>>>>>>>>           --name=iops-test-job --eta-newline=1 --size 100G
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> The IOPS is increased by 90% - 150% (the variance is high, but the
+>>>>>>>>>>>>>>> worst
+>>>>>>>>>>>>>>> number of good case is around 90% more than the best number of bad
+>>>>>>>>>>>>>>> case).
+>>>>>>>>>>>>>>> The bandwidth is increased and the avg clat is reduced
+>>>>>>>>>>>>>>> proportionally.
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> * Sequential file read
+>>>>>>>>>>>>>>> Read 100G file sequentially on XFS (xfs_io read with page cache
+>>>>>>>>>>>>>>> populated).
+>>>>>>>>>>>>>>> The bandwidth is increased by 150%.
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> Mikołaj Lenczewski (1):
+>>>>>>>>>>>>>>>             arm64: Add BBM Level 2 cpu feature
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> Yang Shi (5):
+>>>>>>>>>>>>>>>             arm64: cpufeature: add AmpereOne to BBML2 allow list
+>>>>>>>>>>>>>>>             arm64: mm: make __create_pgd_mapping() and helpers
+>>>>>>>>>>>>>>> non-void
+>>>>>>>>>>>>>>>             arm64: mm: support large block mapping when rodata=full
+>>>>>>>>>>>>>>>             arm64: mm: support split CONT mappings
+>>>>>>>>>>>>>>>             arm64: mm: split linear mapping if BBML2 is not
+>>>>>>>>>>>>>>> supported on
+>>>>>>>>>>>>>>> secondary
+>>>>>>>>>>>>>>> CPUs
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> arch/arm64/Kconfig                  | 11 +++++
+>>>>>>>>>>>>>>> arch/arm64/include/asm/cpucaps.h    | 2 +
+>>>>>>>>>>>>>>> arch/arm64/include/asm/cpufeature.h | 15 ++++++
+>>>>>>>>>>>>>>> arch/arm64/include/asm/mmu.h        | 4 ++
+>>>>>>>>>>>>>>> arch/arm64/include/asm/pgtable.h    | 12 ++++-
+>>>>>>>>>>>>>>> arch/arm64/kernel/cpufeature.c      | 95 ++++++++++++++++++++++++
+>>>>>>>>>>>>>>> ++++++
+>>>>>>>>>>>>>>> +++++++
+>>>>>>>>>>>>>>> arch/arm64/mm/mmu.c                 | 397 ++++++++++++++++++++
+>>>>>>>>>>>>>>> ++++
+>>>>>>>>>>>>>>> ++++++
+>>>>>>>>>>>>>>> ++++
+>>>>>>>>>>>>>>> ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+>>>>>>>>>>>>>>> +++++
+>>>>>>>>>>>>>>> +++++
+>>>>>>>>>>>>>>> ++++++++++++++++++++++-------------------
+>>>>>>>>>>>>>>> arch/arm64/mm/pageattr.c            | 37 ++++++++++++---
+>>>>>>>>>>>>>>> arch/arm64/tools/cpucaps            | 1 +
+>>>>>>>>>>>>>>>        9 files changed, 518 insertions(+), 56 deletions(-)
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>
+>>
 > 
 
 
