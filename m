@@ -1,263 +1,153 @@
-Return-Path: <linux-kernel+bounces-666985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 813C6AC7EE8
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 15:38:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B850DAC7EF3
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 15:39:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DFA51891BAD
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 13:38:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72C294A462A
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 13:39:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80CBE229B23;
-	Thu, 29 May 2025 13:37:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="UGyMqcad"
-Received: from mail-ed1-f67.google.com (mail-ed1-f67.google.com [209.85.208.67])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1008C18BBAE;
+	Thu, 29 May 2025 13:39:35 +0000 (UTC)
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 277B4227EA3
-	for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 13:37:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A24863CB
+	for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 13:39:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748525856; cv=none; b=Pt+lG7UYR8O2AQyJ1t1XApVsEhTWlxjgcJi/FTbagOLGRMDt0bev4mxs2jK9jecjpx64vSYOeaAiIMjaYQxbHuChYQUX4SQdV6gbLrxCWUdibNChI1zpRepzcfx1ljcuuMcCotHBkHxu5DDqRbyNQ7vNgQOHvFVxmCVTrZkzn44=
+	t=1748525974; cv=none; b=eojkOwuREmkJzC0N5Ka7flFx+32VHOgFYAAXL+bH6VE8g+W3jacdh1EgxowiRbVqsem/ru8g2S6ydJ7iEC/tpVSNEvIwUlVw4/Kl79upmnYkL3fUaSr10Wfcj5JN6Yr8PmjG4gcPzTwMUfgJkSqmvKJTlgRWawr1vEY6xu0dstI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748525856; c=relaxed/simple;
-	bh=7qvdrjpOdlBvDAh2/Y7+8Ba7USpRO6EVtdx5gt1PBLc=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n4pbquT7Bysp1QBYumdW8ucOhIYy1zuQPBej9ROMYcVXKnMND7Nlgig7lL309nAUwoKjkNf3GAYMo0xG6FevdkeeLs7TPRPuMtP9PGiKLBp2Ia1A4sBzzEXixJT4bcUoyBsb2mZcnFJuNWaeOc5f/ACbX4W5puUcjfO6FZV4u10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=UGyMqcad; arc=none smtp.client-ip=209.85.208.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f67.google.com with SMTP id 4fb4d7f45d1cf-60477f1a044so1454955a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 06:37:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1748525851; x=1749130651; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=XGJgxS1k4sjFLENCJ0R74UHOiVaE0JfhO0ApUNQ8FHM=;
-        b=UGyMqcadATKeuV2VBLDOsEAhMCNaemxh28mnsKQ03bUx48e+f7L5NV6DQs9haqOIzq
-         tqJWegjNbg2laXGZ37XDuNfg2Ozhmo7dfpTXMROY+p9CSPqkLxinxvQdSqmgLgf4nyiq
-         GXJjWzhWG1eY/UhJwxormCrnbTEBeGvpKeAe9HgwTNJTnOxSsK7QJfzdCQYh/KOHyJFE
-         g6lfSZYAtls+KA3IeZ9GGx5kiZUdCS7C7JQTc9Mqb0p1FLk13SiZWbyWY2HU3MRzLmg6
-         Q9dutbpY2/sWZM3uMxorrImnEbh4YTkevzao2AGsnMgDEUHq5RrwcnJ7+oAWNy3rO92K
-         wvTg==
+	s=arc-20240116; t=1748525974; c=relaxed/simple;
+	bh=yGQZgTTHSVx3PhFr8VKMt4lFCsY/Jmf4/Qqjo4jC7sU=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=BR9RUbeYnK6wKoiax7hjai7isHNhFKBvY+7H9cSxi/E01tQsc6bLe0BLWx57+ARPtEf7/rdwLYLYw6TGAUegMXR1Q0Tm6ATvcHS8LA932XCSsKdh380sKkbu8Ao/fcWpk58aBmNYqLBNB1QMyDaK6sXhKRxOuF5rbr9gs+GwYjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-86a3d964d9fso175729239f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 06:39:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748525851; x=1749130651;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XGJgxS1k4sjFLENCJ0R74UHOiVaE0JfhO0ApUNQ8FHM=;
-        b=jJcBFCoKvhPmCXsF6FBcaIVwitvepSuNa+GnUD9FEzrVrO2nhjNj6AmVORW+UEkcC+
-         JI/2wRE5uwM5DnXp8KGIZXOWsZIEYe5LcBChCzK6v4IzLS+P1zsd2dmx6DyMckfeTdb8
-         +H927LFYJI+cIrGbTZRlTSgoUehlHYkCUdhrbuc0ggh/Hd8cgYmqRDhOfsNKkns2CUOn
-         8InZef/HegFr6sPTcHa//6Y6WvUyU146PQQCMc9KceOVmWuuuJwy+7Ph7QMFiRdtV64I
-         Yw9YOcTQXkXctFg5iUlE0ntRWgpAfEji0E7o3S43/aOlI2MuoepWqcptUsAZGTwbQUM2
-         mY9A==
-X-Forwarded-Encrypted: i=1; AJvYcCVpF82cqA5UfC3aPMSAzh4x9OPQmCfJMeVstSrY0tY2gAHhTpcpQYSeMsvzTo9bgPTIhu2FzL6yaYcr/kk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywt6MxVVo1Xt2g9kGilslXsMoNKFFFY2Dwq4x9ebWpvSq3ZlPhW
-	gVNKZNlKn7RLpCc0XWINmBMyLEHj+97UqowaZIZe4KmstDmG2uqgZq0sNKv84GwV2Gs=
-X-Gm-Gg: ASbGncvuD7M2iFwmviLF62bWmzx++lY4Z2SPKg2218JTMS9YhZmuOVzMmLltLwAg+pC
-	+fSSzXTuHLxKOt7mCJPXmb7/YPHgiSgBnhVuwJwWqLFrMqQywRPJRFL079Vt6nFf1RdRzcJhXf9
-	T5pOhSt547dBdhwKXcOGOy74tc7xiRWN+Cua6RCA4+9tl+mZRD5eJ/iku7OVemV7PHxOg6z4vlF
-	WlHU66MbetSRG9HvuTsjn/vFshFdZt8x9Md2J1vgS2vsAiwZdu6Cb1ghdd7E+7h+y1GPxe+sfzg
-	f9n+OvYWFN7cSOjaUE7lNAS0RTm392gtlwmTH/fMuMAquFunTAJ/rylWoZqTzRepQWkpwzUp+C0
-	FeOAn9y/HmaiCMbvVZQT7pQ==
-X-Google-Smtp-Source: AGHT+IE89jORsxIfrZ11Z2zrlUgtzpwgSWYSGzkctmVru6WV+L9ZxyVvE4uRFiUjC5dkQM82OICRVg==
-X-Received: by 2002:a17:906:6a10:b0:ad8:a935:b8ff with SMTP id a640c23a62f3a-ad8a935c9b6mr508211266b.31.1748525851272;
-        Thu, 29 May 2025 06:37:31 -0700 (PDT)
-Received: from localhost (host-87-21-228-106.retail.telecomitalia.it. [87.21.228.106])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ada5d7ff047sm146955766b.18.2025.05.29.06.37.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 May 2025 06:37:30 -0700 (PDT)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Thu, 29 May 2025 15:39:06 +0200
-To: Andrea della Porta <andrea.porta@suse.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof Wilczynski <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-gpio@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Andrew Lunn <andrew@lunn.ch>, Phil Elwell <phil@raspberrypi.com>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	kernel-list@raspberrypi.com, Matthias Brugger <mbrugger@suse.com>
-Subject: Re: [PATCH v11 0/13] Add support for RaspberryPi RP1 PCI device
- using a DT overlay
-Message-ID: <aDhjehJxIxfNPwTr@apocalypse>
-References: <cover.1748522349.git.andrea.porta@suse.com>
+        d=1e100.net; s=20230601; t=1748525969; x=1749130769;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8ADf1egfEArdae73a3H+BcUdsMSrewOrhnfelJZcO8w=;
+        b=SSxUw7IG+qijMbBVgfPCmX3YTROQU6OQ1MxQb1jfsLKWAivKcvuyzpyPyTGxQTNs+n
+         gaPNf9jve10NCQnt7qh8yi8eitE7RWMXZLNdPHXBlNGXnO3NbwbCa+CqIWTM6fDBAk28
+         m/F8Mt3vFecOlh/sF4M8QNCjlsfvFxHIVIXksQyoAZZoAnlhyJNLx+bVvvwdLvYp6ep/
+         3HDF/SxNh8//Y+groMyqE1zpOoVDJWA0WErZTaRy76IqLQXuup2ubeg0JKdKzjPIztXa
+         5uQnak4pQaT2OERiX9mAzpCXjhLMMh9cPQw2s23eVMK16L6pKQ/GLCSuGiO+O8basAZQ
+         1/sA==
+X-Gm-Message-State: AOJu0YwPxpPk/qsvBqOYiQJUGdwF4Hzx4H/1i/1n3A9oLDdAoCsH0UUG
+	4hCuYmelZClfsviZ+25/iGgTuZNdbvEYT8nQUQp2PK6ZxmBZfCbxsFOtxMkgzyHcqF4OuB7o6rB
+	z+b4CtPpmIduhINl9mCq7WlVkBsCmjqbd2VuUm1a5AIX2Z9SIwbAR1qTvfiDxNw==
+X-Google-Smtp-Source: AGHT+IFhSMpVhEhxUjV1TwvOUsxXh6I7yMPgQgjlpav2sXDD6oDkuCzgQBOJxiGdBVH2d+GutAkydgXC7k+wrCB5sD/ztBvXWINd
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1748522349.git.andrea.porta@suse.com>
+X-Received: by 2002:a05:6602:c88:b0:864:a1fe:1e4a with SMTP id
+ ca18e2360f4ac-86cf29fdec5mr465546739f.3.1748525969214; Thu, 29 May 2025
+ 06:39:29 -0700 (PDT)
+Date: Thu, 29 May 2025 06:39:29 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68386391.a70a0220.1765ec.0189.GAE@google.com>
+Subject: [syzbot] [media?] WARNING in az6007_i2c_xfer
+From: syzbot <syzbot+a43c95e5c2c9ed88e966@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	mchehab@kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Again, this patchset for some reason has duplicated Message-Id for 
-patches 1 to 5, so they will result as clobbered up. Please ignore 
-V10 and V11, I'll send V12 which should be, hopefully, the correct one.
-Sorry for that.
+Hello,
 
-Andrea
+syzbot found the following issue on:
 
-On 14:43 Thu 29 May     , Andrea della Porta wrote:
-> *** RESENDING PATCHSET AS V11 SINCE LAST ONE HAS CLOBBERED SEQUENCE NUMBER ***
-> 
-> RP1 is an MFD chipset that acts as a south-bridge PCIe endpoint sporting
-> a pletora of subdevices (i.e.  Ethernet, USB host controller, I2C, PWM,
-> etc.) whose registers are all reachable starting from an offset from the
-> BAR address.  The main point here is that while the RP1 as an endpoint
-> itself is discoverable via usual PCI enumeraiton, the devices it contains
-> are not discoverable and must be declared e.g. via the devicetree.
-> 
-> This patchset is an attempt to provide a minimum infrastructure to allow
-> the RP1 chipset to be discovered and perpherals it contains to be added
-> from a devictree overlay loaded during RP1 PCI endpoint enumeration. To
-> ensure compatibility with downstream, a devicetree already comprising the
-> RP1 node is also provided, so it's not strictly necessary to use the
-> dynamically loaded overlay if the devicetree is already fully defined at
-> the origin.
-> To achieve this modularity, the RP1 node DT definitions are arranged by
-> file inclusion as per following schema (the arrow points to the includer,
-> see also [9]):
->  
->  rp1-pci.dtso         rp1.dtso
->      ^                    ^
->      |                    |
-> rp1-common.dtsi ----> rp1-nexus.dtsi ----> bcm2712-rpi-5-b.dts
->                                                ^
->                                                |
->                                            bcm2712-rpi-5-b-ovl-rp1.dts
-> 
-> Followup patches should add support for the several peripherals contained
-> in RP1.
-> 
-> This work is based upon dowstream drivers code and the proposal from RH
-> et al. (see [1] and [2]). A similar approach is also pursued in [3].
-> 
-> The patches are ordered as follows:
-> 
-> -PATCHES 1 to 3: add binding schemas for clock, gpio and RP1 peripherals.
->  They are needed to support the other peripherals, e.g. the ethernet mac
->  depends on a clock generated by RP1 and the phy is reset through the
->  on-board gpio controller.
-> 
-> -PATCH 4 and 5: add clock and gpio device drivers.
-> 
-> -PATCH 6: the devicetree node describing the RP1 chipset. 
-> 
-> -PATCH 7: this is the main patch to support RP1 chipset. It can work
->  either with a fully defined devicetree (i.e. one that already included
->  the rp1 node since boot time) or with a runtime loaded dtb overlay
->  which is linked as binary blob in the driver obj. This duality is
->  useful to comply with both downstream and upstream needs (see [9]).
->  The real dtso is in devicetree folder while the dtso in driver folder is
->  just a placeholder to include the real dtso.
->  In this way it is possible to check the dtso against dt-bindings.
->  The reason why drivers/misc has been selected as containing folder
->  for this driver can be seen in [6], [7] and [8].
-> 
-> -PATCH 8: add the external clock node (used by RP1) to the main dts.
-> 
-> -PATCH 9: the fully fledged devictree containing also the rp1 node.
->  This devicetree is functionally similar to the one downstream is using.
-> 
-> -PATCH 10 (OPTIONAL): this patch introduces a new scenario about how
->  the rp1 node is specified and loaded in DT. On top of the base DT
->  (without rp1 node), the fw loads this overlay and the end result is
->  the same devicetree as in patch 9, which is then passed to the next
->  stage (either the kernel or u-boot/bootloader).
->  While this patch is not strictly necessary and can therefore be dropped
->  (see [10]), it's not introducing much extra work and maybe can come
->  in handy while debugging.
-> 
-> -PATCH 11: add the relevant kernel CONFIG_ options to defconfig.
-> 
-> -PATCH 12: enable CONFIG_OF_OVERLAY in order for 'make defconfig'
->  to produce a configuration valid for the RP1 driver. Without this
->  patch, the user has to explicitly enable it since the misc driver
->  depends on OF_OVERLAY.
-> 
-> -PATCH 13: collect all changes for MAINTAINERS file.
-> 
-> This patchset is also a first attempt to be more agnostic wrt hardware
-> description standards such as OF devicetree and ACPI, where 'agnostic'
-> means "using DT in coexistence with ACPI", as been already promoted
-> by e.g. AL (see [4]). Although there's currently no evidence it will also
-> run out of the box on purely ACPI system, it is a first step towards
-> that direction.
-> 
-> Many thanks,
-> Andrea della Porta
-> 
-> Links:
-> - [1]: https://lpc.events/event/17/contributions/1421/attachments/1337/2680/LPC2023%20Non-discoverable%20devices%20in%20PCI.pdf
-> - [2]: https://lore.kernel.org/lkml/20230419231155.GA899497-robh@kernel.org/t/
-> - [3]: https://lore.kernel.org/all/20240808154658.247873-1-herve.codina@bootlin.com/#t
-> - [4]: https://lore.kernel.org/all/73e05c77-6d53-4aae-95ac-415456ff0ae4@lunn.ch/
-> - [5]: https://lore.kernel.org/all/20240626104544.14233-1-svarbanov@suse.de/
-> - [6]: https://lore.kernel.org/all/20240612140208.GC1504919@google.com/
-> - [7]: https://lore.kernel.org/all/83f7fa09-d0e6-4f36-a27d-cee08979be2a@app.fastmail.com/
-> - [8]: https://lore.kernel.org/all/2024081356-mutable-everyday-6f9d@gregkh/
-> - [9]: https://lore.kernel.org/all/Z87wTfChRC5Ruwc0@apocalypse/
-> - [10]: https://lore.kernel.org/all/CAMEGJJ0f4YUgdWBhxvQ_dquZHztve9KO7pvQjoDWJ3=zd3cgcg@mail.gmail.com/#t
-> 
-> CHANGES IN V11
-> 
-> 
-> PATCH RELATED -------------------------------------------------
-> 
-> - Patch 10,11,12: Added: Reviewed-by: Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
-> 
-> - Patches reworked to apply cleanly on broadcom/stblinux branches:
->   patch 1,2,3,6,8,9,10 -> devicetree/next
->   patch 11,12 -> defconfig/next
->   patch 4,5,7 -> drivers/next
->   patch 13 -> maintainers/next
-> 
-> - Patch 13: new patch gathering all changes for MAINTAINERS
-> 
-> 
-> RP1 CLOCK DRIVER ------------------------------------
-> 
-> - Dropped some WARN_ONCE() lines that are basically useless
-> 
-> - rp1_clock_set_parent() now returns EINVAL in case the parent check
->   is failing. As a result, rp1_clock_set_rate_and_parent() has also
->   been adapted to return rp1_clock_set_parent() retcode.
-> 
-> - Return an ERR_PTR from rp1_register_clock() instead of just NULL
-> 
-> - Dropped some unaesthetic blank lines
-> 
-> - Disabled the builtin locking in regmap since we're already dealing
->   with concurrency in the code
-> 
-> - rp1_clk_probe(): dropped dev_err_probe() as redundant due to commit
->   12a0fd23e870 ("clk: Print an error when clk registration fails")
-> 
+HEAD commit:    d0c22de9995b Merge tag 'input-for-v6.15-rc7' of git://git...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=148a1170580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9fd1c9848687d742
+dashboard link: https://syzkaller.appspot.com/bug?extid=a43c95e5c2c9ed88e966
+compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/0badcba87366/disk-d0c22de9.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/1447956c1e1e/vmlinux-d0c22de9.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/55af41f29bbe/bzImage-d0c22de9.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+a43c95e5c2c9ed88e966@syzkaller.appspotmail.com
+
+usb read operation failed. (-71)
+------------[ cut here ]------------
+DEBUG_LOCKS_WARN_ON(__owner_task(owner) != get_current())
+WARNING: CPU: 0 PID: 8723 at kernel/locking/mutex.c:918 __mutex_unlock_slowpath+0x22e/0x700 kernel/locking/mutex.c:918
+Modules linked in:
+CPU: 0 UID: 0 PID: 8723 Comm: syz.3.840 Not tainted 6.15.0-rc7-syzkaller-00152-gd0c22de9995b #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+RIP: 0010:__mutex_unlock_slowpath+0x22e/0x700 kernel/locking/mutex.c:918
+Code: 0f b6 04 03 84 c0 0f 85 d1 00 00 00 83 3d 7d 74 27 04 00 75 19 90 48 c7 c7 e0 d1 6a 8b 48 c7 c6 60 d9 6a 8b e8 73 5e 2c f6 90 <0f> 0b 90 90 90 48 89 da e9 29 ff ff ff 48 89 d3 90 e8 ac b9 5d f9
+RSP: 0018:ffffc90003a3f700 EFLAGS: 00010246
+RAX: abeb948675ff2100 RBX: 1ffffffff1efec8a RCX: 0000000000080000
+RDX: ffffc9000c84b000 RSI: 000000000000ac87 RDI: 000000000000ac88
+RBP: ffffc90003a3f810 R08: 0000000000000003 R09: 0000000000000004
+R10: dffffc0000000000 R11: fffffbfff1bba984 R12: ffffc90003a3f7a0
+R13: 1ffff92000747ee8 R14: 1ffffffff33020d4 R15: ffff88807c620000
+FS:  00007f8f910ac6c0(0000) GS:ffff8881260c2000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f8f9108bd58 CR3: 0000000027662000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ az6007_i2c_xfer+0xb65/0xb90 drivers/media/usb/dvb-usb-v2/az6007.c:827
+ __i2c_transfer+0x871/0x2170 drivers/i2c/i2c-core-base.c:-1
+ i2c_smbus_xfer_emulated drivers/i2c/i2c-core-smbus.c:469 [inline]
+ __i2c_smbus_xfer+0xfb0/0x1e50 drivers/i2c/i2c-core-smbus.c:607
+ i2c_smbus_xfer+0x275/0x3c0 drivers/i2c/i2c-core-smbus.c:545
+ i2cdev_ioctl_smbus+0x43d/0x6d0 drivers/i2c/i2c-dev.c:389
+ i2cdev_ioctl+0x5d3/0x7f0 drivers/i2c/i2c-dev.c:478
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:906 [inline]
+ __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:892
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xf6/0x210 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f8f9018e969
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f8f910ac038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007f8f903b5fa0 RCX: 00007f8f9018e969
+RDX: 00002000000000c0 RSI: 0000000000000720 RDI: 0000000000000006
+RBP: 00007f8f90210ab1 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f8f903b5fa0 R15: 00007f8f904dfa28
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
