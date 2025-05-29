@@ -1,140 +1,248 @@
-Return-Path: <linux-kernel+bounces-667054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-667050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 111C8AC7FDE
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 16:47:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01DEDAC7FD2
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 16:44:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A75E04E74A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 14:47:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47E1F9E2A32
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 14:43:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BFA822B8BC;
-	Thu, 29 May 2025 14:47:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C48BA22AE75;
+	Thu, 29 May 2025 14:43:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HMO06GfX"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B67B1D54E3;
-	Thu, 29 May 2025 14:47:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="jRaj2QLF"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9281219E93;
+	Thu, 29 May 2025 14:43:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748530061; cv=none; b=B0MBSGJB2PYDX3/HPd2EHZeZZhFJ/phB/6teuuwnJfWw0RHaeC2JvZ1cgWPcndy8WD9x/e16ergA5PZKuMBcgjJPBs+J8htD7w8ZPXd7xDZIRyHj+JP9d00fPo24bSXXy1wjntxuiPE14Efu5C9BKBm3pgcVf2ltaP968TIdrfI=
+	t=1748529831; cv=none; b=rTkmMxq0Gj6BRGJ7pUzaKXcbfkc5MLZIgzTagWTd8kmGK6WBXx22zJQoisFvtAnTDi5Y/QlTCYlE6iLu+cUlnenWUQkCUYrffUbLCZzyFUeWpkkj27E+s8NllS1YpUTrVPOgiKtxC+om5qqIETjnhq9q/GjURDT495ct9pvTXoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748530061; c=relaxed/simple;
-	bh=kEjzFkO+XU4YWTcwrv0cEo/Sjcef1XQplfcw8JrSKxU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OZbTp4lACPxsyOiqm1+XGHAmaqKSL+5lHduxU0svU+vT/eYtl26slWy9oKupjeVbSSYM3vjEKTOry0opty0fJFotw2eYReRhgE3KefZFHN3EaunQhM/RHDTaSl44vNliswazzobG5FgmLEEGH24B/Pok+krKtZmkpXXDp2gDIP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HMO06GfX; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1748530060; x=1780066060;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=kEjzFkO+XU4YWTcwrv0cEo/Sjcef1XQplfcw8JrSKxU=;
-  b=HMO06GfXHU0cMRvm1edpZFoFOn8DQgjvvWfKaiXVPsQEchVYPxjLGWcr
-   5FEiDWa2VdiUM8gsRu38DQ2Av1AUwfdPkQefi0Mgd7Uzz2CuTRRvtCByU
-   RMfFa4eWggce2Fot4M9xHi4QX5ceXfvmrj+18kC0TlgtlVh+zmbOvr5UE
-   G7heSH0Uyy6lLQ9w6Snu0ltto1IjChJQ79RuJZ+GiseYutRHKOefntvaz
-   B9lrMnZcjGOxVpkeS5wNI0QM8aQZca/XzkmI1g1NBys9HIe6D31nr0C3E
-   dQFRaixYUVXvQpkjLsrZnhqX0dVRKHpu6uLibhxJEHGJXJ7JPFFBadFWo
-   A==;
-X-CSE-ConnectionGUID: y29a8GFNSEipct84UJS8mw==
-X-CSE-MsgGUID: bhujHordR5SE15kBo+7eQg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11448"; a="49840886"
-X-IronPort-AV: E=Sophos;i="6.16,193,1744095600"; 
-   d="scan'208";a="49840886"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2025 07:47:39 -0700
-X-CSE-ConnectionGUID: 8v9maovfSSmE7dB+aC69nQ==
-X-CSE-MsgGUID: WkireV+rTKS43Kq0z8SZxQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,193,1744095600"; 
-   d="scan'208";a="148621109"
-Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
-  by orviesa004.jf.intel.com with ESMTP; 29 May 2025 07:47:34 -0700
-Date: Thu, 29 May 2025 22:41:15 +0800
-From: Xu Yilun <yilun.xu@linux.intel.com>
-To: Alexey Kardashevskiy <aik@amd.com>
-Cc: Jason Gunthorpe <jgg@nvidia.com>, kvm@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-	linaro-mm-sig@lists.linaro.org, sumit.semwal@linaro.org,
-	christian.koenig@amd.com, pbonzini@redhat.com, seanjc@google.com,
-	alex.williamson@redhat.com, vivek.kasireddy@intel.com,
-	dan.j.williams@intel.com, yilun.xu@intel.com,
-	linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org,
-	lukas@wunner.de, yan.y.zhao@intel.com, daniel.vetter@ffwll.ch,
-	leon@kernel.org, baolu.lu@linux.intel.com, zhenzhong.duan@intel.com,
-	tao1.su@intel.com
-Subject: Re: [RFC PATCH 00/12] Private MMIO support for private assigned dev
-Message-ID: <aDhyC73r149syMpc@yilunxu-OptiPlex-7050>
-References: <20250509184318.GD5657@nvidia.com>
- <aB7Ma84WXATiu5O1@yilunxu-OptiPlex-7050>
- <2c4713b0-3d6c-4705-841b-1cb58cd9a0f5@amd.com>
- <20250512140617.GA285583@nvidia.com>
- <aCRAHRCKP1s0Oi0c@yilunxu-OptiPlex-7050>
- <20250514163339.GD382960@nvidia.com>
- <aCYQdDrYYZRAgsen@yilunxu-OptiPlex-7050>
- <9dea400f-a57b-43be-a2e4-24a9f51e6ba0@amd.com>
- <aDE5SPzOAU0sNIt+@yilunxu-OptiPlex-7050>
- <ae16db07-5fca-4369-aa67-cbe2e0fd60fd@amd.com>
+	s=arc-20240116; t=1748529831; c=relaxed/simple;
+	bh=XU0oPyxZDzZDKkcXO359f69fX/bnl8KlGOXa8n56B4k=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IhVGpbCDS+qj3bIEuliNzn/X6fn+s/G79f0LFnJAU9qVeRjkkwEa5gVgETPkuY+mb1vjqxfMZXWdldQ68YpfQIoBw3cMl//MYHy9a1YS8QLLWvlGr3V5P5nWhxp0/NOHo5cVzQBRfOUNZz8FV1fyd5ZCItPz/DIyCZ6llGePPFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=jRaj2QLF; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=qP
+	ACzQdKmCGnEpy21os+Y6Anwn+AlAe9o0MJqcU0H8E=; b=jRaj2QLFmAKV+U0GUv
+	VUWV5t5XGHDMP3Rg98eFXtpdjKV4wEaOCjSbnOty0BMqZ3haD0Jw/B6FwLlHEIHy
+	TkPBaiGI7eGFheBjaoe5cGxZjOGU4UjnVV/mAy00DCWcz/uIMqJ/PYCurPVGlLWN
+	f8q0kcRUEdhqFlABe8MMw2egM=
+Received: from localhost.localdomain (unknown [])
+	by gzsmtp3 (Coremail) with SMTP id PigvCgDHH6B1cjhoX2CLAQ--.10005S4;
+	Thu, 29 May 2025 22:43:16 +0800 (CST)
+From: David Wang <00107082@163.com>
+To: tytso@mit.edu,
+	adilger.kernel@dilger.ca
+Cc: linux-ext4@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	David Wang <00107082@163.com>
+Subject: [RFC] ext4: use kmem_cache for short fname allocation in readdir
+Date: Thu, 29 May 2025 22:42:56 +0800
+Message-Id: <20250529144256.4517-1-00107082@163.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ae16db07-5fca-4369-aa67-cbe2e0fd60fd@amd.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:PigvCgDHH6B1cjhoX2CLAQ--.10005S4
+X-Coremail-Antispam: 1Uf129KBjvJXoWxKw4fuF1DXr18AF18uF43GFg_yoW7WF1UpF
+	Z3KwnxGw4xXw1DuwsxJr4kZr95Z3W8Ga1UW3s2gw43XrWUZF1kXFnFya4kXa45KrWkX3W3
+	XFW5Kw18ur1kKrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pEb4SnUUUUU=
+X-CM-SenderInfo: qqqrilqqysqiywtou0bp/xtbB0glcqmg4a3dDVAABs3
 
-> > > > 
-> > > > FLR to a bound device is absolutely fine, just break the CC state.
-> > > > Sometimes it is exactly what host need to stop CC immediately.
-> > > > The problem is in VFIO's pre-FLR handling so we need to patch VFIO, not
-> > > > PCI core.
-> > > 
-> > > What is a problem here exactly?
-> > > FLR by the host which equals to any other PCI error? The guest may or may not be able to handle it, afaik it does not handle any errors now, QEMU just stops the guest.
-> > 
-> > It is about TDX Connect.
-> > 
-> > According to the dmabuf patchset, the dmabuf needs to be revoked before
-> > FLR. That means KVM unmaps MMIOs when the device is in LOCKED/RUN state.
-> > That is forbidden by TDX Module and will crash KVM.
-> 
-> 
-> FLR is something you tell the device to do, how/why would TDX know about it?
+When searching files, ext4_readdir would kzalloc() a fname
+object for each entry. It would be faster if a dedicated
+kmem_cache is used for fname.
 
-I'm talking about FLR in VFIO driver. The VFIO driver would zap bar
-before FLR. The zapping would trigger KVM unmap MMIOs. See
-vfio_pci_zap_bars() for legacy case, and see [1] for dmabuf case.
+But fnames are of variable length.
 
-[1] https://lore.kernel.org/kvm/20250307052248.405803-4-vivek.kasireddy@intel.com/
+This patch suggests using kmem_cache for fname with short
+length, and resorting to kzalloc when fname needs larger buffer.
+Assuming long file names are not very common.
 
-A pure FLR without zapping bar is absolutely OK.
+Profiling when searching files in kernel code base, with following
+command:
+	# perf record -g -e cpu-clock --freq=max bash -c \
+	"for i in {1..100}; do find ./linux -name notfoundatall > /dev/null; done"
+And using sample counts as indicator of performance improvement.
+(The faster, the less samples collected. And the tests are carried out
+when system is under no memory pressure.)
 
-> Or it check the TDI state on every map/unmap (unlikely)?
+Before without the change:
+	1232868--ext4_readdir
+		 |
+		 |--839085--ext4_htree_fill_tree
+		 |          |
+		 |           --829223--htree_dirblock_to_tree
+		 |                     |
+		 |                     |--365869--ext4_htree_store_dirent
+		 |                     |          |
+		 |                     |          |--43169--0xffffffffa7f8d094
+		 |                     |          |
+		 |                     |           --21947--0xffffffffa7f8d0f7
+		 |                     |
+		 |                     |--213124--ext4fs_dirhash
+		 |                     |          |
+		 |                     |           --86339--str2hashbuf_signed
+		 |                     |
+		 |                     |--145839--__ext4_read_dirblock
 
-Yeah, TDX Module would check TDI state on every unmapping.
+and with the change, ~3% less samples:
+	1202922--ext4_readdir
+		 |
+		 |--805105--ext4_htree_fill_tree
+		 |          |
+		 |           --795055--htree_dirblock_to_tree
+		 |                     |
+		 |                     |--328876--ext4_htree_store_dirent
+		 |                     |          |
+		 |                     |          |--123207--kmem_cache_alloc_noprof
+		 |                     |          |          |
+		 |                     |          |          |--26453--__alloc_tagging_slab_alloc_hook
+		 |                     |          |          |
+		 |                     |          |           --20413--__slab_alloc.isra.0
+		 |                     |          |
+		 |                     |           --31566--rb_insert_color
+		 |                     |
+		 |                     |--212915--ext4fs_dirhash
+		 |                     |          |
+		 |                     |           --86004--str2hashbuf_signed
+		 |                     |
+		 |                     |--149146--__ext4_read_dirblock
 
-> 
-> 
-> > So the safer way is
-> > to unbind the TDI first, then revoke MMIOs, then do FLR.
-> > 
-> > I'm not sure when p2p dma is involved AMD will have the same issue.
-> 
-> On AMD, the host can "revoke" at any time, at worst it'll see RMP events from IOMMU. Thanks,
+readdir() would have sigfinicant improvement, but the overall
+improvements for searching files is only ~0.5%, might be more
+sigfinicant if the system is under some memory pressures.
 
-Is the RMP event firstly detected by host or guest? If by host,
-host could fool guest by just suppress the event. Guest thought the
-DMA writting is successful but it is not and may cause security issue.
+The slab stats after the test:
+ext4_dir_fname      1242   1242    176   23    1 : tunables    0    0    0 : slabdata     54     54      0
 
-Thanks,
-Yilun
+Signed-off-by: David Wang <00107082@163.com>
+---
+ fs/ext4/dir.c   | 47 ++++++++++++++++++++++++++++++++++++++++++++---
+ fs/ext4/ext4.h  |  4 ++++
+ fs/ext4/super.c |  3 +++
+ 3 files changed, 51 insertions(+), 3 deletions(-)
+
+diff --git a/fs/ext4/dir.c b/fs/ext4/dir.c
+index d4164c507a90..3adfa0d038cd 100644
+--- a/fs/ext4/dir.c
++++ b/fs/ext4/dir.c
+@@ -424,6 +424,48 @@ struct fname {
+ 	char		name[] __counted_by(name_len);
+ };
+ 
++#define EXT4_DIR_FNAME_SHORT_LENGTH 127
++static struct kmem_cache *ext4_dir_fname_cachep;
++
++void __init ext4_init_dir(void)
++{
++	ext4_dir_fname_cachep = kmem_cache_create_usercopy("ext4_dir_fname",
++			struct_size_t(struct fname, name,  EXT4_DIR_FNAME_SHORT_LENGTH + 1),
++			0, SLAB_RECLAIM_ACCOUNT,
++			offsetof(struct fname, name), EXT4_DIR_FNAME_SHORT_LENGTH + 1,
++			NULL);
++}
++
++void ext4_exit_dir(void)
++{
++	if (ext4_dir_fname_cachep)
++		kmem_cache_destroy(ext4_dir_fname_cachep);
++}
++
++static struct fname *rb_node_fname_zalloc(__u8 name_len)
++{
++	struct fname *p;
++	if (ext4_dir_fname_cachep && name_len <= EXT4_DIR_FNAME_SHORT_LENGTH)
++		p = kmem_cache_alloc(ext4_dir_fname_cachep, GFP_KERNEL);
++	else
++		p = kmalloc(struct_size(p, name, name_len + 1), GFP_KERNEL);
++	if (p) {
++		/* no need to fill name with zeroes*/
++		memset(p, 0, offsetof(struct fname, name));
++		p->name[name_len] = 0;
++	}
++	return p;
++}
++
++static void rb_node_fname_free(struct fname *p) {
++	if (!p)
++		return;
++	if (ext4_dir_fname_cachep && p->name_len <= EXT4_DIR_FNAME_SHORT_LENGTH)
++		kmem_cache_free(ext4_dir_fname_cachep, p);
++	else
++		kfree(p);
++}
++
+ /*
+  * This function implements a non-recursive way of freeing all of the
+  * nodes in the red-black tree.
+@@ -436,7 +478,7 @@ static void free_rb_tree_fname(struct rb_root *root)
+ 		while (fname) {
+ 			struct fname *old = fname;
+ 			fname = fname->next;
+-			kfree(old);
++			rb_node_fname_free(old);
+ 		}
+ 
+ 	*root = RB_ROOT;
+@@ -479,8 +521,7 @@ int ext4_htree_store_dirent(struct file *dir_file, __u32 hash,
+ 	p = &info->root.rb_node;
+ 
+ 	/* Create and allocate the fname structure */
+-	new_fn = kzalloc(struct_size(new_fn, name, ent_name->len + 1),
+-			 GFP_KERNEL);
++	new_fn = rb_node_fname_zalloc(ent_name->len);
+ 	if (!new_fn)
+ 		return -ENOMEM;
+ 	new_fn->hash = hash;
+diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+index 5a20e9cd7184..33ab97143000 100644
+--- a/fs/ext4/ext4.h
++++ b/fs/ext4/ext4.h
+@@ -3795,6 +3795,10 @@ extern void ext4_orphan_file_block_trigger(
+ 				struct buffer_head *bh,
+ 				void *data, size_t size);
+ 
++/* dir.c */
++extern void __init ext4_init_dir(void);
++extern void ext4_exit_dir(void);
++
+ /*
+  * Add new method to test whether block and inode bitmaps are properly
+  * initialized. With uninit_bg reading the block from disk is not enough
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index 181934499624..21ce3d78912a 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -7457,6 +7457,8 @@ static int __init ext4_init_fs(void)
+ 	if (err)
+ 		goto out;
+ 
++	ext4_init_dir();
++
+ 	return 0;
+ out:
+ 	unregister_as_ext2();
+@@ -7497,6 +7499,7 @@ static void __exit ext4_exit_fs(void)
+ 	ext4_exit_post_read_processing();
+ 	ext4_exit_es();
+ 	ext4_exit_pending();
++	ext4_exit_dir();
+ }
+ 
+ MODULE_AUTHOR("Remy Card, Stephen Tweedie, Andrew Morton, Andreas Dilger, Theodore Ts'o and others");
+-- 
+2.39.2
+
 
