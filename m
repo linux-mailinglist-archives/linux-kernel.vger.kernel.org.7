@@ -1,212 +1,373 @@
-Return-Path: <linux-kernel+bounces-666552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B65D2AC7876
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 07:56:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13115AC7882
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 08:00:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72B53170016
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 05:56:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BBECE7A2703
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 05:58:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4716253F1D;
-	Thu, 29 May 2025 05:55:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE662254861;
+	Thu, 29 May 2025 05:59:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="tlJSe2q+"
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2061.outbound.protection.outlook.com [40.107.101.61])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eYZiHjrt"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E080253F2B
-	for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 05:55:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.61
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748498108; cv=fail; b=jacsiw1XZKSz/38OV+jmf1NZHL0jtK2zDNmQak9jaAMlEz1pr3YpG/8QPTxIGWUdSSOFeN4nffFACERKeCVO/11iqyBmbqJD3dqjUiBloolsLDGccrsxU0ehSn1jvRqgNmp37zn21uTRnx3TfMBQAXSp+rdHb/Yzkw99pAmLVhU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748498108; c=relaxed/simple;
-	bh=HpN1HtMQ/dZZlkL7pkTRxG+AaurOYcqchZuzq6yPOAA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=PPLwfRODDNKFigE+HjJdFfQQgR2MRbWNX+bfyfZvae2wGu2Z524J3mbCqxb4mS9RUcH4GSavvL5SX01XDoVZhvc1YE1cfKyD6szALeDUJOkjrcAG+cP/hk+L17VZ+CS1Fj1hlyKg/vDWqCqwZpaq3NV80D9Bu5wFLuHef612hmM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=tlJSe2q+; arc=fail smtp.client-ip=40.107.101.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lxlGyGY6U/SqO2A3FC5FAFtuwJfHRkNTGVIZRp4rjruJ1ANjU9RN2hmUlnES7dkJ1tD+Z+Kqq9dX/jOj0WTn2tW9qV1VT32z8fUGmeTaG8V22lGnkDx8S+NurgtFBh5QOPG6c97R3gIG/fHFSZeMSUqY5JJ+zKyPZziMNWMtk/NAcLw8Kq3oXR/avtp+2gVYyZhinfETPnqosk0punP+3dhDfnKYs6WIPmvyB7SZIbphwW8PtgAQnca5CABnWQh8vRYtxEyUaXdB15actdI9/PnZQcTkVtBQfmlMfR5ot4BAL1DSdNBMElrmouOE4gZhPU+MMRhuidiRucIUGIf/hw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=reZgzkMew9Z2mOzYyqPsCKuHLP7j3BdbyL7emxhhiP8=;
- b=pqdBZrdCCD20+yeu8JAJh+GyVPFw0FuflWxQ0Q09cF8WGy8zgRG3OQdU5d+VNz9/D6fQ10dJn5lDjEGQAvrf7svcgEYh1AEujEI9VP4t3LpVS7z91OEVGeLeZIqX9Ij4NLU6niq0hPbrpS14asHNdUSlu7bgmKP/5tl8c4nfdnmtEQojDXZCW0JZR/3QpSpGAgPo/J4Sb7+yMurF9M49HYGvQOKHAzyDWc7rn9ZUMWn9N3kRqLN/91FXmZ6nzOWe7vCVaW8mwn7ePnIf8WdELM3TFtW9byHFwF+Wvr/jTO4gBNtr5JQgY8Z6hZ/fUtRJqzBCAQb3IJDMnJ8/ktdEDg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=reZgzkMew9Z2mOzYyqPsCKuHLP7j3BdbyL7emxhhiP8=;
- b=tlJSe2q+hFOYcyBTYmp88JEG0wMWJj0vjpatRCmKUWq7vGKFbrR5FZU3aRJVohh8QjcxyNzD8njggLiDUEHdSabbwNbQo41d8qFmrNrVHqoYQUcwIBDEfv/gt0NKe3w/ARNJWBlRMMMyyuvnWB1xXYjjDX1bPZPFqmVl5h5HZpL113HQdL9bU3fe8YU9r73LUipyD/by4v9ePguC1W8IgQQvRjv6v5EqEx4ovoYK9TyYC943SJuyYBcmvE4oPUMcyz7A39l8Uy+Q2B15cRmkcSL3jaOuCy0yg70gW1IuHY3crHPG52USm7Q+wp4x8kbpBnli6XbmclhP/AUqecRE+A==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CY8PR12MB7705.namprd12.prod.outlook.com (2603:10b6:930:84::9)
- by SA5PPF6407DD448.namprd12.prod.outlook.com (2603:10b6:80f:fc04::8ce) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.20; Thu, 29 May
- 2025 05:55:03 +0000
-Received: from CY8PR12MB7705.namprd12.prod.outlook.com
- ([fe80::4b06:5351:3db4:95f6]) by CY8PR12MB7705.namprd12.prod.outlook.com
- ([fe80::4b06:5351:3db4:95f6%5]) with mapi id 15.20.8769.025; Thu, 29 May 2025
- 05:55:03 +0000
-Date: Thu, 29 May 2025 15:54:58 +1000
-From: Alistair Popple <apopple@nvidia.com>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	David Hildenbrand <david@redhat.com>, Zi Yan <ziy@nvidia.com>, Matthew Brost <matthew.brost@intel.com>, 
-	Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] MAINTAINERS: add mm memory policy section
-Message-ID: <xuk53vslmg2lserkjew6rudlgrjipmoiybsu5swhoxcdbiaken@pnv3dsuhfoef>
-References: <20250513160007.132378-1-lorenzo.stoakes@oracle.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250513160007.132378-1-lorenzo.stoakes@oracle.com>
-X-ClientProxiedBy: SYCPR01CA0040.ausprd01.prod.outlook.com
- (2603:10c6:10:e::28) To CY8PR12MB7705.namprd12.prod.outlook.com
- (2603:10b6:930:84::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EE3D199939
+	for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 05:59:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748498384; cv=none; b=lPLrgS7SzR4opQS1+TxIWcLeu1480S4YmLzKjSBL0UvaWhaj4z9TeSYKIvydTj/8AJ5AqA36IuRPKwmNzFTQ8w0pGEPXzgeh2Etk4d5vQ/xKrFmJe+Y2KEQi30rgrjB0kmDFXUW/DoIi9lOQ65qUJnN5+Tz9K7nQuIq1z4hjYnM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748498384; c=relaxed/simple;
+	bh=iPaSHY988H9Kcx23HvxF8liBMTdsJZ0pejD77+6Ls1o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fz8NmZPhDtcxKkpIBIo8XmVQYTeguUOF06aKhT+HZrhljeEZtixb+3coVJN20tMTIICkQXGIaP9y49/ILxmZIaQvwwyo1jm6t2WQLgIKIEAeev8UZ4YIitho66yiTPzvnFpyCUF3JLJKrctGdDxC4KWczFC7kWEN5Hn0HsSi5kE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eYZiHjrt; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1748498380;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Hrp8Tsg3gq4eYqgZHBaMCj3lwesK/mHoylipYTBhHT4=;
+	b=eYZiHjrt03XhHOKyd2BKeyl5EGu/Bh2h+Lz9UfJwjr7mY5azsmOfXN5GYFR3bZlyUfKy55
+	PcGMjktjBsLD7eGKdCme/SS61vd/MTR02FCNq+7Ewa+hbuwaK1zI+NrkpszKL0FVkfAkf9
+	R90aEABmp0NqLJupbKqc9BWgpEetXNk=
+Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com
+ [209.85.210.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-607-QR-_Q9VUOuqgFUIPbfmtLA-1; Thu, 29 May 2025 01:59:37 -0400
+X-MC-Unique: QR-_Q9VUOuqgFUIPbfmtLA-1
+X-Mimecast-MFC-AGG-ID: QR-_Q9VUOuqgFUIPbfmtLA_1748498377
+Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-73c09e99069so637713b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 22:59:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748498377; x=1749103177;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Hrp8Tsg3gq4eYqgZHBaMCj3lwesK/mHoylipYTBhHT4=;
+        b=MfACSkcVeEtVmOUuDhwca6SEzweZdtcpE5Et/XnrEkFxPLCuiGDMzwCniQ1L1zb4C/
+         RPgE8KVmA58atIzicHLI4K1h9zoGQEOVN2okgtXYEIpejHXkWGJzIdMaAYpjA558EYkI
+         33xtHyPVOUthZFW1XuTSd8vXaMsLv89Oz/JKzNfmQjGLOCUoJGQArw1srWeIRnUhFcdE
+         VLlK/eVrupnzwBahPaxm/QM4D1a46Ix/PCzXeK0lC44zyOE1MQr/o65A5nsn8I2Szno7
+         mBc41qSm1YULqfVdBa5mWFzWdkay6OKMhaqlFJZeJ6+ZTsJ6/0/+YQrw2+HXKHt9S0bD
+         7l5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXIG0XhC1KNN7ghNOl+qkciy9byrr7eu2QEgfa/vvXBXBPdnpp+1j1xMcP5vJp+0+dztRvrI9WvWXc+N+M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLUVpYUie5RB2SA0m6EF98WVHTXenkI7tXW3ztvKyptWFALR/z
+	2Cng/B5lSTpYRn6Tl0Bgn9DOLwQynPZP89hjefdCwrfV2mstcHyCKg2M0Y+0/F+9VilBLFItwVL
+	gFxXb8IOCk6POTzHkjZkCmfu6utViSMNrLr/D5DytRrmPdnLFCejvrzT9wyAHyXSyIpR3/NKu3M
+	9C5YKGOSiuuDbHjhenwfudKUJg43Bo7WGgQpU+1czu
+X-Gm-Gg: ASbGnctMEVdQbq+PaVV+0Lctmee+B+dGPqM/wTLXqYhFZCT3MWxuLGV2HIHacGj/kjB
+	P2FGd+8ESP0OVYhY5rBDNgP9Lm9VYm91BjSTRHOg2yVOhex5g25PojF5XWM0yGR2cixEh+g==
+X-Received: by 2002:a05:6a20:3d8c:b0:1f5:8cc8:9cc5 with SMTP id adf61e73a8af0-2188c37d595mr36238830637.34.1748498376640;
+        Wed, 28 May 2025 22:59:36 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEppiK3rECq3UScHTVDpF9H46LDpf7/Vz/aWHze9R2mzgO7X7xwc6pTEtfOfbZZgHKK1Ng9NbkbRd3EdjgJ4k8=
+X-Received: by 2002:a05:6a20:3d8c:b0:1f5:8cc8:9cc5 with SMTP id
+ adf61e73a8af0-2188c37d595mr36238802637.34.1748498376235; Wed, 28 May 2025
+ 22:59:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY8PR12MB7705:EE_|SA5PPF6407DD448:EE_
-X-MS-Office365-Filtering-Correlation-Id: c8371947-8f75-493b-d628-08dd9e755aff
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|376014|7053199007|13003099007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?3wDEZoQvlhx8bRfXSgrlEUWl8qKZHkLKLeSKc1ZP8M3wwpUFNLWXUE6/76if?=
- =?us-ascii?Q?/rlUM3or9Rh/vC0GSUJpQKh4lE3OtoFtFptAFxJOaDXpsWvdGYMIWnPsrR6F?=
- =?us-ascii?Q?AW4Q2mz+DR9SLzTP4spFun1TTQR97N23/X/oONOH7flvgtTNq2K7kBxpdBY1?=
- =?us-ascii?Q?WHN3TEKj9BpnGAZlyi3TXYFI+Edf3dIaVQcVCDZJ+dFaADeixpI0Cpp/otb0?=
- =?us-ascii?Q?oYXmkSHPX+/UwEGga5G/0zy0NlaYvJe4IE0ZRV7eJQrCmgFV1E7ksdAi3USr?=
- =?us-ascii?Q?UoBh18c1T6x1CwFnsctKglu6hvZ81OyGJS+VAw5N3Id9vS0XT+rdlubIvmQ4?=
- =?us-ascii?Q?tW3evVarQhTOPx8wcbXoic/7uGNcsoTf3jYUCwSUdsYeXYjjxCRGmMGuNUza?=
- =?us-ascii?Q?N5RHMHYBvzAZDsBlvxYUFEsFc3+U7431g0GVznDiWtnJnnQApaoM5ULvtOIb?=
- =?us-ascii?Q?spe8ir35MVn47KtUyRMFUiagO9K7nc1IitVdLkI2yLOArAOji6GMuZj9Qerh?=
- =?us-ascii?Q?/ZC1j05tYpztVOmA8IohHrOaJf0vY3bBOwvdozAeUIxGGI+a2Jw6qitfUahv?=
- =?us-ascii?Q?Vezo+OtxpiGiqnUg3fQLWKiS5DQ3GLzMlnf5rb/nhi+pGAQ8QSlxjrxdj67q?=
- =?us-ascii?Q?l3dxKDrkPWN7yElJ0lvP45kRM15uoxZa6Ug0iP1cvhRG9hzwQw3Ehh+69KSp?=
- =?us-ascii?Q?YRW8im9QLkrzewV6+H0D/kFDLLBBDBy4BcoPjXR4fV80qxYUJjwZRgJpeyZn?=
- =?us-ascii?Q?Rur0Hid3v+ymLjDHy/dcW8shYje90h6fhZm6mRjI2pK+1+okBSSjoDm8dFAi?=
- =?us-ascii?Q?yiYbgNXZJMh/9g6ZRkuoZFKhK1MC4TwwX4J4yKuYt/lS/SrSPetXtKnjIk9i?=
- =?us-ascii?Q?krL+gValc0tUw+m/dE/b1EXe892NbtdXyRa0ldyz1aJtUvack7FTfR63XsmS?=
- =?us-ascii?Q?a1cpvBNz1w83blY4Ga8GN1ZP5in72TU2a5dLRJHHsPSX55bcuLtdZNPdfXUS?=
- =?us-ascii?Q?MZ122ayZ5L7Ron5G5bWfCz5hN02WWqTvfhQgbQjkkcGP8oy6b/slt8zeGC5Z?=
- =?us-ascii?Q?jHd9vEQiSQcrNRvXCm/O+O1UsZ/N69i9imtiUKWimuIIe8SHjRme8Phx7WHN?=
- =?us-ascii?Q?6kpraHsu/uqqMcWqOIADYQ8D0A/y47dPgELf2sWsq3VBXQuka2jZTVafiLee?=
- =?us-ascii?Q?ncmK1TMrIZ4y2b948jh3whp1Bw2raPHRRiq6aGtocTNyJWNIbCL0txbdHup7?=
- =?us-ascii?Q?H44Kkcz3pZcT8Rd40sLjEWoVDfleE1Cyp5c9ZsdCXdHLHHWQoYMKK+33LvUx?=
- =?us-ascii?Q?r081Gz+ntrlgm40pmW3ka4eUNJ+hQ0Uhh+YRa4lsiH6lstq4bWzbjHEPmiIQ?=
- =?us-ascii?Q?x1sbAGnPfhlJGlNVlaVEPx+2rBRTxCam5AWut57Gk2Ly0TffwRILJpsGhMgV?=
- =?us-ascii?Q?IIKGWNQY2VE=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY8PR12MB7705.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7053199007)(13003099007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?gp0kNXuHPiarzC2ep/aiMndOLO6g01gQCOcX7XauFZ2ISEgaypU+n4sMoN7h?=
- =?us-ascii?Q?6KelggYMQZqaDcSmLNCys0lA/dXRX63lmf1EInP39bw1M0PNamSicFSAdNkn?=
- =?us-ascii?Q?0mL1Uy7TbE6LrLmxNv1YeUbt6wR+zWk8Plfg/MT6L2/0qCFaqy50EM3G5ZTc?=
- =?us-ascii?Q?/czktS5MAybp6SO4/pCfpCcTGKNt0GZSy4V98aEPk5BAt01IdwphrjCnEEtq?=
- =?us-ascii?Q?KdyIptdAjBG+zJsHmjpODGIuY86nVyAwQWrbUMtF1b9Ev63BiGm8djhjEnM9?=
- =?us-ascii?Q?DZA82iSY4TPL6iWCkUHteVdIRADURs4VZF/qIPS6ISa7RUxW4pYDbnODO27C?=
- =?us-ascii?Q?Sp00B0vS2jRbOmD/q73OoXpCDKYmd5AYDv5LTv3K8FFxvucPHvzLkJx4RBuC?=
- =?us-ascii?Q?/A7mh+2x0TSUgN7yDog/C7P6V7yBne+vHfAf8mA6HagAlpCPy3oklfWwmhJg?=
- =?us-ascii?Q?FmooHI5CT9ip1t0FU3L/iVHjVPaY0J3apgC8goRn74mceK+DOLNgzLLdDWJa?=
- =?us-ascii?Q?69+fZFMVdvDd19hBBPfjfMu2sltW0XjrZbPQ5aXzotvwL9Y77SsqSBU0E71e?=
- =?us-ascii?Q?9IPcGt03Wv9d6g/dz/nth+rEk+uwz6U6MhgkFyZuLM0p3O2P5sgcurP0PKFi?=
- =?us-ascii?Q?pKTvZ1i186M0rUmiLCRuQjeWgzB9+tRKZP1PU1YiMa4Npp4djqx9EqcwnYV2?=
- =?us-ascii?Q?HRR8/SEO3Zi87Y7dVLBLTrB/4SY4hH822DmKy1VssJ+rjiep806TetleuoZs?=
- =?us-ascii?Q?3sKCoydiaWWEg4sQH33vfSHXyOSidO367iHVYEwbvzr6p7q8vIG2wlkMYyhl?=
- =?us-ascii?Q?JrWVmKeTQoifq7lMR1+7QqoJ/UzYYXkWd7u2ZgjvMk1rplxngeMPQRqHC8pa?=
- =?us-ascii?Q?V2NY2Nv5m8VChcPyyfAiWkLvuOGzANvYF1BXsu/nJQiUfI8ocOFK4NsNRQVG?=
- =?us-ascii?Q?IEqofySkCG3qgoRYCkmU8okDlbDsz0fmpsvZ8DO/CAQKGvS8y5fyg53P5rP1?=
- =?us-ascii?Q?yE12qNYWFr61hiDMBZ3V8UfsRLNo4hv5AjivN3H7mTk3OHRH/1u67ZsVtnJC?=
- =?us-ascii?Q?gtomACUKnX5egsuncTrh5zZlygkmlFdMywnS8KU4RdTWNjTMCrQkX5wis78o?=
- =?us-ascii?Q?FIGaDX1Z8Ao7PxNIuV3GZGZortZV/g+dzj74g7eqZyoBOiVQulm90KqGDMWG?=
- =?us-ascii?Q?7x2kTb24XWmY45/NnftBUmgDk1QZ7UctBccytkq89daISgnrsGvIMdT6+iep?=
- =?us-ascii?Q?ugQQnpCYsVZqZSy98hYlyO/hkR1mY5FXPPvhG/HP7QYCKGO4GTMLHbnHKlDj?=
- =?us-ascii?Q?DM3j3fmQx22BzDXkr6lXWqrheBk1yHYDvQmRAyv7eRfFm1fEVpbWnKKpRHBs?=
- =?us-ascii?Q?hKimrppU8W+uzxxL0buZeIQE1uM2Z9WCT2clGyGkIC7Bb/mqjGA831YqyvU0?=
- =?us-ascii?Q?9/Dw3zTAwthTh+S2V+cZBbZcASJWZyQJPgUaLYvRC6rS6nIv1Xpm0U2uCXFi?=
- =?us-ascii?Q?XztXLb4gVlCSBhMomfVnOC75uGm53stAsYCDFOFTjf8Z3ex1PtZUM5HfeuWo?=
- =?us-ascii?Q?b01U62y0AhNkhXmzEG4QiU+roisNFz4WTWSitWcW?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c8371947-8f75-493b-d628-08dd9e755aff
-X-MS-Exchange-CrossTenant-AuthSource: CY8PR12MB7705.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 May 2025 05:55:03.3104
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Zn9uVyLU2SQAXx3sFRHTiRefbV5SrLtcPXlL7RbxEkfVZ3G8Zq5t0XvEyp4PgdiKu3jRLtZfqRfI9Zci67Lb7Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA5PPF6407DD448
+References: <20250527161904.75259-1-minhquangbui99@gmail.com> <20250527161904.75259-2-minhquangbui99@gmail.com>
+In-Reply-To: <20250527161904.75259-2-minhquangbui99@gmail.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Thu, 29 May 2025 13:59:24 +0800
+X-Gm-Features: AX0GCFvV4SMxVeAp88dfab7cgPBX-hOf80WPlNoWi1BcZpIXiRmPygKp4JwIjWk
+Message-ID: <CACGkMEvAJziO3KW3Nk9+appXmR92ixcTeWY_XEZz4Qz1MwrhYA@mail.gmail.com>
+Subject: Re: [RFC PATCH net-next v2 1/2] virtio-net: support zerocopy multi
+ buffer XDP in mergeable
+To: Bui Quang Minh <minhquangbui99@gmail.com>
+Cc: netdev@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>, 
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	bpf@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 13, 2025 at 05:00:07PM +0100, Lorenzo Stoakes wrote:
-> As part of the ongoing efforts to sub-divide memory management
-> maintainership and reviewership, establish a section for memory policy and
-> migration and add appropriate maintainers and reviewers.
-> 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+On Wed, May 28, 2025 at 12:19=E2=80=AFAM Bui Quang Minh
+<minhquangbui99@gmail.com> wrote:
+>
+> Currently, in zerocopy mode with mergeable receive buffer, virtio-net
+> does not support multi buffer but a single buffer only. This commit adds
+> support for multi mergeable receive buffer in the zerocopy XDP path by
+> utilizing XDP buffer with frags.
+>
+> Signed-off-by: Bui Quang Minh <minhquangbui99@gmail.com>
 > ---
-> 
-> REVIEWERS NOTES:
-> 
-> I took a look through git blame, past commits, etc. and came up with what
-> seems to be a reasonable list of people here, if you don't feel you ought
-> to be here, or if you feel anybody is missing (including yourself!) let me
-> know :)
-> 
-> David has kindly already agreed to be co-maintainer for this section.
-> 
->  MAINTAINERS | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 80aa09f2e735..29d73593038c 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -15567,6 +15567,24 @@ W:	http://www.linux-mm.org
->  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
->  F:	mm/gup.c
-> 
-> +MEMORY MANAGEMENT - MEMORY POLICY AND MIGRATION
-> +M:	Andrew Morton <akpm@linux-foundation.org>
-> +M:	David Hildenbrand <david@redhat.com>
-> +R:	Zi Yan <ziy@nvidia.com>
-> +R:	Alistair Popple <apopple@nvidia.com>
+>  drivers/net/virtio_net.c | 123 +++++++++++++++++++++------------------
+>  1 file changed, 66 insertions(+), 57 deletions(-)
+>
+> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+> index e53ba600605a..a9558650f205 100644
+> --- a/drivers/net/virtio_net.c
+> +++ b/drivers/net/virtio_net.c
+> @@ -45,6 +45,8 @@ module_param(napi_tx, bool, 0644);
+>  #define VIRTIO_XDP_TX          BIT(0)
+>  #define VIRTIO_XDP_REDIR       BIT(1)
+>
+> +#define VIRTNET_MAX_ZC_SEGS    8
+> +
+>  /* RX packet size EWMA. The average packet size is used to determine the=
+ packet
+>   * buffer size when refilling RX rings. As the entire RX ring may be ref=
+illed
+>   * at once, the weight is chosen so that the EWMA will be insensitive to=
+ short-
+> @@ -1232,65 +1234,53 @@ static void xsk_drop_follow_bufs(struct net_devic=
+e *dev,
+>         }
+>  }
+>
+> -static int xsk_append_merge_buffer(struct virtnet_info *vi,
+> -                                  struct receive_queue *rq,
+> -                                  struct sk_buff *head_skb,
+> -                                  u32 num_buf,
+> -                                  struct virtio_net_hdr_mrg_rxbuf *hdr,
+> -                                  struct virtnet_rq_stats *stats)
+> +static int virtnet_build_xsk_buff_mrg(struct virtnet_info *vi,
+> +                                     struct receive_queue *rq,
+> +                                     u32 num_buf,
+> +                                     struct xdp_buff *xdp,
+> +                                     struct virtnet_rq_stats *stats)
+>  {
+> -       struct sk_buff *curr_skb;
+> -       struct xdp_buff *xdp;
+> -       u32 len, truesize;
+> -       struct page *page;
+> +       unsigned int len;
+>         void *buf;
+>
+> -       curr_skb =3D head_skb;
+> +       if (num_buf < 2)
+> +               return 0;
+> +
+> +       while (num_buf > 1) {
+> +               struct xdp_buff *new_xdp;
+>
+> -       while (--num_buf) {
+>                 buf =3D virtqueue_get_buf(rq->vq, &len);
+> -               if (unlikely(!buf)) {
+> -                       pr_debug("%s: rx error: %d buffers out of %d miss=
+ing\n",
+> -                                vi->dev->name, num_buf,
+> -                                virtio16_to_cpu(vi->vdev,
+> -                                                hdr->num_buffers));
+> +               if (!unlikely(buf)) {
+> +                       pr_debug("%s: rx error: %d buffers missing\n",
+> +                                vi->dev->name, num_buf);
+>                         DEV_STATS_INC(vi->dev, rx_length_errors);
+> -                       return -EINVAL;
+> -               }
+> -
+> -               u64_stats_add(&stats->bytes, len);
+> -
+> -               xdp =3D buf_to_xdp(vi, rq, buf, len);
+> -               if (!xdp)
+> -                       goto err;
+> -
+> -               buf =3D napi_alloc_frag(len);
+> -               if (!buf) {
+> -                       xsk_buff_free(xdp);
+> -                       goto err;
+> +                       return -1;
+>                 }
+>
+> -               memcpy(buf, xdp->data - vi->hdr_len, len);
+> -
+> -               xsk_buff_free(xdp);
+> +               new_xdp =3D buf_to_xdp(vi, rq, buf, len);
+> +               if (!new_xdp)
+> +                       goto drop_bufs;
+>
+> -               page =3D virt_to_page(buf);
+> +               /* In virtnet_add_recvbuf_xsk(), we ask the host to fill =
+from
+> +                * xdp->data - vi->hdr_len with both virtio_net_hdr and d=
+ata.
+> +                * However, only the first packet has the virtio_net_hdr,=
+ the
+> +                * following ones do not. So we need to adjust the follow=
+ing
 
-I'm particularly familiar with mm/migrate.c and mm/migrate_device.c so:
+Typo here.
 
-Acked-by: Alistair Popple <apopple@nvidia.com>
+> +                * packets' data pointer to the correct place.
+> +                */
 
-> +R:	Matthew Brost <matthew.brost@intel.com>
-> +R:	Joshua Hahn <joshua.hahnjy@gmail.com>
-> +R:	Rakie Kim <rakie.kim@sk.com>
-> +L:	linux-mm@kvack.org
-> +S:	Maintained
-> +W:	http://www.linux-mm.org
-> +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
-> +F:	include/linux/mempolicy.h
-> +F:	include/linux/migrate.h
-> +F:	mm/mempolicy.c
-> +F:	mm/migrate.c
-> +F:	mm/migrate_device.c
->  MEMORY MANAGEMENT - NUMA MEMBLOCKS AND NUMA EMULATION
->  M:	Andrew Morton <akpm@linux-foundation.org>
->  M:	Mike Rapoport <rppt@kernel.org>
+I wonder what happens if we don't use this trick? I meant we don't
+reuse the header room for the virtio-net header. This seems to be fine
+for a mergeable buffer and can help to reduce the trick.
+
+> +               new_xdp->data -=3D vi->hdr_len;
+> +               new_xdp->data_end =3D new_xdp->data + len;
+>
+> -               truesize =3D len;
+> +               if (!xsk_buff_add_frag(xdp, new_xdp))
+> +                       goto drop_bufs;
+>
+> -               curr_skb  =3D virtnet_skb_append_frag(head_skb, curr_skb,=
+ page,
+> -                                                   buf, len, truesize);
+> -               if (!curr_skb) {
+> -                       put_page(page);
+> -                       goto err;
+> -               }
+> +               num_buf--;
+>         }
+>
+>         return 0;
+>
+> -err:
+> +drop_bufs:
+>         xsk_drop_follow_bufs(vi->dev, rq, num_buf, stats);
+> -       return -EINVAL;
+> +       return -1;
+>  }
+>
+>  static struct sk_buff *virtnet_receive_xsk_merge(struct net_device *dev,=
+ struct virtnet_info *vi,
+> @@ -1307,23 +1297,42 @@ static struct sk_buff *virtnet_receive_xsk_merge(=
+struct net_device *dev, struct
+>         num_buf =3D virtio16_to_cpu(vi->vdev, hdr->num_buffers);
+>
+>         ret =3D XDP_PASS;
+> +       if (virtnet_build_xsk_buff_mrg(vi, rq, num_buf, xdp, stats))
+> +               goto drop;
+> +
+>         rcu_read_lock();
+>         prog =3D rcu_dereference(rq->xdp_prog);
+> -       /* TODO: support multi buffer. */
+> -       if (prog && num_buf =3D=3D 1)
+> -               ret =3D virtnet_xdp_handler(prog, xdp, dev, xdp_xmit, sta=
+ts);
+
+Without this patch it looks like we had a bug:
+
+        ret =3D XDP_PASS;
+        rcu_read_lock();
+        prog =3D rcu_dereference(rq->xdp_prog);
+        /* TODO: support multi buffer. */
+        if (prog && num_buf =3D=3D 1)
+                ret =3D virtnet_xdp_handler(prog, xdp, dev, xdp_xmit, stats=
+);
+        rcu_read_unlock();
+
+This implies if num_buf is greater than 1, we will assume XDP_PASS?
+
+> +       if (prog) {
+> +               /* We are in zerocopy mode so we cannot copy the multi-bu=
+ffer
+> +                * xdp buff to a single linear xdp buff. If we do so, in =
+case
+> +                * the BPF program decides to redirect to a XDP socket (X=
+SK),
+> +                * it will trigger the zerocopy receive logic in XDP sock=
+et.
+> +                * The receive logic thinks it receives zerocopy buffer w=
+hile
+> +                * in fact, it is the copy one and everything is messed u=
+p.
+> +                * So just drop the packet here if we have a multi-buffer=
+ xdp
+> +                * buff and the BPF program does not support it.
+> +                */
+> +               if (xdp_buff_has_frags(xdp) && !prog->aux->xdp_has_frags)
+> +                       ret =3D XDP_DROP;
+
+Could we move the check before trying to build a multi-buffer XDP buff?
+
+> +               else
+> +                       ret =3D virtnet_xdp_handler(prog, xdp, dev, xdp_x=
+mit,
+> +                                                 stats);
+> +       }
+>         rcu_read_unlock();
+>
+>         switch (ret) {
+>         case XDP_PASS:
+> -               skb =3D xsk_construct_skb(rq, xdp);
+> +               skb =3D xdp_build_skb_from_zc(xdp);
+
+Is this better to make this change a separate patch?
+
+>                 if (!skb)
+> -                       goto drop_bufs;
+> +                       break;
+>
+> -               if (xsk_append_merge_buffer(vi, rq, skb, num_buf, hdr, st=
+ats)) {
+> -                       dev_kfree_skb(skb);
+> -                       goto drop;
+> -               }
+> +               /* Later, in virtnet_receive_done(), eth_type_trans()
+> +                * is called. However, in xdp_build_skb_from_zc(), it is =
+called
+> +                * already. As a result, we need to reset the data to bef=
+ore
+> +                * the mac header so that the later call in
+> +                * virtnet_receive_done() works correctly.
+> +                */
+> +               skb_push(skb, ETH_HLEN);
+>
+>                 return skb;
+>
+> @@ -1332,14 +1341,11 @@ static struct sk_buff *virtnet_receive_xsk_merge(=
+struct net_device *dev, struct
+>                 return NULL;
+>
+>         default:
+> -               /* drop packet */
+> -               xsk_buff_free(xdp);
+> +               break;
+>         }
+>
+> -drop_bufs:
+> -       xsk_drop_follow_bufs(dev, rq, num_buf, stats);
+> -
+>  drop:
+> +       xsk_buff_free(xdp);
+>         u64_stats_inc(&stats->drops);
+>         return NULL;
+>  }
+> @@ -1396,6 +1402,8 @@ static int virtnet_add_recvbuf_xsk(struct virtnet_i=
+nfo *vi, struct receive_queue
+>                 return -ENOMEM;
+>
+>         len =3D xsk_pool_get_rx_frame_size(pool) + vi->hdr_len;
+> +       /* Reserve some space for skb_shared_info */
+> +       len -=3D SKB_DATA_ALIGN(sizeof(struct skb_shared_info));
+>
+>         for (i =3D 0; i < num; ++i) {
+>                 /* Use the part of XDP_PACKET_HEADROOM as the virtnet hdr=
+ space.
+> @@ -6734,6 +6742,7 @@ static int virtnet_probe(struct virtio_device *vdev=
+)
+>         dev->netdev_ops =3D &virtnet_netdev;
+>         dev->stat_ops =3D &virtnet_stat_ops;
+>         dev->features =3D NETIF_F_HIGHDMA;
+> +       dev->xdp_zc_max_segs =3D VIRTNET_MAX_ZC_SEGS;
+>
+>         dev->ethtool_ops =3D &virtnet_ethtool_ops;
+>         SET_NETDEV_DEV(dev, &vdev->dev);
 > --
-> 2.49.0
+> 2.43.0
+>
+
+Thanks
+
 
