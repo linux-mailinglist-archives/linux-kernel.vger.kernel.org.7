@@ -1,123 +1,129 @@
-Return-Path: <linux-kernel+bounces-666818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B591AAC7C55
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 13:03:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CD03AC7C5C
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 13:04:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E124D3B9180
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 11:02:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8553C7A682F
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 11:03:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D55028DF2D;
-	Thu, 29 May 2025 11:03:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FC0028E564;
+	Thu, 29 May 2025 11:04:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aTl415la"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bT4PDFxS"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80F191DE89B
-	for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 11:03:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5471B20E6E3;
+	Thu, 29 May 2025 11:04:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748516595; cv=none; b=XYGGs0d6jxvShgMtTYQK9b5LHB9i4QPsp/1V14gV0j68UbDJfkMFlZkKlBIduXfEFCP6W1Xz+YrXkFEV7chxwWkmizHdzIa0TAPDfhahP4TWv/hIlxxm+q26yioQ9wZsYlpX2/LkxkEglpw3vQ1G6tp1MLq3FGmvuCrYBuaN88w=
+	t=1748516664; cv=none; b=uMjPcPo2EloMIXpDg3blLNcx3coZ5AJrCznnCxEAjWf/OyaNDZKHWI3r3UAFVlC3NwXEQVl775FYdRfxojLMJYDkWyjF5Csj8LOZBxSF0411C5LpUyP0ImBeEq3rJHszguCoSSmOx0aEKW9hYsZZQASkA0nx7ODvPBRbjjLxwT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748516595; c=relaxed/simple;
-	bh=Yn9dVZsvMXLIwbt/fspA5DsmNe/mbinsIxmwOYQ3jRM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ojzR3vKkQVewvb8BKi3Fkhu64kjtaNLuGUYBMYjctpbvjE/cDyv4b+cph7TNglX8DVBtnWDlv+JdYnHNjzlDO+e5T9GcvqYYNebHYuMxS87N2I1wm/mtsIF5Q0wt3SmcROPtbD2GFYt9BgxfoV+E36CAoeHEp5zwIEoAANkQeBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aTl415la; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1748516594; x=1780052594;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=Yn9dVZsvMXLIwbt/fspA5DsmNe/mbinsIxmwOYQ3jRM=;
-  b=aTl415laUbhdnjd4XLLTkuCaAVQ2wut4c3OXPOdXYw0rD1OLbPO+k+mT
-   /cVrrLgwhvpZMYD0pBZaLRoI16wvme9mIROYhp3C57mkNz7V4zXfsdTvd
-   AAZZQ26wzjJUjFMEiwFqQ9mXLpFUMXTqL6Q6zr5eNSX/rum4Rwa7HXzYL
-   WhxVNLhVeshj4b4eVP38I5+ao8guEzKz8xv5XS0TAd/etRtzpuYTEeyFm
-   Tk8E4SBNRjxgpHWqizprN3y3Kqicw0tqx58S0fTeeuxaZcqCE0HbitjJv
-   xGiVCQVIJAKDLNXDt2UWImjq3VlzuD3n0SqB0yikNUndck/VbjXe2a5gM
-   A==;
-X-CSE-ConnectionGUID: 2S2iz9bWQz2aS8UNu4XmHQ==
-X-CSE-MsgGUID: P88SFPmHTEKw22AJD9CtpQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11447"; a="54369597"
-X-IronPort-AV: E=Sophos;i="6.15,192,1739865600"; 
-   d="scan'208";a="54369597"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2025 04:03:13 -0700
-X-CSE-ConnectionGUID: 6kVKqstISrW7He3HzHIs1Q==
-X-CSE-MsgGUID: bTctGFv2QD62OegFqsdS/A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,192,1739865600"; 
-   d="scan'208";a="148303605"
-Received: from igk-lkp-server01.igk.intel.com (HELO b69e6467d450) ([10.211.3.150])
-  by orviesa003.jf.intel.com with ESMTP; 29 May 2025 04:03:11 -0700
-Received: from kbuild by b69e6467d450 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uKb2S-0000Hk-2k;
-	Thu, 29 May 2025 11:03:08 +0000
-Date: Thu, 29 May 2025 19:00:51 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev,
-	"Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: [gustavoars:testing/wfamnae-next20250424 1/25]
- kernel/bpf/core.c:2576:22: warning: comparison of distinct pointer types
- lacks a cast
-Message-ID: <202505291933.IiIYX6Xj-lkp@intel.com>
+	s=arc-20240116; t=1748516664; c=relaxed/simple;
+	bh=bjFdJf+Dm1UZ3P8YltWnNwfPAQJXnYFs0CGmDjW+6gk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rMvp+qcPDUgTNS/094+akJup6pWoOUT1f4LEqsk8YsBchB7Q+ArCKxkXfMV76Yn/hS+XUffIIXMj4g6tnEetZRf8LoH7P8V9br2sDsN3ckjMtK+Cun3XwDMNWep2a0EGzR8e/aydwc2tg2ofvjQ4Ivvbt3mqMFHLOjDTyHCrbXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bT4PDFxS; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-74264d1832eso717091b3a.0;
+        Thu, 29 May 2025 04:04:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748516662; x=1749121462; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=elb0IQnO73maUG0NJbzoI/IOVIfGmzvtWXJxilsL9mo=;
+        b=bT4PDFxSfvmgLjkax8HlZpNGFRpXvuXbiHB4brlQ/s0/cILmS+My+pcUm17A5Lo/Uz
+         yCmaQqe+05VHFUkdLx4rP4SDBMgawtLQhkNXQgUAZm0VGdGydWYiMoNOb3HQhFVzxbGX
+         cwxNrafds7eHeKtT3zcQXFmRMZI5URVHpKigPvoTMjtant5d5v/1cO7mM4C0bK7DDzXi
+         yIGIa2780WJzbtz3nyaxqepERLpRq4Hl7l/cihqlLmdnHMkjTTySEQLWUMlKuGRWHfDh
+         D+DlZXPXLa+/ZXHRdz4EAx3Z8RccVDAkOWJE4LCB8JHh48MA8thrTnE5zBpT130xAYpj
+         SOXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748516662; x=1749121462;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=elb0IQnO73maUG0NJbzoI/IOVIfGmzvtWXJxilsL9mo=;
+        b=jKtnVl0OGaSKguIopFcsdOPst1VUjE5plURlL14KsJ820NtqmOu+9f0IGvbd1emXDq
+         MBR8vENCgdVcVkyNGapxYCTs1YHRBZd1bFPzbbJOfle3S2R5T0fgQcgiAYG6Ts+krW/2
+         Mfdmm7hD/gTOiOdB/RyCGd8MhP1B4jIPGc+S4MRHD0PdOIDqN3skJRV87cHxqPZjJwBC
+         sOztgsh1ZBs8QWjQrAEJcwjfjXlSMgujcNo66Lby8KDALF334d0Iw2Fqg8qQhJeBVObs
+         Q6lcLWvgexEVIiYEsH7Rh6MurOGczLoQIxcAbdj1tMqjlOZ6FpvPQBfCdlDMqQyi2jLi
+         sFcA==
+X-Forwarded-Encrypted: i=1; AJvYcCVOwjXxKw0Tt4z6QzdTG0haL1QNuHKCot9btggVc2GP+KVf1yQwWMxQoBaAIHtqB3KsEMuWLYhb4UR1Mfc=@vger.kernel.org, AJvYcCXkX8Se80XbVneWKXCK7mj1cAsyfQ+/qChwGQS+8NoojgJkOZUXe6TVVg1DxXxVKGi+jq0YMfDhwvyP+TlB8jJ6@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCayYqIfIQRl0m4Xvli86UjgmxUu1JiaoM/MrfwrvWYxcfk6LL
+	4pZsbcEsBFBNtOlSp8FFP1sJdvn1ZB/QPQZAWD9Dr1OzxAuIGaU1BgF8
+X-Gm-Gg: ASbGncthwXx2fhalPIgfb/Q3IzMRX34RA9oOsAgO+6Aimur99+XKtx3rTE4Z9azkSOs
+	WS2b6nGqBDrrdGqnOojqP2iq9wWRFlmRHtQ5LCl+S+Q1m+GIB+CV4lD3+UlxTGBE+E6rUZAGDb4
+	AsLvMDior48m2toj9grPooK1KmTADYDteOk3v7vc+vMXAusKq1czhFx2mV9HvGyjV8XSOrIpwSt
+	kpXbMK1pV11G2Rh5B/Ni4cuu2M+y+u0Q5Ic2B8FJIMAFZqLudW554ROgGeFhWcOwrVPSACzs7p+
+	r8T0e1lI0H/Cy0WyfkPetyV2Yh9oL4B9fUVYMQ01mkWLgNbyShG1D7DbJHGOYIXnVcLMn31CeXt
+	VOWuT0LmY+fGylYvLASazzmjTbTYpDf8zAp4j8M31
+X-Google-Smtp-Source: AGHT+IH5zfeo/HBOiXWizEuXHO3WU2MEzyWgONfZvWvMMvUVOiVgGFx3iOqK4PF3pd4B0YjP702rFQ==
+X-Received: by 2002:a05:6a00:1381:b0:740:9d7c:8f5c with SMTP id d2e1a72fcca58-745fe036213mr33229676b3a.18.1748516662427;
+        Thu, 29 May 2025 04:04:22 -0700 (PDT)
+Received: from ?IPV6:2001:ee0:4f0e:fb30:d434:b1b6:e451:f5d9? ([2001:ee0:4f0e:fb30:d434:b1b6:e451:f5d9])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-747affafb44sm1113913b3a.107.2025.05.29.04.04.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 29 May 2025 04:04:21 -0700 (PDT)
+Message-ID: <da0339d6-b6a3-44d8-8ed4-b99249fa0fd1@gmail.com>
+Date: Thu, 29 May 2025 18:04:17 +0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net] selftests: net: build net/lib dependency in all
+ target
+To: Simon Horman <horms@kernel.org>
+Cc: netdev@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
+ Philip Li <philip.li@intel.com>, oliver.sang@intel.com,
+ Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250529070536.84491-1-minhquangbui99@gmail.com>
+ <20250529103221.GN1484967@horms.kernel.org>
+Content-Language: en-US
+From: Bui Quang Minh <minhquangbui99@gmail.com>
+In-Reply-To: <20250529103221.GN1484967@horms.kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git testing/wfamnae-next20250424
-head:   604833e5a102945aa4596b80085ef9cada5e6d57
-commit: 117d6f3024817bf22efc8b81679e0b282ca9cc07 [1/25] treewide_some: fix multiple -Wfamnae warnings that must be audited separately
-config: alpha-randconfig-2006-20250504 (https://download.01.org/0day-ci/archive/20250529/202505291933.IiIYX6Xj-lkp@intel.com/config)
-compiler: alpha-linux-gcc (GCC) 8.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250529/202505291933.IiIYX6Xj-lkp@intel.com/reproduce)
+On 5/29/25 17:32, Simon Horman wrote:
+> On Thu, May 29, 2025 at 02:05:36PM +0700, Bui Quang Minh wrote:
+>> Currently, we only build net/lib dependency in install target. This
+>> commit moves that to all target so that net/lib is included in in-tree
+>> build and run_tests.
+> Hi,
+>
+> The above describes what is being done.
+> I think it would be good to also describe why.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202505291933.IiIYX6Xj-lkp@intel.com/
+Hi,
 
-All warnings (new ones prefixed by >>):
+Currently, when building net related selftests, we need to
 
-   cc1: note: -Wvla-larger-than=0 is meaningless
-   kernel/bpf/core.c: In function 'bpf_prog_array_free_sleepable':
->> kernel/bpf/core.c:2576:22: warning: comparison of distinct pointer types lacks a cast
-     if (!progs || progs == &bpf_empty_prog_array.hdr)
-                         ^~
+     make install
 
+so that the net/lib is compiled. In case we do
 
-vim +2576 kernel/bpf/core.c
+     make
 
-8c7dcb84e3b744 Delyan Kratunov 2022-06-14  2573  
-8c7dcb84e3b744 Delyan Kratunov 2022-06-14  2574  void bpf_prog_array_free_sleepable(struct bpf_prog_array *progs)
-8c7dcb84e3b744 Delyan Kratunov 2022-06-14  2575  {
-8c7dcb84e3b744 Delyan Kratunov 2022-06-14 @2576  	if (!progs || progs == &bpf_empty_prog_array.hdr)
-8c7dcb84e3b744 Delyan Kratunov 2022-06-14  2577  		return;
-8c7dcb84e3b744 Delyan Kratunov 2022-06-14  2578  	call_rcu_tasks_trace(&progs->rcu, __bpf_prog_array_free_sleepable_cb);
-8c7dcb84e3b744 Delyan Kratunov 2022-06-14  2579  }
-8c7dcb84e3b744 Delyan Kratunov 2022-06-14  2580  
+or
 
-:::::: The code at line 2576 was first introduced by commit
-:::::: 8c7dcb84e3b744b2b70baa7a44a9b1881c33a9c9 bpf: implement sleepable uprobes by chaining gps
+     make run_tests
 
-:::::: TO: Delyan Kratunov <delyank@fb.com>
-:::::: CC: Alexei Starovoitov <ast@kernel.org>
+the net/lib is not compiled. So I move the INSTALL_DEP_TARGETS which is 
+net/lib if the selftests is net related to all. As a result, all 
+make/make install/make run_tests will have the net/lib compiled.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks,
+Quang Minh.
 
