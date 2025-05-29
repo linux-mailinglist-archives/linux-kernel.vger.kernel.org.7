@@ -1,161 +1,206 @@
-Return-Path: <linux-kernel+bounces-666652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27B48AC7A32
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 10:24:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15421AC7A37
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 10:28:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 012861887E51
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 08:24:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4F331BA61D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 08:28:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67B6D21A451;
-	Thu, 29 May 2025 08:24:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 033A821A43D;
+	Thu, 29 May 2025 08:28:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="G8E6sIz7"
-Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="UMV40FJ8"
+Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE54B1EB2F;
-	Thu, 29 May 2025 08:24:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 845961EB2F;
+	Thu, 29 May 2025 08:28:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748507052; cv=none; b=oBNDbokM/LJHYXFb8tdkoTNzFPbX8CjlQn7wGhjVoRY5+cwExhg0TkGN5+z24kaWHN3lZmuHTrF705W5iv/yaPi3LtNKETpt1qhUu5mAkprWSSUVsX/+SBwoioBWSIEScnbYfpWUTjAlzLp+fsOYyyUVHx+nHTO86d1/CIulO0o=
+	t=1748507290; cv=none; b=Ia6j6ks1QFeFU40ActyF/Gbc//ggKOZHkyJrWAFdKFZ6LtLxVMlYHebFPecxzGfB8rR1XbZbXkiLsK0rzEoVMFUcD9gBpXO0XBVB+OxsbsIHpBWXZ7OWn1J2LxeWsPdFwETfEOVWjktLsGjVMYXuZj1SRpUxI0vplKuS/+Y9IAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748507052; c=relaxed/simple;
-	bh=RIJKgny14IykmPjf5Bf9kyBbM164mxDIhs0UrJ22eDM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Qp9+vCFU1kExuY2OkVHOtRqo9ci9fB0Ff2/UE/EOHqvxSBQs4J/iEBS6yiFVrgKDNXB3jEZx/f4upZxeeN1ugEDLMzCLlrI3H5vtyw8xZjFgqPnVVnnsuHr+Z4t00JDUwP+ji4HpxclzXQXTRTegcahhWWlEuPLLxwTaKWySE3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=G8E6sIz7; arc=none smtp.client-ip=115.124.30.100
+	s=arc-20240116; t=1748507290; c=relaxed/simple;
+	bh=UK+2ozS77qj0vsbMk1/tmVRHT1LAkM8SEGNSjhz+Zio=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ENWvpPrpOAiuCjvv+BxmjF33yrAGfRLtKJ4dUFu+5vDGf5k2NTTvEDvbPqIc1hHuIJABTzFuzueowGmj0i9LfgYjAOQCzt3JtDbuAXXV78XYL3uRZdV1kMX1bNPD06skU5m/OBRa+Lh745Lp4OkyGWQ3+9ab336ZK6nmxu0Ui54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=UMV40FJ8; arc=none smtp.client-ip=115.124.30.111
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
 DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
 	d=linux.alibaba.com; s=default;
-	t=1748507046; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=HepIRzU9yVfyc0yQbJg8CFCDS1fs2gXvJNO7QTz5Ovs=;
-	b=G8E6sIz7puwJ/OZer7Hdvi/DmUH9PaCh3Vh0Cr0DywuXQvUiqRq+GgLws7DKfzr+99rhSFN3J4DrdEGzMCRbHSUubCS8eAXWDXTmRB9XKS/kbreDiGCryU3vmKMZEsDvM8yAyMVjSj5DUlWXRSB6SHYeYwqlZpDUIiek+eeXUSk=
-Received: from localhost(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WcGcFkd_1748507044 cluster:ay36)
+	t=1748507284; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=ngl560kZEKSyWNZckI7eA5BnwDW53BnjR6Q03uPelj0=;
+	b=UMV40FJ83//5fzdJZUBLdggOl5PYA9kKE/hWN+erATQHaerXx41N4cHYMVVTf2vL60g+C04HOhmIQJpuWVnOno4MZSaJ1fnuaBRT3Iebh4hC+JqKGf6T0uKVk3ntCO9G8GB+HPKJe9fHOKsS/kZIjraqobiaIKP4w2Cvrv5hgSs=
+Received: from 30.74.144.146(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WcGcH7v_1748507280 cluster:ay36)
           by smtp.aliyun-inc.com;
-          Thu, 29 May 2025 16:24:05 +0800
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-To: akpm@linux-foundation.org,
-	hughd@google.com,
-	david@redhat.com
-Cc: lorenzo.stoakes@oracle.com,
-	Liam.Howlett@oracle.com,
-	npache@redhat.com,
-	ryan.roberts@arm.com,
-	dev.jain@arm.com,
-	ziy@nvidia.com,
-	baolin.wang@linux.alibaba.com,
-	linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] mm: shmem: disallow hugepages if the system-wide shmem THP sysfs settings are disabled
-Date: Thu, 29 May 2025 16:23:55 +0800
-Message-ID: <c1a6fe55f668cfe87ad113faa49120f049ba9cb5.1748506520.git.baolin.wang@linux.alibaba.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <cover.1748506520.git.baolin.wang@linux.alibaba.com>
-References: <cover.1748506520.git.baolin.wang@linux.alibaba.com>
+          Thu, 29 May 2025 16:28:01 +0800
+Message-ID: <2610143f-3274-47c0-9a11-777be673c186@linux.alibaba.com>
+Date: Thu, 29 May 2025 16:27:59 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 06/12] khugepaged: introduce khugepaged_scan_bitmap for
+ mTHP support
+To: Nico Pache <npache@redhat.com>
+Cc: David Hildenbrand <david@redhat.com>, David Rientjes
+ <rientjes@google.com>, zokeefe@google.com, linux-mm@kvack.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, ziy@nvidia.com,
+ lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, ryan.roberts@arm.com,
+ dev.jain@arm.com, corbet@lwn.net, rostedt@goodmis.org, mhiramat@kernel.org,
+ mathieu.desnoyers@efficios.com, akpm@linux-foundation.org,
+ baohua@kernel.org, willy@infradead.org, peterx@redhat.com,
+ wangkefeng.wang@huawei.com, usamaarif642@gmail.com, sunnanyong@huawei.com,
+ vishal.moola@gmail.com, thomas.hellstrom@linux.intel.com,
+ yang@os.amperecomputing.com, kirill.shutemov@linux.intel.com,
+ aarcange@redhat.com, raquini@redhat.com, anshuman.khandual@arm.com,
+ catalin.marinas@arm.com, tiwai@suse.de, will@kernel.org,
+ dave.hansen@linux.intel.com, jack@suse.cz, cl@gentwo.org,
+ jglisse@google.com, surenb@google.com, hannes@cmpxchg.org, mhocko@suse.com,
+ rdunlap@infradead.org
+References: <20250515032226.128900-1-npache@redhat.com>
+ <20250515032226.128900-7-npache@redhat.com>
+ <9c54397f-3cbf-4fa2-bf69-ba89613d355f@linux.alibaba.com>
+ <CAA1CXcC9MB2Nw4MmGajESfH8DhAsh4QvTj4ABG3+Rg2iPi087w@mail.gmail.com>
+ <ed1d1281-ece3-4d2c-8e58-aaeb436d3927@linux.alibaba.com>
+ <CAA1CXcAWcahkxzsvK_bcWei6or_gKBjt+97dqhuSem8N7cBAQw@mail.gmail.com>
+ <1f00fdc3-a3a3-464b-8565-4c1b23d34f8d@linux.alibaba.com>
+ <cf33ff99-ac97-4a33-9df0-01a59d5b8424@redhat.com>
+ <e800189d-ad3d-409d-bfba-2c32a6ac66c0@linux.alibaba.com>
+ <CAA1CXcAAbPXTHvBoSW5uxo5uH4NnQompMSsE-xG+VHGJhhiCew@mail.gmail.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <CAA1CXcAAbPXTHvBoSW5uxo5uH4NnQompMSsE-xG+VHGJhhiCew@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-The MADV_COLLAPSE will ignore the system-wide shmem THP sysfs settings, which
-means that even though we have disabled the shmem THP configuration, MADV_COLLAPSE
-will still attempt to collapse into a shmem THP. This violates the rule we have
-agreed upon: never means never.
 
-Then the current strategy is:
-For shmem, if none of always, madvise, within_size, and inherit have enabled
-PMD-sized mTHP, then MADV_COLLAPSE will be prohibited from collapsing PMD-sized mTHP.
 
-For tmpfs, if the mount option is set with the 'huge=never' parameter, then
-MADV_COLLAPSE will be prohibited from collapsing PMD-sized mTHP.
+On 2025/5/29 12:02, Nico Pache wrote:
+> On Wed, May 28, 2025 at 8:04 AM Baolin Wang
+> <baolin.wang@linux.alibaba.com> wrote:
+>>
+>>
+>>
+>> On 2025/5/28 17:26, David Hildenbrand wrote:
+>>> On 22.05.25 11:39, Baolin Wang wrote:
+>>>>
+>>>>
+>>>> On 2025/5/21 18:23, Nico Pache wrote:
+>>>>> On Tue, May 20, 2025 at 4:09 AM Baolin Wang
+>>>>> <baolin.wang@linux.alibaba.com> wrote:
+>>>>>>
+>>>>>> Sorry for late reply.
+>>>>>>
+>>>>>> On 2025/5/17 14:47, Nico Pache wrote:
+>>>>>>> On Thu, May 15, 2025 at 9:20 PM Baolin Wang
+>>>>>>> <baolin.wang@linux.alibaba.com> wrote:
+>>>>>>>>
+>>>>>>>>
+>>>>>>>>
+>>>>>>>> On 2025/5/15 11:22, Nico Pache wrote:
+>>>>>>>>> khugepaged scans anons PMD ranges for potential collapse to a
+>>>>>>>>> hugepage.
+>>>>>>>>> To add mTHP support we use this scan to instead record chunks of
+>>>>>>>>> utilized
+>>>>>>>>> sections of the PMD.
+>>>>>>>>>
+>>>>>>>>> khugepaged_scan_bitmap uses a stack struct to recursively scan a
+>>>>>>>>> bitmap
+>>>>>>>>> that represents chunks of utilized regions. We can then determine
+>>>>>>>>> what
+>>>>>>>>> mTHP size fits best and in the following patch, we set this
+>>>>>>>>> bitmap while
+>>>>>>>>> scanning the anon PMD. A minimum collapse order of 2 is used as
+>>>>>>>>> this is
+>>>>>>>>> the lowest order supported by anon memory.
+>>>>>>>>>
+>>>>>>>>> max_ptes_none is used as a scale to determine how "full" an order
+>>>>>>>>> must
+>>>>>>>>> be before being considered for collapse.
+>>>>>>>>>
+>>>>>>>>> When attempting to collapse an order that has its order set to
+>>>>>>>>> "always"
+>>>>>>>>> lets always collapse to that order in a greedy manner without
+>>>>>>>>> considering the number of bits set.
+>>>>>>>>>
+>>>>>>>>> Signed-off-by: Nico Pache <npache@redhat.com>
+>>>>>>>>
+>>>>>>>> Sigh. You still haven't addressed or explained the issues I
+>>>>>>>> previously
+>>>>>>>> raised [1], so I don't know how to review this patch again...
+>>>>>>> Can you still reproduce this issue?
+>>>>>>
+>>>>>> Yes, I can still reproduce this issue with today's (5/20) mm-new
+>>>>>> branch.
+>>>>>>
+>>>>>> I've disabled PMD-sized THP in my system:
+>>>>>> [root]# cat /sys/kernel/mm/transparent_hugepage/enabled
+>>>>>> always madvise [never]
+>>>>>> [root]# cat
+>>>>>> /sys/kernel/mm/transparent_hugepage/hugepages-2048kB/enabled
+>>>>>> always inherit madvise [never]
+>>>>>>
+>>>>>> And I tried calling madvise() with MADV_COLLAPSE for anonymous memory,
+>>>>>> and I can still see it collapsing to a PMD-sized THP.
+>>>>> Hi Baolin ! Thank you for your reply and willingness to test again :)
+>>>>>
+>>>>> I didn't realize we were talking about madvise collapse-- this makes
+>>>>> sense now. I also figured out why I could "reproduce" it before. My
+>>>>> script was always enabling the THP settings in two places, and I only
+>>>>> commented out one to test this. But this time I was doing more manual
+>>>>> testing.
+>>>>>
+>>>>> The original design of madvise_collapse ignores the sysfs and
+>>>>> collapses even if you have an order disabled. I believe this behavior
+>>>>> is wrong, but by design. I spent some time playing around with madvise
+>>>>> collapses with and w/o my changes. This is not a new thing, I
+>>>>> reproduced the issue in 6.11 (Fedora 41), and I think its been
+>>>>> possible since the inception of madvise collapse 3 years ago. I
+>>>>> noticed a similar behavior on one of my RFC since it was "breaking"
+>>>>> selftests, and the fix was to reincorporate this broken sysfs
+>>>>> behavior.
+>>>>
+>>>> OK. Thanks for the explanation.
+>>>>
+>>>>> 7d8faaf15545 ("mm/madvise: introduce MADV_COLLAPSE sync hugepage
+>>>>> collapse")
+>>>>> "This call is independent of the system-wide THP sysfs settings, but
+>>>>> will fail for memory marked VM_NOHUGEPAGE."
+>>>>>
+>>>>> The second condition holds true (and fails for VM_NOHUGEPAGE), but I
+>>>>> dont know if we actually want madvise_collapse to be independent of
+>>>>> the system-wide.
+>>>>
+>>>> This design principle surprised me a bit, and I failed to find the
+>>>> reason in the commit log. I agree that "never should mean never," and we
+>>>> should respect the THP/mTHP sysfs setting. Additionally, for the
+>>>> 'shmem_enabled' sysfs interface controlled for shmem/tmpfs, THP collapse
+>>>> can still be prohibited through the 'deny' configuration. The rules here
+>>>> are somewhat confusing.
+>>>
+>>> I recall that we decided to overwrite "VM_NOHUGEPAGE", because the
+>>> assumption is that the same app that triggered MADV_NOHUGEPAGE triggers
+>>> the collapse. So the app decides on its own behavior.
+>>>
+>>> Similarly, allowing for collapsing in a VM without VM_HUGEPAGE in the
+>>> "madvise" mode would be fine.
+>>>
+>>> But in the "never" case, we should just "never" collapse.
+>>
+>> OK. Let's fix the "never" case first. Thanks.
+> Great, I will update that in the next version!
 
-Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
----
- mm/huge_memory.c |  2 +-
- mm/shmem.c       | 12 ++++++------
- 2 files changed, 7 insertions(+), 7 deletions(-)
+I've sent a patchset to fix the MADV_COLLAPSE issue for anonymous memory 
+and shmem [1]. Please have a look.
 
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index d3e66136e41a..a8cfa37cae72 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -166,7 +166,7 @@ unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
- 	 * own flags.
- 	 */
- 	if (!in_pf && shmem_file(vma->vm_file))
--		return shmem_allowable_huge_orders(file_inode(vma->vm_file),
-+		return orders & shmem_allowable_huge_orders(file_inode(vma->vm_file),
- 						   vma, vma->vm_pgoff, 0,
- 						   !enforce_sysfs);
- 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 4b42419ce6b2..4dbb28d85cd9 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -613,7 +613,7 @@ static unsigned int shmem_get_orders_within_size(struct inode *inode,
- }
- 
- static unsigned int shmem_huge_global_enabled(struct inode *inode, pgoff_t index,
--					      loff_t write_end, bool shmem_huge_force,
-+					      loff_t write_end,
- 					      struct vm_area_struct *vma,
- 					      unsigned long vm_flags)
- {
-@@ -625,7 +625,7 @@ static unsigned int shmem_huge_global_enabled(struct inode *inode, pgoff_t index
- 		return 0;
- 	if (shmem_huge == SHMEM_HUGE_DENY)
- 		return 0;
--	if (shmem_huge_force || shmem_huge == SHMEM_HUGE_FORCE)
-+	if (shmem_huge == SHMEM_HUGE_FORCE)
- 		return maybe_pmd_order;
- 
- 	/*
-@@ -860,7 +860,7 @@ static unsigned long shmem_unused_huge_shrink(struct shmem_sb_info *sbinfo,
- }
- 
- static unsigned int shmem_huge_global_enabled(struct inode *inode, pgoff_t index,
--					      loff_t write_end, bool shmem_huge_force,
-+					      loff_t write_end,
- 					      struct vm_area_struct *vma,
- 					      unsigned long vm_flags)
- {
-@@ -1261,7 +1261,7 @@ static int shmem_getattr(struct mnt_idmap *idmap,
- 			STATX_ATTR_NODUMP);
- 	generic_fillattr(idmap, request_mask, inode, stat);
- 
--	if (shmem_huge_global_enabled(inode, 0, 0, false, NULL, 0))
-+	if (shmem_huge_global_enabled(inode, 0, 0, NULL, 0))
- 		stat->blksize = HPAGE_PMD_SIZE;
- 
- 	if (request_mask & STATX_BTIME) {
-@@ -1768,7 +1768,7 @@ unsigned long shmem_allowable_huge_orders(struct inode *inode,
- 		return 0;
- 
- 	global_orders = shmem_huge_global_enabled(inode, index, write_end,
--						  shmem_huge_force, vma, vm_flags);
-+						  vma, vm_flags);
- 	/* Tmpfs huge pages allocation */
- 	if (!vma || !vma_is_anon_shmem(vma))
- 		return global_orders;
-@@ -1790,7 +1790,7 @@ unsigned long shmem_allowable_huge_orders(struct inode *inode,
- 	/* Allow mTHP that will be fully within i_size. */
- 	mask |= shmem_get_orders_within_size(inode, within_size_orders, index, 0);
- 
--	if (vm_flags & VM_HUGEPAGE)
-+	if (shmem_huge_force || (vm_flags & VM_HUGEPAGE))
- 		mask |= READ_ONCE(huge_shmem_orders_madvise);
- 
- 	if (global_orders > 0)
--- 
-2.43.5
-
+[1] 
+https://lore.kernel.org/all/cover.1748506520.git.baolin.wang@linux.alibaba.com/
 
