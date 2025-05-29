@@ -1,155 +1,115 @@
-Return-Path: <linux-kernel+bounces-667021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 127DAAC7F82
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 16:04:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EFFCAC7D8D
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 14:05:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0934A1C05DF7
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 14:03:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F4539E3099
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 12:05:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2585A217705;
-	Thu, 29 May 2025 14:02:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E49B4223709;
+	Thu, 29 May 2025 12:05:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="pQRhGPFo"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T4dxqYAv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFD54213E76
-	for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 14:02:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 455E622256F;
+	Thu, 29 May 2025 12:05:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748527350; cv=none; b=V+Pnjy/mUM6wscL8H0zHH3JycJJ2uX+8Qn0GEUwb7rkmNw0WG1fmCPX1aWSSZKvh64Rf4j5zG7GHtsk4EyvtaA7A5uOMjq3jUrON8GqinHVgylq5CqfC/lohOV4pX6NpGrokzr3JsfKPQ854u0NjxyYRY3WBLhuFvNqnUPuvKqU=
+	t=1748520332; cv=none; b=Z/4WHmRJfiiUYnwG9Tc3YEtWgghwX4vuK4LJ38zwndFemYiA/u98PQ/TqVUb7e/M95C0mBsulBi1Dmhnmwbznf2Puh2ekslocEcXcw/M3wPkce20phyWaBJeMHlgerBf6rUtsea2E66lYF8BoPt8kt6KeETn6oIPYO5FHw0uXVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748527350; c=relaxed/simple;
-	bh=yBKN8id0e8i0mID56sBX04JKOMEpNFcKtfCE5gt4YyQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=ZYNqTB4VpFfIA49EPKBgn1QHvQZ0BmHwEL4vvIJGTiJc8KNkTorYkJLV+rzjGU8JNyXVpBam7QxxK+0TYnNTce45nKtnxdrwFhFf27zuS4DWP5mFyXhMe6WmosRTH+LwntlA70jHZTKswKSM9l5rSYTVL8U/20ZjJGVSF3MzXWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=pQRhGPFo; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250529140227epoutp02d5f1ae2f9b92d272e493d94704b2d0da~EBFuogmSV1921919219epoutp02B
-	for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 14:02:27 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250529140227epoutp02d5f1ae2f9b92d272e493d94704b2d0da~EBFuogmSV1921919219epoutp02B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1748527347;
-	bh=gCzfbZekv4htNUijIC+SbkqBGyLEFOMaleFjXJEgatk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=pQRhGPFoL+9I1NyzEAuNZMzXCCh+59SIW5X+Soj1sPdR/Kb+oC4OO89NDIUAXx9bt
-	 ojZh0s28UbNv4XP9xM/04xKAnL/ldctCENwxlKRiDy4xIWis8EmNPd5yA4pd9TafW8
-	 I91Y5viLqoNBVZxeYBKmIKzR9XDaX8GgZuZM31Pk=
-Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
-	20250529140226epcas5p25bdafdf609607873ca08557b6ad3a85f~EBFt-QyMW1140911409epcas5p2c;
-	Thu, 29 May 2025 14:02:26 +0000 (GMT)
-Received: from epcas5p3.samsung.com (unknown [182.195.38.175]) by
-	epsnrtp02.localdomain (Postfix) with ESMTP id 4b7Sjr3GW2z2SSKX; Thu, 29 May
-	2025 14:02:24 +0000 (GMT)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20250529111718epcas5p4572d6aa7ae959b585b658d5a94f2b4ef~D_1iJ4i-t0282202822epcas5p4D;
-	Thu, 29 May 2025 11:17:18 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20250529111718epsmtrp1257cc470d2823aa85b322766527d6595~D_1iJE18d1149011490epsmtrp1p;
-	Thu, 29 May 2025 11:17:18 +0000 (GMT)
-X-AuditID: b6c32a52-40bff70000004c16-35-6838423d6874
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	8D.D0.19478.D3248386; Thu, 29 May 2025 20:17:17 +0900 (KST)
-Received: from bose.samsungds.net (unknown [107.108.83.9]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250529111715epsmtip16ae03b6cb035bd17825b1eb64d85c26c~D_1fb-zLZ2103321033epsmtip1G;
-	Thu, 29 May 2025 11:17:14 +0000 (GMT)
-From: Raghav Sharma <raghav.s@samsung.com>
-To: krzk@kernel.org, s.nawrocki@samsung.com, cw00.choi@samsung.com,
-	alim.akhtar@samsung.com, mturquette@baylibre.com, sboyd@kernel.org,
-	robh@kernel.org, conor+dt@kernel.org, richardcochran@gmail.com,
-	sunyeal.hong@samsung.com, shin.son@samsung.com
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	chandan.vn@samsung.com, karthik.sun@samsung.com, dev.tailor@samsung.com,
-	Raghav Sharma <raghav.s@samsung.com>
-Subject: [PATCH v3 4/4] arm64: dts: exynosautov920: add CMU_HSI2 clock DT
- nodes
-Date: Thu, 29 May 2025 16:56:40 +0530
-Message-Id: <20250529112640.1646740-5-raghav.s@samsung.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250529112640.1646740-1-raghav.s@samsung.com>
+	s=arc-20240116; t=1748520332; c=relaxed/simple;
+	bh=8I/UWuszTYHqaey/kP67a900h+P9udkFPXSQpcAGIl8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ELbBpObFEO5505pqULUuS6zt9J+mp1F5w1RQwVENxAfU3cvFvj/wHeDZa9i1t1CJN3PnOiDNJiCElb5zqorbAwMjDdl9W+MgFGG6FWt11e5hGzLkmyrZCyYbX7se5kuOrsIQaokDdlAo5dpttuv7r0+pkfGvWTXHMz8z/zY3OuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T4dxqYAv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACCB5C4CEE7;
+	Thu, 29 May 2025 12:05:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748520331;
+	bh=8I/UWuszTYHqaey/kP67a900h+P9udkFPXSQpcAGIl8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=T4dxqYAvZ54FKoVTj+yydgfIVvF/MnkLhnLXZnTR4ayNz5QvjWEoq4myi5AvbFfAm
+	 DUik26A7WJfdEZn2Oavw5VB35a7oD37DLB6bACy/AcZYQJ1FsQhdQ6z874mM+rKNyK
+	 NE9lT1NtdwjTyJULJvVgf3R175yapp8HcDemurLEuVAOniMKakZp7ko/pODiWSIRLw
+	 mfQMlaQP9ooRzSAvU+QH//MLMNUffj17tLGYdBF5hLOb66qByfsDMtQ5zRdSqDfZMx
+	 AaBAGFzMQFa8zQ6ZBpjrTm+58HiFVK+uyN40qv4cgPpby02raRrBdrtmWjJjBDzkZv
+	 MwR/NA+c4+urA==
+Date: Thu, 29 May 2025 13:05:24 +0100
+From: Will Deacon <will@kernel.org>
+To: perlarsen@google.com
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org, sebastianene@google.com,
+	qperret@google.com, qwandor@google.com, arve@android.com,
+	perl@immunant.com, lpieralisi@kernel.org, kernel-team@android.com,
+	tabba@google.com, james.morse@arm.com, armellel@google.com,
+	jean-philippe@linaro.org, ahomescu@google.com
+Subject: Re: [PATCH v4 3/5] KVM: arm64: Mark FFA_NOTIFICATION_* calls as
+ unsupported
+Message-ID: <20250529120523.GA29242@willie-the-truck>
+References: <20250516-virtio-msg-ffa-v4-0-580ee70e5081@google.com>
+ <20250516-virtio-msg-ffa-v4-3-580ee70e5081@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuphkeLIzCtJLcpLzFFi42LZdlhJTtfWySLDYOMxK4sH87axWUz4EmGx
-	Zu85JovrX56zWtzbsYzdYv6Rc6wWjTPeMFmcP7+B3WLT42usFh977rFaXN41h81ixvl9TBYX
-	T7laHFsgZvF95R1GiyNnXjBb/N+zg93i8Jt2Vot/1zayWEw+vpbVomnZeiYHUY/3N1rZPXbO
-	usvusWlVJ5vH5iX1Hn1bVjF6fN4kF8AWxWWTkpqTWZZapG+XwJWxf3InW8EDzoqrvVvYGxjf
-	sncxcnJICJhIvGltY+5i5OIQEtjOKHFi12dmiISExL7/vxkhbGGJlf+es0MUvWWUaO7fD5Zg
-	E9CSuLL9HRtIQkSgi0ni3L9XLCAOs8BOJom2x9vAdggL+Ess/vIKbCyLgKrEre2P2EBsXgFr
-	iS+XN7JBrJCX2H/wLFgNp4CNxN2bz1lAbCGgmo/bzzBD1AtKnJz5BCzODFTfvHU28wRGgVlI
-	UrOQpBYwMq1iFE0tKM5Nz00uMNQrTswtLs1L10vOz93ECI4wraAdjMvW/9U7xMjEwXiIUYKD
-	WUmEt8neLEOINyWxsiq1KD++qDQntfgQozQHi5I4r3JOZ4qQQHpiSWp2ampBahFMlomDU6qB
-	idvibYjTjh3t77kylfP2Bt03DHy/lcnuflfZzI6fJV6Pftw7LKM2qzA+a8Nke72v5z/9nTd1
-	u+DuQzdO7jd5YNB9WlAxd/7iz1OcfhdHMh2w8A3am/Vzts8u4/bc1WnPTDIOWcn+ivy9VVVp
-	s/xtFRWV2X/v+uelL38i+UfFLUrhRl5Mw926w1V712uGzn+Wt3lZ9C3PD1M6TsfdXlF2+s7H
-	7KvX3m2QUZZvTp6cqFQ89X/RJls//8SLHim80dsuVLP8O6GhFtuknO45qXrpPsO5cpdUr/V6
-	7+3QnM7y6hzDGaW7zb+aLcNeeqQdSEiVWv8vqDrMPkj6icty1ZNfeVf01Ur+WPmn1MTU7IRH
-	gRJLcUaioRZzUXEiAAc6exQfAwAA
-X-CMS-MailID: 20250529111718epcas5p4572d6aa7ae959b585b658d5a94f2b4ef
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-543,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250529111718epcas5p4572d6aa7ae959b585b658d5a94f2b4ef
-References: <20250529112640.1646740-1-raghav.s@samsung.com>
-	<CGME20250529111718epcas5p4572d6aa7ae959b585b658d5a94f2b4ef@epcas5p4.samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250516-virtio-msg-ffa-v4-3-580ee70e5081@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-Add required dt node for CMU_HSI2 block, which
-provides clocks to ufs and ethernet IPs
+On Fri, May 16, 2025 at 12:14:02PM +0000, Per Larsen via B4 Relay wrote:
+> From: Per Larsen <perlarsen@google.com>
+> 
+> Prevent FFA_NOTIFICATION_* interfaces from being passed through to TZ.
+> 
+> Signed-off-by: Per Larsen <perlarsen@google.com>
+> ---
+>  arch/arm64/kvm/hyp/nvhe/ffa.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/arch/arm64/kvm/hyp/nvhe/ffa.c b/arch/arm64/kvm/hyp/nvhe/ffa.c
+> index b3d016bee404ce3f8c72cc57befb4ef4e6c1657f..a545d25002c85b79a8d281739479dab7838a7cd3 100644
+> --- a/arch/arm64/kvm/hyp/nvhe/ffa.c
+> +++ b/arch/arm64/kvm/hyp/nvhe/ffa.c
+> @@ -632,6 +632,14 @@ static bool ffa_call_supported(u64 func_id)
+>  	case FFA_RXTX_MAP:
+>  	case FFA_MEM_DONATE:
+>  	case FFA_MEM_RETRIEVE_REQ:
+> +       /* Optional notification interfaces added in FF-A 1.1 */
+> +	case FFA_NOTIFICATION_BITMAP_CREATE:
+> +	case FFA_NOTIFICATION_BITMAP_DESTROY:
+> +	case FFA_NOTIFICATION_BIND:
+> +	case FFA_NOTIFICATION_UNBIND:
+> +	case FFA_NOTIFICATION_SET:
+> +	case FFA_NOTIFICATION_GET:
+> +	case FFA_NOTIFICATION_INFO_GET:
+>  		return false;
 
-Signed-off-by: Raghav Sharma <raghav.s@samsung.com>
----
- arch/arm64/boot/dts/exynos/exynosautov920.dtsi | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+Acked-by: Will Deacon <will@kernel.org>
 
-diff --git a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-index 2cb8041c8a9f..7890373f5da0 100644
---- a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-@@ -1048,6 +1048,23 @@ pinctrl_hsi1: pinctrl@16450000 {
- 			interrupts = <GIC_SPI 456 IRQ_TYPE_LEVEL_HIGH>;
- 		};
- 
-+		cmu_hsi2: clock-controller@16b00000 {
-+			compatible = "samsung,exynosautov920-cmu-hsi2";
-+			reg = <0x16b00000 0x8000>;
-+			#clock-cells = <1>;
-+
-+			clocks = <&xtcxo>,
-+				 <&cmu_top DOUT_CLKCMU_HSI2_NOC>,
-+				 <&cmu_top DOUT_CLKCMU_HSI2_NOC_UFS>,
-+				 <&cmu_top DOUT_CLKCMU_HSI2_UFS_EMBD>,
-+				 <&cmu_top DOUT_CLKCMU_HSI2_ETHERNET>;
-+			clock-names = "oscclk",
-+				      "noc",
-+				      "ufs",
-+				      "embd",
-+				      "ethernet";
-+		};
-+
- 		pinctrl_hsi2: pinctrl@16c10000 {
- 			compatible = "samsung,exynosautov920-pinctrl";
- 			reg = <0x16c10000 0x10000>;
--- 
-2.34.1
+That said, I wonder if we should revisit this denylist along the lines
+of the discussion with Oliver on the initial FF-A proxy series:
 
+https://lore.kernel.org/kvmarm/ZGx0QBZzFCmm636r@linux.dev/
+
+We check for is_ffa_call() already, so we could invert the above to be
+an allow-list for calls within the FF-A range rather than a deny-list.
+
+What do you think?
+
+Will
 
