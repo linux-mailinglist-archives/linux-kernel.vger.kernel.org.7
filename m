@@ -1,173 +1,125 @@
-Return-Path: <linux-kernel+bounces-667024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-667029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61BB6AC7F96
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 16:21:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03E0EAC7FA8
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 16:26:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C0051C005AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 14:21:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 16D857B2D88
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 14:24:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7ADE1DE881;
-	Thu, 29 May 2025 14:21:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ECCB21FF32;
+	Thu, 29 May 2025 14:25:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eJLh73X4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="NXeHWYWk"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15CDA8F5B;
-	Thu, 29 May 2025 14:21:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21F6721D3E1
+	for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 14:25:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748528479; cv=none; b=duxOvAQPSNDr22BtUY1d5KBVGO+xaeMOg1dKKawedthiOXbl8m2Znv02iIPHSJHRgQUkqEv79BWG2iMtGjrVaHovN1FLASbzdkUWIPw2aKLn8BE/5L0KQe6g17iCbzP4P3xdL9dujVLbimXBcAnz88V4G47NuRosl5Yzg7K7x8g=
+	t=1748528751; cv=none; b=cV6izQADOVAlPh4tjkyvjpEbc09EpK1FnJYo678DSdGSdiO5UiwhlN1UD3tor/Bo7pPP/uaUf2+ldo3g/sq2wU7BuQVQ7vgTx147T5ve0U/Kz8NmQqYrwuAh2hAqKd+2gAxfCQ5PlncfM7M4hZffMrw37FoXVIwfxTwPIKh4zYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748528479; c=relaxed/simple;
-	bh=myGypAtrlqF5QAHUeHQu/mXkeB8quQt8Js7lwyNSDAU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YQVuKcBOAw7VJnsT/RHL2HL1vmTzImdNABdYXAGjL+YsqZ4Vb6bMVWWXUzkNoYnqPICU05+nuBhvOQbh1x57ft+36ZvUsg65QDBgd3VhNnXElFmuvosE3dWT+RAL2TpR/q0yiyUh1vIkCXBHJmJW+YGLhIJV5LItWIekAw9aPwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eJLh73X4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4D2DC4CEE7;
-	Thu, 29 May 2025 14:21:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748528479;
-	bh=myGypAtrlqF5QAHUeHQu/mXkeB8quQt8Js7lwyNSDAU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eJLh73X4YcITKyQPqx52wB2t0hNu4C5ASGe6s0sIXIMoBYcwNXk9FD4mWCp+2lHMx
-	 wdcq1dR2LIxZ7Cw3OrugA4pn3fMloQ4lfhE7uVYI0+bVEWgpjh8YW2gZbfIEfggN6N
-	 pogU96zX/N20nG58C5KGWM9x8w/iujRuxx4wIer2H4FAdPXIKsIFUga4dnPZ86tw31
-	 /q7Pf0BHm6agrKIzDxd6a6m8OfddVtJMxLUdeEiz1p190oL7VETrlZtq50s7rCJD14
-	 PHNsR8YAB4RaKJzQEWulTcnYRQ7t+MmO/WR7PXq1bQngU5q8g0wS6Ktrvd8CmPl3XG
-	 JXrEUTpIl7iAw==
-Date: Thu, 29 May 2025 16:21:10 +0200
-From: Lorenzo Pieralisi <lpieralisi@kernel.org>
-To: Peter Maydell <peter.maydell@linaro.org>
-Cc: Marc Zyngier <maz@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, andre.przywara@arm.com,
-	Arnd Bergmann <arnd@arndb.de>,
-	Sascha Bischoff <sascha.bischoff@arm.com>,
-	Timothy Hayes <timothy.hayes@arm.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 01/26] dt-bindings: interrupt-controller: Add Arm GICv5
-Message-ID: <aDhtVkHfJvDfkfaX@lpieralisi>
-References: <20250513-gicv5-host-v4-0-b36e9b15a6c3@kernel.org>
- <20250513-gicv5-host-v4-1-b36e9b15a6c3@kernel.org>
- <aDhWlytLCxONZdF9@lpieralisi>
- <CAFEAcA_3YLMSy+OsSsRayaRciQ1+jjh-dGzEjrh2Wa8BqdmqrA@mail.gmail.com>
+	s=arc-20240116; t=1748528751; c=relaxed/simple;
+	bh=5q/Nt03mW2tHN1oqlNyTEbWsrQ7GhC569w51AxZGonc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=c1vHSIjnLoYtLHdQ3bIlcugG71Ueg/7S9vfwIO3cnj8wvmGMRrsKgUD9Ph7/x9Cd+9slhZJj8wRSNvafi6FMq0/ohmX2W8uJriO7JxbnTKlzWQ/4y4xlp9aAL5BVwCpJeKJnxW58UvJhDdx59D/16/k+OgtFdAOQdNnmFY/1KMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=NXeHWYWk; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 54TEPKYa2393261;
+	Thu, 29 May 2025 09:25:20 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1748528720;
+	bh=dY8BfBTTWayfadhN1o+/naocUo6MT0YpRR4g2Uwl7JY=;
+	h=From:To:CC:Subject:Date;
+	b=NXeHWYWkg1qkdYRtRnUQfCjHqOGVoQO+pU4k47qKmnZ3tvVoSVx00HXEXHJ6MWVv8
+	 BnxNUUVcsCa+nSfxlMT43olyu9QJGd7IURyoXajFoLWKSXETJI1tggBLIJG9EorZEf
+	 DrLBv294Ola0EBcEwIGnigYZu4T0I2ikO1sygTRE=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 54TEPK2a090740
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Thu, 29 May 2025 09:25:20 -0500
+Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 29
+ May 2025 09:25:18 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 29 May 2025 09:25:18 -0500
+Received: from localhost (jayesh-hp-z2-tower-g5-workstation.dhcp.ti.com [172.24.227.14])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 54TEPHml1703962;
+	Thu, 29 May 2025 09:25:18 -0500
+From: Jayesh Choudhary <j-choudhary@ti.com>
+To: <dianders@chromium.org>, <andrzej.hajda@intel.com>,
+        <neil.armstrong@linaro.org>, <rfoss@kernel.org>,
+        <Laurent.pinchart@ideasonboard.com>, <dri-devel@lists.freedesktop.org>,
+        <tomi.valkeinen@ideasonboard.com>, <andyshrk@163.com>
+CC: <jonas@kwiboo.se>, <jernej.skrabec@gmail.com>,
+        <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+        <tzimmermann@suse.de>, <airlied@gmail.com>, <simona@ffwll.ch>,
+        <lumag@kernel.org>, <lyude@redhat.com>, <andy.yan@rock-chips.com>,
+        <mordan@ispras.ru>, <linux@treblig.org>, <viro@zeniv.linux.org.uk>,
+        <a-bhatia1@ti.com>, <javierm@redhat.com>,
+        <linux-kernel@vger.kernel.org>, <devarsht@ti.com>,
+        <j-choudhary@ti.com>
+Subject: [PATCH v3 0/5] MHDP8546 fixes related to DBANC usecase
+Date: Thu, 29 May 2025 19:55:12 +0530
+Message-ID: <20250529142517.188786-1-j-choudhary@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFEAcA_3YLMSy+OsSsRayaRciQ1+jjh-dGzEjrh2Wa8BqdmqrA@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Thu, May 29, 2025 at 02:17:26PM +0100, Peter Maydell wrote:
-> On Thu, 29 May 2025 at 13:44, Lorenzo Pieralisi <lpieralisi@kernel.org> wrote:
-> >
-> > [+Andre, Peter]
-> >
-> > On Tue, May 13, 2025 at 07:47:54PM +0200, Lorenzo Pieralisi wrote:
-> > > +      reg:
-> > > +        minItems: 1
-> > > +        items:
-> > > +          - description: IRS control frame
-> >
-> > I came across it while testing EL3 firmware, raising the topic for
-> > discussion.
-> >
-> > The IRS (and the ITS) has a config frame (need to patch the typo
-> > s/control/config, already done) per interrupt domain supported, that is,
-> > it can have up to 4 config frames:
-> >
-> > - EL3
-> > - Secure
-> > - Realm
-> > - Non-Secure
-> >
-> > The one described in this binding is the non-secure one.
-> >
-> > IIUC, everything described in the DT represents the non-secure address
-> > space.
-> 
-> The dt bindings do allow for describing Secure-world devices:
-> Documentation/devicetree/bindings/arm/secure.txt has the
-> details. We use this in QEMU so we can provide a DTB to
-> guest EL3 firmware that tells it where the hardware is
-> (and which EL3 can then pass on to an NS kernel). It would
-> be helpful for the GICv5 binding to be defined in a way that
-> we can do this for a GICv5 system too.
-> 
-> > Two questions:
-> >
-> > - I don't have to spell out the IRS/ITS config frame (and SETLPI, by
-> >   the way) as non-secure, since that's implicit, is that correct ?
-> 
-> Do you want the DT binding to handle the case of "CPU and GIC do not
-> implement EL3, and the only implemented security state is Secure"
-> without the kernel needing to do something different from "ditto ditto
-> but the only implemented security state is Nonsecure" ?
+With the introduction of DBANC framework, the connector is no longer
+initialised in bridge_attach if that flag is set by the display
+controller.
 
-Not sure I follow you here sorry :)
+This series does some cleanup for legacy !(DRM_BRIDGE_ATTACH_NO_CONNECTOR)
+usecase and adds fixes for DRM_BRIDGE_ATTACH_NO_CONNECTOR usecase.
 
-> (Currently booting.html says you must be in NS, so we effectively
-> say we don't support booting on this particular unicorn :-)
-> But the secure.txt bindings envisage "kernel got booted in S",
-> mostly for the benefit of aarch32.)
-> 
-> > - How can the schema describe, if present, EL3, Secure and Realm frames ?
-> 
-> The tempting thing to do is to have regs[] list the frames
-> in some given order, but the spec makes them not simple
-> supersets, allowing all of:
->  * NS
->  * S
->  * NS, S, EL3
->  * NS, Realm, EL3
->  * NS, Realm, S, EL3
-> 
-> secure.txt says:
-> # The general principle of the naming scheme for Secure world bindings
-> # is that any property that needs a different value in the Secure world
-> # can be supported by prefixing the property name with "secure-". So for
-> # instance "secure-foo" would override "foo".
-> 
-> So maybe we could have
->  reg : the NS frame(s)
->  secure-reg : the S frame(s)
->  realm-reg : the Realm frame(s)
->  root-reg : the EL3 frame(s)
-> 
-> ??
+v2 patch lnk:
+<https://lore.kernel.org/all/20250521073237.366463-1-j-choudhary@ti.com/>
 
-I assume someone has to write the root/realm binding extensions.
+Changelog v2->v3:
+- Add mode_valid in drm_bridge_funcs to a separate patch
+- Remove "if (mhdp->connector.dev)" conditions that were missed in v2
+- Split out the move of drm_atomic_get_new_connector_for_encoder()
+  to a separate patch
+- Drop "R-by" considering the changes in v2[1/3]
+- Add Fixes tag to first 4 patches:
+  commit c932ced6b585 ("drm/tidss: Update encoder/bridge chain connect model")
+  This added DBANC flag in tidss while attaching bridge to the encoder
+- Drop RFC prefix
 
-In Documentation/devicetree/bindings/arm/secure.txt I don't think that
-reg is a contemplated property - I don't know if the list of properties
-is up-to-date.
+Jayesh Choudhary (5):
+  drm/bridge: cadence: cdns-mhdp8546-core: Remove legacy support for
+    connector initialisation in bridge
+  drm/bridge: cadence: cdns-mhdp8546*: Change drm_connector from
+    structure to pointer
+  drm/bridge: cadence: cdns-mhdp8546-core: Set the mhdp connector
+    earlier in atomic_enable()
+  drm/bridge: cadence: cdns-mhdp8546-core: Add mode_valid hook to
+    drm_bridge_funcs
+  drm/bridge: cadence: cdns-mhdp8546-core: Reduce log level for DPCD
+    read/write
 
-If what you suggest is OK, is it really needed to add the
-{secure/realm/root}-reg property to this binding ?
+ .../drm/bridge/cadence/cdns-mhdp8546-core.c   | 232 ++++--------------
+ .../drm/bridge/cadence/cdns-mhdp8546-core.h   |   2 +-
+ .../drm/bridge/cadence/cdns-mhdp8546-hdcp.c   |   8 +-
+ 3 files changed, 48 insertions(+), 194 deletions(-)
 
-Or implicitly a, say, realm-reg property is allowed using the
-yet-to-be-written realm.txt rules ?
+-- 
+2.34.1
 
-This would also slightly change the "required" properties, a "reg"
-property would not be required if eg the GIC does not implement a NS
-interrupt domain (but we would require a secure-reg if it implements a
-secure interrupt domain). I am making this up, obviously, I don't know
-what's best to do here.
-
-Lorenzo
 
