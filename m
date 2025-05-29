@@ -1,215 +1,125 @@
-Return-Path: <linux-kernel+bounces-666971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 528A3AC7ECB
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 15:35:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1D31AC7EE6
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 15:38:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98712A22BD3
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 13:34:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F309D7A90DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 13:36:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3640227EA1;
-	Thu, 29 May 2025 13:35:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AEDC226CE0;
+	Thu, 29 May 2025 13:37:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KV+Iuj1u"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PqKSJ/bt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73242218EBE;
-	Thu, 29 May 2025 13:35:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E45B91DB551;
+	Thu, 29 May 2025 13:37:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748525702; cv=none; b=TM3zsh4hk0vnM5gogYjvwZgWO6KzDW5OMybvW9evjMeicmsIa780s+qr8jumObcf6iZDwXLDefLS337Guy4DcB11RNbKnMD7WSdEcuY0shun9kQVwV0jqOjNpXyd8M8wE5MOqtYWLbxVGUVyv+fYMPeMXgTweccrkbOBEQer5GI=
+	t=1748525848; cv=none; b=fpT+ZDh/U2uCFdaOg2QLiCYClo5j4AM/D4sWPM3fOUisDlSB4l/AxBgCqac+y578g2rT9liRILa+9zj+YffVOfHV/VsCjBsvvDHJh08HAMXp0fZHWicn4P5Y3/gR8lrd8nWKuvdo03deeoVumDovybsP39S2GxwnID3ABB/ryhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748525702; c=relaxed/simple;
-	bh=PgpPs/+dohID7WSPahcG5Nf97Wybz1kIZvy7V9MojdI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ltx/VEOPwpLCj2zzhIA2oZlvgtbkiXceq9eo2i32UJ0VSBHbmw1m5wR9/hiw8nYhx66E0+lyXMjHzw+ZQnfPplC5WfCFe9g71BdipxTvsG90eecFIeKl3gMvaCbRCvizHoWfWnZtpXv2s2xN/rcEN2GwasabtjeL8tQvQEbvJnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KV+Iuj1u; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-3114c943367so940745a91.1;
-        Thu, 29 May 2025 06:35:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748525700; x=1749130500; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xeqkDhvtp3nMyrmOeAqt3MnSL10EXrZRWUnJu7S9sto=;
-        b=KV+Iuj1usttwVDxv55XSOY43MYGiXrx2+KobNbPErsWAzrj6A8tdYe+0gdegQ9txzr
-         IxXZYNa16r7sEvYumuiJnptRrDBkW9Ef95vOtlc2g8tt00i3rQlF0I4GCrv12vdU1NYg
-         HkrO1y46hKioIYXG0S4Z64qzRXIKs9WNZAfRxBnfvTFoe9b1uSNcJrCJfaCH9DDZEAJH
-         eAw9GuUIXXYqAACcVjZfZeuzYJiG4QeBO1m48fQZQsM2jWaIRDujuecSUr/1u5dPz/s8
-         ZtMvT7eHTQY/SxtAo3HBokinPrn2kuWWVc9EkP+9piZdeBWZCYS5thCoJt4WmzI5Oot6
-         k/Kg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748525700; x=1749130500;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xeqkDhvtp3nMyrmOeAqt3MnSL10EXrZRWUnJu7S9sto=;
-        b=oJMHmBBlUxCew3R4NJneqYALrb0xkG3RoEWYz+MpYT7+bj6qpTf5HnOYTSmoeeCXjT
-         49GpbCSbvK6uXRFaHxFRUTIOMRzcm1Kr+OtlVFqjKGRFN4Rq1AAxqPUt79sn/saDv7Xc
-         sWUwb81yXShVwVwFf1RGEzUP9uZf+TGT+Iz7FHX6gtwmVmhvEQralquHtajZwWIMgPIq
-         6969vYyx3zv/5g2opsZXIlwW6pz5j1jOr2LF5Hrn09dlasNr7tgVDpRivhoSSqwIpvaM
-         Fzu/PmJTSfkwKvjONUkMzj1WiUhG/uod4TIKGeUgQKc/HRkmou5trDXpVvWucPpKjQVT
-         JqyA==
-X-Forwarded-Encrypted: i=1; AJvYcCWQ/WVk9fiRl1Ovmc3guRkQsyCLlwVwIwved+m4t4+rNpjuHIuOSJAQRvJmCSD1wbh46P0yyrBOnkU=@vger.kernel.org, AJvYcCWamw/JgpT3+624GbmhTNK7J4p4CSfHShldLcj+8AKozovDvPsS7QrRkI7n9OgRUcm4A9EncJdZUV2I0uLN@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCyoR/CLBv+zPKYphncw+rI6BQP7JA6AL+JoFGt6j6BoQMxfkH
-	BQO9pN27WdpHjYCZrP5qH9r+ass2gqhB6qt/i3fDZbBE+i4j9APNnovRb0r2VaoECsKu43mkD/F
-	0IhW2KvCe/Hsx1P7Z2lDLauFsVNABros=
-X-Gm-Gg: ASbGnctwdGVsH4FAiI4e0p+mEinqHQ4FX54spPUxfqkLmdCOfXAdWpjtrUdAXsNbljo
-	obEsyzXKTQAjWhKqKBZkK/AZRUdHJguyYyJtJGbM7dA9kjYWwzWpLwKa5ydXGIHT9E4K+6DTFoB
-	JtIfLQtSZbney1/AO7rIZDBoFbYR7OOXSflA==
-X-Google-Smtp-Source: AGHT+IG5TvtUi/7Ocsx81viKTveXbpMUjC8wOYCkRjkDSQ6ODB3eJtB5RDP+/qgnQW48o9GBtFKbzdf2DgDlPpHIAlU=
-X-Received: by 2002:a17:90b:1997:b0:311:a314:c2cf with SMTP id
- 98e67ed59e1d1-311a314c4bcmr13887519a91.30.1748525699585; Thu, 29 May 2025
- 06:34:59 -0700 (PDT)
+	s=arc-20240116; t=1748525848; c=relaxed/simple;
+	bh=viS6bsZWOokCCrW1OHynzoFWbRQcOiDWmx3SPsFNbPw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UZqMKaCqVC74Yaf6jdCmyY+l/pMNs0BeFk294KYvk7DuivyM52/UO4AnkeUt6PKJiDPWg12MFToLIfrBIAilssUMmakypp28tftoUuPoPGUaFf1Bj8yQLDNVSZ99ysF+OYZBtr3JMx/oWLjO0fPaNRLjqysVgdAS1Ba0ilR7Ulw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PqKSJ/bt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FC4DC4CEE7;
+	Thu, 29 May 2025 13:37:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748525847;
+	bh=viS6bsZWOokCCrW1OHynzoFWbRQcOiDWmx3SPsFNbPw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=PqKSJ/btt0/1v8XTjS2chmk/ha2/eLXyu/K5L+CkDX0y4LB6c3PVVrUDZqZ/ytKqh
+	 m6iDeWoGzYtyL7W+7etG3ik1XhYe34EonzLtVMElranR38UtXjium0Y6UKT+d7yniY
+	 4w2KZGDPY6Onklp+onf8kxQtstRGocvf89mqoL00hMTXCBo9Jm0Vs13eKP7eyCE17w
+	 vYE2IceM7cNEl6vCRka/nNa50Q9eUkiOTafBmTsyzZpcjQmEnCmgXeZUnS5DQxDXOa
+	 lOX7aG5RuBc8hRZ5Rs/HyaOb2BsXHB/SfGU1P33Y/0ZH9s7hzWXzHmZer3Cs26gr4v
+	 1dnj5tjnCInNA==
+Message-ID: <ec227d43-5e0b-4de5-9329-63aa2bffbd99@kernel.org>
+Date: Thu, 29 May 2025 15:37:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250527200534.98689-1-gye976@gmail.com> <CAHp75VcUr7-X+F1f=wPH4=Z7q3kFffv8BgkmKWM4VTjy2w-tGg@mail.gmail.com>
- <CAKbEznuuGX3Gnqg6WF2mqbigRps0gzK_PfGHGNy8-v1WOZoMUQ@mail.gmail.com>
- <CAHp75VfEeNyspiMSax1_d+cpbmCQQVbOBEPCHuAag2O0ZHC1jA@mail.gmail.com>
- <CAKbEznt7ZhN9gZWy-7wHhFhwbF8XtCGrukuxe4eAFZpfxfu6vg@mail.gmail.com> <20250528180214.00002253@huawei.com>
-In-Reply-To: <20250528180214.00002253@huawei.com>
-From: Gyeyoung Baek <gye976@gmail.com>
-Date: Thu, 29 May 2025 22:34:48 +0900
-X-Gm-Features: AX0GCFtRpBXqvXbavHfcdC6sWlfhnWjzajkk552UN52Ztlm0oGfU-dMgpmTtpTc
-Message-ID: <CAKbEzntM7CvEtNT-SP_CFY0AhTabiDg5JGFdsM=BUd6K=UvCUw@mail.gmail.com>
-Subject: Re: [PATCH] iio: trigger: Avoid data race
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, Jonathan Cameron <jic23@kernel.org>, 
-	David Lechner <dlechner@baylibre.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 01/13] arm64: dts: ti: k3-am625-beagleplay: Enable
+ "cpsw3g" in the board file
+To: Siddharth Vadapalli <s-vadapalli@ti.com>, nm@ti.com, vigneshr@ti.com,
+ kristo@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, srk@ti.com
+References: <20250529133443.1252293-1-s-vadapalli@ti.com>
+ <20250529133443.1252293-2-s-vadapalli@ti.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250529133443.1252293-2-s-vadapalli@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, May 29, 2025 at 2:02=E2=80=AFAM Jonathan Cameron
-<Jonathan.Cameron@huawei.com> wrote:
->
-> On Wed, 28 May 2025 16:17:06 +0900
-> Gyeyoung Baek <gye976@gmail.com> wrote:
->
-> > On Wed, May 28, 2025 at 6:19=E2=80=AFAM Andy Shevchenko
-> > <andy.shevchenko@gmail.com> wrote:
-> > >
-> > > On Tue, May 27, 2025 at 11:10=E2=80=AFPM Gyeyoung Baek <gye976@gmail.=
-com> wrote:
-> > > > On Wed, May 28, 2025 at 5:25=E2=80=AFAM Andy Shevchenko
-> > > > <andy.shevchenko@gmail.com> wrote:
-> > > > > On Tue, May 27, 2025 at 10:05=E2=80=AFPM Gyeyoung Baek <gye976@gm=
-ail.com> wrote:
-> > >
-> > > ...
-> > >
-> > > > > At bare minimum they are not relevant to the patch change and hav=
-en't
-> > > > > been described in the commit messages.
-> > > >
-> > > > Hi Andy, thanks for your review.
-> > > > I initially skipped this part as I thought it was minor.
-> > > > But on a second look, it seems better to separate the declaration f=
-rom
-> > > > the logic.
-> > > >
-> > > > What do you think about the data race logic? Would it make sense?
-> > >
-> > > The point is valid, the atomic_read() + atomic_set() is 101 thingy,
-> > > whoever did that doesn't really have a clue what atomic(ity) is.
->
-> :)
->
-> I'm trying to recall what this protection is actually for so this might
-> be a little vague as descriptions go...
->
-> The key here is what can happen in that 'race' and hence why I'm still fa=
-irly
-> sure it isn't a real race.  Firstly this is called in an irq handler
-> so we can only have one call of this particular function at a time
-> for a given trigger.  So no race against itself.
->
-> The atomic part is about decrements that can happen elsewhere, but there
-> can never be 'more' decrements than the value we set the counter to in th=
-is
-> function.  That is it never goes negative.
->
-> Those decrements ultimately happen in calls that can't happen until after
-> the set (via various convoluted paths ultimately getting to
-> iio_trigger_notify_done()).  In many cases the trigger is masked until it
-> is reenabled on the counter =3D=3D 0 (elsewhere) - but not always...
->
-> IIRC correctly aim is to not double trigger in cases where we can't mask
-> the trigger (a particularly rubbish trigger) - so if any of the downstrea=
-m
-> devices still hasn't called iio_trigger_notify_done() then we quietly
-> drop this particular irq on the floor. We don't mind dropping a few
-> too many, just dropping too few a then we end up loosing count of who
-> has to be 'done' with the trigger.
->
-> Hence the counter won't change between atomic_get and the atomic_set
-> as it's always 0 which means no one else is left to decrement it.
->
-> Atomics don't always need to be atomic all the time, they just are in
-> some states.
->
-> So, is this something that has caused observed problems, or based
-> on code inspection? My remembering of what was going on here might well
-> be flawed.
+On 29/05/2025 15:34, Siddharth Vadapalli wrote:
+> In preparation for disabling "cpsw3g" device-tree node in the SoC file,
+> namely "k3-am62-main.dtsi", enable it in the board file. The motivation
+> for this change is that of following the existing convention of disabling
+> nodes in the SoC file and only enabling the required ones in the board
+> file.
 
-based on code inspection.
-initially, I simply assumed a data race because `atomic_read()` and
-`atomic_set()` were used.
-I didn=E2=80=99t question it further, sorry for that...
-However, after reading Jonathan's review, I take a look at the previous com=
-mits.
-It now seems that there is no data race.
 
-(I wonder why there isn't a wrapper API which does something like
-`atomic->counter =3D val;` for situations like this,
-    where only consumers need atomic API but not producers?)
+That's not separate commit. You disable in DTSI and enable in DTS in the
+same one, to avoid any duplicated statuses like in this case (even if
+one is default).
 
-Since synchronization isn't needed here, I think `cmpxchg()` may not
-be appropriate.
-I considered a few possible ways to improve clarity:
 
-1. Add comments only.
-2. Add comments and access directly like `use_count->counter =3D
-CONFIG_IIO_CONSUMERS_PER_TRIGGER;`.
-    (Wouldn't it make sense to have an official API for such direct
-access in `linux/atomic/~~.h`?)
-3. Add a separate bool flag to represent trigger's on/off state.
-`iio_trigger_notify_done()` still uses an atomic API, and it sets a
-boolean flag when count is 0.
-Then `poll()` and `poll_nested()` would simply check the flag without
-using atomic API.
 
-I think `3.` seems the best.
-I would appreciate your reviews on this.
-
-> There are some 'fun' corners for what happens after that set though
-> where a handler can run fast enough in race conditions we end up
-> hitting 0 in iio_trigger_notify_done_atomic() and have to schedule
-> restarting of the trigger because that might involve a bus write over
-> a sleeping bus.  That one was a painful bug report some years ago...
->
-> Jonathan
->
-> >
-> > Thanks for your explanation.
-> > Then I=E2=80=99ll send a v2 patch with only the `int i` change, followi=
-ng the
-> > review feedback.
-> >
-> > --
-> > Best regards,
-> > Gyeyoung
-> >
-> >
->
+Best regards,
+Krzysztof
 
