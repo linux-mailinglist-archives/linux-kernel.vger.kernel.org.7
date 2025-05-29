@@ -1,148 +1,136 @@
-Return-Path: <linux-kernel+bounces-666898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04AB9AC7DA0
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 14:22:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F825AC7DA2
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 14:22:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7A871BC0F83
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 12:22:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 133631BC5D5E
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 12:23:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20549220F2E;
-	Thu, 29 May 2025 12:22:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2146322425D;
+	Thu, 29 May 2025 12:22:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="QCwpzbep"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="1G76UBbK"
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66ACB7F7FC
-	for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 12:22:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A63BD223320
+	for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 12:22:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748521334; cv=none; b=DUrZ69M3/9g6fyZRozjUQJCsZSBQCacvv8OxAnlsJoQuFVoY8j9qtVOil8RTMaplx7qyvNzhUHA7nypzN8Bb5X9cXX5J0alXutHtto9b+6p0xMsdWH+I8/z0/gB9zZ+mcYFXwrVg5nFS9c7bXAjYoIP4ObFSR8igcufypm2vQi4=
+	t=1748521354; cv=none; b=ZBbv4UpV/JqEti6qXzyNCOXBWzepd/8Fo5PLn3CwCttd9aEjtR2Q4z7x8ekL09en5tMIifvo3vY4aktvZDYqZVGVqKYIIKPUYAeJgzVc9/FiPCfYRkXNVY/y2CWGPSV/cOuQTw8Pv5NeuW3F/JctWhk2+JZ5NctofVCouKtcA+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748521334; c=relaxed/simple;
-	bh=K7qjULalyjMkAxL7PVeGCHXQouk2F6broaGq36eQD0c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oWZPx2zBw4a+VnTX04y7My2LMK3euvuufxESOd/Xo5Inswod6rdU8+pNEuQ7mokwTh9BFw9NH0p1T1r034aS6Hed8T0IhaajUTAacdxsbrB4M/QQXs6vReWS4mcZoGRleUvfXukpwhH26YuUT0IHwkLEQWYdVFw02CONFZEv03g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=QCwpzbep; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-450cd6b511cso5276415e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 05:22:12 -0700 (PDT)
+	s=arc-20240116; t=1748521354; c=relaxed/simple;
+	bh=8Q54xoWFm5dD4JeLp5GkvQ1SCkN6YSxoGPXQB+KAnIE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=a3nabaCidcVxOlxm+m5BGdtedE/HlZqgCO+FuI4hr/SDcOgzqJrAtm24MVXYEHhBsCGy3UfVY5P2/jLxbWLPE9YRj1Ez79BiSar8kG+O0vpFq/0URlWqFMNvyPKQmG5Ms5hfcyZArL4Vtlvt9HVN2SmHiHw3b0BKf8GHplKMpjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=1G76UBbK; arc=none smtp.client-ip=209.85.219.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6fac7147cb8so57766d6.1
+        for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 05:22:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1748521330; x=1749126130; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=al8287RxjgUX+nRH6wDLFLDnBZ/mAzEmTjClCtJoDew=;
-        b=QCwpzbepmjUqNLhiIsZsfzmN79FdLnNpzM534qoCvbZuLDVa83mlgV9cacr32shmeA
-         94QV3Lyq62DHmYZxHh6+TrRIqsGvs74W2BkO95kI2YnAxc6CUCNBwvX2BxyWPmCCCXK9
-         mGzjmDTFASnxTra0fkuc4JgABj6mI5U02/o8aFCnMlksNDkYyycpwD3YM1/03WaeU8Hk
-         o8fCKlSr2H0nOn68/c0fHozsv2tAd9A13BaNNrvBeW6NCiCfAQh3d/1nL5HstjZUl2my
-         D3UgTBophu9ZdwsGHVxu4WgcRx/n18pqHz4h6jB4P/wenCn5MCMrPa2NcyiUVRrSoRJO
-         z4jQ==
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1748521351; x=1749126151; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KfZYXxSa6TDC4D9WbSYlB6mVhhaETHCcZWNW+QLW+Ek=;
+        b=1G76UBbKw7eyH+bEqjcpfKOgmSmq93O+PfvgfBfnBMpLSuoLpbZolW6tyxj4Nx4M25
+         NDGe542pOTum9L4gCkSzFGsN3uMSdJxRXED3QFxCmnTq/HuP0XPBq7hQIr3AOZD/tzdl
+         Dz14Z20cuyJeM3y7ujYoQJQBPdDTfBm7SnletJIaEpXk0njDA74J+ePA2YMu/qJas7eT
+         3t2Js0Jx3E+MYtOt69hJraulrF1RyYgBXtSCDYBRTw9VjRrSXw7sqqT5/LHU9FInofzJ
+         eE/iIIlAjmnHwTiT+uajRqT6sxxVG2nimthHaGscmjzXKGxuTD0G5JGw2KSUaOfiVuCv
+         AdBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748521330; x=1749126130;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=al8287RxjgUX+nRH6wDLFLDnBZ/mAzEmTjClCtJoDew=;
-        b=QYJIRWGB9I0b9d6EzLTQxY0/F1FZNDFlsN5QqfCohF1SueuQGi4l6tE5K1Xb4v1VlE
-         F/pIS2Szs3hA71itTUI5YGwSAaNxY277Hzja9zB947fGv+dGQa0nvIMUm8z2t2GTrRNR
-         nBmqJf3ciHULl7wfIync2d07efH3Fdna6uIYcc1knSJBMsQFDKqvQ768L1gPK/hjfCIX
-         2TpSnqLhKdSaNedyURmaInjjo0PGaPTHwDETBUd7Knfh76YdMZHaihdd6NcoUnQgYqrJ
-         GjptGu8LyD+IsvjzKYlR5p1adBDWDWscfOhqRk8e8aOFGVvSH05wet0D03t9T13Yka3c
-         OZWw==
-X-Forwarded-Encrypted: i=1; AJvYcCUrUnwBdLqd1m9W0vuHW9KP3T9M7SzHetF0kP2hkofJmXYrwvsWS4KsWW1ARQAVcZPKuZdT96JfHZWrn1c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1UaxMMV4oSewcTFgPuySWCf4xGZ3T74/qLZLC6nD3nT3KO1TK
-	GFXW/aIlmw9QcJrKOJKgf8u3vKR8WC5DOXdalLARndInHNyuAHHAu8ClH0zBpop4nNI=
-X-Gm-Gg: ASbGncvf6SM5CVVZ0BLbebetyLtuauTov4Hl5RRwyQegxctV/b6P5KE7f9SvFhnPKJ4
-	9Idy8N231V8/FkeWkyQPoNwrvgegHTFKsDrUuFj6wQgk5SSQWjeC7CU3WrpV4MF1nteCruYzpWK
-	AMR2nvFXkBWsLuIRig+sNBFNHwLpHbwj5qodlMgi1H6CoA9Dhgo4CW3puh4FrFJSt0gO5BkU0nn
-	cm8Ajn8bEKcfdZ5hNZEXt8PPUJPf6vwxSkL7N554scm+9XYr4i1zzR5fa8fkIQxfCZPRzztA6Uh
-	ASHZCcCYb0BhMvqXLgCipdbfPCyFr3oovsjvr0u301JLsKeDDFYUWApdt4fjUk9H
-X-Google-Smtp-Source: AGHT+IEi5QGaE/L2kia77TwpAy38jFwnSSaQnSkGGXHD3NLBpfAk7antH461TuYl2AZ2tzXQyeDH2w==
-X-Received: by 2002:a05:600c:a00e:b0:43b:cc42:c54f with SMTP id 5b1f17b1804b1-45072553bb3mr59385965e9.14.1748521330468;
-        Thu, 29 May 2025 05:22:10 -0700 (PDT)
-Received: from localhost (109-81-89-112.rct.o2.cz. [109.81.89.112])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-450cfc16275sm18627795e9.22.2025.05.29.05.22.10
+        d=1e100.net; s=20230601; t=1748521351; x=1749126151;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KfZYXxSa6TDC4D9WbSYlB6mVhhaETHCcZWNW+QLW+Ek=;
+        b=vPbRDNe5n3kvs7W1qBqDYxKkJwj8E060Kifw69NHk46bSBJ1qBD6bb6g3UPv9UcjyQ
+         ABJC+cJweZzxmAoP4tlGByc2P2dKUa6l8K0KrLAo9opkqyTo+UfdjH7PX2is4pFCHLOm
+         wF7fAJ5d76AFdWM3QRIX1505Gq1kynZElnnZ1Z/+S08g3gNuU2R3xtl0pEWRIkDhG2xY
+         2YKwNocIwSXuK13hg3gs8715XQbR/mUJ3AuwQWpvvW80TMlUhAd+LGi3z2MakDtjoXNE
+         YNirb5Umffy916lVecMBnTaC3wN8h+Yrtmlkopbb/XxBVINhlMNP+de5LRcL4jP8A/8H
+         O5eA==
+X-Forwarded-Encrypted: i=1; AJvYcCUbYS3ednaLeO1IVj1kFTBjXMp2l//DBJfAc160joaqGhpNWhtwe3OA6q1/mbvdeudQi/SP0PTJYwGWP+w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywk2O9zC2YfSYK1zWTSOru1xdFGhUSGaCZD/mRFXwkndi2aRr7b
+	h46UJasrWHQWxUZaqCTMttN1wrt1PkdT1a+1FRvJRS6ZMVhkJOWCnh/pZtRG8Fhnz6Q=
+X-Gm-Gg: ASbGncthRFEl6YNevMcaI8Y39spX6X72GQ5BwOhuqMpDRIiUJ+X1NahmzIqsrP7ZKW5
+	UNcmNHalh168wZmf425pIObEMuarpMBwbx1pAKTVJ/E0MXvELzw9L8lmx7jEC8fZN9n7i1aYUJG
+	ZpGZjXLRHLYdxUXk4YpZbv3IWPBTT+Aogq8PlqLukOTe0+At/FST7WjdFqtDYz9T0pCbXxCf/oj
+	qwIQNxuNNhxBo4MoCO68GQxuq9XZrTpObe3/zSxwTcDMipwu6Ao11kNCo9jDb9gCp99IImlpoxB
+	8ISeXZ/NCQ/Ed847alkVsqY3awX15KTGF9uivBAieTQZHqwyUJqm+Nbco7UQ49Ms5n3ljXRsTr4
+	Vor0VhpgXcA1P0zr03SCDtn5F
+X-Google-Smtp-Source: AGHT+IGKJiOHPciyv3QtiOSyy/RZt9nsdwc7fAQpB3gb8J6aM4q7mvFoREGf65Wv1z/Aaq14437gYA==
+X-Received: by 2002:a05:6214:212e:b0:6fa:c44f:2ae6 with SMTP id 6a1803df08f44-6fac44f2d96mr79427466d6.38.1748521351418;
+        Thu, 29 May 2025 05:22:31 -0700 (PDT)
+Received: from localhost.localdomain (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6fac6d5bd30sm8814346d6.67.2025.05.29.05.22.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 May 2025 05:22:10 -0700 (PDT)
-Date: Thu, 29 May 2025 14:22:09 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>, lorenzo.stoakes@oracle.com,
-	Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org,
-	surenb@google.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	Hongyu Ning <hongyu.ning@linux.intel.com>, stable@vger.kernel.org,
-	Christoph Hellwig <hch@lst.de>, Hannes Reinecke <hare@suse.de>,
-	Johannes Thumshirn <johannes.thumshirn@wdc.com>,
-	Jens Axboe <axboe@kernel.dk>
-Subject: Re: [PATCH] mm: Fix vmstat after removing NR_BOUNCE
-Message-ID: <aDhRcXcqctogIITw@tiehlicka>
-References: <20250529103832.2937460-1-kirill.shutemov@linux.intel.com>
+        Thu, 29 May 2025 05:22:30 -0700 (PDT)
+From: Alex Elder <elder@riscstar.com>
+To: andi.shyti@kernel.org,
+	dlan@gentoo.org,
+	troymitchell988@gmail.com
+Cc: elder@riscstar.com,
+	spacemit@lists.linux.dev,
+	linux-i2c@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] i2c: k1: check for transfer error
+Date: Thu, 29 May 2025 07:22:26 -0500
+Message-ID: <20250529122227.1921611-1-elder@riscstar.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250529103832.2937460-1-kirill.shutemov@linux.intel.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu 29-05-25 13:38:32, Kirill A. Shutemov wrote:
-> Hongyu noticed that the nr_unaccepted counter kept growing even in the
-> absence of unaccepted memory on the machine.
-> 
-> This happens due to a commit that removed NR_BOUNCE: it removed the
-> counter from the enum zone_stat_item, but left it in the vmstat_text
-> array.
-> 
-> As a result, all counters below nr_bounce in /proc/vmstat are
-> shifted by one line, causing the numa_hit counter to be labeled as
-> nr_unaccepted.
-> 
-> To fix this issue, remove nr_bounce from the vmstat_text array.
-> 
-> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> Reported-by: Hongyu Ning <hongyu.ning@linux.intel.com>
-> Fixes: 194df9f66db8 ("mm: remove NR_BOUNCE zone stat")
-> Cc: stable@vger.kernel.org
-> Cc: Christoph Hellwig <hch@lst.de>
-> Cc: Hannes Reinecke <hare@suse.de>
-> Cc: Johannes Thumshirn <johannes.thumshirn@wdc.com>
-> Cc: Jens Axboe <axboe@kernel.dk>
+If spacemit_i2c_xfer_msg() times out waiting for a message transfer to
+complete, or if the hardware reports an error, it returns a negative
+error code (-ETIMEDOUT, -EAGAIN, -ENXIO. or -EIO).
 
-Acked-by: Michal Hocko <mhocko@suse.com>
-Unfortunatelly a common mistake to make. I have seen you have a followup
-fix with a stricter build time check. Will have a look.
+The sole caller of spacemit_i2c_xfer_msg() is spacemit_i2c_xfer(),
+which is the i2c_algorithm->xfer callback function.  It currently
+does not save the value returned by spacemit_i2c_xfer_msg().
 
-Thanks!
+The result is that transfer errors go unreported, and a caller
+has no indication anything is wrong.
 
-> ---
->  mm/vmstat.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/mm/vmstat.c b/mm/vmstat.c
-> index 4c268ce39ff2..ae9882063d89 100644
-> --- a/mm/vmstat.c
-> +++ b/mm/vmstat.c
-> @@ -1201,7 +1201,6 @@ const char * const vmstat_text[] = {
->  	"nr_zone_unevictable",
->  	"nr_zone_write_pending",
->  	"nr_mlock",
-> -	"nr_bounce",
->  #if IS_ENABLED(CONFIG_ZSMALLOC)
->  	"nr_zspages",
->  #endif
-> -- 
-> 2.47.2
+When this code was out for review, the return value *was* checked
+in early versions.  But for some reason, that assignment got dropped
+between versions 5 and 6 of the series, perhaps related to reworking
+the code to merge spacemit_i2c_xfer_core() into spacemit_i2c_xfer().
 
+Simply assigning the value returned to "ret" fixes the problem.
+
+Fixes: 5ea558473fa31 ("i2c: spacemit: add support for SpacemiT K1 SoC")
+Signed-off-by: Alex Elder <elder@riscstar.com>
+---
+ drivers/i2c/busses/i2c-k1.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/i2c/busses/i2c-k1.c b/drivers/i2c/busses/i2c-k1.c
+index 5965b4cf6220e..b68a21fff0b56 100644
+--- a/drivers/i2c/busses/i2c-k1.c
++++ b/drivers/i2c/busses/i2c-k1.c
+@@ -477,7 +477,7 @@ static int spacemit_i2c_xfer(struct i2c_adapter *adapt, struct i2c_msg *msgs, in
+ 
+ 	ret = spacemit_i2c_wait_bus_idle(i2c);
+ 	if (!ret)
+-		spacemit_i2c_xfer_msg(i2c);
++		ret = spacemit_i2c_xfer_msg(i2c);
+ 	else if (ret < 0)
+ 		dev_dbg(i2c->dev, "i2c transfer error: %d\n", ret);
+ 	else
+
+base-commit: a5806cd506af5a7c19bcd596e4708b5c464bfd21
 -- 
-Michal Hocko
-SUSE Labs
+2.45.2
+
 
