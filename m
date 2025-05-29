@@ -1,327 +1,241 @@
-Return-Path: <linux-kernel+bounces-667245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-667233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F122EAC821D
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 20:23:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B66B4AC81F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 20:08:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B69A91BC6B7B
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 18:23:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A84FB7B0F5F
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 18:07:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48BFF230D1E;
-	Thu, 29 May 2025 18:23:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F5EB22DFAB;
+	Thu, 29 May 2025 18:08:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ecMAFBB8"
-Received: from mslow3.mail.gandi.net (mslow3.mail.gandi.net [217.70.178.249])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="lwV04mFl"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2064.outbound.protection.outlook.com [40.107.243.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C28A1DA5F;
-	Thu, 29 May 2025 18:23:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.249
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748542998; cv=none; b=aO3bEnmSFjEuyC+AZtqxM1yvUDG9CknTPvZFo3Oif9M+KB0pKmcrPIcKVczpKjPTiFFD9HCiOQWrlKlqZDpqjebrwyEdSX5dMNHVQ1Elvv+xTaex11SCVvvFGIYpEki2AP+cWpHOPxVk6Mre2F5HseONkIDFMA93TXzxuQz/sjI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748542998; c=relaxed/simple;
-	bh=u8YmwyVAZLLkn3SGk1Qvanbp3CrGFbZ3j0Nuzo+WD2I=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=r1cfIyCIldIoFlN99Se1V6QSJ2npNBzv3bOwTKVMfNLzc0bPLY3I6QtaVwCxSnln7belUtpYJqoLi2jSMhFTwA0Tg3Byi7X7LpxvXCHnhiJXyRKKvFPCzszypI/9THJR+GigyxNfVMvWa1XhSiDiGAJeYq5CX/egyrZJ/j6zfqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ecMAFBB8; arc=none smtp.client-ip=217.70.178.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::224])
-	by mslow3.mail.gandi.net (Postfix) with ESMTP id B728458A4C8;
-	Thu, 29 May 2025 16:17:48 +0000 (UTC)
-Received: by mail.gandi.net (Postfix) with ESMTPSA id AB09D43B46;
-	Thu, 29 May 2025 16:17:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1748535461;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aQcCCRJcmoJGe/Ytwe0GcZgHDaSsO3JHKK47D+mnI3w=;
-	b=ecMAFBB8gulRYOvzlecnreKo0ztVIWO90fKLAItMRQVCsdXgoqN63xBiKB2FnJpIQvs2RQ
-	u4ZvXw5HJuNQ3LeyYyw9DZpnfwIUD2o0NkPOpfu5bO/OOht5HAPXp+tVR6qEkrhWDKQ1Cg
-	K7LOJbOMUZTmwPjFGJ+K2szY0clYVBVIYDpiB1uHI4S9LeWys82YKyiFvp8iXzknmqyJii
-	v/SOxoDcgsxTqCzbuaUkLQgHDTXkMOTCYnwxCj963SpLskoKaemGwVVJHBZcJI4IJYF4Nr
-	bqoI9aLA8kC6QzsNJhuaWio644A1EvC28rFeWTxhJpHmMmzD9Blf59k63KSPaQ==
-Message-ID: <f7689c91-8586-4223-8b4c-9345881ba961@bootlin.com>
-Date: Thu, 29 May 2025 18:17:38 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 008F61DA5F;
+	Thu, 29 May 2025 18:08:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.64
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748542090; cv=fail; b=uVjNg0J4sVpPMB0ujf3FPhIhiAmnfVl9JleqeT0lDgAoXs3mr0nGWcV44AXWojzYxO+1vWVnOEr/1JVx4N9GXMwGdrKBSitRQ6EruDbg7bRwaI5U3URWplKOXkwxU+vL1qZWAeWb/w/BOCW3Ep5kBCRE/buXCpNwaxp2lDMoo2w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748542090; c=relaxed/simple;
+	bh=mRTwMbENQ4Bz0llzWPdaJrdrgupga+KkEh5rYjQqK40=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=mubMBPODUqrg3s3AFwS786Y0oYL3uAVuACanCWJN9C0CZCQJbmB7vxiEF+Skp1+/xyCkBEvIMRaBXR/9WxugADhDhJ2Kd2K/eJqgTU423m4vsPBZoMxU9Q6dZCM8lVvCDUs7dx8URYIKyIRoo/H39bj612a7DhuewZF9NYOlopA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=lwV04mFl; arc=fail smtp.client-ip=40.107.243.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=nYt3FnckuW1pvSX7PMHnDCMj5g7fLpQ8SqibZRjv/fyufds0lwm0OicB0CheygA6z82JK+ZzXWctDPO6GsSWWsdCfORlDQraPLxtg2OIWz9ifW3HkTBv+b3m0F6nCiY3WrxjbYveNnZDuZIZH1NmnPjmnoogCLRWjeS2+4XCJCd2rFusOxNWUzaUV00gkhzTFZ41+CbSfu0zDmRH1u94R3MVkS1xIy47rMkKeEln94ICGvisKlExQgblZM3W6hMz7476GsRZ+Hg7HwLI0Hl0ltRLoJyCExPEgaG8aksNY8e3BkvNnEe8+WyYp2O19IZGzDMcEWUHOy7YKuqqzM1bNQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=HLdONmmCwN1nmYa8/j9DF9LAzrUBt2IH2vPZzv5gjj4=;
+ b=w4WqYxTN8WEtIBtrVnLPCk8MgPysElhGtLEfXNYb3qG6MbZLl/D+3rJQ3LqRZBcufqNfgcSeOIpjXC3bYXMyUT4JH9Ve06IFh5dVG3QjySgHE/Uz6AmlRduAJx6MGr5M2h1YVj7yHJQUONbrQN/w9WujzLzgICrAifQ8YbM52QM5xUjUbOf8pOIWn5COtl098W3ZkqGTOlV8vZRwMq2/AYv7v69n9RMeFlOC8Fq0pShI9Q84rZKUn2Q7LXOzPrbLxpUPd7CzC/kIbPiZpk3KgAvkLv9i1SEboPnYQ7Ankq98vGG73JSC+js0gRGRAUifERz59PEtUT/vPpnaHNFefA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HLdONmmCwN1nmYa8/j9DF9LAzrUBt2IH2vPZzv5gjj4=;
+ b=lwV04mFl4rajVtRiFlzAlaMQCQDS7i5Kup5X+YHASDd8r37IZM0LY9ppMB5Rg1+bzwDTbuGRGZYdZpogTXzBhcDyUabGqSjPKzY4H//k5Tua4mQvWptp/OyjEs6cGCLmKOQLjxseB2gzzqzmiwztWQeIeZx+IDNb1mfcIF/5ayE=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MW3PR12MB4553.namprd12.prod.outlook.com (2603:10b6:303:2c::19)
+ by DM4PR12MB5724.namprd12.prod.outlook.com (2603:10b6:8:5f::9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8769.29; Thu, 29 May 2025 18:08:05 +0000
+Received: from MW3PR12MB4553.namprd12.prod.outlook.com
+ ([fe80::b0ef:2936:fec1:3a87]) by MW3PR12MB4553.namprd12.prod.outlook.com
+ ([fe80::b0ef:2936:fec1:3a87%5]) with mapi id 15.20.8722.031; Thu, 29 May 2025
+ 18:08:04 +0000
+Message-ID: <4aaa13f8-9b60-467e-9dd3-bf9fecf60458@amd.com>
+Date: Thu, 29 May 2025 13:07:46 -0500
+User-Agent: Mozilla Thunderbird
+Reply-To: babu.moger@amd.com
+Subject: Re: [PATCH v13 16/27] x86/resctrl: Pass entire struct rdtgroup rather
+ than passing individual members
+To: Reinette Chatre <reinette.chatre@intel.com>, corbet@lwn.net,
+ tony.luck@intel.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com
+Cc: james.morse@arm.com, dave.martin@arm.com, fenghuay@nvidia.com,
+ x86@kernel.org, hpa@zytor.com, paulmck@kernel.org,
+ akpm@linux-foundation.org, thuth@redhat.com, rostedt@goodmis.org,
+ ardb@kernel.org, gregkh@linuxfoundation.org, daniel.sneddon@linux.intel.com,
+ jpoimboe@kernel.org, alexandre.chartre@oracle.com,
+ pawan.kumar.gupta@linux.intel.com, thomas.lendacky@amd.com,
+ perry.yuan@amd.com, seanjc@google.com, kai.huang@intel.com,
+ xiaoyao.li@intel.com, kan.liang@linux.intel.com, xin3.li@intel.com,
+ ebiggers@google.com, xin@zytor.com, sohil.mehta@intel.com,
+ andrew.cooper3@citrix.com, mario.limonciello@amd.com,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ peternewman@google.com, maciej.wieczor-retman@intel.com, eranian@google.com,
+ Xiaojian.Du@amd.com, gautham.shenoy@amd.com
+References: <cover.1747349530.git.babu.moger@amd.com>
+ <619c9cbb6b1525a2d4a46a042384e6771800d61c.1747349530.git.babu.moger@amd.com>
+ <d4bf97a2-15ae-4093-bdf9-63c78d07eb4a@intel.com>
+Content-Language: en-US
+From: "Moger, Babu" <babu.moger@amd.com>
+In-Reply-To: <d4bf97a2-15ae-4093-bdf9-63c78d07eb4a@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: ROAP284CA0259.BRAP284.PROD.OUTLOOK.COM
+ (2603:10d6:10:f1::20) To MW3PR12MB4553.namprd12.prod.outlook.com
+ (2603:10b6:303:2c::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/4] arm64: dts: rockchip: describe I2c Bus 1 and
- IMX258 world camera on PinePhone Pro
-From: Olivier Benjamin <olivier.benjamin@bootlin.com>
-To: Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
- Nicholas Roth <nicholas@rothemail.net>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Sakari Ailus <sakari.ailus@linux.intel.com>, Shawn Guo
- <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
- imx@lists.linux.dev, Dragan Simic <dsimic@manjaro.org>,
- Ondrej Jirman <megi@xff.cz>
-References: <20250509-camera-v3-0-dab2772d229a@bootlin.com>
- <20250509-camera-v3-3-dab2772d229a@bootlin.com> <3359896.e9J7NaK4W3@phil>
- <e8af352a-bfcf-4aa5-b113-e8b845c3a2c6@bootlin.com>
-Content-Language: en-US
-In-Reply-To: <e8af352a-bfcf-4aa5-b113-e8b845c3a2c6@bootlin.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgddvieehkeculddtuddrgeefvddrtddtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffhvfevfhgjtgfgsehtkeertddtvdejnecuhfhrohhmpefqlhhivhhivghruceuvghnjhgrmhhinhcuoeholhhivhhivghrrdgsvghnjhgrmhhinhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhephfdvfeetudfgfedvkeefleehieetvdejtedvuefgvddtvdegiedvjeehgfffleegnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvrgdtudemvgefgeemvggtfeekmedvgegvtdemfhehtggvmehffeegvdemieehkeejmehfieehieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemvgefgeemvggtfeekmedvgegvtdemfhehtggvmehffeegvdemieehkeejmehfieehiedphhgvlhhopeglkffrggeimedvrgdtudemvgefgeemvggtfeekmedvgegvtdemfhehtggvmehffeegvdemieehkeejmehfieehiegnpdhmrghilhhfrhhomhepohhlihhvihgvrhdrsggvnhhjrghmihhnsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvvddprhgtphhtthhopehhvghikhhosehsnhhtvggthhdruggvp
- dhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhgrtghophhordhmohhnughisehiuggvrghsohhnsghorghrugdrtghomhdprhgtphhtthhopehnihgthhholhgrshesrhhothhhvghmrghilhdrnhgvthdprhgtphhtthhopehmtghhvghhrggssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehsrghkrghrihdrrghilhhusheslhhinhhugidrihhnthgvlhdrtghomh
-X-GND-Sasl: olivier.benjamin@bootlin.com
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MW3PR12MB4553:EE_|DM4PR12MB5724:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5c95825c-41a0-4540-c4f0-08dd9edbc1f2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|7416014|366016|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?RDF2ZWU2S001cllmR0hMdVlNclBXODBhTU85SGE0YmxCWStya0FPUFFiQnEv?=
+ =?utf-8?B?ZlBGdGVPcXZOcEEweVcvbk5yakxneFNCS0lFOWxDNlRsMkFsK2tQWmJqaDRi?=
+ =?utf-8?B?OW9qdVB5dUVLNVlhUDB1ZmpHREtockxDejlHYXUrMGxLVThpTnE1WVZ5U2Vh?=
+ =?utf-8?B?bUd4VFQ4YWxPc2dtS2hJL2ZFNDZ0NUIwRzQ0cG5ITE9WUVVGbmc2dko3NVY0?=
+ =?utf-8?B?WDBybFNjWXZ1RVdQOG1KcGhSR214U1dEd0tHZzVGeFQ3QnZTY01tei9vUURa?=
+ =?utf-8?B?eGVRWmpFcjhFbk1IeXR5bjdpODFOOUdnc0prVU10UGV6MnlzTlY2RkhPdC9s?=
+ =?utf-8?B?VVQwMUhHeHVvM1E0aHFkcktuWXgzWDNjbXlZSWZNNXhCbEs0RCtLeDZ4YnQx?=
+ =?utf-8?B?T3hDZlVBUURJL1phWlZ2c25nakdiYWRpR3kzRW93Sm1DRkNUMEQwZHhqdmRH?=
+ =?utf-8?B?QW5Tb2h5RTBzQlM5VEpGSWRoeTUrRkMxbUMySXBSbHJUVnBrNkVhTmJxOW9w?=
+ =?utf-8?B?ZzlkZUhpWW4rbU1ORSszZ1BWcmxiZTU5SXhLR1JrbUhlU0owb092dXRQaHpU?=
+ =?utf-8?B?MzZKc3NTV2ZIMUZIRGpzdytEaUVFUlZ1YVYxNlhzRlBqd0dKVjBYMTNLbkhy?=
+ =?utf-8?B?ZHpnNWRNbHpNMC9zaXdEVVNYTE9IWXl6SDFXcytTMWJOV2lYM3luL3dzelIy?=
+ =?utf-8?B?UmtKVS9yalVUdUtHSjhuZlUxVXM1dU1IcXVWa1JUTitnc3dSc3VOdGlGMmtK?=
+ =?utf-8?B?ZVAxb1c2aG00WDllaU1mUHhhN2JlNTF4TVNYUktsU3JQc1ZlWVlpYjQyU2Rj?=
+ =?utf-8?B?NkJ1Y1RlaDdtUTVZVnc0WmozUHJsVWg1RmpVdGpYaXlKdlB2UlExRnVPZG4v?=
+ =?utf-8?B?VTBtTVRNYXhnM1BEWTdnTmxnMlB5WDhmVThkOFhRZHZWa01HZ0sraE1ram5a?=
+ =?utf-8?B?akd5QzZxam9Kdnl6Mlh5dnkxYVBUbmtrejBIaEhVaWhqMkhtZmJDSVBWNHdZ?=
+ =?utf-8?B?NWFDR2lyUWRwRVZ2WWhXM1RuQ0xhQ1JBNG02NFRXeVVzRmlpSHdiR0VZcFU1?=
+ =?utf-8?B?bkVwY0RRekVxc0FLd1FRSVN3ditqOGVYQ2VtQStXdFVZS0NiZHEyYWpoU3ha?=
+ =?utf-8?B?T0pZaFVZMnhySWdiTGNObnFHT3lkN0dCVDR5SkczT0NFd09sS1VOMlFTYk1C?=
+ =?utf-8?B?VG00dEdneTR2NjdFa2RyT3p0bkVEMVFTMjlZcnhseEs0dE52UmZUcDNvUUxR?=
+ =?utf-8?B?QlBPQmVWQXVRNW96YWRtT0E4Q0ZoVDczM1JUSzZiNU51REh5eUVHN1pBT2Rh?=
+ =?utf-8?B?WXZwTmtJdkpkTkFZY1pBaGF0TnQwdnpFenZidzUzU3BtWVhpYUVnc1BoZ2lq?=
+ =?utf-8?B?L0xWWjgwTUlQQm5LejhRSXlLSEc1WEN5T0tzUmZHRjc3bGhlaGlweExYaDRu?=
+ =?utf-8?B?SzB6UkNacGE1ZUJsaXk5UXVsT2NQbnlXMFRPcVlieDl1U0NkQ1BEbW40ZVFx?=
+ =?utf-8?B?SjVlSytPMTNkSUtyMjNIM2lBSHMyZjh3MGhra0xnQmFzZEhyVkNmY2JLeThK?=
+ =?utf-8?B?bWt1OW5tS2c0VklURVAvU2o3YStYZHErZE1zaC9FRzZaYnJGWEVVamMrK2tU?=
+ =?utf-8?B?S0tBNmgyV0N4SGRLcFdmT3JXWnFtSmc2Q2NGSStwcEdmdVVGeEVBdjNvTGRH?=
+ =?utf-8?B?QWphUjB3NTFDajVQUlhHTHNSVmhoaUdqbURKbmtTYVh2TnFIbUh3QWhPbEVM?=
+ =?utf-8?B?UHBoWTdCSzRVODB4VDh2bWZkM0dkVHd0MUVhZkVNaXNZQnpOTkVxck1lY01m?=
+ =?utf-8?B?S1hVeWlZQTVBaWhyS1hDZXYzanZYdCtuRWxIVklDL3RRd0JvYmNIMXduZ0ho?=
+ =?utf-8?B?czRXMWt0T3IwZzNqZnY4MEg0WEtDWTFWd1ZmM0h6S1M5WWhKcUdYWTcxSjBN?=
+ =?utf-8?Q?Q6xHL6+DG3s=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW3PR12MB4553.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?azF2WUpCeWtoV1RibUhCcG1xeEJLTkhoM3BzOGUraHJlWXExNU91MDVwR0hW?=
+ =?utf-8?B?aVdOQnhBRnovSlNhcmExMUxYV2hobmxhRXptM2RDbnhRSUtaNllrYlhtMFlR?=
+ =?utf-8?B?eW13VlNkeDM1ZXZ0T3R1REtWVEx2RG9YeStkRmZ6am5qUkZZZEVUUVhQU28z?=
+ =?utf-8?B?YURCNE40U2RxaXlzYzdrNXpwcW4ySEE3N2pEZjJrQVRuZUxWbHg5dW83YzdT?=
+ =?utf-8?B?eDlXZGxZT0lHSTdpQnJ3UE05TGN1M0xmUVM5L21rZ0t4dGtLTUJvOVEwZXRU?=
+ =?utf-8?B?bU1ITlc4OVk2WURtenp1enEzRzZ0d2RXYTU2cnZNTXRiZWxmWTN2YWUxRU5J?=
+ =?utf-8?B?WHhCYWFmRmZLTzhWRHRic2tpeDNXRHBsbVJmcDgwbTc4b2dOVzgxNDB3REJo?=
+ =?utf-8?B?ZTBXajF0Nkh6SVJuQVkzdXhoNjlOY1BMWmtBTHB1Sys5VW9BMzR5b2R2UWJq?=
+ =?utf-8?B?U2FIQzFDTytPVmVzSGNBS25INVRlTDY3OTl3RTZtUDlkM05WelVsSE1rRnFM?=
+ =?utf-8?B?RGJvN2JOaE1nWjhFVWNCVDhEbzRvNWxhdDAvaWJuWHc5MWcrdmljb3phUEFo?=
+ =?utf-8?B?YUVCVFFlT25FcS82TTdWc202ci9jYzZPZGR0WG85YWVJUXljYjJxZUtoUUpk?=
+ =?utf-8?B?TEJFU2FnbVZDQjJVSHlIVmczaFNOMTEwaXY4ekZxREdYM0NMVFdhK2ZOb01h?=
+ =?utf-8?B?MWpMT05IZHg5UE1OOWZBSzlRNmdyZWxhOW1tcnZ6Qm0yQVZtNm1IVG5VV1J5?=
+ =?utf-8?B?bi9JTmZjbm9iZmVId1RmV2Uzd3k3cFI3WmdiTlJLd0VnQlVBZHh1QWxveEVD?=
+ =?utf-8?B?Wm9TbnliRHI2MC9INC9PN0RJRGZkenpRQlU3Y1VDVngxUWY2b2xXUHQ2SWRP?=
+ =?utf-8?B?N0QxUWFvdHlaTTJoMEpzV1Fac0ltN2YybWt2cVpPV0xqcmxlNW9EbkRua01G?=
+ =?utf-8?B?NW1HVnN3ZDFoWTVvQ0lST3Y4M0pROTZYSVhFQktZK2xNTHRMUWlIdVN0S25J?=
+ =?utf-8?B?TE9vWVZaTWw2eUVhVmFxWkdWOE14MHNOUDZLdWprdEU0QU1hdTJFNXozRFZC?=
+ =?utf-8?B?L01ISVRPcTZ1OFlCWVBaVG8xdEhYM0ovem5vQmR2d2VVZEZQSWhjWU9Ba3Av?=
+ =?utf-8?B?WFN0MjlnTUlGZzdkTmpEL2VwckZXb0ZkR3BscFYwWmhBWlppdktKbFczODNK?=
+ =?utf-8?B?VEVoTGovN3NGcjFwdFpkWTdCZkMrbTVIS3NKREZNVkN6aWczL2U3dUp1a21G?=
+ =?utf-8?B?WWN2V3pqTkErelBnUDZjK2tEY2dqRE0xR2Iva3dQNFN5OUFyS1FYZkV3ZjE1?=
+ =?utf-8?B?SUxnYitIUUt0S0JWNm83am05ZkJIRElUSjRaeDZCTzNOVldobjR2NWtzalFt?=
+ =?utf-8?B?c1VJYXQvd0ZHVDRIckRyTTMrTEtjWFJ2cHZWRWxrb2N1RUhkYURpRDhPMnZt?=
+ =?utf-8?B?RUxQZXR3L2FGTmF3V211L2VEdCt3OXJzLzU5aXJlTi9VUGVQcTUzd053OFJn?=
+ =?utf-8?B?dExBYWw1a2o0b2ZielkvaVdhVlhTKzVIL2ZDU3lEWG5UNldhcXpaSnlMNHVt?=
+ =?utf-8?B?TTBjTElhYm8wWWsraTJGYyt6QndlUEErMS9OQktjR250dmk2RE5FWjhnM0dS?=
+ =?utf-8?B?Y0VENURqWE0wczRrYUhQTWsvZFRLK01KdUwzSWx6STVYalYrRi82aVd0NnNQ?=
+ =?utf-8?B?TkxDQlJjdFF5Z2lvZVZHVC8xZjlKYVZCcnBDMDBWaE1IaUdRNDVITmtTTlBm?=
+ =?utf-8?B?ei9YV2llOFhaSllRTmJVWE9BVjB5M2lUODRNZi9paFU4ZHVBWkJnRGZ3VDJR?=
+ =?utf-8?B?TG5XaEVmQlQzVXNPUEJtYzM3QTc0dFFCQktqdUJrRExxYWQ2VE5uNmMyaXBT?=
+ =?utf-8?B?dkdSZnlRMzhNcjAzcWgxSmhSVG5ES0ExOUFtVE94RDVkNzJTUWRoak52eG5y?=
+ =?utf-8?B?UkE5b0V1dFB4UU8yM253VFFBYmprWldTUkpXdTZJeHd0c0ZvbXZCRUxmY21H?=
+ =?utf-8?B?WXNOY0hxV1cvOUdjTE8yMzFzK2xWVUx3eXFNcFhhVmttbEVpYVNZN1NWaTRj?=
+ =?utf-8?B?MmtsNW9PT0xqdXRUalBGSGFHZmlVNFhBTnpjdmZHdHVlZTVGUGpzd0dSNjJT?=
+ =?utf-8?Q?wxhQ=3D?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5c95825c-41a0-4540-c4f0-08dd9edbc1f2
+X-MS-Exchange-CrossTenant-AuthSource: MW3PR12MB4553.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 May 2025 18:08:04.8898
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: aplY6TO2Cmxwfs3SKBkS9AL6T6vsvDEf0ER7dXZ33NpuNNHqKp5TbcTnub6D59eU
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5724
 
+Hi Reinette,
 
-
-On 5/14/25 06:59, Olivier Benjamin wrote:
+On 5/22/25 18:05, Reinette Chatre wrote:
+> Hi Babu,
 > 
+> On 5/15/25 3:52 PM, Babu Moger wrote:
+>> The mbm_cntr_assign mode requires a cntr_id to read event data. The
 > 
-> On 5/13/25 20:23, Heiko Stuebner wrote:
->> Hi Olivier,
->>
-> Hello Heiko, thanks for having a look!
-> 
-Hi again Heiko,
->> Am Freitag, 9. Mai 2025, 23:51:39 Mitteleuropäische Sommerzeit schrieb 
->> Olivier Benjamin:
->>> Add the description of the rear/world camera (IMX258) on the 
->>> PinePhone Pro
->>> to the device dts file.
->>> It receives commands on the I2C Bus 1 at address 0x1a and transmits data
->>> over CSI-MIPI.
->>>
->>> The I2C address for IMX258 can be found in the IMX258-0AQH5 Software
->>> Reference Manual, page 24, section 2.3.1: 0b0011010 = 0x1a.
->>> Section 3 indicates the module has 4 pairs of data lines. While 4-lane
->>> mode is nominal, 2-lane mode should also be supported.
->>>
->>> The pin muxing info was extracted from the PinePhone Pro schematic v1.0
->>> as well as the RK3399 datasheet revision 1.8.
->>>
->>> Table 2-3 in section 2.8 of the RK3399 datasheet contains the mapping
->>> of IO functions for the SoC pins. Page 52 shows GPIO1_A0, page 54 shows
->>> GPIO2_D4.
->>>
->>> For I2C power, the PinePhone Pro schematic page 11 quadrants A4 and A5:
->>> RK3399_J.AA8 and RK3399_J.Y8 get power from vcaa1v8_codec, so turn it on
->>>
->>> The IMX258 also uses the following regulators, expected by its driver:
->>>   - vana (2.8V analog), called AVDD2V8_DVP on P.18 q.C1 and derived from
->>>     VCC1V8_S3 on P.13 q.B2
->>>   - vdig (1.2V digital core), called DVDD_DVP on P.18 q.C1 and shown on
->>>     P.18 q.D3 to be equivalent to VCC1V2_DVP derived from VCC3V3_SYS on
->>>     P.13 q.B3. Note that this regulator's voltage is inconsistently
->>>     labeled either 1.2V or 1.5V
->>>
->>> RK3399_J.AG1 is GPIO4_A1/I2C1_SDA, RK3399_J.Y6 is GPIO4_A2/I2C1_SCL
->>> This is the default pinctrl "i2c1_xfer" for i2c1 from rk3399-base.
->>>
->>> For the reset (RESET) signal:
->>> page 11 quadrant D2             | p.18 q.C3-4 | p.18 q.C2
->>> RK3399_E.R25 -> GPIO1_A0 -> Camera_RST -> MIPI_RST0 -> IMX258.12
->>>
->>> For the powerdown (PWDN) signal:
->>> page 11 quadrants B4-5          | p.18 q.C2
->>> RK3399_G.AF8 -> GPIO2_D4 -> DVP_PDN1_H -> IMX258.14
->>>
->>> Helped-by: Dragan Simic <dsimic@manjaro.org>
->>> Co-developed-by: Ondrej Jirman <megi@xff.cz>
->>> Signed-off-by: Ondrej Jirman <megi@xff.cz>
->>> Signed-off-by: Olivier Benjamin <olivier.benjamin@bootlin.com>
->>
->> how independent are the devicetree changes from the binding changes?
->> As the binding change "only" includes other properties.
->>
-> They are pretty independent: the binding changes are only needed to 
-> suppress warnings on the devicetree.
-> However, the changes to the devicetree are the motivation for the 
-> changes to the binding: the other properties are not strictly necessary 
-> otherwise.
-> 
-Have you had a chance to have a look?
-Are any changes needed in your opinion?
->> Heiko
->>
->>
->>> ---
->>>   .../boot/dts/rockchip/rk3399-pinephone-pro.dts     | 94 +++++++++++ 
->>> +++++++++++
->>>   1 file changed, 94 insertions(+)
->>>
->>> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts b/ 
->>> arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
->>> index 
->>> 04ba4c4565d0a205e2e46d7535c6a3190993621d..588e2d8a049cc649aa227c7a885bd494f23fbdf8 100644
->>> --- a/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
->>> +++ b/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
->>> @@ -114,6 +114,16 @@ vcc3v3_sys: regulator-vcc3v3-sys {
->>>           vin-supply = <&vcc_sys>;
->>>       };
->>> +    avdd2v8_dvp: regulator-avdd2v8-dvp {
->>> +        compatible = "regulator-fixed";
->>> +        regulator-name = "avdd2v8_dvp";
->>> +        regulator-always-on;
->>> +        regulator-boot-on;
->>> +        regulator-min-microvolt = <2800000>;
->>> +        regulator-max-microvolt = <2800000>;
->>> +        vin-supply = <&vcc3v3_sys>;
->>> +    };
->>> +
->>>       vcca1v8_s3: regulator-vcc1v8-s3 {
->>>           compatible = "regulator-fixed";
->>>           regulator-name = "vcca1v8_s3";
->>> @@ -136,6 +146,16 @@ vcc1v8_codec: regulator-vcc1v8-codec {
->>>           vin-supply = <&vcc3v3_sys>;
->>>       };
->>> +    vcc1v2_dvp: regulator-vcc1v2-dvp {
->>> +        compatible = "regulator-fixed";
->>> +        regulator-name = "vcc1v2_dvp";
->>> +        regulator-always-on;
->>> +        regulator-boot-on;
->>> +        regulator-min-microvolt = <1200000>;
->>> +        regulator-max-microvolt = <1200000>;
->>> +        vin-supply = <&vcca1v8_s3>;
->>> +    };
->>> +
->>>       wifi_pwrseq: sdio-wifi-pwrseq {
->>>           compatible = "mmc-pwrseq-simple";
->>>           clocks = <&rk818 1>;
->>> @@ -312,6 +332,8 @@ vcc3v0_touch: LDO_REG2 {
->>>               vcca1v8_codec: LDO_REG3 {
->>>                   regulator-name = "vcca1v8_codec";
->>> +                regulator-always-on;
->>> +                regulator-boot-on;
->>>                   regulator-min-microvolt = <1800000>;
->>>                   regulator-max-microvolt = <1800000>;
->>>               };
->>> @@ -420,6 +442,46 @@ regulator-state-mem {
->>>       };
->>>   };
->>> +&i2c1 {
->>> +    clock-frequency = <400000>;
->>> +    pinctrl-0 = <&i2c1_xfer &cif_clkouta>;
->>> +    assigned-clocks = <&cru SCLK_CIF_OUT>;
->>> +    assigned-clock-rates = <24000000>;
->>> +    status = "okay";
->>> +
->>> +    wcam: camera@1a {
->>> +        compatible = "sony,imx258";
->>> +        reg = <0x1a>;
->>> +        clocks = <&cru SCLK_CIF_OUT>; /* MIPI_MCLK0, derived from 
->>> CIF_CLKO */
->>> +        clock-names = "xvclk";
->>> +        pinctrl-names = "default";
->>> +        pinctrl-0 = <&wcam_rst>;
->>> +        /* Note: both cameras also depend on vcca1v8_codec to power 
->>> the I2C bus. */
->>> +        vif-supply = <&vcc1v8_dvp>;
->>> +        vana-supply = <&avdd2v8_dvp>;
->>> +        vdig-supply = <&vcc1v2_dvp>; /* DVDD_DVP is the same as 
->>> VCC1V2_DVP */
->>> +        reset-gpios = <&gpio1 RK_PA0 GPIO_ACTIVE_LOW>;
->>> +        orientation = <1>; /* V4L2_CAMERA_ORIENTATION_BACK */
->>> +        rotation = <270>;
->>> +        lens-focus = <&wcam_lens>;
->>> +
->>> +        port {
->>> +            wcam_out: endpoint {
->>> +                remote-endpoint = <&mipi_in_wcam>;
->>> +                data-lanes = <1 2 3 4>;
->>> +                link-frequencies = /bits/ 64 <636000000>;
->>> +            };
->>> +        };
->>> +    };
->>> +
->>> +    wcam_lens: camera-lens@c {
->>> +        compatible = "dongwoon,dw9714";
->>> +        reg = <0x0c>;
->>> +        /* Same I2c bus as both cameras, depends on vcca1v8_codec 
->>> for power. */
->>> +        vcc-supply = <&vcc1v8_dvp>;
->>> +    };
->>> +};
->>> +
->>>   &i2c3 {
->>>       i2c-scl-rising-time-ns = <450>;
->>>       i2c-scl-falling-time-ns = <15>;
->>> @@ -462,6 +524,28 @@ &io_domains {
->>>       status = "okay";
->>>   };
->>> +&isp1 {
->>> +    status = "okay";
->>> +
->>> +    ports {
->>> +        port@0 {
->>> +            mipi_in_wcam: endpoint@0 {
->>> +                reg = <0>;
->>> +                remote-endpoint = <&wcam_out>;
->>> +                data-lanes = <1 2 3 4>;
->>> +            };
->>> +        };
->>> +    };
->>> +};
->>> +
->>> +&mipi_dphy_rx0 {
->>> +    status = "okay";
->>> +};
->>> +
->>> +&isp1_mmu {
->>> +    status = "okay";
->>> +};
->>> +
->>>   &mipi_dsi {
->>>       status = "okay";
->>>       clock-master;
->>> @@ -495,6 +579,10 @@ mipi_in_panel: endpoint {
->>>       };
->>>   };
->>> +&mipi_dsi1 {
->>> +    status = "okay";
->>> +};
->>> +
->>>   &pmu_io_domains {
->>>       pmu1830-supply = <&vcc_1v8>;
->>>       status = "okay";
->>> @@ -507,6 +595,12 @@ pwrbtn_pin: pwrbtn-pin {
->>>           };
->>>       };
->>> +    camera {
->>> +        wcam_rst: wcam-rst {
->>> +            rockchip,pins = <1 RK_PA0 RK_FUNC_GPIO &pcfg_pull_none>;
->>> +        };
->>> +    };
->>> +
->>>       leds {
->>>           red_led_pin: red-led-pin {
->>>               rockchip,pins = <4 RK_PD2 RK_FUNC_GPIO &pcfg_pull_none>;
->>>
->>>
->>
->>
->>
->>
->>
+> cntr_id -> "counter ID"
 > 
 
--- 
-Olivier Benjamin, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Sure.
 
+>> cntr_id is retrieved via mbm_cntr_get, which takes a struct rdtgroup as
+> 
+> cntr_id -> "counter ID"
+>
+
+Sure.
+
+
+> mbm_cntr_get -> mbm_cntr_get()
+> 
+
+Sure.
+
+>> a parameter.
+>>
+>> Passing the full rdtgroup also provides access to closid and rmid, both of
+> 
+> closid -> CLOSID
+> rmid -> RMID
+> 
+
+Sure.
+>> which are necessary to read monitoring events.
+>>
+>> Refactor the code to pass the entire struct rdtgroup instead of individual
+> 
+> "the entire" -> "a pointer to"
+> 
+
+Sure.
+
+>> members in preparation for this requirement.
+>>
+>> Suggested-by: Reinette Chatre <reinette.chatre@intel.com>
+>> Signed-off-by: Babu Moger <babu.moger@amd.com>
+>> ---
+> Patch looks good.-- 
+Thanks
+Babu Moger
 
