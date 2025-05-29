@@ -1,105 +1,122 @@
-Return-Path: <linux-kernel+bounces-667189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-667191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDEEEAC817C
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 19:09:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DF91AC8183
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 19:11:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A856D1BA6F5A
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 17:09:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42AA57B33A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 17:10:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAD1722E00A;
-	Thu, 29 May 2025 17:09:23 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0FA522DA10;
+	Thu, 29 May 2025 17:11:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Y+lCTofo"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 925C122D9EF;
-	Thu, 29 May 2025 17:09:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABC171E2858
+	for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 17:11:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748538563; cv=none; b=YhqrBnt2U2Bi7lxvPjsX3gRRW57gxKrG8CD3471r34SSfzh+g5NpRnyQek8lDfVyUVeFYqDnCNCRMMsXNs05GUoj1ZA/OP7U5UoBxjj5SBXcJSFhjAMsc+fwWk1VZ8gYc1b6pti1EOB9Uqb1r/6/HD6Ute60DjJ8+3FllQpRqxU=
+	t=1748538680; cv=none; b=YYu0XJetXRhHPaVs+6OeWZUT/d2H5JmnwPM9EWSGQJ4myr8n/EK/mK6SBiOFW5FRnK1Q2t5ZOs61HqNbkSWXwlxSlJGiz87p7LE+ay8VPuSixIiTtQi3WQozZbD1RjNSr3kGRj67sm1msJa4Zk0C5LQaNmmkwTP3ihMmf1E8poc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748538563; c=relaxed/simple;
-	bh=phWbfYQUtWSBgPuru1Y5ifpvko2MXVLO53DRKlF3uCI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Ux1sciISx4uRZH0WS/1Tq7MKwtHwAn7ChZbG0b+COccG6w4COfHuGYNR+UxD5KGQlz1OoRcWlvOH8sGUXsjU81BxtbMN3YwF+OzhkO1h6ZsYG9G1n4bTjaSFKwjjI9xVoxPYV7JEQwuGERy5gSMuRv1/DYvl9slMN8Lx7gM8An0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3F68C4CEEE;
-	Thu, 29 May 2025 17:09:21 +0000 (UTC)
-Date: Thu, 29 May 2025 13:10:24 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>, x86@kernel.org
-Cc: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
- Ingo Molnar <mingo@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, Dave
- Hansen <dave.hansen@linux.intel.com>, Oleg Nesterov <oleg@redhat.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Masami Hiramatsu
- <mhiramat@kernel.org>
-Subject: [PATCH] x86/fpu: Remove unused trace events
-Message-ID: <20250529131024.7c2ef96f@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1748538680; c=relaxed/simple;
+	bh=40Su1GnwAmr6AztcWQ60IL+CHixZCWxdkTxtFsfZWuc=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=LuKi+/puTnJyHI18AUECB/26KoY42PaI25nZOolojUna9oggPO9fb56GaocLdd324kV43iOKAxoTL3sxSWmdEbE0q5HX89MGVCAuSiokYAQc8r2lu2/cg3kTT2BqR+xszXYQnPwGWpZOlwgNaHnVveOAgA7p2PogSLx9ZvqNGlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Y+lCTofo; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b271f3ae786so841043a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 10:11:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1748538678; x=1749143478; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qNwkLAnqK894as9s9mKIIiJB+bRwSGT/2fsFsNmBFKc=;
+        b=Y+lCTofo6i6HhYJIQv9F+7fG5dGHrSFqw16TSd6KO5BmxhlYDo/cKYe0DjYcoMwMUR
+         cqoDO8QsKI04I+MXdrOLiL9I1W3cQEcfhi6QyBN4WZePdF++AVI4+R/V4hg9zExS600h
+         aFeNXZh2ycFtYt263p/yCeIYrQ8eg6r/NCFQOMHjdPAoym4ysbbRM3+yJBPHCxOQiSlT
+         VMvBBwvRpi0dHU9aopAUXoP07H7QyjtLOKSFMKeB7F+nd1B/jJobAJwLSjnYH6d80Duz
+         QhisGSS+7XeI7CYkVwY5QeK9iB01PPUnvjK7hqlHlgDgUDoULELfHMPC/U500iWjKIHu
+         cZig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748538678; x=1749143478;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qNwkLAnqK894as9s9mKIIiJB+bRwSGT/2fsFsNmBFKc=;
+        b=QwDvuu9//5yPLAQyPqeMU7TsFrsSnpyc/tu1lliOIns7Dnu1WMLQU63ztFz1ke+RmG
+         MhwHdFqthD0OK0qOcgwDYwRTbEPdeQ8ZsKOqtF+EUV0YeG2gC7A3L/RxRUm13FVYNix0
+         yTeY0vJ1qbkSQ/Q1pQn57/VfcS23DAlOrJ0UDhxzWFuDYAG47/PnLNDGIQLswmvs1pes
+         8cXnqyugAHdVFpl/u0IXB73iLs2l2hwlzebyQsW1Y/UuPOLkFnQbKvHIoj4gpfmK/CJR
+         Z8KcT0V0mdV5lYD+/23EHKzUsHc7op4nOHG8eJVRjRiX8bAmZwKVUEG0ks+pHxbm/cwD
+         70SQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXM0/UIPh6xqWiNCiN0sk6QnkDQFoGFcQ0v8pgti+bnFNqRH9uZf57RMdYerznB0zNkuSh2S4XzjdqaZ9k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9TZEg4CxO3bLrAcgTtU/En1Q06CdOoHx7iK/X1Lf8yExd1AHi
+	W8jvIxG0OlCEygqBt40ts+ekJFV4spMbGJ8btHnGaw3GcBfNv3c7T0OYXTMJHI9/nmQ=
+X-Gm-Gg: ASbGncsThrjEmt/jvQUOM7EX2gtoQfIovmoX7t+k0cCRTB7Fy0TU7uu8auefAObqGJi
+	ATvfCnSvrTC8EaRwhLVj6QZ6xmceDif8KlPo+U6ta/BkymLKJpRJ20Mebot4z6g1OPvnKRKM+ZI
+	Q/Bw0mrkNUCnR7+lsAinIl5ZkAoE8iCSY6WqeBs90G1oVaGCtAb608GnyIyo/zIrm/9pJ9QjI8P
+	+HhxHx59ajnYp8a/P6qqaYaszCPWkCjHHCZfKy0BJNFTZdtQDN8UiS0r9qZOh1xhWBeMpJl6hyc
+	P3GI8oq4e1SaULFUZPFe943GwSMWW8+j2gIn6+lyxmTT/7GTXQ==
+X-Google-Smtp-Source: AGHT+IF8U4LS5Ha4ZVJlb6Xexvhz/gVZeJ8PZz0LFT+vBQf4rmFuB/wcLf4M5M+AqpPj3eAYBAnv6w==
+X-Received: by 2002:a05:6a21:516:b0:20d:5076:dd78 with SMTP id adf61e73a8af0-21ad9966437mr590567637.42.1748538677957;
+        Thu, 29 May 2025 10:11:17 -0700 (PDT)
+Received: from localhost ([97.126.182.119])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b2eceb29b20sm217068a12.30.2025.05.29.10.11.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 May 2025 10:11:17 -0700 (PDT)
+From: Kevin Hilman <khilman@baylibre.com>
+To: s-vadapalli@ti.com, Frank Li <Frank.Li@nxp.com>
+Cc: bhelgaas@google.com, conor+dt@kernel.org, devicetree@vger.kernel.org, 
+ krzk+dt@kernel.org, kw@linux.com, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, 
+ linux-pci@vger.kernel.org, lpieralisi@kernel.org, 
+ manivannan.sadhasivam@linaro.org, robh@kernel.org, tony@atomide.com, 
+ vigneshr@ti.com
+In-Reply-To: <20250411153454.3258098-1-Frank.Li@nxp.com>
+References: <20250411153454.3258098-1-Frank.Li@nxp.com>
+Subject: Re: [PATCH v2 1/1] Revert "ARM: dts: Update pcie ranges for dra7"
+Message-Id: <174853867693.3632160.17627654159190851191.b4-ty@baylibre.com>
+Date: Thu, 29 May 2025 10:11:16 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3-dev-d7477
 
-From: Steven Rostedt <rostedt@goodmis.org>
 
-The following trace events are not used and defining them just wastes
-memory:
+On Fri, 11 Apr 2025 11:34:54 -0400, Frank Li wrote:
+> This reverts commit c761028ef5e27f477fe14d2b134164c584fc21ee.
+> 
+> The commit being reverted updated the "ranges" property for the sake of
+> readability. However, this change is no longer appropriate due to the
+> following reasons:
+> 
+> - On many SoCs, the PCIe parent bus translates CPU addresses to different
+> values before passing them to the PCIe controller.
+> - The reverted commit introduced a fake address translation, which violates
+> the fundamental DTS principle: the device tree should reflect actual
+> hardware behavior.
+> 
+> [...]
 
-  x86_fpu_before_restore
-  x86_fpu_after_restore
-  x86_fpu_init_state
+Applied, thanks!
 
-Simply remove them.
+[1/1] Revert "ARM: dts: Update pcie ranges for dra7"
+      commit: 8c178057e734188eeeceaec33848eaca2766ca07
 
-Link: https://lore.kernel.org/all/20250529130138.544ffec4@gandalf.local.home/
-
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- arch/x86/include/asm/trace/fpu.h | 15 ---------------
- 1 file changed, 15 deletions(-)
-
-diff --git a/arch/x86/include/asm/trace/fpu.h b/arch/x86/include/asm/trace/fpu.h
-index 0454d5e60e5d..721b408d9a67 100644
---- a/arch/x86/include/asm/trace/fpu.h
-+++ b/arch/x86/include/asm/trace/fpu.h
-@@ -44,16 +44,6 @@ DEFINE_EVENT(x86_fpu, x86_fpu_after_save,
- 	TP_ARGS(fpu)
- );
- 
--DEFINE_EVENT(x86_fpu, x86_fpu_before_restore,
--	TP_PROTO(struct fpu *fpu),
--	TP_ARGS(fpu)
--);
--
--DEFINE_EVENT(x86_fpu, x86_fpu_after_restore,
--	TP_PROTO(struct fpu *fpu),
--	TP_ARGS(fpu)
--);
--
- DEFINE_EVENT(x86_fpu, x86_fpu_regs_activated,
- 	TP_PROTO(struct fpu *fpu),
- 	TP_ARGS(fpu)
-@@ -64,11 +54,6 @@ DEFINE_EVENT(x86_fpu, x86_fpu_regs_deactivated,
- 	TP_ARGS(fpu)
- );
- 
--DEFINE_EVENT(x86_fpu, x86_fpu_init_state,
--	TP_PROTO(struct fpu *fpu),
--	TP_ARGS(fpu)
--);
--
- DEFINE_EVENT(x86_fpu, x86_fpu_dropped,
- 	TP_PROTO(struct fpu *fpu),
- 	TP_ARGS(fpu)
+Best regards,
 -- 
-2.47.2
+Kevin Hilman <khilman@baylibre.com>
 
 
