@@ -1,228 +1,113 @@
-Return-Path: <linux-kernel+bounces-667055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-667025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E811AC7FE6
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 16:50:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEAADAC7F99
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 16:21:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFD614E7C96
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 14:50:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2ADE43ABEF2
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 14:21:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34BA822B8BF;
-	Thu, 29 May 2025 14:50:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC75D18991E;
+	Thu, 29 May 2025 14:21:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="lsIxr1nT"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	dkim=permerror (0-bit key) header.d=ltec.ch header.i=@ltec.ch header.b="/tg5MDE3";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=ltec.ch header.i=@ltec.ch header.b="Z4Vam7we"
+Received: from mail.ltec.ch (mail.ltec.ch [95.143.48.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CD9133E4
-	for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 14:50:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CC0C1DC075;
+	Thu, 29 May 2025 14:21:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.143.48.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748530203; cv=none; b=Ez1tSRd1PKMnUqojksQv3eZSoDXxr19vv9N5M40EG6fF94zpUBCU8bT9+61rAo3Y2sy4sORNEvH0b+mXfWd6dm1olTJKbkyQZq0pITVpQTfUDRFFCUO74Ng4fj9mslZDNZcjkTX+GeXGfuMMFIfi7UNHyMGxi4cu9wX943/X6wY=
+	t=1748528504; cv=none; b=l03DUdqSS8CrhRcPVdFYrqdeffELZMsJt+iF+aTLBYWzjt2GMLN/SKVhTF66Qz359GIN3Yn3S+LorN6e5fThmVe2RBoiVuqsf+Hr1xdm37B2ZSZl9d6RWGJSRwLfPv6MK6Wfyrt5edQ0CBGul2W5AqIXhMUXso8gQmljLM2UPek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748530203; c=relaxed/simple;
-	bh=mBxBS+F3w/cyhjrDcqffZ7kyoE4diOtuM+0VdOkSmnI=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=FpHY/8R96/DIG4kbnEq4m1JCJSLdWGwJxtlI8VU442sHqwpKe4/iBcTL6HZr5Io44wwoDvJpSMhpDU6+Qmh0oa/CiXEJptucFn+C1EEwrESQvv0/iOKtOa0kELp8C2IUu+Gki7W8y4ucotmwOHibEzziMJOhQR6TYssKlZoLdyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=lsIxr1nT; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250529144958epoutp01406d17aecb48f43e60d2a13167d52c4a~EBvOLRAh22618826188epoutp01i
-	for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 14:49:58 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250529144958epoutp01406d17aecb48f43e60d2a13167d52c4a~EBvOLRAh22618826188epoutp01i
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1748530198;
-	bh=JoVIT/YoibxB9MFqaRb9BAFdhMoHeYYoqYbA3YWaDwU=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=lsIxr1nT8d5gNFvvbFGbztnByv7dD3G0rMX/e5CCROqdCLNOYj97ql/jSZ/zMuM8N
-	 vYzJ9/UHxwl4qOQN1q9djKaM9KMZPId/oy3NkURzKFHumIu/jUFYUaVd+0jEpYJq1A
-	 oqW62/XHL8f14ceLQhrV+wvGGIdkQCMll60WGd3A=
-Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
-	20250529144957epcas5p121ac1b2643ce23abb26c0448e1a0d2f6~EBvNmI7t03174131741epcas5p1v;
-	Thu, 29 May 2025 14:49:57 +0000 (GMT)
-Received: from epcas5p4.samsung.com (unknown [182.195.38.182]) by
-	epsnrtp02.localdomain (Postfix) with ESMTP id 4b7Tmh2V00z2SSKX; Thu, 29 May
-	2025 14:49:56 +0000 (GMT)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250529102448epcas5p1a8209b6700e2206c3bbb6669f473b28b~D_Hs54RNZ1678116781epcas5p1m;
-	Thu, 29 May 2025 10:24:48 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20250529102448epsmtrp2ae0261061f58b804d19887addb119fa9~D_Hs4qBBk2330423304epsmtrp2h;
-	Thu, 29 May 2025 10:24:48 +0000 (GMT)
-X-AuditID: b6c32a29-55afd7000000223e-c2-683835f012c1
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	9D.C8.08766.0F538386; Thu, 29 May 2025 19:24:48 +0900 (KST)
-Received: from FDSFTE462 (unknown [107.122.81.248]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250529102445epsmtip1d9de3beca2d4560f1d5e428ba1253ead~D_Hp7hmwq1925019250epsmtip1K;
-	Thu, 29 May 2025 10:24:45 +0000 (GMT)
-From: "Shradha Todi" <shradha.t@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzk@kernel.org>
-Cc: <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-phy@lists.infradead.org>, <manivannan.sadhasivam@linaro.org>,
-	<lpieralisi@kernel.org>, <kw@linux.com>, <robh@kernel.org>,
-	<bhelgaas@google.com>, <jingoohan1@gmail.com>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <alim.akhtar@samsung.com>, <vkoul@kernel.org>,
-	<kishon@kernel.org>, <arnd@arndb.de>, <m.szyprowski@samsung.com>,
-	<jh80.chung@samsung.com>, "'Pankaj Dubey'" <pankaj.dubey@samsung.com>,
-	<linux-samsung-soc@vger.kernel.org>
-In-Reply-To: <441dd5c3-fd51-4471-86ad-337c646b1571@kernel.org>
-Subject: RE: [PATCH 09/10] PCI: exynos: Add support for Tesla FSD SoC
-Date: Thu, 29 May 2025 15:54:43 +0530
-Message-ID: <0eec01dbd083$e78c8200$b6a58600$@samsung.com>
+	s=arc-20240116; t=1748528504; c=relaxed/simple;
+	bh=pnOeuLVvoGhxI9QE7V69Klv9q3SpI04PooUYZCiq2UM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=e9Qm7ADkTNB4T3U47VkcnBEUIlzXWcrztcR9EhHFWbxRAPyuPgUGlf+4dTw+hQ0EBoTMHK6zxSL2yllhtY6Q5x/rCniwUdr9FlW/s8hm76mXFboiXZCNMJ6eMSObHNJm/tpc/JXbkg0osE7802QV/G1iKlqz8vRY0mjFmJ5PtGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ltec.ch; spf=pass smtp.mailfrom=ltec.ch; dkim=permerror (0-bit key) header.d=ltec.ch header.i=@ltec.ch header.b=/tg5MDE3; dkim=pass (2048-bit key) header.d=ltec.ch header.i=@ltec.ch header.b=Z4Vam7we; arc=none smtp.client-ip=95.143.48.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ltec.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ltec.ch
+DKIM-Signature: v=1; a=ed25519-sha256; q=dns/txt; c=relaxed/relaxed; d=ltec.ch
+	; s=ec-sel; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
+	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=20lWbhN2MmPbIZRs+wuEiLtogdwAF/uD3/PsgRMN/1s=; b=/tg5MDE3pEY3MSfpL3xu6MuU3d
+	XFU1r8nwL3BzB2TRBTgLj26yntHPnpQKN6/TCYERatd+AExBQmG/rMdBMuDg==;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=ltec.ch;
+	s=rsa-sel; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
+	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=20lWbhN2MmPbIZRs+wuEiLtogdwAF/uD3/PsgRMN/1s=; b=Z4Vam7weU0qIZwRgq7MHz7oBz8
+	RqVtemlvRIzhMaTr8nCgknEpBLKpWDGzZlIwk2zsZG0LYyha6IDeJzLbcn4ghkvmVFigj6gPCaDvV
+	eyX2W02zVc5WKxgw6QUUwsCGNfR7QbC8K27vJyCiFQRQMyoaUaMPNmmxKFgzs6Mcf2IeOEiYJMfjf
+	LpupnPMdZeHUS5XgbKMMfSDHrj9YNwbAI3qVWUKd9uZyhs+QNrqzMfPjLBeyaYMdi7DsshOvOu9bg
+	LfZGmqBo8UMcaMUt9H26Lig/cOd5iDw0BrohhR3n+kYsVmqGPlliQSxZaSlpxWT0yZfVWwjMzy/d5
+	hZ6UsojA==;
+Received: from nebula.ltec ([172.27.11.2] helo=localhost.localdomain)
+	by mail.ltec.ch with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <fb@ltec.ch>)
+	id 1uKdhJ-006Vmc-0W;
+	Thu, 29 May 2025 15:53:29 +0200
+From: Felix Brack <fb@ltec.ch>
+To: tony@atomide.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	linux-omap@vger.kernel.org,
+	devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	fb@ltec.ch
+Subject: [PATCH] ARM: dts: am335x-pdu001: Fix RS-485 transceiver switching
+Date: Thu, 29 May 2025 15:53:24 +0200
+Message-ID: <20250529135324.182868-1-fb@ltec.ch>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQKa2HaEso6x90WQFKmaYw3pYxuT6gLGtKN5Ag2CUBUBvBCtGwIQCop6Ao3fESGyEeNtsA==
-Content-Language: en-in
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTYRzGec85O+dstDrOcO9KLBZJWlpCyRsM7aJw0ko/REUSOd3BlU7H
-	zjSNJDWtlOxihjlETeziulBTl9YaOdMuVnZZSzA1aaUh1VJLNM3YVuC3HzzP7+H/4U/jkgFi
-	Eb0/Xc/p0pVpclJEmNvlASGudUi95va4H/pQbSbRTFknheoL1Oj6/RcYqnn4QoB6po4J0NXx
-	Sgp1FM3i6Iuhn0Td3bcolHfytwCZPjoE6M3dKhI9r35EojPGXwS60G3FUOF0IYFuPOyjUF9h
-	sQDVNY9TaNbSQqHW94/xDX7s76kywLYa+ii21pTJmozFJPveYSFZp70CYxvrj7CnmoyAHTMF
-	xAv3iBQqLm1/FqdbHZEoUjtOx2knArJLnSNkHrgrKwFCGjJr4bu6m1gJENES5h6Az4oGSG8g
-	g2Ov3IGbfWHDnyHKW/oMYFd7v6dEMqug0z6Nu3khEwIbe654SjgzREDrmAt4jW4MdhbbBSWA
-	poVMBHzyYJlb8GWiYUvXd49MMMuhreaiZ1TMrIdteRW4l33gk0on4WacWQlLB4vAf758cQT3
-	XrcUTn66LPAesRPmN1b860thx+RJ/AzwNcyZMsyZMsyZMsxRagFhBDJOy2tSNHyYNiydOxjK
-	KzV8ZnpKaHKGxgQ8PxAc1ALuGF2hNoDRwAYgjcsXigsiw9USsUqZc4jTZezTZaZxvA0spgm5
-	VCwdLlVJmBSlnkvlOC2n+59itHBRHlZYbtG3S3+Ex1wZ6Ih++e2lYtYa/NwvNilAseNeSw4n
-	O26tTOKzirD7GzcnB36Nm/dz9KMttcpfYg1ZGjhfZWZiLRPnQ8RxSV8cq/tikl25raiVmSi2
-	97ADdr+uyAZqWwE++cbYuQsGrdk5tLXu4Hjidr1w+NKFTYNNk8j/m2M368JywIKnETGfm5xV
-	CTWVfG/sgw5aH2pcIYoa9RnZ/srnz0RYUJklunzLXtyyuFfaXp+x/rEqkkvonVl3wphimcqt
-	YdncEplqZNe5a6m2w5Hx2QVtoqizanPQYNSnLp867YFmujY83/xayYwqkKytvFxxNLt3eMlb
-	TqDZLCd4tTIsGNfxyr95fT+4cgMAAA==
-X-CMS-MailID: 20250529102448epcas5p1a8209b6700e2206c3bbb6669f473b28b
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-541,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250518193300epcas5p17e954bb18de9169d65e00501b1dcd046
-References: <20250518193152.63476-1-shradha.t@samsung.com>
-	<CGME20250518193300epcas5p17e954bb18de9169d65e00501b1dcd046@epcas5p1.samsung.com>
-	<20250518193152.63476-10-shradha.t@samsung.com>
-	<20250521-competent-honeybee-of-will-3f3ae1@kuoka>
-	<0e2801dbcef4$78fe5ec0$6afb1c40$@samsung.com>
-	<441dd5c3-fd51-4471-86ad-337c646b1571@kernel.org>
+Content-Transfer-Encoding: 8bit
 
+The wiring of the RS-485 transceiver of UART0 of the PDU-001 board
+allows sending or receiving date exclusively. In other words: no
+character transmitted will ever be received.
+Hence the tx-filter counter in the OMAP serial driver can't work
+correctly as it relies on receiving the transmitted characters.
+This in turn will prevent reception of data unless we disable the
+tx-filter counter.
+This patch disables the tx-filter counter by enabling the DTS setting
+rs485-rx-during-tx. This might sound like the opposite to be done but
+it uses the enabling of rs485-rx-during-tx not for receiving the data
+transmitted but for disabling the tx-fiter counter.
 
+Tested-by: Felix Brack <fb@ltec.ch>
+Signed-off-by: Felix Brack <fb@ltec.ch>
+---
+ arch/arm/boot/dts/ti/omap/am335x-pdu001.dts | 1 +
+ 1 file changed, 1 insertion(+)
 
-> -----Original Message-----
-> From: Krzysztof Kozlowski <krzk=40kernel.org>
-> Sent: 28 May 2025 12:56
-> To: Shradha Todi <shradha.t=40samsung.com>
-> Cc: linux-pci=40vger.kernel.org; devicetree=40vger.kernel.org; linux-arm-=
-kernel=40lists.infradead.org;
-> linux-samsung-soc=40vger.kernel.or; linux-kernel=40vger.kernel.org; linux=
--phy=40lists.infradead.org;
-> manivannan.sadhasivam=40linaro.org; lpieralisi=40kernel.org; kw=40linux.c=
-om; robh=40kernel.org;
-> bhelgaas=40google.com; jingoohan1=40gmail.com; krzk+dt=40kernel.org; cono=
-r+dt=40kernel.org;
-> alim.akhtar=40samsung.com; vkoul=40kernel.org; kishon=40kernel.org; arnd=
-=40arndb.de;
-> m.szyprowski=40samsung.com; jh80.chung=40samsung.com
-> Subject: Re: =5BPATCH 09/10=5D PCI: exynos: Add support for Tesla FSD SoC
->=20
-> On 27/05/2025 12:45, Shradha Todi wrote:
-> >
-> >
-> >> -----Original Message-----
-> >> From: Krzysztof Kozlowski <krzk=40kernel.org>
-> >> Sent: 21 May 2025 15:18
-> >> To: Shradha Todi <shradha.t=40samsung.com>
-> >> Cc: linux-pci=40vger.kernel.org; devicetree=40vger.kernel.org; linux-a=
-rm-kernel=40lists.infradead.org;
-> linux-samsung-soc=40vger.kernel.or;
-> >> linux-kernel=40vger.kernel.org; linux-phy=40lists.infradead.org; maniv=
-annan.sadhasivam=40linaro.org;
-> lpieralisi=40kernel.org;
-> >> kw=40linux.com; robh=40kernel.org; bhelgaas=40google.com; jingoohan1=
-=40gmail.com;
-> krzk+dt=40kernel.org; conor+dt=40kernel.org;
-> >> alim.akhtar=40samsung.com; vkoul=40kernel.org; kishon=40kernel.org; ar=
-nd=40arndb.de;
-> m.szyprowski=40samsung.com;
-> >> jh80.chung=40samsung.com
-> >> Subject: Re: =5BPATCH 09/10=5D PCI: exynos: Add support for Tesla FSD =
-SoC
-> >>
-> >> On Mon, May 19, 2025 at 01:01:51AM GMT, Shradha Todi wrote:
-> >>>  static int exynos_pcie_probe(struct platform_device *pdev)  =7B
-> >>>  	struct device *dev =3D &pdev->dev;
-> >>> =40=40 -355,6 +578,26 =40=40 static int exynos_pcie_probe(struct plat=
-form_device *pdev)
-> >>>  	if (IS_ERR(ep->phy))
-> >>>  		return PTR_ERR(ep->phy);
-> >>>
-> >>> +	if (ep->pdata->soc_variant =3D=3D FSD) =7B
-> >>> +		ret =3D dma_set_mask_and_coherent(dev, DMA_BIT_MASK(36));
-> >>> +		if (ret)
-> >>> +			return ret;
-> >>> +
-> >>> +		ep->sysreg =3D syscon_regmap_lookup_by_phandle(dev->of_node,
-> >>> +				=22samsung,syscon-pcie=22);
-> >>> +		if (IS_ERR(ep->sysreg)) =7B
-> >>> +			dev_err(dev, =22sysreg regmap lookup failed.=5Cn=22);
-> >>> +			return PTR_ERR(ep->sysreg);
-> >>> +		=7D
-> >>> +
-> >>> +		ret =3D of_property_read_u32_index(dev->of_node, =22samsung,syscon=
--pcie=22, 1,
-> >>> +						 &ep->sysreg_offset);
-> >>> +		if (ret) =7B
-> >>> +			dev_err(dev, =22couldn't get the register offset for syscon=21=5C=
-n=22);
-> >>
-> >> So all MMIO will go via syscon? I am pretty close to NAKing all this, =
-but let's be sure that I got it right
-> - please post your complete DTS
-> >> for upstream. That's a requirement from me for any samsung drivers - I=
- don't want to support fake,
-> broken downstream solutions
-> >> (based on multiple past submissions).
-> >>
-> >
-> > By all MMIO do you mean DBI read/write? The FSD hardware architecture i=
-s such that the
-> > DBI/ATU/DMA address is at the same offset.
-> > The syscon register holds the upper bits of the actual address differen=
-tiating between these 3
-> > spaces. This kind of implementation was done
-> > to reduce address space for PCI DWC controller. So yes, each DBI/ATU re=
-gister read/write will have
-> > syscon write before it to switch address space.
->=20
-> Wrap your replies correctly to fit mailing list.
->=20
-> No, I meant your binding does not define any MMIO at all. I see you use
-> for example elbi_base which is mapped from =22elbi=22 reg entry, but you =
-do
-> not have it in your binding.
->=20
-> Maybe just binding is heavily incomplete and that confused me.
->=20
-
-Got it. I think the confusion is due to the incomplete dt-bindings.
-I will fix these issues in the next version. Will post again once I get
-clarity about how to avoid redirection in patch 4/10
-
-> Best regards,
-> Krzysztof
+diff --git a/arch/arm/boot/dts/ti/omap/am335x-pdu001.dts b/arch/arm/boot/dts/ti/omap/am335x-pdu001.dts
+index ded19e24e666..6c96840fe8be 100644
+--- a/arch/arm/boot/dts/ti/omap/am335x-pdu001.dts
++++ b/arch/arm/boot/dts/ti/omap/am335x-pdu001.dts
+@@ -258,6 +258,7 @@ &uart0 {
+ 
+ 	rts-gpio = <&gpio1 9 GPIO_ACTIVE_HIGH>;
+ 	rs485-rts-active-high;
++	rs485-rx-during-tx;
+ 	rs485-rts-delay = <0 0>;
+ 	linux,rs485-enabled-at-boot-time;
+ 
+-- 
+2.43.0
 
 
