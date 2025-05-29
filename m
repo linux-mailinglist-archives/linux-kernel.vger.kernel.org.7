@@ -1,162 +1,202 @@
-Return-Path: <linux-kernel+bounces-667107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-667113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E81EAC8090
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 17:54:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD723AC809C
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 17:59:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C8399E1135
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 15:54:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B6DB4E669D
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 15:59:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61B6E22D7BD;
-	Thu, 29 May 2025 15:54:36 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6416D22D7A8;
+	Thu, 29 May 2025 15:59:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YzMr95gQ"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FBD922D4F1;
-	Thu, 29 May 2025 15:54:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18D0922D4F3;
+	Thu, 29 May 2025 15:59:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748534076; cv=none; b=Uz6Y8J+bR6ig4RoJ/v4pUnI8HBfYYGXWpXY3zJllcRp/8xvDCJQM+bNdOC3JJmmXUCsj3mQ55Ijq63C+ReSqw2dd7KU4MCO/xXJzpJYLjmJhJRk8u5S3bLPQqib1TXEoVyCNBkq/ZrBoyh/sfrHllrvkv0LUoLUUI6bdId71/UQ=
+	t=1748534387; cv=none; b=L93Z5qF/evsZlXHhXZFFBwnpbzgG1FikkCObAfARTMaDh+d1Cf5osqpQVBvLilbaUrz4vjQobT0IH65I3DaYgHyD2XfhmJwNT902Jcqu9qmSHltf8IHfHRsT6VPbvl0Nm7+dzFvfHZ695ezpLG6VDeTu2bfFmaWzR+/lmWdf6aE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748534076; c=relaxed/simple;
-	bh=9iykyd3qskHYYgZ8CHKhOP7iD/5TnA6IMb1PXIV/U7A=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=UyAqqA5P2FAn5CqrFAWRis+GSOlsgS8juC9afJd9ATdND/gPRbLtidDbPcQyGtGGXXNg5Ov81HY+9tXjOBLusA3SV3h5P5qj0suG9pqHQbxNR84OcyB9pyolXCsGhZ6LkTNSOxMcPec7etfAn9qemU5pIDlMjb4FVU73XOvE754=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4b7WCD5f4YzYQv88;
-	Thu, 29 May 2025 23:54:32 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id DC56B1A1599;
-	Thu, 29 May 2025 23:54:31 +0800 (CST)
-Received: from ultra.huawei.com (unknown [10.90.53.71])
-	by APP3 (Coremail) with SMTP id _Ch0CgBX98EzgzhooMK5Ng--.57784S6;
-	Thu, 29 May 2025 23:54:31 +0800 (CST)
-From: Pu Lehui <pulehui@huaweicloud.com>
-To: mhiramat@kernel.org,
-	oleg@redhat.com,
-	peterz@infradead.org,
-	akpm@linux-foundation.org,
-	Liam.Howlett@oracle.com,
-	lorenzo.stoakes@oracle.com,
-	vbabka@suse.cz,
-	jannh@google.com,
-	pfalcato@suse.de
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	pulehui@huawei.com
-Subject: [PATCH v1 4/4] selftests/mm: Add test about uprobe pte be orphan during vma merge
-Date: Thu, 29 May 2025 15:56:50 +0000
-Message-Id: <20250529155650.4017699-5-pulehui@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250529155650.4017699-1-pulehui@huaweicloud.com>
-References: <20250529155650.4017699-1-pulehui@huaweicloud.com>
+	s=arc-20240116; t=1748534387; c=relaxed/simple;
+	bh=Pl3LGmkCwfg7gTCA3AsSP2awNVEV2AzkZ84mXZuXslY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iuoE3ymuYVky6qFpOymy66N4ML7FdaNpRUY4huD+JLVe83fStaM9Ha6oOZgJYZ9LMd92KWhsmsPNlJXMAAA+VxrdXgqRZ90qmUiVazZcax20WtRd14U5yIwhEmduzu/2T7bMQeufe4nXJ8D+Wdi/JUAEm3iWsQCiGTS76vA3Y6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YzMr95gQ; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2351227b098so4965825ad.2;
+        Thu, 29 May 2025 08:59:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748534385; x=1749139185; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9d3/XMHaJT7MXZLQQikwQ6fSkoA+ShCfpN8VkDVAL0w=;
+        b=YzMr95gQsrpVXhqTEQd7CItHmygaDZ+ltsx+i9m0x2UY+fvhZU2RQvaC65OkS/ELEG
+         ilWN4MwxQkmJsFdzah9PK+k9qeZaoB4urjpQMnZPUIs1i4bvWbfxy2j0AxGjX3CtwLkT
+         LZV3A9GtsEfUe+32cvT5LaCcb6UIvAWvSwKBhZLyvSEurcB6rtHeMUM8zXBsIcT014YL
+         Q8k435UPWOl8gOGgHmX66+Qyli7FzO5om/rxQYFGn8U3RoRMIfq3G00uWpFEhzhU7crU
+         +iXxlV3CEl8uo74ldB1iH1TDIsEpjEJl9T17LACqTJ2HzF/ci5Sds0ZdIP/D+Ie2+Opr
+         ZLmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748534385; x=1749139185;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9d3/XMHaJT7MXZLQQikwQ6fSkoA+ShCfpN8VkDVAL0w=;
+        b=sxUVSoezW8wxEUXY1HBgYcIHpTPFWwYInwKTY3n0KzMFchjd8ZSQBd3muNRZzuqmSY
+         u0he0fzrw9fdqRbG0hSUQIYvxDe/+OYocC8aI4m/yy6K8+gOkm6DjgOTf7kem9S0Wcc2
+         gXrIqgraP8vIxvelN/Pr8NT4jN0yXUC/4RiVMBHlc9m1nO68OMsU++UUOD87lkDYf29x
+         wBPybnOuwAHzZ6s5qielqNs43UgFBK5+rCmPbF/BbJWuE5/7EEFxUXlSfRjSsxUpIEYw
+         ScGq9uMcQmfrYHMbC4MNLWB1p1QlD9sx6+lfSh1EOZ2qre2QV3jLEDzzOGUmJeVPJZbz
+         UkuA==
+X-Forwarded-Encrypted: i=1; AJvYcCWpPWRtwRoMfn7lnx4crRKrnxU72dpW2WQ0prI59fboT97H9HwNAe4pCHoA4FrlF+tJctIF9DNV@vger.kernel.org, AJvYcCX3hRkTLM2pERwLy5stWgZs1Anu0alMvvigLo6sE2kzn2U0Iv6ShzD4lnpMq8YYKcKiSZ0ZJL/iXqA/Oco=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFV15je0kcQ5+mXDjQtGll/2bsKVHc2DWW53qVOmIYBWsYbxGF
+	W4pSyMSRSDhZy8ZOuweb5Adp39zdKQo1n2BL027C1hK+hj1I7B3kuBE=
+X-Gm-Gg: ASbGnctD2xk1JDSav2osw1RoOcBoj5E99dcjjlgRAyJFbY0GlbwsyrqlqNaZcP1U/zH
+	Db5mU/5RiPcDTBbjcAxylyf8tdWqT6pcunSZatcexzNt9eVyjMReZayHwNmZzVXvUwUZwTw3WJ7
+	robXpuZR37sdzDq9iMr+OV3ppPkC2u7qfOyqtZlZZg6B+31tKFNqDSKIMygWXIjCPcoO7NZ3qf7
+	qUOMr3apjE124u0yuXCkUqV9NzhH2ebR5sH3iYfrLkiYxdJgqbEIbnrYRKCA8SFuaVCIZ7qcdvN
+	6Voack+InbFxf2MiEF0fi2PwlNw/OQMnHN7t8OMY8Zq0+xXkiPz2NMhWv+WS0FaLcFega3Ki3Np
+	o+SsjNmIDvl8P
+X-Google-Smtp-Source: AGHT+IFtrrtjmX3YsvPidGU5eGxbbMDyGkFE11Jn24qLyQPKtG85oSGxOh3adg0lM0/UlxS40ougiw==
+X-Received: by 2002:a17:903:2283:b0:234:f4da:7ecf with SMTP id d9443c01a7336-235289d4a9bmr1792705ad.8.1748534385071;
+        Thu, 29 May 2025 08:59:45 -0700 (PDT)
+Received: from localhost (c-73-158-218-242.hsd1.ca.comcast.net. [73.158.218.242])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-23506cdb9b3sm13959895ad.140.2025.05.29.08.59.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 May 2025 08:59:44 -0700 (PDT)
+Date: Thu, 29 May 2025 08:59:43 -0700
+From: Stanislav Fomichev <stfomichev@gmail.com>
+To: syzbot <syzbot+846bb38dc67fe62cc733@syzkaller.appspotmail.com>
+Cc: davem@davemloft.net, edumazet@google.com, horms@kernel.org,
+	kuba@kernel.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, pabeni@redhat.com,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [net?] possible deadlock in rtnl_newlink
+Message-ID: <aDiEby8WRjJ9Gyfx@mini-arch>
+References: <683837bf.a00a0220.52848.0003.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_Ch0CgBX98EzgzhooMK5Ng--.57784S6
-X-Coremail-Antispam: 1UD129KBjvJXoW7ury3JF1xCry8KFyfJrykuFg_yoW8uF4fp3
-	WkAwn8tw4rKw13t343Zryq9a1fKrs7Jr47t34fXFy8Z3W7tr9xJF40kFyDXFWkXrWvqrn8
-	C39xJFWfCrWUXaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPSb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUAV
-	Cq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0
-	rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x0267
-	AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E
-	14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7
-	xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Y
-	z7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2
-	AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAq
-	x4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r
-	43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF
-	7I0E14v26F4j6r4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI
-	0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7I
-	U1aLvJUUUUU==
-X-CM-SenderInfo: psxovxtxl6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <683837bf.a00a0220.52848.0003.GAE@google.com>
 
-From: Pu Lehui <pulehui@huawei.com>
+On 05/29, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    b1427432d3b6 Merge tag 'iommu-fixes-v6.15-rc7' of git://gi..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=161ef5f4580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=9fd1c9848687d742
+> dashboard link: https://syzkaller.appspot.com/bug?extid=846bb38dc67fe62cc733
+> compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12d21170580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17d9a8e8580000
+> 
+> Downloadable assets:
+> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-b1427432.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/47b0c66c70d9/vmlinux-b1427432.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/a2df6bfabd3c/bzImage-b1427432.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+846bb38dc67fe62cc733@syzkaller.appspotmail.com
+> 
+> ifb0: entered allmulticast mode
+> ifb1: entered allmulticast mode
+> ======================================================
+> WARNING: possible circular locking dependency detected
+> 6.15.0-rc7-syzkaller-00144-gb1427432d3b6 #0 Not tainted
+> ------------------------------------------------------
+> syz-executor216/5313 is trying to acquire lock:
+> ffff888033f496f0 ((work_completion)(&adapter->reset_task)){+.+.}-{0:0}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
+> ffff888033f496f0 ((work_completion)(&adapter->reset_task)){+.+.}-{0:0}, at: rcu_read_lock include/linux/rcupdate.h:841 [inline]
+> ffff888033f496f0 ((work_completion)(&adapter->reset_task)){+.+.}-{0:0}, at: start_flush_work kernel/workqueue.c:4150 [inline]
+> ffff888033f496f0 ((work_completion)(&adapter->reset_task)){+.+.}-{0:0}, at: __flush_work+0xd2/0xbc0 kernel/workqueue.c:4208
+> 
+> but task is already holding lock:
+> ffffffff8f2fab48 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_lock net/core/rtnetlink.c:80 [inline]
+> ffffffff8f2fab48 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_nets_lock net/core/rtnetlink.c:341 [inline]
+> ffffffff8f2fab48 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_newlink+0x8db/0x1c70 net/core/rtnetlink.c:4064
+> 
+> which lock already depends on the new lock.
+> 
+> 
+> the existing dependency chain (in reverse order) is:
+> 
+> -> #1 (rtnl_mutex){+.+.}-{4:4}:
+>        lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5866
+>        __mutex_lock_common kernel/locking/mutex.c:601 [inline]
+>        __mutex_lock+0x182/0xe80 kernel/locking/mutex.c:746
+>        e1000_reset_task+0x56/0xc0 drivers/net/ethernet/intel/e1000/e1000_main.c:3512
+>        process_one_work kernel/workqueue.c:3238 [inline]
+>        process_scheduled_works+0xadb/0x17a0 kernel/workqueue.c:3319
+>        worker_thread+0x8a0/0xda0 kernel/workqueue.c:3400
+>        kthread+0x70e/0x8a0 kernel/kthread.c:464
+>        ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:153
+>        ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+> 
+> -> #0 ((work_completion)(&adapter->reset_task)){+.+.}-{0:0}:
+>        check_prev_add kernel/locking/lockdep.c:3166 [inline]
+>        check_prevs_add kernel/locking/lockdep.c:3285 [inline]
+>        validate_chain+0xb9b/0x2140 kernel/locking/lockdep.c:3909
+>        __lock_acquire+0xaac/0xd20 kernel/locking/lockdep.c:5235
+>        lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5866
+>        touch_work_lockdep_map kernel/workqueue.c:3922 [inline]
+>        start_flush_work kernel/workqueue.c:4176 [inline]
+>        __flush_work+0x6b8/0xbc0 kernel/workqueue.c:4208
+>        __cancel_work_sync+0xbe/0x110 kernel/workqueue.c:4364
+>        e1000_down+0x402/0x6b0 drivers/net/ethernet/intel/e1000/e1000_main.c:526
+>        e1000_close+0x17b/0xa10 drivers/net/ethernet/intel/e1000/e1000_main.c:1448
+>        __dev_close_many+0x361/0x6f0 net/core/dev.c:1702
+>        __dev_close net/core/dev.c:1714 [inline]
+>        __dev_change_flags+0x2c7/0x6d0 net/core/dev.c:9352
+>        netif_change_flags+0x88/0x1a0 net/core/dev.c:9417
+>        do_setlink+0xcb9/0x40d0 net/core/rtnetlink.c:3152
+>        rtnl_group_changelink net/core/rtnetlink.c:3783 [inline]
+>        __rtnl_newlink net/core/rtnetlink.c:3937 [inline]
+>        rtnl_newlink+0x149f/0x1c70 net/core/rtnetlink.c:4065
+>        rtnetlink_rcv_msg+0x7cc/0xb70 net/core/rtnetlink.c:6955
+>        netlink_rcv_skb+0x219/0x490 net/netlink/af_netlink.c:2534
+>        netlink_unicast_kernel net/netlink/af_netlink.c:1313 [inline]
+>        netlink_unicast+0x75b/0x8d0 net/netlink/af_netlink.c:1339
+>        netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1883
+>        sock_sendmsg_nosec net/socket.c:712 [inline]
+>        __sock_sendmsg+0x21c/0x270 net/socket.c:727
+>        ____sys_sendmsg+0x505/0x830 net/socket.c:2566
+>        ___sys_sendmsg+0x21f/0x2a0 net/socket.c:2620
+>        __sys_sendmsg net/socket.c:2652 [inline]
+>        __do_sys_sendmsg net/socket.c:2657 [inline]
+>        __se_sys_sendmsg net/socket.c:2655 [inline]
+>        __x64_sys_sendmsg+0x19b/0x260 net/socket.c:2655
+>        do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>        do_syscall_64+0xf6/0x210 arch/x86/entry/syscall_64.c:94
+>        entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> 
+> other info that might help us debug this:
+> 
+>  Possible unsafe locking scenario:
+> 
+>        CPU0                    CPU1
+>        ----                    ----
+>   lock(rtnl_mutex);
+>                                lock((work_completion)(&adapter->reset_task));
+>                                lock(rtnl_mutex);
+>   lock((work_completion)(&adapter->reset_task));
 
-Add test about uprobe pte be orphan during vma merge.
-
-Signed-off-by: Pu Lehui <pulehui@huawei.com>
----
- tools/testing/selftests/mm/merge.c | 42 ++++++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
-
-diff --git a/tools/testing/selftests/mm/merge.c b/tools/testing/selftests/mm/merge.c
-index c76646cdf6e6..8e1f38d23384 100644
---- a/tools/testing/selftests/mm/merge.c
-+++ b/tools/testing/selftests/mm/merge.c
-@@ -2,11 +2,13 @@
- 
- #define _GNU_SOURCE
- #include "../kselftest_harness.h"
-+#include <fcntl.h>
- #include <stdio.h>
- #include <stdlib.h>
- #include <unistd.h>
- #include <sys/mman.h>
- #include <sys/wait.h>
-+#include <linux/perf_event.h>
- #include "vm_util.h"
- 
- FIXTURE(merge)
-@@ -452,4 +454,44 @@ TEST_F(merge, forked_source_vma)
- 	ASSERT_EQ(procmap->query.vma_end, (unsigned long)ptr2 + 5 * page_size);
- }
- 
-+TEST_F(merge, handle_uprobe_upon_merged_vma)
-+{
-+	const size_t attr_sz = sizeof(struct perf_event_attr);
-+	unsigned int page_size = self->page_size;
-+	const char *probe_file = "./foo";
-+	char *carveout = self->carveout;
-+	struct perf_event_attr attr;
-+	unsigned long type;
-+	void *ptr1, *ptr2;
-+	int fd;
-+
-+	fd = open(probe_file, O_RDWR|O_CREAT, 0600);
-+	ASSERT_GE(fd, 0);
-+
-+	ASSERT_EQ(ftruncate(fd, page_size), 0);
-+	ASSERT_EQ(read_sysfs("/sys/bus/event_source/devices/uprobe/type", &type), 0);
-+
-+	memset(&attr, 0, attr_sz);
-+	attr.size = attr_sz;
-+	attr.type = type;
-+	attr.config1 = (__u64)(long)probe_file;
-+	attr.config2 = 0x0;
-+
-+	ASSERT_GE(syscall(__NR_perf_event_open, &attr, 0, -1, -1, 0), 0);
-+
-+	ptr1 = mmap(&carveout[page_size], 10 * page_size, PROT_EXEC,
-+		    MAP_PRIVATE | MAP_FIXED, fd, 0);
-+	ASSERT_NE(ptr1, MAP_FAILED);
-+
-+	ptr2 = mremap(ptr1, page_size, 2 * page_size,
-+		      MREMAP_MAYMOVE | MREMAP_FIXED, ptr1 + 5 * page_size);
-+	ASSERT_NE(ptr2, MAP_FAILED);
-+
-+	ASSERT_NE(mremap(ptr2, page_size, page_size,
-+			 MREMAP_MAYMOVE | MREMAP_FIXED, ptr1), MAP_FAILED);
-+
-+	close(fd);
-+	remove(probe_file);
-+}
-+
- TEST_HARNESS_MAIN
--- 
-2.34.1
-
+So this is internal WQ entry lock that is being reordered with rtnl
+lock. But looking at process_one_work, I don't see actual locks, mostly
+lock_map_acquire/lock_map_release calls to enforce some internal WQ
+invariants. Not sure what to do with it, will try to read more.
 
