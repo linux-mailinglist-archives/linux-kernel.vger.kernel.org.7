@@ -1,173 +1,180 @@
-Return-Path: <linux-kernel+bounces-666452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9E5AAC76EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 06:03:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54A48AC76D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 05:57:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01DD1A24B6C
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 04:03:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 634EF3B777D
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 03:56:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FEF02459F1;
-	Thu, 29 May 2025 04:03:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BFC624EF88;
+	Thu, 29 May 2025 03:56:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="hnJvOwyI"
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pDBeFSVi"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABBF110785
-	for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 04:03:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D41C2417D9;
+	Thu, 29 May 2025 03:56:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748491425; cv=none; b=Wj2mZLK+sWRaiPH9R7cfJagj3UJpna/SDRtuHQqFfMBXUMqRdu8MtQqQr2kGOBBj6/aCrA12VBLJmby0P5aDNRsSv8odwscutVNNaQ8czhzCDdmeLQ0/bmC/SOCGE2s1neIsKj8FmzLt943Y7hfmLbWxgxQV0WOPrls/4u1cQNY=
+	t=1748491012; cv=none; b=EBl1OM2ExnY6hZY5w2o38RvZUWUk59T3mwrQhTbBdKXHEnF/fK3BMRGQHZZ6A29FtywF4an93obAFPaUDNk5V5Fe348BWLgAl2LQIe1bDqhX7LO0b4kRp1eQ2FNdZ5nQvbM152ggTxU9KYPPWkrLGjaUbVZkYzLRhI7J4CkpyTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748491425; c=relaxed/simple;
-	bh=bjf/JLayP19bwsqdRmI9LExctVLA/PfSC/qjpvMxmXA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Or6HxUF33Upu2RywO9bsle+JZjlUgSuJLw65Dyt5vKJqygOb7sWIUSytqJ/vtTcQj76PQVOxJFl6Asy+gN6SbiveRdrxMtaYnktxhpvYoTcVyAG9dsbJf1cDO70rULkuc8zp6Jvh7ZPwVlT0+JbDiPQgjugDtRCOh650KXZIQE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=hnJvOwyI; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com [209.85.208.71])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id D06493F71E
-	for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 03:55:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1748490902;
-	bh=V4vVrDxJRiSVvwJTAsACN8FW8gcbiroxOJCqMNoZKGU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=hnJvOwyIkjvin+FB0DgEwX15JwTDzmGztxhHSj4mkKDBtMNKQFeKuSc52K+tDO0rQ
-	 j2QAq/XTKTuqVkg3cvZcHuWdbRSVUvCjIRb+ylvGnTvwoDa3SomJywoMyPyytxOBA8
-	 h2Uh5B6n1AwYZjg3wxsP35VM2c8sbS83aHosUfgmB/4/BYNKYogL/40Ahgzi68xgKl
-	 nmeYmi5fmPUZlpPwctBW3MRauA1IxEjvsa7l5mIeJy2fkxR46AGVwgAYF3ID3r3MER
-	 LyeDPSOoQx9O8ZadBoO2ed+iY2IUi886FldVTh30IyF7e6LMOZYAn8+G6qKX2Q7Qf+
-	 MK4yJr39brg+A==
-Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-60498322443so443619a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 20:55:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748490901; x=1749095701;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=V4vVrDxJRiSVvwJTAsACN8FW8gcbiroxOJCqMNoZKGU=;
-        b=p5V0K5ca3xo+yNaQYDOpdV4jB2MYMN/N7FTlOdQXCjgx4tUB0ivrVeMSWnO4lKeZ1o
-         GlslvKfiZoJV2QjQT1f4f2I3srH8GVMyhUgKwGRLrNo9N9iiVIkO3tThRFH9PhX5CU7v
-         nUE2pvnpHixWRY5npSszL3esoO78DfRsxzSAK8JCwFZzCBUUjmEJzt9Ih7tj8ZyjKEhX
-         4mGYoNatx4Escoft7kTd+tmJEQCUx3Zro+kXlBoRaem3Rx8lbz2EwZXTuRl7G3d3OXsV
-         n5ArTbxUYjLw0oqr8hZmhHOKNbseOkJlzD6KCVNtINsrQhcCVRQU5f3cXfVIAGlkuw32
-         ArMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWNzPSPJzKBZWni9envP9LgmOUJWWGO4Co6GHFGjO/QDzmdP2LqxHttJVRAqHlBzchutHCXkIuGKsCPk90=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3/eioXhYFcgjq4tAH3YZ1f+1Rw8/moy5o/bs/u2aMR0OhtpN/
-	Fjqyah6Y3u2VEHctLd6iF7zVWErfnJ5ZFvcJT3rFlhCTInEZNPQ9I9d7H6Lcd6bc1VL93mvtG8L
-	5GbjbQNbBGrXidQXo4/dDN423BfRPrQOLDTa1vULBxwi012zU8HyoGyXE8H99vkOEtdGFfAdXPA
-	7kElkDz+LSpjRDrMCSctZ+yQIYgy5oH7/IzvXOZM2JgcJMAzCPpavRnOHw
-X-Gm-Gg: ASbGnctecsLEbeGFutjaXEPQhyQ8m+cmbS4ocCiUf5wpMfNQvht0OtBOjUxCo8k0ye3
-	B/7yYH2s+H/0TpcZm6gwlcWsf6ctAFpxCPW+k4ERqfD5TJjNK3MH6knfdoLtuOWsvnqenfw==
-X-Received: by 2002:a05:6402:1d4b:b0:601:3f5b:39ee with SMTP id 4fb4d7f45d1cf-602d8f5d70dmr18033634a12.3.1748490901404;
-        Wed, 28 May 2025 20:55:01 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHR0ej2bZUX3SVv9aAplyxdVXsmtwHM6QDoYTrTihqt5ALCD/GbQf0L7mvCwR+nlHJCc5oIyUGYNq9gu+JSggw=
-X-Received: by 2002:a05:6402:1d4b:b0:601:3f5b:39ee with SMTP id
- 4fb4d7f45d1cf-602d8f5d70dmr18033620a12.3.1748490901054; Wed, 28 May 2025
- 20:55:01 -0700 (PDT)
+	s=arc-20240116; t=1748491012; c=relaxed/simple;
+	bh=HlMxjN1rhbUQG9kzZ9xQceQmjB3QNlzQysF7zPqmn8w=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=urYrgewa+pq9Oogx8cONES5M0Z+jylSVSyNxQ0vfrxTVQ4YTzEwNYI+d9OeO1THid6Po/5Ox2bU4oIr+3vwrKqox25S0jolPckRPReZT1JRv4zL84DKe1MHYo04PKzdcnkdHY2Pv9z351uNaL+YvhwXIDZyPuNCmQKJWsLs0QOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pDBeFSVi; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54SHmgLa001002;
+	Thu, 29 May 2025 03:56:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=vQDOhTTOAcRXply+Pu9Czab0u/odqwsF2SK
+	QvQrlP/k=; b=pDBeFSVi5/MMh/9o6x9U6TTF7JufGcWMFqlzCGi+OtowRd33yEC
+	lphtDfnZmtV8GaCIvBAFYmFWEUAs5+vQNocAF+VI+vVN3/OnJEk5iaF7R3O5c62N
+	LEghcUCB/UpxgGhHXqi2Gnd1HP8XzQCJ4zJgnq4TmKT8KJ/rdgvN4otElh1qTdmA
+	UBVjtb8nh8pcxqhtuVKGYfRF6dZNaMykD6PALJi0IY2FwuJiQqohAk5byQR5qkCN
+	FQxsC+W1SwHndy7y9gon9hkjVQtVhUaNtjm+DJFk5k30YgG1uo23a/SBHKj1/qZg
+	kK/3gHbDh/sm9JFtCkEPTSsmeEXC17GvDYg==
+Received: from aptaippmta02.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46u5ek48xm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 29 May 2025 03:56:42 +0000 (GMT)
+Received: from pps.filterd (APTAIPPMTA02.qualcomm.com [127.0.0.1])
+	by APTAIPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 54T3sLZb011619;
+	Thu, 29 May 2025 03:56:39 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 46u76mdpe0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 29 May 2025 03:56:39 +0000
+Received: from APTAIPPMTA02.qualcomm.com (APTAIPPMTA02.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 54T3udkN013251;
+	Thu, 29 May 2025 03:56:39 GMT
+Received: from cse-cd02-lnx.ap.qualcomm.com (cse-cd02-lnx.qualcomm.com [10.64.75.246])
+	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 54T3ucxe013239
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 29 May 2025 03:56:39 +0000
+Received: by cse-cd02-lnx.ap.qualcomm.com (Postfix, from userid 4438065)
+	id 75E783153; Thu, 29 May 2025 11:56:37 +0800 (CST)
+From: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
+To: lpieralisi@kernel.org, kwilczynski@kernel.org,
+        manivannan.sadhasivam@linaro.org, robh@kernel.org, bhelgaas@google.com,
+        krzk+dt@kernel.org, neil.armstrong@linaro.org, abel.vesa@linaro.org,
+        kw@linux.com, conor+dt@kernel.org, vkoul@kernel.org, kishon@kernel.org,
+        andersson@kernel.org, konradybcio@kernel.org
+Cc: linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, quic_qianyu@quicinc.com,
+        quic_krichai@quicinc.com, quic_vbadigan@quicinc.com,
+        Ziyue Zhang <quic_ziyuzhan@quicinc.com>
+Subject: [PATCH v6 0/6] pci: qcom: Add QCS8300 PCIe support
+Date: Thu, 29 May 2025 11:56:29 +0800
+Message-Id: <20250529035635.4162149-1-quic_ziyuzhan@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250528-for-upstream-not-instantiate-spd5118-v1-1-8216e2d38918@canonical.com>
- <202505290728.VsNgBfDO-lkp@intel.com>
-In-Reply-To: <202505290728.VsNgBfDO-lkp@intel.com>
-From: "Yo-Jung (Leo) Lin" <leo.lin@canonical.com>
-Date: Thu, 29 May 2025 11:54:49 +0800
-X-Gm-Features: AX0GCFuvPqKC8O7DWOhXj72SBZClr0XkXQZTp2dRyjUTIGZ3F1XCKz6JwMpGoeY
-Message-ID: <CABscksPBjQ14UrvCVwgVMHZ6NsPKN9tWscaOGBy8TjufgzPGFA@mail.gmail.com>
-Subject: Re: [PATCH] i2c: i801: Do not instantiate spd5118 under SPD Write Disable
-To: kernel test robot <lkp@intel.com>
-Cc: Jean Delvare <jdelvare@suse.com>, Andi Shyti <andi.shyti@kernel.org>, 
-	Wolfram Sang <wsa-dev@sang-engineering.com>, oe-kbuild-all@lists.linux.dev, 
-	Guenter Roeck <linux@roeck-us.net>, "Chia-Lin Kao (AceLan)" <acelan.kao@canonical.com>, linux-i2c@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=GIgIEvNK c=1 sm=1 tr=0 ts=6837dafa cx=c_pps
+ a=nuhDOHQX5FNHPW3J6Bj6AA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=dt9VzEwgFbYA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=QyXUC8HyAAAA:8
+ a=Rx9dfpPETavtrPkqVs0A:9 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: Uyk2CZPwfcyF09NTbJQ03NPVvpYUcVks
+X-Proofpoint-GUID: Uyk2CZPwfcyF09NTbJQ03NPVvpYUcVks
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI5MDAzNSBTYWx0ZWRfXx4Wyi7QQSDTy
+ +I7vdsna3jUELiv0K3cE2pgBX/Kffv9xxCaItQU4GxijaYj8eqeqjDGqgofuaADojpm+vMAOOmV
+ MOCZHwiMIYla1rZ1ovU0HtNv6vlqpHTCo13mgvqnvTqlfZugazHL7/+X+Kz8OiVt7O2YoX4IaPJ
+ VJEgYGrxsCK5J7NBHfa2UWPngJ8tvdW3ezIXBEJ2V4SwT3X7i0yxHILpH8RfPfayj/+jEzWMANy
+ nzBUuZN8WIeyE9drFKoXRFgJu7TEdZ4OH4WpsRmH2H4oDqQJ/y1u4WepPk3WTKXVWMdgUlClosv
+ YuF9Jpr/Pw3FDTYsZ2f4WI9NeMObNWIe1b5RiibLymhtyQLCp3PLhpU/EKDGmMJHeFP18ztkC9Z
+ QpfrUVtdRrNxqAJAokJMUpkYy05tuRb2uajrCBdao6J3CgBOw1d6oLz2wdeQgdZ1KrjBpXjw
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-29_01,2025-05-27_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 malwarescore=0 bulkscore=0 clxscore=1015 lowpriorityscore=0
+ adultscore=0 priorityscore=1501 mlxscore=0 phishscore=0 spamscore=0
+ suspectscore=0 mlxlogscore=999 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505160000
+ definitions=main-2505290035
 
-On Thu, May 29, 2025 at 8:00=E2=80=AFAM kernel test robot <lkp@intel.com> w=
-rote:
->
-> Hi Yo-Jung,
->
-> kernel test robot noticed the following build errors:
->
-> [auto build test ERROR on 176e917e010cb7dcc605f11d2bc33f304292482b]
->
-> url:    https://github.com/intel-lab-lkp/linux/commits/Yo-Jung-Leo-Lin/i2=
-c-i801-Do-not-instantiate-spd5118-under-SPD-Write-Disable/20250528-163253
-> base:   176e917e010cb7dcc605f11d2bc33f304292482b
-> patch link:    https://lore.kernel.org/r/20250528-for-upstream-not-instan=
-tiate-spd5118-v1-1-8216e2d38918%40canonical.com
-> patch subject: [PATCH] i2c: i801: Do not instantiate spd5118 under SPD Wr=
-ite Disable
-> config: loongarch-randconfig-001-20250529 (https://download.01.org/0day-c=
-i/archive/20250529/202505290728.VsNgBfDO-lkp@intel.com/config)
-> compiler: loongarch64-linux-gcc (GCC) 15.1.0
-> reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/archi=
-ve/20250529/202505290728.VsNgBfDO-lkp@intel.com/reproduce)
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
-ion of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202505290728.VsNgBfDO-lkp=
-@intel.com/
->
-> All errors (new ones prefixed by >>):
->
->    drivers/i2c/busses/i2c-i801.c: In function 'i801_notifier_call':
-> >> drivers/i2c/busses/i2c-i801.c:1304:9: error: implicit declaration of f=
-unction '__i801_register_spd' [-Wimplicit-function-declaration]
->     1304 |         __i801_register_spd(priv);
->          |         ^~~~~~~~~~~~~~~~~~~
->
->
-> vim +/__i801_register_spd +1304 drivers/i2c/busses/i2c-i801.c
->
->   1291
->   1292  static int i801_notifier_call(struct notifier_block *nb, unsigned=
- long action,
->   1293                                void *data)
->   1294  {
->   1295          struct i801_priv *priv =3D container_of(nb, struct i801_p=
-riv, mux_notifier_block);
->   1296          struct device *dev =3D data;
->   1297
->   1298          if (action !=3D BUS_NOTIFY_ADD_DEVICE ||
->   1299              dev->type !=3D &i2c_adapter_type ||
->   1300              i2c_root_adapter(dev) !=3D &priv->adapter)
->   1301                  return NOTIFY_DONE;
->   1302
->   1303          /* Call i2c_register_spd for muxed child segments */
-> > 1304          __i801_register_spd(priv);
->   1305
->   1306          return NOTIFY_OK;
->   1307  }
->   1308
+This series depend on the sa8775p gcc_aux_clock and link_down reset change
+https://lore.kernel.org/all/20250529035416.4159963-1-quic_ziyuzhan@quicinc.com/
 
-I think this happens likely because I put the __i801_register_spd() inside =
-the:
+This series adds document, phy, configs support for PCIe in QCS8300.
+It also adds 'link_down' reset for sa8775p.
 
-#if defined CONFIG_X86 && defined CONFIG_DMI
-...
-#endif
+Have follwing changes:
+	- Add dedicated schema for the PCIe controllers found on QCS8300.
+	- Add compatible for qcs8300 platform.
+	- Add configurations in devicetree for PCIe0, including registers, clocks, interrupts and phy setting sequence.
+	- Add configurations in devicetree for PCIe1, including registers, clocks, interrupts and phy setting sequence.
 
-So the function went missing in loongarch. Will fix this in v2.
+Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+Signed-off-by: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
+---
+Changes in v6:
+- move the qcs8300 and sa8775p phy compatibility entry into the list of PHYs that require six clocks
+- Update QCS8300 and sa8775p phy dt, remove aux clock.
+- Fixed compile error found by kernel test robot
+- Link to v5: https://lore.kernel.org/all/20250507031019.4080541-1-quic_ziyuzhan@quicinc.com/
 
->
-> --
-> 0-DAY CI Kernel Test Service
-> https://github.com/intel/lkp-tests/wiki
+Changes in v5:
+- Add QCOM PCIe controller version in commit msg (Mani)
+- Modify platform dts change subject (Dmitry)
+- Fixed compile error found by kernel test robot
+- Link to v4: https://lore.kernel.org/linux-phy/20241220055239.2744024-1-quic_ziyuzhan@quicinc.com/
+
+Changes in v4:
+- Add received tag
+- Fixed compile error found by kernel test robot
+- Link to v3: https://lore.kernel.org/lkml/202412211301.bQO6vXpo-lkp@intel.com/T/#mdd63e5be39acbf879218aef91c87b12d4540e0f7
+
+Changes in v3:
+- Add received tag(Rob & Dmitry)
+- Update pcie_phy in gcc node to soc dtsi(Dmitry & Konrad)
+- remove pcieprot0 node(Konrad & Mani)
+- Fix format comments(Konrad)
+- Update base-commit to tag: next-20241213(Bjorn)
+- Corrected of_device_id.data from 1.9.0 to 1.34.0.
+- Link to v2: https://lore.kernel.org/all/20241128081056.1361739-1-quic_ziyuzhan@quicinc.com/
+
+Changes in v2:
+- Fix some format comments and match the style in x1e80100(Konrad)
+- Add global interrupt for PCIe0 and PCIe1(Konrad)
+- split the soc dtsi and the platform dts into two changes(Konrad)
+- Link to v1: https://lore.kernel.org/all/20241114095409.2682558-1-quic_ziyuzhan@quicinc.com/
+
+Ziyue Zhang (6):
+  dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy: Update pcie phy bindings
+    for qcs8300
+  dt-bindings: PCI: qcom,pcie-sa8775p: document qcs8300
+  arm64: dts: qcom: qcs8300: enable pcie0
+  arm64: dts: qcom: qcs8300-ride: enable pcie0 interface
+  arm64: dts: qcom: qcs8300: enable pcie1
+  arm64: dts: qcom: qcs8300-ride: enable pcie1 interface
+
+ .../bindings/pci/qcom,pcie-sa8775p.yaml       |   7 +-
+ .../phy/qcom,sc8280xp-qmp-pcie-phy.yaml       |  14 +-
+ arch/arm64/boot/dts/qcom/qcs8300-ride.dts     |  80 +++++
+ arch/arm64/boot/dts/qcom/qcs8300.dtsi         | 296 +++++++++++++++++-
+ 4 files changed, 381 insertions(+), 16 deletions(-)
+
+
+base-commit: 47974c65c7bfb29cce6cb13ec35760299e02d553
+-- 
+2.34.1
+
 
