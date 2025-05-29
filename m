@@ -1,102 +1,158 @@
-Return-Path: <linux-kernel+bounces-667177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-667179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 995F4AC815C
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 19:00:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74050AC8160
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 19:01:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D0933BB7D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 17:00:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B885A1C04ADD
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 17:01:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FCB51C5D5E;
-	Thu, 29 May 2025 17:00:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8B7422F176;
+	Thu, 29 May 2025 17:01:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MOxMKoNL"
-Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PmUIwspV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8388522F173;
-	Thu, 29 May 2025 17:00:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0386522E40F;
+	Thu, 29 May 2025 17:00:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748538042; cv=none; b=bpBYIHkyIOj45Gv+WmFCzSVZgYbtMQaNX8PvRO6WkDLXRprcYRwNsL3tLh7rbJo9qXOiF/wvT1ry3Z0rf0kR8KHAGBrSTpcbQWfWvOJpivR2zwvv1FvysOREGHmcxrLS+3jWStrp5hk1hMSMA2Ep/xzaiOTBX9JM8Vu4Ls10umM=
+	t=1748538060; cv=none; b=dhRkV8F9lWH6DX94piePrCFYxkwcEdKsc81aobUh3ogHubk4Lifu919KdNxNNOdWCVAORrbOUvqd106TZAeLOYPKWp/Yceqm4ge9GZ5DKtAGCd3xjwEgnFWwGSHplVMj+J7NuXD1JOxSz09OT6nRVjzBn8FW8DoR8XsOvPgTCCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748538042; c=relaxed/simple;
-	bh=wz8sylcYsf0e/g2Bj83ndjpBmgj030GnVYpd0gvwJ3k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RmzhhVeFrT+XO5h5M70hUml4EReDC0YDYHHAT6Gt7rrGuS7vDKyYU6VRTUvArxahr4mpsHHwqEmv9s7/BjwnmuPckwymOfrxHLjaA7p3B6RZ3UfNEQbsh8Y59V7uRmcoJh+Acu/rsxuZS3hPYrSiUli4tc0CtykOQoFIdSrRT/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MOxMKoNL; arc=none smtp.client-ip=209.85.166.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3da73df6b6bso3505205ab.3;
-        Thu, 29 May 2025 10:00:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748538039; x=1749142839; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=wz8sylcYsf0e/g2Bj83ndjpBmgj030GnVYpd0gvwJ3k=;
-        b=MOxMKoNLt5NG/iyoavQvvJ27CejfZdyBGieZ5YFcKut9AeFIsApWFPykjOv0iUU4+5
-         py6QZDYmsl+NvnwE8H9UkWRtUfrYMdQNYjFyUcVplD8jhLPAYdnI8pBNfr447wU0gRrz
-         oOf7vQG4pZU5WJ9TWcnEzBvrh7k5fW5S6gV+fvynXR9DRmMlCwMXgpDmPMQvCIWFrSa9
-         pn85UmtWSOGTiXkyP6eRnS+uCWR1pCm4BauU2Bt2RwVApzmxX9fT2dv5OT7Wivs9A9sU
-         dsMosVXJ+KbFhaLiUQlU6+GJyZY+/gWjCulQR8Bqw7YXGSLCEjbWYWypyNhosiZ/S2Ya
-         ZMgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748538039; x=1749142839;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wz8sylcYsf0e/g2Bj83ndjpBmgj030GnVYpd0gvwJ3k=;
-        b=sfclw1TOkqr7jDRrm5Hq3DrgAVO+7ZJcHOFkqxTC5QRaa+4OSr3qNkpYUuBsGQnfri
-         i0T7y2Ba9GH8Szmzj55N127g9OuAlnyZY1qxqKbzlkhkaJg+8vmbfcNSv1BBfXXOGoTw
-         tgxPxKujaSov+MxBd5XUKEk76Mrs09o7924qxiPje4MSt1YBbxPm06Q1icvSIWVKOVuu
-         FzHcLPH55gbAbdl9sB4fzHvdnExgGZwdYs6Pu2WUN05SrTNWV8BZqT9XZRLf6tdBilHf
-         Y5q2+REySYl5MJaFYVFwxQGd/Hcm8qbKOZi1wUisMaX4C3TjsYzPdB3HhrksY2QDaiGA
-         kHGw==
-X-Forwarded-Encrypted: i=1; AJvYcCULldaHkXcJ+XfYf5wlYwoyYSaeTRBchtTOwyMQfQFlGv0HMmBGXVa6mHp+VvS5Qk9m9s70sZAkPXsuMTxm@vger.kernel.org, AJvYcCXB+5fd66khx8uc8jrNH+4ABkKFR30yGxJBEKO1FLIBoF1QKiZf/BQty2KNAIemCvkQ2bF1KKqqDX9L@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTruNl9k3jvUmU9M+6E55Uh1bNRD+Cv+aGe/M4CESmGwyGiifB
-	PHvwhYu41ccqtFWdYTTkwN6oY7pG1F7VLmof5AUqZS6gfC05JMGShl7b7Kdychdq+uzgmHXhuhl
-	X/kaNPzPUT04UWB2mIU5Xv4Z+LhoFk3Y=
-X-Gm-Gg: ASbGncvAjCroneoD3x7WuWbupFT2631JbRCmvWOQxgO+3U3i6KzLgSRv5f5HWDkro6W
-	N8os0PNz7Nsf7/rT6L/KBTcmCz9M4Wu5/hIRKpDOGO+M3elZFbjv4VKvk77gzQTK7FNFgryJSTu
-	V4KC0yG3ehJIeNITOXk5hYuyF67Oh7HH8=
-X-Google-Smtp-Source: AGHT+IEyjJb190MgdwjRZw5y/MpOJIX0f6ygYZysAtuVDDlApMx5G40bgqJeidmJuOkA8YG0DhqaZtLvRLAokkzGbU8=
-X-Received: by 2002:a92:c269:0:b0:3dc:76ad:7990 with SMTP id
- e9e14a558f8ab-3dd99c3e914mr7298515ab.15.1748538038104; Thu, 29 May 2025
- 10:00:38 -0700 (PDT)
+	s=arc-20240116; t=1748538060; c=relaxed/simple;
+	bh=YODMCTONNUvrZ/fd9rfuLcDesJI0d1/hZyci/ZkyEos=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=cVnUQu/P9/oVwn8Ng4fy9LsA5u4BxQR+/Zee9lMzF8WFDmm3ArBV6gIrFB3KXheAizExYA5531/qtPXXFTUrf3qyHm5IxJ7sNLmUl7rzyus79Y7T1m+0rveUdQroObBpoAd+I+tPmmvouOY9XsMOoxTmE7OFuryWtnhZtFmTcG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PmUIwspV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56A54C4CEE7;
+	Thu, 29 May 2025 17:00:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748538059;
+	bh=YODMCTONNUvrZ/fd9rfuLcDesJI0d1/hZyci/ZkyEos=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=PmUIwspVuC1D+lZAM3ntHBmQVm7Qst8mN7dAFjtSI5Q5f6F9QUoLEMilLjG/LnJLY
+	 b3ZNJTw8PLI2vxDaphRq//7vKo+srP56G3ysMNti98u4dKRtPfGnwMpetc7Lwz9K9t
+	 KtIJ/dwnPV+0M14uCYsmMEChFAd0NJLrPKdahPKn8bNIkJlFrcHmZVr0LxXJsrdlYd
+	 4ESVkCtGZCtlf8Yow9HRVWxA0qqQISInrZtqKQ4Z/uPSojKYAfXN9buJ1J4NzdDKj4
+	 Rw2tnFfa8EfwHq4r3wRrh0cjlf50OyPiNvg6T9AfCmpbKhRbaMSzQbxKoUrle5w4ac
+	 MHynH4P2nyiVQ==
+From: SeongJae Park <sj@kernel.org>
+To: Honggyu Kim <honggyu.kim@sk.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	kernel_team@skhynix.com,
+	Jonathan Corbet <corbet@lwn.net>,
+	damon@lists.linux.dev,
+	kernel-team@meta.com,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH 0/4] mm/damon: introduce DAMON_STAT for simple and practical access monitoring
+Date: Thu, 29 May 2025 10:00:52 -0700
+Message-Id: <20250529170052.37757-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <82ea9158-c71e-4c11-a46d-397e9ec9349b@sk.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <174735136138.1544989.11909422896170025756.robh@kernel.org>
- <20250528221823.2974653-1-joseph.kogut@gmail.com> <20250528221823.2974653-2-joseph.kogut@gmail.com>
- <20250529-impressive-real-monkey-a7818b@kuoka>
-In-Reply-To: <20250529-impressive-real-monkey-a7818b@kuoka>
-From: Joseph Kogut <joseph.kogut@gmail.com>
-Date: Thu, 29 May 2025 10:00:02 -0700
-X-Gm-Features: AX0GCFvFs5pZmBZbHDiXb0YURJxT4pYR9-M5FQPF83VV1lZt1KUVAfxqyW1PamM
-Message-ID: <CAMWSM7i+eyV4t3xzSXdDyGrBr101V9rG1xMgsTbpjyqpu+hjYw@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] dt-bindings: arm: rockchip: Add Radxa CM5 IO board
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Steve deRosier <derosier@cal-sierra.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-I've reviewed the man page for git-send-email. If I'm understanding
-correctly, I should only thread the *cover letter* of the patch series
-when submitting a new version. That didn't work for me here because I
-didn't initially include a cover letter, then tried to thread the
-first patch in the series. I see now how that would be disruptive.
+Hi Honggyu,
 
-Thanks for the review, and the help with threading, Krzysztof. Parts
-of the mailing list etiquette are still new to me.
+On Thu, 29 May 2025 16:21:39 +0900 Honggyu Kim <honggyu.kim@sk.com> wrote:
 
-Best,
-Joseph
+> Hi SeongJae,
+> 
+> Thanks for your work.
+> 
+> On 5/27/2025 6:09 AM, SeongJae Park wrote:
+> > DAMON-based access monitoring is not simple due to required DAMON
+> > control and results visualizations.  Introduce a static kernel module
+> > for making it simple.  The module can be enabled without manual setup
+> > and provides access pattern metrics that easy to fetch and understand
+> > the practical access pattern information, namely estimated memory
+> > bandwidth and memory idle time percentiles.
+> > 
+> > Background and Problems
+> > =======================
+> > 
+> > DAMON can be used for monitoring data access patterns of the system and
+> > workloads.  Specifically, users can start DAMON to monitor access events
+> > on specific address space with fine controls including address ranges to
+> > monitor and time intervals between samplings and aggregations.  The
+> > resulting access information snapshot contains access frequency
+> > (nr_accesses) and how long the frequency was kept (age) for each byte.
+> > 
+> > The monitoring usage is not simple and practical enough for production
+> > usage.  Users should first start DAMON with a number of parameters, and
+> > wait until DAMON's monitoring results capture a reasonable amount of the
+> > time data (age).  In production, such manual start and wait is
+> > impractical to capture useful information from a high number of machines
+> > in a timely manner.
+> > 
+> > The monitoring result is also too detailed to be used on production
+> > environments.  The raw results are hard to be aggregated and/or compared
+> > for production environments having a large scale of time, space and
+> > machines fleet.
+> > 
+> > Users have to implement and use their own automation of DAMON control
+> > and results processing.  It is repetitive and challenging since there is
+> > no good reference or guideline for such automation.
+> > 
+> > Solution: DAMON_STAT
+> > ====================
+> > 
+> > Implement such automation in kernel space as a static kernel module,
+> > namely DAMON_STAT.  It can be enabled at build, boot, or run time via
+> > its build configuration or module parameter.  It monitors the entire
+> > physical address space with monitoring intervals that auto-tuned for a
+> > reasonable amount of access observations and minimum overhead.  It
+> > converts the raw monitoring results into simpler metrics that can easily
+> > be aggregated and compared, namely estimated memory bandwidth and idle
+> > time percentiles.  Refer to the commit messages of the second and the
+> > third patches of this patch series for more details about the metrics.
+> 
+> I see the description looks good but it'd be useful if you could share some
+> execution commands and expected output examples that some newbies can get better
+> ideas.
+
+Thank you for the feedback.  In my humble opinion, nevertheless, this is what
+the fourth patch of this series is aiming to provide.  And thanks to your
+comment, I now realize I forgot mentioning this on the above comment.
+
+Of course we can add execution commands and output example here, but without
+understanding of the metrics, it would just look like mysterious numbers.
+Meanhile, user interface of the module is simply module parameters that should
+be familiar to most kernel users, so I don't think it necessarily deserves
+example commands.
+
+> 
+> I honestly do not have a clear idea how I can use this kind of static kernel
+> modules as general users although I have developed some features of DAMON.
+> 
+> So could you please help?
+
+I agree this cover letter is not enough for getting clear idea of how readers
+can use this feature.  Thank you for letting me realize this.  But I think this
+cover letter might be better to keep the brevity, as long as it points where
+readers can get necessary details.  What do you think about revising this cover
+letter to
+
+1. point the fourth patch for usage of DAMON_STAT, and
+2. elaborate the fact that readers are recommended to read the metric
+   definitions and usages to get more clear idea of DAMON_STAT?
+
+
+Thanks,
+SJ
+
+[...]
 
