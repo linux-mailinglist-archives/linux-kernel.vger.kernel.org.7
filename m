@@ -1,138 +1,117 @@
-Return-Path: <linux-kernel+bounces-667169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-667171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B7A0AC814A
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 18:56:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95C44AC814D
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 18:57:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E99241BC74B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 16:56:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A17BB3BA483
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 16:56:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35D6922DA0F;
-	Thu, 29 May 2025 16:56:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 729B622DA08;
+	Thu, 29 May 2025 16:56:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gIDhpcE1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jojQbmXj"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 863D719F10A;
-	Thu, 29 May 2025 16:56:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1678C17A31B;
+	Thu, 29 May 2025 16:56:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748537775; cv=none; b=YgOY2evsnoDbomT7SMYcL+CjdB86brwE+PHx963vUDeLZ38agiym7lej37S4uKcLypKhBSCepAbM6TA9xPerIQjvQqF1fTE/61iKH+ToZP+PaYFj9W5f6gZ+tOF/gwcsSn6J6h8ZGZRUU0lvcnkbmAVuQNunYoTC8nhUhd4fE6Q=
+	t=1748537817; cv=none; b=UcTBeF3MkcP8WxpGD1OtdNBXSTp2rAIj5MBg6k9FQP9TeqQiDlOF0R3ve3cAu64NV+4ZtN/twPtOg9TgHbrppEGbuNQQNMlhFGO3QE/KbIS68tEuA3DSsRwlpWK+Nm7oXAtLyFv+RL/qphJ+H/Ia/42G9p3rdRLomAOHQfi7qEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748537775; c=relaxed/simple;
-	bh=DRaD1/jwNIxgIiu48AG/4frKcAETzPdIlDu3ZM3psGY=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=l8rpuiH7IBrYRo1sMArecziJ6PYrIdipdcyFDcY67xfnxerG+mYb1cVzyaZJ1Y2M0cuIy2LaYI4xITVrqVBFZKGB189pU01kHBRka4M2v8qdC7uIdTe81LBEXqIYlfQDPxyKW2X+yirYcrzRZ79h7IMTGRfY9oYEX93ql2xvlk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gIDhpcE1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB6ECC4CEE7;
-	Thu, 29 May 2025 16:56:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748537774;
-	bh=DRaD1/jwNIxgIiu48AG/4frKcAETzPdIlDu3ZM3psGY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=gIDhpcE1ynd3+7vSpPrOvxUKNvDMgUoOkEX4LZUgb0B6MUhwkkQ7qSGAf2Ei/Ka37
-	 tuU84O9CJlS5vUKpzniOmU/Z+V2IxZ6KWX56UvBIIEYF3orRMkseqfL++q2Av7uVUN
-	 GU9ezDGkYsxDDJ822W2OmGAmZpwW9u8dAusndcwrkIaSj8um7Lp2eMhNZNnOyMwwqf
-	 IKc0PdGmhD+/ulFCTvN0sXsURVqZFaH2dJp+eu3zZAAk60A6Tf9mgnbVxu2+VokQin
-	 bwOIQVnnB8360DYl7zLIajbDaS/QbFjopslOYyD4PYXZHZSwB+aNnjutIUOVDuYj1R
-	 51DyHqGiFTpNA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1uKgY8-001ckx-7m;
-	Thu, 29 May 2025 17:56:12 +0100
-Date: Thu, 29 May 2025 17:56:11 +0100
-Message-ID: <867c1ze4pg.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: James Clark <james.clark@linaro.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev
-Subject: Re: [PATCH v2 06/11] KVM: arm64: Add trap configs for PMSDSFR_EL1
-In-Reply-To: <20250529-james-perf-feat_spe_eft-v2-6-a01a9baad06a@linaro.org>
-References: <20250529-james-perf-feat_spe_eft-v2-0-a01a9baad06a@linaro.org>
-	<20250529-james-perf-feat_spe_eft-v2-6-a01a9baad06a@linaro.org>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1748537817; c=relaxed/simple;
+	bh=l42ElIx0jEFUf4x4V+Rb9grbIJ6gKs/rJeQxiQhJGQ8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Rzs3HL6gu2UeoG8mG+7EbR2vuDPdT1wl7cpHh4uYPl+s0nX+lrXiQN+0OI9rrfIPpxbslFjP9rISyNbi1pI4azgyAJKG4/8QWtIzZhY+Itf95aqnMmMSZunM2SvpOw/cACblKk0+8yKaAImtGPgfPbBF0Z05k73kApWkxYC7cX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jojQbmXj; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1748537816; x=1780073816;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=l42ElIx0jEFUf4x4V+Rb9grbIJ6gKs/rJeQxiQhJGQ8=;
+  b=jojQbmXjd8mZ2GbrSxCDIUl6HXEtYZi4TwPI4m8HARWLSWT3DQWQOo1/
+   ZakYLUEsuQ3q+ycPpUIWVaz6rA0/1QlIQklQg/KlB793zGv7ixbvo8m/s
+   8tNCISjrYWulx6bgNlXTYJ18KGvnt8PXXoxcdvkFXTLhm67kMR2fVDC1W
+   opNUGvc6eRszR15M3sfFNzNFX7A6sYeW31gkIqxCbkUAVloZhzjgOSxio
+   59kXR7uyx83Wo3lfxVVIPX2MJcMFMnK0qV2fb1lIY3VAAZ35zCmK9Gtyv
+   dBkW7hekDOgVrWwmgSrJxKmkNyKx39vMT6KVQrkYFTnyKpOAQGmPBAxfp
+   Q==;
+X-CSE-ConnectionGUID: 1xXCtcfDR9u7qGcxqmACVA==
+X-CSE-MsgGUID: jdWP0TaeRm+jDVYIUBWzWA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11448"; a="50536714"
+X-IronPort-AV: E=Sophos;i="6.16,193,1744095600"; 
+   d="scan'208";a="50536714"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2025 09:56:55 -0700
+X-CSE-ConnectionGUID: z5gM/RERTCSYINdK5BK51A==
+X-CSE-MsgGUID: FDEaArnpRmW3F9KJLpvYfQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,193,1744095600"; 
+   d="scan'208";a="148904724"
+Received: from jjgreens-desk15.amr.corp.intel.com (HELO vcostago-mobl3) ([10.124.222.186])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2025 09:56:55 -0700
+From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+To: Yi Sun <yi.sun@intel.com>, dave.jiang@intel.com,
+ dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: yi.sun@intel.com, xueshuai@linux.alibaba.com, gordon.jin@intel.com
+Subject: Re: [PATCH 1/2] dmaengine: idxd: Remove improper idxd_free
+In-Reply-To: <20250529153431.1160067-1-yi.sun@intel.com>
+References: <20250529153431.1160067-1-yi.sun@intel.com>
+Date: Thu, 29 May 2025 09:56:53 -0700
+Message-ID: <87r0079wyy.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: james.clark@linaro.org, catalin.marinas@arm.com, will@kernel.org, mark.rutland@arm.com, corbet@lwn.net, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, peterz@infradead.org, mingo@redhat.com, acme@kernel.org, namhyung@kernel.org, alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, linux-doc@vger.kernel.org, kvmarm@lists.linux.dev
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain
 
-On Thu, 29 May 2025 12:30:27 +0100,
-James Clark <james.clark@linaro.org> wrote:
-> 
-> SPE data source filtering (SPE_FEAT_FDS) adds a new register
-> PMSDSFR_EL1, add the trap configs for it.
-> 
-> Signed-off-by: James Clark <james.clark@linaro.org>
-> ---
->  arch/arm64/kvm/emulate-nested.c | 1 +
->  arch/arm64/kvm/sys_regs.c       | 1 +
->  2 files changed, 2 insertions(+)
-> 
-> diff --git a/arch/arm64/kvm/emulate-nested.c b/arch/arm64/kvm/emulate-nested.c
-> index 0fcfcc0478f9..05d3e6b93ae9 100644
-> --- a/arch/arm64/kvm/emulate-nested.c
-> +++ b/arch/arm64/kvm/emulate-nested.c
-> @@ -1169,6 +1169,7 @@ static const struct encoding_to_trap_config encoding_to_cgt[] __initconst = {
->  	SR_TRAP(SYS_PMSIRR_EL1,		CGT_MDCR_TPMS),
->  	SR_TRAP(SYS_PMSLATFR_EL1,	CGT_MDCR_TPMS),
->  	SR_TRAP(SYS_PMSNEVFR_EL1,	CGT_MDCR_TPMS),
-> +	SR_TRAP(SYS_PMSDSFR_EL1,	CGT_MDCR_TPMS),
->  	SR_TRAP(SYS_TRFCR_EL1,		CGT_MDCR_TTRF),
->  	SR_TRAP(SYS_TRBBASER_EL1,	CGT_MDCR_E2TB),
->  	SR_TRAP(SYS_TRBLIMITR_EL1,	CGT_MDCR_E2TB),
-> diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
-> index 5dde9285afc8..9f544ac7b5a6 100644
-> --- a/arch/arm64/kvm/sys_regs.c
-> +++ b/arch/arm64/kvm/sys_regs.c
-> @@ -2956,6 +2956,7 @@ static const struct sys_reg_desc sys_reg_descs[] = {
->  	{ SYS_DESC(SYS_PMBLIMITR_EL1), undef_access },
->  	{ SYS_DESC(SYS_PMBPTR_EL1), undef_access },
->  	{ SYS_DESC(SYS_PMBSR_EL1), undef_access },
-> +	{ SYS_DESC(SYS_PMSDSFR_EL1), undef_access },
+Hi,
 
-PMSDSFR_EL1 has an offset in the VNCR page (0x858), and must be
-described as such. This is equally true for a bunch of other
-SPE-related registers, so you might as well fix those while you're at
-it.
+Yi Sun <yi.sun@intel.com> writes:
 
-Thanks,
+> The put_device() call can be asynchronous cleanup via schedule_delayed_work
+> when CONFIG_DEBUG_KOBJECT_RELEASE is set. This results in a use-after-free
+> failure during module unloading if invoking idxd_free() immediately
+> afterward.
+>
 
-	M.
+I think that adding the relevant part of the log would be helpful. (I am
+looking at either a similar, or this exact problem, so at least to me it
+would be helpful)
+
+> Removes the improper call idxd_free() to prevent potential memory
+> corruption.
+
+Thinking if it would be worth a Fixes: tag.
+
+>
+> Signed-off-by: Yi Sun <yi.sun@intel.com>
+>
+> diff --git a/drivers/dma/idxd/init.c b/drivers/dma/idxd/init.c
+> index 760b7d81fcd8..504aca0fd597 100644
+> --- a/drivers/dma/idxd/init.c
+> +++ b/drivers/dma/idxd/init.c
+> @@ -1324,7 +1324,6 @@ static void idxd_remove(struct pci_dev *pdev)
+>  	idxd_cleanup(idxd);
+>  	pci_iounmap(pdev, idxd->reg_base);
+>  	put_device(idxd_confdev(idxd));
+> -	idxd_free(idxd);
+>  	pci_disable_device(pdev);
+>  }
+>  
+> -- 
+> 2.43.0
+>
 
 -- 
-Without deviation from the norm, progress is not possible.
+Vinicius
 
