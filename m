@@ -1,92 +1,71 @@
-Return-Path: <linux-kernel+bounces-667257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-667259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53089AC823A
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 20:36:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D51DAC8244
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 20:42:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14475A256D0
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 18:36:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01C781BC4282
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 18:42:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB26E23182A;
-	Thu, 29 May 2025 18:36:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="gMzp76L5"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8B91231836;
+	Thu, 29 May 2025 18:42:26 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 289BA1362;
-	Thu, 29 May 2025 18:36:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CD202AD31;
+	Thu, 29 May 2025 18:42:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748543810; cv=none; b=bMrazJcR8qc9G8jjbXPg9WzkUAWBhMuulY66xAbdPaqPbto8us06KvCPiYABufjivtwnzuJVqqGmNwpDqXDZpURb6Ti3Uo5LvKFo2Pci4azBzvQ6C0npPw92LAPeqNQuPqGtig/iMizbN0S0HH9T95+qZn/HrLvpRvC3HSQFnes=
+	t=1748544146; cv=none; b=YSRx/FRnnIOjzKBSDbQg0PFYTiRm7f0ZPaTBnC/KqFNlBpeVAsTylNSBTviHBBT7UiyCdE51I1WXoB8NeNiIWZWLB7dNwqh/dSG7Twfrw8GnCM+Tp58i4RQDRFqkjAKJldXDehsa6yQnR7VhzNzWYPFRgg7+1sS90ZbuPATy5ZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748543810; c=relaxed/simple;
-	bh=ZT7bYnOk6X1dsatR0bpSuTKzQ1mVLcaJyvjuv6JvtwI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kNIPweeg4oYY9WeIaymPAa78sKo1hx7C5jkfe1gj1xK35fVJaDGhx2QsPruSjXLKR/Uln8p62woXRMlsothw4bzCJaptxTkm8DUAJq7EX/QcNetHdHg88yIhBOhvBOTZQa8W5eGaNrDkJp6h7aWMgXfvjGMhKsWiLZQQOLYTxlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=gMzp76L5; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Xy7hQWPpKk1tX1kqDe7knuOHYDxwoPmB0XPqpxp3AUc=; b=gMzp76L55IkiIWimsFrcjEI1/u
-	xJsmYwZgpLdPX4OKwjmHeb/OS6YHUCVOFQSgu+eoIpxrbIdmStCecE3qp9/2iASJiJNDnIrX5gPQZ
-	DvKRCKaZ57u9PTESHnaHQpwE5zBOB5/UwJoJk7oPRnxQ2bnPknDZXcMSlh/LtDqx4hwCQ80Q4r/vJ
-	N0AWl/7vVVM19Yoly4E3MWi4VMxfYfnbEdRFRCQplZVIlPwiZ25gKQchdiVmR/RMoxhOmLQ71DQ1f
-	VMprwGFM9zvzProq+cA+7RPXFkdD/Dbgaq6wxZKggrqHHiRlPe1Kxqjt1okDgF2tMD+6oEj7jdT6F
-	GoEiaUrg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uKi7P-00000002L8S-2rdk;
-	Thu, 29 May 2025 18:36:43 +0000
-Date: Thu, 29 May 2025 19:36:43 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-Cc: "frank.li@vivo.com" <frank.li@vivo.com>,
-	"glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
-	"slava@dubeyko.com" <slava@dubeyko.com>,
-	"ernesto.mnd.fernandez@gmail.com" <ernesto.mnd.fernandez@gmail.com>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"syzbot+8c0bc9f818702ff75b76@syzkaller.appspotmail.com" <syzbot+8c0bc9f818702ff75b76@syzkaller.appspotmail.com>
-Subject: Re: [PATCH v2] hfsplus: remove mutex_lock check in
- hfsplus_free_extents
-Message-ID: <20250529183643.GM2023217@ZenIV>
-References: <20250529061807.2213498-1-frank.li@vivo.com>
- <2f17f8d98232dec938bc9e7085a73921444cdb33.camel@ibm.com>
+	s=arc-20240116; t=1748544146; c=relaxed/simple;
+	bh=Neoym1y/VIebh0hqAKRlqN9KeVpgBGL7Tb/AAqhQXn0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rAXk7GvfeQyMzYIBPOIL791WaIEbvneByfcOYSSBrEFDz9/CGV6MIOlu970bKCYtJ+yG1LahWAB4AIkpPZ1SYdqnpfovYz9u5S8j6IOtuoEQRhF4AU5Dmr+2BMwxJGSdMaipOb+cFQ/nRJzpX8SJaZiJuq8qKqEYjYv2H1y3mtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CAA5C4CEE7;
+	Thu, 29 May 2025 18:42:24 +0000 (UTC)
+Date: Thu, 29 May 2025 14:43:27 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Caleb Sander Mateos <csander@purestorage.com>, Andrew Morton
+ <akpm@linux-foundation.org>, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Eric Mueller <emueller@purestorage.com>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ linux-mm@kvack.org, Vlastimil Babka <vbabka@suse.cz>, Jann Horn
+ <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>
+Subject: Re: [PATCH] mm: remove unused mmap tracepoints
+Message-ID: <20250529144327.1633825e@gandalf.local.home>
+In-Reply-To: <20250528122411.16a551b1@gandalf.local.home>
+References: <20250411161746.1043239-1-csander@purestorage.com>
+	<3ucksa6coiwco3wpmcjtfwezqjigzm2zwvdvkt2ryvefzojtqy@4lda47c236uz>
+	<CADUfDZpPGQEY9u3p3MCU2S3qmDyKmE1JnSQ6G2jO4_J40rQeeQ@mail.gmail.com>
+	<20250528114549.4d8a5e03@gandalf.local.home>
+	<b694c72b-0873-4123-869c-134709341e19@lucifer.local>
+	<20250528122411.16a551b1@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2f17f8d98232dec938bc9e7085a73921444cdb33.camel@ibm.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, May 29, 2025 at 06:34:43PM +0000, Viacheslav Dubeyko wrote:
-> > diff --git a/fs/hfsplus/extents.c b/fs/hfsplus/extents.c
-> > index a6d61685ae79..b1699b3c246a 100644
-> > --- a/fs/hfsplus/extents.c
-> > +++ b/fs/hfsplus/extents.c
-> > @@ -342,9 +342,6 @@ static int hfsplus_free_extents(struct super_block *sb,
-> >  	int i;
-> >  	int err = 0;
-> >  
-> > -	/* Mapping the allocation file may lock the extent tree */
-> > -	WARN_ON(mutex_is_locked(&HFSPLUS_SB(sb)->ext_tree->tree_lock));
-> > -
-> 
-> Makes sense to me. Looks good.
-> 
-> But I really like your mentioning of reproducing the issue in generic/013 and
-> really nice analysis of the issue there. Sadly, we haven't it in the comment. :)
+On Wed, 28 May 2025 12:24:11 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-Umm...  *Is* that thing safe to call without that lock?
+> Yeah, I have a patch that shows how many static key instances exist and I
+> test that. But I probably could also add an option to the macro that
+> creates the trace function to also add something to a section when used,
+> and report when it isn't. Shouldn't be too hard.
+
+Done:  https://lore.kernel.org/all/20250529130138.544ffec4@gandalf.local.home/
+
+-- Steve
 
