@@ -1,149 +1,130 @@
-Return-Path: <linux-kernel+bounces-666686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16651AC7A94
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 11:02:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03069AC7A9B
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 11:03:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 757F318917B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 09:02:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E27C43A314C
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 09:02:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C462921B8F2;
-	Thu, 29 May 2025 09:01:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7DF121B9E1;
+	Thu, 29 May 2025 09:02:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="drZETqKX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="eMNB7fUo"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 216451B6D06;
-	Thu, 29 May 2025 09:01:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA11B21B8F8;
+	Thu, 29 May 2025 09:02:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748509308; cv=none; b=Eru3FLROrWzaK3Hi8ftj9flN4MO/Prlqugiok8q14Y9SuiTb4jIzzWHDuYe0Gwrf+RBBYSKu75n5auVW2pL++3EQ85PfCRbLTPwJ1kv4Z+5lg6Ce7daEUwRRrMNDCf117PCzIupYJDq3KeB1gQasAL48EyF9p6D4iKZBfVR1I0I=
+	t=1748509368; cv=none; b=NZiMu3XnhOJotc3w3kxouZtSDb96brkbduG6q4c1qL3OJU95IulKivI54aO7FzvjDQtT5uCWsruSh+xAwapWcX1QVlbVa2yP1za0kFHCyqP/iGPa9A2JKJSC9vcraaB6T9ePccEt0KH/SkcgGJ4JB1n9+Endor2Bj5YDgPjP1EU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748509308; c=relaxed/simple;
-	bh=cmvLbyKtwXSsyts5o0RR2FI3M0/ZIWZMEocPoXjVbQw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YrUaBTOHtLWY5dQhLjoIy/bMY1nIEGCfw/oOF2oXYrC2WG7TAOON/xnxj+UPFrkyI4tr+2yD9qSPDTsEWmmjvgCNP8n72VnzGIFl91JPmfVJHHKJY0YPoruoyWcilzMZxybUhrCIsSYx1YjXtLdyjl261RmyYX8QHPFr07khXVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=drZETqKX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 276A3C4CEE7;
-	Thu, 29 May 2025 09:01:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748509308;
-	bh=cmvLbyKtwXSsyts5o0RR2FI3M0/ZIWZMEocPoXjVbQw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=drZETqKXlgA/V3CUDK3etEu0hiRuzGsOsb69fY9pCdojKyxdY4SzBfIGsPTEdq7w8
-	 ZZgXKvWzVSVechyEQYLirh6AXqAPzbf2lqt84vlYeZv+LeJ4gMwJAtktl78Eu0jw/K
-	 7lg31kdgAOOZVrK4plJ0ZugV9vIRtlcf0Wi3yYRKQ/CQqScIhgVNkeScYcWEboKNtQ
-	 1MKhUOu+FJTjflZ/azgOJiAGDsL2dynDfPdUJ7AKzMGRr/WCvVSaKA1o/zM5Nk+wO5
-	 P5R7hoFbYkHV6SnrF53f7wWjMofhG8EruQC05958yP9PuLILuklYW8vbDRsjCX6DCo
-	 ykOW4ORBQuwGg==
-Message-ID: <ebf1eded-aa78-4d50-8aa3-b1b7004c10f8@kernel.org>
-Date: Thu, 29 May 2025 11:01:43 +0200
+	s=arc-20240116; t=1748509368; c=relaxed/simple;
+	bh=329oE9WCShRB/3QSD5347ZmJuUzW2AKy1kGxUA9l7Co=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JjtOUrVmE5mpowlCWSZP2L8s4910TO9mOEETdGBqxCp1xpf+hhkmsaypIblOLR+SeT5lNkbLlMaBuRlLdpJNnUUDXzG8Bi4xLpxQL0VOA/A3rUc1GRSx18Q9Pm/EIQMWmdGvR5qlwc4ZZO2elvxXMrw/ng3qqGg0rI3xAb3UAEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=eMNB7fUo; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=HKJazYyVUxZwZjpx7rpY6/R5Vj8bS07F1odK3H9jHLg=; b=eMNB7fUo/1FgcxbOdQuF2r/kYX
+	qV1xN+llHYjOp7B0PwNTJpfs7dzrSlOcVTibvnRFZ/qrogqn1MY4T3QsxTwblw3hoqHAeoD9hJ2qR
+	Awih0ms4vbkG83lzrvofFOYNU4EblQ+qHfb5WfpW4wcjf1cVyBdODinakYxgaePnC79A6Xq16Sk/5
+	4xll1VA2wdEKkEwFYNLcdn/n1x0fUTlZNjNN0kRrGQuv73cFpfoznp2yt7OpBCpcuVKmFXT9dSmPP
+	fW+TlbJYnKz/F80qHoNIl7R2zmTzMpgr4AC3UYVhKIgYZFDlLsAjDNq7tMrT8/cyFMefKCVXZsjSy
+	4Tch/ddA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uKZ9Y-000000006vJ-3HJd;
+	Thu, 29 May 2025 09:02:21 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id DC66430057C; Thu, 29 May 2025 11:02:19 +0200 (CEST)
+Date: Thu, 29 May 2025 11:02:19 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Kees Cook <kees@kernel.org>
+Cc: Alessandro Carminati <acarmina@redhat.com>,
+	linux-kselftest@vger.kernel.org,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Daniel Diaz <daniel.diaz@linaro.org>,
+	David Gow <davidgow@google.com>,
+	Arthur Grillo <arthurgrillo@riseup.net>,
+	Brendan Higgins <brendan.higgins@linux.dev>,
+	Naresh Kamboju <naresh.kamboju@linaro.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Maxime Ripard <mripard@kernel.org>,
+	Ville Syrjala <ville.syrjala@linux.intel.com>,
+	Daniel Vetter <daniel@ffwll.ch>, Guenter Roeck <linux@roeck-us.net>,
+	Alessandro Carminati <alessandro.carminati@gmail.com>,
+	Jani Nikula <jani.nikula@intel.com>,
+	Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Linux Kernel Functional Testing <lkft@linaro.org>,
+	dri-devel@lists.freedesktop.org, kunit-dev@googlegroups.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 1/5] bug/kunit: Core support for suppressing warning
+ backtraces
+Message-ID: <20250529090219.GA24938@noisy.programming.kicks-ass.net>
+References: <20250526132755.166150-1-acarmina@redhat.com>
+ <20250526132755.166150-2-acarmina@redhat.com>
+ <202505281546.DB9D9029@keescook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 6/9] ARM: dts: stm32: add Hardware debug port (HDP) on
- stm32mp15
-To: Clement LE GOFFIC <clement.legoffic@foss.st.com>,
- Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org
-References: <20250523-hdp-upstream-v3-0-bd6ca199466a@foss.st.com>
- <20250523-hdp-upstream-v3-6-bd6ca199466a@foss.st.com>
- <1c21f915-e067-4801-925a-3d4882f358f2@kernel.org>
- <ef481451-b7d2-4f9a-a3d0-c67e8f5061dd@foss.st.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <ef481451-b7d2-4f9a-a3d0-c67e8f5061dd@foss.st.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202505281546.DB9D9029@keescook>
 
-On 28/05/2025 14:15, Clement LE GOFFIC wrote:
-> On 5/28/25 11:00, Krzysztof Kozlowski wrote:
->> On 23/05/2025 14:38, Clément Le Goffic wrote:
->>> Add the hdp devicetree node for stm32mp15 SoC family
->>>
->>> Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
->>> ---
->>>   arch/arm/boot/dts/st/stm32mp151.dtsi | 7 +++++++
->>>   1 file changed, 7 insertions(+)
->>>
->>> diff --git a/arch/arm/boot/dts/st/stm32mp151.dtsi b/arch/arm/boot/dts/st/stm32mp151.dtsi
->>> index 0daa8ffe2ff5..b1b568dfd126 100644
->>> --- a/arch/arm/boot/dts/st/stm32mp151.dtsi
->>> +++ b/arch/arm/boot/dts/st/stm32mp151.dtsi
->>> @@ -270,6 +270,13 @@ dts: thermal@50028000 {
->>>   			status = "disabled";
->>>   		};
->>>   
->>> +		hdp: pinctrl@5002a000 {
->>> +			compatible = "st,stm32mp151-hdp";
->>> +			reg = <0x5002a000 0x400>;
->>> +			clocks = <&rcc HDP>;
->>> +			status = "disabled";
->>
->> Same questions here and in further patches.
+On Wed, May 28, 2025 at 03:47:42PM -0700, Kees Cook wrote:
+> On Mon, May 26, 2025 at 01:27:51PM +0000, Alessandro Carminati wrote:
+> > Some unit tests intentionally trigger warning backtraces by passing bad
+> > parameters to kernel API functions. Such unit tests typically check the
+> > return value from such calls, not the existence of the warning backtrace.
+> > 
+> > Such intentionally generated warning backtraces are neither desirable
+> > nor useful for a number of reasons:
+> > - They can result in overlooked real problems.
+> > - A warning that suddenly starts to show up in unit tests needs to be
+> >   investigated and has to be marked to be ignored, for example by
+> >   adjusting filter scripts. Such filters are ad hoc because there is
+> >   no real standard format for warnings. On top of that, such filter
+> >   scripts would require constant maintenance.
+> > 
+> > Solve the problem by providing a means to identify and suppress specific
+> > warning backtraces while executing test code. Support suppressing multiple
+> > backtraces while at the same time limiting changes to generic code to the
+> > absolute minimum.
+> > 
+> > Implementation details:
+> > Check suppression directly in the `WARN()` Macros.
+> > This avoids the need for function symbol resolution or ELF section
+> > modification.
+> > Suppression is implemented directly in the `WARN*()` macros.
+> > 
+> > A helper function, `__kunit_is_suppressed_warning()`, is used to determine
+> > whether suppression applies. It is marked as `noinstr`, since some `WARN*()`
+> > sites reside in non-instrumentable sections. As it uses `strcmp`, a
+> > `noinstr` version of `strcmp` was introduced.
+> > The implementation is deliberately simple and avoids architecture-specific
+> > optimizations to preserve portability. Since this mechanism compares
+> > function names and is intended for test usage only, performance is not a
+> > primary concern.
+> > 
+> > Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 > 
-> Same, disabled by default and enable in board's dts file
+> I like this -- it's very simple, it doesn't need to be fast-path, so
+> a linear list walker with strcmp is fine. Nice!
 
-
-So the same answer, node is complete so should it be enabled.
-
-Best regards,
-Krzysztof
+But it is on the fast path! This is still bloating every UD2 site
+instead of doing it on the other end.
 
