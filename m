@@ -1,135 +1,148 @@
-Return-Path: <linux-kernel+bounces-666685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7E61AC7A8D
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 11:01:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 14757AC7A93
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 11:02:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5E863A5F62
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 09:01:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 314A4A23CE8
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 09:01:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8D7B21B1BC;
-	Thu, 29 May 2025 09:01:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48B1321C183;
+	Thu, 29 May 2025 09:01:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ISYwJir1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="D0p438Kf"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1743C1B6D06;
-	Thu, 29 May 2025 09:01:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE22F21B9F0;
+	Thu, 29 May 2025 09:01:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748509295; cv=none; b=TXurk30SDM4vnUpoINX938FI2nOpaKf44fPIRzm5B9vns8F3epWU8ZhQ9PeGCm+QjdxtgdbfqKx1yPC8GH1huSEowiFHWKOWA/k14EJ1XbAzH5n82IpPzkooKbhmT6nrnY36ap2nC0/HZH31s/AvSBee4uyCNDy9bZNkoCNE5L8=
+	t=1748509311; cv=none; b=gHwJmoyq++nfipycV83p/39PDkVQlVRp0LAf2DF2atMnJnMgIbOPrPtzec+3KTY0HyihPlh34DKkfLAp83hNTfzP0QL4+jqtkZ7baRKJhsb2iZ0JSFE0t+KsZ8FHLyopNO9woynSrAfZmTwbDWN5u8I2Urrv7jN1h6q/4mEPu6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748509295; c=relaxed/simple;
-	bh=/F6/DXzn9Rhch+OmnF6nx0kwrtWRRAJCYSnxlsc0kYE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KI3gzL6LKgV7w5oToDZEG7dIw4x/0mKp+ppPnS27/wZOaBkdb9Y0bT7/mp8THp/edfMGuaKgH7jUVYi0RRhhyCcfExZ0KbQaEb1KDnfHU6PCZED/UUtZp2Zx+sxPdWFcaCktMnQhwuC2A548t6MOIbVjGxjpspwL2CZAdKicS5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ISYwJir1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9ABC2C4CEE7;
-	Thu, 29 May 2025 09:01:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748509292;
-	bh=/F6/DXzn9Rhch+OmnF6nx0kwrtWRRAJCYSnxlsc0kYE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ISYwJir1bMRAPsuMiZOBJHVVkxaZF85KGfFJsJsp49oT+xk6HqQaqBs3Pi7zqRMA5
-	 jcu1X7IijkpyDWLOTnSAaux41T0/n7WH2MF7JSiBuJqv4CZgWCS/nbxVliZlcsbYs5
-	 GIgrWYAImzqd5lVN44E8pwXiRTZUgH5z9TVmKqTgr1soXWIeEyNGOKbiFi3vkhy1Lf
-	 8b+kgjJCjn1DnbD/KP96B7gHj+zypMqndAHMg4aNay296uIcL6ukFurz/njylxbQoo
-	 MQQTEttQGfqcd/8sltBHVGCzcSUWP2RtP7H+HKsXpIA/+UqKverteDBCzaExQG2Jqh
-	 f+/+qRWY3Bhsg==
-Message-ID: <3ba588ed-1614-4877-b6fc-b5aa853b8c2e@kernel.org>
-Date: Thu, 29 May 2025 11:01:27 +0200
+	s=arc-20240116; t=1748509311; c=relaxed/simple;
+	bh=HlPWaPKN/azxxyWf2k728K8i6uOX3dIuS3C2IPYFdIc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kcLpvxvhFvfwIHQMNqHPEYyvmG3YarBg6TPBf0tSuJMIA+m8UW2CvrNsGbv2DMqWbTbmztf87yNNk4T5zR2/HV7bt3b2HGBp9Dy14BT0uaOE3j3bWd7RFWexaCNdaA4pURXem6lti+VGhPNJ/5nVYKtaghTvsZ45nvkrW3q5gVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=D0p438Kf; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=4rPjHyO1ImjfX55E2k5VoZ01eHeMPnzv3/koD1bA2Rw=; b=D0p438Kf5mlprmqRVogIIHQsYh
+	HJ/q3CXjGlZZZrdL/+ZAPMrxAUTScM5jGy9h3tCvTNLkxK/VU7N4/+7T8Lv0upCxQs2tLHTa+YbE2
+	JDL+AuS2CNPgKy3JLdYs1zPOK3pjfknYNl+IRo10uQBbqb06b/9TWDPcN9MPmICUdXqOt04elWGcN
+	z1jPG0mi/V99rdCXNHWedorf/WEL4kQcpTON2TICuR0/yMMUV/GQHuuHiHKXZEgRmya/mNx9kd7gR
+	knobjRVBP894kXb000cjon+3g1Ow6ftff1ibC1Amz2siZIaiTgHVV+1VEXrlte8tU8EIiZ8cGvIs6
+	aVu3QTVw==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uKZ8k-0000000Eaug-2OvC;
+	Thu, 29 May 2025 09:01:30 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 964CA30057C; Thu, 29 May 2025 11:01:29 +0200 (CEST)
+Date: Thu, 29 May 2025 11:01:29 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Alessandro Carminati <acarmina@redhat.com>
+Cc: linux-kselftest@vger.kernel.org,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Kees Cook <keescook@chromium.org>,
+	Daniel Diaz <daniel.diaz@linaro.org>,
+	David Gow <davidgow@google.com>,
+	Arthur Grillo <arthurgrillo@riseup.net>,
+	Brendan Higgins <brendan.higgins@linux.dev>,
+	Naresh Kamboju <naresh.kamboju@linaro.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Maxime Ripard <mripard@kernel.org>,
+	Ville Syrjala <ville.syrjala@linux.intel.com>,
+	Daniel Vetter <daniel@ffwll.ch>, Guenter Roeck <linux@roeck-us.net>,
+	Alessandro Carminati <alessandro.carminati@gmail.com>,
+	Jani Nikula <jani.nikula@intel.com>,
+	Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Linux Kernel Functional Testing <lkft@linaro.org>,
+	dri-devel@lists.freedesktop.org, kunit-dev@googlegroups.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 1/5] bug/kunit: Core support for suppressing warning
+ backtraces
+Message-ID: <20250529090129.GZ24938@noisy.programming.kicks-ass.net>
+References: <20250526132755.166150-1-acarmina@redhat.com>
+ <20250526132755.166150-2-acarmina@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 5/9] ARM: dts: stm32: add Hardware debug port (HDP) on
- stm32mp13
-To: Clement LE GOFFIC <clement.legoffic@foss.st.com>,
- Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org
-References: <20250523-hdp-upstream-v3-0-bd6ca199466a@foss.st.com>
- <20250523-hdp-upstream-v3-5-bd6ca199466a@foss.st.com>
- <5b7a2102-ff68-4aab-a88d-0c4f9195ef95@kernel.org>
- <3c868c4b-8a0e-44b5-9d6e-3a0526d9deeb@foss.st.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <3c868c4b-8a0e-44b5-9d6e-3a0526d9deeb@foss.st.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250526132755.166150-2-acarmina@redhat.com>
 
-On 28/05/2025 14:14, Clement LE GOFFIC wrote:
->>
->>> +		};
->>> +
->>> +		hdp: pinctrl@5002a000 {
->>> +			compatible = "st,stm32mp131-hdp";
->>> +			reg = <0x5002a000 0x400>;
->>> +			clocks = <&rcc HDP>;
->>>   			status = "disabled";
->>
->> Why are you disabling it? What is missing?
-> 
-> Nothing is missing just disabled by default.
-> The node is then enabled when needed in board's dts file.
-Nodes should not be disabled by default if they are complete. That's why
-I asked what is missing. Drop.
+On Mon, May 26, 2025 at 01:27:51PM +0000, Alessandro Carminati wrote:
 
-Best regards,
-Krzysztof
+>  #define __WARN()		__WARN_FLAGS(BUGFLAG_TAINT(TAINT_WARN))
+>  #define __WARN_printf(taint, arg...) do {				\
+> -		instrumentation_begin();				\
+> -		__warn_printk(arg);					\
+> -		__WARN_FLAGS(BUGFLAG_NO_CUT_HERE | BUGFLAG_TAINT(taint));\
+> -		instrumentation_end();					\
+> +		if (!KUNIT_IS_SUPPRESSED_WARNING(__func__)) {		\
+> +			instrumentation_begin();			\
+> +			__warn_printk(arg);				\
+> +			__WARN_FLAGS(BUGFLAG_NO_CUT_HERE |		\
+> +				BUGFLAG_TAINT(taint));			\
+> +			instrumentation_end();				\
+> +		}							\
+>  	} while (0)
+>  #define WARN_ON_ONCE(condition) ({				\
+>  	int __ret_warn_on = !!(condition);			\
+> -	if (unlikely(__ret_warn_on))				\
+> +	if (unlikely(__ret_warn_on) && !KUNIT_IS_SUPPRESSED_WARNING(__func__))	\
+>  		__WARN_FLAGS(BUGFLAG_ONCE |			\
+>  			     BUGFLAG_TAINT(TAINT_WARN));	\
+>  	unlikely(__ret_warn_on);				\
+> @@ -121,7 +130,7 @@ extern __printf(1, 2) void __warn_printk(const char *fmt, ...);
+>  #ifndef WARN_ON
+>  #define WARN_ON(condition) ({						\
+>  	int __ret_warn_on = !!(condition);				\
+> -	if (unlikely(__ret_warn_on))					\
+> +	if (unlikely(__ret_warn_on) && !KUNIT_IS_SUPPRESSED_WARNING(__func__))	\
+>  		__WARN();						\
+>  	unlikely(__ret_warn_on);					\
+>  })
+> @@ -138,7 +147,7 @@ extern __printf(1, 2) void __warn_printk(const char *fmt, ...);
+>  
+>  #define WARN_TAINT(condition, taint, format...) ({			\
+>  	int __ret_warn_on = !!(condition);				\
+> -	if (unlikely(__ret_warn_on))					\
+> +	if (unlikely(__ret_warn_on) && !KUNIT_IS_SUPPRESSED_WARNING(__func__))	\
+>  		__WARN_printf(taint, format);				\
+>  	unlikely(__ret_warn_on);					\
+>  })
+> @@ -157,8 +166,10 @@ extern __printf(1, 2) void __warn_printk(const char *fmt, ...);
+>  #else /* !CONFIG_BUG */
+>  #ifndef HAVE_ARCH_BUG
+>  #define BUG() do {		\
+> -	do {} while (1);	\
+> -	unreachable();		\
+> +	if (!KUNIT_IS_SUPPRESSED_WARNING(__func__)) {			\
+> +		do {} while (1);					\
+> +		unreachable();						\
+> +	}								\
+>  } while (0)
+>  #endif
+
+NAK
+
+This is again doing it wrong -- this will bloat every frigging bug/warn
+site for no reason. 
+
+Like I said before; you need to do this on the report_bug() size of
+things.
 
