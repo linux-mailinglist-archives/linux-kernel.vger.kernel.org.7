@@ -1,132 +1,163 @@
-Return-Path: <linux-kernel+bounces-667391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-667397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 403EEAC84DC
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 01:14:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 971AAAC84F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 01:21:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 380641BC55F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 23:15:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87EA17ADE48
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 23:20:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DB4921FF31;
-	Thu, 29 May 2025 23:14:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0373922E00E;
+	Thu, 29 May 2025 23:21:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="HyH5Ogtv"
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vfFoDOMK"
+Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A966421B90B
-	for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 23:14:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF5A91AF0C8
+	for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 23:21:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748560480; cv=none; b=cZmEU//RisbEyUatN/kBK1Hic7lXbnJ0lmxlVcHkaWYkXa7Lm5GNSwzjal+J1Ppd0DXRND7loQp7U/XnT4UtsYPwfWBG+my1fi4tuBN/WPHUu4Xa1rgX6VvC6UH+Wq4ktc5vdRgatUgqB5oTLBHoh/vr+xhqdR0XLbwtQ1uS5Uw=
+	t=1748560875; cv=none; b=HHys3DO3Z2ULC4+3Rf+G4SqNi3Yv7tmuPc3bBnZVmR8TafxFsQ503J1q8CakXkbxJ+XiBZBfyiW+Rnzj+nucAWcGWPrDmNMDpPANXLW+vGQHeCKv9EItfeQc7d+C+BkHTGNSZYRxsVf/VqJpeMWkkkj0Q4EXdd5sZwfMlRyRihg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748560480; c=relaxed/simple;
-	bh=82aH58/OR0lhXutdEGfFFolRSVqVk4YWdp/gYCJthhI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=geqo4juA8fChaIimykb4NoU4wnA/ExBPnEyh+l979YDThh52i8HCgYtT3kqbEdli8XO32JV4Mz3sW4HxM4oFlECxPUgdnWeVp86mbzz366A6bqvtIqOXtJ3xk6Rh4T3CzdXVvQQrcjaUe3S7aXP9Qf6YyfNFkVxIU236YuxxWfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=HyH5Ogtv; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4a43cbc1ab0so11139881cf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 16:14:38 -0700 (PDT)
+	s=arc-20240116; t=1748560875; c=relaxed/simple;
+	bh=MZXk35VJ8Le9CqGjyhGh9Yojgg0lxJHjMlJqlcRjJzc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=p74qh4CnnLj2cAJWBFSXDGT17tCWrb1zaskKdobD8H3tnmFV6E2AAMy2JznFzsH+c3eW7pmSwKmdbxfkzDFZsFerQA0cobcmt2aSy6acEazDXj0FdMUfbaT+p8yqKQfW3EXM1xRhXPX2hjZ4JNqxGXD/08MSISR2BUnY275Sw9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vfFoDOMK; arc=none smtp.client-ip=209.85.217.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-4e47c2a9cdcso937281137.1
+        for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 16:21:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1748560477; x=1749165277; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/B8M5wTYZuijeurw8QK1WHO/ILS2jrTlhZFmFoRTN/Y=;
-        b=HyH5Ogtv/bAKYdeGFzkyKULzvcWBQ61X3a0HjhTxtCLXQX0Bl0xKR9BEh0KGoKMKSj
-         otczVuO2br0wmF2rFklkafmoV0hxzHen4tYQB9A/FsAJb8nBmfJlVKYIZg+1sB95cCOq
-         Zy9Q9DW18+JYlsFZApL8iyVmqLn1Jgfg9thXFshmBAr1PgBakIgGdh4tymdC91HRIoY5
-         sRQtefrELhWmW67eLkro/GffOiRU3/bxcF9wZZqXQeXPPAPmhqIU0f7y54/VnOF5w1o1
-         VoZAc+xqNcLdkQ/bGRjCfsPrOKVrRPlmlfBSXQxdoeUUE2Y8Be3oxDifdR42JMvqka5x
-         MhRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748560477; x=1749165277;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1748560872; x=1749165672; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/B8M5wTYZuijeurw8QK1WHO/ILS2jrTlhZFmFoRTN/Y=;
-        b=k7qSnUvNmHevRC13tPQla2CtpqUpZG1kbYzDHrE1BvMVRbU0riEfM/QdW7oJQ8OKz7
-         JsjvwT0NHYz+8PsVLnmao9f0k0hX8qaf9KcFu+/8fB7UBmMjivWU0ESLQuv6/gPxG7DF
-         FJTM5gEjPcvnNPRt1zof8QmosgLzI04ofcLiEuJyPCgclKAkvsIEq23310tDHvOwtbWP
-         hcKZhzyL7pN4+w3blZ1aaRYS2u4U+4sgDfVNGW9vOOCpa5RTOBIfHE1g6morcTfLcB4D
-         XgKEhoy44G1afx9KTHnK00f7XSMBY86raz5uZVSN7G8ru8xLYf3fFo+6KL3FYIulrYvy
-         Lwiw==
-X-Forwarded-Encrypted: i=1; AJvYcCVpH6N7L5QTR81+ILm3XUrV5tcj/ZV5t00eBX9f4G+wXpShvYkmhkR5dMX1FHqOUcGT0cIJadC7H9IZ+tQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCX9vTTQgPFNhYMPcf5QnBiKn7E5HD0jCa5ESTW32P1GUiwhsj
-	jVyUpyk4W6lqjIAiK8a6mGq/yAX28OBzhiR5P2juUGAxMgsctoMJP5rTOd7P3Isdh00=
-X-Gm-Gg: ASbGnctffZTls3D5lKGI4PduOUU0EP8hEgXo94gI97cxjOteDD23Y2v38sj4bhROSoS
-	65yppqEqjnA7qFEGwre44+a9Lne4TFqUHEa3srQf46wniA2p8vJ/gyqQ6Wli/oMFzbkG3XXQ1ho
-	r8g/5WKAYk0H9OLjHOonpEDvkgXISBYCEWPHi5u1ZKoDobP2y0iLQwzIDyOH+aJj+GQhE6YuVYr
-	NMG2Vc+0SvzqtIG2tkwqhT3PehvbzQycj+V57hUfRw90J3S5axGcXu+rlf29mGQ0ocJXWOFLB1i
-	oLfBLL2bpitAeFcakkLNtGNrqLbt74W+RgD5SH2Nz9FVfyy91Q==
-X-Google-Smtp-Source: AGHT+IH39k+/aVil5iL6wSfx1rri1NcKXfcLj3pE16Pc8yYjcX2Yvk9Lsla/f5OW48LamZwx8C0WJg==
-X-Received: by 2002:a05:622a:608f:b0:4a4:3924:96b9 with SMTP id d75a77b69052e-4a4400e2419mr23361561cf.52.1748560477322;
-        Thu, 29 May 2025 16:14:37 -0700 (PDT)
-Received: from localhost ([2603:7000:c01:2716:365a:60ff:fe62:ff29])
-        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-4a435a377f1sm12758531cf.61.2025.05.29.16.14.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 May 2025 16:14:36 -0700 (PDT)
-Date: Thu, 29 May 2025 19:14:32 -0400
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-Cc: Matthew Wilcox <willy@infradead.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	David Hildenbrand <david@redhat.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Christian Brauner <brauner@kernel.org>,
-	SeongJae Park <sj@kernel.org>, Usama Arif <usamaarif642@gmail.com>,
-	Mike Rapoport <rppt@kernel.org>, Barry Song <21cnbao@gmail.com>,
-	linux-mm@kvack.org, linux-arch@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-	Pedro Falcato <pfalcato@suse.de>
-Subject: Re: [DISCUSSION] proposed mctl() API
-Message-ID: <20250529231432.GB1271329@cmpxchg.org>
-References: <85778a76-7dc8-4ea8-8827-acb45f74ee05@lucifer.local>
- <aDh9LtSLCiTLjg2X@casper.infradead.org>
- <20250529211423.GA1271329@cmpxchg.org>
- <klrw3rjymes6phs5erz7eqkjji5oe3bg4j4jbqpjv3qzuw4vra@k6ei5pssfany>
+        bh=FZ3c+Wi2NmVMCqELDsVloOEHC7NYEmV32OBnWDhc4vg=;
+        b=vfFoDOMKZY7Joks4oTwrMDcba7MBShiAvdujpZFzlRoMfP9u7MTkGOMDJ7C7DEL8dz
+         RtfBBnmoCXC3kwmIivWKbjfeNlEo7rTCN786gQ3x00p9PzL13U9plakVkhE3h458hRel
+         2ThqApGt08CSPw3qTTCQTRuK7VGGr92X3HSYyfBWke/jf2ctJ4tAkcUfu12kBXMuUca8
+         ADqYgMfzMDqBY6bGoxgopycUi+dUZ23NmzdruzYeVHNHDZKMY1ACwSz0EfKpZfJyR2P6
+         kUKfWbIjcbKBmfjUR6+R3sWOb2/OwDVyknYrglXmQNF54aW6eu1PtLwHPD/2dj5yJmJW
+         ytFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748560872; x=1749165672;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FZ3c+Wi2NmVMCqELDsVloOEHC7NYEmV32OBnWDhc4vg=;
+        b=jYhEhMKQ0ZoIYoAnXvNxoysPC80VYU/PTnRzO071GcloK4nw5iF5fuXTu4RHu9utN8
+         yf6mDny0oweZOiDSz2iYH3QUfWGOxVFv6/jaH2NblFq9xxjvv3CG+MmS4qc1+sGCLN9q
+         IZOkHf6CfFSr2JzUZVofg1a4ECVqTEZDCN+YTjt/DoDCdrbNNoxLzppOY1OZxKZYIUOr
+         yPw3piZ3cadcRKty29+ffGKx4sDqg0ezrrap0KIU0K5aRoPVq5G0NIvbe3ql9idpPGlz
+         h0nvBDSpgKsPomGbIioeB2WFQ2vALPgFRIV8hS9MT/ROywpD8rOAzC84uVNFHq5suf3R
+         lESg==
+X-Forwarded-Encrypted: i=1; AJvYcCW5YdbIifbegpQXb9j0CwaFMHoSaWdcQ9uIIxwoiJG0pySaVtAnCMvCpvwkbqtj41wIIRvLEuKmWalIzXU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFr0ypGIeac31iiDdaxAzUQJnr0qAimOwIn8tAUK51qnD75F5Z
+	/4kKzug7vOKI+zoe4vLt/EsiolIY78Ph6rFrb4mpLpArKDtEAIu+oFrjTc5BrxE8OBI6tMpE0pp
+	ysS4adIulaHaRG0GaeGt2bVq9tnb9ClzmB0QF9qxK
+X-Gm-Gg: ASbGncue/BjlWEmwnRsvas1gU51F0+WKh0/eCI2zy9GElp1C9LmXOLcrUr2vPh5Vu3r
+	0fkxld8i7aimpV+c3kY58NX4Ol+0fjpJU6TQOG+pKmeEEmxqAEUTCE/bhjL7Y8MPUTNGVQkB6Cr
+	LXcgc4UdqFka+uczi0VI8fXcKXgmnmbQ+OfkUOSMHdmSh1/ny6sXnlQd99XhTfFNgHvNUzgD/Zs
+	A==
+X-Google-Smtp-Source: AGHT+IHJIZrfAvpKY/5wr0qNDI7tJLIOAGcHH/s3hT0bGXWqKuDPpcR8PAvDf6R0gNbFcBlmC8YVS8YdBkpjGsynf/g=
+X-Received: by 2002:a05:6102:26c8:b0:4c1:9526:a636 with SMTP id
+ ada2fe7eead31-4e6e410cc07mr1777490137.15.1748560872289; Thu, 29 May 2025
+ 16:21:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <klrw3rjymes6phs5erz7eqkjji5oe3bg4j4jbqpjv3qzuw4vra@k6ei5pssfany>
+References: <20250521222725.3895192-1-blakejones@google.com>
+ <20250521222725.3895192-3-blakejones@google.com> <CAP-5=fVn++LYR6PcRMf9wcBooALVHX2y=i_C6cLsDipN2EDsOg@mail.gmail.com>
+In-Reply-To: <CAP-5=fVn++LYR6PcRMf9wcBooALVHX2y=i_C6cLsDipN2EDsOg@mail.gmail.com>
+From: Blake Jones <blakejones@google.com>
+Date: Thu, 29 May 2025 16:21:01 -0700
+X-Gm-Features: AX0GCFuI08MI_TydsQLHChdJJOb9OX44_XJRJWvHC2fCjLT41nw5dVTKyiiOFDs
+Message-ID: <CAP_z_CguNu7KGL+-=WD-8LfZiKaLEe=R=Z6jgtXTr21AzKQNtw@mail.gmail.com>
+Subject: Re: [PATCH 2/3] perf: collect BPF metadata from existing BPF programs
+To: Ian Rogers <irogers@google.com>
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	Chun-Tse Shao <ctshao@google.com>, Zhongqiu Han <quic_zhonhan@quicinc.com>, 
+	James Clark <james.clark@linaro.org>, Charlie Jenkins <charlie@rivosinc.com>, 
+	Andi Kleen <ak@linux.intel.com>, Dmitry Vyukov <dvyukov@google.com>, Leo Yan <leo.yan@arm.com>, 
+	Yujie Liu <yujie.liu@intel.com>, Graham Woodward <graham.woodward@arm.com>, 
+	Yicong Yang <yangyicong@hisilicon.com>, Ben Gainey <ben.gainey@arm.com>, 
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 29, 2025 at 05:24:23PM -0400, Liam R. Howlett wrote:
-> * Johannes Weiner <hannes@cmpxchg.org> [250529 17:14]:
-> > On Thu, May 29, 2025 at 04:28:46PM +0100, Matthew Wilcox wrote:
-> > > Barry's problem is that we're all nervous about possibly regressing
-> > > performance on some unknown workloads.  Just try Barry's proposal, see
-> > > if anyone actually compains or if we're just afraid of our own shadows.
-> > 
-> > I actually explained why I think this is a terrible idea. But okay, I
-> > tried the patch anyway.
-> > 
-> > This is 'git log' on a hot kernel repo after a large IO stream:
-> 
-> Can you clarify this benchmark please?
+Hi Ian,
+
+On Thu, May 29, 2025 at 10:47=E2=80=AFAM Ian Rogers <irogers@google.com> wr=
+ote:
+> > +               bpf_metadata_event =3D &metadata->event->bpf_metadata;
+> > +               *bpf_metadata_event =3D (struct perf_record_bpf_metadat=
+a) {
+> > +                       .header =3D {
+> > +                               .type =3D PERF_RECORD_BPF_METADATA,
+> > +                               .size =3D metadata->event_size,
 >
-> Is this running 'git log', then stream IO, then running 'git log' again?
+> nit: Could we set the header.size in bpf_metadata_alloc to remove
+> metadata->event_size. The code generally doesn't pass a pair of
+> perf_event + size around as the size should be in the header.
 
-Yes, but it's running git log twice first. On the vanilla kernel this
-is the number of references when we usually activate.
+I can do this initialization of metadata->event->bpf_metadata in
+bpf_metadata_alloc(). I'll need to do a bit more work in
+synthesize_perf_record_bpf_metadata() before I can get rid of
+metadata->event_size, because it needs to allocate an additional
+machine->id_hdr_size bytes (see below); I'd just have it get the
+value out of metadata->event->header.size instead. Sound good?
 
-You can substitute any sequence of commands that would interact with
-the git objects repeatedly before a pause where programmer thinks.
+Blake
 
-You can probably get similar mmapIO patterns with sqlite, lmdb, etc.
-
-Periodically running executables and scripts are another case. They
-tend to be less latency-sensitive I suppose, but would still
-unnecessarily eat into the available IO bandwidth.
+> > +static int synthesize_perf_record_bpf_metadata(const struct bpf_metada=
+ta *metadata,
+> > +                                              const struct perf_tool *=
+tool,
+> > +                                              perf_event__handler_t pr=
+ocess,
+> > +                                              struct machine *machine)
+> > +{
+> > +       union perf_event *event;
+> > +       int err =3D 0;
+> > +
+> > +       event =3D calloc(1, metadata->event_size + machine->id_hdr_size=
+);
+> > +       if (!event)
+> > +               return -1;
+> > +       memcpy(event, metadata->event, metadata->event_size);
+> > +       memset((void *)event + event->header.size, 0, machine->id_hdr_s=
+ize);
+> > +       event->header.size +=3D machine->id_hdr_size;
+> > +       for (__u32 index =3D 0; index < metadata->nr_prog_names; index+=
++) {
+> > +               memcpy(event->bpf_metadata.prog_name,
+> > +                      metadata->prog_names[index], BPF_PROG_NAME_LEN);
+> > +               err =3D perf_tool__process_synth_event(tool, event, mac=
+hine,
+> > +                                                    process);
+> > +               if (err !=3D 0)
+> > +                       break;
+> > +       }
+> > +
+> > +       free(event);
+> > +       return err;
+> > +}
 
