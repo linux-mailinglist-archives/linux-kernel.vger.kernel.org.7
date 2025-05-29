@@ -1,148 +1,77 @@
-Return-Path: <linux-kernel+bounces-667057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-667063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A1C2AC7FEB
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 16:57:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 48200AC7FFD
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 17:07:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80CF7188FE42
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 14:57:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 167F61C03B7C
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 15:07:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADD8822B8A2;
-	Thu, 29 May 2025 14:56:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21CF922B8DB;
+	Thu, 29 May 2025 15:07:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hyXLQnv7"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b="io46lwWB"
+Received: from gentwo.org (gentwo.org [62.72.0.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E59339FD9
-	for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 14:56:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E050322AE5E
+	for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 15:07:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.72.0.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748530614; cv=none; b=sYNtXS4vaKzJGd01LVa6VS/JvXd6SH18RXAXpcSYsnkttTKJsYKFMyHkaUL8aREdNETd3OZEQoo7ZUwg05ROkMtAnviEDck7nCOklp51YPEvzTt4H0Pnh3+BSe291JSSgycTmKMt6DgPQGk8/+oRfHWYIPDiCssJ5k3QM27ZRyw=
+	t=1748531255; cv=none; b=f8O2xsR8zmxJ7re6b3EU7DZJowIZsB8qgvYC+R2z8Lzi3njg5YopemoHM48oIK0nvFFWmg5emT9KRMtVQnic4WV/woyGKuVHatquegaZ/GNsfPRIHDPRbkiAqKzZS/C1phWndM3A9uXO/CajD6Bd5PQ71ljqlj46Wjs9zwzVI+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748530614; c=relaxed/simple;
-	bh=B1zsO3xLB87dBpNzAoGuj+8RJlTANU2xKvOZOU1twOU=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=sNqyf3HLg/WCziaFt38YWruUcmvBGxa/xvKqDBpktYLiCW76SgoraLjoTqBxjrjz8rZnv+gvjrQdt7SSA1M+yJxvOSEnbMB0hbJkK0iUdy01G+u5L73ANvuRLUJJNPGnVkHYVE76n3NUWPlueMy2tPUw2vPpE/Pf8NoTeswpYR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hyXLQnv7; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-310efb64693so992048a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 07:56:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1748530612; x=1749135412; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Wtc8z1lt0l7J7qwleBMoPVIkOE4MKmf5AJAUWp638/g=;
-        b=hyXLQnv7oXEntBAzMTAPyUhwAnRTHCci3ptm+H6vpNjcZ1SBsaYZSIS29rQ37BWRpM
-         nKzmyry1m8ComuGB7/wEP6B9vDah1u8dqm/H3gOFh3VDFjK+ZSlbcGMOtKXMiDAiiZku
-         lFOo3WOLxA5IzhFi5bgUXGTJ9TwfWXvBU+aLki3q/k4yE2nNC9zwlpZtzd2ekdFrrr6F
-         lxP5/6WNKc8IgRWY+EBOE9ZCn2LQW90EoDlj3uMzQsRSgqXilJEdL7hiMmIHjMHoxxUT
-         4w/Hetq61CgISID1WKgCiGeboNyuxjhIplPTnToCLy1X9M/Rxgqn181FNyXpnmzxy1RM
-         miwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748530612; x=1749135412;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Wtc8z1lt0l7J7qwleBMoPVIkOE4MKmf5AJAUWp638/g=;
-        b=vxi0Bi58XexKrVrYwrASg6tWWSCkpEaRg/2agNEgLqWX+pKfR366dYr85Fx+5K668h
-         kqQMUC4lmjgFCvDwaP7dJEs8VZyVPFjWqcq/ri1POiIk/zkrGcc4SxbRLjDRQsyyo3PA
-         DqQ36boZoJYcgXBfnltgjyBQAjFJRnz/snFIkf7MylOyNNDDLH0QIG74FN8bzM9lByQP
-         vElGaURlfrWR/3CJ05k1BRQanWKGNegrMl1K9vdhL4UGAjJb5aJWiH0FMfZ7mErgdVm6
-         vRxoXBVRPFJF6xh7NUI83AQ1L3n5rs1pscTbYSD+itOUAoYIgVv+M4TuiG1fIrgE49q9
-         2AKw==
-X-Forwarded-Encrypted: i=1; AJvYcCViMziWvkHiGJSKl22eV0O4cA7pW7FE4x2Edvu4Urlu/a6pI28YAE99Wz0lbexhBCwdOSGED83JBRxwH1Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywsc8CQoLC3nBV43PZIiQa4pSLxiAbnrmRTz03lV+ZFLvzMU/T0
-	l7fkHjaN8X+jQrtKVVoUQi0ErzjTlhZfpdrmjYFKwuCkviIJhoWjWApMnXTSaVNvBdfPDr4ZtS4
-	D+nTovw==
-X-Google-Smtp-Source: AGHT+IEOksNt6WLBVwwH9cCjd/EZtQ2Y3bLCTU4Al9fuM3w6GA9Cf3/1B4op9exa2/CpdjOTCglkD0RIbFs=
-X-Received: from pjbpq14.prod.google.com ([2002:a17:90b:3d8e:b0:311:2c1f:b0d8])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1c09:b0:30c:4b1d:330
- with SMTP id 98e67ed59e1d1-311e7460123mr9878567a91.27.1748530611851; Thu, 29
- May 2025 07:56:51 -0700 (PDT)
-Date: Thu, 29 May 2025 07:56:50 -0700
-In-Reply-To: <aDd-lbrJAX62UQLn@google.com>
+	s=arc-20240116; t=1748531255; c=relaxed/simple;
+	bh=nRqV/m3gANnnW7jwp4ZVNLa3vDIOYWrPSDQCnpgN7n4=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=JfsOm0ObtyzTfZKV2wAuwlscluqTNR8+tLBkL02Uq2FhKQ5yxDAUDd527qyOXbMCmSyL5wNi4f7XUz3e19QzshV03umB1juYp09AO6fVGvHQ4Nu4842oiClTyH9Eks8EJ2tfRxT5oG7yzgjAi8w04Mqk5F7vrvtFSkQkSyTy7To=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org; spf=pass smtp.mailfrom=gentwo.org; dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b=io46lwWB; arc=none smtp.client-ip=62.72.0.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentwo.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gentwo.org;
+	s=default; t=1748530644;
+	bh=nRqV/m3gANnnW7jwp4ZVNLa3vDIOYWrPSDQCnpgN7n4=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=io46lwWB5b6mfowKjoQYKbImgvorQ/ro5x7XuJIuSurDSsH1iRVvHDNHpSIJy/oVW
+	 iP24cdf3GuleGETRgkMQzHOQE277nqS8LPxg3q62cRJpe5nHhzHU8ggCybZg5+Dz28
+	 V3lnWlwuLTvuo/e+PyPHCyyiMP8xP5DFHoL06FNk=
+Received: by gentwo.org (Postfix, from userid 1003)
+	id 4DFCD400C6; Thu, 29 May 2025 07:57:24 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+	by gentwo.org (Postfix) with ESMTP id 49651400C4;
+	Thu, 29 May 2025 07:57:24 -0700 (PDT)
+Date: Thu, 29 May 2025 07:57:24 -0700 (PDT)
+From: "Christoph Lameter (Ampere)" <cl@gentwo.org>
+To: Vlastimil Babka <vbabka@suse.cz>
+cc: David Rientjes <rientjes@google.com>, 
+    Andrew Morton <akpm@linux-foundation.org>, 
+    Roman Gushchin <roman.gushchin@linux.dev>, 
+    Harry Yoo <harry.yoo@oracle.com>, Matthew Wilcox <willy@infradead.org>, 
+    linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] mm, slab: support NUMA policy for large kmalloc
+In-Reply-To: <20250529-frozen-pages-for-large-kmalloc-v1-2-b3aa52a8fa17@suse.cz>
+Message-ID: <e391fe8a-6bef-4067-86d8-b75ece441b75@gentwo.org>
+References: <20250529-frozen-pages-for-large-kmalloc-v1-0-b3aa52a8fa17@suse.cz> <20250529-frozen-pages-for-large-kmalloc-v1-2-b3aa52a8fa17@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250109204929.1106563-1-jthoughton@google.com>
- <20250109204929.1106563-6-jthoughton@google.com> <aBqj3s8THH9SFzLO@google.com>
- <aDdwXrbAHmVqu0kA@linux.dev> <aDd-lbrJAX62UQLn@google.com>
-Message-ID: <aDh1sgc5oAYDfGnF@google.com>
-Subject: Re: [PATCH v2 05/13] KVM: x86/mmu: Add support for KVM_MEM_USERFAULT
-From: Sean Christopherson <seanjc@google.com>
-To: Oliver Upton <oliver.upton@linux.dev>
-Cc: James Houghton <jthoughton@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>, Yan Zhao <yan.y.zhao@intel.com>, 
-	Nikita Kalyazin <kalyazin@amazon.com>, Anish Moorthy <amoorthy@google.com>, 
-	Peter Gonda <pgonda@google.com>, Peter Xu <peterx@redhat.com>, 
-	David Matlack <dmatlack@google.com>, wei.w.wang@intel.com, kvm@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 
-On Wed, May 28, 2025, Sean Christopherson wrote:
-> On Wed, May 28, 2025, Oliver Upton wrote:
-> > On Tue, May 06, 2025 at 05:05:50PM -0700, Sean Christopherson wrote:
-> > > > +	if ((old_flags ^ new_flags) & KVM_MEM_USERFAULT &&
-> > > > +	    (change == KVM_MR_FLAGS_ONLY)) {
-> > > > +		if (old_flags & KVM_MEM_USERFAULT)
-> > > > +			kvm_mmu_recover_huge_pages(kvm, new);
-> > > > +		else
-> > > > +			kvm_arch_flush_shadow_memslot(kvm, old);
-> > > 
-> > > The call to kvm_arch_flush_shadow_memslot() should definitely go in common code.
-> > > The fancy recovery logic is arch specific, but blasting the memslot when userfault
-> > > is toggled on is not.
-> > 
-> > Not like anything in KVM is consistent but sprinkling translation
-> > changes / invalidations between arch and generic code feels
-> > error-prone.
-> 
-> Eh, leaving critical operations to arch code isn't exactly error free either :-)
-> 
-> > Especially if there isn't clear ownership of a particular flag, e.g. 0 -> 1
-> > transitions happen in generic code and 1 -> 0 happens in arch code.
-> 
-> The difference I see is that removing access to the memslot on 0=>1 is mandatory,
-> whereas any action on 1=>0 is not.  So IMO it's not arbitrary sprinkling of
-> invalidations, it's deliberately putting the common, mandatory logic in generic
-> code, while leaving optional performance tweaks to arch code.
-> 
-> > Even in the case of KVM_MEM_USERFAULT, an architecture could potentially
-> > preserve the stage-2 translations but reap access permissions without
-> > modifying page tables / TLBs.
-> 
-> Yes, but that wouldn't be strictly unique to KVM_MEM_USERFAULT.
-> 
-> E.g. for NUMA balancing faults (or rather, the PROT_NONE conversions), KVM could
-> handle the mmu_notifier invalidations by removing access while keeping the PTEs,
-> so that faulting the memory back would be a lighter weight operation.  Ditto for
-> reacting to other protection changes that come through mmu_notifiers.
-> 
-> If we want to go down that general path, my preference would be to put the control
-> logic in generic code, and then call dedicated arch APIs for removing protections.
-> 
-> > I'm happy with arch interfaces that clearly express intent (make this
-> > memslot inaccessible), then the architecture can make an informed
-> > decision about how to best achieve that. Otherwise we're always going to
-> > use the largest possible hammer potentially overinvalidate.
-> 
-> Yeah, definitely no argument there given x86's history in this area.  Though if
-> we want to tackle that problem straightaway, I think I'd vote to add the
-> aforementioned dedicated APIs for removing protections, with a generic default
-> implementation that simply invokes kvm_arch_flush_shadow_memslot().
+On Thu, 29 May 2025, Vlastimil Babka wrote:
 
-Alternatively, we could punt on this issue entirely by not allowing userspace to
-set KVM_MEM_USERFAULT on anything but KVM_MR_CREATE.  I.e. allow a FLAGS_ONLY
-update to clear USERFAULT, but not set USERFAULT.
+> The slab allocator observes the task's numa policy in various places
+> such as allocating slab pages. Large kmalloc allocations currently do
+> not, which seems to be an unintended omission. It is simple to correct
+> that, so make ___kmalloc_large_node() behave the same way as
+> alloc_slab_page().
 
-Other than emulating poisoned pages, is there a (potential) use case for setting
-KVM_MEM_USERFAULT after a VM has been created?
+Large kmalloc allocation lead to the use of the page allocator which
+implements the NUMA policies for the allocations.
+
+This patch is not necessary.
 
