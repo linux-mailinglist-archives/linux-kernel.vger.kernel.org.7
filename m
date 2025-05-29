@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-667044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-667045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DED5AC7FC8
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 16:36:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 36A27AC7FCA
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 16:37:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 090634E70B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 14:36:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 007B04E71C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 14:37:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CD4522DA01;
-	Thu, 29 May 2025 14:36:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3435E22DFAB;
+	Thu, 29 May 2025 14:36:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="SHkVxNPf"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="BYb8gEiE"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A41022D795
-	for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 14:36:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0002922DF86
+	for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 14:36:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748529364; cv=none; b=o79nJ8Ynbap44VqYmtn5QygGGTPZhAIwrOVt76gA3RGHyfcgFUAiuHmNkQOVkT8MhRXgh3+VQX5Djjs40lwwKp4M3hdcEDiFX/BKWzYQFvAfE2cdgmE2q93evGcaZBoJre+JwYU2TKeeBdKw0UbNhmiqGSgcl7rDVA+eWYbAz1g=
+	t=1748529368; cv=none; b=nWL+2I6PIGRq8FuzZLFeOQM2aE95Cpd4vDIPeeFxyskAhdkO26xsAZ06ypuljEPCf1sIVRZ8JV8zcj74X2oLF6YoRxGAr2RP8ZytxYHVeX8ei1xPezfvD9QwN8jwitcah4QLzqWIBOBFKK+2RutPWCtjzO9VjDAGigRp4uqDVRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748529364; c=relaxed/simple;
-	bh=RpvvMj/K5uVzGiJH1mIG91vdZyDBkvd7mqNAf+vhWvM=;
+	s=arc-20240116; t=1748529368; c=relaxed/simple;
+	bh=GeXs2YTmkQkV79yulDXUH0yLLyz3ctNNGJzYo9oqVmM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KkTtNYdSfWChwO2iFBLwmkVSkDNcmFKP/QE6LwkU3TpcLsmWIRnEerBj+27Gc1Zc/Zza+ajK73z8Qx211aUa4yfvkQa5uiS1xz1QveGXXtt8rFkOMMlHy4Ou3CXod2CXc/XfMa1SD/A4aDiPocw0oeqPify2365HexzKLTXs1Q8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=SHkVxNPf; arc=none smtp.client-ip=209.85.218.43
+	 MIME-Version; b=TpvXgMixhZlnhOMjkf7M4krEGQr/ekEi2gc6n5T4Lj1tVzkqeNBxSg5i+mKNK86NiHReA/jtN/eXJER/fJGo5nhXrQG0dZz7TPTv4pUkz8oKIn33SuB57rvz87OfJGNuWyHTP2VQO2xEqnFTSHKisYK6uSfIKbupyeOo+9ryp5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=BYb8gEiE; arc=none smtp.client-ip=209.85.208.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-acae7e7587dso142295166b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 07:36:03 -0700 (PDT)
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-604f5691bceso1671450a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 07:36:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1748529361; x=1749134161; darn=vger.kernel.org;
+        d=amarulasolutions.com; s=google; t=1748529364; x=1749134164; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=GxYH3NexwAbeEcXLC/B+xWmBAAgWvD5JzKcWCQ9bGyI=;
-        b=SHkVxNPfy+LR7MSsG9zvc24kO8OfLUO78sayURCoBoyqeseNuBIZj8bA+YW5O6dgb5
-         FWc8Hs4K/74JeFW2fAKmis4gdo7T5WVIqMI7YLywkhLRKOvDKjYwvqO1OIoFmMqi4C1x
-         rgNvzlAwxhqoQX7GFBdRwMGOAAV/bl+wRelww=
+        bh=xTXx7XXdzk7EWRnp78xo+LM1GM1iIdxfMvNDWhkbA/U=;
+        b=BYb8gEiEtcvV6HH192IHpNjuqi4qjPU++XFPclZ1ps8xRjMwaOMehThpg2KUlwPTuI
+         hSyuKD23n51Ma7+5hNtYgcbhmgmx2RxYGktSGNZ7yxMr/YoPmQG2GlLBbS+XBM68Z9ZM
+         WmAmHEpvAOshXQoyeqF4QDc9d8E0TCpchyy2k=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748529361; x=1749134161;
+        d=1e100.net; s=20230601; t=1748529364; x=1749134164;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=GxYH3NexwAbeEcXLC/B+xWmBAAgWvD5JzKcWCQ9bGyI=;
-        b=nSXKHOLGJ4RczbAKxYyAAEomF6pRsZoCKR98vBTablC6Rk6xkGI9Jykkuiqw2V3J2i
-         5TK4qNOBfuML86AnnLk7HLs3L750I/o1C1uaasRhn/m601b3uZE60EevlftzB0axmz1c
-         FL0/06ND891igzpPsGDDe+vP8PojX1zJTY9Giia8h31SeXNzW9Td6x0TwfkktvJfnaTK
-         aL6AkE9OlBYMqqlFqpboE0Izt3uHN6A6j69bw9vGQ+d8j9wEJMEKjuBv6VFke1e93FTU
-         ijKG9HaPQQZWjOt6QOSP2Led7mqrVYrXLjWpb37KsfGURHDVcWIXh1fvsODmwC4DkDpg
-         gXog==
-X-Gm-Message-State: AOJu0Yw31ltj2qQC3SlLE3Oj7OfbJCAMeXpDTvY8Nxmc0WHag9RnQDjH
-	yDs3hjAczl/cw7tXH0Z2io8F1KIP/KxSPjiFlBRw+I84uJOh7h4F5eypMKP+YQr2C6T48vJY5E1
-	Z0QzA
-X-Gm-Gg: ASbGncvxO/3BVqbFJKretuYLzpC4GzV0jl1FSWSYz9ylFmSMVnzgEgTYloUkXSF+qbD
-	8N4bunKhsrkqCKvw9d6zcY5jxaHBpBllw1ZmSRP68wsY9Aq5s3AqOPBB1TQcFRlUwWusS/wPKw9
-	rQPBTtv33IVLwmRxChtnG72YVXDYmP5YSO5ZBYEiB2RcM0G96hYTqJPtZg7v3tLKYVlQWFB4rpM
-	1ZOhDRPca5tNy6xTS3ILCV7ESNRYuNjTl1Fv0zbQku0OtFY/JvBfLiGzLBhjPl2NOlLi4SiPusa
-	cG+0hSnQ3y8lfIgS/gNNAN+nTP98uRfFPMwK2CoYqrOo1FRmuikWqS9o1IKXgVpVU1WudwgIBbJ
-	8MiCFjOWrcoIMhlFW
-X-Google-Smtp-Source: AGHT+IHLbgs6cMrNEhnJZTad08BJDPcqxBNJSOsMwsYd7juFM8aU5XWIyBIRrYfe55LQYTGTKQIT4g==
-X-Received: by 2002:a17:907:3f1f:b0:ad8:96d2:f42 with SMTP id a640c23a62f3a-ad896d21361mr957537266b.36.1748529361561;
-        Thu, 29 May 2025 07:36:01 -0700 (PDT)
+        bh=xTXx7XXdzk7EWRnp78xo+LM1GM1iIdxfMvNDWhkbA/U=;
+        b=uBUaWunPM2K0+n5cGf0A8+h6vxHrJWYTuoB4wsbk4XVGTRFci8ndx3DE/YVGkhyrmt
+         UKRr5HwkaeFeMzbcYznrYzQfDgWm1p/ax0OmKPymVzu/uuLehYggqW3LUX1Bl4UACEz8
+         jZOJCW8TLGEx5kzvgGyBjeRx6YCultuNCFqLTx5gnp+kw/HRriBLnbPAgPlqEExyvX4s
+         /gGsrfLUv5JYLUS4Tyn+P8iqbk/Txi8onXBDDyFhXDuuNEsZKkwZieuZsdfaRYsmmqsR
+         sH3vkcun0iG0Ruz8unlBJwbtLXgw/R74b86cGlG/a8F7xry4TTIavs772eTG6pf6AfO7
+         lvTw==
+X-Gm-Message-State: AOJu0Yy2PUu3heMwk3abL8YK5T5Q28qVFMaT6M6l19dCte2PR0bPdQZE
+	pR/zOLiIusEt8SFJmpNpcgmuMh2tu8SMQYacvjekSUlT7jWWfGbXZuF8vUbnS1yN9YpzOdFN2cR
+	gSX0+
+X-Gm-Gg: ASbGnct1S0zQF+ZuTyjEGjnDVRHXmwTsaSzmurh/CdGgpmlPUIy6tb2W+JedTkp7WvV
+	k2Pb4a/NL7/VReifDyK1uLpWr1FvYqHhGaI0hYsBNJ90wbW8t+iwCJKO/ns4pX8b8LwKfkJ2MDn
+	WEjvl90+MxqW0yGgE8tzULXYDIsornYMlRWUA83C3HmfGtuIGIvILsmynnu//0vMwrCn/UsAZUq
+	Wbhq4A4DdD17aEXj76GMHjgYFS2Gy+FkUQ8rPBsZSWZDXW/TJTwf53obl0gWZo26s9Y6eySv4xM
+	iIv+bmFB9p/UDHpMeUOqn6bRPW+uT1somRlGe2x5wkvgaCBDQIFH6bYlA4H9tTMIwIxxXW7wTjE
+	r1sP5/MRG7VHrxO0Z
+X-Google-Smtp-Source: AGHT+IGNd99MwT3JpoTl6fZS3HsjpB6dOJqE1wiiL6YvPMiOlp0uVZuWybnPHDsSV0wIHKZmVqHGfA==
+X-Received: by 2002:a17:907:9611:b0:ac3:3e40:e183 with SMTP id a640c23a62f3a-adacda55ce4mr238586366b.3.1748529363612;
+        Thu, 29 May 2025 07:36:03 -0700 (PDT)
 Received: from dario-ThinkPad-T14s-Gen-2i.. ([2.196.42.248])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ada5d7ff075sm154305866b.37.2025.05.29.07.36.00
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ada5d7ff075sm154305866b.37.2025.05.29.07.36.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 May 2025 07:36:01 -0700 (PDT)
+        Thu, 29 May 2025 07:36:02 -0700 (PDT)
 From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 To: linux-kernel@vger.kernel.org
 Cc: linux-amarula@amarulasolutions.com,
@@ -84,9 +84,9 @@ Cc: linux-amarula@amarulasolutions.com,
 	Shawn Guo <shawnguo@kernel.org>,
 	imx@lists.linux.dev,
 	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v4 5/6] ARM: mxs_defconfig: Cleanup mxs_defconfig
-Date: Thu, 29 May 2025 16:35:12 +0200
-Message-ID: <20250529143544.2381031-6-dario.binacchi@amarulasolutions.com>
+Subject: [PATCH v4 6/6] ARM: mxs_defconfig: select new drivers used by imx28-amarula-rmm
+Date: Thu, 29 May 2025 16:35:13 +0200
+Message-ID: <20250529143544.2381031-7-dario.binacchi@amarulasolutions.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250529143544.2381031-1-dario.binacchi@amarulasolutions.com>
 References: <20250529143544.2381031-1-dario.binacchi@amarulasolutions.com>
@@ -98,78 +98,62 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Generate mxs_defconfig by doing:
-
-make mxs_defconfig
-make savedefconfig
-cp defconfig arch/arm/configs/mxs_defconfig
-
-No functional change. The goal here is to cleanup mxs_defconfig file to
-make easier and cleaner the addition of new entries.
+Select the options required by the imx28-amarula-rmm board.
 
 Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+
 ---
 
-(no changes since v1)
+Changes in v4:
+- In mxs-lradc.txt:
+  - Fix typo Low-Resoulution -> Low-Resolution'
+  - Wrap lines at 80 char.
+  - Drop '|' from the description
+  - Describe what each interrupt is for.
+  - Move touchscreen-wires constraint for imx28 to the top level
+- In imx28-amarula-rmm.dts:
+  - Drop label property (deprecated) under the leds sub-nodes.
+  - Add microSD comment above the ssp0 node.
+- Add patch 5/6 "ARM: mxs_defconfig: Cleanup mxs_defconfig"
+- Add patch 6/6 "ARM: mxs_defconfig: select new drivers used by
+  imx28-amarula-rmm"
 
- arch/arm/configs/mxs_defconfig | 11 -----------
- 1 file changed, 11 deletions(-)
+Changes in v3:
+- In imx28-amarula-rmm.dts:
+  - Drop xceiver-supply property from can0 node.
+  - Rearrange the order of specific nodes and properties
+    alphabetically.
+
+Changes in v2:
+- In imx28-amarula-rmm.dts:
+  - Replace '-' with '@' for the pinctrl sub-nodes.
+  - Replace edt,edt-ft5x06 with edt,edt-ft5306.
+  - Drop LCD reset hog pin.
+  - Add correct #address-cells and #size-cells to gpmi node.
+  - Replace edt-ft5x06@38 with touchscreen@38.
+- Drop from commit messages all references to LCD display.
+- Add patch [1/4] "dt-bindings: mfd: convert mxs-lradc bindings to
+  json-schema".
+
+ arch/arm/configs/mxs_defconfig | 3 +++
+ 1 file changed, 3 insertions(+)
 
 diff --git a/arch/arm/configs/mxs_defconfig b/arch/arm/configs/mxs_defconfig
-index c76d66135abb..91723fdd3c04 100644
+index 91723fdd3c04..3b08c63b6de4 100644
 --- a/arch/arm/configs/mxs_defconfig
 +++ b/arch/arm/configs/mxs_defconfig
-@@ -32,9 +32,6 @@ CONFIG_INET=y
- CONFIG_IP_PNP=y
- CONFIG_IP_PNP_DHCP=y
- CONFIG_SYN_COOKIES=y
--# CONFIG_INET_XFRM_MODE_TRANSPORT is not set
--# CONFIG_INET_XFRM_MODE_TUNNEL is not set
--# CONFIG_INET_XFRM_MODE_BEET is not set
- # CONFIG_INET_DIAG is not set
- # CONFIG_IPV6 is not set
- CONFIG_CAN=m
-@@ -45,7 +42,6 @@ CONFIG_MTD=y
- CONFIG_MTD_CMDLINE_PARTS=y
- CONFIG_MTD_BLOCK=y
- CONFIG_MTD_DATAFLASH=y
--CONFIG_MTD_M25P80=y
- CONFIG_MTD_SST25L=y
- CONFIG_MTD_RAW_NAND=y
- CONFIG_MTD_NAND_GPMI_NAND=y
-@@ -60,7 +56,6 @@ CONFIG_ENC28J60=y
- CONFIG_ICPLUS_PHY=y
- CONFIG_MICREL_PHY=y
- CONFIG_REALTEK_PHY=y
--CONFIG_SMSC_PHY=y
- CONFIG_CAN_FLEXCAN=m
- CONFIG_USB_USBNET=y
- CONFIG_USB_NET_SMSC95XX=y
-@@ -77,13 +72,11 @@ CONFIG_SERIAL_AMBA_PL011=y
- CONFIG_SERIAL_AMBA_PL011_CONSOLE=y
- CONFIG_SERIAL_MXS_AUART=y
- # CONFIG_HW_RANDOM is not set
--# CONFIG_I2C_COMPAT is not set
- CONFIG_I2C_CHARDEV=y
- CONFIG_I2C_MXS=y
- CONFIG_SPI=y
- CONFIG_SPI_GPIO=m
- CONFIG_SPI_MXS=y
--CONFIG_GPIO_SYSFS=y
- # CONFIG_HWMON is not set
- CONFIG_WATCHDOG=y
- CONFIG_STMP3XXX_RTC_WATCHDOG=y
-@@ -138,10 +131,6 @@ CONFIG_PWM_MXS=y
- CONFIG_NVMEM_MXS_OCOTP=y
- CONFIG_EXT4_FS=y
- # CONFIG_DNOTIFY is not set
--CONFIG_NETFS_SUPPORT=m
--CONFIG_FSCACHE=y
--CONFIG_FSCACHE_STATS=y
--CONFIG_CACHEFILES=m
- CONFIG_VFAT_FS=y
- CONFIG_TMPFS=y
- CONFIG_TMPFS_POSIX_ACL=y
+@@ -64,8 +64,11 @@ CONFIG_INPUT_EVDEV=y
+ # CONFIG_INPUT_KEYBOARD is not set
+ # CONFIG_INPUT_MOUSE is not set
+ CONFIG_INPUT_TOUCHSCREEN=y
++CONFIG_TOUCHSCREEN_EDT_FT5X06=y
+ CONFIG_TOUCHSCREEN_MXS_LRADC=y
+ CONFIG_TOUCHSCREEN_TSC2007=m
++CONFIG_INPUT_MISC=y
++CONFIG_INPUT_PWM_BEEPER=y
+ # CONFIG_SERIO is not set
+ # CONFIG_LEGACY_PTYS is not set
+ CONFIG_SERIAL_AMBA_PL011=y
 -- 
 2.43.0
 
