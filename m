@@ -1,115 +1,113 @@
-Return-Path: <linux-kernel+bounces-667408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-667436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7F09AC8511
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 01:40:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8BE7AC854A
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 01:48:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EED5A7B2315
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 23:39:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4967D16E4CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 23:47:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 076FD2580EE;
-	Thu, 29 May 2025 23:40:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ECB124EA80;
+	Thu, 29 May 2025 23:44:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kQWi7Skc"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="BzTK5rQa"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 818D9230BFF;
-	Thu, 29 May 2025 23:40:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B45AE24C09E;
+	Thu, 29 May 2025 23:44:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748562022; cv=none; b=t/Whc6LcRiPcgteFcMfuCdZFRHlii8uR94PPxrGeuPVc6RUoAKWd13SS295RKIVQ18YfIG34qM66c87av+kUIj8wj99jreC44x+LZnYxAThF6+TKPdZLFCJhzz0wftLT68rCKTjC55lkxL6hZUUSoCUSKeK9jvnOMdLT1r+dj/k=
+	t=1748562249; cv=none; b=KwEFqgxnEH5DDUiaUh0oseGwrttlCbVN7m0MLs8tspDWtON3IXdKqHrf4v12LY7pTBXnCcS+gS3awzzFlvwMA0W8MBcNcySFwl83AOw5WiyTEitYXgPqeVY4EI+OuAVZsQNgYJyeJ3xlmuozp86y6EHOzzURJ7GRlN+2IuK4h9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748562022; c=relaxed/simple;
-	bh=yqH8SLmi/6XiYcSNKAYKUwI0eWIHT5QDJJgdXPJj83c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FBbJTvrXlVrNW+P4elGStAvkpmC49kDRmy1OnLNcOxBsmHDJTM43gvYy8/WmvypfBo0R4IohEpVfYiGImjGL5stoQgGNNyPVCUHSr/THdTpnTav1dibkzIcuVXXNPoX9puTF8wg7J5e+D7lTSWjCg1vodgB7NPrzEFtGjNFmsnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kQWi7Skc; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1748562020; x=1780098020;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=yqH8SLmi/6XiYcSNKAYKUwI0eWIHT5QDJJgdXPJj83c=;
-  b=kQWi7SkctHwBDByLod4E0tRgm40CzP9pQ5oggwNf2oZ6KM3oWjzUQwfC
-   /uNpnl5QmkZX5o/t5pbUCrnn7D92ZULUCG/IUPeb9Q6klafIR1bN+NpOd
-   +ilNlkFoVhDoP+U92lAwtSyteo0Q7uIKp/8pOwZyN77Tf2YoivLwQBlsA
-   UbwBzF6cXipwqSdfo/FwFJ5pneAGEEgkb0u75dIc1phamEiL5rJi8AkMI
-   pWdxtzFAyDwU/kB9J2oKq3zh8Abx/MM+qiFbuS4K4n0tH2WKcWr3OjBja
-   0O4oDAbjeppHMEqpCwwEsmbqJXXqUtaRgT7yzqDqijh/AVcRPJ/Ql3hcK
-   Q==;
-X-CSE-ConnectionGUID: a2SNQvPaQyuXj8pNOGgH0A==
-X-CSE-MsgGUID: RZs7CO2hRtSL3EJ+QjRA5A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11448"; a="50793286"
-X-IronPort-AV: E=Sophos;i="6.16,194,1744095600"; 
-   d="scan'208";a="50793286"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2025 16:40:19 -0700
-X-CSE-ConnectionGUID: htUU3XhpSGm8Cxkw/0yJQw==
-X-CSE-MsgGUID: 2RIZPymESWaI95yBmG/FXg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,194,1744095600"; 
-   d="scan'208";a="143740009"
-Received: from drlynch-mobl1.amr.corp.intel.com (HELO desk) ([10.125.146.32])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2025 16:40:18 -0700
-Date: Thu, 29 May 2025 16:40:13 -0700
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Borislav Petkov <bp@alien8.de>,
-	Jim Mattson <jmattson@google.com>
-Subject: Re: [PATCH 3/5] KVM: VMX: Apply MMIO Stale Data mitigation if KVM
- maps MMIO into the guest
-Message-ID: <20250529234013.fbxruxq44wpfh5w4@desk>
-References: <20250523011756.3243624-1-seanjc@google.com>
- <20250523011756.3243624-4-seanjc@google.com>
- <20250529042710.crjcc76dqpiak4pn@desk>
- <aDjdagbqcesTcnhc@google.com>
+	s=arc-20240116; t=1748562249; c=relaxed/simple;
+	bh=doSPlKjLKropnFpXRnvUKx9Clv988obaodHZ4TL6MTM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CxJllSy2Q5azZGniEsyUW6eHOTKyEBcm+OIzd0jW/dlamf38G3ddD1vHF/VhWKt1tR92sxbPVGd5sdLN/LjeF36rZNXTf2NPxXFb94Pjsdf0zckiD67owKG/TK9xOFjSVV+ofs8NVkdtUF9bjTjwTp0XVgGLydbxb0M7A4tJ5yM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=BzTK5rQa; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1748562241;
+	bh=PUnVcrIPj4ms41h74epCZdcVJG1fuUK2dUYpjazCxXQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=BzTK5rQa0kYH/1zVjasJXQ14eo/k9IoRWXO4iGXY2GTQ4dDy/S8eZXIaSjZfEH2ln
+	 uB3/sXAaOIYlz+sbGbphYDXwuHU98d9KVRkCS1xrZ2mJFPpwtEvXkhSs/nDwt7Ra0M
+	 BpCGdyV8a52jJ4ivCGudjh2dYrb+YBZZYHqTnZaG49LxfI8bYDA8tHocDkG6MIoxSB
+	 p7gZ1NA/iKm7B/pXwBnOTubQYvqSfP89b3KDcqOkQ4dZnJrhso3iqZ0zFljC+/tVLb
+	 7TXIYpW35vkL5TiiV/+ZuCkdFiK7+P30CG68rPlfscP4vdjJ4Q7OeZvZY9FYbhVQsy
+	 5alpqFsjDUSnQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4b7jcx55Z4z4xVc;
+	Fri, 30 May 2025 09:44:01 +1000 (AEST)
+Date: Fri, 30 May 2025 09:44:00 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman
+ <mpe@ellerman.id.au>
+Cc: Athira Rajeev <atrajeev@linux.ibm.com>, PowerPC
+ <linuxppc-dev@lists.ozlabs.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build warning after merge of the powerpc tree
+Message-ID: <20250530094400.2743f5b3@canb.auug.org.au>
+In-Reply-To: <20250513202809.7e23ed2d@canb.auug.org.au>
+References: <20250513202809.7e23ed2d@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aDjdagbqcesTcnhc@google.com>
+Content-Type: multipart/signed; boundary="Sig_/uD.MQ89IeNe9w0HRY+hb2mS";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Thu, May 29, 2025 at 03:19:22PM -0700, Sean Christopherson wrote:
-> On Wed, May 28, 2025, Pawan Gupta wrote:
-> > On Thu, May 22, 2025 at 06:17:54PM -0700, Sean Christopherson wrote:
-> > > @@ -7282,7 +7288,7 @@ static noinstr void vmx_vcpu_enter_exit(struct kvm_vcpu *vcpu,
-> > >  	if (static_branch_unlikely(&vmx_l1d_should_flush))
-> > >  		vmx_l1d_flush(vcpu);
-> > >  	else if (static_branch_unlikely(&mmio_stale_data_clear) &&
-> > > -		 kvm_arch_has_assigned_device(vcpu->kvm))
-> > > +		 (flags & VMX_RUN_CLEAR_CPU_BUFFERS_FOR_MMIO))
-> > >  		mds_clear_cpu_buffers();
-> > 
-> > I think this also paves way for buffer clear for MDS and MMIO to be done at
-> > a single place. Please let me know if below is feasible:
-> 
-> It's definitely feasible (this thought crossed my mind as well), but because
-> CLEAR_CPU_BUFFERS emits VERW iff X86_FEATURE_CLEAR_CPU_BUF is enabled, the below
-> would do nothing for the MMIO case (either that, or I'm missing something).
+--Sig_/uD.MQ89IeNe9w0HRY+hb2mS
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Thats right, CLEAR_CPU_BUFFERS needs rework too.
+Hi all,
 
-> We could obviously rework CLEAR_CPU_BUFFERS, I'm just not sure that's worth the
-> effort at this point.  I'm definitely not opposed to it though.
+On Tue, 13 May 2025 20:28:09 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> After merging the powerpc tree, today's linux-next build (htmldocs)
+> produced this warning:
+>=20
+> Documentation/arch/powerpc/htm.rst: WARNING: document isn't included in a=
+ny toctree
+>=20
+> Introduced by commit
+>=20
+>   ab1456c5aa7a ("powerpc/pseries/htmdump: Add documentation for H_HTM deb=
+ugfs interface")
 
-My goal with this is to have 2 separate controls for user-kernel and
-guest-host. Such that MDS/TAA/RFDS gets finer controls to only enable
-user-kernel or guest-host mitigation. This would play well with the Attack
-vector series by David:
+I am still seeing this warning.
 
-https://lore.kernel.org/lkml/20250509162839.3057217-1-david.kaplan@amd.com/
+--=20
+Cheers,
+Stephen Rothwell
 
-For now this patch is fine as is. I will send update separately including
-the CLEAR_CPU_BUFFERS rework.
+--Sig_/uD.MQ89IeNe9w0HRY+hb2mS
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmg48UAACgkQAVBC80lX
+0Gx7Ngf/Ub294OckaW0B6laae5Wm7n6SHfRXYf/0GQ7+y2lfLV8Ykmv0xAbhWvi6
+omu3dbKXjmBTiCXy64rkP6WbiDg6bE+xx9R9cZBuiC0x31jc23qUHyyptjLJVEV3
+Ta6Y99Doxxv9/8xSJBub5Sij0/bapvNxNgj5/Vjr2bcLQorEDDFU69XAZPVO0sBL
+ht7vBFKGtW9IcTx6UjmRdAXjSQ43yzJ3fZLDYZCdT6OVpk2t5ea/h4btQhDtR26d
+WiQl2Dd58qJ/KPhIhnoVjtnkg8d/3nEexCKnRA5+rZElag/NvI96p4HtbcrcPZR8
+y6hrVG2D0wMJoEoKU++xQQ/x0vrg7A==
+=DlEO
+-----END PGP SIGNATURE-----
+
+--Sig_/uD.MQ89IeNe9w0HRY+hb2mS--
 
