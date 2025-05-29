@@ -1,162 +1,228 @@
-Return-Path: <linux-kernel+bounces-666994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-667055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F55BAC7EFF
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 15:46:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E811AC7FE6
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 16:50:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F11F41BC4046
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 13:46:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFD614E7C96
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 14:50:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E5BF227B9F;
-	Thu, 29 May 2025 13:45:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34BA822B8BF;
+	Thu, 29 May 2025 14:50:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="OkbyKRgJ"
-Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11012055.outbound.protection.outlook.com [52.101.126.55])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="lsIxr1nT"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC6C2BE49;
-	Thu, 29 May 2025 13:45:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.55
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748526357; cv=fail; b=YWXRK/UxgUSNLXfbI2llqDv5qYbyl75GrvgLimG1pkKV7bjx9qa3UZ5jk0g/rtW9HIj7xOzCnQc7AovlHcL+kUipdJ3BEetf4MW1smAUAN4gp5Gd3BEkf9nGqB9/naN+aybbubndl6oI4ubhUiItc2Lbh+xMsqs2kJxl66c/HgQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748526357; c=relaxed/simple;
-	bh=UpOwIK6gjbNWwQQZ/oztXy05DaHe+Z+uiRiz8Z6Txq0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Cq0SPt11TH0zfTkEpwDEJIkCEBaAydRHliAImsjUSEE8pcl9DaYCIFBb4tOEtRViR/EBqk+Msqo7b7KdNLbjFpvcP4729LvLd0vKe0oSQAGVTdmSGmEqQH5WC0YhlkH2uJoXRDH5lxVugdQfaCOCPjHeWeC56mNxbpXOTp3FzKY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=OkbyKRgJ; arc=fail smtp.client-ip=52.101.126.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ZS2pHRmz1penpPdIXdGyCtcWYFb/SxF9jeu+/zMk5Zwp4QCT3L++07sSft9p/LaZK16LgFFyz24IRVC5PYXxNQwq6tVPPganN8SRdRpQiOo0ZB4B2zF5dRfjezOmn2Q76NiIZywZxY1xo4Ynp42vG9i3y21iRR0OVsJkUfOkq8pknUpYKNTmrc21LPsBKolqWtnn/57yOGXjv3ybnrisKF0wLW724GEfHvUzXuzdOtnUxhglA07ImcaII1y6kziOaiPzjo6dgRHLzYu5qV7NrDQkkm3miqnLzQqjc4xv0KKSASyLXy85ynTRvN5SbhqduJMgJ7sLhNGp5rO1uF+vKg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=UpOwIK6gjbNWwQQZ/oztXy05DaHe+Z+uiRiz8Z6Txq0=;
- b=UCnMXJpUG6R5YVb1kw2dDoShMriAxAlYd+fKYdn62rN1Ewua/dYRsL4nYMkr2khEZBFtIyWiyBHpYArUdk/rMsm8b6Zo5LRFB/5rMitFPWncghVP0TIPGItKfMQIp220Y0V2QcfcsxRWyzYK6p1bcwsDQeHohRpGPLUKOS13CSdtsJZifNDzQSEFT6FbXmHDwM/ItX4ycFBXy0gf8RWoy09pgvInI7VAfjad8Bnyn5eVZ/T0pnSXYxAafaPaYmMnEgO7fRiHkt/wGrhNFI1o+KDGM+AZ0lxFHeYlJ/JKwhCd9+BX5Us5xjdgxm58WfFk0rBRuFLdv/jFXtouK5j+6Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UpOwIK6gjbNWwQQZ/oztXy05DaHe+Z+uiRiz8Z6Txq0=;
- b=OkbyKRgJPvmIv4QxxPpOmoqhtGDlSOzDcNHy+bp4A2Tt61jl23J0/xQYOUcdXmIaT3k4qBzrLzY7Nh++VxBVm9oeIiGPQwvjJFis/y6/so47Puvzx8HohxMLxLUWIFbPb2UgbqpCvpbTiU6Acaut6GchFZmjVUVn5H/3BeDesOY0m7W9H/UJCfzORsqzmBZJLkk3wF9m8lHBRwdht7hBnyAYB4/xDB569rDI4JCdM8enY85YgOFEzdmN2zWHtjSAYg007LfV1ewI1PTl8GU38SN8GsHyXyVgoRfAt7PSTTLt9PDIimnI9olvZN5UDnDaP4tADsVuNHtoQjg5L+s04Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SEZPR06MB5269.apcprd06.prod.outlook.com (2603:1096:101:78::6)
- by KL1PR06MB7034.apcprd06.prod.outlook.com (2603:1096:820:11e::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.26; Thu, 29 May
- 2025 13:45:51 +0000
-Received: from SEZPR06MB5269.apcprd06.prod.outlook.com
- ([fe80::8c74:6703:81f7:9535]) by SEZPR06MB5269.apcprd06.prod.outlook.com
- ([fe80::8c74:6703:81f7:9535%5]) with mapi id 15.20.8769.022; Thu, 29 May 2025
- 13:45:51 +0000
-From: Yangtao Li <frank.li@vivo.com>
-To: frank.li@vivo.com
-Cc: code@tyhicks.com,
-	ecryptfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: Subject: [PATCH] ecryptfs: make splice write available again
-Date: Thu, 29 May 2025 08:06:28 -0600
-Message-Id: <20250529140628.2297560-1-frank.li@vivo.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220831033505.23178-1-frank.li@vivo.com>
-References: <20220831033505.23178-1-frank.li@vivo.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TY2PR0101CA0029.apcprd01.prod.exchangelabs.com
- (2603:1096:404:8000::15) To SEZPR06MB5269.apcprd06.prod.outlook.com
- (2603:1096:101:78::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CD9133E4
+	for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 14:50:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748530203; cv=none; b=Ez1tSRd1PKMnUqojksQv3eZSoDXxr19vv9N5M40EG6fF94zpUBCU8bT9+61rAo3Y2sy4sORNEvH0b+mXfWd6dm1olTJKbkyQZq0pITVpQTfUDRFFCUO74Ng4fj9mslZDNZcjkTX+GeXGfuMMFIfi7UNHyMGxi4cu9wX943/X6wY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748530203; c=relaxed/simple;
+	bh=mBxBS+F3w/cyhjrDcqffZ7kyoE4diOtuM+0VdOkSmnI=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=FpHY/8R96/DIG4kbnEq4m1JCJSLdWGwJxtlI8VU442sHqwpKe4/iBcTL6HZr5Io44wwoDvJpSMhpDU6+Qmh0oa/CiXEJptucFn+C1EEwrESQvv0/iOKtOa0kELp8C2IUu+Gki7W8y4ucotmwOHibEzziMJOhQR6TYssKlZoLdyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=lsIxr1nT; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250529144958epoutp01406d17aecb48f43e60d2a13167d52c4a~EBvOLRAh22618826188epoutp01i
+	for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 14:49:58 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250529144958epoutp01406d17aecb48f43e60d2a13167d52c4a~EBvOLRAh22618826188epoutp01i
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1748530198;
+	bh=JoVIT/YoibxB9MFqaRb9BAFdhMoHeYYoqYbA3YWaDwU=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=lsIxr1nT8d5gNFvvbFGbztnByv7dD3G0rMX/e5CCROqdCLNOYj97ql/jSZ/zMuM8N
+	 vYzJ9/UHxwl4qOQN1q9djKaM9KMZPId/oy3NkURzKFHumIu/jUFYUaVd+0jEpYJq1A
+	 oqW62/XHL8f14ceLQhrV+wvGGIdkQCMll60WGd3A=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
+	20250529144957epcas5p121ac1b2643ce23abb26c0448e1a0d2f6~EBvNmI7t03174131741epcas5p1v;
+	Thu, 29 May 2025 14:49:57 +0000 (GMT)
+Received: from epcas5p4.samsung.com (unknown [182.195.38.182]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4b7Tmh2V00z2SSKX; Thu, 29 May
+	2025 14:49:56 +0000 (GMT)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250529102448epcas5p1a8209b6700e2206c3bbb6669f473b28b~D_Hs54RNZ1678116781epcas5p1m;
+	Thu, 29 May 2025 10:24:48 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20250529102448epsmtrp2ae0261061f58b804d19887addb119fa9~D_Hs4qBBk2330423304epsmtrp2h;
+	Thu, 29 May 2025 10:24:48 +0000 (GMT)
+X-AuditID: b6c32a29-55afd7000000223e-c2-683835f012c1
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	9D.C8.08766.0F538386; Thu, 29 May 2025 19:24:48 +0900 (KST)
+Received: from FDSFTE462 (unknown [107.122.81.248]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250529102445epsmtip1d9de3beca2d4560f1d5e428ba1253ead~D_Hp7hmwq1925019250epsmtip1K;
+	Thu, 29 May 2025 10:24:45 +0000 (GMT)
+From: "Shradha Todi" <shradha.t@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzk@kernel.org>
+Cc: <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-phy@lists.infradead.org>, <manivannan.sadhasivam@linaro.org>,
+	<lpieralisi@kernel.org>, <kw@linux.com>, <robh@kernel.org>,
+	<bhelgaas@google.com>, <jingoohan1@gmail.com>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <alim.akhtar@samsung.com>, <vkoul@kernel.org>,
+	<kishon@kernel.org>, <arnd@arndb.de>, <m.szyprowski@samsung.com>,
+	<jh80.chung@samsung.com>, "'Pankaj Dubey'" <pankaj.dubey@samsung.com>,
+	<linux-samsung-soc@vger.kernel.org>
+In-Reply-To: <441dd5c3-fd51-4471-86ad-337c646b1571@kernel.org>
+Subject: RE: [PATCH 09/10] PCI: exynos: Add support for Tesla FSD SoC
+Date: Thu, 29 May 2025 15:54:43 +0530
+Message-ID: <0eec01dbd083$e78c8200$b6a58600$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEZPR06MB5269:EE_|KL1PR06MB7034:EE_
-X-MS-Office365-Filtering-Correlation-Id: 72e3569c-4d91-4b25-5349-08dd9eb71fee
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|376014|366016|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?CG5cBDm369fpPrSrdkfq0KiVPsrK1zbq/g69rTBwGOHerL2LNRe12LsfRQfL?=
- =?us-ascii?Q?2Lqxb1Zbhimtb03+LPyPbUL4APt0/JckT/u+6VvaHJJ6qHsqowdiMFZI6i73?=
- =?us-ascii?Q?jqU5NmWdkVeM9uvk6K2dE2nCHzxlJ54/ntSd9HKYFlXF7doVy8g7RR5XPmKN?=
- =?us-ascii?Q?mSXMaHT2qJpoQoop+jEzXipODdrPmx8MnNPLMbVyJwKm3vshSJ2UuG4ERTuE?=
- =?us-ascii?Q?lF0Fq3KlTBM3ip6NhcpXKsOXCU3ZrasM5h8sfCqqzvc8IjnJ3Tp8LXey2y5z?=
- =?us-ascii?Q?CMzblShMRsXnKOA0dtRtx3zxUyXR8tjnBWHWLyEdQNKLvjzeZb+hnLRY1WJx?=
- =?us-ascii?Q?BKcU1SCVIBbWFiBHowz61niEorJ/XthdJ3tgMgjTLnDJomGUSkU2PMN+Z5f0?=
- =?us-ascii?Q?xYvkixXfkXz9I1q2lPbgfqOk2GqF/I2hbIbhw+HsDkWDi6goJRoppDtnvabm?=
- =?us-ascii?Q?57hYSFpTv2LSxOKptE5kJnp/V2W+I7557CECPt/s8P1oyRBGuQAoY2o7y9ki?=
- =?us-ascii?Q?BbnTL7ZtAQUHT8uQhEY2CMh491Bkpk1+VabxniiekC4zbW3rLdZV9mZCudMX?=
- =?us-ascii?Q?KMGWdNiRo2P86534I9t6XinoV5WpcOaodYKwf9WB7es+VjMaxV2RW0GsInFm?=
- =?us-ascii?Q?vcxc9VnRf0KRnZjnbHEqzouO90P1Gd5HPd1AFgeV/iFxko9tMvKtqgboRhoG?=
- =?us-ascii?Q?paH/zo4DtHjXUynAvOEdnb7BHx50F7+HqgKGVpzkdxKP6LT1T841MQC0t+Sb?=
- =?us-ascii?Q?AFOQcBSzozz9GEejUQ+T41Z91YwRl0GeFmJtQJWaZVs7Pu6kYXMq4JCCYVhX?=
- =?us-ascii?Q?dR9EKQOf3JFVrY1b6GzctKv6l2P/EnJ1wjteTg1KRseaLzQbterjyUkzZ7cS?=
- =?us-ascii?Q?+UilDEJGQ/E/ReGnN4ffXakCiVghAUmHJX6L8I2Vh8Roq+8zcFD7m/OQ237r?=
- =?us-ascii?Q?QzDt9PWDi30BpjkQo4QjED5sY/dq+EsRhQ81aEhezxqm1BfHP9c1EAFmeG5z?=
- =?us-ascii?Q?bHvGUb1YdPs8NMIsE68d5jQJJMhecSTXEEwfeoogdcXCPbs5ToMB5ADweBbP?=
- =?us-ascii?Q?U739uY9S7Um79Lid/hHW9W3ZhUxoKZnQQNdfYmoL6IeJNyfPRthub/V0al+l?=
- =?us-ascii?Q?7LCYH9TKexlgOGwURcVMjZJPyGbcXDnFiR11Y4s1TN9KAEPVMBew9Xp/GFW5?=
- =?us-ascii?Q?vekL/9rNcF+ddJ1RqH/HTSu7DKVezQQrnI1TY+cK+YB9VeXQyyB7ANcFoqy/?=
- =?us-ascii?Q?NJ8PQl1JYB8U8ekTYbU4VCDFqZFycQ2OjurJo9vu1R7dKxocQ74kjtx+UHNi?=
- =?us-ascii?Q?tnsxYrI0/kbTZyzUnoYZdCTcip5V2pY1yXwFzUeS467bSyLSpK7npaW3cqrK?=
- =?us-ascii?Q?51at1FO0NDQOPWp4do3rZ+vAH79gnPRYiGCC2fcPqFmfH0knMkJGw5Ag34/S?=
- =?us-ascii?Q?iqAJZxjnqkdXLOsGOqB021z4fUEZ3jDM3XA+EqOrR2Bj3XYkpgBtnA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5269.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Ppzx6QCaAPQXA1Iq/TfGdemjUa7A5aHUylNvy1NHbGzPEDEaMRIi9B/PVXh9?=
- =?us-ascii?Q?AuwKLJm/b2IrKPXF+tkj2GZ82Ig1StFdmBzN/y669fZ19DM6RZt3KGcGL7qW?=
- =?us-ascii?Q?c4XFIYOppmyrOVOsDgtrZGR5xmp/TdJvcm8OM32MFpz6TcGirtkw8hyrFYUw?=
- =?us-ascii?Q?DQaS9DLVjXaJV7d6I12Q+AYvvG7frwZD3j5oT4j7vzEiPLrhMxKuYNOGvgvC?=
- =?us-ascii?Q?bAJpycRARf/VOTT4PHteaYkLE2fFXVU3D5uMQG1Yc0gIOWXYNxMDgD19VN+G?=
- =?us-ascii?Q?7cxE2NV3NkfunDha9OKXLlN/qXOuQnud0aJ/EKv0w0/ozMu+Xxbsa+O0DiTv?=
- =?us-ascii?Q?C/J0CPeij7akOc5bSco866+Xl3IhjKAhD5v4AabjM2jzotAsi9CKhg5W9uF8?=
- =?us-ascii?Q?P1fWiQKRaQFLABjgB2Wp3CpXOeGng15E8B16U71nhEDNApGpj9HBHvWGiW7p?=
- =?us-ascii?Q?4+IjZyIrk7gQvYc9y+KolGFUpujE5nk8sMIjCOISfBcNxdzQkpAM/TKLQuya?=
- =?us-ascii?Q?sYug0eClQtgXNgQrBpaAlnkyDKGpv4XJ3ksSe3+BQPgeZVzn3Y9qt9Pg1YaC?=
- =?us-ascii?Q?KNFcM2fZV+7O+OMDcroPsgadIyQs3M0k3r9F4R+F83hozDiZXUOJIubHmnVY?=
- =?us-ascii?Q?nxMAXXdHMBGUiQj4A5TJ9wjRHdIBGGz+qyHUWuQi4m6Tmla2I2o/YT3Lyh/Z?=
- =?us-ascii?Q?ZnPsLAgvAKSCJfpJJKvvKKf3tLFlZ8R7ehMl2UwhtUYwkgwhQYN4MvtLJRNy?=
- =?us-ascii?Q?Ynn8bn4xrNafM4Ot4FqeXmqj0Z0NubGV3Eswc3nqV2LBrCKgRTH0x7pjlmY3?=
- =?us-ascii?Q?SCcBCcj3zFokaQAkEj+oOVz4By01ShAhz8o7Nsper7tcBh3vdxMDC+ejMKSt?=
- =?us-ascii?Q?3TjdRHtHTIclEidNPWFDWMtJ9Yr18o3ldlQlt4VGFEjqR/vvzQifSvGQ0jbG?=
- =?us-ascii?Q?7WUbvR5qOXUNNBeg6P97YAe9exSGSZovxPfuMWYHDthzjr7+rzl9f3fkjlbS?=
- =?us-ascii?Q?K2wXzdd/V4fmDm9EP8iZzmBqXZgMmOJKEPyZoQsGF8wg1Z63YQy4uW2GFxCe?=
- =?us-ascii?Q?ka/WV0HjLzYrC0cdilAlVPO/OMLQVeIiCfX7gxcSM0s2YBbLEQOYMaPhVoPG?=
- =?us-ascii?Q?i0bYv0GFQlNvTFgJf0Vdp1VIDCdzKjn3jpWXXkppsbompjh63XStpF21AnBe?=
- =?us-ascii?Q?J7Yi3xDN0H24e3JlfgnmRle3t1A+1T8Jhy6BRSQ0HpMeTYk9EUhERQQGQOFC?=
- =?us-ascii?Q?MX5pYbtP2ImFPCiMf8SHTaWuPXUp6L1b+4RGvhD2zr8xecTohYr/orcPNEFf?=
- =?us-ascii?Q?FX7svrn2SUTIQlDqlylLyhxlpBvtD8OFCXo2QG38S6zglfLH9KUZIWvUmN16?=
- =?us-ascii?Q?gtdXN9H04xB8QibeiP9aE+DhDzR9OZ3vA4mrsLvFe/R+QtsYRG2qzqGes5gD?=
- =?us-ascii?Q?zwiPyboQJ+SMq1QV5Bic2oRzO2RReU68YRdUBtQkOaRCNWz2BrKRb0j44E+t?=
- =?us-ascii?Q?jM+tVTU9oXLsxLsNxVDz33Ezxgbokw9GKPUF8cQRKMk234GK7rZuf/VpzWMc?=
- =?us-ascii?Q?ighHN4tyoHAw+5Y0yVwU8SB8sd5nWbVZ0XUIHOJZ?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 72e3569c-4d91-4b25-5349-08dd9eb71fee
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5269.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 May 2025 13:45:51.2132
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: OveEQxITifNRjD6Y5uSG9+L8Mt6MO0oPjgPKJuc8Dl01pws2Rsj4QC8bXBCmPuxLW6/TlgMQIRVRwyHUMMLlyQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR06MB7034
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQKa2HaEso6x90WQFKmaYw3pYxuT6gLGtKN5Ag2CUBUBvBCtGwIQCop6Ao3fESGyEeNtsA==
+Content-Language: en-in
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTYRzGec85O+dstDrOcO9KLBZJWlpCyRsM7aJw0ko/REUSOd3BlU7H
+	zjSNJDWtlOxihjlETeziulBTl9YaOdMuVnZZSzA1aaUh1VJLNM3YVuC3HzzP7+H/4U/jkgFi
+	Eb0/Xc/p0pVpclJEmNvlASGudUi95va4H/pQbSbRTFknheoL1Oj6/RcYqnn4QoB6po4J0NXx
+	Sgp1FM3i6Iuhn0Td3bcolHfytwCZPjoE6M3dKhI9r35EojPGXwS60G3FUOF0IYFuPOyjUF9h
+	sQDVNY9TaNbSQqHW94/xDX7s76kywLYa+ii21pTJmozFJPveYSFZp70CYxvrj7CnmoyAHTMF
+	xAv3iBQqLm1/FqdbHZEoUjtOx2knArJLnSNkHrgrKwFCGjJr4bu6m1gJENES5h6Az4oGSG8g
+	g2Ov3IGbfWHDnyHKW/oMYFd7v6dEMqug0z6Nu3khEwIbe654SjgzREDrmAt4jW4MdhbbBSWA
+	poVMBHzyYJlb8GWiYUvXd49MMMuhreaiZ1TMrIdteRW4l33gk0on4WacWQlLB4vAf758cQT3
+	XrcUTn66LPAesRPmN1b860thx+RJ/AzwNcyZMsyZMsyZMsxRagFhBDJOy2tSNHyYNiydOxjK
+	KzV8ZnpKaHKGxgQ8PxAc1ALuGF2hNoDRwAYgjcsXigsiw9USsUqZc4jTZezTZaZxvA0spgm5
+	VCwdLlVJmBSlnkvlOC2n+59itHBRHlZYbtG3S3+Ex1wZ6Ih++e2lYtYa/NwvNilAseNeSw4n
+	O26tTOKzirD7GzcnB36Nm/dz9KMttcpfYg1ZGjhfZWZiLRPnQ8RxSV8cq/tikl25raiVmSi2
+	97ADdr+uyAZqWwE++cbYuQsGrdk5tLXu4Hjidr1w+NKFTYNNk8j/m2M368JywIKnETGfm5xV
+	CTWVfG/sgw5aH2pcIYoa9RnZ/srnz0RYUJklunzLXtyyuFfaXp+x/rEqkkvonVl3wphimcqt
+	YdncEplqZNe5a6m2w5Hx2QVtoqizanPQYNSnLp867YFmujY83/xayYwqkKytvFxxNLt3eMlb
+	TqDZLCd4tTIsGNfxyr95fT+4cgMAAA==
+X-CMS-MailID: 20250529102448epcas5p1a8209b6700e2206c3bbb6669f473b28b
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-541,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250518193300epcas5p17e954bb18de9169d65e00501b1dcd046
+References: <20250518193152.63476-1-shradha.t@samsung.com>
+	<CGME20250518193300epcas5p17e954bb18de9169d65e00501b1dcd046@epcas5p1.samsung.com>
+	<20250518193152.63476-10-shradha.t@samsung.com>
+	<20250521-competent-honeybee-of-will-3f3ae1@kuoka>
+	<0e2801dbcef4$78fe5ec0$6afb1c40$@samsung.com>
+	<441dd5c3-fd51-4471-86ad-337c646b1571@kernel.org>
 
-ping......
 
-+cc linux-fsdevel
 
-Is anyone actually maintaining ecryptfs currently?
+> -----Original Message-----
+> From: Krzysztof Kozlowski <krzk=40kernel.org>
+> Sent: 28 May 2025 12:56
+> To: Shradha Todi <shradha.t=40samsung.com>
+> Cc: linux-pci=40vger.kernel.org; devicetree=40vger.kernel.org; linux-arm-=
+kernel=40lists.infradead.org;
+> linux-samsung-soc=40vger.kernel.or; linux-kernel=40vger.kernel.org; linux=
+-phy=40lists.infradead.org;
+> manivannan.sadhasivam=40linaro.org; lpieralisi=40kernel.org; kw=40linux.c=
+om; robh=40kernel.org;
+> bhelgaas=40google.com; jingoohan1=40gmail.com; krzk+dt=40kernel.org; cono=
+r+dt=40kernel.org;
+> alim.akhtar=40samsung.com; vkoul=40kernel.org; kishon=40kernel.org; arnd=
+=40arndb.de;
+> m.szyprowski=40samsung.com; jh80.chung=40samsung.com
+> Subject: Re: =5BPATCH 09/10=5D PCI: exynos: Add support for Tesla FSD SoC
+>=20
+> On 27/05/2025 12:45, Shradha Todi wrote:
+> >
+> >
+> >> -----Original Message-----
+> >> From: Krzysztof Kozlowski <krzk=40kernel.org>
+> >> Sent: 21 May 2025 15:18
+> >> To: Shradha Todi <shradha.t=40samsung.com>
+> >> Cc: linux-pci=40vger.kernel.org; devicetree=40vger.kernel.org; linux-a=
+rm-kernel=40lists.infradead.org;
+> linux-samsung-soc=40vger.kernel.or;
+> >> linux-kernel=40vger.kernel.org; linux-phy=40lists.infradead.org; maniv=
+annan.sadhasivam=40linaro.org;
+> lpieralisi=40kernel.org;
+> >> kw=40linux.com; robh=40kernel.org; bhelgaas=40google.com; jingoohan1=
+=40gmail.com;
+> krzk+dt=40kernel.org; conor+dt=40kernel.org;
+> >> alim.akhtar=40samsung.com; vkoul=40kernel.org; kishon=40kernel.org; ar=
+nd=40arndb.de;
+> m.szyprowski=40samsung.com;
+> >> jh80.chung=40samsung.com
+> >> Subject: Re: =5BPATCH 09/10=5D PCI: exynos: Add support for Tesla FSD =
+SoC
+> >>
+> >> On Mon, May 19, 2025 at 01:01:51AM GMT, Shradha Todi wrote:
+> >>>  static int exynos_pcie_probe(struct platform_device *pdev)  =7B
+> >>>  	struct device *dev =3D &pdev->dev;
+> >>> =40=40 -355,6 +578,26 =40=40 static int exynos_pcie_probe(struct plat=
+form_device *pdev)
+> >>>  	if (IS_ERR(ep->phy))
+> >>>  		return PTR_ERR(ep->phy);
+> >>>
+> >>> +	if (ep->pdata->soc_variant =3D=3D FSD) =7B
+> >>> +		ret =3D dma_set_mask_and_coherent(dev, DMA_BIT_MASK(36));
+> >>> +		if (ret)
+> >>> +			return ret;
+> >>> +
+> >>> +		ep->sysreg =3D syscon_regmap_lookup_by_phandle(dev->of_node,
+> >>> +				=22samsung,syscon-pcie=22);
+> >>> +		if (IS_ERR(ep->sysreg)) =7B
+> >>> +			dev_err(dev, =22sysreg regmap lookup failed.=5Cn=22);
+> >>> +			return PTR_ERR(ep->sysreg);
+> >>> +		=7D
+> >>> +
+> >>> +		ret =3D of_property_read_u32_index(dev->of_node, =22samsung,syscon=
+-pcie=22, 1,
+> >>> +						 &ep->sysreg_offset);
+> >>> +		if (ret) =7B
+> >>> +			dev_err(dev, =22couldn't get the register offset for syscon=21=5C=
+n=22);
+> >>
+> >> So all MMIO will go via syscon? I am pretty close to NAKing all this, =
+but let's be sure that I got it right
+> - please post your complete DTS
+> >> for upstream. That's a requirement from me for any samsung drivers - I=
+ don't want to support fake,
+> broken downstream solutions
+> >> (based on multiple past submissions).
+> >>
+> >
+> > By all MMIO do you mean DBI read/write? The FSD hardware architecture i=
+s such that the
+> > DBI/ATU/DMA address is at the same offset.
+> > The syscon register holds the upper bits of the actual address differen=
+tiating between these 3
+> > spaces. This kind of implementation was done
+> > to reduce address space for PCI DWC controller. So yes, each DBI/ATU re=
+gister read/write will have
+> > syscon write before it to switch address space.
+>=20
+> Wrap your replies correctly to fit mailing list.
+>=20
+> No, I meant your binding does not define any MMIO at all. I see you use
+> for example elbi_base which is mapped from =22elbi=22 reg entry, but you =
+do
+> not have it in your binding.
+>=20
+> Maybe just binding is heavily incomplete and that confused me.
+>=20
+
+Got it. I think the confusion is due to the incomplete dt-bindings.
+I will fix these issues in the next version. Will post again once I get
+clarity about how to avoid redirection in patch 4/10
+
+> Best regards,
+> Krzysztof
+
 
