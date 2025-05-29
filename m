@@ -1,124 +1,142 @@
-Return-Path: <linux-kernel+bounces-666797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1D4CAC7BF6
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 12:47:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D69ACAC7C3B
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 12:51:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B52041BC61A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 10:47:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0CEC5003CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 10:51:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECDC328DB72;
-	Thu, 29 May 2025 10:47:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E9F828F95E;
+	Thu, 29 May 2025 10:48:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Lt6SHHEx"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JiQMx2df"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1FB0215F7D;
-	Thu, 29 May 2025 10:47:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B22C228FA81
+	for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 10:48:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748515637; cv=none; b=ebgFpIBmyxz+V/PpZlxD206GPFwXaJKSv6dzPlQTyRQ4r96NRVEBLIrFVaL3onCk5ZJxXL9yYTDbFanm4RCP/5wku2DjrdcAH+6M11wt2q1PSgWCxJSmrMY9Z9YyB+UaNelKq/OmgyK1zG4RwJiRqf2KK0fVH5iMX3ZRLyP8yLM=
+	t=1748515698; cv=none; b=VEaMuoRU+eEgrIdIC77St5lAmMiKvjPCZFe70TNUA45OQ1HEcB30GXP18blX1KQ9FYvyNHFOzUdrS+39glZ5d0Qt+lrPW0AR7UbsrofP67i23fXJhiOvytUWCGttY5n9J7Pr2dPjSZ9wCy+QcMqsFIRpgncwXoQxi7iCDwpMb/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748515637; c=relaxed/simple;
-	bh=LVRwWoUatGOrd2tJr+IxXkFBmJAhyBpbsVHwVJNjD+g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=swmwoHuFJ4qFlNyS3D4B1L+G1WAvlAuzrIqWX4gliiuRKFv6d8sxtSS98URwXLfmiGtwQU5K6UehbK1q56ESO3iSwC5Ap6yx8DGHB9oLVxK6w+WNUGiU/n5ZToOMh6QRLtCkgHl/jUbzJQT+NdB3faPb9NBV1uLFNpGKFukiKSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Lt6SHHEx; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1748515636; x=1780051636;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=LVRwWoUatGOrd2tJr+IxXkFBmJAhyBpbsVHwVJNjD+g=;
-  b=Lt6SHHEx0D6cx49lGkrDSs4f47pduOO+1OJ4rBkA6taCR4WJ/N53QbrE
-   DAnWv8F49kOIcAlscSqOM++W5ajRowJDGYgqf7xCWB1IMMS9+RAnqwW8m
-   Uwi+K2+s7H3onT13G64Z6tDpiWsMxQw7uxONLVj8wVnLVn7/Q6iVz6Gpb
-   POeY6zjskm2Nj7TZHCw1UscXU9XagqreDMT+vRZ4Mf6ZDd/vUD/RLGLqH
-   h3ETrgrtVj4Dlt2xiQM4Izwj5RgLuP4Ky/jmYfiqJKkaH7JGs9XOchMK4
-   JLTyIz46U6UtReeTuMX1s4bfu/9fb1XJqqwzU3rDqPXMhTpylTe7Cutxu
-   A==;
-X-CSE-ConnectionGUID: ZokMSbumRdKNk/f8jCNWUg==
-X-CSE-MsgGUID: e0H/dMPMTDWzDvTGrAGrHw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11447"; a="53196010"
-X-IronPort-AV: E=Sophos;i="6.15,192,1739865600"; 
-   d="scan'208";a="53196010"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2025 03:47:14 -0700
-X-CSE-ConnectionGUID: s4B4ZiAUSp6DyUTnffUjdQ==
-X-CSE-MsgGUID: ESX2CJwEQYWD/+AmcTx2Dw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,192,1739865600"; 
-   d="scan'208";a="174400473"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa001.fm.intel.com with ESMTP; 29 May 2025 03:47:11 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id F004114B; Thu, 29 May 2025 13:47:09 +0300 (EEST)
-Date: Thu, 29 May 2025 13:47:09 +0300
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	David Hildenbrand <david@redhat.com>, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, 
-	rppt@kernel.org, surenb@google.com, mhocko@suse.com, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Hongyu Ning <hongyu.ning@linux.intel.com>, 
-	stable@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Hannes Reinecke <hare@suse.de>, 
-	Johannes Thumshirn <johannes.thumshirn@wdc.com>, Jens Axboe <axboe@kernel.dk>
-Subject: Re: [PATCH] mm: Fix vmstat after removing NR_BOUNCE
-Message-ID: <ow3adiccumedegsm4agxlvaiaq3ypeto42hxr4ln6v3zzluhyu@2cdoez7of6ic>
-References: <20250529103832.2937460-1-kirill.shutemov@linux.intel.com>
- <7ae9e9f9-80e7-4285-83f0-a0946d238243@suse.cz>
+	s=arc-20240116; t=1748515698; c=relaxed/simple;
+	bh=9ImJHzLH0jL2vdmxV+OYOyql4HTnk5Je5y1Xr/m0mRk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pH6SM4g/4DcdMRgX/e7AxDbElMxyaw2o7QxukuGuNW4Vpj2xgy9d96z/i2ctciGKhMe8e9ErFdQFSW4DIfGpzLyH7ebT0TilaY/HyH9b7Ef7XrV/3QgF4eMR9S1KR1TxRCN0cdCFMMa7ALGAlyhG7afQrye+Qp4pzR6fH4VDZtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JiQMx2df; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3a365a6804eso597219f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 03:48:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1748515694; x=1749120494; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fltj2Psgn3UlDM+u8Y4W8Qy2aMJ2qUEBMZ88hSUWHB0=;
+        b=JiQMx2dffy9X6XTN2tbkOfEqRXznebpTuZowF0R5TVOk7EbNxDZCCQyVmoodklPb9O
+         xDV6+rmorNlmv66Ka/a57PP4iF2yhVHSPJ6rJC/FmOJEfsBKeJxzlFnnaj2F/DnvylpT
+         4dWcwNW/NA3+jaJJ9Y912LcuWQrc8OuL7TQpDhNWzzsKMwox6kw4sihJn2PJ+o1081bn
+         8HhAgCRrjMymhlAaNwUDSEYq0LsP4ImS0WAcUmeUxM74Pz3YZUnZ9KB0deW4VikXS1VR
+         l/Q7Ur8JVSNFrMz55uP4e2j6lfnOQ+3BeKj7MoZk67XthxbeR7hnE4P3orU4ZRcXG/v6
+         mUaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748515694; x=1749120494;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fltj2Psgn3UlDM+u8Y4W8Qy2aMJ2qUEBMZ88hSUWHB0=;
+        b=IadShC88NQxc1jEqme9qXh13Anebv0dSqy6b2ITzTCIxMaSq5SH7XcBQOuTzlGFFGX
+         Oqgn5zQgRvMUHuGIS0qSrLdTSjQHj7LAuAM7zcure1lEsYOoyd0bRX08glMZq0EGDKn4
+         +c9zr/avqW46bt+62TSTpkXdfusCxqrXgTP9QECWe9fpUBenTBql4M1u8Q4YtTLkZ9uf
+         /MH8J7NE0r7z8+7gcnqT1UrD4c+ughmlmFVvwnKvdC2w+4YNUx6cCSRqFZdn7w/5BNiq
+         CT/3upYkXFFy/CP0rnEL9mQokwbTYzEidbRXuop7hOiaBdHbsdYDQDWu7vLAy51Xl8RB
+         Uunw==
+X-Forwarded-Encrypted: i=1; AJvYcCVqBjw3se7PN/mUepa/D1BqN6es0N3Ymfur9D71BYC8JUP7WlVvw2esvPMY/GPKt6z/yPME0bB/3QUyxhg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3EyXby4tHdwuVvNsM/hCpKwIQzjVzdh6TWEKnelbBEyWDGTaK
+	nKEl+R3pHUGDqps5Wikb5lxk5cP9p/P4UHJa3PnIVemQPLktYPvC08TqtLO5S4MVO2s=
+X-Gm-Gg: ASbGncuc7F1v/sKthEjO//vQnZgrwn0IbCiMQk/IeNNeRJ8p3XGqErECQV8tWg55vC7
+	/OoX8D2WiUHaFGOycJpmUXWM6NjijpNQYYy3XfMT4C1HXbvAzEB89sdwN6shs4zKBp2r82gHAjO
+	YQNq5ZXAkol2QJRVfOe5FAzisH2MLzsT8i1fwinREyjBGuMWJB4107SEJnTinl5qqSYkuWVwghb
+	iARNfb1l+UELtheWZfMQ9P/wTqqzQpVx6QviCSep7bmsXK808YPSE3aVoPeflzXXCI1ZBYBOxdt
+	Mc55WnpAluvKE33PPcmgZuweNmkXyjnivEHpTQ6C1X/xlBip2pKsNJ6Udyhf7TrWC7m1XB0pyin
+	FgMSmcWQ1Sgozeehf
+X-Google-Smtp-Source: AGHT+IHo7KwNlZm+YUU+4y9qfkwD0vC7HRbv21RQgV9il9zHrHE5PzF+Ny11DkPWVA0mfReGd2bGgA==
+X-Received: by 2002:a05:6000:2c12:b0:3a0:b308:8427 with SMTP id ffacd0b85a97d-3a4f35e1bc7mr1175259f8f.37.1748515693825;
+        Thu, 29 May 2025 03:48:13 -0700 (PDT)
+Received: from [192.168.0.34] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4efe7440asm1664853f8f.58.2025.05.29.03.48.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 29 May 2025 03:48:13 -0700 (PDT)
+Message-ID: <4bb5cec9-2c3c-44de-af55-158fadb97acc@linaro.org>
+Date: Thu, 29 May 2025 11:48:12 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7ae9e9f9-80e7-4285-83f0-a0946d238243@suse.cz>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 3/5] thermal: qcom-spmi-temp-alarm: Prepare to support
+ additional Temp Alarm subtypes
+To: Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>,
+ amitk@kernel.org, thara.gopinath@gmail.com, rafael@kernel.org,
+ daniel.lezcano@linaro.org
+Cc: rui.zhang@intel.com, lukasz.luba@arm.com, david.collins@oss.qualcomm.com,
+ srinivas.kandagatla@linaro.org, stefan.schmidt@linaro.org,
+ quic_tsoni@quicinc.com, linux-arm-msm@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dmitry.baryshkov@linaro.org, dmitry.baryshkov@oss.qualcomm.com
+References: <20250528235026.4171109-1-anjelique.melendez@oss.qualcomm.com>
+ <KRWImQTV1yspNfrTQL6APj8mfVUU3rve6Qewj0N5Ayq8QTgHbEK9puHPsML1OlJuFq2eoIKGGh8akuoPv-VseQ==@protonmail.internalid>
+ <20250528235026.4171109-4-anjelique.melendez@oss.qualcomm.com>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20250528235026.4171109-4-anjelique.melendez@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, May 29, 2025 at 12:40:21PM +0200, Vlastimil Babka wrote:
-> On 5/29/25 12:38, Kirill A. Shutemov wrote:
-> > Hongyu noticed that the nr_unaccepted counter kept growing even in the
-> > absence of unaccepted memory on the machine.
-> > 
-> > This happens due to a commit that removed NR_BOUNCE: it removed the
-> > counter from the enum zone_stat_item, but left it in the vmstat_text
-> > array.
-> > 
-> > As a result, all counters below nr_bounce in /proc/vmstat are
-> > shifted by one line, causing the numa_hit counter to be labeled as
-> > nr_unaccepted.
-> > 
-> > To fix this issue, remove nr_bounce from the vmstat_text array.
-> > 
-> > Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> > Reported-by: Hongyu Ning <hongyu.ning@linux.intel.com>
-> > Fixes: 194df9f66db8 ("mm: remove NR_BOUNCE zone stat")
-> > Cc: stable@vger.kernel.org
-> > Cc: Christoph Hellwig <hch@lst.de>
-> > Cc: Hannes Reinecke <hare@suse.de>
-> > Cc: Johannes Thumshirn <johannes.thumshirn@wdc.com>
-> > Cc: Jens Axboe <axboe@kernel.dk>
+On 29/05/2025 00:50, Anjelique Melendez wrote:
+> @@ -356,16 +378,12 @@ static int qpnp_tm_init(struct qpnp_tm_chip *chip)
 > 
-> Is there a way to add a BUILD_BUG_ON to catch a future case like this one?
+>   	mutex_unlock(&chip->lock);
+> 
+> -	ret = thermal_zone_get_crit_temp(chip->tz_dev, &crit_temp);
+> -	if (ret)
+> -		crit_temp = THERMAL_TEMP_INVALID;
+> +	ret = chip->data->configure_trip_temps(chip);
+> +	if (ret < 0)
+> +		return ret;
+> 
+>   	mutex_lock(&chip->lock);
 
-There's
+Could we just drop the mutex lock in tm_init ();
 
-	BUILD_BUG_ON(ARRAY_SIZE(vmstat_text) < NR_VMSTAT_ITEMS);
+probe()
+   tm_init();
+     mutex_lock();
+     do stuff;
+     mutex_unlock();
+     ->configure_trip_temps();
+         mutex_lock();
+         do other stuff
+         mutex_unlock();
+     mutex_lock();
+     back to doing stuff in tm_init();
+     mutex_unlock();
 
-in vmstat_start().
+There's little rationality to tm_init() being a critical section but 
+also doing lock/unlock three times inside of that critical section.
 
-Making it strict != seems to do the trick for my config. But it requires
-wider testing.
+Since tm_init() is only called during probe() what exactly is the 
+parallel context we are premepting with the lock ?
 
-I can prepare a patch for that.
+If we can't answer that question the tm_init() mutex should be dropped.
 
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+---
+bod
 
