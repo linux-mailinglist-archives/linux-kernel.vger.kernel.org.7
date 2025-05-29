@@ -1,191 +1,149 @@
-Return-Path: <linux-kernel+bounces-666688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 356A1AC7A99
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 11:03:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 16651AC7A94
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 11:02:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A91B31893620
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 09:02:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 757F318917B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 09:02:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E62B21B8F5;
-	Thu, 29 May 2025 09:02:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C462921B8F2;
+	Thu, 29 May 2025 09:01:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JNFiDfnm"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="drZETqKX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C5AA2192FB;
-	Thu, 29 May 2025 09:02:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 216451B6D06;
+	Thu, 29 May 2025 09:01:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748509351; cv=none; b=Ord4PchMtW3YJmT6WcqRK3cXrx+alQojHCXmuBF0zCVg4FlHQykc8O8z+8JynkPT/fjC+aSlBkHMS2ZmhlOVB1zA+ZVm+rlFXWeqifUwtoQ8wb2+iQIajo1pauFX9qB+tlSYFFR32rkE/C2BWBlGHC8Zpzw3R6DFi1EVOTMHzFQ=
+	t=1748509308; cv=none; b=Eru3FLROrWzaK3Hi8ftj9flN4MO/Prlqugiok8q14Y9SuiTb4jIzzWHDuYe0Gwrf+RBBYSKu75n5auVW2pL++3EQ85PfCRbLTPwJ1kv4Z+5lg6Ce7daEUwRRrMNDCf117PCzIupYJDq3KeB1gQasAL48EyF9p6D4iKZBfVR1I0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748509351; c=relaxed/simple;
-	bh=sMkdftC0+Tx/IZelfW2inRhlPRbTlYeUucKCNb7CRMM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iuWRJ6Cc8KrHZu1U5MzTX8L5Pemcm+Gqa7l9g/8cN/lHIAbgJGbOt23URgCcZ1janGgRvWEghRcF44vPaGkyes1ZxFHNBA0YQH+yLCJVWxB8WYJe74zXCas+xfoubaQaKr23247KbqHpoArZ8cBkB4ouOqXkaO7+foXRNePqrqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JNFiDfnm; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43ea40a6e98so7263405e9.1;
-        Thu, 29 May 2025 02:02:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748509348; x=1749114148; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=8AXfRWEnLXngbO6ozFx9Vdj+sRj7LpGEVmnez0nbKG8=;
-        b=JNFiDfnmrDT7w1plt23ylGhR00wAkKHlbXfiMaCspLQKscn9bg4b3ML4nVae1XGPIk
-         RCQeGUlSi/AG/Y85vnsjsB4Gv8OqubUCGRApEG6C8iVFPOek7mezRXLnaeMY3A6pq84Y
-         dvV53si2iZqzXGCHXxXiH+0DjEWSMfQRp9wwk5lBjAd6xjwBvmIGlmhRF0LO5duyf3BT
-         64JjINN+nfUKHss3Eqz8gq73qT2G5rV4qSh/zcwo54FaGgl/v4ecGrhnpUcMpyBcOIn6
-         +fRjwbai9TfYj1WQmiOg0+bYR5Du1fFiOZ+8Mo3ynyrnwVI4Ztsunnuda5V2/ZWsNcN5
-         FxyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748509348; x=1749114148;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8AXfRWEnLXngbO6ozFx9Vdj+sRj7LpGEVmnez0nbKG8=;
-        b=bOssOGdAiUmMhNFg+8T50+71K9CZpXa8zTQsbOyoXWgQzmE7gPt7Ifm6Has/p1JSFG
-         9ubZscNiMSY9MCWDgLpX5c/Ko/9IBwrB9C4izN2MP9fMsI1tKryyk/bp63dw50alGYs8
-         M0VPiITEtOr0f0y5i1CiprmE+WQvVXN5Yucjt6MRY6lesn7MW8eRJ/EecsES6CpIRlzy
-         SfTVa0n/PfqZZ4s74S6mi3kwWfgGPgX28RxCwEs4gqePLNmTrheu2xLoCF4gbEPCwZRB
-         TFXPvYldjY0xiCDYk+/w+cETRt4UlePt1PAwdRQAXaxOJiTM5g4hT+Y9bYVs0samjmpw
-         k3HQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUD8Oak8C3hyPujTQp7p5qQNtKuQvqlqftJUudaHp7Yc2PyN8Wt/2MTvV/w2YCaDykbafy9wulboHo=@vger.kernel.org, AJvYcCX3y+PRBK866Uc/7JHfNpBaMc0TulswOxt5u3vBFnrq/VXpuWnCkOvM6BzxJhn/oxYNmfNA339KUdCHKcu6@vger.kernel.org, AJvYcCXg+K1WHPCYjRF6OrC7h5eX+Al/u70kboWo37GnaWo1RwKbpnjF4Z1HH5EgVop/Qtu8/irK/jpug+CfmPk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCAX6KtIlAq/QuE2pjIHzLHSGkDzq0k0kgJwNT/O4Gxj2AatJ+
-	RlplPL1oo6k2nYIvJD2mqh6L3bV3JAnXayEWFJYU4i6Gil8NFs6f4Nc7
-X-Gm-Gg: ASbGncsBOr44S/yeeusPcAiS1bL+VhN7tnS2YyYmgJn3/F0+eV8GPBpqMrVdnPuQkNq
-	BzgryWv3UXZFmkqVdZ/TVWBoaQAvjBGN4zATCiIcbBtehnCLoBzOOH5Y+2PEODmfbuub0XeAWfc
-	+ugIAcsc+G1cGLQKreBn880UCFTEmnogV7kMFLEWnBW69C1WTWJTdIFbDKcwmNTV8sI8i/TUD3i
-	vaAhf+VMnUS/gUipqeckbbOSZ15E+S5qcimgSI173V8DNDZAZ6VOlHnEFvuL8AMEaDpxi2WVpzW
-	SGbGaQld7Q5qh1l2PWM0pYN+Ckq6HWwro5JX7RE1GZRnJVYh2VELcVOpGgYLRR95SqrWYBPqmm3
-	DcBIikE/EvNQ8hd89PIIZMVMHLf2xLZQNyejQGpXED+obknwGBewq1A==
-X-Google-Smtp-Source: AGHT+IFS+6s+jXMSUM+bVy+Oz+xiERYfpm6I7yWMzURvuDDqqqnXdeEsGmmT/Co0X8obLIFaytbc0g==
-X-Received: by 2002:a05:600c:3b25:b0:450:b240:aaab with SMTP id 5b1f17b1804b1-450d0566ea5mr13600055e9.8.1748509348003;
-        Thu, 29 May 2025 02:02:28 -0700 (PDT)
-Received: from puma.museclub.art (p200300cf9f4db30084345851a1a1c45b.dip0.t-ipconnect.de. [2003:cf:9f4d:b300:8434:5851:a1a1:c45b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-450cfc17a04sm14057565e9.24.2025.05.29.02.02.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 May 2025 02:02:27 -0700 (PDT)
-From: Eugene Shalygin <eugene.shalygin@gmail.com>
-To: eugene.shalygin@gmail.com
-Cc: Roy Seitz <royseitz@bluewin.ch>,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-hwmon@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] hwmon: (asus-ec-sensors) add support for ROG STRIX Z490-F GAMING
-Date: Thu, 29 May 2025 11:01:41 +0200
-Message-ID: <20250529090222.154696-1-eugene.shalygin@gmail.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1748509308; c=relaxed/simple;
+	bh=cmvLbyKtwXSsyts5o0RR2FI3M0/ZIWZMEocPoXjVbQw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YrUaBTOHtLWY5dQhLjoIy/bMY1nIEGCfw/oOF2oXYrC2WG7TAOON/xnxj+UPFrkyI4tr+2yD9qSPDTsEWmmjvgCNP8n72VnzGIFl91JPmfVJHHKJY0YPoruoyWcilzMZxybUhrCIsSYx1YjXtLdyjl261RmyYX8QHPFr07khXVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=drZETqKX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 276A3C4CEE7;
+	Thu, 29 May 2025 09:01:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748509308;
+	bh=cmvLbyKtwXSsyts5o0RR2FI3M0/ZIWZMEocPoXjVbQw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=drZETqKXlgA/V3CUDK3etEu0hiRuzGsOsb69fY9pCdojKyxdY4SzBfIGsPTEdq7w8
+	 ZZgXKvWzVSVechyEQYLirh6AXqAPzbf2lqt84vlYeZv+LeJ4gMwJAtktl78Eu0jw/K
+	 7lg31kdgAOOZVrK4plJ0ZugV9vIRtlcf0Wi3yYRKQ/CQqScIhgVNkeScYcWEboKNtQ
+	 1MKhUOu+FJTjflZ/azgOJiAGDsL2dynDfPdUJ7AKzMGRr/WCvVSaKA1o/zM5Nk+wO5
+	 P5R7hoFbYkHV6SnrF53f7wWjMofhG8EruQC05958yP9PuLILuklYW8vbDRsjCX6DCo
+	 ykOW4ORBQuwGg==
+Message-ID: <ebf1eded-aa78-4d50-8aa3-b1b7004c10f8@kernel.org>
+Date: Thu, 29 May 2025 11:01:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 6/9] ARM: dts: stm32: add Hardware debug port (HDP) on
+ stm32mp15
+To: Clement LE GOFFIC <clement.legoffic@foss.st.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org
+References: <20250523-hdp-upstream-v3-0-bd6ca199466a@foss.st.com>
+ <20250523-hdp-upstream-v3-6-bd6ca199466a@foss.st.com>
+ <1c21f915-e067-4801-925a-3d4882f358f2@kernel.org>
+ <ef481451-b7d2-4f9a-a3d0-c67e8f5061dd@foss.st.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
+ QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
+ +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
+ ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
+ 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
+ hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
+ tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
+ 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
+ naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
+ hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
+ whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
+ qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
+ RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
+ Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
+ H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
+ dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
+ AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
+ jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
+ zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
+ XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
+In-Reply-To: <ef481451-b7d2-4f9a-a3d0-c67e8f5061dd@foss.st.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Roy Seitz <royseitz@bluewin.ch>
+On 28/05/2025 14:15, Clement LE GOFFIC wrote:
+> On 5/28/25 11:00, Krzysztof Kozlowski wrote:
+>> On 23/05/2025 14:38, Clément Le Goffic wrote:
+>>> Add the hdp devicetree node for stm32mp15 SoC family
+>>>
+>>> Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
+>>> ---
+>>>   arch/arm/boot/dts/st/stm32mp151.dtsi | 7 +++++++
+>>>   1 file changed, 7 insertions(+)
+>>>
+>>> diff --git a/arch/arm/boot/dts/st/stm32mp151.dtsi b/arch/arm/boot/dts/st/stm32mp151.dtsi
+>>> index 0daa8ffe2ff5..b1b568dfd126 100644
+>>> --- a/arch/arm/boot/dts/st/stm32mp151.dtsi
+>>> +++ b/arch/arm/boot/dts/st/stm32mp151.dtsi
+>>> @@ -270,6 +270,13 @@ dts: thermal@50028000 {
+>>>   			status = "disabled";
+>>>   		};
+>>>   
+>>> +		hdp: pinctrl@5002a000 {
+>>> +			compatible = "st,stm32mp151-hdp";
+>>> +			reg = <0x5002a000 0x400>;
+>>> +			clocks = <&rcc HDP>;
+>>> +			status = "disabled";
+>>
+>> Same questions here and in further patches.
+> 
+> Same, disabled by default and enable in board's dts file
 
-This adds support for the ROG STRIX Z490-F GAMING board.
 
-Signed-off-by: Roy Seitz <royseitz@bluewin.ch>
-Signed-off-by: Eugene Shalygin <eugene.shalygin@gmail.com>
----
- Documentation/hwmon/asus_ec_sensors.rst |  1 +
- drivers/hwmon/asus-ec-sensors.c         | 32 +++++++++++++++++++++++++
- 2 files changed, 33 insertions(+)
+So the same answer, node is complete so should it be enabled.
 
-diff --git a/Documentation/hwmon/asus_ec_sensors.rst b/Documentation/hwmon/asus_ec_sensors.rst
-index 816d1f9947ea..502b0faf3b31 100644
---- a/Documentation/hwmon/asus_ec_sensors.rst
-+++ b/Documentation/hwmon/asus_ec_sensors.rst
-@@ -29,6 +29,7 @@ Supported boards:
-  * ROG STRIX X570-F GAMING
-  * ROG STRIX X570-I GAMING
-  * ROG STRIX Z390-F GAMING
-+ * ROG STRIX Z490-F GAMING
-  * ROG STRIX Z690-A GAMING WIFI D4
-  * ROG ZENITH II EXTREME
-  * ROG ZENITH II EXTREME ALPHA
-diff --git a/drivers/hwmon/asus-ec-sensors.c b/drivers/hwmon/asus-ec-sensors.c
-index e0a95197c71b..c3d5bcbd63f8 100644
---- a/drivers/hwmon/asus-ec-sensors.c
-+++ b/drivers/hwmon/asus-ec-sensors.c
-@@ -166,6 +166,7 @@ enum board_family {
- 	family_amd_500_series,
- 	family_amd_600_series,
- 	family_intel_300_series,
-+	family_intel_400_series,
- 	family_intel_600_series
- };
- 
-@@ -279,6 +280,20 @@ static const struct ec_sensor_info sensors_family_intel_300[] = {
- 		EC_SENSOR("Water_Out", hwmon_temp, 1, 0x01, 0x01),
- };
- 
-+static const struct ec_sensor_info sensors_family_intel_400[] = {
-+	[ec_sensor_temp_chipset] =
-+		EC_SENSOR("Chipset", hwmon_temp, 1, 0x00, 0x3a),
-+	[ec_sensor_temp_cpu] = EC_SENSOR("CPU", hwmon_temp, 1, 0x00, 0x3b),
-+	[ec_sensor_temp_mb] =
-+		EC_SENSOR("Motherboard", hwmon_temp, 1, 0x00, 0x3c),
-+	[ec_sensor_temp_t_sensor] =
-+		EC_SENSOR("T_Sensor", hwmon_temp, 1, 0x00, 0x3d),
-+	[ec_sensor_temp_vrm] = EC_SENSOR("VRM", hwmon_temp, 1, 0x00, 0x3e),
-+	[ec_sensor_fan_cpu_opt] =
-+		EC_SENSOR("CPU_Opt", hwmon_fan, 2, 0x00, 0xb0),
-+	[ec_sensor_fan_vrm_hs] = EC_SENSOR("VRM HS", hwmon_fan, 2, 0x00, 0xb2),
-+};
-+
- static const struct ec_sensor_info sensors_family_intel_600[] = {
- 	[ec_sensor_temp_t_sensor] =
- 		EC_SENSOR("T_Sensor", hwmon_temp, 1, 0x00, 0x3d),
-@@ -498,6 +513,18 @@ static const struct ec_board_info board_info_strix_z390_f_gaming = {
- 	.family = family_intel_300_series,
- };
- 
-+static const struct ec_board_info board_info_strix_z490_f_gaming = {
-+	.sensors = SENSOR_TEMP_CHIPSET |
-+		SENSOR_TEMP_CPU |
-+		SENSOR_TEMP_MB |
-+		SENSOR_TEMP_T_SENSOR |
-+		SENSOR_TEMP_VRM |
-+		SENSOR_FAN_CPU_OPT |
-+		SENSOR_FAN_VRM_HS,
-+	.mutex_path = ASUS_HW_ACCESS_MUTEX_ASMX,
-+	.family = family_intel_400_series,
-+};
-+
- static const struct ec_board_info board_info_strix_z690_a_gaming_wifi_d4 = {
- 	.sensors = SENSOR_TEMP_T_SENSOR | SENSOR_TEMP_VRM,
- 	.mutex_path = ASUS_HW_ACCESS_MUTEX_RMTW_ASMX,
-@@ -586,6 +613,8 @@ static const struct dmi_system_id dmi_table[] = {
- 					&board_info_strix_x570_i_gaming),
- 	DMI_EXACT_MATCH_ASUS_BOARD_NAME("ROG STRIX Z390-F GAMING",
- 					&board_info_strix_z390_f_gaming),
-+	DMI_EXACT_MATCH_ASUS_BOARD_NAME("ROG STRIX Z490-F GAMING",
-+					&board_info_strix_z490_f_gaming),
- 	DMI_EXACT_MATCH_ASUS_BOARD_NAME("ROG STRIX Z690-A GAMING WIFI D4",
- 					&board_info_strix_z690_a_gaming_wifi_d4),
- 	DMI_EXACT_MATCH_ASUS_BOARD_NAME("ROG ZENITH II EXTREME",
-@@ -1061,6 +1090,9 @@ static int asus_ec_probe(struct platform_device *pdev)
- 	case family_intel_300_series:
- 		ec_data->sensors_info = sensors_family_intel_300;
- 		break;
-+	case family_intel_400_series:
-+		ec_data->sensors_info = sensors_family_intel_400;
-+		break;
- 	case family_intel_600_series:
- 		ec_data->sensors_info = sensors_family_intel_600;
- 		break;
--- 
-2.49.0
-
+Best regards,
+Krzysztof
 
