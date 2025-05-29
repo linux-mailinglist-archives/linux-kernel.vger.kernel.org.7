@@ -1,91 +1,135 @@
-Return-Path: <linux-kernel+bounces-666676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 416E6AC7A72
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 10:54:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FBD7AC7A7A
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 10:56:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2ED3F189E873
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 08:54:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCEFD189EA7C
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 08:56:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CD1D21ABDC;
-	Thu, 29 May 2025 08:54:08 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A66E21B182;
+	Thu, 29 May 2025 08:56:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Cnsgw9Ej"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAF36347B4
-	for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 08:54:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50C841474CC;
+	Thu, 29 May 2025 08:56:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748508848; cv=none; b=dir0mszJXCE7ygWJ6+dXSoxDDUBxQ7I+w+d71G6rrcfVIH4Qq5N6kMEhFLu4GFrJ9X463ZAknKo0kpXhKwHhxtV/25zq18nNSL5ImuCkcC3b5T99V8wMqIg7w/zGF9+rus5do0p4Btx0cqEqQfV9xJCTWeDpPlI5oRmGN3WZbvQ=
+	t=1748508967; cv=none; b=hcue/xSszwwx2OdI9HIZpS52BbGn+KA8EXNJ7cGJl8KPer4yzYhzEMCN2565AlseweSTfKZZE/24mC47lIiZ9gI1zLLb/OZhnri2zfOfBJB6JADiwaL7K1SuOjT94zpelZGcPNWmPUU47rCZ68HkL2PKNDMSJQnsvL3Ndo8jnAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748508848; c=relaxed/simple;
-	bh=q91nuQGRRRhb1KNojdFH+w+wL21SpNT90+AHMNekIzU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=mQGWzU5DRFvbmE1hKakZH56saiEfO6gYi9q01LGMUTc8rd/iCNgu9uT2AcSOqweRVUjXOQOPbbcZwZNL+1cq0CcLGzsKTvIez01GzSbAN5J4kyfoN0dyZ2ajUkHTV7uhJwIl72EYwEWmF3UsR6+tygUJKiCXFfep0d6kRdaWaZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-86a50b5f5bdso46061339f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 01:54:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748508846; x=1749113646;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tBlyRIybHBaIqmeBc0FbsfGe2HQBjnmO3lAWrSbPihA=;
-        b=ML03lK0JY5v8ZEmQSoe0EsEoMbF6xYArK4Zhrcfj5ng51Q/IJtsOo/KDHZkzYiHah1
-         bENLFWRWACpzH4vmuhNyAQFErQufyMB/AvdhsK/Wie/CInU5qpeudkh/bMffyXw28RS7
-         zIN1sRnq13H0tWbWD7TRU73Avn+PpC8gEGhoM51jDj4MOB2GUuTBpSLLQ8w1/Ar/Rm1R
-         vqHIX/H+3OGuiL1/R00JlJXLDzgkpuDY7jiZOqd8TlaoMpfGxH6p7gjNlZRnIW1bp3W4
-         pwm49QuGUWdYHdqma43HBg+smO5dZAKVNlGhhgQbRpwrwmqH8Y/xYGXLEYjva8YyLB0C
-         UKDg==
-X-Forwarded-Encrypted: i=1; AJvYcCUiinTq3mWO+gr3R3/DPKD2CoUYTRgxbk0m3GZD2Ov1+K0lnIVCTY390zisRWkhu04pAXABU9RD2vbFavg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyuv04DceSo05lqN9n2zfNI8JIm5pjbwYmZBsCLrsegH89OmYTL
-	MuV5AdxBNbUxHUPncwShVBGhOCFzUicl1IEGF4aQvNkSpGHAkg/bHnUyHx7rd/Io2gwi74REG2p
-	hytS9rQfxbqOVHabqh7Dt1s1QZGubhfjbINpWnN5TxthXcu29/FHmNQwPqD0=
-X-Google-Smtp-Source: AGHT+IGTRXy7d/IwzDy1o86z0H8LJAGn0XcP6VlbyJf2BmWogsfJeseORsf9jwaJIDjRT/Nj1zLMsKYeHBkliNHOwaksJ1d653QC
+	s=arc-20240116; t=1748508967; c=relaxed/simple;
+	bh=SARXCNTufuei1amKdyvTa+4VlPApBOHH2y8NPXkO6Gk=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gDw172M6g1m1sYfZe0T+xd1rKQY7RJwbkgcTI0bZtWYt6JuctOB9IsXE7FBHMn0bRLb7KqhphmIYdOtYXmJGQteeTRh96EA87c8x4asHkqtyYmykWGGcb8Ur+p6gSGrNHwcpLYXdJ1V0Qh2m7mbTcVNnyl7vZJkDBbZeN/cHQ6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Cnsgw9Ej; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54T10vis007169;
+	Thu, 29 May 2025 08:56:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=fwvJvURYk1NjdqWFUzLQ5m2u
+	yNfgteE0KIGGLTM7qMU=; b=Cnsgw9EjWsyEhsA4h+mAXkr61+quHRHpwUlOlAPt
+	sAGncfqDLUjsmAZsVDZT6yfcdEZAtTkOwKqbvCOlrq34JeTIXX1MJk/IO7zUsbJw
+	SZgkA0RSbOaUTahtuny4rzMKzT6Q2XAjt3hU8M+tGhGtxnoIf1KrtuqVWNBDvGs5
+	tB3WJB9zOJ5JrfZjJ0wkza17apqi43gb8y23kDh+T7EOvvvut7j9xwjFhD/N/VXK
+	b3PgEWme6kP1fztXbDxIJnnFwySKrNzyVc1kTIc8diC6V8ymV8WsGq7Smx1t9Uax
+	vz5ybcaqDAeq/553nkx2ilfS+GNPdA9c57OZfKNZuv6A1A==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46u549n1fm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 29 May 2025 08:56:01 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 54T8u0hJ012075
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 29 May 2025 08:56:00 GMT
+Received: from hu-wasimn-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 29 May 2025 01:55:54 -0700
+Date: Thu, 29 May 2025 14:25:50 +0530
+From: Wasim Nazir <quic_wasimn@quicinc.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: Rob Herring <robh@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel@quicinc.com>, <kernel@oss.qualcomm.com>
+Subject: Re: [PATCH v8 1/4] dt-bindings: arm: qcom: Add bindings for QCS9075
+ SOC based board
+Message-ID: <aDghFmI30CGE66sm@hu-wasimn-hyd.qualcomm.com>
+References: <20250528122753.3623570-1-quic_wasimn@quicinc.com>
+ <20250528122753.3623570-2-quic_wasimn@quicinc.com>
+ <20250528222056.GA907125-robh@kernel.org>
+ <853418c8-5aae-440f-a28c-971cef20645f@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1488:b0:3dc:89e3:b882 with SMTP id
- e9e14a558f8ab-3dc9b6d4de6mr200720745ab.8.1748508845817; Thu, 29 May 2025
- 01:54:05 -0700 (PDT)
-Date: Thu, 29 May 2025 01:54:05 -0700
-In-Reply-To: <6746eaef.050a0220.21d33d.0020.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <683820ad.a70a0220.1765ec.0184.GAE@google.com>
-Subject: Re: [syzbot] [hfs?] KASAN: slab-out-of-bounds Write in hfs_bnode_read
-From: syzbot <syzbot+c6811fc2262cec1e6266@syzkaller.appspotmail.com>
-To: brauner@kernel.org, cengiz.can@canonical.com, eadavis@qq.com, 
-	kovalev@altlinux.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <853418c8-5aae-440f-a28c-971cef20645f@kernel.org>
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: BIi9E1QEiU1RxYxZwz2mXlOcjFqRLfe5
+X-Authority-Analysis: v=2.4 cv=E9nNpbdl c=1 sm=1 tr=0 ts=68382121 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=kj9zAlcOel0A:10 a=dt9VzEwgFbYA:10 a=COk6AnOGAAAA:8
+ a=UMomnOuXBGTDzrUDtD0A:9 a=CjuIK1q_8ugA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI5MDA4NiBTYWx0ZWRfX9PimISNX/EnN
+ qmAl+EUkDdA2bN0FsskPWe9noKPeTNiAnUWe+cHEIlzjNKLfLOIxGOFG6RVLW3IG+UPNYfkounY
+ svfHLShS6nSncFHJlr+woCXcSL1WqiD0g2tRXwn0iSHN6G+dXUYMiwYYxvD34ePUXbbLy84LFBL
+ W09KoqyClvWDeAP+MbiB41slxyqhF6QXnLGqXe6VqX4Ny2FviKw6/nHVyNBAZRdVy+egNDB0cbY
+ Gs4+b9a3vWQBY7E34kymoqndNebMcAAg+G9+enta07qKKOMB24R9Yp1Bc2WQ3Be4HCNz4m8c7kx
+ YCCbKpNo3E0yQf5ecK4fsFobfJJXjpc448UMp8/jKUxyxQcmv1E0shOi9WaPmNsCL4cRizQCgt5
+ cy+h5VXJNAYWliNeJwSsO/rtN5aLyAWnaB5RXr8mI/UxsJ10qXBrVYFsbgFDsudYiltrTNUB
+X-Proofpoint-ORIG-GUID: BIi9E1QEiU1RxYxZwz2mXlOcjFqRLfe5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-29_04,2025-05-29_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxscore=0 mlxlogscore=999 spamscore=0 malwarescore=0 priorityscore=1501
+ adultscore=0 phishscore=0 impostorscore=0 lowpriorityscore=0 suspectscore=0
+ clxscore=1015 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505160000
+ definitions=main-2505290086
 
-syzbot suspects this issue was fixed by commit:
+On Thu, May 29, 2025 at 08:29:38AM +0200, Krzysztof Kozlowski wrote:
+> On 29/05/2025 00:20, Rob Herring wrote:
+> > On Wed, May 28, 2025 at 05:57:48PM +0530, Wasim Nazir wrote:
+> >> QCS9075 is compatible Industrial-IOT grade variant of SA8775p SOC.
+> >> Unlike QCS9100, it doesn't have safety monitoring feature of
+> >> Safety-Island(SAIL) subsystem, which affects thermal management.
+> >>
+> >> qcs9075-iq-9075-evk board is based on QCS9075 SOC.
+> >>
+> >> Signed-off-by: Wasim Nazir <quic_wasimn@quicinc.com>
+> > 
+> > This is missing Krzysztof's ack.
+> 
+> ... and yours. This was acked twice but was changed more often then we
+> were able to ack it, so I gave up.
 
-commit bb5e07cb927724e0b47be371fa081141cfb14414
-Author: Vasiliy Kovalev <kovalev@altlinux.org>
-Date:   Sat Oct 19 19:13:03 2024 +0000
+I misunderstood it in our last conversation, I will add the tags in next
+series.
 
-    hfs/hfsplus: fix slab-out-of-bounds in hfs_bnode_read_key
+> 
+> Best regards,
+> Krzysztof
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12794970580000
-start commit:   06afb0f36106 Merge tag 'trace-v6.13' of git://git.kernel.o..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=461a3713d88227a7
-dashboard link: https://syzkaller.appspot.com/bug?extid=c6811fc2262cec1e6266
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=140e7b78580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=129181c0580000
-
-If the result looks correct, please mark the issue as fixed by replying with:
-
-#syz fix: hfs/hfsplus: fix slab-out-of-bounds in hfs_bnode_read_key
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Regards,
+Wasim
 
