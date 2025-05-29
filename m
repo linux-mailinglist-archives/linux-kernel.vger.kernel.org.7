@@ -1,227 +1,293 @@
-Return-Path: <linux-kernel+bounces-666350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EA5CAC759D
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 04:04:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C3FEAC75A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 04:05:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B63C4E7D78
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 02:04:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47F714E7E4E
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 02:05:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74C05242907;
-	Thu, 29 May 2025 02:03:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f5n/mzcw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8A0013AA2F;
-	Thu, 29 May 2025 02:03:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0D8F242922;
+	Thu, 29 May 2025 02:05:11 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84962221FA1;
+	Thu, 29 May 2025 02:05:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748484238; cv=none; b=kaaQZzXoZVDmvo2l2biGFf62LB9Aav9AbfFIzazSWiItah0HIIGl7rpPFTUYBLEtJA96memltWbwZwGG+AV0AdBOzAeKxwfuVyxvK6qaqLl99mk7cRH1mq8+FHFimfZ8v1DhOv1h4wYyypxMjcLquCMLHsFStS3fdM7WSKm0XbU=
+	t=1748484311; cv=none; b=BidO5CTUbhzZzgwq364xyja1asbKVQheFYfkfBi9R5r8jxlCIuR9o938Rc4p+mmQQIw/d/Fe+DSQ/42ndFgUEM/6Ee4uo5zymVe/ufXTgpwo8RVXTfXESbKQ8ztytBnZptRIFCcxfx8q8hBUcOlwQPG3sm/vHy1a5nXTlfVR7Ms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748484238; c=relaxed/simple;
-	bh=HBc8Ud/IdDi0BkqcmQysCOW0ecbFWrLp1KmavCLxf2g=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=OUPrLEF+PXLuR2jscWz67fE86HuV6HZaN+d/ztlAYrspDJlwAk1T+QTsNw4H2zn8H+0/SRXHninwXy5+MtTRLWyfPlkpJHYV3nf3+MdiTt9rx6dUWuYjiJ8xerRvcep5yMvTmhB8jbdiWPalOSVa1aQX6Nu8gXQ+J86cS9IaVZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f5n/mzcw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A2E5C4CEE3;
-	Thu, 29 May 2025 02:03:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748484238;
-	bh=HBc8Ud/IdDi0BkqcmQysCOW0ecbFWrLp1KmavCLxf2g=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=f5n/mzcw39PMaENhngze8uVqtI/yWNHnwiiflXWN73F/IMXETeNrS1jfsaQG220PZ
-	 HqlOYJCQ+kxL8qALTkE5bU2PZDE4wXAdFDwESB004bRNgETwojCGpA6ItsfeJQ6ox2
-	 Fc99ueQPEChPyTnP72+N+VTuhnC9gA/5ypiELmr1pkcQJu6ZB5I2HbxzlcQEGMpw/6
-	 nH+QLYgfaiSpLiR4Y04YMCz7KUKWNfKcbGKdpQd/Fm4fAEEzMmz6UYDK2yzTngLs10
-	 mac133z+JKMVNYxQgPpVU2A1r33ovL1gpF8Mt+gYByVL632sMt0LXF5aQA4PiOBnkJ
-	 RhEf5aIYNGHkw==
-Date: Thu, 29 May 2025 11:03:55 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Vincent Donnefort <vdonnefort@google.com>
-Subject: Re: [PATCH v2] ring-buffer: Do not trigger WARN_ON() due to a
- commit_overrun
-Message-Id: <20250529110355.98fecf6d98765e794e0ba345@kernel.org>
-In-Reply-To: <20250528121555.2066527e@gandalf.local.home>
-References: <20250528121555.2066527e@gandalf.local.home>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1748484311; c=relaxed/simple;
+	bh=7sPL5/FI8t7+TuYRYb75JbvOXzTudEPh6k8nC3y6Pgk=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=YvuI51zfrwTjU3CtrRMpg+La62j3++8ip2Bam4uKcw9tKyj/H+CYeuqsC5/Lc0s0E76orf9DoDNZN46cCXNkGetJYCn0SeEWFPfFkPLDfJVh95UeCI5U3T8vGvofUORVtMcOSZfp5XnSt8s8iuC7oQGp9jeyvPpJzFicSsVCHOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.164])
+	by gateway (Coremail) with SMTP id _____8BxXWvPwDdoFDEBAQ--.20441S3;
+	Thu, 29 May 2025 10:05:03 +0800 (CST)
+Received: from [10.20.42.164] (unknown [10.20.42.164])
+	by front1 (Coremail) with SMTP id qMiowMBxXRvHwDdot1z5AA--.27553S2;
+	Thu, 29 May 2025 10:04:57 +0800 (CST)
+Subject: Re: [PATCH v5 3/4] tpm/tpm_ftpm_tee: support TPM_CHIP_FLAG_SYNC
+To: Stefano Garzarella <sgarzare@redhat.com>
+Cc: Jarkko Sakkinen <jarkko@kernel.org>, linuxppc-dev@lists.ozlabs.org,
+ Peter Huewe <peterhuewe@gmx.de>, Jens Wiklander <jens.wiklander@linaro.org>,
+ linux-integrity@vger.kernel.org,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ linux-arm-kernel@lists.infradead.org,
+ Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Nicholas Piggin <npiggin@gmail.com>, Sumit Garg <sumit.garg@kernel.org>,
+ James Bottomley <James.Bottomley@HansenPartnership.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+ linux-kernel@vger.kernel.org, Christophe Leroy
+ <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>,
+ Michael Ellerman <mpe@ellerman.id.au>,
+ Sumit Garg <sumit.garg@oss.qualcomm.com>
+References: <20250514134630.137621-1-sgarzare@redhat.com>
+ <20250514134630.137621-4-sgarzare@redhat.com>
+From: Qunqin Zhao <zhaoqunqin@loongson.cn>
+Message-ID: <3569b41c-123b-4fd4-458d-f7b2d2ec00f7@loongson.cn>
+Date: Thu, 29 May 2025 10:03:58 +0800
+User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+In-Reply-To: <20250514134630.137621-4-sgarzare@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-CM-TRANSID:qMiowMBxXRvHwDdot1z5AA--.27553S2
+X-CM-SenderInfo: 52kd01pxqtx0o6or00hjvr0hdfq/
+X-Coremail-Antispam: 1Uk129KBj93XoW3Gw1xZF4rXFyUGry7uFyUJwc_yoWxury5pF
+	Z8G39rAFZ3t3WkJr97tFs7ZrWa9w48KFWUJay8Gas3Ar1qkr90gFyqgFy0qFy5trs7Gr1f
+	tF4qgFy5Z3WUZrcCm3ZEXasCq-sJn29KB7ZKAUJUUUUt529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUP2b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v2
+	6F4UJVW0owAaw2AFwI0_Jw0_GFyle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0c
+	Ia020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jw0_
+	WrylYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrw
+	CYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48J
+	MxC20s026xCaFVCjc4AY6r1j6r4UMxCIbckI1I0E14v26r1q6r43MI8I3I0E5I8CrVAFwI
+	0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y
+	0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r4j6ryUMIIF0xvE2Ix0cI8IcVCY1x0267AKxV
+	W8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1l
+	IxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0L0ePUUUU
+	U==
 
-On Wed, 28 May 2025 12:15:55 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
 
-> From: Steven Rostedt <rostedt@goodmis.org>
-> 
-> When reading a memory mapped buffer the reader page is just swapped out
-> with the last page written in the write buffer. If the reader page is the
-> same as the commit buffer (the buffer that is currently being written to)
-> it was assumed that it should never have missed events. If it does, it
-> triggers a WARN_ON_ONCE().
-> 
-> But there just happens to be one scenario where this can legitimately
-> happen. That is on a commit_overrun. A commit overrun is when an interrupt
-> preempts an event being written to the buffer and then the interrupt adds
-> so many new events that it fills and wraps the buffer back to the commit.
-> Any new events would then be dropped and be reported as "missed_events".
-> 
-> In this case, the next page to read is the commit buffer and after the
-> swap of the reader page, the reader page will be the commit buffer, but
-> this time there will be missed events and this triggers the following
-> warning:
-> 
->  ------------[ cut here ]------------
->  WARNING: CPU: 2 PID: 1127 at kernel/trace/ring_buffer.c:7357 ring_buffer_map_get_reader+0x49a/0x780
->  Modules linked in: kvm_intel kvm irqbypass
->  CPU: 2 UID: 0 PID: 1127 Comm: trace-cmd Not tainted 6.15.0-rc7-test-00004-g478bc2824b45-dirty #564 PREEMPT
->  Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
->  RIP: 0010:ring_buffer_map_get_reader+0x49a/0x780
->  Code: 00 00 00 48 89 fe 48 c1 ee 03 80 3c 2e 00 0f 85 ec 01 00 00 4d 3b a6 a8 00 00 00 0f 85 8a fd ff ff 48 85 c0 0f 84 55 fe ff ff <0f> 0b e9 4e fe ff ff be 08 00 00 00 4c 89 54 24 58 48 89 54 24 50
->  RSP: 0018:ffff888121787dc0 EFLAGS: 00010002
->  RAX: 00000000000006a2 RBX: ffff888100062800 RCX: ffffffff8190cb49
->  RDX: ffff888126934c00 RSI: 1ffff11020200a15 RDI: ffff8881010050a8
->  RBP: dffffc0000000000 R08: 0000000000000000 R09: ffffed1024d26982
->  R10: ffff888126934c17 R11: ffff8881010050a8 R12: ffff888126934c00
->  R13: ffff8881010050b8 R14: ffff888101005000 R15: ffff888126930008
->  FS:  00007f95c8cd7540(0000) GS:ffff8882b576e000(0000) knlGS:0000000000000000
->  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->  CR2: 00007f95c8de4dc0 CR3: 0000000128452002 CR4: 0000000000172ef0
->  Call Trace:
->   <TASK>
->   ? __pfx_ring_buffer_map_get_reader+0x10/0x10
->   tracing_buffers_ioctl+0x283/0x370
->   __x64_sys_ioctl+0x134/0x190
->   do_syscall_64+0x79/0x1c0
->   entry_SYSCALL_64_after_hwframe+0x76/0x7e
->  RIP: 0033:0x7f95c8de48db
->  Code: 00 48 89 44 24 18 31 c0 48 8d 44 24 60 c7 04 24 10 00 00 00 48 89 44 24 08 48 8d 44 24 20 48 89 44 24 10 b8 10 00 00 00 0f 05 <89> c2 3d 00 f0 ff ff 77 1c 48 8b 44 24 18 64 48 2b 04 25 28 00 00
->  RSP: 002b:00007ffe037ba110 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
->  RAX: ffffffffffffffda RBX: 00007ffe037bb2b0 RCX: 00007f95c8de48db
->  RDX: 0000000000000000 RSI: 0000000000005220 RDI: 0000000000000006
->  RBP: 00007ffe037ba180 R08: 0000000000000000 R09: 0000000000000000
->  R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
->  R13: 00007ffe037bb6f8 R14: 00007f95c9065000 R15: 00005575c7492c90
->   </TASK>
->  irq event stamp: 5080
->  hardirqs last  enabled at (5079): [<ffffffff83e0adb0>] _raw_spin_unlock_irqrestore+0x50/0x70
->  hardirqs last disabled at (5080): [<ffffffff83e0aa83>] _raw_spin_lock_irqsave+0x63/0x70
->  softirqs last  enabled at (4182): [<ffffffff81516122>] handle_softirqs+0x552/0x710
->  softirqs last disabled at (4159): [<ffffffff815163f7>] __irq_exit_rcu+0x107/0x210
->  ---[ end trace 0000000000000000 ]---
-> 
-> The above was triggered by running on a kernel with both lockdep and KASAN
-> as well as kmemleak enabled and executing the following command:
-> 
->  # perf record -o perf-test.dat -a -- trace-cmd record --nosplice  -e all -p function hackbench 50
-> 
-> With perf interjecting a lot of interrupts and trace-cmd enabling all
-> events as well as function tracing, with lockdep, KASAN and kmemleak
-> enabled, it could cause an interrupt preempting an event being written to
-> add enough events to wrap the buffer. trace-cmd was modified to have
-> --nosplice use mmap instead of reading the buffer.
-> 
-> The way to differentiate this case from the normal case of there only
-> being one page written to where the swap of the reader page received that
-> one page (which is the commit page), check if the tail page is on the
-> reader page. The difference between the commit page and the tail page is
-> that the tail page is where new writes go to, and the commit page holds
-> the first write that hasn't been committed yet. In the case of an
-> interrupt preempting the write of an event and filling the buffer, it
-> would move the tail page but not the commit page.
-> 
-> Have the warning only trigger if the tail page is also on the reader page,
-> and also print out the number of events dropped by a commit overrun as
-> that can not yet be safely added to the page so that the reader can see
-> there were events dropped.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: fe832be05a8ee ("ring-buffer: Have mmapped ring buffer keep track of missed events")
-> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-
-This looks good to me.
-
-Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-
-Thanks!
-
+在 2025/5/14 下午9:46, Stefano Garzarella 写道:
+> From: Stefano Garzarella <sgarzare@redhat.com>
+>
+> This driver does not support interrupts, and receiving the response is
+> synchronous with sending the command.
+>
+> Enable synchronous send() with TPM_CHIP_FLAG_SYNC, which implies that
+> ->send() already fills the provided buffer with a response, and ->recv()
+> is not implemented.
+>
+> Reviewed-by: Sumit Garg <sumit.garg@oss.qualcomm.com>
+> Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
 > ---
-> Changes since v1: https://lore.kernel.org/20250527121140.0e7f0565@gandalf.local.home
-> 
-> - Added to the pr_info() the CPU that overflowed and the timestamp of the
->   page that overflowed, to make it easier for user space to know where it
->   happened.
-> 
-> - Restructured to have if (missed_events) be the main condition, as the sub
->   conditions only did something when missed_events was non-zero.
->   (Masami Hiramatsu)
-> 
->  kernel/trace/ring_buffer.c | 26 ++++++++++++++++++--------
->  1 file changed, 18 insertions(+), 8 deletions(-)
-> 
-> diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-> index ca1a8e706004..683aa57870fe 100644
-> --- a/kernel/trace/ring_buffer.c
-> +++ b/kernel/trace/ring_buffer.c
-> @@ -7285,8 +7285,8 @@ int ring_buffer_map_get_reader(struct trace_buffer *buffer, int cpu)
->  	/* Check if any events were dropped */
->  	missed_events = cpu_buffer->lost_events;
->  
-> -	if (cpu_buffer->reader_page != cpu_buffer->commit_page) {
-> -		if (missed_events) {
-> +	if (missed_events) {
-> +		if (cpu_buffer->reader_page != cpu_buffer->commit_page) {
->  			struct buffer_data_page *bpage = reader->page;
->  			unsigned int commit;
->  			/*
-> @@ -7307,13 +7307,23 @@ int ring_buffer_map_get_reader(struct trace_buffer *buffer, int cpu)
->  				local_add(RB_MISSED_STORED, &bpage->commit);
->  			}
->  			local_add(RB_MISSED_EVENTS, &bpage->commit);
-> +		} else if (!WARN_ONCE(cpu_buffer->reader_page == cpu_buffer->tail_page,
-> +				      "Reader on commit with %ld missed events",
-> +				      missed_events)) {
-> +			/*
-> +			 * There shouldn't be any missed events if the tail_page
-> +			 * is on the reader page. But if the tail page is not on the
-> +			 * reader page and the commit_page is, that would mean that
-> +			 * there's a commit_overrun (an interrupt preempted an
-> +			 * addition of an event and then filled the buffer
-> +			 * with new events). In this case it's not an
-> +			 * error, but it should still be reported.
-> +			 *
-> +			 * TODO: Add missed events to the page for user space to know.
-> +			 */
-> +			pr_info("Ring buffer [%d] commit overrun lost %ld events at timestamp:%lld\n",
-> +				cpu, missed_events, cpu_buffer->reader_page->page->time_stamp);
->  		}
-> -	} else {
-> -		/*
-> -		 * There really shouldn't be any missed events if the commit
-> -		 * is on the reader page.
-> -		 */
-> -		WARN_ON_ONCE(missed_events);
->  	}
->  
->  	cpu_buffer->lost_events = 0;
-> -- 
-> 2.47.2
-> 
+> v5:
+> - changed order and parameter names to match tpm_try_transmit() [Jarkko]
+> v4:
+> - added Sumit's R-b
+> - reworked commit description [Jarkko]
+> v2:
+> - set TPM_CHIP_FLAG_SYNC and support it in the new send()
+> - removed Jens' T-b
+> v1:
+> - added Jens' T-b
+> ---
+>   drivers/char/tpm/tpm_ftpm_tee.h |  4 ---
+>   drivers/char/tpm/tpm_ftpm_tee.c | 64 ++++++++++-----------------------
+>   2 files changed, 19 insertions(+), 49 deletions(-)
+>
+> diff --git a/drivers/char/tpm/tpm_ftpm_tee.h b/drivers/char/tpm/tpm_ftpm_tee.h
+> index e39903b7ea07..8d5c3f0d2879 100644
+> --- a/drivers/char/tpm/tpm_ftpm_tee.h
+> +++ b/drivers/char/tpm/tpm_ftpm_tee.h
+> @@ -22,16 +22,12 @@
+>    * struct ftpm_tee_private - fTPM's private data
+>    * @chip:     struct tpm_chip instance registered with tpm framework.
+>    * @session:  fTPM TA session identifier.
+> - * @resp_len: cached response buffer length.
+> - * @resp_buf: cached response buffer.
+>    * @ctx:      TEE context handler.
+>    * @shm:      Memory pool shared with fTPM TA in TEE.
+>    */
+>   struct ftpm_tee_private {
+>   	struct tpm_chip *chip;
+>   	u32 session;
+> -	size_t resp_len;
+> -	u8 resp_buf[MAX_RESPONSE_SIZE];
+>   	struct tee_context *ctx;
+>   	struct tee_shm *shm;
+>   };
+> diff --git a/drivers/char/tpm/tpm_ftpm_tee.c b/drivers/char/tpm/tpm_ftpm_tee.c
+> index dbad83bf798e..4e63c30aeaf1 100644
+> --- a/drivers/char/tpm/tpm_ftpm_tee.c
+> +++ b/drivers/char/tpm/tpm_ftpm_tee.c
+> @@ -31,47 +31,19 @@ static const uuid_t ftpm_ta_uuid =
+>   		  0x82, 0xCB, 0x34, 0x3F, 0xB7, 0xF3, 0x78, 0x96);
+>   
+>   /**
+> - * ftpm_tee_tpm_op_recv() - retrieve fTPM response.
+> - * @chip:	the tpm_chip description as specified in driver/char/tpm/tpm.h.
+> - * @buf:	the buffer to store data.
+> - * @count:	the number of bytes to read.
+> - *
+> - * Return:
+> - *	In case of success the number of bytes received.
+> - *	On failure, -errno.
+> - */
+> -static int ftpm_tee_tpm_op_recv(struct tpm_chip *chip, u8 *buf, size_t count)
+> -{
+> -	struct ftpm_tee_private *pvt_data = dev_get_drvdata(chip->dev.parent);
+> -	size_t len;
+> -
+> -	len = pvt_data->resp_len;
+> -	if (count < len) {
+> -		dev_err(&chip->dev,
+> -			"%s: Invalid size in recv: count=%zd, resp_len=%zd\n",
+> -			__func__, count, len);
+> -		return -EIO;
+> -	}
+> -
+> -	memcpy(buf, pvt_data->resp_buf, len);
+> -	pvt_data->resp_len = 0;
+> -
+> -	return len;
+> -}
+> -
+> -/**
+> - * ftpm_tee_tpm_op_send() - send TPM commands through the TEE shared memory.
+> + * ftpm_tee_tpm_op_send() - send TPM commands through the TEE shared memory
+> + * and retrieve the response.
+>    * @chip:	the tpm_chip description as specified in driver/char/tpm/tpm.h
+> - * @buf:	the buffer to send.
+> + * @buf:	the buffer to send and to store the response.
+>    * @bufsiz:	the size of the buffer.
+> - * @len:	the number of bytes to send.
+> + * @cmd_len:	the number of bytes to send.
+>    *
+>    * Return:
+> - *	In case of success, returns 0.
+> + *	In case of success, returns the number of bytes received.
+>    *	On failure, -errno
+>    */
+>   static int ftpm_tee_tpm_op_send(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
+> -				size_t len)
+> +				size_t cmd_len)
+>   {
+>   	struct ftpm_tee_private *pvt_data = dev_get_drvdata(chip->dev.parent);
+>   	size_t resp_len;
+> @@ -82,16 +54,15 @@ static int ftpm_tee_tpm_op_send(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
+>   	struct tee_param command_params[4];
+>   	struct tee_shm *shm = pvt_data->shm;
+>   
+> -	if (len > MAX_COMMAND_SIZE) {
+> +	if (cmd_len > MAX_COMMAND_SIZE) {
+>   		dev_err(&chip->dev,
+>   			"%s: len=%zd exceeds MAX_COMMAND_SIZE supported by fTPM TA\n",
+> -			__func__, len);
+> +			__func__, cmd_len);
+>   		return -EIO;
+>   	}
+>   
+>   	memset(&transceive_args, 0, sizeof(transceive_args));
+>   	memset(command_params, 0, sizeof(command_params));
+> -	pvt_data->resp_len = 0;
+>   
+>   	/* Invoke FTPM_OPTEE_TA_SUBMIT_COMMAND function of fTPM TA */
+>   	transceive_args = (struct tee_ioctl_invoke_arg) {
+> @@ -105,7 +76,7 @@ static int ftpm_tee_tpm_op_send(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
+>   		.attr = TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INPUT,
+>   		.u.memref = {
+>   			.shm = shm,
+> -			.size = len,
+> +			.size = cmd_len,
+>   			.shm_offs = 0,
+>   		},
+>   	};
+> @@ -117,7 +88,7 @@ static int ftpm_tee_tpm_op_send(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
+>   		return PTR_ERR(temp_buf);
+>   	}
+>   	memset(temp_buf, 0, (MAX_COMMAND_SIZE + MAX_RESPONSE_SIZE));
+> -	memcpy(temp_buf, buf, len);
+> +	memcpy(temp_buf, buf, cmd_len);
+>   
+>   	command_params[1] = (struct tee_param) {
+>   		.attr = TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INOUT,
+> @@ -158,17 +129,20 @@ static int ftpm_tee_tpm_op_send(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
+>   			__func__, resp_len);
+>   		return -EIO;
+>   	}
+> +	if (resp_len > bufsiz) {
+> +		dev_err(&chip->dev,
+> +			"%s: resp_len=%zd exceeds bufsiz=%zd\n",
+> +			__func__, resp_len, bufsiz);
+> +		return -EIO;
+> +	}
+>   
+> -	/* sanity checks look good, cache the response */
+> -	memcpy(pvt_data->resp_buf, temp_buf, resp_len);
+> -	pvt_data->resp_len = resp_len;
+> +	memcpy(buf, temp_buf, resp_len);
+
+We are confusing the callback name.  Prototype of the send function 
+should be:
+
+diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+index 6c3125300..063126711 100644
+--- a/include/linux/tpm.h
++++ b/include/linux/tpm.h
+@@ -87,7 +87,7 @@ struct tpm_class_ops {
+         const u8 req_complete_val;
+         bool (*req_canceled)(struct tpm_chip *chip, u8 status);
+         int (*recv) (struct tpm_chip *chip, u8 *buf, size_t len);
+-       int (*send) (struct tpm_chip *chip, u8 *buf, size_t len);
++       int (*send) (struct tpm_chip *chip, const u8 *buf, size_t len);
+         void (*cancel) (struct tpm_chip *chip);
+         u8 (*status) (struct tpm_chip *chip);
+         void (*update_timeouts)(struct tpm_chip *chip,
 
 
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+But if Jarkko insist not use a send_recv callback, everything is fine.
+
+BR, Qunqin
+
+>   
+> -	return 0;
+> +	return resp_len;
+>   }
+>   
+>   static const struct tpm_class_ops ftpm_tee_tpm_ops = {
+>   	.flags = TPM_OPS_AUTO_STARTUP,
+> -	.recv = ftpm_tee_tpm_op_recv,
+>   	.send = ftpm_tee_tpm_op_send,
+>   };
+>   
+> @@ -253,7 +227,7 @@ static int ftpm_tee_probe(struct device *dev)
+>   	}
+>   
+>   	pvt_data->chip = chip;
+> -	pvt_data->chip->flags |= TPM_CHIP_FLAG_TPM2;
+> +	pvt_data->chip->flags |= TPM_CHIP_FLAG_TPM2 | TPM_CHIP_FLAG_SYNC;
+>   
+>   	/* Create a character device for the fTPM */
+>   	rc = tpm_chip_register(pvt_data->chip);
+
 
