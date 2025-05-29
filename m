@@ -1,69 +1,72 @@
-Return-Path: <linux-kernel+bounces-666973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11803AC7ECE
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 15:35:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1291BAC7EC7
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 15:35:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48D22500D7D
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 13:35:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0749500A56
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 13:35:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33F3422ACF7;
-	Thu, 29 May 2025 13:35:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2239224AFB;
+	Thu, 29 May 2025 13:35:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="vghXUpSW"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="fMK3zD1I"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C707722A817;
-	Thu, 29 May 2025 13:35:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C4811C3F36;
+	Thu, 29 May 2025 13:34:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748525709; cv=none; b=PhhiCLX4rhVL9sTld2EXNNBvRbIxhbbBCMIOknJIhdnvgGLwXd4CoDYjyCTb1QQ2U+E8REAh/OrDyn5+V8qKKlw8psb4YCoB8jr76Yf8wLyaFVKw5c01lvpnIDz+/kzLcs7RFuHPLXebuMHqAHpQHX6533G+sAMLtObnUvNx/94=
+	t=1748525700; cv=none; b=mSfXBg2caYJze8CqAuUrQXNRt8EfroBf6UJo9oqU24XYol6Ue3UItaXxQ/yxEntTypiPZ0NHSj2P3hRTR/1MaOg7jv96tgpYkav+nTcDquwSJclKgXJg49iZU52FO0KGgR7A4f8RK9cO4oH6/hL5wiTmYjH2AFMED2xs7aFpq3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748525709; c=relaxed/simple;
-	bh=auCqu/A2chn9qI61rk0v6jutTIRphgbvOdGjnHKkFm0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ubZJZZvF8BlDXFlZQz/RPtNpSjqDmVuPL2czVwotnGXCYGOK28MxcdYIO7cTzyj0NgjV/LyRzrrPVdCGtvIsBkRNI2NSsEfTqrz1U4CChy7vWCMBfTjtEsb2s0EMVSUOGzlza6aclMotHAJD0WJCJl8m8hq4lqYU/OgS3dywZGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=vghXUpSW; arc=none smtp.client-ip=198.47.19.246
+	s=arc-20240116; t=1748525700; c=relaxed/simple;
+	bh=vaOZMCvLCmBp6mhm9kcgj12R05vDdhdjK/O0apb5kVI=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=B771snGtrGOeYWkSDBB4NgLWNR3A3e6gAxhH5HGMLDDeZFAshdPLcuTaT6MV771BmtMLsWof/h6eQAqL9XrDumefCIK35Tr1a0KgWWNRpiP6qGqgd/td7YnD9r9Bkq/1N3WyCFQy/6fKpflejhaE2xNqtQ17Nw3WObmLWgojYss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=fMK3zD1I; arc=none smtp.client-ip=198.47.23.235
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 54TDYmdk2378424;
-	Thu, 29 May 2025 08:34:48 -0500
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 54TDYpYQ2407009;
+	Thu, 29 May 2025 08:34:51 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1748525688;
-	bh=K+DtiYfEQ69sC7t4z3+fzWpvG+vUEJo0fRdsX7ekjuA=;
-	h=From:To:CC:Subject:Date;
-	b=vghXUpSWuGLL3sjMCs6OlUHRnvevqAB6XJJ55ppAiOYrh3Bq3ezxv2VL5Y9TMnimF
-	 iANUnWj5TpuNxMnNkAXGj44Bo4CkiwF7Pt2T4dVV/lg465sq71Fxkg/ngZEWuHweN7
-	 /toNIBThohwn49NZvxv52P63/MDlM2Ln1emY/RU4=
-Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
-	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 54TDYmqC2201524
+	s=ti-com-17Q1; t=1748525691;
+	bh=CMupLjWd2gTIRNUkkhAjmLP4EX857cqSjwQTFVZ2qhI=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=fMK3zD1IP7KzaJX1n0elp8xIOHfHYe5nBrUhElxCirsCpcf7ffTUQbG1MmyrfIxyt
+	 luD3/B5pD3U6svw3wZiVvCaX+FPNwB/69bnbYOzMUUulP6NIgN3ecMK5eyC4iNgNPn
+	 lkUCfC/qDyHsXblCd2KL9yp4dCxXx93IPB7HA2H0=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 54TDYpj7063926
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Thu, 29 May 2025 08:34:48 -0500
-Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+	Thu, 29 May 2025 08:34:51 -0500
+Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 29
- May 2025 08:34:48 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ May 2025 08:34:51 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 29 May 2025 08:34:48 -0500
+ Frontend Transport; Thu, 29 May 2025 08:34:51 -0500
 Received: from uda0492258.dhcp.ti.com (uda0492258.dhcp.ti.com [172.24.227.169])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 54TDYi8g1650971;
-	Thu, 29 May 2025 08:34:44 -0500
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 54TDYi8h1650971;
+	Thu, 29 May 2025 08:34:48 -0500
 From: Siddharth Vadapalli <s-vadapalli@ti.com>
 To: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
         <krzk+dt@kernel.org>, <conor+dt@kernel.org>
 CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
         <s-vadapalli@ti.com>
-Subject: [PATCH 00/13] TI-K3-DTS: Cleanup CPSW DT Nodes
-Date: Thu, 29 May 2025 19:04:30 +0530
-Message-ID: <20250529133443.1252293-1-s-vadapalli@ti.com>
+Subject: [PATCH 01/13] arm64: dts: ti: k3-am625-beagleplay: Enable "cpsw3g" in the board file
+Date: Thu, 29 May 2025 19:04:31 +0530
+Message-ID: <20250529133443.1252293-2-s-vadapalli@ti.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250529133443.1252293-1-s-vadapalli@ti.com>
+References: <20250529133443.1252293-1-s-vadapalli@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,81 +77,29 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hello,
+In preparation for disabling "cpsw3g" device-tree node in the SoC file,
+namely "k3-am62-main.dtsi", enable it in the board file. The motivation
+for this change is that of following the existing convention of disabling
+nodes in the SoC file and only enabling the required ones in the board
+file.
 
-This series cleans up the CPSW Device-tree nodes by updating the SoC and
-board files to keep CPSW disabled in the SoC files and enable it only in
-the board files.
+Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+---
+ arch/arm64/boot/dts/ti/k3-am625-beagleplay.dts | 1 +
+ 1 file changed, 1 insertion(+)
 
-The following is a summary of the SoCs, CPSW instance and the Boards that
-this series affects:
-
------    -------    ----------------  --------------------------------------------
-S.No.      SoC        CPSW Instance                    Board(s)
------    -------    ----------------  --------------------------------------------
-  1.       AM62          CPSW3G           AM625-Beagleplay, AM62-LP-SK, AM625-SK
-  2.       AM65        MCU CPSW2G         AM654-Base-Board, IOT-2050 Based Boards
-  3.       J7200       MCU CPSW2G         J7200-Common-Processor-Board
-  4.       J721E       MCU CPSW2G         J721E-Common-Processor-Board
-  5.       J721S2      MCU CPSW2G         J721S2-Common-Processor-Board
-
-Series is based on linux-next tagged next-20250529.
-
-I am posting this series to receive feedback and Reviewed-by / Tested-by tags.
-I will repost the series when the merge window opens.
-
-Logs:
-1. AM625-SK:
-https://gist.github.com/Siddharth-Vadapalli-at-TI/aa812fda8c0653f387931bb90f12cdd0
-2. AM654-Base-Board:
-https://gist.github.com/Siddharth-Vadapalli-at-TI/128b7ef2e0c371db4c8b3a4c4ddefcc6
-3. J7200-Common-Processor-Board:
-https://gist.github.com/Siddharth-Vadapalli-at-TI/66837169f7370faa2dae05cb39bdaad5
-4. J721E-Common-Processor-Board:
-https://gist.github.com/Siddharth-Vadapalli-at-TI/ad0f12f9aab3cd9b55f221062c53493d
-5. J721S2-Common-Processor-Board:
-https://gist.github.com/Siddharth-Vadapalli-at-TI/07dd468558f90d7637f8536d935d2368
-
-Regards,
-Siddharth.
-
-Siddharth Vadapalli (13):
-  arm64: dts: ti: k3-am625-beagleplay: Enable "cpsw3g" in the board file
-  arm64: dts: ti: k3-am62-lp-sk: Enable "cpsw3g" in the board file
-  arm64: dts: ti: k3-am625-sk: Enable "cpsw3g" in the board file
-  arm64: dts: ti: k3-am62-main: Disable "cpsw3g" in the SoC file
-  arm64: dts: ti: k3-am654-base-board: Enable "mcu_cpsw" in board file
-  arm64: dts: ti: k3-am65-mcu: Disable "mcu_cpsw" in the SoC file
-  arm64: dts: ti: iot2050-common: Remove redundant "mcu_cpsw" node
-    status
-  arm64: dts: ti: k3-j7200-common-proc-board: Enable "mcu_cpsw" in board
-    file
-  arm64: dts: ti: k3-j7200-mcu-wakeup: Disable "mcu_cpsw" in the SoC
-    file
-  arm64: dts: ti: k3-j721e-common-proc-board: Enable "mcu_cpsw" in board
-    file
-  arm64: dts: ti: k3-j721e-mcu-wakeup: Disable "mcu_cpsw" in the SoC
-    file
-  arm64: dts: ti: k3-j721s2-common-proc-board: Enable "mcu_cpsw" in
-    board file
-  arm64: dts: ti: k3-j721s2-mcu-wakeup: Disable "mcu_cpsw" in the SoC
-    file
-
- arch/arm64/boot/dts/ti/k3-am62-lp-sk.dts               | 4 ++++
- arch/arm64/boot/dts/ti/k3-am62-main.dtsi               | 2 ++
- arch/arm64/boot/dts/ti/k3-am625-beagleplay.dts         | 1 +
- arch/arm64/boot/dts/ti/k3-am625-sk.dts                 | 1 +
- arch/arm64/boot/dts/ti/k3-am65-iot2050-common.dtsi     | 4 ----
- arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi                | 2 ++
- arch/arm64/boot/dts/ti/k3-am654-base-board.dts         | 1 +
- arch/arm64/boot/dts/ti/k3-j7200-common-proc-board.dts  | 1 +
- arch/arm64/boot/dts/ti/k3-j7200-mcu-wakeup.dtsi        | 2 ++
- arch/arm64/boot/dts/ti/k3-j721e-common-proc-board.dts  | 1 +
- arch/arm64/boot/dts/ti/k3-j721e-mcu-wakeup.dtsi        | 2 ++
- arch/arm64/boot/dts/ti/k3-j721s2-common-proc-board.dts | 1 +
- arch/arm64/boot/dts/ti/k3-j721s2-mcu-wakeup.dtsi       | 2 ++
- 13 files changed, 20 insertions(+), 4 deletions(-)
-
+diff --git a/arch/arm64/boot/dts/ti/k3-am625-beagleplay.dts b/arch/arm64/boot/dts/ti/k3-am625-beagleplay.dts
+index 72b09f9c69d8..999f5baaba1a 100644
+--- a/arch/arm64/boot/dts/ti/k3-am625-beagleplay.dts
++++ b/arch/arm64/boot/dts/ti/k3-am625-beagleplay.dts
+@@ -585,6 +585,7 @@ &usb1 {
+ };
+ 
+ &cpsw3g {
++	status = "okay";
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&rgmii1_pins_default>, <&spe_pins_default>,
+ 		    <&gbe_pmx_obsclk>;
 -- 
 2.34.1
 
