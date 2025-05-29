@@ -1,137 +1,97 @@
-Return-Path: <linux-kernel+bounces-667139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-667135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4047EAC80F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 18:32:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF5B5AC80E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 18:30:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8A281C0297E
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 16:32:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA4594A786E
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 16:30:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3FB922D7B8;
-	Thu, 29 May 2025 16:32:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD6AB22DFB1;
+	Thu, 29 May 2025 16:30:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TtX2/Q4p"
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="aNADSTtT"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2D4B2288C3;
-	Thu, 29 May 2025 16:32:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E49FD22DF8E;
+	Thu, 29 May 2025 16:29:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748536328; cv=none; b=CZ1hMAmzZfKDjAH1SpbV2VbY1+6cOj4TM9YMLnqBTWht0mO1i9pYNTMiOg1SzeS4T3kV+sMjBIEkv2YFPOw98htPTcZXYJ8GJdFUug/WVMx4cy4KXZOFG0yogMSBCPT8dow3cL6Zn/s2u79kjlJDYb2YhvXcj1jnLN9hazOlDHA=
+	t=1748536202; cv=none; b=UzCg8xDQ1K65bkq0MzKeGpgUXTtqpIfCbSg+/5Z8A2kZlnUYAMo8Di6eqQZ8xgUQp0FizyiL1Y4+bGqzlLieugpzLpVYIQ4TSeuRJ0pT1i7aVwV2qowyRSYHZE21qcjwCneHpzTRHcdKcUlWuyPrQFt3iOtZg/ei6UJ6axMaeUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748536328; c=relaxed/simple;
-	bh=6BLCx+5MPlkzOTxHiphi/Qzy0q2UMfB5Z+Ufuf/uG8E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QKpgytfpVLbAXJAexwULe485XdE72BTW4a3qIRaLPPJ24rCKwnyw506aolLays/A+IqrbckyU6WBhhcfEXJgzv+ievItvPBSHmR4UlDSY+K0c0K87efP0l6inOKR/9HxCT97Jovzqrd7EvpAvj34KVsVGSkCA9J0DQErCuRT7MI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TtX2/Q4p; arc=none smtp.client-ip=209.85.219.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6fab54e8bbeso12029276d6.0;
-        Thu, 29 May 2025 09:32:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748536325; x=1749141125; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gkBRRqJSagqyTkfCz1bAUQKHe0riFK6F2xCu+0q7Xlg=;
-        b=TtX2/Q4pkRgLamUshac4EJW2SF8BnVrMJsvKhdeB4q7FIR/A7DTKvr+5GlthU+LuKc
-         jEwGsfzcJwB8W92HOIStRXqQnMWyDFd8DL1G4NJREt68WCvA4828hvawV98WQCaeVzoy
-         zuDRwBgQLXn+1jYuij6TOU7vUfOyjosx8k2o1vULP/iGLT6N+FVswi+fLLCAmnLQzsz8
-         xgXMf7UvY4+Z9WuiwL+l2pWEfYVyK2+xbyHSLZE9Ga65G4ByEbv5BkLfH0SMUYHtLkJV
-         cnXT6eJeaoncbdSKviVXVnjM636fqO4eRRga3qUe5QU9k9Gd9icBpwIXuh1TkoLJDeOi
-         xtLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748536325; x=1749141125;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:sender:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=gkBRRqJSagqyTkfCz1bAUQKHe0riFK6F2xCu+0q7Xlg=;
-        b=PFfWffGFLaRq8/h6w0JrNAyz7NMNP+0kbA7r4gDGm4vMzV87YpkaXLHvW1qxKaFxST
-         GOkAmYBRXPrfkwVAl7o3i6CsrWo+mC4B8vZu4yE/zwiAhwz6dbEmQEM7+STt8TcLbfPc
-         VnxBUqlPg/t7mlrHdF0AXntakSSgG9RohSgAVSBo0+XwaRkC17kO0Rd1C18Z4MXJbkUP
-         kUfF59nEGqS0AjNYadUDnus1M5vHNYir3YxEAV2ULDncF5qj3gEgOE4VrHviwQxA6Fm5
-         cizzxUwFeeGLv2rqhNBOPJf5dt+ohotOtWA+RSIrNPseNDLSj9fm46M89og0Im7pYctl
-         gilQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXnTftlOABOah4HEL74oRQ1hmFxpf2Ew2JoRquhAik4v9vrVgKzde4PJNPsnECWAJ1C1rLSqN7vE7p4hTE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzA12XjCe0C/EnUPFDhl/ndA9AenHExAr7/w6YKQKhOtBOzN+NG
-	JvivhQqGGAjqOpIBykpn77iYulK2/vWm0tFZM/2c8oBxTrkB7m6iFhAH
-X-Gm-Gg: ASbGncvevJi2rrGFgeXOgHauFqHAIXzxZex97kSDFkwX/lQ6/fdTS2zeraRMAi66D76
-	8HGiU2c9plUiMNSoxo/jFz442WCL2ltYSE+Sfc3Jcj52Q6runZDnjH3ea9uESLF0LaRm8Gz0va2
-	w1D3wWzVhq9Mxf2nrZXHNocqDxys2ADU+u39JqPpZ0Sg87hmnrLggGqeJaiyUOWUzn8gZgG/Z/H
-	3CkhqwXz4m2SfyqkQp0WrsHish11DrnMmIa7E5dT2Cm7C40w7/bXnN+mdmkmQ7v8ya807V4TukA
-	Gb+J7XMF2NzAwIHh0dxficPsoa9p12+1TmBYcfMs7AgXuakCjBXtYPf1equjsXSsBCbngsHoVJB
-	DESi5vpzV1CuG45eqXdit7MeF88rugtYAeg==
-X-Google-Smtp-Source: AGHT+IHaIdB1RVflLTevGHMAX/FYpi5gxsFdRsWzGtbC7W5+u10H7UL53E2oLvuyzL5g0UngxWnC2w==
-X-Received: by 2002:a05:6214:d88:b0:6fa:bb44:fddf with SMTP id 6a1803df08f44-6facebb6d12mr4355526d6.16.1748536325506;
-        Thu, 29 May 2025 09:32:05 -0700 (PDT)
-Received: from localhost.localdomain (static-198-44-159-42.cust.tzulo.com. [198.44.159.42])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6fac6d5b3e7sm11208276d6.61.2025.05.29.09.32.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 May 2025 09:32:05 -0700 (PDT)
-Sender: George Gaidarov <gdgaidarov@gmail.com>
-From: George Gaidarov <gdgaidarov+lkml@gmail.com>
-To: Tony Luck <tony.luck@intel.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Jason Baron <jbaron@akamai.com>
-Cc: linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	James Morse <james.morse@arm.com>,
-	Robert Richter <rric@kernel.org>,
-	George Gaidarov <gdgaidarov+lkml@gmail.com>
-Subject: [PATCH 2/2] EDAC/ie31200: Document which CPUs correspond to each Raptor Lake-S device ID
-Date: Thu, 29 May 2025 16:29:33 +0000
-Message-ID: <20250529162933.1228735-2-gdgaidarov+lkml@gmail.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250529162933.1228735-1-gdgaidarov+lkml@gmail.com>
-References: <20250529162933.1228735-1-gdgaidarov+lkml@gmail.com>
+	s=arc-20240116; t=1748536202; c=relaxed/simple;
+	bh=cHC5WHbEaJiuhxsuxlzB9f6LP8cIKNXdNA6XZ3a5How=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fInYbKeKq+WPsPcO/chSmf/xVp6QyQocC8Zz94H0RCrduUA28RcEJmaCBT5pLqX2vuqRLCxXAalSHq5ip2jU56w/S49/R0eqtpS7KuLASoZlqIUhQbQYsIkaf01r0e3yq26awDqr8gvSAO1zMEnZKNF3HgM8Qro2/h4ntTytNPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=aNADSTtT; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=2ROEfGs105IHaeH5xuCxgG1C8SsFk2j1G03w+ZOsJUg=; b=aNADSTtTgd5KKMFX4Rm0nf0gHl
+	HzZWzw7JvPDyh9a18qfJZxA/TUZljPkO7xFQdYpTgj+hmSgqlctoifkmV3ngNW5RF4ELFPpRuTW8d
+	IZMMlCgcvUcX4dzZGbjF5JKsD54f/Wz5TGgwK5aBDbdib3jANcJNiRNSxCA9tAyfpw0E=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uKg8W-00EHbS-FC; Thu, 29 May 2025 18:29:44 +0200
+Date: Thu, 29 May 2025 18:29:44 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Sean Anderson <sean.anderson@linux.dev>
+Cc: "Gupta, Suraj" <Suraj.Gupta2@amd.com>,
+	"andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"edumazet@google.com" <edumazet@google.com>,
+	"kuba@kernel.org" <kuba@kernel.org>,
+	"pabeni@redhat.com" <pabeni@redhat.com>,
+	"vkoul@kernel.org" <vkoul@kernel.org>,
+	"Simek, Michal" <michal.simek@amd.com>,
+	"Pandey, Radhey Shyam" <radhey.shyam.pandey@amd.com>,
+	"horms@kernel.org" <horms@kernel.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"git (AMD-Xilinx)" <git@amd.com>,
+	"Katakam, Harini" <harini.katakam@amd.com>
+Subject: Re: [PATCH net-next] net: xilinx: axienet: Configure and report
+ coalesce parameters in DMAengine flow
+Message-ID: <6c99b7f5-b529-4efd-a065-1e0ebf01468e@lunn.ch>
+References: <20250525102217.1181104-1-suraj.gupta2@amd.com>
+ <679d6810-9e76-425c-9d4e-d4b372928cc3@linux.dev>
+ <BL3PR12MB6571ABA490895FDB8225CAEBC967A@BL3PR12MB6571.namprd12.prod.outlook.com>
+ <d5be7218-8ec1-4208-ac24-94d4831bfdb6@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d5be7218-8ec1-4208-ac24-94d4831bfdb6@linux.dev>
 
-Based on table 103 ("Host Device ID (DID0)") in [1], document which CPUs
-correspond to each Raptor Lake-S device ID for better readability.
+> Yeah, but the reason is that you are trading latency for throughput.
+> There is only one queue, so when the interface is saturated you will not
+> get good latency anyway (since latency-sensitive packets will get
+> head-of-line blocked). But when activity is sparse you can good latency
+> if there is no coalescing. So I think coalescing should only be used
+> when there is a lot of traffic. Hence why I only adjusted the settings
+> once I implemented DIM. I think you should be able to implement it by
+> calling net_dim from axienet_dma_rx_cb, but it will not be as efficient
+> without NAPI.
+> 
+> Actually, if you are looking into improving performance, I think lack of
+> NAPI is probably the biggest limitation with the dmaengine backend.
 
-[1] https://www.intel.com/content/www/us/en/content-details/743844/13th-generation-intel-core-intel-core-14th-generation-intel-core-processor-series-1-and-series-2-and-intel-xeon-e-2400-processor-datasheet-volume-1-of-2.html
+It latency is the goal, especially for mixing high and low priority
+traffic, having BQL implemented is also important. Does this driver
+have that?
 
-Signed-off-by: George Gaidarov <gdgaidarov+lkml@gmail.com>
----
- drivers/edac/ie31200_edac.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/edac/ie31200_edac.c b/drivers/edac/ie31200_edac.c
-index 1812ebd19ece..42e332ecd6d0 100644
---- a/drivers/edac/ie31200_edac.c
-+++ b/drivers/edac/ie31200_edac.c
-@@ -86,12 +86,12 @@
- #define PCI_DEVICE_ID_INTEL_IE31200_HB_CFL_10   0x3eca
- 
- /* Raptor Lake-S */
--#define PCI_DEVICE_ID_INTEL_IE31200_RPL_S_1	0xa703
--#define PCI_DEVICE_ID_INTEL_IE31200_RPL_S_2	0x4640
--#define PCI_DEVICE_ID_INTEL_IE31200_RPL_S_3	0x4630
--#define PCI_DEVICE_ID_INTEL_IE31200_RPL_S_4	0xa700
--#define PCI_DEVICE_ID_INTEL_IE31200_RPL_S_5	0xa740
--#define PCI_DEVICE_ID_INTEL_IE31200_RPL_S_6	0xa704
-+#define PCI_DEVICE_ID_INTEL_IE31200_RPL_S_1	0xa703 /* 8P+8E,  e.g. i7-13700 */
-+#define PCI_DEVICE_ID_INTEL_IE31200_RPL_S_2	0x4640 /* 6P+8E,  e.g. i5-13500, i5-13600, i5-14500 */
-+#define PCI_DEVICE_ID_INTEL_IE31200_RPL_S_3	0x4630 /* 4P+0E,  e.g. i3-13100E */
-+#define PCI_DEVICE_ID_INTEL_IE31200_RPL_S_4	0xa700 /* 8P+16E, e.g. i9-13900, i9-14900 */
-+#define PCI_DEVICE_ID_INTEL_IE31200_RPL_S_5	0xa740 /* 8P+12E, e.g. i7-14700 */
-+#define PCI_DEVICE_ID_INTEL_IE31200_RPL_S_6	0xa704 /* 6P+8E,  e.g. i5-14600 */
- 
- /* Alder Lake-S */
- #define PCI_DEVICE_ID_INTEL_IE31200_ADL_S_1	0x4660
--- 
-2.49.0
-
+	Andrew
 
