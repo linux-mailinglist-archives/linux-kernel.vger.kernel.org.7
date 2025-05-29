@@ -1,85 +1,82 @@
-Return-Path: <linux-kernel+bounces-666444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 964B5AC76DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 05:57:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50F24AC76E8
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 05:59:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EAF03AFE3D
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 03:57:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7149616BEF6
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 03:58:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B2422528EF;
-	Thu, 29 May 2025 03:56:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D28224E010;
+	Thu, 29 May 2025 03:57:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="p10y3Y2e"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="B/OkPjk0"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CC2D2222D9;
-	Thu, 29 May 2025 03:56:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 855A324C66F
+	for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 03:57:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748491013; cv=none; b=Y8rzqzCX7tYOzHyjHofqV8XOCsgwWog0w2YPDOSfaPfM+t/umAeFQBQATSokX7ZQNm3tTXDcWovGKrHbI7l4WJunXFRxtj7c+rvbNmyZAItrsX1DjxCywuCm2a8th2PSY6DVaVpA7Z9sYTrM88KKqGH06wwaq2ICAXom4CK1oB4=
+	t=1748491037; cv=none; b=L5Hp5pCwzfFGl1WiQ/hhk+5aox5txuW5vaqJRg4l7o+hwxyiyTfOkVKqZsv10+ayxrR21Ie9NK9VNu/0ugkXuQXnPVs1oKnXYAk+jHTVIdaxqXP4Z4lxI8eUHAOOLzN8AoUHsgMwl0Q6Zj64Jfk0FjYEMQmVmPNox+F/CGzoDWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748491013; c=relaxed/simple;
-	bh=PfxoTuVJ/a+LjTpUMJfn4qbXf7xz2S5g54xSW+wdud0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=PYoesjj9F8oZNi/sLoHb19dysFcUPbYsnYngJJgUHLHoyoDDMGS8EV0bex7masfTgSwTdfEKnE26rUUXy0JS+L6J+hq3OGUf+uTNh8oMy2RG8yogk5YY7O2g68pqtkqUJNUSG1sfzPVXw6q4Kb+Ud3zX26PtL3cJ3eqWhimjjdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=p10y3Y2e; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54SMbGeM019422;
-	Thu, 29 May 2025 03:56:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=xvoCyDbGw34
-	B660gAA0SqF82bVjpavSVxQxThIP+JHE=; b=p10y3Y2emgc0buL0azjUECyRN3D
-	VOWTejxta0Oa9X+DLcQN8wR/eAQ+z5rhMFmiY1+CekFEBTm5sGtI8KsPPx7Ksdeq
-	ccIft1ypv7KalzmvDQC7Weq5NDLnQaLOgHGUVpBXwNr+h19ge83UCYervQDjOqb7
-	p4UacJVHN5rDnzxUPAPuovLvK9nSVUnXqOrl/AT/4g2bJ0a9zQ99MvYzHn8dT9yZ
-	EXsD0n1RPp+65AYW/C3SOQCPoPVTgFGh267mmdj+/kRHbEZKs0oL3ok7lJeyOjNN
-	7EwfPx7Crurj26I6pJE2y0cUC30ohlwcs8dcg7tx9sk8X7+b1YtfH6w+bxw==
-Received: from aptaippmta02.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46w992pfbw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 29 May 2025 03:56:43 +0000 (GMT)
-Received: from pps.filterd (APTAIPPMTA02.qualcomm.com [127.0.0.1])
-	by APTAIPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 54T3ufv9013295;
-	Thu, 29 May 2025 03:56:41 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 46u76mdpec-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 29 May 2025 03:56:41 +0000
-Received: from APTAIPPMTA02.qualcomm.com (APTAIPPMTA02.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 54T3uelK013290;
-	Thu, 29 May 2025 03:56:40 GMT
-Received: from cse-cd02-lnx.ap.qualcomm.com (cse-cd02-lnx.qualcomm.com [10.64.75.246])
-	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 54T3uepm013284
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 29 May 2025 03:56:40 +0000
-Received: by cse-cd02-lnx.ap.qualcomm.com (Postfix, from userid 4438065)
-	id 930A43163; Thu, 29 May 2025 11:56:37 +0800 (CST)
-From: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
-To: lpieralisi@kernel.org, kwilczynski@kernel.org,
-        manivannan.sadhasivam@linaro.org, robh@kernel.org, bhelgaas@google.com,
-        krzk+dt@kernel.org, neil.armstrong@linaro.org, abel.vesa@linaro.org,
-        kw@linux.com, conor+dt@kernel.org, vkoul@kernel.org, kishon@kernel.org,
-        andersson@kernel.org, konradybcio@kernel.org
-Cc: linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, quic_qianyu@quicinc.com,
-        quic_krichai@quicinc.com, quic_vbadigan@quicinc.com,
-        Ziyue Zhang <quic_ziyuzhan@quicinc.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: [PATCH v6 6/6] arm64: dts: qcom: qcs8300-ride: enable pcie1 interface
-Date: Thu, 29 May 2025 11:56:35 +0800
-Message-Id: <20250529035635.4162149-7-quic_ziyuzhan@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250529035635.4162149-1-quic_ziyuzhan@quicinc.com>
-References: <20250529035635.4162149-1-quic_ziyuzhan@quicinc.com>
+	s=arc-20240116; t=1748491037; c=relaxed/simple;
+	bh=qeSeweZV4uyYGTBRpljsHzDiuUT9QNThQucSYH9GwD4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=l3O5XwDgOX9DlIMfy8CRNoTNpfQYhVsgx8d9GODLGqTHEnAQQttNizFLzRsvTmqzfZMwXAiG2UprSZgmvDuwqruEjLcc9Rb1mYlE6hGLfPNn+qNviW0/1jaG8a/bvwJX8TQLYafV2Roiotjnp3pvyVVM/mhIZnuMJAviXaTyJZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=B/OkPjk0; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-234c5b57557so5167305ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 28 May 2025 20:57:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1748491035; x=1749095835; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ujQ501UPaq8iguu/+DN99t0pQZyaz+0Ycpf8UljFkFE=;
+        b=B/OkPjk0DGFJrnckvysxsmdVZI9uw+Axc+26ONkueUiFNLW66ULZWD4p4K/JfsNvi2
+         HEX5D3+oNGtuxJ8k7kVnN7m6mzcrtbXRA0YQx1oJeUPfMt5ctOZUmCPadfM+1Ud6zHsM
+         StHNvowleWCipNU/aUcZO2hRJHs/dkArpunv4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748491035; x=1749095835;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ujQ501UPaq8iguu/+DN99t0pQZyaz+0Ycpf8UljFkFE=;
+        b=ccyxiDqACKJrf67470NwlezEvuFToi+6WuLn2kCBWZC0tX55PlOTyHYMKAhTyOAAVX
+         cnyUl81/fV6s17WSiranL+pbgdh88OBktOyOzUqVqMpZzsom/1OBwK83SIXBLIYJ3+/L
+         GPwaSM9wcXxqStC3UwnOzQ52WilQD185KILVxqcjzyWoQqBciLaJCT/IC5h+3Bd6yAh6
+         heC10dLrUYiv0Odr3zH03sqW+4i33IwtXjiJREJx2qZFkDXv/TiJ8kizOGdT7iHKuXyE
+         tZjBJLxJ4zrhQ/GqgqXxvYccNtC9qF81pTxLhlp7tphJjRsXkYZ/0yJ9ef44lUBazP/h
+         KW6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUPBidVFdzFf8+kuWo67/Bpvl/8VteMaJuJ7b0ZpwbEpotj9TDG+rmYeDAT7DYuKRbyD5s7asVeRBz+/h0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvSBrIda5OZeFUpza/GupXudSPPNvu6Ueed6Zc4Ta3QsyHA+I6
+	ga14hDSX5J4D4Fczf9qscbN9Dk41Ff2uZR8EgtgNxOtWMR5vemDMG17PXW4uFiC34g==
+X-Gm-Gg: ASbGncu2Ppvf3pmDEEQibGO3v5by1zwx88W40D+gEdRhK1IoSXGupdPKT6xMXAfov2T
+	1ZCZWi6jo8Ghg7LADyBgctdBbqNUvmTD+p8XdOQ/0MzTLn2ej/mnwAFVoRzQQnTjcRrSzayy+0I
+	LPmU8JIjORWvTwFdlF7ArRHefm/SuWoMx8P6hPxT+n0OKNtwG1CThImcVy1x2fTVBFokxviwoWZ
+	2Ds1qntQ4bxGi7DFkbcpjhuTGXB9j6qGN2TWQwBW8PiOx0x+fgVMRTfb51XjL89TP2loT4lDO1t
+	eIRDEswtlcAXcBZRc4zx7k4g85dhVAkVJNiAc1M9qEPPF7if0wdVDko+dNxZwPxyfdMzu3RTfEf
+	t1xp3FnTzoMI=
+X-Google-Smtp-Source: AGHT+IGIABTdusK3hOipL/Wbdz4EXI+YD5CIdyPMuRvBzLsXeRqHjKpFqiBUS36SMFASd9Lh/nCNxw==
+X-Received: by 2002:a17:902:d2d1:b0:22f:a932:5374 with SMTP id d9443c01a7336-23414fc9852mr336996785ad.48.1748491034584;
+        Wed, 28 May 2025 20:57:14 -0700 (PDT)
+Received: from tigerii.tok.corp.google.com ([2401:fa00:8f:203:c024:f903:4009:8c8])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23506cf5179sm3488735ad.190.2025.05.28.20.57.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 May 2025 20:57:14 -0700 (PDT)
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Jeff Johnson <jjohnson@kernel.org>
+Cc: linux-wireless@vger.kernel.org,
+	ath11k@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: [PATCHv2] wifi: ath11k: mark reset srng lists as uninitialized
+Date: Thu, 29 May 2025 12:56:43 +0900
+Message-ID: <20250529035708.3136232-1-senozhatsky@chromium.org>
+X-Mailer: git-send-email 2.49.0.1204.g71687c7c1d-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,101 +84,37 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI5MDAzNCBTYWx0ZWRfX52pXkFFxo5eT
- MVYgBa4k/CJeS+QCCvNnGl4sJlwpbenxXth6muZJHdLQWUiMcHPWddB21gluTBSPx/ZWWjQmKRm
- b3PNrYuSYSltP3T64AQbarI/IwGDICfFEhO+AK4lXXHQFHba36EsIFDkurXgF8OD4TJN6ytdd1f
- GuZJfaD5/uYUoZL4rU7xt9TPalMXtlHV7TREx7z2flAXoPxp2Tto4QICMECZ9+VGFLXO6vNLcdF
- duTwh7xG7vGoMAzJPK7GWxKHw4dl7nRL7EIq2rruL7O2IJx2ygzEHAyf+BYJkG1c5LMs1UcWqF3
- lu0SZzesBLx1ByZtBRg/1gohw+7tMIwfkwaxVwH0pQqpDwJjm9j9jzFAReE15FoLbsLhL35aay7
- hqV9eXEQ57UYNXkUFUdxOF/3WbLN3Q7sOs9PmI7ppJoFQjMVFhnawbaIRH8WJqV2CdPlK1Jb
-X-Authority-Analysis: v=2.4 cv=Fes3xI+6 c=1 sm=1 tr=0 ts=6837dafb cx=c_pps
- a=nuhDOHQX5FNHPW3J6Bj6AA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=dt9VzEwgFbYA:10 a=EUspDBNiAAAA:8 a=COk6AnOGAAAA:8 a=7eNM2EdRHZFxniqUpJIA:9
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: oyjdhu9PqR5VDXIRWMb4knIA9CUhGiFr
-X-Proofpoint-ORIG-GUID: oyjdhu9PqR5VDXIRWMb4knIA9CUhGiFr
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-29_01,2025-05-27_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- mlxscore=0 malwarescore=0 impostorscore=0 phishscore=0 clxscore=1015
- lowpriorityscore=0 bulkscore=0 priorityscore=1501 mlxlogscore=999 spamscore=0
- adultscore=0 suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505160000
- definitions=main-2505290034
 
-Add configurations in devicetree for PCIe1, board related gpios,
-PMIC regulators, etc for qcs8300-ride platform.
+ath11k_hal_srng_deinit() frees rdp and wrp which are used
+by srng lists.  Mark srng lists as not-initialized.  This
+makes sense, for instance, when device fails to resume
+and the driver calls ath11k_hal_srng_deinit() from
+ath11k_core_reconfigure_on_crash().
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Signed-off-by: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
+Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
 ---
- arch/arm64/boot/dts/qcom/qcs8300-ride.dts | 40 +++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs8300-ride.dts b/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
-index 6384d1873415..a1279ecfce85 100644
---- a/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
-+++ b/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
-@@ -321,6 +321,23 @@ &pcie0_phy {
- 	status = "okay";
- };
+v2: fixed subject line and updated commit message
+
+ drivers/net/wireless/ath/ath11k/hal.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/net/wireless/ath/ath11k/hal.c b/drivers/net/wireless/ath/ath11k/hal.c
+index 8cb1505a5a0c..cab11a35f911 100644
+--- a/drivers/net/wireless/ath/ath11k/hal.c
++++ b/drivers/net/wireless/ath/ath11k/hal.c
+@@ -1346,6 +1346,10 @@ EXPORT_SYMBOL(ath11k_hal_srng_init);
+ void ath11k_hal_srng_deinit(struct ath11k_base *ab)
+ {
+ 	struct ath11k_hal *hal = &ab->hal;
++	int i;
++
++	for (i = 0; i < HAL_SRNG_RING_ID_MAX; i++)
++		ab->hal.srng_list[i].initialized = 0;
  
-+&pcie1 {
-+	perst-gpios = <&tlmm 23 GPIO_ACTIVE_LOW>;
-+	wake-gpios = <&tlmm 21 GPIO_ACTIVE_HIGH>;
-+
-+	pinctrl-0 = <&pcie1_default_state>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
-+
-+&pcie1_phy {
-+	vdda-phy-supply = <&vreg_l6a>;
-+	vdda-pll-supply = <&vreg_l5a>;
-+
-+	status = "okay";
-+};
-+
- &qupv3_id_0 {
- 	status = "okay";
- };
-@@ -369,6 +386,29 @@ perst-pins {
- 		};
- 	};
- 
-+   pcie1_default_state: pcie1-default-state {
-+		wake-pins {
-+			pins = "gpio21";
-+			function = "gpio";
-+			drive-strength = <2>;
-+			bias-pull-up;
-+		};
-+
-+		clkreq-pins {
-+			pins = "gpio22";
-+			function = "pcie1_clkreq";
-+			drive-strength = <2>;
-+			bias-pull-up;
-+		};
-+
-+		perst-pins {
-+			pins = "gpio23";
-+			function = "gpio";
-+			drive-strength = <2>;
-+			bias-pull-down;
-+		};
-+	};
-+
- 	ethernet0_default: ethernet0-default-state {
- 		ethernet0_mdc: ethernet0-mdc-pins {
- 			pins = "gpio5";
+ 	ath11k_hal_unregister_srng_key(ab);
+ 	ath11k_hal_free_cont_rdp(ab);
 -- 
-2.34.1
+2.49.0.1204.g71687c7c1d-goog
 
 
