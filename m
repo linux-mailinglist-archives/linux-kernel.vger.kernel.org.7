@@ -1,101 +1,103 @@
-Return-Path: <linux-kernel+bounces-666408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D98BAC7660
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 05:18:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 226FFAC7663
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 05:19:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6C2A17B0DC
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 03:18:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6552A4A4B2B
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 03:18:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D91224E4C3;
-	Thu, 29 May 2025 03:14:15 +0000 (UTC)
-Received: from ssh247.corpemail.net (ssh247.corpemail.net [210.51.61.247])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 847A625229D;
+	Thu, 29 May 2025 03:17:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="kbhJspqm"
+Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ECEB24E008
-	for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 03:14:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.61.247
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E83791B4231
+	for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 03:16:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748488454; cv=none; b=mQx1JNUiDMvDWtXtkcV0Xqw1Z8N8jJb3+4nTV0kX+qvLmLHTfTi12bCxmJSPxwqLuawBeh0EhbetwkS0nP3Y83+cZ4Y5lXrz2frZveIzHPC7h4aJdv+1BDi4UN52wJcDdswTt1KaKj0dmej82wNSHzovGtFYP3NAXRprVATQCjg=
+	t=1748488620; cv=none; b=BBz77sIxbOzC4u9FVafXB7pvRG8HJRnLo5Xkb33uG79ZA17ydWTXJ8N5jagJoBSrgfQTPCmUY1XRjVs3T3UMOX8YP6y6J+0P8wNr2Axn3Rr4l7KtsKcT+R6xwwI7zwfmnWHwtDn+4n/8c9Z0q2Cswfp0t2Io1STR8NxN6mD+CTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748488454; c=relaxed/simple;
-	bh=l2ILOuIWZObDhYLZBp79OtjUsWxZ+VElQDnKaSlu3/M=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=Kus0J+QEO5IDM9X0ucrEngtgjSLX+ymK5tyf+eW0U81I9Hg0tjXWQ3uR0YkAv7fdPXiOpOmfYJr80icQL4RzQgFopp9ROzCtNMJnDuz6nUM51sN/WeCVV6CKZDi3x1Wi3YTz22pw2IGhRFbJU9bXSN4o6ElujWKd6965aV+/SuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.61.247
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
-Received: from jtjnmail201602.home.langchao.com
-        by ssh247.corpemail.net ((D)) with ASMTP (SSL) id 202505291114019608;
-        Thu, 29 May 2025 11:14:01 +0800
-Received: from jtjnmail201604.home.langchao.com (10.100.2.4) by
- jtjnmail201602.home.langchao.com (10.100.2.2) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 29 May 2025 11:14:00 +0800
-Received: from jtjnmail201604.home.langchao.com ([fe80::2830:53ee:1228:5322])
- by jtjnmail201604.home.langchao.com ([fe80::2830:53ee:1228:5322%5]) with mapi
- id 15.01.2507.039; Thu, 29 May 2025 11:14:00 +0800
-From: =?utf-8?B?U2ltb24gV2FuZyAo546L5Lyg5Zu9KQ==?= <wangchuanguo@inspur.com>
-To: SeongJae Park <sj@kernel.org>
-CC: "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"hannes@cmpxchg.org" <hannes@cmpxchg.org>, "david@redhat.com"
-	<david@redhat.com>, "mhocko@kernel.org" <mhocko@kernel.org>,
-	"zhengqi.arch@bytedance.com" <zhengqi.arch@bytedance.com>,
-	"shakeel.butt@linux.dev" <shakeel.butt@linux.dev>,
-	"lorenzo.stoakes@oracle.com" <lorenzo.stoakes@oracle.com>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "damon@lists.linux.dev"
-	<damon@lists.linux.dev>
-Subject: Re: [PATCH 0/2] add a knob to control whether to use other nodes at
- the same tier of the target node in DAMON
-Thread-Topic: [PATCH 0/2] add a knob to control whether to use other nodes at
- the same tier of the target node in DAMON
-Thread-Index: AdvQR4oBL7f9x+k7rE6rF3askVsezQ==
-Date: Thu, 29 May 2025 03:14:00 +0000
-Message-ID: <d70d2cc058fc4a588720076200c81214@inspur.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1748488620; c=relaxed/simple;
+	bh=u2INpLpp6LNjo5bN/yBhudW9HZjqJ0SBRfJfnlCDQso=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HcfchxaNLthMLxck0iu/DAnXy2gdxWwgdKX7b9+JzM+MJt80zl/Uryo3rQ7g0zmGC7vnvdFgd7gF9RzxwWcsB3lPkxZ4nDPf/DMTBGBKoHXoAY8dmUCsXW0fweb7DUHjNiy2gA//DjfF+wweaTqbVu4Ozobih1SPZAFVc5W/+4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=kbhJspqm; arc=none smtp.client-ip=115.124.30.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1748488615; h=From:To:Subject:Date:Message-ID:MIME-Version;
+	bh=x5JgqFBzttSo11sSAziqCVcXUzpDKWbxRc0ZpqHVyGU=;
+	b=kbhJspqmnsYUYka0dmyH+0nmWisb3GY/G5gIB5kON2yZE+nGwabNJW7Ke0AfKyZ3Czeods4GlPSiDGxsrC14REdL5f5eBirqfop8EQ2XeqSjx90Jz2KM7ZvEoZC+rAMh6Gg+2TFCNxuscXJx8HWoeFgEkZMKzR4x4n5J/RjhpX4=
+Received: from localhost.localdomain(mailfrom:qinyuntan@linux.alibaba.com fp:SMTPD_---0WcFfwzB_1748488613 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Thu, 29 May 2025 11:16:54 +0800
+From: Qinyun Tan <qinyuntan@linux.alibaba.com>
+To: Tony Luck <tony.luck@intel.com>
+Cc: "H . Peter Anvin" <hpa@zytor.com>,
+	linux-kernel@vger.kernel.org,
+	x86@kernel.org,
+	Reinette Chatre <reinette.chatre@intel.com>,
+	Qinyun Tan <qinyuntan@linux.alibaba.com>
+Subject: [PATCH V2 0/1] x86/resctrl: Remove unappropriate references to cacheinfo in the resctrl subsystem.
+Date: Thu, 29 May 2025 11:16:49 +0800
+Message-ID: <20250529031650.63880-1-qinyuntan@linux.alibaba.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-tUid: 2025529111402363094195051e7fd047f27fa357286b0
-X-Abuse-Reports-To: service@corp-email.com
-Abuse-Reports-To: service@corp-email.com
-X-Complaints-To: service@corp-email.com
-X-Report-Abuse-To: service@corp-email.com
+Content-Transfer-Encoding: 8bit
 
-DQo+IFRoYW5rIHlvdSBmb3Igc2VuZGluZyB0aGlzIHBhdGNoIHNlcmllcyENCj4gDQo+IE9uIFdl
-ZCwgMjggTWF5IDIwMjUgMTk6MTA6MzYgKzA4MDAgd2FuZ2NodWFuZ3VvDQo+IDx3YW5nY2h1YW5n
-dW9AaW5zcHVyLmNvbT4gd3JvdGU6DQo+IA0KPiA+IEluIERBTU9OJ3MgbWlncmF0ZV9ob3QgYW5k
-IG1pZ3JhdGVfY29sZCBmZWF0dXJlcywgdGhlIGNvZGUgd2FzDQo+ID4gaW50ZW5kZWQgdG8gbWln
-cmF0ZSBwYWdlcyDigIvigItvbmx5IHRvIHRoZSBub2RlIHNwZWNpZmllZCBieSB0YXJnZXRfbmlk
-4oCL4oCLLg0KPiA+IEhvd2V2ZXIsIGR1cmluZyB0ZXN0aW5nLCBpdCB3YXMgb2JzZXJ2ZWQgdGhh
-dCBtZW1vcnkgYWxsb2NhdGlvbiBhbmQNCj4gPiBtaWdyYXRpb24gY291bGQgb2NjdXIgb24g4oCL
-4oCLYW55IG5vZGVz4oCL4oCLLCB3aGljaCBpcyBhIEJVRy4NCj4gPiBUaGUgZmlyc3QgcGF0Y2gg
-aW4gdGhpcyBQUiBmaXggdGhpcyBpc3N1ZS4NCj4gPg0KPiA+IEEgdXNlX25vZGVzX29mX3RpZXIg
-ZmlsZSBoYXMgYmVlbiBhZGRlZCB1bmRlciB0aGUgZGlyZWN0b3J5DQo+ID4gL3N5cy9rZXJuZWwv
-bW0vZGFtb24vYWRtaW4va2RhbW9uZHMvPE4+L2NvbnRleHRzLzxOPi9zY2hlbWVzLzxOPi8NCj4g
-PiB0byBjb250cm9sIHdoZXRoZXIgdG8g4oCL4oCLdXNlIG90aGVyIG5vZGVzIGluIHRoZSBzYW1l
-IHRpZXIgYXMgdGhlIHRhcmdldA0KPiA+IG5vZGXigIvigIsgZm9yIG1pZ3JhdGlvbi4NCj4gDQo+
-IEkgbGVmdCBhIGZldyBjb21tZW50cyBvbiB0aGUgcGF0Y2hlcy4gIExvb2tpbmcgZm9yd2FyZCB0
-byBkaXNjdXNzaW9ucyBvbg0KPiBlYWNoIHN1Yi10aHJlYWQgOikNCj4gDQo+ID4NCj4gPiB3YW5n
-Y2h1YW5ndW8gKDIpOg0KPiANCj4gSSBiZWxpZXZlIHlvdXIgbmFtZSBpcyBXYW5nIENodWFuZ3Vv
-PyAgU29ycnkgaWYgSSByZWFkL3dyb3RlIGl0IHdyb25nbHkuDQo+IEJ1dCB3ZSBkaXNhbGxvd1sx
-XSBhbm9ueW1vdXMgY29udHJpYnV0aW9ucywgYW5kIHByZWZlciBtb3JlIGZvcm1hbA0KPiBTaWdu
-ZWQtb2ZmLWJ5Og0KPiBpZiBwb3NzaWJsZS4gIENvdWxkIHlvdSBwbGVhc2UgdXNlIHN1Y2ggZm9y
-bWFsIFNpZ25lZC1vZmYtYnk6IGlkZW50aXR5LCBzYXksDQo+ICJXYW5nIENodWFuZ3VvIDx3YW5n
-Y2h1YW5ndW9AaW5zcHVyLmNvbT4iIGZyb20gbmV4dCB0aW1lPw0KDQpJJ20gc29ycnksIHRoaXMg
-d2FzIG15IG1pc3Rha2UuIEkgd2lsbCBiZSBtb3JlIGNhcmVmdWwgbmV4dCB0aW1lLg0KDQo+IFsx
-XQ0KPiBodHRwczovL2RvY3Mua2VybmVsLm9yZy9wcm9jZXNzL3N1Ym1pdHRpbmctcGF0Y2hlcy5o
-dG1sI2RldmVsb3Blci1zLWNlcnRpZmljYQ0KPiB0ZS1vZi1vcmlnaW4tMS0xDQo+IA0KPiANCj4g
-VGhhbmtzLA0KPiBTSg0KPiANCj4gWy4uLl0NCg==
+V2:
+- Keep sanity checks in the __mon_event_count to ensure execution occurs
+  exclusively on CPUs sharing the same L3 cache cluster
+- When reading the top level event, obtain a CPU within hdr.cpu_mask.
+  Then use the cacheinfo shared_cpu_map of this CPU instead of using
+  hdr.cpu_mask directly
+- Adjust code formatting and commit log descriptions.
+
+In the resctrl subsystem's Sub-NUMA Cluster (SNC) mode, the rdt_mon_domain
+structure previously relies on the cacheinfo interface to store L3 cache
+information (e.g., shared_cpu_map) for monitoring. However, this approach
+introduces risks when CPUs go offline:
+
+The ci field in rdt_mon_domain is initialized using the first online CPU
+of a NUMA node. When this CPU goes offline, its shared_cpu_map is cleared
+to contain only the offline CPU itself. Subsequently, attempting to read
+counters via smp_call_on_cpu(offline_cpu) would fail, but returning zero
+values for "top-level events" without error indication.
+
+To resolve these issues:
+
+1. Replace direct cacheinfo references in struct rdt_mon_domain and struct
+rmid_read with the cacheinfo ID (a unique identifier for the L3 cache).
+
+2. The hdr.cpu_mask maintained by resctrl constitutes a subset of
+shared_cpu_map. When reading top-level events, we dynamically select a CPU
+from hdr.cpu_mask and utilize its corresponding shared_cpu_map for resctrl
+to determine valid CPUs for reading RMID counter via the MSR interface.
+
+Qinyun Tan (1):
+  x86/resctrl: Remove unappropriate references to cacheinfo in the
+    resctrl subsystem.
+
+ arch/x86/kernel/cpu/resctrl/core.c |  6 ++++--
+ fs/resctrl/ctrlmondata.c           | 13 +++++++++----
+ fs/resctrl/internal.h              |  4 ++--
+ fs/resctrl/monitor.c               |  6 ++++--
+ fs/resctrl/rdtgroup.c              |  6 +++---
+ include/linux/resctrl.h            |  4 ++--
+ 6 files changed, 24 insertions(+), 15 deletions(-)
+
+-- 
+2.43.5
+
 
