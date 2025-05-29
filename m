@@ -1,123 +1,257 @@
-Return-Path: <linux-kernel+bounces-666850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA3B8AC7CE6
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 13:26:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFDB9AC7CA5
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 13:22:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFB1D1C00509
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 11:26:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 644CCA280DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 11:22:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D42328EA7C;
-	Thu, 29 May 2025 11:22:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDAEB28DF0A;
+	Thu, 29 May 2025 11:22:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dc3It4qA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="IFu6ZYMz"
+Received: from mail-ej1-f68.google.com (mail-ej1-f68.google.com [209.85.218.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7226A28EA69;
-	Thu, 29 May 2025 11:22:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F14E8227BA2
+	for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 11:22:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748517772; cv=none; b=NLZgNTIgO5XRbDIPidrQGzebv+7dii0fPHe4l4g52cuAYyuJuL4RdyWOo/LD3eFleFmn/oLUS4JCCotgjGzSG7A+VBzgKm6IQAiTz/ZJffg+eM46iJsaEBNbsorN9g8TxA31FoqLjY2JRltI5NLy+lPhx8ScKldG1v79B8gfMxU=
+	t=1748517739; cv=none; b=i2Z1uU3EyHIdXF2fR/E0OaPEwRaDzCoyDgzWJgAvLdIh0qrkCxjRbIGk2NX/AcxyYEBZcV/tlU2kbqbDLznj3+6cIBkymgluQ3Udd8OpNHlC6MEPatasuEsl0ipbT52bSxuYVy/ba482qXfeMFVt1Vd7Eo/JtKK5ITB96st9VX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748517772; c=relaxed/simple;
-	bh=dV/0sTKRb/rUIweWWF6haVE0P/cXtjrDmiNmJdFO6YM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UCyyKtKe6IMOlYQr2IogiX068YbPWq8FOi2bZaHPfGdfwkTXNpdJoD+ykPX7ZWW3ssFuFmoR9D+3E4i+4XymrYRg3egG3Alm2QMbamUtC3i4b+0PvOfhgnAiRdn5DWcCbMg4sp24RA0cL3ciWVy5ySx/Ul+v/1w+M3pvPwQpKd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dc3It4qA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF3EAC4CEE7;
-	Thu, 29 May 2025 11:22:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748517771;
-	bh=dV/0sTKRb/rUIweWWF6haVE0P/cXtjrDmiNmJdFO6YM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Dc3It4qAFErG8zaqtNNMFIyKNhXsHwAGEtvPrUIKhSiDOgXLUTnliqgcIf+ulWeDx
-	 FZFPyrxkI/ixqR0nVC1BqdEm0poRWiAA1Ko+LA/E0mrDCcAYORlKhu4/pqX1TYFKgK
-	 bIfSqPUKiULm6L5HoWwX7c9YWZW3kibcmaoUq4m2v4xrQfHFqWBVIadj0wuGjDbBpi
-	 AtIEE8lhtIDid0oQ/XC+RgmquZcVH6XbOlGFSDPXyH8LjbIaxSUXUOTVdrxLf/y2QY
-	 9F2LH+V4GVS5uZFumAEjqNZpgjccCKv31D9X2O2gdwotlffSDz56b3t23vMoedTeCU
-	 D3Q5ivPKDqDDA==
-Date: Thu, 29 May 2025 13:22:47 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Nylon Chen <nylon.chen@sifive.com>
-Cc: Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Samuel Holland <samuel.holland@sifive.com>, linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org
-Subject: Re: [PATCH v15 0/5] Change PWM-controlled LED pin active mode and
- algorithm
-Message-ID: <jfql74ayb42fzmakpz4sfyr2mnv62srpzh3ut4tdmnmipwoboy@uxumfy5kq54j>
-References: <20250529035341.51736-1-nylon.chen@sifive.com>
+	s=arc-20240116; t=1748517739; c=relaxed/simple;
+	bh=HfX50NYoIU/1TGYIs/LBfHYUMy0Njhqxs1j5ubqeyRQ=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=HoKhDe0rJ1Hklwkrq3t9cl/D5/2oRRA3HyQY9Ot5nBGZtMk/o0VGjlqAaH/bIj98HQGYNsArm6e4e1XN8k/UbrtC7JX7/MSBc6x5OugTdENTuRsFUfeK3Kjo9ebGd1jCn1BWcDA0NluQMeYwMc41cyPFL5Pc0/rSGXaB2JxwkGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=IFu6ZYMz; arc=none smtp.client-ip=209.85.218.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f68.google.com with SMTP id a640c23a62f3a-ad69e4f2100so115943266b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 04:22:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1748517735; x=1749122535; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6rdlam9aQVHC9nQQf3LUw/+fZ9OoCSBGpql4Labh3I0=;
+        b=IFu6ZYMzV7cq9Gk+q25w1IEIVoLFcM8pYq7u9BLdARgSBS/qIndRs7+B17NTG2HF/r
+         GKDkAmflcCWpSEkw7CYjpVhqxtUDD29eqmf+CGLdeMMg22ricQcJAQO/vx4j5jjaJots
+         9OFvgeGDtaTzyuaBz4/KaeE4vpWU8OtfhbEqUgpxY4e6rojsjt2qbCLhBvrkcK6xNpxQ
+         oTVJ3CpUNmzJQU4xLpclYgceRSrAZfiA2K/AUXHpt1/H+7/uNouge/E+hFsiACJi2/Ao
+         aGbgZzAm1d4bHM7/3xUarYdyHt5/MEHUidhnQGkTSwPXZqerftshPzgCLdT6Toigz1lb
+         FAug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748517735; x=1749122535;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6rdlam9aQVHC9nQQf3LUw/+fZ9OoCSBGpql4Labh3I0=;
+        b=wjv+aofPz0RtwSyoTjWj/v34oPtA3t3u3XuSUZQl9VZeEgcgeFQlUR8p+mf1p+FjY4
+         X3neZp3wZK1/GC0G+YklvoNrjk4ZAa43x3ujyOsUcgQHzXKAt6PJB8QUJwtGqiFjE9Hq
+         yRI9vpQWfBsGTGq44AM9s5CyN2iwI8hipP72a75eUgwVotYuuNS4I4/16yz85l76zn/i
+         ouhTyQpvdLznWYqgSUGNZ5aEt1S+FrQ+804jm/tJUs4EVM206fF1lR2UdVTm1Ibx4lkF
+         vTl+1Jjg/+7hOKMLsScQ4SJDVrWfAm5PLzYdWQMLJf2mH7krBN06n5R5KrUGiNAj/mc2
+         KzaA==
+X-Forwarded-Encrypted: i=1; AJvYcCW1wGXL8uFLXbFggEVaa9N/4CIe2abET/dGsdWFZMIpOx0m8Dx9FuLQEZhEmGmyBfzK+fiqesNtK2GCzKI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4Y1kkRDN4hlbY85SP0HQxt2oH2owWmiiHfET70VSPZWzhWpc6
+	gYBNCSBWudaZB/RCWqiHoyjw17spsMWQWOu2Z4Y/qv6Y9TDbX3X/yXfy6ESCUMK8XU8=
+X-Gm-Gg: ASbGncvUaDq3lLulSEanWZac3eMfDTMLet4LEy1uL52nHX/wu4qpG+Y0WqWS1Hi3/Yt
+	ngmAfbWlxzd8HHIySgDPpBaudCnEijg58cMo1rrdyhP0mZrVCF1XKH6ykzLzOTj7lhk4l1QmPKh
+	//NIFBXga2cRAyrd9//tRrbufuYeBiqPEfQO4QzfMqPxERAkMuvbJ1yqAuEyrP4IPkMn5CJ+10Z
+	iH+hBPUVmOhanhM8dQTxpMyE5aUBW0Q6K+NrVWhRzjg8YfXgh03QkFwpu+ImGRHiyozqJ+xzJYw
+	ssj9UwoTIV2WRMdodwb173mJZDpYfrG9PBLirab+gjOel4hCxybIkQxNH5afT7MhHDlO6LmtBgO
+	0hSArZOcE1jdRWGjCfbbaSQ==
+X-Google-Smtp-Source: AGHT+IGoYhNxVyRb9SNtEYzwCekqQ4ERTvXnL+fFZRAQqJP/4RU1USDSHdMhCXZ3yteLbewZ98pD1A==
+X-Received: by 2002:a17:907:1b02:b0:ad2:3f54:1834 with SMTP id a640c23a62f3a-ad85b2d76b7mr1974487266b.40.1748517735166;
+        Thu, 29 May 2025 04:22:15 -0700 (PDT)
+Received: from localhost (host-87-21-228-106.retail.telecomitalia.it. [87.21.228.106])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ada5d82e861sm125918366b.67.2025.05.29.04.22.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 May 2025 04:22:14 -0700 (PDT)
+From: Andrea della Porta <andrea.porta@suse.com>
+To: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof Wilczynski <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Saravana Kannan <saravanak@google.com>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Phil Elwell <phil@raspberrypi.com>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	kernel-list@raspberrypi.com,
+	Matthias Brugger <mbrugger@suse.com>
+Subject: [PATCH v10 0/13] Add support for RaspberryPi RP1 PCI device using a DT overlay
+Date: Thu, 29 May 2025 13:23:35 +0200
+Message-ID: <cover.1748516814.git.andrea.porta@suse.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="t7jb6esylkpa6lhn"
-Content-Disposition: inline
-In-Reply-To: <20250529035341.51736-1-nylon.chen@sifive.com>
+Content-Transfer-Encoding: 8bit
+
+*** RESENDING PATCHSET SINCE LAST ONE HAS CLOBBERED SEQUENCE NUMBER ***
+
+RP1 is an MFD chipset that acts as a south-bridge PCIe endpoint sporting
+a pletora of subdevices (i.e.  Ethernet, USB host controller, I2C, PWM,
+etc.) whose registers are all reachable starting from an offset from the
+BAR address.  The main point here is that while the RP1 as an endpoint
+itself is discoverable via usual PCI enumeraiton, the devices it contains
+are not discoverable and must be declared e.g. via the devicetree.
+
+This patchset is an attempt to provide a minimum infrastructure to allow
+the RP1 chipset to be discovered and perpherals it contains to be added
+from a devictree overlay loaded during RP1 PCI endpoint enumeration. To
+ensure compatibility with downstream, a devicetree already comprising the
+RP1 node is also provided, so it's not strictly necessary to use the
+dynamically loaded overlay if the devicetree is already fully defined at
+the origin.
+To achieve this modularity, the RP1 node DT definitions are arranged by
+file inclusion as per following schema (the arrow points to the includer,
+see also [9]):
+ 
+ rp1-pci.dtso         rp1.dtso
+     ^                    ^
+     |                    |
+rp1-common.dtsi ----> rp1-nexus.dtsi ----> bcm2712-rpi-5-b.dts
+                                               ^
+                                               |
+                                           bcm2712-rpi-5-b-ovl-rp1.dts
+
+Followup patches should add support for the several peripherals contained
+in RP1.
+
+This work is based upon dowstream drivers code and the proposal from RH
+et al. (see [1] and [2]). A similar approach is also pursued in [3].
+
+The patches are ordered as follows:
+
+-PATCHES 1 to 3: add binding schemas for clock, gpio and RP1 peripherals.
+ They are needed to support the other peripherals, e.g. the ethernet mac
+ depends on a clock generated by RP1 and the phy is reset through the
+ on-board gpio controller.
+
+-PATCH 4 and 5: add clock and gpio device drivers.
+
+-PATCH 6: the devicetree node describing the RP1 chipset. 
+
+-PATCH 7: this is the main patch to support RP1 chipset. It can work
+ either with a fully defined devicetree (i.e. one that already included
+ the rp1 node since boot time) or with a runtime loaded dtb overlay
+ which is linked as binary blob in the driver obj. This duality is
+ useful to comply with both downstream and upstream needs (see [9]).
+ The real dtso is in devicetree folder while the dtso in driver folder is
+ just a placeholder to include the real dtso.
+ In this way it is possible to check the dtso against dt-bindings.
+ The reason why drivers/misc has been selected as containing folder
+ for this driver can be seen in [6], [7] and [8].
+
+-PATCH 8: add the external clock node (used by RP1) to the main dts.
+
+-PATCH 9: the fully fledged devictree containing also the rp1 node.
+ This devicetree is functionally similar to the one downstream is using.
+
+-PATCH 10 (OPTIONAL): this patch introduces a new scenario about how
+ the rp1 node is specified and loaded in DT. On top of the base DT
+ (without rp1 node), the fw loads this overlay and the end result is
+ the same devicetree as in patch 9, which is then passed to the next
+ stage (either the kernel or u-boot/bootloader).
+ While this patch is not strictly necessary and can therefore be dropped
+ (see [10]), it's not introducing much extra work and maybe can come
+ in handy while debugging.
+
+-PATCH 11: add the relevant kernel CONFIG_ options to defconfig.
+
+-PATCH 12: enable CONFIG_OF_OVERLAY in order for 'make defconfig'
+ to produce a configuration valid for the RP1 driver. Without this
+ patch, the user has to explicitly enable it since the misc driver
+ depends on OF_OVERLAY.
+
+-PATCH 13: collect all changes for MAINTAINERS file.
+
+This patchset is also a first attempt to be more agnostic wrt hardware
+description standards such as OF devicetree and ACPI, where 'agnostic'
+means "using DT in coexistence with ACPI", as been already promoted
+by e.g. AL (see [4]). Although there's currently no evidence it will also
+run out of the box on purely ACPI system, it is a first step towards
+that direction.
+
+Many thanks,
+Andrea della Porta
+
+Links:
+- [1]: https://lpc.events/event/17/contributions/1421/attachments/1337/2680/LPC2023%20Non-discoverable%20devices%20in%20PCI.pdf
+- [2]: https://lore.kernel.org/lkml/20230419231155.GA899497-robh@kernel.org/t/
+- [3]: https://lore.kernel.org/all/20240808154658.247873-1-herve.codina@bootlin.com/#t
+- [4]: https://lore.kernel.org/all/73e05c77-6d53-4aae-95ac-415456ff0ae4@lunn.ch/
+- [5]: https://lore.kernel.org/all/20240626104544.14233-1-svarbanov@suse.de/
+- [6]: https://lore.kernel.org/all/20240612140208.GC1504919@google.com/
+- [7]: https://lore.kernel.org/all/83f7fa09-d0e6-4f36-a27d-cee08979be2a@app.fastmail.com/
+- [8]: https://lore.kernel.org/all/2024081356-mutable-everyday-6f9d@gregkh/
+- [9]: https://lore.kernel.org/all/Z87wTfChRC5Ruwc0@apocalypse/
+- [10]: https://lore.kernel.org/all/CAMEGJJ0f4YUgdWBhxvQ_dquZHztve9KO7pvQjoDWJ3=zd3cgcg@mail.gmail.com/#t
+
+CHANGES IN V10
 
 
---t7jb6esylkpa6lhn
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v15 0/5] Change PWM-controlled LED pin active mode and
- algorithm
-MIME-Version: 1.0
+PATCH RELATED -------------------------------------------------
 
-Hello Nylon,
+- Patch 10,11,12: Added: Reviewed-by: Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
 
-On Thu, May 29, 2025 at 11:53:38AM +0800, Nylon Chen wrote:
-> According to the circuit diagram of User LEDs - RGB described in the
-> manual hifive-unleashed-a00.pdf[0] and hifive-unmatched-schematics-v3.pdf=
-[1].
->=20
-> The behavior of PWM is acitve-high.
->=20
-> According to the descriptionof PWM for pwmcmp in SiFive FU740-C000 Manual=
-[2].
->=20
-> The pwm algorithm is (PW) pulse active time  =3D (D) duty * (T) period.
-> The `frac` variable is pulse "inactive" time so we need to invert it.
->=20
-> So this patchset removes active-low in DTS and adds reverse logic to the =
-driver.
+- Patches reworked to apply cleanly on broadcom/stblinux branches:
+  patch 1,2,3,6,8,9,10 -> devicetree/next
+  patch 11,12 -> defconfig/next
+  patch 4,5,7 -> drivers/next
+  patch 13 -> maintainers/next
 
-Applied to
+- Patch 13: new patch gathering all changes for MAINTAINERS
 
-	https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git pwm/for=
--nexxt
 
-as 6.17-rc1 material. I pondered if this should go in earlier and/or
-should get marked for stable. I'm unsure and willing to consider input
-here. The problem I see is that while this is a fix, the change is a
-breaking one and you need the dts change and the code change applied
-either both or none.
+RP1 CLOCK DRIVER ------------------------------------
 
-Best regards
-Uwe
+- Dropped some WARN_ONCE() lines that are basically useless
 
---t7jb6esylkpa6lhn
-Content-Type: application/pgp-signature; name="signature.asc"
+- rp1_clock_set_parent() now returns EINVAL in case the parent check
+  is failing. As a result, rp1_clock_set_rate_and_parent() has also
+  been adapted to return rp1_clock_set_parent() retcode.
 
------BEGIN PGP SIGNATURE-----
+- Return an ERR_PTR from rp1_register_clock() instead of just NULL
 
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmg4Q4QACgkQj4D7WH0S
-/k5Lgwf/SP6TM6iinfR+nLxITKK64by0Ws8lMmVkyjSrhRXh82uC0AGWdbgwYdK/
-PG/mYXTKZ5HCxZSKN6tLrwBlv7274OvSlMHKm5ECqfx2SfOVVonLNGPFPHqSio5T
-fuxD5PyJyJfArppWLvZDc53PZLoXyRWVWMVIQTAz6xsbZSwg46HFKnKKW8gdi+pp
-xGf62lktVUk42OfBKcs4naXobSACqiyG1BES/W+s5Z3o1rWghbdNCj3d/zNtLsUu
-6kGM/uh5xmcM804K0N44LUGmfBFuVNyGepR75baQxSB//3OCrQ9X24M1QfEH8WC4
-swfkxqbXkPf0v5zpt7Rq0afo+gNZ+w==
-=nB9p
------END PGP SIGNATURE-----
+- Dropped some unaesthetic blank lines
 
---t7jb6esylkpa6lhn--
+- Disabled the builtin locking in regmap since we're already dealing
+  with concurrency in the code
+
+- rp1_clk_probe(): dropped dev_err_probe() as redundant due to commit
+  12a0fd23e870 ("clk: Print an error when clk registration fails")
+
 
