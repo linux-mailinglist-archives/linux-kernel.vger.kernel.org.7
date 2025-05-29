@@ -1,87 +1,90 @@
-Return-Path: <linux-kernel+bounces-666330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5E69AC755E
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 03:23:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 024C5AC7563
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 03:28:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 701471BA3A1F
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 01:23:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE0534E3EB9
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 01:28:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7205C1C5485;
-	Thu, 29 May 2025 01:23:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAEF31B87E8;
+	Thu, 29 May 2025 01:28:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Janl0Hws"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XzJE8iWc"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F9461B042C;
-	Thu, 29 May 2025 01:23:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFC4719EED3;
+	Thu, 29 May 2025 01:28:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748481786; cv=none; b=eCuWCYzxGLWTHOx74HysWuKtgCBAJyWUfvTdmPrIW9zL9jOncsRS0j8AJt40kPomvOQYgKFMPBKfWgfCLqqjEqax08mkwJCFVVyIjfda98qEK0zjwD7+ku/5OCi5cjH5B0r+I+BcErmT1kaZIHGvdYn4Soxp5PJyJtLoZhrDDcQ=
+	t=1748482093; cv=none; b=bVK5V/C7tmQryRgjTjSKnA1/iMIj9RiJoFuLebRq6Hja7tSpQXvkp33mZEgQhuhklOmspVaYAd+j9vkY2FHr1bTZ4dnpA1ARh/wHG+KCuxCxHakhllqrho3hsC4756TYsYme9siWTANmWzJSN88RYoIX/qkRJ9QdtyV7S8os/kc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748481786; c=relaxed/simple;
-	bh=5y7CveGbYGod76OFGDf+v0QSkzJi7YLcrk5H2SLo95E=;
+	s=arc-20240116; t=1748482093; c=relaxed/simple;
+	bh=jqnorrBw8WKXKlYbmOCJtgDiXmZMkG7t4CSzybmUHBQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lCG85WU5W6DqHD4HJVUg9XKpk28pAPsN4YkhlD5kEdGh2TI5sZMqkVnDikhWr5fI0oSRu/i3tTpxV38liRj0O/TLqP+Z5eMxBNG1sbM1uyTY8Fg4Mt69BMuU/PeV5uR6bmusu/n2Xgw2TbmBVmids02MKrs6X+a+ga6q5Cl13A8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Janl0Hws; arc=none smtp.client-ip=209.85.210.178
+	 Content-Type:Content-Disposition:In-Reply-To; b=GtKc1M9YiOijJmydvQUAjwqFo57bMQg3SSVfq8s/ONPirUa+CtSYpraNi3mt5AddKsXGFe+RksIOFdL5cXlAzNEX5Ta2eH9QF5b4IXAao2FoT2JbFVKn5vuI0VAscEjnwnc+LS8/rQXimB83dxsQOViCcykoW5BkSBWeiLGC2mA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XzJE8iWc; arc=none smtp.client-ip=209.85.210.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-7370a2d1981so205648b3a.2;
-        Wed, 28 May 2025 18:23:05 -0700 (PDT)
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-7425bd5a83aso275738b3a.0;
+        Wed, 28 May 2025 18:28:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748481784; x=1749086584; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1748482091; x=1749086891; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yNcpQ6iTd23Fuh0WUpnzSmEEECvnd8gbAVf510WE3Vg=;
-        b=Janl0HwszOVx4THtVmpFX07vI3Oufv2zP6Se2kZxMTWYV8nLvWHle6GYN8q97HoBye
-         y4BoDfx6U22lzAxOukOsLsTP/xPTwXDyg+z5ymI10JX8H8s9feF9at669cSQQ4Zix/5L
-         iqy6+1RVTh2EEYwPBUTtN3toutAWnpuUP1DXc0QPZQOVOyUdmSH8dIPQ5pTf6DtWHBF2
-         rNnx4os2d79OW94DJ4RmLbfmqTUOTAuum+Yidj99FM4WEdN1HmYYcY56PqwLoefXm8G4
-         0tlpu8oqNG9jSkY7su3SzK0nyUfKQ0N0fmRazoFhnevdR5xPBURkriEXMfZqbnylzmQX
-         BFcg==
+        bh=hoeXSFYRWh2i4KgtON46+79vyPFN+5fYuOEhE49cAOI=;
+        b=XzJE8iWcwHdxqV+FY2qX8Al8Kog+XeT4F9CTIf6XMphfElD3fC8j/JWU1ijpHoCj6F
+         wlRxXzrcDXZwA6DC8gpIJqpfu20IJxTlaftIBBdOOjSYGIeeiAIN2GTux8vEuLPeMd/7
+         TOupmZ1KQ1HI2IlLMqqFNB+Eh4eDQt3+yOn6DSFojpfl3PVZCJMj96qkGZ1WoRVLFZo2
+         metbrIspDrVi0uGQdlcjYGUXPx3xWBBl6fuFr77lj5Vf0lks/0qzxt0XP1vtr0XFyGT2
+         /Ppv7Y4daGF2W+nfDUCTGBg4njdnaMbL897oc1SG2PABL5QVHTeQmASNIsE3x7OiNsao
+         oIyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748481784; x=1749086584;
+        d=1e100.net; s=20230601; t=1748482091; x=1749086891;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=yNcpQ6iTd23Fuh0WUpnzSmEEECvnd8gbAVf510WE3Vg=;
-        b=H+Xfo7qO+IzDaYNT28FccnLkwURyY69R/0EiiVEvIVxaPJYnLoKvVHqqRzYIHjSoyJ
-         NJTGRHFAl5DAGfNJPkGAGD+A+nRmJbolHHVAGQne2qmMgfxjlVK238uMmoQohDgLP2BI
-         x590+SsFiYzu+rWAwT6FK6WIyZfxtiPhnjOvp9Kg4tIK6iW5NrtaHFOs/IqZ8l5N5cG2
-         O7ayEgSl6mbVEfSeMJFKjWGNymdfqrehe6ZPSPJ4pMaOJQuDJosxikMD/m4kMr+eyuwE
-         VZr+FLLJKAjV9ekb4M95Zv5tkf7Lr+Pm+cwFvEnwpY7EIOciNBZCOaL1G5Dpe1M4Rxlb
-         zRQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUiFdL+baZNQ/gcYO+aELiwUNSn79+AjMTsVnLVu5ZriYoJmh6MDCikVwiPfKO6uiZNNTwF4XDn3Zs=@vger.kernel.org, AJvYcCWIygPOLwCWWsKryAdrMPJ6AaNNb+IoosCH0p0TaFMll58wxLvZ0u2+yuLxSDf6mXcewRTOjMODFM82/FVX@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/GMd0AHf85p/xMrrS/F3NJW5hfo5mjLmu13wUucjhfO+Zxiul
-	Muin8p/MB6u1UA4Ik5wyqPt5VDh7gwW4uTfzgLbnYDTNw6piHcVj7TW1
-X-Gm-Gg: ASbGncu0CDtHCdUMmPitlroKCqejvPl/+KDdbCgrK3EnrhKgGcu0OkC4ANIwQBNdQRn
-	AUgsRy1lzBWlO6lh1Wet22cOZ+PZXt6vzrfzw+UF21lCBKIZQYr4aBIF+xKceaIPh1yCfSKtgaf
-	q6BM8ntnE31t0POw8mnPMu8KbcpvHlWLApVjYGzfB/SqGOyEL69TcmLg7Z1dzV13wEUgcQdm7HF
-	eYJei9xWUT1H9xIoKi8PQ+/PN4DQ5nXeDpyioNB4t9ARh5WpJlO0XceBBJLby2qKRSkaNMvWf0D
-	UCIRz0JiX7flfDZCO7uf1m45qXjUtAeEf9f0I9tB+D880cTfVvg=
-X-Google-Smtp-Source: AGHT+IEq7cO8TC8Du8MUlyjcSTXy0CPrk1am1y/cD3TkFUUKjnPvY8xKVFDO7oe1jBnbh2UVTJ4sXg==
-X-Received: by 2002:a05:6a20:d70f:b0:1f5:9098:e42e with SMTP id adf61e73a8af0-2188c1e8dfamr33868375637.7.1748481784332;
-        Wed, 28 May 2025 18:23:04 -0700 (PDT)
+        bh=hoeXSFYRWh2i4KgtON46+79vyPFN+5fYuOEhE49cAOI=;
+        b=o2GjXIwBuC5xxR6b0lLox/pgi9iHl+KH2MKruSqM/AyG/RXwhcEfG0QjlfpwxhN/aw
+         Poa5Fe+r/CVGaOaXKpYm0dnAkfOh9zCSz5E/xFpa+ddPM+JWDtTlusgq8yvIeYhNYelQ
+         r+cL9kKgdC59oLmnaIPVmBaMSOQSxlKMcyVPoylMexyXjqJWWw33nxRYUScm+8Hxw+a/
+         lAEMj6IVL3o2dA4QWmGaMCQD+mBJSW7ks0K7OVDd9eCIGI5lluNmUn8g99tD9U/LZamp
+         Ep/a5ir1/tLeOAX3L9qfAcE74r3M99nqPRKPnrSh9422Tst326Rd8EwEo5+CO0GNFs6T
+         l1HA==
+X-Forwarded-Encrypted: i=1; AJvYcCUqBph/TZVgRUHRBlmMynbET9vlCn2eHpfu2L8up6Ul7L5t3jXLoz8kvUgaw2vEeZOWXqL6Z8HTexz/Z8qE@vger.kernel.org, AJvYcCXlgCTzQlFM4l1lUl1guGUZWnWy18QUjyfj1pkSeQo7ma2waBPP3voOLrA0MmTWZ5BJ446Ueysf/WY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzcB3HY2ViradU1A8N1lQnC2N1+PSpRV4yrm7G3zbq53tTWsw0D
+	/v/XBtNOv39vloC9IfI8eRctrVWShHPZ5rzd99kzDpAOGVHachqne5Ak
+X-Gm-Gg: ASbGncsUFXZi6/KkX2gPYHqBSiHFr8ZLjWdExQ1OwhjJUYfoJSCInuYsQsnOFfxSTKN
+	O0Vl0tXZKmq8cMlH9wwStjbUd4TCTVnG4p+aZLFYJWKyn6mtK1bn8+vpao+8TxNs0SmrJsZ+gX1
+	yJhI24OH6WDhn/ZqRJiRy5uUz+g+6QInCTF4iWaOSwBKyCjX6iGrkGpDToZXpnrh/QO1TyP3HnQ
+	3aJ91uMnnmQy1unCCYfmjn1w+DlQbqkJ9iHcDcPpgpf84DnETOfr5ox3rqB5+xX3/dZBw8Z2YKC
+	kgCOl/FLg/CbBgSln/G1TgU7gvLfVUbTeqN7lHg6/A8cp6r+c56GQUZJxebLDQ==
+X-Google-Smtp-Source: AGHT+IEz+1R42eNysUwZ0fqEej6CVAYfSf8TKl3yY1k7/5eS4TAR5HPasxyR4xeGfgyqO10P1uKdmA==
+X-Received: by 2002:a05:6a00:3994:b0:740:a023:5d60 with SMTP id d2e1a72fcca58-745fe083439mr27047681b3a.19.1748482090915;
+        Wed, 28 May 2025 18:28:10 -0700 (PDT)
 Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-747afe9639csm248215b3a.17.2025.05.28.18.23.03
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-747afeab6a7sm253212b3a.59.2025.05.28.18.28.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 May 2025 18:23:03 -0700 (PDT)
+        Wed, 28 May 2025 18:28:09 -0700 (PDT)
 Received: by archie.me (Postfix, from userid 1000)
-	id C918B41E4844; Thu, 29 May 2025 08:23:01 +0700 (WIB)
-Date: Thu, 29 May 2025 08:23:01 +0700
+	id 0B67041E4844; Thu, 29 May 2025 08:28:07 +0700 (WIB)
+Date: Thu, 29 May 2025 08:28:07 +0700
 From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: George Anthony Vernon <contact@gvernon.com>, dmitry.torokhov@gmail.com,
-	corbet@lwn.net, skhan@linuxfoundation.org
-Cc: linux-input@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev
-Subject: Re: [PATCH v2 3/4] input: docs: Fix Amiga joysticks grammar
-Message-ID: <aDe29U-JljGPpKiK@archie.me>
-References: <20250526135957.180254-1-contact@gvernon.com>
- <20250526135957.180254-4-contact@gvernon.com>
+To: Abdulrasaq Lawani <abdulrasaqolawani@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Jonathan Corbet <corbet@lwn.net>
+Cc: dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] drm: add overview diagram for drm stack
+Message-ID: <aDe4J8Cmlzicggx2@archie.me>
+References: <20250527-drm-doc-updates-v3-1-58e97a831d03@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,128 +92,98 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="K4011M0stGA66i1P"
+	protocol="application/pgp-signature"; boundary="aC/adGMqQaMC2iPq"
 Content-Disposition: inline
-In-Reply-To: <20250526135957.180254-4-contact@gvernon.com>
+In-Reply-To: <20250527-drm-doc-updates-v3-1-58e97a831d03@gmail.com>
 
 
---K4011M0stGA66i1P
+--aC/adGMqQaMC2iPq
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 26, 2025 at 02:59:51PM +0100, George Anthony Vernon wrote:
-> -         +-------+----------+-------------------------------------------=
---+
-> -         | BIT#  | FUNCTION | DESCRIPTION                               =
-  |
-> -         +=3D=3D=3D=3D=3D=3D=3D+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D+=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D+
-> -         | 15    | OUTRY    | Output enable for Paula pin 33            =
-  |
-> -         +-------+----------+-------------------------------------------=
---+
-> -         | 14    | DATRY    | I/O data Paula pin 33                     =
-  |
-> -         +-------+----------+-------------------------------------------=
---+
-> -         | 13    | OUTRX    | Output enable for Paula pin 32            =
-  |
-> -         +-------+----------+-------------------------------------------=
---+
-> -         | 12    | DATRX    | I/O data Paula pin 32                     =
-  |
-> -         +-------+----------+-------------------------------------------=
---+
-> -         | 11    | OUTLY    | Out put enable for Paula pin 36           =
-  |
-> -         +-------+----------+-------------------------------------------=
---+
-> -         | 10    | DATLY    | I/O data Paula pin 36                     =
-  |
-> -         +-------+----------+-------------------------------------------=
---+
-> -         | 09    | OUTLX    | Output enable for Paula pin 35            =
-  |
-> -         +-------+----------+-------------------------------------------=
---+
-> -         | 08    | DATLX    | I/O data  Paula pin 35                    =
-  |
-> -         +-------+----------+-------------------------------------------=
---+
-> -         | 07-01 |   X      | Not used                                  =
-  |
-> -         +-------+----------+-------------------------------------------=
---+
-> -         | 00    | START    | Start pots (dump capacitors,start counters=
-) |
-> -         +-------+----------+-------------------------------------------=
---+
-> +         +-------+----------+-------------------------------------------=
----+
-> +         | BIT#  | FUNCTION | DESCRIPTION                               =
-   |
-> +         +=3D=3D=3D=3D=3D=3D=3D+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D+=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D+
-> +         | 15    | OUTRY    | Output enable for Paula pin 33            =
-   |
-> +         +-------+----------+-------------------------------------------=
----+
-> +         | 14    | DATRY    | I/O data Paula pin 33                     =
-   |
-> +         +-------+----------+-------------------------------------------=
----+
-> +         | 13    | OUTRX    | Output enable for Paula pin 32            =
-   |
-> +         +-------+----------+-------------------------------------------=
----+
-> +         | 12    | DATRX    | I/O data Paula pin 32                     =
-   |
-> +         +-------+----------+-------------------------------------------=
----+
-> +         | 11    | OUTLY    | Out put enable for Paula pin 36           =
-   |
-                                "Output"
-> +         +-------+----------+-------------------------------------------=
----+
-> +         | 10    | DATLY    | I/O data Paula pin 36                     =
-   |
-> +         +-------+----------+-------------------------------------------=
----+
-> +         | 09    | OUTLX    | Output enable for Paula pin 35            =
-   |
-> +         +-------+----------+-------------------------------------------=
----+
-> +         | 08    | DATLX    | I/O data  Paula pin 35                    =
-   |
-> +         +-------+----------+-------------------------------------------=
----+
-> +         | 07-01 |   X      | Not used                                  =
-   |
-> +         +-------+----------+-------------------------------------------=
----+
-> +         | 00    | START    | Start pots (dump capacitors, start counter=
-s) |
-> +         +-------+----------+-------------------------------------------=
----+
+On Tue, May 27, 2025 at 03:17:43AM -0400, Abdulrasaq Lawani wrote:
+> revert promotion of overview diagram title to that
+> of previous commit in introduction.rst
+>=20
+
+The patch description doesn't really describe the diff below, which is
+to add overview diagram instead. Maybe you can replace that with from your =
+v1?
+
+> diff --git a/Documentation/gpu/introduction.rst b/Documentation/gpu/intro=
+duction.rst
+> index 3cd0c8860b949408ed570d3f9384edd5f03df002..a8d3f953a470180b395ec52a4=
+5d0f3f4561424e0 100644
+> --- a/Documentation/gpu/introduction.rst
+> +++ b/Documentation/gpu/introduction.rst
+> @@ -14,7 +14,45 @@ including the TTM memory manager, output configuration=
+ and mode setting,
+>  and the new vblank internals, in addition to all the regular features
+>  found in current kernels.
+> =20
+> -[Insert diagram of typical DRM stack here]
+> +Overview of the Linux DRM Architecture
+> +--------------------------------------
+> +::
+> +
+> +        +-----------------------------+
+> +        |     User-space Apps         |
+> +        | (Games, Browsers, ML, etc.) |
+> +        +-----------------------------+
+> +                      |
+> +                      v
+> +        +---------------------------------------+
+> +        |    Graphics APIs   |   Compute APIs   |
+> +        |  (OpenGL, Vulkan)  |  (OpenCL, CUDA)  |
+> +        +---------------------------------------+
+> +                |                   |
+> +                v                   v
+> +        +---------------------+  +-----------------------+
+> +        |  User-space Driver  |  |    Compute Runtime    |
+> +        |  (Mesa, AMD/NVIDIA) |  |  (OpenCL, CUDA, ROCm) |
+> +        +---------------------+  +-----------------------+
+> +                |                   |
+> +                +--------+----------+
+> +                         |
+> +                         v
+> +                +-----------------------+
+> +                |   libdrm (DRM API)    |
+> +                +-----------------------+
+> +                          |
+> +                          v
+> +        +-------------------------------------------+
+> +        |     Kernel DRM/KMS Driver (i915, amdgpu,  |
+> +        |     nouveau, etc.)                        |
+> +        +-------------------------------------------+
+> +                |                       |
+> +                v                       v
+> +        +----------------+     +-------------------+
+> +        | GPU Display HW |     | GPU Compute Units |
+> +        +----------------+     +-------------------+
+> +
+> =20
+>  Style Guidelines
+>  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>=20
+
+The diff itself looks good.
 
 Thanks.
 
 --=20
 An old man doll... just what I always wanted! - Clara
 
---K4011M0stGA66i1P
+--aC/adGMqQaMC2iPq
 Content-Type: application/pgp-signature; name=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaDe29QAKCRD2uYlJVVFO
-o2NgAQD2R4HfOj4KSacO1xNyyC/L6FQDftc+OlaWuS7P7PjNHwEAqxD7T/wXLCmO
-uKixNwmxZN2NxZBvJnkaw7Dn7Q2jQw0=
-=pYvh
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaDe4JwAKCRD2uYlJVVFO
+o1vSAP9RDdnvD215ocVJi8rTafh7HN5OcFggjOd1N/NN53BQMAEA1/hsLPZqX2Zd
+BajmnAxuQKkeSKG/0y85fJPYpq7JNQc=
+=1KWA
 -----END PGP SIGNATURE-----
 
---K4011M0stGA66i1P--
+--aC/adGMqQaMC2iPq--
 
