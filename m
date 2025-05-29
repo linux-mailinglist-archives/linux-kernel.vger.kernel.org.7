@@ -1,130 +1,166 @@
-Return-Path: <linux-kernel+bounces-666854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0716AC7CF3
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 13:30:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78B6FAC7D05
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 13:33:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C017B176CE0
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 11:30:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22F124A40DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 11:33:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5025228E60A;
-	Thu, 29 May 2025 11:29:57 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9484628E60A;
+	Thu, 29 May 2025 11:33:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Dj0GVNNq"
+Received: from mail-wm1-f65.google.com (mail-wm1-f65.google.com [209.85.128.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02C9820CCF4;
-	Thu, 29 May 2025 11:29:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 153BF1EA73
+	for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 11:33:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748518196; cv=none; b=VeG4YbgZyobEG5Sc1bH42w7kQujUWTMqmmUM6Dv4pyPIRvr+NHmMhlWRE31aug3GjfujoUjUAcIgxwLj1QmsJSn/9qCF3gCQhuqKyEuSb/YRnyBdKMPPX89Qtt5Mz3LFOKBXehj1sutV3xp9gwhjay0ZJKa7PscFSCYhl7Qudu4=
+	t=1748518392; cv=none; b=u9Hm8dc7Fr72yuEzXYZO0cvpjGqZEsIT6VxuT93fEd3i14jqcaG8Mtlmb7g6vK8Lp9w3gTGo4LccgSxWCBwTSWoHFi2vNPnQ3FhKkQNpAtlINJbfjjpB2Cj0A8eRcoF8E8N3Xeqb2JmNij1y0Sbnh8RfPPTZteSMJxctf68DBT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748518196; c=relaxed/simple;
-	bh=/XTFgQucAxsh2T22QTJl1XSs/Bkg3FT0qfuo/JDH9DY=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NBVBVx59MlOp3zLrbG4LOqSJi7xtDGS3y4sHi7X6iD1njunsUav2NjcCKywFCk8cjBzP1RvhJhjvwBRsILlxay9GjlP1d0yhaQ3ClBifuirBJ7exR6K+cK4usYDbsUA2xjavgX+NDgj8IYv2fW4PfQRgWkoKTnbcn14j7JFikCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4b7PJN5YnVz6L4sw;
-	Thu, 29 May 2025 19:28:36 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 2939F1400CA;
-	Thu, 29 May 2025 19:29:52 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 29 May
- 2025 13:29:51 +0200
-Date: Thu, 29 May 2025 12:29:50 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Songwei Chai <quic_songchai@quicinc.com>
-CC: Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
-	<mike.leach@linaro.org>, James Clark <james.clark@arm.com>, "Alexander
- Shishkin" <alexander.shishkin@linux.intel.com>, Andy Gross
-	<agross@kernel.org>, Bjorn Andersson <andersson@kernel.org>, Rob Herring
-	<robh+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, "Conor
- Dooley" <conor+dt@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<coresight@lists.linaro.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v5 3/7] coresight-tgu: Add signal priority support
-Message-ID: <20250529122950.00001fe6@huawei.com>
-In-Reply-To: <20250529081949.26493-4-quic_songchai@quicinc.com>
-References: <20250529081949.26493-1-quic_songchai@quicinc.com>
-	<20250529081949.26493-4-quic_songchai@quicinc.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1748518392; c=relaxed/simple;
+	bh=bh4MgnxAaRyek2UdQKghPpoTWMGgrTm8WvxljGcyuvo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=UZO5y/jkbVs2tPN1MC4lMBDLJ1kidLuiTjI203AwPTwmwrOzic6L4cpoqzR/0mMqloU+67B+jx5PLiZkvjKZ3N13hawTLHToOcbLz0PNqHjQQY5CpluQVg+XhfsyAMbVnD33xaVJKY6Zvcm4rFza/ELutiAF4VrWtILsGFGIsL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Dj0GVNNq; arc=none smtp.client-ip=209.85.128.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f65.google.com with SMTP id 5b1f17b1804b1-450cfb790f7so4582115e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 04:33:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1748518388; x=1749123188; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9RGEjbS+3C/e9OMoWBvhsdf9eFJydSpRbxivnh7opTI=;
+        b=Dj0GVNNqb0n/uYbHCxZzMflMzbgSmDwQKEnSNwcylR2BIkLiklb5NnsY3fN3SJ9WU7
+         oSGdVxKXeWFluLY6dp7ClPcnnCVCp4LVp9nxSPxg5B+mylQ53ljWGrbJeos4CXrskB1L
+         Mhe9AAXOIB4+gUzwNbhXmVTzNxt3ZqooTvEA15zpcHtKw7mz9iCIG/CpqWMVRDUcbOty
+         7CkxJLqXaSF/XhdS3d94b+IOXbHIrLCbHIZBWDTbeYP5OMDMqo3lOCfj1dLh9Ix59HKF
+         8T3swe8+DqB+dDwoSD01HmT/r/ynLG0zdPNulLNyqcyrESpsrG8NyOB6PsmwZfpakvPx
+         Lleg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748518388; x=1749123188;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9RGEjbS+3C/e9OMoWBvhsdf9eFJydSpRbxivnh7opTI=;
+        b=UmerJqb0kYFKsXHBn4QsS7EPopFmSXkG2qBNsZlJSHMbyQD87Fl+g05iqNj9ZU30hd
+         I7ek3D0BmVAtufZppPdDzT1K+Jhja/ndW8S+IBZmiQU7MVOzmA6EMT74SoZLQv1a/tlf
+         2LunfsOwMy7VPC06CyZtfeBhRo0FZ4ckt8yFlmUTiF8CXpWO7WFi3XXqwyzxZX/YDJu8
+         q81I7CqvYMQ+cH0jPqpc1NOegKozmawbKMoymGg2kv0WSp6Zrw33VrkJrQ688ZvIgV0O
+         G+QGWItpRRL+KSbvi3hYanlZLOgQ/SoHqgsgPtMoRIW2V9zXZ3DSg0BAixE7u56/daqo
+         ps0A==
+X-Forwarded-Encrypted: i=1; AJvYcCWmQo4qH+ZgOEZKFvF5opIgX8sfxdZF5xKdKu2AYZZeu9BEIzeMqpimNVepQ5X5tmlVKvVfbnSIiPnYMFg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxoJbZCWCQTl8Hu9QRGjK3z2srIXQn7lCQ8Ji/BD6gOvKLiEb50
+	MKSVg2P29h/hoAEXNVgInhVhmaSlBCfFHyW/TmYLRGP+vdgRvyNxjEFEMEsnmnc2cD8=
+X-Gm-Gg: ASbGncvuqMtJCKs/55vGxdc3i8NTHzDxgOs44uSHl7iM1Jpqnqo8ESOBSAhQdPA5aVs
+	fU6otJJpNE7I54j5IL6N0FqUx1E3s0rec3dzdOQM8nii8JlCUzRsHl9L9/jkWdCdOFtg2oa36vL
+	twPsRj9ipyL755+nNBgINu/XiliFLY0Tg7H0A/0YlpYpw0C0MeYrOd6o25KO/4PJsRy0gzLl3/Y
+	3Gb/wnHIbFhK0nqyXuecerY1x/ozgbpPVLMa7+wEMVa0BqCSLwTt9iBOVlF/SQhsQ5SpcGbqFfl
+	RMJVK0MEXWhh8OGNgL9i1/NWghV233593sffN1AjDczPsdFvnjvIZKJtEkd1
+X-Google-Smtp-Source: AGHT+IFDz2Nzk5rV8H17aE5jP5Yo1dXjiKY7Wt+ZcHiSvBCRbRuqUmfh+W28PJ1soWP3lufeYbHSmw==
+X-Received: by 2002:a05:600c:3482:b0:441:b00d:e9d1 with SMTP id 5b1f17b1804b1-450d055ba9fmr18892675e9.2.1748518388273;
+        Thu, 29 May 2025 04:33:08 -0700 (PDT)
+Received: from ho-tower-lan.lan ([37.18.136.128])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-450cfc3785bsm17443945e9.40.2025.05.29.04.33.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 May 2025 04:33:07 -0700 (PDT)
+From: James Clark <james.clark@linaro.org>
+Subject: [PATCH v2 00/11] perf: arm_spe: Armv8.8 SPE features
+Date: Thu, 29 May 2025 12:30:21 +0100
+Message-Id: <20250529-james-perf-feat_spe_eft-v2-0-a01a9baad06a@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500001.china.huawei.com (7.191.163.213) To
- frapeml500008.china.huawei.com (7.182.85.71)
+X-B4-Tracking: v=1; b=H4sIAE1FOGgC/33N0QqDIBTG8VcJr+c4mjXb1d5jRIgey7FpaMRG9
+ O6zYLCb7fJ/4Py+hSSMDhM5FwuJOLvkgs/BDwXRg/I9UmdyEw68gpJxelMPTHTEaKlFNXVpxA7
+ tROtaGyuMtNg0JH+PEa177vK1zT24NIX42odmtl0/ZvnTnBkFypXmYASctJaXu/MqhmOI/baxA
+ xXU/wFjhASUKGTFvoF2Xdc3cIeZJgABAAA=
+To: Catalin Marinas <catalin.marinas@arm.com>, 
+ Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+ Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>, 
+ Oliver Upton <oliver.upton@linux.dev>, Joey Gouly <joey.gouly@arm.com>, 
+ Suzuki K Poulose <suzuki.poulose@arm.com>, 
+ Zenghui Yu <yuzenghui@huawei.com>, Peter Zijlstra <peterz@infradead.org>, 
+ Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, 
+ Namhyung Kim <namhyung@kernel.org>, 
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
+ Adrian Hunter <adrian.hunter@intel.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ linux-perf-users@vger.kernel.org, linux-doc@vger.kernel.org, 
+ kvmarm@lists.linux.dev, James Clark <james.clark@linaro.org>, 
+ Leo Yan <leo.yan@arm.com>
+X-Mailer: b4 0.14.0
 
-On Thu, 29 May 2025 16:19:44 +0800
-Songwei Chai <quic_songchai@quicinc.com> wrote:
+Support 3 new SPE features: FEAT_SPEv1p4 filters, FEAT_SPE_EFT extended
+filtering, and SPE_FEAT_FDS data source filtering. The features are
+independent can be applied separately:
 
-> Like circuit of a Logic analyzer, in TGU, the requirement could be
-> configured in each step and the trigger will be created once the
-> requirements are met. Add priority functionality here to sort the
-> signals into different priorities. The signal which is wanted could
-> be configured in each step's priority node, the larger number means
-> the higher priority and the signal with higher priority will be sensed
-> more preferentially.
-> 
-> Signed-off-by: Songwei Chai <quic_songchai@quicinc.com>
+  * Prerequisite sysreg changes - patches 1 - 2
+  * FEAT_SPEv1p4 - patch 3
+  * FEAT_SPE_EFT - patch 4
+  * FEAT_SPE_FDS - patches 5 - 8
+  * FEAT_SPE_FDS Perf tool changes - patches 9 - 11
 
+The first two features will work with old Perfs but a Perf change to
+parse the new config4 is required for the last feature.
 
-> diff --git a/drivers/hwtracing/coresight/coresight-tgu.h b/drivers/hwtracing/coresight/coresight-tgu.h
-> index 6c849a2f78fa..f07ead505365 100644
-> --- a/drivers/hwtracing/coresight/coresight-tgu.h
-> +++ b/drivers/hwtracing/coresight/coresight-tgu.h
-> @@ -13,6 +13,112 @@
+---
+Changes in v2:
+- Fix detection of FEAT_SPE_FDS in el2_setup.h
+- Pickup Marc Z's sysreg change instead which matches the json
+- Restructure and expand docs changes
+- Link to v1: https://lore.kernel.org/r/20250506-james-perf-feat_spe_eft-v1-0-dd480e8e4851@linaro.org
 
-> +enum operation_index {
-> +	TGU_PRIORITY0,
-> +	TGU_PRIORITY1,
-> +	TGU_PRIORITY2,
-> +	TGU_PRIORITY3
-No blank line.  Also convention on anything other than a terminating entry
-is to leave the trailing , 
-> +
-> +};
+---
+James Clark (10):
+      arm64: sysreg: Add new PMSFCR_EL1 fields and PMSDSFR_EL1 register
+      perf: arm_spe: Support FEAT_SPEv1p4 filters
+      perf: arm_spe: Add support for FEAT_SPE_EFT extended filtering
+      arm64/boot: Enable EL2 requirements for SPE_FEAT_FDS
+      KVM: arm64: Add trap configs for PMSDSFR_EL1
+      perf: Add perf_event_attr::config4
+      perf: arm_spe: Add support for filtering on data source
+      tools headers UAPI: Sync linux/perf_event.h with the kernel sources
+      perf tools: Add support for perf_event_attr::config4
+      perf docs: arm-spe: Document new SPE filtering features
 
-> +
->  /**
->   * struct tgu_drvdata - Data structure for a TGU (Trigger Generator Unit)
->   * @base: Memory-mapped base address of the TGU device
-> @@ -20,6 +126,9 @@
->   * @csdev: Pointer to the associated coresight device
->   * @spinlock: Spinlock for handling concurrent access
->   * @enable: Flag indicating whether the TGU device is enabled
-> + * @value_table: Store given value based on relevant parameters.
-> + * @max_reg: Maximum number of registers
-> + * @max_step: Maximum step size
->   *
->   * This structure defines the data associated with a TGU device,
->   * including its base address, device pointers, clock, spinlock for
-> @@ -32,6 +141,9 @@ struct tgu_drvdata {
->  	struct coresight_device *csdev;
->  	spinlock_t spinlock;
->  	bool enable;
-> +	struct value_table *value_table;
-> +	int max_reg;
-> +	int max_step;
+Marc Zyngier (1):
+      arm64: sysreg: Update PMSIDR_EL1 description
 
-Ah. Here some of the bits missing in previous patch that make
-the description make more sense.  Fair enough.
+ Documentation/arch/arm64/booting.rst      |  11 ++++
+ arch/arm64/include/asm/el2_setup.h        |  14 +++++
+ arch/arm64/include/asm/sysreg.h           |   7 +++
+ arch/arm64/kvm/emulate-nested.c           |   1 +
+ arch/arm64/kvm/sys_regs.c                 |   1 +
+ arch/arm64/tools/sysreg                   |  45 ++++++++++++--
+ drivers/perf/arm_spe_pmu.c                | 100 +++++++++++++++++++++++++++++-
+ include/uapi/linux/perf_event.h           |   2 +
+ tools/include/uapi/linux/perf_event.h     |   2 +
+ tools/perf/Documentation/perf-arm-spe.txt |  97 ++++++++++++++++++++++++++---
+ tools/perf/tests/parse-events.c           |  14 ++++-
+ tools/perf/util/parse-events.c            |  11 ++++
+ tools/perf/util/parse-events.h            |   1 +
+ tools/perf/util/parse-events.l            |   1 +
+ tools/perf/util/pmu.c                     |   8 +++
+ tools/perf/util/pmu.h                     |   1 +
+ 16 files changed, 301 insertions(+), 15 deletions(-)
+---
+base-commit: 90b83efa6701656e02c86e7df2cb1765ea602d07
+change-id: 20250312-james-perf-feat_spe_eft-66cdf4d8fe99
 
->  };
->  
->  #endif
-> 
-> 
+Best regards,
+-- 
+James Clark <james.clark@linaro.org>
 
 
