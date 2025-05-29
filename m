@@ -1,227 +1,172 @@
-Return-Path: <linux-kernel+bounces-667405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-667403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EB90AC850C
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 01:40:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 761A5AC8507
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 01:36:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA60F4E43B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 23:40:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F10F1BC395C
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 23:36:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0B74246769;
-	Thu, 29 May 2025 23:39:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6910424729F;
+	Thu, 29 May 2025 23:36:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=auristor.com header.i=jaltman@auristor.com header.b="SeeTgTzs"
-Received: from monticello.secure-endpoints.com (monticello.secure-endpoints.com [208.125.0.237])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ToY9hXjM"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBD3BB67F
-	for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 23:39:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=208.125.0.237
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0782122D7B8;
+	Thu, 29 May 2025 23:36:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748561993; cv=none; b=mP/gu2JzQ/Be3yRiolJFI9azXfU0lZTj2j3TsLeVJDcxLR1VYv+H1HU7/QSmzgnitwCVlYbOu+LSRsFqxvVT47UklrCuAJZBdlbxjWWmH9qtilSsP0yvaccurKqggjd4aJWjDjXcSfav8j0Gjo7KPOQO1VpCtUJeRcBhpj7xcTc=
+	t=1748561769; cv=none; b=FTbV51iQ3wXSbDb7udMcTeuzR0SD/RtPeYV9MJCbuXKQLJE/gD9M3j06edzh5GvQpq6/7l8TSQkoG8RtcYutHVZzSB2ONXGdlVifwZS2vnejnc/yxWMvuUpQgxIjB82tnRmWXK07IuF4Dt6zmcm9p2yTPkUDAU41pIlJ+kgeoR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748561993; c=relaxed/simple;
-	bh=1ouz4+FRjNePv4yEin0z7a1nbFS5U+LAtiVhPVnViAA=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=QBVTbFCoObhMoxjjczGnHnXVbUSPthHvrG0c2iLTaokJPYEyxAR2DwuHbx78dAU1S4/bu0iBfhiVS6lZX4gYq01ivc22qUy7I7uTn3TnDWeEcEPLg79KaKHJk+IbzMu8ZHdFuqwKRAZ7rheKok8WQuGVcHSSxm+HZFJ68jKewDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=auristor.com; spf=pass smtp.mailfrom=auristor.com; dkim=pass (1024-bit key) header.d=auristor.com header.i=jaltman@auristor.com header.b=SeeTgTzs; arc=none smtp.client-ip=208.125.0.237
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=auristor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=auristor.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=auristor.com; s=MDaemon; r=y; l=8753; t=1748561731;
-	x=1749166531; i=jaltman@auristor.com; q=dns/txt; h=Message-ID:
-	Date:MIME-Version:User-Agent:From:Subject:To:Cc:References:
-	Content-Language:Organization:Disposition-Notification-To:
-	In-Reply-To:Content-Type; z=Received:=20from=20[IPV6=3A2603=3A70
-	00=3A73c=3Abb00=3A8d11=3A8793=3Ae55a=3A9811]=20by=20auristor.com
-	=20(IPv6=3A2001=3A470=3A1f07=3Af77=3Affff=3A=3A312)=20(MDaemon=2
-	0PRO=20v25.0.3a)=20=0D=0A=09with=20ESMTPSA=20id=20md500100473639
-	2.msg=3B=20Thu,=2029=20May=202025=2019=3A35=3A30=20-0400|Message
-	-ID:=20<ea42a3fd-7ce8-43e0-a2d5-c5353070bfe2@auristor.com>|Date:
-	=20Thu,=2029=20May=202025=2019=3A35=3A39=20-0400|MIME-Version:=2
-	01.0|User-Agent:=20Mozilla=20Thunderbird|From:=20Jeffrey=20E=20A
-	ltman=20<jaltman@auristor.com>|Subject:=20Re=3A=20[PATCH]=20afs=
-	3A=20Replace=20simple_strtoul=20with=20kstrtoul=20in=0D=0A=20afs
-	_parse_address|To:=20Su=20Hui=20<suhui@nfschina.com>,=20dhowells
-	@redhat.com,=20marc.dionne@auristor.com|Cc:=20linux-afs@lists.in
-	fradead.org,=20linux-kernel@vger.kernel.org,=0D=0A=20kernel-jani
-	tors@vger.kernel.org|References:=20<20250527084916.1699109-1-suh
-	ui@nfschina.com>|Content-Language:=20en-US|Organization:=20AuriS
-	tor,=20Inc.|Disposition-Notification-To:=20Jeffrey=20E=20Altman=
-	20<jaltman@auristor.com>|In-Reply-To:=20<20250527084916.1699109-
-	1-suhui@nfschina.com>|Content-Type:=20multipart/signed=3B=20prot
-	ocol=3D"application/pkcs7-signature"=3B=20micalg=3Dsha-256=3B=20
-	boundary=3D"------------ms050301050905090300030202"; bh=1ouz4+FR
-	jNePv4yEin0z7a1nbFS5U+LAtiVhPVnViAA=; b=SeeTgTzsM+fR4tKjGtGvaRkJ
-	lEMOaGfp0ygEZcJMLFVu2y8PAZ1yiw0e57EARM2/l9fIOTXds8mIO9ckrVP+C1LZ
-	Sf/z8wVTlBNv03gS2yl2721XHc+tYu+MtlOORtS3aNyMTkjHHpliHJbogqmjLolI
-	I6Pd6LT7liyRGhRwgQk=
-X-MDAV-Result: clean
-X-MDAV-Processed: monticello.secure-endpoints.com, Thu, 29 May 2025 19:35:31 -0400
-Received: from [IPV6:2603:7000:73c:bb00:8d11:8793:e55a:9811] by auristor.com (IPv6:2001:470:1f07:f77:ffff::312) (MDaemon PRO v25.0.3a) 
-	with ESMTPSA id md5001004736392.msg; Thu, 29 May 2025 19:35:30 -0400
-X-Spam-Processed: monticello.secure-endpoints.com, Thu, 29 May 2025 19:35:30 -0400
-	(not processed: message from trusted or authenticated source)
-X-MDRemoteIP: 2603:7000:73c:bb00:8d11:8793:e55a:9811
-X-MDHelo: [IPV6:2603:7000:73c:bb00:8d11:8793:e55a:9811]
-X-MDArrival-Date: Thu, 29 May 2025 19:35:30 -0400
-X-MDOrigin-Country: US, NA
-X-Authenticated-Sender: jaltman@auristor.com
-X-Return-Path: prvs=1244a08b51=jaltman@auristor.com
-X-Envelope-From: jaltman@auristor.com
-X-MDaemon-Deliver-To: linux-kernel@vger.kernel.org
-Message-ID: <ea42a3fd-7ce8-43e0-a2d5-c5353070bfe2@auristor.com>
-Date: Thu, 29 May 2025 19:35:39 -0400
+	s=arc-20240116; t=1748561769; c=relaxed/simple;
+	bh=Q2XwdLQnrIkll8t6+9mdiBU9jJB2NiAhwlt3aabO7FU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SwuOe9UDKdpa75vC7UA8YaYqh6tz3GZda9Kp6EQViAE0B2dczyxKtbK1eyl1Hfo/gI2ET1Y7cZ7Of0vHAwhtCLJ/WcBt70xX7TNjTz529nLSWF0vLVD8mKOwENQ5JQ1O1ZtWKnMpP0jLenzdWpmd6P2ZKAg4FR84bG//81kR1yw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ToY9hXjM; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1748561768; x=1780097768;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Q2XwdLQnrIkll8t6+9mdiBU9jJB2NiAhwlt3aabO7FU=;
+  b=ToY9hXjMTjR0a3iI5E4SEZ+/kD5NvjUwAs+RF3i7mWLlXCjRDLLzBO4f
+   Xnf8GIL7MOgbguPnHMPGTz2W4ZGQ+HYYv6b3S6kpu0Q59hA0Cc43pXWa1
+   RaFp/scbb46LfZiV8yepfy243X6XoH4nI5IIr10ISwZyVuuAdOE3nkadB
+   mCAlyIeQas1j22sZqgi+WswUQ40dKQ8jSHaVA8l02UB8MYTtVsXCtiOfu
+   mwfHvgHqH2Az9iG+RWuPvkB4PaSBMYJtBsYhSjmzsXT2M8pDwiDLqXSKF
+   RcR8sKw9L3e83sK+3dxz4dMoMdQ9eOKC2AHnI4gMsFEPrrfbyXjbNHt01
+   Q==;
+X-CSE-ConnectionGUID: SvA0uToCTYGm+0oxG5ju9A==
+X-CSE-MsgGUID: Oz6jk4KDRWKBQAed4IiBRA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11448"; a="61309731"
+X-IronPort-AV: E=Sophos;i="6.16,194,1744095600"; 
+   d="scan'208";a="61309731"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2025 16:36:07 -0700
+X-CSE-ConnectionGUID: xkSmuDiqQNe++hBVgTDbiA==
+X-CSE-MsgGUID: GUAqWgrhSrml+jXCTsCGOw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,194,1744095600"; 
+   d="scan'208";a="144356843"
+Received: from agluck-desk3.sc.intel.com (HELO agluck-desk3) ([172.25.103.51])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2025 16:36:06 -0700
+Date: Thu, 29 May 2025 16:36:05 -0700
+From: "Luck, Tony" <tony.luck@intel.com>
+To: Zaid Alali <zaidal@os.amperecomputing.com>
+Cc: rafael@kernel.org, lenb@kernel.org, james.morse@arm.com, bp@alien8.de,
+	robert.moore@intel.com, Jonathan.Cameron@huawei.com,
+	ira.weiny@intel.com, Benjamin.Cheatham@amd.com,
+	dan.j.williams@intel.com, arnd@arndb.de, Avadhut.Naik@amd.com,
+	u.kleine-koenig@pengutronix.de, john.allen@amd.com,
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	acpica-devel@lists.linux.dev
+Subject: Re: [PATCH v7 7/9] ACPI: APEI: EINJ: Add debugfs files for EINJv2
+ support
+Message-ID: <aDjvZVUU_GJ4dxQ_@agluck-desk3>
+References: <20250506213814.2365788-1-zaidal@os.amperecomputing.com>
+ <20250506213814.2365788-8-zaidal@os.amperecomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Jeffrey E Altman <jaltman@auristor.com>
-Subject: Re: [PATCH] afs: Replace simple_strtoul with kstrtoul in
- afs_parse_address
-To: Su Hui <suhui@nfschina.com>, dhowells@redhat.com, marc.dionne@auristor.com
-Cc: linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-References: <20250527084916.1699109-1-suhui@nfschina.com>
-Content-Language: en-US
-Organization: AuriStor, Inc.
-Disposition-Notification-To: Jeffrey E Altman <jaltman@auristor.com>
-In-Reply-To: <20250527084916.1699109-1-suhui@nfschina.com>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms050301050905090300030202"
-X-MDCFSigsAdded: auristor.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250506213814.2365788-8-zaidal@os.amperecomputing.com>
 
-This is a cryptographically signed message in MIME format.
+On Tue, May 06, 2025 at 02:38:11PM -0700, Zaid Alali wrote:
+> Create a debugfs blob file to be used for reading the user
+> input for the component array. EINJv2 enables users to inject
+> errors to multiple components/devices at the same time using
+> component array.
+> 
+> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Signed-off-by: Zaid Alali <zaidal@os.amperecomputing.com>
+> ---
+>  drivers/acpi/apei/einj-core.c | 21 ++++++++++++++++++++-
+>  1 file changed, 20 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/acpi/apei/einj-core.c b/drivers/acpi/apei/einj-core.c
+> index 60e4f3dc7055..44f9166c3881 100644
+> --- a/drivers/acpi/apei/einj-core.c
+> +++ b/drivers/acpi/apei/einj-core.c
+> @@ -33,6 +33,7 @@
+>  #define SLEEP_UNIT_MAX		5000			/* 5ms */
+>  /* Firmware should respond within 1 seconds */
+>  #define FIRMWARE_TIMEOUT	(1 * USEC_PER_SEC)
+> +#define COMP_ARR_SIZE		1024
+>  #define ACPI65_EINJV2_SUPP	BIT(30)
+>  #define ACPI5_VENDOR_BIT	BIT(31)
+>  #define MEM_ERROR_MASK		(ACPI_EINJ_MEMORY_CORRECTABLE | \
+> @@ -107,6 +108,8 @@ static struct debugfs_blob_wrapper vendor_blob;
+>  static struct debugfs_blob_wrapper vendor_errors;
+>  static char vendor_dev[64];
+>  
+> +static struct debugfs_blob_wrapper einjv2_component_arr;
+> +static void *user_input;
 
---------------ms050301050905090300030202
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+Better name for this? "user_input" is too generic.
 
-T24gNS8yNy8yMDI1IDQ6NDkgQU0sIFN1IEh1aSB3cm90ZToNCj4ga3N0cnRvdWwoKSBpcyBi
-ZXR0ZXIgYmVjYXVzZSBzaW1wbGVfc3RydG91bCgpIGlnbm9yZXMgb3ZlcmZsb3cgd2hpY2gN
-Cj4gbWF5IGxlYWQgdG8gdW5leHBlY3RlZCByZXN1bHRzLg0KPg0KPiBTaWduZWQtb2ZmLWJ5
-OiBTdSBIdWk8c3VodWlAbmZzY2hpbmEuY29tPg0KPiAtLS0NCj4gICBmcy9hZnMvYWRkcl9w
-cmVmcy5jIHwgMTAgKysrKy0tLS0tLQ0KPiAgIDEgZmlsZSBjaGFuZ2VkLCA0IGluc2VydGlv
-bnMoKyksIDYgZGVsZXRpb25zKC0pDQo+DQo+IGRpZmYgLS1naXQgYS9mcy9hZnMvYWRkcl9w
-cmVmcy5jIGIvZnMvYWZzL2FkZHJfcHJlZnMuYw0KPiBpbmRleCBjMDM4NDIwMWI4ZmUuLmFl
-NGY0YjM3MTg4MiAxMDA2NDQNCj4gLS0tIGEvZnMvYWZzL2FkZHJfcHJlZnMuYw0KPiArKysg
-Yi9mcy9hZnMvYWRkcl9wcmVmcy5jDQo+IEBAIC0xMTgsNyArMTE4LDEwIEBAIHN0YXRpYyBp
-bnQgYWZzX3BhcnNlX2FkZHJlc3MoY2hhciAqcCwgc3RydWN0IGFmc19hZGRyX3ByZWZlcmVu
-Y2UgKnByZWYpDQo+ICAgDQo+ICAgCWlmICgqcCA9PSAnLycpIHsNCj4gICAJCXArKzsNCj4g
-LQkJdG1wID0gc2ltcGxlX3N0cnRvdWwocCwgJnAsIDEwKTsNCj4gKwkJaWYgKGtzdHJ0b3Vs
-KHAsIDEwLCAmdG1wKSkgew0KPiArCQkJcHJfd2FybigiSW52YWxpZCBhZGRyZXNzXG4iKTsN
-Cj4gKwkJCXJldHVybiAtRUlOVkFMOw0KPiArCQl9DQo+ICAgCQlpZiAodG1wID4gbWFzaykg
-ew0KPiAgIAkJCXByX3dhcm4oIlN1Ym5ldCBtYXNrIHRvbyBsYXJnZVxuIik7DQo+ICAgCQkJ
-cmV0dXJuIC1FSU5WQUw7DQo+IEBAIC0xMzAsMTEgKzEzMyw2IEBAIHN0YXRpYyBpbnQgYWZz
-X3BhcnNlX2FkZHJlc3MoY2hhciAqcCwgc3RydWN0IGFmc19hZGRyX3ByZWZlcmVuY2UgKnBy
-ZWYpDQo+ICAgCQltYXNrID0gdG1wOw0KPiAgIAl9DQo+ICAgDQo+IC0JaWYgKCpwKSB7DQo+
-IC0JCXByX3dhcm4oIkludmFsaWQgYWRkcmVzc1xuIik7DQo+IC0JCXJldHVybiAtRUlOVkFM
-Ow0KPiAtCX0NCj4gLQ0KPiAgIAlwcmVmLT5zdWJuZXRfbWFzayA9IG1hc2s7DQo+ICAgCXJl
-dHVybiAwOw0KPiAgIH0NCg0KU3UgSHVpLA0KDQpUaGFuayB5b3UgZm9yIHRoZSBjb250cmli
-dXRpb24gYnV0IEkgZG8gbm90IGJlbGlldmUgdGhpcyBwYXRjaCBpcyBjb3JyZWN0Lg0KDQpU
-aGUgc2Vjb25kIGJsb2NrIGlzIHJlcXVpcmVkIGV2ZW4gaWYgdGhlIHNpbXBsZV9zdHJvdWwo
-KSBpcyByZXBsYWNlZCBieSANCmtzdHJ0b3VsKCkgYXMgaXQgcHJvdGVjdHMgYWdhaW5zdCBh
-biBpbnB1dCBzdHJpbmcgd2hpY2ggZG9lcyBub3QgY29udGFpbiANCnRoZSBvcHRpb25hbCBz
-dWJuZXQgbWFzayBidXQgaGFzIHNvbWUgb3RoZXIgY2hhcmFjdGVycyBhZnRlciB0aGUgYWRk
-cmVzcy4NCg0KYWZzX3BhcnNlX2FkZHJlc3MoKSBhbHJlYWR5IGhhcyBpdHMgb3duIG92ZXJm
-bG93IGNoZWNrcyBmb2xsb3dpbmcgdGhlIA0Kc2ltcGxlX3N0cnRvdWwoKSBjYWxsIHdoaWNo
-IGlzIHNwZWNpZmljIHRvIHRoZSBpbnRlcnByZXRhdGlvbiBvZiB0aGUgDQphbGxvd2VkIHN1
-Ym5ldCBtYXNrIHZhbHVlcy4NCg0KRG8geW91IHNlZSBhbiBvdmVyZmxvdyBjb25kaXRpb24g
-d2hpY2ggd291bGQgbm90IGJlIGNhdWdodCBieSB0aG9zZSANCmNoZWNrcyB3aGljaCB3b3Vs
-ZCBiZSBjYXVnaHQgYnkgdXNlIG9mIGtzdHJ0b3VsKCk/DQoNClRoYW5rcyBhZ2Fpbi4NCg0K
-SmVmZnJleSBBbHRtYW4NCg0KDQo=
-
---------------ms050301050905090300030202
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCC
-DHEwggXSMIIEuqADAgECAhBAAYJpmi/rPn/F0fJyDlzMMA0GCSqGSIb3DQEBCwUAMDoxCzAJ
-BgNVBAYTAlVTMRIwEAYDVQQKEwlJZGVuVHJ1c3QxFzAVBgNVBAMTDlRydXN0SUQgQ0EgQTEz
-MB4XDTIyMDgwNDE2MDQ0OFoXDTI1MTAzMTE2MDM0OFowcDEvMC0GCgmSJomT8ixkAQETH0Ew
-MTQxMEQwMDAwMDE4MjY5OUEyRkQyMDAwMjMzQ0QxGTAXBgNVBAMTEEplZmZyZXkgRSBBbHRt
-YW4xFTATBgNVBAoTDEF1cmlTdG9yIEluYzELMAkGA1UEBhMCVVMwggEiMA0GCSqGSIb3DQEB
-AQUAA4IBDwAwggEKAoIBAQCkC7PKBBZnQqDKPtZPMLAy77zo2DPvwtGnd1hNjPvbXrpGxUb3
-xHZRtv179LHKAOcsY2jIctzieMxf82OMyhpBziMPsFAG/ukihBMFj3/xEeZVso3K27pSAyyN
-fO/wJ0rX7G+ges22Dd7goZul8rPaTJBIxbZDuaykJMGpNq4PQ8VPcnYZx+6b+nJwJJoJ46kI
-EEfNh3UKvB/vM0qtxS690iAdgmQIhTl+qfXq4IxWB6b+3NeQxgR6KLU4P7v88/tvJTpxIKkg
-9xj89ruzeThyRFd2DSe3vfdnq9+g4qJSHRXyTft6W3Lkp7UWTM4kMqOcc4VSRdufVKBQNXjG
-IcnhAgMBAAGjggKcMIICmDAOBgNVHQ8BAf8EBAMCBPAwgYQGCCsGAQUFBwEBBHgwdjAwBggr
-BgEFBQcwAYYkaHR0cDovL2NvbW1lcmNpYWwub2NzcC5pZGVudHJ1c3QuY29tMEIGCCsGAQUF
-BzAChjZodHRwOi8vdmFsaWRhdGlvbi5pZGVudHJ1c3QuY29tL2NlcnRzL3RydXN0aWRjYWEx
-My5wN2MwHwYDVR0jBBgwFoAULbfeG1l+KpguzeHUG+PFEBJe6RQwCQYDVR0TBAIwADCCASsG
-A1UdIASCASIwggEeMIIBGgYLYIZIAYb5LwAGAgEwggEJMEoGCCsGAQUFBwIBFj5odHRwczov
-L3NlY3VyZS5pZGVudHJ1c3QuY29tL2NlcnRpZmljYXRlcy9wb2xpY3kvdHMvaW5kZXguaHRt
-bDCBugYIKwYBBQUHAgIwga0MgapUaGlzIFRydXN0SUQgQ2VydGlmaWNhdGUgaGFzIGJlZW4g
-aXNzdWVkIGluIGFjY29yZGFuY2Ugd2l0aCBJZGVuVHJ1c3QncyBUcnVzdElEIENlcnRpZmlj
-YXRlIFBvbGljeSBmb3VuZCBhdCBodHRwczovL3NlY3VyZS5pZGVudHJ1c3QuY29tL2NlcnRp
-ZmljYXRlcy9wb2xpY3kvdHMvaW5kZXguaHRtbDBFBgNVHR8EPjA8MDqgOKA2hjRodHRwOi8v
-dmFsaWRhdGlvbi5pZGVudHJ1c3QuY29tL2NybC90cnVzdGlkY2FhMTMuY3JsMB8GA1UdEQQY
-MBaBFGphbHRtYW5AYXVyaXN0b3IuY29tMB0GA1UdDgQWBBQB+nzqgljLocLTsiUn2yWqEc2s
-gjAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwQwDQYJKoZIhvcNAQELBQADggEBAJwV
-eycprp8Ox1npiTyfwc5QaVaqtoe8Dcg2JXZc0h4DmYGW2rRLHp8YL43snEV93rPJVk6B2v4c
-WLeQfaMrnyNeEuvHx/2CT44cdLtaEk5zyqo3GYJYlLcRVz6EcSGHv1qPXgDT0xB/25etwGYq
-utYF4Chkxu4KzIpq90eDMw5ajkexw+8ARQz4N5+d6NRbmMCovd7wTGi8th/BZvz8hgKUiUJo
-Qle4wDxrdXdnIhCP7g87InXKefWgZBF4VX21t2+hkc04qrhIJlHrocPG9mRSnnk2WpsY0MXt
-a8ivbVKtfpY7uSNDZSKTDi1izEFH5oeQdYRkgIGb319a7FjslV8wggaXMIIEf6ADAgECAhBA
-AXA7OrqBjMk8rp4OuNQSMA0GCSqGSIb3DQEBCwUAMEoxCzAJBgNVBAYTAlVTMRIwEAYDVQQK
-EwlJZGVuVHJ1c3QxJzAlBgNVBAMTHklkZW5UcnVzdCBDb21tZXJjaWFsIFJvb3QgQ0EgMTAe
-Fw0yMDAyMTIyMTA3NDlaFw0zMDAyMTIyMTA3NDlaMDoxCzAJBgNVBAYTAlVTMRIwEAYDVQQK
-EwlJZGVuVHJ1c3QxFzAVBgNVBAMTDlRydXN0SUQgQ0EgQTEzMIIBIjANBgkqhkiG9w0BAQEF
-AAOCAQ8AMIIBCgKCAQEAu6sUO01SDD99PM+QdZkNxKxJNt0NgQE+Zt6ixaNP0JKSjTd+SG5L
-wqxBWjnOgI/3dlwgtSNeN77AgSs+rA4bK4GJ75cUZZANUXRKw/et8pf9Qn6iqgB63OdHxBN/
-15KbM3HR+PyiHXQoUVIevCKW8nnlWnnZabT1FejOhRRKVUg5HACGOTfnCOONrlxlg+m1Vjgn
-o1uNqNuLM/jkD1z6phNZ/G9IfZGI0ppHX5AA/bViWceX248VmefNhSR14ADZJtlAAWOi2un0
-3bqrBPHA9nDyXxI8rgWLfUP5rDy8jx2hEItg95+ORF5wfkGUq787HBjspE86CcaduLka/Bk2
-VwIDAQABo4IChzCCAoMwEgYDVR0TAQH/BAgwBgEB/wIBADAOBgNVHQ8BAf8EBAMCAYYwgYkG
-CCsGAQUFBwEBBH0wezAwBggrBgEFBQcwAYYkaHR0cDovL2NvbW1lcmNpYWwub2NzcC5pZGVu
-dHJ1c3QuY29tMEcGCCsGAQUFBzAChjtodHRwOi8vdmFsaWRhdGlvbi5pZGVudHJ1c3QuY29t
-L3Jvb3RzL2NvbW1lcmNpYWxyb290Y2ExLnA3YzAfBgNVHSMEGDAWgBTtRBnA0/AGi+6ke75C
-5yZUyI42djCCASQGA1UdIASCARswggEXMIIBEwYEVR0gADCCAQkwSgYIKwYBBQUHAgEWPmh0
-dHBzOi8vc2VjdXJlLmlkZW50cnVzdC5jb20vY2VydGlmaWNhdGVzL3BvbGljeS90cy9pbmRl
-eC5odG1sMIG6BggrBgEFBQcCAjCBrQyBqlRoaXMgVHJ1c3RJRCBDZXJ0aWZpY2F0ZSBoYXMg
-YmVlbiBpc3N1ZWQgaW4gYWNjb3JkYW5jZSB3aXRoIElkZW5UcnVzdCdzIFRydXN0SUQgQ2Vy
-dGlmaWNhdGUgUG9saWN5IGZvdW5kIGF0IGh0dHBzOi8vc2VjdXJlLmlkZW50cnVzdC5jb20v
-Y2VydGlmaWNhdGVzL3BvbGljeS90cy9pbmRleC5odG1sMEoGA1UdHwRDMEEwP6A9oDuGOWh0
-dHA6Ly92YWxpZGF0aW9uLmlkZW50cnVzdC5jb20vY3JsL2NvbW1lcmNpYWxyb290Y2ExLmNy
-bDAdBgNVHQ4EFgQULbfeG1l+KpguzeHUG+PFEBJe6RQwHQYDVR0lBBYwFAYIKwYBBQUHAwIG
-CCsGAQUFBwMEMA0GCSqGSIb3DQEBCwUAA4ICAQB/7BKcygLX6Nl4a03cDHt7TLdPxCzFvDF2
-bkVYCFTRX47UfeomF1gBPFDee3H/IPlLRmuTPoNt0qjdpfQzmDWN95jUXLdLPRToNxyaoB5s
-0hOhcV6H08u3FHACBif55i0DTDzVSaBv0AZ9h1XeuGx4Fih1Vm3Xxz24GBqqVudvPRLyMJ7u
-6hvBqTIKJ53uCs3dyQLZT9DXnp+kJv8y7ZSAY+QVrI/dysT8avtn8d7k7azNBkfnbRq+0e88
-QoBnel6u+fpwbd5NLRHywXeH+phbzULCa+bLPRMqJaW2lbhvSWrMHRDy3/d8HvgnLCBFK2s4
-Spns4YCN4xVcbqlGWzgolHCKUH39vpcsDo1ymZFrJ8QR6ihIn8FmJ5oKwAnnd/G6ADXFC9bu
-db9+532phSAXOZrrecIQn+vtP366PC+aClAPsIIDJDsotS5z4X2JUFsNIuEgXGqhiKE7SuZb
-rFG9sdcLprSlJN7TsRDc0W2b9nqwD+rj/5MN0C+eKwha+8ydv0+qzTyxPP90KRgaegGowC4d
-UsZyTk2n4Z3MuAHX5nAZL/Vh/SyDj/ajorV44yqZBzQ3ChKhXbfUSwe2xMmygA2Z5DRwMRJn
-p/BscizYdNk2WXJMTnH+wVLN8sLEwEtQR4eTLoFmQvrK2AMBS9kW5sBkMzINt/ZbbcZ3F+eA
-MDGCBAEwggP9AgEBME4wOjELMAkGA1UEBhMCVVMxEjAQBgNVBAoTCUlkZW5UcnVzdDEXMBUG
-A1UEAxMOVHJ1c3RJRCBDQSBBMTMCEEABgmmaL+s+f8XR8nIOXMwwDQYJYIZIAWUDBAIBBQCg
-ggKEMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI1MDUyOTIz
-MzUzOVowLwYJKoZIhvcNAQkEMSIEIECELZaaL4iyPZQW7IV/Kehd1FUwJfhkfYLFEgCk+N4N
-MF0GCSsGAQQBgjcQBDFQME4wOjELMAkGA1UEBhMCVVMxEjAQBgNVBAoTCUlkZW5UcnVzdDEX
-MBUGA1UEAxMOVHJ1c3RJRCBDQSBBMTMCEEABgmmaL+s+f8XR8nIOXMwwXwYLKoZIhvcNAQkQ
-AgsxUKBOMDoxCzAJBgNVBAYTAlVTMRIwEAYDVQQKEwlJZGVuVHJ1c3QxFzAVBgNVBAMTDlRy
-dXN0SUQgQ0EgQTEzAhBAAYJpmi/rPn/F0fJyDlzMMIIBVwYJKoZIhvcNAQkPMYIBSDCCAUQw
-CwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzANBggqhkiG9w0DAgIBBTAN
-BggqhkiG9w0DAgIBBTAHBgUrDgMCBzANBggqhkiG9w0DAgIBBTAHBgUrDgMCGjALBglghkgB
-ZQMEAgEwCwYJYIZIAWUDBAICMAsGCWCGSAFlAwQCAzALBglghkgBZQMEAgQwCwYJYIZIAWUD
-BAIHMAsGCWCGSAFlAwQCCDALBglghkgBZQMEAgkwCwYJYIZIAWUDBAIKMAsGCSqGSIb3DQEB
-ATALBgkrgQUQhkg/AAIwCAYGK4EEAQsAMAgGBiuBBAELATAIBgYrgQQBCwIwCAYGK4EEAQsD
-MAsGCSuBBRCGSD8AAzAIBgYrgQQBDgAwCAYGK4EEAQ4BMAgGBiuBBAEOAjAIBgYrgQQBDgMw
-DQYJKoZIhvcNAQEBBQAEggEAmKV/MraUkvn6rEMv8yJmU1gQvYrRUgrnB3oQ6Wvvr/2jkixF
-XHgD6bK0GGrlXd/l4fsdovJmx4alReEsazSaIT7lEZ0gtXuuLPDUNZv6ImTL3xYdnJFyuDpD
-CaoVI7XklQ2JiM3tHfXZ2j3DFJpoy3+jBeouqIPghPL4tIdmhnS33FL5B8FauRIqlzzL9OeQ
-XC1+Q1cB3vbQ/QHIQkpOtF/QKqWnXLar3VAuvn4E2zEVIkCs6LOqcGf71Uf3UTgR6ejgAQMt
-G5SUxlHJQnvaHWZ1hbYxIVC9bLT+JJkbUCzet2HY7ZP7OhXfBsd4EPYMR2TokcxnggO48TyL
-ux+LEQAAAAAAAA==
---------------ms050301050905090300030202--
-
+>  static u32 available_error_type;
+>  static u32 available_error_type_v2;
+>  
+> @@ -689,6 +692,7 @@ static u64 error_param3;
+>  static u64 error_param4;
+>  static struct dentry *einj_debug_dir;
+>  static char einj_buf[32];
+> +static bool EINJv2_enabled;
+>  static struct { u32 mask; const char *str; } const einj_error_type_string[] = {
+>  	{ BIT(0), "Processor Correctable" },
+>  	{ BIT(1), "Processor Uncorrectable non-fatal" },
+> @@ -718,7 +722,7 @@ static int available_error_type_show(struct seq_file *m, void *v)
+>  		if (available_error_type & einj_error_type_string[pos].mask)
+>  			seq_printf(m, "0x%08x\t%s\n", einj_error_type_string[pos].mask,
+>  				   einj_error_type_string[pos].str);
+> -	if (available_error_type & ACPI65_EINJV2_SUPP) {
+> +	if ((available_error_type & ACPI65_EINJV2_SUPP) && EINJv2_enabled) {
+>  		for (int pos = 0; pos < ARRAY_SIZE(einjv2_error_type_string); pos++) {
+>  			if (available_error_type_v2 & einjv2_error_type_string[pos].mask)
+>  				seq_printf(m, "V2_0x%08x\t%s\n", einjv2_error_type_string[pos].mask,
+> @@ -901,8 +905,22 @@ static int __init einj_probe(struct platform_device *pdev)
+>  				   &error_param4);
+>  		debugfs_create_x32("notrigger", S_IRUSR | S_IWUSR,
+>  				   einj_debug_dir, &notrigger);
+> +		if (available_error_type & ACPI65_EINJV2_SUPP) {
+> +			user_input = kzalloc(COMP_ARR_SIZE, GFP_KERNEL);
+> +			if (!user_input) {
+> +				EINJv2_enabled = false;
+> +				pr_info("EINJv2 is disabled: not enough memory\n");
+> +				goto skip_EINJv2;
+> +			}
+> +			EINJv2_enabled = true;
+> +			einjv2_component_arr.data = user_input;
+> +			einjv2_component_arr.size = COMP_ARR_SIZE;
+> +			debugfs_create_blob("einjv2_component_array", S_IRUSR | S_IWUSR,
+> +					einj_debug_dir, &einjv2_component_arr);
+> +		}
+>  	}
+>  
+> +skip_EINJv2:
+>  	if (vendor_dev[0]) {
+>  		vendor_blob.data = vendor_dev;
+>  		vendor_blob.size = strlen(vendor_dev);
+> @@ -944,6 +962,7 @@ static void __exit einj_remove(struct platform_device *pdev)
+>  		if (vendor_errors.size)
+>  			acpi_os_unmap_memory(vendor_errors.data, vendor_errors.size);
+>  	}
+> +	kfree(user_input);
+>  	einj_exec_ctx_init(&ctx);
+>  	apei_exec_post_unmap_gars(&ctx);
+>  	apei_resources_release(&einj_resources);
+> -- 
+> 2.43.0
+> 
 
