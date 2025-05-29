@@ -1,153 +1,208 @@
-Return-Path: <linux-kernel+bounces-666988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B850DAC7EF3
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 15:39:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DCBBAC7EFA
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 15:40:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72C294A462A
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 13:39:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5986A50206F
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 13:41:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1008C18BBAE;
-	Thu, 29 May 2025 13:39:35 +0000 (UTC)
-Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2CE8226D1C;
+	Thu, 29 May 2025 13:40:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="JHYx4pEF"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A24863CB
-	for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 13:39:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFEB3225403;
+	Thu, 29 May 2025 13:40:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748525974; cv=none; b=eojkOwuREmkJzC0N5Ka7flFx+32VHOgFYAAXL+bH6VE8g+W3jacdh1EgxowiRbVqsem/ru8g2S6ydJ7iEC/tpVSNEvIwUlVw4/Kl79upmnYkL3fUaSr10Wfcj5JN6Yr8PmjG4gcPzTwMUfgJkSqmvKJTlgRWawr1vEY6xu0dstI=
+	t=1748526054; cv=none; b=RXkwJdQ1MIq4VQBbEWb2y34380OXtfI2ZmI/Gd8+ISI32rG1AAtBKzGeNwQbHSwmNJqvcAEs9U2Yhk1ytPLVLiYg5qxID1Wl6NX5b6Jy/topbM1DcBLTHEXRD7qMHJRMHPeAlolveW2/FllMGNzl+I3fYHNCKcWOfir5feGDyKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748525974; c=relaxed/simple;
-	bh=yGQZgTTHSVx3PhFr8VKMt4lFCsY/Jmf4/Qqjo4jC7sU=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=BR9RUbeYnK6wKoiax7hjai7isHNhFKBvY+7H9cSxi/E01tQsc6bLe0BLWx57+ARPtEf7/rdwLYLYw6TGAUegMXR1Q0Tm6ATvcHS8LA932XCSsKdh380sKkbu8Ao/fcWpk58aBmNYqLBNB1QMyDaK6sXhKRxOuF5rbr9gs+GwYjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-86a3d964d9fso175729239f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 06:39:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748525969; x=1749130769;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8ADf1egfEArdae73a3H+BcUdsMSrewOrhnfelJZcO8w=;
-        b=SSxUw7IG+qijMbBVgfPCmX3YTROQU6OQ1MxQb1jfsLKWAivKcvuyzpyPyTGxQTNs+n
-         gaPNf9jve10NCQnt7qh8yi8eitE7RWMXZLNdPHXBlNGXnO3NbwbCa+CqIWTM6fDBAk28
-         m/F8Mt3vFecOlh/sF4M8QNCjlsfvFxHIVIXksQyoAZZoAnlhyJNLx+bVvvwdLvYp6ep/
-         3HDF/SxNh8//Y+groMyqE1zpOoVDJWA0WErZTaRy76IqLQXuup2ubeg0JKdKzjPIztXa
-         5uQnak4pQaT2OERiX9mAzpCXjhLMMh9cPQw2s23eVMK16L6pKQ/GLCSuGiO+O8basAZQ
-         1/sA==
-X-Gm-Message-State: AOJu0YwPxpPk/qsvBqOYiQJUGdwF4Hzx4H/1i/1n3A9oLDdAoCsH0UUG
-	4hCuYmelZClfsviZ+25/iGgTuZNdbvEYT8nQUQp2PK6ZxmBZfCbxsFOtxMkgzyHcqF4OuB7o6rB
-	z+b4CtPpmIduhINl9mCq7WlVkBsCmjqbd2VuUm1a5AIX2Z9SIwbAR1qTvfiDxNw==
-X-Google-Smtp-Source: AGHT+IFhSMpVhEhxUjV1TwvOUsxXh6I7yMPgQgjlpav2sXDD6oDkuCzgQBOJxiGdBVH2d+GutAkydgXC7k+wrCB5sD/ztBvXWINd
+	s=arc-20240116; t=1748526054; c=relaxed/simple;
+	bh=zi9CAd0UHwTnmwGtSb/HavByLsmoluZyCSlkqqj3zmc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TjcaZuKzL6pFPKqLTzeQS2Vv0zWJKPcaxC+5wfxkiIrfI+OyucX3VAjV9Kq+pbyaFykIpRMUj4Hh0ayRFwQyEo8wisPR+2V0thEN+oxrLGwNzEOamGjBCq9Lodl3pZy/Lo45DDPzIgG/jEK1mxPojfZNmJLqijjqBxGkAkQFkPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=JHYx4pEF; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from kreacher.localnet (unknown [5.63.189.50])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 72A98669948;
+	Thu, 29 May 2025 15:40:43 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1748526044;
+	bh=zi9CAd0UHwTnmwGtSb/HavByLsmoluZyCSlkqqj3zmc=;
+	h=From:Subject:Date;
+	b=JHYx4pEFCJrbFuI4gpcbab1Y8MNML5AyxgNj3RivHQPq27wMssK0uQeoxyOEyp8Yd
+	 hVm/pTd3aXf4LimM4ncYp8MkS88neALw9ZCmoFiRBjrxD9y+k5SY8qE+qUGgpl4L1w
+	 6ovTQWxRz25tsCdT+0wVaFWiEY8zu3Wdz/N67hY8OOPiIbeFAeIztyWyOafPh+U97q
+	 Q1JB/Y2H9hAzxw5JnIT1Qu1f0uJY3cjxe3p9x3tccSglXyJeFzPD/w+pSWT2tQCc7n
+	 bWX/BD0ApZ6cmZ6GXYQ4tc1c5M2IEl9v4weiokaq2OwE3UMYW2FvHET7YsSdOl4KI3
+	 u+B0z/v8hfZdA==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: x86 Maintainers <x86@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
+ Len Brown <lenb@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@suse.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ Artem Bityutskiy <artem.bityutskiy@linux.intel.com>,
+ "Gautham R. Shenoy" <gautham.shenoy@amd.com>, Ingo Molnar <mingo@redhat.com>,
+ Todd Brandt <todd.e.brandt@linux.intel.com>
+Subject: [PATCH v2] Revert "x86/smp: Eliminate mwait_play_dead_cpuid_hint()"
+Date: Thu, 29 May 2025 15:40:43 +0200
+Message-ID: <12674167.O9o76ZdvQC@rjwysocki.net>
+In-Reply-To: <2006806.PYKUYFuaPT@rjwysocki.net>
+References: <2006806.PYKUYFuaPT@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:c88:b0:864:a1fe:1e4a with SMTP id
- ca18e2360f4ac-86cf29fdec5mr465546739f.3.1748525969214; Thu, 29 May 2025
- 06:39:29 -0700 (PDT)
-Date: Thu, 29 May 2025 06:39:29 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68386391.a70a0220.1765ec.0189.GAE@google.com>
-Subject: [syzbot] [media?] WARNING in az6007_i2c_xfer
-From: syzbot <syzbot+a43c95e5c2c9ed88e966@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	mchehab@kernel.org, syzkaller-bugs@googlegroups.com
+Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 5.63.189.50
+X-CLIENT-HOSTNAME: 5.63.189.50
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: dmFkZTFl0QnGpgeAjMEeSCFFZ+8HOWDB8vO95E+K52OCRkJysfFChtAuE6Oz9BdFCckBv2tQAvoFVlQ7bOsM1b2AFojVaIxc7c9AEc96CpmBH77jOe1uN5xyeGpOcnz/zOUTWYhqueZVgjNWse+VaoaY/rAeTu/tNbaVOyBJKZGMdPNq1Eu1ymd7zhCufFS8zL/pYQahjIPI6+shKknpdSEBW9wAHHFyMVe2zw4v4sCyrWSV698C+r81nG5gskyYEAxb3uQb/umZunxUvmP92o1zffhJZH66fsdEXaVOZr3CtISfg8UCFTdMV47/CEIQFm4ES7EPXxQXlDPff5gPiOsGhAtnf9qhKJHJ3ir1BAlO/zllvBD9l8UvK2TAMrvT/vEHn8Y63XT1DL8u44Q9cGOULjt6C81zUQRk/N+TA7KlmFwjABrLgBt1aspEjPXf36WISyZ+BODYOTdXVHuHD0WZKY3ehp+hI7jJY8RA8de1W0SoSFexYMukzEZrATn0jiSkMjdEoGU6VD1D19kAgDEGw8vINei2/XM1DMgezBL1oSNJdIJNtLrBmzSZ1fFUBAbanNeXppMRJKzheu2lWz/T21b13w0jvjm2lB3xNJGxtWc6fOScfLAmsWBr+NxDoEIp44iBsbjb5IqCHdIbN85JWsNZ/T7ing7VozFfi+ci7E/RnA
+X-DCC--Metrics: v370.home.net.pl 1024; Body=12 Fuz1=12 Fuz2=12
 
-Hello,
+From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
 
-syzbot found the following issue on:
+Revert commit 96040f7273e2 ("x86/smp: Eliminate mwait_play_dead_cpuid_hint()")
+because it introduced a significant power regression on systems that
+start with "nosmt" in the kernel command line.
 
-HEAD commit:    d0c22de9995b Merge tag 'input-for-v6.15-rc7' of git://git...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=148a1170580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9fd1c9848687d742
-dashboard link: https://syzkaller.appspot.com/bug?extid=a43c95e5c2c9ed88e966
-compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
+Namely, on such systems, SMT siblings permanently go offline early,
+when cpuidle has not been initialized yet, so after the above commit,
+hlt_play_dead() is called for them.  Later on, when the processor
+attempts to enter a deep package C-state, including PC10 which is
+requisite for reaching minimum power in suspend-to-idle, it is not
+able to do that because of the SMT siblings staying in C1 (which
+they have been put into by HLT).
 
-Unfortunately, I don't have any reproducer for this issue yet.
+As a result, the idle power (including power in suspend-to-idle)
+rises quite dramatically on those systems with all of the possible
+consequences, which (needless to say) may not be expected by their
+users.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/0badcba87366/disk-d0c22de9.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/1447956c1e1e/vmlinux-d0c22de9.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/55af41f29bbe/bzImage-d0c22de9.xz
+This issue is hard to debug and potentially dangerous, so it needs to
+be addressed as soon as possible in a way that will work for 6.15.y,
+hence the revert.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+a43c95e5c2c9ed88e966@syzkaller.appspotmail.com
+Of course, after this revert, the issue that commit 96040f7273e2
+attempted to address will be back and it will need to be fixed again
+later.
 
-usb read operation failed. (-71)
-------------[ cut here ]------------
-DEBUG_LOCKS_WARN_ON(__owner_task(owner) != get_current())
-WARNING: CPU: 0 PID: 8723 at kernel/locking/mutex.c:918 __mutex_unlock_slowpath+0x22e/0x700 kernel/locking/mutex.c:918
-Modules linked in:
-CPU: 0 UID: 0 PID: 8723 Comm: syz.3.840 Not tainted 6.15.0-rc7-syzkaller-00152-gd0c22de9995b #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-RIP: 0010:__mutex_unlock_slowpath+0x22e/0x700 kernel/locking/mutex.c:918
-Code: 0f b6 04 03 84 c0 0f 85 d1 00 00 00 83 3d 7d 74 27 04 00 75 19 90 48 c7 c7 e0 d1 6a 8b 48 c7 c6 60 d9 6a 8b e8 73 5e 2c f6 90 <0f> 0b 90 90 90 48 89 da e9 29 ff ff ff 48 89 d3 90 e8 ac b9 5d f9
-RSP: 0018:ffffc90003a3f700 EFLAGS: 00010246
-RAX: abeb948675ff2100 RBX: 1ffffffff1efec8a RCX: 0000000000080000
-RDX: ffffc9000c84b000 RSI: 000000000000ac87 RDI: 000000000000ac88
-RBP: ffffc90003a3f810 R08: 0000000000000003 R09: 0000000000000004
-R10: dffffc0000000000 R11: fffffbfff1bba984 R12: ffffc90003a3f7a0
-R13: 1ffff92000747ee8 R14: 1ffffffff33020d4 R15: ffff88807c620000
-FS:  00007f8f910ac6c0(0000) GS:ffff8881260c2000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f8f9108bd58 CR3: 0000000027662000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- az6007_i2c_xfer+0xb65/0xb90 drivers/media/usb/dvb-usb-v2/az6007.c:827
- __i2c_transfer+0x871/0x2170 drivers/i2c/i2c-core-base.c:-1
- i2c_smbus_xfer_emulated drivers/i2c/i2c-core-smbus.c:469 [inline]
- __i2c_smbus_xfer+0xfb0/0x1e50 drivers/i2c/i2c-core-smbus.c:607
- i2c_smbus_xfer+0x275/0x3c0 drivers/i2c/i2c-core-smbus.c:545
- i2cdev_ioctl_smbus+0x43d/0x6d0 drivers/i2c/i2c-dev.c:389
- i2cdev_ioctl+0x5d3/0x7f0 drivers/i2c/i2c-dev.c:478
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:906 [inline]
- __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:892
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xf6/0x210 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f8f9018e969
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f8f910ac038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007f8f903b5fa0 RCX: 00007f8f9018e969
-RDX: 00002000000000c0 RSI: 0000000000000720 RDI: 0000000000000006
-RBP: 00007f8f90210ab1 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f8f903b5fa0 R15: 00007f8f904dfa28
- </TASK>
+Fixes: 96040f7273e2 ("x86/smp: Eliminate mwait_play_dead_cpuid_hint()")
+Reported-by: Todd Brandt <todd.e.brandt@linux.intel.com>
+Tested-by: Todd Brandt <todd.e.brandt@linux.intel.com>
+Cc: 6.15+ <stable@vger.kernel.org> # 6.15+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
 
+This supersedes https://lore.kernel.org/linux-pm/7811828.EvYhyI6sBW@rjwysocki.net/
+
+v1 -> v2:
+   * Send as a standalone patch.
+   * Extend the changelog.
+
+I honestly don't think that there is any reasonable alternative to this
+revert that would be suitable for 6.15.y (y > 0), so I'm going to apply
+it and include it in a PR during the remaining part of this merge window
+unless somebody beats me to this.
+
+Thanks!
 
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ arch/x86/kernel/smpboot.c |   54 ++++++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 47 insertions(+), 7 deletions(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+--- a/arch/x86/kernel/smpboot.c
++++ b/arch/x86/kernel/smpboot.c
+@@ -1238,10 +1238,6 @@
+ 	local_irq_disable();
+ }
+ 
+-/*
+- * We need to flush the caches before going to sleep, lest we have
+- * dirty data in our caches when we come back up.
+- */
+ void __noreturn mwait_play_dead(unsigned int eax_hint)
+ {
+ 	struct mwait_cpu_dead *md = this_cpu_ptr(&mwait_cpu_dead);
+@@ -1288,6 +1284,50 @@
+ }
+ 
+ /*
++ * We need to flush the caches before going to sleep, lest we have
++ * dirty data in our caches when we come back up.
++ */
++static inline void mwait_play_dead_cpuid_hint(void)
++{
++	unsigned int eax, ebx, ecx, edx;
++	unsigned int highest_cstate = 0;
++	unsigned int highest_subcstate = 0;
++	int i;
++
++	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD ||
++	    boot_cpu_data.x86_vendor == X86_VENDOR_HYGON)
++		return;
++	if (!this_cpu_has(X86_FEATURE_MWAIT))
++		return;
++	if (!this_cpu_has(X86_FEATURE_CLFLUSH))
++		return;
++
++	eax = CPUID_LEAF_MWAIT;
++	ecx = 0;
++	native_cpuid(&eax, &ebx, &ecx, &edx);
++
++	/*
++	 * eax will be 0 if EDX enumeration is not valid.
++	 * Initialized below to cstate, sub_cstate value when EDX is valid.
++	 */
++	if (!(ecx & CPUID5_ECX_EXTENSIONS_SUPPORTED)) {
++		eax = 0;
++	} else {
++		edx >>= MWAIT_SUBSTATE_SIZE;
++		for (i = 0; i < 7 && edx; i++, edx >>= MWAIT_SUBSTATE_SIZE) {
++			if (edx & MWAIT_SUBSTATE_MASK) {
++				highest_cstate = i;
++				highest_subcstate = edx & MWAIT_SUBSTATE_MASK;
++			}
++		}
++		eax = (highest_cstate << MWAIT_SUBSTATE_SIZE) |
++			(highest_subcstate - 1);
++	}
++
++	mwait_play_dead(eax);
++}
++
++/*
+  * Kick all "offline" CPUs out of mwait on kexec(). See comment in
+  * mwait_play_dead().
+  */
+@@ -1337,9 +1377,9 @@
+ 	play_dead_common();
+ 	tboot_shutdown(TB_SHUTDOWN_WFS);
+ 
+-	/* Below returns only on error. */
+-	cpuidle_play_dead();
+-	hlt_play_dead();
++	mwait_play_dead_cpuid_hint();
++	if (cpuidle_play_dead())
++		hlt_play_dead();
+ }
+ 
+ #else /* ... !CONFIG_HOTPLUG_CPU */
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
