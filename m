@@ -1,110 +1,170 @@
-Return-Path: <linux-kernel+bounces-666963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-666966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E657BAC7EB1
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 15:25:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52B4EAC7EC0
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 15:29:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE9845008FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 13:25:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B16367A5237
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 May 2025 13:28:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66F8A226527;
-	Thu, 29 May 2025 13:25:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AD6C226D1C;
+	Thu, 29 May 2025 13:28:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WAGODEn4"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YscI2kTw"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D66B1DC997;
-	Thu, 29 May 2025 13:25:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E210B226527;
+	Thu, 29 May 2025 13:28:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748525108; cv=none; b=rnmPekVLUx7y/9e+rIA4VK84xJqsSCRDQPKH2s+c7TYGpAZHj5++LBE+9mJ23i1Roly+8GQxfKUr+EFvq68AGFBxEFe0ywydqYcSHlWK+3WbUJZ0fxHRRO3tKhd/ZI3Af6xSXXAqLZ+0OOMk3gujHMnIXXP6hHHbZKT6p96332I=
+	t=1748525338; cv=none; b=UmBMI9xTnGM76G+PMX26iuj2Lq7dmHVBWvltw2vtx7MoE7fh+993isZh928+pb5VQFixJHlKrFsHN5okZg346UTOGrkzouVm7eAyFS0VF8ED8UZiEEzuJVWTowW7oIXLNYMfVJRv0touc6+/JccfjEN2TKis6ZwCFaRWyPbTmIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748525108; c=relaxed/simple;
-	bh=SNBC/CW4BqGwUJUus9i0AbgvfWAY+4prT9ZBY6kNPMQ=;
+	s=arc-20240116; t=1748525338; c=relaxed/simple;
+	bh=KkYz32Trfq7SamxgMNROeJDs8dDQfe+qHhSaPMbUW7c=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nsIimc4UzX3Wgl571sWMV+xC7JzeaKoqYVld4MG80Z3AxZZlQRYKIgnk/u7br2ekP+u0nr81P6x4A1v0xW9UmphmUbYOLBiWfFB0+yMcryaf/cUNxN8oyBwE5tPT85zzM1GppUzq1YiK4ZQCNlg+bQWNrwBGpHqubsf1cRw9gDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WAGODEn4; arc=none smtp.client-ip=209.85.216.51
+	 To:Cc:Content-Type; b=Gzh7Dbbihec2QLVxRuBorb/ainTwaeblPxGIAjsij8X8AWzPEdB5EMdOijxwKV2z+GFjq3BDx7KEI2JhXI91HTBwBmSVixvVWcdZdUO+xy6ObCGdU+bnaV5KPwMSyWSYvoY+WfVQx+qQvqFXUUSV0+fCcVuNqqL0LBCMNVe/11o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YscI2kTw; arc=none smtp.client-ip=209.85.216.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-31232d5b1deso26705a91.3;
-        Thu, 29 May 2025 06:25:07 -0700 (PDT)
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-30e7ee5fe74so136446a91.3;
+        Thu, 29 May 2025 06:28:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748525107; x=1749129907; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1748525336; x=1749130136; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=SNBC/CW4BqGwUJUus9i0AbgvfWAY+4prT9ZBY6kNPMQ=;
-        b=WAGODEn4m9qryT2P/9cdGD5VBE+Mx+8sT67NDqRsTLGxIu6GZSIK62fC/sg6T4F+9w
-         uXb3BuKGkWHIS3LqOvBEvF+Hi5/H54MZ0qjdNsdOqLRSKN1XF9QHXK8iMaBX2OSOZ3uS
-         lS4Zka3e3GKMaQqi5XfsSRDr71p4BaQlpgxXtD0t/Ib7M3lHfzmdVG+YukeQ9BMm3cO8
-         RgtDHvlCmWewyFmNaBuQ4tmLalnysPhze9jTcmHJGdkxIKCXBFeqB8wxgVtzegQ64d6T
-         88/tLH6XIKQNO6nx4UG8bWBCn0C26Vjp3/Ge9LV9CHpQ734HXju0LhpnZmPn3ygGKWOv
-         bKVA==
+        bh=PNGihgT4QhXhCGAq+zxWlUIvoWDD4hq4zx3pCShC04s=;
+        b=YscI2kTw/hsicYfEXSlJgyMdQI9L6Ojf7zF7fRUSE5S6FWY13HRrWRvUqVcf1/LmP5
+         lq8dVezR6KEyWSHZJREVmIgjvIYtZvTzOvE14f6MmEL4PYFC83acud5er1Pxoh8Sk0kw
+         Jt6XDzGe6BZNjqx9iYf4OvRQZvJ8BB02FC6ThVnr72PbmDeu6SIeqwtjlSObaxPnYsHa
+         8iUQQMoxu2QNtaRE+Syl3h2s1MOXurVr3F2fyYEMgTBGG8TTVEzZRnLoLMrFjGBktabb
+         Nc4S39UNI5S3yp8KHok06X8wsR3UWL8JQGqzp6ZPim0jI7W/LnNsSnnYq+2kDcmIHGKo
+         LCeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748525107; x=1749129907;
+        d=1e100.net; s=20230601; t=1748525336; x=1749130136;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=SNBC/CW4BqGwUJUus9i0AbgvfWAY+4prT9ZBY6kNPMQ=;
-        b=biTVkA+9w0aJB7cogmqjp+k0kQmfE6XEKb8aeUG57pnd9PP5tCULusZVLOcrrRV8fp
-         MvO0PBA4cf3aupFhFWC4dVn6lMQdYNNpk9rX4xX59/M0m5Myp4SbRoKDj3IG2VXQRBFq
-         8tZLP4e5UIrwxgMfc/fEYvuoQpw5MIrteFYBX1AZ8ZCnTyy4XUHJfRF1ASR1HUw1nx6q
-         FFOf2rrUGDb5JUYY04le39+dVcche1jbYpAuj+2yQTa+gchV+M04rkhDX8ubOeU4P0rm
-         UMU5lVua4HCOEdc91SiW9nSufL6T0gMk4Kb6YV6m5OWfD9tszR1uv99Kdo2DPbojRRGE
-         NYcg==
-X-Forwarded-Encrypted: i=1; AJvYcCXOEQfHHHXTYB/UROvPY5DNSoak1qAz7bYvowSHC+ncffvi+5oX7Dv3w8sZYMbuoguRKPsEs3ki1JEMC+YRKKY=@vger.kernel.org, AJvYcCXUi0UUM11b0fawqluyEEUK0E1CXRyl8dbpigL3/GYsee1i2SYr7QEKqgjqFu5dUZTGSW2gxvKoQpwLsug=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8Zw4y/vnRk+yVIAEks4/jFgR5rlIsc+AuZOCR6tMagtK2meYs
-	h3Iwf/KwJMI3uOe0qbP2otdmvWK7Jma0100T3lBmZgEUzwlMJUkiwbMWvhgwGhLtcPund3r9T0H
-	SnC4P+BVUaHtPgcAASv97dcyLiUCBdHE=
-X-Gm-Gg: ASbGnctZm0waDprIssVcLQg5yU234wCRevucg19x+ZaBNlitPDhj+AiVkOyjiTJNTtn
-	WEqMaegZhNdj/fPM6o7MWOScQrE1ek/fwNJiFX6za7H5Xea+WGdK+5ZkoiIkOKy0N0jLHUmPsQk
-	4V6ubZWsvtn+kiGB19hjFVEeTWrF8XWMCW
-X-Google-Smtp-Source: AGHT+IFUGeQX+wqDeFHIerYJF6j/noSc3Hz+tFljHNob4fC+SSfoannFSCVYB5WFfpAYw5HdpNcbfQdLk2aM98wRGLE=
-X-Received: by 2002:a17:90a:e7cd:b0:311:c5d9:2c8b with SMTP id
- 98e67ed59e1d1-311c5d93147mr5290976a91.5.1748525106633; Thu, 29 May 2025
- 06:25:06 -0700 (PDT)
+        bh=PNGihgT4QhXhCGAq+zxWlUIvoWDD4hq4zx3pCShC04s=;
+        b=dkwa2jZo+nafqGIehebq3jZ2FL2C6bHIWjRaX3OIdwwZ5IghYEX/JgtFm5pj+oNjmv
+         8Mh2XXa1Dx0l/DUhFJCQXBBb0NuIGa37g0l/qzzy8PWcRv79tOmJfpyrHigtExmt6M7G
+         dp21ZGdsTvB05C1KMqPhSY2D9oJXvHNt6QxledaJcIZ8k4BShIaLt8pS0HxIw7bDZUca
+         9+qADNJ/9n0qSR8UdpcaEY/pdIBanofTdx0FS1UUUsCTumrNHLrP+d6OyNDq2Y00M+oS
+         TIZbrcjXI0RcCHNz0Mz8rvs6Ixwy8PYVIXyhbyTRHmfLQjKXybxu0Tl4m1jqxUl7gFoT
+         WyGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUIVkLznQxYFVOMiJabF6QzY6UywhYiMBHHTCr6fHKfoVOsoExm1UqE+6i7H5EnENuiH3HAUFWOV8Cai0I=@vger.kernel.org, AJvYcCVACqTmyF8KUv+NnQ+WAa6EKAEPDcWqa1s7u4Ie2twJx2dJI5M1wHAX1WoYSEXS2j598IGtAE0XnsblGl9NUFg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxu6B3gQcb8EvodmbNkEVz2pTkv9I9oaOfUQDc+q6y+VINCM+kS
+	NFeUFmlyEqJ6A9jXHadIFZqDBV3PA++CKTpgdvLeD87WX0ZWbUarRW0wy16xyeXCTgzvpOiLjF8
+	dYtjTnw7iVF/h6TbMrgVuc7dbr7uS43w=
+X-Gm-Gg: ASbGncst/7O7radwpgAZjE6Xs5dLb+aXTqJIZ95UlxRxX9hEO/A7tTtTH8zhEud3wIU
+	43m5Xju2sZnXPJThnb9LfWscVbNXmVAJzhVOGEEN3kZnx765ahm10Ptsj+ntMmQvJ8Le+WXYHH+
+	3TGvv2sy50HUzHAkGEGfi79s3dZlYgySFC4ixEP+j36+E=
+X-Google-Smtp-Source: AGHT+IFGDy2s1ce74qQC1vfTsdC+HO7buD9QG8v8iXEfu4mTCnJricWyj500BN8RnRhyunUsCvcZy6Q0gtV6D8o859Y=
+X-Received: by 2002:a17:90b:4d8f:b0:30a:80bc:ad4 with SMTP id
+ 98e67ed59e1d1-311e03a7f6amr3834937a91.0.1748525336037; Thu, 29 May 2025
+ 06:28:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250529-b4-container-of-type-check-v4-1-bf3a7ad73cec@gmail.com>
-In-Reply-To: <20250529-b4-container-of-type-check-v4-1-bf3a7ad73cec@gmail.com>
+References: <20250411-b4-container-of-type-check-v1-1-08262ef67c95@gmail.com>
+In-Reply-To: <20250411-b4-container-of-type-check-v1-1-08262ef67c95@gmail.com>
 From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Thu, 29 May 2025 15:24:52 +0200
-X-Gm-Features: AX0GCFtlCPwO-6oVfk4_3NAdN4BXBfT--uFREchAbAOR3pNMYgJR7LRJIKFes4Q
-Message-ID: <CANiq72mKAt0W_L2L8DX_xpTqxX9CVR_ZJA62C0VM40zF2qwCAg@mail.gmail.com>
-Subject: Re: [PATCH v4] rust: check type of `$ptr` in `container_of!`
+Date: Thu, 29 May 2025 15:28:41 +0200
+X-Gm-Features: AX0GCFtaY6vYdcm5nKRryOdntfVU0xkoA_50wVTCFyygR0ApAbv0Du0o3tFbpIA
+Message-ID: <CANiq72kmGPF+MmYcYmPz93g5L2rr5AspZGYYLfG=gYSfF703+Q@mail.gmail.com>
+Subject: Re: [PATCH] rust: check type of `$ptr` in `container_of!`
 To: Tamir Duberstein <tamird@gmail.com>
 Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
 	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
 	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Benno Lossin <lossin@kernel.org>, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 29, 2025 at 3:11=E2=80=AFPM Tamir Duberstein <tamird@gmail.com>=
+On Fri, Apr 11, 2025 at 4:31=E2=80=AFPM Tamir Duberstein <tamird@gmail.com>=
  wrote:
 >
 > Add a compile-time check that `*$ptr` is of the type of `$type->$($f)*`.
-> Rename those placeholders for clarity.
+>
+> Suggested-by: Alice Ryhl <aliceryhl@google.com>
+> Link: https://lore.kernel.org/all/CAH5fLgh6gmqGBhPMi2SKn7mCmMWfOSiS0WP5wB=
+uGPYh9ZTAiww@mail.gmail.com/
+> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
 
-I had a variation of v1 already applied locally, let me push and you
-can take a look.
+Applied to `rust-next` -- thanks!
 
-> +/// Helper for `container_of!`.
-> +#[doc(hidden)]
-> +pub fn assert_same_type<T>(_: T, _: T) {}
+    [ I went with v1, since it seems to me like the obvious approach, the
+      error messages seemed good enough and the debug performance should be
+      fine, given the kernel is always built with -O2. Moreover, we could
+      move the function out of this -- see [1]:
 
-I meant to have a proper function, possibly "public" (not hidden I
-mean). We can do that later, no worries.
+        With v1, we could also just put `assert_same_type` outside as a
+        utility for others to use, i.e. in the `kernel` crate, which
+        simplifies things and makes the error a bit shorter. Moving the
+        function out makes the error slightly shorter, would also allow us =
+to
+        document its usage, including the suggestion to use `if false` in a=
+n
+        example.
+
+        Regarding the `if false`, the kernel is always built with at least
+        -O2. Benno mentioned debug performance -- was that related to
+        something like debug assertions being enabled or just optimization
+        level? Either way, even with the assertions enabled, I don't see it=
+ in
+        codegen.
+
+      In particular, the error message for a example mistake like the one
+      showcased by Tamir in v2 and v3:
+
+          diff --git a/rust/kernel/rbtree.rs b/rust/kernel/rbtree.rs
+          index 8d978c896747..6a7089149878 100644
+          --- a/rust/kernel/rbtree.rs
+          +++ b/rust/kernel/rbtree.rs
+          @@ -329,7 +329,7 @@ fn raw_entry(&mut self, key: &K) ->
+RawEntry<'_, K, V> {
+                   while !(*child_field_of_parent).is_null() {
+                       let curr =3D *child_field_of_parent;
+                       // SAFETY: All links fields we create are in a
+`Node<K, V>`.
+          -            let node =3D unsafe { container_of!(curr, Node<K,
+V>, links) };
+          +            let node =3D unsafe { container_of!(curr, Node<K,
+V>, key) };
+
+                       // SAFETY: `node` is a non-null node so it is
+valid by the type invariants.
+                       match key.cmp(unsafe { &(*node).key }) {
+
+      looks like this (plus more details):
+
+          error[E0308]: mismatched types
+             --> rust/kernel/lib.rs:219:32
+              |
+          219 |         assert_same_type($ptr,
+::core::ptr::addr_of!((*container).$($f)*).cast_mut());
+              |         ----------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `*mut
+rb_node`, found `*mut K`
+              |         |
+              |         arguments to this function are incorrect
+
+          - Miguel ]
+
+    [ Fixed `mem` -> `ptr`. - Miguel ]
+
+This caught three cases that require an extra cast in -next -- those
+will be fixed on merge.
 
 Cheers,
 Miguel
