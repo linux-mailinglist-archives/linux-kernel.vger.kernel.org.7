@@ -1,109 +1,129 @@
-Return-Path: <linux-kernel+bounces-668344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-668352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DAA6AC915E
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 16:20:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45530AC916E
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 16:23:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE8F45049AD
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 14:20:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1D8487B5085
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 14:22:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 874FB230BDB;
-	Fri, 30 May 2025 14:20:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBA5D230BF6;
+	Fri, 30 May 2025 14:23:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="H6llCjH0"
-Received: from smtp-42af.mail.infomaniak.ch (smtp-42af.mail.infomaniak.ch [84.16.66.175])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kh+0GJAZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E544E228CBC;
-	Fri, 30 May 2025 14:20:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29AB622F386
+	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 14:23:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748614848; cv=none; b=N2U4EDV6WiCb8vZmFeC0UzSGpRXQMygI9QpMXaiYYxhmRnnhELKQmoDEDcBygMr1E8xQKvpW3nzOUUq45+hYzpLvSOzbrGy00QBT+7w3ZYwf49CN/OJ8Gy+7SO0TIXvQpQiJCfVOQJJMSvvAHu6SByBa7uebRiufFYgNPQNVhcE=
+	t=1748615010; cv=none; b=ZVeYrIcWWfxqtrhVEOQhlshaHz0F7v3CXweDL2RjKPjSf8XO2H52ZSJWgyCKFD0boQdhheMRkUohi2iCHxjZam3p0kRN9e0MRCDIrqsPtWKVM4yBKhMl5GY+W6EJoTJgfSbUJjRm/eDGUmnqhhMY5Px4gtN7yVmg1qdvpjxIMIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748614848; c=relaxed/simple;
-	bh=wVfhNS5DZdeGUEmvBL1W3Fh416DAmXU8kLYPsve4Nm0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LCCFrRmrmzD4pd2F9IJCdUGMW6VCCJGw+kiCKZ2mLx7upMLYQ1lu9y9wYhXgopgKuJCq05eTLqYBHRYPVI1BNzQB/m+mRm08AbhbvrfjCh/oYFCYJr6avpC4MPgmHSZCja6hqCuwc0zQsZWgVGlDrnEB4u2un1wqAk0O1N7Wytg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=H6llCjH0; arc=none smtp.client-ip=84.16.66.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4b854T5N7Qz44B;
-	Fri, 30 May 2025 16:20:41 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1748614841;
-	bh=ZXHN7tFICGoD90DDmay+SaYrC/AhNESocYWzHIeiWic=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=H6llCjH06gKMuY55FMcGmNuqHn8ZSo7f8/B8ajYTkZXAKFNSpn3ZOFZauTMaJk2+m
-	 6wnbI0IE/P4PiaVM5vIdKwVpRSyeMX8WEpmrMO6VyZaj86pz2esfigkq0nIEkft1jG
-	 HJY5+dFI/gGj+d+3ctIFhf34+502lqMd3+AG3Oyg=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4b854S2J8fz8yh;
-	Fri, 30 May 2025 16:20:40 +0200 (CEST)
-Date: Fri, 30 May 2025 16:20:39 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Song Liu <song@kernel.org>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, 
-	Jan Kara <jack@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>, 
-	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	LSM List <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, Eduard <eddyz87@gmail.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Christian Brauner <brauner@kernel.org>, KP Singh <kpsingh@kernel.org>, 
-	Matt Bobrowski <mattbobrowski@google.com>, Amir Goldstein <amir73il@gmail.com>, repnop@google.com, 
-	Jeff Layton <jlayton@kernel.org>, Josef Bacik <josef@toxicpanda.com>, 
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-Subject: Re: [PATCH bpf-next 3/4] bpf: Introduce path iterator
-Message-ID: <20250530.oh5pahH9Nui9@digikod.net>
-References: <20250528222623.1373000-1-song@kernel.org>
- <20250528222623.1373000-4-song@kernel.org>
- <20250528223724.GE2023217@ZenIV>
- <yti2dilasy7b3tu6iin5pugkn6oevdswrwoy6gorudb7x2cqhh@nqb3gcyxg4by>
- <CAPhsuW4tg+bXU41fhAaS0n74d_a_KCFGvy_vkQOj7v4VLie2wg@mail.gmail.com>
- <CAADnVQ+UGsvfAM8-E8Ft3neFkz4+TjE=rPbP1sw1m5_4H9BPNg@mail.gmail.com>
- <CAPhsuW78L8WUkKz8iJ1whrZ2gLJR+7Kh59eFrSXvrxP0DwMGig@mail.gmail.com>
+	s=arc-20240116; t=1748615010; c=relaxed/simple;
+	bh=G1DHqL85O4M7V9gqQeeeLVXS9o1JqvnLgjJ0b/R3998=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FVmK8j79Ud/dkBzEfVK0HtIzd7S8/wV+ajUNHaUI9B4LMKxsD3PaO14SsDygCjKzD/62O2u4qUHI58v6Hma1mMwV0A3bbWflxuKam0CUzSzRNohCmWBXwFg5XJ7DERoBCp+F3UaGjUpVaBrAtUJAmhS0UyF6qKg7klixLlDJqh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kh+0GJAZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AE92C4CEEF
+	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 14:23:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748615009;
+	bh=G1DHqL85O4M7V9gqQeeeLVXS9o1JqvnLgjJ0b/R3998=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Kh+0GJAZgF9ocuGGvCpcj14yF/KsAoPDFdkcNZTBX11vSxNlxEVpWvxlhIY/pNRww
+	 KKLMXmTOaOG4JfN/kjaQydvmwzMSgbw5O3na6AwKMq7kqap9t0YaWI+dtdC2gIER4J
+	 ufOLi4JGLxgnZbAyWisY8tMNSNk5QQ8m7TjMxNHGDTfZuzeofdl2kDIf8D5P5/caVL
+	 XekITB6/ZmkITNSae0qeCdR7iz19oUGV1oJsIc5o7y79nTz4MbgjDW61ApyW0xx3nH
+	 eQXkqs8HWsCfTTzXEua71lmzYCbznr9wfAa6+nK5VEboNJX0+MoCgBlOMqyY4MjXSD
+	 nphD72Vpp7TPw==
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-553280c345cso2797775e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 07:23:29 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUOf/WLzcgtnsMtYo/MIkmuJ2SEnMOvbznjMBFdQIsKfFwAKXnNirCc9sIWeVNCej0lIjfncz9mHtNX46U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEPlaFzkp8EtDlAEaIN7Y1Ajq3CaRC7l4rswfo/MM73s++hK1+
+	gjG+E3dqjR5OuwtLmc/VM5RFF+GuwrmtTby8mxIstykXkfuoxleNzMUjbWreAH9xx/eeaX7Eeck
+	61E4zySWsa5xMlP56HxFCrH3sNQjpDxg=
+X-Google-Smtp-Source: AGHT+IGt/ob5oIdyFBNz3BNQJMytXMyiUKhYop+0LOnh+OuVTmEFUuUGiES8anXXR0vfHxL+cc3/rDK2U4LsEG3cMBU=
+X-Received: by 2002:a05:6512:1150:b0:553:2a2f:22eb with SMTP id
+ 2adb3069b0e04-5533d1ab3d4mr864981e87.36.1748615007973; Fri, 30 May 2025
+ 07:23:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAPhsuW78L8WUkKz8iJ1whrZ2gLJR+7Kh59eFrSXvrxP0DwMGig@mail.gmail.com>
-X-Infomaniak-Routing: alpha
+References: <20250529073507.2984959-2-ardb+git@google.com> <20250530133811.GB30622@willie-the-truck>
+In-Reply-To: <20250530133811.GB30622@willie-the-truck>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Fri, 30 May 2025 16:23:16 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXHypqdC9O+8WH7n1=aDOySMScZc2y526S3gc_-QNpqO=w@mail.gmail.com>
+X-Gm-Features: AX0GCFv9Ullf4B8cpH7c41fIue3JQUkh9LV84qL1g7sdVxmnSnjW5Ar7V20Dwwk
+Message-ID: <CAMj1kXHypqdC9O+8WH7n1=aDOySMScZc2y526S3gc_-QNpqO=w@mail.gmail.com>
+Subject: Re: [PATCH] arm64: Disable LLD linker ASSERT()s for the time being
+To: Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>
+Cc: Ard Biesheuvel <ardb+git@google.com>, linux-arm-kernel@lists.infradead.org, 
+	llvm@lists.linux.dev, linux-kernel@vger.kernel.org, catalin.marinas@arm.com, 
+	nathan@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, May 29, 2025 at 10:05:59AM -0700, Song Liu wrote:
-> On Thu, May 29, 2025 at 9:57 AM Alexei Starovoitov
-> <alexei.starovoitov@gmail.com> wrote:
-> [...]
-> > >
-> > > How about we describe this as:
-> > >
-> > > Introduce a path iterator, which safely (no crash) walks a struct path.
-> > > Without malicious parallel modifications, the walk is guaranteed to
-> > > terminate. The sequence of dentries maybe surprising in presence
-> > > of parallel directory or mount tree modifications and the iteration may
-> > > not ever finish in face of parallel malicious directory tree manipulations.
+On Fri, 30 May 2025 at 15:38, Will Deacon <will@kernel.org> wrote:
+>
+> On Thu, May 29, 2025 at 09:35:08AM +0200, Ard Biesheuvel wrote:
+> > From: Ard Biesheuvel <ardb@kernel.org>
 > >
-> > Hold on. If it's really the case then is the landlock susceptible
-> > to this type of attack already ?
-> > landlock may infinitely loop in the kernel ?
-> 
-> I think this only happens if the attacker can modify the mount or
-> directory tree as fast as the walk, which is probably impossible
-> in reality.
+> > It turns out that the way LLD handles ASSERT()s in the linker script can
+> > result in spurious failures, so disable them for the newly introduced
+> > BSS symbol export checks.
+> >
+> > Link: https://github.com/ClangBuiltLinux/linux/issues/2094
+> > Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+> > ---
+> >  arch/arm64/kernel/image-vars.h | 6 ++++++
+> >  1 file changed, 6 insertions(+)
+> >
+> > diff --git a/arch/arm64/kernel/image-vars.h b/arch/arm64/kernel/image-vars.h
+> > index c5266430284b..86f088a16147 100644
+> > --- a/arch/arm64/kernel/image-vars.h
+> > +++ b/arch/arm64/kernel/image-vars.h
+> > @@ -10,6 +10,10 @@
+> >  #error This file should only be included in vmlinux.lds.S
+> >  #endif
+> >
+> > +#if defined(CONFIG_LD_IS_LLD) && CONFIG_LLD_VERSION < 210000
+> > +#define ASSERT(...)
+> > +#endif
+> > +
+> >  #define PI_EXPORT_SYM(sym)           \
+> >       __PI_EXPORT_SYM(sym, __pi_ ## sym, Cannot export BSS symbol sym to startup code)
+> >  #define __PI_EXPORT_SYM(sym, pisym, msg)\
+> > @@ -142,4 +146,6 @@ KVM_NVHE_ALIAS(kvm_protected_mode_initialized);
+> >  _kernel_codesize = ABSOLUTE(__inittext_end - _text);
+> >  #endif
+> >
+> > +#undef ASSERT
+>
+> What about the ASSERT()s at the end of vmlinux.lds.S? Are they not
+> affected by the bug, for some reason?
+>
+> Also, even with this patch applied, I still see a link failure:
+>
+>   | ld.lld: error: assignment to symbol __init_end does not converge
+>
+> with the .config you sent me off-list.
+>
 
-Yes, so this is not an infinite loop but an infinite race between the
-kernel and a very fast malicious user space process with an infinite
-number of available nested writable directories, that would also require
-a filesystem (and a kernel) supporting infinite pathname length.
+That is a different error that has been lurking for a while now; Arnd
+occasionally hits it but I haven't seen any other reports of it. AIUI,
+the issue is that INIT_IDMAP_DIR_PAGES and INIT_DIR_SIZE are defined
+in terms of (_end - KIMAGE_VADDR), resulting in a circular dependency.
 
-> 
-> Thanks,
-> Song
-> 
+The config in the kernel test robot's report [0] appears to build fine
+with this patch applied.
+
+
+[0] https://lore.kernel.org/all/202505261019.OUlitN6m-lkp@intel.com/T/#u
 
