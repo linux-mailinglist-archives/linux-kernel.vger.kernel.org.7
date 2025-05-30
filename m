@@ -1,293 +1,86 @@
-Return-Path: <linux-kernel+bounces-668680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-668676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75334AC95DC
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 20:54:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BF641AC95D4
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 20:52:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E094E1C225D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 18:54:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7924189CCCB
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 18:53:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 493CC27C178;
-	Fri, 30 May 2025 18:52:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B677239E9A;
+	Fri, 30 May 2025 18:52:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="knUKkQM4"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VGKZIj90"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0F4727A93B
-	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 18:52:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E82FF189513;
+	Fri, 30 May 2025 18:52:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748631177; cv=none; b=uAEEXzA8BByRFNdYoxmHkwEhjwia04AW6aAgepG7QiRRiGaznIANZ5xn2fBKueJkhLcOcbc0xYtrRBO3szhoc01PBHoB0D4q9cYscS4/TI+8O7cn38fKa2KsCMAChp+/LKoFDGm1A9md3avxQjih7rIRHGZC38LHMXZ/qHFdEGE=
+	t=1748631169; cv=none; b=b7jUM6nYiBdB5etkcDoRHsuRHPtvqyitHuCCaIu7MTkoJUhDw75Ornay1aoSDAz/M79B3RhzQWFfId343xggdfFPJ2lBOBaedo0MdS2JlluKUjpXbha0s6itbjhgF2YhqU5CO9T0GrCEedw1UWumBEWEI//tpKTnpsgF8vEN7k8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748631177; c=relaxed/simple;
-	bh=mhgEUlAtkWDdE5BIbN7qMPFDGIrHHNY/5plu1NKbztw=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Si/oZWvGVvMEbahQMxt5r/7KCePzP/J7tnk/7CrJGEWOdSpfwJYY1yJ+ZN1NPd83hqHA8vZGNiiXMO2BdKVTLQ4HzPAymb/XewQcmkiQjpwYGxOWCubBaoOg0+ZLpYA5E9nwLTUKm8CRWfkRjLI0n0hk1zF/dPRYeVeACPQJrBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jmattson.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=knUKkQM4; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jmattson.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-311ef4fb5fdso2299380a91.1
-        for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 11:52:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1748631175; x=1749235975; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=DM1PeXelXOrCQthfhESdwyT2BuwrcpH6F3C9kXkDTdw=;
-        b=knUKkQM493mWtdIBtNYvDGiHbZXh94lPlQy9mucGuf6sJvG+mb47BCpaczP5kCn7Jr
-         0bhRhXCxQ9HFfoERs9c8tVBB9fyIwKhxfulVmMqpyhUT6x+V5wn5LDuq0EsU9e/ziQ+j
-         ZWR0+KCpeOIiQ9aNiEKCHCmz0nHbS4JarrBAmOMfTZmj+I+yUIwCbEM+I0zrVH1telKm
-         zi5iyGJAHZ0tDgXZLEjfs6KdU2dxTC3d2rVnxMUM0g9QdwkYpWDhPwTjwBgZiH3syKKl
-         TLWF38rIyqEqrKfkcjVGvo5iX9XD/Op+PCR48QYlZZO4tbo75sCZXTm/BYjL0F0s9GJQ
-         +irg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748631175; x=1749235975;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DM1PeXelXOrCQthfhESdwyT2BuwrcpH6F3C9kXkDTdw=;
-        b=v20io/cIcHmEKbrEHNKELXTBbIxTeauI6eeGqk1tfSoMu09SIuheUTFWdZUTYtBYK1
-         DGNpsfvG6k3aYwQhlK7eW7Haham1425XRPqltKtaibWhU/5th8Vzl4W1txLK0CYvEvgW
-         qEg6X+sBdIM9iA8rCkOVr+rGQLWliam9m4GUrXM0Ao1fe3o9qhWcvas07pYYYn+Nv9Uu
-         B+bg5x5UGf5av8L7o9QTf8puq9amHjBaVMAtKajv2tgjRGJBe4Es5zHPJYrMFsodTuzD
-         OxlV++tN1pCuUfFwkQlVhuSRjyJ+jjQtOZ6jU7+WVWSThn2HY687G2KJ6UM8DN4xgmwG
-         U/DQ==
-X-Gm-Message-State: AOJu0YyW61x38gc68dE+nulhzxnKU16tGny0xl0GhOFMPh5sTBMG+AjL
-	IixYSnJxTQf0w53dz2IHnirWhf3bn4Onp3p2DuTTzqZuHQ2POWNYUX2UEiKGH+JCqbIX92hYvw4
-	NBSSSO5pbmvkrHmQKPHIT4qoV4b7NHRIu2DmMtRXblpmHScOgPBDl0S7lqe8rdTGa+AZa20hHmy
-	m/YmcIrhU8zqjptxf4XEDCmY+MwPUrQfcMhVy7BYV8sA7NpOJgkG7Z6X8=
-X-Google-Smtp-Source: AGHT+IGJy575wE5okiwZRZEZxyJYX3DS6QneORxGJCc2vLIidcgnpO9oZlLrQP9p7hgo6MrAXFbbDzTbr2mhIQ==
-X-Received: from pjbcz16.prod.google.com ([2002:a17:90a:d450:b0:311:c20d:676d])
- (user=jmattson job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90b:3b90:b0:311:eb85:96df with SMTP id 98e67ed59e1d1-31241531935mr7475336a91.17.1748631174984;
- Fri, 30 May 2025 11:52:54 -0700 (PDT)
-Date: Fri, 30 May 2025 11:52:25 -0700
-In-Reply-To: <20250530185239.2335185-1-jmattson@google.com>
+	s=arc-20240116; t=1748631169; c=relaxed/simple;
+	bh=FQPMKronnbZixqRF5rYHmx0k8Hi4UbqrcPT7Lo9aCCQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nTBCbbxGSEraFrk0zGCzONwpAJQg6PgVJ+kqG8trT/5IzphCdue3yk0onIelrPKCdNfZwRwoCadvp/hFOvg4VRYf7VK7VelzUPlQbpMra1RAp4MZGTPLm3SxGF+f9rLrKjZJoGs9by4wvsYrLMSwc0JB9T1To6TLLE2jQbaIKSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VGKZIj90; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51BB2C4CEE9;
+	Fri, 30 May 2025 18:52:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748631168;
+	bh=FQPMKronnbZixqRF5rYHmx0k8Hi4UbqrcPT7Lo9aCCQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VGKZIj90Q5s5AJPF1+8umGeT5/FLGKUv58yrc3F1xglLV+y+/9nkpZ/hMNuWtOnYC
+	 RuDmOXQ/Ike8Xg/kaEWCsIV0EvK5S3ugsWEqZz1SKCbdE/tq7yD9bIHGmxVz5sBOF1
+	 mw1XrSQgQDaRJmYzREBW4IZl/ukAe6mORVds5ndzU7Fjk0I1Jpx36GYRBQEA3h9pmG
+	 S+ly9EMibSnypgkOwkKGGhYGvOA7ea9UGKSxMedsMpRR4ZfITo9rYPtO/advDQXQm3
+	 4dF3rqsU+UBDPFXi/roQvmjx/bD2vRCS2O/SjSjWBNOhBFW7H+3dXZlSGZ+cOOqyMH
+	 UeIJjmXI3KgMw==
+Date: Fri, 30 May 2025 11:52:45 -0700
+From: Kees Cook <kees@kernel.org>
+To: Alexander Lobakin <aleksander.lobakin@intel.com>
+Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3][next] overflow: Fix direct struct member
+ initialization in _DEFINE_FLEX()
+Message-ID: <202505301151.6CEDBBF8@keescook>
+References: <aBQVeyKfLOkO9Yss@kspp>
+ <d4eed1e3-6fc0-4372-8ced-ae6a49f3c5c1@intel.com>
+ <202505301054.A786A183@keescook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250530185239.2335185-1-jmattson@google.com>
-X-Mailer: git-send-email 2.49.0.1204.g71687c7c1d-goog
-Message-ID: <20250530185239.2335185-4-jmattson@google.com>
-Subject: [PATCH v4 3/3] KVM: selftests: Test behavior of KVM_X86_DISABLE_EXITS_APERFMPERF
-From: Jim Mattson <jmattson@google.com>
-To: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
-	Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
-Cc: Jim Mattson <jmattson@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202505301054.A786A183@keescook>
 
-For a VCPU thread pinned to a single LPU, verify that interleaved host
-and guest reads of IA32_[AM]PERF return strictly increasing values when
-APERFMPERF exiting is disabled.
+On Fri, May 30, 2025 at 11:06:01AM -0700, Kees Cook wrote:
+> #define __DEFINE_FLEX(type, name, member, count, trailer...)		\
+>         _Static_assert(__builtin_constant_p(count),			\
+>                        "onstack flex array members require compile-time const count"); \
+>         union {								\
+>                 u8 bytes[struct_size_t(type, member, count)];		\
+>                 type obj;						\
+>         } name##_u trailer;						\
+>         type *name = (type *)&name##_u
+> 
+> #define _DEFINE_FLEX(type, name, member, count, initializer...)		\
+> 	__DEFINE_FLEX(type, name, member, count, = { .obj = initializer })
+> [...]
+> Does that look like what you'd want? (Note I didn't actually build this;
+> I want to make sure the concept is workable...)
 
-Signed-off-by: Jim Mattson <jmattson@google.com>
----
- tools/testing/selftests/kvm/Makefile.kvm      |   1 +
- .../testing/selftests/kvm/include/kvm_util.h  |   2 +
- tools/testing/selftests/kvm/lib/kvm_util.c    |  17 +++
- .../selftests/kvm/x86/aperfmperf_test.c       | 132 ++++++++++++++++++
- 4 files changed, 152 insertions(+)
- create mode 100644 tools/testing/selftests/kvm/x86/aperfmperf_test.c
+FWIW, this is working as expected: https://godbolt.org/z/P7Go8Tr33
 
-diff --git a/tools/testing/selftests/kvm/Makefile.kvm b/tools/testing/selftests/kvm/Makefile.kvm
-index 3e786080473d..8d42a3bd0dd8 100644
---- a/tools/testing/selftests/kvm/Makefile.kvm
-+++ b/tools/testing/selftests/kvm/Makefile.kvm
-@@ -131,6 +131,7 @@ TEST_GEN_PROGS_x86 += x86/amx_test
- TEST_GEN_PROGS_x86 += x86/max_vcpuid_cap_test
- TEST_GEN_PROGS_x86 += x86/triple_fault_event_test
- TEST_GEN_PROGS_x86 += x86/recalc_apic_map_test
-+TEST_GEN_PROGS_x86 += x86/aperfmperf_test
- TEST_GEN_PROGS_x86 += access_tracking_perf_test
- TEST_GEN_PROGS_x86 += coalesced_io_test
- TEST_GEN_PROGS_x86 += dirty_log_perf_test
-diff --git a/tools/testing/selftests/kvm/include/kvm_util.h b/tools/testing/selftests/kvm/include/kvm_util.h
-index 93013564428b..43a1bef10ec0 100644
---- a/tools/testing/selftests/kvm/include/kvm_util.h
-+++ b/tools/testing/selftests/kvm/include/kvm_util.h
-@@ -1158,4 +1158,6 @@ bool vm_is_gpa_protected(struct kvm_vm *vm, vm_paddr_t paddr);
- 
- uint32_t guest_get_vcpuid(void);
- 
-+int pin_task_to_one_cpu(void);
-+
- #endif /* SELFTEST_KVM_UTIL_H */
-diff --git a/tools/testing/selftests/kvm/lib/kvm_util.c b/tools/testing/selftests/kvm/lib/kvm_util.c
-index 5649cf2f40e8..b6c707ab92d7 100644
---- a/tools/testing/selftests/kvm/lib/kvm_util.c
-+++ b/tools/testing/selftests/kvm/lib/kvm_util.c
-@@ -10,6 +10,7 @@
- #include "ucall_common.h"
- 
- #include <assert.h>
-+#include <pthread.h>
- #include <sched.h>
- #include <sys/mman.h>
- #include <sys/resource.h>
-@@ -2321,3 +2322,19 @@ bool vm_is_gpa_protected(struct kvm_vm *vm, vm_paddr_t paddr)
- 	pg = paddr >> vm->page_shift;
- 	return sparsebit_is_set(region->protected_phy_pages, pg);
- }
-+
-+int pin_task_to_one_cpu(void)
-+{
-+	int cpu = sched_getcpu();
-+	cpu_set_t cpuset;
-+	int rc;
-+
-+	CPU_ZERO(&cpuset);
-+	CPU_SET(cpu, &cpuset);
-+
-+	rc = pthread_setaffinity_np(pthread_self(), sizeof(cpuset), &cpuset);
-+	TEST_ASSERT(rc == 0, "%s: Can't set thread affinity", __func__);
-+
-+	return cpu;
-+}
-+
-diff --git a/tools/testing/selftests/kvm/x86/aperfmperf_test.c b/tools/testing/selftests/kvm/x86/aperfmperf_test.c
-new file mode 100644
-index 000000000000..64d976156693
---- /dev/null
-+++ b/tools/testing/selftests/kvm/x86/aperfmperf_test.c
-@@ -0,0 +1,132 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Test for KVM_X86_DISABLE_EXITS_APERFMPERF
-+ *
-+ * Copyright (C) 2025, Google LLC.
-+ *
-+ * Test the ability to disable VM-exits for rdmsr of IA32_APERF and
-+ * IA32_MPERF. When these VM-exits are disabled, reads of these MSRs
-+ * return the host's values.
-+ *
-+ * Note: Requires read access to /dev/cpu/<lpu>/msr to read host MSRs.
-+ */
-+
-+#include <fcntl.h>
-+#include <limits.h>
-+#include <stdbool.h>
-+#include <stdio.h>
-+#include <stdint.h>
-+#include <unistd.h>
-+#include <asm/msr-index.h>
-+
-+#include "kvm_util.h"
-+#include "processor.h"
-+#include "test_util.h"
-+
-+#define NUM_ITERATIONS 100
-+
-+static int open_dev_msr(int cpu)
-+{
-+	char path[PATH_MAX];
-+
-+	snprintf(path, sizeof(path), "/dev/cpu/%d/msr", cpu);
-+	return open_path_or_exit(path, O_RDONLY);
-+}
-+
-+static uint64_t read_dev_msr(int msr_fd, uint32_t msr)
-+{
-+	uint64_t data;
-+	ssize_t rc;
-+
-+	rc = pread(msr_fd, &data, sizeof(data), msr);
-+	TEST_ASSERT(rc == sizeof(data), "Read of MSR 0x%x failed", msr);
-+
-+	return data;
-+}
-+
-+static void guest_code(void)
-+{
-+	int i;
-+
-+	for (i = 0; i < NUM_ITERATIONS; i++)
-+		GUEST_SYNC2(rdmsr(MSR_IA32_APERF), rdmsr(MSR_IA32_MPERF));
-+
-+	GUEST_DONE();
-+}
-+
-+int main(int argc, char *argv[])
-+{
-+	uint64_t host_aperf_before, host_mperf_before;
-+	struct kvm_vcpu *vcpu;
-+	struct kvm_vm *vm;
-+	int msr_fd;
-+	int cpu;
-+	int i;
-+
-+	cpu = pin_task_to_one_cpu();
-+
-+	msr_fd = open_dev_msr(cpu);
-+
-+	/*
-+	 * This test requires a non-standard VM initialization, because
-+	 * KVM_ENABLE_CAP cannot be used on a VM file descriptor after
-+	 * a VCPU has been created.
-+	 */
-+	vm = vm_create(1);
-+
-+	TEST_REQUIRE(vm_check_cap(vm, KVM_CAP_X86_DISABLE_EXITS) &
-+		     KVM_X86_DISABLE_EXITS_APERFMPERF);
-+
-+	vm_enable_cap(vm, KVM_CAP_X86_DISABLE_EXITS,
-+		      KVM_X86_DISABLE_EXITS_APERFMPERF);
-+
-+	vcpu = vm_vcpu_add(vm, 0, guest_code);
-+
-+	host_aperf_before = read_dev_msr(msr_fd, MSR_IA32_APERF);
-+	host_mperf_before = read_dev_msr(msr_fd, MSR_IA32_MPERF);
-+
-+	for (i = 0; i < NUM_ITERATIONS; i++) {
-+		uint64_t host_aperf_after, host_mperf_after;
-+		uint64_t guest_aperf, guest_mperf;
-+		struct ucall uc;
-+
-+		vcpu_run(vcpu);
-+		TEST_ASSERT_KVM_EXIT_REASON(vcpu, KVM_EXIT_IO);
-+
-+		switch (get_ucall(vcpu, &uc)) {
-+		case UCALL_DONE:
-+			break;
-+		case UCALL_ABORT:
-+			REPORT_GUEST_ASSERT(uc);
-+		case UCALL_SYNC:
-+			guest_aperf = uc.args[0];
-+			guest_mperf = uc.args[1];
-+
-+			host_aperf_after = read_dev_msr(msr_fd, MSR_IA32_APERF);
-+			host_mperf_after = read_dev_msr(msr_fd, MSR_IA32_MPERF);
-+
-+			TEST_ASSERT(host_aperf_before < guest_aperf,
-+				    "APERF: host_before (0x%" PRIx64 ") >= guest (0x%" PRIx64 ")",
-+				    host_aperf_before, guest_aperf);
-+			TEST_ASSERT(guest_aperf < host_aperf_after,
-+				    "APERF: guest (0x%" PRIx64 ") >= host_after (0x%" PRIx64 ")",
-+				    guest_aperf, host_aperf_after);
-+			TEST_ASSERT(host_mperf_before < guest_mperf,
-+				    "MPERF: host_before (0x%" PRIx64 ") >= guest (0x%" PRIx64 ")",
-+				    host_mperf_before, guest_mperf);
-+			TEST_ASSERT(guest_mperf < host_mperf_after,
-+				    "MPERF: guest (0x%" PRIx64 ") >= host_after (0x%" PRIx64 ")",
-+				    guest_mperf, host_mperf_after);
-+
-+			host_aperf_before = host_aperf_after;
-+			host_mperf_before = host_mperf_after;
-+
-+			break;
-+		}
-+	}
-+
-+	kvm_vm_free(vm);
-+	close(msr_fd);
-+
-+	return 0;
-+}
+I'll send a proper patch...
+
 -- 
-2.49.0.1204.g71687c7c1d-goog
-
+Kees Cook
 
