@@ -1,136 +1,144 @@
-Return-Path: <linux-kernel+bounces-667694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-667685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 411ECAC8858
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 08:43:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EB11AC8838
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 08:29:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C67581BC353E
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 06:43:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 428AEA25383
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 06:29:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A22D21B9CE;
-	Fri, 30 May 2025 06:41:37 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DBB5200127;
+	Fri, 30 May 2025 06:29:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="TCVm8yWe";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="XY8jWu8j"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34B1C201006;
-	Fri, 30 May 2025 06:41:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3428C1F875C;
+	Fri, 30 May 2025 06:29:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748587296; cv=none; b=orVoUUOfKG/NoJhEvqVpUN4bOVo3hKUvHhY+vocn04VpeeGo4Xmp4BnsGJW8TbctFlAXQOb6gajoWrAYCDmbo6kt2o03CI1LdWEUrkknG8r9Faw4mmr54Huvf1NGYIedE0RY9L6IYX0s70mUswfRTwVaTvDYBtjRmz4UGz89hlU=
+	t=1748586586; cv=none; b=ZjC/LVRZJvCMWljgKS3MmbfRZnLyNbPGilJBt7c4IkNI8tnYp0mPBW/u3MBTeGxgTFcMVl6mzHAGwIzCdvJ3iS1RHH78ZUEdsMCqHHWuHorh9h+ColPKTJy5e6yRDHdr2QGAY1xoPghOsJXP3x8/7vnFa/V3flPPuWbSNfwnAmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748587296; c=relaxed/simple;
-	bh=AHe9ZlzqSs1N0MqxT8r/mBag9PpTGvK3leRA+/aS4ZI=;
+	s=arc-20240116; t=1748586586; c=relaxed/simple;
+	bh=qhgHA/bJ8v/PS2R6f2L3oGVJ9+DXpMZEvteZ1yfDueE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=giP8EeyjYwF8U8IyWYHp9cG+y5Z+aIKWf//4q2zfLTtpDAg5+4tfDUJoXev9NKPs6YEIPV1lXJ/4A7L9YwPrX/P1alqR2GCFFh8CVI9z8AXsnxqM3vIznPjpOw5G2SB6LvNRVRoO6BwrpUR/CUIEjcOlw/Xf3ovZqGOg1oJuTUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4b7tth5wC7zYQv4K;
-	Fri, 30 May 2025 14:41:32 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id E2FCD1A1A1F;
-	Fri, 30 May 2025 14:41:31 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.112.188])
-	by APP4 (Coremail) with SMTP id gCh0CgD3Wl8PUzlo_wXRNw--.6893S9;
-	Fri, 30 May 2025 14:41:31 +0800 (CST)
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-To: linux-ext4@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	tytso@mit.edu,
-	adilger.kernel@dilger.ca,
-	jack@suse.cz,
-	ojaswin@linux.ibm.com,
-	yi.zhang@huawei.com,
-	yi.zhang@huaweicloud.com,
-	libaokun1@huawei.com,
-	yukuai3@huawei.com,
-	yangerkun@huawei.com
-Subject: [PATCH 5/5] ext4: disable large folios if dioread_nolock is not enabled
-Date: Fri, 30 May 2025 14:28:58 +0800
-Message-ID: <20250530062858.458039-6-yi.zhang@huaweicloud.com>
-X-Mailer: git-send-email 2.46.1
-In-Reply-To: <20250530062858.458039-1-yi.zhang@huaweicloud.com>
-References: <20250530062858.458039-1-yi.zhang@huaweicloud.com>
+	 MIME-Version:Content-Type; b=OgVvHmHzUuomzBeSFA5PjrKeytIfKJ5/vXIB284sWlNSlsms6DxpiLrIHpTDYUCmW+FTNtX7KOo3dCw1TcSWSuwwbUAGZHd5O8NsE/pUOzavE/MJayibz7LrWjui9g8UDPmfVJ8XhuF8W8ez/GauxyrcobIjx8Kg6N8eeAS97YY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=TCVm8yWe; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=XY8jWu8j reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1748586583; x=1780122583;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=xKYfvQUJsCe5Fu3IbEtXJ4DySVzCIAQxIRD4sH/yzi8=;
+  b=TCVm8yWe1jp1sSiaauO/CG5GxiQ5QzgIp2ywtcYUH7mzsfUNxNGmh6NU
+   qVuGqKjMTXiyLxDrf8ROTqlZ/obAdxMDzZ2kTVkGTTX5ppqWX2Fe1vbb5
+   SiTgKX8/42tUYh50bEuBcuhi6jkRc+SPd7rQGCj5CxjNPighOBFwC20lH
+   BS/Je0AGoOp4S2JEGIOqs7qpc1sUbQvUpGzKDrUasaL4uh8wPBLhyFkMu
+   jshHe6pdL0JnWs5+0Q+5q025yV/CNd6ti1cRNJwnzHRZVe/hSbmJipTN+
+   k2pRONKK9RSw3TfdhhpU+XYXKuU2cihnGoEn8YxJR45Z0x/Wg6fuzbt3g
+   Q==;
+X-CSE-ConnectionGUID: qQZGS3Y/Tla+y7MpA+X7nA==
+X-CSE-MsgGUID: OnaFfOnkSiWO/+xrExhjsg==
+X-IronPort-AV: E=Sophos;i="6.16,195,1744063200"; 
+   d="scan'208";a="44364193"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 30 May 2025 08:29:34 +0200
+X-CheckPoint: {6839504E-C-8CF597AF-F8BD95DC}
+X-MAIL-CPID: 5E8F613866FB26B0A053F72B1F8FAD48_3
+X-Control-Analysis: str=0001.0A006396.68395054.0069,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4D027163483;
+	Fri, 30 May 2025 08:29:28 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1748586569;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xKYfvQUJsCe5Fu3IbEtXJ4DySVzCIAQxIRD4sH/yzi8=;
+	b=XY8jWu8ju4n5JEtBc/cmVFE2Z7uWTpCnd6BhdtlaNX6JwcXtWr6btn1mOz197fc/ggVz79
+	i93PNjpDqIfOjPbeHVSFlYeYpSHSjqJGLfkfWnlzBj4RTrnWRT+xrTyJ6Kg9T28De7YfI/
+	J86SH8jJau2i6X6hmorZLq3cfyplTzwWc77IUDLcFVOJh0B9aYaSZJ1F5tACswlH2QHRha
+	4HfchkwTlHYX6zXPGpEnmAUGIGd8FXJhika7BJEDSRI/ObZeiLAHkvET/JLG6HHkeAW0D9
+	hS7/8bbOipBRRN+yHH1AKeD1SBIBD0utqVO6DDEXr1/4B1IEDQ7U9/bYam2Akg==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>,
+ Gregor Herburger <gregor.herburger@tq-group.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux@ew.tq-group.com
+Subject:
+ Re: [PATCH 2/2] arm64: dts: ls1028a: Add mbls1028a and mbls1028a-ind
+ devicetrees
+Date: Fri, 30 May 2025 08:29:27 +0200
+Message-ID: <7298658.31r3eYUQgx@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <aDctWKIvBKwF29lP@lizhi-Precision-Tower-5810>
+References:
+ <20250527060400.1005757-1-alexander.stein@ew.tq-group.com>
+ <20250527060400.1005757-2-alexander.stein@ew.tq-group.com>
+ <aDctWKIvBKwF29lP@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgD3Wl8PUzlo_wXRNw--.6893S9
-X-Coremail-Antispam: 1UD129KBjvJXoWxJryDZr15CFWrKw1DJr1DKFg_yoW8WryDpF
-	9xGFW8Grs8uas7CFWxtr1UXr15tayxGa1UJFWSg3WUWFW7AryfKFsYyF1rC3W7JrWxXw4S
-	qF4UCrWDCw43AFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUmI14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
-	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
-	z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F
-	4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq
-	3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7
-	IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4U
-	M4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2
-	kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkE
-	bVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67
-	AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI
-	42IY6xIIjxv20xvEc7CjxVAFwI0_Cr0_Gr1UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCw
-	CI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnI
-	WIevJa73UjIFyTuYvjfUOyIUUUUUU
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+X-Last-TLS-Session-Version: TLSv1.3
 
-From: Zhang Yi <yi.zhang@huawei.com>
+Hi Frank,
 
-The write-back process cannot restart a journal transaction when
-submitting a sufficiently large and discontinuous folio if
-dioread_nolock is disabled. To address this, disable large folios when
-building an inode if dioread_nolock is disabled, and also ensure that
-dioread_nolock cannot be disabled on an active inode that has large
-folio enabled.
+Am Mittwoch, 28. Mai 2025, 17:35:52 CEST schrieb Frank Li:
+> On Tue, May 27, 2025 at 08:03:55AM +0200, Alexander Stein wrote:
+> > From: Gregor Herburger <gregor.herburger@tq-group.com>
+> >
+> > Add device trees for the MBLS1028A and the MBLS1028A-IND and the SoM
+> > TQMLS1028A.
+> >
+> > Signed-off-by: Gregor Herburger <gregor.herburger@tq-group.com>
+> > Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+> > ---
+> >  arch/arm64/boot/dts/freescale/Makefile        |   2 +
+> >  .../fsl-ls1028a-tqmls1028a-mbls1028a-ind.dts  |  68 ++++
+> >  .../fsl-ls1028a-tqmls1028a-mbls1028a.dts      | 118 +++++++
+> >  .../fsl-ls1028a-tqmls1028a-mbls1028a.dtsi     | 291 ++++++++++++++++++
+> >  .../dts/freescale/fsl-ls1028a-tqmls1028a.dtsi | 117 +++++++
+>=20
+> New dts file, suggest run https://github.com/lznuaa/dt-format to nice ord=
+er
 
-Fixes: 7ac67301e82f ("ext4: enable large folio for regular file")
-Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
----
- fs/ext4/ext4_jbd2.h | 7 +++++++
- fs/ext4/inode.c     | 2 ++
- 2 files changed, 9 insertions(+)
+Thanks for the suggestions. It does some improvements, but I also disagree
+with a lot of proposed changes:
+* Wrong indent of SPDX tag
+* model property should come first IMHO
+* {gpio,interrupt}-controller should come before #{gpio,interrupt}-cells
+* gpio-hog property should come first in a hog node
+* sorting gpio-hog nodes by name instead of line number seems wrong
 
-diff --git a/fs/ext4/ext4_jbd2.h b/fs/ext4/ext4_jbd2.h
-index c0ee756cb34c..59292da272ef 100644
---- a/fs/ext4/ext4_jbd2.h
-+++ b/fs/ext4/ext4_jbd2.h
-@@ -422,6 +422,13 @@ static inline int ext4_free_data_revoke_credits(struct inode *inode, int blocks)
-  */
- static inline int ext4_should_dioread_nolock(struct inode *inode)
- {
-+	/*
-+	 * Cannot disable dioread_nolock on an active inode that has
-+	 * large folio enabled.
-+	 */
-+	if (mapping_large_folio_support(inode->i_mapping))
-+		return 1;
-+
- 	if (!test_opt(inode->i_sb, DIOREAD_NOLOCK))
- 		return 0;
- 	if (!S_ISREG(inode->i_mode))
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index e7de2fafc941..421c7bbc3ca9 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -5164,6 +5164,8 @@ bool ext4_should_enable_large_folio(struct inode *inode)
- 		return false;
- 	if (ext4_has_feature_encrypt(sb))
- 		return false;
-+	if (!ext4_should_dioread_nolock(inode))
-+		return false;
- 
- 	return true;
- }
--- 
-2.46.1
+There are some more bogus changes, so I'll skip this tool for now.
+
+Thanks & best regards
+Alexander
+
+> Frank
+> [...]
+=2D-=20
+TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht M=FCnchen, HRB 105018
+Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
+http://www.tq-group.com/
+
 
 
