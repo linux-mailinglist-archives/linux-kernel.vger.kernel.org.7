@@ -1,103 +1,83 @@
-Return-Path: <linux-kernel+bounces-668519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-668516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4605AAC93D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 18:45:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3FE6AC93CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 18:44:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E1DE1C212CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 16:45:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EF901C20B55
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 16:44:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7809235074;
-	Fri, 30 May 2025 16:44:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D0B91CD1E4;
+	Fri, 30 May 2025 16:44:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="Hy0nElZe"
-Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E1LkJqF7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92CD41C6FE8;
-	Fri, 30 May 2025 16:44:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA5CF258A;
+	Fri, 30 May 2025 16:44:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748623491; cv=none; b=h7/Pi4PSV0jxC7jGwB1NLCGG2nmOfzBeFQ5wM0Ha2J0BEwT5LZf/Usv7SGhOnP18pM/IfqolJItdAx/+UPyjUeWZYejKrRi/cBjPJiiCHCVCeUOsjX5zo0Ja1GKQ/BDieg6vtjCec79PColrNhmb4qf1GBkeGQd9GOzfty/kvh0=
+	t=1748623475; cv=none; b=jcEB1Llq6pagE/JqLeL0l0UWmQY8AxvClOgM0EueWY3yolY8GLp5wg6RwTgKG1EfEsp4HnL9Van67oMACjnqQXy/jMhmKWS/3bpwRk7CLY5PwAMlcfcqZlDraHWiWIVL3ZHttTlSFyFsbNevC8hqm5FxqnPoNGenYX/qhFHFhto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748623491; c=relaxed/simple;
-	bh=N63jKpGiCSXNWDphomYejhXm4R3ctp0/FkZ77iqGKfU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=e84gkhYYweglTqO939+skrDZCrvJgcucZPdCzYgqRhlVTymlzbIMc8IpAwX0AgW/A1a4fn4E6BZuhUNaIheP0xXh7wRn94yW8bC2/8QeQ6WH1w6ebPVACoJduNlxGtydd+Fi5MqdlZOcr8R68ukCdbKxlsWUdWdRSj/BI0by7Vg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=Hy0nElZe; arc=none smtp.client-ip=83.149.199.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
-Received: from fedora.intra.ispras.ru (unknown [10.10.165.16])
-	by mail.ispras.ru (Postfix) with ESMTPSA id 01B994076165;
-	Fri, 30 May 2025 16:44:42 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 01B994076165
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
-	s=default; t=1748623482;
-	bh=fPS9KLJ/Uc9OoO0w2alburJ4UW3qX59EuFMYSOSI0iI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Hy0nElZeftqtkdS9jx271XZtlE7wOHh2eUSunioomRU4HmPCx6MqLHnkEBqAQKlCT
-	 Dq+k2QEU27qC64z/zyJ8yJbcQbnER/ouHR2vgAm0QK1TfjJiqGIW5986FcTKoYLsHf
-	 yvr6Wjcl1EKnbvyd7cUDQGTZQsnBSEi193MHAQWQ=
-From: Fedor Pchelkin <pchelkin@ispras.ru>
-To: Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Takashi Iwai <tiwai@suse.com>
-Cc: Fedor Pchelkin <pchelkin@ispras.ru>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
-	Ravulapati Vishnu vardhan rao <Vishnuvardhanrao.Ravulapati@amd.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org,
-	stable@vger.kernel.org
-Subject: [PATCH 3/3] ASoC: amd: acp3x-pdm-dma: free pdm device data on closing
-Date: Fri, 30 May 2025 19:44:16 +0300
-Message-ID: <20250530164425.119102-4-pchelkin@ispras.ru>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250530164425.119102-1-pchelkin@ispras.ru>
-References: <20250530164425.119102-1-pchelkin@ispras.ru>
+	s=arc-20240116; t=1748623475; c=relaxed/simple;
+	bh=W5OpwwUyJIIM5VqI45VotpF5enCBTC5BSFX/2o6LIuo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S0b0hjT379MnjVe1rzyWmOQCxak3n9SOe8I0opf+XgMl4kjUcdTV/Smg+r6pP24PrhrPennzRi0FcUFmmh+J/30bHfTnkZzlq4AC4FZahO8Oswt0vi5lRRSIWbb7dL/YDetQifyYcIK1f2hls/6cT7yeHicU3scEWtGf6OaYmJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E1LkJqF7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12162C4CEE9;
+	Fri, 30 May 2025 16:44:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748623475;
+	bh=W5OpwwUyJIIM5VqI45VotpF5enCBTC5BSFX/2o6LIuo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=E1LkJqF7WWdLxXgE6GXThQxaANeHlK2/YO+4RzDNtgNYnx3C+q6JJV6xO6BzxkDSr
+	 rbmBm6Ds4EnWVMylvEy66N0V/cah6rL98swZNnty9fnd/nAQyNoZdWzLRq7ZhsHj7O
+	 iXGOS0Pksrut4PgAlL2LECTnwUo6Q18qZdqUQJs3M9EBEkhH6NMc3JGZRYuQaTAQvz
+	 n6mKpG3oShMiwwAMwUmrx/u4jqh9h1+nJkeFbXqK4hbvA8ieGj4U7cfguADG8B5u6z
+	 LizuhbySsVIo8dDXJk7wJvkNCQ0vHVy9Y4KQgcrsLLhNXgPrGmDWRFTKAwa5qMTsQw
+	 5ayriPv8tcAhw==
+Date: Fri, 30 May 2025 17:44:31 +0100
+From: Lee Jones <lee@kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	ARM <linux-arm-kernel@lists.infradead.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: duplicate patch in the mfd tree
+Message-ID: <20250530164431.GB7758@google.com>
+References: <20250526140400.54ac8a6c@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250526140400.54ac8a6c@canb.auug.org.au>
 
-Dynamic memory referenced by runtime->private_data pointer is allocated in
-acp_pdm_dma_open() and needs to be freed in the corresponding ->close()
-callback.
+On Mon, 26 May 2025, Stephen Rothwell wrote:
 
-Found by Linux Verification Center (linuxtesting.org).
+> Hi all,
+> 
+> The following commit is also in the arm-soc tree as a different commit
+> (but the same patch):
+> 
+>   0ffcf5f1e41c ("dt-bindings: mfd: qcom,tcsr: Add compatible for ipq5018")
+> 
+> This is commit
+> 
+>   1d2c5d5f3f44 ("dt-bindings: mfd: qcom,tcsr: Add compatible for ipq5018")
+> 
+> in the arm-soc tree.
 
-Fixes: 4a767b1d039a ("ASoC: amd: add acp3x pdm driver dma ops")
-Cc: stable@vger.kernel.org
-Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
----
- sound/soc/amd/renoir/acp3x-pdm-dma.c | 2 ++
- 1 file changed, 2 insertions(+)
+Why is this patch in the arm-soc tree?
 
-diff --git a/sound/soc/amd/renoir/acp3x-pdm-dma.c b/sound/soc/amd/renoir/acp3x-pdm-dma.c
-index 95ac8c680037..6b294040e164 100644
---- a/sound/soc/amd/renoir/acp3x-pdm-dma.c
-+++ b/sound/soc/amd/renoir/acp3x-pdm-dma.c
-@@ -301,9 +301,11 @@ static int acp_pdm_dma_close(struct snd_soc_component *component,
- 			     struct snd_pcm_substream *substream)
- {
- 	struct pdm_dev_data *adata = dev_get_drvdata(component->dev);
-+	struct snd_pcm_runtime *runtime = substream->runtime;
- 
- 	disable_pdm_interrupts(adata->acp_base);
- 	adata->capture_stream = NULL;
-+	kfree(runtime->private_data);
- 	return 0;
- }
- 
 -- 
-2.49.0
-
+Lee Jones [李琼斯]
 
