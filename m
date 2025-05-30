@@ -1,138 +1,150 @@
-Return-Path: <linux-kernel+bounces-667744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-667748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C69EAC8958
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 09:48:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88551AC8964
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 09:49:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89C4F189D686
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 07:48:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB7081BC3B7D
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 07:49:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A868A20C02A;
-	Fri, 30 May 2025 07:46:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2133321771B;
+	Fri, 30 May 2025 07:46:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="PtIAXbe7"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="O/mKfuQB"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 382E12135DD;
-	Fri, 30 May 2025 07:45:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6254A213E6D;
+	Fri, 30 May 2025 07:46:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748591159; cv=none; b=ANCxuvcqzGU2orHt1IbXnNICf4A/+5pXrubQnBvA/zu3E90LZISgH8G3gvsdyyDxIjVCbz+oOav0trehbm6tXRuCtZ/AVDgfkBs9qtakPyhSxSE69RV0/5XeNp9iizf0O8MOt6bjHUYm/oe9t/KzrBxdw9hoCKM6D0ubC5l0Vkw=
+	t=1748591198; cv=none; b=fzrDYBiLR4e5ewANl9mGxdmXXWkLgRtj1ImtVKNuhxgAoP2RE08pVDtJiM/w3tmeekmbMOIiKU0eNKyzr/pv/Y1TgDty/LSHDm5aHZTYuwyhdv0wrOUmxAerjR4zEM/cbzrl0pEASCmRDu0xLoURAdlWvUlP5gcDpGhH0FI1eOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748591159; c=relaxed/simple;
-	bh=vbgGqaUjmC7X3jr8emhPQRlwWfsREiCDK2Qcp0HoCw0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=huGNsb8kPxSLm5UHL4ED80kQihcsNwPX+mfDkLdi4YMMYkPiW+3jdv/KgK8rYM6D6k+aJ+8L7uWWbZYKZ1ytMHuf0Vh9QauCmfgoKdQzBTqi8QmYzChcQS3B4x9qoz9fVyovA00oUHGIChm2Z0E5RmQnejn9yf4YMSM99Ehi248=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=PtIAXbe7; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 1c1c1d063d2a11f082f7f7ac98dee637-20250530
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=voJtxz07cvFdIZAVC3CJIYYyf2kty3bRZc+zfXUZii8=;
-	b=PtIAXbe7g2jcPVV/7rOGfKYD/9sYPafVPcHUEMvHfyLGwBKHFeXI+MjAd7WVwL1T0WG5E5ngvMD+eFmTTrJHCDWH0c30yrWtkwZxALnbo3JZLElUGq07mRUShN/R3w9Z0ienzYEYpQW3pD1V3+LnLnEQ2UTXwvKoGPf0IrVgY+I=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.2.1,REQID:012563c9-f9f2-4575-95aa-125cd1def60e,IP:0,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
-	elease,TS:0
-X-CID-META: VersionHash:0ef645f,CLOUDID:50ef4759-eac4-4b21-88a4-d582445d304a,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102,TC:nil,Content:0|50,EDM:-3
-	,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV
-	:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 1c1c1d063d2a11f082f7f7ac98dee637-20250530
-Received: from mtkmbs13n2.mediatek.inc [(172.21.101.108)] by mailgw02.mediatek.com
-	(envelope-from <kyrie.wu@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1778189780; Fri, 30 May 2025 15:45:51 +0800
-Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
- MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.39; Fri, 30 May 2025 15:45:49 +0800
-Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
- mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1258.39 via Frontend Transport; Fri, 30 May 2025 15:45:49 +0800
-From: Kyrie Wu <kyrie.wu@mediatek.com>
-To: Hans Verkuil <hverkuil-cisco@xs4all.nl>, Mauro Carvalho Chehab
-	<mchehab@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
-	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, Kyrie Wu <kyrie.wu@mediatek.com>,
-	<linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mediatek@lists.infradead.org>
-CC: <srv_heupstream@mediatek.com>
-Subject: [PATCH v5 12/12] media: mediatek: jpeg: fix remove buffer operation for multi-core
-Date: Fri, 30 May 2025 15:45:37 +0800
-Message-ID: <20250530074537.26338-13-kyrie.wu@mediatek.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20250530074537.26338-1-kyrie.wu@mediatek.com>
-References: <20250530074537.26338-1-kyrie.wu@mediatek.com>
+	s=arc-20240116; t=1748591198; c=relaxed/simple;
+	bh=C/gy27BDlYkIDsDi2lK2NXljjmhG5IvM8N89F5XHS3M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=REoS21j7QnCTXl/QT9aZ6FjkyYngocj/tHd9G3l+rtvjx27sj1oQyE7lp2FUE/TcYTXPh/lN2gUxuEK64rH+1bPsY3wfammLAwclYL2r0Paz6Mxvw41IWs7Qz1bQV1wrEWPen0uqtnKHy1l3M/6ziQo4bP95ZeR7Io1wNEsEZGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=O/mKfuQB; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=Ut2tpuuqRAyjo9B+qNNd6yMUFNVjo/29ecFKGIED0ig=; b=O/mKfuQB0BUcNmKRdmWHnd9iSG
+	YG+hJVA3Yn5K2Cyf7t9KIzf9KxAnua8o59fak2AfljqKfB8sgaL/fJtW/VJHi+0FT0XD14AO/yh0h
+	WBYb4GNg8RPO6rM8zhtWY1VqZe77B8ZTC6DS34hH2Lje4+TY59ss4FN9jqBaXeyHrHMS089dZy7IO
+	v6tIHTswLxoPoyt4C75BFzlOtlJqTBYYKJ+BuahW0po4IZOKX596tYectV7YVC0scKjOZXFK9o3uM
+	Du8yGWMTEI5Wq0NzmCH2n21bMfmg6tTQ/LbkC/7mjUgqnyIKNEpS0AlTSXjs1pNNCiYYZTfoCFKxs
+	d4ZMt7sg==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:40490)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1uKuRe-00027t-2K;
+	Fri, 30 May 2025 08:46:26 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1uKuRX-0004Rl-1d;
+	Fri, 30 May 2025 08:46:19 +0100
+Date: Fri, 30 May 2025 08:46:19 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Romain Gantois <romain.gantois@bootlin.com>
+Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>, davem@davemloft.net,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, thomas.petazzoni@bootlin.com,
+	Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	=?iso-8859-1?Q?K=F6ry?= Maincent <kory.maincent@bootlin.com>,
+	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
+	Oleksij Rempel <o.rempel@pengutronix.de>,
+	=?iso-8859-1?Q?Nicol=F2?= Veronese <nicveronese@gmail.com>,
+	Simon Horman <horms@kernel.org>, mwojtas@chromium.org,
+	Antoine Tenart <atenart@kernel.org>, devicetree@vger.kernel.org,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Rob Herring <robh@kernel.org>, Daniel Golle <daniel@makrotopia.org>,
+	Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+Subject: Re: [PATCH net-next v6 06/14] net: phy: Introduce generic SFP
+ handling for PHY drivers
+Message-ID: <aDliS9uMFaLf2lCV@shell.armlinux.org.uk>
+References: <20250507135331.76021-1-maxime.chevallier@bootlin.com>
+ <13770694.uLZWGnKmhe@fw-rgant>
+ <aDhfyiSOnyA709oX@shell.armlinux.org.uk>
+ <6159237.lOV4Wx5bFT@fw-rgant>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-MTK: N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6159237.lOV4Wx5bFT@fw-rgant>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-move remove buffer code to spinlock protect area for multi-core
+On Fri, May 30, 2025 at 09:28:11AM +0200, Romain Gantois wrote:
+> On Thursday, 29 May 2025 15:23:22 CEST Russell King (Oracle) wrote:
+> > On Wed, May 28, 2025 at 09:35:35AM +0200, Romain Gantois wrote:
+> > > > In that regard, you can consider 1000BaseX as a MII mode (we do have
+> > > > PHY_INTERFACE_MODE_1000BASEX).
+> > > 
+> > > Ugh, the "1000BaseX" terminology never ceases to confuse me, but yes
+> > > you're
+> > > right.
+> > 
+> > 1000BASE-X is exactly what is described in IEEE 802.3. It's a PHY
+> > interface mode because PHYs that use SerDes can connect to the host
+> > using SGMII or 1000BASE-X over the serial link.
+> > 
+> > 1000BASE-X's purpose in IEEE 802.3 is as a protocol for use over
+> > fibre links, as the basis for 1000BASE-SX, 1000BASE-LX, 1000BASE-EX
+> > etc where the S, L, E etc are all to do with the properties of the
+> > medium that the electrical 1000BASE-X is sent over. It even includes
+> > 1000BASE-CX which is over copper cable.
+> 
+> Ah makes sense, thanks for the explanation. I guess my mistake was assuming 
+> that MAC/PHY interface modes were necessarily strictly at the reconciliation 
+> sublayer level, and didn't include PCS/PMA functions.
 
-Signed-off-by: Kyrie Wu <kyrie.wu@mediatek.com>
----
- drivers/media/platform/mediatek/jpeg/mtk_jpeg_core.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+When a serdes protocol such as SGMII, 1000BASE-X, or 10GBASE-R is being
+used with a PHY, the IEEE 802.3 setup isn't followed exactly - in
+effect there are more layers.
 
-diff --git a/drivers/media/platform/mediatek/jpeg/mtk_jpeg_core.c b/drivers/media/platform/mediatek/jpeg/mtk_jpeg_core.c
-index eba9f58b9198..34fa03bcfdd3 100644
---- a/drivers/media/platform/mediatek/jpeg/mtk_jpeg_core.c
-+++ b/drivers/media/platform/mediatek/jpeg/mtk_jpeg_core.c
-@@ -1684,9 +1684,6 @@ static void mtk_jpegenc_worker(struct work_struct *work)
- 		goto enc_end;
- 	}
- 
--	v4l2_m2m_src_buf_remove(ctx->fh.m2m_ctx);
--	v4l2_m2m_dst_buf_remove(ctx->fh.m2m_ctx);
--
- 	schedule_delayed_work(&comp_jpeg[hw_id]->job_timeout_work,
- 			      msecs_to_jiffies(MTK_JPEG_HW_TIMEOUT_MSEC));
- 
-@@ -1707,6 +1704,8 @@ static void mtk_jpegenc_worker(struct work_struct *work)
- 			     &src_buf->vb2_buf);
- 	mtk_jpeg_set_enc_params(ctx, comp_jpeg[hw_id]->reg_base);
- 	mtk_jpeg_enc_start(comp_jpeg[hw_id]->reg_base);
-+	v4l2_m2m_src_buf_remove(ctx->fh.m2m_ctx);
-+	v4l2_m2m_dst_buf_remove(ctx->fh.m2m_ctx);
- 	jpeg_buf_queue_inc(ctx);
- 	v4l2_m2m_job_finish(jpeg->m2m_dev, ctx->fh.m2m_ctx);
- 	spin_unlock_irqrestore(&comp_jpeg[hw_id]->hw_lock, flags);
-@@ -1803,9 +1802,6 @@ static void mtk_jpegdec_worker(struct work_struct *work)
- 		goto dec_end;
- 	}
- 
--	v4l2_m2m_src_buf_remove(ctx->fh.m2m_ctx);
--	v4l2_m2m_dst_buf_remove(ctx->fh.m2m_ctx);
--
- 	mtk_jpeg_set_dec_src(ctx, &src_buf->vb2_buf, &bs);
- 	if (mtk_jpeg_set_dec_dst(ctx,
- 				 &jpeg_src_buf->dec_param,
-@@ -1833,6 +1829,8 @@ static void mtk_jpegdec_worker(struct work_struct *work)
- 				jpeg_src_buf->bs_size,
- 				&bs,
- 				&fb);
-+	v4l2_m2m_src_buf_remove(ctx->fh.m2m_ctx);
-+	v4l2_m2m_dst_buf_remove(ctx->fh.m2m_ctx);
- 	mtk_jpeg_dec_start(comp_jpeg[hw_id]->reg_base);
- 	jpeg_buf_queue_inc(ctx);
- 	v4l2_m2m_job_finish(jpeg->m2m_dev, ctx->fh.m2m_ctx);
+On the SoC:
+
+	MAC
+	Reconciliation (RS)
+	PCS
+	SerDes (part of the PMA layer)
+
+On the PHY side of the SerDes host-to-phy link:
+
+	SerDes
+	PCS (which may or may not be exposed in the PHY register set,
+	     and is normally managed by the PHY itself)
+	(maybe other layers, could include MACs	back-to-back)
+	PCS
+	PMA
+	PMD
+
+Hope that helps explain what's going on a little more.
+
+Another way to look at it is that with SGMII, 1000BASE-X etc between
+the PHY and host, the PHY is a media converter.
+
 -- 
-2.46.0
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
