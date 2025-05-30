@@ -1,117 +1,127 @@
-Return-Path: <linux-kernel+bounces-668675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-668677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16461AC95D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 20:51:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F679AC95D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 20:53:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38BE0188D57F
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 18:52:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF7494A0CA2
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 18:53:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE854277028;
-	Fri, 30 May 2025 18:51:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6206B2797A9;
+	Fri, 30 May 2025 18:52:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WMV+huY7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2IIVqNFT"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 553831D8A10;
-	Fri, 30 May 2025 18:51:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59449278E7A
+	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 18:52:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748631102; cv=none; b=PLStmXv9WE+mUnhUZvAHBybIYrLMyxqoxwh1RfpUH0jHenCIqiaE/0kL7SFOV7/Whr7y6nX9A3gEEIs/YG3i/KvO3gRwQQ1WoDISnuH8VaRcHqjlAb/BsXg8NUrELz64/bp4BtOsNz85cpwvxmkmopFwpSJJl16G8qbv4I/1m4M=
+	t=1748631172; cv=none; b=KdpMtdciKB0NQeuGB9kgEgYQ8FJ87QsCYs5eri0todJlk6hEo0EL98x6qv7OYBC/TWfa9qClg5LOneaD83+FK1gQDIobPi8+N1Znt0eeCi745g4NoUacjxd+ewQqJiUA2aseGo8idRs7tReb+aGejTAlW6e6lykruaIOTqRRXjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748631102; c=relaxed/simple;
-	bh=OGWupad3mxhudfRyUECpcU7Gtb3pu/gBN114jYicv8Q=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=QnjVvejl23gHruGePz71vxw5wdFtFixHuroxqnkoxKLE954ecJKfseazIcDHLHA4UzjLOcoKf2efGlAyV9I5n14TO5yGhXKF1/1dJ5b5FM93bZGNOahK+QQcUIB3fgFQdZtKgntZA3QpY//ligaV9YlBlY/e8y41YI1coNFN0hM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WMV+huY7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B77CAC4CEED;
-	Fri, 30 May 2025 18:51:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748631101;
-	bh=OGWupad3mxhudfRyUECpcU7Gtb3pu/gBN114jYicv8Q=;
-	h=From:Date:Subject:To:Cc:From;
-	b=WMV+huY7HRMOPt/q/zgjM9I+Rwo/pYbPN8wfrK5Xa/LSnzt6g0WTaPAqyqUn3b2YM
-	 W+MuZrNKGOYTUXAPeQyW47gF+PopXV1IDH7fyGt5PXbT0iUkr4kgZYDp5Tl/3MXB//
-	 NENkIm0JttvadyOAmQFvi9dTVzEV/65OA6D0r3zqJB3OEHBgZdHudH7ZPLjdSoyId+
-	 ROjvJbG/7Q/lI7Ji3ub9B/dW5pHvSpMKkfye5VhzrVmehA6shmVb/Rn/o8SJNP/4UV
-	 jdq0uH7x03gUaqO5j7wBDB8xvsKA7Twi403gTRzfKt7Ud4keTNo4NoKfdtRnVAEkqd
-	 WZx1LfI42NHXQ==
-Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-2d09d495c6cso594931fac.3;
-        Fri, 30 May 2025 11:51:41 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUAv+r6F+N0KKykDMcp2Uq3XX9FWxnN8CZCSFOcyD6ucUTlTklLIlIvCssHlu4hOLYgiVwErFNvv2RJ8qE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxX9BxmB78LB6uMdQyMe3auJIn5Igfi7iK+zlxsa9vIOZ0gnP0H
-	+xCCKx+uc2iIBmnpYN8DzEWnWK5j23ETg55+C2oKMOmSLoKPGDjBnumc+lBgXqoJLqeRSKJ4sT1
-	c6LI2pXmFtHQCYnNpm9a3GFU/pX/C8sE=
-X-Google-Smtp-Source: AGHT+IGjz3+bC2xHbnZw1cEeyAzaN6Vyk43XA6bFvU9xZf+GRG2XAZuKZSPTTROim601u8ljt0L4DtL9fYG/UvK8HOQ=
-X-Received: by 2002:a05:6870:46a4:b0:2e9:365:d0d3 with SMTP id
- 586e51a60fabf-2e92a422551mr1653148fac.21.1748631101019; Fri, 30 May 2025
- 11:51:41 -0700 (PDT)
+	s=arc-20240116; t=1748631172; c=relaxed/simple;
+	bh=DOB8fqOOZ+nSh40yrnI3oifjq6hR5ylYBAFURXRDnh8=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=pC1V/wckzlnUoBKInxKRBhsTUm/REd11OOJPNke/M8no6lYF8mm74qwTqGSdFpPfsb4T4r8ff6vQcFJMFssOWeYnAcVxNdcbZsMy2OMAODUQAwzYpVEzcu7P94Gpy9XOBbsCoKfKdZslgTwYMVjQza3gMf1eo3nMPstTfQF+sno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jmattson.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2IIVqNFT; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jmattson.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b269789425bso2325200a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 11:52:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1748631170; x=1749235970; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=uUv/RTjh91CEtJSYSuz7ab6/srgFsjOXdoBg1u5u6t4=;
+        b=2IIVqNFTEF+PaIPWeiynwhvTGj0gBkWM548mfFdhq4BKGzg4eZWfhuutxboT+udVJi
+         WWVsU2RVxDia2JxI0d1ziH69uNXG1m1EWU5q1sr4Yg4JYCqqo5wqihwC6lPmVjVl14/W
+         2i5VXCnFyPQaeUA1W7MCrNaaGXMv/kgHa21l8Z4QXes3iykd3XtByT5Ww/FomUSPZHSa
+         m6PzHoRGpnDDOtEfQaOcqlMAzCaObK7EQ+p82+dxrSeQbEaYpEgwXUulfnfHA/M1uWUq
+         K2m2L/ilkUXqtgKnNM67uD2eyEOS6KeaD9OHfE37pJHOkyR7hHyKzYIcVEhpYWQLO0uo
+         LB1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748631170; x=1749235970;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=uUv/RTjh91CEtJSYSuz7ab6/srgFsjOXdoBg1u5u6t4=;
+        b=h11zUQBc8SgWZ/+v23qAoyzgNw99MeZIqNsAt34Fn/5kmPD8fZZqgTIEDR6d1YEkSM
+         GQuTcNY0oKFXcMppJuVpG0jti0mGFTaqbzDzJc5kgp9KsodN2pi8szF4dDqG91OzgzNo
+         iYImm9RV7R8T0kDI2PlxY1PcsZrrDaFYvF40KAiX7cNjLPhxcTNE+44BFqntWuzHDxJ/
+         pMLoKOaNC5AR9VQ7IQNub6fOkJ8q0YsmF1rzGWFIrSixzLLcmCsJgdSkXf8a22yRTGvu
+         KwTAAYh1E8IBuxTVOgIpX7ACAX0TUwyq+K1cRZzZJODJi7if899HbJmmT77zi4345M/d
+         DR3A==
+X-Gm-Message-State: AOJu0YzVY6JHbbdrjTQuSJOwCROqEKs4ouC7DSm2uv1FdageO0DcnjpQ
+	0ux8xBgXKiRnZTNHnPmKjb0msE2/tnDuG2dUEYRHro2HwYDfmMzZfPyuRhu0c8x4eFHRFrYibpj
+	L9USodCDKGRlt8P1enMcUeZx3YykPt70OHM2mt50I/CdGqzHfYi0GB0m3R1Cg3S628dfdjKEL8Y
+	vOG/mQFrapdBI8p4c27A96qE534bUcAZgtYvr7wcPiAuqp8F3ApLFsRg4=
+X-Google-Smtp-Source: AGHT+IGwdiKLI1x4pb5kVZDwHzn2zgcS8gBEAXzxms3PRqiHevVl6CoD0Ciw3kXlOHxiRZmo6nvYLya7fcOefw==
+X-Received: from pjbnw2.prod.google.com ([2002:a17:90b:2542:b0:2f9:dc36:b11])
+ (user=jmattson job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:90a:ec8b:b0:312:1c83:58ea with SMTP id 98e67ed59e1d1-31241511fcemr8333346a91.14.1748631170549;
+ Fri, 30 May 2025 11:52:50 -0700 (PDT)
+Date: Fri, 30 May 2025 11:52:22 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 30 May 2025 20:51:30 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0iDrmG44NHPtDThtYkk-v3YOX-4yxJWC7SvU0Hjq-vWGA@mail.gmail.com>
-X-Gm-Features: AX0GCFv3A9tkuZZjvO1ZqvqZWHyDI1e8Unf6uIwtMO0lJhiJPEYx3F-ibtZbddY
-Message-ID: <CAJZ5v0iDrmG44NHPtDThtYkk-v3YOX-4yxJWC7SvU0Hjq-vWGA@mail.gmail.com>
-Subject: [GIT PULL] ACPI fixes for v6.16-rc1
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: ACPI Devel Maling List <linux-acpi@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.49.0.1204.g71687c7c1d-goog
+Message-ID: <20250530185239.2335185-1-jmattson@google.com>
+Subject: [PATCH v4 0/3] KVM: x86: Provide a capability to disable APERF/MPERF
+ read intercepts
+From: Jim Mattson <jmattson@google.com>
+To: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
+Cc: Jim Mattson <jmattson@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Hi Linus,
+Allow a guest to read IA32_APERF and IA32_MPERF, so that it can
+determine the effective frequency multiplier for the physical LPU.
 
-Please pull from the tag
+Commit b51700632e0e ("KVM: X86: Provide a capability to disable cstate
+msr read intercepts") allowed the userspace VMM to grant a guest read
+access to four core C-state residency MSRs. Do the same for IA32_APERF
+and IA32_MPERF.
 
- git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
- acpi-6.16-rc1-2
+While this isn't sufficient to claim support for
+CPUID.6:ECX.APERFMPERF[bit 0], it may suffice in a sufficiently
+restricted environment (i.e. vCPUs pinned to LPUs, no TSC multiplier,
+and no suspend/resume).
 
-with top-most commit f4c606df263b6de746412dee707bc4b590adf45a
-
- Merge branches 'acpica', 'acpi-tables' and 'acpi-apei'
-
-on top of commit 3702a515edec515fcc7e085053da636fefac88d6
-
- Merge tag 'acpi-6.16-rc1' of
-git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm
-
-to receive ACPI fixes for 6.16-rc1.
-
-These address issues introduced by recent ACPI changes merged
-previously:
-
- - Unbreak acpi_ut_safe_strncpy() by restoring its previous behavior
-   changed incorrectly by a recent update (Ahmed Salem).
-
- - Make a new static checker warning in the recently introduced ACPI
-   MRRM table parser go away (Dan Carpenter).
-
- - Fix ACPI table reference leak in error path of einj_probe() (Dan
-   Carpenter).
-
-Thanks!
+v1 -> v2: Add {IA32_APERF,IA32_MPERF} to vmx_possible_passthrough_msrs[]
+v2 -> v3: Add a selftest
+v3 -> v4: Collect all disabled_exit flags in a u64 [Sean]
+          Improve documentation [Sean]
+	  Add pin_task_to_one_cpu() to kvm selftests library [Sean]
 
 
----------------
+Jim Mattson (3):
+  KVM: x86: Replace growing set of *_in_guest bools with a u64
+  KVM: x86: Provide a capability to disable APERF/MPERF read intercepts
+  KVM: selftests: Test behavior of KVM_X86_DISABLE_EXITS_APERFMPERF
 
-Ahmed Salem (1):
-      ACPICA: Switch back to using strncpy() in acpi_ut_safe_strncpy()
+ Documentation/virt/kvm/api.rst                |  23 +++
+ arch/x86/include/asm/kvm_host.h               |   5 +-
+ arch/x86/kvm/svm/svm.c                        |   9 +-
+ arch/x86/kvm/svm/svm.h                        |   2 +-
+ arch/x86/kvm/vmx/vmx.c                        |   8 +-
+ arch/x86/kvm/vmx/vmx.h                        |   2 +-
+ arch/x86/kvm/x86.c                            |  16 ++-
+ arch/x86/kvm/x86.h                            |  18 ++-
+ include/uapi/linux/kvm.h                      |   1 +
+ tools/include/uapi/linux/kvm.h                |   1 +
+ tools/testing/selftests/kvm/Makefile.kvm      |   1 +
+ .../testing/selftests/kvm/include/kvm_util.h  |   2 +
+ tools/testing/selftests/kvm/lib/kvm_util.c    |  17 +++
+ .../selftests/kvm/x86/aperfmperf_test.c       | 132 ++++++++++++++++++
+ 14 files changed, 220 insertions(+), 17 deletions(-)
+ create mode 100644 tools/testing/selftests/kvm/x86/aperfmperf_test.c
 
-Dan Carpenter (2):
-      ACPI: APEI: EINJ: Clean up on error in einj_probe()
-      ACPI: MRRM: Silence error code static checker warning
+-- 
+2.49.0.1204.g71687c7c1d-goog
 
----------------
-
- drivers/acpi/acpi_mrrm.c        | 4 +++-
- drivers/acpi/acpica/utnonansi.c | 2 +-
- drivers/acpi/apei/einj-core.c   | 2 +-
- 3 files changed, 5 insertions(+), 3 deletions(-)
 
