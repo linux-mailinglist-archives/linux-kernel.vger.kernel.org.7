@@ -1,221 +1,172 @@
-Return-Path: <linux-kernel+bounces-667917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-667919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75D9EAC8B5C
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 11:48:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B0D5AC8B6B
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 11:48:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3DDC27A40F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 09:46:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCDD41BA1809
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 09:48:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A8442192EC;
-	Fri, 30 May 2025 09:47:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5383222127D;
+	Fri, 30 May 2025 09:48:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fb+r1go3"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jCRyxzoL"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F30C354652
-	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 09:47:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EEA61DA5F;
+	Fri, 30 May 2025 09:48:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748598473; cv=none; b=ndCrYN5ISetXjya4LBo+Z+hp393pnKMTe/siL6mqe4Y9hNLZaD4hJz/8ZCxKM0xTpnXDZvfGMxz7NdLFfJBHOQTxVlTgvsJ6i/JlSv45U4MG/XEPHdUZiSfEYmUKqgA7WgrG9orL4mzLftliK9oaybvZNrbMSoBjdu70Azs7uTg=
+	t=1748598512; cv=none; b=tVE8VTINKrKan37XYFU5Ay9iD6cJ+bAocRA0OuX/diPERng8vtp+gJ+NHmlp3vd4WOGZGrTgK4dpbnztIwl0nWWQPV/MjgTWmaqhnkHAxib9eNJjSWjMbj0BhbhpaaActcU4z5RQrrIJjk0qYp9ZP2jubDQlea4qfn/6NygS/og=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748598473; c=relaxed/simple;
-	bh=fPat80MPsBERl9+V9lznILNBH9q5jZ7uaIj+jy+zQjU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aZC6JqOTZ6adCvFSfEPC0LpxeaeVREaLVoDsmc+gGYkwloxetxrkPkzfLBBcm/ac2diW/9QSzPzd5XCigONfDDR3ijqGA0ewYCJ60+Ix5CW4tWDE7Ok3PzQGlDsjOJDJBJHqySXcEB519+BWmoB1i/ZoH+O4mH04dG7Cn+OfwY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fb+r1go3; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1748598471;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=wfAmhiX8GmCFAxokpsMnfWBjFSdezrVGBamjGu0rQl4=;
-	b=fb+r1go3ppf6hVbMfyy2C+VWozRkZzJN3ruPMVRhy2YebYUt22Zyoo35xhF9qgEx4WdiGW
-	QZYD4GFsAU6p0Ryf1WumZH8ldc/MNxyB/Laltbxed3gAsK3pj4FFSeSNBXfikf7Ixk7gaf
-	4WkYQoPZKkb17qZaGDavnMk0mRIm9c4=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-133-EAlcyR23M7ud609kajZNLw-1; Fri, 30 May 2025 05:47:49 -0400
-X-MC-Unique: EAlcyR23M7ud609kajZNLw-1
-X-Mimecast-MFC-AGG-ID: EAlcyR23M7ud609kajZNLw_1748598468
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-43cec217977so11895665e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 02:47:49 -0700 (PDT)
+	s=arc-20240116; t=1748598512; c=relaxed/simple;
+	bh=YudCrucAx1p31d0Wm18PRjT20S5RtbDxkt+4OGkxwE8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U24RiEfMTdup9TyayD6SJfBiy57obuaerEwbAzmFExiLztbxqqxJD0AMIWljvJn2RfTJUOiHkvR4fR5O4TC65PT16FObPZY3Qb0Psnq0HeuLdrRz4QMyoVo0t4SROjmrNtpt1XIV7oXQnpKfQ1SXyyUOyRbwFtp6vVgZSsXqMZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jCRyxzoL; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-234e48b736aso23355695ad.3;
+        Fri, 30 May 2025 02:48:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748598510; x=1749203310; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ookjxClzf4cQCEvAmXl0RF2BomztovFb9LfDcMb8UFA=;
+        b=jCRyxzoLtVUvGvPoQeimce1dbXHpdBli7vuqY0ejqNyTlH3XDuElwF4Vvj2SzRr0Xp
+         2Rmth6j77BGhHcBCYhhAD6Dm28zAUmB5alXbYjLcMglt8iPwtT7HdmB0cqTH8uFfoFT8
+         cICoVd05BH6vhljYxygmAUt4Svn+F/DuYg9qEfUYUZdfsGilLlIcGMYMeS7uJGg2Go5u
+         4LPpPJZ4wg30LmQ/cAK6w7Ldd7w4YiRpIZzvU/gqpC1xaIP63m3tpC7UjhIenrl566TM
+         WAU5RvG7Zszu2xZzifzQlzI2O3ESskzr+C8l1A4R9icxysfPHIqYHZ4OuT20LgC+SYs7
+         i0Dw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748598468; x=1749203268;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=wfAmhiX8GmCFAxokpsMnfWBjFSdezrVGBamjGu0rQl4=;
-        b=NAml7xGNMNEDuYzgNifK9lN1+98IJ5p4tyIvW7mlHZc5HMTlyWsFdyQW7eIhVuBuCy
-         Du7/xOKNlqq5t+FuXwZuOPJX5ohxWlIy4ZuPIQIHmsLZGboZLixF5rB7WuxOXg5fWJmV
-         UpyNmqIM6ctyiKB9RU3qK88bxgIIGbPx+mpK8RE8YkLbk4PG/tZAEo3vpewxyDgxrqC5
-         kChEyqouBY82rE0GfKPFRxGGYoftgqIdnrV7qUJtfcbW1YEQM5Gw5RHUsYQGwZutvqPJ
-         hP5QFNvRbd3Ggy/xGaSjTIuGf6chGW7vO6N4Lkd06f8fzDc6A6FgBS6HGbZmSwRwJx8h
-         wtsA==
-X-Forwarded-Encrypted: i=1; AJvYcCV3IDCeN0FwfkULtMVZtAC4JZn/de8yB/8eV1PSUpr8ui8KlFmiDBe+lyvaMm5FMCNi20x1pGaELXGme7A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzs1M5DXKMdOzejxaVfky0Rzmc/DAL1KTkCtJg166AMvgjqg5My
-	c5mRN3YVyKa1fN5GQp4ESyoVxdQIJY/Za8LI+pk/Y5rJSBaPFJJtjoIK7R4aDTb+8SOFIZNmnCG
-	tFjfhHoGsvYOEi9IU1A6veqjruFCbRD47r40ejiSH9KZy/F0oXGrpwtW06OE8AcyaDg==
-X-Gm-Gg: ASbGncvWF0VB2MXjOKcRgxXDpG8wMi8SSfve+ichRknyt6FSU6ttdTO5+6AAbDT5wzo
-	lIK51AZhKjYcCI9moR8F8f3tT0kbf4e6khv95DXY1t/UFSDEC9hMR4/y7WRzsIqjQsnnM3j6S/I
-	gP/1HlenzJIh5IG4rb+MvVHBEm7RHgVu8HgH5CjVySEQ5NMKzr/OaqbiCzzPOd9Znw+rwgPe/3a
-	QvjeLshVuh8PdVMU1iwETdUpWnGkPAt5ZyTnxVC+Kjn34aCqRaBxkHT4I+nXv+XGAPnNnI3sMva
-	iezW/OQBpq/ayAph5inCNXZNZI+K4eT7nTP6yAvVSfWGNW0D/E/bna9ht3nN2kTmA+OLD9qN/ai
-	ymkW07v5SyPt6ULw4sTiAukDNQPw5ni+6DFeSXgY=
-X-Received: by 2002:a05:600c:6207:b0:445:49e:796b with SMTP id 5b1f17b1804b1-450d886f1f3mr14894745e9.17.1748598468245;
-        Fri, 30 May 2025 02:47:48 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHwHV3a7pm41ph3Tdq1BY1w51HsiBJlc3eQX7poOec+XB3vOA8eRZ2EJbez4lGCHx+/2UqnnA==
-X-Received: by 2002:a05:600c:6207:b0:445:49e:796b with SMTP id 5b1f17b1804b1-450d886f1f3mr14894395e9.17.1748598467820;
-        Fri, 30 May 2025 02:47:47 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f03:5b00:f549:a879:b2d3:73ee? (p200300d82f035b00f549a879b2d373ee.dip0.t-ipconnect.de. [2003:d8:2f03:5b00:f549:a879:b2d3:73ee])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4f00a00f5sm4376727f8f.95.2025.05.30.02.47.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 30 May 2025 02:47:47 -0700 (PDT)
-Message-ID: <f95f2f30-1393-4ae1-96b1-96e4abfc368f@redhat.com>
-Date: Fri, 30 May 2025 11:47:46 +0200
+        d=1e100.net; s=20230601; t=1748598510; x=1749203310;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ookjxClzf4cQCEvAmXl0RF2BomztovFb9LfDcMb8UFA=;
+        b=anwym11AaEKPQ+RX4f73VihMX3wMBNSSheaHymdw0jqAevS7MOwl0IBP6wP6ajSD4W
+         QiunSpdwZYbigUzNSteR9vnuz4tIg0DBWK2v6gDzn+sc+7oeOOjnBAKgrFZcIeKz+XK6
+         JJhu/4D+nbL+c+o7c7h/CikghcAITwk22AOG4EdXBoougNRfmbW5B1Ayf+sYboHJxszy
+         AtpSa46UF6dU0mJBQPT8czYQO/D09eiHqgqx0Hb8IQQSBT/blTvRdyEj9j8++kGq6XDq
+         3/XUcX6cPOdNV4PQX+lWfA6S18khnELPCHyPDSDnJTx/ULL3GhPvFg8cn6e69Bex3mn7
+         JX9g==
+X-Forwarded-Encrypted: i=1; AJvYcCU5iUfig8l5zgW0NxspgqBTIpQbr/30OAr/5+jVmU7lz6iov30UmE6J8N/2UdzYSivmOzVdYLWg0UZD@vger.kernel.org, AJvYcCW9MXmx9gVbkh3zHKb+dqfHOsSJiKEVOrvBowPHxQUMWfSSLAZ0xk64wy2LCYdfVC/l1nbJvaLrfYAFsVpj@vger.kernel.org, AJvYcCXimutrj3Oe0OJvjezn9tbdBWl7Pykj+df0LUK6Q3i8srZeOfB4QGQsLiiDNyjiR+ALqG2NCn9a3XUL@vger.kernel.org
+X-Gm-Message-State: AOJu0YztMNz3/S0JJp12jZ0PR9W9twSpRXJT/g2cicYQMx51lMCLDLBx
+	1r2c1gIpQK4GIwF0wjeakE75/YT+dFi5cZRsxukyAeVvzzmFmgiCXQ6W
+X-Gm-Gg: ASbGncvzk5vy4DActPhuP/4ag2jCNr62qkFkh1Ocfiq0bzHebmkqolF91wsvhG29xHb
+	tAMKU37YbXXERm4/5Jrhj8d7lwEIPwwfYRrRbmaATCZ+WvRa/lmihnkzCdG84y4UgWe5Q2lR+Y5
+	bWEgN0UI/iYQlalzE88k3Ba2KVQbVZ3aIB9P4VespjNLD6OBMK09qQE0Lup0brA5dToFTcMSc88
+	Ct0K1zGsVB4C1TZj4JPjaxyD7ckd6tm6gUj+7HqR40CGWnyIVmSciGMWXn6dQO2oJ+5zNNCf3M+
+	wNy+cDk41SFEfKmIevfHlcywvoQH006YZfegtaw4kmNRLMtoFM5R
+X-Google-Smtp-Source: AGHT+IF9sCFOftJujauKnIRomaigvG8t61Ftfb7NDiYEGkXgDAJ4CTIfsKr0q6wuZJOiHiCtJPc22g==
+X-Received: by 2002:a17:902:c952:b0:235:779:edfe with SMTP id d9443c01a7336-23529a11512mr38942725ad.43.1748598510306;
+        Fri, 30 May 2025 02:48:30 -0700 (PDT)
+Received: from localhost ([2001:19f0:ac00:4eb8:5400:5ff:fe30:7df3])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-23506bc8483sm24863795ad.1.2025.05.30.02.48.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 May 2025 02:48:29 -0700 (PDT)
+Date: Fri, 30 May 2025 17:48:27 +0800
+From: Longbin Li <looong.bin@gmail.com>
+To: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto <inochiama@gmail.com>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, linux-pwm@vger.kernel.org, 
+	devicetree@vger.kernel.org, sophgo@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v5 3/3] pwm: sophgo: add driver for SG2044
+Message-ID: <oo3pevzuyhrsf7t2ja7mxytaxhnthfar73iwvqxgawr5gjiudf@hbevzjog7akj>
+References: <20250528101139.28702-1-looong.bin@gmail.com>
+ <20250528101139.28702-4-looong.bin@gmail.com>
+ <azf5lzfkegr6wt3mratxra2mlfah45dc3comtkjbrbdzf4x5xc@tlzxp7oqtcfl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/5] kdump: crashkernel reservation from CMA
-To: Jiri Bohac <jbohac@suse.cz>
-Cc: Michal Hocko <mhocko@suse.com>, Baoquan He <bhe@redhat.com>,
- Donald Dutile <ddutile@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
- Dave Young <dyoung@redhat.com>, kexec@lists.infradead.org,
- Philipp Rudo <prudo@redhat.com>, Pingfan Liu <piliu@redhat.com>,
- Tao Liu <ltao@redhat.com>, linux-kernel@vger.kernel.org,
- David Hildenbrand <dhildenb@redhat.com>
-References: <04904e86-5b5f-4aa1-a120-428dac119189@redhat.com>
- <427fec88-2a74-471e-aeb6-a108ca8c4336@redhat.com>
- <Z8Z/gnbtiXT9QAZr@MiWiFi-R3L-srv>
- <e9c5c247-85fb-43f1-9aa8-47d62321f37b@redhat.com>
- <aDgQ0lbt1h5v0lgE@tiehlicka>
- <a1a5af90-bc8a-448a-81fa-485624d592f3@redhat.com>
- <aDlsF5tAcUxo4VgT@tiehlicka>
- <e0f7fc1e-2227-4c6b-985a-34a697a52679@redhat.com>
- <aDl1ViMpK_6q_z06@tiehlicka>
- <04a49de5-eb79-431b-ba5b-eae2536781c6@redhat.com>
- <aDl7rHb34zIXEf6j@dwarf.suse.cz>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <aDl7rHb34zIXEf6j@dwarf.suse.cz>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <azf5lzfkegr6wt3mratxra2mlfah45dc3comtkjbrbdzf4x5xc@tlzxp7oqtcfl>
 
-On 30.05.25 11:34, Jiri Bohac wrote:
-> On Fri, May 30, 2025 at 11:11:40AM +0200, David Hildenbrand wrote:
->> On 30.05.25 11:07, Michal Hocko wrote:
->>> On Fri 30-05-25 10:39:39, David Hildenbrand wrote:
->>>> On 30.05.25 10:28, Michal Hocko wrote:
->>> [...]
->>>>> All that being said I would go with an additional parameter to the
->>>>> kdump cma setup - e.g. cma_sane_dma that would skip waiting and use 10s
->>>>> otherwise. That would make the optimized behavior opt in, we do not need
->>>>> to support all sorts of timeouts and also learn if this is not
->>>>> sufficient.
->>>>>
->>>>> Makes sense?
->>>>
->>>> Just so I understand correctly, you mean extending the "crashkernel=" option
->>>> with a boolean parameter? If set, e.g., wait 1s, otherwise magic number 10?
->>>
->>> crashkernel=1G,cma,cma_sane_dma # no wait on transition
->>
->> But is no wait ok? I mean, any O_DIRECT with any device would at least take
->> a bit, no?
->>
->> Of course, there is a short time between the crash and actually triggerying
->> kdump.
->>
->>> crashkernel=1G,cma # wait on transition with e.g. 10s timeout
->>
->> In general, would work for me.
+On Fri, May 30, 2025 at 09:50:25AM +0200, Uwe Kleine-König wrote:
+> Hello,
 > 
-> I don't like extending the crashkernel= syntax like this.
-> It would make hooking into the generic parsing code in
-> parse_crashkernel() really ugly. The syntax is already
-> convoluted as is and hard enough to explain in the documentation.
-
-Would another boolean flag (on top of the other one you are adding) 
-really make this significantly more ugly?
-
+> On Wed, May 28, 2025 at 06:11:38PM +0800, Longbin Li wrote:
+> > Add PWM controller for SG2044 on base of SG2042.
+> > 
+> > Signed-off-by: Longbin Li <looong.bin@gmail.com>
+> > Reviewed-by: Chen Wang <unicorn_wang@outlook.com>
+> > Tested-by: Chen Wang <unicorn_wang@outlook.com>
 > 
-> Also I don't see how adding a boolean knob is better than adding
-> one that allows setting any arbitrary timeout. It has less
-> flexibility and all the drawbacks of having an extra knob.
+> Nitpick: Make your S-o-b line the last line. This way you document that
+> it was you who added the tags for Chen Wang.
+>
 
-I guess Michals point is that specifying the higher-level problem and 
-giving less flexibility mioght actually be less confusing for users.
-
+Thank for remind.
+ 
+> > [...]
+> > +static int pwm_sg2044_apply(struct pwm_chip *chip, struct pwm_device *pwm,
+> > +			    const struct pwm_state *state)
+> > +{
+> > +	struct sg2042_pwm_ddata *ddata = pwmchip_get_drvdata(chip);
+> > +
+> > +	pwm_sg2044_set_polarity(ddata, pwm, state);
+> > +
+> > +	pwm_sg2042_set_dutycycle(chip, pwm, state);
+> > +
+> > +	/*
+> > +	 * re-enable PWMSTART to refresh the register period
+> > +	 */
+> > +	 pwm_sg2044_set_outputen(ddata, pwm, false);
 > 
-> I am inclined to just setting the fixed delay to 10s for now and
-> adding a sysfs knob later if someone asks for it.
+> I'm astonished that checkpatch doesn't spot the wrong indention here.
 > 
-> Would that work for you?
 
-Sure. We could always add such a flag later if it's really a problem for 
-someone.
+I re-ran the checkpatch but no error. Maybe there is something wrong
+in checkpatch.
 
--- 
-Cheers,
+> > +
+> > +	if (!state->enabled)
+> > +		return 0;
+> > +
+> > +	pwm_sg2044_set_outputdir(ddata, pwm, true);
+> > +	pwm_sg2044_set_outputen(ddata, pwm, true);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> >  static const struct sg2042_chip_data sg2042_chip_data = {
+> >  	.ops = {
+> >  		.apply = pwm_sg2042_apply,
+> > @@ -142,11 +215,22 @@ static const struct sg2042_chip_data sg2042_chip_data = {
+> >  	}
+> >  };
+> > 
+> > +static const struct sg2042_chip_data sg2044_chip_data = {
+> > +	.ops = {
+> > +		.apply = pwm_sg2044_apply,
+> > +		.get_state = pwm_sg2042_get_state,
+> > +	}
+> 
+> Missing , after }.
+> 
+> If you're ok, I'll pick up this version and fixup the two code changes
+> and the order of the tags in the commit log.
+> 
+> Best regards
+> Uwe
 
-David / dhildenb
+Thanks, it's ok to go.
 
+Best regards,
+Longbin
 
