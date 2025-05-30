@@ -1,236 +1,177 @@
-Return-Path: <linux-kernel+bounces-668556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-668528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79BF6AC9454
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 19:04:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4115DAC93F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 18:52:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EF7B3B7DC0
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 17:02:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29F663AFB92
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 16:52:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9D721D9A70;
-	Fri, 30 May 2025 17:02:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83656235065;
+	Fri, 30 May 2025 16:52:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="QWhZCCSB"
-Received: from sonic311-30.consmr.mail.ne1.yahoo.com (sonic311-30.consmr.mail.ne1.yahoo.com [66.163.188.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="nvVY89eZ"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2079.outbound.protection.outlook.com [40.107.94.79])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 195A222D7BF
-	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 17:02:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.188.211
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748624558; cv=none; b=pS653kN2a/bOkc3Lc9ifFRW6gUjNLNL7kTW8OWG/CbQPSY1dJG/Pdu811V3ylmwGM2rtD9bGIAeyu2ccSXgzokl7mAvkmVrs9AggoJPiG5MgKjlSQKe+PLU9Alrv3ooo9Hb7TgomTTe4Vb6awVfo/hpoB2TFW0X45wxwVEwv5Ac=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748624558; c=relaxed/simple;
-	bh=eFawQOwx0t+3UujBh4Fr3uZplLDO6ijeohvSoG1jjw0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=K83mg9DzwyCs94/G8d/1Kmh/h1OT5P6IAYj5op52PaFkIS6IWRlK3TlsjAUQ0B6bPtJ8NVoAviaZypbmJg2erje6C6N0Nj5YeT0r2s1gXmz4m0AeEjWelbQx0Op1t6jUMlzHPSuqG2HgBSIqYRdxmvjz9p4X/76sDlg+GsmaczA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=QWhZCCSB; arc=none smtp.client-ip=66.163.188.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1748624549; bh=79d3wEeq0DfVMh6u8bOiCnavXHOMOyotm1cKZBRGi5Y=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=QWhZCCSBuwDP7kPLIM/0CWjUqndI2T6bDlc7PYQJaZmE6QZUehbrx7DAtynsnnxK0msL1vFmM9Bn+aitxHAednWPRs+kIxXJ5fPbytDN662ElDGGAJGw5OQJfFkhYj/6y5l6pUyIgX9bOzBvlj8nyi5dm9Y8E/AKWvEspUQq4s88UNUI1CfBpZJJuQU778B/RWBiNAOWvpKrGrk0fRklciV4T1Dvfb0c5krcyW6aeNmQPJZ9edB0UpsVjUJeTvhGme7eT6ROnTkP0xtX0F1u8ZsTJbh08GkSgLtJbnMMQVUHAVJ+XGnodCuD2hBmZXVwg1LObF5tKmChkpd2gr4Cvw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1748624549; bh=4SFla4BU7AGPmBKuQ530/0PPtqaE5RsIglOGB0q5Iut=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=mQOmakngaW+Xu0+xfCHaMT28Besix6GEezHbsTM20TRn3A0pgriFoYkFTf+bi4y2nMHriU/UcEalJ+coQiCqiLmmUH6vsCEz0Yhk0Mc3h4xTmZtwksJfCXIbO/2367XyhPcJb6UWLJgJRRxWt1CTxiu1VUHio5nspwiAuW/9JzebOL5dNqOFJ0pMA/1YFKwigD6aiL6m3DYcEV7HkhMYrRFtxXyfhVSvtkJnzw4U22eFdtmvoHcQ1fYLdZTixZZamKWFl8Vb6seDd9Z1jMTE+N3y2aLR4qsCh41Hj8/8HKjIJX8esgzFNxCACSbfBPRzVTqC5UgBvpmdm8Mp5INfuQ==
-X-YMail-OSG: 9H8usBAVM1mXvzZYu6juGgF7x128gp_YEHcGoEQLPh05TEOjpl2CxBe_i14A5.V
- Ezg9IR141c6Z5HQtIs5ixMLu7Cnd3tsQ2kPdxaVITSLjZOkziaCx4jofNbNHBKs5l51WAPJ0zu85
- 2qKnq4ZHSo3MY.dcrmRBmdBkhogG1YqMVtJ0yublc8HpvuN7A1biW9WUP2KSs_6osytGi7gZAD99
- SeH0xEHlWke3_PUW7twBOZYm6IzZHtTGZxBQq1R6yOYhBblW3q69ooJtJYstiSa5Erz5I6vVeMrN
- NUuI9RqcfrdIVjG5euyRU4uGTY6zgvXHHgvVUBSnDmZOsfq73EvQY1BwO4ggakazLclK8vo_cHUl
- 9RaOm5re2dl0w7BdxzcVtg_jiVLhATGQ21sYaqXebwXQqdymnyB11sYmR05KhG5No9rQO8yYtz9l
- wgAE5s9ss0tGT2ZIZTIutU.pyMLc89zeDHo47foBKqX6JUD1gZAREJMVG_fEb4zlSXnYO.ZMx7J9
- FjyCVqLGNVeOid6iZ9sX09lZjcWMkr_K6Y723kOsXcrnTthyy0YanDWdvsKQTlMkjWO0PYrny.Pq
- zgnKopb4cCkXYPNO55I5n43REkCSpzrhz7umZ4D.HAyM69UF32lwQSUws3lWQU8lXhK_5Wjz8G3Y
- ar8Et9NPkg7RR6z2YYzUM7BYAoGvkUfGf1AmEG4lq9JKySYNwhvCGtGYo6_tM1_d.Ew9pIFyInyI
- 1.L_IqI76QV1ZBEl2RVbb5agcW7R35pBpxIihwTLExFlRzkbgchJZGNteArKl2nk0fQvptEZlToE
- lBXYZC2MwKKyDOavr4rnPpN6uubCYUrEfSdMcyTaFlC9EUJeuzex0L7BLSAmr5ZcVZIAIL4B97Xi
- o2_JiEU2lAGRz5tSpnyIRG14sPPC8ojyyOMTO0yh0baDcQaQM5IGkuasb1_gTva9xTR.UpY.00aV
- ML9q7toHdmKZFnG_1xCsBnl.7FeBYZm9VskRNpLT.kJ6DwvDKvSnxfbM6m1C3EpDO5PKw_7.TWlB
- 48DIDGv1GfCHygXXmIZy_HBF6JdYCq7CMLhIVT8mN1mqGZx4ovNtidTR2gqm1yMYgFg7Ik6QCXGM
- 5CO1LVwOtlJGtBoieObslgXR3hB_wL2d2eoIwg0IriWgdYgaKiA9OKj70npmowWAeascm_pV04cz
- dCM.yXjL3ml3Zym4hhWGrBPjtMwQp24pAv4fM3xVMSUZ2N_ZodU8HD6.oHc2xqOwdCfeHmXNBGF4
- GvF6oV1WaIuS5MezqdgnjfYpqEotIil7ZX4Yv.D7kuLDXY760GNQ6BkIDDvGWSe86wryhh0E50CO
- Boj7nJDg3U445rPvlZxyehMpeGZXyEZMo3vmHo_stdkC8K8OYwYKjOiKlN19ApGOgSlCa9VmH9Fj
- 41grxKTuX_boyBqfoQaN4UxQwSBeATt_dE.t8N8DSSaJgKTjOWk.FQQVeWYbhOmG.MEFSmbQ3cJX
- nIgtcypZriNNft8a7oNiutuHTZJlQc8u3JXpsbDwh6sBVr5TKiNlScc2J.DIi64Q5dwJphs93EGj
- yJGw3e.ikVbWPFWWXRgJWkFbwUFj2kJNq2vIMoOy.t6RI1yzmRUBi0LN.ZFSzEBql1rS34QHvSoV
- F3s0_..cQKvvbdjqzuT.bZHL.lB_IyPCEpunQcDviWnaNpGZsriCizAK3.AxWgq06ewPnsWjxLUG
- yb1oBoG1M5kG8Uxd5uew.fOEgl.3p6w8mPU.5xYgqrhVfHnGJTXOZQGD5lJXhVmiClb2Y6OfKfrt
- .rz3xPzKuxsgm5MOP9mJdfy1K.wy58TmiTYQN9lR.xj6oc2cDUXF28JiPajKhBJoGcL7BGuEA.zL
- vua1v9UiadmBKzBchj9ixbCjy3tL7ocUOESUuPJqdrSNuejhkPlKFYIfcDDodA07kp4pmeLTUl.i
- nqYJLwv9KKBLkvqvi8n.dD0vkFDZkcTFwJFokXBTWtPoKe2h8I8Psah7OtlQeagqiH1RRFV7G_Ut
- FchLYQE2qtwfN8Ak0wE3MKQb7YNgYClxi02f7fJuKdxbtSuflnbedsw4JezUVNHlhkYqrhcrIbyw
- nftjkQe9Qg3P0NfXbOfdCjglc5jyP8tBDo_zWUDeRFzOmEz6Xz4QrH5mrKgk7aNp4QOjIIpmhmO6
- NeAEanx0_j87qvrAZfVx4_fDH42deiO_otLJCThCcMdQn.0oKHoqR63oTNZK.oYNejbjm7l4E.0b
- 7dc6c.gsCTJbKePlbXIv6Y.OBDbkcRGGjIlGviFVLQcPyAAicMJfeh3fC_d6F2RswhgyJeBOqWYl
- PYShwye9cFFEaAn6PBHiU3oqLej0zY_j_
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: e297110d-07b8-4426-97e4-592aefd09b3c
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic311.consmr.mail.ne1.yahoo.com with HTTP; Fri, 30 May 2025 17:02:29 +0000
-Received: by hermes--production-gq1-74d64bb7d7-r5xbr (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 55de6f3c173c43eb92ce6bb799c178d9;
-          Fri, 30 May 2025 16:52:19 +0000 (UTC)
-Message-ID: <08a97aac-6c77-451a-a2a5-20606bdde51f@schaufler-ca.com>
-Date: Fri, 30 May 2025 09:52:17 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 443971CAA85;
+	Fri, 30 May 2025 16:52:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.79
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748623944; cv=fail; b=LK4x7r0PTBWMrCZ1Bv2tFJebH43NaZMjPZF/JqDKitMhKyxbhxlN+KLFP3D5uaB+Bt5iWIeeXj2zeQtDyolfBKlgndf9cPIBv6RpCD3LX8IJJy28H9YsLQSL5/8FrqQFZ/7B638cmWKnm5l7z/pBikUBMzWsgtdMta94jGYJhbw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748623944; c=relaxed/simple;
+	bh=kfqYMILxQWxcbkEd6WFGIvtWjihJD22B8aTZt+X4hE8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=kB3eUNXo6p/Zo/IcDdrszpPHThIxgQZPfFQ3oJmDLBbP/h1ZLtQxhHJOCGV40T2c2ayT6wtZUl/8vAz6oVtNM1OqwyTBYqPO0rNusKP3RBJJXx7DSVlGcK/RJhoRtJFhPrL5bEFfabdCqkISFJSpaNlliXzGh/ynwBOTfhNWu94=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=nvVY89eZ; arc=fail smtp.client-ip=40.107.94.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=T58xTHFd2JAlXgMWvc78yp7e/3yHyUzKcSWDd3wtb8s3jwNOM6toxskRLDdrf5oiedLoSL2hrpkU7SJyyNa8QfYOQ9FRxMfh2ZuIJqRtG0EX3izDDJBXD7UQIGY1N9CISVTeDsrAaBG/853GD7adz0ZleQl4XpkJ42NgYgrSpeyBK0La7Gn9qs2gv0FN5Dyf+PROddJTlaoQNd4k1pLa35PxWOgmVpt9a5yo7Os/zfqNpm0IAukj6HR/l6zwP1iFgbGGEnISiCwQuw6byBC/dsq/LbP8kXfooOlCHOWkxJudWWNYhlt8eSYdDupBOd7hN7Dco4RDpUhfvODgRRz1jQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=2N1Mt5HNmkdjJFdJ3VTU2413EGzblMPPIPuqpS6f0i0=;
+ b=wlioPKYsGelBCwDzSgz/xA+AjCxIiPLN6ONKK3LrMlnJBGwDeSw+wBsQnjO/ehmYcyB4LTE+gu/ReY55rZgtXyKIztJDRRuCdHWQNPMYw8RxYMu9pURHC0xpk79ib20zE2KG3WTxgkt4/AwuzIcafCm3aWVwTOFqxn9rYLMeAxywvab6j5d9seo76fEOX0a7wsDetpyAZTfTTYGUTxDHX5uXKhcFLVYIdePE9tI1l9aLinuNPX/+10pJ3ReIsIo7P967SQhn8PFJK8qnsY4RzhbQVC+ZKPOd/UyoxMiC53krYiT+QJwb98QGgUd01Gs1tYfRVMuFVFwii32nXs02jQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2N1Mt5HNmkdjJFdJ3VTU2413EGzblMPPIPuqpS6f0i0=;
+ b=nvVY89eZU8Ff43uFw7Vq0xRh9Pl1LKuSKYvuX5WhDZYNJnPYEaRZzdovl/SjbmbUaBOq88ZNnrYB0G23sDJvIwAc2oqtR7nXAJN4pbJ56bgvdpKlltvbtfEpYc4G6BqP1Jwc91SvkFRJ4mWONujpzxef4bVvoREPo8aSa6tS4n28rtds/anvWlN7Tz9wukvAdXmCAszXP+wq+3Sp5s7rtay+vBQ/AMbtc2ekV6tPynkxxhv3mYElLTqU6TsFyme761NyeadYsGRDqZdolM/engX8xC0G6RwFWuhygQIH3oYXh767hDfojjzmftilYl9d15gwc8w3i2m/N7y8BAR+Hw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by PH0PR12MB8098.namprd12.prod.outlook.com (2603:10b6:510:29a::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.27; Fri, 30 May
+ 2025 16:52:20 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%7]) with mapi id 15.20.8769.029; Fri, 30 May 2025
+ 16:52:20 +0000
+Date: Fri, 30 May 2025 13:52:18 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: kevin.tian@intel.com, corbet@lwn.net, will@kernel.org,
+	bagasdotme@gmail.com, robin.murphy@arm.com, joro@8bytes.org,
+	thierry.reding@gmail.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
+	shuah@kernel.org, jsnitsel@redhat.com, nathan@kernel.org,
+	peterz@infradead.org, yi.l.liu@intel.com, mshavit@google.com,
+	praan@google.com, zhangzekun11@huawei.com, iommu@lists.linux.dev,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, patches@lists.linux.dev,
+	mochs@nvidia.com, alok.a.tiwari@oracle.com, vasant.hegde@amd.com,
+	dwmw2@infradead.org, baolu.lu@linux.intel.com
+Subject: Re: [PATCH v5 21/29] iommufd: Allow an input data_type via
+ iommu_hw_info
+Message-ID: <20250530165218.GG233377@nvidia.com>
+References: <cover.1747537752.git.nicolinc@nvidia.com>
+ <a5781101aea86e223ab23e88062a82c95ee3c411.1747537752.git.nicolinc@nvidia.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a5781101aea86e223ab23e88062a82c95ee3c411.1747537752.git.nicolinc@nvidia.com>
+X-ClientProxiedBy: BN9PR03CA0356.namprd03.prod.outlook.com
+ (2603:10b6:408:f6::31) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC 1/2] landlock: Multithreading support for
- landlock_restrict_self()
-To: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
- =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-Cc: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack3000@gmail.com>,
- Paul Moore <paul@paul-moore.com>, sergeh@kernel.org,
- David Howells <dhowells@redhat.com>, Kees Cook <keescook@chromium.org>,
- linux-security-module@vger.kernel.org,
- Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
- Jann Horn <jannh@google.com>, linux-kernel@vger.kernel.org,
- Peter Newman <peternewman@google.com>, Andy Lutomirski
- <luto@amacapital.net>, Will Drewry <wad@chromium.org>,
- Jarkko Sakkinen <jarkko@kernel.org>, Casey Schaufler <casey@schaufler-ca.com>
-References: <20250221184417.27954-3-gnoack3000@gmail.com>
- <20250227.Aequah6Avieg@digikod.net> <20250228.b3794e33d5c0@gnoack.org>
- <20250304.aroh3Aifiiz9@digikod.net> <20250310.990b29c809af@gnoack.org>
- <20250311.aefai7vo6huW@digikod.net> <20250518.be040c48937c@gnoack.org>
- <20250518.xeevoom3kieY@digikod.net> <aDmvpOMlaAZOXrji@google.com>
- <20250530.ozeuZufee5yu@digikod.net> <aDncH8D9FoyAIsTv@google.com>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <aDncH8D9FoyAIsTv@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Mailer: WebService/1.1.23884 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|PH0PR12MB8098:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5d2ca9f2-5624-471c-fdb1-08dd9f9a5795
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?0K0nSeKDdK94PmC06odVcmB3oIYypb6/dKQ4v200mIp/dVlrBYXIwxB3Ytbh?=
+ =?us-ascii?Q?xXRZzlv3YqmzOK8bSCiho5Fo9+6A28j99u3THvx7QrfSQXaCYB2qEVyygQWf?=
+ =?us-ascii?Q?u6UpZU/vK0ZfogfCSkYtTxpsAwUrJHhRv38fECkw7ZnqJQOQK1hrioQ17UAx?=
+ =?us-ascii?Q?woymOAsNYmSXISI7RR7lnrEtNmreuLhJ/5Mc1Zew17wHyTiNg4QdKKdB5KTu?=
+ =?us-ascii?Q?j6n8Q/0Nuq7Lf/G0cDKz34vxWIjJYoynCqvx+RaRFt7YD+I93WmfVR6kSQq0?=
+ =?us-ascii?Q?dL3SKmUrqA4iab7fafwza2hIxe+LjqCdbQrI12Vdj/jhrql2Ha5xwInrnMqe?=
+ =?us-ascii?Q?uArN3TO++7Ls6+SrqQcD8URTgYnOoz6dnl0gG89ObOwBjeiOqPkhopnIxMVF?=
+ =?us-ascii?Q?MoRT5Wfv/EqhQzpBDocaUoGgUgvdOp91vs79wvT4DwMLmMc9Xh+0YPjeEEnj?=
+ =?us-ascii?Q?i+pkn1pQR/XvQCCh/RLfyFwXFbQv4dz2VzUMEVVppm5Zt4hbLL4m49Te/Jz7?=
+ =?us-ascii?Q?xPzqgbe/G5JcRzXwa4BH7Bq6zRTvGV88iipN520gbrtFHslKizXhBUec/9Pi?=
+ =?us-ascii?Q?PSBl8u9jHTgbhL6ML6XcmK78Vrgav/eiLnbY+jmvM6Nnx1jXDFlKfvOMDhAG?=
+ =?us-ascii?Q?K+HqN4q7NWK6RQs5/c1fHRaVzuyK+yYbqeEqVgQ5Cn3EJeEr/odajN0P7Ts/?=
+ =?us-ascii?Q?kDhvvTKvuXmYAuV9MJNrL2WxkIKPChppMdEvhKiFttJDy0rvU3MRlv8Mn7aS?=
+ =?us-ascii?Q?bwSxlV4mjBdyPhnV0V1VOxccOPMN3k+63JgijUopYpEwYM+K125CuFotdUul?=
+ =?us-ascii?Q?iSzG/rGLyu7d7Hg8GoOx6m28ZcBSB+qHpe7Keu6Jft5e5OKOZv251rihSKoy?=
+ =?us-ascii?Q?GRqIx4MGJ6lSp2o7fx2dcUxLInU89abmMuvu1kFAyPz23hirQmwQSx+2UhNf?=
+ =?us-ascii?Q?5MhO0hAc05cpKQ7zFpuMTyp4vHdN9GsFW//w2obLOpAJVloAJPthRWbDYEcW?=
+ =?us-ascii?Q?uJ4u/MAGk0rkuZYqt7kqaVtDK80Skkp8JuCbohqHBENY7gE/g98JAXuO8Rel?=
+ =?us-ascii?Q?LKdtWwFMJyn+xSh69N4caLeS5WTazm0WaqYbBk06uZU2a5EfmPGZszRu1Qy4?=
+ =?us-ascii?Q?W1/llrB2Gv1Uv9G4dgE23/xQpjErjZA6xp2X14uL73xs8qtQnc1VoEUz8zRU?=
+ =?us-ascii?Q?5BntoDSmHfsO/kYtH4xBlGvpPp5AoUtVuFnNXWhc/cu1nl3hsEfJj6e9XfJ5?=
+ =?us-ascii?Q?WMV4UlmGcYHvwDP1SX9eKJMMLelJbhBW0lEUtFOfrIkip/FvIFPxrUNjkYBl?=
+ =?us-ascii?Q?7nnu3IY4mjqjnGuCGQXwXOVugwDk/ekTARFC4DZL33cQ04RWVPEKc8sxpIPT?=
+ =?us-ascii?Q?7iecwCnpZB84g83CarhIjJdqVp96I5rDjmVcEl3BfArok9C+2VOL43tFWyKH?=
+ =?us-ascii?Q?65LHD7z1XI0=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?wN5FtvzoehNA6Yf4ErqwOxUerSWJ6QIqDiLOxMDPfoYKlaaVXhu3vAOCLZE0?=
+ =?us-ascii?Q?BUZptWWLbqgWI/Fgz+ypfplmW0PMB0QJaV4Tua/oJxWlgCzGAabPQ6h5AR5m?=
+ =?us-ascii?Q?L/G65EwR1e4OlKG91dddyGoF5yBvMm5OK1+uHTNziv0irRoMPSnWPHvsGUvi?=
+ =?us-ascii?Q?p9bENqQ8tJlCz2O93uWrvs3knqzs3IRcgiNArDLsZtW3RRurk2cFg+BUGlWS?=
+ =?us-ascii?Q?WFwayZBvS0insUQJZgpPhPBvX++1/nWZgIcgKfYRLt9Qst97o5H6CYpZ5zXE?=
+ =?us-ascii?Q?/QDwwnJGG+UVPIp1Vjnr6urieX6Pn00y09CNvmykk7Z6nlf5Tvqd67k+ccZf?=
+ =?us-ascii?Q?RcRirRFzcMwQq9pdWhBO1fkU7zxjx/apI0GbUr4h85aZAVqHw6hlQWPVqTSV?=
+ =?us-ascii?Q?eC2u2Gl+5XEMgz0a2XcKAJvc2T60aNFZSv1f9U6cIH+oJzZEVj4Z++sMZsZK?=
+ =?us-ascii?Q?ExbFDLYybEP+a+Wg3WU70C/cdIni+yBe8woGqnPmf0gKmQ/id5GH7txdS3pz?=
+ =?us-ascii?Q?uGjVdi/SiwjPdoWRR5ejJF/YKKgqY/hjhdtAiNQEgbkwQ614OQJHr5E8S+QC?=
+ =?us-ascii?Q?XtakQBFclPrWGd4xnQQNiU2KEukeo/LsUhJ8PAos08H7Hc9f7xoTcM38yjKA?=
+ =?us-ascii?Q?LXXKZR033wBE7v6tbS/eQeIgYiYn9NNnospuIve7WWbjoVOZUHGt7KUBwdmp?=
+ =?us-ascii?Q?+YKvUeqv677Ua8oh8EZF+YhK8uQeWUthEhrVPdqyTb1ivv/zRaXUQUdtFeGD?=
+ =?us-ascii?Q?E+tNl/BwrpeGDoeDK9BsgkswzqX3fopuhJsC9HWMFhsV40oyxIoFWDJsJjNK?=
+ =?us-ascii?Q?hO3u6o6C/Hv1bK/vlBkTA01tKvQHYORhIFmBqFGoq3Hi/6U+glFJSmBZMm6Q?=
+ =?us-ascii?Q?e8UK8bms4mfQpq3389HBfipGprnaYaEfTuNkpphaPfiETHKZn8D5Gp54xHbi?=
+ =?us-ascii?Q?VGg2xV9lgN2WnjqFlURv4iIoMXpN9IIKwe9Dn4SYU19x6MPcxOJY1ID6AgRP?=
+ =?us-ascii?Q?JNctA1XauWfuy3dDoiITP8GC7r7pCUqmR9jN6BscSu8/FM7wDMMJL46MjKu7?=
+ =?us-ascii?Q?GBayaMhVs2EPZqW1SEOmJiR7QqKInKNeBKneldNCMPlS/f2y0P3MveWtb+JC?=
+ =?us-ascii?Q?wq7FT1s4cYfnADldnUPcCZbRR/aTXXyZHONGP3gbi2NVG/zKMvOqaPATbncD?=
+ =?us-ascii?Q?pTIgglZ+sYZeXiqvYQ5D0bPcBrbqkoDEtWDq3qA73i5HrD2diTxYTKSQS0/2?=
+ =?us-ascii?Q?XgFbjl9Y+rY5rEq+cgktH9r87+n+iT2UpYYlGostJcKQqwUM/nY92F50bg+s?=
+ =?us-ascii?Q?X3y569jrsP8v+oynZY1bLeeZEmhEGgJAYrEYlcLylxwlOA1uFyqdFgtGlCsO?=
+ =?us-ascii?Q?8+6OwEPs63TjOmCYvJAcXCp3aLxDMr+tsaiEwexFgAAp6zyLUWywLTVLdbas?=
+ =?us-ascii?Q?WpL+50yOcl+COwvMFUofufihskSGPz8fxivtJaEybPJylCgIFw+GVxaSKdxY?=
+ =?us-ascii?Q?px3uhjE3UWCH/ZFPL3DOhSE4Uc0PtfBYhpcjBsUDt3w16uZGY2I6gSFx9Ubg?=
+ =?us-ascii?Q?FSUGc6+psW5ezCRo6IN8Ci1r1TOpFfNE/jdhWrkj?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5d2ca9f2-5624-471c-fdb1-08dd9f9a5795
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 May 2025 16:52:20.1897
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: r5ZQRdVuRHLm657XL18vCK959f7zYjb/nbMEQ92riLnYLkOv79zFRRXrbMcmX0BC
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB8098
 
-On 5/30/2025 9:26 AM, Günther Noack wrote:
-> On Fri, May 30, 2025 at 05:11:34PM +0200, Mickaël Salaün wrote:
->> On Fri, May 30, 2025 at 03:16:20PM +0200, Günther Noack wrote:
->>> On Sun, May 18, 2025 at 09:57:32PM +0200, Mickaël Salaün wrote:
->>>> We should rename the flag to LANDLOCK_RESTRICT_SELF_PROCESS to make it
->>>> clear what it does.
->>>>
->>>> The remaining issues are still the potential memory allocation failures.
->>>> There are two things:
->>>>
->>>> 1. We should try as much as possible to limit useless credential
->>>>    duplications by not creating a new struct cred if parent credentials
->>>>    are the same.
->>>>
->>>> 2. To avoid the libpsx inconsistency (because of ENOMEM or EPERM),
->>>>    landlock_restrict_self(2) should handle memory allocation and
->>>>    transition the process from a known state to another known state.
->>>>
->>>> What about this approach:
->>>> - "Freeze" all threads of the current process (not ideal but simple) to
->>>>   make sure their credentials don't get updated.
->>>> - Create a new blank credential for the calling thread.
->>>> - Walk through all threads and create a new blank credential for all
->>>>   threads with a different cred than the caller.
->>>> - Inject a task work that will call cred_transfer() for all threads with
->>>>   either the same new credential used by the caller (incrementing the
->>>>   refcount), or it will populate and use a blank one if it has different
->>>>   credentials than the caller.
->>>>
->>>> This may not efficiently deduplicate credentials for all threads but it
->>>> is a simple deduplication approach that should be useful in most cases.
->>>>
->>>> The difficult part is mainly in the "fleezing". It would be nice to
->>>> change the cred API to avoid that but I'm not sure how.
->>> I don't see an option how we could freeze the credentials of other threads:
->>>
->>> To freeze a task's credentials, we would have to inhibit that commit_creds()
->>> succeeds on that task, and I don't see how that would be done - we can not
->>> prevent these tasks from calling commit_creds() [1], and when commit_creds()
->>> gets called, it is guaranteed to work.
->>>
->>> So in my mind, we have to somehow deal with the possibility that a task has a
->>> new and not-previously-seen struct creds, by the time that its task_work gets
->>> called.  As a consequence, I think a call to prepare_creds() would then be
->>> unavoidable in the task_work?
->> OK, we don't need to freeze all threads, just to block thread creation.
->>
->> What about that:
->> 1. lock thread creation for this process
->> 2. call prepare_creds() for the calling thread (called new_cred)
->> 3. call cred_alloc_blank() for all other threads, store them in a list,
->>    and exit if ENOMEM
->> 4. asynchronously walk through all threads, and for each:
->>   a. if its creds are the same (i.e. same pointer) as the calling
->>      thread's ones, then call get_cred(new_cred) and
->>      commit_creds(new_cred).
->>   b. otherwise, take a blank cred, call cred_transfer(), add the
->>      Landlock domain, and commit_creds() with it.
->> 5. free all unused blank creds (most)
->> 6. call commit_creds(new_creds) and return
->>
->> Pros:
->> - do not block threads
->> - minimize cred duplication
->> - atomic operation (from the point of view of the caller): all or
->>   nothing (with an error)
->> - almost no change to existing cred API
->>
->> Cons:
->> - block thread creation
->> - initially allocate one cred per thread (but free most of them after)
-> The proposal is growing on me.
->
-> One way to view transfer_creds() and have it nicely fit into the credentials API
-> would be to view prepare_creds() as a convenience wrapper around
-> transfer_creds(), so that prepare_creds() is implemented as a function which:
->
->   1) allocates a new struct cred (this may fail)
->   2) calls transfer_creds() with the new struct cred to populate
->
-> We could then move the bulk of its existing prepare_creds() implementation into
-> the new transfer_creds(), and could also move the keyctl implementation to use
-> that.
->
-> A remaining problem is: The caveat and the underlying assumption is that
-> transfer_creds() must never fail when it runs in the task work, if we want to
-> avoid the additional synchronization.  The existing cases in which the
-> credentials preparation logic can return an error are:
->
-> * Allocation failure for struct cred  (we would get rid of this)
-> * get_ucounts(new->ucounts) returns NULL  (not supposed to happen, AFAICT)
-> * security_prepare_creds() fails.  Existing LSM implementations are:
->   * Tomoyo, SELinux, AppArmor, Landlock: always return 0
->   * SMACK: May return -ENOMEM on allocation failure
->
->
-> So summing up, in my understanding, the prerequisites for this approach are that:
->
->   1) get_ucounts() never returns NULL, and
->
->   2) SMACK does not bubble up allocation errors from the cred_prepare hook
->
->      Casey, Jarkko: do you think this is realistic for SMACK to change?
+On Sat, May 17, 2025 at 08:21:38PM -0700, Nicolin Chen wrote:
+> @@ -666,7 +678,7 @@ struct iommu_hw_info {
+>  	__u32 dev_id;
+>  	__u32 data_len;
+>  	__aligned_u64 data_uptr;
+> -	__u32 out_data_type;
+> +	__u32 data_type;
 
-It's possible, but not trivial. The task based access rule list and relabel
-list would need to move from the Smack cred blob to a Smack task blob. There
-wasn't a task blob when these lists were introduced, so the cred was the only
-option. I would entertain patches.
+It would be better to avoid changing this name, maybe stick a union
+around it?
 
->
-> and that
->
->   3) We can block new thread creation
->
->      Mickaël, do you have a specific approach in mind for that?
->
->      As Jann pointed out in [1], the tasklist_lock and siglock are not sleepable
->      and can't be used while waiting, which is why he proposed an approach where
->      we retry in a loop until no new threads show up any more, while getting the
->      existing threads stuck in the task_work as well (where they can't spawn new
->      threads).
->
->
-> Thanks,
->
-> —Günther
->
-> [1] https://lore.kernel.org/all/CAG48ez0pWg3OTABfCKRk5sWrURM-HdJhQMcWedEppc_z1rrVJw@mail.gmail.com/
->
+Jason
 
