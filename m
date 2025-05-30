@@ -1,88 +1,103 @@
-Return-Path: <linux-kernel+bounces-668753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-668755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94FABAC9683
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 22:26:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0560FAC9689
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 22:26:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B86C8A41BE5
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 20:25:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A33E3A8478
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 20:26:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A41D278767;
-	Fri, 30 May 2025 20:26:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 388FF278767;
+	Fri, 30 May 2025 20:26:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZxvwJKn2";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="cVJ8M9t5";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZxvwJKn2";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="cVJ8M9t5"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="jwLaF4YX"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8046E20A5F3
-	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 20:26:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F21222609D6
+	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 20:26:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748636766; cv=none; b=hbMjUnacuhoAUjrUhrR8FVSg0chK8I8UF8Smsqw1EG/l8m6iWqlNXeBs8QTeglwijU2Ef5CgYf7KWWBcEU978L1y9mj/5YUdg/ioXIpe3s2yuPxbSP2+yX38zYOXqTPcuQh3/IPky+wdOPCsiutcGzX+ZsN0t7kt5q5w17tVtr0=
+	t=1748636805; cv=none; b=h2J4hnK+wdk2VMbHMTob89JU88xtci/8T9wfJ3O4PJpBoRKvD2/+ddmZIsIv94SK2bI5FaqcLE0eUy3Z6NGY0kfUjo8aAOAHYbVZMfeZlNmXRHgV6sowShcINPokCC0lllhfRlTdFGqy71m+HQd4hhP1YydmH63w9GXCmbM33Tw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748636766; c=relaxed/simple;
-	bh=8kxhZGBbItn7x9p6TcW2nt+AMJowocw09GOLimPRAz8=;
+	s=arc-20240116; t=1748636805; c=relaxed/simple;
+	bh=UbC2ciAwBnXn3leWtQ8ADE+eX3jl61pPiAdh+E1mrx0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n6DuOcEDlFMXm58UogYtu8djBsKxSFvtQXrKRzBijU85qsj+KuAa+2LM1Ft3CuZ9HsUs3AIf4WL6TJNtai6FzIm2aeR0p5+ozfWt8HiSEbC2eX/ffBoVURis2HE/rQw67o61z8D2fE14S15Usgn1nic3GE6zlj8dQ9njYBo14Vo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZxvwJKn2; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=cVJ8M9t5; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZxvwJKn2; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=cVJ8M9t5; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from localhost (unknown [10.100.12.32])
-	by smtp-out2.suse.de (Postfix) with ESMTP id 615E01F45A;
-	Fri, 30 May 2025 20:26:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1748636762; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=g24iCuBgnf69Wxs7HVa4iyoKJrN0liDJWTVQxQRyNuA=;
-	b=ZxvwJKn2FoHmf4g3fKM1kbYOYgXYesdqs3EK6eZLc46w9qcq9NS+MV1+wq926ENsjXMnNj
-	gxH1XiqGakYHL8fREXwqLDBjLfP5sTUGwk/oD1voT6QpfbO/m21KBRUSAPDryNe88GF0AK
-	LJE1HUH2FKuO3Ks6xfl8d902WP1H2gQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1748636762;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=g24iCuBgnf69Wxs7HVa4iyoKJrN0liDJWTVQxQRyNuA=;
-	b=cVJ8M9t5eAyhDG4HpLkuPdbffelQgsJ+lmJy9qtZhvOwgalurOklIx2hr7/kZ6tBdgx+1m
-	afO3P5ZDo4LPenAg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1748636762; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=g24iCuBgnf69Wxs7HVa4iyoKJrN0liDJWTVQxQRyNuA=;
-	b=ZxvwJKn2FoHmf4g3fKM1kbYOYgXYesdqs3EK6eZLc46w9qcq9NS+MV1+wq926ENsjXMnNj
-	gxH1XiqGakYHL8fREXwqLDBjLfP5sTUGwk/oD1voT6QpfbO/m21KBRUSAPDryNe88GF0AK
-	LJE1HUH2FKuO3Ks6xfl8d902WP1H2gQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1748636762;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=g24iCuBgnf69Wxs7HVa4iyoKJrN0liDJWTVQxQRyNuA=;
-	b=cVJ8M9t5eAyhDG4HpLkuPdbffelQgsJ+lmJy9qtZhvOwgalurOklIx2hr7/kZ6tBdgx+1m
-	afO3P5ZDo4LPenAg==
-Date: Fri, 30 May 2025 22:26:02 +0200
-From: Jiri Bohac <jbohac@suse.cz>
-To: Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
-	Dave Young <dyoung@redhat.com>, kexec@lists.infradead.org
-Cc: Philipp Rudo <prudo@redhat.com>, Donald Dutile <ddutile@redhat.com>,
-	Pingfan Liu <piliu@redhat.com>, Tao Liu <ltao@redhat.com>,
-	linux-kernel@vger.kernel.org,
-	David Hildenbrand <dhildenb@redhat.com>,
-	Michal Hocko <mhocko@suse.cz>
-Subject: [PATCH v4 1/5] Add a new optional ",cma" suffix to the crashkernel=
- command line option
-Message-ID: <aDoUWrnBguM5EkFd@dwarf.suse.cz>
-References: <aDoT08LfXUEkS9E4@dwarf.suse.cz>
+	 Content-Type:Content-Disposition:In-Reply-To; b=sXi97F2K01qA7ldZ4iRtgCksZalO4nq0tZ+ESbwcirP42/dLP2xtPxnnBL7qxE8LtLSKdXNi+/QQeFWNI5CtAvlN6hnTGN82Fyacf9gj1hwn27Zntpb/JhvD8gL7qqA72KAZstNapjJYfolqV01GuEbD2FxNY7Irf91hHZAi+e4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=jwLaF4YX; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54UJJXkK014821
+	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 20:26:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=2Smv5QWNwygSvZBVOmLYL3h4
+	69JjSVp7Jf4WZWmUL3Y=; b=jwLaF4YX7rih8RAmco5UlwNGxmCbwx0bmdvHL62H
+	safGvXEkAV536kdCF0Y676trAumd4gfdM7ovwvrDNxMgO0VVa4uSd+xJWaYnE3QM
+	HfC0w/4qu9hVQpEcgKPcBAeRQrYGcAEFTIe6hly9GdAsVOWIfSkeqrhU0byI1Lmf
+	OxbE16Le4w3tOWheuyOJoFR/Z/HSmihxnTq0a6MaT6bj2yOyQ1/dAqA8Ewj2Mjqs
+	wWm+0HWkh0/rScJ7+TgmTbSXU1qQYomMNrVITwSA48E73U4RQ5v7TqILvQm20kge
+	t88C6MDoh3tQ5HvLlPOxwrrENYRMq3hfZAFnPX8/TNltlg==
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46wavm4ch9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 20:26:42 +0000 (GMT)
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7c5e28d0cc0so377448685a.3
+        for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 13:26:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748636801; x=1749241601;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2Smv5QWNwygSvZBVOmLYL3h469JjSVp7Jf4WZWmUL3Y=;
+        b=A7gB+PqIShEP/qqFCI1aRU436YbvzfamDYGvhlsUX87T3CyPwvgg6RmXWgo4w8TlOr
+         BoH6oJ0miRDU2oYU6S0he+OOHnfZWmhHQuD3E8iHHcYOYWqwoMgvm94BATcf0RgpzPp6
+         txt4Y1GafavTTZIVcnmXOlz55A6psEVeL7km47orbdl5jX6w/DVfE3BBbQYhFs7CsJO3
+         znyWhOa2po9ZmjMDTrAQbV0G+cE3oJ95sJWvujijlTY2ynnVtt6nhOTBjDoq10/yPmZm
+         Awh3yvyZkJdmDVC2rF2xwshL/q81zJ7tnxZtSOLHnq+r1xtrxGz++8rSSYtSEpBCDBPn
+         RsPA==
+X-Forwarded-Encrypted: i=1; AJvYcCWVctUdQrZs+hkKNKEtw11FICQmbU/19lkoWeFbkMWEgdzCD0rk89EotIzI9IcJb0osQdU56mA4KUBTu4E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQ2aYbkBxtGeeHb22Fv+OPRfqKoSyzLO3SNbCodjj5kGhqJHnY
+	3BvdMq1COqXJG5rN87vqOyY79djb6YuFR2cPYlfcY9SnYrWnrLwCbG2iqlO+n8QpqP4ijJIfEr+
+	kLbrmFEYSELG+lpMBAsfQspDssQINxeGgo4QdEnfyZPoiBeJkSp7x6Fo2sMQvj1he/llPZ17ml/
+	4=
+X-Gm-Gg: ASbGncuMT7gwkbAL3MDg+bAvE/np4vTuHHwQaA470Cpp1LjRqnW7PdJ3uAutBHnjyYN
+	1rHChp7EuJir7no9XQ7mvupCNZ2c/MHvgnKi303EecaoYE8FUy6Yq7JZKPRHHv+KBZOb753PTR6
+	ClmLwDdXoo9L6aNo6vDOc5Z0ibMDp6f7kHUMM7Tre7Gxi1KjwXw+kcZdkC/GOKtW6/s63+TKi8v
+	zfmz5+3dge0bhCY+HHvodLFqwVsb3TW5kYgRCM1Kdrl3/t/zCPalAAr+QJN8nwrIwLPrUUVLc91
+	oX3ZxwMWxomPkcYgiFz3EutnWgFEpFkNKFccw9fDZXEBskldzbfy2NqHzY8y16zqGjII27ZQcyP
+	/Gj28tt274g==
+X-Received: by 2002:a05:620a:2789:b0:7d0:96d9:f8c3 with SMTP id af79cd13be357-7d0a1feb55dmr653460985a.34.1748636801199;
+        Fri, 30 May 2025 13:26:41 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFIWZaLbiNV5l4FpFBJv9XiFQqN5ZB1DIRxf8JfhoR2XVZtRVyRKE7qzxT+Kk2KYko6yQKGew==
+X-Received: by 2002:a05:620a:2789:b0:7d0:96d9:f8c3 with SMTP id af79cd13be357-7d0a1feb55dmr653458785a.34.1748636800784;
+        Fri, 30 May 2025 13:26:40 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55337910f0dsm831084e87.119.2025.05.30.13.26.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 May 2025 13:26:40 -0700 (PDT)
+Date: Fri, 30 May 2025 23:26:37 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Renjiang Han <quic_renjiang@quicinc.com>
+Cc: Vikash Garodia <quic_vgarodia@quicinc.com>,
+        Dikshita Agarwal <quic_dikshita@quicinc.com>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, linux-media@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v8 1/3] media: venus: pm_helpers: use opp-table for the
+ frequency
+Message-ID: <pyaoow6swlbazljgvav2vghixmb7swd4nkahqvxnhd6gsde26f@myhtwp72qxz7>
+References: <20250530-add-venus-for-qcs615-v8-0-c0092ac616d0@quicinc.com>
+ <20250530-add-venus-for-qcs615-v8-1-c0092ac616d0@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,267 +106,165 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aDoT08LfXUEkS9E4@dwarf.suse.cz>
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	RCVD_COUNT_ZERO(0.00)[0];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	URIBL_BLOCKED(0.00)[suse.cz:email,dwarf.suse.cz:mid,localhost:helo];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
+In-Reply-To: <20250530-add-venus-for-qcs615-v8-1-c0092ac616d0@quicinc.com>
+X-Proofpoint-GUID: EiWP66J9WXN8MM9O2uIN02Pv40mxBqHk
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTMwMDE4MiBTYWx0ZWRfXwsOA/J/4oeFx
+ d7UUHhB29dtgcS4IXh8EfcnqR+d0Ml6RkOejDQR+QN9SGtb5T7KKjIUSavUhqF3+biji78c/gS2
+ w3WNDwvh5gltITfyme/d6KUrolyMU1CB+ue3coADZl/ugNTaJQe2uFirA0j5DORgSlAugcfa83z
+ RmBFg5+5guEorWRGAPYiWQGYxrnP431/+GBbitozfJ5s+bfBU+AvMRBZUdLcRDydDI1GsNoHfBq
+ eYmmuQLs/lX7DRJjEEDO/VesHt1buMVMo8Omz+5mveDfNo1vKWUapapW9W4QBfTFfTFYPZw0+Cz
+ c0QjopiIlSV/nw3749hqjWcr3dSEXU1zRWb7Rj66S2QKrENQVn/26aNRYDBI439x1/5aGxiukbB
+ T6R/yHMDkq4xWH708VdC4XeZNUQr+9/7kiGyAz/KGhNXt0/5vHLpGDC/CsMYSz3el5Wcs+nW
+X-Authority-Analysis: v=2.4 cv=fMk53Yae c=1 sm=1 tr=0 ts=683a1482 cx=c_pps
+ a=HLyN3IcIa5EE8TELMZ618Q==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=dt9VzEwgFbYA:10 a=COk6AnOGAAAA:8 a=4WTgWidf2JFRtI-FBxYA:9 a=CjuIK1q_8ugA:10
+ a=bTQJ7kPSJx9SKPbeHEYW:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: EiWP66J9WXN8MM9O2uIN02Pv40mxBqHk
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-30_09,2025-05-30_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 adultscore=0 impostorscore=0 phishscore=0 suspectscore=0
+ spamscore=0 priorityscore=1501 lowpriorityscore=0 clxscore=1015 mlxscore=0
+ mlxlogscore=999 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505160000
+ definitions=main-2505300182
 
-Add a new cma_size parameter to parse_crashkernel().
-When not NULL, call __parse_crashkernel to parse the CMA
-reservation size from "crashkernel=size,cma" and store it
-in cma_size.
+On Fri, May 30, 2025 at 09:32:13AM +0530, Renjiang Han wrote:
+> The frequency value in the opp-table in the device tree and the freq_tbl
+> in the driver are the same.
+> 
+> Therefore, update pm_helpers.c to use the opp-table for frequency values
+> for the v4 core.
 
-Set cma_size to NULL in all calls to parse_crashkernel().
+You are kind of missing the linking between the first two sentences. "The
+tables are the same, so use the second one." You need to explain that
+some of the platforms (provide examples) use the same core, but
+different frequency tables. Using OPP tables allows us to abstract core
+description from the frequency data and use fallback compatibles.
 
-Signed-off-by: Jiri Bohac <jbohac@suse.cz>
----
- arch/arm/kernel/setup.c              |  2 +-
- arch/arm64/mm/init.c                 |  2 +-
- arch/loongarch/kernel/setup.c        |  2 +-
- arch/mips/kernel/setup.c             |  2 +-
- arch/powerpc/kernel/fadump.c         |  2 +-
- arch/powerpc/kexec/core.c            |  2 +-
- arch/powerpc/mm/nohash/kaslr_booke.c |  2 +-
- arch/riscv/mm/init.c                 |  2 +-
- arch/s390/kernel/setup.c             |  2 +-
- arch/sh/kernel/machine_kexec.c       |  2 +-
- arch/x86/kernel/setup.c              |  2 +-
- include/linux/crash_reserve.h        |  3 ++-
- kernel/crash_reserve.c               | 16 ++++++++++++++--
- 13 files changed, 27 insertions(+), 14 deletions(-)
-
-diff --git a/arch/arm/kernel/setup.c b/arch/arm/kernel/setup.c
-index a41c93988d2c..0bfd66c7ada0 100644
---- a/arch/arm/kernel/setup.c
-+++ b/arch/arm/kernel/setup.c
-@@ -1004,7 +1004,7 @@ static void __init reserve_crashkernel(void)
- 	total_mem = get_total_mem();
- 	ret = parse_crashkernel(boot_command_line, total_mem,
- 				&crash_size, &crash_base,
--				NULL, NULL);
-+				NULL, NULL, NULL);
- 	/* invalid value specified or crashkernel=0 */
- 	if (ret || !crash_size)
- 		return;
-diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
-index 0c8c35dd645e..ea84a61ed508 100644
---- a/arch/arm64/mm/init.c
-+++ b/arch/arm64/mm/init.c
-@@ -106,7 +106,7 @@ static void __init arch_reserve_crashkernel(void)
- 
- 	ret = parse_crashkernel(boot_command_line, memblock_phys_mem_size(),
- 				&crash_size, &crash_base,
--				&low_size, &high);
-+				&low_size, NULL, &high);
- 	if (ret)
- 		return;
- 
-diff --git a/arch/loongarch/kernel/setup.c b/arch/loongarch/kernel/setup.c
-index b99fbb388fe0..22b27cd447a1 100644
---- a/arch/loongarch/kernel/setup.c
-+++ b/arch/loongarch/kernel/setup.c
-@@ -265,7 +265,7 @@ static void __init arch_reserve_crashkernel(void)
- 		return;
- 
- 	ret = parse_crashkernel(boot_command_line, memblock_phys_mem_size(),
--				&crash_size, &crash_base, &low_size, &high);
-+				&crash_size, &crash_base, &low_size, NULL, &high);
- 	if (ret)
- 		return;
- 
-diff --git a/arch/mips/kernel/setup.c b/arch/mips/kernel/setup.c
-index fbfe0771317e..11b9b6b63e19 100644
---- a/arch/mips/kernel/setup.c
-+++ b/arch/mips/kernel/setup.c
-@@ -458,7 +458,7 @@ static void __init mips_parse_crashkernel(void)
- 	total_mem = memblock_phys_mem_size();
- 	ret = parse_crashkernel(boot_command_line, total_mem,
- 				&crash_size, &crash_base,
--				NULL, NULL);
-+				NULL, NULL, NULL);
- 	if (ret != 0 || crash_size <= 0)
- 		return;
- 
-diff --git a/arch/powerpc/kernel/fadump.c b/arch/powerpc/kernel/fadump.c
-index 8ca49e40c473..28cab25d5b33 100644
---- a/arch/powerpc/kernel/fadump.c
-+++ b/arch/powerpc/kernel/fadump.c
-@@ -333,7 +333,7 @@ static __init u64 fadump_calculate_reserve_size(void)
- 	 * memory at a predefined offset.
- 	 */
- 	ret = parse_crashkernel(boot_command_line, memblock_phys_mem_size(),
--				&size, &base, NULL, NULL);
-+				&size, &base, NULL, NULL, NULL);
- 	if (ret == 0 && size > 0) {
- 		unsigned long max_size;
- 
-diff --git a/arch/powerpc/kexec/core.c b/arch/powerpc/kexec/core.c
-index 00e9c267b912..d1a2d755381c 100644
---- a/arch/powerpc/kexec/core.c
-+++ b/arch/powerpc/kexec/core.c
-@@ -110,7 +110,7 @@ void __init arch_reserve_crashkernel(void)
- 
- 	/* use common parsing */
- 	ret = parse_crashkernel(boot_command_line, total_mem_sz, &crash_size,
--				&crash_base, NULL, NULL);
-+				&crash_base, NULL, NULL, NULL);
- 
- 	if (ret)
- 		return;
-diff --git a/arch/powerpc/mm/nohash/kaslr_booke.c b/arch/powerpc/mm/nohash/kaslr_booke.c
-index 5c8d1bb98b3e..5e4897daaaea 100644
---- a/arch/powerpc/mm/nohash/kaslr_booke.c
-+++ b/arch/powerpc/mm/nohash/kaslr_booke.c
-@@ -178,7 +178,7 @@ static void __init get_crash_kernel(void *fdt, unsigned long size)
- 	int ret;
- 
- 	ret = parse_crashkernel(boot_command_line, size, &crash_size,
--				&crash_base, NULL, NULL);
-+				&crash_base, NULL, NULL, NULL);
- 	if (ret != 0 || crash_size == 0)
- 		return;
- 	if (crash_base == 0)
-diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
-index ab475ec6ca42..3f272aff2cf1 100644
---- a/arch/riscv/mm/init.c
-+++ b/arch/riscv/mm/init.c
-@@ -1402,7 +1402,7 @@ static void __init arch_reserve_crashkernel(void)
- 
- 	ret = parse_crashkernel(boot_command_line, memblock_phys_mem_size(),
- 				&crash_size, &crash_base,
--				&low_size, &high);
-+				&low_size, NULL, &high);
- 	if (ret)
- 		return;
- 
-diff --git a/arch/s390/kernel/setup.c b/arch/s390/kernel/setup.c
-index f244c5560e7f..b99aeb0db2ee 100644
---- a/arch/s390/kernel/setup.c
-+++ b/arch/s390/kernel/setup.c
-@@ -605,7 +605,7 @@ static void __init reserve_crashkernel(void)
- 	int rc;
- 
- 	rc = parse_crashkernel(boot_command_line, ident_map_size,
--			       &crash_size, &crash_base, NULL, NULL);
-+			       &crash_size, &crash_base, NULL, NULL, NULL);
- 
- 	crash_base = ALIGN(crash_base, KEXEC_CRASH_MEM_ALIGN);
- 	crash_size = ALIGN(crash_size, KEXEC_CRASH_MEM_ALIGN);
-diff --git a/arch/sh/kernel/machine_kexec.c b/arch/sh/kernel/machine_kexec.c
-index 8321b31d2e19..37073ca1e0ad 100644
---- a/arch/sh/kernel/machine_kexec.c
-+++ b/arch/sh/kernel/machine_kexec.c
-@@ -146,7 +146,7 @@ void __init reserve_crashkernel(void)
- 		return;
- 
- 	ret = parse_crashkernel(boot_command_line, memblock_phys_mem_size(),
--			&crash_size, &crash_base, NULL, NULL);
-+			&crash_size, &crash_base, NULL, NULL, NULL);
- 	if (ret == 0 && crash_size > 0) {
- 		crashk_res.start = crash_base;
- 		crashk_res.end = crash_base + crash_size - 1;
-diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-index 7d9ed79a93c0..870b06571b2e 100644
---- a/arch/x86/kernel/setup.c
-+++ b/arch/x86/kernel/setup.c
-@@ -582,7 +582,7 @@ static void __init arch_reserve_crashkernel(void)
- 
- 	ret = parse_crashkernel(boot_command_line, memblock_phys_mem_size(),
- 				&crash_size, &crash_base,
--				&low_size, &high);
-+				&low_size, NULL, &high);
- 	if (ret)
- 		return;
- 
-diff --git a/include/linux/crash_reserve.h b/include/linux/crash_reserve.h
-index 1fe7e7d1b214..e784aaff2f5a 100644
---- a/include/linux/crash_reserve.h
-+++ b/include/linux/crash_reserve.h
-@@ -16,7 +16,8 @@ extern struct resource crashk_low_res;
- 
- int __init parse_crashkernel(char *cmdline, unsigned long long system_ram,
- 		unsigned long long *crash_size, unsigned long long *crash_base,
--		unsigned long long *low_size, bool *high);
-+		unsigned long long *low_size, unsigned long long *cma_size,
-+		bool *high);
- 
- #ifdef CONFIG_ARCH_HAS_GENERIC_CRASHKERNEL_RESERVATION
- #ifndef DEFAULT_CRASH_KERNEL_LOW_SIZE
-diff --git a/kernel/crash_reserve.c b/kernel/crash_reserve.c
-index aff7c0fdbefa..a8861f3f64fe 100644
---- a/kernel/crash_reserve.c
-+++ b/kernel/crash_reserve.c
-@@ -172,17 +172,19 @@ static int __init parse_crashkernel_simple(char *cmdline,
- 
- #define SUFFIX_HIGH 0
- #define SUFFIX_LOW  1
--#define SUFFIX_NULL 2
-+#define SUFFIX_CMA  2
-+#define SUFFIX_NULL 3
- static __initdata char *suffix_tbl[] = {
- 	[SUFFIX_HIGH] = ",high",
- 	[SUFFIX_LOW]  = ",low",
-+	[SUFFIX_CMA]  = ",cma",
- 	[SUFFIX_NULL] = NULL,
- };
- 
- /*
-  * That function parses "suffix"  crashkernel command lines like
-  *
-- *	crashkernel=size,[high|low]
-+ *	crashkernel=size,[high|low|cma]
-  *
-  * It returns 0 on success and -EINVAL on failure.
-  */
-@@ -298,9 +300,11 @@ int __init parse_crashkernel(char *cmdline,
- 			     unsigned long long *crash_size,
- 			     unsigned long long *crash_base,
- 			     unsigned long long *low_size,
-+			     unsigned long long *cma_size,
- 			     bool *high)
- {
- 	int ret;
-+	unsigned long long __always_unused cma_base;
- 
- 	/* crashkernel=X[@offset] */
- 	ret = __parse_crashkernel(cmdline, system_ram, crash_size,
-@@ -331,6 +335,14 @@ int __init parse_crashkernel(char *cmdline,
- 
- 		*high = true;
- 	}
-+
-+	/*
-+	 * optional CMA reservation
-+	 * cma_base is ignored
-+	 */
-+	if (cma_size)
-+		__parse_crashkernel(cmdline, 0, cma_size,
-+			&cma_base, suffix_tbl[SUFFIX_CMA]);
- #endif
- 	if (!*crash_size)
- 		ret = -EINVAL;
+> If getting data from the opp table fails, fall back to using the frequency
+> table.
+> 
+> Reviewed-by: Vikash Garodia <quic_vgarodia@quicinc.com>
+> Signed-off-by: Renjiang Han <quic_renjiang@quicinc.com>
+> ---
+>  drivers/media/platform/qcom/venus/pm_helpers.c | 53 +++++++++++++++++++-------
+>  1 file changed, 39 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/media/platform/qcom/venus/pm_helpers.c b/drivers/media/platform/qcom/venus/pm_helpers.c
+> index 409aa9bd0b5d099c993eedb03177ec5ed918b4a0..434dd66076e8faf7f3feac6c29152789f8d2f81b 100644
+> --- a/drivers/media/platform/qcom/venus/pm_helpers.c
+> +++ b/drivers/media/platform/qcom/venus/pm_helpers.c
+> @@ -43,14 +43,20 @@ static int core_clks_enable(struct venus_core *core)
+>  	const struct venus_resources *res = core->res;
+>  	const struct freq_tbl *freq_tbl = core->res->freq_tbl;
+>  	unsigned int freq_tbl_size = core->res->freq_tbl_size;
+> +	struct device *dev = core->dev;
+> +	struct dev_pm_opp *opp;
+>  	unsigned long freq;
+>  	unsigned int i;
+>  	int ret;
+>  
+> -	if (!freq_tbl)
+> -		return -EINVAL;
+> -
+> -	freq = freq_tbl[freq_tbl_size - 1].freq;
+> +	opp = dev_pm_opp_find_freq_ceil(dev, &freq);
+> +	if (IS_ERR(opp)) {
+> +		if (!freq_tbl)
+> +			return -EINVAL;
+> +		freq = freq_tbl[freq_tbl_size - 1].freq;
+> +	} else {
+> +		dev_pm_opp_put(opp);
+> +	}
+>  
+>  	for (i = 0; i < res->clks_num; i++) {
+>  		if (IS_V6(core)) {
+> @@ -631,12 +637,15 @@ min_loaded_core(struct venus_inst *inst, u32 *min_coreid, u32 *min_load, bool lo
+>  
+>  static int decide_core(struct venus_inst *inst)
+>  {
+> +	const struct freq_tbl *freq_tbl = inst->core->res->freq_tbl;
+>  	const u32 ptype = HFI_PROPERTY_CONFIG_VIDEOCORES_USAGE;
+>  	struct venus_core *core = inst->core;
+>  	u32 min_coreid, min_load, cur_inst_load;
+>  	u32 min_lp_coreid, min_lp_load, cur_inst_lp_load;
+>  	struct hfi_videocores_usage_type cu;
+> -	unsigned long max_freq;
+> +	unsigned long max_freq = ULONG_MAX;
+> +	struct device *dev = core->dev;
+> +	struct dev_pm_opp *opp;
+>  	int ret = 0;
+>  
+>  	if (legacy_binding) {
+> @@ -659,7 +668,11 @@ static int decide_core(struct venus_inst *inst)
+>  	cur_inst_lp_load *= inst->clk_data.low_power_freq;
+>  	/*TODO : divide this inst->load by work_route */
+>  
+> -	max_freq = core->res->freq_tbl[0].freq;
+> +	opp = dev_pm_opp_find_freq_floor(dev, &max_freq);
+> +	if (IS_ERR(opp))
+> +		max_freq = freq_tbl[0].freq;
+> +	else
+> +		dev_pm_opp_put(opp);
+>  
+>  	min_loaded_core(inst, &min_coreid, &min_load, false);
+>  	min_loaded_core(inst, &min_lp_coreid, &min_lp_load, true);
+> @@ -1082,7 +1095,9 @@ static int load_scale_v4(struct venus_inst *inst)
+>  	unsigned int num_rows = core->res->freq_tbl_size;
+>  	struct device *dev = core->dev;
+>  	unsigned long freq = 0, freq_core1 = 0, freq_core2 = 0;
+> +	unsigned long max_freq = ULONG_MAX;
+>  	unsigned long filled_len = 0;
+> +	struct dev_pm_opp *opp;
+>  	int i, ret = 0;
+>  
+>  	for (i = 0; i < inst->num_input_bufs; i++)
+> @@ -1108,19 +1123,29 @@ static int load_scale_v4(struct venus_inst *inst)
+>  
+>  	freq = max(freq_core1, freq_core2);
+>  
+> -	if (freq > table[0].freq) {
+> -		dev_dbg(dev, VDBGL "requested clock rate: %lu scaling clock rate : %lu\n",
+> -			freq, table[0].freq);
+> +	opp = dev_pm_opp_find_freq_floor(dev, &max_freq);
+> +	if (IS_ERR(opp))
+> +		max_freq = table[0].freq;
+> +	else
+> +		dev_pm_opp_put(opp);
+>  
+> -		freq = table[0].freq;
+> +	if (freq > max_freq) {
+> +		dev_dbg(dev, VDBGL "requested clock rate: %lu scaling clock rate : %lu\n",
+> +			freq, max_freq);
+> +		freq = max_freq;
+>  		goto set_freq;
+>  	}
+>  
+> -	for (i = num_rows - 1 ; i >= 0; i--) {
+> -		if (freq <= table[i].freq) {
+> -			freq = table[i].freq;
+> -			break;
+> +	opp = dev_pm_opp_find_freq_ceil(dev, &freq);
+> +	if (IS_ERR(opp)) {
+> +		for (i = num_rows - 1 ; i >= 0; i--) {
+> +			if (freq <= table[i].freq) {
+> +				freq = table[i].freq;
+> +				break;
+> +			}
+>  		}
+> +	} else {
+> +		dev_pm_opp_put(opp);
+>  	}
+>  
+>  set_freq:
+> 
+> -- 
+> 2.34.1
+> 
 
 -- 
-Jiri Bohac <jbohac@suse.cz>
-SUSE Labs, Prague, Czechia
-
+With best wishes
+Dmitry
 
