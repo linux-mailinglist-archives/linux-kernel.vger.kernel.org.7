@@ -1,151 +1,119 @@
-Return-Path: <linux-kernel+bounces-667823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-667825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B70BBAC8A6E
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 11:05:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14D85AC8A70
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 11:07:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B73E13BDFAC
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 09:04:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 080141BC2A12
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 09:07:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE94F21D3D2;
-	Fri, 30 May 2025 09:04:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0532721CC5A;
+	Fri, 30 May 2025 09:07:18 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F33291EA7C8
-	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 09:04:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4390113A244;
+	Fri, 30 May 2025 09:07:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748595890; cv=none; b=F6Ydh1Vuss7g6UQqzqmhEFLNOgvcviuu49B8V84eCI3u4aUCDhkNuloDgMLsQRict9WlafcdNKUSvNn2OB6Fea6ngj1z6/wBg37aCzeV711OUmFvBiWXJxKTRHu2MiXboxLA1XuW49DKOnE8pyazxZ5jjzpIYkxfrypVE85mVPk=
+	t=1748596037; cv=none; b=FIfEnRUZ/ZNszRGrouF3gR3Ktv/sokYwZrEbdTJBJz0EeifzsRK7lVm6o1iKezItWyBp1gGpCV8fGZWco5cJvps3RO1we1h4oaohc8iBlGrnLKN7+j5wkx0PR0DAtX0yqIX9hQRCbEamq+2nItDl/qBkZi5g++xH0temu3eaPP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748595890; c=relaxed/simple;
-	bh=WgIs+0mJhsMumzatCo5VihW3PL80BvxaPeuR0E/W8JE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ndYJ9jrvooKxJ4Yp4v2dhqla+LvHInliFeoDRQZsh1MqvonZ2O9RZ+CeW33s3Rsw8pncmHYqcIuB+g5UTiieuxtyi0AG1m+kCK8vOhNJLP5o5/1F5+4gM/lgdy+8ZYZHAlCRNTRhBiXDOBkB2YeBIgYtf1oikIkHbDKZ1sWYVqo=
+	s=arc-20240116; t=1748596037; c=relaxed/simple;
+	bh=iViSuV0R+rv+QTUVkg89jRMRkjWH+ao1h5/HuE8kknI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ednUkCryZrhHxj7Qc9gyWS3buzvPa/6ioQs07MXASkP7ZyvY8X/8jnMJTii98a2bF3uEcocoBUZZGS53by/p3k+stjZz0OaQYPzETKIvkF4aVFsH74BzKWL4lHzDUe1fES9Q0I3U6AqsK0JEtvNetNAa4dtV6DmO+JgfOojkFp0=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DBC9516F2;
-	Fri, 30 May 2025 02:04:31 -0700 (PDT)
-Received: from MacBook-Pro.blr.arm.com (unknown [10.164.18.49])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 4A0CF3F5A1;
-	Fri, 30 May 2025 02:04:43 -0700 (PDT)
-From: Dev Jain <dev.jain@arm.com>
-To: akpm@linux-foundation.org,
-	david@redhat.com,
-	catalin.marinas@arm.com,
-	will@kernel.org
-Cc: lorenzo.stoakes@oracle.com,
-	Liam.Howlett@oracle.com,
-	vbabka@suse.cz,
-	rppt@kernel.org,
-	surenb@google.com,
-	mhocko@suse.com,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	suzuki.poulose@arm.com,
-	steven.price@arm.com,
-	gshan@redhat.com,
-	linux-arm-kernel@lists.infradead.org,
-	Dev Jain <dev.jain@arm.com>
-Subject: [PATCH 3/3] mm/pagewalk: Add pre/post_pte_table callback for lazy MMU on arm64
-Date: Fri, 30 May 2025 14:34:07 +0530
-Message-Id: <20250530090407.19237-4-dev.jain@arm.com>
-X-Mailer: git-send-email 2.39.3 (Apple Git-146)
-In-Reply-To: <20250530090407.19237-1-dev.jain@arm.com>
-References: <20250530090407.19237-1-dev.jain@arm.com>
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2882016F2;
+	Fri, 30 May 2025 02:06:58 -0700 (PDT)
+Received: from [10.57.95.14] (unknown [10.57.95.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BFAAD3F5A1;
+	Fri, 30 May 2025 02:07:12 -0700 (PDT)
+Message-ID: <00999fc3-3a4a-4ee5-8021-81c73253fe7f@arm.com>
+Date: Fri, 30 May 2025 10:07:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] fix MADV_COLLAPSE issue if THP settings are disabled
+Content-Language: en-GB
+To: David Hildenbrand <david@redhat.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Baolin Wang <baolin.wang@linux.alibaba.com>, akpm@linux-foundation.org,
+ hughd@google.com, Liam.Howlett@oracle.com, npache@redhat.com,
+ dev.jain@arm.com, ziy@nvidia.com, linux-mm@kvack.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1748506520.git.baolin.wang@linux.alibaba.com>
+ <05d60e72-3113-41f0-b81f-225397f06c81@arm.com>
+ <f3dad5b5-143d-4896-b315-38e1d7bb1248@redhat.com>
+ <ade3bdb7-7103-4ecd-bce2-7768a0d729ef@lucifer.local>
+ <9c920642-228b-4eb0-920a-269473ea824e@redhat.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <9c920642-228b-4eb0-920a-269473ea824e@redhat.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-arm64 implements lazy_mmu_mode to allow deferral and batching of barriers
-when updating kernel PTEs, which provides a nice performance boost. arm64
-currently uses apply_to_page_range() to modify kernel PTE permissions,
-which runs inside lazy_mmu_mode. So to prevent a performance regression,
-let's add hooks to walk_page_range_novma() to allow continued use of
-lazy_mmu_mode.
+On 30/05/2025 09:52, David Hildenbrand wrote:
+> On 30.05.25 10:47, Lorenzo Stoakes wrote:
+>> On Fri, May 30, 2025 at 10:44:36AM +0200, David Hildenbrand wrote:
+>>> On 30.05.25 10:04, Ryan Roberts wrote:
+>>>> On 29/05/2025 09:23, Baolin Wang wrote:
+>>>>> As we discussed in the previous thread [1], the MADV_COLLAPSE will ignore
+>>>>> the system-wide anon/shmem THP sysfs settings, which means that even though
+>>>>> we have disabled the anon/shmem THP configuration, MADV_COLLAPSE will still
+>>>>> attempt to collapse into a anon/shmem THP. This violates the rule we have
+>>>>> agreed upon: never means never. This patch set will address this issue.
+>>>>
+>>>> This is a drive-by comment from me without having the previous context, but...
+>>>>
+>>>> Surely MADV_COLLAPSE *should* ignore the THP sysfs settings? It's a deliberate
+>>>> user-initiated, synchonous request to use huge pages for a range of memory.
+>>>> There is nothing *transparent* about it, it just happens to be implemented
+>>>> using
+>>>> the same logic that THP uses.
+>>>>
+>>>> I always thought this was a deliberate design decision.
+>>>
+>>> If the admin said "never", then why should a user be able to overwrite that?
+>>>
+>>> The design decision I recall is that if VM_NOHUGEPAGE is set, we'll ignore
+>>> that. Because that was set by the app itself (MADV_NOHUEPAGE).
+>>>
+>>
+>> I'm with David on this one.
+>>
+>> I think it's principal of least surprise - to me 'never' is pretty
+>> emphatic, and keep in mind the other choices are 'always' and...  'madvise'
+>> :) which explicitly is 'hey only do this if madvise tells you to'.
 
-Signed-off-by: Dev Jain <dev.jain@arm.com>
----
-Credits to Ryan for the patch description.
+I think it's a bit reductive to suggest that enabled=madvise means all madvise
+calls though. I don't think anyone would suggest MADV_DONTNEED should be ignored
+if enabled=never. MADV_COLLAPSE just happens to be implemented on top of the THP
+logic. But it's a different feature in my view.
 
- arch/arm64/mm/pageattr.c | 12 ++++++++++++
- include/linux/pagewalk.h |  2 ++
- mm/pagewalk.c            |  6 ++++++
- 3 files changed, 20 insertions(+)
+>>
+>> I'd be rather surprised if I hadn't set madvise and a user uses madvise to
+>> in some fashion override the never.
+>>
+>> I mean I think we all agree this interface is to use a technical term -
+>> crap - and we need something a lot more fine-grained and smart, 
 
-diff --git a/arch/arm64/mm/pageattr.c b/arch/arm64/mm/pageattr.c
-index a5c829c64969..9163324b12a0 100644
---- a/arch/arm64/mm/pageattr.c
-+++ b/arch/arm64/mm/pageattr.c
-@@ -75,11 +75,23 @@ static int pageattr_pte_entry(pte_t *pte, unsigned long addr,
- 	return 0;
- }
- 
-+static void pte_lazy_mmu_enter(void)
-+{
-+	arch_enter_lazy_mmu_mode();
-+}
-+
-+static void pte_lazy_mmu_leave(void)
-+{
-+	arch_leave_lazy_mmu_mode();
-+}
-+
- static const struct mm_walk_ops pageattr_ops = {
- 	.pud_entry	= pageattr_pud_entry,
- 	.pmd_entry	= pageattr_pmd_entry,
- 	.pte_entry	= pageattr_pte_entry,
- 	.walk_lock	= PGWALK_NOLOCK,
-+	.pre_pte_table	= pte_lazy_mmu_enter,
-+	.post_pte_table	= pte_lazy_mmu_leave,
- };
- 
- bool rodata_full __ro_after_init = IS_ENABLED(CONFIG_RODATA_FULL_DEFAULT_ENABLED);
-diff --git a/include/linux/pagewalk.h b/include/linux/pagewalk.h
-index 9bc8853ed3de..2157d345974c 100644
---- a/include/linux/pagewalk.h
-+++ b/include/linux/pagewalk.h
-@@ -88,6 +88,8 @@ struct mm_walk_ops {
- 	int (*pre_vma)(unsigned long start, unsigned long end,
- 		       struct mm_walk *walk);
- 	void (*post_vma)(struct mm_walk *walk);
-+	void (*pre_pte_table)(void);
-+	void (*post_pte_table)(void);
- 	int (*install_pte)(unsigned long addr, unsigned long next,
- 			   pte_t *ptep, struct mm_walk *walk);
- 	enum page_walk_lock walk_lock;
-diff --git a/mm/pagewalk.c b/mm/pagewalk.c
-index 9657cf4664b2..a441f5cbbc45 100644
---- a/mm/pagewalk.c
-+++ b/mm/pagewalk.c
-@@ -33,6 +33,9 @@ static int walk_pte_range_inner(pte_t *pte, unsigned long addr,
- 	const struct mm_walk_ops *ops = walk->ops;
- 	int err = 0;
- 
-+	if (walk->ops->pre_pte_table)
-+		walk->ops->pre_pte_table();
-+
- 	for (;;) {
- 		if (ops->install_pte && pte_none(ptep_get(pte))) {
- 			pte_t new_pte;
-@@ -56,6 +59,9 @@ static int walk_pte_range_inner(pte_t *pte, unsigned long addr,
- 		addr += PAGE_SIZE;
- 		pte++;
- 	}
-+
-+	if (walk->ops->post_pte_table)
-+		walk->ops->post_pte_table();
- 	return err;
- }
- 
--- 
-2.30.2
+Yes agreed there!
+
+>> but I think
+>> given the situation we're in we should make it at least as least surprising
+>> as possible.
+
+> 
+> Yes. If you configure "never" you are supposed to suffer, consistently.
+> 
+
+OK fair enough. Just giving my 2 cents.
 
 
