@@ -1,299 +1,482 @@
-Return-Path: <linux-kernel+bounces-668384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-668386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46605AC91C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 16:48:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 95049AC91CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 16:49:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 081F14A5010
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 14:48:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EA444E30B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 14:49:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E21AB22B8A8;
-	Fri, 30 May 2025 14:48:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B775C1891AB;
+	Fri, 30 May 2025 14:49:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Xktmjtnn";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="hm8VXsYb"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Z7mcnJQf"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D48538385;
-	Fri, 30 May 2025 14:48:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748616504; cv=fail; b=FgtMWenoxYnvyqj+QXSvCWErqsMyPzLWyBzW3f/Nie48PeZ1Qq7HkNtev/j58JGCHwVoXcuVULflDbShkzsr0uguFJ78ROu1C1579yi6RnEQQy9mL8w89R01kRrDflNvEIp4aIo+1DPlR1t5UT8+WzY9i6E3duHbfNNvb36BPMs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748616504; c=relaxed/simple;
-	bh=vTf2gTsmnVMUAn0GY4WpGCbha35i4FY4SUMSOISAyzA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=XALIdoSMltup2d4Za+PUnEQOI3oCaDKtfUT9nI9oEjAJfMy+H5bO+KJ2EZguSG1Bbwo7/O8E1+ytbLnS6uXIOMknlVXkiz5LucBBjOfxDGLjdahPtMkY8Y7kaJXdyn7uwcZ+nUfBLb/sR/ppDEuriAb078nqP8cteDzXRclU7yE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Xktmjtnn; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=hm8VXsYb; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54UAt2Ya029174;
-	Fri, 30 May 2025 14:47:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=Y/QvbNlRztLrwVJRw4
-	ySGtaqY6CZnBND7tiFkiatjrw=; b=XktmjtnnRkTTu6cNN5L2nMyunFhoXbJeKk
-	1S4c9o+BoKbY3oPSCMgSn57iEuKGWzX5nknXIg9MPKJKyl4SIT2XCXsklsCh61cM
-	OvRvwnNYvFMge4Ry2RkCVvymt4r2d26Qucu0RK6yzP4vvDJpJRnaYzZrqhW+URel
-	fdhWG+q1prMhsQfTYYB76uJNFtYGqNK+wwJ3GbVuSoT+4qUDIvcUnzGhXiKIrOke
-	hYTjZcSVZSYeyyrhF0G1OOd3toJ2bvACA8e6OJOSEiLIeAe4W9Q+pmnYQBPH6kzz
-	q7ljhZk5uSpR9Dxg/WN7Rvk2qeLlqQs0hKkCGpF21w7ClnKGP5IA==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 46wjbcpcbe-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 30 May 2025 14:47:19 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 54UCxaij019186;
-	Fri, 30 May 2025 14:47:19 GMT
-Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12on2072.outbound.protection.outlook.com [40.107.243.72])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 46u4jdce3x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 30 May 2025 14:47:19 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=U7ODIx+R/nRpXzcsFGB5OGzGR4oohX/jMqSfUA1HFYxMN9T0q23tfB9c8zk3UWeo03YKapiSYBb1z/kToePqqKuLtuy/93niwkF/4Uu6qtwAVQ+/gduxdFgtoXQDMRdyJb35/lyCIFYmhBAKJYwL0KRYOyO7pU3aSpufBHNQzTEBck23d+/YN+GrMO6hiooxgGxJ9TkqSCSlZol2OzZtvZRWyCu+WSraZnM38mfK0Tyr8JLaBSGRhJEis9WcvI1F89UQQQtGyB7BJ7ZATzXESX+6pEu9lHZIp+mUH2/qTaL953/eV8os9vs4tTce4aQauzUog+8i9aQL40j4l+he0A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Y/QvbNlRztLrwVJRw4ySGtaqY6CZnBND7tiFkiatjrw=;
- b=FYpXkDsHtUcKBGlXosDyWVyvTtpTjFbDDmZ/jjt2GpBi62PKAcI6YIujpNpfEcSxeenmxaIj/nrKDV74AeiGijL1vMOF1UdwZZch33Z5n0pPVhbfmicp7dZMeVXhqCMzD2r91rebKEUjRPBOrMmk/xoQFbVWaoGgP3yXkx5DHegTh1+aVSFnbhWbE2sOHiVxQ6WLS7diF7OjwzkU2SQZUKuOmeYlrcKFbIR2A0bCpszi98aTvUBe3UvmBcC0BOukr8uAJUW7kpPdBkWOvwxQWrmQYUkx51DXA0voKtYeDn3M966qzdXOtqYChZfn6lIIVKFw6PpcHvStOun4vLCtoQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Y/QvbNlRztLrwVJRw4ySGtaqY6CZnBND7tiFkiatjrw=;
- b=hm8VXsYbdpYqs2jWfqsQrkRfZfUl3QKg7DGGfNplhqObBD2e/RoSRo2eoPStyTYEO7eyJYcfag7YqTmCW8ZsGF96/WAPTFDg5/OgmLw6f11urfwew2ad6gbtumg59YQ6D3h89gAqfg6w9ZHqgZARA1rojVCuhWunMAuZQ9tqP58=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by PH3PPFF6F8BBAB5.namprd10.prod.outlook.com (2603:10b6:518:1::7da) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8746.32; Fri, 30 May
- 2025 14:47:16 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%5]) with mapi id 15.20.8746.030; Fri, 30 May 2025
- 14:47:16 +0000
-Date: Fri, 30 May 2025 15:47:12 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Ryan Roberts <ryan.roberts@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        "David S. Miller" <davem@davemloft.net>,
-        Andreas Larsson <andreas@gaisler.com>, Juergen Gross <jgross@suse.com>,
-        Ajay Kaher <ajay.kaher@broadcom.com>,
-        Alexey Makhalov <alexey.makhalov@broadcom.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>, Arnd Bergmann <arnd@arndb.de>,
-        David Hildenbrand <david@redhat.com>,
-        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-        Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, sparclinux@vger.kernel.org,
-        virtualization@lists.linux.dev, xen-devel@lists.xenproject.org,
-        linux-mm@kvack.org, Jann Horn <jannh@google.com>
-Subject: Re: [RFC PATCH v1 0/6] Lazy mmu mode fixes and improvements
-Message-ID: <5b5d6352-9018-4658-b8fe-6eadaad46881@lucifer.local>
-References: <20250530140446.2387131-1-ryan.roberts@arm.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250530140446.2387131-1-ryan.roberts@arm.com>
-X-ClientProxiedBy: LO4P123CA0458.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:1aa::13) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5334E22D782;
+	Fri, 30 May 2025 14:48:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748616540; cv=none; b=aqx1rE3OIGtBwsgwnndaSdKShMMgnusVVhAlAXoj2NNwT4hPCFrAu9Vt677KSAfnUHL0JxQHInxPs9SsT6vikGPSfelNI+Mc1x07hH28WA61OzBPh1lxX48GxA1TDVZ5L8aIgUG1lnTW2NBmjH4YMUf75rjZKYxZYm45UeV0jzw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748616540; c=relaxed/simple;
+	bh=l1t2lbZkIgJk2YWm78fuWpLoXURes3FURx6seZJlXE4=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=Z/vTIYM52Fo8zKYQpxA1OE0co7SAVo9wfD/9NNRH+IsBExE2LPjOy6LMZDk2i2VDzfxbpWzHooKvGidyk+dnjrOroq7eEvPzw1hZHsi3KQ0VsUd07lgWvNenGdYJP/WDAgeXzEazAbHl4OGy+xNlgIKxCKWdkOu1EiVD2Wu0aUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Z7mcnJQf; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1748616538; x=1780152538;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=l1t2lbZkIgJk2YWm78fuWpLoXURes3FURx6seZJlXE4=;
+  b=Z7mcnJQfmrFrQPvT997nZuzp87I3JRVxh8oY/zz7Xn7w+Cl1Ncm418Sg
+   lk6ebVQyRnXE7R4CH6qWiqGdprIvqFO3gwv40bJM2vQq0/52sphLLIKYr
+   tgQxT07WvUr46R/mN6Wg9QT5+nEoNkfEhx1iKpJeeKTKimOejtt9olL7j
+   ZxbkvaaBnnZ77Lq66GxPl3rVaJ+Bpy6uejcNpaq4ub9HrYh04Jyax+p5Q
+   Wdv59MLxUYkClG8iOkk9eVcfDcjloK9sYWfncQp6pPv91tEnCMGLE9qxd
+   zZZYjwIqqLL2Vzp09/vRufLEDSevyMFNMJe0aEuS72J9Y7Wow7lg/Yaa+
+   g==;
+X-CSE-ConnectionGUID: A2dW07wwThaXianv5CcYSQ==
+X-CSE-MsgGUID: muacGA7qRMy5rYzEiq05xQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11449"; a="54509278"
+X-IronPort-AV: E=Sophos;i="6.16,196,1744095600"; 
+   d="scan'208";a="54509278"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2025 07:48:58 -0700
+X-CSE-ConnectionGUID: RweaZ+RPTZyoPhIBT7/gSQ==
+X-CSE-MsgGUID: MGS2NSGXT+Kp5/4KP+axSw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,196,1744095600"; 
+   d="scan'208";a="144872548"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.183])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2025 07:48:51 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Fri, 30 May 2025 17:48:32 +0300 (EEST)
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
+cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, 
+    =?ISO-8859-2?Q?Micha=B3_Winiarski?= <michal.winiarski@intel.com>, 
+    Igor Mammedov <imammedo@redhat.com>, LKML <linux-kernel@vger.kernel.org>, 
+    Mika Westerberg <mika.westerberg@linux.intel.com>, 
+    William McVicker <willmcvicker@google.com>
+Subject: Re: [PATCH 24/25] PCI: Perform reset_resource() and build fail list
+ in sync
+In-Reply-To: <f6ee05f7-174b-76d4-3dbe-12473f676e4d@linux.intel.com>
+Message-ID: <867e47dc-9454-c00f-6d80-9718e5705480@linux.intel.com>
+References: <20241216175632.4175-1-ilpo.jarvinen@linux.intel.com> <20241216175632.4175-25-ilpo.jarvinen@linux.intel.com> <5f103643-5e1c-43c6-b8fe-9617d3b5447c@linaro.org> <8f281667-b4ef-9385-868f-93893b9d6611@linux.intel.com> <3a47fc82-dc21-46c3-873d-68e713304af3@linaro.org>
+ <f6ee05f7-174b-76d4-3dbe-12473f676e4d@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|PH3PPFF6F8BBAB5:EE_
-X-MS-Office365-Filtering-Correlation-Id: 962566d2-3a42-40f2-d5b3-08dd9f88dee9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?DLGTfu3HT49n8mwVJV7dXPEjZ/IyVham/0OVA6vEuRGB0MFotU3JPOq1iKvH?=
- =?us-ascii?Q?ajZe43IsbzR69lpM8l25ZnRhN9GG8bb1DemrE7T1Rh7NSuvZEkdqXPWg0i6n?=
- =?us-ascii?Q?eHaRCz/J2B7MVHkONaSKaNA3y6OtMqvgLg/pt3qpPZtAOcPhrXtuIuliU2M5?=
- =?us-ascii?Q?XLlbAqycUthl9DNmik+zDuee/FwYeVB2tr4TE+5dsuhj61kjdEJtBD6sip0E?=
- =?us-ascii?Q?5w3YkOgZweqT7GAruGFzl+IudSQcb9P9THsSoZSH0wcAuJF+2DwxygiE54zK?=
- =?us-ascii?Q?zqSOJEoRvkgRUBIYjqAWeMmRnNj9GxNiV1N0k8PZYnCEDk+58wrsmjVwfsYW?=
- =?us-ascii?Q?VVcRP2CCZocpBC1RI/fGKlR6Iym4TMuYEYIpL7tNpZyx8TPiJhMupZ9TWeVl?=
- =?us-ascii?Q?jWVnVipKz618fNRmWNPbkKrHF+B8VnWvv59XfWj5b+IuIknee+KKza33BdXD?=
- =?us-ascii?Q?Hw74+ythuhdwtNsdz31iRwwKraZixhYVA+c8/uMUStQn7WndLZFMsiwxtAEx?=
- =?us-ascii?Q?EeMUGutBKpV2CIycCMO/RzHlfLSDaNS/prcKsQTcj1wpX3eizlCauaEgXbbU?=
- =?us-ascii?Q?1veCRrC1/Nwp0KigkyghczrmegfRA9AtyFSYI6seUMYgjiuKeoVyu5Zk/F9U?=
- =?us-ascii?Q?WkEXftAsS45IHnREyuJkZTbtsNBAFkWCMNP2GbQSdQYnct3ogp99RD62qNdR?=
- =?us-ascii?Q?1U0HuuUb5Sju6AYAlBcK8n+WahU6mtf5z84UXz7zdFWS3tupu5WwlauL166D?=
- =?us-ascii?Q?NKqDW9F1wcj2iILgdzRf578EVAmKKc6K3i7f/Y+0B6CIcTlZVEMXvGYhFzT+?=
- =?us-ascii?Q?7ZzNuvR2DToYUaWA5LpKm20cF5QxwGJsFrdUXKLIcs8YUf6xpiizjLjzJ6hY?=
- =?us-ascii?Q?nN4e7tlhz4ctbtNZCqqSXji9XDgE8MDMgK3WVfrghyNu7NOGc17c3eU6tYaI?=
- =?us-ascii?Q?A4MphqPhS1AV4loJCOijot3VcgNybgOoBi7Uh0Uyh8322TIZlsCZ2+EeOXLw?=
- =?us-ascii?Q?9YTsBmUNcI+Cq7iXW9mWoujdDX4HjkZiFu94VRBlMvJyCM3kzSI96Uu5thJL?=
- =?us-ascii?Q?oS5owQF8rP5uF64Qg3YrnvRdh8JqUodZ+Zax7/+6ZFZNtYADNI42r6nvbTRG?=
- =?us-ascii?Q?+x2pH7REKC0KhALVt+lM9TWhaqNM5Tk5f1Kho1nAxN1XznqUEPX7T1Wr9uvE?=
- =?us-ascii?Q?rs3uJqhLUdJTgAMK7mm0bawFZodBQ9c6PzR5X1skVyBIGZ6E0V/WIcFNF+1u?=
- =?us-ascii?Q?1Hxiqw7Bsnp8HvyHhud27UlFrMpROfQbIAVb8bKB1oVYDurFIiTPNth4dBWV?=
- =?us-ascii?Q?YAtX0vQ6h8wnNygG7uaznC2vtSxFTmeHUEq7uK3WYUpIbSWtSqHZ9DrCPjAr?=
- =?us-ascii?Q?TzVWELnhmb0EZIaKqV13SP+x8DrjMMvMLvTVGA5p0M71qMBSUQdLBAjcbGSS?=
- =?us-ascii?Q?+BdQ//Jl8f8=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Q+JC66hvzFm6Uk2dih2OEVT1uhV8iZlD0VieGfm0aT0rBIgio3g0k0BxZbHE?=
- =?us-ascii?Q?xukbdz/ZM5NwjG0/vXHsHfQuWU7LYOEigPAHbaKXoC48vstfFG9ZLn8KNnMG?=
- =?us-ascii?Q?xyGByIQeTc0+BzCVDAhi8P9kdLF/n7nfIygd6r6BM+bdTPVHViJvuHEsJ60V?=
- =?us-ascii?Q?zN5XLtfWTk1RsARjtt6rAYMDMXD46tWQW86nl/aQIqJUunsEGeJBG4MAmlfB?=
- =?us-ascii?Q?wMwUOEXnbqeUFZIPG0lw70EDmmRVi7GI4aC9fKu62FfphgYnIxUg9T2XHlRZ?=
- =?us-ascii?Q?GPUTJ31Z9yFc7hXaW29qJYvRckuMbvCoJrHShNIBhjMmvgiJVaw3kwxFzxuB?=
- =?us-ascii?Q?NTjmNdYM7xUdIwTmuT2fz3FSUZiWYHw8mymiRPx5Xc9pfXciy8r5a3yi3JS4?=
- =?us-ascii?Q?fq+rskupKWvcjrQSkF5bqgK69uQNtxODiQ1szZ6BKUKYCOvU07PTmvChhuE/?=
- =?us-ascii?Q?fF5wbzZpWsbl0DM8iZBrAJUiEl7t3X6vDFbpaQb52lODAEcVOdnltwVAnjlU?=
- =?us-ascii?Q?SImXimXsMk2i2sEjYAkJGrCLoJspK0lc5lle3v7de/KrUfFNuY7gEPnqfqON?=
- =?us-ascii?Q?7wBDnUs0blbtakT1fv2iQgrVlbfCXOjKvHWY8F65A99T3hzID9eYErOpyTyt?=
- =?us-ascii?Q?TTrbT87qIqX8wjOT4Mz1BQ/DwdOMjw9RYUtJjgTqjd9yGnM7ZCCRy+C+YPMV?=
- =?us-ascii?Q?evliq17uxIz2SyyFLjaiSAsuI3+tR4TevOsXF51sEcUNxOwQ6oPy9jYS7ssG?=
- =?us-ascii?Q?mQoCuQR1jU16NM++SZVuud9rnbA5CqiXTia0x/NLuecGDeayZC9GCL33u9mK?=
- =?us-ascii?Q?YtDgnSE8bbTTr0NjNB1bEwnXzvGlVDaivspE4WbNj7NY/tzuJ/jX2lDPeIt6?=
- =?us-ascii?Q?KZSHk+d7JS7QorIHnD87n47Bq+AZtTNgCBM8m3d40rX1nUevjJeIE2AX7HtS?=
- =?us-ascii?Q?vpKt1SvMB/u6ASHfDkZhVIi/OHNry6tDeY37YhqNDd1xxP48VNRy9zqAYOg1?=
- =?us-ascii?Q?ycD0etQFkwrCsiPUZFSCUkpf31dy9gvOGX1hz2jrEZKdMWFqbLuzLh+FXGol?=
- =?us-ascii?Q?oshoXrEqlc63TdnTyXIlYmiBjDyPD+Q2LeUmu/UFpwIUnDcHd6kFRTo9hlaH?=
- =?us-ascii?Q?QFeiKcA132B3PP7EP1ln2N9d3Zq/WNJufaBye+qtAscvnbst2PjFRnjauCEt?=
- =?us-ascii?Q?rLDz6PK1dCNxE8L88gehXHvSPMKOqFopuFmKFN2m3W1vzpyDKpH/cnzaORn7?=
- =?us-ascii?Q?s591aKz30VtfoZHss1mMw4m6trFHlVMCQI+Dn4K+/Dx3U7qBdNlJir0qkmg5?=
- =?us-ascii?Q?UfJcva5UBsf1ZUo30U8nlWwwUytMFTKwpqeY02IHwKkhgbQxlKxcug75dxP8?=
- =?us-ascii?Q?ClLDbrz74go12AUMybxcZfKo/knfk4l3rgPFP+LFPUiQqudQI9MmEFkSrPXC?=
- =?us-ascii?Q?UZSaKUhwgFrnCkVVB0sRK8LaFZ7eG8NA06JLyPF5bCBiOktlkAlZ/hFbp7SI?=
- =?us-ascii?Q?OqNIwjGyZ6UZYB51WnXonRPHu4pZJeGJK4AFqZ6g52JK3HCxzdcI53il0BAx?=
- =?us-ascii?Q?u6EvvDZDdCl7LhFtvR63yXE/n/jtsmIe++gFb7LptEPVKArvBfDnxirk3Rus?=
- =?us-ascii?Q?3w=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	ObqvUQbqL1TwvmcNRbHTslwpFkt0+TOvMUVI/s4ygbk3inFVNK5jHdS01pPTZlOVhptIcmoPaqg5cKX2rXPPzpgYd0VOW8TVBr8SC7Z2aFHqJIl9vX2hHPTAkIJQA/QYt1qcvcZ8iIG8gVfdAdC9jJwnz77en/92YVe/cD+DpE6ngi2Dw+zJKL4M0syip7PCQVoJocT15zpK9C0iDWJxxMk4Dpu2tFt0tvgYCA6UTAzbj3V0y0Xa2Z9eXywlj9wbhRJo8xhhWxKRjVixhuK3IqFSG8F5md1BWGAXcJdg43Qx5g+NDoVMn2oADL8nnMHeBqZteOzpuo7K38LokuOFxouar+x16P+IWQjK9emrZfBwXe0q/SgJiO0ClC9HAsERIU05j86rm291gS2QeehgUvDe35tkl2g8LLz4vtTbglVHupW0t5DB7d3dzKadmdu1+Gmn15unfc9veMAnaJ+2vKOpFONIAdFZ+fLg8m3EOsdaJQbZQzxnhC0k4JiF2j2/HM4hpQg99xPWZfABMTa+S35Lis21TXm1OXtWc7gdZKlzTFeWY3uEL9GU3X3i+clvOOwKZVndjWbm1oFZqLOz0RJZFMfMGWcQhFN7mVkV7Tk=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 962566d2-3a42-40f2-d5b3-08dd9f88dee9
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 May 2025 14:47:16.2589
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: paCbijAvqhoCcsUE4bx/XLCm21TtFmbcXyty7It48qaRkI8x9OkRvKDnxf4ULgv7XgPmx4YkQhn+tmxFQLGaTyfM7ZkMa5OllQcli09Dv7o=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH3PPFF6F8BBAB5
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-30_05,2025-05-30_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 adultscore=0 spamscore=0
- suspectscore=0 bulkscore=0 phishscore=0 mlxlogscore=999 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
- definitions=main-2505300129
-X-Proofpoint-GUID: CAC20cpsWRupwdAhkQC36DRJpwiI6bc-
-X-Proofpoint-ORIG-GUID: CAC20cpsWRupwdAhkQC36DRJpwiI6bc-
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTMwMDEyOSBTYWx0ZWRfX5bt/W3HQfBxj jR99AVdDh774mt+1De3uIlimIO6UUEtJSo7mQgI4LFDbcCUea8Xsi1dXbt/kNFcKmCwS804oUSA lcCCwpUa7HFoWPVNxbrsdT3GDPqvYZGr6WodjqgmuO6Ez/lDTS1fNI85/tC1ZW0emmJk8omNnXy
- Uv+5zu0uSeJ29JBlhNWy3QbZLKOugalA1J+d0XUdn8ZYGOKwtkBjCfTTEPAlnmppa2ggBLH+a8C cA6SSen2wDNN7LM9hk/xLfnfisGwiXEKf6WGzXH8sBD3XDbusxHYGLspQT7N0RyKouv+8wUlRVQ NhuEwz3qZkWRXDywc/oH/RlEv3KshBga4zmoDM8M7XwDKb37BVhil3n59gaZrp3i1IHRWnk1QG/
- Q2Jv633wTy+yDVt1H5jQzkmDtMl21iExwyImNY/1MzaNlVr2aE/EM/1wJKcvU78aS6Hz7MkG
-X-Authority-Analysis: v=2.4 cv=c8qrQQ9l c=1 sm=1 tr=0 ts=6839c4f7 b=1 cx=c_pps a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=dt9VzEwgFbYA:10 a=GoEa3M9JfhUA:10 a=VwQbUJbxAAAA:8 a=7CQSdrXTAAAA:8 a=KazR_yWdSLylfOF19RIA:9 a=CjuIK1q_8ugA:10 a=a-qgeE7W1pNrGK8U0ZQC:22 cc=ntf awl=host:13206
+Content-Type: multipart/mixed; boundary="8323328-152047510-1748616512=:1000"
 
-+cc Jann who is a specialist in all things page table-y and especially scary
-edge cases :)
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-On Fri, May 30, 2025 at 03:04:38PM +0100, Ryan Roberts wrote:
-> Hi All,
->
-> I recently added support for lazy mmu mode on arm64. The series is now in
-> Linus's tree so should be in v6.16-rc1. But during testing in linux-next we
-> found some ugly corners (unexpected nesting). I was able to fix those issues by
-> making the arm64 implementation more permissive (like the other arches). But
-> this is quite fragile IMHO. So I'd rather fix the root cause and ensure that
-> lazy mmu mode never nests, and more importantly, that code never makes pgtable
-> modifications expecting them to be immediate, not knowing that it's actually in
-> lazy mmu mode so the changes get deferred.
+--8323328-152047510-1748616512=:1000
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-When you say fragile, are you confident it _works_ but perhaps not quite as well
-as you want? Or are you concerned this might be broken upstream in any way?
+On Fri, 30 May 2025, Ilpo J=E4rvinen wrote:
 
-I am thinking specifically about the proposed use in Dev's new series [0] and
-obviously hoping (and assuming in fact) that it's the former :)
+> On Wed, 28 May 2025, Tudor Ambarus wrote:
+> > On 5/6/25 4:53 PM, Ilpo J=E4rvinen wrote:
+> > > On Tue, 6 May 2025, Tudor Ambarus wrote:
+> > >> On 12/16/24 5:56 PM, Ilpo J=E4rvinen wrote:
+> > >>> Resetting resource is problematic as it prevent attempting to alloc=
+ate
+> > >>> the resource later, unless something in between restores the resour=
+ce.
+> > >>> Similarly, if fail_head does not contain all resources that were re=
+set,
+> > >>> those resource cannot be restored later.
+> > >>>
+> > >>> The entire reset/restore cycle adds complexity and leaving resource=
+s
+> > >>> into reseted state causes issues to other code such as for checks d=
+one
+> > >>> in pci_enable_resources(). Take a small step towards not resetting
+> > >>> resources by delaying reset until the end of resource assignment an=
+d
+> > >>> build failure list (fail_head) in sync with the reset to avoid leav=
+ing
+> > >>> behind resources that cannot be restored (for the case where the ca=
+ller
+> > >>> provides fail_head in the first place to allow restore somewhere in=
+ the
+> > >>> callchain, as is not all callers pass non-NULL fail_head).
+> > >>>
+> > >>> The Expansion ROM check is temporarily left in place while building=
+ the
+> > >>> failure list until the upcoming change which reworks optional resou=
+rce
+> > >>> handling.
+> > >>>
+> > >>> Ideally, whole resource reset could be removed but doing that in a =
+big
+> > >>> step would make the impact non-tractable due to complexity of all
+> > >>> related code.
+> > >>>
+> > >>> Signed-off-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+> > >>
+> > >> I'm hitting the BUG_ON(!list_empty(&add_list)); in
+> > >> pci_assign_unassigned_bus_resources() [1] with 6.15-rc5 and the the
+> > >> pixel6 downstream pcie driver.
+> > >>
+> > >> I saw the thread where "a34d74877c66 PCI: Restore assigned resources
+> > >> fully after release" fixes things for some other cases, but it's not=
+ the
+> > >> case here.
+> > >>
+> > >> Reverting the following patches fixes the problem:
+> > >> a34d74877c66 PCI: Restore assigned resources fully after release
+> > >> 2499f5348431 PCI: Rework optional resource handling
+> > >> 96336ec70264 PCI: Perform reset_resource() and build fail list in sy=
+nc
+> > >=20
+> > > So it's confirmed that you needed to revert also this last commit=20
+> > > 96336ec70264, not just the rework change?
+> >=20
+> > I needed to revert 96336ec70264 as well otherwise the build fails.
+>=20
+> Hi again,
+>=20
+> That's news to me... I seem to have botched the resource assignment rewor=
+k=20
+> series at some point when I reordered patches and dropped that helper as =
+a=20
+> result. And it seems the intermediate build fail wasn't caught by LKP :-(=
+=2E=20
+> (Pretty annoying as I intentionally separated these two to make them=20
+> bisectable but not it isn't without amends.)
+>=20
+> The missing helper is basically this:
+>=20
+> static bool pci_resource_is_disabled_rom(const struct pci_dev *dev, int r=
+esno)
+> {
+> =09const struct resource *res =3D pci_resource_n(dev, resno);
+>=20
+> =09return resno =3D=3D PCI_ROM_RESOURCE && !(res->flags & IORESOURCE_ROM_=
+ENABLE)
+> }
+>=20
+> (I didn't build test that.)
+>=20
+> Because of this, the actual culprit could be in 2499f5348431, not it=20
+> 96336ec70264 (which would make more sense as it does significant rework=
+=20
+> on the assignment algorithm).
+>=20
+> > >> In the working case the add_list list is empty throughout the entire
+> > >> body of pci_assign_unassigned_bus_resources().
+> > >>
+> > >> In the failing case __pci_bus_size_bridges() leaves the add_list not
+> > >> empty and __pci_bus_assign_resources() does not consume the list, th=
+us
+> > >> the BUG_ON. The failing case contains an extra print that's not show=
+n
+> > >> when reverting the blamed commits:
+> > >> [   13.951185][ T1101] pcieport 0000:00:00.0: bridge window [mem
+> > >> 0x00100000-0x001fffff] to [bus 01-ff] add_size 100000 add_align 1000=
+00
+> > >>
+> > >> I've added some prints trying to describe the code path, see
+> > >> https://paste.ofcode.org/Aeu2YBpLztc49ZDw3uUJmd#
+> > >>
+> > >> Failing case:
+> > >> [   13.944231][ T1101] pci 0000:01:00.0: [144d:a5a5] type 00 class
+> > >> 0x000000 PCIe Endpoint
+> > >> [   13.944412][ T1101] pci 0000:01:00.0: BAR 0 [mem
+> > >> 0x00000000-0x000fffff 64bit]
+> > >> [   13.944532][ T1101] pci 0000:01:00.0: ROM [mem 0x00000000-0x0000f=
+fff
+> > >> pref]
+> > >> [   13.944649][ T1101] pci 0000:01:00.0: enabling Extended Tags
+> > >> [   13.944844][ T1101] pci 0000:01:00.0: PME# supported from D0 D3ho=
+t D3cold
+> > >> [   13.945015][ T1101] pci 0000:01:00.0: 15.752 Gb/s available PCIe
+> > >> bandwidth, limited by 8.0 GT/s PCIe x2 link at 0000:00:00.0 (capable=
+ of
+> > >> 31.506 Gb/s with 16.0 GT/s PCIe x2 link)
+> > >> [   13.950616][ T1101] __pci_bus_size_bridges: before pbus_size_mem.
+> > >> list empty? 1
+> > >> [   13.950784][ T1101] pbus_size_mem: 2. list empty? 1
+> > >> [   13.950886][ T1101] pbus_size_mem: 1 list empty? 0
+> > >> [   13.950982][ T1101] pbus_size_mem: 3. list empty? 0
+> > >> [   13.951082][ T1101] pbus_size_mem: 4. list empty? 0
+> > >> [   13.951185][ T1101] pcieport 0000:00:00.0: bridge window [mem
+> > >> 0x00100000-0x001fffff] to [bus 01-ff] add_size 100000 add_align 1000=
+00
+> > >> [   13.951448][ T1101] __pci_bus_size_bridges: after pbus_size_mem. =
+list
+> > >> empty? 0
+> > >> [   13.951643][ T1101] pci_assign_unassigned_bus_resources: before
+> > >> __pci_bus_assign_resources -> list empty? 0
+> > >> [   13.951924][ T1101] pcieport 0000:00:00.0: bridge window [mem
+> > >> 0x40000000-0x401fffff]: assigned
+> > >> [   13.952248][ T1101] pci_assign_unassigned_bus_resources: after
+> > >> __pci_bus_assign_resources -> list empty? 0
+> > >> [   13.952634][ T1101] ------------[ cut here ]------------
+> > >> [   13.952818][ T1101] kernel BUG at drivers/pci/setup-bus.c:2514!
+> > >> [   13.953045][ T1101] Internal error: Oops - BUG: 00000000f2000800 =
+[#1]
+> > >>  SMP
+> > >> ...
+> > >> [   13.976086][ T1101] Call trace:
+> > >> [   13.976206][ T1101]  pci_assign_unassigned_bus_resources+0x110/0x=
+114 (P)
+> > >> [   13.976462][ T1101]  pci_rescan_bus+0x28/0x48
+> > >> [   13.976628][ T1101]  exynos_pcie_rc_poweron
+> > >>
+> > >> Working case:
+> > >> [   13.786961][ T1120] pci 0000:01:00.0: [144d:a5a5] type 00 class
+> > >> 0x000000 PCIe Endpoint
+> > >> [   13.787136][ T1120] pci 0000:01:00.0: BAR 0 [mem
+> > >> 0x00000000-0x000fffff 64bit]
+> > >> [   13.787280][ T1120] pci 0000:01:00.0: ROM [mem 0x00000000-0x0000f=
+fff
+> > >> pref]
+> > >> [   13.787541][ T1120] pci 0000:01:00.0: enabling Extended Tags
+> > >> [   13.787808][ T1120] pci 0000:01:00.0: PME# supported from D0 D3ho=
+t D3cold
+> > >> [   13.787988][ T1120] pci 0000:01:00.0: 15.752 Gb/s available PCIe
+> > >> bandwidth, limited by 8.0 GT/s PCIe x2 link at 0000:00:00.0 (capable=
+ of
+> > >> 31.506 Gb/s with 16.0 GT/s PCIe x2 link)
+> > >> [   13.795279][ T1120] __pci_bus_size_bridges: before pbus_size_mem.
+> > >> list empty? 1
+> > >> [   13.795408][ T1120] pbus_size_mem: 2. list empty? 1
+> > >> [   13.795495][ T1120] pbus_size_mem: 2. list empty? 1
+> > >> [   13.795577][ T1120] __pci_bus_size_bridges: after pbus_size_mem. =
+list
+> > >> empty? 1
+> > >> [   13.795692][ T1120] pci_assign_unassigned_bus_resources: before
+> > >> __pci_bus_assign_resources -> list empty? 1
+> > >> [   13.795849][ T1120] pcieport 0000:00:00.0: bridge window [mem
+> > >> 0x40000000-0x401fffff]: assigned
+> > >> [   13.796072][ T1120] pci_assign_unassigned_bus_resources: after
+> > >> __pci_bus_assign_resources -> list empty? 1
+> > >> [   13.796662][ T1120] cpif: s5100_poweron_pcie: DBG: MSI sfr not se=
+t
+> > >> up, yet(s5100_pdev is NULL)
+> > >> [   13.796666][ T1120] cpif: register_pcie: s51xx_pcie_init start
+> > >>
+> > >>
+> > >> Any hints are welcomed. Thanks,
+> > >> ta
+> > >=20
+> > > Hi and thanks for the report.
+> >=20
+> > Hi! Thanks for the help. I've been out of office for the last 2 weeks,
+> > sorry for the delayed reply.
+>=20
+> Np.
+>=20
+> > > The interesting part occurs inside reassign_resources_sorted() where =
+most=20
+> > > items are eliminated from realloc_head by the list_del().
+> > >=20
+> > > My guess is that somehow, the change in 96336ec70264 from !res->flags
+> > > to the more complicated check somehow causes this. If the new check=
+=20
+> > > doesn't match and subsequently, no match is found from the head list,=
+ the=20
+> > > loop will do continue and not remove the entry from realloc_head.
+> >=20
+> > I added a print right there and it seems it's something else. See below=
+=2E
+> > >=20
+> > > But it's hard to confirm without knowing what that resources realloc_=
+head=20
+> > > contains. Perhaps if you print the resources that are processed aroun=
+d=20
+> > > that part of the code in reassign_resources_sorted(), comparing the l=
+og=20
+> > > from the reverted code with the non-working case might help to unders=
+tand=20
+> > > what is different there and why. To understand better what is in the =
+head=20
+> > > list, it would be also useful to know from which device the resources=
+ were=20
+> > > added into the head list in pdev_sort_resources().
+> > >=20
+> >=20
+> > I added the suggested prints
+> > (https://paste.ofcode.org/DgmZGGgS6D36nWEzmfCqMm) on top of v6.15 with
+> > the downstream PCIe pixel driver and I obtain the following. Note that
+> > all added prints contain "tudor" for differentiation.
+> >=20
+> > [   15.211179][ T1107] pci 0001:01:00.0: [144d:a5a5] type 00 class
+> > 0x000000 PCIe Endpoint
+> > [   15.212248][ T1107] pci 0001:01:00.0: BAR 0 [mem
+> > 0x00000000-0x000fffff 64bit]
+> > [   15.212775][ T1107] pci 0001:01:00.0: ROM [mem 0x00000000-0x0000ffff
+> > pref]
+> > [   15.213195][ T1107] pci 0001:01:00.0: enabling Extended Tags
+> > [   15.213720][ T1107] pci 0001:01:00.0: PME# supported from D0 D3hot
+> > D3cold
+> > [   15.214035][ T1107] pci 0001:01:00.0: 15.752 Gb/s available PCIe
+> > bandwidth, limited by 8.0 GT/s PCIe x2 link at 0001:00:00.0 (capable of
+> > 31.506 Gb/s with 16.0 GT/s PCIe x2 link)
+> > [   15.222286][ T1107] pci 0001:01:00.0: tudor: 1: pbus_size_mem: BAR 0
+> > [mem 0x00000000-0x000fffff 64bit] list empty? 1
+> > [   15.222813][ T1107] pci 0001:01:00.0: tudor: 1: pbus_size_mem: ROM
+> > [mem 0x00000000-0x0000ffff pref] list empty? 1
+> > [   15.224429][ T1107] pci 0001:01:00.0: tudor: 2: pbus_size_mem: ROM
+> > [mem 0x00000000-0x0000ffff pref] list empty? 0
+> > [   15.224750][ T1107] pcieport 0001:00:00.0: bridge window [mem
+> > 0x00100000-0x001fffff] to [bus 01-ff] add_size 100000 add_align 100000
+> >=20
+> > [   15.225393][ T1107] tudor : pci_assign_unassigned_bus_resources:
+> > before __pci_bus_assign_resources -> list empty? 0
+> > [   15.225594][ T1107] pcieport 0001:00:00.0: tudor:
+> > pdev_sort_resources: bridge window [mem 0x00100000-0x001fffff] resource
+> > added in head list
+> > [   15.226078][ T1107] pcieport 0001:00:00.0: bridge window [mem
+> > 0x40000000-0x401fffff]: assigned
+>=20
+> So here it ends up assigning the resource here I think.
+>=20
+>=20
+> That print isn't one of yours in reassign_resources_sorted() so the=20
+> assignment must have been made in assign_requested_resources_sorted(). Bu=
+t=20
+> then nothing is printed out from reassign_resources_sorted() so I suspect=
+=20
+> __assign_resources_sorted() has short-circuited.
+>=20
+> We know that realloc_head is not empty, so that leaves the goto out from=
+=20
+> if (list_empty(&local_fail_head)), which kind of makes sense, all=20
+> entries on the head list were assigned. But the code there tries to remov=
+e=20
+> all head list resources from realloc_head so why it doesn't get removed i=
+s=20
+> still a mystery. assign_requested_resources_sorted() doesn't seem to=20
+> remove anything from the head list so that resource should still be on th=
+e=20
+> head list AFAICT so it should call that remove_from_list(realloc_head,=20
+> dev_res->res) for it.
+>=20
+> So can you see if that theory holds water and it short-circuits without=
+=20
+> removing the entry from realloc_head?
 
-[0]: https://lore.kernel.org/linux-mm/20250530090407.19237-1-dev.jain@arm.com/
+I think I figured out more about the reason. It's not related to that=20
+bridge window resource.
 
->
-> The first 2 patches are unrelated, very obvious bug fixes. They don't affect
-> arm64 because arm64 only uses lazy mmu for kernel mappings. But I noticed them
-> during code review and think they should be fixed.
->
-> The next 3 patches are aimed at solving the nesting issue.
->
-> And the final patch is reverting the "permissive" fix I did for arm64, which is
-> no longer needed after the previous 3 patches.
->
-> I've labelled this RFC for now because it depends on the arm64 lazy mmu patches
-> in Linus's master, so it won't apply to mm-unstable. But I'm keen to get review
-> and siince I'm touching various arches and modifying some core mm stuff, I
-> thought that might take a while so thought I'd beat the rush and get a first
-> version out early.
->
-> I've build-tested all the affected arches. And I've run mm selftests for the
-> arm64 build, with no issues (with DEBUG_PAGEALLOC and KFENCE enabled).
->
-> Applies against Linus's master branch (f66bc387efbe).
->
-> Thanks,
-> Ryan
->
->
-> Ryan Roberts (6):
->   fs/proc/task_mmu: Fix pte update and tlb maintenance ordering in
->     pagemap_scan_pmd_entry()
->   mm: Fix pte update and tlb maintenance ordering in
->     migrate_vma_collect_pmd()
->   mm: Avoid calling page allocator from apply_to_page_range()
->   mm: Introduce arch_in_lazy_mmu_mode()
->   mm: Avoid calling page allocator while in lazy mmu mode
->   Revert "arm64/mm: Permit lazy_mmu_mode to be nested"
->
->  arch/arm64/include/asm/pgtable.h              | 22 ++++----
->  .../include/asm/book3s/64/tlbflush-hash.h     | 15 ++++++
->  arch/sparc/include/asm/tlbflush_64.h          |  1 +
->  arch/sparc/mm/tlb.c                           | 12 +++++
->  arch/x86/include/asm/paravirt.h               |  5 ++
->  arch/x86/include/asm/paravirt_types.h         |  1 +
->  arch/x86/kernel/paravirt.c                    |  6 +++
->  arch/x86/xen/mmu_pv.c                         |  6 +++
->  fs/proc/task_mmu.c                            |  3 +-
->  include/asm-generic/tlb.h                     |  2 +
->  include/linux/mm.h                            |  6 +++
->  include/linux/pgtable.h                       |  1 +
->  kernel/bpf/arena.c                            |  6 +--
->  mm/kasan/shadow.c                             |  2 +-
->  mm/memory.c                                   | 54 ++++++++++++++-----
->  mm/migrate_device.c                           |  3 +-
->  mm/mmu_gather.c                               | 15 ++++++
->  17 files changed, 128 insertions(+), 32 deletions(-)
->
-> --
-> 2.43.0
->
+pbus_size_mem() will add also that ROM resource into realloc_head=20
+as it is considered (intentionally) optional after the optional change
+(as per "tudor: 2:" line). And that resource is never assigned because=20
+pdev_sort_resources() didn't pick it up into the head list. The next=20
+question is why the ROM resource isn't in the head list.
+
+
+While it is not necessarily related to issue, I think the bridge sizing=20
+functions too should consider pdev_resources_assignable() so that it
+won't ever add resources from such devices onto the realloc_head. This is=
+=20
+yet another small inconsistency within all this fitting/assignment logic.
+
+pbus_size_mem() seems to consider IORESOURCE_PCI_FIXED so that cannot=20
+explain it as the ROM resource wouldn't be on the realloc_head list in=20
+that case.
+
+
+Just wanted to let you know early even if I don't fully understand=20
+everything so you can hopefully avoid unnecessary debugging.
+
+> > [   15.226419][ T1107] tudor : pci_assign_unassigned_bus_resources:
+> > after __pci_bus_assign_resources -> list empty? 0
+> > [   15.226442][ T1107] ------------[ cut here ]------------
+> > [   15.227587][ T1107] kernel BUG at drivers/pci/setup-bus.c:2522!
+> > [   15.227813][ T1107] Internal error: Oops - BUG: 00000000f2000800 [#1=
+]
+> >  SMP
+> > ...
+> > [   15.251570][ T1107] Call trace:
+> > [   15.251690][ T1107]  pci_assign_unassigned_bus_resources+0x110/0x114=
+ (P)
+> > [   15.251945][ T1107]  pci_rescan_bus+0x28/0x48
+> >=20
+> > I obtain the following output when using the same prints adapted
+> > (https://paste.ofcode.org/37w7RnKkPaCxyNhi5yhZPbZ) and with the blamed
+> > commits reverted:
+> > a34d74877c66 PCI: Restore assigned resources fully after release
+> > 2499f5348431 PCI: Rework optional resource handling
+> > 96336ec70264 PCI: Perform reset_resource() and build fail list in sync
+> >=20
+> > [   15.200456][ T1102] pci 0000:01:00.0: [144d:a5a5] type 00 class
+> > 0x000000 PCIe Endpoint
+> > [   15.200632][ T1102] pci 0000:01:00.0: BAR 0 [mem
+> > 0x00000000-0x000fffff 64bit]
+> > [   15.200755][ T1102] pci 0000:01:00.0: ROM [mem 0x00000000-0x0000ffff
+> > pref]
+> > [   15.200876][ T1102] pci 0000:01:00.0: enabling Extended Tags
+> > [   15.201075][ T1102] pci 0000:01:00.0: PME# supported from D0 D3hot D=
+3cold
+> > [   15.201254][ T1102] pci 0000:01:00.0: 15.752 Gb/s available PCIe
+> > bandwidth, limited by 8.0 GT/s PCIe x2 link at 0000:00:00.0 (capable of
+> > 31.506 Gb/s with 16.0 GT/s PCIe x2 link)
+> > [   15.206555][ T1102] pci 0000:01:00.0: tudor: 1: pbus_size_mem: BAR 0
+> > [mem 0x00000000-0x000fffff 64bit] list empty? 1
+> > [   15.206737][ T1102] pci 0000:01:00.0: tudor: 1: pbus_size_mem: ROM
+> > [mem 0x00000000-0x0000ffff pref] list empty? 1
+> > [   15.206901][ T1102] tudor : pci_assign_unassigned_bus_resources:
+> > before __pci_bus_assign_resources -> list empty? 1
+> > [   15.207072][ T1102] pcieport 0000:00:00.0: tudor:
+> > pdev_sort_resources: bridge window [mem 0x00100000-0x002fffff] resource
+> > added in head list
+> > [   15.207396][ T1102] pcieport 0000:00:00.0: bridge window [mem
+> > 0x40000000-0x401fffff]: assigned
+> > [   15.208165][ T1102] tudor : pci_assign_unassigned_bus_resources:
+> > after __pci_bus_assign_resources -> list empty? 1
+> > [   15.208783][ T1102] cpif: s5100_poweron_pcie: DBG: MSI sfr not set
+> > up, yet(s5100_pdev is NULL)
+> > [   15.208786][ T1102] cpif: register_pcie: s51xx_pcie_init start
+> >=20
+> > > In any case, that BUG_ON() seems a bit drastic action for what might =
+be=20
+> > > just a single resource allocation failure so it should be downgraded =
+to:
+> > >=20
+> > > if (WARN_ON(!list_empty(&add_list))
+> > > =09free_list(&add_list);
+> > > =09
+> > > ... or WARN_ON_ONCE().
+> >=20
+> > I saw your patch doing this, the phone now boots, but obviously I still
+> > see the WARN, so maybe there's still something to be fixed.
+>=20
+> Yes, I don't expect BUG_ON() -> WARN "fix" anything, it just downgrades=
+=20
+> the severity so that the system can still try to boot, which can often=20
+> succeed as this tends to be non-critical failure in many cases so it's=20
+> useful change to have regardless despite the splat.
+>=20
+> Now that it boots, can you please check if /proc/iomem is the same both i=
+n=20
+> the non-working and working config. If that resource got assigned=20
+> successfully, it might well be there is no actual differences in the=20
+> assigned resources (which again doesn't mean there wouldn't be a bug in=
+=20
+> the logic as discussed above).
+>=20
+>=20
+>=20
+
+--=20
+ i.
+
+--8323328-152047510-1748616512=:1000--
 
