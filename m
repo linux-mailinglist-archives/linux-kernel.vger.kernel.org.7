@@ -1,449 +1,281 @@
-Return-Path: <linux-kernel+bounces-668238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-668240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B53EDAC8F99
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 15:16:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B509DAC8FD0
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 15:21:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 867637AEADF
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 13:15:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58B11179420
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 13:21:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD16B383A5;
-	Fri, 30 May 2025 13:16:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3694519F10A;
+	Fri, 30 May 2025 13:21:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NL32GYhq"
-Received: from mail-ed1-f73.google.com (mail-ed1-f73.google.com [209.85.208.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="eBT+XqcO"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A838376F1
-	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 13:16:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 749A3376F1;
+	Fri, 30 May 2025 13:21:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748610987; cv=none; b=tXoS6WSyP4ABdka+3vTrmeQ1uGSkkT8q/1ovg9yyw8LN7uLk8G7HswaFeZv8hmRX/MzvCa0iRxuJwWZfhsxICoF6ToDyTjqudlPeZfmpV8Dw0ghjuBcirJnP1DRV54CulFZSgBxdJQOso8qDdtWz+wFK/ovf79xCYoHAwjwdqkI=
+	t=1748611270; cv=none; b=Z5+rqDweIfZI5knf/4EwIDHfcP2fYTjktwZDJL0DCoUz2mCWjOfNWzVB9dGyMFIAM9+b5hKVKca2VyUf5ymRxMjDk5AWt7NE7K/j26qmYQ9jNPRs+vr88+BTBEMH2Vbh56Ek+FpGxYqndjIRN7uHrAEnTtySIErr5CGN7v/Wk1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748610987; c=relaxed/simple;
-	bh=5KOMNpLu2WpVFkd00aYSN3RLJsSiZizQlOdLJbRz9xE=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=qedD37s2ZovXv5z8APtIdI8TOsq+dwQETgxJAPnJTP8Nw8C8Lbh5RLFeUf9TL2mFH5gEjqknUF1EYxeJymWQzsoWYJYRQrLsineAjbk5COgprrwld34qm5cZWlGOKStim5h3LiDoif6LtrtEv5OQT4TH/baMcc0yX2lHU5AEkAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NL32GYhq; arc=none smtp.client-ip=209.85.208.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
-Received: by mail-ed1-f73.google.com with SMTP id 4fb4d7f45d1cf-601df3b434cso3177453a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 06:16:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1748610983; x=1749215783; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IOjMzms7pPSKfR3QpxPX6uvlXEzx6nYbruXkhIiBjcc=;
-        b=NL32GYhqXEAHvLXMvaYtzeCbW2ggn/57odSAbIgU8aJ8odYKc5oR5SskVvqNZv/LeN
-         woDSrFpGXlOjH/ZgT6pKZkkZhhaqhkAGx8V/t9FaNADyyA+LFfhyoc/WAqfZdw/0bmh2
-         S8QaKJCo4r6miYOreK2fLfyi2TfPGuxV8QakOcqeUgyJG77tLHRkXCBv41YfmFOqpgc+
-         I9PXvQqIybiX0fllQCqWQX8vugpfdsumKEBS8mvV0GgLwUiwf4oqCBKEoby+Vz7YXbff
-         KD3J6Ndsu45TPs79/QeA9Z6deEfxRPIoSrcd8I9NfHyZD9OXYjlFlvrryq0A/+ixz6jL
-         6djg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748610983; x=1749215783;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=IOjMzms7pPSKfR3QpxPX6uvlXEzx6nYbruXkhIiBjcc=;
-        b=U5wNEwjNTI48WOo+/NNV7SrxH7WTENzrileXRJvlg4Pol/hA6ZPBPJH5TYmlYpMSSr
-         SjG88YCXWO/1l1keB+2FZekxuIkt2apzycrbipcrs1TKyUrudEXsWtSS2ge0O7QgSgwv
-         V5aD5YbbWMPuSN6+kkvprPli4+ONt9Le68uySdxWQIgTRTUQ2+NsHAV7nM9Un0w7637Y
-         w5RBkz6jmc/00x1H++nIQn3zBexrhFM9eDUWgyzu5D2EUribsPRoVLo3EIm3yTKVlgeW
-         1SBmPvsZ3tzX27sLC5OfZXxMnEadro9HZCTSv7VxMC5L/jlghM4T7NdoqjSdTS9oCF4M
-         PqKg==
-X-Forwarded-Encrypted: i=1; AJvYcCX5pMX+HOZDeX5DrKywBx9iKI3NQzpJpQIk/eDG0u57D5HHdF7eI9h5C8syKx72eF9WIxSFLuiq1ry4Wrw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKuL+kc9VeUE9HtppV2+DoXFbIGt7REGMyNxklswzSWTtr4C0g
-	/c8hFrzE6NjQehp9I1MEsKrwYxhGYrgIjNlSvTlKK3fJqJi2iTCHm/eWkSoRLapwU9GrP9eLNW+
-	pAui3SA==
-X-Google-Smtp-Source: AGHT+IHj8ynbQPQxdrs2D9yFZEID0TqTbe9/3NBy7GO/WduE0quN9mRt47isPnPUzxmpjm4+WhNcwQPv9p8=
-X-Received: from edqp17.prod.google.com ([2002:aa7:d311:0:b0:5f6:252a:1d7e])
- (user=gnoack job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6402:4316:b0:5f7:2852:2010
- with SMTP id 4fb4d7f45d1cf-6056f80bff2mr2570008a12.13.1748610983613; Fri, 30
- May 2025 06:16:23 -0700 (PDT)
-Date: Fri, 30 May 2025 15:16:20 +0200
-In-Reply-To: <20250518.xeevoom3kieY@digikod.net>
+	s=arc-20240116; t=1748611270; c=relaxed/simple;
+	bh=PwXUXWT9DyeGI/kRb9Ez0UEJg7Zz3tLYEovJpqJVJTE=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=pADILID2Y0g93mwMoWd032nsLapMRhA964KtmsOniortjU8Fak7qptGa0g5bl6s48RVFBuodhfgQTtbYVyOA5ZxQ8r+pNz5clhtAKgN6u6oQYs+8MFJyS6zxUUv+dme+K5Xomz/2ewSQSMwLzRBwUCAZkiW4NhREcIqexHKk//Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=eBT+XqcO; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54UAAF0Q013825;
+	Fri, 30 May 2025 13:21:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=l6myu8eCUg4zijyZo6hfCq
+	Jjh+HSeDdZSggG+SVThYc=; b=eBT+XqcOfOWNSIgm013jFLFeiBH7ky+nm39ooo
+	hjALN0jk3UuHbCgCkElV/Iohk9Cxf0osFybriipvFbhLQ7OQB69/O3xfg/O8voX3
+	WY8kYw2Jp/TlCOwRrH6VmMDcpniu/l2uKIjwy+s3Y52IycnEN1+itc+neLc6RVRp
+	oBY8Lvu079Ad4Us8S3CCz/VEIjXUiRkLyXQxcF/mdSEqiy4XA8hJjIsAFM803E6j
+	7lsbQJcVk+5OZmdR84VU6KWzeF879yLv8QSDaMIA0dbZyeheR7d+pOdEjXkeDFtc
+	whAdayvboTab+yk25ksXYM6RXNg0B/wqvojpZOneAXCp/sjw==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46wavm33r9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 30 May 2025 13:21:02 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 54UDL1M7010765
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 30 May 2025 13:21:01 GMT
+Received: from [10.213.98.28] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 30 May
+ 2025 06:20:55 -0700
+From: Jagadeesh Kona <quic_jkona@quicinc.com>
+Subject: [PATCH v5 00/18] clk: qcom: Add support to attach multiple power
+ domains in cc probe
+Date: Fri, 30 May 2025 18:50:45 +0530
+Message-ID: <20250530-videocc-pll-multi-pd-voting-v5-0-02303b3a582d@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250221184417.27954-2-gnoack3000@gmail.com> <20250221184417.27954-3-gnoack3000@gmail.com>
- <20250227.Aequah6Avieg@digikod.net> <20250228.b3794e33d5c0@gnoack.org>
- <20250304.aroh3Aifiiz9@digikod.net> <20250310.990b29c809af@gnoack.org>
- <20250311.aefai7vo6huW@digikod.net> <20250518.be040c48937c@gnoack.org> <20250518.xeevoom3kieY@digikod.net>
-Message-ID: <aDmvpOMlaAZOXrji@google.com>
-Subject: Re: [RFC 1/2] landlock: Multithreading support for landlock_restrict_self()
-From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
-To: "=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?=" <mic@digikod.net>
-Cc: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack3000@gmail.com>, Paul Moore <paul@paul-moore.com>, sergeh@kernel.org, 
-	David Howells <dhowells@redhat.com>, Kees Cook <keescook@chromium.org>, 
-	linux-security-module@vger.kernel.org, 
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Jann Horn <jannh@google.com>, 
-	linux-kernel@vger.kernel.org, Peter Newman <peternewman@google.com>, 
-	Andy Lutomirski <luto@amacapital.net>, Will Drewry <wad@chromium.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAK2wOWgC/43NQW6DMBCF4atEXtfVeMA2zqr3qLog4yEZiWAKx
+ GoVcfc62aRVJNTl/xbfu6qZJ+FZ7XdXNXGWWdJQwr7sFJ3a4chaYmmFgBbQNDpL5ESkx77X50u
+ /iB6jzmmR4aijM3UkDgbYqyKME3fyddffP0qfZF7S9H0/y+a2/s/NRoOmjh02gVsMh7fPi5AM9
+ ErprG5yxodWgdvWsGhAEcAZPBDws1b90tBva1XRmmC7tosOHfpnrX5o1thtrS6a9YZchcFHMH+
+ 1dV1/AJ+oaMCyAQAA
+X-Change-ID: 20250218-videocc-pll-multi-pd-voting-d614dce910e7
+To: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        "Vladimir
+ Zapolskiy" <vladimir.zapolskiy@linaro.org>,
+        Dmitry Baryshkov
+	<lumag@kernel.org>
+CC: Ajit Pandey <quic_ajipan@quicinc.com>,
+        Imran Shaik
+	<quic_imrashai@quicinc.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        "Satya Priya
+ Kakitapalli" <quic_skakitap@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski@linaro.org>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@oss.qualcomm.com>,
+        Konrad Dybcio
+	<konrad.dybcio@oss.qualcomm.com>,
+        Dmitry Baryshkov <lumag@kernel.org>
+X-Mailer: b4 0.14.2
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: OuF-czEiy0tJG3Wsyy0ToHPO59mn5GXg
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTMwMDExNiBTYWx0ZWRfX/2ETrJTL+0UN
+ i5s1GuOpnN8ZJn6XMafPay98hJVptek4lVMglv/dX8TaDrNj9WPFBLH4Nmo4naQLxuJLjVMDcsn
+ /2fDjYlGjjWD8wVtzcYYh9uyvdbOqydP2F46voAP36EtRJ1Une9NttSKWWq+ZuJ8F6K1PQIEnEv
+ SfyAkB8OwQfyhp2ZIdBefhMgbV3EVPNAvsYTJ3tQL5j4TYe0svacYU5iFh+LYUQX+eyifEPl6ZX
+ nyktuVSDlZ4Gs9fiOQ1JwIyYZG8AQmG7GEwzCJo1QnOjWEjd66O246Qj1nxisO2qjgltw5gOP/F
+ vNZRgJQe6Vxw7jG5rApzT5uONiaU/xZNgIrWfCA0cNoCeSvFomykSHsAffAmyRnYETXwG5f5OET
+ 4lM1SSPPlThyg0/4lK7dlVqu6CC7bnJnYHlE+xKEn+NgK0bXm9kmZcggSte5XIOq2ughP8qc
+X-Authority-Analysis: v=2.4 cv=fMk53Yae c=1 sm=1 tr=0 ts=6839b0be cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=VwQbUJbxAAAA:8
+ a=COk6AnOGAAAA:8 a=KKAkSRfTAAAA:8 a=B-9y34bfxwdAmyIc5O0A:9 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-ORIG-GUID: OuF-czEiy0tJG3Wsyy0ToHPO59mn5GXg
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-30_05,2025-05-30_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 adultscore=0 impostorscore=0 phishscore=0 suspectscore=0
+ spamscore=0 priorityscore=1501 lowpriorityscore=0 clxscore=1015 mlxscore=0
+ mlxlogscore=999 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505160000
+ definitions=main-2505300116
 
-On Sun, May 18, 2025 at 09:57:32PM +0200, Micka=C3=ABl Sala=C3=BCn wrote:
-> On Sun, May 18, 2025 at 09:40:05AM +0200, G=C3=BCnther Noack wrote:
-> > On Tue, Mar 11, 2025 at 03:32:53PM +0100, Micka=C3=ABl Sala=C3=BCn wrot=
-e:
-> > > On Mon, Mar 10, 2025 at 02:04:23PM +0100, G=C3=BCnther Noack wrote:
+In recent QCOM chipsets, PLLs require more than one power domain to be
+kept ON to configure the PLL. But the current code doesn't enable all
+the required power domains while configuring the PLLs, this leads to
+functional issues due to suboptimal settings of PLLs.
 
-> > > > Approach 1: Use the creds API thread-by-thread (implemented here)
-> > > >=20
-> > > >   * Each task calls prepare_creds() and commit_creds() on its own, =
-in
-> > > >     line with the way the API is designed to be used (from a single
-> > > >     task).
-> > > >   * Task work gets scheduled with a pseudo-signal and the task that
-> > > >     invoked the syscall is waiting for all of them to return.
-> > > >   * Task work can fail at the beginning due to prepare_creds(), in
-> > > >     which case all tasks have to abort_creds(). Additional
-> > > >     synchronization is needed for that.
-> > > >=20
-> > > >   Drawback: We need to grab the system-global task lock to prevent =
-new
-> > > >   thread creation and also grab the per-process signal lock to prev=
-ent
-> > > >   races with other creds accesses, for the entire time as we wait f=
-or
-> > > >   each task to do the task work.
-> > >=20
-> > > In other words, this approach blocks all threads from the same proces=
-s.
-> >=20
-> > It does, but that is still an improvement over the current
-> > libpsx-based implementation in userspace.  That existing
-> > implementation does not block, but it is running the risk that
-> > prepare_creds() might fail on one of the threads (e.g. allocation
-> > failure), which would leave the processes' threads in an inconsistent
-> > state.
-> >=20
-> > Another upside that the in-kernel implementation has is that the
-> > implementation of that is hidden behind an API, so if we can
-> > eventually find a better approach, we can migrate to it.  It gives us
-> > flexibility.
->=20
-> > I guess a possible variant (approach 1B) would be to do the equivalent
-> > to what userspace does today, and not make all threads wait for the
-> > possible error of prepare_creds() on the other threads.
->=20
-> This 1B variant is not OK because it would remove the guarantee that the
-> whole process is restricted.
+To address this, add support for handling runtime power management,
+configuring plls and enabling critical clocks from qcom_cc_really_probe.
+The clock controller can specify PLLs, critical clocks, and runtime PM
+requirements using the descriptor data. The code in qcom_cc_really_probe()
+ensures all necessary power domains are enabled before configuring PLLs
+or critical clocks.
 
-=F0=9F=91=8D Agreed.
+This series fixes the below warning reported in SM8550 venus testing due
+to video_cc_pll0 not properly getting configured during videocc probe
 
+[   46.535132] Lucid PLL latch failed. Output may be unstable!
 
-> > > > Approach 2: Attempt to do the prepare_creds() step in the calling t=
-ask.
-> > > >=20
-> > > >   * Would use an API similar to what keyctl uses for the
-> > > >     parent-process update.
-> > > >   * This side-steps the credentials update API as it is documented =
-in
-> > > >     Documentation, using the cred_alloc_blank() helper and replicat=
-ing
-> > > >     some prepare_creds() logic.
-> > > >=20
-> > > >   Drawback: This would introduce another use of the cred_alloc_blan=
-k()
-> > > >   API (and the cred_transfer LSM hook), which would otherwise be
-> > > >   reasonable to delete if we can remove the keyctl use case.
-> > > >   (https://lore.kernel.org/all/20240805-remove-cred-transfer-v2-0-a=
-2aa1d45e6b8@google.com/)
-> > >=20
-> > > cred_alloc_blank() was designed to avoid dealing with -ENOMEM, which =
-is
-> > > a required property for this Landlock TSYNC feature (i.e. atomic and
-> > > consistent synchronization).
-> >=20
-> > Remark on the side, I suspect that the error handling in nptl(7)
-> > probably also does not guarantee that, also for setuid(2) and friends.
-> >=20
-> >=20
-> > > I think it would make sense to replace most of the
-> > > key_change_session_keyring() code with a new cred_transfer() helper t=
-hat
-> > > will memcpy the old cred to the new, increment the appropriate ref
-> > > counters, and call security_transfer_creds().  We could then use this
-> > > helper in Landlock too.
-> > >=20
-> > > To properly handle race conditions with a thread changing its own
-> > > credentials, we would need a new LSM hook called by commit_creds().
-> > > For the Landlock implementation, this hook would check if the process=
- is
-> > > being Landlocked+TSYNC and return -ERESTARTNOINTR if it is the case.
-> > > The newly created task_work would then be free to update each thread'=
-s
-> > > credentials while only blocking the calling thread (which is also a
-> > > required feature).
-> > >=20
-> > > Alternatively, instead of a new LSM hook, commit_creds() could check
-> > > itself a new group leader's flag set if all the credentials from the
-> > > calling process are being updated, and return -ERESTARTNOINTR in this
-> > > case.
-> >=20
-> > commit_creds() is explicitly documented to never return errors.
-> > It returns a 0 integer so that it lends itself for tail calls,
-> > and some of those usages might also rely on it always working.
-> > There are ~15 existing calls where the return value is discarded.
->=20
-> Indeed, commit_creds() should always return 0.  My full proposal does
-> not look safe enough, but the cred_transfer() helper can still be
-> useful.
->=20
-> >=20
-> > If commit_creds() returns -ERESTARTNOINTR, I assume that your idea is
-> > that the task_work would retry the prepare-and-commit when
-> > encountering that?
-> >=20
-> > We would have to store the fact that the process is being
-> > Landlock+TSYNC'd in a central place (e.g. group leader flag set).
-> > When that is done, don't we need more synchronization mechanisms to
-> > access that (which RCU was meant to avoid)?
-> >=20
-> > I am having a hard time wrapping my head around these synchronization
-> > schemes, I feel this is getting too complicated for what it is trying
-> > to do and might become difficult to maintain if we implemented it.
->=20
-> Fair. ERESTARTNOINTR should only be used by a syscall implementation.
->=20
-> >=20
-> > > > Approach 3: Store Landlock domains outside of credentials altogethe=
-r
-> > > >=20
-> > > >   * We could also store a task's Landlock domain as a pointer in th=
-e
-> > > >     per-task security blob, and refcount these.  We would need to m=
-ake
-> > > >     sure that they get newly referenced and updated in the same
-> > > >     scenarios as they do within struct cred today.
-> > > >   * We could then guard accesses to a task's Landlock domain with a
-> > > >     more classic locking mechanism.  This would make it possible to
-> > > >     update the Landlock domain of all tasks in a process without
-> > > >     having to go through pseudo-signals.
-> > > >=20
-> > > >   Drawbacks:
-> > > >   * Would have to make sure that the Landlock domain the task's LSM
-> > > >     blob behaves exactly the same as before in the struct cred.
-> > > >   * Potentially slower to access Landlock domains that are guarded =
-by
-> > > >     a mutex.
-> > >=20
-> > > This would not work because the kernel (including LSM hooks) uses
-> > > credentials to check access.
-> >=20
-> > It's unclear to me what you mean by that.
-> >=20
-> > Do you mean that it is hard to replicate for Landlock the cases where
-> > the pointer would have to be copied, because the LSM hooks are not
-> > suited for it?
->=20
-> struct cred is used to check if a task subject can access a task object.
-> Landlock's metadata must stay in struct cred to be available when
-> checking access to any kernel object.  The LSM hooks reflect this
-> rationale by only passing struct cred when checking a task (e.g.
-> security_task_kill()'s cred).
->=20
-> seccomp only cares about filtering raw syscalls, and the seccomp filters
-> are just ignored when the kernel (with an LSM or not) checks task's
-> permission to access another task.
->=20
-> The per-task security blob could store some state though, e.g. to
-> identify if a domain needs to be updated, but I don't see a use case
-> here.
+The patch adding support to configure the PLLs from common code is
+picked from below series and updated it.
+https://lore.kernel.org/all/20250113-support-pll-reconfigure-v1-0-1fae6bc1062d@quicinc.com/
 
-(Side remark on the idea of storing "pending domain updates" in the task bl=
-ob:
+This series is dependent on bindings patch in below Vladimir's series, hence
+included the Vladimir's series patches also in this series and updated them.
+https://lore.kernel.org/all/20250303225521.1780611-1-vladimir.zapolskiy@linaro.org/
 
-I have pondered such an idea as well, where we do not store the Landlock do=
-main
-itself in the task blob, but only a "pending" update that we need to do to =
-the
-Landlock domain in creds, and then to apply that opportunistically/lazily a=
-s
-part of other Landlock LSM calls.
+Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+---
+Changes in v5:
+- Reversed order of patches 2 & 3 to add MXC support in SM8450
+  camcc bindings first and then moved SC8280XP camcc to SA8775P
+  camcc to have single power domain support for it.
+- Added return code for qcom_cc_clk_pll_configure() and
+  returned -EINVAL in case if PLL config or registers is
+  NULL in patch 6 [Bryan]
+- Added separate CBCR's list for SM8650 videocc and
+  updated clk_cbcrs list based on compatible in patch 8[Konrad]
+- Added R-By tags received on v4
+- Link to v4: https://lore.kernel.org/r/20250515-videocc-pll-multi-pd-voting-v4-0-571c63297d01@quicinc.com
 
-I believe in this approach, it becomes hard to control whether that update =
-can
-actually ever get applied.  So to be sure, we would always have to run unde=
-r the
-assumption that it does not get applied, and then we might as well store th=
-e
-Landlock domain directly in the task blob.
+Changes in v4:
+- Updated the SC8280XP camcc bindings patch to fix the
+  required-opps warning reported by kernel bot
+- Updated the description of power-domains, required-opps of SM8450 camcc
+  bindings as per review comments on v3 [Bryan]
+- Moved the PLL config checks to calling function code [Dmitry]
+- Removed qcom_clk_reg_setting struct and regmap_update_bits() code.
+  Added a .clk_regs_configure() callback that clock drivers can implement
+  if they require to update some misc register settings [Dmitry] 
+- Moved the PLLs and CBCRs data to a separate qcom_cc_driver_data
+  struct to avoid bloating up the CC descriptor structure
+- Updated the videocc and camcc driver patches to incorporate above
+  qcom_cc_driver_data change
+- Updated the commit text of DT patches [Bryan]
+- Added the R-By, T-By tags received on v3
+- Link to v3: https://lore.kernel.org/r/20250327-videocc-pll-multi-pd-voting-v3-0-895fafd62627@quicinc.com
 
-I also don't think this makes sense.)
+Changes in v3:
+ - Updated the videocc bindings patch to add required-opps for MXC power domain [Dmitry]
+   and added Bryan & Rob R/A-By tags received for this patch on v1.
+ - Included the Vladimir's bindings patch for SM8450 camcc bindings to
+   add multiple PD support and updated them to fix the bot warnings.
+ - Moved SC8280XP camcc bindings to SA8775P camcc since SC8280XP only
+   require single MMCX power domain
+ - Split runtime PM and PLL configuration to separate patches [Dmitry]
+ - Removed direct regmap_update_bits to configure clock CBCR's and
+   using clock helpers to configure the CBCR registers [Dmitry, Bryan]
+ - Added new helpers to configure all PLLs & update misc clock
+   register settings from common code [Dmitry, Bryan]
+ - Updated the name of qcom_clk_cfg structure to qcom_clk_reg_setting [Konrad]
+ - Updated the fields in structure from unsigned int to u32 and added
+   val field to this structure [Konrad]
+ - Added a new u32 array for cbcr branch clocks & num_clk_cbcrs fields
+   to maintain the list of critical clock cbcrs in clock controller
+   descriptor [Konrad]
+ - Updated the plls field to alpha_plls in descriptor structure [Konrad]
+ - Added WARN() in PLL configure function if PLL type passed is not
+   supported. The suggestion is to use BUG(), but updated it to
+   WARN() to avoid checkpatch warning. [Bjorn]
+ - Moved the pll configure and helper macros to PLL code from common code [Bjorn]
+ - Updated camcc drivers for SM8450, SM8550, SM8650 and X1E80100 targets
+   with support to configure PLLs from common code and added MXC power
+   domain in corresponding camcc DT nodes. [Bryan]
+ - Added Dmitry and Bryan R-By tags received on videocc DT node changes in v1
+ - Link to v2: https://lore.kernel.org/r/20250306-videocc-pll-multi-pd-voting-v2-0-0cd00612bc0e@quicinc.com
 
+Changes in v2:
+ - Added support to handle rpm, PLL configuration and enable critical
+   clocks from qcom_cc_really_probe() in common code as per v1 commments
+   from Bryan, Konrad and Dmitry
+ - Added patches to configure PLLs from common code
+ - Updated the SM8450, SM8550 videocc patches to use the newly
+   added support to handle rpm, configure PLLs from common code
+ - Split the DT change for each target separately as per
+   Dmitry comments
+ - Added R-By and A-By tags received on v1
+- Link to v1: https://lore.kernel.org/r/20250218-videocc-pll-multi-pd-voting-v1-0-cfe6289ea29b@quicinc.com
 
-> > Here is another possible approach which a colleague suggested in a
-> > discussion:
-> >=20
-> > Approach 4: Freeze-and re-enforce the Landlock ruleset
-> >=20
-> > Another option would be to have a different user space API for this,
-> > with a flag LANDLOCK_RESTRICT_SELF_ENTER (name TBD) to enter a given
-> > domain.
-> >=20
-> > On first usage of landlock_restrict_self() with the flag, the enforced
-> > ruleset would be frozen and linked to the Landlock domain which was
-> > enforced at the end.
-> >=20
-> > Subsequent attempts to add rules to the ruleset would fail when the
-> > ruleset is frozen.  The ruleset FD is now representing the created
-> > domain including all its nesting.
-> >=20
-> > Subsequent usages of landlock_restrict_self() on a frozen ruleset would=
-:
-> >=20
-> > (a) check that the ruleset's domain is a narrower (nested) domain of
-> >     the current thread's domain (so that we retain the property of
-> >     only locking in a task further than it was before).
-> >=20
-> > (b) set the task's domain to the domain attached to the ruleset
-> >=20
-> > This way, we would keep a per-thread userspace API, avoiding the
-> > issues discussed before.  It would become possible to use ruleset file
-> > descriptors as handles for entering Landlock domains and pass them
-> > around between processes.
-> >=20
-> > The only drawback I can see is that it has the same issues as libpsx
-> > and nptl(7) in that the syscall can fail on individual threads due to
-> > ENOMEM.
->=20
-> Right. This approach is interesting, but it does not solve the main
-> issue here.
+---
+Jagadeesh Kona (15):
+      dt-bindings: clock: qcom,sm8450-videocc: Add MXC power domain
+      dt-bindings: clock: qcom,sm8450-camcc: Move sc8280xp camcc to sa8775p camcc
+      clk: qcom: common: Handle runtime power management in qcom_cc_really_probe
+      clk: qcom: common: Add support to configure clk regs in qcom_cc_really_probe
+      clk: qcom: videocc-sm8450: Move PLL & clk configuration to really probe
+      clk: qcom: videocc-sm8550: Move PLL & clk configuration to really probe
+      clk: qcom: camcc-sm8450: Move PLL & clk configuration to really probe
+      clk: qcom: camcc-sm8550: Move PLL & clk configuration to really probe
+      clk: qcom: camcc-sm8650: Move PLL & clk configuration to really probe
+      clk: qcom: camcc-x1e80100: Move PLL & clk configuration to really probe
+      arm64: dts: qcom: sm8450: Additionally manage MXC power domain in videocc
+      arm64: dts: qcom: sm8550: Additionally manage MXC power domain in videocc
+      arm64: dts: qcom: sm8650: Additionally manage MXC power domain in videocc
+      arm64: dts: qcom: sm8450: Additionally manage MXC power domain in camcc
+      arm64: dts: qcom: sm8650: Additionally manage MXC power domain in camcc
 
-It doesn't?
+Taniya Das (1):
+      clk: qcom: clk-alpha-pll: Add support for common PLL configuration function
 
-In my mind, the main goal of the patch set is that we can enable Landlock i=
-n
-multithreaded processes like in Go programs or in multithreaded C(++).
+Vladimir Zapolskiy (2):
+      dt-bindings: clock: qcom,sm8450-camcc: Allow to specify two power domains
+      arm64: dts: qcom: sm8550: Additionally manage MXC power domain in camcc
 
-With Approach 4, we would admittedly still have to do some work in userspac=
-e,
-and it would not have the nice all-or-nothing semantics, but at least, it w=
-ould
-be possible to get all threads joining the same Landlock domain.  (And afte=
-r
-all, setuid(0) also does not have the all-or-nothing semantics, from what I=
- can
-tell.)
+ .../bindings/clock/qcom,sa8775p-camcc.yaml         | 15 ++++
+ .../bindings/clock/qcom,sm8450-camcc.yaml          | 20 +++--
+ .../bindings/clock/qcom,sm8450-videocc.yaml        | 18 +++--
+ arch/arm64/boot/dts/qcom/sm8450.dtsi               | 12 ++-
+ arch/arm64/boot/dts/qcom/sm8550.dtsi               | 12 ++-
+ arch/arm64/boot/dts/qcom/sm8650.dtsi               |  6 +-
+ drivers/clk/qcom/camcc-sm8450.c                    | 89 +++++++++++-----------
+ drivers/clk/qcom/camcc-sm8550.c                    | 85 +++++++++++----------
+ drivers/clk/qcom/camcc-sm8650.c                    | 83 ++++++++++----------
+ drivers/clk/qcom/camcc-x1e80100.c                  | 67 ++++++++--------
+ drivers/clk/qcom/clk-alpha-pll.c                   | 57 ++++++++++++++
+ drivers/clk/qcom/clk-alpha-pll.h                   |  3 +
+ drivers/clk/qcom/common.c                          | 81 +++++++++++++++++---
+ drivers/clk/qcom/common.h                          | 10 +++
+ drivers/clk/qcom/videocc-sm8450.c                  | 58 ++++++--------
+ drivers/clk/qcom/videocc-sm8550.c                  | 66 ++++++++--------
+ 16 files changed, 421 insertions(+), 261 deletions(-)
+---
+base-commit: 138cfc44b3c4a5fb800388c6e27be169970fb9f7
+change-id: 20250218-videocc-pll-multi-pd-voting-d614dce910e7
 
-
-> Anyway, being able to enter a Landlock domain would definitely be
-> useful. I would prefer using a pidfd to refer to a task's Landlock
-> domain, which would avoid race condition and make the API clearer.  It
-> would be nice to be able to pass a pidfd (instead of a ruleset) to
-> landlock_restrict_self().  If we want to directly deal with a domain, we
-> should create a dedicated domain FD type.
-
-Fair enough, a different FD type for that would also be possible.
-
-
-> > If we can not find a solution for "TSYNC", it seems that this might be
-> > a viable alternative.  For multithreaded applications enforcing a
-> > Landlock policy, it would become an application of libpsx with the
-> > LANDLOCK_RESTRICT_SELF_ENTER flag.
-> >=20
-> > Let me know what you think.
-> >=20
-> > =E2=80=93G=C3=BCnther
->=20
-> Thinking more about this feature, it might actually make sense to
-> synchronize all threads from the same process without checking other
-> threads' Landlock domain. The rationale are:
-> 1. Linux threads are not security boundaries and it is allowed for a
->    thread to control other threads' memory, which means changing their
->    code flow.  In other words, thread's permissions are the union of all
->    thread's permissions in the same process.
-> 2. libpsx and libc's set*id() ignore other thread's credentials and just
->    blindly execute the same code on all threads.
-> 3. It would be simpler and would avoid another error case.
-
-+1, agreed.  That would let us skip the check for the pre-existing domain o=
-n
-these threads.
-
-
-> An issue could happen if a Landlock domain restricting a test thread is
-> replaced.
-
-You mean for Landlock's selftests?  I thought these were running in their o=
-wn
-forked-off subprocess?  I'm probably misunderstanding you here. :)
-
-
-> I don't think the benefit of avoiding this issue is worth it
-> compared to the guarantee we get when forcing the sandboxing of a full
-> process without error.
->=20
-
-
-
-> We should rename the flag to LANDLOCK_RESTRICT_SELF_PROCESS to make it
-> clear what it does.
->=20
-> The remaining issues are still the potential memory allocation failures.
-> There are two things:
->=20
-> 1. We should try as much as possible to limit useless credential
->    duplications by not creating a new struct cred if parent credentials
->    are the same.
->=20
-> 2. To avoid the libpsx inconsistency (because of ENOMEM or EPERM),
->    landlock_restrict_self(2) should handle memory allocation and
->    transition the process from a known state to another known state.
->=20
-> What about this approach:
-> - "Freeze" all threads of the current process (not ideal but simple) to
->   make sure their credentials don't get updated.
-> - Create a new blank credential for the calling thread.
-> - Walk through all threads and create a new blank credential for all
->   threads with a different cred than the caller.
-> - Inject a task work that will call cred_transfer() for all threads with
->   either the same new credential used by the caller (incrementing the
->   refcount), or it will populate and use a blank one if it has different
->   credentials than the caller.
->=20
-> This may not efficiently deduplicate credentials for all threads but it
-> is a simple deduplication approach that should be useful in most cases.
->=20
-> The difficult part is mainly in the "fleezing". It would be nice to
-> change the cred API to avoid that but I'm not sure how.
-
-I don't see an option how we could freeze the credentials of other threads:
-
-To freeze a task's credentials, we would have to inhibit that commit_creds(=
-)
-succeeds on that task, and I don't see how that would be done - we can not
-prevent these tasks from calling commit_creds() [1], and when commit_creds(=
-)
-gets called, it is guaranteed to work.
-
-So in my mind, we have to somehow deal with the possibility that a task has=
- a
-new and not-previously-seen struct creds, by the time that its task_work ge=
-ts
-called.  As a consequence, I think a call to prepare_creds() would then be
-unavoidable in the task_work?
-
-
-=E2=80=94G=C3=BCnther
-
-
-[1] We might be able to keep cred_prepare() and maybe cred_alloc_blank() fr=
-om
-    succeeding, but that does not mean that no one can call commit_creds() =
--
-    there is still the possibility that commit_creds() gets called with a s=
-truct
-    cred* that was acquired before decided to freeze.
+Best regards,
+-- 
+Jagadeesh Kona <quic_jkona@quicinc.com>
 
 
