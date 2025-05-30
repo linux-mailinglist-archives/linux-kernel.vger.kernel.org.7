@@ -1,213 +1,287 @@
-Return-Path: <linux-kernel+bounces-667593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-667597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94E0CAC8702
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 05:44:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F21C2AC870B
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 05:48:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D9C44A6485
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 03:44:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 581CD175C1E
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 03:48:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E46E31A01BF;
-	Fri, 30 May 2025 03:44:37 +0000 (UTC)
-Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [52.229.168.213])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 846159476;
-	Fri, 30 May 2025 03:44:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.229.168.213
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3335E1A0BC5;
+	Fri, 30 May 2025 03:48:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="PfV7qeAH"
+Received: from mail-yw1-f226.google.com (mail-yw1-f226.google.com [209.85.128.226])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD56A7080C
+	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 03:48:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.226
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748576677; cv=none; b=PPEYejwwBXazojZj8yI46pQ796ZFLc0k8/nZwoSPitoQxnXqsoE98lvq4Zm2Og+bG+opddXCFUQVZHyf/yHsk+WDrBHJjyOuJ4UQHpXLS6+mN94Py6cuXappusOz27VUiJh8r1HayZNItv04i8x0PFWlXOZrfwXXaj1l4dYw/0w=
+	t=1748576889; cv=none; b=tb5Ltdys7XcfsiydemTCHisEzTMzWym4dZFs5G6y628WNHpkWRIZS8q72qeYtl6QqG6AqTC/s5//TlUU4Wtov1SJvzAxHk2ogUb4658ne0hfDY9BPuda+CY78deN+Hh05OdNox+QY0RstKJTAcDqpbQWZB0BvtXGfdJpU/AcSqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748576677; c=relaxed/simple;
-	bh=dIGjffcg6YtgnsPBnx4IS1i7Bnt38cmcuHBI6hTjwtE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=J3iUowGouJz6PMjk2rIW/CxtCT2H5J7clqVfohEe7Ow+LkHMEuTNPQmRo1eg2Y94MraDP/NwTezBr/KyRSAVS1oXJ1FlmZVDbjlUlqWf5E3QJDEzatoLKAyASMR8g+MQZJu/WzZdJ5Ebe8xJMjTakyFGxgtWe7Iw3PNLgGWGGvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn; spf=pass smtp.mailfrom=hust.edu.cn; arc=none smtp.client-ip=52.229.168.213
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hust.edu.cn
-Received: from hust.edu.cn (unknown [172.16.0.52])
-	by app1 (Coremail) with SMTP id HgEQrAB3WR6HKTlo0MPfCQ--.54948S2;
-	Fri, 30 May 2025 11:44:07 +0800 (CST)
-Received: from [10.12.164.29] (unknown [10.12.164.29])
-	by gateway (Coremail) with SMTP id _____wAXHwOCKTlofER3Aw--.14052S2;
-	Fri, 30 May 2025 11:44:06 +0800 (CST)
-Message-ID: <d38e5648-1700-4d8f-896d-58053a5393ba@hust.edu.cn>
-Date: Fri, 30 May 2025 11:44:02 +0800
+	s=arc-20240116; t=1748576889; c=relaxed/simple;
+	bh=SQzQk5+A+iQDcMZJ61idabZHiNePjEUYhRa2LjuRrfo=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=nrjp/zUv5Urs5mFmsDWbyO76z7J7q1aHA/Yjs6n1cpTqAsq5DNe8NqVhOE9CBD5HJ4+cWttr0VZosOlXH4hqtwfxCxOqaRokD0N0HbDfLSLLQjfZ19EzSPtyv29Js+qxE36wHIlsrnVXIzLvxHDm6GSdDMBXHMsGJxKoJkfoeAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=PfV7qeAH; arc=none smtp.client-ip=209.85.128.226
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-yw1-f226.google.com with SMTP id 00721157ae682-70e2a7a2ce6so1143707b3.0
+        for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 20:48:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1748576886; x=1749181686; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TlMFeDmViObsRmCRsBGfnvTFsQkhpyrM25hcpRVgu8E=;
+        b=PfV7qeAHDjn8MmsI3/InX5fo943Dl6vQf4EzAFhyYJdRl7m/jwZDlBC555ZKGwukLA
+         9NF7is6PNZEYrxVQEUX6o/9OU3loNstqZnCESXbaEgqpQYvNh7SIMQRGDO/K2QYahEOb
+         RkLshVbb/5MxiqqcGPTa0fdO/27ebWvr+KcEY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748576886; x=1749181686;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TlMFeDmViObsRmCRsBGfnvTFsQkhpyrM25hcpRVgu8E=;
+        b=R9WCk4RWIr7uj1jnVMLgQ25U33q7GyxFT1zlsfNm2O8GEYu7C5UKRpeC5pFADJzVfF
+         Ly66zDvzWV5FhlXSJc2j3yNdZKzMXJOaxA5i41+B1neqaz23/OGNCAQE2gjE7JxkbEtY
+         YEEeR8acuciaJ59J+WKsb6CTX0QUEXenr0wOzncWmaceZDxsdm/Zh4aIPaWPimlmUTnH
+         rnV0LgPzticrlS8BQfIGYlEQUJxmc4aYDw1ZnwC/6bwaWRsdU6muuhTPqq5aIKD1+C0Y
+         w03Ry3/r3VvnLLLdDw6tbvO2SK00nvsVSUNLQW2q+ucID4lwIkoYpYfSdtQBAYHsIK4D
+         kaqA==
+X-Gm-Message-State: AOJu0YwvRqAgODgdlxxXI0dcGFRUl1VRrE9pshp9TDSEkm9meZpEyo1e
+	YqxlcoYYF3VX84K39d6T52okk6etQiDy9BME5qaldWBeWpj+vMogTwcY46zjGRYErYBW7WJeVhi
+	ZQyyqAPGgh3bA0mF+1xakt6ktqHSYWVLLgMODWjW5qg8CxrYP3o6eqzGApcJRTQ4j/lSOrrN0GI
+	sIOoJlr+nvoX96OYNf9wn0J8MCVdge3OD92fPfjGrPLGCt3GJWwhFDEqK577c68nidhK/Jf+6mf
+	+vYn5MDC2A=
+X-Gm-Gg: ASbGncuxSDHiA/mK9LcYHjWolYoNvF1LdSMVJpd2JURvo/In3AEBwbeJ5merAyITRWn
+	UVuXkhYxKAEEB/qUlaKB7nmz6Gbgg5CoiME9+p75/dLfHApMDmn+9bK522Je65uOdKRzT6XFwWO
+	lZ3euFZd0k2pgPJO/Plz01VtIe9K1pLLg0qNDCu39N3xRokkmP7V9vP3uNnF25vN53YEtylI8Ie
+	1mPwA28kG9mwOxXtnYLo+jO4Oz13vyNKxy4Jd81dijjkBBSw8V8HWcA/z6yq/OICpWXWLdAnt1z
+	8Qj+ZOIzq6PVx//ayU/POkWcHKzjnnidaSOkWW1PxQCIluxoEjjsaVW68yO5uQ==
+X-Google-Smtp-Source: AGHT+IFYlcasWUbSeH3e/3BpiLkJ/wqunTec57zsoURE4x+b3YDK2EjycXsojz1T4jvgsHKfWfJe30ptkmtu
+X-Received: by 2002:a05:690c:7002:b0:70e:614d:6446 with SMTP id 00721157ae682-71048cbb122mr4828267b3.7.1748576886315;
+        Thu, 29 May 2025 20:48:06 -0700 (PDT)
+Received: from bcacpedev-irv-2.lvn.broadcom.net ([192.19.161.250])
+        by smtp-relay.gmail.com with ESMTPS id 00721157ae682-70f8ad73e72sm1290147b3.68.2025.05.29.20.48.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 May 2025 20:48:06 -0700 (PDT)
+X-Relaying-Domain: broadcom.com
+From: David Regan <dregan@broadcom.com>
+To: linux-kernel@vger.kernel.org,
+	linux-mtd@lists.infradead.org,
+	bcm-kernel-feedback-list@broadcom.com,
+	william.zhang@broadcom.com,
+	anand.gore@broadcom.com,
+	florian.fainelli@broadcom.com,
+	kamal.dasu@broadcom.com,
+	dan.beygelman@broadcom.com,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	=?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= <noltari@gmail.com>,
+	rafal@milecki.pl,
+	computersforpeace@gmail.com,
+	frieder.schrempf@kontron.de,
+	vigneshr@ti.com,
+	richard@nod.at,
+	bbrezillon@kernel.org,
+	kdasu.kdev@gmail.com,
+	jaimeliao.tw@gmail.com,
+	kilobyte@angband.pl,
+	jonas.gorski@gmail.com,
+	dgcbueu@gmail.com,
+	dregan@broadcom.com,
+	dregan@mail.com
+Subject: [PATCH] mtd: nand: brcmnand: fix mtd corrected bits stat
+Date: Thu, 29 May 2025 20:46:59 -0700
+Message-ID: <20250530034713.4165309-1-dregan@broadcom.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH linux next] Docs/zh_CN: Translate vxlan.rst to Simplified
- Chinese
-To: jiang.kun2@zte.com.cn, alexs@kernel.org, si.yanteng@linux.dev,
- corbet@lwn.net, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: xu.xin16@zte.com.cn, yang.yang29@zte.com.cn, fan.yu9@zte.com.cn,
- qiu.yutan@zte.com.cn, wang.yaxin@zte.com.cn
-References: <202505301132492152dM75edlCkVrcPL71Omc5@zte.com.cn>
-Content-Language: en-US
-From: =?UTF-8?B?5oWV5Yas5Lqu?= <dzm91@hust.edu.cn>
-In-Reply-To: <202505301132492152dM75edlCkVrcPL71Omc5@zte.com.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:HgEQrAB3WR6HKTlo0MPfCQ--.54948S2
-Authentication-Results: app1; spf=neutral smtp.mail=dzm91@hust.edu.cn;
-X-Coremail-Antispam: 1UD129KBjvJXoW3GF13Gr4xtF1UJFWrXF18Zrb_yoW7GF1fpF
-	Wqgryxtw47KFyFkrW8Ga15Jrn0kFykCan7GFyxK3Wktr4fG3yktry7Krn8GrZagryrZFyF
-	va1kGry5u3yIyaDanT9S1TB71UUUUUJqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUm0b7Iv0xC_Cr1lb4IE77IF4wAFc2x0x2IEx4CE42xK8VAvwI8I
-	cIk0rVWrJVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjx
-	v20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK
-	6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1ln4kS14v26r
-	1Y6r17M2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI
-	12xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj64x0Y40En7xvr7AKxV
-	W8Jr0_Cr1UMcIj6x8ErcxFaVAv8VW8uFyUJr1UMcIj6xkF7I0En7xvr7AKxVW8Jr0_Cr1U
-	McvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCF04k20xvY0x0EwIxGrwCF04k20x
-	vE74AGY7Cv6cx26r4fZr1UJr1l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_
-	Jrv_JF1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1V
-	AY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAI
-	cVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42
-	IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVj
-	vjDU0xZFpf9x07jfpndUUUUU=
-X-CM-SenderInfo: asqsiiirqrkko6kx23oohg3hdfq/
 
+Currently we attempt to get the amount of flipped bits from a hardware
+location which is reset on every subpage. Instead obtain total flipped
+bits stat from hardware accumulator. In addition identify the correct
+maximum subpage corrected bits.
 
-在 2025/5/30 11:32, jiang.kun2@zte.com.cn 写道:
-> From: Qiu Yutan <qiu.yutan@zte.com.cn>
->
-> translate the "vxlan.rst" into Simplified Chinese
->
-> Update to commit 33a1aaf82bcf("docs: vxlan: add info
-> about device features")
->
-> Signed-off-by: Qiu Yutan <qiu.yutan@zte.com.cn>
-> Signed-off-by: Fan Yu <fan.yu9@zte.com.cn>
-> Signed-off-by: Jiang Kun <jiang.kun2@zte.com.cn>
-> Signed-off-by: xu xin <xu.xin16@zte.com.cn>
-> ---
->   .../translations/zh_CN/networking/index.rst   |  2 +-
->   .../translations/zh_CN/networking/vxlan.rst   | 85 +++++++++++++++++++
->   2 files changed, 86 insertions(+), 1 deletion(-)
->   create mode 100644 Documentation/translations/zh_CN/networking/vxlan.rst
->
-> diff --git a/Documentation/translations/zh_CN/networking/index.rst b/Documentation/translations/zh_CN/networking/index.rst
-> index d07dd69f980b..ed62950c6a1b 100644
-> --- a/Documentation/translations/zh_CN/networking/index.rst
-> +++ b/Documentation/translations/zh_CN/networking/index.rst
-> @@ -21,6 +21,7 @@
->      :maxdepth: 1
->
->      msg_zerocopy
-> +   vxlan.rst
+Signed-off-by: David Regan <dregan@broadcom.com>
+Reviewed-by: William Zhang <william.zhang@broadcom.com>
+Reviewed-by: Kamal Dasu <kamal.dasu@broadcom.com>
+---
+ drivers/mtd/nand/raw/brcmnand/brcmnand.c | 48 ++++++++++++++++++------
+ 1 file changed, 37 insertions(+), 11 deletions(-)
 
-How about using vxlan other than vxlan.rst, consistent with others?
-
-Dongliang Mu
-
->
->   Todolist:
->
-> @@ -142,7 +143,6 @@ Todolist:
->   *   tuntap
->   *   udplite
->   *   vrf
-> -*   vxlan
->   *   x25
->   *   x25-iface
->   *   xfrm_device
-> diff --git a/Documentation/translations/zh_CN/networking/vxlan.rst b/Documentation/translations/zh_CN/networking/vxlan.rst
-> new file mode 100644
-> index 000000000000..b1a67d2e7b8e
-> --- /dev/null
-> +++ b/Documentation/translations/zh_CN/networking/vxlan.rst
-> @@ -0,0 +1,85 @@
-> +.. SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +.. include:: ../disclaimer-zh_CN.rst
-> +
-> +:Original: Documentation/networking/vxlan.rst
-> +
-> +:翻译:
-> +
-> + 范雨 Fan Yu <fan.yu9@zte.com.cn>
-> +
-> +:校译:
-> +
-> + - 邱禹潭 Qiu Yutan <qiu.yutan@zte.com.cn>
-> + - 徐鑫 xu xin <xu.xin16@zte.com.cn>
-> +
-> +==========================
-> +虚拟扩展本地局域网协议文档
-> +==========================
-> +
-> +VXLAN 协议是一种隧道协议，旨在解决 IEEE 802.1q 中 VLAN ID（4096）有限的问题。
-> +VXLAN 将标识符的大小扩展到 24 位（16777216）。
-> +
-> +VXLAN 在 IETF RFC 7348 中进行了描述，并已由多家供应商设计实现。
-> +该协议通过 UDP 协议运行，并使用特定目的端口。
-> +本文档介绍了 Linux 内核隧道设备，Openvswitch 也有单独的 VXLAN 实现。
-> +
-> +与大多数隧道不同，VXLAN 是 1 对 N 的网络，而不仅仅是点对点网络。
-> +VXLAN 设备可以通过类似于学习桥接器的方式动态学习另一端点的 IP 地址，也可以利用静态配置的转发条目。
-> +
-> +VXLAN 的管理方式与它的两个近邻 GRE 和 VLAN 相似。
-> +配置 VXLAN 需要 iproute2 的版本与 VXLAN 首次向上游合并的内核版本相匹配。
-> +
-> +1. 创建 vxlan 设备::
-> +
-> +	# ip link add vxlan0 type vxlan id 42 group 239.1.1.1 dev eth1 dstport 4789
-> +
-> +这将创建一个名为 vxlan0 的网络设备，该设备通过 eth1 使用组播组 239.1.1.1 处理转发表中没有条目的流量。
-> +目标端口号设置为 IANA 分配的值 4789，VXLAN 的 Linux 实现早于 IANA 选择标准目的端口号的时间。
-> +因此默认使用 Linux 选择的值，以保持向后兼容性。
-> +
-> +2. 删除 vxlan 设备::
-> +
-> +	# ip link delete vxlan0
-> +
-> +3. 查看 vxlan 设备信息::
-> +
-> +	# ip -d link show vxlan0
-> +
-> +使用新的 bridge 命令可以创建、销毁和显示 vxlan 转发表。
-> +
-> +1. 创建vxlan转发表项::
-> +
-> +	# bridge fdb add to 00:17:42:8a:b4:05 dst 192.19.0.2 dev vxlan0
-> +
-> +2. 删除vxlan转发表项::
-> +
-> +	# bridge fdb delete 00:17:42:8a:b4:05 dev vxlan0
-> +
-> +3. 显示vxlan转发表项::
-> +
-> +	# bridge fdb show dev vxlan0
-> +
-> +以下网络接口控制器特性可能表明对 UDP 隧道相关的卸载支持（最常见的是 VXLAN 功能，
-> +但是对特定封装协议的支持取决于网络接口控制器）：
-> +
-> + - `tx-udp_tnl-segmentation`
-> + - `tx-udp_tnl-csum-segmentation`
-> +    对 UDP 封装帧执行 TCP 分段卸载的能力
-> +
-> + - `rx-udp_tunnel-port-offload`
-> +    在接收端解析 UDP 封装帧，使网络接口控制器能够执行协议感知卸载，
-> +    例如内部帧的校验和验证卸载（只有不带协议感知卸载的网络接口控制器才需要）
-> +
-> +对于支持 `rx-udp_tunnel-port-offload` 的设备，可使用 `ethtool` 查询当前卸载端口的列表::
-> +
-> +  $ ethtool --show-tunnels eth0
-> +  Tunnel information for eth0:
-> +    UDP port table 0:
-> +      Size: 4
-> +      Types: vxlan
-> +      No entries
-> +    UDP port table 1:
-> +      Size: 4
-> +      Types: geneve, vxlan-gpe
-> +      Entries (1):
-> +          port 1230, vxlan-gpe
+diff --git a/drivers/mtd/nand/raw/brcmnand/brcmnand.c b/drivers/mtd/nand/raw/brcmnand/brcmnand.c
+index 62bdda3be92f..43ab4aedda55 100644
+--- a/drivers/mtd/nand/raw/brcmnand/brcmnand.c
++++ b/drivers/mtd/nand/raw/brcmnand/brcmnand.c
+@@ -361,6 +361,7 @@ enum brcmnand_reg {
+ 	BRCMNAND_CORR_COUNT,
+ 	BRCMNAND_CORR_EXT_ADDR,
+ 	BRCMNAND_CORR_ADDR,
++	BRCMNAND_READ_ERROR_COUNT,
+ 	BRCMNAND_UNCORR_EXT_ADDR,
+ 	BRCMNAND_UNCORR_ADDR,
+ 	BRCMNAND_SEMAPHORE,
+@@ -389,6 +390,7 @@ static const u16 brcmnand_regs_v21[] = {
+ 	[BRCMNAND_CORR_THRESHOLD_EXT]	=     0,
+ 	[BRCMNAND_UNCORR_COUNT]		=     0,
+ 	[BRCMNAND_CORR_COUNT]		=     0,
++	[BRCMNAND_READ_ERROR_COUNT]	=     0,
+ 	[BRCMNAND_CORR_EXT_ADDR]	=  0x60,
+ 	[BRCMNAND_CORR_ADDR]		=  0x64,
+ 	[BRCMNAND_UNCORR_EXT_ADDR]	=  0x68,
+@@ -419,6 +421,7 @@ static const u16 brcmnand_regs_v33[] = {
+ 	[BRCMNAND_CORR_THRESHOLD_EXT]	=     0,
+ 	[BRCMNAND_UNCORR_COUNT]		=     0,
+ 	[BRCMNAND_CORR_COUNT]		=     0,
++	[BRCMNAND_READ_ERROR_COUNT]	=     0,
+ 	[BRCMNAND_CORR_EXT_ADDR]	=  0x70,
+ 	[BRCMNAND_CORR_ADDR]		=  0x74,
+ 	[BRCMNAND_UNCORR_EXT_ADDR]	=  0x78,
+@@ -449,6 +452,7 @@ static const u16 brcmnand_regs_v50[] = {
+ 	[BRCMNAND_CORR_THRESHOLD_EXT]	=     0,
+ 	[BRCMNAND_UNCORR_COUNT]		=     0,
+ 	[BRCMNAND_CORR_COUNT]		=     0,
++	[BRCMNAND_READ_ERROR_COUNT]	=     0,
+ 	[BRCMNAND_CORR_EXT_ADDR]	=  0x70,
+ 	[BRCMNAND_CORR_ADDR]		=  0x74,
+ 	[BRCMNAND_UNCORR_EXT_ADDR]	=  0x78,
+@@ -479,6 +483,7 @@ static const u16 brcmnand_regs_v60[] = {
+ 	[BRCMNAND_CORR_THRESHOLD_EXT]	=  0xc4,
+ 	[BRCMNAND_UNCORR_COUNT]		=  0xfc,
+ 	[BRCMNAND_CORR_COUNT]		= 0x100,
++	[BRCMNAND_READ_ERROR_COUNT]	= 0x104,
+ 	[BRCMNAND_CORR_EXT_ADDR]	= 0x10c,
+ 	[BRCMNAND_CORR_ADDR]		= 0x110,
+ 	[BRCMNAND_UNCORR_EXT_ADDR]	= 0x114,
+@@ -509,6 +514,7 @@ static const u16 brcmnand_regs_v71[] = {
+ 	[BRCMNAND_CORR_THRESHOLD_EXT]	=  0xe0,
+ 	[BRCMNAND_UNCORR_COUNT]		=  0xfc,
+ 	[BRCMNAND_CORR_COUNT]		= 0x100,
++	[BRCMNAND_READ_ERROR_COUNT]	= 0x104,
+ 	[BRCMNAND_CORR_EXT_ADDR]	= 0x10c,
+ 	[BRCMNAND_CORR_ADDR]		= 0x110,
+ 	[BRCMNAND_UNCORR_EXT_ADDR]	= 0x114,
+@@ -539,6 +545,7 @@ static const u16 brcmnand_regs_v72[] = {
+ 	[BRCMNAND_CORR_THRESHOLD_EXT]	=  0xe0,
+ 	[BRCMNAND_UNCORR_COUNT]		=  0xfc,
+ 	[BRCMNAND_CORR_COUNT]		= 0x100,
++	[BRCMNAND_READ_ERROR_COUNT]	= 0x104,
+ 	[BRCMNAND_CORR_EXT_ADDR]	= 0x10c,
+ 	[BRCMNAND_CORR_ADDR]		= 0x110,
+ 	[BRCMNAND_UNCORR_EXT_ADDR]	= 0x114,
+@@ -966,6 +973,13 @@ static inline u32 brcmnand_count_corrected(struct brcmnand_controller *ctrl)
+ 	return brcmnand_read_reg(ctrl, BRCMNAND_CORR_COUNT);
+ }
+ 
++static inline u32 brcmnand_corr_total(struct brcmnand_controller *ctrl)
++{
++	if (ctrl->nand_version < 0x0600)
++		return 0;
++	return brcmnand_read_reg(ctrl, BRCMNAND_READ_ERROR_COUNT);
++}
++
+ static void brcmnand_wr_corr_thresh(struct brcmnand_host *host, u8 val)
+ {
+ 	struct brcmnand_controller *ctrl = host->ctrl;
+@@ -2066,12 +2080,15 @@ static int brcmnand_dma_trans(struct brcmnand_host *host, u64 addr, u32 *buf,
+  */
+ static int brcmnand_read_by_pio(struct mtd_info *mtd, struct nand_chip *chip,
+ 				u64 addr, unsigned int trans, u32 *buf,
+-				u8 *oob, u64 *err_addr)
++				u8 *oob, u64 *err_addr, unsigned int *corr)
+ {
+ 	struct brcmnand_host *host = nand_get_controller_data(chip);
+ 	struct brcmnand_controller *ctrl = host->ctrl;
+ 	int i, ret = 0;
+ 
++	if (corr)
++		*corr = 0;
++
+ 	brcmnand_clear_ecc_addr(ctrl);
+ 
+ 	for (i = 0; i < trans; i++, addr += FC_BYTES) {
+@@ -2099,13 +2116,16 @@ static int brcmnand_read_by_pio(struct mtd_info *mtd, struct nand_chip *chip,
+ 
+ 			if (*err_addr)
+ 				ret = -EBADMSG;
+-		}
++			else {
++				*err_addr = brcmnand_get_correcc_addr(ctrl);
+ 
+-		if (!ret) {
+-			*err_addr = brcmnand_get_correcc_addr(ctrl);
++				if (*err_addr) {
++					ret = -EUCLEAN;
+ 
+-			if (*err_addr)
+-				ret = -EUCLEAN;
++					if (corr && brcmnand_count_corrected(ctrl) > *corr)
++						*corr = brcmnand_count_corrected(ctrl);
++				}
++			}
+ 		}
+ 	}
+ 
+@@ -2173,6 +2193,8 @@ static int brcmnand_read(struct mtd_info *mtd, struct nand_chip *chip,
+ 	int err;
+ 	bool retry = true;
+ 	bool edu_err = false;
++	unsigned int corr; /* max corrected bits per subpage */
++	bool dma = 0;
+ 
+ 	dev_dbg(ctrl->dev, "read %llx -> %p\n", (unsigned long long)addr, buf);
+ 
+@@ -2195,14 +2217,17 @@ static int brcmnand_read(struct mtd_info *mtd, struct nand_chip *chip,
+ 		if (has_edu(ctrl) && err_addr)
+ 			edu_err = true;
+ 
++		dma = 1;
+ 	} else {
+ 		if (oob)
+ 			memset(oob, 0x99, mtd->oobsize);
+ 
+ 		err = brcmnand_read_by_pio(mtd, chip, addr, trans, buf,
+-					       oob, &err_addr);
++					   oob, &err_addr, &corr);
+ 	}
+ 
++	mtd->ecc_stats.corrected = brcmnand_corr_total(ctrl);
++
+ 	if (mtd_is_eccerr(err)) {
+ 		/*
+ 		 * On controller version and 7.0, 7.1 , DMA read after a
+@@ -2240,18 +2265,19 @@ static int brcmnand_read(struct mtd_info *mtd, struct nand_chip *chip,
+ 	}
+ 
+ 	if (mtd_is_bitflip(err)) {
+-		unsigned int corrected = brcmnand_count_corrected(ctrl);
++		if (dma)
++			corr = brcmnand_count_corrected(ctrl);
+ 
+ 		/* in case of EDU correctable error we read again using PIO */
+ 		if (edu_err)
+ 			err = brcmnand_read_by_pio(mtd, chip, addr, trans, buf,
+-						   oob, &err_addr);
++						   oob, &err_addr, &corr);
+ 
+ 		dev_dbg(ctrl->dev, "corrected error at 0x%llx\n",
+ 			(unsigned long long)err_addr);
+-		mtd->ecc_stats.corrected += corrected;
++
+ 		/* Always exceed the software-imposed threshold */
+-		return max(mtd->bitflip_threshold, corrected);
++		return max(mtd->bitflip_threshold, corr);
+ 	}
+ 
+ 	return 0;
+-- 
+2.43.5
 
 
