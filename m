@@ -1,156 +1,211 @@
-Return-Path: <linux-kernel+bounces-668071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-668157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00A4EAC8DBB
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 14:35:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B588AC8F02
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 15:03:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 032EE3B897A
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 12:35:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55CBD188694C
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 12:56:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B6EC22ACD1;
-	Fri, 30 May 2025 12:35:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E201262FD1;
+	Fri, 30 May 2025 12:40:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ibTYds5o"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hainksAY"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C460A21C19B
-	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 12:35:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2533261365;
+	Fri, 30 May 2025 12:40:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748608533; cv=none; b=EBrx5b+9yRvlHnfr+V3syNEAGv7lfdyV4Q1hHmu8UkzQM0FM9LCTBwDBATKAVGrKq4C2WM3D/C8YJg+X8eJv/r0QNrN7/NiHeqkTgkX8uvYH5ug8w7Rf7vu60y4GL+61Qk+mhr5/VGXuKMWcg53BXCguFRmkyTvSyDpXwh/iqLU=
+	t=1748608848; cv=none; b=ij78lSMmSyDx6dnzQgF6avmdDu6Eaa6FJONjK92lgoqMXzcpqs1sk8eee7IjjQGd74GJz2BPBHGtdDWDFvWv5lpPCcHJ8YEAZ6HuOiofow2tQfapEIJJR7mKRwBk12PTxh+s5KsYt9IebPB1t2z5j96WdnHcIB9yMdGQ9xOTe88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748608533; c=relaxed/simple;
-	bh=ssTBq1hnRKFWeYNHahYmURnTBykROGxk7IhvzIj6zSY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LvSBfCtp/q4FOOaEjrXd9kKUHnkIEQ/4TmUxjjGQ0ocK/tMq5zA40+tE6uTVc3/OJ67k/JB/dqj63rWwxf5wBhYa7fSIN/3wsbAjnEyEm8SY3II6llwpRB4i2UvvwYc0lM0eFI7pntJt22ByRh978gacCnBmK6lmfmLBWnt2FYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ibTYds5o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B697C4CEE9;
-	Fri, 30 May 2025 12:35:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748608533;
-	bh=ssTBq1hnRKFWeYNHahYmURnTBykROGxk7IhvzIj6zSY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ibTYds5oHy71GpvqRKYKhl7QbdfMCJ8rZgwuC+JgUtutTq9xmKUjDYyM7SpQOhnWX
-	 43/C6b5cKYALcAENNiFdXH40W3lq0R05X6JQzdFbHf/0IDVtYUnBOprYgxrmQdQB3o
-	 MSu8vJ3AswFJpY12+Ne8UFpM2jSXQTxMbHfyCTPpfBalzSJVDMi37h5QoKl0Oamh2Q
-	 fvE/QDST/ygc20cS76zL9979qO2HSttovfdRNCDOEi7X2DrYbSK119DFMFwjl2UDHi
-	 d5GrnnLG8h03RIqzKIkv8Y8UXtmaqlSfBHfwwTVG1NygFOdB5/gia6G+8yiwSxD7D9
-	 fblFqOy65X/nA==
-Date: Fri, 30 May 2025 13:35:27 +0100
-From: Will Deacon <will@kernel.org>
-To: Ryan Roberts <ryan.roberts@arm.com>
-Cc: Dev Jain <dev.jain@arm.com>, catalin.marinas@arm.com,
-	anshuman.khandual@arm.com, quic_zhenhuah@quicinc.com,
-	kevin.brodsky@arm.com, yangyicong@hisilicon.com, joey.gouly@arm.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	david@redhat.com
-Subject: Re: [PATCH] arm64: Enable vmalloc-huge with ptdump
-Message-ID: <20250530123527.GA30463@willie-the-truck>
-References: <20250530082021.18182-1-dev.jain@arm.com>
- <d2b63b97-232e-4d2e-816b-71fd5b0ffcfa@arm.com>
- <832e84a9-4303-4e21-a88b-94395898fa3e@arm.com>
- <4202a03d-dacd-429c-91e6-81a5d05726a4@arm.com>
+	s=arc-20240116; t=1748608848; c=relaxed/simple;
+	bh=XWF7ghCau7PeWDzA8J+cdCynLNNleKMMNsGblfJSVWE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hK2kD5vaG/kO8BT+MYNFzmAeIq4mlZm71TXBwnVf58kldNvuKrcJq6A41a+q04x3IWQ9+Cl32Trr2eqJgMOPvQmYaFzg543NRC+/1hyPwrXX20sFTId2R0acWIbzUZswGfoT5YIFucuLWDPOLig3SGNA/SPJ+2Dkg/ZBVo4PH94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hainksAY; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3a363d15c64so1320142f8f.3;
+        Fri, 30 May 2025 05:40:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748608845; x=1749213645; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UK5nNgXBuHxDSeQY2F0dT9x4Zdv3FiZ5Mbfzw7GxZn8=;
+        b=hainksAY18GVTqkHDLWetVApZyuFRazRxghW+gW3UWtZyLaL0wFdhzfjW5Ruafi8xU
+         S979XAYfT916gh4T8k2BGe+gQnqKObF1K/+Lb4Hagwtvuz0VCCtO5/fQCuL0AkTtMtTp
+         Oq92dFz1Rr3lJwQL8xistMaZMxNNOowWhW9x6pP/9qKzfpFIISCIvTjCYmxH6jh+8GI9
+         v8Py4H8jSgIJ/g/WnGp+2JKPMMOQnMVnbHv3P02uUq9VYQ1c6l+jF089aSC6TViLEL50
+         lK3RLCS4vm/+ctTmiiZKm4Ix+/p4fvAy5gEWLqZAO4+LLVrA9wKabd+S9gIv4pyw+9qb
+         0u8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748608845; x=1749213645;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UK5nNgXBuHxDSeQY2F0dT9x4Zdv3FiZ5Mbfzw7GxZn8=;
+        b=UgaHlxpTk0RikGL2aMEsLrmSbjGxmD6JkgP1wvxLgk6tT2gNkcI9eAvnBI5HowilUE
+         1tD9+1Eow9cSXzI0iD+kKIGUzD0/LOn3nfoWiG+ius22fD1i2XerqDIxjw+hq867NqlQ
+         L09fhsnGusQVfE9c4DbL60FpZolTnQzPHSy7Z3gnDBNjieN7wdNjdAFJGiFUO4vJj2Fv
+         z+dhCCxV3y640LaEWy+gRa2jBLTiez6GBy0QhcTcw3XN6VzDQrS+igqyLljmZl+QKRgR
+         z2jpMGSbEqhRR5U7o5ArtpCPIdm/8ye/ZcSNc0Gv7e6s7u8TVPMPmG8vcgkzYOKHya3j
+         kIzg==
+X-Forwarded-Encrypted: i=1; AJvYcCUBr/v4CwHtQjRBStNr/Bwr6RDdg6DdUbZ2mcKGode0yLI5wv0XSa+Xi+RTr2HWzd5vuVBqeoNjtbejoBBDKYY=@vger.kernel.org, AJvYcCXKpaO87dPb4VCh1MJvZE2t8W62iC96yDlpyu4zAsUr49uZC59k6LNGPyPlSf7u9ctXBICikWVPtJHwE7/4@vger.kernel.org, AJvYcCXSQNbnQtNlN47bk7LayUpRYgmjdyWbD4SFyL95jJgINOpAk7S8rToiu8JWnJayVcWL003sleaGkfyt@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7UTQKLfZPD65tUFJUT3a4oZ1ZH/eBgNh6o+Fo57Ttk9Ml/ikj
+	bUX3EgVZ4BZ+MHE9L2Tva90uttTx0Q6VK0mHmOc1aMqXRQobqqT0N5dL
+X-Gm-Gg: ASbGncuIk9oUFMda6SOBBCcRZY7G9spd1VnhGfFrJBgs/Gak+L776N/6QzD98tF8ZYW
+	ydLzYYkel/H6ZRj0+y4OJ91r6hm6act0W1t6Oh+TSA+B9WI2RFZ0MUZhV5NbvzrU8z7de0cYhTX
+	iAsmoDF6Zj3323qOrQwg0zSvJWGMaebOxjzQluyw0mFTRCaLNWh/a9Q0+6CW2jes6dEywd/QNk2
+	GS+6XIURDZXSZEReoQvIV0QyHIWDqDLyp9qTOXw2ayq+NTUETnvsuCMgD5wNGrVT0PEJ+naNiy9
+	0O+9sb1guza0u18kUkbTmOryPHh0LdtV496vUBOMYPnHKyBPtJVPgZ2yw07oP2w58XWNE/CcBVJ
+	bP8S76/G4dCcmBo3J02TLO8GF9wQ/
+X-Google-Smtp-Source: AGHT+IFKXKz9K3tDUkA7n5EvBtl+LosvhugkBp22Jy94or3qDXc9oEfUgmuRTn7SuyVpYTAFxKWaig==
+X-Received: by 2002:a5d:5850:0:b0:3a3:6a1b:6885 with SMTP id ffacd0b85a97d-3a4f7a6d1f5mr2638615f8f.47.1748608844502;
+        Fri, 30 May 2025 05:40:44 -0700 (PDT)
+Received: from igor-korotin-Precision-Tower-3620.airspan.com ([188.39.32.4])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4f009ff7asm4752103f8f.90.2025.05.30.05.40.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 May 2025 05:40:43 -0700 (PDT)
+From: Igor Korotin <igor.korotin.linux@gmail.com>
+To: "Rafael J . Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	linux-acpi@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Igor Korotin <igor.korotin.linux@gmail.com>
+Subject: [PATCH] rust: acpi: add `acpi::DeviceId` abstraction
+Date: Fri, 30 May 2025 13:38:06 +0100
+Message-ID: <20250530123815.1766726-1-igor.korotin.linux@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <4202a03d-dacd-429c-91e6-81a5d05726a4@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Fri, May 30, 2025 at 12:50:40PM +0100, Ryan Roberts wrote:
-> On 30/05/2025 10:14, Dev Jain wrote:
-> > 
-> > On 30/05/25 2:10 pm, Ryan Roberts wrote:
-> >> On 30/05/2025 09:20, Dev Jain wrote:
-> >>> arm64 disables vmalloc-huge when kernel page table dumping is enabled,
-> >>> because an intermediate table may be removed, potentially causing the
-> >>> ptdump code to dereference an invalid address. We want to be able to
-> >>> analyze block vs page mappings for kernel mappings with ptdump, so to
-> >>> enable vmalloc-huge with ptdump, synchronize between page table removal in
-> >>> pmd_free_pte_page()/pud_free_pmd_page() and ptdump pagetable walking. We
-> >>> use mmap_read_lock and not write lock because we don't need to synchronize
-> >>> between two different vm_structs; two vmalloc objects running this same
-> >>> code path will point to different page tables, hence there is no race.
-> > 
-> > My "correction" from race->no problem was incorrect after all :) There will
-> > be no race too since the vm_struct object has exclusive access to whatever
-> > table it is clearing.
-> > 
-> >>>
-> >>> Signed-off-by: Dev Jain <dev.jain@arm.com>
-> >>> ---
-> >>>   arch/arm64/include/asm/vmalloc.h | 6 ++----
-> >>>   arch/arm64/mm/mmu.c              | 7 +++++++
-> >>>   2 files changed, 9 insertions(+), 4 deletions(-)
-> >>>
-> >>> diff --git a/arch/arm64/include/asm/vmalloc.h b/arch/arm64/include/asm/vmalloc.h
-> >>> index 38fafffe699f..28b7173d8693 100644
-> >>> --- a/arch/arm64/include/asm/vmalloc.h
-> >>> +++ b/arch/arm64/include/asm/vmalloc.h
-> >>> @@ -12,15 +12,13 @@ static inline bool arch_vmap_pud_supported(pgprot_t prot)
-> >>>       /*
-> >>>        * SW table walks can't handle removal of intermediate entries.
-> >>>        */
-> >>> -    return pud_sect_supported() &&
-> >>> -           !IS_ENABLED(CONFIG_PTDUMP_DEBUGFS);
-> >>> +    return pud_sect_supported();
-> >>>   }
-> >>>     #define arch_vmap_pmd_supported arch_vmap_pmd_supported
-> >>>   static inline bool arch_vmap_pmd_supported(pgprot_t prot)
-> >>>   {
-> >>> -    /* See arch_vmap_pud_supported() */
-> >>> -    return !IS_ENABLED(CONFIG_PTDUMP_DEBUGFS);
-> >>> +    return true;
-> >>>   }
-> >>>     #endif
-> >>> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-> >>> index ea6695d53fb9..798cebd9e147 100644
-> >>> --- a/arch/arm64/mm/mmu.c
-> >>> +++ b/arch/arm64/mm/mmu.c
-> >>> @@ -1261,7 +1261,11 @@ int pmd_free_pte_page(pmd_t *pmdp, unsigned long addr)
-> >>>       }
-> >>>         table = pte_offset_kernel(pmdp, addr);
-> >>> +
-> >>> +    /* Synchronize against ptdump_walk_pgd() */
-> >>> +    mmap_read_lock(&init_mm);
-> >>>       pmd_clear(pmdp);
-> >>> +    mmap_read_unlock(&init_mm);
-> >> So this works because ptdump_walk_pgd() takes the write_lock (which is mutually
-> >> exclusive with any read_lock holders) for the duration of the table walk, so it
-> >> will either consistently see the pgtables before or after this removal. It will
-> >> never disappear during the walk, correct?
-> >>
-> >> I guess there is a risk of this showing up as contention with other init_mm
-> >> write_lock holders. But I expect that pmd_free_pte_page()/pud_free_pmd_page()
-> >> are called sufficiently rarely that the risk is very small. Let's fix any perf
-> >> problem if/when we see it.
-> > 
-> > We can avoid all of that by my initial approach - to wrap the lock around
-> > CONFIG_PTDUMP_DEBUGFS.
-> > I don't have a strong opinion, just putting it out there.
-> 
-> (I wrote then failed to send earlier):
-> 
-> It's ugly though. Personally I'd prefer to keep it simple unless we have clear
-> evidence that its needed. I was just laying out my justification for not needing
-> to doing the conditional wrapping in this comment.
+`acpi::DeviceId` is an abstraction around `struct acpi_device_id`.
 
-I really don't think we should be adding unconditional locking overhead
-to core mm routines purely to facilitate a rarely used debug option.
+This is used by subsequent patches, in particular the i2c driver
+abstractions, to create ACPI device ID tables.
 
-Instead, can we either adopt something like the RCU-like walk used by
-fast GUP or stick the locking behind a static key that's only enabled
-when a ptdump walk is in progress (a bit like how
-hugetlb_vmemmap_optimize_folio() manipulates hugetlb_optimize_vmemmap_key)?
+Signed-off-by: Igor Korotin <igor.korotin.linux@gmail.com>
+---
+ MAINTAINERS         |  1 +
+ rust/kernel/acpi.rs | 63 +++++++++++++++++++++++++++++++++++++++++++++
+ rust/kernel/lib.rs  |  1 +
+ 3 files changed, 65 insertions(+)
+ create mode 100644 rust/kernel/acpi.rs
 
-Will
+diff --git a/MAINTAINERS b/MAINTAINERS
+index b659fb27ab63..5f8dfae08454 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -302,6 +302,7 @@ F:	include/linux/acpi.h
+ F:	include/linux/fwnode.h
+ F:	include/linux/fw_table.h
+ F:	lib/fw_table.c
++F:	rust/kernel/acpi.rs
+ F:	tools/power/acpi/
+ 
+ ACPI APEI
+diff --git a/rust/kernel/acpi.rs b/rust/kernel/acpi.rs
+new file mode 100644
+index 000000000000..bbd38910736c
+--- /dev/null
++++ b/rust/kernel/acpi.rs
+@@ -0,0 +1,63 @@
++// SPDX-License-Identifier: GPL-2.0
++
++//! Advanced Configuration and Power Interface abstractions.
++
++use crate::{bindings, device_id::RawDeviceId, prelude::*};
++
++/// IdTable type for ACPI drivers.
++pub type IdTable<T> = &'static dyn kernel::device_id::IdTable<DeviceId, T>;
++
++/// An ACPI device id.
++#[repr(transparent)]
++#[derive(Clone, Copy)]
++pub struct DeviceId(bindings::acpi_device_id);
++
++// SAFETY:
++// * `DeviceId` is a `#[repr(transparent)` wrapper of `struct acpi_device_id` and does not add
++//   additional invariants, so it's safe to transmute to `RawType`.
++// * `DRIVER_DATA_OFFSET` is the offset to the `data` field.
++unsafe impl RawDeviceId for DeviceId {
++    type RawType = bindings::acpi_device_id;
++
++    const DRIVER_DATA_OFFSET: usize = core::mem::offset_of!(bindings::acpi_device_id, driver_data);
++
++    fn index(&self) -> usize {
++        self.0.driver_data as _
++    }
++}
++
++impl DeviceId {
++    const ACPI_ID_LEN: usize = 16;
++
++    /// Create a new device id from an ACPI 'id' string.
++    pub const fn new(id: &'static CStr) -> Self {
++        assert!(id.len() <= Self::ACPI_ID_LEN, "ID exceeds 16 bytes");
++        let src = id.as_bytes_with_nul();
++        // Replace with `bindings::acpi_device_id::default()` once stabilized for `const`.
++        // SAFETY: FFI type is valid to be zero-initialized.
++        let mut acpi: bindings::acpi_device_id = unsafe { core::mem::zeroed() };
++        // TODO: Use `clone_from_slice` once the corresponding types do match.
++        let mut i = 0;
++        while i < src.len() {
++            acpi.id[i] = src[i] as _;
++            i += 1;
++        }
++
++        Self(acpi)
++    }
++}
++
++/// Create an ACPI `IdTable` with an "alias" for modpost.
++#[macro_export]
++macro_rules! acpi_device_table {
++    ($table_name:ident, $module_table_name:ident, $id_info_type: ty, $table_data: expr) => {
++        const $table_name: $crate::device_id::IdArray<
++            $crate::acpi::DeviceId,
++            $id_info_type,
++            { $table_data.len() },
++        > = $crate::device_id::IdArray::new($table_data);
++
++        $crate::module_device_table!("acpi", $module_table_name, $table_name);
++    };
++}
++
+diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+index 15c5f72976cd..05f1d3870bf7 100644
+--- a/rust/kernel/lib.rs
++++ b/rust/kernel/lib.rs
+@@ -78,6 +78,7 @@
+ #[cfg(CONFIG_NET)]
+ pub mod net;
+ pub mod of;
++pub mod acpi;
+ pub mod page;
+ #[cfg(CONFIG_I2C)]
+ pub mod i2c;
+-- 
+2.43.0
+
 
