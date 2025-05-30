@@ -1,118 +1,91 @@
-Return-Path: <linux-kernel+bounces-667763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-667765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED516AC899D
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 10:03:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D6B8AC89A1
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 10:04:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0D74189E3D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 08:03:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55CC34E0404
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 08:04:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 515DC201100;
-	Fri, 30 May 2025 08:03:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="S7vGkx7Q"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F212538B;
-	Fri, 30 May 2025 08:03:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D0112116F5;
+	Fri, 30 May 2025 08:04:20 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DBD638B;
+	Fri, 30 May 2025 08:04:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748592192; cv=none; b=TsnjNjgHGBl51aKW7er6nLkJUUlqjVkQumhMg50lyT+czwUN4cylGlrwqZff5o4EU63bprWjeqkpC8qnLCP2UkQA/D/uBLKooGwi2Hv/ZxXTkIJw11Bi0n845ZwlTkLyUxyCeW/zmy0b+AOnC07YelmBEc7in86l6k/V4opa29k=
+	t=1748592260; cv=none; b=L8XqPKxJW7+5dhdRCOK4DldJTF7S1bbXhC3pKFZ5DVKrgdXQxT1FZ/KcmdxXRqTX00kAiQbOszdDi/1z+Q3er9OLyZXNlDKA4iYn4VAihX42NFeu7bUlr4Ol7sVBe6lBhaHtWhpFMeoUk7LCPTxg7iHRPgIcTKR1MBeFBSDz3gs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748592192; c=relaxed/simple;
-	bh=/3ip+9z66tdC7aFsRMDA8XFR3EVpsy2dAXc+wOoLdoU=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=HnpV9H69OVE1McxVEZkcQL9E+QQMwGNj0M/nmsMQANwoTe68Vb7syvKD1ejCRVyN22M1CKtW+NUKlU7V8B7JUCKRT2ELjv5RbVyogYB/E2IALJ7PKqoTNPw/JrNxAiw/csmgAvxrHMjMHBs3ETKxUJE+i3LjVWOr7vlpbl5oD4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=S7vGkx7Q; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1748592191; x=1780128191;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=/3ip+9z66tdC7aFsRMDA8XFR3EVpsy2dAXc+wOoLdoU=;
-  b=S7vGkx7QqJHiw/mhHK8wkbuPjVQXqXfOXw1P/hoZuYJx9dhhs+EvbfJB
-   aJZy+ZM+aiYttJSgYTir8RzVHvK8QnBfBb+qUOn43rze6yMVAhcHSqyer
-   1y4BofjOei660zfvDx08nBn3jzWrrPn6XCtgEkKNPPBYqqIWik7LVVqo0
-   cS3UVp5HxX5pqV8VTqkG5skzXJUA80KmEdtHJDeU4P9muYEtpy+Lhxe1u
-   nKy/zafeSM0msViUqoWX2GgLJq0yQLtfjAH/Stc5ZolI6QYVMB1YaPhGJ
-   yvfRQaDnGutXWpx86/Ek6bXElzWEeOifdNp5Ne0Areg2Ytm/ki5ZThBbq
-   A==;
-X-CSE-ConnectionGUID: CJ1clejrT+CzSV7p2bA4lg==
-X-CSE-MsgGUID: wfELXmiqSeKfdEdWqWOPFw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11448"; a="50729804"
-X-IronPort-AV: E=Sophos;i="6.16,195,1744095600"; 
-   d="scan'208";a="50729804"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2025 01:03:10 -0700
-X-CSE-ConnectionGUID: 4nNpK5sdSVSNZqrecFI/vA==
-X-CSE-MsgGUID: 5t3IhpMQRV+GMqJKZurJww==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,195,1744095600"; 
-   d="scan'208";a="166986441"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.183])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2025 01:03:09 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Fri, 30 May 2025 11:03:05 +0300 (EEST)
-To: Stuart Hayes <stuart.w.hayes@gmail.com>
-cc: LKML <linux-kernel@vger.kernel.org>, Hans de Goede <hdegoede@redhat.com>, 
-    platform-driver-x86@vger.kernel.org
-Subject: Re: [PATCH v3 3/4] platform/x86: dell_rbu: Stop overwriting data
- buffer
-In-Reply-To: <20250529202758.8440-4-stuart.w.hayes@gmail.com>
-Message-ID: <ad0301a0-f45f-900a-028d-dff5e08b9525@linux.intel.com>
-References: <20250529202758.8440-1-stuart.w.hayes@gmail.com> <20250529202758.8440-4-stuart.w.hayes@gmail.com>
+	s=arc-20240116; t=1748592260; c=relaxed/simple;
+	bh=PqISbMpO8qeuWTjlG8MDM3jFwckzDRaq5U/AGMNoEIw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MctzVQVdvWlsIptN1+0rfGI5snpH444UdG7CL6PsIP/tI4wUy20fnLAkOm2dNW4i5w/EpF30LNd82aSHvXsTO7rCkGRsyQId2JKJ/h8e4rI3OAC6RhYJqZNLoz1bGJKqA+SyipiRUFjLCwpMiDIebpV+dVHMj6OoJf9A596IfCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F33FF16F8;
+	Fri, 30 May 2025 01:04:00 -0700 (PDT)
+Received: from [10.57.95.14] (unknown [10.57.95.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BFFC83F694;
+	Fri, 30 May 2025 01:04:14 -0700 (PDT)
+Message-ID: <05d60e72-3113-41f0-b81f-225397f06c81@arm.com>
+Date: Fri, 30 May 2025 09:04:12 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] fix MADV_COLLAPSE issue if THP settings are disabled
+Content-Language: en-GB
+To: Baolin Wang <baolin.wang@linux.alibaba.com>, akpm@linux-foundation.org,
+ hughd@google.com, david@redhat.com
+Cc: lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, npache@redhat.com,
+ dev.jain@arm.com, ziy@nvidia.com, linux-mm@kvack.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1748506520.git.baolin.wang@linux.alibaba.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <cover.1748506520.git.baolin.wang@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, 29 May 2025, Stuart Hayes wrote:
+On 29/05/2025 09:23, Baolin Wang wrote:
+> As we discussed in the previous thread [1], the MADV_COLLAPSE will ignore
+> the system-wide anon/shmem THP sysfs settings, which means that even though
+> we have disabled the anon/shmem THP configuration, MADV_COLLAPSE will still
+> attempt to collapse into a anon/shmem THP. This violates the rule we have
+> agreed upon: never means never. This patch set will address this issue.
 
-> The dell_rbu driver will use memset() to clear the data held by each
-> packet when it is no longer needed (when the driver is unloaded, the
-> packet size is changed, etc).
-> 
-> The amount of memory that is cleared (before this patch) is the normal
-> packet size. However, the last packet in the list may be smaller.
-> 
-> Fix this to only clear the memory actually used by each packet, to prevent
-> it from writing past the end of data buffer.
-> 
-> Signed-off-by: Stuart Hayes <stuart.w.hayes@gmail.com>
+This is a drive-by comment from me without having the previous context, but...
 
-This still doesn't have Fixes tag? If it writes part the buffer, there 
-certainly should be one in this one. Did you perhaps add it to a wrong 
-patch?
+Surely MADV_COLLAPSE *should* ignore the THP sysfs settings? It's a deliberate
+user-initiated, synchonous request to use huge pages for a range of memory.
+There is nothing *transparent* about it, it just happens to be implemented using
+the same logic that THP uses.
 
-> ---
->  drivers/platform/x86/dell/dell_rbu.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/platform/x86/dell/dell_rbu.c b/drivers/platform/x86/dell/dell_rbu.c
-> index c03d4d55fcc1..7d5b26735a20 100644
-> --- a/drivers/platform/x86/dell/dell_rbu.c
-> +++ b/drivers/platform/x86/dell/dell_rbu.c
-> @@ -322,7 +322,7 @@ static void packet_empty_list(void)
->  		 * zero out the RBU packet memory before freeing
->  		 * to make sure there are no stale RBU packets left in memory
->  		 */
-> -		memset(newpacket->data, 0, rbu_data.packetsize);
-> +		memset(newpacket->data, 0, newpacket->length);
->  		set_memory_wb((unsigned long)newpacket->data,
->  			1 << newpacket->ordernum);
->  		free_pages((unsigned long) newpacket->data,
-> 
+I always thought this was a deliberate design decision.
 
--- 
- i.
+Thanks,
+Ryan
+
+> 
+> [1] https://lore.kernel.org/all/1f00fdc3-a3a3-464b-8565-4c1b23d34f8d@linux.alibaba.com/
+> 
+> Baolin Wang (2):
+>   mm: huge_memory: disallow hugepages if the system-wide THP sysfs
+>     settings are disabled
+>   mm: shmem: disallow hugepages if the system-wide shmem THP sysfs
+>     settings are disabled
+> 
+>  include/linux/huge_mm.h | 23 +++++++++++++++++++----
+>  mm/huge_memory.c        |  2 +-
+>  mm/shmem.c              | 12 ++++++------
+>  3 files changed, 26 insertions(+), 11 deletions(-)
+> 
 
 
