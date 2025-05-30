@@ -1,131 +1,177 @@
-Return-Path: <linux-kernel+bounces-668286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-668264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D34DAC908A
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 15:49:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D0D14AC9040
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 15:34:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4B419E2AEE
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 13:49:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73B533B6F64
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 13:34:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D36D18A6DB;
-	Fri, 30 May 2025 13:49:25 +0000 (UTC)
-Received: from out01.mta.xmission.com (out01.mta.xmission.com [166.70.13.231])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBCEF18DB1E;
+	Fri, 30 May 2025 13:34:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="WGjpURN6"
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2063.outbound.protection.outlook.com [40.107.102.63])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60C2C79CF
-	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 13:49:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.231
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748612965; cv=none; b=dxS5BzyKEpqbKEg3cJz8ry3KSjZIUlhLvU0PLArvEtJz5Y/6CtMf7HqVanVQtSupN5f7Voi2xZ5UZPjtvz8LAYeMYDTzJvgiTvLMUG0xl99uZSoddZpgdsOe5AG3a14Xus+pVHWF8S4i1Jrv1j9pOBmiW2N2Tyj+/g3y6ziGlNI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748612965; c=relaxed/simple;
-	bh=1jTr1g5QOazu47tadj4JGVrJDAfLbg3ptCZUFAnGh6w=;
-	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
-	 Content-Type:Subject; b=rIy6YOL7DKcFSMC4wWWNJdwkXJTQruCM1PCbA8NMDNcjzd9NNNZ0HG6liMcTrSeXCPaji6+10mKOftpLK4iTHJV5ymS9l0e6I8kMgGHoZEAAO16ePZIFsd6HTIz6YBiKVrXIaSorlIUU2WTJOgF7mSsZgkJPXfI9KSRlYgFzD0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.231
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
-Received: from in02.mta.xmission.com ([166.70.13.52]:55896)
-	by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1uKzm5-005yU3-MH; Fri, 30 May 2025 07:27:53 -0600
-Received: from ip72-198-198-28.om.om.cox.net ([72.198.198.28]:47416 helo=email.froward.int.ebiederm.org.xmission.com)
-	by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1uKzm4-000Vcx-Jk; Fri, 30 May 2025 07:27:53 -0600
-From: "Eric W. Biederman" <ebiederm@xmission.com>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,  Andrew Morton
- <akpm@linux-foundation.org>
-References: <aDlty06JvlGwTfKk@gondor.apana.org.au>
-Date: Fri, 30 May 2025 08:27:14 -0500
-In-Reply-To: <aDlty06JvlGwTfKk@gondor.apana.org.au> (Herbert Xu's message of
-	"Fri, 30 May 2025 16:35:23 +0800")
-Message-ID: <87ldqegrf1.fsf@email.froward.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AC864A3E;
+	Fri, 30 May 2025 13:34:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.63
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748612075; cv=fail; b=FwGqdR8miREIsJJ0YjJ6js7C55XZWqy5OgyTnqUkK72XTTknCFp7MwO77FLPq27QCQ2LJgO0Ht/aQkIizsg+712Sh/qP6+eG1USSQ9FRPKA4y2v82uvbFw7UyrmNaYoUrNixwhF85kRDcPDfy4l8Ev7BaEnmam3I/4N2QMyBH8I=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748612075; c=relaxed/simple;
+	bh=FOEz+JmGgIU8KbxSgfgfpd353Sjh4aICDLbxJb3ENVE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EM+/l5UujZrRksQdYQBacW2Mp53ejyL+KzCEl93Uhq6LLqIU8dulnUXFCHE2VQA4fG5ikPADOjiP7K0M0S4ONU5ojLfiCJBZ2/UCj7kAo8aaP/iIL9oqisiIIthe1DpI4ZLfOhf0IT1RtK/1kAaPMhXA3tvHszE6QsvLjJADlkI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=WGjpURN6; arc=fail smtp.client-ip=40.107.102.63
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=F7tFzjbb6wXn7ylY2jkQzSeKGw8miOp2zQIj4aYPb0OFyt3XEPWlGG2CQKz9a8onbIpjlZq7Qbq/lmjOQmWKkK6Evw7tZTHObjv7AAq8iKW2IfLh1LXox7bUY1yVJkNTRYm4+sbuDj5jBeeGxxjyIYkI5xyRhGyRHu0+L1ogRHBQuXIQbMKfVG6vN5EgRACnTt5zLZtJPQ9+GmAw2x9Yli6qgGLDhK0SK6sX5jvtMN3qN923A0zaO9vpJu3fIjWDBk9n5HFgVY+DopXglSoVvj5NR1OIG/3l2fXA7792ua2fuUj6/svYUdCclEGFqVM8klJPMjHX1raDR4/Rti2L0Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ilOZJZT7S7lJJUWZn7i4qJT0V7CL8j2t0gUv8Ii24No=;
+ b=jwGitgwNA1G6xKcI//6HXYoxp3UEOO5M3e454MUrLn3oOlFemJ4c7dwLBZZFx+sY1qYq+2hybfTRtE/H7pFCpI4HpxIbeovaGDDsL3WV01ejFYvN21oDUMwHp10vEzs9wpMm7SlWq/BcfFQut24uhkeDjpffOugq96hdjHLSdRfvJxoyjUhKegqUynaRr+yqzdhWsKCEhUEdVNLPxvmJp8RvWjKxV7LZNrrVjDDYVtPnE/MmNhp5qVgq5FHVIb6/DXWEGzFWnIp1eA4GRrO6+xIBw+ZbbSNEfgnWM0QmbKNB08hSi/xN1gaBi0JWvf8DF+PRUSMbYSqTMm9tQjoFNg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ilOZJZT7S7lJJUWZn7i4qJT0V7CL8j2t0gUv8Ii24No=;
+ b=WGjpURN6+sgm1g/uiqLqm0PoAwgBi+AVNYioibKm+ieS9CQOURL4l5csHiW7Nm2Fz2MvZuMyoGhNpYc/jTcZaf9LOhkGfvTX5VMNPI2dOGtM1hQNbZMXxOVXlO2Z9SMi5JaKrThTfwMwWJa880hmNKAqsbolrc2cNQ5z2Pt0tFs8AyWQ/mF0797OQx7n7b1TqNhDDrSQhySUOMrFjMYu4bHH/ji6Nexs8ljZ8n4M75vYLLVl/B8a51J23uJgu8l2HlEEPqZtyorf/Q3sJqVzZn7wQl8p8e4BkpWdS1CMB7s8A9XJgn3U82ErKDJBZN5c3VteD8mDqIS/Hoc/HCeGxQ==
+Received: from DM6PR18CA0017.namprd18.prod.outlook.com (2603:10b6:5:15b::30)
+ by CH2PR12MB4136.namprd12.prod.outlook.com (2603:10b6:610:a4::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.32; Fri, 30 May
+ 2025 13:34:30 +0000
+Received: from DS1PEPF0001709C.namprd05.prod.outlook.com
+ (2603:10b6:5:15b:cafe::61) by DM6PR18CA0017.outlook.office365.com
+ (2603:10b6:5:15b::30) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8746.32 via Frontend Transport; Fri,
+ 30 May 2025 13:34:30 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ DS1PEPF0001709C.mail.protection.outlook.com (10.167.18.106) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8769.18 via Frontend Transport; Fri, 30 May 2025 13:34:30 +0000
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 30 May
+ 2025 06:34:12 -0700
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail202.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Fri, 30 May
+ 2025 06:34:11 -0700
+Received: from sumitg-l4t.nvidia.com (10.127.8.14) by mail.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
+ Transport; Fri, 30 May 2025 06:34:08 -0700
+From: Sumit Gupta <sumitg@nvidia.com>
+To: <treding@nvidia.com>, <jonathanh@nvidia.com>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+CC: <--to=tbergstrom@nvidia.com>, <bbasu@nvidia.com>, <sumitg@nvidia.com>
+Subject: [Patch 0/8] Support for Tegra264 and GB10 in CBB driver
+Date: Fri, 30 May 2025 19:03:28 +0530
+Message-ID: <20250530133336.1419971-1-sumitg@nvidia.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-NVConfidentiality: public
+Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-XM-SPF: eid=1uKzm4-000Vcx-Jk;;;mid=<87ldqegrf1.fsf@email.froward.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=72.198.198.28;;;frm=ebiederm@xmission.com;;;spf=pass
-X-XM-AID: U2FsdGVkX1/1W1G+VTxfE0afk/cNZjBjXCe2jTfZW4E=
-X-Spam-Level: 
-X-Spam-Report: 
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-	*      [score: 0.5000]
-	*  0.7 XMSubLong Long Subject
-	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-	*      [sa05 1397; Body=1 Fuz1=1 Fuz2=1]
-	*  0.0 T_TooManySym_01 4+ unique symbols in subject
-X-Spam-DCC: XMission; sa05 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Herbert Xu <herbert@gondor.apana.org.au>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 496 ms - load_scoreonly_sql: 0.08 (0.0%),
-	signal_user_changed: 13 (2.6%), b_tie_ro: 11 (2.2%), parse: 1.31
-	(0.3%), extract_message_metadata: 18 (3.5%), get_uri_detail_list: 1.80
-	(0.4%), tests_pri_-2000: 17 (3.5%), tests_pri_-1000: 3.2 (0.6%),
-	tests_pri_-950: 1.65 (0.3%), tests_pri_-900: 1.29 (0.3%),
-	tests_pri_-90: 109 (22.0%), check_bayes: 107 (21.5%), b_tokenize: 7
-	(1.4%), b_tok_get_all: 7 (1.3%), b_comp_prob: 2.4 (0.5%),
-	b_tok_touch_all: 88 (17.6%), b_finish: 1.12 (0.2%), tests_pri_0: 312
-	(63.0%), check_dkim_signature: 0.68 (0.1%), check_dkim_adsp: 3.5
-	(0.7%), poll_dns_idle: 0.92 (0.2%), tests_pri_10: 4.0 (0.8%),
-	tests_pri_500: 11 (2.2%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH] userns: Add forward declaration of struct seq_file in
- user_namespace.h
-X-SA-Exim-Connect-IP: 166.70.13.52
-X-SA-Exim-Rcpt-To: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, herbert@gondor.apana.org.au
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-SA-Exim-Scanned: No (on out01.mta.xmission.com); SAEximRunCond expanded to false
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS1PEPF0001709C:EE_|CH2PR12MB4136:EE_
+X-MS-Office365-Filtering-Correlation-Id: b4de6287-0a0d-431e-21b2-08dd9f7eb4f7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|36860700013|82310400026|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?CPRprjA93XPMywPvdc0RYygHj9XeitKECYK5mXyIEWRz6/b1M+7sD5tHlxni?=
+ =?us-ascii?Q?ESSeMnXnKHFu0/S52/zTp2UQ9X/22WdogRNXsiMrKpC4YPmVkxMvMaSL3vsM?=
+ =?us-ascii?Q?P/ondDJRpTHdUDtqXTmDv1QvfHRflevfo7+mFwKSC0ZW/H0FKH4BVigoAjVT?=
+ =?us-ascii?Q?q4xaq0pPQgeM3ShbmEIa2m/W9UBiyC/BZHdQ63ir9YOd5p2TCWzkjFPhGanq?=
+ =?us-ascii?Q?S1OOnxEr0Gfu5+JkesxJu9NM0FCHsO8Up+DZGCxb+kwkpglF3EEAOLzowJTu?=
+ =?us-ascii?Q?C7H8JfLF/DTVy78y0ZSFh0QM+cOei8czoQ5wTStpjIyv4Dnzdp4rxZdE24pZ?=
+ =?us-ascii?Q?KrgawiO07lVQdqHIyjHyao2H/n90B1+Anq8xG5K7+P+5VM/OirgYNNokUldk?=
+ =?us-ascii?Q?fNfJg07hHy2CWhKujscpoxpSwY6oKX2NUqjrN3OTafruD8Z8LPqumn54/37I?=
+ =?us-ascii?Q?IesVzMB9ySZGfTxdgdmCshynQgqEjFMaLVaZkQmcgtkIkj/Kn0osz/f7wJAU?=
+ =?us-ascii?Q?wHm/vcKwVjW0tY+8RhdcHEPD6mPYWSi6tWihW26Cu+MrxBRlUxoZNRmOcvjP?=
+ =?us-ascii?Q?0gp0WiVIB7ud8tIYptXRY8LrykuZhRWGa1VAql0r5Z421UgFWAsJfZteyMyY?=
+ =?us-ascii?Q?SigdpGPNJ/+Dlte8jpa9AIxXYo0YtqgZ8KmiD7AYilPPhR8ucM/LGGZQo0XZ?=
+ =?us-ascii?Q?ETyE5o6jdGuZ4/IC5F3MbukZ4BOn0rTe5kop43fbHYQ6nekD9wkelV1b28Mv?=
+ =?us-ascii?Q?PoAQibHBwl7qjTAZkchu0flEKNHYflf6lYapzY3awfuOO1i6QPmWn+jqixTa?=
+ =?us-ascii?Q?aFy1YmQd6MjRWLhFKWswev3C8VkRvRknaDU78nKnhao/9NsxgcQrNFhF1SbH?=
+ =?us-ascii?Q?gFgzcoSrVL2Xz77DeEGTC6I8Vwa5Qky73AteBu8bSpJ7lBMQtAF0Rl65fdrr?=
+ =?us-ascii?Q?06W3b6rwbSBlSl4SqnDf7nGLZ1ujiBVo9sRc7vQmVDfbbUDN9lNt4N9EOWBJ?=
+ =?us-ascii?Q?4rHh5fPovFFY8zudK1DYrhASpwXp/av18MkT9W9ObCCJLU9MvucWshmjDpuv?=
+ =?us-ascii?Q?voLuWsdsW+liIJpvlTWliyfHn5MlYKqAbIw2Z12up0HurMIxwWWD0mVgqzYy?=
+ =?us-ascii?Q?Z26biJGj6AYw5EMLy3Krb3Bl1+HC5OIAZqzDcTlOu16iH16i/Hq0VdLGaiT/?=
+ =?us-ascii?Q?z83c96Sdb4bWjI6mZIK2Ld0A15n4kIx5XsWOIV2KsF8EFimLGah2uzIYJG1R?=
+ =?us-ascii?Q?IMTv9OEcG5KM+R28am/teXj9OUniUa3vzhjLvZ10cj0/CqZRyn4Vyc6PSM+Y?=
+ =?us-ascii?Q?uRL+SVyDdXN/z76mC6aJOV7iljY3x9XirVBxZw9clVqMWitSZy7UNN5xm+k1?=
+ =?us-ascii?Q?BLpOgDqLvaToYDgWXrA5Mvo8w2RW+OuG5gMqhNSdry8HILEmMYyGi8zx1+iS?=
+ =?us-ascii?Q?j+64I5g6J2KmsZkqGb9uLb45MLsaQTB9SsWUuklQJ9qFASA/YD6wIaG6o3nS?=
+ =?us-ascii?Q?JdWGHuyOH/nnn3Gr/MxSBa7Ay0ZrE16il37p?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(36860700013)(82310400026)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 May 2025 13:34:30.5810
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b4de6287-0a0d-431e-21b2-08dd9f7eb4f7
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS1PEPF0001709C.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4136
 
-Herbert Xu <herbert@gondor.apana.org.au> writes:
+This patch series adds support for Tegar264 and GB10 SoCs in the
+Tegra CBB driver. It also includes a fix and some improvements to
+make the driver more generic to add new SoC support.
 
-> Add forward declaration of struct seq_file before using it in
-> function prototype.
+The patches can be applied in sequence. Patch info:
+- Patch 1: Fix.
+- Patch 2: Change lingo from 'Master/Slave' to 'Initiator/Target'.
+- Patch 3 & 4: Improvements.
+- Patch 5: New feature for HW lookup.
+- Patch 6 & 7: Tegra264 SoC support.
+- Patch 8: GB10 SoC support.
 
-I don't see anything wrong with doing that.
+Sumit Gupta (8):
+  soc: tegra: cbb: clear err force register with err status
+  soc: tegra: cbb: change master-slave to initiator-target
+  soc: tegra: cbb: make error interrupt enable and status per SoC
+  soc: tegra: cbb: improve handling for per SoC fabric data
+  soc: tegra: cbb: support hw lookup to get timed out target address
+  dt-bindings: arm: tegra: Add NVIDIA Tegra264 CBB 2.0 binding
+  soc: tegra: cbb: add support for cbb fabrics in Tegra264
+  soc: tegra: cbb: add support for cbb fabrics in GB10
 
-However:
-> Fixes: 9cc46516ddf4 ("userns: Add a knob to disable setgroups on a per
-> user namespace basis")
+ .../arm/tegra/nvidia,tegra234-cbb.yaml        |   4 +
+ drivers/soc/tegra/cbb/tegra194-cbb.c          |  34 +-
+ drivers/soc/tegra/cbb/tegra234-cbb.c          | 758 ++++++++++++++----
+ 3 files changed, 606 insertions(+), 190 deletions(-)
 
-That description seems to be lacking something.  The code as has been
-fine since 2014 and there is no conditional compilation involved.
+-- 
+2.25.1
 
-Did some other change cause a declaration of seq_file not to be present?
-Did user_namespace.h get included somewhere new and that new location
-doesn't wind up declaring seq_file?
-
-Especially since fixes tags tend to get code back ported I would
-appreciate a bit more context on why this is a problem in 2025 when
-it hasn't been a problem for the last decade.
-
-Thank you,
-Eric Biederman
-
-> Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
->
-> diff --git a/include/linux/user_namespace.h b/include/linux/user_namespace.h
-> index a0bb6d012137..5c7aa940b1aa 100644
-> --- a/include/linux/user_namespace.h
-> +++ b/include/linux/user_namespace.h
-> @@ -16,6 +16,8 @@
->  #define UID_GID_MAP_MAX_BASE_EXTENTS 5
->  #define UID_GID_MAP_MAX_EXTENTS 340
->  
-> +struct seq_file;
-> +
->  struct uid_gid_extent {
->  	u32 first;
->  	u32 lower_first;
 
