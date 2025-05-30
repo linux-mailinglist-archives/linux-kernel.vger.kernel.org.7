@@ -1,196 +1,113 @@
-Return-Path: <linux-kernel+bounces-668621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-668623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83C33AC9543
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 19:52:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 556A3AC953F
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 19:51:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C226A1C23D67
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 17:51:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DB40A809E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 17:50:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D6A927585F;
-	Fri, 30 May 2025 17:50:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2E5F279358;
+	Fri, 30 May 2025 17:50:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="saRCg2bT"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="LeyNKKSn"
+Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B634275860
-	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 17:50:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17023278146
+	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 17:50:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748627438; cv=none; b=Eqh0vEKJeQC8m/oTXa9PdJYhbc8gpt64jIFwWUZTNPtqwW0Ak9oYWMgUtR+YoNv/EB50BbeGWK7I8p0zGF57pcrmuqlLiprJbZ1AyFGlvveq03FVWDmSjOWNfk5D98GiWN5qu59a6o36Nff5MN4eGJq7DK+X+0VqGlmfHxx/aOg=
+	t=1748627441; cv=none; b=iMU8sx8+FU7JbzJBBZMBzCoeuWn7dAiBMtj9mF3+VJ0ho7Ctdi1DMFSCauxqK1NRNFRZJEeW/GfYj+BHTv6lOq2dBRWE0WnuZf66avgjg4Oa8MBTiyKv1fGfhsAN6QEQW3teWgrFYlJ86RNIDooBW2H1ysN3vfoknLvZSK2R06c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748627438; c=relaxed/simple;
-	bh=ZpyN4/g0fIVhnbT8d1gKlwHIPtIdzBgiCO0etih4F9c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lOyCRqK4Uj8aVkdlANg83sPagTGdjANNY2E614SFZE3qeBVhxMsjPmxpnkbfveD8VVNb4phLq6xPAcsuBHsgOR3MyRROUsov7WnIHNLNLGMMA5goCNNXA0NaAn5SzSasS80/jcxs/vtlijlalmxsHnm8fK/Tum9s1n/jBSq/DQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=saRCg2bT; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2349068ebc7so19775ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 10:50:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1748627436; x=1749232236; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LZxelI4d4NvZ/TF/J+tAC98NjF7+jArlYHEM3kySd7Y=;
-        b=saRCg2bTJPbra+aNMFsPyKAbAZlqc8IdH/0Ku2IoHdPOUzLWf7PwI6kcvT0KvGBcQv
-         YCwmBj2b8KBBgL3Etw97zdUUnbAm+yUdQfngtlQTvR9evGmleuYl7911bIjZi1e2QbfR
-         mRWu90UgdcDAN8CD64cXCVWcyoThVdqgcLPlnU8E0m4k7a9US9/3mBAfkaohQwIwWk2s
-         urCtb/k1cZtfmNwNnXloR7U0oaxIaH3NBSY7n1C0CkCwzhZY65wZb2i29kNWMKij6B9Q
-         KhHkHebGOgUWsJ/9zUmbfOIG9jdwSjyqaesv6HOhiHT2w/v9K5s/H8pN+14Yu3O7Wly1
-         D+Jg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748627436; x=1749232236;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LZxelI4d4NvZ/TF/J+tAC98NjF7+jArlYHEM3kySd7Y=;
-        b=f78m1ydBISCUUuA5p9i1J3HhD7FCuldP1BxFFjf+q5BUQmq4194b25/CIqVhpem8n1
-         B47aEWOi6aB7nOMTY/uskSxoZF0iDUEjfscdoL8UfRMze5pZ3eQ1EwYua2/bq39ll5uI
-         dIb66qzthPb0xJSDyE3Ge9cwuF6TzIQAhwZKoWawOiWOV3CyobVN91NjhTfxlM9m6jT5
-         rgE+ew+PBfrdKO0+UbXYG1dHpsN35aBHzQMSWlc1fGlN2SanNYowg28/wT4UKcwDfmfQ
-         JJGXDPt71uG3cZ5oOjTw+JWrMkJSwcDEMUFF3RiSteb0Hd2D8YN4hpCn/SIwT/aVb4iz
-         ezeg==
-X-Forwarded-Encrypted: i=1; AJvYcCVmcsVmzpKL8Nyt5Sac1CIXwuxEwwOU3IM0DZqFOeXM4NbAndoURyf1C4ffLPHRSxOUfyN3FBm5Ct/4Oso=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBVwdhH82YAOBW0rICDTP19iBjVPidXdLkkL9OI7q8Qs8+rsJF
-	wv034z16McGdIvrfFDTJYKDsdA+axy/yvZwZp089Wvh5Fk+wrVj9E3BHvbM63Ldc0zm/6+Geprm
-	BH3HqmEJS47txcxt8J2PjC/9pC3kerY/BHNcZDHNy
-X-Gm-Gg: ASbGncuXeaQN2x6KO80MvtDGxk7XD+2CF+pt72hFHrtfmAJoBULdeJ15ZrCPyjmGewy
-	wnsZjwg/enez9c7cU/YCRUoorTanXH9XWnX/10jmg+GuKb5OwWFOoe7ahfQ9DLUf8c26n4bVIgK
-	wDLP3SkQNfpXuaq0Qw2ovjwvutBayYmhTGTulFkWcwMB17rdyowFTF3lGfXlZ7egOK76yrGjh4e
-	w==
-X-Google-Smtp-Source: AGHT+IF/dpJ3V6p0xr1UkmFfbIzfoRNakFfjWEsSzdnU9K0wExcotWGzZLbWs+c4kGKxup4uLNw2Dwpv5BnHj6UuyNs=
-X-Received: by 2002:a17:902:ecd2:b0:231:eedd:de3a with SMTP id
- d9443c01a7336-2353220f83emr3003775ad.25.1748627435241; Fri, 30 May 2025
- 10:50:35 -0700 (PDT)
+	s=arc-20240116; t=1748627441; c=relaxed/simple;
+	bh=V9k3q5zaDeZPO44a5lqK3f3expFPIc+XbGlwvLaHooI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mCiUm86Ucrv2K5x/BPapsMp0KglE7zhflANwHpT/DxeMPsgNQAhfIfRfYbva5yf322B5G6SJw0TIUvl3T+FC50rCIjhWt8orxQEJELR1VKCSc8Rs23/wQnQjfu512hPrAz1AzEslJSSmsDw/UjBLyFoQJX6SFuckNupBdL0WZaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=LeyNKKSn; arc=none smtp.client-ip=115.124.30.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1748627431; h=From:To:Subject:Date:Message-ID:MIME-Version;
+	bh=XimTDkWcSAmgdKNam8nAO6lUSTOa2teCt2mzK0aaMr0=;
+	b=LeyNKKSnrjqo3X403tYe3iFm2itZKd6Gi7EJDSogRlAuQ1S8bPzUtSIqvrZgQmmvLBP3cRLajdwM4RzkQiV1BTNV/JpwWXfGjVrzm+ucFZ+mkFVSX8UKESeMgZP4yMtKx+v1ENq+VRaqHicql6gipdqSWaDR/jULqzknw7VL5J4=
+Received: from localhost.localdomain(mailfrom:qinyuntan@linux.alibaba.com fp:SMTPD_---0WcMBXbd_1748627429 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Sat, 31 May 2025 01:50:31 +0800
+From: Qinyun Tan <qinyuntan@linux.alibaba.com>
+To: Tony Luck <tony.luck@intel.com>
+Cc: "H . Peter Anvin" <hpa@zytor.com>,
+	linux-kernel@vger.kernel.org,
+	x86@kernel.org,
+	Reinette Chatre <reinette.chatre@intel.com>,
+	Qinyun Tan <qinyuntan@linux.alibaba.com>
+Subject: [PATCH V4 0/1] x86/resctrl: Remove unappropriate references to cacheinfo in the resctrl subsystem.
+Date: Sat, 31 May 2025 01:50:26 +0800
+Message-ID: <20250530175027.30140-1-qinyuntan@linux.alibaba.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250529031047.7587-1-byungchul@sk.com> <20250529031047.7587-2-byungchul@sk.com>
- <CAHS8izNBjkMLbQsP++0r+fbkW2q7gGOdrbmE7gH-=jQUMCgJ1g@mail.gmail.com> <20250530011002.GA3093@system.software.com>
-In-Reply-To: <20250530011002.GA3093@system.software.com>
-From: Mina Almasry <almasrymina@google.com>
-Date: Fri, 30 May 2025 10:50:22 -0700
-X-Gm-Features: AX0GCFvslPZ_UC7JzYeAi_Zy_ofVmEwzK1hvI1l778wh4YYuE9pFk1RpuJvt08A
-Message-ID: <CAHS8izNPSHR7B24Y3RZiBeZHkPyzKAKdZbQgXwqwgs01HzxDTw@mail.gmail.com>
-Subject: Re: [RFC v3 01/18] netmem: introduce struct netmem_desc mirroring
- struct page
-To: Byungchul Park <byungchul@sk.com>
-Cc: willy@infradead.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, kernel_team@skhynix.com, kuba@kernel.org, 
-	ilias.apalodimas@linaro.org, harry.yoo@oracle.com, hawk@kernel.org, 
-	akpm@linux-foundation.org, davem@davemloft.net, john.fastabend@gmail.com, 
-	andrew+netdev@lunn.ch, asml.silence@gmail.com, toke@redhat.com, 
-	tariqt@nvidia.com, edumazet@google.com, pabeni@redhat.com, saeedm@nvidia.com, 
-	leon@kernel.org, ast@kernel.org, daniel@iogearbox.net, david@redhat.com, 
-	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz, 
-	rppt@kernel.org, surenb@google.com, mhocko@suse.com, horms@kernel.org, 
-	linux-rdma@vger.kernel.org, bpf@vger.kernel.org, vishal.moola@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, May 29, 2025 at 6:10=E2=80=AFPM Byungchul Park <byungchul@sk.com> w=
-rote:
->
-> On Thu, May 29, 2025 at 09:31:40AM -0700, Mina Almasry wrote:
-> > On Wed, May 28, 2025 at 8:11=E2=80=AFPM Byungchul Park <byungchul@sk.co=
-m> wrote:
-> > >  struct net_iov {
-> > > -       enum net_iov_type type;
-> > > -       unsigned long pp_magic;
-> > > -       struct page_pool *pp;
-> > > -       struct net_iov_area *owner;
-> > > -       unsigned long dma_addr;
-> > > -       atomic_long_t pp_ref_count;
-> > > +       union {
-> > > +               struct netmem_desc desc;
-> > > +
-> > > +               /* XXX: The following part should be removed once all
-> > > +                * the references to them are converted so as to be
-> > > +                * accessed via netmem_desc e.g. niov->desc.pp instea=
-d
-> > > +                * of niov->pp.
-> > > +                *
-> > > +                * Plus, once struct netmem_desc has it own instance
-> > > +                * from slab, network's fields of the following can b=
-e
-> > > +                * moved out of struct netmem_desc like:
-> > > +                *
-> > > +                *    struct net_iov {
-> > > +                *       struct netmem_desc desc;
-> > > +                *       struct net_iov_area *owner;
-> > > +                *       ...
-> > > +                *    };
-> > > +                */
-> >
-> > We do not need to wait until netmem_desc has its own instance from
-> > slab to move the net_iov-specific fields out of netmem_desc. We can do
-> > that now, because there are no size restrictions on net_iov.
->
-> Got it.  Thanks for explanation.
->
-> > So, I recommend change this to:
-> >
-> > struct net_iov {
-> >   /* Union for anonymous aliasing: */
-> >   union {
-> >     struct netmem_desc desc;
-> >     struct {
-> >        unsigned long _flags;
-> >        unsigned long pp_magic;
-> >        struct page_pool *pp;
-> >        unsigned long _pp_mapping_pad;
-> >        unsigned long dma_addr;
-> >        atomic_long_t pp_ref_count;
-> >     };
-> >     struct net_iov_area *owner;
-> >     enum net_iov_type type;
-> > };
->
-> Do you mean?
->
->   struct net_iov {
->     /* Union for anonymous aliasing: */
->     union {
->       struct netmem_desc desc;
->       struct {
->          unsigned long _flags;
->          unsigned long pp_magic;
->          struct page_pool *pp;
->          unsigned long _pp_mapping_pad;
->          unsigned long dma_addr;
->          atomic_long_t pp_ref_count;
->       };
->     };
->     struct net_iov_area *owner;
->     enum net_iov_type type;
->   };
->
-> Right?  If so, I will.
->
+V4:
+- Add the tested by and reviewed by tags.
+- Modify the commit log format.
 
-Yes, sounds good.
+V3:
+- According to Reinette suggestion, modify the commit log description to
+ make it easier for readers to understand
 
-Also, maybe having a union with the same fields for anonymous aliasing
-can be error prone if someone updates netmem_desc and forgets to
-update the mirror in struct net_iov. If you can think of a way to deal
-with that, great, if not lets maybe put a comment on top of struct
-netmem_desc:
+V2:
+- Keep sanity checks in the __mon_event_count to ensure execution occurs
+  exclusively on CPUs sharing the same L3 cache cluster
+- When reading the top level event, obtain a CPU within hdr.cpu_mask.
+  Then use the cacheinfo shared_cpu_map of this CPU instead of using
+  hdr.cpu_mask directly
+- Adjust code formatting and commit log descriptions.
 
-/* Do not update the fields in netmem_desc without also updating the
-anonymous aliasing union in struct net_iov */.
+In the resctrl subsystem's Sub-NUMA Cluster (SNC) mode, the rdt_mon_domain
+structure representing a NUMA node relies on the cacheinfo interface
+(rdt_mon_domain::ci) to store L3 cache information (e.g., shared_cpu_map)
+for monitoring. The L3 cache information of a SNC NUMA node determines
+which domains are summed for the "top level" L3-scoped events.
 
-Or something like that.
+rdt_mon_domain::ci is initialized using the first online CPU of a NUMA
+node. When this CPU goes offline, its shared_cpu_map is cleared to contain
+only the offline CPU itself. Subsequently, attempting to read counters
+via smp_call_on_cpu(offline_cpu) fails (and error ignored), returning
+zero values for "top-level events" without any error indication. Replace
+the cacheinfo references in struct rdt_mon_domain and struct rmid_read
+with the cacheinfo ID (a unique identifier for the L3 cache).
 
---=20
-Thanks,
-Mina
+rdt_domain_hdr::cpu_mask contains the online CPUs associated with that
+domain. When reading "top-level events", select a CPU from
+rdt_domain_hdr::cpu_mask and utilize its L3 shared_cpu_map to determine
+valid CPUs for reading RMID counter via the MSR interface.
+
+Considering all CPUs associated with the L3 cache improves the chances
+of picking a housekeeping CPU on which the counter reading work can be
+queued, avoiding an unnecessary IPI.
+
+Qinyun Tan (1):
+  x86/resctrl: Remove unappropriate references to cacheinfo in the
+    resctrl subsystem.
+
+ arch/x86/kernel/cpu/resctrl/core.c |  6 ++++--
+ fs/resctrl/ctrlmondata.c           | 13 +++++++++----
+ fs/resctrl/internal.h              |  4 ++--
+ fs/resctrl/monitor.c               |  6 ++++--
+ fs/resctrl/rdtgroup.c              |  6 +++---
+ include/linux/resctrl.h            |  4 ++--
+ 6 files changed, 24 insertions(+), 15 deletions(-)
+
+-- 
+2.43.5
+
 
