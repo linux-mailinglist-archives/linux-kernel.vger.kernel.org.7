@@ -1,140 +1,161 @@
-Return-Path: <linux-kernel+bounces-668688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-668690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46273AC95F7
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 21:13:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3791EAC95FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 21:15:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EECE16DBE3
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 19:13:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D9861C229BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 19:15:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03E6927874F;
-	Fri, 30 May 2025 19:13:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C39B279327;
+	Fri, 30 May 2025 19:14:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fviMXFQc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DIGW7bet"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 544DE23E35B;
-	Fri, 30 May 2025 19:13:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCD0C23E35B;
+	Fri, 30 May 2025 19:14:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748632403; cv=none; b=ZqXOxHNPG9UN1HDMJq3rPeC2GrihAm4SWoP9iHFznvGgt36qknZSTwTb+YuTk9nNGBR0hdDduA3Fi04q4zFks7S7Ih1VFPoKdvf5ambbPnRnxs4lfWzZ1ggMaBPnSWozPp1jrZXA4QpwCm+kLl5CXkENl5dLJRKm22LI2PxM8j8=
+	t=1748632494; cv=none; b=TiwJPyQHFKJZTsKMA5b6ThE/1uUDZYUDVBdUslUPt0FNMBlV4SJ9mtrciabKoxtI+lZQuQkpEx2PYJqMJo32ixTCoNK2Pxj2pv4dbUx2Mo6T1RxO9yMhIlvdSZXfg7WcvjAUz8pTmiaZUUV9A7Vy7PKeYVtXkqrgq7eumrR4PN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748632403; c=relaxed/simple;
-	bh=HzXJ6AEdcwmvBWA+PgiZUgeoUUm0HSXNmXjkxF0eRDs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qAzM73JnAnQi6R+Awm383fZyWa7tT4llafQNrUoh11BT9fWPMEfdTxOVsVAp6s/MCcmB4Hh+xcqUfg1H6NRG2Swmuth+ughNv+9mnvI4dWr5FawAczU0JfkdQdJWnjXCvRelgWCye4/arZgim+AMrrDYY5uSALzxYRF0XTbvSXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fviMXFQc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0918C4CEE9;
-	Fri, 30 May 2025 19:13:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748632402;
-	bh=HzXJ6AEdcwmvBWA+PgiZUgeoUUm0HSXNmXjkxF0eRDs=;
-	h=From:To:Cc:Subject:Date:From;
-	b=fviMXFQcF4MiK9d/GhA2R0n7qXLFOkB6Asvr2RQbBkaxooffdv6uQfNwK3kRfwWdQ
-	 U5ZCv29xdRC9gpGAIQh8m+ijqkoAKWExmp1LwKIfI+tQSljPQjqtV0uHxQMybs2UYs
-	 PRbACuaFNs+kuq8sDYL4CsGWdspnTuVHADXP8PqC2rRsVX/lJMz3IPmonK7eRGn2Wy
-	 sqTL8qXdTAzgdGY8MzCpMDlGC8i/Qp0cjb6g0VqC2izrLGooqxsls/PwclBtOAMgWW
-	 VWhmfuYKQ1NdtB4JkCTvD3wLYJXc+wffeKfNpNIpl4bJzb1A4lOeSrYmqq+zG2Dm3D
-	 WYUyVEY+DbMlw==
-From: Kees Cook <kees@kernel.org>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Kees Cook <kees@kernel.org>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	linux-hardening@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] overflow: Introduce __DEFINE_FLEX for having no initializer
-Date: Fri, 30 May 2025 12:13:16 -0700
-Message-Id: <20250530191312.work.661-kees@kernel.org>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1748632494; c=relaxed/simple;
+	bh=o94uNCWV71Npa/D7DFRsizf1ZwcH4B1mlc/EOztA0Kw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h6LpffOtx/qZ8FWjRQyY+b5trOY51FPuTf0eyDuuxGbyx+hu5vhFJxqNWHjuwh5aL/Pv4bUkmNDgjSUCP1dAiaplwklv/XTDdJUdoVfgOlPZ9iIJn6XmqNXYun0M/viUClDw9ApbaPCbPVfBaI0EYPZ76hIvekcTrReibH1Syd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DIGW7bet; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1748632493; x=1780168493;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=o94uNCWV71Npa/D7DFRsizf1ZwcH4B1mlc/EOztA0Kw=;
+  b=DIGW7betdw4A7LfDhL/nZ09cFVNkcL3zzyxQv6c0eaho2zAMwdbjvV41
+   jpWx87BBaIXP4ON9hnj3FPhlNc3jxYDjXCWPLbQyDsrvxe9hL4Ia8eCVn
+   Ao8NKm8zC4ZIv4qwgVUe7f77kKO+VZ2CnUhV+73IrfROMM6o9mzcGutG/
+   nEHndllsdpCIscCl2duuPtU9EdQaEmkFnf7DQUDToYQlLdUsQBwGxq3RM
+   DeF6YI/94uWGLFKmjaIdiOpSjHKFo89H5TB6ZHnSjcU9lPckqWA6YYXIA
+   a7zOVOINoyBCd65xKAZHr52ke4McGizgkTZQaqJhWCbwFrpg+p3hzsVUZ
+   g==;
+X-CSE-ConnectionGUID: i/ug7soHTxmnwREaFCyxcA==
+X-CSE-MsgGUID: du7oQRH6RJym+M7YAgcjPg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11449"; a="60991991"
+X-IronPort-AV: E=Sophos;i="6.16,196,1744095600"; 
+   d="scan'208";a="60991991"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2025 12:14:53 -0700
+X-CSE-ConnectionGUID: eS2mBj5fQZS6qe3p2T0onQ==
+X-CSE-MsgGUID: y9qpQ4EUTiiGK7G8smW0bg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,196,1744095600"; 
+   d="scan'208";a="147843228"
+Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
+  by fmviesa003.fm.intel.com with ESMTP; 30 May 2025 12:14:50 -0700
+Received: from kbuild by 1992f890471c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uL5Bm-000Xtw-2y;
+	Fri, 30 May 2025 19:14:46 +0000
+Date: Sat, 31 May 2025 03:14:27 +0800
+From: kernel test robot <lkp@intel.com>
+To: =?iso-8859-1?Q?=C1lvaro_Fern=E1ndez?= Rojas <noltari@gmail.com>,
+	jonas.gorski@gmail.com, florian.fainelli@broadcom.com,
+	andrew@lunn.ch, olteanv@gmail.com, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	horms@kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, dgcbueu@gmail.com
+Cc: oe-kbuild-all@lists.linux.dev,
+	=?iso-8859-1?Q?=C1lvaro_Fern=E1ndez?= Rojas <noltari@gmail.com>
+Subject: Re: [PATCH] net: dsa: b53: support legacy FCS tags
+Message-ID: <202505310308.8veTfz2G-lkp@intel.com>
+References: <20250530155618.273567-4-noltari@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3412; i=kees@kernel.org; h=from:subject:message-id; bh=HzXJ6AEdcwmvBWA+PgiZUgeoUUm0HSXNmXjkxF0eRDs=; b=owGbwMvMwCVmps19z/KJym7G02pJDBlWzD5z+qurGts6rTnDZWRjXaW6lAvq/x3stV/9qXX31 X97lb91lLIwiHExyIopsgTZuce5eLxtD3efqwgzh5UJZAgDF6cATIRhNiPDxePxP45c09Kvi/X0 Vr8Wubr2h0bdq+WHeZ3WicabWZyoZWRoTtgfn9/p7Lrfb6LsbqPbD3Oy2rYufXf4Q/5ev9ATwd1 8AA==
-X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250530155618.273567-4-noltari@gmail.com>
 
-While not yet in the tree, there is a proposed patch[1] that was
-depending on the prior behavior of _DEFINE_FLEX, which did not have an
-explicit initializer. Provide this via __DEFINE_FLEX now, which can also
-have attributes applied (e.g. __uninitialized).
+Hi Álvaro,
 
-Examples of the resulting initializer behaviors can be seen here:
-https://godbolt.org/z/P7Go8Tr33
+kernel test robot noticed the following build errors:
 
-Link: https://lore.kernel.org/netdev/20250520205920.2134829-9-anthony.l.nguyen@intel.com [1]
-Fixes: 47e36ed78406 ("overflow: Fix direct struct member initialization in _DEFINE_FLEX()")
-Signed-off-by: Kees Cook <kees@kernel.org>
----
-Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Alexander Lobakin <aleksander.lobakin@intel.com>
-Cc: <linux-hardening@vger.kernel.org>
----
- include/linux/overflow.h | 25 +++++++++++++++++++------
- 1 file changed, 19 insertions(+), 6 deletions(-)
+[auto build test ERROR on net-next/main]
+[also build test ERROR on net/main linus/master v6.15 next-20250530]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-diff --git a/include/linux/overflow.h b/include/linux/overflow.h
-index 7b7be27ca113..154ed0dbb43f 100644
---- a/include/linux/overflow.h
-+++ b/include/linux/overflow.h
-@@ -389,24 +389,37 @@ static inline size_t __must_check size_sub(size_t minuend, size_t subtrahend)
- 	struct_size((type *)NULL, member, count)
- 
- /**
-- * _DEFINE_FLEX() - helper macro for DEFINE_FLEX() family.
-- * Enables caller macro to pass (different) initializer.
-+ * __DEFINE_FLEX() - helper macro for DEFINE_FLEX() family.
-+ * Enables caller macro to pass arbitrary trailing expressions
-  *
-  * @type: structure type name, including "struct" keyword.
-  * @name: Name for a variable to define.
-  * @member: Name of the array member.
-  * @count: Number of elements in the array; must be compile-time const.
-- * @initializer: Initializer expression (e.g., pass `= { }` at minimum).
-+ * @trailer: Trailing expressions for attributes and/or initializers.
-  */
--#define _DEFINE_FLEX(type, name, member, count, initializer...)			\
-+#define __DEFINE_FLEX(type, name, member, count, trailer...)			\
- 	_Static_assert(__builtin_constant_p(count),				\
- 		       "onstack flex array members require compile-time const count"); \
- 	union {									\
- 		u8 bytes[struct_size_t(type, member, count)];			\
- 		type obj;							\
--	} name##_u = { .obj initializer };					\
-+	} name##_u trailer;							\
- 	type *name = (type *)&name##_u
- 
-+/**
-+ * _DEFINE_FLEX() - helper macro for DEFINE_FLEX() family.
-+ * Enables caller macro to pass (different) initializer.
-+ *
-+ * @type: structure type name, including "struct" keyword.
-+ * @name: Name for a variable to define.
-+ * @member: Name of the array member.
-+ * @count: Number of elements in the array; must be compile-time const.
-+ * @initializer: Initializer expression (e.g., pass `= { }` at minimum).
-+ */
-+#define _DEFINE_FLEX(type, name, member, count, initializer...)			\
-+	__DEFINE_FLEX(type, name, member, count, = { .obj initializer })
-+
- /**
-  * DEFINE_RAW_FLEX() - Define an on-stack instance of structure with a trailing
-  * flexible array member, when it does not have a __counted_by annotation.
-@@ -424,7 +437,7 @@ static inline size_t __must_check size_sub(size_t minuend, size_t subtrahend)
-  * elements in array @member.
-  */
- #define DEFINE_RAW_FLEX(type, name, member, count)	\
--	_DEFINE_FLEX(type, name, member, count, = {})
-+	__DEFINE_FLEX(type, name, member, count, = { })
- 
- /**
-  * DEFINE_FLEX() - Define an on-stack instance of structure with a trailing
+url:    https://github.com/intel-lab-lkp/linux/commits/lvaro-Fern-ndez-Rojas/net-dsa-b53-support-legacy-FCS-tags/20250530-235844
+base:   net-next/main
+patch link:    https://lore.kernel.org/r/20250530155618.273567-4-noltari%40gmail.com
+patch subject: [PATCH] net: dsa: b53: support legacy FCS tags
+config: sparc-randconfig-001-20250531 (https://download.01.org/0day-ci/archive/20250531/202505310308.8veTfz2G-lkp@intel.com/config)
+compiler: sparc64-linux-gcc (GCC) 8.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250531/202505310308.8veTfz2G-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202505310308.8veTfz2G-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/net/dsa/b53/b53_common.c: In function 'b53_get_tag_protocol':
+>> drivers/net/dsa/b53/b53_common.c:2267:23: error: 'DSA_TAG_PROTO_BRCM_LEGACY_FCS' undeclared (first use in this function); did you mean 'DSA_TAG_PROTO_BRCM_LEGACY'?
+      dev->tag_protocol = DSA_TAG_PROTO_BRCM_LEGACY_FCS;
+                          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                          DSA_TAG_PROTO_BRCM_LEGACY
+   drivers/net/dsa/b53/b53_common.c:2267:23: note: each undeclared identifier is reported only once for each function it appears in
+
+
+vim +2267 drivers/net/dsa/b53/b53_common.c
+
+  2254	
+  2255	enum dsa_tag_protocol b53_get_tag_protocol(struct dsa_switch *ds, int port,
+  2256						   enum dsa_tag_protocol mprot)
+  2257	{
+  2258		struct b53_device *dev = ds->priv;
+  2259	
+  2260		if (!b53_can_enable_brcm_tags(ds, port, mprot)) {
+  2261			dev->tag_protocol = DSA_TAG_PROTO_NONE;
+  2262			goto out;
+  2263		}
+  2264	
+  2265		/* Older models require different 6 byte tags */
+  2266		if (is5325(dev) || is5365(dev)) {
+> 2267			dev->tag_protocol = DSA_TAG_PROTO_BRCM_LEGACY_FCS;
+  2268			goto out;
+  2269		} else if (is63xx(dev)) {
+  2270			dev->tag_protocol = DSA_TAG_PROTO_BRCM_LEGACY;
+  2271			goto out;
+  2272		}
+  2273	
+  2274		/* Broadcom BCM58xx chips have a flow accelerator on Port 8
+  2275		 * which requires us to use the prepended Broadcom tag type
+  2276		 */
+  2277		if (dev->chip_id == BCM58XX_DEVICE_ID && port == B53_CPU_PORT) {
+  2278			dev->tag_protocol = DSA_TAG_PROTO_BRCM_PREPEND;
+  2279			goto out;
+  2280		}
+  2281	
+  2282		dev->tag_protocol = DSA_TAG_PROTO_BRCM;
+  2283	out:
+  2284		return dev->tag_protocol;
+  2285	}
+  2286	EXPORT_SYMBOL(b53_get_tag_protocol);
+  2287	
+
 -- 
-2.34.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
