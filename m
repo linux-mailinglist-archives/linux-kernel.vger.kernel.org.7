@@ -1,129 +1,103 @@
-Return-Path: <linux-kernel+bounces-667946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-667953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CADE8AC8BD1
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 12:04:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 156F2AC8BD9
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 12:05:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A2921C0246E
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 10:04:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27A0A18948C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 10:05:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C0D7222594;
-	Fri, 30 May 2025 10:03:41 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FF2021CA04
-	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 10:03:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C81D22CBC0;
+	Fri, 30 May 2025 10:03:46 +0000 (UTC)
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D033022A4E6
+	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 10:03:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748599421; cv=none; b=jDmnuUAetMBz3N4lb5SEFPw1uy+RxFDQMvGxpjwWTAwoRDCEvLqNbpqIVRevOanvwgLJEIA+6JnJoJYkWNlhkUyMxMwnYIjUPGUqVgGtERAeLoBxW2tCecn7gVuF/6lD491vPPmQYHe2HFKIHR9FMhXpCsOCM9oQzSzaZYnyRcs=
+	t=1748599425; cv=none; b=VZ6MmJlMpIrKui5I0D6AJhV8omIIlx9L4H+uGVe//u1TKjZCxjJip+ktibjy+zpDcecEWyCCzOFrV8mrQ95GIMi8IGciGNiSAqOmKOY64gn1pLnjR0sZgQYcBWPQxTwYYuPn6hKWmDLuh8x4PyxG9GZGV0Env2+IuIPmo5cjWQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748599421; c=relaxed/simple;
-	bh=2LH4iFhDDgSYMqV8yfQVIoPaIsbL9fWVCumZgbaSGbc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u7Uo2UWFbDP0O7gk1r5aK0fssC2G/LLpl7MKLSy1xr+5SQ4nAe7ronHtQlfobXsXk9f2mx4reKlLIFqoizYkQt6h/H8Ke5TeDxd2kixHLegd68eI/khEMM1bnTek4Kie3M/9HR0YO/5btKhy0eOfsyFiwf7BRBgzLZTg/tM0yBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0FC4A16F2;
-	Fri, 30 May 2025 03:03:22 -0700 (PDT)
-Received: from [10.57.95.14] (unknown [10.57.95.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F40B53F694;
-	Fri, 30 May 2025 03:03:35 -0700 (PDT)
-Message-ID: <adfe981a-ec9a-4051-a26f-91b691230161@arm.com>
-Date: Fri, 30 May 2025 11:03:34 +0100
+	s=arc-20240116; t=1748599425; c=relaxed/simple;
+	bh=tZMFnfr5FTgThpkXirHvIlPX9G3+M0LvNYwfd6iY5zU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KdlWuZCBtsNqHYxTtk57XhSkEKecCAMkrdzCg8U6EE9rvArJNaWQpHL0TtE/oZrBZ4fD7ZkPw4P4msJPCSD3K9AV88htV3cIkt/Lbns2kdE07OdlrtMxhSgPWVul9IlqVeJTrmJQlIezwdoHKNBsezCpR8MdyEthpjLKwv3OXN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4b7zLb1fYhz1fy91;
+	Fri, 30 May 2025 18:02:31 +0800 (CST)
+Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
+	by mail.maildlp.com (Postfix) with ESMTPS id D0E85140113;
+	Fri, 30 May 2025 18:03:35 +0800 (CST)
+Received: from kwepemq100007.china.huawei.com (7.202.195.175) by
+ dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 30 May 2025 18:03:35 +0800
+Received: from localhost.huawei.com (10.169.71.169) by
+ kwepemq100007.china.huawei.com (7.202.195.175) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 30 May 2025 18:03:34 +0800
+From: Yongbang Shi <shiyongbang@huawei.com>
+To: <xinliang.liu@linaro.org>, <tiantao6@hisilicon.com>,
+	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
+	<kong.kongxinwei@hisilicon.com>
+CC: <liangjian010@huawei.com>, <chenjianmin@huawei.com>,
+	<lidongming5@huawei.com>, <libaihan@huawei.com>, <shenjian15@huawei.com>,
+	<shaojijie@huawei.com>, <jani.nikula@linux.intel.com>,
+	<dmitry.baryshkov@oss.qualcomm.com>, <dri-devel@lists.freedesktop.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH drm-dp 00/10] Fix hibmc driver bugs
+Date: Fri, 30 May 2025 17:54:22 +0800
+Message-ID: <20250530095432.1206966-1-shiyongbang@huawei.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] Enable huge-vmalloc permission change
-Content-Language: en-GB
-To: Dev Jain <dev.jain@arm.com>, akpm@linux-foundation.org, david@redhat.com,
- catalin.marinas@arm.com, will@kernel.org
-Cc: lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
- rppt@kernel.org, surenb@google.com, mhocko@suse.com, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, suzuki.poulose@arm.com, steven.price@arm.com,
- gshan@redhat.com, linux-arm-kernel@lists.infradead.org
-References: <20250530090407.19237-1-dev.jain@arm.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20250530090407.19237-1-dev.jain@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ kwepemq100007.china.huawei.com (7.202.195.175)
 
-On 30/05/2025 10:04, Dev Jain wrote:
-> This series paves the path to enable huge mappings in vmalloc space by
-> default on arm64. > For this we must ensure that we can handle any permission
-> games on vmalloc space. 
+From: Baihan Li <libaihan@huawei.com>
 
-And the linear map :)
+There are some bugfix for hibmc-drm driver.
 
-> Currently, __change_memory_common() uses
-> apply_to_page_range() which does not support changing permissions for
-> leaf mappings. 
+Baihan Li (10):
+  drm/hisilicon/hibmc: fix the i2c device resource leak when vdac init
+    failed
+  drm/hisilicon/hibmc: fix dp probabilistical detect errors after HPD
+    irq
+  drm/hisilicon/hibmc: fix irq_request()'s irq name variable is local
+  drm/hisilicon/hibmc: fix the hibmc loaded failed bug
+  drm/hisilicon/hibmc: fix rare monitors cannot display problem
+  drm/hisilicon/hibmc: add dp mode valid check
+  drm/hisilicon/hibmc: add dp encoder modeset
+  drm/hisilicon/hibmc: fix DP no showing after HPD with VGA connected
+  drm/hisilicon/hibmc: fix HPD no showing with VGA para of GRUB
+  drm/hisilicon/hibmc: fix no showing problem with loading hibmc
+    manually
 
-nit: A "leaf mapping" is the lowest level entry in the page tables for a given
-address - i.e. it maps an address to some actual memory rather than to another
-pgtable. It includes what the Arm ARM calls "page mappings" (PTE level) and
-"block mappings" (PMD/PUD/.. level). apply_to_page_range() does support page
-mappings, so saying it doesn't support leaf mappings is incorrect. It doesn't
-support block mappings.
+ drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h  |   4 +-
+ drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c    |  22 ++--
+ drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h    |   8 ++
+ drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.c  |  33 +++--
+ .../gpu/drm/hisilicon/hibmc/dp/dp_serdes.c    |  12 --
+ .../gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c    | 115 ++++++++++++++++--
+ .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c   |  14 +--
+ .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h   |   1 +
+ .../gpu/drm/hisilicon/hibmc/hibmc_drm_i2c.c   |   5 +
+ .../gpu/drm/hisilicon/hibmc/hibmc_drm_vdac.c  |  37 +++++-
+ 10 files changed, 198 insertions(+), 53 deletions(-)
 
-> We attempt to move away from this by using walk_page_range_novma(),
-> similar to what riscv does right now; however, it is the responsibility
-> of the caller to ensure that we do not pass a range, or split the range
-> covering a partial leaf mapping.
-> 
-> This series is tied with Yang Shi's attempt [1] at using huge mappings
-> in the linear mapping in case the system supports BBML2, in which case
-> we will be able to split the linear mapping if needed without break-before-make.
-> Thus, Yang's series, IIUC, will be one such user of my series; suppose we
-> are changing permissions on a range of the linear map backed by PMD-hugepages,
-> then the sequence of operations should look like the following:
-> 
-> split_range(start, (start + HPAGE_PMD_SIZE) & ~HPAGE_PMD_MASK);
-> split_range(end & ~HPAGE_PMD_MASK, end);
-
-I don't understand what the HPAGE_PMD_MASK twiddling is doing? That's not right.
-It's going to give you the offset within the 2M region. You just want:
-
-split_range(start)
-split_range(end)
-
-right?
-
-> __change_memory_common(start, end);
-> 
-> However, this series can be used independently of Yang's; since currently
-> permission games are being played only on pte mappings (due to apply_to_page_range
-> not supporting otherwise), this series provides the mechanism for enabling
-> huge mappings for various kernel mappings like linear map and vmalloc.
-
-In other words, you are saying that this series is a prerequisite for Yang's
-series (and both are prerequisites for huge vmalloc by default). Your series
-adds a new capability that Yang's series will rely on (the ability to change
-permissions on block mappings).
-
-Thanks,
-Ryan
-
-> 
-> [1] https://lore.kernel.org/all/20250304222018.615808-1-yang@os.amperecomputing.com/
-> 
-> Dev Jain (3):
->   mm: Allow pagewalk without locks
->   arm64: pageattr: Use walk_page_range_novma() to change memory
->     permissions
->   mm/pagewalk: Add pre/post_pte_table callback for lazy MMU on arm64
-> 
->  arch/arm64/mm/pageattr.c | 81 +++++++++++++++++++++++++++++++++++++---
->  include/linux/pagewalk.h |  4 ++
->  mm/pagewalk.c            | 18 +++++++--
->  3 files changed, 94 insertions(+), 9 deletions(-)
-> 
+-- 
+2.33.0
 
 
