@@ -1,89 +1,132 @@
-Return-Path: <linux-kernel+bounces-668482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-668485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D02CAC9358
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 18:19:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2B4DAC9373
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 18:23:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B0167A54E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 16:18:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36F161C04471
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 16:23:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 136B21D89E3;
-	Fri, 30 May 2025 16:19:13 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4FF519ABC2;
-	Fri, 30 May 2025 16:19:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2894B1B0437;
+	Fri, 30 May 2025 16:22:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="bgOHFXZ6"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48E1819ABC2;
+	Fri, 30 May 2025 16:22:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748621952; cv=none; b=iRDXYXP6Y0PUS96ONSzIc68FnCxNqAbf/A2f27iEPnN8OGhilw7lg16turhc45CJ3pYgdZA+kcM2mCcLxVGxRMTBBqcOa7ba0bWf/IZVt4M/DEXlTNJ/0ixlSZhAlsW1T8gHdA0u4Yh+fFbAHkBiVLICkYSfSPO4gUmBqNMwIrk=
+	t=1748622163; cv=none; b=V7ri+zByXm9p0GCQKqV+ukffzfEICm/x/0C4YSivOVk/ygQWqg0q2s2ZL1zSUfWeOBBlN3mQvSvrXEloncN2cVaiTmVNWoMEQlZEoiZJcdBRo/T87z/ck+JHhRtGVLq7AApAAEnROZ31Y5wUkUmEitrFlH99cTX3zy+fdFAOn94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748621952; c=relaxed/simple;
-	bh=Y+pQZL/C6jxu5H0SS1Bse9YECSORKb/K40rcX08hx6Y=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Tb27mispSUq9mrWs1b1UbWRtd9FC02x1RB5wyin7Bww9yIiYkcweEeUxANhnl5j4Sg9wr7euQJZVftgdX5Vt0pND64NnHXIcOixj1f+WxjsZ3TYjXtgCFGCz2z9YJjNCK58AESAv7ugu7e9sTWJmasuN08maHKbYFzavQFqtir0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4b87gb6Wm5z6K9GB;
-	Sat, 31 May 2025 00:17:47 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id ADA1014027A;
-	Sat, 31 May 2025 00:19:06 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 30 May
- 2025 18:19:05 +0200
-Date: Fri, 30 May 2025 17:19:04 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Jonathan Santos <Jonathan.Santos@analog.com>
-CC: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-	<linux-acpi@vger.kernel.org>, <andy@kernel.org>, <nuno.sa@analog.com>,
-	<Michael.Hennerich@analog.com>, <marcelo.schmitt@analog.com>,
-	<jic23@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <marcelo.schmitt1@gmail.com>,
-	<linus.walleij@linaro.org>, <brgl@bgdev.pl>, <lgirdwood@gmail.com>,
-	<broonie@kernel.org>, <jonath4nns@gmail.com>, <dlechner@baylibre.com>,
-	<andriy.shevchenko@linux.intel.com>, <rafael@kernel.org>,
-	<djrscally@gmail.com>
-Subject: Re: [PATCH v9 00/12] iio: adc: ad7768-1: Add features,
- improvements, and fixes
-Message-ID: <20250530171904.0000467c@huawei.com>
-In-Reply-To: <cover.1748447035.git.Jonathan.Santos@analog.com>
-References: <cover.1748447035.git.Jonathan.Santos@analog.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1748622163; c=relaxed/simple;
+	bh=IvKiI2GS2Dj5Eans+fFHm32EoVrfpQ50Wh/C4X/ZLK4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=fjTqjIIXPUZ/vqj9kEHhhX2AeBdTGc8bHlDXojWivkKiNbacQB+GIKcaglDxWdJhAD+B9LVmAlEfyEpT2PO32TF9mczj4g6qUTwZVf/y04AvkUeecbI6lMelPQyRkMsdXuhbno0AVT1Zjf7NvTSBED51pJ0lhaf84BAN+3aaBCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=bgOHFXZ6; arc=none smtp.client-ip=117.135.210.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version:
+	Content-Type; bh=jCdzSFwYnDZECKuJL2W/gBgula6jQ6d53Xso4SG8qwc=;
+	b=bgOHFXZ6AOcPgSn6ym7msrP48dbWljzcAVEwnjzBO7/oXxAHAUULqJD6I27cdv
+	h+u3PCaPWVgo99D0n4WzIDBoN/1HO8nONEPPv8U6LLdUdo510JQnPBbYoAPTlnF+
+	DdEOs9elr2f1D+e77+cMf8c5O3YO7kQv3r+rMGeFbQ+18=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g1-4 (Coremail) with SMTP id _____wCXjDDH2jlouf2RFA--.37484S2;
+	Sat, 31 May 2025 00:20:31 +0800 (CST)
+From: =?UTF-8?q?=E6=9D=8E=E5=93=B2?= <sensor1010@163.com>
+To: andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	mcoquelin.stm32@gmail.com,
+	alexandre.torgue@foss.st.com,
+	jonas@kwiboo.se,
+	rmk+kernel@armlinux.org.uk,
+	david.wu@rock-chips.com,
+	jan.petrous@oss.nxp.com,
+	detlev.casanova@collabora.com
+Cc: netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	=?UTF-8?q?=E6=9D=8E=E5=93=B2?= <sensor1010@163.com>
+Subject: [PATCH] net: dwmac-rk: No need to check the return value of the phy_power_on()
+Date: Fri, 30 May 2025 09:20:17 -0700
+Message-Id: <20250530162017.3661-1-sensor1010@163.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500002.china.huawei.com (7.191.160.78) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wCXjDDH2jlouf2RFA--.37484S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7Ww4xKw1fAF1rZF13ArWDArb_yoW8Ww47p3
+	9xCF92yr1kXryxGa17trsrZa45uayxtFy0qF1xt3yfu3WfCF1Dtry8tr4FvF109rykXF1a
+	yr4UAF1fCFn8Wr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0ziFfO5UUUUU=
+X-CM-SenderInfo: 5vhq20jurqiii6rwjhhfrp/xtbBMQldq2g502LCbgAAsC
 
-On Thu, 29 May 2025 19:47:57 -0300
-Jonathan Santos <Jonathan.Santos@analog.com> wrote:
+phy_power_on() is a local scope one within the driver, since the return
+value of the phy_power_on() function is always 0, checking its return
+value is redundant.
 
-> This patch series introduces some new features, improvements,
-> and fixes for the AD7768-1 ADC driver. 
-> 
-> The goal is to support all key functionalities listed in the device
-> datasheet, including filter mode selection, common mode voltage output
-> configuration and GPIO support. Additionally, this includes fixes 
-> for SPI communication and for IIO interface, and also code improvements
-> to enhance maintainability and readability.
+Signed-off-by: 李哲 <sensor1010@163.com>
+---
+ drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c | 17 ++++-------------
+ 1 file changed, 4 insertions(+), 13 deletions(-)
 
-Looks good to me.  I'll be waiting on at least some tags on patch 1 though
-before applying this.
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
+index 700858ff6f7c..f7c32934f8a4 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
+@@ -1645,23 +1645,18 @@ static int gmac_clk_enable(struct rk_priv_data *bsp_priv, bool enable)
+ 	return 0;
+ }
+ 
+-static int phy_power_on(struct rk_priv_data *bsp_priv, bool enable)
++static void phy_power_on(struct rk_priv_data *bsp_priv, bool enable)
+ {
+ 	struct regulator *ldo = bsp_priv->regulator;
+-	int ret;
+ 	struct device *dev = &bsp_priv->pdev->dev;
+ 
+ 	if (enable) {
+-		ret = regulator_enable(ldo);
+-		if (ret)
++		if (regulator_enable(ldo))
+ 			dev_err(dev, "fail to enable phy-supply\n");
+ 	} else {
+-		ret = regulator_disable(ldo);
+-		if (ret)
++		if (regulator_disable(ldo))
+ 			dev_err(dev, "fail to disable phy-supply\n");
+ 	}
+-
+-	return 0;
+ }
+ 
+ static struct rk_priv_data *rk_gmac_setup(struct platform_device *pdev,
+@@ -1839,11 +1834,7 @@ static int rk_gmac_powerup(struct rk_priv_data *bsp_priv)
+ 		dev_err(dev, "NO interface defined!\n");
+ 	}
+ 
+-	ret = phy_power_on(bsp_priv, true);
+-	if (ret) {
+-		gmac_clk_enable(bsp_priv, false);
+-		return ret;
+-	}
++	phy_power_on(bsp_priv, true);
+ 
+ 	pm_runtime_get_sync(dev);
+ 
+-- 
+2.17.1
 
-Thanks,
-
-Jonathan
 
