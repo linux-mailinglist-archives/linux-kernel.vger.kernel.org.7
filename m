@@ -1,270 +1,197 @@
-Return-Path: <linux-kernel+bounces-668655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-668653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1B74AC9599
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 20:26:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC7B3AC9594
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 20:23:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82961504B7B
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 18:26:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A05061BA350E
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 18:23:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 330FC265626;
-	Fri, 30 May 2025 18:26:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C04D275853;
+	Fri, 30 May 2025 18:23:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="lsAuWt6b"
-Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="suHVa/bE"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2046.outbound.protection.outlook.com [40.107.244.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63899230D1E
-	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 18:26:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748629581; cv=none; b=O4ycSjGzBfUI5aEWp/uJmf+rOE82/PvtmK8xaxjPRidf3STHa5PrWZy0IOHdAzhv/6XjPv1/6aMY4lcY0Mu7O7HNpUVBiNjZsD7Ws0X1zBjxiBgxmuzlgRqRBZN9ku8U6CCTea0eWD7/9GLO84KrqxRKdop7geWyUJgvjqKMPoE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748629581; c=relaxed/simple;
-	bh=6+bCGAMnFQ6ND2IZtUMYLdjvemuAzisOeEdKn1hjIOQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nw6mscgAfnx/tUCEYd1w/u0OcLFlEgcu/2s2YOVrtNNWIiYaV46lnCh9ixmcF8+M6QqAP+sdcNbSxGC+ojOQ38cdUDvbnHn/8SfTpHdYc9F4iugQ3mMYY1qpRb9yvBDrwrJb09VT27F9TKr46cAWU4Ggc8Bs7MIQHS9H1AYDNdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=lsAuWt6b; arc=none smtp.client-ip=115.124.30.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1748629575; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=I11oEc7eOvF/Rj485Xzya9XuzQf6w0DLvZwJXPE+j6k=;
-	b=lsAuWt6bOBpVKubIXhqhBdF57u8T6wwh/Y7Tz3V9LiCHhVt6vP1rq5GgiEqsJz6bPyc4me8f69v5t838WnT6LMlbWhirFJ1rvZsglLzIWiLTCYIHsCauSMfxu6XHYbcuJ1e6yy2W0q+gTAIU67keMbb6efm6qWNJiW/SvP/VJ14=
-Received: from localhost.localdomain(mailfrom:qinyuntan@linux.alibaba.com fp:SMTPD_---0WcMCRjl_1748629256 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Sat, 31 May 2025 02:20:57 +0800
-From: Qinyun Tan <qinyuntan@linux.alibaba.com>
-To: Tony Luck <tony.luck@intel.com>
-Cc: "H . Peter Anvin" <hpa@zytor.com>,
-	linux-kernel@vger.kernel.org,
-	x86@kernel.org,
-	Reinette Chatre <reinette.chatre@intel.com>,
-	Qinyun Tan <qinyuntan@linux.alibaba.com>
-Subject: [PATCH V6 1/1] x86,fs/resctrl: Remove unappropriate references to cacheinfo in the resctrl subsystem.
-Date: Sat, 31 May 2025 02:20:53 +0800
-Message-ID: <20250530182053.37502-2-qinyuntan@linux.alibaba.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250530182053.37502-1-qinyuntan@linux.alibaba.com>
-References: <20250530182053.37502-1-qinyuntan@linux.alibaba.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE01D230D1E;
+	Fri, 30 May 2025 18:23:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748629408; cv=fail; b=rvHMx065qnVvRsQ/IhrWlf4XgMo5sflVFzDmb1RkdyftTkrLqI/n9xnPmk4I/w10ZOiBiP/koBxUlArDXVdUdCC9yfvmrkh2i8PNXyn2t9Ft4qimvTZ7HFzVFjNfaG/CQ960GyadyjeQre1zLnMGajiQOV9vOYK1XZjOiU+yrdE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748629408; c=relaxed/simple;
+	bh=vwBbA0Bjm8YvDpJ+k69S2SXF05vNu0Qp8jAw+tPubAo=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t7n6nByTaOT2t5tfOs+pMkVj419N3x4EzFTDKhb6NKL0ltO/mkV/ceicx4jts3Lq9gNUbfH7N/kzxB1ith3MPb2O1zmN9pcryQ2USQ1yrpeXyAJcdd0cN/CR6+WhXZkTAwXGr0Ee7jacAgJSqFe6BCFQsJnTx8/0lIbMGlKAo/4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=suHVa/bE; arc=fail smtp.client-ip=40.107.244.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=upxbtksbj9HXFMBt1fHPFJebWgsmgw1wtfWPyjR3bIhTUxk9bqJfHJiIOpA8kWDQ/dtO8d2cttweVjPTWXgNgEK7jnGMI3HSCcfJqi4Lrx+L3YHXgALbJOWL3OJBzejsYygsj8hjwk9N0bmjGA7yPePoGYAmrv/3ZoJGfS4AUdONeCHLCW42ZPb3Y4bE4G4ypzjotJpKHXmQrkindA9L52C/4iLIOwP9Jq47CIJzjaiCie3vCthMk33MuTtb4BG/wWnk/QIRdCg4516tAl6LgxKkmvqTHjl3IFEdNz539wLuulfEqbIwYIf6U8JcNTcMqgETyAEvnE+k7geNgsFHzQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SrkGAJrJGowkSZTolUFD0MqlSvIzR7OLE7ijdjf++rU=;
+ b=I10avmWtXxfwzd3/AT+RA6RXP5K1+wtXpOhTJbS40PWPMNYBvGaUA1updxHN8dAvRkP9QWdD3ykr9xSBQSEYjKMrn6UQvtz6nbJiGq6CBcdqjOJTA+SZ8x1436Vk0kzN75cYaEYjNib2u4i93rdbW4geY/dh6/wB0bliSRBsNQO9rfBeVNZUJJ/xoc849WO6tBj70Lub3sdWHjkWGipaYjlNr5f6D25oqBX+QkpgAaxKC9Mjem+ek+JTaOSiNuKxTbTCuh+RqOGF6Jpt1/Pt4wWTrtQi6Ll/oWo04T4IwmN9l2GqCiniiWHTtxeoPt6b3RhIfoKUN6soQCkx5e4Z/A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=amd.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SrkGAJrJGowkSZTolUFD0MqlSvIzR7OLE7ijdjf++rU=;
+ b=suHVa/bEvjho5dp64WVYzGREdFTG5dCxQDXvShpivRUgtbbtJVQHDz1tY+PbsNkMWR7Kr5CxcmbHNpKY4EXI/88cZJvDKeZ3u3XWwzokP0SPysxt3GCaH96AZ2dUw6IVzGhYpGQ1YFMDKg20+2J5D+GW0pA/JR68CwZVlmhb8rqer0aEIsQuJxml+XpdmArAygZrGmTd907z+6hMNjuf5VG9BopR2n5fmvbUfE1hysN0BBdsyEOypne4VzoxNtzcEbb7wqtr7+am6yN3mLs7whveHvpBM0s/d94MfzJ80t7X2rG0++a6UCO6wUpoQFVDCuJHp3hK8ESsXNlPAVrWRw==
+Received: from PH5P220CA0004.NAMP220.PROD.OUTLOOK.COM (2603:10b6:510:34a::16)
+ by CH3PR12MB7521.namprd12.prod.outlook.com (2603:10b6:610:143::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.29; Fri, 30 May
+ 2025 18:23:23 +0000
+Received: from SN1PEPF0002BA52.namprd03.prod.outlook.com
+ (2603:10b6:510:34a:cafe::3e) by PH5P220CA0004.outlook.office365.com
+ (2603:10b6:510:34a::16) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8792.23 via Frontend Transport; Fri,
+ 30 May 2025 18:23:23 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ SN1PEPF0002BA52.mail.protection.outlook.com (10.167.242.75) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8769.18 via Frontend Transport; Fri, 30 May 2025 18:23:23 +0000
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 30 May
+ 2025 11:23:06 -0700
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail205.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Fri, 30 May
+ 2025 11:23:05 -0700
+Received: from Asurada-Nvidia (10.127.8.11) by mail.nvidia.com (10.129.68.10)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
+ Transport; Fri, 30 May 2025 11:23:04 -0700
+Date: Fri, 30 May 2025 11:23:02 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
+CC: <kevin.tian@intel.com>, <corbet@lwn.net>, <will@kernel.org>,
+	<bagasdotme@gmail.com>, <robin.murphy@arm.com>, <joro@8bytes.org>,
+	<thierry.reding@gmail.com>, <vdumpa@nvidia.com>, <jonathanh@nvidia.com>,
+	<shuah@kernel.org>, <jsnitsel@redhat.com>, <nathan@kernel.org>,
+	<peterz@infradead.org>, <yi.l.liu@intel.com>, <mshavit@google.com>,
+	<praan@google.com>, <zhangzekun11@huawei.com>, <iommu@lists.linux.dev>,
+	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kselftest@vger.kernel.org>, <patches@lists.linux.dev>,
+	<mochs@nvidia.com>, <alok.a.tiwari@oracle.com>, <vasant.hegde@amd.com>,
+	<dwmw2@infradead.org>, <baolu.lu@linux.intel.com>
+Subject: Re: [PATCH v5 14/29] iommufd/viommu: Add IOMMUFD_CMD_HW_QUEUE_ALLOC
+ ioctl
+Message-ID: <aDn3hueUhGKWFIkn@Asurada-Nvidia>
+References: <cover.1747537752.git.nicolinc@nvidia.com>
+ <5c509f092ba61d4c0852ba57b530888ffb864ccb.1747537752.git.nicolinc@nvidia.com>
+ <20250530161455.GE233377@nvidia.com>
+ <aDntEDywhsgMoZwc@Asurada-Nvidia>
+ <20250530174037.GR233377@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250530174037.GR233377@nvidia.com>
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN1PEPF0002BA52:EE_|CH3PR12MB7521:EE_
+X-MS-Office365-Filtering-Correlation-Id: b49f7c94-006d-4281-f995-08dd9fa70fe1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|7416014|36860700013|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?6cLv9Dcxa9IO44pTvEE1nefcMIXQAp3FdpWwNaU2ZED/DfipIiTIUlRE9vri?=
+ =?us-ascii?Q?P4H31tX1nIHj1EffkEdk32qArmwwuvUPlKICPYmoi3ypGjkrxB/YR3VE6OR9?=
+ =?us-ascii?Q?CRbAwu/GyVnBa+iNZwzXgO0RWFEYoeFCR1sMHFN+HzTSY6OmMzU57kLbR2eG?=
+ =?us-ascii?Q?PWZVo+0ugZ/sfjVxw5/dwEHizVQnvStlPdQqPGNGs1lGBftS88rCYGQv/6J5?=
+ =?us-ascii?Q?5al6uanbpjf1mSb+M39F+lhn0/XJAlwcBOEgPxFTOKLpAUO7PI+a+u4mnSMi?=
+ =?us-ascii?Q?5nEs+sfjkv/M0Y8y4qCO4yggWUFaYXwFzPjh3blxAwJV2bAY/4rHqzrGlVtM?=
+ =?us-ascii?Q?LlR/Uh8UTxTvprkHBNtktpawVOPPdoDSdKC6z0YZDEPCzDjVYPEROdJDTmrD?=
+ =?us-ascii?Q?5X1SLmJF8evUn+bCQxXOU+xF4mzBuwarfhaeE35jaFJSqukDWkYWIs6CLCyN?=
+ =?us-ascii?Q?OZgrNNmm1hhc3A3N/VS9y/kTOcyIv/7xR90pg41WMze55cLJCgIiJ97jbaAd?=
+ =?us-ascii?Q?mxkpfLifyLxAfU42SnbTwra0ZYx4DO8POlCmvvpIHj3YxROpOhtHkN5RfTN2?=
+ =?us-ascii?Q?13fU5+CPdIPAdUw37Nsiqd6kXUixY1qnp6cs6TcsKfWCsJ/xbcV05INOI6Wq?=
+ =?us-ascii?Q?3EMVc7y61UpQf1/a0OR4pwwe+lsCWdTFKkCjKeHvPmqIKQwnXET2wrDs8mUb?=
+ =?us-ascii?Q?61e435XKv9W8M/BGVRo1hrzN/3kRcYODaqzFHWHJU5MDGUYdMSE335hHntYu?=
+ =?us-ascii?Q?k0Q0WWzklY27IzR/2lr5Vy8E8gX7cIWB3VfSLxC6WjySZ6QODZWBs5LOuogN?=
+ =?us-ascii?Q?RHJzyTK1grd1iNsGKgQpvaAIISQvX6xw0XzwASaj3ukshLrqGyhEpfFaTJ/G?=
+ =?us-ascii?Q?MpwW4NBlnXLXXDLCA3wtDE838r/n9Otf6TBfhz26e6GnMx5NQ+U8bo0kR2hV?=
+ =?us-ascii?Q?pCbKh+A0O4R53Zzw7awohH6+utIC9Fw3KUZljKfjJmT6GBETfvSVkT+7fsj+?=
+ =?us-ascii?Q?m/+QpuM6Mo9UOsga/oWPWbHQlYCd7atvwa0Oy/ooNBNhkgnbW36VjkcGV/QC?=
+ =?us-ascii?Q?yrYUgLnk+2HN/BV0TWS6wURYdla4vLhPEZrEyEm0Wj1Vi/NevsN82xy4Cacx?=
+ =?us-ascii?Q?QYYo2zo36eRIZXPRkvnmzsyW/u6oYNAm8yjgPtvn7tLqujiw2yhehxIMizY2?=
+ =?us-ascii?Q?q/Tw41EH7YbKOPLgHJCGiczvO419/8UeELQ4mSf3fpJzpP0eDQS281Tg2/VH?=
+ =?us-ascii?Q?4oQyuZRN/1ytF+bBZYKlP043gYHP40zQlzbTHAbz1HvJFA3hXujTLyUQUfdN?=
+ =?us-ascii?Q?aa0fx/ImYK8wBRClSFyqEqKoJaUKKxs6HuawBlnvMR5Sqj938zDnisqn5hbu?=
+ =?us-ascii?Q?PaeKJmL+XTcXalKqx/paGWHHZD4Q6pdXMWwhLqyNV35R1VnQ0gwcguaDth2S?=
+ =?us-ascii?Q?bBdCSdKS6bYsacmS3gnu2zdeYuiZ7yPsv3KjWelYIAe/L6gJlv4nKIXNG3l6?=
+ =?us-ascii?Q?zgQc/P9rV0yeK8Z8o4S8mwszqQTKQVG9MAso?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(36860700013)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 May 2025 18:23:23.0305
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b49f7c94-006d-4281-f995-08dd9fa70fe1
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SN1PEPF0002BA52.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB7521
 
-In the resctrl subsystem's Sub-NUMA Cluster (SNC) mode, the rdt_mon_domain
-structure representing a NUMA node relies on the cacheinfo interface
-(rdt_mon_domain::ci) to store L3 cache information (e.g., shared_cpu_map)
-for monitoring. The L3 cache information of a SNC NUMA node determines
-which domains are summed for the "top level" L3-scoped events.
+On Fri, May 30, 2025 at 02:40:37PM -0300, Jason Gunthorpe wrote:
+> On Fri, May 30, 2025 at 10:38:24AM -0700, Nicolin Chen wrote:
+> > On Fri, May 30, 2025 at 01:14:55PM -0300, Jason Gunthorpe wrote:
+> > > On Sat, May 17, 2025 at 08:21:31PM -0700, Nicolin Chen wrote:
+> > > > +	offset =
+> > > > +		cmd->nesting_parent_iova - PAGE_ALIGN(cmd->nesting_parent_iova);
+> > > > +	max_npages = DIV_ROUND_UP(offset + cmd->length, PAGE_SIZE);
+> > > 
+> > > This should probably be capped to PAGE_SIZE/sizeof(void *), return
+> > > EINVAL if not
+> > 
+> > Hmm, mind elaborating where this PAGE_SIZE/sizeof comes from?
+> 
+> We can usually allocate up to a PAGE_SIZE without too much
+> trouble. Beyond that it gets more likely to fail.
 
-rdt_mon_domain::ci is initialized using the first online CPU of a NUMA
-node. When this CPU goes offline, its shared_cpu_map is cleared to contain
-only the offline CPU itself. Subsequently, attempting to read counters
-via smp_call_on_cpu(offline_cpu) fails (and error ignored), returning
-zero values for "top-level events" without any error indication.
+If PAGE_SIZE=4096, the upper limit for max_npages is 512, i.e. the
+max size of a guest queue is 2MB? It seems to be too small, as the
+VMM can use a larger huge page size to back the guest queue?
 
-Replace the cacheinfo references in struct rdt_mon_domain and struct
-rmid_read with the cacheinfo ID (a unique identifier for the L3 cache).
+> > > > +	hw_queue->viommu = viommu;
+> > > > +	refcount_inc(&viommu->obj.users);
+> > > > +	hw_queue->length = cmd->length;
+> > > > +	hw_queue->base_addr = cmd->nesting_parent_iova;
+> > > 
+> > > When the driver is running, which can be a source of bugs.
+> > 
+> > Hmm, I don't quite follow the "bugs" here. Any example?
+> 
+> Like if the driver thinks that hw_queue->length should be valid during
+> init, it turns out it isn't.
 
-rdt_domain_hdr::cpu_mask contains the online CPUs associated with that
-domain. When reading "top-level events", select a CPU from
-rdt_domain_hdr::cpu_mask and utilize its L3 shared_cpu_map to determine
-valid CPUs for reading RMID counter via the MSR interface.
+Ah, I see. Yes.
 
-Considering all CPUs associated with the L3 cache improves the chances
-of picking a housekeeping CPU on which the counter reading work can be
-queued, avoiding an unnecessary IPI.
-
-Fixes: 328ea68874642 ("x86/resctrl: Prepare for new Sub-NUMA Cluster (SNC) monitor files")
-Signed-off-by: Qinyun Tan <qinyuntan@linux.alibaba.com>
-Tested-by: Tony Luck <tony.luck@intel.com>
-Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
----
- arch/x86/kernel/cpu/resctrl/core.c |  6 ++++--
- fs/resctrl/ctrlmondata.c           | 13 +++++++++----
- fs/resctrl/internal.h              |  4 ++--
- fs/resctrl/monitor.c               |  6 ++++--
- fs/resctrl/rdtgroup.c              |  6 +++---
- include/linux/resctrl.h            |  4 ++--
- 6 files changed, 24 insertions(+), 15 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
-index 7109cbfcad4fd..187d527ef73b6 100644
---- a/arch/x86/kernel/cpu/resctrl/core.c
-+++ b/arch/x86/kernel/cpu/resctrl/core.c
-@@ -498,6 +498,7 @@ static void domain_add_cpu_mon(int cpu, struct rdt_resource *r)
- 	struct rdt_hw_mon_domain *hw_dom;
- 	struct rdt_domain_hdr *hdr;
- 	struct rdt_mon_domain *d;
-+	struct cacheinfo *ci;
- 	int err;
- 
- 	lockdep_assert_held(&domain_list_lock);
-@@ -525,12 +526,13 @@ static void domain_add_cpu_mon(int cpu, struct rdt_resource *r)
- 	d = &hw_dom->d_resctrl;
- 	d->hdr.id = id;
- 	d->hdr.type = RESCTRL_MON_DOMAIN;
--	d->ci = get_cpu_cacheinfo_level(cpu, RESCTRL_L3_CACHE);
--	if (!d->ci) {
-+	ci = get_cpu_cacheinfo_level(cpu, RESCTRL_L3_CACHE);
-+	if (!ci) {
- 		pr_warn_once("Can't find L3 cache for CPU:%d resource %s\n", cpu, r->name);
- 		mon_domain_free(hw_dom);
- 		return;
- 	}
-+	d->ci_id = ci->id;
- 	cpumask_set_cpu(cpu, &d->hdr.cpu_mask);
- 
- 	arch_mon_domain_online(r, d);
-diff --git a/fs/resctrl/ctrlmondata.c b/fs/resctrl/ctrlmondata.c
-index 6ed2dfd4dbbd9..d98e0d2de09fd 100644
---- a/fs/resctrl/ctrlmondata.c
-+++ b/fs/resctrl/ctrlmondata.c
-@@ -594,9 +594,10 @@ int rdtgroup_mondata_show(struct seq_file *m, void *arg)
- 	struct rmid_read rr = {0};
- 	struct rdt_mon_domain *d;
- 	struct rdtgroup *rdtgrp;
-+	int domid, cpu, ret = 0;
- 	struct rdt_resource *r;
-+	struct cacheinfo *ci;
- 	struct mon_data *md;
--	int domid, ret = 0;
- 
- 	rdtgrp = rdtgroup_kn_lock_live(of->kn);
- 	if (!rdtgrp) {
-@@ -623,10 +624,14 @@ int rdtgroup_mondata_show(struct seq_file *m, void *arg)
- 		 * one that matches this cache id.
- 		 */
- 		list_for_each_entry(d, &r->mon_domains, hdr.list) {
--			if (d->ci->id == domid) {
--				rr.ci = d->ci;
-+			if (d->ci_id == domid) {
-+				rr.ci_id = d->ci_id;
-+				cpu = cpumask_any(&d->hdr.cpu_mask);
-+				ci = get_cpu_cacheinfo_level(cpu, RESCTRL_L3_CACHE);
-+				if (!ci)
-+					continue;
- 				mon_event_read(&rr, r, NULL, rdtgrp,
--					       &d->ci->shared_cpu_map, evtid, false);
-+					       &ci->shared_cpu_map, evtid, false);
- 				goto checkresult;
- 			}
- 		}
-diff --git a/fs/resctrl/internal.h b/fs/resctrl/internal.h
-index 9a8cf6f11151d..0a1eedba2b03a 100644
---- a/fs/resctrl/internal.h
-+++ b/fs/resctrl/internal.h
-@@ -98,7 +98,7 @@ struct mon_data {
-  *	   domains in @r sharing L3 @ci.id
-  * @evtid: Which monitor event to read.
-  * @first: Initialize MBM counter when true.
-- * @ci:    Cacheinfo for L3. Only set when @d is NULL. Used when summing domains.
-+ * @ci_id: Cacheinfo id for L3. Only set when @d is NULL. Used when summing domains.
-  * @err:   Error encountered when reading counter.
-  * @val:   Returned value of event counter. If @rgrp is a parent resource group,
-  *	   @val includes the sum of event counts from its child resource groups.
-@@ -112,7 +112,7 @@ struct rmid_read {
- 	struct rdt_mon_domain	*d;
- 	enum resctrl_event_id	evtid;
- 	bool			first;
--	struct cacheinfo	*ci;
-+	unsigned int		ci_id;
- 	int			err;
- 	u64			val;
- 	void			*arch_mon_ctx;
-diff --git a/fs/resctrl/monitor.c b/fs/resctrl/monitor.c
-index bde2801289d35..f5637855c3aca 100644
---- a/fs/resctrl/monitor.c
-+++ b/fs/resctrl/monitor.c
-@@ -361,6 +361,7 @@ static int __mon_event_count(u32 closid, u32 rmid, struct rmid_read *rr)
- {
- 	int cpu = smp_processor_id();
- 	struct rdt_mon_domain *d;
-+	struct cacheinfo *ci;
- 	struct mbm_state *m;
- 	int err, ret;
- 	u64 tval = 0;
-@@ -388,7 +389,8 @@ static int __mon_event_count(u32 closid, u32 rmid, struct rmid_read *rr)
- 	}
- 
- 	/* Summing domains that share a cache, must be on a CPU for that cache. */
--	if (!cpumask_test_cpu(cpu, &rr->ci->shared_cpu_map))
-+	ci = get_cpu_cacheinfo_level(cpu, RESCTRL_L3_CACHE);
-+	if (!ci || ci->id != rr->ci_id)
- 		return -EINVAL;
- 
- 	/*
-@@ -400,7 +402,7 @@ static int __mon_event_count(u32 closid, u32 rmid, struct rmid_read *rr)
- 	 */
- 	ret = -EINVAL;
- 	list_for_each_entry(d, &rr->r->mon_domains, hdr.list) {
--		if (d->ci->id != rr->ci->id)
-+		if (d->ci_id != rr->ci_id)
- 			continue;
- 		err = resctrl_arch_rmid_read(rr->r, d, closid, rmid,
- 					     rr->evtid, &tval, rr->arch_mon_ctx);
-diff --git a/fs/resctrl/rdtgroup.c b/fs/resctrl/rdtgroup.c
-index cc37f58b47dd7..74b25bbb9872c 100644
---- a/fs/resctrl/rdtgroup.c
-+++ b/fs/resctrl/rdtgroup.c
-@@ -3034,7 +3034,7 @@ static void rmdir_mondata_subdir_allrdtgrp(struct rdt_resource *r,
- 	char name[32];
- 
- 	snc_mode = r->mon_scope == RESCTRL_L3_NODE;
--	sprintf(name, "mon_%s_%02d", r->name, snc_mode ? d->ci->id : d->hdr.id);
-+	sprintf(name, "mon_%s_%02d", r->name, snc_mode ? d->ci_id : d->hdr.id);
- 	if (snc_mode)
- 		sprintf(subname, "mon_sub_%s_%02d", r->name, d->hdr.id);
- 
-@@ -3059,7 +3059,7 @@ static int mon_add_all_files(struct kernfs_node *kn, struct rdt_mon_domain *d,
- 		return -EPERM;
- 
- 	list_for_each_entry(mevt, &r->evt_list, list) {
--		domid = do_sum ? d->ci->id : d->hdr.id;
-+		domid = do_sum ? d->ci_id : d->hdr.id;
- 		priv = mon_get_kn_priv(r->rid, domid, mevt, do_sum);
- 		if (WARN_ON_ONCE(!priv))
- 			return -EINVAL;
-@@ -3087,7 +3087,7 @@ static int mkdir_mondata_subdir(struct kernfs_node *parent_kn,
- 	lockdep_assert_held(&rdtgroup_mutex);
- 
- 	snc_mode = r->mon_scope == RESCTRL_L3_NODE;
--	sprintf(name, "mon_%s_%02d", r->name, snc_mode ? d->ci->id : d->hdr.id);
-+	sprintf(name, "mon_%s_%02d", r->name, snc_mode ? d->ci_id : d->hdr.id);
- 	kn = kernfs_find_and_get(parent_kn, name);
- 	if (kn) {
- 		/*
-diff --git a/include/linux/resctrl.h b/include/linux/resctrl.h
-index 9ba771f2ddead..6fb4894b8cfd1 100644
---- a/include/linux/resctrl.h
-+++ b/include/linux/resctrl.h
-@@ -159,7 +159,7 @@ struct rdt_ctrl_domain {
- /**
-  * struct rdt_mon_domain - group of CPUs sharing a resctrl monitor resource
-  * @hdr:		common header for different domain types
-- * @ci:			cache info for this domain
-+ * @ci_id:		cache info id for this domain
-  * @rmid_busy_llc:	bitmap of which limbo RMIDs are above threshold
-  * @mbm_total:		saved state for MBM total bandwidth
-  * @mbm_local:		saved state for MBM local bandwidth
-@@ -170,7 +170,7 @@ struct rdt_ctrl_domain {
-  */
- struct rdt_mon_domain {
- 	struct rdt_domain_hdr		hdr;
--	struct cacheinfo		*ci;
-+	unsigned int			ci_id;
- 	unsigned long			*rmid_busy_llc;
- 	struct mbm_state		*mbm_total;
- 	struct mbm_state		*mbm_local;
--- 
-2.43.5
-
+Nicolin
 
