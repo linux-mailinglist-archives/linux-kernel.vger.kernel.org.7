@@ -1,219 +1,144 @@
-Return-Path: <linux-kernel+bounces-667753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-667755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4204AAC8972
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 09:52:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 28D77AC897D
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 09:54:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DC71188C8EF
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 07:53:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E9A31BC2B24
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 07:54:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30D08213245;
-	Fri, 30 May 2025 07:52:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3DD7213252;
+	Fri, 30 May 2025 07:54:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cgi2AZCl"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Eln8R0q6"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A6992AE6F
-	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 07:52:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8551D2AE6F;
+	Fri, 30 May 2025 07:54:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748591562; cv=none; b=hcap0/ahJbaioXAnEa1r6FijNQwvMwEMzs9mELmEEzMpOWFC1+sP5CaFmGIFi2EKLzgVyv0V8+ZAJieBVz2zveqKIUzPrVz3jaWQp5V2xbFsldwvDjqPqUEnXPh+q0PQkfa8/O0GBtGIepVY9fSjZcqAPjpT3eo6auZ+kOmNevA=
+	t=1748591677; cv=none; b=gj1lMwo2qsQ/V9jBMYTas+i5hDR4ig7VkFmzcVG0NaZKyjn8IuC5HCJI52/KZxHQWhkS2UnmgwFogc4P9/9lz/9BBsvKokX4OHyqCZ2VQ0bh0jpNvAwVT/qNxa+KejW2qImBSaBE5z/Mc7QHrriRju30RBLQCKBHSBur9Vs14xc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748591562; c=relaxed/simple;
-	bh=G7T/l+SD9ggtZyaAliggeCOwfSM27hsQMoMmxA00zko=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LyyivIB1SPHc3Km8oHJIswSEcQz0xxEH+YnRbi6k+Fyee46lh6T4Gbx0RJ0HQQtnjiPyCa2T/ZcR+i/R1BfYPSzA9FUOMLpbiUkeBxcC+c9B6zsP2lCAZbMFKf6C/a9uxHEYeayvHRy4Ov+A3GJxkzzE96zzBQ4F2zAc6DD5VQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cgi2AZCl; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1748591559;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=dXme6NLsCN/6JumBzv0W754qfhIz6/enEzzfyphIa0E=;
-	b=cgi2AZCl2lBqCQilxK3mZgp9525Sf3BYMVZdWWlo6QFg/aEZbjieAvIpL4Ey1ezy4oMEU1
-	5R/zj+DviJaEh4kSBcoP2lQze5SwD3Ui28+FXRSoADuDwqMZMyQ1SmDZyJLjppXL00gGTK
-	69a2GCz+ULLk2eANK4MDprHNW0BlDi0=
-Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
- [209.85.208.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-547-b_0YqXyeOWGUkEf8xSzrDQ-1; Fri, 30 May 2025 03:52:38 -0400
-X-MC-Unique: b_0YqXyeOWGUkEf8xSzrDQ-1
-X-Mimecast-MFC-AGG-ID: b_0YqXyeOWGUkEf8xSzrDQ_1748591557
-Received: by mail-ed1-f70.google.com with SMTP id 4fb4d7f45d1cf-602df3e7adcso1916892a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 00:52:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748591557; x=1749196357;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dXme6NLsCN/6JumBzv0W754qfhIz6/enEzzfyphIa0E=;
-        b=RJRbqYBFN3GwfWHKGF016c5XyqKf20IZ2fFIvYgUa2ANtjD8PdizId08zeWGWUqxFQ
-         BeSDMb6xfMr/Efdkyo6540522SaFB8GatlLQGs4QBUeH422RHle5DD6X0y4/6ZJeFZ/W
-         wrqzQm4qBLSuEs1JJ3mrKt/l25oHwL6O9Ni61r62nY1xDuNCVRWGvKPzBBkOd5UUckaX
-         xkrzvYDLplpJn+L86A6uTbqcJCnaeHREmWqPM8MrueSxALDzBU7rQ9Mom+TNmRY6dXOb
-         qg6SIfIGUZ6onOy6ZaMu15XraLCCOrFhe/4n3jpH4Z4U/K81Fe/iZV0JJp/09YeQvdl3
-         6W/w==
-X-Gm-Message-State: AOJu0Yyr5+AsjRIyGb1GIuis6Hkgs+2E5mw4FJ4RBNuTYWIv5Wuc/Kn1
-	Lqe/S3/8bgDi8hK+UsgibTKJqJAKXWG2ys1EOSq3AGzo802wAFyx6cv+qufqN59kbDQ+QTTcIXo
-	RhofwfIyNxbNoKgNeX22KcgHy1BoF3x92Al342SndEnTQg6yF8CnqTuvrO0bZ487+aQ==
-X-Gm-Gg: ASbGncvrLugMAGXH/HOHDKZoSTniWFSKj/3Pb+r5LU2JSbiC5Q3Zom35caGWKDXzaLZ
-	6gxWMiXEoA7d6Oso+emgTnNQSAL6yKvL5d7QXcp70pH4YvzCiNinCc8+OcPslbBdsii9qWebbkJ
-	4lZUpntjUwVUjrBuPnPsb806AezPeDPcoV5T2w3VZzCyYAqKYe4JLGiQmZZ2zYi465u+VmWlwAM
-	ox9/uOckwt9aQBqY9UqbMwE5M525CBbiNw75zpJc8ls1gDVJrPP3N9VD67ScE9SiQEiP4K7loXH
-	pRxXqAldKP3M3A==
-X-Received: by 2002:a05:6402:2813:b0:5fb:87a2:5ef9 with SMTP id 4fb4d7f45d1cf-6057c621ee7mr948145a12.23.1748591556916;
-        Fri, 30 May 2025 00:52:36 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGWrvvdA9UB3dms/gjMEl+Cd773vHH5XoMNH/OJN8Qpd3i0iyiTFpV0kUVwOV/w6O9TdD8GEg==
-X-Received: by 2002:a05:6402:2813:b0:5fb:87a2:5ef9 with SMTP id 4fb4d7f45d1cf-6057c621ee7mr948131a12.23.1748591556503;
-        Fri, 30 May 2025 00:52:36 -0700 (PDT)
-Received: from [192.168.10.48] ([151.49.64.79])
-        by smtp.googlemail.com with ESMTPSA id 4fb4d7f45d1cf-60566c5c222sm1235068a12.27.2025.05.30.00.52.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 30 May 2025 00:52:35 -0700 (PDT)
-Message-ID: <a283a171-7c74-4e05-bdb1-dd28f1fe6a6e@redhat.com>
-Date: Fri, 30 May 2025 09:52:34 +0200
+	s=arc-20240116; t=1748591677; c=relaxed/simple;
+	bh=eJk6U97j4Cdh5nBfahL6CHsEtxMaisXTKlbSbz6RKnU=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=iuivLjJvS6QruZpqK21GRdE9KkGdkpUjFvXM6kbJWKxyTOAACHxjdQGDCudvBA43/U25KBtIYTCkxF513Pkh22ZfWjeYQ+iaRXmcVhHpIzjE7qwMwcV1z52e6ZKCzODnHxmxdUXVB9gDQpT1y8lppmOJhc99tYBWmjQW+sPL9uU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Eln8R0q6; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1748591675; x=1780127675;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=eJk6U97j4Cdh5nBfahL6CHsEtxMaisXTKlbSbz6RKnU=;
+  b=Eln8R0q6E+eM+1lBigc7XFKLU/vgxKfpuSmJc52CVFe6J7dG+DuEX+Kv
+   Muige0tyVlUzsYTXKFf7LaBK96scpZPEh04nWCj9n8EtMt5458AcBgIjw
+   gQkEwlEZidV5VNhsZO3xw4i0LH2zJO5z6/h475YmN+1YyE/MEn4zV1nKs
+   Y8f4Ms2/mSVwumKir+lGgdhyMG2JuAPMvxIH0OnluFQB0eMdWriY5N0H3
+   ysvrE/MYjwL5KFbfB6DUwguLzwSKN9wVkT29mflFJKxRe56viB7QdTbBR
+   P6bvJvGuLiEpsRMoUnlRMKdIdu8vOAIVIqMDuhxhwC79GeScczPQ/JFF7
+   w==;
+X-CSE-ConnectionGUID: RoF1p9/zThayUxceRmN2wg==
+X-CSE-MsgGUID: dfkeFuGHQvOFLScCLOXypA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11448"; a="50373970"
+X-IronPort-AV: E=Sophos;i="6.16,195,1744095600"; 
+   d="scan'208";a="50373970"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2025 00:54:34 -0700
+X-CSE-ConnectionGUID: G1YyP1mfQjG7cWX7/6GdDA==
+X-CSE-MsgGUID: RIdpZUmwTpy8E6dWJCtpfg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,195,1744095600"; 
+   d="scan'208";a="148951718"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.183])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2025 00:54:33 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Fri, 30 May 2025 10:54:30 +0300 (EEST)
+To: Stuart Hayes <stuart.w.hayes@gmail.com>
+cc: LKML <linux-kernel@vger.kernel.org>, Hans de Goede <hdegoede@redhat.com>, 
+    platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH v3 2/4] platform/x86: dell_rbu: Fix list usage
+In-Reply-To: <20250529202758.8440-3-stuart.w.hayes@gmail.com>
+Message-ID: <d7adf2ca-0cd7-99eb-9be1-a2b37fa8445e@linux.intel.com>
+References: <20250529202758.8440-1-stuart.w.hayes@gmail.com> <20250529202758.8440-3-stuart.w.hayes@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: Tree for May 29 (kernel/locking/rtmutex_api.c)
-To: Randy Dunlap <rdunlap@infradead.org>,
- Stephen Rothwell <sfr@canb.auug.org.au>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Maxim Levitsky <mlevitsk@redhat.com>
-References: <20250529165801.6dcb3fcf@canb.auug.org.au>
- <2d9429d0-e76c-429b-80d4-780052e0907c@infradead.org>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=pbonzini@redhat.com; keydata=
- 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
-In-Reply-To: <2d9429d0-e76c-429b-80d4-780052e0907c@infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 
-On 5/29/25 19:12, Randy Dunlap wrote:
-> 
-> 
-> On 5/28/25 11:58 PM, Stephen Rothwell wrote:
->> Hi all,
->>
->> Changes since 20250528:
->>
-> 
-> on x86_64 or i386:
-> 
-> 
-> In file included from ../include/uapi/linux/posix_types.h:5,
->                   from ../include/uapi/linux/types.h:14,
->                   from ../include/linux/types.h:6,
->                   from ../include/linux/kasan-checks.h:5,
->                   from ../include/asm-generic/rwonce.h:26,
->                   from ./arch/x86/include/generated/asm/rwonce.h:1,
->                   from ../include/linux/compiler.h:390,
->                   from ../include/linux/export.h:5,
->                   from ../include/linux/linkage.h:7,
->                   from ../include/linux/preempt.h:10,
->                   from ../include/linux/spinlock.h:56,
->                   from ../kernel/locking/rtmutex_api.c:5:
-> ../include/linux/stddef.h:8:14: error: expected declaration specifiers or ‘...’ before ‘(’ token
->      8 | #define NULL ((void *)0)
->        |              ^
-> ../include/linux/mutex.h:183:46: note: in expansion of macro ‘NULL’
->    183 |         _mutex_lock_killable(lock, subclass, NULL)
->        |                                              ^~~~
-> ../kernel/locking/rtmutex_api.c:547:13: note: in expansion of macro ‘mutex_lock_killable_nested’
->    547 | int __sched mutex_lock_killable_nested(struct mutex *lock,
->        |             ^~~~~~~~~~~~~~~~~~~~~~~~~~
-> ../kernel/locking/rtmutex_api.c:552:19: error: ‘mutex_lock_killable_nested’ undeclared here (not in a function); did you mean ‘mutex_lock_io_nested’?
->    552 | EXPORT_SYMBOL_GPL(mutex_lock_killable_nested);
->        |                   ^~~~~~~~~~~~~~~~~~~~~~~~~~
-> ../include/linux/export.h:76:23: note: in definition of macro ‘__EXPORT_SYMBOL’
->     76 |         extern typeof(sym) sym;                                 \
->        |                       ^~~
-> ../include/linux/export.h:90:41: note: in expansion of macro ‘_EXPORT_SYMBOL’
->     90 | #define EXPORT_SYMBOL_GPL(sym)          _EXPORT_SYMBOL(sym, "GPL")
->        |                                         ^~~~~~~~~~~~~~
-> ../kernel/locking/rtmutex_api.c:552:1: note: in expansion of macro ‘EXPORT_SYMBOL_GPL’
->    552 | EXPORT_SYMBOL_GPL(mutex_lock_killable_nested);
->        | ^~~~~~~~~~~~~~~~~
-> ../include/linux/stddef.h:8:14: error: expected declaration specifiers or ‘...’ before ‘(’ token
->      8 | #define NULL ((void *)0)
->        |              ^
-> ../include/linux/mutex.h:215:60: note: in expansion of macro ‘NULL’
->    215 | #define mutex_trylock(lock) _mutex_trylock_nest_lock(lock, NULL)
->        |                                                            ^~~~
-> ../kernel/locking/rtmutex_api.c:596:13: note: in expansion of macro ‘mutex_trylock’
->    596 | int __sched mutex_trylock(struct mutex *lock)
->        |             ^~~~~~~~~~~~~
-> ../kernel/locking/rtmutex_api.c:609:15: error: ‘mutex_trylock’ undeclared here (not in a function); did you mean ‘ww_mutex_trylock’?
->    609 | EXPORT_SYMBOL(mutex_trylock);
->        |               ^~~~~~~~~~~~~
-> ../include/linux/export.h:76:23: note: in definition of macro ‘__EXPORT_SYMBOL’
->     76 |         extern typeof(sym) sym;                                 \
->        |                       ^~~
-> ../include/linux/export.h:89:41: note: in expansion of macro ‘_EXPORT_SYMBOL’
->     89 | #define EXPORT_SYMBOL(sym)              _EXPORT_SYMBOL(sym, "")
->        |                                         ^~~~~~~~~~~~~~
-> ../kernel/locking/rtmutex_api.c:609:1: note: in expansion of macro ‘EXPORT_SYMBOL’
->    609 | EXPORT_SYMBOL(mutex_trylock);
->        | ^~~~~~~~~~~~~
-> 
-> 
-> This seems to be due to <linux/mutex.h> containing a #define for mutex_lock_killable_nested()
-> when DEBUG_PAGE_ALLOC is set and another for when DEBUG_PAGE_ALLOC is not set.
-> But then rtmutex_api.c has a function by that name also... (for the DEBUG_PAGE_ALLOC=y case,
-> which is set in my failing randconfig file, which is attached).
+On Thu, 29 May 2025, Stuart Hayes wrote:
 
-Yep, the bad condition is CONFIG_DEBUG_PAGE_ALLOC=y + CONFIG_RT_MUTEXES=y.
-Patch at https://lore.kernel.org/r/20250530075136.11842-1-pbonzini@redhat.com.
+> Stop using an entire struct packet_data just for the embedded list_head,
+> and fix usage of that list_head.
+> 
+> Fixes: d19f359fbdc6 ("platform/x86: dell_rbu: don't open code list_for_each_entry*()")
+> Signed-off-by: Stuart Hayes <stuart.w.hayes@gmail.com>
 
-Thanks for the report!
+Isn't this just refactor so Fixes tag for this commit is not warranted?
 
-Paolo
+> ---
+>  drivers/platform/x86/dell/dell_rbu.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/platform/x86/dell/dell_rbu.c b/drivers/platform/x86/dell/dell_rbu.c
+> index 7b019fb72e86..c03d4d55fcc1 100644
+> --- a/drivers/platform/x86/dell/dell_rbu.c
+> +++ b/drivers/platform/x86/dell/dell_rbu.c
+> @@ -77,14 +77,14 @@ struct packet_data {
+>  	int ordernum;
+>  };
+>  
+> -static struct packet_data packet_data_head;
+> +static struct list_head packet_data_list;
+>  
+>  static struct platform_device *rbu_device;
+>  static int context;
+>  
+>  static void init_packet_head(void)
+>  {
+> -	INIT_LIST_HEAD(&packet_data_head.list);
+> +	INIT_LIST_HEAD(&packet_data_list);
+>  	rbu_data.packet_read_count = 0;
+>  	rbu_data.num_packets = 0;
+>  	rbu_data.packetsize = 0;
+> @@ -183,7 +183,7 @@ static int create_packet(void *data, size_t length) __must_hold(&rbu_data.lock)
+>  
+>  	/* initialize the newly created packet headers */
+>  	INIT_LIST_HEAD(&newpacket->list);
+> -	list_add_tail(&newpacket->list, &packet_data_head.list);
+> +	list_add_tail(&newpacket->list, &packet_data_list);
+>  
+>  	memcpy(newpacket->data, data, length);
+>  
+> @@ -292,7 +292,7 @@ static int packet_read_list(char *data, size_t * pread_length)
+>  	remaining_bytes = *pread_length;
+>  	bytes_read = rbu_data.packet_read_count;
+>  
+> -	list_for_each_entry(newpacket, (&packet_data_head.list)->next, list) {
+> +	list_for_each_entry(newpacket, &packet_data_list, list) {
+>  		bytes_copied = do_packet_read(pdest, newpacket,
+>  			remaining_bytes, bytes_read, &temp_count);
+>  		remaining_bytes -= bytes_copied;
+> @@ -315,7 +315,7 @@ static void packet_empty_list(void)
+>  {
+>  	struct packet_data *newpacket, *tmp;
+>  
+> -	list_for_each_entry_safe(newpacket, tmp, (&packet_data_head.list)->next, list) {
+> +	list_for_each_entry_safe(newpacket, tmp, &packet_data_list, list) {
+>  		list_del(&newpacket->list);
+>  
+>  		/*
+> 
+
+-- 
+ i.
 
 
