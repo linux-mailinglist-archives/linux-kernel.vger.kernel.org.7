@@ -1,144 +1,196 @@
-Return-Path: <linux-kernel+bounces-667987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-668005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84859AC8C3B
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 12:39:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CE2AFAC8C87
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 12:57:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E7CD17B399
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 10:39:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86A7C4E5466
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 10:57:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0EC12236F3;
-	Fri, 30 May 2025 10:39:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fBOVtftm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74F41226193;
+	Fri, 30 May 2025 10:57:23 +0000 (UTC)
+Received: from mta21.hihonor.com (mta21.honor.com [81.70.160.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 239E21EA7C8;
-	Fri, 30 May 2025 10:39:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9D7E21C9F8;
+	Fri, 30 May 2025 10:57:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.160.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748601553; cv=none; b=IwTCYAmsRtjnmHSKBYpb2IcHcnVVtdUPzsiBXUREDrcALawuigXnfp996kCoaRdQaVwgJwJVVlC0YNAEYnffG6agaiDNee6uwTXnusngHmgryhqZACUqJo5gBU0VYvtrgQNkQ3c5/VsNSr/FfJt2FcTYAPKB1CGLEc5ytOKXVkw=
+	t=1748602643; cv=none; b=qumVJABGqlGetS2UBoOrCWyrnNZfOiA9qvnvbmrLyP0wehq0t5SaTbM9t4jk6RhmCkb7k3LhONwDpgKTEhy2WLt+qmEidPCf5SNHiHh/vgBBixomsQb3A5Vl9v7vmp75vENZoFjZTADKTUYvSSffVE6zCAPQC3OS5AiNIwk2vEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748601553; c=relaxed/simple;
-	bh=Cc2l0TKz5YaK8S3redSaC1apH9Fo0cyDOkhqfVmqyV8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L4n1lM1U59PHCwVx8g1XIFdIzh5pcTcFxQQ4dPS22y9WTdCqZMXcBxb52XsJpac0fzi/pc4ZuhSFqFrbD74JT0k0FqfQu600RdOQ3AGZQ8v6OZWHVWjwbZPsS2iop5LmcVr16tvphekjcQ29ZLX5vkR1ZRHZ3PEt18Cn4NYZMDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fBOVtftm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23472C4CEE9;
-	Fri, 30 May 2025 10:39:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748601552;
-	bh=Cc2l0TKz5YaK8S3redSaC1apH9Fo0cyDOkhqfVmqyV8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fBOVtftmYoDSz8Bt5BjQ/uzq726rmBsv5MS2Nm1e5hA45gB8lpcf1jec5FbGK1KoE
-	 b33TNaiQ5KuKgHbj2Wj+1lWNNr5AzT7M8Iv8SM6TuNl0kfxIHKiNcsgcnNg/avAPPq
-	 ClSX2StLLgVvq9R4VOc5JSceZquAd4Y+ek3+FQ/Ikkl3dFAisnW+R1WP4b4ZbLD5Z3
-	 3OQGXYnY/qfZ1XYdfM7oNbLigEu6iMcTvcHGVQJQkXaKEhnj73glkcscBAiqY54RRH
-	 TaC3EYyGMuRwdsXzqjBhHQbQXFElCEp7KUMQ0705zEG735JsEuNcI+i+hwId0D0G15
-	 0C2H5FgovOerw==
-Date: Fri, 30 May 2025 11:39:09 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Shuah Khan <shuah@kernel.org>, Christian Brauner <brauner@kernel.org>,
-	Jeff Layton <jlayton@kernel.org>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] selftests/filesystems: Fix build of anon_inode_test
-Message-ID: <aDmKzSkIlOAkj_Bq@finisterre.sirena.org.uk>
-References: <20250518-selftests-anon-inode-build-v1-1-71eff8183168@kernel.org>
+	s=arc-20240116; t=1748602643; c=relaxed/simple;
+	bh=Kn2+KeM5+tbI7Gdz/WkW+X9jyaEGB44QCGr1f17zrbY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pmV0+7Joy85FUA3QK38L5HO5nGB7lxwzJPOFp3g+2WNqNd319w1cSyXjW/bq9OLBbUK3t228P7dDZ0b+08HvrY52KD2gyI51OS0NzJu/S/XW9x0IflOEUXC3CEMlKQyI7/N4FKQcIc08KtLYcomPPBXU7hMcXiK0oBSVtNhBcpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.160.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
+Received: from w003.hihonor.com (unknown [10.68.17.88])
+	by mta21.hihonor.com (SkyGuard) with ESMTPS id 4b808J0DcCzYkxr7;
+	Fri, 30 May 2025 18:38:40 +0800 (CST)
+Received: from a010.hihonor.com (10.68.16.52) by w003.hihonor.com
+ (10.68.17.88) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 30 May
+ 2025 18:40:39 +0800
+Received: from localhost.localdomain (10.144.18.117) by a010.hihonor.com
+ (10.68.16.52) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 30 May
+ 2025 18:40:39 +0800
+From: wangtao <tao.wangtao@honor.com>
+To: <sumit.semwal@linaro.org>, <christian.koenig@amd.com>,
+	<kraxel@redhat.com>, <vivek.kasireddy@intel.com>, <viro@zeniv.linux.org.uk>,
+	<brauner@kernel.org>, <hughd@google.com>, <akpm@linux-foundation.org>,
+	<amir73il@gmail.com>
+CC: <benjamin.gaignard@collabora.com>, <Brian.Starkey@arm.com>,
+	<jstultz@google.com>, <tjmercier@google.com>, <jack@suse.cz>,
+	<baolin.wang@linux.alibaba.com>, <linux-media@vger.kernel.org>,
+	<dri-devel@lists.freedesktop.org>, <linaro-mm-sig@lists.linaro.org>,
+	<linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+	<linux-mm@kvack.org>, <bintian.wang@honor.com>, <yipengxiang@honor.com>,
+	<liulu.liu@honor.com>, <feng.han@honor.com>, wangtao <tao.wangtao@honor.com>
+Subject: [PATCH v3 0/4] Optimizing disk file & dmabuf copies via copy_file_range.
+Date: Fri, 30 May 2025 18:39:37 +0800
+Message-ID: <20250530103941.11092-1-tao.wangtao@honor.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="DLuH41Ng1iRNSMtA"
-Content-Disposition: inline
-In-Reply-To: <20250518-selftests-anon-inode-build-v1-1-71eff8183168@kernel.org>
-X-Cookie: Anger is momentary madness.
+Content-Type: text/plain
+X-ClientProxiedBy: w011.hihonor.com (10.68.20.122) To a010.hihonor.com
+ (10.68.16.52)
+
+Typical dmabuf file reading steps:
+1. dmabuf_fd = dmabuf_alloc(len, heap_fd)
+2. vaddr = mmap(NULL, len, PROT_READ | PROT_WRITE, MAP_SHARED, dmabuf_fd, 0)
+3. file_fd = open(file_path, O_RDONLY)
+4. read(file_fd, vaddr, len)
+
+dmabuf's attachment/map/fence model uses remap_pfn_range for mmap, which
+lacks Direct I/O support[1]. Buffer IO causes latency when loading large AI
+model files.
+
+My previous patch added dmabuf ioctl for Direct IO file operations, showing
+good performance on low-power CPUs[2][3]. Christian suggested using existing
+uAPIs (read/sendfile/splice/c_f_r) instead of new ioctls.
+
+sendfile/splice/c_f_r enable zero-copy via Direct IO for disk-disk/network:
+sendfile(skt_fd, disk_fd): [DISK]-DMA->[pipe(buf)]-DMA->[NIC]
+sendfile(dst_disk, src_disk): [DISK] -DMA-> [pipe(buf)] -DMA-> [DISK]
+
+Analysis shows existing uAPIs can't achieve zero-copy disk-to-dmabuf.
+Since dmabuf lacks file ops, using tmpfs for disk-to-tmpfs CPU analysis:
+| Method            | CPU Copies | Key Overhead               |
+|-------------------|------------|----------------------------|
+| 1. Buffer R+W     | 2          | Alloc(cache) & 2 CPU copies|
+| 2. Direct R+W     | 1          | GUP(usr_buf) & 1 CPU copy  |
+| 3. Mmap+Buffer R  | 1          | Alloc(cache) & 1 CPU copy  |
+| 4. Mmap+Direct R  | 0          | GUP(mem_buf) ~50% CPU      |
+| 5. Buffer Sendfile| 1          | Alloc(cache) & 1 CPU copy  |
+| 6. Direct Sendfile| 1          | Small pipe, high IRQ       |
+| 7. Buffer Splice  | 1          | Alloc(cache) & 1 CPU copy  |
+| 8. Direct Splice  | 1          | Larger pipe buffer         |
+| 9. c_f_r          | N/A        | Cross-FS blocked           |
+
+GUP: get_user_page
+Alloc(cache): allocate page cache
+
+Data flows:
+1. [DISK] -DMA-> [Alloc(cache)] -COPY-> [usr_buf] -COPY-> [MEM]
+2. [DISK] -DMA-> [GUP(usr_buf)] -COPY-> [MEM]
+3. [DISK] -DMA-> [Alloc(cache)] -COPY-> [mem_buf]
+4. [DISK] -DMA-> [GUP(mem_buf)]
+5. [DISK] -DMA-> [pipe(Alloc(cache))] -COPY-> [tmpfs page]
+6. [DISK] -DMA-> [pipe(buf)] -COPY-> [tmpfs page]
+7. [DISK] -DMA-> [big_pipe(Alloc(cache))] -COPY-> [tmpfs page]
+8. [DISK] -DMA-> [big_pipe(buf)] -COPY-> [tmpfs page]
+9. [DISK] -DMA-> [tmpfs page] (blocked)
+
+Key findings:
+- Buffer I/O requires page cache allocation and at least one CPU copy
+- Read+Write incurs excessive CPU copies and will no longer be analyzed.
+  Future approaches will use Read instead of mmap+Read.
+- Mmap+Direct has zero copies but 50% GUP overhead, and dmabuf doesn't support
+- sendfile/splice require intermediate pipes, needing 1 CPU copy
+- c_f_r limitations: Cross-FS blocks + missing memory FS support
+
+Modifications:
+1. Enable cross-FS c_f_r for memory file types
+2. Add dmabuf c_f_r callbacks for [DISK]-DMA->[dmabuf]
+3. Test tmpfs c_f_r locally only (no upstream) due to lock_page deadlock risks
+
+Performance (1GHz CPU, UFS4@4GB):
+1. tmpfs(memfd) direct c_f_r(1197 MB/s): +15% vs mmap&read(1014)
+2. udmabuf+memfd(2318 MB/s): +50% vs mmap&read(1457 MB/s)
+3. dmabuf direct c_f_r(3405 MB/s): 260% faster than buffer IO(918 MB/s)
+   40% faster than udmabuf(2318 MB/s)
+
+|    32x32MB Read 1024MB  |Creat-ms|Close-ms|  I/O-ms|I/O-MB/s| I/O%
+|-------------------------|--------|--------|--------|--------|-----
+| 1)Beg  dmabuf buffer R/W|     52 |      5 |   1170 |    918 | 100%
+| 2)    udmabuf buffer R/W|    591 |    326 |   1281 |    838 |  91%
+| 3)      memfd buffer R/W|      1 |    323 |   2370 |    453 |  49%
+| 4)      memfd direct R/W|      1 |    321 |   1058 |   1014 | 110%
+| 5) memfd buffer sendfile|      1 |    329 |   1577 |    681 |  74%
+| 6) memfd direct sendfile|      1 |    327 |   2672 |    401 |  43%
+| 7)   memfd buffer splice|      2 |    321 |   1729 |    621 |  67%
+| 8)   memfd direct splice|      2 |    324 |   1528 |    702 |  76%
+| 9)    memfd buffer c_f_r|      1 |    325 |   1586 |    677 |  73%
+|10)    memfd direct c_f_r|      1 |    323 |    897 |   1197 | 130%
+|11)      u+mfd buffer R/W|    609 |    344 |   2207 |    486 |  52%
+|12)      u+mfd direct R/W|    580 |    342 |    737 |   1457 | 158%
+|13) u+mfd buffer sendfile|    582 |    343 |   1270 |    845 |  92%
+|14) u+mfd direct sendfile|    573 |    344 |   2254 |    476 |  51%
+|15)   u+mfd buffer splice|    584 |    341 |   1202 |    893 |  97%
+|16)   u+mfd direct splice|    564 |    340 |    851 |   1263 | 137%
+|17)    u+mfd buffer c_f_r|    585 |    344 |   1244 |    863 |  94%
+|18)    u+mfd direct c_f_r|    578 |    341 |    581 |   1848 | 201%
+|19)  udmabuf buffer c_f_r|    585 |    328 |   1163 |    923 | 100%
+|20)  udmabuf direct c_f_r|    579 |    328 |    464 |   2318 | 252%
+|21)   dmabuf buffer c_f_r|     48 |      5 |   1058 |   1015 | 110%
+|22)   dmabuf direct c_f_r|     48 |      5 |    316 |   3405 | 370%
+|23)End  dmabuf buffer R/W|     48 |      5 |   1173 |    915 |  99%
+
+u+mfd = udma+memfd = udmabuf + pre-allocated memfd combo.
+Cache cleared during tests to simulate real-world large file loading.
+
+dmabuf file Use Cases:
+- Loading large AI models using dmabuf
+- Real-time data capture and storage with dmabuf
+- Persisting task snapshots in Android
+
+v1: [2]
+v1 -> v2: [3]
+ Dma-buf exporter verify exclusive access to the dmabuf's sgtable.
+v2 -> v3:
+ copy_file_range supports copying from disk files to memory files.
+ Implement the copy_file_range callback functions for dmabuf/udmabuf.
+
+Reference:
+[1] https://lore.kernel.org/all/0393cf47-3fa2-4e32-8b3d-d5d5bdece298@amd.com
+[2] https://lore.kernel.org/all/20250513092803.2096-1-tao.wangtao@honor.com
+[3] https://lore.kernel.org/all/20250516092148.12778-1-tao.wangtao@honor.com
 
 
---DLuH41Ng1iRNSMtA
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+wangtao (4):
+  fs: allow cross-FS copy_file_range for memory-backed files
+  dmabuf: Implement copy_file_range for dmabuf
+  udmabuf: Implement udmabuf rw_file callback
+  dmabuf:system_heap Implement system_heap exporter's rw_file callback.
 
-On Sun, May 18, 2025 at 03:01:34PM +0100, Mark Brown wrote:
-> The anon_inode_test test fails to build due to attempting to include
-> a nonexisting overlayfs/wrapper.h:
->=20
-> anon_inode_test.c:10:10: fatal error: overlayfs/wrappers.h: No such file =
-or directory
->    10 | #include "overlayfs/wrappers.h"
->       |          ^~~~~~~~~~~~~~~~~~~~~~
+ drivers/dma-buf/dma-buf.c           | 32 ++++++++++++
+ drivers/dma-buf/heaps/system_heap.c | 79 +++++++++++++++++++++++++++++
+ drivers/dma-buf/udmabuf.c           | 59 +++++++++++++++++++++
+ fs/read_write.c                     | 71 +++++++++++++++++++-------
+ include/linux/dma-buf.h             | 16 ++++++
+ include/linux/fs.h                  |  2 +
+ 6 files changed, 240 insertions(+), 19 deletions(-)
 
-This build failure, first reported against -next and which should be
-fixed by this patch, is now present in mainline.
+-- 
+2.17.1
 
-> This is due to 0bd92b9fe538 ("selftests/filesystems: move wrapper.h out
-> of overlayfs subdir") which was added in the vfs-6.16.selftests branch
-> which was based on -rc5 and does not contain the newly added test so
-> once things were merged into vfs.all in the build started failing - both
-> parent commits are fine.
->=20
-> Fixes: feaa00dbff45a ("Merge branch 'vfs-6.16.selftests' into vfs.all")
-
-I see that the two branches get sent separately to Linus so the merge
-that triggers things is now:
-
-   3e406741b19890 ("Merge tag 'vfs-6.16-rc1.selftests' of git://git.kernel.=
-org/pub/scm/linux/kernel/git/vfs/vfs")
-
-I'll resend with that updated.
-
-> Signed-off-by: Mark Brown <broonie@kernel.org>
-> ---
->  tools/testing/selftests/filesystems/anon_inode_test.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/tools/testing/selftests/filesystems/anon_inode_test.c b/tool=
-s/testing/selftests/filesystems/anon_inode_test.c
-> index e8e0ef1460d2..73e0a4d4fb2f 100644
-> --- a/tools/testing/selftests/filesystems/anon_inode_test.c
-> +++ b/tools/testing/selftests/filesystems/anon_inode_test.c
-> @@ -7,7 +7,7 @@
->  #include <sys/stat.h>
-> =20
->  #include "../kselftest_harness.h"
-> -#include "overlayfs/wrappers.h"
-> +#include "wrappers.h"
-> =20
->  TEST(anon_inode_no_chown)
->  {
->=20
-> ---
-> base-commit: feaa00dbff45ad9a0dcd04a92f88c745bf880f55
-> change-id: 20250516-selftests-anon-inode-build-007e206e8422
->=20
-> Best regards,
-> --=20
-> Mark Brown <broonie@kernel.org>
->=20
-
---DLuH41Ng1iRNSMtA
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmg5iswACgkQJNaLcl1U
-h9A0ngf/a9bipV7ZRWFfwG/WshIDaw6GGK5V72tmc3qGRudNpzCiAiJ/qrXXJ3k3
-4CDmCgSmRRvNlIiX2JC+tk/0tZVFhLhri+RdUwOo1xx8KSHgJiW82JhZC4pdNk1O
-1n9Fqhk40psqQnMBJX5P5eBgYA9JqyavrXbTDGbQ+N4E/Kg6r99f9ktvFamL06Gt
-biRdnGJiB01Kime1zU3Q/PWz4YYRf291dwcoC+KxIKpG/NwWfUMQhHOfpPsOCSRx
-Se0RNrB5TAScO1DEXjWFjx4fG7MPWf3XjIFu8r5Grv/nxwp2lDfZN1LZsARVl1i6
-jDRAxTTwCxXrfBZw/PzO7SSBdvMovw==
-=7Piu
------END PGP SIGNATURE-----
-
---DLuH41Ng1iRNSMtA--
 
