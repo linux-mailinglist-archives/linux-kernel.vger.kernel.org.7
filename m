@@ -1,160 +1,158 @@
-Return-Path: <linux-kernel+bounces-668307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-668310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85738AC90D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 15:59:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FEDBAC90EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 16:03:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FEC716DB58
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 13:59:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CAB51C0593F
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 14:02:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E901022ACF2;
-	Fri, 30 May 2025 13:58:56 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25C9F22D4DC;
+	Fri, 30 May 2025 14:01:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="FWqJRA8w"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91703207DFE
-	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 13:58:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3967FBF0;
+	Fri, 30 May 2025 14:01:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748613536; cv=none; b=P6mFrrbnrqCjdmLCDj6npNPn5tF8+NMT+PnzdKAmBMcAQCdIG4Fz5NRqSFt4DJbI2qLgffASeArHd7sCDUnE9DntgrniL5e/7wYieSQdJed46zy13TpfxhLzmeioLp6MPXweqWEaqvHt+9DqqZLIEIOHcF09N5taplP96gGETek=
+	t=1748613710; cv=none; b=RfXci0DCIYT+UCLDA1/apXVwMi3gn0Vi69Iy/jO+mxwTnpRAvtVDI/IHfAqANOVsh1woDQoAAngZpA+l/Fp7loBPaa2R7y/Z3NEgFKaR3QiVPtGfaHuZc412Q3dvkaWV9QJHpuwbSAun5dB5CX41+6hzlsxARCij1QzChGJ2Tgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748613536; c=relaxed/simple;
-	bh=t1GyjOELfVl8vfv7hnE/YTwAPdG60czzFl9MT01ZeJw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=of+uKhWY4XFyUZ4dCTFHKZLSMHqkUKOcNxHsAqFh4vEeWum3GT8b0HwkcNKRpPkxCo6gFkDHwxIiPzjFzThEEhWHDV5HD6ZV8XyCsrArXf1s5OYvVgjjE3nPqXw/IdhTpW/2qB21SvWcvi+TqciYAy8Rti8dgYVyBtpzrDECMg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 390A4C4CEE9;
-	Fri, 30 May 2025 13:58:55 +0000 (UTC)
-Date: Fri, 30 May 2025 09:59:58 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: [GIT PULL] ring-buffer: Updates for v6.16
-Message-ID: <20250530095958.494ad94e@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1748613710; c=relaxed/simple;
+	bh=IiWa3QYm+SUHUfGrRvdvNCqI8L5mMRzMn8FrCEm9dMw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cENqEtKyzG9n0GiXpoYwf5IutSLgVzPqkRRt8Pzg0+GdqOCDYwpWvXKQ7MijINPPR68WveUCYjqXAUiEzLedJHTBP9ZOicFhBi6fO+4GDvNAts5lHjukMfZPhNaQH+cEEuvvWWNNsyzo8UVWG8IAuAbRcSZd4nQYvJulKpAYfuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=FWqJRA8w; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54UCUU3v016369;
+	Fri, 30 May 2025 14:01:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=6hHECg
+	npQEPXpU2l4pVIj6oEuY8kux5ThRyZ5rj5SM0=; b=FWqJRA8wMcLzzcu9gK/yag
+	96Poaw/AoeKadZdfLGfUKXOMVJF+nwXKHb78cGh6IVhBvqCzuu++I+YfFNabfnFu
+	xuHeQ2i/w0KBGQLCjhE2KcX+1iVObZhc2iMzkcD1LH9HHhVp/NDcOdgyUZNMFt7L
+	qhrSFfiVUVKPL0OLb1VRr7bBpDXekbfSujCLrQhI+dgE+jYlkZmCUkUX2iEcq6Qw
+	pGMLiMgfazOzKqUvU0Ahn7MSywZdScPu8XXCeEQ8C5Z8j+0w6Nfar/DelcJLYsXr
+	64++q+66dXjDinlOUFGnQSrMkjtfgX8UMP7Pqw/pTFpXFgAZoYS9/fdaXqD+vyFg
+	==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46x40kkxa6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 30 May 2025 14:01:36 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 54UBMU6U027314;
+	Fri, 30 May 2025 14:01:35 GMT
+Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 46useq9meg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 30 May 2025 14:01:34 +0000
+Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
+	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 54UE1YS441353562
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 30 May 2025 14:01:34 GMT
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8AE9458059;
+	Fri, 30 May 2025 14:01:34 +0000 (GMT)
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4B3665806F;
+	Fri, 30 May 2025 14:01:30 +0000 (GMT)
+Received: from [9.67.145.202] (unknown [9.67.145.202])
+	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 30 May 2025 14:01:29 +0000 (GMT)
+Message-ID: <f33af0f8-6d7b-479c-9d57-e5fd485d0f6e@linux.ibm.com>
+Date: Fri, 30 May 2025 19:31:28 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [linus:master] [block] 245618f8e4: stress-ng.fpunch.fail
+To: Oliver Sang <oliver.sang@intel.com>
+Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org,
+        Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
+        Hannes Reinecke <hare@suse.de>, Ming Lei <ming.lei@redhat.com>,
+        cgroups@vger.kernel.org, linux-block@vger.kernel.org
+References: <202505221030.760980df-lkp@intel.com>
+ <95753732-9714-42e0-8097-e2b4c3dd5820@linux.ibm.com>
+ <aDe9y3Ef+TEacRr3@xsang-OptiPlex-9020>
+Content-Language: en-US
+From: Nilay Shroff <nilay@linux.ibm.com>
+In-Reply-To: <aDe9y3Ef+TEacRr3@xsang-OptiPlex-9020>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: qbn8N2la_ccNjfFWSCbkNQG9aciyTlrs
+X-Authority-Analysis: v=2.4 cv=fuPcZE4f c=1 sm=1 tr=0 ts=6839ba40 cx=c_pps a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=i3X5FwGiAAAA:8 a=QyXUC8HyAAAA:8 a=CJm8QiaJa0guGxYXfB8A:9 a=QEXdDO2ut3YA:10
+ a=mmqRlSCDY2ywfjPLJ4af:22
+X-Proofpoint-GUID: qbn8N2la_ccNjfFWSCbkNQG9aciyTlrs
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTMwMDExOSBTYWx0ZWRfXxukEhbtcb9tu 0AaTGS/i8A2WZ1oNPnnB36fITs2g4pOgUmd9bWlV2Qx/zzapmEqoVr4u0fr+1bfOkaSAvW/d/Bv nlLEZ2ywOawmFRpEhL7Rqxi5gpsDGsX3heI2aeCVA8hmYQvc/PAkZGq7/6rcJR4O9VqKH9Z1G4A
+ 3/i7xkydqUD3R3saf+aHXl6VHCntPdSxGLLBOkSH3j4+Ko6EUPQxWDjreRxtOA236vvHqWKuhsx tKfd0ersEv/d9SO4nk+CBb45xjQDcLeOmiTABGUj5EsEE/6boB3wwwI2g0A5Xt1Qd3S498NHvf1 /YguK0b8oT7RILhW67h/yvoGxn8geqxpIVPZ0yfca7e8PrOplojUpEev1dyNPA/LMLYkZmJ6aGp
+ dAPFthvw9vjlavhuy71PLhUDX2PTHGPiX0Hu0XRO6s8BtbCr6Mf0NpSkcAsi4dGhcd8Fcjbz
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-30_05,2025-05-30_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 suspectscore=0
+ mlxlogscore=999 priorityscore=1501 malwarescore=0 mlxscore=0 phishscore=0
+ impostorscore=0 lowpriorityscore=0 bulkscore=0 spamscore=0 adultscore=0
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2505160000
+ definitions=main-2505300119
 
 
-Linus,
 
-ring-buffer changes for v6.16:
+On 5/29/25 7:22 AM, Oliver Sang wrote:
+> hi, Nilay,
+> 
+> sorry for late.
+No worries... 
 
-- Allow the persistent ring buffer to be memory mapped
+[...]
+>>>
+>>> The kernel config and materials to reproduce are available at:
+>>> https://download.01.org/0day-ci/archive/20250522/202505221030.760980df-lkp@intel.com
+>>>
+>>
+>> I tried reproducing this issue but I couldn't recreate it. Is it possible
+>> for you to run this test on your setup using stress-ng option "--iostat 1"
+>> as shown below ?
+>>
+>> # stress-ng --timeout 60 --times --verify --metrics --no-rand-seed --fpunch 128 --iostat 1
+>>
+>> If you can run test with above option then please collect logs and share it.
+>> That might help to further debug this.
+> 
+> the log is attached as stress-ng-245618f8e4.
+> also attached the dmesg-245618f8e4.xz.
+> 
+> another log from parent is attached as stress-ng-3efe7571c3.
+> 
+Thanks for trying out --iostat option and sharing logs. I looked through logs and it seems 
+that (my guess) in case of failures (i.e. bogo ops reported as 0) disk read operations are
+either blocked or never completed. However it might be useful to further debug this. 
+Unfortunately, I tried hard but failed to recreate on my setup, so need your help. 
 
-  In the last merge window there was issues with the implementation of
-  mapping the persistent ring buffer because it was assumed that the
-  persistent memory was just physical memory without being part of the
-  kernel virtual address space. But this was incorrect and the persistent
-  ring buffer can be mapped the same way as the allocated ring buffer is
-  mapped.
+I have few follow up questions:
+1. Are you able to recreate this issue even on the recent upstream kernel?
+2. Did you try formatting the disk using ext4 instead of xfs?
 
-  The meta data for the persistent ring buffer is different than the normal
-  ring buffer and the organization of mapping it to user space is a little
-  different. Make the updates needed to the meta data to allow the
-  persistent ring buffer to be mapped to user space.
+Anyways, is it possible to rerun test with following options to further analyze it?
+# stress-ng --timeout 60 --times --metrics --verify --no-rand-seed --fpunch 128 --verbose --klog-check --stressor-time --status 1
 
-- Fix cpus_read_lock() with buffer->mutex and cpu_buffer->mapping_lock
+Above options shall help generate verbose output as well as log why stressors are not exiting 
+after timeout of 60 seconds. Moreover, it'd be helpful if you can also repeat the test specifying 
+"--fpunch 1". Just wanted to see whether limiting stressors to only 1 recreate the issue. 
 
-  Mapping the ring buffer to user space uses the cpu_buffer->mapping_lock.
-  The buffer->mutex can be taken when the mapping_lock is held, giving the
-  locking order of: cpu_buffer->mapping_lock -->> buffer->mutex. But there
-  also exists the ordering:
+Thanks,
+--Nilay
 
-      buffer->mutex -->> cpus_read_lock()
-      mm->mmap_lock -->> cpu_buffer->mapping_lock
-      cpus_read_lock() -->> mm->mmap_lock
-
-  causing a circular chain of:
-
-      cpu_buffer->mapping_lock -> buffer->mutex -->> cpus_read_lock() -->>
-         mm->mmap_lock -->> cpu_buffer->mapping_lock
-
-  By moving the cpus_read_lock() outside the buffer->mutex where:
-  cpus_read_lock() -->> buffer->mutex, breaks the deadlock chain.
-
-- Do not trigger WARN_ON() for commit overrun
-
-  When the ring buffer is user space mapped and there's a "commit overrun"
-  (where an interrupt preempted an event, and then added so many events it
-   filled the buffer having to drop events when it hit the preempted event)
-  a WARN_ON() was triggered if this was read via a memory mapped buffer.
-  This is due to "missed events" being non zero when the reader page ended
-  up with the commit page. The idea was, if the writer is on the reader page,
-  there's only one page that has been written to and there should be no
-  missed events. But if a commit overrun is done where the writer is off the
-  commit page and looped around to the commit page causing missed events, it
-  is possible that the reader page is the commit page with missed events.
-
-  Instead of triggering a WARN_ON() when the reader page is the commit page
-  with missed events, trigger it when the reader page is the tail_page with
-  missed events. That's because the writer is always on the tail_page if
-  an event was interrupted (which holds the commit event) and continues off
-  the commit page.
-
-- Reset the persistent buffer if it is fully consumed
-
-  On boot up, if the user fully consumes the last boot buffer of the
-  persistent buffer, if it reboots without enabling it, there will still be
-  events in the buffer which can cause confusion. Instead, reset the buffer
-  when it is fully consumed, so that the data is not read again.
-
-- Clean up some goto out jumps
-
-  There's a few cases that the code jumps to the "out:" label that simply
-  returns a value. There used to be more work done at those labels but now
-  that they simply return a value use a return instead of jumping to a
-  label.
-
-- Use guard() to simplify some of the code
-
-  Add guard() around some locking instead of jumping to a label to do the
-  unlocking.
-
-- Use free() to simplify some of the code
-
-  Use free(kfree) on variables that will get freed on error and use
-  return_ptr() to return the variable when its not freed. There's one
-  instance where free(kfree) simplifies the code on a temp variable that was
-  allocated just for the function use.
-
-
-Please pull the latest trace-ringbuffer-v6.16 tree, which can be found at:
-
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
-trace-ringbuffer-v6.16
-
-Tag SHA1: 194e7d78d0b586b1b28d37331894919d07f82d1c
-Head SHA1: 99d232804405e35d7a9af1536a057578a1442e81
-
-
-Masami Hiramatsu (Google) (1):
-      tracing: Reset last-boot buffers when reading out all cpu buffers
-
-Steven Rostedt (9):
-      ring-buffer: Move cpus_read_lock() outside of buffer->mutex
-      ring-buffer: Do not trigger WARN_ON() due to a commit_overrun
-      ring-buffer: Allow reserve_mem persistent ring buffers to be mmapped
-      ring-buffer: Removed unnecessary if() goto out where out is the next line
-      ring-buffer: Remove jump to out label in ring_buffer_swap_cpu()
-      ring-buffer: Simplify reset_disabled_cpu_buffer() with use of guard()
-      ring-buffer: Simplify ring_buffer_read_page() with guard()
-      ring-buffer: Make ring_buffer_{un}map() simpler with guard(mutex)
-      ring-buffer: Simplify functions with __free(kfree) to free allocations
-
-----
- kernel/trace/ring_buffer.c | 213 ++++++++++++++++++++++++---------------------
- kernel/trace/trace.c       |  26 +++++-
- 2 files changed, 134 insertions(+), 105 deletions(-)
----------------------------
 
