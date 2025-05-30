@@ -1,242 +1,158 @@
-Return-Path: <linux-kernel+bounces-668741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-668742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA90BAC9666
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 22:10:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 673D8AC9667
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 22:11:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE2827AB81C
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 20:09:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C8D0A20BAC
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 20:10:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80BD4283145;
-	Fri, 30 May 2025 20:10:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2015B2820D8;
+	Fri, 30 May 2025 20:11:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PMrPm9wX"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TPzHMz/Q"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3965925228E
-	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 20:10:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD0891465A1;
+	Fri, 30 May 2025 20:11:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748635814; cv=none; b=dn7e1jQ/3HkKPKZ6ZXQoM/De0TU6impXVHrdukOlMmTYBvvyFjo0mOPsRp6/7i9kYM+tOevzsbyMHLXwmmn70qVHeTpE1MFF5CPgiuVG27xNCrTVrweX3x5wzW9r4R6cQL+qgWc3LlMB+bCXQRuWZmqWPJpftcje7r0Y/mLhDgA=
+	t=1748635865; cv=none; b=bZHlqHA9Om4NmP87Wse1keqDLGZrq/3KybOifDBy9dv9qmFC5njWgTPE2DQ1lkl5sCiktU8Y7bHPZPk/l2AlAeiMwFRVSab7eJydsTZ8npl0NM/YITSQFgYj2XhGyGgejIf1YnB5joht4+jREsvReDbZv3VinvHJdP1V9ksyfmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748635814; c=relaxed/simple;
-	bh=sCz7MeL/oYeoSs34ihneRltpADK2meyF+jNWc8Z6cWU=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=N7J5QYqrzfUObTVX0Q2nseEVcA3JwEmuEcfEFb5en6XH63knIX3Xid+frVI/EDKHyPk24temSgGL7N3h3BpPqp8lM21YHwyi20hDWCSueAV1sSnrBsWG1TABDr8O+aLOGYnP59oc1NfS/jhq+WzegTHXCd6E/zENJlV14Rj2WsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PMrPm9wX; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-742aa6581caso1929617b3a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 13:10:12 -0700 (PDT)
+	s=arc-20240116; t=1748635865; c=relaxed/simple;
+	bh=Mjc/fD0yFgLd5RTJw6hDwnsnEqut4Wn0uLPfdec7M24=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EjgmTxFzO1G7fPz2zJd+VWNH6ojCBqftbwx6t78w7V0b1iA9Av5iv38HTZ6OojW1jCXvCkcBnoRR3zYhk/w+/LkXwmPSBq1g3DYYagLZitzgv4N3pFPBIHmIYygoqLAVGj0RpEGm6GowcXofs9EY1j8Mjix3LJFMdCmM6lYD/3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TPzHMz/Q; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3a375e72473so1380094f8f.0;
+        Fri, 30 May 2025 13:11:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1748635812; x=1749240612; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9kh+gaDGepzKIFDoI7schH9Ybo0vZBkZOnYUUHBSj/0=;
-        b=PMrPm9wXRX7DafBq9f4okJ8qQjEKctMUIpLFoghdTvuAnr6oGXk2bbOSq8HxEd3BSX
-         EbwRJjHNbPAsabHr9WYNJVHHmSyONI7vraMjWAGAPojKhUdtOS9tf61H7Vovv7DVPhlo
-         iCGfFkifcHvkZOAKeWjx/AUHHM5nSRJHMsfUs1hAVeQa66ZbztoTie8g4anNhXDFEL6J
-         6mPej7mcZq8C1O9dTh/+nfqoFsjAkqYtGKuPnoVry8igkn6CCFHMvV0ZDcpOMVVND/bE
-         XNwpvNANRX+DMSyJx4LMKM5QVPpkidwjtxaZbF1mm7ysj7t+QIK8HVQTDYwb4kur2W0T
-         9xFg==
+        d=gmail.com; s=20230601; t=1748635862; x=1749240662; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=UHkw6awC08VKzpHwvnmDwUBFePL2xgE/3JrS0kjGRns=;
+        b=TPzHMz/QgGJ40m+ioR7+0xaRpCn4v0J5fFpEUNfTwrQSmoHQIw3X2HuoOPGq/DiY8y
+         jA8eV1LwKoQzfTbNHRzdSkhbI1YEAg9obtDBU3abA73WSBj3ws3wf0ggeL3FfojwnC8R
+         ewv20mnTPPNy1o4yr0u0taQxb7K1YsL+6y6raki65spHGRaf0Klx3CCTFOm8mBuYcLS2
+         CHYzYLHFVXFgIAZoBp6aq8KVxphAR8R9iUs0qUodmOWMcQ0h/4xg4YDzx0Jr/BnQhq3z
+         byXXv9RmhMv2YVyG/N3a86H6JSEP0iiaEbYTNaRyYFN8FFbdgNa0fwlVcoXxVWrGMyQi
+         h1eA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748635812; x=1749240612;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9kh+gaDGepzKIFDoI7schH9Ybo0vZBkZOnYUUHBSj/0=;
-        b=gBohXJ+zsEv/y9GQppmp6NiRBSBFoxXNCIRdV0IgmytnoUizsgngmQFNuw7gpbatKc
-         fiOVMj8EgHU9uaxCYuv0QTHBjEYcd7IRZxjdCWXqcyHakxNA3p+9bBRJ895JpE94XzfT
-         qcmNppCwWfx80NRG3ocsZISl90wK6qHuFjgFP5B5vD8P86Z7BxGEhZriZL9r30Oo7de9
-         lb29a3ph00OB5ciAmI5ig/W0+EROEhqeNIHkcwbjBf37U9wd1wXeCjPFHxgm5jLy5oPX
-         TyuDoIyFfEIKxrbsTY+9YtVkX1k39XVzGOf5klgo+K4CkW0bf3dmEPmsaqYP1lKf7EJc
-         YLdw==
-X-Forwarded-Encrypted: i=1; AJvYcCX+3fotughmpuRYuG/rwx6LKscqvoQ8CBCMqxlihOw3HXrTDgjxtsxGA3EefxI8ZTeReyLVVXJBb7Of47Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVL45rewciHyfkwOHdYK0F5zSi0GEvukhTCmSjfYICZIr/hEYS
-	PkhuBXMVf3i5onQR3rDEf095KL+vqycp9njVFD6UtubRdYZmFmmzdrJpIfKnXdF1sS72E8ISnpi
-	uNZ0xe+CBXiwJaliAyw9qGoiQTg==
-X-Google-Smtp-Source: AGHT+IEENihy0JLERsyg+Y4ZI07pawEu8Q9Kn+O3sBJa0gI+9nXyHfIoB0NTCHwNarZTFZbWxcdX0N6pLApDjLeLOQ==
-X-Received: from pfbih20.prod.google.com ([2002:a05:6a00:8c14:b0:73c:29d8:b795])
- (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a00:8d2:b0:736:6ecd:8e34 with SMTP id d2e1a72fcca58-747c1c3da28mr5099597b3a.18.1748635812216;
- Fri, 30 May 2025 13:10:12 -0700 (PDT)
-Date: Fri, 30 May 2025 13:10:11 -0700
-In-Reply-To: <b66c38ba-ca16-44c5-b498-7c8eb533d805@linux.intel.com>
+        d=1e100.net; s=20230601; t=1748635862; x=1749240662;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UHkw6awC08VKzpHwvnmDwUBFePL2xgE/3JrS0kjGRns=;
+        b=YFx0KCD9R/nbKT8QGvukia3PVOaOjAcYIuFIzXTMpjeI4MiklZXjpz7u6oNZXj7N65
+         qZZSc1EG35tZS9edyNm3348LP324xoANl5Mjs3o51h609jaXFlw2phWssQPBCePFea46
+         BevPG3BoPl0gF7dxCSLHuJ+Uv6FoxVY2uJaI/gGDepl7uPuIIjnTHIjfDAb9kRocL23j
+         07OK5cUOV5OGO7l39O7PRTwD54XBBDe3Nm9bGNhAXBCHLqwb2IxPYuYJ+VE9kkgeD2gC
+         eF3Cr4efHh/NeQghdZFh0Y99Y79lsLgPJ5IXIdBhWOMnJKx+kb1myyq88BzrjrEiT6zm
+         LxWg==
+X-Forwarded-Encrypted: i=1; AJvYcCW60VRIRWeIE8jVd1hZQQ1X1ILKIN8CuvrJYw35OjlSnffvxUpZGKHTiLX0pTIjwywcGE4EvmNcZo1rZ28=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPu7WarQT78RIGZXfBW4ZJXwhbjj573r3uS4AgGzqAsvpenw0b
+	LoVa+LmYTJSRZOcX4zMltsIpGdS0zkDe9ke9bo5AQS1a/7iN7zvJ7UcD
+X-Gm-Gg: ASbGnctyU0oENfVapjv9fqxbU6ffLiLDgrPfwv3ELy6QUDaHtFx9TwFhdnrssP2R2bX
+	VDmJamIL5WK9hmHGv+HBvZA5lJ2meKI1Iyy7Zs7lHtd7GHT1gkxkgXhb559HQ8qb9KuGEGBwHGH
+	cSsWvaZ83d8uUwt3/eLIBjaGt1/jXGJime4BaWZYBueh/NmGi8TsWCkCnJjvzfaQwrsrOQTTexc
+	0wW6GeJTa9xk514ZKjrjAcKEaXtoVVwtpg6338FzlNnxdyM1yFKoy/9YrBp1VbazIiGKPQ/orUo
+	DuD7o+fcZELXsCo3IAJwTwW4DbIowl5HKiIZwzMFf2mdIUVC07ZHw5WX9Ml3/3WG
+X-Google-Smtp-Source: AGHT+IHbbO+vPN2paBeSNj40h548ttzkqFjyocMZdGD5kvGxrLFajx6wN3mWhP4JSNn5lKocWKp73A==
+X-Received: by 2002:a5d:5f93:0:b0:3a3:671e:3b7c with SMTP id ffacd0b85a97d-3a4f7a7bfebmr3864628f8f.48.1748635861924;
+        Fri, 30 May 2025 13:11:01 -0700 (PDT)
+Received: from ?IPV6:2001:871:22a:cd68::171c? ([2001:871:22a:cd68::171c])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4efe73ee0sm5606894f8f.46.2025.05.30.13.11.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 30 May 2025 13:11:01 -0700 (PDT)
+Message-ID: <6dfafb34-8b85-4f54-9453-c39297d1f851@gmail.com>
+Date: Fri, 30 May 2025 22:11:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <cover.1747264138.git.ackerleytng@google.com> <d3832fd95a03aad562705872cbda5b3d248ca321.1747264138.git.ackerleytng@google.com>
- <b66c38ba-ca16-44c5-b498-7c8eb533d805@linux.intel.com>
-Message-ID: <diqzsekl6esc.fsf@ackerleytng-ctop.c.googlers.com>
-Subject: Re: [RFC PATCH v2 04/51] KVM: guest_memfd: Introduce
- KVM_GMEM_CONVERT_SHARED/PRIVATE ioctls
-From: Ackerley Tng <ackerleytng@google.com>
-To: Binbin Wu <binbin.wu@linux.intel.com>
-Cc: kvm@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	x86@kernel.org, linux-fsdevel@vger.kernel.org, aik@amd.com, 
-	ajones@ventanamicro.com, akpm@linux-foundation.org, amoorthy@google.com, 
-	anthony.yznaga@oracle.com, anup@brainfault.org, aou@eecs.berkeley.edu, 
-	bfoster@redhat.com, brauner@kernel.org, catalin.marinas@arm.com, 
-	chao.p.peng@intel.com, chenhuacai@kernel.org, dave.hansen@intel.com, 
-	david@redhat.com, dmatlack@google.com, dwmw@amazon.co.uk, 
-	erdemaktas@google.com, fan.du@intel.com, fvdl@google.com, graf@amazon.com, 
-	haibo1.xu@intel.com, hch@infradead.org, hughd@google.com, ira.weiny@intel.com, 
-	isaku.yamahata@intel.com, jack@suse.cz, james.morse@arm.com, 
-	jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com, jhubbard@nvidia.com, 
-	jroedel@suse.de, jthoughton@google.com, jun.miao@intel.com, 
-	kai.huang@intel.com, keirf@google.com, kent.overstreet@linux.dev, 
-	kirill.shutemov@intel.com, liam.merwick@oracle.com, 
-	maciej.wieczor-retman@intel.com, mail@maciej.szmigiero.name, maz@kernel.org, 
-	mic@digikod.net, michael.roth@amd.com, mpe@ellerman.id.au, 
-	muchun.song@linux.dev, nikunj@amd.com, nsaenz@amazon.es, 
-	oliver.upton@linux.dev, palmer@dabbelt.com, pankaj.gupta@amd.com, 
-	paul.walmsley@sifive.com, pbonzini@redhat.com, pdurrant@amazon.co.uk, 
-	peterx@redhat.com, pgonda@google.com, pvorel@suse.cz, qperret@google.com, 
-	quic_cvanscha@quicinc.com, quic_eberman@quicinc.com, 
-	quic_mnalajal@quicinc.com, quic_pderrin@quicinc.com, quic_pheragu@quicinc.com, 
-	quic_svaddagi@quicinc.com, quic_tsoni@quicinc.com, richard.weiyang@gmail.com, 
-	rick.p.edgecombe@intel.com, rientjes@google.com, roypat@amazon.co.uk, 
-	rppt@kernel.org, seanjc@google.com, shuah@kernel.org, steven.price@arm.com, 
-	steven.sistare@oracle.com, suzuki.poulose@arm.com, tabba@google.com, 
-	thomas.lendacky@amd.com, vannapurve@google.com, vbabka@suse.cz, 
-	viro@zeniv.linux.org.uk, vkuznets@redhat.com, wei.w.wang@intel.com, 
-	will@kernel.org, willy@infradead.org, xiaoyao.li@intel.com, 
-	yan.y.zhao@intel.com, yilun.xu@intel.com, yuzenghui@huawei.com, 
-	zhiquan1.li@intel.com
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/7] rust: types: support fallible PinInit types in
+ Opaque::pin_init
+To: Benno Lossin <lossin@kernel.org>, Danilo Krummrich <dakr@kernel.org>,
+ gregkh@linuxfoundation.org, rafael@kernel.org, ojeda@kernel.org,
+ alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
+ bjorn3_gh@protonmail.com, benno.lossin@proton.me, a.hindborg@kernel.org,
+ aliceryhl@google.com, tmgross@umich.edu
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250530142447.166524-1-dakr@kernel.org>
+ <20250530142447.166524-2-dakr@kernel.org>
+ <DA9QST4SISFK.37NSCTH594NSF@kernel.org>
+Content-Language: en-US, de-DE
+From: Christian Schrefl <chrisi.schrefl@gmail.com>
+In-Reply-To: <DA9QST4SISFK.37NSCTH594NSF@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Binbin Wu <binbin.wu@linux.intel.com> writes:
 
-> On 5/15/2025 7:41 AM, Ackerley Tng wrote:
->
-> [...]
->> +
->> +static int kvm_gmem_convert_range(struct file *file, pgoff_t start,
->> +				  size_t nr_pages, bool shared,
->> +				  pgoff_t *error_index)
->> +{
->> +	struct conversion_work *work, *tmp, *rollback_stop_item;
->> +	LIST_HEAD(work_list);
->> +	struct inode *inode;
->> +	enum shareability m;
->> +	int ret;
->> +
->> +	inode = file_inode(file);
->> +
->> +	filemap_invalidate_lock(inode->i_mapping);
->> +
->> +	m = shared ? SHAREABILITY_ALL : SHAREABILITY_GUEST;
->> +	ret = kvm_gmem_convert_compute_work(inode, start, nr_pages, m, &work_list);
->> +	if (ret || list_empty(&work_list))
->> +		goto out;
->> +
->> +	list_for_each_entry(work, &work_list, list)
->> +		kvm_gmem_convert_invalidate_begin(inode, work);
->> +
->> +	list_for_each_entry(work, &work_list, list) {
->> +		ret = kvm_gmem_convert_should_proceed(inode, work, shared,
->> +						      error_index);
->
-> Since kvm_gmem_invalidate_begin() begins to handle shared memory,
-> kvm_gmem_convert_invalidate_begin() will zap the table.
-> The shared mapping could be zapped in kvm_gmem_convert_invalidate_begin() even
-> when kvm_gmem_convert_should_proceed() returns error.
-> The sequence is a bit confusing to me, at least in this patch so far.
->
 
-It is true that zapping of pages from the guest page table will happen
-before we figure out whether conversion is allowed.
+On 30.05.25 9:29 PM, Benno Lossin wrote:
+> On Fri May 30, 2025 at 4:24 PM CEST, Danilo Krummrich wrote:
+>> Currently, Opaque::pin_init only supports infallible PinInit
+>> implementations, i.e. impl PinInit<T, Infallible>.
+>>
+>> This has been sufficient so far, since users such as Revocable do not
+>> support fallibility.
+>>
+>> Since this is about to change, make Opaque::pin_init() generic over the
+>> error type E.
+>>
+>> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+>> ---
+>>  rust/kernel/types.rs | 8 ++++----
+>>  1 file changed, 4 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
+>> index 22985b6f6982..75c99d6facf9 100644
+>> --- a/rust/kernel/types.rs
+>> +++ b/rust/kernel/types.rs
+>> @@ -354,13 +354,13 @@ pub const fn zeroed() -> Self {
+>>      }
+>>  
+>>      /// Create an opaque pin-initializer from the given pin-initializer.
+>> -    pub fn pin_init(slot: impl PinInit<T>) -> impl PinInit<Self> {
+>> -        Self::ffi_init(|ptr: *mut T| {
+>> +    pub fn pin_init<E>(slot: impl PinInit<T, E>) -> impl PinInit<Self, E> {
+>> +        Self::try_ffi_init(|ptr: *mut T| -> Result<(), E> {
+>>              // SAFETY:
+>>              //   - `ptr` is a valid pointer to uninitialized memory,
+>> -            //   - `slot` is not accessed on error; the call is infallible,
+>> +            //   - `slot` is not accessed on error,
+>>              //   - `slot` is pinned in memory.
+>> -            let _ = unsafe { PinInit::<T>::__pinned_init(slot, ptr) };
+>> +            unsafe { PinInit::<T, E>::__pinned_init(slot, ptr) }
+> 
+> Could you move this function into an `impl pin_init::Wrapper<T>` block?
+> (it's the same function, but in a trait that was recently added)
 
-For a shared-to-private conversion, we will definitely unmap from the
-host before checking if conversion is allowed, and there's no choice
-there since conversion is allowed if there are no unexpected refcounts,
-and the way to eliminate expected refcounts is to unmap from the host.
+This is then basically this patch [0] from my `UnsafePinned` series.
+Just that I did not update the comment. :)
 
-Since we're unmapping before checking if conversion is allowed, I
-thought it would be fine to also zap from guest page tables before
-checking if conversion is allowed.
+[0]: https://lore.kernel.org/rust-for-linux/20250511-rust_unsafe_pinned-v4-2-a86c32e47e3d@gmail.com/ 
 
-Conversion is not meant to happen very regularly, and even if it is
-unmapped or zapped, the next access will fault in the page anyway, so
-there is a performance but not a functionality impact.
+> 
+> Thanks!
+> 
+> ---
+> Cheers,
+> Benno
+> 
+>>          })
+>>      }
+>>  
+> 
 
-Hope that helps. Is it still odd to zap before checking if conversion
-should proceed?
-
->> +		if (ret)
->> +			goto invalidate_end;
->> +	}
->> +
->> +	list_for_each_entry(work, &work_list, list) {
->> +		rollback_stop_item = work;
->> +		ret = kvm_gmem_shareability_apply(inode, work, m);
->> +		if (ret)
->> +			break;
->> +	}
->> +
->> +	if (ret) {
->> +		m = shared ? SHAREABILITY_GUEST : SHAREABILITY_ALL;
->> +		list_for_each_entry(work, &work_list, list) {
->> +			if (work == rollback_stop_item)
->> +				break;
->> +
->> +			WARN_ON(kvm_gmem_shareability_apply(inode, work, m));
->> +		}
->> +	}
->> +
->> +invalidate_end:
->> +	list_for_each_entry(work, &work_list, list)
->> +		kvm_gmem_convert_invalidate_end(inode, work);
->> +out:
->> +	filemap_invalidate_unlock(inode->i_mapping);
->> +
->> +	list_for_each_entry_safe(work, tmp, &work_list, list) {
->> +		list_del(&work->list);
->> +		kfree(work);
->> +	}
->> +
->> +	return ret;
->> +}
->> +
-> [...]
->> @@ -186,15 +490,26 @@ static void kvm_gmem_invalidate_begin(struct kvm_gmem *gmem, pgoff_t start,
->>   	unsigned long index;
->>   
->>   	xa_for_each_range(&gmem->bindings, index, slot, start, end - 1) {
->> +		enum kvm_gfn_range_filter filter;
->>   		pgoff_t pgoff = slot->gmem.pgoff;
->>   
->> +		filter = KVM_FILTER_PRIVATE;
->> +		if (kvm_gmem_memslot_supports_shared(slot)) {
->> +			/*
->> +			 * Unmapping would also cause invalidation, but cannot
->> +			 * rely on mmu_notifiers to do invalidation via
->> +			 * unmapping, since memory may not be mapped to
->> +			 * userspace.
->> +			 */
->> +			filter |= KVM_FILTER_SHARED;
->> +		}
->> +
->>   		struct kvm_gfn_range gfn_range = {
->>   			.start = slot->base_gfn + max(pgoff, start) - pgoff,
->>   			.end = slot->base_gfn + min(pgoff + slot->npages, end) - pgoff,
->>   			.slot = slot,
->>   			.may_block = true,
->> -			/* guest memfd is relevant to only private mappings. */
->> -			.attr_filter = KVM_FILTER_PRIVATE,
->> +			.attr_filter = filter,
->>   		};
->>   
->>   		if (!found_memslot) {
->> @@ -484,11 +799,49 @@ EXPORT_SYMBOL_GPL(kvm_gmem_memslot_supports_shared);
->>   #define kvm_gmem_mmap NULL
->>   #endif /* CONFIG_KVM_GMEM_SHARED_MEM */
->>   
-> [...]
 
