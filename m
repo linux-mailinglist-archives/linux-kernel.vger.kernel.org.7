@@ -1,74 +1,53 @@
-Return-Path: <linux-kernel+bounces-667487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-667504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5E18AC8600
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 03:26:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1482FAC8627
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 04:12:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2A503BB25B
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 01:26:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39C579E209D
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 02:12:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0FCF158545;
-	Fri, 30 May 2025 01:26:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 007F7155335;
+	Fri, 30 May 2025 02:12:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TRM/iCR+"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="nVqnyfW/"
+Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A07B13790B
-	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 01:26:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5748D8834
+	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 02:12:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748568386; cv=none; b=jIoXz9fyBvfQRvweh3Ng+4yRLId3P4oUUacVnHHZbfH5qxMbFUqoyt7T9gAGII5QmAM6seyZ4/p6p04dTv9+/gU1XN0tMxfLM4dimE5Rc5wJWntWwKvJx4ZxWoLa4Xl8PEZir76C2Fo1iNunTWXko7kxJGP7/QJm7gY5QsaP4FI=
+	t=1748571151; cv=none; b=pBgRDcuXU9ht9oniBB/JEpuZsge5oxt9Igm7gq39e+dhvHo8/ITd5uwR1hPR4NgNZvkXaQl2ONkzPlljMsMaA1chPjB3vHyILfNMLHHslnu8jqgEgXGbvODEn1MhDORV8WJ2X9FkAUl6yisu8NErOoeN9NpYUkSjdSB2e4C835o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748568386; c=relaxed/simple;
-	bh=Jx05D79xtEOaIc+U4Eu6BvQbH/flRDZEX3KCcj+bovU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mU9sYeYYBgnvzIW1JbHRA9ix7yx5mzPaHCMfh7JYuyWgn+7MK2wiINfPF4jhFT4s/LA7fuFPGQiOo+pIRbYJy1OLON2iTq2Sx2p9bYfOYCSo+yPzFR3Ym/Lvv4AWkNZcaJme7uCWNTguMfDEzohhdilXSPgFV/fzBu9Ju253Pd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TRM/iCR+; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1748568383; x=1780104383;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=Jx05D79xtEOaIc+U4Eu6BvQbH/flRDZEX3KCcj+bovU=;
-  b=TRM/iCR+Tqpr134pRYZS9xPbd7i7X5SUQ8EzlZNrRj6vToJ7j/rnIHcJ
-   wVgo3B0gRrsPwsf1+bqupyyYOX66bCOXaFfGx5QKMvKXVNUIeR4KWT4a+
-   piR0EqSL18ULmEZY0ntvglqxx8STlSHBmh/lFADSwA1LPyvIbyT/gZWMV
-   G1yErkCE0Ff4QuCWrUNjc0mft1inU5AVvrm7N2Oz9IpfsWwD6ihJdz2Z1
-   4Vb9n3vk5rCvskZZZBTs4JS9Hh3CiO3aNo0jPtQiWBr6aafqPcxWJPno4
-   6Lpl+QwRCkg4AtXoE+EmOnvweV7fFXoXuAuJeKAiiuqDjos24W3wlPPqt
-   Q==;
-X-CSE-ConnectionGUID: V0ghbuQlTGGWLiGmwTZPsg==
-X-CSE-MsgGUID: P8/NMt9xQdyZ6kySWl71nQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11448"; a="49771739"
-X-IronPort-AV: E=Sophos;i="6.16,194,1744095600"; 
-   d="scan'208";a="49771739"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2025 18:26:23 -0700
-X-CSE-ConnectionGUID: 1tWwaJ+URkGiQntpI5yPoQ==
-X-CSE-MsgGUID: K86HI9IbR8mUvDjGWmd8kQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,194,1744095600"; 
-   d="scan'208";a="144712302"
-Received: from ww-dev.sh.intel.com ([10.239.48.95])
-  by fmviesa009.fm.intel.com with ESMTP; 29 May 2025 18:26:21 -0700
-From: Wei Wang <wei.w.wang@intel.com>
-To: baolu.lu@linux.intel.com,
-	kevin.tian@intel.com,
-	yi.l.liu@intel.com,
-	dwmw2@infradead.org,
-	jroedel@suse.de,
+	s=arc-20240116; t=1748571151; c=relaxed/simple;
+	bh=1XvmdRtI85Kz0YI5gUAc9CE1aL2HAudKHOzDg3eV+Oo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PmzDSlJfqjQ8iP+KjhqiVViCuRKKkZRijrF2BAC9jRXis69qyfo+ktibUklu7oo5QQfAHJysFJCGSZhW3JPMPRBbtFUYaKsrFXRhQaSetQgSbsxM27u/+Hap6wmbxADS6Exk7vaIWjIJcFz4Ads+C7TkwI95K01jkjerNtkAqYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=nVqnyfW/; arc=none smtp.client-ip=115.124.30.119
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1748571140; h=From:To:Subject:Date:Message-ID:MIME-Version;
+	bh=O58mqVj7vnmyprQoKgVD7zhBlpfdEg1Th+iGsU2/phs=;
+	b=nVqnyfW/Kgbcp7Q4FinVOZBxIG4auopTYL9Pu3pAYS1Yz5DqpLHRpTOtCbE8akkvt/O6h8cMxe1IVSbRnBi1ppw2Qr1m8s6hvmtwGAvjaWOA/toZyh29MeERFEIrzRA4mzoRTn+DYt3wEpILHglcql5u3bJeT3LU5pWm/A4JkUE=
+Received: from localhost.localdomain(mailfrom:qinyuntan@linux.alibaba.com fp:SMTPD_---0WcJQhXf_1748571138 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 30 May 2025 10:12:19 +0800
+From: Qinyun Tan <qinyuntan@linux.alibaba.com>
+To: Tony Luck <tony.luck@intel.com>
+Cc: "H . Peter Anvin" <hpa@zytor.com>,
 	linux-kernel@vger.kernel.org,
-	iommu@lists.linux.dev
-Cc: Wei Wang <wei.w.wang@intel.com>
-Subject: [PATCH v1] iommu/vt-d: Remove dead code in intel_iommu_domain_alloc_paging_flags()
-Date: Fri, 30 May 2025 17:13:25 +0800
-Message-ID: <20250530091325.694456-1-wei.w.wang@intel.com>
-X-Mailer: git-send-email 2.43.0
+	x86@kernel.org,
+	Reinette Chatre <reinette.chatre@intel.com>,
+	Qinyun Tan <qinyuntan@linux.alibaba.com>
+Subject: [PATCH V3 0/1] x86/resctrl: Remove unappropriate references to cacheinfo in the resctrl subsystem.
+Date: Fri, 30 May 2025 10:12:15 +0800
+Message-ID: <20250530021216.58581-1-qinyuntan@linux.alibaba.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,40 +56,53 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-When dirty_tracking is enabled, first_stage is set to false to use the
-second stage translation table. dmar_domain->use_first_level, which is
-assigned from first_page, is guaranteed to be false when the execution
-reaches the location of the code to be removed by this patch. So the
-handling for dmar_domain->use_first_level being true there will never
-be executed.
+V3:
+- According to Reinette suggestion, modify the commit log description to
+ make it easier for readers to understand
 
-Signed-off-by: Wei Wang <wei.w.wang@intel.com>
----
- drivers/iommu/intel/iommu.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+V2:
+- Keep sanity checks in the __mon_event_count to ensure execution occurs
+  exclusively on CPUs sharing the same L3 cache cluster
+- When reading the top level event, obtain a CPU within hdr.cpu_mask.
+  Then use the cacheinfo shared_cpu_map of this CPU instead of using
+  hdr.cpu_mask directly
+- Adjust code formatting and commit log descriptions.
 
-diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
-index cb0b993bebb4..1145567c60f9 100644
---- a/drivers/iommu/intel/iommu.c
-+++ b/drivers/iommu/intel/iommu.c
-@@ -3418,13 +3418,8 @@ intel_iommu_domain_alloc_paging_flags(struct device *dev, u32 flags,
- 		spin_lock_init(&dmar_domain->s1_lock);
- 	}
- 
--	if (dirty_tracking) {
--		if (dmar_domain->use_first_level) {
--			iommu_domain_free(domain);
--			return ERR_PTR(-EOPNOTSUPP);
--		}
-+	if (dirty_tracking)
- 		domain->dirty_ops = &intel_dirty_ops;
--	}
- 
- 	return domain;
- }
+In the resctrl subsystem's Sub-NUMA Cluster (SNC) mode, the rdt_mon_domain
+structure representing a NUMA node relies on the cacheinfo interface
+(rdt_mon_domain::ci) to store L3 cache information (e.g., shared_cpu_map)
+for monitoring. The L3 cache information of a SNC NUMA node determines
+which domains are summed for the "top level" L3-scoped events.
 
-base-commit: e0797d3b91de75b6c95b4a0e0649ebd4aac1d9d1
+rdt_mon_domain::ci is initialized using the first online CPU
+of a NUMA node. When this CPU goes offline, its shared_cpu_map is cleared
+to contain only the offline CPU itself.    Subsequently, attempting to read
+counters via smp_call_on_cpu(offline_cpu) fails (and error ignored),
+returning zero values for "top-level events" without any error indication.
+  Replace the cacheinfo references in struct rdt_mon_domain and struct
+rmid_read with the cacheinfo ID (a unique identifier for the L3 cache).
+
+rdt_domain_hdr::cpu_mask contains the online CPUs associated with that
+domain. When reading "top-level events", select a CPU from
+rdt_domain_hdr::cpu_mask and utilize its L3 shared_cpu_map to determine
+valid CPUs for reading RMID counter via the MSR interface.
+Considering all CPUs associated with the L3 cache improves the chances
+of picking a housekeeping CPU on which the counter reading work can be
+queued, avoiding an unnecessary IPI.
+
+Qinyun Tan (1):
+  x86/resctrl: Remove unappropriate references to cacheinfo in the
+    resctrl subsystem.
+
+ arch/x86/kernel/cpu/resctrl/core.c |  6 ++++--
+ fs/resctrl/ctrlmondata.c           | 13 +++++++++----
+ fs/resctrl/internal.h              |  4 ++--
+ fs/resctrl/monitor.c               |  6 ++++--
+ fs/resctrl/rdtgroup.c              |  6 +++---
+ include/linux/resctrl.h            |  4 ++--
+ 6 files changed, 24 insertions(+), 15 deletions(-)
+
 -- 
-2.43.0
+2.43.5
 
 
