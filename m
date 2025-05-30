@@ -1,191 +1,192 @@
-Return-Path: <linux-kernel+bounces-668057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-668059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A847BAC8D79
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 14:20:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BA9FAC8D82
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 14:27:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7757A16AFD7
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 12:20:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 662853B7A07
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 12:27:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2565B22ACE7;
-	Fri, 30 May 2025 12:20:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E855222B5AB;
+	Fri, 30 May 2025 12:27:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="doZt437b"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="Iixtc6xD"
+Received: from smtp-8fad.mail.infomaniak.ch (smtp-8fad.mail.infomaniak.ch [83.166.143.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A465421C9EE
-	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 12:20:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6FB322ACD1
+	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 12:27:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748607613; cv=none; b=Uxaibj2uoD08oRA+AbtkZ099H9YrqhR/keI4mQYcTQP0cE7LgnsgFnP03NsSHqfkeMquBD5NcH7NMeV7jzAIrklsY0ZUieFPUe9CyAEcXoFohs5Z1Vh7buyAOJKDy+4ZQ3y44PDRJS7aNkzjow3fhydPyv4M5iD5WPAe1leE9iY=
+	t=1748608046; cv=none; b=ckWxyREEN6T2GAsCPiell1u6r/aXUS8TSkZ3wNj0Oo9d7EgouRWS8w1RyVQX89kWZNAfmlDyAWytVSFpY+faW7IN5Gm3woEd5scEJeu4C0KjZe3wTyHXZY6Zt4cUA6hpu5ZcSvViUpQnGWLnn1Ygaf0KaQdC5115Hz87lQfXonc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748607613; c=relaxed/simple;
-	bh=Jn4kRM73bkmQ53+JkTUDGYTN55oniv/gib2YYcJqFtk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bMg8FUNLrp46yqtLcGT4acBXi4CzzKgUv18ip/uZTGW1nb5T6m1o+I2oR/Wd0KXldgcan1Tp7sy2TWi1vzlZWbyefdI/tPUaHo1WfIBvvaEn/chUYAsIbGLp6VHru3PRrLEpU+EAgYHD+/yNr3Hrs5svb3PhApmgDuwcF3v7GGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=doZt437b; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2350fc2591dso12095995ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 05:20:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1748607611; x=1749212411; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zVX/fq17IZ0Mm65tm69m9qikaxT2MG0++vNA13gmJdc=;
-        b=doZt437b0e3j8mwFNRbtMLOXsbj+8AMhmDgXQBNFJzp3L5sydEaf9n+RQsSoDANd0l
-         8pFPM24+nDK7L4d5oADb+KBiqeF7/A02GcMWoZDeVqM7uc0NA2xAuPM9WPQ93jrOqQQl
-         QMMC+ukuKil6uCG2YtxtB4hqU75xnmduKKOoYRpVw6P79bQBYGXpqzjN4icmKAMhWhju
-         hncsj/H0+W9pqtOIiPm9iRJb6wvfOJ56JtVtFbIXVjSTtzCyUzfGzXTirYX8OlOdYTmH
-         ojxjx9/IkzuGxB3RK425q/6Z4i86Vn22PSAK4f1X5u9YxSe1U/cDvG2a1bFSULniAniK
-         Splg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748607611; x=1749212411;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zVX/fq17IZ0Mm65tm69m9qikaxT2MG0++vNA13gmJdc=;
-        b=Yn2mQ6/FUUrt1Oj3IfvoYEoyxXFix7qsyGJ4vEukte96QxlPMkzqLWaHfzZ/5Shi5Y
-         T1oMUXsxH0yNuL+fKsDE0i1bm3ubLh1h33lKwCLeBHZcriimJX5B7fL8n3WK6c+PeLmT
-         /QhaImqQENZi4r1qEdt91i06MBKTeyD3QEs5XNDWKGFcrOikHG4r5DX/sZmKvpfM7O7A
-         fwRzvm/QHjoHgmX7p+KzURe4Y1ZfDf3fcXPnXjRK86EZGmnatdcVqBdzjDS/ADxBhCbh
-         v4MMChDGeStxF0rXjPHpmX1XlGByGzK8w6st38TyBf2jvAfwmm4jm2btMIwYdKCTfsOd
-         a7BA==
-X-Forwarded-Encrypted: i=1; AJvYcCWuNctn2d+5KXvB+Bg14BafsTAS1f6oCc5mJZRsYrBAWONa57nX+fI2u0dJTfUwvjDoJcaU9fGZ87v/Ttw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6F7xolB4aoncrSKEsYUtzOmXLwINp7uFBjZRqFpDfYQyTrwBa
-	nMcgfkGtVhXis3BPBvqnj/6DouJULsxFMvlVINUKQW+m9AnVZUEfjb1nN7Go+KKd+4tCARIjZOy
-	76YdFtDo=
-X-Gm-Gg: ASbGncvz6zY6e8rzOFvHmn30QOKKCQ2pXrB3EG4a74BZLemVYDSHR1+nC1ClBZwEHwN
-	j5kuZwXkIZ3K1uS6cub0cER6FvZnq8oOpHhwcCa0uSugSOayZRybiBDvh30XubM6qOgE7W4s0BA
-	EN3+oS+ts/iRN0L2MWIyGAOEGs3Vq9qlo+OsDlbovW1L9Xu82A+Wjv3XNNyBg7wJ0JNfwXSdKp3
-	GFBQk6y/CaRSTANrZAKC5vIzLylAuUHrg94Pud2/eqO+6df/FSvpW2wVg35dgSDE2EcAuBh1/nR
-	aNN6NVMSyCYWpoWq7lYiiszfZHSO4uSaWwhjnLpg+rjAgfnoJbpy48LtC94vhzA336w0d5GEjfF
-	a3uQ=
-X-Google-Smtp-Source: AGHT+IFyawdNLxKKpOA2yzMb22+sXYnk0MR0MJj7pdjyGbLyRuPeq/XfzsI6szDaRh1omT087EqOTw==
-X-Received: by 2002:a17:903:2a8e:b0:234:2d80:36 with SMTP id d9443c01a7336-234f68dbb53mr120049685ad.14.1748607610592;
-        Fri, 30 May 2025 05:20:10 -0700 (PDT)
-Received: from localhost.localdomain ([203.208.189.12])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23506d209f5sm27146855ad.252.2025.05.30.05.20.06
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Fri, 30 May 2025 05:20:10 -0700 (PDT)
-From: lizhe.67@bytedance.com
-To: david@redhat.com
-Cc: akpm@linux-foundation.org,
-	jgg@ziepe.ca,
-	jhubbard@nvidia.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	lizhe.67@bytedance.com,
-	muchun.song@linux.dev,
-	peterx@redhat.com
-Subject: Re: [PATCH] gup: optimize longterm pin_user_pages() for large folio
-Date: Fri, 30 May 2025 20:20:03 +0800
-Message-ID: <20250530122003.44555-1-lizhe.67@bytedance.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <a98bc945-0020-40ce-a650-47dcd0274001@redhat.com>
-References: <a98bc945-0020-40ce-a650-47dcd0274001@redhat.com>
+	s=arc-20240116; t=1748608046; c=relaxed/simple;
+	bh=usNAqfNU05yWDD1nnvMBPsO4jB44WecabSLtQa+JE+Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TwBdcpc7m8MZDQ32+9ZwzQjMRu6lxe/vekR0HUbhpYOPqOWRv8TUYP+gaXCIeCtBjC/kQm/2cj/4QQJpEYLI/zCPD3wnG+HQ4HNAUnQ1tY1+bV2Lz5mtMI6B2SezfyyIvqoX13FrrbJqAS5DCt5y/LnTdDSPHq9G3jr1dkMCaG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=Iixtc6xD; arc=none smtp.client-ip=83.166.143.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-4-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6b])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4b82Q12q1xz8g8;
+	Fri, 30 May 2025 14:20:41 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1748607641;
+	bh=XnOAINnFb0Z0ZcHabmc3qHltopvQ1m/OtdV1pvd9//U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Iixtc6xDq8SMxPtPVz3eEfOFPJq6OSNq9mg0j6DPkcvi1r3iE8Ae4vp8qmodYpgAd
+	 HXk+DJ0PXp2s2uT0p/i1fexLNBhuGQ3aVgdkzut+dav0tI6ZVZNtYRVNlUE0Z/wEnU
+	 JtxL5Y7j3xXmCtz0YpVzCWEiXLWncOjsEQ2BghOM=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4b82Q01gBszjtL;
+	Fri, 30 May 2025 14:20:40 +0200 (CEST)
+Date: Fri, 30 May 2025 14:20:39 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Song Liu <song@kernel.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com, 
+	ast@kernel.org, daniel@iogearbox.net, martin.lau@linux.dev, brauner@kernel.org, 
+	kpsingh@kernel.org, mattbobrowski@google.com, amir73il@gmail.com, repnop@google.com, 
+	jlayton@kernel.org, josef@toxicpanda.com, gnoack@google.com, 
+	Tingmao Wang <m@maowtm.org>
+Subject: Re: [PATCH bpf-next 3/4] bpf: Introduce path iterator
+Message-ID: <20250530.euz5beesaSha@digikod.net>
+References: <20250529173810.GJ2023217@ZenIV>
+ <CAPhsuW5pAvH3E1dVa85Kx2QsUSheSLobEMg-b0mOdtyfm7s4ug@mail.gmail.com>
+ <20250529183536.GL2023217@ZenIV>
+ <CAPhsuW7LFP0ddFg_oqkDyO9s7DZX89GFQBOnX=4n5mV=VCP5oA@mail.gmail.com>
+ <20250529201551.GN2023217@ZenIV>
+ <CAPhsuW5DP1x_wyzT1aYjpj3hxUs4uB8vdK9iEp=+i46QLotiOg@mail.gmail.com>
+ <20250529214544.GO2023217@ZenIV>
+ <CAPhsuW5oXZVEaMwNpSF74O7wZ_f2Qr_44pu9L4_=LBwdW5T9=w@mail.gmail.com>
+ <20250529231018.GP2023217@ZenIV>
+ <CAPhsuW6-J+NUe=jX51wGVP=nMFjETu+1LUTsWZiBa1ckwq7b+w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAPhsuW6-J+NUe=jX51wGVP=nMFjETu+1LUTsWZiBa1ckwq7b+w@mail.gmail.com>
+X-Infomaniak-Routing: alpha
 
-On Fri, 30 May 2025 13:31:26 +0200, david@redhat.com wrote:
-
-> On 30.05.25 11:23, lizhe.67@bytedance.com wrote:
-> > From: Li Zhe <lizhe.67@bytedance.com>
-> > 
-> > In the current implementation of the longterm pin_user_pages() function,
-> > we invoke the collect_longterm_unpinnable_folios() function. This function
-> > iterates through the list to check whether each folio belongs to the
-> > "longterm_unpinnabled" category. The folios in this list essentially
-> > correspond to a contiguous region of user-space addresses, with each folio
-> > representing a physical address in increments of PAGESIZE. If this
-> > user-space address range is mapped with large folio, we can optimize the
-> > performance of function pin_user_pages() by reducing the number of if-else
-> > branches and the frequency of memory accesses using READ_ONCE. This patch
-> > leverages this approach to achieve performance improvements.
-> > 
-> > The performance test results obtained through the gup_test tool from the
-> > kernel source tree are as follows. We achieve an improvement of over 75%
-> > for large folio with pagesize=2M. For normal page, we have only observed
-> > a very slight degradation in performance.
-> > 
-> > Without this patch:
-> > 
-> >      [root@localhost ~] ./gup_test -HL -m 8192 -n 512
-> >      TAP version 13
-> >      1..1
-> >      # PIN_LONGTERM_BENCHMARK: Time: get:13623 put:10799 us#
-> >      ok 1 ioctl status 0
-> >      # Totals: pass:1 fail:0 xfail:0 xpass:0 skip:0 error:0
-> >      [root@localhost ~]# ./gup_test -LT -m 8192 -n 512
-> >      TAP version 13
-> >      1..1
-> >      # PIN_LONGTERM_BENCHMARK: Time: get:129733 put:31753 us#
-> >      ok 1 ioctl status 0
-> >      # Totals: pass:1 fail:0 xfail:0 xpass:0 skip:0 error:0
-> > 
-> > With this patch:
-> > 
-> >      [root@localhost ~] ./gup_test -HL -m 8192 -n 512
-> >      TAP version 13
-> >      1..1
-> >      # PIN_LONGTERM_BENCHMARK: Time: get:3386 put:10844 us#
-> >      ok 1 ioctl status 0
-> >      # Totals: pass:1 fail:0 xfail:0 xpass:0 skip:0 error:0
-> >      [root@localhost ~]# ./gup_test -LT -m 8192 -n 512
-> >      TAP version 13
-> >      1..1
-> >      # PIN_LONGTERM_BENCHMARK: Time: get:131652 put:31393 us#
-> >      ok 1 ioctl status 0
-> >      # Totals: pass:1 fail:0 xfail:0 xpass:0 skip:0 error:0
-> > 
-> > Signed-off-by: Li Zhe <lizhe.67@bytedance.com>
-> > ---
-> >   mm/gup.c | 31 +++++++++++++++++++++++--------
-> >   1 file changed, 23 insertions(+), 8 deletions(-)
-> > 
-> > diff --git a/mm/gup.c b/mm/gup.c
-> > index 84461d384ae2..8c11418036e2 100644
-> > --- a/mm/gup.c
-> > +++ b/mm/gup.c
-> > @@ -2317,6 +2317,25 @@ static void pofs_unpin(struct pages_or_folios *pofs)
-> >   		unpin_user_pages(pofs->pages, pofs->nr_entries);
-> >   }
-> >   
-> > +static struct folio *pofs_next_folio(struct folio *folio,
-> > +				struct pages_or_folios *pofs, long *index_ptr)
-> > +{
-> > +	long i = *index_ptr + 1;
-> > +	unsigned long nr_pages = folio_nr_pages(folio);
-> > +
-> > +	if (!pofs->has_folios)
-> > +		while ((i < pofs->nr_entries) &&
-> > +			/* Is this page part of this folio? */
-> > +			(folio_page_idx(folio, pofs->pages[i]) < nr_pages))
+On Thu, May 29, 2025 at 05:42:16PM -0700, Song Liu wrote:
+> On Thu, May 29, 2025 at 4:10 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+> >
+> > On Thu, May 29, 2025 at 03:13:10PM -0700, Song Liu wrote:
+> >
+> > > Is it an issue if we only hold a reference to a MNT_LOCKED mount for
+> > > short period of time? "Short period" means it may get interrupted, page
+> > > faults, or wait for an IO (read xattr), but it won't hold a reference to the
+> > > mount and sleep indefinitely.
+> >
+> > MNT_LOCKED mount itself is not a problem.  What shouldn't be done is
+> > looking around in the mountpoint it covers.  It depends upon the things
+> > you are going to do with that, but it's very easy to get an infoleak
+> > that way.
+> >
+> > > > OTOH, there's a good cause for moving some of the flags, MNT_LOCKED
+> > > > included, out of ->mnt_flags and into a separate field in struct mount.
+> > > > However, that would conflict with any code using that to deal with
+> > > > your iterator safely.
+> > > >
+> > > > What's more, AFAICS in case of a stack of mounts each covering the root
+> > > > of parent mount, you stop in each of those.  The trouble is, umount(2)
+> > > > propagation logics assumes that intermediate mounts can be pulled out of
+> > > > such stack without causing trouble.  For pathname resolution that is
+> > > > true; it goes through the entire stack atomically wrt that stuff.
+> > > > For your API that's not the case; somebody who has no idea about an
+> > > > intermediate mount being there might get caught on it while it's getting
+> > > > pulled from the stack.
+> > > >
+> > > > What exactly do you need around the mountpoint crossing?
+> > >
+> > > I thought about skipping intermediate mounts (that are hidden by
+> > > other mounts). AFAICT, not skipping them will not cause any issue.
+> >
+> > It can.  Suppose e.g. that /mnt gets propagation from another namespace,
+> > but not the other way round and you mount something on /mnt.
+> >
+> > Later, in that another namespace, somebody mounts something on wherever
+> > your /mnt gets propagation to.  A copy will be propagated _between_
+> > your /mnt and whatever you've mounted on top of it; it will be entirely
+> > invisible until you umount your /mnt.  At that point the propagated
+> > copy will show up there, same as if it had appeared just after your
+> > umount.  Prior to that it's entirely invisible.  If its original
+> > counterpart in another namespace gets unmounted first, the copy will
+> > be quietly pulled out.
 > 
-> passing in a page that does not belong to the folio looks shaky and not 
-> future proof.
+> Thanks for sharing this information!
 > 
-> folio_page() == folio
+> > Note that choose_mountpoint_rcu() callers (including choose_mountpoint())
+> > will have mount_lock seqcount sampled before the traversal _and_ recheck
+> > it after having reached the bottom of stack.  IOW, if you traverse ..
+> > on the way to root, you won't get caught on the sucker being pulled out.
 > 
-> is cleaner
+> In some of our internal discussions, we talked about using
+> choose_mountpoint() instead of follow_up(). I didn't go that direction in this
+> version because it requires holding "root". But if it makes more sense
+> to use, choose_mountpoint(), we sure can hold "root".
+> 
+> Alternatively, I think it is also OK to pass a zero'ed root to
+> choose_mountpoint().
+> 
+> > Your iterator, OTOH, would stop in that intermediate mount - and get
+> > an unpleasant surprise when it comes back to do the next step (towards
+> > /mnt on root filesystem, that is) and finds that path->mnt points
+> > to something that is detached from everything - no way to get from
+> > it any further.  That - despite the fact that location you've started
+> > from is still mounted, still has the same pathname, etc. and nothing
+> > had been disrupted for it.
+> >
+> > And yes, landlock has a narrow race in the matching place.  Needs to
+> > be fixed.  At least it does ignore those as far as any decisions are
+> > concerned...
 
-Yes, this approach is cleaner. However, when obtaining a folio
-corresponding to a page through the page_folio() interface,
-READ_ONCE() is used internally to read from memory, which results
-in the performance of pin_user_pages() being worse than before.
-Could you please suggest an alternative approach to address this
-problem?
+Thanks for pointing this out.  In the case of Landlock, walking to a
+disconnected mount point (because of this umount race condition) would
+deny the requested access whereas it may be allowed otherwise.  This is
+not a security issue but still an issue because an event unrelated to
+the request (umount) can abort a path resolution, which should not be
+the case.
 
-Thanks,
-Zhe
+Without access to mount_lock, what would be the best way to fix this
+Landlock issue while making it backportable?
+
+> 
+> If we update path_parent in this patchset with choose_mountpoint(),
+> and use it in Landlock, we will close this race condition, right?
+
+choose_mountpoint() is currently private, but if we add a new filesystem
+helper, I think the right approach would be to expose follow_dotdot(),
+updating its arguments with public types.  This way the intermediates
+mount points will not be exposed, RCU optimization will be leveraged,
+and usage of this new helper will be simplified.
+
+> 
+> >
+> > Note, BTW, that it might be better off by doing that similar to
+> > d_path.c - without arseloads of dget_parent/dput et.al.; not sure
+> > how feasible it is, but if everything in it can be done under
+> > rcu_read_lock(), that's something to look into.
+> 
+> I don't think we can do everything here inside rcu_read_lock().
+> But d_path.c does have some code we can probably reuse or
+> learn from. Also, we probably need two variations of iterators,
+> one walk until absolute root, while the other walk until root of
+> current->fs, just like d_path() vs. d_absolute_path(). Does this
+> sound reasonable?
+
+Passing the root to a public follow_dotdot() helper should do the job.
+
+> 
+> Thanks,
+> Song
+> 
 
