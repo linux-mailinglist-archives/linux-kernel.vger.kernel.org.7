@@ -1,340 +1,150 @@
-Return-Path: <linux-kernel+bounces-667915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-667918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D77B1AC8B58
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 11:46:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70284AC8B67
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 11:48:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A62C01889B0F
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 09:46:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FAF2173D2A
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 09:48:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6422321CA1C;
-	Fri, 30 May 2025 09:46:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46A18221F0F;
+	Fri, 30 May 2025 09:48:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LuIOSvSg"
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=beims.me header.i=@beims.me header.b="XAvHduuo";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="e/uJIY8K"
+Received: from fout-b6-smtp.messagingengine.com (fout-b6-smtp.messagingengine.com [202.12.124.149])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 614FC184540
-	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 09:46:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9DEC221261;
+	Fri, 30 May 2025 09:47:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748598387; cv=none; b=Ff7bU6z0/LhhScSex6iNT2a47Eu6lmgemJ4GgJ49zUnym0JDYpYtXljhxsOJPs5cFUzOg6br3NLd1FdiT/lYy5HmYkbssOHRWoiCCIZodI21Kwqfx4gGcgO/m82V57/HooA2qoMAPJhDBDul2iCksDtm02EAa3gXnXTeoB5P6cw=
+	t=1748598481; cv=none; b=ksIefUdnDlyGCmqBkSqdPoDRDH5W9hh/wtYzrcYeoxnTBSXgxv+uPoYahwsRiP2XMQjY4WdDlA4boo0yiXBvytu4e1Dew31als7WCWw0gEDl1Dt/G6RNVLBQ619rQwchbQh40HjcLvWOOePRdsG1cZHuyIvWyPlu+STvh5sIvFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748598387; c=relaxed/simple;
-	bh=1JxPp94yu8DXGtTX7nsw/Vy6yoxIUfLieXiixTYycic=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=br+NSTqdAYMGG9ZXWZvuP4bHtBwvsDSMhQnRw5Yp5NLYz1lEPPVFxFLaxDYx1eKwrapg15ZSR+AAVJdpgb+RDiu+CAdZtACOn42tqe3w1MXBDAqeUTnrXj+SEFrgMpK+zMKQiDCgxCEmiQ5A4yVT8vhZgIYmYr3zbcQGfGJNjC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LuIOSvSg; arc=none smtp.client-ip=209.85.219.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e7dc3df7ac3so1861171276.3
-        for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 02:46:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1748598384; x=1749203184; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=N6UY2y9MOEwZlIGv1rKrrngNk7HNQITxylPxlIC9Qrk=;
-        b=LuIOSvSgSrzcYXmVBpZoE713lYH4TpVCBGMAj7n2HzDWReiBZupqLBpB9PKFgPG+Wc
-         rQ7xQP0V71ITrA4sPuaZiNC1ScK0qMKs8U9C7BUwysULfbRqwR2XutU9U1GeUr9C867J
-         B5f3YchoYLI9cDe6yscmiNzrUEOJ4BpCr1AU5uKYk5fYTHlGCTZj+v6/WSXTfBfVK2v8
-         XP3i7GNn1+RKOgtZZIdITAvPD9/ijv2nSqXneQvbsq27Z8FHMgfD9Ij0fw0GQNxb0T+a
-         OMJfwRzAaWNR8w6sTC9A2O2mcvM0nqpWxuAAaaiYHXr7RdC0ewJAT5lWNp21ulp1uP51
-         ikFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748598384; x=1749203184;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=N6UY2y9MOEwZlIGv1rKrrngNk7HNQITxylPxlIC9Qrk=;
-        b=uj//PBXnwhMak9dJ58FqiGxbxbfx+R/VZc093wAlp7Ag+kIush6iGlca1y8B7ZKmex
-         pDzKySfhgkMLmur6xJ8L3vYPPlgoX3dIWcvuv92xN5G2ewoRQJXjPcYWOVTY4hSqnxFi
-         KRV5YjmET5FamSZxqG2tvT4MoODz4hJcyzzrZkUKNteCmM6wSSXIMyz4dC/YJOBuYI9y
-         Zn9hLcfP36DvsKGB7V+Eq7IGI7XiXCgiz5s/Vh4hnt9EHA5+ff+LaIN4aAb7vP4zSh2R
-         uKVHMC04+1vFRtLvL5HJc5UTxdLk5NNhNAQkN+BZcNVQncCCVD6af3Ga+qzDLidQMSbB
-         XCPw==
-X-Forwarded-Encrypted: i=1; AJvYcCV9G21ghmV5XfAN6yOJJ/Al6H3q+5B5eAEhwHnADj1IZJ56nZ9OAnw4YpKeKqkeYFp1DNOHKn2K2S6SL/Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzP1DFCB3Yn3oGoictTls6IKLf5+CP5UKJHaEXx6N930x8Cpcoh
-	heudAdZQc3hGm7w/Vn57eXrgOdY1GjX4V7VZuucS3Ln7FUHp7xwWM5jQm1XX1qHt+WyHU7o8VjG
-	h1SJKUNQdpFmffmwEfo4MiJ+F2PZM9iV7E069WYWWVQ==
-X-Gm-Gg: ASbGncvqoJne+rRwyk01yIH2eSKvqf3YVkX8ENA/RwBSaRJiG6AOpRCxBizWz6hayIt
-	xSyuEjM0XRezFBKp6CDHLzF/5A7ij2pgWNo6KEIEnQ5MJh7jBpGStsIsEJaa6tzATrFynjbNrwt
-	SZg+nX1n5+39zO/Xxk+6+DCKx3Y1MPt3HWsA==
-X-Google-Smtp-Source: AGHT+IHDOOob+rYy5PewBfFSnwrXwwsdqV4NLiR/14XgYNCnd/4FiuYQbhODXW8eT2YWicTg9hQl3xI77mVLBp8m+Dw=
-X-Received: by 2002:a05:6902:26c3:b0:e7d:8875:bfe2 with SMTP id
- 3f1490d57ef6-e7f81f15dedmr3191276276.43.1748598384251; Fri, 30 May 2025
- 02:46:24 -0700 (PDT)
+	s=arc-20240116; t=1748598481; c=relaxed/simple;
+	bh=KCp9L9RQvgbaMu3LuR+jivASdFZYeTKJa0e1O45qbGA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=q7B+MOvPetfSWtjWrV3o4BFiY2mhKS6JiZtlWNH5NVVdRsbJhFChgaeMPeU/G+anqLl3BVvvsYlIYmO9zMCu2hm2faALeltiaWRJuXK9mObLroHg4V6Vmwfm1oEZjnt5v8SDBEHgXCwBrVz9dCDSj71Y/I6mXKsDtUaiX54XcYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=beims.me; spf=pass smtp.mailfrom=beims.me; dkim=pass (2048-bit key) header.d=beims.me header.i=@beims.me header.b=XAvHduuo; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=e/uJIY8K; arc=none smtp.client-ip=202.12.124.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=beims.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=beims.me
+Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
+	by mailfout.stl.internal (Postfix) with ESMTP id 74DCE114014A;
+	Fri, 30 May 2025 05:47:57 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-02.internal (MEProxy); Fri, 30 May 2025 05:47:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=beims.me; h=cc
+	:cc:content-transfer-encoding:content-type:date:date:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to; s=fm3; t=1748598477; x=1748684877; bh=674mFWQDtM26z7fVOMpOw
+	06he7VETZwS9jREHN7/lXw=; b=XAvHduuoG9i6wfwwlX5OFTKuckQjytL7rp5um
+	5Kb9I0Vb4mKmUko9mJwqKqnUYxLlsHMIJyOfDQm8iaCyOVAoWFlVurL19DxKi1In
+	bLISbEI9MkIvATPVwAGvNOl/T0XHXUogF9SPp5y92hc70CwLMUTr0kn+3D0POP3s
+	EPr0vHSxrfv/payVcM12B1g05UMiPQUmWmOCLIiqmKO1sGSIHg5K6LsLgDwFPHNn
+	rsQGhb9a5CxU+WnaZbUNsl/xSpBlbyVgalXdlgixVN8TAZzBbsvpk3TLOUp7EDe1
+	QqLx+lqVWpBEifrQ4VtAUgk7CfWb5BHfOSMo9R+Zz2OMO+Rgw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1748598477; x=1748684877; bh=674mFWQDtM26z7fVOMpOw06he7VETZwS9jR
+	EHN7/lXw=; b=e/uJIY8KTfd8RrOjZZLLVZUrWeLm9nbXN/fnZKFZaIZjmMbB5CL
+	3QUTcYmA69ZEPdlqNey/BLpjiAmZiMx44V7SbW4KjHKVG3R9tWM6tyACLKCtlBgx
+	2ORc+riYAXTvODLz4c1EIRALQuHsopO5WW60oefGX7eFdSctcHlLSPEqMqPP0FXd
+	0puGLIAiEVi00mg4NMJ3tJm9zo11PvHBnbLWVD7BeZEgBSiAJQ6M8R+cMII862pE
+	4ZrULpVrQkFnb9B2lcoTgfGhKOq5NxPitvqUGu+7eLXcC5B6wfPs2UzKmEw+dXtY
+	D+iS8uZTw67O1bwRtFpvmPXhbm/n/1AWNig==
+X-ME-Sender: <xms:zX45aCu3QmM6HlkC8c57JcJy5h45Hc_I0wT7ZfBdq3NeP-cuAVVVeg>
+    <xme:zX45aHe7kqEY6GJMfmraUQ5ZE5GnCpC1PJVi44FLcUJkJ7KG2uG_hrzG5udaz35bj
+    BW35VmalEnef-ahXwU>
+X-ME-Received: <xmr:zX45aNwT-5peNmf0vgbWHUvF_2eANamZ2fEl_6LczyROL2eJ-ALtCI7t1ME3Ac4H9_0>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgddvkeeikeculddtuddrgeefvddrtd
+    dtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggft
+    fghnshhusghstghrihgsvgdpuffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftd
+    dtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffo
+    ggfgsedtkeertdertddtnecuhfhrohhmpeftrghfrggvlhcuuegvihhmshcuoehrrghfrg
+    gvlhessggvihhmshdrmhgvqeenucggtffrrghtthgvrhhnpefgtedvueeugefgieejuefh
+    ueeivefgvdduheffveehffeujefgudfgueffudelhfenucffohhmrghinhepkhgvrhhnvg
+    hlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhho
+    mheprhgrfhgrvghlsegsvghimhhsrdhmvgdpnhgspghrtghpthhtohepiedpmhhouggvpe
+    hsmhhtphhouhhtpdhrtghpthhtohepsghrihgrnhhnohhrrhhishestghhrhhomhhiuhhm
+    rdhorhhgpdhrtghpthhtohepfhhrrghntggvshgtohesugholhgtihhnihdrihhtpdhrtg
+    hpthhtoheprhgrfhgrvghlrdgsvghimhhssehtohhrrgguvgigrdgtohhmpdhrtghpthht
+    oheplhhinhhugidqfihirhgvlhgvshhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtg
+    hpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhr
+    tghpthhtohepfhhrrghntggvshgtohdrugholhgtihhnihesthhorhgruggvgidrtghomh
+X-ME-Proxy: <xmx:zX45aNOIcuwjA0HSZmTI2R_Qmg_2BKU8WX7OYXHvp2ssV5Fr966DuA>
+    <xmx:zX45aC-YeeyX9NlyNTiXI8uaFgoG7hJPK7WAi7XskzBcYhIQEPXVMg>
+    <xmx:zX45aFWiunxrQ3PvV6w6JxEZlHVEduFRS0tJEsIQeLm18E9DXPZzUA>
+    <xmx:zX45aLcNSZjqhUfxIXeho5vCclncOOdiWA0mqLkSLOT5qo3y0Og-IA>
+    <xmx:zX45aK1aqt4ZMbRo0vPkJrI7jcYta0nlEXqxAU_7nvnS93Spmf931ZxE>
+Feedback-ID: idc214666:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 30 May 2025 05:47:55 -0400 (EDT)
+From: Rafael Beims <rafael@beims.me>
+To: Brian Norris <briannorris@chromium.org>,
+	Francesco Dolcini <francesco@dolcini.it>
+Cc: Rafael Beims <rafael.beims@toradex.com>,
+	linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Francesco Dolcini <francesco.dolcini@toradex.com>
+Subject: [PATCH wireless-next v2] wifi: mwifiex: enable host mlme on sdio W8997 chipsets
+Date: Fri, 30 May 2025 06:47:04 -0300
+Message-ID: <20250530094711.915574-1-rafael@beims.me>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250521041840.GB28017@nxa18884-linux> <CAPDyKFpSb+KsfDr1-=uk4TF4Op1dUQ9rDwPP5sSpMfxDRDhnZA@mail.gmail.com>
- <20250523191713.nylhi74jq6z4hqmr@hiago-nb> <CAPDyKFq6HG6iTZRnBSN25vhCU8Zj1c+r_ufGbiBsJ16N+1bJVg@mail.gmail.com>
- <20250527000510.fofehmsdhifcwlys@hiago-nb> <20250527023921.GA14252@nxa18884-linux>
- <CAPDyKFqZkcaGfss=Oi+H9UERFU29jY2t5uTPnGVGQgSAJSeCoA@mail.gmail.com>
- <20250527134525.f7yzs4ww64xxmjmr@hiago-nb> <20250528173813.rxqu6pzqgu4m5joo@hiago-nb>
- <PAXPR04MB845941FFF347274012A0ECA88866A@PAXPR04MB8459.eurprd04.prod.outlook.com>
- <20250529201544.azoqdrgnlqfxi6mb@hiago-nb>
-In-Reply-To: <20250529201544.azoqdrgnlqfxi6mb@hiago-nb>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Fri, 30 May 2025 11:45:48 +0200
-X-Gm-Features: AX0GCFsQvcDOUqaNaQ5cjuiIbQU68DMjg5d50KglTL5dTEGM-jQJUgFg_7R2SME
-Message-ID: <CAPDyKFrDvxpFeBU5noRDBZCA1N96iPNYYjM0kqd1R4z_4CUV3w@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] remoteproc: imx_rproc: add power mode check for
- remote core attachment
-To: Hiago De Franco <hiagofranco@gmail.com>
-Cc: Peng Fan <peng.fan@nxp.com>, "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, 
-	Mathieu Poirier <mathieu.poirier@linaro.org>, 
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, 
-	"linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Bjorn Andersson <andersson@kernel.org>, 
-	Hiago De Franco <hiago.franco@toradex.com>, "imx@lists.linux.dev" <imx@lists.linux.dev>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Daniel Baluta <daniel.baluta@nxp.com>, 
-	"Iuliana Prodan (OSS)" <iuliana.prodan@oss.nxp.com>, Fabio Estevam <festevam@gmail.com>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu, 29 May 2025 at 22:15, Hiago De Franco <hiagofranco@gmail.com> wrote:
->
-> On Thu, May 29, 2025 at 03:54:47AM +0000, Peng Fan wrote:
->
-> [...]
->
-> > > We are making progress ;-)
-> > >
-> > > With the patches you shared Ulf (I added them on top of the current
-> > > master branch), it works as expected, dev_pm_genpd_is_on() returns 0
-> > > when I boot the kernel without M4 running and it returns 1 when I
-> > > boot the kernel with M4 running with a hello-world demo.
-> > >
-> > > However now I tried to, if dev_pm_genpd_is_on() returns 1, put the
-> > > DETACHED state, something as
-> > >
-> > > if (dev_pm_genpd_is_on(priv->pd_list->pd_devs[0]))
-> > >     priv->rproc->state = RPROC_DETACHED;
-> > >
-> > > In this case I used 0 because I understand this is the
-> > > IMX_SC_R_M4_0_PID0 defined in my device tree overlay:
-> > >
-> > >             power-domains = <&pd IMX_SC_R_M4_0_PID0>,
-> > >                             <&pd IMX_SC_R_M4_0_MU_1A>;
-> > >
-> > > But in this case, the kernel does not boot anymore, I see the "Starting
-> > > kernel..." and nothing else.
-> >
-> > Please add "earlycon" in bootargs to see where it hangs.
->
-> Thanks Peng! I was able to catch the kernel panic yesterday, however I
-> must say that today I was doing the tests again and the issue is gone.
-> Sorry, I might have done something wrong yesterday with the tests.
-> Anyway, here is the log:
->
-> [    1.271163] remoteproc remoteproc0: imx-rproc is available
-> [    1.280296] remoteproc remoteproc0: attaching to imx-rproc
-> [    1.285756] Unable to handle kernel paging request at virtual address ffff80005ae3dd79
-> [    1.293624] Mem abort info:
-> [    1.294655] mmc0: SDHCI controller on 5b010000.mmc [5b010000.mmc] using ADMA
-> [    1.296386]   ESR = 0x0000000096000005
-> [    1.307194]   EC = 0x25: DABT (current EL), IL = 32 bits
-> [    1.312473]   SET = 0, FnV = 0
-> [    1.315566]   EA = 0, S1PTW = 0
-> [    1.318649]   FSC = 0x05: level 1 translation fault
-> [    1.323510] Data abort info:
-> [    1.326370]   ISV = 0, ISS = 0x00000005, ISS2 = 0x00000000
-> [    1.331846]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-> [    1.336882]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-> [    1.342182] swapper pgtable: 4k pages, 48-bit VAs, pgdp=0000000096bc1000
-> [    1.348870] [ffff80005ae3dd79] pgd=0000000000000000, p4d=1000000097054003, pud=0000000000000000
-> [    1.357565] Internal error: Oops: 0000000096000005 [#1]  SMP
-> [    1.363198] Modules linked in:
-> [    1.366236] CPU: 2 UID: 0 PID: 47 Comm: kworker/u16:3 Not tainted 6.15.0-03667-g3f5f09105c40-dirty #826 PREEMPT
-> [    1.376405] Hardware name: Toradex Colibri iMX8QXP on Colibri Evaluation Board V3 (DT)
-> [    1.384313] Workqueue: events_unbound deferred_probe_work_func
-> [    1.390128] pstate: 00000005 (nzcv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> [    1.397076] pc : rproc_handle_resources.constprop.0+0x78/0x1d0
-> [    1.402896] lr : rproc_boot+0x368/0x56c
-> [    1.406717] sp : ffff8000819c3990
-> [    1.410017] x29: ffff8000819c3990 x28: ffff80005ae3dd7d x27: 0000000000000000
-> [    1.417145] x26: 0000000000000000 x25: ffff0000015ec038 x24: ffff800080f0c0a8
-> [    1.424268] x23: ffff8000813a6110 x22: 00000000d999ad79 x21: ffff0000015ec000
-> [    1.431392] x20: 0000000026665683 x19: ffff80005ae3dd79 x18: 0000000000000006
-> [    1.438516] x17: ffff000001799400 x16: ffff000001798e00 x15: 4addd15cca11c529
-> [    1.445639] x14: 53ebce6d5564d787 x13: 4addd15cca11c529 x12: 53ebce6d5564d787
-> [    1.452763] x11: 95a1e33b6b190674 x10: 9e3c9abdb41ca345 x9 : ab17b4eaffd6fd1c
-> [    1.459887] x8 : d5da055de4cfbb87 x7 : dfd7fa31596acbbc x6 : 9946d97107d0dcca
-> [    1.467011] x5 : ffff0000010c7800 x4 : 00000000000003fc x3 : ffff0000010c7780
-> [    1.474134] x2 : fffffffffffffff0 x1 : ffff8000814a3000 x0 : ffff8000814a3000
-> [    1.481261] Call trace:
-> [    1.483690]  rproc_handle_resources.constprop.0+0x78/0x1d0 (P)
-> [    1.487705] mmc0: new HS400 MMC card at address 0001
-> [    1.489502]  rproc_boot+0x368/0x56c
-> [    1.495349] mmcblk0: mmc0:0001 Q2J55L 7.09 GiB
-> [    1.497929]  rproc_add+0x184/0x190
-> [    1.504356]  mmcblk0: p1 p2
-> [    1.505747]  imx_rproc_probe+0x458/0x528
-> [    1.509238] mmcblk0boot0: mmc0:0001 Q2J55L 16.0 MiB
-> [    1.512437]  platform_probe+0x68/0xc0
-> [    1.512452]  really_probe+0xc0/0x38c
-> [    1.520584] mmcblk0boot1: mmc0:0001 Q2J55L 16.0 MiB
-> [    1.520951]  __driver_probe_device+0x7c/0x15c
-> [    1.527522] mmcblk0rpmb: mmc0:0001 Q2J55L 4.00 MiB, chardev (242:0)
-> [    1.529377]  driver_probe_device+0x3c/0x10c
-> [    1.544263]  __device_attach_driver+0xbc/0x158
-> [    1.548586]  bus_for_each_drv+0x84/0xe0
-> [    1.552407]  __device_attach+0x9c/0x1ac
-> [    1.556231]  device_initial_probe+0x14/0x20
-> [    1.560401]  bus_probe_device+0xac/0xb0
-> [    1.564221]  deferred_probe_work_func+0x9c/0xec
-> [    1.568741]  process_one_work+0x14c/0x28c
-> [    1.572735]  worker_thread+0x2cc/0x3d4
-> [    1.576473]  kthread+0x12c/0x208
-> [    1.579687]  ret_from_fork+0x10/0x20
-> [    1.583253] Code: 8b36c033 9100127c 54000924 d503201f (b9400261)
-> [    1.589337] ---[ end trace 0000000000000000 ]---
->
-> But again, the issue is not happening anymore ;-) I will keep testing to
-> see if the issue happens again, but for now is working fine, I can now
-> attach to the remote processor.
->
-> This is the git diff on top of Ulf patches I have been testing:
->
-> diff --git a/drivers/pmdomain/core.c b/drivers/pmdomain/core.c
-> index 6da25e2c81d2..661a6aad40a8 100644
-> --- a/drivers/pmdomain/core.c
-> +++ b/drivers/pmdomain/core.c
-> @@ -599,6 +599,23 @@ int dev_pm_genpd_set_performance_state(struct device *dev, unsigned int state)
->  }
->  EXPORT_SYMBOL_GPL(dev_pm_genpd_set_performance_state);
->
-> +bool dev_pm_genpd_is_on(struct device *dev)
-> +{
-> +        struct generic_pm_domain *genpd;
-> +        bool is_on;
-> +
-> +        genpd = dev_to_genpd_safe(dev);
-> +        if (!genpd)
-> +                return false;
-> +
-> +        genpd_lock(genpd);
-> +        is_on = genpd_status_on(genpd);
-> +        genpd_unlock(genpd);
-> +
-> +        return is_on;
-> +}
-> +EXPORT_SYMBOL_GPL(dev_pm_genpd_is_on);
-> +
->  /**
->   * dev_pm_genpd_set_next_wakeup - Notify PM framework of an impending wakeup.
->   *
-> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-> index 627e57a88db2..9688370f9bb5 100644
-> --- a/drivers/remoteproc/imx_rproc.c
-> +++ b/drivers/remoteproc/imx_rproc.c
-> @@ -18,6 +18,7 @@
->  #include <linux/of_reserved_mem.h>
->  #include <linux/platform_device.h>
->  #include <linux/pm_domain.h>
-> +#include <linux/pm_runtime.h>
->  #include <linux/reboot.h>
->  #include <linux/regmap.h>
->  #include <linux/remoteproc.h>
-> @@ -891,9 +892,7 @@ static int imx_rproc_attach_pd(struct imx_rproc *priv)
->  {
->         struct device *dev = priv->dev;
->         int ret;
-> -       struct dev_pm_domain_attach_data pd_data = {
-> -               .pd_flags = PD_FLAG_DEV_LINK_ON,
-> -       };
-> +       bool test;
->
->         /*
->          * If there is only one power-domain entry, the platform driver framework
-> @@ -902,7 +901,16 @@ static int imx_rproc_attach_pd(struct imx_rproc *priv)
->         if (dev->pm_domain)
->                 return 0;
->
-> -       ret = dev_pm_domain_attach_list(dev, &pd_data, &priv->pd_list);
-> +       ret = dev_pm_domain_attach_list(dev, NULL, &priv->pd_list);
-> +       printk("hfranco: returned pd devs is %d", ret);
-> +       for (int i = 0; i < ret; i++) {
-> +               test = dev_pm_genpd_is_on(priv->pd_list->pd_devs[i]);
-> +               printk("hfranco: returned value is %d", test);
-> +               if (test) {
-> +                       priv->rproc->state = RPROC_DETACHED;
-> +                       break;
-> +               }
-> +       }
->         return ret < 0 ? ret : 0;
->  }
->
-> @@ -1146,6 +1154,9 @@ static int imx_rproc_probe(struct platform_device *pdev)
->                 }
->         }
->
-> +       pm_runtime_enable(dev);
-> +       pm_runtime_get_sync(dev);
-> +
->         ret = rproc_add(rproc);
->         if (ret) {
->                 dev_err(dev, "rproc_add failed\n");
-> diff --git a/include/linux/pm_runtime.h b/include/linux/pm_runtime.h
-> index 756b842dcd30..16d1fca2a8c5 100644
-> --- a/include/linux/pm_runtime.h
-> +++ b/include/linux/pm_runtime.h
-> @@ -95,6 +95,7 @@ extern void pm_runtime_put_suppliers(struct device *dev);
->  extern void pm_runtime_new_link(struct device *dev);
->  extern void pm_runtime_drop_link(struct device_link *link);
->  extern void pm_runtime_release_supplier(struct device_link *link);
-> +bool dev_pm_genpd_is_on(struct device *dev);
->
->  int devm_pm_runtime_set_active_enabled(struct device *dev);
->  extern int devm_pm_runtime_enable(struct device *dev);
->
-> This is the rproc output when bootaux is used:
->
-> root@colibri-imx8x-07308754:~# dmesg | grep hfranco
-> [    0.478475] hfranco: returned pd devs is 2
-> [    0.478496] hfranco: returned value is 1
-> root@colibri-imx8x-07308754:~# dmesg | grep rproc
-> [    0.478797] remoteproc remoteproc0: imx-rproc is available
-> [    0.478878] remoteproc remoteproc0: attaching to imx-rproc
-> [    0.478961] remoteproc remoteproc0: remote processor imx-rproc is now attached
->
-> I will cleanup everything and try to come up with a patch. Ulf, in this
-> case, as your patches have not yet been merged, should I wait for them?
+From: Rafael Beims <rafael.beims@toradex.com>
 
-I think you can state in the cover-letter that your series depends on
-mine, so please go ahead and submit them.
+Enable the host MLME flag to allow supported W8997 chipsets to
+use WPA3. This feature requires firmware support (V2 API key), which
+the driver validates before activation.
 
->
-> Thanks for all the help guys.
->
-> >
-> > >
-> > > I am using the pm_runtime functions before rproc_add():
-> > >
-> > > @@ -1146,6 +1154,9 @@ static int imx_rproc_probe(struct
-> > > platform_device *pdev)
-> > >                 }
-> > >         }
-> > >
-> > > +       pm_runtime_enable(dev);
-> > > +       pm_runtime_get_sync(dev);
-> >
-> > I think only make this apply for i.MX8QX/8QM/DX, then no
-> > impact to other patforms.
+Tested using sdsd8997_combo_v4.bin from commit
+211fbc287a0b ("linux-firmware: Update FW files for MRVL SD8997 chips")
 
-In general I think we should avoid such quirks in drivers, unless it's
-really needed. Just wanted to share my opinion, but it's totally up to
-you.
+[    5.956510] mwifiex_sdio mmc2:0001:1: info: FW download over, size 623352 bytes
+...
+[    6.825456] mwifiex_sdio mmc2:0001:1: WLAN FW is active
+...
+[   12.171950] mwifiex_sdio mmc2:0001:1: host_mlme: enable, key_api: 2
+[   12.226206] mwifiex_sdio mmc2:0001:1: info: MWIFIEX VERSION: mwifiex 1.0 (16.68.1.p197)
 
-[...]
+root@verdin-imx8mm-14700070:~# strings /lib/firmware/mrvl/sdsd8997_combo_v4.bin |grep 16
+$Id: w8997o-V4, RF878X, FP68_LINUX, 16.68.1.p197.1 $
 
-Kind regards
-Uffe
+Signed-off-by: Rafael Beims <rafael.beims@toradex.com>
+Reviewed-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+---
+v2: improved commit message, add r-b francesco
+v1: https://lore.kernel.org/all/20250521101950.1220793-1-rafael@beims.me/
+---
+ drivers/net/wireless/marvell/mwifiex/sdio.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/marvell/mwifiex/sdio.c b/drivers/net/wireless/marvell/mwifiex/sdio.c
+index c1fe48448839..f039d6f19183 100644
+--- a/drivers/net/wireless/marvell/mwifiex/sdio.c
++++ b/drivers/net/wireless/marvell/mwifiex/sdio.c
+@@ -438,7 +438,7 @@ static const struct mwifiex_sdio_device mwifiex_sdio_sd8997 = {
+ 	.can_auto_tdls = false,
+ 	.can_ext_scan = true,
+ 	.fw_ready_extra_delay = false,
+-	.host_mlme = false,
++	.host_mlme = true,
+ };
+ 
+ static const struct mwifiex_sdio_device mwifiex_sdio_sd8887 = {
+-- 
+2.47.2
+
 
