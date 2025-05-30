@@ -1,279 +1,153 @@
-Return-Path: <linux-kernel+bounces-667717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-667720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AB81AC88F4
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 09:31:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FE67AC8910
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 09:36:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C5C117A6C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 07:31:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6960A4A392E
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 07:36:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1C181EA7DB;
-	Fri, 30 May 2025 07:31:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C91D219A8A;
+	Fri, 30 May 2025 07:35:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="lnkwtJqW"
-Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hsbzZg8D"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59CD710FD
-	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 07:31:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEC391E520B;
+	Fri, 30 May 2025 07:35:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748590291; cv=none; b=myzpUlLyrycOjp7olr6+fNVD7J5+bfNxI4qVe8Toz7+DtXhwu1RMHJS3FBqlbliZTnQJi2mCig4MPkCKTn0EipfKec2+rG6OwiDO+DDC6LY1upt3yO2EuBFxZzRQBw9gTZ+ARwE+vaMPkO/dvRg4RBLc+A0h1PClmZ195e70XWQ=
+	t=1748590540; cv=none; b=Y8ZEpi2LE1pM8X1lrzAQKta0G5I7qqbcxAutwFbTAmEGDGgTbRChjdIf0ulmS3t9PTetysCP7bZEEXr4mU8feiUcShVdKCIbpvBon2hycZsIJOC+hZfmPEuJLP1oMF6rvgkflzDDYQxr7xPNeKJLVlaCYhkR/RnZ3sgyX7olAwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748590291; c=relaxed/simple;
-	bh=4kWdTAYOz5Pc5WNpJNLqZME+zHvxxbllcD5V1Sv5q6E=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EM9LQv4aNk/rwusARK+Ku1viRguKZPx1NV6ti3WvSgqkPNgN/1PS54B1os/CFa5D2WxO50uBoPjCUWdHLTtuPrGAOyeoVnmEex3IHZypYiu1jYBQN4siWTMw5pcdUCY2Sn9GqYBxklLggQ/Le8nA5X6EGaPkrs2k/hGD23INxBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=lnkwtJqW; arc=none smtp.client-ip=115.124.30.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1748590285; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=sUdJS8owTGJQ26ayrRUygOFvVD5DOZcz8FU13W0N0M4=;
-	b=lnkwtJqWiifuNG2n4tgc3acC6Il9R9qniL4/LlJ3+3tnudrm0fRWa3pbXsmNrGj9uwPn5lO8iEMsBeT4cAv5aF9ipA4ntYTWsghEpOGIgDY2edsd3nn0UPf88tki3lsoZxFSUWmDfk34m2L7FPjt5JILup2L9GSlavbLbV7ttH0=
-Received: from localhost.localdomain(mailfrom:yaoma@linux.alibaba.com fp:SMTPD_---0WcKViDG_1748590283 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 30 May 2025 15:31:24 +0800
-From: Bitao Hu <yaoma@linux.alibaba.com>
-To: kbusch@kernel.org,
-	axboe@kernel.dk,
-	hch@lst.de,
-	sagi@grimberg.me
-Cc: linux-nvme@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	yaoma@linux.alibaba.com,
-	kanie@linux.alibaba.com
-Subject: [PATCH] nvme: Support per-device timeout settings
-Date: Fri, 30 May 2025 15:31:21 +0800
-Message-Id: <20250530073121.26683-1-yaoma@linux.alibaba.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+	s=arc-20240116; t=1748590540; c=relaxed/simple;
+	bh=5HxqNMeD1/f7YQnN7xhf+npL6xt1LWEI9PtEr8GuJRs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=a3QKn22aXOfnqSspSHuJ8Tvb+dfr8+M4EttIvGkFTbtcY4VXnGS614Zti6VStnkHnT9X106AhN5s0MLEzOGF2y6QbOpINZmZ4dUhL9QaBcVkPIgNkqYSeKC/S+ZmQJG/7feMADZW6drk1pzFRDJjfY8PTuaJ0kaaNAr/9iP16cs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hsbzZg8D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 2827FC4CEE9;
+	Fri, 30 May 2025 07:35:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748590540;
+	bh=5HxqNMeD1/f7YQnN7xhf+npL6xt1LWEI9PtEr8GuJRs=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=hsbzZg8DhpT7FQpI+c5O6BTIwVA/TpzlfNRtllXwtkVwWbpxTa7zMIxSgqp1PDFhW
+	 SGyH4XCwsJK3UnpNcCYsEKK1weIuf30GYVLXTkyRiyQ5SbcmtHSV0mLkRYg7dikcU9
+	 ejk1eL7NcM7FT5sIIow8d0rSiDyXwq6AF3HpP5vBtKPgRFQ2OhNtJd9DD1Cn8JUYKR
+	 rxmhhHsMZMDA9Z0rCkQk3YnrmpkeKc4iLCY//lrCeQ51FFxs/XRzOXL1ULD+xlWxFB
+	 5KZcAY8pQTsHucLpLbQp55w95xJnu2FKGiSbpWMCSwHYJY9RRVwnARSfVeM18Rqeto
+	 fpghZ45zY/T+Q==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C4BFC3ABB2;
+	Fri, 30 May 2025 07:35:40 +0000 (UTC)
+From: Fenglin Wu via B4 Relay <devnull+fenglin.wu.oss.qualcomm.com@kernel.org>
+Subject: [PATCH v2 0/8] power: supply: Add several features support in
+ qcom-battmgr driver
+Date: Fri, 30 May 2025 15:35:05 +0800
+Message-Id: <20250530-qcom_battmgr_update-v2-0-9e377193a656@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKlfOWgC/22NywqDMBBFf0Vm3UgSmyy66n8UkTymGqhGkxgs4
+ r83FbrrZuBc7j2zQ8TgMMKt2iFgdtH5qQC/VGAGNfVInC0MnHJBBadkMX7stEpp7EO3zlYlJI2
+ QzBrBpaECynIO+HTbaX20hQcXkw/v80lm3/Tna/76MiOUcK2lvSJVQuLdx1gvq3qV8liXA+1xH
+ B9fkFb7vQAAAA==
+X-Change-ID: 20250520-qcom_battmgr_update-3561dc526c05
+To: Sebastian Reichel <sre@kernel.org>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Subbaraman Narayanamurthy <subbaraman.narayanamurthy@oss.qualcomm.com>, 
+ David Collins <david.collins@oss.qualcomm.com>, linux-pm@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ kernel@oss.qualcomm.com, devicetree@vger.kernel.org, 
+ linux-usb@vger.kernel.org, Fenglin Wu <fenglin.wu@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1748590538; l=3179;
+ i=fenglin.wu@oss.qualcomm.com; s=20240327; h=from:subject:message-id;
+ bh=5HxqNMeD1/f7YQnN7xhf+npL6xt1LWEI9PtEr8GuJRs=;
+ b=hSy5b3n5jlNd/kBYUZ6n/phnURJVIB+JxwC6vo/qUrAwrhgsODUlTHSxJc7W9F0InrD/xTjvh
+ CXxmRPTdk/yAsgwmuk4UXFkgVQriEH+2NbQ/9eyZl4mZS2kWgssyRIc
+X-Developer-Key: i=fenglin.wu@oss.qualcomm.com; a=ed25519;
+ pk=BF8SA4IVDk8/EBCwlBehKtn2hp6kipuuAuDAHh9s+K4=
+X-Endpoint-Received: by B4 Relay for fenglin.wu@oss.qualcomm.com/20240327
+ with auth_id=406
+X-Original-From: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
+Reply-To: fenglin.wu@oss.qualcomm.com
 
-The current 'admin_timeout' and 'io_timeout' parameters in
-the NVMe driver are global, meaning they apply to all NVMe
-devices in the system. However, in certain scenarios, it is
-necessary to set separate timeout values for different
-types of NVMe devices.
+Add following features in qcom-battmgr drivers as the battery management
+firmware has provided such capabilities:
+ - Add resistance power supply property in core driver and qcom-battmgr
+   driver to get battery resistance
+ - Add state_of_health power supply property in core driver and
+   qcom-battmgr driver to get battery health percentage
+ - Add charge control start/end threshold control by using
+   charge_control_start_threshold and charge_control_end_threshold power
+   supply properties
 
-To address this requirement, we propose adding two new fields,
-'admin_timeout' and 'io_timeout', to the sysfs interface for
-each NVMe device. By default, these values will be consistent
-with the global parameters. If a user sets these values
-individually for a specific device, the user-defined values
-will take precedence.
+The changes have been tested on QRD8650 and X1E80100-CRD devices based on
+qcom/linux.git for-next commit f8d04825b12f42ec8198dee1ab4654792f9ac231.
 
-Usage example:
-To set admin_timeout=100 and io_timeout=50 for the NVMe device nvme1,
-use the following commands:
-
-echo 100 > /sys/class/nvme/nvme1/admin_timeout
-echo 50  > /sys/class/nvme/nvme1/io_timeout
-
-Signed-off-by: Bitao Hu <yaoma@linux.alibaba.com>
+Signed-off-by: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
 ---
- drivers/nvme/host/apple.c |  2 +-
- drivers/nvme/host/core.c  |  6 ++--
- drivers/nvme/host/nvme.h  |  2 +-
- drivers/nvme/host/pci.c   |  4 +--
- drivers/nvme/host/rdma.c  |  2 +-
- drivers/nvme/host/sysfs.c | 62 +++++++++++++++++++++++++++++++++++++++
- drivers/nvme/host/tcp.c   |  2 +-
- 7 files changed, 71 insertions(+), 9 deletions(-)
+Changes in v2:
+- Corrected "qcom-battmgr" to "qcom_battmgr" in the commit subject of
+  patch 4/5.
+- Added charge control support for X1E80100 platform in patch 5.
+- X1E80100 is no longer a fallback of SM8550 in pmic-glink battmgr support,
+  hence added patch 6 in the pmic-glink binding to move X1E80100 out of the
+  fallbacks.
+- Added patch 7 in glink-ucsi driver to include UCSI quirk for X1E80100
+  platform
+- Added patch 8 to remove "qcom,sm8550-pmic-glink" compatible string in
+  x1* board files.
+- Rebased the changes on qcom/linux.git for-next commit 44ef9ab4baaf496d227ab98d368016700f0b9300.
+- Link to v1: https://lore.kernel.org/r/20250523-qcom_battmgr_update-v1-0-2bb6d4e0a56e@oss.qualcomm.com
 
-diff --git a/drivers/nvme/host/apple.c b/drivers/nvme/host/apple.c
-index b1fddfa33ab9..ec7c7cfcdf5b 100644
---- a/drivers/nvme/host/apple.c
-+++ b/drivers/nvme/host/apple.c
-@@ -821,7 +821,7 @@ static void apple_nvme_disable(struct apple_nvme *anv, bool shutdown)
- 	 * doing a safe shutdown.
- 	 */
- 	if (!dead && shutdown && freeze)
--		nvme_wait_freeze_timeout(&anv->ctrl, NVME_IO_TIMEOUT);
-+		nvme_wait_freeze_timeout(&anv->ctrl);
- 
- 	nvme_quiesce_io_queues(&anv->ctrl);
- 
-diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index f69a232a000a..32eade3418f8 100644
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -725,11 +725,10 @@ void nvme_init_request(struct request *req, struct nvme_command *cmd)
- 		struct nvme_ns *ns = req->q->disk->private_data;
- 
- 		logging_enabled = ns->head->passthru_err_log_enabled;
--		req->timeout = NVME_IO_TIMEOUT;
- 	} else { /* no queuedata implies admin queue */
- 		logging_enabled = nr->ctrl->passthru_err_log_enabled;
--		req->timeout = NVME_ADMIN_TIMEOUT;
- 	}
-+	req->timeout = req->q->rq_timeout;
- 
- 	if (!logging_enabled)
- 		req->rq_flags |= RQF_QUIET;
-@@ -5174,10 +5173,11 @@ void nvme_unfreeze(struct nvme_ctrl *ctrl)
- }
- EXPORT_SYMBOL_GPL(nvme_unfreeze);
- 
--int nvme_wait_freeze_timeout(struct nvme_ctrl *ctrl, long timeout)
-+int nvme_wait_freeze_timeout(struct nvme_ctrl *ctrl)
- {
- 	struct nvme_ns *ns;
- 	int srcu_idx;
-+	long timeout = ctrl->tagset->timeout;
- 
- 	srcu_idx = srcu_read_lock(&ctrl->srcu);
- 	list_for_each_entry_srcu(ns, &ctrl->namespaces, list,
-diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
-index ad0c1f834f09..50b5f2848f85 100644
---- a/drivers/nvme/host/nvme.h
-+++ b/drivers/nvme/host/nvme.h
-@@ -833,7 +833,7 @@ void nvme_sync_queues(struct nvme_ctrl *ctrl);
- void nvme_sync_io_queues(struct nvme_ctrl *ctrl);
- void nvme_unfreeze(struct nvme_ctrl *ctrl);
- void nvme_wait_freeze(struct nvme_ctrl *ctrl);
--int nvme_wait_freeze_timeout(struct nvme_ctrl *ctrl, long timeout);
-+int nvme_wait_freeze_timeout(struct nvme_ctrl *ctrl);
- void nvme_start_freeze(struct nvme_ctrl *ctrl);
- 
- static inline enum req_op nvme_req_op(struct nvme_command *cmd)
-diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-index e0bfe04a2bc2..e0b29b385d0b 100644
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -2690,7 +2690,7 @@ static bool __nvme_delete_io_queues(struct nvme_dev *dev, u8 opcode)
- 	unsigned long timeout;
- 
-  retry:
--	timeout = NVME_ADMIN_TIMEOUT;
-+	timeout = dev->ctrl.admin_q->rq_timeout;
- 	while (nr_queues > 0) {
- 		if (nvme_delete_queue(&dev->queues[nr_queues], opcode))
- 			break;
-@@ -2871,7 +2871,7 @@ static void nvme_dev_disable(struct nvme_dev *dev, bool shutdown)
- 		 * if doing a safe shutdown.
- 		 */
- 		if (!dead && shutdown)
--			nvme_wait_freeze_timeout(&dev->ctrl, NVME_IO_TIMEOUT);
-+			nvme_wait_freeze_timeout(&dev->ctrl);
- 	}
- 
- 	nvme_quiesce_io_queues(&dev->ctrl);
-diff --git a/drivers/nvme/host/rdma.c b/drivers/nvme/host/rdma.c
-index b5a0295b5bf4..01a9250810cf 100644
---- a/drivers/nvme/host/rdma.c
-+++ b/drivers/nvme/host/rdma.c
-@@ -888,7 +888,7 @@ static int nvme_rdma_configure_io_queues(struct nvme_rdma_ctrl *ctrl, bool new)
- 	if (!new) {
- 		nvme_start_freeze(&ctrl->ctrl);
- 		nvme_unquiesce_io_queues(&ctrl->ctrl);
--		if (!nvme_wait_freeze_timeout(&ctrl->ctrl, NVME_IO_TIMEOUT)) {
-+		if (!nvme_wait_freeze_timeout(&ctrl->ctrl)) {
- 			/*
- 			 * If we timed out waiting for freeze we are likely to
- 			 * be stuck.  Fail the controller initialization just
-diff --git a/drivers/nvme/host/sysfs.c b/drivers/nvme/host/sysfs.c
-index 29430949ce2f..9b8c29435bfa 100644
---- a/drivers/nvme/host/sysfs.c
-+++ b/drivers/nvme/host/sysfs.c
-@@ -10,6 +10,66 @@
- #include "nvme.h"
- #include "fabrics.h"
- 
-+static ssize_t admin_timeout_show(struct device *dev, struct device_attribute *attr, char *buf)
-+{
-+	struct nvme_ctrl *ctrl = dev_get_drvdata(dev);
-+
-+	return sysfs_emit(buf, "%u\n", ctrl->admin_tagset->timeout / HZ);
-+}
-+
-+static ssize_t admin_timeout_store(struct device *dev,
-+				   struct device_attribute *attr, const char *buf,
-+				   size_t count)
-+{
-+	int ret;
-+	unsigned int timeout;
-+	struct nvme_ctrl *ctrl = dev_get_drvdata(dev);
-+
-+	ret = kstrtouint(buf, 10, &timeout);
-+	if (ret < 0 || timeout == 0)
-+		return -EINVAL;
-+
-+	timeout = timeout * HZ;
-+	ctrl->admin_tagset->timeout = timeout;
-+	blk_queue_rq_timeout(ctrl->admin_q, timeout);
-+
-+	return count;
-+}
-+static DEVICE_ATTR_RW(admin_timeout);
-+
-+static ssize_t io_timeout_show(struct device *dev, struct device_attribute *attr, char *buf)
-+{
-+	struct nvme_ctrl *ctrl = dev_get_drvdata(dev);
-+
-+	return sysfs_emit(buf, "%u\n", ctrl->tagset->timeout / HZ);
-+}
-+
-+static ssize_t io_timeout_store(struct device *dev,
-+				struct device_attribute *attr, const char *buf,
-+				size_t count)
-+{
-+	int ret, srcu_idx;
-+	unsigned int timeout;
-+	struct nvme_ns *ns;
-+	struct nvme_ctrl *ctrl = dev_get_drvdata(dev);
-+
-+	ret = kstrtouint(buf, 10, &timeout);
-+	if (ret < 0 || timeout == 0)
-+		return -EINVAL;
-+
-+	timeout = timeout * HZ;
-+	ctrl->tagset->timeout = timeout;
-+	srcu_idx = srcu_read_lock(&ctrl->srcu);
-+	list_for_each_entry_srcu(ns, &ctrl->namespaces, list,
-+				srcu_read_lock_held(&ctrl->srcu)) {
-+		blk_queue_rq_timeout(ns->queue, timeout);
-+	}
-+	srcu_read_unlock(&ctrl->srcu, srcu_idx);
-+
-+	return count;
-+}
-+static DEVICE_ATTR_RW(io_timeout);
-+
- static ssize_t nvme_sysfs_reset(struct device *dev,
- 				struct device_attribute *attr, const char *buf,
- 				size_t count)
-@@ -722,6 +782,8 @@ static DEVICE_ATTR(dhchap_ctrl_secret, S_IRUGO | S_IWUSR,
- static struct attribute *nvme_dev_attrs[] = {
- 	&dev_attr_reset_controller.attr,
- 	&dev_attr_rescan_controller.attr,
-+	&dev_attr_admin_timeout.attr,
-+	&dev_attr_io_timeout.attr,
- 	&dev_attr_model.attr,
- 	&dev_attr_serial.attr,
- 	&dev_attr_firmware_rev.attr,
-diff --git a/drivers/nvme/host/tcp.c b/drivers/nvme/host/tcp.c
-index f6379aa33d77..c66c98e2cfe4 100644
---- a/drivers/nvme/host/tcp.c
-+++ b/drivers/nvme/host/tcp.c
-@@ -2169,7 +2169,7 @@ static int nvme_tcp_configure_io_queues(struct nvme_ctrl *ctrl, bool new)
- 	if (!new) {
- 		nvme_start_freeze(ctrl);
- 		nvme_unquiesce_io_queues(ctrl);
--		if (!nvme_wait_freeze_timeout(ctrl, NVME_IO_TIMEOUT)) {
-+		if (!nvme_wait_freeze_timeout(ctrl)) {
- 			/*
- 			 * If we timed out waiting for freeze we are likely to
- 			 * be stuck.  Fail the controller initialization just
+---
+Fenglin Wu (8):
+      power: supply: core: Add resistance power supply property
+      power: supply: core: Add state_of_health power supply property
+      power: supply: qcom_battmgr: Add resistance power supply property
+      power: supply: qcom_battmgr: Add state_of_health property
+      power: supply: qcom_battmgr: Add charge control support
+      dt-bindings: soc: qcom: pmic-glink: Move X1E80100 out of fallbacks
+      usb: typec: ucsi_glink: Add UCSI quirk for X1E80100 platform
+      arm64: dts: qcom: x1*: Remove qcom,sm8550-pmic-glink fallback
+
+ Documentation/ABI/testing/sysfs-class-power        |  20 ++
+ .../bindings/soc/qcom/qcom,pmic-glink.yaml         |   4 +-
+ arch/arm64/boot/dts/qcom/x1-crd.dtsi               |   1 -
+ arch/arm64/boot/dts/qcom/x1e001de-devkit.dts       |   1 -
+ .../dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi    |   1 -
+ .../boot/dts/qcom/x1e80100-asus-vivobook-s15.dts   |   1 -
+ .../boot/dts/qcom/x1e80100-dell-xps13-9345.dts     |   1 -
+ .../boot/dts/qcom/x1e80100-hp-omnibook-x14.dts     |   1 -
+ .../boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts  |   1 -
+ .../boot/dts/qcom/x1e80100-microsoft-romulus.dtsi  |   1 -
+ arch/arm64/boot/dts/qcom/x1e80100-qcp.dts          |   1 -
+ drivers/power/supply/power_supply_sysfs.c          |   2 +
+ drivers/power/supply/qcom_battmgr.c                | 275 ++++++++++++++++++++-
+ drivers/usb/typec/ucsi/ucsi_glink.c                |   1 +
+ include/linux/power_supply.h                       |   2 +
+ 15 files changed, 295 insertions(+), 18 deletions(-)
+---
+base-commit: abbf1025002e4966bfcbf8a069234e485d49edf1
+change-id: 20250520-qcom_battmgr_update-3561dc526c05
+
+Best regards,
 -- 
-2.39.5 (Apple Git-154)
+Fenglin Wu <fenglin.wu@oss.qualcomm.com>
+
 
 
