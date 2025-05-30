@@ -1,218 +1,291 @@
-Return-Path: <linux-kernel+bounces-667726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-667727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41D20AC8921
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 09:37:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BEE2AC8923
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 09:38:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 015E97B3399
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 07:36:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38F6E1BC110A
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 07:38:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBB4A223DCE;
-	Fri, 30 May 2025 07:35:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8B9220E32F;
+	Fri, 30 May 2025 07:36:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ELiztn5I"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="MV0WdPme"
+Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazolkn19012061.outbound.protection.outlook.com [52.103.43.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4742521E08B;
-	Fri, 30 May 2025 07:35:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748590542; cv=none; b=Wf5P9WqaRDv/0j4laYNmM9JYxaDFlsQG22DK5/JFFNsnlTgZAsbeojbzywnFeBxe9wH9xwSX/deknJxIEORljLE9tj1o6YH3veNZ54n0H4ruSjzqp8yPMJLbX1E31ub2iARV1ewqaSu36fcc0pAhdhwt8Drc2rUTunQYBofb3o8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748590542; c=relaxed/simple;
-	bh=c1Kgnkn3omq/NMFoaeT8ErRn6AuQRpmtsAZYiwa2iKM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=KcTQ3Nvrh0RCovwgoQG60UCbiM09SXZAQs9A4REl3OAanhzLnLDFM0iGqsFBlr2N6TVmo/MCFSDX3Dkcm0WIXDM22z0c+21ponZB14jkpZpQwrBSjPpeMDSJVzA7IU+ievBlKl92K7s3Hxw/TeSKt1d91HXPLmdCCEfQCiqIBcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ELiztn5I; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id A6230C113D0;
-	Fri, 30 May 2025 07:35:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748590540;
-	bh=c1Kgnkn3omq/NMFoaeT8ErRn6AuQRpmtsAZYiwa2iKM=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=ELiztn5I6YBBIJgkTstguPjTwdUmQjDdevydGpBAtpSManoJHjWQ5IL19kA/UZORl
-	 1gpQb2u2BjZFluXfgur0mGQYbIGcP0m9Gf7jGpbtf0BX9UvDQBy5G0RS7P9OeIrfjq
-	 6mvZ5r5lUDjx4V56g2INCbVoV1JKd66DOdtJRLf6kxGo3t18FC462EdFnEqqqyBvb8
-	 wBhvYP1QmeDnh4Fv+Isq2NbJ/L9Jcni8q8esFBQ1yClpZb0eDcTZZpGBCYRuuAotpQ
-	 QvAY/1Ic1thvZ2TmIvO6IWLp70QGmmq7h6zdlU5lgWJ9zrO7R9kqJAHZA6J8d3IXGQ
-	 EgHctsOCHThSg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CE8AC5B553;
-	Fri, 30 May 2025 07:35:40 +0000 (UTC)
-From: Fenglin Wu via B4 Relay <devnull+fenglin.wu.oss.qualcomm.com@kernel.org>
-Date: Fri, 30 May 2025 15:35:13 +0800
-Subject: [PATCH v2 8/8] arm64: dts: qcom: x1*: Remove
- qcom,sm8550-pmic-glink fallback
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4BD620101D
+	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 07:36:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.43.61
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748590618; cv=fail; b=AjGA9FLDsxstYaBAUf6qqtsxatV4zxReeAS8cbpVo786EcuUne1gvjNcw3+WRNGOhxjrkDwEUZ6+zpsPGoxXyw6yJ3tgUIOA/kkxOwL41uogeLhjzMyQEZuNg+Y2zsFDfs3M3JoLbOO64fHzMnNspuwtQjc9k45p0XsVF6Futv0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748590618; c=relaxed/simple;
+	bh=2oKE4SJ5ORo0AH8wkyrh33JU6DEMNaXUkufR1vxPu9Q=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=d/9kDcIkEZtIsnzfHamNMfQrQ/a+/eCkvkeV0j3Zrth8aJtLQCwV8k9ATTYlrvhdfavIaDrPC4NKsnt+hol9CUJ2l0DDyzDQWDFaR/3Wv4QyUuyklS9hCIPoMr39lms80kskqMftFid1kRck9trPH4x7MLM5i6bwUQfPAwuS3t0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=MV0WdPme; arc=fail smtp.client-ip=52.103.43.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=p1QAcE7Ilh05h8SGbwqV/kwr2hUjyDwsdN5q9pHZaQqOgWpdN3d0u6r4Krj5uJe6T+hpb8FnTYp4+5ZDCrEatkaWXP/EAvb55QTYRuklp6CqUjeVIrdCN++Fp+j926RpSy5u/noKYMIz1YsLoLlAFT+sV7gvWIkEPcS2cjBbmSNjRElItkgd48tP5FvAIk+GJZad3YK1r7KJsXkRe1DfCU7MNASe5wUbVKZjYizDpNZ6x37j+LUaestqpih2VH8+aAnS2UwoqwQDcC5SJ+cMMZugMd24MhaukucbLHS9MFHLyYwJewmOIHL0+59qQTaR4qK6TvHjOM1nS8+jdVQ+gg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=BfM8Muy+UHfbnCkxzI9/aDEhycEGWw4J/wbdxv2Ki2A=;
+ b=i0VUMpxhkOVYzBjw1s+OUvjyrGKDpXVg9Cj1ZFRLpR9+edj4U903d1BhFHrnSlMzhFwBOlpTEsFSv5wY2kJUNZEmL+UpOcMl87M0TLc4lWcglWRzZ7f/rxhR/nKgqHd8i1D9s+g7lcJ0PP6fevicj6r07RXOdGbCr3+DvWE7+GWMweBatrqhgRruaBzvjXlcu/hcRFpf3G+WaruuI4zv/0kZsWjwRz907DDoBwWODIXO/sCNRF+8EosCcs/zJY4xsYwsed1jh1AB/Nviz2oAhx9p9yQ9CpyNxB175bE7xtWqsl4CMvTg8VjtULabelFKhkOiiBsp2gT0pcTg7vj67A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=BfM8Muy+UHfbnCkxzI9/aDEhycEGWw4J/wbdxv2Ki2A=;
+ b=MV0WdPme5SeknYECkdv/1YWfiH+EZvtrZMMyk9Q7E/iq+ISQWVLmQau1jfVlbDqen3CifMUYzhHS9vxF1sh0npU6upQQCVGvARH7S7CTVNzdLKGvoX8RWWFn5EYqduVJutDyOrq3b2vr42RD1xjq8i34R+RM1Ub/d/zksFioW2CnPv7gjD8aT10AuXFab2MX/4BbPfuS/qULR4uQi6mZaVxQk6dACxdUIj6sMVFRsoyQ0dOGpPHvpq4I1b2R/Zahg5Z+U11hzazclnRvp5SfP2Hy3yZAwyWEJn0tFts0nHpYDERfT1n2zZFnBye4nDKdZXPsUUttCb+kyLZ0Z6hcaA==
+Received: from SI2PR04MB4931.apcprd04.prod.outlook.com (2603:1096:4:149::12)
+ by TYZPR04MB8019.apcprd04.prod.outlook.com (2603:1096:405:ba::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.32; Fri, 30 May
+ 2025 07:36:50 +0000
+Received: from SI2PR04MB4931.apcprd04.prod.outlook.com
+ ([fe80::a6ac:c945:13f6:e963]) by SI2PR04MB4931.apcprd04.prod.outlook.com
+ ([fe80::a6ac:c945:13f6:e963%6]) with mapi id 15.20.8769.025; Fri, 30 May 2025
+ 07:36:50 +0000
+Message-ID:
+ <SI2PR04MB49315B9161865FB1D319EEDAE361A@SI2PR04MB4931.apcprd04.prod.outlook.com>
+Date: Fri, 30 May 2025 15:36:43 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] sched/fair: allow imbalance between LLCs under NUMA
+To: K Prateek Nayak <kprateek.nayak@amd.com>,
+ Jianyong Wu <wujianyong@hygon.cn>, mingo@redhat.com, peterz@infradead.org,
+ juri.lelli@redhat.com, vincent.guittot@linaro.org
+Cc: dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+ mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org
+References: <20250528070949.723754-1-wujianyong@hygon.cn>
+ <e2b79e4e-f964-4fb6-8d23-6b9d9aeb6980@amd.com>
+ <SI2PR04MB49310190973DC859BBE05DE2E366A@SI2PR04MB4931.apcprd04.prod.outlook.com>
+ <db88ce98-cc24-4697-a744-01c478b7f5c8@amd.com>
+Content-Language: en-US
+From: Jianyong Wu <jianyong.wu@outlook.com>
+In-Reply-To: <db88ce98-cc24-4697-a744-01c478b7f5c8@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: MEWPR01CA0104.ausprd01.prod.outlook.com
+ (2603:10c6:220:1ce::15) To SI2PR04MB4931.apcprd04.prod.outlook.com
+ (2603:1096:4:149::12)
+X-Microsoft-Original-Message-ID:
+ <98e0c7fb-1493-42d3-a113-0060407076b6@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250530-qcom_battmgr_update-v2-8-9e377193a656@oss.qualcomm.com>
-References: <20250530-qcom_battmgr_update-v2-0-9e377193a656@oss.qualcomm.com>
-In-Reply-To: <20250530-qcom_battmgr_update-v2-0-9e377193a656@oss.qualcomm.com>
-To: Sebastian Reichel <sre@kernel.org>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Subbaraman Narayanamurthy <subbaraman.narayanamurthy@oss.qualcomm.com>, 
- David Collins <david.collins@oss.qualcomm.com>, linux-pm@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- kernel@oss.qualcomm.com, devicetree@vger.kernel.org, 
- linux-usb@vger.kernel.org, Fenglin Wu <fenglin.wu@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1748590538; l=5982;
- i=fenglin.wu@oss.qualcomm.com; s=20240327; h=from:subject:message-id;
- bh=X+TxGqrGeFrGC5fjW0b/Inx80/aw7X040xs1XjnqxDs=;
- b=qHgEdC5OU8ylreHSrnO+egnVmDr9kOZjDds1IVuJodwglo7n4ia5wFKiddXxdkBJOd4TRLVh9
- 8/brQverAAhBj5C76rTsuAtOsC+J8ctUGyATyP0MA/vPbEcj5D+ja17
-X-Developer-Key: i=fenglin.wu@oss.qualcomm.com; a=ed25519;
- pk=BF8SA4IVDk8/EBCwlBehKtn2hp6kipuuAuDAHh9s+K4=
-X-Endpoint-Received: by B4 Relay for fenglin.wu@oss.qualcomm.com/20240327
- with auth_id=406
-X-Original-From: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
-Reply-To: fenglin.wu@oss.qualcomm.com
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SI2PR04MB4931:EE_|TYZPR04MB8019:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9c83946c-7a79-472e-c791-08dd9f4cbd47
+X-MS-Exchange-SLBlob-MailProps:
+	znQPCv1HvwVu6ov8hlKZu5ytU8AWxKlxQPOsTislm8pKksS2ps9ZevyaNhSsja1WbO8/QaxR/qCIAwTtKmCKMwnqLozXSM6mm3IcDQitlEe8NCVu+xmXX0lChwc0cg6p7148rGnw7sDu52abBAK1TURuouYJVva24hnmvk7unBKoXiUwvDCQFkiqjyWVEt2f6yOf5ch60mjykHvl36wUSQXp6I1bhjmni8omo9p11RSgNYTNBTZ7upU5Fre0so6bnaVgMKC34rUP1/mg+gcoKdKdq89Py9f9JRZ8KIDOmh4yAxej4fKdeBqPrRagWB2370C7ewWW9C9Gqj77BMlbZlyqJjFMQPM7mtRM+sc+xKY90D/2oi29HwzhCslcu9BCwdsGlkneclUPNQeLXgHt0gdduQMxOycNRiSutYLZsJrV+6TADH6jkS8rTtw+qjikOaFzHr8UsqQIz9yLHJdQsKtlAs7te9z5191B0reKH5rlbjVdgtYEwd3sK6Vk0XAqEp9XkQkSYFLgz9um9wlIu4bU3QZQPMQcTU11GAWrUivIYhzcK0gAKqp7MB+neXROAgicg645sZgqBu+U98kZvWwSrYlv41lY8l7HuPitR8o2CcYd7qFP0TJFFeKtbACBNXjakL+Se7hew7MQ6aa5fHskipHeuEbh5Us/uJkZpdVrwzcYvjAHN0AONhw6F/S9faEZHRnxCV4aRFJLMxq8uTo59s2471aFdMVAgcA6VOSnRFTfFKARv1IFF7CU8mdDAEqjZQK1MdA=
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|8060799009|12121999007|5072599009|41001999006|6090799003|19110799006|15080799009|461199028|3412199025|440099028;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?SWxlYTlTR09mUjFnQzFzRUZuNHRYa090dmNnSkp1VnRjdE9WVHBheHZuN2RV?=
+ =?utf-8?B?ckVQWFg0V2hMUnVyNy96OUJFYXZjTStPTnpvaGRlN04vRTdkVC9xdGtpUita?=
+ =?utf-8?B?RkVLa2lSZVdpME5sSTEvbjk2Wmo2WTh5ZGZvaFpaaUZybGxqaHZrMjR0K3FD?=
+ =?utf-8?B?UmhGdUxYaW9pd1NVYTNyMTZRNGhKb09xQTBJaE9EeldDblhVOWE3TjRqbUtu?=
+ =?utf-8?B?UHlRbFRLR2pPL2xaWnowaDUzRXl4QU9EUmJ0Z3dvVVlGTzM1WkNJMXUreFBy?=
+ =?utf-8?B?Ty9JSU9uRnNIL1VNekloVjhJN1VuZUwwZE5ZVmQrMkhheDk5dnowMlFJSlJr?=
+ =?utf-8?B?VUd3S1A0eTQyVWU3WGJDS2ZIcmhTVk9yU3AzdS9BaUE1dndkekdCN1Q5KytV?=
+ =?utf-8?B?QlA2S3kvRzFQUzBJa3BIVVBKditJTXhQQ1JITDd0QzZ4dlZJcksxeUNjWDFK?=
+ =?utf-8?B?UmRISWZWOWU1UHY1RjQ0WC9xOFcrS1dMSit6RS9iQmVMOEdzRTBpWWJRc2tY?=
+ =?utf-8?B?cUk5RXo0ZVpBeEQ1WjBFaVo5TjVUemRuTDhGZ1ZvZExaWVd5M2RFTklSTzNr?=
+ =?utf-8?B?cWV5UlZHZUJLRlMydnl0WHBLc0hsaE1nL2NTVkZWQlBuSWhmREcxZzdTU0hO?=
+ =?utf-8?B?bkFueUtnU3dRNUVwdXlNSU1MT2dHVUhVS0pwK1pZR3JScFFGNThNWElSbE44?=
+ =?utf-8?B?US90R1U2OHo0V2hjQ3pNTm1xaC9Oa3JBVXVhRTh5enpJK1NCVkpJdGdBdDVi?=
+ =?utf-8?B?MVl3RjVXYXAvcGdWOUNxUjFzYUNBVmtDNUdtYklGMHVGSUxPRDJWdnJtZEhk?=
+ =?utf-8?B?TWRRZlJiYU1idXgzRnJad0FZQWZMblg2cCtCVGJKTnVjTHl0dlpQR3RFdURh?=
+ =?utf-8?B?M0ltUVNqUWlpTXN5QjFseHRSMjFBMkNRa3hmaDJEbUgwNUgwbEFWc1J4RVNT?=
+ =?utf-8?B?NnE2OUcwb2tTeEZaNWJuYWhHUStlYStYMnNaT2ZWOG5TbE92V2hZeXV0MWZz?=
+ =?utf-8?B?a0dZRnh3TStLRFdra3EySnF5ZzlHbTRzaEZiUXZheldDYTZ1TC84VW1Nc29k?=
+ =?utf-8?B?QVVkQXkzMkFCOEtyQlVGUk9sSmltTE52YnpwOVVPeStCTmNlQUd5amJPNVo2?=
+ =?utf-8?B?R3VwWmpJay8xMEtoYWNEejhWMlpJeUYvUlJGTVBvSEM2dWFkTmgxOEpjR3NN?=
+ =?utf-8?B?Mmc0blVqUlk4M3hzeEhhZW5Qd09LUzdTRUhQdnltZGtPTnJwcTdnMmlUc3Jv?=
+ =?utf-8?B?M2MzNSt4TlRWdjZoQXF2S3FycFBlTDJXOTVYUlYvNERQeGdtSEU5VkRXcmor?=
+ =?utf-8?B?cml2S01VbkZRS04wUGVJclpjTnFQOHcxM0RXSUp1ZWNJQU1QbXJBWDcrK3pl?=
+ =?utf-8?B?ekhQY2JRWmg3d291SnJLbk1hVHN6cUd1cm1rNjZBSjRGRkpHTng2R0c4NEZ0?=
+ =?utf-8?B?RmhsSU5JUXFtLzlKNHFiUytiWEMwQXYzQkpwQXlueEtjbythRWhRMDY3QWVP?=
+ =?utf-8?B?TFVObkxMV0h2N3lrSjdSaWZKMklmNXNsWEphYW1idTBNM3huZEIrVHpHaUdU?=
+ =?utf-8?Q?FW/yAsjIQ2knHe2ftnJOQxQrA=3D?=
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?TGJLb0lBWFBCRWdsUWIwcDF5TGFVeWppamFORGdMME96bEJVUklsVWcwTGUx?=
+ =?utf-8?B?SmdHWWY1V004RUVPZU9PcnVpWnRjeFhhMnVrQ3dqd0JtUUxWMnBKRk5WV3hr?=
+ =?utf-8?B?SFJzeFhPWjV1M0NBM29naHIxNHZ1YUg1N2diQ04zc2VLNHhkdzZTMXVadXJE?=
+ =?utf-8?B?NlZ0UTM1TkZHakJEUzVRWmM0VjIvNThMZ2xWZ09iYWlFQ05HVDRIeHFLUXBq?=
+ =?utf-8?B?eXNHU0FqS3p5SllSNkwxN0gyTTFaTElzYkRKNlpvUk9BVzY0RXE5Sm5RUXI4?=
+ =?utf-8?B?M2p2bG5NTG9kWWhJbzNjM2ltUEFVNGZSbnZOb1RHeHB3dlV3RlJlWVVNWlV2?=
+ =?utf-8?B?MmoxWHVVam5JRVBIZFNTTXpySHRLdmE2OVd4VzJMTE9MQjhkcHhVV0FQTmhW?=
+ =?utf-8?B?S3YxbW4vajlmVnNlbDN2MzBud2ZLUUl2bVh4NUVpZzhRY0VLKzEzejVGS24v?=
+ =?utf-8?B?aEdDbkhRL2JuQUxRaHpIbkprOXhyeEM2SVM2WU5kTXR1WWlRazVxZGlzU2Zi?=
+ =?utf-8?B?aXdtWlFnclpTQVdnakw5eU01MjFiNDd1ZzBNVXVIRTk0enh4ekVZYlNYZ2My?=
+ =?utf-8?B?NGloeG9GWGgzYk5YUWd0Um5hSTNLYkRWOVIwQU1hWXJialkzSDJxZFdienBQ?=
+ =?utf-8?B?dTlNYmtoZ3REMjU3SmNBaEloVVlCbm1hWVNTb0ZZeElSNERsajd6MGdUK2lW?=
+ =?utf-8?B?UWFDOGFJbHcyS01vbnFjZTlIaUd4Z2pBbG4zSlZORVZOYUxJU1doai9sUm56?=
+ =?utf-8?B?Q2czU1RGTEF3cjhaZ3JYQlAzbzBaTFlvTkRCRGlvaE1WYSsveXJ6YTBYUkdG?=
+ =?utf-8?B?R1V4QWJnem83U3h1S2QxcEFrOWs3UncrWC9abU1KN2xiY1lwS3ZudmNId2sr?=
+ =?utf-8?B?UXQvcFp3MHdZTlppaTQ4YzI4ZU9JcFhoa3drOEZLM2tydk90R2tiWDNWbU55?=
+ =?utf-8?B?bStPdVZSK2pkNzdYNytCa2JHYXpTWnU4SkZ6SUhXdzhUM2VqUllGazMwQnVK?=
+ =?utf-8?B?N044Qmo3Q2d4Nk1FOGJKWm5EQWphMHROSVY2bXJncllrNzM2dks0SDBkWWFW?=
+ =?utf-8?B?ejVpT3NUZDdzanpoeU51Q3pzMmpLcWpFd3FZWW4zVFZFSm1CQS9haExtdUUr?=
+ =?utf-8?B?WklibFV6VzZjb1pPc3UvVFdaRVJXOGc4WHpIOUFDTGRMWkhiRVpmMmE3UGZ6?=
+ =?utf-8?B?VGY0eWZBdEdSY0VtUzUxaDRNMXJxK25aMzZLZUsvRTlvU3IzTDd0dTdtVmta?=
+ =?utf-8?B?Zk43NjlBL3h3S0NlQnBubnZXRzlXL1o4VC9DRDdIVzVIMlE2VXJhVXNWYk1O?=
+ =?utf-8?B?VmxLZGJMZVdVQWdTWFIwcFlQbWR1ZFlkZDRtVDJtV2JqaGhkRWgzL3ducENp?=
+ =?utf-8?B?dVJhZXc4cVR1ZUVYdkNqVTlCcWd0c3RLeVJaalMrVmR0QW0zL0VpR29NdE9l?=
+ =?utf-8?B?NFJTMlcrZnRPS3NSSFR6YjEzK1dDaGJneUgvbHoxc1dZOFl5RVhsbjFNd0Nj?=
+ =?utf-8?B?TXFGdmQ2RGYyN3Z4dlVJUVZNamtFb2V5S05RZWUyYmlSSmhLbElYODRudkF3?=
+ =?utf-8?B?c2VKRFlTUmJKUnZnK0pmT3FPbSt1RmNCN1IzMkQzd0g1cnVmODBQMDNCbEJY?=
+ =?utf-8?B?MmM3SS9jRlFienUxczhWVkYwbHlaQXJTT0hOOERaUWU2TXFSK2ZyaHVXY2N3?=
+ =?utf-8?Q?LPCoD7smDQoW1u+/aE/a?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9c83946c-7a79-472e-c791-08dd9f4cbd47
+X-MS-Exchange-CrossTenant-AuthSource: SI2PR04MB4931.apcprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 May 2025 07:36:50.3244
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR04MB8019
 
-From: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
+Hi Prateek,
 
-The "qcom,x1e80100-pmic-glink" is not longer a fallback compatible
-string of "qcom,sm8550-pmic-glink", so remove "qcom,sm8550-pmic-glink"
-in x1* platform pmic-glink device nodes.
+On 5/30/2025 2:09 PM, K Prateek Nayak wrote:
+> Hello Jianyong,
+> 
+> On 5/29/2025 4:02 PM, Jianyong Wu wrote:
+>>
+>> This will happen even when 2 task are located in a cpuset of 16 cpus 
+>> that shares an LLC. I don't think that it's overloaded for this case.
+> 
+> But if they are located on 2 different CPUs, sched_balance_find_src_rq()
+> should not return any CPU right? Probably just a timing thing with some
+> system noise that causes the CPU running the server / client to be
+> temporarily overloaded.
+> 
 
-Signed-off-by: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
----
- arch/arm64/boot/dts/qcom/x1-crd.dtsi                        | 1 -
- arch/arm64/boot/dts/qcom/x1e001de-devkit.dts                | 1 -
- arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi | 1 -
- arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts     | 1 -
- arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dts       | 1 -
- arch/arm64/boot/dts/qcom/x1e80100-hp-omnibook-x14.dts       | 1 -
- arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts    | 1 -
- arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi    | 1 -
- arch/arm64/boot/dts/qcom/x1e80100-qcp.dts                   | 1 -
- 9 files changed, 9 deletions(-)
+I think it will.
+Suppose this scenario. There are 2 LLCs each associated with 4 cpus, 
+under a single NUMA node. Sometimes, one LLC has 4 tasks, each running 
+on a separate cpu, while the other LLC has no task running. Should the 
+load balancer take action to balance the workload? Absolutely yes.
 
-diff --git a/arch/arm64/boot/dts/qcom/x1-crd.dtsi b/arch/arm64/boot/dts/qcom/x1-crd.dtsi
-index c9f0d505267081af66b0973fe6c1e33832a2c86b..33d908c8011abe7bbbaca539bb9724f12c679c68 100644
---- a/arch/arm64/boot/dts/qcom/x1-crd.dtsi
-+++ b/arch/arm64/boot/dts/qcom/x1-crd.dtsi
-@@ -74,7 +74,6 @@ switch-lid {
- 
- 	pmic-glink {
- 		compatible = "qcom,x1e80100-pmic-glink",
--			     "qcom,sm8550-pmic-glink",
- 			     "qcom,pmic-glink";
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-diff --git a/arch/arm64/boot/dts/qcom/x1e001de-devkit.dts b/arch/arm64/boot/dts/qcom/x1e001de-devkit.dts
-index 2d9627e6c7983daedba87619ba01074ee22b43c9..d6ad762b8f30cc586761fc75ba95608301b3f599 100644
---- a/arch/arm64/boot/dts/qcom/x1e001de-devkit.dts
-+++ b/arch/arm64/boot/dts/qcom/x1e001de-devkit.dts
-@@ -51,7 +51,6 @@ chosen {
- 
- 	pmic-glink {
- 		compatible = "qcom,x1e80100-pmic-glink",
--			     "qcom,sm8550-pmic-glink",
- 			     "qcom,pmic-glink";
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-diff --git a/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi
-index ac1dddf27da30e6a9f7e1d1ecbd5192bf2d0671e..00e6009e3e4e89e4ca45c2d1b1f20e8caaa85bbf 100644
---- a/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi
-+++ b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi
-@@ -64,7 +64,6 @@ switch-lid {
- 
- 	pmic-glink {
- 		compatible = "qcom,x1e80100-pmic-glink",
--			     "qcom,sm8550-pmic-glink",
- 			     "qcom,pmic-glink";
- 		orientation-gpios = <&tlmm 121 GPIO_ACTIVE_HIGH>,
- 				    <&tlmm 123 GPIO_ACTIVE_HIGH>;
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts b/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts
-index 71b2cc6c392fef9edd19477e4aab6e28699e1eb7..e278997c98e99b1791eb2e0a9dd25ec01b40563b 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts
-+++ b/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts
-@@ -39,7 +39,6 @@ switch-lid {
- 
- 	pmic-glink {
- 		compatible = "qcom,x1e80100-pmic-glink",
--			     "qcom,sm8550-pmic-glink",
- 			     "qcom,pmic-glink";
- 		orientation-gpios = <&tlmm 121 GPIO_ACTIVE_HIGH>,
- 				    <&tlmm 123 GPIO_ACTIVE_HIGH>;
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dts b/arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dts
-index 967f6dba0878b51a985fd7c9570b8c4e71afe57d..e6f1f72505a8dff5b1ffed5f93614973f649e275 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dts
-+++ b/arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dts
-@@ -59,7 +59,6 @@ led-camera-indicator {
- 
- 	pmic-glink {
- 		compatible = "qcom,x1e80100-pmic-glink",
--			     "qcom,sm8550-pmic-glink",
- 			     "qcom,pmic-glink";
- 		orientation-gpios = <&tlmm 121 GPIO_ACTIVE_HIGH>,
- 				    <&tlmm 123 GPIO_ACTIVE_HIGH>;
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100-hp-omnibook-x14.dts b/arch/arm64/boot/dts/qcom/x1e80100-hp-omnibook-x14.dts
-index 10b3af5e79fb6493cd6b6c661de6a801e40092f7..8057a5dadabcbf16426ba0088a13eb9c35ffff61 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100-hp-omnibook-x14.dts
-+++ b/arch/arm64/boot/dts/qcom/x1e80100-hp-omnibook-x14.dts
-@@ -83,7 +83,6 @@ switch-lid {
- 
- 	pmic-glink {
- 		compatible = "qcom,x1e80100-pmic-glink",
--			     "qcom,sm8550-pmic-glink",
- 			     "qcom,pmic-glink";
- 		orientation-gpios = <&tlmm 121 GPIO_ACTIVE_HIGH>,
- 				    <&tlmm 123 GPIO_ACTIVE_HIGH>;
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts b/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts
-index dad0f11e8e8583df6fd8aeec5be2af86739d85fb..aee38ead38a94ddca525b55004d8b8655e8484df 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts
-+++ b/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts
-@@ -41,7 +41,6 @@ switch-lid {
- 
- 	pmic-glink {
- 		compatible = "qcom,x1e80100-pmic-glink",
--			     "qcom,sm8550-pmic-glink",
- 			     "qcom,pmic-glink";
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi b/arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi
-index 0fd8516580b2679ee425438cb73fd4078cb20581..d2bce79c4a4146c57602cf48fbb42446004f48e2 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi
-+++ b/arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi
-@@ -94,7 +94,6 @@ led-camera-indicator {
- 
- 	pmic-glink {
- 		compatible = "qcom,x1e80100-pmic-glink",
--			     "qcom,sm8550-pmic-glink",
- 			     "qcom,pmic-glink";
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts b/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts
-index 4dfba835af6a064dbc5ad65671cb8a6e4df79758..2845a8929f80f9f9921568fb76cba79e60ebcd42 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts
-+++ b/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts
-@@ -52,7 +52,6 @@ chosen {
- 
- 	pmic-glink {
- 		compatible = "qcom,x1e80100-pmic-glink",
--			     "qcom,sm8550-pmic-glink",
- 			     "qcom,pmic-glink";
- 		#address-cells = <1>;
- 		#size-cells = <0>;
+The tricky point is that the balance action will fail during the first 
+few attempts. In the meanwhile, sd->nr_balance_failed increments until 
+it exceeds the threshold sd->cache_nice_tries + 2. At that point, active 
+balancing is triggered. Eventually, the migration thread steps in to 
+migrate the task. That's exactly what I've observed.
 
--- 
-2.34.1
+>>
+>>   I've only seen
+>>> this happen when a noise like kworker comes in. What exactly is
+>>> causing these migrations in your case and is it actually that bad
+>>> for iperf?
+>>
+>> I think it's the nohz idle balance that pulls these 2 iperf apart. But 
+>> the root cause is that load balance doesn't permit even a slight 
+>> imbalance among LLCs.
+>>
+>> Exactly. It's easy to reproduce in those multi-LLCs NUMA system like 
+>> some AMD servers.
+>>
+>>>
+>>>>
+>>>> Our solution: Permit controlled load imbalance between LLCs on the same
+>>>> NUMA node, prioritizing communication affinity over strict balance.
+>>>>
+>>>> Impact: In a virtual machine with one socket, multiple NUMA nodes (each
+>>>> with 4 LLCs), unpatched systems suffered 3,000+ LLC migrations in 200
+>>>> seconds as tasks cycled through all four LLCs. With the patch, 
+>>>> migrations
+>>>> stabilize at ≤10 instances, largely suppressing the NUMA-local LLC
+>>>> thrashing.
+>>>
+>>> Is there any improvement in iperf numbers with these changes?
+>>>
+>> I observe a bit of improvement with this patch in my test.
+> 
+> I'll also give this series a spin on my end to see if it helps.
+> 
+Great! Let me know how it goes on your end.
+
+>>
+>>>>
+>>>> Signed-off-by: Jianyong Wu <wujianyong@hygon.cn>
+>>>> ---
+>>>>   kernel/sched/fair.c | 16 ++++++++++++++++
+>>>>   1 file changed, 16 insertions(+)
+>>>>
+>>>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+>>>> index 0fb9bf995a47..749210e6316b 100644
+>>>> --- a/kernel/sched/fair.c
+>>>> +++ b/kernel/sched/fair.c
+>>>> @@ -11203,6 +11203,22 @@ static inline void 
+>>>> calculate_imbalance(struct lb_env *env, struct sd_lb_stats *s
+>>>>           }
+>>>>   #endif
+>>>> +        /* Allow imbalance between LLCs within a single NUMA node */
+>>>> +        if (env->sd->child && env->sd->child->flags & SD_SHARE_LLC 
+>>>> && env->sd->parent
+>>>> +                && env->sd->parent->flags & SD_NUMA) {
+>>>
+>>> This does not imply multiple LLC in package. SD_SHARE_LLC is
+>>> SDF_SHARED_CHILD and will be set from SMT domain onwards. This condition
+>>> will be true on Intel with SNC enabled despite not having multiple LLC
+>>> and llc_nr will be number of cores there.
+>>>
+>>> Perhaps multiple LLCs can be detected using:
+>>>
+>>>      !((sd->child->flags ^ sd->flags) & SD_SHARE_LLC)
+> 
+> This should have been just
+> 
+>      (sd->child->flags ^ sd->flags) & SD_SHARE_LLC
+> 
+> to find the LLC boundary. Not sure why I prefixed that "!". You also
+> have to ensure sd itself is not a NUMA domain which is possible with L3
+> as NUMA option EPYC platforms and Intel with SNC.
+>
+Thanks again, I made a mistake too.
+
+Thanks
+Jianyong
+>>
+>> Great! Thanks!>
+>>>> +            int child_weight = env->sd->child->span_weight;
+>>>> +            int llc_nr = env->sd->span_weight / child_weight;
+>>>> +            int imb_nr, min;
+>>>> +
+>>>> +            if (llc_nr > 1) {
+>>>> +                /* Let the imbalance not be greater than half of 
+>>>> child_weight */
+>>>> +                min = child_weight >= 4 ? 2 : 1;
+>>>> +                imb_nr = max_t(int, min, child_weight >> 2);
+>>>
+>>> Isn't this just max_t(int, child_weight >> 2, 1)?
+>>
+>> I expect that imb_nr can be 2 when child_weight is 4, as I observe 
+>> that the cpu number of LLC starts from 4 in the multi-LLCs NUMA system.
+>> However, this may cause the LLCs a bit overload. I'm not sure if it's 
+>> a good idea.
+> 
+> My bad. I interpreted ">> 2" as "/ 2" here. Couple of brain stopped
+> working moments.
+> 
 
 
 
