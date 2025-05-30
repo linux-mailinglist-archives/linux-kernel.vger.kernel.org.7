@@ -1,134 +1,136 @@
-Return-Path: <linux-kernel+bounces-668629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-668631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D3B6AC9550
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 19:55:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F565AC9557
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 19:55:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3746316B5DC
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 17:55:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DCD6174BC3
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 17:55:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62D2A263C8C;
-	Fri, 30 May 2025 17:54:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82BEA27815E;
+	Fri, 30 May 2025 17:55:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aSWR9CKy"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="azKIMfjj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BE9F22DFA3;
-	Fri, 30 May 2025 17:54:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDF8B27703E;
+	Fri, 30 May 2025 17:55:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748627696; cv=none; b=BsbHZjcrieO9JPKyqx2Dyy1qbIJh3WEWxDs/Tnpa+t90jUat38zfKRrhhQZltlhuY3m0vb6k6z5Ftis/4kxNtg9bYW/mH7iBZTfscsOgeNleFoKcJrskZoFFXWmUQpK4k3Ca2t4YgngAK5WBLpQ1I8UNmBXw9nD+AJYbOEW2UUw=
+	t=1748627730; cv=none; b=ksgOoj+U/pdZXvV9hg9NcCLNXMHOx0Vb4FE7Trz/GkOCVqR6q7fwpKkGddxbdvi8YesUVxkYulFGVjVBcQcIf1Q1VlUSeCFdr8h2z+9erdtZJXOQR0ET8AwuF6lw8Um2dDbnRgftBXeojqH1kfu7Sm1LACnNJF6LCqmTvNx/DnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748627696; c=relaxed/simple;
-	bh=afJSsEoeyNncZPJRpEWWyUsv9XUzBnoSUUqjD9g2U5k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cxm6HDJvmmmiFZAt1PPD7gHdJK+xX+HSZUy2A2FFUpFHiB2vbAsoUOqP9Z44e6JtIPPTDoMeWQkXGuoFpN/9cxhOCmNHHKquf9ASwsLM9xK5kuFlu5KS7okxob4nyCgkvId5yOUiS9Vtt9B2Kf7CyXvRmNqb9ad+aXwHyN2UYoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aSWR9CKy; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-442f5b3c710so19114055e9.1;
-        Fri, 30 May 2025 10:54:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748627693; x=1749232493; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=kjxoToXJDlv+POyGIuKi3i3ilCXa6eLtO0vMoZzC63E=;
-        b=aSWR9CKymxQcwHwCGqXPCSDi2o3bdDb37jdiRNI/NP/Da+JHoHEBUmF8tBpsuLx4AK
-         tUCAP7xwXO88ox3tIvJ0AxMttfYWpBYMZmONI88LN8OQg1DJcvsU+L3nmUJHqytsjzDl
-         UcXQjj9s6ED32olzRnunF5mNrScHSNUGzJT7vuoj4WGGq+ThpIAkMHa24aopkmuCoZo/
-         Sx7JREeM+n6xqM2wY2dd9L8X2lhySNaXug5yc3ggLIUcGUPg1nrr+FqiOIlxhEqlUw83
-         YgKFjlgoj3i5KHfyXW544NX2wHZl7ovksEnn5wypJCCQ9nnX7zvTSlth6GvKwwPWgkVZ
-         09TQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748627693; x=1749232493;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kjxoToXJDlv+POyGIuKi3i3ilCXa6eLtO0vMoZzC63E=;
-        b=TjMA+W8OJCAzo0mBYiHCWwE9WgJLIL1pdp7wCVO2HySMRVfQ+t56OJ+8XOAJb9kHoP
-         RxH7pKOHcaheXfaGPtQINhmiY7IHtsMa507whH7pqf8aEpQFR16KigzzxUoOajQSbixl
-         hWkfNtNy8pcV9uzaqrZSlKlQvFyP+CCzYx9s/ElSxThEM7LnAZ5yjnIot8IRDL9kBWQQ
-         gr3vph94otMfoDKGQp2TJ1COO0+scO64YKDfExu4qyO3l1BLAOfauPeBeLcey++b0loR
-         aO8SDfJIyjlvYNmHG/773C11UPFAHy0l0NET11OFacmPDTSrzpziovo7jY80IB97NMee
-         RMvw==
-X-Forwarded-Encrypted: i=1; AJvYcCX3bagt4FdlN9bnqTnPHY87HJb7OAXAEUtm+JbdQZ6PmiduSDT7fGzZVx0DnfsT7R8F6eHnMzziZCRh@vger.kernel.org, AJvYcCXcbGvBqV5Q1pe2N59weXvYUxFffAEHfe7c6mDw1cX/cLJbgbABr7Y13plXuD9QR23vqm21ErxlCHTGyU5v@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxIBgNoYkG/wQfS23Y4cXWoMyDN7XeySRKuWKyv31glJupD2Xc
-	V8Af1tMmzLhNgKE/FzEGkjgmbPaBU+Y2FAj8gJBHop17gp1A1MPjVyWT
-X-Gm-Gg: ASbGnctTpH/bWlB2Ffcdb7hiTmQVd57xepHY4aYR0sV1c/rPDqzg+Qp1mEqDZ/5AmNi
-	lVNF4hc3Grhg0toGyP3f0E8Uv2U9v0Yx77fMpYIlekNOKhC/AYblGtQ+n1eAIYVLW1+D7hvsr++
-	dmh1Oe/54djVSSXcQPN1c6KMPGrhNdCNuBCrLosjbTz6yFMYbon5Wdnek9SPmazJ4ZH7Bj+v9Gx
-	CIGhE0AnA3cnGYbxgRlJQ6lX+tGVhr84uh5l4XHAHhVkD9qMZv/ECg161IGPgNKW0Mgtxnnb1nb
-	PbSilHzHBdJGxd+7tTkS/68n7dePdYVAgh14gaxcM5UFmli7ICaPljWBoECoor51dA==
-X-Google-Smtp-Source: AGHT+IEhr2N3LMQLfOqjfiyCqjiseC8V2a5mOVzLYV2OcizhkIMwXqUo0/ClUu8jbLkLM6aFx7i4Hw==
-X-Received: by 2002:a05:600c:1e1b:b0:441:b19c:96fe with SMTP id 5b1f17b1804b1-450d6537a6cmr46734105e9.10.1748627693013;
-        Fri, 30 May 2025 10:54:53 -0700 (PDT)
-Received: from localhost.localdomain ([41.79.198.22])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-450d7f8f1adsm24506375e9.7.2025.05.30.10.54.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 May 2025 10:54:52 -0700 (PDT)
-From: Khalid Ali <khaliidcaliy@gmail.com>
-X-Google-Original-From: Khalid Ali <khaliidcaliy@gmail.com
-To: rafael@kernel.org,
-	enb@kernel.org,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com
-Cc: x86@kernel.org,
-	hpa@zytor.com,
-	linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Khalid Ali <khaliidcaliy@gmail.com>
-Subject: [RESEND PATCH] x86/ACPI: invalidate all cache lines on ACPI C-state transitions
-Date: Fri, 30 May 2025 17:54:19 +0000
-Message-ID: <20250530175420.1277-1-khaliidcaliy@gmail.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1748627730; c=relaxed/simple;
+	bh=Z4p8j6JP93DU8zs/CtD8Et1EBHP1OS4LXOhdqxk3m5w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=p2GmIkz4iENUnJnOpI4DskqXVHaJ6GlLJq5PibYbTcWHaYk2GV/AHQkXWK6NwjW9F/fqlTwb28uVJydGmOHenLERG8b2zhFts5T2IfJXHre3X1JGxmdtITeWCzHb3fr6qiiceftrcHYekjyZ2/EdhTRlEdb7WtXM4uCapq7lNIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=azKIMfjj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53CE7C4AF0B;
+	Fri, 30 May 2025 17:55:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748627729;
+	bh=Z4p8j6JP93DU8zs/CtD8Et1EBHP1OS4LXOhdqxk3m5w=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=azKIMfjjN+SMq6qHg3GBtCWTha0xQuQMeX05VElokprKykfCfjO38W7qDt8nLRZjM
+	 eU+l2hW6YUkysQiQHJAWFoyk0zxKIaAKDOuI0hGLOaTrSx0Kj01VJxqIDsD3Qv2CCf
+	 jBhTaoNozRgmadqP5E8urLtMZlr76ZiwaIgpEsS4iyTYTvte4o9Zsq1PRzHT0dXx9/
+	 bh/IyjSY02c7o5oUBVMWVdV4rO5RMM7rItSoUnLKRyCKIJyejNK2oNwaLPx0MwzkWu
+	 YW5xbFxIvLWaGJZJ7qJ22aQW3eMAW2N1JGG4mA4M31+tgMDauwm3Y0uBEBX5KJlOrW
+	 tOFynIknGO2yQ==
+Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-606648c3f9eso657539eaf.3;
+        Fri, 30 May 2025 10:55:29 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXizlaSWGEPbY91yTAAFPwFGP/5IMnKJLXcf0kROetjAUrfmQE+3DNF1W67oRifefd61Ul37KZnnzM=@vger.kernel.org, AJvYcCXnZFU152Oq2leR+quI0bw3URMm09r4liGhsY/Vg3n1GavdEy3gNrEw2QW1wa4mqA3zfRxzrg8rsh/Bul8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRcTrCSFqai3TOkmzfUliIwYoFLzXwhGzEWmjnwL3X43fBFpGM
+	Vmy0QRDKhSPJR5hRKoLBvLb8nR3tnmBUVZK+hb4QZh8wG2KwRh80covmKZHgJbuAERV51tfJzzJ
+	JkS20s/LhgSRZnd1Snd+XJaH5UX9Mzh4=
+X-Google-Smtp-Source: AGHT+IFEyOOJa6iXg9lMxIVjt9GNXMhZtVhOhypEJV+km46HwPL10FvWa4XooMoBZknnFFbDVGH37lgrgOZDRil611I=
+X-Received: by 2002:a05:6820:98b:b0:60b:edbb:1f50 with SMTP id
+ 006d021491bc7-60d52d6db2fmr1810112eaf.4.1748627728646; Fri, 30 May 2025
+ 10:55:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <2006806.PYKUYFuaPT@rjwysocki.net> <20250528131759.GA39944@noisy.programming.kicks-ass.net>
+ <CAJZ5v0i=TWMjPKxGa8eT-prV=dtQo=pwys5amcj3QL9qo=EYyQ@mail.gmail.com>
+ <20250528133807.GC39944@noisy.programming.kicks-ass.net> <CAJZ5v0g2+OVdFM-bUCOynNivUc4doxH=ukt9e9Z_nKpoZh6gPA@mail.gmail.com>
+ <20250528160523.GE39944@noisy.programming.kicks-ass.net> <CAJZ5v0jzF19rToJMHhEvU6Zbt3690KWCs-B_0sPR=s9xeRiUnQ@mail.gmail.com>
+ <20250529085358.GY24938@noisy.programming.kicks-ass.net> <CAJZ5v0hw1910Gsb57POVhax1hAbEGHa7xksr_FygNd_JL-oeOA@mail.gmail.com>
+ <20250530080733.GH39944@noisy.programming.kicks-ass.net> <CAJZ5v0irHEZEbZVrd-tiaXBvxM4aD9spJg1cVRcjrDQ0_HMJAg@mail.gmail.com>
+ <CAJZ5v0iCesz+jhnxeBOV6-7LLViOnzi+JFXcsOw-dqK=81d8FA@mail.gmail.com>
+In-Reply-To: <CAJZ5v0iCesz+jhnxeBOV6-7LLViOnzi+JFXcsOw-dqK=81d8FA@mail.gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 30 May 2025 19:55:17 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0iokGEr6y38P0ic-hqa0A8VVRhxvsUz38m5douwiX+MKA@mail.gmail.com>
+X-Gm-Features: AX0GCFsQrnVODltGlciG3S922ccgXSZcHHQZIoCIDExIe5PcXuzqVG3UFmN5Xp0
+Message-ID: <CAJZ5v0iokGEr6y38P0ic-hqa0A8VVRhxvsUz38m5douwiX+MKA@mail.gmail.com>
+Subject: Re: [PATCH v1 0/2] x86/smp: Fix power regression introduced by commit 96040f7273e2
+To: Peter Zijlstra <peterz@infradead.org>, x86 Maintainers <x86@kernel.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, LKML <linux-kernel@vger.kernel.org>, 
+	Linux PM <linux-pm@vger.kernel.org>, Len Brown <lenb@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@suse.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, 
+	Artem Bityutskiy <artem.bityutskiy@linux.intel.com>, 
+	"Gautham R. Shenoy" <gautham.shenoy@amd.com>, Ingo Molnar <mingo@redhat.com>, 
+	Todd Brandt <todd.e.brandt@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Khalid Ali <khaliidcaliy@gmail.com>
+On Fri, May 30, 2025 at 6:59=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.or=
+g> wrote:
+>
+> On Fri, May 30, 2025 at 11:18=E2=80=AFAM Rafael J. Wysocki <rafael@kernel=
+.org> wrote:
+> >
+> > On Fri, May 30, 2025 at 10:07=E2=80=AFAM Peter Zijlstra <peterz@infrade=
+ad.org> wrote:
+> > >
+> > > On Thu, May 29, 2025 at 11:38:05AM +0200, Rafael J. Wysocki wrote:
+> > >
+> > > > First off, I'm not sure if all of the requisite things are ready th=
+en
+> > > > (sysfs etc.).
+> > >
+> > > Pretty much everything is already running at early_initcall(). Sysfs
+> > > certainly is.
+> > >
+> > > > We may end up doing this eventually, but it may not be straightforw=
+ard.
+> > > >
+> > > > More importantly, this is not a change for 6.15.y (y > 0).
+> > >
+> > > Seriously, have you even tried?
+> > >
+> > > AFAICT the below is all that is needed.  That boots just fine on the =
+one
+> > > randon system I tried, and seems to still work.
+> > >
+> > > And this is plenty small enough to go into 6.15.y
+> >
+> > But there is still intel_idle_init() which is device_initcall() ATM
+> > and this needs to be tested on other arches too.
+>
+> intel_idle_init() depends on ACPI which initializes via a
+> subsys_initcall() and doing that earlier would mean a major redesign.
+>
+> Pretty much same for reordering APs initialization past ACPI initializati=
+on.
+>
+> One more option is to kick the "dead" SMT siblings after the idle
+> driver initializes and let them do "play dead" again, but who'd be
+> responsible for doing that?
 
-According to ACPI spec 6.4 and 6.5, upon C-state
-transitions (specifically C2 and C3) it is required and explicitly
-mentioned to invalidate and writeback all modified cache line using
-WBINVD.
+Interestingly enough, a similar issue is there during resume from
+hibernation and that's why there is arch_resume_nosmt().
 
-However the current ACPI C-state entry using monitor/mwait instructions
-it have been used CLFLUSH by flushing the cache line associated by
-monitored address. That what all about this patch addresses,
-invalidating all cache lines instead of single cache line.
+So arguably intel_idle_init() could do something analogous to it after
+successfully registering the idle driver.  In principle, the ACPI idle
+driver could do that too on x86.
 
-Let me know if there any reason and decisions behind the current
-implementation.
-
-Signed-off-by: Khalid Ali <khaliidcaliy@gmail.com>
----
- arch/x86/kernel/acpi/cstate.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/arch/x86/kernel/acpi/cstate.c b/arch/x86/kernel/acpi/cstate.c
-index d5ac34186555..eb3d435e08ad 100644
---- a/arch/x86/kernel/acpi/cstate.c
-+++ b/arch/x86/kernel/acpi/cstate.c
-@@ -222,6 +222,9 @@ void __cpuidle acpi_processor_ffh_cstate_enter(struct acpi_processor_cx *cx)
- 	struct cstate_entry *percpu_entry;
- 
- 	percpu_entry = per_cpu_ptr(cpu_cstate_entry, cpu);
-+	/* flush and invalidate all modified cache line on C3 and C2 state entry*/
-+	if (cx->type == ACPI_STATE_C3 || cx->type == ACPI_STATE_C2)
-+		wbinvd();
- 	mwait_idle_with_hints(percpu_entry->states[cx->index].eax,
- 	                      percpu_entry->states[cx->index].ecx);
- }
--- 
-2.49.0
-
+Opinions?
 
