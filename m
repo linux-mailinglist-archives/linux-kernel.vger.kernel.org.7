@@ -1,177 +1,144 @@
-Return-Path: <linux-kernel+bounces-668781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-668783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECA3FAC96D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 22:57:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56438AC96D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 23:01:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD8934E1D0C
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 20:57:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C5927B08BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 21:00:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CFFE2820D7;
-	Fri, 30 May 2025 20:57:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6876827AC48;
+	Fri, 30 May 2025 21:01:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="Vu16c3/k"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RG6pfkL0"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1B96218E81
-	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 20:57:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2116220E32F;
+	Fri, 30 May 2025 21:01:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748638634; cv=none; b=gMNG6TdfwRw5NkhzZ63KcKv8jEuCuzrNpWaJfv4JrVbfY2AWGJDa2jHXUaH/T/EUpv3H54mrKblbAxSLzKMnT7hzaRWnPA8c2wSJpw0KKY9G0AI0lIz8d1n3dAk9q3dfV418Gzbn84IhO5oPj16tlgJa5QT7ebzIjVJNYRkBQ2o=
+	t=1748638894; cv=none; b=qTzgkDrpO/+BnPrAdqRidut66uG6Qd0z/GQWFjFgIU6km965s3htQ6SzgumIX0PuTA0xjj2mtfxM/795RPP7GZPUX3kPoyfHHPzdlrdVJsonbNuZuymzMYEYAXhTFRc67fxzq8rCasxRJcUpygJC2XLouO8gJQcyn/6WB2y1b+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748638634; c=relaxed/simple;
-	bh=7U5wQvWbXxBMolCumFWsOE/r+lyaWSRfdA7Nr4AbUVE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oo2XpXYtrMd6hH+VZM+JyNffBq4FzXjKbcHipWbscfJ90xLBHGM0EWp4juqUu+JuKq8Bvj1fpLkhXZWuo163wsnaoztcfJGQO0oohYJDxuvhIdw5c757O2K4huegt6pE14SC9puwFPELEPM1me0uz8xemQyGlWgTtw/IrdoB9Bg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=Vu16c3/k; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-442f9043f56so15030445e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 13:57:12 -0700 (PDT)
+	s=arc-20240116; t=1748638894; c=relaxed/simple;
+	bh=d4IfK2ka6jjEmZXTXqL1lPng2l65qiPmf5r7IC9XgXE=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=t8C6st8oa1rW+DMQ1M2WHR78eva0db3DbbhgVX+PmRjuole5IQ5OgaghYPPvMvdguzkrLjjmGxe3/1N1F0zfXLfR3kp/Tx/3nI28kdjDZelLNMcNGgCR46zhGuUg10Gjs8opFSbVmvwqGnAuYMcndYoLuiylDCR0BJdpwlCharQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RG6pfkL0; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3a4e742dc97so2290230f8f.0;
+        Fri, 30 May 2025 14:01:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1748638631; x=1749243431; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PjZYZIbC6S4Uuu7UtNzxv6J4SIuS9iTbb5YJqO45QR4=;
-        b=Vu16c3/kzBZhbSjA8wbvXlFCbpWa6YwlEEUCnVHiVU/MVoxQtRdqko+uc9khalArT/
-         BVK63jBu6G145I5FyRRr+01yxk0/oyY7E34jJbwQgfj94K5k0j5+oNKDnEZ7CS0fa0dm
-         J3M0wOJYXAF9ajGa8+oXxS2d9ECrJCTQYMDMS1SZYF1zpHw146chSFFN+CjdX6fodhGs
-         F5cZSGP81XhMBeetLqR9bdsYw8smydar2Z5qx2Wlek6wnjod5QforBkKkRKeeB4v5CRk
-         iVw6xALawqRrDVi/E6+D75TtFhkGSlAjg/R9W6J9Vnmlw2YEzgJUjTNfqoSnuxKs0Jn9
-         tdeQ==
+        d=gmail.com; s=20230601; t=1748638891; x=1749243691; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=rOiB56y4MoyS/CzvCmU15wdJwiiHxlOhTBulQb1MiCk=;
+        b=RG6pfkL0tzE8LQhmdPuNSpy0rAHFcZ+EXxf4SAAswFnW68Dbn9867OQGu1lAhwwPEW
+         DrEfgPI4oVkUniB/qALagP0/1/mp/sxovsbSK2K66WfxkI+b+CoHc3TRqyj38XWDMuL7
+         U7IRfgIod2xX6DIFIQDUNeozTTLrGag0AxR0NigywuuD9W1IeFmlEpH5nI4mk4eHt9cg
+         rVmA07iS0ybu1+N0k/KFmZKTUNKl8zToZetI7GVpJglc1oNhehTLrpuUa46bs0sejrMD
+         9aEYWlFSlA5hlXEcstd6WqUaGVkIG9bTobHSfAN1IndqeKrEIh0Kg0EUkhxkKZY+fbWG
+         GXGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748638631; x=1749243431;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PjZYZIbC6S4Uuu7UtNzxv6J4SIuS9iTbb5YJqO45QR4=;
-        b=wJcNJYo00AzSfqz5P5N8iq/ohRJJoDh1fXf5msu0gocvOhtcO0aTh8q4S+H4zKY35V
-         vCgOVfKAE4l4McitQtzQXA3jbyIyjwqqprI9diZGy1HOXOkWioBYm9EwqhDwrSRC3SHI
-         UrJ7lOpW7u6c2v4wBk67w+v2921zrn6BvTeZoVSqHhgtATYUoGW9XEMwAh+TSK+RdnFg
-         JSxxdp/+ruDrBh5gIXPZ1XFZP9xAo6r5xc/Nzzjon67VAswdF1dwiyNl/n/T3G3JBwOG
-         EIxvggSIDSX5JfyCN+Mtzcli9pK2uGQ+zEEo3lxbX3pobK/efh3lHgFZcajwQkuAfmZQ
-         FY9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUqoAuU7/eHwhr9CUPOyCPi4JXjLh9Ef49MGzx7fQIT0PDp5n/TeycLYtV2Ltwh8HGqEHEQxFouizQeAM0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8GeeYWze27JaqNNldPHvcCkB8EtEClpdT1pK0yXHnTUYEEmb+
-	T/CiYSfdz42L0ZzXvJW6ugaFoaXiF11zRCL529rofn2/tMTAq2HyGTUUw6b09CdUpTjL3T+fMfA
-	Mz1hj
-X-Gm-Gg: ASbGncs0jfCi1UE3CzLazpIr7oyqaFN7OhZnSt+m3W7sxjM7FABDbJPj1c2dhIU07q8
-	tn7FlaERQH0z5GAiA4fu7YdtOWGAk3WvtJoiE9gYwY0J3F1+PC+hx7ZEZqDKifttytu2k4LLdS6
-	7FAaelgghMDu7mLp1QCwSaiqVRrIhWSd8vCeCX+TE1IvfdLwE0EMtZPkkttegjMm2Rq6TR9DYKd
-	qoXGHaY7MCzhELklNU63EhD3vXg+gWYb8ODIgJrJsuiVpOEs1SxqsIgyRZ8M8ajxW7f/xtwdP1B
-	LYq8kFvVup7BVu2Ioaedr1m1onmyqUzq6xKvcbVNEfNWrzfmvPOEJ3dalBZy+ZyyoQlCLskgCo9
-	gnVBxGzautUOttJR1FdGWgHsA7dAKb2EG
-X-Google-Smtp-Source: AGHT+IFFDiOg0ELjNJBx/TmG4aDGrLUMzGWJBFq4CzZb3gUeDCQ/BIo5wyF05rQAokGbHbkjDRQWAg==
-X-Received: by 2002:a05:6000:2c0d:b0:3a4:d994:be7d with SMTP id ffacd0b85a97d-3a4f7a5d340mr3529790f8f.23.1748638630978;
-        Fri, 30 May 2025 13:57:10 -0700 (PDT)
-Received: from carbon-x1.. (amontpellier-552-1-200-51.w109-210.abo.wanadoo.fr. [109.210.255.51])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4efe5b79asm5666527f8f.2.2025.05.30.13.57.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 May 2025 13:57:10 -0700 (PDT)
-From: =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <cleger@rivosinc.com>
-To: linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <cleger@rivosinc.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>
-Subject: [PATCH 2/2] riscv: uaccess: do not do misaligned accesses in get/put_user()
-Date: Fri, 30 May 2025 22:56:58 +0200
-Message-ID: <20250530205658.624195-3-cleger@rivosinc.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250530205658.624195-1-cleger@rivosinc.com>
-References: <20250530205658.624195-1-cleger@rivosinc.com>
+        d=1e100.net; s=20230601; t=1748638891; x=1749243691;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rOiB56y4MoyS/CzvCmU15wdJwiiHxlOhTBulQb1MiCk=;
+        b=as+BZwRY+vvyueOOQWGYo8zp54ZH3iOgyYivw13B0/ebTLvf+TOg47DjCdpkTFs/0k
+         w7jFNGICscQRzhzIS2zxwwfUFzepcF4ZgUuFwb248GWoArjeS/5aLGHVTc52wHSiGq81
+         wDlKwyrkjuyoYC16k9icdXJFXxhCVwjuFoLpjf0IpjtmCsev1QCiUFaCZZHIZiK+08DV
+         EjvNpcmVaZlS7D8J7gUrUlMI6BItOkRbShVUvCbqrVfd8BBabdPgwE6T8irTdXq+Bkh+
+         Bfj8obh5aqryePiiQ2Ab8GfapkYMor0PVooVVeEBtCahKX/YJitRCpuC0JH+VE1hFCcm
+         YA6w==
+X-Forwarded-Encrypted: i=1; AJvYcCUa6ik4/pkiuiCP6LsN3tAUdWsTzhIjcZKEXfV6ZjkgXYtiBTrCRyutuyvdwk9R0omTN2NNtxetjosQZs0Y2yQ=@vger.kernel.org, AJvYcCWDWK3a/HBCwwBpsnrX/vKdp0UIpgX/JBCoOB1DeYdJMV8KaFxO9akSsMr1a/AYVu4r/DynUe5iDGmCWYs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywa2YxuRo0VdqCM/eKwRm5TqLnp492vinCPxnesdN2D9o717nC7
+	5eXdUwrGQPNRYsNl5xHB22OkWODZLrBzOGesSexKVUr4zmfMGGmEx0iE
+X-Gm-Gg: ASbGncsGxqpCYc5JAy4EQtda6WS8uDoACBuyREfIMEjVeLmThY+kLvB56vxioon3pMh
+	TCiYkFshldJHpOpBqhIaXLw8BorYBbKfKUDTLaSBtts3s1paGCulNYP139VYh2DPOJs3Qeytlh+
+	K5W0PGITxr/5G9Q8/lA6LtQAqmMS4PtnwXaejezVVedmAjdd4z+LsrON8ZSpTMK7NietkZOA84w
+	/N7GKXSYpJ0FjIt9ycamBTSju6StNAXlpNc7w7LNtAC/hbvlLS+luAF5VG4kzpeNLesvI7UzEuX
+	M1vd0h/RAkufxoSSbFiXjcEHMmRPlW5Wa3JzsxAj7x37NBROCe4tfDHuDnofQ1Db
+X-Google-Smtp-Source: AGHT+IELYtMr8G86T/WDXfoL8a0eG5NyCgP5oG+4rgfVuvLxB0Ejdrd4sfjXgfEArS/dX/IBihHZVA==
+X-Received: by 2002:a05:6000:2890:b0:3a4:eb43:6003 with SMTP id ffacd0b85a97d-3a4f79e9846mr3851759f8f.29.1748638891290;
+        Fri, 30 May 2025 14:01:31 -0700 (PDT)
+Received: from ?IPV6:2001:871:22a:cd68::171c? ([2001:871:22a:cd68::171c])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4f00a13fasm5797576f8f.98.2025.05.30.14.01.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 30 May 2025 14:01:31 -0700 (PDT)
+Message-ID: <013f62b1-c015-4382-89ba-2104892a2b96@gmail.com>
+Date: Fri, 30 May 2025 23:01:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/3] rust: add UnsafePinned type
+From: Christian Schrefl <chrisi.schrefl@gmail.com>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Sky <sky@sky9.dev>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>,
+ =?UTF-8?Q?Gerald_Wisb=C3=B6ck?= <gerald.wisboeck@feather.ink>,
+ Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+ linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+ llvm@lists.linux.dev
+References: <20250511-rust_unsafe_pinned-v4-0-a86c32e47e3d@gmail.com>
+ <20250511-rust_unsafe_pinned-v4-1-a86c32e47e3d@gmail.com>
+ <CANiq72n0EcibX3Vx95tiPEkd04DA4hjY-TJQs9YSOmHj=VZ_5g@mail.gmail.com>
+ <0dfe6958-1dc8-4e36-aab8-e83a6da4d0e0@gmail.com>
+Content-Language: en-US, de-DE
+In-Reply-To: <0dfe6958-1dc8-4e36-aab8-e83a6da4d0e0@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Doing misaligned access to userspace memory would make a trap on
-platform where it is emulated. Latest fixes removed the kernel
-capability to do unaligned accesses to userspace memory safely since
-interrupts are kept disabled at all time during that. Thus doing so
-would crash the kernel.
+On 30.05.25 10:22 PM, Christian Schrefl wrote:
+> On 20.05.25 11:26 PM, Miguel Ojeda wrote:
+>> On Sun, May 11, 2025 at 8:21 PM Christian Schrefl
+>> <chrisi.schrefl@gmail.com> wrote:
+>>>
+>>> Signed-off-by: Sky <sky@sky9.dev>
+>>
+>> Apologies for not noticing this earlier...
+>>
+>> Since this is a Signed-off-by, the DCO applies, and it requires that
+>> the name is a "known identity":
+>>
+>>     https://docs.kernel.org/process/submitting-patches.html#developer-s-certificate-of-origin-1-1
+>>
+>> Sky: is that name one you use to sign paperwork etc.? If so, that is
+>> fine (and apologies in that case!) -- please let me know. If not,
+>> please feel free to ping me in private if needed.
+> 
+> Since it seems like Sky has not responded for 10 days
+> is should be fine to just drop their COB & SOB.
+> 
+> I only offered to add it since the upstream implementation
+> that this is based on was entirely done by them.
+> 
+> If you want to wait for some more time that's fine as well.
 
-Such behavior was detected with GET_UNALIGN_CTL() that was doing
-a put_user() with an unsigned long* address that should have been an
-unsigned int*. Reenabling kernel misaligned access emulation is a bit
-risky and it would also degrade performances. Rather than doing that,
-we will try to avoid any misaligned accessed by using copy_from/to_user()
-which does not do any misaligned accesses. This can be done only for
-!CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS and thus allows to only generate
-a bit more code for this config.
+It might also make sense to wait for this PR [0]
+and use the new code as the basis for the kernel
+implementation, since that will change `UnsafePinned`
+to include `UnsafeCell` semantics.
 
-Signed-off-by: Clément Léger <cleger@rivosinc.com>
----
- arch/riscv/include/asm/uaccess.h | 28 ++++++++++++++++++++++------
- 1 file changed, 22 insertions(+), 6 deletions(-)
+[0]: https://github.com/rust-lang/rust/pull/140638
 
-diff --git a/arch/riscv/include/asm/uaccess.h b/arch/riscv/include/asm/uaccess.h
-index 046de7ced09c..b542c05f394f 100644
---- a/arch/riscv/include/asm/uaccess.h
-+++ b/arch/riscv/include/asm/uaccess.h
-@@ -169,8 +169,21 @@ do {								\
- 
- #endif /* CONFIG_64BIT */
- 
-+unsigned long __must_check __asm_copy_to_user(void __user *to,
-+	const void *from, unsigned long n);
-+unsigned long __must_check __asm_copy_from_user(void *to,
-+	const void __user *from, unsigned long n);
-+
- #define __get_user_nocheck(x, __gu_ptr, label)			\
- do {								\
-+	if (!IS_ENABLED(CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS)) {			\
-+		if (!IS_ALIGNED((uintptr_t)__gu_ptr, sizeof(*__gu_ptr))) {		\
-+			if (__asm_copy_from_user(&(x), __gu_ptr, sizeof(*__gu_ptr)))	\
-+				goto label;			\
-+			else					\
-+				break;				\
-+		}						\
-+	}							\
- 	switch (sizeof(*__gu_ptr)) {				\
- 	case 1:							\
- 		__get_user_asm("lb", (x), __gu_ptr, label);	\
-@@ -297,6 +310,15 @@ do {								\
- 
- #define __put_user_nocheck(x, __gu_ptr, label)			\
- do {								\
-+	if (!IS_ENABLED(CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS)) {			\
-+		if (!IS_ALIGNED((uintptr_t)__gu_ptr, sizeof(*__gu_ptr))) {		\
-+			unsigned long val = (unsigned long)(x);				\
-+			if (__asm_copy_to_user(__gu_ptr, &(val), sizeof(*__gu_ptr)))	\
-+				goto label;			\
-+			else					\
-+				break;				\
-+		}						\
-+	}							\
- 	switch (sizeof(*__gu_ptr)) {				\
- 	case 1:							\
- 		__put_user_asm("sb", (x), __gu_ptr, label);	\
-@@ -385,12 +407,6 @@ err_label:							\
- 		-EFAULT;					\
- })
- 
--
--unsigned long __must_check __asm_copy_to_user(void __user *to,
--	const void *from, unsigned long n);
--unsigned long __must_check __asm_copy_from_user(void *to,
--	const void __user *from, unsigned long n);
--
- static inline unsigned long
- raw_copy_from_user(void *to, const void __user *from, unsigned long n)
- {
--- 
-2.49.0
+> 
+> Cheers
+> Christian
 
 
