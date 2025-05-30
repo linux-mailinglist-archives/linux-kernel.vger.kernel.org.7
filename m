@@ -1,95 +1,104 @@
-Return-Path: <linux-kernel+bounces-668432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-668437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7833AC92CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 17:56:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA7ECAC92DA
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 17:59:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 107393B84EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 15:56:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65FCC1C20EC7
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 15:58:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40FC1235345;
-	Fri, 30 May 2025 15:56:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CbncBUVI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D108423816B;
+	Fri, 30 May 2025 15:56:33 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95739198845;
-	Fri, 30 May 2025 15:56:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9412F2376FC;
+	Fri, 30 May 2025 15:56:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748620582; cv=none; b=R9Vy+idWnEeUUNJusqrMvwp9n8citY3E5ZCG5G7PuLEOuL+2GPeQLoFCCbyH2d2vBk0x2OXOswCQXNfZnXzgMXCAnCd7v9hTL7MINe4upRCJCbuyxq6AcjvA4vg1Rdn/YAx5eioKVo2Od6hVt8EaWog5DDR3o0sg6SWzl14LImI=
+	t=1748620593; cv=none; b=NmWycz+ZC5SwgXsJU9I6jh/oXC02/P/RqGcf3vQUOqQPtxur9vqKJQ6SVc9Vebppm4MNY3ltNTdwI5EUiJSZwA3j36srZmkxjWptKeIeb2jMgYD3SPuogaKXrMo2GUo3ji/27hP8AYqYAdMWiRzOLyn5qHaFcKG0MtU9dsu9C7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748620582; c=relaxed/simple;
-	bh=46qdYaXfdnGmUSTdfd10vh5+aJpfEeugxFSJgWUzVd8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kbo6Id49WgbH32/ytkGYyyaPb6ONP2bwbg4RGUZinEvEa15ZVS1dZh1sAcN5qVHTW05kCHnDidYthhjdIiO3HcuUAxIboKIPY+WeXMYrHeXv2xqK5qO+mFTpss3KbyVfHFPKGtBqgSMsOPmtQB7pQdzoG48rWmuu32PyvCrXDIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CbncBUVI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 971A3C4CEE9;
-	Fri, 30 May 2025 15:56:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748620582;
-	bh=46qdYaXfdnGmUSTdfd10vh5+aJpfEeugxFSJgWUzVd8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CbncBUVIpau3pBBVFWQnDrbREUKTE439bV41vy0htEqozNxpULTPxV2jFxopej/oZ
-	 ySDmIQJyJU7Lxt6zMBdX6IkVvNp6dAtd0P/hHEVBUqY6Y13/lzhSYZfP50Jv1rbkp9
-	 nihx0L3eSB0tTyCVOetyo1h8pxBQIhn4qlrrhmZswAFze7YEyiifV7vSBLotECA2Hv
-	 bpxLX3EGMyxiXO+rGWRC0HRYCdiElCmhslyXShB42gzlh7eQJyPSpDfTbT9e9FZL42
-	 PrQWSiBJFPoY5bddiAKhmikS5daaeY07Cz+lXNBChr6JEI7df+RnF/fLGTDuO//Dpm
-	 whV8V0S7o0/4w==
-Date: Fri, 30 May 2025 16:56:18 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"open list:CLOCKSOURCE, CLOCKEVENT DRIVERS" <linux-kernel@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	imx@lists.linux.dev
-Subject: Re: [PATCH v2 1/1] dt-bindings: timer: Add fsl,timrot.yaml
-Message-ID: <20250530-underdone-sitcom-3aee9f1ec277@spud>
-References: <20250528165351.691848-1-Frank.Li@nxp.com>
+	s=arc-20240116; t=1748620593; c=relaxed/simple;
+	bh=dFLpiaFzHIro19SRZcWr8KYtMI29DNjKuWrfQFD8bzk=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=O6cDrB/43oWEZx5zRWFzISb/55U5D6m3LFCxxFGNOl6Q+u/6qHGXbvRZzWBkhFiw7TXLw+BuIvQNLc9Y0GHyriIphWXp94KoegAxk/ASlA5wJSdnSmiYOWZf6a75zfXmw796YYBGAcIaX3gz0P6slOP60I4c8yhfamX6NPWHeSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4b87Bt0QJcz6GFWg;
+	Fri, 30 May 2025 23:56:22 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id CDFA114027A;
+	Fri, 30 May 2025 23:56:27 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 30 May
+ 2025 17:56:27 +0200
+Date: Fri, 30 May 2025 16:56:25 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Angelo Dureghello <adureghello@baylibre.com>
+CC: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
+	<Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, "David
+ Lechner" <dlechner@baylibre.com>, Nuno =?ISO-8859-1?Q?S=E1?=
+	<nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+	<linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 2/2] iio: adc: ad7606: add enabling of optional
+ Vrefin voltage
+Message-ID: <20250530165625.000028da@huawei.com>
+In-Reply-To: <20250530-wip-bl-ad7606-reference-voltages-v2-2-d5e1ad7e6f14@baylibre.com>
+References: <20250530-wip-bl-ad7606-reference-voltages-v2-0-d5e1ad7e6f14@baylibre.com>
+	<20250530-wip-bl-ad7606-reference-voltages-v2-2-d5e1ad7e6f14@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="STlooZGqUue+sWwC"
-Content-Disposition: inline
-In-Reply-To: <20250528165351.691848-1-Frank.Li@nxp.com>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500001.china.huawei.com (7.191.163.213) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
+On Fri, 30 May 2025 16:27:57 +0200
+Angelo Dureghello <adureghello@baylibre.com> wrote:
 
---STlooZGqUue+sWwC
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> From: Angelo Dureghello <adureghello@baylibre.com>
+> 
+> Add optional refin voltage enabling. The property "refin-supply" is
+> already available and optional in the current fdt dt_schema.
 
-On Wed, May 28, 2025 at 12:53:50PM -0400, Frank Li wrote:
-> Add fsl,timrot.yaml for i.MX23/i.MX28 timer.
->=20
-> Also add a generic fallback compatible string "fsl,timrot" for legacy
-> devices, which have existed for over 15 years.
->=20
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+Good to call out either as a comment and/or in the patch description
+that we don't need to do anything 'different' dependent on whether
+this exists or not because it is coupled with an external pin that
+should be tied low to use this supply.
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> 
+> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+> ---
+>  drivers/iio/adc/ad7606.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/drivers/iio/adc/ad7606.c b/drivers/iio/adc/ad7606.c
+> index 3bbe9c05b5edbc11e8016c995c6ab64104836e7b..4fd9638eb6e56f800c7c97425e45e04f269e3df7 100644
+> --- a/drivers/iio/adc/ad7606.c
+> +++ b/drivers/iio/adc/ad7606.c
+> @@ -1335,6 +1335,11 @@ int ad7606_probe(struct device *dev, int irq, void __iomem *base_address,
+>  		return dev_err_probe(dev, ret,
+>  				     "Failed to enable Vdrive supply\n");
+>  
+> +	ret = devm_regulator_get_enable_optional(dev, "refin");
+> +	if (ret && ret != -ENODEV)
+> +		return dev_err_probe(dev, ret,
+> +				     "failed to enable REFIN voltage\n");
+> +
+>  	st->chip_info = chip_info;
+>  
+>  	if (st->chip_info->oversampling_num) {
+> 
 
---STlooZGqUue+sWwC
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaDnVIgAKCRB4tDGHoIJi
-0njhAP9bp9G1YnaQ2XCar8NXVTIs/sRffXHGqqJ7IVPO3IcdQAEA4jWLWiYdaYfP
-fcP0ItXIC2Gh1MVhID81vUevEuvC7wI=
-=fFke
------END PGP SIGNATURE-----
-
---STlooZGqUue+sWwC--
 
