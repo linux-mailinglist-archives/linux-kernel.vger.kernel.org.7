@@ -1,175 +1,236 @@
-Return-Path: <linux-kernel+bounces-668857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-668859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F7F4AC97F4
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 May 2025 01:04:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 851E7AC97FB
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 May 2025 01:06:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6D294E5246
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 23:04:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45B1C4E57CF
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 23:06:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61E4328C5CC;
-	Fri, 30 May 2025 23:04:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A938228C867;
+	Fri, 30 May 2025 23:06:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="V0BnDPAQ"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="EFaELeMD"
+Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A65828C030
-	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 23:04:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34055219313
+	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 23:06:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748646270; cv=none; b=uv408LxCJU90ZTmAAZEQy4jNLz1lRlHUaiOyOfcd9MCxRbuYLbfiX4DC1e/6CMIocEs5Odew8Ci2U9KwJoK2ZdiKO0ZKTZExJMAJzpHfIMdYArPpwyFcfeGGwz39d/N6XJSHUuT+bPQAHcp22O22oMsp5EB9xjKxiZqICCL9sPU=
+	t=1748646366; cv=none; b=tSAF7907dgJgT+7ltBQvxHDMtikk7ChwyflteGXHFlESdOoyir6M7opyjotO0L/LCsU/g9rdyJXTqpXCg5dvcWz5f0cWbGDVcJJ7AR3IXa/NXyv++ACSwm00DEitr9iGPXssi6kTPNy1ia1QCd/vLaVuuzlqCKpreIlKmNGkbIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748646270; c=relaxed/simple;
-	bh=byiZoh49SLANJUmSAfCqkOwCaNc9lAE28TTBexKKF/c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uLt7N52gyVPzQ2CJrrOklCt3OFqMq4E4RHEM+/xlrL3P4DZGRH3MmMCmVFbgt0edUudO+YEaQ8MeO90Fh/JDT0fIuqF2NwqcgxinesBEnHW4/jAoAoIfTD+5KQI7z2+ltvjPPHEiqHHMw6XbK+kSbUElYozvfi8+YnpF0nOIMPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=V0BnDPAQ; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54UL4W7V031835
-	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 23:04:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	dkCBS/+sevFscPkQYrCdD9qA2ujLMqx9Mjn5PoGA0mk=; b=V0BnDPAQ1cZA5vMx
-	wrO+uwAWz8KFlXnstE/uufBrXfFTgi9pMy5ti7STYQH8q8NfAlgSoJywzRQ6RcaA
-	6L4TJWa4Uz403dM51XNkHzP/9ei2iIwgXqq+mOW85fAgEex2hgHJ8sNILvHTUBtx
-	QMmPQvrIfUhawDrBFMPX2VL8X4HSZYJ6jM24pYyOVnxGGOnTewosFWMUTitVV0hm
-	KmSkZ/UPg4Xm8SkaQ6cc3gS7/f80g+dpbgrj3rRQ2grar1cbok/T3eBRMT7e4Nov
-	M6dcZIyQItB+TI3kB95iWFi5BpBHlRQOo4mvsDGr9r4aZtKEZ+qjdWdfclyqhQkp
-	lNnSrA==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46u6vk2q2b-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 23:04:28 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-47ae9ed8511so5046021cf.3
-        for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 16:04:28 -0700 (PDT)
+	s=arc-20240116; t=1748646366; c=relaxed/simple;
+	bh=u0HID6qYCpqSqHWioEM+G4moZPLWcoMb4wYUJNV4vEU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=NFT/SYbmff7hsw9X/z2yFUU7XeOgGbDt3Kj7IRVbjL/9Zb7AIw1g6tEW/KJuye7LOPi/ea3HNR6n1DNxMAUZe2v/CrNjfR069F8bw5JXMDY4ihrtJI/HGCV58krbYaTIDioGoAqIbMuDq7fWsnSijuton0ppGdP6Q0Z3u7xA7tM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=EFaELeMD; arc=none smtp.client-ip=209.85.160.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-2c76a1b574cso775575fac.2
+        for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 16:06:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1748646362; x=1749251162; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lu3lG7YwnE3Dy5Hk9HzoUTq4JNREs+Ad6+efkztPKBw=;
+        b=EFaELeMDCRNQUCiBgwX3C+ilQV4QG2hYciIfg6staWVJqh7GohQG5Rd207leHol1SN
+         3qr+9RhO8tURZy1eaLZWWgvWpy6Hf/juFceY/ZmkNt5ywp9w0kSMTag6YzNT4bN5S323
+         DscqfokGo6LSCBPsWo/zyqCPQu3HxHBCujK4zYN0GgKn2nYD85C490ttE0yOaWfmj0bT
+         dyYLAvecsrUtIH9TFxFT0WUnzR3CglN7/o37P0vqivBeJutdhIVqMSzimb2VXoXOjisU
+         Dp/YCYI8X4yIeWD8a0ewdOMMyk23++vco2GyTUJDC/u1MT+rk7mn92sGd3TbwQ26QG9R
+         EQbw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748646267; x=1749251067;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dkCBS/+sevFscPkQYrCdD9qA2ujLMqx9Mjn5PoGA0mk=;
-        b=M23ygCTg/XWdEmEqdo2wFYl0jQGe9DncHQrhlMl3cdvPBwjQ0lb+RGsX1BTiZCDF7T
-         Ghw5Wqwm6kTRULdvSfKPURjVeNK8Yu2MFM1YT7FBL4npvIPHPfZnJQZvgG3hyxkuStU9
-         bCtbsEE8a3MWeCMw8D1BwuZjROV92w9Oj14TbXl3wTc1h/0mrJI57T9mzhGYQgcg2K/h
-         Kwb/YHs35DZ8Zjmth4uTN+ROI2f2ff0uW9NtGrJH3rMqYgQEKk5u0lpIBcr48rl36sWk
-         FQVRmMyipVowSnxQSwxeNurUw27Au4t21FdK2FuPQL1QU1oJm6S/uUbRKnQQrHDqxhmR
-         R1pg==
-X-Forwarded-Encrypted: i=1; AJvYcCUg+Z/4PepHW6b47VN+al6V8NyY3DiG61xUomyWAl/3eEqzGDpnM0Re/bKpET1UJJQvObbyST4f1JK/zgM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxkNFypfKwivCKYh7eImxTBWquVzJOxp2DIunzIcwOKxQlqPbT
-	NhJlu6yfudzLKJgUu/HK4WOU30DPNkqymgvlj7jVC+JkvDBPbC3kxFfyaKXtxESUgxveCHh1Eql
-	4IomwetahPkAybf9AB82og9aSjx4apBwKbTDNuF3TiFnkWikTOnOAi6Xr5avrS1gWEbA=
-X-Gm-Gg: ASbGncsnnWKeXDWHV7uGgTMgPBqpc5RV3nMRmg6/Mk7tz3EQjun2lXrcCDc/9MxAp/O
-	iJThXVt1luQRY3g8ZW/5ftpppVKFPslVSNf1iiL0/jJFJmoU3JSKRg3liGbY6xx0oI7AoR/if+/
-	I3Kxe3qQz2EElfPNlk+0HFh/VhCaxp0O6a69HGnt0THV00fhj14pGfTsrgJW8Fsi1CGycDCIirI
-	uZkLgOKNIsfdKbKeu7qiB9XwN0ElbFIf6rZcnu+nbunU2Qw5dhuBNBDq9gLRf0pOnfewphkqU/q
-	PNiR/sEr7pedgxiZ0k+7yJm1oNUOjPtJtK7hEJJS9rMq+bkQMM4ZY1j4i/Ue/O4xew==
-X-Received: by 2002:ac8:5786:0:b0:4a4:3cad:6378 with SMTP id d75a77b69052e-4a442fd5b4dmr24294051cf.4.1748646266910;
-        Fri, 30 May 2025 16:04:26 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEwEI1tzi2R7YfDu7oYyeYqxX/g+u3B+J1JeZ+9bSeOHb3HGbzLToYdbggmXX+xwNflLNapVg==
-X-Received: by 2002:ac8:5786:0:b0:4a4:3cad:6378 with SMTP id d75a77b69052e-4a442fd5b4dmr24293841cf.4.1748646266428;
-        Fri, 30 May 2025 16:04:26 -0700 (PDT)
-Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ada5d7ff075sm399104366b.37.2025.05.30.16.04.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 30 May 2025 16:04:25 -0700 (PDT)
-Message-ID: <ee3caba9-deff-462e-8117-f375882aaccf@oss.qualcomm.com>
-Date: Sat, 31 May 2025 01:04:23 +0200
+        d=1e100.net; s=20230601; t=1748646362; x=1749251162;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lu3lG7YwnE3Dy5Hk9HzoUTq4JNREs+Ad6+efkztPKBw=;
+        b=NVKpU2l80h/hqhLdmpZu1hm1eNTsS+AHfzzrI8Obd6dCflW+eVJ+kN399yDzQZ4sVp
+         fiiMJv00Woo5Z2wXRo1F2WjcCjXOy5d0mK40dQQl1wzgWXJd6g6ZCkTf6YbHOWYU+kzX
+         7LTXjhqXVlIxDqEVwkNEYshkq9JWkEMkm+HaCL+6/lLzxTERfQ2UfWhZsEqfwUQ+tpZ8
+         +UphCliPzFG7wWMYxna6n/3p9e5EY3nsCeaRECpmE+m1rLAvW8HUsewH9+0DovdgXBMW
+         a4g7njMhsySEb8P9Nwtp3qDk/xsboSKBerApX3sEJApvxZk0B7QBvttMFa4Adz5WXPht
+         ozHw==
+X-Forwarded-Encrypted: i=1; AJvYcCUXP6jipUVIy+7A6p5lbin2DK4z2rCV9Rbcrb7JClVa5+kYGcaIFi2Dy9P6V5YdBlyo4VJ4iIzuWiZrGfo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQztyIqNBru3+uHVF2ixMfy66lPlq3oU6ehnYk8JbPQzy9qzFY
+	EXZqsNg/3JiO8yfnXaeV9nrwxziZHXdyol+iQWP1CUD2i0NvfbnkCzcAKgzjezmGfHc=
+X-Gm-Gg: ASbGncuV4+rPbVdCoM44W3xuPQWchvxW+O+0CbmhnjZWL/VbQLlkd1YM69hRSPQNRuS
+	pVFEb02TQqDWyQmNnNZNgyOWo8uO2oRhmR/sLjBZoNDeYbX+nJowHqkKI1Ka70g3ESQ+CQwE6/0
+	gFRq3BIZoFKAb8yxfwvdPYppZXG7ve92MJRJc+MkiquVslTtSdQw6FWS5WgVQLswrRVvbf8OGwd
+	+tGIIdKUuKwK69N6Ni5kADtzzqogh2YlcWzzEpXL2YyWXrmEtTXth3fph9sSWSzYL5GWyQMTy1S
+	+SLF41BktsRIJwuD6sBoB9lntmfv4A26Dfq+MiFVut7ifhEFDjNM7sD1xA==
+X-Google-Smtp-Source: AGHT+IGIfCYtq5fK/ESbkdB6n1mCNo1Fi5i3xpYNU/514FpGxlSOur50JOAQ5a1k03Rg97LdT5qmVg==
+X-Received: by 2002:a05:6870:6129:b0:2c2:27c8:5865 with SMTP id 586e51a60fabf-2e92a1704dbmr2163763fac.9.1748646362032;
+        Fri, 30 May 2025 16:06:02 -0700 (PDT)
+Received: from [127.0.1.1] ([2600:8803:e7e4:1d00:4b52:4054:714f:5bf2])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2e906c13c13sm844388fac.45.2025.05.30.16.05.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 May 2025 16:06:00 -0700 (PDT)
+From: David Lechner <dlechner@baylibre.com>
+Date: Fri, 30 May 2025 18:05:42 -0500
+Subject: [PATCH] dt-bindings: display: convert sitronix,st7586 to YAML
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/5] clk: qcom: gcc-ipq5018: fix GE PHY reset
-To: george.moussalem@outlook.com, Andrew Lunn <andrew@lunn.ch>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Russell King
- <linux@armlinux.org.uk>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org
-References: <20250528-ipq5018-ge-phy-v2-0-dd063674c71c@outlook.com>
- <20250528-ipq5018-ge-phy-v2-1-dd063674c71c@outlook.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250528-ipq5018-ge-phy-v2-1-dd063674c71c@outlook.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=UOXdHDfy c=1 sm=1 tr=0 ts=683a397c cx=c_pps
- a=JbAStetqSzwMeJznSMzCyw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=qC_FGOx9AAAA:8 a=UqCG9HQmAAAA:8
- a=EUspDBNiAAAA:8 a=rZqdB0JiAKPJAkIg25gA:9 a=QEXdDO2ut3YA:10
- a=uxP6HrT_eTzRwkO_Te1X:22 a=fsdK_YakeE02zTmptMdW:22
-X-Proofpoint-ORIG-GUID: xyJeXjqkWkM8QZQ4NPL-nmYTnk5Lwbi1
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTMwMDIwNyBTYWx0ZWRfX5ltwrvF+kqsQ
- lpPp5bmSb0B3VuiqIW9mUdG1kSQgB4tPhFqSBalOEObhCPYpZNtwBBxbbOaCHYmVcBVFAhxUubt
- xfeYnQmU8VgMYnZkUoEd/ZDeqO6mw3YoYfkSPXb6UQsDaXowXmaHb/ZuXkahRDlx8jDN/on1rx5
- 2RK0woWImuCSzEQA3g4+zrp/CRnuMRrxjJ9COYSWQGOSCKRVugUPO2OflSWerg61gcfUwIOMBrp
- MFK3Aa6jtsmZR4e9MFDxQGfaBUfgpYxOOvgs5oyfJdHIpG+5PE+Xw6d5kyAW3w9k+UFEgQM855q
- SUo9TQULRaavkoQx/OD7MHuCmo3u4BrGi2CZwyErOx+oFHPP6TioVCBG5hGIeIkCZd3I8H5NL/n
- SULLKBAWQYHp03eUQdIzIQ8LUsAWYelVDXAg2MSqoVY2P6SmSUa4MfqRMmJNGGtCY6v07rz/
-X-Proofpoint-GUID: xyJeXjqkWkM8QZQ4NPL-nmYTnk5Lwbi1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-30_10,2025-05-30_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 phishscore=0 mlxscore=0 adultscore=0 priorityscore=1501
- mlxlogscore=999 bulkscore=0 malwarescore=0 impostorscore=0 spamscore=0
- suspectscore=0 lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505160000 definitions=main-2505300207
+Message-Id: <20250530-devicetree-convert-sitronix-st7586-to-yaml-v1-1-c132b512ec57@baylibre.com>
+X-B4-Tracking: v=1; b=H4sIAMY5OmgC/x2N0QrCMAwAf2Xk2UDt6Bz+ivjQtakGtJUkjMnYv
+ 1t8PDjudlASJoXrsIPQysqtdjifBkjPWB+EnDuDdz64MDrMXUpkQoSp1ZXEUNmkVd5Q7RLmCa3
+ hN75fmJeQZ79MYykRevAjVHj7z2734/gBmil6kHwAAAA=
+X-Change-ID: 20250530-devicetree-convert-sitronix-st7586-to-yaml-db5d82b63ffa
+To: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, David Lechner <david@lechnology.com>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, David Lechner <dlechner@baylibre.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4106; i=dlechner@baylibre.com;
+ h=from:subject:message-id; bh=u0HID6qYCpqSqHWioEM+G4moZPLWcoMb4wYUJNV4vEU=;
+ b=owEBbQGS/pANAwAKAcLMIAH/AY/AAcsmYgBoOjnPJNOumLdu2oWPK7+HGRz/nw/m4yuJZvoPh
+ zz8WLXIIZOJATMEAAEKAB0WIQTsGNmeYg6D1pzYaJjCzCAB/wGPwAUCaDo5zwAKCRDCzCAB/wGP
+ wIMFB/4xRAdGwwnFCldEWPft/VX5czF06rng9hS/bcgAKoX/DX4N0uECuHJFnaBzDgRWSokoswA
+ 9mZQNFSqDC+M0UDwrrEZP8HMFfzyhMKW2YRgjH3keUhJo+wbq0eRmDMtWZtxQ/S9PUFXpsvRkZk
+ zgBRtdUrKYGg/GLFSaZ/B7p00+Z16XTFvOs70WcJB+ryF894IzjYuUM2EsLy9bJeIjpnQrXVNvJ
+ VblpcsXHDKCVGGaeOaF5fhQYUQ7WMdQ3Ks7BG5z1rlbV9swht7F4/d50h+P+7/EoDHbeaLZAapE
+ AkYwIUOpaGrWneqUcMbON8nRpK8t6zGm0ifgFY66EKB85r5+
+X-Developer-Key: i=dlechner@baylibre.com; a=openpgp;
+ fpr=8A73D82A6A1F509907F373881F8AF88C82F77C03
 
-On 5/28/25 4:45 PM, George Moussalem via B4 Relay wrote:
-> From: George Moussalem <george.moussalem@outlook.com>
-> 
-> The MISC reset is supposed to trigger a resets across the MDC, DSP, and
-> RX & TX clocks of the IPQ5018 internal GE PHY. So let's set the bitmask
-> of the reset definition accordingly in the GCC as per the downstream
-> driver.
-> 
-> Link: https://git.codelinaro.org/clo/qsdk/oss/kernel/linux-ipq-5.4/-/commit/00743c3e82fa87cba4460e7a2ba32f473a9ce932
-> 
-> Signed-off-by: George Moussalem <george.moussalem@outlook.com>
-> ---
->  drivers/clk/qcom/gcc-ipq5018.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/qcom/gcc-ipq5018.c b/drivers/clk/qcom/gcc-ipq5018.c
-> index 70f5dcb96700f55da1fb19fc893d22350a7e63bf..02d6f08f389f24eccc961b9a4271288c6b635bbc 100644
-> --- a/drivers/clk/qcom/gcc-ipq5018.c
-> +++ b/drivers/clk/qcom/gcc-ipq5018.c
-> @@ -3660,7 +3660,7 @@ static const struct qcom_reset_map gcc_ipq5018_resets[] = {
->  	[GCC_WCSS_AXI_S_ARES] = { 0x59008, 6 },
->  	[GCC_WCSS_Q6_BCR] = { 0x18004, 0 },
->  	[GCC_WCSSAON_RESET] = { 0x59010, 0},
-> -	[GCC_GEPHY_MISC_ARES] = { 0x56004, 0 },
-> +	[GCC_GEPHY_MISC_ARES] = { 0x56004, .bitmask = 0xf },
+Convert the sitronix,st7586 binding documentation from .txt to .yaml.
 
-in case you send a v3:
+Also added a link to the datasheet while we are touching this.
 
-0xf -> GENMASK(3, 0)
+Signed-off-by: David Lechner <dlechner@baylibre.com>
+---
+ .../bindings/display/sitronix,st7586.txt           | 22 --------
+ .../bindings/display/sitronix,st7586.yaml          | 61 ++++++++++++++++++++++
+ MAINTAINERS                                        |  2 +-
+ 3 files changed, 62 insertions(+), 23 deletions(-)
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+diff --git a/Documentation/devicetree/bindings/display/sitronix,st7586.txt b/Documentation/devicetree/bindings/display/sitronix,st7586.txt
+deleted file mode 100644
+index 1d0dad1210d380849370738dbfb6a7b0e07773e8..0000000000000000000000000000000000000000
+--- a/Documentation/devicetree/bindings/display/sitronix,st7586.txt
++++ /dev/null
+@@ -1,22 +0,0 @@
+-Sitronix ST7586 display panel
+-
+-Required properties:
+-- compatible:	"lego,ev3-lcd".
+-- a0-gpios:	The A0 signal (since this binding is for serial mode, this is
+-                the pin labeled D1 on the controller, not the pin labeled A0)
+-- reset-gpios:	Reset pin
+-
+-The node for this driver must be a child node of a SPI controller, hence
+-all mandatory properties described in ../spi/spi-bus.txt must be specified.
+-
+-Optional properties:
+-- rotation:	panel rotation in degrees counter clockwise (0,90,180,270)
+-
+-Example:
+-	display@0{
+-		compatible = "lego,ev3-lcd";
+-		reg = <0>;
+-		spi-max-frequency = <10000000>;
+-		a0-gpios = <&gpio 43 GPIO_ACTIVE_HIGH>;
+-		reset-gpios = <&gpio 80 GPIO_ACTIVE_HIGH>;
+-	};
+diff --git a/Documentation/devicetree/bindings/display/sitronix,st7586.yaml b/Documentation/devicetree/bindings/display/sitronix,st7586.yaml
+new file mode 100644
+index 0000000000000000000000000000000000000000..566aaf1aeac81657d3a425f1c585894a3a6f82d3
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/sitronix,st7586.yaml
+@@ -0,0 +1,61 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/display/sitronix,st7586.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Sitronix ST7586 Display Controller
++
++maintainers:
++  - David Lechner <david@lechnology.com>
++
++description:
++  Sitronix ST7586 is a driver and controller for 4-level gray
++  scale and monochrome dot matrix LCD panels.
++  https://topwaydisplay.com/sites/default/files/2020-04/ST7586S.pdf
++
++$ref: panel/panel-common.yaml#
++
++additionalProperties: false
++
++properties:
++  compatible:
++    const: lego,ev3-lcd
++
++  reg:
++    maxItems: 1
++
++  spi-max-frequency:
++    maximum: 50000000
++
++  a0-gpios:
++    description:
++      The A0 signal (for serial mode, this is the pin labeled D1 on the
++      controller, not the pin labeled A0)
++    maxItems: 1
++
++  reset-gpios: true
++  rotation: true
++
++required:
++  - compatible
++  - reg
++  - a0-gpios
++  - reset-gpios
++
++examples:
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++
++    spi {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        display@0 {
++            compatible = "lego,ev3-lcd";
++            reg = <0>;
++            spi-max-frequency = <10000000>;
++            a0-gpios = <&gpio 43 GPIO_ACTIVE_HIGH>;
++            reset-gpios = <&gpio 80 GPIO_ACTIVE_HIGH>;
++        };
++    };
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 0d59a5910e632350a4d72a761c6c5ce1d3a1bc34..58e9591f46c7b3f7621c5a4b66f469ae2a9f9cd9 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -7815,7 +7815,7 @@ DRM DRIVER FOR SITRONIX ST7586 PANELS
+ M:	David Lechner <david@lechnology.com>
+ S:	Maintained
+ T:	git https://gitlab.freedesktop.org/drm/misc/kernel.git
+-F:	Documentation/devicetree/bindings/display/sitronix,st7586.txt
++F:	Documentation/devicetree/bindings/display/sitronix,st7586.yaml
+ F:	drivers/gpu/drm/sitronix/st7586.c
+ 
+ DRM DRIVER FOR SITRONIX ST7571 PANELS
 
-Konrad
+---
+base-commit: 2a628f951ed54c30a232230b5b58349d2a8dbb11
+change-id: 20250530-devicetree-convert-sitronix-st7586-to-yaml-db5d82b63ffa
+
+Best regards,
+-- 
+David Lechner <dlechner@baylibre.com>
+
 
