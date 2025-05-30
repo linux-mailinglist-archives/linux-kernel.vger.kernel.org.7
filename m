@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-667872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-667874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F11AAC8ADF
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 11:33:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69144AC8AEC
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 11:34:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB9F016A3B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 09:33:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C4621C00A58
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 09:34:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B01F622A80A;
-	Fri, 30 May 2025 09:31:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22EA822D78F;
+	Fri, 30 May 2025 09:31:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="UTab4Njo"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="Y/Wa05cw"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 749D3221560
-	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 09:31:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E9A522B5AA
+	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 09:31:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748597461; cv=none; b=FwFyAOiFT+Rf5sCCWEuo1O31BCkDUott2dnsDvilrz/P9ozCBfckF3U+jYPV/fn7IpNHZZINQZYTucXguPXKJaK+W65PjTs2HqrfF3isOXtWrpZy74IwTYE7+27UEdafTuKVoEIsVdIuWFVZwkx1VG8hiX3Rcywyp76zbZ0cj+E=
+	t=1748597478; cv=none; b=tSMjodNPwG4U0g9Rd+9L6HqrM4oBIVn02KShTJtB+ry4sEsb2AReuJgN71dDotTzN0VKpyVfkX4iNlgq9QZDlcsRaVW1sKtP5zY91EOkSECslR7/AECA4FnN6hDVcYZb+aLHfSyUyCyVvP2BZ+LmMsT7LHcHiJXZJ5B/hQYZ29U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748597461; c=relaxed/simple;
-	bh=zWuwJn1AfK9f6Ju/rr0kFMON4yyaiLCS77HNg2YNluA=;
+	s=arc-20240116; t=1748597478; c=relaxed/simple;
+	bh=Tz+y1/2E7hEgjo92We1jW9pwmbJC4Y8VL7rWkTlATqs=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=geD4hR6aGupV4u6KNuwtjZ1PIQn8uWtnltniK98M00LfhdCoWZBVxNJA/OU2KjYw21/CbdoJpbrNraVJxzbINZchThQQtgSWn27u+zlEUR82jySCBrpf4IklFtSkEX21LQKtH7iiojjMK1YxM6VWukMyEdEQkCaUicJIr7bmjcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=UTab4Njo; arc=none smtp.client-ip=209.85.216.51
+	 MIME-Version; b=shgINVY3iMedLC74iitX6mDPuWVZjgII6eIaVdt+Y2P5Kz34e2wvg46qd4gJs7Ba5QXnvhYFccXoQ1qhP2Z4fq3fXNTCm3FEJl/uuT71BhsNF7VfbHo7bOr/S9f8jmxqZkbAtr9zooH52YgjAsd689T6m5zRB+ypW8hgK8tRdEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=Y/Wa05cw; arc=none smtp.client-ip=209.85.216.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-30f0d8628c8so2061994a91.0
-        for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 02:31:00 -0700 (PDT)
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-3081fe5987eso1482476a91.3
+        for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 02:31:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1748597460; x=1749202260; darn=vger.kernel.org;
+        d=bytedance.com; s=google; t=1748597475; x=1749202275; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=kZkk3bjH1sfOYp+VjBWd01Gh2LTXey//pWYFXMUcbnQ=;
-        b=UTab4NjoLFxlKeL8jmboXD5UpJMWaUHx3DVCAYwZLB0nlwEIlfiWuXkN22bpxm4Vi9
-         DTYrVN9yOy9VnBFeRgd2x8I5ZuuGH0WWwucVoUAv1AgR2lBacf6sTSZhDN9NNTQJoIq+
-         n3v8UiML8CowCq3JUHmtMvuVFYD22l5wG/lZ7TwlFcSvwCvCiD1TKBltNVnDZClzfipx
-         WdFgJsC2Qf54Z2bSF6uFlzzY/0CeWh0mm8ttBgqOtvLWFUdrFaRaSVGW7yjBXCRIWoiK
-         UvmKF9rH2tUV1J9ndAicxUy3UJGVcmSqBxY7jkpzEAWmcB2KeTTE3GLIcbp0y9hjo+17
-         XyZw==
+        bh=FwsjAroG47yqr2xPwlaPw9IAGrmPcW3kvk56UsePHN4=;
+        b=Y/Wa05cw69+qKOFH87dOlfhVUtl62vYn8/tYhSU5dPdLb2jAyiYYipf7pUeoh72E9R
+         hOjVYM6Ie5QxLl1tI8mDVg7WdN7Bm2P3p95hJZY5pFaWc4PYF4CuWwrpqYIvugN52alF
+         1DlurKWNoIsr2aOV9KB5opggiRtyFbnUK6Y4XPaJ4bXM7664cf3fQ1ss7473NqnM8oZV
+         li7rFoRIUyHitkUD1AlHf2yN91eISE+ay4aaOGv6YBVYS87IADfLjGuYvYX5uEbWzEbU
+         3jKTvGou6BBXutBH2P/mXnVK5fD5qElszqHRBBBxrzgmtbSX85YIzUgI+ckYXgu3o8Ic
+         dsLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748597460; x=1749202260;
+        d=1e100.net; s=20230601; t=1748597475; x=1749202275;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=kZkk3bjH1sfOYp+VjBWd01Gh2LTXey//pWYFXMUcbnQ=;
-        b=PDFbFXrXSBZGTWLToirV9oEvVhp8TPLXfi48rWjgYN6MqsqgAjE+5pMV5TPI4LOURH
-         ZNTC8lMTxVxn5fnfF7+OZ+bYpIxL6PxdHBKWKgUZ5aO2TJG9pI3DeQ6r/TGB1pHpy3Zr
-         zvOXLP3YOVrxiD0pfimx8pJtp9EemV3+1j9OeYSQ3slya11bBWL1RIGyb49UCBafDU2y
-         W4f4WeCNnm0S0tP28PiXpV5CgbyI2S/b+YipaWaRuk1xoBZuXmT9P/VkGJNfwK3JMCH2
-         QBJl/z/znTdl8ZP8g5LQ96DlQuUZ4fUWhR5V85YaBuqhyxudt4xe1mI4LJYxoaTEDKLT
-         HsEA==
-X-Forwarded-Encrypted: i=1; AJvYcCV8N5r8E7TQrqfFLEV/HS79KlUVpi4ibC8McExAeRtLSOtuvCc+bIq+90v2ePGuSa+v0spfyd+T5iEVzxY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvOPFzRiyK+aRiEn0W+X3xAGWphTbnV72qpknsVnxZ8yFJoWbb
-	gHTXixQEg2fwq2mk4cD3Av6UTuHTGCW/teeXHam/gD/qvLKqP+/dk8XBpMD8DtGmvEs=
-X-Gm-Gg: ASbGncsvB6SsP72NBwGziQspZKEgVxqnz+yZdm/Qr2udQW7QUCDascPQspFFbtdTA9o
-	M3styXsOz73UDITZeay+BtnvErNXyZhzakNm4byKhr8DDKs+3HP5nzpMPL2uZWWi4wJMefJX/ja
-	YxoIAKaoOWMNt9Xw46HAP0+yliGxm9YIyTijMYoyFwuFF0kAktVaJS1s2yiAiHlS5dMNA27O/tM
-	Q2FG4S85CUNxX2nBJlCeOULu8QBqRWZ6XWK+t1hp/3Bkce5NXY8GwFQ4knjrz7z1mmJjQZ6z6Up
-	8Ewm/vx1mt25l0ycZu6dCHuJM9ps7pSYI2PnyL5HSFgTor9xI18qzoCGRj5QdPJEf0mW0sXxxEk
-	K6WXUcg+PvnZdJNimnmwGmawf6x8p0gA=
-X-Google-Smtp-Source: AGHT+IEDp+vpzbXXEsQMocz8uu8WDoupHL7dKOSkVefmCskmswDnpl1KI6oBSxmQepUxjo/3kPsGsg==
-X-Received: by 2002:a17:90b:28c8:b0:30e:e9f1:8447 with SMTP id 98e67ed59e1d1-31214e11c6cmr9475340a91.4.1748597459572;
-        Fri, 30 May 2025 02:30:59 -0700 (PDT)
+        bh=FwsjAroG47yqr2xPwlaPw9IAGrmPcW3kvk56UsePHN4=;
+        b=SztOFuS2NlYXq8gvxQkxfP0NJ0tHIZiP9KmmKenI1HArCjWpOERzDpbE6s5dj4XIoV
+         v+HVZt6/XPomMGMOFsOwy7p1l3YvvmPJOGK5P7E/NQW87a8koGGfhwA3DvZKJZwAfwJ3
+         UWLJcc5wT0toijwPqHh1mlEB5kDIUAg8E9z0linZJKYNO1qM2YPaqvw9XfLK68wJaQ8E
+         dzRw2OCH6xsXue7yO37CwShFcqnQXE3n/oEUDZNE4uvv5BMsys3Y5JZtpUTHYGkvT9Ar
+         tK4o57hmaIqNjUHjeDM4d3ArmrJ2o1uhmUldq3+DmvW4YHTIYhal5dk6oqCjfDhjsdFK
+         QGmA==
+X-Forwarded-Encrypted: i=1; AJvYcCXzwScqmplshHB5lmS/KG1JanJTTZrw4x0uvGQsv802ehwIQQ0DPVsIvN3FdVoWQTb3GBq2LGQM7kr6XVU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQOtm2db3SjR4njEj72QmNazXpNLNVAmbkITazkTZAuntKyUKx
+	8VTffD3PiI154Cytdb0hVCVOXawQBa6KIMnBPJ9SgAxJMKTind7w/jTXOcaNHyHf6OA=
+X-Gm-Gg: ASbGncs/MA+LvH4BY4hevxYRRQK15oLv+qSHFLVcnvHcj36dYSV/sIgr+6Vumdod5ES
+	K2sHTOFnyD53Ava236qrH798siK6vYLaCwH01jCno9Z0SwBk9h7XIGRdxIHN1idZY+VVt7CcxDt
+	7fBS232MM6E/QXwYOrb4g/2th2MEYY8QgfA98R/DWD72jJS8MKFTte/7jaqvtvvtnFHW/xACFq8
+	K+nAjeX5hOrLEgIuUSxvRPNq6mt4VTo/hiQEi6MVoUOu0AESu7pUrU2FRx4fzJMhdbEbzC/eiDO
+	yPpex26motLfXTpIFJZ2ZnOVJU7p7cQVSfMCArD1lZdsn5RzWHvX0d+0op8EmdcJ4/YhDg6K3qu
+	1GIzFQAxc4nfwHg6w4dy5
+X-Google-Smtp-Source: AGHT+IHRc0pSTHqnWWemzLU4cZ03FJzQxrkM5nsu9yl2b6TGMlL/6vitJMQ7NNciKXpMzxjmPBfgdQ==
+X-Received: by 2002:a17:90a:d448:b0:312:29e:9ed8 with SMTP id 98e67ed59e1d1-31250413834mr2149974a91.20.1748597475019;
+        Fri, 30 May 2025 02:31:15 -0700 (PDT)
 Received: from FQ627FTG20.bytedance.net ([63.216.146.178])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3124e29f7b8sm838724a91.2.2025.05.30.02.30.44
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3124e29f7b8sm838724a91.2.2025.05.30.02.31.00
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Fri, 30 May 2025 02:30:59 -0700 (PDT)
+        Fri, 30 May 2025 02:31:14 -0700 (PDT)
 From: Bo Li <libo.gcs85@bytedance.com>
 To: tglx@linutronix.de,
 	mingo@redhat.com,
@@ -126,9 +126,9 @@ Cc: dietmar.eggemann@arm.com,
 	chengguozhu@bytedance.com,
 	sunjiadong.lff@bytedance.com,
 	Bo Li <libo.gcs85@bytedance.com>
-Subject: [RFC v2 10/35] RPAL: allow service enable/disable
-Date: Fri, 30 May 2025 17:27:38 +0800
-Message-Id: <34c12765bcf534c5afedd10ee3e763695c6a045d.1748594840.git.libo.gcs85@bytedance.com>
+Subject: [RFC v2 11/35] RPAL: add service request/release
+Date: Fri, 30 May 2025 17:27:39 +0800
+Message-Id: <d3e954630da8219029d5aba22fc27acc1e234fdb.1748594840.git.libo.gcs85@bytedance.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 In-Reply-To: <cover.1748594840.git.libo.gcs85@bytedance.com>
 References: <cover.1748594840.git.libo.gcs85@bytedance.com>
@@ -140,181 +140,468 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Since RPAL involves communication between services, and services require
-certain preparations (e.g., registering senders/receivers) before
-communication, the kernel needs to sense whether a service is ready to
-perform RPAL call-related operations.
+Services communicating via RPAL require a series of operations to perform
+RPAL calls, such as mapping each other's memory and obtaining each other's
+metadata.
 
-This patch adds two interfaces: rpal_enable_service() and
-rpal_disable_service(). rpal_enable_service() passes necessary information
-to the kernel and marks the service as enabled. RPAL only permits
-communication between services in the enabled state. rpal_disable_service()
-clears the service's enabled state, thereby prohibiting communication
-between the service and others via RPAL.
+This patch adds the rpal_request_service() and rpal_release_service()
+interfaces. Before communication, services must first complete a handshake
+process by mutually requesting each other. Only after both parties have
+completed their requests will RPAL copy each other's p4d entries into the
+other party's page tables, thereby achieving address space sharing. The
+patch defines RPAL_REQUEST_MAP and RPAL_REVERSE_MAP to indicate whether a
+service has requested another service or has been requested by another
+service.
+
+rpal_release_service() can release previously requested services, which
+triggers the removal of mutual p4d entries and terminates address space
+sharing. When a service exits the enabled state, the kernel will release
+all services it has ever requested, thereby terminating all address space
+sharing involving this service.
 
 Signed-off-by: Bo Li <libo.gcs85@bytedance.com>
 ---
- arch/x86/rpal/internal.h |  2 ++
- arch/x86/rpal/proc.c     |  6 +++++
- arch/x86/rpal/service.c  | 50 ++++++++++++++++++++++++++++++++++++++++
- include/linux/rpal.h     | 18 +++++++++++++++
- 4 files changed, 76 insertions(+)
+ arch/x86/rpal/internal.h |   5 +
+ arch/x86/rpal/proc.c     |   6 +
+ arch/x86/rpal/service.c  | 265 ++++++++++++++++++++++++++++++++++++++-
+ include/linux/rpal.h     |  42 +++++++
+ 4 files changed, 316 insertions(+), 2 deletions(-)
 
 diff --git a/arch/x86/rpal/internal.h b/arch/x86/rpal/internal.h
-index 65f2cf4baf8f..769d3bbe5a6b 100644
+index 769d3bbe5a6b..c504b6efff64 100644
 --- a/arch/x86/rpal/internal.h
 +++ b/arch/x86/rpal/internal.h
-@@ -17,6 +17,8 @@ extern bool rpal_inited;
+@@ -12,6 +12,9 @@
+ #include <linux/mm.h>
+ #include <linux/file.h>
+ 
++#define RPAL_REQUEST_MAP 0x1
++#define RPAL_REVERSE_MAP 0x2
++
+ extern bool rpal_inited;
+ 
  /* service.c */
- int __init rpal_service_init(void);
+@@ -19,6 +22,8 @@ int __init rpal_service_init(void);
  void __init rpal_service_exit(void);
-+int rpal_enable_service(unsigned long arg);
-+int rpal_disable_service(void);
+ int rpal_enable_service(unsigned long arg);
+ int rpal_disable_service(void);
++int rpal_request_service(unsigned long arg);
++int rpal_release_service(u64 key);
  
  /* mm.c */
  static inline struct rpal_shared_page *
 diff --git a/arch/x86/rpal/proc.c b/arch/x86/rpal/proc.c
-index 8a1e4a8a2271..acd814f31649 100644
+index acd814f31649..f001afd40562 100644
 --- a/arch/x86/rpal/proc.c
 +++ b/arch/x86/rpal/proc.c
-@@ -63,6 +63,12 @@ static long rpal_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 	case RPAL_IOCTL_UNREGISTER_RECEIVER:
- 		ret = rpal_unregister_receiver();
+@@ -69,6 +69,12 @@ static long rpal_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 	case RPAL_IOCTL_DISABLE_SERVICE:
+ 		ret = rpal_disable_service();
  		break;
-+	case RPAL_IOCTL_ENABLE_SERVICE:
-+		ret = rpal_enable_service(arg);
++	case RPAL_IOCTL_REQUEST_SERVICE:
++		ret = rpal_request_service(arg);
 +		break;
-+	case RPAL_IOCTL_DISABLE_SERVICE:
-+		ret = rpal_disable_service();
++	case RPAL_IOCTL_RELEASE_SERVICE:
++		ret = rpal_release_service(arg);
 +		break;
  	default:
  		return -EINVAL;
  	}
 diff --git a/arch/x86/rpal/service.c b/arch/x86/rpal/service.c
-index 42fb719dbb2a..8a7b679bc28b 100644
+index 8a7b679bc28b..16a2155873a1 100644
 --- a/arch/x86/rpal/service.c
 +++ b/arch/x86/rpal/service.c
-@@ -177,6 +177,7 @@ struct rpal_service *rpal_register_service(void)
- 	rs->nr_shared_pages = 0;
+@@ -178,6 +178,9 @@ struct rpal_service *rpal_register_service(void)
  	INIT_LIST_HEAD(&rs->shared_pages);
  	atomic_set(&rs->thread_cnt, 0);
-+	rs->enabled = false;
+ 	rs->enabled = false;
++	atomic_set(&rs->req_avail_cnt, MAX_REQUEST_SERVICE);
++	bitmap_zero(rs->requested_service_bitmap, RPAL_NR_ID);
++	spin_lock_init(&rs->lock);
  
  	rs->bad_service = false;
  	rs->base = calculate_base_address(rs->id);
-@@ -228,6 +229,52 @@ void rpal_unregister_service(struct rpal_service *rs)
+@@ -229,6 +232,262 @@ void rpal_unregister_service(struct rpal_service *rs)
  	rpal_put_service(rs);
  }
  
-+int rpal_enable_service(unsigned long arg)
++static inline void set_requested_service_bitmap(struct rpal_service *rs, int id)
 +{
-+	struct rpal_service *cur = rpal_current_service();
-+	struct rpal_service_metadata rsm;
++	set_bit(id, rs->requested_service_bitmap);
++}
++
++static inline void clear_requested_service_bitmap(struct rpal_service *rs, int id)
++{
++	clear_bit(id, rs->requested_service_bitmap);
++}
++
++static int add_mapped_service(struct rpal_service *rs, struct rpal_service *tgt,
++			      int type_bit)
++{
++	struct rpal_mapped_service *node;
++	unsigned long flags;
 +	int ret = 0;
 +
-+	if (cur->bad_service) {
-+		ret = -EINVAL;
-+		goto out;
++	spin_lock_irqsave(&rs->lock, flags);
++	node = rpal_get_mapped_node(rs, tgt->id);
++	if (type_bit == RPAL_REQUEST_MAP) {
++		if (atomic_read(&rs->req_avail_cnt) == 0) {
++			ret = -EINVAL;
++			goto unlock;
++		}
 +	}
 +
-+	ret = copy_from_user(&rsm, (void __user *)arg, sizeof(rsm));
-+	if (ret) {
++	if (node->rs == NULL) {
++		node->rs = rpal_get_service(tgt);
++		set_bit(type_bit, &node->type);
++	} else {
++		if (node->rs != tgt) {
++			ret = -EINVAL;
++			goto unlock;
++		} else {
++			if (test_and_set_bit(type_bit, &node->type)) {
++				ret = -EINVAL;
++				goto unlock;
++			}
++		}
++	}
++
++	if (type_bit == RPAL_REQUEST_MAP) {
++		set_requested_service_bitmap(rs, tgt->id);
++		atomic_dec(&rs->req_avail_cnt);
++	}
++
++unlock:
++	spin_unlock_irqrestore(&rs->lock, flags);
++	return ret;
++}
++
++static void remove_mapped_service(struct rpal_service *rs, int id, int type_bit)
++{
++	struct rpal_mapped_service *node;
++	struct rpal_service *t;
++	unsigned long flags;
++
++	spin_lock_irqsave(&rs->lock, flags);
++	node = rpal_get_mapped_node(rs, id);
++	if (node->rs == NULL)
++		goto unlock;
++
++	clear_bit(type_bit, &node->type);
++	if (type_bit == RPAL_REQUEST_MAP) {
++		clear_requested_service_bitmap(rs, id);
++		atomic_inc(&rs->req_avail_cnt);
++	}
++
++	if (node->type == 0) {
++		t = node->rs;
++		node->rs = NULL;
++		rpal_put_service(t);
++	}
++
++unlock:
++	spin_unlock_irqrestore(&rs->lock, flags);
++}
++
++static bool ready_to_map(struct rpal_service *cur, int tgt_id)
++{
++	struct rpal_mapped_service *node;
++	unsigned long flags;
++	bool need_map = false;
++
++	spin_lock_irqsave(&cur->lock, flags);
++	node = rpal_get_mapped_node(cur, tgt_id);
++	if (test_bit(RPAL_REQUEST_MAP, &node->type) &&
++	    test_bit(RPAL_REVERSE_MAP, &node->type)) {
++		need_map = true;
++	}
++	spin_unlock_irqrestore(&cur->lock, flags);
++
++	return need_map;
++}
++
++int rpal_request_service(unsigned long arg)
++{
++	struct rpal_service *cur, *tgt;
++	struct rpal_request_arg rra;
++	long ret = 0;
++	int id;
++
++	cur = rpal_current_service();
++
++	if (copy_from_user(&rra, (void __user *)arg, sizeof(rra))) {
 +		ret = -EFAULT;
 +		goto out;
 +	}
 +
-+	mutex_lock(&cur->mutex);
-+	if (!cur->enabled) {
-+		cur->rsm = rsm;
-+		cur->enabled = true;
++	if (cur->key == rra.key) {
++		ret = -EINVAL;
++		goto out;
 +	}
++
++	if (atomic_read(&cur->req_avail_cnt) == 0) {
++		ret = -EINVAL;
++		goto out;
++	}
++
++	mutex_lock(&cur->mutex);
++
++	if (!cur->enabled) {
++		ret = -EINVAL;
++		goto unlock_mutex;
++	}
++
++	tgt = rpal_get_service_by_key(rra.key);
++	if (tgt == NULL) {
++		ret = -EINVAL;
++		goto unlock_mutex;
++	}
++
++	if (!tgt->enabled) {
++		ret = -EPERM;
++		goto put_service;
++	}
++
++	ret = put_user((unsigned long)(tgt->rsm.user_meta), rra.user_metap);
++	if (ret) {
++		ret = -EFAULT;
++		goto put_service;
++	}
++
++	ret = put_user(tgt->id, rra.id);
++	if (ret) {
++		ret = -EFAULT;
++		goto put_service;
++	}
++
++	id = tgt->id;
++	ret = add_mapped_service(cur, tgt, RPAL_REQUEST_MAP);
++	if (ret < 0)
++		goto put_service;
++
++	ret = add_mapped_service(tgt, cur, RPAL_REVERSE_MAP);
++	if (ret < 0)
++		goto remove_request;
++
++	/* only map shared address space when both process request each other */
++	if (ready_to_map(cur, id)) {
++		ret = rpal_map_service(tgt);
++		if (ret < 0)
++			goto remove_reverse;
++	}
++
 +	mutex_unlock(&cur->mutex);
 +
++	rpal_put_service(tgt);
++
++	return 0;
++
++remove_reverse:
++	remove_mapped_service(tgt, cur->id, RPAL_REVERSE_MAP);
++remove_request:
++	remove_mapped_service(cur, tgt->id, RPAL_REQUEST_MAP);
++put_service:
++	rpal_put_service(tgt);
++unlock_mutex:
++	mutex_unlock(&cur->mutex);
 +out:
 +	return ret;
 +}
 +
-+int rpal_disable_service(void)
++static int release_service(struct rpal_service *cur, struct rpal_service *tgt)
++{
++	remove_mapped_service(tgt, cur->id, RPAL_REVERSE_MAP);
++	remove_mapped_service(cur, tgt->id, RPAL_REQUEST_MAP);
++	rpal_unmap_service(tgt);
++
++	return 0;
++}
++
++static void rpal_release_service_all(void)
 +{
 +	struct rpal_service *cur = rpal_current_service();
++	struct rpal_service *tgt;
++	int ret, i;
++
++	rpal_for_each_requested_service(cur, i) {
++		struct rpal_mapped_service *node;
++
++		if (i == cur->id)
++			continue;
++		node = rpal_get_mapped_node(cur, i);
++		tgt = rpal_get_service(node->rs);
++		if (!tgt)
++			continue;
++
++		if (test_bit(RPAL_REQUEST_MAP, &node->type)) {
++			ret = release_service(cur, tgt);
++			if (unlikely(ret)) {
++				rpal_err("service %d release service %d fail\n",
++					 cur->id, tgt->id);
++			}
++		}
++		rpal_put_service(tgt);
++	}
++}
++
++int rpal_release_service(u64 key)
++{
++	struct rpal_service *cur = rpal_current_service();
++	struct rpal_service *tgt = NULL;
++	struct rpal_mapped_service *node;
 +	int ret = 0;
++	int i;
 +
 +	mutex_lock(&cur->mutex);
-+	if (cur->enabled) {
-+		cur->enabled = false;
-+	} else {
++
++	if (cur->key == key) {
 +		ret = -EINVAL;
 +		goto unlock_mutex;
 +	}
++
++	rpal_for_each_requested_service(cur, i) {
++		node = rpal_get_mapped_node(cur, i);
++		if (node->rs->key == key) {
++			tgt = rpal_get_service(node->rs);
++			break;
++		}
++	}
++
++	if (!tgt) {
++		ret = -EINVAL;
++		goto unlock_mutex;
++	}
++
++	ret = release_service(cur, tgt);
++
++	rpal_put_service(tgt);
 +
 +unlock_mutex:
 +	mutex_unlock(&cur->mutex);
 +	return ret;
 +}
 +
- void copy_rpal(struct task_struct *p)
+ int rpal_enable_service(unsigned long arg)
  {
  	struct rpal_service *cur = rpal_current_service();
-@@ -244,6 +291,9 @@ void exit_rpal(bool group_dead)
+@@ -270,6 +529,8 @@ int rpal_disable_service(void)
+ 		goto unlock_mutex;
+ 	}
  
- 	exit_rpal_thread();
++	rpal_release_service_all();
++
+ unlock_mutex:
+ 	mutex_unlock(&cur->mutex);
+ 	return ret;
+@@ -289,11 +550,11 @@ void exit_rpal(bool group_dead)
+ 	if (!rs)
+ 		return;
  
-+	if (group_dead)
-+		rpal_disable_service();
+-	exit_rpal_thread();
+-
+ 	if (group_dead)
+ 		rpal_disable_service();
+ 
++	exit_rpal_thread();
 +
  	current->rpal_rs = NULL;
  	rpal_put_service(rs);
  
 diff --git a/include/linux/rpal.h b/include/linux/rpal.h
-index c33425e896af..2e5010602177 100644
+index 2e5010602177..1fe177523a36 100644
 --- a/include/linux/rpal.h
 +++ b/include/linux/rpal.h
-@@ -84,6 +84,14 @@ enum rpal_task_flag_bits {
- 	RPAL_RECEIVER_BIT,
+@@ -77,6 +77,9 @@
+ #define RPAL_ADDRESS_SPACE_LOW  ((0UL) + RPAL_ADDR_SPACE_SIZE)
+ #define RPAL_ADDRESS_SPACE_HIGH ((0UL) + RPAL_NR_ADDR_SPACE * RPAL_ADDR_SPACE_SIZE)
+ 
++/* No more than 15 services can be requested due to limitation of MPK. */
++#define MAX_REQUEST_SERVICE 15
++
+ extern unsigned long rpal_cap;
+ 
+ enum rpal_task_flag_bits {
+@@ -92,6 +95,18 @@ struct rpal_service_metadata {
+ 	void __user *user_meta;
  };
  
-+/*
-+ * user_meta will be sent to other service when requested.
-+ */
-+struct rpal_service_metadata {
++struct rpal_request_arg {
 +	unsigned long version;
-+	void __user *user_meta;
++	u64 key;
++	unsigned long __user *user_metap;
++	int __user *id;
++};
++
++struct rpal_mapped_service {
++	unsigned long type;
++	struct rpal_service *rs;
 +};
 +
  /*
   * Each RPAL process (a.k.a RPAL service) should have a pointer to
   * struct rpal_service in all its tasks' task_struct.
-@@ -125,6 +133,10 @@ struct rpal_service {
- 	/* sender/receiver thread count */
- 	atomic_t thread_cnt;
+@@ -125,6 +140,8 @@ struct rpal_service {
+      */
+ 	/* Mutex for time consuming operations */
+ 	struct mutex mutex;
++	/* spinlock for short operations */
++	spinlock_t lock;
  
-+	/* service metadata */
-+	bool enabled;
-+	struct rpal_service_metadata rsm;
+ 	/* pinned pages */
+ 	int nr_shared_pages;
+@@ -137,6 +154,13 @@ struct rpal_service {
+ 	bool enabled;
+ 	struct rpal_service_metadata rsm;
+ 
++	/* the number of services allow to be requested */
++	atomic_t req_avail_cnt;
++
++	/* map for services required, being required and mapped  */
++	struct rpal_mapped_service service_map[RPAL_NR_ID];
++	DECLARE_BITMAP(requested_service_bitmap, RPAL_NR_ID);
 +
  	/* delayed service put work */
  	struct delayed_work delayed_put_work;
  
-@@ -206,6 +218,8 @@ enum rpal_command_type {
- 	RPAL_CMD_UNREGISTER_SENDER,
- 	RPAL_CMD_REGISTER_RECEIVER,
+@@ -220,6 +244,8 @@ enum rpal_command_type {
  	RPAL_CMD_UNREGISTER_RECEIVER,
-+	RPAL_CMD_ENABLE_SERVICE,
-+	RPAL_CMD_DISABLE_SERVICE,
+ 	RPAL_CMD_ENABLE_SERVICE,
+ 	RPAL_CMD_DISABLE_SERVICE,
++	RPAL_CMD_REQUEST_SERVICE,
++	RPAL_CMD_RELEASE_SERVICE,
  	RPAL_NR_CMD,
  };
  
-@@ -226,6 +240,10 @@ enum rpal_command_type {
- 	_IOWR(RPAL_IOCTL_MAGIC, RPAL_CMD_REGISTER_RECEIVER, unsigned long)
- #define RPAL_IOCTL_UNREGISTER_RECEIVER \
- 	_IO(RPAL_IOCTL_MAGIC, RPAL_CMD_UNREGISTER_RECEIVER)
-+#define RPAL_IOCTL_ENABLE_SERVICE \
-+	_IOWR(RPAL_IOCTL_MAGIC, RPAL_CMD_ENABLE_SERVICE, unsigned long)
-+#define RPAL_IOCTL_DISABLE_SERVICE \
-+	_IO(RPAL_IOCTL_MAGIC, RPAL_CMD_DISABLE_SERVICE)
+@@ -244,6 +270,16 @@ enum rpal_command_type {
+ 	_IOWR(RPAL_IOCTL_MAGIC, RPAL_CMD_ENABLE_SERVICE, unsigned long)
+ #define RPAL_IOCTL_DISABLE_SERVICE \
+ 	_IO(RPAL_IOCTL_MAGIC, RPAL_CMD_DISABLE_SERVICE)
++#define RPAL_IOCTL_REQUEST_SERVICE \
++	_IOWR(RPAL_IOCTL_MAGIC, RPAL_CMD_REQUEST_SERVICE, unsigned long)
++#define RPAL_IOCTL_RELEASE_SERVICE \
++	_IOWR(RPAL_IOCTL_MAGIC, RPAL_CMD_RELEASE_SERVICE, unsigned long)
++
++#define rpal_for_each_requested_service(rs, idx)                             \
++	for (idx = find_first_bit(rs->requested_service_bitmap, RPAL_NR_ID); \
++	     idx < RPAL_NR_ID;                                               \
++	     idx = find_next_bit(rs->requested_service_bitmap, RPAL_NR_ID,   \
++				 idx + 1))
  
  /**
   * @brief get new reference to a rpal service, a corresponding
+@@ -274,6 +310,12 @@ static inline unsigned long rpal_get_top(struct rpal_service *rs)
+ 	return rs->base + RPAL_ADDR_SPACE_SIZE;
+ }
+ 
++static inline struct rpal_mapped_service *
++rpal_get_mapped_node(struct rpal_service *rs, int id)
++{
++	return &rs->service_map[id];
++}
++
+ #ifdef CONFIG_RPAL
+ static inline struct rpal_service *rpal_current_service(void)
+ {
 -- 
 2.20.1
 
