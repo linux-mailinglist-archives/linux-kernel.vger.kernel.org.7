@@ -1,112 +1,118 @@
-Return-Path: <linux-kernel+bounces-668644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-668647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3199EAC9581
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 20:11:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 20438AC9587
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 20:16:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77D2A3A1D83
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 18:11:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C9C93A8437
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 18:16:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FA36276028;
-	Fri, 30 May 2025 18:11:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA70F235360;
+	Fri, 30 May 2025 18:16:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H0v1AXR7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Dy9NNCg+"
+Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEF371A2396;
-	Fri, 30 May 2025 18:11:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63DAE20E6
+	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 18:16:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748628690; cv=none; b=CXJJbGCwM/ADQJ1Q41vfnCyNHJv9Mx3h1hk1dlLXIaXuS4+leSscyJ/ze75DNEtOQ/Kcx5cjCYZNNM9i4t0Jyslmc3aQNjHwz9R7fZlv1TVcgGz92S4wJW9TNow9OKe60/qvdOlkqprjjD7T18jZxfkS5mL3vAkJBMoR9Wl9Dso=
+	t=1748628983; cv=none; b=jxoz680OssWmScGM5tSuA9FywTGqZMYhGN4E35s+DbGHLSGlngic3RD41qEKenAVqwUIVgoYq4H9y35yTPPW6YJ42JIyG3i2tRdY5VvM+4/xlL30vP4YabTqLkVYxEMo/l513XLCN4ec/QpGJFwT7Jtxmoz9BkfgwZOSWRndD3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748628690; c=relaxed/simple;
-	bh=NEnMQhjpyyHfnxzzO/PlX+P6PqzER8qKWzoOIliQ66E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=R8Iw0NdfkxvAH5vHHWAeJQlvxlqz/OLKbXOSMFD4zrP5s4Lw1+BNk45veY7UFk/cXVZakXCAz+SmkMVO89E2+1oqgnrmKuhemI7eoUQeMVPStr5yP4RWPB3a/+9/SuqOXHQBRw0asNcggQfMgrapU5ebwsd17ocwtBDVKZGst04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H0v1AXR7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E3FAC4CEEE;
-	Fri, 30 May 2025 18:11:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748628689;
-	bh=NEnMQhjpyyHfnxzzO/PlX+P6PqzER8qKWzoOIliQ66E=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=H0v1AXR7I9wn7+zzuJY0/KK/n0ihbHDR9DYU7gCQuc2xU7JcJIeP1vE6xyDVy/0gw
-	 0nxJb7uYpSvOiSyExZy6rbDerrJiyhpXgxRrmfDhABKqRzZOwH46wn4Q8/cnGT/bM5
-	 sGsOALyCvYkbwDbwUhBAiymL39K1eAHniYeDNv/z0+ILVKkryzEr8CTp4E9hUktlMc
-	 JMiiTUS3EpK1k/pe6nXPfpuhmuOD3PwMTdFy8Wyiuh3j5w1WJ931e0Ti+KcnDoWyu2
-	 9z+nLV0agsvIZklVEgeUYULJnHNerFnMd/bSDEq23jPrLV/Ex6JmXajeHr1dBHw5QS
-	 UPki0XuEBVp1w==
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-60497d07279so4607344a12.3;
-        Fri, 30 May 2025 11:11:29 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUAslONXbcFRgR5eNAfL0mzYo6s+a+TTTGyxtVInvPzJQ8eHqudKZg05qHP1GPgYd+Tu+lyOvn4yIl+QRA=@vger.kernel.org, AJvYcCUNRBcTlPOqfAnPNXNt7zN9QpLlDu6gMFcIC/8/zBMlpYwbY8KTYQjeu9+XO+a6e2zlrCdp5nin31Od0aq8jeU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyi01xAN5RuQYcXFgQQJzCk5IH8l1QZbjxDFAtTGoJbjfk5tVNi
-	9popN8bNqc3s0/e78n+hlYDhgcDylZXUdoGDUrHtDq82Fae/cFWaSPHXacXTpKLqYDEc4UVBk8b
-	/w0vsh0Ii3Vp7KkU8bZ6WLDHrFMn9OGg=
-X-Google-Smtp-Source: AGHT+IHMIdbep/NDuys/wofm6QP2rT68gpDJiCcWgJ8T5h4FuiduxKTspFC7xNrld8F88bBZkvWbhbBCIC4XV5VTbUM=
-X-Received: by 2002:a17:907:d89:b0:adb:2577:c0c5 with SMTP id
- a640c23a62f3a-adb36be1133mr349200366b.38.1748628687973; Fri, 30 May 2025
- 11:11:27 -0700 (PDT)
+	s=arc-20240116; t=1748628983; c=relaxed/simple;
+	bh=g9x9I/D5iLYNub2uY6+ty3L4YZQgs1kiASUNbQlL4Qw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OEqwAEZxtWDQChrJ/8tc24XQSdDzuXH2rci8UR2TSqPVc5+DCUl25FsS18KD9CPW3R1PuOA9vD7dxNooqK7Yj9j/Yhs6Doqe7tk6TJBwhPQSqMM4W5ijZvJfAfX5BWdUrTaiCAKWAOAQBxr6nPPZMSzHtzUpK3Dck8gIsFj/iSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Dy9NNCg+; arc=none smtp.client-ip=115.124.30.113
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1748628978; h=From:To:Subject:Date:Message-ID:MIME-Version;
+	bh=Vgoipm8jNsxeGuLT4hKP6WLOTd56kdYWyDhKuAXv0mU=;
+	b=Dy9NNCg+N/Lf1bSDl7PhKraFf8etjbVmGjvXfRAN5solsfvglywBAXzSuqo/bomgp3uie//1Xrfs+3iDpc9TRp+mPDOxxxZUmZHp5bghrnbYfDLWguFxLPZSINlVvdQEzYHhpXoxkE9QTVJuIS5T9aGhQZd1F4E7i4ZmOLgHmpU=
+Received: from localhost.localdomain(mailfrom:qinyuntan@linux.alibaba.com fp:SMTPD_---0WcMBeWF_1748628665 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Sat, 31 May 2025 02:11:06 +0800
+From: Qinyun Tan <qinyuntan@linux.alibaba.com>
+To: Tony Luck <tony.luck@intel.com>
+Cc: "H . Peter Anvin" <hpa@zytor.com>,
+	linux-kernel@vger.kernel.org,
+	x86@kernel.org,
+	Reinette Chatre <reinette.chatre@intel.com>,
+	Qinyun Tan <qinyuntan@linux.alibaba.com>
+Subject: [PATCH V5 0/1] x86/resctrl: Remove unappropriate references to cacheinfo in the resctrl subsystem.
+Date: Sat, 31 May 2025 02:11:02 +0800
+Message-ID: <20250530181103.34563-1-qinyuntan@linux.alibaba.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <D9XNS413TVXB.3SWWJE4JGEN8B@nvidia.com> <CAOZdJXW+PoFgxH+wPEum-kYvRmSRd8c4kaxvbNAq5dfZJiXapA@mail.gmail.com>
- <D9Y0VJKOAQAY.2GJSAZ5II54VV@nvidia.com> <DA8G3G918FS4.X8D7PQMT4TGB@nvidia.com>
- <2025052932-pyramid-unvisited-68f7@gregkh> <DA935OIFBM1H.3CMSHQ46LLG4P@nvidia.com>
- <2025053047-theology-unsaid-d6ac@gregkh> <DA9AU3OBT29Z.3CX827C91I3IH@nvidia.com>
- <2025053050-maggot-landfall-d5eb@gregkh> <DA9KIGDH4IF6.2T383ZVLTJN0G@nvidia.com>
- <2025053039-reselect-thinness-e0a2@gregkh>
-In-Reply-To: <2025053039-reselect-thinness-e0a2@gregkh>
-From: Timur Tabi <timur@kernel.org>
-Date: Fri, 30 May 2025 13:10:50 -0500
-X-Gmail-Original-Message-ID: <CAOZdJXVvmDro0Mv36grqQ6LB_1O5GzwPx+Dde+wsfu9Cu_me7A@mail.gmail.com>
-X-Gm-Features: AX0GCFv5S9KtBIywcHff8MbdGQAdMVSxN9c9yC4X5MRuNIIOEn1F1ztLMow72Jc
-Message-ID: <CAOZdJXVvmDro0Mv36grqQ6LB_1O5GzwPx+Dde+wsfu9Cu_me7A@mail.gmail.com>
-Subject: Re: [PATCH] rust: add basic ELF sections parser
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Alexandre Courbot <acourbot@nvidia.com>, Danilo Krummrich <dakr@kernel.org>, Timur Tabi <timur@kernel.org>, 
-	John Hubbard <jhubbard@nvidia.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, May 30, 2025 at 10:42=E2=80=AFAM Greg KH <gregkh@linuxfoundation.or=
-g> wrote:
->
-> On Fri, May 30, 2025 at 11:34:02PM +0900, Alexandre Courbot wrote:
-> > So to try to answer your question, I am not disagreeing that userspace
-> > is capable of doing what we currently do in the kernel. My follow-up
-> > questions to that are: how do we command userspace to do that work for
-> > us when we request the firmware, how do we provide the result to the
-> > kernel, and is this something that distros can adopt easily? I'm happy
-> > to consider doing things this way, but would need a few pointers to loo=
-k
-> > into.
->
-> Again, look at how your firmware for your devices in your laptop are
-> loaded today.
+V5:
+- Modify the commit log format again. I am truly grateful to Reinette
+  for her thoughtful guidance :).
 
-Today, Nouveau loads and parses these binary images (that are already
-in linux-firmware) in the driver.  As I said before, Nova/Nouveau are
-using ELF simply as a packaging format, so that these small binary
-blobs are kept together and processed as one.  It makes no sense for
-Nouveau to consume them as-is, but Nova has to have user-space break
-them up first.
+V4:
+- Add the tested by and reviewed by tags.
+- Modify the commit log format.
 
-We could easily have said that the format is proprietary and not used
-the word "elf" in the parser.
+V3:
+- According to Reinette suggestion, modify the commit log description to
+ make it easier for readers to understand
 
-IMHO, Nova should really do what Nouveau does, and just have the image
-parser in the driver itself, without any generic Rust code to do it.
-After all, what Nova needs to do with these images is driver-specific.
+V2:
+- Keep sanity checks in the __mon_event_count to ensure execution occurs
+  exclusively on CPUs sharing the same L3 cache cluster
+- When reading the top level event, obtain a CPU within hdr.cpu_mask.
+  Then use the cacheinfo shared_cpu_map of this CPU instead of using
+  hdr.cpu_mask directly
+- Adjust code formatting and commit log descriptions.
+
+In the resctrl subsystem's Sub-NUMA Cluster (SNC) mode, the rdt_mon_domain
+structure representing a NUMA node relies on the cacheinfo interface
+(rdt_mon_domain::ci) to store L3 cache information (e.g., shared_cpu_map)
+for monitoring. The L3 cache information of a SNC NUMA node determines
+which domains are summed for the "top level" L3-scoped events.
+
+rdt_mon_domain::ci is initialized using the first online CPU of a NUMA
+node. When this CPU goes offline, its shared_cpu_map is cleared to contain
+only the offline CPU itself. Subsequently, attempting to read counters
+via smp_call_on_cpu(offline_cpu) fails (and error ignored), returning
+zero values for "top-level events" without any error indication.
+
+Replace the cacheinfo references in struct rdt_mon_domain and struct
+rmid_read with the cacheinfo ID (a unique identifier for the L3 cache).
+
+rdt_domain_hdr::cpu_mask contains the online CPUs associated with that
+domain. When reading "top-level events", select a CPU from
+rdt_domain_hdr::cpu_mask and utilize its L3 shared_cpu_map to determine
+valid CPUs for reading RMID counter via the MSR interface.
+
+Considering all CPUs associated with the L3 cache improves the chances
+of picking a housekeeping CPU on which the counter reading work can be
+queued, avoiding an unnecessary IPI.
+
+Qinyun Tan (1):
+  x86/resctrl: Remove unappropriate references to cacheinfo in the
+    resctrl subsystem.
+
+ arch/x86/kernel/cpu/resctrl/core.c |  6 ++++--
+ fs/resctrl/ctrlmondata.c           | 13 +++++++++----
+ fs/resctrl/internal.h              |  4 ++--
+ fs/resctrl/monitor.c               |  6 ++++--
+ fs/resctrl/rdtgroup.c              |  6 +++---
+ include/linux/resctrl.h            |  4 ++--
+ 6 files changed, 24 insertions(+), 15 deletions(-)
+
+-- 
+2.43.5
+
 
