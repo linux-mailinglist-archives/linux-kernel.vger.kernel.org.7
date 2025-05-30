@@ -1,433 +1,320 @@
-Return-Path: <linux-kernel+bounces-668484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-668486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 926A8AC9372
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 18:22:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B867DAC9375
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 18:23:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E8403AA352
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 16:22:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 550C51C051B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 16:23:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C351194A59;
-	Fri, 30 May 2025 16:22:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 411311A5B8B;
+	Fri, 30 May 2025 16:22:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ivGrwFXI"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="PjCk/2R1"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2061.outbound.protection.outlook.com [40.107.236.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 364A719ABC2
-	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 16:22:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748622154; cv=none; b=WhwPpTuXH/DpqCWVL9gD3+YLJElQQCAlrrZt7WWJgjQ8OS22AGlOlAmyCgwtKKUhG+SFZVz7m1T68ZGo04beZu25nNOIKzxIcFSO0TO29oMB3BqdisyH+Ll9pJ5m7ZN4g2zQBlCK5r7xtuoWAEZIdvm19jTgmKvE4sm3xATk2JE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748622154; c=relaxed/simple;
-	bh=ZBGTax/rLGYBtNFTsE9QQBLSrJoNOS5o8XO3INA0fdY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sVqcI0HZpueXg4s/Dy/DfEJ8lmM+ZJEdeFzTVOwif6gFABIxbQW1KaSaVQnuEgVejGV3oZxhGxb0nmaNBPsQ9ZOlI2n08avHU/h9bCSlGNkfpa+dMMVmKp89eXt7TqXrrYICj9tbQz3CkXhvU6dwudshcb5Etow0udaboC7cr2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ivGrwFXI; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2349068ebc7so228525ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 09:22:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1748622150; x=1749226950; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vf6Yud61p5FojbXNBMIgSMyrP3LQYQ4cOutBnHeT7EE=;
-        b=ivGrwFXIrSY9qKABLSoGm7ITyeJOsXL0RdoD36abLhdWnKia+pH+YIsdTOXXie8UtO
-         POVKVg3KMlbj9fzknILIutDZC0DuHHs3wvo7XilgvhR8fFKyFd3IpMhImEqAnXxaOAUR
-         kIPF9lthSo9X2z9nUNFzEu2nuQ5gtI86SO8kEnd9+BiZfQqL4eV8IfnMS0U7ufAIXuEm
-         Bknv8BMjNAbTwOfJaUEbYqfF7sIXxllSS/ZkG+DtFYeU8Fc8k/q1JuueaxQdp3NMmxUs
-         gIxR4yNtD+B5mbfZkFZt38E07xVJjKzSG0DOum59YUkZE2sYxQNBBm77d2Wx0NgLHFCm
-         1KEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748622150; x=1749226950;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vf6Yud61p5FojbXNBMIgSMyrP3LQYQ4cOutBnHeT7EE=;
-        b=E51ePfR2yjo1wSKWU528BKwzFrDG1fRWSDDxmC/WdNofm1pnEGMXPeVEykKtF9bpmi
-         5rh8u4vG70iEqYMPTHq4ykysDxyPMX+K0XVlqFAag2LVoLH9HYZb+KkvG+12ipCjE2+c
-         G5d1d1hlsaQR4AQ/KfNR75/+jZMw9CE4xXWDl2rQcBDtGjt5Or1hkEJ8A7b9ahrZH4ye
-         OHqOkUD1Fy44nr2BCfqk15kj5lEIM4UmH6Q3cP8b4LMp2XPs5fwIPMbcrN6YYckoLnBZ
-         HpUtnH/RHbXf1c2H3xTckOhCAt4VNnsjOh9amZ6RcrwLhtvrQWrYZLnHkEQcBYhlBMjp
-         VucQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWRYw2SY6JfoSRvwDj6a+vlMJLH7L+WcRuwXk5SHIGwZh0qVqI4tmLe3OwzU+hhKTZVi6LDp2HIzPTlmsE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYOdFTNePwR/PIC0Om4cAqlbt7nIeJW/SnJ/TBWzq24CW1sdd3
-	TAg1eVVch/4DOjnmfAkvamWuNqTvm9Ma+bxdHkl2wCpr5uCwNSpzkvqQbtjPu0x1v0DLs3XsxRN
-	n9h7lEKJaycGnBa5DKouBcp865NFF9XXEqDCj7iuJ
-X-Gm-Gg: ASbGnctIMJ/QE4trMFQcFqKe9vTXnvJgyydvxGqocUdlQe2mGLWQt6elRn9jSM/7WhY
-	9fsJeCRm2shGqJd7ItyLiWCGGcnEsYiYi4MMzTspKEbOJuj2fyzWHVZPhH9VxWLlwKe0uLFD2z0
-	25G+3dHzm3OVmGpx8H2HGdM/doL2vSuFCD6hwxc4d/t/+SeR0zm9+S1Lw=
-X-Google-Smtp-Source: AGHT+IEtiJzkhMrbT4HUzOjYjtF5aql9Xb8hdrSN3Cti84xfY4Vb6+gwtO/xOvIq6bw5m4mFgqm8TBezlJPtYjT+ba0=
-X-Received: by 2002:a17:903:32c2:b0:215:f0c6:4dbf with SMTP id
- d9443c01a7336-2352dfcade3mr3925465ad.14.1748622149915; Fri, 30 May 2025
- 09:22:29 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38D3C194124
+	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 16:22:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.61
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748622165; cv=fail; b=cNP5C0fiivos4PpzOB59ZJdBt/9A9tlzKzI8gPPp7LmJr8aGaxiENxUaSZ4NG1BMpQrpu7yT5CSSDPXRR2Bq5KT42pBXp4Vtgj/HtJZxefHaOeEe8+rRmTcjm7iP+j7DBpg4IzooIlAYZBHBtiw3W3MbffMAg7ojGWQopws5qLE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748622165; c=relaxed/simple;
+	bh=zTHW/NT6WoFLUjC8gGcxLcfDbqEUPd/Km429h6U2plo=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=Lkrj+XqMwGLkr900EXoXHjP1aBDW+/Ot4Po4G3/B+TgHtdXH/LR9idB/AfzUaiVFYb7x0GvgkjFqv9IqyKFYU2fnqt1S4RwEtUB2nAiASFqGUw/Okq5qkEWtmdjWgai0G3NuDpNmLAJcAeGwIQM9zO/NkQ5dxArFW+ahtPFDAko=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=PjCk/2R1; arc=fail smtp.client-ip=40.107.236.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Cst6Z3wlLil8pM7SN8fGRLBFRGldGhfovzHBSiWzWjzTb5TAEXn+WrroEIvZuaV/7uZ8oA98Ipaz31GIE8xex0/awCPQEF1IaihKq6bRUZGX8liaAF7xo/O44OR8OilCsK0ih79UB0pfTm3xn8wko5zu0lLXu7Ud/lqXMDtl+ilmhcxm2rFK4jnr4fnPVErcHlUBfQPNE/lz1VvRXBBhBemSL6XcdSvKRZ7ERqYgW3RG93HJgJxyMPgbjAlyEMx/5//2nMl5R9Kt1HJShwH7HhhMf6NrGXuR2X0HCTXfcswapPlFoBz86Z4rSCg62JVde3KAc/4+poClI+MoKBNTxQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=OXgTUdgxMBYu07lKotUpP/Pg1sJCVCZI1lXaeVW61vI=;
+ b=dfqVyvcwsvtPZOVz2MUWcCBPAthyBQZR/0L0y0y1SQYOa2lwOY2T2aL7G8vi3pDnr1b0H7pfthk5Com8P/MrEsradH3IvTkzYs8amAkJ3FDPHmcyeJCmVK2DRv4Wc5PHlP3lIXMl5JAsex3+0Tzk0yMjM5u+PBt9MfcNQmKJqRqqWkhXFfah64NtnEMUbSRv8T+9ur+q2GAH/C8wpZUhgXnaViHkXNKUp///4UPvMZaZjCUyvsK9ZnWxNU80rug6ti/Zs9bdc9tly7UguDQTphCF7WmsGyzkThDiMJDGpGpoTYzNBVq5+mbLUAkX4PuUFHRy65+6CYhd8ZRNsn/2aA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OXgTUdgxMBYu07lKotUpP/Pg1sJCVCZI1lXaeVW61vI=;
+ b=PjCk/2R1f30DYWnN8E3z0nl31QiRLhJBdmvUYqmwuqQoqr5v3Qe7ALRf4Z+5XpSHci7ZOWvmjmMyfu8UYSKlGX9+WoF/+34/cwG82cAkM4bH0JtHR3CY7ot0S2AMOMx00BuAtFbtHtMw92ZGzml3Mq6UUOO6GlR7koAOC5F6EOkbNduUOyUuUmV6p/iy0Xo5HzTU89liyIlVjzsJmAscZVfgVXzMt41ILUYuUS4PSFgSQcwXhAS4YnGgr+/6fCvsxY1wjtoJxvP+dVOG2SQ3Nzj3BTlo6hEP+Nfr2iQtYlml3hdMwtc0Xp2afoUyIxEjYOe4aKE4RwlEonP0p3Q61g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
+ CH3PR12MB8187.namprd12.prod.outlook.com (2603:10b6:610:125::5) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8769.29; Fri, 30 May 2025 16:22:38 +0000
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a%4]) with mapi id 15.20.8769.025; Fri, 30 May 2025
+ 16:22:38 +0000
+From: Zi Yan <ziy@nvidia.com>
+To: David Hildenbrand <david@redhat.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	linux-mm@kvack.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Oscar Salvador <osalvador@suse.de>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+	Mel Gorman <mgorman@techsingularity.net>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Brendan Jackman <jackmanb@google.com>,
+	Richard Chang <richardycc@google.com>,
+	linux-kernel@vger.kernel.org,
+	Zi Yan <ziy@nvidia.com>
+Subject: [PATCH v6 0/6] Make MIGRATE_ISOLATE a standalone bit
+Date: Fri, 30 May 2025 12:22:21 -0400
+Message-ID: <20250530162227.715551-1-ziy@nvidia.com>
+X-Mailer: git-send-email 2.47.2
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: MN2PR03CA0028.namprd03.prod.outlook.com
+ (2603:10b6:208:23a::33) To DS7PR12MB9473.namprd12.prod.outlook.com
+ (2603:10b6:8:252::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <770012.1748618092@warthog.procyon.org.uk>
-In-Reply-To: <770012.1748618092@warthog.procyon.org.uk>
-From: Mina Almasry <almasrymina@google.com>
-Date: Fri, 30 May 2025 09:22:17 -0700
-X-Gm-Features: AX0GCFv_9CblvKqE59Fn0enXIWdu9lK-Q9GgqjjgMg5PEL2NBfaZtCi1kNaSC5g
-Message-ID: <CAHS8izMMU8QZrvXRiDjqwsBg_34s+dhvSyrU7XGMBuPF6eWyTA@mail.gmail.com>
-Subject: Re: Device mem changes vs pinning/zerocopy changes
-To: David Howells <dhowells@redhat.com>
-Cc: willy@infradead.org, hch@infradead.org, Jakub Kicinski <kuba@kernel.org>, 
-	Eric Dumazet <edumazet@google.com>, netdev@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|CH3PR12MB8187:EE_
+X-MS-Office365-Filtering-Correlation-Id: e4bb4245-0044-4b63-8ddf-08dd9f963162
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|10070799003|366016|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Gih9OSDe1Azsh/mKXZbXI9DqD2b7y7BclVMEy+hK+dS7Hk/yRtJluIc0Exoc?=
+ =?us-ascii?Q?t2AZY3+67gu6u4iQ7gYwFKjFHq5uLR1zeliX/DJlOyeE7zzivA/wly1+Jl/W?=
+ =?us-ascii?Q?G5xhR3KR2sVOJD5hIxMo1KXXHgZuW8kmZQqe1YG03B704MTk5BewPQ9gg42k?=
+ =?us-ascii?Q?nrICxVdWwa6GzU6RetNTBoDf9tB6tujNFoqMG0A7dplEO47vYag9miZtzNBw?=
+ =?us-ascii?Q?YbL87I77Jyxsr/wzZMPCqIP1dBMDwkWoWGnmK2WzPIHGLBZY9xH+nAr4XBoq?=
+ =?us-ascii?Q?t/4RgmG+ezwUxW+mJrzwj9LFEqeiC/3o/x3FdFuKe7MpuXXp6Vu+zF8akJpY?=
+ =?us-ascii?Q?SWzBOpJoOXHW8gP6p7p5S+YzXo9yKOdQWeIH0IkseDci1NSrpUf1BRHAsRv3?=
+ =?us-ascii?Q?lWMBd1/oS9r7sa/J839kq+9nBKNBixFNsnmhlkW+3vsilV+dW5syp/DKXydo?=
+ =?us-ascii?Q?IvFzvQDKO+dcDmLAXatIPjjpolhPMM8unedrGLBUvUnJ5K+Js9pMvIIM0ytP?=
+ =?us-ascii?Q?xf+ZKg8C7oiIurKJWHc/X5U9+KltenECYnkXkeYWaYsQWZLDch2ECAVfMqAc?=
+ =?us-ascii?Q?CAM3cbiucnK5btEZBw3SJBBobOZ2B0bOyAtvgTwTAEaBhBZPfy2v70GE5THl?=
+ =?us-ascii?Q?Z39Em8aYn/navS8/VlkQphoUYqXyjujqhTfRa0PXVa+NLbpZbn91lNXlGKWw?=
+ =?us-ascii?Q?/Fsddn90pOsvYqB615tADM9TaCrNq7cSFkaarGu3coP1o72jNZUUaQ7H52rD?=
+ =?us-ascii?Q?YYvroifrfrLzP13ixOEgZXKiAFJy8T7yx2tNlCVDPiEVxF52sW00NAW8+n6i?=
+ =?us-ascii?Q?A4J+C+ayreY94vWMhOjMn8EZcC9nLa3OccuxnkI+/VpSaQjgJ2u4K/+WKWlp?=
+ =?us-ascii?Q?Uwqu7gcJ0fiUGVF6Ji2CQl4FWfLM003aSyTew+76Gyt1xQs+5tXXuUSxdeQY?=
+ =?us-ascii?Q?IbyDC+Lf+8l5jnU27rzF8+5SLAbVlZsYAB7x06M8MXh90ggCyi51wQ+CRrth?=
+ =?us-ascii?Q?d+kSzQtjoHrOaTv4vtIPEL+SqZM39QBhknIthRUezuz7od2abBwwyl+40Xv7?=
+ =?us-ascii?Q?0TUz/2vZt/TuuUkMNVJGAiIaoYUUTWfgtH56Xd3Mu+LRBoOk32+tNWpOEhTV?=
+ =?us-ascii?Q?sXyfraMhxfOCNQYhbuWc8++fl34cT4mEuPIWhoUqCreHAM3ctsNwIDwIBht4?=
+ =?us-ascii?Q?DFbebnTq/5Nv6izGBxreqZnVierYusJcTNYJbZtFWNx0B4l2Bz7DWPGxpusd?=
+ =?us-ascii?Q?UDeZWiMBrfcFfRMU755Z9IHiqANX1SUenE07w+oVBYfOisEiQp/gopyHJ3b6?=
+ =?us-ascii?Q?e9/royfKoXNlEATn7XjANJzEQPdd3/JeQseohWEuFxrqbXI4V8NzTWQALbbp?=
+ =?us-ascii?Q?Y8/mXWgmBh4UYOWz9Gc7froV02kFumg8nlJKbgJ1UYmSwxV52wJVdnCdj06K?=
+ =?us-ascii?Q?tTA/MJdiohVgvQgVy8WN74v2ZHSONBkP?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?4BuNgFppeUfhTlznIw2GR8NGQqki8Oiqp1zOdFCt+/FXsF+xqdTzDJfCrAqA?=
+ =?us-ascii?Q?cxeAMtAY5Xo6MgqjXuDbPkmT28e9hHbfQZgcuYtAotVFPJp9p/XMBphQ1F86?=
+ =?us-ascii?Q?oCv0FNhHdWImquVbzZGb6eqET+r8ENTYq6GVWvnTHnF9VA3EuV3KsRvKCPEH?=
+ =?us-ascii?Q?UhFrahVEnVqrjjHUazr4Mi0O7zOgQlXlxn31Ln+Kw+5QI4z2pDx2UuxyFABx?=
+ =?us-ascii?Q?4Dce+ZytfeOekg2SM7gu7c2bXM0dMDiI0B8bJh3xJZsqXhhhdyDGe0AjlJ94?=
+ =?us-ascii?Q?9i9ySuR00oaTllBg4GnY6Ltrk6ICjtZfYGQNo1IMzGnbBnoNBnm/CnLd5r/w?=
+ =?us-ascii?Q?HQ8d0gkcndh1sg0/dr/9GCiroy+EOuvEA4oOI8pBgMLCehqpKHF2LM6ZAcKx?=
+ =?us-ascii?Q?0vaP38Jg6P5/jOCEFfJMgtF8l+EkG8QZ5SQMBDnzTO+CL78OZFSnJ68jbJuJ?=
+ =?us-ascii?Q?MiLuJDlapAgSPKEAmc7VMNOZ8rYuhtNdQUbacnW7eAz02P6QqHKoBls20R2Z?=
+ =?us-ascii?Q?2jsFIJGWhfpoWRk6DlmYhGnmWa1vl44nX0HhBhHzExdtsZIaCuqbudmUiPjM?=
+ =?us-ascii?Q?VWk/IZo3RGlmnLLQO7UmANPVrFJbeo7LMMtyIXkrOHyRstQJpfgQcsIKa5am?=
+ =?us-ascii?Q?m76y7kdtTvTcYGZ/EDGegeNWbNXWNa1b5YWXrMWzwzKRitKne8wczZayk7eL?=
+ =?us-ascii?Q?67vnfHgndCeTDj/lled9YArEAHiK3SHmAxgcJJ63g+ihHZH2hr1KyTA49xZw?=
+ =?us-ascii?Q?KjjBQ6gECJdJZNNQDHFUfToZotDTSsrTnyy//++hqiemSFvT4Eeu007v7udz?=
+ =?us-ascii?Q?sH/ddJfNUKHu9v0ZMydtLDvr/5ej9qY1+zn113TSPkOWkF2KmnqGWuD1ek03?=
+ =?us-ascii?Q?Me8b8qtu863RUvnOgfQidr2TGi+V1lmFQCYFBZ5HiovcVWIjE7QrOnzq1/Cx?=
+ =?us-ascii?Q?9LV+bh/gWqqgAc9jljg3FPWheViQ4OGK7ic/UgbKcl7IprMtxMsab0ddt3QQ?=
+ =?us-ascii?Q?chbPXpscMRYzHPIC6EFVXn5WvTreGN2ayNWuaMLUB8zJ4x4CfkmWneRy0eUd?=
+ =?us-ascii?Q?whaPZ2xWqek3o2Johr38wge1mJisk5zQNnPzMRmz80oRtJ78GvnoWSIt1uG9?=
+ =?us-ascii?Q?SSnIDFun8dUKN/2AQWPaa2igKxraqx7V81Y4qUxGJ3GH+o4qup6RuRno3HYw?=
+ =?us-ascii?Q?Rqx6uJceLOXV4pzHIuN0IrjJEmnx4dQTgg/3gZmuo/xBLloxQEmC5UeDEIR4?=
+ =?us-ascii?Q?fQwGa4taeff/MRznyfomUjOFvKWyVJWU4L7je3J8plcgC5BC8aEXFZ7jvBHQ?=
+ =?us-ascii?Q?S0CAqsHjSt19pModZM0NDiT7KRdTveZvjrgr++XAXbODNmOQxujzvcAgDcuq?=
+ =?us-ascii?Q?B5EEdtK+7bwUuytMhOT+TgzV/b6MBpUDzPeJSKDQkHsPg1FNV54kY8IXbAfV?=
+ =?us-ascii?Q?JkVSYXJkboI7rOXVC4ZuIa3NuxPdrXQVjYsLXF698MPQaJZdqFuyHx4MRZLy?=
+ =?us-ascii?Q?Fn7HlYO/0ntFgXXDGo0/dRm8SrD2PTk3ZkUmcRzkzDtFDbfH18t2VMh5rafF?=
+ =?us-ascii?Q?mkrKDRWZAj+hNsknV70PDkTzxSoG3ahpJtFTgCMxxqWSaAll8LkPsOzjWx1g?=
+ =?us-ascii?Q?pc/ZZJn1HXMrnqqzuA1srFk1xQTp/HpnSGB0DJXXc46G?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e4bb4245-0044-4b63-8ddf-08dd9f963162
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 May 2025 16:22:38.0403
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ASJwrFpKZ28ckz25Tmq8cM0QMgMquHoYHY63QjZtN9Z3ma+5/EL/dpSa9SdzCPz7
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8187
 
-On Fri, May 30, 2025 at 8:15=E2=80=AFAM David Howells <dhowells@redhat.com>=
- wrote:
->
-> Hi Mina,
->
-> I've seen your transmission-side TCP devicemem stuff has just gone in and=
- it
-> conflicts somewhat with what I'm trying to do.  I think you're working on=
- the
-> problem bottom up and I'm working on it top down, so if you're willing to
-> collaborate on it...?
->
+Hi all,
 
-Hi David! Yes, very happy to collaborate. FWIW, my initial gut feeling
-is that the work doesn't conflict that much. The tcp devmem
-netmem/net_iov stuff is designed to follow the page stuff, and as the
-usage of struct page changes we're happy moving net_iovs and netmems
-to do the same thing. My read is that it will take a small amount of
-extra work, but there are no in-principle design conflicts, at least
-AFAICT so far.
+This patchset moves MIGRATE_ISOLATE to a standalone bit to avoid
+being overwritten during pageblock isolation process. Currently,
+MIGRATE_ISOLATE is part of enum migratetype (in include/linux/mmzone.h),
+thus, setting a pageblock to MIGRATE_ISOLATE overwrites its original
+migratetype. This causes pageblock migratetype loss during
+alloc_contig_range() and memory offline, especially when the process
+fails due to a failed pageblock isolation and the code tries to undo the
+finished pageblock isolations.
 
-> So, to summarise what we need to change (you may already know all of this=
-):
->
->  (*) The refcount in struct page is going to go away.  The sk_buff fragme=
-nt
->      wrangling code, however, occasionally decides to override the zeroco=
-py
->      mode and grab refs on the pages pointed to by those fragments.  sk_b=
-uffs
->      *really* want those page refs - and it does simplify memory handling=
-.
->      But.
->
+Hi David,
 
-I believe the main challenge here is that there are many code paths in
-the net stack that expect to be able to grab a ref on skb frags. See
-all the callers of skb_frag_ref/skb_frag_unref:
+I tried to get rid of pfnblock mask by replacing
+{get,set}_pfnblock_flags_mask() with {get,set}_pfnblock_migratetype(),
+but get_pfnblock_migratetype() will need to do both test_bit() for
+MIGRATE_ISOLATE and try_cmpxchg() for other migratetype, which doubles
+its cost. So I made {get,set}_pfnblock_flags_mask() internal and use
+them in {get,set}_pfnblock_migratetype().
 
-tcp_grow_skb, __skb_zcopy_downgrade_managed, __pskb_copy_fclone,
-pskb_expand_head, skb_zerocopy, skb_split, pksb_carve_inside_header,
-pskb_care_inside_nonlinear, tcp_clone_payload, skb_segment.
+It is on top of mm-everything-2025-05-30-06-04.
 
-I think to accomplish what you're describing we need to modify
-skb_frag_ref to do something else other than taking a reference on the
-page or net_iov. I think maybe taking a reference on the skb itself
-may be acceptable, and the skb can 'guarantee' that the individual
-frags underneath it don't disappear while these functions are
-executing.
+In terms of performance for changing pageblock types, no performance
+change is observed:
 
-But devmem TCP doesn't get much in the way here, AFAICT. It's really
-the fact that so many of the networking code paths want to obtain page
-refs via skb_frag_ref so there is potentially a lot of code to touch.
+1. I used perf to collect stats of offlining and onlining all memory of a
+40GB VM 10 times and see that get_pfnblock_flags_mask() and
+set_pfnblock_flags_mask() take about 0.12% and 0.02% of the whole process
+respectively with and without this patchset across 3 runs.
 
->      Anyway, we need to stop taking refs where possible.  A fragment may =
-in
->      future point to a sequence of pages and we would only be getting a r=
-ef on
->      one of them.
->
->  (*) Further, the page struct is intended to be slimmed down to a single =
-typed
->      pointer if possible, so all the metadata in the net_iov struct will =
-have
->      to be separately allocated.
->
-
-Yes, I'm already collaborating with Byungchul on this, and we're
-making great progress. I think this may be close to getting fully
-reviewed:
-
-https://lore.kernel.org/netdev/20250509115126.63190-1-byungchul@sk.com/
-
-According to his cover letter, he's actually finding the work that I
-did with netmem/net_iovs useful for him.
-
->  (*) Currently, when performing MSG_ZEROCOPY, we just take refs on the us=
-er
->      pages specified by the iterator but we need to stop doing that.  We =
-need
->      to call GUP to take a "pin" instead (and must not take any refs).  T=
-he
->      pages we get access to may be folio-type, anon-type, some sort of de=
-vice
->      type.
->
-
-This also doesn't conflict with devmem changes, AFAICT. Currently in
-devmem we take references on the user devmem only because pages also
-take a reference on the user pages (we mirror devmem and pages to keep
-the netstack uniform without excessive mem-type checks). If the code
-path for  zerocopy_fill_skb_from_iter doesn't need to take ref on the
-pages, we'll just migrate  zerocopy_fill_skb_from_devmem to do the
-same thing.
-
->  (*) It would be good to do a batch lookup of user buffers to cut down on=
- the
->      number of page table trawls we do - but, on the other hand, that mig=
-ht
->      generate more page faults upfront.
->
->  (*) Splice and vmsplice.  If only I could uninvent them...  Anyway, they=
- give
->      us buffers from a pipe - but the buffers come with destructors and s=
-hould
->      not have refs taken on the pages we might think they have, but use t=
-he
->      destructor instead.
->
-
-The above 2 points are orthogonal to devmem. There is no page table
-walks, splice, or vmsplice with devmem. We just have to make sure that
-the generic changes you're implementing also work with the devmem
-paths. I can test your changes and point if I see any issue, but I
-don't see a conflict in-principle.
-
->  (*) The intention is to change struct bio_vec to be just physical addres=
-s and
->      length, with no page pointer.  You'd then use, say, kmap_local_phys(=
-) or
->      kmap_local_bvec() to access the contents from the cpu.  We could the=
-n
->      revert the fragment pointers to being bio_vecs.
->
-
-Ok, this part conflicts a bit, maybe. skb_frag_ref no longer uses
-struct bio_vec. I merged that change before 6.12 kernel, it's not a
-very recent change:
-
-https://lore.kernel.org/netdev/20240214223405.1972973-3-almasrymina@google.=
-com/
-
-But, AFAICT, skb_frag_t needs a struct page inside of it, not just a
-physical address. skb_frags can mmap'd into userspace for TCP
-zerocopy, see tcp_zerocopy_vm_insert_batch (which is a very old
-feature, it's not a recent change). There may be other call paths in
-the net stack that require a full page and just a physical address
-will do. (unless somehow we can mmap a physical address to the
-userspace).
-
->  (*) Kernel services, such as network filesystems, can't pass kmalloc()'d=
- data
->      to sendmsg(MSG_SPLICE_PAGES) because slabs don't have refcounts and,=
- in
->      any case, the object lifetime is not managed by refcount.  However, =
-if we
->      had a destructor, this restriction could go away.
->
-
-This also sounds orthogonal to devmem.
-
->
-> So what I'd like to do is:
->
->  (1) Separate fragment lifetime management from sk_buff.  No more wanglin=
-g of
->      refcounts in the skbuff code.  If you clone an skb, you stick an ext=
-ra
->      ref on the lifetime management struct, not the page.
->
-
-Agreed, and AFAICT devmem doesn't get in the way. Let me know if you
-disagree or are seeing something different.
-
->  (2) Create a chainable 'network buffer' struct, e.g.:
->
->         enum net_txbuf_type {
->                 NET_TXBUF_BUFFERED,     /* Buffered copy of data */
->                 NET_TXBUF_ZCOPY_USER,   /* Zerocopy of user buffers */
->                 NET_TXBUF_ZCOPY_KERNEL, /* Zerocopy of kernel buffers */
->         };
->
->         struct net_txbuf {
->                 struct net_txbuf        next;
->                 struct mmpin            mm_pin;
->                 unsigned int            start_pos;
->                 unsigned int            end_pos;
->                 unsigned int            extracted_to;
->                 refcount_t              ref;
->                 enum net_txbuf_type     type;
->                 u8                      nr_used;
->                 bool                    wmem_charged;
->                 bool                    got_copied;
->                 union {
->                         /* For NET_TXBUF_BUFFERED: */
->                         struct {
->                                 void            *bufs[16];
->                                 u8              bufs_orders[16];
->                                 bool            last_buf_freeable;
->                         };
->                         /* For NET_TXBUF_ZCOPY_*: */
->                         struct {
->                                 struct sock     *sk;
->                                 struct sk_buff  *notify;
->                                 msg_completion_t completion;
->                                 void            *completion_data;
->                                 struct bio_vec  frags[12];
->                         };
->                 };
->         };
->
->      (Note this is very much still a WiP and very much subject to change)
->
->      So how I envision it working depends on the type of flow in the sock=
-et.
->      For the transmission side of streaming sockets (e.g. TCP), the socke=
-t
->      maintains a single chain of these.  Each txbuf is of a single type, =
-but
->      multiple types can be interleaved.
->
->      For non-ZC flow, as data is imported, it's copied into pages attache=
-d to
->      the current head txbuf of type BUFFERED, with more pages being attac=
-hed
->      as we progress.  Successive writes just keep adding to the space in =
-the
->      latest page added and each skbuff generated pins the txbuf it starts=
- at
->      and each txbuf pins its successor.
->
->      As skbuffs are consumed, they unpin the root txbuf.  However, this c=
-ould
->      leave an awful lot of memory pinned for a long time, so I would miti=
-gate
->      this in two ways: firstly, where possible, keep track of the transmi=
-tted
->      byte position and progressively destruct the txbuf; secondly, if we
->      completely use up a partially filled txbuf then reset the queue.
->
->      An skbuff's frag list then has a bio_vec[] that refers to fragments =
-of
->      the buffers recorded in the txbuf chain.  An skbuff may span multipl=
-e
->      txbufs and a txbuf may provision multiple skbuffs.
->
->      For the transmission side of datagram sockets (e.g. UDP) where the
->      messages may complete out of order, I think I would give each datagr=
-am
->      its own series of txbufs, but link the tails together to manage the
->      SO_EE_ORIGIN_ZEROCOPY notification generation if dealing with usersp=
-ace.
->      If dealing with the kernel, there's no need to link them together as=
- the
->      kernel can provide a destructor for each datagram.
->
-
-To be honest, I didn't follow the entirety of point #2 here, but the
-problem is not related to devmem.
-
-Is struct net_txbuf intended to replace struct sk_buff in the tx path
-only? If so, I'm not sure that works. Currently TX and RX memory share
-a single data structure (sk_buff), and I believe that is critical.
-Because RX skbs can be forwarded to TX and vice-versa. You will need
-to implement an net_txbuf_to_skb helper and vice versa if you go this
-route, no? So I think, maybe, instead of introducing a new struct, you
-have to make the modifications you envision to struct sk_buff itself?
-
- >  (3) When doing zerocopy from userspace, do calls to GUP to get batches =
-of
->      non-contiguous pages into a bio_vec array.
->
->  (4) Because AF_UNIX and the loopback driver transfer packets from the
->      transmission queue of one socket down into the reception queue of
->      another, the use of txbufs would also need to extend onto the receiv=
-e
->      side (and so "txbufs" would be a misnomer).
->
-
-OK, you realize that TX packets can be forwarded to RX. The opposite
-is true, RX can be forwarded to TX. And it's not just AF_UNIX and
-loopback. Packets can be forwarded via ip forwarding, and tc, and
-probably another half dozen features in the net stack I don't know
-about. I think you need to modify the existing sk_buff. I think adding
-a new struct and migrating the entire net stack to use that is a bit
-too ambitious. But up to you. Just my 2 cents here.
-
->      When receiving a packet, a txbuf would need to be allocated and the
->      received buffers attached to it.  The pages wouldn't necessarily nee=
-d
->      refcounts as the txbuf holds them.  The skbuff holds a ref on the tx=
-buf.
->
->  (5) Cloning an skbuff would involve just taking an extra ref on the firs=
-t
->      txbuf.  Splitting off part of an skbuff would involve fast-forwardin=
-g the
->      txbuf chain for the second part and pinning that.
->
->  (6) I have a chained-bio_vec array concept with iov_iter type for it tha=
-t
->      might make it easier to string together the fragments in a reassembl=
-ed
->      packet and represent it as an iov_iter, thereby allowing us to use c=
-ommon
->      iterator routines for things like ICMP and packet crypto.
->
->  (7) We need to separate net_iov from struct page, and it might make thin=
-gs
->      easier if we do that now, allocating net_iov from a slab.
->
-
-net_iov is already separate from struct page. The only commonality
-they share is that we static_assert the offset of some page pool
-fields are the same in struct page and struct net_iov, but that's it.
-Byungchul is already handling the entire
-netmem_desc-shrink-struct-page in the series I linked to earlier and I
-would say his work is going well.
-
->  (8) Reference the txbuf in a splice and provide a destructor that drops =
-that
->      reference.  For small splices, I'd be very tempted to simply copy th=
-e
->      data.  For splice-out of data that was spliced into an AF_UNIX socke=
-t or
->      zerocopy data that passed through a loopback device, I'm also very
->      tempted to make splice copy at that point.  There's a potential DoS
->      attack whereby someone can endlessly splice tiny bits of a message o=
-r
->      just sit on them, preventing the original provider from recovering i=
-ts
->      memory.
->
->  (9) Make it easy for a network filesystem to create an entire compound
->      message and present it to the socket in a single sendmsg() with a
->      destructor.
->
-> I've pushed my current changes (very incomplete as they are) to:
->
->         https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs=
-.git/log/?h=3Diov-experimental
->
-> I'm writing functions to abstract out the loading of data into the txbuf =
-chain
-> and attach to skbuff.  These can be found in skbuff.c as net_txbuf_*().  =
-I've
-> modified the TCP sendmsg to use them.
->
+2. I used perf to collect stats of dd from /dev/random to a 40GB tmpfs file
+and find get_pfnblock_flags_mask() takes about 0.05% of the process with and
+without this patchset across 3 runs.
 
 
---=20
-Thanks,
-Mina
+Changelog
+===
+From V5[4]:
+1. used atomic version bitops for pageblock standalone bit operations.
+2. added a helper function for standalone bit check.
+3. renamed PB_migrate_skip to PB_compact_skip.
+4. used #define MIGRATETYPE_AND_ISO_MASK MIGRATETYPE_MASK to simplify
+   !CONFIG_MEMORY_ISOLATION code.
+5. added __MIGRATE_TYPE_END to make sure migratetypes can be stored in
+   PB_migratetype_bits.
+6. used set and clear to implement toggle_pageblock_isolate() and added
+   VM_WARN_ONCE in __move_freepages_block_isolate() to warn isolating a
+   isolated pageblock and unisolating a not isolated pageblock.
+7. dropped toggle_pfnblock_bit().
+8. made acr_flags_t an enum and added ACR_OTHER for non CMA allocation.
+9. renamed pb_isolate_mode items to have PB_ISOLATE_MODE prefix.
+10. collected reviewed-by.
+
+From v4[3]:
+1. cleaned up existing pageblock flag functions:
+   a. added {get,set}_{pfnblock,pageblock}_migratetype() to change
+      pageblock migratetype
+   b. added {get,set,clear}_pfnblock_bit() to change pageblock
+      standalone bit, i.e., PB_migrate_skip and PB_migrate_isolate (added
+      in this series).
+   c. removed {get,set}_pfnblock_flags_mask().
+2. added __NR_PAGEBLOCK_BITS to present the number of pageblock flag bits and
+   used roundup_pow_of_two(__NR_PAGEBLOCK_BITS) as NR_PAGEBLOCK_BITS.
+3. moved {get,set,clear}_pageblock_isolate() to linux/page-isolation.h.
+4. added init_pageblock_migratetype() to initialize a pageblock with a
+   migratetype and isolated. It is used by memmap_init_range(), which is
+   called by move_pfn_range_to_zone() in online_pages() from
+   mm/memory_hotplug.c. Other set_pageblock_migratetype() users are
+   changed too except the ones in mm/page_alloc.c.
+5. toggle_pageblock_isolate() is reimplemented using __change_bit().
+6. set_pageblock_migratetype() gives a warning if a pageblock is changed
+   from MIGRATE_ISOLATE to other migratetype.
+7. added pb_isolate_mode: MEMORY_OFFLINE, CMA_ALLOCATION, ISOLATE_MODE_OTHERS
+   to replace isolate flags.
+8. REPORT_FAILURE is removed, since it is only used by MEMORY_OFFLINE.
+
+From v3[2]:
+1. kept the original is_migrate_isolate_page()
+2. moved {get,set,clear}_pageblock_isolate() to mm/page_isolation.c
+3. used a single version for get_pageblock_migratetype() and
+   get_pfnblock_migratetype().
+4. replace get_pageblock_isolate() with
+   get_pageblock_migratetype() == MIGRATE_ISOLATE, a
+   get_pageblock_isolate() becomes private in mm/page_isolation.c
+5. made set_pageblock_migratetype() not accept MIGRATE_ISOLATE, so that
+   people need to use the dedicate {get,set,clear}_pageblock_isolate() APIs.
+6. changed online_page() from mm/memory_hotplug.c to first set pageblock
+   migratetype to MIGRATE_MOVABLE, then isolate pageblocks.
+7. added __maybe_unused to get_pageblock_isolate(), since it is only
+   used in VM_BUG_ON(), which could be not present when MM debug is off.
+   It is reported by kernel test robot.
+7. fixed test_pages_isolated() type issues reported by kernel test
+   robot.
+
+From v2[1]:
+1. Moved MIGRATETYPE_NO_ISO_MASK to Patch 2, where it is used.
+2. Removed spurious changes in Patch 1.
+3. Refactored code so that migratetype mask is passed properly for all
+callers to {get,set}_pfnblock_flags_mask().
+4. Added toggle_pageblock_isolate() for setting and clearing
+MIGRATE_ISOLATE.
+5. Changed get_pageblock_migratetype() when CONFIG_MEMORY_ISOLATION to
+handle MIGRATE_ISOLATE case. It acts like a parsing layer for
+get_pfnblock_flags_mask().
+
+
+Design
+===
+
+Pageblock flags are read in words to achieve good performance and existing
+pageblock flags take 4 bits per pageblock. To avoid a substantial change
+to the pageblock flag code, 8 pageblock flag bits are used.
+
+It might look like the pageblock flags have doubled the overhead, but in
+reality, the overhead is only 1 byte per 2MB/4MB (based on pageblock config),
+or 0.0000476 %.
+
+Any comment and/or suggestion is welcome. Thanks.
+
+[1] https://lore.kernel.org/linux-mm/20250214154215.717537-1-ziy@nvidia.com/
+[2] https://lore.kernel.org/linux-mm/20250507211059.2211628-2-ziy@nvidia.com/
+[3] https://lore.kernel.org/linux-mm/20250509200111.3372279-1-ziy@nvidia.com/
+[4] https://lore.kernel.org/linux-mm/20250523191258.339826-1-ziy@nvidia.com/
+
+
+Zi Yan (6):
+  mm/page_alloc: pageblock flags functions clean up.
+  mm/page_isolation: make page isolation a standalone bit.
+  mm/page_alloc: add support for initializing pageblock as isolated.
+  mm/page_isolation: remove migratetype from
+    move_freepages_block_isolate()
+  mm/page_isolation: remove migratetype from undo_isolate_page_range()
+  mm/page_isolation: remove migratetype parameter from more functions.
+
+ Documentation/mm/physical_memory.rst |   2 +-
+ drivers/virtio/virtio_mem.c          |   2 +-
+ include/linux/gfp.h                  |   9 +-
+ include/linux/memory_hotplug.h       |   3 +-
+ include/linux/mmzone.h               |  21 +-
+ include/linux/page-isolation.h       |  47 +++-
+ include/linux/pageblock-flags.h      |  48 ++--
+ include/trace/events/kmem.h          |  14 +-
+ mm/cma.c                             |   2 +-
+ mm/hugetlb.c                         |   4 +-
+ mm/internal.h                        |   3 +-
+ mm/memory_hotplug.c                  |  24 +-
+ mm/memremap.c                        |   2 +-
+ mm/mm_init.c                         |  24 +-
+ mm/page_alloc.c                      | 321 +++++++++++++++++++++------
+ mm/page_isolation.c                  | 100 ++++-----
+ 16 files changed, 435 insertions(+), 191 deletions(-)
+
+-- 
+2.47.2
+
 
