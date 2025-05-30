@@ -1,149 +1,95 @@
-Return-Path: <linux-kernel+bounces-668436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-668432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7ECB5AC92D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 17:57:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C7833AC92CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 17:56:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 223F83BFBA2
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 15:57:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 107393B84EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 15:56:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94055236A9F;
-	Fri, 30 May 2025 15:56:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40FC1235345;
+	Fri, 30 May 2025 15:56:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KV7ZuAiZ"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CbncBUVI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3318D2367AB;
-	Fri, 30 May 2025 15:56:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95739198845;
+	Fri, 30 May 2025 15:56:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748620588; cv=none; b=gT7VS4jaXg8hb/cXp6maZMp7jKgPiHygUvrkuEXbm5TJboe3RmUhdcqIFDtJiNwDwLbjFNFNQLHkFQv3qrBNdZs/jQJve+mfE9exdCrJtrblGoSJgvaFlCW7kMCmq+plCyGNewNBmCeutPKGasdSonFY8P+CCvuMsl/Uf7m6m0E=
+	t=1748620582; cv=none; b=R9Vy+idWnEeUUNJusqrMvwp9n8citY3E5ZCG5G7PuLEOuL+2GPeQLoFCCbyH2d2vBk0x2OXOswCQXNfZnXzgMXCAnCd7v9hTL7MINe4upRCJCbuyxq6AcjvA4vg1Rdn/YAx5eioKVo2Od6hVt8EaWog5DDR3o0sg6SWzl14LImI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748620588; c=relaxed/simple;
-	bh=Gov2ErTA4ltXD8t4g2SZjQfOt4pd1BQTNLKN8c2dfY0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Id7ibazBO0Lv8/MFpvAj4eDGwLx8fy2iug6cVUztxsRFNRO9kFYrLbfEu0tHAj5ZTMZq4eWC9K3MSD+cuxwwIQNlygGLNTLQqz5R3Zxp7byFoz9AXp8hgu0JL1I1kUQEjpYh4EsLTAZCYvKZjhuqoF50QSdQS5okHUw7ZDy84Eo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KV7ZuAiZ; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-441ab63a415so23729995e9.3;
-        Fri, 30 May 2025 08:56:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748620585; x=1749225385; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mp+E66Q6A7bA9dhY4T3RjzRvOC5Jv6nIHHeAykV6os4=;
-        b=KV7ZuAiZKTZ4Xtw+NykbZV7inbqv9UWRruWFuAJc32eqLztwmDLC7CY68hJ6U+77ZQ
-         3nnwme3LMXWBLu3G3bmXcSe0l4Hbz+s5J0AXuxgzgdstqA/040qofx+GAW/uGFZCFp4Y
-         HIXT9PQVI46qMFe4z6263aZS5IaLlLGhN3vyeYoHMN5Qm3z8O6tsXxgoBGTTjys0c3CA
-         yuK1fDgyEhbn8Uj+AM8ItP2txA9BMKEja/YQfofMw+FlpEYIexjWonQR/6iE6CA4myhT
-         OnSsAFTBAm0bBo47FjaIn7sT8sBae0rnyHWatkIYLter89Yd9t4dFnu7YDlJl96ZkcGc
-         1ceg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748620585; x=1749225385;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mp+E66Q6A7bA9dhY4T3RjzRvOC5Jv6nIHHeAykV6os4=;
-        b=NaYrxf5hPmDIBYCApi9mo7v32Oz5GVUaLfXKgAiOjeywNAhr1/XogxfuzOFYyh0jdD
-         1PD8ZrSb2tefgzQOcCzcmnpTkSMXyYxJjIbLRc+CJhEPJUZswMJ1B5lDqEJ/6OYtbLxL
-         F/KrZ27/XeeOQcFn1Ju26FyS7C/nw9dIAizkd6O6LCD2L+8QcOonjslC1bwC2M/ayXas
-         F4SiQaasaKTpk4EizM2db5g3GCa5dmHPTD6wKAulDcv5XQ5AEzMxBFLByPDalwuk6hvA
-         06SObn0EDbTC6/Z35p5W6jXw0laeRZlqjZpYTvhQTqWu3UAEqpKJ2OPBhDNs2DBPea/J
-         ANrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWs4Ifz2ZYOnzEMpdO37RfxjPpIBwDaDI3J/bKCSkryfkwL2wtIHGRg1hsfbucHMSysfUYZE5QDIbUYxiI=@vger.kernel.org, AJvYcCXK5c+tgWlLL5ORvTIj8AevZqtuXjLRbcWWi2WuwWTBTTH9/D+33M3IF5DAsWTYRqFjG6JU8z3a@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVMU+mhkGHNvMyU5tMN+4YpPdAsOnQAi4Bej3zL2CN1M6afoBh
-	rAVDcqQCwt+GvM1dLbhv6AzjC/oOIY5jC3Z4Uqw2F/QMQrTorOI8O0KR
-X-Gm-Gg: ASbGncsCItrXkqOaZorsyc3QXo0zlJ4QJnlhIUXW8pnQmHOjKqFVTDh8ofaXIK/mYeQ
-	VCxE9SRpAIrParDg27vnDNMSolfCHnwPnxDVoj7XV1XXVZo0g4KZaHB2LJaLy+cAa9bFP1EFbuR
-	Z8taX3R5hSKER087h2w/sp1a/JDnSayTeDuDGjbaOIakJZ9XIE0y/vZOytWUeiTaQxbXlTdVeV4
-	Mk5OKGRofz4lFYqCivyygmVc9M3jtl3AuV9q6m/Cuj+u4bDJDkH51F7eQtQRHE5TzjvkpYOQ4QY
-	M9dnl48MCQ4RLbCAk2esnruTqROuXDPvFw5NhHWoE3OTOi5IGuZEY11Oeygz3hJC//T70j4GWdn
-	oKNS8vp9ZjPXyW7kOM5ljSis34i21flpjkmaTBKqQyoFV00/qgvJE
-X-Google-Smtp-Source: AGHT+IH1oW3m7z1i5Gu3ZApwun9ZAc56WPYxSGw5Ovt1K1bY+XPvoQAX814eDJcorxESWXgNifgNRA==
-X-Received: by 2002:a05:600c:1c96:b0:43c:fc04:6d35 with SMTP id 5b1f17b1804b1-450d64e2a8amr40070295e9.4.1748620585157;
-        Fri, 30 May 2025 08:56:25 -0700 (PDT)
-Received: from skynet.lan (2a02-9142-4580-1200-0000-0000-0000-0008.red-2a02-914.customerbaf.ipv6.rima-tde.net. [2a02:9142:4580:1200::8])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4efe74165sm5211620f8f.53.2025.05.30.08.56.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 May 2025 08:56:24 -0700 (PDT)
-From: =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= <noltari@gmail.com>
-To: jonas.gorski@gmail.com,
-	florian.fainelli@broadcom.com,
-	andrew@lunn.ch,
-	olteanv@gmail.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	dgcbueu@gmail.com
-Cc: =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= <noltari@gmail.com>
-Subject: [PATCH] net: dsa: b53: support legacy FCS tags
-Date: Fri, 30 May 2025 17:56:18 +0200
-Message-Id: <20250530155618.273567-4-noltari@gmail.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250530155618.273567-1-noltari@gmail.com>
-References: <20250530155618.273567-1-noltari@gmail.com>
+	s=arc-20240116; t=1748620582; c=relaxed/simple;
+	bh=46qdYaXfdnGmUSTdfd10vh5+aJpfEeugxFSJgWUzVd8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Kbo6Id49WgbH32/ytkGYyyaPb6ONP2bwbg4RGUZinEvEa15ZVS1dZh1sAcN5qVHTW05kCHnDidYthhjdIiO3HcuUAxIboKIPY+WeXMYrHeXv2xqK5qO+mFTpss3KbyVfHFPKGtBqgSMsOPmtQB7pQdzoG48rWmuu32PyvCrXDIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CbncBUVI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 971A3C4CEE9;
+	Fri, 30 May 2025 15:56:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748620582;
+	bh=46qdYaXfdnGmUSTdfd10vh5+aJpfEeugxFSJgWUzVd8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CbncBUVIpau3pBBVFWQnDrbREUKTE439bV41vy0htEqozNxpULTPxV2jFxopej/oZ
+	 ySDmIQJyJU7Lxt6zMBdX6IkVvNp6dAtd0P/hHEVBUqY6Y13/lzhSYZfP50Jv1rbkp9
+	 nihx0L3eSB0tTyCVOetyo1h8pxBQIhn4qlrrhmZswAFze7YEyiifV7vSBLotECA2Hv
+	 bpxLX3EGMyxiXO+rGWRC0HRYCdiElCmhslyXShB42gzlh7eQJyPSpDfTbT9e9FZL42
+	 PrQWSiBJFPoY5bddiAKhmikS5daaeY07Cz+lXNBChr6JEI7df+RnF/fLGTDuO//Dpm
+	 whV8V0S7o0/4w==
+Date: Fri, 30 May 2025 16:56:18 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	"open list:CLOCKSOURCE, CLOCKEVENT DRIVERS" <linux-kernel@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	imx@lists.linux.dev
+Subject: Re: [PATCH v2 1/1] dt-bindings: timer: Add fsl,timrot.yaml
+Message-ID: <20250530-underdone-sitcom-3aee9f1ec277@spud>
+References: <20250528165351.691848-1-Frank.Li@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="STlooZGqUue+sWwC"
+Content-Disposition: inline
+In-Reply-To: <20250528165351.691848-1-Frank.Li@nxp.com>
 
-Commit 46c5176c586c ("net: dsa: b53: support legacy tags") introduced
-support for legacy tags, but it turns out that BCM5325 and BCM5365
-switches require the original FCS value and length, so they have to be
-treated differently.
 
-Fixes: 46c5176c586c ("net: dsa: b53: support legacy tags")
-Signed-off-by: Álvaro Fernández Rojas <noltari@gmail.com>
----
- drivers/net/dsa/b53/Kconfig      | 1 +
- drivers/net/dsa/b53/b53_common.c | 7 +++++--
- 2 files changed, 6 insertions(+), 2 deletions(-)
+--STlooZGqUue+sWwC
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/net/dsa/b53/Kconfig b/drivers/net/dsa/b53/Kconfig
-index ebaa4a80d5444..915008e8eff53 100644
---- a/drivers/net/dsa/b53/Kconfig
-+++ b/drivers/net/dsa/b53/Kconfig
-@@ -5,6 +5,7 @@ menuconfig B53
- 	select NET_DSA_TAG_NONE
- 	select NET_DSA_TAG_BRCM
- 	select NET_DSA_TAG_BRCM_LEGACY
-+	select NET_DSA_TAG_BRCM_LEGACY_FCS
- 	select NET_DSA_TAG_BRCM_PREPEND
- 	help
- 	  This driver adds support for Broadcom managed switch chips. It supports
-diff --git a/drivers/net/dsa/b53/b53_common.c b/drivers/net/dsa/b53/b53_common.c
-index 132683ed3abe6..28a20bf0c669e 100644
---- a/drivers/net/dsa/b53/b53_common.c
-+++ b/drivers/net/dsa/b53/b53_common.c
-@@ -2262,8 +2262,11 @@ enum dsa_tag_protocol b53_get_tag_protocol(struct dsa_switch *ds, int port,
- 		goto out;
- 	}
- 
--	/* Older models require a different 6 byte tag */
--	if (is5325(dev) || is5365(dev) || is63xx(dev)) {
-+	/* Older models require different 6 byte tags */
-+	if (is5325(dev) || is5365(dev)) {
-+		dev->tag_protocol = DSA_TAG_PROTO_BRCM_LEGACY_FCS;
-+		goto out;
-+	} else if (is63xx(dev)) {
- 		dev->tag_protocol = DSA_TAG_PROTO_BRCM_LEGACY;
- 		goto out;
- 	}
--- 
-2.39.5
+On Wed, May 28, 2025 at 12:53:50PM -0400, Frank Li wrote:
+> Add fsl,timrot.yaml for i.MX23/i.MX28 timer.
+>=20
+> Also add a generic fallback compatible string "fsl,timrot" for legacy
+> devices, which have existed for over 15 years.
+>=20
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
 
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+
+--STlooZGqUue+sWwC
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaDnVIgAKCRB4tDGHoIJi
+0njhAP9bp9G1YnaQ2XCar8NXVTIs/sRffXHGqqJ7IVPO3IcdQAEA4jWLWiYdaYfP
+fcP0ItXIC2Gh1MVhID81vUevEuvC7wI=
+=fFke
+-----END PGP SIGNATURE-----
+
+--STlooZGqUue+sWwC--
 
