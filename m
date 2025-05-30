@@ -1,246 +1,125 @@
-Return-Path: <linux-kernel+bounces-667484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-667486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49055AC85FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 03:22:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CDCAAC85FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 03:25:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C05EF4A66FE
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 01:22:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1337E4E00B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 01:25:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9913D158DAC;
-	Fri, 30 May 2025 01:22:13 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A314715746E;
+	Fri, 30 May 2025 01:25:01 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C7C078F59;
-	Fri, 30 May 2025 01:22:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 050199475;
+	Fri, 30 May 2025 01:24:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748568133; cv=none; b=GvcoEKWzIkdnVmwAPUcYw3/ioxJQEnGi3ppzvLf/DXY24V3WA1R3vhbG37DSCFor7dGDGwoza9Y55HjHt1TYGUMBCqpvwA+co4XouocNlriTvBL7Av/uf+XhWGdRHycsgPZO/1vUmYdXKxRrpc7n4bB+RYp33XrudMywnTEKc5o=
+	t=1748568301; cv=none; b=TQxHgNg/VanqspiG3EmIbySzYFlyTXzKE5q07ltrmsfo0Lx8HNRtUGdyDTSy32SWm00BY9xZS/wOTnFeQl/1mfXUSLKmGWOU67K5/SG5FYFaZg9OeGM4vjWfvsWGKoHAuLUSBalYBsysoI2i83627rRS4V90OZJ8PODVNS4NmpY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748568133; c=relaxed/simple;
-	bh=cPZgUdjIWra0PdLQpoq1G4ikubdy55BGyBeN7H0ghQc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=NGgcm+Y/UsTtcoj0zO+tDRD8PDK3hGT51wfgeT9CBNrF+orZf6rWJjIQG7d9y80g94Us0XbGjjE5I4pO0Arrq8d6Cyp+soi4z6s+gqMEJCncPyEDOZi9MihQWqRtkXxBkL4khyrK3ckCFlzq+CoSLpgFzOdLh3Tk1nnJMjxaQ2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 7aeb099a3cf411f0b29709d653e92f7d-20250530
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:61bc4a82-4730-41a2-ae0f-7d2ed25cec8c,IP:10,
-	URL:0,TC:0,Content:0,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:5
-X-CID-INFO: VERSION:1.1.45,REQID:61bc4a82-4730-41a2-ae0f-7d2ed25cec8c,IP:10,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:5
-X-CID-META: VersionHash:6493067,CLOUDID:7101c88277929fe5165bb6c834cba4f3,BulkI
-	D:250529133829GCJDP53I,BulkQuantity:1,Recheck:0,SF:17|19|24|43|64|66|74|78
-	|80|81|82|83|100|101|102|841,TC:nil,Content:0|51,EDM:-3,IP:-2,URL:99|1,Fil
-	e:nil,RT:nil,Bulk:40,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DK
-	R:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI,
-	TF_CID_SPAM_ULS
-X-UUID: 7aeb099a3cf411f0b29709d653e92f7d-20250530
-X-User: jianghaoran@kylinos.cn
-Received: from [192.168.31.67] [(223.70.159.239)] by mailgw.kylinos.cn
-	(envelope-from <jianghaoran@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 1991867234; Fri, 30 May 2025 09:21:58 +0800
-Message-ID: <68ec5a7f3cc63dc19397b3ce0649716e0fac8d49.camel@kylinos.cn>
-Subject: =?gb2312?Q?=BB=D8=B8=B4=A3=BA=5BPATCH=5D?= LoongArch: BPF: Optimize
- the calculation method of jmp_offset in the emit_bpf_tail_call function
-From: jianghaoran <jianghaoran@kylinos.cn>
-To: Hengqi Chen <hengqi.chen@gmail.com>
-Cc: loongarch@lists.linux.dev, bpf@vger.kernel.org, 
- linux-kernel@vger.kernel.org, kernel@xen0n.name, chenhuacai@kernel.org, 
- yangtiezhu@loongson.cn, haoluo@google.com, jolsa@kernel.org,
- sdf@fomichev.me,  kpsingh@kernel.org, john.fastabend@gmail.com,
- yonghong.song@linux.dev,  song@kernel.org, eddyz87@gmail.com,
- martin.lau@linux.dev, andrii@kernel.org,  daniel@iogearbox.net
-Date: Fri, 30 May 2025 09:21:54 +0800
-In-Reply-To: <CAEyhmHTg3xNMBrSxXQj96pvfD83t6_RHRT_GGtbBzOpAKztDpw@mail.gmail.com>
-References: <20250528104032.1237415-1-jianghaoran@kylinos.cn>
-	 <CAEyhmHTg3xNMBrSxXQj96pvfD83t6_RHRT_GGtbBzOpAKztDpw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.1-2kord0k2.4.25.1 
+	s=arc-20240116; t=1748568301; c=relaxed/simple;
+	bh=kNaajXg16m+Pd6AypVIjsl97RD3jL0FIaypIp92RAMA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=G3ghHAVYkx2Dyr7hMxhcZ5GCKprDqytnZRGpqnmPtTDMovxfgcxoUwMaC7+iiXylr5QnoK6V9YUgKXRDApX1Bx9C1ZtnLE6qBCJH2KUSnyR6WWxj4/MeCya10ETybMaYxTaF+Wp1GJFGSDvTYt6/v0aI2JtVvr7XLfNZeS9kmOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4b7lsP6cYrzKHN0s;
+	Fri, 30 May 2025 09:24:57 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id 5797A1A0D9C;
+	Fri, 30 May 2025 09:24:56 +0800 (CST)
+Received: from [10.67.109.184] (unknown [10.67.109.184])
+	by APP3 (Coremail) with SMTP id _Ch0CgAHpsDmCDlojyTiNg--.49967S2;
+	Fri, 30 May 2025 09:24:56 +0800 (CST)
+Message-ID: <263929f5-bde6-48fb-a162-298a9f83bf5b@huaweicloud.com>
+Date: Fri, 30 May 2025 09:24:54 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/4] mm: Expose abnormal new_pte during move_ptes
+Content-Language: en-US
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: mhiramat@kernel.org, oleg@redhat.com, peterz@infradead.org,
+ Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, vbabka@suse.cz,
+ jannh@google.com, pfalcato@suse.de, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org, pulehui@huawei.com
+References: <20250529155650.4017699-1-pulehui@huaweicloud.com>
+ <20250529155650.4017699-3-pulehui@huaweicloud.com>
+ <20250529121944.3612511aa540b9711657e05a@linux-foundation.org>
+From: Pu Lehui <pulehui@huaweicloud.com>
+In-Reply-To: <20250529121944.3612511aa540b9711657e05a@linux-foundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_Ch0CgAHpsDmCDlojyTiNg--.49967S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Xw18Jw4rury8trWUZFW3Awb_yoW8Jryrpa
+	y0ga45Wa1UtF17Gr97Zr1qqrZYyws7tFyUG3srZr4YkasYkrnagF9FkayFvFZ5CFWDK3y5
+	tFWUGr93Ga4DJaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
+	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1
+	7KsUUUUUU==
+X-CM-SenderInfo: psxovxtxl6x35dzhxuhorxvhhfrp/
 
 
 
-
-
-在 2025-05-29星期四的 10:02 +0800，Hengqi Chen写道：
-> Hi Haoran,
+On 2025/5/30 3:19, Andrew Morton wrote:
+> On Thu, 29 May 2025 15:56:48 +0000 Pu Lehui <pulehui@huaweicloud.com> wrote:
 > 
-> On Wed, May 28, 2025 at 6:40 PM Haoran Jiang <
-> jianghaoran@kylinos.cn
-> > wrote:
-> > For a ebpf subprog JIT，the last call bpf_int_jit_compile
-> > function will
-> > directly enter the skip_init_ctx process. At this point,
-> > out_offset = -1,
-> > the jmp_offset in emit_bpf_tail_call is calculated
-> > by #define jmp_offset (out_offset - (cur_offset)) is a negative
-> > number,
-> > which does not meet expectations.The final generated assembly
-> > as follow.
-> > 
-> > 54:     bgeu            $a2, $t1, -8        # 0x0000004c
-> > 58:     addi.d          $a6, $s5, -1
-> > 5c:     bltz            $a6, -16            # 0x0000004c
-> > 60:     alsl.d          $t2, $a2, $a1, 0x3
-> > 64:     ld.d            $t2, $t2, 264
-> > 68:     beq             $t2, $zero, -28     # 0x0000004c
-> > 
-> > Before apply this patch, the follow test case will reveal soft
-> > lock issues.
-> > 
-> > cd tools/testing/selftests/bpf/
-> > ./test_progs --allow=tailcalls/tailcall_bpf2bpf_1
-> > 
-> > dmesg:
-> > watchdog: BUG: soft lockup - CPU#2 stuck for 26s!
-> > [test_progs:25056]
-> > 
+>> From: Pu Lehui <pulehui@huawei.com>
+>>
+>> When executing move_ptes, the new_pte must be NULL, otherwise it will be
+>> overwritten by the old_pte, and cause the abnormal new_pte to be leaked.
+>> In order to make this problem to be more explicit, let's add
+>> WARN_ON_ONCE when new_pte is not NULL.
+>>
+>> ...
+>>
+>> --- a/mm/mremap.c
+>> +++ b/mm/mremap.c
+>> @@ -237,6 +237,8 @@ static int move_ptes(struct pagetable_move_control *pmc,
+>>   
+>>   	for (; old_addr < old_end; old_pte++, old_addr += PAGE_SIZE,
+>>   				   new_pte++, new_addr += PAGE_SIZE) {
+>> +		WARN_ON_ONCE(!pte_none(*new_pte));
+>> +
+>>   		if (pte_none(ptep_get(old_pte)))
+>>   			continue;
+>>   
 > 
-> This is a known issue. Does this change pass all tailcall tests ?
-> If not, please refer to the tailcall hierarchy patchset([1]).
-> We should address it once and for all. Thanks.
+> We now have no expectation that this will trigger, yes?  It's a sanity
+
+Hi Andrew,
+
+This can sanitize abnormal new_pte. It is expected that uprobe would not 
+come in later, but others, uncertain🤔? So it will be a good alert. And 
+after patch 1 it will not trigger WARNING.
+
+> check that patch [1/4] is working?  Perhaps VM_WARN_ON_ONCE() would be
+
+Agree, should I respin one more?
+
+> more appropriate.  And maybe even a comment:
 > 
->   [1]: 
-> https://lore.kernel.org/bpf/20240714123902.32305-1-hffilwlqm@gmail.com/
+> 	/* temporary, remove this one day */
 > 
-> Thanks,I'll keep looking into these patches.
-> > Signed-off-by: Haoran Jiang <
-> > jianghaoran@kylinos.cn
-> > >
-> > ---
-> >  arch/loongarch/net/bpf_jit.c | 28 +++++++++-------------------
-> >  1 file changed, 9 insertions(+), 19 deletions(-)
-> > 
-> > diff --git a/arch/loongarch/net/bpf_jit.c
-> > b/arch/loongarch/net/bpf_jit.c
-> > index fa1500d4aa3e..d85490e7de89 100644
-> > --- a/arch/loongarch/net/bpf_jit.c
-> > +++ b/arch/loongarch/net/bpf_jit.c
-> > @@ -208,9 +208,7 @@ bool bpf_jit_supports_far_kfunc_call(void)
-> >         return true;
-> >  }
-> > 
-> > -/* initialized on the first pass of build_body() */
-> > -static int out_offset = -1;
-> > -static int emit_bpf_tail_call(struct jit_ctx *ctx)
-> > +static int emit_bpf_tail_call(int insn, struct jit_ctx *ctx)
-> >  {
-> >         int off;
-> >         u8 tcc = tail_call_reg(ctx);
-> > @@ -220,9 +218,8 @@ static int emit_bpf_tail_call(struct
-> > jit_ctx *ctx)
-> >         u8 t2 = LOONGARCH_GPR_T2;
-> >         u8 t3 = LOONGARCH_GPR_T3;
-> >         const int idx0 = ctx->idx;
-> > -
-> > -#define cur_offset (ctx->idx - idx0)
-> > -#define jmp_offset (out_offset - (cur_offset))
-> > +       int tc_ninsn = 0;
-> > +       int jmp_offset = 0;
-> > 
-> >         /*
-> >          * a0: &ctx
-> > @@ -232,8 +229,11 @@ static int emit_bpf_tail_call(struct
-> > jit_ctx *ctx)
-> >          * if (index >= array->map.max_entries)
-> >          *       goto out;
-> >          */
-> > +       tc_ninsn = insn ? ctx->offset[insn+1] - ctx-
-> > >offset[insn] :
-> > +               ctx->offset[0];
-> >         off = offsetof(struct bpf_array, map.max_entries);
-> >         emit_insn(ctx, ldwu, t1, a1, off);
-> > +       jmp_offset = tc_ninsn - (ctx->idx - idx0);
-> >         /* bgeu $a2, $t1, jmp_offset */
-> >         if (emit_tailcall_jmp(ctx, BPF_JGE, a2, t1, jmp_offset)
-> > < 0)
-> >                 goto toofar;
-> > @@ -243,6 +243,7 @@ static int emit_bpf_tail_call(struct
-> > jit_ctx *ctx)
-> >          *       goto out;
-> >          */
-> >         emit_insn(ctx, addid, REG_TCC, tcc, -1);
-> > +       jmp_offset = tc_ninsn - (ctx->idx - idx0);
-> >         if (emit_tailcall_jmp(ctx, BPF_JSLT, REG_TCC,
-> > LOONGARCH_GPR_ZERO, jmp_offset) < 0)
-> >                 goto toofar;
-> > 
-> > @@ -254,6 +255,7 @@ static int emit_bpf_tail_call(struct
-> > jit_ctx *ctx)
-> >         emit_insn(ctx, alsld, t2, a2, a1, 2);
-> >         off = offsetof(struct bpf_array, ptrs);
-> >         emit_insn(ctx, ldd, t2, t2, off);
-> > +       jmp_offset = tc_ninsn - (ctx->idx - idx0);
-> >         /* beq $t2, $zero, jmp_offset */
-> >         if (emit_tailcall_jmp(ctx, BPF_JEQ, t2,
-> > LOONGARCH_GPR_ZERO, jmp_offset) < 0)
-> >                 goto toofar;
-> > @@ -263,22 +265,11 @@ static int emit_bpf_tail_call(struct
-> > jit_ctx *ctx)
-> >         emit_insn(ctx, ldd, t3, t2, off);
-> >         __build_epilogue(ctx, true);
-> > 
-> > -       /* out: */
-> > -       if (out_offset == -1)
-> > -               out_offset = cur_offset;
-> > -       if (cur_offset != out_offset) {
-> > -               pr_err_once("tail_call out_offset = %d,
-> > expected %d!\n",
-> > -                           cur_offset, out_offset);
-> > -               return -1;
-> > -       }
-> > -
-> >         return 0;
-> > 
-> >  toofar:
-> >         pr_info_once("tail_call: jump too far\n");
-> >         return -1;
-> > -#undef cur_offset
-> > -#undef jmp_offset
-> >  }
-> > 
-> >  static void emit_atomic(const struct bpf_insn *insn, struct
-> > jit_ctx *ctx)
-> > @@ -916,7 +907,7 @@ static int build_insn(const struct bpf_insn
-> > *insn, struct jit_ctx *ctx, bool ext
-> >         /* tail call */
-> >         case BPF_JMP | BPF_TAIL_CALL:
-> >                 mark_tail_call(ctx);
-> > -               if (emit_bpf_tail_call(ctx) < 0)
-> > +               if (emit_bpf_tail_call(i, ctx) < 0)
-> >                         return -EINVAL;
-> >                 break;
-> > 
-> > @@ -1342,7 +1333,6 @@ struct bpf_prog
-> > *bpf_int_jit_compile(struct bpf_prog *prog)
-> >         if (tmp_blinded)
-> >                 bpf_jit_prog_release_other(prog, prog ==
-> > orig_prog ? tmp : orig_prog);
-> > 
-> > -       out_offset = -1;
-> > 
-> >         return prog;
-> > 
-> > --
-> > 2.43.0
-> > 
 
 
