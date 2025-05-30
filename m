@@ -1,182 +1,167 @@
-Return-Path: <linux-kernel+bounces-667466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-667476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2315CAC85BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 02:42:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C954AC85DB
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 03:04:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F230A7B1BF6
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 00:41:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4E2FA4153E
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 01:04:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F16A339A8;
-	Fri, 30 May 2025 00:42:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F51D10E4;
+	Fri, 30 May 2025 01:04:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GI/DRy1T"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="L3+fNESF"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8841F2907;
-	Fri, 30 May 2025 00:42:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F9D313B58A
+	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 01:04:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748565749; cv=none; b=RQG34tAbtTJKzdcIldK4+HtVBq7Q5TAWKLwon60qKSAcZqWW0O7XIKjPUjEzCFGHw6xslRJ7Ux9tjS29YezKtXR+tYAc0DJQuwXoXBY6671dmOxeKDJaxpGm1aEqEGEEn71HcY5pHtscu4GH66B9wGXBiwS4UvomguTa8quFwxc=
+	t=1748567066; cv=none; b=X3nAtYYJ1w23nTNYcr8pFKGyXQAS1UFMGVTTrzLy4fvZJ37/+KeYoZHj5BgujZ/1efrhuWRJbnyn78I4R61xrdxtRLgmFwQauUiijydIEdjHjbQrCVfoF2q4lHOE0eIzyJyj1jgAf4+GGvIlUhPeiOiuNilKx3a1z5SEs2lO1xk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748565749; c=relaxed/simple;
-	bh=7bEkvTOnQCSK2sw2Na277q6zkrloQhkHZ3+iRT9SH4A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=I7XFfqOcwFfRZWBXxN0n5/g7nJ1N41evUU5bJguY/yduopH5NzUjMDhbUmzUwf3CAkQgBeG4L8hkkV3t/KLoKbHHaGoV4IMZaHWXgI95qpeFzuModGI9AnZXI1edk8cW2uZVgdmHZT9D8J/YgGsBP0ml7a2Y6kNDuGXZ24UUxOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GI/DRy1T; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB180C4AF09;
-	Fri, 30 May 2025 00:42:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748565749;
-	bh=7bEkvTOnQCSK2sw2Na277q6zkrloQhkHZ3+iRT9SH4A=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=GI/DRy1TUmCvGHwjRyvzfAQQ9MFa+h9Qei6mR2XNBpi2YOZnwSghcXI+oa95zFwI3
-	 TNe1MYRk5qIVX2dr9XDoA/T1MFltSgFDvYu7d53RiTVLN9T1E5oTShrKV3o7WqkBn3
-	 tpaEz9VYjuVfgk9r5nXFQMxpkbKA+sKe+Nvjl5EGKMlT9/bySFixL0SH8pHx5b4b15
-	 No76H0/t7fTQLk/ja6zXXOQkTSs7cZLAtHNc+k/1GkJO4oxd3Ki1B1slWiOX/rycMp
-	 z4WjhK6E6A81eNOBOBPDZd64UT+x32HLh+W9pMxRzdUl15UXJUGDbKbXuNArNQ8K22
-	 npCmnaNWSLZnQ==
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-476a720e806so13277411cf.0;
-        Thu, 29 May 2025 17:42:28 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUWFp4sOvERXOYlerA/l/gDMg6ehSp46oqsPmmizurDXPWHvg6uvPdGlSRa0SIyRQrZidw=@vger.kernel.org, AJvYcCUxk1ZLRdTG13ZmcWZgaNTeInhjqRWrH0yoo5XCgEHR3h9LT3C8hFpQDsJierDGhtmCdvOgLFpazuyBztF3@vger.kernel.org, AJvYcCVfPyjeFlL+sI/Rnjg/9+x0qMhKKYmjr/w6mYRs0NromghybUcPKIcLVjzNMof1bMzDbZU2ZIRYkdpWJE/+biw4ghCHYEl0@vger.kernel.org, AJvYcCW+rdiuov63382NWrc3r3e7Jp8ufcsog7R0YqzEpavdKTqFr31Z9BI6P5LSy0drLsYhvTrUqAG00UZ6QjcySA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+Lt9wvlgScQ2CWjsIjRaY4+MvaJa/KsJBWCtoDePtvjYjRHnc
-	ce1dkxxCHIbG1OX15MH+n3LVxdg99At2ANTjdwiecdAFXLfh39nKotEp0WqoRJuX2C6UZs19ubQ
-	I1LmNj5kjCPIV4E2YANu3JbvcMi6Kcrg=
-X-Google-Smtp-Source: AGHT+IGGGJvTIObZ60heIR5yqNHLAS2YoqnPZNzVO/6WrFAaaJsKljhGnZyGkTVQZnuSXcgLVahmSs4v22gHvONGMaY=
-X-Received: by 2002:a05:622a:1c14:b0:4a4:2f43:fb4e with SMTP id
- d75a77b69052e-4a440010735mr31040801cf.3.1748565748062; Thu, 29 May 2025
- 17:42:28 -0700 (PDT)
+	s=arc-20240116; t=1748567066; c=relaxed/simple;
+	bh=rX/1ao7p/NvtFeOI1F1MuvMHxeHwAQOnrfHP/4pdlNU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PyyzhV9r24OVSEjotJ6JX0wQqL/g8UQrvLfwhyy5nSYLQjEXIlOk3SslK2vgI3ooQbmyZSsCtB3miANmo9gsNQ9oGDSjerOefMSVoxC8VEPWEC3YAKZraeaUQ1GY3avgU7EiLbb18NcfR+pqP8ozSjId1KnF/KA+/br3pSbdyTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=L3+fNESF; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-7390d21bb1cso1051268b3a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 18:04:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1748567064; x=1749171864; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WMuXhARc7ZPHZfZkbAHNR+JT/HooS/WosQOHTLidIcA=;
+        b=L3+fNESFHVrJ8V1UAJubnyi7Y7ffQqxENgCbwFxqVWfjkObmtt+vuYtce4NaqTgdBU
+         OqT+iWDy7xwQJCpBuZThmNAB7o+TlrfhPkgv7Uh0fXRV1w3Cd6gNCyaCR04PTlIRea8N
+         Sw9ZIrjtuc1asCF//3DyB0j7x3UOq67tua5hE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748567064; x=1749171864;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WMuXhARc7ZPHZfZkbAHNR+JT/HooS/WosQOHTLidIcA=;
+        b=mv4SsC8Lyn2a8aGMAof4vbPuESHvH0XTBUqt7I+ptzx3Zs1zU8coO4oJ4afaNqYsM2
+         rkVmtlJsJB0c4xrjj9tRHOl6ilihgqnwkNwiFx86+VSDiaGcFT7edWolM1H2vYeo1+Ys
+         JfQa/M05kobKnUxboPCWn0BYBaHNM4GRJuKlLWZXwFiPIPwexpHgeOsMtxIVmPYWIcpy
+         /2HKfCXoKjeNJhq14eWt0/GX/ak55B6yqSc8uRK5lrQ69RLXjNGXh6M5oqQMbilylz2R
+         TdD5bY0xVbq0swBjSqOPYDfmt2FSC0gdU08D0/7AqccKW4VivRhSMnFpGa81XA0erfJt
+         jC+g==
+X-Forwarded-Encrypted: i=1; AJvYcCW7J4yrmoeCUf/Lh9qymntljTjv+UISJx08MTTXIduIVDPM5mBhWPri2mdA/OoMFzRWGGurArp1QkpfjEM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1SThvJGNuy5P5hHV0FWOG0Cxuq7XqnkRfP+O3n928bk8m/b40
+	QFK1QIy5orBTvphr+vy9s+3yfljkfJ7iRwc55T6STyFAQGUGjWOruDgwx1tNBHHZhQ==
+X-Gm-Gg: ASbGncsZ/MitGYgvLtH9rgS7wCIIBdCO5Aa2jct9QnlEoqE9ceWFQOKDAY5Hw5Wd3mc
+	ya1SpNRT2Jc4yLZJlEATaj1BDdFxoppnp8sy6AQWXx225SBNuyaB2KxaFG77bIoCNGGpTl7C1kR
+	I6hehwFO/3fj9sZf0RHRu1o5EfxMitvsIZZ1XQ2v2B9pPZILVyr2lA4sqTb91wo0h+JZdQZTuUK
+	iEfmNRENc6c5FUSPwB6v83dPDdbT0NiaEt3ZEMDQvbYh+qX3nC3mF+V6XeOTdnFoV1tAY56ZIxh
+	jSlgbFu2fMqJsHWL4hRTgToEgnCWT4WM4BwAXHHzq0vRRv34w9yuUSBo+4AP3RcVAC60CsLCkMx
+	rHEBfzbFMwKnUxrNgKUuHZQ==
+X-Google-Smtp-Source: AGHT+IHlk/pQOASPBzEhio0XVuWGW4RALWeN2/BSwN7IXKo0wC2eAk4JY8nDmbRw4+IxZyH616w8PQ==
+X-Received: by 2002:a05:6a00:138a:b0:742:a7e3:7c84 with SMTP id d2e1a72fcca58-747bd980c66mr1882310b3a.13.1748567064627;
+        Thu, 29 May 2025 18:04:24 -0700 (PDT)
+Received: from ubuntu.. ([192.19.161.250])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-747afeabc8bsm2004400b3a.64.2025.05.29.18.04.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 May 2025 18:04:23 -0700 (PDT)
+From: Ronak Doshi <ronak.doshi@broadcom.com>
+To: netdev@vger.kernel.org
+Cc: Ronak Doshi <ronak.doshi@broadcom.com>,
+	Guolin Yang <guolin.yang@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH net v3] vmxnet3: correctly report gso type for UDP tunnels
+Date: Fri, 30 May 2025 00:46:30 +0000
+Message-ID: <20250530004631.68288-1-ronak.doshi@broadcom.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <yti2dilasy7b3tu6iin5pugkn6oevdswrwoy6gorudb7x2cqhh@nqb3gcyxg4by>
- <CAPhsuW4tg+bXU41fhAaS0n74d_a_KCFGvy_vkQOj7v4VLie2wg@mail.gmail.com>
- <20250529173810.GJ2023217@ZenIV> <CAPhsuW5pAvH3E1dVa85Kx2QsUSheSLobEMg-b0mOdtyfm7s4ug@mail.gmail.com>
- <20250529183536.GL2023217@ZenIV> <CAPhsuW7LFP0ddFg_oqkDyO9s7DZX89GFQBOnX=4n5mV=VCP5oA@mail.gmail.com>
- <20250529201551.GN2023217@ZenIV> <CAPhsuW5DP1x_wyzT1aYjpj3hxUs4uB8vdK9iEp=+i46QLotiOg@mail.gmail.com>
- <20250529214544.GO2023217@ZenIV> <CAPhsuW5oXZVEaMwNpSF74O7wZ_f2Qr_44pu9L4_=LBwdW5T9=w@mail.gmail.com>
- <20250529231018.GP2023217@ZenIV>
-In-Reply-To: <20250529231018.GP2023217@ZenIV>
-From: Song Liu <song@kernel.org>
-Date: Thu, 29 May 2025 17:42:16 -0700
-X-Gmail-Original-Message-ID: <CAPhsuW6-J+NUe=jX51wGVP=nMFjETu+1LUTsWZiBa1ckwq7b+w@mail.gmail.com>
-X-Gm-Features: AX0GCFvdxMXrtmIn1lcuA6IWSFQd3Sx1TkLEWLyJGOYk7DtqDvgz8-KgHXA52OQ
-Message-ID: <CAPhsuW6-J+NUe=jX51wGVP=nMFjETu+1LUTsWZiBa1ckwq7b+w@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 3/4] bpf: Introduce path iterator
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Jan Kara <jack@suse.cz>, bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, 
-	daniel@iogearbox.net, martin.lau@linux.dev, brauner@kernel.org, 
-	kpsingh@kernel.org, mattbobrowski@google.com, amir73il@gmail.com, 
-	repnop@google.com, jlayton@kernel.org, josef@toxicpanda.com, mic@digikod.net, 
-	gnoack@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, May 29, 2025 at 4:10=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> w=
-rote:
->
-> On Thu, May 29, 2025 at 03:13:10PM -0700, Song Liu wrote:
->
-> > Is it an issue if we only hold a reference to a MNT_LOCKED mount for
-> > short period of time? "Short period" means it may get interrupted, page
-> > faults, or wait for an IO (read xattr), but it won't hold a reference t=
-o the
-> > mount and sleep indefinitely.
->
-> MNT_LOCKED mount itself is not a problem.  What shouldn't be done is
-> looking around in the mountpoint it covers.  It depends upon the things
-> you are going to do with that, but it's very easy to get an infoleak
-> that way.
->
-> > > OTOH, there's a good cause for moving some of the flags, MNT_LOCKED
-> > > included, out of ->mnt_flags and into a separate field in struct moun=
-t.
-> > > However, that would conflict with any code using that to deal with
-> > > your iterator safely.
-> > >
-> > > What's more, AFAICS in case of a stack of mounts each covering the ro=
-ot
-> > > of parent mount, you stop in each of those.  The trouble is, umount(2=
-)
-> > > propagation logics assumes that intermediate mounts can be pulled out=
- of
-> > > such stack without causing trouble.  For pathname resolution that is
-> > > true; it goes through the entire stack atomically wrt that stuff.
-> > > For your API that's not the case; somebody who has no idea about an
-> > > intermediate mount being there might get caught on it while it's gett=
-ing
-> > > pulled from the stack.
-> > >
-> > > What exactly do you need around the mountpoint crossing?
-> >
-> > I thought about skipping intermediate mounts (that are hidden by
-> > other mounts). AFAICT, not skipping them will not cause any issue.
->
-> It can.  Suppose e.g. that /mnt gets propagation from another namespace,
-> but not the other way round and you mount something on /mnt.
->
-> Later, in that another namespace, somebody mounts something on wherever
-> your /mnt gets propagation to.  A copy will be propagated _between_
-> your /mnt and whatever you've mounted on top of it; it will be entirely
-> invisible until you umount your /mnt.  At that point the propagated
-> copy will show up there, same as if it had appeared just after your
-> umount.  Prior to that it's entirely invisible.  If its original
-> counterpart in another namespace gets unmounted first, the copy will
-> be quietly pulled out.
+Commit 3d010c8031e3 ("udp: do not accept non-tunnel GSO skbs landing
+in a tunnel") added checks in linux stack to not accept non-tunnel
+GRO packets landing in a tunnel. This exposed an issue in vmxnet3
+which was not correctly reporting GRO packets for tunnel packets.
 
-Thanks for sharing this information!
+This patch fixes this issue by setting correct GSO type for the
+tunnel packets.
 
-> Note that choose_mountpoint_rcu() callers (including choose_mountpoint())
-> will have mount_lock seqcount sampled before the traversal _and_ recheck
-> it after having reached the bottom of stack.  IOW, if you traverse ..
-> on the way to root, you won't get caught on the sucker being pulled out.
+Currently, vmxnet3 does not support reporting inner fields for LRO
+tunnel packets. This is fine for now as workaround is to enable
+tnl-segmentation offload on the relevant interfaces. This problem
+pre-exists this patch fix and can be addressed as a separate future
+patch.
 
-In some of our internal discussions, we talked about using
-choose_mountpoint() instead of follow_up(). I didn't go that direction in t=
-his
-version because it requires holding "root". But if it makes more sense
-to use, choose_mountpoint(), we sure can hold "root".
+Fixes: dacce2be3312 ("vmxnet3: add geneve and vxlan tunnel offload support")
+Signed-off-by: Ronak Doshi <ronak.doshi@broadcom.com>
+Acked-by: Guolin Yang <guolin.yang@broadcom.com>
 
-Alternatively, I think it is also OK to pass a zero'ed root to
-choose_mountpoint().
+Changes v1-->v2:
+  Do not set encapsulation bit as inner fields are not updated
+Changes v2-->v3:
+  Update the commit message explaining the next steps to address
+  segmentation issues that pre-exists this patch fix.
+---
+ drivers/net/vmxnet3/vmxnet3_drv.c | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-> Your iterator, OTOH, would stop in that intermediate mount - and get
-> an unpleasant surprise when it comes back to do the next step (towards
-> /mnt on root filesystem, that is) and finds that path->mnt points
-> to something that is detached from everything - no way to get from
-> it any further.  That - despite the fact that location you've started
-> from is still mounted, still has the same pathname, etc. and nothing
-> had been disrupted for it.
->
-> And yes, landlock has a narrow race in the matching place.  Needs to
-> be fixed.  At least it does ignore those as far as any decisions are
-> concerned...
+diff --git a/drivers/net/vmxnet3/vmxnet3_drv.c b/drivers/net/vmxnet3/vmxnet3_drv.c
+index c676979c7ab9..287b7c20c0d6 100644
+--- a/drivers/net/vmxnet3/vmxnet3_drv.c
++++ b/drivers/net/vmxnet3/vmxnet3_drv.c
+@@ -1568,6 +1568,30 @@ vmxnet3_get_hdr_len(struct vmxnet3_adapter *adapter, struct sk_buff *skb,
+ 	return (hlen + (hdr.tcp->doff << 2));
+ }
+ 
++static void
++vmxnet3_lro_tunnel(struct sk_buff *skb, __be16 ip_proto)
++{
++	struct udphdr *uh = NULL;
++
++	if (ip_proto == htons(ETH_P_IP)) {
++		struct iphdr *iph = (struct iphdr *)skb->data;
++
++		if (iph->protocol == IPPROTO_UDP)
++			uh = (struct udphdr *)(iph + 1);
++	} else {
++		struct ipv6hdr *iph = (struct ipv6hdr *)skb->data;
++
++		if (iph->nexthdr == IPPROTO_UDP)
++			uh = (struct udphdr *)(iph + 1);
++	}
++	if (uh) {
++		if (uh->check)
++			skb_shinfo(skb)->gso_type |= SKB_GSO_UDP_TUNNEL_CSUM;
++		else
++			skb_shinfo(skb)->gso_type |= SKB_GSO_UDP_TUNNEL;
++	}
++}
++
+ static int
+ vmxnet3_rq_rx_complete(struct vmxnet3_rx_queue *rq,
+ 		       struct vmxnet3_adapter *adapter, int quota)
+@@ -1881,6 +1905,8 @@ vmxnet3_rq_rx_complete(struct vmxnet3_rx_queue *rq,
+ 			if (segCnt != 0 && mss != 0) {
+ 				skb_shinfo(skb)->gso_type = rcd->v4 ?
+ 					SKB_GSO_TCPV4 : SKB_GSO_TCPV6;
++				if (encap_lro)
++					vmxnet3_lro_tunnel(skb, skb->protocol);
+ 				skb_shinfo(skb)->gso_size = mss;
+ 				skb_shinfo(skb)->gso_segs = segCnt;
+ 			} else if ((segCnt != 0 || skb->len > mtu) && !encap_lro) {
+-- 
+2.45.2
 
-If we update path_parent in this patchset with choose_mountpoint(),
-and use it in Landlock, we will close this race condition, right?
-
->
-> Note, BTW, that it might be better off by doing that similar to
-> d_path.c - without arseloads of dget_parent/dput et.al.; not sure
-> how feasible it is, but if everything in it can be done under
-> rcu_read_lock(), that's something to look into.
-
-I don't think we can do everything here inside rcu_read_lock().
-But d_path.c does have some code we can probably reuse or
-learn from. Also, we probably need two variations of iterators,
-one walk until absolute root, while the other walk until root of
-current->fs, just like d_path() vs. d_absolute_path(). Does this
-sound reasonable?
-
-Thanks,
-Song
 
