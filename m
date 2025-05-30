@@ -1,141 +1,90 @@
-Return-Path: <linux-kernel+bounces-667977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-667979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A26BBAC8C1D
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 12:28:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8117AC8C21
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 12:29:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D9C317266E
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 10:28:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FFD9A25D0F
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 10:29:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5BCA2236E1;
-	Fri, 30 May 2025 10:28:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MB2EYJ5h"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACD622222BB;
-	Fri, 30 May 2025 10:28:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2F0E22331B;
+	Fri, 30 May 2025 10:29:36 +0000 (UTC)
+Received: from mail.nfschina.com (unknown [42.101.60.213])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id 5D8582222C0;
+	Fri, 30 May 2025 10:29:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.213
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748600926; cv=none; b=rrahNwGIVI6LlWOZDgeV/Lpz6e6cbVRwRCaVQxbSBN4xB3Xw5HDQX4HRG2NCQ+c9NXBfa7nEflwL9UDdSlciEBoY5ldPDaDr0UgO7kxcMsEptVMmrwAjfvtCx4RxIaRo8rp505sxdbdPTUje7RBd5PXOpSj0UZG3QJZ1pl7QGes=
+	t=1748600976; cv=none; b=U3YlOLK5Lw/qtNJd/Mz+60VQtGrvffPXFbMO+W6GDjkAI4R//vBp2/h2FEzX9uLjlz8QqpHo0qPqfzBV7q6D5Pw/41iBGXUZVyoMoQcP6SCBRlOQzF0gjCmqJxY1ezyIEfzrrzoA+jBse87dpMDGyIrKH9PRKktQy3KQGxQlRhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748600926; c=relaxed/simple;
-	bh=aWZEgxSVS4Ru0ExtQ69W5ibS4LzCBJTNvFmwCjQNAxU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ttgwNFQ156IpUh/G/1Z3uRTqLMtIwWoozhwTOLLIK3wX4TDPcdSQpbdqCDrLI4ZAYIEDpb9dBDMznZdGE7quKFXyWHySJPcrjWDq6Lj9Ne9eNKfQYVwMplD+Vis0h0r0aiD7kPtDJDr59c1kXNAphEn/RKCDgQU2QbWawdpzzLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MB2EYJ5h; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1748600925; x=1780136925;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=aWZEgxSVS4Ru0ExtQ69W5ibS4LzCBJTNvFmwCjQNAxU=;
-  b=MB2EYJ5hramnsP7B151L3FvWNvS2W7+Jh8KcM0LwlmyVMTSu6mHLzFBW
-   2xhTDIa0kk53AW/8aeDFqPlKMvmh2BrI/aR63oSY887v67NEiU+PeU/Ls
-   6wf+bKXPLG9GsDLUprc70aiGGMYV/YZj5bcy03Khgf3W5Db4ksHRyrgQa
-   Nz+9dA5LGZuRDtlTow3aYmkbQz5TxLSsQNxNXS1VlgxRohuC2ClQvt/rA
-   6F9SpPQj6uD+nn8p6vmNsAkctX/fSqYmucInJF7Rpu9BZD52IOi0rsOS/
-   paJpA7FBygbXtaKEEGUX45plZ1MrZTlgEEqLDJyuffCDSZK6QJzqJpyHQ
-   A==;
-X-CSE-ConnectionGUID: WD7tVe8PTo+AUTjzZwONbA==
-X-CSE-MsgGUID: JFl4Olc4SyCNyq/oXBIf5Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11448"; a="49931257"
-X-IronPort-AV: E=Sophos;i="6.16,195,1744095600"; 
-   d="scan'208";a="49931257"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2025 03:28:44 -0700
-X-CSE-ConnectionGUID: 72d97e1oRRuHDdHUHh2R7w==
-X-CSE-MsgGUID: 62XjU1h0SY2jnZyOT+HBlA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,195,1744095600"; 
-   d="scan'208";a="181054375"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa001.jf.intel.com with ESMTP; 30 May 2025 03:28:41 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id 3526214B; Fri, 30 May 2025 13:28:39 +0300 (EEST)
-Date: Fri, 30 May 2025 13:28:39 +0300
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Chao Gao <chao.gao@intel.com>
-Cc: pbonzini@redhat.com, seanjc@google.com, rick.p.edgecombe@intel.com, 
-	isaku.yamahata@intel.com, kai.huang@intel.com, yan.y.zhao@intel.com, tglx@linutronix.de, 
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, kvm@vger.kernel.org, 
-	x86@kernel.org, linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [RFC, PATCH 09/12] KVM: TDX: Preallocate PAMT pages to be used
- in page fault path
-Message-ID: <dtptwhf2si2n2ksz746p67v5oib7h7l7bz57hvxd6rmxne7nht@fvodz653v5nf>
-References: <20250502130828.4071412-1-kirill.shutemov@linux.intel.com>
- <20250502130828.4071412-10-kirill.shutemov@linux.intel.com>
- <aCQ4imYKThyxOWuT@intel.com>
+	s=arc-20240116; t=1748600976; c=relaxed/simple;
+	bh=DB3MFKB2EWYDWs8y86REFzNC3zVqE1NTe3DLImhWNc4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type; b=l/uOqGExU5UhnC58YgRM6dv925fqntM9aLkaj6YmJ6NYvjhwbxiM44Cd5pml7gtUkb0OyH393b8/7O6Io2t3GOQW+7NJc4eCuqk2CjSsqkGKvxZnSEwl9Ox0bqsMnwfP+IyHq6PVrbjWNZpbsUl232vYtc8I9tUb2NKAfPG6xiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.213
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
+Received: from [192.168.43.55] (unknown [122.96.47.185])
+	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id 4D5D06024EF3F;
+	Fri, 30 May 2025 18:29:28 +0800 (CST)
+Message-ID: <1f027931-8781-4c6c-86c8-2d680b86974f@nfschina.com>
+Date: Fri, 30 May 2025 18:29:27 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aCQ4imYKThyxOWuT@intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] afs: Replace simple_strtoul with kstrtoul in
+ afs_parse_address
+To: Jeffrey E Altman <jaltman@auristor.com>, dhowells@redhat.com,
+ marc.dionne@auristor.com
+Cc: linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+Content-Language: en-US
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 122.96.47.185
+From: Su Hui <suhui@nfschina.com>
+In-Reply-To: <ea42a3fd-7ce8-43e0-a2d5-c5353070bfe2@auristor.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, May 14, 2025 at 02:30:34PM +0800, Chao Gao wrote:
-> On Fri, May 02, 2025 at 04:08:25PM +0300, Kirill A. Shutemov wrote:
-> >Preallocate a page to be used in the link_external_spt() and
-> >set_external_spte() paths.
-> >
-> >In the worst-case scenario, handling a page fault might require a
-> >tdx_nr_pamt_pages() pages for each page table level.
-> >
-> >Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> >---
-> > arch/x86/include/asm/kvm_host.h |  2 ++
-> > arch/x86/kvm/mmu/mmu.c          | 10 ++++++++++
-> > 2 files changed, 12 insertions(+)
-> >
-> >diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-> >index 91958c55f918..a5661499a176 100644
-> >--- a/arch/x86/include/asm/kvm_host.h
-> >+++ b/arch/x86/include/asm/kvm_host.h
-> >@@ -849,6 +849,8 @@ struct kvm_vcpu_arch {
-> > 	 */
-> > 	struct kvm_mmu_memory_cache mmu_external_spt_cache;
-> > 
-> >+	struct kvm_mmu_memory_cache pamt_page_cache;
-> >+
-> > 	/*
-> > 	 * QEMU userspace and the guest each have their own FPU state.
-> > 	 * In vcpu_run, we switch between the user and guest FPU contexts.
-> >diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-> >index a284dce227a0..7bfa0dc50440 100644
-> >--- a/arch/x86/kvm/mmu/mmu.c
-> >+++ b/arch/x86/kvm/mmu/mmu.c
-> >@@ -616,6 +616,15 @@ static int mmu_topup_memory_caches(struct kvm_vcpu *vcpu, bool maybe_indirect)
-> > 		if (r)
-> > 			return r;
-> > 	}
-> >+
-> >+	if (vcpu->kvm->arch.vm_type == KVM_X86_TDX_VM) {
-> 
-> The check for vcpu->kvm->arch.vm_type == KVM_X86_TDX_VM is identical to
-> kvm_has_mirrored_tdp() a few lines above.
+On 5/30/25 7:35 AM, Jeffrey E Altman wrote:
+> On 5/27/2025 4:49 AM, Su Hui wrote:
+>> kstrtoul() is better because simple_strtoul() ignores overflow which
+>> may lead to unexpected results.
+>>
+>> Signed-off-by: Su Hui<suhui@nfschina.com>
+>> ---
+>>
+> Su Hui,
+>
+> Thank you for the contribution but I do not believe this patch is 
+> correct.
+>
+Oh, really sorry for my stupid mistake. Thanks for your review too :) .
+> The second block is required even if the simple_stroul() is replaced 
+> by kstrtoul() as it protects against an input string which does not 
+> contain the optional subnet mask but has some other characters after 
+> the address.
+>
+> afs_parse_address() already has its own overflow checks following the 
+> simple_strtoul() call which is specific to the interpretation of the 
+> allowed subnet mask values.
+Agreed, it's my fault that I only see the pattern about 
+'simple_strtoxx(....)' and 'if (*p)'.....
+>
+> Do you see an overflow condition which would not be caught by those 
+> checks which would be caught by use of kstrtoul()?
+Actually, no example in reality.
+If p can equal to '0xffffffffffffffff0000000000000001', simple_strtoul() 
+and kstroul() all transform 'p' to unsigned long value '0x1'.
+But kstrtoul() return an error and we can know overflow happens.  If 'p' 
+can be a very long string, kstroul() make sense.
 
-Well, yes. But I think it is conceptually different. There can be
-different virtualization mode that has mirrored TDP which is not TDX.
+Su Hui
 
-> 
-> >+		int nr = tdx_nr_pamt_pages(tdx_get_sysinfo());
-> 
-> Since you're already accessing tdx_sysinfo, you can check if dynamic PAMT is
-> enabled and allocate the pamt page cache accordingly.
-
-I will hide it in tdx_nr_pamt_pages() which would return 0 if Dynamic PAMT
-is disabled.
-
-
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
 
