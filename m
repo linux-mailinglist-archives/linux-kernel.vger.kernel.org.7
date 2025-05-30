@@ -1,91 +1,125 @@
-Return-Path: <linux-kernel+bounces-667824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-667771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B273AAC8A6F
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 11:06:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C93DAC89BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 10:09:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3B001BC38C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 09:06:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C8CF1BA4A38
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 08:09:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3756821C9F2;
-	Fri, 30 May 2025 09:06:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=bit-philosophy.net header.i=@bit-philosophy.net header.b="pN5urq9Y"
-Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07778215766;
+	Fri, 30 May 2025 08:09:10 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8188221C19B
-	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 09:06:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5264738B;
+	Fri, 30 May 2025 08:09:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748595981; cv=none; b=lpkVnH/vFQoygixp6RsLQC1LXxe0h86wSSLnXLK1K1xvyn+k7rQC0ISjibZOBYWwKSruK2gNNQGOrUBfYVomlYyBQXsMAm0ERrPWGKt0j9OK7SQI07htqePVERRPv8wTXVcX7FbYGyIJG6F89lyOWGbenGbhi6pgTV5IwlYfTWM=
+	t=1748592549; cv=none; b=HPQdME1PdQKkK3fBpc0A9H26caaR68VcSx308JNABagdYL0CoZvFampJ4A7qSZXYH67QXNtj2WJeTFe6Lje7AyURslR+MGWw88u5W3dgfcZELILQizVfs+FNWyLH4Xy8NtGZBjd89xnLX8cixW+RQKUy2bg9UlpeTANmh8dh4/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748595981; c=relaxed/simple;
-	bh=bxQMzxNhia+6ZXQDuN6obyd0azK05G5bLOSYlyomuSo=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=WJfpEFxuCPx+c4q8ktkbM8eNQ8xRxHozFcpXkUseew+L0cvs438Nri/gQ37J6kJkt2nbYoV1bkk81px7WZunnaNDfJvVVIOYMv8ivoAJTQ6wJDT4BLeqJ4cKDuLP6SBKmgPH7VbV7lv6YOZEeS1lyEthb4zEuVQ6YFlLTTtc+iA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bit-philosophy.net; spf=pass smtp.mailfrom=bit-philosophy.net; dkim=pass (2048-bit key) header.d=bit-philosophy.net header.i=@bit-philosophy.net header.b=pN5urq9Y; arc=none smtp.client-ip=194.63.252.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bit-philosophy.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bit-philosophy.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=bit-philosophy.net; s=ds202411; h=Content-Transfer-Encoding:Content-Type:
-	Subject:From:To:MIME-Version:Date:Message-ID:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=e5XPgjVWWMJIYR8N9QzQ5DcnNAdQRMECJP8Vjil3Mm4=; b=pN5urq9YXjiR7iDjM4cCgcNAVx
-	mFwkCS/qbCjhCn3Y/QVjrF2aZG2AFOb0ULm+AfLJz93kMJuygliQk9dMYrrpjPO10QzWJM+a61JmH
-	lr0UJQGCpESTETU37nD5PDEzW0YjFqb/aZZN4OCrcXX2KQHywmt2rT0XgnMwP2lSHwho9QOL14QBe
-	rQsBWVfEsWpBzyNALpsBbS9Gg3rTcLGT55jDwMumPSt+xc9hDH41npVVAg7uleWVaSG7SIPZLp4zR
-	E5CZGpftAiJOUlls2MgoVWygZGNk9wAbXpmfDg0HNiif2e8hIB41aX65qqxRWeZrSuhMIzSLIImwL
-	opKUygEw==;
-Received: from smtp
-	by smtp.domeneshop.no with esmtpsa (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	id 1uKuH2-00Elno-Sz
-	for linux-kernel@vger.kernel.org;
-	Fri, 30 May 2025 09:35:28 +0200
-Message-ID: <1b80772e-6308-4bb7-9112-4be6a43d9b3f@bit-philosophy.net>
-Date: Fri, 30 May 2025 09:35:29 +0200
+	s=arc-20240116; t=1748592549; c=relaxed/simple;
+	bh=aC7ZZT5vqDvhPiQdxbOwr/UJHbnVRNUppLn4j5pfyOo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mjNlC+zfOmmUYOwIqC1/AcT0tsmIJZytTJBhjDZqBAAYdbUu9GcJx1zf0RB0P9E85XOY+lVmkHl7k5frVWVMVlVmh43PNuihelz4dpDRjwEpxEC3xtN9kUiDmdG4/wwooEFkenAPyacMNEAKOXA9ulSw/xaBBPvJp4+hinNe2pw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4b7wqj6KzQzYQvFM;
+	Fri, 30 May 2025 16:09:05 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id F0DDE1A0D46;
+	Fri, 30 May 2025 16:09:04 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP3 (Coremail) with SMTP id _Ch0CgAne8WfZzloSi3_Ng--.6274S4;
+	Fri, 30 May 2025 16:09:04 +0800 (CST)
+From: Yu Kuai <yukuai1@huaweicloud.com>
+To: axboe@kernel.dk
+Cc: linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	yukuai3@huawei.com,
+	yukuai1@huaweicloud.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com,
+	johnny.chenyi@huawei.com
+Subject: [PATCH RFC 0/4] blk-mq-sched: support request batch dispatching for sq elevator
+Date: Fri, 30 May 2025 16:03:51 +0800
+Message-Id: <20250530080355.1138759-1-yukuai1@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: linux-kernel@vger.kernel.org
-From: =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <budi@bit-philosophy.net>
-Subject: A Note On Wayland (was Fair Pay Philosophy, Low Jitter)
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_Ch0CgAne8WfZzloSi3_Ng--.6274S4
+X-Coremail-Antispam: 1UD129KBjvJXoW7ZFyrKF1fuw4DJr1rZrWxXrb_yoW8Gry5pr
+	4fKa9xKr1jqr1fZF1a93W7J34rJws7WasxGrnrJ3W8GFnxCr13JF18K3WkXFyxZrWfAFsr
+	Wr18tF97WFyUCaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkC14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AFwI0_
+	JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67
+	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIY
+	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14
+	v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8
+	JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUYCJmUU
+	UUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-A note on Wayland. It seems to be X, through "Satan".
+From: Yu Kuai <yukuai3@huawei.com>
 
-That seems to be a bit of a problem, that some think a thing like that 
-is needed.
+Lock contention for sq elevator is quite intense when multiple contexts
+are dispatching request, main reason is that a global lock is held and
+release for each request:
 
-I rather prefer a 1:1 reality naming. The background philosophy I do, 
-supports that.
+while
+  spin_lock
+  disaptch one request
+  spin_unlock
 
-X is actually that, symbolcorrect.
+This set support request batch dispatching to reduce the lock contention
+a bit.
 
-"Ya" also changes naming, for instance Bitstream OS, would be "Mandrake 
-OS", there.
+A simple test for null_blk in my VM:
+32 job randwrite
 
-Here one needs to take a philosophical standpoint.
+| elevator                   | bandwidth Mib/s |
+| -------------------------- | --------------- |
+| none                       | 813             |
+| deadline before this patch | 531             |
+| deadline after this patch  | 689             |
 
-My research is at: https://bit-philosophy.net/
+The test is one-sided, however, this is just a quick test to show this
+set might be meaningful. I'm sending this RFC and want to get some
+feedbacks before I continue work on this set.
 
-(with full support for Obes and all relevant science, instead of Lamb 
-Churches.)
+Noted: do not test bfq for this set, it's not changed yet(like patch 2
+for deadline).
 
-Light!,
-Ywe Cærlyn,
-Budi (iMAM)
-Bitstream OS.
+Yu Kuai (4):
+  elevator: introduce global lock for sq_shared elevator
+  mq-deadline: switch to use elevator lock
+  blk-mq-sched: refactor __blk_mq_do_dispatch_sched()
+  blk-mq-sched: support request batch dispatching for sq elevator
+
+ block/blk-mq-sched.c | 224 +++++++++++++++++++++++++++++--------------
+ block/blk-mq.c       |   5 +-
+ block/blk-mq.h       |  21 ++++
+ block/elevator.c     |   1 +
+ block/elevator.h     |  62 +++++++++++-
+ block/mq-deadline.c  |  60 +++++-------
+ 6 files changed, 259 insertions(+), 114 deletions(-)
+
+-- 
+2.39.2
 
 
