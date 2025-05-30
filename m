@@ -1,140 +1,109 @@
-Return-Path: <linux-kernel+bounces-668028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-668031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF9BAAC8CE8
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 13:22:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19BC3AC8CF4
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 13:32:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 169713B9EA9
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 11:21:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 626933AC018
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 11:31:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9A7622F74D;
-	Fri, 30 May 2025 11:20:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="GOVGmP3u"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 701ED22DFB6
-	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 11:20:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26A5F22A4E4;
+	Fri, 30 May 2025 11:31:43 +0000 (UTC)
+Received: from pokefinder.org (pokefinder.org [135.181.139.117])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73C674A28;
+	Fri, 30 May 2025 11:31:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=135.181.139.117
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748604004; cv=none; b=gpMnyFG36e2/tM1VRb22HKjExH3t6uNz1RID7NttMlUDMK2S03TRH0EaKNBLjGVaAqU99x35EKO6UPFQUV5OSlKWz0Jpk12CCbNfYGxFz1XLCifvw6Vx0pvVl1rbvdXk8QmVJW6p1EjdPJbXvcOklAiiTapjXdy35a5dfdTdE5U=
+	t=1748604702; cv=none; b=kXeX3q1Uq10+w0Ki826L/gGJ+wgq2YwMYz+N8L0a0AaAhilsJKz+YloF8f7N92exkQE0vFKrC1/j6vhfayYmAk0rMxK3NMPHRviRuKJWgemCQJAdp7GmBb/ZylknL2ageZLQ5N3eusUGBUnxKI7pQqP8w6qsrPR23CWMQjob4BQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748604004; c=relaxed/simple;
-	bh=PrFWTreIuoDsO+2dJtLRS+p9byMc23RZOKSzUzdjGdw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nt6FO8/0xU+PXEJWQWYbIYwLT60wimKZ/GDCzHXJg7DkTRw2ZIBkSUzNTrs8Re5m3JSn+NueB7VIPx3cRzJPYS6RSjABspLVLUVA0hjp7MtTnP+IQtXDvbO3cq1weEk9vj4MBSuaO4LZ01cAKeF5elmMqMxfM82ACqgVz+ob+LI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=GOVGmP3u; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-441c99459e9so12417895e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 04:20:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1748604001; x=1749208801; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gBGOjaATHiERWGlVICubjqS+hAYT10Q+U69oOw2FjwA=;
-        b=GOVGmP3uTCvTkrkGmlk9XlPB7Zcc930lljqJSrcMoFR7ic1xGAqzYavWil06zi2mGv
-         1+znsfSXNcU7BJdpSyWPzNlI3zsvNGfqfG1egeCbwtHmYcUwu/fIeK31Ua4pX19r0pSt
-         GzYMBTdtRApDw9syaQcsooIxlWBOkrDJbutynG5UPmggQYjozAcfe8SMm70h1BvwLXm8
-         Mf59w+tm6ZvJ53Uup/gg++/9hs1t9eiq3JbqC6FB2OM8OwSQK4YQKCAgWLVwaeCbNsoV
-         MYvPkFsUMMzBYUFxtkeJvqK1afXhptMDP8zwwSr1WW+9ufSbd+O+EiLGeIx0D7ayGauD
-         7Gbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748604001; x=1749208801;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gBGOjaATHiERWGlVICubjqS+hAYT10Q+U69oOw2FjwA=;
-        b=AYuFZ+h2djgfrAGyeLp924asfHZ9fBFWsXHlklo+bYmMmnrcZOnffMoFu6sO4fXgH4
-         xQMz/rOV3wtqIII1QUg/8urq6zMiSandc1yKQb8Om1GHMPYyg9dzcL+GfcCcWFEtkdaG
-         tJrlhKdzzhZxdWFFtRgCfH8sTqnlYVijkx8Q5g6qMhOZA45qkv9eb1/0AyZG+Ze9uQqO
-         rAid1Ibr30tQwajI3MwH/bvvt0YikjE5yQNUkGq7gbNsocuXJKToDIJ5FU5DHsK3BtV7
-         YBvQqxYPYc2K49yPrELZXry3swGnk7GPQ/TI7CGeTcdOTFUdGyV+buskrZ0NzY6zfHf6
-         3aKg==
-X-Forwarded-Encrypted: i=1; AJvYcCWf6QXFcpzO3Fydtjsoaltx6wqbqbd9sJ/zbYZ/eoPJC6K28Afk43oNQF4u8lwwUG5StEsYowWW7kXq1IM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEA6qU4micXJWfblNjE2pdDpI0MrzQdLdAjJOvOc9hfWmmnmAG
-	umlOFfWZ5GtZfgLtAlENoDjp1ognNs/m3vdx+hH0C3F2iAe+uOVqILdbK6n8k91KHNg=
-X-Gm-Gg: ASbGncuaj1REyX3Ifj4MNAYHfaICCFUDn9WDnim8VPiDL8fNLbm7lkYNo+l8BYSypUT
-	GdrMRWEfYQLEuDX+9XIdyBVdhf86nGGWoXkb2QFejJN9G30lMWz7MwI2Rrwe001g67cXU1cspo8
-	UPo1T9RFp0gH+Q5dLgbPQyWFFXsg/K6iSFKe3YBYy3KOgC1uMVIm8PA7zVskrxnQIO9IcFhYmYe
-	2du4j231h9I5molUsM1GazrFKFKjfjIx1u7D3Ia7pzBQ0OiQMTL8kLiAxrrDa16lF5JsRVm57+X
-	2r3c1FGFzshr/IpS9L3RfdtBsWjlpkuAFgu0h4ZmVDkUPR0h8VeAXb1yBCxAoOawlUeWGRFQAVU
-	47dlGSQ==
-X-Google-Smtp-Source: AGHT+IFOnZeDzHLcJzr2XiB1V8TCQqZ4gnYI0oqjqw7IlK2qZ/Smc3vbO5ZYPTsUQejGYt+DG3ev/Q==
-X-Received: by 2002:a05:600c:1d99:b0:442:d9fc:7de with SMTP id 5b1f17b1804b1-450d6546354mr24484345e9.22.1748604000826;
-        Fri, 30 May 2025 04:20:00 -0700 (PDT)
-Received: from claudiu-X670E-Pro-RS.. ([82.78.167.126])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-450dc818f27sm3986435e9.18.2025.05.30.04.19.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 May 2025 04:19:59 -0700 (PDT)
-From: Claudiu <claudiu.beznea@tuxon.dev>
-X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
-To: bhelgaas@google.com,
-	lpieralisi@kernel.org,
-	kw@linux.com,
-	manivannan.sadhasivam@linaro.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	geert+renesas@glider.be,
-	magnus.damm@gmail.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	p.zabel@pengutronix.de
-Cc: claudiu.beznea@tuxon.dev,
-	linux-pci@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	john.madieu.xa@bp.renesas.com,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH v2 8/8] arm64: defconfig: Enable PCIe for the Renesas RZ/G3S SoC
-Date: Fri, 30 May 2025 14:19:17 +0300
-Message-ID: <20250530111917.1495023-9-claudiu.beznea.uj@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250530111917.1495023-1-claudiu.beznea.uj@bp.renesas.com>
-References: <20250530111917.1495023-1-claudiu.beznea.uj@bp.renesas.com>
+	s=arc-20240116; t=1748604702; c=relaxed/simple;
+	bh=qaf8f9ewxo378on/BO/Sf+C8sTWzEsWAsALnixH+k5U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G2AZ1EkHpv9mZIosBXnpPD5Aoy5pgpJBE0bz2FjXCTWn6kGYDUS/Qs2vpzLaxD+o9HhTRXVy+GLiW9zvPe4yzHZbVzI8e9A2+/Y0QQ22CbCauxZHYatE6yKTwIfdcSNzichfOk6jCtTnUaEyIC2Vtlc9tb6rOlYlzY878ie22VQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de; spf=pass smtp.mailfrom=the-dreams.de; arc=none smtp.client-ip=135.181.139.117
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=the-dreams.de
+Received: from localhost (p5486c22a.dip0.t-ipconnect.de [84.134.194.42])
+	by pokefinder.org (Postfix) with UTF8SMTPSA id B6485A40DCA;
+	Fri, 30 May 2025 13:24:47 +0200 (CEST)
+Date: Fri, 30 May 2025 13:24:46 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Romain Gantois <romain.gantois@bootlin.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Jai Luthra <jai.luthra@ideasonboard.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Subject: Re: linux-next: manual merge of the v4l-dvb tree with the i2c tree
+Message-ID: <aDmVftkqLvR0SV3p@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa@the-dreams.de>,
+	Romain Gantois <romain.gantois@bootlin.com>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Jai Luthra <jai.luthra@ideasonboard.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+References: <20250428104905.2b54643f@canb.auug.org.au>
+ <20250428113052.38cf10da@canb.auug.org.au>
+ <20250529124929.5217c6d9@canb.auug.org.au>
+ <3352024.aeNJFYEL58@fw-rgant>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="7n2pe9lU8hdBlJS7"
+Content-Disposition: inline
+In-Reply-To: <3352024.aeNJFYEL58@fw-rgant>
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Enable PCIe for the Renesas RZ/G3S SoC.
+--7n2pe9lU8hdBlJS7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
----
 
-Changes in v2:
-- none
+> Below is the resolution I came up with.
 
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+Thank you for this...
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 897fc686e6a9..3274d14421d4 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -226,6 +226,7 @@ CONFIG_PCIE_MEDIATEK_GEN3=m
- CONFIG_PCI_TEGRA=y
- CONFIG_PCIE_RCAR_HOST=y
- CONFIG_PCIE_RCAR_EP=y
-+CONFIG_PCIE_RENESAS_RZG3S_HOST=m
- CONFIG_PCIE_ROCKCHIP_HOST=m
- CONFIG_PCI_XGENE=y
- CONFIG_PCI_IMX6_HOST=y
--- 
-2.43.0
+> -       for (reg_idx =3D 0; reg_idx < ARRAY_SIZE(rxport->aliased_clients)=
+;=20
+> reg_idx++) {
 
+=2E.. but it was mangled, sadly. Can you resend it properly, please?
+
+
+--7n2pe9lU8hdBlJS7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmg5lXsACgkQFA3kzBSg
+KbZOLg/+IoAZEi1PQvcS03ku8ZPdJu27PYNGjSzHJ+hRLCUgefAnd08kWyl64Ivt
+IHUkUxlRFl1wIpaJbImz3XgSS/K8HmwTffxcm0Jr2yL7Xn07rd7o+gVmUqPIQpck
+ORqJWEy6gMYhsB0iUT9zj7nTRHkTphqfvoGhKTWJRLrFiWKuqPmxBfyq0+urXwC2
++FmoQ/GWA3sbf3iWUEebVjmfMTWIG3rN8kkVC9ttT/cOsuplHDpTLNOnkj9Z1Bqh
+X6gO6hwF4megRAGEhPjU571i9R4Ae87HpOYDUpOdpVSaNCpZrgslOPpMp8/fp+U5
+2nwx3KyPNnFOXMAoTgXMPvXnhEUCD4WooEqd8rmAiGaVruLAC6yg85JqHdq/3nsc
+IV8kEN9qrF7R2fmA+7ykjDuxHSZe3d1NcsRhLOQ2gtoGeiRXbhOX/IKeR9xuGSr8
+O8asvqnFTMfNAHyfd5ad04YNgo9Fe/kti2jsDxTKOoQyVncGNIxM6MFbk66whkIu
+lh6L63lNwl32Tbt3Ovq7ZkfSUulh0HR9D5MVquSUkD/vjgGow3fCH2+RcqHJPJo8
+r5aIONmA3nkarXzGyE9X1rou+grj69d4WBmuTE6/NgLg/T5ZBgu8LKi7vrsE2vOT
+rmtBuAOTo2R0QxT66e0C6t1+jail2AiQWaYbJQF7LwaSaa1UZvI=
+=SjAB
+-----END PGP SIGNATURE-----
+
+--7n2pe9lU8hdBlJS7--
 
