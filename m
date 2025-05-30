@@ -1,215 +1,119 @@
-Return-Path: <linux-kernel+bounces-668431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-668433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81258AC92C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 17:55:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 19907AC92CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 17:56:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE2153B7F19
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 15:55:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA5943ABB58
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 15:56:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57E49235346;
-	Fri, 30 May 2025 15:55:47 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63A14235055;
-	Fri, 30 May 2025 15:55:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8429D235BEE;
+	Fri, 30 May 2025 15:56:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fOP/+MQU"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AE01235346;
+	Fri, 30 May 2025 15:56:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748620546; cv=none; b=PC0Y4HOwaUCDhWfHnntrnmK3QhmRmurMWE43tbCzQWWBCWOOkKYIrgAiciLeCfUUS4HnV06gXIIcDtn8NZwNLkuHXI0UujKnGyWHfTKW5A6pNENJWoxDZaV3kHIGxjK6aGZ+/3ZaCwW+8YWK6BXKj0ePFpOzEu2UDX15NQYWzeo=
+	t=1748620584; cv=none; b=CCbGYK58jxxMs97rCv+4eOi4JAYes226UN0Dtn/jj+aENIje6RfIEyUaq3xUiycmNeeIXG0LIPHnfJkzlFywHidmuwEk6Qet62MiP4sUkTjaHcRCbpvDuputRBtHpNCmQb66wEYyV7es418ehcV0BdlViFchlnmB3vfGLCE89yM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748620546; c=relaxed/simple;
-	bh=O1q9zomtetdd/K40YHBSG96P2D3qtTar+5z8+taIaJs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EHFc1Mp1sAnnYpfZmIoUIlpO38qjctSPvG+x8ig6e/skmtdR5p/cotmo7s/4UCzk7bkQR22tAqT++QbJdk7V1YldHbZUK1UacaTMVEaGgu63A/1rMZ+Y5jK/jFIMGYVon84NmHrcZ1MylMvkHSTTXv6pI8+jE4kHu7AkgMa/saU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 09446169C;
-	Fri, 30 May 2025 08:55:27 -0700 (PDT)
-Received: from [10.57.95.14] (unknown [10.57.95.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BF2053F673;
-	Fri, 30 May 2025 08:55:37 -0700 (PDT)
-Message-ID: <af9a96e1-064b-4627-bd34-e7e7e8a05452@arm.com>
-Date: Fri, 30 May 2025 16:55:36 +0100
+	s=arc-20240116; t=1748620584; c=relaxed/simple;
+	bh=AD0Ki6SWTzpLn8aU7fwOntIH55X1QYvwkqjUoszGwGY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=KxgH3TJoh9z1uyZ4nlkzcCXdst17jw4VHV3R2GBf2ieqB65oqP+4ZTNa/+KyUpGaIKJT2Q/C5viukSX/uWzasCVU1kSHpFDZ/PqSD4+0YLtciGLLi8VOkdWYkkGmxIl8x98tISXK6CHEs/RiIX3LqKln9NVOH51SqsW003fdqWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fOP/+MQU; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3a361b8a664so2155137f8f.3;
+        Fri, 30 May 2025 08:56:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748620582; x=1749225382; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=iy1tt218F4IwK8PlrWhyBFc9NYA/5PWiYpKnhTWXkAA=;
+        b=fOP/+MQUST9ZnriGBL89QDu8ZHVBAIFoUtP+gKA3JU9NWKdK/xlyb+DhGBfDzRfd5Y
+         kWfbGVxEmj8lWMI6TfTR/6KzkE//DbIfqJyJzQWdleqrTOwAsC5IGqRpHX87Jx9/WKvn
+         dqF3RB+58lbdAn1OuFsAjVsN0qgOm4vVbkd/AkInpvq7o1b7UU42ThdiZRnk9jApZ4Yr
+         5m8GEGQhdD8lPKTEgP4nqh5HuM1/hns6dh6GhwyzA4OBERXoPAzu49l7GurIUnijZyIV
+         BsO/7vWRybdlqogNXh7CxePtZ61SY2q/0GtTTrjfJvGUEvR9nq/jaDC58NOYYDcRmHXe
+         bgzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748620582; x=1749225382;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iy1tt218F4IwK8PlrWhyBFc9NYA/5PWiYpKnhTWXkAA=;
+        b=cW4bja9ZOhSYUboXICJghkj/GIxAn0yGreB/iwyqK/fyH3JTWVdETflNfXJkyDHP1T
+         si94T0YB7aoiOl7jWyt6o7V6HWQOhJafTUF51VgT1+GWmwAJAEP8IBBVX/7KMvkvj973
+         EQpDtD/+gq52WaZHd5TKaWqyDRWVV45LJlx+uHG5NnQcoTFCaWV3VK/1aIdjd6uYO1aJ
+         hsn1XUsJGT3yTfx5IbUMNBikc0jjwYhVIGQLOqeDHB03xf31JG6nftEiAVWkXBRuWKBL
+         KEMwKm32kXQ2IIc5SWZzOlJv7mNkK2inQM1N88nT/Bkf7I0eVjdniRRIDfq3DzMjDZo9
+         BXOg==
+X-Forwarded-Encrypted: i=1; AJvYcCW/N3qEtg8yFAOOBXjcL3Yes/jGDKWq0XE/fmps/xrI+HKfCPe9U1B6xvdgDzpc3DhW2c/cMN3uiOTsED0=@vger.kernel.org, AJvYcCWGqWGi8fxgl4lKF5zRmG+GKV0M7WKK0BgCfPrxOS51jo0u5loOrHtvyLIRiyPIefcQPyWQx0Kx@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpmrxxBwJfv94fwmLt6Od59Jse4JzzIoGMUJcBSDmvsAL6AkZM
+	s8A0/Wb7jVB5LUyT8njTLtkSB8F6o02SfHQE7IqhZwKUKtAkPjnE9PtuH4GXRA==
+X-Gm-Gg: ASbGnctykGL8hStA7IJGEv0wkAJvalzCqhM+aymTtRx4JA1O7PGvcdweU928Bc5/bju
+	Gj71n6hxuRtVyDjlq/a5hHtEsQdnhOoRCdMU33dDODPkKlwLERmWKeXzlxkk+QobxM0JvxToHS1
+	VZMNoTq6t2gmsv3Li5ICDf6Py49WmiuGkps1W4EvJb8USKoO846y8OK5nt3Udqum0/C6gRC3kQU
+	Wp43Dlz7xtl2fUoNeEyEWrKhRw3iYfUUNUcU3z04/s+F6Pje2JdpaFQouIOueJ1S51Gn9/DSa9r
+	7R0JeYN4GBv1YqGIwQE8jYKt/v8aMV2Fw5yNDZWupDwzmT7yY414Ut8NcwZu79Fb/rK3TQBPlmE
+	QvOQv//CqaaHb+id7Y6kT8X0cHIlUxyNIKPVE6t0eB8CpCVJ+uVsq015/KpMb/nI=
+X-Google-Smtp-Source: AGHT+IEJDQy3UlayczvuvcXAish7JNZeKcxGj1Hbh3xGg4s4JGgnZ8HlbSdwU38Zijw+TLhv6OFlCA==
+X-Received: by 2002:a05:6000:240b:b0:3a4:f24c:d719 with SMTP id ffacd0b85a97d-3a4f7a816a9mr2841552f8f.29.1748620581395;
+        Fri, 30 May 2025 08:56:21 -0700 (PDT)
+Received: from skynet.lan (2a02-9142-4580-1200-0000-0000-0000-0008.red-2a02-914.customerbaf.ipv6.rima-tde.net. [2a02:9142:4580:1200::8])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4efe74165sm5211620f8f.53.2025.05.30.08.56.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 May 2025 08:56:20 -0700 (PDT)
+From: =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= <noltari@gmail.com>
+To: jonas.gorski@gmail.com,
+	florian.fainelli@broadcom.com,
+	andrew@lunn.ch,
+	olteanv@gmail.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	dgcbueu@gmail.com
+Cc: =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= <noltari@gmail.com>
+Subject: [PATCH] net: dsa: brcm: add legacy FCS tag
+Date: Fri, 30 May 2025 17:56:15 +0200
+Message-Id: <20250530155618.273567-1-noltari@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 0/6] Lazy mmu mode fixes and improvements
-Content-Language: en-GB
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- "David S. Miller" <davem@davemloft.net>,
- Andreas Larsson <andreas@gaisler.com>, Juergen Gross <jgross@suse.com>,
- Ajay Kaher <ajay.kaher@broadcom.com>,
- Alexey Makhalov <alexey.makhalov@broadcom.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H. Peter Anvin" <hpa@zytor.com>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>,
- "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- Peter Zijlstra <peterz@infradead.org>, Arnd Bergmann <arnd@arndb.de>,
- David Hildenbrand <david@redhat.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
- <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Alexei Starovoitov <ast@kernel.org>, Andrey Ryabinin
- <ryabinin.a.a@gmail.com>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- sparclinux@vger.kernel.org, virtualization@lists.linux.dev,
- xen-devel@lists.xenproject.org, linux-mm@kvack.org,
- Jann Horn <jannh@google.com>
-References: <20250530140446.2387131-1-ryan.roberts@arm.com>
- <5b5d6352-9018-4658-b8fe-6eadaad46881@lucifer.local>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <5b5d6352-9018-4658-b8fe-6eadaad46881@lucifer.local>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 30/05/2025 15:47, Lorenzo Stoakes wrote:
-> +cc Jann who is a specialist in all things page table-y and especially scary
-> edge cases :)
-> 
-> On Fri, May 30, 2025 at 03:04:38PM +0100, Ryan Roberts wrote:
->> Hi All,
->>
->> I recently added support for lazy mmu mode on arm64. The series is now in
->> Linus's tree so should be in v6.16-rc1. But during testing in linux-next we
->> found some ugly corners (unexpected nesting). I was able to fix those issues by
->> making the arm64 implementation more permissive (like the other arches). But
->> this is quite fragile IMHO. So I'd rather fix the root cause and ensure that
->> lazy mmu mode never nests, and more importantly, that code never makes pgtable
->> modifications expecting them to be immediate, not knowing that it's actually in
->> lazy mmu mode so the changes get deferred.
-> 
-> When you say fragile, are you confident it _works_ but perhaps not quite as well
-> as you want? Or are you concerned this might be broken upstream in any way?
+The existing brcm legacy tag only works with BCM63xx switches.
+These patches add a new legacy tag for BCM5325 and BCM5365 switches, which
+require including the FCS and length.
 
-I'm confident that it _works_ for arm64 as it is, upstream. But if Dev's series
-were to go in _without_ the lazy_mmu bracketting in some manner, then it would
-be broken if the config includes CONFIG_DEBUG_PAGEALLOC.
+Álvaro Fernández Rojas (3):
+  net: dsa: tag_brcm: legacy: reorganize functions
+  net: dsa: tag_brcm: add support for legacy FCS tags
+  net: dsa: b53: support legacy FCS tags
 
-There's a lot more explanation in the later patches as to how it can be broken,
-but for arm64, the situation is currently like this, because our implementation
-of __change_memory_common() uses apply_to_page_range() which implicitly starts
-an inner lazy_mmu_mode. We enter multiple times, but we exit one the first call
-to exit. Everything works correctly but it's not optimal because C is no longer
-deferred:
+ drivers/net/dsa/b53/Kconfig      |   1 +
+ drivers/net/dsa/b53/b53_common.c |   7 +-
+ include/net/dsa.h                |   2 +
+ net/dsa/Kconfig                  |   8 +++
+ net/dsa/tag_brcm.c               | 117 ++++++++++++++++++++++++-------
+ 5 files changed, 109 insertions(+), 26 deletions(-)
 
-arch_enter_lazy_mmu_mode()                        << outer lazy mmu region
-  <do some pte changes (A)>
-  alloc_pages()
-    debug_pagealloc_map_pages()
-      __kernel_map_pages()
-        __change_memory_common()
-          arch_enter_lazy_mmu_mode()              << inner lazy mmu region
-            <change kernel pte to make valid (B)>
-          arch_leave_lazy_mmu_mode()              << exit; complete A + B
-    clear_page()
-  <do some more pte changes (C)>                  << no longer in lazy mode
-arch_leave_lazy_mmu_mode()                        << nop
-
-An alternative implementation would not add the nested lazy mmu mode, so we end
-up with this:
-
-arch_enter_lazy_mmu_mode()                        << outer lazy mmu region
-  <do some pte changes (A)>
-  alloc_pages()
-    debug_pagealloc_map_pages()
-      __kernel_map_pages()
-        __change_memory_common()
-            <change kernel pte to make valid (B)> << deferred due to lazy mmu
-    clear_page()                                  << BANG! B has not be actioned
-  <do some more pte changes (C)>
-arch_leave_lazy_mmu_mode()
-
-This is clearly a much worse outcome. It's not happening today but it could in
-future. That's why I'm claiming it's fragile. It's much better (IMHO) to
-disallow calling the page allocator when in lazy mmu mode.
-
-I won't speak for other arches; there may be more or less potential impact for them.
-
-> 
-> I am thinking specifically about the proposed use in Dev's new series [0] and
-> obviously hoping (and assuming in fact) that it's the former :)
-
-Dev's changes aren't directly related to this, but if a version was accepted
-that didn't include the lazy mmu mode, that would cause non-obvious issues.
-
-Hope that helps?
-
-Thanks,
-Ryan
-
-> 
-> [0]: https://lore.kernel.org/linux-mm/20250530090407.19237-1-dev.jain@arm.com/
-> 
->>
->> The first 2 patches are unrelated, very obvious bug fixes. They don't affect
->> arm64 because arm64 only uses lazy mmu for kernel mappings. But I noticed them
->> during code review and think they should be fixed.
->>
->> The next 3 patches are aimed at solving the nesting issue.
->>
->> And the final patch is reverting the "permissive" fix I did for arm64, which is
->> no longer needed after the previous 3 patches.
->>
->> I've labelled this RFC for now because it depends on the arm64 lazy mmu patches
->> in Linus's master, so it won't apply to mm-unstable. But I'm keen to get review
->> and siince I'm touching various arches and modifying some core mm stuff, I
->> thought that might take a while so thought I'd beat the rush and get a first
->> version out early.
->>
->> I've build-tested all the affected arches. And I've run mm selftests for the
->> arm64 build, with no issues (with DEBUG_PAGEALLOC and KFENCE enabled).
->>
->> Applies against Linus's master branch (f66bc387efbe).
->>
->> Thanks,
->> Ryan
->>
->>
->> Ryan Roberts (6):
->>   fs/proc/task_mmu: Fix pte update and tlb maintenance ordering in
->>     pagemap_scan_pmd_entry()
->>   mm: Fix pte update and tlb maintenance ordering in
->>     migrate_vma_collect_pmd()
->>   mm: Avoid calling page allocator from apply_to_page_range()
->>   mm: Introduce arch_in_lazy_mmu_mode()
->>   mm: Avoid calling page allocator while in lazy mmu mode
->>   Revert "arm64/mm: Permit lazy_mmu_mode to be nested"
->>
->>  arch/arm64/include/asm/pgtable.h              | 22 ++++----
->>  .../include/asm/book3s/64/tlbflush-hash.h     | 15 ++++++
->>  arch/sparc/include/asm/tlbflush_64.h          |  1 +
->>  arch/sparc/mm/tlb.c                           | 12 +++++
->>  arch/x86/include/asm/paravirt.h               |  5 ++
->>  arch/x86/include/asm/paravirt_types.h         |  1 +
->>  arch/x86/kernel/paravirt.c                    |  6 +++
->>  arch/x86/xen/mmu_pv.c                         |  6 +++
->>  fs/proc/task_mmu.c                            |  3 +-
->>  include/asm-generic/tlb.h                     |  2 +
->>  include/linux/mm.h                            |  6 +++
->>  include/linux/pgtable.h                       |  1 +
->>  kernel/bpf/arena.c                            |  6 +--
->>  mm/kasan/shadow.c                             |  2 +-
->>  mm/memory.c                                   | 54 ++++++++++++++-----
->>  mm/migrate_device.c                           |  3 +-
->>  mm/mmu_gather.c                               | 15 ++++++
->>  17 files changed, 128 insertions(+), 32 deletions(-)
->>
->> --
->> 2.43.0
->>
+-- 
+2.39.5
 
 
