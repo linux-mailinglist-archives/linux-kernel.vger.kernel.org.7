@@ -1,437 +1,246 @@
-Return-Path: <linux-kernel+bounces-668493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-668495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E70BEAC937C
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 18:25:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1BD7AC9383
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 18:26:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAD6A1C08813
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 16:24:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A352A16B96D
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 16:26:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB7121B3925;
-	Fri, 30 May 2025 16:24:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E9AA1AE877;
+	Fri, 30 May 2025 16:26:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=valinux.co.jp header.i=@valinux.co.jp header.b="L2e+Iuhm"
-Received: from OS0P286CU010.outbound.protection.outlook.com (mail-japanwestazon11011049.outbound.protection.outlook.com [40.107.74.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="csTG5BqK"
+Received: from mail-ed1-f74.google.com (mail-ed1-f74.google.com [209.85.208.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B37E1BD9F0
-	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 16:24:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.74.49
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748622258; cv=fail; b=kgB5+O7Vv+Pokm8+PKEofB4KcSJ9RUHdvqOmknU0+W93o7mYVFpEa+s4klbl7Qu6qqZhumukE+0h3ZjNTW3SyDT5//6u5WN6PjJ1ZIIAmMlnebgI1LyzeS0yXPnjmXwHuJhttLAEwUa/7FWlWBarHLeOIhLfzVnHBd/QkYdYEx4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748622258; c=relaxed/simple;
-	bh=veKwduc5AUTGaMnA0mxrIAih1oWi4wKBtixJxWSoWwY=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=uAVD2Pw40fEEEh9OqeTaNbUKmo+nRx8Hrm1jX2rWoCLTKJ4OnNzLHT4RVnMO8vkw9T7cOC/pb+7Ep9h6Mk3Wb2njBaisB9yWV8fE9YvsJmqdojZYraf63sSEsKpOuTso9QjyLkl63aKhfym3+Zj4cz/RSUKuyYdoX9oSKi6UXB0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valinux.co.jp; spf=pass smtp.mailfrom=valinux.co.jp; dkim=pass (1024-bit key) header.d=valinux.co.jp header.i=@valinux.co.jp header.b=L2e+Iuhm; arc=fail smtp.client-ip=40.107.74.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valinux.co.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valinux.co.jp
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=IMMsfaV7ARuQJhib9lPqBwlJSSS/JFqmiz5c6UKaxlVEuC4u/HMoFbgDbdqsFc+r5+JfgA0j/E0ebZ58Y5DwQtnel96mc5P5EsD7/5FLY6kQVDgjIibgZTm7qOJZg+EHTjlrG9VWcfVfD1BwFnxWuKrqkyvj+Nul6mDVEKYTsdaAtPFtiUqKnhlIFxkUtIVagj88H58aQlY0eshK5MArDZX0CPDKZljZGsD9udCjoZMw4UxqNYKGvD4prc1iN+tL9kHlErDwz+VMPNLWWBeWrBGhg7P/ONOHkerQdQYglfC4Yu9bL7mrTKgwV5Ah7l2AmBxBpNq1Yq61zfFHX1SXLw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ik7/1V1iZPplwPCbZPLOJubwhprgGRLrh2RU0dnG4Ic=;
- b=kXgsZB2vMUvOWKkXUl92SKHNPQwStW8Mi5JO+QPD2Lx0boO1lDOjiBSys0sfIJ3Yq5eZhPERM9FEzp692JL7+7PIzmPCZ+5G0mlOvWomLhxsSj7+v/VAXFdICOTwQjGrMXvW/mEZJyTZ6+VDoIqP9ouhVPt8QY2hLnFJ2TPR/GLkKj/PP7D3mwjrwhHRXLLaFBnSO04c2189Vo8QIreAoy+vph73hQuELzwGxrVcaM6UKx3YhHMhRIQDWAyxSz5SOrqs9vlKB9EmviBeByHqp5VgBU61DNvLFIo0IZtCx/qJonGmuonFE2EVmibUJb5F0P477meM3BKjxG+NwDGvWg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=valinux.co.jp; dmarc=pass action=none
- header.from=valinux.co.jp; dkim=pass header.d=valinux.co.jp; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=valinux.co.jp;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ik7/1V1iZPplwPCbZPLOJubwhprgGRLrh2RU0dnG4Ic=;
- b=L2e+Iuhm8F91ZMadxRhszXYfFp4j5Ng76ibf1syLqYF0Wci4iDJRUM/Spm34skvmXafBXAWBSVnbo/0PI6PG6Y2wnXoioVHuC3SwCAKwdptz1RYCPs08ZRShitCGXQSgNzYpN1TVvCho0niZ/jfMkSka09nXMnhNj4L4s4STbo8=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=valinux.co.jp;
-Received: from OS3P286MB0979.JPNP286.PROD.OUTLOOK.COM (2603:1096:604:10d::7)
- by OS3P286MB2105.JPNP286.PROD.OUTLOOK.COM (2603:1096:604:191::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.32; Fri, 30 May
- 2025 16:24:08 +0000
-Received: from OS3P286MB0979.JPNP286.PROD.OUTLOOK.COM
- ([fe80::b8c1:9057:bf46:cc35]) by OS3P286MB0979.JPNP286.PROD.OUTLOOK.COM
- ([fe80::b8c1:9057:bf46:cc35%7]) with mapi id 15.20.8769.031; Fri, 30 May 2025
- 16:24:08 +0000
-From: Koichiro Den <den@valinux.co.jp>
-To: linux-mm@kvack.org
-Cc: akpm@linux-foundation.org,
-	yuanchu@google.com,
-	yuzhao@google.com,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] mm: vmscan: apply proportional reclaim pressure for memcg when MGLRU is enabled
-Date: Sat, 31 May 2025 01:23:53 +0900
-Message-ID: <20250530162353.541882-1-den@valinux.co.jp>
-X-Mailer: git-send-email 2.48.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TYCP286CA0077.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:2b3::9) To OS3P286MB0979.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:604:10d::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F448194124
+	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 16:26:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.74
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748622373; cv=none; b=ON2/OnmRajRFd15PApCpmNTh6zf2dAx+4+b/c369NjmN1hJGX+WoBONwKhXviCu336vMKDsdHOcEXc1dxe5VDGn0qi5aIKeLLkprxZ8HM1dGqvvncZAp2tyoxd9qWndLcvTZLzgNNUwdmwMyl2a8sN7MAE9mJ9W7LshLRvRfNM0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748622373; c=relaxed/simple;
+	bh=1fng35ixqqBrckudTBy0Pyb56ilge4zWiZ7ZGbgtJDA=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=PxT2i7NkCPwCcVPOCnExefryIjLYiCCSKWw76lK78uFNao/DVhbKcm7JEasBMjIu8d9NOkbgayyJTv4/Dk+1ITw04lzdjOs9NUFW3s2QhcWuyVZLG/syUVswVvxfXmTi0TwfuNbFlLNOi97IeC8eRfjM66qoCmnFP4mgGpnOEn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=csTG5BqK; arc=none smtp.client-ip=209.85.208.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
+Received: by mail-ed1-f74.google.com with SMTP id 4fb4d7f45d1cf-604607bb62bso1625544a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 09:26:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1748622370; x=1749227170; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yKpPdX/pBg9NsqtCdWDxQDQHdGt0GO0GXMX5bmb0CeY=;
+        b=csTG5BqKRjAl1pzPFE+JBX+POz0gIrhCtOOIaCmmykqOFd0l9jwkzNgtLL6JOkR6fP
+         uDHa7EF5pbJ42PsI/m7S8Jh7zb79BbGI+Bo3xaXWr2O3Iz796Q30tFpy8gCBpKhoPVSY
+         yXDuNzd1PgSE3hO5WNJHoiWNQLZuPIJVHOH+890y3wKReWKLtBz8mnMtdlZd7yQccIxN
+         4BABA3kI11YDFB3vz0S4LKwNkNyK5T5o0ekhzwIYNpkar/zbjuxwYkKKiW8aXuqhEFHD
+         4gvA3k7LaXdPbwLHRHl5YPaC9NnHQK8bxFEScmXZV7C+0VfH+PU7ZxHAqC5Lo+VKrIkY
+         rQFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748622370; x=1749227170;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=yKpPdX/pBg9NsqtCdWDxQDQHdGt0GO0GXMX5bmb0CeY=;
+        b=J4+SYTxPYPmLyAl0R/3XvfCuTi8BxTunFo3R3ETQ3Z98pcXH4Yuv3HjFUCSvxn3enD
+         32jf5xbhQFJQ81OnrgQW7ddsD8mElv6j7gcdMBbvJQfmrlel6XvsBIY5wJc5Ov48ZdUe
+         IrxXUsYZarR2DsEy7Wea0DI0zxSy2AOcFDcA7bkbN6PTKFRKY83XCU5T+uu45GAadEL5
+         7sHf4u8SbzkDmgpo7QR+jS0qlg90YIKWKEuBZdf+mqALqWstMw36HYq1YkDEl2EtI3Zd
+         N6mX4ENyusaAqMXRQ1swPqHptX6/VHeRbgjfds9T/ekFUpQTqM+bT9umEQDzuTQLOXQD
+         FKVA==
+X-Forwarded-Encrypted: i=1; AJvYcCUY8JIq+Fdjuu+NlVm785uPzMXCO7/BT6rsGaNzlqRtbDiBTeFt0pH3mGGolHWEe5PqNyBqL32brajdhHU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQPha4QK3wdzjaJy0s/5fDue4BNC3Zuo1iJArQydj9FRyATqLp
+	+FWc0SEC7q+q44Z0aLOlA057LFXgV1rnPsSdA86HzKZ5BZ8Hp05xgQlwDof7g+TJiAVS/SCwz0h
+	pf1keKQ==
+X-Google-Smtp-Source: AGHT+IEfnkM9EKGtG//Yqz/IdFCNfi7nAt9WRzaaVNSLbe+iFYneywKAv5HztF7mOdYQa3OchFjO8aBfOtw=
+X-Received: from edyb20.prod.google.com ([2002:aa7:df94:0:b0:601:b195:ed99])
+ (user=gnoack job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6402:274a:b0:604:e99e:b78f
+ with SMTP id 4fb4d7f45d1cf-6056df488b8mr3360734a12.16.1748622369847; Fri, 30
+ May 2025 09:26:09 -0700 (PDT)
+Date: Fri, 30 May 2025 18:26:07 +0200
+In-Reply-To: <20250530.ozeuZufee5yu@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: OS3P286MB0979:EE_|OS3P286MB2105:EE_
-X-MS-Office365-Filtering-Correlation-Id: 617077ea-5aff-47a0-6a5d-08dd9f9666e3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016|10070799003;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?hKtzAUa7pvZMXb5Qlau/thSBBEkWpgTIVL3rV1NWCPj8tIieJrbUyabe+yPx?=
- =?us-ascii?Q?66+/AUgRpYDfzO3S6rASz44FnIwMnh9+L3QjKgyFAElFj4KGOfLJyEqIdcm6?=
- =?us-ascii?Q?9yAyV6nLRWMUWYLzGIPvcFhXHYUzA7jri2/hGtDbrGEPgnIhYJKm8VEeqD5L?=
- =?us-ascii?Q?g1pArrqnlK/ZB412d4yRZFmLy0p06Tkr2TbAZ88YXgkUdWkGg3YdQ+BzLfIX?=
- =?us-ascii?Q?Rd0KveY8WXOrew/g/nrF1WhzNDaqRrM3/qgZn935kQb6oSwyhrfL0+3ggAZr?=
- =?us-ascii?Q?5ebM/rKHC/V/y9VB06y5Fc4ux5N5QKUdC5wWbaRRhR70GgC3hKFkjhkmf1RE?=
- =?us-ascii?Q?uV//yguRtr8aC2XItQepcnGy/woKoREQSpDrw/FW2qtPJyFrDp8ddIX+8GpC?=
- =?us-ascii?Q?yi2rKZTZRJjDcrCovF5zAY9p6hTG5U0oyLNtqR0+aiRp9mOh9uwsbanQeLBf?=
- =?us-ascii?Q?6wFew0vELQGsOWRDyffcv+yEaPBzir49SriquWC+ipk2EL8R8429wI+itTWc?=
- =?us-ascii?Q?1vo02g2S7x2wDyT7zr0UzRYM788PXgxMo93g2wXKEB8xqAvgTEshD4yNXlqb?=
- =?us-ascii?Q?nhyNV8qA2yA5OT93uf6E53SccljPuXKU99Xxp/55hY0locE6SZpGI15SPpvq?=
- =?us-ascii?Q?uoOrtNkQFREFH0op5J9JOYJwzDYIrXVd/MB9K+UxkgGpYakDPcri4kExoyGo?=
- =?us-ascii?Q?7FvgKQ4xWHkUbgAqFaUBdmr2vbpwH8NLetF66CfyLZ9p0E/BlOplOCzsON3u?=
- =?us-ascii?Q?8u9PMiEMfEYXe8YQCNLWi/gm+C7R+USWnL7itN4c0UVsxuuW2savnsIVyPB/?=
- =?us-ascii?Q?bhNR68o6x58sN7hQMKH0Y/RsSFUipy908PY26qSaXmIQSLKF1aa2UZbA9ZyW?=
- =?us-ascii?Q?oS79769KnOsJpYd47+XAUxcnXnSsEOxzARPcmE5yOApLCraKmCKplLl/GpzA?=
- =?us-ascii?Q?vL5BHu+aO1IqpkzvNY1QCl60UWTiRx1E4eWAe9doQStTXHj4C3+uqJZsdhzR?=
- =?us-ascii?Q?qyLyBNSmXVOIG2PF9X2OaM2DbE1+IxRILR9f/w5RI+4uuMJgX6ZiD/zc8MVy?=
- =?us-ascii?Q?9ZPM/u+IpPFXN0Ppb7CjpFl94RxZdk1WhuudheFZ0jj5mYoQ08JyiACX2GNv?=
- =?us-ascii?Q?wOb8M7uS7j4FdCK3pR6hF3oFnTfggAlEytBC4iS8lWfDcAvXTSy/tCKI84uI?=
- =?us-ascii?Q?ckrqvYo2t6KrcLwlCrvbqG26NB3Nylu9mUVO8z3zbmkoNaVEbhXPhLIl4t7v?=
- =?us-ascii?Q?BciTpf+xSPSNfadp7EhQg1xb1LcTsgZMBY0/A9k1n5X1o/b+KQgCkc4T7ggZ?=
- =?us-ascii?Q?HuU43BvSbqcwuSR0zHKA0TOJajTefJeyJsk/5DSppc4V9XBGyXzkmMsGeRa5?=
- =?us-ascii?Q?/Wlxrf99M3y3p5DYZBkrtjrkU4CoenaD6xVjNYdAMOsWLYbtQ+3H/Cd775wT?=
- =?us-ascii?Q?rn5qdf/ADWU=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS3P286MB0979.JPNP286.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(10070799003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?lqqMX5962/g3qaWu4DsFTxqQG/IF/WmGDK4oHP6dwtbkCo+GjiF8+gu4P68h?=
- =?us-ascii?Q?pEWpCguq33xgVKvKE1dUubeGcazaUVcIp99XPnEHx2DyG7+EKTkVxwdHOPVZ?=
- =?us-ascii?Q?/YJ0NrvTt4lIUdyCOXDZZjYYXtbD7g4f7PlwCDT7DVuc1p1nmQf8G1wJvbQT?=
- =?us-ascii?Q?pYOLSwFCj2qmh0MgeWGZm+X7Vo3PIUF44dDIB1QmpUFbt5jIzPzFZYgtWM3n?=
- =?us-ascii?Q?gVTKRRjfQkoxamXMbGqUq4Yp9PNA+ME9JkDjeCoRtidWktfXnks4ZxpqHlkA?=
- =?us-ascii?Q?8nRLTTy/wWLMStpMa0NUtw3/BBEYDSWxwUt23u8VcsqkGaZncLe1IRULfMtk?=
- =?us-ascii?Q?lC/ZtEv07+cIycM5YHvMeQbyljJ3eQdGVtOCu1bFaYkHTZsBfmZNI39iny8F?=
- =?us-ascii?Q?vxwMBS3HGGquMgToLwBGD19s2o/EqkvFCsJyuoQPKKK92/zeiFr3hQ4t2SQI?=
- =?us-ascii?Q?it9/W2U95lM9dK+ZyGwB8negTledIj6y8gHdc8cftKmp8ZlWJbtDLiSnbnt5?=
- =?us-ascii?Q?N0hDzt6RhpwEh3N3/9fbzeNd5w+/yH54W1dZIcir6ZsVuAeCfk7x4IWZPLgJ?=
- =?us-ascii?Q?VQgxDn0yQDLe1JJXX6hYHxIiKlKnPAGszkzufA7tisIC8jEWb4uhXD5XfV5w?=
- =?us-ascii?Q?DbN9dj3PJZlO7yB4r+0oxfojKUcKti2h+TXm8rNDMD3bKfPNBRWOmWhLS2CN?=
- =?us-ascii?Q?URfc8yqn/lEKis9UneIob+YOJQyoo7WDFJ3N9Xm3qaq0H4yYqe++js66+v/z?=
- =?us-ascii?Q?szj1k5EtSGRDn7OEfR0B/auMi9KdX8ob/tCK7NR1SSpRZnaubwSixEdJu+/j?=
- =?us-ascii?Q?jnAk6d8pRrkUqs4lp7NAfnnnlUCNAXrx6xP5PRAvdvEMLdIpXrBEZV1z0tR2?=
- =?us-ascii?Q?gWIRKn6ATtITiGoCwpTbgGClh6foll38QwobRYW+3WdeLWYMK/huFSQZlDXp?=
- =?us-ascii?Q?VAgxWRepg6vYSJmInC2Q8i13i5HMj4hMFLPdj/WoMXIiW8yDhqRWjhkMLk3t?=
- =?us-ascii?Q?VqdgWrCdV78TCyKlAck/dQ3EBLsWsC7IQD1HdiNpgpuECUvnct7FNBxlujMR?=
- =?us-ascii?Q?EaY4AqIar95cd3xnVSTmvusSvkNCG4E62r4fghvB3UMxlluVTpnny0Zayo9t?=
- =?us-ascii?Q?FwkeB5tcdGkOaLTIIOcYCm0Id8S936u9go7HBfKuolJug2Pdkk1Nhg60dUbV?=
- =?us-ascii?Q?4Q5YHRWeS+BnMK7FdG1KiRh8jyi2jgjqaPNr7a70s/anMhtwPCj4BX0cdgQg?=
- =?us-ascii?Q?bPOq+z01RmCnkejF+4XmfvjYPcZteO8/mVycoM6MfW/LRwBEx+vZFjOWPJoQ?=
- =?us-ascii?Q?brjdB0ehSIvkA60IMN9sojw5GSSNosTScN/Fr8smTLxYsRCO/GkPNP9kehy7?=
- =?us-ascii?Q?6rlRlE8eacTRn8AnjVKXZmTRJU8h2wPTvDB4mKiRV0tSIIODxYJvMPKDry9P?=
- =?us-ascii?Q?pirstbcj/nkiXEnF8yfxbz8l/d/sRnP/1gGu1Oo/1/7tKXziC3vliefcW9hK?=
- =?us-ascii?Q?DYAulGcp6xEfOcEpPzxpiEeXK6u+BNg8xZf2XlZjZYlHFJ0dSMnvPQDGsNcf?=
- =?us-ascii?Q?WJhu5ltC0A+pRTfdQe1VOy8PX2ePRIwND+fn69IfTme+SltCcvnYsDO9PZg5?=
- =?us-ascii?Q?RGlnS/XUveHewNd0GLCbdi8=3D?=
-X-OriginatorOrg: valinux.co.jp
-X-MS-Exchange-CrossTenant-Network-Message-Id: 617077ea-5aff-47a0-6a5d-08dd9f9666e3
-X-MS-Exchange-CrossTenant-AuthSource: OS3P286MB0979.JPNP286.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 May 2025 16:24:08.4421
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 7a57bee8-f73d-4c5f-a4f7-d72c91c8c111
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 0eaPzEp0neIAh4QUyQCw+fRnqtbrMrOm6a/o8kMDJGjhM+SdyfNeZEx0flXtIw1RozgsVvJrIFuZaKv4L6Na0g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3P286MB2105
+Mime-Version: 1.0
+References: <20250221184417.27954-3-gnoack3000@gmail.com> <20250227.Aequah6Avieg@digikod.net>
+ <20250228.b3794e33d5c0@gnoack.org> <20250304.aroh3Aifiiz9@digikod.net>
+ <20250310.990b29c809af@gnoack.org> <20250311.aefai7vo6huW@digikod.net>
+ <20250518.be040c48937c@gnoack.org> <20250518.xeevoom3kieY@digikod.net>
+ <aDmvpOMlaAZOXrji@google.com> <20250530.ozeuZufee5yu@digikod.net>
+Message-ID: <aDncH8D9FoyAIsTv@google.com>
+Subject: Re: [RFC 1/2] landlock: Multithreading support for landlock_restrict_self()
+From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
+To: "=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?=" <mic@digikod.net>, Casey Schaufler <casey@schaufler-ca.com>
+Cc: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack3000@gmail.com>, Paul Moore <paul@paul-moore.com>, sergeh@kernel.org, 
+	David Howells <dhowells@redhat.com>, Kees Cook <keescook@chromium.org>, 
+	linux-security-module@vger.kernel.org, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Jann Horn <jannh@google.com>, 
+	linux-kernel@vger.kernel.org, Peter Newman <peternewman@google.com>, 
+	Andy Lutomirski <luto@amacapital.net>, Will Drewry <wad@chromium.org>, 
+	Jarkko Sakkinen <jarkko@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Koichiro Den <koichiro.den@canonical.com>
+On Fri, May 30, 2025 at 05:11:34PM +0200, Micka=C3=ABl Sala=C3=BCn wrote:
+> On Fri, May 30, 2025 at 03:16:20PM +0200, G=C3=BCnther Noack wrote:
+> > On Sun, May 18, 2025 at 09:57:32PM +0200, Micka=C3=ABl Sala=C3=BCn wrot=
+e:
+> > > We should rename the flag to LANDLOCK_RESTRICT_SELF_PROCESS to make i=
+t
+> > > clear what it does.
+> > >=20
+> > > The remaining issues are still the potential memory allocation failur=
+es.
+> > > There are two things:
+> > >=20
+> > > 1. We should try as much as possible to limit useless credential
+> > >    duplications by not creating a new struct cred if parent credentia=
+ls
+> > >    are the same.
+> > >=20
+> > > 2. To avoid the libpsx inconsistency (because of ENOMEM or EPERM),
+> > >    landlock_restrict_self(2) should handle memory allocation and
+> > >    transition the process from a known state to another known state.
+> > >=20
+> > > What about this approach:
+> > > - "Freeze" all threads of the current process (not ideal but simple) =
+to
+> > >   make sure their credentials don't get updated.
+> > > - Create a new blank credential for the calling thread.
+> > > - Walk through all threads and create a new blank credential for all
+> > >   threads with a different cred than the caller.
+> > > - Inject a task work that will call cred_transfer() for all threads w=
+ith
+> > >   either the same new credential used by the caller (incrementing the
+> > >   refcount), or it will populate and use a blank one if it has differ=
+ent
+> > >   credentials than the caller.
+> > >=20
+> > > This may not efficiently deduplicate credentials for all threads but =
+it
+> > > is a simple deduplication approach that should be useful in most case=
+s.
+> > >=20
+> > > The difficult part is mainly in the "fleezing". It would be nice to
+> > > change the cred API to avoid that but I'm not sure how.
+> >=20
+> > I don't see an option how we could freeze the credentials of other thre=
+ads:
+> >=20
+> > To freeze a task's credentials, we would have to inhibit that commit_cr=
+eds()
+> > succeeds on that task, and I don't see how that would be done - we can =
+not
+> > prevent these tasks from calling commit_creds() [1], and when commit_cr=
+eds()
+> > gets called, it is guaranteed to work.
+> >=20
+> > So in my mind, we have to somehow deal with the possibility that a task=
+ has a
+> > new and not-previously-seen struct creds, by the time that its task_wor=
+k gets
+> > called.  As a consequence, I think a call to prepare_creds() would then=
+ be
+> > unavoidable in the task_work?
+>=20
+> OK, we don't need to freeze all threads, just to block thread creation.
+>=20
+> What about that:
+> 1. lock thread creation for this process
+> 2. call prepare_creds() for the calling thread (called new_cred)
+> 3. call cred_alloc_blank() for all other threads, store them in a list,
+>    and exit if ENOMEM
+> 4. asynchronously walk through all threads, and for each:
+>   a. if its creds are the same (i.e. same pointer) as the calling
+>      thread's ones, then call get_cred(new_cred) and
+>      commit_creds(new_cred).
+>   b. otherwise, take a blank cred, call cred_transfer(), add the
+>      Landlock domain, and commit_creds() with it.
+> 5. free all unused blank creds (most)
+> 6. call commit_creds(new_creds) and return
+>=20
+> Pros:
+> - do not block threads
+> - minimize cred duplication
+> - atomic operation (from the point of view of the caller): all or
+>   nothing (with an error)
+> - almost no change to existing cred API
+>=20
+> Cons:
+> - block thread creation
+> - initially allocate one cred per thread (but free most of them after)
 
-The scan implementation for MGLRU was missing proportional reclaim
-pressure for memcg, which contradicts the description in
-Documentation/admin-guide/cgroup-v2.rst (memory.{low,min} section).
+The proposal is growing on me.
 
-This issue can be observed in kselftest cgroup:test_memcontrol
-(specifically test_memcg_min and test_memcg_low). The following table
-shows the actual values observed in my local test env (on xfs) and the
-error "e", which is the symmetric absolute percentage error from the ideal
-values of 29M for c[0] and 21M for c[1].
+One way to view transfer_creds() and have it nicely fit into the credential=
+s API
+would be to view prepare_creds() as a convenience wrapper around
+transfer_creds(), so that prepare_creds() is implemented as a function whic=
+h:
 
-  test_memcg_min
+  1) allocates a new struct cred (this may fail)
+  2) calls transfer_creds() with the new struct cred to populate
 
-         | MGLRU enabled   | MGLRU enabled   | MGLRU disabled
-         | Without patch   | With patch      |
-    -----|-----------------|-----------------|---------------
-    c[0] | 25964544 (e=8%) | 28770304 (e=3%) | 27820032 (e=4%)
-    c[1] | 26214400 (e=9%) | 23998464 (e=4%) | 24776704 (e=6%)
+We could then move the bulk of its existing prepare_creds() implementation =
+into
+the new transfer_creds(), and could also move the keyctl implementation to =
+use
+that.
 
-  test_memcg_low
+A remaining problem is: The caveat and the underlying assumption is that
+transfer_creds() must never fail when it runs in the task work, if we want =
+to
+avoid the additional synchronization.  The existing cases in which the
+credentials preparation logic can return an error are:
 
-         | MGLRU enabled   | MGLRU enabled   | MGLRU disabled
-         | Without patch   | With patch      |
-    -----|-----------------|-----------------|---------------
-    c[0] | 26214400 (e=7%) | 27930624 (e=4%) | 27688960 (e=5%)
-    c[1] | 26214400 (e=9%) | 24764416 (e=6%) | 24920064 (e=6%)
+* Allocation failure for struct cred  (we would get rid of this)
+* get_ucounts(new->ucounts) returns NULL  (not supposed to happen, AFAICT)
+* security_prepare_creds() fails.  Existing LSM implementations are:
+  * Tomoyo, SELinux, AppArmor, Landlock: always return 0
+  * SMACK: May return -ENOMEM on allocation failure
 
-Factor out the proportioning logic to a new function and have MGLRU
-reuse it. While at it, update the eviction behavior via debugfs
-'lru_gen' interface ('-' command with an explicit 'nr_to_reclaim'
-parameter) to ensure eviction is limited to the specified number.
 
-Signed-off-by: Koichiro Den <koichiro.den@canonical.com>
----
-Changes in v2:
-- Leverage the new evict_folios() parameter to ensure correct eviction
-  limitation via debugfs
-- Update the commit message to use the latest upstream kselftest instead
-  of LTP memcontrol03.
+So summing up, in my understanding, the prerequisites for this approach are=
+ that:
 
-v1: https://lore.kernel.org/all/20250404141118.3895592-1-koichiro.den@canonical.com/
----
- mm/vmscan.c | 149 ++++++++++++++++++++++++++++------------------------
- 1 file changed, 79 insertions(+), 70 deletions(-)
+  1) get_ucounts() never returns NULL, and
 
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 07c51fa03434..750c0e72bda4 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -2473,6 +2473,69 @@ static inline void calculate_pressure_balance(struct scan_control *sc,
- 	*denominator = ap + fp;
- }
- 
-+static unsigned long apply_proportional_protection(struct mem_cgroup *memcg,
-+		struct scan_control *sc, unsigned long scan)
-+{
-+	unsigned long min, low;
-+
-+	mem_cgroup_protection(sc->target_mem_cgroup, memcg, &min, &low);
-+
-+	if (min || low) {
-+		/*
-+		 * Scale a cgroup's reclaim pressure by proportioning
-+		 * its current usage to its memory.low or memory.min
-+		 * setting.
-+		 *
-+		 * This is important, as otherwise scanning aggression
-+		 * becomes extremely binary -- from nothing as we
-+		 * approach the memory protection threshold, to totally
-+		 * nominal as we exceed it.  This results in requiring
-+		 * setting extremely liberal protection thresholds. It
-+		 * also means we simply get no protection at all if we
-+		 * set it too low, which is not ideal.
-+		 *
-+		 * If there is any protection in place, we reduce scan
-+		 * pressure by how much of the total memory used is
-+		 * within protection thresholds.
-+		 *
-+		 * There is one special case: in the first reclaim pass,
-+		 * we skip over all groups that are within their low
-+		 * protection. If that fails to reclaim enough pages to
-+		 * satisfy the reclaim goal, we come back and override
-+		 * the best-effort low protection. However, we still
-+		 * ideally want to honor how well-behaved groups are in
-+		 * that case instead of simply punishing them all
-+		 * equally. As such, we reclaim them based on how much
-+		 * memory they are using, reducing the scan pressure
-+		 * again by how much of the total memory used is under
-+		 * hard protection.
-+		 */
-+		unsigned long cgroup_size = mem_cgroup_size(memcg);
-+		unsigned long protection;
-+
-+		/* memory.low scaling, make sure we retry before OOM */
-+		if (!sc->memcg_low_reclaim && low > min) {
-+			protection = low;
-+			sc->memcg_low_skipped = 1;
-+		} else {
-+			protection = min;
-+		}
-+
-+		/* Avoid TOCTOU with earlier protection check */
-+		cgroup_size = max(cgroup_size, protection);
-+
-+		scan -= scan * protection / (cgroup_size + 1);
-+
-+		/*
-+		 * Minimally target SWAP_CLUSTER_MAX pages to keep
-+		 * reclaim moving forwards, avoiding decrementing
-+		 * sc->priority further than desirable.
-+		 */
-+		scan = max(scan, SWAP_CLUSTER_MAX);
-+	}
-+	return scan;
-+}
-+
- /*
-  * Determine how aggressively the anon and file LRU lists should be
-  * scanned.
-@@ -2551,70 +2614,10 @@ static void get_scan_count(struct lruvec *lruvec, struct scan_control *sc,
- 	for_each_evictable_lru(lru) {
- 		bool file = is_file_lru(lru);
- 		unsigned long lruvec_size;
--		unsigned long low, min;
- 		unsigned long scan;
- 
- 		lruvec_size = lruvec_lru_size(lruvec, lru, sc->reclaim_idx);
--		mem_cgroup_protection(sc->target_mem_cgroup, memcg,
--				      &min, &low);
--
--		if (min || low) {
--			/*
--			 * Scale a cgroup's reclaim pressure by proportioning
--			 * its current usage to its memory.low or memory.min
--			 * setting.
--			 *
--			 * This is important, as otherwise scanning aggression
--			 * becomes extremely binary -- from nothing as we
--			 * approach the memory protection threshold, to totally
--			 * nominal as we exceed it.  This results in requiring
--			 * setting extremely liberal protection thresholds. It
--			 * also means we simply get no protection at all if we
--			 * set it too low, which is not ideal.
--			 *
--			 * If there is any protection in place, we reduce scan
--			 * pressure by how much of the total memory used is
--			 * within protection thresholds.
--			 *
--			 * There is one special case: in the first reclaim pass,
--			 * we skip over all groups that are within their low
--			 * protection. If that fails to reclaim enough pages to
--			 * satisfy the reclaim goal, we come back and override
--			 * the best-effort low protection. However, we still
--			 * ideally want to honor how well-behaved groups are in
--			 * that case instead of simply punishing them all
--			 * equally. As such, we reclaim them based on how much
--			 * memory they are using, reducing the scan pressure
--			 * again by how much of the total memory used is under
--			 * hard protection.
--			 */
--			unsigned long cgroup_size = mem_cgroup_size(memcg);
--			unsigned long protection;
--
--			/* memory.low scaling, make sure we retry before OOM */
--			if (!sc->memcg_low_reclaim && low > min) {
--				protection = low;
--				sc->memcg_low_skipped = 1;
--			} else {
--				protection = min;
--			}
--
--			/* Avoid TOCTOU with earlier protection check */
--			cgroup_size = max(cgroup_size, protection);
--
--			scan = lruvec_size - lruvec_size * protection /
--				(cgroup_size + 1);
--
--			/*
--			 * Minimally target SWAP_CLUSTER_MAX pages to keep
--			 * reclaim moving forwards, avoiding decrementing
--			 * sc->priority further than desirable.
--			 */
--			scan = max(scan, SWAP_CLUSTER_MAX);
--		} else {
--			scan = lruvec_size;
--		}
--
-+		scan = apply_proportional_protection(memcg, sc, lruvec_size);
- 		scan >>= sc->priority;
- 
- 		/*
-@@ -4545,8 +4548,9 @@ static bool isolate_folio(struct lruvec *lruvec, struct folio *folio, struct sca
- 	return true;
- }
- 
--static int scan_folios(struct lruvec *lruvec, struct scan_control *sc,
--		       int type, int tier, struct list_head *list)
-+static int scan_folios(unsigned long nr_to_scan, struct lruvec *lruvec,
-+		       struct scan_control *sc, int type, int tier,
-+		       struct list_head *list)
- {
- 	int i;
- 	int gen;
-@@ -4555,7 +4559,7 @@ static int scan_folios(struct lruvec *lruvec, struct scan_control *sc,
- 	int scanned = 0;
- 	int isolated = 0;
- 	int skipped = 0;
--	int remaining = MAX_LRU_BATCH;
-+	int remaining = min(nr_to_scan, MAX_LRU_BATCH);
- 	struct lru_gen_folio *lrugen = &lruvec->lrugen;
- 	struct mem_cgroup *memcg = lruvec_memcg(lruvec);
- 
-@@ -4666,7 +4670,8 @@ static int get_type_to_scan(struct lruvec *lruvec, int swappiness)
- 	return positive_ctrl_err(&sp, &pv);
- }
- 
--static int isolate_folios(struct lruvec *lruvec, struct scan_control *sc, int swappiness,
-+static int isolate_folios(unsigned long nr_to_scan, struct lruvec *lruvec,
-+			  struct scan_control *sc, int swappiness,
- 			  int *type_scanned, struct list_head *list)
- {
- 	int i;
-@@ -4678,7 +4683,7 @@ static int isolate_folios(struct lruvec *lruvec, struct scan_control *sc, int sw
- 
- 		*type_scanned = type;
- 
--		scanned = scan_folios(lruvec, sc, type, tier, list);
-+		scanned = scan_folios(nr_to_scan, lruvec, sc, type, tier, list);
- 		if (scanned)
- 			return scanned;
- 
-@@ -4688,7 +4693,8 @@ static int isolate_folios(struct lruvec *lruvec, struct scan_control *sc, int sw
- 	return 0;
- }
- 
--static int evict_folios(struct lruvec *lruvec, struct scan_control *sc, int swappiness)
-+static int evict_folios(unsigned long nr_to_scan, struct lruvec *lruvec,
-+			struct scan_control *sc, int swappiness)
- {
- 	int type;
- 	int scanned;
-@@ -4707,7 +4713,7 @@ static int evict_folios(struct lruvec *lruvec, struct scan_control *sc, int swap
- 
- 	spin_lock_irq(&lruvec->lru_lock);
- 
--	scanned = isolate_folios(lruvec, sc, swappiness, &type, &list);
-+	scanned = isolate_folios(nr_to_scan, lruvec, sc, swappiness, &type, &list);
- 
- 	scanned += try_to_inc_min_seq(lruvec, swappiness);
- 
-@@ -4828,6 +4834,8 @@ static long get_nr_to_scan(struct lruvec *lruvec, struct scan_control *sc, int s
- 	if (nr_to_scan && !mem_cgroup_online(memcg))
- 		return nr_to_scan;
- 
-+	nr_to_scan = apply_proportional_protection(memcg, sc, nr_to_scan);
-+
- 	/* try to get away with not aging at the default priority */
- 	if (!success || sc->priority == DEF_PRIORITY)
- 		return nr_to_scan >> sc->priority;
-@@ -4880,7 +4888,7 @@ static bool try_to_shrink_lruvec(struct lruvec *lruvec, struct scan_control *sc)
- 		if (nr_to_scan <= 0)
- 			break;
- 
--		delta = evict_folios(lruvec, sc, swappiness);
-+		delta = evict_folios(nr_to_scan, lruvec, sc, swappiness);
- 		if (!delta)
- 			break;
- 
-@@ -5501,7 +5509,8 @@ static int run_eviction(struct lruvec *lruvec, unsigned long seq, struct scan_co
- 		if (sc->nr_reclaimed >= nr_to_reclaim)
- 			return 0;
- 
--		if (!evict_folios(lruvec, sc, swappiness))
-+		if (!evict_folios(nr_to_reclaim - sc->nr_reclaimed, lruvec, sc,
-+				  swappiness))
- 			return 0;
- 
- 		cond_resched();
--- 
-2.48.1
+  2) SMACK does not bubble up allocation errors from the cred_prepare hook
 
+     Casey, Jarkko: do you think this is realistic for SMACK to change?
+
+and that
+
+  3) We can block new thread creation
+
+     Micka=C3=ABl, do you have a specific approach in mind for that?
+
+     As Jann pointed out in [1], the tasklist_lock and siglock are not slee=
+pable
+     and can't be used while waiting, which is why he proposed an approach =
+where
+     we retry in a loop until no new threads show up any more, while gettin=
+g the
+     existing threads stuck in the task_work as well (where they can't spaw=
+n new
+     threads).
+
+
+Thanks,
+
+=E2=80=94G=C3=BCnther
+
+[1] https://lore.kernel.org/all/CAG48ez0pWg3OTABfCKRk5sWrURM-HdJhQMcWedEppc=
+_z1rrVJw@mail.gmail.com/
 
