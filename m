@@ -1,345 +1,184 @@
-Return-Path: <linux-kernel+bounces-668039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-668042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B080AC8D14
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 13:46:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99112AC8D1F
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 13:47:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 451D81BC6509
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 11:46:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 102BE3AEC7F
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 11:46:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31EC822A4E6;
-	Fri, 30 May 2025 11:45:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 429C722A1F1;
+	Fri, 30 May 2025 11:47:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="bj3VnwhO"
-Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nr9ZcbKZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08DA1433D1
-	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 11:45:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 758F721CC5D;
+	Fri, 30 May 2025 11:47:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748605556; cv=none; b=EodWtWlZtmlaSF5NXWScgp8xOlJ1s4mgJ2V41QZtZrGGHyISzEqsTv9XeLxp9Nh5/wJj4Necm6IXmfJqGyiD7lbkcIhvO1WVERHA/0MiaDPS21vdCum+Uo1pQPKZS+CjiyzEpLDOV8Q0sGzpHkS1DsuFfB1tdt528cjr5dzh1oE=
+	t=1748605623; cv=none; b=avm7s/kQI2tMVnjZQ3ArFG+O6/3rWsgwoynnvo4dGZ3xS7whL9FCqdPirRLkK5P0o3LPedK632qHazTWO9FOT0pqbIYNvt6JYEBQYqHhfLgHU0uU6pPN4bvuO25f86JgyM5A+rF185XeH+g2My0sLX5dYof1SEA9KpesecK6uvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748605556; c=relaxed/simple;
-	bh=lb2rrmNSm6fBdb4lX6oCiQBgGtwr5BLU1jvTiz4AWOU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FfdUWE4/2IY/Fy9zvYHNHIm0qf9/P0djNvroStTOk4gaUz9hHHLcLwfMva9FF9Jnw8/vmZKKTPbWiUCm76EdxMPVuBxnZYqhBpHCqZrqz8nWgs3yNWLlmFS2Obn+5h4SbvDFK0f0V9ie0I12FCILAxQq1xN9LdY5y2jrjyJPWps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=bj3VnwhO; arc=none smtp.client-ip=209.85.166.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
-Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-3dc7c19a4c6so6970755ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 04:45:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1748605552; x=1749210352; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=l8Sf8JF/JRHMkMghb8r8bp2QRgmK4Dkiuo4Cc+JcYWU=;
-        b=bj3VnwhO8jFidRdzL0hV+gRlG3wcs3PzFVKSBVsVFAbZBGOyvyWm9AhoN1d+rVcv/5
-         XCf1DcBoTcsxvFK/6h2z4x34+EZ2+S/nJlaTzGxtwX2249iRQ+fKxhyaeZgF07CbHIHR
-         TBLnUSuJEtrjQHpjLHy1pOTd5u9Wp2t5kO5JdfEDoL31rQbYNYaiVDnk8xQbafl7Y9qQ
-         0y13EVwPv/bfbyS5h0idEIOYskhXOvLNzRQh6oHXhq4q83TJSeWEaq/iYReEBfpZY3wJ
-         yJKga17fZR3kZhRFRt/zAP11vEjDCviVQb3pm11B5R9HVKIDiqQtQA1xNFl3uHjyMIXD
-         3Gnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748605552; x=1749210352;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=l8Sf8JF/JRHMkMghb8r8bp2QRgmK4Dkiuo4Cc+JcYWU=;
-        b=SvnBmg3uuZMhRz3evIl8OV1WSidNyMIOV1NJ92EHimb1Z01ELvxrUtv70ILZnAOl2H
-         DRWgy0tjCn8GEJI8jSyc3Rz0JkJHlnt7Dl7GLMJTIYuJ1iq2dQbWHt6f9nyDOgvI5Las
-         kJsHJkyRSVnutQnTXW1NWto43q3H4IiNbWn1sUFZSK07Qtx3/bSyGajnhnC1dvuybvy5
-         d2FMiaiGCHMfH1i7+Lm/5ZjRRlkHrrnuPn0PZ9lqqp5QQeFyhpJQKr3vIGVMZsDNTD/y
-         IVGBL89tWCdOmm5cqYbxm6t6UjRW9RuGmUsMTHeYNlEfWlGWtdo5brLDEQc99VMn6C2S
-         SY9A==
-X-Forwarded-Encrypted: i=1; AJvYcCVm2FHyiwPhyrhQEHeDYRDA17RJ7yhdlEXmoR+7ntL5/lX5fU54pe7+63Qz0DF1G1SIZGSFbxYQLr8pgU4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmwObD1AFzoUk2F4mEa6NuD7dlneNi0UWK/qkYPbfHNk0UGoM5
-	nF77Pb7ZX7a1bRqblJrrc0+fxl4H6u0f4FksJAm9CCF6lp930aKZdEB+3zcnTwiS8MtpfnuUmhr
-	UW58WYzXmZJM+Oh1DG63RA7XX9zhm2mIu+EXPan0jJw==
-X-Gm-Gg: ASbGncvA3SjhsIjvKBUoYs4HuQ32E6QeOOu2+pLZI+REgsToLAmcxkrs1RLWKWS/ic6
-	fOAn8moEYNBCk40MPySMHi5B2g9jMeQ/bRHsAjxevk9xA3+sCaDwnpZtyxsHPr0i8gzTHdsZQAk
-	efU+OL38OhTZs8VMjBgY9AcqqZ7SkjPWVkDEDZCRm35/4A
-X-Google-Smtp-Source: AGHT+IEZspkmXl6apmdK800eHc5l4NQ5iwqsGwzYU97FvRCNbOAgU9eoVynwSTVXbJb+FR7uIpENRquO/2Gk7ASVktU=
-X-Received: by 2002:a05:6e02:2789:b0:3dd:89c4:bc66 with SMTP id
- e9e14a558f8ab-3dd99bf38bbmr36342945ab.9.1748605551821; Fri, 30 May 2025
- 04:45:51 -0700 (PDT)
+	s=arc-20240116; t=1748605623; c=relaxed/simple;
+	bh=PPWkMV6RF/9nIArnrSMpfu5q6WPdhMpJzoHVhO95F74=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=kOLbcy19c7cl/qFIDoO9GxfG3o9tYwLYU1xATTXFKN9mPiB28d4ZUdpH5C6QJlTG+Qr7p8bJywHH3nA+1PUxm1ls/MkviZwMbZ7xVF+QdpYP+YhsMcfCjAAm8OL8FWd1FcxjeosNvAINTbYeW4XhGD6y4aM9Hvzm33RPSbocrgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nr9ZcbKZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D140C4CEE9;
+	Fri, 30 May 2025 11:47:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748605622;
+	bh=PPWkMV6RF/9nIArnrSMpfu5q6WPdhMpJzoHVhO95F74=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=nr9ZcbKZeHr45euNhVKpWXVcky+dUSDmAy3i/ZNUf55AQfRjh+Adb9+WC5uKM1eGr
+	 PszIg6rrh6MZlelEi2d54tgUXy0EqeOOjmdnq3XyOaGHlF/H6lm0p0ws1HUjVZkm+H
+	 Yut4j+V7jeNqN5rSD5iIRA3bsTNhp8tl8u+11T7TOJaV8yuFTT+vE7pesz2H9NW89p
+	 I85kpbBbXBenNmc9YZPz+36sL1is9jvG3YE4grLk1JUj7Lv0ohN35UQ02ZfWURcXfb
+	 ARnZC8jwSFBXyGGD73MTMY1wwBGf1enFmiw4O63P2qBFWtBAixwsN1j3+K+qM0ECDF
+	 O2l/7yrxj9KuA==
+Message-ID: <ee3f6fdb27820654c83cdac9df09e0fe6e43883f.camel@kernel.org>
+Subject: Re: [PATCH v12 04/10] ref_tracker: have callers pass output
+ function to pr_ostream()
+From: Jeff Layton <jlayton@kernel.org>
+To: Krzysztof Karas <krzysztof.karas@intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, "David S. Miller"	
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski	
+ <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman	
+ <horms@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann
+ <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,  Simona Vetter
+ <simona@ffwll.ch>, Jani Nikula <jani.nikula@linux.intel.com>, Joonas
+ Lahtinen	 <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi
+ <rodrigo.vivi@intel.com>,  Tvrtko Ursulin <tursulin@ursulin.net>, Kuniyuki
+ Iwashima <kuniyu@amazon.com>, Qasim Ijaz <qasdev00@gmail.com>,  Nathan
+ Chancellor	 <nathan@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+ linux-kernel@vger.kernel.org, 	netdev@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, 	intel-gfx@lists.freedesktop.org
+Date: Fri, 30 May 2025 07:47:00 -0400
+In-Reply-To: <vzuwl22qfx5pkcgliy3n76mqx4od2dtbduga4wl4tlvtae63e3@vnzosrktvg5m>
+References: <20250529-reftrack-dbgfs-v12-0-11b93c0c0b6e@kernel.org>
+	 <20250529-reftrack-dbgfs-v12-4-11b93c0c0b6e@kernel.org>
+	 <vzuwl22qfx5pkcgliy3n76mqx4od2dtbduga4wl4tlvtae63e3@vnzosrktvg5m>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250522-pmu_event_info-v3-9-f7bba7fd9cfe@rivosinc.com>
- <DA3KSSN3MJW5.2CM40VEWBWDHQ@ventanamicro.com> <61627296-6f94-45ea-9410-ed0ea2251870@linux.dev>
- <DA5YWWPPVCQW.22VHONAQHOCHE@ventanamicro.com> <20250526-224478e15ee50987124a47ac@orel>
- <ace8be22-3dba-41b0-81f0-bf6d661b4343@linux.dev> <20250528-ff9f6120de39c3e4eefc5365@orel>
- <1169138f-8445-4522-94dd-ad008524c600@linux.dev> <DA8KL716NTCA.2QJX4EW2OI6AL@ventanamicro.com>
- <2bac252c-883c-4f8a-9ae1-283660991520@linux.dev> <20250529-badd99c8168a8f607c84338a@orel>
-In-Reply-To: <20250529-badd99c8168a8f607c84338a@orel>
-From: Anup Patel <anup@brainfault.org>
-Date: Fri, 30 May 2025 17:15:40 +0530
-X-Gm-Features: AX0GCFuJc9ZDD3E-EJq-QPTWtrq0YP1bknsGKJtpiBXz7TDFtXgGx4YOXA3X71U
-Message-ID: <CAAhSdy0MBcD29fNSRgfckXuNmptW_borO7gtVqWvXRSnPBpmJg@mail.gmail.com>
-Subject: Re: [PATCH v3 9/9] RISC-V: KVM: Upgrade the supported SBI version to 3.0
-To: Andrew Jones <ajones@ventanamicro.com>
-Cc: Atish Patra <atish.patra@linux.dev>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@ventanamicro.com>, 
-	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Mayuresh Chitale <mchitale@ventanamicro.com>, linux-riscv@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
-	linux-riscv <linux-riscv-bounces@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 30, 2025 at 12:44=E2=80=AFAM Andrew Jones <ajones@ventanamicro.=
-com> wrote:
->
-> On Thu, May 29, 2025 at 11:44:38AM -0700, Atish Patra wrote:
-> >
-> > On 5/29/25 3:24 AM, Radim Kr=C4=8Dm=C3=A1=C5=99 wrote:
-> > > I originally gave up on the idea, but I feel kinda bad for Drew now, =
-so
-> > > trying again:
-> >
-> > I am sorry if some of my replies came across in the wrong way. That was
-> > never
-> > the intention.
->
-> Not at all. Radim only meant that I was defending his patches, even thoug=
-h
-> he wasn't :-)
->
-> >
-> >
-> > > 2025-05-28T12:21:59-07:00, Atish Patra <atish.patra@linux.dev>:
-> > > > On 5/28/25 8:09 AM, Andrew Jones wrote:
-> > > > > On Wed, May 28, 2025 at 07:16:11AM -0700, Atish Patra wrote:
-> > > > > > On 5/26/25 4:13 AM, Andrew Jones wrote:
-> > > > > > > On Mon, May 26, 2025 at 11:00:30AM +0200, Radim Kr=C4=8Dm=C3=
-=A1=C5=99 wrote:
-> > > > > > > > 2025-05-23T10:16:11-07:00, Atish Patra <atish.patra@linux.d=
-ev>:
-> > > > > > > > > On 5/23/25 6:31 AM, Radim Kr=C4=8Dm=C3=A1=C5=99 wrote:
-> > > > > > > > > > 2025-05-22T12:03:43-07:00, Atish Patra <atishp@rivosinc=
-.com>:
-> > > > > > > > > > > Upgrade the SBI version to v3.0 so that corresponding=
- features
-> > > > > > > > > > > can be enabled in the guest.
-> > > > > > > > > > >
-> > > > > > > > > > > Signed-off-by: Atish Patra <atishp@rivosinc.com>
-> > > > > > > > > > > ---
-> > > > > > > > > > > diff --git a/arch/riscv/include/asm/kvm_vcpu_sbi.h b/=
-arch/riscv/include/asm/kvm_vcpu_sbi.h
-> > > > > > > > > > > -#define KVM_SBI_VERSION_MAJOR 2
-> > > > > > > > > > > +#define KVM_SBI_VERSION_MAJOR 3
-> > > > > > > > > > I think it's time to add versioning to KVM SBI implemen=
-tation.
-> > > > > > > > > > Userspace should be able to select the desired SBI vers=
-ion and KVM would
-> > > > > > > > > > tell the guest that newer features are not supported.
-> > > > > > > We need new code for this, but it's a good idea.
-> > > > > > >
-> > > > > > > > > We can achieve that through onereg interface by disabling=
- individual SBI
-> > > > > > > > > extensions.
-> > > > > > > > > We can extend the existing onereg interface to disable a =
-specific SBI
-> > > > > > > > > version directly
-> > > > > > > > > instead of individual ones to save those IOCTL as well.
-> > > > > > > > Yes, I am all in favor of letting userspace provide all val=
-ues in the
-> > > > > > > > BASE extension.
-> > > > > > We already support vendorid/archid/impid through one reg. I thi=
-nk we just
-> > > > > > need to add the SBI version support to that so that user space =
-can set it.
-> > > > > >
-> > > > > > > This is covered by your recent patch that provides userspace_=
-sbi.
-> > > > > > Why do we need to invent new IOCTL for this ? Once the user spa=
-ce sets the
-> > > > > > SBI version, KVM can enforce it.
-> > > > > If an SBI spec version provides an extension that can be emulated=
- by
-> > > > > userspace, then userspace could choose to advertise that spec ver=
-sion,
-> > > > > implement a BASE probe function that advertises the extension, an=
-d
-> > > > > implement the extension, even if the KVM version running is older
-> > > > > and unaware of it. But, in order to do that, we need KVM to exit =
-to
-> > > > > userspace for all unknown SBI calls and to allow BASE to be overr=
-idden
-> > > > You mean only the version field in BASE - Correct ?
-> > > No, "BASE probe function" is the sbi_probe_extension() ecall.
-> > >
-> > > > > by userspace. The new KVM CAP ioctl allows opting into that new b=
-ehavior.
-> > > > But why we need a new IOCTL for that ? We can achieve that with exi=
-sting
-> > > > one reg interface with improvements.
-> > > It's an existing IOCTL with a new data payload, but I can easily use
-> > > ONE_REG if you want to do everything through that.
-> > >
-> > > KVM doesn't really need any other IOCTL than ONE_REGs, it's just
-> > > sometimes more reasonable to use a different IOCTL, like ENABLE_CAP.
-> > >
-> > > > > The old KVM with new VMM configuration isn't totally far-fetched.=
- While
-> > > > > host kernels tend to get updated regularly to include security fi=
-xes,
-> > > > > enterprise kernels tend to stop adding features at some point in =
-order
-> > > > > to maximize stability. While enterprise VMMs would also eventuall=
-y stop
-> > > > > adding features, enterprise consumers are always free to use thei=
-r own
-> > > > > VMMs (at their own risk). So, there's a real chance we could have
-> > > > I think we are years away from that happening (if it happens). My
-> > > > suggestion was not to
-> > > > try to build a world where no body lives ;). When we get to that
-> > > > scenario, the default KVM
-> > > > shipped will have many extension implemented. So there won't be muc=
-h
-> > > > advantage to
-> > > > reimplement them in the user space. We can also take an informed
-> > > > decision at that time
-> > > > if the current selective forwarding approach is better
-> > > Please don't repeat the design of SUSP/SRST/DBCN.
-> > > Seeing them is one of the reasons why I proposed the new interface.
-> > >
-> > > "Blindly" forwarding DBCN to userspace is even a minor optimization. =
-:)
-> > >
-> > > >                                                         or we need =
-to
-> > > > blindly forward any
-> > > > unknown SBI calls to the user space.
-> > > Yes, KVM has to do what userpace configures it to do.
-> > >
-> > > I don't think that implementing unsupported SBI extensions in KVM is
-> > > important -- they should not be a hot path.
-> > >
-> > > > > deployments with older, stable KVM where users want to enable lat=
-er SBI
-> > > > > extensions, and, in some cases, that should be possible by just u=
-pdating
-> > > > > the VMM -- but only if KVM is only acting as an SBI implementatio=
-n
-> > > > > accelerator and not as a userspace SBI implementation gatekeeper.
-> > > > But some of the SBI extensions are so fundamental that it must be
-> > > > implemented in KVM
-> > > > for various reasons pointed by Anup on other thread.
-> > > No, SBI does not have to be implemented in KVM at all.
-> > >
-> > > We do have a deep disagreement on what is virtualization and the role=
- of
-> > > KVM in it.  I think that userspace wants a generic ISA accelerator.
-> >
-> > I think the disagreement is the role of SBI in KVM virtualization rathe=
-r
-> > than
-> > a generic virtualization and the role of KVM in it. I completely agree =
-that
-> > KVM should act as an accelerator and defer the control to the user spac=
-e in
-> > most of the cases
-> > such e.g I/O operations or system related functionalities. However, SBI
-> > specification solves
-> > much wider problems than those. Broadly we can categorize SBI
-> > functionalities into the following
-> > areas
-> >
-> > 1. Bridging ISA GAP
-> > 2. Higher Privilege Assistance
-> > 3. Virtualization
-> > 4. Platform abstraction
-> > 5. Confidential computing
-> >
-> > For #1, #3 and #5, I believe user space shouldn't be involved in
-> > implementation
-> > some of them are in hot path as well.
->
-> IMO, userspace should still be in control of whether or not it's involved
-> in #1, #3, and #5. It may make little sense for it to be involved, but th=
-e
-> choice should still be its.
->
-> > For #4 and #2, there are some
-> > opportunities which
-> > can be implemented in user space depending on the exact need. I am stil=
-l not
-> > clear what is the exact
-> > motivation /right now/ to pursue such a path. May be I missed something=
-.
-> > As per my understanding from our discussion threads, there are two use =
-cases
-> > possible
-> >
-> > 1. userspace wants to update more states in HSM. What are the states us=
-er
-> > space should care about scounteren (fixed already in usptream) ?
-> > 2. VMM vs KVM version difference - this may be true in the future depen=
-ding
-> > on the speed of RISC-V virtualization adoption in the industry.
-> > But we are definitely not there yet. Please let me know if I misunderst=
-ood
-> > any use cases.
->
-> That's what I'm aware of as well, but I see giving userspace back full
-> control of what gets accelerated by KVM, and what doesn't, as a fix, whic=
-h
-> is why I wouldn't want to delay it any longer.
->
-> >
-> > > Even if userspace wants SBI for the M-mode interface, security minded
-> > This is probably a 3rd one ? Why we want M-mode interface in the user s=
-pace
-> > ?
-> > > userspace aims for as little kernel code as possible.
-> >
-> > We trust VMM code more than KVM code ?
->
-> We should be skeptical of both, which is why we'd rather put as much code
-> in userspace as possible. Insecure/faulty userspace will hopefully have
-> exploits/bugs contained to the single process. An insecure/faulty KVM
-> means the host is compromised/crashed. On x86, Google put a lot of effort
-> into moving instruction emulation out of KVM for security concerns[1]. In
-> general, if it's not a hot path and there's a way to do it in userspace,
-> then it should be done in userspace (or at least there should be an
-> option to use userspace -- each use case can choose what's best for
-> itself).
->
-> [1] https://www.linux-kvm.org/images/3/3d/01x02-Steve_Rutherford-Performa=
-nt_Security_Hardening_of_KVM.pdf
->
+On Fri, 2025-05-30 at 11:13 +0000, Krzysztof Karas wrote:
+> Hi Jeff,
+>=20
+> [...]
+> > +static void __ostream_printf pr_ostream_buf(struct ostream *stream, ch=
+ar *fmt, ...)
+> > +{
+> > +	int ret, len =3D stream->size - stream->used;
+> > +	va_list args;
+> > +
+> > +	va_start(args, fmt);
+> > +	ret =3D vsnprintf(stream->buf + stream->used, len, fmt, args);
+> vsnprintf() technically may return a negative error code.
+> In that case, we'd be adding some unwanted values to the
+> stream->used. When we encounter an error we could skip
+> modifying that field.
+>=20
+> > +	va_end(args);
+> > +	stream->used +=3D min(ret, len);
+> > +}
+> > +
+> [...]
+>=20
 
-We are already forwarding a few of the category #2 and all
-of category #4 SBI extensions to KVM user space which are
-not in critical or hot-path.
+Good catch. I'll change this to be:
 
-Majority of SBI extensions in categories #1, #2, #3, and #5
-provide critical per-VCPU functionality and many of these
-are also in hotpath (such as #1, #3, and #5) hence
-implemented in kernel space.
+        va_start(args, fmt);
+        ret =3D vsnprintf(stream->buf + stream->used, len, fmt, args);
+        va_end(args);
+        if (ret > 0)
+                stream->used +=3D min(ret, len);
 
-Further, KVM user space lacks required functionality (CSRs,
-instructions, or ioctls) to implement many critical SBI extensions
-in user space so blanket forwarding of all SBI extensions to
-KVM user space is not going to fly.
-(Note: Previously, I have already provided many examples)
-
-In short, a hybrid approach (current implementation) is the
-best thing where only non-critical and non-hotpath SBI
-extensions (few of them) are forwarded to KVM user space
-while critical / hot-path SBI extensions (majority of them)
-are in kernel space.
-
-Regards,
-Anup
+--=20
+Jeff Layton <jlayton@kernel.org>
 
