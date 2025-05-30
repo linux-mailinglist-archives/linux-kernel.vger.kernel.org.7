@@ -1,135 +1,106 @@
-Return-Path: <linux-kernel+bounces-668689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-668691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D2E8AC95FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 21:14:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 85187AC95FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 21:19:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DDEB504F55
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 19:14:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F06E50550C
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 19:19:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F004D278E47;
-	Fri, 30 May 2025 19:14:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7CA923815C;
+	Fri, 30 May 2025 19:19:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="0PITlNZT"
-Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pt0LSisb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7161F27781E
-	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 19:14:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C0351EA91;
+	Fri, 30 May 2025 19:19:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748632477; cv=none; b=u7KcO6y9vkhEqDB+9xQWXD6cQ+5wit+5VQO2YcGvTPBlc4HpLOPxyeSiRzFsGpzGXvj46BCK1SRBCfDByqHeyBI31LO3z0GOVcN+mLKtpNsUCIiMNVl/HaZ1zRerc/pMAWybv+pu/1uIZ+OwfI4LhJ90M4iV0aNNszWA+kVerpI=
+	t=1748632785; cv=none; b=sC9EPSaC/LCKXNoQZU2lXTACtPyrjGDlkF1WmPMfhN7sLLM8HyxJ6D/nssEO6fEYDYMm1crqbfC5BICdBI46lppiIfafwgSIiNPihIagrzfgZTGqeUvUv07mrEPl4fuWHVkvdg8Nwq9TVaRCWoiIqp4cIeO9vA7eorqwhUIk4Uk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748632477; c=relaxed/simple;
-	bh=n0bPzSDW+HlaSAhgO1u0Y2tk8Tz3wmhJR1U+ZzeshEY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=llDiUDEEoVeBHPumYjD2zuUBuIGZl16NpBpInKdOckcYCRMc2R5IJiBFr+qJ+uBc9yC/u2Ri74bLfojRxBZ+aq+1DcxTj25apkXxvIdantxexZ/Zb49LUtB8qtEr4hCbEZ8H4zEDO/AT6RX/w4LpnjDevu4ob49bvLVW2Jqoh7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=0PITlNZT; arc=none smtp.client-ip=209.85.210.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-72c09f8369cso924529a34.3
-        for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 12:14:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1748632473; x=1749237273; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lHHqZAsVpviFayOBzyBP+5p9wWvjbFoN8P1d5tfq8pE=;
-        b=0PITlNZTk9EPbpGwyLacMtZMl6g8zuflihzfy5Wjtko//4KsuuUnHuNvDR5CCMkbxB
-         CmESIVHgwcl5dMCNdlPMbBYkONHpG00Dss8akuWlb8u7cNPskQJRL3rTOHMsfgp6nZOL
-         0gaQyi2tMRuD4qeOUKYpKtQ+HBkG+QwkB5hZ3PMMlPezWWGKIRuQwpQdEKmXWAnG038h
-         6NEhM45bcmJ+hWu5B5sZaqtsjmHLCrPOKsk/OeilnYb60ZzNyXWLQncK6kNKGdeqDQ7s
-         Ja+H94OLtE5uSc7HOlHosK4APizZHjRmKaS/b3YW+DfVN5F0vZXpzUTA6CkO8EKO5jul
-         RyRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748632473; x=1749237273;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lHHqZAsVpviFayOBzyBP+5p9wWvjbFoN8P1d5tfq8pE=;
-        b=DXP7p18aDGVYZW+ts6G44pVUVPOPvjxm6avBOYThWdJE56Yzlns5h1gzk2OAE6MIeH
-         XaeV2M51cMxXingC/qV2IiSFZVr96jDBymd3po/KVw88C4v6+F/6glW0ZgIDNFwTpxc1
-         asYLqstofFMpcMebQtHoXAKnjoU+vk4fo91pRkqSS0O7M9JLco17HSET6el82omYKqv5
-         F0G2rNrPMjn3/B3DsRwo0qgF+embkVx9tbsPbtACil+AmX2dR2oNef3b/voXja3FxIH7
-         jVpoztRxR3MzaJvLn3pAIMp7nkYIBmV8mf0lf6iQoCI2hlEzzOnMl40Tz1kNDHDVW8PK
-         ueEA==
-X-Forwarded-Encrypted: i=1; AJvYcCVTWO5CiuqQ34xDsUqffLZQaT7R6yAYCDAm2+XZnw/0tRiKHkcCasLCROgfDmHsmF4ULzZdmINVGKCg1pE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKx3pLa627/JscR1V0xQfZShdzfanphlYwlG3189Chp75D2imy
-	AkxSUqX5D5niPRnB9GxwgyoSX+DnDjqq8qLZIrTize4EYQtQ2r3+ZyxlV8Sd9l3NpHQ=
-X-Gm-Gg: ASbGncuf8u1dt0BoCWiaeNyOHHhmhe/rulJb7UVLNBs3Fy15IuXXt6qzp73Kv03jju3
-	O7z2wRFBAeUslmg6Khjziv7vp+Y6ojmSNbbbsNysFFhHVz2BYfEfed309X6bVECq4PWvUlEEEsb
-	Q88I9pDSzT400koR+VRdZH0YbIhqfq69OK4R49SNZzq/mswjZndj+D0RPwG4cZlFN2xKEpGy8Al
-	rRqI95Mp8DpAMDPwfeRAOFP30eT1Jb0GV/Hf1ezhQSLq+8RrTy7CkX5sIWHvKcFe0K4/NY6Nb+Q
-	43yT+i5qP004G9JQ7H28QR7eZiCOWGWgPY6348nka0DAnFh0gOoHuoxaL5cVfpjF96rRFJh/CQB
-	s49+q47dv62GuisCcnHDvzuge5okz
-X-Google-Smtp-Source: AGHT+IHPxI3UBPpTmwRtvH3AUGD4B8Qbyg+V45TvwOxwL3NJO9g1RZBHm35gXZgxpvqaXtWJbZSWDQ==
-X-Received: by 2002:a05:6830:6a15:b0:72b:9a2e:7828 with SMTP id 46e09a7af769-73670cd6814mr2983963a34.28.1748632473479;
-        Fri, 30 May 2025 12:14:33 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:29cb:b1cd:c8f4:2777? ([2600:8803:e7e4:1d00:29cb:b1cd:c8f4:2777])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-735af82d4bfsm692406a34.1.2025.05.30.12.14.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 30 May 2025 12:14:33 -0700 (PDT)
-Message-ID: <90226114-646c-4af7-bd38-361ac383699f@baylibre.com>
-Date: Fri, 30 May 2025 14:14:32 -0500
+	s=arc-20240116; t=1748632785; c=relaxed/simple;
+	bh=U63pN07ZQ4WQ9dRpc9+Jygbz/Zq9XWUsdbSpzj/39WE=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=bTKC2rUcuhYXcwr+p+zfdi/af2ZsdYfjO0ifq+VoL1obqCyO47v5iBFCWC5M1ZTRqANqOJ6MIOPopONPmEGY9k0qI+iA8GiATdAKQdxAVE+SlopoMMQwWn6WSuPTUpZ7yn3z7VvzunpOXOouCskJMI5mqK9ya4tOx8NXRC/rJdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pt0LSisb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFEF0C4CEE9;
+	Fri, 30 May 2025 19:19:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748632784;
+	bh=U63pN07ZQ4WQ9dRpc9+Jygbz/Zq9XWUsdbSpzj/39WE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Pt0LSisbBloaqfL59quYklOYSmIS8dLvpY3JrZQtLnRVhmeutmGS0N1iz8At5wpdy
+	 nA05jJORq4qoAi6k4LKt+/uLtKp+2I9JdPewyOHssCkp7dlpQ75z64QvzudomKQOFe
+	 D9gS3MLF2lpmtppZEIUF+ljeIcPH8Si2qVHbCOAlvylVIqbh9Yf1mMjPAvXR3gXuKD
+	 7erbzAmKt/3TbG1YzsH42sVYf1a4iYLjiI6wtYblYwa48fnhOj/SmXcRJf75HWy1kq
+	 FIgkTYhE4V47J+OYNF7dHFZ06EcXYzx8vEsN4E0gkQ0cn1N40n91BTF/WzzMnY6iip
+	 qaISUVcNWVl1Q==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] iio: adc: adi-axi-adc: fix ad7606_bus_reg_read()
-To: Michael Hennerich <Michael.Hennerich@analog.com>,
- Jonathan Cameron <jic23@kernel.org>,
- Angelo Dureghello <adureghello@baylibre.com>,
- Guillaume Stols <gstols@baylibre.com>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20250530-iio-adc-adi-axi-adc-fix-ad7606_bus_reg_read-v1-1-ce8f7cb4d663@baylibre.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20250530-iio-adc-adi-axi-adc-fix-ad7606_bus_reg_read-v1-1-ce8f7cb4d663@baylibre.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Date: Fri, 30 May 2025 21:19:39 +0200
+Message-Id: <DA9QL5A8747E.17QE50WBD6JOT@kernel.org>
+From: "Benno Lossin" <lossin@kernel.org>
+To: <saivishnu725@gmail.com>, <rust-for-linux@vger.kernel.org>
+Cc: <linux-kernel@vger.kernel.org>, <ojeda@kernel.org>,
+ <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>, <gary@garyguo.net>,
+ <bjorn3_gh@protonmail.com>, <a.hindborg@kernel.org>,
+ <aliceryhl@google.com>, <tmgross@umich.edu>, <dakr@kernel.org>,
+ <gregkh@linuxfoundation.org>, <daniel.almeida@collabora.com>,
+ <me@kloenk.dev>
+Subject: Re: [PATCH] rust: doc: Clean up formatting in io.rs
+X-Mailer: aerc 0.20.1
+References: <20250530123129.31505-2-saivishnu725@gmail.com>
+In-Reply-To: <20250530123129.31505-2-saivishnu725@gmail.com>
 
-On 5/30/25 2:09 PM, David Lechner wrote:
-> Mask the value read before returning it. The value read over the
-> parallel bus via the AXI ADC IP block contains both the address and
-> the data, but callers expect val to only contain the data.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 79c47485e438 ("iio: adc: adi-axi-adc: add support for AD7606 register writing")
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
+On Fri May 30, 2025 at 2:31 PM CEST, saivishnu725 wrote:
+> From: Sai Vishnu M <saivishnu725@gmail.com>
+>
+> Replace `@` with backticks in a comment of `io.rs` to follow Rust doc
+> convention
+>
+> Reported-by: Miguel Ojeda <ojeda@kernel.org>
+> Closes: https://github.com/Rust-for-Linux/linux/issues/1167
+> Signed-off-by: Sai Vishnu M <saivishnu725@gmail.com>
 > ---
->  drivers/iio/adc/adi-axi-adc.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/iio/adc/adi-axi-adc.c b/drivers/iio/adc/adi-axi-adc.c
-> index cf942c043457ccea49207c3900153ee371b3774f..d4759a98b4062bc25ea088e3868806e82db03e8d 100644
-> --- a/drivers/iio/adc/adi-axi-adc.c
-> +++ b/drivers/iio/adc/adi-axi-adc.c
-> @@ -457,6 +457,9 @@ static int ad7606_bus_reg_read(struct iio_backend *back, u32 reg, u32 *val)
->  	axi_adc_raw_write(back, addr);
->  	axi_adc_raw_read(back, val);
->  
-> +	/* Register value is 8 bits. Remove address bits. */
-> +	*val &= 0xFF;
+>  rust/kernel/io.rs | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/rust/kernel/io.rs b/rust/kernel/io.rs
+> index 72d80a6f131e..92bc4e3cd8ec 100644
+> --- a/rust/kernel/io.rs
+> +++ b/rust/kernel/io.rs
+> @@ -43,7 +43,7 @@ pub fn maxsize(&self) -> usize {
+>      }
+>  }
+> =20
+> -/// IO-mapped memory, starting at the base address @addr and spanning @m=
+axlen bytes.
+> +/// IO-mapped memory, starting at the base address `addr` and spanning `=
+maxlen` bytes.
 
-I just found out that there is ADI_AXI_REG_VALUE_MASK we can use
-here instead of 0xFF.
+I would just remove the second part of the sentence. This is a struct
+and its only field is an `IoRaw`, which does have those two fields, but
+they are private, so nobody reading the docs will benefit from knowing
+this.
 
-> +
->  	/* Write 0x0 on the bus to get back to ADC mode */
->  	axi_adc_raw_write(back, 0);
->  
-> 
-> ---
-> base-commit: 7cdfbc0113d087348b8e65dd79276d0f57b89a10
-> change-id: 20250530-iio-adc-adi-axi-adc-fix-ad7606_bus_reg_read-f2bbb503db8b
-> 
-> Best regards,
+---
+Cheers,
+Benno
+
+>  ///
+>  /// The creator (usually a subsystem / bus such as PCI) is responsible f=
+or creating the
+>  /// mapping, performing an additional region request etc.
 
 
