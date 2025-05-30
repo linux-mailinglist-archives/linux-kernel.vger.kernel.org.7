@@ -1,459 +1,314 @@
-Return-Path: <linux-kernel+bounces-667877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-667851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CED7AC8AED
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 11:34:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 148D3AC8AB0
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 11:27:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57A7C17ABD9
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 09:34:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3FBA4E3700
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 09:27:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46AB722D9FD;
-	Fri, 30 May 2025 09:31:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D01E821D5B0;
+	Fri, 30 May 2025 09:27:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="UIhFXuhK"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FuAW+sf7"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A30C2222C1
-	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 09:31:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33D1D28E7
+	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 09:27:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748597508; cv=none; b=YLsTIkZyr/Lxj3xCg3gqtxROwEMQ4aCTWGsGdOt2faJrA08J6RLeoajEZvQAE2SeIO26phg5/XB5Sa5mH99x/IDf2lfi7jCybijaUTjRHPojwGwCI4+MtmsUraqnn/FndaRAJ5BATfnLSmWVwFlhPPBExt9u+mKay59n3q3IKpE=
+	t=1748597269; cv=none; b=Rbw+5qO7sElyIOngoc2gt3fql98ZeCFGYqZJHIGtalIgaYOA74/QHyCKf/6v/vE/RdczMq1SEF0ekiWGSqID1niKWXC2hewvem+WURoadYv6RVEDdIlxzN6nylWE3XbHeegV4ZgRaLTvsUo4RVv8ceJisPKJSRN3KOEHxx/+Z/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748597508; c=relaxed/simple;
-	bh=x42OvKF8cu3SGLWZonaQOFG1mLKzqSw7oCqoTulLIhU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=RnyYX6BhRrqJjsUPgCdp3Cp7NgmeRhZe+UZXmUctQyN0EW1lZGQjc+KxhON7z2iA1fMCpOwMCrZ0dyzIuUSWyWll7oiOLylCNOd7rIqjPHsBVYUtnislMmL1m2LJEEQ9e5aD7KwahPXkIUrFIW50dTd4yaI6s6nY6McS6Lcv+Xk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=UIhFXuhK; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-3124f18c214so295304a91.2
-        for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 02:31:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1748597506; x=1749202306; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lqEqFVUYhIQ6uCyFMSKyc3XjCtHWAqaCcpg8jFQsxWM=;
-        b=UIhFXuhKkT4Y96MhzklPzS+CDHR0Hw8VJ3D0QgE5uV/f0ZucyRKOfLHwT9vxTiLErV
-         j/R1Ct0aZGJOi9mfTNDGtDO/U7JHgHzd0D/7f3Z02wZCMehFDya7ysKmcdrLPqfa+Kgq
-         jdeAef2VgY6bSAmZeYcaxI75LLX8O8+ImWRe5C6OQmjNP64UgseKPtNB8/sBDld/OO7E
-         gBRLKl/EAGe2+e3mvcMrEiNKYFfPhqBslo/LfYZt0in/HfDVApFPGY4Fsbwe7TO0Ojl4
-         7tswhefuv5qkD9ggG7FBUkyGDBpgw0LY3WDOgW40Ng7qocSI1ce1YHVfSPN9ASiwORY7
-         nRAw==
+	s=arc-20240116; t=1748597269; c=relaxed/simple;
+	bh=2F13+WBGh69tuRqhGjrNAMQtEsMkeasNYqXF2rgVhtA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UGpkUCNPGvgkPZV+/17Fw2QHByVOm40VdyG2QovIVwPRZltSb4KDSDjmdRaaUVIOZGDej5NOroo5HC8ZR8Tuw3GcDGRO0lW2cl804dIJvM+rorH86FjtT/uFk8fX0x2ig3IKp5nrJEBVMVUizyIekXXQb4GHankAS9N6HQiF9ic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FuAW+sf7; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1748597267;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=1PBV9a/LZW4fQlp+cup6+DwAjZlGKxU8VEnOtKkuFIc=;
+	b=FuAW+sf7sukl+Kq6eafPA69KXov+VO+qJ5dD5Rhq8k13YHtPjNH1akGODQvDKqBKlg0BKV
+	BlOL8lU7m9wTaZeqzIspLzwugeIdJwW/YD13OBzFQm4xR7DwN7ZbthtQwHNmny/LtutjeN
+	0A8cEJPnYJq8B1qQ+ZG3jAHoGQcwEWg=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-443-lLPI-i9JMmqLtPqBGZSUgA-1; Fri, 30 May 2025 05:27:45 -0400
+X-MC-Unique: lLPI-i9JMmqLtPqBGZSUgA-1
+X-Mimecast-MFC-AGG-ID: lLPI-i9JMmqLtPqBGZSUgA_1748597264
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-442cdf07ad9so7356615e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 02:27:45 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748597506; x=1749202306;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lqEqFVUYhIQ6uCyFMSKyc3XjCtHWAqaCcpg8jFQsxWM=;
-        b=UKpUOSuoLfv1uW43q6yaptbWcjp7xh465EXaXSJSastvM+9VuydNfi88Pd116aYjFi
-         5ZKtyDEjYWAGs0jSS/hnWbE4EMgONA4/xTuKVcfd3YBdXQhVMkNd0SipBWcuWSPeSApx
-         OS4vgH1QUstpX8waKEKDqHvEzAREto1+iXZ1FSQ/cem8y3L5ZMMGod8hl6nRFSz1Rjzt
-         FeF/XRRmLPdsHHLG1x05cbpgWxMvoGe6dEcFOSCpB8/UKk25Seah/WLinIsTBRk/fPzn
-         /4KqPIPUl4BLF35InyViOSMtJWjaEPsSWAByucUGQFBwaCtdL84XUGA9NQ1usJ+Amufe
-         TC+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUnNdgfWmbu1POJvhmU7UWHONXjlki01oJytfxO/k1uJbLmKgZ2bjYe7gBW5MecgmEurRquGGu4HuhCXbw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGiRPUhIhEalpoe/onAzJyH7pwyPpUDEMViu1/DWFqbZvLTEE0
-	srERtIVcCEwJfr8V9fRjyfeNqdBbjC6vd086022ICpmYDR0yyv97RftSt6cAteOjVkc=
-X-Gm-Gg: ASbGnct+WzVXOsNaxsH7JZme53xj0AdZv3DsA0bdi96bI83UZAmOYCsBBTYmC89E20Z
-	Q/tvl77ELaEAmZVpc1Zv0ZHJA70kukZ06y92SP//a6PWECoWmxpNppbQjyYHZgwt+zR2Zx5RKJg
-	RWp10FImbin9oYGforzrEDdnc34TmRxWQN8gSAaC5vyy8lJk+O4BNaYVanBp20869LaV/mvSgqY
-	UvY95oyAc6qISlm0izmedP6lHhSpDJ1PhTg24AghYuf+xeoQgiFcYnYkjP/w44VOYaKk8yZWNil
-	u6kAMH5nEbG1ML2tPSdbHgQGOei/iWf+axZ5z9QdSKpnbLJUGPQAT8/oCUz1ayy6u8S8DFamrUX
-	CFJj8Bv40UQ==
-X-Google-Smtp-Source: AGHT+IGF62FX0HQNv9LilxlCiViF0h8d1bY/G1W0X5Q0qQ2cdYg03wna6Pf30NCPziT41+dazZ7wew==
-X-Received: by 2002:a17:90b:3b50:b0:312:1c83:58e9 with SMTP id 98e67ed59e1d1-3124150e464mr3530070a91.5.1748597505955;
-        Fri, 30 May 2025 02:31:45 -0700 (PDT)
-Received: from FQ627FTG20.bytedance.net ([63.216.146.178])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3124e29f7b8sm838724a91.2.2025.05.30.02.31.31
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Fri, 30 May 2025 02:31:45 -0700 (PDT)
-From: Bo Li <libo.gcs85@bytedance.com>
-To: tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	x86@kernel.org,
-	luto@kernel.org,
-	kees@kernel.org,
-	akpm@linux-foundation.org,
-	david@redhat.com,
-	juri.lelli@redhat.com,
-	vincent.guittot@linaro.org,
-	peterz@infradead.org
-Cc: dietmar.eggemann@arm.com,
-	hpa@zytor.com,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	kan.liang@linux.intel.com,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	lorenzo.stoakes@oracle.com,
-	Liam.Howlett@oracle.com,
-	vbabka@suse.cz,
-	rppt@kernel.org,
-	surenb@google.com,
-	mhocko@suse.com,
-	rostedt@goodmis.org,
-	bsegall@google.com,
-	mgorman@suse.de,
-	vschneid@redhat.com,
-	jannh@google.com,
-	pfalcato@suse.de,
-	riel@surriel.com,
-	harry.yoo@oracle.com,
-	linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	duanxiongchun@bytedance.com,
-	yinhongbo@bytedance.com,
-	dengliang.1214@bytedance.com,
-	xieyongji@bytedance.com,
-	chaiwen.cc@bytedance.com,
-	songmuchun@bytedance.com,
-	yuanzhu@bytedance.com,
-	chengguozhu@bytedance.com,
-	sunjiadong.lff@bytedance.com,
-	Bo Li <libo.gcs85@bytedance.com>
-Subject: [RFC v2 13/35] RPAL: add tlb flushing support
-Date: Fri, 30 May 2025 17:27:41 +0800
-Message-Id: <c1eeca7e95433f2e51eeae63375f41d7fafd4c5b.1748594840.git.libo.gcs85@bytedance.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <cover.1748594840.git.libo.gcs85@bytedance.com>
-References: <cover.1748594840.git.libo.gcs85@bytedance.com>
+        d=1e100.net; s=20230601; t=1748597264; x=1749202064;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=1PBV9a/LZW4fQlp+cup6+DwAjZlGKxU8VEnOtKkuFIc=;
+        b=VGUbSg8tQglKEatKpaZn1pGciIy8iqjoYF1FHEhWu/+i+vQNc6bUH1FzxYFfGm1jzN
+         gXK2ZZ8DdI+6DdWxHZrIN+g7ZNbtMvWLoqhFVKdFCd5Oz6za8gSOr4Q8BwFpC19ztoYV
+         1DgV2RmPPG+ckhDFQflesRee9nFfThcAmTuKid+I0carNsuK4KWQa9K20uxBysVnQ5Rb
+         YJICZufeHSVO1oyHra7xrO+vYrhheg7tpPhrnAKSwWz7iqa7PVrer9sPXIiLq5Ozz082
+         vjaKofUEMqSvW8ExXcEvM4/n8GRxTfkGJOqArNAefV8bPFlOTFnY9BP/JDgpjdlrpd1Y
+         3fOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVSqaE8gGGhzSdUW7mBH+cYdJWYBfT0SJzpLk0Pb7MjX9ercli1hTOAkJWD7tcIcRkSzmXskKsK+iM/vbA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGksc4gR2GhAXD2+w9IYAGIop6IwKn/Ry6aeENSooQByF/DbGB
+	ZcuTiDGcmPiXUYFNj1VbJV+/oTr2oJ/YVtrFUqgAPVwWBxGgNHPeZzXVYYrZeTKmp8dK+GtNCd0
+	PJ2rWbmXv9bh+hjq2Nco2Jf5ufFuZ5EdkwIbn8FrZrF2UJcYdvWX0AKdOSu2Yzz0yJg==
+X-Gm-Gg: ASbGnct0Z8w+rw8SMTBgTnbZLRRIy7fColX5rAYrACmcbpAwKK9eCad5iqnt04UF60U
+	5SmfLgKbdFsDNqsOpRQkVFG707kN6WIN5TDAxXIlorhvwsIDy9dOMWOMtd0pzMuUxOlSWJFCnzF
+	ccfFAwWdrgr8IbTUoevjt4C+nN1ul3N1El8zDZHe2Yz7j10Afvl0A8xaQSeM7vKfdKoVDRrfx7N
+	pGjJ83hWgq+rYsZWmCU3uhYpdAr/61ScBubSmhpBSnHQAUvwoHpnhcwdXDCa+eEFOAmtWUFbGuL
+	ZTUzUSZukbW7HF9WvOsxMjnwJOXpe6APom3R7TU+2HqsYyiC1mPan8hxQ0seNLM5h0IuPw+DeUE
+	xT1EnaEnKoJ6/gHTePhPgRfgmgVlQnTJZeoCvXKM=
+X-Received: by 2002:a05:600c:3b8b:b0:442:e9eb:1b48 with SMTP id 5b1f17b1804b1-450d8876132mr12222805e9.24.1748597264268;
+        Fri, 30 May 2025 02:27:44 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFQdY6YWefTxM8YvOu7ZkhfBRFXt6xgQbeM3AJW5so2JdhELLq7VspnEked2wUBNMkbAWhI6Q==
+X-Received: by 2002:a05:600c:3b8b:b0:442:e9eb:1b48 with SMTP id 5b1f17b1804b1-450d8876132mr12222475e9.24.1748597263789;
+        Fri, 30 May 2025 02:27:43 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f03:5b00:f549:a879:b2d3:73ee? (p200300d82f035b00f549a879b2d373ee.dip0.t-ipconnect.de. [2003:d8:2f03:5b00:f549:a879:b2d3:73ee])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-450d7f8f194sm13143635e9.4.2025.05.30.02.27.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 30 May 2025 02:27:43 -0700 (PDT)
+Message-ID: <9c32dbf6-527f-465b-9010-f5b22cbac075@redhat.com>
+Date: Fri, 30 May 2025 11:27:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] mm/mmap: Fix uprobe anon page be overwritten when
+ expanding vma during mremap
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Pu Lehui <pulehui@huaweicloud.com>, Oleg Nesterov <oleg@redhat.com>,
+ mhiramat@kernel.org, peterz@infradead.org, Liam.Howlett@oracle.com,
+ akpm@linux-foundation.org, vbabka@suse.cz, jannh@google.com,
+ pfalcato@suse.de, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ pulehui@huawei.com
+References: <13c5fe73-9e11-4465-b401-fc96a22dc5d1@redhat.com>
+ <4cbc1e43-ea46-44de-9e2b-1c62dcd2b6d5@huaweicloud.com>
+ <20250526154850.GA4156@redhat.com>
+ <06bd94c0-fefe-4bdc-8483-2d9b6703c3d6@redhat.com>
+ <57533126-eb30-4b56-bc4d-2f27514ae5ad@huaweicloud.com>
+ <cba0155e-d2b9-41fa-bc51-f3738ae73cff@redhat.com>
+ <956124be-c73c-4023-9edd-25372f3f865a@huaweicloud.com>
+ <ccf359b0-8baa-4209-b2c3-75e3813ca804@redhat.com>
+ <b2dd29b0-aa12-4cb7-9c05-d3a998f7b0da@lucifer.local>
+ <172df994-7f24-4fbb-876c-4fab22937177@redhat.com>
+ <205f8165-449c-441f-8ee9-58f69d23dbeb@lucifer.local>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <205f8165-449c-441f-8ee9-58f69d23dbeb@lucifer.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-When a thread flushes the TLB, since the address space is shared,
-not only other threads in the current process but also other processes
-that share the address space may access the corresponding memory (related
-to the TLB flush). Therefore, the cpuset used for TLB flushing should be
-the union of the mm_cpumasks of all processes that share the address
-space.
+On 30.05.25 11:03, Lorenzo Stoakes wrote:
+> On Fri, May 30, 2025 at 10:50:25AM +0200, David Hildenbrand wrote:
+>> On 30.05.25 10:41, Lorenzo Stoakes wrote:
+>>> On Fri, May 30, 2025 at 10:33:16AM +0200, David Hildenbrand wrote:
+>>>> On 29.05.25 18:07, Pu Lehui wrote:
+>>>>>
+>>>>> On 2025/5/28 17:03, David Hildenbrand wrote:
+>>>>>> On 27.05.25 15:38, Pu Lehui wrote:
+>>>>>>> Hi David,
+>>>>>>>
+>>>>>>> On 2025/5/27 2:46, David Hildenbrand wrote:
+>>>>>>>> On 26.05.25 17:48, Oleg Nesterov wrote:
+>>>>>>>>> Hi Lehui,
+>>>>>>>>>
+>>>>>>>>> As I said, I don't understand mm/, so can't comment, but...
+>>>>>>>>>
+>>>>>>>>> On 05/26, Pu Lehui wrote:
+>>>>>>>>>>
+>>>>>>>>>> To make things simpler, perhaps we could try post-processing, that is:
+>>>>>>>>>>
+>>>>>>>>>> diff --git a/mm/mremap.c b/mm/mremap.c
+>>>>>>>>>> index 83e359754961..46a757fd26dc 100644
+>>>>>>>>>> --- a/mm/mremap.c
+>>>>>>>>>> +++ b/mm/mremap.c
+>>>>>>>>>> @@ -240,6 +240,11 @@ static int move_ptes(struct
+>>>>>>>>>> pagetable_move_control
+>>>>>>>>>> *pmc,
+>>>>>>>>>>                      if (pte_none(ptep_get(old_pte)))
+>>>>>>>>>>                              continue;
+>>>>>>>>>>
+>>>>>>>>>> +               /* skip move pte when expanded range has uprobe */
+>>>>>>>>>> +               if (unlikely(pte_present(*new_pte) &&
+>>>>>>>>>> +                            vma_has_uprobes(pmc->new, new_addr,
+>>>>>>>>>> new_addr +
+>>>>>>>>>> PAGE_SIZE)))
+>>>>>>>>>> +                       continue;
+>>>>>>>>>> +
+>>>>>>>>>
+>>>>>>>>> I was thinking about
+>>>>>>>>>
+>>>>>>>>>         WARN_ON(!pte_none(*new_pte))
+>>>>>>>>>
+>>>>>>>>> at the start of the main loop.
+>>>>>>>>>
+>>>>>>>>> Obviously not to fix the problem, but rather to make it more explicit.
+>>>>>>>>
+>>>>>>>> Yeah, WARN_ON_ONCE().
+>>>>>>>>
+>>>>>>>> We really should fix the code to not install uprobes into the area we
+>>>>>>>> are moving.
+>>>>>>> Alright, so let's try this direction.
+>>>>>>>
+>>>>>>>>
+>>>>>>>> Likely, the correct fix will be to pass the range as well to
+>>>>>>>> uprobe_mmap(), and passing that range to build_probe_list().
+>>>>>>>
+>>>>>>> It will be great. But IIUC, the range we expand to is already included
+>>>>>>> when entering uprobe_mmap and also build_probe_list.
+>>>>>>
+>>>>>> Right, you'd have to communicate that information through all layers
+>>>>>> (expanded range).
+>>>>>>
+>>>>>> As an alternative, maybe we can really call handle_vma_uprobe() after
+>>>>>> moving the pages.
+>>>>>
+>>>>> Hi David,
+>>>>>
+>>>>> Not sure if this is possible, but I think it would be appropriate to not
+>>>>> handle this uprobe_mmap at the source, and maybe we should make it clear
+>>>>> that new_pte must be NULL when move_ptes, otherwise it should be an
+>>>>> exception?
+>>>>
+>>>> Yeah, we should ay least document that if we find any non-none pte in the
+>>>> range we are moving to, we have a big problem.
+> 
+> By the way I agree with this.
+> 
+>>>>
+>>>> I think the main issue is that vma_complete() calls uprobe_mmap() before
+>>>> moving the page tables over.
+>>>
+>>> Well vma_complete() is not _normally_ invoked before moving page tables,
+>>> it's mremap that's making things strange :)
+>>>
+>>> That's why I think my suggested approach of specifically indicating that we
+>>> want different behaviour for mremap is a reasonable one here, as it special
+>>> cases things for this case.
+>>>
+>>> However...
+>>>
+>>>>
+>>>> If we could defer the uprobe_mmap() call, we might be good.
+>>>>
+>>>> The entry point is copy_vma_and_data(), where we call copy_vma() before
+>>>> move_page_tables().
+>>>>
+>>>> copy_vma() should trigger the uprobe_mmap() through vma_merge_new_range().
+>>>>
+>>>> I wonder if there might be a clean way to move the uprobe_mmap() out of
+>>>> vma_complete(). (or at least specify to skip it because it will be done
+>>>> manually).
+>>>
+>>> ...I would also love to see some means of not having to invoke
+>>> uprobe_mmap() in the VMA code, but I mean _at all_.
+>>>
+>>> But that leads into my desire to not do:
+>>>
+>>> if (blah blah)
+>>> 	some_specific_hardcoded_case();
+>>>
+>>> I wish we had a better means of hooking stuff like this.
+>>>
+>>> However I don't think currently we can reasonably do so, as in all other
+>>> merge cases we _do_ want to invoke it.
+>>
+>> "all other" -- not so sure.
+>>
+>> Why would we invoke uprobe when merging VMAs after mprotect, mremap,
+>> madvise, ordinary mremap where we are not mapping anything new but just ...
+>> merging VMAs?
+>>
+>> Really, we need to invoke uprobe only when adding new VMAs or extending
+>> existing VMAs -- mapping new file ranges some way.
+>>
+>> Or am I missing something important?
+> 
+> Well, this is where my limited knowledge of uprobe comes in.
 
-This patch extend flush_tlb_info to store other process's mm_struct,
-and when a CPU in the union of the mm_cpumasks if invoked to handle
-tlb flushing, it will check whether cpu_tlbstate.loaded_mm matches any
-of mm_structs stored in flush_tlb_info. If match, the CPU will do local
-tlb flushing for that mm_struct.
+Let me try to summarize it:
 
-Signed-off-by: Bo Li <libo.gcs85@bytedance.com>
----
- arch/x86/include/asm/tlbflush.h |  10 ++
- arch/x86/mm/tlb.c               | 172 ++++++++++++++++++++++++++++++++
- arch/x86/rpal/internal.h        |   3 -
- include/linux/rpal.h            |  12 +++
- mm/rmap.c                       |   4 +
- 5 files changed, 198 insertions(+), 3 deletions(-)
+Essentially, what it does is go over the VMA to find where to install 
+breakpoints. A breakpoint is essentially faulting in the file page, to 
+then trigger a COW fault to get an anonymous page instead that we can 
+modify to ... install the breakpoint.
 
-diff --git a/arch/x86/include/asm/tlbflush.h b/arch/x86/include/asm/tlbflush.h
-index e9b81876ebe4..f57b745af75c 100644
---- a/arch/x86/include/asm/tlbflush.h
-+++ b/arch/x86/include/asm/tlbflush.h
-@@ -227,6 +227,11 @@ struct flush_tlb_info {
- 	u8			stride_shift;
- 	u8			freed_tables;
- 	u8			trim_cpumask;
-+#ifdef CONFIG_RPAL
-+	struct mm_struct **mm_list;
-+	u64 *tlb_gen_list;
-+	int nr_mm;
-+#endif
- };
- 
- void flush_tlb_local(void);
-@@ -356,6 +361,11 @@ static inline void arch_tlbbatch_add_pending(struct arch_tlbflush_unmap_batch *b
- 	mmu_notifier_arch_invalidate_secondary_tlbs(mm, 0, -1UL);
- }
- 
-+#ifdef CONFIG_RPAL
-+void rpal_tlbbatch_add_pending(struct arch_tlbflush_unmap_batch *batch,
-+	struct mm_struct *mm);
-+#endif
-+
- static inline void arch_flush_tlb_batched_pending(struct mm_struct *mm)
- {
- 	flush_tlb_mm(mm);
-diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index 39f80111e6f1..a0fe17b13887 100644
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -12,6 +12,7 @@
- #include <linux/task_work.h>
- #include <linux/mmu_notifier.h>
- #include <linux/mmu_context.h>
-+#include <linux/rpal.h>
- 
- #include <asm/tlbflush.h>
- #include <asm/mmu_context.h>
-@@ -1361,6 +1362,169 @@ void flush_tlb_multi(const struct cpumask *cpumask,
- 	__flush_tlb_multi(cpumask, info);
- }
- 
-+#ifdef CONFIG_RPAL
-+static void rpal_flush_tlb_func_remote(void *info)
-+{
-+	struct mm_struct *loaded_mm = this_cpu_read(cpu_tlbstate.loaded_mm);
-+	struct flush_tlb_info *f = info;
-+	struct flush_tlb_info tf = *f;
-+	int i;
-+
-+	/* As it comes from RPAL path, f->mm cannot be NULL */
-+	if (f->mm == loaded_mm) {
-+		flush_tlb_func(f);
-+		return;
-+	}
-+
-+	for (i = 0; i < f->nr_mm; i++) {
-+		/* We always have f->mm_list[i] != NULL */
-+		if (f->mm_list[i] == loaded_mm) {
-+			tf.mm = f->mm_list[i];
-+			tf.new_tlb_gen = f->tlb_gen_list[i];
-+			flush_tlb_func(&tf);
-+			return;
-+		}
-+	}
-+}
-+
-+static void rpal_flush_tlb_func_multi(const struct cpumask *cpumask,
-+			       const struct flush_tlb_info *info)
-+{
-+	count_vm_tlb_event(NR_TLB_REMOTE_FLUSH);
-+	if (info->end == TLB_FLUSH_ALL)
-+		trace_tlb_flush(TLB_REMOTE_SEND_IPI, TLB_FLUSH_ALL);
-+	else
-+		trace_tlb_flush(TLB_REMOTE_SEND_IPI,
-+				(info->end - info->start) >> PAGE_SHIFT);
-+
-+	if (info->freed_tables || mm_in_asid_transition(info->mm))
-+		on_each_cpu_mask(cpumask, rpal_flush_tlb_func_remote,
-+				 (void *)info, true);
-+	else
-+		on_each_cpu_cond_mask(should_flush_tlb,
-+				      rpal_flush_tlb_func_remote, (void *)info,
-+				      1, cpumask);
-+}
-+
-+static void rpal_flush_tlb_func_local(struct mm_struct *mm, int cpu,
-+				      struct flush_tlb_info *info,
-+				      u64 new_tlb_gen)
-+{
-+	struct mm_struct *loaded_mm = this_cpu_read(cpu_tlbstate.loaded_mm);
-+
-+	if (loaded_mm == info->mm) {
-+		lockdep_assert_irqs_enabled();
-+		local_irq_disable();
-+		flush_tlb_func(info);
-+		local_irq_enable();
-+	} else {
-+		int i;
-+
-+		for (i = 0; i < info->nr_mm; i++) {
-+			if (info->mm_list[i] == loaded_mm) {
-+				lockdep_assert_irqs_enabled();
-+				local_irq_disable();
-+				info->mm = info->mm_list[i];
-+				info->new_tlb_gen = info->tlb_gen_list[i];
-+				flush_tlb_func(info);
-+				info->mm = mm;
-+				info->new_tlb_gen = new_tlb_gen;
-+				local_irq_enable();
-+			}
-+		}
-+	}
-+}
-+
-+static void rpal_flush_tlb_mm_range(struct mm_struct *mm, int cpu,
-+			     struct flush_tlb_info *info, u64 new_tlb_gen)
-+{
-+	struct rpal_service *cur = mm->rpal_rs;
-+	cpumask_t merged_mask;
-+	struct mm_struct *mm_list[MAX_REQUEST_SERVICE];
-+	u64 tlb_gen_list[MAX_REQUEST_SERVICE];
-+	int nr_mm = 0;
-+	int i;
-+
-+	cpumask_copy(&merged_mask, mm_cpumask(mm));
-+	if (cur) {
-+		struct rpal_service *tgt;
-+		struct mm_struct *tgt_mm;
-+
-+		rpal_for_each_requested_service(cur, i) {
-+			struct rpal_mapped_service *node;
-+
-+			if (i == cur->id)
-+				continue;
-+			node = rpal_get_mapped_node(cur, i);
-+			if (!rpal_service_mapped(node))
-+				continue;
-+
-+			tgt = rpal_get_service(node->rs);
-+			if (!tgt)
-+				continue;
-+			tgt_mm = tgt->mm;
-+			if (!mmget_not_zero(tgt_mm)) {
-+				rpal_put_service(tgt);
-+				continue;
-+			}
-+			mm_list[nr_mm] = tgt_mm;
-+			tlb_gen_list[nr_mm] = inc_mm_tlb_gen(tgt_mm);
-+
-+			nr_mm++;
-+			cpumask_or(&merged_mask, &merged_mask,
-+				   mm_cpumask(tgt_mm));
-+			rpal_put_service(tgt);
-+		}
-+		info->mm_list = mm_list;
-+		info->tlb_gen_list = tlb_gen_list;
-+		info->nr_mm = nr_mm;
-+	}
-+
-+	if (cpumask_any_but(&merged_mask, cpu) < nr_cpu_ids)
-+		rpal_flush_tlb_func_multi(&merged_mask, info);
-+	else
-+		rpal_flush_tlb_func_local(mm, cpu, info, new_tlb_gen);
-+
-+	for (i = 0; i < nr_mm; i++)
-+		mmput_async(mm_list[i]);
-+}
-+
-+void rpal_tlbbatch_add_pending(struct arch_tlbflush_unmap_batch *batch,
-+			      struct mm_struct *mm)
-+{
-+	struct rpal_service *cur = mm->rpal_rs;
-+	struct rpal_service *tgt;
-+	struct mm_struct *tgt_mm;
-+	int i;
-+
-+	rpal_for_each_requested_service(cur, i) {
-+		struct rpal_mapped_service *node;
-+
-+		if (i == cur->id)
-+			continue;
-+
-+		node = rpal_get_mapped_node(cur, i);
-+		if (!rpal_service_mapped(node))
-+			continue;
-+
-+		tgt = rpal_get_service(node->rs);
-+		if (!tgt)
-+			continue;
-+		tgt_mm = tgt->mm;
-+		if (!mmget_not_zero(tgt_mm)) {
-+			rpal_put_service(tgt);
-+			continue;
-+		}
-+		inc_mm_tlb_gen(tgt_mm);
-+		cpumask_or(&batch->cpumask, &batch->cpumask,
-+			   mm_cpumask(tgt_mm));
-+		mmu_notifier_arch_invalidate_secondary_tlbs(tgt_mm, 0, -1UL);
-+		rpal_put_service(tgt);
-+		mmput_async(tgt_mm);
-+	}
-+}
-+#endif
-+
- /*
-  * See Documentation/arch/x86/tlb.rst for details.  We choose 33
-  * because it is large enough to cover the vast majority (at
-@@ -1439,6 +1603,11 @@ void flush_tlb_mm_range(struct mm_struct *mm, unsigned long start,
- 	info = get_flush_tlb_info(mm, start, end, stride_shift, freed_tables,
- 				  new_tlb_gen);
- 
-+#if IS_ENABLED(CONFIG_RPAL)
-+	if (mm->rpal_rs)
-+		rpal_flush_tlb_mm_range(mm, cpu, info, new_tlb_gen);
-+	else {
-+#endif
- 	/*
- 	 * flush_tlb_multi() is not optimized for the common case in which only
- 	 * a local TLB flush is needed. Optimize this use-case by calling
-@@ -1456,6 +1625,9 @@ void flush_tlb_mm_range(struct mm_struct *mm, unsigned long start,
- 		flush_tlb_func(info);
- 		local_irq_enable();
- 	}
-+#if IS_ENABLED(CONFIG_RPAL)
-+	}
-+#endif
- 
- 	put_flush_tlb_info();
- 	put_cpu();
-diff --git a/arch/x86/rpal/internal.h b/arch/x86/rpal/internal.h
-index c504b6efff64..cf6d608a994a 100644
---- a/arch/x86/rpal/internal.h
-+++ b/arch/x86/rpal/internal.h
-@@ -12,9 +12,6 @@
- #include <linux/mm.h>
- #include <linux/file.h>
- 
--#define RPAL_REQUEST_MAP 0x1
--#define RPAL_REVERSE_MAP 0x2
--
- extern bool rpal_inited;
- 
- /* service.c */
-diff --git a/include/linux/rpal.h b/include/linux/rpal.h
-index b9622f0235bf..36be1ab6a9f3 100644
---- a/include/linux/rpal.h
-+++ b/include/linux/rpal.h
-@@ -80,6 +80,11 @@
- /* No more than 15 services can be requested due to limitation of MPK. */
- #define MAX_REQUEST_SERVICE 15
- 
-+enum {
-+	RPAL_REQUEST_MAP,
-+	RPAL_REVERSE_MAP,
-+};
-+
- extern unsigned long rpal_cap;
- 
- enum rpal_task_flag_bits {
-@@ -326,6 +331,13 @@ rpal_get_mapped_node(struct rpal_service *rs, int id)
- 	return &rs->service_map[id];
- }
- 
-+static inline bool rpal_service_mapped(struct rpal_mapped_service *node)
-+{
-+	unsigned long type = (1 << RPAL_REQUEST_MAP) | (1 << RPAL_REVERSE_MAP);
-+
-+	return (node->type & type) == type;
-+}
-+
- #ifdef CONFIG_RPAL
- static inline struct rpal_service *rpal_current_service(void)
- {
-diff --git a/mm/rmap.c b/mm/rmap.c
-index 67bb273dfb80..e68384f97ab9 100644
---- a/mm/rmap.c
-+++ b/mm/rmap.c
-@@ -682,6 +682,10 @@ static void set_tlb_ubc_flush_pending(struct mm_struct *mm, pte_t pteval,
- 		return;
- 
- 	arch_tlbbatch_add_pending(&tlb_ubc->arch, mm, start, end);
-+#ifdef CONFIG_RPAL
-+	if (mm->rpal_rs)
-+		rpal_tlbbatch_add_pending(&tlb_ubc->arch, mm);
-+#endif
- 	tlb_ubc->flush_required = true;
- 
- 	/*
+So wherever we have a breakpoint, we want to have an anonymous page 
+mapped later.
+
+That is only required when we map a new file range. When ordinarily 
+merging/splitting/moving, we already called uprobe before and installed 
+the breakpoints.
+
+Calling uprobe_mmap() when we already installed breakpoints is not 
+really problematic, only suboptimal.
+
+Calling uprobe_mmap() before moving page tables is bad.
+
 -- 
-2.20.1
+Cheers,
+
+David / dhildenb
 
 
