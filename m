@@ -1,180 +1,215 @@
-Return-Path: <linux-kernel+bounces-668105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-668131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EBC9AC8E2B
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 14:46:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83C01AC8EB2
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 14:55:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E7704E7AD1
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 12:46:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DA6B189447D
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 12:51:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79C26239E94;
-	Fri, 30 May 2025 12:39:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 836DD2561A8;
+	Fri, 30 May 2025 12:40:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T4+RWxuy"
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="paNlgA75"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0879922DA0C;
-	Fri, 30 May 2025 12:39:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0931253B66;
+	Fri, 30 May 2025 12:40:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748608780; cv=none; b=D3bHUuttK2EKVEk3D2XfUPH4m2rH/uhXb+raOoZjqVhF40HKfqQRsL+2xBPpApmyCUwUhp1EdQjoaMEJSj5nGaJKzHca0j+HoIJ4koXNWlD9xlrd8HkNbCx9ZqWRbg9FgXG0HbzzMnk1ZAVgVosTNYCu765MFGTNiTK5lOm0a7o=
+	t=1748608814; cv=none; b=gLgfrYtgX7MK7IrkNAG2j+WkFGbyUD/2lNYlow1q0McRZcBvfiTMv9kyIqiP2azYW4qFYMA7sLXryXNsq6DSJD+e1WAoGo/E8BxDnTw7lfeP1MhcKy/rOyzzgFu3v6+NcaUFA9SnR8ZUPkF+mQT/TtngaPxwkwfTrBuulHM+hZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748608780; c=relaxed/simple;
-	bh=EDj24TckFfIwzZNQqFPFgCJ8JUM32c0qh/cAyJWLfGk=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=vGA0kKKC+/Y1qHa495xncFj+cp3j6MrA9jjqBPBCE94HRjINGrzrpwQwEBcWlA7CYSD2fm9ivFtVIem7fg0F2bIQnMtGnDxANKHdNcbalTetdXj/bp4/+IuPNCKMmdzH+2SINXziCJnCbbDyS0uTHdsi6f/x32gxuduu2kkSu1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T4+RWxuy; arc=none smtp.client-ip=209.85.219.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6fac8c5b262so26577866d6.3;
-        Fri, 30 May 2025 05:39:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748608778; x=1749213578; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8WX/pI2FZ04CxuI9v1Z6vNfe/KkzprDYtlWCM4gpgas=;
-        b=T4+RWxuyiugoNXLxUMKVEcZD71SK7THi1B4DNEe+lRsYLKs+H2G0SH68GK+itw4Z3t
-         B1p2mYTn1gFbcRdODC7I7lj6J2bC0aM5PCs74BSeyTzKdVO5jP9siE6sYeieQsWjJnwn
-         SJXNjhgxra/wFa1cYmcXRgJwM5m0VJZMVQMNbj3z/N9qlKapow/jztxmO323pKhBw7eh
-         ngxEHwFKWdaYwVhiTxZGeVIR/kyHbXpxJJM3Hqshk36HlSnQxxKllg3yRw3pr6h43Kqu
-         4McLd9jse7Nl7IzS8RyezgpFXM42ONXSmRGkKO85RxBnvN87DpBUGX60s+r4LL82X/4s
-         a+lg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748608778; x=1749213578;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=8WX/pI2FZ04CxuI9v1Z6vNfe/KkzprDYtlWCM4gpgas=;
-        b=g/uEn+b78/MHuP1ZGzXrp0a9FqM120syEH5/kUIJwollSYBPf9ZZq1iHu5Wvj9+/UC
-         djtn1h6rH2JIACfZ7MHFAkq1yGLxdzRrrc06n+h1xAKMNNKRa159RS/HswMXhHMaDSac
-         huTwtAQAVK1iE4X+fYjJsad4hYgrJZNnHMiyH111/OvnzDDigEZq7QeHvHG+9d6Al0tL
-         m9l5fA+zs6Qjmz8/Qc8nCFuZnFug3vGAY6glZiJ2Wbl6qR/nKMYPeiRhmBlccDjj2V5D
-         9K4usVi9Ilv4C9011K2yXQiqL/TAsXlPwuZFTbj01x1eX23vuaZfIXrHF5pJDjiemscZ
-         9Bdw==
-X-Forwarded-Encrypted: i=1; AJvYcCXr02er1uzfDhOP+9XQtKdOYnzipopuAzESY4MjGMHOkbkbOvSaWwItNvrC3aaga9aOUlTsuLM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywagx9kFdWPK5E0ErbocKQTUFQsS/JPjXxygZksKx5LW2CP3HJ/
-	fnfGKiOVDfMihYa55m8KvCSUlQ5x/FDCjxnEcsOcpCQUk8lZeerWSGCh
-X-Gm-Gg: ASbGncu8J8gvhVHeOMHUXtjDQIKRL7gD/eo3X5R4tOxT5QC8BhM1JfuDWIFm6O1IHBc
-	RDhYewDXB3TzscyCSVyHx7ASRXTcQp1ui72P1RGPO6F9tCSQGbHZ8lArkcZjK6sWCxx2slzNL/h
-	62I7RhnH5T0zWdYSQ5DhoKtTffqweyQzpavZurOnWpvByYMY+UX2BB2tZsfByDiyw/XEzmS3PBe
-	Z1p4KpMUbKrtzvzL1tXxNKM2y00csv2hyMilvSuZNmDchOfp8SIH29I+FGvRzj+4sC7DU4NYMvV
-	jebn8RmzSWyLQ+1A74YGvwQpLtowLiRkl0l/QB69GOH3FaELmcdbKvd4dhvcL8O//SKKxkd6sV5
-	og6x3bnTe9rFYoSLSawmL36U=
-X-Google-Smtp-Source: AGHT+IHFT/DYAQo16UED0XkBEZcGPbMpBChu5zz1e9LewGHKTOpAEqO5nDnTnivDufeHSpIpIrA67Q==
-X-Received: by 2002:ad4:5aa1:0:b0:6e8:fa72:be4c with SMTP id 6a1803df08f44-6fad190719cmr24362426d6.1.1748608777736;
-        Fri, 30 May 2025 05:39:37 -0700 (PDT)
-Received: from localhost (23.67.48.34.bc.googleusercontent.com. [34.48.67.23])
-        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-6fac6d4cce8sm21971236d6.37.2025.05.30.05.39.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 May 2025 05:39:36 -0700 (PDT)
-Date: Fri, 30 May 2025 08:39:35 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Shiming Cheng <shiming.cheng@mediatek.com>, 
- willemdebruijn.kernel@gmail.com, 
- willemb@google.com, 
- edumazet@google.com, 
- davem@davemloft.net, 
- kuba@kernel.org, 
- pabeni@redhat.com, 
- matthias.bgg@gmail.com
-Cc: linux-kernel@vger.kernel.org, 
- netdev@vger.kernel.org, 
- shiming.cheng@mediatek.com, 
- lena.wang@mediatek.com
-Message-ID: <6839a707f1b14_1003de2943b@willemb.c.googlers.com.notmuch>
-In-Reply-To: <20250530012622.7888-1-shiming.cheng@mediatek.com>
-References: <20250530012622.7888-1-shiming.cheng@mediatek.com>
-Subject: Re: [PATCH net v6] net: fix udp gso skb_segment after pull from
- frag_list
+	s=arc-20240116; t=1748608814; c=relaxed/simple;
+	bh=16wZIjI3rM+SR9jJf6FfDXb7wOEnVPcIjK1MwsxP91c=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=s1LN42OfuOmgiV7al6JcFbkIVwYaTC1m9z8BlBCFdfETWvBP1Rd3yVlNyUMaT/UcmyLskpB33FWpwSucHzVmG/mqdsjNoB9pUXqKxH0Hawp34xkO5gh0xLjQgLLW7YrVn6f2pVwFetHFMNx0b6rc+CHXjS75Xx3cg20RPYiK1Hg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=paNlgA75; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DD71C4CEE9;
+	Fri, 30 May 2025 12:40:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748608814;
+	bh=16wZIjI3rM+SR9jJf6FfDXb7wOEnVPcIjK1MwsxP91c=;
+	h=From:To:Cc:Subject:Date:From;
+	b=paNlgA75zufSEBj+ppDoJHsqwqD29HEE8JUVGU5WwZoo052jtBVjqfMY/ZOjdQtBn
+	 CrPZlmFWqmQxZ/wTsT/BjW889tVaw6jYpXnJOtUxntYVOuBtzBnNN4XrJiLmIuZrSY
+	 m5lRi5/ymj8Xq/xIt3A6llFI7xpi+i5rXRVyBCe9Vps1Scs7Zo30SJ2LpGPXM/HvPS
+	 uxZ7zw6UN4rn0S/SAWdxXXbUuZvlXONlSL3REPhjFNUrS4mjitNJiu8kVfzcvIOElp
+	 382ikI3d3DarnO2nGlLclvharUknVZPowCfCQuGp4t0+SVaIHvzHWa4ewDLXnyCM5u
+	 bjqJ7JkN07eRw==
+From: Sasha Levin <sashal@kernel.org>
+To: patches@lists.linux.dev,
+	stable@vger.kernel.org
+Cc: Seunghun Han <kkamagui@gmail.com>,
+	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+	Sasha Levin <sashal@kernel.org>,
+	robert.moore@intel.com,
+	erik.schmauss@intel.com,
+	lenb@kernel.org,
+	linux-acpi@vger.kernel.org,
+	devel@acpica.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.12 01/26] ACPICA: fix acpi operand cache leak in dswstate.c
+Date: Fri, 30 May 2025 08:39:47 -0400
+Message-Id: <20250530124012.2575409-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.12.31
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Shiming Cheng wrote:
-> Commit a1e40ac5b5e9 ("net: gso: fix udp gso fraglist segmentation after
-> pull from frag_list") detected invalid geometry in frag_list skbs and
-> redirects them from skb_segment_list to more robust skb_segment. But some
-> packets with modified geometry can also hit bugs in that code. We don't
-> know how many such cases exist. Addressing each one by one also requires
-> touching the complex skb_segment code, which risks introducing bugs for
-> other types of skbs. Instead, linearize all these packets that fail the
-> basic invariants on gso fraglist skbs. That is more robust.
-> 
-> If only part of the fraglist payload is pulled into head_skb, it will
-> always cause exception when splitting skbs by skb_segment. For detailed
-> call stack information, see below.
-> 
-> Valid SKB_GSO_FRAGLIST skbs
-> - consist of two or more segments
-> - the head_skb holds the protocol headers plus first gso_size
-> - one or more frag_list skbs hold exactly one segment
-> - all but the last must be gso_size
-> 
-> Optional datapath hooks such as NAT and BPF (bpf_skb_pull_data) can
-> modify fraglist skbs, breaking these invariants.
-> 
-> In extreme cases they pull one part of data into skb linear. For UDP,
-> this  causes three payloads with lengths of (11,11,10) bytes were
-> pulled tail to become (12,10,10) bytes.
-> 
-> The skbs no longer meets the above SKB_GSO_FRAGLIST conditions because
-> payload was pulled into head_skb, it needs to be linearized before pass
-> to regular skb_segment.
-> 
->     skb_segment+0xcd0/0xd14
->     __udp_gso_segment+0x334/0x5f4
->     udp4_ufo_fragment+0x118/0x15c
->     inet_gso_segment+0x164/0x338
->     skb_mac_gso_segment+0xc4/0x13c
->     __skb_gso_segment+0xc4/0x124
->     validate_xmit_skb+0x9c/0x2c0
->     validate_xmit_skb_list+0x4c/0x80
->     sch_direct_xmit+0x70/0x404
->     __dev_queue_xmit+0x64c/0xe5c
->     neigh_resolve_output+0x178/0x1c4
->     ip_finish_output2+0x37c/0x47c
->     __ip_finish_output+0x194/0x240
->     ip_finish_output+0x20/0xf4
->     ip_output+0x100/0x1a0
->     NF_HOOK+0xc4/0x16c
->     ip_forward+0x314/0x32c
->     ip_rcv+0x90/0x118
->     __netif_receive_skb+0x74/0x124
->     process_backlog+0xe8/0x1a4
->     __napi_poll+0x5c/0x1f8
->     net_rx_action+0x154/0x314
->     handle_softirqs+0x154/0x4b8
-> 
->     [118.376811] [C201134] rxq0_pus: [name:bug&]kernel BUG at net/core/skbuff.c:4278!
->     [118.376829] [C201134] rxq0_pus: [name:traps&]Internal error: Oops - BUG: 00000000f2000800 [#1] PREEMPT SMP
->     [118.470774] [C201134] rxq0_pus: [name:mrdump&]Kernel Offset: 0x178cc00000 from 0xffffffc008000000
->     [118.470810] [C201134] rxq0_pus: [name:mrdump&]PHYS_OFFSET: 0x40000000
->     [118.470827] [C201134] rxq0_pus: [name:mrdump&]pstate: 60400005 (nZCv daif +PAN -UAO)
->     [118.470848] [C201134] rxq0_pus: [name:mrdump&]pc : [0xffffffd79598aefc] skb_segment+0xcd0/0xd14
->     [118.470900] [C201134] rxq0_pus: [name:mrdump&]lr : [0xffffffd79598a5e8] skb_segment+0x3bc/0xd14
->     [118.470928] [C201134] rxq0_pus: [name:mrdump&]sp : ffffffc008013770
-> 
-> Fixes: a1e40ac5b5e9 ("gso: fix udp gso fraglist segmentation after pull from frag_list")
-> Signed-off-by: Shiming Cheng <shiming.cheng@mediatek.com>
+From: Seunghun Han <kkamagui@gmail.com>
 
-Is this effectively a repost of v5?
+[ Upstream commit 156fd20a41e776bbf334bd5e45c4f78dfc90ce1c ]
 
-I think Simon suggested changing the subject line from starting with
-"net:" to starting with "gso:", but this revision does not make such
-a change.
+ACPICA commit 987a3b5cf7175916e2a4b6ea5b8e70f830dfe732
 
-Btw, for upcoming patches: it is helpful to add a changelog below the
---- marker line, to help reviewers see what changed. See also the
-SubmittingPatches doc on that point.
+I found an ACPI cache leak in ACPI early termination and boot continuing case.
+
+When early termination occurs due to malicious ACPI table, Linux kernel
+terminates ACPI function and continues to boot process. While kernel terminates
+ACPI function, kmem_cache_destroy() reports Acpi-Operand cache leak.
+
+Boot log of ACPI operand cache leak is as follows:
+>[    0.585957] ACPI: Added _OSI(Module Device)
+>[    0.587218] ACPI: Added _OSI(Processor Device)
+>[    0.588530] ACPI: Added _OSI(3.0 _SCP Extensions)
+>[    0.589790] ACPI: Added _OSI(Processor Aggregator Device)
+>[    0.591534] ACPI Error: Illegal I/O port address/length above 64K: C806E00000004002/0x2 (20170303/hwvalid-155)
+>[    0.594351] ACPI Exception: AE_LIMIT, Unable to initialize fixed events (20170303/evevent-88)
+>[    0.597858] ACPI: Unable to start the ACPI Interpreter
+>[    0.599162] ACPI Error: Could not remove SCI handler (20170303/evmisc-281)
+>[    0.601836] kmem_cache_destroy Acpi-Operand: Slab cache still has objects
+>[    0.603556] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.12.0-rc5 #26
+>[    0.605159] Hardware name: innotek gmb_h virtual_box/virtual_box, BIOS virtual_box 12/01/2006
+>[    0.609177] Call Trace:
+>[    0.610063]  ? dump_stack+0x5c/0x81
+>[    0.611118]  ? kmem_cache_destroy+0x1aa/0x1c0
+>[    0.612632]  ? acpi_sleep_proc_init+0x27/0x27
+>[    0.613906]  ? acpi_os_delete_cache+0xa/0x10
+>[    0.617986]  ? acpi_ut_delete_caches+0x3f/0x7b
+>[    0.619293]  ? acpi_terminate+0xa/0x14
+>[    0.620394]  ? acpi_init+0x2af/0x34f
+>[    0.621616]  ? __class_create+0x4c/0x80
+>[    0.623412]  ? video_setup+0x7f/0x7f
+>[    0.624585]  ? acpi_sleep_proc_init+0x27/0x27
+>[    0.625861]  ? do_one_initcall+0x4e/0x1a0
+>[    0.627513]  ? kernel_init_freeable+0x19e/0x21f
+>[    0.628972]  ? rest_init+0x80/0x80
+>[    0.630043]  ? kernel_init+0xa/0x100
+>[    0.631084]  ? ret_from_fork+0x25/0x30
+>[    0.633343] vgaarb: loaded
+>[    0.635036] EDAC MC: Ver: 3.0.0
+>[    0.638601] PCI: Probing PCI hardware
+>[    0.639833] PCI host bridge to bus 0000:00
+>[    0.641031] pci_bus 0000:00: root bus resource [io  0x0000-0xffff]
+> ... Continue to boot and log is omitted ...
+
+I analyzed this memory leak in detail and found acpi_ds_obj_stack_pop_and_
+delete() function miscalculated the top of the stack. acpi_ds_obj_stack_push()
+function uses walk_state->operand_index for start position of the top, but
+acpi_ds_obj_stack_pop_and_delete() function considers index 0 for it.
+Therefore, this causes acpi operand memory leak.
+
+This cache leak causes a security threat because an old kernel (<= 4.9) shows
+memory locations of kernel functions in stack dump. Some malicious users
+could use this information to neutralize kernel ASLR.
+
+I made a patch to fix ACPI operand cache leak.
+
+Link: https://github.com/acpica/acpica/commit/987a3b5c
+Signed-off-by: Seunghun Han <kkamagui@gmail.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Link: https://patch.msgid.link/4999480.31r3eYUQgx@rjwysocki.net
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+
+**YES** This commit should be backported to stable kernel trees based on
+the following analysis: ## Analysis of the Commit **1. Bug Fix Nature**:
+This commit fixes a clear memory leak bug in the ACPICA subsystem. The
+issue occurs when `acpi_ds_create_operands()` encounters an error during
+operand creation and needs to clean up allocated operands. **2. Root
+Cause**: The core issue is a mismatch between how operands are pushed
+and popped from the stack: - `acpi_ds_obj_stack_push()` uses
+`walk_state->operand_index` to track the current position -
+`acpi_ds_obj_stack_pop_and_delete()` incorrectly assumes operands start
+at index 0 - This causes incomplete cleanup when errors occur, leading
+to memory leaks **3. Code Analysis**: The fix correctly addresses the
+issue by: - Tracking the original operand count (`prev_num_operands`) -
+Calculating the correct number of operands to clean up
+(`new_num_operands`) - Setting `walk_state->num_operands = i` before
+cleanup to ensure proper indexing - Restoring the original operand count
+after cleanup **4. Security Implications**: The commit message
+explicitly mentions this is a security issue - the memory leak can
+expose kernel function addresses in older kernels (≤4.9), potentially
+defeating ASLR. This elevates the importance beyond a simple memory
+leak. **5. Pattern Consistency**: This follows the exact same pattern as
+other ACPICA operand cache leak fixes that were successfully backported
+(commits `97f3c0a4b057`, `2915f16bdce2`, etc.), all authored by the same
+developer addressing similar issues. **6. Stability Characteristics**: -
+**Small and contained**: Only 8 lines of actual logic changes - **Clear
+error path**: Only affects cleanup during error conditions - **No
+behavioral changes**: No impact on normal operation - **Low regression
+risk**: Only modifies error handling paths **7. Backport Suitability
+Criteria**: - ✅ Fixes important bug affecting users (memory leak) - ✅
+Small, contained fix with minimal risk - ✅ No architectural changes - ✅
+Addresses security concern (ASLR bypass potential) - ✅ Follows
+established patterns for ACPICA fixes - ✅ Critical kernel subsystem
+(ACPI) **8. Historical Precedent**: The similar commits in the reference
+examples (Similar Commits #1, #2, #3) all have "Backport Status: YES"
+and address nearly identical ACPICA operand cache leak issues with
+similar fixes and commit message patterns. This commit meets all
+criteria for stable tree backporting: it's an important bugfix, has
+minimal regression risk, affects a critical subsystem, and follows
+established patterns for similar fixes that were previously backported.
+
+ drivers/acpi/acpica/dsutils.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/acpi/acpica/dsutils.c b/drivers/acpi/acpica/dsutils.c
+index fb9ed5e1da89d..2bdae8a25e084 100644
+--- a/drivers/acpi/acpica/dsutils.c
++++ b/drivers/acpi/acpica/dsutils.c
+@@ -668,6 +668,8 @@ acpi_ds_create_operands(struct acpi_walk_state *walk_state,
+ 	union acpi_parse_object *arguments[ACPI_OBJ_NUM_OPERANDS];
+ 	u32 arg_count = 0;
+ 	u32 index = walk_state->num_operands;
++	u32 prev_num_operands = walk_state->num_operands;
++	u32 new_num_operands;
+ 	u32 i;
+ 
+ 	ACPI_FUNCTION_TRACE_PTR(ds_create_operands, first_arg);
+@@ -696,6 +698,7 @@ acpi_ds_create_operands(struct acpi_walk_state *walk_state,
+ 
+ 	/* Create the interpreter arguments, in reverse order */
+ 
++	new_num_operands = index;
+ 	index--;
+ 	for (i = 0; i < arg_count; i++) {
+ 		arg = arguments[index];
+@@ -720,7 +723,11 @@ acpi_ds_create_operands(struct acpi_walk_state *walk_state,
+ 	 * pop everything off of the operand stack and delete those
+ 	 * objects
+ 	 */
+-	acpi_ds_obj_stack_pop_and_delete(arg_count, walk_state);
++	walk_state->num_operands = i;
++	acpi_ds_obj_stack_pop_and_delete(new_num_operands, walk_state);
++
++	/* Restore operand count */
++	walk_state->num_operands = prev_num_operands;
+ 
+ 	ACPI_EXCEPTION((AE_INFO, status, "While creating Arg %u", index));
+ 	return_ACPI_STATUS(status);
+-- 
+2.39.5
+
 
