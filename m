@@ -1,150 +1,241 @@
-Return-Path: <linux-kernel+bounces-667918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-667916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70284AC8B67
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 11:48:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0465EAC8B5B
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 11:47:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FAF2173D2A
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 09:48:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 017A31657CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 09:47:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46A18221F0F;
-	Fri, 30 May 2025 09:48:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=beims.me header.i=@beims.me header.b="XAvHduuo";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="e/uJIY8K"
-Received: from fout-b6-smtp.messagingengine.com (fout-b6-smtp.messagingengine.com [202.12.124.149])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9DEC221261;
-	Fri, 30 May 2025 09:47:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6183A204866;
+	Fri, 30 May 2025 09:47:36 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 043281DA5F
+	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 09:47:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748598481; cv=none; b=ksIefUdnDlyGCmqBkSqdPoDRDH5W9hh/wtYzrcYeoxnTBSXgxv+uPoYahwsRiP2XMQjY4WdDlA4boo0yiXBvytu4e1Dew31als7WCWw0gEDl1Dt/G6RNVLBQ619rQwchbQh40HjcLvWOOePRdsG1cZHuyIvWyPlu+STvh5sIvFo=
+	t=1748598455; cv=none; b=o1MgLuR+/zIfPRNdcQAimr61HrluAl161AlQ08t54923TYz/BGgUwb9PoQDvJKXgjJJIymgzHSqOUZKGB8LQvdE4RjzGRc9iH31pbN2zlh7lMT2vrE1AN31ZbmLtE3A4TpsMydRw3kJAuHscKtS0dLFJJWwXYOjpEivmlfsDMjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748598481; c=relaxed/simple;
-	bh=KCp9L9RQvgbaMu3LuR+jivASdFZYeTKJa0e1O45qbGA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=q7B+MOvPetfSWtjWrV3o4BFiY2mhKS6JiZtlWNH5NVVdRsbJhFChgaeMPeU/G+anqLl3BVvvsYlIYmO9zMCu2hm2faALeltiaWRJuXK9mObLroHg4V6Vmwfm1oEZjnt5v8SDBEHgXCwBrVz9dCDSj71Y/I6mXKsDtUaiX54XcYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=beims.me; spf=pass smtp.mailfrom=beims.me; dkim=pass (2048-bit key) header.d=beims.me header.i=@beims.me header.b=XAvHduuo; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=e/uJIY8K; arc=none smtp.client-ip=202.12.124.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=beims.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=beims.me
-Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
-	by mailfout.stl.internal (Postfix) with ESMTP id 74DCE114014A;
-	Fri, 30 May 2025 05:47:57 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-02.internal (MEProxy); Fri, 30 May 2025 05:47:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=beims.me; h=cc
-	:cc:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to; s=fm3; t=1748598477; x=1748684877; bh=674mFWQDtM26z7fVOMpOw
-	06he7VETZwS9jREHN7/lXw=; b=XAvHduuoG9i6wfwwlX5OFTKuckQjytL7rp5um
-	5Kb9I0Vb4mKmUko9mJwqKqnUYxLlsHMIJyOfDQm8iaCyOVAoWFlVurL19DxKi1In
-	bLISbEI9MkIvATPVwAGvNOl/T0XHXUogF9SPp5y92hc70CwLMUTr0kn+3D0POP3s
-	EPr0vHSxrfv/payVcM12B1g05UMiPQUmWmOCLIiqmKO1sGSIHg5K6LsLgDwFPHNn
-	rsQGhb9a5CxU+WnaZbUNsl/xSpBlbyVgalXdlgixVN8TAZzBbsvpk3TLOUp7EDe1
-	QqLx+lqVWpBEifrQ4VtAUgk7CfWb5BHfOSMo9R+Zz2OMO+Rgw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1748598477; x=1748684877; bh=674mFWQDtM26z7fVOMpOw06he7VETZwS9jR
-	EHN7/lXw=; b=e/uJIY8KTfd8RrOjZZLLVZUrWeLm9nbXN/fnZKFZaIZjmMbB5CL
-	3QUTcYmA69ZEPdlqNey/BLpjiAmZiMx44V7SbW4KjHKVG3R9tWM6tyACLKCtlBgx
-	2ORc+riYAXTvODLz4c1EIRALQuHsopO5WW60oefGX7eFdSctcHlLSPEqMqPP0FXd
-	0puGLIAiEVi00mg4NMJ3tJm9zo11PvHBnbLWVD7BeZEgBSiAJQ6M8R+cMII862pE
-	4ZrULpVrQkFnb9B2lcoTgfGhKOq5NxPitvqUGu+7eLXcC5B6wfPs2UzKmEw+dXtY
-	D+iS8uZTw67O1bwRtFpvmPXhbm/n/1AWNig==
-X-ME-Sender: <xms:zX45aCu3QmM6HlkC8c57JcJy5h45Hc_I0wT7ZfBdq3NeP-cuAVVVeg>
-    <xme:zX45aHe7kqEY6GJMfmraUQ5ZE5GnCpC1PJVi44FLcUJkJ7KG2uG_hrzG5udaz35bj
-    BW35VmalEnef-ahXwU>
-X-ME-Received: <xmr:zX45aNwT-5peNmf0vgbWHUvF_2eANamZ2fEl_6LczyROL2eJ-ALtCI7t1ME3Ac4H9_0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgddvkeeikeculddtuddrgeefvddrtd
-    dtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggft
-    fghnshhusghstghrihgsvgdpuffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftd
-    dtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffo
-    ggfgsedtkeertdertddtnecuhfhrohhmpeftrghfrggvlhcuuegvihhmshcuoehrrghfrg
-    gvlhessggvihhmshdrmhgvqeenucggtffrrghtthgvrhhnpefgtedvueeugefgieejuefh
-    ueeivefgvdduheffveehffeujefgudfgueffudelhfenucffohhmrghinhepkhgvrhhnvg
-    hlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhho
-    mheprhgrfhgrvghlsegsvghimhhsrdhmvgdpnhgspghrtghpthhtohepiedpmhhouggvpe
-    hsmhhtphhouhhtpdhrtghpthhtohepsghrihgrnhhnohhrrhhishestghhrhhomhhiuhhm
-    rdhorhhgpdhrtghpthhtohepfhhrrghntggvshgtohesugholhgtihhnihdrihhtpdhrtg
-    hpthhtoheprhgrfhgrvghlrdgsvghimhhssehtohhrrgguvgigrdgtohhmpdhrtghpthht
-    oheplhhinhhugidqfihirhgvlhgvshhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtg
-    hpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhr
-    tghpthhtohepfhhrrghntggvshgtohdrugholhgtihhnihesthhorhgruggvgidrtghomh
-X-ME-Proxy: <xmx:zX45aNOIcuwjA0HSZmTI2R_Qmg_2BKU8WX7OYXHvp2ssV5Fr966DuA>
-    <xmx:zX45aC-YeeyX9NlyNTiXI8uaFgoG7hJPK7WAi7XskzBcYhIQEPXVMg>
-    <xmx:zX45aFWiunxrQ3PvV6w6JxEZlHVEduFRS0tJEsIQeLm18E9DXPZzUA>
-    <xmx:zX45aLcNSZjqhUfxIXeho5vCclncOOdiWA0mqLkSLOT5qo3y0Og-IA>
-    <xmx:zX45aK1aqt4ZMbRo0vPkJrI7jcYta0nlEXqxAU_7nvnS93Spmf931ZxE>
-Feedback-ID: idc214666:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 30 May 2025 05:47:55 -0400 (EDT)
-From: Rafael Beims <rafael@beims.me>
-To: Brian Norris <briannorris@chromium.org>,
-	Francesco Dolcini <francesco@dolcini.it>
-Cc: Rafael Beims <rafael.beims@toradex.com>,
-	linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Francesco Dolcini <francesco.dolcini@toradex.com>
-Subject: [PATCH wireless-next v2] wifi: mwifiex: enable host mlme on sdio W8997 chipsets
-Date: Fri, 30 May 2025 06:47:04 -0300
-Message-ID: <20250530094711.915574-1-rafael@beims.me>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1748598455; c=relaxed/simple;
+	bh=UV7i5g7iDoyITDauLFhYMgYAiMZ1h9iDNM7iBFJxR3k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZW/SeqJn9YgFdFbdd1t5OKILgSSdk99/oLc/i6rd8ulSrvvsl6PAJ9uy2rugNXarojW8IdQxP0OkPwDkQLIYNtlR3zKahOsTql8EgOOcvnzLXN/nUD1aFBh8SODahOd/z4Fuf5XCVMSYaJTf06S+H7jR4QkV0p3ZrnlIyMO8A4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 86A5E16F2;
+	Fri, 30 May 2025 02:47:16 -0700 (PDT)
+Received: from [10.57.95.14] (unknown [10.57.95.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4CD193F5A1;
+	Fri, 30 May 2025 02:47:31 -0700 (PDT)
+Message-ID: <6280e181-9f05-4aa0-9fe7-23d4e86000e5@arm.com>
+Date: Fri, 30 May 2025 10:47:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: Enable vmalloc-huge with ptdump
+Content-Language: en-GB
+To: Dev Jain <dev.jain@arm.com>, catalin.marinas@arm.com, will@kernel.org
+Cc: anshuman.khandual@arm.com, quic_zhenhuah@quicinc.com,
+ kevin.brodsky@arm.com, yangyicong@hisilicon.com, joey.gouly@arm.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ david@redhat.com
+References: <20250530082021.18182-1-dev.jain@arm.com>
+ <d2b63b97-232e-4d2e-816b-71fd5b0ffcfa@arm.com>
+ <832e84a9-4303-4e21-a88b-94395898fa3e@arm.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <832e84a9-4303-4e21-a88b-94395898fa3e@arm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Rafael Beims <rafael.beims@toradex.com>
+On 30/05/2025 10:14, Dev Jain wrote:
+> 
+> On 30/05/25 2:10 pm, Ryan Roberts wrote:
+>> On 30/05/2025 09:20, Dev Jain wrote:
+>>> arm64 disables vmalloc-huge when kernel page table dumping is enabled,
+>>> because an intermediate table may be removed, potentially causing the
+>>> ptdump code to dereference an invalid address. We want to be able to
+>>> analyze block vs page mappings for kernel mappings with ptdump, so to
+>>> enable vmalloc-huge with ptdump, synchronize between page table removal in
+>>> pmd_free_pte_page()/pud_free_pmd_page() and ptdump pagetable walking. We
+>>> use mmap_read_lock and not write lock because we don't need to synchronize
+>>> between two different vm_structs; two vmalloc objects running this same
+>>> code path will point to different page tables, hence there is no race.
+> 
+> My "correction" from race->no problem was incorrect after all :) There will
+> be no race too since the vm_struct object has exclusive access to whatever
+> table it is clearing.
+> 
+>>>
+>>> Signed-off-by: Dev Jain <dev.jain@arm.com>
+>>> ---
+>>>   arch/arm64/include/asm/vmalloc.h | 6 ++----
+>>>   arch/arm64/mm/mmu.c              | 7 +++++++
+>>>   2 files changed, 9 insertions(+), 4 deletions(-)
+>>>
+>>> diff --git a/arch/arm64/include/asm/vmalloc.h b/arch/arm64/include/asm/vmalloc.h
+>>> index 38fafffe699f..28b7173d8693 100644
+>>> --- a/arch/arm64/include/asm/vmalloc.h
+>>> +++ b/arch/arm64/include/asm/vmalloc.h
+>>> @@ -12,15 +12,13 @@ static inline bool arch_vmap_pud_supported(pgprot_t prot)
+>>>       /*
+>>>        * SW table walks can't handle removal of intermediate entries.
+>>>        */
+>>> -    return pud_sect_supported() &&
+>>> -           !IS_ENABLED(CONFIG_PTDUMP_DEBUGFS);
+>>> +    return pud_sect_supported();
+>>>   }
+>>>     #define arch_vmap_pmd_supported arch_vmap_pmd_supported
+>>>   static inline bool arch_vmap_pmd_supported(pgprot_t prot)
+>>>   {
+>>> -    /* See arch_vmap_pud_supported() */
+>>> -    return !IS_ENABLED(CONFIG_PTDUMP_DEBUGFS);
+>>> +    return true;
+>>>   }
+>>>     #endif
+>>> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+>>> index ea6695d53fb9..798cebd9e147 100644
+>>> --- a/arch/arm64/mm/mmu.c
+>>> +++ b/arch/arm64/mm/mmu.c
+>>> @@ -1261,7 +1261,11 @@ int pmd_free_pte_page(pmd_t *pmdp, unsigned long addr)
+>>>       }
+>>>         table = pte_offset_kernel(pmdp, addr);
+>>> +
+>>> +    /* Synchronize against ptdump_walk_pgd() */
+>>> +    mmap_read_lock(&init_mm);
+>>>       pmd_clear(pmdp);
+>>> +    mmap_read_unlock(&init_mm);
+>> So this works because ptdump_walk_pgd() takes the write_lock (which is mutually
+>> exclusive with any read_lock holders) for the duration of the table walk, so it
+>> will either consistently see the pgtables before or after this removal. It will
+>> never disappear during the walk, correct?
+>>
+>> I guess there is a risk of this showing up as contention with other init_mm
+>> write_lock holders. But I expect that pmd_free_pte_page()/pud_free_pmd_page()
+>> are called sufficiently rarely that the risk is very small. Let's fix any perf
+>> problem if/when we see it.
+> 
+> We can avoid all of that by my initial approach - to wrap the lock around
+> CONFIG_PTDUMP_DEBUGFS.
+> I don't have a strong opinion, just putting it out there.
+> 
+>>
+>>>       __flush_tlb_kernel_pgtable(addr);
+>> And the tlbi doesn't need to be serialized because there is no security issue.
+>> The walker can be trusted to only dereference memory that it sees as it walks
+>> the pgtable (obviously).
+>>
+>>>       pte_free_kernel(NULL, table);
+>>>       return 1;
+>>> @@ -1289,7 +1293,10 @@ int pud_free_pmd_page(pud_t *pudp, unsigned long addr)
+>>>           pmd_free_pte_page(pmdp, next);
+>>>       } while (pmdp++, next += PMD_SIZE, next != end);
+>>>   +    /* Synchronize against ptdump_walk_pgd() */
+>>> +    mmap_read_lock(&init_mm);
+>>>       pud_clear(pudp);
+>>> +    mmap_read_unlock(&init_mm);
+>> Hmm, so pud_free_pmd_page() is now going to cause us to acquire and release the
+>> (upto) lock 513 times (for a 4K kernel). I wonder if there is an argument for
+>> clearing the pud first (under the lock), then the pmds can all be cleared
+>> without a lock, since the walker won't be able to see the pmds once the pud is
+>> cleared.
+> 
+> Yes, we can isolate the PMD table in case the caller of pmd_free_pte_page is
+> pud_free_pmd_page. In this case, vm_struct_1 has exclusive access to the entire
+> pmd page, hence no race will occur. But, in case of vmap_try_huge_pmd() being the
+> caller, we cannot drop the locks around pmd_free_pte_page. So we can have something
+> like
+> 
+> #ifdef CONFIG_PTDUMP_DEBUGFS
+> static inline void ptdump_synchronize_lock(bool flag)
+> {
+>     if (flag)
+>         mmap_read_lock(&init_mm);
+> }
+> 
+> and pass false when the caller is pud_free_pmd_page.
 
-Enable the host MLME flag to allow supported W8997 chipsets to
-use WPA3. This feature requires firmware support (V2 API key), which
-the driver validates before activation.
+of something like this? (completely untested):
 
-Tested using sdsd8997_combo_v4.bin from commit
-211fbc287a0b ("linux-firmware: Update FW files for MRVL SD8997 chips")
+---8<---
+diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+index 8fcf59ba39db..1f3a922167e4 100644
+--- a/arch/arm64/mm/mmu.c
++++ b/arch/arm64/mm/mmu.c
+@@ -1267,7 +1267,7 @@ int pmd_clear_huge(pmd_t *pmdp)
+        return 1;
+ }
 
-[    5.956510] mwifiex_sdio mmc2:0001:1: info: FW download over, size 623352 bytes
-...
-[    6.825456] mwifiex_sdio mmc2:0001:1: WLAN FW is active
-...
-[   12.171950] mwifiex_sdio mmc2:0001:1: host_mlme: enable, key_api: 2
-[   12.226206] mwifiex_sdio mmc2:0001:1: info: MWIFIEX VERSION: mwifiex 1.0 (16.68.1.p197)
+-int pmd_free_pte_page(pmd_t *pmdp, unsigned long addr)
++static int __pmd_free_pte_page(pmd_t *pmdp, unsigned long addr, bool lock)
+ {
+        pte_t *table;
+        pmd_t pmd;
+@@ -1280,12 +1280,23 @@ int pmd_free_pte_page(pmd_t *pmdp, unsigned long addr)
+        }
 
-root@verdin-imx8mm-14700070:~# strings /lib/firmware/mrvl/sdsd8997_combo_v4.bin |grep 16
-$Id: w8997o-V4, RF878X, FP68_LINUX, 16.68.1.p197.1 $
+        table = pte_offset_kernel(pmdp, addr);
++
++       if (lock)
++               mmap_read_lock(&init_mm);
+        pmd_clear(pmdp);
++       if (lock)
++               mmap_read_unlock(&init_mm);
++
+        __flush_tlb_kernel_pgtable(addr);
+        pte_free_kernel(NULL, table);
+        return 1;
+ }
 
-Signed-off-by: Rafael Beims <rafael.beims@toradex.com>
-Reviewed-by: Francesco Dolcini <francesco.dolcini@toradex.com>
----
-v2: improved commit message, add r-b francesco
-v1: https://lore.kernel.org/all/20250521101950.1220793-1-rafael@beims.me/
----
- drivers/net/wireless/marvell/mwifiex/sdio.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
++int pmd_free_pte_page(pmd_t *pmdp, unsigned long addr)
++{
++       return __pmd_free_pte_page(pmdp, addr, true);
++}
++
+ int pud_free_pmd_page(pud_t *pudp, unsigned long addr)
+ {
+        pmd_t *table;
+@@ -1300,15 +1311,19 @@ int pud_free_pmd_page(pud_t *pudp, unsigned long addr)
+                return 1;
+        }
 
-diff --git a/drivers/net/wireless/marvell/mwifiex/sdio.c b/drivers/net/wireless/marvell/mwifiex/sdio.c
-index c1fe48448839..f039d6f19183 100644
---- a/drivers/net/wireless/marvell/mwifiex/sdio.c
-+++ b/drivers/net/wireless/marvell/mwifiex/sdio.c
-@@ -438,7 +438,7 @@ static const struct mwifiex_sdio_device mwifiex_sdio_sd8997 = {
- 	.can_auto_tdls = false,
- 	.can_ext_scan = true,
- 	.fw_ready_extra_delay = false,
--	.host_mlme = false,
-+	.host_mlme = true,
- };
- 
- static const struct mwifiex_sdio_device mwifiex_sdio_sd8887 = {
--- 
-2.47.2
++       /* Synchronize against ptdump_walk_pgd() */
++       mmap_read_lock(&init_mm);
++       pud_clear(pudp);
++       mmap_read_unlock(&init_mm);
++
+        table = pmd_offset(pudp, addr);
+        pmdp = table;
+        next = addr;
+        end = addr + PUD_SIZE;
+        do {
+-               pmd_free_pte_page(pmdp, next);
++               __pmd_free_pte_page(pmdp, next, false);
+        } while (pmdp++, next += PMD_SIZE, next != end);
+
+-       pud_clear(pudp);
+        __flush_tlb_kernel_pgtable(addr);
+        pmd_free(NULL, table);
+        return 1;
+---8<---
+
+
+
+> 
+>>
+>> Thanks,
+>> Ryan
+>>
+>>>       __flush_tlb_kernel_pgtable(addr);
+>>>       pmd_free(NULL, table);
+>>>       return 1;
 
 
