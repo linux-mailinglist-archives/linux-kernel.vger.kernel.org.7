@@ -1,63 +1,63 @@
-Return-Path: <linux-kernel+bounces-668293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-668304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4835AC90A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 15:53:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EFA6AC90C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 15:56:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14761A4131E
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 13:52:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39446505217
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 13:55:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9B4722F76D;
-	Fri, 30 May 2025 13:51:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C76E22B8AA;
+	Fri, 30 May 2025 13:54:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KhZz1V7H"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LXjWD1rH"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1043222B8AA
-	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 13:51:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53D6C22AE7A
+	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 13:54:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748613102; cv=none; b=BL99EthdkvWZztBI5PE9zeM5WPgD7zyZRF5ehH37kA1Ollioo2f6zg52J9/d353tyNK7melcOJNXo9JGRnpH/ndPzK9CqiutNXZCr+Pmna9xe9yZX/sUbvZsIQ34yh//HL3XWTpqxRrn7k4bALd9jtnN7uHGGu8gdhtBa2f3T5Q=
+	t=1748613294; cv=none; b=CsBeIUq+GG7juyuciIXZsOlfggvosSkqwMy1PitV7ejpyUMS1cLxo9bSw5IPEBNAVBdrL1p/P4UX+fpBIg7MCg9Rh+SrNuEU/EuFoadSLwMhIJGA4JnZNV/rr+suaTLMnnchnjxpgpbMwnR9KRbDDfZGA5cP8XFdTbhlaFHhBgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748613102; c=relaxed/simple;
-	bh=pX2PTHtPzqLQ5kA1NmW2FjwzP4CXJktF96ar71uadBI=;
+	s=arc-20240116; t=1748613294; c=relaxed/simple;
+	bh=RBaCZTQdhPMgKEXPyAzhYmB8NNmpV2BzO5s7RSPQP6w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gQo0xcBVc0/g5nm8uh39Km/Tbn9DJyFiPiW32V0aBEBiyONO7C5xAj3HO6CPzykVjm6frJc5nTBgTg0y5xk7BtCqNhUcVJEq4u0y96F+CRDwBr/HjpMUtKNAK1YGJ6X/KAPhhEo4XFGboMGr6A0XHj4z4hfd42ui5faPWTWiEiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KhZz1V7H; arc=none smtp.client-ip=198.175.65.20
+	 Content-Type:Content-Disposition:In-Reply-To; b=INYeGImdmQ92r/9nuNLzZopauS49envxLa/LPXy4Ownc1DvMTv3FnFgZyQ1uWEczjFQQr/qM3RC/dWCBl2bvssx6fhOGwp49rpLuvK11z2vxUFy6c2QFE0tq0pkjPqHpwa0vPYL1Y3Y+q5Mk34555pc0f87NlpVLEtuAloHZ9q0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LXjWD1rH; arc=none smtp.client-ip=192.198.163.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1748613100; x=1780149100;
+  t=1748613293; x=1780149293;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=pX2PTHtPzqLQ5kA1NmW2FjwzP4CXJktF96ar71uadBI=;
-  b=KhZz1V7HZpT1lTWCixRKiPNu0n/2jjxfxvd26JFcyq7HSGzmk1StFJXs
-   /hrhPTxEy34Gf/7602ypcwnVt4XD1SUQjX7MOpUOVOO0+NIFHMQmywyDL
-   uxdbGKiF/NAGT3Rqi3NYSG4hUkNs2/CteQ25aIIAPgNkplgTnrmuzQ4Hz
-   K4ZrglkUxOdgY9CDPhk3rTXUTMwDjPbl7PFKEB+/DDm/HbYibjzVErF/2
-   bD/zeE45H5rYbDvItCMnfsKFXLOOH95Q17T1nB7UZGOjH+zqWhv+r+3av
-   vOEx9ptOLvdTLaSGeRhSmb2FqcSXJvuhvYoLeeZq7ABsd4cNjV/oDXYLF
-   A==;
-X-CSE-ConnectionGUID: MXk8CQboQW+uhWWQJEdihg==
-X-CSE-MsgGUID: mnbBTU04T2CcE0PhoBoMmA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11449"; a="50402009"
+  bh=RBaCZTQdhPMgKEXPyAzhYmB8NNmpV2BzO5s7RSPQP6w=;
+  b=LXjWD1rHeaUHAi3YJL+wKTgwY/gmNyEy7h3fVlmd5fKiaLhgrr0Q4hlf
+   8X0Jned2E2S4ID3HJIfmZDR5w+Q9jSJwU1iUT6sKXym6Vz/qwQ/z3Fhaw
+   ODyLyaSl/cA7NU9OZFnn17ybRLW+6/AzdMmr6LA2oDxxS/56OR+bY3pjS
+   BnlzvJU4G5v9yUIvklrSF4P+aADBT4bS5a/oehpgFD2cS4Oj2pzrq6mMm
+   q8llnHUDg2pTrvJOfDncxXfrt+sanscJVVx8SfqLEeZjuSfENcGzpG3UB
+   encNDH+vIu0LG55fc2c3okdxJFaU8GgmS9WpPZNJx2fXPnBEUYsv7avyo
+   w==;
+X-CSE-ConnectionGUID: cFJo5fsVS9uH38AOI6M8jw==
+X-CSE-MsgGUID: g+FuZty/QhW1m36521/B+w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11449"; a="62050970"
 X-IronPort-AV: E=Sophos;i="6.16,196,1744095600"; 
-   d="scan'208";a="50402009"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2025 06:51:39 -0700
-X-CSE-ConnectionGUID: ZJN+7x+rQCm/0h/vPOARow==
-X-CSE-MsgGUID: P+15Gi7KSJGyJHH3fdtplg==
+   d="scan'208";a="62050970"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2025 06:54:53 -0700
+X-CSE-ConnectionGUID: r+GLEQFPR2aQqJOf5YKfPg==
+X-CSE-MsgGUID: jWWBS004RTSMRYYJ7+KDhg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.16,196,1744095600"; 
-   d="scan'208";a="143850083"
+   d="scan'208";a="149027757"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2025 06:51:34 -0700
-Date: Fri, 30 May 2025 16:51:30 +0300
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2025 06:54:47 -0700
+Date: Fri, 30 May 2025 16:54:44 +0300
 From: Raag Jadav <raag.jadav@intel.com>
 To: Alexander Usyskin <alexander.usyskin@intel.com>
 Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
@@ -77,13 +77,11 @@ Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
 	Reuven Abliyev <reuven.abliyev@intel.com>,
 	Oren Weil <oren.jer.weil@intel.com>, linux-mtd@lists.infradead.org,
 	intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	Tomas Winkler <tomasw@gmail.com>,
-	Vitaly Lubart <lubvital@gmail.com>
-Subject: Re: [PATCH v11 04/10] mtd: intel-dg: register with mtd
-Message-ID: <aDm34rQxtYhvt6fc@black.fi.intel.com>
+	intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v11 05/10] mtd: intel-dg: align 64bit read and write
+Message-ID: <aDm4pAqHUhI-kY2i@black.fi.intel.com>
 References: <20250528135115.2512429-1-alexander.usyskin@intel.com>
- <20250528135115.2512429-5-alexander.usyskin@intel.com>
+ <20250528135115.2512429-6-alexander.usyskin@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,21 +90,13 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250528135115.2512429-5-alexander.usyskin@intel.com>
+In-Reply-To: <20250528135115.2512429-6-alexander.usyskin@intel.com>
 
-On Wed, May 28, 2025 at 04:51:09PM +0300, Alexander Usyskin wrote:
-> Register the on-die nvm device with the mtd subsystem.
-> Refcount nvm object on _get and _put mtd callbacks.
-> For erase operation address and size should be 4K aligned.
-> For write operation address and size has to be 4bytes aligned.
+On Wed, May 28, 2025 at 04:51:10PM +0300, Alexander Usyskin wrote:
+> GSC NVM controller HW errors on quad access overlapping 1K border.
+> Align 64bit read and write to avoid readq/writeq over 1K border.
 > 
-> CC: Rodrigo Vivi <rodrigo.vivi@intel.com>
-> CC: Lucas De Marchi <lucas.demarchi@intel.com>
 > Acked-by: Miquel Raynal <miquel.raynal@bootlin.com>
-> Co-developed-by: Tomas Winkler <tomasw@gmail.com>
-> Signed-off-by: Tomas Winkler <tomasw@gmail.com>
-> Co-developed-by: Vitaly Lubart <lubvital@gmail.com>
-> Signed-off-by: Vitaly Lubart <lubvital@gmail.com>
 > Signed-off-by: Alexander Usyskin <alexander.usyskin@intel.com>
 
 Reviewed-by: Raag Jadav <raag.jadav@intel.com>
