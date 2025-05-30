@@ -1,168 +1,186 @@
-Return-Path: <linux-kernel+bounces-667854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-667864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3423AC8AB5
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 11:28:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74B22AC8ACD
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 11:30:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 954424E37F4
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 09:28:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 653957A7124
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 09:29:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE71B21D5AF;
-	Fri, 30 May 2025 09:28:27 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 301DC22A7E6;
+	Fri, 30 May 2025 09:29:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="gRDjdDlg"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ADBA21C9F8
-	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 09:28:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0434227E8F;
+	Fri, 30 May 2025 09:29:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748597307; cv=none; b=hoSOLYRidOwTQUCyChN5y48O6WTJ1z/qdKM441NyPldxUKU9b5rPi6Q+vgU+daIXBCh5YW5wE91rQUXnRFyQRVsLMd+H2Flyi4zoUVMJDGuiV/AgZvc7N6h4+wnYWeXd4fqsPCQEww7R+QdBq11XvKOGKOSZgq7vhMo1hxXPomk=
+	t=1748597354; cv=none; b=Ul3X2DFWF9+3MT1rGAJ+M0GEPy13ALECoBvwNscrJfx0J8LmOZ3wlwvwMsWLtn4uoMSVqxB5Y9H4B/JaC9K9QQEYMsYoWmIUa+JWIDQ/mm+CPFmd042uRdzKOZaU1kxhuvK8ey85x4u/rndARzmkb8mHox0nWMuNAPpJkfMCJTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748597307; c=relaxed/simple;
-	bh=uT25BXC8aiIN2if1X7W5ufA0j1GYNkBxlIjE05cNxLM=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=nzIxm6a7gE12MUUTyqhgyh/MWHiRw4AwFw+HWFcOUPPeaMDrTB7LSQlLyFWqZTfPYbPJ4sWPRKPJmczceHlXLZ8m6b0dfInpbGmR0K3glsaGkFyYA79NWJOrM8FWjCWnRBamLkBAZ43jthCP4H+kFrW1UshgYkef3O9F39wSomM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3db9a090c15so22226525ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 02:28:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748597304; x=1749202104;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=tmZLF+sbgUSSdhYb3r1jseS5cZOLcM/dMLZzx55rrmo=;
-        b=cuoXUivNACTzh7xrZYRueerQYh431BdAvxp1q2GV8ajqNKeV3rcrEXiHFaSyZmXw7y
-         zQw4cHm/JMgqgI6WUQG8butc6lQkHQmpe79oxv1o/9fzj8XB5lh4GXfhtVHo3UJmq3KH
-         ei1ZzGhAUvOX/C22vSzKFqUrwzZlMDOCaKSMggCq6T5G98ibe4k6qwbaBN/mkYZQ9wVI
-         cZsz6XCtLn25h+dElm1A7uUorXo1OgRo1K/LmXGDy3kTwelo4ktrJlXc3hj5oPuNKtWY
-         z0JLbwshC7o3G9Y8v2D0Z2vnN6hQipTDFIhvUkgsS7rm4dLX7RjOAF27tTvi79PdEPyN
-         dQdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUuaYtId/w/0ItPNO8ncfBSo7NPIC8l3IE9QE9TRQmoG+ZwAR/TMbCgTPs0LsKiO9uHmw1CjgRURx8zXU8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwE7/vhMPf++mNRgx1xad2bKItRxbXRFyssbsSjAyJkWt0akXph
-	H4sX0RPYVmrId+cMUzHmqHkWBqd5G0u+zI3Yp5z0V4mGw/lR9egyW5EPeI2ss+NnmY9aaDTBSxt
-	KJnO2g/WuWIOV0xCaF3lJVjGqNUhLkHLCmrj4M1sCyeiL3MBz3zgLQYLI4f4=
-X-Google-Smtp-Source: AGHT+IFgBAWP9tjCTLpYZOQkDZy1UGz7BNuGsiaWqONI2VPxMt8mjJCFr0fI/7GfmufaiXEoVClOTmhVCDBYeTCuwC2tjqhaawVm
+	s=arc-20240116; t=1748597354; c=relaxed/simple;
+	bh=ZEybsHDXyPCaqq5mNJW+mpZvnSf4f7JjB5O+755MU3k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=X691093w6eExPcHX2ZQDig66/ZysXyTfgwUhu8kdEDhAE3LxL5MEm5gGkwyxrcPQV+WnDokfooJJL+Kw40jSd8CtAZ4amzzA9+uVJj6H9I3lIvNrY8ru742A/hAGdgWTBp2RIVm9RiwPCUgs4YnoMMjfKA2zQHE/HNqNVU2IjoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=gRDjdDlg; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54U0T53G008030;
+	Fri, 30 May 2025 09:28:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=tzmvSRrblqgZgKJaCs+zrv
+	qpz5Rlg71VuyXyzdUPXeM=; b=gRDjdDlgopV3yajHmhLV/TvaqgRArmvhCFeiIG
+	xhfQg3TSpo34Tc4I7EK3s+84a/PcKpnAKXIcLH0rrMYTvGVOIA8mQ3nOz31zoatv
+	nPy68UGt//IYiktcVo6XvmDuL6sM7dl2kXixPRyFxXJVR6EicM7tnM1f+vsnX95o
+	W+4HNI7cjvMVBOLfmYzZdw+CgCs4eVuOZV8S91nbK5uphQdlwkN4iQ2n22dzf1RK
+	8XnpzE8L+FBZw0K6D9Ivyq4AEScQGtvtKi8gGHGnOLs8WvS8hDc6lx9WCIawvK5n
+	BUqMkIZuY+HaHS4a9qEZ73qZB0Mwm0ajeRag1dC81sBAY+Mw==
+Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46whuf8x28-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 30 May 2025 09:28:57 +0000 (GMT)
+Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 54U9Sq8u008752;
+	Fri, 30 May 2025 09:28:52 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 46u76my9gn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 30 May 2025 09:28:52 +0000
+Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 54U9Sqf8008720;
+	Fri, 30 May 2025 09:28:52 GMT
+Received: from hu-devc-hyd-u22-c.qualcomm.com (hu-wasimn-hyd.qualcomm.com [10.147.246.180])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 54U9SqqA008719
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 30 May 2025 09:28:52 +0000
+Received: by hu-devc-hyd-u22-c.qualcomm.com (Postfix, from userid 3944840)
+	id 27DF259B; Fri, 30 May 2025 14:58:51 +0530 (+0530)
+From: Wasim Nazir <quic_wasimn@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel@quicinc.com,
+        kernel@oss.qualcomm.com, Wasim Nazir <quic_wasimn@quicinc.com>
+Subject: [PATCH v9 0/4] qcom: Add support for IQ-9075-evk board
+Date: Fri, 30 May 2025 14:58:43 +0530
+Message-ID: <20250530092850.631831-1-quic_wasimn@quicinc.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a21:b0:3dd:892d:b25e with SMTP id
- e9e14a558f8ab-3dd9cbf6c36mr12434255ab.22.1748597304567; Fri, 30 May 2025
- 02:28:24 -0700 (PDT)
-Date: Fri, 30 May 2025 02:28:24 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68397a38.a00a0220.d8eae.0005.GAE@google.com>
-Subject: [syzbot] [ext4?] WARNING in jbd2_journal_dirty_metadata (2)
-From: syzbot <syzbot+f71f98e4cf272ac05861@syzkaller.appspotmail.com>
-To: jack@suse.com, linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, tytso@mit.edu
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=OslPyz/t c=1 sm=1 tr=0 ts=68397a59 cx=c_pps
+ a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
+ a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8
+ a=u6Jdqvu1gAsBJA_3vmsA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: bCPyZCNHn_0psLFWJTWRehzF6fSOhSb1
+X-Proofpoint-GUID: bCPyZCNHn_0psLFWJTWRehzF6fSOhSb1
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTMwMDA4MSBTYWx0ZWRfX87BzHTAyUUvr
+ KevXIY5/L7DHZolCNjsZ3qC3XXmBIWOkVuGGYxaZ/pV4w/UxQNtKzHx4Qywc810h7iE814COeUy
+ gqYkZhsxWiZspIO6w7FFT69DogvnVURVxGiJF6ilB2m0hQ8QxoMHO7wl0k8f7C5ESK+ZuwHbFjL
+ 74A9ToIgUSF+32GeRiV31Vsvgf3Ncs9snqpjz7UbA1j1UrOLmnhScwCQeZp7vOr2merdUXicucL
+ PW8JubjEjCUN48fjvaKIH/SU2W9PcvfZeoRZzOZe1rgXyx4ArnmRINFs/U1w3x85Y4S5hv39ejz
+ zRYN9VJ3AFY8QhVy51Zds9Dz4gJQqFueT1DBGVowq72k8FSW2Bv2UV5MKVoQm/i4d73VXdHUOgP
+ +LFiVaW6D4aLIrMmv+vyJy9BavlOkPElol07yPnxonBTKCem0d1Gg5jfAUPHO/p9vgIeXXOZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-30_04,2025-05-29_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 phishscore=0 mlxlogscore=999 adultscore=0 malwarescore=0
+ bulkscore=0 priorityscore=1501 clxscore=1015 mlxscore=0 lowpriorityscore=0
+ spamscore=0 suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505160000
+ definitions=main-2505300081
 
-Hello,
+This series:
 
-syzbot found the following issue on:
+Add support for Qualcomm's iq9-evk board using QCS9075 SOC.
 
-HEAD commit:    c89756bcf406 Merge tag 'pm-6.16-rc1' of git://git.kernel.o..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=174dabf4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ded97a85afe9a6c8
-dashboard link: https://syzkaller.appspot.com/bug?extid=f71f98e4cf272ac05861
-compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
+QCS9075 is compatible IoT-industrial grade variant of SA8775p SOC.
+Unlike QCS9100, it doesn't have safety monitoring feature of
+Safety-Island(SAIL) subsystem, which affects thermal management.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+In QCS9100 SOC, the safety subsystem monitors all thermal sensors and
+does corrective action for each subsystem based on sensor violation
+to comply safety standards. But as QCS9075 is non-safe SOC it requires
+conventional thermal mitigation for thermal management.
+In this series thermal mitigation changes are not included as it needs
+more discussion whether to include the change in DT or in drivers.
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-c89756bc.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/b21d74e73303/vmlinux-c89756bc.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/b778ededeb75/bzImage-c89756bc.xz
+Below are detailed informations on IQ-9075-evk HW:
+------------------------------------------------------
+QCS9075 SOM is stacked on top of IQ-9075-evk board.
+On top of IQ-9075-evk board additional mezzanine boards can be stacked
+in future.
+IQ-9075-evk is single board supporting these peripherals:
+  - Storage: 2 × 128 GB UFS, micro-SD card, EEPROMs for MACs,
+    eMMC on mezzanine card
+  - Audio/Video, Camera & Display ports
+  - Connectivity: RJ45 2.5GbE, WLAN/Bluetooth, CAN/CAN-FD
+  - Sensors: IMU
+  - PCIe ports
+  - USB & UART ports
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+f71f98e4cf272ac05861@syzkaller.appspotmail.com
-
-loop0: detected capacity change from 0 to 32768
-=======================================================
-WARNING: The mand mount option has been deprecated and
-         and is ignored by this kernel. Remove the mand
-         option from the mount to silence this warning.
-=======================================================
-ocfs2: Mounting device (7,0) on (node local, slot 0) with writeback data mode.
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 5317 at fs/jbd2/transaction.c:1552 jbd2_journal_dirty_metadata+0x978/0xcd0 fs/jbd2/transaction.c:1552
-Modules linked in:
-CPU: 0 UID: 0 PID: 5317 Comm: syz.0.0 Not tainted 6.15.0-syzkaller-03478-gc89756bcf406 #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:jbd2_journal_dirty_metadata+0x978/0xcd0 fs/jbd2/transaction.c:1552
-Code: 24 41 89 e8 4d 89 f9 50 41 56 41 55 53 e8 a0 f2 a0 fe 48 83 c4 20 90 0f 0b 90 bb ea ff ff ff e9 09 fe ff ff e8 a9 57 39 ff 90 <0f> 0b 90 bb e4 ff ff ff e9 f6 fd ff ff 48 8b 44 24 28 48 83 c0 18
-RSP: 0018:ffffc9000d4ce938 EFLAGS: 00010283
-RAX: ffffffff82869aa7 RBX: 0000000000000000 RCX: 0000000000100000
-RDX: ffffc9000de7a000 RSI: 0000000000092c37 RDI: 0000000000092c38
-RBP: ffff888052d6b750 R08: 0000000000000003 R09: 0000000000000004
-R10: dffffc0000000000 R11: fffff52001a99d18 R12: 1ffff1100a59d7cf
-R13: dffffc0000000000 R14: 1ffff1100a5ad6e9 R15: 1ffff1100a59d7cc
-FS:  00007f2f05ca06c0(0000) GS:ffff88808d28f000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055c7145f1168 CR3: 000000003f33b000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- ocfs2_journal_dirty+0x149/0x740 fs/ocfs2/journal.c:834
- ocfs2_split_refcount_rec+0xb46/0x12a0 fs/ocfs2/refcounttree.c:1965
- ocfs2_decrease_refcount_rec fs/ocfs2/refcounttree.c:2190 [inline]
- __ocfs2_decrease_refcount+0x551/0x1780 fs/ocfs2/refcounttree.c:2249
- ocfs2_make_clusters_writable fs/ocfs2/refcounttree.c:3262 [inline]
- ocfs2_replace_cow+0xd5a/0x1b90 fs/ocfs2/refcounttree.c:3346
- ocfs2_refcount_cow_hunk fs/ocfs2/refcounttree.c:3424 [inline]
- ocfs2_refcount_cow+0x779/0xc90 fs/ocfs2/refcounttree.c:3467
- ocfs2_prepare_inode_for_write fs/ocfs2/file.c:2340 [inline]
- ocfs2_file_write_iter+0xe28/0x1d10 fs/ocfs2/file.c:2451
- iter_file_splice_write+0x93a/0x1000 fs/splice.c:738
- do_splice_from fs/splice.c:935 [inline]
- direct_splice_actor+0x101/0x160 fs/splice.c:1158
- splice_direct_to_actor+0x5a5/0xcc0 fs/splice.c:1102
- do_splice_direct_actor fs/splice.c:1201 [inline]
- do_splice_direct+0x181/0x270 fs/splice.c:1227
- do_sendfile+0x4da/0x7e0 fs/read_write.c:1370
- __do_sys_sendfile64 fs/read_write.c:1431 [inline]
- __se_sys_sendfile64+0x13e/0x190 fs/read_write.c:1417
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f2f04d8e969
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f2f05ca0038 EFLAGS: 00000246 ORIG_RAX: 0000000000000028
-RAX: ffffffffffffffda RBX: 00007f2f04fb5fa0 RCX: 00007f2f04d8e969
-RDX: 0000000000000000 RSI: 0000000000000007 RDI: 0000000000000007
-RBP: 00007f2f04e10ab1 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000800000009 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f2f04fb5fa0 R15: 00007fff8a1ca8d8
- </TASK>
-
+Currently basic features are enabled to support 'boot to shell'.
 
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Changelog:
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+v9:
+  - Retain earlier tags from Rob Herring [1] & Krzysztof Kozlowski [2]
+  - v8-link: [3]
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+v8:
+  - Squash UFS support [4] into initial board support patch.
+  - Remove uart10 pinctrl settings from board, it is moved to sa8775p.dtsi.
+  - Arrange ufs nodes in alphabetical order.
+  - v7-link: [5]
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+[1] https://lore.kernel.org/all/173142574295.951085.7523517676553074543.robh@kernel.org/
+[2] https://lore.kernel.org/all/20250430-enlightened-enchanted-jellyfish-7049d0@kuoka/
+[3] https://lore.kernel.org/all/20250528122753.3623570-1-quic_wasimn@quicinc.com/
+[4] https://lore.kernel.org/all/20250513084309.10275-1-quic_sayalil@quicinc.com/
+[5] https://lore.kernel.org/all/20250521140807.3837019-1-quic_wasimn@quicinc.com/
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
 
-If you want to undo deduplication, reply with:
-#syz undup
+Pratyush Brahma (1):
+  arm64: dts: qcom: iq9: Introduce new memory map for qcs9100/qcs9075
+
+Wasim Nazir (3):
+  dt-bindings: arm: qcom: Add bindings for QCS9075 SOC based board
+  arm64: dts: qcom: qcs9075: Introduce QCS9075 SOM
+  arm64: dts: qcom: Add support for qcs9075 IQ-9075-EVK
+
+ .../devicetree/bindings/arm/qcom.yaml         |   7 +
+ arch/arm64/boot/dts/qcom/Makefile             |   1 +
+ .../boot/dts/qcom/iq9-reserved-memory.dtsi    | 113 +++++++
+ .../boot/dts/qcom/qcs9075-iq-9075-evk.dts     | 289 ++++++++++++++++++
+ arch/arm64/boot/dts/qcom/qcs9075-som.dtsi     |  10 +
+ 5 files changed, 420 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/qcom/iq9-reserved-memory.dtsi
+ create mode 100644 arch/arm64/boot/dts/qcom/qcs9075-iq-9075-evk.dts
+ create mode 100644 arch/arm64/boot/dts/qcom/qcs9075-som.dtsi
+
+
+base-commit: 3be1a7a31fbda82f3604b6c31e4f390110de1b46
+--
+2.49.0
+
 
