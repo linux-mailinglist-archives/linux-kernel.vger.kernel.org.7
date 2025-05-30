@@ -1,292 +1,176 @@
-Return-Path: <linux-kernel+bounces-667924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-667928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86676AC8B79
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 11:52:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 431D0AC8B86
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 11:57:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAF393B1B59
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 09:51:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62AC61BC0201
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 09:57:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB5B1202F67;
-	Fri, 30 May 2025 09:52:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06A68221578;
+	Fri, 30 May 2025 09:57:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OZR0fvwE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="OByU6NX2"
+Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE56621C182;
-	Fri, 30 May 2025 09:52:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2644221277;
+	Fri, 30 May 2025 09:57:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748598724; cv=none; b=WMyfGYdZVCBhZ5vFljihthcHWG/azDn09VtY3TIBEU/RBoap1Fv8vNs4H56cgrf9vfNjyoVXCvfqORWikJxQiVsKd7gGCEdfHbMTrp5UhocP1cbs8Y666O4lbpefpdlGs1D0e7HHnAI6cjlI/m48y2ZpqzHZSrVRFG+pfK1k4Hk=
+	t=1748599049; cv=none; b=ND6AiQM7qAIY/JDbUneBA7JbJLPT5kKjOPbKyp9RyOYkmQhckJoqA7PYWCdEUbe82uF96PSizTwHOERtFJQ+XgBOLEWMws3FGTFZm+69knZJFbps/RF7dh94Za+cMRfMBM2k5ebX1AMxlt24+xUAmeJ3D/aihZLCrQ9DlbPE63E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748598724; c=relaxed/simple;
-	bh=XegyYKVR+9tGAhONqolJOM9plmL4iXP2Db2nVgyv+Bw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ntdFyk699v/qiBQOCgjYFOVIGvwToVv+ktTjAFnjjmEolNIrW3Xz+KOXF6hPTvLiogoFVl9RSH+fGiiy0ZQsS7lmBWUJeqfymlwjJDWgA9RUShE5AQufhOwabSlULc+8zyZQU9GXdpSqOe3MYvE4bmvI8mmyz0mkdMhF3fTmd3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OZR0fvwE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 053FFC4CEE9;
-	Fri, 30 May 2025 09:52:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748598723;
-	bh=XegyYKVR+9tGAhONqolJOM9plmL4iXP2Db2nVgyv+Bw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OZR0fvwErBs+oQNyzFG/FLo7Y5vREPQWeKiODxE/a5DByWC34rvC7ZVgpwCZnyhk5
-	 KBF/KEHNbfAU8vpcaEp3eKz2GggCVVjMekEA+9YA1o7TsAXqWJFTH1MjQB7fQ+uG7x
-	 hlumhFuSiN4U94XZTyvwPgGcCpdnz6X1tHmoC5gAPaYQNjgqj8ZlyKBf6vsL8jlTvj
-	 0+Dsn/cZLXijWgpltKR6AL0halK120tEqtsMkx7yF9BbjezkfWhVV1loscv0HXb4Hh
-	 angSGd6VMRCnOv6AWhfPfjhRfK5icY4ElkwjcalpjNdyhobkOhp1yCqcr77j2vN2Q8
-	 59+TX99CyQpJQ==
-Date: Fri, 30 May 2025 11:51:58 +0200
-From: Alejandro Colomar <alx@kernel.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, linux-man@vger.kernel.org, 
-	=?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>, Darren Hart <dvhart@infradead.org>, 
-	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>, 
-	Juri Lelli <juri.lelli@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Valentin Schneider <vschneid@redhat.com>, 
-	Waiman Long <longman@redhat.com>
-Subject: Re: [[PATCH v3] 1/4] man/man2/prctl.2,
- man/man2const/PR_FUTEX_HASH.2const: Document PR_FUTEX_HASH
-Message-ID: <fs57mucg3z5ay5ga7gqr6kdhlddydtmspwfkbm3rjtpjp57b6y@opvhf34v5xq4>
-References: <20250526155523.1382465-1-bigeasy@linutronix.de>
- <20250526155523.1382465-2-bigeasy@linutronix.de>
+	s=arc-20240116; t=1748599049; c=relaxed/simple;
+	bh=6rhTEcOtfuAIsXv/LIanH1QuJFYzArBu/CVVOX98c9g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Yf97eXF8h3ApRPjieC7M7G1O5FP0SXWoaRi2JOFETsSxIfbMXaH2N+nG1Oqawlb14arV2vmHdon3NueyZJXEImPPE5Pyhd6WRkBeUUnJjQeu69ffwWT6txm+69atjqbhBOKNxZKtNlcw/FghlTYWbhupBE1NsBMxlSw2BmN9fdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=OByU6NX2; arc=none smtp.client-ip=115.124.30.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1748599043; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=Ybwvx1QHJx3D3UtDCyVd1Dkp/fMn1/UpuqWpEwFvHXQ=;
+	b=OByU6NX2ZgQCv9oEn3D7hDaeYGJXM+VnZEiFhh2Kh4gHNrvylMEUyypMFEeFX42VS7jwzwhOVi1vcW6MHIdxrZ8n+BS/ju/HOqg1LC8PddV23K6EnpgvSgsjd5WjUM9foNzxB2QSnTZ05+u/qDBKJ9dR6DCz0Fb/e9SCp8r+SG4=
+Received: from 30.74.144.115(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WcL4CT5_1748598724 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 30 May 2025 17:52:05 +0800
+Message-ID: <19faab84-dd8e-4dfd-bf91-80bcb4a34fe8@linux.alibaba.com>
+Date: Fri, 30 May 2025 17:52:03 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="m6ivffr4o7phbinl"
-Content-Disposition: inline
-In-Reply-To: <20250526155523.1382465-2-bigeasy@linutronix.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] fix MADV_COLLAPSE issue if THP settings are disabled
+To: David Hildenbrand <david@redhat.com>, Ryan Roberts
+ <ryan.roberts@arm.com>, akpm@linux-foundation.org, hughd@google.com
+Cc: lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, npache@redhat.com,
+ dev.jain@arm.com, ziy@nvidia.com, linux-mm@kvack.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1748506520.git.baolin.wang@linux.alibaba.com>
+ <05d60e72-3113-41f0-b81f-225397f06c81@arm.com>
+ <f3dad5b5-143d-4896-b315-38e1d7bb1248@redhat.com>
+ <9b1bac6c-fd9f-4dc1-8c94-c4da0cbb9e7f@arm.com>
+ <abe284a4-db5c-4a5f-b2fd-e28e1ab93ed1@redhat.com>
+ <6caefe0b-c909-4692-a006-7f8b9c0299a6@redhat.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <6caefe0b-c909-4692-a006-7f8b9c0299a6@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
---m6ivffr4o7phbinl
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, linux-man@vger.kernel.org, 
-	=?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>, Darren Hart <dvhart@infradead.org>, 
-	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>, 
-	Juri Lelli <juri.lelli@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Valentin Schneider <vschneid@redhat.com>, 
-	Waiman Long <longman@redhat.com>
-Subject: Re: [[PATCH v3] 1/4] man/man2/prctl.2,
- man/man2const/PR_FUTEX_HASH.2const: Document PR_FUTEX_HASH
-References: <20250526155523.1382465-1-bigeasy@linutronix.de>
- <20250526155523.1382465-2-bigeasy@linutronix.de>
-MIME-Version: 1.0
-In-Reply-To: <20250526155523.1382465-2-bigeasy@linutronix.de>
 
-Hi Sebastian,
+On 2025/5/30 17:16, David Hildenbrand wrote:
+> On 30.05.25 11:10, David Hildenbrand wrote:
+>> On 30.05.25 10:59, Ryan Roberts wrote:
+>>> On 30/05/2025 09:44, David Hildenbrand wrote:
+>>>> On 30.05.25 10:04, Ryan Roberts wrote:
+>>>>> On 29/05/2025 09:23, Baolin Wang wrote:
+>>>>>> As we discussed in the previous thread [1], the MADV_COLLAPSE will 
+>>>>>> ignore
+>>>>>> the system-wide anon/shmem THP sysfs settings, which means that 
+>>>>>> even though
+>>>>>> we have disabled the anon/shmem THP configuration, MADV_COLLAPSE 
+>>>>>> will still
+>>>>>> attempt to collapse into a anon/shmem THP. This violates the rule 
+>>>>>> we have
+>>>>>> agreed upon: never means never. This patch set will address this 
+>>>>>> issue.
+>>>>>
+>>>>> This is a drive-by comment from me without having the previous 
+>>>>> context, but...
+>>>>>
+>>>>> Surely MADV_COLLAPSE *should* ignore the THP sysfs settings? It's a 
+>>>>> deliberate
+>>>>> user-initiated, synchonous request to use huge pages for a range of 
+>>>>> memory.
+>>>>> There is nothing *transparent* about it, it just happens to be 
+>>>>> implemented using
+>>>>> the same logic that THP uses.
+>>>>>
+>>>>> I always thought this was a deliberate design decision.
+>>>>
+>>>> If the admin said "never", then why should a user be able to 
+>>>> overwrite that?
+>>>
+>>> Well my interpretation would be that the admin is saying never 
+>>> *transparently*
+>>> give anyone any hugepages; on balance it does more harm than good for my
+>>> workloads. The toggle is called transparent_hugepage/enabled, after all.
+>>
+>> I'd say it's "enabling transparent huge pages" not "transparently
+>> enabling huge pages". After all, these things are ... transparent huge
+>> pages.
+>>
+>> But yeah, it's confusing.
+>>
+>>>
+>>> Whereas MADV_COLLAPSE is deliberately applied to a specific region at an
+>>> opportune moment in time, presumably because the user knows that the 
+>>> region
+>>> *will* benefit and because that point in the execution is not 
+>>> sensitive to latency.
+>>
+>> Not sure if MADV_HUGEPAGE is really *that* different.
+>>
+>>>
+>>> I see them as logically separate.
+>>>
+>>>>
+>>>> The design decision I recall is that if VM_NOHUGEPAGE is set, we'll 
+>>>> ignore that.
+>>>> Because that was set by the app itself (MADV_NOHUEPAGE).
 
-On Mon, May 26, 2025 at 05:55:20PM +0200, Sebastian Andrzej Siewior wrote:
-> The prctl(PR_FUTEX_HASH) is queued for the v6.16 merge window.
-> Add some documentation of the interface.
->=20
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> ---
->  man/man2/prctl.2                   |  3 +
->  man/man2const/PR_FUTEX_HASH.2const | 92 ++++++++++++++++++++++++++++++
->  2 files changed, 95 insertions(+)
->  create mode 100644 man/man2const/PR_FUTEX_HASH.2const
->=20
-> diff --git a/man/man2/prctl.2 b/man/man2/prctl.2
-> index cb5e75bf79ab2..ddfd1d1f5b940 100644
-> --- a/man/man2/prctl.2
-> +++ b/man/man2/prctl.2
-> @@ -150,6 +150,8 @@ with a significance depending on the first one.
->  .B PR_GET_MDWE
->  .TQ
->  .B PR_RISCV_SET_ICACHE_FLUSH_CTX
-> +.TQ
-> +.B PR_FUTEX_HASH
->  .SH RETURN VALUE
->  On success,
->  a nonnegative value is returned.
-> @@ -262,4 +264,5 @@ so these operations should be used with care.
->  .BR PR_SET_MDWE (2const),
->  .BR PR_GET_MDWE (2const),
->  .BR PR_RISCV_SET_ICACHE_FLUSH_CTX (2const),
-> +.BR PR_FUTEX_HASH (2const),
->  .BR core (5)
-> diff --git a/man/man2const/PR_FUTEX_HASH.2const b/man/man2const/PR_FUTEX_=
-HASH.2const
-> new file mode 100644
-> index 0000000000000..c27adcb73d079
-> --- /dev/null
-> +++ b/man/man2const/PR_FUTEX_HASH.2const
-> @@ -0,0 +1,92 @@
-> +.\" Copyright, the authors of the Linux man-pages project
-> +.\"
-> +.\" SPDX-License-Identifier: Linux-man-pages-copyleft
-> +.\"
-> +.TH PR_FUTEX_HASH 2const (date) "Linux man-pages (unreleased)"
-> +.SH NAME
-> +PR_FUTEX_HASH
-> +\-
-> +configure the private futex hash
-> +.SH LIBRARY
-> +Standard C library
-> +.RI ( libc ,\~ \-lc )
-> +.SH SYNOPSIS
-> +.nf
-> +.BR "#include <linux/prctl.h>" "  /* Definition of " PR_* " constants */"
-> +.B #include <sys/prctl.h>
-> +.P
-> +.BI "int prctl(PR_FUTEX_HASH, unsigned long " op ", ...);"
-> +.fi
-> +.SH DESCRIPTION
-> +Configure the attributes for the underlying hash used by the
-> +.BR futex (2)
-> +family of operations.
-> +The Linux kernel uses a hash to distribute the unrelated
-> +.BR futex (2)
-> +requests to different data structures
-> +in order to reduce the lock contention.
-> +Unrelated requests are requests which are not related to one another
-> +because they use a different
-> +.I uaddr
-> +value of the syscall or the requests are issued by different processes
+IIUC, MADV_COLLAPSE does not ignore the VM_NOHUGEPAGE setting, if we set 
+VM_NOHUGEPAGE, then MADV_COLLAPSE will not be allowed to collapse a THP. 
+See:
+__thp_vma_allowable_orders() ---> vma_thp_disabled()
 
-I think 'use a different uaddr value of the syscall' is technically
-incorrect, because two processes may have a different address for the
-same futex word, as their address space is different, right?
+>>> Hmm, ok. My instinct would have been the opposite; MADV_NOHUGEPAGE 
+>>> means "I
+>>> don't want the risk of latency spikes and memory bloat that THP can 
+>>> cause". Not
+>>> "ignore my explicit requests to MADV_COLLAPSE".
+>>>
+>>> But if that descision was already taken and that's the current 
+>>> behavior then I
+>>> agree we have an inconsistency with respect to the sysfs control.
+>>>
+>>> Perhaps we should be guided by real world usage - AIUI there is a 
+>>> cloud that
+>>> disables THP at system level today (Google?).
+>> The use case I am aware of for disabling it for debugging purposes.
+>> Saved us quite some headake in the past at customer sites for
+>> troubleshooting + workarounds ...
+>>
+>>
+>> Let's take a look at the man page:
+>>
+>> MADV_COLLAPSE is  independent  of  any  sysfs  (see  sysfs(5))  setting
+>> under  /sys/kernel/mm/transparent_hugepage, both in terms of determining
+>> THP eligibility, and allocation semantics.
+>>
+>> I recall we discussed that it should ignore the 
+>> max_ptes_none/swap/shared.
+>>
+>> But "any" setting would include "enable" ...
+> 
+> It kind-of contradicts the linked 
+> Documentation/admin-guide/mm/transhuge.rst, where we have this 
+> *beautiful* comment
+> 
+> "Transparent Hugepage Support for anonymous memory can be entirely 
+> disable (mostly for debugging purposes".
+> 
+> I mean, "entirely" is also pretty clear to me.
 
-See futex(2):
-
-$ MANWIDTH=3D72 man futex | grep -B7 -A5 different.v
-
-     A futex is a 32=E2=80=90bit value=E2=80=94=E2=80=94referred to below  =
-as  a  futex  word=E2=80=94=E2=80=94
-     whose  address  is  supplied to the futex() system call.  (Futexes
-     are 32 bits in size on all platforms, including  64=E2=80=90bit  syste=
-ms.)
-     All  futex  operations  are  governed  by this value.  In order to
-     share a futex between processes, the futex is placed in  a  region
-     of shared memory, created using (for example) mmap(2) or shmat(2).
-     (Thus, the futex word may have different virtual addresses in dif=E2=
-=80=90
-     ferent  processes, but these addresses all refer to the same loca=E2=
-=80=90
-     tion in physical memory.)  In a multithreaded program, it is  suf=E2=
-=80=90
-     ficient to place the futex word in a global variable shared by all
-     threads.
-
-Maybe say 'use a different futex word'?
-
-> +and the
-> +.B FUTEX_PRIVATE_FLAG
-> +option is set.
-
-By referring to a different futex word, this is already implied, so we
-can drop it.
-
-> +The data structure holds the in-kernel representation of the operation a=
-nd
-> +keeps track of the current users which are enqueued and wait for a wake =
-up.
-> +It also provides synchronisation of waiters against wakers.
-> +The size of the global hash is determined at boot time
-> +and is based on the number of CPUs in the system.
-> +Due to hash collision two unrelated
-
-s/ two/, two/
-
-> +.BR futex (2)
-> +requests can share the same hash bucket.
-> +This in turn can lead to delays of the
-> +.BR futex (2)
-> +operation due to lock contention while accessing the data structure.
-> +These delays can be problematic on a real-time system
-> +since random processes can
-> +share in-kernel locks
-> +and it is not deterministic which process will be involved.
-> +.P
-> +Linux 6.16 implements a process-wide private hash which is used by all
-> +.BR futex (2)
-> +operations that specify the
-> +.B FUTEX_PRIVATE_FLAG
-> +option as part of the operation.
-> +Without any configuration
-> +the kernel will allocate 16 hash slots
-> +once the first thread has been created.
-> +If the process continues to create threads,
-> +the kernel will try to resize the private hash based on the number of th=
-reads
-> +and available CPUs in the system.
-> +The kernel will only increase the size and will make sure it does not ex=
-ceed
-> +the size of the global hash.
-> +.P
-> +The user can configure the size of the private hash which will also disa=
-ble the
-
-s/hash/\nhash/
-
-> +automatic resize provided by the kernel.
-> +.P
-> +The value in
-> +.I op
-> +is one of the options below.
-> +.TP
-> +.B PR_FUTEX_HASH_GET_IMMUTABLE
-> +.TQ
-> +.B PR_FUTEX_HASH_GET_SLOTS
-> +.TQ
-> +.B PR_FUTEX_HASH_SET_SLOTS
-> +.SH RETURN VALUE
-> +On success,
-> +these calls return a nonnegative value.
-> +On error, \-1 is returned, and
-> +.I errno
-> +is set to indicate the error.
-> +.SH STANDARDS
-> +Linux.
-> +.SH HISTORY
-> +Linux 6.16.
-> +.SH SEE ALSO
-> +.BR prctl (2),
-> +.BR futex (2),
-> +.BR PR_FUTEX_HASH_GET_IMMUTABLE (2const),
-> +.BR PR_FUTEX_HASH_GET_SLOTS (2const),
-> +.BR PR_FUTEX_HASH_SET_SLOTS (2const)
-> --=20
-> 2.49.0
-
-Have a lovely day!
-Alex
-
---=20
-<https://www.alejandro-colomar.es/>
-
---m6ivffr4o7phbinl
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmg5f7UACgkQ64mZXMKQ
-wqnBJw//QJG448JNfN1ruE9FGWndKN5hpE8pD6XIgma2YXXCYSQtHeyrh+9nE8wF
-MoHnlVezpS3euWj4I3/9k8NyKACDRuwvaXyFyALyEKbfnnDbbJBtXMXTcSSBXUeP
-I2Je6ElezAOeIPboG4YDj9X7bCRVzcLx3YP7CbOk74itJD2d04LMZ1e2K90zTYWe
-K+ItkvWROmufgpE+UCa6dPOQ+Ma3WWfEEtx1M2xzHDJkKqBNBFvSohQU876iLsgU
-ClezSu3ZURx0T11vEK4iDITYcsCgH80QvEfDnElVa2Cc02pbjgIWxTC3dUOjJBMq
-aRg7l2ugrZaMHj6jVx9babrn8EuQZFKwcAH+ZlCF7j1nhnwZTefPSv9xydrOopAj
-0TWpVlH4DHnnKnFKnvqTEJNvSu2xhSBwnN9/iUboIzoSWPXv8Y+i5IxesfuD1TwR
-mUvgAFpmHnmFKfPoz7vUcxiRIltYOAwZYBVpQN5L+tdQYSTomVmQxaApnPhEBJHr
-FCMoMNyatKO9rj0OBKDX4ZMGw4pcSdZNCZ8ieRGT+8UHP1zjo8jx8ldlaFsYEeKl
-epcPbp8cyAlbLXrTlPc5h6HDmLpN+FTasanJIMxxHpuoaLvNQ+ta72YLEAxfN/12
-QJvHN3wwLzHr5wqhKqNv5YfqClZEYWQZa/Ry9H02HFnmH8/lHhs=
-=mUyr
------END PGP SIGNATURE-----
-
---m6ivffr4o7phbinl--
+Yes, agree. We have encountered issues caused by THP in our Alibaba 
+fleet. The quickest way to stop the bleeding was to disable THP. In such 
+case, we do not expect MADV_HUGEPAGE to still collapse a THP.
 
