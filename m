@@ -1,115 +1,179 @@
-Return-Path: <linux-kernel+bounces-667978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-667972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0371EAC8C1F
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 12:29:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E5EFAC8C14
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 12:26:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 423E33B92BF
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 10:28:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 177F6189E766
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 10:26:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E90C42222C0;
-	Fri, 30 May 2025 10:29:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12A062222C0;
+	Fri, 30 May 2025 10:25:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=parknet.co.jp header.i=@parknet.co.jp header.b="FVfu5OkA";
-	dkim=permerror (0-bit key) header.d=parknet.co.jp header.i=@parknet.co.jp header.b="3quFEydw"
-Received: from mail.parknet.co.jp (mail.parknet.co.jp [210.171.160.6])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="lVgaR2eA"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2041.outbound.protection.outlook.com [40.107.244.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EBD4202F67
-	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 10:29:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.171.160.6
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748600954; cv=none; b=N2dTmy+XdL+if8msj2t7ZiaDYt02JAa7p6auNooWQbNlFVqJc+syTGNvTSOf/MhicYiGsbTLvzmENWjCBDwpkB5yr4ynZcTgwA6qEsf5o6ZXA5UymL7f3SkPW9Ehsl1NHKolnt+6JRJ2gsEcRg656gMvPyL/ffL3EWW0fUW4Q7M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748600954; c=relaxed/simple;
-	bh=MV0xDuxa36T8vlsgUZsA2Zzf4b9NecWsWrOQG1UPhhs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ZIr807E7LHLuOabtTit3HUoKQEelDoJoDkrm113z8f5ugP/mQl4JoeVYeDeupSyxFrbsOuGlkGK40xRcOezmK327guJZEwlz0RnqT4zmViu7wwyEgxhtMg4t5DJ6AZ+9HNkhThh6pZl4/XFHhZjXXaCISJsJnzweJy6lAjdjRIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mail.parknet.co.jp; spf=pass smtp.mailfrom=parknet.co.jp; dkim=pass (2048-bit key) header.d=parknet.co.jp header.i=@parknet.co.jp header.b=FVfu5OkA; dkim=permerror (0-bit key) header.d=parknet.co.jp header.i=@parknet.co.jp header.b=3quFEydw; arc=none smtp.client-ip=210.171.160.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mail.parknet.co.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=parknet.co.jp
-Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
-	by mail.parknet.co.jp (Postfix) with ESMTPSA id C90F6209655A;
-	Fri, 30 May 2025 19:23:55 +0900 (JST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=parknet.co.jp;
-	s=20250114; t=1748600636;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rpFmFQChOnE6nAGClE1PTp1IbANAehjFrMemwvKCnBA=;
-	b=FVfu5OkAEeT/aAMY30IXWqHt3wTElMeTRjsNAJ9NxCs/zLvMT6wDIaNcmmczt+DONrbYrR
-	AC5pKnvenYUSPkcBWyHT7KHVm6dmqN+PD/GibdD4TJfulfDzekmD5ooQk6Db+hAk3zAJI1
-	HJ1tGz0V4c9zLVMC0CmF718gVW7DRA7legWYJXFGdUcQkN2iyuI+h52CFO54o71tBOjwdp
-	fJAagzsO2OR885Ckfo6OlzjQjsb66MVo7vSt8teQnFNJbEIonz+dNFbMGPjtyjJzZkqGq4
-	BTZlkzUq/lU/a4i7Sh2nZZUTJWD4I1D3qWL0VHpvU/KiUzOYUBvM02jWf1tWuw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=parknet.co.jp;
-	s=20250114-ed25519; t=1748600636;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rpFmFQChOnE6nAGClE1PTp1IbANAehjFrMemwvKCnBA=;
-	b=3quFEydwpkRm1RJf4A43WtUSl1R4jf1sfIYTY5JCN60MUOGycxz9p/JUbNrj+VtIedi+/n
-	b2PldOz/Ks2/ZWBg==
-Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
-	by ibmpc.myhome.or.jp (8.18.1/8.18.1/Debian-6) with ESMTPS id 54UANs9t031885
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Fri, 30 May 2025 19:23:55 +0900
-Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
-	by devron.myhome.or.jp (8.18.1/8.18.1/Debian-6) with ESMTPS id 54UANsW4064889
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Fri, 30 May 2025 19:23:54 +0900
-Received: (from hirofumi@localhost)
-	by devron.myhome.or.jp (8.18.1/8.18.1/Submit) id 54UANswX064888;
-	Fri, 30 May 2025 19:23:54 +0900
-From: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-To: Yangtao Li <frank.li@vivo.com>
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fat: correct superblock flags
-In-Reply-To: <20250530084648.2434569-1-frank.li@vivo.com>
-References: <20250530084648.2434569-1-frank.li@vivo.com>
-Date: Fri, 30 May 2025 19:23:54 +0900
-Message-ID: <87v7piflc5.fsf@mail.parknet.co.jp>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8FBE1DA5F
+	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 10:25:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.41
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748600758; cv=fail; b=PybnIC+Dz8C1hUrlxM1nPPrsy2qKtYLpMdI1g2AwbvxzDt4ex/RhTrdtEJPV9CsvXUkcpiJzIqWkLWlFZcpVMWh0zz0lsprt4BapDXBCSyM8nTvGizO7zQPR3ICt/E8GgBIUh6F8yWTrCNtvSigHy1ABolc1F+4XTp+zuhsoUZE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748600758; c=relaxed/simple;
+	bh=nOylb3TVy1FySQ470NzjbOmYCm5UD4O+B9dutD5Jy1E=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=d3BZwnf+yBU1x3YXOxUuqb9BQ2IWB5A0UVraUUEsiQXqpjUayT4lbFiumpsq9VbIriQHDAI378zJ2vkRP8GmCX6JP0aXB7mmbiHvJ8mpEZEPGHa9e+z6YKvNhmXYzEV1jin/6PqwTvnQAmpxPyEVYdGQN55eNNyyo5em2pXALHc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=lVgaR2eA; arc=fail smtp.client-ip=40.107.244.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=gpGsfGFEjZNRRIeXQx25Hs0/W2q4s4KCZIoxeuG67e2O09YS24NhIZPSz5JxN0bWxdgHVf6ys1RO4P2wouL5BaC5l9ijmPoesN++I1f5Bjkd4cefE0MX3+Uc+/0ghrf6kJpCMTe6wR2lhpFNR3TIsYR2L+Oo816PaYOEgywh6BCzUgs7kl5WNBEkGXz3I1HJ0SxzoFacYNVbS+Jcec2l6tmm5Ur/LWPPaWZoyidGg4h4uPKUK+lGmz3MRYaQ5UOFe69hHGQJdNNnXgjkl9TYmE7R6XIz3o3B27qMivGC6xUEA8oznUHMNjvdYqT88e/Mk2Hl1f64dKNxwqkxF17vLQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=0Ba+ogmcyckqTFz7iGPn7zSRXlwXY2qHJosyLN3Udf8=;
+ b=GMvNTSdW+tGeOToz1cdOh1sIZ8XKvg45HJxxeHOmIirBkDzoB4fGI8RyAyCOVnEgi2AqRNcgP2GtCUM0j+H5hU+7F149M/Vbyk974Q+MOEdqyPPzOFLgvFKYT7qHQZRp7VXRkEVQrSBulcPmGCJi02k7VWi1v2q30eH2DqUWNJOYFKYE2r1tePpYaUeTsn7FH2FLhALy/Um6ECj3hv+RO0UbbDPdOR6q6dawdjydJT24qqIqMD77VE/Obs8KFZv6/kQD6qPWc9k9SjPHHazcrJ6NJ+1yF7JH1fPwgAb8dFYkWEuMXZCkD9GfGvpUK8XP+11e5JqjGg2tGQ9DVVwMMA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=lists.linux.dev smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0Ba+ogmcyckqTFz7iGPn7zSRXlwXY2qHJosyLN3Udf8=;
+ b=lVgaR2eAxfvIk2VOd0N8+UXygLbPc8lqHSDaM+JnCfwnyHUzBhG4CaSZcmLFUA+Y05XL8hzNVcDEb2ZD0sD4Ff4Y1373RsnmFmA9INt9A9gHjYDUcxoFK7vNeeqkRooenWrpe6/GPPpbAFQgCTWidtcg3lAnvYe+YIvMi59VBO8=
+Received: from SA1P222CA0049.NAMP222.PROD.OUTLOOK.COM (2603:10b6:806:2d0::26)
+ by PH0PR12MB8797.namprd12.prod.outlook.com (2603:10b6:510:28d::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.31; Fri, 30 May
+ 2025 10:25:52 +0000
+Received: from SN1PEPF0002636D.namprd02.prod.outlook.com
+ (2603:10b6:806:2d0:cafe::7b) by SA1P222CA0049.outlook.office365.com
+ (2603:10b6:806:2d0::26) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8769.19 via Frontend Transport; Fri,
+ 30 May 2025 10:25:52 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SN1PEPF0002636D.mail.protection.outlook.com (10.167.241.138) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8769.18 via Frontend Transport; Fri, 30 May 2025 10:25:51 +0000
+Received: from BLRANKISONI.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 30 May
+ 2025 05:25:48 -0500
+From: Ankit Soni <Ankit.Soni@amd.com>
+To: <iommu@lists.linux.dev>
+CC: <vasant.hegde@amd.com>, <joao.m.martins@oracle.com>,
+	<suravee.suthikulpanit@amd.com>, <joro@8bytes.org>, <will@kernel.org>,
+	<robin.murphy@arm.com>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v3 0/2] iommu/amd: Support for HATdis and HATS features
+Date: Fri, 30 May 2025 10:25:38 +0000
+Message-ID: <cover.1748599144.git.Ankit.Soni@amd.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN1PEPF0002636D:EE_|PH0PR12MB8797:EE_
+X-MS-Office365-Filtering-Correlation-Id: a244236d-dbd9-45d3-2d57-08dd9f645a36
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|376014|82310400026|1800799024|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Vg9fYkYpSlzMjGcGM7Y9Npgp3A5HMuoMcDazFQrq+cduk0QfIWn5KTj6O+39?=
+ =?us-ascii?Q?sETzOTShWT1g0x2yg/pKYr7cm+o7NJIv70buxr6LLMtMmZAzjHtHaAmYG4QA?=
+ =?us-ascii?Q?LTwrt8kQAuCDlcbYRVHPmgZ04bLQWSwztL9g/Kr2i06K/UZxtQl/NDTWZ9mN?=
+ =?us-ascii?Q?/BP8mB9xuhRpbhEMnZf2yRwCfDiki4ZQcGnWk9EWmgvNbeFhckOp8QCnvvgH?=
+ =?us-ascii?Q?n0L/Eia0qOO2b9g67q+EizDtxzxJ9DZ9yAIVRWvxODJSkqm12uqtrmTVd7Vj?=
+ =?us-ascii?Q?3IkBzpLpyNuoHrlgDpAw3+VmAE4fNVxp0Y2FmFoVmq9P1h27I/d1/YejZped?=
+ =?us-ascii?Q?wWbwMuYcplyHBLp1ljAqbdvShKHtRjxWiWFzou2/Ncsg0AyVGKsLP1pKhmf+?=
+ =?us-ascii?Q?GIqjxsFPN+NJnjjZmursOYRVzGA28sMIKyf5oF70+9jrokx3bX20DbxmEeUN?=
+ =?us-ascii?Q?dcvz7fQyAQOLU3+HuDVCvvD1sNF0v6xM3o9rQTTFlJPoIVTXlIbn8LuTJwGz?=
+ =?us-ascii?Q?6/T+eSWNyorG7rBaaIA66XAXzx0Argzdg+QY+KqlwaGeRS12VpJ0vKOM8sDP?=
+ =?us-ascii?Q?bi2RD2/tncq+OVDpcVWIhEIUFs6C2ApBNL7SkBnkZPYklNmys6sfSfWQ5Kos?=
+ =?us-ascii?Q?CQSfYdEaIXEX7XPvKr6qIbHU70pxPr396EfTjkis3PQwjH2WfeOI3UG6U2qZ?=
+ =?us-ascii?Q?5EzzMDtS/02Fwj4/KqfdU+1rDmBZp+DSU4Rzed47Yx3YroPyz508y2CTGv27?=
+ =?us-ascii?Q?DuJIqyiNvBTF+zdyMDXYzw3TScDtSvmNW1zqhzMbYWnp4DRTwoyLaM4dk4He?=
+ =?us-ascii?Q?heu7GrT1fznuwWIasBC/WeVVRI0OGt4FFcbbR9kxYf6jT2VKjSd9r5nMSlBw?=
+ =?us-ascii?Q?Rv802Gc3jA/v13FliL77c9mptIVjXuklF7+UwLNoabma4ahlUCUpmRQwQczb?=
+ =?us-ascii?Q?HYpYMDPabltEaHaDj8oQ3xy9xWBDnrgvE4nFAGYoAoNzwkHJEulFdzhULAED?=
+ =?us-ascii?Q?G7LnsoHoVzLkiD0sQH4wyL4olOr0vy8LYEhffk/OGAiHyiFXdCHR11zmSA8R?=
+ =?us-ascii?Q?ifBIaLmZoJStqsByVQ8A8RH03JUWcF2qv4CbL94OcwkYYhGVifXw27p5o9/g?=
+ =?us-ascii?Q?x2hXjaHPE1h8Bb2Ii7P93CElNKUPWdnAmykqe7cp2wbaw/OOq85Dclw54tlT?=
+ =?us-ascii?Q?G9ecxDMBscxxnY+kZcWuKVxZOJOrrxrgy9kICnCuEEmAZR2YGOiyly/zglPv?=
+ =?us-ascii?Q?bWuPt6ZWiyRW4fLkywQ+mYYV4r4fUcDi9C0d5pKO+uR9ecJxx6ZxqJxsHqG1?=
+ =?us-ascii?Q?Kme4dqoxSEdzVCZOr0apOU6kBlmwN+kU6zGgW1uKHzvjBUxEwfgCLNvhujok?=
+ =?us-ascii?Q?bcsi/MyqS1z84noG7Ch1HTt4P3Cu9HonWWEb8rDWJaYv/3O4I195riyy9sLU?=
+ =?us-ascii?Q?HJCjXhZW+xNtRBWThCJUFngtIQavsOFcbJQ6m9i2c79SrdOIKvQWsw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(376014)(82310400026)(1800799024)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 May 2025 10:25:51.4787
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a244236d-dbd9-45d3-2d57-08dd9f645a36
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SN1PEPF0002636D.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB8797
 
-Yangtao Li <frank.li@vivo.com> writes:
+This series comprises two features:
 
-> SB_NOATIME includes SB_NODIRATIME as a subset. Therefore,
-> setting SB_NOATIME is sufficient to disable atime updates
-> for all files and directories.
+HATDis: When host address translation is not supported by the IOMMU,
+the IVHD->attr[HATDis] bit is set. For instance, QEMU emulated vIOMMU
+does not support dma tranlation for VFIO passthrough device.
+Support has been added to check this bit and switch to guest page table 
+mode, if supported. This feature is useful for cases where only interrupt
+remapping is required.
 
-SB_NODIRATIME is set at fat_fill_super(). So always SB_NODIRATIME looks
-like it is consistent even if meaningless than removing only if remount.
+EFR[HATS]: These bits indicate the maximum level supported for host page table
+by the IOMMU. Modifications have been made to adjust the maximum host page table
+level, starting with level 4. If these bits are set to 11b, the driver will
+attempt to use the guest page table.
 
-Thanks.
+If guest page table mode is not supported, the driver will fail to probe
+devices for DMA translations.
+The interrupt remapping will continue to be supported.
 
-> Signed-off-by: Yangtao Li <frank.li@vivo.com>
-> ---
->  fs/fat/inode.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/fat/inode.c b/fs/fat/inode.c
-> index 3852bb66358c..5da96c37386d 100644
-> --- a/fs/fat/inode.c
-> +++ b/fs/fat/inode.c
-> @@ -807,7 +807,7 @@ int fat_reconfigure(struct fs_context *fc)
->  	bool new_rdonly;
->  	struct super_block *sb = fc->root->d_sb;
->  	struct msdos_sb_info *sbi = MSDOS_SB(sb);
-> -	fc->sb_flags |= SB_NODIRATIME | (sbi->options.isvfat ? 0 : SB_NOATIME);
-> +	fc->sb_flags |= sbi->options.isvfat ? SB_NODIRATIME : SB_NOATIME;
->  
->  	sync_filesystem(sb);
+---
+v3:
+- Add check before populating sysfs entries for iommu groups.
+v2:
+- Addressed comments from Vasant:
+	- Added/Modified comments and logs.
+	- Removed v1 page table assignment hunk.
+- Link: https://lore.kernel.org/linux-iommu/cover.1745389415.git.Ankit.Soni@amd.com/T/#t
+
+Ankit Soni (2):
+  iommu/amd: Add HATDis feature support
+  iommu/amd: Add efr[HATS] max v1 page table level
+
+ drivers/iommu/amd/amd_iommu.h       |  2 ++
+ drivers/iommu/amd/amd_iommu_types.h |  7 ++++-
+ drivers/iommu/amd/init.c            | 47 ++++++++++++++++++++++++++---
+ drivers/iommu/amd/io_pgtable.c      |  4 +--
+ drivers/iommu/amd/iommu.c           | 15 ++++++++-
+ 5 files changed, 66 insertions(+), 9 deletions(-)
 
 -- 
-OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+2.43.0
+
 
