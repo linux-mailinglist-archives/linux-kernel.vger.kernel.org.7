@@ -1,157 +1,162 @@
-Return-Path: <linux-kernel+bounces-668285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-668287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3064AC9088
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 15:49:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18463AC9090
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 15:51:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 017909E21A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 13:48:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE10E7A8156
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 13:50:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDD2820AF98;
-	Fri, 30 May 2025 13:49:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BC7E21D5AF;
+	Fri, 30 May 2025 13:51:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="AdautNmN"
-Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com [209.85.161.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="i1M12tVG"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEC0979CF
-	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 13:49:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE48C749C;
+	Fri, 30 May 2025 13:51:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748612953; cv=none; b=YhrJpwgN+3ALH8WSdZfzFTCW8VKTQxQ5gw4fP42bFA8oufTvZ/gyGnoX+c8J3zq9jMvW25qDWiNFFKTy1sPQGHm3yMyOSDBogoV+M52AqdDW8I9dolUBn2L188sMX3JZAN2h4vYe/GZiN19cY3SpuG6cf96I9Uf36SCIzfcHSaY=
+	t=1748613093; cv=none; b=r/Dx191InRGJbnQUpAKDByztjAv+EHS29MLlSLtvxlOYpY++PTZCePzouHu0f2pZFDQr+q7E9Il1hQpYMa6Do8O8Qhvm9CaAyF8pa5TLjPXqX+xiwEZzLa+kyMdagmp0gVfoh/A4Iz4090gFBjo8Khwj5XWdmmHFHxfDm2435Vo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748612953; c=relaxed/simple;
-	bh=9Mq5hZOOvW2ZFf69WJb4Ff0N/Ky1FM83I7pmjlJ4tUQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jDBBuIT3nOmF6kBaJld4FY2yy/soP/w8q1Yo1zlOtTzW/3VmzJnfIlBMPEUi2YijiaudhFC/iBIveWkFY2FN7AGwGUlH6vQCQucQfhPhTv3GWKRVTsHYotSdMRH3CucThzRtk9i3EF1ETkpQf4S03VdgRSNF/utwfDS5gVLDMtU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=AdautNmN; arc=none smtp.client-ip=209.85.161.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-6065803ef35so548223eaf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 06:49:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1748612949; x=1749217749; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=tme1pCrZrM2VXTRq9FlVTDLE9dpQsp+tmaK/1R+aVG0=;
-        b=AdautNmNSb+kNQOBVfHwtvT+YM6HxbDWWEXal+gk2zjuMnae8JNvEH+hpsoWSpL1Ye
-         waoaFCpa0XX2gxVUViD1TmeP9v490GvbZgyVmtqPqyWVYwEyGK2OT8npB+VIH0njrp48
-         iM6ZoGPAyibnBYA8ylk4BjVFs6x49vdui03xmO9MXFfPylO3Z5BSWSBm0yRAJrvXMNyS
-         czsqhfYde+y7YTcR5F6efr8R9+kTrQXmbSgEBZaTs8WJxl++2OaSYmwNGBU8rf8g+ke0
-         i6DYbH414fgYqklu8TOA/lEjlNqAYXJBCr9SvyfD9sVzIo7eyRFpPe5RrO/rSor9L/5o
-         zxpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748612949; x=1749217749;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tme1pCrZrM2VXTRq9FlVTDLE9dpQsp+tmaK/1R+aVG0=;
-        b=P1gUZ/3dWHrLSAp3/iRlFxty2Au6995y12gJZUSI6dwFtkeUYfTFV+Z3lTS1Z34SA6
-         ahoTw12jXx6wfwppmRAlK0yn49liWNvu3zBxKA5dgwBS3ycVt1rqaufIesZ5xkWFJTJR
-         8sJQ6g7/7b/gt5m0vnJxRjbptiq0qT7z5CI2OPcqL1CSGZw46zf+jD78mjhUmmtPVskh
-         LowWY3hqMoL9ISlDixvkD5D6F6zt2u+tv3fuGY7riyNDxMX9V1fezhD1/wzbaL10zpRI
-         7iwzM/G7s2pv8Gkc4uBNrNnfnH8j6Qr8ivMkKyqAD/ExOU7sfch/21c9fWFJFa2NW1TK
-         Yodw==
-X-Forwarded-Encrypted: i=1; AJvYcCXbgL/LFPcrUxdR42Fyss6PDAeIYZXQwwyn6I7YQ/CyYI8hCNIz2EUwLCC2LpzbMIx/MHAGKQTVadnbtSk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlhizNoOG6FTtg1zLCPg21GlVUmuBYVUmpanPPhSYoY1rkABA6
-	AY/RVDv6FeQxICJwxAUhO+npbMHYPjdLe8QV2uKZbm8T1WyKyuRB99nwZTwm3uZlDz8=
-X-Gm-Gg: ASbGncukxuKvp7NsvGaDPnZ3s59louNMq5dHhqGDsRF4xm6sy7wa4TEri43Wsy8yh69
-	vWxwCpzPTAQH+ftlopcCMSGmGk8aQE0NjI/QEifN694gqzG1hYFLvcM8cm5eD5M/bUxfUVqlmga
-	Kt2zbau3VTP/nlugcBERFFRr5Jl1rnsv99i2iLc4TLWaJ0O9wpozGXGw2KzL6VN51/y0Sgfx9Ug
-	gkzod3vOUf+TDWm8fnO8+1KTO2jiokyEdbVfSSIWwbHlQVEp365TaCSOF+bARM1LhfbnfyYxC3t
-	PyRWSG0i6SOhwQDVoGAcysAtttdSJLdegDUz6MI2FtXJXHkaS4jDOxD4mwFXx9Eq83JVGPMErpF
-	figtiRGI1DC+H0SbiyPb0/7JfqUAH
-X-Google-Smtp-Source: AGHT+IGSeNzdLtM8Wcq3bN9hHuw1X1n/uK7UqEskLwhdNIeOIspP/rFrJu1kmWlprYDK4upeBv0Wxg==
-X-Received: by 2002:a05:6820:98b:b0:60b:edbb:1f50 with SMTP id 006d021491bc7-60d52d6db2fmr1085212eaf.4.1748612948983;
-        Fri, 30 May 2025 06:49:08 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:29cb:b1cd:c8f4:2777? ([2600:8803:e7e4:1d00:29cb:b1cd:c8f4:2777])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-60c14c8ae0asm392439eaf.20.2025.05.30.06.49.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 30 May 2025 06:49:08 -0700 (PDT)
-Message-ID: <9ed23409-f402-4d08-ad59-af8ac48d88d2@baylibre.com>
-Date: Fri, 30 May 2025 08:49:07 -0500
+	s=arc-20240116; t=1748613093; c=relaxed/simple;
+	bh=3g+2Gt6ki2RAC1y5hKm8yLn0M1lJ0n9JI1E/PiZVHHU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=AJRU9SwfpvezdfAsUe9k11bpsIRz+n788u2TsIZdkPJgvmHIhtkHpY1vrvxct8Wjt6Jisb/zWrRLrazGouTsieKJhZqeurAI9e7FGvE75oxEAD08Xs1h6BEIVBFwgvPOuFv80JVzcCEeZwxURSaFL0oZrMRh3+jWHx5OB70Ptnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=i1M12tVG; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [127.0.1.1] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 1751E89A;
+	Fri, 30 May 2025 15:51:01 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1748613061;
+	bh=3g+2Gt6ki2RAC1y5hKm8yLn0M1lJ0n9JI1E/PiZVHHU=;
+	h=From:Subject:Date:To:Cc:From;
+	b=i1M12tVGYn+8VKsu5Ynf0+EMtK1xNPbCFvcVpzJnaZyAF/KWnXM6QGBX28SRFyf33
+	 2+c+jlP5uWjqIakiqY7pTYFcyorH7J10whgGT3vVul31gJVERbbjBff7BaiYWDJQ0J
+	 t0WTa+dnWJzIBvYV6Y7aDqr9TswFYZUl4gouON68=
+From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+Subject: [PATCH v3 00/15] media: rcar: Streams support
+Date: Fri, 30 May 2025 16:50:29 +0300
+Message-Id: <20250530-rcar-streams-v3-0-026655df7138@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] iio: adc: ad7606: add enabling of optional Vrefin
- voltage
-To: Angelo Dureghello <adureghello@baylibre.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250529-wip-bl-ad7606-reference-voltages-v1-0-9b8f16ef0f20@baylibre.com>
- <20250529-wip-bl-ad7606-reference-voltages-v1-2-9b8f16ef0f20@baylibre.com>
- <521f5868-5836-47d9-9a68-88a9d4e843f6@baylibre.com>
- <dv72cvn7rihavqxg6wnybhedhunabo7bremwb5pkutqljwarcf@eo6zc7vi7fbu>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <dv72cvn7rihavqxg6wnybhedhunabo7bremwb5pkutqljwarcf@eo6zc7vi7fbu>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKe3OWgC/23Pz26DMAwG8FdBOc9T/gABTnuPaYeQOCUHSGtTt
+ Kni3ZfSSZWmHj9L/n32TTBSQhZDdROEW+KUlxLMWyX85JYTQgolCy11I7Xqgbwj4JXQzQwqBnR
+ d10psUJSVM2FM3wf3+fXIhJdrUdfH8IkO1R/ZQSQ3IwRkD2fHvE6Ur6cJ2raTDdbK9LYetvruj
+ 44RfJ7ntA5VgypGbVRteyvubVPiNdPP8cumjrrXZ28KJEQ19gaNlc6NH6n8wXkZs6PwXgoOb9N
+ Pw+j2n6GLEWSwUmrf1iq+MPZ9/wXk0UXuYQEAAA==
+X-Change-ID: 20250219-rcar-streams-1fdea8860e5e
+To: =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>, 
+ Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
+ Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+X-Mailer: b4 0.15-dev-c25d1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3422;
+ i=tomi.valkeinen+renesas@ideasonboard.com; h=from:subject:message-id;
+ bh=3g+2Gt6ki2RAC1y5hKm8yLn0M1lJ0n9JI1E/PiZVHHU=;
+ b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBoObfXwcE6IVUVE1gp9AlBNelbeUah8nxwL6Np8
+ mJ9QXH5376JAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCaDm31wAKCRD6PaqMvJYe
+ 9QIwD/9wd3vPznS65rKMksb0n7MwmVbwHpZdGoAWZTlf3iRw1doPJatGO1DikKJvBOOcivz1Csh
+ TotwicEnhkhrQBJz3FQ/kdrSqdC0BK3srbHc9u3AcESRIORKlXLf2y+fGjsqq98cQzYqg/yK7VL
+ mE5QbW22KGdDO4m23o52fXmr2/PQd48SDRxcdb0BnVa2pR9aZsG/K20rW2rpvPmfNY2JqUozIq2
+ Pk1pvGwqfuwP7E3a+GbPdL0Kr8tS9ry800MWmu6HEMvuaYSuwp+K3TM8ExV6ssw9byGP3IQNtCq
+ 4TNeASOWTGenhxEyh/OFyQKbHAC672FVpPqv5vVW4TnZ5dofGe9WIYCXPRVio6sQT3IwP/sEact
+ eiQr6gJTjqjFZwSgh98pEY49D6uyaGRnN0w7gZ5d9WwMRg9xKi9jGjEC48YU3w/ZV1JC7HCODBG
+ ShF9CTGz8xhw0y1eso0bOEhvCPQHkx0dAMg8zBFlpLAT0Fgh/f9KD1DL7A1sHBvNbBHtB6k+63b
+ Lghmp3Uxo8/Kbz4A16RG7jVZtG5Jhc2qtxgwnnhvfwYle0LecTB5f9sKtjeYVApzGcWRhLxR6VF
+ F/O9NcFlfIqeqjoskflduB/3S+v+OBm5vSsHOVJPC+1X1WjXGwRS+68sV8lRagigzDQKMwMT2iD
+ 4HSfbZODaMp0uqQ==
+X-Developer-Key: i=tomi.valkeinen+renesas@ideasonboard.com; a=openpgp;
+ fpr=C4380C3E965EFD81079FF3A7FA3DAA8CBC961EF5
 
-On 5/30/25 2:39 AM, Angelo Dureghello wrote:
-> On 29.05.2025 12:52, David Lechner wrote:
->> On 5/29/25 4:13 AM, Angelo Dureghello wrote:
->>> From: Angelo Dureghello <adureghello@baylibre.com>
->>>
->>> Add optional refin voltage enabling. The property "refin-supply" is
->>> already available and optional in the current fdt dt_schema.
->>>
->>> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
->>> ---
->>>  drivers/iio/adc/ad7606.c | 4 ++++
->>>  1 file changed, 4 insertions(+)
->>>
->>> diff --git a/drivers/iio/adc/ad7606.c b/drivers/iio/adc/ad7606.c
->>> index 3bbe9c05b5edbc11e8016c995c6ab64104836e7b..21e63260965c32988d0ab3b8bb1201aa2396f1ba 100644
->>> --- a/drivers/iio/adc/ad7606.c
->>> +++ b/drivers/iio/adc/ad7606.c
->>> @@ -1335,6 +1335,10 @@ int ad7606_probe(struct device *dev, int irq, void __iomem *base_address,
->>>  		return dev_err_probe(dev, ret,
->>>  				     "Failed to enable Vdrive supply\n");
->>>  
->>> +	ret = devm_regulator_get_enable_optional(dev, "refin");
->>> +	if (ret < 0 && ret != -ENODEV)
->>
->> < 0 is probably not needed.
->>
-> The above code looks correct to me. What is the issue ?
+Add streams support to Renesas rcar platform driver.
 
-Like Nuno said, it can't be > 0, so if (ret && ret != -ENODEV)
+The series attempts to keep compatibility with the current upstream.
+However, in upstream there's some kind of custom multi-stream support
+implemented to the rcar driver, which breaks at patch "media: rcar-csi2:
+Simplify rcsi2_calc_mbps()".
 
->  
->>> +		return dev_err_probe(dev, ret, "failed to get refin voltage\n");
->>
->> We aren't reading the voltage, so the message doesn't make sense.
->>
-> Is it better a 
-> "failed to get refin-supply\n" or
-> "failed to enable refin voltage\n"
+The behavior should not change when using a single stream.
 
-I would make the message the same as Vdrive.
+Testing is problematic, as the only way currently for me to get multiple
+streams is by using the GMSL2 deserializer add-on board with GMSL2
+serializers. These are not supported in upstream. If someone has the
+hardware and wants to test, I can share the very-WIP branch that
+contains the missing pieces.
 
- "Failed to enable REFIN supply\n");
+ Tomi
 
-> 
-> ?
-> 
->>> +
->>>  	st->chip_info = chip_info;
->>>  
->>>  	if (st->chip_info->oversampling_num) {
->>>
->>
-> Regards,
-> angelo
+Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+---
+Changes in v3:
+- Rebased on top of latest linux-media
+- Dropped dependencies which are already in linux-media (only remaining
+  dependency is v4l2_subdev_get_frame_desc_passthrough)
+- Tested on white-hawk board, using the staging deser TPG
+- Also tested in a WIP branch for GMSL2 (two video streams)
+- Link to v2: https://lore.kernel.org/r/20250326-rcar-streams-v2-0-d0d7002c641f@ideasonboard.com
+
+Changes in v2:
+- Rebased on top of latest upstream, and updated the dependencies to
+  match the latest serieses sent.
+- Add new patch "media: rcar-csi2: Use the pad version of v4l2_get_link_freq()"
+- Drop "media: rcar-csi2: Fix typo" (it was not a typo)
+- Update the code in calc_mbps(). The previous method relied on
+  V4L2_CID_LINK_FREQ, but that's not available if the link-freq is
+  provided via get_mbus_config().
+- Dropped dependencies to Niklas' old series which doesn't apply
+  cleanly. It's needed for multi-stream, but not for the current
+  upstream which only has a single stream use case.
+- Link to v1: https://lore.kernel.org/r/20250219-rcar-streams-v1-0-f1b93e370aab@ideasonboard.com
+
+---
+Tomi Valkeinen (15):
+      media: rcar-csi2: Use the pad version of v4l2_get_link_freq()
+      media: rcar-isp: Improve ISPPROCMODE_DT_PROC_MODE_VC
+      media: rcar-isp: Move {enable|disable}_streams() calls
+      media: rcar-csi2: Move {enable|disable}_streams() calls
+      media: rcar-csi2: Move rcar2_calc_mbps()
+      media: rcar-csi2: Simplify rcsi2_calc_mbps()
+      media: rcar-csi2: Optimize rcsi2_calc_mbps()
+      media: rcar-csi2: Switch to Streams API
+      media: rcar-isp: Switch to Streams API
+      media: rcar-csi2: Add .get_frame_desc op
+      media: rcar-isp: Call get_frame_desc to find out VC & DT
+      media: rcar-csi2: Add more stream support to rcsi2_calc_mbps()
+      media: rcar-csi2: Call get_frame_desc to find out VC & DT (Gen3)
+      media: rcar-csi2: Add full streams support
+      media: rcar-isp: Add full streams support
+
+ drivers/media/platform/renesas/rcar-csi2.c      | 426 +++++++++++++++++-------
+ drivers/media/platform/renesas/rcar-isp/csisp.c | 228 ++++++++++---
+ 2 files changed, 479 insertions(+), 175 deletions(-)
+---
+base-commit: 5e1ff2314797bf53636468a97719a8222deca9ae
+change-id: 20250219-rcar-streams-1fdea8860e5e
+prerequisite-change-id: 20250218-frame-desc-passthrough-66805e413974:v4
+prerequisite-patch-id: bce4a915a29a64f88ed1bb600c08df37d2ba20c6
+prerequisite-patch-id: 69b75e7dad9ced905cb39a72f18bebbf3e8f998a
+prerequisite-patch-id: 58463f6944c76acd6cf203b14a2836cdb0db2461
+
+Best regards,
+-- 
+Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
 
 
