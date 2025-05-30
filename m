@@ -1,279 +1,235 @@
-Return-Path: <linux-kernel+bounces-667816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-667841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54A8CAC8A54
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 11:00:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F133AAC8AA0
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 11:20:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A34F7B0A1F
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 08:59:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 367003AD05C
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 09:20:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B486F2222BA;
-	Fri, 30 May 2025 09:00:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1936321D5BE;
+	Fri, 30 May 2025 09:20:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rCBDujFw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="KP5Q1in7"
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011002.outbound.protection.outlook.com [52.101.70.2])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4C6821D5AA;
-	Fri, 30 May 2025 09:00:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748595609; cv=none; b=Qiv/hv6vdtAAMSF8HgeUO1+GrJ1Trss6yJf2Z4MCibbjTSSqR86HYiEtPBTuJ+JxMjtS9uvmSx+BCEC07LQOvfj3E7CQWO+L2k8e+TwPWH07pXSXBeMO4Q/aWDgsLbbxIVl0zztymqIURrmZf4VLPhEK7dpaYBt0kFDo8aDopU4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748595609; c=relaxed/simple;
-	bh=xfa1GFv94euoBmf+fvs/VYYsw3L+ReTgBg+jQpKo9H8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=SJYZhLaL+ya0GCLLQo5Hl1GccSinQxPAsBGI6uY9ZPTzkzrmJ/NkoJogoMuPAg3X8Ys+8YhMVoyonihILe073xyyekkak6EDdVZotBJcur++BX9gES2JXaQFew/4zVoECVIRVCyPUuF2xgg7snQJydMiZDuwd9juqYxXgCKbTpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rCBDujFw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 3BC21C4CEFC;
-	Fri, 30 May 2025 09:00:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748595609;
-	bh=xfa1GFv94euoBmf+fvs/VYYsw3L+ReTgBg+jQpKo9H8=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=rCBDujFw8z6RsUNapzwhReR04ccB53DOGbnmQVKQiAsQanTQt/GBPQ/+wIyDObB2u
-	 jfuzk5sz/iLT7gKe4Olfbs7daSqmVrF0vYBb1kNN5zu4fVUyk6wuuc3jjntIWnRW18
-	 gPXHFBkCCeKaNAeGpKH8nqcQtGKVrpRJSyk7LNIe2qbaQWeCKBvB8mxTm0tJboVA3w
-	 I8t8mRfpJI7RsKopRFI1agMwypV0VBKRXe1njQkWbt5B79vegK4YJQxEithh1HZDQK
-	 2Hiedp1nEgPwBu3RzCl/ArAb4C7DMZt2ap74rc2vGiY5jR2/Rbh/mMx8n6rwfTMxR0
-	 br5RoY/6MWwEQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CB16C5B549;
-	Fri, 30 May 2025 09:00:09 +0000 (UTC)
-From: Vincent Knecht via B4 Relay <devnull+vincent.knecht.mailoo.org@kernel.org>
-Date: Fri, 30 May 2025 11:00:07 +0200
-Subject: [PATCH v3 4/4] arm64: dts: qcom: msm8939: Add camss and cci
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39A4E219A6B;
+	Fri, 30 May 2025 09:20:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.2
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748596814; cv=fail; b=ryaHsp5nzpHYuRFWr9B9h2YHsaqlgSEtueHbQ3h1FE9m9w/RyoIPoy5z2jlvxRukNyiRupBWs46X88s7IHYrwQ35st/1G0HQDqVA296zFOqg5DVEpowfMIhnguKbknhijjgIKH2nRAKTeSRM+jjrN2HAxpTr1PxOqVEz6QYiUhE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748596814; c=relaxed/simple;
+	bh=2BUQqEeHTc36ku7ScZJaPPfb6pPGN4NOv5cHhpYt/Po=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=kd7ZwByAmZbWoTGwX8l83HxOPjkCBJsirU13Pl7SKiieBYjL2sm4v9RFb4KN6cQWZjMvrJQaVQCxuvFUL3x11HTDmMnsCyTSnFo98FUeZUizA+qteCtgZysKHdqI8ScXoQaHlFH5moLZTtqUe4zAT+AE4yAL/aWSOqKHnHtnm5g=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=KP5Q1in7; arc=fail smtp.client-ip=52.101.70.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=lRqXibkl+4AKmYLtcwhskNlLBkjeLCfy3SjxuIgZKltI+ibCgH+XIRrc3UszGO31yM7MoYgM9k6hxGGP/MBNA3yysReEptCiLFiRsy7d1SKMDfFavdvA2sTI7gQrYaUeAMxCmJmA6FCBJorrpsB3d4ifsXu2BtOhpwMEL92Z4OfOzYq6q4ubKOaK7YzFzw+N6r28kIWtsYoJ/X0jyKmTQrmgSh9ivBnT9Mbp3f47M7ap3Dh7HKt14b0hJw6GQafAtAXXdFkPBxKxbLxB8iVNRhNw+anUhS9ntGtMd0onGq/gKPQYw+a/yvpGzbH9o9QQE/M9hCsKnCWKYw3yNjSnAw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Lj0+gJLtntZkGJpgnIa8t9cEIDVZj1mAGmDvJLn5+xA=;
+ b=c0g+nSzTqSojd5Eyrux9bvLxxKEuIYSyvsjOyzm/CrcOByynUB7qqqmzxvBJJt0YliirV44NrY1qYRCGv7iAjoUBKmy9cQJDf7tGbZa9N/53hUzjRM+0kBWXx9rpIMNiXwgnTpesMU6I0wesi5p2cdVPkfB/YlV3TShqKT8iWdc6C3xV88YuNZLWYLWndI1MJH8YbvNnO7zZF5PBkstbtsPINBT6i8iNylU94RaF5H9PvX3B9f67hvPgE5BZIMgRE446NQCLOO0TrTEX+7+YqZPQBHbrTq3u6l5qo34hygd1rcn1lCWpWO6GQGE1BCJTgHfoLrC1ZhaNklIiMrjMnw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Lj0+gJLtntZkGJpgnIa8t9cEIDVZj1mAGmDvJLn5+xA=;
+ b=KP5Q1in7JTkKcUYRg/5vR1Nr1ZESkt/nsYq6LZmOdscbS2vPfOBJyQeFqZm86Th3/nIzl9MQwrr5B+r8GMu599YK7W31cILfgBKbv0U/+R6l+R505hCpRKnKUk8A0dyM7ZWt5cuo4IkyA4v4oHEvRGUMQU9YJkAVTs31s/UAs9dqvZ1YzLwQigKgrem3O1SgpkvF7dZjTNk/hzZbSMf905P47eqA0VJ4onCGuE49lUd+zchhbUflVOT5SQkvM1L9zCBFw+6H+q+KL/UziH2pONvzypRz0eOJE6u+rPkCag6pyKh+76hGuOfQbSnKnIO9/SiyKCX62shVMY2e3sXDQg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com (2603:10a6:102:211::7)
+ by AM0PR04MB7025.eurprd04.prod.outlook.com (2603:10a6:208:19c::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.32; Fri, 30 May
+ 2025 09:20:07 +0000
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db]) by PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db%5]) with mapi id 15.20.8769.031; Fri, 30 May 2025
+ 09:20:07 +0000
+From: Wei Fang <wei.fang@nxp.com>
+To: claudiu.manoil@nxp.com,
+	vladimir.oltean@nxp.com,
+	xiaoning.wang@nxp.com,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev
+Subject: [PATCH net] net: enetc: fix wrong TPID registers and remove dead branch
+Date: Fri, 30 May 2025 17:00:12 +0800
+Message-Id: <20250530090012.3989060-1-wei.fang@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR02CA0035.apcprd02.prod.outlook.com
+ (2603:1096:3:18::23) To PAXPR04MB8510.eurprd04.prod.outlook.com
+ (2603:10a6:102:211::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250530-camss-8x39-vbif-v3-4-fc91d15bb5d6@mailoo.org>
-References: <20250530-camss-8x39-vbif-v3-0-fc91d15bb5d6@mailoo.org>
-In-Reply-To: <20250530-camss-8x39-vbif-v3-0-fc91d15bb5d6@mailoo.org>
-To: Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>, 
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- =?utf-8?q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>, 
- phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
- Vincent Knecht <vincent.knecht@mailoo.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1748595607; l=5427;
- i=vincent.knecht@mailoo.org; s=20250414; h=from:subject:message-id;
- bh=3AXxGKiiFPkzccexXUftpqL5zw7vJ6WvoTGCbe02/GY=;
- b=Sp/sG4/rr4ZLXVlrpVisinb+PnxHYy9BY/0/GWSRVE1dIA+2mVKzBGJUB8gYsKkOa6qeYBnUR
- 1J8kKnT9idCDM14y1N4WCg6yFCl2sqcsejpq3CnD8krLRDns7tlhhJz
-X-Developer-Key: i=vincent.knecht@mailoo.org; a=ed25519;
- pk=MFCVQkhL3+d3NHDzNPWpyZ4isxJvT+QTqValj5gSkm4=
-X-Endpoint-Received: by B4 Relay for vincent.knecht@mailoo.org/20250414
- with auth_id=377
-X-Original-From: Vincent Knecht <vincent.knecht@mailoo.org>
-Reply-To: vincent.knecht@mailoo.org
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB8510:EE_|AM0PR04MB7025:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1ae6de35-7969-430f-2351-08dd9f5b2b74
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|52116014|376014|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?EqlojVJ8ulOXi9TxjxwmDjFqAB09Mj71RSUKN/7kkIMzrOz5Fg6XczySsLbz?=
+ =?us-ascii?Q?ztWej0/eGLzGN0ULsBxOXAHJF0yu9uD05ExckA2DaueR9ePd7rMGEUmK8OZt?=
+ =?us-ascii?Q?SeyMzGtmR2Q3xgpgbAZdcqahFU5oZ117rAWFf82hvQ3+x4fKW58RkJky5JYv?=
+ =?us-ascii?Q?JcjfLqMpEJUX0SDaREELndCSTYJtCaDOoH3cp4z1SnALRARqLoJrFhRz3o63?=
+ =?us-ascii?Q?p8EvY+H751oiNbMYxTsd0wC2HFnBBGGrtbBthtXoxao6TY6BbZPRvNDzTDkr?=
+ =?us-ascii?Q?3N1mQB/MQWTd0L72sSnUH8GppSrajeboZMdBUYKra5o6zqR2FgfJkVXxk1en?=
+ =?us-ascii?Q?flQorrrAt/wN4ebPR2oZD46NRt18mzHaUkFumc0Tu8yVDOIjI9dSUjOLSqnZ?=
+ =?us-ascii?Q?xjjSvyefcY5eBfq7FwWqshJbuTZ4FiJq/6ptMR23L8sRUjL9MmZQu+Xqb+ER?=
+ =?us-ascii?Q?qgOYw5mwuNlanHSraoycJn2r1/W3IPHlNj7Z9yfaIuELOEvyJMflJC3TzphE?=
+ =?us-ascii?Q?slW9Qir4griSyJMlnGPkrpeF1jwZtZ+7x1fIDfd6uejdsIaJigGBFIjGtk5j?=
+ =?us-ascii?Q?Nxib176Y9sht41FaKQg0HL5UC2SeLnQj7wA69Wg5uBgm/b+RmjWV87uB9vB+?=
+ =?us-ascii?Q?Ro4TSxYwaaJJihXovNsRPvCD8mlYi9PT0J8kAhg2ZMrqfW4f5SYR+U/J6Kto?=
+ =?us-ascii?Q?kQ2HsNvEUomCCzs8OIpPCxjO8OgybR9xZ4YV8WnZOUxTDBmTfAOiJWopKnlz?=
+ =?us-ascii?Q?DJsGBGW3lrPZWe3nlydm7UuoqC5VphyF3145DOnWTAzJiIqB4WdrauSxXVnf?=
+ =?us-ascii?Q?3Z3BuKaJmdA1JfVvuhwYipyGCSL7zUHcHatYMuYmxZdpj0YfJGZZ7IiMdGSv?=
+ =?us-ascii?Q?RnKjH21NdVKPFeJTdtwdUlHEcAmFsgauajwq/BATg2vHDSXxm3Dq8nKegcih?=
+ =?us-ascii?Q?6zIFH2Uk/CB73tq+LP0d2iT1YjAUk+ukA09D1oyl0CCcnAZBcD8/e59Xq53Z?=
+ =?us-ascii?Q?Y7yZdnBXkfxJbLPNvufkoQsFTtXt0B3nBtUsZYnZeb79sDcqQDCxZs3mHXbo?=
+ =?us-ascii?Q?inMPm9svnLAPycgMtFUwyyMMxk34EjBknLEe3AZurp51FYarnrx8GczhwhZ5?=
+ =?us-ascii?Q?3JgnYGWzqvopxeqc3+dTTGbtdaBZmns8DHd7kjZ6JJPBNvyCvynwWAfn9/ea?=
+ =?us-ascii?Q?PaEb4VNZfNm9NQ92sLh7k6fVGo4BjzaK8UPmj/8gfkJ2VcsnVVa8qVdBgo8c?=
+ =?us-ascii?Q?8+IMuyxnbJaRCN0c3EzbB8E4WQXkg2dFHAbPb4HJmATPENkYhY3EZpTR8FmA?=
+ =?us-ascii?Q?XrOkuc1dsdtjH1M0M1j2PGjyBIAafKZY4t1kKsZ7yefhqImGGJk4FAOkLMj4?=
+ =?us-ascii?Q?pg8OPSaLzZepZKgvZYXMF/AfwSe0LdWjbHdcFT+j4/rutAEgQADYppZtPJcQ?=
+ =?us-ascii?Q?LXrJlNtemG3AUakikmrLXpihT5ATIH8ZD4Dc9UZvQk8p1y/N0VPBtQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8510.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(52116014)(376014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?EzUFr7UR7tkIbMYsMj0eLDJeRr9B6f2nED7//gVzoi/iLeGSq7FbhMM5rD2x?=
+ =?us-ascii?Q?97lIqjE+7YnVEdedXng1XM+GDh5+L9/nm5lk0YuhTZLy3jKhSA/8gwqJf5oP?=
+ =?us-ascii?Q?nnbmEQPZjWTA/tUCPoFBwW2Er6NAfB6RG8YIjYvC07l9gFmqIqnDuHsloHfM?=
+ =?us-ascii?Q?3phbC0nNDuwy8danL93F+K4CAUwWDsSJ1yYfSwVM4LrsXdTHZITGNnrnqgaG?=
+ =?us-ascii?Q?5/P7DJ+n1pL0/olR9QugTJ+mPHHwW8V2Ew5DdK/HgRIQ8PRNRB5xUZixOlDP?=
+ =?us-ascii?Q?26nQiUvSp0GHLSMQScWeAIUdW6ASTn7ZqbDAHxmlcvKwFS3AFqIM3ImXPduM?=
+ =?us-ascii?Q?5/05Ejcuw+OYJbqDCipDg70xVWLSaHyuJ+0fFtQMKPZhaZNd07+MThb75xE3?=
+ =?us-ascii?Q?qQzu1hFSvzqQZB0Zi4vi1wK75hFPMSsnyfikCp0Muc6N5z0FLSn2I88HkHy4?=
+ =?us-ascii?Q?oJoGSEkGJpBMH/txQFZHEmsmtWmrvaB9hgy9hv0jZnKZDZXxI7/R5dujjEXo?=
+ =?us-ascii?Q?3oLDMp33sj8al1FhoTJEzbfQEf7K1X0C/dQLvp0Qr0LoecBYrHESwjq525Of?=
+ =?us-ascii?Q?nmlb6/PKpN/jzHN03ooecvV0SIAn5xOsrXdu8YPclNVdfwR8EomXFQ5H1SGi?=
+ =?us-ascii?Q?wvlXd795yYbtIluPSSgFIv/mJ3Xj8htWMn+JAcZKzePlAWAWlDbZrigdL8hB?=
+ =?us-ascii?Q?FJ74TCrv4uq0Itu5793ILdzAXt2N5M2ognZvSYwPlUyC29tvo83oX4Er7WFL?=
+ =?us-ascii?Q?4iWDLpfQdE6IjOkB2wnFwwsSjpknnDWmwClgwqueUdlDQTOJRpsO8dxcbiGQ?=
+ =?us-ascii?Q?by334sycYRidhruauUfHdhkRpTH9N3TArPDu44Xjiedv2Nx06xHPfLa/ud9y?=
+ =?us-ascii?Q?E+0tDuyqlRAaaDod6nbrOJeL14pZhXEbX2NFItg8sa0L+6WkjxxOEtNSLaD9?=
+ =?us-ascii?Q?MpsFIki0+qsn9YTphwOsWgGsa/bZqHtjJcv5ivGifEnqCaERNBeEoyQhifiO?=
+ =?us-ascii?Q?u3XD76fyML2bGd8EiLiGhFq+/Bmpdt2jqoFf7jB4ljRP+FHy2GlQuB4/LuNg?=
+ =?us-ascii?Q?ZM5dnWTrVzPMTn9kil3IhQzmJK9J6sBko7T5TBpT2AzVTVV5td3topykvh22?=
+ =?us-ascii?Q?vT+CX5ehZezp1p/nv/arFzTposIgJvE/eLM/pUm559gEhVEGyVbmrujqoGrH?=
+ =?us-ascii?Q?6suv8TXSj2iWcvUUhz4ZHs0VHFOhSXYtZRmV9V0ZQZL3RZs3qMfhzdmQL+0F?=
+ =?us-ascii?Q?Knijk5Mk3qY5LXrs4AOpmDx4nofC1SFZkQyLQuxfcTtLr4FITbbaYxw8nY7I?=
+ =?us-ascii?Q?Nu7VWD42Va7cIAyWbMVv0cBsqAq9SLCfvprCkEPIqD9Egg1Q8X27XK+fDhEF?=
+ =?us-ascii?Q?c+lIkpChLOy6riUoeEcWs9aSFgoeLawvnJjcL8I5GANo3U98T/cwpuM87dkw?=
+ =?us-ascii?Q?UroY3Ze+lVYx/cewCAvGWBoGciljZdrzVvS/AXfIUbttVOwdbVz7CMOHyrMs?=
+ =?us-ascii?Q?y+Oc6D7of0QWeSyCBV7NXm0/FMNn5lwMgxj4dql7mMKYImWg6T4IVCDeuxb3?=
+ =?us-ascii?Q?evim4xeoZrBfYXiz+W03U/CLwOdc60vzEgt2ARJA?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1ae6de35-7969-430f-2351-08dd9f5b2b74
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8510.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 May 2025 09:20:07.9350
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 5aReHm70IqWTOxSaOgKt30IhCY2rbbO4rZWshNtQ2oP/9XhBF6SxfXQddnBhK7NMcZWNw7IRwnDzFT1T8Yw8Kg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB7025
 
-From: Vincent Knecht <vincent.knecht@mailoo.org>
+Both PF and VF have rx-vlan-offload enabled, however, the PCVLANR1/2
+registers are resources controlled by PF, so VF cannot access these
+two registers. Fortunately, the hardware provides SICVLANR1/2 registers
+for each SI to reflect the value of PCVLANR1/2 registers. Therefore,
+use SICVLANR1/2 instead of PCVLANR1/2.
 
-Add the camera subsystem and CCI used to interface with cameras on the
-Snapdragon 615.
+In addition, since ENETC_RXBD_FLAG_TPID is defined as GENMASK(1, 0),
+the possible values are only 0, 1, 2, 3, so the default branch will
+never be true, so remove the default branch.
 
-Signed-off-by: Vincent Knecht <vincent.knecht@mailoo.org>
+Fixes: 827b6fd04651 ("net: enetc: fix incorrect TPID when receiving 802.1ad tagged packets")
+Signed-off-by: Wei Fang <wei.fang@nxp.com>
 ---
- arch/arm64/boot/dts/qcom/msm8939-pm8916.dtsi |   4 +
- arch/arm64/boot/dts/qcom/msm8939.dtsi        | 146 +++++++++++++++++++++++++++
- 2 files changed, 150 insertions(+)
+ drivers/net/ethernet/freescale/enetc/enetc.c    | 12 +++++-------
+ drivers/net/ethernet/freescale/enetc/enetc_hw.h |  5 +++--
+ 2 files changed, 8 insertions(+), 9 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8939-pm8916.dtsi b/arch/arm64/boot/dts/qcom/msm8939-pm8916.dtsi
-index adb96cd8d643e5fde1ac95c0fc3c9c3c3efb07e8..659d127b1bc3570d137ca986e4eacf600c183e5e 100644
---- a/arch/arm64/boot/dts/qcom/msm8939-pm8916.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8939-pm8916.dtsi
-@@ -11,6 +11,10 @@
- #include "msm8939.dtsi"
- #include "pm8916.dtsi"
+diff --git a/drivers/net/ethernet/freescale/enetc/enetc.c b/drivers/net/ethernet/freescale/enetc/enetc.c
+index dcc3fbac3481..e4287725832e 100644
+--- a/drivers/net/ethernet/freescale/enetc/enetc.c
++++ b/drivers/net/ethernet/freescale/enetc/enetc.c
+@@ -1375,6 +1375,7 @@ static void enetc_get_offloads(struct enetc_bdr *rx_ring,
+ 	}
  
-+&camss {
-+	vdda-supply = <&pm8916_l2>;
-+};
-+
- &mdss_dsi0 {
- 	vdda-supply = <&pm8916_l2>;
- 	vddio-supply = <&pm8916_l6>;
-diff --git a/arch/arm64/boot/dts/qcom/msm8939.dtsi b/arch/arm64/boot/dts/qcom/msm8939.dtsi
-index 68b92fdb996c26e7a1aadedf0f52e1afca85c4ab..082542b54d96adaed3e6b49bc3682005ea018a72 100644
---- a/arch/arm64/boot/dts/qcom/msm8939.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8939.dtsi
-@@ -1434,6 +1434,145 @@ mdss_dsi1_phy: phy@1aa0300 {
- 			};
- 		};
+ 	if (le16_to_cpu(rxbd->r.flags) & ENETC_RXBD_FLAG_VLAN) {
++		struct enetc_hw *hw = &priv->si->hw;
+ 		__be16 tpid = 0;
  
-+		camss: isp@1b08000 {
-+			compatible = "qcom,msm8939-camss";
-+			reg = <0x01b08000 0x100>,
-+			      <0x01b08400 0x100>,
-+			      <0x01b08800 0x100>,
-+			      <0x01b0ac00 0x200>,
-+			      <0x01b00030 0x4>,
-+			      <0x01b0b000 0x200>,
-+			      <0x01b00038 0x4>,
-+			      <0x01b00020 0x10>,
-+			      <0x01b0a000 0x500>,
-+			      <0x01b10000 0x1000>,
-+			      <0x01b40000 0x200>;
-+			reg-names = "csid0",
-+				    "csid1",
-+				    "csid2",
-+				    "csiphy0",
-+				    "csiphy0_clk_mux",
-+				    "csiphy1",
-+				    "csiphy1_clk_mux",
-+				    "csi_clk_mux",
-+				    "ispif",
-+				    "vfe0",
-+				    "vfe0_vbif";
-+
-+			clocks = <&gcc GCC_CAMSS_AHB_CLK>,
-+				 <&gcc GCC_CAMSS_CSI0_CLK>,
-+				 <&gcc GCC_CAMSS_CSI0_AHB_CLK>,
-+				 <&gcc GCC_CAMSS_CSI0PHY_CLK>,
-+				 <&gcc GCC_CAMSS_CSI0PIX_CLK>,
-+				 <&gcc GCC_CAMSS_CSI0RDI_CLK>,
-+				 <&gcc GCC_CAMSS_CSI1_CLK>,
-+				 <&gcc GCC_CAMSS_CSI1_AHB_CLK>,
-+				 <&gcc GCC_CAMSS_CSI1PHY_CLK>,
-+				 <&gcc GCC_CAMSS_CSI1PIX_CLK>,
-+				 <&gcc GCC_CAMSS_CSI1RDI_CLK>,
-+				 <&gcc GCC_CAMSS_CSI2_CLK>,
-+				 <&gcc GCC_CAMSS_CSI2_AHB_CLK>,
-+				 <&gcc GCC_CAMSS_CSI2PHY_CLK>,
-+				 <&gcc GCC_CAMSS_CSI2PIX_CLK>,
-+				 <&gcc GCC_CAMSS_CSI2RDI_CLK>,
-+				 <&gcc GCC_CAMSS_CSI0PHYTIMER_CLK>,
-+				 <&gcc GCC_CAMSS_CSI1PHYTIMER_CLK>,
-+				 <&gcc GCC_CAMSS_CSI_VFE0_CLK>,
-+				 <&gcc GCC_CAMSS_ISPIF_AHB_CLK>,
-+				 <&gcc GCC_CAMSS_TOP_AHB_CLK>,
-+				 <&gcc GCC_CAMSS_VFE0_CLK>,
-+				 <&gcc GCC_CAMSS_VFE_AHB_CLK>,
-+				 <&gcc GCC_CAMSS_VFE_AXI_CLK>;
-+			clock-names = "ahb",
-+				      "csi0",
-+				      "csi0_ahb",
-+				      "csi0_phy",
-+				      "csi0_pix",
-+				      "csi0_rdi",
-+				      "csi1",
-+				      "csi1_ahb",
-+				      "csi1_phy",
-+				      "csi1_pix",
-+				      "csi1_rdi",
-+				      "csi2",
-+				      "csi2_ahb",
-+				      "csi2_phy",
-+				      "csi2_pix",
-+				      "csi2_rdi",
-+				      "csiphy0_timer",
-+				      "csiphy1_timer",
-+				      "csi_vfe0",
-+				      "ispif_ahb",
-+				      "top_ahb",
-+				      "vfe0",
-+				      "vfe_ahb",
-+				      "vfe_axi";
-+
-+			interrupts = <GIC_SPI 51 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 52 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 153 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 78 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 79 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 55 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 57 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "csid0",
-+					  "csid1",
-+					  "csid2",
-+					  "csiphy0",
-+					  "csiphy1",
-+					  "ispif",
-+					  "vfe0";
-+
-+			iommus = <&apps_iommu 3>;
-+
-+			power-domains = <&gcc VFE_GDSC>;
-+
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+				};
-+			};
-+		};
-+
-+		cci: cci@1b0c000 {
-+			compatible = "qcom,msm8916-cci", "qcom,msm8226-cci";
-+			reg = <0x01b0c000 0x1000>;
-+			interrupts = <GIC_SPI 50 IRQ_TYPE_EDGE_RISING>;
-+			clocks = <&gcc GCC_CAMSS_TOP_AHB_CLK>,
-+				 <&gcc GCC_CAMSS_CCI_AHB_CLK>,
-+				 <&gcc GCC_CAMSS_CCI_CLK>,
-+				 <&gcc GCC_CAMSS_AHB_CLK>;
-+			clock-names = "camss_top_ahb",
-+				      "cci_ahb",
-+				      "cci",
-+				      "camss_ahb";
-+			assigned-clocks = <&gcc GCC_CAMSS_CCI_AHB_CLK>,
-+					  <&gcc GCC_CAMSS_CCI_CLK>;
-+			assigned-clock-rates = <80000000>,
-+					       <19200000>;
-+			pinctrl-0 = <&cci0_default>;
-+			pinctrl-names = "default";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+
-+			cci_i2c0: i2c-bus@0 {
-+				reg = <0>;
-+				clock-frequency = <400000>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+			};
-+		};
-+
- 		gpu: gpu@1c00000 {
- 			compatible = "qcom,adreno-405.0", "qcom,adreno";
- 			reg = <0x01c00000 0x10000>;
-@@ -1498,6 +1637,13 @@ apps_iommu: iommu@1ef0000 {
- 			#iommu-cells = <1>;
- 			qcom,iommu-secure-id = <17>;
+ 		switch (le16_to_cpu(rxbd->r.flags) & ENETC_RXBD_FLAG_TPID) {
+@@ -1385,15 +1386,12 @@ static void enetc_get_offloads(struct enetc_bdr *rx_ring,
+ 			tpid = htons(ETH_P_8021AD);
+ 			break;
+ 		case 2:
+-			tpid = htons(enetc_port_rd(&priv->si->hw,
+-						   ENETC_PCVLANR1));
++			tpid = htons(enetc_rd_hot(hw, ENETC_SICVLANR1) &
++				     SICVLANR_ETYPE);
+ 			break;
+ 		case 3:
+-			tpid = htons(enetc_port_rd(&priv->si->hw,
+-						   ENETC_PCVLANR2));
+-			break;
+-		default:
+-			break;
++			tpid = htons(enetc_rd_hot(hw, ENETC_SICVLANR2) &
++				     SICVLANR_ETYPE);
+ 		}
  
-+			/* vfe */
-+			iommu-ctx@3000 {
-+				compatible = "qcom,msm-iommu-v1-sec";
-+				reg = <0x3000 0x1000>;
-+				interrupts = <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH>;
-+			};
-+
- 			/* mdp_0: */
- 			iommu-ctx@4000 {
- 				compatible = "qcom,msm-iommu-v1-ns";
-
+ 		__vlan_hwaccel_put_tag(skb, tpid, le16_to_cpu(rxbd->r.vlan_opt));
+diff --git a/drivers/net/ethernet/freescale/enetc/enetc_hw.h b/drivers/net/ethernet/freescale/enetc/enetc_hw.h
+index 4098f01479bc..0385aa66a391 100644
+--- a/drivers/net/ethernet/freescale/enetc/enetc_hw.h
++++ b/drivers/net/ethernet/freescale/enetc/enetc_hw.h
+@@ -43,6 +43,9 @@
+ 
+ #define ENETC_SIPMAR0	0x80
+ #define ENETC_SIPMAR1	0x84
++#define ENETC_SICVLANR1	0x90
++#define ENETC_SICVLANR2	0x94
++#define  SICVLANR_ETYPE	GENMASK(15, 0)
+ 
+ /* VF-PF Message passing */
+ #define ENETC_DEFAULT_MSG_SIZE	1024	/* and max size */
+@@ -178,8 +181,6 @@ enum enetc_bdr_type {TX, RX};
+ #define ENETC_PSIPMAR0(n)	(0x0100 + (n) * 0x8) /* n = SI index */
+ #define ENETC_PSIPMAR1(n)	(0x0104 + (n) * 0x8)
+ #define ENETC_PVCLCTR		0x0208
+-#define ENETC_PCVLANR1		0x0210
+-#define ENETC_PCVLANR2		0x0214
+ #define ENETC_VLAN_TYPE_C	BIT(0)
+ #define ENETC_VLAN_TYPE_S	BIT(1)
+ #define ENETC_PVCLCTR_OVTPIDL(bmp)	((bmp) & 0xff) /* VLAN_TYPE */
 -- 
-2.49.0
-
+2.34.1
 
 
