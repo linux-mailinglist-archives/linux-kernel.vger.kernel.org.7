@@ -1,134 +1,90 @@
-Return-Path: <linux-kernel+bounces-667787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-667789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B8D5AC89E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 10:29:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31305AC89E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 10:30:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50B421BA4C0E
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 08:29:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00FEE17D5F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 08:30:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3990217733;
-	Fri, 30 May 2025 08:29:29 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32CCC211706;
+	Fri, 30 May 2025 08:30:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="M35habH1"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5876211A05
-	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 08:29:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 808A31D9A49
+	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 08:30:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748593769; cv=none; b=VxodrlteZbCitiSnxUyE6Mt9J6CxgUj/z8sZYaIgDYKt/y7dUWQ7BAERbitU4xEb0RspQBf3HZxwe2/boZ/oRrrj2M5CuZ/W4BMCGi9WCp5HxOVJ69d476Mqw3OsA5lvvsT6/W3aO/0NlCznJaZjEINQSRsjRJyelmZIVZp7KDA=
+	t=1748593825; cv=none; b=tPtRm0Mmye2AVDcOVx+hzmkFMpXgdNsxZ28gjAsWZ+ZGSqHUKZ2gOwnoVgcNOi4M6qAtHM9kWTCyqrseAdlmbsna+kQfl7t+SO1WZZhG7XZ/ut75HnQken07gUzXXCV6xnWUW+105SxYpdrvb+BdKVaue2g/qrnr8Iq8IqwtUxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748593769; c=relaxed/simple;
-	bh=zsu+yDkMEzb2harqD8aE1FdD6Jqia+PNCFH57/7eA3U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KiewlVIlW3rattXMoqqswLatj4yoIDJy3wTnVm1Ehg/AkusA1Zo57wUrYQ4pIaGXRepBzjIwMAL94qKhq9Dcw+HjsdGgknHVDG9DCjmtOMYfzOie8L7jZsaM2ZeBvSJX5fTyir8e3XzYvp7KBLBXOytv3YUfByGq4SVRfUCN2nk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1uKv71-00076R-2j; Fri, 30 May 2025 10:29:11 +0200
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1uKv70-000wlp-2I;
-	Fri, 30 May 2025 10:29:10 +0200
-Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1uKv70-000oiP-1q;
-	Fri, 30 May 2025 10:29:10 +0200
-Date: Fri, 30 May 2025 10:29:10 +0200
-From: Marco Felsch <m.felsch@pengutronix.de>
-To: Shengjiu Wang <shengjiu.wang@gmail.com>
-Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org,
-	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-	devicetree@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	carlos.song@nxp.com
-Subject: Re: [PATCH v2 4/6] arm64: dts: imx943-evk: add sound-wm8962 support
-Message-ID: <20250530082910.o5jg7s5ckbm6knms@pengutronix.de>
-References: <20250528015837.488376-1-shengjiu.wang@nxp.com>
- <20250528015837.488376-5-shengjiu.wang@nxp.com>
- <20250528083704.ne6wyoj6vcmy7azq@pengutronix.de>
- <CAA+D8AMDbenx8scnBZdABAxF8MaYsBRzxXZjgGhMRbCJ-1wwcw@mail.gmail.com>
+	s=arc-20240116; t=1748593825; c=relaxed/simple;
+	bh=uMvsKY9QEjvjwd7DFYGmn8OEokhLWAsX8TBQZAs4xdw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=d/3wuz+T/pQ6r7Prwn6LHuX2xyf9M56Vuf8F4fDKgdQId/eSWb+KCiTlsPBzB67Fja8PTeUM7eRY4rjo4ljk+p335AToJEOWg1m9/NtWSxiC0/cMnvwA7qjEC9F20Z93Pb5N1KX2DFeDr/qV0Xx95GenTOuGJ61vw39Xsb19P7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=M35habH1; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=Content-Type:MIME-Version:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=ls5MxaQepdo75i1874VZ8q0kWhIBVLloFn5NFQ+OlgA=; b=M35habH17koqH6T88PnFN9kRZ0
+	MGZvi5QaNzB22SaHZ5mBAUawPgO3ZlhsMAl7+UgnWSD85VKYCTi7MNEXcMA0/HRYukkGn+WNvXhsE
+	oi079+hTHAZuoiYLd5TDY2V405SpZUU2IUXAYeEFcysZSwjcUqkAw1ZDcwlC9splmw4UeHCOBrTO1
+	n+J9vfLDvlR4RNrriFue2AGQLQBOHuGb3pI9lOgegp7Nvb/Omly6Ui7oF3Tk6mdIGQGx0dqFus/z3
+	OksHFTkUc+cvyJ+rmR7QBv+bXsAKQfI30sOLxI2tVKsvshPpe2tG8VnH+PLCKqNzdt8pUgmrAgWOM
+	HQGTixBg==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1uKv7z-009joo-16;
+	Fri, 30 May 2025 16:30:12 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 30 May 2025 16:30:11 +0800
+Date: Fri, 30 May 2025 16:30:11 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>
+Cc: Andrei Vagin <avagin@gmail.com>, Dmitry Safonov <dima@arista.com>
+Subject: [PATCH] time_namespace.h: Add struct seq_file forward declaration
+Message-ID: <aDlskzKIAULMlwPj@gondor.apana.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAA+D8AMDbenx8scnBZdABAxF8MaYsBRzxXZjgGhMRbCJ-1wwcw@mail.gmail.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On 25-05-30, Shengjiu Wang wrote:
-> On Wed, May 28, 2025 at 4:37 PM Marco Felsch <m.felsch@pengutronix.de> wrote:
-> >
-> > Hi,
-> >
-> > On 25-05-28, Shengjiu Wang wrote:
-> > > Add WM8962 codec connected to SAI1 interface.
-> > >
-> > > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> > > Reviewed-by: Frank Li <Frank.Li@nxp.com>
-> > > ---
-> > >  arch/arm64/boot/dts/freescale/imx943-evk.dts | 79 ++++++++++++++++++++
-> > >  1 file changed, 79 insertions(+)
-> > >
-> > > diff --git a/arch/arm64/boot/dts/freescale/imx943-evk.dts b/arch/arm64/boot/dts/freescale/imx943-evk.dts
-> > > index ff6e9ac5477f..da08aaa95904 100644
-> > > --- a/arch/arm64/boot/dts/freescale/imx943-evk.dts
-> > > +++ b/arch/arm64/boot/dts/freescale/imx943-evk.dts
-> > > @@ -36,6 +36,15 @@ reg_usdhc2_vmmc: regulator-usdhc2 {
-> > >               enable-active-high;
-> > >       };
-> > >
-> > > +     reg_audio_pwr: regulator-wm8962-pwr {
-> > > +             compatible = "regulator-fixed";
-> > > +             regulator-max-microvolt = <3300000>;
-> > > +             regulator-min-microvolt = <3300000>;
-> > > +             regulator-name = "audio-pwr";
-> > > +             gpio = <&pcal6416_i2c3_u171 12 GPIO_ACTIVE_HIGH>;
-> > > +             enable-active-high;
-> > > +     };
-> > > +
-> > >       reserved-memory {
-> > >               ranges;
-> > >               #address-cells = <2>;
-> > > @@ -50,6 +59,21 @@ linux,cma {
-> > >               };
-> > >       };
-> > >
-> > > +     sound-wm8962 {
-> > > +             compatible = "fsl,imx-audio-wm8962";
-> >
-> > Out of curiosity did you considered making use of "audio-graph-card2"?
-> >
-> > The "fsl,imx-audio-wm8962" seems like a pretty simple sound card which
-> > could be added via the "audio-graph-card2" as well. Don't get me wrong,
-> > it's not wrong what you're doing here but making use of the generic
-> > sound card would be nice because it's very common to just copy'n'paste
-> > the audio integration from the corresponding evk.dts file.
-> 
-> Thanks for the suggestion.
-> 
-> WM8962 has a function .set_pll(), which hasn't been supported in
-> audio-graph-card2.  so we still use fsl,imx-audio-wm8962.
+Add forward declaration of struct seq_file before using it in
+function prototype.
 
-Thanks for the explanation.
+Fixes: 04a8682a71be ("fs/proc: Introduce /proc/pid/timens_offsets")
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 
-Regards,
-  Marco
+diff --git a/include/linux/time_namespace.h b/include/linux/time_namespace.h
+index 0b8b32bf0655..bb2c52f4fc94 100644
+--- a/include/linux/time_namespace.h
++++ b/include/linux/time_namespace.h
+@@ -12,6 +12,7 @@
+ struct user_namespace;
+ extern struct user_namespace init_user_ns;
+ 
++struct seq_file;
+ struct vm_area_struct;
+ 
+ struct timens_offsets {
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
