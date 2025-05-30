@@ -1,124 +1,131 @@
-Return-Path: <linux-kernel+bounces-668261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-668286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF8C2AC9039
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 15:31:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D34DAC908A
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 15:49:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24DDA18895ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 13:27:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4B419E2AEE
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 13:49:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B82722B584;
-	Fri, 30 May 2025 13:25:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="MzQxbtLB"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D36D18A6DB;
+	Fri, 30 May 2025 13:49:25 +0000 (UTC)
+Received: from out01.mta.xmission.com (out01.mta.xmission.com [166.70.13.231])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 595693FE4
-	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 13:25:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60C2C79CF
+	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 13:49:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.231
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748611546; cv=none; b=m2ALVD4rAht0SFj4dyjB5GYssfSNfzZYZo5Y7igHJbAzUhzudqljuxm+8XL7bCiRmCzltbxJIJzl71FPtNCe/5DK9dpeKGsZaYdbtTxmqN2Pc5OILhafvKTg1Vc3BGMZQozFuO1LOY5Cyue3E/MStXAHLqpAq/9+ytOxjjW8zmM=
+	t=1748612965; cv=none; b=dxS5BzyKEpqbKEg3cJz8ry3KSjZIUlhLvU0PLArvEtJz5Y/6CtMf7HqVanVQtSupN5f7Voi2xZ5UZPjtvz8LAYeMYDTzJvgiTvLMUG0xl99uZSoddZpgdsOe5AG3a14Xus+pVHWF8S4i1Jrv1j9pOBmiW2N2Tyj+/g3y6ziGlNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748611546; c=relaxed/simple;
-	bh=PgxKpmwUXFEHD62wBJ1kOQYT5echnoyGtaLah7i4Xn4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MWvV9uivaXMfKzlm+cOO0Z59I4qyrCe+Renx7dK89UJwYW9Ob/aq8iW5MU+c8/lEVpf+T6NchaEEmYtxHPqwDpAGEonyyGwvUd74XBXHnyjISkWi82AtBJvhxLlElUnqyU59tmepgiCYor2/mNLOJN3RNRLFoXu+wqBo2Nfk1IY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=MzQxbtLB; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-44069f5f3aaso606275e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 06:25:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1748611542; x=1749216342; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=KVWYls6nDQ73R20I/E86TcuwkZJGt1DZr9U8c6qpiXA=;
-        b=MzQxbtLBPw12rLUIoOvKbkmBFOh7rE+gCf+cB9gE8jeefrCk6RKebYT5Uyd5hAsf/j
-         zzjIXu7fT7mFrg+IpRlFqgO2jBwS0//nXJwuasSBjHras8Qu8wHS+R1NGe6idIU3Z+a1
-         +cRk7NlUQ3HX/dkXJyUboOqMdL9tPhVOPbpNSnABBDWw/g+jh/4ihCXPtTUdMZdNa8ML
-         3SWTFeYNUgUbzycX/cdLzR/nfqCmgkehrS3Ah/iL6FfR201RA4VmopWCSM6L2t2lgRug
-         /JTU7dgHXXyKaTlmYyJYm449QyzLkwj3MQ4HkVyWX4QN4NairkEeHC8hro3zXOKu1oAa
-         n26w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748611542; x=1749216342;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KVWYls6nDQ73R20I/E86TcuwkZJGt1DZr9U8c6qpiXA=;
-        b=Inwa7e7E3plQpB9L0eYXskYyaCY+NSzN7P/pCdKA0h1vdmACFZdXSbZQRcA3PiTwJU
-         2OGX0C4fXQIiIg9vPHZJvNGRD5yzuXVVmK5VdjKgBq3SQD4nOTWQLFttoG+zUOgaFoqW
-         y6+nn49bofHYmOPyeEKK6hABdgT1q7Q7edRi2t/u+Vzeryh4l/GDaRv6QXYryq7USpYr
-         /6eKjD/gVPZl/SgLbpQfeQqA3vq+sQB2C+p/Jzw2Ud/RCKwz+5lg2WmNC8zU28S+YKxE
-         832ZH7TNuaYEDS+D0jdg+7mPgxa7MAHtWtF7Na30TvX/xBZeJXFF1MpAorTforsXeUOl
-         fhdw==
-X-Gm-Message-State: AOJu0YzJWiNgjBhPWqYDCjHKNN6aHo8iKbZkrlUXaZCBiuu3youI5eAn
-	6hKnH8NLlf/8Xq13H3Vg7n+lHv84qB34Q0R4GRNuSMZQTBt1Aa5Cv/9HT3vqNex6OQg=
-X-Gm-Gg: ASbGncvdkJiGAXTd4ByscimmLNuc3b9W6AHvwhDTOJv8RQeDhNgqCMkvUrE2ecRf1Z0
-	7C1kuGZDEAzq2RM+ZmxQ7meBfbUlk+ytwlj0NEYeWEGO9a7AcJarJG+IToHg7565DRpu4AO08vK
-	ReOmP66nSsOLhBDIh8BQ5PdEChW1janucNka9xci1zoT6tgI81mD5KVrqTdmC4GHtAhAF7S7HNs
-	Bv05nlrYFXIQSuxkuA5uEpfG/PtwOxiInqKrd8h1XfriLPWJCrAVcjga0Stwsd8iY0TygASHMtX
-	lAqTKzCLwu/hh1+Vmf5Wpd4AzOv8q+ykzEaRzL4a94RF
-X-Google-Smtp-Source: AGHT+IFMDODFq8YfSUMILS9AIMysrQxARbcNqQQhkXacaq+QWyeYkvOmhljmx2uNzVHpXM/pMfqpsg==
-X-Received: by 2002:a05:600c:1c8d:b0:43b:c0fa:f9c4 with SMTP id 5b1f17b1804b1-450d7bae255mr7676065e9.4.1748611542464;
-        Fri, 30 May 2025 06:25:42 -0700 (PDT)
-Received: from localhost ([193.86.92.181])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-450d6358fc9sm20975115e9.1.2025.05.30.06.25.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 May 2025 06:25:42 -0700 (PDT)
-From: Petr Tesarik <ptesarik@suse.com>
-To: Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org (open list:HIGH-RESOLUTION TIMERS, TIMER WHEEL, CLOCKEVENTS),
-	Petr Tesarik <ptesarik@suse.com>
-Subject: [PATCH] timers/migration: remove an unneeded call to find_first_bit()
-Date: Fri, 30 May 2025 15:25:39 +0200
-Message-ID: <20250530132539.234792-1-ptesarik@suse.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1748612965; c=relaxed/simple;
+	bh=1jTr1g5QOazu47tadj4JGVrJDAfLbg3ptCZUFAnGh6w=;
+	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
+	 Content-Type:Subject; b=rIy6YOL7DKcFSMC4wWWNJdwkXJTQruCM1PCbA8NMDNcjzd9NNNZ0HG6liMcTrSeXCPaji6+10mKOftpLK4iTHJV5ymS9l0e6I8kMgGHoZEAAO16ePZIFsd6HTIz6YBiKVrXIaSorlIUU2WTJOgF7mSsZgkJPXfI9KSRlYgFzD0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.231
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
+Received: from in02.mta.xmission.com ([166.70.13.52]:55896)
+	by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1uKzm5-005yU3-MH; Fri, 30 May 2025 07:27:53 -0600
+Received: from ip72-198-198-28.om.om.cox.net ([72.198.198.28]:47416 helo=email.froward.int.ebiederm.org.xmission.com)
+	by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1uKzm4-000Vcx-Jk; Fri, 30 May 2025 07:27:53 -0600
+From: "Eric W. Biederman" <ebiederm@xmission.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,  Andrew Morton
+ <akpm@linux-foundation.org>
+References: <aDlty06JvlGwTfKk@gondor.apana.org.au>
+Date: Fri, 30 May 2025 08:27:14 -0500
+In-Reply-To: <aDlty06JvlGwTfKk@gondor.apana.org.au> (Herbert Xu's message of
+	"Fri, 30 May 2025 16:35:23 +0800")
+Message-ID: <87ldqegrf1.fsf@email.froward.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-XM-SPF: eid=1uKzm4-000Vcx-Jk;;;mid=<87ldqegrf1.fsf@email.froward.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=72.198.198.28;;;frm=ebiederm@xmission.com;;;spf=pass
+X-XM-AID: U2FsdGVkX1/1W1G+VTxfE0afk/cNZjBjXCe2jTfZW4E=
+X-Spam-Level: 
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+	*      [score: 0.5000]
+	*  0.7 XMSubLong Long Subject
+	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+	*      [sa05 1397; Body=1 Fuz1=1 Fuz2=1]
+	*  0.0 T_TooManySym_01 4+ unique symbols in subject
+X-Spam-DCC: XMission; sa05 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Herbert Xu <herbert@gondor.apana.org.au>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 496 ms - load_scoreonly_sql: 0.08 (0.0%),
+	signal_user_changed: 13 (2.6%), b_tie_ro: 11 (2.2%), parse: 1.31
+	(0.3%), extract_message_metadata: 18 (3.5%), get_uri_detail_list: 1.80
+	(0.4%), tests_pri_-2000: 17 (3.5%), tests_pri_-1000: 3.2 (0.6%),
+	tests_pri_-950: 1.65 (0.3%), tests_pri_-900: 1.29 (0.3%),
+	tests_pri_-90: 109 (22.0%), check_bayes: 107 (21.5%), b_tokenize: 7
+	(1.4%), b_tok_get_all: 7 (1.3%), b_comp_prob: 2.4 (0.5%),
+	b_tok_touch_all: 88 (17.6%), b_finish: 1.12 (0.2%), tests_pri_0: 312
+	(63.0%), check_dkim_signature: 0.68 (0.1%), check_dkim_adsp: 3.5
+	(0.7%), poll_dns_idle: 0.92 (0.2%), tests_pri_10: 4.0 (0.8%),
+	tests_pri_500: 11 (2.2%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH] userns: Add forward declaration of struct seq_file in
+ user_namespace.h
+X-SA-Exim-Connect-IP: 166.70.13.52
+X-SA-Exim-Rcpt-To: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, herbert@gondor.apana.org.au
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-SA-Exim-Scanned: No (on out01.mta.xmission.com); SAEximRunCond expanded to false
 
-Use simple bit arithmetic to extract the least significant bit from the
-active bitmask, because the bit position is not needed, only the bit
-itself.
+Herbert Xu <herbert@gondor.apana.org.au> writes:
 
-No functional change.
+> Add forward declaration of struct seq_file before using it in
+> function prototype.
 
-Signed-off-by: Petr Tesarik <ptesarik@suse.com>
----
- kernel/time/timer_migration.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+I don't see anything wrong with doing that.
 
-diff --git a/kernel/time/timer_migration.c b/kernel/time/timer_migration.c
-index 2f6330831f08..0f40727b6cac 100644
---- a/kernel/time/timer_migration.c
-+++ b/kernel/time/timer_migration.c
-@@ -1277,12 +1277,12 @@ static bool tmigr_inactive_up(struct tmigr_group *group,
- 			 * group is idle!
- 			 */
- 			if (!childstate.active) {
--				unsigned long new_migr_bit, active = newstate.active;
-+				u8 active = newstate.active;
- 
--				new_migr_bit = find_first_bit(&active, BIT_CNT);
-+				if (active) {
-+					u8 lsbit = active & -active;
- 
--				if (new_migr_bit != BIT_CNT) {
--					newstate.migrator = BIT(new_migr_bit);
-+					newstate.migrator = lsbit;
- 				} else {
- 					newstate.migrator = TMIGR_NONE;
- 
--- 
-2.49.0
+However:
+> Fixes: 9cc46516ddf4 ("userns: Add a knob to disable setgroups on a per
+> user namespace basis")
 
+That description seems to be lacking something.  The code as has been
+fine since 2014 and there is no conditional compilation involved.
+
+Did some other change cause a declaration of seq_file not to be present?
+Did user_namespace.h get included somewhere new and that new location
+doesn't wind up declaring seq_file?
+
+Especially since fixes tags tend to get code back ported I would
+appreciate a bit more context on why this is a problem in 2025 when
+it hasn't been a problem for the last decade.
+
+Thank you,
+Eric Biederman
+
+> Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+>
+> diff --git a/include/linux/user_namespace.h b/include/linux/user_namespace.h
+> index a0bb6d012137..5c7aa940b1aa 100644
+> --- a/include/linux/user_namespace.h
+> +++ b/include/linux/user_namespace.h
+> @@ -16,6 +16,8 @@
+>  #define UID_GID_MAP_MAX_BASE_EXTENTS 5
+>  #define UID_GID_MAP_MAX_EXTENTS 340
+>  
+> +struct seq_file;
+> +
+>  struct uid_gid_extent {
+>  	u32 first;
+>  	u32 lower_first;
 
