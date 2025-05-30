@@ -1,142 +1,140 @@
-Return-Path: <linux-kernel+bounces-668686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-668688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EC8BAC95EF
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 21:09:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46273AC95F7
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 21:13:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B52F8A47B62
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 19:09:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EECE16DBE3
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 19:13:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6329F278152;
-	Fri, 30 May 2025 19:09:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03E6927874F;
+	Fri, 30 May 2025 19:13:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="M06mhSDs"
-Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fviMXFQc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24AFB277032
-	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 19:09:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 544DE23E35B;
+	Fri, 30 May 2025 19:13:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748632181; cv=none; b=BXL4Tv2smpBhsjdoUfu5DrcQKKuy3KLD7yGj/FpWo1QShPTiDywscadmmc+eS8EQ0THg+VBgajnC8Y3uc6jOo4xuiiu3HfZT4ICKrjUze0iIBYZFwCyZf4QXVeWMdhD0UITA4bDxBG9YDJkRZWrqSIS663l5qUftvW3/J3b1UBQ=
+	t=1748632403; cv=none; b=ZqXOxHNPG9UN1HDMJq3rPeC2GrihAm4SWoP9iHFznvGgt36qknZSTwTb+YuTk9nNGBR0hdDduA3Fi04q4zFks7S7Ih1VFPoKdvf5ambbPnRnxs4lfWzZ1ggMaBPnSWozPp1jrZXA4QpwCm+kLl5CXkENl5dLJRKm22LI2PxM8j8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748632181; c=relaxed/simple;
-	bh=mmKuVFxj8oqDXK1GzynYJ/mE/RkhpPA1TeCN5uhdhNs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=C4xPk6HHr6zpUvdlHexoSZFCoEGGE3P7C8a+gFz3Ac3xOOIJP/Us7Clm8HVYu0gz9l7D0IKI47eSSeVXFWeg9vuQY+JFp2NyMz7E4E4L3plwh3uZpA2y7brBhJ2dqHj1UjGH3tmVoDJFH7D/NgSkGAxLuNw3ofhN+WJqY68GO2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=M06mhSDs; arc=none smtp.client-ip=209.85.167.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-40667dc8a62so1032977b6e.0
-        for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 12:09:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1748632178; x=1749236978; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=FKywJqFiyg7r14emOGTrcjfC7+0Rn2Ebhf4hG1BR+LI=;
-        b=M06mhSDs1u6Wk4AtDncjwKAN4ycLMJxoiehKzD6mW0rSwplXdoAAs206daNahwAEEj
-         1t618zdrAzk4dXPnRCK1nX6HvABI/aM2DMIsFH5IKKppFrERMg1xMDhoDZfaSm5WgHJZ
-         PnAQ9VZ5KIKaj/5lqvJ8+yGNYMazHH18LnWr4FXYjHol98RiF2wVWEGzA+F3WdXd6FSW
-         vosPw6gqVNGSYBIOPbWM0SfMSg62Rrh0sewxl3DHWVCtKl462+NNksQpOfoAii4hdXKK
-         hkwh3AgASls9rNaV64qHlWXy9H76iN/5XZsCTm5zQJF0gOpvk/ISGc8RSnF5BvT1N2T9
-         Naew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748632178; x=1749236978;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FKywJqFiyg7r14emOGTrcjfC7+0Rn2Ebhf4hG1BR+LI=;
-        b=iHyyz9s2WFqtYWutBGCqum5JotD2HgnfEpcNcaLBAxe9eN5swTEjERoezg0r1O3GLZ
-         tjswEP1wgLDErRkr1Hp4mSkBMfnjObdJQjCBev5Jm4OXRYXJ7hG0bH9qyD6tVEp+MI/J
-         890JJJyv++dsryKFM8KYjugoqCqd1+2f3Jou6jM6wDLALgg+wWtWIo9FpHLbnRD95SrG
-         rCwBxpjdRyvyv3e3C6cEDeaWLc66RUAiR74HwDv0fdsT/tDJHiu/OpJg/FCrMFt4ZmCc
-         yPvuBwdbP+E5VoFg+LQJ5N/xcGEVw9AesEM49CLimx/h08dlgnHY/EUgjUnqLuLE5WO5
-         Jp2g==
-X-Forwarded-Encrypted: i=1; AJvYcCWyuztUDRVSfsiTL48ZhATadDWiDb6eBBVgHOtmMnFl+95fj82dUbbxyv2DI/PegKymTgkcnKGTjbf0Slk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4W4Ycx+YATjMAeohuD4W+J0jwiZFYnYSF/4GasPI4WCn5C8Za
-	E6kys7GyYmbH4S0OPLd7HNfRG4v54ghG0D4MdmS0ahWvdlfbsLESKp4ZlAHo/FibK6UgQc+gCo2
-	0ZW55
-X-Gm-Gg: ASbGncv/ZSPYsX+ftVDhyOZojhUAPRqiCbUI2Kvm1e3KE3zhlDDyEKLLx1m+cmVUK5j
-	P/TzepnRqFx5tWLZa/d0qWioHU3i52tcRV7Mb48j6G741jPmsCxe+JA+sCfV9/NdnVlLbYgFyOB
-	Hmw3kSQy2FYEaadCtKFABCpb9Ku/xXJnX4smhHyLujWOuH8zAyPK+LiIokDu16KQBDckgDrco8J
-	5etCC3bVKkXLwJrFyR18JVJlejVfxxTSF7SLiaJF0Qdx3weaaaToiS+mlLrEWmwUI7ZwhBaI9kE
-	lrve6aFzrPPGcvBd5nOPhLDQLHvwVKek5gaXmZzt2SmgIWcZVc4MlNtgrw==
-X-Google-Smtp-Source: AGHT+IG2eOOSL4CmrMiEEHmGHU6etf8ecnV/PntypowdZ73FJy+NqJszGddVLgOSimMPTDEpqX0ZMQ==
-X-Received: by 2002:a05:6808:2e45:b0:406:59f3:7389 with SMTP id 5614622812f47-40679674013mr2897329b6e.7.1748632178153;
-        Fri, 30 May 2025 12:09:38 -0700 (PDT)
-Received: from [127.0.1.1] ([2600:8803:e7e4:1d00:29cb:b1cd:c8f4:2777])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-40678ce830fsm487852b6e.31.2025.05.30.12.09.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 May 2025 12:09:37 -0700 (PDT)
-From: David Lechner <dlechner@baylibre.com>
-Date: Fri, 30 May 2025 14:09:29 -0500
-Subject: [PATCH] iio: adc: adi-axi-adc: fix ad7606_bus_reg_read()
+	s=arc-20240116; t=1748632403; c=relaxed/simple;
+	bh=HzXJ6AEdcwmvBWA+PgiZUgeoUUm0HSXNmXjkxF0eRDs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qAzM73JnAnQi6R+Awm383fZyWa7tT4llafQNrUoh11BT9fWPMEfdTxOVsVAp6s/MCcmB4Hh+xcqUfg1H6NRG2Swmuth+ughNv+9mnvI4dWr5FawAczU0JfkdQdJWnjXCvRelgWCye4/arZgim+AMrrDYY5uSALzxYRF0XTbvSXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fviMXFQc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0918C4CEE9;
+	Fri, 30 May 2025 19:13:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748632402;
+	bh=HzXJ6AEdcwmvBWA+PgiZUgeoUUm0HSXNmXjkxF0eRDs=;
+	h=From:To:Cc:Subject:Date:From;
+	b=fviMXFQcF4MiK9d/GhA2R0n7qXLFOkB6Asvr2RQbBkaxooffdv6uQfNwK3kRfwWdQ
+	 U5ZCv29xdRC9gpGAIQh8m+ijqkoAKWExmp1LwKIfI+tQSljPQjqtV0uHxQMybs2UYs
+	 PRbACuaFNs+kuq8sDYL4CsGWdspnTuVHADXP8PqC2rRsVX/lJMz3IPmonK7eRGn2Wy
+	 sqTL8qXdTAzgdGY8MzCpMDlGC8i/Qp0cjb6g0VqC2izrLGooqxsls/PwclBtOAMgWW
+	 VWhmfuYKQ1NdtB4JkCTvD3wLYJXc+wffeKfNpNIpl4bJzb1A4lOeSrYmqq+zG2Dm3D
+	 WYUyVEY+DbMlw==
+From: Kees Cook <kees@kernel.org>
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: Kees Cook <kees@kernel.org>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	linux-hardening@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] overflow: Introduce __DEFINE_FLEX for having no initializer
+Date: Fri, 30 May 2025 12:13:16 -0700
+Message-Id: <20250530191312.work.661-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250530-iio-adc-adi-axi-adc-fix-ad7606_bus_reg_read-v1-1-ce8f7cb4d663@baylibre.com>
-X-B4-Tracking: v=1; b=H4sIAGgCOmgC/x2NwQqDQBBDf0Xm3IHpymrpr5QiO+6ouWjZpUUQ/
- 72Dh5A8CMlB1Qqs0rM5qNgPFdvqcL81NC5pnY2RnSlIiBJbYWDjlEcXOO248oTdve+kG/Rbh2K
- zK2WegqpGabM+lHzxU8yr19vrfZ5/X1JdtX0AAAA=
-X-Change-ID: 20250530-iio-adc-adi-axi-adc-fix-ad7606_bus_reg_read-f2bbb503db8b
-To: Michael Hennerich <Michael.Hennerich@analog.com>, 
- Jonathan Cameron <jic23@kernel.org>, 
- Angelo Dureghello <adureghello@baylibre.com>, 
- Guillaume Stols <gstols@baylibre.com>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org, David Lechner <dlechner@baylibre.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1226; i=dlechner@baylibre.com;
- h=from:subject:message-id; bh=mmKuVFxj8oqDXK1GzynYJ/mE/RkhpPA1TeCN5uhdhNs=;
- b=owEBbQGS/pANAwAKAcLMIAH/AY/AAcsmYgBoOgJq82QL1VEg0ESXWFXdFQRxKkobZRI4WmDxS
- 9bg005lQqSJATMEAAEKAB0WIQTsGNmeYg6D1pzYaJjCzCAB/wGPwAUCaDoCagAKCRDCzCAB/wGP
- wNtHB/4+wOAZwxHF6O8cFex05SJkEQ5yszuH2MFbRbYJYjEoSUEQNVWlW7h7gCEoL5rcZbN4oAR
- 5SU+nGOwVbg3EENkYXEcIaPMpN7Q3rSs1Ml/sNJhgv/OSL7PeMfmDKPZ6FD+tp8ZdkBa3zFXh+t
- ejbjrepIm/nDIa50mbMBuwr3Mgtj+bapx0hFCZRumu9AZy04swCIMoIJ6BiAQWPaukqj0ZKejjf
- bG2zOvNp/qSkXHnRVaaThgX/LQGkdIQDx7zLyzz/5YXNGOkWRJRj8Wx5LimnNyT66z7Z/N1n4Z2
- GXORO5nt2YpWth/6QkJxrOmfsMAcPuxDCpnTv6x625yeyBiW
-X-Developer-Key: i=dlechner@baylibre.com; a=openpgp;
- fpr=8A73D82A6A1F509907F373881F8AF88C82F77C03
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3412; i=kees@kernel.org; h=from:subject:message-id; bh=HzXJ6AEdcwmvBWA+PgiZUgeoUUm0HSXNmXjkxF0eRDs=; b=owGbwMvMwCVmps19z/KJym7G02pJDBlWzD5z+qurGts6rTnDZWRjXaW6lAvq/x3stV/9qXX31 X97lb91lLIwiHExyIopsgTZuce5eLxtD3efqwgzh5UJZAgDF6cATIRhNiPDxePxP45c09Kvi/X0 Vr8Wubr2h0bdq+WHeZ3WicabWZyoZWRoTtgfn9/p7Lrfb6LsbqPbD3Oy2rYufXf4Q/5ev9ATwd1 8AA==
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 
-Mask the value read before returning it. The value read over the
-parallel bus via the AXI ADC IP block contains both the address and
-the data, but callers expect val to only contain the data.
+While not yet in the tree, there is a proposed patch[1] that was
+depending on the prior behavior of _DEFINE_FLEX, which did not have an
+explicit initializer. Provide this via __DEFINE_FLEX now, which can also
+have attributes applied (e.g. __uninitialized).
 
-Cc: stable@vger.kernel.org
-Fixes: 79c47485e438 ("iio: adc: adi-axi-adc: add support for AD7606 register writing")
-Signed-off-by: David Lechner <dlechner@baylibre.com>
+Examples of the resulting initializer behaviors can be seen here:
+https://godbolt.org/z/P7Go8Tr33
+
+Link: https://lore.kernel.org/netdev/20250520205920.2134829-9-anthony.l.nguyen@intel.com [1]
+Fixes: 47e36ed78406 ("overflow: Fix direct struct member initialization in _DEFINE_FLEX()")
+Signed-off-by: Kees Cook <kees@kernel.org>
 ---
- drivers/iio/adc/adi-axi-adc.c | 3 +++
- 1 file changed, 3 insertions(+)
+Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: Alexander Lobakin <aleksander.lobakin@intel.com>
+Cc: <linux-hardening@vger.kernel.org>
+---
+ include/linux/overflow.h | 25 +++++++++++++++++++------
+ 1 file changed, 19 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/iio/adc/adi-axi-adc.c b/drivers/iio/adc/adi-axi-adc.c
-index cf942c043457ccea49207c3900153ee371b3774f..d4759a98b4062bc25ea088e3868806e82db03e8d 100644
---- a/drivers/iio/adc/adi-axi-adc.c
-+++ b/drivers/iio/adc/adi-axi-adc.c
-@@ -457,6 +457,9 @@ static int ad7606_bus_reg_read(struct iio_backend *back, u32 reg, u32 *val)
- 	axi_adc_raw_write(back, addr);
- 	axi_adc_raw_read(back, val);
+diff --git a/include/linux/overflow.h b/include/linux/overflow.h
+index 7b7be27ca113..154ed0dbb43f 100644
+--- a/include/linux/overflow.h
++++ b/include/linux/overflow.h
+@@ -389,24 +389,37 @@ static inline size_t __must_check size_sub(size_t minuend, size_t subtrahend)
+ 	struct_size((type *)NULL, member, count)
  
-+	/* Register value is 8 bits. Remove address bits. */
-+	*val &= 0xFF;
+ /**
+- * _DEFINE_FLEX() - helper macro for DEFINE_FLEX() family.
+- * Enables caller macro to pass (different) initializer.
++ * __DEFINE_FLEX() - helper macro for DEFINE_FLEX() family.
++ * Enables caller macro to pass arbitrary trailing expressions
+  *
+  * @type: structure type name, including "struct" keyword.
+  * @name: Name for a variable to define.
+  * @member: Name of the array member.
+  * @count: Number of elements in the array; must be compile-time const.
+- * @initializer: Initializer expression (e.g., pass `= { }` at minimum).
++ * @trailer: Trailing expressions for attributes and/or initializers.
+  */
+-#define _DEFINE_FLEX(type, name, member, count, initializer...)			\
++#define __DEFINE_FLEX(type, name, member, count, trailer...)			\
+ 	_Static_assert(__builtin_constant_p(count),				\
+ 		       "onstack flex array members require compile-time const count"); \
+ 	union {									\
+ 		u8 bytes[struct_size_t(type, member, count)];			\
+ 		type obj;							\
+-	} name##_u = { .obj initializer };					\
++	} name##_u trailer;							\
+ 	type *name = (type *)&name##_u
+ 
++/**
++ * _DEFINE_FLEX() - helper macro for DEFINE_FLEX() family.
++ * Enables caller macro to pass (different) initializer.
++ *
++ * @type: structure type name, including "struct" keyword.
++ * @name: Name for a variable to define.
++ * @member: Name of the array member.
++ * @count: Number of elements in the array; must be compile-time const.
++ * @initializer: Initializer expression (e.g., pass `= { }` at minimum).
++ */
++#define _DEFINE_FLEX(type, name, member, count, initializer...)			\
++	__DEFINE_FLEX(type, name, member, count, = { .obj initializer })
 +
- 	/* Write 0x0 on the bus to get back to ADC mode */
- 	axi_adc_raw_write(back, 0);
+ /**
+  * DEFINE_RAW_FLEX() - Define an on-stack instance of structure with a trailing
+  * flexible array member, when it does not have a __counted_by annotation.
+@@ -424,7 +437,7 @@ static inline size_t __must_check size_sub(size_t minuend, size_t subtrahend)
+  * elements in array @member.
+  */
+ #define DEFINE_RAW_FLEX(type, name, member, count)	\
+-	_DEFINE_FLEX(type, name, member, count, = {})
++	__DEFINE_FLEX(type, name, member, count, = { })
  
-
----
-base-commit: 7cdfbc0113d087348b8e65dd79276d0f57b89a10
-change-id: 20250530-iio-adc-adi-axi-adc-fix-ad7606_bus_reg_read-f2bbb503db8b
-
-Best regards,
+ /**
+  * DEFINE_FLEX() - Define an on-stack instance of structure with a trailing
 -- 
-David Lechner <dlechner@baylibre.com>
+2.34.1
 
 
