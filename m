@@ -1,87 +1,87 @@
-Return-Path: <linux-kernel+bounces-667806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-667808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E1A2AC8A33
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 10:50:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B0A2AC8A36
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 10:53:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6828BA22FE9
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 08:50:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A531B17D9DB
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 08:53:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93D3B21B9CE;
-	Fri, 30 May 2025 08:50:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBD2C21C9F2;
+	Fri, 30 May 2025 08:52:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TVJayZrJ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CnJhLiHF"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10B68218ACA
-	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 08:50:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8950F218ACA
+	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 08:52:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748595032; cv=none; b=OjtFqvwlCsKcFV8FiDKY+YdfYyzGBG6/nhB2DYahS3tPXuqxxflAu8PkA92IPPzJcJcZUUclZ2wHTMb7xrVNKM2Dlbd1hZyLkpNloxWD+srWNsiP7h1OGMUd23LbKZ2HYu4RTJDhpkzaFXV8HPs43epf2h0Qv8Ymz3hWDaGODMU=
+	t=1748595173; cv=none; b=O7mCidti9KTWLX7r0jbMUD/1WTLR/5s8aAgAzFY1jHMmiDCJi76ml7e8TGDrYd8QDDPRzxjlcsF7lln2KVWUbixHTKWHft++bY34rvcPGJbVU+Igq6hk6VjCwqnNHCMxH2fw+NS+Sa/JoZMHtLif/dOB363xc0ySV/aBVCvkeoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748595032; c=relaxed/simple;
-	bh=Tbqc8hLPMrW47kJKXZ3VaiSdYPfB1sAgTwJs14fpnqE=;
+	s=arc-20240116; t=1748595173; c=relaxed/simple;
+	bh=tpdB7ZLl0UrgoAlMjYpi/+PImq3CiQZ8aEO4FTpWivY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mFng6WHzhj8X4EnStgcUvdsL1rEw5f10htm9G9DyrqloYn8bZYO/Q5FfLasXattPFglcmymMDPut5rhZ6gFiCYG810dYyBd8rmII3o3Lhs97rk1RGsU5Xqyi5M+VSoq2yNqBW+NVlAmp+/sBWk830XPTY/Dl+s4aV+S6xP/wyS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TVJayZrJ; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:Content-Type; b=q+tDI3PT1VebIOhv153hXWN/FkeBp+fnClcIFSTGOn5fRq3+lSQplnLqh738pgMNuoBkkVDxF8KAmivZyNFGDBfGgKOdxe09hbK6RwYinyU/I1Ia+dlxCP/TqioLLzLR7/wHY3dDYytuRJ1mJYp8PXWvbaSgUb4DYCnZhFmxhbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CnJhLiHF; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1748595029;
+	s=mimecast20190719; t=1748595170;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=L0+8r+h5VJZKyWcv1fSQdLPCY66hBJlKTv4UFpyXBK8=;
-	b=TVJayZrJod8uBz5QqvTSaAl50R3znbbEsqdRT3Ti/Q+bpVBuhrigkAJkuO4f/e4oEe1NXw
-	GNbIIDJcPCyal5Emfp+Qjq6mlTpyAxHkRR016EgSKWkeslRx2+Or96MjyXkyW0hAH+3Gst
-	vEsVCwvzVExHmSJ8D3yaZMojHcNoaBE=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=RivONRZmKtb6PAY6opK1Hx8XQmxD64BeDivEpsAjyjY=;
+	b=CnJhLiHFYflyEJd+BzNJ14uURikdfKGsHLfavEE8/UGhh36czP48O5Yu0r5vV55ibSVO6m
+	EbJK6HslT5hz/PBkOxSva3VgHWrP0T8WwdHwIThL/8reNvYQInsQwRPRv095KvRC41cg35
+	gghkUBVFPENEpjL4bnZkAy+fH3scwuk=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-35-X66WavRWM3eyLXXSNbY0tQ-1; Fri, 30 May 2025 04:50:28 -0400
-X-MC-Unique: X66WavRWM3eyLXXSNbY0tQ-1
-X-Mimecast-MFC-AGG-ID: X66WavRWM3eyLXXSNbY0tQ_1748595027
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3a367b3bc13so749389f8f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 01:50:28 -0700 (PDT)
+ us-mta-260-tR9q6HzuMPWuMShlowdssA-1; Fri, 30 May 2025 04:52:48 -0400
+X-MC-Unique: tR9q6HzuMPWuMShlowdssA-1
+X-Mimecast-MFC-AGG-ID: tR9q6HzuMPWuMShlowdssA_1748595168
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-450d64026baso4162705e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 01:52:48 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748595027; x=1749199827;
+        d=1e100.net; s=20230601; t=1748595168; x=1749199968;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=L0+8r+h5VJZKyWcv1fSQdLPCY66hBJlKTv4UFpyXBK8=;
-        b=hKfsCqFDh5+NMcFbPbxK5u6rsvmyQRBzdqwNozTjvGUCQofe7IHq8ea4YErsDPEYh4
-         iy50NVnXlZXtzdWhleTt2n8AkC7BUEj/MW4NKfEC8iFueQVB+ErMtRXhBKMGJ6mdAkOE
-         dWQhquBHbWojzVo+8ww54h296BYaKU2xVfOyRfWSL+nnH5KKW/lDdWyn0p77b65su5wA
-         6t8yMzZCmQZmszopacPO5H73LgMVTeCztiar3UGAry4TuMkNr+zbVJ5ihvGXys3zhDFA
-         irUoQ26LKYb80JFtbrFAbYXQpsi13UX8XbhCQ6UCPmmkswRnWenJo2GMlF2xsoSPK8+3
-         vrCg==
-X-Forwarded-Encrypted: i=1; AJvYcCVWuV8oQCt8rWrUu754WwqW85mu8AXd4Sh5gvJmUoSvyi47iOlE08Knp+bGJCVJlcm73jt++bOKKAQlH1E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwazO8WK/Ndo5hzfENwjPcN2LaMUFBc70YnjdgQlWpcZXbcbuGD
-	KW+n3DjEgyS/g/GyhwYVMtjPy0wZeuAV159wKrqhChdpr0zGqVNAMJin7I6wkiMrUXtvN73WiNk
-	6BZpCm+Dlb8Ugz9tf81OvceHrs7Bp8thI9wj+igDWVZWud2J6+OLrvtUBPPj7xSFlgg==
-X-Gm-Gg: ASbGnct6hm/SLajjKdv++j3WUZwsGBASgyrL66NmPOP1qIpRvtANUTrFypMqVHWQQ+E
-	FINiPEezEDA/pT9g9MqQe2GxpsnYPUKJLQElRMB3bgHINmDJ8NFFuHRqV7dbq412VZc8lQwyeSf
-	oaqh8qsDSoE6OdPHcPM6ZhUafHMz+WIOQ3lH1pMV3bPyLJevisIVcF5CM7qCWJ/er98b22ajKfw
-	BO0p8V2Xay+AG2/ByB7hTTnTyNYoQuQjBW5LZcuxioRCsh80SWaSV2cWI+/0MliRHEw69rmIDvN
-	i3QR1YooOEGVkQ0Nw6CifvnblgLyKj/AXJbbA9f2BHORAa/owIRh5ZFI5grmWOOrMjdUoGaFVip
-	b5GXs7BJFilLcewL5cNjM+fbqisBBA9TLsibKTMg=
-X-Received: by 2002:a05:6000:3112:b0:3a4:bac3:2792 with SMTP id ffacd0b85a97d-3a4f7a3dc11mr1778328f8f.4.1748595027201;
-        Fri, 30 May 2025 01:50:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFHn1gr3Osd9HyyalCFGtczxVvHmWzyW6PptnSQ10SjPGM6h42L5/AfeMh2GjoihBYKi6RlQw==
-X-Received: by 2002:a05:6000:3112:b0:3a4:bac3:2792 with SMTP id ffacd0b85a97d-3a4f7a3dc11mr1778304f8f.4.1748595026810;
-        Fri, 30 May 2025 01:50:26 -0700 (PDT)
+        bh=RivONRZmKtb6PAY6opK1Hx8XQmxD64BeDivEpsAjyjY=;
+        b=ACsqYg8zrAHC7Z6GbZzBB6cB/OhW74t6FdYIq3KMj4FXNH9uv13i+3HoLgwLR+fWlb
+         NLLNzFGEnt1VXlXip9yi9d9uE6SGrhxbH87RsnAPIB84cIg6WdvImXy5Q7+K75uHPk1D
+         uoGqmBJsQujx8ry/gZAhx+LafZzd2Ruq0u2QlWGR7/FZN0VstJhejVjgF6jlZOAsX6Eu
+         BiG9qzn5TOhx72tO73RcX44NuDdAoSyueyvL67o16DzsH5zow1ERuZ4qmGMPWUR/V2ZG
+         iwEUI1S8c926HhXAIh07WyWQCq3Qj8iRaN/tdBqSmif8qTfpEJP4O3NV/sLDn/JuR6F6
+         XTng==
+X-Forwarded-Encrypted: i=1; AJvYcCWsHC57a6lPBWgQu8xKF/KU8nZWm4K2Zd5Hvwr7eHmQNc1kTIy1n5k9Ypx8nuYetYI2W4YZDGOllOpdnz0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFh3NybmVkJ3sThc14g/8RMEsBGFxN0mL2iqDGdGbH7WLMQ9bQ
+	DdJ/YioHAC1vHa8nFXEKYugL4/H+ya+r2vc6CBMJYzrJsPf9h5hjzhRsOpZ+S13OD7bCxIrdv/C
+	HHeqWwkjqVk0ls/l9jOB0w7smusZZ3uaVwUVviFjKl+IdbpQpPcMh72Y3Y03EGvi4aw==
+X-Gm-Gg: ASbGncuZ3djCTSHaUHzKVnZ3CFWNKV2XlPKJ93Ge7LW80S70HmIShf3suatG0iSkT+2
+	+/brxY5MQkuqLBM/qK42PzQHwTgn2gd/5lwpG+s79KZ+kxD0g02xjxVd08haRY/7U1Wl1ra/zas
+	dq/nSt7iDsQYY7d1CsOm/OzSP7nRF+KkpRpxWNEaKd2BUHe2ObkHvvZ7eJ7hyx0YDIjpbbszm6K
+	LPvC1JGXyO7kJTP06FBlHeB7oqgosqGI5djhlZmXtib7uacCFoabG1fpkSvnI9L/p7AbJJar46p
+	H7FqF5pQRoC3GoL8prOyaeK30iLSX+VtkRgwycNKOtfIfw5JJZ0nVPBVbba+9xVVQ9kbOXQ9645
+	Pcj3LhzjgpF0Ly6yrROUrq+//Cc4GPLs+maGVFvY=
+X-Received: by 2002:a05:600c:6286:b0:43d:fa58:700e with SMTP id 5b1f17b1804b1-450d6575664mr21159905e9.33.1748595167727;
+        Fri, 30 May 2025 01:52:47 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFNUcZukq/uatUBDvfuZ25brMX/E4xbirUMnKjhUU3zzKOX10Q2xDv4lEjZQMcq3GuaUcnUNQ==
+X-Received: by 2002:a05:600c:6286:b0:43d:fa58:700e with SMTP id 5b1f17b1804b1-450d6575664mr21159655e9.33.1748595167391;
+        Fri, 30 May 2025 01:52:47 -0700 (PDT)
 Received: from ?IPV6:2003:d8:2f03:5b00:f549:a879:b2d3:73ee? (p200300d82f035b00f549a879b2d373ee.dip0.t-ipconnect.de. [2003:d8:2f03:5b00:f549:a879:b2d3:73ee])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-450d7fc2725sm11823505e9.37.2025.05.30.01.50.25
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4efe5b96fsm4168233f8f.8.2025.05.30.01.52.46
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 30 May 2025 01:50:26 -0700 (PDT)
-Message-ID: <172df994-7f24-4fbb-876c-4fab22937177@redhat.com>
-Date: Fri, 30 May 2025 10:50:25 +0200
+        Fri, 30 May 2025 01:52:46 -0700 (PDT)
+Message-ID: <9c920642-228b-4eb0-920a-269473ea824e@redhat.com>
+Date: Fri, 30 May 2025 10:52:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,25 +89,17 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] mm/mmap: Fix uprobe anon page be overwritten when
- expanding vma during mremap
+Subject: Re: [PATCH 0/2] fix MADV_COLLAPSE issue if THP settings are disabled
 To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Pu Lehui <pulehui@huaweicloud.com>, Oleg Nesterov <oleg@redhat.com>,
- mhiramat@kernel.org, peterz@infradead.org, Liam.Howlett@oracle.com,
- akpm@linux-foundation.org, vbabka@suse.cz, jannh@google.com,
- pfalcato@suse.de, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- pulehui@huawei.com
-References: <62b5ccf5-f1cd-43c2-b0bc-f542f40c5bdf@redhat.com>
- <afe53868-5542-47d6-8005-71c1b3bec840@huaweicloud.com>
- <13c5fe73-9e11-4465-b401-fc96a22dc5d1@redhat.com>
- <4cbc1e43-ea46-44de-9e2b-1c62dcd2b6d5@huaweicloud.com>
- <20250526154850.GA4156@redhat.com>
- <06bd94c0-fefe-4bdc-8483-2d9b6703c3d6@redhat.com>
- <57533126-eb30-4b56-bc4d-2f27514ae5ad@huaweicloud.com>
- <cba0155e-d2b9-41fa-bc51-f3738ae73cff@redhat.com>
- <956124be-c73c-4023-9edd-25372f3f865a@huaweicloud.com>
- <ccf359b0-8baa-4209-b2c3-75e3813ca804@redhat.com>
- <b2dd29b0-aa12-4cb7-9c05-d3a998f7b0da@lucifer.local>
+Cc: Ryan Roberts <ryan.roberts@arm.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>, akpm@linux-foundation.org,
+ hughd@google.com, Liam.Howlett@oracle.com, npache@redhat.com,
+ dev.jain@arm.com, ziy@nvidia.com, linux-mm@kvack.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1748506520.git.baolin.wang@linux.alibaba.com>
+ <05d60e72-3113-41f0-b81f-225397f06c81@arm.com>
+ <f3dad5b5-143d-4896-b315-38e1d7bb1248@redhat.com>
+ <ade3bdb7-7103-4ecd-bce2-7768a0d729ef@lucifer.local>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -155,130 +147,50 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <b2dd29b0-aa12-4cb7-9c05-d3a998f7b0da@lucifer.local>
+In-Reply-To: <ade3bdb7-7103-4ecd-bce2-7768a0d729ef@lucifer.local>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 30.05.25 10:41, Lorenzo Stoakes wrote:
-> On Fri, May 30, 2025 at 10:33:16AM +0200, David Hildenbrand wrote:
->> On 29.05.25 18:07, Pu Lehui wrote:
+On 30.05.25 10:47, Lorenzo Stoakes wrote:
+> On Fri, May 30, 2025 at 10:44:36AM +0200, David Hildenbrand wrote:
+>> On 30.05.25 10:04, Ryan Roberts wrote:
+>>> On 29/05/2025 09:23, Baolin Wang wrote:
+>>>> As we discussed in the previous thread [1], the MADV_COLLAPSE will ignore
+>>>> the system-wide anon/shmem THP sysfs settings, which means that even though
+>>>> we have disabled the anon/shmem THP configuration, MADV_COLLAPSE will still
+>>>> attempt to collapse into a anon/shmem THP. This violates the rule we have
+>>>> agreed upon: never means never. This patch set will address this issue.
 >>>
->>> On 2025/5/28 17:03, David Hildenbrand wrote:
->>>> On 27.05.25 15:38, Pu Lehui wrote:
->>>>> Hi David,
->>>>>
->>>>> On 2025/5/27 2:46, David Hildenbrand wrote:
->>>>>> On 26.05.25 17:48, Oleg Nesterov wrote:
->>>>>>> Hi Lehui,
->>>>>>>
->>>>>>> As I said, I don't understand mm/, so can't comment, but...
->>>>>>>
->>>>>>> On 05/26, Pu Lehui wrote:
->>>>>>>>
->>>>>>>> To make things simpler, perhaps we could try post-processing, that is:
->>>>>>>>
->>>>>>>> diff --git a/mm/mremap.c b/mm/mremap.c
->>>>>>>> index 83e359754961..46a757fd26dc 100644
->>>>>>>> --- a/mm/mremap.c
->>>>>>>> +++ b/mm/mremap.c
->>>>>>>> @@ -240,6 +240,11 @@ static int move_ptes(struct
->>>>>>>> pagetable_move_control
->>>>>>>> *pmc,
->>>>>>>>                     if (pte_none(ptep_get(old_pte)))
->>>>>>>>                             continue;
->>>>>>>>
->>>>>>>> +               /* skip move pte when expanded range has uprobe */
->>>>>>>> +               if (unlikely(pte_present(*new_pte) &&
->>>>>>>> +                            vma_has_uprobes(pmc->new, new_addr,
->>>>>>>> new_addr +
->>>>>>>> PAGE_SIZE)))
->>>>>>>> +                       continue;
->>>>>>>> +
->>>>>>>
->>>>>>> I was thinking about
->>>>>>>
->>>>>>>        WARN_ON(!pte_none(*new_pte))
->>>>>>>
->>>>>>> at the start of the main loop.
->>>>>>>
->>>>>>> Obviously not to fix the problem, but rather to make it more explicit.
->>>>>>
->>>>>> Yeah, WARN_ON_ONCE().
->>>>>>
->>>>>> We really should fix the code to not install uprobes into the area we
->>>>>> are moving.
->>>>> Alright, so let's try this direction.
->>>>>
->>>>>>
->>>>>> Likely, the correct fix will be to pass the range as well to
->>>>>> uprobe_mmap(), and passing that range to build_probe_list().
->>>>>
->>>>> It will be great. But IIUC, the range we expand to is already included
->>>>> when entering uprobe_mmap and also build_probe_list.
->>>>
->>>> Right, you'd have to communicate that information through all layers
->>>> (expanded range).
->>>>
->>>> As an alternative, maybe we can really call handle_vma_uprobe() after
->>>> moving the pages.
+>>> This is a drive-by comment from me without having the previous context, but...
 >>>
->>> Hi David,
+>>> Surely MADV_COLLAPSE *should* ignore the THP sysfs settings? It's a deliberate
+>>> user-initiated, synchonous request to use huge pages for a range of memory.
+>>> There is nothing *transparent* about it, it just happens to be implemented using
+>>> the same logic that THP uses.
 >>>
->>> Not sure if this is possible, but I think it would be appropriate to not
->>> handle this uprobe_mmap at the source, and maybe we should make it clear
->>> that new_pte must be NULL when move_ptes, otherwise it should be an
->>> exception?
+>>> I always thought this was a deliberate design decision.
 >>
->> Yeah, we should ay least document that if we find any non-none pte in the
->> range we are moving to, we have a big problem.
+>> If the admin said "never", then why should a user be able to overwrite that?
 >>
->> I think the main issue is that vma_complete() calls uprobe_mmap() before
->> moving the page tables over.
-> 
-> Well vma_complete() is not _normally_ invoked before moving page tables,
-> it's mremap that's making things strange :)
-> 
-> That's why I think my suggested approach of specifically indicating that we
-> want different behaviour for mremap is a reasonable one here, as it special
-> cases things for this case.
-> 
-> However...
-> 
+>> The design decision I recall is that if VM_NOHUGEPAGE is set, we'll ignore
+>> that. Because that was set by the app itself (MADV_NOHUEPAGE).
 >>
->> If we could defer the uprobe_mmap() call, we might be good.
->>
->> The entry point is copy_vma_and_data(), where we call copy_vma() before
->> move_page_tables().
->>
->> copy_vma() should trigger the uprobe_mmap() through vma_merge_new_range().
->>
->> I wonder if there might be a clean way to move the uprobe_mmap() out of
->> vma_complete(). (or at least specify to skip it because it will be done
->> manually).
 > 
-> ...I would also love to see some means of not having to invoke
-> uprobe_mmap() in the VMA code, but I mean _at all_.
+> I'm with David on this one.
 > 
-> But that leads into my desire to not do:
+> I think it's principal of least surprise - to me 'never' is pretty
+> emphatic, and keep in mind the other choices are 'always' and...  'madvise'
+> :) which explicitly is 'hey only do this if madvise tells you to'.
 > 
-> if (blah blah)
-> 	some_specific_hardcoded_case();
+> I'd be rather surprised if I hadn't set madvise and a user uses madvise to
+> in some fashion override the never.
 > 
-> I wish we had a better means of hooking stuff like this.
-> 
-> However I don't think currently we can reasonably do so, as in all other
-> merge cases we _do_ want to invoke it.
+> I mean I think we all agree this interface is to use a technical term -
+> crap - and we need something a lot more fine-grained and smart, but I think
+> given the situation we're in we should make it at least as least surprising
+> as possible.
 
-"all other" -- not so sure.
-
-Why would we invoke uprobe when merging VMAs after mprotect, mremap, 
-madvise, ordinary mremap where we are not mapping anything new but just 
-... merging VMAs?
-
-Really, we need to invoke uprobe only when adding new VMAs or extending 
-existing VMAs -- mapping new file ranges some way.
-
-Or am I missing something important?
+Yes. If you configure "never" you are supposed to suffer, consistently.
 
 -- 
 Cheers,
