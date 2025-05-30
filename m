@@ -1,223 +1,232 @@
-Return-Path: <linux-kernel+bounces-667944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-667931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 230D1AC8BCE
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 12:04:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C2D9EAC8B92
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 12:00:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FAEB188E715
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 10:04:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45A311BC000D
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 10:01:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 933BB22FAE1;
-	Fri, 30 May 2025 10:01:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BC77221D87;
+	Fri, 30 May 2025 10:00:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="n4pFlyZg"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="d0sOmoRh"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D420A2222C3
-	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 10:01:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A22FC610B;
+	Fri, 30 May 2025 10:00:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748599264; cv=none; b=rMwUAUeeo6W+CagTWQnkhzmlKcU4dwTcxssWE6m2Zg0sOhhwWu8wSzqNR5AwwudCQBVQjhnLdwaqK5+2wOBxriLSAme5V5Eirq8fVlkl8CeHtV6Z7PuuZRb4OGWBDXYkro5orNOYC3EA6nuchwcy5t1hI57cyEw993fHTDS8WdU=
+	t=1748599239; cv=none; b=Y3EtTu4k6l0PmQM4H2Q83NEfGD8A+p3J3HEriFc02V7WGi3pv8aRh1VFEOqb/tiSvAeuLbAlm5W5iomezxXt4LRn53nxvgbSQr7N3cuvth31Rpggoyhyf8BdSeTjwF7yMibqclu8dcrKAUfKplwcNnoaybEtOYSUcqBHSALmXzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748599264; c=relaxed/simple;
-	bh=NorrkePffBzwUUGIvwnAem9aujHkQ+vw9WO/qgC8D/Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
-	 References; b=goQgNTAPgMkgY4gHuQG+aa5Znj+0DdIgMgKyYa35LpdFm3pHOFoyMvZYUmJbW4ixEVBS+ibz8ZzQ+WhE70N+KPYOy5im2gPNVQ7ZJHLZ9Br5M9MMjetINCLI+aIABvaS8BHPfLREOLSeKykF0SuZrpskfjQcYLCJe2myOw6KLRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=partner.samsung.com; spf=pass smtp.mailfrom=partner.samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=n4pFlyZg; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=partner.samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=partner.samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250530100058euoutp017f2fa0ec809f61e50c11387da1a2d863~ERcLp1RC90928609286euoutp01U
-	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 10:00:58 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250530100058euoutp017f2fa0ec809f61e50c11387da1a2d863~ERcLp1RC90928609286euoutp01U
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1748599258;
-	bh=fnfYVNxfL0DHQ1U8EdAdmg35bYdFSv3S7ReuuQVXUXA=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=n4pFlyZgXMvspCg1s+71PlK18cKVuR0wWjpkzwQqYYtrBJWZR7LlYILS06QKmwbNf
-	 Dna38vSGIUllRaa6REhLCjWjQmvefmZAFq6AJWcWVjYWyLc94hx6agDl02WXd+wMKi
-	 WK32BEaUPlwM3wnnk0zAFKTmnmnyCPDYge5XzP5E=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250530100058eucas1p18554bf19ac9f302a8c3636d091448582~ERcLWn2781752417524eucas1p1B;
-	Fri, 30 May 2025 10:00:58 +0000 (GMT)
-Received: from localhost.localdomain (unknown [106.210.135.126]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250530100058eusmtip24f64e7b8835dcc02dd4e605e2b87339b~ERcK-Bwjr1946319463eusmtip2i;
-	Fri, 30 May 2025 10:00:58 +0000 (GMT)
-From: "e.kubanski" <e.kubanski@partner.samsung.com>
-To: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: bjorn@kernel.org, magnus.karlsson@intel.com,
-	maciej.fijalkowski@intel.com, jonathan.lemon@gmail.com, "e.kubanski"
-	<e.kubanski@partner.samsung.com>
-Subject: [PATCH bpf] xsk: Fix out of order segment free in
- __xsk_generic_xmit()
-Date: Fri, 30 May 2025 11:59:57 +0200
-Message-Id: <20250530095957.43248-1-e.kubanski@partner.samsung.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1748599239; c=relaxed/simple;
+	bh=WPV1CV+uiDvsoig1keH+j8bomHlMve3RbXaMyZ491IU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Lc1x7RRIdfe0relyI5RQhKFSgt+wAQtO46GTrVASZbX8oE6YVozJSUb4D/sNxlj7yspn5UL3pM8ahenkioA234WcyWn1pDr4TB1cXcu8u3mhdcuVrUzGoAYPQlB5o0GlB4QxMcYHGm5oqkrCdtaWxD0vN+9Zz4yQ7Naiv70/fhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=d0sOmoRh; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 82380431D5;
+	Fri, 30 May 2025 10:00:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1748599235;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=YAXKNQsfeE/O2JmZSsFwGmh7jvYQgVsyQ08JD+pIlYM=;
+	b=d0sOmoRhYNRwphk22/APH2XaTgs+jWWpEd2K+1KPBJCPTb79PE5Xs2r8yCZl9VoNvw6xNn
+	Ns53xhl5uwM4zRvuiUBeQteH4TSntjneTbmYwE5FHFSK4FxXdmGolQBFyRZLn0S8FG3IYb
+	I8Q7luRw2qHR9A5FWE9G2YcG77LG8frNdRJ4BwoiHR9eStBmzQczXmkKZNk3aMwHoWrctY
+	LcH2OTxbvN3aJvjJI631gD5noNIqLJtu7kgLygvlOUSxbpOY4H0HZLBBA5OXcU56uxWOXu
+	e9+u+pTs1xPaYbj/73HP6jYj4Xoh6/hZ9tRraK6d/vjPCpn8t2GvD9BL0216ww==
+From: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+Subject: [PATCH v10 00/11] Add support for MAX7360
+Date: Fri, 30 May 2025 12:00:08 +0200
+Message-Id: <20250530-mdb-max7360-support-v10-0-ce3b9e60a588@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250530100058eucas1p18554bf19ac9f302a8c3636d091448582
-X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250530100058eucas1p18554bf19ac9f302a8c3636d091448582
-X-EPHeader: CA
-X-CMS-RootMailID: 20250530100058eucas1p18554bf19ac9f302a8c3636d091448582
-References: <CGME20250530100058eucas1p18554bf19ac9f302a8c3636d091448582@eucas1p1.samsung.com>
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKiBOWgC/33RS07DMBAG4KtUXmNkz/jJinsgFh4/qCXaVEmJi
+ qreHacSSkUSljOyP/8zvrIh9zUP7GV3ZX0e61C7YyukeNqxuA/Hj8xrag0GApQE6fkhET+Ei0U
+ j+PB1OnX9mQNgcDErTQFZu3nqc6mXO/v23up9Hc5d/31/ZZRT939vlFxwlx1Kq9107JW67vxZj
+ 8+xO7BJHOFBAVxXoClog0sAEU1OSwV/FS2k3FCwKV5LTypEErSSRc0KSLWuqGmigDqaROSNWSp
+ 6VlC6dUU3pRAICsXbFMRSMbOixMZ2TVNsAI3aWZPRLxX7oMBGFtsUlYURLolgS1kqblb0VhbXF
+ KKsnCmGItml4h8UgHXFTxOpEgVqabP680e32+0HLhtZ8ukCAAA=
+To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Kamel Bouhara <kamel.bouhara@bootlin.com>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, 
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
+ Michael Walle <mwalle@kernel.org>, Mark Brown <broonie@kernel.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, linux-input@vger.kernel.org, 
+ linux-pwm@vger.kernel.org, andriy.shevchenko@intel.com, 
+ =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1748599233; l=6247;
+ i=mathieu.dubois-briand@bootlin.com; s=20241219; h=from:subject:message-id;
+ bh=WPV1CV+uiDvsoig1keH+j8bomHlMve3RbXaMyZ491IU=;
+ b=yyyGIspl4VXKd9pxsfvhcnrHk46FnmTsSY9Y0ilWa6YYflJZsAPG9oNMj0O1W2CWAU2icd3dN
+ 6V+1/zDCYS9BvQjTG0SOMhsrUXyeM0rtgSFM5b4/9TfPwxpQTdY3156
+X-Developer-Key: i=mathieu.dubois-briand@bootlin.com; a=ed25519;
+ pk=1PVTmzPXfKvDwcPUzG0aqdGoKZJA3b9s+3DqRlm0Lww=
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgddvkeejvdculddtuddrgeefvddrtddtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffufffkgggtgffvvefosehtjeertdertdejnecuhfhrohhmpeforghthhhivghuucffuhgsohhishdquehrihgrnhguuceomhgrthhhihgvuhdrughusghoihhsqdgsrhhirghnugessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhephfekffeugedvkeeihfefjeeuueekkeeggeejgeehgfdvkeevvedvkeeiteekleevnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdpudegqdhrtgdvrddqlhhinhhknecukfhppedvrgdtudemtggsudegmeehheeimeejrgdttdemfehftghfmehfsgdtugemuddviedvmedvvgejieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudegmeehheeimeejrgdttdemfehftghfmehfsgdtugemuddviedvmedvvgejiedphhgvlhhopegluddvjedrtddruddrudgnpdhmrghilhhfrhhomhepmhgrthhhihgvuhdrughusghoihhsqdgsrhhirghnugessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvdehpdhrtghpthhtohepughmihhtrhihrdhtohhrohhkhhhovhesghhmrghilhdrtghom
+ hdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehrrghfrggvlheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqihhnphhuthesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhpfihmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepghhrvghgohhrhidrtghlvghmvghnthessghoohhtlhhinhdrtghomhdprhgtphhtthhopehmfigrlhhlvgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggvvhhitggvthhrvggvsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-GND-Sasl: mathieu.dubois-briand@bootlin.com
 
-Move xsk completion queue descriptor write-back to destructor.
+This series implements a set of drivers allowing to support the Maxim
+Integrated MAX7360 device.
 
-Fix xsk descriptor management in completion queue. Descriptor
-management mechanism didn't take care of situations where
-completion queue submission can happen out-of-order to
-descriptor write-back.
+The MAX7360 is an I2C key-switch and led controller, with following
+functionalities:
+- Keypad controller for a key matrix of up to 8 rows and 8 columns.
+- Rotary encoder support, for a single rotary encoder.
+- Up to 8 PWM outputs.
+- Up to 8 GPIOs with support for interrupts and 6 GPOs.
 
-__xsk_generic_xmit() was assigning descriptor to slot right
-after completion queue slot reservation. If multiple CPUs
-access the same completion queue after xmit, this can result
-in out-of-order submission of invalid descriptor batch.
-SKB destructor call can submit descriptor batch that is
-currently in use by other CPU, instead of correct transmitted
-ones. This could result in User-Space <-> Kernel-Space data race.
+Chipset pins are shared between all functionalities, so all cannot be
+used at the same time.
 
-Forbid possible out-of-order submissions:
-CPU A: Reservation + Descriptor Write
-CPU B: Reservation + Descriptor Write
-CPU B: Submit (submitted first batch reserved by CPU A)
-CPU A: Submit (submitted second batch reserved by CPU B)
-
-Move Descriptor Write to submission phase:
-CPU A: Reservation (only moves local writer)
-CPU B: Reservation (only moves local writer)
-CPU B: Descriptor Write + Submit
-CPU A: Descriptor Write + Submit
-
-This solves potential out-of-order free of xsk buffers.
-
-Signed-off-by: Eryk Kubanski <e.kubanski@partner.samsung.com>
-Fixes: e6c4047f5122 ("xsk: Use xsk_buff_pool directly for cq functions")
+Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
 ---
- include/linux/skbuff.h |  2 ++
- net/xdp/xsk.c          | 17 +++++++++++------
- net/xdp/xsk_queue.h    | 11 +++++++++++
- 3 files changed, 24 insertions(+), 6 deletions(-)
+Changes in v10:
+- Rebased on v6.15
+- Do not use devm_ functions to allocate regmap-irq in gpio-remap.c
+- Link to v9: https://lore.kernel.org/r/20250522-mdb-max7360-support-v9-0-74fc03517e41@bootlin.com
 
-diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
-index bb2b751d274a..6785faec0699 100644
---- a/include/linux/skbuff.h
-+++ b/include/linux/skbuff.h
-@@ -622,6 +622,8 @@ struct skb_shared_info {
- 		void		*destructor_arg;
- 	};
- 
-+	u64 xsk_descs[MAX_SKB_FRAGS];
-+
- 	/* must be last field, see pskb_expand_head() */
- 	skb_frag_t	frags[MAX_SKB_FRAGS];
- };
-diff --git a/net/xdp/xsk.c b/net/xdp/xsk.c
-index a2249fd2048a..f822393907da 100644
---- a/net/xdp/xsk.c
-+++ b/net/xdp/xsk.c
-@@ -526,24 +526,24 @@ static int xsk_wakeup(struct xdp_sock *xs, u8 flags)
- 	return dev->netdev_ops->ndo_xsk_wakeup(dev, xs->queue_id, flags);
- }
- 
--static int xsk_cq_reserve_addr_locked(struct xsk_buff_pool *pool, u64 addr)
-+static int xsk_cq_reserve_locked(struct xsk_buff_pool *pool)
- {
- 	unsigned long flags;
- 	int ret;
- 
- 	spin_lock_irqsave(&pool->cq_lock, flags);
--	ret = xskq_prod_reserve_addr(pool->cq, addr);
-+	ret = xskq_prod_reserve(pool->cq);
- 	spin_unlock_irqrestore(&pool->cq_lock, flags);
- 
- 	return ret;
- }
- 
--static void xsk_cq_submit_locked(struct xsk_buff_pool *pool, u32 n)
-+static void xsk_cq_submit_locked(struct xsk_buff_pool *pool, u64 *descs, u32 n)
- {
- 	unsigned long flags;
- 
- 	spin_lock_irqsave(&pool->cq_lock, flags);
--	xskq_prod_submit_n(pool->cq, n);
-+	xskq_prod_write_submit_addr_n(pool->cq, descs, n);
- 	spin_unlock_irqrestore(&pool->cq_lock, flags);
- }
- 
-@@ -570,7 +570,9 @@ static void xsk_destruct_skb(struct sk_buff *skb)
- 		*compl->tx_timestamp = ktime_get_tai_fast_ns();
- 	}
- 
--	xsk_cq_submit_locked(xdp_sk(skb->sk)->pool, xsk_get_num_desc(skb));
-+	xsk_cq_submit_locked(xdp_sk(skb->sk)->pool,
-+			     skb_shinfo(skb)->xsk_descs,
-+			     xsk_get_num_desc(skb));
- 	sock_wfree(skb);
- }
- 
-@@ -749,7 +751,9 @@ static struct sk_buff *xsk_build_skb(struct xdp_sock *xs,
- 	skb->priority = READ_ONCE(xs->sk.sk_priority);
- 	skb->mark = READ_ONCE(xs->sk.sk_mark);
- 	skb->destructor = xsk_destruct_skb;
-+
- 	xsk_tx_metadata_to_compl(meta, &skb_shinfo(skb)->xsk_meta);
-+	skb_shinfo(skb)->xsk_descs[xsk_get_num_desc(skb)] = desc->addr;
- 	xsk_set_destructor_arg(skb);
- 
- 	return skb;
-@@ -760,6 +764,7 @@ static struct sk_buff *xsk_build_skb(struct xdp_sock *xs,
- 
- 	if (err == -EOVERFLOW) {
- 		/* Drop the packet */
-+		skb_shinfo(xs->skb)->xsk_descs[xsk_get_num_desc(xs->skb)] = desc->addr;
- 		xsk_set_destructor_arg(xs->skb);
- 		xsk_drop_skb(xs->skb);
- 		xskq_cons_release(xs->tx);
-@@ -802,7 +807,7 @@ static int __xsk_generic_xmit(struct sock *sk)
- 		 * if there is space in it. This avoids having to implement
- 		 * any buffering in the Tx path.
- 		 */
--		if (xsk_cq_reserve_addr_locked(xs->pool, desc.addr))
-+		if (xsk_cq_reserve_locked(xs->pool))
- 			goto out;
- 
- 		skb = xsk_build_skb(xs, &desc);
-diff --git a/net/xdp/xsk_queue.h b/net/xdp/xsk_queue.h
-index 46d87e961ad6..06ce89aae217 100644
---- a/net/xdp/xsk_queue.h
-+++ b/net/xdp/xsk_queue.h
-@@ -436,6 +436,17 @@ static inline void xskq_prod_submit_n(struct xsk_queue *q, u32 nb_entries)
- 	__xskq_prod_submit(q, q->ring->producer + nb_entries);
- }
- 
-+static inline void xskq_prod_write_submit_addr_n(struct xsk_queue *q, u64 *addrs, u32 nb_entries)
-+{
-+	struct xdp_umem_ring *ring = (struct xdp_umem_ring *)q->ring;
-+	u32 prod = q->ring->producer;
-+
-+	for (u32 i = 0; i < nb_entries; ++i)
-+		ring->desc[prod++ & q->ring_mask] = addrs[i];
-+
-+	__xskq_prod_submit(q, prod);
-+}
-+
- static inline bool xskq_prod_is_empty(struct xsk_queue *q)
- {
- 	/* No barriers needed since data is not accessed */
+Changes in v9:
+- Fix build issue with bad usage of array_size() on intermediate commit.
+- MFD: Fix error strings. Also fix #define style in the header file.
+- Pinctrl: Fix missing include.
+- PWM: Fix register writes in max7360_pwm_waveform() and
+  max7360_pwm_round_waveform_tohw().
+- GPIO: Fix GPIO valid mask initialization.
+- Link to v8: https://lore.kernel.org/r/20250509-mdb-max7360-support-v8-0-bbe486f6bcb7@bootlin.com
+
+Changes in v8:
+- Small changes in drivers.
+- Rebased on v6.15-rc5
+- Link to v7: https://lore.kernel.org/r/20250428-mdb-max7360-support-v7-0-4e0608d0a7ff@bootlin.com
+
+Changes in v7:
+- Add rotary encoder absolute axis support in device tree bindings and
+  driver.
+- Lot of small changes in keypad, rotary encoder and GPIO drivers.
+- Rebased on v6.15-rc4
+- Link to v6: https://lore.kernel.org/r/20250409-mdb-max7360-support-v6-0-7a2535876e39@bootlin.com
+
+Changes in v6:
+- Rebased on v6.15-rc1.
+- Use device_set_of_node_from_dev() instead of creating PWM and Pinctrl
+  on parent device.
+- Various small fixes in all drivers.
+- Fix pins property pattern in pinctrl dt bindings.
+- Link to v5: https://lore.kernel.org/r/20250318-mdb-max7360-support-v5-0-fb20baf97da0@bootlin.com
+
+Changes in v5:
+- Add pinctrl driver to replace the previous use of request()/free()
+  callbacks for PORT pins.
+- Remove ngpios property from GPIO device tree bindings.
+- Use GPIO valid_mask to mark unusable keypad columns GPOs, instead of
+  changing ngpios.
+- Drop patches adding support for request()/free() callbacks in GPIO
+  regmap and gpio_regmap_get_ngpio().
+- Allow gpio_regmap_register() to create the associated regmap IRQ.
+- Various fixes in MFD, PWM, GPIO and KEYPAD drivers.
+- Link to v4: https://lore.kernel.org/r/20250214-mdb-max7360-support-v4-0-8a35c6dbb966@bootlin.com
+
+Changes in v4:
+- Modified the GPIO driver to use gpio-regmap and regmap-irq.
+- Add support for request()/free() callbacks in gpio-regmap.
+- Add support for status_is_level in regmap-irq.
+- Switched the PWM driver to waveform callbacks.
+- Various small fixes in MFD, PWM, GPIO drivers and dt bindings.
+- Rebased on v6.14-rc2.
+- Link to v3: https://lore.kernel.org/r/20250113-mdb-max7360-support-v3-0-9519b4acb0b1@bootlin.com
+
+Changes in v3:
+- Fix MFD device tree binding to add gpio child nodes.
+- Fix various small issues in device tree bindings.
+- Add missing line returns in error messages.
+- Use dev_err_probe() when possible.
+- Link to v2: https://lore.kernel.org/r/20241223-mdb-max7360-support-v2-0-37a8d22c36ed@bootlin.com
+
+Changes in v2:
+- Removing device tree subnodes for keypad, rotary encoder and pwm
+  functionalities.
+- Fixed dt-bindings syntax and naming.
+- Fixed missing handling of requested period in PWM driver.
+- Cleanup of the code
+- Link to v1: https://lore.kernel.org/r/20241219-mdb-max7360-support-v1-0-8e8317584121@bootlin.com
+
+---
+Kamel Bouhara (2):
+      mfd: Add max7360 support
+      pwm: max7360: Add MAX7360 PWM support
+
+Mathieu Dubois-Briand (9):
+      dt-bindings: mfd: gpio: Add MAX7360
+      pinctrl: Add MAX7360 pinctrl driver
+      regmap: irq: Add support for chips without separate IRQ status
+      gpio: regmap: Allow to allocate regmap-irq device
+      gpio: regmap: Allow to provide init_valid_mask callback
+      gpio: max7360: Add MAX7360 gpio support
+      input: keyboard: Add support for MAX7360 keypad
+      input: misc: Add support for MAX7360 rotary
+      MAINTAINERS: Add entry on MAX7360 driver
+
+ .../bindings/gpio/maxim,max7360-gpio.yaml          |  83 ++++++
+ .../devicetree/bindings/mfd/maxim,max7360.yaml     | 191 +++++++++++++
+ MAINTAINERS                                        |  13 +
+ drivers/base/regmap/regmap-irq.c                   |  99 ++++---
+ drivers/gpio/Kconfig                               |  12 +
+ drivers/gpio/Makefile                              |   1 +
+ drivers/gpio/gpio-max7360.c                        | 257 +++++++++++++++++
+ drivers/gpio/gpio-regmap.c                         |  30 +-
+ drivers/input/keyboard/Kconfig                     |  12 +
+ drivers/input/keyboard/Makefile                    |   1 +
+ drivers/input/keyboard/max7360-keypad.c            | 308 +++++++++++++++++++++
+ drivers/input/misc/Kconfig                         |  10 +
+ drivers/input/misc/Makefile                        |   1 +
+ drivers/input/misc/max7360-rotary.c                | 192 +++++++++++++
+ drivers/mfd/Kconfig                                |  14 +
+ drivers/mfd/Makefile                               |   1 +
+ drivers/mfd/max7360.c                              | 171 ++++++++++++
+ drivers/pinctrl/Kconfig                            |  11 +
+ drivers/pinctrl/Makefile                           |   1 +
+ drivers/pinctrl/pinctrl-max7360.c                  | 215 ++++++++++++++
+ drivers/pwm/Kconfig                                |  10 +
+ drivers/pwm/Makefile                               |   1 +
+ drivers/pwm/pwm-max7360.c                          | 180 ++++++++++++
+ include/linux/gpio/regmap.h                        |  18 ++
+ include/linux/mfd/max7360.h                        | 109 ++++++++
+ include/linux/regmap.h                             |   3 +
+ 26 files changed, 1911 insertions(+), 33 deletions(-)
+---
+base-commit: 0ff41df1cb268fc69e703a08a57ee14ae967d0ca
+change-id: 20241219-mdb-max7360-support-223a8ce45ba3
+
+Best regards,
 -- 
-2.34.1
+Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
 
 
