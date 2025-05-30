@@ -1,121 +1,129 @@
-Return-Path: <linux-kernel+bounces-667705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-667699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42164AC8877
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 09:02:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2279BAC8867
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 08:49:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C14B1BA4FC0
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 07:02:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C1673B0030
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 06:48:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8D711A0728;
-	Fri, 30 May 2025 07:02:34 +0000 (UTC)
-Received: from lgeamrelo03.lge.com (lgeamrelo03.lge.com [156.147.51.102])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5EAB207A27;
+	Fri, 30 May 2025 06:48:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Zdx7EfSf"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37FD01B6CE4
-	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 07:02:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.147.51.102
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9391816B3B7
+	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 06:48:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748588554; cv=none; b=TALtLFsnfQopnXtIdOG3X53usl6A9AX9Qpc9IucoOckaxSWUxPcxT36HtSERHwIFJXXDzH0IFAS9WWKUIKbRVWTPHzq+QN9LFSie086rfYm7dsY1ZKPULHBqbcpmleGtoR+B8Hkyyy7qf9rwpqZe4Ui6RyHHgNKWvO+5G/5bQLA=
+	t=1748587735; cv=none; b=i4ye3SjyYQNKwEOh2DiDRioR0+3qFr5tGkdGjso7Jvrc6/oTi1AZQNA+f4cOrER+3EPSs4gS11dTPU/a44Hc0DdAvHtmX8vMwUrXHZja6h1WRdGt/MLC4trzLiXfly8jTMfVJw7O6B1mU1sWPEByZ8yVydO9IabktHxZhBNGE88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748588554; c=relaxed/simple;
-	bh=E/O9HAYc1pxKvwei2SjnR9l+4Xm5rk6K33BGfGo/hgA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D9s7Pa8CevPGbNxzmc4ETNSVauhoXOFl578yhLzIj241gt4oDHDZVZOF6yzfIQ7/dcT4OrKONWeLkIOUD0AGIDjkFHbUuRb/RxoUsnfSL6iQ3FLhPNL6CedWu7o6OS0AC0idd+aYp6E6039k/3ip5dUxoER7fxh95POFNS6nHIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com; spf=pass smtp.mailfrom=lge.com; arc=none smtp.client-ip=156.147.51.102
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lge.com
-Received: from unknown (HELO yjaykim-PowerEdge-T330) (10.177.112.156)
-	by 156.147.51.102 with ESMTP; 30 May 2025 15:47:30 +0900
-X-Original-SENDERIP: 10.177.112.156
-X-Original-MAILFROM: youngjun.park@lge.com
-Date: Fri, 30 May 2025 15:47:29 +0900
-From: YoungJun Park <youngjun.park@lge.com>
-To: Nhat Pham <nphamcs@gmail.com>
-Cc: linux-mm@kvack.org, akpm@linux-foundation.org, hannes@cmpxchg.org,
-	hughd@google.com, yosry.ahmed@linux.dev, mhocko@kernel.org,
-	roman.gushchin@linux.dev, shakeel.butt@linux.dev,
-	muchun.song@linux.dev, len.brown@intel.com,
-	chengming.zhou@linux.dev, kasong@tencent.com, chrisl@kernel.org,
-	huang.ying.caritas@gmail.com, ryan.roberts@arm.com,
-	viro@zeniv.linux.org.uk, baohua@kernel.org, osalvador@suse.de,
-	lorenzo.stoakes@oracle.com, christophe.leroy@csgroup.eu,
-	pavel@kernel.org, kernel-team@meta.com,
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-	linux-pm@vger.kernel.org, peterx@redhat.com, gunho.lee@lge.com,
-	taejoon.song@lge.com, iamjoonsoo.kim@lge.com
-Subject: Re: [RFC PATCH v2 00/18] Virtual Swap Space
-Message-ID: <aDlUgVFdA7rCUvHx@yjaykim-PowerEdge-T330>
-References: <20250429233848.3093350-1-nphamcs@gmail.com>
+	s=arc-20240116; t=1748587735; c=relaxed/simple;
+	bh=gc8la3SaXvppdABj6Q2cqjk+XZ9br/GNoKxW8tSaZu0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nSsNUMdlVeL8ksRgo+R00L7fKOJ5IESyGPK2Edjgk9QukxlcFxMj6O+qGz1f4arCRXt6SU0oeV4AsV3TypRYks0Fsb0SKF7WnLcHS09yADvTbwYAN5gbAw0af6DROYOkUg+7cfzqn8gehOdFZcK+2D1SV7qh1UHI/tfzvj52law=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Zdx7EfSf; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1748587732;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=O1vDHrajTzrjrnoCpcom2NIqdxhv65ZnMxldhkNVop0=;
+	b=Zdx7EfSfrqvAt431hqzhJYZijLY756xPUoxrejolW/JGVEZCovskYiheZzcT7ZKTqf7Yr9
+	j+btVr4OZBkhZq/CwKgz4hY6/FcSYOW1oYqGIiobZWN/J9loC0EZDDgY43BRkHnDMNP7Uw
+	hbTHrXEEVgG1ZKL7TRmoEqQyWAQ2OYk=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-299-kby2G5ZPN5yYgruZGxv9TA-1; Fri, 30 May 2025 02:48:50 -0400
+X-MC-Unique: kby2G5ZPN5yYgruZGxv9TA-1
+X-Mimecast-MFC-AGG-ID: kby2G5ZPN5yYgruZGxv9TA_1748587729
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-450d64026baso3473175e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 23:48:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748587729; x=1749192529;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=O1vDHrajTzrjrnoCpcom2NIqdxhv65ZnMxldhkNVop0=;
+        b=vr3Oo4l4m2AQD2UYik7z6sRAR2qisoDJ4qR8GdI5uMNkM5ehH9+KxlU1G1B4f2mXeV
+         R93qMBinTUJSoNEA8Od9DPFNkte1JcJkW5gArWkkR6pX6m7eBFquOa+FG/Yfb/gFKytg
+         6/mzuGE+mN2HcEghYJWpVBsls0adG+oWXNYR2WyzdudZ8s7SZ8SZOIy/dFbSDjXDUolY
+         UBYASCQdAxC6nNufg/xiZDzG1JK1H3emppsAmw8rNKMsT3Qux7czEKJKsH+OrxZVoeSN
+         z/1eeIiqWSvZisrWIxGnnNGcPVABOioCQqOtfMFmTs0pG5hwlvrt3OWMfZKk7zQY6oDj
+         RagA==
+X-Forwarded-Encrypted: i=1; AJvYcCUThizS1WiBObjR4cj8lxLLaK4Xnu/UsoWz+HmyrMEZ1DuPbGF4YFYagY5DOhfZlBXmraz/Dt6NyPiEZ5Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+LucUlhUutKSap2xxzYZGjv+iYMa8M0cAsZGLq6sKbxAEKnD5
+	J1B7wVjH/pfR9T0J6bJ1FXVzzlTKnqLfQlQ2JGMk0JHwm/+0LbEJgN/a/yMtLd+Sv3ChcPVCOpf
+	DRSzUfqqHZhvLSHeBYb8BH5mAxXi35blzsJQeZc3XILvrgxq5YqftOe3W1ZkW/0Dd8A==
+X-Gm-Gg: ASbGncv/gBj4cLAbVYBSLVXQpK2j/lyKJgpNgWcu/BakD9yaRsFhOkXZQH6Yxgz6f0h
+	KIXkC6ewD/MxzMJP6ekU6QsMN4E3QMmG77p2dJTl41VJH1fXjXxh88j26xZlmvc4NrbEiYaucm3
+	OfGjdBeOkkdw4vxfpSqpgLSdGUm61Wb0Xa2N4/441oEejhdP37vtjwryBe8DjVyzs1PjnVOLNGB
+	Wm+quskReH5DoXQrdznxQAMykJbFXJ5t2bO1E9rD6dqx7FHPyWKTu1Ha1glwu4KEoYAMx2Lxl1y
+	pA5lqoM2uji/XfRf44WkDCwXCQCceA==
+X-Received: by 2002:a05:600c:3b8e:b0:450:c210:a01b with SMTP id 5b1f17b1804b1-450d6504a0cmr21910665e9.17.1748587729398;
+        Thu, 29 May 2025 23:48:49 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH+uj3ywn94+9+d7ZLHV48pI1EdN47hIPoDHpX3RQ6Yg97pi6vjSTFQNaSq39/FhMnL+1/6Ow==
+X-Received: by 2002:a05:600c:3b8e:b0:450:c210:a01b with SMTP id 5b1f17b1804b1-450d6504a0cmr21910405e9.17.1748587728993;
+        Thu, 29 May 2025 23:48:48 -0700 (PDT)
+Received: from ?IPV6:2a0d:3344:2442:a310::f39? ([2a0d:3344:2442:a310::f39])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-450d8012af3sm8915245e9.35.2025.05.29.23.48.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 29 May 2025 23:48:48 -0700 (PDT)
+Message-ID: <9faa4d04-e370-42f9-81e1-0759ca236000@redhat.com>
+Date: Fri, 30 May 2025 08:48:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250429233848.3093350-1-nphamcs@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net v3] vmxnet3: correctly report gso type for UDP tunnels
+To: Ronak Doshi <ronak.doshi@broadcom.com>, netdev@vger.kernel.org
+Cc: Guolin Yang <guolin.yang@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20250530004631.68288-1-ronak.doshi@broadcom.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20250530004631.68288-1-ronak.doshi@broadcom.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Apr 29, 2025 at 04:38:28PM -0700, Nhat Pham wrote:
-> Changelog:
-> * v2:
-> 	* Use a single atomic type (swap_refs) for reference counting
-> 	  purpose. This brings the size of the swap descriptor from 64 KB
-> 	  down to 48 KB (25% reduction). Suggested by Yosry Ahmed.
-> 	* Zeromap bitmap is removed in the virtual swap implementation.
-> 	  This saves one bit per phyiscal swapfile slot.
-> 	* Rearrange the patches and the code change to make things more
-> 	  reviewable. Suggested by Johannes Weiner.
-> 	* Update the cover letter a bit.
+On 5/30/25 2:46 AM, Ronak Doshi wrote:
+> Commit 3d010c8031e3 ("udp: do not accept non-tunnel GSO skbs landing
+> in a tunnel") added checks in linux stack to not accept non-tunnel
+> GRO packets landing in a tunnel. This exposed an issue in vmxnet3
+> which was not correctly reporting GRO packets for tunnel packets.
+> 
+> This patch fixes this issue by setting correct GSO type for the
+> tunnel packets.
+> 
+> Currently, vmxnet3 does not support reporting inner fields for LRO
+> tunnel packets. This is fine for now as workaround is to enable
+> tnl-segmentation offload on the relevant interfaces. This problem
+> pre-exists this patch fix and can be addressed as a separate future
+> patch.
 
-Hi Nhat,
+I think it would be better if you rephrase the above paragraph, as is a
+bit misleading. The workaround is available only in some scenarios: when
+the egress device supports tunnel TSO and only if the relevant egress
+driver does not use the skb inner fields (many NICs actually use/need them).
 
-Thank you for sharing this patch series.
-I’ve read through it with great interest.
+Note that there is no guarantee that the egress device will be vmxnet, too.
 
-I’m part of a kernel team working on features related to multi-tier swapping,
-and this patch set appears quite relevant
-to our ongoing discussions and early-stage implementation.
+/P
 
-I had a couple of questions regarding the future direction.
-
-> * Multi-tier swapping (as mentioned in [5]), with transparent
->   transferring (promotion/demotion) of pages across tiers (see [8] and
->   [9]). Similar to swapoff, with the old design we would need to
->   perform the expensive page table walk.
-
-Based on the discussion in [5], it seems there was some exploration
-around enabling per-cgroup selection of multiple tiers.
-Do you envision the current design evolving in a similar direction
-to those past discussions, or is there a different direction you're aiming for?
-
->   This idea is very similar to Kairui's work to optimize the (physical)
->   swap allocator. He is currently also working on a swap redesign (see
->   [11]) - perhaps we can combine the two efforts to take advantage of
->   the swap allocator's efficiency for virtual swap.
-
-I noticed that your patch appears to be aligned with the work from Kairui.
-It seems like the overall architecture may be headed toward introducing
-a virtual swap device layer.
-I'm curious if there’s already been any concrete discussion
-around this abstraction, especially regarding how it might be layered over
-multiple physical swap devices?
-
-From a naive perspective, I imagine that while today’s swap devices
-are in a 1:1 mapping with physical devices,
-this virtual layer could introduce a 1:N relationship —
-one virtual swap device mapped to multiple physical ones.
-Would this virtual device behave as a new swappable block device
-exposed via `swapon`, or is the plan to abstract it differently?
-
-Thanks again for your work, 
-and I would greatly appreciate any insights you could share.
-
-Best regards,  
-YoungJun Park
 
