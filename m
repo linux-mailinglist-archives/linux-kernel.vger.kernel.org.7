@@ -1,236 +1,156 @@
-Return-Path: <linux-kernel+bounces-667781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-667785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62E70AC89DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 10:20:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DE6C6AC89E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 10:27:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 244254A6CEC
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 08:21:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A2914A64DF
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 08:27:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA19E21771F;
-	Fri, 30 May 2025 08:20:51 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CA9E21517C;
+	Fri, 30 May 2025 08:27:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eqRiW8a3"
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 336042116F5;
-	Fri, 30 May 2025 08:20:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CFCF1EE017
+	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 08:27:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748593251; cv=none; b=BL4YFlNLjpdz2+c5YDGAv1ciTU4l/5yUJUsU+rt/6JaEQgoh6MjjaOwxVz8nQ2Gqx1U77+FOwqA+AIneGgqOn9AJkOXZ0qhhmskY+9YZ2IHdXgElXxqgUCNsz//6U1jkNmlGJD0Ph61iPWr4VwDgkz2SchLojAR9InWfBmgf0D0=
+	t=1748593639; cv=none; b=HYbQVc82t1P2urUntizbSE83YVzKCqS6Qo0vTCygAgSuNT1MyKZwvnxu6ooUdgVhiu47ZbsWyxKcUK+y54nwT8DeQo26SyFgNkfuYHG+wn0BE9L9mPtUC+uZEC76+nra1avU/zOaHDkHARToYReyXaGqJ/HPBOUPhXL2F/wYITA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748593251; c=relaxed/simple;
-	bh=Ucz1ygW9HG1Og2peBspr33vdjTpvWXFaRtJTMZFth+M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ROCqcKzM3jRKvLEmBmrDZS+h5g5YFuYsbaqOEkH6LrotzMsCT5d+4KdqxjzRrOlIY3bHCoEuFmM5X0W6hMFoeu3qYIyVmrT1ZqkWiZgP2kzpjV3laimwEKuRcFZ2QodAhMjNFiegVBaOYIlt2CkQ5OkRBlNZmjpy0XB3wCOYDR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4b7x3y0mjpz23jTN;
-	Fri, 30 May 2025 16:19:42 +0800 (CST)
-Received: from kwepemg500008.china.huawei.com (unknown [7.202.181.45])
-	by mail.maildlp.com (Postfix) with ESMTPS id 77A591A016C;
-	Fri, 30 May 2025 16:20:45 +0800 (CST)
-Received: from [127.0.0.1] (10.174.177.71) by kwepemg500008.china.huawei.com
- (7.202.181.45) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 30 May
- 2025 16:20:44 +0800
-Message-ID: <d5d840c5-d030-48de-84df-3891f498cfc7@huawei.com>
-Date: Fri, 30 May 2025 16:20:44 +0800
+	s=arc-20240116; t=1748593639; c=relaxed/simple;
+	bh=vRrRzjvalC4b5vsqPDE18UuRNxy3sXp/LnYLU8RtL7E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Mj0ct9dckImup277CQyr3UL13YKgnk491jf6mI30+mjcbjDsBcPL8fdsdf6K6yhd1aiZz55BCmqO2lnOc5s7nQx2rGAHlyQOV5pcpLVoHvgRCKu202ImpTJKC73+u7d8kobHAKV3eIVS8CcnVct2X6rdVcI/K47iAdQsuYuvgnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eqRiW8a3; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-70e78e04e48so14249697b3.1
+        for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 01:27:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748593637; x=1749198437; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oYOli4oTQ0MFkGdltVUUX/1x4FeeDlNH5ixoZJpfc0Y=;
+        b=eqRiW8a3/dfUqAkOBk61G9ThYudPPGEAMbmEKWzTYVgPsUbyhV7tK793o3hwSoU85y
+         x4KrvebM6QN+G1ucZHrJWdJZIrww16MPhVdpx6YP3Sf1VSy8dFjd5Fa+L0xDAAcXDa6P
+         FOE7hQAG0Xdqzi3xK9lhGbrHDK+RyWSM4RVJW2WFHSotyU8EIgSPMAqWSYV8V4c3hXYC
+         I+IAPxKDG0af1aQkAzu2n4Io5FCBskkBI3gXRERzhSwORX985e7X6jQ9Y5h/8FDkrvkL
+         IZoJOZ5Zwk9qN1Rm6MLmSkQsrrX7TZC80zIk2ciFf0fI7mBNZYnVaksUNmek4ZmuQwwN
+         Hc0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748593637; x=1749198437;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oYOli4oTQ0MFkGdltVUUX/1x4FeeDlNH5ixoZJpfc0Y=;
+        b=ZS1hTH72FaIPweWxjMcBahGH89jL/IHS4ax3gQgX+F8s4+ypiJ/BCCfEWzRTJsVdgI
+         JOBjHX5SOj5tpSSB/hUjOOKlHvEIY+TO2KyFgFXIgMcCMDU6LxPzot9uYnkBFo5el6i6
+         BCOobQskWwWCFgSj9q0I0sb/yHt7gWwnyXp8z72MGft5W7hA15F2RXcKaZ651Ey/H/iG
+         zgBmSS3Hgqs0h3zM2TvHtRrYOJ8WIWNOJYdWzxo+UmSPv9y138dEVTKj6Cru1u4EyZC5
+         kTfHKi8R2Njy/VhWBzjKSsBbdD0ATjexyiiz8xTGkhlKxiRFLHBdeysL3a9ZCdTVayzd
+         THnw==
+X-Gm-Message-State: AOJu0YzrYtsf6f65/yUwVqNK6pFTNpkXFTcGmqR/pxWjthf82InbOcRs
+	k3FMrvYS5LACeqUWx55Lyh3c/KwLj9H52WBWY6ThpikouMD2VeGWq1JRt7dXjD9DqAeMDj6A/q6
+	MH759RNDqSy+x4wrpeprcJSMMJIrT7mU=
+X-Gm-Gg: ASbGncvgA4hmkOunOhzEIDDSIJPlSXaKaL2V6Ot6Z6y0DFB5y51HALbdLQBnzvkwbM+
+	AmU4wwdPNsdbrCusSehMioZU3DkJP7HEs8Nhq2BEsgQ0k8VHQRqQewFzMG9x9MQDwDsnb1DpRKa
+	CNg2BV8i8LnkfQmtLJpW5jfNtO9OV3jm4=
+X-Google-Smtp-Source: AGHT+IFsqOwz2hH/6SkMcb4g5Yt5gM++f/aIIg84Ru4n0ZJdf4J+GaGTDN2HUDMjHnisBhrlGkZG3VMjpTsxTu67sqE=
+X-Received: by 2002:a05:690c:ed4:b0:70e:2168:7330 with SMTP id
+ 00721157ae682-70f97ebe21cmr35975617b3.19.1748593637073; Fri, 30 May 2025
+ 01:27:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] ext4: add ext4_try_lock_group() to skip busy groups
-To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-CC: <linux-ext4@vger.kernel.org>, <tytso@mit.edu>, <adilger.kernel@dilger.ca>,
-	<jack@suse.cz>, <linux-kernel@vger.kernel.org>, <yi.zhang@huawei.com>,
-	<yangerkun@huawei.com>, <libaokun@huaweicloud.com>, Baokun Li
-	<libaokun1@huawei.com>
-References: <20250523085821.1329392-1-libaokun@huaweicloud.com>
- <20250523085821.1329392-2-libaokun@huaweicloud.com>
- <aDcmRdOrWatcBJWc@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
-Content-Language: en-US
-From: Baokun Li <libaokun1@huawei.com>
-In-Reply-To: <aDcmRdOrWatcBJWc@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
- kwepemg500008.china.huawei.com (7.202.181.45)
+References: <20250530034713.4165309-1-dregan@broadcom.com>
+In-Reply-To: <20250530034713.4165309-1-dregan@broadcom.com>
+From: Jonas Gorski <jonas.gorski@gmail.com>
+Date: Fri, 30 May 2025 10:27:05 +0200
+X-Gm-Features: AX0GCFu20_wlEHN11fGmhScteajc3WuMgALK6hLnwRgWbt4ITw7IMg-Z42znGps
+Message-ID: <CAOiHx=nzNZiOiBKUVqpTA5S8uY+ZNdPpLpEQGGDN9jP2-4Lj8Q@mail.gmail.com>
+Subject: Re: [PATCH] mtd: nand: brcmnand: fix mtd corrected bits stat
+To: David Regan <dregan@broadcom.com>
+Cc: linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org, 
+	bcm-kernel-feedback-list@broadcom.com, william.zhang@broadcom.com, 
+	anand.gore@broadcom.com, florian.fainelli@broadcom.com, 
+	kamal.dasu@broadcom.com, dan.beygelman@broadcom.com, 
+	Miquel Raynal <miquel.raynal@bootlin.com>, =?UTF-8?B?w4FsdmFybyBGZXJuw6FuZGV6IFJvamFz?= <noltari@gmail.com>, 
+	rafal@milecki.pl, computersforpeace@gmail.com, frieder.schrempf@kontron.de, 
+	vigneshr@ti.com, richard@nod.at, bbrezillon@kernel.org, kdasu.kdev@gmail.com, 
+	jaimeliao.tw@gmail.com, kilobyte@angband.pl, dgcbueu@gmail.com, 
+	dregan@mail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2025/5/28 23:05, Ojaswin Mujoo wrote:
-> On Fri, May 23, 2025 at 04:58:18PM +0800, libaokun@huaweicloud.com wrote:
->> From: Baokun Li <libaokun1@huawei.com>
->>
->> When ext4 allocates blocks, we used to just go through the block groups
->> one by one to find a good one. But when there are tons of block groups
->> (like hundreds of thousands or even millions) and not many have free space
->> (meaning they're mostly full), it takes a really long time to check them
->> all, and performance gets bad. So, we added the "mb_optimize_scan" mount
->> option (which is on by default now). It keeps track of some group lists,
->> so when we need a free block, we can just grab a likely group from the
->> right list. This saves time and makes block allocation much faster.
->>
->> But when multiple processes or containers are doing similar things, like
->> constantly allocating 8k blocks, they all try to use the same block group
->> in the same list. Even just two processes doing this can cut the IOPS in
->> half. For example, one container might do 300,000 IOPS, but if you run two
->> at the same time, the total is only 150,000.
->>
->> Since we can already look at block groups in a non-linear way, the first
->> and last groups in the same list are basically the same for finding a block
->> right now. Therefore, add an ext4_try_lock_group() helper function to skip
->> the current group when it is locked by another process, thereby avoiding
->> contention with other processes. This helps ext4 make better use of having
->> multiple block groups.
->>
->> Also, to make sure we don't skip all the groups that have free space
->> when allocating blocks, we won't try to skip busy groups anymore when
->> ac_criteria is CR_ANY_FREE.
->>
->> Performance test data follows:
->>
->> CPU: HUAWEI Kunpeng 920
->> Memory: 480GB
->> Disk: 480GB SSD SATA 3.2
->> Test: Running will-it-scale/fallocate2 on 64 CPU-bound containers.
->> Observation: Average fallocate operations per container per second.
->>
->>                        base    patched
->> mb_optimize_scan=0    3588    6755 (+88.2%)
->> mb_optimize_scan=1    3588    4302 (+19.8%)
-> The patch looks mostly good. Same observations about mb_optimize_scan=1
-> improving less. We can continue this discussion in my reply to the cover
-> letter. That being said, I have some minor suggestions:
-Thanks for the review!
+Hi,
+
+On Fri, May 30, 2025 at 5:48=E2=80=AFAM David Regan <dregan@broadcom.com> w=
+rote:
 >
->> Signed-off-by: Baokun Li <libaokun1@huawei.com>
->> ---
->>   fs/ext4/ext4.h    | 23 ++++++++++++++---------
->>   fs/ext4/mballoc.c | 14 +++++++++++---
->>   2 files changed, 25 insertions(+), 12 deletions(-)
->>
->> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
->> index 5a20e9cd7184..9c665a620a46 100644
->> --- a/fs/ext4/ext4.h
->> +++ b/fs/ext4/ext4.h
->> @@ -3494,23 +3494,28 @@ static inline int ext4_fs_is_busy(struct ext4_sb_info *sbi)
->>   	return (atomic_read(&sbi->s_lock_busy) > EXT4_CONTENTION_THRESHOLD);
->>   }
->>   
->> +static inline bool ext4_try_lock_group(struct super_block *sb, ext4_group_t group)
->> +{
->> +	if (!spin_trylock(ext4_group_lock_ptr(sb, group)))
->> +		return false;
->> +	/*
->> +	 * We're able to grab the lock right away, so drop the lock
->> +	 * contention counter.
->> +	 */
->> +	atomic_add_unless(&EXT4_SB(sb)->s_lock_busy, -1, 0);
->> +	return true;
->> +}
->> +
->>   static inline void ext4_lock_group(struct super_block *sb, ext4_group_t group)
->>   {
->> -	spinlock_t *lock = ext4_group_lock_ptr(sb, group);
->> -	if (spin_trylock(lock))
->> -		/*
->> -		 * We're able to grab the lock right away, so drop the
->> -		 * lock contention counter.
->> -		 */
->> -		atomic_add_unless(&EXT4_SB(sb)->s_lock_busy, -1, 0);
->> -	else {
->> +	if (!ext4_try_lock_group(sb, group)) {
->>   		/*
->>   		 * The lock is busy, so bump the contention counter,
->>   		 * and then wait on the spin lock.
->>   		 */
->>   		atomic_add_unless(&EXT4_SB(sb)->s_lock_busy, 1,
->>   				  EXT4_MAX_CONTENTION);
->> -		spin_lock(lock);
->> +		spin_lock(ext4_group_lock_ptr(sb, group));
->>   	}
->>   }
->>   
->> diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
->> index 1e98c5be4e0a..5c13d9f8a1cc 100644
->> --- a/fs/ext4/mballoc.c
->> +++ b/fs/ext4/mballoc.c
->> @@ -896,7 +896,8 @@ static void ext4_mb_choose_next_group_p2_aligned(struct ext4_allocation_context
->>   				    bb_largest_free_order_node) {
->>   			if (sbi->s_mb_stats)
->>   				atomic64_inc(&sbi->s_bal_cX_groups_considered[CR_POWER2_ALIGNED]);
->> -			if (likely(ext4_mb_good_group(ac, iter->bb_group, CR_POWER2_ALIGNED))) {
->> +			if (likely(ext4_mb_good_group(ac, iter->bb_group, CR_POWER2_ALIGNED)) &&
->> +			    !spin_is_locked(ext4_group_lock_ptr(ac->ac_sb, iter->bb_group))) {
-> Maybe reversing the && order to be (!spin_is_locked() && ext4_mb_good_group()) would be better?
-Yeah.
->>   				*group = iter->bb_group;
->>   				ac->ac_flags |= EXT4_MB_CR_POWER2_ALIGNED_OPTIMIZED;
->>   				read_unlock(&sbi->s_mb_largest_free_orders_locks[i]);
->> @@ -932,7 +933,8 @@ ext4_mb_find_good_group_avg_frag_lists(struct ext4_allocation_context *ac, int o
->>   	list_for_each_entry(iter, frag_list, bb_avg_fragment_size_node) {
->>   		if (sbi->s_mb_stats)
->>   			atomic64_inc(&sbi->s_bal_cX_groups_considered[cr]);
->> -		if (likely(ext4_mb_good_group(ac, iter->bb_group, cr))) {
->> +		if (likely(ext4_mb_good_group(ac, iter->bb_group, cr)) &&
->> +		    !spin_is_locked(ext4_group_lock_ptr(ac->ac_sb, iter->bb_group))) {
-> same as above
-Okay.
->   
->>   			grp = iter;
->>   			break;
->>   		}
->> @@ -2911,7 +2913,13 @@ ext4_mb_regular_allocator(struct ext4_allocation_context *ac)
->>   			if (err)
->>   				goto out;
->>   
->> -			ext4_lock_group(sb, group);
->> +			/* skip busy group */
->> +			if (cr >= CR_ANY_FREE) {
->> +				ext4_lock_group(sb, group);
->> +			} else if (!ext4_try_lock_group(sb, group)) {
->> +				ext4_mb_unload_buddy(&e4b);
->> +				continue;
->> +			}
-> This in itself looks good. I am just thinking that now that we are
-> deciding to skip locked groups, in the code above this one, shall we do
-> something like:
+> Currently we attempt to get the amount of flipped bits from a hardware
+> location which is reset on every subpage. Instead obtain total flipped
+> bits stat from hardware accumulator. In addition identify the correct
+> maximum subpage corrected bits.
 >
->        
->        if (spin_is_locked(group_lock))
->          continue;
->        
->        err = ext4_mb_load_buddy(sb, group, &e4b);
->        if (err)
->          goto out;
+> Signed-off-by: David Regan <dregan@broadcom.com>
+> Reviewed-by: William Zhang <william.zhang@broadcom.com>
+> Reviewed-by: Kamal Dasu <kamal.dasu@broadcom.com>
+> ---
+>  drivers/mtd/nand/raw/brcmnand/brcmnand.c | 48 ++++++++++++++++++------
+>  1 file changed, 37 insertions(+), 11 deletions(-)
 >
->        /* skip busy group */
->        if (cr >= CR_ANY_FREE) {
->          ext4_lock_group(sb, group);
->        } else if (!ext4_try_lock_group(sb, group)) {
->          ext4_mb_unload_buddy(&e4b);
->          continue;
->        }
->
-> With this we can even avoid loading the folio as well.
-I previously assumed that for busy groups, the buddy was already loaded,
-so reloading it would incur minimal overhead. However, I was mistaken.
+> diff --git a/drivers/mtd/nand/raw/brcmnand/brcmnand.c b/drivers/mtd/nand/=
+raw/brcmnand/brcmnand.c
+> index 62bdda3be92f..43ab4aedda55 100644
+> --- a/drivers/mtd/nand/raw/brcmnand/brcmnand.c
+> +++ b/drivers/mtd/nand/raw/brcmnand/brcmnand.c
+> @@ -361,6 +361,7 @@ enum brcmnand_reg {
+>         BRCMNAND_CORR_COUNT,
+>         BRCMNAND_CORR_EXT_ADDR,
+>         BRCMNAND_CORR_ADDR,
+> +       BRCMNAND_READ_ERROR_COUNT,
+>         BRCMNAND_UNCORR_EXT_ADDR,
+>         BRCMNAND_UNCORR_ADDR,
+>         BRCMNAND_SEMAPHORE,
+> @@ -389,6 +390,7 @@ static const u16 brcmnand_regs_v21[] =3D {
+>         [BRCMNAND_CORR_THRESHOLD_EXT]   =3D     0,
+>         [BRCMNAND_UNCORR_COUNT]         =3D     0,
+>         [BRCMNAND_CORR_COUNT]           =3D     0,
+> +       [BRCMNAND_READ_ERROR_COUNT]     =3D     0,
+>         [BRCMNAND_CORR_EXT_ADDR]        =3D  0x60,
+>         [BRCMNAND_CORR_ADDR]            =3D  0x64,
+>         [BRCMNAND_UNCORR_EXT_ADDR]      =3D  0x68,
+> @@ -419,6 +421,7 @@ static const u16 brcmnand_regs_v33[] =3D {
+>         [BRCMNAND_CORR_THRESHOLD_EXT]   =3D     0,
+>         [BRCMNAND_UNCORR_COUNT]         =3D     0,
+>         [BRCMNAND_CORR_COUNT]           =3D     0,
+> +       [BRCMNAND_READ_ERROR_COUNT]     =3D     0,
+>         [BRCMNAND_CORR_EXT_ADDR]        =3D  0x70,
+>         [BRCMNAND_CORR_ADDR]            =3D  0x74,
+>         [BRCMNAND_UNCORR_EXT_ADDR]      =3D  0x78,
+> @@ -449,6 +452,7 @@ static const u16 brcmnand_regs_v50[] =3D {
+>         [BRCMNAND_CORR_THRESHOLD_EXT]   =3D     0,
+>         [BRCMNAND_UNCORR_COUNT]         =3D     0,
+>         [BRCMNAND_CORR_COUNT]           =3D     0,
+> +       [BRCMNAND_READ_ERROR_COUNT]     =3D     0,
 
-After implementing a change, the proportion of time spent in
-ext4_mb_load_buddy() decreased from 3.6% to 1.7%, resulting in
-approximately a 2% performance improvement.
+I see this register in BCM63268's NAND controller at 0x80, which is a
+v4.x one, so I'm surprised v5.0 doesn't have it. Or does it not work
+there? I don't know if v3.3 also has it or if using this on v4.x would
+require a separate brcmnand_regs entry.
 
-Thank you for your suggestion！
-I will prevent unnecessary buddy loading in the next version.
+Can't really comment on the remaining changes.
 
-Cheers,
-Baokun
-
+Regards,
+Jonas
 
