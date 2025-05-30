@@ -1,215 +1,173 @@
-Return-Path: <linux-kernel+bounces-668727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-668733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 497B7AC9641
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 21:59:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22469AC964C
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 22:04:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0483D5059F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 19:59:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0654E1C06126
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 20:04:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85192280CF0;
-	Fri, 30 May 2025 19:59:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24F7C284669;
+	Fri, 30 May 2025 20:03:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="F9D/kUeg"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="yAeRa1Fg"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2052.outbound.protection.outlook.com [40.107.244.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 369F82609D6
-	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 19:59:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748635182; cv=none; b=RfX7mmfjvRiBQGDl6MbXxIZ0Fv9LuXamWGmcRcYnssLE0pS4j+EkpXFJCVCDoxiJjjCc6Z6HDy4ljEAeYSxPw3UlIgDj0mpE8nktJOQ3xCMcTHonAckubl8Qj55wwupsnV+HLOBcxUYKHpoWAhQzOk4WqgHVAX4tYuSlZsYv38E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748635182; c=relaxed/simple;
-	bh=tgIdWJfTfE8Hk6gr53VjRErzclr/ehhtTPonwVJQzZU=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=poWBLJXeeKBlJiMUKDlkIhsBMrS2jYSC39v7l+YkR+gSAFYp0cVcxGhdFEo+IRbEFJ1lL1MP5RvGS4M4ZpcTviOgyxeh9Xc0P4lBYUFkz3LllJZMz7+OnQ4O/t2VUS2DpPXcZ3x1CZQfLQ9P8dSEddIPB9Cg2MNUoLdpAWj4xzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=F9D/kUeg; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-7377139d8b1so2051339b3a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 12:59:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1748635180; x=1749239980; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XLJX3ZuweedNmIpG0KUncbRpuBe5C8PWGGVckjGFyc8=;
-        b=F9D/kUegV8910/prF+INDnPe8c9BE1061VP7JvND8IZpyP0j+8uTXEAO0Nxb8+C0OM
-         1bzfLxSxsy3sywmTxDWyi8Dfxq5wbWiUkFjX5tJtzzR8lFT6uEetwcNT9RTLmo+nAo2x
-         YcLCv1OQIfuG83Fo23vs7Q9in8TIUcTlBXuGP+Uqiex5LT4SX2FuG4951ldNl7fODrBo
-         Bz6VhSVWivKGs+0K7voQkP9dxVA7D/0nR1yfeWvOF6U5TTyhiatYHC1ssEC7wpafDa8p
-         K1Cx3lYd1nWJEN7RVcqovQKQPo+BFYOqzZToKSvrhUPXuIGocEX4jRFVRLnkHdTsdSmz
-         C2wg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748635180; x=1749239980;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XLJX3ZuweedNmIpG0KUncbRpuBe5C8PWGGVckjGFyc8=;
-        b=wiZToJgWmq1Mk5WasyUXJoshWx7XY1tOY3trcBOGzy7hVdlcOLQkEdstwPgujrinhx
-         Q9SfciiSjZKPWNO80UPf3WGGcO8H5Isy6/gTLLSSLySzSXynxaDXxaAY0Z/WWPkbom/v
-         QVBELnhMt+wwRQbc/8vrL6TSFhIGtpqhh3N6lznGR89qo90W3S42GNsKuOid3D9dELYe
-         ZSAxkXrJBX9TbPDtJvPKMrfwuqy7v/eslsK3mtMk9VGe30dnqsDbZrJeWRd5gvSfcMN+
-         bg1sm06HA2sXUlqzE9s6soXTFhjMDJ0aB2BhA0MOklgGWwFpvR03IHdTeN3IVFfBCm/c
-         HKHA==
-X-Forwarded-Encrypted: i=1; AJvYcCVxS/hubSmXtJ8FSjezaIcUlAxmBocPxtSUYrw6zSM+VYYvNmXkgfE2XuKQMjcS31JgRaIZaz/n4vGLI40=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzb2M2jliK8GMYCJZn1fdYnh1qp3SGUjN6bpNCCV9LrTBKszAFw
-	Ru33bbuymSIxMXcbzo1RF5J2r7zltY4wiThD9Hy3oL14Bhcbwiq+9gUtrtC+MvPBVQvmAo7/Kgc
-	sVyA9x9+0iNTAStzpsej4VRLp4w==
-X-Google-Smtp-Source: AGHT+IFFhC3hXX+PVrgQzetLdBECprnA1DEgPQOOh2/WyOZiyyWJYJHQsUMyh+zMD4P5Er1nSHhtcou8zoPt2CfFVA==
-X-Received: from pfoh25.prod.google.com ([2002:aa7:86d9:0:b0:744:671f:ab5c])
- (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a00:2303:b0:742:ae7e:7da8 with SMTP id d2e1a72fcca58-747bd96e16emr6946361b3a.8.1748635180286;
- Fri, 30 May 2025 12:59:40 -0700 (PDT)
-Date: Fri, 30 May 2025 12:59:38 -0700
-In-Reply-To: <1c5cfc23-3f63-404d-a4bf-030c24412b20@linux.intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C456928368B;
+	Fri, 30 May 2025 20:03:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748635410; cv=fail; b=lUhaAMIXkbNtVPPEgF1Y4kaVPh6qX2Ka9GV89rnvSkNwBK8OiC5LwCW4+IwJq+0ck8wSaDIRR1DjLr5xPeNKvi+onLYiOgKTozfRmOjxVt9AvPyxAHFzwg50fHRrCcO0SQhf5tbmuIJjUDictZGMmyASmGgGruronbLhxuXD/Dk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748635410; c=relaxed/simple;
+	bh=tNU7tYHSsWuzPAfUgZa6z0PW5jXAvTwka6iI4au1c7Y=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OfPX7poJ0/qI+lgDrfYyyUK+G+mRpIJAKkKSZmXdJ/tAyiKqpBoAMAx/Q5cSsKbgtilCk9yQyD+N6GKMLGZ7FO76lb4JsyjokKpczS3lXdOhBAbZqne3Ah+/TVlMfu+CthP6iEOdAIvpl2wqYQcmdP22Bnups5KWdtURScsXi4s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=yAeRa1Fg; arc=fail smtp.client-ip=40.107.244.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=hKzyhYgc4uqatdlbg4l1jV7d3odAJmIgY9t5Qo+7KB5IPWZsRsGb2JVlENmFMsZV0ypkXCTuWiH340kSaY9mAyl5QxCM2J8CgwSV85N0LN+mQJwlK5tszZDerMjkbJKtBklVncOmCl8s4jsPhnP9LuHWvGapC+2goFBbWDoRQFk+QrpedqjuueShsV+uotar9eIfU9tzlTSXJ1iuznCn7ZtJjg30qVcaJ8TlQFcHfvCSJ33XE69ipn940Iy176JFPRAT4oQczV1HXNc44yDCtJmd0Z7+qhVRyaA8ioOIpHIFZ30MJt0/UsbP+fmfQpjTtuKDqWh/Wxp6PageOjS2mQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=pd5Xtlto35kGUha0AZp33jlyHtpe7m6RgA03yO8e/2w=;
+ b=rdczVIBdGeJPg4WL2dICHy14E31uMhLuhb/F7B8dRF2DwRa5HjwYTOm6EDcu7ZwVZIBPeoOjFK5QHSrgkQXK6WcabavgLexI4BBTOc8cDEhwnP+5jFOO17jitPJyewvNYkCDfaa9UUYT+/1qrz+/tvi1iHP74dFjAzr3N8kRoVHligf6ZE/K6DZOCHCWZg4K3eCvg24Qe3iZ/qj6dxfvar6qkpoeXaeVW/toRSFHQzyK/9Fs0EaxEyQ67Jjt6YAgZuNwH/YnAJHnpPajnbJ2xfB/G3OuSdEhkOovnbLTmobVHDv97fhMomdohpi2oNYbBPkpcUAlZkbSOM8X/lgD+A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=infradead.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=pd5Xtlto35kGUha0AZp33jlyHtpe7m6RgA03yO8e/2w=;
+ b=yAeRa1FgGbPoT0Ilg9xftB3uq65Z6k8y8ScF5jR1F1oYWKQJ2z7xlP7iwJHZ0zUJJ7rJiMhBkGupxVYCCVcCvw0phILtLhpaTvaRkVxiOeO1WAhb5XatijZSwXVYWRicSWQxaqgv5GCNEfT5TOlNUjV28/m5JzLJi6IDPIpdvHA=
+Received: from BL1PR13CA0069.namprd13.prod.outlook.com (2603:10b6:208:2b8::14)
+ by DS0PR12MB9421.namprd12.prod.outlook.com (2603:10b6:8:1a1::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.27; Fri, 30 May
+ 2025 20:03:18 +0000
+Received: from BN2PEPF000055DE.namprd21.prod.outlook.com
+ (2603:10b6:208:2b8:cafe::97) by BL1PR13CA0069.outlook.office365.com
+ (2603:10b6:208:2b8::14) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8792.23 via Frontend Transport; Fri,
+ 30 May 2025 20:03:17 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BN2PEPF000055DE.mail.protection.outlook.com (10.167.245.8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8813.0 via Frontend Transport; Fri, 30 May 2025 20:03:17 +0000
+Received: from maple-stxh-linux-10.amd.com (10.180.168.240) by
+ SATLEXMB04.amd.com (10.181.40.145) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 30 May 2025 15:03:15 -0500
+From: Pratap Nirujogi <pratap.nirujogi@amd.com>
+To: <rdunlap@infradead.org>, <hdegoede@redhat.com>,
+	<ilpo.jarvinen@linux.intel.com>, <sfr@canb.auug.org.au>,
+	<linux-next@vger.kernel.org>
+CC: <platform-driver-x86@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<benjamin.chan@amd.com>, <bin.du@amd.com>, <gjorgji.rosikopulos@amd.com>,
+	<king.li@amd.com>, <dantony@amd.com>, Pratap Nirujogi
+	<pratap.nirujogi@amd.com>
+Subject: [PATCH 0/3] Fix build issue when CONFIG_MODULES is not set
+Date: Fri, 30 May 2025 15:59:49 -0400
+Message-ID: <20250530200234.1539571-1-pratap.nirujogi@amd.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <cover.1747264138.git.ackerleytng@google.com> <65afac3b13851c442c72652904db6d5755299615.1747264138.git.ackerleytng@google.com>
- <6825f0f3ac8a7_337c392942d@iweiny-mobl.notmuch> <diqzmsbcfo4o.fsf@ackerleytng-ctop.c.googlers.com>
- <1c5cfc23-3f63-404d-a4bf-030c24412b20@linux.intel.com>
-Message-ID: <diqzwm9x6f9x.fsf@ackerleytng-ctop.c.googlers.com>
-Subject: Re: [RFC PATCH v2 03/51] KVM: selftests: Update guest_memfd_test for
- INIT_PRIVATE flag
-From: Ackerley Tng <ackerleytng@google.com>
-To: Binbin Wu <binbin.wu@linux.intel.com>, Ira Weiny <ira.weiny@intel.com>
-Cc: kvm@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	x86@kernel.org, linux-fsdevel@vger.kernel.org, aik@amd.com, 
-	ajones@ventanamicro.com, akpm@linux-foundation.org, amoorthy@google.com, 
-	anthony.yznaga@oracle.com, anup@brainfault.org, aou@eecs.berkeley.edu, 
-	bfoster@redhat.com, brauner@kernel.org, catalin.marinas@arm.com, 
-	chao.p.peng@intel.com, chenhuacai@kernel.org, dave.hansen@intel.com, 
-	david@redhat.com, dmatlack@google.com, dwmw@amazon.co.uk, 
-	erdemaktas@google.com, fan.du@intel.com, fvdl@google.com, graf@amazon.com, 
-	haibo1.xu@intel.com, hch@infradead.org, hughd@google.com, 
-	isaku.yamahata@intel.com, jack@suse.cz, james.morse@arm.com, 
-	jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com, jhubbard@nvidia.com, 
-	jroedel@suse.de, jthoughton@google.com, jun.miao@intel.com, 
-	kai.huang@intel.com, keirf@google.com, kent.overstreet@linux.dev, 
-	kirill.shutemov@intel.com, liam.merwick@oracle.com, 
-	maciej.wieczor-retman@intel.com, mail@maciej.szmigiero.name, maz@kernel.org, 
-	mic@digikod.net, michael.roth@amd.com, mpe@ellerman.id.au, 
-	muchun.song@linux.dev, nikunj@amd.com, nsaenz@amazon.es, 
-	oliver.upton@linux.dev, palmer@dabbelt.com, pankaj.gupta@amd.com, 
-	paul.walmsley@sifive.com, pbonzini@redhat.com, pdurrant@amazon.co.uk, 
-	peterx@redhat.com, pgonda@google.com, pvorel@suse.cz, qperret@google.com, 
-	quic_cvanscha@quicinc.com, quic_eberman@quicinc.com, 
-	quic_mnalajal@quicinc.com, quic_pderrin@quicinc.com, quic_pheragu@quicinc.com, 
-	quic_svaddagi@quicinc.com, quic_tsoni@quicinc.com, richard.weiyang@gmail.com, 
-	rick.p.edgecombe@intel.com, rientjes@google.com, roypat@amazon.co.uk, 
-	rppt@kernel.org, seanjc@google.com, shuah@kernel.org, steven.price@arm.com, 
-	steven.sistare@oracle.com, suzuki.poulose@arm.com, tabba@google.com, 
-	thomas.lendacky@amd.com, usama.arif@bytedance.com, vannapurve@google.com, 
-	vbabka@suse.cz, viro@zeniv.linux.org.uk, vkuznets@redhat.com, 
-	wei.w.wang@intel.com, will@kernel.org, willy@infradead.org, 
-	xiaoyao.li@intel.com, yan.y.zhao@intel.com, yilun.xu@intel.com, 
-	yuzenghui@huawei.com, zhiquan1.li@intel.com
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN2PEPF000055DE:EE_|DS0PR12MB9421:EE_
+X-MS-Office365-Filtering-Correlation-Id: 28027c50-5c68-4c93-2453-08dd9fb504c2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|82310400026|376014|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Mp7GoNyO9UIBDBmEmgm4zTF5ch03w4wGqOT+R2nRDeYUF4ohdRO6IEXhOhmr?=
+ =?us-ascii?Q?JO99V0521CN6TBoPVHiJY8U7grotUYLTYpGxT4dDkUBEkfPrBS3oGdw666Gv?=
+ =?us-ascii?Q?vbf2OfS/3s8CJi1jgl114ZQKg2i1OxT8FHaMwyeSVGyJTDerS3DuUQBF7J1S?=
+ =?us-ascii?Q?Up58LEN9Jr1yCVd9Y0C3tjmyINxjHwcPXY7mXZCSSEKOAz022n5mJVNNt5Zj?=
+ =?us-ascii?Q?EUbfHY4BGpeic6CfjzoRZPA6VvuDtkNLF1wzYD0T1CqPXTVR87cO4aKVmXZj?=
+ =?us-ascii?Q?is6V6dxdMNNFkIgsEWHT3lwBzB5dzrCzRy/oan3WnCBoByhvvsjCbHwY39/H?=
+ =?us-ascii?Q?cv/NAWlf1PneAr8C9xkdYVYS17+3iM0BE4Fm9zrYexPIZ2WmJVCx5xC3lpM5?=
+ =?us-ascii?Q?1TI+le2UHImMvySR2gagl2KwJcJixy/MZX6GEP1V5kNSVp6t0ksf8eurObhO?=
+ =?us-ascii?Q?o57kCLVcRFLESx8JfXxEHIYxRfIbqAnmUpJpPe9i1OLuytnTOvQhsxkizwap?=
+ =?us-ascii?Q?bmMfWNhrHrGm6KaJsUfpszpd5cxZm/t5gH+U3reQb4PR1uW22O43kdFrNxmC?=
+ =?us-ascii?Q?gl30U9s8RmbUjIJj+77nYdHaW3OmA85IApgFszFTlWk/R7pEWi95bj6NZC6J?=
+ =?us-ascii?Q?smt4MTWP1HT0tGwEKmF3bOoCVQ8FG3RjKeiQWVG//K9ALtglIsX3QwqmKVi7?=
+ =?us-ascii?Q?HWXmlSJF0rY9oQxjClM7LctAVx+SFXybpZhu0b3Bo+XaaX69LHjmfsr2gYCA?=
+ =?us-ascii?Q?i6LlYEXPCZmcoiSsm6a8LXwMTDo8JzZED8Fi06CwRT0r0LlVTkCw1noyQ6MQ?=
+ =?us-ascii?Q?d+G0jdpgbQzaGrLduy4R5x6TFL0vgBRBEiXbS5xXo3TFrl6uvUDW3nCOgBfe?=
+ =?us-ascii?Q?aWwik8lHDQ3cAtTOQ5dejg2xsuZeoWN6fPx4H/fE4L6tz2E6hwwg78CWeA8C?=
+ =?us-ascii?Q?5cG4TL8lR0HNuO4hEGpraLgn7SafFWY6bbJRcL/CpsXv+3mewAOy9w6qg+fp?=
+ =?us-ascii?Q?ek0KwfQo/p6uXnP+wEVXrzGnpvjOVOUgMG0wAWFExDHQb+Bt+MlVRKXB2iNY?=
+ =?us-ascii?Q?D7JLrtQMQifCJVxAUAG/GZn9X9KBeezh5Wm2z2Ra3TcUK5dqGGlox2ldkFV7?=
+ =?us-ascii?Q?vJ6e/bNo4S+kXq9BIkwGSQkrLdGc2QusdnEqplsKHAy1sQ6q198YqvqVrVs+?=
+ =?us-ascii?Q?aP+aEY0p4BoULxzsmuQxH8IIDq9fdtuFSeZmSBNex8D2hzmdXzOC4i2kAtXy?=
+ =?us-ascii?Q?aRXDdE3of8GZ/fdYpS9QL4T4vp9SEJqo1StsG34LlFq+qFfA0UH6sLRlUxxf?=
+ =?us-ascii?Q?0SAAj43Kr514BwcpYUknhKMoE/uF39zzSDfgBWGxh3hZvrwgNsu9xB92w3MD?=
+ =?us-ascii?Q?/djSnegE1r7Y0tSv/UZvnh3mtixqurRYyCO1x12qxB+Di5PSYFHwdqw4dWlU?=
+ =?us-ascii?Q?uxxhXuTUdgYK+d/L9vj2IUPgvqb9tyO4GMbpHbEB9zb0TZFozfCgG2gA62t9?=
+ =?us-ascii?Q?muZx6WE3sFGv0hd7+HFstWKxoOJWAMt9Riks?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(376014)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 May 2025 20:03:17.3794
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 28027c50-5c68-4c93-2453-08dd9fb504c2
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN2PEPF000055DE.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB9421
 
-Binbin Wu <binbin.wu@linux.intel.com> writes:
+When CONFIG_MODULES is not defined, 'adap->owner->name' used in amd_isp4 platform
+driver will not be valid and is resulting in build failures.
 
-> On 5/17/2025 1:42 AM, Ackerley Tng wrote:
->> Ira Weiny <ira.weiny@intel.com> writes:
->>
->>> Ackerley Tng wrote:
->>>> Test that GUEST_MEMFD_FLAG_INIT_PRIVATE is only valid when
->>>> GUEST_MEMFD_FLAG_SUPPORT_SHARED is set.
->>>>
->>>> Change-Id: I506e236a232047cfaee17bcaed02ee14c8d25bbb
->>>> Signed-off-by: Ackerley Tng <ackerleytng@google.com>
->>>> ---
->>>>   .../testing/selftests/kvm/guest_memfd_test.c  | 36 ++++++++++++-------
->>>>   1 file changed, 24 insertions(+), 12 deletions(-)
->>>>
->>>> diff --git a/tools/testing/selftests/kvm/guest_memfd_test.c b/tools/testing/selftests/kvm/guest_memfd_test.c
->>>> index 60aaba5808a5..bf2876cbd711 100644
->>>> --- a/tools/testing/selftests/kvm/guest_memfd_test.c
->>>> +++ b/tools/testing/selftests/kvm/guest_memfd_test.c
->>>> @@ -401,13 +401,31 @@ static void test_with_type(unsigned long vm_type, uint64_t guest_memfd_flags,
->>>>   	kvm_vm_release(vm);
->>>>   }
->>>>   
->>>> +static void test_vm_with_gmem_flag(struct kvm_vm *vm, uint64_t flag,
->>>> +				   bool expect_valid)
->>>> +{
->>>> +	size_t page_size = getpagesize();
->>>> +	int fd;
->>>> +
->>>> +	fd = __vm_create_guest_memfd(vm, page_size, flag);
->>>> +
->>>> +	if (expect_valid) {
->>>> +		TEST_ASSERT(fd > 0,
->>>> +			    "guest_memfd() with flag '0x%lx' should be valid",
->>>> +			    flag);
->>>> +		close(fd);
->>>> +	} else {
->>>> +		TEST_ASSERT(fd == -1 && errno == EINVAL,
->>>> +			    "guest_memfd() with flag '0x%lx' should fail with EINVAL",
->>>> +			    flag);
->>>> +	}
->>>> +}
->>>> +
->>>>   static void test_vm_type_gmem_flag_validity(unsigned long vm_type,
->>>>   					    uint64_t expected_valid_flags)
->>>>   {
->>>> -	size_t page_size = getpagesize();
->>>>   	struct kvm_vm *vm;
->>>>   	uint64_t flag = 0;
->>>> -	int fd;
->>>>   
->>>>   	if (!(kvm_check_cap(KVM_CAP_VM_TYPES) & BIT(vm_type)))
->>>>   		return;
->>>> @@ -415,17 +433,11 @@ static void test_vm_type_gmem_flag_validity(unsigned long vm_type,
->>>>   	vm = vm_create_barebones_type(vm_type);
->>>>   
->>>>   	for (flag = BIT(0); flag; flag <<= 1) {
->>>> -		fd = __vm_create_guest_memfd(vm, page_size, flag);
->>>> +		test_vm_with_gmem_flag(vm, flag, flag & expected_valid_flags);
->>>>   
->>>> -		if (flag & expected_valid_flags) {
->>>> -			TEST_ASSERT(fd > 0,
->>>> -				    "guest_memfd() with flag '0x%lx' should be valid",
->>>> -				    flag);
->>>> -			close(fd);
->>>> -		} else {
->>>> -			TEST_ASSERT(fd == -1 && errno == EINVAL,
->>>> -				    "guest_memfd() with flag '0x%lx' should fail with EINVAL",
->>>> -				    flag);
->>>> +		if (flag == GUEST_MEMFD_FLAG_SUPPORT_SHARED) {
->>>> +			test_vm_with_gmem_flag(
->>>> +				vm, flag | GUEST_MEMFD_FLAG_INIT_PRIVATE, true);
->>> I don't understand the point of this check.  In 2/51 we set
->>> GUEST_MEMFD_FLAG_INIT_PRIVATE when GUEST_MEMFD_FLAG_SUPPORT_SHARED is set.
->>>
->>> When can this check ever fail?
->>>
->>> Ira
->> In 02/51, GUEST_MEMFD_FLAG_INIT_PRIVATE is not set by default,
->> GUEST_MEMFD_FLAG_INIT_PRIVATE is set as one of the valid_flags.
->>
->> The intention is that GUEST_MEMFD_FLAG_INIT_PRIVATE is only valid if
->> GUEST_MEMFD_FLAG_SUPPORT_SHARED is requested by userspace.
->>
->> In this test, the earlier part before the if block calls
->> test_vm_with_gmem_flag() all valid flags, and that already tests
->> GUEST_MEMFD_FLAG_SUPPORT_SHARED individually.
->>
->> Specifically if GUEST_MEMFD_FLAG_SUPPORT_SHARED is set, this if block
->> adds a test for when both GUEST_MEMFD_FLAG_SUPPORT_SHARED and
->> GUEST_MEMFD_FLAG_INIT_PRIVATE are set, and sets that expect_valid is
->> true.
-> Maybe it's more clear to move this case out of the loop?
->
+../drivers/platform/x86/amd/amd_isp4.c: In function 'is_isp_i2c_adapter':
+../drivers/platform/x86/amd/amd_isp4.c:154:35: error: invalid use of undefined type 'struct module'
+  154 |         return !strcmp(adap->owner->name, "i2c_designware_amdisp");
+      |                                   ^~
 
-Will try that in the next revision. Thanks!
+To fix this issue, I need to make changes both in platform and i2c driver modules.
 
->>
->> This second test doesn't fail, it is meant to check that the kernel
->> allows the pair of flags to be set. Hope that makes sense.
+* In the amd_isp4 x86/platform driver, replace 'adap->owner->name' with 'adap->name', this removes
+the hard dependency on 'struct module'.
+* In i2c amdisp driver, initialize unique name to i2c adapter and also make a change in
+i2c-designware-common to avoid overwriting with generic name when adap->name[] is already set.
+
+Thanks,
+Pratap
+
+Pratap Nirujogi (3):
+  i2c: designware: Initialize adapter name only when not set
+  i2c: amd-isp: Initialize unique adpater name
+  platform/x86: Use i2c adapter name to fix build errors
+
+ drivers/i2c/busses/i2c-designware-amdisp.c | 2 ++
+ drivers/i2c/busses/i2c-designware-master.c | 5 +++--
+ drivers/platform/x86/amd/amd_isp4.c        | 2 +-
+ 3 files changed, 6 insertions(+), 3 deletions(-)
+
+-- 
+2.43.0
+
 
