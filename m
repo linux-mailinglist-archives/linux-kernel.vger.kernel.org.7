@@ -1,142 +1,138 @@
-Return-Path: <linux-kernel+bounces-668451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-668468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F61BAC9303
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 18:08:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F2F5AC932E
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 18:14:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BF33174FB1
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 16:08:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64E123B726F
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 16:13:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E7D32367BB;
-	Fri, 30 May 2025 16:08:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3210236429;
+	Fri, 30 May 2025 16:14:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="WA0pHN9w"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HJzXUc7q"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE0C3235C1E
-	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 16:07:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25933235057;
+	Fri, 30 May 2025 16:14:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748621280; cv=none; b=MP21KkB/KrYYl0xPaHsh23RQ0bUOFCaPmsHrEOxk+oaMu3nJYxApT/3a0wapaqmrt/wjXWBYAMEdof29eu/f5EsNTBjUHiLvif/QnXAlTp+KvC8SLF/cHCTcZpBm0THk5y6SKICBf+x8f2J/S4qTqpN7lgwuwo8lacfym9LsGN4=
+	t=1748621644; cv=none; b=kfJxY+EdLBFzz9ehYfxA+a102Tl06H/f10KLzUQRkBEagYiQVRin+aZzIpwVhXTLM+ZB+LIJU/Epz7DvTu5qRo/iq2gGBCfe++Vg5ehvMUcDD9eD1HSQ50aVgt1zLqPCaUdZSwL3VwrB9vMO5TsIZ6UVhxp98hmD8A88pn1yg9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748621280; c=relaxed/simple;
-	bh=sKyyp9KsoPPae0scG2TJa4HQa9SfU2SZ+xFe9IFIWMo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=El8Qn+xdhtFOOghIOHxx6qL8ul358QWURWE/WK1sz6Xc4B/EF0+5u+LtGFqdvc/aSKt4xd8cTVQ8Iddgum2bF4YbGpWXe7hgbmnWpog5RlnT/Q8T4JtVMnzBLT3vpc6JiTE5iLllBMpfZTTjdTEkInB6DQEuyGoYPI15Mp7wivI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=WA0pHN9w; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-450ce671a08so13959945e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 09:07:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1748621276; x=1749226076; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ugagfCqzkkb6ZXT3N2b0w96FZKb2OG83xQzQHJvA1Sw=;
-        b=WA0pHN9wZ3LOeGi1BJKeZndLXrKcfYK3cxcHtR13XmzcWKkPLMlEC8sO0euKfYBhWV
-         SivDdzV6gkPbE/oAl6tKEk2WkeCC3iu3EVKlOX6UjYha5/RNrR8RkQLM85U7Wsj+cNMr
-         IoNsScwiulgiYDWoizc8ckw87nG7zr0HyZJL4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748621276; x=1749226076;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ugagfCqzkkb6ZXT3N2b0w96FZKb2OG83xQzQHJvA1Sw=;
-        b=FjHmIWhQl6uo/fXSacv2J8B3jBfTBRXepB9gSscrofPJQlUf0j3vkRfYKotzxptD2l
-         uETvtPzVd7MykQhY2tEhvCSFldjscizxCh5ReywGpz4MVCOyvmUydFb3kBKe14ucun67
-         NYQHW/2dqlngFOsoar6ZofGZG5FDO1BGUHEd2xfSPAMO2m2M3MIf1ZTjH6YoFRbk0CLs
-         n6/GDzk6ySCVaJjU8tYtEqaSUxIJaj2oM45uRhbE94DsKuVr00auZW5OkTEa0lWw3TbO
-         zbR4Uj446j/o19+xpYnLT4Hguid/6jANo3wk8H+6OpMqGhEkwZEHP97xqBZXD4bEaT1I
-         sRXQ==
-X-Gm-Message-State: AOJu0Yxx8aZwXGmyPnpk2EMh1LwUHsccT6jeqn7pxduGezymjHIGE4db
-	DP87V/yNFHE+XuPT0Q4Br9rlqe4cYb8reoVCpSulN3DG67dq1UL9zcBArXK8PMVk+v+gVDxbLhy
-	GyV/Y
-X-Gm-Gg: ASbGnct+lkKTNWRE25BV0U5/eKe63i5fzULAuzt7V5ugDIOLl+9Z0bF9W9tusi2J4bm
-	6NjFbZhE6CZwiabBQPb1AS1YR9GubcY9E/CPdMpnbyGXCv0s4ejJYiuMWo/hkWToupAg+MRJzv4
-	utfc1GIXdZukMWYfEPljXmYhHe/IHq4iLpUQiqUirO+lpMBWk4HKeKpaTohrEQL4fcnZCtPndkZ
-	yYZAayEH0cOMjtityn29oKp1nSixZuJ5ncYX/JfMxu6UMMsPd8ynzlwAXe6EXgBByqCWpmmArTe
-	znOFUnkum2y2TiAhVnFrOGsR47RWLzL3fbFQCOO0F47LLrPTH7iNfmM3e1PBms7O5Z/cNhxkEMw
-	ZCBcLBGK0ybS6XeuJYay5VlSK9arVXfywziH6KjmO
-X-Google-Smtp-Source: AGHT+IF/FFTEstI8VczI8bSd8uyPZIXtdnlGAyynzNnJaNGF3uvbYAuD6vs/4UH6m6kIb/231ZEJww==
-X-Received: by 2002:a05:600c:8207:b0:450:d586:25ad with SMTP id 5b1f17b1804b1-450d6543cf3mr43891965e9.15.1748621275772;
-        Fri, 30 May 2025 09:07:55 -0700 (PDT)
-Received: from dario-ThinkPad-T14s-Gen-2i.amarulasolutions.com ([2.196.43.33])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-450dcc18a80sm9716365e9.38.2025.05.30.09.07.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 May 2025 09:07:55 -0700 (PDT)
-From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-To: linux-kernel@vger.kernel.org
-Cc: michael@amarulasolutions.com,
-	Frank Li <Frank.Li@nxp.com>,
-	linux-amarula@amarulasolutions.com,
-	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Fabio Estevam <festevam@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	devicetree@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v5 2/6] ARM: dts: imx28: add pwm7 muxing options
-Date: Fri, 30 May 2025 18:07:33 +0200
-Message-ID: <20250530160748.2476088-3-dario.binacchi@amarulasolutions.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250530160748.2476088-1-dario.binacchi@amarulasolutions.com>
-References: <20250530160748.2476088-1-dario.binacchi@amarulasolutions.com>
+	s=arc-20240116; t=1748621644; c=relaxed/simple;
+	bh=7Ha8QhcH6vxCbEOvf4pxZOBX1RWBw+HLR5G0Cw6EZFc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O7EosEn67Ezqdmav+DCg1WwvzV7PxpcOMp9zvHKgaaXzqGi+KxiPUCmaTGJZ8UPo3PNHZ6QBLDL9FcS7gZsD1jJcYUJIx+2Ne6D0GKcRLynDkcPNsr4TtqwaczA+uB8OuSp6VaswCpefMx4c0Upu4Ah6hbEYN1x21LTVjKPNDE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HJzXUc7q; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1748621642; x=1780157642;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=7Ha8QhcH6vxCbEOvf4pxZOBX1RWBw+HLR5G0Cw6EZFc=;
+  b=HJzXUc7qy/Vm5S3Jn/0ujG0ylBRF/BiCiQPRWMQGfhvy2w7pAjm7QdZN
+   NbZYwx93OSNqmWSN259FlZunr1ZcABPIL6Wa592ftU2k/9rrCX6lIO/XH
+   BZw10vkiwGBRco+1GeYQgP29RuK0OsuZKcwN5vktq8FEQdVhOqZ4CBUnp
+   XRmjTOVgv1aN/P2T4KA5mud2/MNNbWVwhrV6re6P2sRYFHo2L8x4Dfheo
+   wT+i/Oj0delvYcBIxMTqYKCsraKWEAr3s/Xtsw/vJfED7N9KkCOCn4BN1
+   NgDbsgtlFbMxHoLZvOzQr3Te8NTvB6DNwECNI0/hgMePwcIwEWdcUM6Wk
+   g==;
+X-CSE-ConnectionGUID: 7V2xg0ixQ7eJRZhaW6HVoQ==
+X-CSE-MsgGUID: t8rTsH0oTpKCcMLEJtaqtQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11449"; a="38348580"
+X-IronPort-AV: E=Sophos;i="6.16,196,1744095600"; 
+   d="scan'208";a="38348580"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2025 09:14:01 -0700
+X-CSE-ConnectionGUID: cty8znblT/OT/sJyYpRcZQ==
+X-CSE-MsgGUID: YgHR8Xp7Qp+rtp4YuuUnSw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,196,1744095600"; 
+   d="scan'208";a="144379572"
+Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
+  by fmviesa010.fm.intel.com with ESMTP; 30 May 2025 09:13:56 -0700
+Date: Sat, 31 May 2025 00:07:34 +0800
+From: Xu Yilun <yilun.xu@linux.intel.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Alexey Kardashevskiy <aik@amd.com>, kvm@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+	linaro-mm-sig@lists.linaro.org, sumit.semwal@linaro.org,
+	christian.koenig@amd.com, pbonzini@redhat.com, seanjc@google.com,
+	alex.williamson@redhat.com, vivek.kasireddy@intel.com,
+	dan.j.williams@intel.com, yilun.xu@intel.com,
+	linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org,
+	lukas@wunner.de, yan.y.zhao@intel.com, daniel.vetter@ffwll.ch,
+	leon@kernel.org, baolu.lu@linux.intel.com, zhenzhong.duan@intel.com,
+	tao1.su@intel.com
+Subject: Re: [RFC PATCH 00/12] Private MMIO support for private assigned dev
+Message-ID: <aDnXxk46kwrOcl0i@yilunxu-OptiPlex-7050>
+References: <2c4713b0-3d6c-4705-841b-1cb58cd9a0f5@amd.com>
+ <20250512140617.GA285583@nvidia.com>
+ <aCRAHRCKP1s0Oi0c@yilunxu-OptiPlex-7050>
+ <20250514163339.GD382960@nvidia.com>
+ <aCYQdDrYYZRAgsen@yilunxu-OptiPlex-7050>
+ <9dea400f-a57b-43be-a2e4-24a9f51e6ba0@amd.com>
+ <aDE5SPzOAU0sNIt+@yilunxu-OptiPlex-7050>
+ <ae16db07-5fca-4369-aa67-cbe2e0fd60fd@amd.com>
+ <aDhyC73r149syMpc@yilunxu-OptiPlex-7050>
+ <20250529162923.GH192531@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250529162923.GH192531@nvidia.com>
 
-Add alternative pinmuxing for pwm7.
+On Thu, May 29, 2025 at 01:29:23PM -0300, Jason Gunthorpe wrote:
+> On Thu, May 29, 2025 at 10:41:15PM +0800, Xu Yilun wrote:
+> 
+> > > On AMD, the host can "revoke" at any time, at worst it'll see RMP
+> > > events from IOMMU. Thanks,
+> > 
+> > Is the RMP event firstly detected by host or guest? If by host,
+> > host could fool guest by just suppress the event. Guest thought the
+> > DMA writting is successful but it is not and may cause security issue.
+> 
+> Is that in scope of the threat model though? Host must not be able to
+> change DMAs or target them to different memory, but the host can stop
+> DMA and loose it, surely?
 
-Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
+This is within the threat model, this is a data integrity issue, not a
+DoS issue.  If secure firmware don't care, then no component within the
+TCB could be aware of the data loss.
 
----
+> 
+> Host controls the PCI memory enable bit, doesn't it?
 
-Changes in v5:
-- Add Reviewed-by tag of Frank Li
+That's why DSM should fallback the device to CONFIG_UNLOCKED when memory
+enable is toggled, that makes TD/TDI aware of the problem. But for IOMMU
+PT blocking, DSM cannot be aware, TSM must do something.
 
-Changes in v3:
-- Add commit body
+Zhi helps find something in SEV-TIO Firmware Interface SPEC, Section 2.11
+which seems to indicate SEV does do something for this.
 
- arch/arm/boot/dts/nxp/mxs/imx28.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+"If a bound TDI sends a request to the root complex, and the IOMMU detects a fault caused by host
+configuration, the root complex fences the ASID from all further I/O to or from that guest. A host
+fault is either a host page table fault or an RMP check violation. ASID fencing means that the
+IOMMU blocks all further I/O from the root complex to the guest that the TDI was bound, and the
+root complex blocks all MMIO accesses by the guest. When a guest writes to MMIO, the write is
+silently dropped. When a guest reads from MMIO, the guest reads 1s."
 
-diff --git a/arch/arm/boot/dts/nxp/mxs/imx28.dtsi b/arch/arm/boot/dts/nxp/mxs/imx28.dtsi
-index bbea8b77386f..ece46d0e7c7f 100644
---- a/arch/arm/boot/dts/nxp/mxs/imx28.dtsi
-+++ b/arch/arm/boot/dts/nxp/mxs/imx28.dtsi
-@@ -755,6 +755,16 @@ MX28_PAD_PWM4__PWM_4
- 					fsl,pull-up = <MXS_PULL_DISABLE>;
- 				};
- 
-+				pwm7_pins_a: pwm7@0 {
-+					reg = <0>;
-+					fsl,pinmux-ids = <
-+						MX28_PAD_SAIF1_SDATA0__PWM_7
-+					>;
-+					fsl,drive-strength = <MXS_DRIVE_4mA>;
-+					fsl,voltage = <MXS_VOLTAGE_HIGH>;
-+					fsl,pull-up = <MXS_PULL_DISABLE>;
-+				};
-+
- 				lcdif_24bit_pins_a: lcdif-24bit@0 {
- 					reg = <0>;
- 					fsl,pinmux-ids = <
--- 
-2.43.0
+Blocking all TDIs should definitely be avoided. Now I'm more sure Unbind
+before DMABUF revoke is necessary.
 
+Thanks,
+Yilun
+
+> 
+> Jason
 
