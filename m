@@ -1,126 +1,161 @@
-Return-Path: <linux-kernel+bounces-667873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-667876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BD31AC8AE2
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 11:33:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F9ECAC8AEA
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 11:34:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76891177807
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 09:33:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97CD97A9E9F
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 09:33:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B031922B59C;
-	Fri, 30 May 2025 09:31:15 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDBBE22B5B5;
+	Fri, 30 May 2025 09:31:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="a7G9f4sB"
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66E23221560;
-	Fri, 30 May 2025 09:31:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CB79221277
+	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 09:31:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748597475; cv=none; b=XDQsH0+YHY5XjVaTgW1RXTiRtlDQ/lp88FXy4/cj7GBakfV6qVUY2cKke9J9lZ2jjdpFZv55ByhPv8cTeziefySjasfOZXZKIhjru0aIZ4rpFGehtisopqnpXMlQp9s0H1c1alTedwqiyPewprK8rgH/9aKuIj06/sty1GfygjU=
+	t=1748597506; cv=none; b=OvngwBkZtECJsC2Q0TXkDpyeteN2iYhBNvi8PQ0cZ8PbmigsCDM58GT8lmyySxB9hrCWU3DyeTycq80uleRsAnpXvCLaN2OFHbxCyEBcDDVEYLQj3jPAHVHdtg29wRv54Z/HATUie78c3ZLzIWe0WCVPcsJG6DERU+9OXzqP/gE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748597475; c=relaxed/simple;
-	bh=aggFkJ8dzIspA0Ee5ZCSXr4Q9BtosF9ZAdFKHZ23WJo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z6FuM1baEJfcQGThZwWYaN+tXugFSQ43L79TFAHQKqmMcJO3zBO4hcsOV1PreEBWZPOoKjgp/ikJgmnHs04zx/bTKn1i1toDcQIVcX36h4aAZVp5otRMe4K6ck3XLd8y/IODVygwXlFdCqId1AnSDQtpXJumA+v4tUm77xuySus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: ce23f0383d3811f0b29709d653e92f7d-20250530
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:9901f846-04db-40fa-9f89-284431738858,IP:10,
-	URL:0,TC:0,Content:0,EDM:0,RT:0,SF:-9,FILE:0,BULK:30,RULE:Release_Ham,ACTI
-	ON:release,TS:31
-X-CID-INFO: VERSION:1.1.45,REQID:9901f846-04db-40fa-9f89-284431738858,IP:10,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:-9,FILE:0,BULK:30,RULE:Release_Ham,ACTION
-	:release,TS:31
-X-CID-META: VersionHash:6493067,CLOUDID:9a3853ec8758490979c83e53ed79c393,BulkI
-	D:250522180435BN613KC0,BulkQuantity:9,Recheck:0,SF:17|19|24|38|45|64|66|78
-	|80|81|82|83|102|841,TC:nil,Content:0|50,EDM:-3,IP:-2,URL:0,File:nil,RT:ni
-	l,Bulk:40|23,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:
-	0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI,TF_CID_SPAM_SNR
-X-UUID: ce23f0383d3811f0b29709d653e92f7d-20250530
-X-User: aichao@kylinos.cn
-Received: from [172.25.120.86] [(112.64.161.44)] by mailgw.kylinos.cn
-	(envelope-from <aichao@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_128_GCM_SHA256 128/128)
-	with ESMTP id 1724392610; Fri, 30 May 2025 17:31:03 +0800
-Message-ID: <22dfeb0b-c3ff-4a7a-8471-1bb89dccdc17@kylinos.cn>
-Date: Fri, 30 May 2025 17:30:58 +0800
+	s=arc-20240116; t=1748597506; c=relaxed/simple;
+	bh=zjDdMcJo7Ja3I/WBhXEJPi7Vf8GGUIfVIusJmH+sQRo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JO3Scn60DQJG+epi51OQjHNL/HRJrrRQ0ijv/POTsmPh4eeq1HCh0QSMxvh7ZJoH5jxzS80VqWwgv0K7b8CHb5mNFm4lwlkNJ/1+kCLqLh9e6h1YqlJijqb6lPcvXMmt69hDQyrExSxwMfkkNOCBWj1cxZ+Cc/SRuqH6iehW+ug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=a7G9f4sB; arc=none smtp.client-ip=209.85.219.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e75668006b9so1673881276.3
+        for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 02:31:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1748597503; x=1749202303; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=nl25XztXyY+91TCe2znVYLQyRFe3A02EIrzJh6x7GCo=;
+        b=a7G9f4sBEY/YGgHiyzGfQtcl5WwSScKP5t262cYRu4yvgwRWO9SoLXiW9BrGywzoYP
+         en2jB2ZZrJLDZXKGRBwjZKU2IzeMHq2Q2B/cdLNOS/g5z6WwCzJSBHmEXzF6F7gQcJAD
+         qJvCEjWHh++ezR3sYbYR2h9+7UgMUgX0E2UXBJtvH52TziCwzxe/iYQ7PqWg/kJPHtn7
+         WklZyDsFHsyOKXYknJx1Oa6RhetNNgCw0ZN4IjkRiw1MJUQsTDKtuLSakphPQ0em8wfi
+         XfUfHrbAPLNhkEAldnqqsuDHaXRSV40TjZJops9Kgcb7Y6yfi/H6DTsOYZJYcKvgAMty
+         2t1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748597503; x=1749202303;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nl25XztXyY+91TCe2znVYLQyRFe3A02EIrzJh6x7GCo=;
+        b=bWs+5cSm+drV8N0GUT8+xrOUlUBN4vXffswxIb6WsEAQ1YoyKNIK4UG5BdjGVH5OJp
+         6OM2zHY9iG3WsJ77ivgo9bjXohb7m/6CO+HmUG1QDK9AD+3/I3OB6t5c8d6iOEE/zisq
+         H0nmt/1dVQxaK1r/+gCulFunapMBmPVJePh7hI1TxwMGxjAxn7ELbfO4adXgEz9vO4qR
+         2Ee+oo8AtYbyBaouW28YQv4c533CvrOHzVpZy5/le2sk4awnHRBu/MJ2AFegmRSbFFqq
+         u94w2s+ILeRK8aD0CEczaNfcxpo+MED9QKt0InJix0Xq/Xe234b3qD2NG6i34So1xkcD
+         eY+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVgtJ9jbKU5PbquVQJVVMzNytpVF61D6bLoQYMW/rPFu1ZsRn/bW+dLQpxB80Up4Xzc4aVaFhB8YD/ctno=@vger.kernel.org
+X-Gm-Message-State: AOJu0YygsUMF49RXZwkXGnBDZGImybrSJYGq5Kq9WlkOpIRpdVm+Mq77
+	W2MiuR4F9AQR2f2OWRadeN00wqt1+apQPb9DASNr2sC5z6FsFHsyskbdX6Kldga/QFjh+WTx7Q+
+	BFdcWrlzDxEDBzIMiFIhVR36IKbIgAHCrmcdacuhoTQ==
+X-Gm-Gg: ASbGncsMkNLS3962e/j4SQlPzkE4Kh0V1rPRZSlju23TQKCSZuqSfsoAusEz5Zd7EXL
+	xuxRykW75TNooWJWhyVH9HDpMIm8lhtOZoi9eS5QaPEefkLUV0buTbwwsNnxxP+6GUZ4YR8Qw04
+	4SUF+/dY4MdX7XEfbnLtAQ5f9c5t7EOhDjWMQ9Av28H+dRI3TYbRUmakc=
+X-Google-Smtp-Source: AGHT+IH95Myawh7TbubfOpFEx22AdElqILjS1RFSDs37pv1ARTzzSoQyHKeRwabQyQ3x8Rz9anZLL/Bb5eyOoF6wyYc=
+X-Received: by 2002:a05:6902:20c7:b0:e7d:c9f4:952b with SMTP id
+ 3f1490d57ef6-e7f81de0626mr3793584276.16.1748597503389; Fri, 30 May 2025
+ 02:31:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/6] ASoC: aoa: Use helper function
- for_each_child_of_node_scoped()
-To: Johannes Berg <johannes@sipsolutions.net>, perex <perex@perex.cz>,
- tiwai <tiwai@suse.com>,
- "kuninori.morimoto.gx" <kuninori.morimoto.gx@renesas.com>,
- lgirdwood <lgirdwood@gmail.com>, broonie <broonie@kernel.org>,
- jbrunet <jbrunet@baylibre.com>, "neil.armstrong"
- <neil.armstrong@linaro.org>, khilman <khilman@baylibre.com>,
- "martin.blumenstingl" <martin.blumenstingl@googlemail.com>,
- "shengjiu.wang" <shengjiu.wang@gmail.com>, "Xiubo.Lee"
- <Xiubo.Lee@gmail.com>, festevam <festevam@gmail.com>,
- nicoleotsuka <nicoleotsuka@gmail.com>, shawnguo <shawnguo@kernel.org>,
- "s.hauer" <s.hauer@pengutronix.de>,
- "srinivas.kandagatla" <srinivas.kandagatla@linaro.org>
-Cc: linux-sound <linux-sound@vger.kernel.org>,
- linux-kernel <linux-kernel@vger.kernel.org>,
- linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
- linux-renesas-soc <linux-renesas-soc@vger.kernel.org>,
- linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
- linux-amlogic <linux-amlogic@lists.infradead.org>, imx
- <imx@lists.linux.dev>, kernel <kernel@pengutronix.de>,
- linux-arm-msm <linux-arm-msm@vger.kernel.org>
-References: <2aq0nyvyf7t-2aq4hsc7kp6@nsmail7.0.0--kylin--1>
- <7e708dcc98c6f0f615b1b87d190464cfe78be668.camel@sipsolutions.net>
- <eb1ddeb3-06b6-4ac5-b20a-06b92c7f1363@kylinos.cn>
- <23aadbd78d3585c900c579c26f360011cf1ca830.camel@sipsolutions.net>
- <9ec008a8-b569-4ad1-9206-fe241fb1712d@kylinos.cn>
- <b36908bf35a20f7196bec4fe22e392a015d9b7d1.camel@sipsolutions.net>
-Content-Language: en-US
-From: Ai Chao <aichao@kylinos.cn>
-In-Reply-To: <b36908bf35a20f7196bec4fe22e392a015d9b7d1.camel@sipsolutions.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250528-pmdomain-hierarchy-onecell-v2-0-7885ae45e59c@baylibre.com>
+ <20250528-pmdomain-hierarchy-onecell-v2-1-7885ae45e59c@baylibre.com>
+In-Reply-To: <20250528-pmdomain-hierarchy-onecell-v2-1-7885ae45e59c@baylibre.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 30 May 2025 11:31:07 +0200
+X-Gm-Features: AX0GCFsDY9QpXv-TDLaqMDwAZXQiaP-2ORBs2bXkP6yJWXm02HY-f6aS5ywCE0Y
+Message-ID: <CAPDyKFqs=EuwzBodoh9-tnuDQP85bv3UnS5eoekCpjUbictfBQ@mail.gmail.com>
+Subject: Re: [PATCH RFC v2 1/2] dt-bindings: power: add nexus map for power-domains
+To: Kevin Hilman <khilman@baylibre.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	arm-scmi@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Johannes:
-     Thanks for your feedback.  I will drop it.
-
-> On Mon, 2025-05-26 at 16:20 +0800, Ai Chao wrote:
->> Hi Johannes:
->>>> for_each_child_of_node.
->>> You still haven't explained why it's even correct.
->>>
->>> johannes
->> The for_each_child_of_node() function is used to iterate over all child
->> nodes of a device tree node.
->> During each iteration, it retrieves a pointer to the child node via
->> of_get_next_child() and automatically increments the node's reference
->> count (of_node_get()).
->> Each call to of_get_next_child() increases the reference count
->> (refcount) of the returned child node, ensuring that the node is not
->> freed while in use.
->> for_each_child_of_node() increments the child node's reference count in
->> each iteration but does not decrement it automatically.
->> If of_node_put() is not called manually, the reference count will never
->> reach zero, resulting in a memory leak of the node.
-> Yes, good! Now show that you can apply what you've learned to the
-> specific code (and changes) at hand.
+On Wed, 28 May 2025 at 23:59, Kevin Hilman <khilman@baylibre.com> wrote:
 >
-> johannes
+> Add support for nexus map to be able to support hierarchical power
+> domains for providers with #power-domain-cells > 0.
+>
+> Suggested-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Kevin Hilman <khilman@baylibre.com>
 
--- 
-Best regards,
-Ai Chao
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 
+Kind regards
+Uffe
+
+> ---
+>  Documentation/devicetree/bindings/power/power-domain.yaml | 35 +++++++++++++++++++++++++++++++++++
+>  1 file changed, 35 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/power/power-domain.yaml b/Documentation/devicetree/bindings/power/power-domain.yaml
+> index 8fdb529d560b..9f099d326aee 100644
+> --- a/Documentation/devicetree/bindings/power/power-domain.yaml
+> +++ b/Documentation/devicetree/bindings/power/power-domain.yaml
+> @@ -68,6 +68,15 @@ properties:
+>        by the given provider should be subdomains of the domain specified
+>        by this binding.
+>
+> +  power-domains-map:
+> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+> +    description:
+> +      Nexus node mapping property that establishes parent-child relationships
+> +      for PM domains using the format defined in the Device Tree specification
+> +      section 2.5.1. Each map entry consists of child domain specifier,
+> +      parent phandle, and optional parent specifier arguments. This property
+> +      is only supported for onecell providers (#power-domain-cells = 1).
+> +
+>  required:
+>    - "#power-domain-cells"
+>
+> @@ -133,3 +142,29 @@ examples:
+>              min-residency-us = <7000>;
+>          };
+>      };
+> +
+> +  - |
+> +    // Example using power-domains-map for Nexus mapping
+> +    main_pd: power-controller@12370000 {
+> +        compatible = "foo,power-controller";
+> +        reg = <0x12370000 0x1000>;
+> +        #power-domain-cells = <0>;
+> +    };
+> +
+> +    wkup_pd: power-controller@12380000 {
+> +        compatible = "foo,power-controller";
+> +        reg = <0x12380000 0x1000>;
+> +        #power-domain-cells = <0>;
+> +    };
+> +
+> +    scmi_pds protocol@11 {
+> +        compatible = "arm,scmi-power-domain";
+> +        reg = <0x11>;
+> +        #power-domain-cells = <1>;
+> +        power-domains-map = <15 &main_pd>,
+> +                            <19 &wkup_pd>;
+> +    };
+> +
+> +    // In this example using Nexus node mapping:
+> +    // - Child domain 15 (scmi_pds 15) becomes a subdomain of main_pd
+> +    // - Child domain 19 (scmi_pds 19) becomes a subdomain of wkup_pd
+>
+> --
+> 2.49.0
+>
 
