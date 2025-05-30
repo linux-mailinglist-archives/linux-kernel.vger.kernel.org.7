@@ -1,614 +1,637 @@
-Return-Path: <linux-kernel+bounces-667842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-667804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6493CAC8AA1
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 11:21:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24BBFAC8A2D
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 10:49:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 209EB4E33D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 09:21:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F7907A7AC3
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 08:48:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE70421C9F8;
-	Fri, 30 May 2025 09:21:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6087321B192;
+	Fri, 30 May 2025 08:49:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JnDztR3H"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O8lt1ubD"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA2CA212B3D
-	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 09:21:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 940401465B4
+	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 08:49:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748596871; cv=none; b=UtbbSWHUu3Bf64ha82eNx40xI4wYPFmVRA49pmcq84wUQ44VlPeFrtOkRrtpopVGd50QTJNMi8jVOTvtga0MAxwpCG/d8JuLQsO86G8lbLiDgRYMEDIe1qUaRgZbFcybopB5QySG7IuLZaHj3rb28bhyX65lPQpQPH8AVjuyQjY=
+	t=1748594966; cv=none; b=IM4wOYHA6Twkca8Gtdhahw9hdNLi1Uap0lqoHi47XhxZQK4xlbpfYjRxX37C0eDGLrBQ7DVwdj0D3u0YJ7HeccSPypcWR+zt3Ei+gQ8StyhTXZXirs/2icmXrVOoaJixDLLuBRcT6PmzjcxnM/tRXWNEC40fUJie9Pl77oEdG6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748596871; c=relaxed/simple;
-	bh=D46erJa1hDlfl78bbCvumBIwf11Orw9oayL8XK4PtbE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IvRzYonN5UjUO5u3YU4HyLOwU7U6aEZznMcnMEfo5XqhduDY3i3T4pwYz0teIE3mLGoqa7jg5rpBm2fJxYd9U491o1DGw+3I1DLSWOOyB1527rmV6uEkTJMkjNFjeaG5FLOd70Y9i1mn4m3Ar3ry/lCFWlzAdnlcl9MU3TxpwPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JnDztR3H; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3a35c894313so1585569f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 02:21:08 -0700 (PDT)
+	s=arc-20240116; t=1748594966; c=relaxed/simple;
+	bh=ucBbvM/c14wBbCHaDiYuMaPpRPHVVsNj1AuM5Oh2SlM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HaAWf8aEO/q9NFRuM7V+XvK3tziA1MkOaghOSZum/3yQ+yrJ6vuKP54VjYIVw3eXccVIBynbdh0iMYjQjLWoD1t58w3A1MmuRMCaiPhCt5ImtkyEqH1JbGzUKucMfNNj3UCjtvDi+UCqPBn057U+i/ss4GRhr/OTB4T1PShdC7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O8lt1ubD; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-3105ef2a071so20853691fa.1
+        for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 01:49:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1748596867; x=1749201667; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2FF94acC02KXHXPQmhhdghAhcPWaDPTPL3VB4RqaEg0=;
-        b=JnDztR3HJGTIGgbjvA7qShbHEkjwjkvVAn+xnPElHGDs62ZG1NSQ4Nm1drlpcHbK5M
-         rVY4Mx17AJJOCynCrH2WcQe6u0RLjLCrP1dn8QavMlmo3euUL7+xbG4tGyqNeQGfd04U
-         qi7AsPrgZjkhYB0kSef8e/wN+TvmDxGobuLToWf7DE7DmANh1l0GOD9k1WA2JRJ+GkN9
-         cMArig3WBFqpdgxeah1lk5+x3DSsR1UPAUx8v8sv6GL0T8gaKNsvnqyBKcmgEiDgpg2g
-         KF21w051PWr49n5NNkIYa31EfU3rpwLSvYMiR9TiqW0zp3aosc/aYh+yJM7TlDnaXTcc
-         Vcqw==
+        d=gmail.com; s=20230601; t=1748594961; x=1749199761; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0bMp2GwF28M9nCY+1eTbEjES5I4QV1m653ObPpjGH6k=;
+        b=O8lt1ubD25zSY8rO9b2tZ5I6NbgupwUJlrqSMmCDy6vsF7PwyQ0tWO/yoKrhrwSf00
+         nqQlUHKniqN0mow2dL70fSWzwVJwxOJAwCiycmH/ldfZwtKaRgB8Ay+xHzuMRrIWrjfu
+         Wj7uS+U70rqcbouSVIsOO7dhdMp5O+uOfsGIbThp/HHbcBAp0TRX6aRFbE6n2W5cbtAn
+         tcr+8ehvMBdoYjSX1Dk9gSYh27WSfCpJtHyh+l4EWk2JK4YdnqkZ6JsywlSsmAwCHzzw
+         CejRxvB7qoM3GBbQ9PHWhOggnpc3vCOjNjG4vxpvjcTi56tMEOcJyJARo9BEpTRHevp0
+         1I+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748596867; x=1749201667;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2FF94acC02KXHXPQmhhdghAhcPWaDPTPL3VB4RqaEg0=;
-        b=pG8pKCbsKdWgtQc0WVw+VwdoVsN/CiCU/JI4Hnu9lw5wljjrVmUoRtWbvHuXUHzZWE
-         elQJOcABPhS74STyX3vR6onXb9qZeFc/SN21nNYZkB7BWyOY4Qe+1Ec5YB4Nr5FubP+B
-         5uMYSb0UGyQsZKRt9Wt7vnLfC9ZwDBZX5a7nV2Fc6rlCkubEDVtwSK8MdzSKMsXp/9lz
-         zrhczF9jLT/6AsXwV99ZV1eekYGhp9DPrZnEJ7qYJqKWnpNxBy174CzvwuEDWTMg2dxl
-         OMMJKrcuYMZmzBv2OaCeX32zkg7lEWV0eG9IEqjmoOKMG5AyIzxF2tmMQbFjb8kInCdH
-         TDNg==
-X-Forwarded-Encrypted: i=1; AJvYcCVs46RkahaAqjQBZ0rubA3aAT2fqrfVkeSruU58/5HhwOktL4YKy/8GPk7E14clYd5uqvpViwdaAnX1BJU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5bknXJjuRuZiatjIpTpDhjk/rVgMlzPj/+NOKotymUzSQe0G5
-	DM8pLbQaUVaSFzqYtkGgCHBGr9PEwEhQmewHupyS4ZHO61jRM0+WegmhduWygK20x1AoOxlyfeh
-	k9TzSnWI=
-X-Gm-Gg: ASbGncsWEdCEKNstMCCd/VwSVAJ/U9h6+F+oWBnT6GwqDUzwbeZvFLGVRM+/wt3H3TW
-	smUCufcMlNh0ARXkdHUEuXVO7iXB1xJyEWmjxxWtX6RGd40NtgflJ/v3k1vkl+aYTZfqCxucjxc
-	KLrX9N7g6RxXR+C1An8G/x6lxzcMYvwNUAz2ZO4673Km/mCPgqHFFVXlpq0XnmeQ13Go3qovmZC
-	vgezkwF88rvqBheXhVNK79ciRAFG+DUa0ALyGqAGqnRlH4PnaYbpuBaxih7k3ZWGFtiLL5Zv+wO
-	kw5c6+xNjCa0nd+cza1xnNdIyTbXh2EVMhefbrEwe0ZTMUxSu7vv2FtKduUbCd/L4p9LOFaXK5K
-	Bjp84AMCx7XYYsialUSOLIls5NTM=
-X-Google-Smtp-Source: AGHT+IFvcFNB62OxE7MIDiidAN2Mv/BdtuQ0G91swbi4nnUSB4ekkNNovaQmQRzoZEkSDncgY+MwZw==
-X-Received: by 2002:a05:6000:4009:b0:3a4:dfa5:325e with SMTP id ffacd0b85a97d-3a4f7a438e5mr1975523f8f.10.1748594904489;
-        Fri, 30 May 2025 01:48:24 -0700 (PDT)
-Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4efe7440asm4317227f8f.58.2025.05.30.01.48.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 30 May 2025 01:48:23 -0700 (PDT)
-Message-ID: <8b396edf-e344-47e9-b497-3f7fb35783ed@linaro.org>
-Date: Fri, 30 May 2025 09:48:22 +0100
+        d=1e100.net; s=20230601; t=1748594961; x=1749199761;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0bMp2GwF28M9nCY+1eTbEjES5I4QV1m653ObPpjGH6k=;
+        b=cF4oAls2TITTsCc3ktakjDmnn00/MPyE8QyV+UwPFB6RUO6QAf8gEN0b5rm5CWzKtH
+         iFTGXIK5TUqdslVISCNhHtDKbEU5R1lvcY7W8w+FfuuRc+kiw7AOyb7qoFkZdY0dUPna
+         YyIhXxf5OLrx7XgZD0kDYIu4XyIyGuX7gTmaYhWn25KN6nJOQmmhu+avHofnF1QrJZZB
+         OuOrJXzYMQ/P+IKNVv/DKo9wvoUFIVCQY/rgHGor/gw54C5Rw2Sviwt2aAFytmZ1HQUn
+         9/dvtukSRYpLQssXYpbp8YsZYw/BHDitG5DDO1KHxpeWsahjyWyyVGSiIhfzBOWgZcEz
+         j/Sg==
+X-Forwarded-Encrypted: i=1; AJvYcCU4OPiehntmMEYXgTjWhSlQO6kuH4O/aCIXtzReG0FLk8a3Dpq9QvnYHLTfJeog6UeclmPUH2/mfXdd1QU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywt1jFGjr0TJsErC7jyBtRa8MW7E8EStB3pReR0ct25SE8qnOCJ
+	vMjm5vizlNQDwjjhmUrtk2gM2heGD56MGqELx2BjaMDJzC0PHgxOfEkHofVRwFL826pgUjY1ecE
+	sG7ybzp13EMk+EI/DYyjCTEloMoVxbtM=
+X-Gm-Gg: ASbGnctyggUh8qtRiQ7bU+uAuVJnzTah2PFR/9lryfszoc8oUwR++2rOzfEqxFcf9VU
+	L1EjeMwjGEDwLL295D1tLsazNDYo2kNs27UYPak1HrnF/GG5v5CXUn9ncwloUjPGsZ8HfRNPgdE
+	Eus+iLQ9Nw0gb45mjI3E/FN+C3OOA8O0Ej
+X-Google-Smtp-Source: AGHT+IHMUXxJ5vi0k1dwPqrpUyBi/SiUwVU9oHPtwN20lM6itfJnJo4i1TQfWd7HOIDyiJ+JF7GIMuHU7woIp38mUlo=
+X-Received: by 2002:a05:651c:b09:b0:32a:62a2:f72b with SMTP id
+ 38308e7fff4ca-32a906cf1f8mr3745591fa.14.1748594960833; Fri, 30 May 2025
+ 01:49:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/8] power: supply: qcom_battmgr: Add charge control
- support
-To: fenglin.wu@oss.qualcomm.com, Sebastian Reichel <sre@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Subbaraman Narayanamurthy <subbaraman.narayanamurthy@oss.qualcomm.com>,
- David Collins <david.collins@oss.qualcomm.com>, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- kernel@oss.qualcomm.com, devicetree@vger.kernel.org,
- linux-usb@vger.kernel.org
-References: <20250530-qcom_battmgr_update-v2-0-9e377193a656@oss.qualcomm.com>
- <497BF3hThnrmYe-YHKmdOyZwdjP3ivm1hFYDDy3-HkSOvkCOMVSkokyhb859mcTarGb55Go5nJLfgsc553u7ZA==@protonmail.internalid>
- <20250530-qcom_battmgr_update-v2-5-9e377193a656@oss.qualcomm.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20250530-qcom_battmgr_update-v2-5-9e377193a656@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250514201729.48420-6-ryncsn@gmail.com> <20250519043847.1806-1-21cnbao@gmail.com>
+ <CAMgjq7BpfueOn9ms8apRX-6dF8rZGtbC=MuZzSD7hbZxtw=Kdg@mail.gmail.com>
+ <CAGsJ_4wC5_YSMLNoY5q4hUsZTpD+YPHSBtzCAdWRFH65EJA_iw@mail.gmail.com>
+ <CAMgjq7AO__8TFE8ibwQswWmmf4tTGg2NBEJp0aEn32vN+Dy8uw@mail.gmail.com>
+ <CAGsJ_4z1cJfOCcpZDt4EuHK7+SON1r0ptRJNv1h=cDv+eOcdSQ@mail.gmail.com>
+ <CAMgjq7CJ4_9bB=46TVzByFRuOwxNs4da=sN==x8cc++YsV+ETQ@mail.gmail.com>
+ <CAGsJ_4wo6u1WSXdzj8RUUDNdk5_YCfLV_mcJtvhiv2UonXw+nw@mail.gmail.com>
+ <CAMgjq7Bc0-eXZ8G=bN8bo2NG1ndtPmCUvxCi0bdM+HdqmOjaPQ@mail.gmail.com>
+ <CAGsJ_4ymRwXhQdzabstHhkK0OM0JEWtvR3tjeyQppm7sKZ8FUw@mail.gmail.com> <CAMgjq7B1K=6OOrK2OUZ0-tqCzi+EJt+2_K97TPGoSt=9+JwP7Q@mail.gmail.com>
+In-Reply-To: <CAMgjq7B1K=6OOrK2OUZ0-tqCzi+EJt+2_K97TPGoSt=9+JwP7Q@mail.gmail.com>
+From: Kairui Song <ryncsn@gmail.com>
+Date: Fri, 30 May 2025 16:49:02 +0800
+X-Gm-Features: AX0GCFundRkueUSS1m8MxSja_2c1kn5vAhBJf6EhcMcXxkYjJcXnH5ar5KUJuQQ
+Message-ID: <CAMgjq7CTbSeNq7HEzZP6raK_6ngC6HAzt46ZSBu0f2RQftZUBQ@mail.gmail.com>
+Subject: Re: [PATCH 05/28] mm, swap: sanitize swap cache lookup convention
+To: Barry Song <21cnbao@gmail.com>
+Cc: akpm@linux-foundation.org, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Baoquan He <bhe@redhat.com>, Chris Li <chrisl@kernel.org>, David Hildenbrand <david@redhat.com>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Hugh Dickins <hughd@google.com>, 
+	Kalesh Singh <kaleshsingh@google.com>, LKML <linux-kernel@vger.kernel.org>, 
+	linux-mm <linux-mm@kvack.org>, Nhat Pham <nphamcs@gmail.com>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Kemeng Shi <shikemeng@huaweicloud.com>, 
+	Tim Chen <tim.c.chen@linux.intel.com>, Matthew Wilcox <willy@infradead.org>, 
+	"Huang, Ying" <ying.huang@linux.alibaba.com>, Yosry Ahmed <yosryahmed@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 30/05/2025 08:35, Fenglin Wu via B4 Relay wrote:
-> From: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
-> 
-> Add charge control support for SM8550 and X1E80100. It's supported
-> with below two power supply properties:
-> 
-> charge_control_end_threshold: SOC threshold at which the charging
-> should be terminated.
-> 
-> charge_control_start_threshold: SOC threshold at which the charging
-> should be resumed.
+On Tue, May 27, 2025 at 11:11=E2=80=AFPM Kairui Song <ryncsn@gmail.com> wro=
+te:
+>
+> On Tue, May 27, 2025 at 3:59=E2=80=AFPM Barry Song <21cnbao@gmail.com> wr=
+ote:
+> >
+> > On Sat, May 24, 2025 at 8:01=E2=80=AFAM Kairui Song <ryncsn@gmail.com> =
+wrote:
+> > >
+> > > On Fri, May 23, 2025 at 10:30=E2=80=AFAM Barry Song <21cnbao@gmail.co=
+m> wrote:
+> > > >
+> > > > On Wed, May 21, 2025 at 2:45=E2=80=AFPM Kairui Song <ryncsn@gmail.c=
+om> wrote:
+> > > > >
+> > > > > Barry Song <21cnbao@gmail.com> =E4=BA=8E 2025=E5=B9=B45=E6=9C=882=
+1=E6=97=A5=E5=91=A8=E4=B8=89 06:33=E5=86=99=E9=81=93=EF=BC=9A
+> > > > > > Let me run test case [1] to check whether this ever happens. I =
+guess I need to
+> > > > > > hack kernel a bit to always add folio to swapcache even for SYN=
+C IO.
+> > > > >
+> > > > > That will cause quite a performance regression I think. Good thin=
+g is,
+> > > > > that's exactly the problem this series is solving by dropping the=
+ SYNC
+> > > > > IO swapin path and never bypassing the swap cache, while improvin=
+g the
+> > > > > performance, eliminating things like this. One more reason to jus=
+tify
+> > > > > the approach :)
+> > >
+> > > Hi Barry,
+> > >
+> > > >
+> > > > I attempted to reproduce the scenario where a folio is added to the=
+ swapcache
+> > > > after filemap_get_folio() returns NULL but before move_swap_pte()
+> > > > moves the swap PTE
+> > > > using non-synchronized I/O. Technically, this seems possible; howev=
+er,
+> > > > I was unable
+> > > > to reproduce it, likely because the time window between swapin_read=
+ahead and
+> > > > taking the page table lock within do_swap_page() is too short.
+> > >
+> > > Thank you so much for trying this!
+> > >
+> > > I have been trying to reproduce it too, and so far I didn't observe
+> > > any crash or warn. I added following debug code:
+> > >
+> > >  static __always_inline
+> > >  bool validate_dst_vma(struct vm_area_struct *dst_vma, unsigned long =
+dst_end)
+> > > @@ -1163,6 +1167,7 @@ static int move_pages_pte(struct mm_struct *mm,
+> > > pmd_t *dst_pmd, pmd_t *src_pmd,
+> > >         pmd_t dummy_pmdval;
+> > >         pmd_t dst_pmdval;
+> > >         struct folio *src_folio =3D NULL;
+> > > +       struct folio *tmp_folio =3D NULL;
+> > >         struct anon_vma *src_anon_vma =3D NULL;
+> > >         struct mmu_notifier_range range;
+> > >         int err =3D 0;
+> > > @@ -1391,6 +1396,15 @@ static int move_pages_pte(struct mm_struct *mm=
+,
+> > > pmd_t *dst_pmd, pmd_t *src_pmd,
+> > >                 if (!src_folio)
+> > >                         folio =3D filemap_get_folio(swap_address_spac=
+e(entry),
+> > >                                         swap_cache_index(entry));
+> > > +               udelay(get_random_u32_below(1000));
+> > > +               tmp_folio =3D filemap_get_folio(swap_address_space(en=
+try),
+> > > +                                       swap_cache_index(entry));
+> > > +               if (!IS_ERR_OR_NULL(tmp_folio)) {
+> > > +                       if (!IS_ERR_OR_NULL(folio) && tmp_folio !=3D =
+folio) {
+> > > +                               pr_err("UFFDIO_MOVE: UNSTABLE folio
+> > > %lx (%lx) -> %lx (%lx)\n", folio, folio->swap.val, tmp_folio,
+> > > tmp_folio->swap.val);
+> > > +                       }
+> > > +                       folio_put(tmp_folio);
+> > > +               }
+> > >                 if (!IS_ERR_OR_NULL(folio)) {
+> > >                         if (folio_test_large(folio)) {
+> > >                                 err =3D -EBUSY;
+> > > @@ -1413,6 +1427,8 @@ static int move_pages_pte(struct mm_struct *mm,
+> > > pmd_t *dst_pmd, pmd_t *src_pmd,
+> > >                 err =3D move_swap_pte(mm, dst_vma, dst_addr, src_addr=
+,
+> > > dst_pte, src_pte,
+> > >                                 orig_dst_pte, orig_src_pte, dst_pmd, =
+dst_pmdval,
+> > >                                 dst_ptl, src_ptl, src_folio);
+> > > +               if (tmp_folio !=3D folio && !err)
+> > > +                       pr_err("UFFDIO_MOVE: UNSTABLE folio passed
+> > > check: %lx -> %lx\n", folio, tmp_folio);
+> > >         }
+> > >
+> > > And I saw these two prints are getting triggered like this (not a rea=
+l
+> > > issue though, just help to understand the problem)
+> > > ...
+> > > [ 3127.632791] UFFDIO_MOVE: UNSTABLE folio fffffdffc334cd00 (0) ->
+> > > fffffdffc7ccac80 (51)
+> > > [ 3172.033269] UFFDIO_MOVE: UNSTABLE folio fffffdffc343bb40 (0) ->
+> > > fffffdffc3435e00 (3b)
+> > > [ 3194.425213] UFFDIO_MOVE: UNSTABLE folio fffffdffc7d481c0 (0) ->
+> > > fffffdffc34ab8c0 (76)
+> > > [ 3194.991318] UFFDIO_MOVE: UNSTABLE folio fffffdffc34f95c0 (0) ->
+> > > fffffdffc34ab8c0 (6d)
+> > > [ 3203.467212] UFFDIO_MOVE: UNSTABLE folio fffffdffc34b13c0 (0) ->
+> > > fffffdffc34eda80 (32)
+> > > [ 3206.217820] UFFDIO_MOVE: UNSTABLE folio fffffdffc7d297c0 (0) ->
+> > > fffffdffc38cedc0 (b)
+> > > [ 3214.913039] UFFDIO_MOVE: UNSTABLE folio passed check: 0 -> fffffdf=
+fc34db140
+> > > [ 3217.066972] UFFDIO_MOVE: UNSTABLE folio fffffdffc342b5c0 (0) ->
+> > > fffffdffc3465cc0 (21)
+> > > ...
+> > >
+> > > The "UFFDIO_MOVE: UNSTABLE folio fffffdffc3435180 (0) ->
+> > > fffffdffc3853540 (53)" worries me at first. On first look it seems th=
+e
+> > > folio is indeed freed completely from the swap cache after the first
+> > > lookup, so another swapout can reuse the entry. But as you mentioned
+> > > __remove_mapping won't release a folio if the refcount check fails, s=
+o
+> > > they must be freed by folio_free_swap or __try_to_reclaim_swap, there
+> > > are many places that can happen. But these two helpers won't free a
+> > > folio from swap cache if its swap count is not zero. And the folio
+> > > will either be swapped out (swap count non zero), or mapped (freeing
+> > > it is fine, PTE is non_swap, and another swapout will still use the
+> > > same folio).
+> > >
+> > > So after more investigation and dumping the pages, it's actually the
+> > > second lookup (tmp_folio) seeing the entry being reused by another
+> > > page table entry, after the first folio is swapped back and released.
+> > > So the page table check below will always fail just fine.
+> > >
+> > > But this also proves the first look up can see a completely irrelevan=
+t
+> > > folio too: If the src folio is swapped out, but got swapped back and
+> > > freed, then another folio B shortly got added to swap cache reuse the
+> > > src folio's old swap entry, then the folio B got seen by the look up
+> > > here and get freed from swap cache, then src folio got swapped out
+> > > again also reusing the same entry, then we have a problem as PTE seem=
+s
+> > > untouched indeed but we grabbed a wrong folio. Seems possible if I'm
+> > > not wrong:
+> > >
+> > > Something like this:
+> > > CPU1                             CPU2
+> > > move_pages_pte
+> > >   entry =3D pte_to_swp_entry(orig_src_pte);
+> > >     | Got Swap Entry S1 from src_pte
+> > >   ...
+> > >                                  <swapin src_pte, using folio A>
+> >
+> > I=E2=80=99m assuming you mean `<swapin src_pte, using folio B>`, since =
+I=E2=80=99m not
+> > sure where folio B comes from in the statement `<someone else tried to
+> > swap out folio B>`.
+> >
+> > If that assumption is correct, and folio A is still in the swapcache,
+> > how could someone swap in folio B without hitting folio A? That would
+> > suggest folio A must have been removed from the swapcache earlier=E2=80=
+=94right?
+> >
+> > >                                  <free folio A from swap cache freein=
+g S1>
+> > >                                  <someone else try swap out folio B >
+>
+> Sorry my bad, I think I made people think folio B is related to
+> src_pte at this point. What I actually mean is that: Another random
+> folio B, unrelated to src_pte, could got swapped out, and using the
+> swap entry S1.
+>
+> > >                                  <put folio B to swap cache using S1 =
+>
+> > >                                 ...
+> > >   folio =3D swap_cache_get_folio(S1)
+> > >     | Got folio B here !!!
+> > >   move_swap_pte
+> > >                                  <free folio B from swap cache>
+> > >                                    | Holding a reference doesn't pin =
+the cache
+> > >                                    | as we have demonstrated
+> > >                                  <Swapout folio A also using S1>
+> > >     double_pt_lock
+> > >     is_pte_pages_stable
+> > >       | Passed because of S1 is reused
+> > >     folio_move_anon_rmap(...)
+> > >       | Moved invalid folio B here !!!
+> > >
+> > > But this is extremely hard to reproduce though, even if doing it
+> > > deliberately...
+> > >
+> > > So I think a "folio_swap_contains" or equivalent check here is a good
+> > > thing to have, to make it more robust and easier to understand. The
+> > > checking after locking a folio has very tiny overhead and can
+> > > definitely ensure the folio's swap entry is valid and stable.
+> > >
+> > > The "UFFDIO_MOVE: UNSTABLE folio passed check: 0 -> fffffdffc385fb00"
+> > > here might seem problematic, but it's still not a real problem. That'=
+s
+> > > the case where the swapin in src region happens after the lookup, and
+> > > before the PTE lock. It will pass the PTE check without moving the
+> > > folio. But the folio is guaranteed to be a completely new folio here
+> > > because the folio can't be added back to the page table without
+> > > holding the PTE lock, and if that happens the following PTE check her=
+e
+> > > will fail.
+> > >
+> > > So I think we should patch the current kernel only adding a
+> > > "folio_swap_contains" equivalent check here, and maybe more comments,
+> > > how do you think?
+> >
+> > The description appears to have some inconsistencies.
+> > Would you mind rephrasing it?
+>
+> Yeah, let's ignore the "UFFDIO_MOVE: UNSTABLE folio passed check: 0 ->
+> fffffdffc385fb00" part first, as both you and me have come into a
+> conclusion that "filemap_get_folio() returns NULL before
+> move_swap_pte, but a folio was added to swap cache" is OK, and this
+> output only proves that happens.
+>
+> So the problematic race is:
+>
+> Here move_pages_pte is moving src_pte to dst_pte, and it begins with
+> src_pte =3D=3D swap entry S1, and S1 isn't cached.
+>
+> CPU1                             CPU2
+> move_pages_pte()
+>   entry =3D pte_to_swp_entry(orig_src_pte);
+>     | src_pte is absent, and got entry =3D=3D S1
+>   ... < Somehow interrupted> ...
+>                                  <swapin src_pte, using folio A>
+>                                    | folio A is just a new allocated foli=
+o
+>                                    | for resolving the swap in fault.
+>                                  <free folio A from swap cache freeing S1=
+>
+>                                    | swap in fault is resolved, src_pte
+>                                    | now points to folio A, so folio A
+>                                    | can get freed just fine.
+>                                    | And now S1 is free to be used
+>                                    | by anyone.
+>                                  <someone else try swap out another folio=
+ B >
+>                                    | Folio B is a completely unrelated
+>                                    | folio swapped out by random process.
+>                                    | (has nothing to do with src_pte)
+>                                    | But S1 is freed so it may use S1
+>                                    | as its swap entry.
+>                                  <put folio B to swap cache with index S1=
+ >
+>                                  ...
+>   folio =3D filemap_get_folio(S1)
+>     | The lookup is using S1, so it
+>     | got folio B here !!!
+>   ... < Somehow interrupted> ...
+>                                  <free folio B from swap cache>
+>                                    | Folio B could fail to be swapped out
+>                                    | or got swapped in again, so it can
+>                                    | be freed by folio_free_swap or
+>                                    | swap cache reclaim.
+>                                    | CPU1 is holding a reference but it
+>                                    | doesn't pin the swap cache folio
+>                                    | as I have demonstrated with the
+>                                    | test C program previously.
+>                                    | New S1 is free to be used again.
+>                                  <Swapout src_pte again using S1>
+>                                    | No thing blocks this from happening
+>                                    | The swapout is still using folio A,
+>                                    | and src_pte =3D=3D S1.
+>   folio_trylock(folio)
+>   move_swap_pte
+>     double_pt_lock
+>     is_pte_pages_stable
+>       | Passed because of S1 is reused so src_pte =3D=3D S1.
+>     folio_move_anon_rmap(...)
+>       | Moved invalid folio B here !!!
+>
+> It's a long and complex one, I don't think it's practically possible
+> to happen in reality but in theory doable, once in a million maybe...
+> Still we have to fix it, or did I got anything wrong here?
 
-Maybe this is very obvious to battery charger experts but what does SOC 
-mean here ?
+Hi Barry,
 
-Reading your patch you pass a "int soc" and compare it to a threshold 
-value, without 'soc' having an obvious meaning.
+I managed to reproduce this issue, by hacking the kernel a bit (Only
+adding only delay to increase the race window, and adding a WARN to
+indicate the problem)
 
-Its a threshold right ? Why not just call it threshold ?
+1. Applying following patch for kernel:
+=3D=3D=3D
 
-> 
-> Signed-off-by: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
-> ---
->   drivers/power/supply/qcom_battmgr.c | 256 ++++++++++++++++++++++++++++++++++--
->   1 file changed, 248 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/power/supply/qcom_battmgr.c b/drivers/power/supply/qcom_battmgr.c
-> index d5d0200b92bdc3d9a22f44159ad45b152efe8be0..39009415f4bfcd76b010305179d3c8fb847254a6 100644
-> --- a/drivers/power/supply/qcom_battmgr.c
-> +++ b/drivers/power/supply/qcom_battmgr.c
-> @@ -21,6 +21,8 @@
->   enum qcom_battmgr_variant {
->   	QCOM_BATTMGR_SM8350,
->   	QCOM_BATTMGR_SC8280XP,
-> +	QCOM_BATTMGR_X1E80100,
-> +	QCOM_BATTMGR_SM8550,
-You're breaking ordering here.
+diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+index bc473ad21202..1d710adf9839 100644
+--- a/mm/userfaultfd.c
++++ b/mm/userfaultfd.c
+@@ -15,6 +15,7 @@
+ #include <linux/mmu_notifier.h>
+ #include <linux/hugetlb.h>
+ #include <linux/shmem_fs.h>
++#include <linux/delay.h>
+ #include <asm/tlbflush.h>
+ #include <asm/tlb.h>
+ #include "internal.h"
+@@ -1100,6 +1101,10 @@ static int move_swap_pte(struct mm_struct *mm,
+struct vm_area_struct *dst_vma,
+         * occur and hit the swapcache after moving the PTE.
+         */
+        if (src_folio) {
++               if (WARN_ON(src_folio->swap.val !=3D
+pte_to_swp_entry(orig_src_pte).val))
++                       pr_err("Moving folio %lx (folio->swap =3D %lx),
+orig_src_pte =3D %lx\n",
++                              (unsigned long)src_folio, src_folio->swap.va=
+l,
++                              pte_to_swp_entry(orig_src_pte).val);
+                folio_move_anon_rmap(src_folio, dst_vma);
+                src_folio->index =3D linear_page_index(dst_vma, dst_addr);
+        }
+@@ -1388,9 +1393,13 @@ static int move_pages_pte(struct mm_struct *mm,
+pmd_t *dst_pmd, pmd_t *src_pmd,
+                 * folios in the swapcache. This issue needs to be resolved
+                 * separately to allow proper handling.
+                 */
++               pr_err("DEBUG: Will do the lookup using entry %lx,
+wait 3s...\n", entry.val);
++               mdelay(1000 * 3);
+                if (!src_folio)
+                        folio =3D filemap_get_folio(swap_address_space(entr=
+y),
+                                        swap_cache_index(entry));
++               pr_err("DEBUG: Got folio value %lx, wait 3s...\n",
+(unsigned long)folio);
++               mdelay(1000 * 3);
+                if (!IS_ERR_OR_NULL(folio)) {
+                        if (folio_test_large(folio)) {
+                                err =3D -EBUSY;
 
-Well the ordering is already broken but, please sort this list 
-alphanumerically.
+2. Save following program in userspace (didn't bother with error check
+for simpler code):
+=3D=3D=3D
+#define _GNU_SOURCE
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/mman.h>
+#include <sys/ioctl.h>
+#include <sys/syscall.h>
+#include <linux/userfaultfd.h>
+#include <fcntl.h>
+#include <pthread.h>
+#include <unistd.h>
+#include <poll.h>
+#include <errno.h>
 
->   };
-> 
->   #define BATTMGR_BAT_STATUS		0x1
-> @@ -66,6 +68,9 @@ enum qcom_battmgr_variant {
->   #define BATT_RESISTANCE			21
->   #define BATT_POWER_NOW			22
->   #define BATT_POWER_AVG			23
-> +#define BATT_CHG_CTRL_EN		24
-> +#define BATT_CHG_CTRL_START_THR		25
-> +#define BATT_CHG_CTRL_END_THR		26
-> 
->   #define BATTMGR_USB_PROPERTY_GET	0x32
->   #define BATTMGR_USB_PROPERTY_SET	0x33
-> @@ -90,6 +95,13 @@ enum qcom_battmgr_variant {
->   #define WLS_TYPE			5
->   #define WLS_BOOST_EN			6
-> 
-> +#define BATTMGR_CHG_CTRL_LIMIT_EN	0x48
-> +#define CHARGE_CTRL_START_THR_MIN	50
-> +#define CHARGE_CTRL_START_THR_MAX	95
-> +#define CHARGE_CTRL_END_THR_MIN		55
-> +#define CHARGE_CTRL_END_THR_MAX		100
-> +#define CHARGE_CTRL_DELTA_SOC		5
-> +
->   struct qcom_battmgr_enable_request {
->   	struct pmic_glink_hdr hdr;
->   	__le32 battery_id;
-> @@ -124,6 +136,13 @@ struct qcom_battmgr_discharge_time_request {
->   	__le32 reserved;
->   };
-> 
-> +struct qcom_battmgr_charge_ctrl_request {
-> +	struct pmic_glink_hdr hdr;
-> +	__le32 enable;
-> +	__le32 target_soc;
-> +	__le32 delta_soc;
-> +};
-> +
->   struct qcom_battmgr_message {
->   	struct pmic_glink_hdr hdr;
->   	union {
-> @@ -236,6 +255,8 @@ struct qcom_battmgr_info {
->   	unsigned int capacity_warning;
->   	unsigned int cycle_count;
->   	unsigned int charge_count;
-> +	unsigned int charge_ctrl_start;
-> +	unsigned int charge_ctrl_end;
->   	char model_number[BATTMGR_STRING_LEN];
->   	char serial_number[BATTMGR_STRING_LEN];
->   	char oem_info[BATTMGR_STRING_LEN];
-> @@ -424,6 +445,8 @@ static const u8 sm8350_bat_prop_map[] = {
->   	[POWER_SUPPLY_PROP_RESISTANCE] = BATT_RESISTANCE,
->   	[POWER_SUPPLY_PROP_STATE_OF_HEALTH] = BATT_SOH,
->   	[POWER_SUPPLY_PROP_POWER_NOW] = BATT_POWER_NOW,
-> +	[POWER_SUPPLY_PROP_CHARGE_CONTROL_START_THRESHOLD] = BATT_CHG_CTRL_START_THR,
-> +	[POWER_SUPPLY_PROP_CHARGE_CONTROL_END_THRESHOLD] = BATT_CHG_CTRL_END_THR,
->   };
-> 
->   static int qcom_battmgr_bat_sm8350_update(struct qcom_battmgr *battmgr,
-> @@ -494,7 +517,8 @@ static int qcom_battmgr_bat_get_property(struct power_supply *psy,
->   	if (!battmgr->service_up)
->   		return -EAGAIN;
-> 
-> -	if (battmgr->variant == QCOM_BATTMGR_SC8280XP)
-> +	if (battmgr->variant == QCOM_BATTMGR_SC8280XP ||
-> +			battmgr->variant == QCOM_BATTMGR_X1E80100)
+#define PAGE_SIZE 4096
+/* Need to consume all slots so define the swap device size here */
+#define SWAP_DEVICE_SIZE (PAGE_SIZE * 1024 - 1)
 
-Please run your series through checkpatch
+char *src, *race, *dst, *place_holder;
+int uffd;
 
-0004-power-supply-qcom_battmgr-Add-state_of_health-proper.patch has no 
-obvious style problems and is ready for submission.
-CHECK: Alignment should match open parenthesis
-#95: FILE: drivers/power/supply/qcom_battmgr.c:521:
-+	if (battmgr->variant == QCOM_BATTMGR_SC8280XP ||
-+			battmgr->variant == QCOM_BATTMGR_X1E80100)
+void read_in(char *p) {
+    /* This test program initials memory with 0xAA to bypass zeromap */
+    while (*((volatile char*)p) !=3D 0xAA);
+}
 
-CHECK: Alignment should match open parenthesis
-#137: FILE: drivers/power/supply/qcom_battmgr.c:678:
-+	if (soc < CHARGE_CTRL_START_THR_MIN ||
-+			soc > CHARGE_CTRL_START_THR_MAX) {
+void *reader_thread(void *arg) {
+    /* Test requires kernel to wait upon uffd move */
+    read_in(dst);
+    return NULL;
+}
 
-CHECK: Alignment should match open parenthesis
-#139: FILE: drivers/power/supply/qcom_battmgr.c:680:
-+		dev_err(battmgr->dev, "charge control start threshold exceed range: 
-[%u - %u]\n",
-+				CHARGE_CTRL_START_THR_MIN, CHARGE_CTRL_START_THR_MAX);
+void *fault_handler_thread(void *arg) {
+    int ret;
+    struct uffd_msg msg;
+    struct uffdio_move move;
+    struct pollfd pollfd =3D { .fd =3D uffd, .events =3D POLLIN };
+    pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
+    pthread_setcanceltype(PTHREAD_CANCEL_DEFERRED, NULL);
 
-CHECK: Alignment should match open parenthesis
-#175: FILE: drivers/power/supply/qcom_battmgr.c:716:
-+	if (soc < CHARGE_CTRL_END_THR_MIN ||
-+			soc > CHARGE_CTRL_END_THR_MAX) {
+    while (1) {
+        poll(&pollfd, 1, -1);
+        read(uffd, &msg, sizeof(msg));
 
-CHECK: Alignment should match open parenthesis
-#177: FILE: drivers/power/supply/qcom_battmgr.c:718:
-+		dev_err(battmgr->dev, "charge control end threshold exceed range: [%u 
-- %u]\n",
-+				CHARGE_CTRL_END_THR_MIN, CHARGE_CTRL_END_THR_MAX);
+        move.src =3D (unsigned long)src + (msg.arg.pagefault.address -
+            (unsigned long)dst);
+        move.dst =3D msg.arg.pagefault.address & ~(PAGE_SIZE - 1);
+        move.len =3D PAGE_SIZE;
+        move.mode =3D 0;
 
-CHECK: Alignment should match open parenthesis
-#196: FILE: drivers/power/supply/qcom_battmgr.c:737:
-+static int qcom_battmgr_bat_is_writeable(struct power_supply *psy,
-+				enum power_supply_property psp)
+        ioctl(uffd, UFFDIO_MOVE, &move);
+    }
+    return NULL;
+}
 
-CHECK: Alignment should match open parenthesis
-#210: FILE: drivers/power/supply/qcom_battmgr.c:751:
-+static int qcom_battmgr_bat_set_property(struct power_supply *psy,
-+			enum power_supply_property psp,
+int main() {
+    pthread_t fault_handler_thr, reader_thr;
+    struct uffdio_api uffdio_api =3D { .api =3D UFFD_API, .features =3D 0 }=
+;
+    struct uffdio_register uffdio_register;
 
-CHECK: Alignment should match open parenthesis
-#326: FILE: drivers/power/supply/qcom_battmgr.c:985:
-+	if (battmgr->variant == QCOM_BATTMGR_SC8280XP ||
-+			battmgr->variant == QCOM_BATTMGR_X1E80100)
+    src =3D mmap(NULL, PAGE_SIZE, PROT_READ | PROT_WRITE, MAP_PRIVATE |
+MAP_ANONYMOUS, -1, 0);
+    dst =3D mmap(NULL, PAGE_SIZE, PROT_READ | PROT_WRITE, MAP_PRIVATE |
+MAP_ANONYMOUS, -1, 0);
+    memset(src, 0xAA, PAGE_SIZE);
+    madvise(src, PAGE_SIZE, MADV_PAGEOUT);
 
-CHECK: Alignment should match open parenthesis
-#336: FILE: drivers/power/supply/qcom_battmgr.c:1108:
-+	if (battmgr->variant == QCOM_BATTMGR_SC8280XP ||
-+			battmgr->variant == QCOM_BATTMGR_X1E80100)
+    /* Consume all slots on swap device left only one entry (S1) */
+    place_holder =3D mmap(NULL, SWAP_DEVICE_SIZE - 1, PROT_READ |
+PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+    memset(place_holder, 0xAA, SWAP_DEVICE_SIZE - 1);
+    madvise(place_holder, SWAP_DEVICE_SIZE - 1, MADV_PAGEOUT);
 
-CHECK: Alignment should match open parenthesis
-#367: FILE: drivers/power/supply/qcom_battmgr.c:1527:
-+	else if (battmgr->variant == QCOM_BATTMGR_SC8280XP ||
-+			battmgr->variant == QCOM_BATTMGR_X1E80100)
+    /* Setup uffd handler and dst reader */
+    uffd =3D syscall(SYS_userfaultfd, O_CLOEXEC | O_NONBLOCK);
+    ioctl(uffd, UFFDIO_API, &uffdio_api);
+    uffdio_register.range.start =3D (unsigned long)dst;
+    uffdio_register.range.len =3D PAGE_SIZE;
+    uffdio_register.mode =3D UFFDIO_REGISTER_MODE_MISSING;
+    ioctl(uffd, UFFDIO_REGISTER, &uffdio_register);
+    pthread_create(&fault_handler_thr, NULL, fault_handler_thread, NULL);
+    pthread_create(&reader_thr, NULL, reader_thread, NULL);
 
-CHECK: Alignment should match open parenthesis
-#396: FILE: drivers/power/supply/qcom_battmgr.c:1606:
-+	if (battmgr->variant == QCOM_BATTMGR_SC8280XP ||
-+			battmgr->variant == QCOM_BATTMGR_X1E80100) {
+    /* Wait for UFFDIO to start */
+    sleep(1);
 
+    /* Release src folio (A) from swap, freeing the entry S1 */
+    read_in(src);
 
->   		ret = qcom_battmgr_bat_sc8280xp_update(battmgr, psp);
->   	else
->   		ret = qcom_battmgr_bat_sm8350_update(battmgr, psp);
-> @@ -599,6 +623,12 @@ static int qcom_battmgr_bat_get_property(struct power_supply *psy,
->   	case POWER_SUPPLY_PROP_TIME_TO_FULL_AVG:
->   		val->intval = battmgr->status.charge_time;
->   		break;
-> +	case POWER_SUPPLY_PROP_CHARGE_CONTROL_START_THRESHOLD:
-> +		val->intval = battmgr->info.charge_ctrl_start;
-> +		break;
-> +	case POWER_SUPPLY_PROP_CHARGE_CONTROL_END_THRESHOLD:
-> +		val->intval = battmgr->info.charge_ctrl_end;
-> +		break;
->   	case POWER_SUPPLY_PROP_MANUFACTURE_YEAR:
->   		val->intval = battmgr->info.year;
->   		break;
-> @@ -624,6 +654,120 @@ static int qcom_battmgr_bat_get_property(struct power_supply *psy,
->   	return 0;
->   }
-> 
-> +static int qcom_battmgr_set_charge_control(struct qcom_battmgr *battmgr,
-> +					   u32 target_soc, u32 delta_soc)
-> +{
-> +	struct qcom_battmgr_charge_ctrl_request request = {
-> +		.hdr.owner = cpu_to_le32(PMIC_GLINK_OWNER_BATTMGR),
-> +		.hdr.type = cpu_to_le32(PMIC_GLINK_REQ_RESP),
-> +		.hdr.opcode = cpu_to_le32(BATTMGR_CHG_CTRL_LIMIT_EN),
-> +		.enable = cpu_to_le32(1),
-> +		.target_soc = cpu_to_le32(target_soc),
-> +		.delta_soc = cpu_to_le32(delta_soc),
-> +	};
-> +
-> +	return qcom_battmgr_request(battmgr, &request, sizeof(request));
-> +}
-> +
-> +static int qcom_battmgr_set_charge_start_threshold(struct qcom_battmgr *battmgr, int soc)
-> +{
-> +	u32 target_soc, delta_soc;
-> +	int ret;
-> +
-> +	if (soc < CHARGE_CTRL_START_THR_MIN ||
-> +			soc > CHARGE_CTRL_START_THR_MAX) {
-> +		dev_err(battmgr->dev, "charge control start threshold exceed range: [%u - %u]\n",
-> +				CHARGE_CTRL_START_THR_MIN, CHARGE_CTRL_START_THR_MAX);
-> +		return -EINVAL;
-> +	}
+    /* Swapout another race folio (B) using S1 */
+    race =3D mmap(NULL, PAGE_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED |
+MAP_ANONYMOUS, -1, 0);
+    memset(race, 0xAA, PAGE_SIZE);
+    madvise(race, PAGE_SIZE, MADV_PAGEOUT);
 
-'soc' is what - a threshold as far as I can tell.
+    /* Wait for UFFDIO swap lookup to see the race folio (B) */
+    sleep(3);
 
-> +
-> +	/*
-> +	 * If the new start threshold is larger than the old end threshold,
-> +	 * move the end threshold one step (DELTA_SOC) after the new start
-> +	 * threshold.
-> +	 */
-> +	if (soc > battmgr->info.charge_ctrl_end) {
-> +		target_soc = soc + CHARGE_CTRL_DELTA_SOC;
-> +		target_soc = min_t(u32, target_soc, CHARGE_CTRL_END_THR_MAX);
-> +		delta_soc = target_soc - soc;
-> +		delta_soc = min_t(u32, delta_soc, CHARGE_CTRL_DELTA_SOC);
-> +	} else {
-> +		target_soc =  battmgr->info.charge_ctrl_end;
-> +		delta_soc = battmgr->info.charge_ctrl_end - soc;
-> +	}
-> +
-> +	mutex_lock(&battmgr->lock);
-> +	ret = qcom_battmgr_set_charge_control(battmgr, target_soc, delta_soc);
-> +	mutex_unlock(&battmgr->lock);
-> +	if (!ret) {
-> +		battmgr->info.charge_ctrl_start = soc;
-> +		battmgr->info.charge_ctrl_end = target_soc;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int qcom_battmgr_set_charge_end_threshold(struct qcom_battmgr *battmgr, int soc)
-> +{
-> +	u32 delta_soc = CHARGE_CTRL_DELTA_SOC;
-> +	int ret;
-> +
-> +	if (soc < CHARGE_CTRL_END_THR_MIN ||
-> +			soc > CHARGE_CTRL_END_THR_MAX) {
-> +		dev_err(battmgr->dev, "charge control end threshold exceed range: [%u - %u]\n",
-> +				CHARGE_CTRL_END_THR_MIN, CHARGE_CTRL_END_THR_MAX);
-> +		return -EINVAL;
-> +	}
-> +
-> +	if (battmgr->info.charge_ctrl_start && soc > battmgr->info.charge_ctrl_start)
-> +		delta_soc = soc - battmgr->info.charge_ctrl_start;
-> +
-> +	mutex_lock(&battmgr->lock);
-> +	ret = qcom_battmgr_set_charge_control(battmgr, soc, delta_soc);
-> +	mutex_unlock(&battmgr->lock);
-> +	if (!ret) {
-> +		battmgr->info.charge_ctrl_start = soc - delta_soc;
-> +		battmgr->info.charge_ctrl_end = soc;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int qcom_battmgr_bat_is_writeable(struct power_supply *psy,
-> +				enum power_supply_property psp)
-> +{
-> +	switch (psp) {
-> +	case POWER_SUPPLY_PROP_CHARGE_CONTROL_START_THRESHOLD:
-> +	case POWER_SUPPLY_PROP_CHARGE_CONTROL_END_THRESHOLD:
-> +		return 1;
-> +	default:
-> +		return 0;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int qcom_battmgr_bat_set_property(struct power_supply *psy,
-> +			enum power_supply_property psp,
-> +			const union power_supply_propval *pval)
-> +{
-> +	struct qcom_battmgr *battmgr = power_supply_get_drvdata(psy);
-> +
-> +	if (!battmgr->service_up)
-> +		return -EAGAIN;
-> +
-> +	switch (psp) {
-> +	case POWER_SUPPLY_PROP_CHARGE_CONTROL_START_THRESHOLD:
-> +		return qcom_battmgr_set_charge_start_threshold(battmgr, pval->intval);
-> +	case POWER_SUPPLY_PROP_CHARGE_CONTROL_END_THRESHOLD:
-> +		return qcom_battmgr_set_charge_end_threshold(battmgr, pval->intval);
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->   static const enum power_supply_property sc8280xp_bat_props[] = {
->   	POWER_SUPPLY_PROP_STATUS,
->   	POWER_SUPPLY_PROP_PRESENT,
-> @@ -657,6 +801,43 @@ static const struct power_supply_desc sc8280xp_bat_psy_desc = {
->   	.get_property = qcom_battmgr_bat_get_property,
->   };
-> 
-> +static const enum power_supply_property x1e80100_bat_props[] = {
-> +	POWER_SUPPLY_PROP_STATUS,
-> +	POWER_SUPPLY_PROP_PRESENT,
-> +	POWER_SUPPLY_PROP_TECHNOLOGY,
-> +	POWER_SUPPLY_PROP_CYCLE_COUNT,
-> +	POWER_SUPPLY_PROP_VOLTAGE_MAX_DESIGN,
-> +	POWER_SUPPLY_PROP_VOLTAGE_NOW,
-> +	POWER_SUPPLY_PROP_POWER_NOW,
-> +	POWER_SUPPLY_PROP_CHARGE_FULL_DESIGN,
-> +	POWER_SUPPLY_PROP_CHARGE_FULL,
-> +	POWER_SUPPLY_PROP_CHARGE_EMPTY,
-> +	POWER_SUPPLY_PROP_CHARGE_NOW,
-> +	POWER_SUPPLY_PROP_ENERGY_FULL_DESIGN,
-> +	POWER_SUPPLY_PROP_ENERGY_FULL,
-> +	POWER_SUPPLY_PROP_ENERGY_EMPTY,
-> +	POWER_SUPPLY_PROP_ENERGY_NOW,
-> +	POWER_SUPPLY_PROP_TEMP,
-> +	POWER_SUPPLY_PROP_MANUFACTURE_YEAR,
-> +	POWER_SUPPLY_PROP_MANUFACTURE_MONTH,
-> +	POWER_SUPPLY_PROP_MANUFACTURE_DAY,
-> +	POWER_SUPPLY_PROP_MODEL_NAME,
-> +	POWER_SUPPLY_PROP_MANUFACTURER,
-> +	POWER_SUPPLY_PROP_SERIAL_NUMBER,
-> +	POWER_SUPPLY_PROP_CHARGE_CONTROL_START_THRESHOLD,
-> +	POWER_SUPPLY_PROP_CHARGE_CONTROL_END_THRESHOLD,
-> +};
-> +
-> +static const struct power_supply_desc x1e80100_bat_psy_desc = {
-> +	.name = "qcom-battmgr-bat",
-> +	.type = POWER_SUPPLY_TYPE_BATTERY,
-> +	.properties = x1e80100_bat_props,
-> +	.num_properties = ARRAY_SIZE(x1e80100_bat_props),
-> +	.get_property = qcom_battmgr_bat_get_property,
-> +	.set_property = qcom_battmgr_bat_set_property,
-> +	.property_is_writeable = qcom_battmgr_bat_is_writeable,
-> +};
-> +
->   static const enum power_supply_property sm8350_bat_props[] = {
->   	POWER_SUPPLY_PROP_STATUS,
->   	POWER_SUPPLY_PROP_HEALTH,
-> @@ -689,6 +870,42 @@ static const struct power_supply_desc sm8350_bat_psy_desc = {
->   	.get_property = qcom_battmgr_bat_get_property,
->   };
-> 
-> +static const enum power_supply_property sm8550_bat_props[] = {
-> +	POWER_SUPPLY_PROP_STATUS,
-> +	POWER_SUPPLY_PROP_HEALTH,
-> +	POWER_SUPPLY_PROP_PRESENT,
-> +	POWER_SUPPLY_PROP_CHARGE_TYPE,
-> +	POWER_SUPPLY_PROP_CAPACITY,
-> +	POWER_SUPPLY_PROP_VOLTAGE_OCV,
-> +	POWER_SUPPLY_PROP_VOLTAGE_NOW,
-> +	POWER_SUPPLY_PROP_VOLTAGE_MAX,
-> +	POWER_SUPPLY_PROP_CURRENT_NOW,
-> +	POWER_SUPPLY_PROP_TEMP,
-> +	POWER_SUPPLY_PROP_TECHNOLOGY,
-> +	POWER_SUPPLY_PROP_CHARGE_COUNTER,
-> +	POWER_SUPPLY_PROP_CYCLE_COUNT,
-> +	POWER_SUPPLY_PROP_CHARGE_FULL_DESIGN,
-> +	POWER_SUPPLY_PROP_CHARGE_FULL,
-> +	POWER_SUPPLY_PROP_MODEL_NAME,
-> +	POWER_SUPPLY_PROP_TIME_TO_FULL_AVG,
-> +	POWER_SUPPLY_PROP_TIME_TO_EMPTY_AVG,
-> +	POWER_SUPPLY_PROP_RESISTANCE,
-> +	POWER_SUPPLY_PROP_STATE_OF_HEALTH,
-> +	POWER_SUPPLY_PROP_POWER_NOW,
-> +	POWER_SUPPLY_PROP_CHARGE_CONTROL_START_THRESHOLD,
-> +	POWER_SUPPLY_PROP_CHARGE_CONTROL_END_THRESHOLD,
-> +};
-> +
-> +static const struct power_supply_desc sm8550_bat_psy_desc = {
-> +	.name = "qcom-battmgr-bat",
-> +	.type = POWER_SUPPLY_TYPE_BATTERY,
-> +	.properties = sm8550_bat_props,
-> +	.num_properties = ARRAY_SIZE(sm8550_bat_props),
-> +	.get_property = qcom_battmgr_bat_get_property,
-> +	.set_property = qcom_battmgr_bat_set_property,
-> +	.property_is_writeable = qcom_battmgr_bat_is_writeable,
-> +};
-> +
->   static int qcom_battmgr_ac_get_property(struct power_supply *psy,
->   					enum power_supply_property psp,
->   					union power_supply_propval *val)
-> @@ -764,7 +981,8 @@ static int qcom_battmgr_usb_get_property(struct power_supply *psy,
->   	if (!battmgr->service_up)
->   		return -EAGAIN;
-> 
-> -	if (battmgr->variant == QCOM_BATTMGR_SC8280XP)
-> +	if (battmgr->variant == QCOM_BATTMGR_SC8280XP ||
-> +			battmgr->variant == QCOM_BATTMGR_X1E80100)
->   		ret = qcom_battmgr_bat_sc8280xp_update(battmgr, psp);
->   	else
->   		ret = qcom_battmgr_usb_sm8350_update(battmgr, psp);
-> @@ -886,7 +1104,8 @@ static int qcom_battmgr_wls_get_property(struct power_supply *psy,
->   	if (!battmgr->service_up)
->   		return -EAGAIN;
-> 
-> -	if (battmgr->variant == QCOM_BATTMGR_SC8280XP)
-> +	if (battmgr->variant == QCOM_BATTMGR_SC8280XP ||
-> +			battmgr->variant == QCOM_BATTMGR_X1E80100)
->   		ret = qcom_battmgr_bat_sc8280xp_update(battmgr, psp);
->   	else
->   		ret = qcom_battmgr_wls_sm8350_update(battmgr, psp);
-> @@ -1196,6 +1415,12 @@ static void qcom_battmgr_sm8350_callback(struct qcom_battmgr *battmgr,
->   		case BATT_POWER_NOW:
->   			battmgr->status.power_now = le32_to_cpu(resp->intval.value);
->   			break;
-> +		case BATT_CHG_CTRL_START_THR:
-> +			battmgr->info.charge_ctrl_start = le32_to_cpu(resp->intval.value);
-> +			break;
-> +		case BATT_CHG_CTRL_END_THR:
-> +			battmgr->info.charge_ctrl_end = le32_to_cpu(resp->intval.value);
-> +			break;
->   		default:
->   			dev_warn(battmgr->dev, "unknown property %#x\n", property);
->   			break;
-> @@ -1278,6 +1503,7 @@ static void qcom_battmgr_sm8350_callback(struct qcom_battmgr *battmgr,
->   		}
->   		break;
->   	case BATTMGR_REQUEST_NOTIFICATION:
-> +	case BATTMGR_CHG_CTRL_LIMIT_EN:
->   		battmgr->error = 0;
->   		break;
->   	default:
-> @@ -1297,7 +1523,8 @@ static void qcom_battmgr_callback(const void *data, size_t len, void *priv)
-> 
->   	if (opcode == BATTMGR_NOTIFICATION)
->   		qcom_battmgr_notification(battmgr, data, len);
-> -	else if (battmgr->variant == QCOM_BATTMGR_SC8280XP)
-> +	else if (battmgr->variant == QCOM_BATTMGR_SC8280XP ||
-> +			battmgr->variant == QCOM_BATTMGR_X1E80100)
->   		qcom_battmgr_sc8280xp_callback(battmgr, data, len);
->   	else
->   		qcom_battmgr_sm8350_callback(battmgr, data, len);
-> @@ -1333,7 +1560,8 @@ static void qcom_battmgr_pdr_notify(void *priv, int state)
->   static const struct of_device_id qcom_battmgr_of_variants[] = {
->   	{ .compatible = "qcom,sc8180x-pmic-glink", .data = (void *)QCOM_BATTMGR_SC8280XP },
->   	{ .compatible = "qcom,sc8280xp-pmic-glink", .data = (void *)QCOM_BATTMGR_SC8280XP },
-> -	{ .compatible = "qcom,x1e80100-pmic-glink", .data = (void *)QCOM_BATTMGR_SC8280XP },
-> +	{ .compatible = "qcom,x1e80100-pmic-glink", .data = (void *)QCOM_BATTMGR_X1E80100 },
-> +	{ .compatible = "qcom,sm8550-pmic-glink", .data = (void *)QCOM_BATTMGR_SM8550 },
+    /* Free the race folio (B) from swap */
+    read_in(race);
+    /* And swap out src folio (A) again, using S1 */
+    madvise(src, PAGE_SIZE, MADV_PAGEOUT);
 
-Please separate compat string addition from functional changes.
+    /* Kernel should have moved a wrong folio by now */
 
->   	/* Unmatched devices falls back to QCOM_BATTMGR_SM8350 */
->   	{}
->   };
-> @@ -1343,6 +1571,7 @@ static char *qcom_battmgr_battery[] = { "battery" };
->   static int qcom_battmgr_probe(struct auxiliary_device *adev,
->   			      const struct auxiliary_device_id *id)
->   {
-> +	const struct power_supply_desc *psy_desc;
->   	struct power_supply_config psy_cfg_supply = {};
->   	struct power_supply_config psy_cfg = {};
->   	const struct of_device_id *match;
-> @@ -1373,8 +1602,14 @@ static int qcom_battmgr_probe(struct auxiliary_device *adev,
->   	else
->   		battmgr->variant = QCOM_BATTMGR_SM8350;
-> 
-> -	if (battmgr->variant == QCOM_BATTMGR_SC8280XP) {
-> -		battmgr->bat_psy = devm_power_supply_register(dev, &sc8280xp_bat_psy_desc, &psy_cfg);
-> +	if (battmgr->variant == QCOM_BATTMGR_SC8280XP ||
-> +			battmgr->variant == QCOM_BATTMGR_X1E80100) {
-> +		if (battmgr->variant == QCOM_BATTMGR_X1E80100)
-> +			psy_desc = &x1e80100_bat_psy_desc;
-> +		else
-> +			psy_desc = &sc8280xp_bat_psy_desc;
-> +
-> +		battmgr->bat_psy = devm_power_supply_register(dev, psy_desc, &psy_cfg);
->   		if (IS_ERR(battmgr->bat_psy))
->   			return dev_err_probe(dev, PTR_ERR(battmgr->bat_psy),
->   					     "failed to register battery power supply\n");
-> @@ -1394,7 +1629,12 @@ static int qcom_battmgr_probe(struct auxiliary_device *adev,
->   			return dev_err_probe(dev, PTR_ERR(battmgr->wls_psy),
->   					     "failed to register wireless charing power supply\n");
->   	} else {
-> -		battmgr->bat_psy = devm_power_supply_register(dev, &sm8350_bat_psy_desc, &psy_cfg);
-> +		if (battmgr->variant == QCOM_BATTMGR_SM8550)
-> +			psy_desc = &sm8550_bat_psy_desc;
-> +		else
-> +			psy_desc = &sm8350_bat_psy_desc;
-> +
-> +		battmgr->bat_psy = devm_power_supply_register(dev, psy_desc, &psy_cfg);
->   		if (IS_ERR(battmgr->bat_psy))
->   			return dev_err_probe(dev, PTR_ERR(battmgr->bat_psy),
->   					     "failed to register battery power supply\n");
-> 
-> --
-> 2.34.1
-> 
-> 
-> 
+    pthread_join(reader_thr, NULL);
+    pthread_cancel(fault_handler_thr);
+    pthread_join(fault_handler_thr, NULL);
+    munmap(race, PAGE_SIZE);
+    munmap(src, PAGE_SIZE);
+    munmap(dst, PAGE_SIZE);
+    close(uffd);
 
+    return 0;
+}
+
+3. Run the test with (ensure no other swap device is mounted and
+current dir is on a block device):
+=3D=3D=3D
+dd if=3D/dev/zero of=3Dswap.img bs=3D1M count=3D1; mkswap swap.img; swapon
+swap.img; gcc test-uffd.c && ./a.out
+
+Then we get the WARN:
+[  348.200587] ------------[ cut here ]------------
+[  348.200599] WARNING: CPU: 7 PID: 1856 at mm/userfaultfd.c:1104
+move_pages_pte+0xdb8/0x11a0
+[  348.207544] Modules linked in: loop
+[  348.209401] CPU: 7 UID: 0 PID: 1856 Comm: a.out Kdump: loaded Not
+tainted 6.15.0-rc6ptch-00381-g99f00d7c6c6f-dirty #304
+PREEMPT(voluntary)
+[  348.214579] Hardware name: QEMU QEMU Virtual Machine, BIOS
+edk2-stable202408-prebuilt.qemu.org 08/13/2024
+[  348.218656] pstate: 81400005 (Nzcv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=
+=3D--)
+[  348.222013] pc : move_pages_pte+0xdb8/0x11a0
+[  348.224062] lr : move_pages_pte+0x928/0x11a0
+[  348.225881] sp : ffff800088b2b8f0
+[  348.227360] x29: ffff800088b2b970 x28: 0000000000000000 x27: 0000ffffbc9=
+20000
+[  348.230228] x26: fffffdffc335e4a8 x25: 0000000000000001 x24: fffffdffc3e=
+4dd40
+[  348.233159] x23: 080000010d792403 x22: ffff0000cd792900 x21: ffff0000c5a=
+6d2c0
+[  348.236339] x20: fffffdffc335e4a8 x19: 0000000000001004 x18: 00000000000=
+00006
+[  348.239269] x17: 0000ffffbc920000 x16: 0000ffffbc922fff x15: 00000000000=
+00003
+[  348.242703] x14: ffff8000812c3b68 x13: 0000000000000003 x12: 00000000000=
+00003
+[  348.245947] x11: 0000000000000000 x10: ffff800081e4feb8 x9 : 00000000000=
+00001
+[  348.249284] x8 : 0000000000000000 x7 : 6f696c6f6620746f x6 : 47203a47554=
+24544
+[  348.252071] x5 : ffff8000815789e3 x4 : ffff8000815789e5 x3 : 00000000000=
+00000
+[  348.255358] x2 : ffff0001fed2aef0 x1 : 0000000000000000 x0 : fffffdffc33=
+5e4a8
+[  348.258134] Call trace:
+[  348.259468]  move_pages_pte+0xdb8/0x11a0 (P)
+[  348.261348]  move_pages+0x3c0/0x738
+[  348.262987]  userfaultfd_ioctl+0x3d8/0x1f98
+[  348.264916]  __arm64_sys_ioctl+0x88/0xd0
+[  348.266779]  invoke_syscall+0x64/0xec
+[  348.268347]  el0_svc_common+0xa8/0xd8
+[  348.269967]  do_el0_svc+0x1c/0x28
+[  348.271711]  el0_svc+0x40/0xe0
+[  348.273345]  el0t_64_sync_handler+0x78/0x108
+[  348.274821]  el0t_64_sync+0x19c/0x1a0
+[  348.276117] ---[ end trace 0000000000000000 ]---
+[  348.278638] Moving folio fffffdffc3e4dd40 (folio->swap =3D 0), orig_src_=
+pte =3D 1
+
+That's the new added WARN, but the test program also hung with D
+forever, and with errors with other tests like:
+[  406.893936] BUG: Bad rss-counter state mm:ffff0000c5a9ddc0
+type:MM_ANONPAGES val:-1
+[  406.894071] BUG: Bad rss-counter state mm:ffff0000c5a9ddc0
+type:MM_SHMEMPAGES val:1
+
+Because the kernel just moved the wrong folio, so unmap takes forever
+looking for the missing folio, and counting went wrong too.
+
+So this race is real. It's extremely unlikely to happen because it
+requires multiple collisions of multiple tiny race windows, however
+it's not impossible.
+
+I'll post a fix very soon.
 
