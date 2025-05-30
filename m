@@ -1,170 +1,156 @@
-Return-Path: <linux-kernel+bounces-668423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-668412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED39FAC92B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 17:44:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4AA4AC928A
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 17:28:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C0AF87AA753
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 15:43:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9000817223E
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 15:28:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F331A23507E;
-	Fri, 30 May 2025 15:44:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAE4C22F76D;
+	Fri, 30 May 2025 15:28:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="JPZwV0MS"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OhpL26uJ"
+Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF59EBA36
-	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 15:44:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5F22FBF0;
+	Fri, 30 May 2025 15:28:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748619888; cv=none; b=E95scFt7V/DunUz7wX9MqNUc8rjOpykbutIkLY7u7Ur2rnp8VhKopGVXZK++1/Uk85Je5Rqnj8ZL4sX4Zq7XD02PnBoaJThXOBZMtV81RaPurXB/FPfp1Ynu+/8JlirB8uChUUu5mXhiSqXHh3Lv/DALE6jUfuV/qrN7TKjzZR8=
+	t=1748618887; cv=none; b=hPN3zBRi95wbn+95OzOu6evB5ubl8XyagAlbZG3ZagxRAYvf6cJeyec4GojdT+ZuHd4JXXOwSaWew6Q7fh0gkaJVfkwrg85pF4qrPyQYN27z8NDSg4X8/zjDZ0pkTCL0G5H1cayh3IKMK/Nz6qmwW5Rsma52EfdEDteLVp0GNFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748619888; c=relaxed/simple;
-	bh=tShNz1F8ZqHyMCW3gy3LmKwe14b90b0cKvfiiQiedF4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pgDsfu+59cdciXliRjfkuEkM4HchOmBXoWKAgLflR37dDNrAGpjBCe5pg9jJykywlvTLiZN1zrxCMfsAynNyLC2vwuKTmgzwEDz7qpXLn0Ti3ljSvBTorApYMs6fNrl3qgawtWkSEnpqlLbxxIt0EUDB6kdzubQWchknbZxg9u0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=JPZwV0MS; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-742c2ed0fe1so2052005b3a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 08:44:46 -0700 (PDT)
+	s=arc-20240116; t=1748618887; c=relaxed/simple;
+	bh=bqbIQZx7tbU8Dq+hbFk5qs1YF5oVdFEw6SaA3RZwkqY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GT/QzXInxQR8rOXQ2jwtscUG9UINs4ARwlgeCx+5iFGDQyKqv4zyMu43PC+MKKUJ2HiAyQQjk6BzTrwBvkJQDbTIRpyKIpw9EsGPhRrDUa425aVg9gHK3lfN8356VZ/hGTHJis8FoFA4nkzNGZoWPbdOAF1fTlshKErD/U+MZcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OhpL26uJ; arc=none smtp.client-ip=209.85.167.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-40356cb3352so1393166b6e.1;
+        Fri, 30 May 2025 08:28:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1748619886; x=1749224686; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=SryMm32kuymojhHrK4V1xjurKm1RRnj6DaabgF0M4vY=;
-        b=JPZwV0MSQKpX15o+jHjUMMGmtb9iFG8glz6eqYd5ZygErrCA1IpKOEm6nLwcdMah32
-         J4rBi03f0G995EwV+R595fNCg/IWwFB5AWRnBn2OPEr9OfyML3w73Lbezl2Afn4T7Gdf
-         X8n27Xg7q+LNQ6EPk877NXAXdUMH/1dGaQAwc=
+        d=gmail.com; s=20230601; t=1748618885; x=1749223685; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Fq2KhMBOr60BNuiq4EFnjEPZcEVfqIe+cd1pNBKZpOY=;
+        b=OhpL26uJ9mLpggHwdF/uANaIz5VVOf/DMlsXckLOAHgfmPRSSK+ayMVIJkCBuV2Oul
+         T18mkg58pSRdNT4oukSE/9ZXkwPZjslRAy5lweq6/prplfpu3rxohLGHfSQLNwwpMxbX
+         xh50EXdRC6MgBqToEtE7qMk9/sDlyJj3iDFMpCTACqARGwhoXkzSAomNLbiNJDZytrP0
+         Rj4scuW7ha9gyuuNsi7bMORsXpunrN9exYpuJYGdu1YSFI7Bs1OBpQ6Oyl19hPJSqm1R
+         m0kU6hZq9zub31kQq4BwHosPe6aX2SOSz8B5Xu7uBT4ZYR4AX56BZj+4xf1QqXTEmmbV
+         meGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748619886; x=1749224686;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SryMm32kuymojhHrK4V1xjurKm1RRnj6DaabgF0M4vY=;
-        b=ElZl39NjliNsKE37Fi9tY/Imdqc6KXqK3il/miwTKlMQ1d9M4ixE3FiSP9L3sT5INz
-         eqPWF6XfhHkebaGGAVeLo9ilmc1iOX9u8dr9hC3pYA9zfj0EfVrRbN2KRUgwQWY0bQmt
-         TVyP5FQ0kSTP4JEfuUeIF73ERwOQIu1RGxBxPElBr33j4p+c0slAKUC1xfae52oVf+kv
-         gDTppcv54QCt9RAbCy0dgfWLZcp/VKljLSPx9bkIUxq8CJFCB73eCd8PMSCfprbNEqJ3
-         ozB6KjjN+863Nr27O02SsZvB0qyAXk/ZZKsknx+Hx/WAKZXF0m9SpY8Frq6BT+LUidRw
-         gDJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWxYPdSIiB/7RZHUJKxHNK8AhyTtVEA5wagHxwV+TeIGdFxK8xEyMNivXCmnCG1NCi1CkKIlwth28hziBo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz47be5d6GOgfRKM2Rt4RCUvFa08GfcRNDrw8cRM0LhgmV4Mcwi
-	SA/QD4urzKhq6gYcRH1a7NNNkywHSGgR+YiEpNZStQ9ST+9IEN+7cLUnGcILg3VbmQ==
-X-Gm-Gg: ASbGncvdULc5iEMj+CUd9Lqs0pGW7Zl3Y3BNnKpjgyiXbIUqAuA9vIgC22CPxJhATFW
-	O7/AyvLe8+h10Rn+9j3mOQQMe8MjsCJVKsUmYm2QGF/cD3c6fujbW9Gh2nWUxG9Cl7dARKHZryd
-	1VdekecUL+cFhaWfC2j4yxYUrhkwOMxqIS0J7Rf2kUkGLZkB4Mwu6HicSw76JeU77n71ImWN1l+
-	60fBs06/L6yEX372vsJydOtBvbxY9TN8Qbuch9jZWi6LtoYy9y2b2wxrIP8rD9ixZuvEFvzJgr7
-	C57vHfNu9Zcry0rn2VXzHHuEwVSn49LQKgdacGhruEXwun3y67M5m1gYyKTLctzL2Tzt+QWRpnh
-	kf0Q/S7oU//LNVWwgnXgE7A==
-X-Google-Smtp-Source: AGHT+IGAK8o+8Ua0lXjHXGjY94JIpgJscQVIy88WZ6WB5EqaxsbE1cmu3G6Ju41EdiRl90z+RRovCA==
-X-Received: by 2002:a05:6a00:2305:b0:746:3040:4da2 with SMTP id d2e1a72fcca58-747bd96b918mr6023716b3a.8.1748619885949;
-        Fri, 30 May 2025 08:44:45 -0700 (PDT)
-Received: from ubuntu.. ([192.19.161.250])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-747afe9645dsm3208018b3a.7.2025.05.30.08.44.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 May 2025 08:44:45 -0700 (PDT)
-From: Ronak Doshi <ronak.doshi@broadcom.com>
-To: netdev@vger.kernel.org
-Cc: Ronak Doshi <ronak.doshi@broadcom.com>,
-	Guolin Yang <guolin.yang@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH net v4] vmxnet3: correctly report gso type for UDP tunnels
-Date: Fri, 30 May 2025 15:27:00 +0000
-Message-ID: <20250530152701.70354-1-ronak.doshi@broadcom.com>
-X-Mailer: git-send-email 2.45.2
+        d=1e100.net; s=20230601; t=1748618885; x=1749223685;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Fq2KhMBOr60BNuiq4EFnjEPZcEVfqIe+cd1pNBKZpOY=;
+        b=tytq1Y9LlFr0G8k1nkt1nVOCrdQRYvwcR95bWdAIOf5w2muM0HVWyO9X+ByC+JpI9N
+         9q0M7ItALZ8/v5nma0QiyGStI5UhIuZPEiZVdc1e6CZApkvkN1f6RChlU8S0YFlP/RPQ
+         4tcFH9ljJYSofi9v/4d38nKmBbdLxXBjAJTCGFeb9oJ3OoaWcRTpZHTXNNfh78oJJImL
+         Q2+3I0laAaMwkaqcqjZfNkZS2CPp30SRHdXjYDWGX1LdteH8tkwFlN4shTLnSVb9SuWv
+         aHSRLAaqHiusZxQMuNP+diorgmt6KjKr6HsUurB37uoZ/rkmr9j46tj+74lmf0gCZU3O
+         aQKg==
+X-Forwarded-Encrypted: i=1; AJvYcCVofnQ/xdgSvQnN30oyYkIimdxT8HdGUmMMI0RAWzSJzkX7Lbw4pzwpGnI3SxlLwiPcDB7PvqL8nBw6GPJmuZXhdfT5@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxzTR4SFOerWZHtyl7NiK7Az188oScIYJ1k1xjH89m3ubsHdxJ
+	+zhzgkn6/i5nJBEPjGLcuFVzAdUye0p/NWvJaTr1c9RF/XIsytfAlvxFBoU5zQ==
+X-Gm-Gg: ASbGncuEsPPEvNAPT5mmnTU8H+MqzNKT8t1TtGSU2zwi+2t9Ze83BXUjc2IRNiWLhst
+	xOlbkAFkhmRPQogCFfnxTDuif5MWI5+61uqNJlciQB8eVJo6IYwxAsrXl2dOvq1WeuaB4ecjHy+
+	Y/LFytag/pEd7cHq8R7F7tM+/6HvcEk6o6+cP6Vx8/6+L21pZgJ9ROXbPTjwV2UrZkr7dqX2f91
+	PPhFnmISJT5FqEa4glQ3ezlmQ83e8RfpH2JhPFXJjTpXIZU5DXfXUT8Wgf8QcFguLCgQyzp0/3O
+	SKlnjtcCmPyV49Okywd9BzUn+tJLf+ovSNH4bYyEqNKcbXNCxn/u0YNpZKVnVgFU8/GWFz+6eQy
+	pi5328QFJPmQyb9VxFupfRwKTtBcTmuoSsojn
+X-Google-Smtp-Source: AGHT+IHKkhsy6Uz1bY8BQdc1ov61XM/m9cZ1jC2Xl3IOfyNQ2Ger8hqyJv6NvLF39lVR3lajl+s58w==
+X-Received: by 2002:a05:6870:538b:b0:2d5:f8f:56eb with SMTP id 586e51a60fabf-2e9210f13e5mr1829335fac.2.1748618874235;
+        Fri, 30 May 2025 08:27:54 -0700 (PDT)
+Received: from [192.168.1.7] (syn-067-048-091-116.res.spectrum.com. [67.48.91.116])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2e90681bcc0sm691268fac.23.2025.05.30.08.27.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 30 May 2025 08:27:53 -0700 (PDT)
+Message-ID: <8a8ff0b4-49a9-4b07-abbd-243b754bfc0e@gmail.com>
+Date: Fri, 30 May 2025 10:27:52 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/4] platform/x86: dell_rbu: Stop overwriting data
+ buffer
+To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Hans de Goede <hdegoede@redhat.com>,
+ platform-driver-x86@vger.kernel.org
+References: <20250529202758.8440-1-stuart.w.hayes@gmail.com>
+ <20250529202758.8440-4-stuart.w.hayes@gmail.com>
+ <ad0301a0-f45f-900a-028d-dff5e08b9525@linux.intel.com>
+Content-Language: en-US
+From: stuart hayes <stuart.w.hayes@gmail.com>
+In-Reply-To: <ad0301a0-f45f-900a-028d-dff5e08b9525@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Commit 3d010c8031e3 ("udp: do not accept non-tunnel GSO skbs landing
-in a tunnel") added checks in linux stack to not accept non-tunnel
-GRO packets landing in a tunnel. This exposed an issue in vmxnet3
-which was not correctly reporting GRO packets for tunnel packets.
+On 5/30/2025 3:03 AM, Ilpo Järvinen wrote:
+> On Thu, 29 May 2025, Stuart Hayes wrote:
+> 
+>> The dell_rbu driver will use memset() to clear the data held by each
+>> packet when it is no longer needed (when the driver is unloaded, the
+>> packet size is changed, etc).
+>>
+>> The amount of memory that is cleared (before this patch) is the normal
+>> packet size. However, the last packet in the list may be smaller.
+>>
+>> Fix this to only clear the memory actually used by each packet, to prevent
+>> it from writing past the end of data buffer.
+>>
+>> Signed-off-by: Stuart Hayes <stuart.w.hayes@gmail.com>
+> 
+> This still doesn't have Fixes tag? If it writes part the buffer, there
+> certainly should be one in this one. Did you perhaps add it to a wrong
+> patch?
+> 
 
-This patch fixes this issue by setting correct GSO type for the
-tunnel packets.
+This fixes a bug that's existed for the life of the driver. Should I use 
+the patch that introduced the driver for "Fixes:"?
 
-Currently, vmxnet3 does not support reporting inner fields for LRO
-tunnel packets. The issue is not seen for egress drivers that do not
-use skb inner fields. The workaround is to enable tnl-segmentation
-offload on the egress interfaces if the driver supports it. This
-problem pre-exists this patch fix and can be addressed as a separate
-future patch.
+I don't think this has ever caused a problem, because, as far as I know, 
+the Dell BIOS update program is the only user of this module, and it 
+uses 4096 as the packet size. Because the packet data buffers are 
+allocated with...
 
-Fixes: dacce2be3312 ("vmxnet3: add geneve and vxlan tunnel offload support")
-Signed-off-by: Ronak Doshi <ronak.doshi@broadcom.com>
-Acked-by: Guolin Yang <guolin.yang@broadcom.com>
+	ordernum = get_order(size);
+	image_update_buffer =
+		(unsigned char *)__get_free_pages(GRP_DMA32, ordernum);
 
-Changes v1-->v2:
-  Do not set encapsulation bit as inner fields are not updated
-Changes v2-->v3:
-  Update the commit message explaining the next steps to address
-  segmentation issues that pre-exists this patch fix.
-Changes v3->v4:
-  Update the commit message to clarify the workaround.
----
- drivers/net/vmxnet3/vmxnet3_drv.c | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+...this will always allocate one full page for every packet data buffer.
 
-diff --git a/drivers/net/vmxnet3/vmxnet3_drv.c b/drivers/net/vmxnet3/vmxnet3_drv.c
-index c676979c7ab9..287b7c20c0d6 100644
---- a/drivers/net/vmxnet3/vmxnet3_drv.c
-+++ b/drivers/net/vmxnet3/vmxnet3_drv.c
-@@ -1568,6 +1568,30 @@ vmxnet3_get_hdr_len(struct vmxnet3_adapter *adapter, struct sk_buff *skb,
- 	return (hlen + (hdr.tcp->doff << 2));
- }
- 
-+static void
-+vmxnet3_lro_tunnel(struct sk_buff *skb, __be16 ip_proto)
-+{
-+	struct udphdr *uh = NULL;
-+
-+	if (ip_proto == htons(ETH_P_IP)) {
-+		struct iphdr *iph = (struct iphdr *)skb->data;
-+
-+		if (iph->protocol == IPPROTO_UDP)
-+			uh = (struct udphdr *)(iph + 1);
-+	} else {
-+		struct ipv6hdr *iph = (struct ipv6hdr *)skb->data;
-+
-+		if (iph->nexthdr == IPPROTO_UDP)
-+			uh = (struct udphdr *)(iph + 1);
-+	}
-+	if (uh) {
-+		if (uh->check)
-+			skb_shinfo(skb)->gso_type |= SKB_GSO_UDP_TUNNEL_CSUM;
-+		else
-+			skb_shinfo(skb)->gso_type |= SKB_GSO_UDP_TUNNEL;
-+	}
-+}
-+
- static int
- vmxnet3_rq_rx_complete(struct vmxnet3_rx_queue *rq,
- 		       struct vmxnet3_adapter *adapter, int quota)
-@@ -1881,6 +1905,8 @@ vmxnet3_rq_rx_complete(struct vmxnet3_rx_queue *rq,
- 			if (segCnt != 0 && mss != 0) {
- 				skb_shinfo(skb)->gso_type = rcd->v4 ?
- 					SKB_GSO_TCPV4 : SKB_GSO_TCPV6;
-+				if (encap_lro)
-+					vmxnet3_lro_tunnel(skb, skb->protocol);
- 				skb_shinfo(skb)->gso_size = mss;
- 				skb_shinfo(skb)->gso_segs = segCnt;
- 			} else if ((segCnt != 0 || skb->len > mtu) && !encap_lro) {
--- 
-2.45.2
+I just happened to notice that the driver could overwrite the end of the 
+buffer for the last packet if a packet size of more than 4096 was used, 
+so I thought I'd fix that.
+
+>> ---
+>>   drivers/platform/x86/dell/dell_rbu.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/platform/x86/dell/dell_rbu.c b/drivers/platform/x86/dell/dell_rbu.c
+>> index c03d4d55fcc1..7d5b26735a20 100644
+>> --- a/drivers/platform/x86/dell/dell_rbu.c
+>> +++ b/drivers/platform/x86/dell/dell_rbu.c
+>> @@ -322,7 +322,7 @@ static void packet_empty_list(void)
+>>   		 * zero out the RBU packet memory before freeing
+>>   		 * to make sure there are no stale RBU packets left in memory
+>>   		 */
+>> -		memset(newpacket->data, 0, rbu_data.packetsize);
+>> +		memset(newpacket->data, 0, newpacket->length);
+>>   		set_memory_wb((unsigned long)newpacket->data,
+>>   			1 << newpacket->ordernum);
+>>   		free_pages((unsigned long) newpacket->data,
+>>
+> 
 
 
