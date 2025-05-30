@@ -1,87 +1,143 @@
-Return-Path: <linux-kernel+bounces-668492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-668494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F4225AC937D
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 18:25:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54955AC9381
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 18:26:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DCB8A479BB
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 16:23:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FBB3A21894
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 16:24:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32A362367D0;
-	Fri, 30 May 2025 16:23:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E87C1D5154;
+	Fri, 30 May 2025 16:24:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="SQGEdxb5"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2067.outbound.protection.outlook.com [40.107.94.67])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Y9maxsAT";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="oCyl+mXF"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72DAB2367A0
-	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 16:23:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB5CB194124;
+	Fri, 30 May 2025 16:24:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748622182; cv=fail; b=lHoKwOOJAk6t9btNIkbThSErrZZmaqmtGjLPs15q2MgF8jMIeAfRudX0DG2vnOXBNrj2KWATAGgW0jqLtp8hG0GhSPirxYuq15fBPT3iRcyhznKgOMuZQWidOYutsG0zx5yas2fn9EduFhRGTjvTUEkwUMuZ1e9UZonLUQmWk+Q=
+	t=1748622287; cv=fail; b=sigksl9ApyZtWJZIn87S8HLl3PxaScFsaDvnoEbBcNRGxf+tF2xHFPlCFNA7AWRVMnJYr3Codk0c0TCJqSdZ672uY2J/Bv/t/9zDhcft8zeVPY4mxinE7f8+Mtwj2VMGqq/KJucznRoP6Oo2Hq9wnqwlnJ1+ux9SkqTWoobZE98=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748622182; c=relaxed/simple;
-	bh=sFmvWoG8UWI82YJ/HyVQD4m849oUTB2wyhnSXUCWp+Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=mn2MqtuOrIGvro2NmRJqDDGPYJuqNb290L+gDT3O7QPm0pmqFWMl4mqnWpJtunQOhn8RbV20FjrgJo+HJyhlKCqA4D9EDtFJut/4gueRJAKpMaCj2FezCOVRiArpn3QgRD0at2Viy7yZOkAx68xc1C5YJ0VfpHZ7938uOHINMMI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=SQGEdxb5; arc=fail smtp.client-ip=40.107.94.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	s=arc-20240116; t=1748622287; c=relaxed/simple;
+	bh=QWlJm6GuFRmR/crOIkCTokHiddzZOx1RaNny3XK03as=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=epAGEFeLnnIQWv3UisK23Xi7TNZ69ucZeCKB98QBUKNdWi5mS3A4FAEfdrtRm7HOd7km19A6cFHfnR4LgbaUa7aS5Vt3lc0ZdWoJD6x4Rhl76Hd3eOY7krA/dJ/tGUyOOmW1Ov9qbfTzbfwDDF8J7rlDgnqZCsF/Ba6XYXzFA1w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Y9maxsAT; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=oCyl+mXF; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54UGN9np027654;
+	Fri, 30 May 2025 16:23:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=z3IMNQdsmC2DCOkbLy
+	x7xZc2rQ1pHkFPsx8mRJLi9aQ=; b=Y9maxsATkcbroTC7Gs2beoJCLF7Q5vQT8t
+	oy17r4F49Nr8Ki1PdboBXmXfZSUM0V/Z2ipSfoKmZc2jRLvcbAXR3jAMSaMq3qGV
+	NH6UIgQA48LvblJE51LECKWW8cy7ffC+mbo678G+ubDwVl9/z0j2MDGEtX64txCG
+	G9IkH/b2GDbWno2pgUD6LVZXJzLxJQ3YWxX1/HGXFRrYEkcrkQhyU1HY3r40cRMY
+	Cl/i+hu6tGfYA9KZSbtApSDhyfQYLWGxi7WwPklPn+TcLqeJ8UWMoz6HDigToTnR
+	sWhXAD8ujMZBEsINl1/h0ah0jJJJr3mqy5VP+c31KnPQuXeW/E4g==
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 46wjbcpjh6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 30 May 2025 16:23:36 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 54UGE3kU019300;
+	Fri, 30 May 2025 16:23:35 GMT
+Received: from dm5pr21cu001.outbound.protection.outlook.com (mail-centralusazon11011016.outbound.protection.outlook.com [52.101.62.16])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 46u4jdg1uj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 30 May 2025 16:23:35 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wDd16J2m784gQKYYgA+nG9YDZdkQ98vRkmubi0T1XCKBYGIzpCZc1ggrR/9XOMPofLesq9W4nEZoCBqs+aJr6CvS2ukulTu2davJzpn6L5Yu25KX4IzxZblJnG9kHGb1TNZjzNZ8lc5zY6C8ka725sXeXjGUIDmzsxuMkmhYyssDM2h6DChlefDJUzByVSK1X3RZv7TK4RC5/nhM8rxxe6owoq8Zx7+aHTj98DxyTvRnp4tQzwsU+b45Hxa/UBz7ro3qBrCl4XTTUu3HLlZ2iNr97LSUCJYlAyRBODRyWS7hyiN7NL9aWfU5k4rwafzLGMSkyeielF8XuQu5XZgBdA==
+ b=IIP9nKk1pq26oj2y5bu4bwf7t1LccVLx+R1Ij+q8Q2/aj9wIUCGhCcEKBXyhVHgdn3BOTBm3gQCwsBRJ2hWcL0ChguN0M2EVqUpvk7120FdGOMhEgVaIISbFbFk+yuRQ1tWk/+gRjCW6aFkdVc3aW85JbOC1RifjZyjht1lypqVa127f8vSAI8hMENS6StG6FQue+hXf57Uj5/AgfNJyJoGVhpQQMRGJ/As5lpAmwiYFz9gglSVJl7PTpBrxfsYkBeHzhFs/++NhwW894n+fxOkaNkgYwWJ+A8KY5w+dXGyZOS+kqpZxXT3hqRdP7OktlRCfOo1NQ8/ssBGPzeFWNQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wb/Fp+uRMUu3LWYISpfCe6+ZoJXs2ED2L45GhzmoFkw=;
- b=VrU1OvYf+bP4HfW+jNWX8IBpVTs1vjY8z/8imJ41up0q1fWg00er3WlRDUZPvd/UF7o3WnABSraSrGm2TKG5JX+zz/4VapwavsB7Mb3sBslbPJOws1gaw8n1XcMxfBt1qTsZ+urX96OkcZLSfQrr+NPtkO9C6MMyQH+GF+2TXtUWGl/D0Np/hfuUNyXU9Stccp3dPtuAJ+zmrLvng7GowKT5/RkVOMTMOsbDCamA8/Oweu9iOKN+uPPCYFFo4G25oN7FF61Uo80RYIVRx+h/2lQFHKsoHdgqozld2CNSFA84Vsj5dbJSIGfD2cCB6fakkc/beyLNBGV9VbTCSo4yng==
+ bh=z3IMNQdsmC2DCOkbLyx7xZc2rQ1pHkFPsx8mRJLi9aQ=;
+ b=B05DTUNndrRC/znt9MkRGOhx/LJjPfABIjHA+o7uIe2T9KXcQflos/rNmHizW4YDj+puszCbmvuS7lhH5wG7veJTOj8TWpwMkV2CSltoubWVCeuvtwHdvIwlJ1vLf6nyFzwxf+Khbn3unjBiLM56dApgHyV7CC9b+x0qHehvLbEAPOTv4MCp2DFogOBo0veHVTomXZBGm/Jy/gOBEGzrKAehU0mdfLmau+kCGxaarpDygb22D3EigOtbOW/lvrxPFj4rCTRjMrt4ia6jzxdoPpZ/Mz8IQsjCHBG6Nrzw4APlgS+1kBi6haZ8it66rArcQBEDLtGlfjJyRGtiIL6ClA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wb/Fp+uRMUu3LWYISpfCe6+ZoJXs2ED2L45GhzmoFkw=;
- b=SQGEdxb5wOZl/U+JqwQKWscf1bT9tq61mJQEi0Ie3MTlxjisoIbufdMEZIESVMssuB9x87R+Bo7FdfirXKMa3Kzs3ByvG8I0/zq8sRyD+6/Dqm6pmVXtmBCyL1/c+6urEtiM82x/gE7ZBs34qpREKNsP3FRQIeSENROwwmJRFMIp/3yZJykw2seoCZyTLjyL5KgDNZ0UYjOixTpLf8C7zbKytc1D+g8tFTC0W5xwAKrgSBE+cCvmqOuWpetw8X9RzWX5LXv9n29FH53vQAPZG2lzS/X/8ZaN8FJOY5yvJyp5e9obO0g0/2CNDJ6Wnom9XLfOFdJi/b9+MxuO/qbM8g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
- DM3PR12MB9352.namprd12.prod.outlook.com (2603:10b6:0:4a::20) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8769.27; Fri, 30 May 2025 16:22:55 +0000
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a%4]) with mapi id 15.20.8769.025; Fri, 30 May 2025
- 16:22:55 +0000
-From: Zi Yan <ziy@nvidia.com>
-To: David Hildenbrand <david@redhat.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Oscar Salvador <osalvador@suse.de>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-	Mel Gorman <mgorman@techsingularity.net>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Brendan Jackman <jackmanb@google.com>,
-	Richard Chang <richardycc@google.com>,
-	linux-kernel@vger.kernel.org,
-	Zi Yan <ziy@nvidia.com>
-Subject: [PATCH v6 6/6] mm/page_isolation: remove migratetype parameter from more functions.
-Date: Fri, 30 May 2025 12:22:27 -0400
-Message-ID: <20250530162227.715551-7-ziy@nvidia.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250530162227.715551-1-ziy@nvidia.com>
-References: <20250530162227.715551-1-ziy@nvidia.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: BN9PR03CA0649.namprd03.prod.outlook.com
- (2603:10b6:408:13b::24) To DS7PR12MB9473.namprd12.prod.outlook.com
- (2603:10b6:8:252::5)
+ bh=z3IMNQdsmC2DCOkbLyx7xZc2rQ1pHkFPsx8mRJLi9aQ=;
+ b=oCyl+mXFmpvBmRnPZxUw2KzJBEl6GocTDSe3Y1VqRHhhvj3wiDWH9alaPuD6cj60ovuNd7UxVNLF1ccohtV9TG7zhHWzY9HRCr+11MQ57JDXq9coHNsasy7szPdtscEU6gMwDirFj2PrmgA+3muA84uZozqe0EjWRn5masqUlEg=
+Received: from PH0PR10MB5777.namprd10.prod.outlook.com (2603:10b6:510:128::16)
+ by DM6PR10MB4218.namprd10.prod.outlook.com (2603:10b6:5:222::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8746.35; Fri, 30 May
+ 2025 16:23:32 +0000
+Received: from PH0PR10MB5777.namprd10.prod.outlook.com
+ ([fe80::75a8:21cc:f343:f68c]) by PH0PR10MB5777.namprd10.prod.outlook.com
+ ([fe80::75a8:21cc:f343:f68c%6]) with mapi id 15.20.8746.035; Fri, 30 May 2025
+ 16:23:32 +0000
+Date: Fri, 30 May 2025 12:23:19 -0400
+From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+To: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        "David S. Miller" <davem@davemloft.net>,
+        Andreas Larsson <andreas@gaisler.com>, Juergen Gross <jgross@suse.com>,
+        Ajay Kaher <ajay.kaher@broadcom.com>,
+        Alexey Makhalov <alexey.makhalov@broadcom.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>, Arnd Bergmann <arnd@arndb.de>,
+        David Hildenbrand <david@redhat.com>,
+        Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, sparclinux@vger.kernel.org,
+        virtualization@lists.linux.dev, xen-devel@lists.xenproject.org,
+        linux-mm@kvack.org
+Subject: Re: [RFC PATCH v1 3/6] mm: Avoid calling page allocator from
+ apply_to_page_range()
+Message-ID: <6nf3cxwhij7jtfi2u6nmt4igezf754gmue5dfskn4jkfkxmjzr@7btdipzmzjuo>
+Mail-Followup-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
+	Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, "David S. Miller" <davem@davemloft.net>, 
+	Andreas Larsson <andreas@gaisler.com>, Juergen Gross <jgross@suse.com>, 
+	Ajay Kaher <ajay.kaher@broadcom.com>, Alexey Makhalov <alexey.makhalov@broadcom.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>, "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Arnd Bergmann <arnd@arndb.de>, David Hildenbrand <david@redhat.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
+	Michal Hocko <mhocko@suse.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, sparclinux@vger.kernel.org, 
+	virtualization@lists.linux.dev, xen-devel@lists.xenproject.org, linux-mm@kvack.org
+References: <20250530140446.2387131-1-ryan.roberts@arm.com>
+ <20250530140446.2387131-4-ryan.roberts@arm.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250530140446.2387131-4-ryan.roberts@arm.com>
+User-Agent: NeoMutt/20240425
+X-ClientProxiedBy: YQBPR0101CA0057.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:c00:1::34) To PH0PR10MB5777.namprd10.prod.outlook.com
+ (2603:10b6:510:128::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,597 +145,381 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|DM3PR12MB9352:EE_
-X-MS-Office365-Filtering-Correlation-Id: eea8a2c8-ea08-4ffd-f0e2-08dd9f963ba6
+X-MS-TrafficTypeDiagnostic: PH0PR10MB5777:EE_|DM6PR10MB4218:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2be6b663-a884-4de3-d462-08dd9f9651b4
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|376014|7416014|7053199007;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?QXIOsZ6AE/Zqw+XGItAxgmCkDxDFsCkfuB1tOrj7kW9QqxHZJ86EA/bja9fH?=
- =?us-ascii?Q?/sZWGLY9wAB7TnWy9kE7JZeFGeva9WyuG90D8Vsv2hOej8phKrYESC9PFS7q?=
- =?us-ascii?Q?WeRF7gCAHWUAirSVthyZEBkcC/wWhp10Fpdfco9my/Hlz0Raybfqexwc4Wtq?=
- =?us-ascii?Q?EOmUjyjjf5KXqoT8KBuFcSCGY685Rfsh5XS0Kcwzc//cW+KaLj2mLtTlnkxY?=
- =?us-ascii?Q?GDPZctINoCule3wqVZommZpAaOljc8af8mtcJhuQgIiQSxZqN+VjUn64Ng10?=
- =?us-ascii?Q?58LofmSeSv7+uiZbgyCEsRh03+VCA1rC33cHE2/vN1xnjsv9p4Vqrj5NeuXB?=
- =?us-ascii?Q?QHrHkabX+APM1duG0BkeVabtwy17VdfFLhCOYo5iUGWpGf9XBsvNpq5nYoff?=
- =?us-ascii?Q?CFiW/jDT3eGLLqmuTRCDdYTh+TbirSdazGTpI2tM0OMqcPB4brlpBQ/oFZpt?=
- =?us-ascii?Q?KlwtMHJ1b7w7SkVUVcT8fYnLVAurRcl2Dcs/W6BI2yA9b7XcZPntlvnu0yS0?=
- =?us-ascii?Q?uZ0SxM3wktAR8DuZopytcsL9NEeV5fxU4IucJqiSRRYxhKhjS+iEu02Gg6Ue?=
- =?us-ascii?Q?Mgqzh5isS/lpDWjuJDssS5tkSVgTTXRYXth7cPEVybk2cYlyg0XanLtWDbt0?=
- =?us-ascii?Q?MV+agk4dqdqlxz8FvDYMBS87dPT84cMREe12zMOU9ThKIjKZ+U5TJtldbkQ5?=
- =?us-ascii?Q?ECtX+Js4z3g02PX4VPW1qPHX/8RyyuKgGf/GUzu3FlAZPbj6+I49yoOIRuT7?=
- =?us-ascii?Q?icc3BvPp43TzI6wPFYO82K0t0U3YrOU4oMgyjUkqmSYR2lwNPd00//oTst7T?=
- =?us-ascii?Q?EwndOW3PSVz09dkp7OLSf+grihVsdTRQOrumJkSweU54P6UtufrQ3JupjHi5?=
- =?us-ascii?Q?emV/RFm0Noh0l9urm+nKdVAwMNYzoTgpwM9wgATGWY9/CJzFdLtFK1/KlVRz?=
- =?us-ascii?Q?PdrUaHR5gHSYxWKw+V0nZYmr+0GLv6tLORscfFP38xm8fhKR4vIGVeKO3L8J?=
- =?us-ascii?Q?+rKM3uXy+iec7Y/cHqWWNQD2gUtmUqTimILLrLuTxpH9DicBnoEqgF1xjTAe?=
- =?us-ascii?Q?vvTBKp54Rx3j+3sDqpHmh4eQkY22g0iSsKoktxNJnx5tytGMJIhCpcVdlOKc?=
- =?us-ascii?Q?lYV6JoQNHJgw0s/wrRNM6NpHMK1dGr1Lo15ActcLjRFSNTRgjpjNeJgO0lXP?=
- =?us-ascii?Q?wVAq1/fAwClcXM7wYCKi+WXq4iwn3AsifGeLFDiayzUB/UVFkBj2NmAObDvm?=
- =?us-ascii?Q?8UXyckafYlGnAhUPPLn67SixTGpX6pV5oDaHMOW+dPs0ikTWsgMOSanK2/ip?=
- =?us-ascii?Q?X7yZ9YwRCSJwJCLsSISlTAmid9XEcgPgdTTkykReXYLwNXFLT53703tU7fF5?=
- =?us-ascii?Q?fzkqQ9PvJqMQOVltnQGfWN00xiigsPS+Ff/0tFNNmUXsiZ1oV5D4s7Qwccen?=
- =?us-ascii?Q?lG8L/xLhcIw=3D?=
+	=?us-ascii?Q?5HT7V/TJEwTo2zZW0rM9ZsHJfQTrhquflzi9GU9aGf1bUgCnGmDpC0UHzee8?=
+ =?us-ascii?Q?pOM2WYan0fj2+qk9LPK0OfOeEUDrkmkC6XOW7D+NvjN0+sUp1q11nxzlYlWR?=
+ =?us-ascii?Q?KlgLCsM6FYGDxGH6Je8s9CQUAJRGAiGnDKt/C9Ts7WKzeqdBV5PqbLSn5+wN?=
+ =?us-ascii?Q?E77VM/DTfaQ4azHEJVyxBE4dx5G0UIBzscS/irKaZfJk6XCerh6NEc2CTt9u?=
+ =?us-ascii?Q?8G7w4se68aakL58PA5cRfLyJ5i/6zmd5Q38HxDtY0Iq/G7dl0leqUfGCs537?=
+ =?us-ascii?Q?MvU3eS0snhRQPRaPWYO56Izc56vBkAd9Es5Y1xLvJzkCqj6s9cu+uZVZfoA3?=
+ =?us-ascii?Q?9a6YKRlpECqk0eLV++maFZ3pMMm0LQMACiLADW7PCrqpm4P/qvSRI9agUVcd?=
+ =?us-ascii?Q?cQHF+WJRpMRBHrnj/p+vGjMas1Rp8qNe2z2r9YtiHPGYrD5+XyVDoP3P1qG6?=
+ =?us-ascii?Q?/7ZBIScpzdttNg04Z0GfRGjBkyxOmtzos/LZalUndL9e1+ZeuEPW629NN05S?=
+ =?us-ascii?Q?BoUy4g3UfcURMfvQAgHx3V3yCjiMMXpkaVdFQsgh1hXBw71tocPmAGtTq2Vg?=
+ =?us-ascii?Q?WomDLf0wg0N7hA+hmMppfCE0mZuoP8m4lURcOteJOLBuIvnTWS95iqk8I5CE?=
+ =?us-ascii?Q?QY/z/zgICyKwS3I6so1Y+Y9hqcyWq0WONxg7JhRLfkwPRpaO3YA4hqMeXH5c?=
+ =?us-ascii?Q?4B8baik83sep1jvilJ08XoH8JGf4wQw+jglLOviI7P131fcb6gRl06DPMKu4?=
+ =?us-ascii?Q?QJv6tkntdUJiWrg+r98N8uNge2i/cns23u3nwKVLRR9bqPdFgWftRUgiWAKP?=
+ =?us-ascii?Q?0/GHDnMK82RRo8ZsG8fbEeHGgxHqIRKdqg2Pg34CeTqbPbhc3pyjORRuiXZ/?=
+ =?us-ascii?Q?NPNVYFWTFOAOdF4yyR+dgLA0ry85yFj6Rr7Q04DY5T1pK29Pejr/9WI02wF0?=
+ =?us-ascii?Q?o/eoosvcKZCo5iI3zeQ+znaII/LAf9geILgq6FrziZ+Kr84hc7JLekYX+ZJM?=
+ =?us-ascii?Q?MPPrNtI0oEKvyluhw4P7oO64JMm8FZFzT6y05VVvjZ2NgM77/mFlns9thl2Z?=
+ =?us-ascii?Q?4ERLwjlqFKdJDy9nrHn9p48l+Q5NkrN1fgyR6RCYBGcRBasfRpd+zzBr7wIR?=
+ =?us-ascii?Q?MsdKtyFV9RcgFRw2P6DEyaKseiWw22AIA3EXfdd0clK7muvMG+vPWy8m6fMm?=
+ =?us-ascii?Q?EZQqVzAnuc6THMieZoiHoOtQH56c+NHHxnrjO4aqu82xikd89vozRKsgVip3?=
+ =?us-ascii?Q?SD1APnFBr56N4gLpDgq3n31pq3YiyPizlJ8wD9OkQAJJm07BQ7BLqj4hL9Sf?=
+ =?us-ascii?Q?I8cMLfJ+LLnCe2vhunntRdu1xEdCP5nJ2JaKsa8XyA8C/6KoI6GxQekc47+b?=
+ =?us-ascii?Q?L5HTpm9Hw8AEUKXZPkdXHd5s0v1jAW74PUjZ65L25A7Tgj4TPnPEUPbMQR5S?=
+ =?us-ascii?Q?CkWU6TSOH0o=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB5777.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(7053199007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?4VfCvKWpcCzq7IFJVfXPiIqZ2gI4Z9f+MT2qAJCnx5gh3XiHViItRDV1cGjl?=
- =?us-ascii?Q?0Koxag2o4Mu0ky4SnXiV5vVEutwLgURCsdzKHp3TsObvcQvxpBWaQ3k7O0GV?=
- =?us-ascii?Q?23svcUH4xmj3+q1dNqiZ/5EfnUTEsnMSh1n02bUfpGMvCadMP55BQNiBI3aU?=
- =?us-ascii?Q?kF29EbnuCNBY/MR8u2ChTrHIbNgS1vb/6ABCgOkP3GpwD70xE3Pz99ZFEsGh?=
- =?us-ascii?Q?1eDhSIZTlFAaqVVEUVeXcWzSkrbMqSRVEQAZfTkH2i5FYZsee3dViKhi44y+?=
- =?us-ascii?Q?2tNSfRcjjyT3HngKVXqF0yN5Ene356T4ZTah/asE59s8xmxxaZkdB5lAlsRN?=
- =?us-ascii?Q?NMqsoMfUv6k7NhiaiDtShCww4GcsMbildSfphVzj6KY/iOkLUep1yjPgkcGj?=
- =?us-ascii?Q?jSA2VgePbnQe9JA7OLjOMLcq8cGBhRG1Dm1wDNwXVk3AyOCqyLa5EPlKnBy5?=
- =?us-ascii?Q?nyEBp+eXVLOgFZvwcD6Y9IE7XGG0YU0aGLMjyfV285dfcCbtXT0sksIklmN5?=
- =?us-ascii?Q?Bddqi6KGljzirjuIEcwHZ0AI/tGE1uyUh3iX8xpdPD9lAVT6oev3cuTfKXRn?=
- =?us-ascii?Q?KnIhvSp1ijsDrOHY20/aTFXZ3H+nPJQoXyJX/E6h2BK8vwyC9qdv6zPAyiZk?=
- =?us-ascii?Q?LGUVPY4Tepu+hK8U66qmm+blWYQ989nKeBCx5XqCZEUtilBpBaQydtTJsqiJ?=
- =?us-ascii?Q?8U/ybGK7ZVOZIGB6g3uOytPLGpsZ0rmp0yuAuhuL4LrzSXzymyGZPOXEGzOz?=
- =?us-ascii?Q?O6yeZYZ+VPRr0vQG9skndlGHRB/reZnXpxt80NFm0s0x3AVHRIMfQt1+GnfF?=
- =?us-ascii?Q?VekKAfHpHk3C9eiWkk7cBvoIht7LtxOMQCgVBMObypcPfkxHGPIHm8xwXFMY?=
- =?us-ascii?Q?lzOn6mP+1qUZ3ttVIV8DW2oXD7JzLIPgzbzC7ZEcfd2/lRVSRMmyB3MmETQP?=
- =?us-ascii?Q?fPz2jq4XU/U8zhTHK7xmsacyykuDg3H4Z/kyBNgYPjt3JhcPfDrbStd99+mJ?=
- =?us-ascii?Q?HOY740MGQTMRepgfOOlLCh5mIg1ITyL1nRTJZbmd3tntp7lRKv1n8y8wr9xs?=
- =?us-ascii?Q?p9nr81WUIUSKmjntcNS1d7/EAIeUQ5syBo+ePmAsxDLgu0KmweNmw+R+4s7p?=
- =?us-ascii?Q?+J1oS/Kuj7aJql6DBx707MSKxMAwdnbHocNu6C+FZoHlMJ6JNlh+iGv6DXoN?=
- =?us-ascii?Q?anDmTJ5NUXQyibCGSekKoJvxOZa7ZNxebQJKfI8Ksutk5Zoe7UmXcdI9pLMy?=
- =?us-ascii?Q?Jaa0VTn+qDrN+oNQd/eFXarjWn0IIK4EgDnwqNCLJmaqUwBjwhdNlM7xpHzt?=
- =?us-ascii?Q?e1iqJ5Kbbjb3czUrxOSTnjkqzqRim6ZBPNj0UAd7y/XQszwveA6+NlLFx6A4?=
- =?us-ascii?Q?Z+C/a3k+OmJK019PehGvW5y9ifpz04i01AWzGI0AXQui9TqT9d8t7subifOa?=
- =?us-ascii?Q?Vuesgf827pELqQy0hQ+kbqbEXHzzAkhKZPN/dMk7KeeRQ6vp8qaUJrWZ4xIp?=
- =?us-ascii?Q?HYZ4griR7fukzHvs//XrrJGSor8QXuFsaJgHdhxy0In49xzAMeW76RY/vIfU?=
- =?us-ascii?Q?bZ7b4ct0fp+FbPd3HL3PjgHC0iJ788D9o/qbQ/RY?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: eea8a2c8-ea08-4ffd-f0e2-08dd9f963ba6
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
+	=?us-ascii?Q?1hbAFM/AdoIhAGVP9GYa+QS4ch2Ju6Gzvz8mraHPe2WuiBRp+TRJL2r5tnNB?=
+ =?us-ascii?Q?E1S68gKbzsMvaUrRGC5g9ftvF6uvzt4FW5b4frY6NxSL89U3/l0tgiKmJhRr?=
+ =?us-ascii?Q?y1Nxi2ot1qqklzX51nto8pOHTkrgMCPK6ERHyx6MATtP8Bbn8Bn2vFri/g6m?=
+ =?us-ascii?Q?q69vKgWMsgNLJCgBF+eIpwndG8suSQPwFHot13QHnheLfbjbqLHgkBMLuRmb?=
+ =?us-ascii?Q?JGOigdDO54+oGI9PzWrHzOm6Xtu7WEpG/nb/F92h3DVevnFYuGKMmlJR9MvX?=
+ =?us-ascii?Q?MKtJz4B96qEMKOZ8lHe4x1e7PUtjmjLFwFPDzLgIhmwz5BhnRuJT6otzwChy?=
+ =?us-ascii?Q?CcVBJn35OYnU1VM5CxLWMnhTU4HTssG0KMHmrKyP4PUt6LwV68MisX8x+1F7?=
+ =?us-ascii?Q?4ia8ABoABeygTq8XQZ83pbBNLIX1oeFU/O6U0+40m2eJuRW8be/9nb16cOWl?=
+ =?us-ascii?Q?0MDiFMEG9MpXssFit/FSBZgq8qK6iWaG8JnG6knJbg1W4mxpqquOClOGPpB8?=
+ =?us-ascii?Q?ogdRHTh/69guyjLnXeMRTlWMYAlnEgxM1yc3qJ4YAowtUIcCDi4qVMQkP7sw?=
+ =?us-ascii?Q?RRcgDbQcZgtpMlOxjMRDE39dV6ZcAldz+MHxKNEM2aXDPDkHTv9wapWJRaed?=
+ =?us-ascii?Q?GtFHFHCyxjiZO1ETSgclLjMWWQI5svITQ2KMpNqmiAi45UN7O3WHTTNPhmIb?=
+ =?us-ascii?Q?VKR1Enu50KtHh6IWaUeMBkPFB7ap8CfAjspDqZ48RQ3rBdLjlvFXoKC3x/gW?=
+ =?us-ascii?Q?2232Dd+IIc5jmxHrWE7+1P1LW+jYqqH9rTcOOzS5XR+794m5uZcgsAfxYXO3?=
+ =?us-ascii?Q?+lDPBSmDIa2xvumyC0HroxeJRNdrPz41ZrKrCpWkjKuaa+rnfarGIWOVKWCL?=
+ =?us-ascii?Q?7LsYMP41LQdORi2iWCVkvE65lwGLQqHZRtRXZPM5KqH4kBzEwk+ChkYFm25W?=
+ =?us-ascii?Q?pL17Zfmww4gniRB1/ZxQsGGYy49iGoKi9OtOrF1IEF72pFS8hLXxrbmD70SJ?=
+ =?us-ascii?Q?ofPKg6fr5ZsnCothc8x7CUn0/7X3QQhFGG0X7nqhceXlDpv6k0W1uB0RL+z5?=
+ =?us-ascii?Q?x+CCh+SNo5aJVbqoM3F7Z1VPTYOPw/n/wel+7yTQGM7WFkqxw2rkBS10qr9z?=
+ =?us-ascii?Q?cEIJW6kFrTbrBitzMFj4recrAG81JYUgXRGPD8XlS8VHsNw2EeFxnLs2a65N?=
+ =?us-ascii?Q?Cw7teRvrPnAg1PvGI6eagtk0xSgOAI3fpgX5nGgGjZmwXzOyninjcpJ7oVSY?=
+ =?us-ascii?Q?ijcdetf46ChCV6ck2RzcGRNngvKw1s2AThJlJwU2qkf7biQGWLrO6SxO5V/+?=
+ =?us-ascii?Q?eb+78lRA/K9GVUic4FACiyQ5JAenUJA3dSfiPjlETsetARZtQgFcKa0GykLR?=
+ =?us-ascii?Q?iPFtSNQ3eghjHXfAiYgv2xCKM5+D3irz/Gq8XPPHGOm0SCOVzDaDk7EyXE06?=
+ =?us-ascii?Q?McCEJxjaXTyrg56VOkd+WaS42dQJ6DVZIR0hnzbpIkaDGHa+sFW8JgAWv3G1?=
+ =?us-ascii?Q?qKjNdX/o6zk27hcm8Yun0ChCUYyq22PQNE0Zg0XIQk5h/AjBdpnJL+gTIuDB?=
+ =?us-ascii?Q?/QtHwlH6Iu8bHBFosP7fiU6991tCnfdU54ArLkd0?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	KBKr0pL5HgZGkOok8B5HfawQ6ctregPXPVEk5dUOaZlbBoHbLKDlIqatRX9hNxA86sQ443J+gwMIpQM09SIopc+UIwBlBzaxkTX/wqZPVbjhOhvFgE5DSyiXSIPswdjsZIT84BiTaDO6mtMAhSpJ3ZOsKtsAwbYpFEWKT4DNYmvddeQqVW+QTtjz69vO9afq903t/GwjIxzP4WZgIp3QHr4hNXMJEjTmENMVMi5cVkOJ2g8CA3TApIvLgfUZe9rTWajc6s6NfuSRFCZmNAS3vTGlcvCLOJCxFtQGcPqs6ZNLoAvDtBMk3mV2oSRFu8pTaXz05CTkakQU5/U0M9aCie7zq7OSJQ0x6nqFn+WpwedhTEesCgB1dcN4tANh+Jzzp5JLkmaG+hYnLZvdZjCHsfDF7T4BMluhtnRqQUTxD3ACSm2KyWG+znLXggy8DvFN+xlZ1/qOTtpfP9bGPbLWf8VnpdNAVDxs1kVx1f84JuEnI3KkijXSddsj3CgjhpOMy6GigmL+en3khWFpN/QQh8Wsbt0d0QWxegs9n+4sN7qUSgWPxYWJhqMQnPcY3h8PcLAUvNtiPFcfkeRJ8Y2VkubUxi87tQ1hW3Dvtj9C7qQ=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2be6b663-a884-4de3-d462-08dd9f9651b4
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB5777.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 May 2025 16:22:55.3079
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 May 2025 16:23:32.3861
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: t1LCcF+GHO/46pB1yTSsy3/ii2MDy9SHOydL0MFwSh8s9AJqtJkLCmS3g4Bpoa5s
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PR12MB9352
+X-MS-Exchange-CrossTenant-UserPrincipalName: 4LQLNejlDYm4KVGqjMxTNaABALov65WQAJAG4Yi73QiAYLLQ1CukZoXCPD5VgxF5S61Bi+QsjDfanrNCC/F19A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR10MB4218
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-30_07,2025-05-30_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 adultscore=0 spamscore=0
+ suspectscore=0 bulkscore=0 phishscore=0 mlxlogscore=999 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
+ definitions=main-2505300145
+X-Proofpoint-GUID: 22ulwtNqNm5tFI6AH-5TBf-qOW4Gyq_x
+X-Proofpoint-ORIG-GUID: 22ulwtNqNm5tFI6AH-5TBf-qOW4Gyq_x
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTMwMDE0MyBTYWx0ZWRfX4HMZDLoR8DfV 37lOwoY4qz3TImL0+3UMQmzbvqkiwq5AxIlp9er8pJBSalRprWhESbEn1Q/dsfxN2wyzlKcZQMl DJariRI9Que0+Neq4NitZOpM6qOteaqH01fdiaa0vN2S5S+APAf+ug5Y2dKVMgNJk24iv2mmKkJ
+ Im9ghpzjm0tg/uacEIm7QHnDCpHutQnm37vEGNTivF7ketd1GoNwVETEXtUbavJms3IvxmEX/QA 1drbnuCa5/h286riEXFucRQZTLKF4VbaPjNbvuQq+WqXdQWbhv7HT++wXaD896ORBVP+q8vb9Ro 06xurYb3f+IT6GGx205Iidq0NJp7eJJnJvYZKYhbkR+sD1Oprl3h6TktY8TbTdZ8l4Anb7lmX8y
+ mdGyGB3Mwm4vpebfzRh+Xl47IsBlta80tNNMbhAX9+S1fip5IncFZlczjgSuHnsAILEt/+fL
+X-Authority-Analysis: v=2.4 cv=c8qrQQ9l c=1 sm=1 tr=0 ts=6839db88 b=1 cx=c_pps a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=dt9VzEwgFbYA:10 a=GoEa3M9JfhUA:10 a=7CQSdrXTAAAA:8 a=BttKmYIqwxqZfdoHdj4A:9 a=CjuIK1q_8ugA:10 a=a-qgeE7W1pNrGK8U0ZQC:22 cc=ntf awl=host:13206
 
-migratetype is no longer overwritten during pageblock isolation,
-start_isolate_page_range(), has_unmovable_pages(), and
-set_migratetype_isolate() no longer need which migratetype to restore
-during isolation failure.
+* Ryan Roberts <ryan.roberts@arm.com> [250530 10:05]:
+> Lazy mmu mode applies to the current task and permits pte modifications
+> to be deferred and updated at a later time in a batch to improve
+> performance. apply_to_page_range() calls its callback in lazy mmu mode
+> and some of those callbacks call into the page allocator to either
+> allocate or free pages.
+> 
+> This is problematic with CONFIG_DEBUG_PAGEALLOC because
+> debug_pagealloc_[un]map_pages() calls the arch implementation of
+> __kernel_map_pages() which must modify the ptes for the linear map.
+> 
+> There are two possibilities at this point:
+> 
+>  - If the arch implementation modifies the ptes directly without first
+>    entering lazy mmu mode, the pte modifications may get deferred until
+>    the existing lazy mmu mode is exited. This could result in taking
+>    spurious faults for example.
+> 
+>  - If the arch implementation enters a nested lazy mmu mode before
+>    modification of the ptes (many arches use apply_to_page_range()),
+>    then the linear map updates will definitely be applied upon leaving
+>    the inner lazy mmu mode. But because lazy mmu mode does not support
+>    nesting, the remainder of the outer user is no longer in lazy mmu
+>    mode and the optimization opportunity is lost.
+> 
+> So let's just ensure that the page allocator is never called from within
+> lazy mmu mode. New "_nolazy" variants of apply_to_page_range() and
+> apply_to_existing_page_range() are introduced which don't enter lazy mmu
+> mode. Then users which need to call into the page allocator within their
+> callback are updated to use the _nolazy variants.
+> 
+> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+> ---
+>  include/linux/mm.h |  6 ++++++
+>  kernel/bpf/arena.c |  6 +++---
+>  mm/kasan/shadow.c  |  2 +-
+>  mm/memory.c        | 54 +++++++++++++++++++++++++++++++++++-----------
+>  4 files changed, 51 insertions(+), 17 deletions(-)
+> 
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index e51dba8398f7..11cae6ce04ff 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -3743,9 +3743,15 @@ static inline bool gup_can_follow_protnone(struct vm_area_struct *vma,
+>  typedef int (*pte_fn_t)(pte_t *pte, unsigned long addr, void *data);
+>  extern int apply_to_page_range(struct mm_struct *mm, unsigned long address,
+>  			       unsigned long size, pte_fn_t fn, void *data);
+> +extern int apply_to_page_range_nolazy(struct mm_struct *mm,
+> +				      unsigned long address, unsigned long size,
+> +				      pte_fn_t fn, void *data);
 
-For has_unmoable_pages(), it needs to know if the isolation is for CMA
-allocation, so adding CMA_ALLOCATION to provide the information. At the
-same time change isolation flags to enum pb_isolate_mode
-(PB_ISOLATE_MODE_MEM_OFFLINE, PB_ISOLATE_MODE_CMA_ALLOC,
-PB_ISOLATE_MODE_OTHER). Remove REPORT_FAILURE and check
-MEMORY_OFFLINE instead, since only PB_ISOLATE_MODE_MEM_OFFLINE reports
-isolation failures.
+We are removing externs as things are edited, so probably drop them
+here.
 
-alloc_contig_range() no longer needs migratetype. Replace it with
-enum acr_flags_t to tell if an allocation is for CMA. So does
-__alloc_contig_migrate_range().
+>  extern int apply_to_existing_page_range(struct mm_struct *mm,
+>  				   unsigned long address, unsigned long size,
+>  				   pte_fn_t fn, void *data);
+> +extern int apply_to_existing_page_range_nolazy(struct mm_struct *mm,
+> +				   unsigned long address, unsigned long size,
+> +				   pte_fn_t fn, void *data);
+>  
+>  #ifdef CONFIG_PAGE_POISONING
+>  extern void __kernel_poison_pages(struct page *page, int numpages);
+> diff --git a/kernel/bpf/arena.c b/kernel/bpf/arena.c
+> index 0d56cea71602..ca833cfeefb7 100644
+> --- a/kernel/bpf/arena.c
+> +++ b/kernel/bpf/arena.c
+> @@ -187,10 +187,10 @@ static void arena_map_free(struct bpf_map *map)
+>  	/*
+>  	 * free_vm_area() calls remove_vm_area() that calls free_unmap_vmap_area().
+>  	 * It unmaps everything from vmalloc area and clears pgtables.
+> -	 * Call apply_to_existing_page_range() first to find populated ptes and
+> -	 * free those pages.
+> +	 * Call apply_to_existing_page_range_nolazy() first to find populated
+> +	 * ptes and free those pages.
+>  	 */
+> -	apply_to_existing_page_range(&init_mm, bpf_arena_get_kern_vm_start(arena),
+> +	apply_to_existing_page_range_nolazy(&init_mm, bpf_arena_get_kern_vm_start(arena),
+>  				     KERN_VM_SZ - GUARD_SZ, existing_page_cb, NULL);
+>  	free_vm_area(arena->kern_vm);
+>  	range_tree_destroy(&arena->rt);
+> diff --git a/mm/kasan/shadow.c b/mm/kasan/shadow.c
+> index d2c70cd2afb1..2325c5166c3a 100644
+> --- a/mm/kasan/shadow.c
+> +++ b/mm/kasan/shadow.c
+> @@ -590,7 +590,7 @@ void kasan_release_vmalloc(unsigned long start, unsigned long end,
+>  
+>  
+>  		if (flags & KASAN_VMALLOC_PAGE_RANGE)
+> -			apply_to_existing_page_range(&init_mm,
+> +			apply_to_existing_page_range_nolazy(&init_mm,
+>  					     (unsigned long)shadow_start,
+>  					     size, kasan_depopulate_vmalloc_pte,
+>  					     NULL);
+> diff --git a/mm/memory.c b/mm/memory.c
+> index 49199410805c..24436074ce48 100644
+> --- a/mm/memory.c
+> +++ b/mm/memory.c
+> @@ -2913,7 +2913,7 @@ EXPORT_SYMBOL(vm_iomap_memory);
+>  static int apply_to_pte_range(struct mm_struct *mm, pmd_t *pmd,
+>  				     unsigned long addr, unsigned long end,
+>  				     pte_fn_t fn, void *data, bool create,
+> -				     pgtbl_mod_mask *mask)
+> +				     pgtbl_mod_mask *mask, bool lazy_mmu)
+>  {
+>  	pte_t *pte, *mapped_pte;
+>  	int err = 0;
+> @@ -2933,7 +2933,8 @@ static int apply_to_pte_range(struct mm_struct *mm, pmd_t *pmd,
+>  			return -EINVAL;
+>  	}
+>  
+> -	arch_enter_lazy_mmu_mode();
+> +	if (lazy_mmu)
+> +		arch_enter_lazy_mmu_mode();
+>  
+>  	if (fn) {
+>  		do {
+> @@ -2946,7 +2947,8 @@ static int apply_to_pte_range(struct mm_struct *mm, pmd_t *pmd,
+>  	}
+>  	*mask |= PGTBL_PTE_MODIFIED;
+>  
+> -	arch_leave_lazy_mmu_mode();
+> +	if (lazy_mmu)
+> +		arch_leave_lazy_mmu_mode();
+>  
+>  	if (mm != &init_mm)
+>  		pte_unmap_unlock(mapped_pte, ptl);
+> @@ -2956,7 +2958,7 @@ static int apply_to_pte_range(struct mm_struct *mm, pmd_t *pmd,
+>  static int apply_to_pmd_range(struct mm_struct *mm, pud_t *pud,
+>  				     unsigned long addr, unsigned long end,
+>  				     pte_fn_t fn, void *data, bool create,
+> -				     pgtbl_mod_mask *mask)
+> +				     pgtbl_mod_mask *mask, bool lazy_mmu)
 
-Signed-off-by: Zi Yan <ziy@nvidia.com>
----
- drivers/virtio/virtio_mem.c    |  2 +-
- include/linux/gfp.h            |  9 ++++-
- include/linux/page-isolation.h | 20 ++++++++--
- include/trace/events/kmem.h    | 14 ++++---
- mm/cma.c                       |  2 +-
- mm/memory_hotplug.c            |  6 +--
- mm/page_alloc.c                | 27 ++++++-------
- mm/page_isolation.c            | 70 +++++++++++++++-------------------
- 8 files changed, 82 insertions(+), 68 deletions(-)
+I am having a hard time understanding why other lazy mmus were more
+self-contained, but arm has added arguments to generic code?
 
-diff --git a/drivers/virtio/virtio_mem.c b/drivers/virtio/virtio_mem.c
-index 56d0dbe62163..6bce70b139b2 100644
---- a/drivers/virtio/virtio_mem.c
-+++ b/drivers/virtio/virtio_mem.c
-@@ -1243,7 +1243,7 @@ static int virtio_mem_fake_offline(struct virtio_mem *vm, unsigned long pfn,
- 		if (atomic_read(&vm->config_changed))
- 			return -EAGAIN;
- 
--		rc = alloc_contig_range(pfn, pfn + nr_pages, MIGRATE_MOVABLE,
-+		rc = alloc_contig_range(pfn, pfn + nr_pages, ACR_OTHER,
- 					GFP_KERNEL);
- 		if (rc == -ENOMEM)
- 			/* whoops, out of memory */
-diff --git a/include/linux/gfp.h b/include/linux/gfp.h
-index be160e8d8bcb..51990d571e3e 100644
---- a/include/linux/gfp.h
-+++ b/include/linux/gfp.h
-@@ -423,9 +423,16 @@ static inline bool gfp_compaction_allowed(gfp_t gfp_mask)
- extern gfp_t vma_thp_gfp_mask(struct vm_area_struct *vma);
- 
- #ifdef CONFIG_CONTIG_ALLOC
-+
-+enum acr_flags_t {
-+	ACR_CMA,	// CMA allocation
-+	ACR_OTHER,	// other allocation
-+};
-+
- /* The below functions must be run on a range from a single zone. */
- extern int alloc_contig_range_noprof(unsigned long start, unsigned long end,
--			      unsigned migratetype, gfp_t gfp_mask);
-+				     enum acr_flags_t alloc_flags,
-+				     gfp_t gfp_mask);
- #define alloc_contig_range(...)			alloc_hooks(alloc_contig_range_noprof(__VA_ARGS__))
- 
- extern struct page *alloc_contig_pages_noprof(unsigned long nr_pages, gfp_t gfp_mask,
-diff --git a/include/linux/page-isolation.h b/include/linux/page-isolation.h
-index 7a681a49e73c..3e2f960e166c 100644
---- a/include/linux/page-isolation.h
-+++ b/include/linux/page-isolation.h
-@@ -38,8 +38,20 @@ static inline void set_pageblock_isolate(struct page *page)
- }
- #endif
- 
--#define MEMORY_OFFLINE	0x1
--#define REPORT_FAILURE	0x2
-+/*
-+ * Pageblock isolation modes:
-+ * PB_ISOLATE_MODE_MEM_OFFLINE - isolate to offline (!allocate) memory
-+ *				 e.g., skip over PageHWPoison() pages and
-+ *				 PageOffline() pages. Unmovable pages will be
-+ *				 reported in this mode.
-+ * PB_ISOLATE_MODE_CMA_ALLOC   - isolate for CMA allocations
-+ * PB_ISOLATE_MODE_OTHER       - isolate for other purposes
-+ */
-+enum pb_isolate_mode {
-+	PB_ISOLATE_MODE_MEM_OFFLINE,
-+	PB_ISOLATE_MODE_CMA_ALLOC,
-+	PB_ISOLATE_MODE_OTHER,
-+};
- 
- void __meminit init_pageblock_migratetype(struct page *page,
- 					  enum migratetype migratetype,
-@@ -49,10 +61,10 @@ bool pageblock_isolate_and_move_free_pages(struct zone *zone, struct page *page)
- bool pageblock_unisolate_and_move_free_pages(struct zone *zone, struct page *page);
- 
- int start_isolate_page_range(unsigned long start_pfn, unsigned long end_pfn,
--			     int migratetype, int flags);
-+			     enum pb_isolate_mode mode);
- 
- void undo_isolate_page_range(unsigned long start_pfn, unsigned long end_pfn);
- 
- int test_pages_isolated(unsigned long start_pfn, unsigned long end_pfn,
--			int isol_flags);
-+			enum pb_isolate_mode mode);
- #endif
-diff --git a/include/trace/events/kmem.h b/include/trace/events/kmem.h
-index f74925a6cf69..7c4e2e703a23 100644
---- a/include/trace/events/kmem.h
-+++ b/include/trace/events/kmem.h
-@@ -304,6 +304,7 @@ TRACE_EVENT(mm_page_alloc_extfrag,
- 		__entry->change_ownership)
- );
- 
-+#ifdef CONFIG_CONTIG_ALLOC
- TRACE_EVENT(mm_alloc_contig_migrate_range_info,
- 
- 	TP_PROTO(unsigned long start,
-@@ -311,9 +312,9 @@ TRACE_EVENT(mm_alloc_contig_migrate_range_info,
- 		 unsigned long nr_migrated,
- 		 unsigned long nr_reclaimed,
- 		 unsigned long nr_mapped,
--		 int migratetype),
-+		 enum acr_flags_t alloc_flags),
- 
--	TP_ARGS(start, end, nr_migrated, nr_reclaimed, nr_mapped, migratetype),
-+	TP_ARGS(start, end, nr_migrated, nr_reclaimed, nr_mapped, alloc_flags),
- 
- 	TP_STRUCT__entry(
- 		__field(unsigned long, start)
-@@ -321,7 +322,7 @@ TRACE_EVENT(mm_alloc_contig_migrate_range_info,
- 		__field(unsigned long, nr_migrated)
- 		__field(unsigned long, nr_reclaimed)
- 		__field(unsigned long, nr_mapped)
--		__field(int, migratetype)
-+		__field(enum acr_flags_t, alloc_flags)
- 	),
- 
- 	TP_fast_assign(
-@@ -330,17 +331,18 @@ TRACE_EVENT(mm_alloc_contig_migrate_range_info,
- 		__entry->nr_migrated = nr_migrated;
- 		__entry->nr_reclaimed = nr_reclaimed;
- 		__entry->nr_mapped = nr_mapped;
--		__entry->migratetype = migratetype;
-+		__entry->alloc_flags = alloc_flags;
- 	),
- 
--	TP_printk("start=0x%lx end=0x%lx migratetype=%d nr_migrated=%lu nr_reclaimed=%lu nr_mapped=%lu",
-+	TP_printk("start=0x%lx end=0x%lx alloc_flags=%d nr_migrated=%lu nr_reclaimed=%lu nr_mapped=%lu",
- 		  __entry->start,
- 		  __entry->end,
--		  __entry->migratetype,
-+		  __entry->alloc_flags,
- 		  __entry->nr_migrated,
- 		  __entry->nr_reclaimed,
- 		  __entry->nr_mapped)
- );
-+#endif
- 
- TRACE_EVENT(mm_setup_per_zone_wmarks,
- 
-diff --git a/mm/cma.c b/mm/cma.c
-index 397567883a10..9ee8fad797bc 100644
---- a/mm/cma.c
-+++ b/mm/cma.c
-@@ -822,7 +822,7 @@ static int cma_range_alloc(struct cma *cma, struct cma_memrange *cmr,
- 
- 		pfn = cmr->base_pfn + (bitmap_no << cma->order_per_bit);
- 		mutex_lock(&cma->alloc_mutex);
--		ret = alloc_contig_range(pfn, pfn + count, MIGRATE_CMA, gfp);
-+		ret = alloc_contig_range(pfn, pfn + count, ACR_CMA, gfp);
- 		mutex_unlock(&cma->alloc_mutex);
- 		if (ret == 0) {
- 			page = pfn_to_page(pfn);
-diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index ab66acd3e6b3..19cad4460cee 100644
---- a/mm/memory_hotplug.c
-+++ b/mm/memory_hotplug.c
-@@ -2009,8 +2009,7 @@ int offline_pages(unsigned long start_pfn, unsigned long nr_pages,
- 
- 	/* set above range as isolated */
- 	ret = start_isolate_page_range(start_pfn, end_pfn,
--				       MIGRATE_MOVABLE,
--				       MEMORY_OFFLINE | REPORT_FAILURE);
-+				       PB_ISOLATE_MODE_MEM_OFFLINE);
- 	if (ret) {
- 		reason = "failure to isolate range";
- 		goto failed_removal_pcplists_disabled;
-@@ -2069,7 +2068,8 @@ int offline_pages(unsigned long start_pfn, unsigned long nr_pages,
- 			goto failed_removal_isolated;
- 		}
- 
--		ret = test_pages_isolated(start_pfn, end_pfn, MEMORY_OFFLINE);
-+		ret = test_pages_isolated(start_pfn, end_pfn,
-+					  PB_ISOLATE_MODE_MEM_OFFLINE);
- 
- 	} while (ret);
- 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index a248faf30ee0..c28e5c2105e5 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -6697,11 +6697,12 @@ static void alloc_contig_dump_pages(struct list_head *page_list)
- 
- /*
-  * [start, end) must belong to a single zone.
-- * @migratetype: using migratetype to filter the type of migration in
-+ * @alloc_flags: using acr_flags_t to filter the type of migration in
-  *		trace_mm_alloc_contig_migrate_range_info.
-  */
- static int __alloc_contig_migrate_range(struct compact_control *cc,
--		unsigned long start, unsigned long end, int migratetype)
-+					unsigned long start, unsigned long end,
-+					enum acr_flags_t alloc_flags)
- {
- 	/* This function is based on compact_zone() from compaction.c. */
- 	unsigned int nr_reclaimed;
-@@ -6773,7 +6774,7 @@ static int __alloc_contig_migrate_range(struct compact_control *cc,
- 		putback_movable_pages(&cc->migratepages);
- 	}
- 
--	trace_mm_alloc_contig_migrate_range_info(start, end, migratetype,
-+	trace_mm_alloc_contig_migrate_range_info(start, end, alloc_flags,
- 						 total_migrated,
- 						 total_reclaimed,
- 						 total_mapped);
-@@ -6844,10 +6845,7 @@ static int __alloc_contig_verify_gfp_mask(gfp_t gfp_mask, gfp_t *gfp_cc_mask)
-  * alloc_contig_range() -- tries to allocate given range of pages
-  * @start:	start PFN to allocate
-  * @end:	one-past-the-last PFN to allocate
-- * @migratetype:	migratetype of the underlying pageblocks (either
-- *			#MIGRATE_MOVABLE or #MIGRATE_CMA).  All pageblocks
-- *			in range must have the same migratetype and it must
-- *			be either of the two.
-+ * @alloc_flags:	allocation information
-  * @gfp_mask:	GFP mask. Node/zone/placement hints are ignored; only some
-  *		action and reclaim modifiers are supported. Reclaim modifiers
-  *		control allocation behavior during compaction/migration/reclaim.
-@@ -6864,7 +6862,7 @@ static int __alloc_contig_verify_gfp_mask(gfp_t gfp_mask, gfp_t *gfp_cc_mask)
-  * need to be freed with free_contig_range().
-  */
- int alloc_contig_range_noprof(unsigned long start, unsigned long end,
--		       unsigned migratetype, gfp_t gfp_mask)
-+			      enum acr_flags_t alloc_flags, gfp_t gfp_mask)
- {
- 	unsigned long outer_start, outer_end;
- 	int ret = 0;
-@@ -6879,6 +6877,9 @@ int alloc_contig_range_noprof(unsigned long start, unsigned long end,
- 		.alloc_contig = true,
- 	};
- 	INIT_LIST_HEAD(&cc.migratepages);
-+	enum pb_isolate_mode mode = (alloc_flags == ACR_CMA) ?
-+					    PB_ISOLATE_MODE_CMA_ALLOC :
-+					    PB_ISOLATE_MODE_OTHER;
- 
- 	gfp_mask = current_gfp_context(gfp_mask);
- 	if (__alloc_contig_verify_gfp_mask(gfp_mask, (gfp_t *)&cc.gfp_mask))
-@@ -6905,7 +6906,7 @@ int alloc_contig_range_noprof(unsigned long start, unsigned long end,
- 	 * put back to page allocator so that buddy can use them.
- 	 */
- 
--	ret = start_isolate_page_range(start, end, migratetype, 0);
-+	ret = start_isolate_page_range(start, end, mode);
- 	if (ret)
- 		goto done;
- 
-@@ -6921,7 +6922,7 @@ int alloc_contig_range_noprof(unsigned long start, unsigned long end,
- 	 * allocated.  So, if we fall through be sure to clear ret so that
- 	 * -EBUSY is not accidentally used or returned to caller.
- 	 */
--	ret = __alloc_contig_migrate_range(&cc, start, end, migratetype);
-+	ret = __alloc_contig_migrate_range(&cc, start, end, alloc_flags);
- 	if (ret && ret != -EBUSY)
- 		goto done;
- 
-@@ -6955,7 +6956,7 @@ int alloc_contig_range_noprof(unsigned long start, unsigned long end,
- 	outer_start = find_large_buddy(start);
- 
- 	/* Make sure the range is really isolated. */
--	if (test_pages_isolated(outer_start, end, 0)) {
-+	if (test_pages_isolated(outer_start, end, mode)) {
- 		ret = -EBUSY;
- 		goto done;
- 	}
-@@ -6998,8 +6999,8 @@ static int __alloc_contig_pages(unsigned long start_pfn,
- {
- 	unsigned long end_pfn = start_pfn + nr_pages;
- 
--	return alloc_contig_range_noprof(start_pfn, end_pfn, MIGRATE_MOVABLE,
--				   gfp_mask);
-+	return alloc_contig_range_noprof(start_pfn, end_pfn, ACR_OTHER,
-+					 gfp_mask);
- }
- 
- static bool pfn_range_valid_contig(struct zone *z, unsigned long start_pfn,
-diff --git a/mm/page_isolation.c b/mm/page_isolation.c
-index 1edfef408faf..ece3bfc56bcd 100644
---- a/mm/page_isolation.c
-+++ b/mm/page_isolation.c
-@@ -31,7 +31,7 @@
-  *
-  */
- static struct page *has_unmovable_pages(unsigned long start_pfn, unsigned long end_pfn,
--				int migratetype, int flags)
-+				enum pb_isolate_mode mode)
- {
- 	struct page *page = pfn_to_page(start_pfn);
- 	struct zone *zone = page_zone(page);
-@@ -46,7 +46,7 @@ static struct page *has_unmovable_pages(unsigned long start_pfn, unsigned long e
- 		 * isolate CMA pageblocks even when they are not movable in fact
- 		 * so consider them movable here.
- 		 */
--		if (is_migrate_cma(migratetype))
-+		if (mode == PB_ISOLATE_MODE_CMA_ALLOC)
- 			return NULL;
- 
- 		return page;
-@@ -117,7 +117,7 @@ static struct page *has_unmovable_pages(unsigned long start_pfn, unsigned long e
- 		 * The HWPoisoned page may be not in buddy system, and
- 		 * page_count() is not 0.
- 		 */
--		if ((flags & MEMORY_OFFLINE) && PageHWPoison(page))
-+		if ((mode == PB_ISOLATE_MODE_MEM_OFFLINE) && PageHWPoison(page))
- 			continue;
- 
- 		/*
-@@ -130,7 +130,7 @@ static struct page *has_unmovable_pages(unsigned long start_pfn, unsigned long e
- 		 * move these pages that still have a reference count > 0.
- 		 * (false negatives in this function only)
- 		 */
--		if ((flags & MEMORY_OFFLINE) && PageOffline(page))
-+		if ((mode == PB_ISOLATE_MODE_MEM_OFFLINE) && PageOffline(page))
- 			continue;
- 
- 		if (__PageMovable(page) || PageLRU(page))
-@@ -151,7 +151,7 @@ static struct page *has_unmovable_pages(unsigned long start_pfn, unsigned long e
-  * present in [start_pfn, end_pfn). The pageblock must intersect with
-  * [start_pfn, end_pfn).
-  */
--static int set_migratetype_isolate(struct page *page, int migratetype, int isol_flags,
-+static int set_migratetype_isolate(struct page *page, enum pb_isolate_mode mode,
- 			unsigned long start_pfn, unsigned long end_pfn)
- {
- 	struct zone *zone = page_zone(page);
-@@ -186,7 +186,7 @@ static int set_migratetype_isolate(struct page *page, int migratetype, int isol_
- 				  end_pfn);
- 
- 	unmovable = has_unmovable_pages(check_unmovable_start, check_unmovable_end,
--			migratetype, isol_flags);
-+			mode);
- 	if (!unmovable) {
- 		if (!pageblock_isolate_and_move_free_pages(zone, page)) {
- 			spin_unlock_irqrestore(&zone->lock, flags);
-@@ -198,7 +198,7 @@ static int set_migratetype_isolate(struct page *page, int migratetype, int isol_
- 	}
- 
- 	spin_unlock_irqrestore(&zone->lock, flags);
--	if (isol_flags & REPORT_FAILURE) {
-+	if (mode == PB_ISOLATE_MODE_MEM_OFFLINE) {
- 		/*
- 		 * printk() with zone->lock held will likely trigger a
- 		 * lockdep splat, so defer it here.
-@@ -292,11 +292,10 @@ __first_valid_page(unsigned long pfn, unsigned long nr_pages)
-  * isolate_single_pageblock() -- tries to isolate a pageblock that might be
-  * within a free or in-use page.
-  * @boundary_pfn:		pageblock-aligned pfn that a page might cross
-- * @flags:			isolation flags
-+ * @mode:			isolation mode
-  * @isolate_before:	isolate the pageblock before the boundary_pfn
-  * @skip_isolation:	the flag to skip the pageblock isolation in second
-  *			isolate_single_pageblock()
-- * @migratetype:	migrate type to set in error recovery.
-  *
-  * Free and in-use pages can be as big as MAX_PAGE_ORDER and contain more than one
-  * pageblock. When not all pageblocks within a page are isolated at the same
-@@ -311,8 +310,9 @@ __first_valid_page(unsigned long pfn, unsigned long nr_pages)
-  * either. The function handles this by splitting the free page or migrating
-  * the in-use page then splitting the free page.
-  */
--static int isolate_single_pageblock(unsigned long boundary_pfn, int flags,
--		bool isolate_before, bool skip_isolation, int migratetype)
-+static int isolate_single_pageblock(unsigned long boundary_pfn,
-+			enum pb_isolate_mode mode, bool isolate_before,
-+			bool skip_isolation)
- {
- 	unsigned long start_pfn;
- 	unsigned long isolate_pageblock;
-@@ -338,12 +338,11 @@ static int isolate_single_pageblock(unsigned long boundary_pfn, int flags,
- 				      zone->zone_start_pfn);
- 
- 	if (skip_isolation) {
--		int mt __maybe_unused = get_pageblock_migratetype(pfn_to_page(isolate_pageblock));
--
--		VM_BUG_ON(!is_migrate_isolate(mt));
-+		VM_BUG_ON(!get_pageblock_isolate(pfn_to_page(isolate_pageblock)));
- 	} else {
--		ret = set_migratetype_isolate(pfn_to_page(isolate_pageblock), migratetype,
--				flags, isolate_pageblock, isolate_pageblock + pageblock_nr_pages);
-+		ret = set_migratetype_isolate(pfn_to_page(isolate_pageblock),
-+				mode, isolate_pageblock,
-+				isolate_pageblock + pageblock_nr_pages);
- 
- 		if (ret)
- 			return ret;
-@@ -441,14 +440,7 @@ static int isolate_single_pageblock(unsigned long boundary_pfn, int flags,
-  * start_isolate_page_range() - mark page range MIGRATE_ISOLATE
-  * @start_pfn:		The first PFN of the range to be isolated.
-  * @end_pfn:		The last PFN of the range to be isolated.
-- * @migratetype:	Migrate type to set in error recovery.
-- * @flags:		The following flags are allowed (they can be combined in
-- *			a bit mask)
-- *			MEMORY_OFFLINE - isolate to offline (!allocate) memory
-- *					 e.g., skip over PageHWPoison() pages
-- *					 and PageOffline() pages.
-- *			REPORT_FAILURE - report details about the failure to
-- *			isolate the range
-+ * @mode:		isolation mode
-  *
-  * Making page-allocation-type to be MIGRATE_ISOLATE means free pages in
-  * the range will never be allocated. Any free pages and pages freed in the
-@@ -481,7 +473,7 @@ static int isolate_single_pageblock(unsigned long boundary_pfn, int flags,
-  * Return: 0 on success and -EBUSY if any part of range cannot be isolated.
-  */
- int start_isolate_page_range(unsigned long start_pfn, unsigned long end_pfn,
--			     int migratetype, int flags)
-+			     enum pb_isolate_mode mode)
- {
- 	unsigned long pfn;
- 	struct page *page;
-@@ -492,8 +484,8 @@ int start_isolate_page_range(unsigned long start_pfn, unsigned long end_pfn,
- 	bool skip_isolation = false;
- 
- 	/* isolate [isolate_start, isolate_start + pageblock_nr_pages) pageblock */
--	ret = isolate_single_pageblock(isolate_start, flags, false,
--			skip_isolation, migratetype);
-+	ret = isolate_single_pageblock(isolate_start, mode, false,
-+			skip_isolation);
- 	if (ret)
- 		return ret;
- 
-@@ -501,8 +493,7 @@ int start_isolate_page_range(unsigned long start_pfn, unsigned long end_pfn,
- 		skip_isolation = true;
- 
- 	/* isolate [isolate_end - pageblock_nr_pages, isolate_end) pageblock */
--	ret = isolate_single_pageblock(isolate_end, flags, true,
--			skip_isolation, migratetype);
-+	ret = isolate_single_pageblock(isolate_end, mode, true, skip_isolation);
- 	if (ret) {
- 		unset_migratetype_isolate(pfn_to_page(isolate_start));
- 		return ret;
-@@ -513,8 +504,8 @@ int start_isolate_page_range(unsigned long start_pfn, unsigned long end_pfn,
- 	     pfn < isolate_end - pageblock_nr_pages;
- 	     pfn += pageblock_nr_pages) {
- 		page = __first_valid_page(pfn, pageblock_nr_pages);
--		if (page && set_migratetype_isolate(page, migratetype, flags,
--					start_pfn, end_pfn)) {
-+		if (page && set_migratetype_isolate(page, mode, start_pfn,
-+					end_pfn)) {
- 			undo_isolate_page_range(isolate_start, pfn);
- 			unset_migratetype_isolate(
- 				pfn_to_page(isolate_end - pageblock_nr_pages));
-@@ -556,7 +547,7 @@ void undo_isolate_page_range(unsigned long start_pfn, unsigned long end_pfn)
-  */
- static unsigned long
- __test_page_isolated_in_pageblock(unsigned long pfn, unsigned long end_pfn,
--				  int flags)
-+				  enum pb_isolate_mode mode)
- {
- 	struct page *page;
- 
-@@ -569,11 +560,12 @@ __test_page_isolated_in_pageblock(unsigned long pfn, unsigned long end_pfn,
- 			 * simple way to verify that as VM_BUG_ON(), though.
- 			 */
- 			pfn += 1 << buddy_order(page);
--		else if ((flags & MEMORY_OFFLINE) && PageHWPoison(page))
-+		else if ((mode == PB_ISOLATE_MODE_MEM_OFFLINE) &&
-+			 PageHWPoison(page))
- 			/* A HWPoisoned page cannot be also PageBuddy */
- 			pfn++;
--		else if ((flags & MEMORY_OFFLINE) && PageOffline(page) &&
--			 !page_count(page))
-+		else if ((mode == PB_ISOLATE_MODE_MEM_OFFLINE) &&
-+			 PageOffline(page) && !page_count(page))
- 			/*
- 			 * The responsible driver agreed to skip PageOffline()
- 			 * pages when offlining memory by dropping its
-@@ -591,11 +583,11 @@ __test_page_isolated_in_pageblock(unsigned long pfn, unsigned long end_pfn,
-  * test_pages_isolated - check if pageblocks in range are isolated
-  * @start_pfn:		The first PFN of the isolated range
-  * @end_pfn:		The first PFN *after* the isolated range
-- * @isol_flags:		Testing mode flags
-+ * @mode:		Testing mode
-  *
-  * This tests if all in the specified range are free.
-  *
-- * If %MEMORY_OFFLINE is specified in @flags, it will consider
-+ * If %PB_ISOLATE_MODE_MEM_OFFLINE specified in @mode, it will consider
-  * poisoned and offlined pages free as well.
-  *
-  * Caller must ensure the requested range doesn't span zones.
-@@ -603,7 +595,7 @@ __test_page_isolated_in_pageblock(unsigned long pfn, unsigned long end_pfn,
-  * Returns 0 if true, -EBUSY if one or more pages are in use.
-  */
- int test_pages_isolated(unsigned long start_pfn, unsigned long end_pfn,
--			int isol_flags)
-+			enum pb_isolate_mode mode)
- {
- 	unsigned long pfn, flags;
- 	struct page *page;
-@@ -639,7 +631,7 @@ int test_pages_isolated(unsigned long start_pfn, unsigned long end_pfn,
- 	/* Check all pages are free or marked as ISOLATED */
- 	zone = page_zone(page);
- 	spin_lock_irqsave(&zone->lock, flags);
--	pfn = __test_page_isolated_in_pageblock(start_pfn, end_pfn, isol_flags);
-+	pfn = __test_page_isolated_in_pageblock(start_pfn, end_pfn, mode);
- 	spin_unlock_irqrestore(&zone->lock, flags);
- 
- 	ret = pfn < end_pfn ? -EBUSY : 0;
--- 
-2.47.2
+>  {
+>  	pmd_t *pmd;
+>  	unsigned long next;
+> @@ -2983,7 +2985,7 @@ static int apply_to_pmd_range(struct mm_struct *mm, pud_t *pud,
+>  			pmd_clear_bad(pmd);
+>  		}
+>  		err = apply_to_pte_range(mm, pmd, addr, next,
+> -					 fn, data, create, mask);
+> +					 fn, data, create, mask, lazy_mmu);
+>  		if (err)
+>  			break;
+>  	} while (pmd++, addr = next, addr != end);
+> @@ -2994,7 +2996,7 @@ static int apply_to_pmd_range(struct mm_struct *mm, pud_t *pud,
+>  static int apply_to_pud_range(struct mm_struct *mm, p4d_t *p4d,
+>  				     unsigned long addr, unsigned long end,
+>  				     pte_fn_t fn, void *data, bool create,
+> -				     pgtbl_mod_mask *mask)
+> +				     pgtbl_mod_mask *mask, bool lazy_mmu)
+>  {
+>  	pud_t *pud;
+>  	unsigned long next;
+> @@ -3019,7 +3021,7 @@ static int apply_to_pud_range(struct mm_struct *mm, p4d_t *p4d,
+>  			pud_clear_bad(pud);
+>  		}
+>  		err = apply_to_pmd_range(mm, pud, addr, next,
+> -					 fn, data, create, mask);
+> +					 fn, data, create, mask, lazy_mmu);
+>  		if (err)
+>  			break;
+>  	} while (pud++, addr = next, addr != end);
+> @@ -3030,7 +3032,7 @@ static int apply_to_pud_range(struct mm_struct *mm, p4d_t *p4d,
+>  static int apply_to_p4d_range(struct mm_struct *mm, pgd_t *pgd,
+>  				     unsigned long addr, unsigned long end,
+>  				     pte_fn_t fn, void *data, bool create,
+> -				     pgtbl_mod_mask *mask)
+> +				     pgtbl_mod_mask *mask, bool lazy_mmu)
+>  {
+>  	p4d_t *p4d;
+>  	unsigned long next;
+> @@ -3055,7 +3057,7 @@ static int apply_to_p4d_range(struct mm_struct *mm, pgd_t *pgd,
+>  			p4d_clear_bad(p4d);
+>  		}
+>  		err = apply_to_pud_range(mm, p4d, addr, next,
+> -					 fn, data, create, mask);
+> +					 fn, data, create, mask, lazy_mmu);
+>  		if (err)
+>  			break;
+>  	} while (p4d++, addr = next, addr != end);
+> @@ -3065,7 +3067,7 @@ static int apply_to_p4d_range(struct mm_struct *mm, pgd_t *pgd,
+>  
+>  static int __apply_to_page_range(struct mm_struct *mm, unsigned long addr,
+>  				 unsigned long size, pte_fn_t fn,
+> -				 void *data, bool create)
+> +				 void *data, bool create, bool lazy_mmu)
+>  {
+>  	pgd_t *pgd;
+>  	unsigned long start = addr, next;
+> @@ -3091,7 +3093,7 @@ static int __apply_to_page_range(struct mm_struct *mm, unsigned long addr,
+>  			pgd_clear_bad(pgd);
+>  		}
+>  		err = apply_to_p4d_range(mm, pgd, addr, next,
+> -					 fn, data, create, &mask);
+> +					 fn, data, create, &mask, lazy_mmu);
 
+This is annoying.  We now have a bool, bool passed through with mask
+inserted in the middle.
+
+>  		if (err)
+>  			break;
+>  	} while (pgd++, addr = next, addr != end);
+> @@ -3105,11 +3107,14 @@ static int __apply_to_page_range(struct mm_struct *mm, unsigned long addr,
+>  /*
+>   * Scan a region of virtual memory, filling in page tables as necessary
+>   * and calling a provided function on each leaf page table.
+> + *
+> + * fn() is called in lazy mmu mode. As a result, the callback must be careful
+> + * not to perform memory allocation.
+>   */
+>  int apply_to_page_range(struct mm_struct *mm, unsigned long addr,
+>  			unsigned long size, pte_fn_t fn, void *data)
+>  {
+> -	return __apply_to_page_range(mm, addr, size, fn, data, true);
+> +	return __apply_to_page_range(mm, addr, size, fn, data, true, true);
+
+Please add something here to tell me what false, true is.
+
+>  }
+>  EXPORT_SYMBOL_GPL(apply_to_page_range);
+>  
+> @@ -3117,13 +3122,36 @@ EXPORT_SYMBOL_GPL(apply_to_page_range);
+>   * Scan a region of virtual memory, calling a provided function on
+>   * each leaf page table where it exists.
+>   *
+> + * fn() is called in lazy mmu mode. As a result, the callback must be careful
+> + * not to perform memory allocation.
+> + *
+>   * Unlike apply_to_page_range, this does _not_ fill in page tables
+>   * where they are absent.
+>   */
+>  int apply_to_existing_page_range(struct mm_struct *mm, unsigned long addr,
+>  				 unsigned long size, pte_fn_t fn, void *data)
+>  {
+> -	return __apply_to_page_range(mm, addr, size, fn, data, false);
+> +	return __apply_to_page_range(mm, addr, size, fn, data, false, true);
+
+every..
+
+> +}
+> +
+> +/*
+> + * As per apply_to_page_range() but fn() is not called in lazy mmu mode.
+> + */
+> +int apply_to_page_range_nolazy(struct mm_struct *mm, unsigned long addr,
+> +			       unsigned long size, pte_fn_t fn, void *data)
+> +{
+> +	return __apply_to_page_range(mm, addr, size, fn, data, true, false);
+
+one...
+
+> +}
+> +
+> +/*
+> + * As per apply_to_existing_page_range() but fn() is not called in lazy mmu
+> + * mode.
+> + */
+> +int apply_to_existing_page_range_nolazy(struct mm_struct *mm,
+> +					unsigned long addr, unsigned long size,
+> +					pte_fn_t fn, void *data)
+> +{
+> +	return __apply_to_page_range(mm, addr, size, fn, data, false, false);
+
+adds confusion :)
+
+
+These wrappers are terrible for readability and annoying for argument
+lists too.
+
+Could we do something like the pgtbl_mod_mask or zap_details and pass
+through a struct or one unsigned int for create and lazy_mmu?
+
+At least we'd have better self-documenting code in the wrappers.. and if
+we ever need a third boolean, we could avoid multiplying the wrappers
+again.
+
+WDYT?
+
+Cheers,
+Liam
 
