@@ -1,281 +1,200 @@
-Return-Path: <linux-kernel+bounces-667904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-667853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B9C2AC8B30
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 11:42:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 520B9AC8AB3
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 11:28:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B41611890110
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 09:42:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AB629E25F7
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 09:27:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19C6D22F163;
-	Fri, 30 May 2025 09:36:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3090521578F;
+	Fri, 30 May 2025 09:28:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="Wwt4uAd8"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SGjcQHCL"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31DA6220F30
-	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 09:36:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE8F321CA05
+	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 09:28:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748597799; cv=none; b=DXbQVX78YVyek/s3tqBPq+HgPJKO3l4lJd06hOLEFAyR3uOa1t3ocomBTQIR4KwCf9ugyVAyoCQbBsCtLDFoWFcQmEu8i3F9l08Am9xiML5/NNWj9LQc6vthDco3gNw2NK9c2t8Jasow8N1AR9pI+Q/Zf3BkPsWWWH7FBWrC3sE=
+	t=1748597289; cv=none; b=HncuIFkxS6tgZ/kP4TRRtNwe+fJv13AzCrUv1bXP/iY7/bcsgUqMeEudQD8C67Z8aQhXbu+WibIK4YsnI9HGx4g7BL+jMUHMjMTLhHaZ3aTxs/amFD7N02uAFH9s04UyFgET6clf1hjqQifu+57t9PG5XJ/VVa+i9S4vcz6KBO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748597799; c=relaxed/simple;
-	bh=Dtz1Aet7apWTXhLd7VJWKFnNYwGISZ8LO5wYY32y+Hg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=PNiiZ49Z5SYThRjWy0JqIcYKnVGPru+aJwySUZKq/E7/KGNfmuCrO1Si0xctyX2zLfoLQ0v7JKioPJ/GLGFBeZXQXMLMfqgF9rYRyeTWmVAX6+Bfbf+7k4Vp/FMrEs+lb5S12XpONL2uQijrGSJzopHgdw7889bTCgryXzTuEfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=Wwt4uAd8; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-311d5fdf1f0so1705323a91.1
-        for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 02:36:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1748597796; x=1749202596; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PQ/D1sjhfYHEwDTh2b+Qyte458RPTLSFlphr3fZumJQ=;
-        b=Wwt4uAd8KbjRRSsRvich6T35PFHgOUS+Fouykni2GzUkaA8t/k3UTaCOLNa7A6hdWF
-         x1RPblBdLzzWC1AE4v87JHrM61KF9DVGbUK8DEpp1cUP/DUuDeLidudvWGuW07fFBQvo
-         XsLAUvimfdP6y7CO6hHio+NKe/+P42z+xBNiOHIBXkeee2PwtArHHOplLnjsJ9wNosUg
-         E01vyFZb748GdrTlxKUnbJTyKS8Zn6JhcvT8DxNNlYF0w5Z0r+UmrF7gj63i7iDyBOhz
-         BIAKWOhEjVr7wQQv+6F9Rr1vj4Y9ZuEuEEYS6k3Lpgm8CNT6pPZaykrXHWBUNyJ1Bb5e
-         7sXA==
+	s=arc-20240116; t=1748597289; c=relaxed/simple;
+	bh=UPgrN+I2yqTJYCpGaX5IMke5p2FuQ5Fto8LxZ7iAGOE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=V0i8FWo/wPH+mG5jsrs+tWWpf1Mi/XQiCnJunGVNPfNMBW9BGxm4WPCd0QmhucIHAqY+FwHZ0kUWQN2hGAMs3gvHxbDyCrXqtbEVhTAfieqfuA2zP0Sfo/ixl7LoExVRAqzwxvhOnEhyixTdFmiSKDSkBPO0BSRYBRzBFZPM27g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SGjcQHCL; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1748597286;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=MaatFJjQ8egE/8VtOwBSoT6wLagg2lOTiOnjBKEO9pM=;
+	b=SGjcQHCL9TkEtLRHNl1uYHuBajy8I7QMy0k7jldx/EUuNotLiKKZe15QROdVuAiUg/zl89
+	EZeU9q1uOKAq9SOB2HHMdDyyXfYshegixlT4mqrJPQfg+2iS7SLBULou1Squom94N0IHe0
+	Gh5DygbopDp43FJ+9kEfR2W7r8HXZP0=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-442-0gERuKarOW6tGj8GvVESlA-1; Fri, 30 May 2025 05:28:05 -0400
+X-MC-Unique: 0gERuKarOW6tGj8GvVESlA-1
+X-Mimecast-MFC-AGG-ID: 0gERuKarOW6tGj8GvVESlA_1748597284
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3a4f85f31d9so254590f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 02:28:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748597796; x=1749202596;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PQ/D1sjhfYHEwDTh2b+Qyte458RPTLSFlphr3fZumJQ=;
-        b=aAlzonhj2hRf+6SXryDi8t4NsLqj6evbTjGyY4/5UP7sXgxTI9Qu9rxhHCJrGIdrj+
-         SKNcq5qiSt2+H7iSZ2pbcAKsm3vTHmkTYlzdkipzMGFg8GnAlywDCRBHJddKp3Rz/GtL
-         fc/YO0vVdf8MBesW3a85SlRW4DG0nXywhjQ7u4+pW9Sffk7jP/cQ7p/qfLkUqgnltCZy
-         PysNX8k/7mDDmBgQ7RO7iGHKSNCnHdKwEzbvCuTKG5H0fkk0HqmmlIrbrWBukLT//GWv
-         etYNPwJ4LZFbu3UQIVpvoh7NNNR364fDHpE72RiTsAaQkw0CK2aN6vRnFEcRXxe1JLED
-         PJ2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXOY210lrmGfWj5ysAvoaDOZ7MjC6xHx2aEwcMZi9uIKDNp4dSXqeWptqQnBVgbfh1YjL7+b5rf7uK/s6A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9iiGXS+SnmCVxdpMoQ7oQSr+WBJq02oJwkRBX6W9IiZdyRdCQ
-	xrtrL2su8jH1KG4twNHKYmsYchGTGksF4eII0wwaf73IiWcS21UKqV7PyVqCU9TSOVc=
-X-Gm-Gg: ASbGnctg+lhn2ZODT0SZvEu4gv+8uBV8nCVlmTK6k472thUyHN3aduFsYTFBt06f4dC
-	RWkGtXrC1O8kZRsUMbzgUIQHWhmS6naLLuRp9TtzwolOSikIzwP1rYPcXk08bY3gb7Tx+2a3ZCx
-	/gpdpm7ymKLvLfZpOJQvz247Ljf5uWwZpfmigyQeU8cMnabzGeQgy/Tkh6FAV2D44psXg/mNp7v
-	GfF1dkf2BjfwTbYEHj8XYh0vXjsZoNkS+Wa4/wXlrMG6nASeBevUKMTH3rZkBm23giVKa7ExYyE
-	2YiPB9jHDqEJlkfwnRxlZVyzMcRmUuBxgXtSYu9hSBGhHEYBKYe8eewkamaV1Rk6TUniHvsRxWg
-	AQrFDxj8vD1doQZNPsDML
-X-Google-Smtp-Source: AGHT+IE1J4YJ6wHA6b9CUB/dnKICEd+OlMDbXuOs/bJjQ/NWJ3rv4Cxh7kWsPUyPIoUfIb7mzNdLsw==
-X-Received: by 2002:a17:90b:4f4d:b0:312:1cd7:b337 with SMTP id 98e67ed59e1d1-3125034a47amr1876977a91.5.1748597796457;
-        Fri, 30 May 2025 02:36:36 -0700 (PDT)
-Received: from FQ627FTG20.bytedance.net ([63.216.146.178])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3124e29f7b8sm838724a91.2.2025.05.30.02.36.21
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Fri, 30 May 2025 02:36:36 -0700 (PDT)
-From: Bo Li <libo.gcs85@bytedance.com>
-To: tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	x86@kernel.org,
-	luto@kernel.org,
-	kees@kernel.org,
-	akpm@linux-foundation.org,
-	david@redhat.com,
-	juri.lelli@redhat.com,
-	vincent.guittot@linaro.org,
-	peterz@infradead.org
-Cc: dietmar.eggemann@arm.com,
-	hpa@zytor.com,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	kan.liang@linux.intel.com,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	lorenzo.stoakes@oracle.com,
-	Liam.Howlett@oracle.com,
-	vbabka@suse.cz,
-	rppt@kernel.org,
-	surenb@google.com,
-	mhocko@suse.com,
-	rostedt@goodmis.org,
-	bsegall@google.com,
-	mgorman@suse.de,
-	vschneid@redhat.com,
-	jannh@google.com,
-	pfalcato@suse.de,
-	riel@surriel.com,
-	harry.yoo@oracle.com,
-	linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	duanxiongchun@bytedance.com,
-	yinhongbo@bytedance.com,
-	dengliang.1214@bytedance.com,
-	xieyongji@bytedance.com,
-	chaiwen.cc@bytedance.com,
-	songmuchun@bytedance.com,
-	yuanzhu@bytedance.com,
-	chengguozhu@bytedance.com,
-	sunjiadong.lff@bytedance.com,
-	Bo Li <libo.gcs85@bytedance.com>
-Subject: [RFC v2 32/35] RPAL: fix unknown nmi on AMD CPU
-Date: Fri, 30 May 2025 17:28:00 +0800
-Message-Id: <fc9a95163b055235b1a5007753a131a7250a409b.1748594841.git.libo.gcs85@bytedance.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <cover.1748594840.git.libo.gcs85@bytedance.com>
-References: <cover.1748594840.git.libo.gcs85@bytedance.com>
+        d=1e100.net; s=20230601; t=1748597284; x=1749202084;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=MaatFJjQ8egE/8VtOwBSoT6wLagg2lOTiOnjBKEO9pM=;
+        b=tXjybnQHHjGyYXM1RRqHVsHL5wFO9iZnbswNsRrVVf3llx68ddBCmeThlvPCmU2im6
+         UKoSo4iNuOf+aJdhera3CuwRsLuZiYGpM1l8YbY8NSUh4jIWmwJnllcTTpvrv/Ko9+PV
+         Kp6PWKUBoZtZIk6IrYhNYg6+ELkJfdcJxK8nKvqHN/bsDRlWMAZI7Kp07NTDJs5TGFXQ
+         m6Qd1jS8FCPWZxkvm6WBIs9Qh3yOWsmElxofwm33zYL0DFxEpic6axt652roE5xTUi4p
+         zm9Yt2AxwcT4naF/XbNvraEjiDuDoT6wUXk5DMjTBSO9ReXJuSor3Rvc5EUgdj7UKxIS
+         M74g==
+X-Forwarded-Encrypted: i=1; AJvYcCUvSaklPu/Z6b7FCUg9V3CyTUkl8GhaEg5ZzA80MkULb+ajDHjDO/Svs8g4HwbqkWtp2Iszlcg0ynRLLc0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtnVFNTK4yg+VQ1UXxwPDxm8DciYWm4L72nKBGJ6cTysWZPGTa
+	wUd1HNjmM4r5UhcWSo5qs0wscN3/LrYcqtxwQ/Bwc5cUTsqJ4l7JYIYAqKXGIzUEhRjpSraMGFB
+	Z+Ex/IEPFGhVXBVczt9VIeysLgDUhxJDUQiXTFqJZi9gigqMjDPcgKvNgXiD1LCDPkQ==
+X-Gm-Gg: ASbGncvexKlR9h8doSHmnWcSJbrz3NkbciLPxapmeM9vY6Ckj2YPMQ5Z5dcbD0ww8dw
+	UsNI3JzizARudrbTSW3qiJDHiurpR9fnZJ669Kcunct0bbgTb9franZgSMVFtutVXcu6vXRpoQw
+	Zyomn1uXc5keJP2Nr0drYA9dO/oOZ8gBNXPCn3ViOeCdUjl8bMk2foY+UDe1JC1e/JKhLxQUnMq
+	vk/AJtzTqeezSScK78KKYrLCtaHq0tcjcf3F1EcHLjJwGMbplvNvUXttN8Qkpv235VL5EY9bcVO
+	LcBYit1A/hdDx9qVd4hu6NstXDes0D3Brf6Osx9H5eKXra0Gc/hQENfduUz5a/m6Mno3pf9+VSv
+	/Re45VllBdDWUPZoGpAgOaTTovtvnBIInwdnelD4=
+X-Received: by 2002:a05:6000:230b:b0:3a4:e318:1aa9 with SMTP id ffacd0b85a97d-3a4f89ead67mr1079180f8f.59.1748597283683;
+        Fri, 30 May 2025 02:28:03 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHSN415fVjodgeAGej8jr3DGQGkFoBTJfuX+0MivXSEcmg1XYg2YU3IQl5r7q4efo/bqIG2xA==
+X-Received: by 2002:a05:6000:230b:b0:3a4:e318:1aa9 with SMTP id ffacd0b85a97d-3a4f89ead67mr1079154f8f.59.1748597283295;
+        Fri, 30 May 2025 02:28:03 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f03:5b00:f549:a879:b2d3:73ee? (p200300d82f035b00f549a879b2d373ee.dip0.t-ipconnect.de. [2003:d8:2f03:5b00:f549:a879:b2d3:73ee])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4f009757fsm4336476f8f.78.2025.05.30.02.28.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 30 May 2025 02:28:02 -0700 (PDT)
+Message-ID: <2fb04e1b-8ce0-4216-9255-fc09c04e860b@redhat.com>
+Date: Fri, 30 May 2025 11:28:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/5] kdump: crashkernel reservation from CMA
+To: Michal Hocko <mhocko@suse.com>
+Cc: Baoquan He <bhe@redhat.com>, Donald Dutile <ddutile@redhat.com>,
+ Jiri Bohac <jbohac@suse.cz>, Vivek Goyal <vgoyal@redhat.com>,
+ Dave Young <dyoung@redhat.com>, kexec@lists.infradead.org,
+ Philipp Rudo <prudo@redhat.com>, Pingfan Liu <piliu@redhat.com>,
+ Tao Liu <ltao@redhat.com>, linux-kernel@vger.kernel.org,
+ David Hildenbrand <dhildenb@redhat.com>
+References: <04904e86-5b5f-4aa1-a120-428dac119189@redhat.com>
+ <427fec88-2a74-471e-aeb6-a108ca8c4336@redhat.com>
+ <Z8Z/gnbtiXT9QAZr@MiWiFi-R3L-srv>
+ <e9c5c247-85fb-43f1-9aa8-47d62321f37b@redhat.com>
+ <aDgQ0lbt1h5v0lgE@tiehlicka>
+ <a1a5af90-bc8a-448a-81fa-485624d592f3@redhat.com>
+ <aDlsF5tAcUxo4VgT@tiehlicka>
+ <e0f7fc1e-2227-4c6b-985a-34a697a52679@redhat.com>
+ <aDl1ViMpK_6q_z06@tiehlicka>
+ <04a49de5-eb79-431b-ba5b-eae2536781c6@redhat.com>
+ <aDl5rpqCUyf7nX2M@tiehlicka>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <aDl5rpqCUyf7nX2M@tiehlicka>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-In Lazy switch, the function event_sched_out() will be called. This
-function deletes the perf event of the task being scheduled out, causing
-the active_mask in cpu_hw_events to be cleared. In AMD's NMI handler, if
-the bit corresponding to active_mask is not set, the CPU will not handle
-the NMI event, ultimately triggering an unknown NMI error. Additionally,
-event_sched_out() may call amd_pmu_wait_on_overflow(), leading to a busy
-wait of up to 50us during lazy switch.
+On 30.05.25 11:26, Michal Hocko wrote:
+> On Fri 30-05-25 11:11:40, David Hildenbrand wrote:
+>> On 30.05.25 11:07, Michal Hocko wrote:
+>>> On Fri 30-05-25 10:39:39, David Hildenbrand wrote:
+>>>> On 30.05.25 10:28, Michal Hocko wrote:
+>>> [...]
+>>>>> All that being said I would go with an additional parameter to the
+>>>>> kdump cma setup - e.g. cma_sane_dma that would skip waiting and use 10s
+>>>>> otherwise. That would make the optimized behavior opt in, we do not need
+>>>>> to support all sorts of timeouts and also learn if this is not
+>>>>> sufficient.
+>>>>>
+>>>>> Makes sense?
+>>>>
+>>>> Just so I understand correctly, you mean extending the "crashkernel=" option
+>>>> with a boolean parameter? If set, e.g., wait 1s, otherwise magic number 10?
+>>>
+>>> crashkernel=1G,cma,cma_sane_dma # no wait on transition
+>>
+>> But is no wait ok? I mean, any O_DIRECT with any device would at least take
+>> a bit, no?
+>>
+>> Of course, there is a short time between the crash and actually triggerying
+>> kdump.
+> 
+> This is something we can test for and if we need a short timeout in this
+> case as well then it is just trivial to add it. I am much more
+> concerned about those potentially unpredictable DMA transfers that could
+> take too long and it is impossible to test for those and therefore we
+> need to overshoot.
 
-This patch adds two per_cpu variables. rpal_nmi_handle is set when an NMI
-occurs. When encountering an unknown NMI, this NMI is skipped. rpal_nmi is
-set before lazy switch and cleared after lazy switch, preventing the busy
-wait caused by amd_pmu_wait_on_overflow().
+Agreed.
 
-Signed-off-by: Bo Li <libo.gcs85@bytedance.com>
----
- arch/x86/events/amd/core.c | 14 ++++++++++++++
- arch/x86/kernel/nmi.c      | 20 ++++++++++++++++++++
- arch/x86/rpal/core.c       | 17 ++++++++++++++++-
- 3 files changed, 50 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/events/amd/core.c b/arch/x86/events/amd/core.c
-index b20661b8621d..633a9ac4e77c 100644
---- a/arch/x86/events/amd/core.c
-+++ b/arch/x86/events/amd/core.c
-@@ -719,6 +719,10 @@ static void amd_pmu_wait_on_overflow(int idx)
- 	}
- }
- 
-+#ifdef CONFIG_RPAL
-+DEFINE_PER_CPU(bool, rpal_nmi);
-+#endif
-+
- static void amd_pmu_check_overflow(void)
- {
- 	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
-@@ -732,6 +736,11 @@ static void amd_pmu_check_overflow(void)
- 	if (in_nmi())
- 		return;
- 
-+#ifdef CONFIG_RPAL
-+	if (this_cpu_read(rpal_nmi))
-+		return;
-+#endif
-+
- 	/*
- 	 * Check each counter for overflow and wait for it to be reset by the
- 	 * NMI if it has overflowed. This relies on the fact that all active
-@@ -807,6 +816,11 @@ static void amd_pmu_disable_event(struct perf_event *event)
- 	if (in_nmi())
- 		return;
- 
-+#ifdef CONFIG_RPAL
-+	if (this_cpu_read(rpal_nmi))
-+		return;
-+#endif
-+
- 	amd_pmu_wait_on_overflow(event->hw.idx);
- }
- 
-diff --git a/arch/x86/kernel/nmi.c b/arch/x86/kernel/nmi.c
-index be93ec7255bf..dd72b6d1c7f9 100644
---- a/arch/x86/kernel/nmi.c
-+++ b/arch/x86/kernel/nmi.c
-@@ -351,12 +351,23 @@ NOKPROBE_SYMBOL(unknown_nmi_error);
- 
- static DEFINE_PER_CPU(bool, swallow_nmi);
- static DEFINE_PER_CPU(unsigned long, last_nmi_rip);
-+#ifdef CONFIG_RPAL
-+DEFINE_PER_CPU(bool, rpal_nmi_handle);
-+#endif
- 
- static noinstr void default_do_nmi(struct pt_regs *regs)
- {
- 	unsigned char reason = 0;
- 	int handled;
- 	bool b2b = false;
-+#ifdef CONFIG_RPAL
-+	bool rpal_handle = false;
-+
-+	if (__this_cpu_read(rpal_nmi_handle)) {
-+		__this_cpu_write(rpal_nmi_handle, false);
-+		rpal_handle = true;
-+	}
-+#endif
- 
- 	/*
- 	 * Back-to-back NMIs are detected by comparing the RIP of the
-@@ -471,6 +482,15 @@ static noinstr void default_do_nmi(struct pt_regs *regs)
- 	 */
- 	if (b2b && __this_cpu_read(swallow_nmi))
- 		__this_cpu_add(nmi_stats.swallow, 1);
-+#ifdef CONFIG_RPAL
-+	/*
-+	 * Lazy switch may clear the bit in active_mask, causing
-+	 * nmi event not handled. This will lead to unknown nmi,
-+	 * try to avoid this.
-+	 */
-+	else if (rpal_handle)
-+		goto out;
-+#endif
- 	else
- 		unknown_nmi_error(reason, regs);
- 
-diff --git a/arch/x86/rpal/core.c b/arch/x86/rpal/core.c
-index 6a22b9faa100..92281b557a6c 100644
---- a/arch/x86/rpal/core.c
-+++ b/arch/x86/rpal/core.c
-@@ -376,11 +376,26 @@ rpal_exception_context_switch(struct pt_regs *regs)
- 	return next;
- }
- 
-+DECLARE_PER_CPU(bool, rpal_nmi_handle);
-+DECLARE_PER_CPU(bool, rpal_nmi);
- __visible struct task_struct *rpal_nmi_context_switch(struct pt_regs *regs)
- {
- 	struct task_struct *next;
- 
--	next = rpal_kernel_context_switch(regs);
-+	if (rpal_test_current_thread_flag(RPAL_LAZY_SWITCHED_BIT))
-+		rpal_update_fsbase(regs);
-+
-+	next = rpal_misidentify();
-+	if (unlikely(next != NULL)) {
-+		next = rpal_fix_critical_section(next, regs);
-+		if (next) {
-+			__this_cpu_write(rpal_nmi_handle, true);
-+			/* avoid wait in amd_pmu_check_overflow */
-+			__this_cpu_write(rpal_nmi, true);
-+			next = rpal_do_kernel_context_switch(next, regs);
-+			__this_cpu_write(rpal_nmi, false);
-+		}
-+	}
- 
- 	return next;
- }
 -- 
-2.20.1
+Cheers,
+
+David / dhildenb
 
 
