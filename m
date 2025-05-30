@@ -1,242 +1,614 @@
-Return-Path: <linux-kernel+bounces-667803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-667842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C68B6AC8A2C
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 10:48:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6493CAC8AA1
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 11:21:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91A681BA6E51
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 08:49:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 209EB4E33D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 09:21:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 613E421C182;
-	Fri, 30 May 2025 08:48:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE70421C9F8;
+	Fri, 30 May 2025 09:21:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="dBIc9dNc";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="kmUaVODS"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JnDztR3H"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC6551465B4;
-	Fri, 30 May 2025 08:48:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748594929; cv=fail; b=u1z1s7NCiE1zyOUsdOowl97Zlw4Kq2Xr2Qn9YTtXtv40wQmVRV+iMCTgQho8Z6QurOcWZOUvuQoRB5QIJqlJ8nNicJTvG9eu4jlnUkkmsMzPBRj5lKYUb8R11gKBLL9fsNt59bq1yhIYxQ7dwpbkT7IBxBx+0phmnlxcgyoos00=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748594929; c=relaxed/simple;
-	bh=CcTHdJzngZudm+8G+EcSor134pCxSA0b5jqeQ6VcOuY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=IW9s55aiEi3y+AUhjLXIURX8rR1wNJ0v5cRk+k5O0sUN5DWJcVdWZZzxALWj9gB42nrU2woMFim7s1Ho4c7QWpiKZHqFsG4rzBABAt2/kpTW7E0LYHjGFuSeoMqOhhWnetuEpoZk9DvF/WkcxlYsUdF1YXm+jnPtq01WCgyf46A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=dBIc9dNc; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=kmUaVODS; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54U6twgY012746;
-	Fri, 30 May 2025 08:48:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=wzX3rAejxWdXAJt/Gt
-	lgwESc10+BkW7X9/wJm7J11gc=; b=dBIc9dNcvoI1ylIc1yezzx1Vv5CzFcITaw
-	a+g3tR5K9XeZB1XmjD0vP5z6/o/iQ5oWOCIhwWSkLeuN6v1Qb+leA9MImCUlgwv3
-	aeAH2e8Cb0xvZscyoZLXSHhpHQ05svhD9IPTO69mpMWoxYyGzpinPreSJus2IDBc
-	dyir0aTpfqGH0fjaQVVW/VvYLGtcJRrTEdeuzwtT40SnaLnhzq19jKuA4l5WZxtR
-	axSCBR39HqO8apaPX/B/kTti/N6LqMQdLofBEZjjh6rU4TIkQbWCKO/xNEbZvk4j
-	SxsawuE+Ld1pMiqh718vH2Ib3fYrybCkZSKxKodJdk5cTkvj3/Fw==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 46v3pd9kwu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 30 May 2025 08:48:31 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 54U7t532019300;
-	Fri, 30 May 2025 08:48:30 GMT
-Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10on2053.outbound.protection.outlook.com [40.107.94.53])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 46u4jd1gxf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 30 May 2025 08:48:30 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=bJJrD1ycHrSXzIYangXUMu8PYU8aswK4yUfmg9NOuPSmwdBBNlUbmbtVdnMXbClAdy72dpp+YtRyStf7gCyGoGRjtgNbdpD+r3i0lgiI3hwlkMKvLBC7AxyUAzLVVmaMbsUYeVImWdcABa+OoDwwhapfHlKLFaGSfuKfx89Mj3x7hL7UFSim3LphO7rKV5wrBEK0d1CPW1zken70Qnynq2Zs77ECWRPF7b+OZ3Y3JuGGoOrixx1TcT1kUFbmA4371ydkaQKAy3MsJf0tgvNaJmqJAM+jQ9lwAElA4K6LaYqKf493/REsKrTjf4ASN4LjoyTBUsQ7nJljn+sGSO4PMw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wzX3rAejxWdXAJt/GtlgwESc10+BkW7X9/wJm7J11gc=;
- b=VTR4rZuDh6FZteCFo6AKgVVL07n/oqtcszg7JH0J9o2kTncp1zEQ2aFEB8vrVljUJgmWMRx55ZaimwqItcodiHu7+p0oFuu0xP6q/Du54kzgx6dJqM64oiaPk6cwra5GkxoXTDZwnDghyZU5HtrEsnrJ3e69vyVjPaENIfISu/cjv8ES2Cc8OzQy/wlVY4ciApsm/1viftZQExTsslvOcmhZP56ZMXCNFIXeagp94VDasq+pdEIMEKBvvMnNyseXiJ2Y6P1qjYHciVqMy6XGqvTDNa6SpI0X0WRPiIKTRRSgjkSV8qqH6GSmGgmbi7tqtO6O/qRmY9Pf/5A4Aua4Lw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA2CA212B3D
+	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 09:21:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748596871; cv=none; b=UtbbSWHUu3Bf64ha82eNx40xI4wYPFmVRA49pmcq84wUQ44VlPeFrtOkRrtpopVGd50QTJNMi8jVOTvtga0MAxwpCG/d8JuLQsO86G8lbLiDgRYMEDIe1qUaRgZbFcybopB5QySG7IuLZaHj3rb28bhyX65lPQpQPH8AVjuyQjY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748596871; c=relaxed/simple;
+	bh=D46erJa1hDlfl78bbCvumBIwf11Orw9oayL8XK4PtbE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IvRzYonN5UjUO5u3YU4HyLOwU7U6aEZznMcnMEfo5XqhduDY3i3T4pwYz0teIE3mLGoqa7jg5rpBm2fJxYd9U491o1DGw+3I1DLSWOOyB1527rmV6uEkTJMkjNFjeaG5FLOd70Y9i1mn4m3Ar3ry/lCFWlzAdnlcl9MU3TxpwPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JnDztR3H; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3a35c894313so1585569f8f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 02:21:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wzX3rAejxWdXAJt/GtlgwESc10+BkW7X9/wJm7J11gc=;
- b=kmUaVODSlprVMYd/xKGtXM3tLv7qHh0SYXEmbRhnnSHTrIGNZ94UqB8yqOu+T/FQLkCAlY5Cuap7nopKRdvU/dMNSJuUytF5nSxHDOIIrQhsp1qvVm0tks5NLS6pcxmWfYSiOy+2XsZlucCLytpp/5FKjxX8Sj+lq3w/KFU9uAE=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by LV3PR10MB8155.namprd10.prod.outlook.com (2603:10b6:408:28f::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8746.31; Fri, 30 May
- 2025 08:48:01 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%5]) with mapi id 15.20.8746.030; Fri, 30 May 2025
- 08:48:01 +0000
-Date: Fri, 30 May 2025 09:47:58 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Ryan Roberts <ryan.roberts@arm.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>, akpm@linux-foundation.org,
-        hughd@google.com, Liam.Howlett@oracle.com, npache@redhat.com,
-        dev.jain@arm.com, ziy@nvidia.com, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] fix MADV_COLLAPSE issue if THP settings are disabled
-Message-ID: <ade3bdb7-7103-4ecd-bce2-7768a0d729ef@lucifer.local>
-References: <cover.1748506520.git.baolin.wang@linux.alibaba.com>
- <05d60e72-3113-41f0-b81f-225397f06c81@arm.com>
- <f3dad5b5-143d-4896-b315-38e1d7bb1248@redhat.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f3dad5b5-143d-4896-b315-38e1d7bb1248@redhat.com>
-X-ClientProxiedBy: LO2P123CA0087.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:138::20) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+        d=linaro.org; s=google; t=1748596867; x=1749201667; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2FF94acC02KXHXPQmhhdghAhcPWaDPTPL3VB4RqaEg0=;
+        b=JnDztR3HJGTIGgbjvA7qShbHEkjwjkvVAn+xnPElHGDs62ZG1NSQ4Nm1drlpcHbK5M
+         rVY4Mx17AJJOCynCrH2WcQe6u0RLjLCrP1dn8QavMlmo3euUL7+xbG4tGyqNeQGfd04U
+         qi7AsPrgZjkhYB0kSef8e/wN+TvmDxGobuLToWf7DE7DmANh1l0GOD9k1WA2JRJ+GkN9
+         cMArig3WBFqpdgxeah1lk5+x3DSsR1UPAUx8v8sv6GL0T8gaKNsvnqyBKcmgEiDgpg2g
+         KF21w051PWr49n5NNkIYa31EfU3rpwLSvYMiR9TiqW0zp3aosc/aYh+yJM7TlDnaXTcc
+         Vcqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748596867; x=1749201667;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2FF94acC02KXHXPQmhhdghAhcPWaDPTPL3VB4RqaEg0=;
+        b=pG8pKCbsKdWgtQc0WVw+VwdoVsN/CiCU/JI4Hnu9lw5wljjrVmUoRtWbvHuXUHzZWE
+         elQJOcABPhS74STyX3vR6onXb9qZeFc/SN21nNYZkB7BWyOY4Qe+1Ec5YB4Nr5FubP+B
+         5uMYSb0UGyQsZKRt9Wt7vnLfC9ZwDBZX5a7nV2Fc6rlCkubEDVtwSK8MdzSKMsXp/9lz
+         zrhczF9jLT/6AsXwV99ZV1eekYGhp9DPrZnEJ7qYJqKWnpNxBy174CzvwuEDWTMg2dxl
+         OMMJKrcuYMZmzBv2OaCeX32zkg7lEWV0eG9IEqjmoOKMG5AyIzxF2tmMQbFjb8kInCdH
+         TDNg==
+X-Forwarded-Encrypted: i=1; AJvYcCVs46RkahaAqjQBZ0rubA3aAT2fqrfVkeSruU58/5HhwOktL4YKy/8GPk7E14clYd5uqvpViwdaAnX1BJU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5bknXJjuRuZiatjIpTpDhjk/rVgMlzPj/+NOKotymUzSQe0G5
+	DM8pLbQaUVaSFzqYtkGgCHBGr9PEwEhQmewHupyS4ZHO61jRM0+WegmhduWygK20x1AoOxlyfeh
+	k9TzSnWI=
+X-Gm-Gg: ASbGncsWEdCEKNstMCCd/VwSVAJ/U9h6+F+oWBnT6GwqDUzwbeZvFLGVRM+/wt3H3TW
+	smUCufcMlNh0ARXkdHUEuXVO7iXB1xJyEWmjxxWtX6RGd40NtgflJ/v3k1vkl+aYTZfqCxucjxc
+	KLrX9N7g6RxXR+C1An8G/x6lxzcMYvwNUAz2ZO4673Km/mCPgqHFFVXlpq0XnmeQ13Go3qovmZC
+	vgezkwF88rvqBheXhVNK79ciRAFG+DUa0ALyGqAGqnRlH4PnaYbpuBaxih7k3ZWGFtiLL5Zv+wO
+	kw5c6+xNjCa0nd+cza1xnNdIyTbXh2EVMhefbrEwe0ZTMUxSu7vv2FtKduUbCd/L4p9LOFaXK5K
+	Bjp84AMCx7XYYsialUSOLIls5NTM=
+X-Google-Smtp-Source: AGHT+IFvcFNB62OxE7MIDiidAN2Mv/BdtuQ0G91swbi4nnUSB4ekkNNovaQmQRzoZEkSDncgY+MwZw==
+X-Received: by 2002:a05:6000:4009:b0:3a4:dfa5:325e with SMTP id ffacd0b85a97d-3a4f7a438e5mr1975523f8f.10.1748594904489;
+        Fri, 30 May 2025 01:48:24 -0700 (PDT)
+Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4efe7440asm4317227f8f.58.2025.05.30.01.48.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 30 May 2025 01:48:23 -0700 (PDT)
+Message-ID: <8b396edf-e344-47e9-b497-3f7fb35783ed@linaro.org>
+Date: Fri, 30 May 2025 09:48:22 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|LV3PR10MB8155:EE_
-X-MS-Office365-Filtering-Correlation-Id: a15a77ae-bc3c-4ef3-9db9-08dd9f56af1f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?hqQpWQACXFwLXAbxGumElFmwmrcanZ2v3SmXo4xhdpHYCnUqv1REsnxCptgy?=
- =?us-ascii?Q?2DUadV41eV+rrdJWu5sFYUs2VfQpsgN1Q6WNn8vtLUt/P4ftAVyk4YSt41gU?=
- =?us-ascii?Q?mfNhiFDZqx5h1TKffkCjZ4Z7uz6SNB1gTN6u4xwCOJbpr0f17b5RdI3SOt8I?=
- =?us-ascii?Q?A8cMkBNm+fZbpGJaWUciJM6NQJs0ZstajRz4q8GdK3YbCy8FxQYRrJXgUjfI?=
- =?us-ascii?Q?JBiZcmXKygO6BGv42GG3GAmgZqaVlzG7U1MgcWK06gKoZbIbYlAw6OMk879h?=
- =?us-ascii?Q?eVjz6aw0CtfMDH7bv07rDv7DUKcXmwgJ/F+pfcnBcxilwQHzKqv5siNdJqoN?=
- =?us-ascii?Q?VdaIVWcrVj6pMTrG2fIISCGjA4OeU96n7bSHbKeAqY1ulcalPuxe/PRR0SMZ?=
- =?us-ascii?Q?lQtoTqA8OhStKsWa0nAg+XVUuzPVQbjt0wdcXQREcLUChCRU8tWsONrYLF/P?=
- =?us-ascii?Q?pA8HaVZG/Ww8ot6g4jIRt55Pnvh5HNi11GmsNnGFwGYkNPUqiR+zww3Y7/QS?=
- =?us-ascii?Q?o//KGNiKcBiFsKPef0b/8aSQhZqQtFm2XORjV755mW4aCKp01H5MpC1YuhCn?=
- =?us-ascii?Q?YumIyszNO/krf3R0bhLJz8mMOsv+6v+zbw2XKusqdjZ13QI75Od5XnyJlYsP?=
- =?us-ascii?Q?Al8akU2R7G1AR+iO2o9EAUAT8i4oRLOP68wtTR/t4smManryAD053nvszvw0?=
- =?us-ascii?Q?FSSlV9t52kHGRrYsF9ksc08w3zKQO73+7KXHLhWwAa8DgPwzttwE6bgn4yoz?=
- =?us-ascii?Q?1hWdlHTiINpf3TKGS/SFQXVahXaOLiu/iZCViL2/l+5tOh1/HcWoiZPoj1C2?=
- =?us-ascii?Q?eTbU91StQ+laYwaaX8ZCk8zW3HRlmZ5rNk/Zc2t4KndCSfDCzhon4FCKhZHj?=
- =?us-ascii?Q?dl8qHcsGh8+SD10xraqYgfERi1j3DbWPlCgES+b6Kfi1XulbwhjlUye4T3nn?=
- =?us-ascii?Q?aQWS2qGD/RdUD8m+z7JbMnu+eOF5CLFU89YXPmYDmqOCNgJUU+XBTIf+JhvB?=
- =?us-ascii?Q?Uqg78iRQxmvMnD0mVhODg+fdFtPsBwBlhmbDcWOEeZEyxnxXM7qD75/BGDG3?=
- =?us-ascii?Q?JelWh7FLS0b0Ha+ITeCaXdcxN5c0O1PJvoGaBYdUQWjWT8ad2YhSspgkExF+?=
- =?us-ascii?Q?Lnf/RbMFlS+sClGXNrRC8pPq8qGhu95eSPSQS/h9wGO2gNRoduiDl2A9l/4x?=
- =?us-ascii?Q?dmfJ0WA09mG2cx+cda5MEydfUpRQwEqbYaDnAN3W5JS9NN9bX75Q684n3tql?=
- =?us-ascii?Q?1RhySFBKreEhcIhu08jADPA0m9A98+UDR/dGwiCDvFU666GQ/GT+KhZdjxrj?=
- =?us-ascii?Q?3LRHPjMGi2TDhKIi3vpWGGLTJE4Znq9/T/+EsLzjQhcdyfD59hB7vWhNveTr?=
- =?us-ascii?Q?LmKON+Gc4npMEtb0S3Oj0kV1DjdBxfD0cS6WEgH7dyRPFu9FKZgmQp202/Yx?=
- =?us-ascii?Q?nqLr9YvLKv4=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?VMEULcTzJ2T1z3oUAM9/OGuPELAvPHFANBIGk3nPJb1hpc5ilwIlD4Yv7ILY?=
- =?us-ascii?Q?5IBQBEIEiwlKaN/ElI6/48DfztIA7+fluL3H9zynJ+ENGCezDi5XPdoTmp53?=
- =?us-ascii?Q?4SiER3mtoPVT2fEQ4+T1MnG4ielgymqraQ103byxfHu4QjrVMfVa7N9VoNlI?=
- =?us-ascii?Q?ktEAomg5Qjapivb2cjGzq3j/v+il1jSJrnlhv7jnWJh+MlIElKxUjer5pZ/Y?=
- =?us-ascii?Q?T8JovBhBrcJIckTEFszpmxqXJjNF3/9LviY+QRDRJNg2jiDFsumUXcWoLpvD?=
- =?us-ascii?Q?zpq/ZVufWFC9ItG09e9ooGka3lGTzKdKJ5mk/qrVyzZT6jE5/XihLr16VJJy?=
- =?us-ascii?Q?VmUY1vJ6r3jq1vqoYMQLPAMKdifaIBE9b9+raKWGprtBw2m/sC68gsDEylzA?=
- =?us-ascii?Q?ZL+YrW1ZehraEkwzb1Du4/nz8y4Lswm/le8iNZmdoS6bDXJXd67lwNCFOFfS?=
- =?us-ascii?Q?sbtA03BFNAUA518a10qjQv6b9/E6xetWdL5uc10bfAOlBONi8meGicOwPKVI?=
- =?us-ascii?Q?NlFk9xG3ntyTpuI9VQHA3/fFFf5TRGPe8Iy1wOjAlEyUr210/LpQIVTPPk5R?=
- =?us-ascii?Q?7pOiqLcvSLsue1W7i6NErFrrNiNWg1Cd+uyONYVtkI3EN9NuJ4zzCWQVcVGg?=
- =?us-ascii?Q?VVs5lDgcGzcX9BdrhYUEDGuT2IP5DEc+lquuCSQcPVX1g+kdJtbloOO14Pu7?=
- =?us-ascii?Q?tjl0So/uXGU9Pbj5nBeN+loORzBz92SMiiLBS9ltS773FOxR7qoEPDWGvtTe?=
- =?us-ascii?Q?AaN8erPLxVLvilUl5fZ4NKrhps2Xpw9F1GDb+tWIlHP/p+0Nj3/Hj/OOdDTJ?=
- =?us-ascii?Q?h7btH5R1xUAiEj49OW3RUcuOA7u2B5jFSjSi8Qy2684z1J9iDUY/4a7iFgkA?=
- =?us-ascii?Q?ldvuyI/i+j8FlILx/3MYBEO+gqxJjNwSsSXHwB4hMGpbK20NMCBoGfDjvKbL?=
- =?us-ascii?Q?cqqnaZGs5diW5xVQ5pSBzmrBrWPOPQWPYNmGVIOtMU10yJ4poxAdlpzcFen0?=
- =?us-ascii?Q?lKlIt72+8jRyix1siu8vfNQhqY/qvBtc8PoxtVwLKtS0RHUluyoowC+eCfCo?=
- =?us-ascii?Q?T0sCZN1U9kJGXwrf4oRmL/UIr0/9/0tmdtwHmEzcm0adfdCf2e9YGiQq++VJ?=
- =?us-ascii?Q?hnMpylra4AlmBtGR5VZ0Y/Q+pn2ZHMsCd/S5LQ45Co99gZGICqpHDKktYv9S?=
- =?us-ascii?Q?TX0+HhAaWtT8i8Kg0uCkXsapc2k3nJ+hBnJ/jAbZzo1PUv58SGAXJat2fHmH?=
- =?us-ascii?Q?CadnBwasXwLGuhucA/JWC9UrucVw5IrwpQn+GJq3OOxpaOk4icaJGXVHunpY?=
- =?us-ascii?Q?wMAP2Wn6p8nf3en4ZiM1Z1NNv0x05XyIhpH3r9Cg7PWHWFeZyn5TU3u4h1Fc?=
- =?us-ascii?Q?2Aax7hs3CsqmizrEyNiiC5rUdM6k74N8azAa8PohPnsDUQ7zOqrdrDg6PP4N?=
- =?us-ascii?Q?90UYvLAhW9ZgiE0CCV+79k/8dq7zL63Fwe6SeWszlfZ+6c3D0O4FTFopjgCC?=
- =?us-ascii?Q?tuYmvFjhH/x8e5mfBE/QHVqQYanEIz8ZUsDG/O1TeLsc1/Cw4BA13/tFwMhh?=
- =?us-ascii?Q?eujPQVtVpXnf5vc1VtMxRcCRYax5qID9LSMyuQVkrYO6/YQywAlyBkb+dReo?=
- =?us-ascii?Q?ag=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	q0tYpU3IMKRhr0/Cf+TvOdc5YmBp/QxnMi13YCzTPepcsp2RIaBtN61PzNXZa5VbLWNEhY+PdPStNRwn2hF18Pv15tunabBIzTY4DstQBSR2t4x9HHtvlD1u/jCX6RLrr/jiaC4QAQPHO4FCvk6x4zFQDQ70+YlVlc/rEuogBwv/CY9ZtoKAhVgHEvP8irBhaTExyhCxNWmMClXmZDHN21+JkreqwbHsY/pXETa8+KeeM8X7pCtQ3Eu2pBBKgqOkFldFVmH4K2VdyBGIFuAUj+kcyckzIKQrxw0f03hpy2uYoVNMzi1iaviTehSMlI2LviCtsBbocuVlZPgYrlqTrTPXLlp+YBgREa7NrKhc1DJJFiL9rhDFtI+a6yQa04i9O+Zu7K/Dt4wB7/+q6KMQhCj4IFF7yPIHjdVZgzRN5yHGcIZGrFSorTH69xV1oUO29tFW17vLxjsWKu8Mim3YjGXvx83bbbIJwOLE3ScUfVJUCQgepqj7Pq+ZlgyUE0eDLbcyoMF1Ez+YCOfQSQ1lPA//Lxryr+vB+7o35X4ng0Zh5MlawvsZC1c+GDFUE3ij1PbRN33OqPNH6BlMc9UrXEEvPb0Gq3SxPxwyU1ItUBM=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a15a77ae-bc3c-4ef3-9db9-08dd9f56af1f
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 May 2025 08:48:01.1293
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: VFJSZQEik3xvcjwBHikipqiZD+Tbi/dBmGanHQgdu/YzZQ9eNNDyJmDPtKoh4437rnTqwbgExjUgXQIy1bcLgh7242WbhglL2HFvb5jhdcs=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR10MB8155
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-30_03,2025-05-29_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 adultscore=0 spamscore=0
- suspectscore=0 bulkscore=0 phishscore=0 mlxlogscore=999 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
- definitions=main-2505300074
-X-Proofpoint-ORIG-GUID: B6tmW15nf-H9HYPOYQQugNxxAc3B93xC
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTMwMDA3NCBTYWx0ZWRfX6Ssq+DhRwHvx SjgkVr6NE1pFunCmbWkUfwUOrbzJPa6B0C5mvUzUgX6fysowl/xW5ikMrnSOseehnBb9mAPKZkY qcSzVFzZPRyYkAA+mMl5RYy9HWMAn4XrSKtTa6dJi/EE2I9vwFx7cSR6AhpQvbk91SO6Gya4in2
- 2Ogjtg/gZcWyFzocpHMHaAhhNaChabQSM87MMdGwcLriRIm4SHocKOCaxmSfzULFHS1Ep1DnDsi XxvtCEf87Dp+e5IL40m9sHB3P+SL+FE9wkN05vgxGridNTdqqIeTsSMUWOHbi9u4uZV8sYh1rkD 5xFjJSn4BtUZAYVbyu0M/YHyDJphr83P+PnWSZ3a5wABoGzVE2T5u23tNPs0rEqMW5bfUhTarOf
- Mb/qqWDYxKH6wLQzrhAZXFX8LY9F6LwQFoXHTekI8SghtpJ7WtcmYRzKGuy0JZcND7N9PVAU
-X-Authority-Analysis: v=2.4 cv=UZNRSLSN c=1 sm=1 tr=0 ts=683970df b=1 cx=c_pps a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=dt9VzEwgFbYA:10 a=GoEa3M9JfhUA:10 a=CFYDfzxikTNwhxn6LM8A:9 a=CjuIK1q_8ugA:10 cc=ntf awl=host:13206
-X-Proofpoint-GUID: B6tmW15nf-H9HYPOYQQugNxxAc3B93xC
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 5/8] power: supply: qcom_battmgr: Add charge control
+ support
+To: fenglin.wu@oss.qualcomm.com, Sebastian Reichel <sre@kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Subbaraman Narayanamurthy <subbaraman.narayanamurthy@oss.qualcomm.com>,
+ David Collins <david.collins@oss.qualcomm.com>, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ kernel@oss.qualcomm.com, devicetree@vger.kernel.org,
+ linux-usb@vger.kernel.org
+References: <20250530-qcom_battmgr_update-v2-0-9e377193a656@oss.qualcomm.com>
+ <497BF3hThnrmYe-YHKmdOyZwdjP3ivm1hFYDDy3-HkSOvkCOMVSkokyhb859mcTarGb55Go5nJLfgsc553u7ZA==@protonmail.internalid>
+ <20250530-qcom_battmgr_update-v2-5-9e377193a656@oss.qualcomm.com>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20250530-qcom_battmgr_update-v2-5-9e377193a656@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, May 30, 2025 at 10:44:36AM +0200, David Hildenbrand wrote:
-> On 30.05.25 10:04, Ryan Roberts wrote:
-> > On 29/05/2025 09:23, Baolin Wang wrote:
-> > > As we discussed in the previous thread [1], the MADV_COLLAPSE will ignore
-> > > the system-wide anon/shmem THP sysfs settings, which means that even though
-> > > we have disabled the anon/shmem THP configuration, MADV_COLLAPSE will still
-> > > attempt to collapse into a anon/shmem THP. This violates the rule we have
-> > > agreed upon: never means never. This patch set will address this issue.
-> >
-> > This is a drive-by comment from me without having the previous context, but...
-> >
-> > Surely MADV_COLLAPSE *should* ignore the THP sysfs settings? It's a deliberate
-> > user-initiated, synchonous request to use huge pages for a range of memory.
-> > There is nothing *transparent* about it, it just happens to be implemented using
-> > the same logic that THP uses.
-> >
-> > I always thought this was a deliberate design decision.
->
-> If the admin said "never", then why should a user be able to overwrite that?
->
-> The design decision I recall is that if VM_NOHUGEPAGE is set, we'll ignore
-> that. Because that was set by the app itself (MADV_NOHUEPAGE).
->
+On 30/05/2025 08:35, Fenglin Wu via B4 Relay wrote:
+> From: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
+> 
+> Add charge control support for SM8550 and X1E80100. It's supported
+> with below two power supply properties:
+> 
+> charge_control_end_threshold: SOC threshold at which the charging
+> should be terminated.
+> 
+> charge_control_start_threshold: SOC threshold at which the charging
+> should be resumed.
 
-I'm with David on this one.
+Maybe this is very obvious to battery charger experts but what does SOC 
+mean here ?
 
-I think it's principal of least surprise - to me 'never' is pretty
-emphatic, and keep in mind the other choices are 'always' and...  'madvise'
-:) which explicitly is 'hey only do this if madvise tells you to'.
+Reading your patch you pass a "int soc" and compare it to a threshold 
+value, without 'soc' having an obvious meaning.
 
-I'd be rather surprised if I hadn't set madvise and a user uses madvise to
-in some fashion override the never.
+Its a threshold right ? Why not just call it threshold ?
 
-I mean I think we all agree this interface is to use a technical term -
-crap - and we need something a lot more fine-grained and smart, but I think
-given the situation we're in we should make it at least as least surprising
-as possible.
+> 
+> Signed-off-by: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
+> ---
+>   drivers/power/supply/qcom_battmgr.c | 256 ++++++++++++++++++++++++++++++++++--
+>   1 file changed, 248 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/power/supply/qcom_battmgr.c b/drivers/power/supply/qcom_battmgr.c
+> index d5d0200b92bdc3d9a22f44159ad45b152efe8be0..39009415f4bfcd76b010305179d3c8fb847254a6 100644
+> --- a/drivers/power/supply/qcom_battmgr.c
+> +++ b/drivers/power/supply/qcom_battmgr.c
+> @@ -21,6 +21,8 @@
+>   enum qcom_battmgr_variant {
+>   	QCOM_BATTMGR_SM8350,
+>   	QCOM_BATTMGR_SC8280XP,
+> +	QCOM_BATTMGR_X1E80100,
+> +	QCOM_BATTMGR_SM8550,
+You're breaking ordering here.
 
+Well the ordering is already broken but, please sort this list 
+alphanumerically.
+
+>   };
+> 
+>   #define BATTMGR_BAT_STATUS		0x1
+> @@ -66,6 +68,9 @@ enum qcom_battmgr_variant {
+>   #define BATT_RESISTANCE			21
+>   #define BATT_POWER_NOW			22
+>   #define BATT_POWER_AVG			23
+> +#define BATT_CHG_CTRL_EN		24
+> +#define BATT_CHG_CTRL_START_THR		25
+> +#define BATT_CHG_CTRL_END_THR		26
+> 
+>   #define BATTMGR_USB_PROPERTY_GET	0x32
+>   #define BATTMGR_USB_PROPERTY_SET	0x33
+> @@ -90,6 +95,13 @@ enum qcom_battmgr_variant {
+>   #define WLS_TYPE			5
+>   #define WLS_BOOST_EN			6
+> 
+> +#define BATTMGR_CHG_CTRL_LIMIT_EN	0x48
+> +#define CHARGE_CTRL_START_THR_MIN	50
+> +#define CHARGE_CTRL_START_THR_MAX	95
+> +#define CHARGE_CTRL_END_THR_MIN		55
+> +#define CHARGE_CTRL_END_THR_MAX		100
+> +#define CHARGE_CTRL_DELTA_SOC		5
+> +
+>   struct qcom_battmgr_enable_request {
+>   	struct pmic_glink_hdr hdr;
+>   	__le32 battery_id;
+> @@ -124,6 +136,13 @@ struct qcom_battmgr_discharge_time_request {
+>   	__le32 reserved;
+>   };
+> 
+> +struct qcom_battmgr_charge_ctrl_request {
+> +	struct pmic_glink_hdr hdr;
+> +	__le32 enable;
+> +	__le32 target_soc;
+> +	__le32 delta_soc;
+> +};
+> +
+>   struct qcom_battmgr_message {
+>   	struct pmic_glink_hdr hdr;
+>   	union {
+> @@ -236,6 +255,8 @@ struct qcom_battmgr_info {
+>   	unsigned int capacity_warning;
+>   	unsigned int cycle_count;
+>   	unsigned int charge_count;
+> +	unsigned int charge_ctrl_start;
+> +	unsigned int charge_ctrl_end;
+>   	char model_number[BATTMGR_STRING_LEN];
+>   	char serial_number[BATTMGR_STRING_LEN];
+>   	char oem_info[BATTMGR_STRING_LEN];
+> @@ -424,6 +445,8 @@ static const u8 sm8350_bat_prop_map[] = {
+>   	[POWER_SUPPLY_PROP_RESISTANCE] = BATT_RESISTANCE,
+>   	[POWER_SUPPLY_PROP_STATE_OF_HEALTH] = BATT_SOH,
+>   	[POWER_SUPPLY_PROP_POWER_NOW] = BATT_POWER_NOW,
+> +	[POWER_SUPPLY_PROP_CHARGE_CONTROL_START_THRESHOLD] = BATT_CHG_CTRL_START_THR,
+> +	[POWER_SUPPLY_PROP_CHARGE_CONTROL_END_THRESHOLD] = BATT_CHG_CTRL_END_THR,
+>   };
+> 
+>   static int qcom_battmgr_bat_sm8350_update(struct qcom_battmgr *battmgr,
+> @@ -494,7 +517,8 @@ static int qcom_battmgr_bat_get_property(struct power_supply *psy,
+>   	if (!battmgr->service_up)
+>   		return -EAGAIN;
+> 
+> -	if (battmgr->variant == QCOM_BATTMGR_SC8280XP)
+> +	if (battmgr->variant == QCOM_BATTMGR_SC8280XP ||
+> +			battmgr->variant == QCOM_BATTMGR_X1E80100)
+
+Please run your series through checkpatch
+
+0004-power-supply-qcom_battmgr-Add-state_of_health-proper.patch has no 
+obvious style problems and is ready for submission.
+CHECK: Alignment should match open parenthesis
+#95: FILE: drivers/power/supply/qcom_battmgr.c:521:
++	if (battmgr->variant == QCOM_BATTMGR_SC8280XP ||
++			battmgr->variant == QCOM_BATTMGR_X1E80100)
+
+CHECK: Alignment should match open parenthesis
+#137: FILE: drivers/power/supply/qcom_battmgr.c:678:
++	if (soc < CHARGE_CTRL_START_THR_MIN ||
++			soc > CHARGE_CTRL_START_THR_MAX) {
+
+CHECK: Alignment should match open parenthesis
+#139: FILE: drivers/power/supply/qcom_battmgr.c:680:
++		dev_err(battmgr->dev, "charge control start threshold exceed range: 
+[%u - %u]\n",
++				CHARGE_CTRL_START_THR_MIN, CHARGE_CTRL_START_THR_MAX);
+
+CHECK: Alignment should match open parenthesis
+#175: FILE: drivers/power/supply/qcom_battmgr.c:716:
++	if (soc < CHARGE_CTRL_END_THR_MIN ||
++			soc > CHARGE_CTRL_END_THR_MAX) {
+
+CHECK: Alignment should match open parenthesis
+#177: FILE: drivers/power/supply/qcom_battmgr.c:718:
++		dev_err(battmgr->dev, "charge control end threshold exceed range: [%u 
+- %u]\n",
++				CHARGE_CTRL_END_THR_MIN, CHARGE_CTRL_END_THR_MAX);
+
+CHECK: Alignment should match open parenthesis
+#196: FILE: drivers/power/supply/qcom_battmgr.c:737:
++static int qcom_battmgr_bat_is_writeable(struct power_supply *psy,
++				enum power_supply_property psp)
+
+CHECK: Alignment should match open parenthesis
+#210: FILE: drivers/power/supply/qcom_battmgr.c:751:
++static int qcom_battmgr_bat_set_property(struct power_supply *psy,
++			enum power_supply_property psp,
+
+CHECK: Alignment should match open parenthesis
+#326: FILE: drivers/power/supply/qcom_battmgr.c:985:
++	if (battmgr->variant == QCOM_BATTMGR_SC8280XP ||
++			battmgr->variant == QCOM_BATTMGR_X1E80100)
+
+CHECK: Alignment should match open parenthesis
+#336: FILE: drivers/power/supply/qcom_battmgr.c:1108:
++	if (battmgr->variant == QCOM_BATTMGR_SC8280XP ||
++			battmgr->variant == QCOM_BATTMGR_X1E80100)
+
+CHECK: Alignment should match open parenthesis
+#367: FILE: drivers/power/supply/qcom_battmgr.c:1527:
++	else if (battmgr->variant == QCOM_BATTMGR_SC8280XP ||
++			battmgr->variant == QCOM_BATTMGR_X1E80100)
+
+CHECK: Alignment should match open parenthesis
+#396: FILE: drivers/power/supply/qcom_battmgr.c:1606:
++	if (battmgr->variant == QCOM_BATTMGR_SC8280XP ||
++			battmgr->variant == QCOM_BATTMGR_X1E80100) {
+
+
+>   		ret = qcom_battmgr_bat_sc8280xp_update(battmgr, psp);
+>   	else
+>   		ret = qcom_battmgr_bat_sm8350_update(battmgr, psp);
+> @@ -599,6 +623,12 @@ static int qcom_battmgr_bat_get_property(struct power_supply *psy,
+>   	case POWER_SUPPLY_PROP_TIME_TO_FULL_AVG:
+>   		val->intval = battmgr->status.charge_time;
+>   		break;
+> +	case POWER_SUPPLY_PROP_CHARGE_CONTROL_START_THRESHOLD:
+> +		val->intval = battmgr->info.charge_ctrl_start;
+> +		break;
+> +	case POWER_SUPPLY_PROP_CHARGE_CONTROL_END_THRESHOLD:
+> +		val->intval = battmgr->info.charge_ctrl_end;
+> +		break;
+>   	case POWER_SUPPLY_PROP_MANUFACTURE_YEAR:
+>   		val->intval = battmgr->info.year;
+>   		break;
+> @@ -624,6 +654,120 @@ static int qcom_battmgr_bat_get_property(struct power_supply *psy,
+>   	return 0;
+>   }
+> 
+> +static int qcom_battmgr_set_charge_control(struct qcom_battmgr *battmgr,
+> +					   u32 target_soc, u32 delta_soc)
+> +{
+> +	struct qcom_battmgr_charge_ctrl_request request = {
+> +		.hdr.owner = cpu_to_le32(PMIC_GLINK_OWNER_BATTMGR),
+> +		.hdr.type = cpu_to_le32(PMIC_GLINK_REQ_RESP),
+> +		.hdr.opcode = cpu_to_le32(BATTMGR_CHG_CTRL_LIMIT_EN),
+> +		.enable = cpu_to_le32(1),
+> +		.target_soc = cpu_to_le32(target_soc),
+> +		.delta_soc = cpu_to_le32(delta_soc),
+> +	};
+> +
+> +	return qcom_battmgr_request(battmgr, &request, sizeof(request));
+> +}
+> +
+> +static int qcom_battmgr_set_charge_start_threshold(struct qcom_battmgr *battmgr, int soc)
+> +{
+> +	u32 target_soc, delta_soc;
+> +	int ret;
+> +
+> +	if (soc < CHARGE_CTRL_START_THR_MIN ||
+> +			soc > CHARGE_CTRL_START_THR_MAX) {
+> +		dev_err(battmgr->dev, "charge control start threshold exceed range: [%u - %u]\n",
+> +				CHARGE_CTRL_START_THR_MIN, CHARGE_CTRL_START_THR_MAX);
+> +		return -EINVAL;
+> +	}
+
+'soc' is what - a threshold as far as I can tell.
+
+> +
+> +	/*
+> +	 * If the new start threshold is larger than the old end threshold,
+> +	 * move the end threshold one step (DELTA_SOC) after the new start
+> +	 * threshold.
+> +	 */
+> +	if (soc > battmgr->info.charge_ctrl_end) {
+> +		target_soc = soc + CHARGE_CTRL_DELTA_SOC;
+> +		target_soc = min_t(u32, target_soc, CHARGE_CTRL_END_THR_MAX);
+> +		delta_soc = target_soc - soc;
+> +		delta_soc = min_t(u32, delta_soc, CHARGE_CTRL_DELTA_SOC);
+> +	} else {
+> +		target_soc =  battmgr->info.charge_ctrl_end;
+> +		delta_soc = battmgr->info.charge_ctrl_end - soc;
+> +	}
+> +
+> +	mutex_lock(&battmgr->lock);
+> +	ret = qcom_battmgr_set_charge_control(battmgr, target_soc, delta_soc);
+> +	mutex_unlock(&battmgr->lock);
+> +	if (!ret) {
+> +		battmgr->info.charge_ctrl_start = soc;
+> +		battmgr->info.charge_ctrl_end = target_soc;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int qcom_battmgr_set_charge_end_threshold(struct qcom_battmgr *battmgr, int soc)
+> +{
+> +	u32 delta_soc = CHARGE_CTRL_DELTA_SOC;
+> +	int ret;
+> +
+> +	if (soc < CHARGE_CTRL_END_THR_MIN ||
+> +			soc > CHARGE_CTRL_END_THR_MAX) {
+> +		dev_err(battmgr->dev, "charge control end threshold exceed range: [%u - %u]\n",
+> +				CHARGE_CTRL_END_THR_MIN, CHARGE_CTRL_END_THR_MAX);
+> +		return -EINVAL;
+> +	}
+> +
+> +	if (battmgr->info.charge_ctrl_start && soc > battmgr->info.charge_ctrl_start)
+> +		delta_soc = soc - battmgr->info.charge_ctrl_start;
+> +
+> +	mutex_lock(&battmgr->lock);
+> +	ret = qcom_battmgr_set_charge_control(battmgr, soc, delta_soc);
+> +	mutex_unlock(&battmgr->lock);
+> +	if (!ret) {
+> +		battmgr->info.charge_ctrl_start = soc - delta_soc;
+> +		battmgr->info.charge_ctrl_end = soc;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int qcom_battmgr_bat_is_writeable(struct power_supply *psy,
+> +				enum power_supply_property psp)
+> +{
+> +	switch (psp) {
+> +	case POWER_SUPPLY_PROP_CHARGE_CONTROL_START_THRESHOLD:
+> +	case POWER_SUPPLY_PROP_CHARGE_CONTROL_END_THRESHOLD:
+> +		return 1;
+> +	default:
+> +		return 0;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int qcom_battmgr_bat_set_property(struct power_supply *psy,
+> +			enum power_supply_property psp,
+> +			const union power_supply_propval *pval)
+> +{
+> +	struct qcom_battmgr *battmgr = power_supply_get_drvdata(psy);
+> +
+> +	if (!battmgr->service_up)
+> +		return -EAGAIN;
+> +
+> +	switch (psp) {
+> +	case POWER_SUPPLY_PROP_CHARGE_CONTROL_START_THRESHOLD:
+> +		return qcom_battmgr_set_charge_start_threshold(battmgr, pval->intval);
+> +	case POWER_SUPPLY_PROP_CHARGE_CONTROL_END_THRESHOLD:
+> +		return qcom_battmgr_set_charge_end_threshold(battmgr, pval->intval);
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>   static const enum power_supply_property sc8280xp_bat_props[] = {
+>   	POWER_SUPPLY_PROP_STATUS,
+>   	POWER_SUPPLY_PROP_PRESENT,
+> @@ -657,6 +801,43 @@ static const struct power_supply_desc sc8280xp_bat_psy_desc = {
+>   	.get_property = qcom_battmgr_bat_get_property,
+>   };
+> 
+> +static const enum power_supply_property x1e80100_bat_props[] = {
+> +	POWER_SUPPLY_PROP_STATUS,
+> +	POWER_SUPPLY_PROP_PRESENT,
+> +	POWER_SUPPLY_PROP_TECHNOLOGY,
+> +	POWER_SUPPLY_PROP_CYCLE_COUNT,
+> +	POWER_SUPPLY_PROP_VOLTAGE_MAX_DESIGN,
+> +	POWER_SUPPLY_PROP_VOLTAGE_NOW,
+> +	POWER_SUPPLY_PROP_POWER_NOW,
+> +	POWER_SUPPLY_PROP_CHARGE_FULL_DESIGN,
+> +	POWER_SUPPLY_PROP_CHARGE_FULL,
+> +	POWER_SUPPLY_PROP_CHARGE_EMPTY,
+> +	POWER_SUPPLY_PROP_CHARGE_NOW,
+> +	POWER_SUPPLY_PROP_ENERGY_FULL_DESIGN,
+> +	POWER_SUPPLY_PROP_ENERGY_FULL,
+> +	POWER_SUPPLY_PROP_ENERGY_EMPTY,
+> +	POWER_SUPPLY_PROP_ENERGY_NOW,
+> +	POWER_SUPPLY_PROP_TEMP,
+> +	POWER_SUPPLY_PROP_MANUFACTURE_YEAR,
+> +	POWER_SUPPLY_PROP_MANUFACTURE_MONTH,
+> +	POWER_SUPPLY_PROP_MANUFACTURE_DAY,
+> +	POWER_SUPPLY_PROP_MODEL_NAME,
+> +	POWER_SUPPLY_PROP_MANUFACTURER,
+> +	POWER_SUPPLY_PROP_SERIAL_NUMBER,
+> +	POWER_SUPPLY_PROP_CHARGE_CONTROL_START_THRESHOLD,
+> +	POWER_SUPPLY_PROP_CHARGE_CONTROL_END_THRESHOLD,
+> +};
+> +
+> +static const struct power_supply_desc x1e80100_bat_psy_desc = {
+> +	.name = "qcom-battmgr-bat",
+> +	.type = POWER_SUPPLY_TYPE_BATTERY,
+> +	.properties = x1e80100_bat_props,
+> +	.num_properties = ARRAY_SIZE(x1e80100_bat_props),
+> +	.get_property = qcom_battmgr_bat_get_property,
+> +	.set_property = qcom_battmgr_bat_set_property,
+> +	.property_is_writeable = qcom_battmgr_bat_is_writeable,
+> +};
+> +
+>   static const enum power_supply_property sm8350_bat_props[] = {
+>   	POWER_SUPPLY_PROP_STATUS,
+>   	POWER_SUPPLY_PROP_HEALTH,
+> @@ -689,6 +870,42 @@ static const struct power_supply_desc sm8350_bat_psy_desc = {
+>   	.get_property = qcom_battmgr_bat_get_property,
+>   };
+> 
+> +static const enum power_supply_property sm8550_bat_props[] = {
+> +	POWER_SUPPLY_PROP_STATUS,
+> +	POWER_SUPPLY_PROP_HEALTH,
+> +	POWER_SUPPLY_PROP_PRESENT,
+> +	POWER_SUPPLY_PROP_CHARGE_TYPE,
+> +	POWER_SUPPLY_PROP_CAPACITY,
+> +	POWER_SUPPLY_PROP_VOLTAGE_OCV,
+> +	POWER_SUPPLY_PROP_VOLTAGE_NOW,
+> +	POWER_SUPPLY_PROP_VOLTAGE_MAX,
+> +	POWER_SUPPLY_PROP_CURRENT_NOW,
+> +	POWER_SUPPLY_PROP_TEMP,
+> +	POWER_SUPPLY_PROP_TECHNOLOGY,
+> +	POWER_SUPPLY_PROP_CHARGE_COUNTER,
+> +	POWER_SUPPLY_PROP_CYCLE_COUNT,
+> +	POWER_SUPPLY_PROP_CHARGE_FULL_DESIGN,
+> +	POWER_SUPPLY_PROP_CHARGE_FULL,
+> +	POWER_SUPPLY_PROP_MODEL_NAME,
+> +	POWER_SUPPLY_PROP_TIME_TO_FULL_AVG,
+> +	POWER_SUPPLY_PROP_TIME_TO_EMPTY_AVG,
+> +	POWER_SUPPLY_PROP_RESISTANCE,
+> +	POWER_SUPPLY_PROP_STATE_OF_HEALTH,
+> +	POWER_SUPPLY_PROP_POWER_NOW,
+> +	POWER_SUPPLY_PROP_CHARGE_CONTROL_START_THRESHOLD,
+> +	POWER_SUPPLY_PROP_CHARGE_CONTROL_END_THRESHOLD,
+> +};
+> +
+> +static const struct power_supply_desc sm8550_bat_psy_desc = {
+> +	.name = "qcom-battmgr-bat",
+> +	.type = POWER_SUPPLY_TYPE_BATTERY,
+> +	.properties = sm8550_bat_props,
+> +	.num_properties = ARRAY_SIZE(sm8550_bat_props),
+> +	.get_property = qcom_battmgr_bat_get_property,
+> +	.set_property = qcom_battmgr_bat_set_property,
+> +	.property_is_writeable = qcom_battmgr_bat_is_writeable,
+> +};
+> +
+>   static int qcom_battmgr_ac_get_property(struct power_supply *psy,
+>   					enum power_supply_property psp,
+>   					union power_supply_propval *val)
+> @@ -764,7 +981,8 @@ static int qcom_battmgr_usb_get_property(struct power_supply *psy,
+>   	if (!battmgr->service_up)
+>   		return -EAGAIN;
+> 
+> -	if (battmgr->variant == QCOM_BATTMGR_SC8280XP)
+> +	if (battmgr->variant == QCOM_BATTMGR_SC8280XP ||
+> +			battmgr->variant == QCOM_BATTMGR_X1E80100)
+>   		ret = qcom_battmgr_bat_sc8280xp_update(battmgr, psp);
+>   	else
+>   		ret = qcom_battmgr_usb_sm8350_update(battmgr, psp);
+> @@ -886,7 +1104,8 @@ static int qcom_battmgr_wls_get_property(struct power_supply *psy,
+>   	if (!battmgr->service_up)
+>   		return -EAGAIN;
+> 
+> -	if (battmgr->variant == QCOM_BATTMGR_SC8280XP)
+> +	if (battmgr->variant == QCOM_BATTMGR_SC8280XP ||
+> +			battmgr->variant == QCOM_BATTMGR_X1E80100)
+>   		ret = qcom_battmgr_bat_sc8280xp_update(battmgr, psp);
+>   	else
+>   		ret = qcom_battmgr_wls_sm8350_update(battmgr, psp);
+> @@ -1196,6 +1415,12 @@ static void qcom_battmgr_sm8350_callback(struct qcom_battmgr *battmgr,
+>   		case BATT_POWER_NOW:
+>   			battmgr->status.power_now = le32_to_cpu(resp->intval.value);
+>   			break;
+> +		case BATT_CHG_CTRL_START_THR:
+> +			battmgr->info.charge_ctrl_start = le32_to_cpu(resp->intval.value);
+> +			break;
+> +		case BATT_CHG_CTRL_END_THR:
+> +			battmgr->info.charge_ctrl_end = le32_to_cpu(resp->intval.value);
+> +			break;
+>   		default:
+>   			dev_warn(battmgr->dev, "unknown property %#x\n", property);
+>   			break;
+> @@ -1278,6 +1503,7 @@ static void qcom_battmgr_sm8350_callback(struct qcom_battmgr *battmgr,
+>   		}
+>   		break;
+>   	case BATTMGR_REQUEST_NOTIFICATION:
+> +	case BATTMGR_CHG_CTRL_LIMIT_EN:
+>   		battmgr->error = 0;
+>   		break;
+>   	default:
+> @@ -1297,7 +1523,8 @@ static void qcom_battmgr_callback(const void *data, size_t len, void *priv)
+> 
+>   	if (opcode == BATTMGR_NOTIFICATION)
+>   		qcom_battmgr_notification(battmgr, data, len);
+> -	else if (battmgr->variant == QCOM_BATTMGR_SC8280XP)
+> +	else if (battmgr->variant == QCOM_BATTMGR_SC8280XP ||
+> +			battmgr->variant == QCOM_BATTMGR_X1E80100)
+>   		qcom_battmgr_sc8280xp_callback(battmgr, data, len);
+>   	else
+>   		qcom_battmgr_sm8350_callback(battmgr, data, len);
+> @@ -1333,7 +1560,8 @@ static void qcom_battmgr_pdr_notify(void *priv, int state)
+>   static const struct of_device_id qcom_battmgr_of_variants[] = {
+>   	{ .compatible = "qcom,sc8180x-pmic-glink", .data = (void *)QCOM_BATTMGR_SC8280XP },
+>   	{ .compatible = "qcom,sc8280xp-pmic-glink", .data = (void *)QCOM_BATTMGR_SC8280XP },
+> -	{ .compatible = "qcom,x1e80100-pmic-glink", .data = (void *)QCOM_BATTMGR_SC8280XP },
+> +	{ .compatible = "qcom,x1e80100-pmic-glink", .data = (void *)QCOM_BATTMGR_X1E80100 },
+> +	{ .compatible = "qcom,sm8550-pmic-glink", .data = (void *)QCOM_BATTMGR_SM8550 },
+
+Please separate compat string addition from functional changes.
+
+>   	/* Unmatched devices falls back to QCOM_BATTMGR_SM8350 */
+>   	{}
+>   };
+> @@ -1343,6 +1571,7 @@ static char *qcom_battmgr_battery[] = { "battery" };
+>   static int qcom_battmgr_probe(struct auxiliary_device *adev,
+>   			      const struct auxiliary_device_id *id)
+>   {
+> +	const struct power_supply_desc *psy_desc;
+>   	struct power_supply_config psy_cfg_supply = {};
+>   	struct power_supply_config psy_cfg = {};
+>   	const struct of_device_id *match;
+> @@ -1373,8 +1602,14 @@ static int qcom_battmgr_probe(struct auxiliary_device *adev,
+>   	else
+>   		battmgr->variant = QCOM_BATTMGR_SM8350;
+> 
+> -	if (battmgr->variant == QCOM_BATTMGR_SC8280XP) {
+> -		battmgr->bat_psy = devm_power_supply_register(dev, &sc8280xp_bat_psy_desc, &psy_cfg);
+> +	if (battmgr->variant == QCOM_BATTMGR_SC8280XP ||
+> +			battmgr->variant == QCOM_BATTMGR_X1E80100) {
+> +		if (battmgr->variant == QCOM_BATTMGR_X1E80100)
+> +			psy_desc = &x1e80100_bat_psy_desc;
+> +		else
+> +			psy_desc = &sc8280xp_bat_psy_desc;
+> +
+> +		battmgr->bat_psy = devm_power_supply_register(dev, psy_desc, &psy_cfg);
+>   		if (IS_ERR(battmgr->bat_psy))
+>   			return dev_err_probe(dev, PTR_ERR(battmgr->bat_psy),
+>   					     "failed to register battery power supply\n");
+> @@ -1394,7 +1629,12 @@ static int qcom_battmgr_probe(struct auxiliary_device *adev,
+>   			return dev_err_probe(dev, PTR_ERR(battmgr->wls_psy),
+>   					     "failed to register wireless charing power supply\n");
+>   	} else {
+> -		battmgr->bat_psy = devm_power_supply_register(dev, &sm8350_bat_psy_desc, &psy_cfg);
+> +		if (battmgr->variant == QCOM_BATTMGR_SM8550)
+> +			psy_desc = &sm8550_bat_psy_desc;
+> +		else
+> +			psy_desc = &sm8350_bat_psy_desc;
+> +
+> +		battmgr->bat_psy = devm_power_supply_register(dev, psy_desc, &psy_cfg);
+>   		if (IS_ERR(battmgr->bat_psy))
+>   			return dev_err_probe(dev, PTR_ERR(battmgr->bat_psy),
+>   					     "failed to register battery power supply\n");
+> 
 > --
-> Cheers,
->
-> David / dhildenb
->
+> 2.34.1
+> 
+> 
+> 
+
 
