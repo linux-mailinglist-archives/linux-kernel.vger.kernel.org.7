@@ -1,103 +1,56 @@
-Return-Path: <linux-kernel+bounces-668052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-668056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B52ADAC8D44
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 14:01:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A53BBAC8D78
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 14:19:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7160B1890348
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 12:01:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA6D13BC076
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 12:19:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A13E821FF31;
-	Fri, 30 May 2025 12:01:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE9BB22AE7B;
+	Fri, 30 May 2025 12:19:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CL6A4bzA"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35426D299
-	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 12:01:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="aci+aISz"
+Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8CB338DF9
+	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 12:19:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748606499; cv=none; b=UKe8rL9Wy1jFyI3eL4b3/9AJqIMLqVoYwL+G8U32J/TgORPyPz6ET2bAgqnixewifQpOzRUPKEUkS4UJ4JgO6GrYjxtJ9VQPbAmDAWDTGBBAH2+n1pH4XPPDMrDQcz8vn2EQaj3Z0Be7m5LmwjoBGzVGxO4/O9ThfHx0LXvmf74=
+	t=1748607576; cv=none; b=nfIWETRMrUPGWuDJqLcmFEWu8Tp0cgHr4VAgizeHwjVyj+QZJ/cr4egRVLMzbUsC6e4ZR0hjzMH2Fr/qLkjd+rS/uJvRklxpf+x+7T0ECI2ekJ5AmtOYsgcuZZ0ObPVRL6oN84qXpA/Es9dWw+tWHsqaOpC+BuPPbtJh6z9uo8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748606499; c=relaxed/simple;
-	bh=ssBU7ew2CyurUUHd3fgFEYsdYoHHLH9PeUvxnIJsnCk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nZ+v7wrxZ4undNCYt+lbM8xyNo2gUVjM7/VKMDspt11cJCbcXIliAsBpUtjy4pruch16N3rFCVWs22aAKDrWXmkt6NT94tQ2ueTI/OHT8CpA2hQB/8kcdVVVwbl8OQIlKEeBU8wLUNdjF+xbRUwYySK7XIuxlCQg8r76xBJ/zoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CL6A4bzA; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1748606496;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+WPaWb2DBUzybHtEtz5+SIZgM6ykPPLxKGgnQITZGiM=;
-	b=CL6A4bzAkKdGySR7tuFX9HdB8tMJIaLsISVJe1Jf5DBTFSJXUMn6d+DiKU5P8szVOXaBWA
-	NXDvnA1t/kxa1suukX6/R+ZmDh6ERC4Yhk5pMTPDfScJwtYsNC0SQ35kup/o9y0JmMA2SZ
-	yf1nFHKEZN4nYcN8okiHIF3mZdABFNs=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-156-ELLxJ_qzM5ahNlU3akBRkA-1; Fri, 30 May 2025 08:01:34 -0400
-X-MC-Unique: ELLxJ_qzM5ahNlU3akBRkA-1
-X-Mimecast-MFC-AGG-ID: ELLxJ_qzM5ahNlU3akBRkA_1748606493
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3a1f6c5f4f2so800596f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 05:01:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748606493; x=1749211293;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+WPaWb2DBUzybHtEtz5+SIZgM6ykPPLxKGgnQITZGiM=;
-        b=EfmE68RGZrmfmH/w7yDt6LNqnl8FpPo7w9bNEFwHdxS7MHzJJAdgAixpiwq6SmmzmV
-         qSKI8i+Lwzet6gefu7PEghEdbBEaYtCwRQbAjjXJnvt6L6goDRfPAyOKESjsN+L7VhYN
-         Bds/GjjTDwszcMHeKNndQWAChuoALG6YGolyTvnLmgFvXl9HlTKjep6AiCru0JRxpK0Y
-         tlfSvvrUoHIalOxet65amlccw7Bxkl3YqCnvWrlKYxwctDr2IvIWahwhr8f0416pTQha
-         scvyVPGDFU1xtkhr+Rv1VmOEVwNjrPIeMS5NTzRo6HB+lThf5vo0UCRIpwtushRWMkpH
-         KzPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUmcxF/RacQo0sVSp7wzxnRvXp+1ZFR+w/uDPc7196KCOSbnqyyNyov4zxka/6uDps17h/WnNouYKcTFIg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5xHivFCcQwK7S06n9pJ/CxbFBLtIlk1gVf3doYUY6pvkeh54C
-	/OxBDqgqtFPdWLcOU5LkDZ07Tlb7159FmUSsY6aUpqWtj3VnGB0V7aLddJvmre0NMg/CVVjbyB3
-	hj0PLEy7Q0BQLceWKwZgOj5TinXzE3w+kFiNhVt1uG5X4jpj6yYfGbeATGYiYy/5Cnw==
-X-Gm-Gg: ASbGnctZoOlpxxfJiFxvXyf5V8EbY+aGAqIMEDKJyGaZBXNuEOxJonCwAVlbVyRFaeI
-	ljaA6o7oFj2GsUm7zw1OzmcJfazgsfKqzheRBIVv0NM4FZQuRoUZCGYaIdN81ZnqYvJsAgFoQBR
-	y0IQApVZdsOsynQiTfvGDv1xuoAcKoKK61m7vKJaYUQIvxWNUIDtjvN0AQLDKanrAP38thVa426
-	TdZWx+KKCIdlq6ePAmSKsxZG+RpPB4Mrm33sstr0ZaYQ3nvX/E262TxmlaDs/NuKgwUBnOcyCEM
-	o2wD3A==
-X-Received: by 2002:a05:6000:4023:b0:3a4:dc2a:924e with SMTP id ffacd0b85a97d-3a4f89a7defmr1467419f8f.6.1748606493157;
-        Fri, 30 May 2025 05:01:33 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE1gVcqHAhAJ9QWvV4I/CcNLL95rHuwb8avC98d08tABfzwj9pgURbSqB3ZvasaIXJegFy+Dg==
-X-Received: by 2002:a05:6000:4023:b0:3a4:dc2a:924e with SMTP id ffacd0b85a97d-3a4f89a7defmr1467369f8f.6.1748606492597;
-        Fri, 30 May 2025 05:01:32 -0700 (PDT)
-Received: from redhat.com ([2a0d:6fc0:1517:1000:ea83:8e5f:3302:3575])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4efe5b7b0sm4698399f8f.10.2025.05.30.05.01.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 May 2025 05:01:31 -0700 (PDT)
-Date: Fri, 30 May 2025 08:01:28 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Igor Mammedov <imammedo@redhat.com>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Shiju Jose <shiju.jose@huawei.com>, qemu-arm@nongnu.org,
-	qemu-devel@nongnu.org,
-	Philippe =?iso-8859-1?Q?Mathieu-Daud=E9?= <philmd@linaro.org>,
-	Ani Sinha <anisinha@redhat.com>,
-	Eduardo Habkost <eduardo@habkost.net>,
-	Marcel Apfelbaum <marcel.apfelbaum@gmail.com>,
-	Peter Maydell <peter.maydell@linaro.org>,
-	Shannon Zhao <shannon.zhaosl@gmail.com>,
-	Yanan Wang <wangyanan55@huawei.com>, Zhao Liu <zhao1.liu@intel.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v9 12/20] acpi/generic_event_device: add logic to detect
- if HEST addr is available
-Message-ID: <20250530080120-mutt-send-email-mst@kernel.org>
-References: <cover.1747722973.git.mchehab+huawei@kernel.org>
- <aa74b756f633dbee5442cf4baa2c1d81a669d2f9.1747722973.git.mchehab+huawei@kernel.org>
- <20250528174212.2823d3de@imammedo.users.ipa.redhat.com>
+	s=arc-20240116; t=1748607576; c=relaxed/simple;
+	bh=brnWk11xz+8EDtLCZYLVYfCnLv1msbsfbcC4wsfPTss=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=d7tTZi4m+dsBT0ZzGEigriCJYF7+NK8uzaqJBRNwZu4SMq3dU2K/ftSrLw9GBSVvpMQLWftQgeE6t2GLSuj7Tf0FRXrICA8YV51jWsRL9dFmTbFCVVTm6++Q6uo3LqoqOjKS6L7MwBuLgC08mc1hlqggrqk9+pHTOwF4+A4N9Bc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=aci+aISz; arc=none smtp.client-ip=85.214.250.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
+Received: from 8bytes.org (p4ffe03ae.dip0.t-ipconnect.de [79.254.3.174])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.8bytes.org (Postfix) with ESMTPSA id 66F184AC4C;
+	Fri, 30 May 2025 14:11:51 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
+	s=default; t=1748607111;
+	bh=brnWk11xz+8EDtLCZYLVYfCnLv1msbsfbcC4wsfPTss=;
+	h=Date:From:To:Cc:Subject:From;
+	b=aci+aISzd4JecodwFwT88niBcJcm8fsTJs9RWZpAizzef2jgaxphDPM/Jd3GBmzxd
+	 2gZd0V/+YE5IwRlrk2+xMautGnY9B1sObVAiMSpia1VURC2qSKhD8DXCIcrtnLP0z8
+	 5CdalWS0n57BaTij+r9ATa4TCB5CGxwxKNHL1c2uTKgPE5fNDHzrRKgLQhZuKy0FjM
+	 r3rUwiCnhJ71as/Mu/pZYaDBE6tFNTyGx5MWWRA7ORD+c4NVFEdDA7oVCDskFDBhQx
+	 e7mI77b/i5IRge7QNi51uBaickm2Ry8J6C0JwTYJbybciq/PqfIgNA3rsBqWOe0FZB
+	 GW5pbRtQVkJRA==
+Date: Fri, 30 May 2025 14:11:50 +0200
+From: Joerg Roedel <joro@8bytes.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org,
+	iommu@lists.linux.dev
+Subject: [git pull] IOMMU Updates for Linux v6.16
+Message-ID: <aDmght5YpHmJ6qZ2@8bytes.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -106,106 +59,254 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250528174212.2823d3de@imammedo.users.ipa.redhat.com>
 
-On Wed, May 28, 2025 at 05:42:12PM +0200, Igor Mammedov wrote:
-> On Tue, 20 May 2025 08:41:31 +0200
-> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
-> 
-> > Create a new property (x-has-hest-addr) and use it to detect if
-> > the GHES table offsets can be calculated from the HEST address
-> > (qemu 10.0 and upper) or via the legacy way via an offset obtained
-> > from the hardware_errors firmware file.
-> 
-> 
-> it doesn't apply to current master anymore
+Hi Linus,
 
-indeed. Mauro?
+Please note that I alread sent you the fixes branch for v6.15-rc7, thus
+the actual merge diff-stat you will get is different from the one below.
+With that in mind:
 
-> 
-> > 
-> > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> > Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> > Reviewed-by: Igor Mammedov <imammedo@redhat.com>
-> > ---
-> >  hw/acpi/generic_event_device.c |  2 ++
-> >  hw/arm/virt-acpi-build.c       | 18 ++++++++++++++++--
-> >  hw/core/machine.c              |  5 ++++-
-> >  3 files changed, 22 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/hw/acpi/generic_event_device.c b/hw/acpi/generic_event_device.c
-> > index d292f61b4e41..3cf9dab0d01a 100644
-> > --- a/hw/acpi/generic_event_device.c
-> > +++ b/hw/acpi/generic_event_device.c
-> > @@ -318,6 +318,8 @@ static void acpi_ged_send_event(AcpiDeviceIf *adev, AcpiEventStatusBits ev)
-> >  
-> >  static const Property acpi_ged_properties[] = {
-> >      DEFINE_PROP_UINT32("ged-event", AcpiGedState, ged_event_bitmap, 0),
-> > +    DEFINE_PROP_BOOL("x-has-hest-addr", AcpiGedState,
-> > +                     ghes_state.use_hest_addr, false),
-> >  };
-> >  
-> >  static const VMStateDescription vmstate_memhp_state = {
-> > diff --git a/hw/arm/virt-acpi-build.c b/hw/arm/virt-acpi-build.c
-> > index da3ebf403ef9..3126234e657d 100644
-> > --- a/hw/arm/virt-acpi-build.c
-> > +++ b/hw/arm/virt-acpi-build.c
-> > @@ -893,6 +893,10 @@ static const AcpiNotificationSourceId hest_ghes_notify[] = {
-> >      { ACPI_HEST_SRC_ID_SYNC, ACPI_GHES_NOTIFY_SEA },
-> >  };
-> >  
-> > +static const AcpiNotificationSourceId hest_ghes_notify_10_0[] = {
-> > +    { ACPI_HEST_SRC_ID_SYNC, ACPI_GHES_NOTIFY_SEA },
-> > +};
-> > +
-> >  static
-> >  void virt_acpi_build(VirtMachineState *vms, AcpiBuildTables *tables)
-> >  {
-> > @@ -947,15 +951,25 @@ void virt_acpi_build(VirtMachineState *vms, AcpiBuildTables *tables)
-> >  
-> >      if (vms->ras) {
-> >          AcpiGedState *acpi_ged_state;
-> > +        static const AcpiNotificationSourceId *notify;
-> > +        unsigned int notify_sz;
-> >          AcpiGhesState *ags;
-> >  
-> >          acpi_ged_state = ACPI_GED(vms->acpi_dev);
-> >          ags = &acpi_ged_state->ghes_state;
-> >          if (ags) {
-> >              acpi_add_table(table_offsets, tables_blob);
-> > +
-> > +            if (!ags->use_hest_addr) {
-> > +                notify = hest_ghes_notify_10_0;
-> > +                notify_sz = ARRAY_SIZE(hest_ghes_notify_10_0);
-> > +            } else {
-> > +                notify = hest_ghes_notify;
-> > +                notify_sz = ARRAY_SIZE(hest_ghes_notify);
-> > +            }
-> > +
-> >              acpi_build_hest(ags, tables_blob, tables->hardware_errors,
-> > -                            tables->linker, hest_ghes_notify,
-> > -                            ARRAY_SIZE(hest_ghes_notify),
-> > +                            tables->linker, notify, notify_sz,
-> >                              vms->oem_id, vms->oem_table_id);
-> >          }
-> >      }
-> > diff --git a/hw/core/machine.c b/hw/core/machine.c
-> > index b8ae155dfa11..dfd36cf063c7 100644
-> > --- a/hw/core/machine.c
-> > +++ b/hw/core/machine.c
-> > @@ -35,9 +35,12 @@
-> >  #include "hw/virtio/virtio-pci.h"
-> >  #include "hw/virtio/virtio-net.h"
-> >  #include "hw/virtio/virtio-iommu.h"
-> > +#include "hw/acpi/generic_event_device.h"
-> >  #include "audio/audio.h"
-> >  
-> > -GlobalProperty hw_compat_10_0[] = {};
-> > +GlobalProperty hw_compat_10_0[] = {
-> > +    { TYPE_ACPI_GED, "x-has-hest-addr", "false" },
-> > +};
-> >  const size_t hw_compat_10_0_len = G_N_ELEMENTS(hw_compat_10_0);
-> >  
-> >  GlobalProperty hw_compat_9_2[] = {
+The following changes since commit a5806cd506af5a7c19bcd596e4708b5c464bfd21:
 
+  Linux 6.15-rc7 (2025-05-18 13:57:29 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/iommu/linux.git tags/iommu-updates-v6.16
+
+for you to fetch changes up to 879b141b7cfa09763f932f15f19e9bc0bcb020d5:
+
+  Merge branches 'fixes', 'apple/dart', 'arm/smmu/updates', 'arm/smmu/bindings', 'fsl/pamu', 'mediatek', 'renesas/ipmmu', 's390', 'intel/vt-d', 'amd/amd-vi' and 'core' into next (2025-05-23 17:14:32 +0200)
+
+----------------------------------------------------------------
+IOMMU Updates for Linux v6.16:
+
+Including:
+
+	- Core:
+	  - Introduction of iommu-pages infrastructure to consolitate page-table
+	    allocation code among hardware drivers. This is ground-work for more
+	    generalization in the future.
+	  - Remove IOMMU_DEV_FEAT_SVA and IOMMU_DEV_FEAT_IOPF feature flags.
+	  - Convert virtio-iommu to domain_alloc_paging().
+	  - KConfig cleanups.
+	  - Some small fixes for possible overflows and race conditions.
+
+	- Intel VT-d driver:
+	   - Restore WO permissions on second-level paging entries.
+	   - Use ida to manage domain id.
+	   - Miscellaneous cleanups.
+
+	- AMD-Vi:
+	  - Make sure notifiers finish running before module unload.
+	  - Add support for HTRangeIgnore feature.
+	  - Allow matching ACPI HID devices without matching UIDs.
+
+	- ARM-SMMU:
+	  - SMMUv2:
+	    - Recognise the compatible string for SAR2130P MDSS in the Qualcomm
+	      driver, as this device requires an identity domain.
+	    - Fix Adreno stall handling so that GPU debugging is more robust and
+	      doesn't e.g. result in deadlock.
+	  - SMMUv3:
+	    - Fix ->attach_dev() error reporting for unrecognised domains.
+	  - IO-pgtable:
+	    - Allow clients (notably, drivers that process requests from
+	      userspace) to silence warnings when mapping an already-mapped IOVA.
+
+	- S390:
+	  - Add support for additional table regions.
+
+	- Mediatek:
+	  - Add support for MT6893 MM IOMMU.
+
+	- Some smaller fixes and improvements in various other drivers.
+
+----------------------------------------------------------------
+AngeloGioacchino Del Regno (3):
+      dt-bindings: iommu: mediatek: Add binding for MT6893 MM IOMMU
+      iommu/mediatek: Add support for Dimensity 1200 MT6893 MM IOMMU
+      iommu/mediatek: Fix compatible typo for mediatek,mt6893-iommu-mm
+
+Arnd Bergmann (2):
+      iommu: ipmmu-vmsa: avoid Wformat-security warning
+      iommu/io-pgtable-arm: dynamically allocate selftest device struct
+
+Chen Ni (1):
+      iommu: apple-dart: Remove unnecessary NULL check before free_io_pgtable_ops()
+
+Colin Ian King (1):
+      iommu/fsl_pamu: remove trailing space after \n
+
+Connor Abbott (3):
+      iommu/arm-smmu-qcom: Enable threaded IRQ for Adreno SMMUv2/MMU500
+      iommu/arm-smmu: Move handing of RESUME to the context fault handler
+      iommu/arm-smmu-qcom: Make set_stall work when the device is on
+
+Dmitry Baryshkov (1):
+      iommu/arm-smmu-qcom: Add SAR2130P MDSS compatible
+
+Jason Gunthorpe (33):
+      iommu/terga: Do not use struct page as the handle for as->pd memory
+      iommu/tegra: Do not use struct page as the handle for pts
+      iommu/pages: Remove __iommu_alloc_pages()/__iommu_free_pages()
+      iommu/pages: Make iommu_put_pages_list() work with high order allocations
+      iommu/pages: Remove the order argument to iommu_free_pages()
+      iommu/pages: Remove iommu_free_page()
+      iommu/pages: De-inline the substantial functions
+      iommu/pages: Formalize the freelist API
+      iommu/riscv: Convert to use struct iommu_pages_list
+      iommu/amd: Convert to use struct iommu_pages_list
+      iommu: Change iommu_iotlb_gather to use iommu_page_list
+      iommu/pages: Remove iommu_put_pages_list_old and the _Generic
+      iommu/pages: Move from struct page to struct ioptdesc and folio
+      iommu/pages: Move the __GFP_HIGHMEM checks into the common code
+      iommu/pages: Allow sub page sizes to be passed into the allocator
+      iommu/amd: Change rlookup, irq_lookup, and alias to use kvalloc()
+      iommu/amd: Use roundup_pow_two() instead of get_order()
+      iommu/riscv: Update to use iommu_alloc_pages_node_lg2()
+      iommu: Update various drivers to pass in lg2sz instead of order to iommu pages
+      iommu/pages: Remove iommu_alloc_page/pages()
+      iommu/pages: Remove iommu_alloc_page_node()
+      iommu/amd: Use iommu_alloc_pages_node_sz() for the IRT
+      iommu/vtd: Remove iommu_alloc_pages_node()
+      iommu/arm-smmu-v3: Put iopf enablement in the domain attach path
+      iommu: Remove IOMMU_DEV_FEAT_SVA
+      iommu/virtio: Break out bypass identity support into a global static
+      iommu: Add domain_alloc_identity()
+      iommu/virtio: Move to domain_alloc_paging()
+      iommu: Do not call domain_alloc() in iommu_sva_domain_alloc()
+      iommu: Hide ops.domain_alloc behind CONFIG_FSL_PAMU
+      iommu: Protect against overflow in iommu_pgsize()
+      iommu/vt-d: Restore WO permissions on second-level paging entries
+      iommu: Clear the freelist after iommu_put_pages_list()
+
+Joerg Roedel (1):
+      Merge branches 'fixes', 'apple/dart', 'arm/smmu/updates', 'arm/smmu/bindings', 'fsl/pamu', 'mediatek', 'renesas/ipmmu', 's390', 'intel/vt-d', 'amd/amd-vi' and 'core' into next
+
+Lu Baolu (11):
+      iommu/vt-d: Put iopf enablement in domain attach path
+      iommufd/selftest: Put iopf enablement in domain attach path
+      dmaengine: idxd: Remove unnecessary IOMMU_DEV_FEAT_IOPF
+      uacce: Remove unnecessary IOMMU_DEV_FEAT_IOPF
+      iommufd: Remove unnecessary IOMMU_DEV_FEAT_IOPF
+      iommu: Remove iommu_dev_enable/disable_feature()
+      iommu: Allow attaching static domains in iommu_attach_device_pasid()
+      iommu: Cleanup comments for dev_enable/disable_feat
+      iommu/vt-d: Use ida to manage domain id
+      iommu/vt-d: Replace spin_lock with mutex to protect domain ida
+      iommu/vt-d: Restore context entry setup order for aliased devices
+
+Mario Limonciello (1):
+      iommu/amd: Allow matching ACPI HID devices without matching UIDs
+
+Matthew Rosato (5):
+      iommu/s390: set appropriate IOTA region type
+      iommu/s390: support cleanup of additional table regions
+      iommu/s390: support iova_to_phys for additional table regions
+      iommu/s390: support map/unmap for additional table regions
+      iommu/s390: allow larger region tables
+
+Qinxin Xia (1):
+      iommu/arm-smmu-v3: Fix incorrect return in arm_smmu_attach_dev
+
+Rob Clark (1):
+      iommu/io-pgtable-arm: Add quirk to quiet WARN_ON()
+
+Robin Murphy (3):
+      iommu: Avoid introducing more races
+      iommu: Split out and tidy up Arm Kconfig
+      iommu: Handle yet another race around registration
+
+Rolf Eike Beer (5):
+      iommu: remove duplicate selection of DMAR_TABLE
+      iommu: make inclusion of intel directory conditional
+      iommu: make inclusion of amd directory conditional
+      iommu: make inclusion of riscv directory conditional
+      iommu: make inclusion of arm/arm-smmu-v3 directory conditional
+
+Sairaj Kodilkar (1):
+      iommu/amd: Add support for HTRangeIgnore feature
+
+Sean Christopherson (1):
+      iommu/amd: Ensure GA log notifier callbacks finish running before module unload
+
+Tushar Dave (1):
+      iommu: Skip PASID validation for devices without PASID capability
+
+Wei Wang (2):
+      iommu/vt-d: Eliminate pci_physfn() in dmar_find_matched_satc_unit()
+      iommu/vt-d: Change dmar_ats_supported() to return boolean
+
+ .../devicetree/bindings/iommu/mediatek,iommu.yaml  |   4 +
+ arch/s390/include/asm/pci_dma.h                    |   3 +
+ drivers/accel/amdxdna/aie2_pci.c                   |  13 +-
+ drivers/dma/idxd/init.c                            |  41 +--
+ drivers/iommu/Kconfig                              | 158 +---------
+ drivers/iommu/Makefile                             |   6 +-
+ drivers/iommu/amd/Makefile                         |   2 +-
+ drivers/iommu/amd/amd_iommu.h                      |   2 +
+ drivers/iommu/amd/amd_iommu_types.h                |  10 +-
+ drivers/iommu/amd/init.c                           |  94 +++---
+ drivers/iommu/amd/io_pgtable.c                     |  38 +--
+ drivers/iommu/amd/io_pgtable_v2.c                  |  12 +-
+ drivers/iommu/amd/iommu.c                          |  94 +++---
+ drivers/iommu/amd/ppr.c                            |   2 +-
+ drivers/iommu/apple-dart.c                         |   3 +-
+ drivers/iommu/arm/Kconfig                          | 144 +++++++++
+ drivers/iommu/arm/Makefile                         |   3 +-
+ drivers/iommu/arm/arm-smmu-v3/Makefile             |   2 +-
+ drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-sva.c    |  86 +----
+ drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c        | 138 +++++----
+ drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h        |  39 +--
+ drivers/iommu/arm/arm-smmu/arm-smmu-qcom-debug.c   |   9 +
+ drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c         |  44 ++-
+ drivers/iommu/arm/arm-smmu/arm-smmu.c              |   6 +
+ drivers/iommu/dma-iommu.c                          |  11 +-
+ drivers/iommu/exynos-iommu.c                       |  12 +-
+ drivers/iommu/fsl_pamu_domain.c                    |   2 +-
+ drivers/iommu/intel/Makefile                       |   7 +-
+ drivers/iommu/intel/dmar.c                         |  14 +-
+ drivers/iommu/intel/iommu.c                        | 244 ++++++---------
+ drivers/iommu/intel/iommu.h                        |  62 +++-
+ drivers/iommu/intel/irq_remapping.c                |  12 +-
+ drivers/iommu/intel/nested.c                       |  20 +-
+ drivers/iommu/intel/pasid.c                        |  13 +-
+ drivers/iommu/intel/pasid.h                        |   1 -
+ drivers/iommu/intel/prq.c                          |   7 +-
+ drivers/iommu/intel/svm.c                          |   9 +-
+ drivers/iommu/io-pgtable-arm.c                     |  58 ++--
+ drivers/iommu/io-pgtable-dart.c                    |  23 +-
+ drivers/iommu/iommu-pages.c                        | 119 +++++++
+ drivers/iommu/iommu-pages.h                        | 195 ++++--------
+ drivers/iommu/iommu-sva.c                          |  18 +-
+ drivers/iommu/iommu.c                              | 150 ++++-----
+ drivers/iommu/iommufd/device.c                     |  59 ++--
+ drivers/iommu/iommufd/eventq.c                     |  48 +--
+ drivers/iommu/iommufd/iommufd_private.h            |   6 -
+ drivers/iommu/iommufd/selftest.c                   |  57 +++-
+ drivers/iommu/ipmmu-vmsa.c                         |   3 +-
+ drivers/iommu/mtk_iommu.c                          |  37 ++-
+ drivers/iommu/riscv/Makefile                       |   2 +-
+ drivers/iommu/riscv/iommu.c                        |  43 +--
+ drivers/iommu/rockchip-iommu.c                     |  14 +-
+ drivers/iommu/s390-iommu.c                         | 345 +++++++++++++++++++--
+ drivers/iommu/sun50i-iommu.c                       |   6 +-
+ drivers/iommu/tegra-smmu.c                         | 111 +++----
+ drivers/iommu/virtio-iommu.c                       | 187 ++++++-----
+ drivers/misc/uacce/uacce.c                         |  40 ---
+ .../memory/mediatek,mt6893-memory-port.h           | 288 +++++++++++++++++
+ include/linux/adreno-smmu-priv.h                   |   6 +-
+ include/linux/io-pgtable.h                         |   8 +
+ include/linux/iommu.h                              |  65 ++--
+ 61 files changed, 1884 insertions(+), 1371 deletions(-)
+ create mode 100644 drivers/iommu/arm/Kconfig
+ create mode 100644 drivers/iommu/iommu-pages.c
+ create mode 100644 include/dt-bindings/memory/mediatek,mt6893-memory-port.h
+
+Please pull.
+
+Thanks,
+
+	Joerg
 
