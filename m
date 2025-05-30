@@ -1,123 +1,139 @@
-Return-Path: <linux-kernel+bounces-668276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-668280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC233AC9064
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 15:38:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40485AC906E
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 15:40:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 329519E20EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 13:38:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DF06A43031
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 13:39:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1994618DB34;
-	Fri, 30 May 2025 13:38:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3181B223DCE;
+	Fri, 30 May 2025 13:39:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="fS7CR5L4"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="gRZv1CZI"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B317921517C;
-	Fri, 30 May 2025 13:38:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C147207DFE
+	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 13:39:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748612310; cv=none; b=JYOGMswRlRMyJ8VfIdZ1hhtnmHyEAARPRBLJCoOuJjI7xuKn3eg1b4aVH1467rXGSGSNCb2JyUPWJJIa/VFf485L/vHfHryg46G46g9ZKIFS4NI7yk7rJd+frs3FzybJiEdQ/mfJiqBd4vIWEEjx5a++JXGhm4tZP1Ch9qZ50nA=
+	t=1748612381; cv=none; b=pX0FqHi/36dKWYCdKrmr5Xsk18hAwCRTRjvDqn5bl+73/0WruVBJ29lafdZ2elkc6BNYP/ZqHaZCBZLMJcAe7MJOAOxtVBc40XPwGAEHpJ0VZLSbZazIvJeGjniyiVGknlIdvSdb0num5nM1rqrFWPeuJ5ty6VeqBTBeMOprCu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748612310; c=relaxed/simple;
-	bh=okfO53B1MuctCihtZiKCNsiS2kQIh+Mos6rbOD+jj8c=;
+	s=arc-20240116; t=1748612381; c=relaxed/simple;
+	bh=uiPnWYUvBr2dZYGj5pih1313yI+zbVEDfWOn2toitH8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=doT5GyW6Za1k5TC48tlXVlhePDTDoBgStGZlFjcTVWHG9QBeiOKYeGHoZNe2OyNx0U8YnqKBQhMoaMXOfjFzq/O+wAi4TI1wKyLI1yPKzlrtRoi+w4xJij7+5u/zmalHSlwA0Nex1O5Qrty45/9smiXfkyauAljIhGlPfKbQXOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=fS7CR5L4; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id E526B89A;
-	Fri, 30 May 2025 15:37:58 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1748612279;
-	bh=okfO53B1MuctCihtZiKCNsiS2kQIh+Mos6rbOD+jj8c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fS7CR5L4Ri4EdInT3VKvDyb4ZXdL/n+8OpunXXsCmRhOXqrkJ6Q5//0GsYph7dK8l
-	 kEMESAjHk2eGNgfCRLFyQDSLpN39BLQFipBgjTOVnFrq4VlqqRPy8qE2hNNkmOume6
-	 pHhpqq783sFSsnRku5ADvJcGbzyCvA8LKu5xMOv8=
-Date: Fri, 30 May 2025 16:38:20 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-	ALOK TIWARI <alok.a.tiwari@oracle.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
-	linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	 Content-Type:Content-Disposition:In-Reply-To; b=lES96Bop3xLYSlkbuKlUCf+CtCvlhRQaEYVpmhVwF5pPOunQVoD+963ANHfJaVtx1zLSL3ntYlOY6C0Wr8/vdk6UGAZ8Sod/1dS8tG6L9lptgmwipxAVCMwpQ8uB5WVHqHrqBNf1w8+ose2nk0/UsNhl9zCQR/fiJG5FVfZO2yY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=gRZv1CZI; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3a363d15c64so1363074f8f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 06:39:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1748612377; x=1749217177; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=yRGPAlzvwqw6A1h+zbYAm+4VpblGusAQkDYaKOqoOyw=;
+        b=gRZv1CZIaX9Fxcw+R4Tf0ekRuSPTNaLzyEAFo50pWgQOQhpdikQ6kL5n8i/oRcMNQw
+         n3d3d//y8Qyfmm6CC/K6NBnJgeKaSo17W14tVHm4uGTF/3hPFdMvXqL7yZp3l8jxspmQ
+         OIHOyw6OJVUoM6HQ9aIg6i4+kfLv0BmnGePFcEP+AEOTgYB571VmDN36l1qxUVdlLpHw
+         DdAAlZEl7LIQJo6gdSgsbdV65kFGs6yVa56pzSqcy1ZV65lr6eVkkUL5HBtYEVL+siua
+         my4PZrVr/pTkM3TZk27ZGBuTbwYyjeCYGfdHQ0TIkQs6LEqQRgXtuO89YCdOqBaVB5LS
+         aDkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748612377; x=1749217177;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yRGPAlzvwqw6A1h+zbYAm+4VpblGusAQkDYaKOqoOyw=;
+        b=SvnyuQLxb4VLbif+NfSpr6tABcdVAomJ2IiXg9SbgSShc4CBGkQL6I3LT4oNlaJIFH
+         vXsSMOZUfhldXNyrBBP0nBMVNZTXGNMdYYUWZWbsNZQYYWkJ+AAurmPC9PX4E0WKFxL6
+         Nr+Ovt6VywblMuRqvRvthpo8KvLvL1XdflzZm+klWUowz+lV+vidUK2nIJFli8vm7oXV
+         +dgSuBNlVYhhhM9dTwiobMiqB5QtLzOCBDBku79VZCxqdr+e3HzDPmIB3Gd4UNH2X/qj
+         uFsH90Rjqj61m0IESeaXVEfx+lOV1cHQRfbUpfzAZ38TYkhELrvPioMQmIvOmcWa9B37
+         +pVA==
+X-Forwarded-Encrypted: i=1; AJvYcCUG22KeR1cYF+64kHSb7x79DMRxoX+hawv2rJiSCb1nvFMwYlUbzGmrX7Q7iQLp54RTSgvLciTVd/9DheM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3HMyB9hxd4WCMKGVoFfZIt6sujCwPfTFZNYZiVGtX9Sff32al
+	7JR1pUQDLv4r6ZAk0xvcuZgOls+b0B+Tnc0OXr8UTQ6Br+xKgisqruIWgf00xEX8XRA=
+X-Gm-Gg: ASbGncsQBikW+OjToXZygcAl2ijKxPaCJYGc3mufb3eZqNId8eT1LjL7NVFtNiTHgxH
+	abBfH52twMhp8PKS/9kbpoJb1EDoAkfVhG1NHXb4udMLNfrRmGweG0erbpu1uGzjSwmGjO33qD0
+	F0eZDzfZL9gZkxrERApUzDWm2VcSg3clQwK1U9/RqmSinVcDC6bbQHuSLrPE8P7s2jzU2Srq42Q
+	qeNXTjEcG8uio0pNG21B4SV/RksEubfUPz++WzAZqFQB2iv0+KazseMFTpxod0leoY+4AKkIe9y
+	8qqMEmAzbgZoqODfjzIKFi51aTe6rV5Bd827mrdC4oqphd+W4JwwuYx8mqNNNs+D
+X-Google-Smtp-Source: AGHT+IEo9kE2Be7pLGHE2XuA9AU0Ju3nckFIvGlZabjJ2oxMPb3m4OllHxVr60DZeTamXlijFKgeCA==
+X-Received: by 2002:a05:6000:24c8:b0:3a3:55e6:eaaf with SMTP id ffacd0b85a97d-3a4f7a1cda7mr2695435f8f.24.1748612377483;
+        Fri, 30 May 2025 06:39:37 -0700 (PDT)
+Received: from localhost (109-81-89-112.rct.o2.cz. [109.81.89.112])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a4f009748fsm4788637f8f.80.2025.05.30.06.39.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 May 2025 06:39:37 -0700 (PDT)
+Date: Fri, 30 May 2025 15:39:36 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Baolin Wang <baolin.wang@linux.alibaba.com>, david@redhat.com,
+	shakeel.butt@linux.dev, lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org,
+	surenb@google.com, donettom@linux.ibm.com, aboorvad@linux.ibm.com,
+	sj@kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/4] media: rcar-csi2: Add D-PHY support for V4H
-Message-ID: <20250530133820.GC18205@pendragon.ideasonboard.com>
-References: <20250511174730.944524-1-niklas.soderlund+renesas@ragnatech.se>
- <20250511174730.944524-5-niklas.soderlund+renesas@ragnatech.se>
- <10d2ae58-8da8-4802-95be-951d8b376551@oracle.com>
- <20250511200333.GA2365307@ragnatech.se>
- <CAMuHMdUbMRBFV-7hDMQ3-UKAhzfbGM5yZJz05aGAHpOKZ5eKcQ@mail.gmail.com>
- <20250512084843.GE2365307@ragnatech.se>
+Subject: Re: [PATCH] mm: fix the inaccurate memory statistics issue for users
+Message-ID: <aDm1GCV8yToFG1cq@tiehlicka>
+References: <4f0fd51eb4f48c1a34226456b7a8b4ebff11bf72.1748051851.git.baolin.wang@linux.alibaba.com>
+ <20250529205313.a1285b431bbec2c54d80266d@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250512084843.GE2365307@ragnatech.se>
+In-Reply-To: <20250529205313.a1285b431bbec2c54d80266d@linux-foundation.org>
 
-On Mon, May 12, 2025 at 10:48:43AM +0200, Niklas Söderlund wrote:
-> On 2025-05-12 09:37:48 +0200, Geert Uytterhoeven wrote:
-> > On Sun, 11 May 2025 at 22:03, Niklas Söderlund wrote:
-> > > On 2025-05-12 00:37:09 +0530, ALOK TIWARI wrote:
-> > > > On 11-05-2025 23:17, Niklas Söderlund wrote:
-> > > > > +   rcsi2_write16(priv, V4H_CORE_DIG_COMMON_RW_DESKEW_FINE_MEM_REG, 0x0404);
-> > > > > +   rcsi2_write16(priv, V4H_CORE_DIG_COMMON_RW_DESKEW_FINE_MEM_REG, 0x040c);
-> > > > > +   rcsi2_write16(priv, V4H_CORE_DIG_COMMON_RW_DESKEW_FINE_MEM_REG, 0x0414);
-> > > > > +   rcsi2_write16(priv, V4H_CORE_DIG_COMMON_RW_DESKEW_FINE_MEM_REG, 0x041c);
-> > 
-> >  [...]
-> > 
-> > > > Instead of manually writing each call, it could use a loop ?
-> > > >
-> > > > for (int i = 0x0404; i <= 0x07fc; i += 0x08) {
-> > > >     rcsi2_write16(priv, V4H_CORE_DIG_COMMON_RW_DESKEW_FINE_MEM_REG, i);
-> > >
-> > > Unfortunately the values are not all sequential, see the progression
-> > > 0x061c -> 0x0623 and 0x071c -> 0x0723 for example.
-> > >
-> > > > or if values are not strictly sequential, iterating over the array.
-> > > > static const u16 register_values[]= {0x0404, 0x040c, 0x0414 etc,,}
-> > > > rcsi2_write16(priv, V4H_CORE_DIG_COMMON_RW_DESKEW_FINE_MEM_REG,
-> > > > register_values[i]);
-> > >
-> > > I agree with you, a array of values would make this look a tad less
-> > > silly and would reduce the number of lines. I considered this while
-> > > writing it but opted for this. My reason was as most of the register
-> > > writes needed to setup the PHY are not documented in the docs I have and
-> > > I wanted to keep the driver as close to the table of magic values I have
-> > > to make it easy to compare driver and the limited documentation.
-> > >
-> > > I guess it's really a matter of style. I have no real strong opinion, if
-> > > people think an array would be nicer I have no issue switching to that.
-> > 
-> > Have you looked at the impact on kernel size?
+On Thu 29-05-25 20:53:13, Andrew Morton wrote:
+> On Sat, 24 May 2025 09:59:53 +0800 Baolin Wang <baolin.wang@linux.alibaba.com> wrote:
 > 
-> That is a good point, I'm sure an array would reduce the kernel size. I 
-> could possibly even craft a few clever loops to to generate the values 
-> as they are almost sequential. As these are magic values I had opted to 
-> keep it close to the docs, but seems people prefere something else. Will 
-> change this and send new version.
+> > On some large machines with a high number of CPUs running a 64K pagesize
+> > kernel, we found that the 'RES' field is always 0 displayed by the top
+> > command for some processes, which will cause a lot of confusion for users.
+> > 
+> >     PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
+> >  875525 root      20   0   12480      0      0 R   0.3   0.0   0:00.08 top
+> >       1 root      20   0  172800      0      0 S   0.0   0.0   0:04.52 systemd
+> > 
+> > The main reason is that the batch size of the percpu counter is quite large
+> > on these machines, caching a significant percpu value, since converting mm's
+> > rss stats into percpu_counter by commit f1a7941243c1 ("mm: convert mm's rss
+> > stats into percpu_counter"). Intuitively, the batch number should be optimized,
+> > but on some paths, performance may take precedence over statistical accuracy.
+> > Therefore, introducing a new interface to add the percpu statistical count
+> > and display it to users, which can remove the confusion. In addition, this
+> > change is not expected to be on a performance-critical path, so the modification
+> > should be acceptable.
+> > 
+> > Fixes: f1a7941243c1 ("mm: convert mm's rss stats into percpu_counter")
+> 
+> Three years ago.
+> 
+> > Tested-by Donet Tom <donettom@linux.ibm.com>
+> > Reviewed-by: Aboorva Devarajan <aboorvad@linux.ibm.com>
+> > Tested-by: Aboorva Devarajan <aboorvad@linux.ibm.com>
+> > Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
+> > Acked-by: SeongJae Park <sj@kernel.org>
+> > Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+> 
+> Thanks, I added cc:stable to this.
 
-I recommend an array of values. That will significantly reduce the size,
-while keeping the code easy to compare with the documentation. We can
-try to be more clever than that in a separate patch if desired.
+I have only noticed this new posting now. I do not think this is a
+stable material. I am also not convinced that the impact of the pcp lock
+exposure to the userspace has been properly analyzed and documented in
+the changelog. I am not nacking the patch (yet) but I would like to see
+a serious analyses that this has been properly thought through.
 
 -- 
-Regards,
-
-Laurent Pinchart
+Michal Hocko
+SUSE Labs
 
