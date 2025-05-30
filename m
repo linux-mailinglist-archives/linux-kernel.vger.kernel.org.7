@@ -1,158 +1,523 @@
-Return-Path: <linux-kernel+bounces-668310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-668312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FEDBAC90EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 16:03:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FC86AC90E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 16:02:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CAB51C0593F
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 14:02:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85E84A434BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 14:02:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25C9F22D4DC;
-	Fri, 30 May 2025 14:01:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EA3E22A1EF;
+	Fri, 30 May 2025 14:02:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="FWqJRA8w"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="AgBaHGyI"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3967FBF0;
-	Fri, 30 May 2025 14:01:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D31111C683;
+	Fri, 30 May 2025 14:02:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748613710; cv=none; b=RfXci0DCIYT+UCLDA1/apXVwMi3gn0Vi69Iy/jO+mxwTnpRAvtVDI/IHfAqANOVsh1woDQoAAngZpA+l/Fp7loBPaa2R7y/Z3NEgFKaR3QiVPtGfaHuZc412Q3dvkaWV9QJHpuwbSAun5dB5CX41+6hzlsxARCij1QzChGJ2Tgw=
+	t=1748613755; cv=none; b=nAWmTyoBiF+uj07UDPSs+cHwJ2XIg19tK0EdqWBimOmXUVYPeORssjPbdGAGLyIp4w5stLJfCpOj1GWkRWxj8NeckeyFWlxKJzF9WLLGp//Xx5NzwYg0GPmKp7IjOjvYEcCugqQ/Yas8Hvn1XV4NRH08BmBOqGSvbzyjp9qLd0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748613710; c=relaxed/simple;
-	bh=IiWa3QYm+SUHUfGrRvdvNCqI8L5mMRzMn8FrCEm9dMw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cENqEtKyzG9n0GiXpoYwf5IutSLgVzPqkRRt8Pzg0+GdqOCDYwpWvXKQ7MijINPPR68WveUCYjqXAUiEzLedJHTBP9ZOicFhBi6fO+4GDvNAts5lHjukMfZPhNaQH+cEEuvvWWNNsyzo8UVWG8IAuAbRcSZd4nQYvJulKpAYfuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=FWqJRA8w; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54UCUU3v016369;
-	Fri, 30 May 2025 14:01:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=6hHECg
-	npQEPXpU2l4pVIj6oEuY8kux5ThRyZ5rj5SM0=; b=FWqJRA8wMcLzzcu9gK/yag
-	96Poaw/AoeKadZdfLGfUKXOMVJF+nwXKHb78cGh6IVhBvqCzuu++I+YfFNabfnFu
-	xuHeQ2i/w0KBGQLCjhE2KcX+1iVObZhc2iMzkcD1LH9HHhVp/NDcOdgyUZNMFt7L
-	qhrSFfiVUVKPL0OLb1VRr7bBpDXekbfSujCLrQhI+dgE+jYlkZmCUkUX2iEcq6Qw
-	pGMLiMgfazOzKqUvU0Ahn7MSywZdScPu8XXCeEQ8C5Z8j+0w6Nfar/DelcJLYsXr
-	64++q+66dXjDinlOUFGnQSrMkjtfgX8UMP7Pqw/pTFpXFgAZoYS9/fdaXqD+vyFg
-	==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46x40kkxa6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 30 May 2025 14:01:36 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 54UBMU6U027314;
-	Fri, 30 May 2025 14:01:35 GMT
-Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 46useq9meg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 30 May 2025 14:01:34 +0000
-Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
-	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 54UE1YS441353562
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 30 May 2025 14:01:34 GMT
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8AE9458059;
-	Fri, 30 May 2025 14:01:34 +0000 (GMT)
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4B3665806F;
-	Fri, 30 May 2025 14:01:30 +0000 (GMT)
-Received: from [9.67.145.202] (unknown [9.67.145.202])
-	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 30 May 2025 14:01:29 +0000 (GMT)
-Message-ID: <f33af0f8-6d7b-479c-9d57-e5fd485d0f6e@linux.ibm.com>
-Date: Fri, 30 May 2025 19:31:28 +0530
+	s=arc-20240116; t=1748613755; c=relaxed/simple;
+	bh=Fum/TRVThwGX58ougliYEQ3GV8bxa2jyVjaMx/4Cojw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A+svjirWfRqAQKkixJCO339KCe2dxaQcCWQVCPk74uwLt4qieE1kJ+L03FXewSg7Khl3Qfd7yajQ6U64pVsgDwITiWZsLk+8Ffe87kwQFmJFTW00sFgoqdcWbpBDpP/tszMy7nakatJ4MDKi3uDfEKJ/Sm4h0B2QGEpzMpr0aZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=AgBaHGyI; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=ciHFY0VgOd5QIMYfzEsxxrFpF1H8WdgMxl2q6NzkMcQ=; b=AgBaHGyIlmAW/v8GWs/OGq2Eqr
+	yZFFmsHTkVFvnufBUGKi5lrsKHweHy7rsvU7AKLJJOUM2Wg3rh7CwDrS4pQQ+0L2q/kiYFT8DfHPI
+	45gYqEujDh3vsR6tqOsHUlXGnogpqFP8bIqYnafqB2aEaKpJc2ZV9o/bqEPLcvfZuWBDL81whZQqu
+	UDs9DW8dVQlVwKH+SAeebNs9B/1Sqp+odrGrqg4Xkd5XejCWqUABqkRqxQLUNt0q5PG7wGACXd1u8
+	ttUskYnu6/kJo7+A2bn3W6lfZzW0kh0s/wBq2XsNUNmbXRFQQTn4wHva/qQChsPNHZbIFH0oeeOSE
+	TzyIMu2Q==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uL0Is-00000000Fcx-41gu;
+	Fri, 30 May 2025 14:01:48 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 8E1F330066A; Fri, 30 May 2025 16:01:40 +0200 (CEST)
+Date: Fri, 30 May 2025 16:01:40 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Alessandro Carminati <acarmina@redhat.com>
+Cc: linux-kselftest@vger.kernel.org,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Kees Cook <keescook@chromium.org>,
+	Daniel Diaz <daniel.diaz@linaro.org>,
+	David Gow <davidgow@google.com>,
+	Arthur Grillo <arthurgrillo@riseup.net>,
+	Brendan Higgins <brendan.higgins@linux.dev>,
+	Naresh Kamboju <naresh.kamboju@linaro.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Maxime Ripard <mripard@kernel.org>,
+	Ville Syrjala <ville.syrjala@linux.intel.com>,
+	Daniel Vetter <daniel@ffwll.ch>, Guenter Roeck <linux@roeck-us.net>,
+	Alessandro Carminati <alessandro.carminati@gmail.com>,
+	Jani Nikula <jani.nikula@intel.com>,
+	Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Linux Kernel Functional Testing <lkft@linaro.org>,
+	dri-devel@lists.freedesktop.org, kunit-dev@googlegroups.com,
+	linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH v5 1/5] bug/kunit: Core support for suppressing warning
+ backtraces
+Message-ID: <20250530140140.GE21197@noisy.programming.kicks-ass.net>
+References: <20250526132755.166150-1-acarmina@redhat.com>
+ <20250526132755.166150-2-acarmina@redhat.com>
+ <20250529090129.GZ24938@noisy.programming.kicks-ass.net>
+ <CAGegRW76X8Fk_5qqOBw_aqBwAkQTsc8kXKHEuu9ECeXzdJwMSw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [linus:master] [block] 245618f8e4: stress-ng.fpunch.fail
-To: Oliver Sang <oliver.sang@intel.com>
-Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
-        Hannes Reinecke <hare@suse.de>, Ming Lei <ming.lei@redhat.com>,
-        cgroups@vger.kernel.org, linux-block@vger.kernel.org
-References: <202505221030.760980df-lkp@intel.com>
- <95753732-9714-42e0-8097-e2b4c3dd5820@linux.ibm.com>
- <aDe9y3Ef+TEacRr3@xsang-OptiPlex-9020>
-Content-Language: en-US
-From: Nilay Shroff <nilay@linux.ibm.com>
-In-Reply-To: <aDe9y3Ef+TEacRr3@xsang-OptiPlex-9020>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: qbn8N2la_ccNjfFWSCbkNQG9aciyTlrs
-X-Authority-Analysis: v=2.4 cv=fuPcZE4f c=1 sm=1 tr=0 ts=6839ba40 cx=c_pps a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=i3X5FwGiAAAA:8 a=QyXUC8HyAAAA:8 a=CJm8QiaJa0guGxYXfB8A:9 a=QEXdDO2ut3YA:10
- a=mmqRlSCDY2ywfjPLJ4af:22
-X-Proofpoint-GUID: qbn8N2la_ccNjfFWSCbkNQG9aciyTlrs
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTMwMDExOSBTYWx0ZWRfXxukEhbtcb9tu 0AaTGS/i8A2WZ1oNPnnB36fITs2g4pOgUmd9bWlV2Qx/zzapmEqoVr4u0fr+1bfOkaSAvW/d/Bv nlLEZ2ywOawmFRpEhL7Rqxi5gpsDGsX3heI2aeCVA8hmYQvc/PAkZGq7/6rcJR4O9VqKH9Z1G4A
- 3/i7xkydqUD3R3saf+aHXl6VHCntPdSxGLLBOkSH3j4+Ko6EUPQxWDjreRxtOA236vvHqWKuhsx tKfd0ersEv/d9SO4nk+CBb45xjQDcLeOmiTABGUj5EsEE/6boB3wwwI2g0A5Xt1Qd3S498NHvf1 /YguK0b8oT7RILhW67h/yvoGxn8geqxpIVPZ0yfca7e8PrOplojUpEev1dyNPA/LMLYkZmJ6aGp
- dAPFthvw9vjlavhuy71PLhUDX2PTHGPiX0Hu0XRO6s8BtbCr6Mf0NpSkcAsi4dGhcd8Fcjbz
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-30_05,2025-05-30_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 suspectscore=0
- mlxlogscore=999 priorityscore=1501 malwarescore=0 mlxscore=0 phishscore=0
- impostorscore=0 lowpriorityscore=0 bulkscore=0 spamscore=0 adultscore=0
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2505160000
- definitions=main-2505300119
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGegRW76X8Fk_5qqOBw_aqBwAkQTsc8kXKHEuu9ECeXzdJwMSw@mail.gmail.com>
 
 
++Mark because he loves a hack :-)
 
-On 5/29/25 7:22 AM, Oliver Sang wrote:
-> hi, Nilay,
+On Thu, May 29, 2025 at 12:36:55PM +0200, Alessandro Carminati wrote:
+
+> > Like I said before; you need to do this on the report_bug() size of
+> > things.
+> >
+> I fully understand your concerns, and I truly appreciate both yours
+> and Josh’s feedback on this matter.
+> Please rest assured that I took your suggestions seriously and
+> carefully evaluated the possibility of consolidating all related logic
+> within the exception handler.
+> After a thorough investigation, however, I encountered several
+> limitations that led me to maintain the check in the macro.
+> I’d like to share the rationale behind this decision:
+
+> * In the case of WARN() messages, part of the output, the
+> user-specified content, is emitted directly by the macro, prior to
+> reaching the exception handler [1].
+>   Moving the check solely to the exception handler would not prevent
+> this early output.
+
+Yeah, this has been really annoying me for a long while. WARN() code gen
+is often horrible crap because of that.
+
+Everything I've tried so far is worse though :/ So in the end I try to
+never use WARN(), its just not worth it.
+
+... /me goes down the rabbit-hole again, because well, you can't let
+something simple like this defeat you ;-)
+
+Results of today's hackery below. It might actually be worth cleaning
+up.
+
+> * Unless we change the user-facing interface that allows suppression
+> based on function names, we still need to work with those names at
+> runtime.
+
+I'm not sure I understand this. What interface and what names? This is a
+new feature, so how can there be an interface that needs to be
+preserved?
+
+> * This leaves us with two main strategies: converting function names
+> to pointers (e.g., via kallsyms) or continuing to work with names.
+>   The former requires name resolution at suppression time and pointer
+> comparison in the handler, but function names are often altered by the
+> compiler due to inlining or other optimizations[2].
+>   Some WARN() sites are even marked __always_inline[3], making it
+> difficult to prevent inlining altogether.
+
+Arguably __func__ should be the function name of the function you get
+inlined into. C inlining does not preserve the sequence point, so there
+is absolutely no point in trying to preserve the inline name.
+
+I'm again confused though; [2] does not use __func__ at all.
+
+Anyway, when I do something like:
+
+void __attribute__((__always_inline__)) foo(void)
+{
+	puts(__func__);
+}
+
+void bar(void)
+{
+	foo();
+}
+
+it uses a "foo" string, which IMO is just plain wrong. Anyway, do both
+compilers guarantee it will always be foo? I don't think I've seen the
+GCC manual be explicit about this case.
+
+> * An alternative is to embed function names in the __bug_table.
+>   While potentially workable, this increases the size of the table and
+> requires attention to handle position-independent builds
+> (-fPIC/-fPIE), such as using offsets relative to __start_rodata.
 > 
-> sorry for late.
-No worries... 
+> However, the central challenge remains: any logic that aims to
+> suppress WARN() output must either move the entire message emission
+> into the exception handler or accept that user-specified parts of the
+> message will still be printed.
 
-[...]
->>>
->>> The kernel config and materials to reproduce are available at:
->>> https://download.01.org/0day-ci/archive/20250522/202505221030.760980df-lkp@intel.com
->>>
->>
->> I tried reproducing this issue but I couldn't recreate it. Is it possible
->> for you to run this test on your setup using stress-ng option "--iostat 1"
->> as shown below ?
->>
->> # stress-ng --timeout 60 --times --verify --metrics --no-rand-seed --fpunch 128 --iostat 1
->>
->> If you can run test with above option then please collect logs and share it.
->> That might help to further debug this.
-> 
-> the log is attached as stress-ng-245618f8e4.
-> also attached the dmesg-245618f8e4.xz.
-> 
-> another log from parent is attached as stress-ng-3efe7571c3.
-> 
-Thanks for trying out --iostat option and sharing logs. I looked through logs and it seems 
-that (my guess) in case of failures (i.e. bogo ops reported as 0) disk read operations are
-either blocked or never completed. However it might be useful to further debug this. 
-Unfortunately, I tried hard but failed to recreate on my setup, so need your help. 
+Well, we can set suppress_printk and then all is quiet :-) Why isn't
+this good enough?
 
-I have few follow up questions:
-1. Are you able to recreate this issue even on the recent upstream kernel?
-2. Did you try formatting the disk using ext4 instead of xfs?
+> As a secondary point, there are also less common architectures where
+> it's unclear whether suppressing these warnings is a priority, which
+> might influence how broadly the effort is applied.
+> I hoped to have addressed the concern of having faster runtime, by
+> exposing a counter that could skip the logic.
+> Kess suggested using static branching that would make things even better.
+> Could Kess' suggestion mitigate your concern on this strategy?
+> I’m absolutely open to any further thoughts or suggestions you may
+> have, and I appreciate your continued guidance.
 
-Anyways, is it possible to rerun test with following options to further analyze it?
-# stress-ng --timeout 60 --times --metrics --verify --no-rand-seed --fpunch 128 --verbose --klog-check --stressor-time --status 1
+I'm not really concerned with performance here, but more with the size
+of the code emitted by WARN_ONCE(). There are a *ton* of WARN sites,
+while only one report_bug() and printk().
 
-Above options shall help generate verbose output as well as log why stressors are not exiting 
-after timeout of 60 seconds. Moreover, it'd be helpful if you can also repeat the test specifying 
-"--fpunch 1". Just wanted to see whether limiting stressors to only 1 recreate the issue. 
+The really offensive thing is that this is for a feature most nobody
+will ever need :/
 
-Thanks,
---Nilay
 
+
+The below results in:
+
+03dc  7ac:      48 c7 c0 00 00 00 00    mov    $0x0,%rax        7af: R_X86_64_32S       .rodata.str1.1+0x223
+03e3  7b3:      ba 2a 00 00 00          mov    $0x2a,%edx
+03e8  7b8:      48 0f b9 d0             ud1    %rax,%rdx
+
+And it even works :-)
+
+Hmm... I should try and stick the format string into the __bug_table,
+its const after all. Then I can get 2 arguments covered.
+
+---
+diff --git a/arch/x86/include/asm/bug.h b/arch/x86/include/asm/bug.h
+index f0e9acf72547..88b305d49f35 100644
+--- a/arch/x86/include/asm/bug.h
++++ b/arch/x86/include/asm/bug.h
+@@ -5,6 +5,7 @@
+ #include <linux/stringify.h>
+ #include <linux/instrumentation.h>
+ #include <linux/objtool.h>
++#include <linux/args.h>
+ 
+ /*
+  * Despite that some emulators terminate on UD2, we use it for WARN().
+@@ -28,50 +29,44 @@
+ #define BUG_UD1_UBSAN		0xfffc
+ #define BUG_EA			0xffea
+ #define BUG_LOCK		0xfff0
++#define BUG_WARN		0xfe00
++#define BUG_WARN_END		0xfeff
+ 
+ #ifdef CONFIG_GENERIC_BUG
+ 
+ #ifdef CONFIG_X86_32
+-# define __BUG_REL(val)	".long " __stringify(val)
++#define ASM_BUG_REL(val)	.long val
+ #else
+-# define __BUG_REL(val)	".long " __stringify(val) " - ."
++#define ASM_BUG_REL(val)	.long val - .
+ #endif
+ 
+ #ifdef CONFIG_DEBUG_BUGVERBOSE
++#define ASM_BUGTABLE_VERBOSE(file, line)				\
++	ASM_BUG_REL(file) ;						\
++	.word line
++#define ASM_BUGTABLE_VERBOSE_SIZE	6
++#else
++#define ASM_BUGTABLE_VERBOSE(file, line)
++#define ASM_BUGTABLE_VERBOSE_SIZE	0
++#endif
+ 
+-#define _BUG_FLAGS(ins, flags, extra)					\
+-do {									\
+-	asm_inline volatile("1:\t" ins "\n"				\
+-		     ".pushsection __bug_table,\"aw\"\n"		\
+-		     "2:\t" __BUG_REL(1b) "\t# bug_entry::bug_addr\n"	\
+-		     "\t"  __BUG_REL(%c0) "\t# bug_entry::file\n"	\
+-		     "\t.word %c1"        "\t# bug_entry::line\n"	\
+-		     "\t.word %c2"        "\t# bug_entry::flags\n"	\
+-		     "\t.org 2b+%c3\n"					\
+-		     ".popsection\n"					\
+-		     extra						\
+-		     : : "i" (__FILE__), "i" (__LINE__),		\
+-			 "i" (flags),					\
+-			 "i" (sizeof(struct bug_entry)));		\
+-} while (0)
+-
+-#else /* !CONFIG_DEBUG_BUGVERBOSE */
++#define ASM_BUGTABLE_FLAGS(at, file, line, flags)			\
++	.pushsection __bug_table, "aw" ;				\
++	123:	ASM_BUG_REL(at) ;					\
++	ASM_BUGTABLE_VERBOSE(file, line) ;				\
++	.word	flags ;							\
++	.org 123b + 6 + ASM_BUGTABLE_VERBOSE_SIZE ;			\
++	.popsection
+ 
+-#define _BUG_FLAGS(ins, flags, extra)					\
++#define _BUG_FLAGS(ins, flags, extra, extra_args...)			\
+ do {									\
+ 	asm_inline volatile("1:\t" ins "\n"				\
+-		     ".pushsection __bug_table,\"aw\"\n"		\
+-		     "2:\t" __BUG_REL(1b) "\t# bug_entry::bug_addr\n"	\
+-		     "\t.word %c0"        "\t# bug_entry::flags\n"	\
+-		     "\t.org 2b+%c1\n"					\
+-		     ".popsection\n"					\
+-		     extra						\
+-		     : : "i" (flags),					\
+-			 "i" (sizeof(struct bug_entry)));		\
++	    __stringify(ASM_BUGTABLE_FLAGS(1b, %c0, %c1, %c2)) "\n"	\
++			    extra					\
++		     : : "i" (__FILE__), "i" (__LINE__),		\
++			 "i" (flags), ## extra_args);			\
+ } while (0)
+ 
+-#endif /* CONFIG_DEBUG_BUGVERBOSE */
+-
+ #else
+ 
+ #define _BUG_FLAGS(ins, flags, extra)  asm volatile(ins)
+@@ -100,6 +95,40 @@ do {								\
+ 	instrumentation_end();					\
+ } while (0)
+ 
++#define __WARN_printf_1(taint, format)				\
++do { \
++	__auto_type __flags = BUGFLAG_WARNING | BUGFLAG_NO_CUT_HERE | BUGFLAG_TAINT(taint); \
++	unsigned long dummy = 0; \
++	instrumentation_begin(); \
++	asm_inline volatile("1: ud1 %[fmt], %[arg]\n"			\
++	    __stringify(ASM_BUGTABLE_FLAGS(1b, %c0, %c1, %c2)) "\n"	\
++		     : : "i" (__FILE__), "i" (__LINE__),		\
++			 "i" (__flags), [fmt] "r" (format), [arg] "r" (dummy));		\
++	instrumentation_end(); \
++} while (0)
++
++#define __WARN_printf_2(taint, format, _arg)				\
++do { \
++	__auto_type __flags = BUGFLAG_WARNING | BUGFLAG_NO_CUT_HERE | BUGFLAG_TAINT(taint); \
++	instrumentation_begin(); \
++	asm_inline volatile("1: ud1 %[fmt], %[arg]\n"			\
++	    __stringify(ASM_BUGTABLE_FLAGS(1b, %c0, %c1, %c2)) "\n"	\
++		     : : "i" (__FILE__), "i" (__LINE__),		\
++			 "i" (__flags), [fmt] "r" (format), [arg] "r" ((unsigned long)(_arg)));		\
++	instrumentation_end(); \
++} while (0)
++
++#define __WARN_printf_n(taint, fmt, arg...) do {			\
++		instrumentation_begin();				\
++		__warn_printk(fmt, arg);				\
++		__WARN_FLAGS(BUGFLAG_NO_CUT_HERE | BUGFLAG_TAINT(taint));\
++		instrumentation_end();					\
++	} while (0)
++
++#define WARN_ARGS(X...) __COUNT_ARGS(, ##X, n, n, n, n, n, n, n, n, n, n, n, n, n, 2, 1, 0)
++
++#define __WARN_printf(taint, arg...) CONCATENATE(__WARN_printf_, WARN_ARGS(arg))(taint, arg)
++
+ #include <asm-generic/bug.h>
+ 
+ #endif /* _ASM_X86_BUG_H */
+diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
+index 94c0236963c6..b7f69f4addf4 100644
+--- a/arch/x86/kernel/traps.c
++++ b/arch/x86/kernel/traps.c
+@@ -81,18 +81,6 @@
+ 
+ DECLARE_BITMAP(system_vectors, NR_VECTORS);
+ 
+-__always_inline int is_valid_bugaddr(unsigned long addr)
+-{
+-	if (addr < TASK_SIZE_MAX)
+-		return 0;
+-
+-	/*
+-	 * We got #UD, if the text isn't readable we'd have gotten
+-	 * a different exception.
+-	 */
+-	return *(unsigned short *)addr == INSN_UD2;
+-}
+-
+ /*
+  * Check for UD1 or UD2, accounting for Address Size Override Prefixes.
+  * If it's a UD1, further decode to determine its use:
+@@ -102,25 +90,37 @@ __always_inline int is_valid_bugaddr(unsigned long addr)
+  * UBSan{0}:     67 0f b9 00             ud1    (%eax),%eax
+  * UBSan{10}:    67 0f b9 40 10          ud1    0x10(%eax),%eax
+  * static_call:  0f b9 cc                ud1    %esp,%ecx
++ * WARN_printf:                          ud1    %reg,%reg
+  *
+- * Notably UBSAN uses EAX, static_call uses ECX.
++ * Notably UBSAN uses (%eax), static_call uses %esp,%ecx
+  */
+ __always_inline int decode_bug(unsigned long addr, s32 *imm, int *len)
+ {
+ 	unsigned long start = addr;
++	u8 v, rex = 0, reg, rm;
+ 	bool lock = false;
+-	u8 v;
++	int type = BUG_UD1;
+ 
+ 	if (addr < TASK_SIZE_MAX)
+ 		return BUG_NONE;
+ 
+-	v = *(u8 *)(addr++);
+-	if (v == INSN_ASOP)
++	for (;;) {
+ 		v = *(u8 *)(addr++);
+ 
+-	if (v == INSN_LOCK) {
+-		lock = true;
+-		v = *(u8 *)(addr++);
++		if (v == INSN_ASOP)
++			continue;
++
++		if (v == INSN_LOCK) {
++			lock = true;
++			continue;
++		}
++
++		if ((v & 0xf0) == 0x40) {
++			rex = v;
++			continue;
++		}
++
++		break;
+ 	}
+ 
+ 	switch (v) {
+@@ -156,9 +156,13 @@ __always_inline int decode_bug(unsigned long addr, s32 *imm, int *len)
+ 	if (X86_MODRM_MOD(v) != 3 && X86_MODRM_RM(v) == 4)
+ 		addr++;			/* SIB */
+ 
++	reg = X86_MODRM_REG(v) + 8*!!X86_REX_R(rex);
++	rm  = X86_MODRM_RM(v)  + 8*!!X86_REX_B(rex);
++
+ 	/* Decode immediate, if present */
+ 	switch (X86_MODRM_MOD(v)) {
+-	case 0: if (X86_MODRM_RM(v) == 5)
++	case 0: *imm = 0;
++		if (X86_MODRM_RM(v) == 5)
+ 			addr += 4; /* RIP + disp32 */
+ 		break;
+ 
+@@ -170,18 +174,37 @@ __always_inline int decode_bug(unsigned long addr, s32 *imm, int *len)
+ 		addr += 4;
+ 		break;
+ 
+-	case 3: break;
++	case 3: if (rm != 4) /* %esp */
++			type = BUG_WARN | (rm << 4) | reg;
++		break;
+ 	}
+ 
+ 	/* record instruction length */
+ 	*len = addr - start;
+ 
+-	if (X86_MODRM_REG(v) == 0)	/* EAX */
++	if (!rm && X86_MODRM_MOD(v) != 3)	/* (%eax) */
+ 		return BUG_UD1_UBSAN;
+ 
+-	return BUG_UD1;
++	return type;
+ }
+ 
++int is_valid_bugaddr(unsigned long addr)
++{
++	int ud_type, ud_len;
++	u32 ud_imm;
++
++	if (addr < TASK_SIZE_MAX)
++		return 0;
++
++	/*
++	 * We got #UD, if the text isn't readable we'd have gotten
++	 * a different exception.
++	 */
++	ud_type = decode_bug(addr, &ud_imm, &ud_len);
++
++	return ud_type == BUG_UD2 ||
++		(ud_type >= BUG_WARN && ud_type <= BUG_WARN_END);
++}
+ 
+ static nokprobe_inline int
+ do_trap_no_signal(struct task_struct *tsk, int trapnr, const char *str,
+@@ -305,6 +328,14 @@ static inline void handle_invalid_op(struct pt_regs *regs)
+ 		      ILL_ILLOPN, error_get_trap_addr(regs));
+ }
+ 
++static inline unsigned long pt_regs_val(struct pt_regs *regs, int nr)
++{
++	int offset = pt_regs_offset(regs, nr);
++	if (WARN_ON_ONCE(offset < -0))
++		return 0;
++	return *((unsigned long *)((void *)regs + offset));
++}
++
+ static noinstr bool handle_bug(struct pt_regs *regs)
+ {
+ 	unsigned long addr = regs->ip;
+@@ -334,6 +365,14 @@ static noinstr bool handle_bug(struct pt_regs *regs)
+ 		raw_local_irq_enable();
+ 
+ 	switch (ud_type) {
++	case BUG_WARN ... BUG_WARN_END:
++		int ud_reg = ud_type & 0xf;
++		int ud_rm  = (ud_type >> 4) & 0xf;
++
++		__warn_printk((const char *)(pt_regs_val(regs, ud_rm)),
++			      pt_regs_val(regs, ud_reg));
++		fallthrough;
++
+ 	case BUG_UD2:
+ 		if (report_bug(regs->ip, regs) == BUG_TRAP_TYPE_WARN) {
+ 			handled = true;
+diff --git a/include/asm-generic/bug.h b/include/asm-generic/bug.h
+index 387720933973..a5960c92d70a 100644
+--- a/include/asm-generic/bug.h
++++ b/include/asm-generic/bug.h
+@@ -101,12 +101,16 @@ extern __printf(1, 2) void __warn_printk(const char *fmt, ...);
+ 	} while (0)
+ #else
+ #define __WARN()		__WARN_FLAGS(BUGFLAG_TAINT(TAINT_WARN))
++
++#ifndef __WARN_printf
+ #define __WARN_printf(taint, arg...) do {				\
+ 		instrumentation_begin();				\
+ 		__warn_printk(arg);					\
+ 		__WARN_FLAGS(BUGFLAG_NO_CUT_HERE | BUGFLAG_TAINT(taint));\
+ 		instrumentation_end();					\
+ 	} while (0)
++#endif
++
+ #define WARN_ON_ONCE(condition) ({				\
+ 	int __ret_warn_on = !!(condition);			\
+ 	if (unlikely(__ret_warn_on))				\
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 62b3416f5e43..564513f605ac 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -8703,6 +8703,8 @@ void __init sched_init(void)
+ 	preempt_dynamic_init();
+ 
+ 	scheduler_running = 1;
++
++	WARN(true, "Ultimate answer: %d\n", 42);
+ }
+ 
+ #ifdef CONFIG_DEBUG_ATOMIC_SLEEP
 
