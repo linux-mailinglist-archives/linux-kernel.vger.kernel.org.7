@@ -1,224 +1,140 @@
-Return-Path: <linux-kernel+bounces-668848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-668850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CAFDAC97D7
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 May 2025 00:47:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 563C4AC97DA
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 May 2025 00:49:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2574C17F466
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 22:47:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83251A43869
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 22:48:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB95828B7C2;
-	Fri, 30 May 2025 22:47:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l1FWsg4t"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DA12283FD8;
+	Fri, 30 May 2025 22:49:12 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02D3C1AC891
-	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 22:47:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46AEF205E16
+	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 22:49:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748645244; cv=none; b=j2r1a/ph2u+/w9oFtIDaDMPdE1jkqCCT7C5gmWchALRQpO/tvyYMcAR741Xk2NAc/cESQkr1tco9fw+E1Rnpe/gaE7jn2R/whRAM4pnvR0HUI03lrBYzjIjXBBAx2GaAIFlVygJ7i9+jreSIQdFPGH2HCgNQB2XiY1BNYHINyAk=
+	t=1748645351; cv=none; b=pspRAC3eYW5WXJrJACdHzCv0cAKwuEdIyKzykJJL1t4dXcgp0dtD7QszFOI9X90heeRNXRDABofEXgxlE5lzBXx9YmCRkVSb/xwKI+Td0htvH4/y1pckoaTK1yFcI6+REi9h0CgFCvCJWy3aGylENDK5HIAkn7gJnrRinyqhRRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748645244; c=relaxed/simple;
-	bh=HHG2788MAfzLv6FpNbSS2PT5GiBzIy9/XDiczvd4Vls=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z3PrQoY+ApDvkhDPCpkHv9aIayaClF/7eUjl79U3WTUKbEaFGnBAiLy6m3ns8bQJYDMef+f9qQ6dtwud0NNsFFojY1OlYc5OSiRoEuPTjeBgEB8Is6f07mwzwT+YnHAbB8ALr46aQSnL3KOwxbewTF6Mjp7ptxypebIRxSTFqEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l1FWsg4t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99F3DC4CEFD
-	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 22:47:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748645243;
-	bh=HHG2788MAfzLv6FpNbSS2PT5GiBzIy9/XDiczvd4Vls=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=l1FWsg4tKRnT/+vxnW+s7WAje5WmMWUZwWWJwgmrze6OL8JCQRd2AsEPi0qy/q2RC
-	 ieMtxazaCgd4f/seXGhloWLSUi32DKh51gLbujFVpLiJvM7oq6upiGJ/KbjEisTHDV
-	 aECAHKirIPKQsJS9/FCXcZup+dlv+HZfaw4bcLnrRUO3s3etaFvwaLB+kjgQVbHjRb
-	 +2Xd1vQFTbNTGUO3RsGNPnvKCR4ONlY89hqqi6zfKGesSGGNg3Mk9vWC9cA1uiHUCS
-	 ERtmBtxatMMKGmI1uSuOSkByb3uO5OxQA1ApDrEEYesHc6w1iQtVqh/SBDAbh3PLA2
-	 0ykWFNEWnpAwQ==
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-605b9488c28so3751a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 15:47:23 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXWgICizCba3MvWchZi9LCnKQdrLnDJtVlOFb5c8U5mDdFwfOxoeWfNNY7S1qsxSmZL8z9qTbGLnPIxJcM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPcaoa4kdJ7oEUVc+vAW5TCZuUDrzhM51PmZZ06Ymh3UjljOUI
-	oNBWjOCmDzK62f+MuyADXtLWB/sjhJxSQDzMWRAKa29dv8ucWSv5qYcVZhWHdkkcISj56gQArJp
-	f97TSltrH0FhwGG6EJQAGG86Sx8k57gW1aYKo4rdu
-X-Google-Smtp-Source: AGHT+IFYxnUR608wUuerbDE05DFFV1ug2zC4oLVRvqWuBJ5505E/XEYgfXCYPZcgaF6AS2m1jiZPgriYTwhKBizbrzM=
-X-Received: by 2002:a05:6402:268c:b0:5fa:f7ed:f19c with SMTP id
- 4fb4d7f45d1cf-6057c1a98f4mr3487149a12.4.1748645241501; Fri, 30 May 2025
- 15:47:21 -0700 (PDT)
+	s=arc-20240116; t=1748645351; c=relaxed/simple;
+	bh=f+WC+n+HJyyafimeO1O9qVAO4GLSXRIklXlLnCrE57Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Bn5EJXlpCZXz+vdLslMZy/V5EkGH8ozmT4I00IOVZEBROEWbRhK8GdmTm7QYPfIq/C8OTruVE5GhZk3nD5LvznODtE61rHkEJuMTc95zbU9xaeWGcSznj+CwHlZyF54TEysWsvZIoS6HkC5xjiSF7EMt02qM/ckOZZ6aExTEeZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4b8JM13CkwzYQvBn
+	for <linux-kernel@vger.kernel.org>; Sat, 31 May 2025 06:49:01 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id 871F01A0F3C
+	for <linux-kernel@vger.kernel.org>; Sat, 31 May 2025 06:49:00 +0800 (CST)
+Received: from [10.82.57.70] (unknown [10.82.57.70])
+	by APP2 (Coremail) with SMTP id Syh0CgCnsWTYNTpoIKGjNw--.13722S2;
+	Sat, 31 May 2025 06:48:58 +0800 (CST)
+Message-ID: <0a91d1bd-eaa1-4ae3-9212-e63d456f7754@huaweicloud.com>
+Date: Sat, 31 May 2025 06:48:56 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250528215037.2081066-1-bboscaccy@linux.microsoft.com>
- <CACYkzJ5oJASZ43B531gY8mESqAF3WYFKez-H5vKxnk8r48Ouxg@mail.gmail.com>
- <87iklhn6ed.fsf@microsoft.com> <CACYkzJ75JXUM_C2og+JNtBat5psrEzjsgcV+b74FwrNaDF68nA@mail.gmail.com>
- <87ecw5n3tz.fsf@microsoft.com> <CACYkzJ4ondubPHDF8HL-sseVQo7AtJ2uo=twqhqLWaE3zJ=jEA@mail.gmail.com>
- <878qmdn39e.fsf@microsoft.com>
-In-Reply-To: <878qmdn39e.fsf@microsoft.com>
-From: KP Singh <kpsingh@kernel.org>
-Date: Sat, 31 May 2025 00:47:10 +0200
-X-Gmail-Original-Message-ID: <CACYkzJ6ChW6GeG8CJiUR6w-Nu3U2OYednXgCYJmp6N5FysLc2w@mail.gmail.com>
-X-Gm-Features: AX0GCFvje4fvKUf4y96Q3VqXMLTB0Y_ktvXyo16G-5-1AcLf8dXPpXsGOmvMgcg
-Message-ID: <CACYkzJ6ChW6GeG8CJiUR6w-Nu3U2OYednXgCYJmp6N5FysLc2w@mail.gmail.com>
-Subject: Re: [PATCH 0/3] BPF signature verification
-To: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
-Cc: Paul Moore <paul@paul-moore.com>, jarkko@kernel.org, zeffron@riotgames.com, 
-	xiyou.wangcong@gmail.com, kysrinivasan@gmail.com, code@tyhicks.com, 
-	linux-security-module@vger.kernel.org, roberto.sassu@huawei.com, 
-	James.Bottomley@hansenpartnership.com, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, David Howells <dhowells@redhat.com>, Lukas Wunner <lukas@wunner.de>, 
-	Ignat Korchagin <ignat@cloudflare.com>, Quentin Monnet <qmo@kernel.org>, 
-	Jason Xing <kerneljasonxing@gmail.com>, Willem de Bruijn <willemb@google.com>, 
-	Anton Protopopov <aspsk@isovalent.com>, Jordan Rome <linux@jordanrome.com>, 
-	Martin Kelly <martin.kelly@crowdstrike.com>, Alan Maguire <alan.maguire@oracle.com>, 
-	Matteo Croce <teknoraver@meta.com>, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	keyrings@vger.kernel.org, linux-crypto@vger.kernel.org, kys@microsoft.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] mm/mmap: Fix uprobe anon page be overwritten when
+ expanding vma during mremap
+To: David Hildenbrand <david@redhat.com>
+Cc: Oleg Nesterov <oleg@redhat.com>, lorenzo.stoakes@oracle.com,
+ mhiramat@kernel.org, peterz@infradead.org, Liam.Howlett@oracle.com,
+ akpm@linux-foundation.org, vbabka@suse.cz, jannh@google.com,
+ pfalcato@suse.de, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ pulehui@huawei.com
+References: <62b5ccf5-f1cd-43c2-b0bc-f542f40c5bdf@redhat.com>
+ <afe53868-5542-47d6-8005-71c1b3bec840@huaweicloud.com>
+ <13c5fe73-9e11-4465-b401-fc96a22dc5d1@redhat.com>
+ <4cbc1e43-ea46-44de-9e2b-1c62dcd2b6d5@huaweicloud.com>
+ <20250526154850.GA4156@redhat.com>
+ <06bd94c0-fefe-4bdc-8483-2d9b6703c3d6@redhat.com>
+ <57533126-eb30-4b56-bc4d-2f27514ae5ad@huaweicloud.com>
+ <cba0155e-d2b9-41fa-bc51-f3738ae73cff@redhat.com>
+ <956124be-c73c-4023-9edd-25372f3f865a@huaweicloud.com>
+ <ccf359b0-8baa-4209-b2c3-75e3813ca804@redhat.com>
+ <20250530180920.GC25160@redhat.com>
+ <0dcec9f4-eef8-499d-a96a-dc6ab3433039@redhat.com>
+Content-Language: en-US
+From: Pu Lehui <pulehui@huaweicloud.com>
+In-Reply-To: <0dcec9f4-eef8-499d-a96a-dc6ab3433039@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:Syh0CgCnsWTYNTpoIKGjNw--.13722S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Cr1rGF4fWFWfWr1fJr4UCFg_yoW8Xw18pa
+	yFvayYgr4rKr18Ar4Ika109F4Yv3yfG3yUCr15Jw13CFWjgF1akrWI9r4Y9Fnruwsa9F10
+	ywsFgFy0y34jvaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
+	v3UUUUU
+X-CM-SenderInfo: psxovxtxl6x35dzhxuhorxvhhfrp/
 
-On Sat, May 31, 2025 at 12:27=E2=80=AFAM Blaise Boscaccy
-<bboscaccy@linux.microsoft.com> wrote:
->
-> KP Singh <kpsingh@kernel.org> writes:
->
-> > On Sat, May 31, 2025 at 12:14=E2=80=AFAM Blaise Boscaccy
-> > <bboscaccy@linux.microsoft.com> wrote:
-> >>
-> >> KP Singh <kpsingh@kernel.org> writes:
-> >>
-> >> > On Fri, May 30, 2025 at 11:19=E2=80=AFPM Blaise Boscaccy
-> >> > <bboscaccy@linux.microsoft.com> wrote:
-> >> >>
-> >> >> KP Singh <kpsingh@kernel.org> writes:
-> >> >>
-> >> >
-> >> > [...]
-> >> >
-> >> >> >
-> >> >>
-> >> >> And that isn't at odds with the kernel being able to do it nor is i=
-t
-> >> >> with what I posted.
-> >> >>
-> >> >> > If your build environment that signs the BPF program is compromis=
-ed
-> >> >> > and can inject arbitrary code, then signing does not help.  Can y=
-ou
-> >> >> > explain what a supply chain attack would look like here?
-> >> >> >
-> >> >>
-> >> >> Most people here can read C code. The number of people that can rea=
-d
-> >> >> ebpf assembly metaprogramming code is much smaller. Compromising cl=
-ang
-> >> >> is one thing, compromising libbpf is another. Your proposal increas=
-es
-> >> >> the attack surface with no observable benefit. If I was going to le=
-ave a
-> >> >> hard-to-find backdoor into ring0, gen.c would be a fun place to exp=
-lore
-> >> >> doing it. Module and UEFI signature verification code doesn't live
-> >> >> inside of GCC or Clang as set of meta-instructions that get emitted=
-, and
-> >> >> there are very good reasons for that.
-> >> >>
-> >> >> Further, since the signature verification code is unique for each a=
-nd
-> >> >> every program it needs to be verified/proved/tested for each and ev=
-ery
-> >> >> program. Additionally, since all these checks are being forced outs=
-ide
-> >> >> of the kernel proper, with the insistence of keeping the LSM layer =
-in
-> >> >> the dark of the ultimate result, the only way to test that a progra=
-m
-> >> >> will fail if the map is corrupted is to physically corrupt each and
-> >> >> every program and test that individually. That isn't "elegant" nor =
-"user
-> >> >> friendly" in any way, shape or form.
-> >> >>
-> >> >> >> subsystem.  Additionally, it is impossible to verify the code
-> >> >> >> performing the signature verification, as it is uniquely regener=
-ated
-> >> >> >
-> >> >> > The LSM needs to ensure that it allows trusted LOADER programs i.=
-e.
-> >> >> > with signatures and potentially trusted signed user-space binarie=
-s
-> >> >> > with unsigned or delegated signing (this will be needed for Ciliu=
-m and
-> >> >> > bpftrace that dynamically generate BPF programs), that's a more
-> >> >> > important aspect of the LSM policy from a BPF perspective.
-> >> >> >
-> >> >>
-> >> >> I would like to be able to sign my programs please and have the ker=
-nel
-> >> >> verify it was done correctly. Why are you insisting that I *don't* =
-do
-> >> >> that?  I'm yet to see any technical objection to doing that. Do you=
- have
-> >> >> one that you'd like to share at this point?
-> >> >
-> >> > The kernel allows a trusted loader that's signed with your private
-> >> > key, that runs in the kernel context to delegate the verification.
-> >> > This pattern of a trusted / delegated loader is going to be required
-> >> > for many of the BPF use-cases that are out there (Cilium, bpftrace)
-> >> > that dynamically generate eBPF programs.
-> >> >
-> >> > The technical objection is that:
-> >> >
-> >> > * It does not align with most BPF use-cases out there as most
-> >> > use-cases need a trusted loader.
-> >>
-> >> No, it's definitely a use case. It's trivial to support both a trusted
-> >> loader and a signature over the hash chain of supplied assets.
-> >>
-> >> > * Locks us into a UAPI, whereas a signed LOADER allows us to
-> >> > incrementally build signing for all use-cases without compromising t=
-he
-> >> > security properties.
-> >> >
-> >>
-> >> Your proposal locks us into a UAPI as well. There is no way to make to
-> >> do this via UAPI without making a UAPI design choice.
-> >>
-> >> > BPF's philosophy is that of flexibility and not locking the users in=
-to
-> >> > a rigid in-kernel implementation and UAPI.
-> >> >
-> >>
-> >> Then why are you locking us into a rigid
-> >> only-signing-the-loader-is-allowed implementation?
-> >
-> > I explained this before, the delegated / trusted loader is needed by
-> > many BPF use-cases. A UAPI is forever, thus the lock-in.
-> >
->
-> Again, I'm not following. What is technically wrong with supporting both
-> signing a loader only and allowing for the signature of multiple
-> passed-in assets? It's trivial to support both and any path forward will
-> force a UAPI lock-in.
->
-> Do you simply feel that it isn't a valid use case and therefore we
-> shouldn't be allowed to do it?
->
 
-I am saying both are not needed when one (trusted loader) handles all
-cases. You are writing / generating the loader anyways, you have the
-private key, the only thing to be done is add a few lines to the
-loader to verify an embedded hash.
 
-Let's have this discussion in the patch series, much easier to discuss
-with the code.
+On 5/31/2025 2:34 AM, David Hildenbrand wrote:
+> On 30.05.25 20:09, Oleg Nesterov wrote:
+>> Well, let me say this again ;) I can't really comment, I don't understand
+>> this code enough.
+>>
+>> That said...
+>>
+>> On 05/30, David Hildenbrand wrote:
+>>>
+>>> I wonder if there might be a clean way to move the uprobe_mmap() out of
+>>> vma_complete().
+>>
+>> Me too.
+>>
+>> Not only the uprobe_mmap() calls in vma_complete() doesn't look right
+>> "in general" (at least to me).
+>>
+>> To remind, vma_complete/uprobe_mmap/install_breakpoint is not even called
+>> in, say, this case when VMA grows and moves. See
+>> https://lore.kernel.org/all/20250526173845.GC4156@redhat.com/
+>> I guess we don't really care, but still...
+>>
+>>
+>> But just in case... I agree with Lehui and Lorenzo in that we need a 
+>> short
+>> term fix, and the last patch from Lehui seems to fix the immediate 
+>> problem.
+> 
+> Oh, there was a new patch yesterday. Too bad I wasn't CCed on that.
+> 
+Oops...I just realized that you weren't included in the CC list. I had 
+been using the send script which referencing the get_maintainer.pl list 
+from the initial RFC, and I sincerely apologize for the oversight. I 
+have already submitted three versions and would greatly appreciate your 
+review.
+
+RFC v1：
+https://lore.kernel.org/all/20250521092503.3116340-1-pulehui@huaweicloud.com/
+
+RFC v2:
+https://lore.kernel.org/all/20250527132351.2050820-1-pulehui@huaweicloud.com/
+
+v1:
+https://lore.kernel.org/all/20250529155650.4017699-1-pulehui@huaweicloud.com/
+
 
