@@ -1,124 +1,121 @@
-Return-Path: <linux-kernel+bounces-667698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-667705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0463AAC8860
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 08:46:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42164AC8877
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 09:02:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34E183B027E
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 06:46:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C14B1BA4FC0
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 07:02:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40CAF1FBE80;
-	Fri, 30 May 2025 06:46:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FPJ07Fmu"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8D711A0728;
+	Fri, 30 May 2025 07:02:34 +0000 (UTC)
+Received: from lgeamrelo03.lge.com (lgeamrelo03.lge.com [156.147.51.102])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEEBB10F1
-	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 06:46:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37FD01B6CE4
+	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 07:02:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.147.51.102
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748587602; cv=none; b=ari2Jn2ip3uWl4EJ01Srs9OZWPHwjk1iXqMTJAZ6t9PbOrKVuEOscdG9ZHFAiq3F4fVl8Kfzb+7RI2nykgehh6ZNfyUZv5oZRRUojbyyDcjgtl04hmd9Te65T5m4XXJNud2Oq525F4K3vUXhg/iRq0uFw187Tv5mZxTWyhwNqP0=
+	t=1748588554; cv=none; b=TALtLFsnfQopnXtIdOG3X53usl6A9AX9Qpc9IucoOckaxSWUxPcxT36HtSERHwIFJXXDzH0IFAS9WWKUIKbRVWTPHzq+QN9LFSie086rfYm7dsY1ZKPULHBqbcpmleGtoR+B8Hkyyy7qf9rwpqZe4Ui6RyHHgNKWvO+5G/5bQLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748587602; c=relaxed/simple;
-	bh=GUJR9nbyGJ8lYC5hJXcMMoDjs2R2zeY1mx2UdApjUEw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=K5VjbBzff3zYBsbKXBs4kAqlNXrgUOwbXbpawG+S4SCr8Pfj6eFGzeGNEUYoVoOZT7ydqX01ihk8EbEXylbImJiCEj7MJqcLDNtt2ihjak4L5ph3uerlPvumVfY2KPMuOZasy0iXmgwB6pTLPG5dCY8KsnjW9b7ki/2WxJ+YwrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FPJ07Fmu; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1748587601; x=1780123601;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=GUJR9nbyGJ8lYC5hJXcMMoDjs2R2zeY1mx2UdApjUEw=;
-  b=FPJ07FmuO/y3DROtSceTW2qG77E6j9vrUXA0WkqCJNzlYq+oTFJlf1ni
-   XadP4tAGGMAEDWsFok6pzOnkOr8iKjCrUt8sV6YLaWO0Z5G2jzfOn0c4C
-   9LcbdaU5oAzkPJEXZc3ak8C4srfZzPmZh1zW4Tuq3eX4upZHKZv1MhDzx
-   3xxmdKCVYbvc4RLRvNIR2nXHb2Jqqr/fWyDJ2wIQIMHZjPhZ6ISnEBzEa
-   cjgGwd9VxvahrdutHT9qU9F1/UoJQ+cQgNMMR5/hKkzupbzJD6ugpBPFo
-   nrcmAAszMrmnBEq6BWEhvG1sMRiz76vFNiqVmQ68JJzDOuJJaYAn53pzO
-   A==;
-X-CSE-ConnectionGUID: 2lKTSlOVRCuPAOAzWnGmNg==
-X-CSE-MsgGUID: a8oPavquTP2qjGzgk7Bsmw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11448"; a="54335409"
-X-IronPort-AV: E=Sophos;i="6.16,195,1744095600"; 
-   d="scan'208";a="54335409"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2025 23:46:40 -0700
-X-CSE-ConnectionGUID: wqB8Q+eDTVWVaXdpZwFCyQ==
-X-CSE-MsgGUID: wD5teb9kTYOr5e9BVYUY+Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,195,1744095600"; 
-   d="scan'208";a="144773649"
-Received: from igk-lkp-server01.igk.intel.com (HELO b69e6467d450) ([10.211.3.150])
-  by orviesa008.jf.intel.com with ESMTP; 29 May 2025 23:46:39 -0700
-Received: from kbuild by b69e6467d450 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uKtVl-0000qe-0H;
-	Fri, 30 May 2025 06:46:37 +0000
-Date: Fri, 30 May 2025 14:45:51 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jack Yu <jack.yu@realtek.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-Subject: sound/soc/codecs/rt1318.c:1149:34: warning: unused variable
- 'rt1318_of_match'
-Message-ID: <202505301432.PXdO6rap-lkp@intel.com>
+	s=arc-20240116; t=1748588554; c=relaxed/simple;
+	bh=E/O9HAYc1pxKvwei2SjnR9l+4Xm5rk6K33BGfGo/hgA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D9s7Pa8CevPGbNxzmc4ETNSVauhoXOFl578yhLzIj241gt4oDHDZVZOF6yzfIQ7/dcT4OrKONWeLkIOUD0AGIDjkFHbUuRb/RxoUsnfSL6iQ3FLhPNL6CedWu7o6OS0AC0idd+aYp6E6039k/3ip5dUxoER7fxh95POFNS6nHIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com; spf=pass smtp.mailfrom=lge.com; arc=none smtp.client-ip=156.147.51.102
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lge.com
+Received: from unknown (HELO yjaykim-PowerEdge-T330) (10.177.112.156)
+	by 156.147.51.102 with ESMTP; 30 May 2025 15:47:30 +0900
+X-Original-SENDERIP: 10.177.112.156
+X-Original-MAILFROM: youngjun.park@lge.com
+Date: Fri, 30 May 2025 15:47:29 +0900
+From: YoungJun Park <youngjun.park@lge.com>
+To: Nhat Pham <nphamcs@gmail.com>
+Cc: linux-mm@kvack.org, akpm@linux-foundation.org, hannes@cmpxchg.org,
+	hughd@google.com, yosry.ahmed@linux.dev, mhocko@kernel.org,
+	roman.gushchin@linux.dev, shakeel.butt@linux.dev,
+	muchun.song@linux.dev, len.brown@intel.com,
+	chengming.zhou@linux.dev, kasong@tencent.com, chrisl@kernel.org,
+	huang.ying.caritas@gmail.com, ryan.roberts@arm.com,
+	viro@zeniv.linux.org.uk, baohua@kernel.org, osalvador@suse.de,
+	lorenzo.stoakes@oracle.com, christophe.leroy@csgroup.eu,
+	pavel@kernel.org, kernel-team@meta.com,
+	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+	linux-pm@vger.kernel.org, peterx@redhat.com, gunho.lee@lge.com,
+	taejoon.song@lge.com, iamjoonsoo.kim@lge.com
+Subject: Re: [RFC PATCH v2 00/18] Virtual Swap Space
+Message-ID: <aDlUgVFdA7rCUvHx@yjaykim-PowerEdge-T330>
+References: <20250429233848.3093350-1-nphamcs@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250429233848.3093350-1-nphamcs@gmail.com>
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   f66bc387efbee59978e076ce9bf123ac353b389c
-commit: fe1ff61487ace69cd4e680e36169c90667eb9624 ASoC: rt1318: Add RT1318 audio amplifier driver
-date:   12 months ago
-config: x86_64-buildonly-randconfig-2003-20250530 (https://download.01.org/0day-ci/archive/20250530/202505301432.PXdO6rap-lkp@intel.com/config)
-compiler: clang version 20.1.2 (https://github.com/llvm/llvm-project 58df0ef89dd64126512e4ee27b4ac3fd8ddf6247)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250530/202505301432.PXdO6rap-lkp@intel.com/reproduce)
+On Tue, Apr 29, 2025 at 04:38:28PM -0700, Nhat Pham wrote:
+> Changelog:
+> * v2:
+> 	* Use a single atomic type (swap_refs) for reference counting
+> 	  purpose. This brings the size of the swap descriptor from 64 KB
+> 	  down to 48 KB (25% reduction). Suggested by Yosry Ahmed.
+> 	* Zeromap bitmap is removed in the virtual swap implementation.
+> 	  This saves one bit per phyiscal swapfile slot.
+> 	* Rearrange the patches and the code change to make things more
+> 	  reviewable. Suggested by Johannes Weiner.
+> 	* Update the cover letter a bit.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202505301432.PXdO6rap-lkp@intel.com/
+Hi Nhat,
 
-All warnings (new ones prefixed by >>):
+Thank you for sharing this patch series.
+I’ve read through it with great interest.
 
-   In file included from sound/soc/codecs/rt1318.c:18:
-   In file included from include/linux/i2c.h:19:
-   In file included from include/linux/regulator/consumer.h:35:
-   In file included from include/linux/suspend.h:5:
-   In file included from include/linux/swap.h:9:
-   In file included from include/linux/memcontrol.h:21:
-   In file included from include/linux/mm.h:2253:
-   include/linux/vmstat.h:514:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     514 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
->> sound/soc/codecs/rt1318.c:1149:34: warning: unused variable 'rt1318_of_match' [-Wunused-const-variable]
-    1149 | static const struct of_device_id rt1318_of_match[] = {
-         |                                  ^~~~~~~~~~~~~~~
-   2 warnings generated.
+I’m part of a kernel team working on features related to multi-tier swapping,
+and this patch set appears quite relevant
+to our ongoing discussions and early-stage implementation.
 
+I had a couple of questions regarding the future direction.
 
-vim +/rt1318_of_match +1149 sound/soc/codecs/rt1318.c
+> * Multi-tier swapping (as mentioned in [5]), with transparent
+>   transferring (promotion/demotion) of pages across tiers (see [8] and
+>   [9]). Similar to swapoff, with the old design we would need to
+>   perform the expensive page table walk.
 
-  1148	
-> 1149	static const struct of_device_id rt1318_of_match[] = {
-  1150		{ .compatible = "realtek,rt1318", },
-  1151		{},
-  1152	};
-  1153	MODULE_DEVICE_TABLE(of, rt1318_of_match);
-  1154	
+Based on the discussion in [5], it seems there was some exploration
+around enabling per-cgroup selection of multiple tiers.
+Do you envision the current design evolving in a similar direction
+to those past discussions, or is there a different direction you're aiming for?
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>   This idea is very similar to Kairui's work to optimize the (physical)
+>   swap allocator. He is currently also working on a swap redesign (see
+>   [11]) - perhaps we can combine the two efforts to take advantage of
+>   the swap allocator's efficiency for virtual swap.
+
+I noticed that your patch appears to be aligned with the work from Kairui.
+It seems like the overall architecture may be headed toward introducing
+a virtual swap device layer.
+I'm curious if there’s already been any concrete discussion
+around this abstraction, especially regarding how it might be layered over
+multiple physical swap devices?
+
+From a naive perspective, I imagine that while today’s swap devices
+are in a 1:1 mapping with physical devices,
+this virtual layer could introduce a 1:N relationship —
+one virtual swap device mapped to multiple physical ones.
+Would this virtual device behave as a new swappable block device
+exposed via `swapon`, or is the plan to abstract it differently?
+
+Thanks again for your work, 
+and I would greatly appreciate any insights you could share.
+
+Best regards,  
+YoungJun Park
 
