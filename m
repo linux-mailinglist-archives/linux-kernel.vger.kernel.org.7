@@ -1,132 +1,578 @@
-Return-Path: <linux-kernel+bounces-667852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-667880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F52DAC8AB2
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 11:28:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8152BAC8AF5
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 11:35:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3C441BA23E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 09:28:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5FD507A20AB
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 09:34:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 392D7220686;
-	Fri, 30 May 2025 09:27:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACD6D2248A1;
+	Fri, 30 May 2025 09:32:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jjUUitks"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="TkX8S0ml"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91BB028E7;
-	Fri, 30 May 2025 09:27:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1094224B1C
+	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 09:32:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748597275; cv=none; b=HnWTwDXZHJFGwgh+HTLMEycD04/rTcfxglihMj0zpN66e/g9EKZwzjarszbupvq7XIG5e1/sS1EyubLFaNwiT5uYgd3jAVPkn+5omxmdj7gsRxCOpUtxTedh934zvPfYGZdIzqD4YEYMFr8gsx6sGiznrVr1WoQCOVcJWqttMh0=
+	t=1748597541; cv=none; b=ZTQlDlu4DzxOGzpQoTZh3kYbRjTI7uMnWQw3rRwIYo3xMTITulRIvM6158JNxSYeIEdLLSJ49QuPkrjHJ4LJcFNXSA8HNCM4lKByAwSpTGi6jl6RKEMxEkTnZi0swjI8fdEmp/Hf17xn5U6BM5bwmK536cEohNLtNDig6epyBYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748597275; c=relaxed/simple;
-	bh=RSiqO/kmQ8iZ5K+uJsE1ImfJmQxmaHfrScdUILlX7vw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ne+Tz3NdfpZM0stdLc5Yjj5YX5j6RBrW41lyW1IeyXDirRjgo5Wcs9OhDb0lCWUehGzgHbfd2wHKw4smb9GkmDR95B9dxhrsrMmBpSJYAwCA14ciCm8DMDoTVyu1hsOBzD+x5wDPe1QC6shmEC03TrjX/ZSHAvJ1VdGmNKzHHzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jjUUitks; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 227BBC4CEEF;
-	Fri, 30 May 2025 09:27:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748597275;
-	bh=RSiqO/kmQ8iZ5K+uJsE1ImfJmQxmaHfrScdUILlX7vw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=jjUUitksHOEzwX3xq+/GgKAPVOsU+wG6wGPkZvuj2Xfr6xhH+rUbAy+qCZvtwcfVC
-	 iSlvN06+eLala1U8idzdU5UKQcxOGCWJF7N8rgks+wreA7zSa/9leT+kFiwBCDXlgC
-	 mgemYZjiKU23S6MmtRnzXpFM8xzgeXANhRI8GQpvQ8iuo7AE2y1RmoXWWIOZCwsfZb
-	 +nqdk7we2WiMC6n11/N0P91x86NaDn1gUoBHblLblZWQRlIiJtmqmpBbtbA4eDuFuw
-	 pTOfEoLJFaa3WuRfi9uyQjBwgCu8KywzY0pO4D0ZQX3v1DYuypu59UUwgvCNrS6Po3
-	 a1hkbjZbkzHhg==
-Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-3fbaa18b810so507149b6e.2;
-        Fri, 30 May 2025 02:27:55 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV2lNGzE2glvb6bgU2+im1C4pRqhsV8PN29Z1ax3phVfzTeWYYWsbHIG4MZOAfNhoqM7AlUeRRjl2C/p3U=@vger.kernel.org, AJvYcCWuz6kl/TMARaiiNtTi4JFbtdAhXnUlSz1VNwEHECPycOY6mqp1is5uZ8R3opgz1Y9MbnsgqTlApbE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywl6gcs1/WujHIjB/uaLMvdKFwPMl4+hwjzkPePvLpBAbg9xFH3
-	D8BOzwHmIBoNn35zHz+LIHFG+7NTpDr2YV60L5XU9YUZ0/FrbG6m0Lznx995wGc/YtiJ4S8Ncwz
-	nP38HWy/ADDfHnZ5QE1/Iy3oFFKI8388=
-X-Google-Smtp-Source: AGHT+IGJLxY/YP4qQcPSGdC9M+XSOtwoc14LjM91TbppT+2aS41XhEg2kIpcpB3/+sLOP4lhOK2f/pb3lYY/B5ouX6E=
-X-Received: by 2002:a05:6820:98b:b0:60b:edbb:1f50 with SMTP id
- 006d021491bc7-60d52d6db2fmr625648eaf.4.1748597274497; Fri, 30 May 2025
- 02:27:54 -0700 (PDT)
+	s=arc-20240116; t=1748597541; c=relaxed/simple;
+	bh=Vo5W68+B44KDyLABkBRZQtt4MP6EbodSR8b0dyMCe9I=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=pIzvE0SS9VaQbKpvr3Aegn5oPePLJbixR7Ofr3wBiivBOKs7jZ+4pzrx6Deu6R+pSKqu8S1Gf7Mwq9SplhTNXKEnxG69OLQ1B+f8unywtTkaMCW/+2J/WapMRTuGmHlivHnH9XlC48z9BHGste2YERI5YYixvgoPP56leRB7e1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=TkX8S0ml; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b26f5f47ba1so1205977a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 02:32:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1748597537; x=1749202337; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WgdxFQILtv1ZFBwGDlokBNLY9DZwyLg+1V8wfJcAxqs=;
+        b=TkX8S0mlzQALs9Xd5nJpstems/lEQiViliadNUqZ4Vy8VoDCAE5kciPed4kmjZLKad
+         n8hB45Jt3bYVFXCyFT5oyZz4lK1WLpSj5Fc4MxtiO2L4EGIFb8jmcYRiccXd2tLquT7B
+         BRHHWEKNw6hlh2CQoq2nyx+qZm+F00Y9/x74H99SsxNixZDyvF13Fhp+iLENW8YOIwKO
+         Ki8SkEP9Qe9OTkoCcdoZKTBKAAzCdYnz06HFG8XOP7N+0ymzkVd9OGk3pnex18I7Vq9Y
+         TyxCukQA/nk4bq6n4UCJ9LJ8de/svHiuUk4FzIYNo4r0Aj0tiwYsGugLD0GS90z1O7Kb
+         GdBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748597537; x=1749202337;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WgdxFQILtv1ZFBwGDlokBNLY9DZwyLg+1V8wfJcAxqs=;
+        b=Yd5wejABTjHSe3GHpFh1aEomkcyBe9fkuBF7nHSSgV9USIvSXucmNZaHyFn5YM97Y7
+         aDRW1naLaVm3S146r4XUtPB2N1y5e3nyiCOLI+cy1ec1MYVrxUgCXPSr+xyZ6omshOUq
+         63wox9RsXQ67IqB3eIEOFRCXtrv5RrrfWK8YCvk8c1X/qbLL7A1ut0Z4PTcmeIRJ0iqk
+         eGLDu2YpYI+jhP4+6WxYYbDLqWOXRiD9NUkOETGdN4g0AyqjTlM73gDz/cXfpwoi3rHh
+         9bMPM8k2SuNiHb23u5lo02ImOatV/vItwH2cXyFYmjogVgmkJcSuPfgIGSj3Rv7QTJHT
+         zj0A==
+X-Forwarded-Encrypted: i=1; AJvYcCUMV1bA3TEWC+dU78v7+5nNMjxrfkR0VXkqxp1cyHaNc12s2fMnVhk7wbuA0ymfPpk+ahsMRhEKGm8rgZI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLfgnDdzVp71Iw7DhMy4qKP+NAePwtk++0BTqbo9uWAaQR5Wnu
+	AgHfLBxSiL+jEfMmvQCRLxRXmfJh2N5JLDIjhHUBn83j1IzdnYE0lm/uP0OT9RkdBSg=
+X-Gm-Gg: ASbGncuuvwxKxuOAkqt+uuGv9F58Nr5ylwFQOAc9I6gXRv7LOtV3qOQDSTMwZ9GZ8vi
+	/IcIsNvwgrSJTdmwuP5eebN3zF5Hnl6ninaoRkmD0d2bHytyF4yq2Ux2wqEhqVZU3DYhE8ZFjgA
+	B+1IBsieNj70Lzsox9JkGgoyJM5MzeQnQJzscrEYZuV4kuH7/eEqmjmUu6rFFgGUMk3q4YTv+4/
+	yVP+z3z2o7YUaQ1CQW/cHaOeJ5p40PPlDN5CHYZN9p/rj/9a7gcfwj1nx/u7pkZo5mJjUVGIksz
+	JdmLDLBFWAu0T/LrJqZ0rm2eyGKHwBg7Xp8dbkRAIDQ+gz5Pd9NNnV2HgjEGR7sbxwL1ISwUsh1
+	Bxa8KTVip6g==
+X-Google-Smtp-Source: AGHT+IEJreThnxFmdrlfjlpwKZv59IFtRtCaH2wQICekYkicVpLMTveAapFUeJrWIU6RsHlorrZhig==
+X-Received: by 2002:a17:90b:314d:b0:311:c1ec:7d0c with SMTP id 98e67ed59e1d1-312504437b2mr2132223a91.27.1748597536883;
+        Fri, 30 May 2025 02:32:16 -0700 (PDT)
+Received: from FQ627FTG20.bytedance.net ([63.216.146.178])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3124e29f7b8sm838724a91.2.2025.05.30.02.32.02
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Fri, 30 May 2025 02:32:16 -0700 (PDT)
+From: Bo Li <libo.gcs85@bytedance.com>
+To: tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	x86@kernel.org,
+	luto@kernel.org,
+	kees@kernel.org,
+	akpm@linux-foundation.org,
+	david@redhat.com,
+	juri.lelli@redhat.com,
+	vincent.guittot@linaro.org,
+	peterz@infradead.org
+Cc: dietmar.eggemann@arm.com,
+	hpa@zytor.com,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org,
+	irogers@google.com,
+	adrian.hunter@intel.com,
+	kan.liang@linux.intel.com,
+	viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz,
+	lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com,
+	vbabka@suse.cz,
+	rppt@kernel.org,
+	surenb@google.com,
+	mhocko@suse.com,
+	rostedt@goodmis.org,
+	bsegall@google.com,
+	mgorman@suse.de,
+	vschneid@redhat.com,
+	jannh@google.com,
+	pfalcato@suse.de,
+	riel@surriel.com,
+	harry.yoo@oracle.com,
+	linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	duanxiongchun@bytedance.com,
+	yinhongbo@bytedance.com,
+	dengliang.1214@bytedance.com,
+	xieyongji@bytedance.com,
+	chaiwen.cc@bytedance.com,
+	songmuchun@bytedance.com,
+	yuanzhu@bytedance.com,
+	chengguozhu@bytedance.com,
+	sunjiadong.lff@bytedance.com,
+	Bo Li <libo.gcs85@bytedance.com>
+Subject: [RFC v2 15/35] RPAL: add sender/receiver state
+Date: Fri, 30 May 2025 17:27:43 +0800
+Message-Id: <6582d600063dd2176558bdf2b62a6a143bd594e2.1748594840.git.libo.gcs85@bytedance.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+In-Reply-To: <cover.1748594840.git.libo.gcs85@bytedance.com>
+References: <cover.1748594840.git.libo.gcs85@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <2006806.PYKUYFuaPT@rjwysocki.net> <20250528131759.GA39944@noisy.programming.kicks-ass.net>
- <CAJZ5v0i=TWMjPKxGa8eT-prV=dtQo=pwys5amcj3QL9qo=EYyQ@mail.gmail.com>
- <20250528133807.GC39944@noisy.programming.kicks-ass.net> <CAJZ5v0g2+OVdFM-bUCOynNivUc4doxH=ukt9e9Z_nKpoZh6gPA@mail.gmail.com>
- <20250528160523.GE39944@noisy.programming.kicks-ass.net> <CAJZ5v0jzF19rToJMHhEvU6Zbt3690KWCs-B_0sPR=s9xeRiUnQ@mail.gmail.com>
- <20250529085358.GY24938@noisy.programming.kicks-ass.net> <CAJZ5v0hw1910Gsb57POVhax1hAbEGHa7xksr_FygNd_JL-oeOA@mail.gmail.com>
- <20250530080733.GH39944@noisy.programming.kicks-ass.net> <CAJZ5v0irHEZEbZVrd-tiaXBvxM4aD9spJg1cVRcjrDQ0_HMJAg@mail.gmail.com>
-In-Reply-To: <CAJZ5v0irHEZEbZVrd-tiaXBvxM4aD9spJg1cVRcjrDQ0_HMJAg@mail.gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 30 May 2025 11:27:42 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0gbE1Y5zjD_WbwfXYUco=6gtJHYJrTDy0t+sGkBjdD8pQ@mail.gmail.com>
-X-Gm-Features: AX0GCFtXA3TjByyV2Y_Ee8S3152mP4t9FecpBX4C3ns-oPIQRIfIXrWE6bVa4Zk
-Message-ID: <CAJZ5v0gbE1Y5zjD_WbwfXYUco=6gtJHYJrTDy0t+sGkBjdD8pQ@mail.gmail.com>
-Subject: Re: [PATCH v1 0/2] x86/smp: Fix power regression introduced by commit 96040f7273e2
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, x86 Maintainers <x86@kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>, 
-	Len Brown <lenb@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@suse.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, 
-	Artem Bityutskiy <artem.bityutskiy@linux.intel.com>, 
-	"Gautham R. Shenoy" <gautham.shenoy@amd.com>, Ingo Molnar <mingo@redhat.com>, 
-	Todd Brandt <todd.e.brandt@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, May 30, 2025 at 11:18=E2=80=AFAM Rafael J. Wysocki <rafael@kernel.o=
-rg> wrote:
->
-> On Fri, May 30, 2025 at 10:07=E2=80=AFAM Peter Zijlstra <peterz@infradead=
-.org> wrote:
-> >
-> > On Thu, May 29, 2025 at 11:38:05AM +0200, Rafael J. Wysocki wrote:
-> >
-> > > First off, I'm not sure if all of the requisite things are ready then
-> > > (sysfs etc.).
-> >
-> > Pretty much everything is already running at early_initcall(). Sysfs
-> > certainly is.
-> >
-> > > We may end up doing this eventually, but it may not be straightforwar=
-d.
-> > >
-> > > More importantly, this is not a change for 6.15.y (y > 0).
-> >
-> > Seriously, have you even tried?
-> >
-> > AFAICT the below is all that is needed.  That boots just fine on the on=
-e
-> > randon system I tried, and seems to still work.
-> >
-> > And this is plenty small enough to go into 6.15.y
->
-> But there is still intel_idle_init() which is device_initcall() ATM
-> and this needs to be tested on other arches too.
->
-> So not really there, sorry.
+The lazy switch defines six receiver states, and their state transitions
+are as follows:
 
-BTW, I do think that this is the way to go, but not in a hurry, and if
-6.15.y does not include a proper fix for the original issue, this is
-not the end of the world.
+   |<--->READY<----> WAIT <----> CALL ----> LAZY_SWITCH ---> KERNEL_RET
+   |                                             |               |
+RUNNING <----------------------------------------|---------------|
 
-If it turns out to be unproblematic and all goes well, we may as well
-try to put it into 6.16.
+The receiver thread initially starts in the RUNNING state and can
+transition to the WAIT state voluntarily. The READY state is a temporary
+state before entering WAIT state.  For a receiver in the WAIT state, it
+must be in the TASK_INTERRUPTIBLE state. If the receiver thread is woken
+up, the WAIT state can transition to the RUNNING state.
 
-> > diff --git a/drivers/cpuidle/cpuidle.c b/drivers/cpuidle/cpuidle.c
-> > index 0835da449db8..0f25de8081af 100644
-> > --- a/drivers/cpuidle/cpuidle.c
-> > +++ b/drivers/cpuidle/cpuidle.c
-> > @@ -814,4 +814,4 @@ static int __init cpuidle_init(void)
-> >
-> >  module_param(off, int, 0444);
-> >  module_param_string(governor, param_governor, CPUIDLE_NAME_LEN, 0444);
-> > -core_initcall(cpuidle_init);
-> > +early_initcall(cpuidle_init);
+Once the receiver is in the WAIT state, the sender thread can
+initiate an RPAL call, causing the receiver to enter the CALL state. A
+receiver thread in the CALL state cannot be awakened until a lazy switch
+occurs or its state changes. The call state carries additional service_id
+and sender_id information.
+
+If the sender completes executing the receiver's code without entering the
+kernel after issuing the RPAL call, the receiver transitions back from the
+CALL state to the WAIT state. Conversely, if the sender enters the kernel
+during the RPAL call, the receiver's state changes to LAZY_SWITCH.
+
+From the LAZY_SWITCH state, the receiver thread has two possible state
+transitions: When the receiver thread finishes execution and switches back
+to the sender via a lazy switch, it first enters the KERNEL_RET state and
+then transitions to the RUNNING state. If the receiver thread runs for too
+long and the scheduler resumes the sender, the receiver directly
+transitions to the RUNNING state. Transitions to the RUNNING state can be
+done in userspace.
+
+The lazy switch mechanism defines three states for the sender thread:
+
+ - RUNNING: The sender starts in this state. When the sender initiates
+   an RPAL call to switch from user mode to the receiver, it transitions
+   to the CALL state.
+
+ - CALL: The sender remains in this state while the receiver is executing
+   the code triggered by the RPAL call. When the receiver switches back to
+   the sender from user mode, the sender returns to the RUNNING state.
+
+ - KERNEL_RET: If the receiver takes an extended period to switch back to
+   the sender after a lazy switch, the scheduler may preempt the sender to
+   run other tasks. In this case, the sender enters the KERNEL_RET state
+   while in the kernel. Once the sender resumes execution in user mode, it
+   transitions back to the RUNNING state.
+
+This patch implements the handling and transition of the receiver's state.
+When a receiver leaves the run queue in the READY state, its state
+transitions to the WAIT state; otherwise, it transitions to the RUNNING
+state. The patch also modifies try_to_wake_up() to handling different
+states: for the READY and WAIT states, try_to_wake_up() causes the state
+to change to the RUNNING state. For the CALL state, try_to_wake_up() cannot
+wake up the task. The patch provides a special interface,
+rpal_try_to_wake_up(), to wake up tasks in the CALL state, which can be
+used for lazy switches.
+
+Signed-off-by: Bo Li <libo.gcs85@bytedance.com>
+---
+ arch/x86/kernel/process_64.c |  43 ++++++++++++
+ arch/x86/rpal/internal.h     |   7 ++
+ include/linux/rpal.h         |  50 ++++++++++++++
+ kernel/sched/core.c          | 130 +++++++++++++++++++++++++++++++++++
+ 4 files changed, 230 insertions(+)
+
+diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
+index f39ff02e498d..4830e9215de7 100644
+--- a/arch/x86/kernel/process_64.c
++++ b/arch/x86/kernel/process_64.c
+@@ -40,6 +40,7 @@
+ #include <linux/ftrace.h>
+ #include <linux/syscalls.h>
+ #include <linux/iommu.h>
++#include <linux/rpal.h>
+ 
+ #include <asm/processor.h>
+ #include <asm/pkru.h>
+@@ -596,6 +597,36 @@ void compat_start_thread(struct pt_regs *regs, u32 new_ip, u32 new_sp, bool x32)
+ }
+ #endif
+ 
++#ifdef CONFIG_RPAL
++static void rpal_receiver_enter_wait(struct task_struct *prev_p)
++{
++	if (READ_ONCE(prev_p->__state) == TASK_INTERRUPTIBLE) {
++		atomic_cmpxchg(&prev_p->rpal_rd->rcc->receiver_state,
++			       RPAL_RECEIVER_STATE_READY,
++			       RPAL_RECEIVER_STATE_WAIT);
++	} else {
++		/*
++		 * Simply check RPAL_RECEIVER_STATE_READY is not enough. It is
++		 * possible task's state is TASK_RUNNING. Consider following case:
++		 *
++		 * CPU 0(prev_p)            CPU 1(waker)
++		 * set TASK_INTERRUPTIBLE
++		 * set RPAL_RECEIVER_STATE_READY
++		 *                          check TASK_INTERRUPTIBLE
++		 * clear RPAL_RECEIVER_STATE_READY
++		 * clear TASK_INTERRUPTIBLE
++		 * set TASK_INTERRUPTIBLE
++		 * set RPAL_RECEIVER_STATE_READY
++		 *                          ttwu_runnable()
++		 * schedule()
++		 */
++		atomic_cmpxchg(&prev_p->rpal_rd->rcc->receiver_state,
++			       RPAL_RECEIVER_STATE_READY,
++			       RPAL_RECEIVER_STATE_RUNNING);
++	}
++}
++#endif
++
+ /*
+  *	switch_to(x,y) should switch tasks from x to y.
+  *
+@@ -704,6 +735,18 @@ __switch_to(struct task_struct *prev_p, struct task_struct *next_p)
+ 			loadsegment(ss, __KERNEL_DS);
+ 	}
+ 
++#ifdef CONFIG_RPAL
++	/*
++	 * When we come to here, the stack switching is finished. Therefore,
++	 * the receiver thread is prepared for a lazy switch. We then change
++	 * the receiver_state from RPAL_RECEIVER_STATE_REAY to
++	 * RPAL_RECEIVER_STATE_WAIT and other thread is able to call it with
++	 * RPAL call.
++	 */
++	if (rpal_test_task_thread_flag(prev_p, RPAL_RECEIVER_BIT))
++		rpal_receiver_enter_wait(prev_p);
++#endif
++
+ 	/* Load the Intel cache allocation PQR MSR. */
+ 	resctrl_sched_in(next_p);
+ 
+diff --git a/arch/x86/rpal/internal.h b/arch/x86/rpal/internal.h
+index cf6d608a994a..6256172bb79e 100644
+--- a/arch/x86/rpal/internal.h
++++ b/arch/x86/rpal/internal.h
+@@ -47,3 +47,10 @@ int rpal_unregister_sender(void);
+ int rpal_register_receiver(unsigned long addr);
+ int rpal_unregister_receiver(void);
+ void exit_rpal_thread(void);
++
++static inline unsigned long
++rpal_build_call_state(const struct rpal_sender_data *rsd)
++{
++	return ((rsd->rcd.service_id << RPAL_SID_SHIFT) |
++		(rsd->scc->sender_id << RPAL_ID_SHIFT) | RPAL_RECEIVER_STATE_CALL);
++}
+diff --git a/include/linux/rpal.h b/include/linux/rpal.h
+index 3310d222739e..4f4719bb7eae 100644
+--- a/include/linux/rpal.h
++++ b/include/linux/rpal.h
+@@ -87,6 +87,13 @@ enum {
+ 
+ #define RPAL_ERROR_MAGIC 0x98CC98CC
+ 
++#define RPAL_SID_SHIFT 24
++#define RPAL_ID_SHIFT 8
++#define RPAL_RECEIVER_STATE_MASK ((1 << RPAL_ID_SHIFT) - 1)
++#define RPAL_SID_MASK (~((1 << RPAL_SID_SHIFT) - 1))
++#define RPAL_ID_MASK (~(0 | RPAL_RECEIVER_STATE_MASK | RPAL_SID_MASK))
++#define RPAL_MAX_ID ((1 << (RPAL_SID_SHIFT - RPAL_ID_SHIFT)) - 1)
++
+ extern unsigned long rpal_cap;
+ 
+ enum rpal_task_flag_bits {
+@@ -94,6 +101,22 @@ enum rpal_task_flag_bits {
+ 	RPAL_RECEIVER_BIT,
+ };
+ 
++enum rpal_receiver_state {
++	RPAL_RECEIVER_STATE_RUNNING,
++	RPAL_RECEIVER_STATE_KERNEL_RET,
++	RPAL_RECEIVER_STATE_READY,
++	RPAL_RECEIVER_STATE_WAIT,
++	RPAL_RECEIVER_STATE_CALL,
++	RPAL_RECEIVER_STATE_LAZY_SWITCH,
++	RPAL_RECEIVER_STATE_MAX,
++};
++
++enum rpal_sender_state {
++	RPAL_SENDER_STATE_RUNNING,
++	RPAL_SENDER_STATE_CALL,
++	RPAL_SENDER_STATE_KERNEL_RET,
++};
++
+ /*
+  * user_meta will be sent to other service when requested.
+  */
+@@ -215,6 +238,8 @@ struct rpal_task_context {
+ struct rpal_receiver_call_context {
+ 	struct rpal_task_context rtc;
+ 	int receiver_id;
++	atomic_t receiver_state;
++	atomic_t sender_state;
+ };
+ 
+ /* recovery point for sender */
+@@ -390,11 +415,35 @@ static inline bool rpal_test_current_thread_flag(unsigned long bit)
+ {
+ 	return test_bit(bit, &current->rpal_flag);
+ }
++
++static inline bool rpal_test_task_thread_flag(struct task_struct *tsk,
++					      unsigned long bit)
++{
++	return test_bit(bit, &tsk->rpal_flag);
++}
++
++static inline void rpal_set_task_thread_flag(struct task_struct *tsk,
++					     unsigned long bit)
++{
++	set_bit(bit, &tsk->rpal_flag);
++}
++
++static inline void rpal_clear_task_thread_flag(struct task_struct *tsk,
++					       unsigned long bit)
++{
++	clear_bit(bit, &tsk->rpal_flag);
++}
+ #else
+ static inline struct rpal_service *rpal_current_service(void) { return NULL; }
+ static inline void rpal_set_current_thread_flag(unsigned long bit) { }
+ static inline void rpal_clear_current_thread_flag(unsigned long bit) { }
+ static inline bool rpal_test_current_thread_flag(unsigned long bit) { return false; }
++static inline bool rpal_test_task_thread_flag(struct task_struct *tsk,
++	unsigned long bit) { return false; }
++static inline void rpal_set_task_thread_flag(struct task_struct *tsk,
++					     unsigned long bit) { }
++static inline void rpal_clear_task_thread_flag(struct task_struct *tsk,
++					       unsigned long bit) { }
+ #endif
+ 
+ void rpal_unregister_service(struct rpal_service *rs);
+@@ -414,4 +463,5 @@ struct mm_struct *rpal_pf_get_real_mm(unsigned long address, int *rebuild);
+ 
+ extern void rpal_pick_mmap_base(struct mm_struct *mm,
+ 	struct rlimit *rlim_stack);
++int rpal_try_to_wake_up(struct task_struct *p);
+ #endif
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 62b3416f5e43..045e92ee2e3b 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -67,6 +67,7 @@
+ #include <linux/wait_api.h>
+ #include <linux/workqueue_api.h>
+ #include <linux/livepatch_sched.h>
++#include <linux/rpal.h>
+ 
+ #ifdef CONFIG_PREEMPT_DYNAMIC
+ # ifdef CONFIG_GENERIC_ENTRY
+@@ -3820,6 +3821,40 @@ static int ttwu_runnable(struct task_struct *p, int wake_flags)
+ 	return ret;
+ }
+ 
++#ifdef CONFIG_RPAL
++static bool rpal_check_state(struct task_struct *p)
++{
++	bool ret = true;
++
++	if (rpal_test_task_thread_flag(p, RPAL_RECEIVER_BIT)) {
++		struct rpal_receiver_call_context *rcc = p->rpal_rd->rcc;
++		int state;
++
++retry:
++		state = atomic_read(&rcc->receiver_state) & RPAL_RECEIVER_STATE_MASK;
++		switch (state) {
++		case RPAL_RECEIVER_STATE_READY:
++		case RPAL_RECEIVER_STATE_WAIT:
++			if (state != atomic_cmpxchg(&rcc->receiver_state, state,
++						     RPAL_RECEIVER_STATE_RUNNING))
++				goto retry;
++			break;
++		case RPAL_RECEIVER_STATE_KERNEL_RET:
++		case RPAL_RECEIVER_STATE_LAZY_SWITCH:
++		case RPAL_RECEIVER_STATE_RUNNING:
++			break;
++		case RPAL_RECEIVER_STATE_CALL:
++			ret = false;
++			break;
++		default:
++			rpal_err("%s: invalid state: %d\n", __func__, state);
++			break;
++		}
++	}
++	return ret;
++}
++#endif
++
+ #ifdef CONFIG_SMP
+ void sched_ttwu_pending(void *arg)
+ {
+@@ -3841,6 +3876,11 @@ void sched_ttwu_pending(void *arg)
+ 		if (WARN_ON_ONCE(task_cpu(p) != cpu_of(rq)))
+ 			set_task_cpu(p, cpu_of(rq));
+ 
++#ifdef CONFIG_RPAL
++		if (!rpal_check_state(p))
++			continue;
++#endif
++
+ 		ttwu_do_activate(rq, p, p->sched_remote_wakeup ? WF_MIGRATED : 0, &rf);
+ 	}
+ 
+@@ -4208,6 +4248,17 @@ int try_to_wake_up(struct task_struct *p, unsigned int state, int wake_flags)
+ 		if (!ttwu_state_match(p, state, &success))
+ 			goto out;
+ 
++#ifdef CONFIG_RPAL
++		/*
++		 * For rpal thread, we need to check if it can be woken up. If not,
++		 * we do not wake it up here but wake it up later by kernel worker.
++		 *
++		 * For normal thread, nothing happens.
++		 */
++		if (!rpal_check_state(p))
++			goto out;
++#endif
++
+ 		trace_sched_waking(p);
+ 		ttwu_do_wakeup(p);
+ 		goto out;
+@@ -4224,6 +4275,11 @@ int try_to_wake_up(struct task_struct *p, unsigned int state, int wake_flags)
+ 		if (!ttwu_state_match(p, state, &success))
+ 			break;
+ 
++#ifdef CONFIG_RPAL
++		if (!rpal_check_state(p))
++			break;
++#endif
++
+ 		trace_sched_waking(p);
+ 
+ 		/*
+@@ -4344,6 +4400,56 @@ int try_to_wake_up(struct task_struct *p, unsigned int state, int wake_flags)
+ 	return success;
+ }
+ 
++#ifdef CONFIG_RPAL
++int rpal_try_to_wake_up(struct task_struct *p)
++{
++	guard(preempt)();
++	int cpu, success = 0;
++	int wake_flags = WF_TTWU;
++
++	BUG_ON(READ_ONCE(p->__state) == TASK_RUNNING);
++
++	scoped_guard (raw_spinlock_irqsave, &p->pi_lock) {
++		smp_mb__after_spinlock();
++		if (!ttwu_state_match(p, TASK_NORMAL, &success))
++			break;
++
++		trace_sched_waking(p);
++		/* see try_to_wake_up() */
++		smp_rmb();
++
++#ifdef CONFIG_SMP
++		smp_acquire__after_ctrl_dep();
++		WRITE_ONCE(p->__state, TASK_WAKING);
++		/* see try_to_wake_up() */
++		if (smp_load_acquire(&p->on_cpu) &&
++		    ttwu_queue_wakelist(p, task_cpu(p), wake_flags))
++			break;
++		smp_cond_load_acquire(&p->on_cpu, !VAL);
++
++		cpu = select_task_rq(p, p->wake_cpu, &wake_flags);
++		if (task_cpu(p) != cpu) {
++			if (p->in_iowait) {
++				delayacct_blkio_end(p);
++				atomic_dec(&task_rq(p)->nr_iowait);
++			}
++
++			wake_flags |= WF_MIGRATED;
++			psi_ttwu_dequeue(p);
++			set_task_cpu(p, cpu);
++		}
++#else
++		cpu = task_cpu(p);
++#endif
++	}
++	ttwu_queue(p, cpu, wake_flags);
++	if (success)
++		ttwu_stat(p, task_cpu(p), wake_flags);
++
++	return success;
++}
++#endif
++
+ static bool __task_needs_rq_lock(struct task_struct *p)
+ {
+ 	unsigned int state = READ_ONCE(p->__state);
+@@ -6574,6 +6680,18 @@ pick_next_task(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
+ #define SM_PREEMPT		1
+ #define SM_RTLOCK_WAIT		2
+ 
++#ifdef CONFIG_RPAL
++static inline void rpal_check_ready_state(struct task_struct *tsk, int state)
++{
++	if (rpal_test_task_thread_flag(tsk, RPAL_RECEIVER_BIT)) {
++		struct rpal_receiver_call_context *rcc = tsk->rpal_rd->rcc;
++
++		atomic_cmpxchg(&rcc->receiver_state, state,
++			       RPAL_RECEIVER_STATE_RUNNING);
++	}
++}
++#endif
++
+ /*
+  * Helper function for __schedule()
+  *
+@@ -6727,7 +6845,19 @@ static void __sched notrace __schedule(int sched_mode)
+ 			goto picked;
+ 		}
+ 	} else if (!preempt && prev_state) {
++#ifdef CONFIG_RPAL
++		if (!try_to_block_task(rq, prev, &prev_state)) {
++			/*
++			 * As the task enter TASK_RUNNING state, we should clean up
++			 * RPAL_RECEIVER_STATE_READY status. Therefore, the receiver's
++			 * state will not be change to RPAL_RECEIVER_STATE_WAIT. Thus,
++			 * there is no RPAL call when a receiver is at TASK_RUNNING state.
++			 */
++			rpal_check_ready_state(prev, RPAL_RECEIVER_STATE_READY);
++		}
++#else
+ 		try_to_block_task(rq, prev, &prev_state);
++#endif
+ 		switch_count = &prev->nvcsw;
+ 	}
+ 
+-- 
+2.20.1
+
 
