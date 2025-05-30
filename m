@@ -1,155 +1,208 @@
-Return-Path: <linux-kernel+bounces-667605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-667613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 751D5AC8728
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 06:04:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E89DAC873B
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 06:15:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2DBE4A764B
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 04:04:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7FA84E0CCF
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 04:15:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28DD320296E;
-	Fri, 30 May 2025 04:03:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E8A71DFE22;
+	Fri, 30 May 2025 04:15:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="U0b2STfi"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VCZv3pw5"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03AB01FAC42;
-	Fri, 30 May 2025 04:03:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 826291DB92C
+	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 04:15:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748577800; cv=none; b=mi/W9TRaJAmzjCAoB5TqtdLhI+dTZukJvH/hcw2NNU5JnXL5ZOkLAE8mZpr4DIvify7V5nCj7IyxC7hI79XV9ja1nSrdVyTafvq3J/qybV85QvB7ZiPk2/2IVuy7o7XmcBIKfTKbwhtlZ9lR2Ium+qcJk2X/cCCgJ5vmMrsACwY=
+	t=1748578517; cv=none; b=qIvK2OMyaV4YXetrnlYJslZzzkKXARKAA3Q89P8wrKaj+RRBqJtlIfX0ZcoKcxZsp9n6oMegLE/Znu1+XU9rUtLfeE/RGwxtbZfA1jE6ncStFPkIfzC+Ksfwk5bOJlzlNWGvOn00EoecsoHwUTaUPPs/xA/E7itgK+IxANhP/hs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748577800; c=relaxed/simple;
-	bh=Bhv08tf8IfVooEUV98A22ujdDnjVjCoxavWzvMsfg1w=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=iVSSoU/QFz81DmrKBFWp5HBjbHj+LC6ScYuypLQ08TJP57AHF8gAXK2HmzT8haWT5JP+R7aEB6OORGNbzPcWXJ1hu4lDAJipd/zqJsigko6Gmiv60AIMa69SpFVJfa9dozTq0OCpDFAlakarVXX6kcOEARhVsngZg2yYVPhC4dU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=U0b2STfi; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54U15uCp024010;
-	Fri, 30 May 2025 04:03:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	iRIv26I4XNbj/rsh69mFh2RG34OAeGAiVTyPYpO9PWE=; b=U0b2STfiLQI3TbQJ
-	DOembpVk1CnrXKosq4KLDbLV7TcT82wwiAVO7ZSNS6Ip8EI+O2eZ0d40+iQRtRyk
-	ygLD8pZLHpsFfrhCr442+jrdHD/rwCIlS65vwV/FkQPeeBmj7LaHWT+DYtbYcO/Y
-	hh3g9eTYmp2XD8fVBgFWZVPg61n662pOhw4sWiXYoAch+leMqLZu+tr8rnqjk5tJ
-	jDxJrR7dVe9xwdHswuh7tpvT1Cgb+901TSJX/rZ076+f8rh7XYZwBmjanLDMaI9E
-	8cjAI91+a6BwThtu8zecHG4qxU02U8ZTlhwVHpkWwdxeCfpX06kNXSKFdmqicSo1
-	TP4vMg==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46x8d7cddb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 30 May 2025 04:03:14 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 54U43DBw023676
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 30 May 2025 04:03:13 GMT
-Received: from hu-renjiang-sha.qualcomm.com (10.80.80.8) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 29 May 2025 21:03:09 -0700
-From: Renjiang Han <quic_renjiang@quicinc.com>
-Date: Fri, 30 May 2025 09:32:15 +0530
-Subject: [PATCH v8 3/3] arm64: dts: qcom: qcs615-ride: enable venus node to
- initialize video codec
+	s=arc-20240116; t=1748578517; c=relaxed/simple;
+	bh=ME5ccnIAVYQSz3b4RI9mFcQVxdpBwo1MysYq1/2Wgvc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RB/TKzgftYHUpEr8DNlAUF5SCX7cKqzrlEuhR2k8j1mHeCqsWQVq+2w1UvNdyidFBey/Y3aKsVofTEApE7hpcBwtadBMz+FvVvBKCKoG5zNOEh3iViMA9jK5550xoXXJMIxhBPqRzpxxiTeABVd7oMWqlYXqOPZsoaK6fqMuqRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VCZv3pw5; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1748578511;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BEb33DDg7DpFW9LjvXELe8JW6iZ+vyGYUAOVA6/mv7c=;
+	b=VCZv3pw5AfjzSyPYwp0oAfZC7JEToFiqrq1RluiWr+ghXLAaqNGURdEDx13riFRUlq//1Y
+	hm81u5kYdeArXCQ5x24TgjotvIztMZv6zWFGLPeVQP4RF7sjtlEcX8FTlV1XCohp927GBI
+	Jc37plCbmCq1q64KwPCxZX8gbAt+Glc=
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
+ [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-249-xBT8DwJrPki9jW40kFRuNQ-1; Fri, 30 May 2025 00:15:09 -0400
+X-MC-Unique: xBT8DwJrPki9jW40kFRuNQ-1
+X-Mimecast-MFC-AGG-ID: xBT8DwJrPki9jW40kFRuNQ_1748578509
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-31220ecc586so1187532a91.2
+        for <linux-kernel@vger.kernel.org>; Thu, 29 May 2025 21:15:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748578509; x=1749183309;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BEb33DDg7DpFW9LjvXELe8JW6iZ+vyGYUAOVA6/mv7c=;
+        b=nolIaBONt/m6TENWC8dQHrjXypT2gX0VpooW+CzKKUsJa+QIgsjKmdK7nHT4vG1o6d
+         TJyu5pwDOsaSKrSnzRcledRMgzoX0Gk5b1i4EuyaSBfIyO8ZSOF3vyWNEYzSsjkiBiUL
+         1z5g32MG9KmUXcOWPSR7j2uvvQaLwQbP3BnTxPtNshU1OdzvDAc9i2wxR3OvMMq5Xu4h
+         wsLeSl1I/Us3V94DtjVbNzlzzvkCV8/6V4ViAisGTbrhHAhMG4A07Wnm79RZVsWcZ1Ae
+         Nhx/d1XsqsrwCGHjnX/BECUiDB9fV19mBIQ+1NP0UibepO6Maq4cCF6mvAp74n7sPgyJ
+         XH9A==
+X-Forwarded-Encrypted: i=1; AJvYcCV7P9BhV3U/mAcSwm7iUK/fPonotlBTdRes023LXc/pYHAqWPXtJIF7gSU5tN9IPJQxjWdEGGqD2SD5npw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5teENOxzLXBYvI2Cd9F5GL5RtLG8NSvZVWba/opFd24+J8G4V
+	kH7uOvZj2YouVA/FvIFARjMwjLR6NCZxm/4vEpzvxCp5QWPBWspX7rcZjCjp5qcvwJ4DaFM3bVs
+	5+q4RXzvpdmNl22gGih26a88qF3xB8pgrYjAh2oxlVGo8U+PGJCNUBVOyBZojfANvHWRLXutL7m
+	UbW/PWQGIGb9D+Hf0gKpzphhC82R4EYQG2rIW+o1FA
+X-Gm-Gg: ASbGncutD3ooMR0Rg4P07O4N9PmuCtGfWslK+qs1OZ+xgwVOhvrEK48eJRQNb4R0OKq
+	NdF8juAgUjRqwdUC990GO1ErzHndtpet7ISwtXSaxiI2AlOVAGqjxCH0r9y9oqhUtrdjCgg==
+X-Received: by 2002:a17:90b:58eb:b0:311:f99e:7f4e with SMTP id 98e67ed59e1d1-3124152f29fmr3271297a91.16.1748578508610;
+        Thu, 29 May 2025 21:15:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHdNkL/QOg0pgwhpFjclJbxX9yS+kdBsgXT9/3xp4M+RVHKQ3aStcTn4xx15LUWcuWRLmKhhRfllSzauASBpmg=
+X-Received: by 2002:a17:90b:58eb:b0:311:f99e:7f4e with SMTP id
+ 98e67ed59e1d1-3124152f29fmr3271262a91.16.1748578508205; Thu, 29 May 2025
+ 21:15:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250530-add-venus-for-qcs615-v8-3-c0092ac616d0@quicinc.com>
-References: <20250530-add-venus-for-qcs615-v8-0-c0092ac616d0@quicinc.com>
-In-Reply-To: <20250530-add-venus-for-qcs615-v8-0-c0092ac616d0@quicinc.com>
-To: Vikash Garodia <quic_vgarodia@quicinc.com>,
-        Dikshita Agarwal
-	<quic_dikshita@quicinc.com>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>
-CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Renjiang Han
-	<quic_renjiang@quicinc.com>,
-        Nicolas Dufresne
-	<nicolas.dufresne@collabora.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1748577780; l=776;
- i=quic_renjiang@quicinc.com; s=20241001; h=from:subject:message-id;
- bh=Bhv08tf8IfVooEUV98A22ujdDnjVjCoxavWzvMsfg1w=;
- b=I1DCnuHllVdwHs83/OjAKNyqTYKQ9ssZJu66kTNbqjZcL1/Bu4BmnZQNOGfIN+Zau1orRrXBY
- gBkFk+442fvDD3fnZQPZYVCMfcEVJVa9Mbe6WWzsGmmvpokGRqxho1V
-X-Developer-Key: i=quic_renjiang@quicinc.com; a=ed25519;
- pk=8N59kMJUiVH++5QxJzTyHB/wh/kG5LxQ44j9zhUvZmw=
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: njivV9Z21-eYSxFaou13gRp6NoWGhhd_
-X-Proofpoint-ORIG-GUID: njivV9Z21-eYSxFaou13gRp6NoWGhhd_
-X-Authority-Analysis: v=2.4 cv=X8pSKHTe c=1 sm=1 tr=0 ts=68392e02 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=QX4gbG5DAAAA:8
- a=COk6AnOGAAAA:8 a=1tseWai4MNHguRGVtBsA:9 a=QEXdDO2ut3YA:10
- a=AbAUZ8qAyYyZVLSsDulk:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTMwMDAzMSBTYWx0ZWRfX/lEkzsno0ZEY
- l6qafjuUbdzjC1kxzNhvKwIh1QIx1oB8glI6hPEblElg/V54ooIYTJvLoNsYkHqkHwtrB4t2xi8
- Mjg9ScPyTm3Fe4kS4SqHGRKj9lOTQZQkDWSFDhFKcPLF7x7upN2fDXw2jokP+uSOXlFLFuzMqsU
- fWgRsLq2tT8CNhbTLLdIOvL/ei0Fx9cvxssU2xUFTWeKYBI+0diwusBOltJ8JQL4BLgdEpmaS37
- ZbEzZmWRjEfurJRvlrNPZpD+eqqeQADwhk/tKkAOjLLaDLvE1ZAd5pb3yjQT98xa0o5bLR31G2w
- Fc7wTAcWih8X1rmQTymKWGC1WgGGKHsFl3xR4BjSoX0Y5aIGF1YdlX4z5I59ZRbbCRDKZ7PorqP
- hfT6kRm/aW3Cjrb2OFmgtnRVYx8GJ0NXfjeS36vWJyWqynukeij+/ECgMBQTJ+AbZLC+Qblc
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-30_01,2025-05-29_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 mlxscore=0 lowpriorityscore=0 phishscore=0 spamscore=0
- adultscore=0 impostorscore=0 bulkscore=0 mlxlogscore=824 suspectscore=0
- clxscore=1011 malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505160000
- definitions=main-2505300031
+References: <20250515233953.14685-1-bhe@redhat.com> <aCaFNvHbYxrCaPbe@MiWiFi-R3L-srv>
+ <1d2848fe45dbf58707cecf16c4fc46b179e24415.camel@linux.ibm.com>
+ <aC6Y3S9hEB1snvwj@MiWiFi-R3L-srv> <c0f1df02160138d0782cb897eda844287b3d7792.camel@linux.ibm.com>
+ <aC86NSypHlER2C3L@MiWiFi-R3L-srv> <CAF+s44QHJs8J27TEy0AW1m2wT=LRSz59nHf-8AuqL8px_zKGUg@mail.gmail.com>
+ <0e794fc984c8f37a6d3eb5acdb6cc094f14df940.camel@linux.ibm.com>
+ <CAF+s44Q6ZJ8rdi1VG40JVJmxX-1hmss5eNaKvGhJSOS6xYLx-g@mail.gmail.com> <91a9aa935b3a194c57a166133c9c1a537a9ca802.camel@linux.ibm.com>
+In-Reply-To: <91a9aa935b3a194c57a166133c9c1a537a9ca802.camel@linux.ibm.com>
+From: Pingfan Liu <piliu@redhat.com>
+Date: Fri, 30 May 2025 12:14:57 +0800
+X-Gm-Features: AX0GCFu-M8N1d-FrbfO4Ax_Xw2IAE_iVpqDIOOmbg0VDp3GzgJjExVn2UQM-Mb0
+Message-ID: <CAF+s44TOjC60hfTU2JKQrfiogUin5E=O7XvePb86Lv7jjobJ1Q@mail.gmail.com>
+Subject: Re: [PATCH] ima: add a knob ima= to make IMA be able to be disabled
+To: Mimi Zohar <zohar@linux.ibm.com>
+Cc: Baoquan He <bhe@redhat.com>, prudo@redhat.com, linux-integrity@vger.kernel.org, 
+	kexec@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	pmenzel@molgen.mpg.de, coxu@redhat.com, ruyang@redhat.com, 
+	chenste@linux.microsoft.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Enable the venus node to allow the video codec to start working properly
-by setting its status to "okay".
+On Thu, May 29, 2025 at 10:32=E2=80=AFPM Mimi Zohar <zohar@linux.ibm.com> w=
+rote:
+>
+> On Thu, 2025-05-29 at 12:13 +0800, Pingfan Liu wrote:
+> > On Tue, May 27, 2025 at 10:18=E2=80=AFPM Mimi Zohar <zohar@linux.ibm.co=
+m> wrote:
+> > >
+> > > On Tue, 2025-05-27 at 11:25 +0800, Pingfan Liu wrote
+> > > > > >
+> > > > > >
+> > > > > > We're trying to close integrity gaps, not add new ones.  Verify=
+ing the
+> > > > > > UKI's
+> > > > > > signature addresses the integrity of the initramfs.  What about=
+ the
+> > > > > > integrity of
+> > > > > > the kdump initramfs (or for that matter the kexec initramfs)?  =
+If the
+> > > > > > kdump
+> > > > > > initramfs was signed, IMA would be able to verify it before the=
+ kexec.
+> > > >
+> > > > IMHO, from the higher level, if there is a requirement on the integ=
+rity of
+> > > > the
+> > > > initramfs, it should take a similar approach as UKI. And the system=
+ admin
+> > > > can
+> > > > choose whether to disable the unsafe format loader or not.
+> > >
+> > > Yes, that is a possibility, probably a good aim, but in the case of
+> > > kexec/kdump
+> > > that isn't really necessary.  As filesystem(s) support xattrs, IMA po=
+licies
+> > > could be written in terms of "func=3DKEXEC_INITRAMFS_CHECK" to includ=
+e the
+> > > initramfs.
+> > >
+> >
+> > Just aware that we have such a cool feature. Thanks!
+>
+> > I checked the code. IIUC, the relevant code has already been in the
+> > kernel. And the thing left to do is to install an IMA policy, right?
+>
+> Correct.  The problem up to now has been that the initramfs was created o=
+n the
+> fly on the target system, so it was impossible to remotely sign it by the
+> distro.
+>
+> >
+> > But there are still two things to be considered.
+> > -1.The UEFI partition is FAT format, which can not support xattr
+>
+> The normal kexec/kdump kernel image and initramfs are stored in /boot, no=
+t the
+> UEFI partition.  Is that changing?
+>
+I think that is the case if grub is used as a bootloader.
 
-Acked-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-Signed-off-by: Renjiang Han <quic_renjiang@quicinc.com>
----
- arch/arm64/boot/dts/qcom/qcs615-ride.dts | 4 ++++
- 1 file changed, 4 insertions(+)
+But officially, only FAT32 is supported in the UEFI specification. So
+if a UEFI application (let's say systemd-boot) tries to load kernel
+and initramfs, then boots into kernel, it can only expect to read
+these files from FAT32 partition.
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs615-ride.dts b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-index 2b5aa3c66867676bda59ff82b902b6e4974126f8..0686f5c10bdaf7ba3f522e16acd2107d25742dd9 100644
---- a/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-+++ b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-@@ -338,6 +338,10 @@ &ufs_mem_phy {
- 	status = "okay";
- };
- 
-+&venus {
-+	status = "okay";
-+};
-+
- &watchdog {
- 	clocks = <&sleep_clk>;
- };
+> e.g. kexec -s -l /boot/vmlinuz-`uname -r` --initrd=3D/boot/initramfs-`una=
+me -
+> r`.img --reuse-cmdline
+>
+> > -2. Just like in the UKI case, the kernel fd content is not necessary
+> > for the kernel image itself. The initramfs fd can be used to pass some
+> > extra data if we use a temp file as a package. So checking the
+> > signatures at the initramfs level will block this usage
+>
+> Sorry I lost you here.  What exactly is included in the UKI signature?  W=
+hat is
+> this initramfs fd extra data?  Is it included in the UKI signature?  Can =
+you
+> point me to some documentation?
+>
 
--- 
-2.34.1
+Sorry for the awkward expression, let me clarify it.
+
+It is a pity that these things are on the fly and there are no documents ye=
+t.
+
+With the advent of UKI, which encapsulates the kernel, initramfs, and
+cmdline into a single PE file, the original kexec_file_load syscall
+schema no longer aligns with this design.
+
+SYSCALL_DEFINE5(kexec_file_load, int, kernel_fd, int, initrd_fd,
+                unsigned long, cmdline_len, const char __user *, cmdline_pt=
+r,
+                unsigned long, flags)
+
+In particular, the kernel_fd parameter no longer refers to just the
+kernel image alone.
+And the same thing may happen to initrd_fd.
+
+In essence, it means the redesign or re-explaining of the
+kexec_file_load() interface, but for the time being, these things are
+on the fly.
+
+Thanks,
+
+Pingfan
 
 
