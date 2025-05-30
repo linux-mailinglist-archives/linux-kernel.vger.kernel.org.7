@@ -1,180 +1,437 @@
-Return-Path: <linux-kernel+bounces-668500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-668493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 433B3AC9396
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 18:30:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E70BEAC937C
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 18:25:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB6AF1C0842F
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 16:30:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAD6A1C08813
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 16:24:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89F99231823;
-	Fri, 30 May 2025 16:29:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB7121B3925;
+	Fri, 30 May 2025 16:24:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lNKdW1SA"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (1024-bit key) header.d=valinux.co.jp header.i=@valinux.co.jp header.b="L2e+Iuhm"
+Received: from OS0P286CU010.outbound.protection.outlook.com (mail-japanwestazon11011049.outbound.protection.outlook.com [40.107.74.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AEBF1DDC07;
-	Fri, 30 May 2025 16:29:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748622596; cv=none; b=lFnaYW166DwK6ad896Od8n5IChRotMm4WGgcmpO7XKDoO263UMtXzOQA2qUHhoZKJyu0cYnmBEio96d1BTc/D1WSzMitVhyOKYPnXFmOOi/RdvW3hrD4W+CL7V0GFsvVChbYre04MxDuNV6MlBqfV1gkRLFOy/NQwEPDf8mvLc8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748622596; c=relaxed/simple;
-	bh=D2scOJFObbCx4KXsuqN5hyJ1uWi4EUmVo0sfkDiPW9Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jTzt9oQ7OG9yCvDkB5rJrJtAYR1yTxoALCCzp8ILnhIHNW7q1Vpu0eEchcIxSHhfGe/ppwAwrtcktwutefp2fqr05sDFSZ99coE/6pj7OYE9gfGPhk8jbR4LwJv+7zjz9nSAmiIoV6RbqZtnyJHDlM4LMoq508YKK18Lb4+cjLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lNKdW1SA; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1748622595; x=1780158595;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=D2scOJFObbCx4KXsuqN5hyJ1uWi4EUmVo0sfkDiPW9Q=;
-  b=lNKdW1SAoWgKbPkdhUOEMWrEZ1SbSJ20BjGsdaahXZf6Asn+e6cSy5fT
-   5K7QdXKlq7y/uXHbv+jU1HzC0KpX0nK0ULHWYmSEUERJPgzjGLDNzRltt
-   RxFpsxpdyyApcvwzeEECotNZVDBJVmxLypfu4Q3ciKEzQwQ540bC2jZpI
-   TgBWiMLj+Zy0/Bz0yXhnyfnPDi4PqTHcUaMM4NNRV6hh86yOb/0W4IkIy
-   2Mnqfr/NcFMFNcj09pmQ+OhDNOHvwvhaovDgpe3pkd4ZKay0q6NiwXtqP
-   tpLDUNlA1u4+2yttNJhyDg1zGJ84ccYgiNDlpenpaj3DpbY7HQaqUjKQ8
-   Q==;
-X-CSE-ConnectionGUID: l2qV2cjhQ1CJ4bxNRU2v6A==
-X-CSE-MsgGUID: Neis9g1nRiKdsU3ZsIXtNQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11449"; a="60977538"
-X-IronPort-AV: E=Sophos;i="6.16,196,1744095600"; 
-   d="scan'208";a="60977538"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2025 09:29:54 -0700
-X-CSE-ConnectionGUID: gSdMvp93Re2stAr5qQaSYg==
-X-CSE-MsgGUID: xmWbXOtqSKqnqwM/UkPvTQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,196,1744095600"; 
-   d="scan'208";a="149061981"
-Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
-  by fmviesa004.fm.intel.com with ESMTP; 30 May 2025 09:29:49 -0700
-Date: Sat, 31 May 2025 00:23:28 +0800
-From: Xu Yilun <yilun.xu@linux.intel.com>
-To: Alexey Kardashevskiy <aik@amd.com>
-Cc: Jason Gunthorpe <jgg@nvidia.com>, kvm@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-	linaro-mm-sig@lists.linaro.org, sumit.semwal@linaro.org,
-	christian.koenig@amd.com, pbonzini@redhat.com, seanjc@google.com,
-	alex.williamson@redhat.com, vivek.kasireddy@intel.com,
-	dan.j.williams@intel.com, yilun.xu@intel.com,
-	linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org,
-	lukas@wunner.de, yan.y.zhao@intel.com, daniel.vetter@ffwll.ch,
-	leon@kernel.org, baolu.lu@linux.intel.com, zhenzhong.duan@intel.com,
-	tao1.su@intel.com
-Subject: Re: [RFC PATCH 00/12] Private MMIO support for private assigned dev
-Message-ID: <aDnbgBbxF8IkH/cq@yilunxu-OptiPlex-7050>
-References: <2c4713b0-3d6c-4705-841b-1cb58cd9a0f5@amd.com>
- <20250512140617.GA285583@nvidia.com>
- <aCRAHRCKP1s0Oi0c@yilunxu-OptiPlex-7050>
- <20250514163339.GD382960@nvidia.com>
- <aCYQdDrYYZRAgsen@yilunxu-OptiPlex-7050>
- <9dea400f-a57b-43be-a2e4-24a9f51e6ba0@amd.com>
- <aDE5SPzOAU0sNIt+@yilunxu-OptiPlex-7050>
- <ae16db07-5fca-4369-aa67-cbe2e0fd60fd@amd.com>
- <aDhyC73r149syMpc@yilunxu-OptiPlex-7050>
- <79872224-4e81-446b-a451-28260f449ea9@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B37E1BD9F0
+	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 16:24:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.74.49
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748622258; cv=fail; b=kgB5+O7Vv+Pokm8+PKEofB4KcSJ9RUHdvqOmknU0+W93o7mYVFpEa+s4klbl7Qu6qqZhumukE+0h3ZjNTW3SyDT5//6u5WN6PjJ1ZIIAmMlnebgI1LyzeS0yXPnjmXwHuJhttLAEwUa/7FWlWBarHLeOIhLfzVnHBd/QkYdYEx4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748622258; c=relaxed/simple;
+	bh=veKwduc5AUTGaMnA0mxrIAih1oWi4wKBtixJxWSoWwY=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=uAVD2Pw40fEEEh9OqeTaNbUKmo+nRx8Hrm1jX2rWoCLTKJ4OnNzLHT4RVnMO8vkw9T7cOC/pb+7Ep9h6Mk3Wb2njBaisB9yWV8fE9YvsJmqdojZYraf63sSEsKpOuTso9QjyLkl63aKhfym3+Zj4cz/RSUKuyYdoX9oSKi6UXB0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valinux.co.jp; spf=pass smtp.mailfrom=valinux.co.jp; dkim=pass (1024-bit key) header.d=valinux.co.jp header.i=@valinux.co.jp header.b=L2e+Iuhm; arc=fail smtp.client-ip=40.107.74.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valinux.co.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valinux.co.jp
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=IMMsfaV7ARuQJhib9lPqBwlJSSS/JFqmiz5c6UKaxlVEuC4u/HMoFbgDbdqsFc+r5+JfgA0j/E0ebZ58Y5DwQtnel96mc5P5EsD7/5FLY6kQVDgjIibgZTm7qOJZg+EHTjlrG9VWcfVfD1BwFnxWuKrqkyvj+Nul6mDVEKYTsdaAtPFtiUqKnhlIFxkUtIVagj88H58aQlY0eshK5MArDZX0CPDKZljZGsD9udCjoZMw4UxqNYKGvD4prc1iN+tL9kHlErDwz+VMPNLWWBeWrBGhg7P/ONOHkerQdQYglfC4Yu9bL7mrTKgwV5Ah7l2AmBxBpNq1Yq61zfFHX1SXLw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ik7/1V1iZPplwPCbZPLOJubwhprgGRLrh2RU0dnG4Ic=;
+ b=kXgsZB2vMUvOWKkXUl92SKHNPQwStW8Mi5JO+QPD2Lx0boO1lDOjiBSys0sfIJ3Yq5eZhPERM9FEzp692JL7+7PIzmPCZ+5G0mlOvWomLhxsSj7+v/VAXFdICOTwQjGrMXvW/mEZJyTZ6+VDoIqP9ouhVPt8QY2hLnFJ2TPR/GLkKj/PP7D3mwjrwhHRXLLaFBnSO04c2189Vo8QIreAoy+vph73hQuELzwGxrVcaM6UKx3YhHMhRIQDWAyxSz5SOrqs9vlKB9EmviBeByHqp5VgBU61DNvLFIo0IZtCx/qJonGmuonFE2EVmibUJb5F0P477meM3BKjxG+NwDGvWg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=valinux.co.jp; dmarc=pass action=none
+ header.from=valinux.co.jp; dkim=pass header.d=valinux.co.jp; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=valinux.co.jp;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ik7/1V1iZPplwPCbZPLOJubwhprgGRLrh2RU0dnG4Ic=;
+ b=L2e+Iuhm8F91ZMadxRhszXYfFp4j5Ng76ibf1syLqYF0Wci4iDJRUM/Spm34skvmXafBXAWBSVnbo/0PI6PG6Y2wnXoioVHuC3SwCAKwdptz1RYCPs08ZRShitCGXQSgNzYpN1TVvCho0niZ/jfMkSka09nXMnhNj4L4s4STbo8=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=valinux.co.jp;
+Received: from OS3P286MB0979.JPNP286.PROD.OUTLOOK.COM (2603:1096:604:10d::7)
+ by OS3P286MB2105.JPNP286.PROD.OUTLOOK.COM (2603:1096:604:191::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.32; Fri, 30 May
+ 2025 16:24:08 +0000
+Received: from OS3P286MB0979.JPNP286.PROD.OUTLOOK.COM
+ ([fe80::b8c1:9057:bf46:cc35]) by OS3P286MB0979.JPNP286.PROD.OUTLOOK.COM
+ ([fe80::b8c1:9057:bf46:cc35%7]) with mapi id 15.20.8769.031; Fri, 30 May 2025
+ 16:24:08 +0000
+From: Koichiro Den <den@valinux.co.jp>
+To: linux-mm@kvack.org
+Cc: akpm@linux-foundation.org,
+	yuanchu@google.com,
+	yuzhao@google.com,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] mm: vmscan: apply proportional reclaim pressure for memcg when MGLRU is enabled
+Date: Sat, 31 May 2025 01:23:53 +0900
+Message-ID: <20250530162353.541882-1-den@valinux.co.jp>
+X-Mailer: git-send-email 2.48.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TYCP286CA0077.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:2b3::9) To OS3P286MB0979.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:604:10d::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <79872224-4e81-446b-a451-28260f449ea9@amd.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: OS3P286MB0979:EE_|OS3P286MB2105:EE_
+X-MS-Office365-Filtering-Correlation-Id: 617077ea-5aff-47a0-6a5d-08dd9f9666e3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016|10070799003;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?hKtzAUa7pvZMXb5Qlau/thSBBEkWpgTIVL3rV1NWCPj8tIieJrbUyabe+yPx?=
+ =?us-ascii?Q?66+/AUgRpYDfzO3S6rASz44FnIwMnh9+L3QjKgyFAElFj4KGOfLJyEqIdcm6?=
+ =?us-ascii?Q?9yAyV6nLRWMUWYLzGIPvcFhXHYUzA7jri2/hGtDbrGEPgnIhYJKm8VEeqD5L?=
+ =?us-ascii?Q?g1pArrqnlK/ZB412d4yRZFmLy0p06Tkr2TbAZ88YXgkUdWkGg3YdQ+BzLfIX?=
+ =?us-ascii?Q?Rd0KveY8WXOrew/g/nrF1WhzNDaqRrM3/qgZn935kQb6oSwyhrfL0+3ggAZr?=
+ =?us-ascii?Q?5ebM/rKHC/V/y9VB06y5Fc4ux5N5QKUdC5wWbaRRhR70GgC3hKFkjhkmf1RE?=
+ =?us-ascii?Q?uV//yguRtr8aC2XItQepcnGy/woKoREQSpDrw/FW2qtPJyFrDp8ddIX+8GpC?=
+ =?us-ascii?Q?yi2rKZTZRJjDcrCovF5zAY9p6hTG5U0oyLNtqR0+aiRp9mOh9uwsbanQeLBf?=
+ =?us-ascii?Q?6wFew0vELQGsOWRDyffcv+yEaPBzir49SriquWC+ipk2EL8R8429wI+itTWc?=
+ =?us-ascii?Q?1vo02g2S7x2wDyT7zr0UzRYM788PXgxMo93g2wXKEB8xqAvgTEshD4yNXlqb?=
+ =?us-ascii?Q?nhyNV8qA2yA5OT93uf6E53SccljPuXKU99Xxp/55hY0locE6SZpGI15SPpvq?=
+ =?us-ascii?Q?uoOrtNkQFREFH0op5J9JOYJwzDYIrXVd/MB9K+UxkgGpYakDPcri4kExoyGo?=
+ =?us-ascii?Q?7FvgKQ4xWHkUbgAqFaUBdmr2vbpwH8NLetF66CfyLZ9p0E/BlOplOCzsON3u?=
+ =?us-ascii?Q?8u9PMiEMfEYXe8YQCNLWi/gm+C7R+USWnL7itN4c0UVsxuuW2savnsIVyPB/?=
+ =?us-ascii?Q?bhNR68o6x58sN7hQMKH0Y/RsSFUipy908PY26qSaXmIQSLKF1aa2UZbA9ZyW?=
+ =?us-ascii?Q?oS79769KnOsJpYd47+XAUxcnXnSsEOxzARPcmE5yOApLCraKmCKplLl/GpzA?=
+ =?us-ascii?Q?vL5BHu+aO1IqpkzvNY1QCl60UWTiRx1E4eWAe9doQStTXHj4C3+uqJZsdhzR?=
+ =?us-ascii?Q?qyLyBNSmXVOIG2PF9X2OaM2DbE1+IxRILR9f/w5RI+4uuMJgX6ZiD/zc8MVy?=
+ =?us-ascii?Q?9ZPM/u+IpPFXN0Ppb7CjpFl94RxZdk1WhuudheFZ0jj5mYoQ08JyiACX2GNv?=
+ =?us-ascii?Q?wOb8M7uS7j4FdCK3pR6hF3oFnTfggAlEytBC4iS8lWfDcAvXTSy/tCKI84uI?=
+ =?us-ascii?Q?ckrqvYo2t6KrcLwlCrvbqG26NB3Nylu9mUVO8z3zbmkoNaVEbhXPhLIl4t7v?=
+ =?us-ascii?Q?BciTpf+xSPSNfadp7EhQg1xb1LcTsgZMBY0/A9k1n5X1o/b+KQgCkc4T7ggZ?=
+ =?us-ascii?Q?HuU43BvSbqcwuSR0zHKA0TOJajTefJeyJsk/5DSppc4V9XBGyXzkmMsGeRa5?=
+ =?us-ascii?Q?/Wlxrf99M3y3p5DYZBkrtjrkU4CoenaD6xVjNYdAMOsWLYbtQ+3H/Cd775wT?=
+ =?us-ascii?Q?rn5qdf/ADWU=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS3P286MB0979.JPNP286.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(10070799003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?lqqMX5962/g3qaWu4DsFTxqQG/IF/WmGDK4oHP6dwtbkCo+GjiF8+gu4P68h?=
+ =?us-ascii?Q?pEWpCguq33xgVKvKE1dUubeGcazaUVcIp99XPnEHx2DyG7+EKTkVxwdHOPVZ?=
+ =?us-ascii?Q?/YJ0NrvTt4lIUdyCOXDZZjYYXtbD7g4f7PlwCDT7DVuc1p1nmQf8G1wJvbQT?=
+ =?us-ascii?Q?pYOLSwFCj2qmh0MgeWGZm+X7Vo3PIUF44dDIB1QmpUFbt5jIzPzFZYgtWM3n?=
+ =?us-ascii?Q?gVTKRRjfQkoxamXMbGqUq4Yp9PNA+ME9JkDjeCoRtidWktfXnks4ZxpqHlkA?=
+ =?us-ascii?Q?8nRLTTy/wWLMStpMa0NUtw3/BBEYDSWxwUt23u8VcsqkGaZncLe1IRULfMtk?=
+ =?us-ascii?Q?lC/ZtEv07+cIycM5YHvMeQbyljJ3eQdGVtOCu1bFaYkHTZsBfmZNI39iny8F?=
+ =?us-ascii?Q?vxwMBS3HGGquMgToLwBGD19s2o/EqkvFCsJyuoQPKKK92/zeiFr3hQ4t2SQI?=
+ =?us-ascii?Q?it9/W2U95lM9dK+ZyGwB8negTledIj6y8gHdc8cftKmp8ZlWJbtDLiSnbnt5?=
+ =?us-ascii?Q?N0hDzt6RhpwEh3N3/9fbzeNd5w+/yH54W1dZIcir6ZsVuAeCfk7x4IWZPLgJ?=
+ =?us-ascii?Q?VQgxDn0yQDLe1JJXX6hYHxIiKlKnPAGszkzufA7tisIC8jEWb4uhXD5XfV5w?=
+ =?us-ascii?Q?DbN9dj3PJZlO7yB4r+0oxfojKUcKti2h+TXm8rNDMD3bKfPNBRWOmWhLS2CN?=
+ =?us-ascii?Q?URfc8yqn/lEKis9UneIob+YOJQyoo7WDFJ3N9Xm3qaq0H4yYqe++js66+v/z?=
+ =?us-ascii?Q?szj1k5EtSGRDn7OEfR0B/auMi9KdX8ob/tCK7NR1SSpRZnaubwSixEdJu+/j?=
+ =?us-ascii?Q?jnAk6d8pRrkUqs4lp7NAfnnnlUCNAXrx6xP5PRAvdvEMLdIpXrBEZV1z0tR2?=
+ =?us-ascii?Q?gWIRKn6ATtITiGoCwpTbgGClh6foll38QwobRYW+3WdeLWYMK/huFSQZlDXp?=
+ =?us-ascii?Q?VAgxWRepg6vYSJmInC2Q8i13i5HMj4hMFLPdj/WoMXIiW8yDhqRWjhkMLk3t?=
+ =?us-ascii?Q?VqdgWrCdV78TCyKlAck/dQ3EBLsWsC7IQD1HdiNpgpuECUvnct7FNBxlujMR?=
+ =?us-ascii?Q?EaY4AqIar95cd3xnVSTmvusSvkNCG4E62r4fghvB3UMxlluVTpnny0Zayo9t?=
+ =?us-ascii?Q?FwkeB5tcdGkOaLTIIOcYCm0Id8S936u9go7HBfKuolJug2Pdkk1Nhg60dUbV?=
+ =?us-ascii?Q?4Q5YHRWeS+BnMK7FdG1KiRh8jyi2jgjqaPNr7a70s/anMhtwPCj4BX0cdgQg?=
+ =?us-ascii?Q?bPOq+z01RmCnkejF+4XmfvjYPcZteO8/mVycoM6MfW/LRwBEx+vZFjOWPJoQ?=
+ =?us-ascii?Q?brjdB0ehSIvkA60IMN9sojw5GSSNosTScN/Fr8smTLxYsRCO/GkPNP9kehy7?=
+ =?us-ascii?Q?6rlRlE8eacTRn8AnjVKXZmTRJU8h2wPTvDB4mKiRV0tSIIODxYJvMPKDry9P?=
+ =?us-ascii?Q?pirstbcj/nkiXEnF8yfxbz8l/d/sRnP/1gGu1Oo/1/7tKXziC3vliefcW9hK?=
+ =?us-ascii?Q?DYAulGcp6xEfOcEpPzxpiEeXK6u+BNg8xZf2XlZjZYlHFJ0dSMnvPQDGsNcf?=
+ =?us-ascii?Q?WJhu5ltC0A+pRTfdQe1VOy8PX2ePRIwND+fn69IfTme+SltCcvnYsDO9PZg5?=
+ =?us-ascii?Q?RGlnS/XUveHewNd0GLCbdi8=3D?=
+X-OriginatorOrg: valinux.co.jp
+X-MS-Exchange-CrossTenant-Network-Message-Id: 617077ea-5aff-47a0-6a5d-08dd9f9666e3
+X-MS-Exchange-CrossTenant-AuthSource: OS3P286MB0979.JPNP286.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 May 2025 16:24:08.4421
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 7a57bee8-f73d-4c5f-a4f7-d72c91c8c111
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 0eaPzEp0neIAh4QUyQCw+fRnqtbrMrOm6a/o8kMDJGjhM+SdyfNeZEx0flXtIw1RozgsVvJrIFuZaKv4L6Na0g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3P286MB2105
 
-On Fri, May 30, 2025 at 12:29:30PM +1000, Alexey Kardashevskiy wrote:
-> 
-> 
-> On 30/5/25 00:41, Xu Yilun wrote:
-> > > > > > 
-> > > > > > FLR to a bound device is absolutely fine, just break the CC state.
-> > > > > > Sometimes it is exactly what host need to stop CC immediately.
-> > > > > > The problem is in VFIO's pre-FLR handling so we need to patch VFIO, not
-> > > > > > PCI core.
-> > > > > 
-> > > > > What is a problem here exactly?
-> > > > > FLR by the host which equals to any other PCI error? The guest may or may not be able to handle it, afaik it does not handle any errors now, QEMU just stops the guest.
-> > > > 
-> > > > It is about TDX Connect.
-> > > > 
-> > > > According to the dmabuf patchset, the dmabuf needs to be revoked before
-> > > > FLR. That means KVM unmaps MMIOs when the device is in LOCKED/RUN state.
-> > > > That is forbidden by TDX Module and will crash KVM.
-> > > 
-> > > 
-> > > FLR is something you tell the device to do, how/why would TDX know about it?
-> > 
-> > I'm talking about FLR in VFIO driver. The VFIO driver would zap bar
-> > before FLR. The zapping would trigger KVM unmap MMIOs. See
-> > vfio_pci_zap_bars() for legacy case, and see [1] for dmabuf case.
-> 
-> oh I did not know that we do this zapping, thanks for the pointer.
-> > [1] https://lore.kernel.org/kvm/20250307052248.405803-4-vivek.kasireddy@intel.com/
-> > 
-> > A pure FLR without zapping bar is absolutely OK.
-> > 
-> > > Or it check the TDI state on every map/unmap (unlikely)?
-> > 
-> > Yeah, TDX Module would check TDI state on every unmapping.
-> 
-> _every_? Reading the state from DOE mailbox is not cheap enough (imho) to do on every unmap.
+From: Koichiro Den <koichiro.den@canonical.com>
 
-Sorry for confusing. TDX firmware just checks if STOP TDI firmware call
-is executed, will not check the real device state via DOE. That means
-even if device has physically exited to UNLOCKED, TDX host should still
-call STOP TDI fwcall first, then MMIO unmap.
+The scan implementation for MGLRU was missing proportional reclaim
+pressure for memcg, which contradicts the description in
+Documentation/admin-guide/cgroup-v2.rst (memory.{low,min} section).
 
-> 
-> > > 
-> > > > So the safer way is
-> > > > to unbind the TDI first, then revoke MMIOs, then do FLR.
-> > > > 
-> > > > I'm not sure when p2p dma is involved AMD will have the same issue.
-> > > 
-> > > On AMD, the host can "revoke" at any time, at worst it'll see RMP events from IOMMU. Thanks,
-> > 
-> > Is the RMP event firstly detected by host or guest? If by host,
-> 
-> Host.
-> 
-> > host could fool guest by just suppress the event. Guest thought the
-> > DMA writting is successful but it is not and may cause security issue.
-> 
-> An RMP event on the host is an indication that RMP check has failed and DMA to the guest did not complete so the guest won't see new data. Same as other PCI errors really. RMP acts like a firewall, things behind it do not need to know if something was dropped. Thanks,
+This issue can be observed in kselftest cgroup:test_memcontrol
+(specifically test_memcg_min and test_memcg_low). The following table
+shows the actual values observed in my local test env (on xfs) and the
+error "e", which is the symmetric absolute percentage error from the ideal
+values of 29M for c[0] and 21M for c[1].
 
-Not really, guest thought the data is changed but it actually doesn't.
-I.e. data integrity is broken.
+  test_memcg_min
 
-Also please help check if the following relates to this issue:
+         | MGLRU enabled   | MGLRU enabled   | MGLRU disabled
+         | Without patch   | With patch      |
+    -----|-----------------|-----------------|---------------
+    c[0] | 25964544 (e=8%) | 28770304 (e=3%) | 27820032 (e=4%)
+    c[1] | 26214400 (e=9%) | 23998464 (e=4%) | 24776704 (e=6%)
 
-SEV-TIO Firmware Interface SPEC, Section 2.11
+  test_memcg_low
 
-If a bound TDI sends a request to the root complex, and the IOMMU detects a fault caused by host
-configuration, the root complex fences the ASID from all further I/O to or from that guest. A host
-fault is either a host page table fault or an RMP check violation. ASID fencing means that the
-IOMMU blocks all further I/O from the root complex to the guest that the TDI was bound, and the
-root complex blocks all MMIO accesses by the guest. When a guest writes to MMIO, the write is
-silently dropped. When a guest reads from MMIO, the guest reads 1s.
+         | MGLRU enabled   | MGLRU enabled   | MGLRU disabled
+         | Without patch   | With patch      |
+    -----|-----------------|-----------------|---------------
+    c[0] | 26214400 (e=7%) | 27930624 (e=4%) | 27688960 (e=5%)
+    c[1] | 26214400 (e=9%) | 24764416 (e=6%) | 24920064 (e=6%)
 
-Thanks,
-Yilun
+Factor out the proportioning logic to a new function and have MGLRU
+reuse it. While at it, update the eviction behavior via debugfs
+'lru_gen' interface ('-' command with an explicit 'nr_to_reclaim'
+parameter) to ensure eviction is limited to the specified number.
 
-> 
-> > 
-> > Thanks,
-> > Yilun
-> 
-> -- 
-> Alexey
-> 
+Signed-off-by: Koichiro Den <koichiro.den@canonical.com>
+---
+Changes in v2:
+- Leverage the new evict_folios() parameter to ensure correct eviction
+  limitation via debugfs
+- Update the commit message to use the latest upstream kselftest instead
+  of LTP memcontrol03.
+
+v1: https://lore.kernel.org/all/20250404141118.3895592-1-koichiro.den@canonical.com/
+---
+ mm/vmscan.c | 149 ++++++++++++++++++++++++++++------------------------
+ 1 file changed, 79 insertions(+), 70 deletions(-)
+
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 07c51fa03434..750c0e72bda4 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -2473,6 +2473,69 @@ static inline void calculate_pressure_balance(struct scan_control *sc,
+ 	*denominator = ap + fp;
+ }
+ 
++static unsigned long apply_proportional_protection(struct mem_cgroup *memcg,
++		struct scan_control *sc, unsigned long scan)
++{
++	unsigned long min, low;
++
++	mem_cgroup_protection(sc->target_mem_cgroup, memcg, &min, &low);
++
++	if (min || low) {
++		/*
++		 * Scale a cgroup's reclaim pressure by proportioning
++		 * its current usage to its memory.low or memory.min
++		 * setting.
++		 *
++		 * This is important, as otherwise scanning aggression
++		 * becomes extremely binary -- from nothing as we
++		 * approach the memory protection threshold, to totally
++		 * nominal as we exceed it.  This results in requiring
++		 * setting extremely liberal protection thresholds. It
++		 * also means we simply get no protection at all if we
++		 * set it too low, which is not ideal.
++		 *
++		 * If there is any protection in place, we reduce scan
++		 * pressure by how much of the total memory used is
++		 * within protection thresholds.
++		 *
++		 * There is one special case: in the first reclaim pass,
++		 * we skip over all groups that are within their low
++		 * protection. If that fails to reclaim enough pages to
++		 * satisfy the reclaim goal, we come back and override
++		 * the best-effort low protection. However, we still
++		 * ideally want to honor how well-behaved groups are in
++		 * that case instead of simply punishing them all
++		 * equally. As such, we reclaim them based on how much
++		 * memory they are using, reducing the scan pressure
++		 * again by how much of the total memory used is under
++		 * hard protection.
++		 */
++		unsigned long cgroup_size = mem_cgroup_size(memcg);
++		unsigned long protection;
++
++		/* memory.low scaling, make sure we retry before OOM */
++		if (!sc->memcg_low_reclaim && low > min) {
++			protection = low;
++			sc->memcg_low_skipped = 1;
++		} else {
++			protection = min;
++		}
++
++		/* Avoid TOCTOU with earlier protection check */
++		cgroup_size = max(cgroup_size, protection);
++
++		scan -= scan * protection / (cgroup_size + 1);
++
++		/*
++		 * Minimally target SWAP_CLUSTER_MAX pages to keep
++		 * reclaim moving forwards, avoiding decrementing
++		 * sc->priority further than desirable.
++		 */
++		scan = max(scan, SWAP_CLUSTER_MAX);
++	}
++	return scan;
++}
++
+ /*
+  * Determine how aggressively the anon and file LRU lists should be
+  * scanned.
+@@ -2551,70 +2614,10 @@ static void get_scan_count(struct lruvec *lruvec, struct scan_control *sc,
+ 	for_each_evictable_lru(lru) {
+ 		bool file = is_file_lru(lru);
+ 		unsigned long lruvec_size;
+-		unsigned long low, min;
+ 		unsigned long scan;
+ 
+ 		lruvec_size = lruvec_lru_size(lruvec, lru, sc->reclaim_idx);
+-		mem_cgroup_protection(sc->target_mem_cgroup, memcg,
+-				      &min, &low);
+-
+-		if (min || low) {
+-			/*
+-			 * Scale a cgroup's reclaim pressure by proportioning
+-			 * its current usage to its memory.low or memory.min
+-			 * setting.
+-			 *
+-			 * This is important, as otherwise scanning aggression
+-			 * becomes extremely binary -- from nothing as we
+-			 * approach the memory protection threshold, to totally
+-			 * nominal as we exceed it.  This results in requiring
+-			 * setting extremely liberal protection thresholds. It
+-			 * also means we simply get no protection at all if we
+-			 * set it too low, which is not ideal.
+-			 *
+-			 * If there is any protection in place, we reduce scan
+-			 * pressure by how much of the total memory used is
+-			 * within protection thresholds.
+-			 *
+-			 * There is one special case: in the first reclaim pass,
+-			 * we skip over all groups that are within their low
+-			 * protection. If that fails to reclaim enough pages to
+-			 * satisfy the reclaim goal, we come back and override
+-			 * the best-effort low protection. However, we still
+-			 * ideally want to honor how well-behaved groups are in
+-			 * that case instead of simply punishing them all
+-			 * equally. As such, we reclaim them based on how much
+-			 * memory they are using, reducing the scan pressure
+-			 * again by how much of the total memory used is under
+-			 * hard protection.
+-			 */
+-			unsigned long cgroup_size = mem_cgroup_size(memcg);
+-			unsigned long protection;
+-
+-			/* memory.low scaling, make sure we retry before OOM */
+-			if (!sc->memcg_low_reclaim && low > min) {
+-				protection = low;
+-				sc->memcg_low_skipped = 1;
+-			} else {
+-				protection = min;
+-			}
+-
+-			/* Avoid TOCTOU with earlier protection check */
+-			cgroup_size = max(cgroup_size, protection);
+-
+-			scan = lruvec_size - lruvec_size * protection /
+-				(cgroup_size + 1);
+-
+-			/*
+-			 * Minimally target SWAP_CLUSTER_MAX pages to keep
+-			 * reclaim moving forwards, avoiding decrementing
+-			 * sc->priority further than desirable.
+-			 */
+-			scan = max(scan, SWAP_CLUSTER_MAX);
+-		} else {
+-			scan = lruvec_size;
+-		}
+-
++		scan = apply_proportional_protection(memcg, sc, lruvec_size);
+ 		scan >>= sc->priority;
+ 
+ 		/*
+@@ -4545,8 +4548,9 @@ static bool isolate_folio(struct lruvec *lruvec, struct folio *folio, struct sca
+ 	return true;
+ }
+ 
+-static int scan_folios(struct lruvec *lruvec, struct scan_control *sc,
+-		       int type, int tier, struct list_head *list)
++static int scan_folios(unsigned long nr_to_scan, struct lruvec *lruvec,
++		       struct scan_control *sc, int type, int tier,
++		       struct list_head *list)
+ {
+ 	int i;
+ 	int gen;
+@@ -4555,7 +4559,7 @@ static int scan_folios(struct lruvec *lruvec, struct scan_control *sc,
+ 	int scanned = 0;
+ 	int isolated = 0;
+ 	int skipped = 0;
+-	int remaining = MAX_LRU_BATCH;
++	int remaining = min(nr_to_scan, MAX_LRU_BATCH);
+ 	struct lru_gen_folio *lrugen = &lruvec->lrugen;
+ 	struct mem_cgroup *memcg = lruvec_memcg(lruvec);
+ 
+@@ -4666,7 +4670,8 @@ static int get_type_to_scan(struct lruvec *lruvec, int swappiness)
+ 	return positive_ctrl_err(&sp, &pv);
+ }
+ 
+-static int isolate_folios(struct lruvec *lruvec, struct scan_control *sc, int swappiness,
++static int isolate_folios(unsigned long nr_to_scan, struct lruvec *lruvec,
++			  struct scan_control *sc, int swappiness,
+ 			  int *type_scanned, struct list_head *list)
+ {
+ 	int i;
+@@ -4678,7 +4683,7 @@ static int isolate_folios(struct lruvec *lruvec, struct scan_control *sc, int sw
+ 
+ 		*type_scanned = type;
+ 
+-		scanned = scan_folios(lruvec, sc, type, tier, list);
++		scanned = scan_folios(nr_to_scan, lruvec, sc, type, tier, list);
+ 		if (scanned)
+ 			return scanned;
+ 
+@@ -4688,7 +4693,8 @@ static int isolate_folios(struct lruvec *lruvec, struct scan_control *sc, int sw
+ 	return 0;
+ }
+ 
+-static int evict_folios(struct lruvec *lruvec, struct scan_control *sc, int swappiness)
++static int evict_folios(unsigned long nr_to_scan, struct lruvec *lruvec,
++			struct scan_control *sc, int swappiness)
+ {
+ 	int type;
+ 	int scanned;
+@@ -4707,7 +4713,7 @@ static int evict_folios(struct lruvec *lruvec, struct scan_control *sc, int swap
+ 
+ 	spin_lock_irq(&lruvec->lru_lock);
+ 
+-	scanned = isolate_folios(lruvec, sc, swappiness, &type, &list);
++	scanned = isolate_folios(nr_to_scan, lruvec, sc, swappiness, &type, &list);
+ 
+ 	scanned += try_to_inc_min_seq(lruvec, swappiness);
+ 
+@@ -4828,6 +4834,8 @@ static long get_nr_to_scan(struct lruvec *lruvec, struct scan_control *sc, int s
+ 	if (nr_to_scan && !mem_cgroup_online(memcg))
+ 		return nr_to_scan;
+ 
++	nr_to_scan = apply_proportional_protection(memcg, sc, nr_to_scan);
++
+ 	/* try to get away with not aging at the default priority */
+ 	if (!success || sc->priority == DEF_PRIORITY)
+ 		return nr_to_scan >> sc->priority;
+@@ -4880,7 +4888,7 @@ static bool try_to_shrink_lruvec(struct lruvec *lruvec, struct scan_control *sc)
+ 		if (nr_to_scan <= 0)
+ 			break;
+ 
+-		delta = evict_folios(lruvec, sc, swappiness);
++		delta = evict_folios(nr_to_scan, lruvec, sc, swappiness);
+ 		if (!delta)
+ 			break;
+ 
+@@ -5501,7 +5509,8 @@ static int run_eviction(struct lruvec *lruvec, unsigned long seq, struct scan_co
+ 		if (sc->nr_reclaimed >= nr_to_reclaim)
+ 			return 0;
+ 
+-		if (!evict_folios(lruvec, sc, swappiness))
++		if (!evict_folios(nr_to_reclaim - sc->nr_reclaimed, lruvec, sc,
++				  swappiness))
+ 			return 0;
+ 
+ 		cond_resched();
+-- 
+2.48.1
+
 
