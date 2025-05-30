@@ -1,150 +1,365 @@
-Return-Path: <linux-kernel+bounces-667748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-667764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88551AC8964
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 09:49:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1BD9AC899F
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 10:04:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB7081BC3B7D
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 07:49:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A451C7A2581
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 08:02:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2133321771B;
-	Fri, 30 May 2025 07:46:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC95B211A27;
+	Fri, 30 May 2025 08:03:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="O/mKfuQB"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="RpVg/SAz"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6254A213E6D;
-	Fri, 30 May 2025 07:46:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0209C1D61AA;
+	Fri, 30 May 2025 08:03:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748591198; cv=none; b=fzrDYBiLR4e5ewANl9mGxdmXXWkLgRtj1ImtVKNuhxgAoP2RE08pVDtJiM/w3tmeekmbMOIiKU0eNKyzr/pv/Y1TgDty/LSHDm5aHZTYuwyhdv0wrOUmxAerjR4zEM/cbzrl0pEASCmRDu0xLoURAdlWvUlP5gcDpGhH0FI1eOc=
+	t=1748592231; cv=none; b=IRx+EmAkGcjnRY4i8ZkZNgqIiwfm9tCAuJSUuNncmLbbN3GgJhBefpZkJJIddc4EZovNtAZgVL9GZfMZziC73tPxyLAmC2i5vqVuHf6HymtviaORuThykDvUrjf8DZ5of/Bp6BZ5+vWftL8LNV+zqApggTl8HjHOGUD03HCHmXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748591198; c=relaxed/simple;
-	bh=C/gy27BDlYkIDsDi2lK2NXljjmhG5IvM8N89F5XHS3M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=REoS21j7QnCTXl/QT9aZ6FjkyYngocj/tHd9G3l+rtvjx27sj1oQyE7lp2FUE/TcYTXPh/lN2gUxuEK64rH+1bPsY3wfammLAwclYL2r0Paz6Mxvw41IWs7Qz1bQV1wrEWPen0uqtnKHy1l3M/6ziQo4bP95ZeR7Io1wNEsEZGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=O/mKfuQB; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+	s=arc-20240116; t=1748592231; c=relaxed/simple;
+	bh=MOZRfILlxYLTD5YPIe1ukUVdwB74Lc8RJ5ifhuojFsE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=U1y83/La4Ii256wFYkfo69uiuIln5Vt7JoXQGHRrRmS2vayOMFff8iDSY3gtx/wEZGt9pCbI6XdMqO4cT+rJvVDjhpJNpySZloMxLYWBAPwVWUH3rnEX6HPFuDC5RU/PUJCe5TZp2JceKtqChlUnBcDy4TaBRkGmRi7hg+WtTzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=RpVg/SAz; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=Ut2tpuuqRAyjo9B+qNNd6yMUFNVjo/29ecFKGIED0ig=; b=O/mKfuQB0BUcNmKRdmWHnd9iSG
-	YG+hJVA3Yn5K2Cyf7t9KIzf9KxAnua8o59fak2AfljqKfB8sgaL/fJtW/VJHi+0FT0XD14AO/yh0h
-	WBYb4GNg8RPO6rM8zhtWY1VqZe77B8ZTC6DS34hH2Lje4+TY59ss4FN9jqBaXeyHrHMS089dZy7IO
-	v6tIHTswLxoPoyt4C75BFzlOtlJqTBYYKJ+BuahW0po4IZOKX596tYectV7YVC0scKjOZXFK9o3uM
-	Du8yGWMTEI5Wq0NzmCH2n21bMfmg6tTQ/LbkC/7mjUgqnyIKNEpS0AlTSXjs1pNNCiYYZTfoCFKxs
-	d4ZMt7sg==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:40490)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1uKuRe-00027t-2K;
-	Fri, 30 May 2025 08:46:26 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1uKuRX-0004Rl-1d;
-	Fri, 30 May 2025 08:46:19 +0100
-Date: Fri, 30 May 2025 08:46:19 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Romain Gantois <romain.gantois@bootlin.com>
-Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>, davem@davemloft.net,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, thomas.petazzoni@bootlin.com,
-	Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	=?iso-8859-1?Q?K=F6ry?= Maincent <kory.maincent@bootlin.com>,
-	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
-	Oleksij Rempel <o.rempel@pengutronix.de>,
-	=?iso-8859-1?Q?Nicol=F2?= Veronese <nicveronese@gmail.com>,
-	Simon Horman <horms@kernel.org>, mwojtas@chromium.org,
-	Antoine Tenart <atenart@kernel.org>, devicetree@vger.kernel.org,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Rob Herring <robh@kernel.org>, Daniel Golle <daniel@makrotopia.org>,
-	Dimitri Fedrau <dimitri.fedrau@liebherr.com>
-Subject: Re: [PATCH net-next v6 06/14] net: phy: Introduce generic SFP
- handling for PHY drivers
-Message-ID: <aDliS9uMFaLf2lCV@shell.armlinux.org.uk>
-References: <20250507135331.76021-1-maxime.chevallier@bootlin.com>
- <13770694.uLZWGnKmhe@fw-rgant>
- <aDhfyiSOnyA709oX@shell.armlinux.org.uk>
- <6159237.lOV4Wx5bFT@fw-rgant>
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:To:Subject:MIME-Version:Date:Message-ID:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=+FQ7mAJWoOpdEQTP2UWDOkXe0sgkjazV/6cKTyxk9EY=; t=1748592229;
+	x=1749024229; b=RpVg/SAzeTHW9iVd0qAEDdquy03idZeON58JPD6gIbu2l3qxoD06zD31NS9I1
+	cOzzlm+tQXbD3e+A0EFN5hTvZiqMstEHL1rVcFB73lPBSM2vFbuSJNueLYfpETCJ/oYqJ7qi+5+0J
+	wZRGxwvD5ktppJzf5OwDmvXuWX5UMKMYWAo3NrlE8l++bCnt/V5rVT3hVpXDaG/DPnHlnU3iyFwqP
+	ARI3V2yyLiyCBgD5u4X0VBrXSQVHmzDXfV3fehr5czXxQNgbdoi1rSgR/5jqcw5fbRBR3riRhAp+x
+	nCIe+jR66WfqSgG9/gmRGNO2chPs//aPOFsZKEL0MyECdZpdvA==;
+Received: from [2a02:8108:8984:1d00:a0cf:1912:4be:477f]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128)
+	id 1uKuRp-006ZdF-2k;
+	Fri, 30 May 2025 09:46:37 +0200
+Message-ID: <699ec35a-5453-4900-b535-a9a9863bb9bf@leemhuis.info>
+Date: Fri, 30 May 2025 09:46:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6159237.lOV4Wx5bFT@fw-rgant>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: REGRESSION: armv7 build mismatched types
+To: Rudraksha Gupta <guptarud@gmail.com>, linux-kernel@vger.kernel.org,
+ Linux regressions mailing list <regressions@lists.linux.dev>,
+ rust-for-linux@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>,
+ Tamir Duberstein <tamird@gmail.com>
+References: <700ebe13-c2d3-48e3-800f-8dc327efb6fc@gmail.com>
+From: Thorsten Leemhuis <linux@leemhuis.info>
+Content-Language: de-DE, en-US
+Autocrypt: addr=linux@leemhuis.info; keydata=
+ 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 n7RI
+In-Reply-To: <700ebe13-c2d3-48e3-800f-8dc327efb6fc@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;linux@leemhuis.info;1748592229;a15d77b2;
+X-HE-SMSGID: 1uKuRp-006ZdF-2k
 
-On Fri, May 30, 2025 at 09:28:11AM +0200, Romain Gantois wrote:
-> On Thursday, 29 May 2025 15:23:22 CEST Russell King (Oracle) wrote:
-> > On Wed, May 28, 2025 at 09:35:35AM +0200, Romain Gantois wrote:
-> > > > In that regard, you can consider 1000BaseX as a MII mode (we do have
-> > > > PHY_INTERFACE_MODE_1000BASEX).
-> > > 
-> > > Ugh, the "1000BaseX" terminology never ceases to confuse me, but yes
-> > > you're
-> > > right.
-> > 
-> > 1000BASE-X is exactly what is described in IEEE 802.3. It's a PHY
-> > interface mode because PHYs that use SerDes can connect to the host
-> > using SGMII or 1000BASE-X over the serial link.
-> > 
-> > 1000BASE-X's purpose in IEEE 802.3 is as a protocol for use over
-> > fibre links, as the basis for 1000BASE-SX, 1000BASE-LX, 1000BASE-EX
-> > etc where the S, L, E etc are all to do with the properties of the
-> > medium that the electrical 1000BASE-X is sent over. It even includes
-> > 1000BASE-CX which is over copper cable.
+CCing linux-next and Tamir Duberstein, who authored the culprit.
+
+On 30.05.25 08:23, Rudraksha Gupta wrote:
+> Logs: https://gitlab.postmarketos.org/LogicalErzor/pmaports/-/jobs/1368490
 > 
-> Ah makes sense, thanks for the explanation. I guess my mistake was assuming 
-> that MAC/PHY interface modes were necessarily strictly at the reconciliation 
-> sublayer level, and didn't include PCS/PMA functions.
+> Archive: https://web.archive.org/web/20250530060232/https://
+> gitlab.postmarketos.org/LogicalErzor/pmaports/-/jobs/1368490/raw
 
-When a serdes protocol such as SGMII, 1000BASE-X, or 10GBASE-R is being
-used with a PHY, the IEEE 802.3 setup isn't followed exactly - in
-effect there are more layers.
+I ran into the same error on aarch64 and x86_64 when building -next for
+Fedora today using the rawhide config:
 
-On the SoC:
+https://download.copr.fedorainfracloud.org/results/@kernel-vanilla/next/fedora-rawhide-x86_64/09103515-next-next-all/builder-live.log.gz
+https://download.copr.fedorainfracloud.org/results/@kernel-vanilla/next/fedora-rawhide-aarch64/09103515-next-next-all/builder-live.log.gz
 
-	MAC
-	Reconciliation (RS)
-	PCS
-	SerDes (part of the PMA layer)
+Reverting b20fbbc08a363f ("rust: check type of `$ptr` in
+`container_of!`") fixed things. That's the patch Rudraksha suspected to
+be the root of the problem (see the quote below).
 
-On the PHY side of the SerDes host-to-phy link:
+Ciao, Thorsten
 
-	SerDes
-	PCS (which may or may not be exposed in the PHY register set,
-	     and is normally managed by the PHY itself)
-	(maybe other layers, could include MACs	back-to-back)
-	PCS
-	PMA
-	PMD
+> Snip:
+> 
+> ||
+> 
+> |EXPORTS rust/exports_core_generated.h|
+> |
+> ||
+> RUSTC L rust/compiler_builtins.o
+> ||
+> RUSTC L rust/ffi.o
+> ||
+> RUSTC L rust/build_error.o
+> ||
+> RUSTC L rust/pin_init.o
+> ||
+> RUSTC L rust/bindings.o
+> ||
+> RUSTC L rust/uapi.o
+> ||
+> EXPORTS rust/exports_bindings_generated.h
+> ||
+> RUSTC L rust/kernel.o
+> ||
+> error[E0308]: mismatched types
+> ||
+> --> rust/kernel/lib.rs:234:45
+> ||
+> |
+> ||
+> 234 | $crate::assert_same_type(field_ptr, (&raw const (*container_ptr).
+> $($fields)*).cast_mut());
+> ||
+> | ------------------------ ---------
+> ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `*const
+> drm_device`, found `*mut Opaque<drm_device>`
+> ||
+> | | |
+> ||
+> | | expected all arguments to be this `*const drm_device` type because
+> they need to match the type of this parameter
+> ||
+> | arguments to this function are incorrect
+> ||
+> |
+> ||
+> ::: rust/kernel/drm/device.rs:140:18
+> ||
+> |
+> ||
+> 140 | unsafe { crate::container_of!(ptr, Self, dev) }.cast_mut()
+> ||
+> | ------------------------------------ in this macro invocation
+> ||
+> |
+> ||
+> = note: expected raw pointer `*const drm_device`
+> ||
+> found raw pointer `*mut Opaque<drm_device>`
+> ||
+> note: function defined here
+> ||
+> --> rust/kernel/lib.rs:241:8
+> ||
+> |
+> ||
+> 241 | pub fn assert_same_type<T>(_: T, _: T) {}
+> ||
+> | ^^^^^^^^^^^^^^^^ - ---- ---- this parameter needs to match the `*const
+> drm_device` type of parameter #1
+> ||
+> | | |
+> ||
+> | | parameter #2 needs to match the `*const drm_device` type of this
+> parameter
+> ||
+> | parameter #1 and parameter #2 both reference this parameter `T`
+> ||
+> = note: this error originates in the macro `crate::container_of` (in
+> Nightly builds, run with -Z macro-backtrace for more info)
+> ||
+> error[E0308]: mismatched types
+> ||
+> --> rust/kernel/lib.rs:234:45
+> ||
+> |
+> ||
+> 234 | $crate::assert_same_type(field_ptr, (&raw const (*container_ptr).
+> $($fields)*).cast_mut());
+> ||
+> | ------------------------ ---------
+> ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `*mut
+> drm_gem_object`, found `*mut Opaque<drm_gem_object>`
+> ||
+> | | |
+> ||
+> | | expected all arguments to be this `*mut drm_gem_object` type because
+> they need to match the type of this parameter
+> ||
+> | arguments to this function are incorrect
+> ||
+> |
+> ||
+> ::: rust/kernel/drm/gem/mod.rs:130:20
+> ||
+> |
+> ||
+> 130 | unsafe { &*crate::container_of!(self_ptr, Object<T>, obj) }
+> ||
+> | ---------------------------------------------- in this macro invocation
+> ||
+> |
+> ||
+> = note: expected raw pointer `*mut drm_gem_object`
+> ||
+> found raw pointer `*mut Opaque<drm_gem_object>`
+> ||
+> note: function defined here
+> ||
+> --> rust/kernel/lib.rs:241:8
+> ||
+> |
+> ||
+> 241 | pub fn assert_same_type<T>(_: T, _: T) {}
+> ||
+> | ^^^^^^^^^^^^^^^^ - ---- ---- this parameter needs to match the `*mut
+> drm_gem_object` type of parameter #1
+> ||
+> | | |
+> ||
+> | | parameter #2 needs to match the `*mut drm_gem_object` type of this
+> parameter
+> ||
+> | parameter #1 and parameter #2 both reference this parameter `T`
+> ||
+> = note: this error originates in the macro `crate::container_of` (in
+> Nightly builds, run with -Z macro-backtrace for more info)
+> ||
+> error[E0308]: mismatched types
+> ||
+> --> rust/kernel/lib.rs:234:45
+> ||
+> |
+> ||
+> 234 | $crate::assert_same_type(field_ptr, (&raw const (*container_ptr).
+> $($fields)*).cast_mut());
+> ||
+> | ------------------------ ---------
+> ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `*mut
+> drm_gem_object`, found `*mut Opaque<drm_gem_object>`
+> ||
+> | | |
+> ||
+> | | expected all arguments to be this `*mut drm_gem_object` type because
+> they need to match the type of this parameter
+> ||
+> | arguments to this function are incorrect
+> ||
+> |
+> ||
+> ::: rust/kernel/drm/gem/mod.rs:273:29
+> ||
+> |
+> ||
+> 273 | let this = unsafe { crate::container_of!(obj, Self, obj) };
+> ||
+> | ------------------------------------ in this macro invocation
+> ||
+> |
+> ||
+> = note: expected raw pointer `*mut drm_gem_object`
+> ||
+> found raw pointer `*mut Opaque<drm_gem_object>`
+> ||
+> note: function defined here
+> ||
+> --> rust/kernel/lib.rs:241:8
+> ||
+> |
+> ||
+> 241 | pub fn assert_same_type<T>(_: T, _: T) {}
+> ||
+> | ^^^^^^^^^^^^^^^^ - ---- ---- this parameter needs to match the `*mut
+> drm_gem_object` type of parameter #1
+> ||
+> | | |
+> ||
+> | | parameter #2 needs to match the `*mut drm_gem_object` type of this
+> parameter
+> ||
+> | parameter #1 and parameter #2 both reference this parameter `T`
+> ||
+> = note: this error originates in the macro `crate::container_of` (in
+> Nightly builds, run with -Z macro-backtrace for more info)
+> ||
+> error: aborting due to 3 previous errors
+> ||
+> For more information about this error, try `rustc --explain E0308`.
+> ||
+> make[2]: *** [rust/Makefile:538: rust/kernel.o] Error 1
+> ||
+> make[1]: *** [/home/pmos/build/src/linux-next-next-20250530/
+> Makefile:1285: prepare] Error 2
+> ||make: *** [Makefile:248: __sub-make] Error 2|
+> 
+> 
+> Bad: next-20250530
+> 
+> Good: next-20250528
+> 
+> 
+> Likely introduced with: https://lore.kernel.org/all/
+> CANiq72mFiCrzawVUVOU2giJtBVsRdAO3sGtDsZptPuFvmid3EQ@mail.gmail.com/
+> 
+> 
+> Repo: https://gitlab.postmarketos.org/LogicalErzor/pmaports/-/tree/rust/
+> device/testing/linux-next
+> 
+> How it's built (Alpine-like build system):
+> 
+> - https://archive.ph/vxEmk
+> 
+> Config fragments (in addition to qcom_defconfig):
+> 
+> - https://archive.ph/q4hfc
+> 
+> - https://archive.ph/RKgFf
+> 
+> 
+> 
 
-Hope that helps explain what's going on a little more.
-
-Another way to look at it is that with SGMII, 1000BASE-X etc between
-the PHY and host, the PHY is a media converter.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
