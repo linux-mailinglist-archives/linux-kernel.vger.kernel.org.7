@@ -1,147 +1,178 @@
-Return-Path: <linux-kernel+bounces-668672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-668674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3621AC95CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 20:50:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E93A4AC95D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 20:51:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B56AB5063C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 18:50:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF61E1C203C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 18:51:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89FD62798FF;
-	Fri, 30 May 2025 18:50:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0098D277028;
+	Fri, 30 May 2025 18:51:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=edgeble-ai.20230601.gappssmtp.com header.i=@edgeble-ai.20230601.gappssmtp.com header.b="o3r7N3Ld"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HiopQ5vM"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60EBA279337
-	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 18:50:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D32C2367D6
+	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 18:51:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748631014; cv=none; b=JiEiYVd/tg2+d4AFasEcN1WejQ60EDZK/axn5gr0XMHLlNMoNYZLElOAPr+O2EsnYHevdkEz2ryEntM5IuWWwMwLt33LEfu7bR4CQQmYjyU4eIy/mFvUJXIkkpLO85MuXnTDPxv150oH8+kVzvslRght+04GEYAn/lKgr6D46wU=
+	t=1748631085; cv=none; b=iGzn0SPjg1wTgei9p7O0ksVNU/o0E+LNNeVoCufdXlqWsUP5SR/8xk+puQELAaI2NfHi910F7Lpla4+4yLWI4VvDPPq3k8wyuwyIdeQZAzM5vHS8ovJw1g3mznztPQKJonWqOP7vdYBqEXq/C8aSLwV6uT2wrAmsIjbL+L1Fpt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748631014; c=relaxed/simple;
-	bh=D1P2hjUoye3he0La/a+iQ8GuVBH89z9c8PtYeykiOpQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bMmlG6NrslvUVes6YE+zEgvPNuujijGDSkr9tGEjDDrDF7cMzXgiirUnGbX3MsKLcE6CXw6y6cxIiAsaAPNfk++eqdtYyJHytc56f2OYU1b+q+A4y8Xf731Rj9unVRFCIyPxi1rNnK+IkDQWf0BPhEXcLY2u8X0SlT5vOra8i8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=edgeble.ai; spf=none smtp.mailfrom=edgeble.ai; dkim=pass (2048-bit key) header.d=edgeble-ai.20230601.gappssmtp.com header.i=@edgeble-ai.20230601.gappssmtp.com header.b=o3r7N3Ld; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=edgeble.ai
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=edgeble.ai
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2349282084bso30187185ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 11:50:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=edgeble-ai.20230601.gappssmtp.com; s=20230601; t=1748631012; x=1749235812; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=CX8RVGcjNGfza1J+8Y/TBJXjjM61IDQf7sORQ0CRlUE=;
-        b=o3r7N3LdxZb+mP2Gi74J071rrydJRzZ+Pb9zspL7Kt8x0zrmQxM+TjOg3IzLGD/Ilz
-         I9QlyrEcW1Gk1nJ+zPUnzYkWa2KDfhDcUtN5HG0Ecy1/ncvas1i2OX+rBns/e+uZ7a7O
-         4ZjXRvxqly4y5z452RmDlkKSjHrXGlEENaQy4Z1Ei4CHWKSBVWoZnddG8tvU/7EmL/D4
-         wzu+Ke39byEHVqJSIky7j8FjKC0+Zsy6ZGEqYeowS0g2ahqv7unAIilzTtq9JQ23mj5/
-         AL94ioEfGZKMoTwgPM4/h/yVuhMCQhpOTWSOKjHRjGO38FkJjZmSv9BDBYQ55rbyOo+t
-         7tLA==
+	s=arc-20240116; t=1748631085; c=relaxed/simple;
+	bh=eVV9xeVeiv2yXILMXk2UmpohCzZ0JzvHyAW4iBGaRic=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=M9YYyHgaoPtcbbV5g68iVHNKlHn10vbhdaQpBjKxp9hlFEXsk/CskaC5RF5ed0nWDHbhvIx8/HXOsFyoOumGE+o4NcF+OjgztI7vbCxgCfNPxiS1+MssyRGgJIfACvn631F3g7VAVcYJ7niuYxU34imOFZ9xiojtUPXDIar2iJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HiopQ5vM; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1748631080;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=YJzGuOEyCD92yoey5UJsZHsZc4atn6WQPDIRCxciOwU=;
+	b=HiopQ5vMWfvFKGgwhN+gcFiTf2bUR7U5jcPMS8wCEZ7huyKGjOEYMEW14ZVi5MeSHzjEb1
+	ZP1VJEJcPM3/YH7ah4nafG3JOIwZlptule/5UL0DtjuJEu3GB4q1vvZzwRHvicSg2h+6OD
+	Wxjip98RjqQdxQaE8fKqkF4A3mVCQWY=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-179-Of2tg2f4PLuEdXHIdDBooQ-1; Fri, 30 May 2025 14:51:17 -0400
+X-MC-Unique: Of2tg2f4PLuEdXHIdDBooQ-1
+X-Mimecast-MFC-AGG-ID: Of2tg2f4PLuEdXHIdDBooQ_1748631076
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3a367b3bc13so995842f8f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 11:51:17 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748631012; x=1749235812;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CX8RVGcjNGfza1J+8Y/TBJXjjM61IDQf7sORQ0CRlUE=;
-        b=gFzrmFLLorkhsCAOvkWqT/4K+R0JQOQHXLi0WIVeQscRXTF+CiLIQq4l2ohd58Y9x1
-         AJ5LpBEOMGN8/xu46hkB5QJV8gNYhzeMA6PoQv6aKjltPVCaQ+SpIhY7wr8igcFcdNAN
-         m9u8UDeAZinLOUCLlCuuWJw9JBIBRFQzawhWZ/jH7uA35wMuAMwnCu3PEp9NfIZodYCA
-         s5zLtymaeJaWEV1jhOkK8o6Gs4OZBBqxIUdUMxjBdXgc8oYk5fSSu8zOWQkxwabO3/Aj
-         1NYrTZfzF9+XFDcrwYRv5QaLP1EEWsq1SBOBtXMD62/xHEKUxTKzZSzekFoabfakuvj6
-         +Oaw==
-X-Forwarded-Encrypted: i=1; AJvYcCXsDY0Am6CVK9llxLiHR8NNfbNOZgMbNtFkIMdLFmRsIfRm6Gh+5HqOTHNaK1WM5pFidMc13VsfCoqHpkw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0GAEiMg3URqEpwip47agZSIazsxRhEW3AHostAqdmzkfMQC6Q
-	dLz4ZWHsFB0jiRH1yZBjrYAKB5M5z/gX7FfRc+it+eSkz+zPikiXb9Ul/uzLWdqUbhMVNxKS6vS
-	SceZqevuYbXIndAiVLxqmyU0eNEh8SSP8swsrOTP2UA==
-X-Gm-Gg: ASbGncvK/fauZwjAhec9rScyuoq2K5hxQM3gUylDlRLkeGLa1Uj1j+1ZKkNuU99WNSC
-	XU9a67WfFfhNasa3vB4jBJRANhCZm5rSygrSZKWCVxs+HmVZrTXdOzb6J65MT8axsaiIPuWj7Oa
-	GGAV0i+k4AHdEb9D0GWs3hVFLRE4Ox0BeMOABg4h1Dow==
-X-Google-Smtp-Source: AGHT+IFy6gculqd6TMBrN0rYJWssXVz6+60yi4DzoSheepAu+OoDDguVK86eUKc83jB1uCOQJbumvqYQqLIeYGr+pL0=
-X-Received: by 2002:a17:903:1b6c:b0:234:ba37:87b6 with SMTP id
- d9443c01a7336-23528ef7833mr65464395ad.17.1748631012585; Fri, 30 May 2025
- 11:50:12 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1748631076; x=1749235876;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=YJzGuOEyCD92yoey5UJsZHsZc4atn6WQPDIRCxciOwU=;
+        b=aveyeQfPGiDxRQRYsD/2pIsbPDpNcoFbMMUkpvyeCwfr3QXlnEdU5cTSxvZ7MKPR3H
+         P4bG1k+nm34DLi/WZd0ivyucIBEayk+dVX85xvc3B0hlJUrroX8xhq4yvsk43yypRBOo
+         KyuCHv+7mBK850vWWpNmIZyz86/JYqOCpQ8ucVB+sVpQ1Br1hn0g4KK6IjnWgerJvtve
+         Ptaab3Oq7aNFuwsZjkulGbvFDTP3EqlDwsP6FxWbhyi6c/XLJzbXXXPIRyUtKLvMzSOr
+         GM7fJ7Tm1sbyCrtgT3emNwl/dOK7ZxnSVa29CBEONvb73432Uzc/sz37wrfS+jxTIMht
+         s7nw==
+X-Forwarded-Encrypted: i=1; AJvYcCUCQCrKPtvqd5w23IwEVccTM5GAPw5nnuUYvRGej+I6mpLXbF77xTK1zkOdjR0BSrlRWz0JG9Sz/YTwjgs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5dRBlvlifDdh1i6kfDdZ3gh9FeD9e4JYGpOQg32i0XsgqxlSs
+	CvyLggNOv+6MId/CWYu8xwSNZQEk4BBPyzZxdkjNygOiQGDdUFImL8PG/kSUhWFyXUWJdLmHYqy
+	lOBriT5QIePgz2VMarW0GkAMp/CbdU3L3OEiSzkAd0Gww9fRb85A99QPUP4E4lqUT3Q==
+X-Gm-Gg: ASbGncslB3/hHOgLxdR9V2ClmM0HABRldXcnFCdZ53dh5+vQysCrGTnj57vWT8m79hR
+	5Z4HW02z7uxgqXu17oCzsLBfJHfFLGrE6yf5ioBPe6db5FiLZ2OUE5t6JkDeS71JLnqO11O82fx
+	xJZ4wXL3mQsFi3DzKahpFLPmyG4uLGvExh0jqnonLGp416Xm5jVrSp5CoyGQwteTpiIoSeshrpx
+	CWt2b6to94zp1ZoCsFQ8RxC3Dp+RLqsPi7a0QoF4tb17QAnvxUc2i1w1g4eF1QzfadbpXoWGUNk
+	MHLb4CqZLiJNnUwCUVVCgnulL7Y6Me6Wnu7cyPiS2/TWXMYaHoXArynhgX8RQS8WWAmMtp6rC96
+	1rdhVFaDRmmPDCERjco776bACUesv13JNCQOZm5sLvu2Ml087dg==
+X-Received: by 2002:a05:6000:18ab:b0:3a4:ea40:4d3f with SMTP id ffacd0b85a97d-3a4f7aafa70mr4212773f8f.53.1748631076240;
+        Fri, 30 May 2025 11:51:16 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEXz9jboLNudDIoWr1Y0bfqfhAVm5ux5WqC9fB4zaCC4yD21pmClOISusCFn1KSYiqhpVoOfg==
+X-Received: by 2002:a05:6000:18ab:b0:3a4:ea40:4d3f with SMTP id ffacd0b85a97d-3a4f7aafa70mr4212755f8f.53.1748631075852;
+        Fri, 30 May 2025 11:51:15 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f03:5b00:f549:a879:b2d3:73ee? (p200300d82f035b00f549a879b2d373ee.dip0.t-ipconnect.de. [2003:d8:2f03:5b00:f549:a879:b2d3:73ee])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4efe5b8besm5586306f8f.16.2025.05.30.11.51.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 30 May 2025 11:51:15 -0700 (PDT)
+Message-ID: <962c6be7-e37a-4990-8952-bf8b17f6467d@redhat.com>
+Date: Fri, 30 May 2025 20:51:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250519-6-10-rocket-v4-0-d6dff6b4c0ae@tomeuvizoso.net>
-In-Reply-To: <20250519-6-10-rocket-v4-0-d6dff6b4c0ae@tomeuvizoso.net>
-From: Jagan Teki <jagan@edgeble.ai>
-Date: Sat, 31 May 2025 00:20:00 +0530
-X-Gm-Features: AX0GCFvkNnwtQ--V1GCDW4BcbIzs35k_zL3RhgmHKFDsjekxRIDXrFhtYRu24lI
-Message-ID: <CA+VMnFzisyMFzze52RRf6=Gstq29jmukrPSfqXfBWrVw0a7k1Q@mail.gmail.com>
-Subject: Re: [PATCH v4 00/10] New DRM accel driver for Rockchip's RKNN NPU
-To: Tomeu Vizoso <tomeu@tomeuvizoso.net>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, Oded Gabbay <ogabbay@kernel.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Sebastian Reichel <sebastian.reichel@collabora.com>, 
-	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, Jeff Hugo <jeff.hugo@oss.qualcomm.com>, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org, 
-	linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/4] mm: Fix uprobe pte be overwritten when expanding
+ vma
+To: Pu Lehui <pulehui@huaweicloud.com>, mhiramat@kernel.org, oleg@redhat.com,
+ peterz@infradead.org, akpm@linux-foundation.org, Liam.Howlett@oracle.com,
+ lorenzo.stoakes@oracle.com, vbabka@suse.cz, jannh@google.com,
+ pfalcato@suse.de
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+ pulehui@huawei.com
+References: <20250529155650.4017699-1-pulehui@huaweicloud.com>
+ <20250529155650.4017699-2-pulehui@huaweicloud.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20250529155650.4017699-2-pulehui@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, 19 May 2025 at 19:14, Tomeu Vizoso <tomeu@tomeuvizoso.net> wrote:
->
-> This series adds a new driver for the NPU that Rockchip includes in its
-> newer SoCs, developed by them on the NVDLA base.
->
-> In its current form, it supports the specific NPU in the RK3588 SoC.
->
-> The userspace driver is part of Mesa and an initial draft can be found at:
->
-> https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/29698
->
-> Signed-off-by: Tomeu Vizoso <tomeu@tomeuvizoso.net>
-> ---
-> Changes in v4:
-> - Several fixes to DT bindings.
-> - Link to v3: https://lore.kernel.org/r/20250516-6-10-rocket-v3-0-7051ac9225db@tomeuvizoso.net
->
-> Changes in v3:
-> - Reference in the device tree only the register blocks that are
->   actually used.
-> - Several style and robustness fixes suggested in the mailing list.
-> - Added patches from Nicolas Frattaroli that add support to the NPU for
->   the Rock 5B board.
-> - Link to v2: https://lore.kernel.org/r/20250225-6-10-rocket-v2-0-d4dbcfafc141@tomeuvizoso.net
->
-> Changes in v2:
-> - Drop patch adding the rk3588 compatible to rockchip-iommu (Sebastian Reichel)
-> - Drop patch adding support for multiple power domains to rockchip-iommu (Sebastian Reichel)
-> - Link to v1: https://lore.kernel.org/r/20240612-6-10-rocket-v1-0-060e48eea250@tomeuvizoso.net
->
-> ---
-> Nicolas Frattaroli (2):
->       arm64: dts: rockchip: add pd_npu label for RK3588 power domains
->       arm64: dts: rockchip: enable NPU on ROCK 5B
->
-> Tomeu Vizoso (8):
->       dt-bindings: npu: rockchip,rknn: Add bindings
->       arm64: dts: rockchip: Add nodes for NPU and its MMU to rk3588s
->       arm64: dts: rockchip: Enable the NPU on quartzpro64
->       accel/rocket: Add registers header
->       accel/rocket: Add a new driver for Rockchip's NPU
->       accel/rocket: Add IOCTL for BO creation
->       accel/rocket: Add job submission IOCTL
->       accel/rocket: Add IOCTLs for synchronizing memory accesses
+>   
+>   	if (vp->remove) {
+> @@ -1823,6 +1829,14 @@ struct vm_area_struct *copy_vma(struct vm_area_struct **vmap,
+>   		faulted_in_anon_vma = false;
+>   	}
+>   
+> +	/*
+> +	 * If the VMA we are copying might contain a uprobe PTE, ensure
+> +	 * that we do not establish one upon merge. Otherwise, when mremap()
+> +	 * moves page tables, it will orphan the newly created PTE.
+> +	 */
+> +	if (vma->vm_file)
+> +		vmg.skip_vma_uprobe = true;
+> +
 
-Can this be possible to infer yolov8/10? Do we need to convert PT/ONNX
-to any other common format's unlike rknn?
+Assuming we extend the VMA on the way (not merge), would we handle that 
+properly?
 
-Thanks,
-Jagan.
+Or is that not possible on this code path or already broken either way?
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
