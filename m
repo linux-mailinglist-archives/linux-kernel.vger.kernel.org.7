@@ -1,248 +1,280 @@
-Return-Path: <linux-kernel+bounces-668058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-668060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83525AC8D80
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 14:26:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62754AC8D90
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 14:28:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FA0E3B6B87
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 12:26:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2C3C1BC59A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 12:28:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF3EF22B5B6;
-	Fri, 30 May 2025 12:26:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC7B722C355;
+	Fri, 30 May 2025 12:27:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gJCJLP2K"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c94cqCVD"
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31A6410F1;
-	Fri, 30 May 2025 12:26:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.16
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748607999; cv=fail; b=ayZZpnX5C7jMxk6xljEhvU5LRzaA6QFf/aARrSMHCaSUS/mL4PvjnfkJ3QK35eRUsknbeYMHe4IONJztO7Q+DwVq+KneUj65EMbd6bdhu6AfaEjbAoX4LIUl9QMZ0M7DT7Su/n0DKHnQT9+jhXpF09NdFETW7h5FIKbOmHUYzFE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748607999; c=relaxed/simple;
-	bh=kWDMNC6gz1RQ5m+Cp7ihyfYoDc7Njv8tPJPmKzJu2u4=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=WpILVpcIUm9UlyCTtuKM2qMQZG9GsGAwARCHKcNB0d85rUS6YR+w3UMc9Egyg8zwBA5HU4VV997yXj611YSPc3J31FwsJ8ocJjisWTZw2KQ/VeqOJ2r0zn106n2SWo/9jRXSjldOQ1A92nUuIzxb4/zlUrpG5wGgHsK6fWC/52w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gJCJLP2K; arc=fail smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1748607998; x=1780143998;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=kWDMNC6gz1RQ5m+Cp7ihyfYoDc7Njv8tPJPmKzJu2u4=;
-  b=gJCJLP2KIKG2YfUdBemDC8cPP7vyAzgzTMoo6BG+qXifVz46C3rErsth
-   EwYB4zCgubexz+aOva9QkDx3WMms5osXCqHXwB26uXnBpqL+K6qAqUegL
-   UecEiVJREWImAawviNu5L4xPP3NEcFW0024mtEEwUSH3CcwLGpG/Z5vDo
-   vszrupFsg12X+N9FLmA+bfCm3TskVbtCvYbKVUAYCmriKwdL+GOqq5OTK
-   GRc1DKukW5gQmdwAyH/4N9qsDC9CZlgoGEpMvLqLUbo5a0t0/nUNqmjRk
-   U84zc50I/SWTTHVncFoVGaFQi5roB1peWkeBAn/yYM6DLHU2FFqTlVLlT
-   Q==;
-X-CSE-ConnectionGUID: FUrqqYfmSpKVT3oZbDtvPQ==
-X-CSE-MsgGUID: xO22aCWNT3SkYMS6vvnKHg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11449"; a="38325326"
-X-IronPort-AV: E=Sophos;i="6.16,195,1744095600"; 
-   d="scan'208";a="38325326"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2025 05:26:38 -0700
-X-CSE-ConnectionGUID: NzAG6lkRToaKefeumJ6ULg==
-X-CSE-MsgGUID: /WgGqZr7R8OjhYN6DSOoaw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,195,1744095600"; 
-   d="scan'208";a="144197640"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2025 05:26:37 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Fri, 30 May 2025 05:26:36 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25 via Frontend Transport; Fri, 30 May 2025 05:26:36 -0700
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (40.107.237.43)
- by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.55; Fri, 30 May 2025 05:26:35 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Ao0MqtfuftYbJZwyOmiDCrdUZNsDdtmO6HVztoCRW3RK6EilxMA0kSLoPDi5vc5RR1RpwmyLKwI45fC4FNT/eYu8k54ljkxBLTa4kBGH+22iDyVBKZ5mT2J3x4DsyRQbPt6390nkDLDV/ulkth+nEgcpaP3ImNDc/uJmFQ6DgHvPlyewhkxrvHJ8sicXp9AM8a4NMt+nIJl76Gu2tT2LwOwz6Ljb4zR/14cf+3Gtg5ZdPwzEqI1mj0wpfBikPr9bYdvzmgUP3xqIYKb27dZfLRknHfp5oEu851uGxmnYpReaPdZKxFE3S9S1qPEHEdZLVNCDdXqZh+fFUnJi0+VrzQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mHPwBlGmMqe0hZ4rR+ek9Jfjj65MHRxZWBEN3AJImzY=;
- b=FTNs5gZpQJz2XtyyYLnrAhNlfOqE+4XTMWii3O434NOSwqHh1IvR1IBA7PJYtxmaz6UB14PrhEUbm352y6MzP1HNChLlA2cQKUlD5BUaLehSiRXF/YDbMccFZZQxpXuN3e5LPEFhz69dPPiLWrkSRUiaVR8DiVztJp9FYMSfiLIxTfV09XPSsIZqB6Cpl+tceQrUehZU2+pRtrshpoK12uLBnOq6E4pn9EryDsWD7H1Dm4V27X1FGdLWs6IaracWQxpv0s12IrMRoRsD6VKZHeAejr3hrA2BOp6gQgYYHrT3BZozGnWrZK93CfGylHxifcCvqGTUCtyPzl6FRjINtw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from PH7PR11MB6054.namprd11.prod.outlook.com (2603:10b6:510:1d2::8)
- by SA2PR11MB4811.namprd11.prod.outlook.com (2603:10b6:806:11d::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.30; Fri, 30 May
- 2025 12:26:33 +0000
-Received: from PH7PR11MB6054.namprd11.prod.outlook.com
- ([fe80::a255:8692:8575:1301]) by PH7PR11MB6054.namprd11.prod.outlook.com
- ([fe80::a255:8692:8575:1301%6]) with mapi id 15.20.8769.029; Fri, 30 May 2025
- 12:26:33 +0000
-Message-ID: <bcf606a1-1a06-42bd-89d0-c388a57a94f2@intel.com>
-Date: Fri, 30 May 2025 15:26:27 +0300
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mmc: sdhci-sprd: Add error handling for
- sdhci_runtime_suspend_host()
-To: Wentao Liang <vulab@iscas.ac.cn>, <ulf.hansson@linaro.org>,
-	<orsonzhai@gmail.com>, <baolin.wang@linux.alibaba.com>,
-	<zhang.lyra@gmail.com>
-CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<stable@vger.kernel.org>
-References: <20250519123347.2242-1-vulab@iscas.ac.cn>
-Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <20250519123347.2242-1-vulab@iscas.ac.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P123CA0317.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:197::16) To PH7PR11MB6054.namprd11.prod.outlook.com
- (2603:10b6:510:1d2::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B0F121CC55;
+	Fri, 30 May 2025 12:27:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748608072; cv=none; b=XPtZhdXr5t+zzp0BxgwwVhQEk13pArTHLnW75/zpA/Vwk3HeWve5lrIcWJmRNEZuyUl3/nEOXIsVAiLqgdcedMv+ZwT0CJHFkGRv66+jElvrma+6Hl4BkYn1TT6rk/rVh2YiGUuBe/hPBOCgdBVw+WstdOKvtWergVXuuNAYBPA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748608072; c=relaxed/simple;
+	bh=5NRw2BPuzd4CaSoFhQyS92NyyJZbEuiSnoR6lbAl7A4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=uQzJ30FA101TFGS+FQhbVKfaK9sBRKuG7lconKZb/UUocDElN3oVrSFB/4z+/RXx3a6uSLEEchWVId07FwpdADC7Ce8K4LNh488yVNzdpL8m6dSnVr/4G1hDepSBTHc5QETfUUEsblWCD7JHiCOWve9Sz5/zUULIpQF8ovAN1cA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c94cqCVD; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-476a720e806so17404431cf.0;
+        Fri, 30 May 2025 05:27:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748608069; x=1749212869; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=EjF77eIXn5rbCgQ6Jld+tzlhhos22ijDGstzJKXraFM=;
+        b=c94cqCVDaf6Ub322i2pWlWQI4XfqymhpTiMJv11frOAInthKvvuh4WUXeXud1IkQHL
+         EvegB1mLHEIxL2325kAqewdhyD/YaQfIIfkF/zQTM/+h6am7Z8dOKS4gC9tsNoIE/8GZ
+         uMhC551WSfYzxNacoQwFDAOaAW4IgTFotyq+nz0jKzZLZ49SIoWQMJxjSRoae9CkjkVa
+         TYlOfjod/uXa0NvLxMOcgw13qtRGy/FE47YLTc0PDaHfvOrntVVbMbhrKVp38Ntzvyxd
+         b8PYqZMxv6/a60anDP3cCCuDk4jmkleS7L2lEA2ExRS4iI/tXjUA1+keGkexm5shInvD
+         BIbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748608069; x=1749212869;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EjF77eIXn5rbCgQ6Jld+tzlhhos22ijDGstzJKXraFM=;
+        b=oFgWVmOWRO9gudITKgeEs3UKhW8BBX4GcVNoFRBqZc/XhYU65yVIzVD0BQ4ukRiyLA
+         uQwkvEXDJ8itx4x3elIEvtq0nwLgZ6TpPxnxYlcQWv5U3Rs0nMh2G4Fc1aJKHxF+gg93
+         nchbWaw0tfcTyI1KET2ut8vJSHMoRKo3UUt04aMAV5cDxWVFqYecQVLhufvy3btB/9Yt
+         qh4YqerIPZvJg6kj2XFgKGZ4OGRYo67KXhKSP8iU3PAHBEqnNG8hjfJb6/Oc3eKLr/BX
+         Xosp5YTmcJPXQkDVW7p31Oc4CkJJJbvTXPXm5LwwQdb6mzrM/izI6MMkSkwMCSSUSAyM
+         14yQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU6ztCYEJNpmaOjGcqunnecoNspUXqO6VGUaSdDByF3TwlVhj7QSTVuUasKT0a0yZZGtkUmDgcVR7Z3SEix@vger.kernel.org, AJvYcCVP5PwiGe9yn1W6f0Tzyc7dyz1USpYzRc/Sj1p5XuD6L6kOEukHCDMJamOwXT0ctQTI+W4KNPqzB7pnB/s=@vger.kernel.org, AJvYcCVdCyP2hR9B0WCUAOiKqa2d6AjtauBBxlHiaqrBOKPn2wNkDgiXbW/QWtJSSb/iIRQvtiVsac9pLIht@vger.kernel.org, AJvYcCW8n5mSLoh3W+8aejBnNeptm/mM4w+BUgDkI0vHsoOIZYUwqVgP2D06S6XkBa/FN1Q/NipGpaOU@vger.kernel.org, AJvYcCWsF20vm92hmV3lO5jhOXai2lUUG3XjH1jp8bZjeQo/f8dXMl14VminpUbR73DageueQ0nnFjaI/joq@vger.kernel.org, AJvYcCXLVR3FedNeN5cFujFw1GnSjak5RD1/mzgsX4DOCiQENuQTTwZXwgUI47TNnoMYXXHvxDZbG58MMQt8amayjXeU@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHfpgTGT1cys3PiZOIv4Sa0JWoMMcVGsxzv97F2B/jyG9+1zjY
+	CIKSPqbQ7T9Z90LIkRpSxCGlgjQy9RWHtK27fQNQpzu5a5IXgPJbj65Q
+X-Gm-Gg: ASbGncsf3iJWm9N3uEFTdZpQ/xqNBtwlgqPzcY9COqtJhdP05va8HmTpmRsn1Iqm/Yr
+	Pr9oSbu5Zx4YYGW8R3zASyz+lehcIg9u+3c04ERuVMlGKFpXLjMYwXdno/gvoheQZgaJjnrtY0D
+	c2L7fHcCbIlIuvkWnZ0X3a9YGpjmKV10CHi6JMXNLU4M4qEhMQhA8A+QJ8Z5PYwPkT9Wv04ocG+
+	wphZeAFDGUSN4Yzn2DRV6dF0PPKADhWHQb0TMWWxEA5yBgt1nFBlsP3dxutbRrXj6LEADkO+6Zh
+	RxlatYVTIxAGn71NHu2IheG+vSsXtDl2uh1eYUnZ/lrpju8SlfXKJuFeyBPlnQHuLRvNXQ4Uzil
+	7C9QsKH07XStktK58vLrR/46V/X0T/Yl47oWQYuGAz6mSGrmL07w/xkaJ6S2A
+X-Google-Smtp-Source: AGHT+IGfjgQI2SYiqTDZZqtk6xAv1YDFCzHe/hIZJctpyviQ3ufizyFRYxRIuu0rnsdysg0lQBJL9A==
+X-Received: by 2002:a05:622a:1f0f:b0:494:adde:e3f4 with SMTP id d75a77b69052e-4a44005415bmr52541221cf.25.1748608069240;
+        Fri, 30 May 2025 05:27:49 -0700 (PDT)
+Received: from 1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa ([2620:10d:c091:600::1:fbe8])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a4358ad334sm19700201cf.27.2025.05.30.05.27.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 May 2025 05:27:47 -0700 (PDT)
+From: Tamir Duberstein <tamird@gmail.com>
+Subject: [PATCH v11 0/5] rust: replace kernel::str::CStr w/ core::ffi::CStr
+Date: Fri, 30 May 2025 08:27:41 -0400
+Message-Id: <20250530-cstr-core-v11-0-cd9c0cbcb902@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR11MB6054:EE_|SA2PR11MB4811:EE_
-X-MS-Office365-Filtering-Correlation-Id: c90d7a58-b71d-4f3a-70e2-08dd9f75362e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7053199007;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?bzE0a25jTkpkb2E4ZW5ySE14RUNMdXRqeEJSRXZPTGdUYUdQYWg0N2tGS2hs?=
- =?utf-8?B?NndvME1EQmVhRElxQnVvNHdRUXVxTXRPb3ZtQkVWakN5WDVRWStiNlhCMlo2?=
- =?utf-8?B?ZFlBbUFBVVUxUnJESjZQbjVab2hmQW5MQ085WXJJSnVlV0VUZWNWNlNQZDBJ?=
- =?utf-8?B?YzRNUnlYT2dlM20xWFdPamNwQ3NQeFhyZHJzVytIc24rMXpRTVJyMWxiNFNn?=
- =?utf-8?B?Z0ptZkNhS28zRzJUZmxiUmhMYUdqSlNOenJCK0IzaTRsZHJ4WVZxQm1QTXRo?=
- =?utf-8?B?UUNIV2NhNVM5YzhKM0NESHRQdlJFQnVKUVkzKy9sNkVFdFhudElmRGRqaGY0?=
- =?utf-8?B?WFRPRll5RHhzLzZXUFBDZXg1bUQvVitYUzNxaFZQbUxWUng1WERNYTFmWCt3?=
- =?utf-8?B?UmhoT2M4Vmt5Wm14Z0t6ZWpXTWtnTmNrV3kvbFFoMVJDeHFIK2dBUWZEMHZW?=
- =?utf-8?B?RXhOeVcvb1J6UDMzUVliVC8wb1cxTDNsNVhCYlZycTU0dXhZZnVwYVdhcHpR?=
- =?utf-8?B?bzFtblhxQTBYcm1CU3Ryclhnd1ZsY0VPZHQrbzIzanU2NWxHcXNkb0lUR21N?=
- =?utf-8?B?NlV6cGxkSmNRNWs0Qzd6cS93UW5kaTlNVWs3b3cxQzEvTnlXckdod1ZhQnQ5?=
- =?utf-8?B?OW96dXQvSjF4WUJwaVRJN0ZwT2pHNGR6MEZrOUI2cU1CNUt3WE1aZFQ5NmJU?=
- =?utf-8?B?aGpIQ1AyZ2ZvZkdDNWVvWE8rYWhscE5YN1lUT1QxSU5JcktBTUxXbWJ6ZytJ?=
- =?utf-8?B?c014V3l3UWIyTUVNQU5NQlc4eHRRaWExRUZ6RlBNaGs3MDRMVkUvNzhXV2o4?=
- =?utf-8?B?TytyYjhIaklWT25wcllQQ0Eza2FRZDczRzFZeXVrMEJNSGlCZzF4MEI1aGxm?=
- =?utf-8?B?WG1TUGU2NlpGeFRxenNCWVBvdVE2a2lFcE9idmxKTk53bU5LUXVobDhsR1RH?=
- =?utf-8?B?ckxzRkdLSjg0MElRcXFkd1pkNzRnQko0MzdkR0NvWGtaSGNkV1ZZTm5VNzRL?=
- =?utf-8?B?Zlc0RGl0QS9TTlg5eVZzY3BCeU1wS3ZqS2UxcWd5R0VSbEpFVFNLM2UwNzYz?=
- =?utf-8?B?dytsNnhPSmQ0YThjWDlkVk1ZUFZ0dEwyWitJbi9ZdC9tbGRuUVVkaUwyVk9C?=
- =?utf-8?B?NG40cStNNC9QYy93ZnFLRCtpZW1acXBTRzVSKzRWYkgvZDVsYy9RUXpvT1F2?=
- =?utf-8?B?WkJ5dVFVbDJEN1pOZVpVMmlDeGV5NFh4NGd3SUdqc2lqc0VpdFdWSmpadkFV?=
- =?utf-8?B?UXM3em40Ni9McFhZS0NjS0VwSGJISVhZYUU5OFdpMlBOWWRBYnZkV3czMHJQ?=
- =?utf-8?B?alprRVlJeGZZT1gwOXdpbk9aOVY2MC94bWZ4M29JamJOeTJxVlpUTzczTSsv?=
- =?utf-8?B?VTB1ZHF6a2ZNaTdVSC9OVFlmZzV4MDM3STA0Qk16YTFEdmdBMWNWN3pMVjJh?=
- =?utf-8?B?SnlhYkgvUWl6YnA2cjB1WlFMbS9JRnNIMGZ5cy9GSmJpejh5a2lUc1c5emha?=
- =?utf-8?B?WjlHdk04NEZuNGhjbU1vdHk2bmVvdnFkLzFac0l3SEY2SVJPWnV2dC9maHJ4?=
- =?utf-8?B?MlAvUS9UcU83VkF1K1hXenR5d2tGRnVUZi81Z3kwTGcxMkZFUTNJa0FjZXhq?=
- =?utf-8?B?a1dyRzZJenFqTlU5TURmOVJhQVRUVEtTTmtsZnA1bEE0ZzAzcU5jcDRpb1Ax?=
- =?utf-8?B?eHJRUFFWY2VQQ0dRZW1ZQnIyaVlENzZkUU45TVA2V05Vd3Z6V2RUdXlnTk0y?=
- =?utf-8?B?UUZOZ0VVaDRRQkYwcmZwTTNhOUdUbTNSN1dtd2E1ZnduRnY3T1NrY2Z1WHls?=
- =?utf-8?B?VmNnM2djVnJPYzNGQkFXZVlNL21wdVB0empTZzZwdFRCaXpSeGR4d2ZWS1hS?=
- =?utf-8?Q?4vfyAlLwo7U6/?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR11MB6054.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?MnJ5VjBNN0loYXNvZlBtcUdhZ0lKcGdqQ1h6SEcrYmFSUHRzUE95eHdJSDBi?=
- =?utf-8?B?T3VmVlJDeXhrdUw2aE8vUTUzZHBKVUNuTHFNZHhaaW9yZXBwUHY4NlJKazZK?=
- =?utf-8?B?TzZaMEIyV25nOFk3RFMvUTV2Zi8zd3dyRUtRMWx3WUk1Y1lUaWNnY29heGxZ?=
- =?utf-8?B?MFd4WGdkZldpdDQvRlAvQmpJbU5zc2s5YjlqRzk3clJnd3JtK0NVU0Q1dmNR?=
- =?utf-8?B?WE04UjNUbzkrekdKbUhiUUV1ZnZnNmpHQlA1ZVFFUkh2LzlmYXducFhTYS9V?=
- =?utf-8?B?MU16cUNwbXkyYThjc252S3N5b2puZThOVC9tZ3oxaEZ3R0dNTXNNNkQyL3BD?=
- =?utf-8?B?QlliakpkakhmQ3dKMEc2dkJqY3h1U0tKZ1VsQ0FHaWUxYXlzK0RCeFdmcDhX?=
- =?utf-8?B?UnJkYnZQOEtscWUyOFVhMlZvL0xMcUh0eXVGRlovR0JXUmxzUitMTXQrSGZk?=
- =?utf-8?B?bG5yTW02L29wWXYwcFJkL3oxVGZpQVJKTnQ3SGtHMlVOY01DbUQyK1ZMOHBx?=
- =?utf-8?B?aXFVNnlRcWJNN2NlWHdreDJyK0hFa3RMVlU0d2cxQ0pFRG1yOWFYQlpVYUx5?=
- =?utf-8?B?Y1ZKaUdUVVFPTm9YcnpwZjR3dzRsck9NcHV0Z1hmelpqWDBrVWd1RXRZM0py?=
- =?utf-8?B?TmFsbWU2QjhCem5Cekt4enM2eGxKMVE3T0RaMVJNbkJGaHVzV0ZvczVPRFdn?=
- =?utf-8?B?bEdqbjhBR2JEclVyZUVvUHplQXRnTHJFbXh6M2JHMWVNUGNIMDVkK2I3R09j?=
- =?utf-8?B?MGFFaHNNV1BMOWpFOUJjY1lQMzlJRnhydGZqbVdSMUdaL1RhNmo1Ykd5RnNz?=
- =?utf-8?B?T0Y0V1VtaG5KRHcwRFNrQXNFM1dtNmErQlhmVVVPWFBrdE42VjFGTTcvdzdJ?=
- =?utf-8?B?V0NuTER5VWNmVU9ueGZ5MERXWDVFUjI2b0pnL01LMXdtWWh5dkpYUlE4dW5p?=
- =?utf-8?B?aDMwelpuek02TU55L2N2VGZkZlJ0cENaZkU4RlA3ZWttZTV1UmYzdElYc3Bv?=
- =?utf-8?B?cmp6V2FyM0NpQkcvVXhUa2ZIVGlOd1dmaWdPY2lIYWZlc1htU21BYVB1bEgy?=
- =?utf-8?B?VWRKUGJjbnlEdmdkQjRUWkhjZVNJM0cwRFVwSDROSm9TNG9QR3A4NFlrditY?=
- =?utf-8?B?MDg2YUVoeUpJQXZ4dkhuZ2ZlOXlEL3J1ZnhWVllZNDBUODlKVnFseFhUS0hG?=
- =?utf-8?B?cUZ3RjNtYis5TlhIOW5hR0V1NU1GKzJUMGVwMXdkWnB6VXI5OUNKTlV2WEpM?=
- =?utf-8?B?TTBCa3hjeFpOYlhKaTRvcmMwK2gvSU5tdDJHc1pObk55aWxYYWhwdENoVmlZ?=
- =?utf-8?B?bUtxbU1MZ011cU1wOGc2WFJ0UzBEUjJlTUtPaHhoZ0xzUDNVNTFyak8zaGFT?=
- =?utf-8?B?MDhZTytSK25Ta25MTGcwaGduNUhSdWZIb2xCSEEyUmJQZENCdUczTGEyblJM?=
- =?utf-8?B?WDhFTDMzcU5SSXJNcFRtWVhJMFZQSWRISWhFZWdRazB4NytXc3VJM2R5VmlQ?=
- =?utf-8?B?WXIvUE9PSldMOEhNc015NEhuNEhFOHJVWGIySlpabFRDc1poRk13Mkw3em4y?=
- =?utf-8?B?ZmZnT1JxNWFsWllKQTBIc0cyclVTdlB4MHl3SlBJUGdlYXFFZ05sa2JRWnNN?=
- =?utf-8?B?VEdUOERTbFlKL2VEdngvMnZ2ZnEwQjJnbmZISG4ySlZ3REl3WHY4SGxPdk9G?=
- =?utf-8?B?NlhYTFM3SGtaM1FsRFBiN2QvbnBjQlh5L0xkV3NReUNiMW9kSXlRNlhYY3dk?=
- =?utf-8?B?SjQ5dnk4ZVliRDR6UFlkSm9BNnV1b2lBWmRUV1FEWVltcGhtWVdTb1pUdFpT?=
- =?utf-8?B?NG5CMmpoT2s2R2VXdkVIVVorTXh4NklxaFJlZDVEbnNCdEIzdGRreU1tbVNu?=
- =?utf-8?B?emdzS1NBTGhxeWdUc0lTRkZVQU5uSlRaU29LWmN3WGlRdjlIcWlmbFprcmFj?=
- =?utf-8?B?M1pzOHRRTzVEY1FDbU5USTk2ME1Xa1JMU3JCV3RHby9JLzdpVzJCcmtLNWxB?=
- =?utf-8?B?YlorODVmcDIyYnhBZGtRN2tPRWdVblFkSld3SysvbmYzVGsxNTU0QWdaSHg4?=
- =?utf-8?B?S1VoNjRvWFovL1lVcTFaZ21vam9IbzM2Wm9tcW1RS3RFVFRYVlg4UkNGUnQ4?=
- =?utf-8?B?eWtBQ1E0U0NKZnp2TWNXd3FiTTFjVlk0RTBZMXRyUW9QZEdxWE5KQmhJRy8r?=
- =?utf-8?B?OXc9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: c90d7a58-b71d-4f3a-70e2-08dd9f75362e
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR11MB6054.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 May 2025 12:26:32.9158
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 1hqqLYmFQ0iZJZOhhAVqfDEEaSCQ3lRZ4CId8RDp3JezipaPPrXULhnnrGrEr29zeKKsi2msPPqwd2UNNj6dbQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR11MB4811
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAD6kOWgC/3XOy27DIBAF0F+JvC4RjGGArvIfVReYR4zamAgs1
+ CjyvxdHSmNZ6nIe5+reu+Jz9KV7P9y77GssMU1tYOzt0NnRTGdPomuLDigICpQRW+ZMbMqeOD7
+ oATUDakPX/q/Zh/jzCPv4bHPI6ULmMXvzTOBUMc1EjwKPoBSVBEg1LuVUy9ftdM1pTtPFxO+jT
+ Zc1coxlTvn2qFdxDX4WgU2RioQSxVFbhw50cKfzX8hapMp/pWzSGabaCSjv1V6qrey3UjVphz4
+ AeqlQ4V7ql+yZ3ErdpGAOrRUAAWEvGX1RAXxLGW0WOQOjudNOiq1dluUXREeHvdABAAA=
+X-Change-ID: 20250201-cstr-core-d4b9b69120cf
+To: Michal Rostecki <vadorovsky@protonmail.com>, 
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+ Trevor Gross <tmgross@umich.edu>, 
+ Brendan Higgins <brendan.higgins@linux.dev>, 
+ David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, 
+ Danilo Krummrich <dakr@kernel.org>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, 
+ FUJITA Tomonori <fujita.tomonori@gmail.com>, Rob Herring <robh@kernel.org>, 
+ Saravana Kannan <saravanak@google.com>, 
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+ Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, 
+ Nathan Chancellor <nathan@kernel.org>, 
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+ Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
+ Russell King <linux@armlinux.org.uk>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Bjorn Helgaas <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>, 
+ Jens Axboe <axboe@kernel.dk>, Benno Lossin <lossin@kernel.org>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
+ dri-devel@lists.freedesktop.org, netdev@vger.kernel.org, 
+ devicetree@vger.kernel.org, llvm@lists.linux.dev, linux-pci@vger.kernel.org, 
+ nouveau@lists.freedesktop.org, linux-block@vger.kernel.org, 
+ Tamir Duberstein <tamird@gmail.com>
+X-Mailer: b4 0.15-dev
 
-On 19/05/2025 15:33, Wentao Liang wrote:
-> The dhci_sprd_runtime_suspend() calls sdhci_runtime_suspend_host() but
-> does not handle the return value. A proper implementation can be found
-> in sdhci_am654_runtime_suspend().
-> 
-> Add error handling for sdhci_runtime_suspend_host(). Return the error
-> code if the suspend fails.
+This picks up from Michal Rostecki's work[0]. Per Michal's guidance I
+have omitted Co-authored tags, as the end result is quite different.
 
-I think it's better to remove the return value instead:
+Link: https://lore.kernel.org/rust-for-linux/20240819153656.28807-2-vadorovsky@protonmail.com/t/#u [0]
+Closes: https://github.com/Rust-for-Linux/linux/issues/1075
 
-	https://lore.kernel.org/linux-mmc/20250530122018.37250-1-adrian.hunter@intel.com/T/#u
+Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+---
+Changes in v11:
+- Use `quote_spanned!` to avoid `use<'a, T>` and generally reduce manual
+  token construction.
+- Add a commit to simplify `quote_spanned!`.
+- Drop first commit in favor of
+  https://lore.kernel.org/rust-for-linux/20240906164448.2268368-1-paddymills@proton.me/.
+  (Miguel Ojeda)
+- Correctly handle expressions such as `pr_info!("{a}", a = a = a)`.
+  (Benno Lossin)
+- Avoid dealing with `}}` escapes, which is not needed. (Benno Lossin)
+- Revert some unnecessary changes. (Benno Lossin)
+- Rename `c_str_avoid_literals!` to `str_to_cstr!`. (Benno Lossin &
+  Alice Ryhl).
+- Link to v10: https://lore.kernel.org/r/20250524-cstr-core-v10-0-6412a94d9d75@gmail.com
 
-> 
-> Fixes: fb8bd90f83c4 ("mmc: sdhci-sprd: Add Spreadtrum's initial host controller")
-> Cc: stable@vger.kernel.org # v4.20
-> Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
-> ---
->  drivers/mmc/host/sdhci-sprd.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mmc/host/sdhci-sprd.c b/drivers/mmc/host/sdhci-sprd.c
-> index db5e253b0f79..dd41427e973a 100644
-> --- a/drivers/mmc/host/sdhci-sprd.c
-> +++ b/drivers/mmc/host/sdhci-sprd.c
-> @@ -922,9 +922,12 @@ static int sdhci_sprd_runtime_suspend(struct device *dev)
->  {
->  	struct sdhci_host *host = dev_get_drvdata(dev);
->  	struct sdhci_sprd_host *sprd_host = TO_SPRD_HOST(host);
-> +	int ret;
->  
->  	mmc_hsq_suspend(host->mmc);
-> -	sdhci_runtime_suspend_host(host);
-> +	ret = sdhci_runtime_suspend_host(host);
-> +	if (ret)
-> +		return ret;
->  
->  	clk_disable_unprepare(sprd_host->clk_sdio);
->  	clk_disable_unprepare(sprd_host->clk_enable);
+Changes in v10:
+- Rebase on cbeaa41dfe26b72639141e87183cb23e00d4b0dd.
+- Implement Alice's suggestion to use a proc macro to work around orphan
+  rules otherwise preventing `core::ffi::CStr` to be directly printed
+  with `{}`.
+- Link to v9: https://lore.kernel.org/r/20250317-cstr-core-v9-0-51d6cc522f62@gmail.com
+
+Changes in v9:
+- Rebase on rust-next.
+- Restore `impl Display for BStr` which exists upstream[1].
+- Link: https://doc.rust-lang.org/nightly/std/bstr/struct.ByteStr.html#impl-Display-for-ByteStr [1]
+- Link to v8: https://lore.kernel.org/r/20250203-cstr-core-v8-0-cb3f26e78686@gmail.com
+
+Changes in v8:
+- Move `{from,as}_char_ptr` back to `CStrExt`. This reduces the diff
+  some.
+- Restore `from_bytes_with_nul_unchecked_mut`, `to_cstring`.
+- Link to v7: https://lore.kernel.org/r/20250202-cstr-core-v7-0-da1802520438@gmail.com
+
+Changes in v7:
+- Rebased on mainline.
+- Restore functionality added in commit a321f3ad0a5d ("rust: str: add
+  {make,to}_{upper,lower}case() to CString").
+- Used `diff.algorithm patience` to improve diff readability.
+- Link to v6: https://lore.kernel.org/r/20250202-cstr-core-v6-0-8469cd6d29fd@gmail.com
+
+Changes in v6:
+- Split the work into several commits for ease of review.
+- Restore `{from,as}_char_ptr` to allow building on ARM (see commit
+  message).
+- Add `CStrExt` to `kernel::prelude`. (Alice Ryhl)
+- Remove `CStrExt::from_bytes_with_nul_unchecked_mut` and restore
+  `DerefMut for CString`. (Alice Ryhl)
+- Rename and hide `kernel::c_str!` to encourage use of C-String
+  literals.
+- Drop implementation and invocation changes in kunit.rs. (Trevor Gross)
+- Drop docs on `Display` impl. (Trevor Gross)
+- Rewrite docs in the style of the standard library.
+- Restore the `test_cstr_debug` unit tests to demonstrate that the
+  implementation has changed.
+
+Changes in v5:
+- Keep the `test_cstr_display*` unit tests.
+
+Changes in v4:
+- Provide the `CStrExt` trait with `display()` method, which returns a
+   `CStrDisplay` wrapper with `Display` implementation. This addresses
+   the lack of `Display` implementation for `core::ffi::CStr`.
+- Provide `from_bytes_with_nul_unchecked_mut()` method in `CStrExt`,
+   which might be useful and is going to prevent manual, unsafe casts.
+- Fix a typo (s/preffered/prefered/).
+
+Changes in v3:
+- Fix the commit message.
+- Remove redundant braces in `use`, when only one item is imported.
+
+Changes in v2:
+- Do not remove `c_str` macro. While it's preferred to use C-string
+   literals, there are two cases where `c_str` is helpful:
+   - When working with macros, which already return a Rust string literal
+     (e.g. `stringify!`).
+   - When building macros, where we want to take a Rust string literal as an
+     argument (for caller's convenience), but still use it as a C-string
+     internally.
+- Use Rust literals as arguments in macros (`new_mutex`, `new_condvar`,
+   `new_mutex`). Use the `c_str` macro to convert these literals to C-string
+   literals.
+- Use `c_str` in kunit.rs for converting the output of `stringify!` to a
+   `CStr`.
+- Remove `DerefMut` implementation for `CString`.
+
+---
+Tamir Duberstein (5):
+      rust: macros: reduce collections in `quote!` macro
+      rust: support formatting of foreign types
+      rust: replace `CStr` with `core::ffi::CStr`
+      rust: replace `kernel::c_str!` with C-Strings
+      rust: remove core::ffi::CStr reexport
+
+ drivers/block/rnull.rs               |   4 +-
+ drivers/gpu/drm/drm_panic_qr.rs      |   5 +-
+ drivers/gpu/nova-core/driver.rs      |   2 +-
+ drivers/gpu/nova-core/firmware.rs    |   2 +-
+ drivers/net/phy/ax88796b_rust.rs     |   8 +-
+ drivers/net/phy/qt2025.rs            |   6 +-
+ rust/kernel/block/mq.rs              |   2 +-
+ rust/kernel/device.rs                |   9 +-
+ rust/kernel/devres.rs                |   2 +-
+ rust/kernel/driver.rs                |   4 +-
+ rust/kernel/error.rs                 |  10 +-
+ rust/kernel/faux.rs                  |   5 +-
+ rust/kernel/firmware.rs              |  16 +-
+ rust/kernel/fmt.rs                   |  77 ++++++
+ rust/kernel/kunit.rs                 |  21 +-
+ rust/kernel/lib.rs                   |   3 +-
+ rust/kernel/miscdevice.rs            |   5 +-
+ rust/kernel/net/phy.rs               |  12 +-
+ rust/kernel/of.rs                    |   5 +-
+ rust/kernel/pci.rs                   |   2 +-
+ rust/kernel/platform.rs              |   6 +-
+ rust/kernel/prelude.rs               |   5 +-
+ rust/kernel/print.rs                 |   4 +-
+ rust/kernel/seq_file.rs              |   6 +-
+ rust/kernel/str.rs                   | 443 ++++++++++-------------------------
+ rust/kernel/sync.rs                  |   7 +-
+ rust/kernel/sync/condvar.rs          |   4 +-
+ rust/kernel/sync/lock.rs             |   4 +-
+ rust/kernel/sync/lock/global.rs      |   6 +-
+ rust/kernel/sync/poll.rs             |   1 +
+ rust/kernel/workqueue.rs             |   9 +-
+ rust/macros/fmt.rs                   |  99 ++++++++
+ rust/macros/kunit.rs                 |  10 +-
+ rust/macros/lib.rs                   |  19 ++
+ rust/macros/module.rs                |   2 +-
+ rust/macros/quote.rs                 | 111 ++++-----
+ samples/rust/rust_driver_faux.rs     |   4 +-
+ samples/rust/rust_driver_pci.rs      |   4 +-
+ samples/rust/rust_driver_platform.rs |   4 +-
+ samples/rust/rust_misc_device.rs     |   3 +-
+ scripts/rustdoc_test_gen.rs          |   6 +-
+ 41 files changed, 485 insertions(+), 472 deletions(-)
+---
+base-commit: 7a17bbc1d952057898cb0739e60665908fbb8c72
+change-id: 20250201-cstr-core-d4b9b69120cf
+
+Best regards,
+-- 
+Tamir Duberstein <tamird@gmail.com>
 
 
