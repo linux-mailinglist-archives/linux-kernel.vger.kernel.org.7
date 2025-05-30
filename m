@@ -1,402 +1,386 @@
-Return-Path: <linux-kernel+bounces-668525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-668526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B190CAC93E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 18:49:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 181B4AC93ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 18:51:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 77A4B7ABFD5
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 16:48:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D786B7AA37A
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 16:49:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BDE323536B;
-	Fri, 30 May 2025 16:49:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=crowdstrike.com header.i=@crowdstrike.com header.b="g3tbbypp"
-Received: from mx0a-00206402.pphosted.com (mx0a-00206402.pphosted.com [148.163.148.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE87B1A23A2;
-	Fri, 30 May 2025 16:49:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.148.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C96BB235057;
+	Fri, 30 May 2025 16:50:55 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8D4B1DB548;
+	Fri, 30 May 2025 16:50:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748623774; cv=none; b=NJLkdscd5KqpHF4eaGr6G+BXVIj5YXWLEGSHgMYTKRDP9DLAbSN79tR1FXLjZVxSAAKaJN/fHMAnkRWmQQ3svvAIEv+qf0cqPTYLKYKKYthDpq/sIlLtK1/VuVhkD3AsMLczAD8h/UtdBVWcvn82V9JdZuyhtuMmXDeFSTkDQ+8=
+	t=1748623855; cv=none; b=VZrJuTbMkfpqU9UdKzeN0MEUHqcEZxPFHAwBubcFMqCHbYZOBEOlGZ/2KfqJBiwWQvQjRUn/TtQAGtNDmH63GuZqsRwSsqB7Fmw0BodBcp4yNAdjjjWuzwKe/xxfnLCVelawCvDNoptUn49gByz9tfEUreXnZwHUy1aKLVQP3OM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748623774; c=relaxed/simple;
-	bh=mq+8VExfNMFj16XIDJQGqcy8oUpPXpBXcMQRt/Sjtfk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SLGOmDr0jkvXDekObWdWEv9B0ObvLZA3SuBycIJcAu5vuN5CVDgIqiT6/QVXnvBcJTMBLvn1wVnT5uQA5s0nTI5GhwfYtApU7FxvtFuerWZ2zyGctuWS3QEHUNiBwMP17gQ7UkGpgb50tBgqQmNuOMHE1pqZmidRRc6PLSYZXNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=crowdstrike.com; spf=pass smtp.mailfrom=crowdstrike.com; dkim=pass (2048-bit key) header.d=crowdstrike.com header.i=@crowdstrike.com header.b=g3tbbypp; arc=none smtp.client-ip=148.163.148.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=crowdstrike.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crowdstrike.com
-Received: from pps.filterd (m0354652.ppops.net [127.0.0.1])
-	by mx0a-00206402.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54UGO1DB002318;
-	Fri, 30 May 2025 16:49:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crowdstrike.com;
-	 h=cc:content-transfer-encoding:content-type:date:from
-	:in-reply-to:message-id:mime-version:references:subject:to; s=
-	default; bh=m0xDDwWLnWiEvrgHQyJtx/t0XNiUz4bdWVqVGiJM6wY=; b=g3tb
-	byppSqzjtWmd6v0HpkoL8CFHdFvaLESYqf+F5szLHj/ZnNcUSEpynG2d7zaP0yiH
-	qVK4lxfYnZmTaqdDMGmxgUd+JV8DetK1jIO7WNOr8VHMdCBNLvgrIV0Hma5jtV6K
-	cRa4LPHJfXkdmjbr0nelqN0t+k9nXnLX6Vv1CFtqT88yTXxGCUyYFiYM6UyXgn5y
-	KkGKWHWWYx8GchmeTaXgro8v2ZyKLEQMYqtXzN2eD76zxGzpqaaBXAsmrsBsadMz
-	oTACL0CxYKqO2RDIX1q/GRPzGwehNZNOeizlEZuES3zG0u7FaDUfe0ZkEBW7fOvq
-	pcLTaLBI85i6Cp/PXA==
-Received: from mail.crowdstrike.com (dragosx.crowdstrike.com [208.42.231.60] (may be forged))
-	by mx0a-00206402.pphosted.com (PPS) with ESMTPS id 46uux3m7tv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 30 May 2025 16:49:10 +0000 (GMT)
-Received: from ML-CTVHTF21DX.crowdstrike.sys (10.100.11.122) by
- 04WPEXCH007.crowdstrike.sys (10.100.11.74) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 30 May 2025 16:49:05 +0000
-From: Slava Imameev <slava.imameev@crowdstrike.com>
-To: <qmo@kernel.org>, <ast@kernel.org>, <daniel@iogearbox.net>,
-        <andrii@kernel.org>, <shuah@kernel.org>, <bpf@vger.kernel.org>
-CC: <martin.lau@linux.dev>, <eddyz87@gmail.com>, <song@kernel.org>,
-        <yonghong.song@linux.dev>, <john.fastabend@gmail.com>,
-        <kpsingh@kernel.org>, <sdf@fomichev.me>, <haoluo@google.com>,
-        <jolsa@kernel.org>, <mykolal@fb.com>, <slava.imameev@crowdstrike.com>,
-        <justin.deschamp@crowdstrike.com>, <mark.fontana@crowdstrike.com>,
-        <linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>
-Subject: [PATCH bpf-next v2 2/2] selftests/bpf: Add test for bpftool access to read-only protected maps
-Date: Sat, 31 May 2025 02:48:44 +1000
-Message-ID: <20250530164844.74734-2-slava.imameev@crowdstrike.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20250530164844.74734-1-slava.imameev@crowdstrike.com>
-References: <20250530164844.74734-1-slava.imameev@crowdstrike.com>
+	s=arc-20240116; t=1748623855; c=relaxed/simple;
+	bh=1rAT+8CKJoN9r0BGm8ytHBHiBDR3P2OL3nwvv9m2gCU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=A5rPPKrSmLmFHaCHTVvPKW9rKd6jPf/jJKt4nDU+l4RniI038pfH676wg7RHTeyX/k3yHn9iLcAJDB5gj9dTEFU5hzamSQ5yEKYYRsijA0V1V8nZZ3loMYiG5A5aqdxGbUIj74UBqFqnPuASDymh+fjA3pFDFRzxOCImib2IeH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 63DD81692;
+	Fri, 30 May 2025 09:50:34 -0700 (PDT)
+Received: from [10.57.95.14] (unknown [10.57.95.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4A56B3F673;
+	Fri, 30 May 2025 09:50:45 -0700 (PDT)
+Message-ID: <c7017555-cc46-4cf9-86d2-03a252165062@arm.com>
+Date: Fri, 30 May 2025 17:50:43 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: 04WPEXCH012.crowdstrike.sys (10.100.11.82) To
- 04WPEXCH007.crowdstrike.sys (10.100.11.74)
-X-Disclaimer: USA
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-30_07,2025-05-30_01,2025-03-28_01
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v1 3/6] mm: Avoid calling page allocator from
+ apply_to_page_range()
+Content-Language: en-GB
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ "David S. Miller" <davem@davemloft.net>,
+ Andreas Larsson <andreas@gaisler.com>, Juergen Gross <jgross@suse.com>,
+ Ajay Kaher <ajay.kaher@broadcom.com>,
+ Alexey Makhalov <alexey.makhalov@broadcom.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "H. Peter Anvin" <hpa@zytor.com>,
+ Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+ "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Peter Zijlstra <peterz@infradead.org>, Arnd Bergmann <arnd@arndb.de>,
+ David Hildenbrand <david@redhat.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ Alexei Starovoitov <ast@kernel.org>, Andrey Ryabinin
+ <ryabinin.a.a@gmail.com>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ sparclinux@vger.kernel.org, virtualization@lists.linux.dev,
+ xen-devel@lists.xenproject.org, linux-mm@kvack.org
+References: <20250530140446.2387131-1-ryan.roberts@arm.com>
+ <20250530140446.2387131-4-ryan.roberts@arm.com>
+ <6nf3cxwhij7jtfi2u6nmt4igezf754gmue5dfskn4jkfkxmjzr@7btdipzmzjuo>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <6nf3cxwhij7jtfi2u6nmt4igezf754gmue5dfskn4jkfkxmjzr@7btdipzmzjuo>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add selftest cases that validate bpftool's expected behavior when
-accessing maps protected from modification via security_bpf_map.
+On 30/05/2025 17:23, Liam R. Howlett wrote:
+> * Ryan Roberts <ryan.roberts@arm.com> [250530 10:05]:
+>> Lazy mmu mode applies to the current task and permits pte modifications
+>> to be deferred and updated at a later time in a batch to improve
+>> performance. apply_to_page_range() calls its callback in lazy mmu mode
+>> and some of those callbacks call into the page allocator to either
+>> allocate or free pages.
+>>
+>> This is problematic with CONFIG_DEBUG_PAGEALLOC because
+>> debug_pagealloc_[un]map_pages() calls the arch implementation of
+>> __kernel_map_pages() which must modify the ptes for the linear map.
+>>
+>> There are two possibilities at this point:
+>>
+>>  - If the arch implementation modifies the ptes directly without first
+>>    entering lazy mmu mode, the pte modifications may get deferred until
+>>    the existing lazy mmu mode is exited. This could result in taking
+>>    spurious faults for example.
+>>
+>>  - If the arch implementation enters a nested lazy mmu mode before
+>>    modification of the ptes (many arches use apply_to_page_range()),
+>>    then the linear map updates will definitely be applied upon leaving
+>>    the inner lazy mmu mode. But because lazy mmu mode does not support
+>>    nesting, the remainder of the outer user is no longer in lazy mmu
+>>    mode and the optimization opportunity is lost.
+>>
+>> So let's just ensure that the page allocator is never called from within
+>> lazy mmu mode. New "_nolazy" variants of apply_to_page_range() and
+>> apply_to_existing_page_range() are introduced which don't enter lazy mmu
+>> mode. Then users which need to call into the page allocator within their
+>> callback are updated to use the _nolazy variants.
+>>
+>> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+>> ---
+>>  include/linux/mm.h |  6 ++++++
+>>  kernel/bpf/arena.c |  6 +++---
+>>  mm/kasan/shadow.c  |  2 +-
+>>  mm/memory.c        | 54 +++++++++++++++++++++++++++++++++++-----------
+>>  4 files changed, 51 insertions(+), 17 deletions(-)
+>>
+>> diff --git a/include/linux/mm.h b/include/linux/mm.h
+>> index e51dba8398f7..11cae6ce04ff 100644
+>> --- a/include/linux/mm.h
+>> +++ b/include/linux/mm.h
+>> @@ -3743,9 +3743,15 @@ static inline bool gup_can_follow_protnone(struct vm_area_struct *vma,
+>>  typedef int (*pte_fn_t)(pte_t *pte, unsigned long addr, void *data);
+>>  extern int apply_to_page_range(struct mm_struct *mm, unsigned long address,
+>>  			       unsigned long size, pte_fn_t fn, void *data);
+>> +extern int apply_to_page_range_nolazy(struct mm_struct *mm,
+>> +				      unsigned long address, unsigned long size,
+>> +				      pte_fn_t fn, void *data);
+> 
+> We are removing externs as things are edited, so probably drop them
+> here.
 
-The test includes a BPF program attached to security_bpf_map with two maps:
-- A protected map that only allows read-only access
-- An unprotected map that allows full access
+ACK
 
-The test script attaches the BPF program to security_bpf_map and
-verifies that for the bpftool map command:
-- Read access works on both maps
-- Write access fails on the protected map
-- Write access succeeds on the unprotected map
-- These behaviors remain consistent when the maps are pinned
+> 
+>>  extern int apply_to_existing_page_range(struct mm_struct *mm,
+>>  				   unsigned long address, unsigned long size,
+>>  				   pte_fn_t fn, void *data);
+>> +extern int apply_to_existing_page_range_nolazy(struct mm_struct *mm,
+>> +				   unsigned long address, unsigned long size,
+>> +				   pte_fn_t fn, void *data);
+>>  
+>>  #ifdef CONFIG_PAGE_POISONING
+>>  extern void __kernel_poison_pages(struct page *page, int numpages);
+>> diff --git a/kernel/bpf/arena.c b/kernel/bpf/arena.c
+>> index 0d56cea71602..ca833cfeefb7 100644
+>> --- a/kernel/bpf/arena.c
+>> +++ b/kernel/bpf/arena.c
+>> @@ -187,10 +187,10 @@ static void arena_map_free(struct bpf_map *map)
+>>  	/*
+>>  	 * free_vm_area() calls remove_vm_area() that calls free_unmap_vmap_area().
+>>  	 * It unmaps everything from vmalloc area and clears pgtables.
+>> -	 * Call apply_to_existing_page_range() first to find populated ptes and
+>> -	 * free those pages.
+>> +	 * Call apply_to_existing_page_range_nolazy() first to find populated
+>> +	 * ptes and free those pages.
+>>  	 */
+>> -	apply_to_existing_page_range(&init_mm, bpf_arena_get_kern_vm_start(arena),
+>> +	apply_to_existing_page_range_nolazy(&init_mm, bpf_arena_get_kern_vm_start(arena),
+>>  				     KERN_VM_SZ - GUARD_SZ, existing_page_cb, NULL);
+>>  	free_vm_area(arena->kern_vm);
+>>  	range_tree_destroy(&arena->rt);
+>> diff --git a/mm/kasan/shadow.c b/mm/kasan/shadow.c
+>> index d2c70cd2afb1..2325c5166c3a 100644
+>> --- a/mm/kasan/shadow.c
+>> +++ b/mm/kasan/shadow.c
+>> @@ -590,7 +590,7 @@ void kasan_release_vmalloc(unsigned long start, unsigned long end,
+>>  
+>>  
+>>  		if (flags & KASAN_VMALLOC_PAGE_RANGE)
+>> -			apply_to_existing_page_range(&init_mm,
+>> +			apply_to_existing_page_range_nolazy(&init_mm,
+>>  					     (unsigned long)shadow_start,
+>>  					     size, kasan_depopulate_vmalloc_pte,
+>>  					     NULL);
+>> diff --git a/mm/memory.c b/mm/memory.c
+>> index 49199410805c..24436074ce48 100644
+>> --- a/mm/memory.c
+>> +++ b/mm/memory.c
+>> @@ -2913,7 +2913,7 @@ EXPORT_SYMBOL(vm_iomap_memory);
+>>  static int apply_to_pte_range(struct mm_struct *mm, pmd_t *pmd,
+>>  				     unsigned long addr, unsigned long end,
+>>  				     pte_fn_t fn, void *data, bool create,
+>> -				     pgtbl_mod_mask *mask)
+>> +				     pgtbl_mod_mask *mask, bool lazy_mmu)
+>>  {
+>>  	pte_t *pte, *mapped_pte;
+>>  	int err = 0;
+>> @@ -2933,7 +2933,8 @@ static int apply_to_pte_range(struct mm_struct *mm, pmd_t *pmd,
+>>  			return -EINVAL;
+>>  	}
+>>  
+>> -	arch_enter_lazy_mmu_mode();
+>> +	if (lazy_mmu)
+>> +		arch_enter_lazy_mmu_mode();
+>>  
+>>  	if (fn) {
+>>  		do {
+>> @@ -2946,7 +2947,8 @@ static int apply_to_pte_range(struct mm_struct *mm, pmd_t *pmd,
+>>  	}
+>>  	*mask |= PGTBL_PTE_MODIFIED;
+>>  
+>> -	arch_leave_lazy_mmu_mode();
+>> +	if (lazy_mmu)
+>> +		arch_leave_lazy_mmu_mode();
+>>  
+>>  	if (mm != &init_mm)
+>>  		pte_unmap_unlock(mapped_pte, ptl);
+>> @@ -2956,7 +2958,7 @@ static int apply_to_pte_range(struct mm_struct *mm, pmd_t *pmd,
+>>  static int apply_to_pmd_range(struct mm_struct *mm, pud_t *pud,
+>>  				     unsigned long addr, unsigned long end,
+>>  				     pte_fn_t fn, void *data, bool create,
+>> -				     pgtbl_mod_mask *mask)
+>> +				     pgtbl_mod_mask *mask, bool lazy_mmu)
+> 
+> I am having a hard time understanding why other lazy mmus were more
+> self-contained, but arm has added arguments to generic code?
 
-Signed-off-by: Slava Imameev <slava.imameev@crowdstrike.com>
----
-Changes in v2:
-- fix for a test compilation error: "conflicting types for 'bpf_fentry_test1'"
----
----
- tools/testing/selftests/bpf/Makefile          |   1 +
- .../selftests/bpf/progs/security_bpf_map.c    |  56 +++++
- .../testing/selftests/bpf/test_bpftool_map.sh | 208 ++++++++++++++++++
- 3 files changed, 265 insertions(+)
- create mode 100644 tools/testing/selftests/bpf/progs/security_bpf_map.c
- create mode 100755 tools/testing/selftests/bpf/test_bpftool_map.sh
+They are not; as I explain in the cover letter, arm64 can work with the code as
+it is today, but IMHO opinion it is very fragile and this is an attempt to
+reduce the fragility (for all).
 
-diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftests/bpf/Makefile
-index cf5ed3bee573..731a86407799 100644
---- a/tools/testing/selftests/bpf/Makefile
-+++ b/tools/testing/selftests/bpf/Makefile
-@@ -109,6 +109,7 @@ TEST_PROGS := test_kmod.sh \
- 	test_xdping.sh \
- 	test_bpftool_build.sh \
- 	test_bpftool.sh \
-+	test_bpftool_map.sh \
- 	test_bpftool_metadata.sh \
- 	test_doc_build.sh \
- 	test_xsk.sh \
-diff --git a/tools/testing/selftests/bpf/progs/security_bpf_map.c b/tools/testing/selftests/bpf/progs/security_bpf_map.c
-new file mode 100644
-index 000000000000..09048c096ee4
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/security_bpf_map.c
-@@ -0,0 +1,56 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+
-+#include "vmlinux.h"
-+#include <bpf/bpf_tracing.h>
-+#include <bpf/bpf_helpers.h>
-+
-+char _license[] SEC("license") = "GPL";
-+
-+#define EPERM 1 /* Operation not permitted */
-+
-+/* From include/linux/mm.h. */
-+#define FMODE_WRITE	0x2
-+
-+struct map;
-+
-+struct {
-+	__uint(type, BPF_MAP_TYPE_ARRAY);
-+	__type(key, __u32);
-+	__type(value, __u32);
-+	__uint(max_entries, 1);
-+} prot_map SEC(".maps");
-+
-+struct {
-+	__uint(type, BPF_MAP_TYPE_ARRAY);
-+	__type(key, __u32);
-+	__type(value, __u32);
-+	__uint(max_entries, 1);
-+} not_prot_map SEC(".maps");
-+
-+SEC("fmod_ret/security_bpf_map")
-+int BPF_PROG(fmod_bpf_map, struct bpf_map *map, int fmode)
-+{
-+	if (map == &prot_map) {
-+		/* Allow read-only access */
-+		if (fmode & FMODE_WRITE)
-+			return -EPERM;
-+	}
-+
-+	return 0;
-+}
-+
-+/*
-+ * This program keeps references to maps. This is needed to prevent
-+ * optimizing them out.
-+ */
-+SEC("fentry/bpf_fentry_test1")
-+int BPF_PROG(bpf_map_test0, int a)
-+{
-+	__u32 key = 0;
-+	__u32 val1 = a;
-+	__u32 val2 = a + 1;
-+
-+	bpf_map_update_elem(&prot_map, &key, &val1, BPF_ANY);
-+	bpf_map_update_elem(&not_prot_map, &key, &val2, BPF_ANY);
-+	return 0;
-+}
-diff --git a/tools/testing/selftests/bpf/test_bpftool_map.sh b/tools/testing/selftests/bpf/test_bpftool_map.sh
-new file mode 100755
-index 000000000000..c7c7f3d2071e
---- /dev/null
-+++ b/tools/testing/selftests/bpf/test_bpftool_map.sh
-@@ -0,0 +1,208 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+
-+# Kselftest framework requirement - SKIP code is 4.
-+ksft_skip=4
-+
-+PROTECTED_MAP_NAME="prot_map"
-+NOT_PROTECTED_MAP_NAME="not_prot_map"
-+BPF_FILE="security_bpf_map.bpf.o"
-+TESTNAME="security_bpf_map"
-+BPF_FS=$(awk '$3 == "bpf" {print $2; exit}' /proc/mounts)
-+BPF_DIR="$BPF_FS/test_$TESTNAME"
-+SCRIPT_DIR=$(dirname $(realpath "$0"))
-+BPF_FILE_PATH="$SCRIPT_DIR/$BPF_FILE"
-+# Assume the script is located under tools/testing/selftests/bpf/
-+KDIR_ROOT_DIR=$(realpath "$SCRIPT_DIR"/../../../../)
-+
-+_cleanup()
-+{
-+	set +eu
-+	[ -d "$TMPDIR" ] && rm -rf "$TMPDIR" 2> /dev/null
-+	[ -d "$BPF_DIR" ] && rm -rf "$BPF_DIR" 2> /dev/null
-+}
-+
-+cleanup_skip()
-+{
-+	echo "selftests: $TESTNAME [SKIP]"
-+	_cleanup
-+
-+	exit $ksft_skip
-+}
-+
-+cleanup()
-+{
-+	if [ "$?" = 0 ]; then
-+		echo "selftests: $TESTNAME [PASS]"
-+	else
-+		echo "selftests: $TESTNAME [FAILED]"
-+	fi
-+	_cleanup
-+}
-+
-+# Parameters:
-+#   $1: The top of kernel repository
-+#   $2: Output directory
-+build_bpftool()
-+{
-+	local kdir_root_dir="$1"
-+	local output_dir="$2"
-+	local pwd="$(pwd)"
-+	local ncpus=1
-+
-+	echo Building bpftool ...
-+
-+	#We want to start build from the top of kernel repository.
-+	cd "$kdir_root_dir"
-+	if [ ! -e tools/bpf/bpftool/Makefile ]; then
-+		echo bpftool files not found
-+		exit $ksft_skip
-+	fi
-+
-+	# Determine the number of CPUs for parallel compilation
-+	if command -v nproc >/dev/null 2>&1; then
-+		ncpus=$(nproc)
-+	fi
-+
-+	make -C tools/bpf/bpftool -s -j"$ncpus" OUTPUT="$output_dir"/ >/dev/null
-+	echo ... finished building bpftool
-+	cd "$pwd"
-+}
-+
-+# Function to test map access with configurable write expectations
-+# Parameters:
-+#   $1: Map name
-+#   $2: Whether write should succeed (true/false)
-+#   $3: bpftool path
-+#   $4: BPF_DIR
-+test_map_access() {
-+	local map_name="$1"
-+	local write_should_succeed="$2"
-+	local bpftool_path="$3"
-+	local pin_path="$4/${map_name}_pinned"
-+	local key="0 0 0 0"
-+	local value="1 1 1 1"
-+
-+	echo "Testing access to map: $map_name"
-+
-+	# Test read access to the map
-+	if "$bpftool_path" map lookup name "$map_name" key $key; then
-+		echo "  Read access to $map_name succeeded"
-+	else
-+		echo "  Read access to $map_name failed"
-+		exit 1
-+	fi
-+
-+	# Test write access to the map
-+	if "$bpftool_path" map update name "$map_name" key $key value $value; then
-+		if [ "$write_should_succeed" = "true" ]; then
-+			echo "  Write access to $map_name succeeded as expected"
-+		else
-+			echo "  Write access to $map_name succeeded but should have failed"
-+			exit 1
-+		fi
-+	else
-+		if [ "$write_should_succeed" = "true" ]; then
-+			echo "  Write access to $map_name failed but should have succeeded"
-+			exit 1
-+		else
-+			echo "  Write access to $map_name failed as expected"
-+		fi
-+	fi
-+
-+	# Pin the map to the BPF filesystem
-+	"$bpftool_path" map pin name "$map_name" "$pin_path"
-+	if [ -e "$pin_path" ]; then
-+		echo "  Successfully pinned $map_name to $pin_path"
-+	else
-+		echo "  Failed to pin $map_name"
-+		exit 1
-+	fi
-+
-+	# Test read access to the pinned map
-+	if "$bpftool_path" map lookup pinned "$pin_path" key $key; then
-+		echo "  Read access to pinned $map_name succeeded"
-+	else
-+		echo "  Read access to pinned $map_name failed"
-+		exit 1
-+	fi
-+
-+	# Test write access to the pinned map
-+	if "$bpftool_path" map update pinned "$pin_path" key $key value $value; then
-+		if [ "$write_should_succeed" = "true" ]; then
-+			echo "  Write access to pinned $map_name succeeded as expected"
-+		else
-+			echo "  Write access to pinned $map_name succeeded but should have failed"
-+			exit 1
-+		fi
-+	else
-+		if [ "$write_should_succeed" = "true" ]; then
-+			echo "  Write access to pinned $map_name failed but should have succeeded"
-+			exit 1
-+		else
-+			echo "  Write access to pinned $map_name failed as expected"
-+		fi
-+	fi
-+
-+	echo "  Finished testing $map_name"
-+	echo
-+}
-+
-+check_root_privileges() {
-+	if [ $(id -u) -ne 0 ]; then
-+		echo "Need root privileges"
-+		exit $ksft_skip
-+	fi
-+}
-+
-+check_bpffs() {
-+	if [ -z "$BPF_FS" ]; then
-+		echo "Could not run test without bpffs mounted"
-+		exit $ksft_skip
-+	fi
-+}
-+
-+create_tmp_dir() {
-+	TMPDIR=$(mktemp -d)
-+	if [ $? -ne 0 ] || [ ! -d "$TMPDIR" ]; then
-+		echo "Failed to create temporary directory"
-+		exit $ksft_skip
-+	fi
-+}
-+
-+locate_or_build_bpftool() {
-+	if ! bpftool version > /dev/null 2>&1; then
-+		build_bpftool "$KDIR_ROOT_DIR" "$TMPDIR"
-+		BPFTOOL_PATH="$TMPDIR"/bpftool
-+	else
-+		echo "Using bpftool from PATH"
-+		BPFTOOL_PATH="bpftool"
-+	fi
-+}
-+
-+set -eu
-+
-+trap cleanup_skip EXIT
-+
-+check_root_privileges
-+
-+check_bpffs
-+
-+create_tmp_dir
-+
-+locate_or_build_bpftool
-+
-+mkdir "$BPF_DIR"
-+
-+trap cleanup EXIT
-+
-+# Load and attach the BPF programs to control maps access
-+"$BPFTOOL_PATH" prog loadall "$BPF_FILE_PATH" "$BPF_DIR"/prog autoattach
-+
-+# Test protected map (write should fail)
-+test_map_access "$PROTECTED_MAP_NAME" "false" "$BPFTOOL_PATH" "$BPF_DIR"
-+
-+# Test not protected map (write should succeed)
-+test_map_access "$NOT_PROTECTED_MAP_NAME" "true" "$BPFTOOL_PATH" "$BPF_DIR"
-+
-+exit 0
--- 
-2.34.1
+> 
+>>  {
+>>  	pmd_t *pmd;
+>>  	unsigned long next;
+>> @@ -2983,7 +2985,7 @@ static int apply_to_pmd_range(struct mm_struct *mm, pud_t *pud,
+>>  			pmd_clear_bad(pmd);
+>>  		}
+>>  		err = apply_to_pte_range(mm, pmd, addr, next,
+>> -					 fn, data, create, mask);
+>> +					 fn, data, create, mask, lazy_mmu);
+>>  		if (err)
+>>  			break;
+>>  	} while (pmd++, addr = next, addr != end);
+>> @@ -2994,7 +2996,7 @@ static int apply_to_pmd_range(struct mm_struct *mm, pud_t *pud,
+>>  static int apply_to_pud_range(struct mm_struct *mm, p4d_t *p4d,
+>>  				     unsigned long addr, unsigned long end,
+>>  				     pte_fn_t fn, void *data, bool create,
+>> -				     pgtbl_mod_mask *mask)
+>> +				     pgtbl_mod_mask *mask, bool lazy_mmu)
+>>  {
+>>  	pud_t *pud;
+>>  	unsigned long next;
+>> @@ -3019,7 +3021,7 @@ static int apply_to_pud_range(struct mm_struct *mm, p4d_t *p4d,
+>>  			pud_clear_bad(pud);
+>>  		}
+>>  		err = apply_to_pmd_range(mm, pud, addr, next,
+>> -					 fn, data, create, mask);
+>> +					 fn, data, create, mask, lazy_mmu);
+>>  		if (err)
+>>  			break;
+>>  	} while (pud++, addr = next, addr != end);
+>> @@ -3030,7 +3032,7 @@ static int apply_to_pud_range(struct mm_struct *mm, p4d_t *p4d,
+>>  static int apply_to_p4d_range(struct mm_struct *mm, pgd_t *pgd,
+>>  				     unsigned long addr, unsigned long end,
+>>  				     pte_fn_t fn, void *data, bool create,
+>> -				     pgtbl_mod_mask *mask)
+>> +				     pgtbl_mod_mask *mask, bool lazy_mmu)
+>>  {
+>>  	p4d_t *p4d;
+>>  	unsigned long next;
+>> @@ -3055,7 +3057,7 @@ static int apply_to_p4d_range(struct mm_struct *mm, pgd_t *pgd,
+>>  			p4d_clear_bad(p4d);
+>>  		}
+>>  		err = apply_to_pud_range(mm, p4d, addr, next,
+>> -					 fn, data, create, mask);
+>> +					 fn, data, create, mask, lazy_mmu);
+>>  		if (err)
+>>  			break;
+>>  	} while (p4d++, addr = next, addr != end);
+>> @@ -3065,7 +3067,7 @@ static int apply_to_p4d_range(struct mm_struct *mm, pgd_t *pgd,
+>>  
+>>  static int __apply_to_page_range(struct mm_struct *mm, unsigned long addr,
+>>  				 unsigned long size, pte_fn_t fn,
+>> -				 void *data, bool create)
+>> +				 void *data, bool create, bool lazy_mmu)
+>>  {
+>>  	pgd_t *pgd;
+>>  	unsigned long start = addr, next;
+>> @@ -3091,7 +3093,7 @@ static int __apply_to_page_range(struct mm_struct *mm, unsigned long addr,
+>>  			pgd_clear_bad(pgd);
+>>  		}
+>>  		err = apply_to_p4d_range(mm, pgd, addr, next,
+>> -					 fn, data, create, &mask);
+>> +					 fn, data, create, &mask, lazy_mmu);
+> 
+> This is annoying.  We now have a bool, bool passed through with mask
+> inserted in the middle.
+> 
+>>  		if (err)
+>>  			break;
+>>  	} while (pgd++, addr = next, addr != end);
+>> @@ -3105,11 +3107,14 @@ static int __apply_to_page_range(struct mm_struct *mm, unsigned long addr,
+>>  /*
+>>   * Scan a region of virtual memory, filling in page tables as necessary
+>>   * and calling a provided function on each leaf page table.
+>> + *
+>> + * fn() is called in lazy mmu mode. As a result, the callback must be careful
+>> + * not to perform memory allocation.
+>>   */
+>>  int apply_to_page_range(struct mm_struct *mm, unsigned long addr,
+>>  			unsigned long size, pte_fn_t fn, void *data)
+>>  {
+>> -	return __apply_to_page_range(mm, addr, size, fn, data, true);
+>> +	return __apply_to_page_range(mm, addr, size, fn, data, true, true);
+> 
+> Please add something here to tell me what false, true is.
+> 
+>>  }
+>>  EXPORT_SYMBOL_GPL(apply_to_page_range);
+>>  
+>> @@ -3117,13 +3122,36 @@ EXPORT_SYMBOL_GPL(apply_to_page_range);
+>>   * Scan a region of virtual memory, calling a provided function on
+>>   * each leaf page table where it exists.
+>>   *
+>> + * fn() is called in lazy mmu mode. As a result, the callback must be careful
+>> + * not to perform memory allocation.
+>> + *
+>>   * Unlike apply_to_page_range, this does _not_ fill in page tables
+>>   * where they are absent.
+>>   */
+>>  int apply_to_existing_page_range(struct mm_struct *mm, unsigned long addr,
+>>  				 unsigned long size, pte_fn_t fn, void *data)
+>>  {
+>> -	return __apply_to_page_range(mm, addr, size, fn, data, false);
+>> +	return __apply_to_page_range(mm, addr, size, fn, data, false, true);
+> 
+> every..
+> 
+>> +}
+>> +
+>> +/*
+>> + * As per apply_to_page_range() but fn() is not called in lazy mmu mode.
+>> + */
+>> +int apply_to_page_range_nolazy(struct mm_struct *mm, unsigned long addr,
+>> +			       unsigned long size, pte_fn_t fn, void *data)
+>> +{
+>> +	return __apply_to_page_range(mm, addr, size, fn, data, true, false);
+> 
+> one...
+> 
+>> +}
+>> +
+>> +/*
+>> + * As per apply_to_existing_page_range() but fn() is not called in lazy mmu
+>> + * mode.
+>> + */
+>> +int apply_to_existing_page_range_nolazy(struct mm_struct *mm,
+>> +					unsigned long addr, unsigned long size,
+>> +					pte_fn_t fn, void *data)
+>> +{
+>> +	return __apply_to_page_range(mm, addr, size, fn, data, false, false);
+> 
+> adds confusion :)
+> 
+> 
+> These wrappers are terrible for readability and annoying for argument
+> lists too.
+
+Agreed.
+
+> 
+> Could we do something like the pgtbl_mod_mask or zap_details and pass
+> through a struct or one unsigned int for create and lazy_mmu?
+
+Or just create some enum flags?
+
+> 
+> At least we'd have better self-documenting code in the wrappers.. and if
+> we ever need a third boolean, we could avoid multiplying the wrappers
+> again.
+> 
+> WDYT?
+
+I'm happy with either approach. I was expecting more constination about the idea
+of being able to disable lazy mode though, so perhaps I'll wait and see if any
+arrives. If it doesn't... flags?
+
+> 
+> Cheers,
+> Liam
 
 
