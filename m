@@ -1,161 +1,277 @@
-Return-Path: <linux-kernel+bounces-667876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-667879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F9ECAC8AEA
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 11:34:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 514D7AC8AF1
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 11:35:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97CD97A9E9F
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 09:33:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40EC67AE30A
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 09:33:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDBBE22B5B5;
-	Fri, 30 May 2025 09:31:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="a7G9f4sB"
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1646E22DA1D;
+	Fri, 30 May 2025 09:32:07 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CB79221277
-	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 09:31:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98D58222578;
+	Fri, 30 May 2025 09:32:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748597506; cv=none; b=OvngwBkZtECJsC2Q0TXkDpyeteN2iYhBNvi8PQ0cZ8PbmigsCDM58GT8lmyySxB9hrCWU3DyeTycq80uleRsAnpXvCLaN2OFHbxCyEBcDDVEYLQj3jPAHVHdtg29wRv54Z/HATUie78c3ZLzIWe0WCVPcsJG6DERU+9OXzqP/gE=
+	t=1748597526; cv=none; b=mZdzxBgGVaguqIEpYZK2GxTx4gAT0pyhWgMxlq/Xs1qcDALiz5QYyxxvr8yLt530o1pvMigaKqoXl60u0lxwMJFOU/Enf01M9pOqEeQpEebqtc9xnyie3oiHD6A5L+Ej/VavcVlYBF3C/l0vboDdiFO5QU5D6yiiS0XfBv3YLMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748597506; c=relaxed/simple;
-	bh=zjDdMcJo7Ja3I/WBhXEJPi7Vf8GGUIfVIusJmH+sQRo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JO3Scn60DQJG+epi51OQjHNL/HRJrrRQ0ijv/POTsmPh4eeq1HCh0QSMxvh7ZJoH5jxzS80VqWwgv0K7b8CHb5mNFm4lwlkNJ/1+kCLqLh9e6h1YqlJijqb6lPcvXMmt69hDQyrExSxwMfkkNOCBWj1cxZ+Cc/SRuqH6iehW+ug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=a7G9f4sB; arc=none smtp.client-ip=209.85.219.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e75668006b9so1673881276.3
-        for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 02:31:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1748597503; x=1749202303; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=nl25XztXyY+91TCe2znVYLQyRFe3A02EIrzJh6x7GCo=;
-        b=a7G9f4sBEY/YGgHiyzGfQtcl5WwSScKP5t262cYRu4yvgwRWO9SoLXiW9BrGywzoYP
-         en2jB2ZZrJLDZXKGRBwjZKU2IzeMHq2Q2B/cdLNOS/g5z6WwCzJSBHmEXzF6F7gQcJAD
-         qJvCEjWHh++ezR3sYbYR2h9+7UgMUgX0E2UXBJtvH52TziCwzxe/iYQ7PqWg/kJPHtn7
-         WklZyDsFHsyOKXYknJx1Oa6RhetNNgCw0ZN4IjkRiw1MJUQsTDKtuLSakphPQ0em8wfi
-         XfUfHrbAPLNhkEAldnqqsuDHaXRSV40TjZJops9Kgcb7Y6yfi/H6DTsOYZJYcKvgAMty
-         2t1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748597503; x=1749202303;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nl25XztXyY+91TCe2znVYLQyRFe3A02EIrzJh6x7GCo=;
-        b=bWs+5cSm+drV8N0GUT8+xrOUlUBN4vXffswxIb6WsEAQ1YoyKNIK4UG5BdjGVH5OJp
-         6OM2zHY9iG3WsJ77ivgo9bjXohb7m/6CO+HmUG1QDK9AD+3/I3OB6t5c8d6iOEE/zisq
-         H0nmt/1dVQxaK1r/+gCulFunapMBmPVJePh7hI1TxwMGxjAxn7ELbfO4adXgEz9vO4qR
-         2Ee+oo8AtYbyBaouW28YQv4c533CvrOHzVpZy5/le2sk4awnHRBu/MJ2AFegmRSbFFqq
-         u94w2s+ILeRK8aD0CEczaNfcxpo+MED9QKt0InJix0Xq/Xe234b3qD2NG6i34So1xkcD
-         eY+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVgtJ9jbKU5PbquVQJVVMzNytpVF61D6bLoQYMW/rPFu1ZsRn/bW+dLQpxB80Up4Xzc4aVaFhB8YD/ctno=@vger.kernel.org
-X-Gm-Message-State: AOJu0YygsUMF49RXZwkXGnBDZGImybrSJYGq5Kq9WlkOpIRpdVm+Mq77
-	W2MiuR4F9AQR2f2OWRadeN00wqt1+apQPb9DASNr2sC5z6FsFHsyskbdX6Kldga/QFjh+WTx7Q+
-	BFdcWrlzDxEDBzIMiFIhVR36IKbIgAHCrmcdacuhoTQ==
-X-Gm-Gg: ASbGncsMkNLS3962e/j4SQlPzkE4Kh0V1rPRZSlju23TQKCSZuqSfsoAusEz5Zd7EXL
-	xuxRykW75TNooWJWhyVH9HDpMIm8lhtOZoi9eS5QaPEefkLUV0buTbwwsNnxxP+6GUZ4YR8Qw04
-	4SUF+/dY4MdX7XEfbnLtAQ5f9c5t7EOhDjWMQ9Av28H+dRI3TYbRUmakc=
-X-Google-Smtp-Source: AGHT+IH95Myawh7TbubfOpFEx22AdElqILjS1RFSDs37pv1ARTzzSoQyHKeRwabQyQ3x8Rz9anZLL/Bb5eyOoF6wyYc=
-X-Received: by 2002:a05:6902:20c7:b0:e7d:c9f4:952b with SMTP id
- 3f1490d57ef6-e7f81de0626mr3793584276.16.1748597503389; Fri, 30 May 2025
- 02:31:43 -0700 (PDT)
+	s=arc-20240116; t=1748597526; c=relaxed/simple;
+	bh=r3EQ7kD0QYtBm/wVC83vp9ptG9VHOOzuguqUtvBO63U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=DAaRP8bGhEOJ5m2o9uJgUrGh12GDM1JoNISKwv2K2nxIUV/lF61Z43l1gV/7KT3tPNn0GI++SkDIWoMcT3Ei4XHwpLUpNgD2uZtK+u4MDwRIy+rzZrDUnuhlvBWYjLPQClldvb67byZTKu8J8je/171nYoUy//9VjejOYeistfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4b7yb13zDqz2CfQD;
+	Fri, 30 May 2025 17:28:13 +0800 (CST)
+Received: from kwepemg500008.china.huawei.com (unknown [7.202.181.45])
+	by mail.maildlp.com (Postfix) with ESMTPS id 696321A016C;
+	Fri, 30 May 2025 17:31:59 +0800 (CST)
+Received: from [127.0.0.1] (10.174.177.71) by kwepemg500008.china.huawei.com
+ (7.202.181.45) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 30 May
+ 2025 17:31:58 +0800
+Message-ID: <6200e067-0ad1-4dc4-9694-05ee1e977f4c@huawei.com>
+Date: Fri, 30 May 2025 17:31:48 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250528-pmdomain-hierarchy-onecell-v2-0-7885ae45e59c@baylibre.com>
- <20250528-pmdomain-hierarchy-onecell-v2-1-7885ae45e59c@baylibre.com>
-In-Reply-To: <20250528-pmdomain-hierarchy-onecell-v2-1-7885ae45e59c@baylibre.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Fri, 30 May 2025 11:31:07 +0200
-X-Gm-Features: AX0GCFsDY9QpXv-TDLaqMDwAZXQiaP-2ORBs2bXkP6yJWXm02HY-f6aS5ywCE0Y
-Message-ID: <CAPDyKFqs=EuwzBodoh9-tnuDQP85bv3UnS5eoekCpjUbictfBQ@mail.gmail.com>
-Subject: Re: [PATCH RFC v2 1/2] dt-bindings: power: add nexus map for power-domains
-To: Kevin Hilman <khilman@baylibre.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	arm-scmi@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/4] ext4: move mb_last_[group|start] to ext4_inode_info
+To: Jan Kara <jack@suse.cz>
+CC: <linux-ext4@vger.kernel.org>, <tytso@mit.edu>, <adilger.kernel@dilger.ca>,
+	<linux-kernel@vger.kernel.org>, <yi.zhang@huawei.com>,
+	<yangerkun@huawei.com>, <libaokun@huaweicloud.com>, Baokun Li
+	<libaokun1@huawei.com>
+References: <20250523085821.1329392-1-libaokun@huaweicloud.com>
+ <20250523085821.1329392-3-libaokun@huaweicloud.com>
+ <afjkyrm4y5mp5p72ew3ddqma7v4gkmjqdkcloeaidcj55ruami@zfkn6dzgqfwh>
+Content-Language: en-US
+From: Baokun Li <libaokun1@huawei.com>
+In-Reply-To: <afjkyrm4y5mp5p72ew3ddqma7v4gkmjqdkcloeaidcj55ruami@zfkn6dzgqfwh>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
+ kwepemg500008.china.huawei.com (7.202.181.45)
 
-On Wed, 28 May 2025 at 23:59, Kevin Hilman <khilman@baylibre.com> wrote:
->
-> Add support for nexus map to be able to support hierarchical power
-> domains for providers with #power-domain-cells > 0.
->
-> Suggested-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+Hello Honza,
 
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+Thank you for you review!
 
-Kind regards
-Uffe
+On 2025/5/29 20:56, Jan Kara wrote:
+> On Fri 23-05-25 16:58:19, libaokun@huaweicloud.com wrote:
+>> From: Baokun Li <libaokun1@huawei.com>
+>>
+>> After we optimized the block group lock, we found another lock
+>> contention issue when running will-it-scale/fallocate2 with multiple
+>> processes. The fallocate's block allocation and the truncate's block
+>> release were fighting over the s_md_lock. The problem is, this lock
+>> protects totally different things in those two processes: the list of
+>> freed data blocks (s_freed_data_list) when releasing, and where to start
+>> looking for new blocks (mb_last_[group|start]) when allocating.
+>>
+>> Moreover, when allocating data blocks, if the first try (goal allocation)
+>> fails and stream allocation is on, it tries a global goal starting from
+>> the last group we used (s_mb_last_group). This can make things faster by
+>> writing blocks close together on the disk. But when many processes are
+>> allocating, they all fight over s_md_lock and might even try to use the
+>> same group. This makes it harder to merge extents and can make files more
+>> fragmented. If different processes allocate chunks of very different sizes,
+>> the free space on the disk can also get fragmented. A small allocation
+>> might fit in a partially full group, but a big allocation might have
+>> skipped it, leading to the small IO ending up in a more empty group.
+>>
+>> So, we're changing stream allocation to work per inode. First, it tries
+>> the goal, then the last group where that inode successfully allocated a
+>> block. This keeps an inode's data closer together. Plus, after moving
+>> mb_last_[group|start] to ext4_inode_info, we don't need s_md_lock during
+>> block allocation anymore because we already have the write lock on
+>> i_data_sem. This gets rid of the contention between allocating and
+>> releasing blocks, which gives a huge performance boost to fallocate2.
+>>
+>> Performance test data follows:
+>>
+>> CPU: HUAWEI Kunpeng 920
+>> Memory: 480GB
+>> Disk: 480GB SSD SATA 3.2
+>> Test: Running will-it-scale/fallocate2 on 64 CPU-bound containers.
+>> Observation: Average fallocate operations per container per second.
+>>
+>>                        base     patched
+>> mb_optimize_scan=0    6755     23280 (+244.6%)
+>> mb_optimize_scan=1    4302     10430 (+142.4%)
+>>
+>> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+> Good spotting with the s_md_lock contention here. But your changes don't
+> quite make sense to me. The idea of streaming allocation in mballoc is to
+> have an area of filesystem for large files to reduce fragmentation.  When
+> you switch to per-inode, this effect of packing large files together goes
+> away. Futhermore for each inode either all allocations will be very likely
+> streaming or not streaming (the logic uses file size) so either your
+> per-inode target will be unused or just another constantly used copy of
+> goal value.
+Sorry, I didn't intend to  break streaming allocation's semantics.
+A precise definition of streaming allocation is not found in the
+existing code, documentation, or historical records. Consequently,
+my previous understanding of it was somewhat inaccurate.
 
-> ---
->  Documentation/devicetree/bindings/power/power-domain.yaml | 35 +++++++++++++++++++++++++++++++++++
->  1 file changed, 35 insertions(+)
+I previously thought it was used to optimize the efficiency of linear
+traversal. For instance, if 500 inodes are created in group 0 and each
+file is sequentially filled to 1GB, each file's goal, being empty, would
+be group 1 (the second group in the inode's flex_bg).
+
+Without a global goal and in the absence of non-linear traversal,
+after the first inode is filled, the second inode would need to traverse
+groups 1 through 8 to find its first free block.
+
+This inefficiency escalates, eventually requiring the 500th inode to
+potentially traverse almost 4000 block groups to find its first available
+block.
+
+I initially believed it could be split to the inode level to reduce
+traversal time and file fragmentation. However, as you pointed out,
+its purpose is to cluster large files, not data blocks within a file.
+Given this, splitting it to the inode level no longer makes sense.
+> So I can see two sensible solutions here:
+> a) Drop streaming allocations support altogether.
+As mentioned above, it can also greatly improve the efficiency of linear
+traversal, so we can't simply remove it.
 >
-> diff --git a/Documentation/devicetree/bindings/power/power-domain.yaml b/Documentation/devicetree/bindings/power/power-domain.yaml
-> index 8fdb529d560b..9f099d326aee 100644
-> --- a/Documentation/devicetree/bindings/power/power-domain.yaml
-> +++ b/Documentation/devicetree/bindings/power/power-domain.yaml
-> @@ -68,6 +68,15 @@ properties:
->        by the given provider should be subdomains of the domain specified
->        by this binding.
+> b) Enhance streaming allocation support to avoid contention between
+> processes allocating in parallel and freeing. Frankly, there's no strong
+> reason why reads & writes of streaming allocation goal need to use a
+> spinlock AFAICS.
+Yes, since it's just a hint, we don't need a lock at all, not even
+fe_start, we just need the last fe_group.
+> We could just store a physical block number and use
+> atomic64 accessors for it? Also having single goal value is just causing
+> more contention on group locks for parallel writers that end up using it
+> (that's the problem I suspect you were hitting the most).
+Spot on! We did try a single, lockless atomic64 variable, and just as
+you pointed out, all processes started traversing from the very same
+group, which just cranked up the contention, dropping OPS to just 6745.
+>   So perhaps we
+> can keep multiple streaming goal slots in the superblock (scale the count
+> based on CPU count & filesystem group count) and just pick the slot based
+> on inode number hash to reduce contention?
 >
-> +  power-domains-map:
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +    description:
-> +      Nexus node mapping property that establishes parent-child relationships
-> +      for PM domains using the format defined in the Device Tree specification
-> +      section 2.5.1. Each map entry consists of child domain specifier,
-> +      parent phandle, and optional parent specifier arguments. This property
-> +      is only supported for onecell providers (#power-domain-cells = 1).
-> +
->  required:
->    - "#power-domain-cells"
->
-> @@ -133,3 +142,29 @@ examples:
->              min-residency-us = <7000>;
->          };
->      };
-> +
-> +  - |
-> +    // Example using power-domains-map for Nexus mapping
-> +    main_pd: power-controller@12370000 {
-> +        compatible = "foo,power-controller";
-> +        reg = <0x12370000 0x1000>;
-> +        #power-domain-cells = <0>;
-> +    };
-> +
-> +    wkup_pd: power-controller@12380000 {
-> +        compatible = "foo,power-controller";
-> +        reg = <0x12380000 0x1000>;
-> +        #power-domain-cells = <0>;
-> +    };
-> +
-> +    scmi_pds protocol@11 {
-> +        compatible = "arm,scmi-power-domain";
-> +        reg = <0x11>;
-> +        #power-domain-cells = <1>;
-> +        power-domains-map = <15 &main_pd>,
-> +                            <19 &wkup_pd>;
-> +    };
-> +
-> +    // In this example using Nexus node mapping:
-> +    // - Child domain 15 (scmi_pds 15) becomes a subdomain of main_pd
-> +    // - Child domain 19 (scmi_pds 19) becomes a subdomain of wkup_pd
->
-> --
-> 2.49.0
->
+> 								Honza
+That's a brilliant idea, actually!
+
+Since most containers are CPU-pinned, this would naturally cluster a single
+container's data blocks together. I believe we can also apply this to inode
+allocation, so a container's inodes and data are all in a single region,
+significantly reducing interference between containers.
+
+My gratitude for your valuable suggestion!
+I'm going to try out the CPU bucketing approach.
+
+Regards,
+Baokun
+
+
+>> ---
+>>   fs/ext4/ext4.h    |  7 ++++---
+>>   fs/ext4/mballoc.c | 20 +++++++++-----------
+>>   fs/ext4/super.c   |  2 ++
+>>   3 files changed, 15 insertions(+), 14 deletions(-)
+>>
+>> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+>> index 9c665a620a46..16c14dd09df6 100644
+>> --- a/fs/ext4/ext4.h
+>> +++ b/fs/ext4/ext4.h
+>> @@ -1171,6 +1171,10 @@ struct ext4_inode_info {
+>>   	__u32 i_csum_seed;
+>>   
+>>   	kprojid_t i_projid;
+>> +
+>> +	/* where last allocation was done - for stream allocation */
+>> +	ext4_group_t i_mb_last_group;
+>> +	ext4_grpblk_t i_mb_last_start;
+>>   };
+>>   
+>>   /*
+>> @@ -1603,9 +1607,6 @@ struct ext4_sb_info {
+>>   	unsigned int s_mb_order2_reqs;
+>>   	unsigned int s_mb_group_prealloc;
+>>   	unsigned int s_max_dir_size_kb;
+>> -	/* where last allocation was done - for stream allocation */
+>> -	unsigned long s_mb_last_group;
+>> -	unsigned long s_mb_last_start;
+>>   	unsigned int s_mb_prefetch;
+>>   	unsigned int s_mb_prefetch_limit;
+>>   	unsigned int s_mb_best_avail_max_trim_order;
+>> diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
+>> index 5c13d9f8a1cc..ee9696f9bac8 100644
+>> --- a/fs/ext4/mballoc.c
+>> +++ b/fs/ext4/mballoc.c
+>> @@ -2138,7 +2138,6 @@ static int mb_mark_used(struct ext4_buddy *e4b, struct ext4_free_extent *ex)
+>>   static void ext4_mb_use_best_found(struct ext4_allocation_context *ac,
+>>   					struct ext4_buddy *e4b)
+>>   {
+>> -	struct ext4_sb_info *sbi = EXT4_SB(ac->ac_sb);
+>>   	int ret;
+>>   
+>>   	BUG_ON(ac->ac_b_ex.fe_group != e4b->bd_group);
+>> @@ -2169,10 +2168,8 @@ static void ext4_mb_use_best_found(struct ext4_allocation_context *ac,
+>>   	folio_get(ac->ac_buddy_folio);
+>>   	/* store last allocated for subsequent stream allocation */
+>>   	if (ac->ac_flags & EXT4_MB_STREAM_ALLOC) {
+>> -		spin_lock(&sbi->s_md_lock);
+>> -		sbi->s_mb_last_group = ac->ac_f_ex.fe_group;
+>> -		sbi->s_mb_last_start = ac->ac_f_ex.fe_start;
+>> -		spin_unlock(&sbi->s_md_lock);
+>> +		EXT4_I(ac->ac_inode)->i_mb_last_group = ac->ac_f_ex.fe_group;
+>> +		EXT4_I(ac->ac_inode)->i_mb_last_start = ac->ac_f_ex.fe_start;
+>>   	}
+>>   	/*
+>>   	 * As we've just preallocated more space than
+>> @@ -2844,13 +2841,14 @@ ext4_mb_regular_allocator(struct ext4_allocation_context *ac)
+>>   							   MB_NUM_ORDERS(sb));
+>>   	}
+>>   
+>> -	/* if stream allocation is enabled, use global goal */
+>> +	/* if stream allocation is enabled, use last goal */
+>>   	if (ac->ac_flags & EXT4_MB_STREAM_ALLOC) {
+>> -		/* TBD: may be hot point */
+>> -		spin_lock(&sbi->s_md_lock);
+>> -		ac->ac_g_ex.fe_group = sbi->s_mb_last_group;
+>> -		ac->ac_g_ex.fe_start = sbi->s_mb_last_start;
+>> -		spin_unlock(&sbi->s_md_lock);
+>> +		struct ext4_inode_info *ei = EXT4_I(ac->ac_inode);
+>> +
+>> +		if (ei->i_mb_last_group || ei->i_mb_last_start) {
+>> +			ac->ac_g_ex.fe_group = ei->i_mb_last_group;
+>> +			ac->ac_g_ex.fe_start = ei->i_mb_last_start;
+>> +		}
+>>   	}
+>>   
+>>   	/*
+>> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+>> index 181934499624..6c49c43bb2cb 100644
+>> --- a/fs/ext4/super.c
+>> +++ b/fs/ext4/super.c
+>> @@ -1416,6 +1416,8 @@ static struct inode *ext4_alloc_inode(struct super_block *sb)
+>>   	INIT_WORK(&ei->i_rsv_conversion_work, ext4_end_io_rsv_work);
+>>   	ext4_fc_init_inode(&ei->vfs_inode);
+>>   	mutex_init(&ei->i_fc_lock);
+>> +	ei->i_mb_last_group = 0;
+>> +	ei->i_mb_last_start = 0;
+>>   	return &ei->vfs_inode;
+>>   }
+>>   
+>> -- 
+>> 2.46.1
+>>
+
 
