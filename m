@@ -1,176 +1,172 @@
-Return-Path: <linux-kernel+bounces-667837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-667839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70531AC8A95
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 11:17:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09E75AC8A9B
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 11:18:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 27AA37B13A4
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 09:16:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 490A69E1944
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 09:18:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2407A21CA05;
-	Fri, 30 May 2025 09:17:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C76B21E0BB;
+	Fri, 30 May 2025 09:18:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qdssh3k1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JO9V1K8/"
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66834213E69;
-	Fri, 30 May 2025 09:17:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF53D218593
+	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 09:18:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748596638; cv=none; b=cJHR1eEHXIbZJFahK1bcA9nHodoY51lXfGnHsg0Kn7AcoxPapdTGpN1lTPzUK0rtIyIAaKPP3Y7QJqtkKMra1xP2RlAIbBUOTvQNGoClnb84K0xTmQZHhH+TQfVX+WEblvUGeWehwWU137JXB03fnc1BEHn+/9EFVId008KQpYQ=
+	t=1748596701; cv=none; b=CgBw3o6VlrTL8nG/y0hgFxn5bfi3XkL2ZM2oJ/W7qc1Z3G/938w7vVg3IJpo9ln9o6Nz3lxEKxQJgD75xfoQ0SbZsSlqiRfqN+VzuEIvnZtklqZWjz19EYWB/x7UJgEL6j/FZK01t07Mj3iWVkOJcfH+W/qseAbhwzkCxZNgapw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748596638; c=relaxed/simple;
-	bh=rvOVWJD5+xqMqRK/AGl01bB/hKBxArXk3yGsiYQz278=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Emy2AqJZecsGy550AYwtEgMl/fCHSFc8Ey974qEjHi5dC4I/ZM6EM7298BXqCAojHF2NlfEnL14p+unCZElrPeQgEoTaQlzegSquXCfb78mp84R8m35fyRx04LWmUZmL4hx5G+MBCuqbNqIYKhWlTupqimTUANtc+YZnnj8+nEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qdssh3k1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C91FC4CEE9;
-	Fri, 30 May 2025 09:17:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748596637;
-	bh=rvOVWJD5+xqMqRK/AGl01bB/hKBxArXk3yGsiYQz278=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Qdssh3k1UwPO6qsM3u4ZvtuEHTcMUtaTI1MVf3+Q1Tq4rduKU2AbsCU7qFM1bFIWx
-	 FV+aBu4YPbVVB+82MWwqg5kTpmUmmZ1+XuebfeHK2lzuk9Qrqs12pkGnXu6ouOrHHg
-	 aSaehZrAvwYIeyN0safPGRwq5cMhEcAovlrBAqx45WlUwcVJ0UY6QbuCfUVX6NUmgz
-	 +tb8W953Z/l4XWUma45ZpFEIHvzrXkEGa/fO6Wgo+sLO7+cXPnSPD/ssY4rC2IKxvv
-	 T2cTeBeBkwkFvSqY0RaO9vxH6PQ96u2Y3inr8iGqkzCXYmawjvZuE4OtMEIUng7iV9
-	 tV136S6pLrzNg==
-Date: Fri, 30 May 2025 11:17:09 +0200
-From: Lorenzo Pieralisi <lpieralisi@kernel.org>
-To: Peter Maydell <peter.maydell@linaro.org>
-Cc: Marc Zyngier <maz@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, andre.przywara@arm.com,
-	Arnd Bergmann <arnd@arndb.de>,
-	Sascha Bischoff <sascha.bischoff@arm.com>,
-	Timothy Hayes <timothy.hayes@arm.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Jiri Slaby <jirislaby@kernel.org>, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 01/26] dt-bindings: interrupt-controller: Add Arm GICv5
-Message-ID: <aDl3lXiw3+l43+Cj@lpieralisi>
-References: <20250513-gicv5-host-v4-0-b36e9b15a6c3@kernel.org>
- <20250513-gicv5-host-v4-1-b36e9b15a6c3@kernel.org>
- <aDhWlytLCxONZdF9@lpieralisi>
- <CAFEAcA_3YLMSy+OsSsRayaRciQ1+jjh-dGzEjrh2Wa8BqdmqrA@mail.gmail.com>
- <aDhtVkHfJvDfkfaX@lpieralisi>
- <CAFEAcA-=0GWG+rnHDOnsHg8cUq1pszN=x1-W+4MYZXXD8H8Pkg@mail.gmail.com>
+	s=arc-20240116; t=1748596701; c=relaxed/simple;
+	bh=ebOJBYeeHCkyALDjIWQdDTTwURnubvG/RMOC2ONZm84=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eDJ0kSFzLSEciIm4jDaWE/MGgtnnMmCEBBTzl8PWdb4bIaOxWTagREF4LrWjK/giIUahfRzcXQ2NSk7hozn4LSJZrajNOmBOhNIndxHGaiWybs1jJ6sRdo9ypP/fRZO5R4QUpczb3g3SsP6a4PqqQ09G9w5knx+7gP23P5XyY1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JO9V1K8/; arc=none smtp.client-ip=209.85.219.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e740a09eb00so1574112276.0
+        for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 02:18:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1748596699; x=1749201499; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=9LSJUMPXEV1M8KFzX9qlsWTgwSLRhfElyDaP/rhgR2Q=;
+        b=JO9V1K8/JqVH6STc3aC5hUeFMsyAGvVmnOc6iVsh+JcQAzddXP4NWCcPSxZbqcE9H+
+         pbtJNqQ/kFu6zyfjQ0Ju8XwmisQPpwGLUi90u6fT1PFy40xo0RK63H/92/TLV7WnV7we
+         O0hXGEjC9UEK3YZXz8n8yTmLdej1Oab3M2cdXFFldlKpChgPb5moAEtjTLkzdxKYbSIj
+         BMxFTGg8lngG82+wA7OA9i9AuU3eK1oL4Jl3V2sQGreDu0w0W9NqBxKPZXAxmQ/qBCNL
+         Aq94l5qiD0ncP+b5o3GRjI4V9IJra6qm48SWpqIZKoRCBsLE4UapoLHxkiO2A+VZaqna
+         CMSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748596699; x=1749201499;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9LSJUMPXEV1M8KFzX9qlsWTgwSLRhfElyDaP/rhgR2Q=;
+        b=VOh+x0yNVQi87FmAFJq6XcQGZckHo+BhLoNPjfaY796FZ4Vrxq3YxIQzrv9lRcKA1T
+         cLJCPlln5KKXhFRfkhFCnJCQdIKux8UTrzwsnFb8LSH0ifQ7h3G0Jothqw+E3LoWJWq2
+         BgyS+LhYBEnP0q/nbQf6ft3Sbh3zlVkQEoHIXIKECAm52Vu9aUk+oVtLhfRK3ltBfobN
+         ohkuPyvgHHabDCIL9mlObQbim/gKxnlll/JU6qG80GyfPkxjfkMnnQjKR/k1FSttG0b2
+         e1ysMdEOKBhcE/D2WjvSW3YWRAvJHezVnlX6XngcOKeeMta7jBoWid2EsOqLCm2TnV/x
+         duGg==
+X-Forwarded-Encrypted: i=1; AJvYcCU33L0VGlZl6nsdjryCU358G2E/xA/pajq5gKfzbfl3sxXDatjvl1onQJ2u013sjv5lD4ZyMGo5PP3LeII=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzH5tRXeCJBbS7iBsIx78/aSYXsWUPGQY8CCVZMGGKeUdF+oyrL
+	+ZHvzBHqyHG4p1jRRYazNsF5gExB7ZMIDOm3SK4A/vD5AVDJ+QdNGFFvRejSg+ZZ00Zq0yCLweR
+	Q6h3VItfbZkn61+EB6XiU+SWhARYRmj2HucnJ7/1+DxrIXaysFv/ccaBTSQ==
+X-Gm-Gg: ASbGncsUKYLz9IBdlzXR4AE11mg3RDZFxDqtv+08U5QlYeAe4TL1MJLGrULkREE7i1v
+	3N1lFrGuJTUeF2XebJzuwmHH7mG9BWPf2bb/DwZhK6B//ndEcJsfo2VR0b9ttOj4kn+Q+jTAV2g
+	sg/hZI88DM1EWPuXcv4qvmeF6YaRL4uXK5yA==
+X-Google-Smtp-Source: AGHT+IFfycBwEI3FxueTISbpHh6OJPQeP2Lrq+8rdRXtzuwP9IhvuccKAVwiT0W7cxN5YrLOeQ38HlPh8PvZt5WQSe4=
+X-Received: by 2002:a05:6902:1003:b0:e7d:9bfb:a320 with SMTP id
+ 3f1490d57ef6-e7f81f064a1mr3911070276.36.1748596698927; Fri, 30 May 2025
+ 02:18:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFEAcA-=0GWG+rnHDOnsHg8cUq1pszN=x1-W+4MYZXXD8H8Pkg@mail.gmail.com>
+References: <20250526122054.65532-1-claudiu.beznea.uj@bp.renesas.com>
+ <20250526122054.65532-2-claudiu.beznea.uj@bp.renesas.com> <hojdkntm3q5a5ywya7n5i4zy24auko4u6zdqm25infhd44nyfx@x2evb6sc2d45>
+ <111d2d6c-8ac0-40b9-94c3-02f2f64ef9fe@tuxon.dev> <CAPDyKFoQYTNBhtBXY-Ds7E0TohtA6558W1Jf3cLsnXDQC74DSg@mail.gmail.com>
+ <rmc7me6rvumr6pcekgp5lsrxtuge5houitn474lkljew2hzdcw@z7wh2vtntvs5>
+In-Reply-To: <rmc7me6rvumr6pcekgp5lsrxtuge5houitn474lkljew2hzdcw@z7wh2vtntvs5>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 30 May 2025 11:17:42 +0200
+X-Gm-Features: AX0GCFvzfTrcuWANsmOBcb2p2VazFw-uQgVJQLGJOuhNKKaI5gJPiizsYJAEId8
+Message-ID: <CAPDyKFpsk-o0KvaJK+dgNDvW30piHKgvtyOxF7URaUEvrPZmZA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] PM: domains: Add devres variant for dev_pm_domain_attach()
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Claudiu Beznea <claudiu.beznea@tuxon.dev>, gregkh@linuxfoundation.org, rafael@kernel.org, 
+	dakr@kernel.org, len.brown@intel.com, pavel@kernel.org, jic23@kernel.org, 
+	daniel.lezcano@linaro.org, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-iio@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, bhelgaas@google.com, geert@linux-m68k.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-[+Suzuki]
-
-On Thu, May 29, 2025 at 03:30:51PM +0100, Peter Maydell wrote:
-> On Thu, 29 May 2025 at 15:21, Lorenzo Pieralisi <lpieralisi@kernel.org> wrote:
-> > On Thu, May 29, 2025 at 02:17:26PM +0100, Peter Maydell wrote:
-> > > The dt bindings do allow for describing Secure-world devices:
-> > > Documentation/devicetree/bindings/arm/secure.txt has the
-> > > details. We use this in QEMU so we can provide a DTB to
-> > > guest EL3 firmware that tells it where the hardware is
-> > > (and which EL3 can then pass on to an NS kernel). It would
-> > > be helpful for the GICv5 binding to be defined in a way that
-> > > we can do this for a GICv5 system too.
-> > >
-> > > > Two questions:
+On Wed, 28 May 2025 at 18:09, Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
+>
+> On Wed, May 28, 2025 at 06:04:45PM +0200, Ulf Hansson wrote:
+> > [...]
+> >
+> > > >> +/**
+> > > >> + * devm_pm_domain_attach - devres-enabled version of dev_pm_domain_attach()
+> > > >> + * @dev: Device to attach.
+> > > >> + * @attach_power_on: Use to indicate whether we should power on the device
+> > > >> + *                   when attaching (true indicates the device is powered on
+> > > >> + *                   when attaching).
+> > > >> + * @detach_power_off: Used to indicate whether we should power off the device
+> > > >> + *                    when detaching (true indicates the device is powered off
+> > > >> + *                    when detaching).
+> > > >> + *
+> > > >> + * NOTE: this will also handle calling dev_pm_domain_detach() for
+> > > >> + * you during remove phase.
+> > > >> + *
+> > > >> + * Returns 0 on successfully attached PM domain, or a negative error code in
+> > > >> + * case of a failure.
+> > > >> + */
+> > > >> +int devm_pm_domain_attach(struct device *dev, bool attach_power_on,
+> > > >> +                      bool detach_power_off)
 > > > >
-> > > > - I don't have to spell out the IRS/ITS config frame (and SETLPI, by
-> > > >   the way) as non-secure, since that's implicit, is that correct ?
+> > > > Do we have examples where we power on a device and leave it powered on
+> > > > (or do not power on device on attach but power off it on detach)? I
 > > >
-> > > Do you want the DT binding to handle the case of "CPU and GIC do not
-> > > implement EL3, and the only implemented security state is Secure"
-> > > without the kernel needing to do something different from "ditto ditto
-> > > but the only implemented security state is Nonsecure" ?
+> > > I haven't found one yet.
+> > >
+> > > > believe devm release should strictly mirror the acquisition, so separate
+> > > > flag is not needed.
+> > >
+> > > I was in the middle whether I should do it with 2 flags or only to revert
+> > > the acquisition.
+> > >
+> > > >
+> > > >
+> > > >> +{
+> > > >> +    int ret;
+> > > >> +
+> > > >> +    ret = dev_pm_domain_attach(dev, attach_power_on);
+> > > >> +    if (ret)
+> > > >> +            return ret;
+> > > >> +
+> > > >> +    if (detach_power_off)
+> > > >> +            return devm_add_action_or_reset(dev, devm_pm_domain_detach_off,
+> > > >> +                                            dev);
+> > > >> +
+> > > >> +    return devm_add_action_or_reset(dev, devm_pm_domain_detach_on, dev);
+> > > >
+> > > > Instead of 2 separate cleanup methods maybe define dedicated devres:
+> > > >
+> > > > struct dev_pm_domain_devres {
+> > > >       struct device *dev;
+> > > >       bool power_off;
+> > > > }
+> > > >
+> > > > ?
+> > >
+> > > That was the other option I've thought about but I found the one with 2
+> > > cleanup methods to be simpler. What would you prefer here?
+> > >
+> > > Ulf: could you please let me know what would you prefer here?
 > >
-> > Not sure I follow you here sorry :)
-> 
-> In a hypothetical system like that the dt could either
-> define the (only) IRS frame in reg[], or in secure-reg[].
-> The former would let the kernel not care about the fact it was
-> in Secure, but would be a bit weird. But I think we can probably
-> ignore this hypothetical in favour of keeping the binding simple.
-> 
-> > > (Currently booting.html says you must be in NS, so we effectively
-> > > say we don't support booting on this particular unicorn :-)
-> > > But the secure.txt bindings envisage "kernel got booted in S",
-> > > mostly for the benefit of aarch32.)
-> > >
-> > > > - How can the schema describe, if present, EL3, Secure and Realm frames ?
-> > >
-> > > The tempting thing to do is to have regs[] list the frames
-> > > in some given order, but the spec makes them not simple
-> > > supersets, allowing all of:
-> > >  * NS
-> > >  * S
-> > >  * NS, S, EL3
-> > >  * NS, Realm, EL3
-> > >  * NS, Realm, S, EL3
-> > >
-> > > secure.txt says:
-> > > # The general principle of the naming scheme for Secure world bindings
-> > > # is that any property that needs a different value in the Secure world
-> > > # can be supported by prefixing the property name with "secure-". So for
-> > > # instance "secure-foo" would override "foo".
-> > >
-> > > So maybe we could have
-> > >  reg : the NS frame(s)
-> > >  secure-reg : the S frame(s)
-> > >  realm-reg : the Realm frame(s)
-> > >  root-reg : the EL3 frame(s)
-> > >
-> > > ??
-> >
-> > I assume someone has to write the root/realm binding extensions.
-> >
-> > In Documentation/devicetree/bindings/arm/secure.txt I don't think that
-> > reg is a contemplated property - I don't know if the list of properties
-> > is up-to-date.
-> 
-> It's up to date in the sense that so far we've only needed
-> to have the 'status' property have a secure- variant. My
-> suggestion here is that we might extend that to also allow
-> secure-reg, and to have root- and realm- prefixes too.
-> Though I don't think we would want to permit secure-reg for
-> any old device, so maybe something more-GICv5-specific would
-> work better.
+> > As it looks like we agreed to use one cleanup method, the struct
+> > dev_pm_domain_devres seems superfluous to me.
+>
+> I think we agreed that cleanup should mirror the acquisition, that is
+> true. But since attaching to the domain has an option to either turn the
+> device on or not we still need 2 cleanup branches. They can either be
+> implemented with 2 cleanup callbacks or with 1 callback and dedicated
+> devres structure.
 
-I am not sure this is a GICv5 only requirement (looking at SMMUv3,
-for instance and there might be more IPs that require security
-state awareness).
+Yes, you are right. Better with one callback and using struct
+dev_pm_domain_devres to manage the power_off parameter.
 
-Or maybe it is a non-existing problem IIUC the paragraph below
-correctly (albeit to be frank I don't understand how to determine
-whether a dtb is consumed by eg secure-world-only).
-
-"Note that it is still valid for bindings intended for purely Secure
-world consumers (like kernels that run entirely in Secure) to simply
-describe the view of Secure world using the standard bindings. These
-secure- bindings only need to be used where both the Secure and Normal
-world views need to be described in a single device tree."
-
-I assume "standard bindings" there would mean that "reg" for the
-GICv5 would be just eg "config frame" with no NS/S/Realm/Root attached.
-
-We don't strictly need to have the same dts file for NS and S (example),
-NS will never "need" the S bindings at least for GICv5.
-
-Thoughts ?
-
-Thanks,
-Lorenzo
+Kind regards
+Uffe
 
