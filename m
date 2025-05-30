@@ -1,97 +1,58 @@
-Return-Path: <linux-kernel+bounces-667683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-667693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9157AAC8833
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 08:24:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E3D7AC8855
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 08:42:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B4271BC1842
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 06:24:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 516CF1BC34DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 06:42:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 326E81FDE22;
-	Fri, 30 May 2025 06:24:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G2du+f0Y"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B9BF217733;
+	Fri, 30 May 2025 06:41:36 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 383B320B80E;
-	Fri, 30 May 2025 06:24:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 418701F0E4F;
+	Fri, 30 May 2025 06:41:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748586257; cv=none; b=l3GuKbI2jlNM7W7BFKTUCgMouLbLi5talS0pNtymuNbidIcIbSHBbz5H2sJHwMdyTBy80SI2UE37MFYFD8RoFv1i/d+BLYJS0+aLPp5wUUWKqxwxblqL7WbbGGpn5b4AQFtGlyV2/bWy9FlYiz6NmbQlwcpj99rkTAtK0SRuin8=
+	t=1748587295; cv=none; b=jTTW+t9xuu2CoPyKTN4dFj5axac8qvYi7kWTGqyz+pGnKv1/q9V39YJEh1oR2JBuWU3qP+vOP3HDzL75xi+RSLfm3ls6UQGePbx9x8rz53hnEDYc921IYX6EwxDzhSY7TbMxxpnDakITQl+CaUZz3/ELKHuzMLHleikymUQp7Aw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748586257; c=relaxed/simple;
-	bh=rsHqclV0wwJ+jYvaB6k+vgMp1oYs6c5EIO//r1OUdho=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AkIWU82YKORQEXMWRnjFsYFZMkjdCTHPjn+jPQIfu8s/95Q8IWZFO46aCSxH0tssCM9Y3XHKxd/4/bz/JiTVUAnVNevnDGQDjN4qYxMI3zTGCn8owvB+huvDmFiwHhIY6YssX7HOaGQB4UKtxFl263I7WFMoJrNYYRfGB7PQBz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G2du+f0Y; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-742c27df0daso1376906b3a.1;
-        Thu, 29 May 2025 23:24:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748586254; x=1749191054; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DwHMlGLBbWMktCeyAIGsdWrLp2OXZKXa5jc6etwR3FQ=;
-        b=G2du+f0YOPaCDagqvwQ2pdBrTZbLrTFSEuLF44q35zVskN/Wc+3RbFIvyZPUtUW/kh
-         FWXtQjNu8ry+JzEEiSfhPy+9v3UbWSQMmowxdow4hfR/Mm3TzP067e0z8CjqPnYR/INv
-         1ep7ax4r7S/reUbtE4mgtF8IB8RegY9GU6VzrE42Hnn/BWPINk4r9Y7zXy6ZqDwgAjV0
-         Ufz8PKbnYpM2QnHjNjTNs9utEFh7ZbVtaNRml3ktKtfRdZ4sHhOKAlcdQKa/AlGfon9g
-         4OrOFiRDvzGDGRK+xxHkJPQHA18upQsRNeKB7uf8bH5Vco3uW6Mcbr59aa1HYJHBVXl0
-         XElg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748586254; x=1749191054;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DwHMlGLBbWMktCeyAIGsdWrLp2OXZKXa5jc6etwR3FQ=;
-        b=NTaRoXk7VeuBJ0ei+VQBT7qne2Ha5Ap8qR2Eg7T5zNCuujT4SeFh6HUOYjp+nW0QPQ
-         u2qfX+GhsOpRbyztn+69uH2NGku4PxLy7suF2y5Vyhh8Wg06M7Zx0j/s5DUiS0h4Y+7Z
-         9dB/GZoifyHwBuHt8dWevwcSvA7HaZlqmtwpFfzQtCAVgNMb0f/yYsG0qwyzo2YeM3KB
-         kkBwNaMrf2HWFMs1cM9P8OZwBWAwB8uuA8eH2GzbKjLRPF5ak3dP7qno3UkJf/yOaz9/
-         5DJAV2b2tzFFh8j2l324DIbInqoyfaVbulSEG1GRa2SJ5GHTFbgOw+3qz9TviM9f24AP
-         cQlw==
-X-Forwarded-Encrypted: i=1; AJvYcCVR68ZkOKfIGSfaKY7NMe911LaCcahDbYu0HkOsAg5exBmoI/Kv/U6ZJTG62kXAWmz5xPzEYZEgb0YF+UijLdKU3A==@vger.kernel.org, AJvYcCVbjgcuKVVfAqES9Kp7VFzv9W7qGxacTI3ruwsikPJG0Zy0kzGQ+EunHSA/4jBYPJvEP0eN4zNwA+TBrGQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnVkslqZOCRbQCYLDbf3bH2FiQqOAZJJNXRY/KnfoWDs8bA3/N
-	lksGwTIupz2F/fN4MkS86g6vUTPxyWaQyB/KxWOPFgp280VRIs3i7cYN
-X-Gm-Gg: ASbGncs/RCDnIDWjAbOytAra1o3mjsjKp9N4qgiG9hKwHfK2x2xrUX5byATLi1hES2s
-	uGzy2WSDk8RHw+Ac9NsQHh/fFCVK5b6pFMbwn03fbwDM2KgfnIhyk5679evAkRZVb5+AKypC6GI
-	vMi9AhSgqoFRDCub6tmxRRk+bTSGH66PNWJDH4VP4lCzAuyFvJBeCMv1bxfI9c1Ea1/ManMwQuW
-	uQG7r2FmeROm95tJ2KbX9f6nRnq7Cio0aNa9QsdVxcHHcMqXC/yn5Fj3Yh8mG1LLnLCi/8lOCQj
-	w15g21lDGbjmIOZiMKeFchUHldIa6GyluwhFPgDrmCDV9g1h1/27nu+bpqgiFg652kJt3jZMEi9
-	YLRrXq6Zj3jk=
-X-Google-Smtp-Source: AGHT+IEWuw8NAHaYGrNnE/bVGa1Yuo/O/jxEoQUYt2NcNRy377Xme8SuumEbqFGesDEc2zI45jruLg==
-X-Received: by 2002:a05:6a20:2591:b0:1fe:90c5:7cfb with SMTP id adf61e73a8af0-21ad9816be9mr4005375637.27.1748586254374;
-        Thu, 29 May 2025 23:24:14 -0700 (PDT)
-Received: from howard.lan (c-73-202-46-50.hsd1.ca.comcast.net. [73.202.46.50])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b2ecebb6857sm757498a12.73.2025.05.29.23.24.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 May 2025 23:24:14 -0700 (PDT)
-From: Howard Chu <howardchu95@gmail.com>
-To: acme@kernel.org
-Cc: mingo@redhat.com,
-	namhyung@kernel.org,
-	mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	peterz@infradead.org,
-	kan.liang@linux.intel.com,
-	linux-perf-users@vger.kernel.org,
+	s=arc-20240116; t=1748587295; c=relaxed/simple;
+	bh=9sFOwelv5fYdviKsYOi6adhX1HjIA7FitQc+BiYdpsk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ctEpzZtUQGeedKmb3OI6YIQH70tSN8ByQhnEk4jwNEGsUvk7nBnmRLjBlQD8DOoOd18cr+wN1/05BEKpHoXyjk+7wMYy9xaANTXlF/GUknCGkLX5HyqWRWSsxObHXYQe5nWEmEmVPQKP6rBaI+rmH8D6j42AVdgOHsiOW4Sc+Ro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4b7ttg0JmVzKHLw5;
+	Fri, 30 May 2025 14:41:31 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 72BF51A190E;
+	Fri, 30 May 2025 14:41:29 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.112.188])
+	by APP4 (Coremail) with SMTP id gCh0CgD3Wl8PUzlo_wXRNw--.6893S4;
+	Fri, 30 May 2025 14:41:27 +0800 (CST)
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+To: linux-ext4@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Howard Chu <howardchu95@gmail.com>
-Subject: [PATCH v1 2/2] perf evlist: Remove evlist__has_bpf_output()
-Date: Thu, 29 May 2025 23:24:08 -0700
-Message-ID: <20250530062408.1438861-3-howardchu95@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250530062408.1438861-1-howardchu95@gmail.com>
-References: <20250530062408.1438861-1-howardchu95@gmail.com>
+	tytso@mit.edu,
+	adilger.kernel@dilger.ca,
+	jack@suse.cz,
+	ojaswin@linux.ibm.com,
+	yi.zhang@huawei.com,
+	yi.zhang@huaweicloud.com,
+	libaokun1@huawei.com,
+	yukuai3@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH 0/5] ext4: fix insufficient credits when writing back large folios
+Date: Fri, 30 May 2025 14:28:53 +0800
+Message-ID: <20250530062858.458039-1-yi.zhang@huaweicloud.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -99,51 +60,63 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgD3Wl8PUzlo_wXRNw--.6893S4
+X-Coremail-Antispam: 1UD129KBjvJXoW7CrWrGrWDuw4Dur4xZFyrWFg_yoW8AF4kpa
+	93CF95Gw15ua47ZF4fZa1xJF1rG3y8ur4UJFnrXr1DWa98uF1Ikrn3Ka15KFWUJr4xGFyY
+	qr1jkryDGFZ8ArDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
+	nIWIevJa73UjIFyTuYvjfUonmRUUUUU
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-This function is no longer needed.
+From: Zhang Yi <yi.zhang@huawei.com>
 
-Signed-off-by: Howard Chu <howardchu95@gmail.com>
----
- tools/perf/util/evlist.c | 12 ------------
- tools/perf/util/evlist.h |  1 -
- 2 files changed, 13 deletions(-)
+This series addresses the issue that Jan pointed out regarding large
+folios support for ext4[1]. The problem is that the credits calculation
+may insufficient in ext4_meta_trans_blocks() when allocating blocks
+during write back a sufficiently large and discontinuous folio, it
+doesn't involve the credits for updating bitmap and group descriptor
+block. However, if we fix this issue, it may lead to significant
+overestimation on the some filesystems with a lot of block groups.
 
-diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
-index 7b5837c6e6bb..876952685803 100644
---- a/tools/perf/util/evlist.c
-+++ b/tools/perf/util/evlist.c
-@@ -2618,18 +2618,6 @@ void evlist__uniquify_evsel_names(struct evlist *evlist, const struct perf_stat_
- 	}
- }
- 
--bool evlist__has_bpf_output(struct evlist *evlist)
--{
--	struct evsel *evsel;
--
--	evlist__for_each_entry(evlist, evsel) {
--		if (evsel__is_bpf_output(evsel))
--			return true;
--	}
--
--	return false;
--}
--
- bool evlist__needs_bpf_sb_event(struct evlist *evlist)
- {
- 	struct evsel *evsel;
-diff --git a/tools/perf/util/evlist.h b/tools/perf/util/evlist.h
-index 85859708393e..dd5e32583c74 100644
---- a/tools/perf/util/evlist.h
-+++ b/tools/perf/util/evlist.h
-@@ -436,7 +436,6 @@ void evlist__format_evsels(struct evlist *evlist, struct strbuf *sb, size_t max_
- void evlist__check_mem_load_aux(struct evlist *evlist);
- void evlist__warn_user_requested_cpus(struct evlist *evlist, const char *cpu_list);
- void evlist__uniquify_evsel_names(struct evlist *evlist, const struct perf_stat_config *config);
--bool evlist__has_bpf_output(struct evlist *evlist);
- bool evlist__needs_bpf_sb_event(struct evlist *evlist);
- 
- #endif /* __PERF_EVLIST_H */
+The solution involves first reserving credit for one page when writing
+back a sufficiently large and discontinuous folio, and then attempting
+to extend the current transaction's credits. If the credits reach the
+upper limit, the handler stops and initiates a new transaction. Again,
+fix the wrong credits calculation in ext4_meta_trans_blocks(). Finally,
+this solution only works in dioread_nolock mode, so disable large folios
+if dioread_nolock is disabled. Please see the following patches for
+details.
+
+[1] https://lore.kernel.org/linux-ext4/ht54j6bvjmiqt62xmcveqlo7bmrunqs4ji7wikfteftdjijzek@7tz5gpejaoen/
+
+Thanks,
+Yi.
+
+Zhang Yi (5):
+  ext4: restart handle if credits are insufficient during writepages
+  ext4: correct the reserved credits for extent conversion
+  ext4/jbd2: reintroduce jbd2_journal_blocks_per_page()
+  ext4: fix insufficient credits calculation in ext4_meta_trans_blocks()
+  ext4: disable large folios if dioread_nolock is not enabled
+
+ fs/ext4/ext4_jbd2.h  | 14 ++++++++++
+ fs/ext4/inode.c      | 64 +++++++++++++++++++++++++++++++++++---------
+ fs/jbd2/journal.c    |  6 +++++
+ include/linux/jbd2.h |  1 +
+ 4 files changed, 72 insertions(+), 13 deletions(-)
+
 -- 
-2.45.2
+2.46.1
 
 
