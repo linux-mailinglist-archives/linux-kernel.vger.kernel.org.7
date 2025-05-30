@@ -1,200 +1,354 @@
-Return-Path: <linux-kernel+bounces-667853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-667905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 520B9AC8AB3
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 11:28:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 35D6CAC8B33
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 11:42:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AB629E25F7
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 09:27:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF7663B038F
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 09:41:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3090521578F;
-	Fri, 30 May 2025 09:28:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD4DD22A800;
+	Fri, 30 May 2025 09:36:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SGjcQHCL"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="FU4Xbg5J"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE8F321CA05
-	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 09:28:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BC7922A1EF
+	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 09:36:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748597289; cv=none; b=HncuIFkxS6tgZ/kP4TRRtNwe+fJv13AzCrUv1bXP/iY7/bcsgUqMeEudQD8C67Z8aQhXbu+WibIK4YsnI9HGx4g7BL+jMUHMjMTLhHaZ3aTxs/amFD7N02uAFH9s04UyFgET6clf1hjqQifu+57t9PG5XJ/VVa+i9S4vcz6KBO0=
+	t=1748597814; cv=none; b=Fv/hMe8PKkMhNyTI5O00KTZ3zvXyRhR7jLBjpvT5CcyZPmwbZ/H5O6SGKdM0dPOYQsG0TCNQ4ohUlf5G1L6mFbONTUIfRdjoVsuk/XCIkgHztbP7xBMgyeM1PfAKeNdYwkVza8TTA+sxgT6SwTAbPkEOwXZLLEubc5j+2cLJgjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748597289; c=relaxed/simple;
-	bh=UPgrN+I2yqTJYCpGaX5IMke5p2FuQ5Fto8LxZ7iAGOE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V0i8FWo/wPH+mG5jsrs+tWWpf1Mi/XQiCnJunGVNPfNMBW9BGxm4WPCd0QmhucIHAqY+FwHZ0kUWQN2hGAMs3gvHxbDyCrXqtbEVhTAfieqfuA2zP0Sfo/ixl7LoExVRAqzwxvhOnEhyixTdFmiSKDSkBPO0BSRYBRzBFZPM27g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SGjcQHCL; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1748597286;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=MaatFJjQ8egE/8VtOwBSoT6wLagg2lOTiOnjBKEO9pM=;
-	b=SGjcQHCL9TkEtLRHNl1uYHuBajy8I7QMy0k7jldx/EUuNotLiKKZe15QROdVuAiUg/zl89
-	EZeU9q1uOKAq9SOB2HHMdDyyXfYshegixlT4mqrJPQfg+2iS7SLBULou1Squom94N0IHe0
-	Gh5DygbopDp43FJ+9kEfR2W7r8HXZP0=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-442-0gERuKarOW6tGj8GvVESlA-1; Fri, 30 May 2025 05:28:05 -0400
-X-MC-Unique: 0gERuKarOW6tGj8GvVESlA-1
-X-Mimecast-MFC-AGG-ID: 0gERuKarOW6tGj8GvVESlA_1748597284
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3a4f85f31d9so254590f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 02:28:04 -0700 (PDT)
+	s=arc-20240116; t=1748597814; c=relaxed/simple;
+	bh=vd2C1pogQV46JqBd4R9eC8WzEgBwL6DtuQBJbThvcY0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Eqhh6pGm2FuiK8BDS+ZNGS8WnbibuWQWMzQrENS458oiLS1kkbqqP6qDGCZjl+PqjIeNqtIE30po1Jitgq8Q7k9i1koVRcr5q3lGeGTrC8HqmcMDxudPGzo1vIcLyh3SizmqltGvdh1Py+HFFupSG0skC/GE/MjCi+6REwvV0zY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=FU4Xbg5J; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-b2c4476d381so1642540a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 02:36:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1748597811; x=1749202611; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9GWxjqZwkmZx5+2pv+QLtRl8XC71PyQccoyY/dIwUoU=;
+        b=FU4Xbg5JkXTsWoP2NVMq4T/VCUnkpyQejsiTEHcl2yure2y1mHWmP11exSYEnJdlhr
+         /FdE7deI2fUaaELz2MqqcsRNahTIaO9I5G1zsgunOCTERvqf58se7Ho9IIgJDjnYAxi2
+         T0TsibJyUU0LBKhdDjzJXKG7kkB+JQFLDHuReD4ILaEK0GDJSFiA+fa2tB3r8vTZUR/o
+         AGu+W8mrucLYHMnK6b1vbLdNWCa7l3DxnM50Tpq1jlH5jog99k7Vxn3tu36uVfDCA+sa
+         HnQw/Oz4L9eF55h0FXhU1zh/9gZRxIYBxVCFyNGqJZmBCq4jRmW/K+4vgzNbw8kuEo5X
+         Jm5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748597284; x=1749202084;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=MaatFJjQ8egE/8VtOwBSoT6wLagg2lOTiOnjBKEO9pM=;
-        b=tXjybnQHHjGyYXM1RRqHVsHL5wFO9iZnbswNsRrVVf3llx68ddBCmeThlvPCmU2im6
-         UKoSo4iNuOf+aJdhera3CuwRsLuZiYGpM1l8YbY8NSUh4jIWmwJnllcTTpvrv/Ko9+PV
-         Kp6PWKUBoZtZIk6IrYhNYg6+ELkJfdcJxK8nKvqHN/bsDRlWMAZI7Kp07NTDJs5TGFXQ
-         m6Qd1jS8FCPWZxkvm6WBIs9Qh3yOWsmElxofwm33zYL0DFxEpic6axt652roE5xTUi4p
-         zm9Yt2AxwcT4naF/XbNvraEjiDuDoT6wUXk5DMjTBSO9ReXJuSor3Rvc5EUgdj7UKxIS
-         M74g==
-X-Forwarded-Encrypted: i=1; AJvYcCUvSaklPu/Z6b7FCUg9V3CyTUkl8GhaEg5ZzA80MkULb+ajDHjDO/Svs8g4HwbqkWtp2Iszlcg0ynRLLc0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtnVFNTK4yg+VQ1UXxwPDxm8DciYWm4L72nKBGJ6cTysWZPGTa
-	wUd1HNjmM4r5UhcWSo5qs0wscN3/LrYcqtxwQ/Bwc5cUTsqJ4l7JYIYAqKXGIzUEhRjpSraMGFB
-	Z+Ex/IEPFGhVXBVczt9VIeysLgDUhxJDUQiXTFqJZi9gigqMjDPcgKvNgXiD1LCDPkQ==
-X-Gm-Gg: ASbGncvexKlR9h8doSHmnWcSJbrz3NkbciLPxapmeM9vY6Ckj2YPMQ5Z5dcbD0ww8dw
-	UsNI3JzizARudrbTSW3qiJDHiurpR9fnZJ669Kcunct0bbgTb9franZgSMVFtutVXcu6vXRpoQw
-	Zyomn1uXc5keJP2Nr0drYA9dO/oOZ8gBNXPCn3ViOeCdUjl8bMk2foY+UDe1JC1e/JKhLxQUnMq
-	vk/AJtzTqeezSScK78KKYrLCtaHq0tcjcf3F1EcHLjJwGMbplvNvUXttN8Qkpv235VL5EY9bcVO
-	LcBYit1A/hdDx9qVd4hu6NstXDes0D3Brf6Osx9H5eKXra0Gc/hQENfduUz5a/m6Mno3pf9+VSv
-	/Re45VllBdDWUPZoGpAgOaTTovtvnBIInwdnelD4=
-X-Received: by 2002:a05:6000:230b:b0:3a4:e318:1aa9 with SMTP id ffacd0b85a97d-3a4f89ead67mr1079180f8f.59.1748597283683;
-        Fri, 30 May 2025 02:28:03 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHSN415fVjodgeAGej8jr3DGQGkFoBTJfuX+0MivXSEcmg1XYg2YU3IQl5r7q4efo/bqIG2xA==
-X-Received: by 2002:a05:6000:230b:b0:3a4:e318:1aa9 with SMTP id ffacd0b85a97d-3a4f89ead67mr1079154f8f.59.1748597283295;
-        Fri, 30 May 2025 02:28:03 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f03:5b00:f549:a879:b2d3:73ee? (p200300d82f035b00f549a879b2d373ee.dip0.t-ipconnect.de. [2003:d8:2f03:5b00:f549:a879:b2d3:73ee])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4f009757fsm4336476f8f.78.2025.05.30.02.28.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 30 May 2025 02:28:02 -0700 (PDT)
-Message-ID: <2fb04e1b-8ce0-4216-9255-fc09c04e860b@redhat.com>
-Date: Fri, 30 May 2025 11:28:01 +0200
+        d=1e100.net; s=20230601; t=1748597811; x=1749202611;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9GWxjqZwkmZx5+2pv+QLtRl8XC71PyQccoyY/dIwUoU=;
+        b=hNxHvdUNAbghhdVrTAy21aOXHUeQ1xOwluJ92P43wB3Q6BpZc0qmUJ7E4dXdpHPfvy
+         ObguWz9jv0z9rZbEAtYHRPhsfTHNkbY47ViYJTIhxsIw989o2nAXkNMv7/69tilQs478
+         mB6NUqY8xSF5mJ8NfoGdBNPTyeefWutFc/GMca0iLMqZdyOPXyCllEedfroi6VoVFiek
+         lzSj8hcLOEGIDcgAnxlYMMmkwCcfftuXmRD/YT4wW/KatJsAIKNPI4He0ZwCjtJb1e3U
+         ReXmxSeuaQxast8SQZTJGDPFqS1M4s0zx8O532UUArgRYZvbLhzJwpd0PfQ2SzgJdaqZ
+         6vfg==
+X-Forwarded-Encrypted: i=1; AJvYcCUPCK7HgxMc1HXLcUPE0UGAgtJhz7wz05KLB4CcbwJcgA5Me59Xn+k5F/eKcYHAYk7mMUPPG0imn7OhhTQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6yn7WZJWf4XNtGpsfVs0zEk+bCdyFVY0Mdh5hvI2erzr1EFIT
+	FC7kwdzZaJx5zydAHnP+O6bBtppTNPAZUQ246lDr8hZBnxtDpslRAT5Q6W6SuyyVtJ0=
+X-Gm-Gg: ASbGncukCnINC8LyxP+MZ8LnwfwyIO+5s7olYaKLEN4QyPdtowSnfQNlOQrB/Zgr3DN
+	8GU02p7mVo6RP2d4Qb+SIRWopH+VsMlBE4a4HF4zEfcsPgtf6mN7J5nVbNC4widDBIINBc1ldnf
+	JpR4WjUlMTtCqCXaZXgwxC+orsMCqJadIngsrcqAgbWLg/9HY1wKM1Z1tZxT8aySMSj+cEjkmYe
+	ppnYTYuIqekMJ5Xkh/iTAW/Uv4k+lo/2bx2u3fQ9Tl91HGjv/abBvJdaW0RXSmQSYcBppJ8+MKE
+	NpYcZEr2wx8mEauvOQljWGH/MyzyCjQ4UEwk3hn1GRGdtdAWx9/xm+DhQIJp9D20Vx2WIoZs0tu
+	EOcgTqZSVJA==
+X-Google-Smtp-Source: AGHT+IEd6eqw3bYsn2JQr9oo7VNa3bHRe5ESaa02VpYg0eRHeS5gGe9cNS3vRZsm3BzNT8I7hOudjA==
+X-Received: by 2002:a17:90b:5104:b0:302:fc48:4f0a with SMTP id 98e67ed59e1d1-3124446ce79mr4391987a91.0.1748597811484;
+        Fri, 30 May 2025 02:36:51 -0700 (PDT)
+Received: from FQ627FTG20.bytedance.net ([63.216.146.178])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3124e29f7b8sm838724a91.2.2025.05.30.02.36.36
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Fri, 30 May 2025 02:36:51 -0700 (PDT)
+From: Bo Li <libo.gcs85@bytedance.com>
+To: tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	x86@kernel.org,
+	luto@kernel.org,
+	kees@kernel.org,
+	akpm@linux-foundation.org,
+	david@redhat.com,
+	juri.lelli@redhat.com,
+	vincent.guittot@linaro.org,
+	peterz@infradead.org
+Cc: dietmar.eggemann@arm.com,
+	hpa@zytor.com,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org,
+	irogers@google.com,
+	adrian.hunter@intel.com,
+	kan.liang@linux.intel.com,
+	viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz,
+	lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com,
+	vbabka@suse.cz,
+	rppt@kernel.org,
+	surenb@google.com,
+	mhocko@suse.com,
+	rostedt@goodmis.org,
+	bsegall@google.com,
+	mgorman@suse.de,
+	vschneid@redhat.com,
+	jannh@google.com,
+	pfalcato@suse.de,
+	riel@surriel.com,
+	harry.yoo@oracle.com,
+	linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	duanxiongchun@bytedance.com,
+	yinhongbo@bytedance.com,
+	dengliang.1214@bytedance.com,
+	xieyongji@bytedance.com,
+	chaiwen.cc@bytedance.com,
+	songmuchun@bytedance.com,
+	yuanzhu@bytedance.com,
+	chengguozhu@bytedance.com,
+	sunjiadong.lff@bytedance.com,
+	Bo Li <libo.gcs85@bytedance.com>
+Subject: [RFC v2 33/35] RPAL: enable time slice correction
+Date: Fri, 30 May 2025 17:28:01 +0800
+Message-Id: <8941a17e12edce00c1cc1c78f4dd3e1bf28e47c0.1748594841.git.libo.gcs85@bytedance.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+In-Reply-To: <cover.1748594840.git.libo.gcs85@bytedance.com>
+References: <cover.1748594840.git.libo.gcs85@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/5] kdump: crashkernel reservation from CMA
-To: Michal Hocko <mhocko@suse.com>
-Cc: Baoquan He <bhe@redhat.com>, Donald Dutile <ddutile@redhat.com>,
- Jiri Bohac <jbohac@suse.cz>, Vivek Goyal <vgoyal@redhat.com>,
- Dave Young <dyoung@redhat.com>, kexec@lists.infradead.org,
- Philipp Rudo <prudo@redhat.com>, Pingfan Liu <piliu@redhat.com>,
- Tao Liu <ltao@redhat.com>, linux-kernel@vger.kernel.org,
- David Hildenbrand <dhildenb@redhat.com>
-References: <04904e86-5b5f-4aa1-a120-428dac119189@redhat.com>
- <427fec88-2a74-471e-aeb6-a108ca8c4336@redhat.com>
- <Z8Z/gnbtiXT9QAZr@MiWiFi-R3L-srv>
- <e9c5c247-85fb-43f1-9aa8-47d62321f37b@redhat.com>
- <aDgQ0lbt1h5v0lgE@tiehlicka>
- <a1a5af90-bc8a-448a-81fa-485624d592f3@redhat.com>
- <aDlsF5tAcUxo4VgT@tiehlicka>
- <e0f7fc1e-2227-4c6b-985a-34a697a52679@redhat.com>
- <aDl1ViMpK_6q_z06@tiehlicka>
- <04a49de5-eb79-431b-ba5b-eae2536781c6@redhat.com>
- <aDl5rpqCUyf7nX2M@tiehlicka>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <aDl5rpqCUyf7nX2M@tiehlicka>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 30.05.25 11:26, Michal Hocko wrote:
-> On Fri 30-05-25 11:11:40, David Hildenbrand wrote:
->> On 30.05.25 11:07, Michal Hocko wrote:
->>> On Fri 30-05-25 10:39:39, David Hildenbrand wrote:
->>>> On 30.05.25 10:28, Michal Hocko wrote:
->>> [...]
->>>>> All that being said I would go with an additional parameter to the
->>>>> kdump cma setup - e.g. cma_sane_dma that would skip waiting and use 10s
->>>>> otherwise. That would make the optimized behavior opt in, we do not need
->>>>> to support all sorts of timeouts and also learn if this is not
->>>>> sufficient.
->>>>>
->>>>> Makes sense?
->>>>
->>>> Just so I understand correctly, you mean extending the "crashkernel=" option
->>>> with a boolean parameter? If set, e.g., wait 1s, otherwise magic number 10?
->>>
->>> crashkernel=1G,cma,cma_sane_dma # no wait on transition
->>
->> But is no wait ok? I mean, any O_DIRECT with any device would at least take
->> a bit, no?
->>
->> Of course, there is a short time between the crash and actually triggerying
->> kdump.
-> 
-> This is something we can test for and if we need a short timeout in this
-> case as well then it is just trivial to add it. I am much more
-> concerned about those potentially unpredictable DMA transfers that could
-> take too long and it is impossible to test for those and therefore we
-> need to overshoot.
+After an RPAL call, the receiver's user mode code executes. However, the
+kernel incorrectly attributes this CPU time to the sender due to the
+unchanged kernel context. This results in incorrect runtime statistics.
 
-Agreed.
+This patch adds a new member total_time to both rpal_sender_call_context
+and rpal_receiver_call_context. This member tracks how much runtime (
+measured in CPU cycles via rdtsc()) has been incorrectly accounted for.
+The kernel measures total_time at the entry of __schedule() and corrects
+the delta in the update_rq_clock_task() function.
 
+Additionally, since RPAL calls occur in user space, runtime statistics are
+typically calculated by user space. However, when a lazy switch happens,
+the kernel takes over. To address this, the patch introduces a start_time
+member to record when an RPAL call is initiated, enabling the kernel to
+accurately calculate the runtime that needs correction.
+
+Signed-off-by: Bo Li <libo.gcs85@bytedance.com>
+---
+ arch/x86/rpal/core.c   |  8 ++++++++
+ arch/x86/rpal/thread.c |  6 ++++++
+ include/linux/rpal.h   |  3 +++
+ include/linux/sched.h  |  1 +
+ init/init_task.c       |  1 +
+ kernel/fork.c          |  1 +
+ kernel/sched/core.c    | 42 ++++++++++++++++++++++++++++++++++++++++++
+ 7 files changed, 62 insertions(+)
+
+diff --git a/arch/x86/rpal/core.c b/arch/x86/rpal/core.c
+index 92281b557a6c..2ac5d932f69c 100644
+--- a/arch/x86/rpal/core.c
++++ b/arch/x86/rpal/core.c
+@@ -144,6 +144,13 @@ rpal_do_kernel_context_switch(struct task_struct *next, struct pt_regs *regs)
+ 	struct task_struct *prev = current;
+ 
+ 	if (rpal_test_task_thread_flag(next, RPAL_LAZY_SWITCHED_BIT)) {
++		struct rpal_receiver_call_context *rcc = next->rpal_rd->rcc;
++		struct rpal_sender_call_context *scc = current->rpal_sd->scc;
++		u64 slice = rdtsc_ordered() - scc->start_time;
++
++		rcc->total_time += slice;
++		scc->total_time += slice;
++
+ 		rpal_resume_ep(next);
+ 		current->rpal_sd->receiver = next;
+ 		rpal_lock_cpu(current);
+@@ -169,6 +176,7 @@ rpal_do_kernel_context_switch(struct task_struct *next, struct pt_regs *regs)
+ 		rpal_schedule(next);
+ 		rpal_clear_task_thread_flag(prev, RPAL_LAZY_SWITCHED_BIT);
+ 		prev->rpal_rd->sender = NULL;
++		next->rpal_sd->scc->start_time = rdtsc_ordered();
+ 	}
+ 	if (unlikely(!irqs_disabled())) {
+ 		local_irq_disable();
+diff --git a/arch/x86/rpal/thread.c b/arch/x86/rpal/thread.c
+index 51c9eec639cb..5cd0be631521 100644
+--- a/arch/x86/rpal/thread.c
++++ b/arch/x86/rpal/thread.c
+@@ -99,6 +99,8 @@ int rpal_register_sender(unsigned long addr)
+ 	rsd->scc = (struct rpal_sender_call_context *)(addr - rsp->user_start +
+ 						       rsp->kernel_start);
+ 	rsd->receiver = NULL;
++	rsd->scc->start_time = 0;
++	rsd->scc->total_time = 0;
+ 
+ 	current->rpal_sd = rsd;
+ 	rpal_set_current_thread_flag(RPAL_SENDER_BIT);
+@@ -182,6 +184,7 @@ int rpal_register_receiver(unsigned long addr)
+ 		(struct rpal_receiver_call_context *)(addr - rsp->user_start +
+ 						      rsp->kernel_start);
+ 	rrd->sender = NULL;
++	rrd->rcc->total_time = 0;
+ 
+ 	current->rpal_rd = rrd;
+ 	rpal_set_current_thread_flag(RPAL_RECEIVER_BIT);
+@@ -289,6 +292,9 @@ int rpal_rebuild_sender_context_on_fault(struct pt_regs *regs,
+ 				rpal_pkey_to_pkru(rpal_current_service()->pkey),
+ 				RPAL_PKRU_SET);
+ #endif
++			if (!rpal_is_correct_address(rpal_current_service(), regs->ip))
++				/* receiver has crashed */
++				scc->total_time += rdtsc_ordered() - scc->start_time;
+ 			return 0;
+ 		}
+ 	}
+diff --git a/include/linux/rpal.h b/include/linux/rpal.h
+index 1d8c1bdc90f2..f5f4da63f28c 100644
+--- a/include/linux/rpal.h
++++ b/include/linux/rpal.h
+@@ -310,6 +310,7 @@ struct rpal_receiver_call_context {
+ 	void __user *events;
+ 	int maxevents;
+ 	int timeout;
++	int64_t total_time;
+ };
+ 
+ /* recovery point for sender */
+@@ -325,6 +326,8 @@ struct rpal_sender_call_context {
+ 	struct rpal_task_context rtc;
+ 	struct rpal_error_context ec;
+ 	int sender_id;
++	s64 start_time;
++	s64 total_time;
+ };
+ 
+ /* End */
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index 5f25cc09fb71..a03113fecdc5 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -1663,6 +1663,7 @@ struct task_struct {
+ 		struct rpal_sender_data *rpal_sd;
+ 		struct rpal_receiver_data *rpal_rd;
+ 	};
++	s64 rpal_steal_time;
+ #endif
+ 
+ 	/* CPU-specific state of this task: */
+diff --git a/init/init_task.c b/init/init_task.c
+index 2eb08b96e66b..3606cf701dfe 100644
+--- a/init/init_task.c
++++ b/init/init_task.c
+@@ -224,6 +224,7 @@ struct task_struct init_task __aligned(L1_CACHE_BYTES) = {
+ 	.rpal_rs = NULL,
+ 	.rpal_flag = 0,
+ 	.rpal_cd = NULL,
++	.rpal_steal_time = 0,
+ #endif
+ };
+ EXPORT_SYMBOL(init_task);
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 11cba74d07c8..ff6331a28987 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -1222,6 +1222,7 @@ static struct task_struct *dup_task_struct(struct task_struct *orig, int node)
+ 	tsk->rpal_rs = NULL;
+ 	tsk->rpal_flag = 0;
+ 	tsk->rpal_cd = NULL;
++	tsk->rpal_steal_time = 0;
+ #endif
+ 	return tsk;
+ 
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index c219ada29d34..d6f8e0d76fc0 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -789,6 +789,14 @@ static void update_rq_clock_task(struct rq *rq, s64 delta)
+ 		delta -= steal;
+ 	}
+ #endif
++#ifdef CONFIG_RPAL
++	if (unlikely(current->rpal_steal_time != 0)) {
++		delta += current->rpal_steal_time;
++		if (unlikely(delta < 0))
++			delta = 0;
++		current->rpal_steal_time = 0;
++	}
++#endif
+ 
+ 	rq->clock_task += delta;
+ 
+@@ -6872,6 +6880,36 @@ static bool try_to_block_task(struct rq *rq, struct task_struct *p,
+ 	return true;
+ }
+ 
++#ifdef CONFIG_RPAL
++static void rpal_acct_runtime(void)
++{
++	if (rpal_current_service()) {
++		if (rpal_test_task_thread_flag(current, RPAL_SENDER_BIT) &&
++		    current->rpal_sd->scc->total_time != 0) {
++			struct rpal_sender_call_context *scc =
++				current->rpal_sd->scc;
++
++			u64 slice =
++				native_sched_clock_from_tsc(scc->total_time) -
++				native_sched_clock_from_tsc(0);
++			current->rpal_steal_time -= slice;
++			scc->total_time = 0;
++		} else if (rpal_test_task_thread_flag(current,
++						      RPAL_RECEIVER_BIT) &&
++			   current->rpal_rd->rcc->total_time != 0) {
++			struct rpal_receiver_call_context *rcc =
++				current->rpal_rd->rcc;
++
++			u64 slice =
++				native_sched_clock_from_tsc(rcc->total_time) -
++				native_sched_clock_from_tsc(0);
++			current->rpal_steal_time += slice;
++			rcc->total_time = 0;
++		}
++	}
++}
++#endif
++
+ /*
+  * __schedule() is the main scheduler function.
+  *
+@@ -6926,6 +6964,10 @@ static void __sched notrace __schedule(int sched_mode)
+ 	struct rq *rq;
+ 	int cpu;
+ 
++#ifdef CONFIG_RPAL
++	rpal_acct_runtime();
++#endif
++
+ 	trace_sched_entry_tp(preempt, CALLER_ADDR0);
+ 
+ 	cpu = smp_processor_id();
 -- 
-Cheers,
-
-David / dhildenb
+2.20.1
 
 
