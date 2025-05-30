@@ -1,163 +1,123 @@
-Return-Path: <linux-kernel+bounces-668605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-668608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95201AC94F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 19:46:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4D29AC94F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 19:47:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86DD6188DC40
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 17:47:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 834634A7EBC
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 17:47:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32F36267B86;
-	Fri, 30 May 2025 17:46:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8007826A1CC;
+	Fri, 30 May 2025 17:46:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bQc020xD"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cENcTrjG"
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4510267B01
-	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 17:46:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 705BE26A0BE;
+	Fri, 30 May 2025 17:46:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748627203; cv=none; b=g9ifI7ile5TYiWwUxk5re8p4x1q8qBr8C3KP5eMjy20bSygudurMFCs05JnpwpCVncjoXeXfF54O69dKKCYmiNvh77FQnA7YYzNg1MYLZh/e2f301X+C5o30/fIlTn67DGsmBJr9QVTa3r8HuXKYedpVO+/Z/IpRy22Wj08bCAs=
+	t=1748627214; cv=none; b=hz+Zmm2utJUOhNryDVKxbS4JembyRCZIKvIQYpSStYIZJYVKe8iYgf01vXSzKJkC0T5CbY2zYDlnbEakgsrIhurDZSZo+NQil70Dv+rkAskAQEHfk1K7od+DPSb1F0ZedxR+lMbZZQ+IgRGb179ZfHZPk7+e+ey8PU90uh7o3Zs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748627203; c=relaxed/simple;
-	bh=8/rRsYd5JSLeJh6AS9GM17uwsqHj9NnqSj1CiHBfh1o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=I2ygW/T1ALmFIy5NqYzE3scnJqPZ7u4p24t5p2ImQlN6Vo+ShWiFkbSWh88iCBUAtRxcUptX45cFuZ9fA9zfL5GnIWge51NSyMy84AoemHtt77bDgSQZCT6gwTe4QEcRUDtHpeJhYmv9N+o9fPt/nDRzFUTbV7DIDClmqsbT5AM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bQc020xD; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-6000791e832so755a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 10:46:40 -0700 (PDT)
+	s=arc-20240116; t=1748627214; c=relaxed/simple;
+	bh=vRflShkK0QVF32FYyRhepXzHjk4JEqhl1dD+AekKEWI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=rM/HDcO6Mr5q20P8FDiDQj80pGwvQIX2gPCq3WISdd+wyGY/SQRCi/RjrdJJ0w9KD+0mZjPiVy9CLLn99jAr27MaRrNarhlFJDqFhGzieO9JE3vIYw9mFDFjXYzozFVkb3fW4vo6btWlN8tfG8LJDxX8Pfm2F99SKA3czAcNBV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cENcTrjG; arc=none smtp.client-ip=209.85.219.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6f0cfbe2042so24622296d6.1;
+        Fri, 30 May 2025 10:46:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1748627199; x=1749231999; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ihn3lqu8Zt6o9S0Gm/cjJQZ8oEZNZXj7TjU4dT1ISYE=;
-        b=bQc020xDvzIaFIL3v9Jg0LyaBSrXH2yW4ppEHZi3DYPfh8IPlXZRzGoehKPw7LCHET
-         L0SLyRaTjkgkjC2q7oKEJhKciSFq/54enx8+T+SMxidHVyyDO1MxwEyM519EcqJAbLiy
-         +9aWQ6jh097lZk6me03TlWUHExTspu2XqKyZ0Kdaj/3v4ojWdOZ/lc+ulqltquHiFPH1
-         oowKDkWbMK5DVzntCJUXEbQ3azETloXFzL2E3G4pbxCuUKL77I9NRsu88TnbqQNDqPgK
-         wig8AmGN2iOfvSupK1Yit99xEC+WGsR8zFzbSu70u/4Ja1sjF/+Jh0Yq1N6UaFZ/NhxI
-         WHtw==
+        d=gmail.com; s=20230601; t=1748627211; x=1749232011; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4yWvre4iDXKzBypLznnX+SBubiDfmTLcrr0bP7oEJqw=;
+        b=cENcTrjGPXiJglj3cyfu9xxGpBZry2Rcsc1MokW2Bjt9mobfEpm/Q0SFHm0htEzblV
+         sd9DcWXn66UI61xGJxdSU9+dONdhaZxyKvEifeIc9NRiY9plh5m9bKBl51hJrXJ9x1CI
+         aaq/qkmf6L8juInpNKxSA4XdRgHsPNJyoQw6HZCeNTsrUiaVKhlHCxibd5GTLgWfB9l8
+         J7cnWVcEHyWbA/5cDYD9Ndra/Mk13L/tV4QxmXndiEr1s+wDwxv9C72Cuu2UPf9tLJdc
+         22e9xvDWrNwUIyZynVGOLUDG+3U1CnzgJf3RECEeyD3N/amSgrHdMlv57qh2sW4bajCx
+         WZ8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748627199; x=1749231999;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ihn3lqu8Zt6o9S0Gm/cjJQZ8oEZNZXj7TjU4dT1ISYE=;
-        b=E6n3diCvhlL2B7NzEAFVWxSDdZNeYT1WUYgTRKdPkPhP04MDIJxfqqYfXHPdYp5HvF
-         1WkBuqRZT/zsiKkicyYQzrktkG8jUNRs3VbIr72u5RaD+qjcn0c5jVubota7BQaSRDys
-         J34g2xBHY5wt8SzC8/F7Fe+EOcAm2pkDiDjPrldyUKhWrjphKa8NzN07XFBXBNsZXllv
-         JdnMvGqztI7tei9G9B6EUwiODAyxXyF5twQSE2iCgRHBK8MRPfJqVzxBUUp8Unb77I3y
-         oEO/bXEONoT2fh4/uo1zv3xytbQ1dWqxWoFTDuXjpZbHHLBXvVWyW6urAcVs05SEZgWI
-         p+kQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWzAplzIU0MA2Qe8nwxkceUFFN/5nHR+MEESu54SrSiI2aEaRAIED0Pl2s3RYHrMysS2Wr0DEKw3mRcg08=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBWCNJMK5B0cuspezcZBSrfsxIMxj/1Xb6STjuPjSWBaaru/Ho
-	JL6jDQVbqa91WtbTrcR6o3dXFCRoMcmSIgeLqokoSzfmrEYaQruc0114IRpPn8ieSE7UzRwlAOy
-	Ob5GjnY0dNp6xMUkWy0p1gsQ/3hevwZJZnO/+YeEt
-X-Gm-Gg: ASbGncvy04YIGhu+lRcyC1WnqNdOvtvJ6EiieoSB/ugr3jrdy8zkPkQaGbfRkwVAv99
-	1xynDvVtEEcC+hltKN0iTTZRscgm7j5E2Wxjs+63mhPT73+PA9EIJrHYzhCac3TEsU9DNtW7O+k
-	RTmFHWRfsEr5QTzSQr0dSXY7SEHHlzcABOn8dF1t7ZXNZQdBn76RqqJVZW19jeo7NVhgLT6IE=
-X-Google-Smtp-Source: AGHT+IFlIzSWLpiRPWX4PVcfGklgRFG+QAA+iehSSjEDDk9XEYQUHXFbDDpIGgjFzNVjN6xbkHl/xyDhsDUsEr6S+OI=
-X-Received: by 2002:aa7:d5ce:0:b0:604:5b98:7c9b with SMTP id
- 4fb4d7f45d1cf-605accfe0b1mr1879a12.0.1748627198767; Fri, 30 May 2025 10:46:38
- -0700 (PDT)
+        d=1e100.net; s=20230601; t=1748627211; x=1749232011;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4yWvre4iDXKzBypLznnX+SBubiDfmTLcrr0bP7oEJqw=;
+        b=FOYhpZXDdRjMrWYiya+oaT2Kqs8Oq7/cVcdVHdg5FnemdiL3iXBwdx2P6Obf1Qgv/T
+         sZnSCh+sU7lDtk9+BUd7fP0LG2JD5Mw1kKg7XGBArydBTsJYbK594FrYXGzxNFTPbyd8
+         HflBA0aTn67WRVMbZ2u7esn6SK/ICa/4QvFi9TNRH3UO5eBTwncsycUE94IdgKBF+SmM
+         QhSPm9N0dO9HqEply23wxnslTYAmPH6e+eKu/2cQdG9drvAoFEb99wXs2AwDToB9O1C1
+         Oh9Zlwosoz+iToIGquyh6mG3izd8w9jGSAbs6GUBUzBqpmdndtRqYbBtPcElBX/JOZGL
+         exnA==
+X-Forwarded-Encrypted: i=1; AJvYcCU3c/J/S6r2o2R5uZPKeXhTVl8sGc+EKpbM/BlChiN5zOHVGX38UoKzCip/okw+jsNXpAVyyBT4s0bjFSLK@vger.kernel.org, AJvYcCUIr6lSHFpnn/hl1HeUxFCz5kzh8+saVx0jRq50zTJHXYucJcPfNbUOXnlncPYvpHNOlLwWxLSIWlMy@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1lNz7gRr//lg64AP9Ql50Aczjacz14OCpgkZUDdK0r0X/OqJq
+	0qQZeF8QD3RFmw9qzI6mNBPq5PRdW3cHpNFmt+QH2fSQwAsxGVU/FLC/hl3iIeHC
+X-Gm-Gg: ASbGncuBFHSEQLc6c/ZfVDMnOLzkh/AGd1oa/T0HteDguS0f5pYPvVqKqCb2kpUHpWB
+	ujcY3Y+yE+UVOuv7f5KNx0SG6S0OK/72ejQ8/6ZUseqfbaMInYLin0w+JBSLcgDV9EKEna3PGIt
+	wJAeCfYl6lFJlZQUu1qFELQqSfN5UVCcSU0G2WxsZeYd0eT78obMSA9qis8defZcOJ0oqv7Irr3
+	VdnyV/88dgiVOffNMn3CpMJvHR0r0OJrKitWib8WfqQ/8geWoBFN28wpbELh4AeMZrQRa+vNodu
+	FLhKhfaikLTTGGikWo/2JOZOWIRBDJuaTKXe0vCITnf+ONfl9H38wbvIqSuczaoDn1QVGMImWOg
+	h6KgUumYy8ApvfjCxc5AIrZ4gqIzsMdw=
+X-Google-Smtp-Source: AGHT+IF9tURkuT3YArE+DnyZIMle9WncnNtAWoNMHJyKa12+SMywR79cNrkihMBZNgoPhgmwaa04Og==
+X-Received: by 2002:a05:6122:17a8:b0:50d:39aa:7881 with SMTP id 71dfb90a1353d-530810a550dmr5023203e0c.0.1748627200605;
+        Fri, 30 May 2025 10:46:40 -0700 (PDT)
+Received: from joaog-nb.corp.toradex.com ([67.159.246.222])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-53074ab0d37sm3578591e0c.8.2025.05.30.10.46.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 May 2025 10:46:39 -0700 (PDT)
+From: =?utf-8?q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <jpaulo.silvagoncalves@gmail.com>
+Subject: [PATCH 0/3] hwmon: (amc6821) Add cooling device support
+Date: Fri, 30 May 2025 14:46:24 -0300
+Message-Id: <20250530-b4-v1-amc6821-cooling-device-support-b4-v1-0-7bb98496c969@toradex.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250404021902.48863-1-anthony.yznaga@oracle.com>
- <20250404021902.48863-9-anthony.yznaga@oracle.com> <CAG48ez3cUZf+xOtP6UkkS2-CmOeo+3K5pvny0AFL_XBkHh5q_g@mail.gmail.com>
- <bd7d2ebe-f9be-437f-8cd8-683c809326f1@oracle.com>
-In-Reply-To: <bd7d2ebe-f9be-437f-8cd8-683c809326f1@oracle.com>
-From: Jann Horn <jannh@google.com>
-Date: Fri, 30 May 2025 19:46:02 +0200
-X-Gm-Features: AX0GCFtcbPmabOKu0l_GvwpOc7YrLnX_imk60FuH-p4r20hytH-nZKj_S8c80B0
-Message-ID: <CAG48ez3TTicKSxXyScmqq5Gg91+-KCSk80EccwkbvsQjLzjCFA@mail.gmail.com>
-Subject: Re: [PATCH v2 08/20] mm/mshare: flush all TLBs when updating PTEs in
- an mshare range
-To: Anthony Yznaga <anthony.yznaga@oracle.com>
-Cc: akpm@linux-foundation.org, willy@infradead.org, markhemm@googlemail.com, 
-	viro@zeniv.linux.org.uk, david@redhat.com, khalid@kernel.org, 
-	andreyknvl@gmail.com, dave.hansen@intel.com, luto@kernel.org, 
-	brauner@kernel.org, arnd@arndb.de, ebiederm@xmission.com, 
-	catalin.marinas@arm.com, linux-arch@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, mhiramat@kernel.org, 
-	rostedt@goodmis.org, vasily.averin@linux.dev, xhao@linux.alibaba.com, 
-	pcc@google.com, neilb@suse.de, maz@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAPDuOWgC/x2NQQ6CMBREr0L+2p+0tSh4FeIC2wF/Im3TIjEh3
+ N3q8iXz5u1UkAWFbs1OGZsUiaGCPjXknmOYweIrk1GmVe1Z8cPypnlc3KUzml2MLwkz+6o6cHm
+ nFPP6G1mNCbja3viO6lvKmOTzLw334/gCUbXkk3kAAAA=
+X-Change-ID: 20250530-b4-v1-amc6821-cooling-device-support-b4-41efee7492d8
+To: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Farouk Bouabid <farouk.bouabid@cherry.de>, 
+ Quentin Schulz <quentin.schulz@cherry.de>
+Cc: linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <joao.goncalves@toradex.com>
+X-Mailer: b4 0.14.2
 
-On Fri, May 30, 2025 at 6:30=E2=80=AFPM Anthony Yznaga
-<anthony.yznaga@oracle.com> wrote:
-> On 5/30/25 7:41 AM, Jann Horn wrote:
-> > On Fri, Apr 4, 2025 at 4:18=E2=80=AFAM Anthony Yznaga <anthony.yznaga@o=
-racle.com> wrote:
-> >> Unlike the mm of a task, an mshare host mm is not updated on context
-> >> switch. In particular this means that mm_cpumask is never updated
-> >> which results in TLB flushes for updates to mshare PTEs only being
-> >> done on the local CPU. To ensure entries are flushed for non-local
-> >> TLBs, set up an mmu notifier on the mshare mm and use the
-> >> .arch_invalidate_secondary_tlbs callback to flush all TLBs.
-> >> arch_invalidate_secondary_tlbs guarantees that TLB entries will be
-> >> flushed before pages are freed when unmapping pages in an mshare regio=
-n.
-> >
-> > Thanks for working on this, I think this is a really nice feature.
-> >
-> > An issue that I think this series doesn't address is:
-> > There could be mmu_notifiers (for things like KVM or SVA IOMMU) that
-> > want to be notified on changes to an mshare VMA; if those are not
-> > invoked, we could get UAF of page contents. So either we propagate MMU
-> > notifier invocations in the host mm into the mshare regions that use
-> > it, or we'd have to somehow prevent a process from using MMU notifiers
-> > and mshare at the same time.
->
-> Thanks, Jann. I've noted this as an issue. Ultimately I think the
-> notifiers calls will need to be propagated. It's going to be tricky, but
-> I have some ideas.
+Add support for using the AMC6821 as a cooling device. The AMC6821
+registers with the thermal framework only if the `cooling-levels`
+property is present in the fan device tree child node. Existing behavior
+is unchanged, so the AMC6821 can still be used without the thermal
+framework (hwmon only).
 
-Very naively I think you could basically register your own notifier on
-the host mm that has notifier callbacks vaguely like this that walk
-the rmap of the mshare file and invoke nested mmu notifiers on each
-VMA that maps the file, basically like unmap_mapping_pages() except
-that you replace unmap_mapping_range_vma() with a notifier invocation?
+Signed-off-by: João Paulo Gonçalves <joao.goncalves@toradex.com>
+---
+João Paulo Gonçalves (3):
+      dt-bindings: hwmon: amc6821: Add cooling levels
+      hwmon: (amc6821) Move reading fan data from OF to a function
+      hwmon: (amc6821) Add cooling device support
 
-static int mshare_mmu_notifier_invalidate_range_start(struct mmu_notifier *=
-mn,
-    const struct mmu_notifier_range *range)
-{
-  struct vm_area_struct *vma;
-  pgoff_t first_index, last_index;
+ .../devicetree/bindings/hwmon/ti,amc6821.yaml      |   6 +
+ drivers/hwmon/amc6821.c                            | 147 ++++++++++++++++++---
+ 2 files changed, 131 insertions(+), 22 deletions(-)
+---
+base-commit: 7e801aa73daa456c4404fde177d3fc397661abf0
+change-id: 20250530-b4-v1-amc6821-cooling-device-support-b4-41efee7492d8
 
-  if (range->end < host_mm->mmap_base)
-    return 0;
-  first_index =3D (max(range->start, host_mm->mmap_base) -
-host_mm->mmap_base) / PAGE_SIZE;
-  last_index =3D (range->end - host_mm->mmap_base) / PAGE_SIZE;
-  i_mmap_lock_read(mapping);
-  vma_interval_tree_foreach(vma, &mapping->i_mmap, first_index, last_index)=
- {
-    struct mmu_notifier_range nested_range;
+Best regards,
+-- 
+João Paulo Gonçalves <joao.goncalves@toradex.com>
 
-    [... same math as in unmap_mapping_range_tree ...]
-    mmu_notifier_range_init(&nested_range, range->event, vma->vm_mm,
-nested_start, nested_end);
-    mmu_notifier_invalidate_range_start(&nested_range);
-  }
-  i_mmap_unlock_read(mapping);
-}
-
-And ensure that when mm_take_all_locks() encounters an mshare VMA, it
-basically recursively does mm_take_all_locks() on the mshare host mm?
-
-I think that might be enough to make it work, and the rest beyond that
-would be optimizations?
 
