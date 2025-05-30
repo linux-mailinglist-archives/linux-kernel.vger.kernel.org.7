@@ -1,126 +1,149 @@
-Return-Path: <linux-kernel+bounces-668477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-668474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A254AC933F
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 18:16:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B99B7AC9341
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 18:16:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 056D17AC4BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 16:15:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D146C9E38A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 16:15:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57406235346;
-	Fri, 30 May 2025 16:15:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACCA51D89E3;
+	Fri, 30 May 2025 16:15:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bDe5zrzM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YUr+R+IG"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB5FF22D9E6;
-	Fri, 30 May 2025 16:15:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58F261A5B8B;
+	Fri, 30 May 2025 16:15:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748621743; cv=none; b=mfXn0W3Ln93vm0xFMq2kCyJ3m/Fzct+hbDdJ461ji2jkHLseH7cbYwJz1XfsTbxZ/mOCtOxi+w7Ie5HcItmADF72TELbq6RNtJTjT+Bq2wcCCkQljwdp6IRvjZzVYJ/qxgq6SBDMp3gXoFaurB0ZpfGPrzVpnYE9WsMCwXIwVdY=
+	t=1748621740; cv=none; b=jI5DB0omRoa1X10bksc8uPk0nTxYRMMJ/w13B4sOI6AdNEqrontvzQm5hXhSKP1JnG4KwR1k7aXoeYowxu/gcoNQKXFK2aQC2CVlZBSOaep1+4BTGCSu7Ah/LRRKkFpFWfpO7LFVqf3XjCWhMHSenSlZevfnvq9aIiqNYJB7iyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748621743; c=relaxed/simple;
-	bh=w5NsNbTubNW7kEeGSKcRDNbUqh6ip+QRiqiAGqFFjqQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=f4/rpdJpNm7TP5vL67YmmxgUlGth1tKhcfsSBLjPNNG1TCPXRO16NlklH+CGpqWGHElgzp26AXFTeS4J4j6meVLWrBKmG8KSnQvSN25KFEWZm+A+AP2rXqN4Pv7MkY8n3snMOr1QTO1KCsb+2qqne5B/sYoLJ+iE2rZ05TUmyH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bDe5zrzM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 2E216C4CEE9;
-	Fri, 30 May 2025 16:15:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748621743;
-	bh=w5NsNbTubNW7kEeGSKcRDNbUqh6ip+QRiqiAGqFFjqQ=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=bDe5zrzM+6vJ5pjlbffBn5YoicdoWnLXv5mJDJPP2k8vG+9ZnKwfB9XAa6sZdh4T3
-	 pljpkTuYESuvxPsZ5n217wa1KGCrfntqO9JN5mKku+s6PvDGh8X01nUMQfZ/CuGQc1
-	 Fb5kXdimjCWuM5/R2nXLPVvdiEHphqUdxnz3vn1mRUOevbaitybx9hybccvs5WAc8T
-	 rt3qRp/ixS+gcH7EFRc/l9uALl7IdPvS2u5JJHypuj8+TRI17+kD7SzVB+cEfOs2yx
-	 s+bRhZvNCioMJ2i66g0Umx+qmPeUOpeEhrrHF/bvP5XvswmxoJrNjVHcMhgeYlZ6W7
-	 J+gI4U3ygMfaw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23603C5B543;
-	Fri, 30 May 2025 16:15:43 +0000 (UTC)
-From: Jake Hillion via B4 Relay <devnull+jake.hillion.co.uk@kernel.org>
-Date: Fri, 30 May 2025 17:15:22 +0100
-Subject: [PATCH 2/2] x86/platform/amd: replace down_timeout with
- down_interruptible
+	s=arc-20240116; t=1748621740; c=relaxed/simple;
+	bh=nMHhGzKx6l1yFtYUlEhM7VyCxgik5nVNLeVZurJT0e8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=I+iGNQAdhuVe9KgxfOmyC/HOiOvkseetYSERx51nWRoT9OnUPjgVvjP53q90C3SrOD9ILcYO65gvhpZNAx9dzz7jR2m0FVdwl9GZNXowccA/cXof42Qlo8kDldyCMPcosiFlj3sV0xCBlUAsBy5Yqu1pUvM8Q/RjvEpz4iqopQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YUr+R+IG; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-442f9043f56so13813185e9.0;
+        Fri, 30 May 2025 09:15:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748621736; x=1749226536; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Qy6uONJd9YDsRJcfKs6FIt0MY6YyHzNaH+4QdToi3oA=;
+        b=YUr+R+IGaL/e8+/FZ/+dFP8WXDe6jjbfpHobP7stBPsIN0E3GqmR06x67+gXnbNKFi
+         CVCgYHBTdKz8UDwQd4ogiC2rj9v6pR5wOpgDnnihaJBo2e1mDHbPOvlEbEKBBySQA01F
+         sJcX2X7GO/eT/WKG9lQ3R83idbBWp7PECbmabjA3o5eQUCb0fr7awqRJuUkdsAfRtAQ6
+         DGJ3umOXgbDZJ5HDui0Qu4byIQVPhxUR6fi9zIaVE8e8uk31yM7/VpCJxQ7LDAzh32H+
+         UBx0g0TN5Pm7O1KNwGl7C1Y9fs0axQlTZ01MvMthGimIFkaQINJl6uoQTcp8hXUFKtLi
+         6mJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748621736; x=1749226536;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Qy6uONJd9YDsRJcfKs6FIt0MY6YyHzNaH+4QdToi3oA=;
+        b=dTaRxoRnbNhgzUE/vCI8HRL4oW58/g/te1AhNjKGZ2yxdwKHumyci6m5i5Xvx7Ke1n
+         YTHcOkY1GFcapfiYvEkBGpOcVVNYwZI/b5TzQn98lib2stxVfjsLcKP16xhnz2myyoY4
+         tsDHo4dKe9a6AeDZOshVujDoP1rWaWbhRyq+Hn/imQFAluMHmA9sT87r9DjprHl+i5nt
+         obeOX9gFEVGyXrBU7gs0YkzEYecVOEbohQlFslJCL9gbwOnKiQ7hD+1b+McQnuQU5zmr
+         7e/BDyZHZomH6pNQMMpofDVDPeBs/McXOU3JE1IHbXD9tFax1oFSiVgBKTETKtTyNElO
+         Z1Sg==
+X-Forwarded-Encrypted: i=1; AJvYcCVu5mLIoWKNO5NKAZyPQq7N4w3ToKbleVs/gz84AvZVk8hkTDLQTcVWmRZ6NdNwkSgfVTcTxdqAeKCt2aQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YweOUYpWf8IUg9ItN+zl5//O73i9mLjQwBAM1xnEOJDfGyOJVdk
+	AqPtmF4uCb/1E4kXnfsDJjS+UYdEZR9KrRZ7L9oxpHMJjkrE/88rSwh9
+X-Gm-Gg: ASbGncu0t4pYaYINnggkZFF8D+H4iOf0KpcfcWq+VydqVbHRjunrQizcWw8LbUyOetT
+	L9MrYy+BYY44zp3cw6AArl0ezaTm+pDZfOkbes7/8x1xXs4BXzBhURgwvSPgYNSq3QXS19BohCU
+	jL+UOHZm1DTlTBGhHNHknN5LiJsO5NOE/Dh657FiwETVdcxpW55lmHTZ648M4yb1livCA4aUauF
+	dam0YsQoYTzaBa4Cu/Aw24q+hDX3dC81eIOfnVJoBIUEQp/ZWkqEm1nzhJ+hqQm5l1rR7Wbuc6i
+	nj5eLB5A9BE/tmbYKRBXMVam6aKdZiebisFxwIX/wxYjZ4EFcgIcR9nNa9tYqSmB
+X-Google-Smtp-Source: AGHT+IF3Qheau+41FJN4zh+ru7u19FUa9vqxVjioTQgILtoyR31hRsBY/unJ+M14by/h2EdXRVD++A==
+X-Received: by 2002:a05:600c:4fc6:b0:43d:fa59:cc8f with SMTP id 5b1f17b1804b1-450d6599897mr37801315e9.33.1748621736182;
+        Fri, 30 May 2025 09:15:36 -0700 (PDT)
+Received: from ?IPV6:2001:871:22a:cd68::171c? ([2001:871:22a:cd68::171c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-450d7fa2493sm21651905e9.16.2025.05.30.09.15.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 30 May 2025 09:15:35 -0700 (PDT)
+Message-ID: <d30be54d-f2dd-4394-b677-193cb2d77f1c@gmail.com>
+Date: Fri, 30 May 2025 18:15:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/7] rust: revocable: support fallible PinInit types
+To: Danilo Krummrich <dakr@kernel.org>, gregkh@linuxfoundation.org,
+ rafael@kernel.org, ojeda@kernel.org, alex.gaynor@gmail.com,
+ boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+ benno.lossin@proton.me, a.hindborg@kernel.org, aliceryhl@google.com,
+ tmgross@umich.edu
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250530142447.166524-1-dakr@kernel.org>
+ <20250530142447.166524-3-dakr@kernel.org>
+Content-Language: en-US, de-DE
+From: Christian Schrefl <chrisi.schrefl@gmail.com>
+In-Reply-To: <20250530142447.166524-3-dakr@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250530-amd-hsmp-v1-2-3222bffa4008@hillion.co.uk>
-References: <20250530-amd-hsmp-v1-0-3222bffa4008@hillion.co.uk>
-In-Reply-To: <20250530-amd-hsmp-v1-0-3222bffa4008@hillion.co.uk>
-To: Naveen Krishna Chatradhi <naveenkrishna.chatradhi@amd.com>, 
- Carlos Bilbao <carlos.bilbao@kernel.org>, 
- Hans de Goede <hdegoede@redhat.com>, 
- =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, 
- sched-ext@meta.com, Jake Hillion <jake@hillion.co.uk>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1748621741; l=1695;
- i=jake@hillion.co.uk; s=20250530; h=from:subject:message-id;
- bh=QAHzX1+6Dbbm88Tx2DVSQQq09t9e4710Uyoh5Lrpb0o=;
- b=bPFG2Kfuu/Iy7NIuGI3wee7kIwEkO5Wlnw8PECvDRTAOUIcRsmmm1HaMc7adFbQo7H4Z1Adql
- n5WBJDcjxCsB7rQbrRLj61XBiU97Vst4pXEQuRSZr/2Je0kLM4vdTmE
-X-Developer-Key: i=jake@hillion.co.uk; a=ed25519;
- pk=8cznmqtMcMEcU8QH55k8DrySboD889OBB/BEUMJh3dw=
-X-Endpoint-Received: by B4 Relay for jake@hillion.co.uk/20250530 with
- auth_id=419
-X-Original-From: Jake Hillion <jake@hillion.co.uk>
-Reply-To: jake@hillion.co.uk
 
-From: Jake Hillion <jake@hillion.co.uk>
+On 30.05.25 4:24 PM, Danilo Krummrich wrote:
+> Currently, Revocable::new() only supports infallible PinInit
+> implementations, i.e. impl PinInit<T, Infallible>.
+> 
+> This has been sufficient so far, since users such as Devres do not
+> support fallibility.
+> 
+> Since this is about to change, make Revocable::new() generic over the
+> error type E.
+> 
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> ---
 
-Currently hsmp_send_message uses down_timeout with a 100ms timeout to
-take the semaphore. However __hsmp_send_message, the content of the
-critical section, has a sleep in it. On systems with significantly
-delayed scheduling behaviour this may take over 100ms.
+Reviewed-by: Christian Schrefl <chrisi.schrefl@gmail.com>
 
-Convert this method to down_interruptible. Leave the error handling the
-same as the documentation currently is not specific about what error is
-returned.
-
-Previous behaviour: a caller who competes with another caller stuck in
-the critical section due to scheduler delays would receive -ETIMEDOUT.
-
-New behaviour: a caller who competes with another caller stuck in the
-critical section due to scheduler delays will complete successfully.
-
-Signed-off-by: Jake Hillion <jake@hillion.co.uk>
----
- drivers/platform/x86/amd/hsmp/hsmp.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
-
-diff --git a/drivers/platform/x86/amd/hsmp/hsmp.c b/drivers/platform/x86/amd/hsmp/hsmp.c
-index f35c639457ac425e79dead2515c0eddea0759323..6c30bb3edc1d77939b10047b771a5c574e5f2a1e 100644
---- a/drivers/platform/x86/amd/hsmp/hsmp.c
-+++ b/drivers/platform/x86/amd/hsmp/hsmp.c
-@@ -216,13 +216,7 @@ int hsmp_send_message(struct hsmp_message *msg)
- 		return -ENODEV;
- 	sock = &hsmp_pdev.sock[msg->sock_ind];
- 
--	/*
--	 * The time taken by smu operation to complete is between
--	 * 10us to 1ms. Sometime it may take more time.
--	 * In SMP system timeout of 100 millisecs should
--	 * be enough for the previous thread to finish the operation
--	 */
--	ret = down_timeout(&sock->hsmp_sem, msecs_to_jiffies(HSMP_MSG_TIMEOUT));
-+	ret = down_interruptible(&sock->hsmp_sem);
- 	if (ret < 0)
- 		return ret;
- 
-
--- 
-2.47.2
-
+>  rust/kernel/devres.rs    | 2 +-
+>  rust/kernel/revocable.rs | 7 +++++--
+>  2 files changed, 6 insertions(+), 3 deletions(-)
+> 
+> diff --git a/rust/kernel/devres.rs b/rust/kernel/devres.rs
+> index 0f79a2ec9474..2dbe17d6ea1f 100644
+> --- a/rust/kernel/devres.rs
+> +++ b/rust/kernel/devres.rs
+> @@ -98,7 +98,7 @@ struct DevresInner<T> {
+>  impl<T> DevresInner<T> {
+>      fn new(dev: &Device<Bound>, data: T, flags: Flags) -> Result<Arc<DevresInner<T>>> {
+>          let inner = Arc::pin_init(
+> -            pin_init!( DevresInner {
+> +            try_pin_init!( DevresInner {
+>                  dev: dev.into(),
+>                  callback: Self::devres_callback,
+>                  data <- Revocable::new(data),
+> diff --git a/rust/kernel/revocable.rs b/rust/kernel/revocable.rs
+> index db4aa46bb121..ca738f75dc10 100644
+> --- a/rust/kernel/revocable.rs
+> +++ b/rust/kernel/revocable.rs
+> @@ -80,8 +80,11 @@ unsafe impl<T: Sync + Send> Sync for Revocable<T> {}
+>  
+>  impl<T> Revocable<T> {
+>      /// Creates a new revocable instance of the given data.
+> -    pub fn new(data: impl PinInit<T>) -> impl PinInit<Self> {
+> -        pin_init!(Self {
+> +    pub fn new<E>(data: impl PinInit<T, E>) -> impl PinInit<Self, Error>
+> +    where
+> +        Error: From<E>,
+> +    {
+> +        try_pin_init!(Self {
+>              is_available: AtomicBool::new(true),
+>              data <- Opaque::pin_init(data),
+>          })
 
 
