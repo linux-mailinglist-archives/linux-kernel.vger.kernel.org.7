@@ -1,125 +1,177 @@
-Return-Path: <linux-kernel+bounces-668701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-668708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD991AC9614
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 21:30:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B38D1AC9622
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 21:33:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 328925053D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 19:30:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F36151C22E9E
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 19:32:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C70F2797A5;
-	Fri, 30 May 2025 19:29:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE7C727B51A;
+	Fri, 30 May 2025 19:30:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qejIatAl"
-Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ADIDGxNV"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F80827D782
-	for <linux-kernel@vger.kernel.org>; Fri, 30 May 2025 19:29:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1336E1A239B;
+	Fri, 30 May 2025 19:30:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748633382; cv=none; b=apqDImN3Eh1LrHuvHj1Z0QwwTfDTpaN/xOLcK1mB5Zyd+r/K7RTgWyjL7i7+Xn4FSV9gBJzsY1aOeEj3vYXRMMBZtbAf16UaRpjefQ95oJC9IfR+Xjg6fO/M+ydlwPBvpXHet1jkuzjelPj6JXMoxOVca1kUdRK0EsSvtm1kDzc=
+	t=1748633427; cv=none; b=fnNelavsaSFjBTNoSCs9qldY0cfjor5irMByPH0yGeA2rGjRKk1legi40ku/Ci6jFwvNPaDI+6KttLo3YxSHsF1HIEFHVbhxp/aMtt72iwmf2x5fTtwd37Fupf3wihCoVWGjsWabGsv/0h1TXisw0AbQFY4WfFr4OikL2mAlCCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748633382; c=relaxed/simple;
-	bh=VHN1sgts+2xB2xrF6P1F1g5v6UKe5rxGHeCV1L66Wxo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ANAPrhACrni4jv1/JUyn8/HQdIF0/kPTWEmMewX2zwLrw25K+Y8k+x7iR4L59ML6S+F0r4GLabHDWUQP/hK0AJvynKP8czwSKYK4XO/I2yUnqjOXb/fEJGI/PANG+aEsSagXF/bCwTI+g92ihA6VZqgaxnBV+5J2HimK5i5EC6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qejIatAl; arc=none smtp.client-ip=95.215.58.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <0dcd01cd-419f-4225-b22c-cbaf82718235@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1748633376;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tkiGcg9Pp6HB9HenrxwiWzm/IMuLvXwvBc2ohIpTcuU=;
-	b=qejIatAl3IVBpVjd5b1sjdObGZ7rJABj1bGentvPoaT9Gk2nMpl/NODNwtlNVuxD7mIwiW
-	xTQUdOt6Gu3DaCC7BjJCdrWEHh521evt/yWAJJhiesYDNH5GuqToxdnr9DVQXVDc4uDjZ3
-	Hq4CVYV8tCgSZSBhWUbuMlqAshgB7wA=
-Date: Fri, 30 May 2025 12:29:30 -0700
+	s=arc-20240116; t=1748633427; c=relaxed/simple;
+	bh=4FwaqCDDQ3UbxfQ4VtHMq/Q/lIRBQ0+k6N9FDLqpcr0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tT7lcaE1u3U/CtMVqd+qh3vXQxaZh0dO2TqhpskRWHy4zaTQLwsm8V6hmbdIIWKzqAgLc+RgrH1zKbUttzweC7vXO41jxN6HXLMODmT+ZT4E41ovdAUdhFmRvMLvGeg5i/7OLEgERA/MSXRvwrjlLS1WyaK2r5PrR+L/8gpNNJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=ADIDGxNV; arc=none smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54UJN5Vv005165;
+	Fri, 30 May 2025 19:30:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=corp-2025-04-25; bh=CN2fq21ygL6WgXmmWOmyXxcdv1CpH
+	DMsLyZYTZip8D0=; b=ADIDGxNVCB2gbH9rV59INDMPvY/uWV75NOBAdS30kzPnB
+	SJ+p8H6lmANXW/oip5/m8QOhA/POLL540UGtgoHmGS9VKOv8pzFaWdZ85KF+9boT
+	BnmArq5eTKQBNfgwThS6Ff0Te8T47mYcjh0F7vVUpbowUE3qFNriN3guCqDLevjU
+	K7yC2cKTeIUWWxVyrz2duQIVj8R/ym2aqS9b85gJl+NpO7Z7wMNdFx9VDS34jQtE
+	SSwrui6atFy87AM4KSLaAmzCKPTSWsZvKjHyPRNQzOmZnicCZNvcQY3eo/JI38fK
+	kwDL8Tq9Z+fZG42Hi3k3G4dEEGDVYumj6DWAwuDqQ==
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 46v0ym3248-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 30 May 2025 19:30:18 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 54UHnm6w025544;
+	Fri, 30 May 2025 19:30:17 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 46u4jkx6hj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 30 May 2025 19:30:17 +0000
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 54UJUGRH005415;
+	Fri, 30 May 2025 19:30:16 GMT
+Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 46u4jkx6g1-1;
+	Fri, 30 May 2025 19:30:16 +0000
+From: Alok Tiwari <alok.a.tiwari@oracle.com>
+To: lduncan@suse.com, cleech@redhat.com, michael.christie@oracle.com,
+        James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com,
+        open-iscsi@googlegroups.com, linux-scsi@vger.kernel.org
+Cc: alok.a.tiwari@oracle.com, linux-kernel@vger.kernel.org,
+        darren.kenny@oracle.com
+Subject: [PATCH] scsi: iscsi: fix incorrect error path labels for flashnode operations
+Date: Fri, 30 May 2025 12:29:35 -0700
+Message-ID: <20250530193012.3312911-1-alok.a.tiwari@oracle.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v3 9/9] RISC-V: KVM: Upgrade the supported SBI version to
- 3.0
-To: =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@ventanamicro.com>,
- Andrew Jones <ajones@ventanamicro.com>
-Cc: Anup Patel <anup@brainfault.org>, Will Deacon <will@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Paul Walmsley
- <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
- Mayuresh Chitale <mchitale@ventanamicro.com>,
- linux-riscv@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
- kvm-riscv@lists.infradead.org,
- linux-riscv <linux-riscv-bounces@lists.infradead.org>
-References: <20250522-pmu_event_info-v3-0-f7bba7fd9cfe@rivosinc.com>
- <20250522-pmu_event_info-v3-9-f7bba7fd9cfe@rivosinc.com>
- <DA3KSSN3MJW5.2CM40VEWBWDHQ@ventanamicro.com>
- <61627296-6f94-45ea-9410-ed0ea2251870@linux.dev>
- <DA5YWWPPVCQW.22VHONAQHOCHE@ventanamicro.com>
- <20250526-224478e15ee50987124a47ac@orel>
- <ace8be22-3dba-41b0-81f0-bf6d661b4343@linux.dev>
- <20250528-ff9f6120de39c3e4eefc5365@orel>
- <1169138f-8445-4522-94dd-ad008524c600@linux.dev>
- <DA8KL716NTCA.2QJX4EW2OI6AL@ventanamicro.com>
- <2bac252c-883c-4f8a-9ae1-283660991520@linux.dev>
- <DA9G60UI0ZLC.1KIWBXCTX0427@ventanamicro.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Atish Patra <atish.patra@linux.dev>
-In-Reply-To: <DA9G60UI0ZLC.1KIWBXCTX0427@ventanamicro.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-30_08,2025-05-30_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxscore=0 phishscore=0
+ adultscore=0 suspectscore=0 malwarescore=0 mlxlogscore=999 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
+ definitions=main-2505300173
+X-Proofpoint-GUID: PW7ah64oAe7nexZTSOyEfMmHZsp8WQyF
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTMwMDE3MyBTYWx0ZWRfX4n3a80RIKB46 dQnPTEStgiKgz5HU8/LOZmBCKLbEryJJW9bdeFU7GtpE+prURxEqu49ZBhbx4ImJHnmqytsYqfs YtqqEiKfzdUg+93dHRyBw8q4kJ2mXak20biqfSsby6qVXQxqGbiRTNhe/K0++qRIPg+5tNDqORU
+ t7MAhpL92vkw66EHMCeXLNBEY34pjonJ+5Nsmsgkq3276RPHP10ZZeypW7iuevvs3MVtfiiG2Wn 3PWNP+N4fbVqQj/hmzfAJCSI/WizmWNWNAt7z+GlEEcF9U0+XTRoTXghWP4Hv0jdb7Pv9HLzjks yognJJf5pXA0ccSFifHnx9EZTPOAToHuWAHBo4g9txL5J+GarCDQiUD9ZG5YX3GWQtRnM58Tiyf
+ Sd9dynty6EvYiERSMYnJVM3HYGeFvY4apUp8LA7K5TXcdyTvejYmXMCYj9UEJn+61sj3Yyqm
+X-Proofpoint-ORIG-GUID: PW7ah64oAe7nexZTSOyEfMmHZsp8WQyF
+X-Authority-Analysis: v=2.4 cv=N7MpF39B c=1 sm=1 tr=0 ts=683a074a b=1 cx=c_pps a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17 a=dt9VzEwgFbYA:10 a=yPCof4ZbAAAA:8 a=GT0089TQb_y9MyhFKysA:9 cc=ntf awl=host:13207
 
+Correct the error handling goto labels used when host lookup fails in
+various flashnode-related event handlers:
+- iscsi_new_flashnode()
+- iscsi_del_flashnode()
+- iscsi_login_flashnode()
+- iscsi_logout_flashnode()
+- iscsi_logout_flashnode_sid()
 
-On 5/30/25 4:09 AM, Radim Krčmář wrote:
-> 2025-05-29T11:44:38-07:00, Atish Patra <atish.patra@linux.dev>:
->> On 5/29/25 3:24 AM, Radim Krčmář wrote:
->>> I originally gave up on the idea, but I feel kinda bad for Drew now, so
->>> trying again:
->> I am sorry if some of my replies came across in the wrong way. That was
->> never
->> the intention.
-> I didn't mean to accuse you, my apologies.  I agree with Drew's
-> positions, so to expand on a question that wasn't touched in his mail:
->
->>> Even if userspace wants SBI for the M-mode interface, security minded
->> This is probably a 3rd one ? Why we want M-mode interface in the user
->> space ?
-> It is about turning KVM into an ISA accelerator.
->
-> A guest thinks it is running in S/HS-mode.
-> The ecall instruction traps to M-mode.  RISC-V H extension doesn't
-> accelerate M-mode, so we have to emulate the trap in software.
-We don't need to accelerate M-mode. That's the beauty of the RISC-V H 
-extension.
-The ISA is designed in such a way that the SBI is the interface between 
-the supervisor environment (VS/HS)
-and the supervisor execution environment (HS/M).
+scsi_host_put() is not required when shost is NULL, so jumping to the
+correct label avoids unnecessary operations. These functions previously
+jumped to the wrong goto label (put_host), which did not match the
+intended cleanup logic.
+Updated to use the correct exit labels (exit_new_fnode, exit_del_fnode,
+etc.) to ensure proper error handling.
+Also removed the unused put_host label under iscsi_new_flashnode()
+as it is no longer needed.
 
+No functional changes beyond accurate error path correction.
 
->
-> The ISA doesn't say that M-mode means SBI.  We try really hard to have
-> SBI on all RISC-V, but I think KVM is taking it a bit too far.
->
-> We can discuss how best to describe SBI, so userspace can choose to
-> accelerate the M-mode in KVM, but I think that the ability to emulate
-> M-mode in userspace should be provided.
-I am still trying to understand the advantages of emulating the M-mode 
-in the user space.
-Can you please elaborate ?
-I am assuming you are not hinting Nested virtualization which can be 
-achieved with existing
-ISA provided mechanisms and accelerated by SBI NACL.
+Fixes: c6a4bb2ef596 ("[SCSI] scsi_transport_iscsi: Add flash node mgmt support")
+Signed-off-by: Alok Tiwari <alok.a.tiwari@oracle.com>
+---
+ drivers/scsi/scsi_transport_iscsi.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
+diff --git a/drivers/scsi/scsi_transport_iscsi.c b/drivers/scsi/scsi_transport_iscsi.c
+index 0b8c91bf793f..c75a806496d6 100644
+--- a/drivers/scsi/scsi_transport_iscsi.c
++++ b/drivers/scsi/scsi_transport_iscsi.c
+@@ -3499,7 +3499,7 @@ static int iscsi_new_flashnode(struct iscsi_transport *transport,
+ 		pr_err("%s could not find host no %u\n",
+ 		       __func__, ev->u.new_flashnode.host_no);
+ 		err = -ENODEV;
+-		goto put_host;
++		goto exit_new_fnode;
+ 	}
+ 
+ 	index = transport->new_flashnode(shost, data, len);
+@@ -3509,7 +3509,6 @@ static int iscsi_new_flashnode(struct iscsi_transport *transport,
+ 	else
+ 		err = -EIO;
+ 
+-put_host:
+ 	scsi_host_put(shost);
+ 
+ exit_new_fnode:
+@@ -3534,7 +3533,7 @@ static int iscsi_del_flashnode(struct iscsi_transport *transport,
+ 		pr_err("%s could not find host no %u\n",
+ 		       __func__, ev->u.del_flashnode.host_no);
+ 		err = -ENODEV;
+-		goto put_host;
++		goto exit_del_fnode;
+ 	}
+ 
+ 	idx = ev->u.del_flashnode.flashnode_idx;
+@@ -3576,7 +3575,7 @@ static int iscsi_login_flashnode(struct iscsi_transport *transport,
+ 		pr_err("%s could not find host no %u\n",
+ 		       __func__, ev->u.login_flashnode.host_no);
+ 		err = -ENODEV;
+-		goto put_host;
++		goto exit_login_fnode;
+ 	}
+ 
+ 	idx = ev->u.login_flashnode.flashnode_idx;
+@@ -3628,7 +3627,7 @@ static int iscsi_logout_flashnode(struct iscsi_transport *transport,
+ 		pr_err("%s could not find host no %u\n",
+ 		       __func__, ev->u.logout_flashnode.host_no);
+ 		err = -ENODEV;
+-		goto put_host;
++		goto exit_logout_fnode;
+ 	}
+ 
+ 	idx = ev->u.logout_flashnode.flashnode_idx;
+@@ -3678,7 +3677,7 @@ static int iscsi_logout_flashnode_sid(struct iscsi_transport *transport,
+ 		pr_err("%s could not find host no %u\n",
+ 		       __func__, ev->u.logout_flashnode.host_no);
+ 		err = -ENODEV;
+-		goto put_host;
++		goto exit_logout_sid;
+ 	}
+ 
+ 	session = iscsi_session_lookup(ev->u.logout_flashnode_sid.sid);
+-- 
+2.47.1
 
 
