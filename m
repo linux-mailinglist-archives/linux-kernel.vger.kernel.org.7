@@ -1,79 +1,80 @@
-Return-Path: <linux-kernel+bounces-668608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-668606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4D29AC94F9
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 19:47:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE1EDAC94F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 19:47:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 834634A7EBC
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 17:47:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14091A47EB1
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 May 2025 17:46:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8007826A1CC;
-	Fri, 30 May 2025 17:46:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFD02268FF9;
+	Fri, 30 May 2025 17:46:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cENcTrjG"
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TTr4FJDR"
+Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 705BE26A0BE;
-	Fri, 30 May 2025 17:46:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDE70268C49;
+	Fri, 30 May 2025 17:46:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748627214; cv=none; b=hz+Zmm2utJUOhNryDVKxbS4JembyRCZIKvIQYpSStYIZJYVKe8iYgf01vXSzKJkC0T5CbY2zYDlnbEakgsrIhurDZSZo+NQil70Dv+rkAskAQEHfk1K7od+DPSb1F0ZedxR+lMbZZQ+IgRGb179ZfHZPk7+e+ey8PU90uh7o3Zs=
+	t=1748627207; cv=none; b=j/PcUsT7jsIYClFnEMsFdyC4GxdfC8CIlcnzD3mJqC528Ndy23cqUdyAqpm3MIzZeO4BCGccrGZ7EuwlcKaV1DYeMTIejfaIjorpvnytdCM5jmbMTdNKjOhaZNJOop2KNpkyR7DUxUq7zTvPbAvfLvZCh7BJ5Ce8ZTYwFNJihq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748627214; c=relaxed/simple;
-	bh=vRflShkK0QVF32FYyRhepXzHjk4JEqhl1dD+AekKEWI=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=rM/HDcO6Mr5q20P8FDiDQj80pGwvQIX2gPCq3WISdd+wyGY/SQRCi/RjrdJJ0w9KD+0mZjPiVy9CLLn99jAr27MaRrNarhlFJDqFhGzieO9JE3vIYw9mFDFjXYzozFVkb3fW4vo6btWlN8tfG8LJDxX8Pfm2F99SKA3czAcNBV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cENcTrjG; arc=none smtp.client-ip=209.85.219.54
+	s=arc-20240116; t=1748627207; c=relaxed/simple;
+	bh=c8eMnEXkKj3KZv7pXFKJycXqfPtAZ8DjtUNQCxj7R9I=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=NIq20kl4pONbOjrvKXol297snj7sB4E/fOJBRyXtlFWjID4kwb6dbfGYyA7iBsCFE0yCKf09Jy23OMQ1pO4OC+Ghzw6QOL9ixIVQGeReps4xPKSEwpgfB8j01ilNmlwj05lsw5XKfYgm7YZ6dIQqhWqVf+gc/uEndRhfYjvhAqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TTr4FJDR; arc=none smtp.client-ip=209.85.221.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6f0cfbe2042so24622296d6.1;
-        Fri, 30 May 2025 10:46:52 -0700 (PDT)
+Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-52413efd0d3so749788e0c.2;
+        Fri, 30 May 2025 10:46:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748627211; x=1749232011; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4yWvre4iDXKzBypLznnX+SBubiDfmTLcrr0bP7oEJqw=;
-        b=cENcTrjGPXiJglj3cyfu9xxGpBZry2Rcsc1MokW2Bjt9mobfEpm/Q0SFHm0htEzblV
-         sd9DcWXn66UI61xGJxdSU9+dONdhaZxyKvEifeIc9NRiY9plh5m9bKBl51hJrXJ9x1CI
-         aaq/qkmf6L8juInpNKxSA4XdRgHsPNJyoQw6HZCeNTsrUiaVKhlHCxibd5GTLgWfB9l8
-         J7cnWVcEHyWbA/5cDYD9Ndra/Mk13L/tV4QxmXndiEr1s+wDwxv9C72Cuu2UPf9tLJdc
-         22e9xvDWrNwUIyZynVGOLUDG+3U1CnzgJf3RECEeyD3N/amSgrHdMlv57qh2sW4bajCx
-         WZ8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748627211; x=1749232011;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=gmail.com; s=20230601; t=1748627204; x=1749232004; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=4yWvre4iDXKzBypLznnX+SBubiDfmTLcrr0bP7oEJqw=;
-        b=FOYhpZXDdRjMrWYiya+oaT2Kqs8Oq7/cVcdVHdg5FnemdiL3iXBwdx2P6Obf1Qgv/T
-         sZnSCh+sU7lDtk9+BUd7fP0LG2JD5Mw1kKg7XGBArydBTsJYbK594FrYXGzxNFTPbyd8
-         HflBA0aTn67WRVMbZ2u7esn6SK/ICa/4QvFi9TNRH3UO5eBTwncsycUE94IdgKBF+SmM
-         QhSPm9N0dO9HqEply23wxnslTYAmPH6e+eKu/2cQdG9drvAoFEb99wXs2AwDToB9O1C1
-         Oh9Zlwosoz+iToIGquyh6mG3izd8w9jGSAbs6GUBUzBqpmdndtRqYbBtPcElBX/JOZGL
-         exnA==
-X-Forwarded-Encrypted: i=1; AJvYcCU3c/J/S6r2o2R5uZPKeXhTVl8sGc+EKpbM/BlChiN5zOHVGX38UoKzCip/okw+jsNXpAVyyBT4s0bjFSLK@vger.kernel.org, AJvYcCUIr6lSHFpnn/hl1HeUxFCz5kzh8+saVx0jRq50zTJHXYucJcPfNbUOXnlncPYvpHNOlLwWxLSIWlMy@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1lNz7gRr//lg64AP9Ql50Aczjacz14OCpgkZUDdK0r0X/OqJq
-	0qQZeF8QD3RFmw9qzI6mNBPq5PRdW3cHpNFmt+QH2fSQwAsxGVU/FLC/hl3iIeHC
-X-Gm-Gg: ASbGncuBFHSEQLc6c/ZfVDMnOLzkh/AGd1oa/T0HteDguS0f5pYPvVqKqCb2kpUHpWB
-	ujcY3Y+yE+UVOuv7f5KNx0SG6S0OK/72ejQ8/6ZUseqfbaMInYLin0w+JBSLcgDV9EKEna3PGIt
-	wJAeCfYl6lFJlZQUu1qFELQqSfN5UVCcSU0G2WxsZeYd0eT78obMSA9qis8defZcOJ0oqv7Irr3
-	VdnyV/88dgiVOffNMn3CpMJvHR0r0OJrKitWib8WfqQ/8geWoBFN28wpbELh4AeMZrQRa+vNodu
-	FLhKhfaikLTTGGikWo/2JOZOWIRBDJuaTKXe0vCITnf+ONfl9H38wbvIqSuczaoDn1QVGMImWOg
-	h6KgUumYy8ApvfjCxc5AIrZ4gqIzsMdw=
-X-Google-Smtp-Source: AGHT+IF9tURkuT3YArE+DnyZIMle9WncnNtAWoNMHJyKa12+SMywR79cNrkihMBZNgoPhgmwaa04Og==
-X-Received: by 2002:a05:6122:17a8:b0:50d:39aa:7881 with SMTP id 71dfb90a1353d-530810a550dmr5023203e0c.0.1748627200605;
-        Fri, 30 May 2025 10:46:40 -0700 (PDT)
+        bh=un/E/DEhIx+krru6ePBASrA8B37RqcZJZEYw5tmJ1+Y=;
+        b=TTr4FJDRNp04sUOW2nPxU99Rr4PzEBA5MZ+3UENl7SAFmYndSLbq3qmRvcs7ER9JTV
+         iX0lMjE7q9Hz7hP9gRG2VfdUWBwteKpvjND6wgwkPVIBkTaLTjyvaXz4XqrRAel9jA3/
+         RuBtukJuvADLWHBCQgKM84hVeOvWIJWxv1ExDEGrFhkA3OK8O/43ae6aYpfsGHeSvA5z
+         AgrTx2k7Z6Z0zTbrvYDqPqnY3x9xPjbdvxOMcq7kR1rFHmChSilldBEw84lQlZ3m1bDh
+         xRvpsFweDiG2B+xvHymDgBavUU2RNjeItexaPu83tjRqmp8XoQSnaPgCFP8Jhdo42v5b
+         1RyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748627204; x=1749232004;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=un/E/DEhIx+krru6ePBASrA8B37RqcZJZEYw5tmJ1+Y=;
+        b=HF1Gv5Ook5DmBm0byc1LOJ4zbWh6I0a4mTaoLQPqqdh/lZn5reb9ZatzjISFoIk62I
+         4kLzeWs6Bkn+4VcOM07gisfUplg+lPKsuRI5AlpK2QR6VgRT1nil/f7bHlg56UzfPz44
+         W43XSygKB+MLQkkmwwJTStjtEw/lYA36hBZuQmgfZo/l+akmvFtGx5Hu320TO7mw9aSK
+         Nl8O7lL9adHSV6wko16seIiqhJ3n36PtTPbBKJTQsJARRQxX7bQKUQWcw26TlFD5oKv/
+         2vHEEa9UJ1oKcxklqHpbK5MMBbrK8rSjdICVV7CCx/oAcGGkQ/aJ9Ucxy25OZ+xg7p9O
+         JnBw==
+X-Forwarded-Encrypted: i=1; AJvYcCWRLV3GG0q9gAP+WeSXAUmKS+V3+to1vPIac2a/e5LxovTn4ybI+xx/S2tAa3bmbnv1Rj/CD+w/XkHH7vdT@vger.kernel.org, AJvYcCWk1+6q6Z8j8ulaaPV6M4oPSja2npclkunDkqmkNpsKIo3XrwBNWJjnJEE9K0JR5/I5W8SnPqTXUeIy@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRmPM67N9cDei2QASGBHGTlQZo150UG263+Vbr4cbe2XFODwqN
+	GpSDeXYrf7KPgY5/cFXhkXcoB2Qd7Hr4E7LpwiJOZfCEqoR2L1DgYNe8BZfQDJHd
+X-Gm-Gg: ASbGncsQk4GLNp0cW/wv1EPuTgGDVxzsLrQZzNM1+8q3zmVZSxAUI50w5qrddQm4sz7
+	YSzPCfFMcS2+IGEoy6Z80oqRyo0NphBwygxJCQshPTanwB3uWwmP7+Xxwy5zVSOwDIN27N9ph3O
+	6O8MQV6j1diBjxTj0HdbfPpsRJvUv6Z8BsLRqwNV6C+jrFUejj8rkDj9CVMTRs62nqjC6kowUJv
+	Sd72YLklu5K4NCf/AoqhmH3PcNt8F+UHGAHl9LUMpn+9JN4957iE+UCuDtaoItU4OFUvBNuRWR9
+	whRK9cvHHhn5LTAUEsDn/7GwwFITJ3bzAWkoppud4sqt1R/PWPus0wFAeHXE63eaq0dp9/h9/q3
+	+7wO5VIu7fu/b2il7hOp0
+X-Google-Smtp-Source: AGHT+IH4V76m/Hf7vdE21xeBTvIMLCsL9QKgzOFnmhDedDYenCAyoRqzRaTj/o0/xnOLWhRO9VhpZA==
+X-Received: by 2002:a05:6122:4f83:b0:530:6dc2:ba9c with SMTP id 71dfb90a1353d-53084bbd2b7mr3090590e0c.2.1748627204284;
+        Fri, 30 May 2025 10:46:44 -0700 (PDT)
 Received: from joaog-nb.corp.toradex.com ([67.159.246.222])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-53074ab0d37sm3578591e0c.8.2025.05.30.10.46.36
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-53074ab0d37sm3578591e0c.8.2025.05.30.10.46.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 May 2025 10:46:39 -0700 (PDT)
+        Fri, 30 May 2025 10:46:43 -0700 (PDT)
 From: =?utf-8?q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <jpaulo.silvagoncalves@gmail.com>
-Subject: [PATCH 0/3] hwmon: (amc6821) Add cooling device support
-Date: Fri, 30 May 2025 14:46:24 -0300
-Message-Id: <20250530-b4-v1-amc6821-cooling-device-support-b4-v1-0-7bb98496c969@toradex.com>
+Date: Fri, 30 May 2025 14:46:25 -0300
+Subject: [PATCH 1/3] dt-bindings: hwmon: amc6821: Add cooling levels
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,10 +83,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIAPDuOWgC/x2NQQ6CMBREr0L+2p+0tSh4FeIC2wF/Im3TIjEh3
- N3q8iXz5u1UkAWFbs1OGZsUiaGCPjXknmOYweIrk1GmVe1Z8cPypnlc3KUzml2MLwkz+6o6cHm
- nFPP6G1mNCbja3viO6lvKmOTzLw334/gCUbXkk3kAAAA=
-X-Change-ID: 20250530-b4-v1-amc6821-cooling-device-support-b4-41efee7492d8
+Message-Id: <20250530-b4-v1-amc6821-cooling-device-support-b4-v1-1-7bb98496c969@toradex.com>
+References: <20250530-b4-v1-amc6821-cooling-device-support-b4-v1-0-7bb98496c969@toradex.com>
+In-Reply-To: <20250530-b4-v1-amc6821-cooling-device-support-b4-v1-0-7bb98496c969@toradex.com>
 To: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, 
@@ -96,28 +96,36 @@ Cc: linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
  =?utf-8?q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <joao.goncalves@toradex.com>
 X-Mailer: b4 0.14.2
 
-Add support for using the AMC6821 as a cooling device. The AMC6821
-registers with the thermal framework only if the `cooling-levels`
-property is present in the fan device tree child node. Existing behavior
-is unchanged, so the AMC6821 can still be used without the thermal
-framework (hwmon only).
+From: João Paulo Gonçalves <joao.goncalves@toradex.com>
+
+The fan can be used as a cooling device, add a description of the
+`cooling-levels` property and restrict the maximum value to 255, which
+is the highest PWM duty cycle supported by the AMC6821 fan controller.
 
 Signed-off-by: João Paulo Gonçalves <joao.goncalves@toradex.com>
 ---
-João Paulo Gonçalves (3):
-      dt-bindings: hwmon: amc6821: Add cooling levels
-      hwmon: (amc6821) Move reading fan data from OF to a function
-      hwmon: (amc6821) Add cooling device support
+ Documentation/devicetree/bindings/hwmon/ti,amc6821.yaml | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
- .../devicetree/bindings/hwmon/ti,amc6821.yaml      |   6 +
- drivers/hwmon/amc6821.c                            | 147 ++++++++++++++++++---
- 2 files changed, 131 insertions(+), 22 deletions(-)
----
-base-commit: 7e801aa73daa456c4404fde177d3fc397661abf0
-change-id: 20250530-b4-v1-amc6821-cooling-device-support-b4-41efee7492d8
+diff --git a/Documentation/devicetree/bindings/hwmon/ti,amc6821.yaml b/Documentation/devicetree/bindings/hwmon/ti,amc6821.yaml
+index 9ca7356760a74b1ab5e6c5a4966ba30f050a1eed..eb00756988be158b104642707d96e371930c9fd7 100644
+--- a/Documentation/devicetree/bindings/hwmon/ti,amc6821.yaml
++++ b/Documentation/devicetree/bindings/hwmon/ti,amc6821.yaml
+@@ -32,6 +32,12 @@ properties:
+     $ref: fan-common.yaml#
+     unevaluatedProperties: false
+ 
++    properties:
++      cooling-levels:
++        description: PWM duty cycle values corresponding to thermal cooling states.
++        items:
++          maximum: 255
++
+   "#pwm-cells":
+     const: 2
+     description: |
 
-Best regards,
 -- 
-João Paulo Gonçalves <joao.goncalves@toradex.com>
+2.43.0
 
 
