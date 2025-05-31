@@ -1,131 +1,105 @@
-Return-Path: <linux-kernel+bounces-669005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-669006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC474AC9A00
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 May 2025 10:13:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 286CFAC9A0A
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 May 2025 10:24:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 567BA18961F2
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 May 2025 08:13:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01C809E1F50
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 May 2025 08:23:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 680FA23816C;
-	Sat, 31 May 2025 08:12:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A9CB236A8B;
+	Sat, 31 May 2025 08:24:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A0JkRh8J"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="O5Dzxm2c"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34D4B236A9C;
-	Sat, 31 May 2025 08:12:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E054156F28;
+	Sat, 31 May 2025 08:24:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748679147; cv=none; b=mN65GPE0gwtsYbnqPssFroZ3ZzqStSumB1dbw4xk42Xv59RLtta3IJDO4vh/+ZV6Oh+qj7OkWIkWOSHQzIHzb8wzcbNIVMaGSoSVDUaFc9mHMDEC0ktd5wV2n5fCSEVG4M99cUXUzZ7U9+HgbNboHWj5UebYrbHlLZsIRTtSBOw=
+	t=1748679850; cv=none; b=YtEf6lvwnJPRFV5W4B6jVvJ9UoLMr4+VEPwOp+E4W2Mi7X+BeDzzIstsHCJT4i+FCv3XbT3vcebuhlYvdWqZPhybVXCjf7LKyqod/5pQAUOg2skaPSfhG45Pxj9gqqJ8dJC5sfmX/o75oahFX+jTwPZtN2zhiCcB52MGkUvxymo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748679147; c=relaxed/simple;
-	bh=8HwClmr2xVr+CmAlR/0BETSpOdsTD5SUPbqo4egfRO8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HTLvZn4PAK5RS4eClhD0rNNrn3uhaB1VPNMgeNQalSSyGB88kp8Mj2UZHusMZ8UY9sy0u3hCfLNS2EMOMaCss0dSurOLnyrNKIH/Qi7YJHNnmg3H0PlarGFowGSkYxo0GbjcjOVfmFSRoVljg5ojTKrBfgvFrNAX3K17wsQrFkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A0JkRh8J; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ad89333d603so512662566b.2;
-        Sat, 31 May 2025 01:12:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748679144; x=1749283944; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BLmUijDcOQlZSQu4QReLwYm78Nqw60uUPGdDyhjoijs=;
-        b=A0JkRh8Jb1KpaGd75vGh2JBrIgMAQJmrfoB1V/8h8FrbHyTjx11r8ALqtHgaGKnTFB
-         oJ+ybMbokzj19VqiImjJDxoUhAzy3Y1dlRhAAojaZPkd6mtVEJZQe4fHfFZ0Sc5EBfFY
-         4QmchyZyuJYvERj5MtVZnmHWHgs61T4yKM7YgG7W+0/2mjxdN3K4qidZ+iJSXA1ky4IE
-         2ZCnqxf02k2i5gn1x76vLce0+ODgA884bRO/LS9P0ukvV7RzWekxHSY6sivSnJzAGVPk
-         iD2c3z85MZbiP0KP3CRptsptyi53bKSMhnllAMlkwLHhe0w5sZWQ78KsM3rk9Wp/4pMR
-         zYxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748679144; x=1749283944;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BLmUijDcOQlZSQu4QReLwYm78Nqw60uUPGdDyhjoijs=;
-        b=c/zFZdXLrzGbsGBJOOqp4pLZfmWYTXc9la3DDzJPEuotln0bXaXlg3lyi90fMNoIr0
-         2jvvgm2X2kSSdzKAbgApKEdd5KlFNU72as1RvXW1kR1fel9rEIF5BD81SQKcBlk9ve0o
-         BJ1tP42u7uirXGLnkjYcqgEWEf74NftQR8mcZSpjrThroMC1F9A5ybtXgctJMJgUSPbb
-         EnKI+mKNNBkfyubuqZATqF3wkbSDiSB/zO1PY9MZvxKVGE/rg63YXglcEIZSSazQiISo
-         5/azw92ydo4T+5N3sx7Ds0b2Pc37QH1DjzHe6cZ/EH5WU/+CvIaklFrujmVziHmnfMjb
-         oFZg==
-X-Forwarded-Encrypted: i=1; AJvYcCXlvBxZt+x+cy3lhsFisijljgEImPbf11O5SpjxjxkfVauMWWElbIDqR7VyR9H/pWMMmCES3Gwj9DL+@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvVlgJIKgXBG9z/CRwzs4oijZtb2PAlekyKVbDS7nLap4msHTr
-	Y1Jqw4Dxg0AgwLIugn3mAGEuht93syxS+Q2ngkMpn35avlAHR4fy1z0KYz8HKn9Y
-X-Gm-Gg: ASbGncv1qWbpHw31RIL6fRoDbP8nhcF8SJ4Mg8GjIKXWYm2LV82PwDUWQaVKAPDjY4X
-	eKgBdsChZFF/qNMyL52BxVylF8gVUOiKQqvyQ0JJK27UgXXr8UiliLg/A41E8Gdhrrti278tRHw
-	BcN/KPvyGFDSEvBI98OeMuEgmnJXPiK005bkL7MCfilM1De8SOo73ggM1C9j7ryWTg17YiW+E5v
-	rFQxWnas2wOrU6+djTe0wl9vOm6HSgVZuBfk3aWjhmp8NKk1MtI0KZcRLCAUusO2qHVMTCGf0Pe
-	Sl/O0CQlPo/zcxnchdlWXyLA+VsFmCqjLb8zjYnAwoSMMgAqpWsx0Ylkj6vdGbvN8rhfVcT+IrQ
-	Zjh4WCrTjWhZYnx9kCE9CvM5E99TEm6grMrY=
-X-Google-Smtp-Source: AGHT+IFd3hUrqJwk5ZcKpsNdJCVoow7Qh+Yu4NNlytx4myRDGgV3XmKKhbk2CzvDlF84MpiOqZNunQ==
-X-Received: by 2002:a17:907:7206:b0:ad8:8529:4f73 with SMTP id a640c23a62f3a-adb3243a979mr552944366b.49.1748679144154;
-        Sat, 31 May 2025 01:12:24 -0700 (PDT)
-Received: from masalkhi.. (ip-109-43-114-141.web.vodafone.de. [109.43.114.141])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ada5e2bf05csm451352766b.113.2025.05.31.01.12.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 31 May 2025 01:12:23 -0700 (PDT)
-From: Abd-Alrhman Masalkhi <abd.masalkhi@gmail.com>
-To: linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Cc: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	arnd@arndb.de,
-	gregkh@linuxfoundation.org,
-	abd.masalkhi@gmail.com
-Subject: [PATCH 3/3] MAINTAINERS: Add entry for ST M24LR control driver
-Date: Sat, 31 May 2025 08:11:59 +0000
-Message-ID: <20250531081159.2007319-4-abd.masalkhi@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250531081159.2007319-1-abd.masalkhi@gmail.com>
+	s=arc-20240116; t=1748679850; c=relaxed/simple;
+	bh=ZrQNziy5pLMUUO6PL2SqYbWHdIJAq1F10Q0TiH0CoCw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fnv+ZBmPQT9RLu5G3npPX+2w5MpgP3KTXG6nIBYWULvrRkkmgabBp7Cg7zbLbw9rxIJo1OVpOvhOWBUyuOrlRzdHzzTHpPswTm69jXwwY/+BNfKRSjzmkszp0fpR/GVHrgIkvVlRv3W36S/BxqRTWgN5P4VdgO5HxpoA1ZpnbTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=O5Dzxm2c; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 529D8C4CEE3;
+	Sat, 31 May 2025 08:24:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1748679849;
+	bh=ZrQNziy5pLMUUO6PL2SqYbWHdIJAq1F10Q0TiH0CoCw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=O5Dzxm2cPtx0MF/lWLq9+XoLv991VI9Ru6+/bMjvus0trIbNJijNP0Q9O066u5rQQ
+	 VPHXNvrGIuFA2zn2/xtp60TwZkB/T25b8/efolBaj4g+Ryx1jaDlgtorJAajG2e/bl
+	 iwBWnv70CqNTBAd+kv3dlcC/nbHlQFwA6BxXInzk=
+Date: Sat, 31 May 2025 10:24:07 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Abd-Alrhman Masalkhi <abd.masalkhi@gmail.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	arnd@arndb.de
+Subject: Re: [PATCH 2/3] misc: add sysfs control driver for ST M24LR series
+ RFID/NFC chips
+Message-ID: <2025053131-starship-radiantly-2cd8@gregkh>
 References: <20250531081159.2007319-1-abd.masalkhi@gmail.com>
+ <20250531081159.2007319-3-abd.masalkhi@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250531081159.2007319-3-abd.masalkhi@gmail.com>
 
-Add a MAINTAINERS entry for the newly introduced sysfs control driver
-supporting STMicroelectronics M24LR series RFID/NFC EEPROM chips.
+On Sat, May 31, 2025 at 08:11:58AM +0000, Abd-Alrhman Masalkhi wrote:
+> Add a sysfs-based control driver for the STMicroelectronics M24LR
+> series RFID/NFC EEPROM chips, such as the M24LR04E-R. It enables
+> access to control registers for features such as password
+> authentication, memory access, and device configuration. It also
+> synchronize access to the device. (The EEPROM uses a separate driver;
+> see the note below for details.)
+> 
+> This driver provides only the control interface for M24LR chips. It
+> also acts as an I2C mux (gate) for the EEPROM. Therefore, the EEPROM
+> is represented as a child node in the Device Tree and is accessed
+> through a separate driver (the standard 'at24' driver). This setup
+> is possible because M24LR chips use two I2C addresses: one for
+> accessing the system parameter sector, and another for accessing
+> the EEPROM.
+> 
+> Signed-off-by: Abd-Alrhman Masalkhi <abd.masalkhi@gmail.com>
+> ---
+>  drivers/misc/Kconfig     |  15 +
+>  drivers/misc/Makefile    |   1 +
+>  drivers/misc/m24lr_ctl.c | 677 +++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 693 insertions(+)
+>  create mode 100644 drivers/misc/m24lr_ctl.c
 
-This entry includes the driver source, Device Tree binding, and assigns
-maintainership to the original contributor.
+If you are adding sysfs files, you must have Documentation/ABI/ entries
+to describe this new user/kernel api that you are creating and must
+support for the next 20+ years, and to give us a hint as to how to
+review this driver properly.
 
-Signed-off-by: Abd-Alrhman Masalkhi <abd.masalkhi@gmail.com>
----
- MAINTAINERS | 8 ++++++++
- 1 file changed, 8 insertions(+)
+One minor comment below:
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index eb11c6f57500..f08975ac4d9f 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -23017,6 +23017,14 @@ W:	http://www.st.com/
- F:	Documentation/devicetree/bindings/iio/imu/st,lsm6dsx.yaml
- F:	drivers/iio/imu/st_lsm6dsx/
- 
-+ST M24LR CONTROL DRIVER
-+M:	Abd-Alrhman Masalkhi <abd.masalkhi@gmail.com>
-+L:	linux-kernel@vger.kernel.org
-+L:	devicetree@vger.kernel.org
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/misc/st,m24lr.yaml
-+F:	drivers/misc/m24lr_ctl.c
-+
- ST MIPID02 CSI-2 TO PARALLEL BRIDGE DRIVER
- M:	Benjamin Mugnier <benjamin.mugnier@foss.st.com>
- M:	Sylvain Petinot <sylvain.petinot@foss.st.com>
--- 
-2.43.0
+> +	err = i2c_mux_add_adapter(muxc, 0, 0, 0);
+> +	if (err)
+> +		return err;
+> +
+> +	dev_info(&client->dev, "control interface initialized for %s\n",
+> +		 client->name);
 
+When drivers work properly, they are quiet, no need to spam the kernel
+log for a correctly working system.
+
+thanks,
+
+greg k-h
 
