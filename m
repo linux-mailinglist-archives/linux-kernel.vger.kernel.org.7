@@ -1,180 +1,104 @@
-Return-Path: <linux-kernel+bounces-669068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-669070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5268AC9AB3
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 May 2025 13:39:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78FD6AC9AB6
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 May 2025 13:40:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0D70189A211
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 May 2025 11:39:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82BF0189BF74
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 May 2025 11:40:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D14B23A9A3;
-	Sat, 31 May 2025 11:39:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE71223A563;
+	Sat, 31 May 2025 11:40:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="d2v/VAyH"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=t-8ch.de header.i=@t-8ch.de header.b="fSI6RidY"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 509DD21CA0F
-	for <linux-kernel@vger.kernel.org>; Sat, 31 May 2025 11:39:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F479238C2A
+	for <linux-kernel@vger.kernel.org>; Sat, 31 May 2025 11:40:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748691558; cv=none; b=Hr0y+yMgvzjL3Zpv20mhnYybbrXA76DgO7D8mMcPxVOy96a2k9PDf6QCO9Cy4IU/OBDPEBnx+PB7xwtOoTVgER+4CxXhq/xEZnOePhJMNnL0tXlqn2yIWNP8ucAPXLpTur7p4XrdfYqebQ+QcFe5NpuBOnM9hvxGqtqeN5tvx1s=
+	t=1748691624; cv=none; b=E1pci2O4ryk8XV7PE6tD2LH23vfzAlnotZJjufq1oi6IaeXjiRCtuNzK8ko27K/LrBdsrzLaqCGC22CkCA620qBzJKaZcgTitbPH8wfBdqX5qc/RUmJ60EbTKnfEmqcD9su1Ukilyb3fxmpdsiuOt/uIJmGB8GmzJp26I7ISuLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748691558; c=relaxed/simple;
-	bh=m65zYeSVVsi7UqG52q+jGdWxFXgZln5/FXtFQtDgwvY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=h2BSoM6uHCme0VlcbQ7kJrU76/60uyRNYY7iJU/uEOwBGufOLhwOBtbhn+LloFtPdexTwM8V+sTdnCoLC/pav1rnJ+gW1yAz1JZLXYd4D9Xr9Jjq33NJWNjYGj8etTW+TDK2NtrjqDGPVZzKYOIprbriJpkl3NHMoR9P7DBP/yk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=d2v/VAyH; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id A654D26082;
-	Sat, 31 May 2025 13:39:14 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id rG_HP7124bMt; Sat, 31 May 2025 13:39:13 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1748691553; bh=m65zYeSVVsi7UqG52q+jGdWxFXgZln5/FXtFQtDgwvY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=d2v/VAyH7QNvCtMsgYGlucRpVqiGaFGMUaXWP6g8Y3lfPmZGjBppnppFiBQadgOnC
-	 UweEN3t6/0nO+PKcS+hWszcStqnxgfYEgnCr7H2BNGMpLJ6zT+vSpPuljZKRaErJLq
-	 AZSF5Jy27K4wJNL8XOxfGc6NBp8Ik5QoRjaEC5JsCOtH5TsV7WYvv3P1HtdioaSGH0
-	 TWwDGPP8SJnXBxANE9Pu/GoHGCnFDgyBr1dZEGjpe9mCR4zRkysv2T8tB3swxjhCMn
-	 UP6MTO25EKdlh56E2lvgup9OQiOnztxjJHrjrcxvAmmZW6egGUSYOVGnf/E0Tg6HKp
-	 JpzNJau5eMu0Q==
-From: Yao Zi <ziyao@disroot.org>
-To: Huacai Chen <chenhuacai@kernel.org>,
-	Jianmin Lv <lvjianmin@loongson.cn>,
-	WANG Xuerui <kernel@xen0n.name>
-Cc: linux-kernel@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	Mingcong Bai <jeffbai@aosc.io>,
-	Kexy Biscuit <kexybiscuit@aosc.io>,
-	Yao Zi <ziyao@disroot.org>
-Subject: [PATCH 2/2] platform/loongarch: laptop: Support backlight power control
-Date: Sat, 31 May 2025 11:38:51 +0000
-Message-ID: <20250531113851.21426-3-ziyao@disroot.org>
-In-Reply-To: <20250531113851.21426-1-ziyao@disroot.org>
-References: <20250531113851.21426-1-ziyao@disroot.org>
+	s=arc-20240116; t=1748691624; c=relaxed/simple;
+	bh=QmBowPy2XocnfyrqUSljY0nK1UfcMM28v5fKuvkAQHo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jq60WC8jrcIiXAIq3XwZZ3isNSzOr5lBhwBbU2BXCVoZu6zmRI+hgHv98QVvesLsC+hhNdiFH9f3AK1CIw05FzoCZ4j7p0i2X1GCjRK4ShXn2fXV8zvpKKwZEtcOqi6V/+nbR7pOujSAi/e3SlBpXfwsdBcv/t3r+ahUpmqco8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=t-8ch.de; spf=pass smtp.mailfrom=t-8ch.de; dkim=pass (1024-bit key) header.d=t-8ch.de header.i=@t-8ch.de header.b=fSI6RidY; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=t-8ch.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-8ch.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=t-8ch.de; s=mail;
+	t=1748691613; bh=QmBowPy2XocnfyrqUSljY0nK1UfcMM28v5fKuvkAQHo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fSI6RidYQ1iOYn1EHMbWUgNl4KFV3576+zpMGLfy+nAbpGB+5WyV3WuWFHUCCihMh
+	 GSeovPhYQmXKjKBjcuQcdzigFnUwxf70Rq6DTMAyO542ln6y/qI7IgFmrbGR+DWmQq
+	 LrRkjENCJyxS6NMY2Lm5iU/rnk71604f+LcIW6q8=
+Date: Sat, 31 May 2025 13:40:13 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas@t-8ch.de>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] Driver core changes for 6.16-rc1
+Message-ID: <39eaf3d6-3c69-4e06-a61e-cccc7aad578d@t-8ch.de>
+References: <aDcyRMojWUbAllVX@kroah.com>
+ <35e4b33f-d9e4-41d6-8a47-644fda5b1b7f@t-8ch.de>
+ <2025052822-cavity-mortality-07d2@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <2025052822-cavity-mortality-07d2@gregkh>
 
-loongson_laptop_turn_{on,off}_backlight() are designed for controlling
-power of the backlight, but they aren't really used in the driver
-previously.
+(trimmed the CC-list)
 
-Unify these two functions since they only differ in arguments passed to
-ACPI method, and wire up loongson_laptop_backlight_update() to update
-power state of the backlight as well. Tested on TongFang L860-T2 3A5000
-laptop.
+Hi Greg,
 
-Signed-off-by: Yao Zi <ziyao@disroot.org>
----
- drivers/platform/loongarch/loongson-laptop.c | 53 +++++++-------------
- 1 file changed, 19 insertions(+), 34 deletions(-)
+On 2025-05-28 18:29:20+0200, Greg KH wrote:
+> On Wed, May 28, 2025 at 06:16:21PM +0200, Thomas Weißschuh wrote:
+> > On 2025-05-28 17:56:52+0200, Greg KH wrote:
 
-diff --git a/drivers/platform/loongarch/loongson-laptop.c b/drivers/platform/loongarch/loongson-laptop.c
-index 828bd62e3596..f01e53b1c84d 100644
---- a/drivers/platform/loongarch/loongson-laptop.c
-+++ b/drivers/platform/loongarch/loongson-laptop.c
-@@ -56,8 +56,6 @@ static struct input_dev *generic_inputdev;
- static acpi_handle hotkey_handle;
- static struct key_entry hotkey_keycode_map[GENERIC_HOTKEY_MAP_MAX];
- 
--int loongson_laptop_turn_on_backlight(void);
--int loongson_laptop_turn_off_backlight(void);
- static int loongson_laptop_backlight_update(struct backlight_device *bd);
- 
- /* 2. ACPI Helpers and device model */
-@@ -354,6 +352,22 @@ static int ec_backlight_level(u8 level)
- 	return level;
- }
- 
-+static int ec_backlight_set_power(bool state)
-+{
-+	int status;
-+	union acpi_object arg0 = { ACPI_TYPE_INTEGER };
-+	struct acpi_object_list args = { 1, &arg0 };
-+
-+	arg0.integer.value = state;
-+	status = acpi_evaluate_object(NULL, "\\BLSW", &args, NULL);
-+	if (ACPI_FAILURE(status)) {
-+		pr_info("Loongson lvds error: 0x%x\n", status);
-+		return -EIO;
-+	}
-+
-+	return 0;
-+}
-+
- static int loongson_laptop_backlight_update(struct backlight_device *bd)
- {
- 	int lvl = ec_backlight_level(bd->props.brightness);
-@@ -363,6 +377,8 @@ static int loongson_laptop_backlight_update(struct backlight_device *bd)
- 	if (ec_set_brightness(lvl))
- 		return -EIO;
- 
-+	ec_backlight_set_power(bd->props.power == BACKLIGHT_POWER_ON ? true : false);
-+
- 	return 0;
- }
- 
-@@ -394,6 +410,7 @@ static int laptop_backlight_register(void)
- 
- 	props.brightness = ec_get_brightness();
- 	props.max_brightness = status;
-+	props.power = BACKLIGHT_POWER_ON;
- 	props.type = BACKLIGHT_PLATFORM;
- 
- 	backlight_device_register("loongson_laptop",
-@@ -402,38 +419,6 @@ static int laptop_backlight_register(void)
- 	return 0;
- }
- 
--int loongson_laptop_turn_on_backlight(void)
--{
--	int status;
--	union acpi_object arg0 = { ACPI_TYPE_INTEGER };
--	struct acpi_object_list args = { 1, &arg0 };
--
--	arg0.integer.value = 1;
--	status = acpi_evaluate_object(NULL, "\\BLSW", &args, NULL);
--	if (ACPI_FAILURE(status)) {
--		pr_info("Loongson lvds error: 0x%x\n", status);
--		return -ENODEV;
--	}
--
--	return 0;
--}
--
--int loongson_laptop_turn_off_backlight(void)
--{
--	int status;
--	union acpi_object arg0 = { ACPI_TYPE_INTEGER };
--	struct acpi_object_list args = { 1, &arg0 };
--
--	arg0.integer.value = 0;
--	status = acpi_evaluate_object(NULL, "\\BLSW", &args, NULL);
--	if (ACPI_FAILURE(status)) {
--		pr_info("Loongson lvds error: 0x%x\n", status);
--		return -ENODEV;
--	}
--
--	return 0;
--}
--
- static int __init event_init(struct generic_sub_driver *sub_driver)
- {
- 	int ret;
--- 
-2.49.0
+<snip>
 
+> > > Here are the driver core / kernfs changes for 6.16-rc1.
+> > > 
+> > > Not a huge number of changes this development cycle, here's the summary
+> > > of what is included in here:
+> > >   - kernfs locking tweaks, pushing some global locks down into a per-fs
+> > >     image lock
+> > >   - rust driver core and pci device bindings added for new features.
+> > 
+> > >   - sysfs const work for bin_attributes.  This churn should now be
+> > >     completed for those types of attributes
+> > 
+> > This is missing the switch away and removal of the transitional
+> > struct members, "read_new", "write_new" and "bin_attrs_new".
+> > These are the actually churny changes.
+
+<snip>
+
+> > Do you want me to resubmit it to you? Now or shortly before the end of
+> > the merge window?
+> 
+> Ah, yes, those are still in my "to apply after -rc1 is out" queue, sorry
+> about that.  And yes, I'll be glad to take updated versions as things
+> have changed.
+
+In case you don't see patches submitted during the merge window,
+here is the updated series:
+
+https://lore.kernel.org/lkml/20250530-sysfs-const-bin_attr-final-v3-0-724bfcf05b99@weissschuh.net/
+
+Based on linux-next to make sure that all changes that could go into the
+merge window are accounted for.
+
+
+Thomas
 
