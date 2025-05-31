@@ -1,199 +1,108 @@
-Return-Path: <linux-kernel+bounces-669255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-669258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D191FAC9D1C
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Jun 2025 00:08:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11803AC9D21
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Jun 2025 00:13:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2D8F1895AF7
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 May 2025 22:08:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 317A41895B1A
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 May 2025 22:14:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 939CE1DF757;
-	Sat, 31 May 2025 22:08:38 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEF8C1E25E8;
+	Sat, 31 May 2025 22:13:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=zash.se header.i=@zash.se header.b="jJvRM59/"
+Received: from dimidiatus.zash.se (dimidiatus.zash.se [185.97.32.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B3CD18D63A
-	for <linux-kernel@vger.kernel.org>; Sat, 31 May 2025 22:08:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A9E3EEA8;
+	Sat, 31 May 2025 22:13:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.97.32.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748729318; cv=none; b=nJhY8Q/0QxjWkTAvN0wMA4M6qLUtCGaqMuQIkoZBpYJ94ZYKaRVHy285qVfEqa/576XDzzR+XkBhstuM3p0jZlgxGAjRiUFm52+yc2ua9Klb4yqaaQ4INkfYvM+CfiYeoAiiZH7Ni/ZX2LFUA/mqOIWdIUB5vGeNAywBtPh1Qes=
+	t=1748729620; cv=none; b=M+YoGxQcKBWi6eJIG/NaVLYoyDmWNhF6j5eFMh9GP+frKGEnMigYDvKoDWHWmcAYYOF9UrI34oFAo5Lwt9BQHA6/NKzMXfHfsuKsytcSc9HHZe9kKAU12ArN/dKMF+8r+VVweJih0IaywZPA+P+2eCZ0GcYZU6W63SGmK8m4KRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748729318; c=relaxed/simple;
-	bh=WLa7oNWA5CDRx2xlWQIm6EZZcYZWiI5vRgs+5RpVfw8=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=n5gATeOfIh7uWwkZtvoFvRHFZ5OK0SlrIaX/8c3fAV6kiqscmJkGdg6qcvEif27ffpyWeV6Sv0hZnXIvfheFPW7YspZQo2kf4zXDgpq5g1UirpcsUlzAxxr5fKD1oJfOEngWv9NOgnTYqpPCnU+Xz37rVLcXeB7Ar2E7Z3DyDyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3dd759fd518so38493975ab.2
-        for <linux-kernel@vger.kernel.org>; Sat, 31 May 2025 15:08:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748729315; x=1749334115;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kKSaKzHAhnlkIYbXowCmdw9SvU1FsOjCtk72zMGXAS0=;
-        b=Tj7e/UPmRBLic8gRTfXsgK11Yc0zg3xkdexzY0q70S0SKRWaWBnqEfBhh3OkfXFYqR
-         GO9NN9X5g359PE5uaGKr1pQwugQuC6Em+3VfHeL2FRNXlJPLOyTxYB0kzjHTC49mh0kS
-         o7axmIOBPHKwg99tnj8pTH0MCBoe7mFLPK1axa33dMCNsvI9dfJWHdeZlWfsTbSXrc67
-         LR8Jy2SHu40Cc9Ihkv1KQmPYfMxjSPbasqf51cBVHnVj33fjrlE9ooBOsdT73gKWUZNb
-         zQhfJE032Kij4R0CxHZE7sfEMuEfU0amSMtf5ggstNhnPz15WNKZUTrCaIwr82cr6h7/
-         I8IA==
-X-Forwarded-Encrypted: i=1; AJvYcCVSJCdKYz/QIiyXOqO/sgkIuApmZF3JlmqV+pevbcCz2oKiOqeDNQ7FFTNv2l+4h17v3bCW3ENf5ruNu0s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhZjPgZ6F19Rocpc46N57Qhe//HoFEcwMA/64UIW7cjRuHEFNK
-	IQg5vcCbpQqnnVL8GlfyVKE3OknUM5bu4ksFpGyfxP0fBPrzvkka3kssYiGt+vtQRKZZLWMG0Q3
-	TMaZdztaLgjdYlQihIPAhqyO2PVzs2dlTvsGviiAG421claCbGOr1GkvPHBU=
-X-Google-Smtp-Source: AGHT+IGpL9XtdpJc1/Py6FFAuxDrAYTnA5CrpSFy8fTQrN8POgaVaVlqK1xcse5w5kf3MIvuj/RB1CGbxBEytJeXnVrqo9g6FtKU
+	s=arc-20240116; t=1748729620; c=relaxed/simple;
+	bh=EufhE4khXJfcXaIToKySlWjWh0rkPLuopmauJx8nfF8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a13PW8zFeYyHOhYcujEo5JyftGE6qiCSqEnlIBrWVRPSPaI8GSwizS1JAqiBa+FwY19NkrVP1FSNdgY7yRYujqoFJQBnAiwfWBeWzvbNa28TqeFCL8bpYNky7NiPVEG/72Uw1su4BsqXBel/K5Vt64UsYIk8K3ZFk/n/Z4wedr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=zash.se; spf=pass smtp.mailfrom=zash.se; dkim=pass (2048-bit key) header.d=zash.se header.i=@zash.se header.b=jJvRM59/; arc=none smtp.client-ip=185.97.32.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=zash.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zash.se
+Received: from mail.zash.se (cerdale.zash.se [IPv6:2a00:66c0:7:1::cd1e])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (secp384r1) server-digest SHA384)
+	(Client did not present a certificate)
+	by dimidiatus.zash.se (Postfix) with ESMTPS id 958E719F5D8;
+	Sun,  1 Jun 2025 00:05:14 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zash.se; s=2025;
+	t=1748729105; bh=SVotxztx5CJUQc5mS0Q1kj0N0+zv2DMFiBjZ7PfRb3s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jJvRM59/TB7v+qAsievCIxoXPQ7HUOs3PNoXZWguAzaFIVEQ4j+Vt8ic2WdEiqYUt
+	 YoyVBrWTNWYUq2fv4Vp1MVDL5P32SZnM8Ijsfw3PotFs7duJXUd3keVcrC1suyxuoL
+	 CKicMw0Pn4wLfoqVyZZCzTSAqBt8eMwRsqlrkBTR6gTm1Ozm4C0RIiWfbQdd8kFp1I
+	 PM9pfEruXnMlFUjEINDm3BN8l5ksFYLrZgcfQw/vAqJyUVcYxPEMQnOScNesLU1155
+	 MAQYMfNTxpfzdbanXwUAhKrfzAJvFwxhREdN18a+OVxinb2aUs/85Z5MsYgsRuLxB2
+	 63o0yD50N4XBw==
+Received: from localhost (localhost [::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.zash.se (Postfix) with ESMTPSA id B4C376E0076;
+	Sun,  1 Jun 2025 00:05:04 +0200 (CEST)
+Date: Sun, 1 Jun 2025 00:05:02 +0200
+From: Kim Alvefur <zash@zash.se>
+To: Salvatore Bonaccorso <carnil@debian.org>
+Cc: 1106411@bugs.debian.org, Stephan Gerhold <stephan@gerhold.net>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org
+Subject: Re: kernel NULL pointer dereference in bmc150_accel_core / RIP:
+ 0010:bmc150_accel_set_interrupt+0x68/0x120 [bmc150_accel_core]
+Message-ID: <aDt9DrWxKOUZHQ3K@spisula.zash.se>
+References: <174809774197.3242.15028356144506391196.reportbug@spisula.zash.se>
+ <aDMuJsV4Mxb1IVoZ@eldamar.lan>
+ <174809774197.3242.15028356144506391196.reportbug@spisula.zash.se>
+ <aDnt9LkEZjb4DOO-@spisula.zash.se>
+ <aDtZqwjKtpyguppg@eldamar.lan>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:ca47:0:b0:3ce:4b12:fa17 with SMTP id
- e9e14a558f8ab-3dd99c41659mr87207635ab.19.1748729315516; Sat, 31 May 2025
- 15:08:35 -0700 (PDT)
-Date: Sat, 31 May 2025 15:08:35 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <683b7de3.a00a0220.d8eae.001e.GAE@google.com>
-Subject: [syzbot] [gfs2?] kernel BUG in gfs2_quota_cleanup (2)
-From: syzbot <syzbot+8f7c48186f31bbcfd78d@syzkaller.appspotmail.com>
-To: agruenba@redhat.com, gfs2@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <aDtZqwjKtpyguppg@eldamar.lan>
+Jabber-ID: zash@zash.se
 
-Hello,
+On Sat, May 31, 2025 at 09:34:03PM +0200, Salvatore Bonaccorso wrote:
+>On Fri, May 30, 2025 at 07:42:12PM +0200, Kim Alvefur wrote:
+>> So far it seems to happen on every boot, between unlocking LUKS and the
+>> login manager starting.
+>>
+>> I wonder if this is related to another symptom this machine has, where
+>> it fails to complete suspend and goes into a state where the only action
+>> that has any effect is a long-press of the power button to turn it off.
+>
+>Looking through the boot log I'm noticing the following:
+>
+>> May 30 19:21:47 spisula kernel: bmc150_accel_i2c i2c-BOSC0200:00: supply vdd not found, using dummy regulator
+>> May 30 19:21:47 spisula kernel: bmc150_accel_i2c i2c-BOSC0200:00: supply vddio not found, using dummy regulator
+>[...]
+>> May 30 19:21:47 spisula kernel: bmc150_accel_i2c i2c-BOSC0200:base: supply vdd not found, using dummy regulator
+>> May 30 19:21:47 spisula kernel: bmc150_accel_i2c i2c-BOSC0200:base: supply vddio not found, using dummy regulator
+>
+>and iio-sensor-proxy might fail to handle then the bosch 0200
+>accelerometer. You proobably cannot temporary purge the
+>iio-sensor-proxy if installed by reverse dependencies, but might you
+>try to temporarily mask the service and retest a boot?
 
-syzbot found the following issue on:
+That seems to have an effect, no "BUG: ..." in dmesg now, and the
+machine made it trough a suspends and resume cycle.
 
-HEAD commit:    914873bc7df9 Merge tag 'x86-build-2025-05-25' of git://git..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13e80482580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=eeb82b5d1d67d535
-dashboard link: https://syzkaller.appspot.com/bug?extid=8f7c48186f31bbcfd78d
-compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-914873bc.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/b88f5c802da5/vmlinux-914873bc.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/2481c0fe9c9f/bzImage-914873bc.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+8f7c48186f31bbcfd78d@syzkaller.appspotmail.com
-
-FAULT_INJECTION: forcing a failure.
-name failslab, interval 1, probability 0, space 0, times 1
-CPU: 0 UID: 0 PID: 5313 Comm: syz.0.0 Not tainted 6.15.0-syzkaller-01972-g914873bc7df9 #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- fail_dump lib/fault-inject.c:73 [inline]
- should_fail_ex+0x414/0x560 lib/fault-inject.c:174
- should_failslab+0xa8/0x100 mm/failslab.c:46
- slab_pre_alloc_hook mm/slub.c:4100 [inline]
- slab_alloc_node mm/slub.c:4176 [inline]
- kmem_cache_alloc_noprof+0x73/0x3c0 mm/slub.c:4203
- qd_alloc+0x50/0x250 fs/gfs2/quota.c:234
- gfs2_quota_init+0x777/0x1230 fs/gfs2/quota.c:1448
- gfs2_make_fs_rw+0x181/0x2b0 fs/gfs2/super.c:149
- gfs2_reconfigure+0x617/0xb20 fs/gfs2/ops_fstype.c:1595
- reconfigure_super+0x224/0x890 fs/super.c:1082
- vfs_cmd_reconfigure fs/fsopen.c:262 [inline]
- vfs_fsconfig_locked+0x171/0x320 fs/fsopen.c:291
- __do_sys_fsconfig fs/fsopen.c:467 [inline]
- __se_sys_fsconfig+0x78e/0x8d0 fs/fsopen.c:344
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xf6/0x220 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f671238e969
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f6713195038 EFLAGS: 00000246 ORIG_RAX: 00000000000001af
-RAX: ffffffffffffffda RBX: 00007f67125b6080 RCX: 00007f671238e969
-RDX: 0000000000000000 RSI: 0000000000000007 RDI: 0000000000000004
-RBP: 00007f6713195090 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
-R13: 0000000000000001 R14: 00007f67125b6080 R15: 00007ffc65f837d8
- </TASK>
-------------[ cut here ]------------
-kernel BUG at fs/gfs2/quota.c:1520!
-Oops: invalid opcode: 0000 [#1] SMP KASAN NOPTI
-CPU: 0 UID: 0 PID: 5313 Comm: syz.0.0 Not tainted 6.15.0-syzkaller-01972-g914873bc7df9 #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:gfs2_quota_cleanup+0x6ee/0x6f0 fs/gfs2/quota.c:1519
-Code: ff 44 89 f1 80 e1 07 80 c1 03 38 c1 0f 8c c2 fd ff ff 4c 89 f7 e8 b2 ac 2e fe e9 b5 fd ff ff e8 88 bf 69 07 e8 b3 cc cb fd 90 <0f> 0b 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 66 0f 1f 00
-RSP: 0018:ffffc9000d23f9a0 EFLAGS: 00010293
-RAX: ffffffff83f407fd RBX: 0000000000000002 RCX: ffff888000634880
-RDX: 0000000000000000 RSI: 0000000000000002 RDI: 0000000000000000
-RBP: ffffc9000d23fab0 R08: ffff8880342e80af R09: 1ffff1100685d015
-R10: dffffc0000000000 R11: ffffed100685d016 R12: 1ffff92001a47f38
-R13: dffffc0000000000 R14: dffffc0000000000 R15: 0000000000000000
-FS:  00007f67131956c0(0000) GS:ffff88808d291000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f6713194fc8 CR3: 000000003f46f000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- gfs2_quota_init+0x10d8/0x1230 fs/gfs2/quota.c:1509
- gfs2_make_fs_rw+0x181/0x2b0 fs/gfs2/super.c:149
- gfs2_reconfigure+0x617/0xb20 fs/gfs2/ops_fstype.c:1595
- reconfigure_super+0x224/0x890 fs/super.c:1082
- vfs_cmd_reconfigure fs/fsopen.c:262 [inline]
- vfs_fsconfig_locked+0x171/0x320 fs/fsopen.c:291
- __do_sys_fsconfig fs/fsopen.c:467 [inline]
- __se_sys_fsconfig+0x78e/0x8d0 fs/fsopen.c:344
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xf6/0x220 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f671238e969
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f6713195038 EFLAGS: 00000246 ORIG_RAX: 00000000000001af
-RAX: ffffffffffffffda RBX: 00007f67125b6080 RCX: 00007f671238e969
-RDX: 0000000000000000 RSI: 0000000000000007 RDI: 0000000000000004
-RBP: 00007f6713195090 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
-R13: 0000000000000001 R14: 00007f67125b6080 R15: 00007ffc65f837d8
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:gfs2_quota_cleanup+0x6ee/0x6f0 fs/gfs2/quota.c:1519
-Code: ff 44 89 f1 80 e1 07 80 c1 03 38 c1 0f 8c c2 fd ff ff 4c 89 f7 e8 b2 ac 2e fe e9 b5 fd ff ff e8 88 bf 69 07 e8 b3 cc cb fd 90 <0f> 0b 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 66 0f 1f 00
-RSP: 0018:ffffc9000d23f9a0 EFLAGS: 00010293
-RAX: ffffffff83f407fd RBX: 0000000000000002 RCX: ffff888000634880
-RDX: 0000000000000000 RSI: 0000000000000002 RDI: 0000000000000000
-RBP: ffffc9000d23fab0 R08: ffff8880342e80af R09: 1ffff1100685d015
-R10: dffffc0000000000 R11: ffffed100685d016 R12: 1ffff92001a47f38
-R13: dffffc0000000000 R14: dffffc0000000000 R15: 0000000000000000
-FS:  00007f67131956c0(0000) GS:ffff88808d291000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f6713194fc8 CR3: 000000003f46f000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+Kim "Zash" Alvefur
 
