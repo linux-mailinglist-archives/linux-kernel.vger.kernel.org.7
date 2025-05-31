@@ -1,295 +1,161 @@
-Return-Path: <linux-kernel+bounces-669257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-669259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11A12AC9D1F
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Jun 2025 00:10:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F34DAC9D48
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Jun 2025 00:24:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC1CB179229
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 May 2025 22:10:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2B5E17A968
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 May 2025 22:24:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E73F01E0DE3;
-	Sat, 31 May 2025 22:10:28 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 423C61E51F1;
+	Sat, 31 May 2025 22:24:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eX0qyU+s"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E60118DF89
-	for <linux-kernel@vger.kernel.org>; Sat, 31 May 2025 22:10:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 318BC1E515;
+	Sat, 31 May 2025 22:24:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748729428; cv=none; b=n9EkJfgIfMAnMBeQhv4CHADwYhfstiYyYimqLTdJHbaSUgxn7cEcq2mnAL/YLAnMT+fIMVxOmEdPSyjsce8EB9ymUcsmZNnRbGQT6Lzpt4cqeMJKBmmL1Ab1eQS9nlf2J/4ytJkVmDkXXRSXubHvYcWXjrmjmN1eJDkfqkm58eE=
+	t=1748730258; cv=none; b=F/APxBxa3My5NZbM9BmVOxRfLHyhAcdig6k4u4vWfgqKp8c4tdg0ioqT9pLrRYLceYoKPZgTsFKCVEo04OYBUyQhWfk+XmtrOtXoOVehTn3CRbUvl8Y8lG1t4xDFPfkJmThJpPVBRDbVTsehYuoncRL8wcBAMEIwirKFjbvOLng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748729428; c=relaxed/simple;
-	bh=oIifjk9L5QF7cdQ+XWkmh2JHuGfNZAgRYDBR5Us6Z2w=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=sHizMVZm/4GpnxFkO+H4B00xjlQM27+ChoY7iuuQPbGgmMvWlTfDbJSyaaZoqBpU+HlWaZAtsoc5j9kQDt2AU93dDPrTaiMX+wIfrTkkowasiYoIjqyvZDQ7fCM2qTs5QuRJZxgaNVo9hDlvZxcT/3edp6rfByjTNmTszHR/dSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3dda50c4072so6309125ab.3
-        for <linux-kernel@vger.kernel.org>; Sat, 31 May 2025 15:10:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748729425; x=1749334225;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+hXfmHIYcMulUPoPBdwKUNqqRuhUli24eZSQwojohek=;
-        b=vp/q0gE2rxBxxA8BYO20YwGLw6ygGphaAVTqE3kWuoLDVZ5a2I5K4CgP6Usqetn7Qt
-         KBufmD2CTMpJr2ePVhOjSErBf3em9zqDg00R9LpFSHUUIabNgnlWFyzR/MJtZlM4kDXk
-         wpnGe1bUv95cNE3rtGa4Jbgh2Qs4vBq4BU0Ubb5+WfjC3e+psiKoi3n1GEk6MPgHzdcv
-         2bUNrrs93LapY/rX+YN0lecVyfP+yiiDonhx9fTltY4P3BAI+RNfAnh/hr50BS0aqvjZ
-         Q6SamKxv3EKL0SWyMxD7ofivz+fDsq0WIoDDg3yI8qaFQ+fHhduwdGUSh+beeFFNNZzR
-         7vGw==
-X-Forwarded-Encrypted: i=1; AJvYcCXS/AZuiprOStpiDEoDbeLTDzv/W1D+ZgDb1hP8u44goDxMghxlnnBL94Wp9Qg8nh0syrlwiqOIccDXzfU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSARj2RcV79iEsVce5EeZxQ4SGEJJlBobjjJ6nsPUMuy4i1yLN
-	ivrezG6BAw9MGCJ3l3MBF13CQZcCR8Vlk6eSmWbO61yO19+DTJ5vEHOo5cifMoTsLOYJHYab+5n
-	u2cN5a8uMzG/QkkqBZzJpwWRfL7ophOYwwyslF1XRx4Gk3TefluOJXOKHOFI=
-X-Google-Smtp-Source: AGHT+IEHzVR4yywyPwb1N0XQ9c7DucpF5p9l3koGqXg1enSSKId02DM0DHi3akeMAEjdCYjSYaRZXXICCywXQN/doBFV6ZAyx4z6
+	s=arc-20240116; t=1748730258; c=relaxed/simple;
+	bh=/OT6BcuQ0bwLw4PLGhYig6PRzvZSfY49od4+Eb2T+R4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D1HVzy/ZUAcpLDFb+hr4j1VX9MA34t0shFEdOml9Q8Yw3KfGypL7MJN/8k2RjUzRFXU56cWhK7PZ6caGuoweBEnHZBPQUS7kDEhi53604PPesrrYebBbale6ykA7zO7V1nVVEvEbAhzgWX1r7XJ4N2bhe5Wv42y2zJw9VuzBc/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eX0qyU+s; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1748730258; x=1780266258;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=/OT6BcuQ0bwLw4PLGhYig6PRzvZSfY49od4+Eb2T+R4=;
+  b=eX0qyU+sUxabFn20trCyHR2zy7K9JMFUW3HsRgUWsrUKjdO+FCg2ADKk
+   t9O4gYHRX1Hs1DBGQazns/8O7gw67ySutiZyDEB2jmsZR3CfIljPKLKV7
+   T9Dmkoq22vRsF1WqsFcdmiszfZxAtIWSez+IZGgQM4nxT+oWwez8Ejlj7
+   pI6DEZajHeMfUfdyFP23I2cIwt06wIQzV+lsYRPG5teBl2zFGZ7mgaRwl
+   qQw6Yd77Q2+0Kmm2ezqv0feTgyr85PqHaLMfJ0Y0XauazH4QVJpw+lXAO
+   YAWyc0o/SWOsoOS499AO0ge0JZsglwpKBECgfNq4funHX/ZTOdXasJwBy
+   g==;
+X-CSE-ConnectionGUID: s77bKskrSzmPl0bf3Kw0xw==
+X-CSE-MsgGUID: 0wJQPZAiQVi9QwMjFG0+Gw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11450"; a="54588796"
+X-IronPort-AV: E=Sophos;i="6.16,199,1744095600"; 
+   d="scan'208";a="54588796"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2025 15:24:17 -0700
+X-CSE-ConnectionGUID: hvIVU3ssSIm/7tNqdg2kGw==
+X-CSE-MsgGUID: HayCyTs5Q1qP/nfJsbkbzA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,199,1744095600"; 
+   d="scan'208";a="144095998"
+Received: from agluck-desk3.sc.intel.com (HELO agluck-desk3) ([172.25.103.51])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2025 15:24:16 -0700
+Date: Sat, 31 May 2025 15:24:14 -0700
+From: "Luck, Tony" <tony.luck@intel.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Zaid Alali <zaidal@os.amperecomputing.com>, rafael@kernel.org,
+	lenb@kernel.org, james.morse@arm.com, robert.moore@intel.com,
+	Jonathan.Cameron@huawei.com, ira.weiny@intel.com,
+	Benjamin.Cheatham@amd.com, dan.j.williams@intel.com, arnd@arndb.de,
+	Avadhut.Naik@amd.com, john.allen@amd.com,
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	acpica-devel@lists.linux.dev
+Subject: Re: [PATCH v7 9/9] ACPI: APEI: EINJ: Update the documentation for
+ EINJv2 support
+Message-ID: <aDuBjopy_nE9A-ph@agluck-desk3>
+References: <20250506213814.2365788-1-zaidal@os.amperecomputing.com>
+ <20250506213814.2365788-10-zaidal@os.amperecomputing.com>
+ <20250530102711.GAaDmH_1O7lc6kuveY@fat_crate.local>
+ <aDoal24J-BMTIBCq@agluck-desk3>
+ <20250531092050.GBaDrJ8iw7cNcpOKeA@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1687:b0:3db:7c22:303c with SMTP id
- e9e14a558f8ab-3dd9c9936d5mr70331245ab.8.1748729425643; Sat, 31 May 2025
- 15:10:25 -0700 (PDT)
-Date: Sat, 31 May 2025 15:10:25 -0700
-In-Reply-To: <683447f8.a70a0220.29d4a0.0803.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <683b7e51.a70a0220.1a6ae.000e.GAE@google.com>
-Subject: Re: [syzbot] [bcachefs?] possible deadlock in start_poll_synchronize_rcu_expedited
-From: syzbot <syzbot+cbc79a37b5fa23efd23b@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250531092050.GBaDrJ8iw7cNcpOKeA@fat_crate.local>
 
-syzbot has found a reproducer for the following issue on:
+On Sat, May 31, 2025 at 11:20:50AM +0200, Borislav Petkov wrote:
+> On Fri, May 30, 2025 at 01:52:39PM -0700, Luck, Tony wrote:
+> > Use case to inject to one device would be:
+> > 
+> > # echo 1 > nr_components
+> 
+> What does that do?
 
-HEAD commit:    0f70f5b08a47 Merge tag 'pull-automount' of git://git.kerne..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17ea200c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=22765942f2e2ebcf
-dashboard link: https://syzkaller.appspot.com/bug?extid=cbc79a37b5fa23efd23b
-compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=134b1970580000
+EINJ V2 allows the user to perform multiple injections together.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/4af859a809ab/disk-0f70f5b0.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/d3df10c6aa23/vmlinux-0f70f5b0.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/3a2d5f44d739/bzImage-0f70f5b0.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/f623992a9c46/mount_0.gz
+The component_idN/component_syndromeN pairs of files direct the
+"where" and the "what" of each injection.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+cbc79a37b5fa23efd23b@syzkaller.appspotmail.com
+But the kernel needs to know how many of these pairs to use
+for an injection (to fill in a field in the structure passed
+to the BIOS).
 
-ODEBUG: object ffffc90003387b90 is on stack ffffc90003380000, but NOT annotated.
-======================================================
-WARNING: possible circular locking dependency detected
-6.15.0-syzkaller-09161-g0f70f5b08a47 #0 Not tainted
-------------------------------------------------------
-bch-copygc/loop/6108 is trying to acquire lock:
-ffffffff8e130e00 (console_owner){....}-{0:0}, at: console_trylock_spinning kernel/printk/printk.c:2048 [inline]
-ffffffff8e130e00 (console_owner){....}-{0:0}, at: vprintk_emit+0x444/0x7a0 kernel/printk/printk.c:2449
+With EINJ V2 the user might want to inject to 2 locations with
+one injection, and then just to 1 location on the next.
 
-but task is already holding lock:
-ffffffff99c79a98 (&obj_hash[i].lock){-.-.}-{2:2}, at: __debug_object_init+0x85/0x3c0 lib/debugobjects.c:741
+Zaid Alali's version took the approach of zeroing the input
+after each injection so the user had to start from scratch
+for each injection.
 
-which lock already depends on the new lock.
+I wasn't fond of that because the existing Linux EINJ interface
+saves all the paramters allowing the user to repeat the same
+injection by just runniing "echo 1 > error_inject: over and over
+(e.g. to force a soft offline by injecting multiple corrected
+errors to the same address).
 
+User interface options:
 
-the existing dependency chain (in reverse order) is:
+1) User can zero out the component_idN/component_syndromeN pairs
+that they don't need and have the kernel count how many injections
+are requested by looping to find the zero terminator.
 
--> #4 (&obj_hash[i].lock){-.-.}-{2:2}:
-       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5871
-       __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-       _raw_spin_lock_irqsave+0xa7/0xf0 kernel/locking/spinlock.c:162
-       debug_object_activate+0xbb/0x420 lib/debugobjects.c:818
-       debug_work_activate kernel/workqueue.c:664 [inline]
-       insert_work+0x35/0x330 kernel/workqueue.c:2180
-       __queue_work+0xcfc/0xfe0 kernel/workqueue.c:2341
-       queue_work_on+0x181/0x270 kernel/workqueue.c:2392
-       queue_work include/linux/workqueue.h:662 [inline]
-       start_poll_synchronize_rcu_expedited+0xfc/0x140 kernel/rcu/tree_exp.h:1075
-       rcu_init+0x108/0x160 kernel/rcu/tree.c:4854
-       start_kernel+0x1fb/0x500 init/main.c:990
-       x86_64_start_reservations+0x24/0x30 arch/x86/kernel/head64.c:307
-       x86_64_start_kernel+0x143/0x1c0 arch/x86/kernel/head64.c:288
-       common_startup_64+0x13e/0x147
+2) Kernel could zero all pairs after an injection to make the user
+explicitly set the list of targets each time.
 
--> #3 (&pool->lock){-.-.}-{2:2}:
-       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5871
-       __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
-       _raw_spin_lock+0x2e/0x40 kernel/locking/spinlock.c:154
-       __queue_work+0x7b0/0xfe0 kernel/workqueue.c:-1
-       queue_work_on+0x181/0x270 kernel/workqueue.c:2392
-       queue_work include/linux/workqueue.h:662 [inline]
-       rpm_suspend+0xe54/0x1720 drivers/base/power/runtime.c:673
-       __pm_runtime_idle+0x12f/0x1a0 drivers/base/power/runtime.c:1112
-       pm_runtime_put include/linux/pm_runtime.h:470 [inline]
-       __device_attach+0x342/0x400 drivers/base/dd.c:1047
-       bus_probe_device+0x185/0x260 drivers/base/bus.c:537
-       device_add+0x7b6/0xb50 drivers/base/core.c:3692
-       serial_base_port_add+0x2f2/0x430 drivers/tty/serial/serial_base_bus.c:179
-       serial_core_port_device_add drivers/tty/serial/serial_core.c:3342 [inline]
-       serial_core_register_port+0x367/0x2700 drivers/tty/serial/serial_core.c:3381
-       serial8250_register_8250_port+0x16dc/0x2050 drivers/tty/serial/8250/8250_core.c:822
-       serial_pnp_probe+0x527/0x790 drivers/tty/serial/8250/8250_pnp.c:480
-       pnp_device_probe+0x30b/0x4c0 drivers/pnp/driver.c:111
-       call_driver_probe drivers/base/dd.c:-1 [inline]
-       really_probe+0x26a/0x9a0 drivers/base/dd.c:657
-       __driver_probe_device+0x18c/0x2f0 drivers/base/dd.c:799
-       driver_probe_device+0x4f/0x430 drivers/base/dd.c:829
-       __driver_attach+0x452/0x700 drivers/base/dd.c:1215
-       bus_for_each_dev+0x230/0x2b0 drivers/base/bus.c:370
-       bus_add_driver+0x345/0x640 drivers/base/bus.c:678
-       driver_register+0x23a/0x320 drivers/base/driver.c:249
-       serial8250_init+0xc2/0x1c0 drivers/tty/serial/8250/8250_platform.c:315
-       do_one_initcall+0x233/0x820 init/main.c:1257
-       do_initcall_level+0x137/0x1f0 init/main.c:1319
-       do_initcalls+0x69/0xd0 init/main.c:1335
-       kernel_init_freeable+0x3d9/0x570 init/main.c:1567
-       kernel_init+0x1d/0x1d0 init/main.c:1457
-       ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+3) User provides the count vis the nr_components file (perhaps
+needs a better name?)
 
--> #2 (&dev->power.lock){-.-.}-{3:3}:
-       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5871
-       __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-       _raw_spin_lock_irqsave+0xa7/0xf0 kernel/locking/spinlock.c:162
-       __pm_runtime_resume+0x10f/0x180 drivers/base/power/runtime.c:1179
-       pm_runtime_get include/linux/pm_runtime.h:418 [inline]
-       __uart_start+0x171/0x440 drivers/tty/serial/serial_core.c:148
-       uart_write+0x278/0xa40 drivers/tty/serial/serial_core.c:635
-       process_output_block drivers/tty/n_tty.c:561 [inline]
-       n_tty_write+0xd32/0x11d0 drivers/tty/n_tty.c:2377
-       iterate_tty_write drivers/tty/tty_io.c:1015 [inline]
-       file_tty_write+0x4fe/0x990 drivers/tty/tty_io.c:1090
-       new_sync_write fs/read_write.c:593 [inline]
-       vfs_write+0x54b/0xa90 fs/read_write.c:686
-       ksys_write+0x145/0x250 fs/read_write.c:738
-       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-       do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+4) Something else?
 
--> #1 (&port_lock_key){-.-.}-{3:3}:
-       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5871
-       __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-       _raw_spin_lock_irqsave+0xa7/0xf0 kernel/locking/spinlock.c:162
-       uart_port_lock_irqsave include/linux/serial_core.h:715 [inline]
-       serial8250_console_write+0x17e/0x1ba0 drivers/tty/serial/8250/8250_port.c:3415
-       console_emit_next_record kernel/printk/printk.c:3138 [inline]
-       console_flush_all+0x728/0xc40 kernel/printk/printk.c:3226
-       __console_flush_and_unlock kernel/printk/printk.c:3285 [inline]
-       console_unlock+0xc4/0x270 kernel/printk/printk.c:3325
-       vprintk_emit+0x5b7/0x7a0 kernel/printk/printk.c:2450
-       _printk+0xcf/0x120 kernel/printk/printk.c:2475
-       register_console+0xa8b/0xf90 kernel/printk/printk.c:4125
-       univ8250_console_init+0x52/0x90 drivers/tty/serial/8250/8250_core.c:513
-       console_init+0x1a1/0x670 kernel/printk/printk.c:4323
-       start_kernel+0x2cc/0x500 init/main.c:1034
-       x86_64_start_reservations+0x24/0x30 arch/x86/kernel/head64.c:307
-       x86_64_start_kernel+0x143/0x1c0 arch/x86/kernel/head64.c:288
-       common_startup_64+0x13e/0x147
+> 
+> The interface probably needs a little refinement, but...
+> 
+> > # echo 4 > component_id0
+> > # echo A5A5A5A5 > component_syndrome0
+> > ... set other files and finish with usual
+> > # echo 1 > error_inject
+> > 
+> > There isn't a fancy "debugfs_create_x128_le()" helper to manage these
+> > 128-bit little endian numbers. So I've coded with the basic building
+> > blocks (though using copy_from_user() and copy_to_user() feels like
+> > back in the stone age). If there some helpers that I missed I'd be
+> > happy to see that part simplified.
+> > 
+> > Patch is on top of the existing v7 set. Obviously it needs to be folded
+> > back into the earlier patches to make a clean history that doesn't add
+> > functions and then replace them with different code.
+> 
+> ... yes, definitely much better.
+> 
+> Thanks!
 
--> #0 (console_owner){....}-{0:0}:
-       check_prev_add kernel/locking/lockdep.c:3168 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3287 [inline]
-       validate_chain+0xb9b/0x2140 kernel/locking/lockdep.c:3911
-       __lock_acquire+0xab9/0xd20 kernel/locking/lockdep.c:5240
-       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5871
-       console_trylock_spinning kernel/printk/printk.c:2048 [inline]
-       vprintk_emit+0x460/0x7a0 kernel/printk/printk.c:2449
-       _printk+0xcf/0x120 kernel/printk/printk.c:2475
-       debug_object_is_on_stack lib/debugobjects.c:-1 [inline]
-       lookup_object_or_alloc lib/debugobjects.c:688 [inline]
-       __debug_object_init+0x2c8/0x3c0 lib/debugobjects.c:743
-       rhashtable_init_noprof+0x7c0/0xbb0 lib/rhashtable.c:1085
-       bch2_copygc_thread+0x116/0xdc0 fs/bcachefs/movinggc.c:355
-       kthread+0x711/0x8a0 kernel/kthread.c:464
-       ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+You are welcome.
+> 
+> -- 
+> Regards/Gruss,
+>     Boris.
 
-other info that might help us debug this:
-
-Chain exists of:
-  console_owner --> &pool->lock --> &obj_hash[i].lock
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&obj_hash[i].lock);
-                               lock(&pool->lock);
-                               lock(&obj_hash[i].lock);
-  lock(console_owner);
-
- *** DEADLOCK ***
-
-1 lock held by bch-copygc/loop/6108:
- #0: ffffffff99c79a98 (&obj_hash[i].lock){-.-.}-{2:2}, at: __debug_object_init+0x85/0x3c0 lib/debugobjects.c:741
-
-stack backtrace:
-CPU: 1 UID: 0 PID: 6108 Comm: bch-copygc/loop Not tainted 6.15.0-syzkaller-09161-g0f70f5b08a47 #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- print_circular_bug+0x2ee/0x310 kernel/locking/lockdep.c:2046
- check_noncircular+0x134/0x160 kernel/locking/lockdep.c:2178
- check_prev_add kernel/locking/lockdep.c:3168 [inline]
- check_prevs_add kernel/locking/lockdep.c:3287 [inline]
- validate_chain+0xb9b/0x2140 kernel/locking/lockdep.c:3911
- __lock_acquire+0xab9/0xd20 kernel/locking/lockdep.c:5240
- lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5871
- console_trylock_spinning kernel/printk/printk.c:2048 [inline]
- vprintk_emit+0x460/0x7a0 kernel/printk/printk.c:2449
- _printk+0xcf/0x120 kernel/printk/printk.c:2475
- debug_object_is_on_stack lib/debugobjects.c:-1 [inline]
- lookup_object_or_alloc lib/debugobjects.c:688 [inline]
- __debug_object_init+0x2c8/0x3c0 lib/debugobjects.c:743
- rhashtable_init_noprof+0x7c0/0xbb0 lib/rhashtable.c:1085
- bch2_copygc_thread+0x116/0xdc0 fs/bcachefs/movinggc.c:355
- kthread+0x711/0x8a0 kernel/kthread.c:464
- ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 6108 at lib/debugobjects.c:655 debug_object_is_on_stack lib/debugobjects.c:655 [inline]
-WARNING: CPU: 1 PID: 6108 at lib/debugobjects.c:655 lookup_object_or_alloc lib/debugobjects.c:688 [inline]
-WARNING: CPU: 1 PID: 6108 at lib/debugobjects.c:655 __debug_object_init+0x2c9/0x3c0 lib/debugobjects.c:743
-Modules linked in:
-CPU: 1 UID: 0 PID: 6108 Comm: bch-copygc/loop Not tainted 6.15.0-syzkaller-09161-g0f70f5b08a47 #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-RIP: 0010:debug_object_is_on_stack lib/debugobjects.c:655 [inline]
-RIP: 0010:lookup_object_or_alloc lib/debugobjects.c:688 [inline]
-RIP: 0010:__debug_object_init+0x2c9/0x3c0 lib/debugobjects.c:743
-Code: cc cc cc 41 ff c7 44 89 3d 14 aa 17 15 48 c7 c1 00 9b e1 8b 48 c7 c7 60 9b e1 8b 84 c0 48 0f 45 f9 48 89 de e8 48 e5 68 fc 90 <0f> 0b 90 e9 c0 fe ff ff e8 3a 1c 00 00 8b 05 8c f3 cc 09 3b 05 8a
-RSP: 0018:ffffc900033876e0 EFLAGS: 00010046
-RAX: 0000000000000050 RBX: ffffc90003387b90 RCX: f040b7745b5f4c00
-RDX: 0000000000000000 RSI: 0000000080000001 RDI: 0000000000000000
-RBP: ffff88802c68bc20 R08: ffffffff8e130da3 R09: 1ffffffff1c261b4
-R10: dffffc0000000000 R11: fffffbfff1c261b5 R12: 0000000000000040
-R13: ffff8880622786c8 R14: dffffc0000000000 R15: 0000000000000001
-FS:  0000000000000000(0000) GS:ffff888125d99000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fbb648c56d0 CR3: 000000007f3f6000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- rhashtable_init_noprof+0x7c0/0xbb0 lib/rhashtable.c:1085
- bch2_copygc_thread+0x116/0xdc0 fs/bcachefs/movinggc.c:355
- kthread+0x711/0x8a0 kernel/kthread.c:464
- ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-
-
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+-Tony
 
