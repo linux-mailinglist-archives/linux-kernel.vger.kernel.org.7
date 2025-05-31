@@ -1,186 +1,112 @@
-Return-Path: <linux-kernel+bounces-669206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-669209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DBE5AC9C48
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 May 2025 20:28:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3C80AC9C4E
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 May 2025 20:32:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFEC716A8E1
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 May 2025 18:28:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9171D17243B
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 May 2025 18:32:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27EE119D884;
-	Sat, 31 May 2025 18:28:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E39F19ADA4;
+	Sat, 31 May 2025 18:32:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jrVRKdEd"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lVqZ5KXr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C20BB199FD0
-	for <linux-kernel@vger.kernel.org>; Sat, 31 May 2025 18:28:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7EB217A30A;
+	Sat, 31 May 2025 18:32:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748716087; cv=none; b=DGZJMdVDk2nOfZksHlq/j6Th0razXhBQJYljxKKZTnjTNSwdissNl7dah0sBAkj6XC50t8NKi8dxAAVZAHccKZlMMP+3mdv5MPCEMhI70ABWiGkkTByV9kl2l7+4NzZ272GMNBycs/djp1088Ho1NmJ99fa/AT1sSTQQ2N5UuY0=
+	t=1748716342; cv=none; b=czZbGLw0nSo+eFlOLbagZooVQRWvInQOLEE1h9pogFryxF05TFUCjnrsWF1w59V19PU8eOAIWirzMLAesCqyd0DTM+K/7Hh46BDiHZI90je2V3SxzYqdcTkyGg3mpXSVsbZ4ubPeuqYGPI1Mpz/Oyc4bXOpMjF+F9hilZeHjtEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748716087; c=relaxed/simple;
-	bh=dk3fI/RFl3JBQlIF7cdxOmi75SUbSYf9k2jysCiZRo8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mHtP8FfoJO+ccCqxr8q4+U5yeSKtZICQ3aDqp/nBa9KivFobwmGfRy/A+RsGVvFtu5lP450sOfxB8Vr++Mi8jTCBF6cDaRGT2xKhemphhV8q4T0WneH+7+fQy+b7GbbeKCfblm6S/jAVK55REBj5WtbEwyrXZOedd8aJycOmSQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jrVRKdEd; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3a366843fa6so1604437f8f.1
-        for <linux-kernel@vger.kernel.org>; Sat, 31 May 2025 11:28:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748716083; x=1749320883; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1YdbwTnzAydK1ENdR81ZzCGwAItUOCi2suDZhdSPMmY=;
-        b=jrVRKdEd4DmCRUMdSEMO7T+Pw81VDlJDsnUBXyCZR0UdjFsuUJB/74e0fz3zrKI2I5
-         xFa27tv27yTm05hJgkrdDJ2JFIkHbLdYL6djqKF87+/rT5bK3CtZ2l4bBpOBf7YWdDJ3
-         zu1ixxHzKxMV8AK5PxHW5qG0aP7BEBLCZ8aTMldp6I9TwegbzhAqiUh/nEosiDkAYGZO
-         lOpKkrvdi9vqaE1ACjodwS5ENs3+ERypS7k4FmJAUjqtboA5NczuC0Uol53bhs16SBtq
-         4/ucJ8xueWZIYwxevvlXo25Z+CqWnQP+rGz0E8tVnLZNh3rFksfcm7regm77UK4UjZc7
-         b95w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748716083; x=1749320883;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1YdbwTnzAydK1ENdR81ZzCGwAItUOCi2suDZhdSPMmY=;
-        b=ZIoRigRZPYHkzjj20bZuiWRIVY7abFgibcYaddVA2Bo+z8EmgXGv/BK76d1n60JcQb
-         LZUZ6drxPynLzOKPao4XfvPFojne/JZZyzjOnB1mWI+SIv0gdJNrLW6IaG/UpcPzKRF1
-         AhvisE/3rtvcjsy8b3wZyFCyAAFKwHT5XzmQyhDUbk6ghAOtxgKH/Q17liAqQHWA5MLA
-         I9esFj7OPiAg5B7RWRIfNv8EyVq8ojAZBwSOq3Oq7BNAKkZazwtXczhzYkLe/GNwGdU4
-         jvefYdhsUQRqjpt1uaUiRZ5wKq0TtoQiICkbL94wVEgBCzZKRwnWbDxjRPWN85qi/rBg
-         nRLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXWT6REO+7zqlpicIBVQP1VxcqtARHDQusNtqGe4YJI4s+sG4GzKmQc3c0l3dIxORrmP93p3F115G9dtgk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnW1zTIGCWKJCtF82WnwF8Aayh/HJiguv0fPcr4uD0lRLrj89/
-	T29NccUCcpmuZSgOdu+KdmTalGp7dB20nCgg5sczna4vOeDqaF8Xou2S
-X-Gm-Gg: ASbGncvB0+U6wWVtEJ86sAqLD0s+5ahCTiAyg0o6HCxREuQbDIGWn3bp5ypDkZuAae1
-	n1AKG6DLBg2Tr7R/44C3V3aCDJ6byUNLFNishWheGdo8zMLSZyw9jKiaMvqftRWbvPXHP6HK3E6
-	/u/7vBzm999TJ6kfzYWh14FGkQjKbO4ajXc2fRI+70bw9EZDteCGMtRLwFEQ36h8swnwU5iYvyq
-	Pzye/jka3RciE1KVHCkKhcLw8ko62LSykupwvyUSmlK9pFLL5+N3Hry48hcV4/bJMGgnDOyITbC
-	SN0r7YAmv+g00ou9+Ne7iUi7CdJxsg63TOLKh7/qJSHCXQU0b7rH+HWJ5AReyCVI+xRtJI4FPH6
-	lglKYt0LB1DT6NQ==
-X-Google-Smtp-Source: AGHT+IHWo5ANP+dqauzoVoWuJ4LwCO1gMzfyDDlO2VCYKfnBp1d20CxKeSOkRv6fVimOUljOEpnsvw==
-X-Received: by 2002:adf:a111:0:b0:3a4:f2aa:2e32 with SMTP id ffacd0b85a97d-3a4f89dcc2fmr4588914f8f.44.1748716082823;
-        Sat, 31 May 2025 11:28:02 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4efe2b35dsm8766372f8f.0.2025.05.31.11.28.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 31 May 2025 11:28:02 -0700 (PDT)
-Date: Sat, 31 May 2025 19:28:01 +0100
-From: David Laight <david.laight.linux@gmail.com>
-To: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, Paul
- Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>
-Subject: Re: [PATCH 2/2] riscv: uaccess: do not do misaligned accesses in
- get/put_user()
-Message-ID: <20250531192801.5d6329c3@pumpkin>
-In-Reply-To: <20250530205658.624195-3-cleger@rivosinc.com>
-References: <20250530205658.624195-1-cleger@rivosinc.com>
-	<20250530205658.624195-3-cleger@rivosinc.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	s=arc-20240116; t=1748716342; c=relaxed/simple;
+	bh=/ZsJND5fzftc2cszq8cTexT6uJOrDy350bh50M3G9XI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kxset2yzQ+FZs1ZcTJbUVdp4zGL5HjjvAQlFHKffOGbxokR8P504XKaiv0FvPaOmbwZl2zMntlFIOWWLDYjAMyogLA5CWOJfMu8OQxhtnnA2GLDpQXgjsMwMyTJrrfO4X5GO0YHWRdRh+v9or7D+p5/KPaUwez9t3du451Oq2s4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lVqZ5KXr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29C96C4CEE3;
+	Sat, 31 May 2025 18:32:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748716342;
+	bh=/ZsJND5fzftc2cszq8cTexT6uJOrDy350bh50M3G9XI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=lVqZ5KXr50KIpfplEhXEEbk6uKOMzFjlDex50pREjKKAabcu+alI/eoz+jAj5tgUq
+	 kKfzt5WMad19h2qNT9P3HNc7RYFwhVB3q+fsdsfPIi9Aw6GFNLMcmC5wEoiZa92YhZ
+	 lzNnlyMVNfqSgY0mdDrBYnV35mJYwNaqX+PHhNK9qf3HNHPls4PZdgKXvUE6/FRr8/
+	 G+kQtlbV6ZmHlZGs/Rxc4SbYwCUU6x5FgPZXW/YlGNyOULt9bYrOzH0ZRa5cX/thh8
+	 psL60XkTFPpwusRc1y1soaNEc4dIswm3FOBDIXK3OsVkDEa5j1sZNqWg/pQP939B+r
+	 qc/ZmBYeM4e9Q==
+From: Masahiro Yamada <masahiroy@kernel.org>
+To: linux-kbuild@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas.schier@linux.dev>
+Subject: [PATCH 1/3] kbuild: move W=1 check for scripts/misc-check to top-level Makefile
+Date: Sun,  1 Jun 2025 03:28:20 +0900
+Message-ID: <20250531183217.3844357-1-masahiroy@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, 30 May 2025 22:56:58 +0200
-Cl=C3=A9ment L=C3=A9ger <cleger@rivosinc.com> wrote:
+This script is executed only when ${KBUILD_EXTRA_WARN} contains 1.
+Move this check to the top-level Makefile to allow more checks to be
+easily added to this script.
 
-> Doing misaligned access to userspace memory would make a trap on
-> platform where it is emulated. Latest fixes removed the kernel
-> capability to do unaligned accesses to userspace memory safely since
-> interrupts are kept disabled at all time during that. Thus doing so
-> would crash the kernel.
->=20
-> Such behavior was detected with GET_UNALIGN_CTL() that was doing
-> a put_user() with an unsigned long* address that should have been an
-> unsigned int*. Reenabling kernel misaligned access emulation is a bit
-> risky and it would also degrade performances. Rather than doing that,
-> we will try to avoid any misaligned accessed by using copy_from/to_user()
-> which does not do any misaligned accesses. This can be done only for
-> !CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS and thus allows to only generate
-> a bit more code for this config.
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+---
 
-For get_user() you are much better off reading the two words that contain
-the value and then doing 'shift' and 'or' to get the correct value.
+ Makefile           | 3 +++
+ scripts/misc-check | 9 +--------
+ 2 files changed, 4 insertions(+), 8 deletions(-)
 
-Even for put_user() doing the explicit byte accesses will be faster than
-going though the generic copy_to/from_user() function.
-
-	David
-
->=20
-> Signed-off-by: Cl=C3=A9ment L=C3=A9ger <cleger@rivosinc.com>
-> ---
->  arch/riscv/include/asm/uaccess.h | 28 ++++++++++++++++++++++------
->  1 file changed, 22 insertions(+), 6 deletions(-)
->=20
-> diff --git a/arch/riscv/include/asm/uaccess.h b/arch/riscv/include/asm/ua=
-ccess.h
-> index 046de7ced09c..b542c05f394f 100644
-> --- a/arch/riscv/include/asm/uaccess.h
-> +++ b/arch/riscv/include/asm/uaccess.h
-> @@ -169,8 +169,21 @@ do {								\
-> =20
->  #endif /* CONFIG_64BIT */
-> =20
-> +unsigned long __must_check __asm_copy_to_user(void __user *to,
-> +	const void *from, unsigned long n);
-> +unsigned long __must_check __asm_copy_from_user(void *to,
-> +	const void __user *from, unsigned long n);
-> +
->  #define __get_user_nocheck(x, __gu_ptr, label)			\
->  do {								\
-> +	if (!IS_ENABLED(CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS)) {			\
-> +		if (!IS_ALIGNED((uintptr_t)__gu_ptr, sizeof(*__gu_ptr))) {		\
-> +			if (__asm_copy_from_user(&(x), __gu_ptr, sizeof(*__gu_ptr)))	\
-> +				goto label;			\
-> +			else					\
-> +				break;				\
-> +		}						\
-> +	}							\
->  	switch (sizeof(*__gu_ptr)) {				\
->  	case 1:							\
->  		__get_user_asm("lb", (x), __gu_ptr, label);	\
-> @@ -297,6 +310,15 @@ do {								\
-> =20
->  #define __put_user_nocheck(x, __gu_ptr, label)			\
->  do {								\
-> +	if (!IS_ENABLED(CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS)) {			\
-> +		if (!IS_ALIGNED((uintptr_t)__gu_ptr, sizeof(*__gu_ptr))) {		\
-> +			unsigned long val =3D (unsigned long)(x);				\
-> +			if (__asm_copy_to_user(__gu_ptr, &(val), sizeof(*__gu_ptr)))	\
-> +				goto label;			\
-> +			else					\
-> +				break;				\
-> +		}						\
-> +	}							\
->  	switch (sizeof(*__gu_ptr)) {				\
->  	case 1:							\
->  		__put_user_asm("sb", (x), __gu_ptr, label);	\
-> @@ -385,12 +407,6 @@ err_label:							\
->  		-EFAULT;					\
->  })
-> =20
-> -
-> -unsigned long __must_check __asm_copy_to_user(void __user *to,
-> -	const void *from, unsigned long n);
-> -unsigned long __must_check __asm_copy_from_user(void *to,
-> -	const void __user *from, unsigned long n);
-> -
->  static inline unsigned long
->  raw_copy_from_user(void *to, const void __user *from, unsigned long n)
->  {
+diff --git a/Makefile b/Makefile
+index 61f4e7662192..7a52be3a4b80 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1824,9 +1824,12 @@ rustfmtcheck: rustfmt
+ # Misc
+ # ---------------------------------------------------------------------------
+ 
++# Run misc checks when ${KBUILD_EXTRA_WARN} contains 1
+ PHONY += misc-check
++ifneq ($(findstring 1,$(KBUILD_EXTRA_WARN)),)
+ misc-check:
+ 	$(Q)$(srctree)/scripts/misc-check
++endif
+ 
+ all: misc-check
+ 
+diff --git a/scripts/misc-check b/scripts/misc-check
+index d40d5484e0c5..f37b2f6931cc 100755
+--- a/scripts/misc-check
++++ b/scripts/misc-check
+@@ -3,15 +3,8 @@
+ 
+ set -e
+ 
+-# Detect files that are tracked but ignored by git. This is checked only when
+-# ${KBUILD_EXTRA_WARN} contains 1, git is installed, and the source tree is
+-# tracked by git.
++# Detect files that are tracked but ignored by git.
+ check_tracked_ignored_files () {
+-	case "${KBUILD_EXTRA_WARN}" in
+-	*1*) ;;
+-	*) return;;
+-	esac
+-
+ 	git -C ${srctree:-.} ls-files -i -c --exclude-per-directory=.gitignore 2>/dev/null |
+ 		sed 's/$/: warning: ignored by one of the .gitignore files/' >&2
+ }
+-- 
+2.43.0
 
 
