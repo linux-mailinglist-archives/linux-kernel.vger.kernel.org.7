@@ -1,175 +1,230 @@
-Return-Path: <linux-kernel+bounces-669082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-669087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFBD7AC9ACE
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 May 2025 14:10:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E224EAC9AD9
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 May 2025 14:12:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA28E189E5BD
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 May 2025 12:10:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 046C49E42D9
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 May 2025 12:12:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E83323BCF5;
-	Sat, 31 May 2025 12:10:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EAE823A9BD;
+	Sat, 31 May 2025 12:12:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s2lo5/yV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="TXPlul1F"
+Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 676627260A;
-	Sat, 31 May 2025 12:10:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748693413; cv=none; b=GFSyk/6GSSZbDreYTGZoDI3NtlL4cj3JDVJMEy83JOfLrzrosXK2utBZJn7Zn2FgNemafgnvTSpqAOTHx/ibNXH5aeZHe96hbvHPdjj8i1UIwQM47linSa0hTmV/pQkJkRbllNzG2iuDzw483P639xr7w+yNbLL6cDu+3xBj+wI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748693413; c=relaxed/simple;
-	bh=edR2Sg60IDTAJd9y49ifvck9u5o43rpFtj/a1phDKnU=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=ZjPA19OqjzOwRHSlDjKxyMxVT22RsrmeNQBDfvSw7L3hND/H9NdvpTZet/IYa/hffo879SG96uXkdcLxEO04VakuTQQXTPfzVVsV7C+7fH5s2KRu5ELeF0Rqo8H5A4an3j0QQtg2dv+eVqXCKaaadiFMuaUUX2Cd5cuua0tSKTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s2lo5/yV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3519C4CEE3;
-	Sat, 31 May 2025 12:10:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748693412;
-	bh=edR2Sg60IDTAJd9y49ifvck9u5o43rpFtj/a1phDKnU=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=s2lo5/yV8L1MdzxV6i+KTg7CjrN6u6q7afEoin8eBHaZR+Pz33o1zZOiJ5H0ERjQ5
-	 hHO3uJ7kbzA+9dww4dmY+oJqgpCrG7IVXVHZh6tEnTXiIjYhURhbq3+lMvYLfLWkn+
-	 0s73VHRnC5yhFWAljLcsF6g50vV96vbwdtxscfg1ukSdrAjACY2m9Vk1OLW4mOOhKu
-	 D5/yobhDgcesmRPZCPMjkOEgWIQjImPvdx8dorlaDz4rfNl9/jPE7/GOyDWRni+//n
-	 KcYpXdcsMZshTWURyQkC5GYUDjllGkOwXyrPi9L1nhjhSNbeH1YFRW92safsN2rj9N
-	 CYkCXOFUNmnrA==
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1A7C237A3B
+	for <linux-kernel@vger.kernel.org>; Sat, 31 May 2025 12:12:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748693547; cv=pass; b=XsrC1UfUYADEjFSE1hiCBlK5kS9yZbvmoVgcrT3bPc6deq/XDaazF3527+9FHtdXbkQfK4KTju98nis55d0zXOeAfhJPN9qPJh4VndzBEOrQI1+EX58sH+E/m7+1lDsvCniiJoqHoPtcKzwdYPK/4mN+jdVLa8CK+XJb5X3AVjQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748693547; c=relaxed/simple;
+	bh=50DqJ3xUiixaRqJKJj8lkIXYqReB0hVRTI46Qo3uIU8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eDJoR6zxwzoaIKYvDMwcR32Yz0kwB6xTQhHOk23LAk83WO9s4J8rNi8+JceuJXqBDLOecBluZzhAiYCUayT6LqrUNJhrAQecBoAEiu8rrItxKpDq0zILKnoizFWWxF6eX0Bn3E6ZBqOZo8LQqUI3/haN0cHSRoowcQyCjCbKu8I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=TXPlul1F; arc=pass smtp.client-ip=136.143.188.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
+ARC-Seal: i=1; a=rsa-sha256; t=1748693519; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=NQFC0AIUY23FUQjQz62ed9qK5rpwaVURBiwk3dkDm82WhPJGCOJKKbfcP+vlRPBS/1DU/WCh4gWSA6UK9wlX4uSl9ZvSShgsKqW+NTtFDvtuxzxNAUAm5UpwjNfkOCck0MBxrR3b2cFFjN3mO2JC/xb2NgqZp74gv1mzdgzLhII=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1748693519; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=NYhJiwF0tBtC7BJnrVq4lhX1cQwG9XLjgrh95lCEAF8=; 
+	b=R39n6y6IEwGkmMkC+XD7su8I642KC2vuar7b3J8ErQo9niEVyq/jjWv8mz13LmOYs+9/ksnm3lxpaqhDiz+WyKAo1uXvBNL2WAZFXMTsR0SIdQmDThbYAuNrCSw9FqX/ImDTNCQDux+Ocs+NKt/hAR9vVAlofEJ+MDqJgLKsj7Y=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=icenowy.me;
+	spf=pass  smtp.mailfrom=uwu@icenowy.me;
+	dmarc=pass header.from=<uwu@icenowy.me>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1748693519;
+	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=NYhJiwF0tBtC7BJnrVq4lhX1cQwG9XLjgrh95lCEAF8=;
+	b=TXPlul1F6op3zLbL2y6z9iqPSXYOMf1WvhOe25kxqDfE72r6pspOW89nHTzBaI01
+	7+KUoAX8KN+lmxDkRFyx3t+4a/fqTxGj4gCvrhmTs7sDhgX6JIghMuWcUcNyfHfrccb
+	pDN7a/Fg4NJDBg08WhNoIZVWGrk5icvYU1dIdY0i5JGzDHZMTNbc02NwwVrcrOjrfsu
+	S6zyJtNrwZ6dlY7A8PQrXktKqw5tUtnwH/HnurkA6i+2DCNFNJVnmFfA7JpMYCKAyZQ
+	5RWarM3/2N9QwVNiLWKLWuCmIBrCiRcrpjDVMCwh6qdhwchqP0RYiiRp/nJ4Y5lVvIO
+	+h8QjqcBiQ==
+Received: by mx.zohomail.com with SMTPS id 1748693516762703.3998524129344;
+	Sat, 31 May 2025 05:11:56 -0700 (PDT)
+From: Icenowy Zheng <uwu@icenowy.me>
+To: Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Justin Green <greenjustin@chromium.org>
+Cc: dri-devel@lists.freedesktop.org,
+	linux-mediatek@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Icenowy Zheng <uwu@icenowy.me>
+Subject: [PATCH] drm/mediatek: only announce AFBC if really supported
+Date: Sat, 31 May 2025 20:11:40 +0800
+Message-ID: <20250531121140.387661-1-uwu@icenowy.me>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sat, 31 May 2025 14:10:08 +0200
-Message-Id: <DAAC2TIAOAEY.16STTUX7D2UNR@kernel.org>
-Cc: <gregkh@linuxfoundation.org>, <rafael@kernel.org>, <ojeda@kernel.org>,
- <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>, <gary@garyguo.net>,
- <bjorn3_gh@protonmail.com>, <benno.lossin@proton.me>,
- <a.hindborg@kernel.org>, <aliceryhl@google.com>, <tmgross@umich.edu>,
- <chrisi.schrefl@gmail.com>, <rust-for-linux@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 6/7] rust: miscdevice: expose the parent device as
- &Device<Bound>
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Danilo Krummrich" <dakr@kernel.org>
-X-Mailer: aerc 0.20.1
-References: <20250530142447.166524-1-dakr@kernel.org>
- <20250530142447.166524-7-dakr@kernel.org>
- <DAA7CJOUJPNL.F7UH9KD8JANF@kernel.org> <aDreGUcvyR4kjMGl@pollux>
-In-Reply-To: <aDreGUcvyR4kjMGl@pollux>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
+X-ZohoMail-Owner: <20250531121140.387661-1-uwu@icenowy.me>+zmo_0_
 
-On Sat May 31, 2025 at 12:46 PM CEST, Danilo Krummrich wrote:
-> On Sat, May 31, 2025 at 10:27:44AM +0200, Benno Lossin wrote:
->> On Fri May 30, 2025 at 4:24 PM CEST, Danilo Krummrich wrote:
->> > @@ -227,11 +229,21 @@ fn drop(self: Pin<&mut Self>) {
->> >      }
->> >  }
->> > =20
->> > +/// The arguments passed to the file operation callbacks of a [`MiscD=
-eviceRegistration`].
->> > +pub struct MiscArgs<'a, T: MiscDevice> {
->> > +    /// The [`Device`] representation of the `struct miscdevice`.
->> > +    pub device: &'a Device,
->> > +    /// The parent [`Device`] of [`Self::device`].
->> > +    pub parent: Option<&'a Device<Bound>>,
->> > +    /// The `RegistrationData` passed to [`MiscDeviceRegistration::re=
-gister`].
->> > +    pub data: &'a T::RegistrationData,
->>=20
->> Here I would also just use `T`, remove the `MiscDevice` bound and then
->> use `MiscArgs<'_, Self::RegistrationData>` below.
->
-> It has the disadvantage that the documentation of the `data` field above =
-needs
-> to be much more vague, since we can't claim that it's the `RegistrationDa=
-ta`
-> passed to `MiscDeviceRegistration::register` anymore -- given that, I'm n=
-ot sure
-> it's worth changing.
+Currently even the SoC's OVL does not declare the support of AFBC, AFBC
+is still announced to the userspace within the IN_FORMATS blob, which
+breaks modern Wayland compositors like KWin Wayland and others.
 
-Yeah that's not ideal... Then keep it this way.
+Gate passing modifiers to drm_universal_plane_init() behind querying the
+driver of the hardware block for AFBC support.
 
->> > +}
->> > +
->> >  /// Trait implemented by the private data of an open misc device.
->> >  #[vtable]
->> >  pub trait MiscDevice: Sized {
->> >      /// What kind of pointer should `Self` be wrapped in.
->> > -    type Ptr: ForeignOwnable + Send + Sync;
->> > +    type Ptr: Send + Sync;
->>=20
->> There is no info about this change in the commit message. Why are we
->> changing this? This seems a bit orthogonal to the other change, maybe do
->> it in a separate patch?
->
-> It's a consequence of the implementation:
->
-> A `Ptr` instance is created in the misc device's file operations open() c=
-allback
-> and dropped in the fops release() callback.
->
-> Previously, this was stored in the private data pointer of the struct fil=
-e that
-> is passed for every file operation in open().
->
-> Also note that when open is called the private data pointer in a struct f=
-ile
-> points to the corresponding struct miscdevice.
->
-> With this patch, we keep the pointer to the struct miscdevice in the priv=
-ate
-> data pointer of struct file, but instead store the `Ptr` instance in
-> `RawDeviceRegistration::private`.
->
-> Subsequently, ForeignOwnable is not a required trait anymore.
-
-That's true, but it also wouldn't hurt to keep it for this patch and do
-the change in a separate one. Or mention it in the commit message :)
-
-> We need this in order to keep access to the `RawDeviceRegistration` throu=
-ghout
-> file operations to be able to pass the misc device's parent as &Device<Bo=
-und>
-> through the `MiscArgs` above.
->
->> Also `Ptr` doesn't make much sense for the name, since now that the
->> `ForeignOwnable` bound is gone, I could set this to `Self` and then have
->> access to `&Self` in the callbacks.
->
-> We can't make it `Self`, it might still be some pointer type, require pin=
--init,
-> etc. So, it has to be a generic type.
-
-`MiscDevice::open` could return an `impl PinInit<Self, Error>` :)
-
-> But, I agree that we should not name it `Ptr`, probably should never have=
- been
-> named `Ptr`, but `Data`, `Private` or similar.
->
->> Would that also make sense to use as a general change? So don't store
->> `Self::Ptr`, but `Self` directly?
->
-> I think it can't be `Self`, see above.
-
-The rust_misc_device example would still work if we changed this to
-`Self`. Now it's not a complicated user of the API and someone might
-want to store `Self` in an `Arc` and then store that as the private
-data, as the MiscDevice is also referenced from somewhere else. But I
-don't know if that is common or an intended use-case :)
-
-For simple use-cases however, I think that `Self` definitely is the
-right choice (as opposed to `Pin<KBox<Self>>` for example, as that has
-an extra allocation :)
-
+Fixes: c410fa9b07c3 ("drm/mediatek: Add AFBC support to Mediatek DRM driver")
+Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
 ---
-Cheers,
-Benno
+Patch tested on MT8183, on which KWin Wayland 5.27.12 is fixed.
+
+In addition, I tried to fake supports_afbc in mt8183_ovl_driver_data and
+mt8183_ovl_2l_driver_data, then KWin Wayland gets broken again and
+modetest also shows the AFBC modifier in IN_FORMATS.
+
+ drivers/gpu/drm/mediatek/mtk_crtc.c     | 3 ++-
+ drivers/gpu/drm/mediatek/mtk_ddp_comp.c | 1 +
+ drivers/gpu/drm/mediatek/mtk_ddp_comp.h | 9 +++++++++
+ drivers/gpu/drm/mediatek/mtk_disp_drv.h | 1 +
+ drivers/gpu/drm/mediatek/mtk_disp_ovl.c | 7 +++++++
+ drivers/gpu/drm/mediatek/mtk_plane.c    | 7 +++++--
+ drivers/gpu/drm/mediatek/mtk_plane.h    | 3 ++-
+ 7 files changed, 27 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/gpu/drm/mediatek/mtk_crtc.c b/drivers/gpu/drm/mediatek/mtk_crtc.c
+index 8f6fba4217ece..53359c2465b65 100644
+--- a/drivers/gpu/drm/mediatek/mtk_crtc.c
++++ b/drivers/gpu/drm/mediatek/mtk_crtc.c
+@@ -930,7 +930,8 @@ static int mtk_crtc_init_comp_planes(struct drm_device *drm_dev,
+ 				mtk_ddp_comp_supported_rotations(comp),
+ 				mtk_ddp_comp_get_blend_modes(comp),
+ 				mtk_ddp_comp_get_formats(comp),
+-				mtk_ddp_comp_get_num_formats(comp), i);
++				mtk_ddp_comp_get_num_formats(comp),
++				mtk_ddp_comp_is_afbc_supported(comp), i);
+ 		if (ret)
+ 			return ret;
+ 
+diff --git a/drivers/gpu/drm/mediatek/mtk_ddp_comp.c b/drivers/gpu/drm/mediatek/mtk_ddp_comp.c
+index edc6417639e64..ac6620e10262e 100644
+--- a/drivers/gpu/drm/mediatek/mtk_ddp_comp.c
++++ b/drivers/gpu/drm/mediatek/mtk_ddp_comp.c
+@@ -366,6 +366,7 @@ static const struct mtk_ddp_comp_funcs ddp_ovl = {
+ 	.get_blend_modes = mtk_ovl_get_blend_modes,
+ 	.get_formats = mtk_ovl_get_formats,
+ 	.get_num_formats = mtk_ovl_get_num_formats,
++	.is_afbc_supported = mtk_ovl_is_afbc_supported,
+ };
+ 
+ static const struct mtk_ddp_comp_funcs ddp_postmask = {
+diff --git a/drivers/gpu/drm/mediatek/mtk_ddp_comp.h b/drivers/gpu/drm/mediatek/mtk_ddp_comp.h
+index 39720b27f4e9e..7289b3dcf22f2 100644
+--- a/drivers/gpu/drm/mediatek/mtk_ddp_comp.h
++++ b/drivers/gpu/drm/mediatek/mtk_ddp_comp.h
+@@ -83,6 +83,7 @@ struct mtk_ddp_comp_funcs {
+ 	u32 (*get_blend_modes)(struct device *dev);
+ 	const u32 *(*get_formats)(struct device *dev);
+ 	size_t (*get_num_formats)(struct device *dev);
++	bool (*is_afbc_supported)(struct device *dev);
+ 	void (*connect)(struct device *dev, struct device *mmsys_dev, unsigned int next);
+ 	void (*disconnect)(struct device *dev, struct device *mmsys_dev, unsigned int next);
+ 	void (*add)(struct device *dev, struct mtk_mutex *mutex);
+@@ -294,6 +295,14 @@ size_t mtk_ddp_comp_get_num_formats(struct mtk_ddp_comp *comp)
+ 	return 0;
+ }
+ 
++static inline bool mtk_ddp_comp_is_afbc_supported(struct mtk_ddp_comp *comp)
++{
++	if (comp->funcs && comp->funcs->is_afbc_supported)
++		return comp->funcs->is_afbc_supported(comp->dev);
++
++	return false;
++}
++
+ static inline bool mtk_ddp_comp_add(struct mtk_ddp_comp *comp, struct mtk_mutex *mutex)
+ {
+ 	if (comp->funcs && comp->funcs->add) {
+diff --git a/drivers/gpu/drm/mediatek/mtk_disp_drv.h b/drivers/gpu/drm/mediatek/mtk_disp_drv.h
+index 04217a36939cd..679d413bf10be 100644
+--- a/drivers/gpu/drm/mediatek/mtk_disp_drv.h
++++ b/drivers/gpu/drm/mediatek/mtk_disp_drv.h
+@@ -106,6 +106,7 @@ void mtk_ovl_disable_vblank(struct device *dev);
+ u32 mtk_ovl_get_blend_modes(struct device *dev);
+ const u32 *mtk_ovl_get_formats(struct device *dev);
+ size_t mtk_ovl_get_num_formats(struct device *dev);
++bool mtk_ovl_is_afbc_supported(struct device *dev);
+ 
+ void mtk_ovl_adaptor_add_comp(struct device *dev, struct mtk_mutex *mutex);
+ void mtk_ovl_adaptor_remove_comp(struct device *dev, struct mtk_mutex *mutex);
+diff --git a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
+index d0581c4e3c999..e0236353d4997 100644
+--- a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
++++ b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
+@@ -236,6 +236,13 @@ size_t mtk_ovl_get_num_formats(struct device *dev)
+ 	return ovl->data->num_formats;
+ }
+ 
++bool mtk_ovl_is_afbc_supported(struct device *dev)
++{
++	struct mtk_disp_ovl *ovl = dev_get_drvdata(dev);
++
++	return ovl->data->supports_afbc;
++}
++
+ int mtk_ovl_clk_enable(struct device *dev)
+ {
+ 	struct mtk_disp_ovl *ovl = dev_get_drvdata(dev);
+diff --git a/drivers/gpu/drm/mediatek/mtk_plane.c b/drivers/gpu/drm/mediatek/mtk_plane.c
+index 655106bbb76d3..e08b771bc25e9 100644
+--- a/drivers/gpu/drm/mediatek/mtk_plane.c
++++ b/drivers/gpu/drm/mediatek/mtk_plane.c
+@@ -321,7 +321,8 @@ static const struct drm_plane_helper_funcs mtk_plane_helper_funcs = {
+ int mtk_plane_init(struct drm_device *dev, struct drm_plane *plane,
+ 		   unsigned long possible_crtcs, enum drm_plane_type type,
+ 		   unsigned int supported_rotations, const u32 blend_modes,
+-		   const u32 *formats, size_t num_formats, unsigned int plane_idx)
++		   const u32 *formats, size_t num_formats,
++		   bool supports_afbc, unsigned int plane_idx)
+ {
+ 	int err;
+ 
+@@ -332,7 +333,9 @@ int mtk_plane_init(struct drm_device *dev, struct drm_plane *plane,
+ 
+ 	err = drm_universal_plane_init(dev, plane, possible_crtcs,
+ 				       &mtk_plane_funcs, formats,
+-				       num_formats, modifiers, type, NULL);
++				       num_formats,
++				       supports_afbc ? modifiers : NULL,
++				       type, NULL);
+ 	if (err) {
+ 		DRM_ERROR("failed to initialize plane\n");
+ 		return err;
+diff --git a/drivers/gpu/drm/mediatek/mtk_plane.h b/drivers/gpu/drm/mediatek/mtk_plane.h
+index 3b13b89989c7e..95c5fa5295d8a 100644
+--- a/drivers/gpu/drm/mediatek/mtk_plane.h
++++ b/drivers/gpu/drm/mediatek/mtk_plane.h
+@@ -49,5 +49,6 @@ to_mtk_plane_state(struct drm_plane_state *state)
+ int mtk_plane_init(struct drm_device *dev, struct drm_plane *plane,
+ 		   unsigned long possible_crtcs, enum drm_plane_type type,
+ 		   unsigned int supported_rotations, const u32 blend_modes,
+-		   const u32 *formats, size_t num_formats, unsigned int plane_idx);
++		   const u32 *formats, size_t num_formats,
++		   bool supports_afbc, unsigned int plane_idx);
+ #endif
+-- 
+2.49.0
+
 
