@@ -1,105 +1,80 @@
-Return-Path: <linux-kernel+bounces-669079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-669083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 705B4AC9AC5
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 May 2025 14:05:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90910AC9AD0
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 May 2025 14:11:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7ACB1189D6E8
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 May 2025 12:05:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CC563A4F2C
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 May 2025 12:11:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5E5923BCE7;
-	Sat, 31 May 2025 12:05:16 +0000 (UTC)
-Received: from pokefinder.org (pokefinder.org [135.181.139.117])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ECFF7260A;
-	Sat, 31 May 2025 12:05:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=135.181.139.117
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED40623A9BD;
+	Sat, 31 May 2025 12:11:30 +0000 (UTC)
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F1177260A;
+	Sat, 31 May 2025 12:11:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748693116; cv=none; b=MSsuPzyLd+DLWVPyjwAn6dpp0qz0MNyO2UJ1SGYnHyPVMazYe0Q4jf4QQcaT4KbM4GTl8bXaQWVOzfrQOecXGBVN37gzTmiiXG1NURtbYQxzTsqQDJQuEHogKWaALE9PaKwiT+C7dFeAJ6QV41QVk/Vw6p08ezDqfho1rSlDsDY=
+	t=1748693490; cv=none; b=DxjAmu8oM8Wj3/Nmzl5v7dB9+ZTGXxr3xnQ7ACdCSZ6hiXLQ0G5/LsWxqGdsU2yWIR7bKL8nNiY0bb0lP0LKYVJMByNwJhHHR1swkXjAY3XSsGXR4QfdNr4TH9MgEcvVZ2urK1AQN9leXfAo45p6iea4abF5FUWPXmmNxwnceuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748693116; c=relaxed/simple;
-	bh=sp0NAPl4tOGpghuTGmrIS1hVWJ1MkV58/R+uN30n1As=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bKIrq2MG+xx2OqnH6zQfSudD4WLvd0YGhNE3edt81h4cse5zYLFUwiw14zYPMzCwQGN97+gHZ538cpGUGYs6z8lAEioAAh0YazM3Ul3Aq/fwQPxLlE0a50ZI0AIKHIP7uPCdL0H/tK5mHLXP3jm8t5d7G1mu2cvExtRryn4QWiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de; spf=pass smtp.mailfrom=the-dreams.de; arc=none smtp.client-ip=135.181.139.117
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=the-dreams.de
-Received: from localhost (ip-109-40-241-5.web.vodafone.de [109.40.241.5])
-	by pokefinder.org (Postfix) with UTF8SMTPSA id A2566A426EA;
-	Sat, 31 May 2025 14:05:04 +0200 (CEST)
-Date: Sat, 31 May 2025 14:05:03 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Romain Gantois <romain.gantois@bootlin.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Jai Luthra <jai.luthra@ideasonboard.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Subject: Re: linux-next: manual merge of the v4l-dvb tree with the i2c tree
-Message-ID: <aDrwb1YvwFKQB8x1@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa@the-dreams.de>,
-	Romain Gantois <romain.gantois@bootlin.com>,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Jai Luthra <jai.luthra@ideasonboard.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-References: <20250428104905.2b54643f@canb.auug.org.au>
- <20250428113052.38cf10da@canb.auug.org.au>
- <20250529124929.5217c6d9@canb.auug.org.au>
- <3352024.aeNJFYEL58@fw-rgant>
+	s=arc-20240116; t=1748693490; c=relaxed/simple;
+	bh=us2Py93GBDsSp0jD+73Gd0wAEBph6IjnFu+nDClLvYY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Bi+Gt00L3UlUi+8XBq3BQqbl3ra3txB4rHrp85iRzX1kmSbkKgWwHGbgo14SgNKTzUqevdCla62W1lLByiudHFIGiw2yxkIn033/l1YZAeF7WlFgZb3wKSvHVp/fdA5KuoTheaBGrZ+N2A7ER2COs0/0XIc2IhyhH/SGXnLKtFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=timmermann.space; spf=pass smtp.mailfrom=timmermann.space; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=timmermann.space
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=timmermann.space
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4b8f8q69K0z9skH;
+	Sat, 31 May 2025 14:11:23 +0200 (CEST)
+From: Lukas Timmermann <linux@timmermann.space>
+To: lee@kernel.org,
+	pavel@kernel.org
+Cc: linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Timmermann <linux@timmermann.space>
+Subject: [PATCH v2 0/2] Support for Osram as3668 LED driver 
+Date: Sat, 31 May 2025 14:07:16 +0200
+Message-ID: <20250531120715.302870-4-linux@timmermann.space>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="q4AK4MLirR2Yt7dW"
-Content-Disposition: inline
-In-Reply-To: <3352024.aeNJFYEL58@fw-rgant>
+Content-Transfer-Encoding: 8bit
 
+This is v2 of the patch series adding support for the as3668 LED driver. I am sending v2 because I discovered major issues in v1 that required correction before review.
 
---q4AK4MLirR2Yt7dW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This patch adds basic support for the as3668 driver IC via I2C interface. The IC is capable of driving four individual LEDs up to 25.5mA per channel. Hardware blinking would be theoretically possible, but this chip only supports a few set on/off-delays which makes using that feature unfeasable, therefore my driver doesn't offer that capability. It's intended applications is in mobile devices such as phones, tablets and cameras. This driver was tested and is working on a samsung-manta which is running postmarketOS with a near mainline kernel.
 
+Please note: This is my first suggested patch to the kernel. checkpatch.pl runs without warnings or errors. I've read the docs in regards to the led subsystem, coding style and submission of patches, but I'm still a bit unsure about the general workflow. I will try my best.
 
-> Below is the resolution I came up with.
+Changes in v2:
+- Fixed reading led subnodes in dt incorrectly, which caused wrong numbering and a segfault when removing the driver module
+- Fixed calling of_property_read_u8 with an int, causing a compiler error
+- Added more error checking during writes to the i2c bus
+- Link to v1: https://lore.kernel.org/linux-leds/20250530184219.78085-3-linux@timmermann.space/
 
-Linus solved it differently [1]. I think he is right, but those
-interested please double check.
+Lukas Timmermann (2):
+  leds: as3668: Driver for the ams Osram 4-channel i2c LED driver
+  dt-bindings: leds: Add new as3668 support
 
-[1] https://lore.kernel.org/all/CAHk-=wiKW=BPcDvBAsVDemdWBR0uh09A_WMOCoceqj3w3doGJg@mail.gmail.com/
+ .../devicetree/bindings/leds/leds-as3668.yaml |  76 +++++++
+ drivers/leds/Kconfig                          |  10 +
+ drivers/leds/Makefile                         |   1 +
+ drivers/leds/leds-as3668.c                    | 192 ++++++++++++++++++
+ 4 files changed, 279 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-as3668.yaml
+ create mode 100644 drivers/leds/leds-as3668.c
 
+-- 
+2.49.0
 
---q4AK4MLirR2Yt7dW
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmg68G8ACgkQFA3kzBSg
-KbYY7w//RO5HdBP/QG6c7Y4jqcd1B1qyf0c3ysfo87auEWurE1B/lUzDZPsO+kkF
-EyV8RljR9G/7D5cSkTSzRD2orm2mvnN748rsHiul3loxDyDCk+WDUUMNWdGhIok2
-UGyXPIuw47JUAA1eyiYtcYtuIuQr+zMOVy4IgJkUZXQXGkaK/15ozTZ5WZ91rBo2
-YQHEKJO6a0hJgPdN+3f6vwXm4T+T2N7PLYVBH6vf3gf25rseNr40SYYbwwWJaVVs
-k3vXO/5Cj12zefqOyXAv1zFUKt7mJIBILB5M5pGWzdinWLhoEWfnxaf1fLSEjjhx
-cBVNrCvSquaS3/V5jpaNN27E+3zVWSBnEANOn2/X6+wdMkpa8+QnsE0t3ANlF2LF
-/HDffmy7QW/wVZuJZ6LPyomRBm2//HQKfVg/T6gDzcmq092Np/BotkIPgS+P/INd
-jwZz/yHTIHuJ/OWQAhzeGmH5iIaDJxf3VlvKUkDxaSkm676ODOEEu6cpERRfXjFj
-Mv+Vd1OHMFTFGPF2einWr7M1n4HcDSrOSPadL1TIvUSEAcXPrpuq+58WicWzf45N
-n0vNr3y+3pozUgRG0Ij4vkA3xPBw+bv8e/C8cWruNrCpKIuM2Qx/kxQWDfycjJVT
-6GykzT82aWStTP05uKZ4zpzB2jJODe2OKwEjd81XPZSn1ZLcnpY=
-=15f7
------END PGP SIGNATURE-----
-
---q4AK4MLirR2Yt7dW--
 
