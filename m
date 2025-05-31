@@ -1,108 +1,122 @@
-Return-Path: <linux-kernel+bounces-669258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-669256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11803AC9D21
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Jun 2025 00:13:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7159FAC9D1E
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Jun 2025 00:10:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 317A41895B1A
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 May 2025 22:14:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85DE33B7CE8
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 May 2025 22:09:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEF8C1E25E8;
-	Sat, 31 May 2025 22:13:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFF851DFE26;
+	Sat, 31 May 2025 22:09:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zash.se header.i=@zash.se header.b="jJvRM59/"
-Received: from dimidiatus.zash.se (dimidiatus.zash.se [185.97.32.56])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EWW4WThU"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A9E3EEA8;
-	Sat, 31 May 2025 22:13:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.97.32.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACE1B18D63A;
+	Sat, 31 May 2025 22:09:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748729620; cv=none; b=M+YoGxQcKBWi6eJIG/NaVLYoyDmWNhF6j5eFMh9GP+frKGEnMigYDvKoDWHWmcAYYOF9UrI34oFAo5Lwt9BQHA6/NKzMXfHfsuKsytcSc9HHZe9kKAU12ArN/dKMF+8r+VVweJih0IaywZPA+P+2eCZ0GcYZU6W63SGmK8m4KRk=
+	t=1748729395; cv=none; b=UlfUd04KMImV+5cg+zRkNc4XbIRWADzs7RdsWGBfNjOZrJ6Q/Sn6VJ03AEiRymU7SmPmGUK6bl900f6XVIPZZElYikeIj5Y3H1MjCuxHEgTbo18/kHmueh6BJQjQY6r9sTrE7MZdxrgqbk2h1FS3xp8lcNSwRgB7+qeg4+3fRf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748729620; c=relaxed/simple;
-	bh=EufhE4khXJfcXaIToKySlWjWh0rkPLuopmauJx8nfF8=;
+	s=arc-20240116; t=1748729395; c=relaxed/simple;
+	bh=qD9FC1vyMvm89EJTpfDitWPr5e5+DYZUgCl7MfyLMWU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a13PW8zFeYyHOhYcujEo5JyftGE6qiCSqEnlIBrWVRPSPaI8GSwizS1JAqiBa+FwY19NkrVP1FSNdgY7yRYujqoFJQBnAiwfWBeWzvbNa28TqeFCL8bpYNky7NiPVEG/72Uw1su4BsqXBel/K5Vt64UsYIk8K3ZFk/n/Z4wedr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=zash.se; spf=pass smtp.mailfrom=zash.se; dkim=pass (2048-bit key) header.d=zash.se header.i=@zash.se header.b=jJvRM59/; arc=none smtp.client-ip=185.97.32.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=zash.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zash.se
-Received: from mail.zash.se (cerdale.zash.se [IPv6:2a00:66c0:7:1::cd1e])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (secp384r1) server-digest SHA384)
-	(Client did not present a certificate)
-	by dimidiatus.zash.se (Postfix) with ESMTPS id 958E719F5D8;
-	Sun,  1 Jun 2025 00:05:14 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zash.se; s=2025;
-	t=1748729105; bh=SVotxztx5CJUQc5mS0Q1kj0N0+zv2DMFiBjZ7PfRb3s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jJvRM59/TB7v+qAsievCIxoXPQ7HUOs3PNoXZWguAzaFIVEQ4j+Vt8ic2WdEiqYUt
-	 YoyVBrWTNWYUq2fv4Vp1MVDL5P32SZnM8Ijsfw3PotFs7duJXUd3keVcrC1suyxuoL
-	 CKicMw0Pn4wLfoqVyZZCzTSAqBt8eMwRsqlrkBTR6gTm1Ozm4C0RIiWfbQdd8kFp1I
-	 PM9pfEruXnMlFUjEINDm3BN8l5ksFYLrZgcfQw/vAqJyUVcYxPEMQnOScNesLU1155
-	 MAQYMfNTxpfzdbanXwUAhKrfzAJvFwxhREdN18a+OVxinb2aUs/85Z5MsYgsRuLxB2
-	 63o0yD50N4XBw==
-Received: from localhost (localhost [::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.zash.se (Postfix) with ESMTPSA id B4C376E0076;
-	Sun,  1 Jun 2025 00:05:04 +0200 (CEST)
-Date: Sun, 1 Jun 2025 00:05:02 +0200
-From: Kim Alvefur <zash@zash.se>
-To: Salvatore Bonaccorso <carnil@debian.org>
-Cc: 1106411@bugs.debian.org, Stephan Gerhold <stephan@gerhold.net>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org,
-	Andy Shevchenko <andy.shevchenko@gmail.com>,
-	Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org
-Subject: Re: kernel NULL pointer dereference in bmc150_accel_core / RIP:
- 0010:bmc150_accel_set_interrupt+0x68/0x120 [bmc150_accel_core]
-Message-ID: <aDt9DrWxKOUZHQ3K@spisula.zash.se>
-References: <174809774197.3242.15028356144506391196.reportbug@spisula.zash.se>
- <aDMuJsV4Mxb1IVoZ@eldamar.lan>
- <174809774197.3242.15028356144506391196.reportbug@spisula.zash.se>
- <aDnt9LkEZjb4DOO-@spisula.zash.se>
- <aDtZqwjKtpyguppg@eldamar.lan>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YsLqKlmS+6G0h2+WfmQnBkx+7wDeV1Ui1J4FMnx7m6tvJ+7Bv0dIpnYzprWKLCcLRAafnSfGZONxBtvqRVwpZL7bfyUtvg5ceDAChfsG6P7G4p0eGHQZnvFyaQ5WchSZ6jcLM7xViKrn2pQ5Adl91cIQl5ALtsUwN+Ku+/2mNsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EWW4WThU; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1748729394; x=1780265394;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=qD9FC1vyMvm89EJTpfDitWPr5e5+DYZUgCl7MfyLMWU=;
+  b=EWW4WThU2SxjUnbrlIRpZXbwrVYm7IgOxQuO3SlYTcIQQZFOLSNG8RZc
+   ourq7WUj8Et6OdcvFMU54eeOn9v4ffwDALy8nTPA/PYZ/FJFzUPVPYqj7
+   qXIjTtDf7ogEEWGZnNt6SVipx1hPIhvTYNiM15ea7wapRMyqxoGGkqkPT
+   IW8WMfDs3Kk33KF9XSXWGxLomb1lvfzys5ESk1kQXh+jM+v8+E1OAHGj3
+   NxKOoUhRYMjUYNB0QSrdMercbXrpDtB/hd0t8pVPkMpwEeNYn5K1Ho21C
+   i319SYQ6m6AVTLl5Imt+iqVVSs4TZSgRKWWurGRht1iDI3UcdRDVjWIUa
+   Q==;
+X-CSE-ConnectionGUID: 1AtnRWTTT7yjTs5oZH46IQ==
+X-CSE-MsgGUID: jm+e6CDJQKGjWc38Nc3uCw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11450"; a="62187627"
+X-IronPort-AV: E=Sophos;i="6.16,199,1744095600"; 
+   d="scan'208";a="62187627"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2025 15:09:53 -0700
+X-CSE-ConnectionGUID: DR2wqyAZQZGWq35UX2HHTQ==
+X-CSE-MsgGUID: Kjbyv2bSSkWJOLFCgt4FuQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,199,1744095600"; 
+   d="scan'208";a="167378829"
+Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
+  by fmviesa002.fm.intel.com with ESMTP; 31 May 2025 15:09:51 -0700
+Received: from kbuild by 1992f890471c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uLUOi-000Yfg-2v;
+	Sat, 31 May 2025 22:09:48 +0000
+Date: Sun, 1 Jun 2025 06:09:24 +0800
+From: kernel test robot <lkp@intel.com>
+To: Christian Lamparter <chunkeey@gmail.com>, linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Paul Gazzillo <paul@pgazz.com>,
+	Necip Fazil Yildiran <fazilyildiran@gmail.com>,
+	oe-kbuild-all@lists.linux.dev, Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v1] spi: push HAS_IOMEM dependency down to the drivers
+Message-ID: <202506010509.Ln1e8D4u-lkp@intel.com>
+References: <20250530234941.950431-1-chunkeey@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aDtZqwjKtpyguppg@eldamar.lan>
-Jabber-ID: zash@zash.se
+In-Reply-To: <20250530234941.950431-1-chunkeey@gmail.com>
 
-On Sat, May 31, 2025 at 09:34:03PM +0200, Salvatore Bonaccorso wrote:
->On Fri, May 30, 2025 at 07:42:12PM +0200, Kim Alvefur wrote:
->> So far it seems to happen on every boot, between unlocking LUKS and the
->> login manager starting.
->>
->> I wonder if this is related to another symptom this machine has, where
->> it fails to complete suspend and goes into a state where the only action
->> that has any effect is a long-press of the power button to turn it off.
->
->Looking through the boot log I'm noticing the following:
->
->> May 30 19:21:47 spisula kernel: bmc150_accel_i2c i2c-BOSC0200:00: supply vdd not found, using dummy regulator
->> May 30 19:21:47 spisula kernel: bmc150_accel_i2c i2c-BOSC0200:00: supply vddio not found, using dummy regulator
->[...]
->> May 30 19:21:47 spisula kernel: bmc150_accel_i2c i2c-BOSC0200:base: supply vdd not found, using dummy regulator
->> May 30 19:21:47 spisula kernel: bmc150_accel_i2c i2c-BOSC0200:base: supply vddio not found, using dummy regulator
->
->and iio-sensor-proxy might fail to handle then the bosch 0200
->accelerometer. You proobably cannot temporary purge the
->iio-sensor-proxy if installed by reverse dependencies, but might you
->try to temporarily mask the service and retest a boot?
+Hi Christian,
 
-That seems to have an effect, no "BUG: ..." in dmesg now, and the
-machine made it trough a suspends and resume cycle.
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on broonie-spi/for-next]
+[also build test WARNING on linus/master next-20250530]
+[cannot apply to v6.15]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Christian-Lamparter/spi-push-HAS_IOMEM-dependency-down-to-the-drivers/20250531-075211
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+patch link:    https://lore.kernel.org/r/20250530234941.950431-1-chunkeey%40gmail.com
+patch subject: [PATCH v1] spi: push HAS_IOMEM dependency down to the drivers
+config: s390-kismet-CONFIG_MDIO_MSCC_MIIM-CONFIG_NET_DSA_MSCC_OCELOT_EXT-0-0 (https://download.01.org/0day-ci/archive/20250601/202506010509.Ln1e8D4u-lkp@intel.com/config)
+reproduce: (https://download.01.org/0day-ci/archive/20250601/202506010509.Ln1e8D4u-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202506010509.Ln1e8D4u-lkp@intel.com/
+
+kismet warnings: (new ones prefixed by >>)
+>> kismet: WARNING: unmet direct dependencies detected for MDIO_MSCC_MIIM when selected by NET_DSA_MSCC_OCELOT_EXT
+   WARNING: unmet direct dependencies detected for MFD_OCELOT
+     Depends on [n]: HAS_IOMEM [=n] && SPI_MASTER [=y]
+     Selected by [y]:
+     - NET_DSA_MSCC_OCELOT_EXT [=y] && NETDEVICES [=y] && NET_DSA [=y] && SPI [=y] && NET_VENDOR_MICROSEMI [=y] && PTP_1588_CLOCK_OPTIONAL [=y]
+   
+   WARNING: unmet direct dependencies detected for MDIO_MSCC_MIIM
+     Depends on [n]: NETDEVICES [=y] && MDIO_DEVICE [=y] && MDIO_BUS [=y] && HAS_IOMEM [=n] && REGMAP_MMIO [=y]
+     Selected by [y]:
+     - NET_DSA_MSCC_OCELOT_EXT [=y] && NETDEVICES [=y] && NET_DSA [=y] && SPI [=y] && NET_VENDOR_MICROSEMI [=y] && PTP_1588_CLOCK_OPTIONAL [=y]
 
 -- 
-Kim "Zash" Alvefur
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
