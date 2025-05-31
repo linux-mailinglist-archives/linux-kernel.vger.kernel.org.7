@@ -1,195 +1,153 @@
-Return-Path: <linux-kernel+bounces-668992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-668994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27D5BAC99E5
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 May 2025 09:47:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73120AC99EB
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 May 2025 09:49:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 08B437B1872
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 May 2025 07:45:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 904B8A20947
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 May 2025 07:49:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E90322F74B;
-	Sat, 31 May 2025 07:47:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B8DE235063;
+	Sat, 31 May 2025 07:49:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m4l+/YKI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="EPGZrbB9";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qhpJQYvm"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87204143736;
-	Sat, 31 May 2025 07:47:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1655122259C;
+	Sat, 31 May 2025 07:49:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748677627; cv=none; b=Rrr2J4ueAgRLv5QTQa7QLpkJMNrgYymkOnvgWEFmhEyRCwymLKORgRReYcPF0BVw5yr0mMaBrELG9nXIa7WYDicx9T13zVU9VzTn+me6l/WL1t3UFSs4aTFNxcnqe8f4H3CHgW5avF+lIJkx1IngpdnDNZf3OlagUVcI8/Cj678=
+	t=1748677789; cv=none; b=IJH1LmnM3yjiLmdKbhVTkL5eOnrFDlgZ6+C53q5WuPA2FceNDdCKoqndFV7zZh92GoF3tPdX74QQg2kfXzGnHCAu4QG24upU0Or9NKCX/AUZqogZAI1F3uDhA40jqtUCypXC9Of/pK6HGHmzk8xhx83BL7ZGWePSjSbT7CNRx+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748677627; c=relaxed/simple;
-	bh=sT8ax5dbTHlITwDR7EB59IJncQ2gJREmL936Z5hIaHo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=De0DmsTMkWvYx2KTIqKGsNmMiZwDlwR7cRT7PX+IX59zuSycU8likPhc2zA5ZxciTDg5hb6E6WovPPuFuXUUDhGpy4/Gn4ThWWNhEBaXKalYlsVJdtxenshPaxqt4zUe9HHJOkOvMr/jGJ8XHfqaTBiU1hyixrKmEEeOb4ITPIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m4l+/YKI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEAB7C4CEE3;
-	Sat, 31 May 2025 07:46:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748677627;
-	bh=sT8ax5dbTHlITwDR7EB59IJncQ2gJREmL936Z5hIaHo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=m4l+/YKIs/KGay8y5vMJQ2bX/6i3fxjZ0gJ0+6SfB85gTMv9isMoswQqVsv4Dm+Yl
-	 5gBNStHJ++v6+O0EtdOWObMpAyqqJtKiiiHCvqbrRYRGbqgk54Gsoto2+2xSaTGEX/
-	 UjUmkcVswzLe8hErYSg4k60I8QKcdT/ikfO8I1+QYom9bCQCk6Jq/eiD5Mj9Y39hlp
-	 sAiyJS/N7snMk3XQ2/Bvj/0wr0qADR+cJOCyKzCUqM5WQ0/2ASiXFMHCRpT2zrg06m
-	 ciDBHHpS087W/LZIa9rTY4pgSp3axMokcqCHGPjdvNd0LKzornyQw2tVBbwFtOMgVG
-	 zRx/WnEiPnYpA==
-Date: Sat, 31 May 2025 10:46:52 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Ryan Roberts <ryan.roberts@arm.com>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	"David S. Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Juergen Gross <jgross@suse.com>,
-	Ajay Kaher <ajay.kaher@broadcom.com>,
-	Alexey Makhalov <alexey.makhalov@broadcom.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-	"Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Arnd Bergmann <arnd@arndb.de>, David Hildenbrand <david@redhat.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>, Alexei Starovoitov <ast@kernel.org>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, sparclinux@vger.kernel.org,
-	virtualization@lists.linux.dev, xen-devel@lists.xenproject.org,
-	linux-mm@kvack.org, Jann Horn <jannh@google.com>
-Subject: Re: [RFC PATCH v1 0/6] Lazy mmu mode fixes and improvements
-Message-ID: <aDqz7H-oBo35FRXe@kernel.org>
-References: <20250530140446.2387131-1-ryan.roberts@arm.com>
- <5b5d6352-9018-4658-b8fe-6eadaad46881@lucifer.local>
- <af9a96e1-064b-4627-bd34-e7e7e8a05452@arm.com>
+	s=arc-20240116; t=1748677789; c=relaxed/simple;
+	bh=C23frJRaDHSQk3U93KLhYqeyYDN3gwDTYfOh2Q08BMU=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=SPoPzG78EOx0kGaGsWA0K3MJtTUQyCQJ9c5YuPGgDSJXLEPDB9htLKh3EW2uvFjjEu4C8mfJcf4AWn4I57Qdl0vGyW7S9X1+LjIqDG1wFR3HSa78r2xxVxrkuDRmPEv+41rlN/gwJwNC+OFtbqdgTgKssb7xgOrU68vfdtSuB6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=EPGZrbB9; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qhpJQYvm; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Sat, 31 May 2025 07:49:44 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1748677786;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=D2dQZGZiVXbPX6pz1wr8QMCfnqgrExGw5IHm7j/528o=;
+	b=EPGZrbB9WRIoJAoGQvQFvUpdp1H9UPL+tenrWldvjxu6E4MluSabhAnpQPpT0nXgaraxPs
+	opki3EucJPYiprVCrVMiOaleIm3hP/r53JMOwatn3XZ9Q7WnrC1sY6cvvjbuGKOYULnsGA
+	BExOb5OCsUSo1N4qOrrNaTERnOMsd5qhKzWITa99CyRNikjn4xctoEML6BUQt9ZdYg54bM
+	J2cXfF5Zc3a6yMWftmp6QfCtvy3Dq9+bkTDe0/NFvguMB/QbgLzyFbLkofxx+cNH71+B1E
+	GgziFh5lGS6B3JAYM76MVsBVthZuBr9F8xLJgD2pOxWlb06epQ/zKLoPHSOfqw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1748677786;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=D2dQZGZiVXbPX6pz1wr8QMCfnqgrExGw5IHm7j/528o=;
+	b=qhpJQYvmmQikMjGCrfSAr+fStSRmCX1gBaHWX+vPX4bi3tzkoBK6G+SVUKpB0douBSRz1J
+	Pt6KWcaUwn0b5NDw==
+From: "tip-bot2 for Steven Rostedt" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/urgent] x86/fpu: Remove unused trace events
+Cc: "Steven Rostedt (Google)" <rostedt@goodmis.org>,
+ Ingo Molnar <mingo@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>,
+ Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Oleg Nesterov <oleg@redhat.com>, x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250529131024.7c2ef96f@gandalf.local.home # x86 submission>
+References: <20250529131024.7c2ef96f@gandalf.local.home # x86 submission>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <af9a96e1-064b-4627-bd34-e7e7e8a05452@arm.com>
+Message-ID: <174867778456.406.2535316646277526444.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-Hi Ryan,
+The following commit has been merged into the x86/urgent branch of tip:
 
-On Fri, May 30, 2025 at 04:55:36PM +0100, Ryan Roberts wrote:
-> On 30/05/2025 15:47, Lorenzo Stoakes wrote:
-> > +cc Jann who is a specialist in all things page table-y and especially scary
-> > edge cases :)
-> > 
-> > On Fri, May 30, 2025 at 03:04:38PM +0100, Ryan Roberts wrote:
-> >> Hi All,
-> >>
-> >> I recently added support for lazy mmu mode on arm64. The series is now in
-> >> Linus's tree so should be in v6.16-rc1. But during testing in linux-next we
-> >> found some ugly corners (unexpected nesting). I was able to fix those issues by
-> >> making the arm64 implementation more permissive (like the other arches). But
-> >> this is quite fragile IMHO. So I'd rather fix the root cause and ensure that
-> >> lazy mmu mode never nests, and more importantly, that code never makes pgtable
-> >> modifications expecting them to be immediate, not knowing that it's actually in
-> >> lazy mmu mode so the changes get deferred.
-> > 
-> > When you say fragile, are you confident it _works_ but perhaps not quite as well
-> > as you want? Or are you concerned this might be broken upstream in any way?
-> 
-> I'm confident that it _works_ for arm64 as it is, upstream. But if Dev's series
-> were to go in _without_ the lazy_mmu bracketting in some manner, then it would
-> be broken if the config includes CONFIG_DEBUG_PAGEALLOC.
-> 
-> There's a lot more explanation in the later patches as to how it can be broken,
-> but for arm64, the situation is currently like this, because our implementation
-> of __change_memory_common() uses apply_to_page_range() which implicitly starts
-> an inner lazy_mmu_mode. We enter multiple times, but we exit one the first call
-> to exit. Everything works correctly but it's not optimal because C is no longer
-> deferred:
-> 
-> arch_enter_lazy_mmu_mode()                        << outer lazy mmu region
->   <do some pte changes (A)>
->   alloc_pages()
->     debug_pagealloc_map_pages()
->       __kernel_map_pages()
->         __change_memory_common()
->           arch_enter_lazy_mmu_mode()              << inner lazy mmu region
->             <change kernel pte to make valid (B)>
->           arch_leave_lazy_mmu_mode()              << exit; complete A + B
->     clear_page()
->   <do some more pte changes (C)>                  << no longer in lazy mode
-> arch_leave_lazy_mmu_mode()                        << nop
-> 
-> An alternative implementation would not add the nested lazy mmu mode, so we end
-> up with this:
-> 
-> arch_enter_lazy_mmu_mode()                        << outer lazy mmu region
->   <do some pte changes (A)>
->   alloc_pages()
->     debug_pagealloc_map_pages()
->       __kernel_map_pages()
->         __change_memory_common()
->             <change kernel pte to make valid (B)> << deferred due to lazy mmu
->     clear_page()                                  << BANG! B has not be actioned
->   <do some more pte changes (C)>
-> arch_leave_lazy_mmu_mode()
-> 
-> This is clearly a much worse outcome. It's not happening today but it could in
-> future. That's why I'm claiming it's fragile. It's much better (IMHO) to
-> disallow calling the page allocator when in lazy mmu mode.
+Commit-ID:     99850a1c93fe7ca40ad9efddc00acec6e85c5e48
+Gitweb:        https://git.kernel.org/tip/99850a1c93fe7ca40ad9efddc00acec6e85c5e48
+Author:        Steven Rostedt <rostedt@goodmis.org>
+AuthorDate:    Thu, 29 May 2025 13:10:24 -04:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Sat, 31 May 2025 09:40:40 +02:00
 
-First, I think it should be handled completely inside arch/arm64. Page
-allocation worked on lazy mmu mode on other architectures, no reason it
-should be changed because of the way arm64 implements lazy mmu.
+x86/fpu: Remove unused trace events
 
-Second, DEBUG_PAGEALLOC already implies that performance is bad, for it to
-be useful the kernel should be mapped with base pages and there's map/unmap
-for every page allocation so optimizing a few pte changes (C in your
-example) won't matter much.
+The following trace events are not used and defining them just wastes
+memory:
 
-If there's a potential correctness issue with Dev's patches, it should be
-dealt with as a part of those patches with the necessary updates of how
-lazy mmu is implemented on arm64 and used in pageattr.c.
+  x86_fpu_before_restore
+  x86_fpu_after_restore
+  x86_fpu_init_state
 
-And it seems to me that adding something along the lines below to
-__kernel_map_pages() would solve DEBUG_PAGEALLOC issue:
+Simply remove them.
 
-void __kernel_map_pages(struct page *page, int numpages, int enable)
-{
-	unsigned long flags;
-	bool lazy_mmu = false;
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Link: https://lore.kernel.org/all/20250529130138.544ffec4@gandalf.local.home  # background
+Link: https://lore.kernel.org/r/20250529131024.7c2ef96f@gandalf.local.home    # x86 submission
+---
+ arch/x86/include/asm/trace/fpu.h | 15 ---------------
+ 1 file changed, 15 deletions(-)
 
-	if (!can_set_direct_map())
-		return;
-
-	flags = read_thread_flags();
-	if (flags & BIT(TIF_LAZY_MMU))
-		lazy_mmu = true;
-
-	set_memory_valid((unsigned long)page_address(page), numpages, enable);
-
-	if (lazy_mmu)
-		set_thread_flag(TIF_LAZY_MMU);
-}
-
-> Thanks,
-> Ryan
-
--- 
-Sincerely yours,
-Mike.
+diff --git a/arch/x86/include/asm/trace/fpu.h b/arch/x86/include/asm/trace/fpu.h
+index 0454d5e..721b408 100644
+--- a/arch/x86/include/asm/trace/fpu.h
++++ b/arch/x86/include/asm/trace/fpu.h
+@@ -44,16 +44,6 @@ DEFINE_EVENT(x86_fpu, x86_fpu_after_save,
+ 	TP_ARGS(fpu)
+ );
+ 
+-DEFINE_EVENT(x86_fpu, x86_fpu_before_restore,
+-	TP_PROTO(struct fpu *fpu),
+-	TP_ARGS(fpu)
+-);
+-
+-DEFINE_EVENT(x86_fpu, x86_fpu_after_restore,
+-	TP_PROTO(struct fpu *fpu),
+-	TP_ARGS(fpu)
+-);
+-
+ DEFINE_EVENT(x86_fpu, x86_fpu_regs_activated,
+ 	TP_PROTO(struct fpu *fpu),
+ 	TP_ARGS(fpu)
+@@ -64,11 +54,6 @@ DEFINE_EVENT(x86_fpu, x86_fpu_regs_deactivated,
+ 	TP_ARGS(fpu)
+ );
+ 
+-DEFINE_EVENT(x86_fpu, x86_fpu_init_state,
+-	TP_PROTO(struct fpu *fpu),
+-	TP_ARGS(fpu)
+-);
+-
+ DEFINE_EVENT(x86_fpu, x86_fpu_dropped,
+ 	TP_PROTO(struct fpu *fpu),
+ 	TP_ARGS(fpu)
 
