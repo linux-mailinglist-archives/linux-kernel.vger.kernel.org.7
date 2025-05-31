@@ -1,50 +1,51 @@
-Return-Path: <linux-kernel+bounces-669067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-669069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9855BAC9AB2
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 May 2025 13:39:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56D28AC9AB5
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 May 2025 13:39:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7509A9E6A6C
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 May 2025 11:39:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D1DB4A2641
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 May 2025 11:39:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21B6A239E9F;
-	Sat, 31 May 2025 11:39:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A454623BD00;
+	Sat, 31 May 2025 11:39:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="HL9lD6uo"
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="coKGkj2E"
 Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E09C1239570
-	for <linux-kernel@vger.kernel.org>; Sat, 31 May 2025 11:39:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35D7523A563;
+	Sat, 31 May 2025 11:39:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748691557; cv=none; b=YmB2xSbsXdtfp1pw6PUMC/yLQM63Fvhgu5s2kJEU3zXlkvUZRbL3avmbO9y7MHpgB7O+kNDACrtAcAyOXZJ39pkAn0nKDHQclkDn2WYkf04q339vRhUhLbwqBs83FbH9W3jKLnCGUsXvAQo1jacnsLZtczAdycgw+/KKf3nJe/s=
+	t=1748691560; cv=none; b=HycAevO7XXXDik+le+PdZ9cmj46GI3z38a/XbcXBs/LMSnfwjpOnIFjZC7IHACF3Rd0AXStZIQytzfcZXiBXGOzgPsHkOP6aMZdmLQSkR85KTOeYaX2nnsYOZ2ORFqWm6QyLS5qbXfPVwgqGvPXT477rSU7zRSSvhdi35zW2z6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748691557; c=relaxed/simple;
-	bh=FThwoyjp+lIKrPd5bzRRSkMXiwi1LjBL90jgimirWd8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RINANgt0X42B8tuUrn2WAEL2nGqiZ0lQ3xqqwG5etVzkHQ5yE6g+PMFKgubLJtenj8kKOcm0vzHbR1vK4k2rcXxcO0+QJ03/rej2oakzg3GbSI8Eq0Lc9D7BYYJ5+D9qyk0J9Zoq1qVE6JfowjDrlAPGG9Pdq/QO03agB8lanj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=HL9lD6uo; arc=none smtp.client-ip=178.21.23.139
+	s=arc-20240116; t=1748691560; c=relaxed/simple;
+	bh=erN5D2e7bDlphwtOAn+dkHFnD3yn45/VsLbboj6zrxI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=kKoGeiuOT9/Ay44rg+Ef498uHhUaCXlydPqbXZp4FJNQjeNZP3A0ZBUz8DFVyKF/6v07EOiqEwv/hl6ezU0UE77xAAzAVOd/oq/BcJoIL1WD6ph2z2glYmRD+0ZYHHth54IMNjK/WTAB9JU0CIvVlqI89Eot25Rucz2KZGPaZmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=coKGkj2E; arc=none smtp.client-ip=178.21.23.139
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id C10A525C1E;
-	Sat, 31 May 2025 13:39:06 +0200 (CEST)
+	by disroot.org (Postfix) with ESMTP id C383D25DDA;
+	Sat, 31 May 2025 13:39:10 +0200 (CEST)
 X-Virus-Scanned: SPAM Filter at disroot.org
 Received: from layka.disroot.org ([127.0.0.1])
  by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id tdtcKqBGVBb8; Sat, 31 May 2025 13:39:06 +0200 (CEST)
+ id d_qvBswCBNzt; Sat, 31 May 2025 13:39:10 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1748691546; bh=FThwoyjp+lIKrPd5bzRRSkMXiwi1LjBL90jgimirWd8=;
-	h=From:To:Cc:Subject:Date;
-	b=HL9lD6uo72BQbIVpdfk9aqygljJNUq37nzFGQlzRKGG3MshIP9SaNNup4DsLt5p9h
-	 B9PsAgeFWsDMmNsggg8mB+iqXSD/JnVm5SUL61hgjwpQLzA8+mOehWMNt4sjXpsm6O
-	 bqvaMDB2slkCcxhCB23toOuysofKwdlQ0bJ4Y/07zQ1+VUVxmF/f4wHTOtU8BKE1hk
-	 m85sG6t81pDZ1vY4JHX/N17FqvzkauOCjB0/3FDw04PC4lbDu7Ym/HoCqx92BtzX8+
-	 EUrf1GDNmaWXKt8s+2Hxm+UKfnggtMbUvNpceLvAba2HWoxpHAb4FAzdRikwWSDYsW
-	 mTUJsXrD0vNSg==
+	t=1748691550; bh=erN5D2e7bDlphwtOAn+dkHFnD3yn45/VsLbboj6zrxI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=coKGkj2EGAeXZzXzQthnKgSaBjMzg9y7BE4++nvKXRygjTM46d95x+NEpCDSJybNP
+	 eXFrIcFlVCD4d8rOBjWZDgpZRfGW4DK64ixxiszauNvfwklr2cQ120uEFh0QtcIt25
+	 EjyKZ9IbZRZ1wJHZ4GXhU4ezg6OkHWn9pmlg0W4nIciDWm81fGhQeGJhkK8kimt4mU
+	 HxaU/jUvl9aQkCCHZ/MhdsV8ojzcvDC+v8dN8KxzVzN9aG798humwNhAX1x+iyQ/B4
+	 Q2oKPP9OiOWVJjpT1OZi1ObEhZokJ0VvbrHUtQgjT627Q6FOuMWSzVXd5W4VzChK4u
+	 SByg+BrwAaiVg==
 From: Yao Zi <ziyao@disroot.org>
 To: Huacai Chen <chenhuacai@kernel.org>,
 	Jianmin Lv <lvjianmin@loongson.cn>,
@@ -53,10 +54,13 @@ Cc: linux-kernel@vger.kernel.org,
 	loongarch@lists.linux.dev,
 	Mingcong Bai <jeffbai@aosc.io>,
 	Kexy Biscuit <kexybiscuit@aosc.io>,
-	Yao Zi <ziyao@disroot.org>
-Subject: [PATCH 0/2] Backlight control improvements for loongson_laptop
-Date: Sat, 31 May 2025 11:38:49 +0000
-Message-ID: <20250531113851.21426-1-ziyao@disroot.org>
+	Yao Zi <ziyao@disroot.org>,
+	stable@vger.kernel.org
+Subject: [PATCH 1/2] platform/loongarch: laptop: Get brightness setting from EC on probe
+Date: Sat, 31 May 2025 11:38:50 +0000
+Message-ID: <20250531113851.21426-2-ziyao@disroot.org>
+In-Reply-To: <20250531113851.21426-1-ziyao@disroot.org>
+References: <20250531113851.21426-1-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,25 +69,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-I've observed strange screen brightness changes on TongFang L860-T2
-3A5000 laptop after resumption. It's found that a brightness value that
-doesn't match the hardware state before suspension is "restored" for the
-EC, causing the strange behavior.
+Previously 1 is unconditionally taken as current brightness value. This
+causes problems since it's required to restore brightness settings on
+resumption, and a value that doesn't match EC's state before suspension
+will cause surprising changes of screen brightness.
 
-This series fixes the behavior by obtaining EC's brightness setting
-instead of using a constant as current brightness on probe.
+Let's get brightness from EC and take it as the current brightness on
+probe of the laptop driver to avoid the surprising behavior. Tested on
+TongFang L860-T2 3A5000 laptop.
 
-While digging through the code, I've found some unused,
-power-control-related functions in the driver. They're cleaned up and
-used to support power control of backlight in the second patch as well.
+Cc: stable@vger.kernel.org
+Fixes: 6246ed09111f ("LoongArch: Add ACPI-based generic laptop driver")
+Signed-off-by: Yao Zi <ziyao@disroot.org>
+---
+ drivers/platform/loongarch/loongson-laptop.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Yao Zi (2):
-  platform/loongarch: laptop: Get brightness setting from EC on probe
-  platform/loongarch: laptop: Support backlight power control
-
- drivers/platform/loongarch/loongson-laptop.c | 55 +++++++-------------
- 1 file changed, 20 insertions(+), 35 deletions(-)
-
+diff --git a/drivers/platform/loongarch/loongson-laptop.c b/drivers/platform/loongarch/loongson-laptop.c
+index 99203584949d..828bd62e3596 100644
+--- a/drivers/platform/loongarch/loongson-laptop.c
++++ b/drivers/platform/loongarch/loongson-laptop.c
+@@ -392,7 +392,7 @@ static int laptop_backlight_register(void)
+ 	if (!acpi_evalf(hotkey_handle, &status, "ECLL", "d"))
+ 		return -EIO;
+ 
+-	props.brightness = 1;
++	props.brightness = ec_get_brightness();
+ 	props.max_brightness = status;
+ 	props.type = BACKLIGHT_PLATFORM;
+ 
 -- 
 2.49.0
 
