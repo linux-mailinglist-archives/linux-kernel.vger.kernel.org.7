@@ -1,131 +1,119 @@
-Return-Path: <linux-kernel+bounces-669074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-669078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9068EAC9ABD
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 May 2025 13:49:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0116DAC9AC3
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 May 2025 14:04:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36358189C87C
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 May 2025 11:49:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A065189D728
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 May 2025 12:04:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1E4523BCE7;
-	Sat, 31 May 2025 11:49:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49822239E82;
+	Sat, 31 May 2025 12:04:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TEigLghs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=mebeim.net header.i=@mebeim.net header.b="eiCQzkLO"
+Received: from h8.fbrelay.privateemail.com (h8.fbrelay.privateemail.com [162.0.218.231])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16D7EEAD0;
-	Sat, 31 May 2025 11:49:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A86807260A;
+	Sat, 31 May 2025 12:04:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.0.218.231
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748692164; cv=none; b=Ii9n6bzo6d8qnronXd9lR8SHD7/Az7o6X0LKsZyVFJYtXb/fwOozhEl5EeyLLuI8JFg7l9tm518L9adqNDDIb1lMyp2/s8NHzNm3EznIJgi9eGbTdJ7vbTgDeWO/+5oY5uyyYg8Cg1pLMEnLz6+uEbFnGFxp4LUlrTySmJhOWfo=
+	t=1748693052; cv=none; b=Ghhyx/EhRWl+nOzbMfoLyo44932mjSMlAf4KgmmU4/edqmGBVvXXvGtT+4o/bZdsKYL1Wdxr9CkYOGDGAwzTH26xLf4bHqrk+QOUL9HA+feB4JFPw6xe7jo4rcmY/HIUzl7sQjnj7qc4XtTzSfjhtKfw3q171BUeUY06RdrC72U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748692164; c=relaxed/simple;
-	bh=Af8HaQZyJpqo1jRB+/Ioz25AGaCCmNcBiYyroVixhYE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q+HkHKSF+8/uv2ms2cs5kv1DSgnnEjN0p0DBd8LWEjx/SpIWv0jSb53Nl0QgA498eIW2Zp8HNfne6pNPjhrxJXvUbv+he5mi2Q9o5a7XN68AqGsJNpcMhGdoTQRt407WEWpbcKA9F5678cQ8i1VlNQUpCYSPshSvqaI5wxolC0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TEigLghs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0B02C4CEE3;
-	Sat, 31 May 2025 11:49:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748692163;
-	bh=Af8HaQZyJpqo1jRB+/Ioz25AGaCCmNcBiYyroVixhYE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TEigLghsEjebwnfmaWzIZ5IRtT/hfObwzEXTQ8Xrf0NraDdI9BxKvVpEfIRfyUKdI
-	 /0xMCqtgKeTXOhGTsfqWy6U77gaq7n/52DNBUj64UXLWv3FoA6T+wyAqc8NmFlDeAp
-	 rSxIV3jPteD9etdKv1FXVOxb4+SG3mgbqLWQq89MEJp80szksXbTpaYPaillKbAHJf
-	 CriapOSmozuODEWbfG6yj+LIbcnSiuha19aZeePhoLsBFUeT2ees550idWHrMxYyQE
-	 0uPyDG5SRBdH2IS9EuxY5vMzU96opEP49UZs5FcBITe94bMqIWj9e3W8lXaxfu4wxO
-	 uNfnL0PIRWbHg==
-Date: Sat, 31 May 2025 08:49:20 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org, Song Liu <song@kernel.org>,
-	bpf@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>
-Subject: Re: [PATCH] perf lock contention: Reject more than 10ms delays for
- safety
-Message-ID: <aDrswP62_-fy3vUC@x1>
-References: <20250515181042.555189-1-namhyung@kernel.org>
+	s=arc-20240116; t=1748693052; c=relaxed/simple;
+	bh=ZqEA3lY58sHUP6hm3TaLzmg215uhz+4IvCjcFgwxtJY=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=dfKu7okpqwkF8wRzm93ZIsQqVsO4+h4j9JmgCFD5Ve8P3E8MXVqw7rQDNXMXiX2Hq0XLzbBUtGtPXmy9lh7XHbJxtPLcaS7I4CeoXEgCT+rsEKg6Ef0sReAA1q8FiMgYg7rblb8LR8paq2bWeLS8myN3ymE69IQXCekiSoT68SY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mebeim.net; spf=pass smtp.mailfrom=mebeim.net; dkim=pass (2048-bit key) header.d=mebeim.net header.i=@mebeim.net header.b=eiCQzkLO; arc=none smtp.client-ip=162.0.218.231
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mebeim.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mebeim.net
+Received: from MTA-05-3.privateemail.com (mta-05.privateemail.com [198.54.127.60])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by h7.fbrelay.privateemail.com (Postfix) with ESMTPSA id 4b8dlm2pTQz2xj0;
+	Sat, 31 May 2025 07:53:08 -0400 (EDT)
+Received: from mta-05.privateemail.com (localhost [127.0.0.1])
+	by mta-05.privateemail.com (Postfix) with ESMTP id 4b8dlc38sqz3hhVV;
+	Sat, 31 May 2025 07:53:00 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=mebeim.net; s=default;
+	t=1748692380; bh=ZqEA3lY58sHUP6hm3TaLzmg215uhz+4IvCjcFgwxtJY=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=eiCQzkLOYvvS70DtlQVbO/wXbYTrj0ctl3ppfNKdpA+bEm4ZCwuvQe0h9YFWkKXit
+	 B7OQF+zim8XVzkUWUqKb3LJMjbN7U1P3OhqL/a0RrpaRwD0mg+XIl/8VrmBQu7MCxp
+	 oFY0wTYju1Ay7P7rTpM6BMsamF2GQ8xVFZX7UYHBI7vMsHus8s5Kw6lQRv6XEL868u
+	 oPuiKmtc3ecg0lTjEfnREV1XxYcIlXaJaFOJm6d/7btzKKeMas0aK7Ue5Bg0/w6H8l
+	 kSdguuoaGjr+xpAQ7wZQzpGvsYA1LLEuIxXUP+FovHDvV1TxZmLmPYGlHZtTsVDnWD
+	 QnyFKtx69CORA==
+Received: from APP-18 (unknown [10.50.14.242])
+	by mta-05.privateemail.com (Postfix) with ESMTPA;
+	Sat, 31 May 2025 07:52:51 -0400 (EDT)
+Date: Sat, 31 May 2025 13:52:51 +0200 (CEST)
+From: Marco Bonelli <marco@mebeim.net>
+To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: "terrelln@fb.com" <terrelln@fb.com>,
+	"rostedt@goodmis.org" <rostedt@goodmis.org>,
+	"mhiramat@kernel.org" <mhiramat@kernel.org>,
+	"mark.rutland@arm.com" <mark.rutland@arm.com>,
+	"linux-trace-kernel@vger.kernel.org" <linux-trace-kernel@vger.kernel.org>,
+	"paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
+	"palmer@dabbelt.com" <palmer@dabbelt.com>,
+	"aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
+	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>
+Message-ID: <1552795452.650306.1748692371190@privateemail.com>
+In-Reply-To: <960240908.630790.1748641210849@privateemail.com>
+References: <960240908.630790.1748641210849@privateemail.com>
+Subject: Re: Broken 32-bit riscv debug build with ZSTD and FTRACE
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250515181042.555189-1-namhyung@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+Importance: Normal
+X-Mailer: Open-Xchange Mailer v7.10.6-Rev75
+X-Originating-Client: open-xchange-appsuite
+X-Virus-Scanned: ClamAV using ClamSMTP
 
-On Thu, May 15, 2025 at 11:10:42AM -0700, Namhyung Kim wrote:
-> Delaying kernel operations can be dangerous and the kernel may kill
-> (non-sleepable) BPF programs running for long in the future.
+> Steps to reproduce:
 > 
-> Limit the max delay to 10ms and update the document about it.
-> 
->   $ sudo ./perf lock con -abl -J 100000us@cgroup_mutex true
->   lock delay is too long: 100000us (> 10ms)
-> 
->    Usage: perf lock contention [<options>]
-> 
->       -J, --inject-delay <TIME@FUNC>
->                             Inject delays to specific locks
-> 
-> Suggested-by: Alexei Starovoitov <ast@kernel.org>
-> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-> ---
->  tools/perf/Documentation/perf-lock.txt | 8 ++++++--
->  tools/perf/builtin-lock.c              | 5 +++++
->  2 files changed, 11 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tools/perf/Documentation/perf-lock.txt b/tools/perf/Documentation/perf-lock.txt
-> index 2d9aecf630422aa6..c17b3e318169f9dc 100644
-> --- a/tools/perf/Documentation/perf-lock.txt
-> +++ b/tools/perf/Documentation/perf-lock.txt
-> @@ -224,8 +224,12 @@ CONTENTION OPTIONS
->  	only with -b/--use-bpf.
->  
->  	The 'time' is specified in nsec but it can have a unit suffix.  Available
-> -	units are "ms" and "us".  Note that it will busy-wait after it gets the
-> -	lock.  Please use it at your own risk.
-> +	units are "ms", "us" and "ns".  Currently it accepts up to 10ms of delays
-> +	for safety reasons.
-> +
-> +	Note that it will busy-wait after it gets the lock. Delaying locks can
-> +	have significant consequences including potential kernel crashes.  Please
-> +	use it at your own risk.
->  
->  
->  SEE ALSO
-> diff --git a/tools/perf/builtin-lock.c b/tools/perf/builtin-lock.c
-> index 41f6f3d2b779b986..3b3ade7a39cad01f 100644
-> --- a/tools/perf/builtin-lock.c
-> +++ b/tools/perf/builtin-lock.c
-> @@ -2537,6 +2537,11 @@ static bool add_lock_delay(char *spec)
->  		return false;
->  	}
->  
-> +	if (duration > 10 * 1000 * 1000) {
-> +		pr_err("lock delay is too long: %s (> 10ms)\n", spec);
-> +		return false;
-> +	}
-> +
+>     export ARCH=riscv CROSS_COMPILE=riscv32-linux-
+>     make distclean
+>     make defconfig
+>     make 32-bit.config
+>     ./scripts/config \
+>         -e DEBUG_KERNEL \
+>         -e DEBUG_INFO \
+>         -e DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT \
+>         -d DEBUG_INFO_NONE \
+>         -d DEBUG_INFO_REDUCED
+>     make olddefconfig
+>     make -j vmlinux
 
-Please consider to replace those 1000 * 1000 her and in other places
-with NSEC_PER_MSEC in a followup patch for the next merge window.
+Sorry, forgot to add "-e FTRACE" to the steps above. Here it is:
 
-- Arnaldo
+	export ARCH=riscv CROSS_COMPILE=riscv32-linux-
+	make distclean
+	make defconfig
+	make 32-bit.config
+	./scripts/config \
+		-e DEBUG_KERNEL \
+		-e DEBUG_INFO \
+		-e DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT \
+		-d DEBUG_INFO_NONE \
+		-d DEBUG_INFO_REDUCED \
+		-e FTRACE
+	make olddefconfig
+	make -j vmlinux
 
->  	tmp = realloc(delays, (nr_delays + 1) * sizeof(*delays));
->  	if (tmp == NULL) {
->  		pr_err("Memory allocation failure\n");
-> -- 
-> 2.49.0.1101.gccaa498523-goog
+Everything else still applies.
+
+--
+Marco Bonelli
 
