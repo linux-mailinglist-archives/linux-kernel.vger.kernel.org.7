@@ -1,122 +1,124 @@
-Return-Path: <linux-kernel+bounces-669064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-669071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 165DFAC9AA7
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 May 2025 13:05:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE56AAC9AB7
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 May 2025 13:41:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E445C189FF08
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 May 2025 11:05:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D82E7A5F7C
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 May 2025 11:40:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E384239E76;
-	Sat, 31 May 2025 11:05:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l3x3cLQ5"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5FBF23A563;
+	Sat, 31 May 2025 11:41:38 +0000 (UTC)
+Received: from out03.mta.xmission.com (out03.mta.xmission.com [166.70.13.233])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4543E220F56;
-	Sat, 31 May 2025 11:05:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90FF421CA0F
+	for <linux-kernel@vger.kernel.org>; Sat, 31 May 2025 11:41:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748689536; cv=none; b=b22JGpYbvmV/qqphji26dUo1loFGettYdhHZEiCkcnNaq0mAgUxu7FfjGS6Lpq1j1ZoE5VOwbsgZs6oAth0juX5HlJ6OO+vadpS6hQk6UsLYilbroqpZlIp97QUyyWNcW09Pwbnv2NfTVPNbwRgNYvunN/Nl57sXoYv4jJAl84k=
+	t=1748691698; cv=none; b=Jm7Jm6X6rF7L7QaU5W5tluqiVzjCwBZNFpKeYY64tcysa/7albPZ3ge+bbgyedZb4PxAOJVm5r+aXexLck5IV2D70wAuJUrcGIcqHiellnjcJBFm7M//N4jC+p7byQrSA8igky3WAcZ7zXfUJerF3RcYFRyF7f9gP+dts29BQeA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748689536; c=relaxed/simple;
-	bh=dYDKXesgHkdXXeckfKtCNiqnxIHSWdQGcNNgbHW5FwE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YaQ5rrEdo/cmIGMMDj86L1e+DmmcykVgDXSXmqRt+Wr/6F8tn7eTcKCxXA/dUsWKv8sSzqGorwJMwgdWpL/mhGrTO9wjPNK1myevBUWzDyKFIyp0rk6zXlL4/Hg2VzFQFDGs6n3UyxjDFiqiOBiSNDjmcCvvuprxpJkvuxPkI1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l3x3cLQ5; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2322d8316f6so3661755ad.3;
-        Sat, 31 May 2025 04:05:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748689534; x=1749294334; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dYDKXesgHkdXXeckfKtCNiqnxIHSWdQGcNNgbHW5FwE=;
-        b=l3x3cLQ5WhBv5FksNnJvzkefnH/11ApTYhw+PHXO2RH2T7cw8lmwKznrNM2c5NnbQp
-         vYTEp/X8Y/cjO1e0tcYlZpMay6rzCNBgXWV5HgsjDg5AR258UgnmyQrxBB6RYl7gF9uB
-         +KsY7OAn9OdcZWYe94d+2i/ki41IShtDa6PNZ7WMdSO8erQvSxikK47HcgSay1x4aI+2
-         9HhWisxEoRtlnwaGtK0/2kbrXtnjaq8UZdrIb4lbglZBxpbA0fya1y3T9Eg3WvK1kOk3
-         3ChAN73vkdkoTOX/08+WiSKO8/VKlF0GiN4JqaRIGV5wjuJKH3X6nFx6RyvLVNTgjXEu
-         p4uw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748689534; x=1749294334;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dYDKXesgHkdXXeckfKtCNiqnxIHSWdQGcNNgbHW5FwE=;
-        b=Qh+jprJDquA9hraffUrM7PB4000whTMAJbkcoj/TeHkfSLoyfSJj4Ozav0COvsuPrK
-         V8zSE524t6TxvXtDaJzcW+gUaK5vmKLFx13ZS7crg/iPq9P8oVXammUCZIjCi2tf5e0n
-         3cFAfa39AE5QMLz4XayoZxLA7PNpE2m27GeVMSZpDCaaCrhh/CUwGtD6NxPTrj793HWd
-         Y2JWQNxDiyv2i7fuDWO8agxzMqGwKJy8BY6aQrrpR1m9jD0JQKq5LX6iBwkJoqqEPQn9
-         UvQ5vR5XGYPxe00tBjldQk5kr/hLcKWh55EKjRxOL09c60R+oolWerQP+n488kYw1BaY
-         LtHw==
-X-Forwarded-Encrypted: i=1; AJvYcCUuDOyoSenc9FXVYSqvxFiDKSBHGuCltdj8mBmQGXzT15LesMl1tPMPlD0ack7aIKjd3MFyKeXC8LBhtYw=@vger.kernel.org, AJvYcCXes27yghyu66B7W2yRyjAgcgO2Z8rTB7RJeq8HS0KbtTgmu2F69jWfUErcrJlourAhh8VYmdWLVQeg5WT2gVM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzG7jdXp+NhVeR+lk6QHDsBinsUABV7OyyUKzSlihAwe2twziRQ
-	boceUZH/umL303Y1jSb7MdHqyrQ4gj76OcEmIXH27OUBA8KXRoR2VrCbYZhtF+Jmsd/efXKv/sV
-	7Yv6EpjNCQTH3b1T8OsrlqbdKPi+MthM=
-X-Gm-Gg: ASbGncusEO6FVQwVEXkjqWJJQufSGPSOM+8LqLfFLqR/nx2qVtwbSAxpTApxVuBp+nb
-	ZqKSslb3+3xNgdDP1poXrJWatiufywMMmkTisqCFieBy/dB9g6DFX2uvezXEhJ7K8WXcM55tZSA
-	KX6V6oGbs+42jlmilzfEsDaQle+JP6FJq2H28zJmIpTvgaWjfXtc211g==
-X-Google-Smtp-Source: AGHT+IHr0F8f28AYuxYXH9ARPMLJdMBMX5+b9+n3J5cdDU26jX1yTPwIm+xgtmwf171/lr9FNtaP2xnoPF9dJCvL0lc=
-X-Received: by 2002:a17:903:1a68:b0:235:737:7a8 with SMTP id
- d9443c01a7336-235351e09b0mr31579385ad.3.1748689534463; Sat, 31 May 2025
- 04:05:34 -0700 (PDT)
+	s=arc-20240116; t=1748691698; c=relaxed/simple;
+	bh=PJYUmQnYqamUhWh7o7uxI5LCMCjqaXJ/8M6Z+95fw5M=;
+	h=From:To:Cc:In-Reply-To:References:Date:Message-ID:MIME-Version:
+	 Content-Type:Subject; b=QVUWCHVOgdUFprQKnUhE8Uk/GBIn1+55qo+jYUwOUNEiRZLPsHpXAQwi6ZEDy2Gf1fjmnGctYbQv5VM3fYjuIGJqPOptJB6ZCEDWz+DIKtoyLB06EWLwtno9N8vsByNFyE/B5INTx0qcFte0AL/eyyx6mkkR/8GN9S9O7x02GY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
+Received: from in02.mta.xmission.com ([166.70.13.52]:36380)
+	by out03.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1uLK3s-0072Zk-6z; Sat, 31 May 2025 05:07:36 -0600
+Received: from ip72-198-198-28.om.om.cox.net ([72.198.198.28]:36250 helo=email.froward.int.ebiederm.org.xmission.com)
+	by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1uLK3r-002sts-8B; Sat, 31 May 2025 05:07:35 -0600
+From: "Eric W. Biederman" <ebiederm@xmission.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,  Andrew Morton
+ <akpm@linux-foundation.org>
+In-Reply-To: <aDqq4rg9rTKRur8Y@gondor.apana.org.au> (Herbert Xu's message of
+	"Sat, 31 May 2025 15:08:18 +0800")
+References: <aDlty06JvlGwTfKk@gondor.apana.org.au>
+	<87ldqegrf1.fsf@email.froward.int.ebiederm.org>
+	<aDqq4rg9rTKRur8Y@gondor.apana.org.au>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+Date: Sat, 31 May 2025 06:07:20 -0500
+Message-ID: <877c1xghsn.fsf@email.froward.int.ebiederm.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250530142447.166524-1-dakr@kernel.org> <20250530142447.166524-8-dakr@kernel.org>
- <DA9RRZVPZSMW.1LGW9H4G0RLT5@kernel.org> <aDowAzvEvrQcella@pollux> <DAA6ZTTNP0CM.270XX92YOFGWB@kernel.org>
-In-Reply-To: <DAA6ZTTNP0CM.270XX92YOFGWB@kernel.org>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Sat, 31 May 2025 13:05:21 +0200
-X-Gm-Features: AX0GCFvOph2vOvoPyYINMtiojBc1C6_u1HQWHSUz7m-6nP4AYTe1_0MCnlRK8co
-Message-ID: <CANiq72nx8VNjKw_P+49AcMUuY_pE2jYoybLMCAyjhGv-Z-a22w@mail.gmail.com>
-Subject: Re: [PATCH 7/7] rust: sample: misc: implement device driver sample
-To: Benno Lossin <lossin@kernel.org>
-Cc: Danilo Krummrich <dakr@kernel.org>, gregkh@linuxfoundation.org, rafael@kernel.org, 
-	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, 
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me, 
-	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu, 
-	chrisi.schrefl@gmail.com, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-XM-SPF: eid=1uLK3r-002sts-8B;;;mid=<877c1xghsn.fsf@email.froward.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=72.198.198.28;;;frm=ebiederm@xmission.com;;;spf=pass
+X-XM-AID: U2FsdGVkX19vJFQhYd6rvInd2nAfpwQNCWGGf0wsLGw=
+X-Spam-Level: 
+X-Spam-Virus: No
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+	*      [score: 0.5000]
+	*  0.7 XMSubLong Long Subject
+	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+	*      [sa01 1397; Body=1 Fuz1=1 Fuz2=1]
+	*  0.0 T_TooManySym_01 4+ unique symbols in subject
+X-Spam-DCC: XMission; sa01 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Herbert Xu <herbert@gondor.apana.org.au>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 395 ms - load_scoreonly_sql: 0.03 (0.0%),
+	signal_user_changed: 3.6 (0.9%), b_tie_ro: 2.4 (0.6%), parse: 0.95
+	(0.2%), extract_message_metadata: 13 (3.2%), get_uri_detail_list: 1.09
+	(0.3%), tests_pri_-2000: 14 (3.5%), tests_pri_-1000: 3.1 (0.8%),
+	tests_pri_-950: 1.65 (0.4%), tests_pri_-900: 1.06 (0.3%),
+	tests_pri_-90: 62 (15.7%), check_bayes: 61 (15.4%), b_tokenize: 4.2
+	(1.1%), b_tok_get_all: 6 (1.4%), b_comp_prob: 1.30 (0.3%),
+	b_tok_touch_all: 47 (11.9%), b_finish: 0.59 (0.2%), tests_pri_0: 285
+	(72.1%), check_dkim_signature: 0.36 (0.1%), check_dkim_adsp: 3.2
+	(0.8%), poll_dns_idle: 1.80 (0.5%), tests_pri_10: 1.70 (0.4%),
+	tests_pri_500: 6 (1.5%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH] userns: Add forward declaration of struct seq_file in
+ user_namespace.h
+X-SA-Exim-Connect-IP: 166.70.13.52
+X-SA-Exim-Rcpt-To: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, herbert@gondor.apana.org.au
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-SA-Exim-Scanned: No (on out03.mta.xmission.com); SAEximRunCond expanded to false
 
-On Sat, May 31, 2025 at 10:11=E2=80=AFAM Benno Lossin <lossin@kernel.org> w=
-rote:
+Herbert Xu <herbert@gondor.apana.org.au> writes:
+
+> On Fri, May 30, 2025 at 08:27:14AM -0500, Eric W. Biederman wrote:
+>>
+>> That description seems to be lacking something.  The code as has been
+>> fine since 2014 and there is no conditional compilation involved.
 >
-> We could separate the common parts into a single file and then
-> `include!` that file from the two samples. (Or if the build system
-> supports multi-file samples then just use that, but my gut feeling is
-> that it doesn't)
+> I'm happy to drop the fixes header.  There is no need to backport
+> this.
 
-It does, in the sense that you can use Rust modules (i.e. different
-files). Multi-file in the sense of linking several C files + a single
-Rust crate root also works (we have a sample doing that).
+The fixes tag isn't wrong.
 
-Reusing the same `mod` from two different crate roots should also work
-(well, unless `rustc` doesn't like it for some reason, but from a
-quick test it seems OK), plus games with `#[path]` and symlinks.
+>> Did some other change cause a declaration of seq_file not to be present?
+>> Did user_namespace.h get included somewhere new and that new location
+>> doesn't wind up declaring seq_file?
+>
+> The seq_file forward declaration is currently being provided by
+> linux/sched.h.  I tried removing it and found this issue.
 
-> I really would like to avoid `cfg` in samples.
+Thanks.
 
-I think the `cfg` is not the end of the world w.r.t. learning (after
-all, `cfg`s are part of the kernel all the time, and it is not the
-first sample). In fact, one could argue that it is a good way to show
-what `cfg` can do, in a way.
+That is the interesting information that I would appreciate to see
+in the change log.
 
-But another disadvantage of `cfg` is that then one cannot have both
-modules at the same time, and thus 2 builds to test both etc.
+If someone has to play code archaeologist and has to look at the
+history, this is exactly the information that is needed to understand
+why the change was made.
 
-Cheers,
-Miguel
+Eric
+
 
