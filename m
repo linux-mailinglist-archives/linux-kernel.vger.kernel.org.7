@@ -1,103 +1,118 @@
-Return-Path: <linux-kernel+bounces-669406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-669408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1273AC9F68
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Jun 2025 18:33:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3C21AC9F6C
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Jun 2025 18:34:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7738317470E
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Jun 2025 16:33:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 314FD1894CAD
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Jun 2025 16:34:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38FB51EB196;
-	Sun,  1 Jun 2025 16:33:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D8551EB196;
+	Sun,  1 Jun 2025 16:34:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="coVpVsad"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RV/26xYv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 946E22DCC01;
-	Sun,  1 Jun 2025 16:33:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE1742DCC01
+	for <linux-kernel@vger.kernel.org>; Sun,  1 Jun 2025 16:34:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748795601; cv=none; b=Yei1vfHF0nsaqbOnR/TBnoYBq8O/TvwPzkPtz9NI6BWw1xftD+dot0XrRkZW3e3k/x7I7zcA6wuA0arnNbtz8RIC6fYZHwNpTiwGfasUn/JsXpyGq++funfTnhUsOEmIe7P+AHjvNUqscsfPpZVupNoCIj12Bod55qN01NuddGQ=
+	t=1748795646; cv=none; b=N0od/PGeozchGENy75UszX+LwUKqICO3+4NWq0k7k8FwPe3fcMrtiY8quD/QnLGQ4M1BwsJPDazcMnzY0m5ARri9PsWq1nNcjvZZN0W2jVckbf/FeIB17lx9ZKobkQTXBPArOsNdD5l6roKJ/8xeeDzCkI03ZNEWpxcmR0iMaes=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748795601; c=relaxed/simple;
-	bh=xSmHgAGZ7sO7lCniEOnA8Fn1fFrbUT/yauBSSc903sM=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=fHIqJiEOASND+8SpGT4yUKtLR310kI/9e0GqPrbwidB4LjSIgA63U2HEwqC1ou10O1/sM8dHhvs1PXx2UWR3b5WHzPOk8Qvf4FVqXxY1T3GIuDWYhcCDhiezRYYd5c9Oa9pyahKbfxr6aICZ5xlJiMyd2Qpecbxp21gslb67K2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=coVpVsad; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7EF5C4CEE7;
-	Sun,  1 Jun 2025 16:33:20 +0000 (UTC)
+	s=arc-20240116; t=1748795646; c=relaxed/simple;
+	bh=hdWGCtLwk6uedecaOzHPDgt+Sx3o/v0XIWx/02rg8RQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=i0fAURjc0hwlRWljXDSuheKRzE9mmSMUXtGZYrVSL9vtqS7gV8EiBY6IP7hyZT6hTlHZs8wiZKPj2Wve16gzFn+J92He6yK5dw1Ujh9YqDY7oLf014woc5Ze2e5G1t/g4CUXIqgOMtmvipyLKjncMB0OrW1fp9hE6wkOasaUuDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RV/26xYv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6999FC4CEE7;
+	Sun,  1 Jun 2025 16:34:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748795601;
-	bh=xSmHgAGZ7sO7lCniEOnA8Fn1fFrbUT/yauBSSc903sM=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=coVpVsadMvAf4p0RHZYzaU/GBsx7PeqDtEhAztvB3uFLpRUpoIbOFkrzOKVBnY3w0
-	 w9AVXr1KsM6k2Dif+wSUfmujSdLEZ5ZO1zjr/l1NcgNTWvXWM3rW0j0K2C1BkRLHhP
-	 jO82EgAhYTow7KqGIKFGwVSc2lDRWs7Z2cvkadBJUK2aYCPGAOktePoFcHRWHR4vKt
-	 +vRHBqlxsduMGsMeAG5Qf5lOQi4uxllWeSRj17I3vTZD+lCf6tKqRUDDRDeh4AM/Xg
-	 ErBpzD/jxtjcSjD2/f26HxYAMisXmyz+Ckt+J+DuO+fuol98XCUb7nBT28wWRsV9Dq
-	 99Sr6X8yLNZog==
-Date: Sun, 01 Jun 2025 11:33:19 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1748795645;
+	bh=hdWGCtLwk6uedecaOzHPDgt+Sx3o/v0XIWx/02rg8RQ=;
+	h=Date:From:To:Cc:Subject:From;
+	b=RV/26xYvQKlom6iHe4/9gNchwRoVZbvPXMrJIQIuNVwmnSS/UM3VNU9BllavJ8ZVM
+	 Ko3MathEhPC4+j5R5I8nVUOoHQISzQ0l/hdk7Pa9bdSC9/tV9GMDchOI6heUqvpP2N
+	 4J7e3gSqjCC4ELJULosLCsI16ucFFriv0JaQFT3Ppu4fMqHu2+uKmNc+zBLPmun9QE
+	 Jufwq3dkYHd1+4azKOZkxx/A4rXWFKazcTwyjmz/qAYLxSpI7Cgqe/bw9n1Yfsh66H
+	 iY5mks/+4mKjLvpRrA0QuY/YB3w1KYLtpoaSmgQVQ0xDDCGeMbii2WYxh388uWDuwE
+	 XpCFVB5FJBx9A==
+Date: Sun, 1 Jun 2025 09:34:02 -0700
+From: Kees Cook <kees@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Eric Biggers <ebiggers@kernel.org>,
+	Ingo Saitz <ingo@hannover.ccc.de>, Kees Cook <kees@kernel.org>,
+	kernel test robot <oliver.sang@intel.com>,
+	Marco Elver <elver@google.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Thiago Jung Bauermann <thiago.bauermann@linaro.org>
+Subject: [GIT PULL] hardening fixes for v6.16-rc1 (take 2)
+Message-ID: <202506010901.522039FEAC@keescook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- krzk+dt@kernel.org, gregkh@linuxfoundation.org, conor+dt@kernel.org, 
- arnd@arndb.de
-To: Abd-Alrhman Masalkhi <abd.masalkhi@gmail.com>
-In-Reply-To: <20250601153022.2027919-2-abd.masalkhi@gmail.com>
-References: <20250601153022.2027919-1-abd.masalkhi@gmail.com>
- <20250601153022.2027919-2-abd.masalkhi@gmail.com>
-Message-Id: <174879559905.2719478.15392001971491179573.robh@kernel.org>
-Subject: Re: [PATCH v2 1/3] dt-bindings: eeprom: Add ST M24LR control
- interface
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+Hi Linus,
 
-On Sun, 01 Jun 2025 15:30:19 +0000, Abd-Alrhman Masalkhi wrote:
-> Add support for the control interface of STMicroelectronics M24LR
-> RFID/NFC EEPROM chips.
-> 
-> Signed-off-by: Abd-Alrhman Masalkhi <abd.masalkhi@gmail.com>
-> ---
->  .../devicetree/bindings/eeprom/st,m24lr.yaml  | 72 +++++++++++++++++++
->  1 file changed, 72 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/eeprom/st,m24lr.yaml
-> 
+Please pull these hardening fixes for v6.16-rc1 (take 2). This is based on
+my original rc1 PR, rather than on the horribly mangled version of your tree.
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Once merged with your tree, allmodconfig builds cleanly. Unmerged, this
+current tree of mine doesn't build allmodconfig cleanly, as it doesn't
+have the fix from d4ad53adfe21 ("drm/ttm: Remove the struct ttm_backup
+abstraction"), which is in your tree now. (Avoiding this warning was
+one of my motivations for the attempted merge-gone-wrong seen in take 1.)
 
-yamllint warnings/errors:
+Thanks and sorry for the horrible confusion and waste of everyone's time
+that was take 1 of this PR!
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/eeprom/st,m24lr.example.dtb: eeprom@53 (atmel,24c04): pagesize: 4 is not one of [1, 8, 16, 32, 64, 128, 256]
-	from schema $id: http://devicetree.org/schemas/eeprom/at24.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/eeprom/st,m24lr.example.dtb: eeprom@53 (atmel,24c04): Unevaluated properties are not allowed ('pagesize' was unexpected)
-	from schema $id: http://devicetree.org/schemas/eeprom/at24.yaml#
+-Kees
 
-doc reference errors (make refcheckdocs):
+The following changes since commit f0cd6012c40da99b45f8f63052b97ec89d5f307b:
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250601153022.2027919-2-abd.masalkhi@gmail.com
+  Revert "hardening: Disable GCC randstruct for COMPILE_TEST" (2025-05-08 09:42:40 -0700)
 
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
+are available in the Git repository at:
 
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
+  https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git tags/hardening-v6.16-rc1-fix1-take2
 
-pip3 install dtschema --upgrade
+for you to fetch changes up to f39f18f3c3531aa802b58a20d39d96e82eb96c14:
 
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+  randstruct: gcc-plugin: Fix attribute addition (2025-06-01 08:41:11 -0700)
 
+----------------------------------------------------------------
+hardening fixes for v6.16-rc1 (take 2)
+
+- randstruct: gcc-plugin: Fix attribute addition with GCC 15
+
+- ubsan: integer-overflow: depend on BROKEN to keep this out of CI
+
+- overflow: Introduce __DEFINE_FLEX for having no initializer
+
+- wifi: iwlwifi: mld: Work around Clang loop unrolling bug
+
+----------------------------------------------------------------
+Kees Cook (4):
+      wifi: iwlwifi: mld: Work around Clang loop unrolling bug
+      ubsan: integer-overflow: depend on BROKEN to keep this out of CI
+      overflow: Introduce __DEFINE_FLEX for having no initializer
+      randstruct: gcc-plugin: Fix attribute addition
+
+ lib/Kconfig.ubsan                             |  2 ++
+ scripts/gcc-plugins/gcc-common.h              | 32 +++++++++++++++++++++++++++
+ scripts/gcc-plugins/randomize_layout_plugin.c | 22 +++++++++---------
+ include/linux/overflow.h                      | 25 ++++++++++++++++-----
+ drivers/net/wireless/intel/iwlwifi/mld/d3.c   |  2 +-
+ 5 files changed, 65 insertions(+), 18 deletions(-)
+
+-- 
+Kees Cook
 
