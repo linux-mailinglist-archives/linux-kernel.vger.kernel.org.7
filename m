@@ -1,130 +1,214 @@
-Return-Path: <linux-kernel+bounces-669653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-669659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B4E1ACA3E2
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 01:56:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E653ACA3DA
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 01:55:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7400A1882EB9
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Jun 2025 23:53:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E23016963A
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Jun 2025 23:55:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3250828C846;
-	Sun,  1 Jun 2025 23:30:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="ALjex9gR"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7CB228DB55;
+	Sun,  1 Jun 2025 23:31:05 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B9F528C2C6
-	for <linux-kernel@vger.kernel.org>; Sun,  1 Jun 2025 23:30:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96CF028D8C9
+	for <linux-kernel@vger.kernel.org>; Sun,  1 Jun 2025 23:31:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748820651; cv=none; b=rIPt7tsNs0vrFP91erN9Lzro4xRdoSMOIy4ORsaJnzEWNL2VDa4YFVgujP4CViTFRCVRbUZ/ydccDU56IssjzrHL3LKGMxxw1B4G4gpx7JoL7SlqX5YX8SVp3dirgI452uJkVMtQG+nOPbEiNvSPSOmgatpU3deq/X3Jeu86bBQ=
+	t=1748820665; cv=none; b=TJhkB30weYjtuyRszUz04oqRV+GYgOf81XvzUrStBGb/RhZXDUefE55PX8wi6KHE3pRLUOrXnhEllehxWX0DEjKhdCX/qobZgwEPTf30WX0wQ0uO80FtBdU+cnVRzNscRqocYLv/27Qo+d7nvkz+ZrTqVDEicdUuB5LDKaAKcAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748820651; c=relaxed/simple;
-	bh=SSGlRVBX7Ip3ay6aSI5KJLngtv0nEq6HZf42gbzA32M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZO5gbEtmPGXzaWjcF633qNK+Ipn1t3eONMlz3SDZCst3vNUkbh98KYxB53RQX9IuaMdCzSb1yfE90JKy+vbQKGO/sFbSjgEI48XtK/iTbGaLqr+n/Nxciwszat8twKaBZB84IhHWXu/1EVYekwmHqwj1TsNd80fXvICo7qMeUOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=ALjex9gR; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4947635914aso40355791cf.3
-        for <linux-kernel@vger.kernel.org>; Sun, 01 Jun 2025 16:30:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1748820647; x=1749425447; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z3ahtq5iYBzerYLsn2L4RRjLdCR+uk5v7bMh9egaPjI=;
-        b=ALjex9gRMTmQ50it4soOyvAbAxZmVhMqeTenLVUSlJgmgg2i436msWqW7NPxB+PcGz
-         8E71fLpVjbn7fnG32k8Cd33Im37uQienEuVV5aZKfwwRJH/g2N4N0WSPUcHv/YJVB7Me
-         vUCq1fJJRACnOIOO82ys7g6agTDGMGelgnXRZMkBRCPcyTJgNNyyNPL4QORouDo0bsWf
-         LuiaONA3E5+LirJ8+frAHn94QnCaeSXPMS6UcWmmIxfgNPZMKmu1tTd1z2XgaaH2ZLfK
-         s+wdNie7dcETYVAw3m7HcYLpI70eH6OKE/gT4ftKWRzPf9MJRXa9tWRLAiVM0w8zarNq
-         p++Q==
+	s=arc-20240116; t=1748820665; c=relaxed/simple;
+	bh=KKFnwsUkXK3cO3gnt+y7AHgqFQanNG0Da/tJNjZLCos=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=W5MtOwwqHo/kMwfQva5qTLACNhSJhB5v087MxpsyEYm2T0p/EozHrI2O7eilZD/8myZuvYaQPgYbnp/UedwIBwBOvKs/0V0YrG/v8soPLMtmG0DC90U5UDqrhu27dpQZBBu/CFngpDn5eKMBx0xW7DVvRSe9oj8YH+qmbu7O6i8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-86f4e2434b6so80294139f.2
+        for <linux-kernel@vger.kernel.org>; Sun, 01 Jun 2025 16:31:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748820647; x=1749425447;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Z3ahtq5iYBzerYLsn2L4RRjLdCR+uk5v7bMh9egaPjI=;
-        b=no+3jOAPLfhmraJenrHvdN3LLnaGwVV+WzZLbBP2ptytYY/tM68Wor/IwObvfGMlNd
-         J/GTV9+n0F30LYL0cyQ4LNLMfJ3+IRJ2WQgE1n5RjRE31xvi2KNvIG1eCMXAQxqsdIrj
-         9W7whFMRlTZwV+Aenk9Y1gLCP0OXtNSgNiTsOPLAi6xu5jSOx2r4IHnv5q+5HJCEdTYd
-         2r+vpdnMqUWx1akAc4LVtfb1DzxN5Lo1gf4RJxLaFLzqzWIAs7zEeyTKvvaOy8oCPHZQ
-         7cdh9+OOE9tabz9Ne74oj3MYcEOAsqa5eHFFe7j1XYfN8BqfMpPQJO9pumiTENuRQM0o
-         0zIA==
-X-Forwarded-Encrypted: i=1; AJvYcCXO0fyHKczAtcwm0p27wbG/9sBMJiAC+09IVo2O523EUvIJjpQLzE2uC62YWuGP8bn5rJXaMbGZmrIngd8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/UoHxOMEaBXzGPIE/RDbNd5VpsvWSFoPrCvsjwzKGmEPJTV6L
-	6HWXxG3O27/MyiGiOkaOAAu9V/uQN/3xHrawC7Y9SSVkj9SCtg72PKAKJ9i9+mjGQ5Q=
-X-Gm-Gg: ASbGncsAw1wwaCGHuB3xoswxU1RIdNXCS5sDJj112q65ZC/+6QwkYSWy9cYzDc4Ile4
-	II4r0P1zJ+szjrai+ScCPTzQsaM+0qrpolIgN/EAzRpiJRJYYHVCU5bdyXszxq9Td6eEF3MrpTz
-	P9q8fRUVM+FS3+sjNPlSPNf6iXi/Ag5CZyJUoLcbNKcDGVUI9DKY4/YWb7viNfSdTanWx37vkMB
-	NIPJ/QoAWEAMOE9P/tf8HEPn8x1QRsxvMvO6MPu2qIdkPqJEMwMHD4MUBqRaxtSugW/xGPwPaF5
-	sdoQ1GZIncsd7yZcBKV4z7uT+kzRpEImtVDr6fOzXtCHrXkxPRjsCh3ie2zbis7HBkib6GPU+nH
-	EY6FYLeG4pttWsdfWBrBmrsY1FTGIIJA=
-X-Google-Smtp-Source: AGHT+IHAt46IPZ2ZNZ13vLsgj7LdizYMg33TCIokRzOtUXTMz4rVh+t4qoD51lnIbRNNJhpIDOFVlg==
-X-Received: by 2002:a05:620a:1a93:b0:7c5:49b7:237c with SMTP id af79cd13be357-7d0a1fb77c1mr1867411185a.27.1748820647265;
-        Sun, 01 Jun 2025 16:30:47 -0700 (PDT)
-Received: from gourry-fedora-PF4VCD3F (pool-96-255-20-42.washdc.ftas.verizon.net. [96.255.20.42])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6fac6e00cebsm52506366d6.73.2025.06.01.16.30.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 01 Jun 2025 16:30:46 -0700 (PDT)
-Date: Sun, 1 Jun 2025 19:30:44 -0400
-From: Gregory Price <gourry@gourry.net>
-To: Alok Tiwari <alok.a.tiwari@oracle.com>
-Cc: dave@stgolabs.net, jonathan.cameron@huawei.com, dave.jiang@intel.com,
-	alison.schofield@intel.com, vishal.l.verma@intel.com,
-	ira.weiny@intel.com, dan.j.williams@intel.com, corbet@lwn.net,
-	linux-cxl@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, darren.kenny@oracle.com
-Subject: Re: [PATCH] Documentation: cxl: fix typos and improve clarity in
- memory-devices.rst
-Message-ID: <aDzipGmldaeje43H@gourry-fedora-PF4VCD3F>
-References: <20250531075209.3334261-1-alok.a.tiwari@oracle.com>
+        d=1e100.net; s=20230601; t=1748820662; x=1749425462;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uRwjphiC8lg73poxL4TeTlQKXOjKsMAQ7W0Cv5rLC+8=;
+        b=gQLWaSMoaiQrWP5T4SX8a2dFNqV4F6+sQI6hZNMdx4kafIiRyGjO5FeS5tcmMinOwQ
+         ZzaO/gEnnTK9Au4b2vvXATLjckX/EyxlgRGEnWmcoccuRHfmIv6i5GInjM+RA1aKzChG
+         5Lh/Ee+z8FFaAKvJxkebzuQCI0oZqN6GaKaI8IDtYBxzsTv6m+rYH/SZq+esqsUvyfob
+         tkhgGeySLcnDXTwVvnzz/TyhUryZGwvwceRfbBXhgfkpsx4TTykkhkI4LUraPaxqmfs5
+         WNRxGpsHi0Tk0A4OYFaxbPYO3snKqt2VecB8fZaKIa+BpmSKJhjriydIsNLXR7g/k6vI
+         Zn2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVQgdJ9Gk70RJ3XrCp3s2nD38m/cGDzos3xXWnJZSIck6eO0RhZgprl/KGUSy4KkLhjMUYaGvJMjtfDn6k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YweX+iB86YG3GQ6mLFVd9FmH5yNabP801XygczBAqZfCcr0x1aG
+	fWh7IZADtaWSC5uGx5rV3EqHisUH5845sAJh5DSH7WnxQpKhLlP7MNEOeXmMoXqZl3X5jGQVV40
+	Www958HdvQ04a/yPg/nAiczh50Irnd5X9+aEltIaJpDv50CuKP1n9IOSXlkU=
+X-Google-Smtp-Source: AGHT+IEMqlopUGtHPZUc44mFIF8A4WE1RvQcn5RCpAmTYNFlLjQ42IYJwvw4kuQsuoNnv+QruDDZ0pcLR9k8AyUbFRBod4e2sEKT
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250531075209.3334261-1-alok.a.tiwari@oracle.com>
+X-Received: by 2002:a05:6e02:3810:b0:3dc:90fc:282d with SMTP id
+ e9e14a558f8ab-3dd9cbd3f78mr88607875ab.16.1748820662577; Sun, 01 Jun 2025
+ 16:31:02 -0700 (PDT)
+Date: Sun, 01 Jun 2025 16:31:02 -0700
+In-Reply-To: <20250601231608.2638-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <683ce2b6.a00a0220.d8eae.0038.GAE@google.com>
+Subject: Re: [syzbot] [kernel?] KASAN: slab-out-of-bounds Read in __futex_pivot_hash
+From: syzbot <syzbot+0a5079ee014f4b907817@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat, May 31, 2025 at 12:51:58AM -0700, Alok Tiwari wrote:
-> This patch corrects several typographical issues and improves phrasing
-> in memory-devices.rst:
-> 
-> - Fixes duplicate word ("1 one") and adjusts phrasing for clarity.
-> - Adds missing hyphen in "on-device".
-> - Corrects "a give memory device" to "a given memory device".
-> - fix singular/plural "decoder resource" -> "decoder resources".
-> - Clarifies "spans to Host Bridges" -> "spans two Host Bridges".
-> 
-> These changes improve readability and accuracy of the documentation.
-> 
-> Signed-off-by: Alok Tiwari <alok.a.tiwari@oracle.com>
-> ---
->  Documentation/driver-api/cxl/memory-devices.rst | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/Documentation/driver-api/cxl/memory-devices.rst b/Documentation/driver-api/cxl/memory-devices.rst
-> index d732c42526df..e9e2952a967d 100644
-> --- a/Documentation/driver-api/cxl/memory-devices.rst
-> +++ b/Documentation/driver-api/cxl/memory-devices.rst
-> @@ -29,8 +29,8 @@ Platform firmware enumerates a menu of interleave options at the "CXL root port"
->  (Linux term for the top of the CXL decode topology). From there, PCIe topology
->  dictates which endpoints can participate in which Host Bridge decode regimes.
->  Each PCIe Switch in the path between the root and an endpoint introduces a point
-> -at which the interleave can be split. For example platform firmware may say at a
-> -given range only decodes to 1 one Host Bridge, but that Host Bridge may in turn
-> +at which the interleave can be split. For example, platform firmware may say at a
-                                                                                ^^^^
-If you wouldn't mind, can you also change:                           "at a"  - >  "a"
+Hello,
 
-Otherwise
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+KASAN: slab-out-of-bounds Read in __futex_pivot_hash
 
-Reviewed-by: Gregory Price <gourry@gourry.net>
+==================================================================
+BUG: KASAN: slab-out-of-bounds in __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
+BUG: KASAN: slab-out-of-bounds in _raw_spin_lock+0x2e/0x40 kernel/locking/spinlock.c:154
+Read of size 1 at addr ffff888052d074e0 by task syz.0.16/6505
+
+CPU: 1 UID: 0 PID: 6505 Comm: syz.0.16 Not tainted 6.15.0-syzkaller-gcd2e103d57e5-dirty #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:408 [inline]
+ print_report+0xcd/0x680 mm/kasan/report.c:521
+ kasan_report+0xe0/0x110 mm/kasan/report.c:634
+ __kasan_check_byte+0x36/0x50 mm/kasan/common.c:557
+ kasan_check_byte include/linux/kasan.h:399 [inline]
+ lock_acquire kernel/locking/lockdep.c:5845 [inline]
+ lock_acquire+0xfc/0x350 kernel/locking/lockdep.c:5828
+ __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
+ _raw_spin_lock+0x2e/0x40 kernel/locking/spinlock.c:154
+ spin_lock include/linux/spinlock.h:351 [inline]
+ futex_rehash_private kernel/futex/core.c:213 [inline]
+ __futex_pivot_hash+0x225/0x6d0 kernel/futex/core.c:252
+ futex_hash_allocate+0xad1/0xf00 kernel/futex/core.c:1664
+ futex_hash_prctl+0x1f4/0x650 kernel/futex/core.c:1759
+ __do_sys_prctl+0x171f/0x24c0 kernel/sys.c:2825
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f7e8738e969
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f7e882e3038 EFLAGS: 00000246 ORIG_RAX: 000000000000009d
+RAX: ffffffffffffffda RBX: 00007f7e875b5fa0 RCX: 00007f7e8738e969
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 000000000000004e
+RBP: 00007f7e87410ab1 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000001 R14: 00007f7e875b5fa0 R15: 00007fff0b994368
+ </TASK>
+
+Allocated by task 6506:
+ kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
+ kasan_save_track+0x14/0x30 mm/kasan/common.c:68
+ poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
+ __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:394
+ kasan_kmalloc include/linux/kasan.h:260 [inline]
+ __do_kmalloc_node mm/slub.c:4327 [inline]
+ __kvmalloc_node_noprof+0x279/0x620 mm/slub.c:5012
+ futex_hash_allocate+0x49d/0xf00 kernel/futex/core.c:1603
+ futex_hash_prctl+0x1f4/0x650 kernel/futex/core.c:1759
+ __do_sys_prctl+0x171f/0x24c0 kernel/sys.c:2825
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+The buggy address belongs to the object at ffff888052d07480
+ which belongs to the cache kmalloc-cg-64 of size 64
+The buggy address is located 32 bytes to the right of
+ allocated 64-byte region [ffff888052d07480, ffff888052d074c0)
+
+The buggy address belongs to the physical page:
+page: refcount:0 mapcount:0 mapping:0000000000000000 index:0xffff888052d07800 pfn:0x52d07
+memcg:ffff888029437c01
+flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
+page_type: f5(slab)
+raw: 00fff00000000000 ffff88801b849a40 dead000000000122 0000000000000000
+raw: ffff888052d07800 000000008020001e 00000000f5000000 ffff888029437c01
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 0, migratetype Unmovable, gfp_mask 0x52cc0(GFP_KERNEL|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 6405, tgid 6405 (syz-executor), ts 88336803313, free_ts 88336042403
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1c0/0x230 mm/page_alloc.c:1704
+ prep_new_page mm/page_alloc.c:1712 [inline]
+ get_page_from_freelist+0x1321/0x3890 mm/page_alloc.c:3669
+ __alloc_frozen_pages_noprof+0x261/0x23f0 mm/page_alloc.c:4959
+ alloc_pages_mpol+0x1fb/0x550 mm/mempolicy.c:2419
+ alloc_slab_page mm/slub.c:2450 [inline]
+ allocate_slab mm/slub.c:2618 [inline]
+ new_slab+0x23b/0x330 mm/slub.c:2672
+ ___slab_alloc+0xd9c/0x1940 mm/slub.c:3858
+ __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3948
+ __slab_alloc_node mm/slub.c:4023 [inline]
+ slab_alloc_node mm/slub.c:4184 [inline]
+ __do_kmalloc_node mm/slub.c:4326 [inline]
+ __kvmalloc_node_noprof+0x3af/0x620 mm/slub.c:5012
+ allocate_hook_entries_size net/netfilter/core.c:58 [inline]
+ nf_hook_entries_grow+0x22b/0x860 net/netfilter/core.c:137
+ __nf_register_net_hook+0x1cd/0x730 net/netfilter/core.c:432
+ nf_register_net_hook+0x109/0x160 net/netfilter/core.c:575
+ nf_register_net_hooks+0x5d/0xd0 net/netfilter/core.c:591
+ arpt_register_table+0x29b/0x410 net/ipv4/netfilter/arp_tables.c:1561
+ arptable_filter_table_init+0x40/0x60 net/ipv4/netfilter/arptable_filter.c:39
+ xt_find_table_lock+0x2e1/0x520 net/netfilter/x_tables.c:1260
+ xt_request_find_table_lock+0x28/0xf0 net/netfilter/x_tables.c:1285
+page last free pid 6405 tgid 6405 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1248 [inline]
+ __free_frozen_pages+0x7fe/0x1180 mm/page_alloc.c:2706
+ ___free_pages_bulk mm/kasan/shadow.c:332 [inline]
+ __kasan_populate_vmalloc mm/kasan/shadow.c:375 [inline]
+ kasan_populate_vmalloc+0x18c/0x1f0 mm/kasan/shadow.c:417
+ alloc_vmap_area+0x959/0x29c0 mm/vmalloc.c:2084
+ __get_vm_area_node+0x1ca/0x330 mm/vmalloc.c:3179
+ __vmalloc_node_range_noprof+0x271/0x14b0 mm/vmalloc.c:3845
+ __vmalloc_node_noprof+0xad/0xf0 mm/vmalloc.c:3948
+ ebt_register_table+0x243/0xfc0 net/bridge/netfilter/ebtables.c:1211
+ find_inlist_lock_noload net/bridge/netfilter/ebtables.c:343 [inline]
+ find_inlist_lock.constprop.0+0x1d0/0x730 net/bridge/netfilter/ebtables.c:370
+ find_table_lock net/bridge/netfilter/ebtables.c:379 [inline]
+ do_ebt_get_ctl+0x225/0x7c0 net/bridge/netfilter/ebtables.c:2468
+ nf_getsockopt+0x7c/0xe0 net/netfilter/nf_sockopt.c:116
+ ip_getsockopt+0x18c/0x1e0 net/ipv4/ip_sockglue.c:1777
+ tcp_getsockopt+0x9e/0x100 net/ipv4/tcp.c:4760
+ do_sock_getsockopt+0x3fc/0x800 net/socket.c:2357
+ __sys_getsockopt+0x12f/0x260 net/socket.c:2386
+ __do_sys_getsockopt net/socket.c:2393 [inline]
+ __se_sys_getsockopt net/socket.c:2390 [inline]
+ __x64_sys_getsockopt+0xbd/0x160 net/socket.c:2390
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
+
+Memory state around the buggy address:
+ ffff888052d07380: fa fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+ ffff888052d07400: fa fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+>ffff888052d07480: 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc fc
+                                                       ^
+ ffff888052d07500: 00 00 00 00 00 fc fc fc fc fc fc fc fc fc fc fc
+ ffff888052d07580: fa fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+==================================================================
+
+
+Tested on:
+
+commit:         cd2e103d Merge tag 'hardening-v6.16-rc1-fix1-take2' of..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=168ccc82580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4df26174733e11f3
+dashboard link: https://syzkaller.appspot.com/bug?extid=0a5079ee014f4b907817
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1172a80c580000
+
 
