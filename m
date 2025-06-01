@@ -1,84 +1,93 @@
-Return-Path: <linux-kernel+bounces-669445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-669428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03343AC9FFB
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Jun 2025 19:38:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E638DAC9FA8
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Jun 2025 19:33:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBC7816D25C
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Jun 2025 17:38:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D55283B53E8
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Jun 2025 17:32:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CDDB2222DA;
-	Sun,  1 Jun 2025 17:34:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5091B1C1F13;
+	Sun,  1 Jun 2025 17:32:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="seV+FBFL"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ihyLVks9"
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7EAF2040A7;
-	Sun,  1 Jun 2025 17:34:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DAF813AA2E;
+	Sun,  1 Jun 2025 17:32:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748799264; cv=none; b=HoBH1asKjJMVi6ZQIlSwqcMlVFN7niA58DFLLzFzItKZfkpUDoWnpJJAs2o/16aQc3cPhmdPSQs16bfp0UNhc3yC+38mfkzH71dEACh5ndXY+J98K9yNHrHct0pXiVvXEIuF9dGTXB7ZdCdZGnztETB9yGuKOYyOM5kMiUvKFuA=
+	t=1748799177; cv=none; b=NLqeC13An8ei3iWEXm2VvJV52b6OBj4X4KotxJqGnqqQ+2W9k/8blJfJavwBjgcz9bR2YlLL2hH/1+/fB8/0UN9QJci1aLMCSJbViNA7QsUIVpqzoTjXF0U4DhWWE0CPommV5erwwCZ9vI4pQrIGEVPBp/c8rDuWQY0Ug5FC/w0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748799264; c=relaxed/simple;
-	bh=TvkscDn4xyRs/OG2fgHGFLtEWOqH0WaWMTg63MBsOQo=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=elGIHVZz6u2g7ShPPQC8C6xzfTMlBPPt3W9AFsQgTx34ZjGANCTrYCAUVQ+Z2exGhcXcJlLsnjPOiS4tluiKQhqIYvZQ4Jkn8ZiJ9BwzWwiRnKwJLsT1BkMywmxHEr7go2QO8eh/xehinBiv9VsjlOVMCR8F5lIDoSl/IklKcp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=seV+FBFL; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 9fad42183f0e11f0813e4fe1310efc19-20250602
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=2gv1/VijZn9c5GOAX5UDUGxzqkMMVHk61o3vy02qtQ4=;
-	b=seV+FBFLkbFWQ6mB4mkG2xDU5EhsEy3yMWfCxDGt49Qf5KCIvMFBHzOMP4iGvFafJx+pV5RBmJGj2iDSDDdOfOnltHJSchwnGJ66vYS18ivleNKcdwQHct0VlwrgFaDWNmJw1cx5OVSrvG19TOjVsfwSnkc2QwG5NjwXN2BMY/s=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.2.1,REQID:ee7eaa47-5c55-43ea-8588-cbb5f065fc07,IP:0,UR
-	L:0,TC:0,Content:100,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:100
-X-CID-META: VersionHash:0ef645f,CLOUDID:1924f447-ee4f-4716-aedb-66601021a588,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102|801,TC:nil,Content:3|50,ED
-	M:-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:
-	0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 9fad42183f0e11f0813e4fe1310efc19-20250602
-Received: from mtkmbs13n1.mediatek.inc [(172.21.101.193)] by mailgw01.mediatek.com
-	(envelope-from <jason-jh.lin@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 810962837; Mon, 02 Jun 2025 01:34:08 +0800
-Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
- mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.39; Mon, 2 Jun 2025 01:34:06 +0800
-Received: from mtksitap99.mediatek.inc (10.233.130.16) by
- mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1258.39 via Frontend Transport; Mon, 2 Jun 2025 01:34:06 +0800
-From: Jason-JH Lin <jason-jh.lin@mediatek.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>,
-	Chun-Kuang Hu <chunkuang.hu@kernel.org>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, Mauro Carvalho Chehab
-	<mchehab@kernel.org>
-CC: Matthias Brugger <matthias.bgg@gmail.com>, Jason-JH Lin
-	<jason-jh.lin@mediatek.com>, Nancy Lin <nancy.lin@mediatek.com>, Singo Chang
-	<singo.chang@mediatek.com>, Paul-PL Chen <paul-pl.chen@mediatek.com>, "Moudy
- Ho" <moudy.ho@mediatek.com>, Xavier Chang <xavier.chang@mediatek.com>,
-	Xiandong Wang <xiandong.wang@mediatek.com>, Sirius Wang
-	<sirius.wang@mediatek.com>, Fei Shao <fshao@chromium.org>, Chen-yu Tsai
-	<wenst@chromium.org>, <Project_Global_Chrome_Upstream_Group@mediatek.com>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<dri-devel@lists.freedesktop.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-media@vger.kernel.org>
-Subject: [PATCH v6 20/20] mailbox: mtk-cmdq: Remove unsued cmdq_get_shift_pa()
-Date: Mon, 2 Jun 2025 01:31:52 +0800
-Message-ID: <20250601173355.1731140-21-jason-jh.lin@mediatek.com>
+	s=arc-20240116; t=1748799177; c=relaxed/simple;
+	bh=CXCDkqc3HY6PJJ55Qx1TyU2PeMArvJtCEHSeg/VHZMM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Q7g2gxnjCo6YZ24vDU3oRz5yTx7mviuuAX0bWM+i6Vgrubvy5KDBd4xi09xy9aVS+U/fZ9WPCg3BCPZ5DQKXTmVDHVtRl3AzQJfiv++7N3vBakmULeTUY2q7ka7Q9C+K5VqMMoru/8+zVu9EFtKPHiJGnzv4WVyqaMsz6HwP/78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ihyLVks9; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7fd581c2bf4so2421234a12.3;
+        Sun, 01 Jun 2025 10:32:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748799175; x=1749403975; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=o1+o6RtULl3mTWS1CrGZdbkjEyWAPKzUw62Egq5PIGE=;
+        b=ihyLVks9S1jDo5dZkr99gLRHR5XNSSuKqiq6L9HsKImxVGCxyP22GhTI0KDjmY37ib
+         XUcbzf2ARdulGdt820x2OkrLaOVOfIFNjbH17CGS/VVbOx6STr9eXxvRA/r6CQzAr5Sa
+         j8C1YupRykW1uhZ92fHPyUCUIHMdnPnmO+4/y1HkNXZbkMqF5CU4u+0sU6OR4TefHEo0
+         MWMKOJqwwK/vJn2upM/OTZp6OAR2rEt4GtKJOHs5g5/GjfrhPl2RUbcg/sFZgSZ7LEDC
+         +iO9EY2BeOfvacsqVwoJcBwC+NvXP6Yh4IuSXyiHQP8jrg9oVwWeojQLnfAlMT1df+zU
+         hxSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748799175; x=1749403975;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=o1+o6RtULl3mTWS1CrGZdbkjEyWAPKzUw62Egq5PIGE=;
+        b=cqqzWuhplTYG9ifJPHbUqSMz6v9jHizw6gCGMO/5zGGQ+wfeiZR12l0A4H0WPuQnRI
+         lv0UjM5vB66TIi0kwg0q7L0UBpRFQO87+EW3RYsohdMRP6noqUUbF3lyT/yMiZwDavCE
+         IG8gaebDx1hXk/yHQAcvK0ULp9ECZoZvLQdCnAmZfyWbv6nQ7IPOVxYvu3ahC/BDe30m
+         MEmNASb9FZMMA8C3ECm6J+OYz1t2UaDHj4Q59q6ECSkotA0nh/RKcFt1a15T+DKGAEO1
+         myJbBUQGymUu/5Q6Cd6K31h4XzdNU/OzNwCloN/V2FUeMJMKlzeHsmfJ5L7ZRThODCeb
+         xuOA==
+X-Forwarded-Encrypted: i=1; AJvYcCWZGoM4ce6v5R3tPJMvvHgdpX2p7m9BafMr+RKVYJvDAXViMezlngJIeYAlCgI7LurUU/KDFM+/tFgndOA=@vger.kernel.org, AJvYcCXghCWJmScBoaU/fhPq1h4KrT9Ha2EA9esqP5sKaVwbrvzvNA0vK7IouhyIcwC89P9S9PVzfVcZ/UjKXOp8YGNvBQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzG0TZ5aB3y7hlVr3JFLlkUu8wKzlA1hRwnATcGZyj53v/liG/u
+	g8NzKTzADQwctu/BmhU7QfX9/xAJmvT12kCbHPvf4XGi32t5o1HhAP7m
+X-Gm-Gg: ASbGncvadhfp+ZS5LFW8eziPzHoWbkjwXyGdNvAsIlU3bHbxzGzAkR5oYDnwtI/mLTU
+	dnl31aKHytI3JIYXkcckpXbPBSXk2fZHMtzlUyh5j36uIVGLNI3TTwKNaMERzO4S4/vns4rJx03
+	t7xb9VrDPukA1uu+fd3W4RO0yIV8o9Cn0TjvgCKmEDpD0O8YVY7jpgj+cs8I3qm0ByPQdbfT0Nf
+	vlhF2AXkFHTeUUFN8/rSTPh3DE3q+uNcl0KWFQZnGDsoH1NnLCBLNx6KJ7yCjwT6MWZLQEOeSlE
+	9cvlaTL/ZpVXvYcpYlOXi1un7jJ2I0wobgLlZvPt/JPlLM9ApNXZuJRjMZlBI2sR6uCvkVUWQm3
+	U2uU9k01jXy305BWGirF1
+X-Google-Smtp-Source: AGHT+IGpWuebZEN8XIRXmDyaNBUyrPUAgC66ultV2VrLU7U9h1pAbJdpOORsPz+ia37EPuJEtEJ46Q==
+X-Received: by 2002:a17:90b:3e84:b0:311:e8cc:424e with SMTP id 98e67ed59e1d1-3127c74306dmr9167596a91.24.1748799175535;
+        Sun, 01 Jun 2025 10:32:55 -0700 (PDT)
+Received: from howard-ubuntu.lan (c-73-202-46-50.hsd1.ca.comcast.net. [73.202.46.50])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3124e3327b4sm4232625a91.48.2025.06.01.10.32.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 01 Jun 2025 10:32:55 -0700 (PDT)
+From: Howard Chu <howardchu95@gmail.com>
+To: acme@kernel.org
+Cc: mingo@redhat.com,
+	namhyung@kernel.org,
+	mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org,
+	irogers@google.com,
+	adrian.hunter@intel.com,
+	peterz@infradead.org,
+	kan.liang@linux.intel.com,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Howard Chu <howardchu95@gmail.com>
+Subject: [PATCH v2] perf doc trace: Remove --map-dump documentation
+Date: Sun,  1 Jun 2025 10:32:52 -0700
+Message-ID: <20250601173252.717780-1-howardchu95@gmail.com>
 X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250601173355.1731140-1-jason-jh.lin@mediatek.com>
-References: <20250601173355.1731140-1-jason-jh.lin@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,61 +95,40 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-MTK: N
 
-Since the mailbox driver data can be obtained using cmdq_get_mbox_priv()
-and all CMDQ users have transitioned to cmdq_get_mbox_priv(),
-cmdq_get_shift_pa() can be removed.
+The --map-dump option was removed in 5e6da6be3082 ("perf trace: Migrate
+BPF augmentation to use a skeleton"), this patch removes its remaining
+documentation.
 
-Fixes: 0858fde496f8 ("mailbox: cmdq: variablize address shift in platform")
-Signed-off-by: Jason-JH Lin <jason-jh.lin@mediatek.com>
+Change in v2:
+- Correct the commit log format
+
+Fixes: 5e6da6be3082 ("perf trace: Migrate BPF augmentation to use a skeleton")
+Signed-off-by: Howard Chu <howardchu95@gmail.com>
 ---
- drivers/mailbox/mtk-cmdq-mailbox.c       |  8 --------
- include/linux/mailbox/mtk-cmdq-mailbox.h | 12 ------------
- 2 files changed, 20 deletions(-)
+ tools/perf/Documentation/perf-trace.txt | 8 --------
+ 1 file changed, 8 deletions(-)
 
-diff --git a/drivers/mailbox/mtk-cmdq-mailbox.c b/drivers/mailbox/mtk-cmdq-mailbox.c
-index 85211b80ccdb..e543b26dbba9 100644
---- a/drivers/mailbox/mtk-cmdq-mailbox.c
-+++ b/drivers/mailbox/mtk-cmdq-mailbox.c
-@@ -121,14 +121,6 @@ void cmdq_get_mbox_priv(struct mbox_chan *chan, struct cmdq_mbox_priv *priv)
- }
- EXPORT_SYMBOL(cmdq_get_mbox_priv);
+diff --git a/tools/perf/Documentation/perf-trace.txt b/tools/perf/Documentation/perf-trace.txt
+index c1fb6056a0d3..973fede403a0 100644
+--- a/tools/perf/Documentation/perf-trace.txt
++++ b/tools/perf/Documentation/perf-trace.txt
+@@ -238,14 +238,6 @@ the thread executes on the designated CPUs. Default is to monitor all CPUs.
+ 	the same beautifiers used in the strace-like enter+exit lines to augment the
+ 	tracepoint arguments.
  
--u8 cmdq_get_shift_pa(struct mbox_chan *chan)
--{
--	struct cmdq *cmdq = container_of(chan->mbox, struct cmdq, mbox);
+---map-dump::
+-	Dump BPF maps setup by events passed via -e, for instance the augmented_raw_syscalls
+-	living in tools/perf/examples/bpf/augmented_raw_syscalls.c. For now this
+-	dumps just boolean map values and integer keys, in time this will print in hex
+-	by default and use BTF when available, as well as use functions to do pretty
+-	printing using the existing 'perf trace' syscall arg beautifiers to map integer
+-	arguments to strings (pid to comm, syscall id to syscall name, etc).
 -
--	return cmdq->pdata->shift;
--}
--EXPORT_SYMBOL(cmdq_get_shift_pa);
--
- static void cmdq_vm_toggle(struct cmdq *cmdq, bool enable)
- {
- 	int i;
-diff --git a/include/linux/mailbox/mtk-cmdq-mailbox.h b/include/linux/mailbox/mtk-cmdq-mailbox.h
-index 07c1bfbdb8c4..a42b44d5fd49 100644
---- a/include/linux/mailbox/mtk-cmdq-mailbox.h
-+++ b/include/linux/mailbox/mtk-cmdq-mailbox.h
-@@ -96,16 +96,4 @@ struct cmdq_pkt {
-  */
- void cmdq_get_mbox_priv(struct mbox_chan *chan, struct cmdq_mbox_priv *priv);
- 
--/**
-- * cmdq_get_shift_pa() - get the shift bits of physical address
-- * @chan: mailbox channel
-- *
-- * GCE can only fetch the command buffer address from a 32-bit register.
-- * Some SOCs support more than 32-bit command buffer address for GCE, which
-- * requires some shift bits to make the address fit into the 32-bit register.
-- *
-- * Return: the shift bits of physical address
-- */
--u8 cmdq_get_shift_pa(struct mbox_chan *chan);
--
- #endif /* __MTK_CMDQ_MAILBOX_H__ */
+ --force-btf::
+ 	Use btf_dump to pretty print syscall argument data, instead of using hand-crafted pretty
+ 	printers. This option is intended for testing BTF integration in perf trace. btf_dump-based
 -- 
-2.43.0
+2.45.2
 
 
