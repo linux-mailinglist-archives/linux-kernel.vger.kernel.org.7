@@ -1,78 +1,177 @@
-Return-Path: <linux-kernel+bounces-669453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-669451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 829A6ACA006
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Jun 2025 19:43:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03B9AACA000
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Jun 2025 19:39:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C98B188B9AB
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Jun 2025 17:43:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0F2016300A
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Jun 2025 17:39:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C0991F4169;
-	Sun,  1 Jun 2025 17:43:33 +0000 (UTC)
-Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DE521F130B
-	for <linux-kernel@vger.kernel.org>; Sun,  1 Jun 2025 17:43:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 314AF1E0DB0;
+	Sun,  1 Jun 2025 17:37:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="WTFPE3EL"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46823130A73;
+	Sun,  1 Jun 2025 17:37:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748799813; cv=none; b=mN1KCkdHITtCVbkx0Y8WA2l7fqAEjtbIbmysDl/NPvHz5fYrRM9yM8zwTOcKeYK6YmdM+YE+c8QcjiN/x+KQ76qhnQquaNpTPVN6FcH8GQKyFooSLkdIs2wCxpNPIKCamK0axduvhpDMKOD3DWMcpouzc3Ahemvi0Cy8Sv8uWfc=
+	t=1748799429; cv=none; b=K0wIdDgwdtMvMD53C4VQgQu8uHBl7QMxlxij+TH4vb+8KyfYuWRtkKhLhbasXUOL2e2LrMgvvnXblA9jxTLhe4FJBXZPFO4Uql35Wpv0C2YxJJYXVZ401Vf508eP7zOxkSlyqOoG854CqyqLCXCu2XQh9/M64rvChXvjWkgajX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748799813; c=relaxed/simple;
-	bh=Zz8e06YVeWDcGKPw8DWhq8/H0GPysOm4s9w93yWdqjw=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=HjAXlwkzE034tXFfs0eiXlEG8gRn4ONPKVy1oA4nPVtXOvkiIYy5UqqA6iUVRCngyKKR4ki0HycZ1Iu8dSypXg3JA4AvQ+PkKrhYucRkguMehbZFrM33DTSrsmfTf83av7S5IJMJwMwMAknxJtYop9Z4Yxd3aTK4xXc5eYEHu5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
-Received: by angie.orcam.me.uk (Postfix, from userid 500)
-	id 3404292009D; Sun,  1 Jun 2025 19:35:13 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by angie.orcam.me.uk (Postfix) with ESMTP id 2631792009B;
-	Sun,  1 Jun 2025 18:35:13 +0100 (BST)
-Date: Sun, 1 Jun 2025 18:35:13 +0100 (BST)
-From: "Maciej W. Rozycki" <macro@orcam.me.uk>
-To: David Laight <david.laight.linux@gmail.com>
-cc: =?UTF-8?Q?Cl=C3=A9ment_L=C3=A9ger?= <cleger@rivosinc.com>, 
-    linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-    Paul Walmsley <paul.walmsley@sifive.com>, 
-    Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-    Alexandre Ghiti <alex@ghiti.fr>
-Subject: Re: [PATCH 2/2] riscv: uaccess: do not do misaligned accesses in
- get/put_user()
-In-Reply-To: <20250531192801.5d6329c3@pumpkin>
-Message-ID: <alpine.DEB.2.21.2506011830130.28395@angie.orcam.me.uk>
-References: <20250530205658.624195-1-cleger@rivosinc.com> <20250530205658.624195-3-cleger@rivosinc.com> <20250531192801.5d6329c3@pumpkin>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+	s=arc-20240116; t=1748799429; c=relaxed/simple;
+	bh=NVjc1Vhtb1ux3Cw7s+ruy1up4JfJkPlZ0G7owI/j2IM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YIVHJ8zE30L8u0Cv8noiOwvkD6JeNhB/TuZNwZwymatxVQkrkLP/MMPwVo6itUhOkGjeXJ2zxoPFu5J8DNgf9m8KL3wNOZTemvPG8z73sKEtnOyMIW95v53N2I4aJ+qTRcJp4loQBL7XniapmvjBngsYufhQV4HyU+rXQ3J3z2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=WTFPE3EL; arc=none smtp.client-ip=220.197.31.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=QS
+	Abk8u6Isf18mdwu+1NVxO1zb8ggOWJU6i8G8rJ7uQ=; b=WTFPE3EL6Z7Hoyd70/
+	8SSU0Zd3wBOtm6URW5ZVnvv/mNcfF/1fCAWGz8iVq9uj1c2xJR8xX6TjxGVTYEoM
+	fZ2juCc0XW7avYA01vxyAHiDZWkhH+6Pl0ENsm/gUGUfu1t8/We72gzsGikIuL7I
+	wdKdjxuYkiwevgLo5yQEmVHPc=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g1-4 (Coremail) with SMTP id _____wDnt7yGjzxokb0uFg--.4965S4;
+	Mon, 02 Jun 2025 01:36:22 +0800 (CST)
+From: David Wang <00107082@163.com>
+To: peterz@infradead.org,
+	mingo@redhat.com,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	mingo@kernel.org,
+	yeoreum.yun@arm.com,
+	leo.yan@arm.com
+Cc: linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	David Wang <00107082@163.com>
+Subject: [BUG][6.15][perf] Kernel panic not syncing: Fatal exception in interrupt 
+Date: Mon,  2 Jun 2025 01:36:03 +0800
+Message-Id: <20250601173603.3920-1-00107082@163.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDnt7yGjzxokb0uFg--.4965S4
+X-Coremail-Antispam: 1Uf129KBjvJXoWxWrWUXFW3Wr48tw1xJF4DCFg_yoWrtr1rpr
+	WDKrnxKw4vqryDX3W5J3WUXw15GrW8AFs8XF1kJr1xZF1Yg3W5JF18trWYvr45tr9xXa47
+	twsYqw1Iq3srJaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0piJ5rxUUUUU=
+X-CM-SenderInfo: qqqrilqqysqiywtou0bp/1tbiqANfqmg8hNWvRAAAsw
 
-On Sat, 31 May 2025, David Laight wrote:
+Hi,
 
-> > Such behavior was detected with GET_UNALIGN_CTL() that was doing
-> > a put_user() with an unsigned long* address that should have been an
-> > unsigned int*. Reenabling kernel misaligned access emulation is a bit
-> > risky and it would also degrade performances. Rather than doing that,
-> > we will try to avoid any misaligned accessed by using copy_from/to_user()
-> > which does not do any misaligned accesses. This can be done only for
-> > !CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS and thus allows to only generate
-> > a bit more code for this config.
-> 
-> For get_user() you are much better off reading the two words that contain
-> the value and then doing 'shift' and 'or' to get the correct value.
-> 
-> Even for put_user() doing the explicit byte accesses will be faster than
-> going though the generic copy_to/from_user() function.
+Caught a kernel panic when rebooting, system stuck until pressing power button.
+I have only a screenshot when it happens, following logs were extracted from a
+captured picture.
 
- FWIW I think optimising copy_to/from_user for such cases would be a more 
-robust approach moving forward than sprinkling open-coded implementations 
-across code.
+863.881960] sysved_call_function_sing le+0x4c/0xc0
+863.881301] asm_sysvec_call_function_single+0x16/0x20
+869.881344] RIP: 0633:0x7f9alcea3367
+663.681373] Code: 00 66 99 b8 ff ff ff ff c3 66 ....
+863.881524] RSP: 002b:00007fffa526fcf8 EFLAGS: 00000246
+869.881567] RAX: 0000562060c962d0 RBX: 0000000000000002 RCX: 00007f9a1cff1c60
+863.881625] RDX: 00007f9a0c000030 RSI: 00007f9alcff1c60 RDI: 00007f9a1ca91c20
+863.081682] RBP: 0000000000000001 R08: 0000000000000000 R09: 00007f9a1d6217a0
+869.881740] R10: 00007f9alca91c10 R11: 0000000000000246 R12: 00007f9a1d70c020
+869.881798] R13: 00007fffa5270030 R14: 00007fffa526fd00 R15: 0000000000000000
+863.881860] </TASK>
+863.881876) Modules linked in: snd_seq_dummy (E) snd_hrtimer (E)...
+...
+863.887142] button (E)
+863.912127] CR2: ffffe4afcc079650
+863.914593] --- [ end trace 0000000000000000 1--
+864.042750] RIP: 0010:ctx_sched_out+0x1ce/0x210
+864.045214] Code: 89 c6 4c 8b b9 de 00 00 00 48 ...
+864.050343] RSP: 0000:ffffaa4ec0f3fe60 EFLAGS: 00010086
+864.052929] RAX: 0000000000000002 RBX: ffff8e8eeed2a580 RCX: ffff8e8bded9bf00
+864.055518] RDX: 000000c92340b051 RSI: 000000c92340b051 RDI: ffff
+864.058093] RBP: 0000000000000000 R08: 0000000000000002 R09: 00
+864.060654] R10: 0000000000000000 R11: 0000000000000000 R12: 000
+864.063183] R13: ffff8e8eeed2a580 R14: 0000000000000007 R15: ffffe4afcc079650
+864.065729] FS: 00007f9a1ca91940 (0000) GS:ffff8e8f6b1c3000(0000) knIGS:0000000000000000
+864.068312] CS: 0010 DS: 0000 ES: 0000 CRO: 0000000080050033
+864.070898] CR2: ffffe4afcc079650 CR3: 00000001136d8000 CR4: 0000000000350ef0
+864.673523] Kernel panic - not syncing: Fatal exception in interrupt
+864.076410] Kernel Offset: 0xc00000 from 0xffffffff81000000 (relocation range: 0xff
+864.205401] --- [ end Kernel panic - not syncing: Fatal exception in interrupt ]---
 
-  Maciej
+This happens ever since 6.15-rc1, from time to time, I would get kernel panic when
+reboot; it is only recently that I figured out a precedure reproducing
+this with *high* probability:
+
+1. create a cgroup.
+2. perf_event_open(PERF_FLAG_FD_CLOEXEC|PERF_FLAG_PID_CGROUP) for each cpu with following attrs:
+	attr.type = PERF_TYPE_SOFTWARE;
+	attr.size = sizeof(attr);
+	attr.config = PERF_COUNT_SW_CPU_CLOCK;
+	attr.sample_freq = 9999;
+	attr.freq = 1;
+	attr.wakeup_events = 16;
+	attr.sample_type = PERF_SAMPLE_CALLCHAIN;
+	attr.sample_max_stack = 32;
+	attr.exclude_callchain_user = 1;
+3. close all perf_event_open after several minutes
+4. reboot
+
+And after an exhausting bisect on events/core.c, (I need 5 rounds to conclude a good bisect)
+I think I reach the conclusion, with very high probability, that this is caused by
+
+commit a3c3c66670cee11eb13aa43905904bf29cb92d32
+Author: Yeoreum Yun <yeoreum.yun@arm.com>
+Date:   Wed Mar 26 08:20:03 2025 +0000
+
+    perf/core: Fix child_total_time_enabled accounting bug at task exit
+
+Reverting this can fix it: I run the test 10 rounds, no kernel panic observed.
+
+The changes made to __perf_remove_from_context by commit a3c3c6667("perf/core:
+Fix child_total_time_enabled accounting bug at task exit") has wider effect
+than the callchain mentioned in commit message, and I think an esay fix would
+be just restricting the effect to that callchain only, and restore other changes back.
+
+I have test the patch below several rounds, and so far so good, and I will have
+more tests on it.
+
+Signed-off-by: David Wang <00107082@163.com>
+---
+ kernel/events/core.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 95e703891b24..95d15105e0e7 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -2482,12 +2482,15 @@ __perf_remove_from_context(struct perf_event *event,
+ 		state = PERF_EVENT_STATE_DEAD;
+ 	}
+ 	event_sched_out(event, ctx);
+-	perf_event_set_state(event, min(event->state, state));
++	if (flags & DETACH_EXIT)
++		perf_event_set_state(event, min(event->state, state));
+ 	if (flags & DETACH_GROUP)
+ 		perf_group_detach(event);
+ 	if (flags & DETACH_CHILD)
+ 		perf_child_detach(event);
+ 	list_del_event(event, ctx);
++	if (flags & DETACH_DEAD)
++		event->state = PERF_EVENT_STATE_DEAD;
+ 
+ 	if (!pmu_ctx->nr_events) {
+ 		pmu_ctx->rotate_necessary = 0;
+-- 
+2.39.2
+
+
+
+
+Thanks
+David
+
 
