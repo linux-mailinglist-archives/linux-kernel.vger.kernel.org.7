@@ -1,91 +1,63 @@
-Return-Path: <linux-kernel+bounces-669496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-669497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAF88ACA0A6
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 00:43:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D9ABACA0B4
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 00:46:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56C6E1892C8A
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Jun 2025 22:43:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1AD93B2A4A
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Jun 2025 22:45:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A92BE23AE7C;
-	Sun,  1 Jun 2025 22:43:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81E6823AE87;
+	Sun,  1 Jun 2025 22:45:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H7asz3lM"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D1vveVQO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E3C95674E;
-	Sun,  1 Jun 2025 22:43:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A0C829D19;
+	Sun,  1 Jun 2025 22:45:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748817782; cv=none; b=BNDrysYXep1gW1I8uWTTt+/28EEqbTwm49DZ+jEHVrJ7B9pX7l+wyTHaLZoRavTwXneqoIzZH/0jX9BOpVLrxhlFdJO/Qj7lU/DyhrxLEP4c13ew+OiFKfJl5Yppw3UydX3cbaGDa2wmYKukziaAxwXOhmK/ENFUmncwOxn00XM=
+	t=1748817953; cv=none; b=ApLaegIFL5clx2l5KCA2SS4wHChtfGjvnW32KE+57WclyDOBkpsA4hqnH/9AU3ggErbc/Uukz4KwdlfwizjS4yWMwtfraQZoKtG2ETspXZYzATB5KaJIJhpTKXAYqDRA73NAwGi2CyXjYkEPMIcEQYu9X9ZzWw2Cvhppm5yWM8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748817782; c=relaxed/simple;
-	bh=Qh+NNgy2Htt9SRQ9f/fplZWpWNIBbv9cYrP6I+711Dk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=UofXSl1jZpRrr+ilwSkxQbwyUuhsFbTqdfi9Iy4cVnW0d01tWj3I4Ew6+gTML65HOZs/fvyACz5ITFf4sK4isswFkhsVR54OcvPKZGNEqBXQOw0C8c9gLrOPz4OZsUE/TU4OVVfBez9Cor4ALQ0yEzeEdq1bo806r1QcNAQPy2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H7asz3lM; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3a50956e5d3so397349f8f.1;
-        Sun, 01 Jun 2025 15:43:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748817779; x=1749422579; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4kWWXJ7FZ3GSQ1AVSLuDSr03mU7wdwc2Hu2NuHuHCJ0=;
-        b=H7asz3lMqKXTk3of/ndMcZWJW7/a+dK3Z0XB4fKikLsIEZmsu1d+G69ikfn+xgSzNj
-         3nzUMtsk2A7MNB4UKbN9843aoOwJxtxpST5WsdQasag5ycgTCs6Dpmk/hhshiE/gQyXQ
-         ght7EgRsPuwp4rF334qWKcd11rVPMDlLQcG8r5nhufJhLITRSUBc1iMSLxBAmFAww89M
-         h9HVbWZv8Z8Ie4RNw9A5XA7RWB1zF9DvLvvu9Q26tGWWhVJTOWHcI75vNuMHZrateXp+
-         rOZIKc3OXjVzxb4eZ9APU9FSE98QnZp10XYs5OPOIe4HkLn6haCZC/pUimqdO9IkoCr5
-         2oJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748817779; x=1749422579;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4kWWXJ7FZ3GSQ1AVSLuDSr03mU7wdwc2Hu2NuHuHCJ0=;
-        b=G+5fGmY/DvGTYBtMpukzmWsv9njIUSBJFBPC0+CY8RA/IkE+pVvwGeTEN+TAVuKIj1
-         60Z95ggZrUJy0aklgcWnqASAfBWm5ZfzUIadoN2a2Fmb3OvLYefa7WLB7RrHW/Rt8EAN
-         3vi4pFpWmfEED5mFrjDeeAFyld8AHI/OaPEzi75g5LUpQKF2RWqDYe2/Oh1c+CXs5oT5
-         p4PZeKUXTr4//ezdAyAPVgKDr+vdugHVrleJaMyVIBeYcvQaTvkeEfw5R8edBpsyBGaI
-         O35vkKybfcifO/JzayeoQvJA7eG8dgrFCfeQK3oCp5Ts7Oa3y2NkDYLZuaNLdmRi6m+y
-         GhBA==
-X-Forwarded-Encrypted: i=1; AJvYcCWdgyqO+JN8j0NdT59zVB5rD9IBAXLPPv9ZteCTaeZ+ZkuisJBSv+XDXSRkhzl7+FMmKdPEhJd0QWw=@vger.kernel.org, AJvYcCXKZgsCTBp+JMNT0gtLcfnAHMM8QjMMl25hy77qZrWGqAsuuj4eTp4U9qt+B6kWHPOeTJ3LtQzNYE6ED0Ojow==@vger.kernel.org, AJvYcCXPuy8g+v0ThPmqJV+/9rhb1l2Ho9HYBAxVCDKxcXrDCMXz54Ad0g6d716hJFfjKVfa8P4WDkoAOMEB7/Gm@vger.kernel.org, AJvYcCXlq0fyJm5noHt+Tx2Ab6GWc33oT0YToZtvbCmSpQR87WC4Y9dVfeGjFGQmDLce2v1GF0IGaPWk@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7VW4zgu9EUVtZ+AbXjikfFotjNUsGGNWstjAGs6bJhO5LmUDT
-	lDoPK6AXX7dFVF10WiQFOj2iZ3iJB42lyhy9GHHOMMZfws0U91dmDl0/OwwY5Q==
-X-Gm-Gg: ASbGncuMWsGbXoZ8VJRpBj4cglIFuP0uYCnNZcMRJ2Zf38MK6qsueNvFJ5uNGmV87ZS
-	mwM08DIZJ3/U58FY9zUIfS5Ji9O5EymFVafLcR+D/LY3YKS3oUnk8Fo2LfJ1mvP3/QgdSEkHx5D
-	bew0PCCAvhzmDln1pqrn3hNYQmWAwq4APS2h5GDGDz99Ss1lY2vr5WqPLId27Ony61jS9As7GdT
-	blAxcSkUQl3VSvIJQgR1jzOPMYzXUqR+W74Zp5I7eIR1JwjGUXlfaiFkxminzuK5/OFNoTwV0TM
-	/aeWuQX8xeYY9XgxA/4zVGuRLb+TKpyoUobxqqdeRGPqWx32Nr+pHDYuMLxQfcQ=
-X-Google-Smtp-Source: AGHT+IFVzpxyXLCtBRbAQTyeYAjleNHnDwVMGvtUL11IWaYeITMphSowW190mBTSVIH8CGVCZ/soCg==
-X-Received: by 2002:a05:6000:220b:b0:3a4:d53d:be23 with SMTP id ffacd0b85a97d-3a4f7a816edmr8112878f8f.30.1748817778595;
-        Sun, 01 Jun 2025 15:42:58 -0700 (PDT)
-Received: from qasdev.Home ([2a02:c7c:6696:8300:4518:757b:6751:290f])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4efe74165sm12916554f8f.53.2025.06.01.15.42.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 01 Jun 2025 15:42:57 -0700 (PDT)
-From: Qasim Ijaz <qasdev00@gmail.com>
-To: Sinan Kaya <okaya@kernel.org>,
-	Vinod Koul <vkoul@kernel.org>,
+	s=arc-20240116; t=1748817953; c=relaxed/simple;
+	bh=+Jr0DfYTtSLUgtIhUw1xndcaRDnhct6ml0L8zeKyV8I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GhWihf9Fe0EF3RWeKnm3Ltb5WWTlgDh9yRD/ASEWuXM+I/tgZJ4DZ2CMKu0DeBEtgPXGAB9QpSo3rtICOEs26nFKRNK7/zDq9ihRuaWrZ3YE/8gGp8kS6GcroqyrV5zgpwCpr9wIhDCLGe9rnGbCBl7xPwnlcuvIKybc775RV/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D1vveVQO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6902FC4CEE7;
+	Sun,  1 Jun 2025 22:45:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748817952;
+	bh=+Jr0DfYTtSLUgtIhUw1xndcaRDnhct6ml0L8zeKyV8I=;
+	h=From:To:Cc:Subject:Date:From;
+	b=D1vveVQOEOFlaQitpUnAPEJK5wovky/1hjK5K7Yr74MSwV0OMkXyUqCzcdWtVeYZC
+	 /Mr/WAD0ylD0RfhFxbDMAvn41iMg4hkgfRRS1YuuIph/cIitepltHPVQhW5eYbS9Dm
+	 SFQsbx9+aAHCCKkuo98OfLANfn8gTVaLvgzFSJeYQyGmfsiEJs+f9EpihVF5TXGVs0
+	 S1L8P1JIW6ElhBC4kDCQGkew6sOTbo62KYr88FToZQmbIuN2RX9cMJBf7TNrHOueJe
+	 uZHIeQppZaEmnIA4yU7gM7sfutEnJuWmQ6wSDU5DjCc7sYnXw+wKBfy92I5Sv6TDUK
+	 wu5Ge0GzbiZNw==
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: linux-crypto@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-arm-msm@vger.kernel.org,
-	dmaengine@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Qasim Ijaz <qasdev00@gmail.com>,
-	stable@vger.kernel.org
-Subject: [PATCH 2/2] dmaengine: qcom_hidma: fix handoff FIFO memory leak on driver removal
-Date: Sun,  1 Jun 2025 23:42:31 +0100
-Message-Id: <20250601224231.24317-3-qasdev00@gmail.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250601224231.24317-1-qasdev00@gmail.com>
-References: <20250601224231.24317-1-qasdev00@gmail.com>
+	loongarch@lists.linux.dev,
+	linux-mips@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-riscv@lists.infradead.org,
+	linux-s390@vger.kernel.org,
+	sparclinux@vger.kernel.org,
+	x86@kernel.org,
+	linux-arch@vger.kernel.org,
+	Ard Biesheuvel <ardb@kernel.org>,
+	"Jason A . Donenfeld " <Jason@zx2c4.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 00/13] lib/crc: improve how arch-optimized code is integrated
+Date: Sun,  1 Jun 2025 15:44:28 -0700
+Message-ID: <20250601224441.778374-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,33 +66,205 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-hidma_ll_init() allocates a handoff FIFO, but the matching 
-hidma_ll_uninit() function (which is invoked in remove()) 
-never releases it, leaking memory.
+This series improves how lib/crc supports arch-optimized code.  First,
+instead of the arch-optimized CRC code being in arch/$(SRCARCH)/lib/, it
+will now be in lib/crc/$(SRCARCH)/.  Second, the API functions (e.g.
+crc32c()), arch-optimized functions (e.g. crc32c_arch()), and generic
+functions (e.g. crc32c_base()) will now be part of a single module for
+each CRC type, allowing better inlining and dead code elimination.  The
+second change is made possible by the first.
 
-To fix this call kfifo_free in hidma_ll_uninit().
+As an example, consider CONFIG_CRC32=m on x86.  We'll now have just
+crc32.ko instead of both crc32-x86.ko and crc32.ko.  The two modules
+were already coupled together and always both got loaded together via
+direct symbol dependency, so the separation provided no benefit.
 
-Fixes: d1615ca2e085 ("dmaengine: qcom_hidma: implement lower level hardware interface")
-Cc: stable@vger.kernel.org
-Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
+Note: later I'd like to apply the same design to lib/crypto/ too, where
+often the API functions are out-of-line so this will work even better.
+In those cases, for each algorithm we currently have 3 modules all
+coupled together, e.g. libsha256.ko, libsha256-generic.ko, and
+sha256-x86.ko.  We should have just one, inline things properly, and
+rely on the compiler's dead code elimination to decide the inclusion of
+the generic code instead of manually setting it via kconfig.
 
----
- drivers/dma/qcom/hidma_ll.c | 1 +
- 1 file changed, 1 insertion(+)
+Having arch-specific code outside arch/ was somewhat controversial when
+Zinc proposed it back in 2018.  But I don't think the concerns are
+warranted.  It's better from a technical perspective, as it enables the
+improvements mentioned above.  This model is already successfully used
+in other places in the kernel such as lib/raid6/.  The community of each
+architecture still remains free to work on the code, even if it's not in
+arch/.  At the time there was also a desire to put the library code in
+the same files as the old-school crypto API, but that was a mistake; now
+that the library is separate, that's no longer a constraint either.
 
-diff --git a/drivers/dma/qcom/hidma_ll.c b/drivers/dma/qcom/hidma_ll.c
-index fee448499777..0c2bae46746c 100644
---- a/drivers/dma/qcom/hidma_ll.c
-+++ b/drivers/dma/qcom/hidma_ll.c
-@@ -816,6 +816,7 @@ int hidma_ll_uninit(struct hidma_lldev *lldev)
- 
- 	required_bytes = sizeof(struct hidma_tre) * lldev->nr_tres;
- 	tasklet_kill(&lldev->task);
-+	kfifo_free(&lldev->handoff_fifo);
- 	memset(lldev->trepool, 0, required_bytes);
- 	lldev->trepool = NULL;
- 	atomic_set(&lldev->pending_tre_count, 0);
+Patches 1 and 2, which I previously sent out by themselves, are
+prerequisites because they eliminate the need for the CRC32 library API
+to expose the generic functions.
+
+Eric Biggers (13):
+  crypto/crc32: register only one shash_alg
+  crypto/crc32c: register only one shash_alg
+  lib/crc: move files into lib/crc/
+  lib/crc: prepare for arch-optimized code in subdirs of lib/crc/
+  lib/crc/arm: migrate arm-optimized CRC code into lib/crc/
+  lib/crc/arm64: migrate arm64-optimized CRC code into lib/crc/
+  lib/crc/loongarch: migrate loongarch-optimized CRC code into lib/crc/
+  lib/crc/mips: migrate mips-optimized CRC code into lib/crc/
+  lib/crc/powerpc: migrate powerpc-optimized CRC code into lib/crc/
+  lib/crc/riscv: migrate riscv-optimized CRC code into lib/crc/
+  lib/crc/s390: migrate s390-optimized CRC code into lib/s390/
+  lib/crc/sparc: migrate sparc-optimized CRC code into lib/crc/
+  lib/crc/x86: migrate x86-optimized CRC code into lib/crc/
+
+ Documentation/core-api/kernel-api.rst         |  14 +-
+ MAINTAINERS                                   |   4 +-
+ arch/arm/Kconfig                              |   2 -
+ arch/arm/lib/Makefile                         |   6 -
+ arch/arm64/Kconfig                            |   2 -
+ arch/arm64/lib/Makefile                       |   6 -
+ arch/loongarch/Kconfig                        |   1 -
+ arch/loongarch/lib/Makefile                   |   2 -
+ arch/mips/Kconfig                             |   1 -
+ arch/mips/lib/Makefile                        |   2 -
+ arch/powerpc/Kconfig                          |   2 -
+ arch/powerpc/lib/Makefile                     |   6 -
+ arch/riscv/Kconfig                            |   3 -
+ arch/riscv/lib/Makefile                       |   6 -
+ arch/s390/Kconfig                             |   1 -
+ arch/s390/lib/Makefile                        |   3 -
+ arch/sparc/Kconfig                            |   1 -
+ arch/sparc/lib/Makefile                       |   2 -
+ arch/x86/Kconfig                              |   3 -
+ arch/x86/lib/Makefile                         |  10 --
+ crypto/crc32.c                                |  69 ++--------
+ crypto/crc32c.c                               |  70 ++--------
+ include/linux/crc-t10dif.h                    |  10 +-
+ include/linux/crc32.h                         |  30 +----
+ include/linux/crc64.h                         |  22 +---
+ lib/Kconfig                                   |  87 +------------
+ lib/Kconfig.debug                             |  21 ---
+ lib/Makefile                                  |  32 +----
+ lib/crc/.gitignore                            |   5 +
+ lib/crc/Kconfig                               | 121 ++++++++++++++++++
+ lib/crc/Makefile                              |  62 +++++++++
+ .../arm/lib => lib/crc/arm}/crc-t10dif-core.S |   0
+ .../crc-t10dif.c => lib/crc/arm/crc-t10dif.h  |  23 +---
+ {arch/arm/lib => lib/crc/arm}/crc32-core.S    |   0
+ arch/arm/lib/crc32.c => lib/crc/arm/crc32.h   |  40 ++----
+ .../lib => lib/crc/arm64}/crc-t10dif-core.S   |   0
+ .../crc/arm64/crc-t10dif.h                    |  22 +---
+ .../arm64/lib => lib/crc/arm64}/crc32-core.S  |   0
+ .../lib/crc32.c => lib/crc/arm64/crc32.h      |  22 +---
+ lib/{ => crc}/crc-ccitt.c                     |   3 -
+ lib/{ => crc}/crc-itu-t.c                     |   0
+ lib/{crc-t10dif.c => crc/crc-t10dif-main.c}   |  37 +++++-
+ lib/{ => crc}/crc16.c                         |   0
+ lib/{crc32.c => crc/crc32-main.c}             |  77 +++++++++--
+ lib/{ => crc}/crc4.c                          |   0
+ lib/{crc64.c => crc/crc64-main.c}             |  47 ++++++-
+ lib/{ => crc}/crc7.c                          |   0
+ lib/{ => crc}/crc8.c                          |   0
+ lib/{ => crc}/gen_crc32table.c                |   4 +-
+ lib/{ => crc}/gen_crc64table.c                |  11 +-
+ .../crc/loongarch/crc32.h                     |  34 +----
+ .../lib/crc32-mips.c => lib/crc/mips/crc32.h  |  35 +----
+ .../crc/powerpc/crc-t10dif.h                  |  20 +--
+ .../crc/powerpc}/crc-vpmsum-template.S        |   0
+ .../lib/crc32.c => lib/crc/powerpc/crc32.h    |  36 +-----
+ .../crc/powerpc}/crc32c-vpmsum_asm.S          |   0
+ .../crc/powerpc}/crct10dif-vpmsum_asm.S       |   0
+ .../lib => lib/crc/riscv}/crc-clmul-consts.h  |   0
+ .../crc/riscv}/crc-clmul-template.h           |   0
+ {arch/riscv/lib => lib/crc/riscv}/crc-clmul.h |   0
+ .../crc/riscv/crc-t10dif.h                    |   8 +-
+ {arch/riscv/lib => lib/crc/riscv}/crc16_msb.c |   0
+ .../lib/crc32.c => lib/crc/riscv/crc32.h      |  20 +--
+ {arch/riscv/lib => lib/crc/riscv}/crc32_lsb.c |   0
+ {arch/riscv/lib => lib/crc/riscv}/crc32_msb.c |   0
+ .../lib/crc64.c => lib/crc/riscv/crc64.h      |  11 +-
+ {arch/riscv/lib => lib/crc/riscv}/crc64_lsb.c |   0
+ {arch/riscv/lib => lib/crc/riscv}/crc64_msb.c |   0
+ {arch/s390/lib => lib/crc/s390}/crc32-vx.h    |   0
+ arch/s390/lib/crc32.c => lib/crc/s390/crc32.h |  19 +--
+ {arch/s390/lib => lib/crc/s390}/crc32be-vx.c  |   0
+ {arch/s390/lib => lib/crc/s390}/crc32le-vx.c  |   0
+ .../lib/crc32.c => lib/crc/sparc/crc32.h      |  40 +-----
+ .../sparc/lib => lib/crc/sparc}/crc32c_asm.S  |   0
+ lib/crc/tests/Makefile                        |   2 +
+ lib/{ => crc}/tests/crc_kunit.c               |   0
+ .../lib => lib/crc/x86}/crc-pclmul-consts.h   |   0
+ .../lib => lib/crc/x86}/crc-pclmul-template.S |   0
+ .../lib => lib/crc/x86}/crc-pclmul-template.h |   0
+ .../crc-t10dif.c => lib/crc/x86/crc-t10dif.h  |  18 +--
+ .../lib => lib/crc/x86}/crc16-msb-pclmul.S    |   0
+ {arch/x86/lib => lib/crc/x86}/crc32-pclmul.S  |   0
+ arch/x86/lib/crc32.c => lib/crc/x86/crc32.h   |  32 +----
+ {arch/x86/lib => lib/crc/x86}/crc32c-3way.S   |   0
+ {arch/x86/lib => lib/crc/x86}/crc64-pclmul.S  |   0
+ arch/x86/lib/crc64.c => lib/crc/x86/crc64.h   |  21 +--
+ lib/tests/Makefile                            |   1 -
+ 87 files changed, 446 insertions(+), 743 deletions(-)
+ create mode 100644 lib/crc/.gitignore
+ create mode 100644 lib/crc/Kconfig
+ create mode 100644 lib/crc/Makefile
+ rename {arch/arm/lib => lib/crc/arm}/crc-t10dif-core.S (100%)
+ rename arch/arm/lib/crc-t10dif.c => lib/crc/arm/crc-t10dif.h (70%)
+ rename {arch/arm/lib => lib/crc/arm}/crc32-core.S (100%)
+ rename arch/arm/lib/crc32.c => lib/crc/arm/crc32.h (69%)
+ rename {arch/arm64/lib => lib/crc/arm64}/crc-t10dif-core.S (100%)
+ rename arch/arm64/lib/crc-t10dif.c => lib/crc/arm64/crc-t10dif.h (70%)
+ rename {arch/arm64/lib => lib/crc/arm64}/crc32-core.S (100%)
+ rename arch/arm64/lib/crc32.c => lib/crc/arm64/crc32.h (81%)
+ rename lib/{ => crc}/crc-ccitt.c (98%)
+ rename lib/{ => crc}/crc-itu-t.c (100%)
+ rename lib/{crc-t10dif.c => crc/crc-t10dif-main.c} (78%)
+ rename lib/{ => crc}/crc16.c (100%)
+ rename lib/{crc32.c => crc/crc32-main.c} (73%)
+ rename lib/{ => crc}/crc4.c (100%)
+ rename lib/{crc64.c => crc/crc64-main.c} (66%)
+ rename lib/{ => crc}/crc7.c (100%)
+ rename lib/{ => crc}/crc8.c (100%)
+ rename lib/{ => crc}/gen_crc32table.c (95%)
+ rename lib/{ => crc}/gen_crc64table.c (81%)
+ rename arch/loongarch/lib/crc32-loongarch.c => lib/crc/loongarch/crc32.h (71%)
+ rename arch/mips/lib/crc32-mips.c => lib/crc/mips/crc32.h (82%)
+ rename arch/powerpc/lib/crc-t10dif.c => lib/crc/powerpc/crc-t10dif.h (75%)
+ rename {arch/powerpc/lib => lib/crc/powerpc}/crc-vpmsum-template.S (100%)
+ rename arch/powerpc/lib/crc32.c => lib/crc/powerpc/crc32.h (64%)
+ rename {arch/powerpc/lib => lib/crc/powerpc}/crc32c-vpmsum_asm.S (100%)
+ rename {arch/powerpc/lib => lib/crc/powerpc}/crct10dif-vpmsum_asm.S (100%)
+ rename {arch/riscv/lib => lib/crc/riscv}/crc-clmul-consts.h (100%)
+ rename {arch/riscv/lib => lib/crc/riscv}/crc-clmul-template.h (100%)
+ rename {arch/riscv/lib => lib/crc/riscv}/crc-clmul.h (100%)
+ rename arch/riscv/lib/crc-t10dif.c => lib/crc/riscv/crc-t10dif.h (62%)
+ rename {arch/riscv/lib => lib/crc/riscv}/crc16_msb.c (100%)
+ rename arch/riscv/lib/crc32.c => lib/crc/riscv/crc32.h (66%)
+ rename {arch/riscv/lib => lib/crc/riscv}/crc32_lsb.c (100%)
+ rename {arch/riscv/lib => lib/crc/riscv}/crc32_msb.c (100%)
+ rename arch/riscv/lib/crc64.c => lib/crc/riscv/crc64.h (65%)
+ rename {arch/riscv/lib => lib/crc/riscv}/crc64_lsb.c (100%)
+ rename {arch/riscv/lib => lib/crc/riscv}/crc64_msb.c (100%)
+ rename {arch/s390/lib => lib/crc/s390}/crc32-vx.h (100%)
+ rename arch/s390/lib/crc32.c => lib/crc/s390/crc32.h (81%)
+ rename {arch/s390/lib => lib/crc/s390}/crc32be-vx.c (100%)
+ rename {arch/s390/lib => lib/crc/s390}/crc32le-vx.c (100%)
+ rename arch/sparc/lib/crc32.c => lib/crc/sparc/crc32.h (62%)
+ rename {arch/sparc/lib => lib/crc/sparc}/crc32c_asm.S (100%)
+ create mode 100644 lib/crc/tests/Makefile
+ rename lib/{ => crc}/tests/crc_kunit.c (100%)
+ rename {arch/x86/lib => lib/crc/x86}/crc-pclmul-consts.h (100%)
+ rename {arch/x86/lib => lib/crc/x86}/crc-pclmul-template.S (100%)
+ rename {arch/x86/lib => lib/crc/x86}/crc-pclmul-template.h (100%)
+ rename arch/x86/lib/crc-t10dif.c => lib/crc/x86/crc-t10dif.h (56%)
+ rename {arch/x86/lib => lib/crc/x86}/crc16-msb-pclmul.S (100%)
+ rename {arch/x86/lib => lib/crc/x86}/crc32-pclmul.S (100%)
+ rename arch/x86/lib/crc32.c => lib/crc/x86/crc32.h (76%)
+ rename {arch/x86/lib => lib/crc/x86}/crc32c-3way.S (100%)
+ rename {arch/x86/lib => lib/crc/x86}/crc64-pclmul.S (100%)
+ rename arch/x86/lib/crc64.c => lib/crc/x86/crc64.h (61%)
+
+base-commit: cd2e103d57e5615f9bb027d772f93b9efd567224
 -- 
-2.39.5
+2.49.0
 
 
