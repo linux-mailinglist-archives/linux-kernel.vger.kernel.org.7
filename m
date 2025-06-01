@@ -1,66 +1,70 @@
-Return-Path: <linux-kernel+bounces-669540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-669689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 731ECACA53E
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 02:26:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C5B2ACA447
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 02:06:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 273F918836DD
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 00:23:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C90618860AA
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 00:02:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 608902609C3;
-	Sun,  1 Jun 2025 23:25:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9AE8265632;
+	Sun,  1 Jun 2025 23:32:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FdfCPI+P"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A5fZlyuQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A224025FA1F;
-	Sun,  1 Jun 2025 23:25:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E806292902;
+	Sun,  1 Jun 2025 23:32:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748820345; cv=none; b=Krael7yDg8MEEWwxZt0CGpGvo+KFsVl5iJkGsmSbATOxOh/AcWRZOpSvBatD3MWJrStcl90GODQyJsVjw7828vwKJroKDf3JYSOfCB5y8hHjomFfKRmV/wQzWqOVmpSn4EUri3wlrtSxGdmM2Zl/ZzyCJMA1KQErieXJ9lDwEf8=
+	t=1748820760; cv=none; b=UkyjHPFQoEASsM/j13eurkE3hqH/J2QHBNquFX47wgb4yjRJUIEWxuXgGcrd8P9jnQ9xruDX66jlxU7cEokoqx1XbxC5w2c8bTg4stGNOc3HeFQDjIOkBdBKmUlMmXUB33FRIrvKQOfAg8FSr0pVmdLZEJ8jpH0wH3CQFa0jl7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748820345; c=relaxed/simple;
-	bh=bvw+k3QRqKUAJ2ZYFESlxQQEAa5h0GeMvUWBFW9RKdQ=;
+	s=arc-20240116; t=1748820760; c=relaxed/simple;
+	bh=rCp0CskXxHH3qHtGLMEoOzrYFN/TXnfMBhINaz9qod8=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=XpBtZ+tuOt3xsnZN6AgCrGXtwzjVDg7QGo0fYCdXHqjrNrPWEvhDrJI82ifzwKlUCZHuhaXsL0/GkoZEoZjEC1b3ee+oieHtVIZTq2nla11MY7MDjtRhLj3gbFBny3nK8jLove5T+lKcfUCS12uq51nKdUDS10QKrwNO/Mlm+uE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FdfCPI+P; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0E65C4CEE7;
-	Sun,  1 Jun 2025 23:25:42 +0000 (UTC)
+	 MIME-Version; b=JsrM5uNhTwqfUUFIeUzmS+EI6lTbg8h9bKEEuMSTTY+lMKbFTU9/xFho/1sj8bPYTdRDEZTC0kfgO6PH+BoMbdfbCOGzc69ymoZGLb3PPZ+jY7GNIX4VJpB9dIA8WOFqNvvmVNsphNbggDD/1XvRmXUTiW39vzWCzV9HwRVG2vQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A5fZlyuQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EAA0C4CEF2;
+	Sun,  1 Jun 2025 23:32:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748820344;
-	bh=bvw+k3QRqKUAJ2ZYFESlxQQEAa5h0GeMvUWBFW9RKdQ=;
+	s=k20201202; t=1748820760;
+	bh=rCp0CskXxHH3qHtGLMEoOzrYFN/TXnfMBhINaz9qod8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=FdfCPI+P2rvKQ5OVgvAGdLEQlOey95CDQfIJ8t4DBaI2h0jnGmLG90j8R/jjJGnex
-	 F3MU3joz1Cx47e4eJhNDCuzbWfEF2vkG28VUt+s72cyVwq9mM6ikgaBLqKHmyPNYrt
-	 H/13NlYanc+s6iN0Xj6g2Y/7MLUKRhWDuwupImsAHcqiIW4kc1Ikp1UAGxv6T0hNoH
-	 wwNRfqtxGXfD2zJ6qbj6szs7LXXQcIc3jGszddKsRVBefNdkCdjeL9SyOkgg9vlAVB
-	 dGTsf2evNJBvWIIbsOYzjxbKDy9Z3HLnEHgO/hwRvmDDLRFi2OnAQcP3gYK2XHflAe
-	 mdYEyI8biHW+g==
+	b=A5fZlyuQYc1Q1tEsjJ30MJWoTMZmsJa+wSpZ6+x2n08QBGYQOkaCO+8He/bQc/dQE
+	 N6x2nO4ZErhoYrOBeJBAubn1omKMPVTLkkDuycAmVSW5kZkUvS8CGoyL9VrGDzD3oS
+	 mpvnbDsL1lMXidqLooF53j/yX1v1lFhPf6dY1D7vGSoHfa5phhYaCSGTLv6T7mujBK
+	 N/fNZRhGtHiGJYGMe2Ug5s0zoozER49dRpQSWFr4OeFvng1EHOFSpyTssq2NazCmr3
+	 Sr5imm0DG09/mdMGNKJUiMev1lk9UvS9y5r14keUCyV3liVUJD7/HNodmktXXvFIb+
+	 QkjOZW5+uvK1Q==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
-Cc: Ben Skeggs <bskeggs@nvidia.com>,
-	Dave Airlie <airlied@redhat.com>,
-	Timur Tabi <ttabi@nvidia.com>,
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
 	Sasha Levin <sashal@kernel.org>,
-	lyude@redhat.com,
-	dakr@kernel.org,
+	robdclark@gmail.com,
+	quic_abhinavk@quicinc.com,
+	lumag@kernel.org,
 	airlied@gmail.com,
 	simona@ffwll.ch,
-	zhiw@nvidia.com,
+	quic_jesszhan@quicinc.com,
+	jun.nie@linaro.org,
+	jonathan@marek.ca,
+	linux-arm-msm@vger.kernel.org,
 	dri-devel@lists.freedesktop.org,
-	nouveau@lists.freedesktop.org,
+	freedreno@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.15 026/110] drm/nouveau/gsp: fix rm shutdown wait condition
-Date: Sun,  1 Jun 2025 19:23:08 -0400
-Message-Id: <20250601232435.3507697-26-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.14 063/102] drm/msm/dpu: don't select single flush for active CTL blocks
+Date: Sun,  1 Jun 2025 19:28:55 -0400
+Message-Id: <20250601232937.3510379-63-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250601232435.3507697-1-sashal@kernel.org>
-References: <20250601232435.3507697-1-sashal@kernel.org>
+In-Reply-To: <20250601232937.3510379-1-sashal@kernel.org>
+References: <20250601232937.3510379-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,86 +73,75 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.15
+X-stable-base: Linux 6.14.9
 Content-Transfer-Encoding: 8bit
 
-From: Ben Skeggs <bskeggs@nvidia.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-[ Upstream commit 7904bcdcf6b56602a049ed2b47282db63671fa99 ]
+[ Upstream commit e93eee524bb78f3ee4b78654d0083382f98b3d23 ]
 
-Though the initial upstreamed GSP-RM version in nouveau was 535.113.01,
-the code was developed against earlier versions.
+In case of ACTIVE CTLs, a single CTL is being used for flushing all INTF
+blocks. Don't skip programming the CTL on those targets.
 
-535.42.02 modified the mailbox value used by GSP-RM to signal shutdown
-has completed, which was missed at the time.
-
-I'm not aware of any issues caused by this, but noticed the bug while
-working on GB20x support.
-
-Signed-off-by: Ben Skeggs <bskeggs@nvidia.com>
-Reviewed-by: Dave Airlie <airlied@redhat.com>
-Reviewed-by: Timur Tabi <ttabi@nvidia.com>
-Tested-by: Timur Tabi <ttabi@nvidia.com>
-Signed-off-by: Dave Airlie <airlied@redhat.com>
+Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8550-QRD
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Patchwork: https://patchwork.freedesktop.org/patch/641585/
+Link: https://lore.kernel.org/r/20250307-dpu-active-ctl-v3-5-5d20655f10ca@linaro.org
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
 
-**YES** This commit should be backported to stable kernel trees.
-**Analysis:** **1. Nature of the Bug Fix:** The commit fixes a bug in
-the GSP-RM shutdown wait condition in the r535_gsp_fini() function at
-drivers/gpu/drm/nouveau/nvkm/subdev/gsp/r535.c:2612. The change is from:
-```c if (nvkm_falcon_rd32(&gsp->falcon, 0x040) & 0x80000000) ``` to:
-```c if (nvkm_falcon_rd32(&gsp->falcon, 0x040) == 0x80000000) ``` **2.
-Technical Impact:** - The original code used a bitwise AND operation
-(`&`) to check if bit 31 is set in the mailbox value - The fixed code
-uses an equality comparison (`==`) to check if the mailbox value is
-exactly 0x80000000 - This fixes a version compatibility issue where GSP-
-RM 535.42.02 changed the shutdown completion signal value - The bug
-could potentially cause incorrect shutdown behavior or timing issues
-**3. Backport Criteria Assessment:** - **Fixes important bug**: YES -
-This fixes a GSP-RM shutdown synchronization bug that could affect
-system stability - **Small and contained**: YES - Single line change,
-very minimal and focused - **No architectural changes**: YES - Simple
-conditional logic fix - **Minimal regression risk**: YES - The change is
-specific to GSP-RM shutdown sequence and well-understood - **Clear side
-effects**: NO - The fix has no unexpected side effects, only corrects
-the intended behavior **4. Critical Subsystem Impact:** The change
-affects the Nouveau DRM GSP (Graphics System Processor) subsystem,
-specifically the shutdown sequence. GSP is critical for modern NVIDIA
-GPU operation, and incorrect shutdown behavior could lead to system
-instability, resource leaks, or improper hardware state transitions.
-**5. Historical Context:** Looking at the similar commits provided as
-reference, all were marked "NO" for backporting because they were
-architectural preparation changes for GSP-RM support (adding `if
-(nvkm_gsp_rm(device->gsp)) return -ENODEV;` guards). This commit is
-fundamentally different - it's a targeted bug fix rather than a feature
-preparation change. **6. Stability Tree Rules Compliance:** - This is an
-important bugfix that corrects faulty synchronization logic - It has
-minimal risk of introducing regressions - The change is confined to a
-specific subsystem (nouveau GSP) - No new features are introduced The
-commit message explicitly states this was developed against earlier GSP-
-RM versions and the bug was "missed at the time" when 535.42.02 modified
-the mailbox behavior. While the author mentions being unaware of
-specific issues, incorrect shutdown synchronization in GPU drivers can
-lead to subtle but serious problems including system hangs, resource
-leaks, or corrupted GPU state.
+**YES** This commit should be backported to stable kernel trees. ##
+Analysis: **1. Clear Bug Fix Nature:** The commit fixes a functional bug
+where CTL programming was being incorrectly skipped on ACTIVE CTL
+configurations. The commit message explicitly states "Don't skip
+programming the CTL on those targets" indicating incorrect behavior was
+occurring. **2. Small and Contained Change:** The change is minimal - it
+modifies only the `dpu_encoder_phys_vid_needs_single_flush()` function
+by adding a single condition check: ```c - return phys_enc->split_role
+!= ENC_ROLE_SOLO; + return !(phys_enc->hw_ctl->caps->features &
+BIT(DPU_CTL_ACTIVE_CFG)) && + phys_enc->split_role != ENC_ROLE_SOLO; ```
+**3. Hardware-Specific Fix:** The fix addresses a specific hardware
+configuration issue for devices with `DPU_CTL_ACTIVE_CFG` feature. From
+examining the kernel code, this affects multiple SoCs including SM8150,
+SM8250, SM6150, SC7180, and others - making it a widely impacting fix.
+**4. Clear Functional Impact:** - **Before**: On ACTIVE CTL targets, the
+function incorrectly returned true for split configurations, causing CTL
+programming to be skipped - **After**: On ACTIVE CTL targets, it returns
+false, ensuring proper CTL programming occurs - **Effect**: Ensures
+display pipeline functions correctly on affected hardware **5. Tested
+Change:** The commit includes "Tested-by: Neil Armstrong
+<neil.armstrong@linaro.org> # on SM8550-QRD" indicating real hardware
+testing was performed. **6. Matches Successful Backport Pattern:** This
+commit closely matches the pattern of Similar Commits #1, #2, and #4
+(all marked YES): - Small, targeted fix (line 377 in
+`dpu_encoder_phys_vid.c:377`) - Addresses incorrect hardware behavior -
+Has clear before/after functional difference - Affects critical graphics
+subsystem functionality **7. Risk Assessment:** - **Low regression
+risk**: The change only affects the specific condition logic -
+**Targeted scope**: Only impacts ACTIVE CTL configurations -
+**Conservative fix**: Makes the logic more restrictive (requires both
+conditions to skip programming) This is a clear hardware bug fix that
+prevents display issues on affected SoCs and follows the stable tree
+criteria for important bugfixes with minimal regression risk.
 
- drivers/gpu/drm/nouveau/nvkm/subdev/gsp/r535.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/gsp/r535.c b/drivers/gpu/drm/nouveau/nvkm/subdev/gsp/r535.c
-index db2602e880062..6a964b54f69c2 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/gsp/r535.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/gsp/r535.c
-@@ -2838,7 +2838,7 @@ r535_gsp_fini(struct nvkm_gsp *gsp, bool suspend)
- 		return ret;
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c
+index abd6600046cb3..8220a4012846b 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c
+@@ -372,7 +372,8 @@ static void dpu_encoder_phys_vid_underrun_irq(void *arg)
+ static bool dpu_encoder_phys_vid_needs_single_flush(
+ 		struct dpu_encoder_phys *phys_enc)
+ {
+-	return phys_enc->split_role != ENC_ROLE_SOLO;
++	return !(phys_enc->hw_ctl->caps->features & BIT(DPU_CTL_ACTIVE_CFG)) &&
++		phys_enc->split_role != ENC_ROLE_SOLO;
+ }
  
- 	nvkm_msec(gsp->subdev.device, 2000,
--		if (nvkm_falcon_rd32(&gsp->falcon, 0x040) & 0x80000000)
-+		if (nvkm_falcon_rd32(&gsp->falcon, 0x040) == 0x80000000)
- 			break;
- 	);
- 
+ static void dpu_encoder_phys_vid_atomic_mode_set(
 -- 
 2.39.5
 
