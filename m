@@ -1,92 +1,80 @@
-Return-Path: <linux-kernel+bounces-669427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-669449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CA18AC9FA1
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Jun 2025 19:27:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 34C85AC9FFE
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Jun 2025 19:38:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B68216954F
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Jun 2025 17:27:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8393B164310
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Jun 2025 17:38:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4BA01E3DFA;
-	Sun,  1 Jun 2025 17:27:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 997DB221FD6;
+	Sun,  1 Jun 2025 17:34:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CFEpT9b7"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="BZPOJ5HA"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBFD929D0E;
-	Sun,  1 Jun 2025 17:27:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 290FF1FDE19;
+	Sun,  1 Jun 2025 17:34:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748798839; cv=none; b=FgpdceX/9gsymX3XtQdmNQ8hhSTCwLWVxOTGHJ40KmrBkGxxcGIgb0BiZ7Ii032qC6KNU6wG/FYhoXKYmZcyaHIxguqjp/k1bJrDCmZRkPivDGBwPp+3BtRrykm9lFDzHvu4QgqlwR/CtdDL0XIp6EtnjaVthqnSGVKUTdy3S6Y=
+	t=1748799265; cv=none; b=CBCCXwvHpTwwEqunWWblpjR1bw4YELsT+4dU+K1+lBekN2PxvZMVPY3tvE13B9izAm0x8L+IKFj6H/GsZBgHESwRf5B8UTV+SS0a9RCuchebBizPqjpnXFDaYFLhMzqnauc++RAHkNNfnVLZar4ZE4aDF5MaUcqqpIG1ZahDx5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748798839; c=relaxed/simple;
-	bh=0JIw9pnhtVwSmprjc3gPKxQnCvRU3b0Jw7lMThUT+j4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=l01VM6lkrXrGZCUXnWsytele2JiupYVQJZCmRfNC//onXVzViUB5O5rvi3J69RDePbQoUck9ZIJn1EhmpD0CkgTOWBu63q/2xa7to/Tjo7vfokq+BYRA1WH/SBInvUq+siwE4S81hyrxvUZv4sFnOD3kelQvWiaOr7mk0NzR5bM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CFEpT9b7; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-742c9907967so3814642b3a.1;
-        Sun, 01 Jun 2025 10:27:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748798836; x=1749403636; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=qvHjG4CO77bT7r3bkmdR5FN9ms4HdQC9iQON6aBJJ4Q=;
-        b=CFEpT9b75UdfoZ6WWASGwSe7wIwqkQ+lCD6RLcQL2nj8w1sZLF1+crkClWmwNlqBRA
-         nEcZziO+vadd9kRTrJoueRgw8209mWdWETWEqgvQu7memO0bo3y2sWSdOE/N0JCYATWE
-         sUd28aHQJpal2uyhJyknHiHVY/wcucMsvBSoCqifcFmtVsQpqLc1nH71NBPAHZdPbAiR
-         rc74+uv7wx2Q0NMKwptZDzl4Gn8pqZ3jBF/yZvoUwElI1bdFBjl74JpvTQg4xUysQm/n
-         4O+zAyPa1up6NzSgsx2b9W5borFSqBtEZXvsb+YNTWr030IWGLuxdBK9r0QKJacuM1V8
-         2tWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748798836; x=1749403636;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qvHjG4CO77bT7r3bkmdR5FN9ms4HdQC9iQON6aBJJ4Q=;
-        b=W3tzKeqgEtyGWmEGKMBOkqZBWEwVNIVj2dz3W9wf3dOy9Nj7yiIfGvlJV2M28oC+Jd
-         QGRBtNocdXiSehwC9dowzOtssFLLeckq7OSx/Wo8OvqE+MIs8KDbcJg91miQqV+AR1vD
-         3D87kJetkdDnsrrEbXu5FlVdLT0s0/fJWpnGVe0DR+gqcATiloEvU7G7qirdjHKACH3X
-         Tcp7aP/liQOuLMX6vnLEGCzBR7ieOoPrcBNd176PZ110jhKnwAxVUEViwIYGHBnHc+rn
-         lA2R3ACd+THbATwnOyV30RNaToe0/sfPXO6mezCt3iMr+61XD284HhAZ66KCHiYvKlQo
-         dKyw==
-X-Forwarded-Encrypted: i=1; AJvYcCU8ZfBXTnf0Or5NfaGImU9OeUXdSZTkziq9ksKpmEbN4goBpAK8+chaXLiE7M/ZtjkWfcLW+etG5bhRQak=@vger.kernel.org, AJvYcCV+fuGkvUFKmke1Mm2D684ZHQ8K5Evus5ws3qCBdInJ7IETyDXDaGagn/lzEhUWYnSlDrCoHryE8oKRmiNmV3UZjA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz00SAMyWflv63Bn5I+rvgAqFQmopP8izvJaV/xn9IckJZgLbzB
-	vIAHBXMoPcXO2VnGON2JQkLv1qk4Z3BoBIZ3Y2uT8ushpqm2CPuv5EGU
-X-Gm-Gg: ASbGnctoqD1dqi1bymFaWJtbFyMzt9DiJWZGFvlcQulJFQdE2j4NzD6mTswxo2oRlBV
-	+H2q1KBNWGtJDBeS9+XWymOa39BZaqmEvtXY6ALuA9+W7cJYslxD9cUFDulj+cawpfhg+SXkjWu
-	kmmNwJOqigRkxhRPEOom0ItAZ/YIXfI1TVP54NuvR27IUVN9hgwK58C2URicWmPGJjyhDv8WbVK
-	F/71i9viBe5xAaNOVvSAr9bM4Z2/hkc4g37y4pRaAWS4uAKBGpFh60ATw1/wLzytX1W+HfkeFBv
-	/NopKEDWX1CU5edvj5bCj5VWCER/XzhrhgotIpAlH8n54fCcpkPnCu+NBGQlTcX6kO81yP7tSkm
-	M1cfhWWFtntSwdWh213FCdN2kkwsxJi+C/RGuAE1Apw==
-X-Google-Smtp-Source: AGHT+IF1PiEGfKnZbZ92ZYamfQLHjj5IrW00BlwLQgui6Z4Bza85MSb7padK61VHTmmtCZM56IKM0g==
-X-Received: by 2002:a05:6a00:2301:b0:736:35d4:f03f with SMTP id d2e1a72fcca58-747d1835b73mr6725109b3a.6.1748798836019;
-        Sun, 01 Jun 2025 10:27:16 -0700 (PDT)
-Received: from howard-ubuntu.lan (c-73-202-46-50.hsd1.ca.comcast.net. [73.202.46.50])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-747afe963cdsm6168675b3a.23.2025.06.01.10.27.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 01 Jun 2025 10:27:15 -0700 (PDT)
-From: Howard Chu <howardchu95@gmail.com>
-To: acme@kernel.org
-Cc: mingo@redhat.com,
-	namhyung@kernel.org,
-	mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	peterz@infradead.org,
-	kan.liang@linux.intel.com,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Howard Chu <howardchu95@gmail.com>
-Subject: [PATCH] perf doc trace: Remove --map-dump documentation
-Date: Sun,  1 Jun 2025 10:27:11 -0700
-Message-ID: <20250601172711.714695-1-howardchu95@gmail.com>
+	s=arc-20240116; t=1748799265; c=relaxed/simple;
+	bh=l2S8GWb+y5W8OkMiqjwD9a00gezPSB4gUaUw5CbW7yQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UfgqkHFblkgioRXy3RLSJ8Prp6iywjYdWegQY+pOpeAO1lGuXj/5u9G9Xj9dAfKQVkmIYzPSOCBrvi4NEw9kYwDkREWrVQvmHhlpqERkemHAmPAEx8sxop6H+KmpMCG9mZQpfufcaWHff9ZGMUyr1hRyOnP9IagD7CrzofuBXzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=BZPOJ5HA; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 9d7309f63f0e11f0813e4fe1310efc19-20250602
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=PY+ALpqUBHRjs74wiRoQJwK5x0+HaE1qFxtkUe6SylM=;
+	b=BZPOJ5HA3FIdhH4yrcMHVZbYbxafOzazghA1349BO9ciTNxgUYiekfj9o0FuuuB1EQj/mkxOWOqhOego3okI8lcv1Zv+HIJe/So6zKrZa+AKQhB4vzbvqtVr0V25jIM7B7a3rSgYkKklhxPzc/kbYqPMQ4mTdoCe5PFqsP0mbaE=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.2.1,REQID:91dcb454-0409-489e-93c7-f7a36de8c2b5,IP:0,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:0
+X-CID-META: VersionHash:0ef645f,CLOUDID:e3315659-eac4-4b21-88a4-d582445d304a,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:-3,IP:ni
+	l,URL:99|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,
+	LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
+X-UUID: 9d7309f63f0e11f0813e4fe1310efc19-20250602
+Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw01.mediatek.com
+	(envelope-from <jason-jh.lin@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1699391817; Mon, 02 Jun 2025 01:34:05 +0800
+Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
+ MTKMBS09N2.mediatek.inc (172.21.101.94) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.39; Mon, 2 Jun 2025 01:34:02 +0800
+Received: from mtksitap99.mediatek.inc (10.233.130.16) by
+ mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1258.39 via Frontend Transport; Mon, 2 Jun 2025 01:34:02 +0800
+From: Jason-JH Lin <jason-jh.lin@mediatek.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>,
+	Chun-Kuang Hu <chunkuang.hu@kernel.org>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, Mauro Carvalho Chehab
+	<mchehab@kernel.org>
+CC: Matthias Brugger <matthias.bgg@gmail.com>, Jason-JH Lin
+	<jason-jh.lin@mediatek.com>, Nancy Lin <nancy.lin@mediatek.com>, Singo Chang
+	<singo.chang@mediatek.com>, Paul-PL Chen <paul-pl.chen@mediatek.com>, Moudy
+ Ho <moudy.ho@mediatek.com>, Xavier Chang <xavier.chang@mediatek.com>,
+	Xiandong Wang <xiandong.wang@mediatek.com>, Sirius Wang
+	<sirius.wang@mediatek.com>, Fei Shao <fshao@chromium.org>, Chen-yu Tsai
+	<wenst@chromium.org>, <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<dri-devel@lists.freedesktop.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-media@vger.kernel.org>
+Subject: [PATCH v6 00/20] Add GCE support for MT8196
+Date: Mon, 2 Jun 2025 01:31:32 +0800
+Message-ID: <20250601173355.1731140-1-jason-jh.lin@mediatek.com>
 X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -95,38 +83,111 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK: N
 
-The --map-dump option was removed in (5e6da6be3082: "perf trace: Migrate
-BPF augmentation to use a skeleton"), this patch removes its remaining
-documentation.
+This patch series adds support for the MediaTek MT8196 SoC in the CMDQ
+driver and related subsystems. The changes include adding compatible
+names and iommus property, updating driver data to accommodate hardware
+changes, and modifying the usage of CMDQ APIs to support non-subsys ID
+hardware.
 
-Fixes: (5e6da6be3082: "perf trace: Migrate BPF augmentation to use a skeleton")
-
-Signed-off-by: Howard Chu <howardchu95@gmail.com>
 ---
- tools/perf/Documentation/perf-trace.txt | 8 --------
- 1 file changed, 8 deletions(-)
 
-diff --git a/tools/perf/Documentation/perf-trace.txt b/tools/perf/Documentation/perf-trace.txt
-index c1fb6056a0d3..973fede403a0 100644
---- a/tools/perf/Documentation/perf-trace.txt
-+++ b/tools/perf/Documentation/perf-trace.txt
-@@ -238,14 +238,6 @@ the thread executes on the designated CPUs. Default is to monitor all CPUs.
- 	the same beautifiers used in the strace-like enter+exit lines to augment the
- 	tracepoint arguments.
- 
----map-dump::
--	Dump BPF maps setup by events passed via -e, for instance the augmented_raw_syscalls
--	living in tools/perf/examples/bpf/augmented_raw_syscalls.c. For now this
--	dumps just boolean map values and integer keys, in time this will print in hex
--	by default and use BTF when available, as well as use functions to do pretty
--	printing using the existing 'perf trace' syscall arg beautifiers to map integer
--	arguments to strings (pid to comm, syscall id to syscall name, etc).
--
- --force-btf::
- 	Use btf_dump to pretty print syscall argument data, instead of using hand-crafted pretty
- 	printers. This option is intended for testing BTF integration in perf trace. btf_dump-based
+Change in v6:
+1. Move the removal patches to the end of series.
+2. Fix build error for cmdq_pkt_jump_rel_temp patch.
+
+Change in RESEND v5:
+1. Separate the removal of cmdq_get_shift_pa() from [PATCH v5 03/19] to a
+   single patch [PATCH RESEND v5 10/20].
+
+Change in v5:
+1. Rebase on tag: next-20250424 + patch [1].
+2. Split adding driver data for MT8196 patch to 3 independent patch
+   and add more detail commit message to each patch.
+3. Refine passing shift_pa as the parameter in API to storing it into
+   the cmdq_pkt.
+4. Refine DMA address potential issue in cmdq mailbox driver.
+5. Change the mminfra_offset related mbox API to passing it by cmdq_pkt.
+6. Add new cmdq_pkt_write_pa() and cmdq_pkt_write_subsys() APIs to
+   replace the cmdq_pkt_write().
+
+[1] mailbox: mtk-cmdq: Refine GCE_GCTL_VALUE setting
+- https://patchwork.kernel.org/project/linux-mediatek/patch/20250421035650.441383-1-jason-jh.lin@mediatek.com/
+
+Change in v4:
+1. Remove dt-binding header and add a gce header in dts folder.
+2. Remove dot in sign-off name.
+3. Change addr type from u32 to dma_addr_t for cmdq_reg_shift_addr() and
+   cmdq_reg_revert_addr().
+
+Change in v3:
+1. Merge 2 dt-bindings pathes together and add more detail commit message.
+2. Change type u32 to phys_addr_t for pa_base of struct cmdq_client_reg.
+3. Remove cmdq_subsys_is_valid() and subsys_num in CMDQ driver.
+4. Add CMDQ_SUBSYS_INVALID to check subsys instead of using
+   cmdq_subsys_is_invalid().
+5. Make use of CMDQ_THR_SPR0 define to the parameter of CMDQ APIs.
+6. Rebase on the new MACRO in mtk-mdp3-comp.h.
+
+Change in v2:
+1. Remove the constant and fix warning in dt-bindings.
+2. Remove the pa_base parameter of CMDQ APIs and related modification.
+3. Move subsys checking to client drivers and use 2 alternative
+   CMDQ APIs to achieve the same functionality.
+
+---
+
+Jason-JH Lin (20):
+  arm64: dts: mediatek: Add GCE header for MT8196
+  mailbox: mtk-cmdq: Refine DMA address handling for the command buffer
+  mailbox: mtk-cmdq: Add cmdq private data to cmdq_pkt for generating
+    instruction
+  soc: mediatek: mtk-cmdq: Add cmdq_get_mbox_priv() in cmdq_pkt_create()
+  soc: mediatek: mtk-cmdq: Add cmdq_pkt_jump_rel_temp() for removing
+    shift_pa
+  mailbox: mtk-cmdq: Add GCE hardware virtualization configuration
+  mailbox: mtk-cmdq: Add mminfra_offset configuration for DRAM
+    transaction
+  mailbox: mtk-cmdq: Add driver data to support for MT8196
+  soc: mediatek: mtk-cmdq: Add pa_base parsing for hardware without
+    subsys ID support
+  soc: mediatek: mtk-cmdq: Add new APIs to replace cmdq_pkt_write() and
+    cmdq_pkt_write_mask()
+  soc: mediatek: mtk-cmdq: Add mminfra_offset adjustment for DRAM
+    addresses
+  soc: mediatek: Add programming flow for unsupported subsys ID hardware
+  drm/mediatek: Add programming flow for unsupported subsys ID hardware
+  media: platform: mtk-mdp3: Add programming flow for unsupported subsys
+    ID hardware
+  media: platform: mtk-mdp3: Change cmdq_pkt_jump_rel() to
+    cmdq_pkt_jump_rel_temp()
+  soc: mediatek: mtk-cmdq: Remove shift_pa parameter from
+    cmdq_pkt_jump()
+  media: platform: mtk-mdp3: Use cmdq_pkt_jump_rel() without shift_pa
+  soc: mediatek: mtk-cmdq: Remove cmdq_pkt_jump() and
+    cmdq_pkt_jump_rel_temp()
+  soc: mediatek: mtk-cmdq: Remove cmdq_pkt_write() and
+    cmdq_pkt_write_mask()
+  mailbox: mtk-cmdq: Remove unsued cmdq_get_shift_pa()
+
+ arch/arm64/boot/dts/mediatek/mt8196-gce.h     | 612 ++++++++++++++++++
+ drivers/gpu/drm/mediatek/mtk_ddp_comp.c       |  24 +-
+ drivers/mailbox/mtk-cmdq-mailbox.c            | 115 +++-
+ .../platform/mediatek/mdp3/mtk-mdp3-cmdq.c    |  16 +-
+ .../platform/mediatek/mdp3/mtk-mdp3-comp.h    |  70 +-
+ .../platform/mediatek/mdp3/mtk-mdp3-core.c    |   2 -
+ .../platform/mediatek/mdp3/mtk-mdp3-core.h    |   1 -
+ drivers/soc/mediatek/mtk-cmdq-helper.c        |  68 +-
+ drivers/soc/mediatek/mtk-mmsys.c              |  12 +-
+ drivers/soc/mediatek/mtk-mutex.c              |   8 +-
+ include/linux/mailbox/mtk-cmdq-mailbox.h      |  19 +-
+ include/linux/soc/mediatek/mtk-cmdq.h         |  83 ++-
+ 12 files changed, 941 insertions(+), 89 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt8196-gce.h
+
 -- 
-2.45.2
+2.43.0
 
 
