@@ -1,103 +1,114 @@
-Return-Path: <linux-kernel+bounces-669337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-669339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D001AC9E37
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Jun 2025 11:34:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0BF2AC9E3C
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Jun 2025 11:36:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2D8018979BF
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Jun 2025 09:35:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAF213B9FA2
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Jun 2025 09:35:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDAD31A38E3;
-	Sun,  1 Jun 2025 09:34:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68E6D1A38E1;
+	Sun,  1 Jun 2025 09:35:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HxnsHh3E"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="EhP9TXEw"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DF6684D34;
-	Sun,  1 Jun 2025 09:34:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80D0B84D34;
+	Sun,  1 Jun 2025 09:35:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748770486; cv=none; b=LV6JAdml2UPhBDj0tf/UXxRYB4EArJ22tZlBs561PWDZ68kSgHGYAK9LqaSXKJXHnbmSIeLOg0CZTKwKmu323X9ZXDi4fEIuxQMc0ht3jExsK6Dn0OpZTj9izc6S6qTKUqCfU+C3Vfp9d4c83+odWvhCynwA50UshBJfhgRk/l0=
+	t=1748770555; cv=none; b=ncQSZzUmLDqZ2pfzvHenfbw8WMZa72Cphc6B58AL/4nfy50giI9SRGpUhVuny4xxMM+FUJubqMsQprdMTsviRD6j+xM57cYbiGcr54IuNtuKRqeTwQY/etwr/hchKP3zvsm8Roe+X28hSHJ5BvcwufXqZ6XMXSbKijxPlXcEMVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748770486; c=relaxed/simple;
-	bh=PANr7s73/zPOm8/gG8PUhwbjQwKY387Tz5rVkcAr3vA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Gz6k2f5Y3OjlntFg+MzBpPgnxJ8/joJUGKswJBPB/HgWkCpXucCshO20odyjp50M4E5ojAjuFt0TOuBIG29JTM+82su0dzUowdSHS0t/J95AyX6kHyZUsQQ6x9Btd/k2fG5ZvIIbfqbvuI+nV3u/+gPVidX52LmTq4ofWQMUVHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HxnsHh3E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 024ACC4CEE7;
-	Sun,  1 Jun 2025 09:34:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748770485;
-	bh=PANr7s73/zPOm8/gG8PUhwbjQwKY387Tz5rVkcAr3vA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=HxnsHh3EbRndyteVnA5F7ckUPN8zQ0aTaNqujSKEsZIrs9hgvcpdihXw7MDkYiMi0
-	 h/+RLkGD5nG9oWxHaxlAtYISJRToI406YuwLloTXCz7xp70i0bIVLdCQwfJm3T50qD
-	 dxBOduXotNTTU1mIkUGvD1MJxW2uLM4xYBB1qDKXWXyj9i2cK0N8pGeM+VlvOdme1k
-	 BIqoGuKfpxsSym6RkyicU+XlvlKFcKzo/EAx/F45AYP0EeughVZF7em9YJN9+C7s0U
-	 WO0ZcoaXtO9TVQx6g9mFNiGWU/59zSZ72k+iL5YKKqHqBu7fejwX0Altb7OZkctQRW
-	 BS2UuWxcIG4Rg==
-Date: Sun, 1 Jun 2025 11:34:38 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>, Albert Esteve
- <aesteve@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang
- <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Eugenio
- =?UTF-8?B?UMOpcmV6?= <eperezma@redhat.com>, gurchetansingh@google.com,
- daniel.almeida@collabora.com, adelva@google.com, changyeon@google.com,
- nicolas.dufresne@collabora.com, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, virtualization@lists.linux.dev, Alexandre
- Courbot <acourbot@google.com>
-Subject: Re: [PATCH v3] media: add virtio-media driver
-Message-ID: <20250601113425.4d5a3d89@foz.lan>
-In-Reply-To: <CANiDSCsmbiveo4GHX54_q7-1CeKiDAVaGnb8+jsCybM+pyA7Fw@mail.gmail.com>
-References: <20250412-virtio-media-v3-1-97dc94c18398@gmail.com>
-	<CANiDSCsmbiveo4GHX54_q7-1CeKiDAVaGnb8+jsCybM+pyA7Fw@mail.gmail.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1748770555; c=relaxed/simple;
+	bh=RJKCaPiWIDE8bOx2/4ctR5l64HsBPwzlyJLVNSxp/g0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Qa2sJ6ctTN/6jdAqc68SS4+OdwuHFnuBpcRWlktj3n+xTNE21XGLv0miukFi/OqQdAVJwGK7/EwfzsqBFkQUJCXFlcu0NeK6VuQHV0yjgM053HtJANIiHaWED188puNeQX9Yvr82fdbLvTce2YWtWpSEKnj3Et2LGMqxLPIwJHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=EhP9TXEw; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 41B6440E01B0;
+	Sun,  1 Jun 2025 09:35:42 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id zHX6jAr_AudW; Sun,  1 Jun 2025 09:35:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1748770538; bh=534HHIEC23nasQx/1enxYyPwoTEAc9KU8mA7uY/u/Dw=;
+	h=Date:From:To:Cc:Subject:From;
+	b=EhP9TXEwnZPnTaYxQm7AIaFOD9abj8+1DyQdWrcsXcK2HKenEzJpKS7A8YmJ+SK8w
+	 BRyrzVLBVC5FLR+qOJE4B8qQWCVfe8yZnXR1U+joJUvbFGF+DLPmUlVlNdGzNKCQYa
+	 ed80dqgvIig+v5oTyF/nKcTWBxbxOfWKoXzDq7+ZxpHL2SMngjT86D3z3eHj5ECvh+
+	 BUvjgI9hx9+hoH8wqNr4lrlN1CGaJS7LdK/tJD0Bq6uQUp3tx0HWLzVKsdVJzuvrkF
+	 clpCnkWC2Vne8E8Yc2Bz5sarvgFF2xifiTUPdSB9EGrErL30XFScbNS+Bec5s/JwFt
+	 wSpXI0c+YfNN0r4vqr9PyMv9QvMdETp1E2fpEbeNyQdTidvGTbiWRLZCsDmy4WPI59
+	 Fc8J6fbVARZ6BOy0gLTQxeVLbkYlzeGaJmlB3Vlcdj+vUs4Rbw5Z/sGgu8SN6HjfBa
+	 qozo1Z3zbmA5d9zz38MMDYpfoFXMRSOPkb7Vutu10qhzPYJfWmFW8kcW6F8VRGjY3L
+	 6HvC1V7xU+/vmyYlZxL+9i3E5H4tlSTCMMI1h+ybn6OxPcPfvZGsmxs547pU9NatK4
+	 Yq7TKNIzFMlvBMtbpwWntFEqnsH8ngUuNl5E7SdlKW9MhU6NkRCNfIJBCK9U660uAX
+	 ezeA+92SBCZaQu53f0I0ISWY=
+Received: from zn.tnic (p57969c58.dip0.t-ipconnect.de [87.150.156.88])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A480740E01AD;
+	Sun,  1 Jun 2025 09:35:35 +0000 (UTC)
+Date: Sun, 1 Jun 2025 11:35:29 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-edac <linux-edac@vger.kernel.org>,
+	lkml <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] EDAC urgent for v6.16-rc1
+Message-ID: <20250601093529.GAaDwe4Ucse6iANlLb@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-Em Wed, 28 May 2025 18:23:02 +0200
-Ricardo Ribalda <ribalda@chromium.org> escreveu:
+Hi Linus,
 
-> > +static int scatterlist_builder_add_userptr(struct scatterlist_builder *builder,
-> > +                                          unsigned long userptr,
-> > +                                          unsigned long length)
-> > +{
-> > +       int ret;
-> > +       int nents;  
-> Could you initialize nents and sg_list?
-> old versions of gcc are a bit picky
-> https://gitlab.freedesktop.org/linux-media/users/ribalda/-/jobs/77042562#L4381
+please pull a urgent EDAC fix for v6.16-rc1.
 
-Please don't. In this specific case, ret is always initialized:
+Thx.
 
-> +       struct virtio_media_sg_entry *sg_list;
-> +
-> +       ret = __scatterlist_builder_add_userptr(builder, userptr, length,
-> +                                               &sg_list, &nents);
+---
 
-nents and sg_list may or may not be initialized at the function,
-but initializing it is wrong, as, when they are not initialized, the
-ret code shall catch it (and if not, we *do* want gcc to warn).
+The following changes since commit ada1b0436b5a290923b072b2eb0368a7869bf680:
 
-So, if our CI is warning about that due to an old version, please upgrade 
-the version at the CI runner.
+  Merge tag 'edac_updates_for_v6.16' of git://git.kernel.org/pub/scm/linux/kernel/git/ras/ras (2025-05-27 10:13:06 -0700)
 
-Regards,
-Mauro
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/ras/ras.git tags/edac_urgent_for_v6.16_rc1
+
+for you to fetch changes up to e5ef4cd2a47f27c0c9d8ff6c0f63a18937c071a3:
+
+  EDAC/altera: Use correct write width with the INTTEST register (2025-05-29 17:38:55 +0200)
+
+----------------------------------------------------------------
+Limit a register write width in altera_edac to avoid hw errors
+
+----------------------------------------------------------------
+Niravkumar L Rabara (1):
+      EDAC/altera: Use correct write width with the INTTEST register
+
+ drivers/edac/altera_edac.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 
-Thanks,
-Mauro
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
