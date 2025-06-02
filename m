@@ -1,69 +1,72 @@
-Return-Path: <linux-kernel+bounces-670429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAF20ACAE4C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 14:52:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32918ACAE57
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 14:56:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9E7717986F
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 12:52:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B93DF1BA0009
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 12:56:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45BE821ABC5;
-	Mon,  2 Jun 2025 12:52:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34D6721C176;
+	Mon,  2 Jun 2025 12:56:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=norik.com header.i=@norik.com header.b="cWqOLWpt"
-Received: from cpanel.siel.si (cpanel.siel.si [46.19.9.99])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AuTUU2ET"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E08D215F6B;
-	Mon,  2 Jun 2025 12:52:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.19.9.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9043B21B9F5
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 12:56:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748868739; cv=none; b=ZX4t6jqKPVnyjieDZCPebhighPHhGCSPJI9p8ponK6eITP9oAsPG9+0aScJjLwdx9S/+RyVRunlVsqZHJ0B2sgLRMZjJtODnjRpTwxktmaxswbkjbMfguu5Bs7pd3aTqNfdXs/cg7B5lGUlWfiW34cyyAOtZzggmLSJpO4uzmFo=
+	t=1748868960; cv=none; b=hJRcNp9VADUHLKyQWLq2x1882HacDDlQYuWhVyjpgn29fl0NPBsMb3NkfQsdylz+CxbVuF453koAR7pr01Xyob7N7V6Stw4DcZ3cHgZk+ufthl6yUd0NlZwE4D0u9hx+zVwAF1RQ03QBT4Jo3kOOujM0FgacXZMn0Am+tb5LwWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748868739; c=relaxed/simple;
-	bh=kLIQLvncsrMXNhkMSXPH1bKlaURjWeZCyUZk3Ef1v6I=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EsPiN97/xTc97B4OAGtwqI34rTCG29rN9KU38cSIXX33Sn0qx7EKdOHLgZVytx+IngzcsabnSfVZZMwMAXhB52jyiOHFcShH5K3eahNK76B+Jy6Z+2paG7dzmBEVY30iqfckm3X5WuodmmccIHjPlsQ65+uCS+v3hdafIuR/b1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com; spf=pass smtp.mailfrom=norik.com; dkim=pass (2048-bit key) header.d=norik.com header.i=@norik.com header.b=cWqOLWpt; arc=none smtp.client-ip=46.19.9.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=norik.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=norik.com;
-	s=default; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:
-	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=ZxhTgCLygSpRzZ9PzHb6ECFgejGwUE72Etj5ELI2Wgw=; b=cWqOLWptPRZS2apnyR7vYHWdOR
-	2s8bFDL8T/eRFZt8GpEJ7XYzh7n9b0DZfcBvXJ1oeFnwupUw1lE2wh11Lrs/lGvvdklnQ4+sGT/2b
-	skDo4BHK4n7cF129X0xlvBDh881I07pno4lsiefN7kUyinnV/hjBqZ+WEoHIkClcElMOzXgdVhq7L
-	QjwcRGB6NO/g+NZltYJJmfqUHpeWl/F2Myi1/J4N+3BiGYxorKLMfSGyGebeIB5E+YACumUNjp9mw
-	YJSbXAbxqA0jiYMmtw5bbdkMKKYdrruQxe8GEEl+5GVIE3WImlFkf6dW9cW+RUF1XbSOEYoK/gXBT
-	EshVYq/g==;
-Received: from 89-212-21-243.static.t-2.net ([89.212.21.243]:56998 helo=localhost.localdomain)
-	by cpanel.siel.si with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <primoz.fiser@norik.com>)
-	id 1uM4e8-007eqG-2L;
-	Mon, 02 Jun 2025 14:52:08 +0200
-From: Primoz Fiser <primoz.fiser@norik.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>
-Cc: devicetree@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	upstream@lists.phytec.de
-Subject: [PATCH] arm64: dts: freescale: imx93-phyboard-nash: Move ADC vref to SoM
-Date: Mon,  2 Jun 2025 14:52:07 +0200
-Message-Id: <20250602125207.2265222-1-primoz.fiser@norik.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1748868960; c=relaxed/simple;
+	bh=1y1k9L6v273vVnANqw0hHe3EnLWOX+Fa7Jbly59n7Q8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Ugim5W8F7FzMDJBdAlXoixAO1Nb8cJD2fXTjEaAS878OHI4oiapQfBFvyq9HN2nL7v35B7/5o7k56llSX82lqQMLlQknult+slnMcQibql5XjYpg/zAaXPqxoLom18pGZqBmfKR7U/BJk8bH8VtLi2K1A4Ch+L7nHCK6nu/zGCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AuTUU2ET; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F300EC4CEEB;
+	Mon,  2 Jun 2025 12:55:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748868960;
+	bh=1y1k9L6v273vVnANqw0hHe3EnLWOX+Fa7Jbly59n7Q8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=AuTUU2ETaC4zcMj2e9medq9DpK1kpQ1Z4GptW+VZfh+F0niL2wttEvT2MLo6mUH9Q
+	 iGtoKWqYgvlwP4M7vRgYcNy/bF67fKmEGd3PgJnJ3Qaibu2tOZmVKPkFi7v1InnG+i
+	 GhvVjUkiwmmDy9oxSFWraVNO2/03Fqx/O5Agz6uudV1u8Swa8LxepWWJFzShmB65z+
+	 F7OLADiYqScR7qVbLd/uoL6wlfQZGzMaquoiRNPN5UeqelmD+GzGJTFxysHmv96RMu
+	 7KSSKOYguLx5Fv7RmZS4a1rkxSKLwqWi6e5tQMYtSlFLrY4qIase30Aa26UqS8uG7h
+	 icbv4+ZA/omhQ==
+Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
+	(envelope-from <mchehab+huawei@kernel.org>)
+	id 1uM4hV-000000008bf-0Wcl;
+	Mon, 02 Jun 2025 14:55:37 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Igor Mammedov <imammedo@redhat.com>,
+	"Michael S . Tsirkin" <mst@redhat.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Shiju Jose <shiju.jose@huawei.com>,
+	qemu-arm@nongnu.org,
+	qemu-devel@nongnu.org,
+	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	=?UTF-8?q?Philippe=20Mathieu-Daud=C3=A9?= <philmd@linaro.org>,
+	Ani Sinha <anisinha@redhat.com>,
+	Eduardo Habkost <eduardo@habkost.net>,
+	Marcel Apfelbaum <marcel.apfelbaum@gmail.com>,
+	Peter Maydell <peter.maydell@linaro.org>,
+	Shannon Zhao <shannon.zhaosl@gmail.com>,
+	Yanan Wang <wangyanan55@huawei.com>,
+	Zhao Liu <zhao1.liu@intel.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v10 12/26] acpi/generic_event_device: add logic to detect if HEST addr is available
+Date: Mon,  2 Jun 2025 14:52:30 +0200
+Message-ID: <20250602122244.081a1960@imammedo.users.ipa.redhat.com>, Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250530221810.694ce02e@foz.lan>
+References: <20250530221810.694ce02e@foz.lan>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,81 +74,99 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - cpanel.siel.si
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - norik.com
-X-Get-Message-Sender-Via: cpanel.siel.si: authenticated_id: primoz.fiser@norik.com
-X-Authenticated-Sender: cpanel.siel.si: primoz.fiser@norik.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-Move configuration for ADC voltage reference from board DTS to a SoM
-include file. The SoC ADC reference voltage is connected to a "VDDA_1V8"
-voltage node and supplied by the PMIC's BUCK5 regulator. The reference
-voltage is thus defined by the SoM and cannot be changed by the carrier
-board design and as such belongs into the SoM include file.
+Create a new property (x-has-hest-addr) and use it to detect if
+the GHES table offsets can be calculated from the HEST address
+(qemu 10.0 and upper) or via the legacy way via an offset obtained
+from the hardware_errors firmware file.
 
-Moreover, with this in place, customers designing own carrier boards can
-simply include imx93-phycore-som.dtsi and enable adc1 in their own DTS
-without the need to define dummy ADC vref regulator themselves anymore.
-
-Signed-off-by: Primoz Fiser <primoz.fiser@norik.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Reviewed-by: Igor Mammedov <imammedo@redhat.com>
 ---
- .../boot/dts/freescale/imx93-phyboard-nash.dts      |  8 --------
- .../arm64/boot/dts/freescale/imx93-phycore-som.dtsi | 13 +++++++++++++
- 2 files changed, 13 insertions(+), 8 deletions(-)
+v10:
+- rebased on the top of upstream
 
-diff --git a/arch/arm64/boot/dts/freescale/imx93-phyboard-nash.dts b/arch/arm64/boot/dts/freescale/imx93-phyboard-nash.dts
-index e1c9aa77c000..475913cf0cb9 100644
---- a/arch/arm64/boot/dts/freescale/imx93-phyboard-nash.dts
-+++ b/arch/arm64/boot/dts/freescale/imx93-phyboard-nash.dts
-@@ -53,18 +53,10 @@ reg_vcc_1v8: regulator-vcc-1v8 {
- 		regulator-max-microvolt = <1800000>;
- 		regulator-min-microvolt = <1800000>;
- 	};
--
--	reg_vref_1v8: regulator-adc-vref {
--		compatible = "regulator-fixed";
--		regulator-name = "VREF_1V8";
--		regulator-min-microvolt = <1800000>;
--		regulator-max-microvolt = <1800000>;
--	};
+ hw/acpi/generic_event_device.c |  2 ++
+ hw/arm/virt-acpi-build.c       | 18 ++++++++++++++++--
+ hw/core/machine.c              |  2 ++
+ 3 files changed, 20 insertions(+), 2 deletions(-)
+
+diff --git a/hw/acpi/generic_event_device.c b/hw/acpi/generic_event_device.c
+index d292f61b4e41..3cf9dab0d01a 100644
+--- a/hw/acpi/generic_event_device.c
++++ b/hw/acpi/generic_event_device.c
+@@ -318,6 +318,8 @@ static void acpi_ged_send_event(AcpiDeviceIf *adev, AcpiEventStatusBits ev)
+ 
+ static const Property acpi_ged_properties[] = {
+     DEFINE_PROP_UINT32("ged-event", AcpiGedState, ged_event_bitmap, 0),
++    DEFINE_PROP_BOOL("x-has-hest-addr", AcpiGedState,
++                     ghes_state.use_hest_addr, false),
  };
  
- /* ADC */
- &adc1 {
--	vref-supply = <&reg_vref_1v8>;
- 	status = "okay";
+ static const VMStateDescription vmstate_memhp_state = {
+diff --git a/hw/arm/virt-acpi-build.c b/hw/arm/virt-acpi-build.c
+index da3ebf403ef9..3126234e657d 100644
+--- a/hw/arm/virt-acpi-build.c
++++ b/hw/arm/virt-acpi-build.c
+@@ -893,6 +893,10 @@ static const AcpiNotificationSourceId hest_ghes_notify[] = {
+     { ACPI_HEST_SRC_ID_SYNC, ACPI_GHES_NOTIFY_SEA },
  };
  
-diff --git a/arch/arm64/boot/dts/freescale/imx93-phycore-som.dtsi b/arch/arm64/boot/dts/freescale/imx93-phycore-som.dtsi
-index 0ea61841e591..26bd801a49bb 100644
---- a/arch/arm64/boot/dts/freescale/imx93-phycore-som.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx93-phycore-som.dtsi
-@@ -46,6 +46,19 @@ led-0 {
- 			linux,default-trigger = "heartbeat";
- 		};
- 	};
-+
-+	reg_vdda_1v8: regulator-vdda-1v8 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VDDA_1V8";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		vin-supply = <&buck5>;
-+	};
++static const AcpiNotificationSourceId hest_ghes_notify_10_0[] = {
++    { ACPI_HEST_SRC_ID_SYNC, ACPI_GHES_NOTIFY_SEA },
 +};
 +
-+/* ADC */
-+&adc1 {
-+	vref-supply = <&reg_vdda_1v8>;
- };
+ static
+ void virt_acpi_build(VirtMachineState *vms, AcpiBuildTables *tables)
+ {
+@@ -947,15 +951,25 @@ void virt_acpi_build(VirtMachineState *vms, AcpiBuildTables *tables)
  
- /* Ethernet */
+     if (vms->ras) {
+         AcpiGedState *acpi_ged_state;
++        static const AcpiNotificationSourceId *notify;
++        unsigned int notify_sz;
+         AcpiGhesState *ags;
+ 
+         acpi_ged_state = ACPI_GED(vms->acpi_dev);
+         ags = &acpi_ged_state->ghes_state;
+         if (ags) {
+             acpi_add_table(table_offsets, tables_blob);
++
++            if (!ags->use_hest_addr) {
++                notify = hest_ghes_notify_10_0;
++                notify_sz = ARRAY_SIZE(hest_ghes_notify_10_0);
++            } else {
++                notify = hest_ghes_notify;
++                notify_sz = ARRAY_SIZE(hest_ghes_notify);
++            }
++
+             acpi_build_hest(ags, tables_blob, tables->hardware_errors,
+-                            tables->linker, hest_ghes_notify,
+-                            ARRAY_SIZE(hest_ghes_notify),
++                            tables->linker, notify, notify_sz,
+                             vms->oem_id, vms->oem_table_id);
+         }
+     }
+diff --git a/hw/core/machine.c b/hw/core/machine.c
+index c3f3a5020d0b..aa90a83d8c23 100644
+--- a/hw/core/machine.c
++++ b/hw/core/machine.c
+@@ -35,10 +35,12 @@
+ #include "hw/virtio/virtio-pci.h"
+ #include "hw/virtio/virtio-net.h"
+ #include "hw/virtio/virtio-iommu.h"
++#include "hw/acpi/generic_event_device.h"
+ #include "audio/audio.h"
+ 
+ GlobalProperty hw_compat_10_0[] = {
+     { "scsi-hd", "dpofua", "off" },
++    { TYPE_ACPI_GED, "x-has-hest-addr", "false" },
+ };
+ const size_t hw_compat_10_0_len = G_N_ELEMENTS(hw_compat_10_0);
+ 
 -- 
-2.34.1
+2.49.0
 
 
