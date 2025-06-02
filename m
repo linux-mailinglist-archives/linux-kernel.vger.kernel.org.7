@@ -1,134 +1,114 @@
-Return-Path: <linux-kernel+bounces-670657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A959ACB51B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 16:59:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3537FACB503
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 16:58:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4EC0A211A1
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 14:50:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18ED4194793B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 14:52:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67D782147E7;
-	Mon,  2 Jun 2025 14:45:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86CAC22D9ED;
+	Mon,  2 Jun 2025 14:46:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="SqUXdBcl"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="SF6yYloj"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0E3F22A1E6
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 14:45:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22A6322ACF3
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 14:46:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748875537; cv=none; b=V5fCKzjIhJ4TZffN063/jHh4KXhR0M3wynSR6z/Po0TdnQFMcfss8MgT5ybk6YFEwgMGR54XEOxn2WIpPqYesji3m7aSJ5TDkhbabakbpsX1GG1ff3MJhw4C3w/eHY5DUBd/hJTIS5QSIodL2TsP1WD+hGIh4bFyBcPwTrWHfgY=
+	t=1748875582; cv=none; b=mD4gjvC5NZUcT6T5JjZyTn6KbtR4i3DGgDadZcCTZ/T004E/QC+OsKqorpYEDZshYec8BmnTc55GI6+PKMo4mgwyPT3zXFr1n/SiYfGH3HY62CqQzCfX2M+eij3vz4xJ2choeYLjbkFA1H5WIRkfLivCE+d9LBHXM5YPu8as57s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748875537; c=relaxed/simple;
-	bh=qf8xhx/P8U6G8/9ptr04NOdlpjybtwrNiRY9oxiFgCo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mgHuktr11kSfjHN01OxBRQdwQIZGG1nf4Q6rJEhwEDCtXKLSR2SaWZXbqwQDHtCbn4L9PnVu85hoXUkvRQfi4VzxkiP/H6fNypBIYJBf8u4oLYRs4Ni2TWakEqVvb9pgT7nuCxSxvSB04Tlzelm0hXXqfaTqUXhQQ+AFAKkEVnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=SqUXdBcl; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3a5058d46ceso803540f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jun 2025 07:45:35 -0700 (PDT)
+	s=arc-20240116; t=1748875582; c=relaxed/simple;
+	bh=BMdmqxyCVbd7fEc++ql37zNwaBo1D8/TV+gOsCFIGWs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=C3YN3NK0m5VP56aUj3SVFBUBgGowwWnZfQWkVKfJPP2ks9A6RwLTcllMUWKY/0Zy3DEiofCr8tNx5fectTh2aRsdzXrLCWXmz4uBkaHAqw9jwBo6vXuAq4V2qtFLxo88j21mcP3QTSO4AVmOmiGdO4wGM8opX2oKfrFR9NDEf4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=SF6yYloj; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-606741e8e7cso1355747a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jun 2025 07:46:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1748875534; x=1749480334; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qf8xhx/P8U6G8/9ptr04NOdlpjybtwrNiRY9oxiFgCo=;
-        b=SqUXdBclmE5O6zjByqrDF5y6WZUKgd5oCUClVCr1PU/WT5pvhHGAcNtGfrq2onZRwX
-         0uFfUkXEhwN9lxbIrn8SxKwkmjYyL6fSh45cAEKVxTr7DU2+QnxJK7hYLBK1Kj2r1kxJ
-         PcEepwIisICvcGqvHem7trQR7I6rMAEBT1FYYq/ZxmPApKORDS9Scg4EGvWW9BnLGdLF
-         RNYI/8AOIIO/hr61h2iatoXsGjGpHZS8orBmtlfj7Ivysi93Za8SWvyhbbD0ZgHrOLbN
-         2B+Sq3Gaf0MbpLVpC5gl2nb7ASFDTz0S/6HOzOSDaO0fQSPYvOqFjlpLq50CWlkPQdKu
-         KEhQ==
+        d=linux-foundation.org; s=google; t=1748875576; x=1749480376; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Cg0dwJvYfbYUNtSY86lpjPZ26U71B5eHF51TBSSqPe4=;
+        b=SF6yYlojOixJbBBhIxUACxynoF+Ykc+9DyX65vtQ3Lhl/X5Io8anAasHAL50IOwwDK
+         B9gqP9+TGWQDY9+YPCj/dfBj7SeBHS7WCv0NtkeOdlNGO7HcRrUM/muyIMZ64yJWs+f0
+         RqtkoZ+a1Tl4xCPOpZpsq+yfgH4mR6xYdK67I=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748875534; x=1749480334;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qf8xhx/P8U6G8/9ptr04NOdlpjybtwrNiRY9oxiFgCo=;
-        b=MKL0I+tEJDwnOeY6iyAfPwQM1pTzgeo5Wcvx6JlkVAPYSYkzvltOI2YU3/ABgHuyQ0
-         qqenU7/GbpgrN0OnH7yj/15tt5NIBzfnUHLsJZiiTpF6YjBlZraWIhof8+gmSOw+T5mM
-         s8w0IyYGWdFGrZPqCqBnXvjffPDKaq9E0dBJfDIT7YZ5VxvByPmLanW8jioqT3ZvM54G
-         JpKKVg5l/dC0VLP1MEHvIpkmkfSUXp0f5tEIqMrvd1L47eki2B/vQNxyi7q7NXMH6aOM
-         S5kNK9f1ZVV9E40K1zKwTa+N7FdscOlG7gWfuvoSPEHp1p1HHTXzJpfRKs5IUGa82hW5
-         C+dw==
-X-Forwarded-Encrypted: i=1; AJvYcCVILKlnaqVQlkQTXpBU8Vnc/LJTgDY1cqpuPb1oJkwYWjezp3wDX2qbKkTY7+xaHe0nroe/S74FPS/3s9I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnHrY2UFjwRcZYf5y3nUslsDKon5sHGYqQ95hOUNoly+C7N3bc
-	NMFNWxTe1LI4+AEZKqLincT+K36jFyU4WXNGSr8yGjr2hBDL+MFj07IEAykuW4yuDa0=
-X-Gm-Gg: ASbGncs3xH3Ujdtz37bLyjyi9jDlZQG9LwFFx+tA3lJ69pNd/QIr+hVtIux1SpUHKub
-	fGrXxFQ2Bd45C+I1xp/9XsG1a2nrZXLOISh6FxoKECvw+2YIrL1/xE93kVS1a6/5KdQLxIXu544
-	gl4Hq/I7wVoNrQCIGTMuKSLGWgbehvUQiHk0mejCaKCw1qhmlJMp3vZHicM7rLMRA4bZ8CmVx+J
-	Ik2tt/+9gkOHByeCWYeXwazka3+YfVeN1xrmWeKi3meQbAtj4vYQIZRxjMi5D2Wgl+y9epZfM3j
-	LAR2h00w2XJr0onArC9SfxCgMrSdNyTsIrekv4xgPnlPDFfhxm5vr1s5Jnkfd/u5
-X-Google-Smtp-Source: AGHT+IHhOLPK3wy+JJwKSLsDWydjB4lRADzhyLKMg8NOlNveSdw1CmJFuZPFx5ougj5v+ByLkjCMxA==
-X-Received: by 2002:a05:6000:40e0:b0:3a4:f41d:6973 with SMTP id ffacd0b85a97d-3a4f89ad29emr9750624f8f.13.1748875533919;
-        Mon, 02 Jun 2025 07:45:33 -0700 (PDT)
-Received: from blackdock.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4f00971fasm14937650f8f.77.2025.06.02.07.45.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Jun 2025 07:45:33 -0700 (PDT)
-Date: Mon, 2 Jun 2025 16:45:31 +0200
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Muchun Song <muchun.song@linux.dev>, 
-	Vlastimil Babka <vbabka@suse.cz>, Alexei Starovoitov <ast@kernel.org>, 
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Harry Yoo <harry.yoo@oracle.com>, 
-	Yosry Ahmed <yosry.ahmed@linux.dev>, Peter Zijlstra <peterz@infradead.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Tejun Heo <tj@kernel.org>, bpf@vger.kernel.org, 
-	linux-mm@kvack.org, cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Meta kernel team <kernel-team@meta.com>
-Subject: Re: [PATCH v4 0/5] memcg: nmi-safe kmem charging
-Message-ID: <gqb34j7wrgetfuklvcjbdlcuteratvvnuow4ujs3dza22fdtwb@cobgv5fq6hb5>
-References: <20250519063142.111219-1-shakeel.butt@linux.dev>
+        d=1e100.net; s=20230601; t=1748875576; x=1749480376;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Cg0dwJvYfbYUNtSY86lpjPZ26U71B5eHF51TBSSqPe4=;
+        b=TZBjTZD0STekxT0CBvdhnZhwaLaMG3Kh5EBdqBcu97BlXnPA5qbUzrUmAF74mvSAAC
+         ImdbNYMxi8wiPKicMPgTaTNa3C56/mrzUXsLb7SBHUL6Xbj9C1GdNt3vaSIvygXzxyA5
+         S1d76xMM73pSq65TGNA9rGh8MfzyWIH+yf1ksGLB0E6H3mTIHFxQu965D1vC1vRBHDpR
+         ynRB46SELdQPKtm6TaejNto7F+wZEmku2/Tu2cbj8vWhacntiYEiuABwPA5WFunjLmHM
+         L4HsBWb3j5paP9bIANTvCX0TzWVD7sgENHCPUAC8REW+3Yo8CrxxfcRAH909jMu1LuVY
+         yi6A==
+X-Forwarded-Encrypted: i=1; AJvYcCUmTGGvuVNfi5uj/zAvAI2NQKYFsd/HvcIBJVxppo+DnTnPiVzxXdBKfgg/SElyM7kRhP31BSBjdUQaFU0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1IVUoKde92c/wNChXuMeriAYIYrnhiaBFe3C0RbIU2KBXAGsB
+	77E+kmbopp7DfpVSNdObAPy6d/PXc+dwrfcBXucpi1ILS0lTuPT8ydCfwIlTwsMPUUhvxdY2MeS
+	Q9p89+IM=
+X-Gm-Gg: ASbGnctNNcQ8macEKSIPh8Ax9MFUqQt1HCV9NfZI2vDCRx8YnzIpoOqSryFgr1O8Lqe
+	2Viw3OU8Jel/8TcOkZStQsDJAHNdaqzZDvrXYNgBCk2467rgUR7YQJbGacr089Ynsgw2gFSZW8/
+	9ap2feX5zkTusQkr/Ixp5wk4LV1l6mCeWx1HEvBxaUed75Ks22mfSM+N88y3q5vWY9PjrhE7GKy
+	mS+58O0VP1wE6KDCzwk3oI/9B6lbu3w4kVaVS0ao9bLTW2vsm25RzXcFJjSoamHebZt++VuLWpy
+	2CEeeNNDbCq28Y/swklx2a88L9tnEL8Ur33jpol/tMEcW6E+qldXPiuudwqyEFBOgkb5yGQ7gYA
+	6WWVORlYeLUXirrh6/beap1bPqmlAYlofql4w
+X-Google-Smtp-Source: AGHT+IHEu2pJOX4iDLLuaeTYMD4ePz/ZYJl4ZGt49UmBbOrrhHRA4xT3ahPrTI7uwEMB6jEFbnMS/A==
+X-Received: by 2002:a17:907:930c:b0:ad8:8621:9268 with SMTP id a640c23a62f3a-adb32599e70mr1268282066b.59.1748875576071;
+        Mon, 02 Jun 2025 07:46:16 -0700 (PDT)
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com. [209.85.208.54])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-adb390f09c8sm559429866b.45.2025.06.02.07.46.13
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Jun 2025 07:46:13 -0700 (PDT)
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5fff52493e0so6398959a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jun 2025 07:46:13 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUr8UVfAZbJjx4K7+uR0c+3NntE23mnArdy0oiLCbX5LaiewuBTL1WVegnArXsUWKaWfOU8nVmrE8uafpk=@vger.kernel.org
+X-Received: by 2002:a05:6402:5205:b0:606:3146:4e85 with SMTP id
+ 4fb4d7f45d1cf-60631464feemr3563572a12.4.1748875572780; Mon, 02 Jun 2025
+ 07:46:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="7o34cr4hrs2kk3cc"
-Content-Disposition: inline
-In-Reply-To: <20250519063142.111219-1-shakeel.butt@linux.dev>
+References: <20250428170040.423825-1-ebiggers@kernel.org> <20250428170040.423825-9-ebiggers@kernel.org>
+ <20250529110526.6d2959a9.alex.williamson@redhat.com> <20250529173702.GA3840196@google.com>
+ <CAHk-=whCp-nMWyLxAot4e6yVMCGANTUCWErGfvmwqNkEfTQ=Sw@mail.gmail.com>
+ <20250529211639.GD23614@sol> <CAHk-=wh+H-9649NHK5cayNKn0pmReH41rvG6hWee+oposb3EUg@mail.gmail.com>
+ <20250530001858.GD3840196@google.com> <20250601230014.GB1228@sol>
+In-Reply-To: <20250601230014.GB1228@sol>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 2 Jun 2025 07:45:56 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjO+t0FBrg=bHkbnXVsZ_U0TPgT9ZWUzu12-5NurCaWCA@mail.gmail.com>
+X-Gm-Features: AX0GCFuodXM8SKmhJCuuDQhW2iq8pjrSnsjy_QXiBCm4TA9D0azfhocKT2KWhmk
+Message-ID: <CAHk-=wjO+t0FBrg=bHkbnXVsZ_U0TPgT9ZWUzu12-5NurCaWCA@mail.gmail.com>
+Subject: Re: [PATCH v4 08/13] crypto: s390/sha256 - implement library instead
+ of shash
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: Alex Williamson <alex.williamson@redhat.com>, linux-crypto@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org, 
+	sparclinux@vger.kernel.org, linux-s390@vger.kernel.org, x86@kernel.org, 
+	Ard Biesheuvel <ardb@kernel.org>, "Jason A . Donenfeld" <Jason@zx2c4.com>
+Content-Type: text/plain; charset="UTF-8"
 
+On Sun, 1 Jun 2025 at 16:00, Eric Biggers <ebiggers@kernel.org> wrote:
+>
+> I implemented my proposal, for lib/crc first,
 
---7o34cr4hrs2kk3cc
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Subject: Re: [PATCH v4 0/5] memcg: nmi-safe kmem charging
-MIME-Version: 1.0
+Ok, I scanned through that series, and it looks good to me. A clear improvement.
 
-Hello Shakeel.
-
-On Sun, May 18, 2025 at 11:31:37PM -0700, Shakeel Butt <shakeel.butt@linux.dev> wrote:
-> Users can attached their BPF programs at arbitrary execution points in
-> the kernel and such BPF programs may run in nmi context. In addition,
-> these programs can trigger memcg charged kernel allocations in the nmi
-> context. However memcg charging infra for kernel memory is not equipped
-> to handle nmi context for all architectures.
-
-How much memory does this refer to? Is it unbound (in particular for
-non-privileged eBPF)? Or is it rather negligible? (I assume the former
-to make the series worth it.)
-
-Thanks,
-Michal
-
---7o34cr4hrs2kk3cc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCaD25CQAKCRAt3Wney77B
-SQiTAQC/eAKARy8kEU7fP7GCMHE1+7v+d2sSxmXDyaCQ6wqidAEAu4q3hQa6TLAp
-Pqns7WVL19JaCImjilT1rPY77Jv3aQo=
-=nNTq
------END PGP SIGNATURE-----
-
---7o34cr4hrs2kk3cc--
+         Linus
 
