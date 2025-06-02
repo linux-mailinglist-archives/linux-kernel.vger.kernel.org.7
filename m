@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-670985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F734ACBB8B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 21:29:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A815BACBB96
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 21:30:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C300F189456F
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 19:29:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2791D170D6A
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 19:29:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10D1B22A7E0;
-	Mon,  2 Jun 2025 19:29:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26B8F22B8B6;
+	Mon,  2 Jun 2025 19:29:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XbbImGHM"
-Received: from mail-il1-f202.google.com (mail-il1-f202.google.com [209.85.166.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wqso+t7N"
+Received: from mail-io1-f74.google.com (mail-io1-f74.google.com [209.85.166.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C1F4225779
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 19:28:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 517F1227EA7
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 19:29:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748892542; cv=none; b=uqdHYlblE6B/2W6vi0unBenW+Hjby6n95PxNPd+XezZgWZUlkm/hlGGWt7V/7c+7dJuovCJIB8FPjIElDMGHXNP/+Wdm2IE9e4Ptb+soflpecUIQPvWINUyiLsLhFrFIftozDp0Ws92uh1CHqsuRv0AVuB8YdOGLR9PNHd+AMwI=
+	t=1748892543; cv=none; b=UEbnqvi2lsNUAU4w3exMVusQ0T6/itQ1LkJoSx2QupP19M99k+BTxyJin4tsploR0DjwW4dVtU4B+2ywaGfgRzkyWaxhjQWfBhUsP+XnRiM2YuFnlDmlj02JZU/qzLaIxj8CinJ45kSJK7jR8xg8AxPje/uNxr1jpvszSr4mfgQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748892542; c=relaxed/simple;
-	bh=EE8lwX3DPSHd479fj6h8oG+WY564CeOYM752jwwfbIY=;
+	s=arc-20240116; t=1748892543; c=relaxed/simple;
+	bh=hTJhSiv8BCxLXoZ+NIawSUFDzfOoIJdaR2ZVHq+pdOY=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=bjNXsXPVlIOnCkVhJpDIYb3c/4nb3MgDFHD3c8d48cxcQ99uB9/gQ/AIwQXzvtHduxXlNGXw5c9sOaQMtJR8v6kpEkt0GGFP2o687aWa6tnzF9VZ24bIZfwdJLVwEpqpQOWPDQxPC4SIis6e9jfZmxtfyPkCFYCGnzLfXP/Yy1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--coltonlewis.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XbbImGHM; arc=none smtp.client-ip=209.85.166.202
+	 To:Cc:Content-Type; b=kuZYTpZ1q6MvJJg3Tcd1AcsawGv4SE6gv8wMYvaqeT6gvTVyx7+GZPtX1d9qBEr9w/g5/WYOYzlZ2U4E2ax5s9uhYj1L2FlLEE3qyixcWsRPNe6VHpETlstcUJP4zD50VKQiVGl5syk+jIXyKoaeqPaU/rLy1NhG5lTqpWeIH/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--coltonlewis.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wqso+t7N; arc=none smtp.client-ip=209.85.166.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--coltonlewis.bounces.google.com
-Received: by mail-il1-f202.google.com with SMTP id e9e14a558f8ab-3ddb4a92e80so7582965ab.3
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jun 2025 12:28:59 -0700 (PDT)
+Received: by mail-io1-f74.google.com with SMTP id ca18e2360f4ac-86cc7cdb86fso408811439f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jun 2025 12:29:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1748892539; x=1749497339; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1748892540; x=1749497340; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ob4i5lx3NjoopJMkPn2Gu2SflaQcZ8+s5uU/xFdQFYQ=;
-        b=XbbImGHMT5YKWxUxFNXKd4+Fc5Z7rljkAz4a2j4ZrW2ZT17Q2jzUOjBMaRGlaH+Vid
-         lpbeulD4SNnMJUNkuOPNpZGGSqNcG6rgRwmTlTiOt7msbwV374B048BW1wMhXW3ehjUo
-         NpEI9q1tGFpPC9ifMmECKkhDQRgZ/ANpUfZoMaIzHL9NgdTlxGzperO28lLJDdM3mdrA
-         7yr9apdzZmPOogxNLPSCEwMW0IZayhfvdE/Fzm+/Us8m/EWwd4sX/sSTCgwtshFGJc5B
-         LnxxVUX3XwL6GH00S8FHm5j7azb6kV1hLhvUGvlCUkKo7ZitVhRw98xa/H8kN8UQ2gxl
-         VkTQ==
+        bh=OVB/n3He0PUlo5Tdl7uIOjIZvaOC3NNae41+U8BzpWw=;
+        b=wqso+t7NhJqrApZJzbtbNVoClSpEMoimaL4X+Pks3aonRPGdeKmZnXOqwF3e9LfYVR
+         IEdjJrvjabWwK/is6CHvoYHs02GmXtwWW4xZ5/j0W+jNXbu83gdfHLamZ3FI/EPm/LDe
+         igP+YO+MU9ZeBkTlOKBFiLlCBINcqv7GObafx1Z9QZW8hsoJ/ar8/p+Gm2MTxSM8gLpU
+         jY8qOGqysDIje/pRy6fcg5YdLpbnzdfJY1FPkhRAXHXI5kQt805U/+kF7jdjOKS+hEkl
+         pRls57M1p5I2ypjOx82J9kCn/XZ/V0zk2OOvOIcQLjy1RHSeYzNR+mW8YNYO2e7M75jA
+         TvEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748892539; x=1749497339;
+        d=1e100.net; s=20230601; t=1748892540; x=1749497340;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ob4i5lx3NjoopJMkPn2Gu2SflaQcZ8+s5uU/xFdQFYQ=;
-        b=fTXWY9jiopNMNKP+xKMLxTe6Yfa35yuDjT3MafRVCq5svxqJd/rxqp+eCx4hpCrFOT
-         9MbxtSJaVV1rrRAEaZcmkzQDOqu4Jd60w3ZKXafUhznj16ALitJQgL8QU60r5L/4G4Bc
-         6XrzcuIcOhN/TdQjKr+u0Df7BCyJYH6S6g0/jm/9mSm0UKwkV5Rai26uplg3Whq4Cmay
-         SfI15RtkSkyEs7Bwk75P6YuiU/HMLS+kqicU8hQyOy6sMTxST+QLEjlxbxuBgZiokacs
-         +u4RoQUhuuBK4L+WdGXGUzEf7HR52zdDQx4z/XFYfFLnOwSaYMbF92MNOpN2Jpsw+krF
-         pKFA==
-X-Forwarded-Encrypted: i=1; AJvYcCWm7XN36ry+kaqbwyE0exByNWgwAiCj7rnHXgI3HmXNJl/a3L7vgXUUV5PoeHPtnO2khxqTG3SfNgcknqo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZ12kPL3gI114Uo/LwXGnzYYvyf5YVoL/wE+9xHJs8h7QA9IqZ
-	ccSMaG57soXEdGcHrdpZwWgrmVDTvqFUu0csFDok8222XNC9OId+IXqWJq7fABjwHvu3LjzaBqU
-	O+ET92sHU3P2/jFlixoU++KwZBQ==
-X-Google-Smtp-Source: AGHT+IG9118tOdExJjBuer/f/VBDO3HNWaiwxBHIeaEYz6xcDfDEYQh0uxIwgejlm2yfIrTUPAC6q6L4NmScHLSSog==
-X-Received: from ilbbp25.prod.google.com ([2002:a05:6e02:3499:b0:3dc:756a:e520])
+        bh=OVB/n3He0PUlo5Tdl7uIOjIZvaOC3NNae41+U8BzpWw=;
+        b=VeAnPgpKcyAooCxyKhtDy4v29bPhX9I5vDIqdtaZQuVXHSAMf7BpXlIJHgvOhYh3ct
+         rkMUzG3K+vGYuft2ni3ADwZqhc9EPQZWFa+YAOgLRcAlmhVxEQCu3xTHGMkbfWcvK2S3
+         Z/YWWNKhUioFshqXM0Tds1wPSUx1SwGGIV3c0TwBmJ6q1enuxMbc4sX0ZDZg65K3dTJi
+         HKN29uoOTdkxXasjpqszq8yb5/CwXQXt2Vfz8YjP4ZiivUsGKt+hUNeuqkgqW98L/nhb
+         zR2JhsRvEQQRF66/SqNwrUhvuXY7+HUXMXazmYhAhVqbHbn9HGJqQhzq6UQf10xxKeCs
+         1KRw==
+X-Forwarded-Encrypted: i=1; AJvYcCWuOfkGIRAmbc2DIEyIMAMeoJMVa2R5xmTPkwdNvpp6yObbb6Hgs+TEvnQREFHYjm3HteAaBpUm6GICVrY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLNhHLUtmCRnJiWTsov4RiUUjTezu+EbUsOnRodWItpf3Dxu6x
+	E9ADPobSDhuY0SfQlGntcM+uiZ927+fjt4u0Bl+qnNSXoTWoNHR6F/NWxQsrVRbx/GClVmjbShO
+	GRm30/u/rB+KC2v4Z547OULTcLw==
+X-Google-Smtp-Source: AGHT+IGP8Tr9H87Uubq0BhuyNeY27JD5iCuR6Hrz2NAJX2PVsu7lMWY1S1KfCHmBz3Zd2wWiWUQw5wTiYh98OuafJw==
+X-Received: from ilbby14.prod.google.com ([2002:a05:6e02:260e:b0:3dc:64a8:fc81])
  (user=coltonlewis job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6e02:1aa6:b0:3dc:8e8b:42a8 with SMTP id e9e14a558f8ab-3dd99c28963mr156701455ab.16.1748892539395;
- Mon, 02 Jun 2025 12:28:59 -0700 (PDT)
-Date: Mon,  2 Jun 2025 19:26:47 +0000
+ 2002:a05:6e02:1a25:b0:3dc:8b57:b770 with SMTP id e9e14a558f8ab-3dda3370d7cmr84711015ab.11.1748892540564;
+ Mon, 02 Jun 2025 12:29:00 -0700 (PDT)
+Date: Mon,  2 Jun 2025 19:26:48 +0000
 In-Reply-To: <20250602192702.2125115-1-coltonlewis@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250602192702.2125115-1-coltonlewis@google.com>
 X-Mailer: git-send-email 2.49.0.1204.g71687c7c1d-goog
-Message-ID: <20250602192702.2125115-3-coltonlewis@google.com>
-Subject: [PATCH 02/17] arm64: Generate sign macro for sysreg Enums
+Message-ID: <20250602192702.2125115-4-coltonlewis@google.com>
+Subject: [PATCH 03/17] arm64: cpufeature: Add cpucap for PMICNTR
 From: Colton Lewis <coltonlewis@google.com>
 To: kvm@vger.kernel.org
 Cc: Paolo Bonzini <pbonzini@redhat.com>, Jonathan Corbet <corbet@lwn.net>, 
@@ -88,27 +88,45 @@ Cc: Paolo Bonzini <pbonzini@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
 	Colton Lewis <coltonlewis@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-There's no reason Enums shouldn't be equivalent to UnsignedEnums and
-explicitly specify they are unsigned. This will avoid the annoyance I
-had with HPMN0.
+Add a cpucap for FEAT_PMUv3_PMICNTR, meaning there is a dedicated
+instruction counter as well as the cycle counter.
 
 Signed-off-by: Colton Lewis <coltonlewis@google.com>
 ---
- arch/arm64/tools/gen-sysreg.awk | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/kernel/cpufeature.c | 7 +++++++
+ arch/arm64/tools/cpucaps       | 1 +
+ 2 files changed, 8 insertions(+)
 
-diff --git a/arch/arm64/tools/gen-sysreg.awk b/arch/arm64/tools/gen-sysreg.awk
-index f2a1732cb1f6..fa21a632d9b7 100755
---- a/arch/arm64/tools/gen-sysreg.awk
-+++ b/arch/arm64/tools/gen-sysreg.awk
-@@ -308,6 +308,7 @@ $1 == "Enum" && (block_current() == "Sysreg" || block_current() == "SysregFields
- 	parse_bitdef(reg, field, $2)
- 
- 	define_field(reg, field, msb, lsb)
-+	define_field_sign(reg, field, "false")
- 
- 	next
- }
+diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+index 578eea321a60..e798a706d8fb 100644
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@ -2892,6 +2892,13 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
+ 		.matches = has_cpuid_feature,
+ 		ARM64_CPUID_FIELDS(ID_AA64DFR0_EL1, HPMN0, IMP)
+ 	},
++	{
++		.desc = "PMU Dedicated Instruction Counter",
++		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
++		.capability = ARM64_HAS_PMICNTR,
++		.matches = has_cpuid_feature,
++		ARM64_CPUID_FIELDS(ID_AA64DFR1_EL1, PMICNTR, IMP)
++	},
+ #ifdef CONFIG_ARM64_SME
+ 	{
+ 		.desc = "Scalable Matrix Extension",
+diff --git a/arch/arm64/tools/cpucaps b/arch/arm64/tools/cpucaps
+index 5b196ba21629..6dd72fcdd612 100644
+--- a/arch/arm64/tools/cpucaps
++++ b/arch/arm64/tools/cpucaps
+@@ -47,6 +47,7 @@ HAS_LSE_ATOMICS
+ HAS_MOPS
+ HAS_NESTED_VIRT
+ HAS_PAN
++HAS_PMICNTR
+ HAS_PMUV3
+ HAS_S1PIE
+ HAS_S1POE
 -- 
 2.49.0.1204.g71687c7c1d-goog
 
