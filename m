@@ -1,241 +1,147 @@
-Return-Path: <linux-kernel+bounces-670765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48D98ACB8F5
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 17:51:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D49BFACB8E4
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 17:49:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 766C7940062
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 15:41:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F2691BA3234
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 15:44:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A26D0221F1E;
-	Mon,  2 Jun 2025 15:41:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C43D221FCC;
+	Mon,  2 Jun 2025 15:43:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tGIGWGP1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gL43YtlG"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8A30175BF;
-	Mon,  2 Jun 2025 15:41:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4262F1C7008
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 15:43:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748878903; cv=none; b=PUPW8B059mfN+z4taZXuVqt4Qnmp7u6xgPtUi15kPD9QNbmtNHSDCBpQmhZ5jJncKDDOT2LVBmKKmjlsbUxREZjX9WeRYISPNOk+p9nKimHINHUvz8LgdH4s0W6oMRvRa5GCEhl1oT69xjsblEiPaY+YN7PCUi3ABsqIKWI/zgc=
+	t=1748879023; cv=none; b=nfrtZLa6E/6Vh/HgL7pcg75c1/Vvq4Iu9K7N4iZaAy5ukgp9wk8xsHhROQt+UXHpNxeXu9rQ+3jalzTyEf5HOEsHE1EDKglzjGiYA3yvvZIQ1BL6THNPmbmZa61J/EPwgSUkWByZkASiUb9O0P6g8cKlT2p2bB0kBx8c/RYdxdQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748878903; c=relaxed/simple;
-	bh=SErxh7WSPVlVMY3VQCtjc25vnpO0BTrBiG4/l0WqpNk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D5bhsI4OR7fA7eZYf6ohkgqxA9rmPy/BzeLPpl8WnYfCEmQtrmfJDNrDyXdH2AWPzqju4rmyENC0uT/IzxyxIA0BJCFmgrYYCH6n0uWbaLEeNldJ4S+GZMx01ix/mLdUezJXWooAlBTWTQi8ypKhl3XB/F/6xnNMk+y2zC41R1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tGIGWGP1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 731E8C4CEEB;
-	Mon,  2 Jun 2025 15:41:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748878902;
-	bh=SErxh7WSPVlVMY3VQCtjc25vnpO0BTrBiG4/l0WqpNk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tGIGWGP1rl6fcd+udRDMiHKphlrMMsEvxfYTCB1RGLwgOrbWkGCLD4PaM9JhNyMOm
-	 MU5OOQ12RxPYTLgZyhksCrm3ctfp9lWjao/ue4Q9sHwU6jTElsQubbIPy1hmX+ue6+
-	 3cxpcV64YaC1ssIbj45mU8NUgo/f7fqAzlJbqHlnJZV2uB/LIn6dqUqBviFA4VzR5X
-	 RjL7F0ieVTKYcxb5RwPKVu9/jaZg2YscijxFrNtaYgBpRhfrnazjQS/XabtaOCu++s
-	 60m2E5oLtB3bR5sm35tgAC+lGdWlmW1dMS3z+rdK5GcgvRJtRzIGbDEs5RPQAeIudW
-	 l3dw+iz5UY0kw==
-Date: Mon, 2 Jun 2025 10:41:39 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Wasim Nazir <quic_wasimn@quicinc.com>
-Cc: Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel@quicinc.com, kernel@oss.qualcomm.com, 
-	Pratyush Brahma <quic_pbrahma@quicinc.com>, Prakash Gupta <quic_guptap@quicinc.com>
-Subject: Re: [PATCH v9 2/4] arm64: dts: qcom: iq9: Introduce new memory map
- for qcs9100/qcs9075
-Message-ID: <ss3xhat6v3s4ivcypw6fqcmblqait56pqhzwuhzyfhevp4kzlr@5e3f5nwb6lhb>
-References: <20250530092850.631831-1-quic_wasimn@quicinc.com>
- <20250530092850.631831-3-quic_wasimn@quicinc.com>
+	s=arc-20240116; t=1748879023; c=relaxed/simple;
+	bh=vnDj3LDoE6fvOnpQxqV5cUhV0MzIRWUbuJRW8FXHgy0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RIQ4yH6ql5A/Bc1ndwkJuXFgoerUaytA/7pbL6Xuu3xFOtly4LKKfSYm2QNc6g20yjOfaIRe5erztCFWrO6mx58UL5k/rLPNSor6+xOyLIQx6RRe7/cOtBi4nQT5U81FUJryHvlS28prL01ui3ygVGHhfcu6k/VRZgvoZQEwpLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gL43YtlG; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1748879020;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oEnNPOQQYinKhtyFPbtNahXJ+hfo2zYwElH9phszy/s=;
+	b=gL43YtlGSVLnnYVWPw8zMfZuvurFG1mf6MaZzuhRvERrny183Ysjv6aJFEzXOZEAa/urkg
+	Y3pltDpqe4Q8zZHTWtoIRkCwJsF9cSveB+p6Wgbgw3R/La9+snTLKi6JWt4ErFG0mYV1Ty
+	AupSD5uby51Eh9HsVPKbjLf/673yzs8=
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com
+ [209.85.166.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-208-AnoYZxCgMfqZmoZAQcXpSw-1; Mon, 02 Jun 2025 11:43:38 -0400
+X-MC-Unique: AnoYZxCgMfqZmoZAQcXpSw-1
+X-Mimecast-MFC-AGG-ID: AnoYZxCgMfqZmoZAQcXpSw_1748879018
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-8617c4a3d0dso28957339f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jun 2025 08:43:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748879018; x=1749483818;
+        h=content-transfer-encoding:mime-version:organization:references
+         :in-reply-to:message-id:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=oEnNPOQQYinKhtyFPbtNahXJ+hfo2zYwElH9phszy/s=;
+        b=qeFmVtC36mhWKmNKK/gu/IWv3Lz0+uRySLX65jP8kkPR50Fzh3xisv/V53H7VCdDS1
+         SJ8q163twauVbBVZjba0Bypo81ajJpTU+L6FtELEI7CWjyA58fJXgVxzGDbE6lP2Pff9
+         GSr5+7rsjrwv9FZnqZUT76Q3jpUXmwEVZ2V6GwETwiSg9fj/6mnF2LHoetH60pJgyXf3
+         HygJcmFsBheg7nxUN7+XlQravWcChE+WUxAP6GlF4qZ1KzGVbguZGlpK+uAc4/Tnygqw
+         XO0so78BdOEeEMO89bPd4a5vi3zWySxAfVvzOvdaZtXiZ7FUFaZGRwABgd38vzbk+G2v
+         Ui9g==
+X-Forwarded-Encrypted: i=1; AJvYcCWvodAvzFigFpNtQfDCnkGOdBtzNxP0uH+2HZWoxXhYFh/uUbIVj6aNcNz/218NiScTCOwlmsolMdk3o4Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXAwYnd54TtBf0bAoN4V7rsQLYgVPBpnN3PWQfcZgM76f67ZZi
+	ttEaAqwslwyBtRtR1foSNK2aka3xwjWyq8ZSv/hFeoKa6aWQUiMaJcV92i6JCR+v2J1jWkznFvN
+	nyNOu5HXSEtxQiYH97S+bL71oNbRFk0gxUWj1L0YW3D0mEmkA5PsWPiZnkGO8dGVfGw==
+X-Gm-Gg: ASbGncuvciVUMT/SLZcVLaNtOeGHWsKWvho4hgq/xD6JiJ6V3PVRXkyXgmieO/w7ayy
+	AJS3ao3ngpuvhl4niRG5ndJsWf8V1mRjLVt+ObjYw/hrAetLbRyqgksB0OkCKRsqVVDessYzdom
+	sEJbJ6PuwBo3VFDUSVEiqcHB532os3gcmHXxSplcLJakTJvpjZdwjlUZsxMnXdqWnN3Hl6a/7JV
+	brR8E5Nlb9gT/1OjfeICeZ0Wo6ErD/uqiuJ0iQvZzah9ToYCiMZE4j+ZVfHUr7cKuUBiHS9YPdn
+	+oivcsOfDgRCXME=
+X-Received: by 2002:a05:6602:1507:b0:85b:3f28:ff99 with SMTP id ca18e2360f4ac-86d025f5633mr430893839f.2.1748879017931;
+        Mon, 02 Jun 2025 08:43:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGxt5m7iXx5A9r4eTEAWC0Vws511DwnI/2T8V+mtgy7cCEIe9lBpfzRQFP+WGCTj9UR0FmfLg==
+X-Received: by 2002:a05:6602:1507:b0:85b:3f28:ff99 with SMTP id ca18e2360f4ac-86d025f5633mr430892039f.2.1748879017486;
+        Mon, 02 Jun 2025 08:43:37 -0700 (PDT)
+Received: from redhat.com ([38.15.36.11])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4fdd7dfe4a5sm1808088173.16.2025.06.02.08.43.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Jun 2025 08:43:36 -0700 (PDT)
+Date: Mon, 2 Jun 2025 09:43:34 -0600
+From: Alex Williamson <alex.williamson@redhat.com>
+To: Xose Vazquez Perez <xose.vazquez@gmail.com>
+Cc: Kirti Wankhede <kwankhede@nvidia.com>, Linus Torvalds
+ <torvalds@linux-foundation.org>, KVM ML <kvm@vger.kernel.org>, KERNEL ML
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] samples: vfio-mdev: mtty.c: delete MODULE_VERSION
+Message-ID: <20250602094334.4995ea23.alex.williamson@redhat.com>
+In-Reply-To: <20250531161836.102346-1-xose.vazquez@gmail.com>
+References: <20250531161836.102346-1-xose.vazquez@gmail.com>
+Organization: Red Hat
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250530092850.631831-3-quic_wasimn@quicinc.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, May 30, 2025 at 02:58:45PM +0530, Wasim Nazir wrote:
-> From: Pratyush Brahma <quic_pbrahma@quicinc.com>
-> 
-> SA8775P has a memory map which caters to the auto specific requirements.
+On Sat, 31 May 2025 18:18:36 +0200
+Xose Vazquez Perez <xose.vazquez@gmail.com> wrote:
 
-I thought SA8775P was the IoT platform and SA8255P was the automotive
-one. Has this changed?
+> Reminiscence of ancient times when modules were developed outside the kernel.
 
-> QCS9100 & QCS9075 are its IOT variants (with marketing name as IQ9) which
-> inherit the memory map of SA8775P require a slightly different memory
-> map as compared to SA8775P auto parts.
-> This new memory map is applicable for all the IoT boards which inherit
-> the initial SA8775P memory map. This is not applicable for non-IoT
+s/Reminiscence/Reminiscent/
 
-Is there are platform out there that actually uses the "initial SA8775P
-memory map"?
+I think there are likely better arguments that could be made for
+removal though, ex. citing specific policies or discussions.
 
-> boards.
-> 
-> Some new carveouts (viz. gunyah_md and a few pil dtb carveouts) have been
-> introduced as part of firmware updates for IoT. The size and base address
-> have been updated for video PIL carveout compared to SA8775P since it is
-> being brought up for the first time on IoT boards. The base addresses
-> of the rest of the PIL carveouts have been updated to accommodate the
-> change in size of video since PIL regions are relocatable and their
-> functionality is not impacted due to this change. The size of camera
-> pil has also been increased without breaking any feature.
-> 
-> The size of trusted apps carveout has also been reduced since it is
-> sufficient to meet IoT requirements. Also, audio_mdf_mem & tz_ffi_mem
-> carveout and its corresponding scm reference has been removed as these
-> are not required for IoT parts.
-> 
-> Incorporate these changes in the updated memory map.
-> 
-> Signed-off-by: Pratyush Brahma <quic_pbrahma@quicinc.com>
-> Signed-off-by: Prakash Gupta <quic_guptap@quicinc.com>
-> Signed-off-by: Wasim Nazir <quic_wasimn@quicinc.com>
+> Cc: Kirti Wankhede <kwankhede@nvidia.com>
+> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> Cc: KVM ML <kvm@vger.kernel.org>
+> Cc: KERNEL ML <linux-kernel@vger.kernel.org>
+
+Signed-off-by?
+
+See Developer's Certificate of Origin:
+Documentation/process/submitting-patches.rst
+
+Thanks,
+Alex
+
 > ---
->  .../boot/dts/qcom/iq9-reserved-memory.dtsi    | 113 ++++++++++++++++++
->  1 file changed, 113 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/qcom/iq9-reserved-memory.dtsi
+>  samples/vfio-mdev/mtty.c | 2 --
+>  1 file changed, 2 deletions(-)
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/iq9-reserved-memory.dtsi b/arch/arm64/boot/dts/qcom/iq9-reserved-memory.dtsi
-> new file mode 100644
-> index 000000000000..ff2600eb5e3d
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/qcom/iq9-reserved-memory.dtsi
+> diff --git a/samples/vfio-mdev/mtty.c b/samples/vfio-mdev/mtty.c
+> index 59eefe2fed10..f9f7472516c9 100644
+> --- a/samples/vfio-mdev/mtty.c
+> +++ b/samples/vfio-mdev/mtty.c
+> @@ -35,7 +35,6 @@
+>   * #defines
+>   */
+>  
+> -#define VERSION_STRING  "0.1"
+>  #define DRIVER_AUTHOR   "NVIDIA Corporation"
+>  
+>  #define MTTY_CLASS_NAME "mtty"
+> @@ -2057,5 +2056,4 @@ module_exit(mtty_dev_exit)
+>  
+>  MODULE_LICENSE("GPL v2");
+>  MODULE_DESCRIPTION("Test driver that simulate serial port over PCI");
+> -MODULE_VERSION(VERSION_STRING);
+>  MODULE_AUTHOR(DRIVER_AUTHOR);
 
-The naming convention is <soc>-<something>.dtsi and I don't see any
-other uses of the "iq9" naming.
-
-> @@ -0,0 +1,113 @@
-> +// SPDX-License-Identifier: BSD-3-Clause
-> +
-
-Why is there a blank space here?
-
-Regards,
-Bjorn
-
-> +/*
-> + * Copyright (c) 2025 Qualcomm Innovation Center, Inc. All rights reserved.
-> + */
-> +
-> +/delete-node/ &pil_camera_mem;
-> +/delete-node/ &pil_adsp_mem;
-> +/delete-node/ &pil_gdsp0_mem;
-> +/delete-node/ &pil_gdsp1_mem;
-> +/delete-node/ &pil_cdsp0_mem;
-> +/delete-node/ &pil_gpu_mem;
-> +/delete-node/ &pil_cdsp1_mem;
-> +/delete-node/ &pil_cvp_mem;
-> +/delete-node/ &pil_video_mem;
-> +/delete-node/ &audio_mdf_mem;
-> +/delete-node/ &trusted_apps_mem;
-> +/delete-node/ &hyptz_reserved_mem;
-> +/delete-node/ &tz_ffi_mem;
-> +
-> +/ {
-> +	reserved-memory {
-> +		#address-cells = <2>;
-> +		#size-cells = <2>;
-> +		ranges;
-> +
-> +		gunyah_md_mem: gunyah-md@91a80000 {
-> +			reg = <0x0 0x91a80000 0x0 0x80000>;
-> +			no-map;
-> +		};
-> +
-> +		pil_camera_mem: pil-camera@95200000 {
-> +			reg = <0x0 0x95200000 0x0 0x700000>;
-> +			no-map;
-> +		};
-> +
-> +		pil_adsp_mem: pil-adsp@95900000 {
-> +			reg = <0x0 0x95900000 0x0 0x1e00000>;
-> +			no-map;
-> +		};
-> +
-> +		q6_adsp_dtb_mem: q6-adsp-dtb@97700000 {
-> +			reg = <0x0 0x97700000 0x0 0x80000>;
-> +			no-map;
-> +		};
-> +
-> +		q6_gdsp0_dtb_mem: q6-gdsp0-dtb@97780000 {
-> +			reg = <0x0 0x97780000 0x0 0x80000>;
-> +			no-map;
-> +		};
-> +
-> +		pil_gdsp0_mem: pil-gdsp0@97800000 {
-> +			reg = <0x0 0x97800000 0x0 0x1e00000>;
-> +			no-map;
-> +		};
-> +
-> +		pil_gdsp1_mem: pil-gdsp1@99600000 {
-> +			reg = <0x0 0x99600000 0x0 0x1e00000>;
-> +			no-map;
-> +		};
-> +
-> +		q6_gdsp1_dtb_mem: q6-gdsp1-dtb@9b400000 {
-> +			reg = <0x0 0x9b400000 0x0 0x80000>;
-> +			no-map;
-> +		};
-> +
-> +		q6_cdsp0_dtb_mem: q6-cdsp0-dtb@9b480000 {
-> +			reg = <0x0 0x9b480000 0x0 0x80000>;
-> +			no-map;
-> +		};
-> +
-> +		pil_cdsp0_mem: pil-cdsp0@9b500000 {
-> +			reg = <0x0 0x9b500000 0x0 0x1e00000>;
-> +			no-map;
-> +		};
-> +
-> +		pil_gpu_mem: pil-gpu@9d300000 {
-> +			reg = <0x0 0x9d300000 0x0 0x2000>;
-> +			no-map;
-> +		};
-> +
-> +		q6_cdsp1_dtb_mem: q6-cdsp1-dtb@9d380000 {
-> +			reg = <0x0 0x9d380000 0x0 0x80000>;
-> +			no-map;
-> +		};
-> +
-> +		pil_cdsp1_mem: pil-cdsp1@9d400000 {
-> +			reg = <0x0 0x9d400000 0x0 0x1e00000>;
-> +			no-map;
-> +		};
-> +
-> +		pil_cvp_mem: pil-cvp@9f200000 {
-> +			reg = <0x0 0x9f200000 0x0 0x700000>;
-> +			no-map;
-> +		};
-> +
-> +		pil_video_mem: pil-video@9f900000 {
-> +			reg = <0x0 0x9f900000 0x0 0x1000000>;
-> +			no-map;
-> +		};
-> +
-> +		trusted_apps_mem: trusted-apps@d1900000 {
-> +			reg = <0x0 0xd1900000 0x0 0x1c00000>;
-> +			no-map;
-> +		};
-> +	};
-> +
-> +	firmware {
-> +		scm {
-> +			/delete-property/ memory-region;
-> +		};
-> +	};
-> +};
-> --
-> 2.49.0
-> 
 
