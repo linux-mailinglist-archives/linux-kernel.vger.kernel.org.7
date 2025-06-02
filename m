@@ -1,126 +1,148 @@
-Return-Path: <linux-kernel+bounces-670161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFBF5ACA9E4
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 09:24:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75091ACA9F4
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 09:32:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 545BE3B70B9
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 07:24:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 540BD1894F77
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 07:32:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 171BB1AB6F1;
-	Mon,  2 Jun 2025 07:24:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yiVj1q2F"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A3661AC891;
+	Mon,  2 Jun 2025 07:32:12 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C25221A8F60
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 07:24:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BE6E175BF;
+	Mon,  2 Jun 2025 07:32:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748849065; cv=none; b=DHT5F2XXXdCJBTfs8ahAsOxXfJ46B6UOw1sicpnR6P/jJ38p4XdgWvYi7+rnQvlLH3g4jYtEZuaOTC3L5lXtw0CtNapCQnArwxSoVyb3fkhq+AeERPHhLV8en9WhXTyTmnfT1faucd3hNcyiWGHSkD7oRG/PvK/aZCKcnXFKXB8=
+	t=1748849532; cv=none; b=WQyXq4Xw248RDkfBfZ5JsJu33GZbSj+Lf2OfBG9ViMsn+BZRXwFdbi9YNdlmBqqPsuLrLj4OKCP2wEgTii6FH4CsKSHCjP3SOrPkqoE5wZhn71rX6z34Q09tskWiPJ2uuLG0X+UE35KpBuQ0vuRfzhgCXHP+dCGk+yKGd+cesqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748849065; c=relaxed/simple;
-	bh=Q21PoUgOrkYVhLx1T3USs15A8eDhsrRdYr+FrSfT+1Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WfCINuPqU3JGry6eMPBBpvPfQprvus5pdhHTkp+JNrPetkS2yX443jcxBDEcltKLH7p+v66cxCPAT+jQTh7xINxkdZ02qaWCzSM/n9HZqnAk48+cytBzlqQfaEEV21t06zk68633KPMz3HhCItjhVrTNOjPJkKoLDmCceiOYYQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yiVj1q2F; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43edecbfb94so43382955e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jun 2025 00:24:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1748849062; x=1749453862; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Cx0RaYDb88MYeeNdBYIWya8sxL0SHlDdzkxwTt2TDWc=;
-        b=yiVj1q2FM9Z8AaN/mMdWYDuxgzf2QZ3dBN7R+zzUPbG2YPdGDgyowIa2qxNJY54CC1
-         gBBY4uk2uueK01HesT/E2uWjQPX1mH/hryqusENNSomrHrZeUEXNEUggR2GyQkHQnEta
-         JmC7PRsIPh3Za6E56KSVhPJdlJceAJ8YGKixtsGOa1+D94NvjtyUbCaDd5cUxCzd+XIN
-         mmXD8BAgPmvJ2ReSYFb3IZAvyYHhT0n6VZZBVECg86LVFdrbB0QdQG0MXnGull7eaHbP
-         +/1oAKdlOv3iKAIpSIsCAyTviyB/MaVli3GIr8rAUip7VW7ud75g6x8znXgDcR4TuFex
-         OtpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748849062; x=1749453862;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Cx0RaYDb88MYeeNdBYIWya8sxL0SHlDdzkxwTt2TDWc=;
-        b=w8zJchTME11IxFcKnHkf0CHpdvuLoAR/s8IOyu44HK1yPVodTOWDbXggYa2gIQcuo6
-         E3Z59i5Ja4aM/R3Ow+C55tCa4YWzde3W5Ukpx4PhjL11l4a/wS3rsEjb8ngUZJw1+HY7
-         03/EMqKTOjgLgnAc9pfkwZKFrspsjtMwbZczYGbId7dyxooneK14Fa7X62ilLXic7/vs
-         keQv9gargGRGflDulsV48nxPh10SKMxbQMO7bLYipQvZiNsccrmMiagkubFcRSdsmQVZ
-         GCNSnB0gCUq8huv9teuZpcmhWQWhyLZJ+2A3MLgnwv5JJTK14cR+Liq8xcJJaGygEhuH
-         o2mQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU5WKeQzgtOVYP8/KoWjRNA8saZqo2d6wg6Iq0SsnWQcRbeB08NY8VBIqXEZCfeZEkaHMRzhc462+ALSq4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYMrQR435FuTmyJBOEU2tDnXDoBgIRfOTiw8LdyPv+hoAAmyQK
-	Q8J6mJgoR4CJVvpRvuhOLl0ImKHxAg6TvPQTqZyJh+iRT9Ho70tCLEyFwT63j1ZpxWo=
-X-Gm-Gg: ASbGncvUvpZKgm/GH0/tDScT2lGOP+OGKa2zZAiqu8fKN5REgyquPBZcowoRC3Mt00R
-	EJR5kghY4b48RcBWmA0E9I8Ya9Lk+gGwAWNKQ8KYEOU3Zkllsq/HLQ7rwY/FkDI+Omgq3RcQGAM
-	cx4IRtkRvRmN3swuCxBhmepOmEsndiCAr873VaVk+3x5xJ8BsWmetoChTB0dCjZtmxmvPiRFidM
-	AINoFOfD0ABVNidk3vepZA6ROIeDPzfl0/X2SMmJOJ6jCnWQZkPGGifSs/d6I9oYu/2EI74RqTy
-	Zdfy2cYG1WaDvx6NaCXnpfz1Bxmko14jAAArOou5T6fTCEQ83kV7QeI=
-X-Google-Smtp-Source: AGHT+IEVNyhdFOejr0L1LpDA1g7jRxs4kNrwm5NxBxAJbrQF2oeNR/IcwKlZ4fxQVZ9FMa1DqjLp8g==
-X-Received: by 2002:a05:6000:144e:b0:3a4:d6ed:8e2e with SMTP id ffacd0b85a97d-3a4fe395675mr5771680f8f.41.1748849062063;
-        Mon, 02 Jun 2025 00:24:22 -0700 (PDT)
-Received: from localhost ([41.210.143.146])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-450d8006952sm109189995e9.32.2025.06.02.00.24.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Jun 2025 00:24:21 -0700 (PDT)
-Date: Mon, 2 Jun 2025 10:24:17 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Alessandro Carminati <acarmina@redhat.com>
-Cc: linux-kselftest@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-	Daniel Diaz <daniel.diaz@linaro.org>,
-	David Gow <davidgow@google.com>,
-	Arthur Grillo <arthurgrillo@riseup.net>,
-	Brendan Higgins <brendan.higgins@linux.dev>,
-	Naresh Kamboju <naresh.kamboju@linaro.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Maxime Ripard <mripard@kernel.org>,
-	Ville Syrjala <ville.syrjala@linux.intel.com>,
-	Daniel Vetter <daniel@ffwll.ch>, Guenter Roeck <linux@roeck-us.net>,
-	Alessandro Carminati <alessandro.carminati@gmail.com>,
-	Jani Nikula <jani.nikula@intel.com>,
-	Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Linux Kernel Functional Testing <lkft@linaro.org>,
-	dri-devel@lists.freedesktop.org, kunit-dev@googlegroups.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 0/5] kunit: Add support for suppressing warning
- backtraces
-Message-ID: <aD1Roe-z6o1Y5K2V@stanley.mountain>
-References: <20250526132755.166150-1-acarmina@redhat.com>
+	s=arc-20240116; t=1748849532; c=relaxed/simple;
+	bh=YQNB2MJLMgBz6sHqs2F3mrI0QCwCTcf4Fwz1knbIk0k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tHLBh95tc2/ywXfiiLe3dMgRxUMzDj0CuUi3GAz8PqWs2SEWYxlgu2f7DgkFy16oFMbCBeCsisr1SOomVAMvvGCc17gJSae3N3OnD4uCP6Bm8ilNNbcI4ZYQzPHRuFgcUGkDq/Yu89DB1deXdgmQdGweFiMXKDvckB3rlGy064I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57AF4C4CEEB;
+	Mon,  2 Jun 2025 07:32:10 +0000 (UTC)
+Message-ID: <5b2c5e93-3e5d-497e-aef5-89f3474be2c7@xs4all.nl>
+Date: Mon, 2 Jun 2025 09:32:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250526132755.166150-1-acarmina@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] media: uvcvideo: Refactor uvc_queue_streamon
+To: Ricardo Ribalda <ribalda@chromium.org>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Hans de Goede <hdegoede@redhat.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250522-uvc-fop-v1-0-3bfe7a00f31d@chromium.org>
+ <20250522-uvc-fop-v1-1-3bfe7a00f31d@chromium.org>
+Content-Language: en-US, nl
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Autocrypt: addr=hverkuil@xs4all.nl; keydata=
+ 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
+In-Reply-To: <20250522-uvc-fop-v1-1-3bfe7a00f31d@chromium.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-I like suppressing warning messages but there are still many cases, such
-as mm/kasan/kasan_test_c.c where printing the warning message is the
-whole point.
+On 22/05/2025 19:58, Ricardo Ribalda wrote:
+> Do uvc_pm_get before we call uvc_queue_streamon. Although the current
+> code is correct, uvc_ioctl_streamon is allways called after uvc_pm_get,
 
-We should create a standard way that test bots can filter out deliberate
-errors from unintentional errors.  This would also help humans who have
-to look at test results.
+allways -> always
 
-#define intentional_warning_marker(type) do {				\
-	pr_err("Triggering intentional %s warning!", type);		\
-} while (0)
+> this change makes the code more resiliant to future changes.
 
-intentional_warning_marker("KASAN");
+I would add that this change also avoids calling streamoff, which is
+a rather ugly thing to do.
 
-regards,
-dan carpenter
+> 
+> Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+
+Reviewed-by: Hans Verkuil <hverkuil@xs4all.nl>
+
+Regards,
+
+	Hans
+
+> ---
+>  drivers/media/usb/uvc/uvc_v4l2.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/media/usb/uvc/uvc_v4l2.c b/drivers/media/usb/uvc/uvc_v4l2.c
+> index 668a4e9d772c6d91f045ca75e2744b3a6c69da6b..862b4e34e5b629cf324479a9bb59ebe8784ccd5d 100644
+> --- a/drivers/media/usb/uvc/uvc_v4l2.c
+> +++ b/drivers/media/usb/uvc/uvc_v4l2.c
+> @@ -853,15 +853,16 @@ static int uvc_ioctl_streamon(struct file *file, void *fh,
+>  	if (handle->is_streaming)
+>  		return 0;
+>  
+> -	ret = uvc_queue_streamon(&stream->queue, type);
+> +	ret = uvc_pm_get(stream->dev);
+>  	if (ret)
+>  		return ret;
+>  
+> -	ret = uvc_pm_get(stream->dev);
+> +	ret = uvc_queue_streamon(&stream->queue, type);
+>  	if (ret) {
+> -		uvc_queue_streamoff(&stream->queue, type);
+> +		uvc_pm_put(stream->dev);
+>  		return ret;
+>  	}
+> +
+>  	handle->is_streaming = true;
+>  
+>  	return 0;
+> 
 
 
