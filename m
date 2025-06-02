@@ -1,327 +1,175 @@
-Return-Path: <linux-kernel+bounces-670808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1B18ACB99A
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 18:22:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83D01ACB96C
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 18:19:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5539E189BC07
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 16:22:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0FDA176ADD
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 16:19:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 729C522A7F9;
-	Mon,  2 Jun 2025 16:20:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A58F2224B0C;
+	Mon,  2 Jun 2025 16:19:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="byLC1B15"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1mXTW4nB"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84B3522A4EF;
-	Mon,  2 Jun 2025 16:20:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748881252; cv=pass; b=cg+NM5EtEvE+5BPfKVEMjLLMHUZj/1IVxaPntgPD6Z+aRPexarS2uTorosp4kDi7fIuz3mco5R/hFNNDCMtqvf8FP90QAX0QK4Tah6KD1E4CeCfkteofh7sK//Ah8+W4h8NdsGH+jXWJIjzltrMLMCFa86/VM4tVCaPXL+abya4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748881252; c=relaxed/simple;
-	bh=II7toPKcxc5b9nd9L6ZN0tvZ4Ex0twIQo2PgJQeP1dk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Kf3JOCtuTcxjwrDeDs5gClvtLC2su6+lXfGdCUNPX+MnKFgUgFrPzb1YbnBGxFF7xqYF7SNBhFZ4rkzCkfcwgGJIsLBBVkG0T93wm0sRQlLKvUz8blR3+oVyucVxe6vgcaVih+w/ed6rd5yvQCDz7sYDMY9E/15ndtrJthGn1oY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=byLC1B15; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1748881222; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=YlvPxyVRx5Y0D0TaXwBbBC5vTZ3i+GJvvt9o2sNlhnLyAAxBzW7u0k8klUR13kpCAYNnM4/czu1q8Fr/m6cmjeqKFqZrNtqRy8A6vmZx05SwNW5h/T5oS2p4WMqzzR9cA01Ec+B9xmKQJTIG2qpkg8U75Fh1AQLtyP0BnVNSPJs=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1748881222; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=371M5ZgJiNRZAbpzrDmOP0fheE7cPZHpnAVaMSS17xQ=; 
-	b=UMQHNwI1TgXjU7hnzWF5M2Jn/zLEqduVITf3LO98McGtv1WVFSBgLIyFHnKGUEg1Bw75MMnqLN4tj1DCm4S7GIfNXVcy3ja8vYjr4am9QLiUo2Or99syAdxUoEU3P2/rzevL2PGGxHCFlGGO1GKFNzaSYbLi1bUuIphT/+sN23E=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
-	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1748881222;
-	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
-	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:References:In-Reply-To:To:To:Cc:Cc:Reply-To;
-	bh=371M5ZgJiNRZAbpzrDmOP0fheE7cPZHpnAVaMSS17xQ=;
-	b=byLC1B15kmD+ovr09RJ9NCLK6MHYdw1f2Cyh1XmzYjPJsXqyEZNGD+sImPGZA6Bj
-	KAqrsTgpVz8awEtqbdZqmIyW0/oPjt4kjAbnkvd2yf4WSi+Uv27ZlLhgb2MFCxC5QhR
-	oJAfGRxnB/iEwJvtFiYGpLw0zRZV0keCGeWepYH4=
-Received: by mx.zohomail.com with SMTPS id 1748881221412572.4871567129961;
-	Mon, 2 Jun 2025 09:20:21 -0700 (PDT)
-From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Date: Mon, 02 Jun 2025 18:19:18 +0200
-Subject: [PATCH v2 7/7] arm64: dts: rockchip: add PWM nodes to RK3576 SoC
- dtsi
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43D5121B9C7
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 16:19:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748881167; cv=none; b=OAUOHadIAGQK49+HLbisfYCQyrREnF2O5rZkUi521iRq++QniprfASDejDkxi5x8DlTNC6ayzJmUVDU2/XFcR8w+Dm4Xs+D07vO9rFl0J/SsZEL2JyBhh+aru5Of4zaIE0cJGgn+bNGF60aL/t1carq1UkNl3hUhdJSfSjx+oN0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748881167; c=relaxed/simple;
+	bh=ljIrxYiJzxGe7Czc47ScoMraWr5MaF89zkDh0vKT6Tw=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=iGlLL3Gpn6BFYiN0wzW+DPpT/R/nRibkh4KVfEAA8pnJbSPz1x2VOxrNyhjcplz0BiibanXm+r5F/88blohbXESByDe6xLjITU5byzc9w9EVmmwI+CJ7b5ntBbOkKC/wfN+rEwJ/4nx4O6rCwMckAtm4RZtaEK3J+/r7FDtRkkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1mXTW4nB; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-450d6768d4dso23163705e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jun 2025 09:19:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1748881163; x=1749485963; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=XuOsHwV8/b0lID06SIdHpZB8Xl8LCaN/OUfGvnqpXk8=;
+        b=1mXTW4nBf73BVQjx9mCDmB6cLvSEk4nC74OM3gj6lEtfFzojAhPv7EcVMy2Rf15e/6
+         q7uvEDZlKGc40DLRVIFooTxW3+Bkd+SIVigz6E1ia+53tdsKlp1Pw+7h4unQp9aLvHTB
+         Okw3Lq5BbbFbTm/ipslLxGq2QDsEIIbspqS3GLAUO06pOO4RXlXOA/o8J7E2yb5nNsye
+         Om/m6SkY2ydczEOYMnUIFNmeFVbLeHTAD4k6LDfmSu4g2bs1ua+p7rSf5cKg466W5iW4
+         5r1Bx+4bu33GDzCdkvy7ztdN5ZK36dJ/vuu66ZGlikpIw4M55DwzFkM8fCBBonja1HDv
+         mNZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748881163; x=1749485963;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XuOsHwV8/b0lID06SIdHpZB8Xl8LCaN/OUfGvnqpXk8=;
+        b=mGudAbNjfrR6L+0zvjWuGJ/w2+lwHyH1y6fr9TVdEUElO+1vN8ffy21KJZbZw7rI5V
+         rRlhYDPbfo9Ll0v+fK/gP55FzgGNyT7GxBSeOz3YGHAXlai8NCon1cbM+3SVyKpbvJOX
+         jKACr5xono5rAp32ijDRwD9HYDM/T3C5ZTL1bEMR1T2T3xQbYxKfmFGrP4f0+tXWuRKh
+         vfolWG7dHq3WzgQPb/selkqMXHuUCMaKUauREK5fjfyYwH3hIDP4nl0+0TOTo3X1yFgJ
+         fpVezymOlcAJn1cwttDmJZKyWjz7+9QhXmE2CTQ2WlqYduJOfjkhFnj7TgtihAfqsMA+
+         LMuA==
+X-Forwarded-Encrypted: i=1; AJvYcCV/rLKtJhDmYyu0DR9u77gttd4S0+jakeRsm9PECUNJ4l3iQfSM9gCbfBWzmWEQh59WQdJbtTry5M/Agy8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgC6ap6PoLs70HUHzjEWLwmH3Xj/v4Pi41olPFfcL7wPKCTS8x
+	Bm2yPOsWGb63lC8xN/yOkNFE9yDuDi3n4UQvQ5mWDWK1JVhc4AP3nA1hHZCKBWn7R7SShhU2f3+
+	vXjT8fyiIdS3UoJRrzQ==
+X-Google-Smtp-Source: AGHT+IHSoq9Hg+bK+/GeaKnDjhYI/ippomoPHfGqVG5kdYjQ3Y/8lR8OvZ7OHaRyk7G5A2dqSYUHiV9mzFamY18=
+X-Received: from wmbbi20.prod.google.com ([2002:a05:600c:3d94:b0:451:d70f:eb87])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:46cb:b0:442:d9fb:d9f1 with SMTP id 5b1f17b1804b1-450d882b051mr118531105e9.4.1748881163711;
+ Mon, 02 Jun 2025 09:19:23 -0700 (PDT)
+Date: Mon, 2 Jun 2025 16:19:21 +0000
+In-Reply-To: <aCUQ0VWgoxdmIUaS@pollux>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+References: <20250514-topics-tyr-request_irq-v3-0-d6fcc2591a88@collabora.com>
+ <20250514-topics-tyr-request_irq-v3-1-d6fcc2591a88@collabora.com> <aCUQ0VWgoxdmIUaS@pollux>
+Message-ID: <aD3PCc6QREqNgBYU@google.com>
+Subject: Re: [PATCH v3 1/2] rust: irq: add support for request_irq()
+From: Alice Ryhl <aliceryhl@google.com>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Daniel Almeida <daniel.almeida@collabora.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250602-rk3576-pwm-v2-7-a6434b0ce60c@collabora.com>
-References: <20250602-rk3576-pwm-v2-0-a6434b0ce60c@collabora.com>
-In-Reply-To: <20250602-rk3576-pwm-v2-0-a6434b0ce60c@collabora.com>
-To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
- =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
- William Breathitt Gray <wbg@kernel.org>, 
- Sebastian Reichel <sebastian.reichel@collabora.com>, 
- Kever Yang <kever.yang@rock-chips.com>, Yury Norov <yury.norov@gmail.com>, 
- Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
- Leon Romanovsky <leon@kernel.org>, Lee Jones <lee@kernel.org>, 
- linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
- linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org, 
- linux-iio@vger.kernel.org, kernel@collabora.com, 
- Jonas Karlman <jonas@kwiboo.se>, 
- Detlev Casanova <detlev.casanova@collabora.com>, 
- Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-X-Mailer: b4 0.14.2
 
-The RK3576 SoC features three distinct PWM controllers, with variable
-numbers of channels. Add each channel as a separate node to the SoC's
-device tree, as they don't really overlap in register ranges.
+On Wed, May 14, 2025 at 11:53:21PM +0200, Danilo Krummrich wrote:
+> On Wed, May 14, 2025 at 04:20:51PM -0300, Daniel Almeida wrote:
+> > +/// // This is running in process context.
+> > +/// fn register_irq(irq: u32, handler: Handler) -> Result<Arc<Registration<Handler>>> {
+> > +///     let registration = Registration::register(irq, flags::SHARED, c_str!("my-device"), handler);
+> > +///
+> > +///     // You can have as many references to the registration as you want, so
+> > +///     // multiple parts of the driver can access it.
+> > +///     let registration = Arc::pin_init(registration, GFP_KERNEL)?;
+> 
+> This makes it possible to arbitrarily extend the lifetime of an IRQ
+> registration. However, we must guarantee that the IRQ is unregistered when the
+> corresponding device is unbound. We can't allow drivers to hold on to device
+> resources after the corresponding device has been unbound.
+> 
+> Why does the data need to be part of the IRQ registration itself? Why can't we
+> pass in an Arc<T> instance already when we register the IRQ?
+> 
+> This way we'd never have a reason to ever access the Registration instance
+> itself ever again and we can easily wrap it as Devres<irq::Registration> -
+> analogously to devm_request_irq() on the C side - without any penalties.
 
-Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
----
- arch/arm64/boot/dts/rockchip/rk3576.dtsi | 208 +++++++++++++++++++++++++++++++
- 1 file changed, 208 insertions(+)
+If we step away from the various Rust abstractions for a moment, then it
+sounds like the request_irq API must follow these rules:
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3576.dtsi b/arch/arm64/boot/dts/rockchip/rk3576.dtsi
-index 1086482f04792325dc4c22fb8ceeb27eef59afe4..9e7a41d721d29842dc9bde39170b8127584b0b2c 100644
---- a/arch/arm64/boot/dts/rockchip/rk3576.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3576.dtsi
-@@ -892,6 +892,32 @@ uart1: serial@27310000 {
- 			status = "disabled";
- 		};
- 
-+		pwm0_2ch_0: pwm@27330000 {
-+			compatible = "rockchip,rk3576-pwm";
-+			reg = <0x0 0x27330000 0x0 0x1000>;
-+			clocks = <&cru CLK_PMU1PWM>, <&cru PCLK_PMU1PWM>,
-+				 <&cru CLK_PMU1PWM_OSC>, <&cru CLK_PMU1PWM_RC>;
-+			clock-names = "pwm", "pclk", "osc", "rc";
-+			interrupts = <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&pwm0m0_ch0>;
-+			#pwm-cells = <3>;
-+			status = "disabled";
-+		};
-+
-+		pwm0_2ch_1: pwm@27331000 {
-+			compatible = "rockchip,rk3576-pwm";
-+			reg = <0x0 0x27331000 0x0 0x1000>;
-+			clocks = <&cru CLK_PMU1PWM>, <&cru PCLK_PMU1PWM>,
-+				 <&cru CLK_PMU1PWM_OSC>, <&cru CLK_PMU1PWM_RC>;
-+			clock-names = "pwm", "pclk", "osc", "rc";
-+			interrupts = <GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&pwm0m0_ch1>;
-+			#pwm-cells = <3>;
-+			status = "disabled";
-+		};
-+
- 		pmu: power-management@27380000 {
- 			compatible = "rockchip,rk3576-pmu", "syscon", "simple-mfd";
- 			reg = <0x0 0x27380000 0x0 0x800>;
-@@ -2273,6 +2299,188 @@ uart9: serial@2adc0000 {
- 			status = "disabled";
- 		};
- 
-+		pwm1_6ch_0: pwm@2add0000 {
-+			compatible = "rockchip,rk3576-pwm";
-+			reg = <0x0 0x2add0000 0x0 0x1000>;
-+			clocks = <&cru CLK_PWM1>, <&cru PCLK_PWM1>,
-+				 <&cru CLK_OSC_PWM1>, <&cru CLK_RC_PWM1>;
-+			clock-names = "pwm", "pclk", "osc", "rc";
-+			interrupts = <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&pwm1m0_ch0>;
-+			#pwm-cells = <3>;
-+			status = "disabled";
-+		};
-+
-+		pwm1_6ch_1: pwm@2add1000 {
-+			compatible = "rockchip,rk3576-pwm";
-+			reg = <0x0 0x2add1000 0x0 0x1000>;
-+			clocks = <&cru CLK_PWM1>, <&cru PCLK_PWM1>,
-+				 <&cru CLK_OSC_PWM1>, <&cru CLK_RC_PWM1>;
-+			clock-names = "pwm", "pclk", "osc", "rc";
-+			interrupts = <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&pwm1m0_ch1>;
-+			#pwm-cells = <3>;
-+			status = "disabled";
-+		};
-+
-+		pwm1_6ch_2: pwm@2add2000 {
-+			compatible = "rockchip,rk3576-pwm";
-+			reg = <0x0 0x2add2000 0x0 0x1000>;
-+			clocks = <&cru CLK_PWM1>, <&cru PCLK_PWM1>,
-+				 <&cru CLK_OSC_PWM1>, <&cru CLK_RC_PWM1>;
-+			clock-names = "pwm", "pclk", "osc", "rc";
-+			interrupts = <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&pwm1m0_ch2>;
-+			#pwm-cells = <3>;
-+			status = "disabled";
-+		};
-+
-+		pwm1_6ch_3: pwm@2add3000 {
-+			compatible = "rockchip,rk3576-pwm";
-+			reg = <0x0 0x2add3000 0x0 0x1000>;
-+			clocks = <&cru CLK_PWM1>, <&cru PCLK_PWM1>,
-+				 <&cru CLK_OSC_PWM1>, <&cru CLK_RC_PWM1>;
-+			clock-names = "pwm", "pclk", "osc", "rc";
-+			interrupts = <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&pwm1m0_ch3>;
-+			#pwm-cells = <3>;
-+			status = "disabled";
-+		};
-+
-+		pwm1_6ch_4: pwm@2add4000 {
-+			compatible = "rockchip,rk3576-pwm";
-+			reg = <0x0 0x2add4000 0x0 0x1000>;
-+			clocks = <&cru CLK_PWM1>, <&cru PCLK_PWM1>,
-+				 <&cru CLK_OSC_PWM1>, <&cru CLK_RC_PWM1>;
-+			clock-names = "pwm", "pclk", "osc", "rc";
-+			interrupts = <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&pwm1m0_ch4>;
-+			#pwm-cells = <3>;
-+			status = "disabled";
-+		};
-+
-+		pwm1_6ch_5: pwm@2add5000 {
-+			compatible = "rockchip,rk3576-pwm";
-+			reg = <0x0 0x2add5000 0x0 0x1000>;
-+			clocks = <&cru CLK_PWM1>, <&cru PCLK_PWM1>,
-+				 <&cru CLK_OSC_PWM1>, <&cru CLK_RC_PWM1>;
-+			clock-names = "pwm", "pclk", "osc", "rc";
-+			interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&pwm1m0_ch5>;
-+			#pwm-cells = <3>;
-+			status = "disabled";
-+		};
-+
-+		pwm2_8ch_0: pwm@2ade0000 {
-+			compatible = "rockchip,rk3576-pwm";
-+			reg = <0x0 0x2ade0000 0x0 0x1000>;
-+			clocks = <&cru CLK_PWM2>, <&cru PCLK_PWM2>,
-+				 <&cru CLK_OSC_PWM2>, <&cru CLK_RC_PWM2>;
-+			clock-names = "pwm", "pclk", "osc", "rc";
-+			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&pwm2m0_ch0>;
-+			#pwm-cells = <3>;
-+			status = "disabled";
-+		};
-+
-+		pwm2_8ch_1: pwm@2ade1000 {
-+			compatible = "rockchip,rk3576-pwm";
-+			reg = <0x0 0x2ade1000 0x0 0x1000>;
-+			clocks = <&cru CLK_PWM2>, <&cru PCLK_PWM2>,
-+				 <&cru CLK_OSC_PWM2>, <&cru CLK_RC_PWM2>;
-+			clock-names = "pwm", "pclk", "osc", "rc";
-+			interrupts = <GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&pwm2m0_ch1>;
-+			#pwm-cells = <3>;
-+			status = "disabled";
-+		};
-+
-+		pwm2_8ch_2: pwm@2ade2000 {
-+			compatible = "rockchip,rk3576-pwm";
-+			reg = <0x0 0x2ade2000 0x0 0x1000>;
-+			clocks = <&cru CLK_PWM2>, <&cru PCLK_PWM2>,
-+				 <&cru CLK_OSC_PWM2>, <&cru CLK_RC_PWM2>;
-+			clock-names = "pwm", "pclk", "osc", "rc";
-+			interrupts = <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&pwm2m0_ch2>;
-+			#pwm-cells = <3>;
-+			status = "disabled";
-+		};
-+
-+		pwm2_8ch_3: pwm@2ade3000 {
-+			compatible = "rockchip,rk3576-pwm";
-+			reg = <0x0 0x2ade3000 0x0 0x1000>;
-+			clocks = <&cru CLK_PWM2>, <&cru PCLK_PWM2>,
-+				 <&cru CLK_OSC_PWM2>, <&cru CLK_RC_PWM2>;
-+			clock-names = "pwm", "pclk", "osc", "rc";
-+			interrupts = <GIC_SPI 111 IRQ_TYPE_LEVEL_HIGH>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&pwm2m0_ch3>;
-+			#pwm-cells = <3>;
-+			status = "disabled";
-+		};
-+
-+		pwm2_8ch_4: pwm@2ade4000 {
-+			compatible = "rockchip,rk3576-pwm";
-+			reg = <0x0 0x2ade4000 0x0 0x1000>;
-+			clocks = <&cru CLK_PWM2>, <&cru PCLK_PWM2>,
-+				 <&cru CLK_OSC_PWM2>, <&cru CLK_RC_PWM2>;
-+			clock-names = "pwm", "pclk", "osc", "rc";
-+			interrupts = <GIC_SPI 112 IRQ_TYPE_LEVEL_HIGH>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&pwm2m0_ch4>;
-+			#pwm-cells = <3>;
-+			status = "disabled";
-+		};
-+
-+		pwm2_8ch_5: pwm@2ade5000 {
-+			compatible = "rockchip,rk3576-pwm";
-+			reg = <0x0 0x2ade5000 0x0 0x1000>;
-+			clocks = <&cru CLK_PWM2>, <&cru PCLK_PWM2>,
-+				 <&cru CLK_OSC_PWM2>, <&cru CLK_RC_PWM2>;
-+			clock-names = "pwm", "pclk", "osc", "rc";
-+			interrupts = <GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&pwm2m0_ch5>;
-+			#pwm-cells = <3>;
-+			status = "disabled";
-+		};
-+
-+		pwm2_8ch_6: pwm@2ade6000 {
-+			compatible = "rockchip,rk3576-pwm";
-+			reg = <0x0 0x2ade6000 0x0 0x1000>;
-+			clocks = <&cru CLK_PWM2>, <&cru PCLK_PWM2>,
-+				 <&cru CLK_OSC_PWM2>, <&cru CLK_RC_PWM2>;
-+			clock-names = "pwm", "pclk", "osc", "rc";
-+			interrupts = <GIC_SPI 114 IRQ_TYPE_LEVEL_HIGH>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&pwm2m0_ch6>;
-+			#pwm-cells = <3>;
-+			status = "disabled";
-+		};
-+
-+		pwm2_8ch_7: pwm@2ade7000 {
-+			compatible = "rockchip,rk3576-pwm";
-+			reg = <0x0 0x2ade7000 0x0 0x1000>;
-+			clocks = <&cru CLK_PWM2>, <&cru PCLK_PWM2>,
-+				 <&cru CLK_OSC_PWM2>, <&cru CLK_RC_PWM2>;
-+			clock-names = "pwm", "pclk", "osc", "rc";
-+			interrupts = <GIC_SPI 115 IRQ_TYPE_LEVEL_HIGH>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&pwm2m0_ch7>;
-+			#pwm-cells = <3>;
-+			status = "disabled";
-+		};
-+
- 		saradc: adc@2ae00000 {
- 			compatible = "rockchip,rk3576-saradc", "rockchip,rk3588-saradc";
- 			reg = <0x0 0x2ae00000 0x0 0x10000>;
+1. Ensure that free_irq is called before the device is unbound.
+2. Ensure that associated data remains valid until after free_irq is
+   called.
 
--- 
-2.49.0
+We don't necessarily need to ensure that the Registration object itself
+is dropped before the device is unbound - as long as free_irq is called
+in time, it's okay.
 
+Now, if we use Devres, the way this is enforced is that during cleanup
+of a device, we call free_irq *and* we destroy the associated data right
+afterwards. By also destroying the associated data at that moment, it
+becomes necessary to use rcu_read_lock() to access the associated data.
+But if we just don't destroy the associated data during device cleanup,
+then that requirement goes away.
+
+Based on this, we could imagine something along these lines:
+
+    struct RegistrationInner(i32);
+    impl Drop for RegistrationInner {
+        fn drop(&mut self) {
+            free_irq(...);
+        }
+    }
+    
+    struct Registration<T> {
+        reg: Devres<RegistrationInner>,
+        data: T,
+    }
+
+Here you can access the `data` on the registration at any time without
+synchronization.
+
+Note that with this, I don't think the rcu-based devres is really the
+right choice. It would make more sense to have a mutex along these
+lines:
+
+    // drop Registration
+    if devm_remove_callback() {
+        free_irq();
+    } else {
+        mutex_lock();
+        free_irq();
+        mutex_unlock();
+    }
+    
+    // devm callback
+    mutex_lock();
+    free_irq();
+    mutex_unlock();
+
+This avoids that really expensive call to synchronize_rcu() in the devm
+callback.
+
+Of course, for cases where the callback is only removed in the devm
+callback, you could also do away with the registration, take a
+ForeignOwnable that you can turn into the void pointer, and have the
+devm callback call free_irq followed by dropping the ForeignOwnable
+pointer.
+
+Alice
 
