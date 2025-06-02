@@ -1,168 +1,89 @@
-Return-Path: <linux-kernel+bounces-670274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AE43ACABC6
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 11:46:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 09E26ACABCC
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 11:46:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A2507A4FE1
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 09:44:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9E3E7AC1DD
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 09:45:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E3931EB9F3;
-	Mon,  2 Jun 2025 09:44:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCEB420127D;
+	Mon,  2 Jun 2025 09:44:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="LL6sGAV9"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VsW3D9D2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EECE91E285A;
-	Mon,  2 Jun 2025 09:44:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25A5B1E32D5;
+	Mon,  2 Jun 2025 09:44:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748857460; cv=none; b=AQru07FRBC3MUjC4TH6WdvLoLJiROI2wUa9dvevhoYLw8zWNjV++/34NaQQL5Q/qBw5XhA2KCbrnCST7Vhq99+PMRWR4gzKrQXwtlb69bY55cTX/k9b2hDtAPTHhHTfdOvlvxPizQIXUFYdDAdvQMII96ObPjwDO/YG7oGnH4G0=
+	t=1748857475; cv=none; b=FbU9LeI05MRK+R2pI+ELp8sog9krw93UUEQ1ZlWueHSB7Xns6C2A5N0H4LrjZBoO86+WZlQQDEunYSatDhUKRMuwfvXVOfNb2gri7Ml9cFRRUE1MwPeggHmw+gzTC5CN0mcAQu7fiZ9VH22JD/esvRGMMULi7QzyjcpOtPiajdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748857460; c=relaxed/simple;
-	bh=uIw5FT+oSLAsNqOjmaUd1W4Or0NVYECduE24Avljrtk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Tfd3NgeBaDdH19axUnD/UQj1U8EOoG3bB3DF7OrR0vQYL+gRbCyD7bKg3gZmzN7pLGkGuOqpGxM6hTj/6nLqOZATSyAxQid6ydUCizXymflfvshvtw4xHV77oxFLvLvpUvewUbyAEArw9vCSm3WY4SVNbhRQrL5DKkVVhU0Cxks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=LL6sGAV9; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 09F26379;
-	Mon,  2 Jun 2025 11:44:15 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1748857456;
-	bh=uIw5FT+oSLAsNqOjmaUd1W4Or0NVYECduE24Avljrtk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LL6sGAV9QnlbAgq4O3j81FkvgfHIjbw73X32i1z/q5RX0kxkN4lhXf8NVXat/Dcii
-	 5Yt9IO99oAyQUBlB9FhVH6h3RSlLwmcckEgYkfAJH+k8oEM9zQKD0f3f4hoGaYSq3Z
-	 s7pqRnMIDzaZmgqoBdMMH+xzvdp7UDA7iNnSNiTI=
-Date: Mon, 2 Jun 2025 12:44:09 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-Cc: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
-	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Subject: Re: [PATCH v3 10/15] media: rcar-csi2: Add .get_frame_desc op
-Message-ID: <20250602094409.GI3645@pendragon.ideasonboard.com>
-References: <20250530-rcar-streams-v3-0-026655df7138@ideasonboard.com>
- <20250530-rcar-streams-v3-10-026655df7138@ideasonboard.com>
+	s=arc-20240116; t=1748857475; c=relaxed/simple;
+	bh=Ku8Z0uwEL+JP5dU+wMkvW77sU9CsV6zZejCoPGfn1Dc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rwV5+Ssdwkc5qRz/OXo38toRlN6bQlbXH29GAhX7Ot7dmLIrvNBgyKNEVBBqjZ+FzvACUEe8RA5sbHHL/Z8pzkvx53CAStVa7LU4AI1ZE0/O4Omac32xj8zFMkymKhcs/MiRnI4Va8s3mWVtqYEByRd/4BKh9h3uF1pvSQuqHUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VsW3D9D2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C24BC4CEEB;
+	Mon,  2 Jun 2025 09:44:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748857474;
+	bh=Ku8Z0uwEL+JP5dU+wMkvW77sU9CsV6zZejCoPGfn1Dc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=VsW3D9D23VCaynChA+/KmUA1pZ2iiivTCCc3yQWi8PS2aRTOxab7bWV1VrMpv2lge
+	 mIK+abLR+Id9c7sC1pz/T76McXXemoZBqjd6MK9ox7G2MYYJQgvUHibi5zhCRrW6pI
+	 6laDODTqXzOG9oXxxSQV4vSrAYAiL+3If7viuQA3yg1VVLeON6E0zoeCWLLT7smvBR
+	 7TICpBkO2Ip7RFh2QCTOid87lzngGFpfoTIzLGg/s+rVL9WY3eHX4G2TjCpA6rTtud
+	 3ZfjjcSBecH4zUsk5JLy2fEgNDUkiCcBRgl46pl/8rRjTm1fMZW8O/g7uFoaRnavgK
+	 YIeEn9+ULjMcA==
+From: Christian Brauner <brauner@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/1] fs/read_write: Fix spelling typo
+Date: Mon,  2 Jun 2025 11:44:20 +0200
+Message-ID: <20250602-ziffer-anpreisen-6a220b0e9828@brauner>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250530173204.3611576-1-andriy.shevchenko@linux.intel.com>
+References: <20250530173204.3611576-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250530-rcar-streams-v3-10-026655df7138@ideasonboard.com>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=868; i=brauner@kernel.org; h=from:subject:message-id; bh=Ku8Z0uwEL+JP5dU+wMkvW77sU9CsV6zZejCoPGfn1Dc=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWTYFtVcv++2hYuNYdX296+ja7Ufhu3MO/if5/uvJt7/z W6zbu1r7ShlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZjI61kM/3Q4ss9I7u8Kum2j vPzsLvP9sikmntner5bO9HDf/aXMLpKR4cFT0dWZP6sXdMavub6vYyunYc2FwpvlF4/sTuHe+kb /Fz8A
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-Hi Tomi,
-
-Thank you for the patch.
-
-On Fri, May 30, 2025 at 04:50:39PM +0300, Tomi Valkeinen wrote:
-> Add v4l2_subdev_pad_ops.get_frame_desc() implementation.
+On Fri, 30 May 2025 20:32:04 +0300, Andy Shevchenko wrote:
+> 'implemenation' --> 'implementation'.
 > 
-> We also implement a fallback for the case where the upstream subdevice
-> does not implement .get_frame_desc. It assumes a single stream with VC =
-> 0 and DT based on the configured stream mbus format.
 > 
-> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-> ---
->  drivers/media/platform/renesas/rcar-csi2.c | 56 ++++++++++++++++++++++++++++++
->  1 file changed, 56 insertions(+)
-> 
-> diff --git a/drivers/media/platform/renesas/rcar-csi2.c b/drivers/media/platform/renesas/rcar-csi2.c
-> index 20bd44274bd2..65c7f3040696 100644
-> --- a/drivers/media/platform/renesas/rcar-csi2.c
-> +++ b/drivers/media/platform/renesas/rcar-csi2.c
-> @@ -1676,12 +1676,68 @@ static int rcsi2_set_pad_format(struct v4l2_subdev *sd,
->  	return 0;
->  }
->  
-> +static int rcsi2_get_frame_desc_fallback(struct v4l2_subdev *sd,
-> +					 unsigned int pad,
-> +					 struct v4l2_mbus_frame_desc *fd)
-> +{
-> +	const struct rcar_csi2_format *format;
-> +	struct v4l2_subdev_state *state;
-> +	struct v4l2_mbus_framefmt *fmt;
-> +	int ret = 0;
-> +
-> +	state = v4l2_subdev_lock_and_get_active_state(sd);
 
-This reminds me we should pass the state to the .get_frame_desc()
-operation.
+Applied to the vfs-6.17.misc branch of the vfs/vfs.git tree.
+Patches in the vfs-6.17.misc branch should appear in linux-next soon.
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-> +
-> +	fmt = v4l2_subdev_state_get_format(state, RCAR_CSI2_SINK, 0);
-> +	if (!fmt) {
-> +		ret = -EINVAL;
-> +		goto out;
-> +	}
-> +
-> +	format = rcsi2_code_to_fmt(fmt->code);
-> +	if (!format) {
-> +		ret = -EINVAL;
-> +		goto out;
-> +	}
-> +
-> +	fd->num_entries = 1;
-> +	fd->type = V4L2_MBUS_FRAME_DESC_TYPE_CSI2;
-> +	fd->entry[0].stream = 0;
-> +	fd->entry[0].pixelcode = fmt->code;
-> +	fd->entry[0].bus.csi2.vc = 0;
-> +	fd->entry[0].bus.csi2.dt = format->datatype;
-> +
-> +out:
-> +	v4l2_subdev_unlock_state(state);
-> +
-> +	return ret;
-> +}
-> +
-> +static int rcsi2_get_frame_desc(struct v4l2_subdev *sd, unsigned int pad,
-> +				struct v4l2_mbus_frame_desc *fd)
-> +{
-> +	struct rcar_csi2 *priv = sd_to_csi2(sd);
-> +	int ret;
-> +
-> +	if (WARN_ON(!priv->info->use_isp))
-> +		return -ENOTTY;
-> +
-> +	if (WARN_ON(pad != RCAR_CSI2_SOURCE_VC0))
-> +		return -EINVAL;
-> +
-> +	ret = v4l2_subdev_get_frame_desc_passthrough(sd, pad, fd);
-> +	if (ret == -ENOIOCTLCMD)
-> +		ret = rcsi2_get_frame_desc_fallback(sd, pad, fd);
-> +	return ret;
-> +}
-> +
->  static const struct v4l2_subdev_pad_ops rcar_csi2_pad_ops = {
->  	.enable_streams = rcsi2_enable_streams,
->  	.disable_streams = rcsi2_disable_streams,
->  
->  	.set_fmt = rcsi2_set_pad_format,
->  	.get_fmt = v4l2_subdev_get_fmt,
-> +
-> +	.get_frame_desc = rcsi2_get_frame_desc,
->  };
->  
->  static const struct v4l2_subdev_ops rcar_csi2_subdev_ops = {
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
--- 
-Regards,
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-Laurent Pinchart
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.17.misc
+
+[1/1] fs/read_write: Fix spelling typo
+      https://git.kernel.org/vfs/vfs/c/28b65351df00
 
