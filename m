@@ -1,138 +1,117 @@
-Return-Path: <linux-kernel+bounces-670547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3177ACB037
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 16:02:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 710F9ACB053
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 16:03:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 594B23A56EE
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 14:01:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FF1A402B85
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 14:02:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6AE2223323;
-	Mon,  2 Jun 2025 14:01:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0D812222B0;
+	Mon,  2 Jun 2025 14:01:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jvJOyfhN";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1NDtcM6O"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Uanr9LLf"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86278221F10;
-	Mon,  2 Jun 2025 14:01:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F15021CC4F
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 14:01:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748872872; cv=none; b=usRzCXs6PbaepZl42egfdXCxmci/W95gl00cJc5V1ViNBhSnmmVDcvMXsPDpDtTmlDR0ZcYIwhqK5GmJCMjULX9h1/o+F9X/V22tMop5y/nCeSKCM4zMdpQvvKn1Kd6MnpH4UaVmvZchKRC//n1nwUCP2mi9+ux3ymvkgBExDg4=
+	t=1748872896; cv=none; b=uCzomp3pKOcBM/+/zURW+p4IBFcmPz/cfiKrrQX0op1wCtIk3HWc72BZshxaxEY5Jo285QcKcRNhVuhSXXcOwQURqFDH4S8IgxvVFr+3Gbo9dOGeq7kzHoYGBg8FZGidRH9QJsXpOVt4FajWsgLNuiZZ8uBD7bgnV0C5OJ1UHqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748872872; c=relaxed/simple;
-	bh=YpXHqkOfYbjmBfWYsT9XlirLT3FOYSkAoPbRE2/wJro=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QjlGGBgOgonTY3bhPJEn/+QWPzz/fiP37o1Q5iJa6Iohae97hgqjf47B+vp0lJqt4goqJ7oyXc59CUodQumtwekhylrrttpVP2sPZ77NIH1X4ve9KSOHwoyDLDiROGzJNBSGNmGWOWtWy6e24GLKGKU5HMt9x/vUYvovoudlTMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jvJOyfhN; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1NDtcM6O; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1748872868;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7tpspZ5z5yJcrONoYAmjpEX6uY8u62SOLKRvr2PGBuk=;
-	b=jvJOyfhNKpDM2tj+S6xtzVuVVJ+vDa/qaZ4o5/ZCiBNx8vyWLCAbqsXgKwLk0f3XOP8TNC
-	8iqOP/rKJA4k/UTq6On7KbIfTW70DPQPhTrfSuWfKMTeML35LO+4S7HMW3qsVGXIcphHrm
-	IfJUF9wT6QN8pyEWCBvyx4obNDGduw0bkteDk87NhMbh0uzge4zSWQwfh9g55z9IO5/iUw
-	SlLUHq215gd01QU650fFObw6hlQa+MYO/x5YjdfU6MMiAq5Q9MqgjQHtQ0yRLt9WoWgaE0
-	4DCY1QhlqLaxuwenhwehHLTLh2qJQihE6VoGOMzp6qWXle6PZ3uVO/xCD9fWzw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1748872868;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7tpspZ5z5yJcrONoYAmjpEX6uY8u62SOLKRvr2PGBuk=;
-	b=1NDtcM6OpxyUs5J22yFSw8edNvsA6mnkqQ9OlCq+oCgjmtUM9+4u43Q4pH5aZr6+ZF74rj
-	RAWrO3ztarX53nDw==
-To: linux-kernel@vger.kernel.org,
-	linux-man@vger.kernel.org
-Cc: Alejandro Colomar <alx@kernel.org>,
-	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Waiman Long <longman@redhat.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH v4 4/4] man/man2/prctl.2, PR_FUTEX_HASH_GET_IMMUTABLE.2const: Document PR_FUTEX_HASH_GET_IMMUTABLE
-Date: Mon,  2 Jun 2025 16:01:04 +0200
-Message-ID: <20250602140104.2769223-5-bigeasy@linutronix.de>
-In-Reply-To: <20250602140104.2769223-1-bigeasy@linutronix.de>
-References: <20250602140104.2769223-1-bigeasy@linutronix.de>
+	s=arc-20240116; t=1748872896; c=relaxed/simple;
+	bh=NagQOnPJDvkb2mkYf+XeOB5En0lYB8s9niseheZBotI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Mai6HCXcIl4xwzoTczTxKIspfrRJnZ7heZBBHe2GPbRs3uCPj6bxENRuA4LsCc2AqzQRn2FcrAo41cyK96A4tzrg8/heH7RuowUwrMbsO1/yAr8us+9HWYg0Tw9nhsyox29cU2f+npLUu/oBtsUQPOWx9gRSAHjSTagUmytpg9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Uanr9LLf; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3a4fea34e07so1126050f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jun 2025 07:01:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1748872892; x=1749477692; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=iIbBoniHrQ8ysPUakN2ZSVqOUqWXbm4NXe1FWYc3Lms=;
+        b=Uanr9LLfoTE01oJ841zWFY8P8MyvuFKYUt8W4IaN94K3MEFNbx580BM2nA8iPXx0b7
+         9z2X5cvJx07rQj2DEDyKm49sEB/cRPxF3YGzicESzGPU0x7d44TVIdGUDU8Bczfm3sy3
+         NeVVfUPIVATbwsA6vLIPzdunACnwWrxL8477xKe1/7rryRjaNfVte4MYCgWluOO74nCJ
+         k6eu2SgQ0alRROv1BzNtIg5ply8gvY8LYYrfmoRrckWaDH/TPL1eehAmJffxua+qBoql
+         QA8Rbhm07x2vukGaOP+47O9s4tHTwRn7uYG5ENNkSvciD4S9YX8ZPeyPjApiW/xfdfqF
+         VQlA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748872892; x=1749477692;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iIbBoniHrQ8ysPUakN2ZSVqOUqWXbm4NXe1FWYc3Lms=;
+        b=E6a3tTcfKXir8u/wXxtf5lu1rbFXp0Vcow0NVoMRI+JulWDadR0zN7307RLwEUJVzp
+         5NPMdEM3RiT8K9Xmt5X0QWEJT2mQggHA87/i+UXr6xLdufLjQ+ar+ykom63dVV1ZpA+M
+         qW/bD+rEtHJIg4aGdjduffRY5ap1/VINvBwXgv4grtp+yAST9TtqmKpPYl5WDAetzkYb
+         MEbJBR38REJaPooN5PeLWHL66ICw8C4hT0umZzEpMsUAX9ofRusYAmeGeg/LscRhlXtL
+         hWo3Wi4896bxMUsHJgvkuAlO4wuNdL085w/JvV7JQimTXnHMAcXqjqKN8045AeXhYZGy
+         fLlg==
+X-Forwarded-Encrypted: i=1; AJvYcCWWlUCun64MXE1Cqk1c64ixRymFNLDryjWzwYDjIM5TPaHma1QWgK6jrb1B73ogsJO1dki+aOcQIucZkp4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfiiXK2DXmhMkQYjU+DnV5UJu1mRBsOvg3nARz8qlxGOyy+N8O
+	aVi2s6PGizGV8uvaEUI5JZt35dJrwxVcOIWfpxDr8+eYb0+cYBmMM08DkL6csHsgcuA=
+X-Gm-Gg: ASbGncsQ9MatZfRh9hHUutVU/3dhPQvm5GNy0Uz1czdOJkIl4d+c70TFv0fp2PD6mZ7
+	gYgToaAgXQ5A6v1Ic656FbFqB17/7eZKMGRQzLxX1MNDVM+xaCtEdqsmYuwNHPxZntmzRQzd6Mi
+	Erhhm8Yx1Mgk++t1mIngSZs7Ruy6bnYgw0diHpYmMn4WDtBDzaMm6H7Pd9nLbQ85FBgIwH7ySSs
+	3EA/CNbzQnocFgyKkP2ADOUQ1AehuF/jaHWBAC5ZcXSWiZClBW74ZzGD/Ml+R8PQz20i9qY/rfR
+	1H8Zt5A279Nl01O7FMaY8l4NhAjVoU2kA7Vkr0E7QdiSeL4uUtgoZt3o77yztL6qBmU=
+X-Google-Smtp-Source: AGHT+IFcK/6ISQPxykPrncma5VHws55L2Y9hI5oNzFpiILYMm6BZyuZo0dKaVkm4FGL7w36sh5Q2lg==
+X-Received: by 2002:a05:6000:2409:b0:3a4:d0dc:184d with SMTP id ffacd0b85a97d-3a4f7a3650bmr10615706f8f.27.1748872892237;
+        Mon, 02 Jun 2025 07:01:32 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a4efe5b871sm15236681f8f.13.2025.06.02.07.01.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Jun 2025 07:01:31 -0700 (PDT)
+Date: Mon, 2 Jun 2025 17:01:28 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Peter Chen <peter.chen@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, linux-usb@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>, s32@nxp.com,
+	linaro-s32@linaro.org
+Subject: Re: [PATCH 2/4] usb: chipidea: usbmisc: s32g: Add a
+ REINIT_DURING_RESUME flag
+Message-ID: <aD2uuP6Tx9NH7wVg@stanley.mountain>
+References: <cover.1748453565.git.dan.carpenter@linaro.org>
+ <b1ddbc5993b2906cf916d023fdf27b07088a9672.1748453565.git.dan.carpenter@linaro.org>
+ <aDd/pNP0jt73PKtb@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aDd/pNP0jt73PKtb@lizhi-Precision-Tower-5810>
 
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
----
- .../PR_FUTEX_HASH_GET_IMMUTABLE.2const        | 39 +++++++++++++++++++
- 1 file changed, 39 insertions(+)
- create mode 100644 man/man2const/PR_FUTEX_HASH_GET_IMMUTABLE.2const
+On Wed, May 28, 2025 at 05:27:00PM -0400, Frank Li wrote:
+> On Wed, May 28, 2025 at 10:57:20PM +0300, Dan Carpenter wrote:
+> > From: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
+> >
+> > The s32g2 and s32g3 chips will need to re-initialize in the resume path.
+> > Add a REINIT_DURING_RESUME flag which will trigger the reinitialization.
+> 
+> why power_lost_check() doesn't work for you?
+> 
 
-diff --git a/man/man2const/PR_FUTEX_HASH_GET_IMMUTABLE.2const b/man/man2con=
-st/PR_FUTEX_HASH_GET_IMMUTABLE.2const
-new file mode 100644
-index 0000000000000..d3b9e95ccbc98
---- /dev/null
-+++ b/man/man2const/PR_FUTEX_HASH_GET_IMMUTABLE.2const
-@@ -0,0 +1,39 @@
-+.\" Copyright, the authors of the Linux man-pages project
-+.\"
-+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
-+.\"
-+.TH PR_FUTEX_HASH_GET_IMMUTABLE 2const (date) "Linux man-pages (unreleased=
-)"
-+.SH NAME
-+PR_FUTEX_HASH_GET_IMMUTABLE
-+\-
-+check if the private hash is immutable.
-+.SH LIBRARY
-+Standard C library
-+.RI ( libc ,\~ \-lc )
-+.SH SYNOPSIS
-+.nf
-+.BR "#include <linux/prctl.h>" "  /* Definition of " PR_* " constants */"
-+.B #include <sys/prctl.h>
-+.P
-+.B int prctl(PR_FUTEX_HASH, PR_FUTEX_HASH_GET_IMMUTABLE);
-+.fi
-+.SH DESCRIPTION
-+Check if the private hash is immutable.
-+.SH RETURN VALUE
-+If the hash is immutable,
-+it returns 1;
-+otherwise,
-+it returns 0.
-+.P
-+On error, \-1 is returned, and
-+.I errno
-+is set to indicate the error.
-+.SH STANDARDS
-+Linux.
-+.SH HISTORY
-+Linux 6.16.
-+.SH SEE ALSO
-+.BR prctl (2),
-+.BR PR_FUTEX_HASH (2const),
-+.BR PR_FUTEX_HASH_GET_SLOTS (2const),
-+.BR PR_FUTEX_HASH_SET_SLOTS (2const)
---=20
-2.49.0
+Yeah.  That looks like it should work.  Thanks.
+
+regards,
+dan carpenter
 
 
