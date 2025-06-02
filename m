@@ -1,123 +1,148 @@
-Return-Path: <linux-kernel+bounces-670402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C068ACADEF
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 14:23:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DCBBACAE02
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 14:26:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 434F33BA001
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 12:22:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 002253BA159
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 12:25:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3261D21421D;
-	Mon,  2 Jun 2025 12:23:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 247EB21772B;
+	Mon,  2 Jun 2025 12:26:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XH8P+s/6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LlZX0/wJ"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81DF17485;
-	Mon,  2 Jun 2025 12:23:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D55F01C3BEB;
+	Mon,  2 Jun 2025 12:26:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748866982; cv=none; b=aqVQJimT1I9pVdYoaxORxmAy7/5nIaLpaifpla2N0tBmuKmD1uT/CP/aWEbNvqoXmmrqvMMhdLm/dPcXf4ioED48TK3+hPA6V4a+JMOWYW4fFaUOW1lfg5xLKOZtfH08MWkcpMfIUPxtWRPD/78orl9FyLh+kq/+Cu5vsJq1qbg=
+	t=1748867163; cv=none; b=s0b1C85RG6TXnw+T21xSs/uvdhCBdWbFIVNRDUB9MCxMYjxbOTNVUChpxL0FxdCfOpD4axPOoq4rmYvsEMgk/O87gJvg9HG7iBWTthA6FXg29f2ve6mK/yP8spEvnawAkQBXLSuxXQSZDtfqf4ZfD558s4VUoiEJGjqz/eYBaSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748866982; c=relaxed/simple;
-	bh=LrpYnWwRqQ2fm/LULB92EX1rn4RlP8w3zOCG97Ytfb0=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=q+M99lU5sLzCuutkg5EI0Kx0OJke8xL8eEJmHIPKMZa9kSQRBHkHMxWvUhM8FHs3aRxkWam0jd+fTAmdo6XEt5Py6b0jjSw1bDPh6U+MxdglX50Mu/qL1BynPAGSvAcO6b2UGy8BHe2Gu5yIIYr+H2vDE+B0C6hEQOfTn5XXF7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XH8P+s/6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5406C4CEF1;
-	Mon,  2 Jun 2025 12:23:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748866981;
-	bh=LrpYnWwRqQ2fm/LULB92EX1rn4RlP8w3zOCG97Ytfb0=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=XH8P+s/6uHV0G/AUxM/CUAKy1Bx8y4n7STCn3MNsw0QSUv7jbkKemEwBZHZLi7GSe
-	 dlBoxSiFnVxEJxMXlnIOQ73bJK7QkaF6ZL8Q01gt9h2Mp0QOr0w39M74LrRKT9LWeF
-	 kWdtqAuYJWRLUFLiy756cCW0xwmRbgxuBGhrZzFo12EiMtp+hke6HR0iDxp0KeoYPN
-	 ytVlyyppkVOJVfXlmaEAdzFEVANeiRL85qP+GI8FBfFgdtHju/rCyQTPAJLov/5ftD
-	 iF/Qmg50PcpKbL1xXRbdSoDLZYSfkj7dr4c+rJrEFiwXlIBYpHbwup1VzlLVP99Uo8
-	 MZ6ZTPKpkE04A==
-Date: Mon, 02 Jun 2025 07:23:00 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1748867163; c=relaxed/simple;
+	bh=IvyJNoELFWAc1pwZK+On2sYk30E3H6Bv/8JU7bkB85k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jvfduy/ST6xibayLarFX4kfKxuEndm+PJ4EvTxCJkfh/7Xn5iNhy0bl7hNat56R8Qg2Cc9/K2g9ll4ZTVtyis9yS8z6q41Vsi0vA6cZuOFf/GC/2FOhJb6qDKVWZ/towUFEMy8GGSD6lm5hOGxXnL0wF5uYLX6MYuqFqllF7uJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LlZX0/wJ; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-31062172698so42336711fa.0;
+        Mon, 02 Jun 2025 05:26:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748867160; x=1749471960; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=I+xZ+1rNLzamfg62JThm32IA/jBJvxSiOUYhQofWR7Y=;
+        b=LlZX0/wJKafnFvB+ORVJsAkWbkWzFAoNESv0jE2azkQVXihL4RMxNpsHIhxsGIufyG
+         7RG7CoPt6XJ/HhjtX31Ad2m/fzMOZVzmfNDjqQ9I4GmIe7HaRF+ufZKdpf5xNEgYapQI
+         i6ZRQrZt5NQPRaHRaaA1aTD/dbWEDxdGbXX3F75OWM9DTscCpTgXINjAiAfxUI4GMS3s
+         lKNWGJCxi2MQo2Nl2nVYi/dwyfMr8kceX6jXTmsvBYnafP4aw3naUssCeHSNRMuacdc7
+         4l5D/dpgd2nvxMLE+rn4VysG8sJ0fCKn8MjWBR4Px0In9vVJcb8QL+CfH5mlqxCzlz6X
+         6Erw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748867160; x=1749471960;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=I+xZ+1rNLzamfg62JThm32IA/jBJvxSiOUYhQofWR7Y=;
+        b=H0pFi5lwplyfopzSM1FGBjvNdCaPGqDybOwcIMeqQAZwvaUCDjYSVXAoStdrCuZQBn
+         PGyps+xsXZ+eM2+6SzA51jZaqtGs6oDUovyap4XTTfggD/JHgjF4jriZeZ2Qdf8lSUjY
+         Nmq7ytalyh+jwQS/37tHPrHdOaPTZ4sUaeMDBPfC0GbrLLaGPGbRLC950XmsXc2QhpJI
+         aPmWEXOhxsQYM/QvF3ftwU/sDdvgAlb0auFt367uYSdXkk5LCXqp/ruuIkT/IUEfd5V8
+         ps3xzoIiiGvhgZ8BYzUVrUZIhdK7EKRSkmmnJktHQ4KnLuYy9q48i4s/vg9f8Uzy/+TW
+         h/dg==
+X-Forwarded-Encrypted: i=1; AJvYcCU8ZJx/4eUezg2E+WHr+HsKBtSWt8DWrlKTzYFUk8BMyZPEkYHFEWb2w/6vmdoLKRY1x4JG8Py42pehUTNGoMs=@vger.kernel.org, AJvYcCULKT8lAWN6qSxVjf7GwU8uYJDSZDTCmYRJHHVUo1vGP31R61JIWQwE/Qs8jPkgURr41O17SNysQhgm494=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKdqMyDRms3e2qCt6Sk9CH0isJM46M3noXLJTu5qsCJsVFRZcS
+	xK+6GmySbhp6ABVX1a8fcxs/Pa3qNgviN5qjWWXUQ8MzGG8JnyZJMegEN/PIzQ==
+X-Gm-Gg: ASbGncuos0GhUz96bpn8fIdVKXVRurl2LZ17lHICJ8M+2PV5n8z4JsLiTODXmLP98mA
+	KUbqc8+d6smr9kgejC2E30IHZ45FWV/wtpRfzwOrQ/4rHksAfJL4qzxOFpJd1Mei5QTH1ucVXgl
+	TaxGku2+W+cf0Q064xWC+4OzYW+6eqZYFvl1JzzmyIw3j5DAcJt6IVdS/Qtfuho4Wi8mYitgw1k
+	jBhHkAHzbMdMkSFZLN+/x4RNu+pUoLebZLa/A3uqiy0ziZuUEBCIn3DipEwj1j0XjX67KziyDJx
+	weRzGAxcBYHu02TU3h6p5k15RPxhCKoOyvUODIBs2urbFPyJX7IkAxK0/dAlFHg32/xo9pyxi5i
+	dned8wnJuFVCmBcv23D+MYumIkL/QeGpm96Wx+HI=
+X-Google-Smtp-Source: AGHT+IHfLZLW7auV30M3BKqzYy/PS/uhPlzd7MURt+DLuiKZmTu4Csl3qjOP0d7BohBDI7Zrb+dLMQ==
+X-Received: by 2002:a05:651c:3247:20b0:32a:8c95:d841 with SMTP id 38308e7fff4ca-32a9e9cee67mr11289011fa.14.1748867159569;
+        Mon, 02 Jun 2025 05:25:59 -0700 (PDT)
+Received: from [192.168.1.146] (dsl-hkibng22-54f8dc-251.dhcp.inet.fi. [84.248.220.251])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-32a85b527ecsm15045091fa.48.2025.06.02.05.25.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Jun 2025 05:25:59 -0700 (PDT)
+Message-ID: <5380b2a1-8a92-4362-a014-132fbc301579@gmail.com>
+Date: Mon, 2 Jun 2025 15:25:58 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: nuno.sa@analog.com, andy@kernel.org, linus.walleij@linaro.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Michael.Hennerich@analog.com, conor+dt@kernel.org, 
- linux-iio@vger.kernel.org, brgl@bgdev.pl, dlechner@baylibre.com, 
- lars@metafoo.de, marcelo.schmitt1@gmail.com, jic23@kernel.org, 
- krzk+dt@kernel.org, linux-gpio@vger.kernel.org
-To: Marcelo Schmitt <marcelo.schmitt@analog.com>
-In-Reply-To: <187e038cb9e7dbe3991149885cb0a4b30376660c.1748829860.git.marcelo.schmitt@analog.com>
-References: <cover.1748829860.git.marcelo.schmitt@analog.com>
- <187e038cb9e7dbe3991149885cb0a4b30376660c.1748829860.git.marcelo.schmitt@analog.com>
-Message-Id: <174886697998.948762.16527380744873036141.robh@kernel.org>
-Subject: Re: [PATCH v4 01/11] dt-bindings: iio: adc: Add AD4170
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] rust: add initial scatterlist bindings
+To: Jason Gunthorpe <jgg@ziepe.ca>, Alexandre Courbot <acourbot@nvidia.com>
+Cc: dakr@kernel.org, lyude@redhat.com, Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, Valentin Obst <kernel@valentinobst.de>,
+ open list <linux-kernel@vger.kernel.org>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ Robin Murphy <robin.murphy@arm.com>, airlied@redhat.com,
+ rust-for-linux@vger.kernel.org,
+ "open list:DMA MAPPING HELPERS" <iommu@lists.linux.dev>,
+ Petr Tesarik <petr@tesarici.cz>, Andrew Morton <akpm@linux-foundation.org>,
+ Herbert Xu <herbert@gondor.apana.org.au>,
+ Sui Jingfeng <sui.jingfeng@linux.dev>, Randy Dunlap <rdunlap@infradead.org>,
+ Michael Kelley <mhklinux@outlook.com>
+References: <20250528221525.1705117-1-abdiel.janulgue@gmail.com>
+ <20250528221525.1705117-2-abdiel.janulgue@gmail.com>
+ <20250529004550.GB192517@ziepe.ca> <DA9JTYA0EQU8.26M0ZX80FOBWY@nvidia.com>
+ <20250530141419.GA292183@ziepe.ca> <DA9KQF9CY77R.77PBMU8Y1FPY@nvidia.com>
+ <20250530145026.GB293473@ziepe.ca> <DAAD0NZOCHS5.9FTVJIOI12QI@nvidia.com>
+ <20250602114047.GA298147@ziepe.ca>
+Content-Language: en-US
+From: Abdiel Janulgue <abdiel.janulgue@gmail.com>
+In-Reply-To: <20250602114047.GA298147@ziepe.ca>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
-On Mon, 02 Jun 2025 08:36:24 -0300, Marcelo Schmitt wrote:
-> Add device tree documentation for AD4170 and similar sigma-delta ADCs.
-> The AD4170 is a 24-bit, multichannel, sigma-delta ADC.
+
+On 02/06/2025 14:40, Jason Gunthorpe wrote:
+> On Sat, May 31, 2025 at 09:54:20PM +0900, Alexandre Courbot wrote:
 > 
-> Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
-> ---
-> Change log v3 -> v4
-> - Dropped sensor-node and most of defs.
-> - Updated external sensor props to have similar name and type of adi,ad4130 ones.
-> - Added constraints to properties related to external bridge sensor excitation.
+>> So if I understood your idea correctly, this would mean creating the
+>> SGTable and mapping it in one call, eschewing the typestate entirely?
 > 
-> Some explanation about the constraints to weigh scale sensor types.
+> Probably no need for a type state
 > 
-> The predefined ACX1, ACX1 negated, ACX2, and ACX2 negated signals are used to AC
-> excite external bridge circuits and are output on GPIO2, GPIO0, GPIO3, and
-> GPIO1, respectively. If only two pins are specified for AC excitation, only ACX1
-> and ACX2 (GPIO2 and GPIO3) are used. Because of that, if AC excitation is
-> specified/requested, then those specific GPIO pins must be used with the bridge.
-> Otherwise, the bridge won't get properly excited and we also cannot guarantee to
-> avoid short-circuit conditions since the level set to GPIOs to DC excite the
-> bridge depends on the GPIO number. See AD4170 datasheet Figure 113 Weigh Scale
-> (AC Excitation) for the reference circuit diagram.
-> Link: https://www.analog.com/media/en/technical-documentation/data-sheets/ad4170-4.pdf#unique_149_Connect_42_ID10354
+>> And the `SGTable` would own the backing data, and only release it upon
+>> destruction and unmapping?
 > 
->  .../bindings/iio/adc/adi,ad4170.yaml          | 543 ++++++++++++++++++
->  MAINTAINERS                                   |   7 +
->  2 files changed, 550 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,ad4170.yaml
+> But I don't think you can do this, it is not allowed to pin kmalloc
+> memory for instance so you have to do something as you showed to tie
+> the lifetime to the kmalloc across the sgtable lifetime.
 > 
 
-My bot found errors running 'make dt_binding_check' on your patch:
+We could explicitly have the SGTable own the backing store, so the 
+lifetime of the pages is connected to it? ie., we have a VVec with the 
+kmalloc allocator, instead of passing a a reference to pages, one could 
+have the page builder something in the likes of:
 
-yamllint warnings/errors:
+sgt.init(||
+	let k = Vec::<PageSlice, Kmalloc>::new();
+	k.reserve(pages, GFP_KERNEL) {
+	...
+	)
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/adi,ad4170.yaml: properties:interrupt-names: 'enum' should not be valid under {'enum': ['const', 'enum', 'exclusiveMaximum', 'exclusiveMinimum', 'minimum', 'maximum', 'multipleOf', 'pattern']}
-	hint: Scalar and array keywords cannot be mixed
-	from schema $id: http://devicetree.org/meta-schemas/keywords.yaml#
+Anyway this probably needs the related (still WIP btw) support in: 
+https://lore.kernel.org/rust-for-linux/20241119112408.779243-3-abdiel.janulgue@gmail.com/ 
 
-doc reference errors (make refcheckdocs):
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/187e038cb9e7dbe3991149885cb0a4b30376660c.1748829860.git.marcelo.schmitt@analog.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+/Abdiel
 
 
