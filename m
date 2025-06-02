@@ -1,120 +1,123 @@
-Return-Path: <linux-kernel+bounces-671150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66436ACBD77
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 00:45:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC88DACBD7B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 00:48:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FDDF173D33
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 22:45:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0501E7A5410
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 22:46:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F2611C5D72;
-	Mon,  2 Jun 2025 22:45:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DACB31C861B;
+	Mon,  2 Jun 2025 22:48:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AVchAOUB"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="AlX5fJuF"
+Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30AF315ECD7
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 22:45:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BE7315ECD7
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 22:48:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748904308; cv=none; b=IaAqwMoOzJOnhkr0dTE7PpqyUP37BqfO0sOXotSBuJJZU8qAegH7sVpewyE5lPtJcpkV2Dlp8y7D/Yr18w+aJ9WBqqU/X8jMBB5KXXJuMd17bfRM8qBr3Kv2hTxoCarOtMvVjUsKtgXjiulpoqzsZy+6veq+KFoNotgrb2gc+Xw=
+	t=1748904489; cv=none; b=GHIawgj/I2JqSwHv31RzUQ+b7FTIEnzIMca6UQw48KM947JlelAvMLFILF8ogXWm192mmCyExJSk3rylbcmjIy4K52niUvTxD5T9kSWzZXU7jM5YcMo8GWbnV9l+6xI9QFiD2lCheUuRmXfRCAwBsd2hlyvC/j/EN+imMNH4Uq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748904308; c=relaxed/simple;
-	bh=wgFrKfdNqxvptwJ0dkv/Tz2GZ8THxGEKBjjrVCTNsvQ=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=O0LnTzF/MA5tI/kkIN2NF59yXVbdi1tRKM8/FYKdQMQM3Y8LS2wMFsGnoq3sYeIOJvmbtfuMonqCMD+hIMg0YomsEa0sEieVczJNZ2abGwSs9WZhtBLXbVZ2q/nGrDN6WaiqqZpl3zEtIHLb3HE3aX0umQkzyF8HHXuAeIFfRxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AVchAOUB; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2350804a43eso69875085ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jun 2025 15:45:06 -0700 (PDT)
+	s=arc-20240116; t=1748904489; c=relaxed/simple;
+	bh=dV8jNwoaHn3pYzAQqE0xKwHO/o+oj5FSIrvUimpRDk4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pRuA4/Y2dyGi5+4KSXmMitVZ9xWTD7I8wtDGOGBoSbA9paS+L8IZrWnNv3NkWXgzOZHq02XOIOKPJt4ZSp91NWuBJInjylNhMd/HzTv3h885Rsasc63ehM9APsVUyjKHcHJmdDyvCeHrrOhA1ktIo4/FvtlsISbiCwisaQg0HMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=AlX5fJuF; arc=none smtp.client-ip=209.85.166.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-86d029e2bdeso109187939f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jun 2025 15:48:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1748904306; x=1749509106; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=uYBueFv/pVEZ7QUV21+wkLlBlHK3mqlshK0YqFmhI5s=;
-        b=AVchAOUBH8ctkwJCLzTBu7K26UZkkhAQV3HLIRf7mWNu3woZPT7OltF1L0Tlh51HDg
-         B3mkgt9oOiJx69pjMcFmsRWWDXAv2ubXy12QOWguQgra70vv1zC0eGVUUQmLxF4BwOTv
-         ltlpqvxeKF7YtrHAnAV7lBAfy8tMrw1uiDZAhG565pMaZSDVjUFcheSnFkXdTEuelUPH
-         sVDdKs/De72Gg/bt8RSOb09MRgnsUmiSKeXcPo9ec4xIZLGqSKyG2aTOBO13wbOrD/Gs
-         FL/GRVIqg55mdQHHErcWHhzBp/ypTmnqT3ZrM7iLTlEDRC8cA4IWSZJcWnxccmfuNAYG
-         CtjQ==
+        d=linuxfoundation.org; s=google; t=1748904486; x=1749509286; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=k0MPRxC3zSKa9lUKC3PPGWxNiqxgy6DGxhs8CNtCqjc=;
+        b=AlX5fJuF8oQq+andlgeBt8tco6K++GKywsYfAMFGdEjTcqBFRqqcl9NwheZL20K1rl
+         OKiZzVrYlzq096E+6tNrnTDQ4dP52A6bmT2kkAeWTR7JQUHICFNSYxe2ekdcZ17Uh6+N
+         A+sK8OY0cWbG+kN4Du++HEpuexgJ8EfyyyuyA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748904306; x=1749509106;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uYBueFv/pVEZ7QUV21+wkLlBlHK3mqlshK0YqFmhI5s=;
-        b=Q+7D4btghBRReIKMUGMmWAREi7/u19CymH7A0BG1ZliRdyEWdQgj+iZbwRuYqaHGBB
-         g0VJ0QD4hkG+HRNC0jcKuDwZK3P9lc8r9gHwhzvyX26kQ0y0ZNT2aeiKkGUYEML6O5B2
-         HuyBXtRmZUL4Lyc+XOJX8G5Vd2iVS/qxkump5IGBk12bLzHHOqTf8hJdQtksFFe9Tx+v
-         lCECSrOMh2TBfKODPcqOqDwxbOALxJxr87tCqX2+y2/vNhjxUW3+Tvx7qGksT4+Uwsu7
-         ps4xD9gKTbDYMYuIzgKxNmkviGdwm935kd65b4XaQ9Hq/ad5JrDxgB9ZXZWsq18UoIql
-         9Cug==
-X-Forwarded-Encrypted: i=1; AJvYcCXDSmzXB9emmnKgZoUaBr4+ZHzcmec302jL1JN8WReQXNjeThEv0FXuPK7Vhkt+IiaFOyrLlfgqANnnGFw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAZekB3HTtK+UyCYcxKUetPElD4zqEZ5Gl/V94l4bMN6g5BKi3
-	9wPMEGokXy4AnJfCG08oxWAjojM7SX6dEwvDYihnoFTx/38l8Ptsz5yKkneeO2cZ33HTbhm/Jeo
-	NwjX5jQ==
-X-Google-Smtp-Source: AGHT+IExJZgimPIbe4xzxtu5I+efDW8e+vVzSbLlqkjYo9jNvakiMZHwiNPe4gJj71w/WgjG5NU7oimXGs4=
-X-Received: from pjbpm8.prod.google.com ([2002:a17:90b:3c48:b0:312:14e5:174b])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:2346:b0:235:15f5:cc30
- with SMTP id d9443c01a7336-2355f783078mr133507935ad.16.1748904306524; Mon, 02
- Jun 2025 15:45:06 -0700 (PDT)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Mon,  2 Jun 2025 15:44:59 -0700
-In-Reply-To: <20250602224459.41505-1-seanjc@google.com>
+        d=1e100.net; s=20230601; t=1748904486; x=1749509286;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=k0MPRxC3zSKa9lUKC3PPGWxNiqxgy6DGxhs8CNtCqjc=;
+        b=N/HdpVy4K8ep7iLfE/mVacGGucpG3TDwk6/VG/DpZsOXQlfR52koAcnwcHK4ACVWod
+         SwTqoIWG8zYTYJW87Pm4//yyu/VIg1PFNlbEPRvHr4OyGLBblyVNe3yF26hyWRUaC4+J
+         lrXJkLlAieNw/j5CzMowBpYe6EIfenWpOKIglmMMZKkGG8ZmMxsDMTikjxegUp1JlE1k
+         z/OrzY81NEmVKfBW3a3i3w5BYsFoQgMoTfuqwnCx+8AcnkGKho4hTz7jBc5Z6VN6L4ls
+         U0D3N/wtrLg/y8mIykBEcmWRwMxfbC3HKzrq1o5jGYyQJgF6qRttuQ1kwyQpz60CGTye
+         oySg==
+X-Forwarded-Encrypted: i=1; AJvYcCXs99BxO3D9njOwNm8Mqwu5d/JlT3VZxJUHJrW6rIoOAikRDrb0sbTtfCGLqkjsZ+XHuaWh6FPB9VkIc1s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIKWVITwM0ti8skFgofbVrurJy5dERm47cLxgQuHQmTANykuQo
+	U4O2t6kTVbQfxQO2ZfR5m2egyrsveFTOb58R0e2lRYjUnZ56L5KDkhYme/Q4ShzrLWYT2WoCT0j
+	XjJhY
+X-Gm-Gg: ASbGncvaD3j8l60BnEkvefZanGkojIioyQFqWvevEvtp3L7YOKHudtNxeya0WK+g9vA
+	6FxWwxygxo/7IX9vH7IlYKL8qVBeE7kNFSXioQe3KW5YgfzdibWPYoFQtxLzmFNI2MVEYxFdLTj
+	Zvq6YhbaXEgzFRnAK+fTDycaSD666W93byHLnc4Nv42KWtwDJL7qByIc7NkvnRQZDeJUqFt7zii
+	AS/0muRB1ELyycIvUO8VWOPjo/zA0BqVBE80oCiXSBA3pItlEL1k6KWPAlgNeybQ4V1XUuEu2ud
+	2Wg8uR/q40iGlse4wwshU0iEUQVuRCKI7tWCgWMedg/9vO1w1OMQ80Gfe5biQA==
+X-Google-Smtp-Source: AGHT+IGcqPQ6Br4YkdnS67IYJqV4bo0xOj2HBlD5gFqWwiSIyNPUyz3F+NvBmsbbGyAdNmOLbKGGBg==
+X-Received: by 2002:a92:c26e:0:b0:3d4:2ea4:6b87 with SMTP id e9e14a558f8ab-3ddb79ff68amr2712545ab.11.1748904486155;
+        Mon, 02 Jun 2025 15:48:06 -0700 (PDT)
+Received: from [192.168.1.14] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3dd93546c38sm22951685ab.38.2025.06.02.15.48.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Jun 2025 15:48:05 -0700 (PDT)
+Message-ID: <4a28c302-b37e-4963-86c2-87c5793c2661@linuxfoundation.org>
+Date: Mon, 2 Jun 2025 16:48:04 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250602224459.41505-1-seanjc@google.com>
-X-Mailer: git-send-email 2.49.0.1204.g71687c7c1d-goog
-Message-ID: <20250602224459.41505-3-seanjc@google.com>
-Subject: [PATCH 2/2] KVM: SVM: Initialize vmsa_pa in VMCB to INVALID_PAGE if
- VMSA page is NULL
-From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Alexander Potapenko <glider@google.com>, James Houghton <jthoughton@google.com>, 
-	Peter Gonda <pgonda@google.com>, Tom Lendacky <thomas.lendacky@amd.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] selftests: Add version file to kselftest installation dir
+To: Tianyi Cui <1997cui@gmail.com>, shuah@kernel.org
+Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20250529003417.468478-1-1997cui@gmail.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20250529003417.468478-1-1997cui@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-When creating an SEV-ES vCPU for intra-host migration, set its vmsa_pa to
-INVALID_PAGE to harden against doing VMRUN with a bogus VMSA (KVM checks
-for a valid VMSA page in pre_sev_run()).
+On 5/28/25 18:33, Tianyi Cui wrote:
+> As titled, adding version file to kselftest installation dir, so the user
+> of the tarball can know which kernel version the tarball belongs to.
+> 
+> Signed-off-by: Tianyi Cui <1997cui@gmail.com>
+> ---
+>   tools/testing/selftests/Makefile | 6 ++++++
+>   1 file changed, 6 insertions(+)
+> 
+> diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
+> index a0a6ba47d600..246e9863b45b 100644
+> --- a/tools/testing/selftests/Makefile
+> +++ b/tools/testing/selftests/Makefile
+> @@ -291,6 +291,12 @@ ifdef INSTALL_PATH
+>   		$(MAKE) -s --no-print-directory OUTPUT=$$BUILD_TARGET COLLECTION=$$TARGET \
+>   			-C $$TARGET emit_tests >> $(TEST_LIST); \
+>   	done;
+> +	@if git describe HEAD > /dev/null 2>&1; then \
+> +		git describe HEAD > $(INSTALL_PATH)/VERSION; \
+> +		printf "Version saved to $(INSTALL_PATH)/VERSION\n"; \
+> +	else \
+> +		printf "Unable to get version from git describe\n"; \
+> +	fi
+>   else
+>   	$(error Error: set INSTALL_PATH to use install)
+>   endif
 
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- arch/x86/kvm/svm/sev.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+Why not use "make kernelrelease" to get the version?
 
-diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
-index 93d899454535..5ebb265f2075 100644
---- a/arch/x86/kvm/svm/sev.c
-+++ b/arch/x86/kvm/svm/sev.c
-@@ -4471,8 +4471,12 @@ static void sev_es_init_vmcb(struct vcpu_svm *svm)
- 	 * the VMSA will be NULL if this vCPU is the destination for intrahost
- 	 * migration, and will be copied later.
- 	 */
--	if (svm->sev_es.vmsa && !svm->sev_es.snp_has_guest_vmsa)
--		svm->vmcb->control.vmsa_pa = __pa(svm->sev_es.vmsa);
-+	if (!svm->sev_es.snp_has_guest_vmsa) {
-+		if (svm->sev_es.vmsa)
-+			svm->vmcb->control.vmsa_pa = __pa(svm->sev_es.vmsa);
-+		else
-+			svm->vmcb->control.vmsa_pa = INVALID_PAGE;
-+	}
- 
- 	/* Can't intercept CR register access, HV can't modify CR registers */
- 	svm_clr_intercept(svm, INTERCEPT_CR0_READ);
--- 
-2.49.0.1204.g71687c7c1d-goog
-
+thanks,
+-- Shuah
 
