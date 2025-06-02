@@ -1,312 +1,239 @@
-Return-Path: <linux-kernel+bounces-670980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A626FACBB7E
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 21:25:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B76CEACBB8C
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 21:29:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70C593A6D98
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 19:25:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4149170B39
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 19:29:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 280CF1A3150;
-	Mon,  2 Jun 2025 19:25:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBCF9229B15;
+	Mon,  2 Jun 2025 19:29:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aIv+MIYE"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XDrZYzTf"
+Received: from mail-io1-f73.google.com (mail-io1-f73.google.com [209.85.166.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53BEC148827;
-	Mon,  2 Jun 2025 19:25:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39536221F06
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 19:28:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748892332; cv=none; b=eR2HTo7YSpj8gOLB0uJrS/4AhmqXxyp2uqgJjso2zi162Ov8Ljl67mu4dIsMvn1YyyQQYDyqCC/uq4bWHRSSWkB4014hsz1Mu6ZYftBkNMu8rxgsTNkrheF3j1RuZ/IBx1ny38nwVnzPSNsKNaxIw2aP2z1s906EITWwFn/FgQs=
+	t=1748892540; cv=none; b=UUXtHwkElLEFNzfng97a9YFDgjHNTkXPX2/4hgBvueLqwn7HbJg32TZ3ekqWnjE7EkyiTDKvBXzZ/lkcczs46hZU2iC/WdCXkGNxApz9grPMr7OsmKGZcNpApkkEbdHNTOSP7eVVeAk/vphgN1fTohN0vI3cntSkiyU+0042nZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748892332; c=relaxed/simple;
-	bh=5OIb0TTZTl+gOrJHLUBR5bzK1rr+xWHikk5I656jqyk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LUEtO9W27CU0jcgyRHrMLjLkrs31q/cYc7iwOvmU4CRUqPKAHnWYaUAO+OK0dnvtwHPlOI4w0Ya2nY4SmiBqNmYaMh8XoLnKwXrtJp0pGakGMzJJYWWSXH0tt4U3OoxO8RMxwjGc5hPHIfbU2FnCcyV9/8f78nhU7fGxjnge4vc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aIv+MIYE; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-234c5b57557so42502495ad.3;
-        Mon, 02 Jun 2025 12:25:30 -0700 (PDT)
+	s=arc-20240116; t=1748892540; c=relaxed/simple;
+	bh=Bkp+RHmq5Zb8XC8EbWlPhlhfVe8QwDCY3ZtSkb5UPso=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=aRJeMCez69I5zeC/d4R2uuUFAwXRgr3TzKGQ3La3Gc471qlVaZ0nOqahA+eDQSQfEqfKNRI5k3rbYAsCCkjt8mqkppUh+EHTWpu1JX3K/Jpe8xiAgYkA5xbnxY303d6xP5WN6qusXqOTQLEtozET2EJa5VdmPHuiDAPR7XQ12LM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--coltonlewis.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XDrZYzTf; arc=none smtp.client-ip=209.85.166.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--coltonlewis.bounces.google.com
+Received: by mail-io1-f73.google.com with SMTP id ca18e2360f4ac-869e9667f58so757999639f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jun 2025 12:28:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748892329; x=1749497129; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=3rzsJqPboQ5hPdxr5AQP/HWaTk1HX8GdAZDNET0lMnw=;
-        b=aIv+MIYERKpCMkoZAbDCl+Ranaqwc/q3GL5UWMRZ79umHiZsIUWB0Q7Sj7yMPbxdRj
-         t70S2KmQgBLcaJFwPB9rX8tI5wgflZNot/Nc7ZE5QIBxFeE0mengcSs+T7CRoNkqXis7
-         x/bYy6rvAVtzuLOXOELYgthuXWgDojc6EY2ow7XQS9k7RcY6AzFscd65xJ+Bh1qLpKRF
-         IbYi9crHPKIgpO5MECvcEyfbrmp+Q20Qkulr3FMy/Sq7nQAXKpdNiPjtfsAp/3kalmh9
-         qLC3ZGqTJff5HYboVY5SvxTUByhMAaG533vdDu2ruUMBdrIRqzZdMnaL0Xc0WxkCmXsC
-         zM0w==
+        d=google.com; s=20230601; t=1748892537; x=1749497337; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=XDqE8mFNSY/ZirLnr+lInzWb5qO4cUyD2wakE3p29r0=;
+        b=XDrZYzTfUvfcveiV/2SQ3WvdQeceqlug2ytLntPdDuPPTnoTrNaYRh6IRYgh70BxJn
+         G47KoGTrpJjSvRjiOBFHdgUhd2vjt0cbJZdDJLl2bu+2BeTgZ8YXnWeysk8346CeYH5b
+         vQnRmtDS6ZPDIjzZlunD/tSRQ6FugEnoOqSoDAMZ0D62yS4MuRJizK0IrMQZC+FtHBVB
+         ZrDUQcfO+Bh4uU3OfDCioGBfoGIG9eNmFcPFxphi7Ew0KKPrZ80Wm0peBY9chO2hPaWn
+         tngZne7iGzJ6LAR972Ppv7mIhuaiTUcDzRWjoobQYGtPtg3X9UccCbM5g22B86+LIphx
+         iFMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748892329; x=1749497129;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3rzsJqPboQ5hPdxr5AQP/HWaTk1HX8GdAZDNET0lMnw=;
-        b=h3IuyL8CGFB9z6wi2gKfPMjav0LNi1ZhMTDQ5qYRc5ajEnqNYa5J3YOEosmohfFhxw
-         4zK3AiwDvrNGXBmwpFIXTS0wQExHw10HE2lwj8w0O81NZ5jOf4rQa7xk9xkjtmaZGaDr
-         JUcszFhjL+KctlHj64YvzvDGflunXyz27WjfH2EvOt7szA1KvC1W3UGoTA+HF0LUydtX
-         QAmx9GxONEUgGWILXbeGh62PolQUwtUTGsQfCgLyNoHB9B2Mu7k7PqrURz/nYBlUm8KU
-         nSsCUtdcPWuBDkKt7b8Hi9pzAYO7pMwl/BYhEmtQQxazDw8RRkdJe/JOAF4WW903OidC
-         j4pA==
-X-Forwarded-Encrypted: i=1; AJvYcCU8W+8T3xU99i8BMxOwUutp1h3jYCLRGWKFoBj72XdBObOWRh1Rxw3o1ZLagd499AHckDs5ixb//kB1xQw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YybwNHvWhk4k80RCqrbRlz2MuxtVh+wsBDu00IQx0RV11NdgYIZ
-	Elfh1uX5liII88iro4X9s5M5CcSGHUvZizVsCCQ9eMMrIVdQ61Uce7vkik5+NDgE
-X-Gm-Gg: ASbGncvKmvei8veHy6HJGcCjzIea1nWBZaCyFyZjws59kP1KnW1sISgXmvGsJ1Tm5VI
-	lD5V6PX7bRjqYltKjKMcK2zCwnZ4fKwCZxcyUmJh2jUr8aun2FgksmJxTiIG+UJlxFF7Ysw6q8i
-	au+7jeNTcXpEsGM57Mn0OcxlDZTtF/P6vu2VZp5O/XwE3bMbfzA/IXcPYof0lLxMbb8K6eL4Gw9
-	F1y3RxTrcMRl1Wf/C2uYikpwsk4c3hd8SrHEMkZd77pQQfmXy3Qh1/e4gd76IsGrSkUtBp0ZQv5
-	m5gSeQxlvFIjioE6m6CWBTI9h5TRqKhQXr9t0C54dhjREhcERiGnWytwRnBxiGDh
-X-Google-Smtp-Source: AGHT+IEcUHVBszZnXDV3izP+C8FXfhN5tXCobPMjoVw3ZEXgzjF0b8wtPF7HzUP0apIoxXdDItOsTQ==
-X-Received: by 2002:a17:902:e5c4:b0:234:9670:cc73 with SMTP id d9443c01a7336-2353942405bmr201708995ad.5.1748892329429;
-        Mon, 02 Jun 2025 12:25:29 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23506d14ddasm74351175ad.251.2025.06.02.12.25.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Jun 2025 12:25:28 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-From: Guenter Roeck <linux@roeck-us.net>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-hwmon@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] hwmon updates for v6.16
-Date: Mon,  2 Jun 2025 12:25:27 -0700
-Message-ID: <20250602192527.265989-1-linux@roeck-us.net>
-X-Mailer: git-send-email 2.45.2
+        d=1e100.net; s=20230601; t=1748892537; x=1749497337;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XDqE8mFNSY/ZirLnr+lInzWb5qO4cUyD2wakE3p29r0=;
+        b=svhzrRNBCSNNdZbl0CRLUesjSGgus39kaDQR5/oJEi4A/q55qO7vAPHOcfRUpffdER
+         7vd6J0gLO+Pa9ibygGftcytR+kD1NUt6aEkHAkg9X7wsLaiZ/WiZJEv3nCrR5a2j/K3n
+         hULr7SyHmi+mRKhYWXC5S3lIxYUlHhFRDgu1IwvzjU8fllSCVOC1lFhg0V6KDZyk3iKw
+         oj+om9vZvD6ptJ0WsRpRC5sVYKedXPDq76jKzW5zs9li4jV99tlFtAj9xxk1kw9eJ9Ly
+         bSeGg7qLG7QDSSTzkjXhbkxKzLrZnkeJgtZMoneGmMoN/aazV7ZT6uuydOICveNgA5/B
+         8NTw==
+X-Forwarded-Encrypted: i=1; AJvYcCXmGHaemgLAHCejqJkig2t9u1GCCCE/YWYgFH2RBXrgNCVR3N7ROqgrLe4Yq6nBqgu1+qfkx0/wv7hqlIY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YymVwcehvCDP+/FmEgETQuz8Hw2G8bw04WKlFARwspLATbod2Jd
+	11Q7U0+f38WC6UO9nb9O9Jv+z/9ScudMSCSfvW1LcsJSNXPM4u6bOC4agBTBcPJ7FZIq3shpjxV
+	imwpuMEIjqi72zH7odwhVE6hHJA==
+X-Google-Smtp-Source: AGHT+IFxeHQ76hpwbia1zMeQqWVTlfaiwmMC2Ena7lOl4cpvV3skj0sAcuon/x4Imo4A5kPFT2TaGxeLGLjA5Bo9DQ==
+X-Received: from ilbby12.prod.google.com ([2002:a05:6e02:260c:b0:3dd:b4dc:eb43])
+ (user=coltonlewis job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6e02:194b:b0:3dc:787f:2bc8 with SMTP id e9e14a558f8ab-3dda3363f25mr100622585ab.12.1748892537342;
+ Mon, 02 Jun 2025 12:28:57 -0700 (PDT)
+Date: Mon,  2 Jun 2025 19:26:45 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.49.0.1204.g71687c7c1d-goog
+Message-ID: <20250602192702.2125115-1-coltonlewis@google.com>
+Subject: [PATCH 00/17] ARM64 PMU Partitioning
+From: Colton Lewis <coltonlewis@google.com>
+To: kvm@vger.kernel.org
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
+	Zenghui Yu <yuzenghui@huawei.com>, Mark Rutland <mark.rutland@arm.com>, 
+	Shuah Khan <shuah@kernel.org>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+	linux-perf-users@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	Colton Lewis <coltonlewis@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Linus,
+Overview:
 
-Please pull hwmon updates for Linux v6.16 from signed tag:
+This series implements a new PMU scheme on ARM, a partitioned PMU
+that exists alongside the existing emulated PMU and may be enabled by
+the kernel command line kvm.reserved_host_counters or by the vcpu
+ioctl KVM_ARM_PARTITION_PMU. This is a continuation of the RFC posted
+earlier this year. [1]
 
-    git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git hwmon-for-v6.16
+The high level overview and reason for the name is that this
+implementation takes advantage of recent CPU features to partition the
+PMU counters into a host-reserved set and a guest-reserved set. Guests
+are allowed untrapped hardware access to the most frequently used PMU
+registers and features for the guest-reserved counters only.
 
-Thanks,
-Guenter
-------
+This untrapped hardware access significantly reduces the overhead of
+using performance monitoring capabilities such as the `perf` tool
+inside a guest VM. Register accesses that aren't trapping to KVM mean
+less time spent in the host kernel and more time on the workloads
+guests care about. This optimization especially shines during high
+`perf` sample rates or large numbers of events that require
+multiplexing hardware counters.
 
-The following changes since commit 9c32cda43eb78f78c73aee4aa344b777714e259b:
+Performance:
 
-  Linux 6.15-rc3 (2025-04-20 13:43:47 -0700)
+For example, the following tests were carried out on identical ARM
+machines with 10 general purpose counters with identical guest images
+run on QEMU, the only difference being my PMU implementation or the
+existing one. Some arguments have been simplified here to clarify the
+purpose of the test:
 
-are available in the Git repository at:
+1) time perf record -e ${FIFTEEN_HW_EVENTS} -F 1000 -- \
+   gzip -c tmpfs/random.64M.img >/dev/null
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git tags/hwmon-for-v6.16
+On emulated PMU this command took 4.143s real time with 0.159s system
+time. On partitioned PMU this command took 3.139s real time with
+0.110s system time, runtime reductions of 24.23% and 30.82%.
 
-for you to fetch changes up to 46d40b2479ab6417db4d7174f7a938c994435b3f:
+2) time perf stat -dd -- \
+   automated_specint2017.sh
 
-  doc: hwmon: acpi_power_meter: Add information about enabling the power capping feature. (2025-05-20 06:19:25 -0700)
+On emulated PMU this benchmark completed in 3789.16s real time with
+224.45s system time and a final benchmark score of 4.28. On
+partitioned PMU this benchmark completed in 3525.67s real time with
+15.98s system time and a final benchmark score of 4.56. That is a
+6.95% reduction in runtime, 92.88% reduction in system time, and
+6.54% improvement in overall benchmark score.
 
-----------------------------------------------------------------
-hwmon updates for v6.16
+Seeing these improvements on something as lightweight as perf stat is
+remarkable and implies there would have been a much greater
+improvement with perf record. I did not test that because I was not
+confident it would even finish in a reasonable time on the emulated
+PMU
 
-- New drivers
+Test 3 was slightly different, I ran the workload in a VM with a
+single VCPU pinned to a physical CPU and analyzed from the host where
+the physical CPU spent its time using mpstat.
 
-  * Driver for KEBA fan controller
+3) perf record -e ${FIFTEEN_HW_EVENTS} -F 4000 -- \
+   stress-ng --cpu 0 --timeout 30
 
-  * Driver for KEBA battery monitoring controller
+Over a period of 30s the cpu running with the emulated PMU spent
+34.96% of the time in the host kernel and 55.85% of the time in the
+guest. The cpu running the partitioned PMU spent 0.97% of its time in
+the host kernel and 91.06% of its time in the guest.
 
-  * Driver for MAX77705
+Taken together, these tests represent a remarkable performance
+improvement for anything perf related using this new PMU
+implementation.
 
-- Support added to existing drivers
+Caveats:
 
-  * asus-ec-sensors: Support or MAXIMUS VI HERO and ROG MAXIMUS Z90 Formula
+Because the most consistent and performant thing to do was untrap
+PMCR_EL0, the number of counters visible to the guest via PMCR_EL0.N
+is always equal to the value KVM sets for MDCR_EL2.HPMN. Previously
+allowed writes to PMCR_EL0.N via {GET,SET}_ONE_REG no longer affect
+the guest.
 
-  * ina238: Support for SQ52206
+These improvements come at a cost to 7-35 new registers that must be
+swapped at every vcpu_load and vcpu_put if the feature is enabled. I
+have been informed KVM would like to avoid paying this cost when
+possible.
 
-  * pmbus/lt3074: Support for lt3074
+One solution is to make the trapping changes and context swapping lazy
+such that the trapping changes and context swapping only take place
+after the guest has actually accessed the PMU so guests that never
+access the PMU never pay the cost.
 
-  * pmbus/max34440: Support for ADPM12160
+This is not done here because it is not crucial to the primary
+functionality and I thought review would be more productive as soon as
+I had something complete enough for reviewers to easily play with.
 
-  * pmbus/mpq8785: Support for MPM82504 and for MPM3695 family
+However, this or any better ideas are on the table for inclusion in
+future re-rolls.
 
-  * dell-smm: Add the Dell OptiPlex 7050 to the DMI whitelist
+[1] https://lore.kernel.org/kvmarm/20250213180317.3205285-1-coltonlewis@google.com/
 
-  * k10temp: Support for Zen5 Ryzen Desktop
+Colton Lewis (16):
+  arm64: cpufeature: Add cpucap for HPMN0
+  arm64: Generate sign macro for sysreg Enums
+  arm64: cpufeature: Add cpucap for PMICNTR
+  KVM: arm64: Reorganize PMU functions
+  KVM: arm64: Introduce method to partition the PMU
+  perf: arm_pmuv3: Generalize counter bitmasks
+  perf: arm_pmuv3: Keep out of guest counter partition
+  KVM: arm64: Set up FGT for Partitioned PMU
+  KVM: arm64: Writethrough trapped PMEVTYPER register
+  KVM: arm64: Use physical PMSELR for PMXEVTYPER if partitioned
+  KVM: arm64: Writethrough trapped PMOVS register
+  KVM: arm64: Context switch Partitioned PMU guest registers
+  perf: pmuv3: Handle IRQs for Partitioned PMU guest counters
+  KVM: arm64: Inject recorded guest interrupts
+  KVM: arm64: Add ioctl to partition the PMU when supported
+  KVM: arm64: selftests: Add test case for partitioned PMU
 
-- Various other minor fixes and improvements
+Marc Zyngier (1):
+  KVM: arm64: Cleanup PMU includes
 
-----------------------------------------------------------------
-Alexander Stein (1):
-      hwmon: (gpio-fan) Add regulator support
+ Documentation/virt/kvm/api.rst                |  16 +
+ arch/arm/include/asm/arm_pmuv3.h              |  24 +
+ arch/arm64/include/asm/arm_pmuv3.h            |  36 +-
+ arch/arm64/include/asm/kvm_host.h             | 208 +++++-
+ arch/arm64/include/asm/kvm_pmu.h              |  82 +++
+ arch/arm64/kernel/cpufeature.c                |  15 +
+ arch/arm64/kvm/Makefile                       |   2 +-
+ arch/arm64/kvm/arm.c                          |  24 +-
+ arch/arm64/kvm/debug.c                        |  13 +-
+ arch/arm64/kvm/hyp/include/hyp/switch.h       |  65 +-
+ arch/arm64/kvm/pmu-emul.c                     | 629 +----------------
+ arch/arm64/kvm/pmu-part.c                     | 358 ++++++++++
+ arch/arm64/kvm/pmu.c                          | 630 ++++++++++++++++++
+ arch/arm64/kvm/sys_regs.c                     |  54 +-
+ arch/arm64/tools/cpucaps                      |   2 +
+ arch/arm64/tools/gen-sysreg.awk               |   1 +
+ arch/arm64/tools/sysreg                       |   6 +-
+ drivers/perf/arm_pmuv3.c                      |  55 +-
+ include/kvm/arm_pmu.h                         | 199 ------
+ include/linux/perf/arm_pmu.h                  |  15 +-
+ include/linux/perf/arm_pmuv3.h                |  14 +-
+ include/uapi/linux/kvm.h                      |   4 +
+ tools/include/uapi/linux/kvm.h                |   2 +
+ .../selftests/kvm/arm64/vpmu_counter_access.c |  40 +-
+ virt/kvm/kvm_main.c                           |   1 +
+ 25 files changed, 1616 insertions(+), 879 deletions(-)
+ create mode 100644 arch/arm64/include/asm/kvm_pmu.h
+ create mode 100644 arch/arm64/kvm/pmu-part.c
+ delete mode 100644 include/kvm/arm_pmu.h
 
-Alexei Safin (1):
-      hwmon: (asus-ec-sensors) check sensor index in read_string()
 
-Alexis Czezar Torreno (2):
-      hwmon: (pmbus/max34440) Fix support for max34451
-      hwmon: (pmbus/max34440) Add support for ADPM12160
-
-Andy Shevchenko (1):
-      hwmon: (qnap-mcu) Remove (explicitly) unused header
-
-Armin Wolf (1):
-      hwmon: (dell-smm) Add the Dell OptiPlex 7050 to the DMI whitelist
-
-Bartosz Golaszewski (2):
-      hwmon: (ltc2992) Use new GPIO line value setter callbacks
-      hwmon: (pmbus/ucd9000) Use new GPIO line value setter callbacks
-
-Bo Liu (1):
-      hwmon: (isl28022, nct7363) Convert to use maple tree register cache
-
-Cedric Encarnacion (2):
-      dt-bindings: hwmon: pmbus: add lt3074
-      hwmon: (pmbus/lt3074) add support for lt3074
-
-Chen Ni (1):
-      hwmon: (lm90) Use to_delayed_work()
-
-Ciprian Marian Costea (1):
-      hwmon: (ina2xx) make regulator 'vs' support optional
-
-Daniel Grainger (1):
-      hwmon: (asus-ec-sensors) add ROG MAXIMUS Z90 Formula.
-
-David Hows (1):
-      hwmon: (k10temp) Add support for Zen5 Ryzen Desktop
-
-Dzmitry Sankouski (1):
-      hwmon: (max77705) Add initial support
-
-Eugene Shalygin (1):
-      hwmon: (asus-ec-sensors) sort sensor definition arrays
-
-Francesco Dolcini (2):
-      dt-bindings: hwmon: amc6821: add fan and PWM output
-      hwmon: (amc6821) Add PWM polarity configuration with OF
-
-Gerhard Engleder (2):
-      hwmon: Add KEBA battery monitoring controller support
-      hwmon: Add KEBA fan controller support
-
-Guenter Roeck (6):
-      hwmon: (pmbus) Do not set regulators_node for single-channel chips
-      hwmon: (aht10) Drop doctype annotations from static functions
-      hwmon: (spd5118) Split into common and I2C specific code
-      hwmon: (spd5118) Name chips taking the specification literally
-      hwmon: (spd5118) Support 16-bit addressing for NVMEM accesses
-      hwmon: (spd5118) Detect and support 16-bit register addressing
-
-Inochi Amaoto (1):
-      dt-bindings: hwmon: Add Sophgo SG2044 external hardware monitor support
-
-Jarkko Nikula (1):
-      hwmon: (lm75) Fix I3C transfer buffer pointer for incoming data
-
-John Keeping (1):
-      hwmon: (pwm-fan) disable threaded interrupts
-
-Naresh Solanki (1):
-      hwmon: (max6639) Allow setting target RPM
-
-Pawel Dembicki (5):
-      dt-bindings: hwmon: Add bindings for mpq8785 driver
-      hwmon: pmbus: mpq8785: Prepare driver for multiple device support
-      hwmon: pmbus: mpq8785: Implement VOUT feedback resistor divider ratio configuration
-      hwmon: pmbus: mpq8785: Add support for MPM82504
-      hwmon: pmbus: mpq8785: Add support for MPM3695 family
-
-Peter Korsgaard (2):
-      dt-bindings: hwmon: ti,tmp102: document optional V+ supply property
-      hwmon: (tmp102) add vcc regulator support
-
-Shinji Nomoto (1):
-      doc: hwmon: acpi_power_meter: Add information about enabling the power capping feature.
-
-Sudeep Holla (1):
-      hwmon: (xgene-hwmon) Simplify PCC shared memory region handling
-
-Wenliang Yan (4):
-      hwmon: (ina238) Add ina238_config to save configurations for different chips
-      dt-bindings: Add SQ52206 to ina2xx devicetree bindings
-      hwmon: (ina238) Add support for SQ52206
-      hwmon: (ina238) Modify the calculation formula to adapt to different chips
-
-William A. Kennington III (2):
-      hwmon: (pmbus) Introduce page_change_delay
-      hwmon: (max34451) Work around lost page
-
-Yikai Tsai (1):
-      hwmon: (isl28022) Fix current reading calculation
-
-pkarc (1):
-      hwmon: (ausus-ec-sensors) add MAXIMUS VI HERO.
-
- .../bindings/hwmon/pmbus/adi,lt3074.yaml           |  50 +++
- .../bindings/hwmon/pmbus/mps,mpq8785.yaml          |  74 +++++
- .../bindings/hwmon/sophgo,sg2042-hwmon-mcu.yaml    |   6 +-
- .../devicetree/bindings/hwmon/ti,amc6821.yaml      |  18 +-
- .../devicetree/bindings/hwmon/ti,ina2xx.yaml       |   5 +
- .../devicetree/bindings/hwmon/ti,tmp102.yaml       |   4 +
- .../devicetree/bindings/trivial-devices.yaml       |   2 -
- Documentation/hwmon/acpi_power_meter.rst           |  29 +-
- Documentation/hwmon/asus_ec_sensors.rst            |   2 +
- Documentation/hwmon/ina238.rst                     |  15 +
- Documentation/hwmon/index.rst                      |   4 +
- Documentation/hwmon/kbatt.rst                      |  60 ++++
- Documentation/hwmon/kfan.rst                       |  39 +++
- Documentation/hwmon/lt3074.rst                     |  72 +++++
- Documentation/hwmon/max34440.rst                   |  30 +-
- Documentation/hwmon/max77705.rst                   |  39 +++
- Documentation/hwmon/mpq8785.rst                    |  27 +-
- MAINTAINERS                                        |  16 +
- drivers/hwmon/Kconfig                              |  29 ++
- drivers/hwmon/Makefile                             |   3 +
- drivers/hwmon/aht10.c                              |  16 +-
- drivers/hwmon/amc6821.c                            |  50 ++-
- drivers/hwmon/asus-ec-sensors.c                    |  53 ++-
- drivers/hwmon/dell-smm-hwmon.c                     |   7 +
- drivers/hwmon/gpio-fan.c                           | 103 +++++-
- drivers/hwmon/ina238.c                             | 214 ++++++++++--
- drivers/hwmon/ina2xx.c                             |   8 +-
- drivers/hwmon/isl28022.c                           |   8 +-
- drivers/hwmon/k10temp.c                            |   7 +
- drivers/hwmon/kbatt.c                              | 147 +++++++++
- drivers/hwmon/kfan.c                               | 246 ++++++++++++++
- drivers/hwmon/lm75.c                               |   2 +-
- drivers/hwmon/lm90.c                               |   2 +-
- drivers/hwmon/ltc2992.c                            |  30 +-
- drivers/hwmon/max6639.c                            |  16 +-
- drivers/hwmon/max77705-hwmon.c                     | 221 +++++++++++++
- drivers/hwmon/nct7363.c                            |   2 +-
- drivers/hwmon/pmbus/Kconfig                        |  18 ++
- drivers/hwmon/pmbus/Makefile                       |   1 +
- drivers/hwmon/pmbus/lm25066.c                      |   2 +-
- drivers/hwmon/pmbus/lt3074.c                       | 122 +++++++
- drivers/hwmon/pmbus/max34440.c                     | 119 ++++++-
- drivers/hwmon/pmbus/mpq7932.c                      |   4 +-
- drivers/hwmon/pmbus/mpq8785.c                      |  91 +++++-
- drivers/hwmon/pmbus/pmbus.h                        |  19 +-
- drivers/hwmon/pmbus/pmbus_core.c                   |  69 ++--
- drivers/hwmon/pmbus/tda38640.c                     |   2 +-
- drivers/hwmon/pmbus/tps25990.c                     |   2 +-
- drivers/hwmon/pmbus/ucd9000.c                      |  16 +-
- drivers/hwmon/pwm-fan.c                            |   4 +-
- drivers/hwmon/qnap-mcu-hwmon.c                     |   1 -
- drivers/hwmon/spd5118.c                            | 359 +++++++++++++--------
- drivers/hwmon/tmp102.c                             |   5 +
- drivers/hwmon/xgene-hwmon.c                        |  39 +--
- 54 files changed, 2176 insertions(+), 353 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/hwmon/pmbus/adi,lt3074.yaml
- create mode 100644 Documentation/devicetree/bindings/hwmon/pmbus/mps,mpq8785.yaml
- create mode 100644 Documentation/hwmon/kbatt.rst
- create mode 100644 Documentation/hwmon/kfan.rst
- create mode 100644 Documentation/hwmon/lt3074.rst
- create mode 100644 Documentation/hwmon/max77705.rst
- create mode 100644 drivers/hwmon/kbatt.c
- create mode 100644 drivers/hwmon/kfan.c
- create mode 100644 drivers/hwmon/max77705-hwmon.c
- create mode 100644 drivers/hwmon/pmbus/lt3074.c
+base-commit: 1b85d923ba8c9e6afaf19e26708411adde94fba8
+--
+2.49.0.1204.g71687c7c1d-goog
 
