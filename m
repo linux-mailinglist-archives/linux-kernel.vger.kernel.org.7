@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-670490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1132ACAF18
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 15:34:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B93A4ACAF1A
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 15:34:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 242C2188D28C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 13:34:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA8C3188EE80
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 13:34:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3474321C9FE;
-	Mon,  2 Jun 2025 13:34:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A41D221735;
+	Mon,  2 Jun 2025 13:34:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=surriel.com header.i=@surriel.com header.b="W1ByYhMF"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=surriel.com header.i=@surriel.com header.b="dNUn9e8O"
 Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EDF92576
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EE364C92
 	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 13:34:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748871265; cv=none; b=pHaC/I5y87SiNIeM1RtrBYHgnLRjqxyC+1ooJZV5vSXExxl7xY7w7UFV40YVHuSKhE3bQ0UO+ZedsxiPsrfnFIHQ3PFvhmXXcdV/0gfavCyAJQXA0yqCJs/KX2GNOOkOIs2pABYsgKmjG+nJiGxYLdJiIMfByTbtygrroL3DkKo=
+	t=1748871266; cv=none; b=f8INPrExzoNxZsTmzuQol6a4rCzslStm2XfYvNvK2uszAM1Pgg6NpNNY+lHfOGHqUOP1Y2OzFw+UnuOvmMsBGticrInmCGT5Of/OoivZdi5hx3tkzOq+8MSSga/3CKfYOge2j7CF7gVUypipECGU6mDzAsxJy3NN6ZAny4CKB4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748871265; c=relaxed/simple;
-	bh=E1jQCmW1AWiKNiWNWSmIeWD2f7jmxwou+CIsK3vzHdU=;
+	s=arc-20240116; t=1748871266; c=relaxed/simple;
+	bh=N/bc8cctnDxYPo2VjOUGNDpV2wFXojvm5ZPAAPyh1jM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HowuLJUFR/PoDlK5U2VzHBOGHwGeLUSf0k9qG2WtA4edneLwykwE2jn3k9h08noiTR7k4vPE1C1riP8ufV2VtBrpmTcDCRn0ZqanzyV9wxzXLisYpK9vkH8aPL/xC+zBcodxNe9JZMkxn+0k4UiJMfRseVu1m8WlUatUjLZIYpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=surriel.com; dkim=pass (2048-bit key) header.d=surriel.com header.i=@surriel.com header.b=W1ByYhMF; arc=none smtp.client-ip=96.67.55.147
+	 MIME-Version; b=hKTrN0zd2SyDrd/HsMg2ewReNpiWTbP3OPv93sBlCrd00bEWZ6m1IhW8OczSks6clBzGL+tBsxqFkvR3KhTFzhVYw8UMbr3+C63R3rV+dhS+KLrNW2YT+PLsCOrqtaR9d882NWM+NKLkdOJAYWzq7DK71CLr5nosd9hEFEJ2LB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=surriel.com; dkim=pass (2048-bit key) header.d=surriel.com header.i=@surriel.com header.b=dNUn9e8O; arc=none smtp.client-ip=96.67.55.147
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=surriel.com
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=surriel.com
@@ -36,17 +36,17 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=surriel.com
 	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
 	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
 	List-Post:List-Owner:List-Archive;
-	bh=HOkpLGouw96M0QDvWvRx/Gas9tMsXenCGy9ePmfmVD8=; b=W1ByYhMFdbHHMn4riZuqihHQ/K
-	7P7AGhfDEHGfwccrJt7Ij0c7USKu47FVCIoCFa/LQ1BPs1Py0v1PflDq15V7NIsP9NV57dlwqfriT
-	5fPEDOydTsYKn1c7gKsLvA8SVWkNXclg/GGNcymWP1golQK5IFrS5/EqRlI/Oyr6teOim9zg6nTmS
-	BAiW6QPZzrkuA6ZOFxR5BKkdKlVVX+tNRvVMUjxTmIrid2+LgvadaQXbjvn0nA22JOsnxcGsiAmsI
-	rfjXp/imH6OwXYQuO1jQ/lN178xDayDzkXydGGb2gUAZPGhEuKoW62XG00Gog4ZZtLv+GGiEfAnyv
-	up0ZTX7w==;
+	bh=P6nle2NZJqiVUJ7iKkvpJRIQ4Mwb3x6RviBJIuO/ifo=; b=dNUn9e8OZeFXWNaOH8FTxZj3H/
+	nhpiOb04gD3njt7n9snxOivXRGam8QQNZsgcdzgHrOMlWANtUDbcOpgzMfibFWIGfICTt6jVFmzhz
+	nLUTi1ifmh5Gd1p4HjSGUI1q6CbUrZsvUr+hccTlpF5dY4QVEQs0tpzcTYRkR0j5Ri8fefybTK405
+	xJ8j1w0QzwLRuzaL+efCxa7sUXSyzFd8eqbY57UbuLRHvXOaH73We+TaW/Gm+8txpYMo09MIQWoZF
+	FffVU1eJNhVZPPGM2bdGLd1YUOc614d567ro2RGjspNuPn3eLhM/ibb6HHoImPS24ytiQTsfS1KkN
+	V2zOjs+w==;
 Received: from fangorn.home.surriel.com ([10.0.13.7])
 	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.97.1)
 	(envelope-from <riel@surriel.com>)
-	id 1uM5Im-000000008IJ-11we;
+	id 1uM5Im-000000008IJ-176s;
 	Mon, 02 Jun 2025 09:34:08 -0400
 From: Rik van Riel <riel@surriel.com>
 To: linux-kernel@vger.kernel.org
@@ -57,11 +57,10 @@ Cc: kernel-team@meta.com,
 	bp@alien8.de,
 	x86@kernel.org,
 	yu-cheng.yu@intel.com,
-	Rik van Riel <riel@surriel.com>,
-	stable@kernel.org
-Subject: [PATCH 2/3] x86/mm: Fix early boot use of INVPLGB
-Date: Mon,  2 Jun 2025 09:30:56 -0400
-Message-ID: <20250602133402.3385163-3-riel@surriel.com>
+	Rik van Riel <riel@surriel.com>
+Subject: [PATCH 3/3] x86/mm: Change cpa_flush() to call flush_kernel_range() directly
+Date: Mon,  2 Jun 2025 09:30:57 -0400
+Message-ID: <20250602133402.3385163-4-riel@surriel.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250602133402.3385163-1-riel@surriel.com>
 References: <20250602133402.3385163-1-riel@surriel.com>
@@ -73,40 +72,72 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Use of the INVLPGB instruction is done based off the X86_FEATURE_INVLPGB
-CPU feature, which is provided directly by the hardware.
+From: Yu-cheng Yu <yu-cheng.yu@intel.com>
 
-If invlpgb_kernel_range_flush is called before the kernel has read
-the value of invlpgb_count_max from the hardware, the normally
-bounded loop can become an infinite loop if invlpgb_count_max is
-initialized to zero.
+The function cpa_flush() calls __flush_tlb_one_kernel() and
+flush_tlb_all().
 
-Fix that issue by initializing invlpgb_count_max to 1.
+Replacing that with a call to flush_tlb_kernel_range() allows
+cpa_flush() to make use of INVLPGB or RAR without any additional
+changes.
 
-This way INVPLGB at early boot time will be a little bit slower
-than normal (with initialized invplgb_count_max), and not an
-instant hang at bootup time.
+Initialize invlpgb_count_max to 1, since flush_tlb_kernel_range()
+can now be called before invlpgb_count_max has been initialized
+to the value read from CPUID.
 
+[riel: remove now unused __cpa_flush_tlb]
+
+Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
 Signed-off-by: Rik van Riel <riel@surriel.com>
-Fixes: b7aa05cbdc52 ("x86/mm: Add INVLPGB support code")
-Cc: stable@kernel.org
 ---
- arch/x86/kernel/cpu/amd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/mm/pat/set_memory.c | 20 +++++++-------------
+ 1 file changed, 7 insertions(+), 13 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
-index 93da466dfe2c..b2ad8d13211a 100644
---- a/arch/x86/kernel/cpu/amd.c
-+++ b/arch/x86/kernel/cpu/amd.c
-@@ -31,7 +31,7 @@
+diff --git a/arch/x86/mm/pat/set_memory.c b/arch/x86/mm/pat/set_memory.c
+index 30ab4aced761..2454f5249329 100644
+--- a/arch/x86/mm/pat/set_memory.c
++++ b/arch/x86/mm/pat/set_memory.c
+@@ -399,15 +399,6 @@ static void cpa_flush_all(unsigned long cache)
+ 	on_each_cpu(__cpa_flush_all, (void *) cache, 1);
+ }
  
- #include "cpu.h"
+-static void __cpa_flush_tlb(void *data)
+-{
+-	struct cpa_data *cpa = data;
+-	unsigned int i;
+-
+-	for (i = 0; i < cpa->numpages; i++)
+-		flush_tlb_one_kernel(fix_addr(__cpa_addr(cpa, i)));
+-}
+-
+ static int collapse_large_pages(unsigned long addr, struct list_head *pgtables);
  
--u16 invlpgb_count_max __ro_after_init;
-+u16 invlpgb_count_max __ro_after_init = 1;
+ static void cpa_collapse_large_pages(struct cpa_data *cpa)
+@@ -444,6 +435,7 @@ static void cpa_collapse_large_pages(struct cpa_data *cpa)
  
- static inline int rdmsrq_amd_safe(unsigned msr, u64 *p)
+ static void cpa_flush(struct cpa_data *cpa, int cache)
  {
++	unsigned long start, end;
+ 	unsigned int i;
+ 
+ 	BUG_ON(irqs_disabled() && !early_boot_irqs_disabled);
+@@ -453,10 +445,12 @@ static void cpa_flush(struct cpa_data *cpa, int cache)
+ 		goto collapse_large_pages;
+ 	}
+ 
+-	if (cpa->force_flush_all || cpa->numpages > tlb_single_page_flush_ceiling)
+-		flush_tlb_all();
+-	else
+-		on_each_cpu(__cpa_flush_tlb, cpa, 1);
++	start = fix_addr(__cpa_addr(cpa, 0));
++	end = fix_addr(__cpa_addr(cpa, cpa->numpages));
++	if (cpa->force_flush_all)
++		end = TLB_FLUSH_ALL;
++
++	flush_tlb_kernel_range(start, end);
+ 
+ 	if (!cache)
+ 		goto collapse_large_pages;
 -- 
 2.49.0
 
