@@ -1,176 +1,248 @@
-Return-Path: <linux-kernel+bounces-670522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E45A0ACAFAD
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 15:52:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B683BACAFB7
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 15:54:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 220811896F51
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 13:52:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9AF867AE2D0
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 13:52:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FBA7221F06;
-	Mon,  2 Jun 2025 13:52:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6A5B221F37;
+	Mon,  2 Jun 2025 13:52:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="hYHBiRgM"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1Uxbwxr0"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F8B6211A0E
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 13:52:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE4D0221F09
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 13:52:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748872341; cv=none; b=oZ2iuLlD1FpGhxXFK6mgDZaQtLSoxtFAb1F6FgiARxofTgdoLfYFWkIQVW1YBwythuvHC3yv4A3vu+0rMcKgo8iJVa+mHTFnB1/2FtrgIUh7a34Jifgho1vIjlHOj1APW+bB7PfOG0k0p+D4cYd1gMt0cNPAI85Xac/XLqjaSbU=
+	t=1748872371; cv=none; b=FkOe+OhrYWCQKIOtxUu6Esx00e84A6cxfA3RjCbFkEKqSoGuHcfeel+GzwpVETC+hCpV4sSYw9FQERcWZ9O8Pm43PBym+fVXpXOdc3lZFfG10S96CCAsmfrQiwjLZnED7C/SFEcVKLSfWVRSy69DlR3DM64InjtsBnVBzjJ2yGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748872341; c=relaxed/simple;
-	bh=CFHqvgNE9b73k6YmsSW5HF2d2NOeePKLWcT5klVRYU0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=O0U2Dx7+aRotXCFlRkGkdj91a9Ke2xGoMcqAVZ1Vnx2pY9fw0BuFKubKntkvgmc964X4womR3F/eTc4nsQFJFPN0ucsW7K0fHddFm3jncbnl6Mb+YT6O6kYA/PJDLiltrxI1ymtZ2lo6jwcBytaj4j7vNaDf1q94IL6WPYlAJo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=hYHBiRgM; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=nQnA2hQbzP8WZin9HMjdUuwpEMqqWDeL9smiJWMLtKA=; b=hYHBiRgMJWxNARrE
-	4ZgnanHme8vG8gWXREVCKBrNOb/oWR8qwOzrow8d81Kx9wiDd9lVeBROGobDrj7I8KK88bbRi6SDQ
-	GUZP8maM2kcVxQEPOZh4pbIi59/SxioyLbecHGGTNblwvQHPopooWrZC2fXyqtMMKIn5JSQRsCavH
-	xfnV11hGGRL8qVjgGcq6zx8MF8tepFesdAPyNihtoHoHRanPhHbjg8id2qrBNFW3TFUUmInHBJ4PN
-	lX9Lo7x7omBmUCdHkyCb7Gsz5a91JwqhXTC84OgQtLQun0vmYPahdxWbna5BWVhHQcGgeY6KEX+qv
-	ESvG3cC5d+9ZBDW9sg==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1uM5aB-007CLX-20;
-	Mon, 02 Jun 2025 13:52:07 +0000
-From: linux@treblig.org
-To: dmitry.baryshkov@oss.qualcomm.com,
-	lumag@kernel.org,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch
-Cc: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Subject: [PATCH v3 3/3] Revert "drm/client: Add drm_client_modeset_check()"
-Date: Mon,  2 Jun 2025 14:52:01 +0100
-Message-ID: <20250602135201.207466-4-linux@treblig.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250602135201.207466-1-linux@treblig.org>
-References: <20250602135201.207466-1-linux@treblig.org>
+	s=arc-20240116; t=1748872371; c=relaxed/simple;
+	bh=uF8hxqIj1Sf4x4jjTav6cC9N6GsI7bx3rVB9ghYsgsk=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=EFSZQ8pqnQelxl6wQJnEnxkoVNCNI9xyxKY3gu+UaA3b9KdFEuOw30BIQbFBoUFIgICDT3idjOTMBQ86g/C079+EsZkrvwwGYlMACjh0TcqGoG+s4Xh/4CDapffUdGcdJUfbDFT19FLwCse0EQOOxu4XsA/kyoYPspSF3pQDW4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--bqe.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1Uxbwxr0; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--bqe.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-442dc702850so30322265e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jun 2025 06:52:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1748872368; x=1749477168; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=B1gyk8tejKHaTMBBBjsgcp4qhTmJJOEZNBdZdZTzpv4=;
+        b=1Uxbwxr0WgC/u8p4aeBl5rsLnxLN1wxOOo2QTy8BVsT1cnG0tFmER8QghCc+YcyHjW
+         PA0MrjpA1UF/Cn7T8Cv7y9sUf1Fyri25SgWnI6PkJ2t+5N+QzXUevXWXgHWaGFPc8Fv2
+         nDr6jBiSq9xagQZjUf+kKDTP1b/wvivG08Mt9NOqdy/gQYu0Z8BdbVhlGkEri0s7sdRh
+         tFWdrjxm2Cjz/o2yLuAI15YVsSZWDhvfexCGYTt7vnXeXUdM5TqXy4qjjnsNGI+Dx6z+
+         zUVFt+GMDCb70plUbd3sJ8NpXAe7qvt13yGdbBRyX+zNB9LgqYptdT7wYlwYMQGCMWQW
+         Y4cQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748872368; x=1749477168;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=B1gyk8tejKHaTMBBBjsgcp4qhTmJJOEZNBdZdZTzpv4=;
+        b=p9fJuP/1dGrrU9CfyDJWenRLVyUgbOLZKGAlGxlLLpvxobVCkUPdq6s3S9wcP10DTm
+         9MbrMKsLK8bphIzQknePxhEWNjwiA+ls3gAeP4vbYPHS+KfsT0TNn6OEnKThVrUUyhDd
+         dvnMf0NvhHvFmh/EHHTG3+1EzQxPTJkwl47Za62nxrsZ8LN2QAKsqopzgfKnH7QLyVfX
+         DoEPLrXT8/+F9gwiqPhMtYLnm8GqncpM08x5m39eBf6ztH8ZNiARQazzpYPtBWnctWdX
+         dTmPpIeAnrWd1la9mOkLy96NfftZwhSvgVLkHx8pkH+EZCCV2AGb1o9dUITjo7GgBh99
+         mu5g==
+X-Forwarded-Encrypted: i=1; AJvYcCUAwVKtklhpeRhwGxmWZbN138yQvpJW4gxwmFDDfamp+odEEyzES6ghTG1f57MhmZptOMw63rontV+qeSU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/+5VM53me4akLWL36hUYATdDyOktJjfSpJrmHqh/yPjAWStgM
+	V/HfMy8XvR1rrkhC0GqmfenljcZQBiAiA92S/eBBWHMDBa27IMuJiGF1v3fPqm69qCVH/w==
+X-Google-Smtp-Source: AGHT+IEZH0QrMFpGUi1j00sTpxBWBviOdf6jxq344C+oJ3vWkDs92KG0tpgQuwv1Pp/WSFIv67Nn1l0=
+X-Received: from wmbep23.prod.google.com ([2002:a05:600c:8417:b0:440:5e01:286b])
+ (user=bqe job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:4747:b0:442:d9f2:c753
+ with SMTP id 5b1f17b1804b1-451221a1bbfmr59152175e9.26.1748872368305; Mon, 02
+ Jun 2025 06:52:48 -0700 (PDT)
+Date: Mon,  2 Jun 2025 13:52:19 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.49.0.1204.g71687c7c1d-goog
+Message-ID: <20250602135231.1615281-1-bqe@google.com>
+Subject: [PATCH v11 0/5] rust: adds Bitmap API, ID pool and bindings
+From: Burak Emir <bqe@google.com>
+To: Yury Norov <yury.norov@gmail.com>, Kees Cook <kees@kernel.org>
+Cc: Burak Emir <bqe@google.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+	Viresh Kumar <viresh.kumar@linaro.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, 
+	"=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, "Gustavo A . R . Silva" <gustavoars@kernel.org>, 
+	Carlos LLama <cmllamas@google.com>, Pekka Ristola <pekkarr@protonmail.com>, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+This series adds a Rust bitmap API for porting the approach from
+commit 15d9da3f818c ("binder: use bitmap for faster descriptor lookup")
+to Rust. The functionality in dbitmap.h makes use of bitmap and bitops.
 
-This reverts commit 64593f2a6fc933bb9a410bc3f8c261f3e57a9601.
+The Rust bitmap API provides a safe abstraction to underlying bitmap
+and bitops operations. For now, only includes method necessary for
+dbitmap.h, more can be added later. We perform bounds checks for
+hardening, violations are programmer errors that result in panics.
 
-drm_client_modeset_check() was explicitly added in 2020 by
-commit 64593f2a6fc9 ("drm/client: Add drm_client_modeset_check()")
-but has never been used.
+We include set_bit_atomic and clear_bit_atomic operations. One has
+to avoid races with non-atomic operations, which is ensure by the
+Rust type system: either callers have shared references &bitmap in
+which case the mutations are atomic operations. Or there is a
+exclusive reference &mut bitmap, in which case there is no concurrent
+access.
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- drivers/gpu/drm/drm_client_modeset.c | 35 ++++------------------------
- include/drm/drm_client.h             |  1 -
- 2 files changed, 4 insertions(+), 32 deletions(-)
+This version includes an optimization to represent the bitmap inline,
+as suggested by Yury.
 
-diff --git a/drivers/gpu/drm/drm_client_modeset.c b/drivers/gpu/drm/drm_client_modeset.c
-index 0f9d5ba36c81..b62f8f4553e5 100644
---- a/drivers/gpu/drm/drm_client_modeset.c
-+++ b/drivers/gpu/drm/drm_client_modeset.c
-@@ -1028,7 +1028,7 @@ bool drm_client_rotation(struct drm_mode_set *modeset, unsigned int *rotation)
- }
- EXPORT_SYMBOL(drm_client_rotation);
- 
--static int drm_client_modeset_commit_atomic(struct drm_client_dev *client, bool active, bool check)
-+static int drm_client_modeset_commit_atomic(struct drm_client_dev *client, bool active)
- {
- 	struct drm_device *dev = client->dev;
- 	struct drm_plane *plane;
-@@ -1095,10 +1095,7 @@ static int drm_client_modeset_commit_atomic(struct drm_client_dev *client, bool
- 		}
- 	}
- 
--	if (check)
--		ret = drm_atomic_check_only(state);
--	else
--		ret = drm_atomic_commit(state);
-+	ret = drm_atomic_commit(state);
- 
- out_state:
- 	if (ret == -EDEADLK)
-@@ -1159,30 +1156,6 @@ static int drm_client_modeset_commit_legacy(struct drm_client_dev *client)
- 	return ret;
- }
- 
--/**
-- * drm_client_modeset_check() - Check modeset configuration
-- * @client: DRM client
-- *
-- * Check modeset configuration.
-- *
-- * Returns:
-- * Zero on success or negative error code on failure.
-- */
--int drm_client_modeset_check(struct drm_client_dev *client)
--{
--	int ret;
--
--	if (!drm_drv_uses_atomic_modeset(client->dev))
--		return 0;
--
--	mutex_lock(&client->modeset_mutex);
--	ret = drm_client_modeset_commit_atomic(client, true, true);
--	mutex_unlock(&client->modeset_mutex);
--
--	return ret;
--}
--EXPORT_SYMBOL(drm_client_modeset_check);
--
- /**
-  * drm_client_modeset_commit_locked() - Force commit CRTC configuration
-  * @client: DRM client
-@@ -1201,7 +1174,7 @@ int drm_client_modeset_commit_locked(struct drm_client_dev *client)
- 
- 	mutex_lock(&client->modeset_mutex);
- 	if (drm_drv_uses_atomic_modeset(dev))
--		ret = drm_client_modeset_commit_atomic(client, true, false);
-+		ret = drm_client_modeset_commit_atomic(client, true);
- 	else
- 		ret = drm_client_modeset_commit_legacy(client);
- 	mutex_unlock(&client->modeset_mutex);
-@@ -1280,7 +1253,7 @@ int drm_client_modeset_dpms(struct drm_client_dev *client, int mode)
- 
- 	mutex_lock(&client->modeset_mutex);
- 	if (drm_drv_uses_atomic_modeset(dev))
--		ret = drm_client_modeset_commit_atomic(client, mode == DRM_MODE_DPMS_ON, false);
-+		ret = drm_client_modeset_commit_atomic(client, mode == DRM_MODE_DPMS_ON);
- 	else
- 		drm_client_modeset_dpms_legacy(client, mode);
- 	mutex_unlock(&client->modeset_mutex);
-diff --git a/include/drm/drm_client.h b/include/drm/drm_client.h
-index 146ca80e35db..4e3aa3c7f00b 100644
---- a/include/drm/drm_client.h
-+++ b/include/drm/drm_client.h
-@@ -216,7 +216,6 @@ int drm_client_modeset_create(struct drm_client_dev *client);
- void drm_client_modeset_free(struct drm_client_dev *client);
- int drm_client_modeset_probe(struct drm_client_dev *client, unsigned int width, unsigned int height);
- bool drm_client_rotation(struct drm_mode_set *modeset, unsigned int *rotation);
--int drm_client_modeset_check(struct drm_client_dev *client);
- int drm_client_modeset_commit_locked(struct drm_client_dev *client);
- int drm_client_modeset_commit(struct drm_client_dev *client);
- int drm_client_modeset_dpms(struct drm_client_dev *client, int mode);
+We ran a simple microbenchmark which shows that overall the Rust API 
+can be expected to be about 4.5% slower than C API.
+
+We introduce a Rust API that would replace (dbitmap.h) in file 
+id_pool.rs. This data structure is tightly coupled to the bitmap API. 
+Includes an example of usage that requires releasing a spinlock, as 
+expected in Binder driver.
+
+This is v11 of a patch introducing Rust bitmap API [v9]. Thanks
+for all the helpful comments, this series has improved significantly
+as a result of your work.
+
+Changes v10 --> v11:
+- Fix Kconfig dependency, Rust benchmark depends on CONFIG_RUST
+- Disable clippy warning for len() without is_empty() in id_pool.rs
+
+Changes v9 --> v10:
+- change helper to use `unsigned long` for `nr` parameter (Boqun)
+- add missing and fix safety comments (Boqun, Pekka)
+- move benchmark module output and results to #4 commit msg.
+- use pr_cont to avoid repeating find_bit_benchmark_rust log prefix.
+- Disable clippy warning for len() without is_empty() in bitmap.rs
+
+Changes v8 --> v9:
+- added a new type `CBitmap` that makes any C bitmap accessible with
+  the same API, and add Deref so both Bitmap and
+  CBitmap can share the same implementation.  Full credit for this 
+  goes to Alice who suggested idea and code.
+- added config dependency on CONFIG_RUST that was missing from
+  CONIG_FIND_BIT_BENCHMARK_RUST.
+- implemented Send for Bitmap, it is actually needed by Binder.
+- reworded commit msg for clarity.
+- removed unsafe for atomic ops.
+- renamed `bitmap_hardening_assert` to `bitmap_assert` and make operations
+  do nothing and log error when RUST_BITMAP_HARDENED is off.
+- update author information in find_bit_benchmark_rust.rs
+- Various improvements to id_pool, better names and comments.
+
+Changes v7 --> v8:
+- added Acked-by for bindings patches
+- add RUST_BITMAP_HARDENED config, making extra bound-checks configurable.
+  This is added to security/Kconfig.hardening 
+- changed checks of `index` return value to >=
+- removed change to FIND_BIT_BENCHMARK
+
+Changes v6 --> v7:
+- Added separate unit tests in bitmap.rs and benchmark module,
+  following the example in find_bit_benchmark.c
+- Added discussion about using vendored bitset to commit message.
+- Refined warning about naming convention
+
+Changes v5 --> v6:
+- Added SAFETY comment for atomic operations.
+- Added missing volatile to bitops set_bit and clear_bit bindings.
+- Fixed condition on `nbits` to be <= i32::MAX, update SAFETY comments.
+- Readability improvements.
+- Updated doc comments wording and indentation.
+
+Changes v4 --> v5: (suggested by Yury and Alice)
+- rebased on next-20250318
+- split MAINTAINERS changes
+- no dependencies on [1] and [2] anymore - Viresh,
+  please do add a separate section if you want to maintain cpumask.rs
+  separately.
+- imports atomic and non-atomic variants, introduces a naming convention
+  set_bit and set_bit_atomic on the Rust side.
+- changed naming and comments. Keeping `new`.
+- change dynamic_id_pool to id_pool
+- represent bitmap inline when possible
+- add some more tests
+- add myself to M: line for the Rust abstractions
+
+Changes v3 --> v4:
+- Rebased on Viresh's v3 [2].
+- split into multiple patches, separate Rust and bindings. (Yury)
+- adds dynamic_id_pool.rs to show the Binder use case. (Yury)
+- include example usage that requires release of spinlock (Alice)
+- changed bounds checks to `assert!`, shorter (Yury)
+- fix param names in binding helpers. (Miguel)
+- proper rustdoc formatting, and use examples as kunit tests. (Miguel)
+- reduce number of Bitmap methods, and simplify API through
+  use Option<usize> to handle the "not found" case.
+- make Bitmap pointer accessors private, so Rust Bitmap API
+  provides an actual abstraction boundary (Tamir)
+- we still return `AllocError` in `Bitmap::new` in case client code
+  asks for a size that is too large. Intentionally
+  different from other bounds checks because it is not about
+  access but allocation, and we expect that client code need
+  never handle AllocError and nbits > u32::MAX situations
+  differently.
+
+Changes v2 --> v3:
+- change `bitmap_copy` to `copy_from_bitmap_and_extend` which
+  zeroes out extra bits. This enables dbitmap shrink and grow use
+  cases while offering a consistent and understandable Rust API for
+  other uses (Alice)
+
+Changes v1 --> v2:
+- Rebased on Yury's v2 [1] and Viresh's v3 [2] changes related to
+  bitmap.
+- Removed import of `bindings::*`, keeping only prefix (Miguel)
+- Renamed panic methods to make more explicit (Miguel)
+- use markdown in doc comments and added example/kunit test (Miguel)
+- Added maintainer section for BITOPS API BINDINGS [RUST] (Yury)
+- Added M: entry for bitmap.rs which goes to Alice (Viresh, Alice)
+- Changed calls from find_* to _find_*, removed helpers (Yury)
+- Use non-atomic __set_bit and __clear_bit from Bitmap Rust API (Yury)
+
+Link [1] https://lore.kernel.org/all/20250224233938.3158-1-yury.norov@gmail.com/
+Link [2] https://lore.kernel.org/rust-for-linux/cover.1742296835.git.viresh.kumar@linaro.org/
+Link [v9] https://lore.kernel.org/rust-for-linux/20250526150141.3407433-1-bqe@google.com/
+
+Burak Emir (5):
+  rust: add bindings for bitmap.h
+  rust: add bindings for bitops.h
+  rust: add bitmap API.
+  rust: add find_bit_benchmark_rust module.
+  rust: add dynamic ID pool abstraction for bitmap
+
+ MAINTAINERS                     |  15 +
+ lib/Kconfig.debug               |  13 +
+ lib/Makefile                    |   1 +
+ lib/find_bit_benchmark_rust.rs  |  95 ++++++
+ rust/bindings/bindings_helper.h |   2 +
+ rust/helpers/bitmap.c           |   9 +
+ rust/helpers/bitops.c           |  23 ++
+ rust/helpers/helpers.c          |   2 +
+ rust/kernel/bitmap.rs           | 588 ++++++++++++++++++++++++++++++++
+ rust/kernel/id_pool.rs          | 222 ++++++++++++
+ rust/kernel/lib.rs              |   2 +
+ security/Kconfig.hardening      |  10 +
+ 12 files changed, 982 insertions(+)
+ create mode 100644 lib/find_bit_benchmark_rust.rs
+ create mode 100644 rust/helpers/bitmap.c
+ create mode 100644 rust/helpers/bitops.c
+ create mode 100644 rust/kernel/bitmap.rs
+ create mode 100644 rust/kernel/id_pool.rs
+
 -- 
-2.49.0
+2.49.0.1204.g71687c7c1d-goog
 
 
