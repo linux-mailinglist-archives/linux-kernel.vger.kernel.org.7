@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-671117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 820F8ACBD16
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 00:10:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDBBAACBD18
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 00:11:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 432B616E53B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 22:10:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 10B527AA3CE
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 22:09:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5831C1482E7;
-	Mon,  2 Jun 2025 22:10:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15EC92528E1;
+	Mon,  2 Jun 2025 22:10:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zTeNT6z4"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hkGq6AxE"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B83A25393D
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 22:10:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92B73253F1D
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 22:10:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748902215; cv=none; b=RgAC5whlJloLjncRhFFSUHQ6kung4RmcgkVpM2Fblj44+jD7MQPd/R6iSf3K71YfiTftEyS78+eajkPzKT8Hnn6lWXsMrizZykmtgSC6DZETg2sHegYceWg8SFsDVjjoSHxDro2873nGNp0w1LtfLhOrfLB/srIGEpl8wAliMoo=
+	t=1748902217; cv=none; b=XZ6TjhZ81VVc+PVF4LxLUL4pFG6HmaJVojEaop2pYWBqICOQ5sQ7WxOqtvB4e8zBHF5lweDzX+Xd/AvUKE51aWdojzYZzveiKjm86rYe5BkyFT+pvZjxgNUjyMd2ZPrUAaAgN3P8q6/9TVOvvaOdufQAQ++r5iIZRWvu32/bZ3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748902215; c=relaxed/simple;
-	bh=Xuha6ehtfjg1YtPwETlzII/2HV7SQ0sBfZI7PgOCKVU=;
+	s=arc-20240116; t=1748902217; c=relaxed/simple;
+	bh=NCUrEGi2u1oCtkJO4Dp4w852bBBi4EAOIH6ah3MsQy8=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=WFhO25AtG6ou7AQddHyJ3Gy7KzwBUzPYCbHtLmq579XEWNg3isS6KtnIW2XlygI259bN07hY5ruTvNiEl1o5Q5bn/ZRqiCe2TlmjeZAQbVFIAw0UDcjCLObp4emRjzBz8qKGCq8k5Sx4EGnzW/mVrYN1gp5X2VzbBigVpRrpJoI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jstultz.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zTeNT6z4; arc=none smtp.client-ip=209.85.216.74
+	 To:Cc:Content-Type; b=Agn2qNDCm8TyxrAm0knZ1b1m+r8I4D2bUQvzFTTPal6QRH7uTCvUTdlSPgWd3aAyBZQHeVuXES7p0m+Kw0u9bwyv6T70rpkj9OPyNvYARcAk+PYzlLOqxBaugr+I3NWDkbogz9vj7uuYgsPZ2emLFLmKcDHSw5Fzw7woHQ1/biE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jstultz.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hkGq6AxE; arc=none smtp.client-ip=209.85.210.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jstultz.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-311c5d9307eso5756769a91.2
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jun 2025 15:10:13 -0700 (PDT)
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-742a969a4d0so4186068b3a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jun 2025 15:10:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1748902213; x=1749507013; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1748902215; x=1749507015; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=u5sZ5DDlYPoP9+KX+1Wg17vVbFiaes9b+IQ4ff8OE6A=;
-        b=zTeNT6z4gyKFTbr+nazS5nP0VoILkCgylJ1/mZMkMyeN4VaaYNSoQIgLl7YM09qVId
-         OxXj0M8MsGxjwhpVFjVQvLQGI0mL7hYnN6FvCH5/pJ+4NQNVwjAxQvetXLarxb9tQGg9
-         UNgqfmqyO98sH1GQD2z+1l7WNiDlEWPXK8iJZ/oyAC2YKwL4U5eB9IgVSIOI2J+k8mkm
-         Hp1fUrxERLoDCCJibtxQjocQxmel3xsi3OQ5EsnjXKbxyUi/dilKrd/nYRw1jMsLl6FH
-         OkhrAS0eeNWBHU3Bwu3u86IqGjpOQ5kEZZNR/LQKNbhHKcP4bwkfbV4XNHWEr+AWDmY2
-         83gg==
+        bh=aRsxl7DlHgjIL8w0jjEFHtbm0Ysvj4vLREqaVlUkTVI=;
+        b=hkGq6AxEAMSN40dxyvVB/4gRdPPkq/kKheqt14yXjJ7H8P6iacFPA99bF1iKrVbAo5
+         JMEPWEVu/imp4+cSd6N6c3x39cY7z+VZjyrzUeyZ372MagVHaTGfJ4czossC2ENQLW88
+         CNHZBYIny6xFJx+gz+FAhABIS7P1AYnJGny8ZyQV7l8oPTbVNK47nf9yKJJo+yVMaKDx
+         vrWncGUYOKUpWFL8d/y3gouUah5fNUnrr3xmd8Mt7zLiloXd4JCVHS7nG0kPkYNR1gya
+         mz2tPkvRU+KF78B5+wkccOGqzs3ONypTZE4OXwQZUISf7RVwNHc0t8sqPyc+FX01E/1D
+         /ivw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748902213; x=1749507013;
+        d=1e100.net; s=20230601; t=1748902215; x=1749507015;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=u5sZ5DDlYPoP9+KX+1Wg17vVbFiaes9b+IQ4ff8OE6A=;
-        b=PEOYmANv9lQC3bYBxHcNg+lQb8pnA0BRHKPqww3Pl66YD12/Ae37vn669+X3Z+L/hr
-         rZRr+402zO3nAUeUJURZW9nnfRxAPZn0jufClT4bw/wJradcE0zAl4Kb+CFbvM6LUM4X
-         t9b1hBZc1wN9XjLbrt20rQyISq+xDuHoN7z5xxjy9VaKdk5+gTbXhtwKkrVUij8kBLO5
-         iNYIMxOqDpVh0jCEl60Lq4Td8xkU8hSA+ecvkFp2EYQdRrHxICvpVIKhWO/rDFemWzd2
-         DYlaASBzs6XdxBhDlX0X+A1eCtxNDYeLF4vtj3phELLTh2k+zDmkOcSu04XhPf3DVxnY
-         W5tA==
-X-Gm-Message-State: AOJu0YykQ5iK4P2qeH36Go/TweiWX3ObkXRbEooRCb+behmC57w0rQCJ
-	y7YPeEUxXkgU2m26bCn2GkGEgvD2D5YsUlQinmwhpV2F3VZNppIKU1Y7TqRhypE1Hub233GXnYH
-	pjvX3zMYLsQkiPXExu7KJmuWv2Jv35s/BWGi+RpWOnUADZtJra+KuRVlZ+9tmybEbHu6cWcBsqW
-	bZgx5ZgyRHuKi40u2DKyveeXw4YzNIaUZXy2Xgt/FfkzMTUadV
-X-Google-Smtp-Source: AGHT+IH2fkYqH6qG0prUn7l082W/tI6Mtl0s54sm8bUBBRGcc1L1Op7gfUSvX2gKjFvLTcC0MyT2dKBcLrIB
-X-Received: from pjbpm11.prod.google.com ([2002:a17:90b:3c4b:b0:311:3fe:710a])
- (user=jstultz job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:48c7:b0:312:959:dc41
- with SMTP id 98e67ed59e1d1-3127c8521cbmr15254230a91.27.1748902213224; Mon, 02
- Jun 2025 15:10:13 -0700 (PDT)
-Date: Mon,  2 Jun 2025 22:09:51 +0000
+        bh=aRsxl7DlHgjIL8w0jjEFHtbm0Ysvj4vLREqaVlUkTVI=;
+        b=jI3qMYj/Z+Usdib3+dZh6fADM1Re7kNCQPKn/bp9w/Tm7Gip5vHsLmzZ84hSvpwfI1
+         LcKwsN6Yev4yQFezApbm7G1QDrtsRMtk+v8clczXZcCbH/HSD3GUuONSeW5560VM5Lxq
+         1meSnQ2AfVvgrfyX+r2llpD9B0qPh+LVjAMNFQzT6+buu+3dNLUYiWNKp7Iy+RX0wKAQ
+         +MDj2B1pBg0+gJMcmuuRYmMSSRlrQabdTPt4xDyVl6YoGmRFLRMj59mqQfTUBJup7V98
+         Tb8xI73Eb72HJRIUpK4tG3fiI+cuQ05dViHp90vzlvgrEN4i0EKllKBscjiQ7MwMu9Am
+         jbyw==
+X-Gm-Message-State: AOJu0YzoGBsuSXQ8M7kFbZrJplp3ZUwNtFuIBGsD2E2pu2xF+YNHj+5s
+	etfc++yQblLO0g6L/+sMt97B3W7xkskL33d/TkeaY98bVibLaMmum0b3fIuFbs5KSFdj6aVCGa5
+	uIJdtzkrIxFVFKLINWNbTYVcyveV74FikHnqyP0sNdmtZqWNImMJ2PPC329vVUVU7VgC2PaMdTx
+	0ZWTp1cAy2zRx4FG0aGHfFkH6lXcTIbjas6DHeDf5ROqPiUwB7
+X-Google-Smtp-Source: AGHT+IECcwqQM+pz0Wes8Q07zDBNdCv+B1A1XXND7lHfcn0z8ifCeU5Rb3jYjmB3a8HAYDk27d+RUXD1SSTu
+X-Received: from pfve14.prod.google.com ([2002:a05:6a00:1a8e:b0:73c:6d5:ce4c])
+ (user=jstultz job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:807:b0:742:9fea:a2d1
+ with SMTP id d2e1a72fcca58-747d1ae28e5mr12030036b3a.23.1748902214703; Mon, 02
+ Jun 2025 15:10:14 -0700 (PDT)
+Date: Mon,  2 Jun 2025 22:09:52 +0000
 In-Reply-To: <20250602221004.3837674-1-jstultz@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250602221004.3837674-1-jstultz@google.com>
 X-Mailer: git-send-email 2.49.0.1204.g71687c7c1d-goog
-Message-ID: <20250602221004.3837674-5-jstultz@google.com>
-Subject: [RESEND][PATCH v17 4/8] sched: Move update_curr_task logic into update_curr_se
+Message-ID: <20250602221004.3837674-6-jstultz@google.com>
+Subject: [RESEND][PATCH v17 5/8] sched: Fix runtime accounting w/ split exec &
+ sched contexts
 From: John Stultz <jstultz@google.com>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: John Stultz <jstultz@google.com>, Joel Fernandes <joelagnelf@nvidia.com>, 
@@ -90,13 +91,39 @@ Cc: John Stultz <jstultz@google.com>, Joel Fernandes <joelagnelf@nvidia.com>,
 	Suleiman Souhlal <suleiman@google.com>, kernel-team@android.com
 Content-Type: text/plain; charset="UTF-8"
 
-Absorb update_curr_task() into update_curr_se(), and
-in the process simplify update_curr_common().
+Without proxy-exec, we normally charge the "current" task for
+both its vruntime as well as its sum_exec_runtime.
 
-This will make the next step a bit easier.
+With proxy, however, we have two "current" contexts: the
+scheduler context and the execution context. We want to charge
+the execution context rq->curr (ie: proxy/lock holder) execution
+time to its sum_exec_runtime (so it's clear to userland the
+rq->curr task *is* running), as well as its thread group.
+
+However the rest of the time accounting (such a vruntime and
+cgroup accounting), we charge against the scheduler context
+(rq->donor) task, because it is from that task that the time
+is being "donated".
+
+If the donor and curr tasks are the same, then it's the same as
+without proxy.
 
 Signed-off-by: John Stultz <jstultz@google.com>
 ---
+v16:
+* Renamed update_curr_se to update_se_times, as suggested by
+  Steven Rostedt.
+* Reworded the commit message as suggested by Steven Rostedt
+v17:
+* Renamed update_se_times to update_se, as suggested by Peter
+* Added comment clarifying cfs_rq->curr being rq->donor.se as
+  suggested by Peter
+* Reworked to fix issue Peter pointed out with thread group
+  accounting being done on the donor, rather than the running
+  execution context.
+* Slight rewording of the commit message to further clarify
+  things.
+
 Cc: Joel Fernandes <joelagnelf@nvidia.com>
 Cc: Qais Yousef <qyousef@layalina.io>
 Cc: Ingo Molnar <mingo@redhat.com>
@@ -121,68 +148,95 @@ Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
 Cc: Suleiman Souhlal <suleiman@google.com>
 Cc: kernel-team@android.com
 ---
- kernel/sched/fair.c | 26 +++++++++-----------------
- 1 file changed, 9 insertions(+), 17 deletions(-)
+ kernel/sched/fair.c | 40 ++++++++++++++++++++++++++++------------
+ 1 file changed, 28 insertions(+), 12 deletions(-)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 0fb9bf995a479..8d067168185f4 100644
+index 8d067168185f4..1fd4c78314d6e 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -1155,6 +1155,14 @@ static s64 update_curr_se(struct rq *rq, struct sched_entity *curr)
- 	curr->exec_start = now;
- 	curr->sum_exec_runtime += delta_exec;
+@@ -1143,30 +1143,40 @@ static void update_tg_load_avg(struct cfs_rq *cfs_rq)
+ }
+ #endif /* CONFIG_SMP */
  
-+	if (entity_is_task(curr)) {
-+		struct task_struct *p = task_of(curr);
-+
-+		trace_sched_stat_runtime(p, delta_exec);
-+		account_group_exec_runtime(p, delta_exec);
-+		cgroup_account_cputime(p, delta_exec);
-+	}
-+
+-static s64 update_curr_se(struct rq *rq, struct sched_entity *curr)
++static s64 update_se(struct rq *rq, struct sched_entity *se)
+ {
+ 	u64 now = rq_clock_task(rq);
+ 	s64 delta_exec;
+ 
+-	delta_exec = now - curr->exec_start;
++	delta_exec = now - se->exec_start;
+ 	if (unlikely(delta_exec <= 0))
+ 		return delta_exec;
+ 
+-	curr->exec_start = now;
+-	curr->sum_exec_runtime += delta_exec;
++	se->exec_start = now;
++	if (entity_is_task(se)) {
++		struct task_struct *donor = task_of(se);
++		struct task_struct *running = rq->curr;
++		/*
++		 * If se is a task, we account the time against the running
++		 * task, as w/ proxy-exec they may not be the same.
++		 */
++		running->se.exec_start = now;
++		running->se.sum_exec_runtime += delta_exec;
+ 
+-	if (entity_is_task(curr)) {
+-		struct task_struct *p = task_of(curr);
++		trace_sched_stat_runtime(running, delta_exec);
++		account_group_exec_runtime(running, delta_exec);
+ 
+-		trace_sched_stat_runtime(p, delta_exec);
+-		account_group_exec_runtime(p, delta_exec);
+-		cgroup_account_cputime(p, delta_exec);
++		/* cgroup time is always accounted against the donor */
++		cgroup_account_cputime(donor, delta_exec);
++	} else {
++		/* If not task, account the time against donor se  */
++		se->sum_exec_runtime += delta_exec;
+ 	}
+ 
  	if (schedstat_enabled()) {
  		struct sched_statistics *stats;
  
-@@ -1166,13 +1174,6 @@ static s64 update_curr_se(struct rq *rq, struct sched_entity *curr)
- 	return delta_exec;
- }
- 
--static inline void update_curr_task(struct task_struct *p, s64 delta_exec)
--{
--	trace_sched_stat_runtime(p, delta_exec);
--	account_group_exec_runtime(p, delta_exec);
--	cgroup_account_cputime(p, delta_exec);
--}
--
- static inline bool did_preempt_short(struct cfs_rq *cfs_rq, struct sched_entity *curr)
- {
- 	if (!sched_feat(PREEMPT_SHORT))
-@@ -1211,13 +1212,8 @@ static inline bool do_preempt_short(struct cfs_rq *cfs_rq,
- s64 update_curr_common(struct rq *rq)
+-		stats = __schedstats_from_se(curr);
++		stats = __schedstats_from_se(se);
+ 		__schedstat_set(stats->exec_max,
+ 				max(delta_exec, stats->exec_max));
+ 	}
+@@ -1213,7 +1223,7 @@ s64 update_curr_common(struct rq *rq)
  {
  	struct task_struct *donor = rq->donor;
--	s64 delta_exec;
  
--	delta_exec = update_curr_se(rq, &donor->se);
--	if (likely(delta_exec > 0))
--		update_curr_task(donor, delta_exec);
--
--	return delta_exec;
-+	return update_curr_se(rq, &donor->se);
+-	return update_curr_se(rq, &donor->se);
++	return update_se(rq, &donor->se);
  }
  
  /*
-@@ -1242,10 +1238,6 @@ static void update_curr(struct cfs_rq *cfs_rq)
- 	update_min_vruntime(cfs_rq);
+@@ -1221,6 +1231,12 @@ s64 update_curr_common(struct rq *rq)
+  */
+ static void update_curr(struct cfs_rq *cfs_rq)
+ {
++	/*
++	 * Note: cfs_rq->curr corresponds to the task picked to
++	 * run (ie: rq->donor.se) which due to proxy-exec may
++	 * not necessarily be the actual task running
++	 * (rq->curr.se). This is easy to confuse!
++	 */
+ 	struct sched_entity *curr = cfs_rq->curr;
+ 	struct rq *rq = rq_of(cfs_rq);
+ 	s64 delta_exec;
+@@ -1229,7 +1245,7 @@ static void update_curr(struct cfs_rq *cfs_rq)
+ 	if (unlikely(!curr))
+ 		return;
  
- 	if (entity_is_task(curr)) {
--		struct task_struct *p = task_of(curr);
--
--		update_curr_task(p, delta_exec);
--
- 		/*
- 		 * If the fair_server is active, we need to account for the
- 		 * fair_server time whether or not the task is running on
+-	delta_exec = update_curr_se(rq, curr);
++	delta_exec = update_se(rq, curr);
+ 	if (unlikely(delta_exec <= 0))
+ 		return;
+ 
 -- 
 2.49.0.1204.g71687c7c1d-goog
 
