@@ -1,138 +1,121 @@
-Return-Path: <linux-kernel+bounces-670165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49F2BACA9F7
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 09:35:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CA43ACA9FD
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 09:39:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 103A9177B2A
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 07:35:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 058203AE12A
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 07:38:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C30B31A0BFE;
-	Mon,  2 Jun 2025 07:35:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 831ED1AB6F1;
+	Mon,  2 Jun 2025 07:39:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="QkaDbGLe"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ll4VNW+1"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11FA92F50
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 07:35:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 582296ADD
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 07:39:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748849736; cv=none; b=PJUiL6vUyut5b5mhppVzUPnJO7/5AvPas/rtNj74W+fDM7a3qJMEob6iInFq9Vc4h4NNxXL4sVhcnBdVyOZ1nClguZrYnkVM1v6ydJU4EK9FSaJCy3EKte0kTEK4um3cEuSEquYasUtiLXIWhcjYIyiysoFCCPboL+nqRd7wPMg=
+	t=1748849956; cv=none; b=FXjJXgAOJf8F3Hu/6Dqcs3vIreH4jvqoMlXvs0bCGfiTVADqHlyymNE0qPITOC02SRKYQma5CKw5wDclh38RyXa1tkwUjNo2rUC0TowLmPOiToTSybG0QChm5NhTlqBJ/QLVnB2Yc4H2I59x9JdDI6Wi18XiEOTUiYh0A0yWNeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748849736; c=relaxed/simple;
-	bh=MJsv+5GBNj21PZlW1gTm5wXSgxhfAGAZGeqFJ/x9egw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ssFSeekKmoeAbA/X8zGUOHuUEqrSNlYPQsJVcw4f43D6Gl18PqYo+Lx+dW2hVeEDH+RHQliNuggFFDXjnZowN5KAm3mkbFXvygkUKwlADxMlaMmT/l5zat8yDA1DUFx+8YAC6cYRTAIgGkRZiN4kqZqtivAceIFEXZWklCXL044=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=QkaDbGLe; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-442eb5d143eso39908585e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jun 2025 00:35:33 -0700 (PDT)
+	s=arc-20240116; t=1748849956; c=relaxed/simple;
+	bh=tpbGa+wb1ROibOMJ754QCVyWSnLkiLu3ogNqXjrQrSM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=I8hPcdg9bj1Tggd8nQ39bL94g79J9Ow/wwZstCL5KwEB1E+/PsyKF0x+mfVPaQzvBrSfn3V3C/k6yl7VgHDLqCLMD6Yipf7HsPB3jX+nkudtbmTA0s/EdJxU09ZGubgH+Dd+aXTNJ3pZou6xBhQVMmDhH/nHMynNgSoKsK7dFJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ll4VNW+1; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-450ce3a2dd5so34905545e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jun 2025 00:39:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1748849732; x=1749454532; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cumGIXMNgc0u7pbGPIyAxyyCYSUeC1bHYbz8p+dQZP8=;
-        b=QkaDbGLePrTQ77/yzIMAup0CIQlXPWtPRmvRfrrkzrSatvFjptqb60j5wbYWgLrNj4
-         7tlPrGAmFtuLyEosGhbUVHV1fw1aPQlhe/gz7pa2GWaYygVcIkSy5bb4Wfrwg1uJWOGK
-         rOy4UhDIb20uYDG17DofwCCTFyqboUhRWlPzqxrFUSp/UnPpwGdN2YXiQlVsGBcp8y5f
-         u25AK5TGhzEkkdx2mevhnLo+33RQM260GjTz6w1JLmfcM9Nc4d1c3X9FzysjgRl+Hrck
-         8n/fhbjwV8+uTEaVFBuyScOrRGWnx28hUsebMZzcBNdC5AaMQgSsjf65qYYoF31guA7t
-         WTKw==
+        d=gmail.com; s=20230601; t=1748849952; x=1749454752; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0KRsqCQdQxGvJUA1Gb3gOwJAWm93IjHatNhbLpImD7I=;
+        b=Ll4VNW+1Ngepsnl/d8olQGqHnHWgL631ZuzVV1RpPrcmh9j7C3JaWuBKXnQn4sW2nR
+         pN/Qqfh2W10fp6lSfGGTaQvalCTOBVOkdfMqsTLVhYtdDp9i0/kXzZ3/zpkDxF2H0lAM
+         MXzH2nnrFw/o7wig2OqqARmwG5UYuO7Pa0frgZ/dbjuZBoF3i7hOpcNW6UWGmfbqMJap
+         7NrPUr8X8eThl3kGlubB500Jx737AW6GoW3AdiCIlbAFYhQK//v/HNMBTpjvXp++Uru1
+         6QTucjHmBicfwQHNvITrHyQvdTAqkGuIl2fHUTlYpYX8513LUrT3WfgGOtUBSE2i0ti8
+         9xzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748849732; x=1749454532;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cumGIXMNgc0u7pbGPIyAxyyCYSUeC1bHYbz8p+dQZP8=;
-        b=E4irLFE51ZLHz6U1WZhuDgzrtT66NcvnD2wMiYV0tLxCP609UFamZPoIVjvwTC1bhj
-         3eMSauHHef7W2BLH0x9nNkOhrJjfwMLy9JbuIFoZx8aTjZxuThkb3L+UX4aXllZ6VRD6
-         ghdrVps3tvPrkpE0s9LNHW5KmgQjSQfDNF5/940FAr5xHEDV6pHo0jDjNbS9BRMkOb/5
-         rDTPNJoO8swfhkGrjhPMfhA0oNM3HorJHSw5CjfbiNYZZYTEx5Kalx7G++lnc6kD1U3R
-         rsxWRgXI6lIJ+fdn46MMuiTtl5Y4AWW8YiUoyXV3qz9UrAb2cFyJmHYmQ3kKBjC5Kytm
-         9gmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWcsF6FywTs2VX0Gk85Sm9X1qpgMJkO+7fH3IeUsdxkAo6MImxIW4uobvtkPVx9exSbusCY4FCRFw0fjAc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRIj6/aeHhyDNzO+pWGn2wq0CrL5lUIQvDe7yp0k1WKYhe53j7
-	008wuO0jr9hWeCaNOJhXxuQf6Od2IRGjWKQ7YqqOQq9Kz+X5zDyE4/njFDC1/tf0Seg=
-X-Gm-Gg: ASbGncsLpQqf6yI6W9ow2+DRcgWmsJTEoiOd+/NV4FWDHyg3dK+cdPbxZMbL4An/gCE
-	ZusPrlubUCN3j85r85mu4pFIPhPxNQF2Al0MB5aU5dbp4IMBejjZDKfnSyM/4LFTHxqJwoKdaFj
-	X8vbGQPyewrxK4CEmj/vJn7NiJZm6VVG7+jNa8okOi2NUll2/1wuCU2oDigeB0iU/wStLSS2FaC
-	bm1uiCH11enudzKFradh8Z+mEUqbVD21WHTei702z2Mzzn+G0GJIz16Da9cDkUAjhmuXNwSzETO
-	40Kw2MnWY+5DvOAS3lJD8xfJf1HuOSBqHmua2RYuS1ufNk3b3gOV2XZaZwlUpgDzul3mhZAvIEp
-	fwnZ20DtlMz9anPd0cJRr3uX7u46fUYo=
-X-Google-Smtp-Source: AGHT+IF6XBbjDeoqa8ITCmT2RHP8cD671wm4VZYXi7RTv3p6ZxGMEf7YXAkUXpSnyVYCGdL9bcgGPQ==
-X-Received: by 2002:a05:600c:1914:b0:450:cf42:7565 with SMTP id 5b1f17b1804b1-45121fb93a2mr53090255e9.23.1748849732335;
-        Mon, 02 Jun 2025 00:35:32 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:e17:9700:16d2:7456:6634:9626? ([2a01:e0a:e17:9700:16d2:7456:6634:9626])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4efe6c842sm13689674f8f.29.2025.06.02.00.35.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Jun 2025 00:35:31 -0700 (PDT)
-Message-ID: <ff60e791-7305-4ea8-8048-ff33316bf8f1@rivosinc.com>
-Date: Mon, 2 Jun 2025 09:35:30 +0200
+        d=1e100.net; s=20230601; t=1748849952; x=1749454752;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0KRsqCQdQxGvJUA1Gb3gOwJAWm93IjHatNhbLpImD7I=;
+        b=I+6eVDSgx38BS5LBQUCyfFCYWjZnZEv46Fw5zu3wDHJ1VqvSYITJaRg6mAktkmrmuu
+         XYd6AapTLqKMEOCbdgoJNOnXEagAnUU2wYL8FJhIg7rQBAwnZPR/AaQDSyKrkhwFMNGy
+         2Lbb+6EjAWWoWpmeoo4EpHWGEbkn3llVnJoMUszUtfJOl7kUkmUx6kZVxtmZMOMeR3Pu
+         l1FZo0oSahSdeyFIlPtAmC/S40UKQ69ig/hse6v1MCyvoJzaw50HvdHamBakJ4ih9WL/
+         O+ZoZ2+Brv1AMWnfnBsbq2iWZttfEVy65QknvgWtQL+QQGor/wQsS81owkU2ItoOBIlN
+         nsrw==
+X-Forwarded-Encrypted: i=1; AJvYcCW8S24V+pcj1uKxX4jmMdnjgBAIDLjdUFQrGArMC/XKPXfXmwRmhF+A9xCJdLril86B7lus4d3LmOdRg7I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyg8xxnkIKR+mFlFXP55dIgrNm1kvvlrisg3S25gwM9oKfsZ7Ti
+	wHLFm/oGP1joyYUVELCMTedLveOgbD57ibQULkfEPH+KXnIjYDKiQTF7
+X-Gm-Gg: ASbGncviNOSk6zVQ9KtFEh572WrBNxNIWbVD7U5U9GFhtmzi7Z9JVunYEtPJZsMwBaw
+	Lp9B0jeMGUlwp8PNYulBLrEwwMSfOQNfgVxSsxt7acpwQ3XIx0V6+HpOutQgiM3+n/lYyhFcFjd
+	k0eWAjXK3YK+NNRnS5Fr4gixnTufChblsEo6AXaeEaYqvPo2r53kX8hgQkyPlbgBBS1XFbfr1dr
+	lLJG7CGE4SlAu46pdLS4PACiLYIf1JDHj7SYKniKkeBiuPXSr4uoGxWXW3ZDq4cCQn/krrTuHre
+	CwWe+u6d/9TKVeN7xazej4MRAsdQzaESAjJxtQ+DWNwhtSm9TIDUnlZyrqV4g8CtnzIIQf54670
+	AiA==
+X-Google-Smtp-Source: AGHT+IE8lDHcTjU/MxOEjrpe1DoCim0M2qp/z/Bda98u1Z+TCcARAjAz1Rb4YJjFowK3otT/SnYu7g==
+X-Received: by 2002:a05:600c:5251:b0:43d:47b7:b32d with SMTP id 5b1f17b1804b1-451221a223emr48903255e9.25.1748849952241;
+        Mon, 02 Jun 2025 00:39:12 -0700 (PDT)
+Received: from localhost.localdomain ([41.79.198.22])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-450d7f8f188sm112487005e9.3.2025.06.02.00.39.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Jun 2025 00:39:11 -0700 (PDT)
+From: Khalid Ali <khaliidcaliy@gmail.com>
+X-Google-Original-From: Khalid Ali <khaliidcaliy@gmail.com
+To: tglx@linutronix.de,
+	bp@alien8.de,
+	peterz@infradead.org,
+	jpoimboe@kernel.org,
+	mingo@redhat.com,
+	dave.hansen@linux.intel.com
+Cc: pawan.kumar.gupta@linux.intel.com,
+	linux-kernel@vger.kernel.org,
+	x86@kernel.org,
+	hpa@zytor.com,
+	Khalid Ali <khaliidcaliy@gmail.com>
+Subject: [PATCH] kernel/cpu/bugs: log ltf1 mitigation status
+Date: Mon,  2 Jun 2025 07:37:06 +0000
+Message-ID: <20250602073732.734-1-khaliidcaliy@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] riscv: uaccess: do not do misaligned accesses in
- get/put_user()
-To: "Maciej W. Rozycki" <macro@orcam.me.uk>,
- David Laight <david.laight.linux@gmail.com>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alex@ghiti.fr>
-References: <20250530205658.624195-1-cleger@rivosinc.com>
- <20250530205658.624195-3-cleger@rivosinc.com>
- <20250531192801.5d6329c3@pumpkin>
- <alpine.DEB.2.21.2506011830130.28395@angie.orcam.me.uk>
-Content-Language: en-US
-From: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
-In-Reply-To: <alpine.DEB.2.21.2506011830130.28395@angie.orcam.me.uk>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
+Log the L1TF mitigation like other mitigatioons. This one is is the
+only one that doesn't get logged.
 
+Signed-off-by: Khalid Ali <khaliidcaliy@gmail.com>
+---
+ arch/x86/kernel/cpu/bugs.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-On 01/06/2025 19:35, Maciej W. Rozycki wrote:
-> On Sat, 31 May 2025, David Laight wrote:
-> 
->>> Such behavior was detected with GET_UNALIGN_CTL() that was doing
->>> a put_user() with an unsigned long* address that should have been an
->>> unsigned int*. Reenabling kernel misaligned access emulation is a bit
->>> risky and it would also degrade performances. Rather than doing that,
->>> we will try to avoid any misaligned accessed by using copy_from/to_user()
->>> which does not do any misaligned accesses. This can be done only for
->>> !CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS and thus allows to only generate
->>> a bit more code for this config.
->>
->> For get_user() you are much better off reading the two words that contain
->> the value and then doing 'shift' and 'or' to get the correct value.
->>
->> Even for put_user() doing the explicit byte accesses will be faster than
->> going though the generic copy_to/from_user() function.
-> 
->  FWIW I think optimising copy_to/from_user for such cases would be a more 
-> robust approach moving forward than sprinkling open-coded implementations 
-> across code.
-
-Hi Maciej,
-
-Indeed, that's a good idea, we could optimize small copy in
-copy_from/to_user so that will benefit all the users as well.
-
-Thanks,
-
-Clément
-
-> 
->   Maciej
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index 7f94e6a5497d..38cb2a1b2849 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -2803,6 +2803,7 @@ static void __init l1tf_apply_mitigation(void)
+ 		return;
+ 	}
+ 
++	pr_info("Mitigation: PTE inversion\n");
+ 	setup_force_cpu_cap(X86_FEATURE_L1TF_PTEINV);
+ }
+ 
+-- 
+2.49.0
 
 
