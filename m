@@ -1,99 +1,89 @@
-Return-Path: <linux-kernel+bounces-670249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45377ACAB57
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 11:28:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B336ACAB62
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 11:28:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A90A189A7FE
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 09:28:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8508E3BD284
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 09:28:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53B691E0B9C;
-	Mon,  2 Jun 2025 09:27:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YzhYaH/6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5936F1E0DE3;
+	Mon,  2 Jun 2025 09:28:17 +0000 (UTC)
+Received: from mx.gpxsee.org (mx.gpxsee.org [37.205.14.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 996061DF27E;
-	Mon,  2 Jun 2025 09:27:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C8D91DF757;
+	Mon,  2 Jun 2025 09:28:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.14.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748856471; cv=none; b=QPwogplnswoybI23jAlww84dBpchpirCnqr8GVXacidlHbQi9aZnS25pxxxJNETdpuZ2qgELMsmwxx1rrwfJtig+WMotgWClBGDCdv/6N9AzmWxqQttWjijKVocTye+ml2Rcd+fKcJ2lA6HNSGZTYtNNy4sffRt1InmMRehz8zk=
+	t=1748856497; cv=none; b=QAzriUo96KAh4U1H3SW6z+8rYEk1+qnRopTD0WSacyKaKf90G62RMe6oKljjKaAffN+XbRPd67QsAyWNSqqOVJ6dP3gbvwnwUAXUBIuvo7Q6oW4odohnLvMA6AMTNOdcQn1bSGjMyuyQVfF2CG/J2nZn15mIMDY3anU74HbsBm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748856471; c=relaxed/simple;
-	bh=fuCwrDtAeeNlLsohNw8BcfdoS4oZ78T7wzvlQFE7D0Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f25p0zel2m95HM8+2TmwNoKVkEDBz9x6UPPC98XViJwD/CtcJdnogYXWufUUB5VQ13CxIm3V1JdJJH1dy+uX60KNajIqCzYEUhwLlA9rdRelsmVml2Pq15HZqNX7rewp1uAhCudriNbITwvU24Wz4yC265v7oDQiYgaep/syzaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YzhYaH/6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 757C3C4CEEB;
-	Mon,  2 Jun 2025 09:27:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748856471;
-	bh=fuCwrDtAeeNlLsohNw8BcfdoS4oZ78T7wzvlQFE7D0Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YzhYaH/6BwzleMGi0lwstDdyVBU5xie15ljOfvo26nuvV6dY52Y9mvgjMm7K7XEKd
-	 F1kzZbI+zo8U2E4PvObvEvD6Ws2Yq1qFWVF18VFsjDOaYqu82cK5wUfIPhULPma/5c
-	 rPduVNTPn8E/2XejcgTgzwIwTbpQxqCwfvy0wBDd/K/O2C6aflBtHUQrp723ig1NC7
-	 M1krVNbsHu1prOYuWxbEGEeLf+V0ZbkCR9OIAmxPfpy2cm9U7wi/v3D2Hu/QhwOPup
-	 RUHAIfhCsF/wl+v3Pg/K5p0AL9pcbhjQM+nmuFUXs+M57/w9K0crmGLJ3AXoT7/LvA
-	 Wonq17PVLiysg==
-Date: Mon, 2 Jun 2025 11:27:43 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Song Liu <song@kernel.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com, 
-	ast@kernel.org, daniel@iogearbox.net, martin.lau@linux.dev, kpsingh@kernel.org, 
-	mattbobrowski@google.com, amir73il@gmail.com, repnop@google.com, jlayton@kernel.org, 
-	josef@toxicpanda.com, mic@digikod.net, gnoack@google.com
-Subject: Re: [PATCH bpf-next 3/4] bpf: Introduce path iterator
-Message-ID: <20250602-lustig-erkennbar-7ef28fa97e20@brauner>
-References: <20250528222623.1373000-1-song@kernel.org>
- <20250528222623.1373000-4-song@kernel.org>
- <20250528223724.GE2023217@ZenIV>
- <yti2dilasy7b3tu6iin5pugkn6oevdswrwoy6gorudb7x2cqhh@nqb3gcyxg4by>
- <CAPhsuW4tg+bXU41fhAaS0n74d_a_KCFGvy_vkQOj7v4VLie2wg@mail.gmail.com>
- <20250529173810.GJ2023217@ZenIV>
- <CAPhsuW5pAvH3E1dVa85Kx2QsUSheSLobEMg-b0mOdtyfm7s4ug@mail.gmail.com>
+	s=arc-20240116; t=1748856497; c=relaxed/simple;
+	bh=Lupz2iTDHGUuhlaI2fVwSrIneOs8j+pnxEeTB6pHpRE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DvldS6JfoBE0pBMJqRQc7aJGRC9PDJ4qzfOqfX8nUrYxeaLdK9Cq8lIJQQOD8nFuQV+C14kCW/cY+nqhsLv97DxKB4UEXbBV8lVEP38agvcGOqvfFKJhlGkKFdtc/2N6qCri6hYiq1xnsQ3stwh96EROpNXqyny8OtNaJKKaZBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gpxsee.org; spf=pass smtp.mailfrom=gpxsee.org; arc=none smtp.client-ip=37.205.14.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gpxsee.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gpxsee.org
+Received: from mgb4.. (unknown [62.77.71.229])
+	by mx.gpxsee.org (Postfix) with ESMTPSA id B936879B9E;
+	Mon, 02 Jun 2025 11:28:04 +0200 (CEST)
+From: tumic@gpxsee.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	=?UTF-8?q?Martin=20T=C5=AFma?= <martin.tuma@digiteqautomotive.com>
+Subject: [PATCH v2] media: mgb4: Enumerate only the available timings
+Date: Mon,  2 Jun 2025 11:27:51 +0200
+Message-ID: <20250602092751.2529-1-tumic@gpxsee.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAPhsuW5pAvH3E1dVa85Kx2QsUSheSLobEMg-b0mOdtyfm7s4ug@mail.gmail.com>
 
-On Thu, May 29, 2025 at 11:00:51AM -0700, Song Liu wrote:
-> On Thu, May 29, 2025 at 10:38 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
-> >
-> > On Thu, May 29, 2025 at 09:53:21AM -0700, Song Liu wrote:
-> >
-> > > Current version of path iterator only supports walking towards the root,
-> > > with helper path_parent. But the path iterator API can be extended
-> > > to cover other use cases.
-> >
-> > Clarify the last part, please - call me paranoid, but that sounds like
-> > a beginning of something that really should be discussed upfront.
-> 
-> We don't have any plan with future use cases yet. The only example
-> I mentioned in the original version of the commit log is "walk the
-> mount tree". IOW, it is similar to the current iterator, but skips non
-> mount point iterations.
-> 
-> Since we call it "path iterator", it might make sense to add ways to
-> iterate the VFS tree in different patterns. For example, we may
+From: Martin Tůma <martin.tuma@digiteqautomotive.com>
 
-No, we're not adding a swiss-army knife for consumption by out-of-tree
-code. I'm not opposed to adding a sane iterator for targeted use-cases
-with a clear scope and internal API behavior as I've said multiple times
-already on-list and in-person.
+Enumerate only the available (as given by the sysfs setup - our "EDID
+replacement") timings, not all theoretically possible. This is the video
+outputs part of the previous inputs patch that somehow got "lost in
+translation".
 
-I will not merge anything that will endup exploding into some fancy
-"walk subtrees in any order you want".
+Signed-off-by: Martin Tůma <martin.tuma@digiteqautomotive.com>
+---
+ drivers/media/pci/mgb4/mgb4_vout.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/media/pci/mgb4/mgb4_vout.c b/drivers/media/pci/mgb4/mgb4_vout.c
+index 14c5725bd4d8..c179c425e167 100644
+--- a/drivers/media/pci/mgb4/mgb4_vout.c
++++ b/drivers/media/pci/mgb4/mgb4_vout.c
+@@ -492,7 +492,14 @@ static int vidioc_s_dv_timings(struct file *file, void *fh,
+ static int vidioc_enum_dv_timings(struct file *file, void *fh,
+ 				  struct v4l2_enum_dv_timings *timings)
+ {
+-	return v4l2_enum_dv_timings_cap(timings, &video_timings_cap, NULL, NULL);
++	struct mgb4_vout_dev *voutdev = video_drvdata(file);
++
++	if (timings->index != 0)
++		return -EINVAL;
++
++	get_timings(voutdev, &timings->timings);
++
++	return 0;
+ }
+ 
+ static int vidioc_dv_timings_cap(struct file *file, void *fh,
+
+base-commit: 5e1ff2314797bf53636468a97719a8222deca9ae
+-- 
+2.48.1
+
 
