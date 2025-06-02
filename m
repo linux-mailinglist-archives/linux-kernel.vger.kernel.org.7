@@ -1,196 +1,131 @@
-Return-Path: <linux-kernel+bounces-671023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B94D4ACBBF7
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 21:53:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE535ACBBFB
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 21:54:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE91E188F2D8
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 19:53:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4F563A4D5B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 19:53:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 339A2223316;
-	Mon,  2 Jun 2025 19:53:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QCojKUWD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEA3D22A1D5;
+	Mon,  2 Jun 2025 19:53:41 +0000 (UTC)
+Received: from bmailout3.hostsharing.net (bmailout3.hostsharing.net [176.9.242.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 726B813BC35;
-	Mon,  2 Jun 2025 19:53:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E39FD229B18;
+	Mon,  2 Jun 2025 19:53:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.242.62
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748894003; cv=none; b=O+aZWopZtTJyzA2y7lRCeKjl5G/HBj8xSvyoi8T6hdadkXvsNIc8GuRUp89TcnKrDAn2CCGh33jMbtE1X+f6ewmyeW+80Q8zn47Pppl/4xNNJyoOR06TktlVn01C9WC/X29GYvpA52ZtvUhFzSDpJYKeNlIg9lcxnBV59BB4zU4=
+	t=1748894021; cv=none; b=sLbjDfllojxNpgj3EbVEZQyEJO9Qu3JmD7q5lxIQHli5wjbFTe35Gfn4W6BmkeFB1N1WBXWpRygBMG8wg208tjE7ggO7HcY0ZZ8Mv8F4HQSSrj4tfZwlNKqKxtbAw39OnauNRCVGa4BTra7SQ/tZx56GN9JfkIp0ahyJ6f1cGis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748894003; c=relaxed/simple;
-	bh=xxLHPiRenp4yZIphGmjEN+lPuM5g24FnW6uhTp0Vca0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z4IfcTIkev+NP5Uj1s579165/vpveJwX7X2tQwT+BiRZEN8HNO4/4zLBPgTSecCtT0klG1mYZuMDcJWG4+aSqvBWQRrd+6xuxaEXWkcOZHV0yv2amw3rI/KhLs4G0aWR7Ze9AplyEnviJVt0UkUQ2RxC2RdWcjVy2P1O8gcZVhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QCojKUWD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A095C4CEEB;
-	Mon,  2 Jun 2025 19:53:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748894002;
-	bh=xxLHPiRenp4yZIphGmjEN+lPuM5g24FnW6uhTp0Vca0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=QCojKUWDXjG/Sob0ga6Y/HDBW/ZeZ+5K0tXbOneqzTgPq4Nv6BmQRlaw9kwHqu1Kx
-	 FCTY1JUFGOhcW4mUcIwiRFfQtwpTU+YkLwH3EEdMxHB+GPQd7J8iZlHlM9QElfGldS
-	 q/VuC3Ijb7r28Yf4FwnBRvX/5ojes75ZSPLVlt6HIeiTDPhLMdMXzlnwyLhPV8wFEv
-	 r5cR+nRShgx9uzRT4EMasXilrfzAxAJFzbI7T8a2rc1Qo/5tZwrmzzakzjcv8On4Ps
-	 xFo/qwrQM2IF18hED6I0TvUDaBFPdq0MPvYtiJT23y4ZcqOJbuO4FRTak83wFNk748
-	 MfRDpjKpzqMnQ==
-Message-ID: <a5028d5a-cc93-4ece-bff5-16990a7de2e3@kernel.org>
-Date: Mon, 2 Jun 2025 21:53:17 +0200
+	s=arc-20240116; t=1748894021; c=relaxed/simple;
+	bh=OP23uEfHXl1amO04OXMvRIIhq0jJ+wGQl9T29QAiXOg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nxseij+Xa0oobcBdaMjIzJJaNYkgO3CjcXd6zqWeQ5E/Vhsu8S+ObKCXtmMhIZrRrQDsk5OHThRSAjwRBUYXjjQ/bfSItHqhsYPtlEs3wucKb0SRcTLSvsCc5Jt+NgHt1oK3XUCnrDb8pGJab+9OT+GgjiP54IgCbrx2NDfTOyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=176.9.242.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout3.hostsharing.net (Postfix) with ESMTPS id 75F7D2C0161A;
+	Mon,  2 Jun 2025 21:53:30 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id 5AA2DDDCC8; Mon,  2 Jun 2025 21:53:30 +0200 (CEST)
+Date: Mon, 2 Jun 2025 21:53:30 +0200
+From: Lukas Wunner <lukas@wunner.de>
+To: Changwoo Min <changwoo@igalia.com>
+Cc: lukasz.luba@arm.com, rafael@kernel.org, len.brown@intel.com,
+	pavel@kernel.org, christian.loehle@arm.com, tj@kernel.org,
+	kernel-dev@igalia.com, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 02/11] PM: EM: Add a skeleton code for netlink
+ notification.
+Message-ID: <aD4BOga3GvPewnqI@wunner.de>
+References: <20250529001315.233492-1-changwoo@igalia.com>
+ <20250529001315.233492-3-changwoo@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] dt-bindings: net: dsa: microchip: add bit-banged SMI
- example
-To: Corentin Guillevic <corentin.guillevic@smile.fr>,
- Woojung Huh <woojung.huh@microchip.com>, UNGLinuxDriver@microchip.com,
- Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Marek Vasut <marex@denx.de>
-Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250602170458.125549-1-corentin.guillevic@smile.fr>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250602170458.125549-1-corentin.guillevic@smile.fr>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250529001315.233492-3-changwoo@igalia.com>
 
-On 02/06/2025 19:04, Corentin Guillevic wrote:
-> KSZ8863 can be configured using I2C, SPI or Microchip SMI. The latter is
-> similar to MDIO, but uses a different protocol. If the hardware doesn't
-> support this, SMI bit banging can help. This commit adds an device tree
-> example that uses the CONFIG_MDIO_GPIO driver for SMI bit banging.
-
-So the difference is in one property? Or no difference at all...
-
-> 
-> Signed-off-by: Corentin Guillevic <corentin.guillevic@smile.fr>
-> ---
-> Changes in v2:
-> - Fix dt_binding_check errors
-> 
->  .../bindings/net/dsa/microchip,ksz.yaml       | 59 ++++++++++++++++++-
->  1 file changed, 58 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/net/dsa/microchip,ksz.yaml b/Documentation/devicetree/bindings/net/dsa/microchip,ksz.yaml
-> index 62ca63e8a26f..33a067809ebe 100644
-> --- a/Documentation/devicetree/bindings/net/dsa/microchip,ksz.yaml
-> +++ b/Documentation/devicetree/bindings/net/dsa/microchip,ksz.yaml
-> @@ -241,4 +241,61 @@ examples:
->              };
->          };
->      };
-> -...
+> diff --git a/include/uapi/linux/energy_model.h b/include/uapi/linux/energy_model.h
+> new file mode 100644
+> index 000000000000..42a19e614c7d
+> --- /dev/null
+> +++ b/include/uapi/linux/energy_model.h
+> @@ -0,0 +1,40 @@
+> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+> +#ifndef _UAPI_LINUX_ENERGY_MODEL_H
+> +#define _UAPI_LINUX_ENERGY_MODEL_H
 > +
-> +  # KSZ8863 with bit-banged SMI
-> +  - |
-> +    #include <dt-bindings/gpio/gpio.h>
+
+It looks like you created the header file manually.  There is tooling
+to auto-generate all the boilerplate code from a YAML description in
+Documentation/netlink/specs/ and my (limited) understanding is that
+using it is mandatory for all newly introduced Netlink protocols.
+
+I just had to wrap my head around all that for SPDM (a device
+authentication protocol), see the top-most commit on this branch,
+which is in a WIP state though:
+
+https://github.com/l1k/linux/commits/doe
+
+Basically you create the uapi and kernel header files plus kernel source
+like this:
+
+tools/net/ynl/pyynl/ynl_gen_c.py --spec Documentation/netlink/specs/em.yaml \
+  --mode uapi --header
+tools/net/ynl/pyynl/ynl_gen_c.py --spec Documentation/netlink/specs/em.yaml \
+  --mode kernel --header
+tools/net/ynl/pyynl/ynl_gen_c.py --spec Documentation/netlink/specs/em.yaml \
+  --mode kernel --source
+
+And then you add both the YAML file as well as the generated files to
+the commit.  The reason you have to do that is because Python is
+optional for building the kernel per Documentation/process/changes.rst,
+so the files cannot be generated at compile time.  It is possible though
+to regenerate them with tools/net/ynl/ynl-regen.sh whenever the YAML file
+is changed.
+
+The tooling is somewhat brittle, see 396786af1cea.  In theory ynl_gen_c.py
+is capable of auto-generating code for user space applications as well
+but it crashed when parsing my YAML file.  So there are more bugs,
+just haven't had the time yet to fix them.
+
+
+> +int __init em_netlink_init(void)
+> +{
+> +	return genl_register_family(&em_genl_family);
+> +}
 > +
-> +    // Ethernet switch connected via SMI to the host, CPU port wired to eth0:
-> +    ethernet0 {
-
-
-Drop node, not really used.
-
-> +        phy-mode = "rmii";
+> +void __init em_netlink_exit(void)
+> +{
+> +	genl_unregister_family(&em_genl_family);
+> +}
 > +
-> +        fixed-link {
-> +            speed = <100>;
-> +            full-duplex;
-> +            pause;
-> +        };
-> +    };
-> +
-> +    mdio: mdio {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
 
-Order properties according to DTS coding style.
+It looks like em_netlink_exit() isn't invoked anywhere, so why define
+it in the first place?  You only need this if the feature can be modular
+(which it cannot - it's gated by a bool Kconfig option).  Then you'd
+call em_netlink_exit() in module_exit().
 
-> +        compatible = "microchip,mdio-smi0";
+Also, you may want to consider moving this to patch [03/11], where
+em_netlink_init() is actually invoked.  And you may want to move the
+postcore_initcall() to this file so that you can declare em_netlink_init()
+static, don't need em_init() and don't need the empty inline stubs.
 
-Not relevant. This binding describes device, not bus.
+Thanks,
 
-> +        gpios = <&gpioc 1 GPIO_ACTIVE_HIGH>,
-> +            <&gpioa 2 GPIO_ACTIVE_HIGH>;
-
-Messed indentation
-
-> +        status = "okay";
-
-Drop status
-
-but anyway all above is not really relevant, drop.
-
-> +
-> +        switch@0 {
-> +            compatible = "microchip,ksz8863";
-> +            reg = <0>;
-> +            reset-gpios = <&gpioa 4 GPIO_ACTIVE_LOW>;
-> +            status = "okay";
-
-Drop.
-
-After cleanup from redundant pieces there is basically no difference.
-Don't add examples which differ by compatible (or even by one property).
-
-
-
-Best regards,
-Krzysztof
+Lukas
 
