@@ -1,97 +1,177 @@
-Return-Path: <linux-kernel+bounces-670180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5FF1ACAA31
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 09:56:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D9BAACAA23
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 09:55:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83B2C178C23
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 07:56:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48A6D178055
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 07:55:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80F3B1C1F02;
-	Mon,  2 Jun 2025 07:56:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3315136351;
+	Mon,  2 Jun 2025 07:55:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rXRnYBa5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="RaOXfqCB"
+Received: from mail-ej1-f68.google.com (mail-ej1-f68.google.com [209.85.218.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEFFA2C3255;
-	Mon,  2 Jun 2025 07:56:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45EA81AC891
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 07:55:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748850981; cv=none; b=DGkqkzp4sjyB6DHLUTRzV3CCeLPuKmynLIweVTYwtv5tG3/An61mscXzJt7M1P62FUykzzjvvPhx+sECd9uroF7cHsen0AtXNp9Lrk9xURAgoR5IJJhvI6kFm/kEXwEVd8hKmprcF99nAaUIDlJSLu9tjAfivbZ1HZRXn7DWsto=
+	t=1748850904; cv=none; b=iPUDoeySNueBjFIvVbWc+Ydm65lY7D+NFvOQgOaogGn3UxSNc8YFPUo+IA26T/nYJqY6DTr9eDp1tbDBwx+5pzaUoKQlM8MNb2v92tAzR0xur2h45ncLzRBuVVby8N1fjiEbC7pvWEI782bt9voeVPKcc+tdwbVoVwrxwH1rcnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748850981; c=relaxed/simple;
-	bh=G8vHJ1oOdy/gXfGEd+HQJJV4bCKcrAcoq3qPx+pvPHs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LmRno2W01kn0haWjebzxYTa35ahcDKXvBLfc6H2vEnc9rfp2nKHub8Wm96XzsGFqJxnwO8MmAGJ8lmOLPUw4x+SvoLIVJISqujsTq3AyvUTzt3FSsuPt1OKDRTrGEbtbTa+/hTkfRlMgd3/5MrS2nCqMoPm9dDaExUsgNOO1ysk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rXRnYBa5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45A6CC4CEEB;
-	Mon,  2 Jun 2025 07:56:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748850980;
-	bh=G8vHJ1oOdy/gXfGEd+HQJJV4bCKcrAcoq3qPx+pvPHs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=rXRnYBa5uTwqNg7HrQlBM9RVB+9sd72Lt7mMcN9ryVd+B0s2Q0ReGp4yR93VLwz9i
-	 0I9t1xDRdYG9fI6afAYVTQNFIAz6ZUrSnlPUO+ZnrAzTItf9WffI8HDlZcecfdxQA7
-	 ceRYtPBBm+dQpbK2f2ZzbMWQRg/VxcX75yIX4NcqDmaH7Cs8wnPOi2fH5G6P0JxugE
-	 MOXjngNwVOCO/NnkkyCgwM0lC+DujVdtbR8lgBAFaXFVqb6EXN4xlr//5ilBslQfEZ
-	 Sz8a/xPL/LZMw90LqfzMrMX2bXG0n/6FpqgZ7BK3pdL3cw4Di8LfafSkuXQypONmSK
-	 W9WFWkfaFwpjQ==
-From: Maxime Ripard <mripard@kernel.org>
-To: Neil Armstrong <neil.armstrong@linaro.org>,
-	Jessica Zhang <quic_jesszhan@quicinc.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Robert Chiras <robert.chiras@nxp.com>,
+	s=arc-20240116; t=1748850904; c=relaxed/simple;
+	bh=/eCRwbS/rN2ZWoD/Lu11QTQjPmNCmF14z0tboBkD57o=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rroLuWKNhfm32lX/MB+nztsY+x2a3dNLRNSHvLVsnblkqQbVIxeonAa1LXKCWg4CvKo4UL2Uqki+fNmHztP1SuAxOv0WHiwwhXCA2OdKNWu4HSpeszzm9nsCxPI/6o3xN4K4LqISCJO2Iwlo/mZ/glY1husETfGy6kH7Rz8ELsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=RaOXfqCB; arc=none smtp.client-ip=209.85.218.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f68.google.com with SMTP id a640c23a62f3a-addda47ebeaso26267266b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jun 2025 00:55:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1748850900; x=1749455700; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=pw+Y5BshWhNb94U5zV1jdIqM6Bb94uu0DoTvWRycrlQ=;
+        b=RaOXfqCBEFW13E47e6E6zE4xdki3YIJFWC4NEPVDyuFCCw/2yhDOFcZxkN438eveoQ
+         aTW3XtIUCK9jUWT/cBy6QAfOVsMGagaWd9ZKUxRl4CqyBDSb0Un4SZcIF9aTRUJKMa+D
+         bfxwvEW4YvALnZIXWYithVRASjMllUUSnlBhHP0qMhj9ODbeLHV9nC6bGJ1EaoqDmDDR
+         5PlPT83YmflW0D1RmSXAOkp37Oqf8aONdsI4kD7AlzpJhnB9FVGpxcPqcCKvFeNKtbMH
+         57WbTEBBxJio47Xu2DwJLZD401he5r1/ODrfxNilpoBz8k2VyB+JvvwdCEgZN9aeDByR
+         jW5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748850900; x=1749455700;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pw+Y5BshWhNb94U5zV1jdIqM6Bb94uu0DoTvWRycrlQ=;
+        b=B6nL1Yqxx03+OUWCkP3bmwUt9k8O53c15Vl2uIvyO3Kug1CCIQBqn440rH1BBericT
+         //Hj96jhqUjgN0UGD37lzJ7an8NyiZgniE6LNv4lwU2W2VTiKwbSIWyqN8Azf9CJ/py3
+         CIP0cEdXSfETyJuaiPy5fkuTk9wLIBJBJ6hcCaKhA+ei/n78rsd3aE9RadMt1gCvoMcV
+         iNODicfFScj9YepMSPKN788MTCA2yDUMmAtb2H0wiMVtlBL3t5AetPP9Fcvh0yachpI2
+         aiNvnF2JWgU2J/MIeZILZduunxOwzE1wKbhz/yIV+ZNoDsRoQBG0Az6Hkd70L5ibz3rq
+         qleA==
+X-Forwarded-Encrypted: i=1; AJvYcCVI4EsGcOXLi6N+1+PstMYl2A/4h6ikiDO3e4GS73oBj9vYsBBbh62DWJVwyW/i43ygrQ4zXjPai2vrQvo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8GvyunXC3ljELkyxgdCIDNYtQPHvqetpIeSdxDXOelTE3cT5s
+	J4h7IcyDrXkZc9TGU7ZW75BNM3+A+Ola28AFMEguTzJpI6sfFAX3lZmPrQaspqUwf1g=
+X-Gm-Gg: ASbGnctOh/NGv0Yk8likDY09oun6ZjKLYlTD+Ls7fDsZ/uEY5YJN4saLlPH2reJfgLX
+	aDiQpGM/TUTjzKnW3KBzVTmDpBDMhylDmy9u0OXvFBWOKwX5Z1NdP5p/QoW8yTpHooLtcemTzOx
+	U3nI8sh4R5xVrMQ7Kn/Ni5QZg2/XuRu+BNNsYjv9M8DvsQmXmcQzS+G7JBtQerErEqT3qmHRySm
+	aR5BhUgazK/GFttwUJTOIafVTa9De+kXx9d0ibF/rIrwalgILk29hmCdizmM36VcUyiDtABkDBM
+	HHQw+TJZhRuqLk4EbKY8vu3Ut85NA0NRfPb/yy6Tj7mGmEP4F3z7NY74mho6BrOTh0LNzA9lc7q
+	4PqFak6b5qm1n17S4nEs3Yg==
+X-Google-Smtp-Source: AGHT+IHF9M9iH6tYPPh5MIhkY3Ci/eDAulcraBxUrXh9olFXnZZZyiItNIM7oMxNMVOCoyclD4K34g==
+X-Received: by 2002:a17:907:d8f:b0:ad8:8eb7:1c7a with SMTP id a640c23a62f3a-adb36c0767emr1041585566b.52.1748850900474;
+        Mon, 02 Jun 2025 00:55:00 -0700 (PDT)
+Received: from localhost (host-87-21-228-106.retail.telecomitalia.it. [87.21.228.106])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ada5dd045bbsm749892766b.118.2025.06.02.00.54.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Jun 2025 00:55:00 -0700 (PDT)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Mon, 2 Jun 2025 09:56:36 +0200
+To: Florian Fainelli <florian.fainelli@broadcom.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Andrea della Porta <andrea.porta@suse.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
 	Linus Walleij <linus.walleij@linaro.org>,
-	Markuss Broks <markuss.broks@gmail.com>,
-	Artur Weber <aweber.kernel@gmail.com>,
-	Dzmitry Sankouski <dsankouski@gmail.com>,
-	Jagan Teki <jagan@amarulasolutions.com>,
-	=?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>,
-	Purism Kernel Team <kernel@puri.sm>,
-	Ondrej Jirman <megi@xff.cz>,
-	Sasha Finkelstein <fnkl.kernel@gmail.com>,
-	Janne Grunau <j@jannau.net>,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Anusha Srivatsa <asrivats@redhat.com>
-Cc: Maxime Ripard <mripard@kernel.org>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	asahi@lists.linux.dev
-Subject: Re: [PATCH v2 00/46] drm/panel: Use refcounted allocation in place of devm_kzalloc() - Part3
-Date: Mon,  2 Jun 2025 09:56:15 +0200
-Message-ID: <174885096739.421739.9939855699808449174.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250529-b4-drm_panel_mass_driver_convert_part3-v2-0-5d75a3711e40@redhat.com>
-References: <20250529-b4-drm_panel_mass_driver_convert_part3-v2-0-5d75a3711e40@redhat.com>
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	"derek.kiernan@amd.com" <derek.kiernan@amd.com>,
+	"dragan.cvetic@amd.com" <dragan.cvetic@amd.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	"open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Andrew Lunn <andrew@lunn.ch>, Phil Elwell <phil@raspberrypi.com>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	kernel-list@raspberrypi.com, Matthias Brugger <mbrugger@suse.com>
+Subject: Re: [PATCH v12 0/13] Add support for RaspberryPi RP1 PCI device
+ using a DT overlay
+Message-ID: <aD1ZNAeB4tpMNTGZ@apocalypse>
+References: <cover.1748526284.git.andrea.porta@suse.com>
+ <0580b026-5139-4079-b1a7-464224a7d239@kernel.org>
+ <aDholLnKwql-jHm1@apocalypse>
+ <7934ae2a-3fc5-4ea2-b79a-ecbe668fd032@app.fastmail.com>
+ <0e154ae3-e0ab-4a4e-aa39-999ea1c720ed@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0e154ae3-e0ab-4a4e-aa39-999ea1c720ed@broadcom.com>
 
-On Thu, 29 May 2025 21:46:02 -0500, Anusha Srivatsa wrote:
-> Final set of drivers to use the new API - devm_drm_panel_alloc().
-> There are a lot of occurences of the panel allocation across the
-> subsystem. Much thanks to Maxime for the semanic patch which actually
-> gives a list of panels allocated unsafely.
+Hi Florian,
+
+On 16:46 Fri 30 May     , Florian Fainelli wrote:
+> On 5/29/25 23:03, Arnd Bergmann wrote:
+> > On Thu, May 29, 2025, at 16:00, Andrea della Porta wrote:
+> > > Hi Krzysztof,
+> > > 
+> > > On 15:50 Thu 29 May     , Krzysztof Kozlowski wrote:
+> > > > On 29/05/2025 15:50, Andrea della Porta wrote:
+> > > > > *** RESENDING PATCHSET AS V12 SINCE LAST ONE HAS CLOBBERED EMAIL Message-Id ***
+> > > > > 
+> > > > Can you slow down please? It's merge window and you keep sending the
+> > > > same big patchset third time today.
+> > > 
+> > > Sorry for that, I was sending it so Florian can pick it up for this
+> > > merge window, and I had some trouble with formatting. Hopefully
+> > > this was the last one.
+> > 
+> > That's not how the merge window works, you missed 6.16 long ago:
+> > 
+> > Florian sent his pull requests for 6.16 in early may, see
+> > https://lore.kernel.org/linux-arm-kernel/20250505165810.1948927-1-florian.fainelli@broadcom.com/
+> > 
+> > and he needed time to test the contents before sending them to me.
+> > 
+> > If the driver is ready to be merged now, Florian can pick it up
+> > after -rc1 is out, and then include it in the 6.17 pull requests
+> > so I can include them in the next merge window.
 > 
-> virtual report
+> I have applied all of the patches in the respective branch as we had
+> discussed with Andrea and also merged all of the branches into my "next"
+> branch so we can give this some proper soak testing. Once 6.16-rc1 is
+> available, all those branches (devicetree/next, defconfig-arm64/next,
+> drivers/next, etc.) will be rebased against that tag such that the patches
+> that are already included will be dropped, and only this patch set plus what
+> I have accumulated will be applied on top (if that makes sense).
 > 
-> [...]
+> As Arnd says though, this is too late for 6.16 so this would be included in
+> 6.17. Andrea, thank you very much for your persistence working on this patch
+> series, and sorry that the request to merge those patches came in during a
+> time where I was away. The good news is that I am not doing that again
+> anytime soon.
 
-Applied to misc/kernel.git (drm-misc-next).
+It was a pleasure, and many thanks for your patience too.
 
-Thanks!
-Maxime
+Andrea
+
+> 
+> Thank you!
+> -- 
+> Florian
 
