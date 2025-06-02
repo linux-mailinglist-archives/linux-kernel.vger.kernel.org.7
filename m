@@ -1,278 +1,160 @@
-Return-Path: <linux-kernel+bounces-671087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E26BACBCB7
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 23:33:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A87EACBCBA
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 23:36:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9C673A2D64
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 21:32:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43F3818921E6
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 21:37:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26CF31C3306;
-	Mon,  2 Jun 2025 21:32:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8971C19F48D;
+	Mon,  2 Jun 2025 21:36:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aXSK3tFb"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hRbRcV1C"
+Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74F2B4400;
-	Mon,  2 Jun 2025 21:32:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.9
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748899975; cv=fail; b=p3aBwKe6c4T2MHc/K48G/jBDVIkZ+RzXTJPkYuQW4T0cSCTlwy3O/yQX/5+9Qa/cnOUmtSQJ46EtQUYNoj/Mwsb7GCJGmt0j+rhV89wFnA+61vbDDArbxDhct452R3Dw+D2gIWUvektEpx+EcMVZxTLPvy5tYKVrw/VE1FlFnt4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748899975; c=relaxed/simple;
-	bh=GGpYWIIhZGkliI/weB2Z58qXu8f1zGp0xywsfl9f6Bk=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=e8xO2ZpuGUgxayF6S6j0o02NWQJ/8xBvg2fINrHLjbUvaib2nVZc6CNbnrooosH9WkM/p+OvE4OqOH9uUfhenfDfV5NxCQaV1maxLE4LyaJXHFQJuHXx1yYnwmhM4Bk3TKxBerL4+Ce1UtwCHBEEfAdTACbMOLgZbB2LBcUlrJ4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aXSK3tFb; arc=fail smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1748899973; x=1780435973;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=GGpYWIIhZGkliI/weB2Z58qXu8f1zGp0xywsfl9f6Bk=;
-  b=aXSK3tFbRZEQ5B+aqW3N8yJkFujr8uSF5iliS0qetEowviIIaEhEJ5gr
-   Ne6TKPFEUcYoafnZyELA6QcVp9JxFUyefOEAd3WtNLxMgF7tbrlS5FrnI
-   vmTBX/BGIDdT3FykA+N1oDwnFhXL1HpSFPJHOLYWHhJav6bYNGkGbbv58
-   OThX3kP9uk6W02MCxaJhxRv7sJapONeQ+67wE1CXMrimhoS2jIilVYdv2
-   68KVWcVcbUMhl8T2I8cP7G01erbvQk2BgMEV9NXILiIDLp1yvtsb6TruY
-   DfKjB/UiNa+4MSzmm9uPcmlQMJVeKsOMpMlEVEgNYErtEDpd+o8NMTNUg
-   Q==;
-X-CSE-ConnectionGUID: oLLb62KaQ0SMVTlc4vvRjA==
-X-CSE-MsgGUID: JCoLvjrGSgC+MJBP+fn42Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11451"; a="61583993"
-X-IronPort-AV: E=Sophos;i="6.16,204,1744095600"; 
-   d="scan'208";a="61583993"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2025 14:32:52 -0700
-X-CSE-ConnectionGUID: co+jdYiETcqL+EIYvcmmGw==
-X-CSE-MsgGUID: GTVtZ3obSmGkz5Nd9lT3IA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,204,1744095600"; 
-   d="scan'208";a="145610049"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
-  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2025 14:32:51 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Mon, 2 Jun 2025 14:32:51 -0700
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25 via Frontend Transport; Mon, 2 Jun 2025 14:32:51 -0700
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (40.107.244.73)
- by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.55; Mon, 2 Jun 2025 14:32:51 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dDUY9pDTk4kGy+Sy+dcYKrvd2HK/aHBGPegbxGxYzusFhNBLNCrR3BMd41n55I8HhZQHavJf5GNZb2kxHX+zVqSy6dSZV5D5nLrM2IWSQG4AG1oaigTs4pPy+7PRhEEOd1zu64a2a1eM+snlQbznEyUHK5hkun9kta9Jt9mYErztFik/Zxgqh123sAJyuUHzrbdTSnkG1FYCYXikeEI3nVBjxxzCpMMMjwCPMsg33SweUHc5PnJ8WFSd4n1ILndnsjyxbvxgqWrMT3xluCqUzR68OVZx3n3bAfBf8qSsudAmEQv5pVkH9EWdbusaNtjlbyolNhRI64nHtjw8lVtHQQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7GPfpJMaFDgfiGqF6M/wkT6OqsUAUi0RgJgpCEVbhKU=;
- b=V0WT+HC3Mv2xIiqflGHdQty3qJzLXxGKEJMG4yr1RNOW9TwiH2emWvwduIkQMVYYMcvKLpJhARm4vWs1JMe1kcQUZABQIeiJ1J5DQGm77DthKCCRmOvBonHJ3kANVa+q5EvZzW1Z0+1uvQggYu3+0oSAgf52Z9aNrQ7tloCiJj0pLplYjoW65NSEpCsTvL8G9a5jCvL7yCUGLwb4P46tZmeySz/marTUeJfd4xggL8MAYzn6ikn+bIC5eewBtypNGB1qwuwxZ3ygMVftaGnn9XA2S6X+a4NJaDtsBTHtoR11SruJJ/4Wxg+bxj/NHrV11hzMCfQymdQAX1u9RsMB3Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from CO1PR11MB5089.namprd11.prod.outlook.com (2603:10b6:303:9b::16)
- by PH0PR11MB5926.namprd11.prod.outlook.com (2603:10b6:510:14d::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.30; Mon, 2 Jun
- 2025 21:32:48 +0000
-Received: from CO1PR11MB5089.namprd11.prod.outlook.com
- ([fe80::7de8:e1b1:a3b:b8a8]) by CO1PR11MB5089.namprd11.prod.outlook.com
- ([fe80::7de8:e1b1:a3b:b8a8%7]) with mapi id 15.20.8769.037; Mon, 2 Jun 2025
- 21:32:48 +0000
-From: "Keller, Jacob E" <jacob.e.keller@intel.com>
-To: "Damato, Joe" <jdamato@fastly.com>, Jakub Kicinski <kuba@kernel.org>
-CC: Stanislav Fomichev <stfomichev@gmail.com>, "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>, "john.cs.hey@gmail.com" <john.cs.hey@gmail.com>,
-	"syzbot+846bb38dc67fe62cc733@syzkaller.appspotmail.com"
-	<syzbot+846bb38dc67fe62cc733@syzkaller.appspotmail.com>, "Nguyen, Anthony L"
-	<anthony.l.nguyen@intel.com>, "Kitszel, Przemyslaw"
-	<przemyslaw.kitszel@intel.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David
- S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, "Paolo
- Abeni" <pabeni@redhat.com>, "moderated list:INTEL ETHERNET DRIVERS"
-	<intel-wired-lan@lists.osuosl.org>, open list <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH iwl-net] e1000: Move cancel_work_sync to avoid deadlock
-Thread-Topic: [PATCH iwl-net] e1000: Move cancel_work_sync to avoid deadlock
-Thread-Index: AQHb0/1+MJXhui+C9E27yipPfrFUgbPwY6NA
-Date: Mon, 2 Jun 2025 21:32:48 +0000
-Message-ID: <CO1PR11MB508906CCB79542A1531B506AD662A@CO1PR11MB5089.namprd11.prod.outlook.com>
-References: <20250530014949.215112-1-jdamato@fastly.com>
- <aDnJsSb-DNBJPNUM@mini-arch> <aDoKyVE7_hVENi4O@LQ3V64L9R2>
- <20250530183140.6cfad3ae@kernel.org> <aD4KXAj0ZlZ5b42f@LQ3V64L9R2>
-In-Reply-To: <aD4KXAj0ZlZ5b42f@LQ3V64L9R2>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CO1PR11MB5089:EE_|PH0PR11MB5926:EE_
-x-ms-office365-filtering-correlation-id: e334bffa-0e5a-42f8-352b-08dda21d058e
-x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016|38070700018;
-x-microsoft-antispam-message-info: =?us-ascii?Q?K2k677SPiLhEkpuU17c3rRWg2Y5vW5rIFfYRxBqxeGxn6rv/COAAAilUEv2Z?=
- =?us-ascii?Q?oHzGdUpYfYl7sHevV8n85BEQxzOza/RbAhZQr1bf6CiNFOwgQLwSkhpUc3BG?=
- =?us-ascii?Q?SAnHRVV/q7BsBEDK99rVs736C8o7QDfJnanU8b9fRj51HMzk6q0djz0OOnqd?=
- =?us-ascii?Q?DsfCnebgFHWuKg+zno2D12tFyIZTOwcZhy0R3I2qgW4l4OPgayVO0hbRb4I1?=
- =?us-ascii?Q?+ZgI7k6vRfn+9ZlLXXP/nkf1C09LIpEUbllprah3OEeLRLewkALTvnnovbnC?=
- =?us-ascii?Q?c1HZIpi5WL+/xVjlk1l7HqQcXf0OTxhTeoG8eXI0Tq8ACGKVvzuoiGyBTUgs?=
- =?us-ascii?Q?DQ1ThaY0GeMVNmfwgEM+o+3bF3i3RKQvnO52S9Ofb49JJUg6//QAQIhanMXE?=
- =?us-ascii?Q?51/DYt61AOESsDr9b7qnY8KjbYnG8ukdMZLTYC1R5tnjVbJWzRX6oQjIQDPw?=
- =?us-ascii?Q?/mW/2q+iT1l+JVlvGo8TsZoi1RRlmMx1BUt+gSgQb1OSxwxowKIHpSMmWCuv?=
- =?us-ascii?Q?IH8Ug0I8ky6LkLUMrWavE2YeSIGqO54VltLNt1VrMWFot3Jt2hgTDwD41egF?=
- =?us-ascii?Q?WpjKOGjwzMX27cIAhfaoMchwJvbxM2aS7rADGpAY2SGMOFS4HQQ8lrrp3HWH?=
- =?us-ascii?Q?8RmffEIJkuvgx6VByLU6dfoz2W3PVBvIJOB46/Lo0GXgYWgSESzKvBwE+lTH?=
- =?us-ascii?Q?ZYxA9ciNf+kEMP0lInHpztD0xbEvZwp0RcJ2dFNavGY5WS91ajCQTjhCqP6b?=
- =?us-ascii?Q?gun1q9NWMzMa+Rmx26+x6+1g6In3+ZJ8BTslJBfNLb23lVOFQ/SdNBQ3zquh?=
- =?us-ascii?Q?b4a00BGAoim81FUMAuiJjxvCknbRYX+ulmSLL4d1lxgcuAUVRcE5Xn9OlWKT?=
- =?us-ascii?Q?Lite+pdwmzR9n8y7IqRuRrIfp5B/5BwZxCum7wBlX/jDm69WkUvyCunNLMVX?=
- =?us-ascii?Q?kEyFwMZ/ogllzxQcP3wfNb4yzHsNpZK29cvZLJV5MuQM4eb8cjpd90AeeQ9D?=
- =?us-ascii?Q?3VMlW8SYkNDAFVC7MTleJKdXRz9nIMgWIYtaigj7nRInqq83iSOrwpvaTgmE?=
- =?us-ascii?Q?uTEVWOCjzSBACmGy1YXgDUD/kQexlA3ZyvAHv0krAMvNf3Ld2xPZsq/7YNhl?=
- =?us-ascii?Q?ZrKXEZc6WYlr4Qcd9qfU6wkz02WATtQk5L2tdAcRkeX4r90Kxv4PHA3ixHD3?=
- =?us-ascii?Q?x8VMezSETdxqmeSEcpa0bOiQjYdfVE5jnDqznRHsxazUtjmzQoNLOkhKk55c?=
- =?us-ascii?Q?T78nC+HeuALjdrLGvCnJMW8BUw9xlLSQ41mnY/vMEQpcJmg7NfKT8IwWhawr?=
- =?us-ascii?Q?wV+hsEx/qspMnbBtFn9ibIT6KMT6bqlUe+AnhPpP2DHAwbzObTwtnxD86Ljm?=
- =?us-ascii?Q?WS/8/xjBaXNJn4a5XiKkPws9gxwCMXCEzedtY+FOh0rAKjX6KjF+p0Y2ytQQ?=
- =?us-ascii?Q?hwe744PpVdhWphmlmqi+Q6OwnidHEYDhaWM8FqJprZZ6UpbOG3/jF0o/g5QG?=
- =?us-ascii?Q?KOz5CIEz1+Sh+B0=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO1PR11MB5089.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?GRtjtQT3mOvm1/uk16Lj5jk0RYsg8EjIfXKEsytMq3dyKx/dQXd3XYkbkady?=
- =?us-ascii?Q?YBgw2wY1xF2Qc6XfnbbYTgJM7TzrhQaiLW/MCou94oFaqFBhDVyBtNx6TN6w?=
- =?us-ascii?Q?7MudBR2P5VCfEJAW+Mnv0GWEuEl8P8qEGm4eUYEET4ivEq0I9EjOoxkehckd?=
- =?us-ascii?Q?uxpr4Np1zkPe71J30Mg65cJ7Nf/1Thdhf2t02us1zXyF8olo59D8oi6yqLY2?=
- =?us-ascii?Q?all9TUTTFQwgFCSvXTflbgugswu2mpriwULmX86Lx9mCecg8DsF0YoquGxSY?=
- =?us-ascii?Q?M3TGlrrL5Sy8IPwB/LHBvi4p+rvTujd5SbTz3D9aHErxMoW6tGdGXDx/R+KK?=
- =?us-ascii?Q?m6+k3+73nmPIAudj8ko9J03IrfuX8JC9q+0gHaB+wVgpaEWDpCs+tkuemNEo?=
- =?us-ascii?Q?xy3lJcQglZsxT/74T9Qbnf00TUTIscHByF/ywsHFkbHeZTmOO2EiYemiRmZw?=
- =?us-ascii?Q?m3iANCuRpt/k/DDZ5qXHmVyHdjjDUs2X/ZqLcwJSzYAaWFJumk5klzmOaq1i?=
- =?us-ascii?Q?/bd6d8XKnvqomRnde1v0m4N55k3HaRqGXCa6MV9FtGjFEFgAFD0q8/7bMEt+?=
- =?us-ascii?Q?bGdhWOeZRtrmPm7LpUMNrZqMLOUlzKE0JjHqA3ho+8e6i1FkSy6KS7F3BrR5?=
- =?us-ascii?Q?TBLMNDwKK6nyi6Rvc4EhFk+b1Ab/Vs6mD++w6MSgq5AXpUBBAzIfVL/EHg6d?=
- =?us-ascii?Q?HE5V/aMF9n5BimCe3Zlektw/uLWYDEBK8XeUcxv37alfRm9umUpEjS0Z8yvJ?=
- =?us-ascii?Q?EJe06TfgVaE3kSUvHbq9P731CC3jpLQX7FDYpyehl8jEbMGtfAVwIlNWvIH+?=
- =?us-ascii?Q?nwhHPicV/eTo0Pj0uLLu+QB+CuP/7Q5uR/MhyZfasA/vRRBjjgaxk36/g9b+?=
- =?us-ascii?Q?WtQFxfvUetV/q0gkk/JHuM71nJSx47d1UxdM1BWEBCsIGp+xB3iHLXOhfIxi?=
- =?us-ascii?Q?0LLV5QwYUkVDSy0/NjHB+XHI2WBK4lKZOSVdgDQAHboW/7/njerOSDrDdaj6?=
- =?us-ascii?Q?NBYsvxzU/z9OABTPe22B6e6w/HzDWNTt/tWVH4HcswOl05GylW6ULPBIkLfs?=
- =?us-ascii?Q?6Ebq/vohA5dC99TeMdBZ43AY1nwEGWq4T0+Wv7KbPLDBkldp2O9E02pSU1Md?=
- =?us-ascii?Q?YuIPwWGqoUI3xkm8J4Ub+ixyoTPmv5VZNxy5DggtS87VPl+g0XpBfzHreNtO?=
- =?us-ascii?Q?cKPyb376Uyovq4y1AzFzSWDymZ5Hb4bmIKf9Mcv6LXbAI+YDpA9rFAJ0+gfE?=
- =?us-ascii?Q?CKxncagN60Xd+7B8kY43dg03uEoEZDl++lw4xEqvAbncgfcYLwTgyGiEn4KJ?=
- =?us-ascii?Q?Vfl3LbJiapMRcjVo5C21NmEZqhPk2XxTCLtiNcR3MXg5Q01J+NCcyqeScW6Y?=
- =?us-ascii?Q?YUF9oipDEE2lhXC95821l3+n+t5wlpwjk8jCvx4OSRLkTW/yXfDK7LqFNSWv?=
- =?us-ascii?Q?mF6q82D8UAsu2i97klpxjCv+5rCUuImx6q8pc5Htg0HIh6BKZI94fBEJcf2V?=
- =?us-ascii?Q?LrSHv7r80YNC62PBbe359fmbRp4OGsPwIemSlhln7qhnfpzHU7SML13N+Fsk?=
- =?us-ascii?Q?WGe5EyCvqRFh9XAyLQa8xKar3ZjZBmg3LjQMYr6Q?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BF594400
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 21:36:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748900202; cv=none; b=Bia+5ItPz+91pum2Db2rnCDRiGDm5xaqh+uAtuDUssk96ji/YhcUiWbKDxz4VkFcCCZlAOfmdAu4Ba5qpTb0g0jBoQOzotK+A3q0X3ogFnqT94QzVk+rLvGNw04ZL4Hkl1g/d9LQBQeeq7bFErkEF8lkWLRy0v2QHRzivZ6AXzk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748900202; c=relaxed/simple;
+	bh=qaObFCzEmkOopnvJyBsgsPOL9KZS3jOgNYZQL3ktBqw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=p47hKuGDD6LJY8etBnKO3DE+y1RmrgeCCIkhK3H/le+gyugWg12AD0mWFrXw57dkADM7zEnpA/GmdAwx9po7kFWiOASz8y6nVykVV+OhhHAUyjKhus1V3qqDJdPXfty9kjcpqWGu0Kl58IVMlV4bricD0wySMKi5TODQuqZjIbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hRbRcV1C; arc=none smtp.client-ip=209.85.221.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-5307e208234so2659102e0c.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jun 2025 14:36:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748900199; x=1749504999; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2dr6dHBl/nlI98ji38RaPmAwZoqg5PWiKWngjRnF5kQ=;
+        b=hRbRcV1CENzywxo4OVuj1+EKdiuFfE0F1g9O/qnUdaWIGYBDYx0/a3tSJKVyp2Q+jT
+         M+yT1804Os8BkflhFiIULICMJAdVeXakd4aYssQoyu0VpWps0isAUlP/VFRaxMIKEug1
+         rfBYt4eFRloBVW7otj2rPhEt0qx30bWZkn+rRo32pbUixMk9Tj81Q/v03lFT2kyJSDt1
+         kKT8DaT4SE0vd+u+rNk00mNSyOdeYgJsBgK+kAlS0ObS09JZhMrn9cLMQ2ZCuy78WjWd
+         WUe7IwFEYNhbLWuZTa4L2U8VtMOKK65UkAt6/tX5TuPClvqZjw4OEvRgvsvUjT3OXLZm
+         0EJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748900199; x=1749504999;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2dr6dHBl/nlI98ji38RaPmAwZoqg5PWiKWngjRnF5kQ=;
+        b=wVYAFbjoudpuSvrw6nFwmr94PfpsXv+RUdXOZAiD4l7bxlG7KImO8XPPUotsjLA+LJ
+         UeHI+xU4twmhYi93oFmtFSWvXAQN4jqUMaEu2+thqJR5T20GUuEBAXW8imbGAiD92ux/
+         9WtiaBgbaX4d0zxUxfrKC1yxMtggHaQL0ONP9Hsz4wqFkgxZ4s/+9LexWIsWjcjQ4a5V
+         HAnAhl3E5qi0oq8YT9gqYL6OtuSpM/BwRqNier4MES0r5xRFaTFUr1KpnFPRplgBUULi
+         VPPGrxQ5wRjyUUfr/3t92adgEGTQzX8NegqNRiYZbiTh2U/aP2ko2zdQHh5Glj9R8pvV
+         cQkA==
+X-Forwarded-Encrypted: i=1; AJvYcCWM5qtNOXB3UwJKesCoSI4n2ff1s1LvWjpMq1hoRRTcf4MQ29bAiDOtoueQJBxRgG7wY/VEQ2p5PxzkQws=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNEBYHJ5xJz1MJDHW53RYrd2PXN55YkPP9igxCj2LXBiMjah8+
+	vduR5/JvGg9cSwV4qjVavlolU27CA7jxQXK3hoZp+h8bvzmZGhNnUobvtH4c5fskwxD06EH3L87
+	n6GB9bjLQ2v3c6zNg4PWysxLuNUdhVS4=
+X-Gm-Gg: ASbGncvo4Wpr61fB3E6KiJi6u2+nz8eUW1C83TweDzQKGEJ1tEc3eza0G5NAvESkXYQ
+	rJsqOTh/2b0D3x9BEmKXDSKeeTW6oL/jfypMlP1uozMLwxUX0vjbWHuwV56PKJfVYInBKZ9Comn
+	TkMPhmYvWIs5SXLATHdoeAO8eaH/CSsDYPlw==
+X-Google-Smtp-Source: AGHT+IEVyG+fjvwxDip9p7Gwq1JSG0Qc9lF5kRwYMp/RGG6rSCzG2xa3PtEy2BirOPXHhFN1hHzzPgv6Blxc3HWmm1Q=
+X-Received: by 2002:a05:6122:8c0d:b0:530:71e7:37eb with SMTP id
+ 71dfb90a1353d-5308115f60bmr11496838e0c.10.1748900199097; Mon, 02 Jun 2025
+ 14:36:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CO1PR11MB5089.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e334bffa-0e5a-42f8-352b-08dda21d058e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Jun 2025 21:32:48.7372
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: ZcFDM6zpnGyMSjms4rnOvdoIj4QqNYagAbW9v763mqM5Sud2JigFe3tKRw5/hK5EXBb3q2iW4Ra/06pDWaHbmDWp87yr5ddHYtvdpovY4rs=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB5926
-X-OriginatorOrg: intel.com
+References: <20250602152015.54366-1-lorenzo.stoakes@oracle.com>
+In-Reply-To: <20250602152015.54366-1-lorenzo.stoakes@oracle.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Tue, 3 Jun 2025 09:36:28 +1200
+X-Gm-Features: AX0GCFuO-IpQNmms_HxWq9QdlH8yiR11c8aAXv_CoowwXpTAYGA7ik-ShXV1KNM
+Message-ID: <CAGsJ_4w99uUf-MQ4oecbM2w8jwV4-3-WvjQrR1ojbL_wxvDLtw@mail.gmail.com>
+Subject: Re: [RFC PATCH] MAINTAINERS: add mm swap section
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Yu Zhao <yuzhao@google.com>, 
+	Kemeng Shi <shikemeng@huaweicloud.com>, Kairui Song <kasong@tencent.com>, 
+	Nhat Pham <nphamcs@gmail.com>, Baoquan He <bhe@redhat.com>, Chris Li <chrisl@kernel.org>, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Jun 3, 2025 at 3:20=E2=80=AFAM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
+>
+> In furtherance of ongoing efforts to ensure people are aware of who
+> de-facto maintains/has an interest in specific parts of mm, as well tryin=
+g
+> to avoid get_maintainers.pl listing only Andrew and the mailing list for
+> mm files - establish a swap memory management section and add relevant
+> maintainers/reviewers.
+>
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> ---
+> REVIEWERS NOTE:
+>
+> I have taken a look at recent work on the swap and chosen a list of peopl=
+e
+> who seem to be regular and recent contributors/reviewers.
+>
+> Please let me know if I missed anybody, or if anybody doesn't wish to be
+> added here.
+>
+> I also realise we have a bunch of non-swap stuff living in some of these
+> files - we will have to address this separately :)
+>
+> Thanks!
+>
+>  MAINTAINERS | 19 +++++++++++++++++++
+>  1 file changed, 19 insertions(+)
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index e66460861bdf..3386272f6bf4 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -15674,6 +15674,25 @@ S:     Maintained
+>  F:     include/linux/secretmem.h
+>  F:     mm/secretmem.c
+>
+> +MEMORY MANAGEMENT - SWAP
+> +M:     Andrew Morton <akpm@linux-foundation.org>
+> +R:     Yu Zhao <yuzhao@google.com>
+> +R:     Kemeng Shi <shikemeng@huaweicloud.com>
+> +R:     Kairui Song <kasong@tencent.com>
+> +R:     Nhat Pham <nphamcs@gmail.com>
+> +R:     Baoquan He <bhe@redhat.com>
+> +R:     Barry Song <baohua@kernel.org>
 
+I'm happy to help review the swap code. Thanks!
 
-> -----Original Message-----
-> From: Joe Damato <jdamato@fastly.com>
-> Sent: Monday, June 2, 2025 1:32 PM
-> To: Jakub Kicinski <kuba@kernel.org>
-> Cc: Stanislav Fomichev <stfomichev@gmail.com>; netdev@vger.kernel.org;
-> john.cs.hey@gmail.com; Keller, Jacob E <jacob.e.keller@intel.com>;
-> syzbot+846bb38dc67fe62cc733@syzkaller.appspotmail.com; Nguyen, Anthony L
-> <anthony.l.nguyen@intel.com>; Kitszel, Przemyslaw
-> <przemyslaw.kitszel@intel.com>; Andrew Lunn <andrew+netdev@lunn.ch>; Davi=
-d
-> S. Miller <davem@davemloft.net>; Eric Dumazet <edumazet@google.com>;
-> Paolo Abeni <pabeni@redhat.com>; moderated list:INTEL ETHERNET DRIVERS
-> <intel-wired-lan@lists.osuosl.org>; open list <linux-kernel@vger.kernel.o=
-rg>
-> Subject: Re: [PATCH iwl-net] e1000: Move cancel_work_sync to avoid deadlo=
-ck
->=20
-> On Fri, May 30, 2025 at 06:31:40PM -0700, Jakub Kicinski wrote:
-> > On Fri, 30 May 2025 12:45:13 -0700 Joe Damato wrote:
-> > > > nit: as Jakub mentioned in another thread, it seems more about the
-> > > > flush_work waiting for the reset_task to complete rather than
-> > > > wq mutexes (which are fake)?
-> > >
-> > > Hm, I probably misunderstood something. Also, not sure what you
-> > > meant by the wq mutexes being fake?
-> > >
-> > > My understanding (which is prob wrong) from the syzbot and user
-> > > report was that the order of wq mutex and rtnl are inverted in the
-> > > two paths, which can cause a deadlock if both paths run.
-> >
-> > Take a look at touch_work_lockdep_map(), theres nosaj thing as wq mutex=
-.
-> > It's just a lockdep "annotation" that helps lockdep connect the dots
-> > between waiting thread and the work item, not a real mutex. So the
-> > commit msg may be better phrased like this (modulo the lines in front):
-> >
-> >    CPU 0:
-> >   , - RTNL is held
-> >  /  - e1000_close
-> >  |  - e1000_down
-> >  +- - cancel_work_sync (cancel / wait for e1000_reset_task())
-> >  |
-> >  | CPU 1:
-> >  |  - process_one_work
-> >   \ - e1000_reset_task
-> >    `- take RTNL
->=20
-> OK, I'll resubmit shortly with the following commit message:
->=20
->     e1000: Move cancel_work_sync to avoid deadlock
->=20
->     Previously, e1000_down called cancel_work_sync for the e1000 reset ta=
-sk
->     (via e1000_down_and_stop), which takes RTNL.
->=20
->     As reported by users and syzbot, a deadlock is possible in the follow=
-ing
->     scenario:
->=20
->     CPU 0:
->       - RTNL is held
->       - e1000_close
->       - e1000_down
->       - cancel_work_sync (cancel / wait for e1000_reset_task())
->=20
->     CPU 1:
->       - process_one_work
->       - e1000_reset_task
->       - take RTNL
->=20
->     To remedy this, avoid calling cancel_work_sync from e1000_down
->     (e1000_reset_task does nothing if the device is down anyway). Instead=
-,
->     call cancel_work_sync for e1000_reset_task when the device is being
->     removed.
+Acked-by: Barry Song <baohua@kernel.org>
 
-Acked-by: Jacob Keller <jacob.e.keller@intel.com>
+> +R:     Chris Li <chrisl@kernel.org>
+> +L:     linux-mm@kvack.org
+> +S:     Maintained
+> +F:     include/linux/swap.h
+> +F:     include/linux/swapfile.h
+> +F:     include/linux/swapops.h
+> +F:     mm/swap.c
+> +F:     mm/swap.h
+> +F:     mm/swap_state.c
+> +F:     mm/swapfile.c
+> +
+>  MEMORY MANAGEMENT - THP (TRANSPARENT HUGE PAGE)
+>  M:     Andrew Morton <akpm@linux-foundation.org>
+>  M:     David Hildenbrand <david@redhat.com>
+> --
+> 2.49.0
+
+Thanks
+Barry
 
