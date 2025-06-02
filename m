@@ -1,373 +1,154 @@
-Return-Path: <linux-kernel+bounces-670196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57688ACAA7D
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 10:20:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01FE7ACAA78
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 10:17:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60311189A5E7
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 08:20:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36C49189BE58
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 08:17:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71CE31CEEB2;
-	Mon,  2 Jun 2025 08:20:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC68D1CDFD4;
+	Mon,  2 Jun 2025 08:17:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HLACAx3u"
-Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qADoffoH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14D892C3240;
-	Mon,  2 Jun 2025 08:20:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25C442C325A;
+	Mon,  2 Jun 2025 08:17:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748852408; cv=none; b=fUQn4aR//3OQRtQiH5s/d4yfOGy3wBHEGn5xkSTGWhuLu7ttQZTLXp0TTqrIBx9KxwYP3NqcMQphCxj/GghJYFIAlWj9ONrWfWVEJC6rC0jLi8hKkZ0RS/0VpWhcNbMDxgKIhF8FmCQKlySQ+u4M3EAAld2UiR3x/m4GTET90X8=
+	t=1748852230; cv=none; b=ixliRSuAQBzepbbf3ZUCTvEpQTs9l8ukOPsV/49glXtgQOJ0fL4rXKTwzB52suOIAZZARn5SnvXR6mybkb9XY3tVXvf5pjp/hTUMkQui0hXgJSVMJGN4uNTPUsdY22qyG3OKZiogmnecFkCw/XM5jQ04Qiru2spLLYKWPdMqGTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748852408; c=relaxed/simple;
-	bh=wQmdVQzhmACE/iLA+CILuPts2LFooLyztYYbLPdIp3I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jqAyJloMFaqLclZPF43EqL4aMma9vwEAES5FAbCwLANHF2utDsefyQfv7g+JzcOXh3VwslVdJk1TGEfnSwAT1/7A52S2Qz8xcWbP09comPAtyEKde6yO+w9+8jn8isbEU+tTyA+SI8azOGSt7IBOLixrQIl2LBZ9aOzh2urJXiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HLACAx3u; arc=none smtp.client-ip=209.85.210.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-735a9e65471so2509004a34.1;
-        Mon, 02 Jun 2025 01:20:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748852406; x=1749457206; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Q4AIXpAJK6Qh4J225/GkriMkqC1GAmPuK8nWyY+CVyU=;
-        b=HLACAx3uE4Ijcv0DzSM0mFL+AEWZG/6njkrp6f1uj8AJHEyV3Ggq9loMQ8DFci7Bsy
-         Oya6RcLQybRy6PU+1BdO1Sybx29+cwe9J6BtV6K4IwdqgzZpZU3FgxDOPDqUh1xBatJj
-         NsQSnN1cW+TYIwSLkERJroj5fgJwnyuIeI8VPc2M/GH7KgFLRDM8tK4llXr33VVb7LcL
-         CajQrz+mLE1oGigFwBuVG4vX8hFrN/TjjQs+Y1vZNTjXLLL4qip73Er6Y6QbrXiNlugI
-         Yh1x6EcfuIQ9tGWzEhEKYp//4e2HEKOAPbDHT30+tyO5kNl1JLYsqW4WeZuGtvQI/mdE
-         sXbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748852406; x=1749457206;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Q4AIXpAJK6Qh4J225/GkriMkqC1GAmPuK8nWyY+CVyU=;
-        b=Z0HgGx0QtqKw9p0EdroZ0XTXitIGR9+n+PaSq3ZlCo7NisMZL0yeggJ1geYoCwstnB
-         GwGqaoCFR/G8gd1nFdGLsEeTfycgFUFvxmZGiQeHy2aNPQuzd2M5AIgWterEZNtnmoxL
-         5Mpit+XZCFzDjmfapV/pOF/6/kbIDOBQtWz1QdIcMROTj5FgC6nC/R2l5GBUg0aanSK+
-         eNOoLRc0b1vf2B4hWyBtj+vOEVNz6qPVht2YaamwMHn/GgsJaNCHi2XGMKqcQDFMol4e
-         1BErbLaSAivC9guwONFinE1gYm4CIeucH00E+4CZBop2KlsY2PHK0Fx99AH2OZYhLHUt
-         JSWg==
-X-Forwarded-Encrypted: i=1; AJvYcCWWQiX8DMEXkwESyTNOYc0M0DOnjkrw5oxVVvdYytwhvwWIBR2X+0la+1E+mARP5knG3sPvmEDBQRRm@vger.kernel.org, AJvYcCXJH78G5lFTaX8ikF1eIkS3YD/uEz6MP6oQ8nMY85QTIsgH6bXou/2TOZ+T181m9L7SoLlqEyiMUf5qZpQdWA==@vger.kernel.org, AJvYcCXkanib/KNqcKyBTYceFyzGZ6/MZ+kzxTwrw/+pBVyWFp4Y+MJI+VYfeXFTCfdG/+TvdH+hSEl69DJfn9iH@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOS4B90LnQN3HZj1DXLxpNjK5TmOK7LTVP/VK8E+1PBekCjORx
-	GBVFs3wBPCxYr8nLX1g4D5Rt9rBY64h63zn/gf5y6kwR+ZLoeng1jT53UpujjOv+
-X-Gm-Gg: ASbGncvsr2pIjEhFJU3sd+r2dELr0okOdbFgZU0TKwi8FQuy26cDdyRGJkeGz6dxiWZ
-	5Rzbki2et8fYA36bx3eOosMyy5wD0+4+VHGqIqgCihDNBDg/Eekow9Qu4EOIv7cmT2/OMRSo92K
-	Vbw6/cRpQUQuhNkcihGS/BSVKWd6A5RXpaanga5O4GscCBtpRce4n5/Jpb6tYd7bEfADjhTShtP
-	ppFlESfsReDRZlGMLipacV40d3mWfK5mCgzQJgL7epojhLIXaK4BJP4DIDVfRRWIpPJh0ymtOqQ
-	WN4FrbeF2I8yQQO5oQHcb6H2G0Ho/30RuxHbl6IZxsgbxCezG26ofUNvWYKm1e3k+9F7my3w6HA
-	ipPlg+Bmy6FRG+9IdbrdWypxfo3SHYAo8cfFiNKQgmrxe+0CbPCXIX/oyGws1Efi6+Q==
-X-Google-Smtp-Source: AGHT+IHclKPqTOEZunbGOPTiEBJQffpUA66wP9SE4O0rQUc1IFZNJvvRVQISZwHrq/VB+kDIa3fxPA==
-X-Received: by 2002:a05:6a00:124b:b0:736:5822:74b4 with SMTP id d2e1a72fcca58-747bda09fb4mr16568976b3a.21.1748852395128;
-        Mon, 02 Jun 2025 01:19:55 -0700 (PDT)
-Received: from localhost.localdomain (ec2-13-229-131-224.ap-southeast-1.compute.amazonaws.com. [13.229.131.224])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-747affcf2f9sm7101372b3a.127.2025.06.02.01.19.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Jun 2025 01:19:54 -0700 (PDT)
-From: binarycraft007 <elliot.huang.signed@gmail.com>
-To: andersson@kernel.org
-Cc: conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	johan@kernel.org,
-	konrad.dybcio@oss.qualcomm.com,
-	konradybcio@kernel.org,
-	krzk+dt@kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lumag@kernel.org,
-	maud_spierings@hotmail.com,
-	robh@kernel.org,
-	Elliot Huang <elliot.huang.signed@gmail.com>
-Subject: [PATCH 1/1] arm64: dts: qcom: support sound on Asus Vivobook S15
-Date: Mon,  2 Jun 2025 16:16:38 +0800
-Message-ID: <20250602081638.51724-1-elliot.huang.signed@gmail.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <174770727723.36693.13352978360096773573.b4-ty@kernel.org>
-References: <174770727723.36693.13352978360096773573.b4-ty@kernel.org>
+	s=arc-20240116; t=1748852230; c=relaxed/simple;
+	bh=6BJBW7hoyakG5udJhK64Z32vJN+hzccr4+Nx1CdInn8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tVNaFVBvkhZmPrDtZUP7/mMCiRGz6kF/IYKA8emQh/BWhs6bN+sHIJbllB16GjccsnRl++kScwkFNx/oyFOo2O2n8zEMjiAGx7fTVbkOoWUo/1V6MmdoqYREvd7+gsstjzNXs6TNFlMu0frA//2h1GK+7PkQpB9tXbSPquOeVFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qADoffoH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F257BC4CEED;
+	Mon,  2 Jun 2025 08:17:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748852229;
+	bh=6BJBW7hoyakG5udJhK64Z32vJN+hzccr4+Nx1CdInn8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=qADoffoHweZjsKnSJcQ1gLtNtlO/yVLCwXzzu26LCCar32NB5fc2fl/e9syTJ+vDZ
+	 sSYh1Mu1JzcgzLywOMwN9bpoXOywsMOUADhYo98VNn3wHzphGPDIozyEMGgHHJx9L+
+	 X3axm0Bz0zWOsCC7gaTNUM6uoOTmF9dxYuaRfCpCuAW4sh38M6nGRgfLNrqlSICFvM
+	 gdfkGWWIz0A9y1+gEm+U6/EbTEmkm1b9wekPzA53y7wg3fYls0rP3i3jcYEV3E0gub
+	 okkaoZn9jSszErbR0WMNXC4TduBjvkVjhFykNqDcFJU+BUHhJYZ+cSxmHgGl2xcQ8r
+	 nxladnBpVmuDg==
+Message-ID: <93434285-ebef-4039-9a7a-e5786fd8bcd2@kernel.org>
+Date: Mon, 2 Jun 2025 10:17:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/4] dt-bindings: input: Add TouchNetix axiom
+ touchscreen
+To: Marco Felsch <m.felsch@pengutronix.de>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, Russ Weight
+ <russ.weight@linux.dev>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+ Kamel Bouhara <kamel.bouhara@bootlin.com>,
+ Marco Felsch <kernel@pengutronix.de>, Henrik Rydberg <rydberg@bitmath.org>,
+ Danilo Krummrich <dakr@redhat.com>, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-input@vger.kernel.org
+References: <20250529-v6-10-topic-touchscreen-axiom-v2-0-a5edb105a600@pengutronix.de>
+ <20250529-v6-10-topic-touchscreen-axiom-v2-3-a5edb105a600@pengutronix.de>
+ <119eba0a-2c81-4232-8b20-acc0a0eea969@kernel.org>
+ <20250530084516.ee2kre7kmdd6uikv@pengutronix.de>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
+ QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
+ +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
+ ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
+ 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
+ hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
+ tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
+ 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
+ naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
+ hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
+ whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
+ qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
+ RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
+ Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
+ H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
+ dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
+ AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
+ jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
+ zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
+ XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
+In-Reply-To: <20250530084516.ee2kre7kmdd6uikv@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Elliot Huang <elliot.huang.signed@gmail.com>
+On 30/05/2025 10:45, Marco Felsch wrote:
+>>> +
+>>> +  interrupts:
+>>> +    maxItems: 1
+>>> +
+>>> +  reset-gpios:
+>>> +    maxItems: 1
+>>> +
+>>> +  panel: true
+>>
+>> So that was the reason of dropping tag?
+>> https://lore.kernel.org/lkml/821ce1d4-bc15-4764-bbe0-315c57e8536e@linaro.org/
+>>
+>> Anyway, drop the property. Redundant.
+> 
+> Why is this redundant? The touchscreen.yaml defines it but I need to
 
-This adds sound support for vivobook s15, tested:
-- 2 speakers.
-- 2 dmics
-- headset with mic(distorted).
+It is redundant, because it has ZERO effect. The presence of this
+property or lack of it changes nothing. Binding has exactly the same
+meaning. Binding behaves exactly the same way in validation/checks. Zero
+difference. If there is a difference, please paste checks results.
 
-Signed-off-by: Elliot Huang <elliot.huang.signed@gmail.com>
----
- .../dts/qcom/x1e80100-asus-vivobook-s15.dts   | 202 ++++++++++++++++++
- 1 file changed, 202 insertions(+)
+> request it? At least I understood it that way and all other users of
+> this property do it same way. Same is true for all the touchscreen-*
 
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts b/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts
-index 71b2cc6..cce2460 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts
-+++ b/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts
-@@ -23,6 +23,32 @@ aliases {
- 		serial1 = &uart14;
- 	};
- 
-+	wcd938x: audio-codec {
-+		compatible = "qcom,wcd9385-codec";
-+
-+		pinctrl-0 = <&wcd_default>;
-+		pinctrl-names = "default";
-+
-+		qcom,micbias1-microvolt = <1800000>;
-+		qcom,micbias2-microvolt = <1800000>;
-+		qcom,micbias3-microvolt = <1800000>;
-+		qcom,micbias4-microvolt = <1800000>;
-+		qcom,mbhc-buttons-vthreshold-microvolt = <75000 150000 237000 500000 500000 500000 500000 500000>;
-+		qcom,mbhc-headset-vthreshold-microvolt = <1700000>;
-+		qcom,mbhc-headphone-vthreshold-microvolt = <50000>;
-+		qcom,rx-device = <&wcd_rx>;
-+		qcom,tx-device = <&wcd_tx>;
-+
-+		reset-gpios = <&tlmm 191 GPIO_ACTIVE_LOW>;
-+
-+		vdd-buck-supply = <&vreg_l15b_1p8>;
-+		vdd-rxtx-supply = <&vreg_l15b_1p8>;
-+		vdd-io-supply = <&vreg_l15b_1p8>;
-+		vdd-mic-bias-supply = <&vreg_bob1>;
-+
-+		#sound-dai-cells = <1>;
-+	};
-+
- 	gpio-keys {
- 		compatible = "gpio-keys";
- 		pinctrl-0 = <&hall_int_n_default>;
-@@ -105,6 +131,88 @@ pmic_glink_ss1_ss_in: endpoint {
- 		};
- 	};
- 
-+	sound {
-+		compatible = "qcom,x1e80100-sndcard";
-+		model = "X1E80100-ASUS-Vivobook-S15";
-+		audio-routing = "SpkrLeft IN", "WSA WSA_SPK1 OUT",
-+				"SpkrRight IN", "WSA WSA_SPK2 OUT",
-+				"IN1_HPHL", "HPHL_OUT",
-+				"IN2_HPHR", "HPHR_OUT",
-+				"AMIC2", "MIC BIAS2",
-+				"VA DMIC0", "MIC BIAS3",
-+				"VA DMIC1", "MIC BIAS3",
-+				"VA DMIC0", "VA MIC BIAS3",
-+				"VA DMIC1", "VA MIC BIAS3",
-+				"TX SWR_INPUT1", "ADC2_OUTPUT";
-+
-+		va-dai-link {
-+			link-name = "VA Capture";
-+
-+			cpu {
-+				sound-dai = <&q6apmbedai VA_CODEC_DMA_TX_0>;
-+			};
-+
-+			codec {
-+				sound-dai = <&lpass_vamacro 0>;
-+			};
-+
-+			platform {
-+				sound-dai = <&q6apm>;
-+			};
-+		};
-+
-+		wcd-capture-dai-link {
-+			link-name = "WCD Capture";
-+
-+			cpu {
-+				sound-dai = <&q6apmbedai TX_CODEC_DMA_TX_3>;
-+			};
-+
-+			codec {
-+				sound-dai = <&wcd938x 1>, <&swr2 1>,
-+					    <&lpass_txmacro 0>;
-+			};
-+
-+			platform {
-+				sound-dai = <&q6apm>;
-+			};
-+		};
-+
-+		wcd-playback-dai-link {
-+			link-name = "WCD Playback";
-+
-+			cpu {
-+				sound-dai = <&q6apmbedai RX_CODEC_DMA_RX_0>;
-+			};
-+
-+			codec {
-+				sound-dai = <&wcd938x 0>, <&swr1 0>,
-+					    <&lpass_rxmacro 0>;
-+			};
-+
-+			platform {
-+				sound-dai = <&q6apm>;
-+			};
-+		};
-+
-+		wsa-dai-link {
-+			link-name = "WSA Playback";
-+
-+			cpu {
-+				sound-dai = <&q6apmbedai WSA_CODEC_DMA_RX_0>;
-+			};
-+
-+			codec {
-+				sound-dai = <&left_spkr>, <&right_spkr>,
-+					    <&swr0 0>, <&lpass_wsamacro 0>;
-+			};
-+
-+			platform {
-+				sound-dai = <&q6apm>;
-+			};
-+		};
-+	};
-+
- 	reserved-memory {
- 		linux,cma {
- 			compatible = "shared-dma-pool";
-@@ -290,6 +398,13 @@ vreg_bob2: bob2 {
- 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
- 		};
- 
-+		vreg_l1b_1p8: ldo1 {
-+			regulator-name = "vreg_l1b_1p8";
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
- 		vreg_l2b_3p0: ldo2 {
- 			regulator-name = "vreg_l2b_3p0";
- 			regulator-min-microvolt = <3072000>;
-@@ -304,6 +419,14 @@ vreg_l4b_1p8: ldo4 {
- 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
- 		};
- 
-+		vreg_l12b_1p2: ldo12 {
-+			regulator-name = "vreg_l12b_1p2";
-+			regulator-min-microvolt = <1200000>;
-+			regulator-max-microvolt = <1200000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+			regulator-always-on;
-+		};
-+
- 		vreg_l13b_3p0: ldo13 {
- 			regulator-name = "vreg_l13b_3p0";
- 			regulator-min-microvolt = <3072000>;
-@@ -586,6 +709,24 @@ &i2c7 {
- 	/* PS8830 USB4 Retimer? @ 0x8 */
- };
- 
-+&lpass_tlmm {
-+	spkr_01_sd_n_active: spkr-01-sd-n-active-state {
-+		pins = "gpio12";
-+		function = "gpio";
-+		drive-strength = <16>;
-+		bias-disable;
-+		output-low;
-+	};
-+};
-+
-+&lpass_vamacro {
-+	pinctrl-0 = <&dmic01_default>;
-+	pinctrl-names = "default";
-+
-+	vdd-micb-supply = <&vreg_l1b_1p8>;
-+	qcom,dmic-sample-rate = <4800000>;
-+};
-+
- &mdss {
- 	status = "okay";
- };
-@@ -742,6 +883,59 @@ &smb2360_1_eusb2_repeater {
- 	vdd3-supply = <&vreg_l14b_3p0>;
- };
- 
-+&swr0 {
-+	status = "okay";
-+
-+	pinctrl-0 = <&wsa_swr_active>, <&spkr_01_sd_n_active>;
-+	pinctrl-names = "default";
-+
-+	/* WSA8845, Left Speaker */
-+	left_spkr: speaker@0,0 {
-+		compatible = "sdw20217020400";
-+		reg = <0 0>;
-+		reset-gpios = <&lpass_tlmm 12 GPIO_ACTIVE_LOW>;
-+		#sound-dai-cells = <0>;
-+		sound-name-prefix = "SpkrLeft";
-+		vdd-1p8-supply = <&vreg_l15b_1p8>;
-+		vdd-io-supply = <&vreg_l12b_1p2>;
-+		qcom,port-mapping = <1 2 3 7 10 13>;
-+	};
-+
-+	/* WSA8845, Right Speaker */
-+	right_spkr: speaker@0,1 {
-+		compatible = "sdw20217020400";
-+		reg = <0 1>;
-+		reset-gpios = <&lpass_tlmm 12 GPIO_ACTIVE_LOW>;
-+		#sound-dai-cells = <0>;
-+		sound-name-prefix = "SpkrRight";
-+		vdd-1p8-supply = <&vreg_l15b_1p8>;
-+		vdd-io-supply = <&vreg_l12b_1p2>;
-+		qcom,port-mapping = <4 5 6 7 11 13>;
-+	};
-+};
-+
-+&swr1 {
-+	status = "okay";
-+
-+	/* WCD9385 RX */
-+	wcd_rx: codec@0,4 {
-+		compatible = "sdw20217010d00";
-+		reg = <0 4>;
-+		qcom,rx-port-mapping = <1 2 3 4 5>;
-+	};
-+};
-+
-+&swr2 {
-+	status = "okay";
-+
-+	/* WCD9385 TX */
-+	wcd_tx: codec@0,3 {
-+		compatible = "sdw20217010d00";
-+		reg = <0 3>;
-+		qcom,tx-port-mapping = <2 2 3 4>;
-+	};
-+};
-+
- &tlmm {
- 	gpio-reserved-ranges = <34 2>, /* Unused */
- 			       <44 4>, /* SPI (TPM) */
-@@ -849,6 +1043,14 @@ tpad_default: tpad-default-state {
- 		bias-disable;
- 	};
- 
-+	wcd_default: wcd-reset-n-active-state {
-+		pins = "gpio191";
-+		function = "gpio";
-+		drive-strength = <16>;
-+		bias-disable;
-+		output-low;
-+	};
-+
- 	wcn_bt_en: wcn-bt-en-state {
- 		pins = "gpio116";
- 		function = "gpio";
--- 
-2.49.0
+And these users end the binding with additionalProps, right? So that's
+the difference.
 
+> properties definied in touchscreen.yaml.
+> 
+> Regards,
+>   Marco
+
+
+Best regards,
+Krzysztof
 
