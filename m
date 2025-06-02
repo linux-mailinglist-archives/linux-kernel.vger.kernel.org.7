@@ -1,228 +1,175 @@
-Return-Path: <linux-kernel+bounces-670413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B807BACAE1A
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 14:32:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADB14ACAE1E
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 14:34:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8AC87AB63D
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 12:31:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B2EB189D241
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 12:34:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 440C3139D;
-	Mon,  2 Jun 2025 12:32:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87D3521ABD3;
+	Mon,  2 Jun 2025 12:34:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RM92tU9m"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 927BC1537C6
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 12:32:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="oQWZB2k1"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EB6233CFC;
+	Mon,  2 Jun 2025 12:34:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748867560; cv=none; b=e/meywVOVF+kmkTRHGJFlsKz4aYl/yV0tEFFC7clWmxeHJQ8DpILqVJLkodAaBSvSczIIzZeEvJsV3NIsvn331TQ5ny1gRKz/uBJ2wS4/nnDBD4SJvWAN60ywIxhyr+GYi98yNcPGAv01WZuyoOmRjZoCNr6la2Z6vR5Ee32QZM=
+	t=1748867652; cv=none; b=KPZrbNylHVW/GZih5hN7tSBfRGWZN8VcipKOAm9v9Qdk1C6PFmiwgD7rrAWZln/2xeRne07ShCv6CU0d2Gcq/O26lKg/G9Q04alZDiERBoOMoZiGM6gedd2C3AViN4D0uFXYTy1bbm028S/BEMkERHALWy3uPeayDPx/XkM4Zns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748867560; c=relaxed/simple;
-	bh=Fw4N7iX6m0ldEG5hd1LcGLRXQoTg7QP3sJF8fiBpSz0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ghz5GBfpnkA98tMTxAPJwgKehGACoRv1hukKG4a3Td7+nE++aNA4S8I7BtJD0+gkXYyQBqNNSt3LKqmwyET9+lRYP0Duh5PZTm6HuDZu59RkBdMc8BVsGhglaMoFSxsmnt9mmn1Fdsuneacq2PhVcCUWIS3L9mJD2jqTPHTzuvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RM92tU9m; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ad88d77314bso783526666b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jun 2025 05:32:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1748867557; x=1749472357; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qNmR2LVDrZBvYOssuTfD9LAdBgszcoMj02H+hU1ZLVM=;
-        b=RM92tU9m4cZs4TB7V7eXdOsT2lXBKtM6uf14sXdnvYuMbhs8OYczhFra07ySewJ3LB
-         vb0OV9aU0Q2qSp+JHbHKmG4T4469LwUKw/XM8+eRT1+MZ7WAB4Uh61E/wPbEBwyk5WXP
-         H1Ye8rLyHu+vyyAw/3bnx0l9SVJwgcp1jNHSS6ELN5XitJ1ASyih8A/UrmhS6jCj8/0+
-         oszqWdBL5p/qgVs8uBBs1tRvuIlxtBwT3guwoFKoM5bwSKO3dD49klJ0FOHRPpfUSz3G
-         UPsCX0vLKLgVqq5O2krkRqQpF/rPpEmn3V8ZjH7DoHvqcItXV5+vS1IbxgLxIr6gTYhx
-         eTVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748867557; x=1749472357;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qNmR2LVDrZBvYOssuTfD9LAdBgszcoMj02H+hU1ZLVM=;
-        b=kzRnD5bzsqdf82DTCNLPN0E/fPw/FrkE+VdN41zs9ZjIdYch5VqmWzMVvwuIl+wvPG
-         I4noK7XkDqxIxgFQarm/fXusuauDvTAvnlC9oWfRy+uIROa2vem65gwqwuFgz8npRGM/
-         6rNZSxbnhDpIZzO1GgAbwosAkzbpMK5ByT0SfXbnCSmzXCOo3OPBzie+T3AuApl1rqzx
-         GMKiZb67+NMe1jhflYhPylXaJRwZciPXBbReEklzb3QZPjhRvMH4Kuynb1uOs1I/v/QV
-         oKklWSbRXaWUT9WNVcjI5V2KpHqE/7XtPry0Q3tBzky8toGLVOULda58S4BvDShOPiqH
-         gRfw==
-X-Forwarded-Encrypted: i=1; AJvYcCVjHPT7KuADNFmrgLxuzytYUbn29fwdMQ2inTl1pAGKeWuODfpz5mxOgiRK1gujHPqa/fcjglwvPgJwVLU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5mp/KuSdI6zqN8IhzFZ8jtcM4GRsRamBbPoXpCUaaFt/tdsCp
-	mxhNNXszELbtFlwnyZF8QIz0+2kHBDIh7OOQ66o1+Ujl5H1ZFSrWSHFenIbaZmzQWnc=
-X-Gm-Gg: ASbGnctPUEs3IwspVGgGfk/WrfRR9GzvnJq3GjTOh4QJX+0P2vduqA7LgMGjfJ46aE8
-	PU+p8b7R6NvtGlABnVjfXr81lbJeEVg//HqUCdX5QGy+wo5ieKOCfbrm0iqWSwHq0Br3p4wP84a
-	7FUF/4gca0TMY6pjxa+yJONapeFpJSYo/GUF47MKYjpEzYtMjKFPNMbaY8EXttTNmVgu5MLXZfV
-	skQjBFOJCWPBTRdLVPWnYD93C8OUTLpzY9HlluwOa42wjX/lESwi3m4/11iZgAyOzdz+6jAAiUM
-	3Bh3OHzvnVQVWGfkF4oHc1/FgYTDgReChVCjkObgZC6ahfYRhTAYnPH7uPPN5Pdpj5eO5Q==
-X-Google-Smtp-Source: AGHT+IHiS9U+zqDmnEMCHR70yLzS187TrGBDgjrasVug7mewsFtHLYtqg30afGkuc6JWczlwMXtlqA==
-X-Received: by 2002:a17:907:2d13:b0:ad8:9b23:16d9 with SMTP id a640c23a62f3a-adb322a4025mr1152616266b.34.1748867556771;
-        Mon, 02 Jun 2025 05:32:36 -0700 (PDT)
-Received: from [192.168.0.14] ([79.115.63.75])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ada5d7fed53sm787352866b.27.2025.06.02.05.32.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Jun 2025 05:32:36 -0700 (PDT)
-Message-ID: <86a58291-b7f7-477d-89b5-39690b9ef371@linaro.org>
-Date: Mon, 2 Jun 2025 13:32:34 +0100
+	s=arc-20240116; t=1748867652; c=relaxed/simple;
+	bh=cRQXcU2Ra7nEta5mNo/E/pC3EOrS0rm0kWNFyZCJqmk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=JJobhjuU7luULmjMwgyvoyPT4zCRqn+DV3YqnnsofMivdTPx1I/mO0BMKzVhJ4UWxC5MgnK3B/RYQ9jyLYidJi0uIsZeijSGNVulX2x/svwgo/te02bIBZFam5ylUgwUioo4aA225xlMfUI3ISIEBC+X3la0MKg+BUL47xt9/HA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=oQWZB2k1 reason="signature verification failed"; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=EztYNPtjzWxGg2uPLBCx4cP2YXMaV72XRRVDsDC69zI=; b=o
+	QWZB2k1cET5yzYTRIkfGMzelYK5y46HoTmyC2b1lIlf9f/kuPHUZkJPlAJUfxrqe
+	GDolBB8G9p4RE8SZzs94mMyQeJxRR9zBh15uI4GnUEQNj+1AdGXriYTMCIWvurze
+	TXYoeiXv6/CpyJzFEW1DF4gU8PbySYPFxXBoca4nmY=
+Received: from 00107082$163.com ( [111.35.189.95] ) by
+ ajax-webmail-wmsvr-40-142 (Coremail) ; Mon, 2 Jun 2025 20:33:37 +0800 (CST)
+Date: Mon, 2 Jun 2025 20:33:37 +0800 (CST)
+From: "David Wang" <00107082@163.com>
+To: yeoreum.yun@arm.com
+Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+	namhyung@kernel.org, mingo@kernel.org, yeoreum.yun@arm.com,
+	leo.yan@arm.com, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [BUG][6.15][perf] Kernel panic not syncing: Fatal exception in
+ interrupt
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
+ Copyright (c) 2002-2025 www.mailtech.cn 163com
+In-Reply-To: <aD2TspKH/7yvfYoO@e129823.arm.com>
+References: <aD2TspKH/7yvfYoO@e129823.arm.com>
+X-NTES-SC: AL_Qu2fCvSduE4q4SCbY+kXn0oTju85XMCzuv8j3YJeN500uCbQ9wsdeXBGOVjmwcO0BiGtvxeOewJn7vxgdq9CXJwJ7UJTt+S1JWBrHbGbBKdO
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=GBK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 24/25] PCI: Perform reset_resource() and build fail list
- in sync
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
- =?UTF-8?Q?Micha=C5=82_Winiarski?= <michal.winiarski@intel.com>,
- Igor Mammedov <imammedo@redhat.com>, LKML <linux-kernel@vger.kernel.org>,
- Mika Westerberg <mika.westerberg@linux.intel.com>,
- William McVicker <willmcvicker@google.com>
-References: <20241216175632.4175-1-ilpo.jarvinen@linux.intel.com>
- <20241216175632.4175-25-ilpo.jarvinen@linux.intel.com>
- <5f103643-5e1c-43c6-b8fe-9617d3b5447c@linaro.org>
- <8f281667-b4ef-9385-868f-93893b9d6611@linux.intel.com>
- <3a47fc82-dc21-46c3-873d-68e713304af3@linaro.org>
- <f6ee05f7-174b-76d4-3dbe-12473f676e4d@linux.intel.com>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <f6ee05f7-174b-76d4-3dbe-12473f676e4d@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Message-ID: <83b4d26.3362.19730a21115.Coremail.00107082@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:jigvCgD3Hykimj1oeiISAA--.19002W
+X-CM-SenderInfo: qqqrilqqysqiywtou0bp/xtbB0hhgqmg9jvGL1wADs1
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-
-On 5/30/25 7:38 AM, Ilpo Järvinen wrote:
-
-cut
-
->>>> Reverting the following patches fixes the problem:
->>>> a34d74877c66 PCI: Restore assigned resources fully after release
->>>> 2499f5348431 PCI: Rework optional resource handling
->>>> 96336ec70264 PCI: Perform reset_resource() and build fail list in sync
->>>
->>> So it's confirmed that you needed to revert also this last commit 
->>> 96336ec70264, not just the rework change?
->>
->> I needed to revert 96336ec70264 as well otherwise the build fails.
-> 
-> Hi again,
-
-Hi!
-
-cut
-
-> 
-> The missing helper is basically this:
-
-cut
-I used the following:
-
-+static bool pci_resource_is_disabled_rom(const struct resource *res,
-int resno)
-+{
-+       return resno == PCI_ROM_RESOURCE && !(res->flags &
-IORESOURCE_ROM_ENABLE);
-+}
-
-> 
-> Because of this, the actual culprit could be in 2499f5348431, not it 
-> 96336ec70264 (which would make more sense as it does significant rework 
-> on the assignment algorithm).
-
-I confirm with the above that the problem is in 2499f5348431 indeed.
-
-cut
-
->> I added the suggested prints
->> (https://paste.ofcode.org/DgmZGGgS6D36nWEzmfCqMm) on top of v6.15 with
->> the downstream PCIe pixel driver and I obtain the following. Note that
->> all added prints contain "tudor" for differentiation.
->>
->> [   15.211179][ T1107] pci 0001:01:00.0: [144d:a5a5] type 00 class
->> 0x000000 PCIe Endpoint
->> [   15.212248][ T1107] pci 0001:01:00.0: BAR 0 [mem
->> 0x00000000-0x000fffff 64bit]
->> [   15.212775][ T1107] pci 0001:01:00.0: ROM [mem 0x00000000-0x0000ffff
->> pref]
->> [   15.213195][ T1107] pci 0001:01:00.0: enabling Extended Tags
->> [   15.213720][ T1107] pci 0001:01:00.0: PME# supported from D0 D3hot
->> D3cold
->> [   15.214035][ T1107] pci 0001:01:00.0: 15.752 Gb/s available PCIe
->> bandwidth, limited by 8.0 GT/s PCIe x2 link at 0001:00:00.0 (capable of
->> 31.506 Gb/s with 16.0 GT/s PCIe x2 link)
->> [   15.222286][ T1107] pci 0001:01:00.0: tudor: 1: pbus_size_mem: BAR 0
->> [mem 0x00000000-0x000fffff 64bit] list empty? 1
->> [   15.222813][ T1107] pci 0001:01:00.0: tudor: 1: pbus_size_mem: ROM
->> [mem 0x00000000-0x0000ffff pref] list empty? 1
->> [   15.224429][ T1107] pci 0001:01:00.0: tudor: 2: pbus_size_mem: ROM
->> [mem 0x00000000-0x0000ffff pref] list empty? 0
->> [   15.224750][ T1107] pcieport 0001:00:00.0: bridge window [mem
->> 0x00100000-0x001fffff] to [bus 01-ff] add_size 100000 add_align 100000
->>
->> [   15.225393][ T1107] tudor : pci_assign_unassigned_bus_resources:
->> before __pci_bus_assign_resources -> list empty? 0
->> [   15.225594][ T1107] pcieport 0001:00:00.0: tudor:
->> pdev_sort_resources: bridge window [mem 0x00100000-0x001fffff] resource
->> added in head list
->> [   15.226078][ T1107] pcieport 0001:00:00.0: bridge window [mem
->> 0x40000000-0x401fffff]: assigned
-> 
-> So here it ends up assigning the resource here I think.
-> 
-> 
-> That print isn't one of yours in reassign_resources_sorted() so the 
-> assignment must have been made in assign_requested_resources_sorted(). But 
-> then nothing is printed out from reassign_resources_sorted() so I suspect 
-> __assign_resources_sorted() has short-circuited.
-> 
-> We know that realloc_head is not empty, so that leaves the goto out from 
-> if (list_empty(&local_fail_head)), which kind of makes sense, all 
-> entries on the head list were assigned. But the code there tries to remove 
-> all head list resources from realloc_head so why it doesn't get removed is 
-> still a mystery. assign_requested_resources_sorted() doesn't seem to 
-> remove anything from the head list so that resource should still be on the 
-> head list AFAICT so it should call that remove_from_list(realloc_head, 
-> dev_res->res) for it.
-> 
-> So can you see if that theory holds water and it short-circuits without 
-> removing the entry from realloc_head?
-> 
-
-cut. I saw your other reply. Will check a bit both and respond there
-directly.
-
->>
->>> In any case, that BUG_ON() seems a bit drastic action for what might be 
->>> just a single resource allocation failure so it should be downgraded to:
->>>
->>> if (WARN_ON(!list_empty(&add_list))
->>> 	free_list(&add_list);
->>> 	
->>> ... or WARN_ON_ONCE().
->>
->> I saw your patch doing this, the phone now boots, but obviously I still
->> see the WARN, so maybe there's still something to be fixed.
-> 
-cut
-
-> Now that it boots, can you please check if /proc/iomem is the same both in 
-> the non-working and working config. If that resource got assigned 
-> successfully, it might well be there is no actual differences in the 
-> assigned resources (which again doesn't mean there wouldn't be a bug in 
-> the logic as discussed above).
-
-I confirm /proc/iomem is identical when comparing the no revert and the
-WARN_ON_ONCE() case, and when reverting the blamed commit case.
-
-
+CgpBdCAyMDI1LTA2LTAyIDIwOjA2OjEwLCAiWWVvcmV1bSBZdW4iIDw+IHdyb3RlOgo+U29ycnkg
+dG8gbWFrZSBub2lzZSBhbGwuCj5JJ3ZlIGZvcmdvdHRlbiB0byBjYyBtYWlsaW5nIGxpc3QuCj5J
+ZiB5b3UgcmVjZWl2ZSBkdXBsaWNhdGUgbWFpbCwgU29ycnkgYWdhaW4uLi4KPgo+PT09PT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PQo+SGkgRGF2aWQsCj4K
+Pj4gSGksCj4+Cj4+IENhdWdodCBhIGtlcm5lbCBwYW5pYyB3aGVuIHJlYm9vdGluZywgc3lzdGVt
+IHN0dWNrIHVudGlsIHByZXNzaW5nIHBvd2VyIGJ1dHRvbi4KPj4gSSBoYXZlIG9ubHkgYSBzY3Jl
+ZW5zaG90IHdoZW4gaXQgaGFwcGVucywgZm9sbG93aW5nIGxvZ3Mgd2VyZSBleHRyYWN0ZWQgZnJv
+bSBhCj4+IGNhcHR1cmVkIHBpY3R1cmUuCj4+Cj4+IDg2My44ODE5NjBdIHN5c3ZlZF9jYWxsX2Z1
+bmN0aW9uX3NpbmcgbGUrMHg0Yy8weGMwCj4+IDg2My44ODEzMDFdIGFzbV9zeXN2ZWNfY2FsbF9m
+dW5jdGlvbl9zaW5nbGUrMHgxNi8weDIwCj4+IDg2OS44ODEzNDRdIFJJUDogMDYzMzoweDdmOWFs
+Y2VhMzM2Nwo+PiA2NjMuNjgxMzczXSBDb2RlOiAwMCA2NiA5OSBiOCBmZiBmZiBmZiBmZiBjMyA2
+NiAuLi4uCj4+IDg2My44ODE1MjRdIFJTUDogMDAyYjowMDAwN2ZmZmE1MjZmY2Y4IEVGTEFHUzog
+MDAwMDAyNDYKPj4gODY5Ljg4MTU2N10gUkFYOiAwMDAwNTYyMDYwYzk2MmQwIFJCWDogMDAwMDAw
+MDAwMDAwMDAwMiBSQ1g6IDAwMDA3ZjlhMWNmZjFjNjAKPj4gODYzLjg4MTYyNV0gUkRYOiAwMDAw
+N2Y5YTBjMDAwMDMwIFJTSTogMDAwMDdmOWFsY2ZmMWM2MCBSREk6IDAwMDA3ZjlhMWNhOTFjMjAK
+Pj4gODYzLjA4MTY4Ml0gUkJQOiAwMDAwMDAwMDAwMDAwMDAxIFIwODogMDAwMDAwMDAwMDAwMDAw
+MCBSMDk6IDAwMDA3ZjlhMWQ2MjE3YTAKPj4gODY5Ljg4MTc0MF0gUjEwOiAwMDAwN2Y5YWxjYTkx
+YzEwIFIxMTogMDAwMDAwMDAwMDAwMDI0NiBSMTI6IDAwMDA3ZjlhMWQ3MGMwMjAKPj4gODY5Ljg4
+MTc5OF0gUjEzOiAwMDAwN2ZmZmE1MjcwMDMwIFIxNDogMDAwMDdmZmZhNTI2ZmQwMCBSMTU6IDAw
+MDAwMDAwMDAwMDAwMDAKPj4gODYzLjg4MTg2MF0gPC9UQVNLPgo+PiA4NjMuODgxODc2KSBNb2R1
+bGVzIGxpbmtlZCBpbjogc25kX3NlcV9kdW1teSAoRSkgc25kX2hydGltZXIgKEUpLi4uCj4+IC4u
+Lgo+PiA4NjMuODg3MTQyXSBidXR0b24gKEUpCj4+IDg2My45MTIxMjddIENSMjogZmZmZmU0YWZj
+YzA3OTY1MAo+PiA4NjMuOTE0NTkzXSAtLS0gWyBlbmQgdHJhY2UgMDAwMDAwMDAwMDAwMDAwMCAx
+LS0KPj4gODY0LjA0Mjc1MF0gUklQOiAwMDEwOmN0eF9zY2hlZF9vdXQrMHgxY2UvMHgyMTAKPj4g
+ODY0LjA0NTIxNF0gQ29kZTogODkgYzYgNGMgOGIgYjkgZGUgMDAgMDAgMDAgNDggLi4uCj4+IDg2
+NC4wNTAzNDNdIFJTUDogMDAwMDpmZmZmYWE0ZWMwZjNmZTYwIEVGTEFHUzogMDAwMTAwODYKPj4g
+ODY0LjA1MjkyOV0gUkFYOiAwMDAwMDAwMDAwMDAwMDAyIFJCWDogZmZmZjhlOGVlZWQyYTU4MCBS
+Q1g6IGZmZmY4ZThiZGVkOWJmMDAKPj4gODY0LjA1NTUxOF0gUkRYOiAwMDAwMDBjOTIzNDBiMDUx
+IFJTSTogMDAwMDAwYzkyMzQwYjA1MSBSREk6IGZmZmYKPj4gODY0LjA1ODA5M10gUkJQOiAwMDAw
+MDAwMDAwMDAwMDAwIFIwODogMDAwMDAwMDAwMDAwMDAwMiBSMDk6IDAwCj4+IDg2NC4wNjA2NTRd
+IFIxMDogMDAwMDAwMDAwMDAwMDAwMCBSMTE6IDAwMDAwMDAwMDAwMDAwMDAgUjEyOiAwMDAKPj4g
+ODY0LjA2MzE4M10gUjEzOiBmZmZmOGU4ZWVlZDJhNTgwIFIxNDogMDAwMDAwMDAwMDAwMDAwNyBS
+MTU6IGZmZmZlNGFmY2MwNzk2NTAKPj4gODY0LjA2NTcyOV0gRlM6IDAwMDA3ZjlhMWNhOTE5NDAg
+KDAwMDApIEdTOmZmZmY4ZThmNmIxYzMwMDAoMDAwMCkga25JR1M6MDAwMDAwMDAwMDAwMDAwMAo+
+PiA4NjQuMDY4MzEyXSBDUzogMDAxMCBEUzogMDAwMCBFUzogMDAwMCBDUk86IDAwMDAwMDAwODAw
+NTAwMzMKPj4gODY0LjA3MDg5OF0gQ1IyOiBmZmZmZTRhZmNjMDc5NjUwIENSMzogMDAwMDAwMDEx
+MzZkODAwMCBDUjQ6IDAwMDAwMDAwMDAzNTBlZjAKPj4gODY0LjY3MzUyM10gS2VybmVsIHBhbmlj
+IC0gbm90IHN5bmNpbmc6IEZhdGFsIGV4Y2VwdGlvbiBpbiBpbnRlcnJ1cHQKPj4gODY0LjA3NjQx
+MF0gS2VybmVsIE9mZnNldDogMHhjMDAwMDAgZnJvbSAweGZmZmZmZmZmODEwMDAwMDAgKHJlbG9j
+YXRpb24gcmFuZ2U6IDB4ZmYKPj4gODY0LjIwNTQwMV0gLS0tIFsgZW5kIEtlcm5lbCBwYW5pYyAt
+IG5vdCBzeW5jaW5nOiBGYXRhbCBleGNlcHRpb24gaW4gaW50ZXJydXB0IF0tLS0KPj4KPj4gVGhp
+cyBoYXBwZW5zIGV2ZXIgc2luY2UgNi4xNS1yYzEsIGZyb20gdGltZSB0byB0aW1lLCBJIHdvdWxk
+IGdldCBrZXJuZWwgcGFuaWMgd2hlbgo+PiByZWJvb3Q7IGl0IGlzIG9ubHkgcmVjZW50bHkgdGhh
+dCBJIGZpZ3VyZWQgb3V0IGEgcHJlY2VkdXJlIHJlcHJvZHVjaW5nCj4+IHRoaXMgd2l0aCAqaGln
+aCogcHJvYmFiaWxpdHk6Cj4+Cj4+IDEuIGNyZWF0ZSBhIGNncm91cC4KPj4gMi4gcGVyZl9ldmVu
+dF9vcGVuKFBFUkZfRkxBR19GRF9DTE9FWEVDfFBFUkZfRkxBR19QSURfQ0dST1VQKSBmb3IgZWFj
+aCBjcHUgd2l0aCBmb2xsb3dpbmcgYXR0cnM6Cj4+IAlhdHRyLnR5cGUgPSBQRVJGX1RZUEVfU09G
+VFdBUkU7Cj4+IAlhdHRyLnNpemUgPSBzaXplb2YoYXR0cik7Cj4+IAlhdHRyLmNvbmZpZyA9IFBF
+UkZfQ09VTlRfU1dfQ1BVX0NMT0NLOwo+PiAJYXR0ci5zYW1wbGVfZnJlcSA9IDk5OTk7Cj4+IAlh
+dHRyLmZyZXEgPSAxOwo+PiAJYXR0ci53YWtldXBfZXZlbnRzID0gMTY7Cj4+IAlhdHRyLnNhbXBs
+ZV90eXBlID0gUEVSRl9TQU1QTEVfQ0FMTENIQUlOOwo+PiAJYXR0ci5zYW1wbGVfbWF4X3N0YWNr
+ID0gMzI7Cj4+IAlhdHRyLmV4Y2x1ZGVfY2FsbGNoYWluX3VzZXIgPSAxOwo+PiAzLiBjbG9zZSBh
+bGwgcGVyZl9ldmVudF9vcGVuIGFmdGVyIHNldmVyYWwgbWludXRlcwo+PiA0LiByZWJvb3QKPj4K
+Pj4gQW5kIGFmdGVyIGFuIGV4aGF1c3RpbmcgYmlzZWN0IG9uIGV2ZW50cy9jb3JlLmMsIChJIG5l
+ZWQgNSByb3VuZHMgdG8gY29uY2x1ZGUgYSBnb29kIGJpc2VjdCkKPj4gSSB0aGluayBJIHJlYWNo
+IHRoZSBjb25jbHVzaW9uLCB3aXRoIHZlcnkgaGlnaCBwcm9iYWJpbGl0eSwgdGhhdCB0aGlzIGlz
+IGNhdXNlZCBieQo+Pgo+PiBjb21taXQgYTNjM2M2NjY3MGNlZTExZWIxM2FhNDM5MDU5MDRiZjI5
+Y2I5MmQzMgo+PiBBdXRob3I6IFllb3JldW0gWXVuIDx5ZW9yZXVtLnl1bkBhcm0uY29tPgo+PiBE
+YXRlOiAgIFdlZCBNYXIgMjYgMDg6MjA6MDMgMjAyNSArMDAwMAo+Pgo+PiAgICBwZXJmL2NvcmU6
+IEZpeCBjaGlsZF90b3RhbF90aW1lX2VuYWJsZWQgYWNjb3VudGluZyBidWcgYXQgdGFzayBleGl0
+Cj4+Cj4+IFJldmVydGluZyB0aGlzIGNhbiBmaXggaXQ6IEkgcnVuIHRoZSB0ZXN0IDEwIHJvdW5k
+cywgbm8ga2VybmVsIHBhbmljIG9ic2VydmVkLgo+Pgo+PiBUaGUgY2hhbmdlcyBtYWRlIHRvIF9f
+cGVyZl9yZW1vdmVfZnJvbV9jb250ZXh0IGJ5IGNvbW1pdCBhM2MzYzY2NjcoInBlcmYvY29yZToK
+Pj4gRml4IGNoaWxkX3RvdGFsX3RpbWVfZW5hYmxlZCBhY2NvdW50aW5nIGJ1ZyBhdCB0YXNrIGV4
+aXQiKSBoYXMgd2lkZXIgZWZmZWN0Cj4+IHRoYW4gdGhlIGNhbGxjaGFpbiBtZW50aW9uZWQgaW4g
+Y29tbWl0IG1lc3NhZ2UsIGFuZCBJIHRoaW5rIGFuIGVzYXkgZml4IHdvdWxkCj4+IGJlIGp1c3Qg
+cmVzdHJpY3RpbmcgdGhlIGVmZmVjdCB0byB0aGF0IGNhbGxjaGFpbiBvbmx5LCBhbmQgcmVzdG9y
+ZSBvdGhlciBjaGFuZ2VzIGJhY2suCj4+Cj4+IEkgaGF2ZSB0ZXN0IHRoZSBwYXRjaCBiZWxvdyBz
+ZXZlcmFsIHJvdW5kcywgYW5kIHNvIGZhciBzbyBnb29kLCBhbmQgSSB3aWxsIGhhdmUKPj4gbW9y
+ZSB0ZXN0cyBvbiBpdC4KPj4KPj4gU2lnbmVkLW9mZi1ieTogRGF2aWQgV2FuZyA8MDAxMDcwODJA
+MTYzLmNvbT4KPgo+VGhhbmtzIGZvciB5b3VyIHJlcG9ydGluZyBhbmQgU29ycnkgZm9yIG15IGJh
+ZC4KPkJ5IG15IGNoYW5nZSwgdGhlIHRyYWNraW5nIG5yX2Nnb3J1cHMgaXMgYnJva2VuIHdoaWNo
+IGNvdWxkIG1ha2UgYSBkYW5nbGluZwo+cG9pbnRlciBmb3IgY3B1Y3R4LT5jZ3JwLgo+Cj5Db3Vs
+ZCB5b3UgdGVzdCB3aXRoIGJlbG93IGNoYW5nZSBwbGVhc2U/Cj4KPmRpZmYgLS1naXQgYS9rZXJu
+ZWwvZXZlbnRzL2NvcmUuYyBiL2tlcm5lbC9ldmVudHMvY29yZS5jCj5pbmRleCA5NWU3MDM4OTFi
+MjQuLmQwYTkwOTY3MzViOSAxMDA2NDQKPi0tLSBhL2tlcm5lbC9ldmVudHMvY29yZS5jCj4rKysg
+Yi9rZXJuZWwvZXZlbnRzL2NvcmUuYwo+QEAgLTIxMTYsMTggKzIxMTYsNiBAQCBsaXN0X2RlbF9l
+dmVudChzdHJ1Y3QgcGVyZl9ldmVudCAqZXZlbnQsIHN0cnVjdCBwZXJmX2V2ZW50X2NvbnRleHQg
+KmN0eCkKPiAgICAgICAgaWYgKGV2ZW50LT5ncm91cF9sZWFkZXIgPT0gZXZlbnQpCj4gICAgICAg
+ICAgICAgICAgZGVsX2V2ZW50X2Zyb21fZ3JvdXBzKGV2ZW50LCBjdHgpOwo+Cj4tICAgICAgIC8q
+Cj4tICAgICAgICAqIElmIGV2ZW50IHdhcyBpbiBlcnJvciBzdGF0ZSwgdGhlbiBrZWVwIGl0Cj4t
+ICAgICAgICAqIHRoYXQgd2F5LCBvdGhlcndpc2UgYm9ndXMgY291bnRzIHdpbGwgYmUKPi0gICAg
+ICAgICogcmV0dXJuZWQgb24gcmVhZCgpLiBUaGUgb25seSB3YXkgdG8gZ2V0IG91dAo+LSAgICAg
+ICAgKiBvZiBlcnJvciBzdGF0ZSBpcyBieSBleHBsaWNpdCByZS1lbmFibGluZwo+LSAgICAgICAg
+KiBvZiB0aGUgZXZlbnQKPi0gICAgICAgICovCj4tICAgICAgIGlmIChldmVudC0+c3RhdGUgPiBQ
+RVJGX0VWRU5UX1NUQVRFX09GRikgewo+LSAgICAgICAgICAgICAgIHBlcmZfY2dyb3VwX2V2ZW50
+X2Rpc2FibGUoZXZlbnQsIGN0eCk7Cj4tICAgICAgICAgICAgICAgcGVyZl9ldmVudF9zZXRfc3Rh
+dGUoZXZlbnQsIFBFUkZfRVZFTlRfU1RBVEVfT0ZGKTsKPi0gICAgICAgfQo+LQo+ICAgICAgICBj
+dHgtPmdlbmVyYXRpb24rKzsKPiAgICAgICAgZXZlbnQtPnBtdV9jdHgtPm5yX2V2ZW50cy0tOwo+
+IH0KPkBAIC0yNDcxLDYgKzI0NTksMTYgQEAgX19wZXJmX3JlbW92ZV9mcm9tX2NvbnRleHQoc3Ry
+dWN0IHBlcmZfZXZlbnQgKmV2ZW50LAo+Cj4gICAgICAgIGN0eF90aW1lX3VwZGF0ZShjcHVjdHgs
+IGN0eCk7Cj4KPisgICAgICAgLyoKPisgICAgICAgICogSWYgZXZlbnQgd2FzIGluIGVycm9yIHN0
+YXRlLCB0aGVuIGtlZXAgaXQKPisgICAgICAgICogdGhhdCB3YXksIG90aGVyd2lzZSBib2d1cyBj
+b3VudHMgd2lsbCBiZQo+KyAgICAgICAgKiByZXR1cm5lZCBvbiByZWFkKCkuIFRoZSBvbmx5IHdh
+eSB0byBnZXQgb3V0Cj4rICAgICAgICAqIG9mIGVycm9yIHN0YXRlIGlzIGJ5IGV4cGxpY2l0IHJl
+LWVuYWJsaW5nCj4rICAgICAgICAqIG9mIHRoZSBldmVudAo+KyAgICAgICAgKi8KPisgICAgICAg
+aWYgKGV2ZW50LT5zdGF0ZSA+IFBFUkZfRVZFTlRfU1RBVEVfT0ZGKQo+KyAgICAgICAgICAgICAg
+IHBlcmZfY2dyb3VwX2V2ZW50X2Rpc2FibGUoZXZlbnQsIGN0eCk7Cj4rCj4gICAgICAgIC8qCj4g
+ICAgICAgICAqIEVuc3VyZSBldmVudF9zY2hlZF9vdXQoKSBzd2l0Y2hlcyB0byBPRkYsIGF0IHRo
+ZSB2ZXJ5IGxlYXN0Cj4gICAgICAgICAqIHRoaXMgYXZvaWRzIHJhaXNpbmcgcGVyZl9wZW5kaW5n
+X3Rhc2soKSBhdCB0aGlzIHRpbWUuCj4KPlRoYW5rcwo+Cj4KPi0tCj5TaW5jZXJlbHksCj5ZZW9y
+ZXVtIFl1bgoKQmVmb3JlIEkgc3RhcnQgdGVzdGluZywgSSBmZWVsIGNvbmNlcm5lZCBhYm91dCBm
+b2xsb3dpbmcgY2hhaW46CgouL2tlcm5lbC9mb3JrLmM6CmJhZF9mb3JrX2NsZWFudXBfcGVyZjoK
+ICAgIHBlcmZfZXZlbnRfZnJlZV90YXNrKCkgCiAgICAgICAgcGVyZl9mcmVlX2V2ZW50KCkKICAg
+ICAgICAgICAgbGlzdF9kZWxfZXZlbnQoKQoKVGhpcyBwYXRjaCBzZWVtcyBjaGFuZ2VzIHRoZSBi
+ZWhhdmlvciBpbiB0aGlzIGNhbGxjaGFpbi4KV291bGQgdGhpcyBoYXZlIG90aGVyIHNpZGUtZWZm
+ZWN0PwoKCkRhdmlkCg==
 
