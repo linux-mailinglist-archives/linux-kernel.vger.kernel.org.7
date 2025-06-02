@@ -1,45 +1,92 @@
-Return-Path: <linux-kernel+bounces-670685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC286ACB5E3
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 17:11:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E95E7ACB73F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 17:26:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C287D9E5D5B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 15:00:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0701740778B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 15:01:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A99522D790;
-	Mon,  2 Jun 2025 14:51:49 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23FA722F177;
+	Mon,  2 Jun 2025 14:52:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mee2OePn"
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE48822259C;
-	Mon,  2 Jun 2025 14:51:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA8C322F745
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 14:52:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748875909; cv=none; b=AaqnDDADnlKSnhZZCOV0S9AWqF1W6KDr8PliSQACFF1Knt0UKz8d/kOk0Uqpzmxg8+Hv4R2B8ejO85FCZ24+nGuhQCOvCJHf+8hCivyYvacaXDsdkE51F5FxIxJ2dJqio05CQSyfTtd1wI7wXMXnMdTdwb2eKZ0xysTQxhlr6aM=
+	t=1748875967; cv=none; b=dQMZ9stSRbi2TucQ3RrtnQ/Xkk2RQTfkLFZZYf4PPtYL2HDZFgDeizdItn4LzNyfu/7d90W5GQl5LXLSPxOgXgvvViUcw9CzfQCcMYqNUu6ldhLfco8z6h6Vzb1fbTCWOtvmzC6MQuvFaZ6OlcLJcMBsjAeHeuRE7PayVsU0hrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748875909; c=relaxed/simple;
-	bh=QbU08Oxgch8EyUJdjnd4rKfu/28BROHfTCaJAwOypcQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XX5JT1Fay9VnS+9XpmnA80/Pgl0zFZ3+nrhJ0bhKs1TEoS142CdGliUXZJKh0ll5mLvIiUDZowXsFcFwBU/qa/Rg2KV2xYMsCrG0mQLCVwZLUUPtIjbK3Aa2ENve7SAbpYe9HB9WMWt/dga15TOM3Mz0ljoLkw5qD5DoZj5ujfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B762C4CEF2;
-	Mon,  2 Jun 2025 14:51:46 +0000 (UTC)
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Kees Cook <kees@kernel.org>,
-	"Gustavo A . R . Silva" <gustavoars@kernel.org>,
-	David Gow <davidgow@google.com>
-Cc: linux-hardening@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
+	s=arc-20240116; t=1748875967; c=relaxed/simple;
+	bh=jylN3WxyrQyqqaQ20fOx41X52y2IzYXWK79bb3JhcZk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=eQwlgJ0zMNxwpPR6yc2H7zoGIY4yjMgP/UlcNOIpIszaTOWbq5MmQ3GvD1pF/UeMyumljVFPW1TpY5MA1AAQAMd1Ky1XbYIUlJyI2DqsQxl6qfDlRoZQprEq4EG6yg67KLgYgU2o88eBAmtW7OXwEpfYHUxX0WCawL92lPeWPhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mee2OePn; arc=none smtp.client-ip=209.85.128.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-70f31433d96so42085187b3.2
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jun 2025 07:52:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748875965; x=1749480765; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=76sd53eSyvjHFmX9Hf2WRuEGfzgy55oGQBEa4L2zRnU=;
+        b=Mee2OePn+uk7YU4iY+ujb0Y6LbQC+2pBiA35pO83/5YD2fEosu0wH+MvaZFpOo7d0X
+         Au+cKYP8MjX+k+1eW4LiBqitbg3q7kdkCM6pEe5ctTWb2kr4u2teV+C4m5D3X71bEGk4
+         CJiMusWsU3kuTb7fg6IUsT5Mxy71sK6+tzJ38SOaljuixVhBd2nKZJuafGKjgK2vsAZj
+         9u01bQsu8N58+orLylX25FMA9Vo2GnjBq1Lx7h2nAYmyMDrxm44XS51x7ZJsYyKnnG8K
+         rQB34P74HmlP0fr5v5Pii50AaxGFSm6z+IpHqJQQK8SHYLoro14aqIbhOIFJzq9aszGQ
+         VZAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748875965; x=1749480765;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=76sd53eSyvjHFmX9Hf2WRuEGfzgy55oGQBEa4L2zRnU=;
+        b=HcfQx52r9TDajhqmj+VCzpTXoDP3Tf9k0HCNFv2GvJ5H+XcNg6ZF2JMnKX9AkSsamN
+         OSHnuQbxwZFA+vbhhTFiE2zAs2GYTB5+IIn8lwwEIdoN27KGMfO6ie36+Srb9nXPltOj
+         Sdd29WkohacYzH3JqDBrrmGUdg1Ytn8+qNEk+ank+B8H8oEBejsjwhSaHgR5l3IM4Hno
+         wnoWXrbTSc0hCMA8gBwyrA5i9eY5/DXy8LZ9XRBldlZtjAnrhLYKlFdzwVp5SkfaU9AS
+         m64r81cDDm3KMw1UKN0hUUtv6U+aVJ+L/A4W5y3Txmshd96Sfsw3hvSe8kcpfE2lLiAu
+         5LQw==
+X-Forwarded-Encrypted: i=1; AJvYcCX/Ruz6VWv96EGrM4JGgJvMYWJnwW7ffEGk5SI76G+fZ2Vih1s4gpWhHs4hReKhExbSdyjvyF1wFqGgR8s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzg5HChYflpmZOIFVJj2AyadzLc2izgArG8fC6XwRP4e9oIRxTR
+	a5+XdDCIx+cQVx2IqBdMKJULffRWL83tSTzxtuinOam6IxVyEMpsJ13YZaFKTw==
+X-Gm-Gg: ASbGnctexWTMepIXWFyUMteNCD0LJxf2Q94bNINGrQOn0eb/zno86Dp1K8SKiOXork+
+	MlwwhEGWUZ//cG9YAhXreJCysvwSzsyFp5FRPI6QC0wMPhWQsIqaItYJDlfienDnhpNrbI8cCJP
+	fUdhO9BMIIuoj2hrwPA1Th9obufmIwDNMR7EyQfDhbYFgx4nuHBkQuAPGjrSZtYU/b2TTJMwJrt
+	J9tLiscRkRiUSybZfvGfL1NHvFZZggXwFcElvF4cD8HWb+MXKPcVebGceSuUd0U+syN+sOrtQeZ
+	L4v3WsOrLAVJjXUHFLRdvnR9m+V1qEEMfG8eFDCDanIYfsrdAg==
+X-Google-Smtp-Source: AGHT+IEsgSp200jiLK+JMX2zF3T0B7XKAG0dLeZ5mmTJTjJ/BXwU5aM/+R7TYdq3m+S8I9xo+XiTZg==
+X-Received: by 2002:a05:690c:4d84:b0:70d:ffaf:48ed with SMTP id 00721157ae682-71057d61298mr155431007b3.33.1748875964793;
+        Mon, 02 Jun 2025 07:52:44 -0700 (PDT)
+Received: from localhost ([2a03:2880:25ff:1::])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-70f8abee892sm20949177b3.32.2025.06.02.07.52.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Jun 2025 07:52:42 -0700 (PDT)
+From: Joshua Hahn <joshua.hahnjy@gmail.com>
+To: Harry Yoo <harry.yoo@oracle.com>
+Cc: kernel test robot <lkp@intel.com>,
+	oe-kbuild-all@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH] lib/tests: Make FORTIFY_KUNIT_TEST depend on FORTIFY_SOURCE
-Date: Mon,  2 Jun 2025 16:51:44 +0200
-Message-ID: <e36d5e6996a7ea4dc694c4b8dedd15943952d33d.1748875801.git.geert@linux-m68k.org>
-X-Mailer: git-send-email 2.43.0
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	Gregory Price <gourry@gourry.net>,
+	Huang Ying <ying.huang@linux.alibaba.com>,
+	Honggyu Kim <honggyu.kim@sk.com>
+Subject: Re: mm/mempolicy.c:3719:1-6: ERROR: invalid free of structure field
+Date: Mon,  2 Jun 2025 07:52:39 -0700
+Message-ID: <20250602145240.1868958-1-joshua.hahnjy@gmail.com>
+X-Mailer: git-send-email 2.47.1
+In-Reply-To: <aD0-JNr0Z83OpXg4@harry>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,63 +95,71 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-When CONFIG_FORTIFY_SOURCE is not enabled, all fortify tests are
-skipped.  Move this logic from run-time to config-time, to avoid people
-building and running tests that do not do anything.
+On Mon, 2 Jun 2025 15:01:08 +0900 Harry Yoo <harry.yoo@oracle.com> wrote:
 
-This basically reverts commit 1a78f8cb5daac774 ("fortify: Allow KUnit
-test to build without FORTIFY") in v6.9, which was v3 of commit
-a9dc8d0442294b42 ("fortify: Allow KUnit test to build without FORTIFY")
-in v6.5, which was quickly reverted in commit 5e2956ee46244ffb ("Revert
-"fortify: Allow KUnit test to build without FORTIFY"").
+> On Sun, Jun 01, 2025 at 01:34:46PM +0800, kernel test robot wrote:
+> > cocci warnings: (new ones prefixed by >>)
+> > >> mm/mempolicy.c:3719:1-6: ERROR: invalid free of structure field
+> > 
+> > vim +3719 mm/mempolicy.c
+> > 
+> >   3700	
+> >   3701	static void wi_state_free(void)
+> >   3702	{
+> >   3703		struct weighted_interleave_state *old_wi_state;
+> >   3704	
+> >   3705		mutex_lock(&wi_state_lock);
+> >   3706	
+> >   3707		old_wi_state = rcu_dereference_protected(wi_state,
+> >   3708				lockdep_is_held(&wi_state_lock));
+> >   3709		if (!old_wi_state) {
+> >   3710			mutex_unlock(&wi_state_lock);
+> >   3711			goto out;
+> >   3712		}
+> >   3713	
+> >   3714		rcu_assign_pointer(wi_state, NULL);
+> >   3715		mutex_unlock(&wi_state_lock);
+> >   3716		synchronize_rcu();
+> >   3717		kfree(old_wi_state);
+> >   3718	out:
+> > > 3719		kfree(&wi_group->wi_kobj);
+> 
+> Hmm maybe Joshua meant kfree(wi_group)?
+> 
+> Anyway, practically it's the same as kfree(wi_group) and something strange
+> is happening there.
+> 
+> in add_weighted_interleave_group() (the only caller of wi_cleanup()),
+> kobject_del() and kobject_put() are called after wi_cleanup() freed
+> wi_group in the error path.
 
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
----
-Let's keep on playing whack-a-mole ;-)
----
- lib/Kconfig.debug         | 1 +
- lib/tests/fortify_kunit.c | 8 --------
- 2 files changed, 1 insertion(+), 8 deletions(-)
+Hi Harry,
 
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index 407f2ed7fcb3e94c..ca5afd192c9fbf51 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -2912,6 +2912,7 @@ config STACKINIT_KUNIT_TEST
- config FORTIFY_KUNIT_TEST
- 	tristate "Test fortified str*() and mem*() function internals at runtime" if !KUNIT_ALL_TESTS
- 	depends on KUNIT
-+	depends on FORTIFY_SOURCE
- 	default KUNIT_ALL_TESTS
- 	help
- 	  Builds unit tests for checking internals of FORTIFY_SOURCE as used
-diff --git a/lib/tests/fortify_kunit.c b/lib/tests/fortify_kunit.c
-index 29ffc62a71e3f968..10b0e1b12cdc3ae2 100644
---- a/lib/tests/fortify_kunit.c
-+++ b/lib/tests/fortify_kunit.c
-@@ -48,11 +48,6 @@ void fortify_add_kunit_error(int write);
- #include <linux/string.h>
- #include <linux/vmalloc.h>
- 
--/* Handle being built without CONFIG_FORTIFY_SOURCE */
--#ifndef __compiletime_strlen
--# define __compiletime_strlen __builtin_strlen
--#endif
--
- static struct kunit_resource read_resource;
- static struct kunit_resource write_resource;
- static int fortify_read_overflows;
-@@ -1071,9 +1066,6 @@ static void fortify_test_kmemdup(struct kunit *test)
- 
- static int fortify_test_init(struct kunit *test)
- {
--	if (!IS_ENABLED(CONFIG_FORTIFY_SOURCE))
--		kunit_skip(test, "Not built with CONFIG_FORTIFY_SOURCE=y");
--
- 	fortify_read_overflows = 0;
- 	kunit_add_named_resource(test, NULL, NULL, &read_resource,
- 				 "fortify_read_overflows",
--- 
-2.43.0
+Thanks for your suggestion and insight! This is totally a slip-up on my end.
 
+I completely missed the kobject_{put, delete} that gets called immediately
+after this, which is embarrassing because rebasing on top of Rakie's patch
+(which introduces those proper freeing calls) was the main focus of this v8.
+
+From what I can tell, I think the solution here is to just remove the goto
+statement entirely. There is no need to free the wi_group here, and it
+would also be bad practice to do more than the function name suggests anyways.
+
+Let me send a patch that gets rid of the goto statement, and just returns if
+there is no old_wi_state. While I'm at it, I'll send in a patch from
+David Hildenbrand that is an optimization in this area. 
+
+Thanks again for taking a look Harry, hope you have a great day!
+Joshua
+
+> 
+> >   3720	}
+> >   3721	
+> > 
+> > -- 
+> > 0-DAY CI Kernel Test Service
+> 
+> -- 
+> Cheers,
+> Harry / Hyeonggon
 
