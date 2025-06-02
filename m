@@ -1,93 +1,156 @@
-Return-Path: <linux-kernel+bounces-670976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DFAAACBB71
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 21:20:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B62CEACBB79
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 21:24:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7FE307AA089
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 19:19:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81F1C170F98
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 19:24:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC6231991CF;
-	Mon,  2 Jun 2025 19:20:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA89E1991CF;
+	Mon,  2 Jun 2025 19:24:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="bURaxLVJ"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TjDUmDKA"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B48C12C324E;
-	Mon,  2 Jun 2025 19:20:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E15A2C324E
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 19:24:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748892041; cv=none; b=QaadN8nZ9JjnpyYtX1YRCLJxmN0Ro/oiHWrQClm0k2QS7SZeJdOVYRDPpUbr8i5pdxrI9XxX2dW6EoFSQInM1CuZ26TvdV50va7Wo2eC8SKqp8G5o23SmT5xaUETS2pEi8CUAvupoFru4i0COPuutDjcanLbN6uHEsMUSSRLaCw=
+	t=1748892278; cv=none; b=ORt8xHFdh27OVwSyDiiZufih0vejJCX/NyLU4kfBaJIH2AnVunjRVY70CxxHzjKRcREw5lA2RVae+YF3IZFXzrSe13rwB3R85ZwM1y8Q7YXAsdkGNKUMd15E5Rv7GNAXcHG0YyEkQFKvUGIMNV85m1TMmJUmLCAvl756saQm5MI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748892041; c=relaxed/simple;
-	bh=5uhXrocylBQdGBan0QqjAPQ5k009DNU1Z8mQ+OjLuBo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jQ4hlVT+fJEP6V3GQruRv0aXuboTwPEpHYlut0ijEvS8KUocd+77+BLrTqCxHM/IxRMXcAr4u0xoUYsp0sXSvrHaln25jCujL/6AM06NUQpEsXVAQ2dCATA3huAbNtuGfXfBQM9w6EXfZPNb+HVWSDpNPVXLYv8UBQMoI+WJecE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=bURaxLVJ; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=v0JOHp1Sk8wZLXiW77XvXNKnCz2rxKUiMhwBWqUIHew=; b=bURaxLVJAmyVpHPBIb19lm59cU
-	rZP9W8HemkuDXsIreFITIpBEv/DxtNb9SNpWVNOVlpWFl/suDq6SRbL1wKLeXZKXmq8jcQRSLUxyS
-	DnHfoRUDVJSN3YCVV+6XVcwestxHw7p1B0jDYmxFXj5g6A7DBiIr2s8nmxrTmKEZ/balxdeC1epJ5
-	g2unXJkTZtmIOe0t+W+HOO9xWaY6YDAzpw0tmDA1S1hgWyI33e/40kZTF/tb3t5spNwp4cIt/N4lj
-	jCMeL67EcMHk4fwNJmCmHL/oMkd3Ev9t7jygrLBY/a359tcZ08drJ4533UoIe62nyd02KdVJ/DJF+
-	FvdMY86A==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uMAi5-00000001FuO-3FZs;
-	Mon, 02 Jun 2025 19:20:37 +0000
-Date: Mon, 2 Jun 2025 20:20:37 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-mm@kvack.org,
-	mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] Additional MM updates for 6.16-rc1
-Message-ID: <aD35hVObSEuPmHDg@casper.infradead.org>
-References: <20250601151222.60ead71e7d8492a18c711a05@linux-foundation.org>
- <aD29wnb5zR-afWpM@casper.infradead.org>
- <20250602121751.53ee502779a2f746404a3548@linux-foundation.org>
+	s=arc-20240116; t=1748892278; c=relaxed/simple;
+	bh=tuwqe87VdwziFvbz9AdK0h/LOxYJMXn8i8IpMj5T0BI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=PmQs7i9T3I1J2X7X8COVQvTG440GjwCM5cwSSv4HnlxiJBSq0mRPnF3VOyxpqgU9oL0xjDPExgczngytT61yU+SxRnRlVhRGl2tyy4o8Gar+2hLDhW2Ka2vOH1dufNh9eYAHPhxpiUK7E1WjgHZjS0QA/PiQlw0Q1lbd98LPciQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TjDUmDKA; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3a0ac853894so4576453f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jun 2025 12:24:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748892275; x=1749497075; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8m6SvceI4w2fX+/mSIf31z8+GL2GuOXNwJxTgqZqfKA=;
+        b=TjDUmDKAu0UMjK4v5NMPIKSyvx6zGBkSDLq/hI1fnG4ubltYkg9/lBXqmhdGVu0NpQ
+         3SLEXcBj/4+BukdkgnX799x/iobc2dV1QyN31ZuirXMaQy2012nUb5PiG44/bWu8n2Ku
+         UKXm+5yIpyQ0eOXZGxp2SzHVR8dFSOqdDoNDWi7NOlhcf72fMQUK2PQrdEpHTT8quP++
+         7nr5gqDRILX3aoNUJ+0Yj0lHaZAHHJyaJ9FVN2UmPUFXLOG1dt7wsWKCf7Y+ZShakXu1
+         JoENtiWrJGBfSblKpHSyCA3qCFcuaztU83ew77Q3mwoI2/mRxGG9lDN1nTK8TGZRkU7j
+         VSSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748892275; x=1749497075;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8m6SvceI4w2fX+/mSIf31z8+GL2GuOXNwJxTgqZqfKA=;
+        b=ps35VKfeSMd+fcEsQE5SdlqVKVSwxmoD3SfpeX/Oth0QLwg4q84jb1mtHzrlkmj5ro
+         2zLLLbVSzNDCeqmVd/iI8t9R/U9ngSt/j29DUZF1JiJeAiY6BKv36UMSpcfpJghpxaVN
+         FMxv7V2FSXKIKM1ULicWNxkmAXqUMMMu2OtSo582nB3EG6mvVudYTH2fHbg0Vp/H+Tf+
+         n8STjXBGa4R+Yh76GMXgPiNDqMhnj/LFJZW/AWtCuvW592hlNdt4bHSHBcg5ZOVEr4nG
+         66DwLWxJTD4m7vz0eVFYh+yq3Ls4lmrGUtSSFipxgWDSbJj6lXSghPRUa/SQl+xjkE+o
+         y/Ug==
+X-Forwarded-Encrypted: i=1; AJvYcCXDssG/BahD5CYc1NmAjMAQ5rpzgo64FbCXzoOAq8/tKCsryfvSkkpFe1EwSMMJcjXcrlJqiVJwm6yz5B4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzT2uVyX6oD4DpOXjHIV6ADipHMG63gQ4iB4HH9ejs1C7zz6UWc
+	M+yo9HxDB7CYbWkWmBFJjyLw/mES+dwVaCUT4CjGj7E5lDA7GnmEOYxF
+X-Gm-Gg: ASbGnctTM7vWtivY/N2dumBmNUyFW9AD7AH9B7SuTNy7IA3ANCdObx47mJzgRipGpIO
+	mSnHlFglPqTqUd8urJHZAWwo4Es1ibeeljDYB90+FOJgj062Acw5xDsLdXjl9GBocd4EdvLHHGS
+	cCFIEC3X/R4v595/6nF4JDz8BFyQOjRNnWN/KarbCgEdgW0vO+FU/IuRj7CxdgPDS1jEXmTWnW7
+	uavzpoYG+poc2+CkOv2cjqjdXYIAVX0abN7BsDS3Y+MetBpDAYIs1DVIKQJFgD4HYt9njwKSQ3i
+	NvvCAUR0fM3sU55MyS5IiwXju3zrDsG32Tms+ZpSaP45VMJnpk7XvH15t260xFEfOg==
+X-Google-Smtp-Source: AGHT+IEWlGVmcNdwcc1WhsAIOXfGzocOIIKwmPag7jHCLZm/M1bXamrXvTSGo/Zkn2eB4BjAiko9GA==
+X-Received: by 2002:a05:6000:420a:b0:3a4:cb4f:ac2a with SMTP id ffacd0b85a97d-3a4fe16aa9bmr5879577f8f.21.1748892274428;
+        Mon, 02 Jun 2025 12:24:34 -0700 (PDT)
+Received: from localhost.localdomain ([41.79.198.22])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-450d7fb05bbsm131449525e9.22.2025.06.02.12.24.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Jun 2025 12:24:34 -0700 (PDT)
+From: Khalid Ali <khaliidcaliy@gmail.com>
+X-Google-Original-From: Khalid Ali <khaliidcaliy@gmail.com
+To: bp@alien8.de
+Cc: dave.hansen@linux.intel.com,
+	hpa@zytor.com,
+	jpoimboe@kernel.org,
+	khaliidcaliy@gmail.com,
+	linux-kernel@vger.kernel.org,
+	mingo@redhat.com,
+	pawan.kumar.gupta@linux.intel.com,
+	peterz@infradead.org,
+	tglx@linutronix.de,
+	x86@kernel.org
+Subject: Re: [PATCH] kernel/cpu/bugs: log ltf1 mitigation status
+Date: Mon,  2 Jun 2025 19:22:44 +0000
+Message-ID: <20250602192346.654-1-khaliidcaliy@gmail.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250602090942.GAaD1qVv5182lZSPtK@fat_crate.local>
+References: <20250602090942.GAaD1qVv5182lZSPtK@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250602121751.53ee502779a2f746404a3548@linux-foundation.org>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 02, 2025 at 12:17:51PM -0700, Andrew Morton wrote:
-> On Mon, 2 Jun 2025 16:05:38 +0100 Matthew Wilcox <willy@infradead.org> wrote:
-> 
-> > On Sun, Jun 01, 2025 at 03:12:22PM -0700, Andrew Morton wrote:
-> > > Linus, please merge this second batch of MM updates for the 6.16-rcX cycle.
+> > Log the L1TF mitigation like other mitigatioons. This one is is the
+> > only one that doesn't get logged.
+> >
+> > Signed-off-by: Khalid Ali <khaliidcaliy@gmail.com>
+> > ---
+> > arch/x86/kernel/cpu/bugs.c | 1 +
+> >  1 file changed, 1 insertion(+)
 > > 
-> > A word of warning for Linus since he wouldn't've been cc'd on the
-> > earlier email.  This branch is based on v6.15-rc6 but contains a
-> > commit which depends on 97dfbbd135cb which was merged during the
-> > current merge window.  You might want to do a rebase or ask Andrew to
-> > do it in order to prevent a bisection hazard.
-> > 
-> > 0day-ci found the problem here:
-> > https://lore.kernel.org/linux-mm/202506022027.IYQzZghL-lkp@intel.com/
-> 
-> I think it's OK?  I did the merge and 
-> 
-> 	d9736929445e iov: remove copy_page_from_iter_atomic()
-> 
-> lands later than
-> 
-> 	97dfbbd135cb highmem: add folio_test_partial_kmap()
+> > diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+> > index 7f94e6a5497d..38cb2a1b2849 100644
+> > --- a/arch/x86/kernel/cpu/bugs.c
+> > +++ b/arch/x86/kernel/cpu/bugs.c
+> > @@ -2803,6 +2803,7 @@ static void __init l1tf_apply_mitigation(void)
+> > 		return;
+> > 	}
+> >  
+> > +	pr_info("Mitigation: PTE inversion\n");
+> >  	setup_force_cpu_cap(X86_FEATURE_L1TF_PTEINV);
+> >  }
 
-Yes, but if 'git bisect' lands you on there being a problem in 0b43b8bc8ef8
-you won't be able to build it because 0b43b8bc8ef8 has d9736929445e as
-an ancestor but not 97dfbbd135cb .  You'll need to add a cherry-pick of
-97dfbbd135cb which is aggravating and we try to avoid this.
+> Pawan, what's the story here?
+>
+> There's this stuff further down in that file:
+>
+> | #define L1TF_DEFAULT_MSG "Mitigation: PTE Inversion"
+> |         
+> | #if IS_ENABLED(CONFIG_KVM_INTEL)
+> | static const char * const l1tf_vmx_states[] = {
+>
+> which comes from 2018:
+> 
+> 72c6d2db64fa ("x86/litf: Introduce vmx status variable")
+> 
+> I guess it is about time we made this mitigation also follow the common
+> pattern with the mitigation strings and issuing them at the right time?
+>
+> :-)
+>
+> Thx.
+
+Exactly, this mitigation is the only one doesn't have string, 
+so i thought it is odd. Not only this but we need to make all 
+mitigations consistent.
+
+I think the commit you mentioned (72c6d2db64fa ("x86/litf: Introduce vmx status variable"))
+and mine have different context (one related to vmx and other common options), and i couldn't
+find any string to express since enum values are basically different. enum l1tf_mitigations 
+seems more general like "off" or "on" doesn't dictate any special mitigation option. So the 
+simplest way maybe is to print the string like "PTE inversion".
+
+Maybe we should move the macro at top of the function so it can print it. This is the only 
+information we can print about L1TF mitigation.
+
+Regards 
+Khalid Ali
 
