@@ -1,475 +1,112 @@
-Return-Path: <linux-kernel+bounces-670746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A0DCACB86E
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 17:41:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE7D8ACB636
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 17:15:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 701EE4A79DE
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 15:28:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB21A1BC2DE7
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 15:07:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4E902253EE;
-	Mon,  2 Jun 2025 15:25:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 208F222259E;
+	Mon,  2 Jun 2025 15:00:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b="2Mua7UF0"
-Received: from imap5.colo.codethink.co.uk (imap5.colo.codethink.co.uk [78.40.148.171])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="in305YNH"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8D871A2547
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 15:25:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.40.148.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEDA122259F
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 15:00:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748877944; cv=none; b=lb/qqg8Jm7pL0kaozKlNs0ECiPLNkE7lPibHFSWVWH7e5byX5y2N9WjIYPlYDahhE8GddoPL3ilgL0C06D1DOUH9iKm2a0SJsqNB42gcVcekUT38zF8O+Fsn9JN0jUYd2r2/dzZN9f6ier0iubH4csqZvc/jS4Q7x8mESriYRkk=
+	t=1748876420; cv=none; b=odiZ5ZZ5fE6R2ZzZFZ1zhfCNVNzDq7okJjqYUf6Dn0DXMFZpo74fBqm7EfzegGYPOeHDNo4o4AqeT9pcrgdE5HKnV8JhjUvvfeiqsc/YTz5ztxpNchB+bI7/8yn8IZkKQjerrarS1Nb1zzgbHMJxY6X9Zx6Rd+c19iuYFQL4njM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748877944; c=relaxed/simple;
-	bh=V9qpyVj2qptNPmcnnNYN1gSodzoegKuzkukODxhm+tw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=frCOj9NA0bY0jEUNq0RFs+5WdLX0c3XIrQlwYwX+FMqqJpwKGSRxA1MNlqbs1tY8AMUEtivdwgkMj1wn+i1onLlnqCENH2CnCZcvbE6//r2DsFaXeqLO8gc8trtkvxxMDA61CHgjMcsjRWi1RDeZkW8zjgzSM8MIOTCnVgljbAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk; spf=pass smtp.mailfrom=codethink.co.uk; dkim=pass (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b=2Mua7UF0; arc=none smtp.client-ip=78.40.148.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codethink.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=codethink.co.uk; s=imap5-20230908; h=Sender:MIME-Version:
-	Content-Transfer-Encoding:Content-Type:References:In-Reply-To:Date:Cc:To:From
-	:Subject:Message-ID:Reply-To:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=nmh8hZH+/SkrQ4KvtitpdeGoe8YXi7dLPYr07tqnxos=; b=2Mua7UF01GNpCzUMIxS/ZiKXJM
-	jZHDEFWxEs4Ej9+FidHAo96puvIJtuNQnA8iT/5HlYMHfplHLMaNhvWBNh/UloDdvs8qziLqyX3cf
-	XXZju6U5t+HPejFUcVci/oTaWahQyvDiOEhWXc01S1SScdcuzeQRfNDWd27lx9bwV8WX1Fa47E5HE
-	uIN6TcN2TNUNY2ntZSvrSrXHLGsMdxV8d64aeU/9Z9RrpyboMKi3UDlpH3EsK8ZSz/AnArrbMzdXv
-	XoDakYxtDLWAU6Xua6jBI3wVQ25zMPfiPAIJtOwnNB9gnNn7Eq4pAbcvn30VTKGbfoaKs16ftCEfC
-	AS+mEvJw==;
-Received: from [213.55.223.191] (helo=[10.108.88.253])
-	by imap5.colo.codethink.co.uk with esmtpsa  (Exim 4.94.2 #2 (Debian))
-	id 1uM6d8-00Ara5-8a; Mon, 02 Jun 2025 15:59:14 +0100
-Message-ID: <8d6dd3013b05225541821132398cb7615cdd874e.camel@codethink.co.uk>
-Subject: Re: SCHED_DEADLINE tasks missing their deadline with
- SCHED_FLAG_RECLAIM jobs in the mix (using GRUB)
-From: Marcel Ziswiler <marcel.ziswiler@codethink.co.uk>
-To: Juri Lelli <juri.lelli@redhat.com>
-Cc: luca abeni <luca.abeni@santannapisa.it>, linux-kernel@vger.kernel.org, 
- Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Vineeth Pillai	 <vineeth@bitbyteword.org>
-Date: Mon, 02 Jun 2025 16:59:11 +0200
-In-Reply-To: <aDgrOWgYKb1_xMT6@jlelli-thinkpadt14gen4.remote.csb>
-References: <ce8469c4fb2f3e2ada74add22cce4bfe61fd5bab.camel@codethink.co.uk>
-	 <aBTO3r6Py_emwf1Y@jlelli-thinkpadt14gen4.remote.csb>
-	 <f532441d8b3cf35e7058305fd9cd3f2cbd3a9fac.camel@codethink.co.uk>
-	 <20250507222549.183e0b4a@nowhere>
-	 <92690eb9158c1019dc0945f8298800cad17cae05.camel@codethink.co.uk>
-	 <20250523214603.043833e3@nowhere>
-	 <c91a117401225290fbf0390f2ce78c3e0fb3b2d5.camel@codethink.co.uk>
-	 <aDgrOWgYKb1_xMT6@jlelli-thinkpadt14gen4.remote.csb>
-Organization: Codethink
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1 (by Flathub.org) 
+	s=arc-20240116; t=1748876420; c=relaxed/simple;
+	bh=wWb+Nid5VUOH38Jde4+YnT8vvEysVcJMVJwzOim0Hds=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gxc+j9nvXhTOf2aMVSCCJ/Lf3LZfwV5nMUbQ53HzoeNrlgb2eXak2XjMkz3nL9MvG2o+lTB9iM+QDJDTCEDorp0vgUbdo4IEQ/xxBSWO3iekwBs5YNY6OFdqqfUS1HEBhpl7UOTt9G6dmyAsxuXn/Lbd1+pQ7dvYnMo8wuRpkXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=in305YNH; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1748876419; x=1780412419;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=wWb+Nid5VUOH38Jde4+YnT8vvEysVcJMVJwzOim0Hds=;
+  b=in305YNHY065nbLuWd2PgBk6OVJoay8s/ltTZvHBSnzFZ8dkYJikPOEL
+   uA8aUF1NUDpAE1eTzu6x3ljpEOtiVcX/kq4Xdwx80yOwuJRP/AbAJGUP1
+   A5d7ehycTaG84lpPeA8yGsbocEgPSWF6H4XahpYBFM+UkwgdmNAo1kTP+
+   NrhFf7/ipAV+MHfVeJXbdsJ8Y46rhO7Yz7RDTgu8Wi8nGQw8gHXG/ES4v
+   d651953KtFW5BeWho5ba8/FfzYv5Vgw8Ttik4IiaIK1FexSNOL7gjtGU7
+   IsP8SPd23hXHItacFTk7CBNun4aH8ekiOFqHSVeu+dICv2jHF4jPJPHvx
+   Q==;
+X-CSE-ConnectionGUID: 7tKWUuXPTwG3RyLRCGrtVg==
+X-CSE-MsgGUID: lYSJs8fKS0uQ7x7yeCdiQQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11451"; a="68436666"
+X-IronPort-AV: E=Sophos;i="6.16,203,1744095600"; 
+   d="scan'208";a="68436666"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2025 08:00:18 -0700
+X-CSE-ConnectionGUID: 8ihRZWE+RUWHuwZTejsogQ==
+X-CSE-MsgGUID: mpsLBosnQASZ6yAnaxw13g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,203,1744095600"; 
+   d="scan'208";a="144594788"
+Received: from ly-workstation.sh.intel.com (HELO ly-workstation) ([10.239.35.3])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2025 08:00:15 -0700
+Date: Mon, 2 Jun 2025 23:00:11 +0800
+From: "Lai, Yi" <yi1.lai@linux.intel.com>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-kernel@vger.kernel.org,
+	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Waiman Long <longman@redhat.com>, yi1.lai@intel.com
+Subject: Re: [PATCH v12 14/21] futex: Allow to resize the private local hash
+Message-ID: <aD28exSNTcRKCCkl@ly-workstation>
+References: <20250416162921.513656-1-bigeasy@linutronix.de>
+ <20250416162921.513656-15-bigeasy@linutronix.de>
+ <aDwDw9Aygqo6oAx+@ly-workstation>
+ <20250602110027.wfqbHgzb@linutronix.de>
+ <aD22/Ra2jHOsHJ9W@ly-workstation>
+ <20250602144422.GIWEDzbT@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Sender: marcel.ziswiler@codethink.co.uk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250602144422.GIWEDzbT@linutronix.de>
 
-Hi Juri
+On Mon, Jun 02, 2025 at 04:44:22PM +0200, Sebastian Andrzej Siewior wrote:
+> On 2025-06-02 22:36:45 [+0800], Lai, Yi wrote:
+> > Will trim my report next time.
+> Thank you.
+> 
+> > After applying following patch on top of lastest linux-next, issue
+> > cannot be reproduced. Thanks.
+> 
+> Does this statement above count as
+> Tested-by: "Lai, Yi" <yi1.lai@linux.intel.com>
+> 
+> ?
+>
 
-On Thu, 2025-05-29 at 11:39 +0200, Juri Lelli wrote:
-> Hi Marcel,
->=20
-> On 25/05/25 21:29, Marcel Ziswiler wrote:
-> > Hi Luca
-> >=20
-> > On Fri, 2025-05-23 at 21:46 +0200, luca abeni wrote:
-> > > Hi Marcel,
-> > >=20
-> > > sorry, but I have some additional questions to fully understand your
-> > > setup...
-> >=20
-> > No Problem, I am happy to answer any questions :)
-> >=20
-> > > On Mon, 19 May 2025 15:32:27 +0200
-> > > Marcel Ziswiler <marcel.ziswiler@codethink.co.uk> wrote:
-> > > [...]
-> > > > > just a quick question to better understand your setup (and check
-> > > > > where the issue comes from):
-> > > > > in the email below, you say that tasks are statically assigned to
-> > > > > cores; how did you do this? Did you use isolated cpusets,=C2=A0=
-=20
-> > > >=20
-> > > > Yes, we use the cpuset controller from the cgroup-v2 APIs in the
-> > > > linux kernel in order to partition CPUs and memory nodes. In detail=
-,
-> > > > we use the AllowedCPUs and AllowedMemoryNodes in systemd's slice
-> > > > configurations.
-> > >=20
-> > > How do you configure systemd? I am having troubles in reproducing you=
-r
-> > > AllowedCPUs configuration... This is an example of what I am trying:
-> > > 	sudo systemctl set-property --runtime custom-workload.slice AllowedC=
-PUs=3D1
-> > > 	sudo systemctl set-property --runtime init.scope AllowedCPUs=3D0,2,3
-> > > 	sudo systemctl set-property --runtime system.slice AllowedCPUs=3D0,2=
-,3
-> > > 	sudo systemctl set-property --runtime user.slice AllowedCPUs=3D0,2,3
-> > > and then I try to run a SCHED_DEADLINE application with
-> > > 	sudo systemd-run --scope -p Slice=3Dcustom-workload.slice <applicati=
-on>
-> >=20
-> > We just use a bunch of systemd configuration files as follows:
-> >=20
->=20
-> ...
->=20
-> > > How are you configuring the cpusets?
-> >=20
-> > See above.
-> >=20
->=20
-> Could you please add 'debug sched_debug sched_verbose' to your kernel
-> cmdline and share the complete dmesg before starting your tests?
+Yes. Please kindly include it.
 
-Sure, here you go [1].
+Tested-by: "Lai, Yi" <yi1.lai@linux.intel.com>
 
-> Also, I am attaching a script that should be able to retrieve cpuset
-> information if you run it with
->=20
-> # python3 get_cpuset_info.py > cpuset.out
->=20
-> Could you please also do that and share the collected information?
-
-[root@localhost ~]# python3 get_cpuset_info.py > cpuset.out
-[root@localhost ~]# cat cpuset.out=20
-Recursively retrieving cpuset information from /sys/fs/cgroup (cgroup v2):
-
-Cgroup: /
-  cpuset.cpus.effective: 0
-  cpuset.mems.effective: 0
-------------------------------
-Cgroup: /safety3.slice
-  cpuset.cpus: 3
-  cpuset.mems:=20
-  cpuset.cpus.effective: 3
-  cpuset.mems.effective: 0
-  cpuset.cpus.exclusive:=20
-  cpuset.cpus.exclusive.effective: 3
-  cpuset.cpus.partition: root
-------------------------------
-Cgroup: /sys-fs-fuse-connections.mount
-  cpuset.cpus:=20
-  cpuset.mems:=20
-  cpuset.cpus.effective: 0
-  cpuset.mems.effective: 0
-  cpuset.cpus.exclusive:=20
-  cpuset.cpus.exclusive.effective:=20
-  cpuset.cpus.partition: member
-------------------------------
-Cgroup: /sys-kernel-debug.mount
-  cpuset.cpus:=20
-  cpuset.mems:=20
-  cpuset.cpus.effective: 0
-  cpuset.mems.effective: 0
-  cpuset.cpus.exclusive:=20
-  cpuset.cpus.exclusive.effective:=20
-  cpuset.cpus.partition: member
-------------------------------
-Cgroup: /dev-mqueue.mount
-  cpuset.cpus:=20
-  cpuset.mems:=20
-  cpuset.cpus.effective: 0
-  cpuset.mems.effective: 0
-  cpuset.cpus.exclusive:=20
-  cpuset.cpus.exclusive.effective:=20
-  cpuset.cpus.partition: member
-------------------------------
-Cgroup: /user.slice
-  cpuset.cpus: 0
-  cpuset.mems:=20
-  cpuset.cpus.effective: 0
-  cpuset.mems.effective: 0
-  cpuset.cpus.exclusive:=20
-  cpuset.cpus.exclusive.effective:=20
-  cpuset.cpus.partition: member
-------------------------------
-Cgroup: /monitor.slice
-  cpuset.cpus: 0
-  cpuset.mems:=20
-  cpuset.cpus.effective: 0
-  cpuset.mems.effective: 0
-  cpuset.cpus.exclusive:=20
-  cpuset.cpus.exclusive.effective:=20
-  cpuset.cpus.partition: member
-------------------------------
-Cgroup: /safety1.slice
-  cpuset.cpus: 1
-  cpuset.mems:=20
-  cpuset.cpus.effective: 1
-  cpuset.mems.effective: 0
-  cpuset.cpus.exclusive:=20
-  cpuset.cpus.exclusive.effective: 1
-  cpuset.cpus.partition: root
-------------------------------
-Cgroup: /sys-kernel-tracing.mount
-  cpuset.cpus:=20
-  cpuset.mems:=20
-  cpuset.cpus.effective: 0
-  cpuset.mems.effective: 0
-  cpuset.cpus.exclusive:=20
-  cpuset.cpus.exclusive.effective:=20
-  cpuset.cpus.partition: member
-------------------------------
-Cgroup: /init.scope
-  cpuset.cpus: 0
-  cpuset.mems:=20
-  cpuset.cpus.effective: 0
-  cpuset.mems.effective: 0
-  cpuset.cpus.exclusive:=20
-  cpuset.cpus.exclusive.effective:=20
-  cpuset.cpus.partition: member
-------------------------------
-Cgroup: /system.slice
-  cpuset.cpus: 0
-  cpuset.mems:=20
-  cpuset.cpus.effective: 0
-  cpuset.mems.effective: 0
-  cpuset.cpus.exclusive:=20
-  cpuset.cpus.exclusive.effective:=20
-  cpuset.cpus.partition: member
-------------------------------
-Cgroup: /system.slice/systemd-networkd.service
-  cpuset.cpus:=20
-  cpuset.mems:=20
-  cpuset.cpus.effective: 0
-  cpuset.mems.effective: 0
-  cpuset.cpus.exclusive:=20
-  cpuset.cpus.exclusive.effective:=20
-  cpuset.cpus.partition: member
-------------------------------
-Cgroup: /system.slice/systemd-udevd.service
-  cpuset.cpus:=20
-  cpuset.mems:=20
-  cpuset.cpus.effective: 0
-  cpuset.mems.effective: 0
-  cpuset.cpus.exclusive:=20
-  cpuset.cpus.exclusive.effective:=20
-  cpuset.cpus.partition: member
-------------------------------
-Cgroup: /system.slice/system-serial\x2dgetty.slice
-  cpuset.cpus:=20
-  cpuset.mems:=20
-  cpuset.cpus.effective: 0
-  cpuset.mems.effective: 0
-  cpuset.cpus.exclusive:=20
-  cpuset.cpus.exclusive.effective:=20
-  cpuset.cpus.partition: member
-------------------------------
-Cgroup: /system.slice/boot.mount
-  cpuset.cpus:=20
-  cpuset.mems:=20
-  cpuset.cpus.effective: 0
-  cpuset.mems.effective: 0
-  cpuset.cpus.exclusive:=20
-  cpuset.cpus.exclusive.effective:=20
-  cpuset.cpus.partition: member
-------------------------------
-Cgroup: /system.slice/var-lib-containers.mount
-  cpuset.cpus:=20
-  cpuset.mems:=20
-  cpuset.cpus.effective: 0
-  cpuset.mems.effective: 0
-  cpuset.cpus.exclusive:=20
-  cpuset.cpus.exclusive.effective:=20
-  cpuset.cpus.partition: member
-------------------------------
-Cgroup: /system.slice/auditd.service
-  cpuset.cpus:=20
-  cpuset.mems:=20
-  cpuset.cpus.effective: 0
-  cpuset.mems.effective: 0
-  cpuset.cpus.exclusive:=20
-  cpuset.cpus.exclusive.effective:=20
-  cpuset.cpus.partition: member
-------------------------------
-Cgroup: /system.slice/system-modprobe.slice
-  cpuset.cpus:=20
-  cpuset.mems:=20
-  cpuset.cpus.effective: 0
-  cpuset.mems.effective: 0
-  cpuset.cpus.exclusive:=20
-  cpuset.cpus.exclusive.effective:=20
-  cpuset.cpus.partition: member
-------------------------------
-Cgroup: /system.slice/systemd-journald.service
-  cpuset.cpus:=20
-  cpuset.mems:=20
-  cpuset.cpus.effective: 0
-  cpuset.mems.effective: 0
-  cpuset.cpus.exclusive:=20
-  cpuset.cpus.exclusive.effective:=20
-  cpuset.cpus.partition: member
-------------------------------
-Cgroup: /system.slice/systemd-nsresourced.service
-  cpuset.cpus:=20
-  cpuset.mems:=20
-  cpuset.cpus.effective: 0
-  cpuset.mems.effective: 0
-  cpuset.cpus.exclusive:=20
-  cpuset.cpus.exclusive.effective:=20
-  cpuset.cpus.partition: member
-------------------------------
-Cgroup: /system.slice/sshd.service
-  cpuset.cpus:=20
-  cpuset.mems:=20
-  cpuset.cpus.effective: 0
-  cpuset.mems.effective: 0
-  cpuset.cpus.exclusive:=20
-  cpuset.cpus.exclusive.effective:=20
-  cpuset.cpus.partition: member
-------------------------------
-Cgroup: /system.slice/var-tmp.mount
-  cpuset.cpus:=20
-  cpuset.mems:=20
-  cpuset.cpus.effective: 0
-  cpuset.mems.effective: 0
-  cpuset.cpus.exclusive:=20
-  cpuset.cpus.exclusive.effective:=20
-  cpuset.cpus.partition: member
-------------------------------
-Cgroup: /system.slice/test-audio.service
-  cpuset.cpus:=20
-  cpuset.mems:=20
-  cpuset.cpus.effective: 0
-  cpuset.mems.effective: 0
-  cpuset.cpus.exclusive:=20
-  cpuset.cpus.exclusive.effective:=20
-  cpuset.cpus.partition: member
-------------------------------
-Cgroup: /system.slice/tmp.mount
-  cpuset.cpus:=20
-  cpuset.mems:=20
-  cpuset.cpus.effective: 0
-  cpuset.mems.effective: 0
-  cpuset.cpus.exclusive:=20
-  cpuset.cpus.exclusive.effective:=20
-  cpuset.cpus.partition: member
-------------------------------
-Cgroup: /system.slice/systemd-userdbd.service
-  cpuset.cpus:=20
-  cpuset.mems:=20
-  cpuset.cpus.effective: 0
-  cpuset.mems.effective: 0
-  cpuset.cpus.exclusive:=20
-  cpuset.cpus.exclusive.effective:=20
-  cpuset.cpus.partition: member
-------------------------------
-Cgroup: /system.slice/test-speaker.service
-  cpuset.cpus:=20
-  cpuset.mems:=20
-  cpuset.cpus.effective: 0
-  cpuset.mems.effective: 0
-  cpuset.cpus.exclusive:=20
-  cpuset.cpus.exclusive.effective:=20
-  cpuset.cpus.partition: member
-------------------------------
-Cgroup: /system.slice/systemd-oomd.service
-  cpuset.cpus:=20
-  cpuset.mems:=20
-  cpuset.cpus.effective: 0
-  cpuset.mems.effective: 0
-  cpuset.cpus.exclusive:=20
-  cpuset.cpus.exclusive.effective:=20
-  cpuset.cpus.partition: member
-------------------------------
-Cgroup: /system.slice/systemd-resolved.service
-  cpuset.cpus:=20
-  cpuset.mems:=20
-  cpuset.cpus.effective: 0
-  cpuset.mems.effective: 0
-  cpuset.cpus.exclusive:=20
-  cpuset.cpus.exclusive.effective:=20
-  cpuset.cpus.partition: member
-------------------------------
-Cgroup: /system.slice/dbus.service
-  cpuset.cpus:=20
-  cpuset.mems:=20
-  cpuset.cpus.effective: 0
-  cpuset.mems.effective: 0
-  cpuset.cpus.exclusive:=20
-  cpuset.cpus.exclusive.effective:=20
-  cpuset.cpus.partition: member
-------------------------------
-Cgroup: /system.slice/systemd-timesyncd.service
-  cpuset.cpus:=20
-  cpuset.mems:=20
-  cpuset.cpus.effective: 0
-  cpuset.mems.effective: 0
-  cpuset.cpus.exclusive:=20
-  cpuset.cpus.exclusive.effective:=20
-  cpuset.cpus.partition: member
-------------------------------
-Cgroup: /system.slice/system-getty.slice
-  cpuset.cpus:=20
-  cpuset.mems:=20
-  cpuset.cpus.effective: 0
-  cpuset.mems.effective: 0
-  cpuset.cpus.exclusive:=20
-  cpuset.cpus.exclusive.effective:=20
-  cpuset.cpus.partition: member
-------------------------------
-Cgroup: /system.slice/systemd-logind.service
-  cpuset.cpus:=20
-  cpuset.mems:=20
-  cpuset.cpus.effective: 0
-  cpuset.mems.effective: 0
-  cpuset.cpus.exclusive:=20
-  cpuset.cpus.exclusive.effective:=20
-  cpuset.cpus.partition: member
-------------------------------
-Cgroup: /system.slice/system-disk\x2dstat\x2dmonitoring.slice
-  cpuset.cpus:=20
-  cpuset.mems:=20
-  cpuset.cpus.effective: 0
-  cpuset.mems.effective: 0
-  cpuset.cpus.exclusive:=20
-  cpuset.cpus.exclusive.effective:=20
-  cpuset.cpus.partition: member
-------------------------------
-Cgroup: /safety2.slice
-  cpuset.cpus: 2
-  cpuset.mems:=20
-  cpuset.cpus.effective: 2
-  cpuset.mems.effective: 0
-  cpuset.cpus.exclusive:=20
-  cpuset.cpus.exclusive.effective: 2
-  cpuset.cpus.partition: root
-------------------------------
-Cgroup: /dev-hugepages.mount
-  cpuset.cpus:=20
-  cpuset.mems:=20
-  cpuset.cpus.effective: 0
-  cpuset.mems.effective: 0
-  cpuset.cpus.exclusive:=20
-  cpuset.cpus.exclusive.effective:=20
-  cpuset.cpus.partition: member
-------------------------------
-
-> It should help us to better understand your setup and possibly reproduce
-> the problem you are seeing.
-
-Sure, I am happy to help.
-
-> Thanks!
-
-Thanks you!
-
-> Juri
-
-[1] https://pastebin.com/khFApYgf
-
-Cheers
-
-Marcel
+> > Regards,
+> > Yi Lai
+> 
+> Sebastian
 
