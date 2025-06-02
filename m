@@ -1,199 +1,257 @@
-Return-Path: <linux-kernel+bounces-670587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00C31ACB192
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 16:21:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15DD0ACB189
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 16:20:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 345D41940AF5
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 14:16:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0DA2167A9E
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 14:16:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C3F922ACD1;
-	Mon,  2 Jun 2025 14:06:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BE9622DA19;
+	Mon,  2 Jun 2025 14:07:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="B4yHCEcl"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="ltvmGKNY"
+Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013061.outbound.protection.outlook.com [52.101.72.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44D4D1FBC8C;
-	Mon,  2 Jun 2025 14:06:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748873213; cv=none; b=pYGDff3i8wG1r+A7QIDDSDIkfbKzbYeP0rufqIV3yn+25jlfva40j5xyz3Y0YFAviu1A+H75Xveh844TnStRVKhydjE47wVdyS/R8NiHkA60E/scJDjl2FKIarHKA6+xGWQE1EhKFDtV2rkjHFGxRJe88JLx+I7exbH0+ccxRuU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748873213; c=relaxed/simple;
-	bh=wzdXv0J62meupiqoL3PfTMvL1b06X3EOV3Vf2o7pHMc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u1X82Fexlli1SGSGEorb7pF9uoxp+36SJErtdZBb9axBu8SwuKxmsHTGeg/rB9VYoowXWB10WXE+QVOXS4yAEjH3iM3hm47zcLVMEHgsbdZAmz7YX4S+nCfoIB8APET3FyclUt276mHTivTNRCZasPw8C/unlHb16BDquEcKF34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=B4yHCEcl; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id C63F6379;
-	Mon,  2 Jun 2025 16:06:48 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1748873209;
-	bh=wzdXv0J62meupiqoL3PfTMvL1b06X3EOV3Vf2o7pHMc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=B4yHCEclb6A/nzw2hUHyA8nrGs2cAelBZxUQkdiV9XR9Aqbwg6f/NmY2dq32eRX/U
-	 9NwRE7HSYJZX0DpP6lh5oTDx7xMZsmqzESX/bQACH5eVscq8UMe5ZqiGZ98o+d4LWI
-	 RwV0KGLH9XJRHsgEWbG8vCoz/sD4qEgvaVkc4iIc=
-Date: Mon, 2 Jun 2025 17:06:41 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-Cc: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
-	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Subject: Re: [PATCH v3 08/15] media: rcar-csi2: Switch to Streams API
-Message-ID: <20250602140641.GF23515@pendragon.ideasonboard.com>
-References: <20250530-rcar-streams-v3-0-026655df7138@ideasonboard.com>
- <20250530-rcar-streams-v3-8-026655df7138@ideasonboard.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45A3722D9F3;
+	Mon,  2 Jun 2025 14:07:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.61
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748873261; cv=fail; b=fD0uF8wpfY09D/qk3rck3rhF2RE48N6n9RKURZkBOwPgsB8OtsoJY7dMFJFf3KWhMvppcf07t90G7+xOlBwgfQuLPQOuQHD8OrgxFzzpVCqEajxeWr1ND/JITWp+FLoww6UMn42EMeRJc1N0PgkhP1h3JqSEz8CD95+WwkQEv9o=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748873261; c=relaxed/simple;
+	bh=LrVWHFHZV7M8pmbUMOOc3OI1JuDYIlqhziyoUtvGisY=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=GDqVuRXfwaSgVJXTUElcz44oOmfrPM6zyTnvd93ilx+2/BpE5T5HUH918DfDWhGGnNJ046h857iGiiaj83m14U33PzHjouWVP49Lc0ZTMgv23EJztml6poXFA64QDwlpCm+V2bOXLHeVKoAJdHnUQea/sg7qpR/e7mZu9NRqxh4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=ltvmGKNY; arc=fail smtp.client-ip=52.101.72.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=EzGxzVzEptA9elnAtgtcPTTeyc0PfJRiOoqVkkn3gVlKyl2fiq2HIBHe2m/w33XYB2+n0eeZ8jxpQXN5FeUPCJ65hFYBwMSrjsyjHVbVYFachir77ab8yz0m4mZY2At1rcBZ+iT9EqxHtjMAG2b6IefQrjjrwcdhVf/vrO3foYj3yISW5RDKqbXZ5nVxGtNXlC9IWAvNJxVnrKfUkR1koj5N5YwlNGtrU8lsAcNMWiXSmaA2ZY3opCx6qrZEurUenwIHiW2ec9WM/BTW3DPe4ggNxBUZuwao8RhRPLTD0dCx7yQDabTyi9qGC1WPQSgFDjdVOKtcwA5Y1bEtAlpR4g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=YAcqyRM9YyiL53/Pp+oEGH34fI0/3ea5fnG2+PHL8NM=;
+ b=qPAyQzYQXiHhYytgy4nsUTBJWUzTGoy+H9rc3rOntzQulCnnpHxnZ5i9jHwUhfQvvDreOIrbCsE1tlxp9LU1CRQeirF28B1bKb8cKi8ENUfCz07P4eBkvktVqBnccw19lsb5VGBySf0+DumLNKtZluhuKCUuUeHXIlQkSwuI67kZ8nci8T26ybNIgg9XIiomYH7FN8riYmA4eP9jfZpPVGyS6sVDltp/5d5YL4ZVHEjF2Vwvl4WvnAnXbSfIO71MAqthgVyVMe4gyMVpLC0ArzrsQKZmo0Jh1I9njFMnSU3ZaJaeyIyCPMBrZ2/xJM6dyUs2Rfk4Q4uO0uIXXloRRg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YAcqyRM9YyiL53/Pp+oEGH34fI0/3ea5fnG2+PHL8NM=;
+ b=ltvmGKNYJbYWagGgmAN5F1D14TlsyRqqL0x2cnwOSpMb7Q8WC+BvgGivCq4I88RtX0CojDBzgj43+37z8ND3iD4yDjNIcu+ryDW2nqrOqDUbx6mLGuhbHCvOO7nG1jPhCiv8/o9Olr44G4nPiW9EQwmCQQ4MnNtizQkeo2Plns8dZFzOwi7ZUp1qMfCKwl8Wc4ACTc4iQaB5dfF4vb4RTjiEaqhLIk8GpGfbzFKSraRt8WvhGCiYk8UjYarWGDajxEICLMT5diyNKVmvpe0hGHKEkXVhYUtd+/c0rv/Od8zaDqwjPROdDCA05fQL4mlFcg+qz0vUHwbRiRiOssQ/CQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by DB8PR04MB7051.eurprd04.prod.outlook.com (2603:10a6:10:fd::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.37; Mon, 2 Jun
+ 2025 14:07:34 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%6]) with mapi id 15.20.8769.025; Mon, 2 Jun 2025
+ 14:07:34 +0000
+From: Frank Li <Frank.Li@nxp.com>
+To: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-pwm@vger.kernel.org (open list:PWM SUBSYSTEM),
+	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
+	linux-kernel@vger.kernel.org (open list)
+Cc: imx@lists.linux.dev
+Subject: [PATCH 1/1] dt-bindings: pwm: convert lpc1850-sct-pwm.txt to yaml format
+Date: Mon,  2 Jun 2025 10:07:21 -0400
+Message-Id: <20250602140722.941002-1-Frank.Li@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: PH8P221CA0016.NAMP221.PROD.OUTLOOK.COM
+ (2603:10b6:510:2d8::18) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250530-rcar-streams-v3-8-026655df7138@ideasonboard.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|DB8PR04MB7051:EE_
+X-MS-Office365-Filtering-Correlation-Id: 498bb486-7615-4518-321c-08dda1ded287
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|376014|52116014|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?E+waY0RVHbQV8YHNGVd1Ldb9YHTVjcxIZD6oOFRJie8xD0b0O0OFNlL7P8nY?=
+ =?us-ascii?Q?ULzfYS/Uko3XZcC9PtD9HUekuezLx1SiVSjiIj/Nyd2MdJy7osOSZx3hdeMQ?=
+ =?us-ascii?Q?iu8CMn8GtULUlPoDXmdHkKCSlm87e7pfeIy47mTWMAfumKnFyUyna8bwqIEh?=
+ =?us-ascii?Q?40L0rlclACk2qcGCZ2d3R0U9xfymupSorzyGLzg6ZimI84yth8kedPM5fSs2?=
+ =?us-ascii?Q?4fkd4kMUpGzyBr9hzW0q9Mnqmo6Th7xjmEgeIGm6GRu87ZnsOl/Qqj+0cLvV?=
+ =?us-ascii?Q?ex3KybA3iN67t5OeXf01LUhOzEwCmGFxJW4avG/BrgWSUvoG3A3NT0WIp6ko?=
+ =?us-ascii?Q?R2+0d0MIOl5YxcQuzBHjISKh0HRbV1A2Sr86ziAqvWbXodCLNNIxqspOpFaY?=
+ =?us-ascii?Q?OatV4FOTyvo1tv4doneakFuEk5Y/TCyFk9UQXHQ8/DW93hxfdvvL/cHidhAI?=
+ =?us-ascii?Q?eAYvWJ4ZQXBW20Bq/0Dfv5mmNc7UtxEaL2Hayltrm2rpNF+TaxVzLqd0qCO9?=
+ =?us-ascii?Q?zdGmQUExplgi8dXV+oUGTltsqwomlnozPl0HT9Eimfrg90zvv+N5okHsK67Z?=
+ =?us-ascii?Q?YMUaQWkIWy6LAUwFaw/5IUTlSui1yC20BDweOl8+NG8lhuzajCGwnpJ55+ih?=
+ =?us-ascii?Q?WsAj3lZSh00wkTF3uRsl0AXwcHxK179jltaVi8maLRyho1zMoWQLWGBKiUse?=
+ =?us-ascii?Q?i5E55XEOOIpuv+h+vt62k9O8tiY5NHIEWAJWB3zRDzABc66WNf9cF9mXA1Bi?=
+ =?us-ascii?Q?+dyE8n5qKw8uiIpGtZbLCfidGaQdLuKoGOMlSvU+VTNkTh5seyi9IiqgbU5k?=
+ =?us-ascii?Q?co1WTeQ7g2/xhse21PhaszrR118IDQzFCoWPJjiM4y0ZW6zmyrj3oa0PBK6h?=
+ =?us-ascii?Q?tpKoaBeQr4met1P+oNu7rBcmhfJMNmxuZW6FqTS2jsZpbrAmrZ51nrCVP0R1?=
+ =?us-ascii?Q?LIb624cMCI8WoEYnH1xMGLZ3bVG2wnqvvzAiAlbfHmiNqKgLUNIPChGmDl4l?=
+ =?us-ascii?Q?8vILRprfduCeouXcU/Cjqz+GJPOd68sGRrZDTRfsv0i1dJFCpkFKrX9EpDVk?=
+ =?us-ascii?Q?oMLbxaZMU3ZSmGHRHnP8pfYxu+7r/sjF4T/NwuG+xRFg967RTdzoFzuHrLcq?=
+ =?us-ascii?Q?v4ghRS26rzzQgkrK1mlNbHDDo18/Y1fZmVx48fkc8Kqfr5oImjoAGBlweDa2?=
+ =?us-ascii?Q?tW/5RWPFf99tA1vHDsTOf2ArYnpLYN+iYyPeyz2pgd38tZYNfpdEu7toCEOH?=
+ =?us-ascii?Q?8T0orOQJHB9ZGWYYRn1nF+/yB2BFfyNHkISVDap4v05bWb1LsE2Q+sJ6OW33?=
+ =?us-ascii?Q?6srcev8VDUG5SHwAup6IvRYykET707uWg+rzQrZVWxxdkF/hYmYZ4h9BYYYC?=
+ =?us-ascii?Q?Gzg9lWZojH4GybDClsV8a1XTzSUCHohoostU9Zf2XKOpbTbheEcZSRGJ9QCO?=
+ =?us-ascii?Q?airbSjKKcaqgwSDUZ/XnJEw2Y0YeTrVg?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(52116014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?z0gWEgcHsQ4YkU4LHtMoUWZuoGp5q1J1GxoyprHau77sufcUEl8EKM1iZSPe?=
+ =?us-ascii?Q?bK/r2pLofXIMu17ugzyvlNR+0jkdlkJnS7wPyIbjZ5Tv15Y8QXebHioY/D8T?=
+ =?us-ascii?Q?PbNNH3bfu1xCuELUG8dQ6aWCrZpBLO2DMcmlKMi4yOlGdsxqziKnkCFC5roy?=
+ =?us-ascii?Q?ztS6hCfxXwNLjDJi3QVxPYI8TUMANFIdsB13cfL2QHif5Og+aQ6NxByBGbu7?=
+ =?us-ascii?Q?f3Uzo2XDYSsyR57T46xispWQ7WOsRHOB/YFcOUV+9kBf/SgHtnEvPdixuoeL?=
+ =?us-ascii?Q?5pDJ4Y5V07ydnMELsVak6IFfC0vyO52bExildgg9amMyV7dEaXnaUqm80Dn5?=
+ =?us-ascii?Q?ul22UJKtyTN+bc7n7bHZHF8YeJcvHGHgeuCacJSfdjZ4CgL7mID3KA5vA6Ll?=
+ =?us-ascii?Q?Nns/t3txoOrawANHmau4Rn4Ju4wfsLlfOY3/u6ruja/9NAzLLBmqC3chQBzB?=
+ =?us-ascii?Q?hDa8QrkHGRpgBAyMI3NhLFzOC7ZxxbtCsQj645niB0bbfFUcricwy0NnYHVt?=
+ =?us-ascii?Q?hEQOzCiY7Ueb5MPFQZ+IBLxbO4NipcHp0vyDK9/NOUFTT+FAxkJImevvZTlS?=
+ =?us-ascii?Q?atrhZFFGHDrP5lC/Iw0Zpjrpnf+dniXJPBSHVjKlKBL2iobFcMqh9iBII20R?=
+ =?us-ascii?Q?0D5SSM6twc4vq8nUFuKXmYbLHE4YSWZdy2Syg1eUqBJexDUWRJtJGbVZZ55p?=
+ =?us-ascii?Q?B8/RS6pLMgjE+dIQqxXzewp1scZOCWVjS+pIkh75hPtbGWcf8YXfnoPWXmL0?=
+ =?us-ascii?Q?ouB/UPp1XooLHlx11XuM/VFZ0HZwQ5SjsbwPM2+sQlJwdCpPiG18ZV4gmLMg?=
+ =?us-ascii?Q?7ZxPnHy1U8KfC6JOcMoToOa0MBHHVpq6PJPaf0I7Lgi8PSaRTYxPaN/t1Kek?=
+ =?us-ascii?Q?llQeEASw+L+qV1bDMDcIOdWR1XZrQYNJyws6JBoF1Qoc4oH/OKPbpxOrSBMn?=
+ =?us-ascii?Q?GezlW2/HV+cJQAtB4vUbTx/R1XbjCMO8dSvDTYCNnltC1IiDavvSrcCfa8LM?=
+ =?us-ascii?Q?6BhXzZtN6ehw1DUGMQUNv/tuF5VJ4vR28CqXZDQ0QCtq7LBwzrNQVwkk60CK?=
+ =?us-ascii?Q?nlrqg7M0KH+LImcbUx6lhV/3169AWL6O/V01KFzqOVXg3BbDIxvyObwH+NSB?=
+ =?us-ascii?Q?BZg5Ni01KAiJaKUGhLCEJ8JFjPtYaUZstp0ac1fOKhbluO6sV/+/Lt+39ErX?=
+ =?us-ascii?Q?NbEP9EKEQhvXUd2DEDRkj1UWzveQCzHrb+rzChoQuOdxHQyBraHBxdyh2Xxn?=
+ =?us-ascii?Q?nQM1m1jUtyggOjbLgz5KiMmc1Bh23fldbH58zlH0h9S2uSeBiINS95Sy1sxa?=
+ =?us-ascii?Q?aPcz6blI+zIuqcqzLPJFroAzPgKOjb0E82BQ6oolJ5+23rpAvlyNutuxD9qs?=
+ =?us-ascii?Q?lbH714i+N1h0aXOQLHP39gZyeaLyL7+dmeN9g1eDGzPJfFvu1w5D60MjEEyv?=
+ =?us-ascii?Q?DNnpShB0A0fOIinCXzPnnI6uF7QGeZE9JuyOHirKUsPX6LL26nmcQgoV5bGv?=
+ =?us-ascii?Q?JgyjGQS+Mtsj5hthh874lwACvepJ4JPHy5ddhBGsz+9G8+8zsczZUF3XHkc9?=
+ =?us-ascii?Q?AZhagCc84WroQBIwlcE9O0PGgdvCeACuxhHUeXAp?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 498bb486-7615-4518-321c-08dda1ded287
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Jun 2025 14:07:34.7297
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: leU0GuZZr1XaVF8ysMN2SeBKR2LKa8hQgJyGShavYEpmjzejWd7jMjTJGET0Tw6KTkBKGAbSpq3yZOqJymXZOg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR04MB7051
 
-Hi Tomi,
+Convert lpc1850-sct-pwm.txt to yaml format.
 
-Thank you for the patch.
+Additional changes:
+- add ref pwm.yaml.
+- add resets property to match existed dts.
 
-On Fri, May 30, 2025 at 04:50:37PM +0300, Tomi Valkeinen wrote:
-> Switch to Streams API with a single hardcoded route. This breaks any
-> existing userspace which depended on the custom rcar streams
-> implementation, but a single camera use case should continue to work.
-> 
-> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-> ---
->  drivers/media/platform/renesas/rcar-csi2.c | 47 +++++++++++++++++++++---------
->  1 file changed, 33 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/media/platform/renesas/rcar-csi2.c b/drivers/media/platform/renesas/rcar-csi2.c
-> index e0a0fd96459b..20bd44274bd2 100644
-> --- a/drivers/media/platform/renesas/rcar-csi2.c
-> +++ b/drivers/media/platform/renesas/rcar-csi2.c
-> @@ -1028,7 +1028,7 @@ static int rcsi2_calc_mbps(struct rcar_csi2 *priv,
->  		if (ret)
->  			return ret;
->  
-> -		fmt = v4l2_subdev_state_get_format(state, RCAR_CSI2_SINK);
-> +		fmt = v4l2_subdev_state_get_format(state, RCAR_CSI2_SINK, 0);
->  		if (!fmt)
->  			return -EINVAL;
->  
-> @@ -1069,7 +1069,7 @@ static int rcsi2_start_receiver_gen3(struct rcar_csi2 *priv,
->  	int mbps, ret;
->  
->  	/* Use the format on the sink pad to compute the receiver config. */
-> -	fmt = v4l2_subdev_state_get_format(state, RCAR_CSI2_SINK);
-> +	fmt = v4l2_subdev_state_get_format(state, RCAR_CSI2_SINK, 0);
->  
->  	dev_dbg(priv->dev, "Input size (%ux%u%c)\n",
->  		fmt->width, fmt->height,
-> @@ -1650,8 +1650,7 @@ static int rcsi2_set_pad_format(struct v4l2_subdev *sd,
->  				struct v4l2_subdev_state *state,
->  				struct v4l2_subdev_format *format)
->  {
-> -	struct rcar_csi2 *priv = sd_to_csi2(sd);
-> -	unsigned int num_pads = rcsi2_num_pads(priv);
-> +	struct v4l2_mbus_framefmt *fmt;
->  
->  	if (format->pad > RCAR_CSI2_SINK)
->  		return v4l2_subdev_get_fmt(sd, state, format);
-> @@ -1659,11 +1658,20 @@ static int rcsi2_set_pad_format(struct v4l2_subdev *sd,
->  	if (!rcsi2_code_to_fmt(format->format.code))
->  		format->format.code = rcar_csi2_formats[0].code;
->  
-> -	*v4l2_subdev_state_get_format(state, format->pad) = format->format;
-> +	/* Set sink format */
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
+---
+ .../bindings/pwm/lpc1850-sct-pwm.txt          | 20 --------
+ .../bindings/pwm/nxp,lpc1850-sct-pwm.yaml     | 51 +++++++++++++++++++
+ 2 files changed, 51 insertions(+), 20 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/pwm/lpc1850-sct-pwm.txt
+ create mode 100644 Documentation/devicetree/bindings/pwm/nxp,lpc1850-sct-pwm.yaml
 
-s/format/format./
-
-> +	fmt = v4l2_subdev_state_get_format(state, format->pad, format->stream);
-> +	if (!fmt)
-> +		return -EINVAL;
-> +
-> +	*fmt = format->format;
-> +
-> +	/* Propagate to source format */
-
-Same here. Although I'd write
-
-	/* Propagate the format to the source pad. */
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-
-> +	fmt = v4l2_subdev_state_get_opposite_stream_format(state, format->pad,
-> +							   format->stream);
-> +	if (!fmt)
-> +		return -EINVAL;
->  
-> -	/* Propagate the format to the source pads. */
-> -	for (unsigned int i = RCAR_CSI2_SOURCE_VC0; i < num_pads; i++)
-> -		*v4l2_subdev_state_get_format(state, i) = format->format;
-> +	*fmt = format->format;
->  
->  	return 0;
->  }
-> @@ -1683,8 +1691,15 @@ static const struct v4l2_subdev_ops rcar_csi2_subdev_ops = {
->  static int rcsi2_init_state(struct v4l2_subdev *sd,
->  			    struct v4l2_subdev_state *state)
->  {
-> -	struct rcar_csi2 *priv = sd_to_csi2(sd);
-> -	unsigned int num_pads = rcsi2_num_pads(priv);
-> +	static struct v4l2_subdev_route routes[] = {
-> +		{
-> +			.sink_pad = RCAR_CSI2_SINK,
-> +			.sink_stream = 0,
-> +			.source_pad = RCAR_CSI2_SOURCE_VC0,
-> +			.source_stream = 0,
-> +			.flags = V4L2_SUBDEV_ROUTE_FL_ACTIVE,
-> +		},
-> +	};
->  
->  	static const struct v4l2_mbus_framefmt rcar_csi2_default_fmt = {
->  		.width		= 1920,
-> @@ -1697,10 +1712,13 @@ static int rcsi2_init_state(struct v4l2_subdev *sd,
->  		.xfer_func	= V4L2_XFER_FUNC_DEFAULT,
->  	};
->  
-> -	for (unsigned int i = RCAR_CSI2_SINK; i < num_pads; i++)
-> -		*v4l2_subdev_state_get_format(state, i) = rcar_csi2_default_fmt;
-> +	static const struct v4l2_subdev_krouting routing = {
-> +		.num_routes = ARRAY_SIZE(routes),
-> +		.routes = routes,
-> +	};
->  
-> -	return 0;
-> +	return v4l2_subdev_set_routing_with_fmt(sd, state, &routing,
-> +						&rcar_csi2_default_fmt);
->  }
->  
->  static const struct v4l2_subdev_internal_ops rcar_csi2_internal_ops = {
-> @@ -2356,7 +2374,8 @@ static int rcsi2_probe(struct platform_device *pdev)
->  	v4l2_set_subdevdata(&priv->subdev, &pdev->dev);
->  	snprintf(priv->subdev.name, sizeof(priv->subdev.name), "%s %s",
->  		 KBUILD_MODNAME, dev_name(&pdev->dev));
-> -	priv->subdev.flags = V4L2_SUBDEV_FL_HAS_DEVNODE;
-> +	priv->subdev.flags = V4L2_SUBDEV_FL_HAS_DEVNODE |
-> +			     V4L2_SUBDEV_FL_STREAMS;
->  
->  	priv->subdev.entity.function = MEDIA_ENT_F_PROC_VIDEO_PIXEL_FORMATTER;
->  	priv->subdev.entity.ops = &rcar_csi2_entity_ops;
-
+diff --git a/Documentation/devicetree/bindings/pwm/lpc1850-sct-pwm.txt b/Documentation/devicetree/bindings/pwm/lpc1850-sct-pwm.txt
+deleted file mode 100644
+index 43d9f4f08a2e2..0000000000000
+--- a/Documentation/devicetree/bindings/pwm/lpc1850-sct-pwm.txt
++++ /dev/null
+@@ -1,20 +0,0 @@
+-* NXP LPC18xx State Configurable Timer - Pulse Width Modulator driver
+-
+-Required properties:
+-  - compatible: Should be "nxp,lpc1850-sct-pwm"
+-  - reg: Should contain physical base address and length of pwm registers.
+-  - clocks: Must contain an entry for each entry in clock-names.
+-    See ../clock/clock-bindings.txt for details.
+-  - clock-names: Must include the following entries.
+-    - pwm: PWM operating clock.
+-  - #pwm-cells: Should be 3. See pwm.yaml in this directory for the description
+-    of the cells format.
+-
+-Example:
+-  pwm: pwm@40000000 {
+-    compatible = "nxp,lpc1850-sct-pwm";
+-    reg = <0x40000000 0x1000>;
+-    clocks =<&ccu1 CLK_CPU_SCT>;
+-    clock-names = "pwm";
+-    #pwm-cells = <3>;
+-  };
+diff --git a/Documentation/devicetree/bindings/pwm/nxp,lpc1850-sct-pwm.yaml b/Documentation/devicetree/bindings/pwm/nxp,lpc1850-sct-pwm.yaml
+new file mode 100644
+index 0000000000000..b524978695979
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pwm/nxp,lpc1850-sct-pwm.yaml
+@@ -0,0 +1,51 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pwm/nxp,lpc1850-sct-pwm.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: NXP LPC18xx State Configurable Timer
++
++maintainers:
++  - Frank Li <Frank.Li@nxp.com>
++
++properties:
++  compatible:
++    const: nxp,lpc1850-sct-pwm
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    maxItems: 1
++
++  clock-names:
++    items:
++      - const: pwm
++
++  resets:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++  - '#pwm-cells'
++
++allOf:
++  - $ref: pwm.yaml#
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/lpc18xx-ccu.h>
++
++    pwm@40000000 {
++        compatible = "nxp,lpc1850-sct-pwm";
++        reg = <0x40000000 0x1000>;
++        clocks =<&ccu1 CLK_CPU_SCT>;
++        clock-names = "pwm";
++        #pwm-cells = <3>;
++    };
 -- 
-Regards,
+2.34.1
 
-Laurent Pinchart
 
