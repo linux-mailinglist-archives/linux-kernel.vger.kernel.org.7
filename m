@@ -1,184 +1,161 @@
-Return-Path: <linux-kernel+bounces-670838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1FD1ACB9EE
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 19:01:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A98F6ACB9F3
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 19:02:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 670553BFF45
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 17:01:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4476402947
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 17:02:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CD8413BC35;
-	Mon,  2 Jun 2025 17:01:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C497F2253A9;
+	Mon,  2 Jun 2025 17:02:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=smile.fr header.i=@smile.fr header.b="Q0pP/Un4"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VYFZTPPh"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFC7FBA49
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 17:01:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADB64EAF9;
+	Mon,  2 Jun 2025 17:02:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748883711; cv=none; b=aX8C4fn7iIj0Bk9verYh7ouA38cppMbgCjayoYcmlnI6vAZI8EcrzrI614dLsrsqIXCu3sQLKJOIG64K3QDKAYZ9wzu4YLQZUdWoyhokrGqccUMZcy3bzicfrefqLnXw4InRi7YiHXoWVQjzmrSjT/58T6PzPoYCs3bi/HD9iHg=
+	t=1748883739; cv=none; b=YloYAcMDnHRAazjl1DbX9bzrSOkUNq7/XuaIfv4G4JzaKsIwxQbBNrEB/gExvCMkrWdTUlgoJ/jRrWdxHGqPvAIwnQkVbpBtLqFO35d3YPAxxEaRRr/CpVBLMrTRC7lYnH4PrGSYwvvb6gxKvp9Lmip/KrXroQ74rmoN38NiFJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748883711; c=relaxed/simple;
-	bh=HH4IZh2wZ91YFwtu/TN9O0Wjnf2tiVrksx+dUNEHZxc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gO6PpCRGQNxGv6nrEdgm33ooF4awXfO3YLDK6rzCwJWu4hOhGqDvELz03Lwesag1SiwrEXFW1fR1AsErdsPIleP8liAPgX5/fRSiFtViBLtzC/OnbbxvKJc0u+RZgb3FbRuTldZI12mJ1F5QiEVHAMfPB/wDSrmVt+nPKErYEEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=smile.fr; spf=pass smtp.mailfrom=smile.fr; dkim=pass (1024-bit key) header.d=smile.fr header.i=@smile.fr header.b=Q0pP/Un4; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=smile.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=smile.fr
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-604bff84741so8980439a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jun 2025 10:01:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=smile.fr; s=google; t=1748883708; x=1749488508; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=abDph0Aj5XQN6In+Lzu8X3Vm8VPqLMwLrdQIcHgjTyU=;
-        b=Q0pP/Un4szZNC3IOfyP//MC8RoLsqa8BX7cQHeshkk0oVJI+cLH9PJdgpdO9ODD6HI
-         AAPjPQAyRm0xOR/G2x6bwQdD9PoG07dBQx2mgb06Wppq62s1k0nxpr/iBvzMchPvL9tU
-         yg0p7MIamF3ze7r7R6XGcEWGaSujGVikGwHJA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748883708; x=1749488508;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=abDph0Aj5XQN6In+Lzu8X3Vm8VPqLMwLrdQIcHgjTyU=;
-        b=NidHCSoqDC8rL5bssRB+N89w6mbQx3+bG/RkEW3vAYuXzZMxEzD0fRniNLEyyCm40R
-         jfS903MC52DLsHwV1dXVNXSqvz0VhjetIc7S4Mvtln/b/zSgOMuEw/VpzOXrjTcbsCqR
-         Vf89bVnh6bkxquHT6Oi6iMhG9QQIJYxU61Sl27mfJuIdNIxW28898zvoLTIH5188z3NA
-         BIlUtmPyIrEpIBAt0ztWmPw1vVo+UpO0TDkaKNHqqh2n1hJmJ7vDHvsaXCsxEZy7Ycjq
-         La66BbM7aAiylN6VuptRzMj35gRcDx/q28MXxQ8T5SuvwV6u8ogSHRyIT05rr0AxncN2
-         RCzg==
-X-Forwarded-Encrypted: i=1; AJvYcCWrn4pYpbFY0QpuR09fXmCPZBxSn13Pjv5iz5zJPz3qeoQawyGNUew0vGi2i88W6MyvxPtk3PZWy4GgORY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHY5RjGlYz8gtCQSIA2OlOiZsWqzZK6HVPlhtP6bCgFbqjAJV/
-	dm2eBA+ZKKy0Se0PKqKn1er5QQdwRNJiZOUTh5lH1NhLpjV4lETofONB88K8hdTQMrLUv2a/YHw
-	zuRQH91uPga/80xKFUbc2joSvLgQATAwT4BJAsX+7og==
-X-Gm-Gg: ASbGncuDbnYeDPmf883qQaGA3b7aVDXZ3Gy59ttg2t8AcowyHHuB3VkdiDRo5aeIide
-	ajFopZ4aPWuyRn+rGPMlbheOBvUv3pWXugsjpxEm4rHWgXs3XSVmOAme/1HvzqE5DfMSCCC4NSG
-	yt8Uk+DfFMRZg4MDigd6FF6FhAgNn163WPFGACYrUhiWs=
-X-Google-Smtp-Source: AGHT+IG76GcE0CyIGvdYC6symGR++l6I7RyOq2ODj2VjqbpsYHvlsULDDGdmeG91WwsK5n6zSyCNIMvbwaUqpWiOWN8=
-X-Received: by 2002:a05:6402:280f:b0:602:3e6d:9334 with SMTP id
- 4fb4d7f45d1cf-6057c628879mr10562013a12.24.1748883707841; Mon, 02 Jun 2025
- 10:01:47 -0700 (PDT)
+	s=arc-20240116; t=1748883739; c=relaxed/simple;
+	bh=PAm0qcVMccKzdp3fnXKmqZ+vGp/mrw6+rOYNaWYB160=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FZymTehWtHv8AYXurRPDH+XpHB5BokG+12ZusqnWmQ8zwjqGgVCvzzs6jiGA2wTTEPNLXIp7HViq4Su2+EmejT2Kpgm0uSURwDscN9fsM+/CS8XRS6DW0mj1/aRkjs7mjGCV+y9Xt1ns3Dwn+AJ/Rk9pt1oeVWIxUOYzqD3XQEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VYFZTPPh; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1748883738; x=1780419738;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=PAm0qcVMccKzdp3fnXKmqZ+vGp/mrw6+rOYNaWYB160=;
+  b=VYFZTPPhKiBC/Sb/trqgppHvCfCTCvHE0aM6AE5jhRhwGTG9hloTN2UC
+   5Q8Pqbcfz6ldGmodh71fJB9piXu/4oIsrO/tx2bAuw2jMfMNW8xoFWT45
+   y8hytDNy8kwxAg4M+UPLG2E5253MPCWfghjQxPMtzSFS0wFQmLy1PGWSK
+   Tn9geGBehI7yk/dt5j/7TUYRlEeLkjPwhNRtXae7pBQ5Kll4q/GuwtjnG
+   me/PLHb7cKEJwYtnWhxKvPIG8zV5csT8n/trrqsmEBspXWNqJvEEkkelu
+   7g8YTDWr2zoMcJ3sd7UGRzS9OwJfkLHD/K/zuMRZjjgwjGNasobFr4hY2
+   g==;
+X-CSE-ConnectionGUID: FVMqi/LnTAWDDBGtGiNEYA==
+X-CSE-MsgGUID: O4AEIlrfRqSBJXxBFiIyZA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11451"; a="51045532"
+X-IronPort-AV: E=Sophos;i="6.16,203,1744095600"; 
+   d="scan'208";a="51045532"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2025 10:02:17 -0700
+X-CSE-ConnectionGUID: z/pjBT1NRjuZhrsoXUAvOw==
+X-CSE-MsgGUID: z/gChtcpR1WIx6vBj/unYw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,203,1744095600"; 
+   d="scan'208";a="148451524"
+Received: from agluck-desk3.sc.intel.com (HELO agluck-desk3) ([172.25.103.51])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2025 10:02:16 -0700
+Date: Mon, 2 Jun 2025 10:02:15 -0700
+From: "Luck, Tony" <tony.luck@intel.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Zaid Alali <zaidal@os.amperecomputing.com>, rafael@kernel.org,
+	lenb@kernel.org, james.morse@arm.com, robert.moore@intel.com,
+	Jonathan.Cameron@huawei.com, ira.weiny@intel.com,
+	Benjamin.Cheatham@amd.com, dan.j.williams@intel.com, arnd@arndb.de,
+	Avadhut.Naik@amd.com, john.allen@amd.com,
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	acpica-devel@lists.linux.dev
+Subject: Re: [PATCH v7 9/9] ACPI: APEI: EINJ: Update the documentation for
+ EINJv2 support
+Message-ID: <aD3ZFyBW4SCyaGI9@agluck-desk3>
+References: <20250506213814.2365788-1-zaidal@os.amperecomputing.com>
+ <20250506213814.2365788-10-zaidal@os.amperecomputing.com>
+ <20250530102711.GAaDmH_1O7lc6kuveY@fat_crate.local>
+ <aDoal24J-BMTIBCq@agluck-desk3>
+ <20250531092050.GBaDrJ8iw7cNcpOKeA@fat_crate.local>
+ <aDuBjopy_nE9A-ph@agluck-desk3>
+ <20250601102554.GAaDwqsgCODzEne7Ow@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250528203152.628818-1-corentin.guillevic@smile.fr> <174846881248.859527.7504198795486149705.robh@kernel.org>
-In-Reply-To: <174846881248.859527.7504198795486149705.robh@kernel.org>
-From: Corentin GUILLEVIC <corentin.guillevic@smile.fr>
-Date: Mon, 2 Jun 2025 19:01:37 +0200
-X-Gm-Features: AX0GCFuEbqSxAst_bXA7BoLSAfRzF9ne8TSDsrwoFAMFO0l0IJqCz-SKpTzZj5U
-Message-ID: <CAMFqQmoKEiakkXhhQf4E8fMYQSV76sKNdnKNEBoMh_+OL7riew@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: net: dsa: microchip: add bit-banged SMI example
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: devicetree@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org, 
-	"David S. Miller" <davem@davemloft.net>, Andrew Lunn <andrew@lunn.ch>, Marek Vasut <marex@denx.de>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Vladimir Oltean <olteanv@gmail.com>, 
-	Woojung Huh <woojung.huh@microchip.com>, Conor Dooley <conor+dt@kernel.org>, 
-	UNGLinuxDriver@microchip.com, Paolo Abeni <pabeni@redhat.com>, 
-	linux-kernel@vger.kernel.org, Eric Dumazet <edumazet@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250601102554.GAaDwqsgCODzEne7Ow@fat_crate.local>
 
-Le mer. 28 mai 2025 =C3=A0 23:46, Rob Herring (Arm) <robh@kernel.org> a =C3=
-=A9crit :
->
->
-> On Wed, 28 May 2025 22:31:51 +0200, Corentin Guillevic wrote:
-> > KSZ8863 can be configured using I2C, SPI or Microchip SMI. The latter i=
-s
-> > similar to MDIO, but uses a different protocol. If the hardware doesn't
-> > support this, SMI bit banging can help. This commit adds an device tree
-> > example that uses the CONFIG_MDIO_GPIO driver for SMI bit banging.
-> >
-> > Signed-off-by: Corentin Guillevic <corentin.guillevic@smile.fr>
-> > ---
-> >  .../bindings/net/dsa/microchip,ksz.yaml       | 57 +++++++++++++++++++
-> >  1 file changed, 57 insertions(+)
-> >
->
-> My bot found errors running 'make dt_binding_check' on your patch:
->
-> yamllint warnings/errors:
-> ./Documentation/devicetree/bindings/net/dsa/microchip,ksz.yaml:246:1: [er=
-ror] missing document start "---" (document-start)
-> ./Documentation/devicetree/bindings/net/dsa/microchip,ksz.yaml:246:3: [er=
-ror] syntax error: expected '<document start>', but found '<block sequence =
-start>' (syntax)
->
-> dtschema/dtc warnings/errors:
-> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/n=
-et/dsa/microchip,ksz.yaml: ignoring, error parsing file
-> Traceback (most recent call last):
->   File "/usr/bin/yamllint", line 33, in <module>
->     sys.exit(load_entry_point('yamllint=3D=3D1.29.0', 'console_scripts', =
-'yamllint')())
->              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^=
-^^^^^^^^^
->   File "/usr/lib/python3/dist-packages/yamllint/cli.py", line 228, in run
->     prob_level =3D show_problems(problems, file, args_format=3Dargs.forma=
-t,
->                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
->   File "/usr/lib/python3/dist-packages/yamllint/cli.py", line 113, in sho=
-w_problems
->     for problem in problems:
->   File "/usr/lib/python3/dist-packages/yamllint/linter.py", line 200, in =
-_run
->     for problem in get_cosmetic_problems(buffer, conf, filepath):
->   File "/usr/lib/python3/dist-packages/yamllint/linter.py", line 137, in =
-get_cosmetic_problems
->     for problem in rule.check(rule_conf,
->   File "/usr/lib/python3/dist-packages/yamllint/rules/indentation.py", li=
-ne 583, in check
->     yield from _check(conf, token, prev, next, nextnext, context)
->   File "/usr/lib/python3/dist-packages/yamllint/rules/indentation.py", li=
-ne 344, in _check
->     if expected < 0:
->        ^^^^^^^^^^^^
-> TypeError: '<' not supported between instances of 'NoneType' and 'int'
-> ./Documentation/devicetree/bindings/net/dsa/microchip,ksz.yaml:246:3: but=
- found another document
-> make[2]: *** Deleting file 'Documentation/devicetree/bindings/net/dsa/mic=
-rochip,ksz.example.dts'
-> Documentation/devicetree/bindings/net/dsa/microchip,ksz.yaml:246:3: but f=
-ound another document
-> make[2]: *** [Documentation/devicetree/bindings/Makefile:26: Documentatio=
-n/devicetree/bindings/net/dsa/microchip,ksz.example.dts] Error 1
-> make[2]: *** Waiting for unfinished jobs....
-> make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1524: dt_bin=
-ding_check] Error 2
-> make: *** [Makefile:248: __sub-make] Error 2
->
-> doc reference errors (make refcheckdocs):
->
-> See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/202505=
-28203152.628818-1-corentin.guillevic@smile.fr
->
-> The base for the series is generally the latest rc1. A different dependen=
-cy
-> should be noted in *this* patch.
->
-> If you already ran 'make dt_binding_check' and didn't see the above
-> error(s), then make sure 'yamllint' is installed and dt-schema is up to
-> date:
->
-> pip3 install dtschema --upgrade
->
-> Please check and re-submit after running the above command yourself. Note
-> that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-> your schema. However, it must be unset to test all examples with your sch=
-ema.
->
+On Sun, Jun 01, 2025 at 12:25:54PM +0200, Borislav Petkov wrote:
+> Some questions inline...
+> 
+> On Sat, May 31, 2025 at 03:24:14PM -0700, Luck, Tony wrote:
+> > EINJ V2 allows the user to perform multiple injections together.
+> > 
+> > The component_idN/component_syndromeN pairs of files direct the
+> > "where" and the "what" of each injection.
+> > 
+> > But the kernel needs to know how many of these pairs to use
+> > for an injection (to fill in a field in the structure passed
+> > to the BIOS).
+> 
+> The kernel could realloc on each write. Or we could allocate the struct to max
+> elems and trim it before passing it down to BIOS.
 
-Sorry,.. I send a fixed one.
+The actual structure passed to BIOS is the same each time. Just the
+set_error_type_with_address::einjv2_struct::component_arr_count
+changed to indicate how many errors to inject.  In theory the
+driver could allocate and copy a correctly sized structure, but
+Zaid's code here is simpler, an this is hardly a critical path.
 
-Regards,
-Corentin
+> > User interface options:
+> > 
+> > 1) User can zero out the component_idN/component_syndromeN pairs
+> > that they don't need and have the kernel count how many injections
+> > are requested by looping to find the zero terminator.
+> > 
+> > 2) Kernel could zero all pairs after an injection to make the user
+> > explicitly set the list of targets each time.
+> > 
+> > 3) User provides the count vis the nr_components file (perhaps
+> > needs a better name?)
+> 
+> Yap, agree that the name is not optimal.
+
+It can be dropped if we make the user zap previously supplied
+component_idN/component_syndromeN pairs that are no longer
+wanted.
+> 
+> User can inject into each component pairs file and the kernel can put that in
+> the tracking struct. So you have:
+> 
+> # echo 4 > component_id0
+> # echo A5A5A5A5 > component_syndrome0
+> ... set other files and finish with usual
+> # echo 1 > error_inject
+> 
+> <--- here, it goes through each component pair and builds the structure to
+> pass down the BIOS.
+> 
+> And you track valid component pairs by setting the IDs to -1 or something else
+> invalid.
+
+This is just an improvement on my "option 1" (improved because all-ones
+for the component ID is going to be invalid for sure, while all zeroes
+could be a valid component).
+> 
+> All those component IDs which have remained invalid after the error_inject
+> write happens, get ignored - you gather only those which are valid and inject.
+
+Or just stop collecting on the first invalid one.
+
+> And this way you can keep the old values too and gather them again and inject
+> again, over and over again.
+> 
+> Right?
+
+Yup.
+
+-Tony
 
