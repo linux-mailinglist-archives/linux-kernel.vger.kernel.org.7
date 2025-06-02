@@ -1,370 +1,195 @@
-Return-Path: <linux-kernel+bounces-670499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EC71ACAF32
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 15:38:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DC1DBACAF38
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 15:39:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F8A14017EC
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 13:37:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DDBC4022B9
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 13:38:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47E612222BF;
-	Mon,  2 Jun 2025 13:37:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A57B221F0F;
+	Mon,  2 Jun 2025 13:37:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CQ323RWT"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="IqN3wAdo"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2067.outbound.protection.outlook.com [40.107.244.67])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 316812222C2
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 13:37:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748871430; cv=none; b=nWk/FRelfKbtbhRwtejPYrbyJniCTWWzppu4pjReJtnpG7MpQOequSk+r3PrEUFMwhlORkzL2pLhpDWie4uH9aQNwn39A5RuqhTfTrrZ6sT3BZ/kKEemINH060ECWfUoNADuZQx2PrAaIvT8zSCmWwfV9Dv39cojIZ9WOH6cZ9o=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748871430; c=relaxed/simple;
-	bh=PzU1TNEpY63ziwPu0K6S7872blhntIsbvgBWQ6z5IVo=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=KgM5jtKRIctIZSjCLvTsNUlPaWSCVGeBaCeAusDIGw3W9GXnb2cvP1WqQ+ZxHFZM+6ivFd3HQ5h0F6AHuR+AVOBM9IUDoJW/J7jtn+Lp8UxY78WzxDoa4m/wjNaVnsZdP58CEBpPUHme6vKQX5CIwdg+xCuA7haMBVtuH3rdOKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--bqe.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CQ323RWT; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--bqe.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-450de98b28eso7969565e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jun 2025 06:37:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1748871426; x=1749476226; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=uFgGeBKzfW5L5KrbepqXepN9vaTJ/sH7LxFyURED/wg=;
-        b=CQ323RWTO9/TSLn29TFtUGFlr6khDCU+0qMvu5g67QtK5g0HUDbSPWUncXORNW3dWk
-         hvh5j/G6yhJDSlkap5nKLvqKwzGwTCIRlIpoPZVHZInxlxniznHXIW1IdGMtftD+lcTU
-         KjB3CYU/CGyFF5ya0sLdNUTTKIaGvhp3fwS1BF0mI0vGLdhrMbm2KPjTqmWN9Y/x7Z44
-         PM49wlViMUDg/hADXaY6VibHMXzyGJPpex72iFloAQBeTTpSt9CARoNdieZKH/MrZtHs
-         2wqXGgV+2W9Mq4Q2O/drmkpAcCL529E7GSJ5JjROx2TtjbWXfQyKRNjJPywIp2dtzi3g
-         2Odg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748871426; x=1749476226;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uFgGeBKzfW5L5KrbepqXepN9vaTJ/sH7LxFyURED/wg=;
-        b=IePQc+XDu7CDx26Vl00pbgx4OfMG9mrmTC9pww0V+/LHQ7LFdmafsVb8QthDdAbR2W
-         xldLio+0+DSRDv64HveqpUau1Y7U36ze4xDSEx2gf7I9aFtFJlWilTr3xJoOU7L2PFHj
-         HF2LZAlnJQvgCsB8yFk25N93dRMgJR/dbZQhdWj5nAk6apwkEynZ7FV5Sk55/ih6jsQq
-         ycKbgZXfXEyhqgV7ObbEjYGDe0+f+NkPwgnpLmCw1Fz9H69rxLPX3lxLn1SB+Dcc0uEE
-         HNoeZgan8wd1WgCHzvVW7AlKfxEwxO0Ma5OrSIqCT++U0MYGh0OdeRt3+N/IUCDowgfF
-         ilow==
-X-Forwarded-Encrypted: i=1; AJvYcCUMfHHfZ5fTWAqX0xVQI8Vc9VxVrS4G8KZ43m7xWnp4JxKWInQ4OaYB58SooDWqghMGNelLJTMWto0Xn38=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxq2h+uK/MdWab9BzqaOYfK52fFUqDXkiczwoofV71StE9yPTfb
-	rCFr612Xje3N+/ICnPKpz7lc5x6AfSPQ+K7rFSLnXofeamDayvf0lxbbZ58Mf49/pgcoBg==
-X-Google-Smtp-Source: AGHT+IFAaaS5H+dAIVvcUs662alckHrr0QZRRmjiGlR9bhX7/7K6GoTjRpmJ9oYKB14GIck/dY6aVX4=
-X-Received: from wmbdv9.prod.google.com ([2002:a05:600c:6209:b0:450:def3:7fc6])
- (user=bqe job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:3657:b0:43b:c592:7e16
- with SMTP id 5b1f17b1804b1-450ce8189b3mr116328495e9.3.1748871426738; Mon, 02
- Jun 2025 06:37:06 -0700 (PDT)
-Date: Mon,  2 Jun 2025 13:36:46 +0000
-In-Reply-To: <20250602133653.1606388-1-bqe@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D930522156D;
+	Mon,  2 Jun 2025 13:37:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.67
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748871454; cv=fail; b=N1u/d0Sk9fOrbp5gA7IjGrTTYi4MmVLhv+3YV1ErVwNOiy+3DgfrFV3hVGyEZTqygVH0p4EgAMjk4tapFTgA7orriSLRguBA/ZwZLmXCtS1xKHO0jzlh0vhuJlbEIPODg4EKah9xbUyYsyzym5+it9n3Kn/1VK5kPM6knHbODF4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748871454; c=relaxed/simple;
+	bh=2XHIYLoX1WFvw2VFbZAj2JPYRWILjCdpLDI9nOs+pf0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=N05RqQ7i0Esrev2E9MZ7A56Fhjm1UCJR48CZwTw3WmxCjhoiuVS1kLAzZb0NkX/++dWYEEDj5W0mlx/yjgEzXvcN65XoK4EVOp7xr5P4Mf/D2Fhp/G2srzvG74RwmxB6A5/ayt2K8nH14F0WwVAehlOlZDYXFZQ/429DkZd/U2k=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=IqN3wAdo; arc=fail smtp.client-ip=40.107.244.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=i4iNyQrKp6L1yqX2/v19ndhwgbJDjdJjhpY1MdHEY9mfJJTJCL4f47fksaymlfP23tdpTh99c48VQXdrzeSy82eyPNng/rR2qB0bkFfFWPnJf0+LWwgtu4asWV6Ks77Kyh+MSCPPxQUkuTsYCP4cd5eh0X6ARdONpAZED8CPQW88EXmxxe2WS914DVtFyo7HLwE/WuGGTYsPKNbvqIu8TUxJyULg2zYgz4CecTjOyOOWyFV/sWbaj0ZFLT/wP5plLaQReInYX3wGOlG2t4SuzMwzIxuAYRqR2yWuBlMGq9G1KkHcp2qRUhTLQDBFt2/9nazuBBplIKvVpwaEQRmGPA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=h9VAB4/NzddGRa8m/xw1WcrnSYdfOaaaX8v8/NQQDI0=;
+ b=evVEOOCUMM8Fi+kETgH5vLCAfRFbQko1vZbwv0lQJtc+hoZQfthFqDH+8cytDOX6H4dcu7jC3cFeHxGV7QIYz6d3MulMq87DdC/06XJ+NFPcP1zk8/CPvYmXgYRZ2MpWAapfNFakDIoWEfPAihiBO80YmNqVU25aInM0gHs9MFLACKQdnZSVEP1c5+tLGljw8ASRJT5Mu+iH5S6sPQLfAf+h2QrqwICYYKYXF+LhCAI3uUWNc2Rp2eUAVI/zzl0ef8vC4MbW3b624WFMR6QCaoUsK4LJ1eAvP1AfrIJzpA/X33iepBr3m6QltCKq/JDh0jTe1Col8nbd1TRVVaBvRA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=h9VAB4/NzddGRa8m/xw1WcrnSYdfOaaaX8v8/NQQDI0=;
+ b=IqN3wAdopsXvxwZLqROWx8ZcFZR4fiahHko4swyi+OSPLv7HoUWhW+2JUZycn/jhdKeHJu3pCj8B0gl+b98jB3faYINjIxE0nmT0sdTGh1JauiF1FRDYoRIKFUPb6iXwx/L/nP1KX90Nc9He9rDTlIATrjDFyQ8jI06BIad7gBpzkrR22cPShIXMWSy/15RTGPU/8vSLvcBaAZmeIl100JS1ggkivG6BwjIhMOQyZHFPUFLMMU7Zr798v0it+gcSIuKp9yKVOBIC6qtaU2t21HjwYNRWRvjVs3oKo0aBKMB3ccVfGvMY/1Pm8O9O6CkD6lU9azxOhTEkDkiDKsI+bw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from MW6PR12MB8663.namprd12.prod.outlook.com (2603:10b6:303:240::9)
+ by PH8PR12MB8606.namprd12.prod.outlook.com (2603:10b6:510:1ce::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.31; Mon, 2 Jun
+ 2025 13:37:29 +0000
+Received: from MW6PR12MB8663.namprd12.prod.outlook.com
+ ([fe80::594:5be3:34d:77f]) by MW6PR12MB8663.namprd12.prod.outlook.com
+ ([fe80::594:5be3:34d:77f%7]) with mapi id 15.20.8769.033; Mon, 2 Jun 2025
+ 13:37:29 +0000
+Date: Mon, 2 Jun 2025 10:37:27 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Xu Yilun <yilun.xu@linux.intel.com>
+Cc: kvm@vger.kernel.org, sumit.semwal@linaro.org, christian.koenig@amd.com,
+	pbonzini@redhat.com, seanjc@google.com, alex.williamson@redhat.com,
+	dan.j.williams@intel.com, aik@amd.com, linux-coco@lists.linux.dev,
+	dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+	linaro-mm-sig@lists.linaro.org, vivek.kasireddy@intel.com,
+	yilun.xu@intel.com, linux-kernel@vger.kernel.org, lukas@wunner.de,
+	yan.y.zhao@intel.com, daniel.vetter@ffwll.ch, leon@kernel.org,
+	baolu.lu@linux.intel.com, zhenzhong.duan@intel.com,
+	tao1.su@intel.com, linux-pci@vger.kernel.org, zhiw@nvidia.com,
+	simona.vetter@ffwll.ch, shameerali.kolothum.thodi@huawei.com,
+	aneesh.kumar@kernel.org, iommu@lists.linux.dev,
+	kevin.tian@intel.com
+Subject: Re: [RFC PATCH 00/30] Host side (KVM/VFIO/IOMMUFD) support for TDISP
+ using TSM
+Message-ID: <20250602133727.GD233377@nvidia.com>
+References: <20250529053513.1592088-1-yilun.xu@linux.intel.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250529053513.1592088-1-yilun.xu@linux.intel.com>
+X-ClientProxiedBy: BLAPR03CA0111.namprd03.prod.outlook.com
+ (2603:10b6:208:32a::26) To MW6PR12MB8663.namprd12.prod.outlook.com
+ (2603:10b6:303:240::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250602133653.1606388-1-bqe@google.com>
-X-Mailer: git-send-email 2.49.0.1204.g71687c7c1d-goog
-Message-ID: <20250602133653.1606388-6-bqe@google.com>
-Subject: [PATCH v10 5/5] rust: add dynamic ID pool abstraction for bitmap
-From: Burak Emir <bqe@google.com>
-To: Yury Norov <yury.norov@gmail.com>, Kees Cook <kees@kernel.org>
-Cc: Burak Emir <bqe@google.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
-	Viresh Kumar <viresh.kumar@linaro.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, 
-	"=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, "Gustavo A . R . Silva" <gustavoars@kernel.org>, 
-	Carlos LLama <cmllamas@google.com>, Pekka Ristola <pekkarr@protonmail.com>, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-hardening@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MW6PR12MB8663:EE_|PH8PR12MB8606:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7f05a891-d785-430b-faa4-08dda1da9e9c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?iBfdb+PeKZuBXEqkTfkrkRN3OGczj0g/mpSAMeJakRUd8PI9Ib4P3ZMxyODl?=
+ =?us-ascii?Q?+f+llrNg8Em8DjCvrUa1Vd839gK2j7GC13CnAwe/rkhLeiNe5bn0tDu/MLj3?=
+ =?us-ascii?Q?R2F1PmUZ2dpRcXTieALeXalr79mUbettQ7b1VWtBMK4iGnF2rVHnpAxvesVt?=
+ =?us-ascii?Q?ZqzCtCG21WgXzT+yeh6LQFtplT/HeV6Op65HNAoZJi1dzMcIHU1RuIMRQSV1?=
+ =?us-ascii?Q?LOxI8nKh8Toz3JUoAjlrnQ1MXazsMKS3Kx9CoPsBwL2VocugThQioIwGWxhu?=
+ =?us-ascii?Q?3Fxw0PnCE5RBW+QFYJK3N9vemCJp21EUEWR1s06wyBpbtsS+BKchTzjgcL3D?=
+ =?us-ascii?Q?cAN/dNdA2za0/yvrGPg4aaOy+vvRqAUlVsat03uQ8jD8IC4ykyCw5vfoEqBv?=
+ =?us-ascii?Q?uwmIPu0T2hQMyOC2r9AiWtz6eZ4DB26foWzRiEWXXvR6UMOa+p6oQTwrx7sc?=
+ =?us-ascii?Q?7tSUuQSFOCfkTOfoPuM/7ymjoSubNXy6IXi4hFwKnowrFZy5WPOaA7EE/Zat?=
+ =?us-ascii?Q?SPvQ3Vo8/6MTvY7Tg51acjcgBmgxbMYtotj6G928jGSDGpzE/utDUDqbJc4H?=
+ =?us-ascii?Q?yaJ9M0oWlPY4V4hnOwAdBVbXwRaEEe9tUbV0JHg5i/nS/0mEPMmhFyRugP1I?=
+ =?us-ascii?Q?rWiya9jG+oI2ou0uvUe1za8eJ5sizRttN96AzwgM7SfPj5LhA/jBO3KkI9xC?=
+ =?us-ascii?Q?qf8q9PZ5v6QSMzZ2IaG+hk+4nMg/C7UxxTOF4+hx2dw7MHvO8rkCqQhUSRu7?=
+ =?us-ascii?Q?wqGtywE4QZjEqt3dmRzASGl0HNnhpvbO6oW5THKSNVA367k2CzEEim0NPLOV?=
+ =?us-ascii?Q?dHJvssDQM5N5EbCXwRCGH7zC++mSYgkuyrxJElpjLiuB1D7NRX5YSnifP6OQ?=
+ =?us-ascii?Q?3PDhpOf02dD5YG6v3XptTRhzJ5aJfwRtGdV8KiP/CkNZPVzPg8IWRNPDMx3t?=
+ =?us-ascii?Q?dmwQ6vXHQH+FaKGqNQwvx4rA2wIz8ZisVR9ueDEJgcT+rRjSyScmHf1CMHl4?=
+ =?us-ascii?Q?rItlKbdQ/YddZe1yMu6t0/tvu3BQL5v543jrYr/UGXJusZTfPbWzDYil6o3e?=
+ =?us-ascii?Q?znEe9sjmS2kNCdSJzpyfr7jbft7SNN64dspws+HDXT90v+kgefuLA16KaWr1?=
+ =?us-ascii?Q?b52grpCKzFQ23gH0GSQ8NH0eZJe3Mi/Sj9iNO05UvDPE5qXg0spVzFCg5dj4?=
+ =?us-ascii?Q?5UU1v/8fpshgHjnJbGOTCqBiDBG1VkaEaMd7rM3Lf28mDQj53+gvUN65ybrX?=
+ =?us-ascii?Q?dAQ6jxDybbPszWm3pS/T4lb8zujq0f//OyFvTDJP79lQnc8wscTZPzprs3Wq?=
+ =?us-ascii?Q?6S/hUV2Dgau1A1tRsMArMIR2+Mar/h+Tcyt9+xv70cRYX3rBXndg2fywpf0n?=
+ =?us-ascii?Q?3jM1gchYmHOTZEN+iqPW+R1wG75RSNe7+GFISWjkZ7J4dRBQhlZUgQIcL3qV?=
+ =?us-ascii?Q?DwtTi3i8+84=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW6PR12MB8663.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?zcu3E2DELorEYTVMSuYUxDdRuhYqHNqOxQ0gtjJ2FgCxvvk3jlQuKAwVkRdn?=
+ =?us-ascii?Q?gcYzyfAJnknOSA7SZIDq3V0GzFYb+0qpLCJmv9K8PHon3016lxFbhNdnBNb8?=
+ =?us-ascii?Q?nwW0bxwtWjUVFbODONcRB9VDAHnUKNxn/uuJhh4+Nrwv4q6rruu2kF9CF0yq?=
+ =?us-ascii?Q?GbDCDbzLIYtpgRxU6cIfWfNcHcDk0wzTqPIWHWf6UcCRW3nZeaUkfLKIjFPm?=
+ =?us-ascii?Q?0DVVfg6eB6hxkqO9sXnWeauKCT9rhLheJeCX5UJHTceewCjgnbCJA/z2QvRf?=
+ =?us-ascii?Q?tfwbw8HHMaKw+kkl5L4c2TX7J2TfvyN+n6sMReoy+VlUPre0/LDd8KSaMqOY?=
+ =?us-ascii?Q?6qsAjAB9dTa80DU8VQ6LVJH4v+zfzDpcDzImYJWxnbvlT44p1MdftS9KBqLc?=
+ =?us-ascii?Q?iG9TuRW9J+SzDRwCM4JYt8SnoqwWTmT0BhsXwUPQc3hnS7dDRm0iLFIq9NUl?=
+ =?us-ascii?Q?MuXp4iXiCIW9oj280bhgVQEGVyKWaaUIZ/EU/h0jBC182+2nt61UhzAV0WVC?=
+ =?us-ascii?Q?FCmMJjSXU2eEiBbrieY6uhJQMWwa3plXAg0kwjODssOBq7n138GvZtZ9Ut2C?=
+ =?us-ascii?Q?57FYMvbnFoyOkzXbp5QXnlbS/DTil3lTkbCl31R6jM9dyGYWO12wQfp5D+WJ?=
+ =?us-ascii?Q?+xqyKBvExUQzk/dPAh2GOWmvoMsYsSvdsgjVu+mrY+k8s4O5wJIzsCcI/HvM?=
+ =?us-ascii?Q?feBqYODdRw2bE+ur4ET+IPLznMmRMtHLyNL1dql4Mm8/kK6pmFwjLE+6/1BJ?=
+ =?us-ascii?Q?UPAhn6YpnrvSqVPMxqOKC/FuuP+iM595gt3c4lp7VSs7ht7cZmmLFg+RWlOC?=
+ =?us-ascii?Q?/8Oqhim8CTwYVnYbUd/B8T4WIqxc0/VimInwEWT/X+oFOdTi6QoQU3LSL9xT?=
+ =?us-ascii?Q?/IHJXRc4x3GalB2TBoBqzHYdBzfOHezk/PdzGoxOzvJNBR9mt44LVdSVxt7M?=
+ =?us-ascii?Q?xAh1uv3lOvssuQRUQdGNV93utJqc1lgGyVdcRou12KboTfh7ESemwSkTfTtw?=
+ =?us-ascii?Q?4uj3OWKkP1zziwyYmeDgqlXf5SLxU67WEF6080C+MNPzdQY7AUvwYVIKBQeG?=
+ =?us-ascii?Q?DWRPhtsAMWCmVwuNEdcyZKiDtBS4bNPiShsXZXtcPIs3UDnDjtjoeayf7qT0?=
+ =?us-ascii?Q?xg6mfPl8d/eUaRPwjLLaYFFjz1htmTh1ON/ts0Htl527BJPOL6jvEKq4z/sz?=
+ =?us-ascii?Q?k5wmPWaJQ3vEn4j2IfAYRZcBcjusPPytimx3ubiyoT8tXW69OFLdt/rlNiJB?=
+ =?us-ascii?Q?x601gc9eDwZ08kyUxzUB4VEDSVWpKLwrh/2j5ujYui+OVOofOi01EvjD6O21?=
+ =?us-ascii?Q?qrVIqgkmYD0LwEVf917M+g3YeWNcRmpo+TSB1JBVOF3XB4+lc8SssAso44pf?=
+ =?us-ascii?Q?P2rL/qjZfSrIVCgtRxqzzd/XTdh0kl1Pfvfl0SsXq5VU4b4t2H7k4bTX2knb?=
+ =?us-ascii?Q?k+k43pvZmoBAe5mNGYq3p6h7l79To94AilfdHOxME4K3YiQB2Bo95M4RA63b?=
+ =?us-ascii?Q?IhvNVBFGkgYg11zyMJ0tNCIa62ZMPobAV3ijkPs4p43NeFiwZcMpNe1c10Na?=
+ =?us-ascii?Q?2XfBGcJqVHGSiniccTHyzbVyHM/4pWsGu+/TeB6w?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7f05a891-d785-430b-faa4-08dda1da9e9c
+X-MS-Exchange-CrossTenant-AuthSource: MW6PR12MB8663.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Jun 2025 13:37:29.4987
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: EkQqPnTyUvSlpQIhhn22hOF7b+wyWOkOmmu2+SUjgOS0K4ZDHRQE6zMvy6w1g+9E
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB8606
 
-This is a port of the Binder data structure introduced in commit
-15d9da3f818c ("binder: use bitmap for faster descriptor lookup") to
-Rust.
+On Thu, May 29, 2025 at 01:34:43PM +0800, Xu Yilun wrote:
 
-Like drivers/android/dbitmap.h, the ID pool abstraction lets
-clients acquire and release IDs. The implementation uses a bitmap to
-know what IDs are in use, and gives clients fine-grained control over
-the time of allocation. This fine-grained control is needed in the
-Android Binder. We provide an example that release a spinlock for
-allocation and unit tests (rustdoc examples).
+> This series has 3 sections:
 
-The implementation does not permit shrinking below capacity below
-BITS_PER_LONG.
-
-Suggested-by: Alice Ryhl <aliceryhl@google.com>
-Suggested-by: Yury Norov <yury.norov@gmail.com>
-Signed-off-by: Burak Emir <bqe@google.com>
----
- MAINTAINERS            |   1 +
- rust/kernel/id_pool.rs | 222 +++++++++++++++++++++++++++++++++++++++++
- rust/kernel/lib.rs     |   1 +
- 3 files changed, 224 insertions(+)
- create mode 100644 rust/kernel/id_pool.rs
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 943d85ed1876..bc95d98f266b 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -4134,6 +4134,7 @@ R:	Yury Norov <yury.norov@gmail.com>
- S:	Maintained
- F:	lib/find_bit_benchmark_rust.rs
- F:	rust/kernel/bitmap.rs
-+F:	rust/kernel/id_pool.rs
+I really think this is too big to try to progress, even in RFC
+form.
  
- BITOPS API
- M:	Yury Norov <yury.norov@gmail.com>
-diff --git a/rust/kernel/id_pool.rs b/rust/kernel/id_pool.rs
-new file mode 100644
-index 000000000000..cf26d405d9bb
---- /dev/null
-+++ b/rust/kernel/id_pool.rs
-@@ -0,0 +1,222 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+// Copyright (C) 2025 Google LLC.
-+
-+//! Rust API for an ID pool backed by a [`Bitmap`].
-+
-+use crate::alloc::{AllocError, Flags};
-+use crate::bitmap::Bitmap;
-+
-+/// Represents a dynamic ID pool backed by a [`Bitmap`].
-+///
-+/// Clients acquire and release IDs from unset bits in a bitmap.
-+///
-+/// The capacity of the ID pool may be adjusted by users as
-+/// needed. The API supports the scenario where users need precise control
-+/// over the time of allocation of a new backing bitmap, which may require
-+/// release of spinlock.
-+/// Due to concurrent updates, all operations are re-verified to determine
-+/// if the grow or shrink is sill valid.
-+///
-+/// # Examples
-+///
-+/// Basic usage
-+///
-+/// ```
-+/// use kernel::alloc::{AllocError, flags::GFP_KERNEL};
-+/// use kernel::id_pool::IdPool;
-+///
-+/// let mut pool = IdPool::new(64, GFP_KERNEL)?;
-+/// for i in 0..64 {
-+///   assert_eq!(i, pool.acquire_next_id(i).ok_or(ENOSPC)?);
-+/// }
-+///
-+/// pool.release_id(23);
-+/// assert_eq!(23, pool.acquire_next_id(0).ok_or(ENOSPC)?);
-+///
-+/// assert_eq!(None, pool.acquire_next_id(0));  // time to realloc.
-+/// let resizer = pool.grow_request().ok_or(ENOSPC)?.realloc(GFP_KERNEL)?;
-+/// pool.grow(resizer);
-+///
-+/// assert_eq!(pool.acquire_next_id(0), Some(64));
-+/// # Ok::<(), Error>(())
-+/// ```
-+///
-+/// Releasing spinlock to grow the pool
-+///
-+/// ```no_run
-+/// use kernel::alloc::{AllocError, flags::GFP_KERNEL};
-+/// use kernel::sync::{new_spinlock, SpinLock};
-+/// use kernel::id_pool::IdPool;
-+///
-+/// fn get_id_maybe_realloc(guarded_pool: &SpinLock<IdPool>) -> Result<usize, AllocError> {
-+///   let mut pool = guarded_pool.lock();
-+///   loop {
-+///     match pool.acquire_next_id(0) {
-+///       Some(index) => return Ok(index),
-+///       None => {
-+///         let alloc_request = pool.grow_request();
-+///         drop(pool);
-+///         let resizer = alloc_request.ok_or(AllocError)?.realloc(GFP_KERNEL)?;
-+///         pool = guarded_pool.lock();
-+///         pool.grow(resizer)
-+///       }
-+///     }
-+///   }
-+/// }
-+/// ```
-+pub struct IdPool {
-+    map: Bitmap,
-+}
-+
-+/// Indicates that an [`IdPool`] should change to a new target size.
-+pub struct ReallocRequest {
-+    num_ids: usize,
-+}
-+
-+/// Contains a [`Bitmap`] of a size suitable for reallocating [`IdPool`].
-+pub struct PoolResizer {
-+    new: Bitmap,
-+}
-+
-+impl ReallocRequest {
-+    /// Allocates a new backing [`Bitmap`] for [`IdPool`].
-+    ///
-+    /// This method only prepares reallocation and does not complete it.
-+    /// Reallocation will complete after passing the [`PoolResizer`] to the
-+    /// [`IdPool::grow`] or [`IdPool::shrink`] operation, which will check
-+    /// that reallocation still makes sense.
-+    pub fn realloc(&self, flags: Flags) -> Result<PoolResizer, AllocError> {
-+        let new = Bitmap::new(self.num_ids, flags)?;
-+        Ok(PoolResizer { new })
-+    }
-+}
-+
-+impl IdPool {
-+    /// Constructs a new `[IdPool]`.
-+    ///
-+    /// A capacity below [`BITS_PER_LONG`] is adjusted to [`BITS_PER_LONG`].
-+    #[inline]
-+    pub fn new(num_ids: usize, flags: Flags) -> Result<Self, AllocError> {
-+        let num_ids = core::cmp::max(num_ids, bindings::BITS_PER_LONG as usize);
-+        let map = Bitmap::new(num_ids, flags)?;
-+        Ok(Self { map })
-+    }
-+
-+    /// Returns how many IDs this pool can currently have.
-+    #[inline]
-+    pub fn len(&self) -> usize {
-+        self.map.len()
-+    }
-+
-+    /// Returns a [`ReallocRequest`] if the [`IdPool`] can be shrunk, [`None`] otherwise.
-+    ///
-+    /// The capacity of an [`IdPool`] cannot be shrunk below [`BITS_PER_LONG`].
-+    ///
-+    /// # Examples
-+    ///
-+    /// ```
-+    /// use kernel::alloc::{AllocError, flags::GFP_KERNEL};
-+    /// use kernel::id_pool::{ReallocRequest, IdPool};
-+    ///
-+    /// let mut pool = IdPool::new(1024, GFP_KERNEL)?;
-+    /// let alloc_request = pool.shrink_request().ok_or(AllocError)?;
-+    /// let resizer = alloc_request.realloc(GFP_KERNEL)?;
-+    /// pool.shrink(resizer);
-+    /// assert_eq!(pool.len(), kernel::bindings::BITS_PER_LONG as usize);
-+    /// # Ok::<(), AllocError>(())
-+    /// ```
-+    #[inline]
-+    pub fn shrink_request(&self) -> Option<ReallocRequest> {
-+        let len = self.map.len();
-+        // Shrinking below [`BITS_PER_LONG`] is never possible.
-+        if len <= bindings::BITS_PER_LONG as usize {
-+            return None;
-+        }
-+        // Determine if the bitmap can shrink based on the position of
-+        // its last set bit. If the bit is within the first quarter of
-+        // the bitmap then shrinking is possible. In this case, the
-+        // bitmap should shrink to half its current size.
-+        let last_bit = self.map.last_bit();
-+        if last_bit.is_none() {
-+            return Some(ReallocRequest {
-+                num_ids: bindings::BITS_PER_LONG as usize,
-+            });
-+        }
-+        let bit = last_bit.unwrap();
-+        if bit >= (len / 4) {
-+            return None;
-+        }
-+        let num_ids = core::cmp::max(bindings::BITS_PER_LONG as usize, len / 2);
-+        Some(ReallocRequest { num_ids })
-+    }
-+
-+    /// Shrinks pool by using a new [`Bitmap`], if still possible.
-+    #[inline]
-+    pub fn shrink(&mut self, mut resizer: PoolResizer) {
-+        // Between request to shrink that led to allocation of `resizer` and now,
-+        // bits may have changed.
-+        // Verify that shrinking is still possible. In case shrinking to
-+        // the size of `resizer` is no longer possible, do nothing,
-+        // drop `resizer` and move on.
-+        let updated = self.shrink_request();
-+        if updated.is_none() {
-+            return;
-+        }
-+        if updated.unwrap().num_ids > resizer.new.len() {
-+            return;
-+        }
-+
-+        resizer.new.copy_and_extend(&self.map);
-+        self.map = resizer.new;
-+    }
-+
-+    /// Returns a [`ReallocRequest`] for growing this [`IdPool`], if possible.
-+    ///
-+    /// The capacity of an [`IdPool`] cannot be grown above [`i32::MAX`].
-+    #[inline]
-+    pub fn grow_request(&self) -> Option<ReallocRequest> {
-+        let num_ids = self.map.len() * 2;
-+        if num_ids > i32::MAX.try_into().unwrap() {
-+            return None;
-+        }
-+        Some(ReallocRequest { num_ids })
-+    }
-+
-+    /// Grows pool by using a new [`Bitmap`], if still necessary.
-+    ///
-+    /// The `resizer` arguments has to be obtained by calling [`grow_request`]
-+    /// on this object and performing a `realloc`.
-+    #[inline]
-+    pub fn grow(&mut self, mut resizer: PoolResizer) {
-+        // Between request to grow that led to allocation of `resizer` and now,
-+        // another thread may have already grown the capacity.
-+        // In this case, do nothing, drop `resizer` and move on.
-+        if resizer.new.len() <= self.map.len() {
-+            return;
-+        }
-+
-+        resizer.new.copy_and_extend(&self.map);
-+        self.map = resizer.new;
-+    }
-+
-+    /// Acquires a new ID by finding and setting the next zero bit in the
-+    /// bitmap.
-+    ///
-+    /// Upon success, returns its index. Otherwise, returns `None`
-+    /// to indicate that a `grow_request` is needed.
-+    #[inline]
-+    pub fn acquire_next_id(&mut self, offset: usize) -> Option<usize> {
-+        let next_zero_bit = self.map.next_zero_bit(offset);
-+        if let Some(nr) = next_zero_bit {
-+            self.map.set_bit(nr);
-+        }
-+        next_zero_bit
-+    }
-+
-+    /// Releases an ID.
-+    #[inline]
-+    pub fn release_id(&mut self, id: usize) {
-+        self.map.clear_bit(id);
-+    }
-+}
-diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-index 8c4161cd82ac..d7def807900a 100644
---- a/rust/kernel/lib.rs
-+++ b/rust/kernel/lib.rs
-@@ -54,6 +54,7 @@
- #[cfg(CONFIG_RUST_FW_LOADER_ABSTRACTIONS)]
- pub mod firmware;
- pub mod fs;
-+pub mod id_pool;
- pub mod init;
- pub mod io;
- pub mod ioctl;
--- 
-2.49.0.1204.g71687c7c1d-goog
+> Patch 1 - 11 deal with the private MMIO mapping in KVM MMU via DMABUF.
+> Leverage Jason & Vivek's latest VFIO dmabuf series [3], see Patch 2 - 4.
+> The concern for get_pfn() kAPI [4] is not addressed so are marked as
+> HACK, will investigate later.
 
+I would probably split this out entirely into its own topic. It
+doesn't seem directly related to TSM as KVM can use DMABUF for good
+reasons independently .
+
+> Patch 12 - 22 is about TSM Bind/Unbind/Guest request management in VFIO
+> & IOMMUFD. Picks some of Shameer's patch in [5], see Patch 12 & 14.
+
+This is some reasonable topic on its own after Dan's series
+ 
+> Patch 23 - 30 is a solution to meet the TDX specific sequence
+> enforcement on various device Unbind cases, including converting device
+> back to shared, hot unplug, TD destroy. Start with a tdx_tsm driver
+> prototype and finally implement the Unbind enforcement inside the
+> driver. To be honest it is still awkward to me, but I need help.
+
+Then you have a series or two to implement TDX using the infrastructure.
+
+Jason
 
