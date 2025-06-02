@@ -1,127 +1,101 @@
-Return-Path: <linux-kernel+bounces-670755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A82F9ACB87D
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 17:42:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E24FACB8B0
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 17:44:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B9C74A50BD
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 15:35:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77E614A2852
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 15:36:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BABFF221299;
-	Mon,  2 Jun 2025 15:34:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="JYHa/G6Z"
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D70DE221FD0;
+	Mon,  2 Jun 2025 15:36:19 +0000 (UTC)
+Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52912523A;
-	Mon,  2 Jun 2025 15:34:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B6D4222582;
+	Mon,  2 Jun 2025 15:36:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.169.211.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748878490; cv=none; b=Vn0IByxeEnc4K5sdfLpaoXequbmvzyfrMSf9U2XeD7e7asH8rF3Ffs7KJr4Rr4gxLB5LbRRQf8TXHTIQE7rQ7MnmEMIiNATI1JlmbggIVDqisAyPeqvJk6VRV9xzy171dGeYQGneYtlmElkTtbVANZmRAPW8341GNzn3Y39JAfU=
+	t=1748878579; cv=none; b=TYdhXhEbnr41wAUeOrTq1aWXoWphLJFuPZT7N83pi5jvQuMx16c2K0YKC62HgBTP0IwqRInKUJKyfvOffO1je0ox1DeHFhUL/w/g6EEFfR+uEE0VsZpqsIQ25UwiZFpJXOuanPYa2OkkrJLVddvyaVeGxuQl9+7CZZYKU41i/AM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748878490; c=relaxed/simple;
-	bh=rxSgjePRrDqocTR5PEa49E0emUGdPLDuFJFOaU0vyCc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Q6SzKM84FVu6bYCSdo5mNV5wLE333vdzhNtDAWDXGwjWWE26eZvL92T99ci0AbwKKeSD/UjEsN7YFnL5o1UE5BnsYXC6Tgr8rZR0yl3divld0MAQrFKobmNNwyRdsH36DNPJ0JC7OryVUlm/YxNkXduPkvmDX+rOSCbRfAnz6WU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=JYHa/G6Z; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4b9yZP6Tt5z9spq;
-	Mon,  2 Jun 2025 17:34:37 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1748878477;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RSWKa5jRWKpvNy5AYCWfE+HSpjMQwSPIzI/OGLplaVE=;
-	b=JYHa/G6ZeQB0yAIfVULn7KaHNi4u8pvPNXSitQ8sgxqIlk+aajfX3BD9W0hQ+kbsx9N+9W
-	4+YpGSR1x/9Gh9Fl4RfwNNQ4F7DMRNJrQ257cm5pEKfOP75SlHLUx0rz4jX2wokT972Hue
-	g/QuoCL9k1F1+UyaQbPWltOLes749bUQfmviBmHvr18Kj9mKw1JygJQklQr7s8ja9pvnm1
-	I/+nRbIjRkCvi6lKJE/Gow/dROVAa1ZqEi/Hc6vgRPJA8MqqiPwY82gJeMLdhQoXKpiyvC
-	ypkNLWhdS2u6RYhoqxkjev30NqlJyBmCOU/r87fIZlVKDRmSrJCbbi/cmjMS1A==
-Message-ID: <2acfe69f-f542-4f74-b671-d5a952d5b205@pankajraghav.com>
-Date: Mon, 2 Jun 2025 17:34:27 +0200
+	s=arc-20240116; t=1748878579; c=relaxed/simple;
+	bh=c603DWBYqwlU/aWg2+WiVmQp9Ok9b798vC1nRwPD66g=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZmTWaTOZFgjAak3ooWmefuzo/YxK741raJLPjTiLbGecdoMlrnO45cYDAk6/REu0uL8Lj1zgAx728UJNtl+cq1ySdC46MjHIykGD90GFk98QLzvQluRVfNXZP4fQ2TwQo4Fgu0Q27AxoR6d5R727V/Y0eio64t97+mZ5LuucXGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chainsx.cn; spf=pass smtp.mailfrom=chainsx.cn; arc=none smtp.client-ip=18.169.211.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chainsx.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chainsx.cn
+X-QQ-mid: esmtpgz12t1748878503t61ff263f
+X-QQ-Originating-IP: 6W6+bQXnVHQhbo8HPKV1XPMJMh78ckaDklHZl58FLdI=
+Received: from chainsx-ubuntu-server.lan ( [182.245.65.132])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Mon, 02 Jun 2025 23:35:01 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 1004114850195244819
+EX-QQ-RecipientCnt: 15
+From: Hsun Lai <i@chainsx.cn>
+To: i@chainsx.cn
+Cc: andrew@lunn.ch,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	heiko@sntech.de,
+	inindev@gmail.com,
+	jonas@kwiboo.se,
+	krzk+dt@kernel.org,
+	krzysztof.kozlowski@linaro.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	quentin.schulz@cherry.de,
+	robh@kernel.org,
+	sfr@canb.auug.org.au
+Subject: [v5,0/2] Add support for Firefly Station-M3/ROC-RK3588S-PC
+Date: Mon,  2 Jun 2025 23:35:00 +0800
+Message-Id: <20250602153500.1831349-1-i@chainsx.cn>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250530031046.166202-1-i@chainsx.cn>
+References: <20250530031046.166202-1-i@chainsx.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [RFC 3/3] block: use mm_huge_zero_folio in
- __blkdev_issue_zero_pages()
-To: Christoph Hellwig <hch@lst.de>, Pankaj Raghav <p.raghav@samsung.com>
-Cc: Suren Baghdasaryan <surenb@google.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Vlastimil Babka <vbabka@suse.cz>,
- Baolin Wang <baolin.wang@linux.alibaba.com>, Borislav Petkov <bp@alien8.de>,
- Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
- Zi Yan <ziy@nvidia.com>, Mike Rapoport <rppt@kernel.org>,
- Dave Hansen <dave.hansen@linux.intel.com>, Michal Hocko <mhocko@suse.com>,
- David Hildenbrand <david@redhat.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Thomas Gleixner <tglx@linutronix.de>, Nico Pache <npache@redhat.com>,
- Dev Jain <dev.jain@arm.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, linux-block@vger.kernel.org, willy@infradead.org,
- x86@kernel.org, linux-fsdevel@vger.kernel.org,
- "Darrick J . Wong" <djwong@kernel.org>, mcgrof@kernel.org,
- gost.dev@samsung.com
-References: <20250527050452.817674-1-p.raghav@samsung.com>
- <20250527050452.817674-4-p.raghav@samsung.com>
- <20250602050514.GD21716@lst.de>
-Content-Language: en-US
-From: Pankaj Raghav <kernel@pankajraghav.com>
-In-Reply-To: <20250602050514.GD21716@lst.de>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 4b9yZP6Tt5z9spq
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpgz:chainsx.cn:qybglogicsvrsz:qybglogicsvrsz3a-0
+X-QQ-XMAILINFO: NyTsQ4JOu2J2YHolm8kogsVjbbA1pNZRv2rLqpgswDE8y4EIOC64O2fv
+	xxhl4aEvmolbqfeNzqIyi1fbrte42iaPLC8GCxC0WxrNNREil3cbIafsy+kEULItMMUcbiq
+	Mj1r6zKWDB5jpEHimH3HFFItJWC4ZyyRfYXvn6znD2AXkPOowhJUnV1OsBPV2q0wCW//LX4
+	iSBoUTEYZlaK4qexxjicBjQLlyOjZJkOkvBOEsKZvzLPYezjIS6CHlZrqvQaxGr3MFHvTx2
+	i/IatOVoW7WcFNZoLLQv60igExwTDOeN8HB4NGUeSPO+zmlOUQJpYFfyn54qgC+YdKxcaVP
+	0sYUzaJCR14vxxUrYGmNwJuQ+MLoVbnZwBxeavbNB9fWkYzhcDdoprNmWh64lMDs8/lT9MC
+	l50IlKiI6uRJxgfL3riS3mfe3bahOLaBWSSiYQjMSSCH3X4WQa04AOpZAx+2wWz5Se010Rz
+	OnLII59EiZPkM2al6IsjlpKNtKZaTlqjBDd0+I5FtB1K/QqJvTfY9uA3O4UE4/d3U56oT5Q
+	v+eEYEEUMPCvxwclfDM1lpAGfTWujEerMFtw/EopiCAWKuaUj1XWwTcgDKWgyQM7Mia4h7s
+	R+SK0GvoPWZcwBBoQUo4m1vSch4FdXwgrHmSXyadhip4t2IGiWo5mntEhMVlV5Mm0jn55N+
+	zh/tKG+LMpLtpM1ckZiJ0WTxLoWK/lBzt+2pq+krJklxWdHHhNKoWgMwUQCyORddTXUYz5j
+	nCxxCs31S42wAxn37+yDdxOHjGS+0bi+KhXk3to7ex7ZfogyA30zn44Ky3jC44QI2s+rBDm
+	kKwelyE6Ho4UI5dH/ktF+dRzkdtjK3lSmFQmlz4GvNt1aFU9xZ3tcU57Vb+yFSTci/eIQQr
+	XUYPSbad7GAe5BO5yyQ9kJ5/UH9sl/vJxcpK6Ofeac9mAIFAK2UO3AdIlzmV6/DHl+Cjzzu
+	OVpD+irN55+sGfSJg0dS1Gab1zDfmofXMXlCE6egXutlErr1/dkRp42MOxKuXoamchVPKQ/
+	AOw8gBlOoBBLy0nLmidS4kEm6olqoDD4KnaxGdMg==
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+X-QQ-RECHKSPAM: 0
 
-On 6/2/25 07:05, Christoph Hellwig wrote:
-> On Tue, May 27, 2025 at 07:04:52AM +0200, Pankaj Raghav wrote:
->> Noticed a 4% increase in performance on a commercial NVMe SSD which does
->> not support OP_WRITE_ZEROES. The device's MDTS was 128K. The performance
->> gains might be bigger if the device supports bigger MDTS.
-> 
-> Impressive gain on the one hand - on the other hand what is the macro
-> workload that does a lot of zeroing on an SSD, because avoiding that
-> should yield even better result while reducing wear..
-> 
+> I tried to replicate on top of master 
+> (24de2b9da3e28df323c1e096538ae1e035751adf) but couldn't, so I guess we 
+> can simply ignore this warning?
 
-Absolutely. I think it is better to use either WRITE_ZEROES or DISCARD. But I wanted
-to have some measurable workload to show the benefits of using a huge page to zero out.
+Yes, the same situation occurs here,
+and it has already been answered by Heiko Stübner(#2):
+https://patchwork.kernel.org/project/linux-rockchip/cover/20250516012402.580468-1-i@chainsx.cn/
 
-Interestingly, I have seen many client SSDs not implementing WRITE_ZEROES.
-
->> +			unsigned int len, added = 0;
->>  
->> +			len = min_t(sector_t, folio_size(zero_folio),
->> +				    nr_sects << SECTOR_SHIFT);
->> +			if (bio_add_folio(bio, zero_folio, len, 0))
->> +				added = len;
->>  			if (added < len)
->>  				break;
->>  			nr_sects -= added >> SECTOR_SHIFT;
-> 
-> Unless I'm missing something the added variable can go away now, and
-> the code using it can simply use len.
-> 
-
-Yes. This should do it.
-
-if (!bio_add_folio(bio, zero_folio, len, 0))
-    break;
-
-nr_sects -= len >> SECTOR_SHIFT;
-
---
-Pankaj
+Best regards,
+Hsun
 
