@@ -1,195 +1,156 @@
-Return-Path: <linux-kernel+bounces-670090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21EC9ACA8CB
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 07:11:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BD546ACA8DA
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 07:17:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27646189B0FE
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 05:11:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABB9E189C116
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 05:17:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC46417E473;
-	Mon,  2 Jun 2025 05:10:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECA3D17B506;
+	Mon,  2 Jun 2025 05:17:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PvWliMUS"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="GP9bYpvp"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8FA05695;
-	Mon,  2 Jun 2025 05:10:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB6C62C3256
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 05:17:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748841054; cv=none; b=oOZmZMfMAg5JgnzWIYgpA6c9L8KmPl9FeQjY9JlX33xLzqp0biGtsYKGvtNipHNpmPEnfLrDZBE33RWcHp1+w/nAh/gcpKFnHkifTCQAeLXvfurPLqHfjyf16eniEocoi8+LbRs4AXKtXxH0rFHo0AKYciaFZHPLbBwXqXYCh0o=
+	t=1748841429; cv=none; b=Loy+RCeqhu6L9mQ8QlYpwlITfyHWbFM6oaXnEa9kSuygEg6rCDSt7685zO0Qh6ZdcrXa/3nWurm7vxuw6HgSJj5YYzdd9bPQmBzkGCN5l1XW+bwfMCoJXhgqVNkFLENgAhnGVdGWE7wR6VV5oe2tVBREDnRvwaHfviJ+1M7TZlg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748841054; c=relaxed/simple;
-	bh=fxDosPY8Wny75hKwXSp7HiD2ycgAdMQx1mnEg0e7Xco=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=LAA9xatP8Ppwplogz1Sio1Skf91eZUwYmzznW2kP41DZJiyzIGP2fBLDA/yL7xcHZNW1Kz0uKzXC9ZG4a1Kx0dFUqfpwUog9wH5/Ymb+noc/oziAs1qKiyEaLAkstCv14A416c2r7Nn20AxGQEQbJEhanQuQ0jbZH7Qf4UB3eks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PvWliMUS; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1748841052; x=1780377052;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=fxDosPY8Wny75hKwXSp7HiD2ycgAdMQx1mnEg0e7Xco=;
-  b=PvWliMUSA3lGVmY1/4f8QFrjQxu963ILr4lXLPS+GJHjsYnqXyC40D7y
-   omPrY0tnHcBDQOiyJgcOmpfNRrT0csNWjoxf2ki4ro8AutWv2N9bUbp5O
-   iPk7PJ2EXk8khvXDjVpV+0gay54szolJDR90Fq3Iz70bXHVmACseRXDi/
-   mfmohLDDYXpHZZDKduAGQs37PbUuHjxlNBBWSxwQHchK2o0GLUKeWjrZO
-   WKjFM4pt487+KJoWxBe7EyaOjs9beoBhYKEoh9u1quK+BJgcdecOAtsXG
-   navSoSb+ItaM3qFc2bgosWsSsiaeAsoQCt4xX4BbDEEW1G3UMQXHxnxIs
-   A==;
-X-CSE-ConnectionGUID: FX9W3Kn9Q9mc0zL4t69Akw==
-X-CSE-MsgGUID: BkCCyqZiQOmUZbXFAq2vYQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11450"; a="68396905"
-X-IronPort-AV: E=Sophos;i="6.16,202,1744095600"; 
-   d="scan'208";a="68396905"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jun 2025 22:10:51 -0700
-X-CSE-ConnectionGUID: cCOHNwErSH+NtylyeCcbaQ==
-X-CSE-MsgGUID: b99YSdCfQQO4vQ0vfIUCVQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,202,1744095600"; 
-   d="scan'208";a="181622455"
-Received: from vpanait-mobl.ger.corp.intel.com (HELO localhost) ([10.245.245.134])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jun 2025 22:10:46 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 2 Jun 2025 08:10:42 +0300 (EEST)
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-cc: Dan Williams <dan.j.williams@intel.com>, Lukas Wunner <lukas@wunner.de>, 
-    Bjorn Helgaas <bhelgaas@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
-    Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-    Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-    "H. Peter Anvin" <hpa@zytor.com>, linux-pci@vger.kernel.org, 
-    LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/1] PCI: Add Extended Tag + MRRS quirk for Xeon 6
-In-Reply-To: <xwcoamcgyprdiru3z3qyamqxjmolis23vps4axzkpesgjrag4p@wnp63ospijyw>
-Message-ID: <45809733-1e02-0109-a929-3cdd6c960646@linux.intel.com>
-References: <20250422130207.3124-1-ilpo.jarvinen@linux.intel.com> <xwcoamcgyprdiru3z3qyamqxjmolis23vps4axzkpesgjrag4p@wnp63ospijyw>
+	s=arc-20240116; t=1748841429; c=relaxed/simple;
+	bh=QlgZisWVY17SLtoiXdf351YXoW5eO2YEIBQ2EQVI5BE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eT3C9Jetmld5kRhn3qTQk4FLWknsclqC8p0xtFKUrQbReLdh9GAsTuUWs8wskinvTiBIcjyfNQVZlNk87xEQ6PJJ05UCPlXmfmtrZSD8XtZJ7CUO0unCdqBZ0ZmJQhDD09c/et/2ReM0dlXedwukfCEwHH+ns0dY0/eXdnNywZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=GP9bYpvp; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 551Mgv2C004094
+	for <linux-kernel@vger.kernel.org>; Mon, 2 Jun 2025 05:17:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=BcvF3wu0+glYxRvQURwwkyPb
+	Iw+40g+dQPFaEyxFw88=; b=GP9bYpvpahtE5IBqlgEbKiOhXg6THipkPi4Sa5D2
+	SDZd1Ulu6vmJUpASjAQBAffcirieEVAqMA5mze5s3AHyEfOWMQ8K1OuOUMnKqacP
+	F2JWvLk7F2DwE5WPOmhf1PW9G7vPGgDGjAbDPqPbaXh3Zy/as4cENeh1CW32oAkh
+	RjFVpzP3HjJAdDEcoXLmmOG9Sq5ICWR3sjOXHv5EMs/Z5f0JgUA5LDniHTtk21PX
+	tgbI6FTDQnejfSJPJOgp6TvFP2ZlpDZ5ysdfstweYpronhBD1wOGuIiWFuUonZO3
+	iXmuM+5UbEyubg9ok1IjZwETRJCMSqMN4bbvr11Fio5UyA==
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46ytkwbet4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 02 Jun 2025 05:17:07 +0000 (GMT)
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-311b6d25163so3636563a91.0
+        for <linux-kernel@vger.kernel.org>; Sun, 01 Jun 2025 22:17:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748841426; x=1749446226;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BcvF3wu0+glYxRvQURwwkyPbIw+40g+dQPFaEyxFw88=;
+        b=F9itif34PW0tB/ab5b6H4vGcf7dnFlNVAgUGHSXMbMlDflzbnSGR11j16rZXpT2hHy
+         83nOBeWMmJikeHdY3RjZy/PUxFRxA3bRY48pfKQdGgWxwBAgFJLNz2piQj1yXbqlruTN
+         HWbj4HAtKx6+puFK+sPUM+j4+lZKEPdSL9+YCe0BDJIvpx8gaN43fhuj4JeNiGqtsgA1
+         HKlW/a1w5sMa9BgomXO01rHjVd1hSmTYCjuz9Jn39QmK5vNEvEGyDHChI3KowZ6z8Z/j
+         YqR4TDlFBOYXaZomiTmMsQl9uDU1GRGWc9LHlzwB1zCpDUgPT8Zfg9TvCNAmh6TjmtRx
+         PmZg==
+X-Forwarded-Encrypted: i=1; AJvYcCX2YxvIybd8vB7SrToXaeGw6FIxz/2MBWlpJGjeEjrGxopwKWdNwLaFU/ufmNKf6jKGa0CEcD1W2q/IyBA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfDFD1OzGD1s5sDpLHIVb2uuvkJpeE86ToY3Wxo58QzcCpLbVN
+	4klqOlH/mxn87nKZXAfh1DeAOYla017gWHjDFaSoNPHWTk/q8kiAYZSAzNV/eIEsUVeiP2GbYBK
+	w3fTXP69s2Yu8luuhAf5eevwal+ZE+myBd1Ovo24pKMgu0SwR7aZ8mRFj6CjLIYtbpfrfh7z09c
+	Q2TLd4gS3GDLD5dK3PpZd5QJFQmo0RgZdO/qNpP4eLbg==
+X-Gm-Gg: ASbGncs5g+Eu8Z7QAVlwuXGLmhiKrXqMV4TLfnj8bvhCPnPXdWheX7WpMcSjNTVCyJZ
+	wZGb1uMyHL9vrx5Afa5fEERSI0n2l8QfnibQ9lgXivl9YYUWc1i+TVAsSNUQPB72ETMyR
+X-Received: by 2002:a17:90b:5828:b0:311:e8cc:4264 with SMTP id 98e67ed59e1d1-31250363513mr19184380a91.12.1748841426099;
+        Sun, 01 Jun 2025 22:17:06 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHChfK7PzYEZQwIvqSMCkJ/uvXJUWw56R0DX0Cq8T43ylpHzEa8bN6hcW7rjeT7ueXeX59XgKnJOr16AZ1SCX8=
+X-Received: by 2002:a17:90b:5828:b0:311:e8cc:4264 with SMTP id
+ 98e67ed59e1d1-31250363513mr19184328a91.12.1748841425612; Sun, 01 Jun 2025
+ 22:17:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-1642513350-1748841042=:1085"
+References: <20250527111227.2318021-1-quic_pkumpatl@quicinc.com>
+ <DA70A4LOJ57L.1RTX2K0Z6PU0L@linaro.org> <5b28e37d-6d46-472a-9aef-d2d86ea8f04b@quicinc.com>
+In-Reply-To: <5b28e37d-6d46-472a-9aef-d2d86ea8f04b@quicinc.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Date: Mon, 2 Jun 2025 08:16:54 +0300
+X-Gm-Features: AX0GCFtphupxUXzge-OP-7CeHDdsIOZC-CkWPj3OAeMdCwPb4GB5B5RCJ_MKFaQ
+Message-ID: <CAO9ioeUPQOTgAY1FDW=VCNbcTHv6jZFnjF7F0JdJb5Px3Dhotg@mail.gmail.com>
+Subject: Re: [PATCH v4 0/8] Enable audio on qcs6490-RB3Gen2 and qcm6490-idp boards
+To: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
+Cc: Alexey Klimov <alexey.klimov@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Srinivas Kandagatla <srini@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org,
+        kernel@oss.qualcomm.com, Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Authority-Analysis: v=2.4 cv=JIE7s9Kb c=1 sm=1 tr=0 ts=683d33d3 cx=c_pps
+ a=UNFcQwm+pnOIJct1K4W+Mw==:117 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10
+ a=NEAV23lmAAAA:8 a=COk6AnOGAAAA:8 a=XMtzzObD5LvXkpxU5CkA:9 a=QEXdDO2ut3YA:10
+ a=uKXjsCUrEbL0IQVhDsJ9:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: ijeHim-92Ay712bYAhJQsgnFCGvh9lel
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjAyMDA0MiBTYWx0ZWRfXzXlrWHz0kCp9
+ Uz0eum3KE9+/MNXUw33gNBzla2a/X5HIF4Otl94FJJIfq6BA3vElLmbHeTb5Y5K9vHY8pOarZYd
+ xBF1SDMv6hW1jBELpNqh/k/L6tvdYFlzc7SETh670cCM1zd7Uj68BCRHnoPIeYQblxtX3QyP6R8
+ vTufs1pbEI49jEgV0gfgONaHTOSt6URlH+tgjEF50uPrWUJu5Q8axdvINUiXHXMUrktUrzF8TNq
+ RYRL37PiIJqgqQrJ48nMtcu2FzOkJpXOvrYHzpGLRpZXGA2IEQhE7ZMRdVWmvkBDjGuB+WAbBQC
+ 9eRxtgjS6K0tcMeNzGE8ujCF4N/pIYi6Treb/cil7d7W7ncUl8g3Gq0d9IxtC5oKp5UH+ymGro6
+ sEhJfL9uZTTgaQOqC6u6JckDRD6efcxRSJZ8RGo1ukvuWkYp37O4u+VcpfKzol0ONK+GFyZn
+X-Proofpoint-ORIG-GUID: ijeHim-92Ay712bYAhJQsgnFCGvh9lel
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-02_01,2025-05-30_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxlogscore=954 priorityscore=1501 suspectscore=0 adultscore=0 phishscore=0
+ spamscore=0 impostorscore=0 clxscore=1015 malwarescore=0 lowpriorityscore=0
+ mlxscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505160000
+ definitions=main-2506020042
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Sun, 1 Jun 2025 at 16:02, Prasad Kumpatla <quic_pkumpatl@quicinc.com> wrote:
+>
+>
+>
+> On 5/27/2025 7:47 PM, Alexey Klimov wrote:
+> > On Tue May 27, 2025 at 12:12 PM BST, Prasad Kumpatla wrote:
+> >> From: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+> >>
+> >> Audio support is now enabled on the qcs6490-RB3Gen2 and qcm6490-idp boards.
+> >> The updates include adding the necessary audio device tree support and the required
+> >> dependencies.
+> >
+> > Do you have topology file and mixers commands (or UCM profile) to test this?
+> >
+> > I already asked but I don't see any replies. How this can be tested?
+>
+> please use these below UCM config files
+> https://github.com/mohsRafi/alsa-ucm-conf/blob/qcs6490_qcm6490_hifi/ucm2/Qualcomm/qcs6490/QCS6490-RB3Gen2/HiFi.conf
+>
+> https://github.com/mohsRafi/alsa-ucm-conf/blob/qcs6490_qcm6490_hifi/ucm2/Qualcomm/qcm6490/QCM6490-IDP/HiFi.conf
 
---8323328-1642513350-1748841042=:1085
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Is there anything there that isn't a part of the 1.2.14 release of
+alsa-ucm-conf?
 
-On Sun, 1 Jun 2025, Manivannan Sadhasivam wrote:
 
-> On Tue, Apr 22, 2025 at 04:02:07PM +0300, Ilpo J=C3=A4rvinen wrote:
-> > When bifurcated to x2, Xeon 6 Root Port performance is sensitive to the
-> > configuration of Extended Tags, Max Read Request Size (MRRS), and 10-Bi=
-t
-> > Tag Requester (note: there is currently no 10-Bit Tag support in the
-> > kernel). While those can be configured to the recommended values by FW,
-> > kernel may decide to overwrite the initial values.
-> >=20
-> > Unfortunately, there is no mechanism for FW to indicate OS which parts
-> > of PCIe configuration should not be altered. Thus, the only option is
-> > to add such logic into the kernel as quirks.
-> >=20
-> > There is a pre-existing quirk flag to disable Extended Tags. Depending
-> > on CONFIG_PCIE_BUS_* setting, MRRS may be overwritten by what the
-> > kernel thinks is the best for performance (the largest supported
-> > value), resulting in performance degradation instead with these Root
-> > Ports. (There would have been a pre-existing quirk to disallow
-> > increasing MRRS but it is not identical to rejecting >128B MRRS.)
-> >=20
-> > Add a quirk that disallows enabling Extended Tags and setting MRRS
-> > larger than 128B for devices under Xeon 6 Root Ports if the Root Port i=
-s
-> > bifurcated to x2. Reject >128B MRRS only when it is going to be written
-> > by the kernel (this assumes FW configured a good initial value for MRRS
-> > in case the kernel is not touching MRRS at all).
-> >=20
-> > It was first attempted to always write MRRS when the quirk is needed
-> > (always overwrite the initial value). That turned out to be quite
-> > invasive change, however, given the complexity of the initial setup
-> > callchain and various stages returning early when they decide no change=
-s
-> > are necessary, requiring override each. As such, the initial value for
-> > MRRS is now left into the hands of FW.
-> >=20
-> > Link: https://cdrdv2.intel.com/v1/dl/getContent/837176
-> > Signed-off-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
-> > ---
-> >=20
-> > v2:
-> > - Explain in changelog why FW cannot solve this on its own
-> > - Moved the quirk under arch/x86/pci/
-> > - Don't NULL check value from pci_find_host_bridge()
-> > - Added comment above the quirk about the performance degradation
-> > - Removed all setup chain 128B quirk overrides expect for MRRS write
-> >   itself (assumes a sane initial value is set by FW)
-> >=20
-> >  arch/x86/pci/fixup.c | 30 ++++++++++++++++++++++++++++++
-> >  drivers/pci/pci.c    | 15 ++++++++-------
-> >  include/linux/pci.h  |  1 +
-> >  3 files changed, 39 insertions(+), 7 deletions(-)
-> >=20
-> > diff --git a/arch/x86/pci/fixup.c b/arch/x86/pci/fixup.c
-> > index efefeb82ab61..aa9617bc4b55 100644
-> > --- a/arch/x86/pci/fixup.c
-> > +++ b/arch/x86/pci/fixup.c
-> > @@ -294,6 +294,36 @@ DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL,=09PCI=
-_DEVICE_ID_INTEL_MCH_PB1,=09pcie_r
-> >  DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL,=09PCI_DEVICE_ID_INTEL_MCH=
-_PC,=09pcie_rootport_aspm_quirk);
-> >  DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL,=09PCI_DEVICE_ID_INTEL_MCH=
-_PC1,=09pcie_rootport_aspm_quirk);
-> > =20
-> > +/*
-> > + * PCIe devices underneath Xeon6 PCIe Root Port bifurcated to 2x have =
-slower
-> > + * performance with Extended Tags and MRRS > 128B. Workaround the perf=
-ormance
-> > + * problems by disabling Extended Tags and limiting MRRS to 128B.
-> > + *
-> > + * https://cdrdv2.intel.com/v1/dl/getContent/837176
-> > + */
-> > +static void quirk_pcie2x_no_tags_no_mrrs(struct pci_dev *pdev)
-> > +{
-> > +=09struct pci_host_bridge *bridge =3D pci_find_host_bridge(pdev->bus);
-> > +=09u32 linkcap;
-> > +
-> > +=09pcie_capability_read_dword(pdev, PCI_EXP_LNKCAP, &linkcap);
-> > +=09if (FIELD_GET(PCI_EXP_LNKCAP_MLW, linkcap) !=3D 0x2)
-> > +=09=09return;
-> > +
-> > +=09bridge->no_ext_tags =3D 1;
-> > +=09bridge->only_128b_mrrs =3D 1;
->=20
-> My 2 cents here. Wouldn't it work if you hardcode MRRS to 128 in PCI_EXP_=
-DEVCTL
-> here and then set pci_host_bridge::no_inc_mrrs to 1? This would avoid
-> introducing an extra flag and also serve the same purpose.
-
-Hi Mani,
-
-Thanks for the suggestion but it won't work because this is the Root Port.=
-=20
-The devices underneath it need this setting so we cannot set them to 128B=
-=20
-reliable here (is there anything that guarantees those devices have been=20
-enumerated at this point?).
-
-I've v3 already prepared which uses the enable device hook as suggested by=
-=20
-Lukas. I'll send it soon.
-
---=20
- i.
-
---8323328-1642513350-1748841042=:1085--
+-- 
+With best wishes
+Dmitry
 
