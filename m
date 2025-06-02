@@ -1,83 +1,78 @@
-Return-Path: <linux-kernel+bounces-670972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62655ACBB6B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 21:19:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B31DAACBB61
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 21:17:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB55816B6AD
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 19:18:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 724B31609B5
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 19:17:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 745142AD2F;
-	Mon,  2 Jun 2025 19:17:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32B01227BB9;
+	Mon,  2 Jun 2025 19:17:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="RPrYj70D"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T/Er14HK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C9472C3242;
-	Mon,  2 Jun 2025 19:17:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90FC6B660;
+	Mon,  2 Jun 2025 19:17:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748891872; cv=none; b=udCk3vgdrqsg+YKjHEcKaPk9peQovTYiPXUjA9OwgQQ12jByAnlQcXw4W4K3Wuwvu+mO5m3mteRsnd5cvyGCgpkJHi3ZMUMCoTWYE5H6JEigZY+mGGPbts9rYOjj8eggTUvcuV84UHytsMA4Mg7r11P/bwhKmrkKLFbrXecGmE4=
+	t=1748891841; cv=none; b=AmwE5t93MDXCQ5dbOuaIo1g6YZ6yYycGsfQQBPfQsDR/A0TCv2ld0iX5h+rjiYP6qPoXX/EET2sfR7tvI37okIOUE6S9XvtCp6qjykR21euiTdGY9b0JeyvKHLhH9stTjgKcDLKzDWY4YCksPQANKidv3xI/1kVwN7QiDQhSL9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748891872; c=relaxed/simple;
-	bh=JbBE2BSt4IuIp/mHpK/1woVzzTCCuTRSikmM/SfpxhY=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=rkfaiAqqrbY13Kb46XvtuPTU45XRIouZ2hgceSiJKM1IhSjs/Rhbchj9LikkH7RJZ5Hk5ZT3OCtnnu+kXekRJkor5TkNMOfn9Odwwg4eNz/fMDV3vnYo4c/dSghYrQ9EL2Y2cbt3k0k4LVnK4708ZAIve7N5WyGPHnNOcwsfR34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=RPrYj70D; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCDB7C4CEEB;
-	Mon,  2 Jun 2025 19:17:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1748891872;
-	bh=JbBE2BSt4IuIp/mHpK/1woVzzTCCuTRSikmM/SfpxhY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=RPrYj70DmEmC7GBiB8PpxtPpU/sbGbi6aG9rrPIRKVx7x62oNDMBzL3sdd6zk3AfA
-	 JnimY6oTs8hWj0hO1nCK76iCMRfVhK8g7IZG4g3OyCZat2uwoQuoMBHdqb8KjZ42T1
-	 2r2AxubAjvJN+V0z5Sft2RiPFyUJrOzvVsWAzHeA=
-Date: Mon, 2 Jun 2025 12:17:51 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-mm@kvack.org,
- mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] Additional MM updates for 6.16-rc1
-Message-Id: <20250602121751.53ee502779a2f746404a3548@linux-foundation.org>
-In-Reply-To: <aD29wnb5zR-afWpM@casper.infradead.org>
-References: <20250601151222.60ead71e7d8492a18c711a05@linux-foundation.org>
-	<aD29wnb5zR-afWpM@casper.infradead.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1748891841; c=relaxed/simple;
+	bh=8LVTHc2CIY3i+iU9NIpiraQaeCmRC1dytqsnIesJADo=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=ldLx4elTJK5bP9Baw0I0Te3LLQf+oI+XoC60Qc0z+ExC7tehyIrUZdIZxVh4eNL5dMRa858YIBHfPYtr01Qqr/5BNAC11M/PKrVodod38Ta9r2OwqU+qQuJrFhRxjrTtjNa805POWsdX2vyXKh08Hpl2Nk/nveF+8CGQXfNaum4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T/Er14HK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14C60C4CEEE;
+	Mon,  2 Jun 2025 19:17:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748891841;
+	bh=8LVTHc2CIY3i+iU9NIpiraQaeCmRC1dytqsnIesJADo=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=T/Er14HKPiTUyx1oLUzzuTopZXt9czTE7lhReRxmFNpyi3yTTDXSnK8tx72sUZAg4
+	 q89sGqGUWVI4WhII/OzcWBf7JFFk7CHuw3hB6ze1fO6D3MzbmTyihoMZE+BOqgtG5Z
+	 m5HA18g448yE4BiMArGH0lX901XuoTcu9Qk7OX4E2Di1hFrMDBgYzVnzRUcTYhJrQA
+	 3ho9ILBWKke4N72mvxMAiAsUInY7f35Z3HN/9ldnzcucqIpLsFgoDpXVdDfF/OVdnQ
+	 VYie+Y2gK00i5CP2Es+CZ09q029Rt2U1CEHAIekMuQQ/KpgexRkeHp3PRm8bJZTeax
+	 jios2HUPtXzRA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAE47380AAD0;
+	Mon,  2 Jun 2025 19:17:54 +0000 (UTC)
+Subject: Re: [GIT PULL] rpmsg updates for v6.16
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20250602140914.2086-1-andersson@kernel.org>
+References: <20250602140914.2086-1-andersson@kernel.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20250602140914.2086-1-andersson@kernel.org>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git tags/rpmsg-v6.16
+X-PR-Tracked-Commit-Id: 5de775df3362090a6e90046d1f2d83fe62489aa0
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: b509c16e1d7cba8d0fd3843f6641fcafb3761432
+Message-Id: <174889187349.877155.2064923235735672025.pr-tracker-bot@kernel.org>
+Date: Mon, 02 Jun 2025 19:17:53 +0000
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, "Dr . David Alan Gilbert" <linux@treblig.org>, Dan Carpenter <dan.carpenter@linaro.org>, Luca Weiss <luca@lucaweiss.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 
-On Mon, 2 Jun 2025 16:05:38 +0100 Matthew Wilcox <willy@infradead.org> wrote:
+The pull request you sent on Mon,  2 Jun 2025 09:09:12 -0500:
 
-> On Sun, Jun 01, 2025 at 03:12:22PM -0700, Andrew Morton wrote:
-> > Linus, please merge this second batch of MM updates for the 6.16-rcX cycle.
-> 
-> A word of warning for Linus since he wouldn't've been cc'd on the
-> earlier email.  This branch is based on v6.15-rc6 but contains a
-> commit which depends on 97dfbbd135cb which was merged during the
-> current merge window.  You might want to do a rebase or ask Andrew to
-> do it in order to prevent a bisection hazard.
-> 
-> 0day-ci found the problem here:
-> https://lore.kernel.org/linux-mm/202506022027.IYQzZghL-lkp@intel.com/
+> https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git tags/rpmsg-v6.16
 
-I think it's OK?  I did the merge and 
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/b509c16e1d7cba8d0fd3843f6641fcafb3761432
 
-	d9736929445e iov: remove copy_page_from_iter_atomic()
+Thank you!
 
-lands later than
-
-	97dfbbd135cb highmem: add folio_test_partial_kmap()
-
-
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
