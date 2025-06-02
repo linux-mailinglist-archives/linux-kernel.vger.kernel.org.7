@@ -1,183 +1,106 @@
-Return-Path: <linux-kernel+bounces-670745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89D57ACB88F
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 17:42:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC66BACB833
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 17:37:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C9754C111D
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 15:28:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E90D51944D4F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 15:29:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF3F62248B3;
-	Mon,  2 Jun 2025 15:22:36 +0000 (UTC)
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C2DC226863;
+	Mon,  2 Jun 2025 15:26:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="nocTW5lJ"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D65FC1C6FE9
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 15:22:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A7DF21A444;
+	Mon,  2 Jun 2025 15:26:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748877756; cv=none; b=TmIKEyMGFw32P90Je81o2cbh+GrLNDapbs3px52XA6a3GWFUkqfxUEotrGlCPpTR2tMO353onFPdinC71LweCWx1C34hGezrINgQwEOJ4rSVT+1LB6z5aCMkvnrs+lYwr+LKosbWOAKgit63Fe5aJLOO9WLR7ADrXVckzE2vHKc=
+	t=1748877973; cv=none; b=nzjirnvz0YJh7cZUsl8P5MOVJJJ3bzoymEX4X5sK4gZm7zvhqv5Q5287uQFapwFMPVh/6vr78yGpvobh6QDippk0V7XkIXYDtNRe+G21kb3KNmgpkfT189iFKJBHSLtrTK2YvxBTyrQqAkqsLa4zSVsBwHkuNWX9S6LUzabzvRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748877756; c=relaxed/simple;
-	bh=g9WOMBkmMG8BclD+4LVAq3Z8bUO9U2znlJqwHtM6kmk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SRh4wgWigFsWo8JxA30jvlgRz1nk+71qZyOXsLyFPIuDorQLVeUtDEIdsg5xCcDkJQ/RrdTn9tB1wlqyl7jGC8VsFqbiwHnsDEJaU2AnCiX1EpuWTBJqn84c+U++gyWC6ce5YQLxYVoD3Ezw0r1oQ1rSCzWdAmxIf0iTt32hqiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 3635E4393F;
-	Mon,  2 Jun 2025 15:22:29 +0000 (UTC)
-Message-ID: <c6d4e881-d258-41f2-a7c3-d993caf892ae@ghiti.fr>
-Date: Mon, 2 Jun 2025 17:22:29 +0200
+	s=arc-20240116; t=1748877973; c=relaxed/simple;
+	bh=B/rTeYDT4bu9TqlcVS+AMRm0LLhf4oIY9pXCk0xIYWY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WhSOcSaIrtBpDY2s1NsDD74LVRrsFAq7P0K4zS1kEMSnRaoetiWwaBxxv4nr5FghCE51VTiPHKjzvxDDN5555B0IUg18pcoTLIibhdfzNI+Wi0TBC5/fr+GA3dznAaanQz5+LpJ8etl4DS1RQQ8RjgxdZ7N8MM1rmJvyEVqHz7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=nocTW5lJ; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=VsmBZUh+vyXv4ku+fzDdFGhVlt45TaS4taDV3PYjBJs=; b=nocTW5lJMQ/TMaA8qaPK4x9xGY
+	YHoLB6m1pNtMbB+bEbBT3ru7jVtGgwGZvuPuGgBT253G23p3UJ5WHYUwS26S9UmPa9E+uG8S65Lxp
+	GFCvWfH4t88+KK4RUBPL48KvgCAUHuXHoI6rfN4XYyHIAu63tdKU7phtVc8bOvBOsWMkJGxoRXWCs
+	jbqQ2DqHn9IRa8f2y8hTgjiqY3qQrA03xW/9y1g8BT5x+suXlKEihGY1Wec0H4D5q2afAdyT+XUuv
+	AYUOV3yQbBY+yxWNOC9lbQ8zTiB40WZ5nP2ReoIqYXljqYIhBiID+mpg1B3ma/Pe1QEpaghq6GeNh
+	ql3M45uA==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:55524)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1uM72q-00051K-2g;
+	Mon, 02 Jun 2025 16:25:48 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1uM72h-0007i6-0r;
+	Mon, 02 Jun 2025 16:25:39 +0100
+Date: Mon, 2 Jun 2025 16:25:39 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Ilya K <me@0upti.me>
+Cc: Eric Woudstra <ericwouds@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Frank Wunderlich <frank-w@public-files.de>,
+	Daniel Golle <daniel@makrotopia.org>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org,
+	coreteam@netfilter.org, bridge@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH RFC net-next] net: phylink: always config mac for
+ (delayed) phy
+Message-ID: <aD3Cc7gmB2Tev_ul@shell.armlinux.org.uk>
+References: <20250107123615.161095-1-ericwouds@gmail.com>
+ <Z30iUj6DE9-fRp0n@shell.armlinux.org.uk>
+ <4b9b2a9a-061b-43ad-b402-a49aee317f41@gmail.com>
+ <Z31CJS1YUvPGiEXs@shell.armlinux.org.uk>
+ <98234080-946e-4b36-832f-113b185e7bca@gmail.com>
+ <Z3-Tz5WdLCat91vm@shell.armlinux.org.uk>
+ <9cc913d7-7e5b-4b6c-886c-ca9778c3f970@0upti.me>
+ <aD1lRha-enQ9Pw0g@shell.armlinux.org.uk>
+ <2894a781-4d4b-4e3c-9f4e-7c1f04122f8a@0upti.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] riscv: uaccess: do not do misaligned accesses in
- get/put_user()
-To: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
-References: <20250530205658.624195-1-cleger@rivosinc.com>
- <20250530205658.624195-3-cleger@rivosinc.com>
- <718fb1d7-9f0c-4637-abe8-5a34305c3ae2@ghiti.fr>
- <cea8cdf2-4b1e-4628-a5df-249adf4387b5@rivosinc.com>
-Content-Language: en-US
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <cea8cdf2-4b1e-4628-a5df-249adf4387b5@rivosinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgdefkedtvdculddtuddrgeefvddrtddtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeetlhgvgigrnhgurhgvucfihhhithhiuceorghlvgigsehghhhithhirdhfrheqnecuggftrfgrthhtvghrnhepuefffedvleetleetjefhjeehudejteetvedtvddvtdfhieetffelvdffgefgieeinecuffhomhgrihhnpehinhhfrhgruggvrggurdhorhhgnecukfhppedvtddtudemkeeiudemfeefkedvmegvfheltdemfeeifhdvmeeijeehgeemvdeiieekmegsieeksgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvtddtudemkeeiudemfeefkedvmegvfheltdemfeeifhdvmeeijeehgeemvdeiieekmegsieeksgdphhgvlhhopeglkffrggeimedvtddtudemkeeiudemfeefkedvmegvfheltdemfeeifhdvmeeijeehgeemvdeiieekmegsieeksggnpdhmrghilhhfrhhomheprghlvgigsehghhhithhirdhfrhdpnhgspghrtghpthhtohepiedprhgtphhtthhopegtlhgvghgvrhesrhhivhhoshhinhgtrdgtohhmpdhrtghpthhtoheplhhinhhugidqrhhishgtvheslhhishhtshdri
- hhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehprghulhdrfigrlhhmshhlvgihsehsihhfihhvvgdrtghomhdprhgtphhtthhopehprghlmhgvrhesuggrsggsvghlthdrtghomhdprhgtphhtthhopegrohhusegvvggtshdrsggvrhhkvghlvgihrdgvughu
-X-GND-Sasl: alex@ghiti.fr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2894a781-4d4b-4e3c-9f4e-7c1f04122f8a@0upti.me>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Hi Clément,
+On Mon, Jun 02, 2025 at 04:00:14PM +0300, Ilya K wrote:
+> That's weird, because I do have all the patches applied. I think this may have been broken by the pcs_inband_caps changes, because without the patch I'm just getting "autoneg setting not compatible with PCS", after which it bails, when it should really reconfigure the MAC instead.
 
-On 6/2/25 09:37, Clément Léger wrote:
->
-> On 31/05/2025 14:35, Alexandre Ghiti wrote:
->> On 5/30/25 22:56, Clément Léger wrote:
->>> Doing misaligned access to userspace memory would make a trap on
->>> platform where it is emulated. Latest fixes removed the kernel
->>> capability to do unaligned accesses to userspace memory safely since
->>> interrupts are kept disabled at all time during that. Thus doing so
->>> would crash the kernel.
->>>
->>> Such behavior was detected with GET_UNALIGN_CTL() that was doing
->>> a put_user() with an unsigned long* address that should have been an
->>> unsigned int*. Reenabling kernel misaligned access emulation is a bit
->>> risky and it would also degrade performances. Rather than doing that,
->>> we will try to avoid any misaligned accessed by using copy_from/to_user()
->>> which does not do any misaligned accesses. This can be done only for
->>> !CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS and thus allows to only generate
->>> a bit more code for this config.
->>>
->>> Signed-off-by: Clément Léger <cleger@rivosinc.com>
->>> ---
->>>    arch/riscv/include/asm/uaccess.h | 28 ++++++++++++++++++++++------
->>>    1 file changed, 22 insertions(+), 6 deletions(-)
->>>
->>> diff --git a/arch/riscv/include/asm/uaccess.h b/arch/riscv/include/
->>> asm/uaccess.h
->>> index 046de7ced09c..b542c05f394f 100644
->>> --- a/arch/riscv/include/asm/uaccess.h
->>> +++ b/arch/riscv/include/asm/uaccess.h
->>> @@ -169,8 +169,21 @@ do {                                \
->>>      #endif /* CONFIG_64BIT */
->>>    +unsigned long __must_check __asm_copy_to_user(void __user *to,
->>> +    const void *from, unsigned long n);
->>> +unsigned long __must_check __asm_copy_from_user(void *to,
->>> +    const void __user *from, unsigned long n);
->>> +
->>>    #define __get_user_nocheck(x, __gu_ptr, label)            \
->>>    do {                                \
->>> +    if (!IS_ENABLED(CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS))
->>> {            \
->>> +        if (!IS_ALIGNED((uintptr_t)__gu_ptr, sizeof(*__gu_ptr)))
->>> {        \
->>
->> Nit: I would use && instead of 2 ifs.
->>
->>
->>> +            if (__asm_copy_from_user(&(x), __gu_ptr,
->>> sizeof(*__gu_ptr)))    \
->>> +                goto label;            \
->>> +            else                    \
->>> +                break;                \
->>
->> Here I would remove the else
-> Hi Alex,
->
-> The "else" is needed to break from the outer do/while loop or it will go
-> though the next switch case (and it will crash due to misaligned accesses).
+Please enable phylink and sfp debug (adding #define DEBUG to the top of
+phylink.c and sfp.c, and then send the kernel messages after reproducing
+the issue.
 
+Thanks.
 
-I meant only the "else", not the "break"!
-
-Thanks,
-
-Alex
-
-
->
->>
->>> +        }                        \
->>> +    }                            \
->>>        switch (sizeof(*__gu_ptr)) {                \
->>>        case 1:                            \
->>>            __get_user_asm("lb", (x), __gu_ptr, label);    \
->>> @@ -297,6 +310,15 @@ do {                                \
->>>      #define __put_user_nocheck(x, __gu_ptr, label)            \
->>>    do {                                \
->>> +    if (!IS_ENABLED(CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS))
->>> {            \
->>> +        if (!IS_ALIGNED((uintptr_t)__gu_ptr, sizeof(*__gu_ptr)))
->>> {        \
->>> +            unsigned long val = (unsigned long)(x);                \
->>
->> Here it sems like __inttype(*(__gu_ptr)) is more accurate than unsigned
->> long, even though I think unsigned long works fine too.
-> Wasn't aware of __inttype, but it sounds good.
->
-> Thanks,
->
-> Clément
->
->>
->>> +            if (__asm_copy_to_user(__gu_ptr, &(val),
->>> sizeof(*__gu_ptr)))    \
->>> +                goto label;            \
->>> +            else                    \
->>> +                break;                \
->>> +        }                        \
->>> +    }                            \
->>>        switch (sizeof(*__gu_ptr)) {                \
->>>        case 1:                            \
->>>            __put_user_asm("sb", (x), __gu_ptr, label);    \
->>> @@ -385,12 +407,6 @@ err_label:                            \
->>>            -EFAULT;                    \
->>>    })
->>>    -
->>> -unsigned long __must_check __asm_copy_to_user(void __user *to,
->>> -    const void *from, unsigned long n);
->>> -unsigned long __must_check __asm_copy_from_user(void *to,
->>> -    const void __user *from, unsigned long n);
->>> -
->>>    static inline unsigned long
->>>    raw_copy_from_user(void *to, const void __user *from, unsigned long n)
->>>    {
->
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
