@@ -1,157 +1,128 @@
-Return-Path: <linux-kernel+bounces-670205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCDA4ACAA96
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 10:29:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B52DFACAA9E
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 10:32:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99D10189C9D0
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 08:30:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7EFD5179CE1
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 08:32:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A01519DF4A;
-	Mon,  2 Jun 2025 08:29:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 543A21B424E;
+	Mon,  2 Jun 2025 08:32:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="G+UyZ6gu";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="9f4jIC50"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WeKWQ72/"
+Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D81E42C3240
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 08:29:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D83132C8B;
+	Mon,  2 Jun 2025 08:32:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748852982; cv=none; b=WtobOF52GHLy8Bj8JbN99oAy1+qSptWwlrcvZZ2CXsNBpjfBvXf6uBrUru1bkTX3lio6asunQ1XaEZz2UAP3pIcGGIQLo8TsYXYnJkeNotwyRD1DMSleBxyDjcas2GwwYq4i2HPTQ9XbIvtlla9Kddux2/lSTXsTIbPQyJk9F1o=
+	t=1748853137; cv=none; b=EucQyAEq0X9uRRDAzvPBgdeRuDy7w/lc46ci398FS3G+0NLoRx39tn+d8hEK2muPUKmA08CH6Grye4/Og+9ofUDu9+9Y54mI1UQrby/KQIob/duLyOs5bZTA3OQs1jbX1Al0HjTHPjt3PGZeBAFrZtUbQegdMqg7aJMU+a92Lqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748852982; c=relaxed/simple;
-	bh=Y/RO85aVjqQPNi2XGujWPx/9mU+5vSHT2xDBTvt+aQc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=uVLpzoBScbmCF/jfiM5lQL/3qEkBahh0A0epGNS/l3dOndMO1+VgWrMWr0K2vvI3dMpCJgtzKjoPQlSOPhtmxXOQXSQzMDXWIQRWxFRgkGmujQiPGSTmwuXdrOi+0+Etu8Jug/fm7CwlPjF1BRarJ+zj3lHu9D6O+jR35LK0E7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=G+UyZ6gu; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=9f4jIC50; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 2 Jun 2025 10:29:30 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1748852973;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=hkgKy/QUlyNlnSk3m53sjulr8OtKHIa03c7yKO2yAy8=;
-	b=G+UyZ6gu3vB+3b66XqRSs5jjNmArS4yLCIOwwC80hMp6BdI1U9Ma4Nb9OhVjVBLS54mmkm
-	ISF0B5cUkJSclS+BEnFuvPkMje6AOWm1u7ROftSSv9MDoz8a8bkls+UCRFvD+jMAenD0zP
-	jiy5Bw3Ix4bSdodDXwTDyHkz/JLZ5IkYqmgEPdf5bp+S1LTuxfBooivc8Tp2APJgQxAysP
-	tOvSzuOFgCGzVzZA1rikdPIN4H7X0xMS8nizj5WbQBYbn3pFoRcDpVsu9S++P4ciQa1u9f
-	YOYkzJ94rZ663XMSE5SOfjeJ+GVlfkqD37HqQe2FAEYkwClCDK8JJX/JxG8LnQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1748852973;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=hkgKy/QUlyNlnSk3m53sjulr8OtKHIa03c7yKO2yAy8=;
-	b=9f4jIC508FM1bGALIOZ5lf5M4u3ubt1omZiWSOotv0lFzENM5YMuI3fESAyOPtp4E53I3p
-	B9xpG6XzPEPln5Bg==
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
-	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, llvm@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Subject: [BUG?] clang miscompilation of inline ASM with overlapping
- input/output registers
-Message-ID: <20250602102825-42aa84f0-23f1-4d10-89fc-e8bbaffd291a@linutronix.de>
+	s=arc-20240116; t=1748853137; c=relaxed/simple;
+	bh=JXTm2dW9soi7AjmSLBIOUJFewUQfyTHyJEK63fcQbWk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RKSrYcwyFMDAQkS8CJLSvXE7wzLkzRt8Tu8zHDvtPRpiDhkZRhXGXPnCIH8BSi3RbncMCMcHcgpoUrwewc7w/Epxjw6R/BkQqnpwv8veTWPvxaFD1GQDf+ai0J1vUtuwOvZycrDw2tuKUvv/NCoyJBXWWGWxbFsjLGvmqi2+MXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WeKWQ72/; arc=none smtp.client-ip=209.85.210.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-72c173211feso1099132a34.1;
+        Mon, 02 Jun 2025 01:32:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748853135; x=1749457935; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JXTm2dW9soi7AjmSLBIOUJFewUQfyTHyJEK63fcQbWk=;
+        b=WeKWQ72/tphcN5k4U6iaaCz3BTG7bbeNTFtyj4RyZPA0KW8JbfWFhgpcvmCXCumfpN
+         iWm3etJ9NjzEgS21D8ublwekWNWV4Hi6zQxiwvO3c3CFkj5SMxY5ClYHbsoL6iVVpY9Z
+         tk5vLTORb7zrDGgsapXM7tcQkTZgmQ9fYqZb9hfdC3kl/cBkL3YxTw6NC2Jfmpwi73GV
+         HzptI74SPXp3MIun26mpPVPpnXkXT1p2BVn4SUmXkaSucEW3ywz2GU20ioSzBp+SSdRs
+         BB/2DKHlHbjEb9KONTDdfTxalLD1CbsB6cnoInONMXTJybBrb8h6YQuVXstt1o5xA+Dk
+         XHeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748853135; x=1749457935;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JXTm2dW9soi7AjmSLBIOUJFewUQfyTHyJEK63fcQbWk=;
+        b=Igkxaq9oOQDgw3ToL7/0c6G8cyR/uLASgv5Ez7zuiomI0yowoxfxSllkKeEwK773vI
+         Qc/InZPaJa7z61qXDh1WAXRjGuH8Z3XbrukzzDvUs1naiRj2VL8wdQuC0mjno+2DdIn0
+         h5Bqzd/5qW/BwmQX+Xb10ZPs45v1+0VyLQndtLxRu7DW+lpeuhDZ7qzAKg79qSnhYax+
+         mIfprhzJvpqPRSB08mH7Jj+CHm+BTHTjEV4z/OQC/u59V99GYXixObT7bpQ/lkxz2xO5
+         foKkniDN4dVeQTxcF3Ccxnkg01Tkise3rg/xPODC/rB/eFke/6JlBynJvrcBFiSBFzyD
+         WvSg==
+X-Forwarded-Encrypted: i=1; AJvYcCVcfhisL0scniRUG9M0kILmcZT0t8Kvg9rCqEnk2/LSnAlkeJL38N6JxtA711IS2L6Xr3RtleVPKH5+@vger.kernel.org, AJvYcCW9Mc5ycJBlaZKQ/oo3Ge5dFe1tdPLJWPjl9zU12R1OS+XDltQrSrRK+/12UvPx6qU3g3H6AszIxkvnekq2sQ==@vger.kernel.org, AJvYcCWsIDChrIwB0brsCiTymrdRp6WChPUjUUUpjD/YZI4gb0ssp6jKslA5cCSHQ8c/ivkHUez0WnAAhJs0Hr5/@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3JRQK91Bpi8ugqSMlRpwGO8cbS8Y0Kb3KenXn/klQ1nN+ySfA
+	Zg3A6VjgcOkDgQIS68SKXT7zT+MND/lfv9ZAp31ufYTYJO8uyUZZCO73im4qd3unvNiC1DHqhiH
+	NLn67NrdJ9Z9IVEgYbh2yOIlrMQgj4zE=
+X-Gm-Gg: ASbGncuyEG6ul/1GFvk/xmYB986iDLzb/M64BECD0mEnJMWVgfRFBmB7C0YL2ZsYNK+
+	QXUo0EdF+aLbupPQ3NSbAj1wGJv4OayExkXqONfJtZQyDOAzWEdM93ANYWeSeaKMQBMQYaA1xG8
+	8ePp5vB5r81sriy1x+JC3VdrmOdinuehnk5Q==
+X-Google-Smtp-Source: AGHT+IG08SyOEOKizDZlR4fXPxa3T8Q1zNlW4b89aLdSyuDxE0Sy/BUGurGnY/qWDExjKkJ/oo8qbi97Eby7F9wa76I=
+X-Received: by 2002:a05:6830:490d:b0:72b:b8d8:3995 with SMTP id
+ 46e09a7af769-736eceede66mr7271164a34.19.1748853135247; Mon, 02 Jun 2025
+ 01:32:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <174770727723.36693.13352978360096773573.b4-ty@kernel.org>
+ <20250602081638.51724-1-elliot.huang.signed@gmail.com> <466ee887-cbea-434d-8599-3a8966b08c2a@kernel.org>
+In-Reply-To: <466ee887-cbea-434d-8599-3a8966b08c2a@kernel.org>
+From: Elliot Huang <elliot.huang.signed@gmail.com>
+Date: Mon, 2 Jun 2025 16:30:11 +0800
+X-Gm-Features: AX0GCFs3Qj8Z9XgGk0K-d-gUwRKLMWd81H3TlPEkBK-Jupkwuif2VHyOeYKgU8k
+Message-ID: <CALe+u94c6EVjXWc5MjmT4U8xWF3EX-e=yY59k=RG=eXVYrfPmA@mail.gmail.com>
+Subject: Re: [PATCH 1/1] arm64: dts: qcom: support sound on Asus Vivobook S15
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: andersson@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org, 
+	johan@kernel.org, konrad.dybcio@oss.qualcomm.com, konradybcio@kernel.org, 
+	krzk+dt@kernel.org, linux-arm-msm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, lumag@kernel.org, maud_spierings@hotmail.com, 
+	robh@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Thanks, I will
 
-Hi,
-
-I observed a surprising behavior of clang around inline assembly and register
-variables, differing from GCC.
-
-Consider the following snippet:
-
-	$ cat repro.c
-	int main(void)
-	{
-		register long in asm("eax");
-		register long out asm("eax");
-
-		in = 0;
-		asm volatile("nop" : "+r" (out) : "r" (in));
-
-		return out;
-	}
-
-The relevant part is that the inline ASM has input and output register
-variables both using the same register and the input one is assigned to.
-
-
-Compile with clang (19.1.7, tested on godbolt.org with trunk):
-
-	$ clang -O2 repro.c
-	$ llvm-objdump --disassemble-symbols=main a.out
-	0000000000001120 <main>:
-	    1120: 90                           	nop
-	    1121: c3                           	retq
-
-The store of the variable "in" has been optimized away.
-
-
-Compile with gcc (15.1.1, also tested on godbolt.org with trunk):
-
-	$ gcc -O2 repro.c
-	$ llvm-objdump --disassemble-symbols=main a.out
-	0000000000001020 <main>:
-	    1020: 31 c0                        	xorl	%eax, %eax
-	    1022: 90                           	nop
-	    1023: c3                           	retq
-	    1024: 66 2e 0f 1f 84 00 00 00 00 00	nopw	%cs:(%rax,%rax)
-	    102e: 66 90                        	nop
-
-The store to "eax" is preserved.
-
-
-As far as I can see gcc is correct here. As the variable is used as an input to
-ASM the compiler can not optimize away.
-On other architectures the same effect can be observed.
-
-
-The real kernel example for this issue is in the loongarch vDSO code from
-arch/loongarch/include/asm/vdso/gettimeofday.h:
-
-	static __always_inline long clock_gettime_fallback(
-						clockid_t _clkid,
-						struct __kernel_timespec *_ts)
-	{
-		register clockid_t clkid asm("a0") = _clkid;
-		register struct __kernel_timespec *ts asm("a1") = _ts;
-		register long nr asm("a7") = __NR_clock_gettime;
-		register long ret asm("a0");
-
-		asm volatile(
-		"       syscall 0\n"
-		: "+r" (ret)
-		: "r" (nr), "r" (clkid), "r" (ts)
-		: "$t0", "$t1", "$t2", "$t3", "$t4", "$t5", "$t6", "$t7",
-		 "$t8", "memory");
-
-		return ret;
-	}
-
-Here both "clkid" and "ret" are stored in "a0". I can't point to the concrete
-disassembly here because it is inlined into a much larger block of code
-and removing the inlining hides the bug.
-Also in my tests the bug only manifests for "_clkid" in the interval [16, 23].
-Other values work by chance.
-Removing the aliasing by dropping "ret" and using "clkid" for both input and
-output produces correct results.
-
-Is this a clang bug, is the code broken or am I missing something?
-
-
-Thomas
+On Mon, Jun 2, 2025 at 4:27=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.org=
+> wrote:
+>
+> On 02/06/2025 10:16, binarycraft007 wrote:
+> > From: Elliot Huang <elliot.huang.signed@gmail.com>
+> >
+> > This adds sound support for vivobook s15, tested:
+> > - 2 speakers.
+> > - 2 dmics
+> > - headset with mic(distorted).
+> >
+> > Signed-off-by: Elliot Huang <elliot.huang.signed@gmail.com>
+>
+> Do not attach (thread) your patchsets to some other threads (unrelated
+> or older versions). This buries them deep in the mailbox and might
+> interfere with applying entire sets.
+>
+> Please version your patches correctly, e.g. use b4 or git format-patch
+> -vX, and add changelog in cover letter or under '---' of individual
+> patches describing changes from previous version.
+>
+> Please use subject prefixes matching the subsystem. You can get them for
+> example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
+> your patch is touching. For bindings, the preferred subjects are
+> explained here:
+> https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-pat=
+ches.html#i-for-patch-submitters
+>
+> Do not send new versions while the discussion is still going.
+>
+>
+> Best regards,
+> Krzysztof
 
