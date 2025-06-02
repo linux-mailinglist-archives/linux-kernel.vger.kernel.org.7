@@ -1,281 +1,173 @@
-Return-Path: <linux-kernel+bounces-670604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED8C8ACB1FD
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 16:26:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BD6AACB21B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 16:27:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2F04486255
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 14:20:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A36116DFE3
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 14:21:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BBC2239E92;
-	Mon,  2 Jun 2025 14:10:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D80223C4FC;
+	Mon,  2 Jun 2025 14:11:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Li2nBdMd"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E0y9cyjr"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A759239E7B
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 14:10:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03C8023BD1A;
+	Mon,  2 Jun 2025 14:11:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748873455; cv=none; b=P/r07yP1GMDRq044q6HlZjxAudiJPYCROzCaIINGb+mOs3BSP1B40w8km3COP566ZPNYlUv90eEUnimYlm1PM+ktBGR0/QcsEldwB+p78FyXNHJbNjSRl4kXFiHdyL+kb3MMK/TYxXuFn9hjxpQ7dr2C+CnECiRqiMtxylSGMho=
+	t=1748873499; cv=none; b=AZPLAyoWNSa3pzmEoWJEWBb4l50hOII+B9AvIKwCiNBe2y/q5cbqtF27mlIoprRQd7TBSHoEZqytwtEqY3/SKXbIRieJVktfLpWh1rG5ARTEPUs5TuMgR4G5imH9gzLnJBHlcXhSxXqqB91+LKHNBvh6BKTiy8R+FysAS0+SGS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748873455; c=relaxed/simple;
-	bh=ousPvc2zGRDEFMA40RS58QI/UFkXo7SsE2URjvgjojw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D8e6IZQPRaxX0sYBOBQETxom/E0nlIYmOFq5j2M95YbgzSjBEiVmRA3nYvBtROdLfGjnqazZBW5RkbMmvpbVOAakUZGfBTbg9zjKVpyh7OTIVWj6KRpDDR9+b4kvTyJxSlsSZTQhb/tw4N+AUv42EHLXkm56so84KpjJllUsuPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Li2nBdMd; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1748873453; x=1780409453;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ousPvc2zGRDEFMA40RS58QI/UFkXo7SsE2URjvgjojw=;
-  b=Li2nBdMdnd+2r9al0TvozIkySTN/9IfP0ZW5GORzMdEFFORxgNAS5R/w
-   B3VHJIGthCTBiskIutzySvVYxwcHbVS7iTS8IxNDGoxX8okz7vBpOGIqc
-   uWE5QOJ6Xvq0sshwJc949U6uOogZEtfkQQIRQiteXD7o/aMQoHqN1pC+6
-   0tRRzTaIQJPrLkx1BZwOCDK7foshFAG2CkjKLq1bBeJhhx0OSP4IelJU3
-   yo5e060asinuILXQsFjU3xHQPd4pbNBWq+ZVvMEVK3xfUwO8HDcyMoTOJ
-   sAJ6kL+Sra8AOAVfb1P83wq/WqHzNponyX9KnStb0rWZ/v/fU3UujE4R1
-   g==;
-X-CSE-ConnectionGUID: ZzmrTpvhTXqyxj97bcIhhg==
-X-CSE-MsgGUID: OTYhlWzeS+maQ15ftOqidQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11451"; a="50798973"
-X-IronPort-AV: E=Sophos;i="6.16,203,1744095600"; 
-   d="scan'208";a="50798973"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2025 07:10:52 -0700
-X-CSE-ConnectionGUID: rocCGsKcQXy/xxWDkyW9UQ==
-X-CSE-MsgGUID: EKNS3vxGT52QIHI5/nS25g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,203,1744095600"; 
-   d="scan'208";a="149552246"
-Received: from ly-workstation.sh.intel.com (HELO ly-workstation) ([10.239.35.3])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2025 07:10:50 -0700
-Date: Mon, 2 Jun 2025 22:10:47 +0800
-From: "Lai, Yi" <yi1.lai@linux.intel.com>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>, yi1.lai@intel.com
-Subject: Re: [RFC/PATCH] perf/core: Use POLLHUP for a pinned event in error
-Message-ID: <aD2w50VDvGIH95Pf@ly-workstation>
-References: <20250317061745.1777584-1-namhyung@kernel.org>
+	s=arc-20240116; t=1748873499; c=relaxed/simple;
+	bh=Oqi/dneJGeyGAoSf6jrH1IEST05UFsco/17naRZEefA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=P0LrPhrnwLRpMjvwP9+TcndCY5TTaxYJEy6ZXII8P/Rq2Cq+fRUoXx1kMLfBUBqzxB18vXlB3/ASBElZ5s3u8AHF5jQi7TaohhQ25032OaD0ITvcnf6KH6FPqSGncmMgh+izrJ8WFJH3sWehBfklEVIiEI79FAi8b7u1/h5TelU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E0y9cyjr; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-231e8553248so42062745ad.1;
+        Mon, 02 Jun 2025 07:11:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748873497; x=1749478297; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=RQuw7/TJU1j7Z0HT/rwULfCMawLOPYNu/pS+8IoIehM=;
+        b=E0y9cyjrFqE5kZOVtO3IbxxEBuWzbKOQVvfXEXPIHyH6jjBL/NSg2EYOR5RU1V/Aea
+         MuuRGtTExKuyru9o9vhz89ocmDXdhaVCtOJEm+2sYM8Q3sRMWJJcJZ1763Grk+pCSBRW
+         3mNJdd+NHseiAkk3VJRAuSdthpa+/ob9K0Fw+Z83SlTRMWOCX/TbFJwfhpwmBgspjfWR
+         U/bBgcVXkKTuuHCOf3KYhGQJhN7d3tw0Jlget6ydRoOXadzW107FIl7GYlcTGrFwzTYn
+         P8PJ/UqE0Ap96hoahsB6jCE+WlB5d2fhuvyOeNIrf8blCR3MHuZHCaleu4jncTIfswD3
+         Hqrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748873497; x=1749478297;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RQuw7/TJU1j7Z0HT/rwULfCMawLOPYNu/pS+8IoIehM=;
+        b=Qj+yCGeNjTiyGGHx7Zd2U0hzceSy6GnhNCvmtzBitIexj9OqocIfPoIW/4P540LEV1
+         KlFHuc/ft8KHEcFmunh+GwUk19MiId+ykVSahVqQlarOodTTkJgQJIrUh53FpA6tR9g1
+         UGl0CDhdT+C/E8xBTLTFI8muPFi5jTJpmZqAlgbHZqgpFCNSYOwr9R5IhvQyFJhNw0kZ
+         HiIoH168NDhmK7CbKLurSkfESSgI7C2JbstGMHccA1dlSfvWGvJmJQ3ldnshqYcMuSOa
+         2834oZurEWRTGzeAZx+chREEEEt+6jcqyYJ9YfFFV8aGFqTGXsYa8RJiHZzqY/I4UWKO
+         r66w==
+X-Forwarded-Encrypted: i=1; AJvYcCWX2Q8DMF8y8tyPKESr9UxwBypW0ynvcLhs3Rl/6suTaiBcwQRRoawm7J0PIO8GhXpww2xZlRk6LtYQx04=@vger.kernel.org, AJvYcCXhgSBZRhNoaWrhbc9eVR4/bCS7yqBXljs22/JC4jXEMYhbP9xmurqHJigyxzfPhbAWkm8f44SHdk/cZKCbbQY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzeustUTIv2ntk+btT/rZqU/l5/p84oX243C8avWSjwBsnlHMAx
+	aOkyDoT+0IekTBBM+BQ+nYBoVQ5UUxE9RTkn+LUuQlHwbIPHzZuzcoPr8dLbqOFo
+X-Gm-Gg: ASbGncvfLgjRWVF2xN4FGdDO/VyWP08WgdwtSafvvVAwdLh4vZrD6VgqSvmr98qzHfO
+	6PEfto5VVX8g+NN0eFt0qNuAD/G9/ysZFJPBixQUQQoY47seO9zTg9zXDfchuVv1LkpGtREb/fQ
+	Ry07j/bjnLoktT+3Oaw1WRHBEiaWLx3/wGmtfB5rGDQ+Eg4DXUXBPLHX5WGkWOGQTc4Ap+kBWwh
+	xXhGs3fmEbCEeDVS6AlrxRSN3W5DoPilAqAR6V3TNTz6RdxkDwyPuHmhGZuXYXguJOwzk5EfuRb
+	yuPfbhygB+qgKa8rVhGpSKgKXXh+4AftsE0G2m1OOfTCbsvD8eCMbvojUzSfiFfklDvzWt+qGMP
+	iLAcclYXxzZwtrgNowwtgOXl/
+X-Google-Smtp-Source: AGHT+IFIMpWcEWdbPQ8RhkKRIxsANnzG7tpSbIsv99Ipr+jjFtQBzgn2lOu/+i10qxUsOx6xQeEHQw==
+X-Received: by 2002:a17:902:cf10:b0:234:aa9a:9e0f with SMTP id d9443c01a7336-235395c1ae0mr144531795ad.23.1748873497127;
+        Mon, 02 Jun 2025 07:11:37 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23506d21df0sm71361925ad.229.2025.06.02.07.11.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Jun 2025 07:11:36 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <e7c1cf7e-b007-49cb-9441-31ecdce3614c@roeck-us.net>
+Date: Mon, 2 Jun 2025 07:11:34 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250317061745.1777584-1-namhyung@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] watchdog: ziirave_wdt: check record length in
+ ziirave_firm_verify()
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+ Enric Balletbo i Serra <eballetbo@kernel.org>
+Cc: Wim Van Sebroeck <wim@linux-watchdog.org>,
+ linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1748463049.git.dan.carpenter@linaro.org>
+ <3b58b453f0faa8b968c90523f52c11908b56c346.1748463049.git.dan.carpenter@linaro.org>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
+In-Reply-To: <3b58b453f0faa8b968c90523f52c11908b56c346.1748463049.git.dan.carpenter@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Namhyung Kim,
-
-Greetings!
-
-I used Syzkaller and found that there is WARNING: locking bug in perf_event_wakeup in linux-next next-20250530.
-
-After bisection and the first bad commit is:
-"
-f4b07fd62d4d perf/core: Use POLLHUP for pinned events in error
-"
-
-All detailed into can be found at:
-https://github.com/laifryiee/syzkaller_logs/tree/main/250601_162355_perf_event_wakeup
-Syzkaller repro code:
-https://github.com/laifryiee/syzkaller_logs/tree/main/250601_162355_perf_event_wakeup/repro.c
-Syzkaller repro syscall steps:
-https://github.com/laifryiee/syzkaller_logs/tree/main/250601_162355_perf_event_wakeup/repro.prog
-Syzkaller report:
-https://github.com/laifryiee/syzkaller_logs/tree/main/250601_162355_perf_event_wakeup/repro.report
-Kconfig(make olddefconfig):
-https://github.com/laifryiee/syzkaller_logs/tree/main/250601_162355_perf_event_wakeup/kconfig_origin
-Bisect info:
-https://github.com/laifryiee/syzkaller_logs/tree/main/250601_162355_perf_event_wakeup/bisect_info.log
-bzImage:
-https://github.com/laifryiee/syzkaller_logs/raw/refs/heads/main/250601_162355_perf_event_wakeup/bzImage_next-20250530
-Issue dmesg:
-https://github.com/laifryiee/syzkaller_logs/blob/main/250601_162355_perf_event_wakeup/next-20250530_dmesg.log
-
-"
-[   39.913691] =============================
-[   39.914157] [ BUG: Invalid wait context ]
-[   39.914623] 6.15.0-next-20250530-next-2025053 #1 Not tainted
-[   39.915271] -----------------------------
-[   39.915731] repro/837 is trying to lock:
-[   39.916191] ffff88801acfabd8 (&event->waitq){....}-{3:3}, at: __wake_up+0x26/0x60
-[   39.917182] other info that might help us debug this:
-[   39.917761] context-{5:5}
-[   39.918079] 4 locks held by repro/837:
-[   39.918530]  #0: ffffffff8725cd00 (rcu_read_lock){....}-{1:3}, at: __perf_event_task_sched_in+0xd1/0xbc0
-[   39.919612]  #1: ffff88806ca3c6f8 (&cpuctx_lock){....}-{2:2}, at: __perf_event_task_sched_in+0x1a7/0xbc0
-[   39.920748]  #2: ffff88800d91fc18 (&ctx->lock){....}-{2:2}, at: __perf_event_task_sched_in+0x1f9/0xbc0
-[   39.921819]  #3: ffffffff8725cd00 (rcu_read_lock){....}-{1:3}, at: perf_event_wakeup+0x6c/0x470
-[   39.922823] stack backtrace:
-[   39.923171] CPU: 0 UID: 0 PID: 837 Comm: repro Not tainted 6.15.0-next-20250530-next-2025053 #1 PREEMPT(voluntary)
-[   39.923196] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.o4
-[   39.923214] Call Trace:
-[   39.923221]  <TASK>
-[   39.923228]  dump_stack_lvl+0xea/0x150
-[   39.923256]  dump_stack+0x19/0x20
-[   39.923276]  __lock_acquire+0xb22/0x22a0
-[   39.923308]  ? x86_pmu_commit_txn+0x195/0x2b0
-[   39.923339]  ? __lock_acquire+0x412/0x22a0
-[   39.923375]  lock_acquire+0x170/0x310
-[   39.923407]  ? __wake_up+0x26/0x60
-[   39.923448]  _raw_spin_lock_irqsave+0x52/0x80
-[   39.923473]  ? __wake_up+0x26/0x60
-[   39.923504]  __wake_up+0x26/0x60
-[   39.923537]  perf_event_wakeup+0x14a/0x470
-[   39.923571]  merge_sched_in+0x846/0x15c0
-[   39.923610]  visit_groups_merge.constprop.0.isra.0+0x952/0x1420
-[   39.923653]  ? __pfx_visit_groups_merge.constprop.0.isra.0+0x10/0x10
-[   39.923688]  ? sched_clock_noinstr+0x12/0x20
-[   39.923724]  ? __sanitizer_cov_trace_const_cmp1+0x1e/0x30
-[   39.923766]  ctx_sched_in+0x471/0xa20
-[   39.923804]  ? __pfx_ctx_sched_in+0x10/0x10
-[   39.923838]  ? __sanitizer_cov_trace_const_cmp4+0x1a/0x20
-[   39.923878]  perf_event_sched_in+0x47/0xa0
-[   39.923912]  __perf_event_task_sched_in+0x3fc/0xbc0
-[   39.923951]  ? __pfx___perf_event_task_sched_in+0x10/0x10
-[   39.923984]  ? __this_cpu_preempt_check+0x21/0x30
-[   39.924012]  ? __sanitizer_cov_trace_cmp8+0x1c/0x30
-[   39.924046]  ? xfd_validate_state+0x14f/0x1b0
-[   39.924081]  finish_task_switch.isra.0+0x525/0x990
-[   39.924117]  ? lock_unpin_lock+0xdc/0x170
-[   39.924152]  __schedule+0xef3/0x3840
-[   39.924185]  ? __pfx___schedule+0x10/0x10
-[   39.924218]  ? ktime_get_coarse_real_ts64+0xad/0xf0
-[   39.924259]  schedule+0xf6/0x3d0
-[   39.924285]  exit_to_user_mode_loop+0x7a/0x110
-[   39.924315]  do_syscall_64+0x284/0x2e0
-[   39.924340]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-[   39.924360] RIP: 0033:0x7ff14103ee5d
-[   39.924381] Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 8
-[   39.924400] RSP: 002b:00007fffb2745578 EFLAGS: 00000202 ORIG_RAX: 0000000000000038
-[   39.924418] RAX: 0000000000000346 RBX: 0000000000000000 RCX: 00007ff14103ee5d
-[   39.924431] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000082000
-[   39.924443] RBP: 00007fffb27455c0 R08: 0000000000000000 R09: 0000000000000000
-[   39.924456] R10: 0000000000000000 R11: 0000000000000202 R12: 00007fffb27459a8
-[   39.924468] R13: 0000000000404e78 R14: 0000000000406e08 R15: 00007ff141389000
-[   39.924497]  </TASK>
-[   40.307815] coredump: 804(repro): over core_pipe_limit, skipping core dump
-[   40.472093] coredump: 795(repro): over core_pipe_limit, skipping core dump
-[   40.545575] coredump: 799(repro): over core_pipe_limit, skipping core dump
-[   40.948915] coredump: 833(repro): over core_pipe_limit, skipping core dump
-[   40.989336] coredump: 811(repro): over core_pipe_limit, skipping core dump
-[   42.121469] coredump: 857(repro): over core_pipe_limit, skipping core dump
-"
-
-Hope this cound be insightful to you.
-
-Regards,
-Yi Lai
-
----
-
-If you don't need the following environment to reproduce the problem or if you
-already have one reproduced environment, please ignore the following information.
-
-How to reproduce:
-git clone https://gitlab.com/xupengfe/repro_vm_env.git
-cd repro_vm_env
-tar -xvf repro_vm_env.tar.gz
-cd repro_vm_env; ./start3.sh  // it needs qemu-system-x86_64 and I used v7.1.0
-  // start3.sh will load bzImage_2241ab53cbb5cdb08a6b2d4688feb13971058f65 v6.2-rc5 kernel
-  // You could change the bzImage_xxx as you want
-  // Maybe you need to remove line "-drive if=pflash,format=raw,readonly=on,file=./OVMF_CODE.fd \" for different qemu version
-You could use below command to log in, there is no password for root.
-ssh -p 10023 root@localhost
-
-After login vm(virtual machine) successfully, you could transfer reproduced
-binary to the vm by below way, and reproduce the problem in vm:
-gcc -pthread -o repro repro.c
-scp -P 10023 repro root@localhost:/root/
-
-Get the bzImage for target kernel:
-Please use target kconfig and copy it to kernel_src/.config
-make olddefconfig
-make -jx bzImage           //x should equal or less than cpu num your pc has
-
-Fill the bzImage file into above start3.sh to load the target kernel in vm.
-
-
-Tips:
-If you already have qemu-system-x86_64, please ignore below info.
-If you want to install qemu v7.1.0 version:
-git clone https://github.com/qemu/qemu.git
-cd qemu
-git checkout -f v7.1.0
-mkdir build
-cd build
-yum install -y ninja-build.x86_64
-yum -y install libslirp-devel.x86_64
-../configure --target-list=x86_64-softmmu --enable-kvm --enable-vnc --enable-gtk --enable-sdl --enable-usb-redir --enable-slirp
-make
-make install 
-
-On Sun, Mar 16, 2025 at 11:17:45PM -0700, Namhyung Kim wrote:
-> Pinned events can go to an error state when they are failed to be
-> scheduled in the context.  And they won't generate samples anymore
-> and silently ignored until it's recovered by PERF_EVENT_IOC_ENABLE or
-> something (and of course the condition also should be changed so that
-> they can be scheduled in).  But then users should know about the state
-> change.
+On 5/28/25 13:22, Dan Carpenter wrote:
+> The "rec->len" value comes from the firmware.  We generally do
+> trust firmware, but it's always better to double check.  If
+> the length value is too large it would lead to memory corruption
+> when we set "data[i] = ret;"
 > 
-> Currently there's no mechanism to notify users when they go to an error
-> state.
-> 
-> One way to do this is to issue POLLHUP event to poll(2) to handle this.
-> Reading events in an error state would return 0 (EOF) and it matches to
-> the behavior of POLLHUP according to the man page.
-> 
-> Users should remove the fd of the event from pollfd after getting
-> POLLHUP, otherwise it'll be returned repeatedly.
-> 
-> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> Fixes: 217209db0204 ("watchdog: ziirave_wdt: Add support to upload the firmware.")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+
+Reviewed-by: Guenetr Roeck <linux@roeck-us.net>
+
 > ---
->  kernel/events/core.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
+>   drivers/watchdog/ziirave_wdt.c | 3 +++
+>   1 file changed, 3 insertions(+)
 > 
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index 2533fc32d890eacd..cef1f5c60f642d21 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -3984,6 +3984,11 @@ static int merge_sched_in(struct perf_event *event, void *data)
->  		if (event->attr.pinned) {
->  			perf_cgroup_event_disable(event, ctx);
->  			perf_event_set_state(event, PERF_EVENT_STATE_ERROR);
+> diff --git a/drivers/watchdog/ziirave_wdt.c b/drivers/watchdog/ziirave_wdt.c
+> index fcc1ba02e75b..5c6e3fa001d8 100644
+> --- a/drivers/watchdog/ziirave_wdt.c
+> +++ b/drivers/watchdog/ziirave_wdt.c
+> @@ -302,6 +302,9 @@ static int ziirave_firm_verify(struct watchdog_device *wdd,
+>   		const u16 len = be16_to_cpu(rec->len);
+>   		const u32 addr = be32_to_cpu(rec->addr);
+>   
+> +		if (len > sizeof(data))
+> +			return -EINVAL;
 > +
-> +			if (*perf_event_fasync(event))
-> +				event->pending_kill = POLL_HUP;
-> +
-> +			perf_event_wakeup(event);
->  		} else {
->  			struct perf_cpu_pmu_context *cpc = this_cpc(event->pmu_ctx->pmu);
->  
-> @@ -5925,6 +5930,10 @@ static __poll_t perf_poll(struct file *file, poll_table *wait)
->  	if (is_event_hup(event))
->  		return events;
->  
-> +	if (unlikely(READ_ONCE(event->state) == PERF_EVENT_STATE_ERROR &&
-> +		     event->attr.pinned))
-> +		return events;
-> +
->  	/*
->  	 * Pin the event->rb by taking event->mmap_mutex; otherwise
->  	 * perf_event_set_output() can swizzle our rb and make us miss wakeups.
-> -- 
-> 2.49.0.rc1.451.g8f38331e32-goog
-> 
+>   		if (ziirave_firm_addr_readonly(addr))
+>   			continue;
+>   
+
 
