@@ -1,99 +1,90 @@
-Return-Path: <linux-kernel+bounces-670447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15CC4ACAE7E
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 15:05:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCC6CACAE88
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 15:06:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC3BA16548D
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 13:05:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7DC63A1797
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 13:06:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B732320F066;
-	Mon,  2 Jun 2025 13:04:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8140921D3C7;
+	Mon,  2 Jun 2025 13:06:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="OjSHWXCc";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="nUMKEKmL"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="bkNOyjuF"
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2046.outbound.protection.outlook.com [40.107.101.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAE8E191F6D
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 13:04:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A98822D7BF;
+	Mon,  2 Jun 2025 13:06:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.46
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748869494; cv=fail; b=truyaUIQJ0UAchNdXsR5C9ixtyJt1gmzf8Cvd+hAWGeEmSpQUls80ZGNkujGkNRaBh7KjRhIsxJT7pjYSvFUiJSANChUBd1gZIv3ewM/FUrvofSpy+tXukajZ6ePe0hqpV3N9fOmSWgWnsvl/EEZKwuz+zyl80lvVH9WoSqaBV4=
+	t=1748869582; cv=fail; b=DOQvElERcCLrpzIYhlEJU/girkSvxYZKLD2yZy2h83de7a4bUs+D37A2mOSp8wNZknsGgyLfNx0ZUjzJQqY1DwGlvfByiwyVmLMl5X2o3665758TVAJiu/Fr01OVRKZ6rYDJiNpM+8LWPop4HqfBS3/ysl3XrFczLV8Z0RXsuis=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748869494; c=relaxed/simple;
-	bh=aVTvPOvQLWVnag7nlF0prf19L7D35+LNyRhndeFpREo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=W1XuZNdAHxSMio4kwqNrybCRwXdoTLzIsoyuOTUT5JnpQsN03vDuOdxthkRmNibhMzDVZfGyHZnN9spgYCgNVy2QT9OSqKjo34m0qzGooQoVuGThgiGH6sTbNLWUC6MqTf0yUgQWqStdR5gNIiPCA3oJLw+Beqzxv2BqUY+Lh4k=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=OjSHWXCc; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=nUMKEKmL; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 552C4gG9031436;
-	Mon, 2 Jun 2025 13:04:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=tLer5J5lGXg43twp3z
-	zlKjkVQbcoVAc4tpF3lfmTT/U=; b=OjSHWXCc16PeL0CJLhPgT/3PL+AN8/6dYT
-	KBGVvDjf6BrEiOidlUbAuaQLAhYHXryTp9ebJEWbtjWNJPWC4EgKuiHMdbM8Zf9z
-	+tV2wMsw4Ql7J4kkPiTOiOlDcwveqGFA4Ln0atXKEGTi1qtR6t7hhXe9mQ5ppzAJ
-	sUDpeV1m/flqttDr1zJN7sYTZAAURZo7gkHgWzmetK7RcwEHQUtiOwbZpi0hbwiO
-	pAD3HugrfEMVmRYxxj1jU97YnCeU7eAnKni8ZQIxfpztZRcYB4/dGCUl/zwFLCdy
-	A/hrfQiCJsQeS7ChvgAmITNRmjwt4NlIocySQGcBSfE0TrDAjjQw==
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 46yrpe2ju3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 02 Jun 2025 13:04:37 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 552Bnptc035349;
-	Mon, 2 Jun 2025 13:04:36 GMT
-Received: from nam04-bn8-obe.outbound.protection.outlook.com (mail-bn8nam04on2084.outbound.protection.outlook.com [40.107.100.84])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 46yr786hnk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 02 Jun 2025 13:04:36 +0000
+	s=arc-20240116; t=1748869582; c=relaxed/simple;
+	bh=2WQn0y2rZ+SdCwUQ5XF7JLOcqNtla8AQAcRFLpKHOGQ=;
+	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
+	 In-Reply-To:MIME-Version; b=uSDi1mdCAdTMbGBR15RErVpPwvwvw+B1G40w3kaqliu76W233RMrvorPND15+kWc1AQm1ge+QrNWdo511Ma8qO6a4r6KJFqE7ORS9ilBvociJuQHMfFCAegIqDPCfje/Wa5ppN+ink3NWSPmKOYl+0PlOFaCL3QWfv1q+ct56pE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=bkNOyjuF; arc=fail smtp.client-ip=40.107.101.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=RhcCtNH1iggp5Q1eK43kQIKApeq30Xcn5pj6T65vhb9xtXKxWabLo5XtgXC6r/W9OvJpVo3IwHqZAFnHSVtGJ0JMEMYE9jCSmM/9XNaiNfA2JNIzD9hSnDGyxkrGqdTXsc4xEKmONZEculhUqYLClQkkSncYHJR8AxyelyQWCBRZv1kz60uDK3QcksW57uNSColWnEXbhMatdEEesIYyG0B48r54o9ZIG6+tBvBkRw2xvxSlFiI4lMlMibKEYJg9n7x8nkUjuh1Kg7fi2EU4bG4qRz8lFKxTM1Qm4zQG5iPQM7xQI9bag8+KbLxmO4oaQ7rBQAq+zuVrCvq9f7fJFw==
+ b=wf/iOxOCDVwjiQLsajOmtzpiWdeH+swbRmuNqBMLp3dTTEkMsJ06LnvDbNn78uGL7lMPHWjRhg4yCmU0VJDZI///n7mBc3c6uBfIEIKC1WDO8Z5nwfvWFm8WhDrAFv9WHF4WnlLQ7BXp3+O6QNOWGzA3M9m4fLRAy5ZNTBXj1Lsm1Cu6Bt8F0EtZZmXCvkMXsBg9u/L2Gh67TrC6DtCo4gFzDRj2sGORDLpAUYQLHbwGy8jdlGeOKirQ9drR0PUidpjfypLgS9f5lU3pbNgP8vebtIww55lM5fEHZsB6PCjYpJAxRgRqwNL3nLAGVifXATzDRwllIPzZOBIf18T/Tg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tLer5J5lGXg43twp3zzlKjkVQbcoVAc4tpF3lfmTT/U=;
- b=KaytJSXzLijynjqJNBgruNsebWR8wfISqtnvlJO43ESdyo+nmPOsfUuA1LHisFyyFO76u4lFI5Hh/QbJE1xRPsgtn8AznxbTYHHZpegpESyPr5t7bP/CEhMeBwC+rn57lBeimjEZxyKNJ6d23a42VoPriP5amzykkqZ3XObDPQAvtofZ2hSRjQJ94N+0qI/poGNENIjYN8a0iomdxeSXOYFJI2JFa4rGiz3ei2l5OuXy/wpZLspACdl5Do9p+enSXugJ/V85OxReQ2jqwDCXHo81lgYo6pnf96AM1lKbGRBkTJrOQ6aABhQEAVH/T2Bk73oXZMMS2UvPzz0n19OVaw==
+ bh=Rn8hokviY+4Lwy/I5e7uW6cKdFvZGhZ+wuewoYBB2zQ=;
+ b=GUxNnR+3PsPnTaeBD7+e2adMSzBNtKAu37LqAUtcq236avGHTtSXCEe9NCr8tLpOUnqTrIuarc68BRuJ9Xyw7Bi/Spzl67/h/MR5t7PWxYleqvQG+qfTJg6QjFA31+JV/lDIaeLccOU1lpqF/FnLLirQIgytkw63zjlF7XlbTwcdMt8bCB/Vf3zNc28XQJAOZ4Isk4/+BUTf0d5xWQHgjytykdph8UeIQyVX4N+f3x4aGXVapk9Fg1HHvKnAaeMMbCALH1/F6dK780D91Xmeh/9ZU4eW7IVGYv4VSfhbQRKXnuqtbbg5lRebHnCsV/gEMx5Gwmj5Z39izU7CMD1w6g==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tLer5J5lGXg43twp3zzlKjkVQbcoVAc4tpF3lfmTT/U=;
- b=nUMKEKmLQadcD8Nljv4RSEez9QtG2hlJ9yXIbSjMo8REOgs+rjfNzlwrJOw0MYgHNs2SaIqcIyArPTgmxYTiMrClE9Kbd3V6DgWZHGh9U6xkhF8ep8837zqy6XEX2P1ZtrdGTUbC1dBeBPU38s0sK7IeZvMl7wbMp4JrmEcq79M=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by BLAPR10MB4913.namprd10.prod.outlook.com (2603:10b6:208:307::15) with
+ bh=Rn8hokviY+4Lwy/I5e7uW6cKdFvZGhZ+wuewoYBB2zQ=;
+ b=bkNOyjuFVJVdtsRuVOj8Ko07A/yF9JVjHzkilZ7xmVxON5R8xNHDCsZv7nmSItUa8y0bXSG3v300xiSFOcTpDbdQv7qzU6SMdQCPITuGQrrWN2w8zvx18PB2iAR1YnbcePF4NTVGUtkOTkCcxJ26iBCDjrrjDrTXIilELtiNEbgdy4e8CcXmLZlGXpwf55ImzgtIHdQbyVB5E9mnPcgfmdteKQd4Yx6nlJvieXZCHG0MUm30qyjEX2+NfFBc/vGrI310TME0TwgMvHg/TX+v/zBNE8vdnDMmebZq1B8c9zDBmJ7LYn2WNAFavHFidev3EBB+LRBlQgI4ptM1LYSzsA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
+ by IA0PPF1D04084C7.namprd12.prod.outlook.com (2603:10b6:20f:fc04::bca) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8792.34; Mon, 2 Jun
- 2025 13:04:33 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%6]) with mapi id 15.20.8746.041; Mon, 2 Jun 2025
- 13:04:33 +0000
-Date: Mon, 2 Jun 2025 14:04:30 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: syzbot <syzbot+23de6daeb71241d36a18@syzkaller.appspotmail.com>
-Cc: Liam.Howlett@oracle.com, akpm@linux-foundation.org, jannh@google.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org, pfalcato@suse.de,
-        syzkaller-bugs@googlegroups.com, vbabka@suse.cz,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [syzbot] [mm?] possible deadlock in __vma_start_write
-Message-ID: <04c893fe-0498-4847-a525-9efb6d9306da@lucifer.local>
-References: <68387feb.a70a0220.29d4a0.0830.GAE@google.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <68387feb.a70a0220.29d4a0.0830.GAE@google.com>
-X-ClientProxiedBy: LO4P265CA0311.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:391::16) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8655.33; Mon, 2 Jun
+ 2025 13:06:18 +0000
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::6e37:569f:82ee:3f99]) by CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::6e37:569f:82ee:3f99%4]) with mapi id 15.20.8769.037; Mon, 2 Jun 2025
+ 13:06:17 +0000
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 02 Jun 2025 22:05:53 +0900
+Message-Id: <DAC2ILD2DSIZ.3TF8W39X5DDH8@nvidia.com>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <benno.lossin@proton.me>,
+ "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl"
+ <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>, "Valentin Obst"
+ <kernel@valentinobst.de>, "open list" <linux-kernel@vger.kernel.org>,
+ "Marek Szyprowski" <m.szyprowski@samsung.com>, "Robin Murphy"
+ <robin.murphy@arm.com>, <airlied@redhat.com>,
+ <rust-for-linux@vger.kernel.org>, "open list:DMA MAPPING HELPERS"
+ <iommu@lists.linux.dev>, "Petr Tesarik" <petr@tesarici.cz>, "Andrew Morton"
+ <akpm@linux-foundation.org>, "Herbert Xu" <herbert@gondor.apana.org.au>,
+ "Sui Jingfeng" <sui.jingfeng@linux.dev>, "Randy Dunlap"
+ <rdunlap@infradead.org>, "Michael Kelley" <mhklinux@outlook.com>
+Subject: Re: [PATCH v4 3/3] rust: dma: add as_slice/write functions for
+ CoherentAllocation
+From: "Alexandre Courbot" <acourbot@nvidia.com>
+To: "Abdiel Janulgue" <abdiel.janulgue@gmail.com>, <dakr@kernel.org>
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a
+References: <20250602085444.1925053-1-abdiel.janulgue@gmail.com>
+ <20250602085444.1925053-4-abdiel.janulgue@gmail.com>
+In-Reply-To: <20250602085444.1925053-4-abdiel.janulgue@gmail.com>
+X-ClientProxiedBy: TYCP286CA0315.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:38b::9) To CH2PR12MB3990.namprd12.prod.outlook.com
+ (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -101,501 +92,232 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|BLAPR10MB4913:EE_
-X-MS-Office365-Filtering-Correlation-Id: ce9347f1-085b-4dc7-160a-08dda1d6049d
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|IA0PPF1D04084C7:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7bb1046a-9e84-41c1-b6f5-08dda1d64318
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016|7053199007;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|10070799003|366016|1800799024|376014|7416014|7053199007;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?F1YYVSznl/zLVui2/yIEE39SnZTQN8KtmOMAyWTS/qfjQkTToKenzAEZrVs1?=
- =?us-ascii?Q?SmMbviB9xIUxhNWmOTB4Iy75GkPZUfjFhnkBxJR7nvRUueLPWbhDH0An6dap?=
- =?us-ascii?Q?ptD8TLhbgoAGD3r0lfFW7jZ3IxIxgb7SXVOnPsHASvIfnXfAOtwjQybYPZsH?=
- =?us-ascii?Q?ohuCwG+Ix1SMkWljfNrZ+HQY6YpbzdXCBqTdw9ic080NcGDtGxteXQKbHzB6?=
- =?us-ascii?Q?6tlZx/NXCLGBxs4r4PU63Au8hJTdRXFtMUTBT9BB8YC5HSkN3Q+v7jmrZTzB?=
- =?us-ascii?Q?euqlyG7mOyPIHeG6AO9vSBj3MgUNwV88v9L/gMImEh0UrBAT39B6k1DFCC5h?=
- =?us-ascii?Q?FDU7+DMA/gVQChrA8YYoqMddb5kWLnejy/eoT+fmxhXb4JmjWri2i2sP6zfv?=
- =?us-ascii?Q?aQpfhmQvtpr/G4ihBal4aJLigKYETe3I60+Db16updmn5876n+c3NbgdWTLi?=
- =?us-ascii?Q?nS/hW6DtbQ3yS3QqcnT+P3MNojryiPhs1VrvOejFjurF3r6VpGyLRcKVsevi?=
- =?us-ascii?Q?dg3Dl84O9vgnRJis6tzTbATAftgKIOxW5wXhjefTI7Q0DiNnVqV2OIj20z8S?=
- =?us-ascii?Q?Up9dc6TPDvfBkqzMWCe9CJj7foSQTS6fGO/DvuNk3c4NeQ9CzrvGmOm/7gFt?=
- =?us-ascii?Q?9mn69Ny5wUu/r6fgP/ml1bhEOm2Z3UEymDwoVinh4RIL9bBpgYcIh3yLyHP3?=
- =?us-ascii?Q?sJEVfTE7IY1iYrB9lqWTSgXpHCZNhXfHOkID2eWVk1e/GuMTiG/oB1Mwb7ar?=
- =?us-ascii?Q?HXkrFNygcGK4z9koyt7Gq7HCz+YaKUzGfJ/Npqof32Az2C1m2HnAMBy/Ry2D?=
- =?us-ascii?Q?+JeWt+fkp/rU7psmzsRJqfuxONrItnpckn4KhXMR3ZSLjo5DTB5TmhewRfq2?=
- =?us-ascii?Q?/DZkwqduX1cVDZFXZhkx/YvSaG4VgDRlWYBtGUf4blGkcj5SAb9oZbaKW2kx?=
- =?us-ascii?Q?1nayQANpJq6mZ6UESeJ2URnORFAlMrBKBlZ1vWOxYOXauexnKzWPzx3k4lMf?=
- =?us-ascii?Q?uixZ5qqRrCLemfGqBZlpNNmaikYB8Kmb0q2q/f6OHrIN9BGOp0ygCgHc4h/c?=
- =?us-ascii?Q?ebrhdl5/lcmqz0zz6FM4SQlA2WhBr0ugHgZL9hD/MYhJQsLeCozGMf/lRwuh?=
- =?us-ascii?Q?u5EuueWCh0pNhRe1kPuwCEw3Y2+PuL0GrfK8VHBptfHwtuO0Qqob5Fdh9zFl?=
- =?us-ascii?Q?ws/P6JmOhSzVSVHEeajGC/ixL3Z6Enk049f09vfKl1pQ3mNJFMSGz+HB7LvI?=
- =?us-ascii?Q?XHoyrJa3KKCd44YRffZxQsJv9pHwQFodGlLIOC1c0ixMGBXFb3hVtIjuQ57M?=
- =?us-ascii?Q?Qug9ZuKGXIX1Pu2taHA5y0CFz2Km7rfD1I5vBbUYyjnNB77ETzhOHXfVKmeA?=
- =?us-ascii?Q?N+wyezbinO+2RnzFqjdavN1ZNZEG?=
+	=?utf-8?B?NFNCZjc4Z0Nyd1hpaHlvM2gwYWo1MUhSSGczbjlkQ3lnNERaUlZWZ2srQ2Vr?=
+ =?utf-8?B?R1BNbVNYR1VnREJmeTAwWmhaT0F5TUlQZlNGNjZzTzhVQ3Azc1NvSXlYN2Uz?=
+ =?utf-8?B?WUxtYkVGYmdKNWtiYUhPUjJxcnNuR0pWWWJseURlVUdBdUs3U01zaFk3OHhX?=
+ =?utf-8?B?QVlKSnBXeUFIZXlRMDJnc1ROQUJCSFlSMisxSEZBbUpaZUg4eDBHUlZienJk?=
+ =?utf-8?B?Qjg1bDZ0U2ZveE9MMEZlcG5jWXZ6MGdleEhDM3NuSHZFUk1hQkRyWDUvaS94?=
+ =?utf-8?B?STg5SmhSdS9iVCtaME5wQXJxRXFPSVVycjA5TXFHZUN4eXB5QmhtcldvN2Vz?=
+ =?utf-8?B?UFBYQnVXU1IyZTk4QktGUlZUS2xhMm4xQm44eWdzTm94Q284RGQ1WUx1dHFs?=
+ =?utf-8?B?Q0RGOHpYVjRibGdLc0VPbGE1RnhqYSs5UjZYRnlHY2ZzaVh4Mk0za0pQVUdV?=
+ =?utf-8?B?SVpvNUlpUHA2ZHpYQXJvaVcwY2Y1Wi9PNGdMdUpKRnBEWm55TGowNERBLyty?=
+ =?utf-8?B?NHRpQStYeXVlU3llVUVOODRNdlR5VmgxUnVjWklSekRlcjVZcVM1SXVwYURI?=
+ =?utf-8?B?cSsvSVNRSXNKajJJNkhqRGJJYzRRQTJSRGN3d09GL1ppUHBsQWUwZmdLRXFH?=
+ =?utf-8?B?a2tzUFVTUmxRN3prczBsVzRPcjVvOEw4WnhoYndrSDhKNUl6MWpLeXBscTRQ?=
+ =?utf-8?B?RnYwbDdyZ3dZL3Rwc0FEZUdEa1dNQW1wb1Ztejc5KzhVaEZDVHhZcUl4bmJy?=
+ =?utf-8?B?dHRaREpxWVp3eEZRdmxHZHJIa3hHcmx5VTNZaU5qaDdyOTN6ZkFUY2lpUjI3?=
+ =?utf-8?B?MEZaLzdSNEhUSkN2L0txSjJnUzJFU0tHWnNoUDlEZ29DUU9BRU9vb0l1NjRr?=
+ =?utf-8?B?a0RCdFdRa1ZTRU9YR2ZGVVlFUDQ3Nk1SRlU0RXFMT2wvd2RGdlpjdHR1TUNo?=
+ =?utf-8?B?VS9aTmczRjliZklhTWVCUjhYalUxd1AvQ3Fkc2pYUGg5aTJZSWl4bW8rSEhW?=
+ =?utf-8?B?MkVWWWRFWlhscy9qZit3VllOQ0huTVdoZDh4ZTc0RFVwQjgvaHRxdktOLzlt?=
+ =?utf-8?B?M0tNMjJ6RldGb0xEVmltZSttZ0ltejYyMEdyYTdrOEgrMTc4WGlEWHhDc0pN?=
+ =?utf-8?B?RU9CcXdvS01TTFNGYnM1RVVCR1FGeXpJQWFiQUo0WEpFK3B4RzlCTFo0SzhO?=
+ =?utf-8?B?aTZUa0RYTkx6dGNjazdMWnU2SlVuUlBpMGxjSlg2OHdkRlBFc2FzMEwzQTl1?=
+ =?utf-8?B?UmgySi9CWGNTTlE1ZnB1bis3b0hwektvTlNlZStkbmRGU3FpMng2WmtlbHYx?=
+ =?utf-8?B?Q1pUV2FMMnoxaFgvMHB6bFdHZUQ0Y0Mzbk1DNEljb1hiREJNalhlUXo0Qmd4?=
+ =?utf-8?B?bFNjbXQvMC9NTndubitRS3NFSTVBTXRMTjU1TmZUcFMyL0tDSGh6NXZFeFFR?=
+ =?utf-8?B?elRNNDlNalZra0s2ZDhUZzBLV283aVo5WlV1dVRVVWtqTlk3QnZCeEdPNVNX?=
+ =?utf-8?B?bVhUd1JVNU8xWWhHK1p1SDZqWGJiUmNndWhCWXNxQkRWZFk2bFpjUU9pQXZJ?=
+ =?utf-8?B?WVNUMXhlaGtRbGlxcmZSamw0Nzgzb0pUT2xCdDJFenkyN0JadU9ON0tlNlJP?=
+ =?utf-8?B?NU5BYVhKYXgvbmdIZEpYN1N1cC95Rmd0cTI4TFZaelhNM0hMcExYTVJhWjBH?=
+ =?utf-8?B?RWJPalQ3TVRtU01QNmFpK0hhcFNBNTBGZCt5Wkh4OTZWa21rQk5YdU1kZDY3?=
+ =?utf-8?B?eHFhZGtiNGFlTU53U2FZN1pyRHU2NnBJaE40TEtneXNjc1FLOEFXbDFlTVcr?=
+ =?utf-8?B?emlQMy9BYlNLVFMrTTNLY0plMzJHcTBVSjE1Z0QxK2loY2I4YXBoTjB0RXMv?=
+ =?utf-8?B?eGJUV1ROVHVxNldzREM0VFlDdGRDdnpvb3BJb25KNTRsUENrdUpVS2ZBWlRI?=
+ =?utf-8?Q?MARfcxeFdUI=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7053199007);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(366016)(1800799024)(376014)(7416014)(7053199007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?XPjyD62n8b0LHBAZ1qE8xxyG3UH29uVX8WPJg7L/4vx+8O2Z61WUSbzKZeoX?=
- =?us-ascii?Q?B2CeOOwIHLZB+zJWlnTIwaiXLkvacJB4ftZ/VISJqYlXGyMdwgBIJfJMevhT?=
- =?us-ascii?Q?hLYiqa9vq2qQNqVJELjNQXWMwOo7tquGS8yIzjBfuT2aPUKhb3V1+HK4UzaZ?=
- =?us-ascii?Q?NTl0lNzzpWpKqXhVGy5QiTJg65vdgihUwkox1IFb2CSHsGavU07IoNnuIieZ?=
- =?us-ascii?Q?lp3DiqOU3PKkKcstgx1+pn/M2frpc3bFW5XdgAfRBN2Q5FU4Hd4f3Gq42Iy9?=
- =?us-ascii?Q?n5X7MDa3KEbmKFtS9aZixw20zqExrh+n4DLrncAo/vQMSRum+CxXvxLRvCog?=
- =?us-ascii?Q?+lwcpNVBD27WnlNr/XK1LJdtRRl1L/uXWOhDen4xMGR2KRyMZMt1BX58aS5v?=
- =?us-ascii?Q?iKWGF7wKWddL6BWHGPCP5TXG15t6inizGpoIuP2eNprith9XZVSR1TjXNBDy?=
- =?us-ascii?Q?h3tVhvrsGBLbudNcEckkkJqnbz+nBl9NzQzb58lQuNKXXR8ZYunZkKk5GLZD?=
- =?us-ascii?Q?ixL/7vVMUUqkadgqZxGDdLeMSHfQYXN4m+fn5gb+zK3g++EJQPbBZbRTtAjA?=
- =?us-ascii?Q?+Mem/0EzW/uZHZzkfNRA+ubUgwZdwHwe8Ti5JcMS4rXyVhD9jpSkrCSf99FS?=
- =?us-ascii?Q?7S2EYSsvc9fjHlVO9zf2hvwiWsKP3YckY3BYJJlfwqhXTBNGq+rpz3t1ZFTT?=
- =?us-ascii?Q?N+lBLwS2Kj1xI9mFeHjPAtTrskkld27kz0Rja871dP6v3CXvdxsvl9+dGYo9?=
- =?us-ascii?Q?JuLLX1r8arpUB+Pnvi9GlFVLZaSZyHOn7qHTBVV1eNRrGFZ3NUvLFzOnPACo?=
- =?us-ascii?Q?vVK5C4AIqjwhj2rchh8ohNpQ1NwCwoaDyr6afd2AkYMUe8MySxNWfRdAWTZG?=
- =?us-ascii?Q?3f+2D80bp2/Al/Y+cfnxw9eE3HrTDRwcCJjACKrC9gCRKZ7tNTS55lx2UKZM?=
- =?us-ascii?Q?yGAgOi45UpOOdmYCEnslM2q+ndiswlH6LiJdxGWARCaSaL58oWFkmi6z4n1y?=
- =?us-ascii?Q?Ba0BozXT8aoV+OnhKVhGoFCDiHMTeKCOjRNhLRBwmZHRg8JTlwxuJaVAJG7E?=
- =?us-ascii?Q?U0yLsLQjEaUKDppAU21c22/iHvY2W/vyOPnKGCl9lfCdmc8aP6kfcTkOERiy?=
- =?us-ascii?Q?edecaiNWM0n1l9hymEgHCMki6st6Z0jTtzQuHcoGKsPpDoeMLaQf1pWChY2R?=
- =?us-ascii?Q?As8N5ZoP7XksVsD0UsUzpYyWh6IrUR4dvsfrs17dmcWLsYoSmt0BpFXY8j1G?=
- =?us-ascii?Q?hvJI2KjCYKtK5cc03AudVacXCzBTtCRZ2Y4KSQLW3Hl0Y+cLP+k8ZxK8SCqE?=
- =?us-ascii?Q?FUfoA6GWLWE5mLO2B/Kl8wfNyiSErcgTiM4kVk5rPuV9o7DK5ZnE19nYgnKe?=
- =?us-ascii?Q?v5VE8feBN5HPqRG36pmSvzx6gOQyV0ESWUvKcv44uH696t6Ft6P6rU7cA2GJ?=
- =?us-ascii?Q?9KSM7xzY0oU0yyAlAjAq631iseDFk9E4tEqOmeUjLYpNWMuGlcpgWY5voOU1?=
- =?us-ascii?Q?FMR35u7PfLgNbodNWFGdf+cPpwiEpkBq0fnv4ijv8BrSeUswiCPUHYNNenfK?=
- =?us-ascii?Q?CeZu1aIIxBrZ5UNm8aMscQK5e2bdlAyp737oE2hzbWIv+nMl/JBwKWlaaARE?=
- =?us-ascii?Q?qA=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	KIPInajejRHwScjSJUT1PMEest8SBMUQbkk/raGshKrtbC+X0hZP5qtd55O9lu7cZoNOjHjs1uFzgpUrOWrHvSDKymUdnYLblG7CioC+iWcq4ShC8JnHIeq+0ausamDMzZ+IQNl6AQwIZ9SX0RHp3Ef9bG0I49tkYkh8T8/Et6A6S7tQB9+ksXidVcUkhU7a5WGOBh5+yCQ5gKQo+w4Dh9Ka1cdbdkv8TUXsepqpCq+dku5kZ/U1+hAV30Eor8R2Fu9OU1luVCei8QmbL3fwoaZfuExv8F2l0dBJVwPNowzdK7BQll/f4XqWhWuC1985dfmSJv0IwtXd6QmlrtY0V1rGyGDOoHBxCzf19Wo9mgHD5oycKZod60i+SFxAj/rBtEQXG2TSqFdac3EvLhozrO8SKN/cR8eihmYk2IAEeKwltk1PKxBtfhJOsdJeG4FN6E5OIqSxAztccPG425Sv8760y3cXgJj6+lrbvPSqy/ZxsbNjWLlNqLQTNMNd2vNYj77CKGrXG8zvz16pdZC2J1FLBaMpcf2Sgz1g9c6w8DSl5d1mHTwu1a2MFYxOk1uYz1EarYRzFCfjlYiE90QB/GxFbFTQBkKoNfXWpEW78gg=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ce9347f1-085b-4dc7-160a-08dda1d6049d
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+	=?utf-8?B?OVplRTF4SjM3elpveCt2UWVjT2EvQ0FtUlpKUS91OWxuU3AzWGZOdS8vajdE?=
+ =?utf-8?B?cTdsUjUwTjAvM1pkZG1oczBNalB2cUIvMUxsTjhJQ0RlalFXak5VT1VVdmJP?=
+ =?utf-8?B?OExCTzk3aEdNMllLUFFlY3lKcmNVYndkZnFLMzV1bVpSb2M1b3lac09XU2g1?=
+ =?utf-8?B?MDNSYXNDQm9UMnFSL1lrNHNLdmpXWEpMYkNqeFdDV1l2MHJNY1BhNzhsZXpx?=
+ =?utf-8?B?VW5XOUF6VFozeExYc0lMMWoxMEI2eDF4aGRaQTdQL2tDc1hFZnhXNVlsdVZH?=
+ =?utf-8?B?UzJJMkpsT3lCOXk2aGRnSnRkZWZUei9VZlBOSVMzVVEvVy9VaThhQStPUHdw?=
+ =?utf-8?B?TmE0Y2RjTWl4WERlSDMrR25qa0VudWNmMnFhRFQxQ2JkRUJaRkNiL2E0K3Bl?=
+ =?utf-8?B?SzFzcHR1eHJtcFJQbEJTS1BObHl1TTkybUhkMmttVitYK0RYN25ibXZBMS8y?=
+ =?utf-8?B?Yk1va2NBbW44SFZUVFd2TW9zWGFWT2IxS3JicXlpSUV6ZDVnckdGcGxzaW45?=
+ =?utf-8?B?QmpEbUlrL0N2YnRrMk0zeUQ2VUkrY1NyRC80SVhJVU1WdzlBQUVobHI5WWda?=
+ =?utf-8?B?dWxHYXEzTlFYenFrSCtQZksya2pYZE5Gc0dGWi9pZlVSeHpZcmNEYWo0RGFr?=
+ =?utf-8?B?TUVUdFFMR2x1ZnVjU2NzaThSSWovMGpaY3huUTVBY2U5dExlZ2VJWXNPakhJ?=
+ =?utf-8?B?N21UL2htVHpGeXZuTXZ1YkhOWXN2Z2JNQUgvUWlqTk5vcndiN1NFbjRKMUdp?=
+ =?utf-8?B?UmdNL1F5UzBHbUFKcHdVODZDYUVkTk82RkgwY0hiSE05L2hZTGtadGJWd2FK?=
+ =?utf-8?B?WURick1QdTFIMngwTkVLOGNubzNSMDVYN2ppRXR1SFFEaktWV0RpYmFTcjZH?=
+ =?utf-8?B?Unhjd3VhazZaU21aZjR6cnl3RDNTYU5UcVNrbGxSUnNLT3Rna1dRRTZZSDFh?=
+ =?utf-8?B?ZHcyQm1EYnF1dDlHdE5tYWllN0FEWTlNWHdJYkdPc1lCZEc2NDlsMm03LzMv?=
+ =?utf-8?B?UkhnTVgwT1NoWkN0enBnS2NuaXBITGZSYVBZM1NVYVB0RGRHejZWRUtpaFl4?=
+ =?utf-8?B?VXl3WjFPd1gzVTVMSGdhMitwNStYaDdwdm80bGx6dW4rTll0eHZyaVd5SGdu?=
+ =?utf-8?B?WlNBTlhuaDZRemJldjRKQm9OT3VDbDQ5cHBSQU04RUYvS2tFZXpVLzJpcSsy?=
+ =?utf-8?B?S2Q1ZW5PWjBYb0lTQVBGUHpWRUV1M3FvZFgvbElBTExvbzYyUXYzVkpKRWo4?=
+ =?utf-8?B?dmMvby9RSCs3MWppdE0rdXJEcEF2a3RHU0hFbkh1cTNPc0FHUlFLRWVtSDE2?=
+ =?utf-8?B?bGN6L3oyY082bWxzaFBWUkJGTlo2VGk3aXBYcWZ1S3E5MzRsZmNYNDNTeTV1?=
+ =?utf-8?B?MkxzN3pGSFd5NHhncmpGblRLNTQwcmtwUUFBUEdzckZYT2g0V1ViYi9OTDRE?=
+ =?utf-8?B?QVljOVFLYU5OYTZYdUx5ajdWaVdydUFYRThjWkJudXk5RmpNM3Zrc2sxcU9M?=
+ =?utf-8?B?NlRuZ0FNWmJ5NzRXR2wvQ3VSNEZHaTNNWXRRc1Z3bDl1RWtkNTJobGhtV2Qy?=
+ =?utf-8?B?M3JMMkRxZ1FHL1REci8yRXdQUmR2OUMyNWNKNlZ6bVJtbThGR0Q0WHRaTzR3?=
+ =?utf-8?B?Wkg2UVhsVkt4WDIxd2Z1Y0tVOUI3R3doNktUamtrbVFidjVJRjV1M0YxQURr?=
+ =?utf-8?B?YVVmSGRtRGRHN1JDbjVEcy9RcnFpNW4yN2dxSHNENm5EaVZ1emlYQnNLdklw?=
+ =?utf-8?B?aTViT3ZjTHg1RmgrRVUwMHF0ekVIeVp1S0lvNzhjY1M2VTZlbHIvRDR6ZzlN?=
+ =?utf-8?B?Nm52SkZpay9TYWQ3VVBsK3BRNGRJdU1uRjdoL2psTTlpdi9xTGloWnpyUnpK?=
+ =?utf-8?B?enpucm9YUURvb25oUUs1OVlzZW9TTEdOSkVDQW9mL3MzYWRXTHp3N09UQ21a?=
+ =?utf-8?B?VTdWS1JMR1ZnMk1ET1A5WC9PdGlYRXE2MFJTaUY3c3RVZ2RSeFRxT00yUGJn?=
+ =?utf-8?B?MkpoRlFwNUI5THh0bER1UllhL0RqWU9JU3FSblRqdWFjZVEwTmtSQVhrMzk2?=
+ =?utf-8?B?T0h5amZhRURYNStoSGJIS3FkZStyRjJrYXA5cXRTZjVsa25vZWMreXJ2dWZC?=
+ =?utf-8?B?OTBIckU0TkZ3Ylc0dDRUcHcwL0g0U0ZnbFdBbjhQcEhUdmt1b3VjbXJham9U?=
+ =?utf-8?Q?ELSDKzDW9Rgba+tWdjS8NE2Bj+hqTpujVAPYFEZ927VI?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7bb1046a-9e84-41c1-b6f5-08dda1d64318
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Jun 2025 13:04:33.1313
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Jun 2025 13:06:17.8935
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: UDtwZCeCrP/5fVSSvBsOhG2GJritsInccVJ7r2FjpaWaOWUWu9+wUYkwCufeOkuPh5F0fI5LDSbl6VmYidjZbY7CgUNg7kuTAQE/D8u4cWQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLAPR10MB4913
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-02_05,2025-06-02_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 mlxlogscore=999
- bulkscore=0 spamscore=0 suspectscore=0 malwarescore=0 mlxscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2505160000 definitions=main-2506020108
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjAyMDEwOCBTYWx0ZWRfX8vxHViihLtx6 rYdMFu6JjnX4mueor1NyGuU9mGKlhQvw4AapNjl398g/KBCj92e53ACFx+8KgDr81cASOGbDWOC vCHNiBsNU8uiZrXanTx58yrLT9XXKysMwrjzza/oG6MrppyNNaLkw789QisvlaW1r0d58+iiHBH
- Num0DCS+hGmf56JYdtfYBhlYTj9bC2QGWg8SInEs3CA5Stsnel+wN/Ph1xpim3zEVzw6iU0cS5j Eg7Dtx8/aUuv/x9xBXULzye4ylS4e8camfD0Nc/prd6c81KfF9nQoRKJ/Wyw6XDVoVf5BHhLAeh T42OgXGhW+SlrrDaehDTEAq3y9xfhhwlpOYXBxYDvSsXz5LjQe/zlFoco5VJTMBjZa2zVcNUBaP
- uzyhfhlAlt5EyKbFwmLocjN4yGzsuSPjXinDvecQko4qOItnKVj7GFaLZgd+oEgqUhe/TEsA
-X-Authority-Analysis: v=2.4 cv=NN7V+16g c=1 sm=1 tr=0 ts=683da165 b=1 cx=c_pps a=WeWmnZmh0fydH62SvGsd2A==:117 a=WeWmnZmh0fydH62SvGsd2A==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=6IFa9wvqVegA:10 a=GoEa3M9JfhUA:10 a=edf1wS77AAAA:8 a=3g80flMcAAAA:8 a=oHvirCaBAAAA:8 a=VwQbUJbxAAAA:8 a=hSkVLCK3AAAA:8 a=4RBUngkUAAAA:8 a=9nx2ocBvMzdqPXke1VkA:9
- a=BhMdqm2Wqc4Q2JL7t0yJfBCtM/Y=:19 a=CjuIK1q_8ugA:10 a=vVHabExCe68A:10 a=DcSpbTIhAlouE1Uv7lRv:22 a=3urWGuTZa-U-TZ_dHwj2:22 a=cQPPKAXgyycSBL8etih5:22 a=_sbA2Q-Kp09kWB8D3iXc:22
-X-Proofpoint-GUID: hrqxIOi0dfl2j8e4tQq7kQ8B4X_N__zn
-X-Proofpoint-ORIG-GUID: hrqxIOi0dfl2j8e4tQq7kQ8B4X_N__zn
+X-MS-Exchange-CrossTenant-UserPrincipalName: JAVH2hu8nmXRbnMVG8vTNNPLNz2sX70PcM3Jq0u3QGaYJXdFFtO0EpL+kLopvSgHvCLOSGAcB9Eh8Ww0iisRiw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PPF1D04084C7
 
-+cc Suren
-
-Suren - could you take a look at this please?
-
-I can't for the life of me figure out why this implies a deadlock, there's
-a might_fault() on the drm stuff, it's kind of sketchy they managed to get
-that to trigger (maybe short window between mmap_read_lock() and
-mmap_write_lock() in exit_mmap()?) immediately before free page table
-teardown.
-
-I don't think __vma_start_write() can possibly block no? So the alleged
-'trying to acquire lock' bit should always succeed, even if
-dev->mode_config.idr_mutex is held in another thread waiting to be able to
-possibly fault.
-
-I mean it's a screwy situation in _general_ but maybe we need to tweak the
-lockdep here? Or maybe I'm missing something... :)
-
-Thanks!
-
-On Thu, May 29, 2025 at 08:40:27AM -0700, syzbot wrote:
-> Hello,
+On Mon Jun 2, 2025 at 5:53 PM JST, Abdiel Janulgue wrote:
+> Add unsafe accessors for the region for reading or writing large
+> blocks of data.
 >
-> syzbot found the following issue on:
->
-> HEAD commit:    d7fa1af5b33e Merge branch 'for-next/core' into for-kernelci
-> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-> console output: https://syzkaller.appspot.com/x/log.txt?x=12bbdad4580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=89c13de706fbf07a
-> dashboard link: https://syzkaller.appspot.com/bug?extid=23de6daeb71241d36a18
-> compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
-> userspace arch: arm64
->
-> Unfortunately, I don't have any reproducer for this issue yet.
->
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/da97ad659b2c/disk-d7fa1af5.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/659e123552a8/vmlinux-d7fa1af5.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/6ec5dbf4643e/Image-d7fa1af5.gz.xz
->
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+23de6daeb71241d36a18@syzkaller.appspotmail.com
->
-> SQUASHFS error: zstd decompression failed, data probably corrupt
-> SQUASHFS error: Failed to read block 0x60: -5
-> ======================================================
-> WARNING: possible circular locking dependency detected
-> 6.15.0-rc7-syzkaller-gd7fa1af5b33e #0 Not tainted
-> ------------------------------------------------------
-> syz.1.261/8150 is trying to acquire lock:
-> ffff0000d7ffcbc8 (vm_lock){++++}-{0:0}, at: __vma_start_write+0x34/0x158 mm/memory.c:6497
+> Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
+> Signed-off-by: Abdiel Janulgue <abdiel.janulgue@gmail.com>
 
-We're execve'ing the process, so we call exit_mmap() which eventually calls
-free_pgtables() to tear down the VMA in question in free_pgtables().
+A couple remaining nits/questions below, but FWIW:
 
-In doing so, we write-lock the VMA:
+Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
 
-		/*
-		 * Hide vma from rmap and truncate_pagecache before freeing
-		 * pgtables
-		 */
-		if (mm_wr_locked)
-			vma_start_write(vma);
-
->
-> but task is already holding lock:
-> ffff0000d572df50 (&mm->mmap_lock){++++}-{4:4}, at: mmap_write_lock include/linux/mmap_lock.h:128 [inline]
-
-Presumably refers to the __might_fault() case.
-
-> ffff0000d572df50 (&mm->mmap_lock){++++}-{4:4}, at: exit_mmap+0x200/0xbec mm/mmap.c:1292
-
-This is the mmap write lock we hold to be able to hold the VMA write lock
-on page table tear down.
-
->
-> which lock already depends on the new lock.
->
->
-> the existing dependency chain (in reverse order) is:
->
-> -> #6 (&mm->mmap_lock){++++}-{4:4}:
->        __might_fault+0xc4/0x124 mm/memory.c:7151
-
-This invokes:
-
-	if (current->mm)
-		might_lock_read(&current->mm->mmap_lock);
-
-That indicates we might try to acquire a read lock on the mmap lock.
-
-I guess since RCU-obtained VMA read locks fall back to mmap read locks this is
-valid.
-
-This invokes might_lock_read() which triggers the lockdep report (we will need
-to obtain the mmap read or VMA lock to fault, neither or which we can do because
-we hold the write lock).
-
->        drm_mode_get_lease_ioctl+0x2bc/0x53c drivers/gpu/drm/drm_lease.c:673
-
-
-This holds the dev->mode_config.idr_mutex lock...
-
-Seems like an ioctl to get lease state but we invoke put_user() on each object:
-
-		if (count_objects > count) {
-			drm_dbg_lease(dev, "adding object %d\n", object);
-			ret = put_user(object, object_ids + count);
-			if (ret)
-				break;
-		}
-
-And put_user() -> __put_user() -> __put_user_error() invokes might_fault().
-
-
->        drm_ioctl_kernel+0x238/0x310 drivers/gpu/drm/drm_ioctl.c:796
->        drm_ioctl+0x65c/0xa5c drivers/gpu/drm/drm_ioctl.c:893
->        vfs_ioctl fs/ioctl.c:51 [inline]
->        __do_sys_ioctl fs/ioctl.c:906 [inline]
->        __se_sys_ioctl fs/ioctl.c:892 [inline]
->        __arm64_sys_ioctl+0x14c/0x1c4 fs/ioctl.c:892
->        __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
->        invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
->        el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
->        do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
->        el0_svc+0x58/0x17c arch/arm64/kernel/entry-common.c:767
->        el0t_64_sync_handler+0x78/0x108 arch/arm64/kernel/entry-common.c:786
->        el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
->
-> -> #5 (&dev->mode_config.idr_mutex){+.+.}-{4:4}:
->        __mutex_lock_common+0x1d0/0x2190 kernel/locking/mutex.c:601
->        __mutex_lock kernel/locking/mutex.c:746 [inline]
->        mutex_lock_nested+0x2c/0x38 kernel/locking/mutex.c:798
->        __drm_mode_object_add+0xa8/0x1f0 drivers/gpu/drm/drm_mode_object.c:47
->        drm_framebuffer_init+0x14c/0x2bc drivers/gpu/drm/drm_framebuffer.c:875
->        drm_gem_fb_init drivers/gpu/drm/drm_gem_framebuffer_helper.c:82 [inline]
->        drm_gem_fb_init_with_funcs+0xa60/0xda4 drivers/gpu/drm/drm_gem_framebuffer_helper.c:202
->        drm_gem_fb_create_with_funcs drivers/gpu/drm/drm_gem_framebuffer_helper.c:245 [inline]
->        drm_gem_fb_create+0x84/0xd4 drivers/gpu/drm/drm_gem_framebuffer_helper.c:286
->        drm_internal_framebuffer_create+0xfcc/0x19dc drivers/gpu/drm/drm_framebuffer.c:304
->        drm_mode_addfb2+0xac/0x2a0 drivers/gpu/drm/drm_framebuffer.c:338
->        drm_client_buffer_addfb drivers/gpu/drm/drm_client.c:386 [inline]
->        drm_client_framebuffer_create+0x2d0/0x55c drivers/gpu/drm/drm_client.c:428
->        drm_fbdev_shmem_driver_fbdev_probe+0x180/0x70c drivers/gpu/drm/drm_fbdev_shmem.c:151
->        drm_fb_helper_single_fb_probe drivers/gpu/drm/drm_fb_helper.c:1649 [inline]
->        __drm_fb_helper_initial_config_and_unlock+0xf94/0x159c drivers/gpu/drm/drm_fb_helper.c:1829
->        drm_fb_helper_initial_config+0x3c/0x58 drivers/gpu/drm/drm_fb_helper.c:1916
->        drm_fbdev_client_hotplug+0x154/0x22c drivers/gpu/drm/clients/drm_fbdev_client.c:52
->        drm_client_register+0x13c/0x1d4 drivers/gpu/drm/drm_client.c:140
->        drm_fbdev_client_setup+0x194/0x3d0 drivers/gpu/drm/clients/drm_fbdev_client.c:159
->        drm_client_setup+0x78/0x140 drivers/gpu/drm/clients/drm_client_setup.c:39
->        vkms_create drivers/gpu/drm/vkms/vkms_drv.c:218 [inline]
->        vkms_init+0x4b8/0x5ac drivers/gpu/drm/vkms/vkms_drv.c:242
->        do_one_initcall+0x250/0x990 init/main.c:1257
->        do_initcall_level+0x154/0x214 init/main.c:1319
->        do_initcalls+0x84/0xf4 init/main.c:1335
->        do_basic_setup+0x8c/0xa0 init/main.c:1354
->        kernel_init_freeable+0x2dc/0x444 init/main.c:1567
->        kernel_init+0x24/0x1dc init/main.c:1457
->        ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:847
->
-> -> #4 (&helper->lock){+.+.}-{4:4}:
->        __mutex_lock_common+0x1d0/0x2190 kernel/locking/mutex.c:601
->        __mutex_lock kernel/locking/mutex.c:746 [inline]
->        mutex_lock_nested+0x2c/0x38 kernel/locking/mutex.c:798
->        __drm_fb_helper_restore_fbdev_mode_unlocked+0x74/0x198 drivers/gpu/drm/drm_fb_helper.c:228
->        drm_fb_helper_set_par+0xa4/0x108 drivers/gpu/drm/drm_fb_helper.c:1359
->        fbcon_init+0xe4c/0x1d18 drivers/video/fbdev/core/fbcon.c:1112
->        visual_init+0x27c/0x540 drivers/tty/vt/vt.c:1011
->        do_bind_con_driver+0x7b8/0xdd8 drivers/tty/vt/vt.c:3831
->        do_take_over_console+0x824/0x97c drivers/tty/vt/vt.c:4397
->        do_fbcon_takeover+0x158/0x25c drivers/video/fbdev/core/fbcon.c:548
->        do_fb_registered drivers/video/fbdev/core/fbcon.c:2989 [inline]
->        fbcon_fb_registered+0x354/0x4c8 drivers/video/fbdev/core/fbcon.c:3009
->        do_register_framebuffer drivers/video/fbdev/core/fbmem.c:449 [inline]
->        register_framebuffer+0x44c/0x5ec drivers/video/fbdev/core/fbmem.c:515
->        __drm_fb_helper_initial_config_and_unlock+0x103c/0x159c drivers/gpu/drm/drm_fb_helper.c:1851
->        drm_fb_helper_initial_config+0x3c/0x58 drivers/gpu/drm/drm_fb_helper.c:1916
->        drm_fbdev_client_hotplug+0x154/0x22c drivers/gpu/drm/clients/drm_fbdev_client.c:52
->        drm_client_register+0x13c/0x1d4 drivers/gpu/drm/drm_client.c:140
->        drm_fbdev_client_setup+0x194/0x3d0 drivers/gpu/drm/clients/drm_fbdev_client.c:159
->        drm_client_setup+0x78/0x140 drivers/gpu/drm/clients/drm_client_setup.c:39
->        vkms_create drivers/gpu/drm/vkms/vkms_drv.c:218 [inline]
->        vkms_init+0x4b8/0x5ac drivers/gpu/drm/vkms/vkms_drv.c:242
->        do_one_initcall+0x250/0x990 init/main.c:1257
->        do_initcall_level+0x154/0x214 init/main.c:1319
->        do_initcalls+0x84/0xf4 init/main.c:1335
->        do_basic_setup+0x8c/0xa0 init/main.c:1354
->        kernel_init_freeable+0x2dc/0x444 init/main.c:1567
->        kernel_init+0x24/0x1dc init/main.c:1457
->        ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:847
->
-> -> #3 (console_lock){+.+.}-{0:0}:
->        console_lock+0x194/0x1ec kernel/printk/printk.c:2849
->        __bch2_print_string_as_lines fs/bcachefs/util.c:267 [inline]
->        bch2_print_string_as_lines+0x34/0x150 fs/bcachefs/util.c:286
->        bucket_ref_update_err+0x1c8/0x21c fs/bcachefs/buckets.c:417
->        bch2_bucket_ref_update+0x3d8/0x888 fs/bcachefs/buckets.c:-1
->        __mark_pointer fs/bcachefs/buckets.c:572 [inline]
->        bch2_trigger_pointer fs/bcachefs/buckets.c:618 [inline]
->        __trigger_extent+0xd90/0x35fc fs/bcachefs/buckets.c:763
->        bch2_trigger_extent+0x3e4/0x78c fs/bcachefs/buckets.c:881
->        run_one_trans_trigger fs/bcachefs/btree_trans_commit.c:-1 [inline]
->        bch2_trans_commit_run_triggers fs/bcachefs/btree_trans_commit.c:550 [inline]
->        __bch2_trans_commit+0x7e8/0x62d0 fs/bcachefs/btree_trans_commit.c:990
->        bch2_trans_commit fs/bcachefs/btree_update.h:195 [inline]
->        bch2_extent_update+0x2d8/0x7e8 fs/bcachefs/io_write.c:353
->        bch2_write_index_default fs/bcachefs/io_write.c:401 [inline]
->        __bch2_write_index+0x570/0xfec fs/bcachefs/io_write.c:591
->        bch2_write_data_inline fs/bcachefs/io_write.c:1630 [inline]
->        bch2_write+0xacc/0x112c fs/bcachefs/io_write.c:1698
->        closure_queue include/linux/closure.h:270 [inline]
->        closure_call include/linux/closure.h:432 [inline]
->        bch2_writepage_do_io fs/bcachefs/fs-io-buffered.c:494 [inline]
->        bch2_writepages+0x1fc/0x2cc fs/bcachefs/fs-io-buffered.c:677
->        do_writepages+0x2c0/0x6a8 mm/page-writeback.c:2656
->        filemap_fdatawrite_wbc mm/filemap.c:386 [inline]
->        __filemap_fdatawrite_range mm/filemap.c:419 [inline]
->        filemap_write_and_wait_range+0x1ac/0x29c mm/filemap.c:691
->        bchfs_truncate+0x574/0xa70 fs/bcachefs/fs-io.c:-1
->        bch2_setattr+0x198/0x20c fs/bcachefs/fs.c:1245
->        notify_change+0x9a4/0xc50 fs/attr.c:552
->        do_truncate+0x178/0x1f0 fs/open.c:65
->        vfs_truncate+0x398/0x444 fs/open.c:115
->        do_sys_truncate+0xe4/0x1a8 fs/open.c:138
->        __do_sys_truncate fs/open.c:150 [inline]
->        __se_sys_truncate fs/open.c:148 [inline]
->        __arm64_sys_truncate+0x5c/0x74 fs/open.c:148
->        __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
->        invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
->        el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
->        do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
->        el0_svc+0x58/0x17c arch/arm64/kernel/entry-common.c:767
->        el0t_64_sync_handler+0x78/0x108 arch/arm64/kernel/entry-common.c:786
->        el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
->
-> -> #2 (bcachefs_btree){+.+.}-{0:0}:
->        trans_set_locked+0x94/0x200 fs/bcachefs/btree_locking.h:198
->        bch2_trans_begin+0x6f8/0xa40 fs/bcachefs/btree_iter.c:3288
->        bch2_read_err_msg_trans+0x64/0x298 fs/bcachefs/io_read.c:346
->        __bch2_read_extent+0x21fc/0x3694 fs/bcachefs/io_read.c:975
->        bch2_read_extent fs/bcachefs/io_read.h:140 [inline]
->        bchfs_read+0x1178/0x17dc fs/bcachefs/fs-io-buffered.c:226
->        bch2_readahead+0xa18/0xd88 fs/bcachefs/fs-io-buffered.c:316
->        read_pages+0x13c/0x4c8 mm/readahead.c:160
->        page_cache_ra_order+0x7b8/0xb34 mm/readahead.c:515
->        do_sync_mmap_readahead+0x2f0/0x660 mm/filemap.c:-1
->        filemap_fault+0x600/0x1278 mm/filemap.c:3403
->        bch2_page_fault+0x2cc/0x700 fs/bcachefs/fs-io-pagecache.c:594
->        __do_fault+0xf8/0x498 mm/memory.c:5098
->        do_read_fault mm/memory.c:5518 [inline]
->        do_fault mm/memory.c:5652 [inline]
->        do_pte_missing mm/memory.c:4160 [inline]
->        handle_pte_fault mm/memory.c:5997 [inline]
->        __handle_mm_fault mm/memory.c:6140 [inline]
->        handle_mm_fault+0x2cb0/0x4d18 mm/memory.c:6309
->        faultin_page mm/gup.c:1193 [inline]
->        __get_user_pages+0x1dd4/0x30d8 mm/gup.c:1491
->        populate_vma_page_range+0x218/0x2e8 mm/gup.c:1929
->        __mm_populate+0x208/0x330 mm/gup.c:2032
->        mm_populate include/linux/mm.h:3487 [inline]
->        vm_mmap_pgoff+0x378/0x43c mm/util.c:584
->        ksys_mmap_pgoff+0x394/0x5b8 mm/mmap.c:607
->        __do_sys_mmap arch/arm64/kernel/sys.c:28 [inline]
->        __se_sys_mmap arch/arm64/kernel/sys.c:21 [inline]
->        __arm64_sys_mmap+0xf8/0x110 arch/arm64/kernel/sys.c:21
->        __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
->        invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
->        el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
->        do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
->        el0_svc+0x58/0x17c arch/arm64/kernel/entry-common.c:767
->        el0t_64_sync_handler+0x78/0x108 arch/arm64/kernel/entry-common.c:786
->        el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
->
-> -> #1 (mapping.invalidate_lock#4){.+.+}-{4:4}:
->        down_read+0x58/0x2f8 kernel/locking/rwsem.c:1524
->        filemap_invalidate_lock_shared include/linux/fs.h:922 [inline]
->        filemap_fault+0x564/0x1278 mm/filemap.c:3391
->        bch2_page_fault+0x2cc/0x700 fs/bcachefs/fs-io-pagecache.c:594
->        __do_fault+0xf8/0x498 mm/memory.c:5098
->        do_shared_fault mm/memory.c:5582 [inline]
->        do_fault mm/memory.c:5656 [inline]
->        do_pte_missing mm/memory.c:4160 [inline]
->        handle_pte_fault mm/memory.c:5997 [inline]
->        __handle_mm_fault mm/memory.c:6140 [inline]
->        handle_mm_fault+0x1a08/0x4d18 mm/memory.c:6309
->        do_page_fault+0x428/0x1554 arch/arm64/mm/fault.c:647
->        do_translation_fault+0xc4/0x114 arch/arm64/mm/fault.c:783
->        do_mem_abort+0x70/0x194 arch/arm64/mm/fault.c:919
->        el0_da+0x64/0x160 arch/arm64/kernel/entry-common.c:627
->        el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:789
->        el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
->
-> -> #0 (vm_lock){++++}-{0:0}:
->        check_prev_add kernel/locking/lockdep.c:3166 [inline]
->        check_prevs_add kernel/locking/lockdep.c:3285 [inline]
->        validate_chain kernel/locking/lockdep.c:3909 [inline]
->        __lock_acquire+0x1728/0x3058 kernel/locking/lockdep.c:5235
->        lock_acquire+0x14c/0x2e0 kernel/locking/lockdep.c:5866
->        __vma_enter_locked+0x184/0x354 mm/memory.c:6473
->        __vma_start_write+0x34/0x158 mm/memory.c:6497
->        vma_start_write include/linux/mm.h:829 [inline]
->        free_pgtables+0x1e0/0x63c mm/memory.c:369
->        exit_mmap+0x394/0xbec mm/mmap.c:1295
->        __mmput+0xec/0x3dc kernel/fork.c:1380
->        mmput+0x70/0xac kernel/fork.c:1402
->        free_bprm+0x11c/0x398 fs/exec.c:1493
->        do_execveat_common+0x6b8/0x834 fs/exec.c:1970
->        do_execveat fs/exec.c:2053 [inline]
->        __do_sys_execveat fs/exec.c:2127 [inline]
->        __se_sys_execveat fs/exec.c:2121 [inline]
->        __arm64_sys_execveat+0xd0/0xec fs/exec.c:2121
->        __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
->        invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
->        el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
->        do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
->        el0_svc+0x58/0x17c arch/arm64/kernel/entry-common.c:767
->        el0t_64_sync_handler+0x78/0x108 arch/arm64/kernel/entry-common.c:786
->        el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
->
-> other info that might help us debug this:
->
-> Chain exists of:
->   vm_lock --> &dev->mode_config.idr_mutex --> &mm->mmap_lock
->
->  Possible unsafe locking scenario:
->
->        CPU0                    CPU1
->        ----                    ----
->   lock(&mm->mmap_lock);
->                                lock(&dev->mode_config.idr_mutex);
->                                lock(&mm->mmap_lock);
->   lock(vm_lock);
-
-Yeah I don't see it... CPU1 might try to do a read lock, wait, while CPU0
-holds an mmap write lock and acquires a VMA write lock, I don't see how it
-could be unsuccessful. Then CPU1 could carry on (possibly disasterously
-under the circumstances but still...)
-
->
->  *** DEADLOCK ***
->
-> 2 locks held by syz.1.261/8150:
->  #0: ffff0000d0fee3d0 (&sig->cred_guard_mutex){+.+.}-{4:4}, at: prepare_bprm_creds fs/exec.c:1469 [inline]
->  #0: ffff0000d0fee3d0 (&sig->cred_guard_mutex){+.+.}-{4:4}, at: bprm_execve+0xa8/0x10dc fs/exec.c:1842
->  #1: ffff0000d572df50 (&mm->mmap_lock){++++}-{4:4}, at: mmap_write_lock include/linux/mmap_lock.h:128 [inline]
->  #1: ffff0000d572df50 (&mm->mmap_lock){++++}-{4:4}, at: exit_mmap+0x200/0xbec mm/mmap.c:1292
->
-> stack backtrace:
-> CPU: 1 UID: 0 PID: 8150 Comm: syz.1.261 Not tainted 6.15.0-rc7-syzkaller-gd7fa1af5b33e #0 PREEMPT
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
-> Call trace:
->  show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:466 (C)
->  __dump_stack+0x30/0x40 lib/dump_stack.c:94
->  dump_stack_lvl+0xd8/0x12c lib/dump_stack.c:120
->  dump_stack+0x1c/0x28 lib/dump_stack.c:129
->  print_circular_bug+0x324/0x32c kernel/locking/lockdep.c:2079
->  check_noncircular+0x154/0x174 kernel/locking/lockdep.c:2211
->  check_prev_add kernel/locking/lockdep.c:3166 [inline]
->  check_prevs_add kernel/locking/lockdep.c:3285 [inline]
->  validate_chain kernel/locking/lockdep.c:3909 [inline]
->  __lock_acquire+0x1728/0x3058 kernel/locking/lockdep.c:5235
->  lock_acquire+0x14c/0x2e0 kernel/locking/lockdep.c:5866
->  __vma_enter_locked+0x184/0x354 mm/memory.c:6473
->  __vma_start_write+0x34/0x158 mm/memory.c:6497
->  vma_start_write include/linux/mm.h:829 [inline]
->  free_pgtables+0x1e0/0x63c mm/memory.c:369
->  exit_mmap+0x394/0xbec mm/mmap.c:1295
->  __mmput+0xec/0x3dc kernel/fork.c:1380
->  mmput+0x70/0xac kernel/fork.c:1402
->  free_bprm+0x11c/0x398 fs/exec.c:1493
->  do_execveat_common+0x6b8/0x834 fs/exec.c:1970
->  do_execveat fs/exec.c:2053 [inline]
->  __do_sys_execveat fs/exec.c:2127 [inline]
->  __se_sys_execveat fs/exec.c:2121 [inline]
->  __arm64_sys_execveat+0xd0/0xec fs/exec.c:2121
->  __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
->  invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
->  el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
->  do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
->  el0_svc+0x58/0x17c arch/arm64/kernel/entry-common.c:767
->  el0t_64_sync_handler+0x78/0x108 arch/arm64/kernel/entry-common.c:786
->  el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
->
->
 > ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>  rust/kernel/dma.rs | 86 ++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 86 insertions(+)
 >
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
->
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
->
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
->
-> If you want to undo deduplication, reply with:
-> #syz undup
+> diff --git a/rust/kernel/dma.rs b/rust/kernel/dma.rs
+> index 5a690e5f1e66..b486f63c1d3a 100644
+> --- a/rust/kernel/dma.rs
+> +++ b/rust/kernel/dma.rs
+> @@ -218,6 +218,92 @@ pub fn dma_handle(&self) -> bindings::dma_addr_t {
+>          self.dma_handle
+>      }
+> =20
+> +    /// Common helper to validate a range applied from the allocated reg=
+ion in the CPU's virtual
+> +    /// address space.
+> +    fn validate_range(&self, offset: usize, count: usize) -> Result
+> +    {
+> +        if offset.checked_add(count).ok_or(EOVERFLOW)? > self.count {
+> +            return Err(EINVAL);
+> +        }
+> +        Ok(())
+> +    }
+> +
+> +    /// Returns the data from the region starting from `offset` as a sli=
+ce.
+> +    /// `offset` and `count` are in units of `T`, not the number of byte=
+s.
+> +    ///
+> +    /// For ringbuffer type of r/w access or use-cases where the pointer=
+ to the live data is needed,
+> +    /// [`CoherentAllocation::start_ptr`] or [`CoherentAllocation::start=
+_ptr_mut`] could be used instead.
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// * Callers must ensure that the device does not read/write to/fro=
+m memory while the returned
+> +    ///   slice is live.
+> +    /// * Callers must ensure that this call does not race with a write =
+to the same region while
+> +    ///   the returned slice is live.
+> +    pub unsafe fn as_slice(&self, offset: usize, count: usize) -> Result=
+<&[T]> {
+> +        self.validate_range(offset, count)?;
+> +        // SAFETY:
+> +        // - The pointer is valid due to type invariant on `CoherentAllo=
+cation`,
+> +        //   we've just checked that the range and index is within bound=
+s. The immutability of the
+> +        //   data is also guaranteed by the safety requirements of the f=
+unction.
+> +        // - `offset + count` can't overflow since it is smaller than `s=
+elf.count` and we've checked
+> +        //   that `self.count` won't overflow early in the constructor.
+> +        Ok(unsafe { core::slice::from_raw_parts(self.cpu_addr.add(offset=
+), count) })
+> +    }
+> +
+> +    /// Performs the same functionality as [`CoherentAllocation::as_slic=
+e`], except that a mutable
+> +    /// slice is returned.
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// * Callers must ensure that the device does not read/write to/fro=
+m memory while the returned
+> +    ///   slice is live.
+> +    /// * Callers must ensure that this call does not race with a read o=
+r write to the same region
+> +    ///   while the returned slice is live.
+> +    pub unsafe fn as_slice_mut(&self, offset: usize, count: usize) -> Re=
+sult<&mut [T]> {
+> +        self.validate_range(offset, count)?;
+> +        // SAFETY:
+> +        // - The pointer is valid due to type invariant on `CoherentAllo=
+cation`,
+> +        //   we've just checked that the range and index is within bound=
+s. The immutability of the
+> +        //   data is also guaranteed by the safety requirements of the f=
+unction.
+> +        // - `offset + count` can't overflow since it is smaller than `s=
+elf.count` and we've checked
+> +        //   that `self.count` won't overflow early in the constructor.
+> +        Ok(unsafe { core::slice::from_raw_parts_mut(self.cpu_addr.add(of=
+fset), count) })
+> +    }
+> +
+> +    /// Writes data to the region starting from `offset`. `offset` is in=
+ units of `T`, not the
+> +    /// number of bytes.
+
+Reading this sentence it occured to me that `offset` may be ambiguous
+here, as in my mind it rings as being in bytes unit. How about using
+`index` throughout the file?
+
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// * Callers must ensure that the device does not read/write to/fro=
+m memory while the returned
+> +    ///   slice is live.
+> +    /// * Callers must ensure that this call does not race with a read o=
+r write to the same region
+> +    ///   that overlaps with this write.
+> +    ///
+> +    /// # Examples
+> +    ///
+> +    /// ```
+> +    /// # fn test(alloc: &mut kernel::dma::CoherentAllocation<u8>) -> Re=
+sult {
+> +    /// let somedata: [u8; 4] =3D [0xf; 4];
+> +    /// let buf: &[u8] =3D &somedata;
+> +    /// // SAFETY: No hw operation on the device and no other r/w access=
+ to the region at this point.
+> +    /// unsafe { alloc.write(buf, 0)?; }
+> +    /// # Ok::<(), Error>(()) }
+> +    /// ```
+> +    pub unsafe fn write(&self, src: &[T], offset: usize) -> Result {
+
+Can this function be written by leveraging `as_slice_mut` and
+`clone_from_slice`? But doing so might require `T` to implement Clone,
+so maybe not a good idea (OTOH, aren't types implementing `AsBytes`
+implicitly Cloneable?)
+
 
