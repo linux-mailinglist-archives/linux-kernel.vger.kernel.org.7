@@ -1,105 +1,109 @@
-Return-Path: <linux-kernel+bounces-670516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3E9AACAF84
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 15:49:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D875AACAF8E
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 15:49:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70A5E7A1340
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 13:47:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9381E1773EE
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 13:49:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EE60221F00;
-	Mon,  2 Jun 2025 13:48:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C392221FBB;
+	Mon,  2 Jun 2025 13:49:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1QpiWp9b"
-Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="NkckSpJA"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4476F22068E
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 13:48:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B966F1DE2CC;
+	Mon,  2 Jun 2025 13:49:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748872120; cv=none; b=EdFgTYXBbmzOljfxLU3y++4gRhuNu6Ng/qs+gBx07bkUvVaMcgpyoWuBkQHYkzVZxPEXsqqWCK3vttEDCs9g1x/G6fgjJrErb5tp5QO620glNB+xizlnzCuUg6NNE3PoqwVeou1y7UBHTiRmsoxzabYSH4jjoy70lpxgKNO64PU=
+	t=1748872175; cv=none; b=iqH1zP361pcK7hjWxEDKqCBc0u2Dj02gzQm8ReiKam5bd9rgiiyKhwZrMt3KGf96I1csYiAbMfTsAnkrFtPvRKYvrF7kiyoc4+6adlqsQBv3oXXc0OJyD0XR5UMKx51KtE+ehv7vaBHQLd0MPbhCswcNxHLp6JHrESnyc4rODkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748872120; c=relaxed/simple;
-	bh=zOSeXNcd8Limb2V+zOaCZevg9OAEa7wcn/HbXg+RdIo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gHXEBHATtLKIRK9VjEswi0ljtPw+UKxETvtzIlBUlBbkiATJnNwyEv9D1VI83G7TrrU0dW95TptsBPya0eqDph57A/trDsDS+V//LPp9W8XzW5hDu7T0/LbHPCuxxiyZQ64ZhymfXMGinaL6LkmTCkVo88cmAzOZ7YOrQEul9ys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1QpiWp9b; arc=none smtp.client-ip=209.85.160.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-2da73155e91so1792639fac.0
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jun 2025 06:48:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1748872118; x=1749476918; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zOSeXNcd8Limb2V+zOaCZevg9OAEa7wcn/HbXg+RdIo=;
-        b=1QpiWp9b9h3f9od5DTIyQjVX+XhTPDPRxupc/Hq57596+G307Hp2LQsTI/ZgqVSHt1
-         FFib3xiB5SdwgLUVbPzJeg8HfsDkwcSVxWBfxYeXBmLDXDMPG2vtaS6/QkJhAyu1KtPc
-         usR2V3kt2dKuq/AMw9uIav7EFiuR/D1KtiwUrMPVySf/1bgDT9CF3IsFr+MEaZ0Oi6O+
-         izBBHvjXm7hmeBvHzpBCKBcTbYGpxIa2a9H2gZHSeotBq/DywUpdVZ/R9oQYHUhniUdO
-         MDArjRa3cKlPJ5EFUWZ/fVKfZ8PTSVHelYqghJAzZOVgwq65DEaaXarZ/x5LlCmz5vDY
-         pOYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748872118; x=1749476918;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zOSeXNcd8Limb2V+zOaCZevg9OAEa7wcn/HbXg+RdIo=;
-        b=OgD8gdZqgszAR3eyuwJy5E7JR5IXL3191KNyhCD7oPf9ucjzmz8rEr3LvItL2RZWwZ
-         cc0QrvVZhOLzdc4rOlwpXuNOWquVeq4E9RjCAdrxdUev1StLdK4wLe2gGhY+SQdEEVq/
-         v1sAwpOxIeMGvsyuCb+vtKoykbjTOQHJDFwXq3+zAMniaGmWoFgK3Uhnw9PWyOkplZD0
-         WlcLP/9MwnQJWFxD74L95OZ1khVRd7LUqfjxL7uda/GToPlxlBxaVtXlGq7NhgNdajLE
-         iKP017XCKWl99ZT04bLwoH4c+9iddoit6MZsbEgY0llMlVzLCOQv19xo1/fXGvSj1bWr
-         +Tqg==
-X-Forwarded-Encrypted: i=1; AJvYcCXI1ulhCr+H2YsFWH58l4+nQ5OLoticFN+pvOs+EJzNdTdEEar7McjUmtqIS7CdVufRAfAflOrHW6JrSyo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZXMnnfPaC7m29ntswvT5B/n+cNSsOo6LDYROOV4QIkoPMINgV
-	QF/3X+3ApZtJfYAMBNzG5wW1c1vaQycELsaOeZRtiIF2WbLWHRdrNb3U7UKqCDLzHdE/yUmn7hM
-	8lpRJxJFfIGXmeSj4Dk+rzXzePR5Ptqw3jpxe9eOF
-X-Gm-Gg: ASbGncuaiF9Oh0PZScLnnhepNpT8Q6cw7kODe75WEDfRWMSilbjx+YLU6yTkBU2yJcF
-	R+V8N18zdNIhErk7c0QF6GBqVY8d8IgY2oz2trU46KJyi8+lFG0eEXgbkFWR+WPoCRi9QJlcljA
-	uX99IalZsLQTWELtpeQ7A7wwdeli83m4sksHW+FrKZsyRy/B3SLVQGO0P242VOA3e6OVEeuX18T
-	Q==
-X-Google-Smtp-Source: AGHT+IHZcil0xtLyST3sDOJtjEJ8Q1w8t4vE+wRo5JvoAI0L4YVl2hM6fja6W80hRtiHTsXppngSkoU4ekQc+wPvxGM=
-X-Received: by 2002:a05:6870:9106:b0:2c2:4c92:77f with SMTP id
- 586e51a60fabf-2e92a478289mr6485269fac.38.1748872118156; Mon, 02 Jun 2025
- 06:48:38 -0700 (PDT)
+	s=arc-20240116; t=1748872175; c=relaxed/simple;
+	bh=uUC0Tmx0QaerHMkNytkLZoq4sJKr8yMxwE6hyQWxQKg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MpvTJWnIde1SPr/qapSb+z9U5nY4UARMFvzCC+djLYnFtqcWobcgahd7t9DgfKPCBp5faLzwCCFzkrriRInJIOybWak1Py8sSo2oeH4s1aJYZx6MhiKhCgcS2rIKuf5PqiPKYpKMTGvMpgAcsj4eesywevAkbwkhWA+aS0npjWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=NkckSpJA; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=KClf/L5EO+Fw2bszJ2s3soremDMaf6aoB4Nu/1spgug=; b=NkckSpJAU2VS4CdB+rRmbjzTG2
+	lhR7A+lZ/8EdGDqMJcnnejHhI14DpDzSdaIQ2LbYd1s3Qi801deLq7XcRD5khbjeaUhuuWGPuzNhe
+	j7MGsj6PbNhWQ/n+I08WjrwI8rgYMCn4Xpd76L9TXel8l3jFHs6TTr8dZlcX3XUhXm5o=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uM5XV-00EVR6-A8; Mon, 02 Jun 2025 15:49:21 +0200
+Date: Mon, 2 Jun 2025 15:49:21 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: George Moussalem <george.moussalem@outlook.com>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 3/5] net: phy: qcom: at803x: Add Qualcomm IPQ5018
+ Internal PHY support
+Message-ID: <7b92f27b-3953-4673-a532-6671acdfd402@lunn.ch>
+References: <20250602-ipq5018-ge-phy-v3-0-421337a031b2@outlook.com>
+ <20250602-ipq5018-ge-phy-v3-3-421337a031b2@outlook.com>
+ <3704c056-91b9-464a-8bc8-7a98a9d9b7a7@lunn.ch>
+ <DS7PR19MB8883B6501250F67CB83415BD9D62A@DS7PR19MB8883.namprd19.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250602133653.1606388-1-bqe@google.com>
-In-Reply-To: <20250602133653.1606388-1-bqe@google.com>
-From: Burak Emir <bqe@google.com>
-Date: Mon, 2 Jun 2025 15:48:26 +0200
-X-Gm-Features: AX0GCFtH8q7_iibcqy7PZfc8_r0qw0yaACH-9rlFYCUQZJ89nTglDsYGq_wrzcg
-Message-ID: <CACQBu=UFGmCVK=tpcerBXZBQyF87EhPJqD62eAgm0OHtW6yc1g@mail.gmail.com>
-Subject: Re: [PATCH v10 0/5] rust: adds Bitmap API, ID pool and bindings
-To: Yury Norov <yury.norov@gmail.com>, Kees Cook <kees@kernel.org>
-Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	"Gustavo A . R . Silva" <gustavoars@kernel.org>, Carlos LLama <cmllamas@google.com>, 
-	Pekka Ristola <pekkarr@protonmail.com>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DS7PR19MB8883B6501250F67CB83415BD9D62A@DS7PR19MB8883.namprd19.prod.outlook.com>
 
-Sorry for the spam, please ignore this version. Had to fix one more
-typo in Kconfig.
+> > So shouldn't there be an else clause here setting these two values to
+> > their default, undoing what the bootloader might of done etc.
+> 
+> DAC values are only set if the property is set in the DTS. If the property
+> is not set, the default values set by the PHY itself are used, and as you
+> mentioned below, DAC values aren't modified by the driver.
+> 
+> > 
+> > Or you can change the binding, and say something like:
+> > 
+> > +            If not set, DAC values are not modified.
+> 
+> sure, anything else you need changed for v4?
 
-On Mon, Jun 2, 2025 at 3:36=E2=80=AFPM Burak Emir <bqe@google.com> wrote:
->
-> This series adds a Rust bitmap API for porting the approach from
-> commit 15d9da3f818c ("binder: use bitmap for faster descriptor lookup")
-> to Rust. The functionality in dbitmap.h makes use of bitmap and bitops.
+We have seen cases where the bootloader does the wrong thing, e.g. in
+this case, hard coded for short cable. A DT developer than looks at
+the binding, sees that the defaults should be used, and are confused.
+By accurately wording the binding, that the values are left untouched,
+it gives the DT developer a hint where to look, at the bootloader.
+
+So in general, i tend to be picky about what does it mean if the
+property is not present, because its a detail which is often
+overlooked.
+
+I did not notice anything else, but net-next is closed at the moment
+for the merge window, so you need to wait a while before submitting it
+for merging.
+
+	Andrew
 
