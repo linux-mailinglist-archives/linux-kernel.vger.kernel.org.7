@@ -1,162 +1,290 @@
-Return-Path: <linux-kernel+bounces-670425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC5B2ACAE45
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 14:47:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5266BACAE4A
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 14:50:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 39F527AC3CC
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 12:46:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8AE527A8805
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 12:49:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FB4B21325D;
-	Mon,  2 Jun 2025 12:47:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4947215F6B;
+	Mon,  2 Jun 2025 12:50:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NqZqdg19"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Uz+qE0dc"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8C6D1AF4D5
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 12:47:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A782E5227
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 12:50:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748868465; cv=none; b=oFUijMl0VD4TwHNCyMEXz0Jsoy9Uo0Jmn0M4pw1p4O3mYkS2h2Evil+GIAZ3FqCiN4V9LRj14lc/UyyefysTZXYoUHM4mQK2xIFc6zNLawBcqmoTL536uh2xrX5WR/wQg6NqrURNfxrAKS6Ua8iGsthhrKOsq7k7vwcQE1NgJy4=
+	t=1748868629; cv=none; b=DT/vQiABLMB8X5h9qNj+dXcoAE+RntcF/OU/Bp6/4h2/QQDyJAJT6DEaUkUIsHlsuCbFcviW5fi2+d81BXXv4qF9Q19FwukiGVnFz26eO9kov0h60gp1U4N0HqkV0viPT4PCeTL2kBNpeiguxF8e+gSx4KeWUYGOv7Ldy3axtw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748868465; c=relaxed/simple;
-	bh=HW3Z90l7RNBksiCHnADYX0xsQ1oyiXxM4OgllXOR9NQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GFROqv+a6cnWQmxDn9YEGYf8T5XvaH+Z37pruawhaC6xkj42n2GeXKH1FLAbFQqheepDIL5CjRxlOgKgE50O0LAsVDCVusvMNJw3DNxi6Y0MQtsmVrbc6MmFnEp81+NU/qMmxVYzacWl+z3Dy1i6ZKwtNfXfWsvlUJOzqSwsSxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NqZqdg19; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B763C4CEEB;
-	Mon,  2 Jun 2025 12:47:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748868465;
-	bh=HW3Z90l7RNBksiCHnADYX0xsQ1oyiXxM4OgllXOR9NQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NqZqdg19cTQfnr3uMJSzkWMJI11jMh9dsJ72dji6DqM43sBlwThnQuG9afVGw6mFq
-	 oDGJN2F2kJL9QibiX49oi7WfgDzBtizvE2MQCoXV9NTeYhhBcqvwfLuRceoft7dEn+
-	 auQmA3lF+wnjyK9uqJ60dfprBsEdpDbdbCLWwNTNs57GUtzwyVZkr4yodlKj/ksKxW
-	 WxvDspEtJXk1p3hktrgbJdrZjuQ+oBVmF1CTskUbngqJx2rMAUIHVMez/kQwXszSxN
-	 qJRI1pv0qTLoVQLDOAYE3UY4W6U2KBQyAhVO5FZ4gmV0fSCTU+J9YM2d97fnEX/zeG
-	 ZO1380svXV1LA==
-Date: Mon, 2 Jun 2025 13:47:39 +0100
-From: Will Deacon <will@kernel.org>
-To: Yeoreum Yun <yeoreum.yun@arm.com>
-Cc: catalin.marinas@arm.com, geert@linux-m68k.org, broonie@kernel.org,
-	mcgrof@kernel.org, joey.gouly@arm.com, kristina.martsenko@arm.com,
-	rppt@kernel.org, pcc@google.com, bigeasy@linutronix.de,
-	ptosi@google.com, mark.rutland@arm.com, james.morse@arm.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	ada.coupriediaz@arm.com
-Subject: Re: [PATCH] arm64/trap: fix broken ct->nmi_nesting when die() is
- called in a kthread
-Message-ID: <20250602124738.GD1227@willie-the-truck>
-References: <20250530092723.3307630-1-yeoreum.yun@arm.com>
+	s=arc-20240116; t=1748868629; c=relaxed/simple;
+	bh=5G3CEcHjyLUfLhtR42+j+KALXQp0tNC97BMRtb+fTyA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fmW+I23d1mQ99vVKUrda+ykv4w+kXAOi+0Wfs8TXeQbVSPNt0TZAA8FDHYG0fpKtRxF15gVTK8mE3mfOIsroi/I4frcptrpHZ1wbIWddV2UyHXNPz//BMkNkU9xKYT3G0bNpL7/w8NWBP9mJuXCpNgApVkOmc+fLDfYeaduICpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Uz+qE0dc; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-60462e180e2so9291071a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jun 2025 05:50:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1748868626; x=1749473426; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=AuG7xwjsdNNiPL7hovGzGxZc0DBRkYJ8vtTWBvnDZ2M=;
+        b=Uz+qE0dcOSKi5MKpLwLmZdUPvgUEDO1kmbpbJq33C54pBhqjsaCxUPynrHzM/eA7ky
+         J7J1ZDlYXxJ+vKuqu1pwYPdsACBTAIO4X09CYEQzYz7fEdwhvXToV3LRWffxcUwkSgkx
+         ci7ShmEusYTkiubGGep/Yhs4lxeIN/Re5lJI60hJqZXJkxeyBchbsEo1GOLY5l7DJJLd
+         RKYaUEevtyN6KFI/tCjjEyBpyVn21JrxCkXXXMZvQ/7tUZrDD0UkEDFavIYeDuRyQ9Fr
+         ZnDQNO/j6TSrxpGCnrvsFC/MDmXQ+nsyNjUQB00JgIxCNBlnjm6WT8/NyUPQYTtw0YNL
+         LlmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748868626; x=1749473426;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AuG7xwjsdNNiPL7hovGzGxZc0DBRkYJ8vtTWBvnDZ2M=;
+        b=fPpl79QppsmG5eEsai7BC/Z97zwhXD079rGieNaWbLRDVKXKZApLLjwcZK7Dd6xk2q
+         6O5tvqSp7OXQtDzTE6nInPWeO8kU6eUFKeT9fx5npY0p/P2xfrXijXGpxwU9r1Su6nSV
+         tXRmOoDLwymi2PErmN0jEyUb4peBvFoK2jvYjneP+cNJbP6x3hcHdqjAI4pC2QoFW+W5
+         FxpJoEt7lrC6Chl3YyBx0BZxq7fjo3xWBuK1Y/ouXAMflferPeafkxOJkYxjuPqvcza6
+         V3D0lJjOgz3+mLU9cV5Ii5LXCiAsLbDnRYz0gre6sNPihs0aVbwz5YnzAPzNwC0jLaU9
+         Vx9A==
+X-Forwarded-Encrypted: i=1; AJvYcCWADZmMGHu782ZHMNHA3xacYbPx88oGnGpaUj/G62qvNglwhlYRip+rK8bicYqLrv4G+r/SOE6yqwO3BPM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZFsfQe6mDmluCCAob3Z2mWnDznyNI+0bObc1xacY0G6VKHB9l
+	WJkOv9oiA6tp/Z74zD46B0a3zmOvcUGbMDlntwJOyx9TKQHWefZIpixTCX9p+G7b35w=
+X-Gm-Gg: ASbGncu5oxXB6FFkQH/EiPJzgrNbmHGtN8K3o2KB+rfSE1ZLuJblGPImzF3KKV36k5r
+	o2+eSI9TG+jIbFkVTMOR8nkYymjn/kKkcTPdYR8GOBNuIeSXH4D4scjAO0jg72CYl/Ae9QLDNz5
+	1OeaQSPpo+Q+rRnEOve8xUiNmyaYGnCHjdmrZ6S+0rSAG4gMFNtVyda/ZS+5ba27+vcNiNt4f+N
+	NNrugpZKspw0L1prvs9J9D4r5M+0B7kZDFikzWqNAlWuy5TKUi27X9P8LzGrwxNx8bNs9eEX+kd
+	gUPwppy3I8o+s1G91h9Id5686X4ozdgNHFQcBe1MuGtXm5fzuc7RwfAH
+X-Google-Smtp-Source: AGHT+IH6DxCLWYrDygQN3QIL9gGZsLQSxTFfge4IINaZgXAw9wAjRpEXx+aSqzh1ccJ2t6FyAOPx4w==
+X-Received: by 2002:a17:907:7246:b0:ad8:9c97:c2fc with SMTP id a640c23a62f3a-adb36b31a5dmr1029799366b.13.1748868625763;
+        Mon, 02 Jun 2025 05:50:25 -0700 (PDT)
+Received: from [192.168.0.20] ([212.21.159.167])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ada5eb54d24sm784274166b.123.2025.06.02.05.50.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Jun 2025 05:50:25 -0700 (PDT)
+Message-ID: <206656f9-917e-4478-b731-ab7e05bc8a74@suse.com>
+Date: Mon, 2 Jun 2025 15:50:24 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250530092723.3307630-1-yeoreum.yun@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 25/32] x86/boot/e820: Simplify append_e820_table() and
+ remove restriction on single-entry tables
+To: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org
+Cc: Andy Shevchenko <andy@kernel.org>, Arnd Bergmann <arnd@kernel.org>,
+ Borislav Petkov <bp@alien8.de>, Juergen Gross <jgross@suse.com>,
+ "H . Peter Anvin" <hpa@zytor.com>, Kees Cook <keescook@chromium.org>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Mike Rapoport <rppt@kernel.org>, Paul Menzel <pmenzel@molgen.mpg.de>,
+ Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>,
+ David Woodhouse <dwmw@amazon.co.uk>
+References: <20250515120549.2820541-1-mingo@kernel.org>
+ <20250515120549.2820541-26-mingo@kernel.org>
+From: Nikolay Borisov <nik.borisov@suse.com>
+Content-Language: en-US
+Autocrypt: addr=nik.borisov@suse.com; keydata=
+ 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
+In-Reply-To: <20250515120549.2820541-26-mingo@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-[+Ada]
 
-On Fri, May 30, 2025 at 10:27:23AM +0100, Yeoreum Yun wrote:
-> When a kernel thread hits BUG() outside of an interrupt handler and
-> panic_on_oops is not set, it exits via make_task_dead(), which is called by die().
-> In this case, the nmi_nesting value in context_tracking becomes
-> inconsistent because the proper context tracking exit functions are not reached.
-> 
-> Here’s an example scenario on arm64:
->   1. A kernel thread hits the BUG() macro outside an interrupt handler,
->      and panic_on_oops is not set (ct->nmi_nesting == CT_NESTING_IRQ_NONIDLE).
-> 
->   2. The exception handler jumps to el1_dbg() and calls arm64_enter_el1_dbg(),
->      which invokes ct_nmi_enter(). (ct->nmi_nesting == CT_NESTING_IRQ_NONIDLE + 2)
-> 
->   3. bug_handler() runs, and if the bug type is BUG_TRAP_TYPE_BUG, it calls die().
-> 
->   4. die() then calls make_task_dead(), which terminates the kernel thread and
->      schedules another task—assume this is the idle_task.
 
-This sounds like there is a genuine imbalance, then, as we're scheduling
-in the context of an exception taken from EL1.
-
->   5. The idle_task attempts to enter the idle state by calling ct_idle_enter().
->      However, since the current ct->nmi_nesting value is CT_NESTING_IRQ_NONIDLE + 2,
->      ct_kernel_exit() triggers a WARN_ON_ONCE() warning.
+On 5/15/25 15:05, Ingo Molnar wrote:
+> So append_e820_table() begins with this weird condition that checks 'nr_entries':
 > 
-> Because the kernel thread couldn’t call the appropriate context tracking exit
-> function in step 3, the ct->nmi_nesting value remains incorrect.
-> This leads to warnings like the following:
+>      static int __init append_e820_table(struct boot_e820_entry *entries, u32 nr_entries)
+>      {
+>              /* Only one memory region (or negative)? Ignore it */
+>              if (nr_entries < 2)
+>                      return -1;
 > 
-> [    7.133093] ------------[ cut here ]------------
-> [    7.133129] WARNING: CPU: 2 PID: 0 at kernel/context_tracking.c:127 ct_kernel
-> [    7.134157] Modules linked in:
-> [    7.134158]     not ok 62 kasan_strings
-> [    7.134280]
-> [    7.134506] CPU: 2 UID: 0 PID: 0 Comm: swapper/2 Tainted: G    B D W        N
-> [    7.134930] Tainted: [B]=BAD_PAGE, [D]=DIE, [W]=WARN, [N]=TEST
-> [    7.135150] pstate: 204003c5 (nzCv DAIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> [    7.135441] pc : ct_kernel_exit+0xa4/0xb0
-> [    7.135656] lr : ct_kernel_exit+0x1c/0xb0
-> [    7.135866] sp : ffff8000829bbd90
-> [    7.136011] x29: ffff8000829bbd90 x28: ffff80008224ecf0 x27: 0000000000000004
-> [    7.136379] x26: ffff80008228ed30 x25: ffff80008228e000 x24: 0000000000000000
-> [    7.137016] x23: f3ff000800a52280 x22: 0000000000000000 x21: ffff00087b6c7408
-> [    7.137380] x20: ffff80008224b408 x19: 0000000000000005 x18: 0000000000000000
-> [    7.137741] x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000000
-> [    7.311316] x14: 0000000000000000 x13: 0000000000000000 x12: 0000000000000000
-> [    7.311673] x11: 0000000000000000 x10: 0000000000000000 x9 : 4000000000000000
-> [    7.312031] x8 : 4000000000000002 x7 : 0000000000000000 x6 : 0000000000000000
-> [    7.312387] x5 : 0000000000000000 x4 : 0000000000000000 x3 : 0000000000000000
-> [    7.312740] x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff8007f947c000
-> [    7.313096] Call trace:
-> [    7.313210]  ct_kernel_exit+0xa4/0xb0 (P)
-> [    7.313445]  ct_idle_enter+0x14/0x28
-> [    7.313666]  default_idle_call+0x2c/0x60
-> [    7.313902]  do_idle+0xec/0x320
-> [    7.314104]  cpu_startup_entry+0x40/0x50
-> [    7.314331]  secondary_start_kernel+0x120/0x1a0
+> Firstly, 'nr_entries' has been an u32 since 2017 and cannot be negative.
 > 
-> This behavior is specific to the arm64 architecture, where ct_nmi_enter()
-> is called when handling a debug exception.
-> In contrast, on other architectures, ct_nmi_enter() is not called when
-> handling BUG().
-> (i.e) when handling X86_TRAP_UD via handle_invalid_op(), it doesn't call
-> ct_nmi_enter(). so it doesn’t cause any issues
-> (While irq_entry_enter() does call ct_nmi_enter() for idle tasks,
-> that doesn’t apply to debug exception handling).
-
-It sounds like you're suggesting that we don't update the
-context-tracking NMI state for BRK exceptions from EL1, to align
-with x86. I think Ada's pending series might make that easier, but then
-the patch you propose:
-
-> diff --git a/arch/arm64/kernel/traps.c b/arch/arm64/kernel/traps.c
-> index 529cff825531..9cf03b9ce691 100644
-> --- a/arch/arm64/kernel/traps.c
-> +++ b/arch/arm64/kernel/traps.c
-> @@ -227,8 +227,14 @@ void die(const char *str, struct pt_regs *regs, long err)
+> Secondly, there's nothing inherently wrong with single-entry E820 maps,
+> especially in virtualized environments.
 > 
->  	raw_spin_unlock_irqrestore(&die_lock, flags);
+> So remove this restriction and remove the __append_e820_table()
+> indirection.
 > 
-> -	if (ret != NOTIFY_STOP)
-> +	if (ret != NOTIFY_STOP) {
-> +#ifdef CONFIG_CONTEXT_TRACKING_IDLE
-> +		long nmi_nesting = ct_nmi_nesting();
-> +		if (nmi_nesting && nmi_nesting != CT_NESTING_IRQ_NONIDLE)
-> +			ct_nmi_exit();
-> +#endif
+> Also:
+> 
+>   - fix/update comments
+>   - remove obsolete comments
+> 
+> This shrinks the generated code a bit as well:
+> 
+>     text       data        bss        dec        hex    filename
+>     7549      44072          0      51621       c9a5    e820.o.before
+>     7533      44072          0      51605       c995    e820.o.after
+> 
+> Signed-off-by: Ingo Molnar <mingo@kernel.org>
+> Cc: Andy Shevchenko <andy@kernel.org>
+> Cc: Arnd Bergmann <arnd@kernel.org>
+> Cc: David Woodhouse <dwmw@amazon.co.uk>
+> Cc: H. Peter Anvin <hpa@zytor.com>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> Cc: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> ---
+>   arch/x86/kernel/e820.c | 35 +++++++++++------------------------
+>   1 file changed, 11 insertions(+), 24 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/e820.c b/arch/x86/kernel/e820.c
+> index 447f8bbb77b8..22bfcad7b723 100644
+> --- a/arch/x86/kernel/e820.c
+> +++ b/arch/x86/kernel/e820.c
+> @@ -483,17 +483,22 @@ __init int e820__update_table(struct e820_table *table)
+>   	return 0;
+>   }
+>   
+> -__init static int __append_e820_table(struct boot_e820_entry *entries, u32 nr_entries)
+> +/*
+> + * Copy the BIOS E820 map into the kernel's e820_table.
+> + *
+> + * Sanity-check it while we're at it..
+> + */
+> +__init static int append_e820_table(struct boot_e820_entry *entries, u32 nr_entries)
+>   {
+>   	struct boot_e820_entry *entry = entries;
+>   
+>   	while (nr_entries) {
+>   		u64 start = entry->addr;
+> -		u64 size = entry->size;
+> -		u64 end = start + size - 1;
+> -		u32 type = entry->type;
+> +		u64 size  = entry->size;
+> +		u64 end   = start + size-1;
+> +		u32 type  = entry->type;
+>   
+> -		/* Ignore the entry on 64-bit overflow: */
+> +		/* Ignore the remaining entries on 64-bit overflow: */
+>   		if (start > end && likely(size))
+>   			return -1;
 
-tries to undo the context-tracking when we realise we're going to kill
-the task, which feels like a hack.
+nit: All this function wants to do is simply iterate an array, I'd say
+the standard way to iterate an array is to use a 'for' loop.
 
-Will
+How about doing this instead (on top of this patch):
+
+diff --git a/arch/x86/kernel/e820.c b/arch/x86/kernel/e820.c
+index 22bfcad7b723..41aa26eae594 100644
+--- a/arch/x86/kernel/e820.c
++++ b/arch/x86/kernel/e820.c
+@@ -490,9 +490,9 @@ __init int e820__update_table(struct e820_table *table)
+   */
+  __init static int append_e820_table(struct boot_e820_entry *entries, u32 nr_entries)
+  {
+-       struct boot_e820_entry *entry = entries;
+  
+-       while (nr_entries) {
++       for (int i = 0; i < nr_entries; i++) {
++               struct boot_e820_entry *entry = entries + i;
+                 u64 start = entry->addr;
+                 u64 size  = entry->size;
+                 u64 end   = start + size-1;
+@@ -503,9 +503,6 @@ __init static int append_e820_table(struct boot_e820_entry *entries, u32 nr_entr
+                         return -1;
+  
+                 e820__range_add(start, size, type);
+-
+-               entry++;
+-               nr_entries--;
+         }
+         return 0;
+  }
+
+
+
+
+>   
+> @@ -505,24 +510,6 @@ __init static int __append_e820_table(struct boot_e820_entry *entries, u32 nr_en
+>   	return 0;
+>   }
+>   
+> -/*
+> - * Copy the BIOS E820 map into a safe place.
+> - *
+> - * Sanity-check it while we're at it..
+> - *
+> - * If we're lucky and live on a modern system, the setup code
+> - * will have given us a memory map that we can use to properly
+> - * set up memory.  If we aren't, we'll fake a memory map.
+> - */
+> -__init static int append_e820_table(struct boot_e820_entry *entries, u32 nr_entries)
+> -{
+> -	/* Only one memory region (or negative)? Ignore it */
+> -	if (nr_entries < 2)
+> -		return -1;
+> -
+> -	return __append_e820_table(entries, nr_entries);
+> -}
+> -
+>   __init static u64
+>   __e820__range_update(struct e820_table *table, u64 start, u64 size, enum e820_type old_type, enum e820_type new_type)
+>   {
+> @@ -796,7 +783,7 @@ __init void e820__memory_setup_extended(u64 phys_addr, u32 data_len)
+>   	entries = sdata->len / sizeof(*extmap);
+>   	extmap = (struct boot_e820_entry *)(sdata->data);
+>   
+> -	__append_e820_table(extmap, entries);
+> +	append_e820_table(extmap, entries);
+>   	e820__update_table(e820_table);
+>   
+>   	memcpy(e820_table_kexec, e820_table, sizeof(*e820_table_kexec));
+
 
