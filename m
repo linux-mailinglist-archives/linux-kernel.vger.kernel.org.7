@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-670492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A08A0ACAF1B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 15:34:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1132ACAF18
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 15:34:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 153DA7A4341
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 13:33:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 242C2188D28C
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 13:34:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E432221D8F;
-	Mon,  2 Jun 2025 13:34:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3474321C9FE;
+	Mon,  2 Jun 2025 13:34:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=surriel.com header.i=@surriel.com header.b="h98/2Hq3"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=surriel.com header.i=@surriel.com header.b="W1ByYhMF"
 Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EEFD1F461D
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EDF92576
 	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 13:34:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748871266; cv=none; b=AqV2fJoPizOq31297kPccYGXSARvXIZvHaLwJbg9usndiUZA3MLmthOxXQWC3EDs12FaK2mUW0UKz0h1Xuj5ng8OHo5FrmMsmUyHIbyg7ahlKKulbMCKBEfcUM6iQGDnU8k5HwaQT7DlViTzKawYtXlR4jDWN1DeENegpiwI5Kk=
+	t=1748871265; cv=none; b=pHaC/I5y87SiNIeM1RtrBYHgnLRjqxyC+1ooJZV5vSXExxl7xY7w7UFV40YVHuSKhE3bQ0UO+ZedsxiPsrfnFIHQ3PFvhmXXcdV/0gfavCyAJQXA0yqCJs/KX2GNOOkOIs2pABYsgKmjG+nJiGxYLdJiIMfByTbtygrroL3DkKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748871266; c=relaxed/simple;
-	bh=3A/nS97NHAJTkWlaiypbzyqySMi04md3ZZ2+u2AUIGQ=;
+	s=arc-20240116; t=1748871265; c=relaxed/simple;
+	bh=E1jQCmW1AWiKNiWNWSmIeWD2f7jmxwou+CIsK3vzHdU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gjTK5P1uNO2Azdt5nu+PD/9ZCv1IzPlq5aKDyecaPlX1jXDoM5bQUtvPePiFZOAsS2FFfPeslnmGxHS6uPPlCVn6oGJvxaypzqpwjDDLr2GcHOSFPQam8wI3n/+pAJ8gOvDC+OK8UlEWMKyWg4RTNO9e4FLZa3cTDIyBKPyUAuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=surriel.com; dkim=pass (2048-bit key) header.d=surriel.com header.i=@surriel.com header.b=h98/2Hq3; arc=none smtp.client-ip=96.67.55.147
+	 MIME-Version; b=HowuLJUFR/PoDlK5U2VzHBOGHwGeLUSf0k9qG2WtA4edneLwykwE2jn3k9h08noiTR7k4vPE1C1riP8ufV2VtBrpmTcDCRn0ZqanzyV9wxzXLisYpK9vkH8aPL/xC+zBcodxNe9JZMkxn+0k4UiJMfRseVu1m8WlUatUjLZIYpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=surriel.com; dkim=pass (2048-bit key) header.d=surriel.com header.i=@surriel.com header.b=W1ByYhMF; arc=none smtp.client-ip=96.67.55.147
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=surriel.com
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=surriel.com
@@ -36,17 +36,17 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=surriel.com
 	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
 	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
 	List-Post:List-Owner:List-Archive;
-	bh=ZxiwV20WeOLhn763SS/ToMhk4JltdQCVVeZkL2ebiuY=; b=h98/2Hq3yOu2vYbCejPYUBv9jW
-	KHbVcXynUMm+8I2oYD4uGGHe0lKFdeONynUBI5cPzVUvOBajUPOcMszjpeKBb+IwZI31pt/AYfB0g
-	Mi00AOg81Il3OZIwxLFDtHansrRQ9z7HQ7EW4vhu5WlvnoL6Gb3A4wtMZ6Wyt1Np8aNEsM0dPIgbX
-	8iVX3bjUf9tEc06smVzZojxSqjMdAvOSBJ99AOvjDUWOtpOCvIFXTbK2zdHOTgwz+crNk1OML139D
-	g2E2rw2s93hjYx/clycoMPZdEnl9qMpdPy5nfVQ6WStFaZCF5W3kXdUJSkkL4Cox8Sfkv5dvK+SZb
-	b8VPcVwA==;
+	bh=HOkpLGouw96M0QDvWvRx/Gas9tMsXenCGy9ePmfmVD8=; b=W1ByYhMFdbHHMn4riZuqihHQ/K
+	7P7AGhfDEHGfwccrJt7Ij0c7USKu47FVCIoCFa/LQ1BPs1Py0v1PflDq15V7NIsP9NV57dlwqfriT
+	5fPEDOydTsYKn1c7gKsLvA8SVWkNXclg/GGNcymWP1golQK5IFrS5/EqRlI/Oyr6teOim9zg6nTmS
+	BAiW6QPZzrkuA6ZOFxR5BKkdKlVVX+tNRvVMUjxTmIrid2+LgvadaQXbjvn0nA22JOsnxcGsiAmsI
+	rfjXp/imH6OwXYQuO1jQ/lN178xDayDzkXydGGb2gUAZPGhEuKoW62XG00Gog4ZZtLv+GGiEfAnyv
+	up0ZTX7w==;
 Received: from fangorn.home.surriel.com ([10.0.13.7])
 	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.97.1)
 	(envelope-from <riel@surriel.com>)
-	id 1uM5Im-000000008IJ-0wB0;
+	id 1uM5Im-000000008IJ-11we;
 	Mon, 02 Jun 2025 09:34:08 -0400
 From: Rik van Riel <riel@surriel.com>
 To: linux-kernel@vger.kernel.org
@@ -57,12 +57,11 @@ Cc: kernel-team@meta.com,
 	bp@alien8.de,
 	x86@kernel.org,
 	yu-cheng.yu@intel.com,
-	Rik van Riel <riel@meta.com>,
 	Rik van Riel <riel@surriel.com>,
 	stable@kernel.org
-Subject: [PATCH 1/3] x86/mm: Fix potential overflow in user_pcid_flush_mask
-Date: Mon,  2 Jun 2025 09:30:55 -0400
-Message-ID: <20250602133402.3385163-2-riel@surriel.com>
+Subject: [PATCH 2/3] x86/mm: Fix early boot use of INVPLGB
+Date: Mon,  2 Jun 2025 09:30:56 -0400
+Message-ID: <20250602133402.3385163-3-riel@surriel.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250602133402.3385163-1-riel@surriel.com>
 References: <20250602133402.3385163-1-riel@surriel.com>
@@ -74,168 +73,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Rik van Riel <riel@meta.com>
+Use of the INVLPGB instruction is done based off the X86_FEATURE_INVLPGB
+CPU feature, which is provided directly by the hardware.
 
-Currently no system with AMD INVLPGB support requires the page table
-isolation mitigation. However, people could still enable PTI manually,
-or a vulnerability could be found in the future that makes PTI useful
-on certain AMD CPUs.
+If invlpgb_kernel_range_flush is called before the kernel has read
+the value of invlpgb_count_max from the hardware, the normally
+bounded loop can become an infinite loop if invlpgb_count_max is
+initialized to zero.
 
-Additionally, there are systems that support Intel RAR TLB invalidation,
-where PTI is a useful mitigation.
+Fix that issue by initializing invlpgb_count_max to 1.
 
-The combination of PTI and broadcast TLB flush has a problem:
-- invalidate_user_asid() sets a bit corresponding to the process PCID in user_pcid_flush_mask
-- SWITCH_TO_USER_CR3 tests and clears a bit corresponding to the process PCID in user_pcid_flush_mask
-
-Enlarge user_pcid_flush_mask to fit the PCID numbers that can be present when
-using broadcast TLB flushing. This takes up 256 or 512 bytes per CPU, depending
-on whether or not page table isolation is built into the kernel.
+This way INVPLGB at early boot time will be a little bit slower
+than normal (with initialized invplgb_count_max), and not an
+instant hang at bootup time.
 
 Signed-off-by: Rik van Riel <riel@surriel.com>
-Fixes: c3ed3f5b2550 x86/mm: userspace & pageout flushing using Intel RAR
+Fixes: b7aa05cbdc52 ("x86/mm: Add INVLPGB support code")
 Cc: stable@kernel.org
 ---
- arch/x86/include/asm/tlbflush.h | 42 ++++++++++++++++++++++++++-------
- arch/x86/kernel/asm-offsets.c   |  2 ++
- arch/x86/mm/tlb.c               | 28 +++-------------------
- 3 files changed, 39 insertions(+), 33 deletions(-)
+ arch/x86/kernel/cpu/amd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/include/asm/tlbflush.h b/arch/x86/include/asm/tlbflush.h
-index e9b81876ebe4..cc9935bbbd45 100644
---- a/arch/x86/include/asm/tlbflush.h
-+++ b/arch/x86/include/asm/tlbflush.h
-@@ -23,6 +23,31 @@ void __flush_tlb_all(void);
- #define TLB_FLUSH_ALL	-1UL
- #define TLB_GENERATION_INVALID	0
+diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
+index 93da466dfe2c..b2ad8d13211a 100644
+--- a/arch/x86/kernel/cpu/amd.c
++++ b/arch/x86/kernel/cpu/amd.c
+@@ -31,7 +31,7 @@
  
-+/*
-+ * When enabled, MITIGATION_PAGE_TABLE_ISOLATION consumes a single bit for
-+ * user/kernel switches
-+ */
-+#ifdef CONFIG_MITIGATION_PAGE_TABLE_ISOLATION
-+# define PTI_CONSUMED_PCID_BITS	1
-+#else
-+# define PTI_CONSUMED_PCID_BITS	0
-+#endif
-+
-+#define CR3_AVAIL_PCID_BITS (X86_CR3_PCID_BITS - PTI_CONSUMED_PCID_BITS)
-+
-+/*
-+ * ASIDs are zero-based: 0->MAX_AVAIL_ASID are valid.  -1 below to account
-+ * for them being zero-based.  Another -1 is because PCID 0 is reserved for
-+ * use by non-PCID-aware users.
-+ */
-+#define MAX_ASID_AVAILABLE ((1 << CR3_AVAIL_PCID_BITS) - 2)
-+
-+#ifdef CONFIG_BROADCAST_TLB_FLUSH
-+# define CR3_AVAIL_PCID_LONGS ((1 << CR3_AVAIL_PCID_BITS) / BITS_PER_LONG)
-+#else
-+# define CR3_AVAIL_PCID_LONGS 1
-+#endif
-+
- void cr4_update_irqsoff(unsigned long set, unsigned long clear);
- unsigned long cr4_read_shadow(void);
+ #include "cpu.h"
  
-@@ -115,14 +140,6 @@ struct tlb_state {
- 	 */
- 	u8 lam;
- #endif
--
--	/*
--	 * Mask that contains TLB_NR_DYN_ASIDS+1 bits to indicate
--	 * the corresponding user PCID needs a flush next time we
--	 * switch to it; see SWITCH_TO_USER_CR3.
--	 */
--	unsigned short user_pcid_flush_mask;
--
- 	/*
- 	 * Access to this CR4 shadow and to H/W CR4 is protected by
- 	 * disabling interrupts when modifying either one.
-@@ -149,6 +166,15 @@ struct tlb_state {
- 	 * context 0.
- 	 */
- 	struct tlb_context ctxs[TLB_NR_DYN_ASIDS];
-+
-+#ifdef CONFIG_MITIGATION_PAGE_TABLE_ISOLATION
-+	/*
-+	 * Mask that contains TLB_NR_DYN_ASIDS+1 bits to indicate
-+	 * the corresponding user PCID needs a flush next time we
-+	 * switch to it; see SWITCH_TO_USER_CR3.
-+	 */
-+	unsigned long user_pcid_flush_mask[CR3_AVAIL_PCID_LONGS];
-+#endif
- };
- DECLARE_PER_CPU_ALIGNED(struct tlb_state, cpu_tlbstate);
+-u16 invlpgb_count_max __ro_after_init;
++u16 invlpgb_count_max __ro_after_init = 1;
  
-diff --git a/arch/x86/kernel/asm-offsets.c b/arch/x86/kernel/asm-offsets.c
-index 6259b474073b..8c41a2e5a53e 100644
---- a/arch/x86/kernel/asm-offsets.c
-+++ b/arch/x86/kernel/asm-offsets.c
-@@ -103,8 +103,10 @@ static void __used common(void)
- 	BLANK();
- 	DEFINE(PTREGS_SIZE, sizeof(struct pt_regs));
- 
-+#ifdef CONFIG_MITIGATION_PAGE_TABLE_ISOLATION
- 	/* TLB state for the entry code */
- 	OFFSET(TLB_STATE_user_pcid_flush_mask, tlb_state, user_pcid_flush_mask);
-+#endif
- 
- 	/* Layout info for cpu_entry_area */
- 	OFFSET(CPU_ENTRY_AREA_entry_stack, cpu_entry_area, entry_stack_page);
-diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index 39f80111e6f1..f5761e8be77f 100644
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -90,25 +90,6 @@
-  *
-  */
- 
--/*
-- * When enabled, MITIGATION_PAGE_TABLE_ISOLATION consumes a single bit for
-- * user/kernel switches
-- */
--#ifdef CONFIG_MITIGATION_PAGE_TABLE_ISOLATION
--# define PTI_CONSUMED_PCID_BITS	1
--#else
--# define PTI_CONSUMED_PCID_BITS	0
--#endif
--
--#define CR3_AVAIL_PCID_BITS (X86_CR3_PCID_BITS - PTI_CONSUMED_PCID_BITS)
--
--/*
-- * ASIDs are zero-based: 0->MAX_AVAIL_ASID are valid.  -1 below to account
-- * for them being zero-based.  Another -1 is because PCID 0 is reserved for
-- * use by non-PCID-aware users.
-- */
--#define MAX_ASID_AVAILABLE ((1 << CR3_AVAIL_PCID_BITS) - 2)
--
- /*
-  * Given @asid, compute kPCID
-  */
-@@ -543,10 +524,7 @@ static void broadcast_tlb_flush(struct flush_tlb_info *info)
-  */
- static inline void invalidate_user_asid(u16 asid)
+ static inline int rdmsrq_amd_safe(unsigned msr, u64 *p)
  {
--	/* There is no user ASID if address space separation is off */
--	if (!IS_ENABLED(CONFIG_MITIGATION_PAGE_TABLE_ISOLATION))
--		return;
--
-+#ifdef CONFIG_MITIGATION_PAGE_TABLE_ISOLATION
- 	/*
- 	 * We only have a single ASID if PCID is off and the CR3
- 	 * write will have flushed it.
-@@ -557,8 +535,8 @@ static inline void invalidate_user_asid(u16 asid)
- 	if (!static_cpu_has(X86_FEATURE_PTI))
- 		return;
- 
--	__set_bit(kern_pcid(asid),
--		  (unsigned long *)this_cpu_ptr(&cpu_tlbstate.user_pcid_flush_mask));
-+	__set_bit(kern_pcid(asid), this_cpu_ptr(&cpu_tlbstate.user_pcid_flush_mask[0]));
-+#endif
- }
- 
- static void load_new_mm_cr3(pgd_t *pgdir, u16 new_asid, unsigned long lam,
 -- 
 2.49.0
 
