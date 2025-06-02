@@ -1,123 +1,182 @@
-Return-Path: <linux-kernel+bounces-670060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18EE3ACA836
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 04:49:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8296EACA83D
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 05:14:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 033953B9C5F
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 02:49:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5588D3BB25D
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 03:14:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 413C322615;
-	Mon,  2 Jun 2025 02:49:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kJMUxVer"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14FFA2C325F;
-	Mon,  2 Jun 2025 02:49:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0762B770FE;
+	Mon,  2 Jun 2025 03:14:28 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6D9720DF4;
+	Mon,  2 Jun 2025 03:14:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748832570; cv=none; b=AyHB5+JWjE3aHvsfIch5Z9HI8qsBfWHiySTl/2rd2Z/8oa9RLhCOjnI8RbgVD7w6VTlxkxQmWrowhLTIEjTAWAcFumHdoEN3E5HPhNjLgrEBg39jgUj8ENVdvJVPjrzOSzPJXFqwIBaMeEKPjPGW2EyQBiB6vmTuCJXtXv49lGQ=
+	t=1748834067; cv=none; b=kBWhutRvhj03MRqIWKMcjvHIoWVpJUvnv6nUCIzFQ9TPqOU8FQBoRmlnC4sqSyhaJs9J0XeX8oniRWBC+Jj4OGclf/WbXW+4Pk7oGVRtXvhZKi9fMkJBGSjPrTm1FQgSXAE3OV8ftBEFBTUILUdYTKGyT5JrlDvp/xUB4Q5bN5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748832570; c=relaxed/simple;
-	bh=7jtOMQnE4k7Ptb1rOSgSxx3tJE8kSt7sImdIjPXZZ0M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lKX+EY5H0jmAxNDv8/5SxAA2EnWC1hMlix8ngylj6dGKKbvBnR/bGnjBIXYthUI3UNuDMa5dLyDzJwnd2pxnAc6KWz7dpfg0xjdQ5CC/zuCNpAEEHg4Q1Inq57rtTbfmJONAIHZqiXbNf7ugSSaQj9091X4jn7LR/g0EZJLqDjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=kJMUxVer; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
-	:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=sR0r0ubGCSVcvnMxMB6zdK1pyNoMsW+qrdvloib0VMg=; b=kJMUxVerQGn+6t5BoPSzjjZvEx
-	Fa7l6xpdBugk/YctOzx7zaQNuEF4ZCNKps52crZm74CcduywrKbtVeBfHDpRo+Xy97seLQQcAa7FR
-	/dclnz5OUJUEFoPalXRyYLPAr5MCIbn/c6ZYb8AtfeDq7nQG+Md/xueBwcWKPxaCGv0uTGNYBBpI5
-	ffVI130IUIMQcG57r12rwhbsTxe4oCJDkR2eiHq8ZetMO6dIkxd+DC+ySBseCbh0nt2TTwV5evDLV
-	gHbLg8YSytYJ3DLfV0mESmJ0PGdu8ibWY8S3VpjfGi3A5HyIW968xEKz1/mnetsLKCZvP23reAe/n
-	D6+sNOqA==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uLvEc-00000000Zzi-3ovo;
-	Mon, 02 Jun 2025 02:49:19 +0000
-Message-ID: <6459566b-bf9f-4e07-9290-41853cdee9ec@infradead.org>
-Date: Sun, 1 Jun 2025 19:49:08 -0700
+	s=arc-20240116; t=1748834067; c=relaxed/simple;
+	bh=T/fkZ6GB49Nv2JRnkt9E9Zmi+h2o7KqjYgObf/O4lJU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D1Gs4pz190SiBnv6hpjnv6qL5dwDDmRUo0pjvU5o7hDyvBxOk5b61ilzr00U555VNiohqhsttcckHbeVoe1U0AupMj98xtrqBNmA2B/HhY+5S1jS1tUY5SxJNPvGye/3O5Vq5e1CPuhYng5LMc8PgJDH2P22TtGhtfEQS+l8Bq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-669ff7000002311f-6b-683d137fccc7
+Date: Mon, 2 Jun 2025 11:59:06 +0900
+From: Byungchul Park <byungchul@sk.com>
+To: Yeo Reum Yun <YeoReum.Yun@arm.com>
+Cc: "kernel_team@skhynix.com" <kernel_team@skhynix.com>,
+	"linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>,
+	"kernel-team@lge.com" <kernel-team@lge.com>,
+	"open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
+	"harry.yoo@oracle.com" <harry.yoo@oracle.com>,
+	"yskelg@gmail.com" <yskelg@gmail.com>,
+	"her0gyugyu@gmail.com" <her0gyugyu@gmail.com>,
+	"max.byungchul.park@gmail.com" <max.byungchul.park@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC DEPT v16] Question for dept.
+Message-ID: <20250602025906.GA67804@system.software.com>
+References: <GV1PR08MB10521BCB90DD275E324622DA0FB61A@GV1PR08MB10521.eurprd08.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Documentation: Add a source tree map overview
-To: Bagas Sanjaya <bagasdotme@gmail.com>, William Raezer <wraezer@gmail.com>,
- linux-doc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, corbet@lwn.net
-References: <CAKg96b=n1pZi4FUBqe+puUJo9ndRfU8npvo9w6fE6Enshe73Hg@mail.gmail.com>
- <f882f6d9-c914-48af-97b7-0aad6d995819@infradead.org>
- <aDz92QNc3ZSVkdx3@archie.me>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <aDz92QNc3ZSVkdx3@archie.me>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <GV1PR08MB10521BCB90DD275E324622DA0FB61A@GV1PR08MB10521.eurprd08.prod.outlook.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrHLMWRmVeSWpSXmKPExsXC9ZZnkW69sG2Gweo1ehZz1q9hs7i/7BmL
+	xfSXbBYn711jtTi24xGTxeVdc9gs7q35z2pxYWIvq8XcL4YWjfM3sDhweayZt4bRY+esu+we
+	mz5NYvfoenuFyePEjN8sHh+f3mLx+LxJLoA9issmJTUnsyy1SN8ugSvj0YLLzAV3ZCte9V9k
+	bmDcL97FyMkhIWAi8WDKZDYY+/eOl4wgNouAisSyCU+ZQGw2AXWJGzd+MoPYIgJqEj9XHQOK
+	c3EwC/SwSDy5Po8FJCEsoCdx6sx5sEG8AhYSXy8fBhskJBAnMXHzVlaIuKDEyZlPwOqZBbQk
+	bvx7CTSIA8iWllj+jwMkzCkQL/FiyjewVlEBZYkD246D7ZIQuMwmsXj3LRaIQyUlDq64wTKB
+	UWAWkrGzkIydhTB2ASPzKkahzLyy3MTMHBO9jMq8zAq95PzcTYzAWFhW+yd6B+OnC8GHGAU4
+	GJV4eC/42WQIsSaWFVfmHmKU4GBWEuF1NbHKEOJNSaysSi3Kjy8qzUktPsQozcGiJM5r9K08
+	RUggPbEkNTs1tSC1CCbLxMEp1cCorJ785brNhvWPevUdV+gGsFlNOZ8q9Jnx37t8k8+vvK2/
+	SD+6FXjz1UWFec4cltpRe3yuL7rbukKwYnr37zlb2k5NlDS9y/Jt3QvVo1sm3AzR+VUj4ep0
+	a5mmSV23CAN7ZcrX+NDTm7//NAqb2tfM+NCO4X+ZTLn9Xr9XOoHbj299rJAdyyaixFKckWio
+	xVxUnAgAhGh7LoECAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrKLMWRmVeSWpSXmKPExsXC5WfdrFsvbJthcP+rssWc9WvYLO4ve8Zi
+	Mf0lm8XJe9dYLQ7PPclqcWzHIyaLy7vmsFncW/Of1eLCxF5Wi7lfDC0a529gceD2WDNvDaPH
+	zll32T02fZrE7tH19gqTx4kZv1k8Pj69xeKx+MUHJo/Pm+QCOKK4bFJSczLLUov07RK4Mh4t
+	uMxccEe24lX/ReYGxv3iXYycHBICJhK/d7xkBLFZBFQklk14ygRiswmoS9y48ZMZxBYRUJP4
+	ueoYUJyLg1mgh0XiyfV5LCAJYQE9iVNnzrOB2LwCFhJfLx8GGyQkECcxcfNWVoi4oMTJmU/A
+	6pkFtCRu/HsJNIgDyJaWWP6PAyTMKRAv8WLKN7BWUQFliQPbjjNNYOSdhaR7FpLuWQjdCxiZ
+	VzGKZOaV5SZm5pjqFWdnVOZlVugl5+duYgQG9rLaPxN3MH657H6IUYCDUYmH94KfTYYQa2JZ
+	cWXuIUYJDmYlEV5XE6sMId6UxMqq1KL8+KLSnNTiQ4zSHCxK4rxe4akJQgLpiSWp2ampBalF
+	MFkmDk6pBkbzhRvZZ6bYH/py9FzBbQdVjV/aAb5XAv+0OuRsTyufGfbdan95qexZN8cLotIP
+	ej8w/HgnvdW4cHNK8ukTmzYGvvj04pnR37P7vKuCF9oyzNI1YOm6dmyze6CwtWhImadiQaGD
+	9Qvdlb8Pf7oZaJDFfeCKHNOFA3++fH3PHBAxvanE3dBwZZ0SS3FGoqEWc1FxIgBXY2luaAIA
+	AA==
+X-CFilter-Loop: Reflected
 
-
-
-On 6/1/25 6:26 PM, Bagas Sanjaya wrote:
-> On Sun, Jun 01, 2025 at 09:50:14AM -0700, Randy Dunlap wrote:
->> Hi,
->>
->> On 6/1/25 9:22 AM, William Raezer wrote:
->>> Hello,
->>>
->>
->> Please wrap email lines at around 72-75 characters each.
->>
->>> My name is William Raezer, and this is my first contribution to the Linux kernel. I'm submitting a simple but hopefully helpful addition: a high-level map of the Linux kernel source tree as a new document in `Documentation/source-map.rst`.
->>
->> This looks somewhat useful, although I was expecting more of a graphic presentation
->> of the tree structure. But that would cause trouble with the role of each subdirectory.
->> (and one can always use `tree` for that)
+On Fri, May 30, 2025 at 11:27:48AM +0000, Yeo Reum Yun wrote:
+> Hi Byungchul,
 > 
-> I was expecting tree output either.
+> Thanks for your great work for the latest dept patch.
 > 
->>
->>> As someone beginning to explore the internals of the Linux kernel, I noticed that while there is some documentation available that describes the subsystems in principle, there's no centralized overview of the source tree structure itself. This patch adds a basic source map that describes the role of each top-level directory in the kernel source.
->>>
->>> The goal is to assist both myself and others in navigating the codebase, especially new contributors who may be overwhelmed by the kernel's size and complexity. As a follow-up, I plan to add subsystem-level maps for key directories such as `kernel/`, `mm/`, and `fs/`.
->>>
->>> I hope this addition is seen as a positive and useful step, and I’m open to feedback or suggestions to improve it.
->>
->> Patches should generally be inline as email text, not as attachments.
->> This is up to the maintainer to decide about...
->> and gmail is not good as maintaining whitespace in emails.
->> (I don't see any whitespace problems in the current patch.)
+> But I have a some quetions with the below dept log supplied from 
+> Yunseong Kim<yskelg@gmail.com>
 > 
-> tl;dr: see Documentation/process/submitting-patches.rst.
+> ...
+> [13304.604203] context A
+> [13304.604209]    [S] lock(&uprobe->register_rwsem:0)
+> [13304.604217]    [W] __wait_rcu_gp(<sched>:0)
+> [13304.604226]    [E] unlock(&uprobe->register_rwsem:0)
+> [13304.604234]
+> [13304.604239] context B 
+> [13304.604244]    [S] lock(event_mutex:0)
+> [13304.604252]    [W] lock(&uprobe->register_rwsem:0)
+> [13304.604261]    [E] unlock(event_mutex:0)
+> [13304.604269]
+> [13304.604274] context C
+> [13304.604279]    [S] lock(&ctx->mutex:0)
+> [13304.604287]    [W] lock(event_mutex:0)
+> [13304.604295]    [E] unlock(&ctx->mutex:0)
+> [13304.604303]
+> [13304.604308] context D
+> [13304.604313]    [S] lock(&sig->exec_update_lock:0)
+> [13304.604322]    [W] lock(&ctx->mutex:0)
+> [13304.604330]    [E] unlock(&sig->exec_update_lock:0)
+> [13304.604338]
+> [13304.604343] context E
+> [13304.604348]    [S] lock(&f->f_pos_lock:0)
+> [13304.604356]    [W] lock(&sig->exec_update_lock:0)
+> [13304.604365]    [E] unlock(&f->f_pos_lock:0)
+> [13304.604373]
+> [13304.604378] context F
+> [13304.604383]    [S] (unknown)(<sched>:0)
+> [13304.604391]    [W] lock(&f->f_pos_lock:0)
+> [13304.604399]    [E] try_to_wake_up(<sched>:0)
+> [13304.604408]
+> [13304.604413] context G
+> [13304.604418]    [S] lock(btrfs_trans_num_writers:0)
+> [13304.604427]    [W] btrfs_commit_transaction(<sched>:0)
+> [13304.604436]    [E] unlock(btrfs_trans_num_writers:0)
+> [13304.604445]
+> [13304.604449] context H
+> [13304.604455]    [S] (unknown)(<sched>:0)
+> [13304.604463]    [W] lock(btrfs_trans_num_writers:0)
+> [13304.604471]    [E] try_to_wake_up(<sched>:0)
+> [13304.604484] context I
+> [13304.604490]    [S] (unknown)(<sched>:0)
+> [13304.604498]    [W] synchronize_rcu_expedited_wait_once(<sched>:0)
+> [13304.604507]    --------------- >8 timeout ---------------
+> [13304.604527] context J
+> [13304.604533]    [S] (unknown)(<sched>:0)
+> [13304.604541]    [W] synchronize_rcu_expedited(<sched>:0)
+> [13304.604549]    [E] try_to_wake_up(<sched>:0)
+
+What a long circle!  Dept is working great!
+
+However, this is a false positive that comes from rcu waits that haven't
+been classified properly yet, the fix of which is in progress by
+Yunseong Kim.  We should wait for him to complete the fix :(
+
+> [end of circular]
+> ...
 > 
->>
->> I get a warning when building with this patch applied:
->>
->> Documentation/source-map.rst: WARNING: document isn't included in any toctree [toc.not_included]
+> 1. I wonder how context A could be printed with 
+>     [13304.604217]    [W] __wait_rcu_gp(<sched>:0) 
+>     since, the completion's dept map will be initailized with 
+>        sdt_might_sleep_start_timeout((x)->dmap, -1L);
+>    
+>     I think last dept_task's stage_sched_map affects this wrong print.
+
+No.  It's working as it should.  Since (x)->dmap is NULL in this case,
+it's supposed to print <sched>.
+
+>     Should this be fixed with:
 > 
-> make htmldocs.
+>  @@ -2713,6 +2713,7 @@ void dept_stage_wait(struct dept_map *m, struct dept_key *k,
+>         if (m) {
+>                 dt->stage_m = *m;
+>                 dt->stage_real_m = m;
+> +               dt->stage_sched_map = false;
+
+It should already be false since sdt_might_sleep_end() reset this value
+to false.  DEPT_WARN_ON(dt->stage_sched_map) in here might make more
+sense.
+
+>                 /*
+>                  * Ensure dt->stage_m.keys != NULL and it works with the
+>     
+> 2. Whenever prints the dependency which initalized with sdt_might_sleep_start_timeout() currently it prints
+>    (unknown)(<sched>:0) only.
+>    Would it much better to print task information? (pid, comm and other).    
+
+Thanks for such a valuable feedback.  I will add it to to-do.
+
+	Byungchul
 > 
->>
->> Also, when I look at source-map.html with a web browser, no parts of
->> the source-map are shown. (tested with multiple browsers)
-
-No, I mean that what I see is mostly a blank/empty page.
-Other that the sidebar, it only contains this line:
-
-©The kernel development community. | Powered by Sphinx 8.2.3 & Alabaster 1.0.0 | Page source
-
-
--- 
-~Randy
-
+> Thanks.
 
