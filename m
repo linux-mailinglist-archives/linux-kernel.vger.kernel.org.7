@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-671143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 144E2ACBD5D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 00:33:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C63CDACBD62
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 00:37:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3DE03A49C0
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 22:33:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94171173BB8
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 22:37:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 966F624DD0F;
-	Mon,  2 Jun 2025 22:33:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CB521F4CA4;
+	Mon,  2 Jun 2025 22:37:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="KzzsNTFe"
-Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="BAU2Urc0"
+Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43436182D0
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 22:33:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41311205AB9
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 22:37:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748903624; cv=none; b=kOKL9XzMNrBtbZaJNxQgyJ+SzIp4V5YTVjNDzqmXpOgyGtVCXcJkKgDY2gLoB8hVwxQF2pGFVAt9xryrzA66N//ApQStW5b9pe6Z8Tkx45XCaz+yMM+qPUQJn+ikTH5jf+8f4DNOtF8TIVH2loaQGM2uZYYO5qq1zlwSPjMFyxk=
+	t=1748903843; cv=none; b=AdVTvlis/vvwfoApB+CkHZw2de2IlFUPTtz6Vzeoqi8doL//mieClkDaMa1emAUlIf4xYAuOc2knpwD7CHppN2DxGufZISvo/HetT6um7XOLmz3AbK2HhtWaa7pTjGL+IlA/k3EPAYVi7UTU2/qXwjuLufK0Xjp+8C/+gbTxelE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748903624; c=relaxed/simple;
-	bh=4A6/DFadQ6PEoiQRDBjp3zfAlAKxeoFH4k1O19zzaFM=;
+	s=arc-20240116; t=1748903843; c=relaxed/simple;
+	bh=r7k6bG5Py1kCkArtt6Kx6C3RAo6ZjdMLiXc1eV3Aj30=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lCyNNRkjJv01/rec43GTkXHZxIGYaFvqS28eS4Rq3C5XqmLSLhNSLh1aWgnQ/mw6xWGFptpjceGFIHSbtcAZ769sWlJZPOh3jws48LTmrCbhDljPK7V9Jo9gQxJrmxjU5N6Dn2JYmqLKjXQ+cW3xzXptfksO0pQCoQqGZn+eoFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=KzzsNTFe; arc=none smtp.client-ip=209.85.166.182
+	 In-Reply-To:Content-Type; b=P5ktsCvOg7PtaPC3q7r/HqUE/Is+PnD9ki5zhmJ69x7yfwVp/YTfrBXovzz1UFbGN0h0UBaI4zLdrjdoC0ty4EAC3yluURREo1xSgLKGLtCRtPTiwJ7o4mwUXST5PM7RYePR3jfOjtAvL3CyKCvhmG41DJzpQ06CZaElu0mrgM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=BAU2Urc0; arc=none smtp.client-ip=209.85.166.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-3dd87b83302so16984725ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jun 2025 15:33:41 -0700 (PDT)
+Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-86a52889f45so148883339f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jun 2025 15:37:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1748903621; x=1749508421; darn=vger.kernel.org;
+        d=linuxfoundation.org; s=google; t=1748903840; x=1749508640; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=BGNygOz2PUzKUKDRozF3XmR1BLxdv32LAzNyS4YZMko=;
-        b=KzzsNTFe5pS2A4lxxzLR74YtXHL3DgbBMfIGnoR5NbEK5Drvh/5H5Nmw9U9XbY1hpc
-         fVWGMA9Bu6L8KHbavyFPqiHlefuY26fAsyx7tsUtDXz0884xl0qD4PWUDhuzDJ+geucW
-         lQzQ+47RpZB+Xn2DKrUMjoBKya1tt8RHEx8+4=
+        bh=12T9W+zJ7OWMhNAgsHi6b5IDqVrAfWIhIz/reSH6rSg=;
+        b=BAU2Urc0VRP1pzMcgI9wFLmhXb49Lf4X25nGzRVf4OSs2K0iHJIpm7OdUEWcqKfCR0
+         moDdw9mbapBWXIi+4YF8TvqPwwKLRqFbTZKZPQMxzTYAxrfU7PtHs094lrSlHPq2UN9t
+         PCNd7P2Fz0TCbYiw4ihgQ52YerHCvXxvWdsIs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748903621; x=1749508421;
+        d=1e100.net; s=20230601; t=1748903840; x=1749508640;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BGNygOz2PUzKUKDRozF3XmR1BLxdv32LAzNyS4YZMko=;
-        b=uQeRBZiVPRn3PVJS2lP/BhF5wMfMJezb9+RKfCipiV8hqv15KIPZCq1AyomG9fsCgR
-         hFFvK6DuXLwe9QRClNDN71n/HkOVY0GUEqcJ/4V84SI6PNc5blo0SoSabWqH+GFl4eG+
-         /ZWqL16XzvgWrwEc9yMqti6GOaw1nqmFLBx+XqKEiukvXObL0GzoUJAdL7coIquqcXpM
-         Yv6rwX4W82CLD4vTir90MI/eTjn0LIAJPxPyM3pUJH1/5WiMlfh/tnLKrAaNJrqlaM5C
-         fkv/Wy1jVnws/AaKTIGYSKBdTdzbNpRXlcUh/2JLVJh8hBlX/7DZfcDjtUN1mzUDLpeU
-         afBg==
-X-Forwarded-Encrypted: i=1; AJvYcCVvupgpW2c/rGh4D2dNjAwaUMZhT7mE04TfKXr7abWcmht8FBu/OMdY843BrlsA2BaKs3tC13KzQYRjHmw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzmKE8t5NG/2JvOZB+CZq9mUV8I68ItNZHqm1e/u1SkBzF4F6e
-	dbjIIZWnUb/LScVn9c6w/hEcNJi2NX1YxpCwGVWcPJ5unDRGQhckIVOxz/D62LlkifY=
-X-Gm-Gg: ASbGncsjaoxbx/8cjAOnWdF9wz8FK6YG9mWbXyJ3HPQVmJbs65udEfzJhgZ0Lx97IbZ
-	bWDtiehf1eqAmK/1tgRc/Bj335mPpWEtJsoNuTvq4uL9Im7+15NXBZ8L5VbKYgl2CGWFPvXAfBi
-	b2IDJKATTZNwTEyPcR095cV3LWUaXydmlzJAbia7M+HY75DEhQNv4Dal80F5mIbFpN/EfhGXeE2
-	a77OIvhlCxqIt5IFHz4bxklq5+p/C3ZvJCsyIy8ibjxjVRmxxlmqxrM109lwMPpLoV/Ee9I4fft
-	eLP8dvKA+w+IiHam9PFIakJ//BxWc7N94lbUqlR6hoILpyA3LHZFcywy98iu2A==
-X-Google-Smtp-Source: AGHT+IF0xbLpXUt9eRmOQdLbCz/+5KPlrOqNN3OTQBxtKEQe70WAV9CDZv7hCKzlBIA2qwn/X91AYA==
-X-Received: by 2002:a05:6e02:378d:b0:3dc:7a9a:44db with SMTP id e9e14a558f8ab-3dda33922a8mr95638915ab.16.1748903621299;
-        Mon, 02 Jun 2025 15:33:41 -0700 (PDT)
+        bh=12T9W+zJ7OWMhNAgsHi6b5IDqVrAfWIhIz/reSH6rSg=;
+        b=FuepuaqdeD+YZLcRvC+uR4KIamQGdTYQUgWK6LZmFdc6/JZsrrQCjlRWGzRtkMiJcz
+         lTFa86t5MyE7WXjhpJATGh4RyItSW5V7AkEeLm+P7mdjXCe3Dxj8V7h4IGe40Ksa0xDJ
+         XDoGKd9p93lgEBKr1sULjWyhJzyUKAREfLFxtSBg1UfjNKGOdiGn/BueNE6kg/pMnD63
+         sDeqIM+w+wfnOA/B4sy2ILiI1fv7tWnBpwftTuo55tVKLj4iSDmeWgWwPjLpoJKDM08q
+         5x9b/reSt0vlHvkMt81eY0qEhXEImILdebnMZPI01vi//UQ+91diZhig5HIo436gO4zL
+         WY5w==
+X-Forwarded-Encrypted: i=1; AJvYcCU9FANkrf7Mp3NMkFtllVqz+g0skFyAzlrUdjFkRH+HxBN6NJG84PLleNDKmT8LPUO9mjuXNRD50O3a1sA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJNHpxr/csJtTQVIML9lrWRLQAZsifjnWJ6ctD7kfKcS9qbLct
+	6pnLdeGFredMo/NJIiulSbFf/NTJmoxhUaV5jvFpVqFfWcT7x2YmuAUIInWw3sa4he4=
+X-Gm-Gg: ASbGncspfyMEICLyAUakx/xU9JEXecq8qtvvu8LuOTr6jajn/WYtTfhTZYPkSSB6qV5
+	u3Dvo88Rrtd3ObKN5cVdkHj/czOB8H2g+WBuoO8RiVdyFK7mh57VvyOm87cdH25tJQvDYutbylK
+	PclimInn/fP9NbsYKjIZtudsz9fdvpOZ7bJwydX9KQxcP12KgkTJ0Nd0PLvlcM1jIxmIMN+OWBC
+	9OArYPWfh6ACkyayc/ZgrViKnWCMCnSM+PR/VfFHqcPJ4Bqx2wgVnMQB/AJWDr5ZVYiTUq68Vts
+	olXDgFEEQrfJRqjFz3RZoaXnGa97WBaANc252UPnPZxg+rt+TJlzZfNoAKN4DQ==
+X-Google-Smtp-Source: AGHT+IGf0yaexklfzi6TQvlxE6pO9F6XuAuKiNt1+vArAkLDaKC8rFe/Qu/1VP11g4Yo9fCF48ZuJw==
+X-Received: by 2002:a05:6e02:5e88:b0:3dd:b762:ed1b with SMTP id e9e14a558f8ab-3ddb762ef65mr3362615ab.16.1748903840250;
+        Mon, 02 Jun 2025 15:37:20 -0700 (PDT)
 Received: from [192.168.1.14] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4fdd7ce29d0sm1990151173.0.2025.06.02.15.33.40
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4fdd7dfe582sm1950657173.18.2025.06.02.15.37.19
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Jun 2025 15:33:40 -0700 (PDT)
-Message-ID: <99f32bcc-0754-4414-b69e-c4d5d000f216@linuxfoundation.org>
-Date: Mon, 2 Jun 2025 16:33:39 -0600
+        Mon, 02 Jun 2025 15:37:19 -0700 (PDT)
+Message-ID: <edf6b46e-786d-4614-8e50-c365f52ff9cb@linuxfoundation.org>
+Date: Mon, 2 Jun 2025 16:37:18 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,45 +77,36 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] selftests/filesystems: Fix build of anon_inode_test
-To: Mark Brown <broonie@kernel.org>,
- Linus Torvalds <torvalds@linux-foundation.org>, Shuah Khan
- <shuah@kernel.org>, Christian Brauner <brauner@kernel.org>,
- Jeff Layton <jlayton@kernel.org>, Amir Goldstein <amir73il@gmail.com>
-Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20250530-selftests-anon-inode-build-v2-1-74c47eeeacd1@kernel.org>
+Subject: Re: [PATCH 0/2] cpupower: Allow control of boost feature on non-x86
+ based systems with boost support.
+To: "John B. Wyatt IV" <jwyatt@redhat.com>,
+ Shinji Nomoto <fj5851bi@fujitsu.com>
+Cc: Thomas Renninger <trenn@suse.com>, Shuah Khan <shuah@kernel.org>,
+ John Kacur <jkacur@redhat.com>, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
+References: <20250522061122.2149188-1-fj5851bi@fujitsu.com>
+ <aDhJdTWzDihchywc@thinkpad2024>
 Content-Language: en-US
 From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20250530-selftests-anon-inode-build-v2-1-74c47eeeacd1@kernel.org>
+In-Reply-To: <aDhJdTWzDihchywc@thinkpad2024>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 5/30/25 04:42, Mark Brown wrote:
-> The newly added anon_inode_test test fails to build due to attempting to
-> include a nonexisting overlayfs/wrapper.h:
+On 5/29/25 05:48, John B. Wyatt IV wrote:
+> Hello Shinji, ty for your patch.
 > 
-> anon_inode_test.c:10:10: fatal error: overlayfs/wrappers.h: No such file or directory
->     10 | #include "overlayfs/wrappers.h"
->        |          ^~~~~~~~~~~~~~~~~~~~~~
+> On Thu, May 22, 2025 at 03:10:57PM +0900, Shinji Nomoto wrote:
+>> The cpufreq subsystem has a generic sysfs interface for controlling boost
+>> (/sys/devices/system/cpu/cpufreq/boost).
+>> The sysfs interface can be used to enable boost control from the cpupower
+>> command on non-x86 platforms as well. So, allow boost controlling on
+>> non-x86 system if boost sysfs file exists.
 > 
-> This is due to 0bd92b9fe538 ("selftests/filesystems: move wrapper.h out
-> of overlayfs subdir") which was added in the vfs-6.16.selftests branch
-> which was based on -rc5 and did not contain the newly added test so once
-> things were merged into mainline the build started failing - both
-> parent commits are fine.
+> Did you test this on non-x86 systems? If so, would you please provide
+> details on those architectures and systems?
 > 
-> Fixes: 3e406741b1989 ("Merge tag 'vfs-6.16-rc1.selftests' of git://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs")
-> Signed-off-by: Mark Brown <broonie@kernel.org>
-> ---
-> Changes in v2:
-> - Rebase onto mainline and adjust fixes commit now the two branches got
->    merged there.
-> - Link to v1: https://lore.kernel.org/r/20250518-selftests-anon-inode-build-v1-1-71eff8183168@kernel.org
 
-Looks this will have to go directly to Linu's tree or vfs tree.
-
-Acked-by: Shuah Khan <skhan@linuxfoundation.org>
+I applied these to coupower - I will go drop them now.
 
 thanks,
 -- Shuah
