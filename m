@@ -1,41 +1,41 @@
-Return-Path: <linux-kernel+bounces-670537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 318CBACAFFD
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 15:59:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 38433ACAF8D
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 15:49:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CEEF81BA3944
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 13:58:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA08B1BA2704
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 13:49:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA7A7221DB7;
-	Mon,  2 Jun 2025 13:58:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EF93221735;
+	Mon,  2 Jun 2025 13:49:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="A64e2kVP"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Ft+XXN3d"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD0342576;
-	Mon,  2 Jun 2025 13:58:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CC111DE2CC;
+	Mon,  2 Jun 2025 13:49:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748872687; cv=none; b=iLZPSDZYyu9j6vTq+1B8O1N1hCgifOCgGiab91x+zLjMU2v3tU/pi3f+juzaZwvfB2OipZFgmxyO7cWrZPPrgfnQm+TmovwYPaCE7WjRYUnfBAC3OGKnk3YdEHE4ofbbU1KjBs6mQtzM/G+BY6OiBiwp/RhtDufDnxhIeFJXNNQ=
+	t=1748872165; cv=none; b=OscrunBSOSbUXH6RA5Ji3hc1FqI7/DkU7ZE8WD23bQAgGmVpsIzL/VdPK18jPMwk0TmRS9sOKDU8nFuzStxrFyTyJ9YAq3Mkx8fYNg7xp0Q5ZmyhbRTP1beGTX4Nl7sfG0bUXSdEMF9wq3W1QlzVIUdik4PGItXHYKhrGR5UvJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748872687; c=relaxed/simple;
-	bh=nMnXKUuATEpZG42axsJNs3TRyx84YhSz4x5QUxN5ErA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VCuVsAboDpuumPDNQ0kbyom0MwI/wfksXVVbN2JcoQWsp0pnizVqhWhO4U0W3wyXHCy+NTIKqBTVE9HxRCEbkAK0+tVEsHGSvkkWel71HlJnExshvJKsiOC0ZTjQZqt6WjjYrzmAiSG9l8OHDML7eyECboH5amOCwzfA7resQjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=A64e2kVP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09C95C4CEEB;
-	Mon,  2 Jun 2025 13:58:07 +0000 (UTC)
+	s=arc-20240116; t=1748872165; c=relaxed/simple;
+	bh=9BRhHLHwHfZnsOdrUuyLODNLgJjqs+HEmZVk+lD4POc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rDaMgu9PFm3gEbUO4sbc4rU+3GEGpsuHC0QTxkpX3X0OeuqMzwIaMYyJXu2xCBLZQdJp2pHj9Sd9db6G3VegsdyO3eLCNEBdZPR2cWpNcw5fFHIN3/OMP8KnC4xnlo2nBE7OzETEr8nx0HqkXjMDatkkM3pG3ogPGxaG4mCwlR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Ft+XXN3d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBC06C4CEEB;
+	Mon,  2 Jun 2025 13:49:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1748872687;
-	bh=nMnXKUuATEpZG42axsJNs3TRyx84YhSz4x5QUxN5ErA=;
+	s=korg; t=1748872165;
+	bh=9BRhHLHwHfZnsOdrUuyLODNLgJjqs+HEmZVk+lD4POc=;
 	h=From:To:Cc:Subject:Date:From;
-	b=A64e2kVPYU58b398EBGVdIHjXlGv1kjI+NI/qvvva/NebVunVBd4mLR4p05UFL0+D
-	 QvF0EP5E0vcJAHRAq5YqnBLe+Q4RPE87kQTUqZxG0MooMLrGM7AFq8XAIhvg8EqnyO
-	 AY96tpOHLRxB89WD/O6cv8R4ASmPr1aUwmQilcO0=
+	b=Ft+XXN3d6TGYPn7nutOnWXqfgREajGnatoo1AqJ2DGDYXwu0oBb3aJaoev52+sFB8
+	 bDgkhKWd6ykVnV5HxONHQnPUNrUwwn30thsEHLxJpwvrl/Z92+dMJY1/yY9x2dZuKZ
+	 Yog1hrkjV1k0OkR3vMTcEfboHeyEQ0U9SUJPOyIg=
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -56,9 +56,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	conor@kernel.org,
 	hargar@microsoft.com,
 	broonie@kernel.org
-Subject: [PATCH 6.14 00/73] 6.14.10-rc1 review
-Date: Mon,  2 Jun 2025 15:46:46 +0200
-Message-ID: <20250602134241.673490006@linuxfoundation.org>
+Subject: [PATCH 6.15 00/49] 6.15.1-rc1 review
+Date: Mon,  2 Jun 2025 15:46:52 +0200
+Message-ID: <20250602134237.940995114@linuxfoundation.org>
 X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -69,16 +69,16 @@ MIME-Version: 1.0
 User-Agent: quilt/0.68
 X-stable: review
 X-Patchwork-Hint: ignore
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.14.10-rc1.gz
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.15.1-rc1.gz
 X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-6.14.y
+X-KernelTest-Branch: linux-6.15.y
 X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 6.14.10-rc1
+X-KernelTest-Version: 6.15.1-rc1
 X-KernelTest-Deadline: 2025-06-04T13:42+00:00
 Content-Transfer-Encoding: 8bit
 
-This is the start of the stable review cycle for the 6.14.10 release.
-There are 73 patches in this series, all will be posted as a response
+This is the start of the stable review cycle for the 6.15.1 release.
+There are 49 patches in this series, all will be posted as a response
 to this one.  If anyone has any issues with these being applied, please
 let me know.
 
@@ -86,9 +86,9 @@ Responses should be made by Wed, 04 Jun 2025 13:42:20 +0000.
 Anything received after that time might be too late.
 
 The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.14.10-rc1.gz
+	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.15.1-rc1.gz
 or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.14.y
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.15.y
 and the diffstat can be found below.
 
 thanks,
@@ -99,85 +99,13 @@ greg k-h
 Pseudo-Shortlog of commits:
 
 Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 6.14.10-rc1
+    Linux 6.15.1-rc1
 
-Namjae Jeon <linkinjeon@kernel.org>
-    ksmbd: use list_first_entry_or_null for opinfo_get_list()
+Robin Murphy <robin.murphy@arm.com>
+    iommu: Handle yet another race around registration
 
-Nishanth Menon <nm@ti.com>
-    net: ethernet: ti: am65-cpsw: Lower random mac address error print to info
-
-Mark Pearson <mpearson-lenovo@squebb.ca>
-    platform/x86: thinkpad_acpi: Ignore battery threshold change event notification
-
-Kailang Yang <kailang@realtek.com>
-    ALSA: hda/realtek - restore auto-mute mode for Dell Chrome platform
-
-Valtteri Koskivuori <vkoskiv@gmail.com>
-    platform/x86: fujitsu-laptop: Support Lifebook S2110 hotkeys
-
-Trond Myklebust <trond.myklebust@hammerspace.com>
-    NFS: Avoid flushing data while holding directory locks in nfs_rename()
-
-Purva Yeshi <purvayeshi550@gmail.com>
-    char: tpm: tpm-buf: Add sanity check fallback in read helpers
-
-Umesh Nerlige Ramappa <umesh.nerlige.ramappa@intel.com>
-    drm/xe: Save the gt pointer in lrc and drop the tile
-
-Aradhya Bhatia <aradhya.bhatia@intel.com>
-    drm/xe/xe2hpg: Add Wa_22021007897
-
-Ilya Guterman <amfernusus@gmail.com>
-    nvme-pci: add NVME_QUIRK_NO_DEEPEST_PS quirk for SOLIDIGM P44 Pro
-
-Alan Adamson <alan.adamson@oracle.com>
-    nvme: all namespaces in a subsystem must adhere to a common atomic write size
-
-Alessandro Grassi <alessandro.grassi@mailbox.org>
-    spi: spi-sun4i: fix early activation
-
-Algea Cao <algea.cao@rock-chips.com>
-    phy: phy-rockchip-samsung-hdptx: Fix PHY PLL output 50.25MHz error
-
-Hal Feng <hal.feng@starfivetech.com>
-    phy: starfive: jh7110-usb: Fix USB 2.0 host occasional detection failure
-
-Alan Adamson <alan.adamson@oracle.com>
-    nvme: multipath: enable BLK_FEAT_ATOMIC_WRITES for multipathing
-
-Aurabindo Pillai <aurabindo.pillai@amd.com>
-    drm/amd/display: check stream id dml21 wrapper to get plane_id
-
-George Shen <george.shen@amd.com>
-    drm/amd/display: fix link_set_dpms_off multi-display MST corner case
-
-Markus Burri <markus.burri@mt.com>
-    gpio: virtuser: fix potential out-of-bound write
-
-Damien Le Moal <dlemoal@kernel.org>
-    nvmet: pci-epf: cleanup nvmet_pci_epf_raise_irq()
-
-Masahiro Yamada <masahiroy@kernel.org>
-    um: let 'make clean' properly clean underlying SUBARCH as well
-
-Sami Tolvanen <samitolvanen@google.com>
-    kbuild: Require pahole <v1.28 or >v1.29 with GENDWARFKSYMS on X86
-
-John Chau <johnchau@0atlas.com>
-    platform/x86: thinkpad_acpi: Support also NEC Lavie X1475JAS
-
-Jeff Layton <jlayton@kernel.org>
-    nfs: don't share pNFS DS connections between net namespaces
-
-Milton Barrera <miltonjosue2001@gmail.com>
-    HID: quirks: Add ADATA XPG alpha wireless mouse support
-
-Mario Limonciello <mario.limonciello@amd.com>
-    HID: amd_sfh: Avoid clearing reports for SRA sensor
-
-Purva Yeshi <purvayeshi550@gmail.com>
-    dmaengine: idxd: cdev: Fix uninitialized use of sva in idxd_cdev_open
+Robin Murphy <robin.murphy@arm.com>
+    iommu: Avoid introducing more races
 
 Christian Brauner <brauner@kernel.org>
     coredump: hand a pidfd to the usermode coredump helper
@@ -185,8 +113,8 @@ Christian Brauner <brauner@kernel.org>
 Christian Brauner <brauner@kernel.org>
     coredump: fix error handling for replace_fd()
 
-Robin Murphy <robin.murphy@arm.com>
-    iommu: Handle yet another race around registration
+Christian Brauner <brauner@kernel.org>
+    pidfs: move O_RDWR into pidfs_alloc_file()
 
 Robin Murphy <robin.murphy@arm.com>
     perf/arm-cmn: Add CMN S3 ACPI binding
@@ -311,14 +239,14 @@ Stephan Gerhold <stephan.gerhold@linaro.org>
 Stephan Gerhold <stephan.gerhold@linaro.org>
     arm64: dts: qcom: ipq9574: Add missing properties for cryptobam
 
+Sebastian Reichel <sebastian.reichel@collabora.com>
+    arm64: dts: rockchip: Add missing SFC power-domains to rk3576
+
 Lukasz Czechowski <lukasz.czechowski@thaumatec.com>
     arm64: dts: rockchip: fix internal USB hub instability on RK3399 Puma
 
 Niravkumar L Rabara <niravkumar.l.rabara@intel.com>
     arm64: dts: socfpga: agilex5: fix gpio0 address
-
-Axel Forsman <axfo@kvaser.com>
-    can: kvaser_pciefd: Force IRQ edge in case of nested IRQ
 
 
 -------------
@@ -341,6 +269,7 @@ Diffstat:
  arch/arm64/boot/dts/qcom/x1e80100-qcp.dts          |   6 +-
  arch/arm64/boot/dts/qcom/x1e80100.dtsi             | 309 +++++++++++----------
  arch/arm64/boot/dts/rockchip/rk3399-puma.dtsi      |  40 ++-
+ arch/arm64/boot/dts/rockchip/rk3576.dtsi           |   2 +
  arch/arm64/boot/dts/ti/k3-am62-main.dtsi           |   2 -
  arch/arm64/boot/dts/ti/k3-am62a-main.dtsi          |   2 -
  .../boot/dts/ti/k3-am62p-j722s-common-main.dtsi    |   2 -
@@ -354,48 +283,14 @@ Diffstat:
  arch/arm64/boot/dts/ti/k3-j722s-evm.dts            |   8 +
  arch/arm64/boot/dts/ti/k3-j722s-main.dtsi          |   4 +
  .../boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi  |   2 +-
- arch/um/Makefile                                   |   1 +
- drivers/char/tpm/tpm-buf.c                         |   6 +-
- drivers/dma/idxd/cdev.c                            |   4 +-
- drivers/gpio/gpio-virtuser.c                       |  12 +-
- .../dc/dml2/dml21/dml21_translation_helper.c       |  20 +-
- drivers/gpu/drm/amd/display/dc/link/link_dpms.c    |  13 +-
- drivers/gpu/drm/xe/regs/xe_gt_regs.h               |   1 +
- drivers/gpu/drm/xe/xe_lrc.c                        |   4 +-
- drivers/gpu/drm/xe/xe_lrc_types.h                  |   4 +-
- drivers/gpu/drm/xe/xe_wa.c                         |   4 +
- drivers/hid/amd-sfh-hid/sfh1_1/amd_sfh_init.c      |   5 +
- drivers/hid/hid-ids.h                              |   4 +
- drivers/hid/hid-quirks.c                           |   2 +
- drivers/iommu/iommu.c                              |  26 +-
- drivers/net/can/kvaser_pciefd.c                    |  83 +++---
- drivers/net/ethernet/ti/am65-cpsw-nuss.c           |   2 +-
- drivers/nvme/host/core.c                           |  30 +-
- drivers/nvme/host/multipath.c                      |   3 +-
- drivers/nvme/host/nvme.h                           |   3 +-
- drivers/nvme/host/pci.c                            |   2 +
- drivers/nvme/target/pci-epf.c                      |  10 +-
+ drivers/iommu/iommu.c                              |  34 ++-
  drivers/perf/arm-cmn.c                             |  11 +-
- drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c  |   2 +
- drivers/phy/starfive/phy-jh7110-usb.c              |   7 +
- drivers/platform/x86/fujitsu-laptop.c              |  33 ++-
- drivers/platform/x86/thinkpad_acpi.c               |   7 +
- drivers/spi/spi-sun4i.c                            |   5 +-
  fs/coredump.c                                      |  65 ++++-
- fs/nfs/client.c                                    |   2 +
- fs/nfs/dir.c                                       |  15 +-
- fs/nfs/filelayout/filelayoutdev.c                  |   6 +-
- fs/nfs/flexfilelayout/flexfilelayoutdev.c          |   6 +-
- fs/nfs/pnfs.h                                      |   4 +-
- fs/nfs/pnfs_nfs.c                                  |   9 +-
- fs/smb/server/oplock.c                             |   7 +-
+ fs/pidfs.c                                         |   1 +
  include/linux/coredump.h                           |   1 +
  include/linux/iommu.h                              |   2 +
- include/linux/nfs_fs_sb.h                          |  12 +-
- kernel/module/Kconfig                              |   5 +
  net/sched/sch_hfsc.c                               |   9 +-
- sound/pci/hda/patch_realtek.c                      |   5 +-
- 70 files changed, 674 insertions(+), 540 deletions(-)
+ 37 files changed, 447 insertions(+), 440 deletions(-)
 
 
 
