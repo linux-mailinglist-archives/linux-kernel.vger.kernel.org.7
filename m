@@ -1,160 +1,229 @@
-Return-Path: <linux-kernel+bounces-670723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04176ACB8F0
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 17:50:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE560ACB8B9
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 17:45:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DDCC40421E
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 15:21:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1046A1944D8B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 15:22:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2667A226CFD;
-	Mon,  2 Jun 2025 15:17:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="uQqnRoC8"
-Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AB3F228CB8;
+	Mon,  2 Jun 2025 15:18:03 +0000 (UTC)
+Received: from lgeamrelo03.lge.com (lgeamrelo03.lge.com [156.147.51.102])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ABF4226861
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 15:17:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38E64228CB7
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 15:17:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.147.51.102
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748877443; cv=none; b=L5+gdqKYhw7545/y9P6zfiVJ8aGOhSNCXrIPkgspZT95M90r/bWP7c33TFDwRSldqp887WilYBVprRVte+5F3RWZYoNo/ZZzWog97r3bl3EIHiNeQn9HIGCpI0Wc5WsNs4zx7RzzkMHSpe5nrcPuzpzBQWruOeo8eQbBZewfLfY=
+	t=1748877482; cv=none; b=t1ibWPNkYrb3cdJ27iY9YkPZlJ3m16Mn1asjK5HM0U3d9Vqkoz3QaywSrsy8JWkrINbgQ3qIcrrxQUZZ4QtTX7T43pTygt66n2rASDCaJVg+M4H1WMhzUKyoVb1LHExRrrrm6lQXI5/htvH83TmjGYCiOQ3sjjQoVG+7qRZuw8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748877443; c=relaxed/simple;
-	bh=6PeBJSTna6lX3rGrf4lCGvp5OKDfktdRcJOfJVLf5WA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lcQb7byc9UCI7Am8drUrFoe7+tHDkvZV7VDSO1R5aHQ2u/EJDK/I8HOOacsnEINQTm6P2FyKkBTe3hID031UDeot2Twqt6nnV5PCAKqLAF/iBSkhu+4pgwe054+1eGNeoz9jP+WDCfvPeYVUlPxzz8S7W+QY6PifmbnL292vCFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=uQqnRoC8; arc=none smtp.client-ip=209.85.160.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-2e95f0b6cb7so494042fac.3
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jun 2025 08:17:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1748877440; x=1749482240; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/FLsGzoXOAagEvr3iBgspYfHnJfzfNsAWbJHVPi43wg=;
-        b=uQqnRoC8bVrAJ7GFrYX0xzTIwaXDpPLPMjgilPOwjvArRDhEbMTgS1k4xHvtQ7SSMd
-         G9qoY5vjSo3/Gxq81aBGy+Xk1TWeaenwWzArmqCTl79zmPpzFWgPgY8wywSOUqqGBf3l
-         lqSEFYtXKeE/4IKWuMfjlcvRqgdJ4dHT3915o0KvFTno0SnYWPl6ekdBn4ZuoWPF9wpZ
-         U2Dji7zezOajUxoct4hiSze9Titte6XhsSSQf2U8f71uGPjuhgQxu5FVSRnZXpvV5y3n
-         FuADPKRHrzhvwqO00MQE0sF+wGUUvxNTiPXn2BTKapnFVA5L4m98/c4RH12SXJV/iDR8
-         sRdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748877440; x=1749482240;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/FLsGzoXOAagEvr3iBgspYfHnJfzfNsAWbJHVPi43wg=;
-        b=hZuHqP+f6yMR1viIfTSz/ulhi+wqwiaBrZqHHmfv4Q3WfRIWJQDvGDdSjZmYdDf136
-         OEBirUNsxe6EHvq8/iwKQIub+ZumAtJHwUhzB8KV6+27240vCitWkxLDVIMRsg6Kk7Fy
-         jo/antTKO2pcOT9LxoLhIgNwMMki+EtvquVlJ3L/XmoAfXPV3n9NPorhiH32Z0EIGHVW
-         cPl+5guvfRHx7NIADm1h91r98HeGTa478Zs2uBbt/b22LLVe/xTukUb1NA3FNT/AyjIr
-         ljgoAjpaBv3nlTfPnFd1o2n34xREtxh43b6CBk+FxJSQuZSPsL0PcUIAGkYip9riaqFf
-         9o/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXUwvkdMFm7WCqEViDbIwkt5q7Rnk3ni5fEuoQicyhXxDt7bL6cZLhSYgzqXdR7l1GkUWiPcU8LMxeH+TM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWxMuVYAcWvyq+3T+ysiP0Fh86L6NgWcOcofxeOY/IUt7N1gra
-	nJyFYjduSga5Q7yG6h3l0lpl/3lcKUILY5Pvhozw2xSQTvt4MgzRIXgO+SLTaWFKp50=
-X-Gm-Gg: ASbGncsT5pOUDtBdXFGyPMcCIsASJtHf3mgBE22pxeyR4SoKuUhO7APL6vQ2vCTOxB1
-	eeRDtvo/3ioPHXWtoWAMDMKAftiY3MLQydyqwWKCU48mqa4T1wV/DFkBwdYznu7G3VYktaJjT6R
-	eS5dcc8T1xz1pl429UmRjFC0ce7BlMa/djoRGHWvZQkzwX5wfCjX/dVdu3dYUcOVXDsicS4Kix5
-	ZGrBd+zWVfqyamHcUW2cKBCn/SEt1Tm2vwlw4KzGlK6wq0u3GZXNPY5iywpBFkMdFmh9TOl7SHb
-	8dohayX0biS4ouQeSAMrN7KjylLvlO5okodOhGm1UjCapZE9qBazgsjIEGfS/PppFlc5EE+eEpB
-	csMzEdZXJ3tCbzQ734UkGzaBkF3Biw1nFUXM1iFQo06j/1NCe4A==
-X-Google-Smtp-Source: AGHT+IFJw1a45g7SyLmMPrQb2Epc56Sa07pw4E8vlKLf+JG+t/AybNRoowveYczNrGBWjBjxY3fQ3g==
-X-Received: by 2002:a05:6870:5493:b0:2d6:af0:8d8e with SMTP id 586e51a60fabf-2e92115fb6fmr8227470fac.2.1748877440482;
-        Mon, 02 Jun 2025 08:17:20 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:74f4:5886:86e1:3bcf? ([2600:8803:e7e4:1d00:74f4:5886:86e1:3bcf])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2e90681c6ffsm1783595fac.29.2025.06.02.08.17.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Jun 2025 08:17:20 -0700 (PDT)
-Message-ID: <a6f62963-5776-47e4-bdac-78e921a6e476@baylibre.com>
-Date: Mon, 2 Jun 2025 10:17:18 -0500
+	s=arc-20240116; t=1748877482; c=relaxed/simple;
+	bh=fRjKqdfi/jmJw5tjnf/CKTWSP54t2Ex+l05wCk9TSfw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZXXRTDgi8b7N1Sjvy7j10kl6D8rxONy8NfFy0e3yeDAuXVjNejy10S8spt9nWrwhrPA/haKYlgPrCYyNclWRRKVjkyHzjVHtdy894zChitQmm6jsHHLZp+JuUrf7TlnXzIBm8+jcYckA7HwsgDDbSruZMqf0fBGBfkb01UD4Q7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com; spf=pass smtp.mailfrom=lge.com; arc=none smtp.client-ip=156.147.51.102
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lge.com
+Received: from unknown (HELO yjaykim-PowerEdge-T330) (10.177.112.156)
+	by 156.147.51.102 with ESMTP; 3 Jun 2025 00:17:58 +0900
+X-Original-SENDERIP: 10.177.112.156
+X-Original-MAILFROM: youngjun.park@lge.com
+Date: Tue, 3 Jun 2025 00:17:58 +0900
+From: YoungJun Park <youngjun.park@lge.com>
+To: Kairui Song <ryncsn@gmail.com>
+Cc: Nhat Pham <nphamcs@gmail.com>, linux-mm@kvack.org,
+	akpm@linux-foundation.org, hannes@cmpxchg.org, hughd@google.com,
+	yosry.ahmed@linux.dev, mhocko@kernel.org, roman.gushchin@linux.dev,
+	shakeel.butt@linux.dev, muchun.song@linux.dev, len.brown@intel.com,
+	chengming.zhou@linux.dev, chrisl@kernel.org,
+	huang.ying.caritas@gmail.com, ryan.roberts@arm.com,
+	viro@zeniv.linux.org.uk, baohua@kernel.org, osalvador@suse.de,
+	lorenzo.stoakes@oracle.com, christophe.leroy@csgroup.eu,
+	pavel@kernel.org, kernel-team@meta.com,
+	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+	linux-pm@vger.kernel.org, peterx@redhat.com, gunho.lee@lge.com,
+	taejoon.song@lge.com, iamjoonsoo.kim@lge.com
+Subject: Re: [RFC PATCH v2 00/18] Virtual Swap Space
+Message-ID: <aD3Apu+sz9Na+65B@yjaykim-PowerEdge-T330>
+References: <20250429233848.3093350-1-nphamcs@gmail.com>
+ <aDlUgVFdA7rCUvHx@yjaykim-PowerEdge-T330>
+ <CAKEwX=MjyEsoyDmMBCRr0QnBfgkTA5bfrshPbfSgNp887zaxVw@mail.gmail.com>
+ <aDxN6oz86TD5H4IL@yjaykim-PowerEdge-T330>
+ <CAMgjq7DGMS5A4t6nOQmwyLy5Px96aoejBkiwFHgy9uMk-F8Y-w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/5] dt-bindings: iio: adc: Add adi,ad4052
-To: Jorge Marques <gastmaier@gmail.com>
-Cc: Jorge Marques <jorge.marques@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Andy Shevchenko <andy@kernel.org>, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?=
- <ukleinek@kernel.org>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-pwm@vger.kernel.org
-References: <20250422-iio-driver-ad4052-v2-0-638af47e9eb3@analog.com>
- <20250422-iio-driver-ad4052-v2-3-638af47e9eb3@analog.com>
- <88a326e7-3910-4e02-b4ba-7afe06402871@baylibre.com>
- <hvexchm2ozsto5s2o6n5j2z3odrkbcamgmg67umd4aehwzmgie@dvtx6anioasq>
- <1b0e9003-7322-46fa-b2ba-518a142616dc@baylibre.com>
- <vchomz3iazgdmotcs3jskrugi2qmdxyo74t4ruo2fsc7cjwtqb@7rtdmdkxobvg>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <vchomz3iazgdmotcs3jskrugi2qmdxyo74t4ruo2fsc7cjwtqb@7rtdmdkxobvg>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMgjq7DGMS5A4t6nOQmwyLy5Px96aoejBkiwFHgy9uMk-F8Y-w@mail.gmail.com>
 
-On 6/2/25 4:17 AM, Jorge Marques wrote:
-> On Tue, Apr 29, 2025 at 10:45:20AM -0500, David Lechner wrote:
->> On 4/29/25 8:48 AM, Jorge Marques wrote:
->>> Hi David, 
->>>
->>> I didn't went through your's and Jonathan's ad4052.c review yet,
->>> but for the trigger-source-cells I need to dig deeper and make
->>> considerable changes to the driver, as well as hardware tests.
->>> My idea was to have a less customizable driver, but I get that it is
->>> more interesting to make it user-definable.
->>
->> We don't need to make the driver support all possibilities, but the devicetree
->> needs to be as complete as possible since it can't be as easily changed in the
->> future.
->>
+On Mon, Jun 02, 2025 at 12:14:53AM +0800, Kairui Song wrote:
+> On Sun, Jun 1, 2025 at 8:56 PM YoungJun Park <youngjun.park@lge.com> wrote:
+> >
+> > On Fri, May 30, 2025 at 09:52:42AM -0700, Nhat Pham wrote:
+> > > On Thu, May 29, 2025 at 11:47 PM YoungJun Park <youngjun.park@lge.com> wrote:
+> > > >
+> > > > On Tue, Apr 29, 2025 at 04:38:28PM -0700, Nhat Pham wrote:
+> > > > > Changelog:
+> > > > > * v2:
+> > > > >       * Use a single atomic type (swap_refs) for reference counting
+> > > > >         purpose. This brings the size of the swap descriptor from 64 KB
+> > > > >         down to 48 KB (25% reduction). Suggested by Yosry Ahmed.
+> > > > >       * Zeromap bitmap is removed in the virtual swap implementation.
+> > > > >         This saves one bit per phyiscal swapfile slot.
+> > > > >       * Rearrange the patches and the code change to make things more
+> > > > >         reviewable. Suggested by Johannes Weiner.
+> > > > >       * Update the cover letter a bit.
+> > > >
+> > > > Hi Nhat,
+> > > >
+> > > > Thank you for sharing this patch series.
+> > > > I’ve read through it with great interest.
+> > > >
+> > > > I’m part of a kernel team working on features related to multi-tier swapping,
+> > > > and this patch set appears quite relevant
+> > > > to our ongoing discussions and early-stage implementation.
+> > >
+> > > May I ask - what's the use case you're thinking of here? Remote swapping?
+> > >
+> >
+> > Yes, that's correct.
+> > Our usage scenario includes remote swap,
+> > and we're experimenting with assigning swap tiers per cgroup
+> > in order to improve specific scene of our target device performance.
+> >
+> > We’ve explored several approaches and PoCs around this,
+> > and in the process of evaluating
+> > whether our direction could eventually be aligned
+> > with the upstream kernel,
+> > I came across your patchset and wanted to ask whether
+> > similar efforts have been discussed or attempted before.
+> >
+> > > >
+> > > > I had a couple of questions regarding the future direction.
+> > > >
+> > > > > * Multi-tier swapping (as mentioned in [5]), with transparent
+> > > > >   transferring (promotion/demotion) of pages across tiers (see [8] and
+> > > > >   [9]). Similar to swapoff, with the old design we would need to
+> > > > >   perform the expensive page table walk.
+> > > >
+> > > > Based on the discussion in [5], it seems there was some exploration
+> > > > around enabling per-cgroup selection of multiple tiers.
+> > > > Do you envision the current design evolving in a similar direction
+> > > > to those past discussions, or is there a different direction you're aiming for?
+> > >
+> > > IIRC, that past design focused on the interface aspect of the problem,
+> > > but never actually touched the mechanism to implement a multi-tier
+> > > swapping solution.
+> > >
+> > > The simple reason is it's impossible, or at least highly inefficient
+> > > to do it in the current design, i.e without virtualizing swap. Storing
+> >
+> > As you pointed out, there are certainly inefficiencies
+> > in supporting this use case with the current design,
+> > but if there is a valid use case,
+> > I believe there’s room for it to be supported in the current model
+> > —possibly in a less optimized form—
+> > until a virtual swap device becomes available
+> > and provides a more efficient solution.
+> > What do you think about?
 > 
-> Ack.
+> Hi All,
 > 
-> I see that the node goes in the spi controller (the parent). To use the
-> same information in the driver I need to look-up the parent node, then
-> the node. I don't plan to do that in the version of the driver, just an
-> observation.
+> I'd like to share some info from my side. Currently we have an
+> internal solution for multi tier swap, implemented based on ZRAM and
+> writeback: 4 compression level and multiple block layer level. The
+> ZRAM table serves a similar role to the swap table in the "swap table
+> series" or the virtual layer here.
 > 
-> There is something else I want to discuss on the dt-bindings actually.
-> According to the schema, the spi-max-frequency is:
+> We hacked the BIO layer to let ZRAM be Cgroup aware, so it even
+> supports per-cgroup priority, and per-cgroup writeback control, and it
+> worked perfectly fine in production.
 > 
->   > Maximum SPI clocking speed of the device in Hz.
+> The interface looks something like this:
+> /sys/fs/cgroup/cg1/zram.prio: [1-4]
+> /sys/fs/cgroup/cg1/zram.writeback_prio [1-4]
+> /sys/fs/cgroup/cg1/zram.writeback_size [0 - 4K]
 > 
-> The ad4052 has 2 maximum speeds: Configuration mode (lower) and ADC Mode
-> (higher, depends on VIO). The solution I came up, to not require a
-> custom regmap spi bus, is to have spi-max-frequency bound the
-> Configuration mode speed,
+> It's really nothing fancy and complex, the four priority is simply the
+> four ZRAM compression streams that's already in upstream, and you can
+> simply hardcode four *bdev in "struct zram" and reuse the bits, then
+> chain the write bio with new underlayer bio... Getting the priority
+> info of a cgroup is even simpler once ZRAM is cgroup aware.
+> 
+> All interfaces can be adjusted dynamically at any time (e.g. by an
+> agent), and already swapped out pages won't be touched. The block
+> devices are specified in ZRAM's sys files during swapon.
+> 
+> It's easy to implement, but not a good idea for upstream at all:
+> redundant layers, and performance is bad (if not optimized):
+> - it breaks SYNCHRONIZE_IO, causing a huge slowdown, so we removed the
+> SYNCHRONIZE_IO completely which actually improved the performance in
+> every aspect (I've been trying to upstream this for a while);
+> - ZRAM's block device allocator is just not good (just a bitmap) so we
+> want to use the SWAP allocator directly (which I'm also trying to
+> upstream with the swap table series);
+> - And many other bits and pieces like bio batching are kind of broken,
+> busy loop due to the ZRAM_WB bit, etc...
+> - Lacking support for things like effective migration/compaction,
+> doable but looks horrible.
+> 
 
-The purpose of spi-max-frequency in the devicetree is that sometimes
-the wiring of a complete system makes the effective max frequency
-lower than what is allowed by the datasheet. So this really needs
-to be the absolute highest frequency allowed.
+That's interesting — we've explored a similar idea as well, 
+although not by attaching it to ZRAM.
+Instead, our concept involved creating a separate block device 
+capable of performing the tiering functionality, and using it as follows:
 
-> and have ADC Mode set by VIO regulator
-> voltage, through spi_transfer.speed_hz. At the end of the day, both are
-> bounded by the spi controller maximum speed.
+1. Prepare a block device that can manage multiple backend block devices.
+2. Perform swapon on this block device.
+3. Within the block device, use cgroup awareness 
+to carry out tiered swap operations across the prepared backend devices.
 
-If spi_transfer.speed_hz > spi-max-frequency, then the core SPI code
-uses spi-max-frequency. So I don't think this would actually work.
+However, we ended up postponing this approach as a second-tier option, mainly 
+due to the following concerns:
 
+1. The idea of allocating physical slots but managing them internally 
+as logical slots felt inefficient.
+2. Embedding cgroup awareness within a block device 
+seemed like a layer violation.
+
+> So I definitely don't like this band-aid solution, but hey, it works.
+> I'm looking forward to replacing it with native upstream support.
+> That's one of the motivations behind the swap table series, which
+> I think it would resolve the problems in an elegant and clean way
+> upstreamly. The initial tests do show it has a much lower overhead
+> and cleans up SWAP.
+> But maybe this is kind of similar to the "less optimized form" you
+> are talking about? As I mentioned I'm already trying to upstream
+> some nice parts of it, and hopefully replace it with an upstream
+> solution finally.
 > 
-> My concern is that having ADC mode speed higher than spi-max-frequency
-> may be counter-intuitive, still, it allows to achieve the max data sheet
-> speed considering VIO voltage with the lowest code boilerplate.
-> 
-> Let me know if I can proceed this way before submitting V3.
+> I can try upstream other parts of it if there are people really
+> interested, but I strongly recommend that we should focus on the
+> right approach instead and not waste time on that and spam the
+> mail list.
 
+I am in agreement with the points you’ve made.
+ 
+> I have no special preference on how the final upstream interface
+> should look like. But currently SWAP devices already have priorities,
+> so maybe we should just make use of that.
+
+I have been exploring an interface design 
+that leverages the existing swap priority mechanism,
+and I believe it would be valuable 
+to share this for further discussion and feedback.
+As mentioned in my earlier response to Nhat,
+I intend to submit this as an RFC to solicit broader input from the community. 
+
+Best regards,
+YoungJun Park
 
