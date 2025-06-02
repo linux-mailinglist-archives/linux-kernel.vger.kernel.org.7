@@ -1,137 +1,115 @@
-Return-Path: <linux-kernel+bounces-671052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1860ACBC49
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 22:28:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC783ACBC3B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 22:21:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0EA7168F96
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 20:27:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E70971892407
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 20:21:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DDF3221297;
-	Mon,  2 Jun 2025 20:27:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EA601B4F1F;
+	Mon,  2 Jun 2025 20:21:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=o2.pl header.i=@o2.pl header.b="w0Jxn9HD"
-Received: from mx-out.tlen.pl (mx-out.tlen.pl [193.222.135.142])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AEtJU/A1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B83ED2629D
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 20:27:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.222.135.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7A3B23CE;
+	Mon,  2 Jun 2025 20:21:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748896064; cv=none; b=UU+YufeIO6PioH3jqZxPQkh9neXa93z2iwlkXB9JIcxByzeyB7MhqtcLBB8tPJnVMuQQTF0oU2lWfSc8yuneoF4Bwxx6X6Tb+94Ex8xUPZynoOTKopTGrXJ+xVPbiQ9RWtqvnNRV4GODsdO8z42VYCSEFY7ItQdPRCxuAJOCTKE=
+	t=1748895679; cv=none; b=tvq6Q/A5LrcACQiS1PBrwDet5dmAdLlgZL+Ss3NDRKBLZaXw284d9jdflNBo/81L09bemiVYiUlvpEkk2X0jQyTqSXoFzgOx4qxIkF2VeRcJT7MvNRsI7Iuj9xs1AsSApxLInzn4DDYfJ2ssK0ugjYnO237BVXEDYiKxjG5+MU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748896064; c=relaxed/simple;
-	bh=n+jCYVhQRi5LIQhJcRoGurAAZtIH5inbBx+yn9CpDw8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dgelim1wu5SQpfGABw1CSo34OSHgR1dhCiNThF7ocSqgzwhbZ2K5ocQTOZnIhBg4C6Tvbo3/NiT2DFXy9h+sydwNWEIs1r6nZY3O2wDXml5tYSFp9qAEJyJOsO0lQs1EFLJWJaR5gahFSPI4a8Y1Z0gwBY0Xq+ii8x8WgtPgdv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=o2.pl; spf=pass smtp.mailfrom=o2.pl; dkim=pass (2048-bit key) header.d=o2.pl header.i=@o2.pl header.b=w0Jxn9HD; arc=none smtp.client-ip=193.222.135.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=o2.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=o2.pl
-Received: (wp-smtpd smtp.tlen.pl 34503 invoked from network); 2 Jun 2025 22:20:59 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=o2.pl; s=20241105;
-          t=1748895659; bh=ym2M7zvD/JGRuJYqVWmOqTfwrMcLMYmxiC+N/CwqG2I=;
-          h=From:To:Cc:Subject;
-          b=w0Jxn9HDQdfXD8Bz4Fc6o/IowBYPV8f0Orvcb1H7EYtQ53nn/r59FzwnTej9Ndzw7
-           iLlAyIJxL/fxZYc/eEosRE+7hkzjZqWf0YrdCCBkzM60OxgmoE5s0JqQBbyRP34Uw5
-           q9Gbz8L5Q7IcYFJ544Wy4vuaLk3cuW52EBdwcatAOJZ5BvP+5GDOM1WIAQp22oQqj2
-           LRfOsk+QaHdEmaYN+275fMusoGtw/d0WbHZzT18nZDhy0D0zYBYNQbcfn0pZqZS/UP
-           mmkII6xHvuyKA36pU1iSflLlbGP4NLMz2oY3PZI6qeOWWsv8kJxs1GL/lagtBcxARH
-           4BVbCl5Ka3Kkw==
-Received: from apn-31-0-2-65.dynamic.gprs.plus.pl (HELO localhost.localdomain) (mat.jonczyk@o2.pl@[31.0.2.65])
-          (envelope-sender <mat.jonczyk@o2.pl>)
-          by smtp.tlen.pl (WP-SMTPD) with SMTP
-          for <chris.bainbridge@gmail.com>; 2 Jun 2025 22:20:59 +0200
-From: =?UTF-8?q?Mateusz=20Jo=C5=84czyk?= <mat.jonczyk@o2.pl>
-To: Chris Bainbridge <chris.bainbridge@gmail.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@alien8.de>,
-	linux-rtc@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	lkml <linux-kernel@vger.kernel.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	=?UTF-8?q?Mateusz=20Jo=C5=84czyk?= <mat.jonczyk@o2.pl>
-Subject: [DRAFT PATCH] rtc-cmos: use spin_lock_irqsave in cmos_interrupt
-Date: Mon,  2 Jun 2025 22:20:19 +0200
-Message-Id: <20250602202019.625331-1-mat.jonczyk@o2.pl>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <74bcd576-d410-45b2-aaf0-05aedf96b8be@o2.pl>
-References: <74bcd576-d410-45b2-aaf0-05aedf96b8be@o2.pl>
+	s=arc-20240116; t=1748895679; c=relaxed/simple;
+	bh=AbAA39BeBTC8EmhrmyqS8RkGk6nWxaurq2Bfwb7Nqnk=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=DVlvvM/WXmD7f9Gwe22ZdCGSK56/uz2nDh4PRjarLSLY5ajY30wh19WRcR9Ta8FOtSOVXntEhcL+2m4HL7KR7w1uJ2YND4gvDL+yDKS+p4dvmlrmLlAwepXLNBCfG4qlbc7JFwP+tNhd48sgFp++fuPADD5gJwwMjRUCuEDSK7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AEtJU/A1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB4C2C4CEEB;
+	Mon,  2 Jun 2025 20:21:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748895677;
+	bh=AbAA39BeBTC8EmhrmyqS8RkGk6nWxaurq2Bfwb7Nqnk=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=AEtJU/A1P3nHbXf7T19nOoS/9Gz0iXSgES9cbwE/ydWE4+1GVegRqPp9VHlBuyYyE
+	 NL9+Krh0dS1mY7x0BI4dcETR1MSZUlJUjJbpnnja/wCFn2+X9itn4AqqoL37mMBEBp
+	 hzUqD4XQUwM9nwUzlKqWHY3KjrIenpKQsfEfBUZnFCKk728z6EZGcXFSP6o6i+c4JC
+	 LtsQ0E/9h/KEsTGQ9pTcloF0Y3oxy3n5zqHQzBAnvcFgsfP+JMccppi++Um6tGxmPH
+	 ALx/gJgm72fT6urXkoXH21NzH3lxnZg+MkbMpgrwGKvHvL4HzwwpowfpoPbiFrpeV1
+	 0c0lFx6g3K8Eg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-WP-DKIM-Status: good (id: o2.pl)                                                      
-X-WP-MailID: c6440f7c3ffbb3307021f0e989c11d45
-X-WP-AV: skaner antywirusowy Poczty o2
-X-WP-SPAM: NO 0000000 [UdOR]                               
+Date: Mon, 02 Jun 2025 22:21:12 +0200
+Message-Id: <DACBRWLT0TOK.3BLVIST5ICH36@kernel.org>
+Cc: "Danilo Krummrich" <dakr@kernel.org>, "Miguel Ojeda" <ojeda@kernel.org>,
+ "Alex Gaynor" <alex.gaynor@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, <rust-for-linux@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/4] rust: alloc: implement `Borrow` and `BorrowMut` for
+ `Vec`
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Boqun Feng" <boqun.feng@gmail.com>, "Alexandre Courbot"
+ <acourbot@nvidia.com>
+X-Mailer: aerc 0.20.1
+References: <20250601-borrow_impls-v1-0-e1caeb428db4@nvidia.com>
+ <20250601-borrow_impls-v1-1-e1caeb428db4@nvidia.com>
+ <DABBUFXP4O5X.1JG9O6Z2BRAQX@kernel.org>
+ <DABND24P80ZZ.NLCKU3AYPN4X@nvidia.com> <aD29_GfdV02X4q5N@Mac.home>
+In-Reply-To: <aD29_GfdV02X4q5N@Mac.home>
 
-cmos_interrupt() can also be called also in non-interrupt contexts, such
-as in ACPI handlers via rtc_handler(). Therefore, usage of
-spin_lock(&rtc_lock) is insecure. Use spin_lock_irqsave() / etc.
-instead.
+On Mon Jun 2, 2025 at 5:06 PM CEST, Boqun Feng wrote:
+> On Mon, Jun 02, 2025 at 10:13:22AM +0900, Alexandre Courbot wrote:
+>> On Mon Jun 2, 2025 at 1:11 AM JST, Benno Lossin wrote:
+>> > On Sun Jun 1, 2025 at 5:00 AM CEST, Alexandre Courbot wrote:
+>> >> Implement these two common traits, which allow generic types to store
+>> >> either an owned value or a reference to it.
+>> >
+>> > I don't understand the second part of the sentence.
+>>=20
+>> I want to say that Borrow allows you to do something like:
+>>=20
+>>     struct Foo<B: Borrow<u32>>(B);
+>>=20
+>>     // `foo1` owns its value...
+>>     let foo1 =3D Foo(0x12);
+>>=20
+>>     let i =3D 0x24;
+>>     // ... but `foo2` just borrows it, subject to the lifetime of `i`.
+>>     let foo2 =3D Foo(&i);
+>>=20
+>> And the implementations in this series also let you do:
+>>=20
+>>     // `foo3`'s value is owned, but heap-allocated
+>>     let foo3 =3D Arc::new(KBox::new(0x56, GFP_KERNEL)?);
+>>=20
+>>     let j =3D Arc::new(0x78, GFP_KERNEL)?;
+>>     // `foo4`'s value is shared and its lifetime runtime-managed.
+>>     let foo4 =3D Foo(j.clone());
+>
+> Maybe you could put these in the "# Examples" section before impl
+> blocks. E.g
+>
+> 	/// # Examples
+> 	/// ```
+> 	/// <you case above>
+> 	/// ```
+> 	impl<T, A> Borrow<[T]> for Vec<T, A> ...
 
-Remove the local_irq_disable() hacks in cmos_check_wkalrm() and add a
-comment so that these _irqsave / _irqrestore will not be disabled again,
-as in
+Does that get rendered in the docs? If not, I don't think we should do
+it.
 
-commit 6950d046eb6e ("rtc: cmos: Replace spin_lock_irqsave with spin_lock in hard IRQ")
-
-Untested yet.
-
-Signed-off-by: Mateusz Jończyk <mat.jonczyk@o2.pl>
-Fixes: 13be2efc390a ("rtc: cmos: Disable irq around direct invocation of cmos_interrupt()")
 ---
- drivers/rtc/rtc-cmos.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/rtc/rtc-cmos.c b/drivers/rtc/rtc-cmos.c
-index 8172869bd3d7..399bb82e6153 100644
---- a/drivers/rtc/rtc-cmos.c
-+++ b/drivers/rtc/rtc-cmos.c
-@@ -692,8 +692,12 @@ static irqreturn_t cmos_interrupt(int irq, void *p)
- {
- 	u8		irqstat;
- 	u8		rtc_control;
-+	unsigned long	flags;
- 
--	spin_lock(&rtc_lock);
-+	/* We cannot use spin_lock() here, as cmos_interrupt() is also called
-+	 * in non-irq context.
-+	 */
-+	spin_lock_irqsave(&rtc_lock, flags);
- 
- 	/* When the HPET interrupt handler calls us, the interrupt
- 	 * status is passed as arg1 instead of the irq number.  But
-@@ -727,7 +731,7 @@ static irqreturn_t cmos_interrupt(int irq, void *p)
- 			hpet_mask_rtc_irq_bit(RTC_AIE);
- 		CMOS_READ(RTC_INTR_FLAGS);
- 	}
--	spin_unlock(&rtc_lock);
-+	spin_unlock_irqrestore(&rtc_lock, flags);
- 
- 	if (is_intr(irqstat)) {
- 		rtc_update_irq(p, 1, irqstat);
-@@ -1295,9 +1299,7 @@ static void cmos_check_wkalrm(struct device *dev)
- 	 * ACK the rtc irq here
- 	 */
- 	if (t_now >= cmos->alarm_expires && cmos_use_acpi_alarm()) {
--		local_irq_disable();
- 		cmos_interrupt(0, (void *)cmos->rtc);
--		local_irq_enable();
- 		return;
- 	}
- 
--- 
-2.25.1
-
+Cheers,
+Benno
 
