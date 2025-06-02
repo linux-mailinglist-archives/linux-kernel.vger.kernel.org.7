@@ -1,239 +1,175 @@
-Return-Path: <linux-kernel+bounces-670571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 242EEACB10E
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 16:15:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 34557ACB09A
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 16:08:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2209A1940460
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 14:10:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28E971885715
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 14:04:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB28D238176;
-	Mon,  2 Jun 2025 14:03:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A40F2253B5;
+	Mon,  2 Jun 2025 14:02:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hDvYfMZ7"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bOllxQD0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25B3C2343D4;
-	Mon,  2 Jun 2025 14:03:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 597E3224245;
+	Mon,  2 Jun 2025 14:02:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748872984; cv=none; b=Vdq0H/xcWe/Q1EQthZtLAkYpnEXqPLl7lsAToGQ/B74JpEZhgOWKo9Hp2GdIDotru8RwQL6KbyEioOKReenEoxjMlK6opGmb6EpwmeNxGnzDiw2zb1JJTjNhaithc3MsD1/F4uPPe8Elzo8dZGlqpUrcMFYrPb1gBKYfOS4Z3PE=
+	t=1748872944; cv=none; b=pyQ+/S/TOtnpp09KhNyWBXNrUGJDaLXQDXcuwfggbJ+uO9yJNKNIASPZ1w5JXotCA2wMDdhhlDGQk31ZNlNPR288Dc5jxYzdE3myiuAj1DwPnp5IvDTjaN8iq2DkPjxBIB7y9rmQ6YpsH4qozYWzin/qpcyvX1dNMYIgk8G92MY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748872984; c=relaxed/simple;
-	bh=FLY8rXV/wMLxhZlXAViF34cDRZWKhFotP2CxFgwxkmk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GSaVzKHApfwF0RbDyhkx70xoz2KSItYjaazTdeQD9N86t7M9WI0clnvOxlrlISZxVOiODPds5yCIkrk7yv4kRoIBP4MZvYFf64O+9mXoW9WlsJ626mQ4zgC/XnXFBG6jozgUxtiA2lR/rDUhU/M9H3JVrs5lV8GQNKGbGfoNyBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hDvYfMZ7; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1748872982; x=1780408982;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=FLY8rXV/wMLxhZlXAViF34cDRZWKhFotP2CxFgwxkmk=;
-  b=hDvYfMZ73RVsVrdVGGJ2f9bHYeSalJ4m9EYcuaC0K7jWIVtY0E8xurkx
-   goQiZsXtpReds5cZ7KwXW+fPEHWmjOhx5lBfOVCgcMycmN2FB2CrIsx5O
-   eMspGYKXUbRrM+JZpcJoiisEyr/GCiXCYIJMHjG7rmI1El59Xjl6KurOK
-   Af3lvxfCqHno0SienmucwXrM56iTp66/XIJ3fsWRcfJOR1WFn5Ul6UgAT
-   YOjzv6dtYnFHUuNdFZlrgf+3I4Rm1OO5dn2Jv51RhkwgW9Ypav9jTDUfr
-   tq4xe4fmSscuh2gVzElWkbr7UMDyW77maWcqlSh8wWoAnTFoh51OyW4Hd
-   g==;
-X-CSE-ConnectionGUID: vRih7ekhQy6Jm/rScjjT/A==
-X-CSE-MsgGUID: uWPB6l0FTzCpr4xm9I28jg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11451"; a="50937096"
-X-IronPort-AV: E=Sophos;i="6.16,203,1744095600"; 
-   d="scan'208";a="50937096"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2025 07:03:01 -0700
-X-CSE-ConnectionGUID: 4aYjc9MNSNmAc1o1IuJCGw==
-X-CSE-MsgGUID: VUHNjsVZRI+VLiCrPqDFCA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,203,1744095600"; 
-   d="scan'208";a="181716728"
-Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
-  by orviesa001.jf.intel.com with ESMTP; 02 Jun 2025 07:02:55 -0700
-Date: Mon, 2 Jun 2025 21:56:25 +0800
-From: Xu Yilun <yilun.xu@linux.intel.com>
-To: "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>
-Cc: kvm@vger.kernel.org, sumit.semwal@linaro.org, christian.koenig@amd.com,
-	pbonzini@redhat.com, seanjc@google.com, alex.williamson@redhat.com,
-	jgg@nvidia.com, dan.j.williams@intel.com, aik@amd.com,
-	linux-coco@lists.linux.dev, dri-devel@lists.freedesktop.org,
-	linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
-	vivek.kasireddy@intel.com, yilun.xu@intel.com,
-	linux-kernel@vger.kernel.org, lukas@wunner.de, yan.y.zhao@intel.com,
-	daniel.vetter@ffwll.ch, leon@kernel.org, baolu.lu@linux.intel.com,
-	zhenzhong.duan@intel.com, tao1.su@intel.com,
-	linux-pci@vger.kernel.org, zhiw@nvidia.com, simona.vetter@ffwll.ch,
-	shameerali.kolothum.thodi@huawei.com, iommu@lists.linux.dev,
-	kevin.tian@intel.com
-Subject: Re: [RFC PATCH 20/30] vfio/pci: Do TSM Unbind before zapping bars
-Message-ID: <aD2ticKyMxxMXzZ+@yilunxu-OptiPlex-7050>
-References: <20250529053513.1592088-1-yilun.xu@linux.intel.com>
- <20250529053513.1592088-21-yilun.xu@linux.intel.com>
- <yq5a34cilnxw.fsf@kernel.org>
+	s=arc-20240116; t=1748872944; c=relaxed/simple;
+	bh=ZrFup30IUUI62IhIRTGdtQyA3ni1qkUHKiEvsunwAIc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=jBpzpBggOeVtG9BEyXo+UTaesmJ29TvUwCTrkbNHcpZq3OTtMNzROCTQDcNWWbjbJyh9wwa2zTwEke2z8HVnzmk7gNrBO3/zvjFjQoMSbzvtxOi++dGSWgoBSkyyuWDYOnZdGwASjho5bdkvJ0Wt2++IYdBt1gtQFd5Mhg2xQsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bOllxQD0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3ACF1C4CEF5;
+	Mon,  2 Jun 2025 14:02:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748872944;
+	bh=ZrFup30IUUI62IhIRTGdtQyA3ni1qkUHKiEvsunwAIc=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=bOllxQD0QutP185Tx+5m080NYaVFu/O8IYq4VMDolty/P/OSOenm0IFy/5qjX2YH1
+	 YgAmwfzQUR3pN1VHhT5OP1ESmeA1tz9QLmLiauh8CC7OjrwJCwAqXlWaMYjOtZTXpi
+	 8mXs4qcJncvNH3LyKlPiZydfldKGUEl1qJQ34tEe7EdCu3nYG8Klv6oq0AjuvsyEWW
+	 W0xt5u/THz5svq3SMg/YUAZAreWLy+SS12qq3oERDKZDrG6F3N5qiNBNcQDoN8+R2Z
+	 GPnFJx0s+wWszvs43irEtRrB6utXaGwtgsQMhvZ8VtB+Tsq1cYiPjCUGHuoESr2cSR
+	 YUf7p3u9/4Ucw==
+From: Jeff Layton <jlayton@kernel.org>
+Date: Mon, 02 Jun 2025 10:01:44 -0400
+Subject: [PATCH RFC v2 01/28] filelock: push the S_ISREG check down to
+ ->setlease handlers
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <yq5a34cilnxw.fsf@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250602-dir-deleg-v2-1-a7919700de86@kernel.org>
+References: <20250602-dir-deleg-v2-0-a7919700de86@kernel.org>
+In-Reply-To: <20250602-dir-deleg-v2-0-a7919700de86@kernel.org>
+To: Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+ Chuck Lever <chuck.lever@oracle.com>, 
+ Alexander Aring <alex.aring@gmail.com>, 
+ Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
+ Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>, 
+ Ronnie Sahlberg <ronniesahlberg@gmail.com>, 
+ Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>, 
+ Bharath SM <bharathsm@microsoft.com>, NeilBrown <neil@brown.name>, 
+ Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
+ Jonathan Corbet <corbet@lwn.net>, Amir Goldstein <amir73il@gmail.com>, 
+ Miklos Szeredi <miklos@szeredi.hu>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org, 
+ samba-technical@lists.samba.org, linux-doc@vger.kernel.org, 
+ Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3149; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=ZrFup30IUUI62IhIRTGdtQyA3ni1qkUHKiEvsunwAIc=;
+ b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBoPa7kbGXbFK+2MezlY3MJ/Xtzr/ggiQYYbxlfc
+ LXfkYQCqF+JAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaD2u5AAKCRAADmhBGVaC
+ FbHvD/9vSTVF8NJ7ALqyShqeu2mSuoidlK+DgJlsHzCpSFoJ4QmMFY53YntfUE6tg4GYQgGRxv6
+ eL8ix5GzWuQCu/aZ9F5Fpno+yDZ9DbZPumGZDUQy3pWpfSfeiqtV648XILPtQMZdzH6l75LVnut
+ 4DrL0vRNg4UTjJP4hHXTKrt6O1hYmX3XNlyk6m24CMa/Pv9D/hVoOk1h7Q6EUyG8Gq6BsY5uIyT
+ 0z1KH1Ok5xg9uj1Xj5RyB4N2lHrBMbucFWTh74ug0L2ebnKve7dh/WiIQgpTaf8L3AQ7yHj5OrA
+ Or+8t0/98p1RRVq57i/uShY7+gMgzLPBzJSq6kMVDaMODvfcTLY09XMYypKTDEN2etAifXPTz7/
+ kgLw7P2IVuME5DpLTXpH7VGyod/qbu+f/lu05uBLf7z+gexzz6Xesf6eHkIenCDJ0JBTX33GHmg
+ Lb7hazPie+DtN0CWxTBzjzB6HqeOq9xgh0VNEI5MemTkcCgsnidLu/UebrKhhqHOfvsqvk160pV
+ hFSUV9a9+FLTcLFebW5qAclhoKvi9oWOvby2qoQCwyNpqly+NJEkzwu3sYwjlenXz2bHspYTYsc
+ 7x2I3jSCyKW7eN7Gecmy4Wgf6okjfult8w114tBEVjgLSGyC38PNSiukTa+C/k9mOMdjMZbvfQC
+ /n5RRBGG/tMRkHw==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-On Mon, Jun 02, 2025 at 10:50:11AM +0530, Aneesh Kumar K.V wrote:
-> Xu Yilun <yilun.xu@linux.intel.com> writes:
-> 
-> > When device is TSM Bound, some of its MMIO regions are controlled by
-> > secure firmware. E.g. TDX Connect would require these MMIO regions
-> > mappeed in S-EPT and never unmapped until device Unbound. Zapping bars
-> > irrespective of TSM Bound state may cause unexpected secure firmware
-> > errors. It is always safe to do TSM Unbind first, transiting the device
-> > to shared, then do whatever needed as before.
-> >
-> > Signed-off-by: Xu Yilun <yilun.xu@linux.intel.com>
-> > ---
-> >  drivers/vfio/pci/vfio_pci_config.c |  4 +++
-> >  drivers/vfio/pci/vfio_pci_core.c   | 41 +++++++++++++++++++-----------
-> >  drivers/vfio/pci/vfio_pci_priv.h   |  3 +++
-> >  3 files changed, 33 insertions(+), 15 deletions(-)
-> >
-> > diff --git a/drivers/vfio/pci/vfio_pci_config.c b/drivers/vfio/pci/vfio_pci_config.c
-> > index 7ac062bd5044..4ffe661c9e59 100644
-> > --- a/drivers/vfio/pci/vfio_pci_config.c
-> > +++ b/drivers/vfio/pci/vfio_pci_config.c
-> > @@ -590,6 +590,7 @@ static int vfio_basic_config_write(struct vfio_pci_core_device *vdev, int pos,
-> >  		new_mem = !!(new_cmd & PCI_COMMAND_MEMORY);
-> >  
-> >  		if (!new_mem) {
-> > +			vfio_pci_tsm_unbind(vdev);
-> >  			vfio_pci_zap_and_down_write_memory_lock(vdev);
-> >  			vfio_pci_dma_buf_move(vdev, true);
-> >
-> 
-> Don't we need to re-bind the vdev with tsm_bind for the continued use of TDI?
+When nfsd starts requesting directory delegations, setlease handlers may
+see requests for leases on directories. Push the !S_ISREG check down
+into the non-trivial setlease handlers, so we can selectively enable
+them where they're supported.
 
-I choose not to re-bind because host basically cannot recover
-everything. The guest does 'bind', 'attest', 'accept' to make a trusted
-device, but for this series VFIO is only aware of 'bind' and can only
-recover 'bind', which doesn't make much sense.  So I think just make
-guest fully aware of TDISP rules, guest should expect writing MSE breaks
-private state, and should do 'bind', 'attest', 'accept' again for
-recovery if it wants to.
+FUSE is specialr:. It's the only filesystem that supports atomic_open and
+allow kernel-internal leases. Ensure that we don't allow directory
+leases by default going forward by explicitly disabling them there.
 
-> 
-> >  		} else {
-> > @@ -712,6 +713,7 @@ static void vfio_lock_and_set_power_state(struct vfio_pci_core_device *vdev,
-> >  					  pci_power_t state)
-> >  {
-> >  	if (state >= PCI_D3hot) {
-> > +		vfio_pci_tsm_unbind(vdev);
-> >  		vfio_pci_zap_and_down_write_memory_lock(vdev);
-> >  		vfio_pci_dma_buf_move(vdev, true);
-> >  	} else {
-> > @@ -907,6 +909,7 @@ static int vfio_exp_config_write(struct vfio_pci_core_device *vdev, int pos,
-> >  						 &cap);
-> >  
-> >  		if (!ret && (cap & PCI_EXP_DEVCAP_FLR)) {
-> > +			vfio_pci_tsm_unbind(vdev);
-> >  			vfio_pci_zap_and_down_write_memory_lock(vdev);
-> >  			vfio_pci_dma_buf_move(vdev, true);
-> >  			pci_try_reset_function(vdev->pdev);
-> > @@ -992,6 +995,7 @@ static int vfio_af_config_write(struct vfio_pci_core_device *vdev, int pos,
-> >  						&cap);
-> >  
-> >  		if (!ret && (cap & PCI_AF_CAP_FLR) && (cap & PCI_AF_CAP_TP)) {
-> > +			vfio_pci_tsm_unbind(vdev);
-> >  			vfio_pci_zap_and_down_write_memory_lock(vdev);
-> >  			vfio_pci_dma_buf_move(vdev, true);
-> >  			pci_try_reset_function(vdev->pdev);
-> > diff --git a/drivers/vfio/pci/vfio_pci_core.c b/drivers/vfio/pci/vfio_pci_core.c
-> > index 92544e54c9c3..a8437fcecca1 100644
-> > --- a/drivers/vfio/pci/vfio_pci_core.c
-> > +++ b/drivers/vfio/pci/vfio_pci_core.c
-> > @@ -286,6 +286,7 @@ static int vfio_pci_runtime_pm_entry(struct vfio_pci_core_device *vdev,
-> >  	 * The vdev power related flags are protected with 'memory_lock'
-> >  	 * semaphore.
-> >  	 */
-> > +	vfio_pci_tsm_unbind(vdev);
-> >  	vfio_pci_zap_and_down_write_memory_lock(vdev);
-> >  	vfio_pci_dma_buf_move(vdev, true);
-> >  
-> > @@ -693,11 +694,7 @@ void vfio_pci_core_close_device(struct vfio_device *core_vdev)
-> >  	eeh_dev_release(vdev->pdev);
-> >  #endif
-> >  
-> > -	if (vdev->is_tsm_bound) {
-> > -		vfio_iommufd_tsm_unbind(&vdev->vdev);
-> > -		pci_release_regions(vdev->pdev);
-> > -		vdev->is_tsm_bound = false;
-> > -	}
-> > +	__vfio_pci_tsm_unbind(vdev);
-> >  
-> >  	vfio_pci_core_disable(vdev);
-> >  
-> > @@ -1222,6 +1219,7 @@ static int vfio_pci_ioctl_reset(struct vfio_pci_core_device *vdev,
-> >  	if (!vdev->reset_works)
-> >  		return -EINVAL;
-> >  
-> > +	vfio_pci_tsm_unbind(vdev);
-> >  	vfio_pci_zap_and_down_write_memory_lock(vdev);
-> >  
-> >  	/*
-> > @@ -1491,12 +1489,32 @@ static int vfio_pci_ioctl_tsm_bind(struct vfio_pci_core_device *vdev,
-> >  	return ret;
-> >  }
-> >  
-> > +void __vfio_pci_tsm_unbind(struct vfio_pci_core_device *vdev)
-> > +{
-> > +	struct pci_dev *pdev = vdev->pdev;
-> > +
-> > +	lockdep_assert_held(&vdev->vdev.dev_set->lock);
-> > +
-> > +	if (!vdev->is_tsm_bound)
-> > +		return;
-> > +
-> > +	vfio_iommufd_tsm_unbind(&vdev->vdev);
-> > +	pci_release_regions(pdev);
-> > +	vdev->is_tsm_bound = false;
-> >
-> 
-> Do we really need to check vdev->is_tsm_bound? The tsm_ops lock already
-> ensures that concurrent TSM operations can't happen, and repeated calls
-> to bind()/unbind() seem to be handled safely by pci_tsm_bind and pci_tsm_unbind.
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+ fs/fuse/dir.c          | 1 +
+ fs/locks.c             | 5 +++--
+ fs/nfs/nfs4file.c      | 2 ++
+ fs/smb/client/cifsfs.c | 3 +++
+ 4 files changed, 9 insertions(+), 2 deletions(-)
 
-It is mainly for pci_release_regions(). I remember there is a concern
-about whether pci_request/release_region() should be in VFIO driver,
-maybe lets solve that concern first in that thread.
+diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+index 33b82529cb6e4bffa607e1b20bd09ac489b0667f..c83e61b52e0fff106ef2a3d62efcc3949ccf39e7 100644
+--- a/fs/fuse/dir.c
++++ b/fs/fuse/dir.c
+@@ -2218,6 +2218,7 @@ static const struct file_operations fuse_dir_operations = {
+ 	.fsync		= fuse_dir_fsync,
+ 	.unlocked_ioctl	= fuse_dir_ioctl,
+ 	.compat_ioctl	= fuse_dir_compat_ioctl,
++	.setlease	= simple_nosetlease,
+ };
+ 
+ static const struct inode_operations fuse_common_inode_operations = {
+diff --git a/fs/locks.c b/fs/locks.c
+index 1619cddfa7a4d799f0f84f0bc8f28458d8d280db..a35d033dcaf0b604b73395260562af08f7711c12 100644
+--- a/fs/locks.c
++++ b/fs/locks.c
+@@ -1929,6 +1929,9 @@ static int generic_delete_lease(struct file *filp, void *owner)
+ int generic_setlease(struct file *filp, int arg, struct file_lease **flp,
+ 			void **priv)
+ {
++	if (!S_ISREG(file_inode(filp)->i_mode))
++		return -EINVAL;
++
+ 	switch (arg) {
+ 	case F_UNLCK:
+ 		return generic_delete_lease(filp, *priv);
+@@ -2018,8 +2021,6 @@ vfs_setlease(struct file *filp, int arg, struct file_lease **lease, void **priv)
+ 
+ 	if ((!vfsuid_eq_kuid(vfsuid, current_fsuid())) && !capable(CAP_LEASE))
+ 		return -EACCES;
+-	if (!S_ISREG(inode->i_mode))
+-		return -EINVAL;
+ 	error = security_file_lock(filp, arg);
+ 	if (error)
+ 		return error;
+diff --git a/fs/nfs/nfs4file.c b/fs/nfs/nfs4file.c
+index 1cd9652f3c280358209f22503ea573a906a6194e..b7630a437ad22fbfb658086953b25b9ae6b4f057 100644
+--- a/fs/nfs/nfs4file.c
++++ b/fs/nfs/nfs4file.c
+@@ -442,6 +442,8 @@ void nfs42_ssc_unregister_ops(void)
+ static int nfs4_setlease(struct file *file, int arg, struct file_lease **lease,
+ 			 void **priv)
+ {
++	if (!S_ISREG(file_inode(file)->i_mode))
++		return -EINVAL;
+ 	return nfs4_proc_setlease(file, arg, lease, priv);
+ }
+ 
+diff --git a/fs/smb/client/cifsfs.c b/fs/smb/client/cifsfs.c
+index fb04e263611cadaea210f5c1d90c05bea37fb496..991583b0b77e480c002974b410f06853740e4b1b 100644
+--- a/fs/smb/client/cifsfs.c
++++ b/fs/smb/client/cifsfs.c
+@@ -1094,6 +1094,9 @@ cifs_setlease(struct file *file, int arg, struct file_lease **lease, void **priv
+ 	struct inode *inode = file_inode(file);
+ 	struct cifsFileInfo *cfile = file->private_data;
+ 
++	if (!S_ISREG(inode->i_mode))
++		return -EINVAL;
++
+ 	/* Check if file is oplocked if this is request for new lease */
+ 	if (arg == F_UNLCK ||
+ 	    ((arg == F_RDLCK) && CIFS_CACHE_READ(CIFS_I(inode))) ||
 
-> 
-> > +}
-> > +
-> > +void vfio_pci_tsm_unbind(struct vfio_pci_core_device *vdev)
-> > +{
-> > +	mutex_lock(&vdev->vdev.dev_set->lock);
-> > +	__vfio_pci_tsm_unbind(vdev);
-> > +	mutex_unlock(&vdev->vdev.dev_set->lock);
-> > +}
-> >
-> 
-> If is_tsm_bound is no longer needed, and pci_release_regions /
-> request_region_exclusive are now handled within pci_tsm_unbind / bind,
-> do we still need mutex_lock() to guard this path?
+-- 
+2.49.0
 
-We may still need the dev_set->lock. The vfio_pci/iommufd_device_tsm_bind()
-not only does pci_tsm_bind(), but also secure IOMMU setup which affects
-all devices in the dev_set.
-
-Maybe I worried too much, I doesn't know there exists a real secure device
-set.
-
-Thanks,
-Yilun
 
