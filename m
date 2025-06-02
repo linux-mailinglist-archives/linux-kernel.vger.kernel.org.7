@@ -1,78 +1,83 @@
-Return-Path: <linux-kernel+bounces-670969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1D5EACBB5F
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 21:17:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 62655ACBB6B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 21:19:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90EDF176797
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 19:17:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB55816B6AD
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 19:18:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3DA3225776;
-	Mon,  2 Jun 2025 19:17:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 745142AD2F;
+	Mon,  2 Jun 2025 19:17:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Un0xGbfT"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="RPrYj70D"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 507D663CF;
-	Mon,  2 Jun 2025 19:17:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C9472C3242;
+	Mon,  2 Jun 2025 19:17:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748891840; cv=none; b=L53gbDIBFWS+s5iHStLekwfWiARzZ/+m6OLHMWWX5i0h6ikx0/OVGV2aKhLwjuoXY9NoYSGS5WYYGTxwJYgYqwnK9OvSXES/eTQELhElzBmtcXiQJcZJZORRhECpaXyfRJRaK+/akuusiRbWyZpNIW8I2zTbJPPQalvijYQZmco=
+	t=1748891872; cv=none; b=udCk3vgdrqsg+YKjHEcKaPk9peQovTYiPXUjA9OwgQQ12jByAnlQcXw4W4K3Wuwvu+mO5m3mteRsnd5cvyGCgpkJHi3ZMUMCoTWYE5H6JEigZY+mGGPbts9rYOjj8eggTUvcuV84UHytsMA4Mg7r11P/bwhKmrkKLFbrXecGmE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748891840; c=relaxed/simple;
-	bh=V0M9Et82dIM92ydZ1N9eJZnj6ejTyaxm5EY/6noh4i8=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=sS6GHY/T0ktM66NcCGjxJKKo6fapuQ9t4qyrBA6pB9UtLYntfnGzGLop612+4nmL98BrT5t+tDGS3i/ap2K3FffK8Cpdb4sZEEchCxvKUUr5Fc25P9Cw4RVykJjfUPCwAOm2HTbg10orZNFjR/iCjtf12EXC2tkCc4E+p3JfyQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Un0xGbfT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6783C4CEEB;
-	Mon,  2 Jun 2025 19:17:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748891837;
-	bh=V0M9Et82dIM92ydZ1N9eJZnj6ejTyaxm5EY/6noh4i8=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=Un0xGbfTtMQJ/IcJkLr4zyjM1Xugv2y7xc/3gcuz2PRuFfrrq8teOqxRs9UuuE1kU
-	 +RS2dBqEYb9Fb2yek0zDptSJTvpnslN9lZk/3dXNUDr77ggmbm3Ia+dte0i+czH3ph
-	 A3dyaPRN1G/7OPhx+iiAdoBv0Bi27f3ljY2why/2pIIXXsc1W767nvvx0qFRwua7CW
-	 Efj25dKlX88yxaLS+qufb+enuJHK72l3vNETWi0fT3v3KyyWmVbLPD2g0O9elS+r1Z
-	 8Qwzql8LjFDEcUWygDqqvhZ3adSKZgZoOg8s9HM+m/U/cYKNs5gcjBhCmqxz7LTqEy
-	 BUzu1gJDVzmfw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADFB0380AAD0;
+	s=arc-20240116; t=1748891872; c=relaxed/simple;
+	bh=JbBE2BSt4IuIp/mHpK/1woVzzTCCuTRSikmM/SfpxhY=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=rkfaiAqqrbY13Kb46XvtuPTU45XRIouZ2hgceSiJKM1IhSjs/Rhbchj9LikkH7RJZ5Hk5ZT3OCtnnu+kXekRJkor5TkNMOfn9Odwwg4eNz/fMDV3vnYo4c/dSghYrQ9EL2Y2cbt3k0k4LVnK4708ZAIve7N5WyGPHnNOcwsfR34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=RPrYj70D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCDB7C4CEEB;
 	Mon,  2 Jun 2025 19:17:51 +0000 (UTC)
-Subject: Re: [git pull] Input updates for v6.16-rc0
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <66fexopj4i5izpsalnoiqxy4ufbexlcax5yqs7iqvzdpdfjwww@6wiq5a6ubmak>
-References: <66fexopj4i5izpsalnoiqxy4ufbexlcax5yqs7iqvzdpdfjwww@6wiq5a6ubmak>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <66fexopj4i5izpsalnoiqxy4ufbexlcax5yqs7iqvzdpdfjwww@6wiq5a6ubmak>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git tags/input-for-v6.16-rc0
-X-PR-Tracked-Commit-Id: 4f9786035f9e519db41375818e1d0b5f20da2f10
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: d00a83477e7a8f55c9f9d0c6768901f28b1b9d87
-Message-Id: <174889187017.877155.11958381161972732361.pr-tracker-bot@kernel.org>
-Date: Mon, 02 Jun 2025 19:17:50 +0000
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1748891872;
+	bh=JbBE2BSt4IuIp/mHpK/1woVzzTCCuTRSikmM/SfpxhY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=RPrYj70DmEmC7GBiB8PpxtPpU/sbGbi6aG9rrPIRKVx7x62oNDMBzL3sdd6zk3AfA
+	 JnimY6oTs8hWj0hO1nCK76iCMRfVhK8g7IZG4g3OyCZat2uwoQuoMBHdqb8KjZ42T1
+	 2r2AxubAjvJN+V0z5Sft2RiPFyUJrOzvVsWAzHeA=
+Date: Mon, 2 Jun 2025 12:17:51 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-mm@kvack.org,
+ mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] Additional MM updates for 6.16-rc1
+Message-Id: <20250602121751.53ee502779a2f746404a3548@linux-foundation.org>
+In-Reply-To: <aD29wnb5zR-afWpM@casper.infradead.org>
+References: <20250601151222.60ead71e7d8492a18c711a05@linux-foundation.org>
+	<aD29wnb5zR-afWpM@casper.infradead.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The pull request you sent on Sun, 1 Jun 2025 21:57:04 -0700:
+On Mon, 2 Jun 2025 16:05:38 +0100 Matthew Wilcox <willy@infradead.org> wrote:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git tags/input-for-v6.16-rc0
+> On Sun, Jun 01, 2025 at 03:12:22PM -0700, Andrew Morton wrote:
+> > Linus, please merge this second batch of MM updates for the 6.16-rcX cycle.
+> 
+> A word of warning for Linus since he wouldn't've been cc'd on the
+> earlier email.  This branch is based on v6.15-rc6 but contains a
+> commit which depends on 97dfbbd135cb which was merged during the
+> current merge window.  You might want to do a rebase or ask Andrew to
+> do it in order to prevent a bisection hazard.
+> 
+> 0day-ci found the problem here:
+> https://lore.kernel.org/linux-mm/202506022027.IYQzZghL-lkp@intel.com/
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/d00a83477e7a8f55c9f9d0c6768901f28b1b9d87
+I think it's OK?  I did the merge and 
 
-Thank you!
+	d9736929445e iov: remove copy_page_from_iter_atomic()
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+lands later than
+
+	97dfbbd135cb highmem: add folio_test_partial_kmap()
+
+
 
