@@ -1,113 +1,109 @@
-Return-Path: <linux-kernel+bounces-671131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51BB7ACBD26
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 00:16:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA20CACBD30
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 00:17:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A77C16D58A
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 22:16:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DDFF3A2871
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 22:17:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A28C2C3255;
-	Mon,  2 Jun 2025 22:15:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1A671EDA1E;
+	Mon,  2 Jun 2025 22:17:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="tTuEyZFt"
-Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="BK4v3r74"
+Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90DB92C3254
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 22:15:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 322B02C3254
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 22:17:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748902558; cv=none; b=VHs0jEf7UJaUsRhiZ9jQeD/X6qmcmVRqmrAxDPblDW7/8FXp/9adDIQrZhx+HQIFdbC1yyAprZiEJFsEa69O1fgtNCr6l/xAerJjOsEgwHvX9/YtquvmmfHfJfRgtXRioZfkvqFW/WNEqH7mRB8xwSdwF691Jxamn+7GLrosOjA=
+	t=1748902660; cv=none; b=pyzcvhaVmicT+6W5GX1JffOTktCh7G9M6JmNw7pDOywGBV+ldTDRe73yPQO4NZYBp7To0z6CY/C5SHqgSCbq2M2OhkSZZcLDXhi6XfK5C2DOZEomyXcpON7i6dkp847/kW5kTbKVI1wiLRx2HGlnYSe64q1zPRP7LXvcpV0AvTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748902558; c=relaxed/simple;
-	bh=OP+63dCxPFG+vz6WLxcGM2+JVN5D3VzDZtsJxe45u9Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pj2OlKBRKCguJ6aSrmYUHmJ2FgB9FNV4t9Y/jkWc0lNebG54bel6cT42IH0HGQ4lYsdgfg7lmmvfkkoyw0mKWe6+vcNgT3Dc/77L60eQsbJ9mbi8N1E3ZLH8cG9IktWcOcuTonMTgBgzyTR0f0F8dNA8ykr7FQnkeP44DWhXDZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=tTuEyZFt; arc=none smtp.client-ip=95.215.58.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 2 Jun 2025 15:15:41 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1748902554;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JMZY2rnPLYUjm4Au9yd8KB0DTNWhfRQzCwBMACGnhms=;
-	b=tTuEyZFtmo7HE+33x7wE6vP4kNqw4C28hL5Snm7XFixdKRD/GuN+jCSaDjmBjyhhfmyII/
-	t4WMbe8NVBAKCO3jEiazPalCWz0BPsPaffibJBYMKTax2sR+h7vP8iL3XXjwZcQynvUciS
-	IsFAYeIfl42ZZzeoAbwyCMO0XpbhIPk=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Oliver Upton <oliver.upton@linux.dev>
-To: Colton Lewis <coltonlewis@google.com>
-Cc: kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Mark Rutland <mark.rutland@arm.com>, Shuah Khan <shuah@kernel.org>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	linux-perf-users@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH 01/17] arm64: cpufeature: Add cpucap for HPMN0
-Message-ID: <aD4ijUaSGm9b2g5H@linux.dev>
-References: <20250602192702.2125115-1-coltonlewis@google.com>
- <20250602192702.2125115-2-coltonlewis@google.com>
+	s=arc-20240116; t=1748902660; c=relaxed/simple;
+	bh=j6Fap+EQAIOK+jn18EOLW8N0FIHYXwyw9RKc0Puqt1o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Xtpgu68WFBd+X8DzqDSkZBN0b1fx/I2+Rka1aOQJiP7qiUoxr/eQ0PygihZ/ykT8jigWUauNcwxHpMCO5DmNzjeAhIgx5sgQjmuuNzRnxkUFBrJIliKoAYOsLfkkielJO6WfNKM4bnRvvwro41pyoFejOHMGBFV5nOYyh7izqAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=BK4v3r74; arc=none smtp.client-ip=209.85.166.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-86efcef9194so63331339f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jun 2025 15:17:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1748902656; x=1749507456; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=a2QWknujeW14lLIRfZtcP+1dmYSGYay6rfog0SJjymc=;
+        b=BK4v3r74kqkF4M6ZdU+2g2p0Xv/cuKXdLslyJSKmrVHEqeIUNf6hKDwnc42WnYIxfg
+         xK75xtpwoauPCt8Al1uFNuij+dPILB/csOpQyYfGLYfeFQSJH80pDinld6LI4x1qOEXf
+         cqDkvRq9gFkEHda5n7FVh0/hAqGjzcgqV+Q8s=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748902656; x=1749507456;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=a2QWknujeW14lLIRfZtcP+1dmYSGYay6rfog0SJjymc=;
+        b=gfld7cu01GD5vBt1GSRaAunj6MuFGKjOVV/SdJ5C73XyCewM385rMSdXAGoM4TGppy
+         mMSVH8i1BiXDOnJXi1VTfZBDAqpd2d781ci1l73/XwgL7Nq68HXZWh06Wfu7LtS5y277
+         jwna8KguFUCaZ/7TD3om0j3WIh5tsnTyMCL/YhyqfSxjdNIfpd4W6e1sNeW3Kw4Et6ia
+         3lZzdUb81O9lUNHjechJRQ8G13rusFe/i0P0jvt5lj394KffSoMBfQYqtGKhx/8VDnat
+         glYAVzztACjAJXjcCUKOiNh0CvJGdgKB1WrAAWcUjZXx8oHo8KRwoeaF1YBmZDmC/qSE
+         vyHw==
+X-Forwarded-Encrypted: i=1; AJvYcCVghv8ZJOA9A1HBIul6fu41smZizViKyrkfC28s8PhjZ3vBJQQBU8yrIWqTOc5RoYRfT5/9PvKfIGbUwCE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFgxAeVD5q98lt5WuY0AfTcwbDGPAYgGNgEQ/xAhzCFeKkXbZ2
+	JDtUMpZZTxHPUgd3Hk8brUWgvEBOewyFllC/yU4ihpbhxkmJVvBvRykTB0lw8SDNDEQxjFIVjxy
+	tTY83
+X-Gm-Gg: ASbGncvfcoVr2/RUpQ+CV0tPLH4PA3gpanlSbvVYnCQwl5w1QXanBTkzIBJrRRP5ozw
+	kXLNfaFb62EHUyVTPbRsCnQofrmPdTTVU7CjQjclVtVsM4rbSoxfldcY7flLMG2w7f5DwGxxUl+
+	EAW+UnWJOdWg0eZHXU3u3X71VqjcT2Y7s7SSBWQ2EvzE676p0nvBWNFnAHNG5pwvaKm/kKXrbKQ
+	/JnRARHwtuCo0JXALvgEQsp8pxSHCyKDIgT8EFMUQ8V68BJmrbcliEIB9y6AxDEt1C7MBf/8p2L
+	cmMmfsuSV41MXdXDmL+zBcstRcXTbHjX+vh7O+rG7/yGfZf9boNh1i7kM6Wn7w==
+X-Google-Smtp-Source: AGHT+IHo0xFealycsEKSTMK+zGMcC7ZgOeGW2tvBAdIjxOTYpMujokNufwJ0G96rJS43d74JdBHfZQ==
+X-Received: by 2002:a05:6602:3a07:b0:86a:93c:a721 with SMTP id ca18e2360f4ac-86d05094622mr1429654239f.2.1748902656177;
+        Mon, 02 Jun 2025 15:17:36 -0700 (PDT)
+Received: from [192.168.1.14] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4fdd7e3be98sm1863324173.60.2025.06.02.15.17.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Jun 2025 15:17:35 -0700 (PDT)
+Message-ID: <53586971-e67c-4b10-b42c-4aec8fc4fff7@linuxfoundation.org>
+Date: Mon, 2 Jun 2025 16:17:34 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250602192702.2125115-2-coltonlewis@google.com>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] selftests: ipc: Replace fail print statements with
+ ksft_test_result_fail
+To: Nick Huang <sef1548@gmail.com>, shuah@kernel.org,
+ linux-kselftest@vger.kernel.org
+Cc: usama.anjum@collabora.com, zhangjiao2@cmss.chinamobile.com,
+ linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
+References: <20250531070140.24287-1-sef1548@gmail.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20250531070140.24287-1-sef1548@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Colton,
-
-On Mon, Jun 02, 2025 at 07:26:46PM +0000, Colton Lewis wrote:
-> Add a capability for FEAT_HPMN0, whether MDCR_EL2.HPMN can specify 0
-> counters reserved for the guest.
+On 5/31/25 01:01, Nick Huang wrote:
+> Use the standard kselftest failure report function to ensure consistent
+> test output formatting. This improves readability and integration with
+> automated test frameworks.
 > 
-> This required changing HPMN0 to an UnsignedEnum in tools/sysreg
-> because otherwise not all the appropriate macros are generated to add
-> it to arm64_cpu_capabilities_arm64_features.
-> 
-> Signed-off-by: Colton Lewis <coltonlewis@google.com>
+> Signed-off-by: Nick Huang <sef1548@gmail.com>
 > ---
->  arch/arm64/kernel/cpufeature.c | 8 ++++++++
->  arch/arm64/tools/cpucaps       | 1 +
->  arch/arm64/tools/sysreg        | 6 +++---
->  3 files changed, 12 insertions(+), 3 deletions(-)
+>   tools/testing/selftests/ipc/msgque.c | 47 ++++++++++++++--------------
+>   1 file changed, 23 insertions(+), 24 deletions(-)
 > 
-> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-> index a3da020f1d1c..578eea321a60 100644
-> --- a/arch/arm64/kernel/cpufeature.c
-> +++ b/arch/arm64/kernel/cpufeature.c
-> @@ -541,6 +541,7 @@ static const struct arm64_ftr_bits ftr_id_mmfr0[] = {
->  };
->  
->  static const struct arm64_ftr_bits ftr_id_aa64dfr0[] = {
-> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64DFR0_EL1_HPMN0_SHIFT, 4, 0),
->  	S_ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64DFR0_EL1_DoubleLock_SHIFT, 4, 0),
->  	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64DFR0_EL1_PMSVer_SHIFT, 4, 0),
->  	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64DFR0_EL1_CTX_CMPs_SHIFT, 4, 0),
-> @@ -2884,6 +2885,13 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
->  		.matches = has_cpuid_feature,
->  		ARM64_CPUID_FIELDS(ID_AA64MMFR0_EL1, FGT, FGT2)
->  	},
-> +	{
-> +		.desc = "Hypervisor PMU Partitioning 0 Guest Counters",
 
-nit: just use the the FEAT_xxx name for the description (i.e. "HPMN0").
+Looks good to me. I will apply this after merge window closes.
 
-Thanks,
-Oliver
+thanks,
+-- Shuah
 
