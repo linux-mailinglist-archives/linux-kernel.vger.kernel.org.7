@@ -1,96 +1,146 @@
-Return-Path: <linux-kernel+bounces-671100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 715A1ACBCD9
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 23:57:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B31CACBCDB
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 23:59:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 315F83A547B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 21:57:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8934165C61
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 21:59:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B4EF24DCEC;
-	Mon,  2 Jun 2025 21:57:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AD6224DD06;
+	Mon,  2 Jun 2025 21:59:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jnWkyvoP"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gcJogw9+"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CD342629D
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 21:57:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3210824DCF4
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 21:59:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748901451; cv=none; b=HEcwMp/ugw5cRwDmCASpOmhYgs1j1XoVATSE1gevEl5K2NL9xzJcWAbs0xiqz4WE3w8hDu9IyziECNJ0/xg0I1CCWw3BZnMkL1oe634LMRVlDa1IIeFyQZN0dj8yVIvqsq4CljMh4tfY5smHLtmcs8WpBOdYCqAWmL5kH6PsJsA=
+	t=1748901551; cv=none; b=ZkOb3clBKU7x6wBki9pfioldQ6mhR8bHzuMx7bD82/1AzogsDU7cy4kLTUqqqxGwi32aeb14537jVX5Y67kUu6f1HUWkkspu1mUD1rOdJLMUS0nSYiOEOSEtcVM2nq7P68Fz+AsxJErYpwyplZvOtEJHJ9BCY6TQJcRyJmbsvSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748901451; c=relaxed/simple;
-	bh=Avxk7uiGDcVdibBzpTBCMITiGYiAjLULDMdnkWXuTEA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H3epYYII+b2jJxec6DseF/iykJ9lKLhjBi2SORFf+RiCgj2EdIPX8SUYYPIrR6PcXUHjs20VKIFfvl7Id1iaP2B0a4jIItEVkhAQtQnJsl9ZaFmHhXiUH4Knrlm/12d9gjgdfvWNsCymRpqcx+pFLiXqBHDE/tS/Xl8Nhe9CMyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=jnWkyvoP; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=D3wetvgdNNMOwVxl4hVBjZDppgpQ6Ns+o6HpYvOnbHs=; b=jnWkyvoPYDC4XJWQk5EzwthWdd
-	Sg8Vk86hC3GQDxxHYrIowD7m5fsNBUt+YEDM5VKg8VduFdB4LXcxKcgM6Z3zrNlAiXCqGDW+HhS/i
-	u0iHBmRd+hPI1NyQCJ8+EVZrVXIWA4nwcMmAYlP7GJGq4+gxJbOwjQHABtHZTBDm/QSNKyDJ4qJKA
-	yhIyVlp6egEWLYaQUiAZzrKqh+6J6MRk+CmSsu0WRkR1y3bgQCjQ2EUMr/M3G6fNnP18kMjU+U4R2
-	QP6Kw1lDFi1KwywG8tOPgfXpTrIUK1HGih0yDaApH6sO+Qtxwjpas9dPF/N34JSOzspge2YRRrC83
-	aReWtzZw==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uMD9q-00000001Moo-20qh;
-	Mon, 02 Jun 2025 21:57:26 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id CCDDC300787; Mon,  2 Jun 2025 23:57:25 +0200 (CEST)
-Date: Mon, 2 Jun 2025 23:57:25 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Linus Torvalds <torvalds@linuxfoundation.org>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, kees@kernel.org,
-	acarmina@redhat.com, jpoimboe@kernel.org, mark.rutland@arm.com
-Subject: Re: [RFC 6/8] x86_64/bug: Implement __WARN_printf()
-Message-ID: <20250602215725.GA39782@noisy.programming.kicks-ass.net>
-References: <20250602144201.301974933@infradead.org>
- <20250602144755.928750774@infradead.org>
- <CAHk-=whkD=pveK6X_5gtVbJ62+86oBOr9JokneYpSJyxjHFBpQ@mail.gmail.com>
- <20250602154943.GB30486@noisy.programming.kicks-ass.net>
- <CAHk-=wiYHv2duN1Aj3E5UD3zH=z6A9YpGJ1Mxj_CWL7_FRMKgw@mail.gmail.com>
+	s=arc-20240116; t=1748901551; c=relaxed/simple;
+	bh=Uq9DQhTBlwgkIbB9t2H8Mj9IDlkH0ESm4U+MMqQIJRk=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=G7pYIeWwbvBeLINye9sgLVN7g98JLDnKHNKa3mzUBPfqG0WP32UPj9pXdrMJEJ3fb9JpVKMEilx9G7KbIK18zBVmZgKvIqb7WzWomQVskzeSZsph+Xi82RcMkC/AVL697Nwak0tRGasLS245QSWg7V6Kc5PNNQ2ejfQC8zRZ3jA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gcJogw9+; arc=none smtp.client-ip=209.85.210.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-73bfc657aefso3471147b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jun 2025 14:59:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1748901549; x=1749506349; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9QhFqKOR2kUc+mUo1rVAi0osS9Bm5VIMXg1evYyHe/E=;
+        b=gcJogw9+DWW4WxPQ2fx8tZUWMvCS1ppKXOCcJqqbQ2gSF6/hnW37W+j1DKgY2W+ywV
+         nnVi81t7mH6rubq8bFjySwV4zgNFfWWx4cdXXwMuO+PsXfaMn+9Zh9huKzzcPV5e3WEd
+         155kWrvZnyCHh4cPcoBizwIwq5RWh0kLNJt3AAmcIEZGH9GvpPT8sft/604zd1kS9uw+
+         ErH76Hgy1TJDdVlnDEi6GnkA9ke0Xe+URjManbuwbsUYt0fTYXlZEhmpTR2+q0IzhLzG
+         gicuqsCnipomRtxOAk4+UU4QDI4XuBC2DhD9NepzwEV9zPTKieHnKMS4ofHKfNzx8pYo
+         siIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748901549; x=1749506349;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9QhFqKOR2kUc+mUo1rVAi0osS9Bm5VIMXg1evYyHe/E=;
+        b=S3RK7PI8FppPOK+abjA7eJRfT4VMcByWIG6Cwr2tvUy8cDzofA71onybb/NXGmZLuy
+         kUtvM03H0mTpe3B14vBSekdgZsS95Wn/6W7uCnDwl4UvRyEX0KxL7mYB8Q+20V8n6EOK
+         GO0O4CZfoQgyXLIh9qegF6MIXRwJ++YT4jzxVqXoZNf7nxep5Y+wmMsAlXT0jR75H1/O
+         tOLPHdJn228KfY1590vGZKnH9VARBMVMNpHfel3PSyNA0my2dE9IqUYNSxFO93Y32JsS
+         WpKTM0fO/QA26JRrls/L8WPX9RrMRJf+2cfWoWWFJ6vEIJChslKYGWqrq5I0JfM4cByR
+         oRyg==
+X-Forwarded-Encrypted: i=1; AJvYcCX0e+Fokm+ONDr7F+W8FDal9lba86j4/wZ9iAzb+r0ecaVx3lhS2B2J1P55PYEj1HnHD4GIw+aVckaTfw4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyM1kc9flQ/NiD22DuLgknfnJa4iV75GnF050aNLQkXGfmlvnJw
+	rfM6MtrYJWg90ZIjh+/0NyP5Rmzmou5vGW8mT+0SeE/sjwPGZxVkc91Sf+gcczDO6eeWxiVaPMH
+	mIu2HTw==
+X-Google-Smtp-Source: AGHT+IG/GylPU+EY1o8XPm4YfEWI7SwzwPYH9j1avW8aqFxashcL73XjO9G4c/63vKt1A0SaKoI+30XGpcg=
+X-Received: from pfjg6.prod.google.com ([2002:a05:6a00:b86:b0:747:a049:d575])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:986:b0:736:450c:fa54
+ with SMTP id d2e1a72fcca58-747d1831e8amr11523980b3a.6.1748901549480; Mon, 02
+ Jun 2025 14:59:09 -0700 (PDT)
+Date: Mon, 2 Jun 2025 14:59:08 -0700
+In-Reply-To: <9a64d394-e693-49fe-887b-3e4fa0f70878@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wiYHv2duN1Aj3E5UD3zH=z6A9YpGJ1Mxj_CWL7_FRMKgw@mail.gmail.com>
+Mime-Version: 1.0
+References: <20250523010004.3240643-1-seanjc@google.com> <20250523010004.3240643-39-seanjc@google.com>
+ <9a64d394-e693-49fe-887b-3e4fa0f70878@amd.com>
+Message-ID: <aD4erDTWk2VUIldC@google.com>
+Subject: Re: [PATCH v2 38/59] iommu/amd: KVM: SVM: Infer IsRun from validity
+ of pCPU destination
+From: Sean Christopherson <seanjc@google.com>
+To: Sairaj Kodilkar <sarunkod@amd.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Joerg Roedel <joro@8bytes.org>, 
+	David Woodhouse <dwmw2@infradead.org>, Lu Baolu <baolu.lu@linux.intel.com>, kvm@vger.kernel.org, 
+	iommu@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	Vasant Hegde <vasant.hegde@amd.com>, Maxim Levitsky <mlevitsk@redhat.com>, 
+	Joao Martins <joao.m.martins@oracle.com>, Francesco Lavra <francescolavra.fl@gmail.com>, 
+	David Matlack <dmatlack@google.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On Mon, Jun 02, 2025 at 09:38:09AM -0700, Linus Torvalds wrote:
-
-> And no, I'm not ok with only using 'objdump' and friends to look at
-> assembly generation. I want to be able to do
+On Fri, May 30, 2025, Sairaj Kodilkar wrote:
+> On 5/23/2025 6:29 AM, Sean Christopherson wrote:
+> > Infer whether or not a vCPU should be marked running from the validity of
+> > the pCPU on which it is running.  amd_iommu_update_ga() already skips the
+> > IRTE update if the pCPU is invalid, i.e. passing %true for is_run with an
+> > invalid pCPU would be a blatant and egregrious KVM bug.
+> > 
+> > Tested-by: Sairaj Kodilkar <sarunkod@amd.com>
+> > Signed-off-by: Sean Christopherson <seanjc@google.com>
+> > ---
+> >   arch/x86/kvm/svm/avic.c   | 11 +++++------
+> >   drivers/iommu/amd/iommu.c | 14 +++++++++-----
+> >   include/linux/amd-iommu.h |  6 ++----
+> >   3 files changed, 16 insertions(+), 15 deletions(-)
+> > 
+> > diff --git a/arch/x86/kvm/svm/avic.c b/arch/x86/kvm/svm/avic.c
+> > index 4747fb09aca4..c79648d96752 100644
+> > --- a/arch/x86/kvm/svm/avic.c
+> > +++ b/arch/x86/kvm/svm/avic.c
+> > @@ -832,7 +832,7 @@ int avic_pi_update_irte(struct kvm_kernel_irqfd *irqfd, struct kvm *kvm,
+> >   		entry = svm->avic_physical_id_entry;
+> >   		if (entry & AVIC_PHYSICAL_ID_ENTRY_IS_RUNNING_MASK)
+> >   			amd_iommu_update_ga(entry & AVIC_PHYSICAL_ID_ENTRY_HOST_PHYSICAL_ID_MASK,
+> > -					    true, pi_data.ir_data);
+> > +					    pi_data.ir_data);
+> >   		irqfd->irq_bypass_data = pi_data.ir_data;
+> >   		list_add(&irqfd->vcpu_list, &svm->ir_list);
+> > @@ -841,8 +841,7 @@ int avic_pi_update_irte(struct kvm_kernel_irqfd *irqfd, struct kvm *kvm,
+> >   	return irq_set_vcpu_affinity(host_irq, NULL);
+> >   }
+> > -static inline int
+> > -avic_update_iommu_vcpu_affinity(struct kvm_vcpu *vcpu, int cpu, bool r)
+> > +static inline int avic_update_iommu_vcpu_affinity(struct kvm_vcpu *vcpu, int cpu)
+> >   {
 > 
->    make xyz.s
+> Hi sean
 > 
-> and look at code generation without throwing up.
+> What if define cpu as "unsigned int" instead of "int" and use nr_cpu_ids
+> as invalid cpu id ? I see that it is common in the other subsystems to
+> use nr_cpu_ids instead of -1.
 
-So if I stuff the asm macro in a global asm() block then GCC ends up
-looking like so:
+My vote is for -1, as it makes the KVM side of things much more intuitive
 
-        .set warn_imm, 0
-        warn_add_reg var=warn_imm reg=%rcx      # tmp215
-        .set warn_imm, (warn_imm << 4)
-        warn_add_reg var=warn_imm reg=%rdx      # tmp212
-        1: ud1 warn_imm(%ecx),%rax      # tmp210
-        .pushsection .discard.annotate_insn,"M",@progbits,8
-        .long 1b - .
-        .long 8
-        .popsection
-        .pushsection __bug_table, "aw" ; 123: .long 1b - . ; .long .LC76 - . ; .long .LC0 - . ; .word 8710 ; .word 2321 ; .org 123b + 6 + 4 + 6 ; .popsection   #,,,
+E.g. this is pretty obviously saying "no associated CPU"
 
-However, clangd is 'helpful' and fully expands the asm macro for the .s
-file :-(
+  avic_update_iommu_vcpu_affinity(vcpu, -1);
+
+whereas this honestly just looks a bit weird.
+ 
+  avic_update_iommu_vcpu_affinity(vcpu, nr_cpu_ids);
+
+It also requires knowing what cpu numbers are strictly packed in the kernel, i.e.
+that nr_cpu_ids is guaranteed to be greater than the cpu numbers themselves (e.g.
+the the kernel can't have nr_cpu_ids=2 with CPU0 and CPU2 being the two CPUs).
+
+I also don't love that nr_cpu_ids is __read_mostly, i.e. isn't const post-boot
+(though at a glance, it looks like it could be __ro_after_init on x86 at least).
 
