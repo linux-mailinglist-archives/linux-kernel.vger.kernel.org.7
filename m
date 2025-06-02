@@ -1,218 +1,192 @@
-Return-Path: <linux-kernel+bounces-670647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12A86ACB529
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 17:00:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7DF0ACB431
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 16:49:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0942B3B9F2C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 14:45:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 067B17B0442
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 14:45:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2C5B22B5A1;
-	Mon,  2 Jun 2025 14:40:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C6DF22F744;
+	Mon,  2 Jun 2025 14:41:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ypb4bw7B"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="eieLBwZa"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55CB422A804
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 14:40:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748875225; cv=none; b=I5x4O++FaYhH+hIfkc0XKt8/2MQ6xq7sOKYJpRvBjOOsr4i/0AtuiAmgTa6VzspdOwfO4lfzAtyBsnZO63e2g+WoO4n6fzejkJQRnwbDKxiDfUNIsRwVUnNsg1kY2soVHzK676MEFAHmk7YrrQw7VofBpbGu4aI8UXVx2iyKd9o=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748875225; c=relaxed/simple;
-	bh=UbnBn8tfT8ZcbdT68ZGxa26CWg9/x3KXlIYEipLgrI0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QUjoS+xV9bshAVUuKjmrbR8fenlPncI3mf+HkjEqYBvRYhh3iCNAR1ojmnZvQcx/9ophvpAzIF2MRmWZukCJPJj/T+/JcahgEmkq1LdOqTVVISRzf2imx/MwQcIrd8vQz5g5Z43BmEr908VIJwtzjM1txQFDTjOqZQeDz4KG1RU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ypb4bw7B; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-606741e8e7cso1342830a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jun 2025 07:40:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1748875220; x=1749480020; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=17rjv0YNoJkKo4gi7+hBtlZzTO2nh7fXG9npkl5iBe0=;
-        b=ypb4bw7BDk5lod1eAVVXHhi66xQnNoJrLueg/if97h4MqWAA4bUkSpIYYTC5ckZSJK
-         sov3vK+k2RLlZ7Lr8MYEYuk9xibZPogERiBIKn9h6yvuCooK5eymr8kdUJPYlhQ5k3N1
-         bmzQ6i6gLMx7iYRRTHZQqJGjlFXvzUIA8GpPkkIqg3go4z24esDuj9yBmbw1YVlhp1zP
-         BiRujM5ClKzTm/kAFMUgx0kJ5oQvQoZZMSEsAS3JRZT+/Q75U9CbUnf2YG9SFJIlKxsC
-         aabXg1Bu8atu6kvIoWG7ZJxtm/JRELjc8/xC+DzjSZZnbdV0cgUp8unfLm0xO5Pe90Pg
-         NCWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748875220; x=1749480020;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=17rjv0YNoJkKo4gi7+hBtlZzTO2nh7fXG9npkl5iBe0=;
-        b=TMwQk9J4NV6dNg2pTrmDVyfCevqQ1UguXmwXZUh4AObF3JbQ4M9z8io/t74kvtRENO
-         zM1/e8EqIDM64YIOTfy7f49NZqjaWPNoj470juGqO1gs+8oyML7+CaRo3vrbjqhS9r9G
-         izx7Rpqqic5YDUG7VqYWzKCAgIdzZxle5gpl8y9CtdyIjuAcpIJRftIyAge1fG1QtxJn
-         gczkUiP65yWovlQI4sBk5SxzM8DGMmNfeJEkUCv+PB1ONNQ9TwUz/x7kjz0s8CNhoEWq
-         bY+o01TATmw3yMi3+CFPHu572x67EX+L3jLyXXvyyOqADUCgZuOeYB5E5dcXZkYa+yGt
-         kO1A==
-X-Forwarded-Encrypted: i=1; AJvYcCWyRQB8jroQDzSB1eQWUNbNE5P2v++xfFmM/mL6RPefbfo3Gk6e3HbDbpk3jHkYwgCl20Wd5U4SJYTaUZg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiK4bslesy0FgQtEuDgFQijyNeGWone9lb2yRvYJWlPReDbWKX
-	+P/nne5tiojBImMZhIf/LfjvW+CD2PLpElZn6FHoohVSjAmpdrmr4sj+YjG06ghqKCU=
-X-Gm-Gg: ASbGncsQczCXBPtxfvFg2GIgBw+aceXERJy2plCPD8adqE1EdPRe/Wbrc/b1yvfycPD
-	9DVX99P0pT8tOmZcUwLWca+Oq22e4+lk8zUiuJ7PYqwznhajtnvHwfVNj9kK8xIfebbgSbjhbqy
-	x9Emv0CuTqpoSIjrvuj4Ld73rBEleRTfo0NQ+hf3fMoQGpNQX/MG/fpsC4iUhqRHFHVmMjiX4Zi
-	droBRqsVfvtuXYs2MvFGSDUQ4egs3HA2bPgALaJUpqOaOiAXK0eRsIJ7PWclSMV9qoV9R50LqbF
-	YhwseKZm4rz6cLHO8fMPcUgDeY1NhyZck/oqo+jGGtodqYG9DLW6wA3uVTvnNibrZ2tXWQ==
-X-Google-Smtp-Source: AGHT+IEyvvmQFAXI+47qMTgwD54rEnxkNOV+WVE+6umaVq7qvzVjKK+BHzDrSujJ8RzHfqtedkxN2Q==
-X-Received: by 2002:a05:6402:13cb:b0:604:d739:614a with SMTP id 4fb4d7f45d1cf-6056dd3b514mr11273412a12.12.1748875220460;
-        Mon, 02 Jun 2025 07:40:20 -0700 (PDT)
-Received: from [192.168.0.14] ([79.115.63.75])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60566c75aebsm6269024a12.46.2025.06.02.07.40.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Jun 2025 07:40:20 -0700 (PDT)
-Message-ID: <a56284a4-755d-4eb4-ba77-9ea30e18d08f@linaro.org>
-Date: Mon, 2 Jun 2025 15:40:18 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C439320E6E3;
+	Mon,  2 Jun 2025 14:41:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748875298; cv=pass; b=jI0yZ03b7d+sGlkH0/R/G28h6Mf6a6bl9oqxGJth9N6fOORPeSJIvs+9Zt8vNwqqNVB4n96qbdW4J6DaBnkcXFJttcqa0NL6xuZY8nn4Ng5P2o68lNusP83D1CcoX0rp4cs4AjGgW0RP11RVj0Cv49jhs3k+B0Nq00AecFuO5v8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748875298; c=relaxed/simple;
+	bh=5WVenTmoa5TTU/MD1JJjX5B70QxApWgt4Q80ak6CXgs=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=WDXoXI4mI5J/eFjHwZtaL9g7EjVXdh3VPbfx0S20+gPW67iOwdVC5SU9b2Z7JBCx5aMzIDConQ6yM2ODJ8hxvgD4+t6jRCvS/J1kP2eLkbOh4C7wxGoaUJTCi/0ACrHJi5DtpVrvWq2ribFxnw9fGRzZ5cV1JA7G5/3RQy1H4ns=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=eieLBwZa; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1748875262; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=IurCQZowWQ7DVk1aMDNPnhleQ1UnlpzoqmVWwf8tAg+uB+YlWupn9JlNkBlSbM8a1AURbgXewqYpYvdIflQzsI+kcbMCYUdp+fmeoC7OaT062MbzDOF0Pk3ADzmWh42wA29+Q5EjQKVSnbHmBLsKcH20ZatIAddBCDl3LJWgYtA=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1748875262; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=yAP4nEvzkvKipuKZ8I4LuAwMeif0jM6XM9ojDsGXtFI=; 
+	b=IVNaUHnZMj8Mwt4VQwtQzNHurkB1sgd1ZsPE2FIK2IYEPG6ZWoJXu70C7QnTc2tAecVeM3hOmc1hjO1nZdQWsxLYQnWKQi2m2jME8wM6nk31T7BqsFkrtLrCE7EwaRDH15gQHbnQmm6/D6mkQAyyn9zBz/+wJTsCFeMicU1PQd4=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1748875262;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=yAP4nEvzkvKipuKZ8I4LuAwMeif0jM6XM9ojDsGXtFI=;
+	b=eieLBwZajIX02Bc3fZGX5e58OdEu9b9KW7QVC1Pg8DxoegVKYr/hMfj0eSWWak0T
+	N95LY60N8fxy3YCv2Tg5iYJE331lDstw+88vEhG9pzoJ8m6r92HZI+3nS6vP8gvEEr2
+	bgXq1u792FLzmUq5yrIxnuASB1Ixb+s0kl30D6X8=
+Received: by mx.zohomail.com with SMTPS id 1748875259269248.6443780135536;
+	Mon, 2 Jun 2025 07:40:59 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 24/25] PCI: Perform reset_resource() and build fail list
- in sync
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
- =?UTF-8?Q?Micha=C5=82_Winiarski?= <michal.winiarski@intel.com>,
- Igor Mammedov <imammedo@redhat.com>, LKML <linux-kernel@vger.kernel.org>,
- Mika Westerberg <mika.westerberg@linux.intel.com>,
- William McVicker <willmcvicker@google.com>
-References: <20241216175632.4175-1-ilpo.jarvinen@linux.intel.com>
- <20241216175632.4175-25-ilpo.jarvinen@linux.intel.com>
- <5f103643-5e1c-43c6-b8fe-9617d3b5447c@linaro.org>
- <8f281667-b4ef-9385-868f-93893b9d6611@linux.intel.com>
- <3a47fc82-dc21-46c3-873d-68e713304af3@linaro.org>
- <f6ee05f7-174b-76d4-3dbe-12473f676e4d@linux.intel.com>
- <867e47dc-9454-c00f-6d80-9718e5705480@linux.intel.com>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <867e47dc-9454-c00f-6d80-9718e5705480@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH v3 1/2] rust: irq: add support for request_irq()
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <aCXxnUdO8--5y8Zo@pollux>
+Date: Mon, 2 Jun 2025 11:40:43 -0300
+Cc: Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <1FCFF2CD-9CF1-4716-AFDA-78A5AFAF113F@collabora.com>
+References: <20250514-topics-tyr-request_irq-v3-0-d6fcc2591a88@collabora.com>
+ <20250514-topics-tyr-request_irq-v3-1-d6fcc2591a88@collabora.com>
+ <aCUQ0VWgoxdmIUaS@pollux>
+ <A7E3A124-AF77-4A4A-B4E2-AE7DDB1CE007@collabora.com>
+ <aCXYaCGvO_tI1OOh@pollux>
+ <39C56E3E-07C6-44BB-B5F6-38090F037032@collabora.com>
+ <aCXh1g5FWNiz7exb@pollux>
+ <BEDD659F-B222-4150-9018-3B59126140E6@collabora.com>
+ <aCXv86nAARGgoqEq@pollux> <aCXxnUdO8--5y8Zo@pollux>
+To: Danilo Krummrich <dakr@kernel.org>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
+X-ZohoMailClient: External
 
+Danilo,
 
+> On 15 May 2025, at 10:52, Danilo Krummrich <dakr@kernel.org> wrote:
+>=20
+> On Thu, May 15, 2025 at 03:45:28PM +0200, Danilo Krummrich wrote:
+>> On Thu, May 15, 2025 at 10:16:33AM -0300, Daniel Almeida wrote:
+>>>=20
+>>>>>=20
+>>>>> Well, not really, because this impl PinInit can be assigned to =
+something larger
+>>>>> that is already pinned, like drm::Device::Data for example, which =
+is (or was)
+>>>>> already behind an Arc, or any other private data in other =
+subsystems.
+>>>>>=20
+>>>>> IIUC what you proposed has yet another indirection. If we reuse =
+the example
+>>>>> from above, that would be an Arc for the drm Data, and another Arc =
+for the
+>>>>> handler itself?
+>>>>=20
+>>>> Can't you implement Handler for drm::Device::Data and e.g. make =
+Registration
+>>>> take an Arc<T: Handler>?
+>>>=20
+>>> No, because drivers may need more than one handler. Panthor needs 3, =
+for
+>>> example, for 3 different lines.
+>>>=20
+>>>>=20
+>>>> The irq::Registration itself doesn't need to be allocated =
+dynamically, so it'd
+>>>> still be a single allocation, no?
+>>>>=20
+>>>=20
+>>> Right, the registrations don't, but the handlers do.
+>>=20
+>> Why does the handler need to be allocated dynamically?
+>>=20
+>> What about something like the following?
+>>=20
+>> pub struct Registration<T, H: Handler<T>> { ... };
+>>=20
+>> pub trait Handler<T> {
+>>   fn handle_irq(&T) -> IrqReturn;
+>> }
+>>=20
+>> // Could be `drm::Device::Data`.
+>> struct MyData { ... };
+>>=20
+>> // Implements `Handler<MyData>`.
+>> struct IRQHandler1;
+>> struct IRQHandler2;
+>>=20
+>> // `data` is `Arc<MyData>`
+>> irq::Registration::<IRQHandler1>::new(data, ...);
+>> irq::Registration::<IRQHandler2>::new(data, ...);
+>>=20
+>> With that you can have as many IRQs as you want without any =
+additional
+>> allocation.
+>=20
+> Alternatively we could also do the following, which is probably =
+simpler.
+>=20
+> pub struct Registration<H: Handler> { ... };
+>=20
+> pub trait Handler {
+>   fn handle_irq(&self) -> IrqReturn;
+> }
+>=20
+> // Could be `drm::Device::Data`.
+> struct MyData { ... };
+>=20
+> // Implements `Handler`.
+> struct IRQHandler1(Arc<MyData>);
+> struct IRQHandler2(Arc<MyData>);
+>=20
+> // `data` is `Arc<MyData>`
+> let handler1 =3D IRQHandler1::new(data);
+> let handler2 =3D IRQHandler2::new(data);
+>=20
+> irq::Registration::new(handler1, ...);
+> irq::Registration::new(handler2, ...);
+>=20
 
-On 5/30/25 3:48 PM, Ilpo Järvinen wrote:
->>> I added the suggested prints
->>> (https://paste.ofcode.org/DgmZGGgS6D36nWEzmfCqMm) on top of v6.15 with
->>> the downstream PCIe pixel driver and I obtain the following. Note that
->>> all added prints contain "tudor" for differentiation.
->>>
->>> [   15.211179][ T1107] pci 0001:01:00.0: [144d:a5a5] type 00 class
->>> 0x000000 PCIe Endpoint
->>> [   15.212248][ T1107] pci 0001:01:00.0: BAR 0 [mem
->>> 0x00000000-0x000fffff 64bit]
->>> [   15.212775][ T1107] pci 0001:01:00.0: ROM [mem 0x00000000-0x0000ffff
->>> pref]
->>> [   15.213195][ T1107] pci 0001:01:00.0: enabling Extended Tags
->>> [   15.213720][ T1107] pci 0001:01:00.0: PME# supported from D0 D3hot
->>> D3cold
->>> [   15.214035][ T1107] pci 0001:01:00.0: 15.752 Gb/s available PCIe
->>> bandwidth, limited by 8.0 GT/s PCIe x2 link at 0001:00:00.0 (capable of
->>> 31.506 Gb/s with 16.0 GT/s PCIe x2 link)
->>> [   15.222286][ T1107] pci 0001:01:00.0: tudor: 1: pbus_size_mem: BAR 0
->>> [mem 0x00000000-0x000fffff 64bit] list empty? 1
->>> [   15.222813][ T1107] pci 0001:01:00.0: tudor: 1: pbus_size_mem: ROM
->>> [mem 0x00000000-0x0000ffff pref] list empty? 1
->>> [   15.224429][ T1107] pci 0001:01:00.0: tudor: 2: pbus_size_mem: ROM
->>> [mem 0x00000000-0x0000ffff pref] list empty? 0
->>> [   15.224750][ T1107] pcieport 0001:00:00.0: bridge window [mem
->>> 0x00100000-0x001fffff] to [bus 01-ff] add_size 100000 add_align 100000
->>>
->>> [   15.225393][ T1107] tudor : pci_assign_unassigned_bus_resources:
->>> before __pci_bus_assign_resources -> list empty? 0
->>> [   15.225594][ T1107] pcieport 0001:00:00.0: tudor:
->>> pdev_sort_resources: bridge window [mem 0x00100000-0x001fffff] resource
->>> added in head list
->>> [   15.226078][ T1107] pcieport 0001:00:00.0: bridge window [mem
->>> 0x40000000-0x401fffff]: assigned
->> So here it ends up assigning the resource here I think.
->>
->>
->> That print isn't one of yours in reassign_resources_sorted() so the 
->> assignment must have been made in assign_requested_resources_sorted(). But 
->> then nothing is printed out from reassign_resources_sorted() so I suspect 
->> __assign_resources_sorted() has short-circuited.
->>
->> We know that realloc_head is not empty, so that leaves the goto out from 
->> if (list_empty(&local_fail_head)), which kind of makes sense, all 
->> entries on the head list were assigned. But the code there tries to remove 
->> all head list resources from realloc_head so why it doesn't get removed is 
->> still a mystery. assign_requested_resources_sorted() doesn't seem to 
->> remove anything from the head list so that resource should still be on the 
->> head list AFAICT so it should call that remove_from_list(realloc_head, 
->> dev_res->res) for it.
->>
->> So can you see if that theory holds water and it short-circuits without 
->> removing the entry from realloc_head?
-> I think I figured out more about the reason. It's not related to that 
-> bridge window resource.
-> 
-> pbus_size_mem() will add also that ROM resource into realloc_head 
-> as it is considered (intentionally) optional after the optional change
-> (as per "tudor: 2:" line). And that resource is never assigned because 
+I am trying to implement this, but isn't this what we have already?
 
-right, the ROM resource is added into realloc_head here:
-https://web.git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/pci/setup-bus.c#n1202
+I guess the only difference would be removing the handler() accessor, as =
+the
+caller is now expected to figure this part out on his own, i.e.:
 
-Then in the failing case, and extra resource is added:
-[   15.224750][ T1107] pcieport 0001:00:00.0: bridge window [mem
-0x00100000-0x001fffff] to [bus 01-ff] add_size 100000 add_align 100000
+In your example (IIUC) that would mean accessing the Arc in IRQHandler1
+and IRQHandler2 through some other clone and from the actual T:Handler =
+in
+the callback.
 
-The above extra print happens just in the failing case. Here's where the
-extra resource is added:
-https://web.git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/pci/setup-bus.c#n1285
-
-It seems that in the failing case 2 resources are added into
-realloc_head at the pbus_size_mem() time, whereas with the patch
-reverted - none.
-
-Also, in the failing case a smaller resource is added into the list:
-pdev_sort_resources: bridge window [mem 0x00100000-0x001fffff]
-compared to the working case:
-pdev_sort_resources: bridge window [mem 0x00100000-0x002fffff]
-
-Can this make a difference?
-
-> pdev_sort_resources() didn't pick it up into the head list. The next 
-> question is why the ROM resource isn't in the head list.
-> 
-
-It seems the ROM resource is skipped at:
-https://web.git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/pci/setup-bus.c#n175
-
-tudor: pdev_sort_resources: ROM [??? 0x00000000 flags 0x0] resource
-skipped due to !(r->flags) || r->parent
-
-> 
-> While it is not necessarily related to issue, I think the bridge sizing 
-> functions too should consider pdev_resources_assignable() so that it
-> won't ever add resources from such devices onto the realloc_head. This is 
-> yet another small inconsistency within all this fitting/assignment logic.
-> 
-> pbus_size_mem() seems to consider IORESOURCE_PCI_FIXED so that cannot 
-> explain it as the ROM resource wouldn't be on the realloc_head list in 
-> that case.
-> 
-> 
-> Just wanted to let you know early even if I don't fully understand 
-> everything so you can hopefully avoid unnecessary debugging.
-
-Thanks! Would adding some prints in pbus_size_mem() to describe the code
-paths in the working and non-working case help?
-
-Cheers,
-ta
-
+=E2=80=94 Daniel=
 
