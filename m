@@ -1,216 +1,140 @@
-Return-Path: <linux-kernel+bounces-670924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BB79ACBAD8
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 20:11:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C8EAACBAC8
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 20:07:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E24684002EA
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 18:11:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DE4E3BF458
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 18:07:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17CB0227E97;
-	Mon,  2 Jun 2025 18:11:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BA8C227BA4;
+	Mon,  2 Jun 2025 18:07:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fmSQW/5Z"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="LtRnSrFM"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E166EAF9;
-	Mon,  2 Jun 2025 18:11:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1362017B402
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 18:07:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748887872; cv=none; b=Iw1PfzlIpbWW2nq5xiVxGssu64okMRlooilb/nE7/vGv8CS1a13VMVVdwP2cKQyB27G4Y5/08p/DxJ6gjnVvu6wW9dySlaLjemU5rkZKCVJctHYelYv6Lz7hZn+lWqPSF1F2tN+yzUgchAVXDIqnx+E1oNy/eHMIqD41bmOcpqM=
+	t=1748887645; cv=none; b=ePhEDKkgf8idhGGhEhAf98aZN/7QAQFu9c/YnYcOaNlu0j/kE27M9qOM2DGOxLPVSuL9sbMwNgV4Ll0c362OWifDZC7SfRxE+/RuLUVudQhJLZ9lgN+/K3RfJpotu6wZo5DbJ464CbPm3Cnd2pADLdImoKb/8z4HK8aYKEuq4yU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748887872; c=relaxed/simple;
-	bh=30U5FrzZe477PkMourbldSSCDpz4fRDaC700uOnf3C0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FV1qs+I8v7408En5xYve6KejJtMYw+9+POj8dNFMRQW4y6WF9pyoo1N5DCYVvjOMcA0ny2OjXaJNUPhWubN/QcCiDXj3ECj34ZrtUSKChyUfRZkkABwPd/I2xJ7WE12BT22832FNpYWPY0Xv4XA+dx60MEmMf/6GvCUYdvI1o0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fmSQW/5Z; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1748887871; x=1780423871;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=30U5FrzZe477PkMourbldSSCDpz4fRDaC700uOnf3C0=;
-  b=fmSQW/5ZVmnMp5slep4QinOaqcZjzpm4c4TKX1SinJezIVG/Z/aOJJZW
-   C3k0xzSKuvArrDK70JCWs4AXwUdRd7GGqCULxHnjs0xzX5+a+DvbegBuC
-   JpK1tTojevQjKbi070x6IXBqxLcD7ZMmWqWQ+53Nn/BVjj/+CrRo4KRp9
-   lZGHi0Bbn5z8viq+1BsxZQhNXck99FQ8heEvzyL6CAV9itYegZ74l1JR3
-   zDZfHc7rqhBdmu2DUEXd7jxZQ7W0cG75UWk/baTbLBHhNegXoIeW757mx
-   O/MH/BCtyYsSnAO7m+XOanmOt2M9XkWSxvqe9HDWLjgnZKUzHNji3zH8j
-   g==;
-X-CSE-ConnectionGUID: DFLFctPOQiSFkgCBQxHYnA==
-X-CSE-MsgGUID: X6wdajwUS/yz3qxThmtmtQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11451"; a="50770704"
-X-IronPort-AV: E=Sophos;i="6.16,204,1744095600"; 
-   d="scan'208";a="50770704"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2025 11:11:10 -0700
-X-CSE-ConnectionGUID: rmcKHSDgT8WBm+xG+YxC8w==
-X-CSE-MsgGUID: OZrs+IS/S4yOMpwDesH9+Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,204,1744095600"; 
-   d="scan'208";a="148467703"
-Received: from fdefranc-mobl3.ger.corp.intel.com (HELO fdefranc-mobl3.localnet) ([10.245.246.244])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2025 11:11:04 -0700
-From: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
-To: Yazen Ghannam <yazen.ghannam@amd.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Davidlohr Bueso <dave@stgolabs.net>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Dave Jiang <dave.jiang@intel.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>,
- Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
- Oliver O'Halloran <oohall@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>,
- Tony Luck <tony.luck@intel.com>, Borislav Petkov <bp@alien8.de>,
- linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
- linux-cxl@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- linux-pci@vger.kernel.org, linux-edac@vger.kernel.org
-Subject: Re: [PATCH 4/4 v2] ACPI: extlog: Trace CPER CXL Protocol Errors
-Date: Mon, 02 Jun 2025 20:06:28 +0200
-Message-ID: <2947754.vYhyI6sBWr@fdefranc-mobl3>
-In-Reply-To: <20250429182055.GB76257@yaz-khff2.amd.com>
-References:
- <20250429172109.3199192-1-fabio.m.de.francesco@linux.intel.com>
- <20250429172109.3199192-5-fabio.m.de.francesco@linux.intel.com>
- <20250429182055.GB76257@yaz-khff2.amd.com>
+	s=arc-20240116; t=1748887645; c=relaxed/simple;
+	bh=B1IT92nzoDwlJgHyhF/M8EqdbkoWldClYQt+fdBC7O8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=SGQo2vx2XE2Kp/uY00Gl+Li4STOTQ9LIVGslf12QMYVJMX4d0Xk+ky9KPfWHg04ITJPDKprIBGSS7lQqFKMPWGy+Xw/LocFfuzx4NzDZjz6D4/2rXan/MBF0H2USimBMxlUI/knYP0ePfJLm7JTrpaVVyt+wByMwn7eZDE2yyKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=LtRnSrFM; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-747abb3cd0bso3527918b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jun 2025 11:07:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1748887643; x=1749492443; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=f75Fmd2HmTOxmb3ydCTXDBO0VW57Rha9LIEst3+i6PQ=;
+        b=LtRnSrFMIAfdFf8vnbe73IBT+DMTAY1UA5AxZ0JatLJGWRh4aKat8/gVYz8LFGRbM4
+         XA6caG9u4+BDYTItgDWd9lF24OVRaLksgvVUIxXhcbbthHMsL78VYF5x4YkOapbZIDHo
+         jAN0aEvWOdcybdUimk3SJ+MFDHpT57BP9m7sw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748887643; x=1749492443;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=f75Fmd2HmTOxmb3ydCTXDBO0VW57Rha9LIEst3+i6PQ=;
+        b=nh39UMAlldSm478wMV4MO4OJv+QWSdQbv2OZ73pf2bUc5j7vVcXurnPSsD1GcXpDAg
+         P9cCndpy6/BV5wIa7wIVdT4S1hL3TgzzaqljFqUau1Rpt7CljNQF4CX/El01NQIbpjoE
+         tyjMbgxGV0/knhE7McheZUYXIeD8AGcBxX/og/gpniH9ypzZo8JbVKsozeGMBxQCCEAG
+         8KxB5ECzccGn8P71B5xC1ys3QOgbZAJdsIQvb+ZKxbHTEkWM0Wl/1syG3geZCenYjAqP
+         iMKvDpFzdMM2op7Ce9xFyg06ZAwW1Mzppi6s++Ba+N/JyRFMcZ2gt31uSJsuI3zgCw4a
+         eMJA==
+X-Forwarded-Encrypted: i=1; AJvYcCU6zHW3fRsaFoSdQIJleEIL1KOd4uwJFXhiLmV0TfFIigz9Fex4ph/n3wyFIhWTkhtBndMG0m0h+zE4X4I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSnlG+rizvPbb/YGSRmKFqMMlp8f5Pbmf9MsokYWJjaAGrnU1N
+	k7pATiRbH4Y+nVb1EOI4H20deNR5rUq+0sJhO55aUzE4YoyFlUc63NlYRr15zQpD1LvszigrBzv
+	kD3Eoki9+
+X-Gm-Gg: ASbGnctmIs1jTrDTP75vH5/8oX2l7FNNqGEyAMCjhhVvkyyb9CmA5McXh7X3MKSZDWA
+	72zE0Y9Sca6ZUAQDDrbBFI1YFtfXfpkITYz0PA3M1Zg3IhXxTb4knV6szzI/2W5pObDrLfZcOsF
+	zmIKERf/Smn/UCPKiDjmfrVJPdIyGhJdQCsgu8QtIpo/de39rLpmBByXp5Tt8HEbl70VCtMKR47
+	0r7q5JLdeBstVqQWL0JaJ5OiUOVPDf3a2/KD6lAgrMQYFNBS+KOKVKU6d1TSXOxQTQqTBRr5w3+
+	dRhrqGeH5NS7sJwWbOsfPQHM5HpB6hqH7dekrTYh5h2Q3pxcXPp9rFM4Z9rBN2obRmSDsD8kWJI
+	isuP5j/y8D1oc3N0=
+X-Google-Smtp-Source: AGHT+IFW1A8jX6Iq5Uxnn5p/4m0wDsnzCLGnjep/xHiKvfLONgy5Zls2kW93VR4nae5axXvqgzGsiw==
+X-Received: by 2002:a05:6a20:748c:b0:218:d024:11f5 with SMTP id adf61e73a8af0-21d0a014e05mr656981637.3.1748887643322;
+        Mon, 02 Jun 2025 11:07:23 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b2eceb368d5sm5862201a12.39.2025.06.02.11.07.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Jun 2025 11:07:22 -0700 (PDT)
+Message-ID: <0f26cda5-8269-484c-b5d0-2b627e92776c@broadcom.com>
+Date: Mon, 2 Jun 2025 11:07:20 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 06/10] net: dsa: b53: prevent BRCM_HDR access on
+ BCM5325
+To: =?UTF-8?Q?=C3=81lvaro_Fern=C3=A1ndez_Rojas?= <noltari@gmail.com>,
+ jonas.gorski@gmail.com, andrew@lunn.ch, olteanv@gmail.com,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, vivien.didelot@gmail.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, dgcbueu@gmail.com
+References: <20250531101308.155757-1-noltari@gmail.com>
+ <20250531101308.155757-7-noltari@gmail.com>
+Content-Language: en-US
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <20250531101308.155757-7-noltari@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tuesday, April 29, 2025 8:20:55=E2=80=AFPM Central European Summer Time =
-Yazen Ghannam wrote:
-> On Tue, Apr 29, 2025 at 07:21:09PM +0200, Fabio M. De Francesco wrote:
-> > When Firmware First is enabled, BIOS handles errors first and then it
-> > makes them available to the kernel via the Common Platform Error Record
-> > (CPER) sections (UEFI 2.10 Appendix N). Linux parses the CPER sections
-> > via one of two similar paths, either ELOG or GHES.
-> >=20
-> > Currently, ELOG and GHES show some inconsistencies in how they report to
-> > userspace via trace events.
-> >=20
-> > Therfore make the two mentioned paths act similarly by tracing the CPER
-> > CXL Protocol Error Section (UEFI v2.10, Appendix N.2.13) signaled by the
-> > I/O Machine Check Architecture and reported by BIOS in FW-First.
-> >=20
-> > Cc: Dan Williams <dan.j.williams@intel.com>
-> > Signed-off-by: Fabio M. De Francesco <fabio.m.de.francesco@linux.intel.=
-com>
-> > ---
-> >  drivers/acpi/acpi_extlog.c | 60 ++++++++++++++++++++++++++++++++++++++
-> >  drivers/cxl/core/ras.c     |  6 ++++
-> >  include/cxl/event.h        |  2 ++
-> >  3 files changed, 68 insertions(+)
-> >=20
-> > diff --git a/drivers/acpi/acpi_extlog.c b/drivers/acpi/acpi_extlog.c
-> > index 7d7a813169f1..8f2ff3505d47 100644
-> > --- a/drivers/acpi/acpi_extlog.c
-> > +++ b/drivers/acpi/acpi_extlog.c
-> > @@ -12,6 +12,7 @@
-> >  #include <linux/ratelimit.h>
-> >  #include <linux/edac.h>
-> >  #include <linux/ras.h>
-> > +#include <cxl/event.h>
-> >  #include <acpi/ghes.h>
-> >  #include <asm/cpu.h>
-> >  #include <asm/mce.h>
-> > @@ -157,6 +158,60 @@ static void extlog_print_pcie(struct cper_sec_pcie=
- *pcie_err,
-> >  	}
-> >  }
-> > =20
-> > +static void
-> > +extlog_cxl_cper_handle_prot_err(struct cxl_cper_sec_prot_err *prot_err,
-> > +				int severity)
-> > +{
-> > +#ifdef CONFIG_ACPI_APEI_PCIEAER
->=20
-> Why not apply this check on the function prototype?
->=20
-This function is static.
->
-> Reference: Documentation/process/coding-style.rst
-> 	   Section 21) Conditional Compilation
->=20
-> > +	struct cxl_cper_prot_err_work_data wd;
-> > +	u8 *dvsec_start, *cap_start;
-> > +
-> > +	if (!(prot_err->valid_bits & PROT_ERR_VALID_AGENT_ADDRESS)) {
-> > +		pr_err_ratelimited("CXL CPER invalid agent type\n");
-> > +		return;
-> > +	}
-> > +
-> > +	if (!(prot_err->valid_bits & PROT_ERR_VALID_ERROR_LOG)) {
-> > +		pr_err_ratelimited("CXL CPER invalid protocol error log\n");
-> > +		return;
-> > +	}
-> > +
-> > +	if (prot_err->err_len !=3D sizeof(struct cxl_ras_capability_regs)) {
-> > +		pr_err_ratelimited("CXL CPER invalid RAS Cap size (%u)\n",
-> > +				   prot_err->err_len);
-> > +		return;
-> > +	}
-> > +
-> > +	if (!(prot_err->valid_bits & PROT_ERR_VALID_SERIAL_NUMBER))
-> > +		pr_warn(FW_WARN "CXL CPER no device serial number\n");
->=20
-> Is this a requirement (in the spec) that we should warn users about?
->=20
-> The UEFI spec says that serial number is only used if "CXL agent" is a
-> "CXL device".
->=20
-> "CXL ports" won't have serial numbers. So this will be a false warning
-> for port errors.
->=20
-I'll add a test and print that warning only if agent is a device (RCD,
-DEVICE, LD, FMLD).
->
-> > +
-> > +	switch (prot_err->agent_type) {
-> > +	case RCD:
-> > +	case DEVICE:
-> > +	case LD:
-> > +	case FMLD:
-> > +	case RP:
-> > +	case DSP:
-> > +	case USP:
-> > +		memcpy(&wd.prot_err, prot_err, sizeof(wd.prot_err));
-> > +
-> > +		dvsec_start =3D (u8 *)(prot_err + 1);
-> > +		cap_start =3D dvsec_start + prot_err->dvsec_len;
-> > +
-> > +		memcpy(&wd.ras_cap, cap_start, sizeof(wd.ras_cap));
-> > +		wd.severity =3D cper_severity_to_aer(severity);
-> > +		break;
-> > +	default:
-> > +		pr_err_ratelimited("CXL CPER invalid agent type: %d\n",
->=20
-> "invalid" is too harsh given that the specs may be updated. Maybe say
-> "reserved" or "unknown" or "unrecognized" instead.
->=20
-> Hopefully things will settle down to where a user will be able to have a
-> system with newer CXL "agents" without *requiring* a kernel update. :)
->
-I'll replace "invalid" with "unknown".
->=20
-> Thanks,
-> Yazen
->=20
-Thanks,
+On 5/31/25 03:13, Álvaro Fernández Rojas wrote:
+> BCM5325 doesn't implement BRCM_HDR register so we should avoid reading or
+> writing it.
+> 
+> Fixes: b409a9efa183 ("net: dsa: b53: Move Broadcom header setup to b53")
+> Signed-off-by: Álvaro Fernández Rojas <noltari@gmail.com>
 
-=46abio
-
-
-
+Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
 
