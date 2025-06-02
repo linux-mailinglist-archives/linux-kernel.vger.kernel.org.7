@@ -1,271 +1,195 @@
-Return-Path: <linux-kernel+bounces-670371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C7A1ACAD6D
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 13:40:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48624ACAD72
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 13:41:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 870A23BE20F
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 11:40:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A1CA17E230
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 11:41:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30B1420E70B;
-	Mon,  2 Jun 2025 11:40:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15B46211A21;
+	Mon,  2 Jun 2025 11:41:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bcw7P3O4"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="UT/VHevy"
+Received: from mx0b-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C601213E69
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 11:40:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2C0120F067;
+	Mon,  2 Jun 2025 11:40:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748864429; cv=none; b=OeXPuHbE0tgbcO1dR6EW/wnxFj1R0vV2sbp0izc/3wwYyEqGfxF1Z5NzKk6V3o4m0DLKPGB3tLZkcMQECoecEkFbb9F2zcoq2T2MyIWonqoHe3dit/lXEvRDa4ffquViVlh37k5BVNcoVJS3NBEtRYDJR/z8nRz3ZBO9e2k+NuU=
+	t=1748864461; cv=none; b=q3RYKbQsv6h+zTr589ihMqWLlScbMSasOGAJcCxa7HueZv2NBF0MCVt6IA+9vVciigzetukLiqRhpx633y6rSEtzsZolPaszSNZdQqJZzb71b5qzur3lCKpYRBE91oGyE0tyg1GzxvUWhMtTtDNKnxniybgDVtged41tQipaZ/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748864429; c=relaxed/simple;
-	bh=dRUdYyLiv7HUQ7bUBwyNfD4MB8oZDgxtM3+ZPWYebCw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JSmiAjW1PEJUsesg8iAF3QvKUEL4/xkj3yW45hUYO+0Gw5LgFf8bzKtGg1Cieu/8e77OEm5c+5kXiVlQVWdsNKPBTWLRUjMhid2AxVxi3wfWZkwemIZ8xPaY+ewMiqVwJAtLEhL97bcD8JJ8RBQIVCFi2xa9xVmY2NAcEUXtWg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=bcw7P3O4; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-54b10594812so5226131e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jun 2025 04:40:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1748864425; x=1749469225; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=gil6AlHmzhgpcu56HDGcVLiUYTQhdxpwRL+hujim4tE=;
-        b=bcw7P3O45K+gXKD4fZc/sRhFB20T23h6EoYBsp4e56PhHxoLcBlqFVGcKpR7R59AT9
-         BioxVNytqlOFDzGqAmV+5j3z+MdXy6d6TG6f7E6uHEuzWSgystg/SBVnfnXgUPiWCl/r
-         JcSc7FmiPT/fOJFwbv5gkuwU7Y7SN1H/P8KII=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748864425; x=1749469225;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gil6AlHmzhgpcu56HDGcVLiUYTQhdxpwRL+hujim4tE=;
-        b=qq9SlyL03OIMhYSg5IWFghjq9MaZ4YMe5QyIjVlgZVsbVztnJZlrYsV/C6opFBJ/RA
-         ynKJRmsO7D3C8saEwjshG6D4krYviqZ/LOdDc1pEYhH1npJa/zS2U7F7jhlYYkokOkuM
-         z8VkppxrCEoKYhRI9L+Svj4XU8BvUTePOlqbHVFECgHIv2bZhG5S0iKwd/vYcHv7ZsCm
-         8cbjNVh3S0T3GMuoxfJKlQlA8BMjLBCiIVZgoZGj3KzfT19Sw54uaHDxriyEUJyDjQ7x
-         XRgGHSUZ+DCQaBZJJyl0qUryEsOSVgtUGz8hJc/rRR6dIn2bSS780ucWlzr0cq7ynpTb
-         Rmlw==
-X-Forwarded-Encrypted: i=1; AJvYcCU6ZJMSxB/LCgayjJu6D240Gj8n7Vci453/1iFSzt74dc5layXjBF/ZFnol4xZ8evUZmiCzzkNi78snVwE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJe3EYCk5dcOjV9I3Yz4RGRdcHACxPTHcv9xCa0R3N1LBBPGY8
-	+j0L5RTflHDzhjGcJJZnmJQDYoIC0KK2RvAV0Io10adKbKDY691EljgYyK0yGcUCKTk0LYSotxM
-	83do=
-X-Gm-Gg: ASbGncvU+igPo1sBmbIcBQEM5iVuPdJpYdGGmHtNdJFTCGOzKwOulvpQ0k/ltEPyiGg
-	Vb09IX/DiqODJeKOSFvhYdtURp5zo70y7rzBI3tNj2agS3yDDkjFh3RaEPGvcLtxOhHX5yhE3AD
-	2isFMCUCbX4ohIsC/bf0gc0Dq1m5CMwKroEIU57Aq4Z0euFui3Ix1Hc+LFeQjXPWTEMK8TASPX+
-	NC8liW0jno7l9WTchS5ABdf4hpYCV0rDTx9GOx69w5ROyxf/R+q2f3tWBfUpznh7WI4I4UblNBT
-	iZChVOEU1L7RTFeNRmim652RxBLHNc7ChDR6tn6AyGI/bQwN1OqsxHL+6UOBXFjEOYxg8GsqlfC
-	kDcItBqhtqRPXh1c/59+T8Hq+
-X-Google-Smtp-Source: AGHT+IGobs3jAxNLTgBbi85nm5ecWkAAJoBrwZ4QIUrt0GscLIjy0kCs+6f1NgluKYDiGT2f5QIP0g==
-X-Received: by 2002:a05:6512:3b25:b0:553:3332:b65f with SMTP id 2adb3069b0e04-55342f54624mr2167643e87.12.1748864424373;
-        Mon, 02 Jun 2025 04:40:24 -0700 (PDT)
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com. [209.85.167.42])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5533791d105sm1555706e87.209.2025.06.02.04.40.20
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Jun 2025 04:40:21 -0700 (PDT)
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-54b10594812so5226051e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jun 2025 04:40:20 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW0AUdcjLYHVVMX7K7ufasTXNqtz9d2p29K3s5TSB16pxfw/nVsEdqUl3Z82QqOiTn99nT5oY7xAWxoQcg=@vger.kernel.org
-X-Received: by 2002:a05:6512:3b25:b0:553:3332:b65f with SMTP id
- 2adb3069b0e04-55342f54624mr2167585e87.12.1748864418670; Mon, 02 Jun 2025
- 04:40:18 -0700 (PDT)
+	s=arc-20240116; t=1748864461; c=relaxed/simple;
+	bh=frO+5Uw+FFWvnZhmxBsgg95PnNMzamfOuSyyhM7pW/E=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aU1MEZ0bUfoqSuxSfi1KrWgf1nDsY4vbUhyVukeloL/j6I28ucDbAOLFa8OUDPpf2PULVXqgOMwmrjxicrLDxpmk8R1cWUuAH/TvOtp5CSpYitX1bG+UxtUfb+s19hBa0ePO9aKBDaWAwaXSd/BEH7LlrPBXY3ztmO2psO456JE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=UT/VHevy; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0375855.ppops.net [127.0.0.1])
+	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 552BSViv006785;
+	Mon, 2 Jun 2025 07:40:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=DKIM; bh=FOb5a
+	J2aVNLZu+0Loa+8hBFtGDoQeca0LadPc3yuziE=; b=UT/VHevygegDf09CgX+ef
+	TEKw38uZ07lUNHBoAHYfXdQgZcYk/k8ZF33NdbexPdIJS9dwF8136SGsbaqp+E4i
+	GZhqjvYrJAsu5dggjlepsO4BiXu8SB/HCRGu53bP/G4EkBGXQpv0EX4OhjAPbGD+
+	mL/4AISSGZc/FQhWj1dkL+rR/6a76JgZJvV7+0XK0QToDAEVhcaGlPO/qiA1FYT0
+	XW8gLCjVIuSRLq5YQie60LiQS9RypQqmaUBhyZtvoaXLp3T3G3ps/ZAJ3GRX3pKc
+	j5S6YZVWHNNPOskEF4NlF+bCq0tCCcDW8hRO6kKqwtq2F1JuQ0ZxWxtpSFVbP4Ax
+	Q==
+Received: from nwd2mta3.analog.com ([137.71.173.56])
+	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 47133mj2rd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 02 Jun 2025 07:40:43 -0400 (EDT)
+Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
+	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 552BeaPX023600
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 2 Jun 2025 07:40:36 -0400
+Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by ASHBMBX8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Mon, 2 Jun
+ 2025 07:40:36 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
+ Transport; Mon, 2 Jun 2025 07:40:36 -0400
+Received: from work.ad.analog.com (HYB-hERzalRezfV.ad.analog.com [10.65.205.9])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 552BeKS8025010;
+	Mon, 2 Jun 2025 07:40:23 -0400
+From: Marcelo Schmitt <marcelo.schmitt@analog.com>
+To: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <jic23@kernel.org>, <lars@metafoo.de>, <Michael.Hennerich@analog.com>,
+        <dlechner@baylibre.com>, <nuno.sa@analog.com>, <andy@kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <linus.walleij@linaro.org>, <brgl@bgdev.pl>,
+        <marcelo.schmitt1@gmail.com>
+Subject: [PATCH v4 11/11] iio: adc: ad4170: Add timestamp channel
+Date: Mon, 2 Jun 2025 08:40:17 -0300
+Message-ID: <40f7403efbca2cade808a769a9b3b50135a24fec.1748829860.git.marcelo.schmitt@analog.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <cover.1748829860.git.marcelo.schmitt@analog.com>
+References: <cover.1748829860.git.marcelo.schmitt@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250528-uvc-grannular-invert-v1-0-d01581f9cc25@chromium.org>
- <20250528-uvc-grannular-invert-v1-9-d01581f9cc25@chromium.org>
- <34d9f779-987f-4e2c-b046-5dc15641547c@kernel.org> <CANiDSCtrG59QX-R0YcS+G9HmG5oE8LwiXdm_NKuCbNmHp8aeTQ@mail.gmail.com>
- <b88a8847-6e19-4d5e-a847-5deee69ab7b4@kernel.org> <CANiDSCsXNu2xa_ATGUJbKY_t7xxXgSGdpZMf+P4LT+x3qcP1tg@mail.gmail.com>
- <69885612-75ea-422c-ba13-07eaf4325005@kernel.org>
-In-Reply-To: <69885612-75ea-422c-ba13-07eaf4325005@kernel.org>
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Mon, 2 Jun 2025 13:40:06 +0200
-X-Gmail-Original-Message-ID: <CANiDSCtSKCn+mx8pGwuYCre9Wb7gONJYjLqc6tYLWQL3YXBmrw@mail.gmail.com>
-X-Gm-Features: AX0GCFsb5l02HNSHjOIwpwsxX7MGOLU1IzK9yeaQ6vL8i18RyuyOrgkhC7K-W58
-Message-ID: <CANiDSCtSKCn+mx8pGwuYCre9Wb7gONJYjLqc6tYLWQL3YXBmrw@mail.gmail.com>
-Subject: Re: [PATCH 9/9] media: uvcvideo: Support granular power saving for
- compat syscalls
-To: Hans de Goede <hansg@kernel.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Hans de Goede <hdegoede@redhat.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-GUID: uv6iOJUWhFW5DeZ6ZySy4S-3Og5mA2Nm
+X-Proofpoint-ORIG-GUID: uv6iOJUWhFW5DeZ6ZySy4S-3Og5mA2Nm
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjAyMDEwMSBTYWx0ZWRfXxvnatpSFvHSv
+ 0ii+4auimX24jw/Zl4BOGTEz2G0fH2rApxEAIJkVVKgf8ID6b7W0R0W5TVlRSJPvCFDCFSxtbWM
+ hcCcwn+uLbeOqwBPBxTeLsHveW6JJzCltjqAb1hu4PxQSFAmbZ0xUT2M669riqsOSILjKT6+2h6
+ +l6jhfj0EA9Ni22fufGfy0AvELi/fZcgU+Go0RManRc5qZJs+ONbfcjPc/7taZbE1Y0aHwuDpx5
+ 00Q4/sLfQzfNvj4XDYBLy6GLAYxluATW1uE8ih5XeXBtO8FRbrnN6oemWb8yGBoamkKTMueDVmR
+ RV5Gz6nMu+wTPz76oZMvFb7vuTPBz08zEAnMHvlk422sRwMW7A7ftxsjbfoUOheHXkhudta+wU4
+ xU4Jvu5sHdpuET3OKEVlBQaheSSzMElFQwd59IcAiGppYTiAu3xUcv+uOsRRhe9Ml3g2NNWN
+X-Authority-Analysis: v=2.4 cv=DY4XqutW c=1 sm=1 tr=0 ts=683d8dbb cx=c_pps
+ a=PpDZqlmH/M8setHirZLBMw==:117 a=PpDZqlmH/M8setHirZLBMw==:17
+ a=6IFa9wvqVegA:10 a=gAnH3GRIAAAA:8 a=ooJTjvKFDTQpXrV7GjsA:9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-02_05,2025-05-30_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxscore=0 mlxlogscore=999 priorityscore=1501 lowpriorityscore=0
+ suspectscore=0 spamscore=0 clxscore=1015 malwarescore=0 adultscore=0
+ bulkscore=0 impostorscore=0 phishscore=0 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505160000 definitions=main-2506020101
 
-Hi Hans
+Add timestamp channel allowing to record the moment at which ADC samples
+are captured in buffered read mode.
 
-On Mon, 2 Jun 2025 at 13:24, Hans de Goede <hansg@kernel.org> wrote:
->
-> On 2-Jun-25 13:11, Ricardo Ribalda wrote:
-> > On Mon, 2 Jun 2025 at 13:07, Hans de Goede <hansg@kernel.org> wrote:
-> >>
-> >> Hi Ricardo,
-> >>
-> >> On 2-Jun-25 12:27, Ricardo Ribalda wrote:
-> >>> Hi Hans
-> >>>
-> >>> On Mon, 2 Jun 2025 at 12:11, Hans de Goede <hansg@kernel.org> wrote:
-> >>>>
-> >>>> Hi Ricardo,
-> >>>>
-> >>>> On 28-May-25 19:58, Ricardo Ribalda wrote:
-> >>>>> Right now we cannot support granular power saving on compat syscalls
-> >>>>> because the VIDIOC_*32 NRs defines are not accessible to drivers.
-> >>>>>
-> >>>>> Use the video_translate_cmd() helper to convert the compat syscall NRs
-> >>>>> into syscall NRs.
-> >>>>>
-> >>>>> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> >>>>> ---
-> >>>>>  drivers/media/usb/uvc/uvc_v4l2.c     | 9 ++-------
-> >>>>>  drivers/media/v4l2-core/v4l2-ioctl.c | 3 ++-
-> >>>>>  include/media/v4l2-ioctl.h           | 1 +
-> >>>>>  3 files changed, 5 insertions(+), 8 deletions(-)
-> >>>>>
-> >>>>> diff --git a/drivers/media/usb/uvc/uvc_v4l2.c b/drivers/media/usb/uvc/uvc_v4l2.c
-> >>>>> index fcb1b79c214849ce4da96a86a688d777b32cc688..048ee7e01808c8944f9bd46e5df2931b9c146ad5 100644
-> >>>>> --- a/drivers/media/usb/uvc/uvc_v4l2.c
-> >>>>> +++ b/drivers/media/usb/uvc/uvc_v4l2.c
-> >>>>> @@ -1282,15 +1282,10 @@ static long uvc_v4l2_pm_ioctl(struct file *file,
-> >>>>>  static long uvc_v4l2_unlocked_ioctl(struct file *file,
-> >>>>>                                   unsigned int cmd, unsigned long arg)
-> >>>>>  {
-> >>>>> -     /*
-> >>>>> -      * For now, we do not support granular power saving for compat
-> >>>>> -      * syscalls.
-> >>>>> -      */
-> >>>>> -     if (in_compat_syscall())
-> >>>>> -             return uvc_v4l2_pm_ioctl(file, cmd, arg);
-> >>>>> +     unsigned int converted_cmd = video_translate_cmd(cmd);
-> >>>>
-> >>>> It looks like something went wrong here and you did not test-compile this?
-> >>>> video_translate_cmd() is private to drivers/media/v4l2-core/v4l2-ioctl.c
-> >>>> so this should not compile.
-> >>>
-> >>> Hmm... Actually I am pretty sure that I tested it on real hardware.
-> >>>
-> >>> Did you miss the EXPORT_SYMBOL() on the patch?
-> >>
-> >> Ah yes I did miss that, sorry.
-> >
-> > My bad, I doubt it till the last second if I should split it or not :)
-> >
-> >>
-> >> For the next time please split core changes out into their own
-> >> separate patches.
-> >>
-> >> In this case I think the core changes are not necessary instead
-> >> you can just do:
-> >>
-> >>         unsigned int converted_cmd = cmd;
-> >>
-> >> #ifdef CONFIG_COMPAT
-> >>         converted_cmd = v4l2_compat_translate_cmd(cmd);
-> >> #endif
-> >
-> > I believe this should work as well:
-> >
-> > unsigned int converted_cmd = cmd;
-> > if (in_compat_syscall())
-> >   converted_cmd = v4l2_compat_translate_cmd(cmd);
-> >
-> > the compiler knows that CONFIG_COMPAT=n means in_compat_syscall() will
-> > be always fails.
-> >
-> > If it is ok with you (and it actually works :) ) I will use this version.
->
-> I agree that that is cleaner/better and I also think it should work,
-> so lets go with that.
+Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+---
+ drivers/iio/adc/ad4170.c | 21 +++++++++++++++++----
+ 1 file changed, 17 insertions(+), 4 deletions(-)
 
-Actually, v4l2_compat_translate_cmd() does not seem to be EXPORT_SYMBOL()ed
-
-So I still need to do some changes in the core.
-(It also does not handle COMPAT_32BIT_TIME... but in this case it
-seems to be the same).
-
-
-Any preference between what to use: v4l2_compat_translate_cmd() vs
-video_translate_cmd()?
-
-Thanks!
->
-> Regards,
->
-> Hans
->
->
->
-> >>>> You can use v4l2_compat_translate_cmd() but only when CONFIG_COMPAT is set
-> >>>> otherwise that symbol is not available.
-> >>>
-> >>> I tried now without CONFIG_COMPAT and it built fine.
-> >>>
-> >>>>
-> >>>> Regards,
-> >>>>
-> >>>> Hans
-> >>>>
-> >>>>
-> >>>>
-> >>>>>
-> >>>>>       /* The following IOCTLs do need to turn on the camera. */
-> >>>>> -     switch (cmd) {
-> >>>>> +     switch (converted_cmd) {
-> >>>>>       case UVCIOC_CTRL_QUERY:
-> >>>>>       case VIDIOC_G_CTRL:
-> >>>>>       case VIDIOC_G_EXT_CTRLS:
-> >>>>> diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
-> >>>>> index 650dc1956f73d2f1943b56c42140c7b8d757259f..6fbd28f911cf23eec43ef1adcf64bd46ef067c81 100644
-> >>>>> --- a/drivers/media/v4l2-core/v4l2-ioctl.c
-> >>>>> +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
-> >>>>> @@ -3245,7 +3245,7 @@ static int check_array_args(unsigned int cmd, void *parg, size_t *array_size,
-> >>>>>       return ret;
-> >>>>>  }
-> >>>>>
-> >>>>> -static unsigned int video_translate_cmd(unsigned int cmd)
-> >>>>> +unsigned int video_translate_cmd(unsigned int cmd)
-> >>>>>  {
-> >>>>>  #if !defined(CONFIG_64BIT) && defined(CONFIG_COMPAT_32BIT_TIME)
-> >>>>>       switch (cmd) {
-> >>>>> @@ -3266,6 +3266,7 @@ static unsigned int video_translate_cmd(unsigned int cmd)
-> >>>>>
-> >>>>>       return cmd;
-> >>>>>  }
-> >>>>> +EXPORT_SYMBOL(video_translate_cmd);
-> >>>>>
-> >>>>>  static int video_get_user(void __user *arg, void *parg,
-> >>>>>                         unsigned int real_cmd, unsigned int cmd,
-> >>>>> diff --git a/include/media/v4l2-ioctl.h b/include/media/v4l2-ioctl.h
-> >>>>> index c6ec87e88dfef9e6cfe1d1fb587c1600882fb14d..437b9f90714c62e0ba434ce47391ef64d88110aa 100644
-> >>>>> --- a/include/media/v4l2-ioctl.h
-> >>>>> +++ b/include/media/v4l2-ioctl.h
-> >>>>> @@ -687,6 +687,7 @@ int v4l2_compat_get_array_args(struct file *file, void *mbuf,
-> >>>>>  int v4l2_compat_put_array_args(struct file *file, void __user *user_ptr,
-> >>>>>                              void *mbuf, size_t array_size,
-> >>>>>                              unsigned int cmd, void *arg);
-> >>>>> +unsigned int video_translate_cmd(unsigned int cmd);
-> >>>>>
-> >>>>>  /**
-> >>>>>   * typedef v4l2_kioctl - Typedef used to pass an ioctl handler.
-> >>>>>
-> >>>>
-> >>>
-> >>>
-> >>
-> >
-> >
->
-
-
+diff --git a/drivers/iio/adc/ad4170.c b/drivers/iio/adc/ad4170.c
+index 23b634d324a7..28466b245567 100644
+--- a/drivers/iio/adc/ad4170.c
++++ b/drivers/iio/adc/ad4170.c
+@@ -182,6 +182,7 @@
+ #define AD4170_NUM_ANALOG_PINS				9
+ #define AD4170_NUM_GPIO_PINS				4
+ #define AD4170_MAX_CHANNELS				16
++#define AD4170_MAX_IIO_CHANNELS				(AD4170_MAX_CHANNELS + 1)
+ #define AD4170_MAX_ANALOG_PINS				8
+ #define AD4170_MAX_SETUPS				8
+ #define AD4170_INVALID_SETUP				9
+@@ -426,7 +427,7 @@ struct ad4170_state {
+ 	int vrefs_uv[AD4170_MAX_SUP];
+ 	u32 mclk_hz;
+ 	struct ad4170_setup_info setup_infos[AD4170_MAX_SETUPS];
+-	struct iio_chan_spec chans[AD4170_MAX_CHANNELS];
++	struct iio_chan_spec chans[AD4170_MAX_IIO_CHANNELS];
+ 	struct ad4170_chan_info chan_infos[AD4170_MAX_CHANNELS];
+ 	struct spi_device *spi;
+ 	struct regmap *regmap;
+@@ -443,6 +444,7 @@ struct ad4170_state {
+ 	unsigned int clock_ctrl;
+ 	int gpio_fn[AD4170_NUM_GPIO_PINS];
+ 	unsigned int cur_src_pins[AD4170_NUM_CURRENT_SRC];
++	unsigned int num_adc_chans;
+ 	/*
+ 	 * DMA (thus cache coherency maintenance) requires the transfer buffers
+ 	 * to live in their own cache lines.
+@@ -2385,7 +2387,16 @@ static int ad4170_parse_channels(struct iio_dev *indio_dev)
+ 			return dev_err_probe(dev, ret, "Invalid input config\n");
+ 
+ 		st->chan_infos[chan_num].input_range_uv = ret;
++		chan_num++;
+ 	}
++	st->num_adc_chans = chan_num;
++
++	/* Add timestamp channel */
++	struct iio_chan_spec ts_chan = IIO_CHAN_SOFT_TIMESTAMP(chan_num);
++
++	st->chans[chan_num] = ts_chan;
++	num_channels = num_channels + 1;
++
+ 	indio_dev->num_channels = num_channels;
+ 	indio_dev->channels = st->chans;
+ 
+@@ -2577,7 +2588,7 @@ static int ad4170_initial_config(struct iio_dev *indio_dev)
+ 		return dev_err_probe(dev, ret,
+ 				     "Failed to set ADC mode to idle\n");
+ 
+-	for (i = 0; i < indio_dev->num_channels; i++) {
++	for (i = 0; i < st->num_adc_chans; i++) {
+ 		struct ad4170_chan_info *chan_info;
+ 		struct iio_chan_spec const *chan;
+ 		struct ad4170_setup *setup;
+@@ -2702,7 +2713,7 @@ static int ad4170_buffer_predisable(struct iio_dev *indio_dev)
+ 	 * is done after buffer disable. Disable all channels so only requested
+ 	 * channels will be read.
+ 	 */
+-	for (i = 0; i < indio_dev->num_channels; i++) {
++	for (i = 0; i < st->num_adc_chans; i++) {
+ 		ret = ad4170_set_channel_enable(st, i, false);
+ 		if (ret)
+ 			return ret;
+@@ -2752,7 +2763,9 @@ static irqreturn_t ad4170_trigger_handler(int irq, void *p)
+ 		memcpy(&st->bounce_buffer[i++], st->rx_buf, ARRAY_SIZE(st->rx_buf));
+ 	}
+ 
+-	iio_push_to_buffers(indio_dev, st->bounce_buffer);
++	iio_push_to_buffers_with_ts(indio_dev, st->bounce_buffer,
++				    sizeof(st->bounce_buffer),
++				    iio_get_time_ns(indio_dev));
+ err_out:
+ 	iio_trigger_notify_done(indio_dev->trig);
+ 	return IRQ_HANDLED;
 -- 
-Ricardo Ribalda
+2.47.2
+
 
