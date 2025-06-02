@@ -1,139 +1,150 @@
-Return-Path: <linux-kernel+bounces-670828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49A83ACB9DA
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 18:51:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 488D4ACB9D6
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 18:49:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 775B4189B735
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 16:51:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1568E173CF3
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 16:49:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92C05224B10;
-	Mon,  2 Jun 2025 16:51:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A593223707;
+	Mon,  2 Jun 2025 16:49:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NeMS0meT"
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="Ox5muyNT"
 Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96F1142A8F;
-	Mon,  2 Jun 2025 16:51:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7594118FDD5
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 16:49:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748883080; cv=none; b=nkGwbLdYTeRtLcy5+l065X4aLC/kjKV2LylewCkzBSAEVLdVRh+indYxeMIxOzlaVCiCz8Z+4gwQjRLDlRLgWFTrMYszuHSaNQZzHszSLckfCCn97lZwDs3VEx05ik2LRQsxIfOs3KmZ9l4rPbSBLj8QOJHC/Y9tkb8G7iLEQaQ=
+	t=1748882991; cv=none; b=nW89M5lcKZR/9kQJh1Q/XjjXD+a2uabOlrK6CHacwI6+5OGpnZ9htKf5icxfM25fEfGIHaSk8onOzweIwgyLajjTN7F7Am2OpqUWtLbeykfd8hdyHg6gpfiOE4z0UD6/35VzGPB05zuwv9Q4Sn9dUk78J8GmNrgyXB2/UtkDJko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748883080; c=relaxed/simple;
-	bh=jF8MGhpz7zikQzscsV25gQYi1FEI7qgJxpnsycTcP/o=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NROfQ4VrI2WRxBqoDr8Joa8vudQF8B+xqMCvfL2vksJZUmkKBA19lb9AAei/rM/e67e2ngi50uYg6GaSnDoWXQtFrDvgCgjIPC01+oHLuNpz9B5909+DwDFYGuPi2ZnK+OkSyAgbrBn0iYv6tKqmWUGwh2XwQQSruomDuoiXM+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NeMS0meT; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-23211e62204so35819675ad.3;
-        Mon, 02 Jun 2025 09:51:17 -0700 (PDT)
+	s=arc-20240116; t=1748882991; c=relaxed/simple;
+	bh=t41YNlrYxkEJSSxgqLb/rQ0ZuTZlBz9xtzIyTCEdCPo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uxscAzqqEkjOO2xmG3k6H2wOR+x1kT67BykxABkWSWulpVTMB8yEqCnb/enr2LHFqSA21WDon1NX/UO/UlUXzDbN+16iQigY7rdTSEc8kWKKl7JrAeB7qmKLIPe7NbLGo4Jn2vv8hCI/LRZ22e061MRMpEBhP0gMzhuLAN0JEls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=Ox5muyNT; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-234e48b736aso55760905ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jun 2025 09:49:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748883076; x=1749487876; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=cPtKhhT5aSL0hsmEufH2lmmZQafAkmejjgAELqic0no=;
-        b=NeMS0meTzcaBVx84M1BjcQM/S5b+wOI2wxmRVF0qSrII1w3K1NKw0P7iwkXM80Jo0T
-         rARyo1ZzRAMN5ez4kjZ/N8vY6dxJiUkLWuq6qc/1aO5z3awgTlxBnfYS+i8eYA7Rug2K
-         PqE2EQx+8pnBfhLDPw8Sq4acrJ4ZXKcPwljyZ9By8toTrNIhi53aG4mR2mJYeZcwF/Jf
-         PipoUmXqBfGGGdIt1zp/jI+FHNhUTN2TXNCQfqdWysnbc6+IZGsUbT9qVfWMpJDRd+DE
-         NiMkEtuaEOMmpCzFkqHed2bFG9YjvJkyvWDcuheLKNBg2g/J+5sd3PyAZ95VjlX9oQlC
-         KGsQ==
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1748882988; x=1749487788; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=SJtLmJ1+ZA9gGTeiAdVPiVyS3gmJ2S4O+OKpjfVOgGU=;
+        b=Ox5muyNTSBUZz7ZyVEZbqvyMt6EjkDAFHsNw+SUePwpntaX8QrA3Tn/Yc9Zdy+SAfH
+         8ZenGAxtQzvNh8vGdaWGocJGcJzT4c1tKygSA6kIaK9n9TCnZRvlErVRZqG1zH4+XQXt
+         PHiaNvCgLrVT15GvWd6nrR7GI0g9XFqO0yH2/cztoFXaYyuYHAymHKIjKGlYpz/7gB8d
+         UI9sdVC21e0SRXOp706LbH3HKEky1mAEcDCDdfR9kxhUQJ7ww8tuOKGAuEFE48C52Qwv
+         8QHZepuohPFBiV9hDGlE5vxT3/ij6CuRdy+g5zpgGg+Wv2f4ZrZ3OBS7UIAz8Y1F0+w6
+         sohA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748883076; x=1749487876;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cPtKhhT5aSL0hsmEufH2lmmZQafAkmejjgAELqic0no=;
-        b=bZb8sNAXN2yhdJDB7vLgIjR8GoMuOZHCa3NEVAK1TC80RipR+p6DvgIIWsLe4TKlJn
-         51W5P9RBmjBoc1oXiRNh7/qAdTisl635jq1XapUqichQa1+33GygmloHv9oT1SIaOL7H
-         QCQ3BwgX2O7wlmXQs/C0PEKhL7uKsy7r+pTGzog/NbKr1pDEUN4ZuX349UCsWQkmAxT1
-         MdS9u2OvHVV7NAZplqXGo5IS0woKhVJz62fo6moUvXG5ii7tEQNiiVBmpFzSmhyYgEtB
-         +q4IiQhGH1LmAr+vhKlwgxaoLjAh5rtkKECD4l1jzClnjN/jHEliwJKh8C9uJDbn9ELT
-         8nBg==
-X-Gm-Message-State: AOJu0YzJRcF9KVfcGaQkN6vAYNcMLCPaAVN1Y8hUHKgCB0l2n1xzRkNH
-	0WiFGP7opbj+SbOpriUxYVfhfFStHyOWsQ5qhJJSrhuFK99ryXvIrf6bKD1wzlhr1dbH/g==
-X-Gm-Gg: ASbGncuckMVBuVxi3WtRo4bqGEDUs+ayvvXf9DFQaO9PedL+NJVhJ2voaI1WHcyQEql
-	Ixf4OTu+k6GFyl38C6EuBubWFWu5xMDnG3fO3DLjf+2Hm6bP9uFMfOoL/ph3L9OBTQKPaD6VLZR
-	4jGcS8y250Utz91uL10am7a8wRQfJJ8pLmwXEvMcq+Xc4LTtMBjEh5RlA5ieGoUeE2SIf98usIv
-	hKVV6uAl7SL2s7Tx2LqmLtyvfJ9AL8oS78LH77IGqCY3MwUwPbShn24NW+aIBg3zGMOqKOfgIlt
-	sCKcB+o6b1zID+gcpkfRMCYW+/rE2mDruyPksP6HmA==
-X-Google-Smtp-Source: AGHT+IHPJWk6al4M1VwNr0bYwHE2LdhMYhtJjyrU7mfnhIPB9cVAan28lH4oqZFGAT7m36MClwxGOw==
-X-Received: by 2002:a17:902:f64d:b0:234:d679:72e3 with SMTP id d9443c01a7336-23529906ec0mr191058195ad.42.1748883076550;
-        Mon, 02 Jun 2025 09:51:16 -0700 (PDT)
-Received: from localhost.localdomain ([2409:40f2:11ab:2cf2:10cd:85bd:e95:5230])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23506cf5249sm72859615ad.192.2025.06.02.09.51.11
+        d=1e100.net; s=20230601; t=1748882988; x=1749487788;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SJtLmJ1+ZA9gGTeiAdVPiVyS3gmJ2S4O+OKpjfVOgGU=;
+        b=f5ajcrgNyw7EfC4rwbd7NCD2LBEkvtrCrdC189f+Kd5eGhURYfl0LdwK26jVOK7kSa
+         2yhEEgxXt8+9rnne2Fu+arw0f3psC+k0cCkYQlQrTzl2aC5pzWB3h/oBdWQXhpLFuZvb
+         hhovBhnYwLSJ3FsHB525j/+fxD/df5UUfzU/Fr63koVl+4mt5/5tFqKHfPU4+yYivoA3
+         uEC57G4T9vat7F/9uJ4vYF8NpeZ5Hzkq8/Syrxt9iogha8kYd0Ua0o/7e4c6GGI5F4Dd
+         M5MF7zh+mARqUhsDNcwOdNCxMnaJCqVyCn/B468AZfI4d0seJlzEvKaAesc4+8YXnor1
+         x0mQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVzDSlZgXu3jWHaoJeeHSjW0w5CcMtzivPuYIBRH0TqlpU94vuYv4zRuEJjk7yWwFEsTAE6+WJUFol2mhg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDsZHfM+h76W3l8UObzSxQPv/4Wxjzg5X1fv/kUxOl9uVD4y46
+	MFjzdxiyfSbw5gYlDA967ktQUcdyGdpAhCwrRYfTcrejB696W4vn0jSWXqYqN6I+4S0=
+X-Gm-Gg: ASbGncuoFoBIixTTSXmVQ7HZZqWvt26JEEyQMBAEwgNg9xjFo067UudzpHq2zPPoMD4
+	S5a2Hj6OKFRwjRpD/ONtqVgL197bDBbOgGibcjHnFeffuSjjUzLBrFhGCJXGzos/zE0SPDs1ebd
+	XiR6Kz8HyId9tj3dCkGu5JlySohGFoN1mlVlLB6EbYPB4tXdkqNmvBedlxV34E1a4FMOT32mCrN
+	KMxAMYbI/zzw9qvOTpB06U1VcMacf3xQQsgA3ff7SVKe65/DCco34phpcosefACIpXkYImb37bV
+	zc9BqL2mjbSQoWz3uLsVtLWNdQwdapfNKJeR4hVPonF/qHG3zotpHD/0lFkmBVM7Hj39Czfa
+X-Google-Smtp-Source: AGHT+IHf3hxMDA11sY8CrqFCsHaPToaLCZdH89rX8lG5jyAges8FHHXEJxrLZzMcA5pRD8YHrbMtkg==
+X-Received: by 2002:a17:902:ce84:b0:234:a992:96d8 with SMTP id d9443c01a7336-23528ef7a17mr232511875ad.19.1748882988548;
+        Mon, 02 Jun 2025 09:49:48 -0700 (PDT)
+Received: from debug.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23506cd75c7sm73327845ad.113.2025.06.02.09.49.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Jun 2025 09:51:15 -0700 (PDT)
-From: Sai Vishnu M <saivishnu725@gmail.com>
-X-Google-Original-From: Sai Vishnu M
-To: rust-for-linux@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	ojeda@kernel.org,
-	alex.gaynor@gmail.com,
-	boqun.feng@gmail.com,
-	gary@garyguo.net,
-	bjorn3_gh@protonmail.com,
-	lossin@kernel.org,
-	a.hindborg@kernel.org,
-	aliceryhl@google.com,
-	tmgross@umich.edu,
-	dakr@kernel.org,
-	gregkh@linuxfoundation.org,
-	daniel.almeida@collabora.com,
-	me@kloenk.dev,
-	Sai Vishnu M <saivishnu725@gmail.com>
-Subject: [PATCH v4] rust: doc: Clean up formatting in io.rs
-Date: Mon,  2 Jun 2025 22:19:24 +0530
-Message-ID: <20250602164923.48893-2-saivishnu725@gmail.com>
-X-Mailer: git-send-email 2.49.0
+        Mon, 02 Jun 2025 09:49:48 -0700 (PDT)
+Date: Mon, 2 Jun 2025 09:49:46 -0700
+From: Deepak Gupta <debug@rivosinc.com>
+To: Zong Li <zong.li@sifive.com>
+Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] riscv: traps: handle uprobe event in software-check
+ exception
+Message-ID: <aD3WKnyp_ffk60oF@debug.ba.rivosinc.com>
+References: <20250314092614.27372-1-zong.li@sifive.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20250314092614.27372-1-zong.li@sifive.com>
 
-From: Sai Vishnu M <saivishnu725@gmail.com>
+Hi Zong,
 
-Removed reference to internal variables in the comment of `IoMem`
-This avoids using private variable names in public documentation.
+Thanks for taking the initiative for making cfi work with uprobe.
+And sorry for not noticing the patch earlier.
+Few comments inline.
 
-Reported-by: Miguel Ojeda <ojeda@kernel.org>
-Closes:  https://github.com/Rust-for-Linux/linux/issues/1167
-Signed-off-by: Sai Vishnu M <saivishnu725@gmail.com>
----
-v1: Used backticks instead of `@` for parameters
-link: https://lore.kernel.org/rust-for-linux/20250530123129.31505-2-saivishnu725@gmail.com/
-v2: removed reference to the variable entirely.
-link: https://lore.kernel.org/rust-for-linux/20250601164939.5306-2-saivishnu725@gmail.com/
-v3: Moved chanelog to commit message. Used the proper parent commit.
-link: https://lore.kernel.org/rust-for-linux/20250602083119.17752-2-saivishnu725@gmail.com/
-v4: Fixed the patch format with the same commit changes
----
- rust/kernel/io.rs | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/rust/kernel/io.rs b/rust/kernel/io.rs
-index 72d80a6f131e..41404c1e17b3 100644
---- a/rust/kernel/io.rs
-+++ b/rust/kernel/io.rs
-@@ -43,7 +43,7 @@ pub fn maxsize(&self) -> usize {
-     }
- }
- 
--/// IO-mapped memory, starting at the base address @addr and spanning @maxlen bytes.
-+/// IO-mapped memory region.
- ///
- /// The creator (usually a subsystem / bus such as PCI) is responsible for creating the
- /// mapping, performing an additional region request etc.
+On Fri, Mar 14, 2025 at 05:26:14PM +0800, Zong Li wrote:
+>Handle the uprobe event first before handling the CFI violation in
+>software-check exception handler. Because when the landing pad is
+>activated, if the uprobe point is set at the lpad instruction at
+>the beginning of a function, the system triggers a software-check
+>exception instead of an ebreak exception due to the exception
+>priority, then uprobe can't work successfully.
+>
+>Co-developed-by: Deepak Gupta <debug@rivosinc.com>
+>Signed-off-by: Deepak Gupta <debug@rivosinc.com>
+>Signed-off-by: Zong Li <zong.li@sifive.com>
+>---
+>
+>This patch is based on top of the following series
+>[PATCH v11 00/27] riscv control-flow integrity for usermode
+>
+> arch/riscv/kernel/traps.c | 9 ++++++---
+> 1 file changed, 6 insertions(+), 3 deletions(-)
+>
+>diff --git a/arch/riscv/kernel/traps.c b/arch/riscv/kernel/traps.c
+>index 3f7709f4595a..ef5a92111ee1 100644
+>--- a/arch/riscv/kernel/traps.c
+>+++ b/arch/riscv/kernel/traps.c
+>@@ -386,9 +386,12 @@ asmlinkage __visible __trap_section void do_trap_software_check(struct pt_regs *
+> 	if (user_mode(regs)) {
+> 		irqentry_enter_from_user_mode(regs);
+>
+>-		/* not a cfi violation, then merge into flow of unknown trap handler */
+>-		if (!handle_user_cfi_violation(regs))
+>-			do_trap_unknown(regs);
+>+		/* handle uprobe event frist */
+>+		if (!probe_breakpoint_handler(regs)) {
 
-base-commit: 7a17bbc1d952057898cb0739e60665908fbb8c72
--- 
-2.49.0
+If task has uprobe enabled and there is a cfi violation due to mismatch in
+return address on shadow stack and regular stack, then it would be a cfi
+bypass, right?
+Perhaps we should be doing this only when we match that sw check exception
+is due to forward cfi violation?
 
+Do you agree?
+
+>+			/* not a cfi violation, then merge into flow of unknown trap handler */
+>+			if (!handle_user_cfi_violation(regs))
+>+				do_trap_unknown(regs);
+>+		}
+>
+> 		irqentry_exit_to_user_mode(regs);
+> 	} else {
+>-- 
+>2.17.1
+>
 
