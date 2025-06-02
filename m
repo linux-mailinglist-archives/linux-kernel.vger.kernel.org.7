@@ -1,152 +1,158 @@
-Return-Path: <linux-kernel+bounces-670284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1267BACAC00
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 11:53:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E04DFACAC1A
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 11:54:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2A383B9EB6
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 09:52:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 243AD189DA0F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 09:54:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 285CE1E5B93;
-	Mon,  2 Jun 2025 09:52:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 730BA1F0982;
+	Mon,  2 Jun 2025 09:53:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sFUOki3h"
-Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UBHURkdq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1899572638
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 09:52:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BCD272638;
+	Mon,  2 Jun 2025 09:53:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748857973; cv=none; b=Ks4mRhOHpYXuL0OrCja4ERmHOpkNydP3wagfLZ3MosoofcQxNEbP3CpbB9PRqHKlXZi3vscGm9h4KTyZU8LXLsDuwr5oDn/CXsNWPNjTLuixn0Bt1/AAJY7Flkb1JGxJ15iDyqfrNkHsqsg9HOo9x8U6SYGUfijJfxAhF+GGJkI=
+	t=1748858005; cv=none; b=UOZJ6QwWqLrSxoMSisdJr7iWXbvW1gx7EbgaK6raupN/FLGSsUX+Y2mhbq91maHinYJF9Slu2mZ/N9xPZ48ZgAvZyUr6r0eAYkS2OKw3FwEF3oRu8h8pf/CDqnZZWM7tYcsfDBf6122OLmlfycKmXz+uTK/5NOqXKbKf5u3ns1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748857973; c=relaxed/simple;
-	bh=3Nr3rdAGLG+bEMBy2/W8X+wI8WL1Tg0+J7sPa+p7Hek=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PR6V0WS/J5kjZS/Ffl7jvIYWUiTQU9MW72M8DdW9A8tVvrKAk/P9KTYqf19A4PBIz9t1rLsJQk7o5Jod+zn2OX4PHv3IQIg2kwXDuwMqLDjzU6zgnsnvraWponxxJcf9HRRe+o7j+1i5jVdA5XSAfL2gFTdIMLTDC7shP7hyYs8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sFUOki3h; arc=none smtp.client-ip=209.85.160.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-2db2f23f174so2312011fac.2
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jun 2025 02:52:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1748857971; x=1749462771; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fA3ofLgxtfNebWUF4UqqforqyhiSi+NdjwHYvtGkbrM=;
-        b=sFUOki3hcCO+Y1ycPhbXKkcOoB9R54EQrfJIZsRKRiMXP5+e4PZXKk9Tn2AiP2rJOy
-         9pPrU/VUfgyn3P5lmwkz5Jh6iukhUIcTj5jt+vYrpjL+wi3LggOVOfXtnwx+9UG4poNG
-         PV6bfnpY/HvRvPJxQ2k1jei795ZwYFPUUuK+qLaovabSSgHQen7kxTs2p5gJIupYqhid
-         4Ywk41DKGVXVxOoYaoUp9/yhYkMqXi1QwW1YoZ5yccCieM32lr840CtgeNayKE6QOXWz
-         RsZn51lziJxC2opWf9KIBFw+I4kaIHcB/b2RKg21ZQhfKRmYyc7VDY5Vq66uzwFdwggU
-         jJkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748857971; x=1749462771;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fA3ofLgxtfNebWUF4UqqforqyhiSi+NdjwHYvtGkbrM=;
-        b=uc8/bkp87CDtBtKtHwiJM8dRWaB5OKEq4dmuMVQLnnsdapHSgp5Cwj6rrycEM+Jos3
-         +LA1GyxZ8F6ovBo76Os6+jMUcFwUmvYrO+7YoNZY738z3vr8iLC4K143zz6cSu9FpXiZ
-         yEtlkcpB1PjIC+TychmCgTFhrOn4dKoD3QrpiOFFPVC2CsvD6tDjoZk56naiSrxfmLMK
-         ksHHBIf3OL9E450bGTloDqO6yLGCiqdT88nsB/Axnf1IpcbYARoQOc2z/pHUgi31Tw6D
-         B+0kowUuHzxQ99YFWNWn4kbzqu8m/5yZrhvMhbu6kWhSyfdsAjZLQSBggVBqIi3W0g9O
-         1w6A==
-X-Forwarded-Encrypted: i=1; AJvYcCWXUbSaWL2srIDTajTi0UKB/eQFhZ5nqk743x9pLkZ6RiRdnUOT+A3JgV+X94p9ScbADmrWNF5qxke1oL0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYI/Ya1Yi3dLpYsAHF8HdWoGyKhDVecxYQQraxRIj30L8vdAPx
-	uwnVw87o9oZtUta0wx2d8hf77g/KuuJTOI3c/SpYvH4+6nyVGhAk1RUeOqbE48Ni8j88c8vUCN/
-	ey1myBs41Dtdi0YAqZgOyQM+tXRs5q8FrO4m8usvc
-X-Gm-Gg: ASbGncsopTOeqV3avrp2/zVAdgn7OUon5xP5R1vuUm5r3nJjpNAeieoppzocqrjbcMi
-	Mg37MEyOPz7Ar1FbANnOnO3JWG3rWYVMjBRqzbyLbm3Uh1IhUG4jPGFx4gxRY440Danjztsey52
-	9ZvOYbQu0/AVh6ACcIw/IESjVmDZkhOUb2f0E8xvsyJf8696H26axqn6LNwYAKrElMoBp8MYYHZ
-	Q==
-X-Google-Smtp-Source: AGHT+IE0ZGbnN04vjx83CwiRAf58xPvogSS6sEqYUTYlTlD740NOxi5Aoj2v4ECI6TEk/um1u2Qod5ydbnaGW57R8yM=
-X-Received: by 2002:a05:6870:9725:b0:2e4:68ee:4f21 with SMTP id
- 586e51a60fabf-2e9212c9e5fmr7107654fac.20.1748857970178; Mon, 02 Jun 2025
- 02:52:50 -0700 (PDT)
+	s=arc-20240116; t=1748858005; c=relaxed/simple;
+	bh=amsY+BaYvrHOlicu0uLhK5nM2/c8GjObiUUPtf09ZQs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=aBvccjsViZKkqmJEvIicV1uFot6Zn6E6RlElc5YctedISNTiEpm2zAXg2K4jZfW98lFHUTE2XN7Kh/a2CNERkoQNqKhOhJ7UA5gAb11PtivwTXjwG1iHJWhm0eGcZC2fsqS679+Kli0tBWnJ38hgBJiJNNDCc6ZiBIz0Iz2ue8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UBHURkdq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 3DF52C4CEF1;
+	Mon,  2 Jun 2025 09:53:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748858005;
+	bh=amsY+BaYvrHOlicu0uLhK5nM2/c8GjObiUUPtf09ZQs=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=UBHURkdqD9MtfSFRxiRX13Ct2XSyk88hDe7Yd5zj3erL+AKkGTWVVmRqnitsP0Ite
+	 73nl2nycPcEjOp/oyoDIyXt+c+mUEZGdK/LuF8plsbqYeImBZAq5NSdgA3GGu2kOH4
+	 +xxk1ziDwKZzX8d8XM3kO4YA2Wjpk2HYxdV8lEaPUl5goL+KDsivbnT83lgLG58uf7
+	 1bKUsbEyCtJgUIBAOFJ3icMr8VKpwW02aGRn648UybPA5+kgO0vSXaOGjYJxjE1TGh
+	 MXpoTvNORn0Otl81MkUFU3MOHUPXp/q9yK8vho4CCk7FOJhiLq0vlyGoWaxCNfa7Rr
+	 SufJZ6du5SSyA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C798C54FB3;
+	Mon,  2 Jun 2025 09:53:25 +0000 (UTC)
+From: George Moussalem via B4 Relay <devnull+george.moussalem.outlook.com@kernel.org>
+Subject: [PATCH v3 0/5] Add support for the IPQ5018 Internal GE PHY
+Date: Mon, 02 Jun 2025 13:53:12 +0400
+Message-Id: <20250602-ipq5018-ge-phy-v3-0-421337a031b2@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250526150141.3407433-1-bqe@google.com> <aDXLqJTWlsrvVYB2@yury>
-In-Reply-To: <aDXLqJTWlsrvVYB2@yury>
-From: Burak Emir <bqe@google.com>
-Date: Mon, 2 Jun 2025 11:52:38 +0200
-X-Gm-Features: AX0GCFvUUiFbUINzQ_Bdsf7EBt95VwNEYE5j1QvwuapbexknnbONhxI4OgqJICM
-Message-ID: <CACQBu=WL=RLN_9sU-DcJaRxCrCcokFhHvOF4K+=Ui+=POH9jVQ@mail.gmail.com>
-Subject: Re: [PATCH v9 0/5] rust: adds Bitmap API, ID pool and bindings
-To: Yury Norov <yury.norov@gmail.com>
-Cc: Kees Cook <kees@kernel.org>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
-	Viresh Kumar <viresh.kumar@linaro.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	"Gustavo A . R . Silva" <gustavoars@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIh0PWgC/2XMSw6CMBSF4a2Qjq3p60LjiH0YB6Ut0qgUW2wkh
+ L1bcOJj+N+b880o2uBsRIdiRsEmF53vc/BdgXSn+rPFzuRGjDAgghPshjsQKnH+DN2ETVOCUK0
+ S2hqUR0OwrXtu4PGUu3Nx9GHa/ETX65sCBr9UophgY1QjJQjLgNf+MV69v+y1v6EVS+wTkH8A2
+ wBS8rISuqL6G1iW5QWwiYfu7wAAAA==
+X-Change-ID: 20250430-ipq5018-ge-phy-db654afa4ced
+To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
+ Russell King <linux@armlinux.org.uk>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>
+Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ linux-clk@vger.kernel.org, George Moussalem <george.moussalem@outlook.com>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1748858002; l=3186;
+ i=george.moussalem@outlook.com; s=20250321; h=from:subject:message-id;
+ bh=amsY+BaYvrHOlicu0uLhK5nM2/c8GjObiUUPtf09ZQs=;
+ b=qT8k+dmDpyQNLaKfvAiglNzAB3A8PYvF9qZqsTNi3NMfyhcBzmy9M8EG0ebI5fd22dqUOafQw
+ Bn4HVsk+tQcDQ6ut1SrXvaSqD8NtuRrnmSR9rY9ZN5ngIwM9h+wDAPX
+X-Developer-Key: i=george.moussalem@outlook.com; a=ed25519;
+ pk=/PuRTSI9iYiHwcc6Nrde8qF4ZDhJBlUgpHdhsIjnqIk=
+X-Endpoint-Received: by B4 Relay for george.moussalem@outlook.com/20250321
+ with auth_id=364
+X-Original-From: George Moussalem <george.moussalem@outlook.com>
+Reply-To: george.moussalem@outlook.com
 
-On Tue, May 27, 2025 at 4:27=E2=80=AFPM Yury Norov <yury.norov@gmail.com> w=
-rote:
+The IPQ5018 SoC contains an internal Gigabit Ethernet PHY with its
+output pins that provide an MDI interface to either an external switch
+in a PHY to PHY link architecture or directly to an attached RJ45
+connector.
 
-> So, 95% CI means z=3D1.96, isn't? And to me it should be, for example for
-> the first line: 5.18 +- 1.96*0.32/sqrt(32) =3D 5.18 +- 0.11 =3D [5.07, 5.=
-29].
-> Can you check your math please?
+The PHY supports 10/100/1000 mbps link modes, CDT, auto-negotiation and
+802.3az EEE.
 
-Facepalm... I used scipy to get the CI, and passed alpha (5%) instead
-of 1-alpha (95%) for confidence level.
-I am very sorry...
+The LDO controller found in the IPQ5018 SoC needs to be enabled to drive
+power to the CMN Ethernet Block (CMN BLK) which the GE PHY depends on.
+The LDO must be enabled in TCSR by writing to a specific register.
 
-> > Results for sparse bitmap:
-> > +------------+------+-----------+--------------+-----------+-----------=
-+
-> > | Benchmark  | Code | Mean (ns) | Std Dev (ns) | 95% CI Lo | 95% CI Hi =
-|
-> > +------------+------+-----------+--------------+-----------+-----------=
-+
-> > | find_bit/  | C    |     22.51 |        12.34 |     22.38 |     22.65 =
-|
-> > | next_bit   | Rust |     30.53 |        20.44 |     30.30 |     30.75 =
-|
-> > +------------+------+-----------+--------------+-----------+-----------=
-+
-> > | find_zero/ | C    |      5.69 |         0.22 |      5.68 |      5.69 =
-|
-> > | next_zero  | Rust |      5.68 |         0.29 |      5.68 |      5.68 =
-|
-> > +------------+------+-----------+--------------+-----------+-----------=
-+
->
-> Your numbers look pretty weird. I wrote the test such that on a typical
-> x86 system it takes milliseconds for each subtest to pass.  Here you
-> report nanoseconds-scaled times. Did you divide by the number of
-> iterations? If so, please mention it.
+In a phy to phy architecture, DAC values need to be set to accommodate
+for the short cable length.
 
-Yes, I had divided by number of iterations.
-Now that you are questioning this, I have second thoughts.
-I will repeat the benchmark, without dividing by iterations.
+Signed-off-by: George Moussalem <george.moussalem@outlook.com>
+---
+Changes in v3:
+- Replace bitmask of GEPHY_MISC_ARES with GENMASK as suggested by Konrad
+- Removed references to RX and TX clocks as the driver need not
+  explicitly enable them. The GCC gatecontrols and routes the PHY's
+  output clocks, registered in the DT as fixed clocks, back to the PHY.
+  The bindings file has been updated accordingly.
+- Removed acquisition and enablement of RX and TX clocks from the driver
+- Link to v2: https://lore.kernel.org/r/20250528-ipq5018-ge-phy-v2-0-dd063674c71c@outlook.com
 
-> Please print raw output of your test in patch #4 which adds the test.
-> Because the test is tightly coupled to it's C version, we need to make
-> sure it hast the same format - fields alignment, etc.
+Changes in v2:
+- Moved values for MDAC and EDAC into the driver and converted DT
+  property qca,dac to a new boolean: qcom,dac-preset-short-cable as per
+  discussion.
+- Added compatible string along with a condition with a description of
+  properties including clocks, resets, and qcom,dac-preset-short-cable
+  in the bindings to address bindings issues reported by Rob and to
+  bypass restrictions on nr of clocks and resets in ethernet-phy.yaml
+- Added example to bindings file
+- Renamed all instances of IPQ5018_PHY_MMD3* macros to IPQ5018_PHY_PCS*
+- Removed qca,eth-ldo-ready property and moved the TCSR register to the
+  mdio bus the phy is on as there's already support for setting this reg
+  property in the mdio-ipq4019 driver as per commit:
+  23a890d493e3ec1e957bc925fabb120962ae90a7
+- Explicitly probe on PHY ID as otherwise the PHY wouldn't come up and
+  initialize as found during further testing when the kernel is flashed
+  to NAND
+- Link to v1: https://lore.kernel.org/r/20250525-ipq5018-ge-phy-v1-0-ddab8854e253@outlook.com
 
-Will do. In v10, I have removed the module name from the output and
-the lines match exactly now.
+---
+George Moussalem (5):
+      clk: qcom: gcc-ipq5018: fix GE PHY reset
+      dt-bindings: net: qca,ar803x: Add IPQ5018 Internal GE PHY support
+      net: phy: qcom: at803x: Add Qualcomm IPQ5018 Internal PHY support
+      arm64: dts: qcom: ipq5018: Add MDIO buses
+      arm64: dts: qcom: ipq5018: Add GE PHY to internal mdio bus
 
-> I would prefer to have detailed performance discussion in the
-> corresponding patch (#4), and here in cover letter you'd just mention
-> the overall performance difference - 2%, as I can see.
->
-ok.
+ .../devicetree/bindings/net/qca,ar803x.yaml        |  39 +++++
+ arch/arm64/boot/dts/qcom/ipq5018.dtsi              |  48 +++++-
+ drivers/clk/qcom/gcc-ipq5018.c                     |   2 +-
+ drivers/net/phy/qcom/Kconfig                       |   2 +-
+ drivers/net/phy/qcom/at803x.c                      | 185 ++++++++++++++++++++-
+ 5 files changed, 264 insertions(+), 12 deletions(-)
+---
+base-commit: ebfff09f63e3efb6b75b0328b3536d3ce0e26565
+change-id: 20250430-ipq5018-ge-phy-db654afa4ced
 
-cheers,
-Burak
+Best regards,
+-- 
+George Moussalem <george.moussalem@outlook.com>
+
+
 
