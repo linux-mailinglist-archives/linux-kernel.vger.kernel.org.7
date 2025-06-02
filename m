@@ -1,84 +1,155 @@
-Return-Path: <linux-kernel+bounces-670923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 624EAACBAD4
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 20:10:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0771FACBADA
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 20:11:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3633A4002F1
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 18:10:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F7504004FC
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 18:11:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DB97226D19;
-	Mon,  2 Jun 2025 18:10:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47FE8229B16;
+	Mon,  2 Jun 2025 18:11:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hdKgQhgv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="R30Ml5Vx"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F9F1EAF9
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 18:10:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51E882253AE
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 18:11:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748887830; cv=none; b=JzrrHtw8KuncvvY2pUg7XwUK0Re6LZPN86CHSHn7W1+Xn/dajKe9JcI4cWJb8wAx/gCjNyGr5toQav66kXNeEKgyCaJXP7vCkxrHS+ggWD/JmfXXGypeOaFmyxvmy2D5b/LrlT/CfRwc9VKqeGc7rLheZFO/Bs/0InO2VgomG5M=
+	t=1748887873; cv=none; b=k1bnu6O/ifGvukj1l7F/1MtcRgiH5JesTA4EIFZHdZqnM8ca19t4S2Ly4HQ3jJXmoWf7jMXhB6+9xbcr9oIDdejzqobDQJpwq5F0iMH2bR3ysaV77jnvBpegZZzTXUfbFWhoV68sFWKKbhOPT7C11zwQ1LYUcJTVGtJe3dsjmjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748887830; c=relaxed/simple;
-	bh=2Cxd3jS8VMSsjweHbN859HTp8jM+cKEyz1r4yJ8hT4M=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qG400EkrGR7p/qtWN2L5sagrreI9MTEXTZQuX3QNLhNd93j676K6lBeYjMwgcTwEDVbNCApfe4lHNLmR3KHp2CaHCkCnzVvpY7CHRTEj+2Vyalnx67ITU+Dm5xJVaUFcgeCi6sT6ZBRshRNz8/a0gXfSdgzi16iFB4ZKx8jibCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hdKgQhgv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34EF4C4CEEB;
-	Mon,  2 Jun 2025 18:10:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748887829;
-	bh=2Cxd3jS8VMSsjweHbN859HTp8jM+cKEyz1r4yJ8hT4M=;
-	h=From:To:Cc:Subject:Date:From;
-	b=hdKgQhgvE8SV7l63uUx/PI0qaLfr+AddJIlOhFXQVpI4acJ5Nnf10WmeeXIAxbsQp
-	 AsGvl+0AuDBWFK7cUlyxj89iVSQsxsgk/BrhCHFwjF7cB7Q+F8R35xsig5wAu1NHWj
-	 wSQ9+nZelJK6bUgFov4ZXhuutY/ike3CLWuPRV1YNUYrFhTfZc9TUTsYhkQ0W4+JdP
-	 s4q1mVj8wTI5vbddmAsTs60R+UvjkL4F5G1QLJhZSqtwThHEmXC10+vsDlH4Gfed+A
-	 kTUoEP80XaU2DtcTBhlSMsnmZcKPNuB7vzSrhLeZbZ6Yy01qIWn2ODFQJNyhyBW5Za
-	 Fg6645twCxlJg==
-From: Masahiro Yamada <masahiroy@kernel.org>
-To: Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	linux-riscv@lists.infradead.org
-Cc: Masahiro Yamada <masahiroy@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] riscv: pi: use 'targets' instead of extra-y in Makefile
-Date: Tue,  3 Jun 2025 03:10:18 +0900
-Message-ID: <20250602181023.528550-1-masahiroy@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1748887873; c=relaxed/simple;
+	bh=IQOXj2mWKxG4LnCPYqu20JJu5cF3ESUvUmGZOG1GktI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=hkn/n1YB21dKoapQPjo21GdoJP6lycCyGaBY+hGgoRpHXojo8T/KWuU0hshK5b3K60DwC1y897u6iXX5mA6PEwgGfuniHhpKZRrBgax/FqMhEbVyza/vJSzA/vRfImb5Jw8IK3FQcio2zvpEjCFqFf+FC/WrdYEGmGzxnVMUs9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=R30Ml5Vx; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-231e8553248so45561235ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jun 2025 11:11:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1748887871; x=1749492671; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=SdBSPm4lDSqUwft73VRA8JaXXCTN7tMlvEeCqjJoyCc=;
+        b=R30Ml5Vxf6rhGxrCDDbedqC9xKzO/VxhfAKDyjqwKdGaIXxzPUaaOsl0p/GxtN4gGS
+         kjR4ZO6xi3T2k6wV4gTzye06wq/cE4pjB5bQYVO41OXH/ode5TupmHj4Zw8JysgMObY0
+         JFvaG2VgjgHrAzVbK/SKLz4GPiZPFWlLy6WHI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748887871; x=1749492671;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SdBSPm4lDSqUwft73VRA8JaXXCTN7tMlvEeCqjJoyCc=;
+        b=LVUP+gNEG9BHyFukdAMt2HMix0OSD7+0KGJqTPKvR7r1hkyRVyv9tdZ3SYDzghqutU
+         ypMI59MoIbDlyALyXKA4rtkpJCj0jYC45yRVOWvawwT6pOpYn5IhhGPZcSwD8E44YA+v
+         1tc/2I0g9FPPcF7qtngjZ7tY/M80znQbteWon1tnh7bFbYwpon6r/o8QR4R/Wah7JAlK
+         duIuoj6NXkKSPobIDU/057LVUMi6tXv6AsbKry+PP0Gw8w7PgFPmPMcc/XLYnL/VxpA4
+         Ti624eU2ak9q1OnHp32jemaJBwD662yZOG1yi7t8IXT7k5EiC4vG8PSl5jcLoun1xtuL
+         QLXg==
+X-Forwarded-Encrypted: i=1; AJvYcCXn8aD9wxnH+H4Y11McqFNVarB8dz2NX9G1Xa0vtfIZWv4go/grN1mWPkrkZH7rzeUrUv+Xpg+8K+epSI8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQACAhuMbePuwVtbmfyYqai4beNOxpTnQzfaS6/ZBJNne/U/ke
+	NMsFccZ2ZjPAp4znFtqBo5lBv24t3j1kqOeY2sNe17+Njll8grxyamUirZ6JWZesXw==
+X-Gm-Gg: ASbGncuvetneMl5M6ZjtXFxtKJwdRkTnZOQ7iKfGpKEhD3/nSwX1yoLdqdJVgYm7sEs
+	kqbUFxDkKmsLGiBAMfB5FvOGx8nyhHx+dvIZZ5IY/z8vXTMewPP6y1bsD0rjgCeZeLFab/9+lhc
+	Zm8EB2ymBfY9LwDTm1+qaZZaxAn3jLBWmBNzxJunF0DVePryRwpCvamTG7td4XSkGAm//DhWHmE
+	EHykSJu7NH/IScAWaJMWVDK7qpvZGiqnyr4zKdNwVX45K1uu1cLE2m+P1AAe8os7uo/5HOopVr2
+	esN+TRJ9hZ+HMWrJLhiKJOvqeEPLeuBNL2oJjSn4mYCxrW1IsANVHJ5Z2gqPeueE5EuHd3IYvl8
+	3BJIJbBC8Wz8M6Qw=
+X-Google-Smtp-Source: AGHT+IEVGZpn/uowa+A9bLOJ5UPLni0Ixvp7UMIIwF6/riHxJPgzKmIY82bGmKK9D5Cn48v+Sho0jQ==
+X-Received: by 2002:a17:903:1787:b0:234:d7b2:2ac5 with SMTP id d9443c01a7336-235395bfa8bmr204925465ad.21.1748887871182;
+        Mon, 02 Jun 2025 11:11:11 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23506d14ddasm73795265ad.251.2025.06.02.11.11.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Jun 2025 11:11:10 -0700 (PDT)
+Message-ID: <455d5122-7716-4323-b712-9a7d84063c0c@broadcom.com>
+Date: Mon, 2 Jun 2025 11:11:08 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 09/10] net: dsa: b53: fix b53_imp_vlan_setup for
+ BCM5325
+To: =?UTF-8?Q?=C3=81lvaro_Fern=C3=A1ndez_Rojas?= <noltari@gmail.com>,
+ jonas.gorski@gmail.com, andrew@lunn.ch, olteanv@gmail.com,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, vivien.didelot@gmail.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, dgcbueu@gmail.com
+References: <20250531101308.155757-1-noltari@gmail.com>
+ <20250531101308.155757-10-noltari@gmail.com>
+Content-Language: en-US
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <20250531101308.155757-10-noltari@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-%.pi.o files are built as prerequisites of other objects.
-There is no need to use extra-y, which is planned for deprecation.
+On 5/31/25 03:13, Álvaro Fernández Rojas wrote:
+> CPU port should be B53_CPU_PORT instead of B53_CPU_PORT_25 for
+> B53_PVLAN_PORT_MASK register.
+> 
+> Fixes: ff39c2d68679 ("net: dsa: b53: Add bridge support")
+> Signed-off-by: Álvaro Fernández Rojas <noltari@gmail.com>
+> ---
+>   drivers/net/dsa/b53/b53_common.c | 4 ++++
+>   1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/net/dsa/b53/b53_common.c b/drivers/net/dsa/b53/b53_common.c
+> index d5216ea2c984..802020eaea44 100644
+> --- a/drivers/net/dsa/b53/b53_common.c
+> +++ b/drivers/net/dsa/b53/b53_common.c
+> @@ -543,6 +543,10 @@ void b53_imp_vlan_setup(struct dsa_switch *ds, int cpu_port)
+>   	unsigned int i;
+>   	u16 pvlan;
+>   
+> +	/* BCM5325 CPU port is at 8 */
+> +	if ((is5325(dev) || is5365(dev)) && cpu_port == B53_CPU_PORT_25)
+> +		cpu_port = B53_CPU_PORT;
 
-Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
----
-
- arch/riscv/kernel/pi/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/riscv/kernel/pi/Makefile b/arch/riscv/kernel/pi/Makefile
-index 81d69d45c06c..13b7d68c95b5 100644
---- a/arch/riscv/kernel/pi/Makefile
-+++ b/arch/riscv/kernel/pi/Makefile
-@@ -39,4 +39,4 @@ $(obj)/ctype.o: $(srctree)/lib/ctype.c FORCE
- 	$(call if_changed_rule,cc_o_c)
- 
- obj-y		:= cmdline_early.pi.o fdt_early.pi.o string.pi.o ctype.pi.o lib-fdt.pi.o lib-fdt_ro.pi.o archrandom_early.pi.o
--extra-y		:= $(patsubst %.pi.o,%.o,$(obj-y))
-+targets		:= $(patsubst %.pi.o,%.o,$(obj-y))
+Don't we get to that point only if we have invalid Device Tree settings? 
+In which case wouldn't a WARN_ON() be more adequate?
 -- 
-2.43.0
-
+Florian
 
