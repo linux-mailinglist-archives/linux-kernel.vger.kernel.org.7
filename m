@@ -1,184 +1,155 @@
-Return-Path: <linux-kernel+bounces-670467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B63CACAEC0
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 15:14:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C580AACAECE
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 15:20:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F7C23A3931
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 13:14:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A6617A6274
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 13:18:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2F2E21D018;
-	Mon,  2 Jun 2025 13:14:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B248B21CC6D;
+	Mon,  2 Jun 2025 13:19:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="Zltz4DYE"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EOQpJ1Vm"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAA2520371E;
-	Mon,  2 Jun 2025 13:14:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB2E95227;
+	Mon,  2 Jun 2025 13:19:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748870080; cv=none; b=CVcE4UQHaO9ek9E3mKIaJ5Y3c5NXIE0N/Uqvaek3dhw1g+gyqslDBZpIYbgYaLlU4yKX9BwdVWSk0Cifx4cdYVgDV+Wbx/BfDYZaisdHtZM/RKkB8yAgtLEryvVF+rcA6T2e68RcJOsXKAePwDrOFUiZz4O1Yk5f20iVR8yZp0s=
+	t=1748870389; cv=none; b=jdbWbSvtmJioimYH6TxiHYVNPGCrlplbVqMzCIlBO+ve0LbM5lq61FAHfE+d4ndYoSQ7FAJ6rMGR35vZFrHhMqwX5b8zAOz165frgNqk5wlSab1BS9tR9poEYB1SV/wDTGdspYOrTfPyda17buOA8uAS68HtHrv90CF5cP+gjZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748870080; c=relaxed/simple;
-	bh=TTwL/BKTMRfWSpnqfREP0hMXmoloFSrx+yYMDC7F1Z4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=q/hcrdVD27zfBU/7OgkT/8d869GVkDrf7BPJMr7QVhwNUUrpLu7DUow8w3dTl2nIcpOETa3b17lsbKSYQfXfu7mVmi603ltDYjQblQrQsdLtMVwrNDBv+vXN3mEU+LdPPB5RdeNEamAbU6zVlmrBDPV2T9ar2FPdpP+ljW5AM34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=Zltz4DYE; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=Th1bsXYbOdZNBdF4HpkqWzJZdFEbTYJpHy2+yVwfjLk=; b=Zltz4DYEAJKKQbIDz9XRJRi/AJ
-	59wjiN/h8OXZGaXQGB0452s2iFnI1zU+IPY1w8k5EKp4u81L8YgToJme/4Y7pK4jA7yez7TWCegkN
-	OQGc6sZvsIGtymAkACMrMnE+3y/Vp/fxEgFVrLGadY4xXOxOmQoQjzfqn8Jw08rbA0Dys9bFKdTiw
-	G2mLBp2M1MzNsCfMVOOIWHQmWJHz3hU0XprPlfMM2WzxPYznBwsqZaI8KwuAnwKZ6jyx/ju6Onc+R
-	+P9cVvuKJ90OZhDAIq7vBruure411VR6UT/1AJtSwfuDuniO2L7l0hC3GCGZge3bprxpiH4EYriKg
-	Pip1Md9A==;
-Received: from i53875a2b.versanet.de ([83.135.90.43] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1uM4zc-00038Y-5g; Mon, 02 Jun 2025 15:14:20 +0200
-From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
-To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <ukleinek@kernel.org>,
- William Breathitt Gray <wbg@kernel.org>,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- Kever Yang <kever.yang@rock-chips.com>,
- Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
- linux-iio@vger.kernel.org, kernel@collabora.com,
- Jonas Karlman <jonas@kwiboo.se>,
- Detlev Casanova <detlev.casanova@collabora.com>
-Subject: Re: [PATCH 4/7] soc: rockchip: add mfpwm driver
-Date: Mon, 02 Jun 2025 15:14:19 +0200
-Message-ID: <1970051.6tgchFWduM@diego>
-In-Reply-To: <13790724.uLZWGnKmhe@workhorse>
-References:
- <20250408-rk3576-pwm-v1-0-a49286c2ca8e@collabora.com>
- <2188729.OBFZWjSADL@diego> <13790724.uLZWGnKmhe@workhorse>
+	s=arc-20240116; t=1748870389; c=relaxed/simple;
+	bh=UxGEKXZqr/JaIi0rMXu3vg+WUXFZEFThlv9I/oaHoDA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=H4MHk6BkH044AauMoGcOXiFv1Z4/+7dy33Vjm5GtC21D29Zqyvjx/Idh0XOjuZJ6JAHn3p0hQwXvdhUGe0nlFn/Iz1Voviv5ojNZtkqXOO4HRhygRWFalxmWzErlV8fa3NeOh1Qr9n40NfIp9chgrinK6GvxM49cu4v6pTFYNks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EOQpJ1Vm; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-31223a4cddeso3015401a91.1;
+        Mon, 02 Jun 2025 06:19:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748870387; x=1749475187; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=U2pWQ8XYInPzY7yzvFzb84/7Ia0EnVFU8WNL68zGHlw=;
+        b=EOQpJ1VmyTxByW69ygZWWDI0yb2LCZhzGZUNA6TNUkm2uPEZZUuz4UP5KHttBMVTP0
+         9VOisYX1gvaq/r1/IYwrTI62s8VUT3EHca7Zz4jq54lmK3QC5qon7tlFx3HJR6o43uVN
+         N/Z0HsEVpw1Elw0lqotVwc3o90E+f8H2SV1X5d+NISWOopXP5sSfIywT8LqcT1X/5aOP
+         atlhKoiA+eU9LRhjB+cyGGQp3RHO6gTWd/7SCnu5yBQjFu/Ip5NjOa98BFrUM2FHsjQq
+         Lee8bP814KC34HSv8Fs0qJHIZjRmGLzYYG5AIUfALc/KXeL0pmML4kk59HZr5rFSxxGO
+         exOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748870387; x=1749475187;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=U2pWQ8XYInPzY7yzvFzb84/7Ia0EnVFU8WNL68zGHlw=;
+        b=eagfQT+tLsQbBPg2N3RmR+Yytx5CUwcIX/ofgZWUDUtargkH0pWNjCO6oPjY4r6V98
+         GwJhLHw4/AJ0IsWaD6fuvQpgQ4HPYMjyQAUgPSQTGOzYM3Vbt2SXiN89XcsLWBc3yUT7
+         gtVEnWs9Rs6K5YVj0wTvo5VG4UhIyE7uDONrG5sajZqBsTlt4MI3T/7TYOqfr2KQC6LD
+         XqgSqKGD6yg1IR/2IEhAp83oZg624mP+1q8gKthUOt0g5z3QAZx4lsoa1rSaYO/amEyf
+         khVO7seoDIXvYtsafBu3J8d2o/mkKY5/enf410YWdvnEQk87v5L4lgd23eOKfEUYznPo
+         HLVA==
+X-Forwarded-Encrypted: i=1; AJvYcCV5GY00X34pYdutgccNlz0q0AZKZpJ4gKoNAMcO7zRGfT2UtLdyK5hR4gb8p2tPXRG0BlIB97G1dxaruaIrtprfWQ==@vger.kernel.org, AJvYcCW7a+N4+ITdGpPCgT63s02QdLkLxzgrXogNMzTmvu+Tpak0VJsKPfV92vnIfKKKaly3gZSC5EYekBQ=@vger.kernel.org, AJvYcCXF6Pwn09h+oLDCEhidH8YetBuEawGCd3V9uYv7HSiqT2aM+c3q7DYJlTXKveY8C4E+9bgZ7115sdBPjtI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEFrvZExDA7Qa6PG/r35JuVoHhpBXN7J2mMadylW3kv5dWuuC9
+	cLk9Q2l+LpExzZaV13sVr9nkfIbc1BrmrqLLth6FIgPB+q4Wu+FKICLr57QTzbqL
+X-Gm-Gg: ASbGnct7WtkoFjJUbDw+ImTPuknAd/rEnjQxDa31Yh5S4rPMFuVovzV4YSedAFEnocS
+	J8LdzbVx+NYSbBNoIGCQ2qs+og3PPdxYqKoK7ApG8+mMk52ExCUvy52O+0+DWlhkQ8eSkuGTqpl
+	KkCby2MFrZ3yKvKVeuEksBE/oFdFHfRHYnocr/yqJ3xycGmONg8KGQgG0AJ5l0hOrXVmmvRBiss
+	auyJ++euEZrd+VrASwggwx2GiTYifgtbNxgklMUjWjovNyYds5XGLORSvjriQO3oNaluuOEf1Nk
+	DxeskcC921h8gju51xgjAnTSisRQtuvz6PkLmY5FJ+70T7Xw8g1j2vGpdgTOIbGHSHcR05rVyQ=
+	=
+X-Google-Smtp-Source: AGHT+IFDyEzGFaym1wpwRqsblj24xGVKJRt91HFE7nLSINnTFLOY+Zcd+cdYuE1FMCys07O3cnvoUw==
+X-Received: by 2002:a17:90b:4a0d:b0:312:1d2d:18d9 with SMTP id 98e67ed59e1d1-3127c6a9969mr11777603a91.5.1748870386764;
+        Mon, 02 Jun 2025 06:19:46 -0700 (PDT)
+Received: from hiagof-nb.corp.toradex.com ([67.159.246.222])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3124e2b67bcsm6130983a91.8.2025.06.02.06.19.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Jun 2025 06:19:45 -0700 (PDT)
+From: Hiago De Franco <hiagofranco@gmail.com>
+To: Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	linux-pm@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org
+Cc: Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Hiago De Franco <hiago.franco@toradex.com>,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Peng Fan <peng.fan@oss.nxp.com>,
+	daniel.baluta@nxp.com,
+	iuliana.prodan@oss.nxp.com,
+	"Rafael J . Wysocki" <rafael@kernel.org>
+Subject: [PATCH v4 0/3] remoteproc: imx_rproc: allow attaching to running core kicked by the bootloader
+Date: Mon,  2 Jun 2025 10:19:02 -0300
+Message-Id: <20250602131906.25751-1-hiagofranco@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Am Montag, 2. Juni 2025, 14:15:45 Mitteleurop=C3=A4ische Sommerzeit schrieb=
- Nicolas Frattaroli:
-> On Saturday, 31 May 2025 23:48:29 Central European Summer Time Heiko St=
-=C3=BCbner wrote:
-> > Am Dienstag, 8. April 2025, 14:32:16 Mitteleurop=C3=A4ische Sommerzeit =
-schrieb Nicolas Frattaroli:
+From: Hiago De Franco <hiago.franco@toradex.com>
 
-> > On a more general note, what is the differentiation to an MFD here?
-> >=20
-> > Like you can already bind dt-nodes to MFD subdevices, and can implement
-> > the exclusivity API thing on top of a general mfd device, to make sure =
-only
-> > one mfd-cell gets activated at one time.
-> >=20
-> > Other than that, this looks like it reimplements MFDs?
->=20
-> What initially made me not make this an MFD was Uwe Kleine-K=C3=B6nig exp=
-ressing
-> some doubts, which lead me to alternatives like the auxiliary bus. Readin=
-g the
-> auxiliary bus docs I found:
->=20
->   A key requirement for utilizing the auxiliary bus is that there is no
->   dependency on a physical bus, device, register accesses or regmap suppo=
-rt.
->   These individual devices split from the core cannot live on the platform
->   bus as they are not physical devices that are controlled by DT/ACPI. The
->   same argument applies for not using MFD in this scenario as MFD relies =
-on
->   individual function devices being physical devices.
+This patch series depends on Ulf's patches that are currently under review,
+"pmdomain: Add generic ->sync_state() support to genpd" [1]. Without them,
+this series is not going to work.
 
-Interestingly the 5 year old LWN article seems to have been overtaken by
-real-world usage ;-) .
+For the i.MX8X and i.MX8 family SoCs, currently when the remotecore is
+started by the bootloader and the M core and A core are in the same
+partition, the driver is not capable to detect the remote core and
+report the correct state of it.
 
-I see pinctrl/pinctrl-ep93xx.c using regmaps (and thus registers), similarly
-in gpu/drm/bridge/ti-sn65dsi86.c and a number more.
+This patch series implement a new function, dev_pm_genpd_is_on(), which
+returns the power status of a given power domain (M core power domains
+IMX_SC_R_M4_0_PID0 and IMX_SC_R_M4_0_MU_1A in this case). If it is already
+powered on, the driver will attach to it.
 
+Finally, the imx_rproc_clk_enable() function was also changed to make it
+return before dev_clk_get() is called, as it currently generates an SCU
+fault reset if the remote core is already running and the kernel tries
+to enable the clock again. These changes are a follow up from a v1 sent
+to imx_rproc [2] and from a reported regression [3].
 
-> Additionally, LWN[1] about the auxiliary bus, which I've read up on durin=
-g my
-> ill-fated journey into that version of the driver, also goes further into=
- why
-> MFD is sometimes a bad fit:
+[1] https://lore.kernel.org/all/20250523134025.75130-1-ulf.hansson@linaro.org/
+[2] https://lore.kernel.org/lkml/20250423155131.101473-1-hiagofranco@gmail.com/
+[3] https://lore.kernel.org/lkml/20250404141713.ac2ntcsjsf7epdfa@hiago-nb/
 
-[...] LWN excerpt [...]
+v4:
+- dev_pm_genpd_is_on() introduced to drivers/pmdomain/core.c
+- imx_rproc.c updated to use the generic power domains instead of the
+  SCU API call, which depends on Ulf's patch series.
 
-> The individual function devices may be all pointing at the same physical
-> device here, but they're not distinct parts of the device. However, there
-> still *is* a physical device, which convinced me that auxiliary bus wasn't
-> the right one either, and the idea for just using the platform bus came
-> during a work meeting. If someone with experience on aux bus vs platform =
-bus
-> (what this uses) vs MFD, then feel free to chime in. Unfortunately, as is=
- the
-> norm, I can't seem to find much in terms of MFD documentation. Needing to=
- know
-> what type of exclusion they guarantee and what type of abstractions they =
-bring
-> with them that would make them more useful than my solution would need so=
-me
-> justification in more than just an auto-generated header listing.
+v3:
+- https://lore.kernel.org/all/20250519171514.61974-1-hiagofranco@gmail.com/
 
-I think MFD itself does not provide any exclusivity - aka allowing definiti=
-ons
-that combinations of sub-devices cannot be used at the same time.
+v2:
+- https://lore.kernel.org/lkml/20250507160056.11876-1-hiagofranco@gmail.com/
 
-But as I see it right now, you have sort of a mfd-device in there, creating
-all the sub-devices and then the aquire/release logic on top making sure
-only one device is ever active at the same time.
+v1:
+- https://lore.kernel.org/lkml/20250505154849.64889-1-hiagofranco@gmail.com/
 
-Right now I really don't see (prone to code-blindness though) why the
-aquire/release logic could not live in a mfd-device.
+Hiago De Franco (3):
+  pmdomain: core: introduce dev_pm_genpd_is_on
+  remoteproc: imx_rproc: skip clock enable when M-core is managed by the
+    SCU
+  remoteproc: imx_rproc: detect and attach to pre-booted remote cores
 
+ drivers/pmdomain/core.c        | 27 +++++++++++++++++++++++++++
+ drivers/remoteproc/imx_rproc.c | 33 ++++++++++++++++++++++++++-------
+ include/linux/pm_domain.h      |  6 ++++++
+ 3 files changed, 59 insertions(+), 7 deletions(-)
 
-> I am very inclined to start pretending things that aren't documented do
-> not actually exist in the kernel, because it's very annoying to have to
-> constantly deal with this.
-
-Sadly the "ostrich method" won't work ;-)
-
-So as a way forward, I'd suggest you posting your v2, so that all the
-current review comments get addressed and amending the
-cover-letter with the aux-bux / mfd discussion thing (ideally in a
-somewhat highlighed block so that people skimming along will notice)
-and include the relevant people:
-
-=2D for aux-bux get_maintainer.pl says:
-Greg Kroah-Hartman <gregkh@linuxfoundation.org> (maintainer:AUXILIARY BUS D=
-RIVER)
-Dave Ertman <david.m.ertman@intel.com> (reviewer:AUXILIARY BUS DRIVER)
-Ira Weiny <ira.weiny@intel.com> (reviewer:AUXILIARY BUS DRIVER)
-Leon Romanovsky <leon@kernel.org> (reviewer:AUXILIARY BUS DRIVER)
-
-=2D and for MFD it's of course Lee:
-Lee Jones <lee@kernel.org> (maintainer:MULTIFUNCTION DEVICES (MFD))
-
-
-Heiko
-
-
-> [1]: https://lwn.net/Articles/840416/
-
-
-
+-- 
+2.39.5
 
 
