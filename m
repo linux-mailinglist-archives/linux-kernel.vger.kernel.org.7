@@ -1,175 +1,184 @@
-Return-Path: <linux-kernel+bounces-670959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15C73ACBB48
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 20:55:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DEC1ACBB50
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 21:01:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C18DA175651
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 18:55:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0E7A3B1320
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 19:00:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D47A8227E80;
-	Mon,  2 Jun 2025 18:54:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B31922538F;
+	Mon,  2 Jun 2025 19:01:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XVULdCes"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="azkYICkZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 744B322256B
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 18:54:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A523F19B3EE;
+	Mon,  2 Jun 2025 19:01:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748890490; cv=none; b=Q1A2lj36mb7PtgFXg2rfdG+Nsb2cGCNPDy+AzaRAjfCy/BKBcKsEdVC1ioxfWOvPhoeuOxo+2NmrQmBIuRrs+sjfwxfcDF6XJBVS9QK173upx7uiCVon/hF9eSFPHdZyOrHZgJBY5GCk1woXjxHrcuXQoSLV84w29NgRcruhNug=
+	t=1748890868; cv=none; b=lsfWlzns2OvPnmb54nGKm/K+Xanfk4b181UR2xa3dgCN8PUQk7wyhSLeI3KYo/+utOyfp1PT1uB/gXfcegZ+oX7scWcXTXXxiTmPUqLj6/PsbNAhaiRR5CdVuAl4QKq2aoe9NrFb6FYJzmHzRgjRCEo4Oi07nB0KRpyfmgCVXCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748890490; c=relaxed/simple;
-	bh=ADW9xya+1oa2cmviacIcm+dB4kYEr+YRKtM/wxWuyc4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=V0hPsJoG7kGz/7cLEb3ckrQhGB4B3+My5bC+jQqsSAYRHuVaXGAa9vx9EDSFdfSFOIUV0dKNhe0csLWoklWJLdBXJb9A0t0AAR5/jmLfmdEmDsudugHxiKUXf2AmKi1uyLluI41L8RLV6iLen346iJOYkjMJhKDaFYlrrWC0TWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XVULdCes; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1748890487;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6C/P1ic66cDx0vo/JBziwVz7kRWsMBGoIIf4HEtYsGQ=;
-	b=XVULdCesiDBOHgkMpNnXAJTBQlmj67y+PwfAapVb4Hqb9s7FLcyQyBYHYG/EgTe2XGmUo7
-	jj+aNFBTfzORiT6KO6Inacia4KS+k91IE/ae6llLVVuwq+1brw3vPPbG/cuO3K5kdT/Mt1
-	k8yjlWeSRm1IAKZXyzsUVtT7UY5fnxE=
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com
- [209.85.166.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-619-2IF8irM8Oty-ZN2FcoYugg-1; Mon, 02 Jun 2025 14:54:46 -0400
-X-MC-Unique: 2IF8irM8Oty-ZN2FcoYugg-1
-X-Mimecast-MFC-AGG-ID: 2IF8irM8Oty-ZN2FcoYugg_1748890485
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-86cf7803786so21254239f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jun 2025 11:54:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748890485; x=1749495285;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6C/P1ic66cDx0vo/JBziwVz7kRWsMBGoIIf4HEtYsGQ=;
-        b=YUJwLX7Re8cCMnymcKPBG3WdAXdDa19SUpEJQMR5PKPLOiWG+8PIj6xZFk8pRUULK8
-         Og+OImtGrAAWr/lcgv+SBkKfnaLB+2/x+CjPucK5vz3EgfKFuyzmNkWm9R2fbIh+U9hP
-         iHF+/zn9Duy5Z81JC9lcacy+jHVZ6d1F+VPF9FuCB22i/PfBViM/aFzKxLq0XOsosi3C
-         1NIGTdcNO62bYm/pzQ+LTYD5Dq9QA+orvlyZ7M6UXhPlnzR3el6orPlMmN0arGkMCDSm
-         AhvHtEjDmbd24+hhvCUPq7zGIUmyQsmB1B615ehnGi6wTDLKxEtfLP5ZtC4v6tBCIwPq
-         nuPw==
-X-Forwarded-Encrypted: i=1; AJvYcCUjfGB2elC15O9yQpCZWj3DCqvPNIoM0e6B67e1QC9WHPEyIwW63/3LxlFISt2sYVLOSyEubLZL/4fWjDg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywqa8tqmz0O1BPdXxfUGLkfLEe7XFHjxfgkz6pR086jteiVqHdA
-	/1b5OuHp1WJ0vA/iw8t1g+pjeCANSyKdW2katv60MepDSeOVMuxsFUoMONaKnKVn/XODpfi8P9F
-	UAWS7SC3ryi/3369cZ7MoY7V6jj+W59jkknCr2k5XC6cRdneMk+aAqHeHAQV9CF284Q==
-X-Gm-Gg: ASbGncvEWVrIzdmJv2f4JfeHPr0aGIPaoEppU5tFOdi0YyrK+HUqGfUTW5TfM4ic8yZ
-	wAIwBzwSHAPjditIrEQ2CMT0QWHA0eTrqu9MJMJ50Jf7DLMhFQiGTGm348BnQsykT3Hvd16LlJ8
-	QygcCj7JVfOxyoPWnkJGqphXCS9j0LBQsYaMRskJCRO7Wb1hwPa/l/dilzevsGypdia4KZ1LEpr
-	jlzOaXO9IOE19rqVG5/F333K7tukd8zy0X+6dv0opSxRtWFnmlf8uRfzoJyQxuHQHNtIOV3ZS3D
-	nZb8fYM47CTFJro=
-X-Received: by 2002:a05:6e02:258a:b0:3dd:869e:d1d9 with SMTP id e9e14a558f8ab-3dd9bb04986mr43707915ab.4.1748890485375;
-        Mon, 02 Jun 2025 11:54:45 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEDB2BJKvNT8wrVq77BTo5j1RKq7jCh6zygyLgk4tNvo1VWUIo2Syvkw5u3DYlSjqc4/evPNg==
-X-Received: by 2002:a05:6e02:258a:b0:3dd:869e:d1d9 with SMTP id e9e14a558f8ab-3dd9bb04986mr43707735ab.4.1748890484945;
-        Mon, 02 Jun 2025 11:54:44 -0700 (PDT)
-Received: from redhat.com ([38.15.36.11])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3dd93534293sm23059685ab.13.2025.06.02.11.54.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Jun 2025 11:54:44 -0700 (PDT)
-Date: Mon, 2 Jun 2025 12:54:42 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, "Michael S. Tsirkin"
- <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, kvm@vger.kernel.org,
- virtualization@lists.linux.dev, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, Kevin Tian <kevin.tian@intel.com>, Oliver
- Upton <oliver.upton@linux.dev>, David Matlack <dmatlack@google.com>, Like
- Xu <like.xu.linux@gmail.com>, Binbin Wu <binbin.wu@linux.intel.com>, Yong
- He <alexyonghe@tencent.com>
-Subject: Re: [PATCH v2 0/8] irqbypass: Cleanups and a perf improvement
-Message-ID: <20250602125442.19d41098.alex.williamson@redhat.com>
-In-Reply-To: <20250516230734.2564775-1-seanjc@google.com>
-References: <20250516230734.2564775-1-seanjc@google.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1748890868; c=relaxed/simple;
+	bh=YxAIIEqrvalJpraYDwrR/Jv08dcEQhmUG4FTOhbLtvA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uX/n8xrQbYSz9RdRiUskSBYNIffJVoKjjhVck4dUmQP2Ohx0m5Lyqe6hFRq6j7nYKW3cBajOcrer/7as7zwU4ZmrxP+K+din9urf/FfozIhngJRPfFjJJuFsT6MYIXWjxPwiasDsRXZ+n+KUdHJHUAzsj+fIwqOetDxy/2/H8+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=azkYICkZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06AA0C4CEF4;
+	Mon,  2 Jun 2025 19:01:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748890868;
+	bh=YxAIIEqrvalJpraYDwrR/Jv08dcEQhmUG4FTOhbLtvA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=azkYICkZlQ5ql7NykpA+R78old0/NerqQNfG8LRiB9X/ZgddrvbuoZOcQvZCYQ4Op
+	 Wu++QpGyok4B4WoNOfYugmcWnr0ZtQ+gWmrukxzFhFlGyNqtL2V6BvAyTMxYddT8p0
+	 1jdxnxLpEN3BfizlufMyFHONIH0N9UyrXx5aTpRP8yYVSdTxy2MOFkHQz70RFAVufL
+	 Ct3Wjtj/jLazs0lV2y7vF7cDX3cvM1hohk1p+eVfNYELHkS9HtBjbALnxVVz1aB5Ow
+	 0RXEY142WSimh9c8ftaJJ+GiavkOFZ5q+UeGmIpzR9iK30wLTxM1vhwwUw1zcYIIhk
+	 RZCKawqQpr5sQ==
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5532f9ac219so5464672e87.1;
+        Mon, 02 Jun 2025 12:01:07 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWq6Kekdz/tdlJcvutT9WiEeSWh8C7BuAcRvNJm0ImRytVjn8CYC/b79r2pTmE/gr0NHzxDFR5wsPZKqtlz@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5n92+aEsoHwMqe4ihP89kMiXzsy5rr/0wnbV0kQ/QK9Xg4xCv
+	jCwIQ/MkL+loCDTK2Kxeul7T3awm3l1uAfkBtKeZ2kwZV/PnpLQ6ZaRFWQFJOJUX/OCnmMM6T5A
+	77DkAiZxgTAVkqa3/YyFz1Lc+Ud695e8=
+X-Google-Smtp-Source: AGHT+IEP9e7Bpuwqds9sFw3Aiv2WxrKc7K+TA6TYOkLWb3q58bdth2n5EggvyYF7ux3Zm6WAnpfFKnO9m6KzrByFzek=
+X-Received: by 2002:a05:6512:1051:b0:553:2ef3:f72d with SMTP id
+ 2adb3069b0e04-5533b9080bamr4311815e87.28.1748890866590; Mon, 02 Jun 2025
+ 12:01:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250602130609.402581-1-masahiroy@kernel.org>
+In-Reply-To: <20250602130609.402581-1-masahiroy@kernel.org>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Tue, 3 Jun 2025 04:00:30 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATBCmhf_yT+1nkULwRZgQ3QJ6PDbUSWAPOvYZT478M07A@mail.gmail.com>
+X-Gm-Features: AX0GCFtsggFfXeaX3Ol5SttNYUFE9YlQfIaR15VSe7V-T65Ig-aR4_3I6582Pqg
+Message-ID: <CAK7LNATBCmhf_yT+1nkULwRZgQ3QJ6PDbUSWAPOvYZT478M07A@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: stop module name mangling
+To: linux-kbuild@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, 
+	Lucas De Marchi <lucas.de.marchi@gmail.com>, Daniel Gomez <da.gomez@samsung.com>, 
+	Luis Chamberlain <mcgrof@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas.schier@linux.dev>, Petr Pavlu <petr.pavlu@suse.com>, 
+	Sami Tolvanen <samitolvanen@google.com>, linux-modules@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 16 May 2025 16:07:26 -0700
-Sean Christopherson <seanjc@google.com> wrote:
+On Mon, Jun 2, 2025 at 10:06=E2=80=AFPM Masahiro Yamada <masahiroy@kernel.o=
+rg> wrote:
+>
+> In the old days, KBUILD_MODNAME was passed to C without double quotes,
+> and then handled by __stringify() on the C side. This was the reason
+> why KBUILD_MODNAME was mangled: characters such as commas (,) and
+> hyphens (-) are not allowed in C identifiers, so they were replaced
+> with underscores (_) in Kbuild.
+>
+> Since commit f83b5e323f57 ("kbuild: set correct KBUILD_MODNAME when
+> using well known kernel symbols as module names"), KBUILD_MODNAME has
+> been passed to C as a string literal, which allows any characters.
+>
+> Aside from this historical behavior in the build system, there is no
+> longer a reason for mangling. In fact, it is rather annoying, as we
+> now need to convert between hyphens and underscores in some places,
+> but not in others. See commit 0267cbf297bf ("module: Account for the
+> build time module name mangling").
+>
+> This commit eliminates that oddity, so the module name will now match
+> the filename. For example, the module name of "foo-bar.ko" will be
+> "foo-bar", not "foo_bar".
+>
+> However, this oddity persisted for so long and also affected the
+> userspace. To adapt to this behavior, when a user runs "rmmod foo-bar",
+> kmod converts hyphens to underscores, and passes "foo_bar" to the
+> delete_module syscall.
 
-> The two primary goals of this series are to make the irqbypass concept
-> easier to understand, and to address the terrible performance that can
-> result from using a list to track connections.
-> 
-> For the first goal, track the producer/consumer "tokens" as eventfd context
-> pointers instead of opaque "void *".  Supporting arbitrary token types was
-> dead infrastructure when it was added 10 years ago, and nothing has changed
-> since.  Taking an opaque token makes a very simple concept (device signals
-> eventfd; KVM listens to eventfd) unnecessarily difficult to understand.
-> 
-> Burying that simple behind a layer of obfuscation also makes the overall
-> code more brittle, as callers can pass in literally anything. I.e. passing
-> in a token that will never be paired would go unnoticed.
-> 
-> For the performance issue, use an xarray.  I'm definitely not wedded to an
-> xarray, but IMO it doesn't add meaningful complexity (even requires less
-> code), and pretty much Just Works.  Like tried this a while back[1], but
-> the implementation had undesirable behavior changes and stalled out.
-> 
-> Note, I want to do more aggressive cleanups of irqbypass at some point,
-> e.g. not reporting an error to userspace if connect() fails is awful
-> behavior for environments that want/need irqbypass to always work.  And
-> KVM shold probably have a KVM_IRQFD_FLAG_NO_IRQBYPASS if a VM is never going
-> to use device posted interrupts.  But those are future problems.
-> 
-> v2:
->  - Collect reviews. [Kevin, Michael]
->  - Track the pointer as "struct eventfd_ctx *eventfd" instead of "void *token".
->    [Alex]
->  - Fix typos and stale comments. [Kevin, Binbin]
->  - Use "trigger" instead of the null token/eventfd pointer on failure in
->    vfio_msi_set_vector_signal(). [Kevin]
->  - Drop a redundant "tmp == consumer" check from patch 3. [Kevin]
->  - Require producers to pass in the line IRQ number.
-> 
-> v1: https://lore.kernel.org/all/20250404211449.1443336-1-seanjc@google.com
-> 
-> [1] https://lore.kernel.org/all/20230801115646.33990-1-likexu@tencent.com
-> [2] https://lore.kernel.org/all/20250401161804.842968-1-seanjc@google.com
-> 
-> Sean Christopherson (8):
->   irqbypass: Drop pointless and misleading THIS_MODULE get/put
->   irqbypass: Drop superfluous might_sleep() annotations
->   irqbypass: Take ownership of producer/consumer token tracking
->   irqbypass: Explicitly track producer and consumer bindings
->   irqbypass: Use paired consumer/producer to disconnect during
->     unregister
->   irqbypass: Use guard(mutex) in lieu of manual lock+unlock
->   irqbypass: Use xarray to track producers and consumers
->   irqbypass: Require producers to pass in Linux IRQ number during
->     registration
-> 
->  arch/x86/kvm/x86.c                |   4 +-
->  drivers/vfio/pci/vfio_pci_intrs.c |  10 +-
->  drivers/vhost/vdpa.c              |  10 +-
->  include/linux/irqbypass.h         |  46 ++++----
->  virt/kvm/eventfd.c                |   7 +-
->  virt/lib/irqbypass.c              | 190 +++++++++++-------------------
->  6 files changed, 107 insertions(+), 160 deletions(-)
-> 
-> 
-> base-commit: 7ef51a41466bc846ad794d505e2e34ff97157f7f
+Hmm. That was modprobe/rmmod from busybox.
 
-Sorry for the delay.  Do you intend to take this through your trees?
+kmod tries to open /sys/module/*, and
+hyphen/underscore conversion happens everywhere.
 
-Reviewed-by: Alex Williamson <alex.williamson@redhat.com>
+libkmod: ERROR ../libkmod/libkmod-module.c:2039
+kmod_module_get_holders: could not open '/sys/module/fo_o/holders': No
+such file or directory
 
+So, we may need to carry this forever...
+
+
+
+>
+> Therefore, the mod_strncmp() needs to remain in find_module_all(),
+> otherwise, we cannot unload modules.
+>
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> ---
+>
+>  kernel/module/main.c | 8 ++++++--
+>  scripts/Makefile.lib | 4 ++--
+>  2 files changed, 8 insertions(+), 4 deletions(-)
+>
+> diff --git a/kernel/module/main.c b/kernel/module/main.c
+> index b8440b0887e3..1fa90a95e0c5 100644
+> --- a/kernel/module/main.c
+> +++ b/kernel/module/main.c
+> @@ -410,7 +410,11 @@ struct module *find_module_all(const char *name, siz=
+e_t len,
+>                                 lockdep_is_held(&module_mutex)) {
+>                 if (!even_unformed && mod->state =3D=3D MODULE_STATE_UNFO=
+RMED)
+>                         continue;
+> -               if (strlen(mod->name) =3D=3D len && !memcmp(mod->name, na=
+me, len))
+> +               /*
+> +                * For historical reasons, kmod passes a module name with
+> +                * a hyphen replaced with an underscore.
+> +                */
+> +               if (!mod_strncmp(mod->name, name, len))
+>                         return mod;
+>         }
+>         return NULL;
+> @@ -1135,7 +1139,7 @@ static bool module_match(const char *modname, const=
+ char *patterns)
+>                 if (*sep)
+>                         sep++;
+>
+> -               if (mod_strncmp(patterns, modname, len) =3D=3D 0 && (glob=
+ || len =3D=3D modlen))
+> +               if (strncmp(patterns, modname, len) =3D=3D 0 && (glob || =
+len =3D=3D modlen))
+>                         return true;
+>         }
+>
+> diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
+> index 336fb0d763c7..e37e2db5f528 100644
+> --- a/scripts/Makefile.lib
+> +++ b/scripts/Makefile.lib
+> @@ -18,8 +18,8 @@ target-stem =3D $(basename $(patsubst $(obj)/%,%,$@))
+>  # end up in (or would, if it gets compiled in)
+>  name-fix-token =3D $(subst $(comma),_,$(subst -,_,$1))
+>  name-fix =3D $(call stringify,$(call name-fix-token,$1))
+> -basename_flags =3D -DKBUILD_BASENAME=3D$(call name-fix,$(basetarget))
+> -modname_flags  =3D -DKBUILD_MODNAME=3D$(call name-fix,$(modname)) \
+> +basename_flags =3D -DKBUILD_BASENAME=3D$(call stringify,$(basetarget))
+> +modname_flags  =3D -DKBUILD_MODNAME=3D$(call stringify,$(modname)) \
+>                  -D__KBUILD_MODNAME=3Dkmod_$(call name-fix-token,$(modnam=
+e))
+>  modfile_flags  =3D -DKBUILD_MODFILE=3D$(call stringify,$(modfile))
+>
+> --
+> 2.43.0
+>
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
