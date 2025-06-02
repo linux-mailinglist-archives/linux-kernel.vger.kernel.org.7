@@ -1,124 +1,172 @@
-Return-Path: <linux-kernel+bounces-670779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36E68ACB925
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 17:59:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4A67ACB937
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 18:02:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A29CB1696B4
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 15:59:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3D7D1625AD
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 16:02:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B29E223321;
-	Mon,  2 Jun 2025 15:59:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A44EF224244;
+	Mon,  2 Jun 2025 16:02:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="YKDCMUby"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="J9/BQFxs"
+Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 010D31A3A80
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 15:58:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EE1C220685
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 16:02:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748879942; cv=none; b=M9tkC5zx8vZXCgKnyzSWN3m1UZ3m2G2yI5nA3sGpCsBkQk9rdewHAUj9reIt4d7raYsKgJ4jwd1mKd6Klq6UWfMzZLaNHAQH18YSN6B1kXPPtGqz89SmwgidCTRXLA1OfAmWR895M5jurz4OUWW2wHitrEnTNZjZXIhOLizE5M8=
+	t=1748880164; cv=none; b=iOlpA8+gH5snojrjDITekzk8ssF318zH19lzTCpwZ8hDvSttOUG2UqHQK/u3Dt+yrpp3WDvukdjH6zDOmk31XiLd1QoixgncRAKgRPzItrwURO2retaVfFwNNfhX6CdDYpWlTWG/ZQN1SSfFrtl3ioA7s6KkDPK4VaiLk0kRNZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748879942; c=relaxed/simple;
-	bh=yfU7vGpDryfoSujqGsXll5dEfH872fdchiUhHqRymJc=;
-	h=Mime-Version:Subject:From:To:CC:In-Reply-To:Message-ID:Date:
-	 Content-Type:References; b=gdfJ39YMOxEwWY8pnZln9Ua5XiXx8feN6VuGAnuV4IRgtbTqsXjXu8KXYqy4pV30hFoGDjzMcx8AnDLJNNp1JNr1TBoB801WnL5QNBkTvvhgqsKFRcabRHi14uLjO3/wSBjW6SmaBYR5GBc4/16jh7951Dyd3Upj1T3XE8MI2sc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=partner.samsung.com; spf=pass smtp.mailfrom=partner.samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=YKDCMUby; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=partner.samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=partner.samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250602155856euoutp01f447343f328b03f0d906aa9b1e24148d~FRQlhkjlA2303723037euoutp01S
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 15:58:56 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250602155856euoutp01f447343f328b03f0d906aa9b1e24148d~FRQlhkjlA2303723037euoutp01S
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1748879936;
-	bh=yfU7vGpDryfoSujqGsXll5dEfH872fdchiUhHqRymJc=;
-	h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
-	b=YKDCMUbypp2F5yfn6IoW0UirDq9xfRTlZ9LrEVb3I2eSUgpafpkSsGVZvbh+I4bV3
-	 /WFlEQamQhTZIVIQy2A4WyLDsdTLiYWHnFBuD0ptoSX3fffIjqlVpDb8Vl3gh+M06r
-	 b0eZv3QBlBoYylvTQsyyJcVku6MibnMxmTNBOGvM=
+	s=arc-20240116; t=1748880164; c=relaxed/simple;
+	bh=6NfF/X3yQ0XHNDEeB3ap42sSQz7382eJ+Iu/Erbmta4=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=JVMr2yA2g170iCe9cflsg/jsoVtzYjVxHN0q/LaIiejZSGhPRogy70r0r9Uz0s9msUYDRCw+6MRmq1howqnxTd95+9OwB4ywgp/O50mj5wPUmzI6nsCwTsaABdsKNHJDexH6+Anw7uPplpjLC/FI/JM2FZmKEYVFIjMRkTSHmlE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=J9/BQFxs; arc=none smtp.client-ip=209.85.221.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-3a4f65a705dso3019732f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jun 2025 09:02:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1748880159; x=1749484959; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=5LSRzdKUmCfZ6ZEE5fydRUyqDXoWGCBC1D0jQYKLUL0=;
+        b=J9/BQFxsZhIwlCDz5SXBS/iueKbpK1pyjFzr22hVE/h1/8slUTcv5GyAAwDeWWr1kA
+         4taHqIeLvnAB9+Xr3OEUsmUwEJzWr3xPUpBaNECaLhUh/fZ12ESL9pOsbXpKg12HT+Ui
+         KgCG8bdzPpCTM+5m4EafxDqIlOiMzw5Pt1QgjQ32MxGU2z+BTeSh17Dl4UFxfFHzO7Z4
+         rFS/9uuhuuy2cFf0waoYQR4MFWO3qOQbEXAi7BXcvvKw7BFj6XHVCkD3kegCX7R+DFA/
+         vqkQ5/JiIh4qe+fPBGC5ueU5TXFaJJkEotK4X7IoPMvSnWwSx5WIqLFvygtwx19IZc5f
+         Ts6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748880159; x=1749484959;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5LSRzdKUmCfZ6ZEE5fydRUyqDXoWGCBC1D0jQYKLUL0=;
+        b=IyHpwM0l0eFwWDQ3q/9H5a95Fk0fPLDs9whk9yLXcijve7PyKfZYIqOroPUyiNfSrX
+         z3gyyfg02ut0XI+jUxMBYU3y3YqhztNPUyH248zYr+8Xix5q46mZNzmZha9Wz8+dqB49
+         557gvjzcHYjGrJhPBj2YF8+UJWjLXlpfOPSigR3uCrVjc9C63ZkOCVqG9UUx6XYekQ5g
+         L7cKojbt4Q6dTjNzbYrKhqkMyw489SoHM+VCHJKDLw7wUhfUdDXi7vPUAdlH5B8+p821
+         xNDJnjgVzetKSUhcNIkyLKU1uj4sA5nozVmyB8mEnr+lLYDlrUvQF+54W5OG5//mlWaR
+         rPzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW3xGDS1IuKsfO+E61fAXKXN7WSQSJsyGY5CtKLZM2/LZluCKlQtLGq3N69KOWRav5CgW0UewZVRpp210Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNwcwXKlUm3cs4ZjvklJntQZaETvJp6fMz3f9xL9CIgj2YI4I8
+	IOmzb1KyBY7aBASqMipDdJ3FV+SkkdvcHB5qnGHtSf+7vZSSAf2/3G2TQcq9SgUGN/zmywM9nDe
+	qs8w+Kj/s1fNJsCZggQ==
+X-Google-Smtp-Source: AGHT+IG8cLazPRIdxKpkEHN0QpVz7JJD0lWn7hgDZa3uU8xfy6JHF1/OrcOMgFXS+oLc0dKG6umKocG6VFxuQNY=
+X-Received: from wmbfp6.prod.google.com ([2002:a05:600c:6986:b0:450:ce9d:a742])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6000:1885:b0:3a4:eb80:fcc2 with SMTP id ffacd0b85a97d-3a4fe15ad82mr7450176f8f.11.1748880159443;
+ Mon, 02 Jun 2025 09:02:39 -0700 (PDT)
+Date: Mon, 2 Jun 2025 16:02:37 +0000
+In-Reply-To: <aCXxnUdO8--5y8Zo@pollux>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-Subject: RE: Re: Re: [PATCH bpf v2] xsk: Fix out of order segment free in
- __xsk_generic_xmit()
-Reply-To: e.kubanski@partner.samsung.com
-Sender: Eryk Kubanski <e.kubanski@partner.samsung.com>
-From: Eryk Kubanski <e.kubanski@partner.samsung.com>
-To: Stanislav Fomichev <stfomichev@gmail.com>
-CC: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"bjorn@kernel.org" <bjorn@kernel.org>, "magnus.karlsson@intel.com"
-	<magnus.karlsson@intel.com>, "maciej.fijalkowski@intel.com"
-	<maciej.fijalkowski@intel.com>, "jonathan.lemon@gmail.com"
-	<jonathan.lemon@gmail.com>
-X-Priority: 3
-X-Content-Kind-Code: NORMAL
-In-Reply-To: <aD3DM4elo_Xt82LE@mini-arch>
-X-Drm-Type: N,general
-X-Msg-Generator: Mail
-X-Msg-Type: PERSONAL
-X-Reply-Demand: N
-Message-ID: <20250602155856eucms1p3af8567bd024a17e200ef28a6b492fff2@eucms1p3>
-Date: Mon, 02 Jun 2025 17:58:56 +0200
-X-CMS-MailID: 20250602155856eucms1p3af8567bd024a17e200ef28a6b492fff2
-Content-Transfer-Encoding: 7bit
+References: <20250514-topics-tyr-request_irq-v3-0-d6fcc2591a88@collabora.com>
+ <20250514-topics-tyr-request_irq-v3-1-d6fcc2591a88@collabora.com>
+ <aCUQ0VWgoxdmIUaS@pollux> <A7E3A124-AF77-4A4A-B4E2-AE7DDB1CE007@collabora.com>
+ <aCXYaCGvO_tI1OOh@pollux> <39C56E3E-07C6-44BB-B5F6-38090F037032@collabora.com>
+ <aCXh1g5FWNiz7exb@pollux> <BEDD659F-B222-4150-9018-3B59126140E6@collabora.com>
+ <aCXv86nAARGgoqEq@pollux> <aCXxnUdO8--5y8Zo@pollux>
+Message-ID: <aD3LHfkmuXR-wPzm@google.com>
+Subject: Re: [PATCH v3 1/2] rust: irq: add support for request_irq()
+From: Alice Ryhl <aliceryhl@google.com>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Daniel Almeida <daniel.almeida@collabora.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250530103506eucas1p1e4091678f4157b928ddfa6f6534a0009
-X-EPHeader: Mail
-X-ConfirmMail: N,general
-X-CMS-RootMailID: 20250530103506eucas1p1e4091678f4157b928ddfa6f6534a0009
-References: <aD3DM4elo_Xt82LE@mini-arch> <aDnX3FVPZ3AIZDGg@mini-arch>
-	<20250530103456.53564-1-e.kubanski@partner.samsung.com>
-	<20250602092754eucms1p1b99e467d1483531491c5b43b23495e14@eucms1p1>
-	<CGME20250530103506eucas1p1e4091678f4157b928ddfa6f6534a0009@eucms1p3>
 
-> XSK represents a single queue and each queue is single producer single
-> consumer. The fact that you can dup a socket and call sendmsg from
-> different threads/processes does not lift that restriction. I think
-> if you add synchronization on the userspace (lock(); sendmsg();
-> unlock();), that should help, right?
+On Thu, May 15, 2025 at 03:52:29PM +0200, Danilo Krummrich wrote:
+> On Thu, May 15, 2025 at 03:45:28PM +0200, Danilo Krummrich wrote:
+> > On Thu, May 15, 2025 at 10:16:33AM -0300, Daniel Almeida wrote:
+> > > 
+> > > >> 
+> > > >> Well, not really, because this impl PinInit can be assigned to something larger
+> > > >> that is already pinned, like drm::Device::Data for example, which is (or was)
+> > > >> already behind an Arc, or any other private data in other subsystems.
+> > > >> 
+> > > >> IIUC what you proposed has yet another indirection. If we reuse the example
+> > > >> from above, that would be an Arc for the drm Data, and another Arc for the
+> > > >> handler itself?
+> > > > 
+> > > > Can't you implement Handler for drm::Device::Data and e.g. make Registration
+> > > > take an Arc<T: Handler>?
+> > > 
+> > > No, because drivers may need more than one handler. Panthor needs 3, for
+> > > example, for 3 different lines.
+> > > 
+> > > > 
+> > > > The irq::Registration itself doesn't need to be allocated dynamically, so it'd
+> > > > still be a single allocation, no?
+> > > > 
+> > > 
+> > > Right, the registrations don't, but the handlers do.
+> > 
+> > Why does the handler need to be allocated dynamically?
+> > 
+> > What about something like the following?
+> > 
+> > 	pub struct Registration<T, H: Handler<T>> { ... };
+> > 
+> > 	pub trait Handler<T> {
+> > 	   fn handle_irq(&T) -> IrqReturn;
+> > 	}
+> > 
+> > 	// Could be `drm::Device::Data`.
+> > 	struct MyData { ... };
+> > 
+> > 	// Implements `Handler<MyData>`.
+> > 	struct IRQHandler1;
+> > 	struct IRQHandler2;
+> > 
+> > 	// `data` is `Arc<MyData>`
+> > 	irq::Registration::<IRQHandler1>::new(data, ...);
+> > 	irq::Registration::<IRQHandler2>::new(data, ...);
+> > 
+> > With that you can have as many IRQs as you want without any additional
+> > allocation.
+> 
+> Alternatively we could also do the following, which is probably simpler.
+> 
+> 	pub struct Registration<H: Handler> { ... };
+> 
+> 	pub trait Handler {
+> 	   fn handle_irq(&self) -> IrqReturn;
+> 	}
+> 
+> 	// Could be `drm::Device::Data`.
+> 	struct MyData { ... };
+> 
+> 	// Implements `Handler`.
+> 	struct IRQHandler1(Arc<MyData>);
+> 	struct IRQHandler2(Arc<MyData>);
+> 
+> 	// `data` is `Arc<MyData>`
+> 	let handler1 = IRQHandler1::new(data);
+> 	let handler2 = IRQHandler2::new(data);
+> 
+> 	irq::Registration::new(handler1, ...);
+> 	irq::Registration::new(handler2, ...);
 
-It's not dup() of fd, It's perfectly legal AF_XDP setup.
+Yeah there's no reason to *force* the user to store an Arc. The user
+could store data that is only accessed by the irq callback without an
+Arc. I agree that for shared content you probably want to access it
+through an Arc.
 
-You can share single device queue between multiple AF_XDP sockets.
-Then RX and TX queue are per socket, while FILL / COMP are per
-queue id of device. Access to FILL and COMP must be synchronized
-on both user-space and kernel-space side.
-
-https://docs.kernel.org/networking/af_xdp.html
-
-> XDP_SHARED_UMEM bind flag
-> This flag enables you to bind multiple sockets to the same UMEM.
-> It works on the same queue id, between queue ids and between netdevs/devices.
-> In this mode, each socket has their own RX and TX rings as usual, but you are going
-> to have one or more FILL and COMPLETION ring pairs. You have to create one of these
-> pairs per unique netdev and queue id tuple that you bind to.
-
-Im not using sendmsg on dupped socket descriptor. It's just
-another socket bound to the same netdev, queue id pair.
-
-Even if that was the case, calling sendmsg on multiple
-threads should be perfectly legal in this situation.
-But i don't do that, each socket is handled exclusively
-by single thread.
-
-This is simply one of available AF_XDP deployments.
-It should just work.
-I don't need to introduce any locking scheme on my own
-except FILL/COMP queue locking, which I did.
-
-Definetly holding single netdevice-wide lock for any
-RX/TX operation isn't an option. It should just work.
-
-This problem is definetly in kernel. Provided explanation
-clearly proves It. It's caught red handed. Please analyze
-the code and see it for yourself.
+Alice
 
