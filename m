@@ -1,39 +1,54 @@
-Return-Path: <linux-kernel+bounces-670433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B84EDACAE56
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 14:56:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F5A0ACAE5D
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 14:57:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A30817D300
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 12:56:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFA3B3B79CE
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 12:57:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9375421ADC2;
-	Mon,  2 Jun 2025 12:55:55 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7382D21ABC3
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 12:55:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6A3021B9CA;
+	Mon,  2 Jun 2025 12:57:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="hMTyHcPG"
+Received: from out.smtpout.orange.fr (out-71.smtpout.orange.fr [193.252.22.71])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F01EE1F461D;
+	Mon,  2 Jun 2025 12:57:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748868955; cv=none; b=c7wD+RtNcajfr0De4Op+kLyuaYNM263iysqujiSTz9Rw1u5Lbc3ZODi/JpKVHJd2q5iK6LOH9HOmLOe2CPNyxhv0wnfhaX1pY3EBRUmwUINNiaDPDjW+NDqxxPGoEsTl1Hsk2xcfh9ZBSqTz0qVimsxBl04XxfIVMAog0SAvxcI=
+	t=1748869046; cv=none; b=UdqDGwqnFKRoATRXYT/6rLofbv1Zrj5gIPEGiokSZ92Py5BeCG0RkaPGFxP/vKKwz/mMp+p4Q7Ei53VWjdYyPMyVm9VeEmnqyXNlo+ueOQ+BzPERGY1iXD09pPvT/ez7x61umKzNNBj9Szay1+C2t/3KEqMEDEiQZDgz23o29iw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748868955; c=relaxed/simple;
-	bh=LebBu5otgWHbzSZx27+nOtzxv93PTCMXYvWP2OJh0E0=;
+	s=arc-20240116; t=1748869046; c=relaxed/simple;
+	bh=1T+4SjlPktQEfdR3wxZEdOF+qZdvMuowjfd72KE39/E=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MlK/9n0IQ1vVEkY7GFlspSWQ9xQiQ0/Ox9rSdCaNLAguJRMeU/QLKPPWRU7G5KnRxgwi2bIvAIuvJUlkUoBaGpoJuTu5uSbHyKP+8EpnqfcIMSQnpWtrbRfYXZ4Mp5gc2gzO8Cl8WuEP+M+cL8qC7V40q0Lb4tYwtFwMH9YNIeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 38A6812FC;
-	Mon,  2 Jun 2025 05:55:35 -0700 (PDT)
-Received: from [10.57.64.248] (unknown [10.57.64.248])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 824CB3F59E;
-	Mon,  2 Jun 2025 05:55:49 -0700 (PDT)
-Message-ID: <6b6d9e84-0c18-4133-99dc-fe07cf5e563e@arm.com>
-Date: Mon, 2 Jun 2025 13:55:47 +0100
+	 In-Reply-To:Content-Type; b=Gfj0osIgjZvQAPmyr44hMmUKyQYpJmflmQZIRtLCqUjw8h6+bQgnQjK/Kv3eIJ7f8cKC2Z1wNJ7XM9Ej/f2IX+TLx2mkdiVk5xJ1IkihFkkG0jHK/YqLeP+nDUBZ4OwJS9BIiWVUqVTCXORKMdJbCbRESaITrZN9pZhSasqbss0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=hMTyHcPG; arc=none smtp.client-ip=193.252.22.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [172.16.82.72] ([124.33.176.97])
+	by smtp.orange.fr with ESMTPA
+	id M4hyu0vvBVLIhM4hzubQOb; Mon, 02 Jun 2025 14:56:09 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1748868969;
+	bh=tJpgnt56+6gsOzEu20toZVeHIgDQ2dRsyJW0tnHgKwU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=hMTyHcPGlhHISDzQz5qTSzqnDykQUtWBMCIHzWUVj2pdesekSkWwhFfyMuuJwLfNa
+	 UQaDLpOwEnOra0eVwbcoeXPA2VD6Tuz/XFbegSLffE2EXvWufC6f3rCVTsvLpXCYyS
+	 gxWqq11aRkNodTBMMRdiqyTlCyVxfgql6CnE2lXt9rnxdAlQsqiuiKir8jHK4Cag7j
+	 +Kmp4DqQOaLPeY7C2WGEJ09sL/qGDYQP3XZXlK05E5drY/TD3mkSDfPnMZbcxdlPAQ
+	 wAyqk7Hn/XK70Fu8yuKqqL7uVT5cybD8bPOgcjnFVxRZscDpnZT+140aG2+BfCFrb+
+	 OX5CSooo41hsw==
+X-ME-Helo: [172.16.82.72]
+X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 02 Jun 2025 14:56:09 +0200
+X-ME-IP: 124.33.176.97
+Message-ID: <ad3dbd97-eb25-41bc-a105-1fd328b53899@wanadoo.fr>
+Date: Mon, 2 Jun 2025 21:56:05 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,36 +56,176 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/5] drm/panfrost: Add BO labelling to Panfrost
-To: =?UTF-8?Q?Adri=C3=A1n_Larumbe?= <adrian.larumbe@collabora.com>,
- linux-kernel@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org,
- Boris Brezillon <boris.brezillon@collabora.com>, kernel@collabora.com,
- Rob Herring <robh@kernel.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-References: <20250520174634.353267-1-adrian.larumbe@collabora.com>
- <20250520174634.353267-2-adrian.larumbe@collabora.com>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20250520174634.353267-2-adrian.larumbe@collabora.com>
+Subject: Re: [PATCH v6 4/6] can: netlink: add interface for CAN-FD Transmitter
+ Delay Compensation (TDC)
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Marc Kleine-Budde <mkl@pengutronix.de>, linux-can@vger.kernel.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ =?UTF-8?Q?Stefan_M=C3=A4tje?= <Stefan.Maetje@esd.eu>
+References: <20210918095637.20108-1-mailhol.vincent@wanadoo.fr>
+ <20210918095637.20108-5-mailhol.vincent@wanadoo.fr>
+ <CAMuHMdVEBLoG084rhBtELcFO+3cA9_UrZrUfspOeLNo80zyb9g@mail.gmail.com>
+ <10ed3ec2-ac66-494a-9d3f-bf2df459ebc0@wanadoo.fr>
+ <CAMuHMdWDUpkwPVCm2Dha04F59MES4QvKFUVfvg70x5GPZHsxDA@mail.gmail.com>
+Content-Language: en-US
+From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Autocrypt: addr=mailhol.vincent@wanadoo.fr; keydata=
+ xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
+ LFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI+wrIEExYKAFoC
+ GwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AWIQTtj3AFdOZ/IOV06OKrX+uI
+ bbuZwgUCZx41XhgYaGtwczovL2tleXMub3BlbnBncC5vcmcACgkQq1/riG27mcIYiwEAkgKK
+ BJ+ANKwhTAAvL1XeApQ+2NNNEwFWzipVAGvTRigA+wUeyB3UQwZrwb7jsQuBXxhk3lL45HF5
+ 8+y4bQCUCqYGzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrbYZzu0JG5w8gxE6EtQe6LmxKMqP6E
+ yR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDldOjiq1/riG27mcIFAmceMvMCGwwF
+ CQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8VzsZwr/S44HCzcz5+jkxnVVQ5LZ4B
+ ANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
+In-Reply-To: <CAMuHMdWDUpkwPVCm2Dha04F59MES4QvKFUVfvg70x5GPZHsxDA@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 20/05/2025 18:43, Adrián Larumbe wrote:
-> Functions for labelling UM-exposed an internal BOs are provided. An
-> example of the latter would be the Perfcnt sample buffer.
+On 02/06/2025 at 16:23, Geert Uytterhoeven wrote:
+> Hi Vincent,
 > 
-> This commit is done in preparation of a following one that will allow
-> UM to set BO labels through a new ioctl().
+> On Sat, 31 May 2025 at 10:25, Vincent Mailhol
+> <mailhol.vincent@wanadoo.fr> wrote:
+>> On 30/05/2025 at 20:44, Geert Uytterhoeven wrote:
+
+(...)
+
+>> Let me first repost what I wrote but this time using numerals and letters
+>> instead of the bullet points:
+>>
+>>   The TDC netlink logic works as follow:
+>>
+>>    1. CAN_CTRLMODE_FD is not provided:
+>>       a) if any TDC parameters are provided: error.
+>>
+>>       b) TDC parameters not provided: TDC parameters unchanged.
+>>
+>>    2. CAN_CTRLMODE_FD is provided and is false:
+>>       a) TDC is deactivated: both the structure and the
+>>          CAN_CTRLMODE_TDC_{AUTO,MANUAL} flags are flushed.
+>>
+>>    3. CAN_CTRLMODE_FD provided and is true:
+>>       a) CAN_CTRLMODE_TDC_{AUTO,MANUAL} and tdc{v,o,f} not provided: call
+>>          can_calc_tdco() to automatically decide whether TDC should be
+>>          activated and, if so, set CAN_CTRLMODE_TDC_AUTO and uses the
+>>          calculated tdco value.
+>>
+>>       b) CAN_CTRLMODE_TDC_AUTO and tdco provided: set
+>>          CAN_CTRLMODE_TDC_AUTO and use the provided tdco value. Here,
+>>          tdcv is illegal and tdcf is optional.
+>>
+>>       c) CAN_CTRLMODE_TDC_MANUAL and both of tdcv and tdco provided: set
+>>          CAN_CTRLMODE_TDC_MANUAL and use the provided tdcv and tdco
+>>          value. Here, tdcf is optional.
+>>
+>>       d) CAN_CTRLMODE_TDC_{AUTO,MANUAL} are mutually exclusive. Whenever
+>>          one flag is turned on, the other will automatically be turned
+>>          off. Providing both returns an error.
+>>
+>>       e) Combination other than the one listed above are illegal and will
+>>          return an error.
+>>
+>> You can double check that it is the exact same as before.
+>>
+>>> By default, a CAN-FD interface comes up in TDC-AUTO mode (if supported),
+>>> using a calculated tdco value.  However, enabling "tdc-mode auto"
+>>> explicitly from userland requires also specifying an explicit tdco
+>>> value.  I.e.
+>>>
+>>>     ip link set can0 type can bitrate 500000 dbitrate 8000000 fd on
+>>                                                                 ^^^^^
+>> Here:
+>>
+>>   - CAN_CTRLMODE_FD provided and is true: so we are in close 3.
+>>
+>>   - CAN_CTRLMODE_TDC_{AUTO,MANUAL} and tdc{v,o,f} not provided: so we *are* in
+>>     sub-clause a)
+>>
+>> 3.a) tells that the framework will decide whether or not TDC should be
+>> activated, and if activated, will set the TDCO.
+>>
+>>> gives "can <FD,TDC-AUTO>" and "tdcv 0 tdco 3", while
+>>
+>> Looks perfectly coherent with 3.a)
+>>
+>> Note that with lower data bitrate, the framework might have decided to set TDC off.
 > 
-> Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
-> Reviewed-by: Steven Price <steven.price@arm.com>
+> Yes, that case is fine for sure.
+> 
+>>>     ip link set can0 type can bitrate 500000 dbitrate 8000000 fd on
+>>> tdc-mode auto
+>>
+>> This time:
+>>
+>>   - CAN_CTRLMODE_FD provided and is true: so we are in close 3.
+>>
+>>   - CAN_CTRLMODE_TDC_AUTO is provided, we are *not* in sub-clause a)
+>>
+>>   - tdco is not provided.
+>>
+>> No explicit clauses matches this pattern so it defaults to the last
+>> sub-clause: e), which means an error.
+>>
+>>> gives:
+>>>
+>>>     tdc-mode auto: RTNETLINK answers: Operation not supported
+>>
+>> Looks perfectly coherent with 3.e)
+> 
+> Thanks, I misread this as clause 3.a being applicable (hasn't NOT a
+> higher precedence than AND? ;-)
 
-All 5 patches pushed to drm-misc.
+Now I see where your confusion comes from.
 
-Thanks,
-Steve
+But if I read:
+
+  Paul and Mary not present
+
+I understand that both are absent. I do not see an ambiguity that Paul may be
+present and only Mary absent.
+
+Well, I guess this is what occurs when you write in English instead of C.
+
+And I just realize that there was an actual mistake in my description: I forgot
+to state the obvious and I omitted to mention that TDC_OFF means that TDC is
+forcefully deactivated.
+
+>>> unless I add an explicit "tdco 3".
+>>
+>> Yes, if you provide tcdo 3, then you are under 3.b).
+>>
+>>> According to your commit description, this is not the expected behavior?
+>>> Thanks!
+>>
+>> Looking back to my commit, I admit that the explanation is convoluted and could
+>> be hard to digest, but I do not see a mismatch between the description and the
+>> behaviour.
+> 
+> OK, so the description and the behaviour do match.
+> 
+> However, I still find it a bit counter-intuitive that
+> CAN_CTRLMODE_TDC_AUTO is not fully automatic, but automatic-with-one-
+> manual-knob.
+
+Fair enough. In truth, TDC_AUTO and TDC_MANUAL means respectively
+TDC_ON_WITH_TDCV_AUTO and TDC_ON_WITH_TDCV_MANUAL.
+
+The problem is that it makes close to no sense to allow the user to ask to have
+TDC explicitly ON and TDCO automatically calculated. And if I recall, TDC_AUTO
+and TDC_MANUAL is also consistent with what I found in the datasheets.
+
+On a side note, I still have to update Documentation/networking/can.rst to add
+some TDC explanations. I will of course not change the naming (this is part of
+the UAPI, so now it is set in stone), but I will try to clarify the concerns you
+raised here so that the documentation is more clear than my patch comments.
+
+Also, I am not writing this documentation any soon. CAN-XL has a higher priority
+in my TODO list :)
+
+
+Yours sincerely,
+Vincent Mailhol
 
 
