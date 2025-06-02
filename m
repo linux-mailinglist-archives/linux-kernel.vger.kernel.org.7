@@ -1,245 +1,536 @@
-Return-Path: <linux-kernel+bounces-670801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54E53ACB96E
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 18:19:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92CEEACB988
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 18:21:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAAA2176A16
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 16:19:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 348D6179E07
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 16:21:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C785225417;
-	Mon,  2 Jun 2025 16:19:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 945A822A1E9;
+	Mon,  2 Jun 2025 16:20:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Jw4JKak0";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="SM0WyW3i"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="QzNozrQc"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE87F1B81DC;
-	Mon,  2 Jun 2025 16:19:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F55B225A47;
+	Mon,  2 Jun 2025 16:20:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748881168; cv=fail; b=Fpn4P+u0NbBAyLMvBXag0lwnowec0EB4j0mNJPdnhBAMq4k7VD1MZecYTdQ7MJVY8Ntppvmcua0OrJYaKkbYzNEkY5vH6dkT3yqwpyX3ZD4KalPnYE16o2cDrB11wRSa2OjDoK/+RXTjhjUYu41jOiAMOJh4qVZR6HGS26AOKgo=
+	t=1748881244; cv=pass; b=LHikTDEvTAi5Y3J/h9oOtNokP2/K9Mf2+QNBnin841iWubsu+vX4RlmlNr332j1AeJXi1Ac5XL9wagfeiCmerLcd1P7XR2fymLWFZJMscnuVP5i/iuTS0GyaXUa7/8FYFhzhMFWB3RNBSkHk/RPy/ZosRyiRjrD3OmtPIdyAdvs=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748881168; c=relaxed/simple;
-	bh=BbqktL3LdnidoXCjiwkZd8sHvi0jqRbX0Qf2GILPjPE=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Iw+sPgggwtbCjTCPP907PXaM2487mj7XeqlrdOqVw7lhcRK4NMkzX+Yp/2kqo5hqdM2GdQaZZmIsIq74IX3StxK4pz/4tBJzHXFP0tyWJViKAmuByluz7oX3OOf3hPTjSkmrkZu/NosmMohuTBgztpVEVboaOYTg7lv8T9AVhpk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Jw4JKak0; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=SM0WyW3i; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 552C4VYA028592;
-	Mon, 2 Jun 2025 16:19:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2025-04-25; bh=aBxNIGWjTqy7o7BAZvOnIFJ60LtJ3tTgpMWOpcDp3vg=; b=
-	Jw4JKak0iTuClN6n4p5G2pumuTTZRFZuRpkPRRZH5cC+CmB5oLnFoNfxDUe8Dwq/
-	56xaxoAcjMFAn8aLVOkBxv00U79cD5HV3z6exzLGqN/brkVr8CuF6TfOY6WAGwm6
-	3KdeKNiUEz40pkAFHYHFT/F0z4ZwuhZ2NDz2N5K315CpmLioDBLOn4JYmOjODG/K
-	SOUNPLyy7Wc9LjNbP4uqDBqOJ4grmDmyjWl/93Yg+h4Gfgx7uW3RNxmjBDiF0EBT
-	SPHuJnRTp2yG9T/LA8DNTMyhXlbZCHZRGfQuVANxQkPW1c12jdWoShBZrs+6kgdU
-	6aAEvWfvyMHuFMU7cazIVA==
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 46yrj530sh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 02 Jun 2025 16:19:22 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 552F6N6w033822;
-	Mon, 2 Jun 2025 16:19:22 GMT
-Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11on2055.outbound.protection.outlook.com [40.107.220.55])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 46yr786d43-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 02 Jun 2025 16:19:22 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nzuy6eVIt95NZOkV9V+uYfllEq5nkVmVbHUBFA7wH+yYHoigdJMAjfyKq6O0PfQUJFe5Vo23KNueEhA2ORJRY63R/wNkoJu8nGfLV7cCn2ejguRQG/qYAHhF7sx9QtrUzL8QgyKrl7XH7mZk/VNAEZwqyQTLDN+J+4uYPZWe4ykPAQpqatNfYtgo5QfUkEirKiz2pbUfailRcRqeg+FL9l7ivFrYfwunwWxVivAkWpsi+jStlb2jvqdFelqQPUuWAasi04hk3JxNnCrGOB246QMTAs0gPV5MuPl7lRqy9tSDOUlOG78RbqE/raumFGD/eY/i4p/g8Xcw6bwGBvqD1w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=aBxNIGWjTqy7o7BAZvOnIFJ60LtJ3tTgpMWOpcDp3vg=;
- b=O2/UUN7UxyPukiBHBaiiqA+dhJVI+69WwL8veuhIhCTJCxZuW7lu87BQJzcZgDeXRb8mI7NGpnlUZ3vxM9BWM4j7TxuwXN7/V6nfNdqertmoU8hNcotcYLp3qGtNqjr6Q15fJxy4kdxhol5OEYMlwlXBDolIPgeG8H+BdzLHmSreJV2s0w8/q7hJbUG/+R+QNGZTCuncsQ+v/HIaNGQhG80BDqcNscPdRtYKgqsi7c9QWe7KOJmHBc5M7acAHlZct9LirdIoWRtHvCwnKlSouUbuIdw7dazpCpTKPqj+lBppMpExzCcfNShIk/L9mzAKqoVznpU8w7ekvI8TqHlmgA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aBxNIGWjTqy7o7BAZvOnIFJ60LtJ3tTgpMWOpcDp3vg=;
- b=SM0WyW3ijdD79MZTPBYKPkXyfUqZx+Q0enFa4iEDMudg/sRv8y965ADL7p9dRpoXEdWrYGIOtfXzwuSQSEMrQzSRw5ZtKO8ABwNUAiY9qCcoU7urmngx71v+3BDSn49ARZn1BOJbAP8GUBwJIiAb/9NS4eJjMYydimiQuU7nz/k=
-Received: from CY8PR10MB7243.namprd10.prod.outlook.com (2603:10b6:930:7c::10)
- by DS0PR10MB8152.namprd10.prod.outlook.com (2603:10b6:8:1fd::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8746.31; Mon, 2 Jun
- 2025 16:19:18 +0000
-Received: from CY8PR10MB7243.namprd10.prod.outlook.com
- ([fe80::b779:d0be:9e3a:34f0]) by CY8PR10MB7243.namprd10.prod.outlook.com
- ([fe80::b779:d0be:9e3a:34f0%4]) with mapi id 15.20.8746.030; Mon, 2 Jun 2025
- 16:19:18 +0000
-Message-ID: <08566ecc-e056-4331-828c-77f3fa22c3b5@oracle.com>
-Date: Mon, 2 Jun 2025 11:19:15 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] scsi: iscsi: fix incorrect error path labels for
- flashnode operations
-To: Alok Tiwari <alok.a.tiwari@oracle.com>, lduncan@suse.com,
-        cleech@redhat.com, James.Bottomley@HansenPartnership.com,
-        martin.petersen@oracle.com, open-iscsi@googlegroups.com,
-        linux-scsi@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, darren.kenny@oracle.com
-References: <20250530193012.3312911-1-alok.a.tiwari@oracle.com>
-Content-Language: en-US
-From: Mike Christie <michael.christie@oracle.com>
-In-Reply-To: <20250530193012.3312911-1-alok.a.tiwari@oracle.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: DS7PR03CA0335.namprd03.prod.outlook.com
- (2603:10b6:8:55::34) To CY8PR10MB7243.namprd10.prod.outlook.com
- (2603:10b6:930:7c::10)
+	s=arc-20240116; t=1748881244; c=relaxed/simple;
+	bh=U4wDpSFDbrzm7OqrAeryFQ9ob28dE2PHpOtLCXUXKlE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=KbT+fi+rQ+JSjIDvxhgqkH/312kNkjN9/X9DPvktfKCKzLEX5VZsq91q3QBkp2jIC7O5q1IiO9mXIu7MAvCX8teL4/Rka10OZPwpzGajofLj4NGKNJHqc7FFMVaW+ZmGif0P2rmlsKixqpY7frWZ1IZZVg3hDPTAu/F10iNSO5Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=QzNozrQc; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1748881210; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=G6T0p2jDHJReVNNbbwnK7DVGNm2ZuIogFNfln3mUQHWbe6eG2+3fDWsPj9mXsrdj7d4erifrvl+U9AdKgfoHLrwZ4ZagdCx33wo6QO6hYCVkmFQlgsKVbFt1d8NHmMYhRKfbZutAiKUHTreQYrFIziXJod5J7yXkxHe3PHXjAcw=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1748881210; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=JQE8+UUe2ZYnyEepFbx8v4Nmdf6XOz4R07wEwqI14eM=; 
+	b=XKMeF9vu0QBipKEg4RmiG6hkQVYyiYWQoA7S+YpFDvMoWzaBIyD4Ce0YAiJYhqaPlAdWVDeEAJg6t3/Xz2SYkJbPSp+/x3lfYeBlC4NOEpBOCPp4PdBy7rKCCLjZ8TuqfZhi7BF5Xw9wUyNeQnwjZZcFVzkiIEyGy3h8jVmttig=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
+	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1748881210;
+	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
+	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:References:In-Reply-To:To:To:Cc:Cc:Reply-To;
+	bh=JQE8+UUe2ZYnyEepFbx8v4Nmdf6XOz4R07wEwqI14eM=;
+	b=QzNozrQcLsrnSFqyINI80jNhWX0+r3dZlJ9kIpCq6RAl9osSA1S8yOb/Tme3AcPN
+	/TJeqM+g/q59nH4IL2K6yCslbT5Cm/Z7Fy11Mv4SGaUFS6atM/VhYE92nIBkw0SJvfx
+	+hLcgmoJmc9G6OZRVvMyTizEBEsMcvLfUnxE+DHY=
+Received: by mx.zohomail.com with SMTPS id 1748881208796587.1675568317672;
+	Mon, 2 Jun 2025 09:20:08 -0700 (PDT)
+From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Date: Mon, 02 Jun 2025 18:19:16 +0200
+Subject: [PATCH v2 5/7] pwm: Add rockchip PWMv4 driver
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY8PR10MB7243:EE_|DS0PR10MB8152:EE_
-X-MS-Office365-Filtering-Correlation-Id: 65ba9234-bc73-40fe-6b9c-08dda1f138d9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?TWYydERhcTZuQi8zY0psQmhzOW9SVi9ZZzFMVlJrSUxHM1pUeDJSUU1vZlF1?=
- =?utf-8?B?OEFtMkt6OXQ1cFBnNytrbEp3WTJVMCtIaWlRZlpGOGJlT3JjdFBoU3pQZ2l3?=
- =?utf-8?B?WGNUY3Y3YXcrdGFpMitwLzhoZmQySXJaNFZaT2pXcnlvRFhlUURjZDVnK1Ix?=
- =?utf-8?B?Q2FzTWlsOHJJcnJSRW05OUhGY1IvWm9PRk5hY2cvZTdxWmlLUnBFUFZuTzFQ?=
- =?utf-8?B?VjFLcUZQTnVGcDMwdnd6NFJRNk56cHYvYTJENFI3cnk1V1Q4WmZUQWZDanlH?=
- =?utf-8?B?cTRBY2N6ZDZUNzJBeXJjNjBYamErR0s1STN2VG1uL3E0bm82UllQS0kzTC9V?=
- =?utf-8?B?STA3NytsNVZOR3NIYVVsRkVQVUVXQ0xRVnhLaC8xeUhCclcxWTJTVHZFT3lv?=
- =?utf-8?B?bm9mK2d1K3h5Zy9QTmx5UTZYb3VCL2ZVY1VkMmFXSlA1QlpUaWl0TllMKzZQ?=
- =?utf-8?B?MG5JRXpuQTkrZG9VVS9McnhKVDloTjdhZENFUEJ6L09aQUtKZ3N5dENkVnZK?=
- =?utf-8?B?TjZWQ3lzWmFtemhrb2swYmZBMUhyc0lZUW5uYkJrUHY2aVpkNSs4alg2R2tI?=
- =?utf-8?B?Nm9WcjZueFFWMiswTHc0bmxlNXRlakZmMjRVQTRLb2hKV0VtcHdiczg4NDRZ?=
- =?utf-8?B?WHM0LzB4SUhydWRtMzlsYko5UnN6ODNHMC9oeGtCekhBVkNkZzBxZlNscTRq?=
- =?utf-8?B?aXN3YlVhMDVMblA4Z3k2RDRXRGYwUGxQbXhHU2w5S1Zjd1pPTFljMzQzcytS?=
- =?utf-8?B?YW1ZWTZVaWVXSVArNU9pSVNRR1UvSW1hWUhlcVJjTk5YMU1iZ2ZYVlFEVFBM?=
- =?utf-8?B?Qy9jdkRkUGxFbmVtYzI3MnlwUnZGQ0kwM3h0OWlVTUVJUmZIMU1DWmVFOHhD?=
- =?utf-8?B?Uks4QzRyT3F0cFhPcWxXMmJuRWdZMFl1SUZIaVZpL29ESUF3ZUlLM0E4N3RO?=
- =?utf-8?B?NVRMVm55ck80aFdSeEp3UE1HVzZhYzF2bGZwcEM2WnFNNG9raStQMitzV1pa?=
- =?utf-8?B?Mm8zRndYaEdZL3ZqMmN2TVQyaVJuTVJDYTUvTzRCN2dRRGpzM0dHMEdiaGoy?=
- =?utf-8?B?L0dhTmhmYWZCZSt6Q1EzM0lHN09ZRlpyZG1DblR4R2lxWWtwSWM5TjBOYml2?=
- =?utf-8?B?R0h1eUEzZytlUWYybUlmZFEwdXNrNmRVY0FmM1BueURGWEtzTE1jNHAwYXNM?=
- =?utf-8?B?TkViQjM4SmsxYlhLdktuQzFRVVpaYXJHZ3Z3eFl2UUJFWDJBUnB2STFibHQy?=
- =?utf-8?B?WlRDNVhZRSthbEo0SlZNZUVUU0NkN1hKZk04YzF6ZEpvYmVna2Z5SGlSbGFI?=
- =?utf-8?B?Uk9jUVNaSW5XYjRBTFNiR2ZMSHFBclMzcm53V29LYmNQZlEzRmIwTHBmUk9Q?=
- =?utf-8?B?L0F3MlBpaEdacVNjdUlKc3FjTFpZcFdMcWhEa1p2MHhhNlAxL2MwcEFIeTRN?=
- =?utf-8?B?YzMxTGk2TGdLY0NQU01jMUh1OW9UemgzaWt0M202Q0toVndMdTFHNFJ1OWF4?=
- =?utf-8?B?SGtGeFJTWjZjTDV6aGJJRFFubDFaUWFMa29PU3JTWno1SjBSMzQ0dGIrMzlv?=
- =?utf-8?B?MFJGd25wbmNUOFZqV0xvaDJZTkVIR3RmVWVCclljSFF6SGVMQTJlWHZwN3V2?=
- =?utf-8?B?QmlXTFlZeWZIV0UybC9UMmhUSEZWdVJQU1poN0xGWnkvY2hpc1RSYVhjM2Rw?=
- =?utf-8?B?YzhWaDJkTGlpSGZTNStoUW16d3RURjBxNGpEL3loSVJWeUdlL0xSS05abmht?=
- =?utf-8?B?MmVhbnBZOHdsb1p1elM1TGxYUDFpNkZqNDlOQ3NmWVN4dUtXZW9nY05LV0pO?=
- =?utf-8?B?ZWhCVnNpZ1R0SyttWHVGclVNclZDV0RzME9vbkVqbThlZEszV1AvbUVxUjJV?=
- =?utf-8?B?RDlNdVZNNTBlaFd5OWZCaGJsUEJSMXIxajNtOUdjYlh2S1A2OSt2em5nSlVy?=
- =?utf-8?Q?C409kU6/DU0=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY8PR10MB7243.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?R1pKdU9vK1pPR2tYNS9haXZqVXM2SUhEQXpPRUFvSXl5MUYyOEV3ZnRkdXZZ?=
- =?utf-8?B?NVlBWk5Tc1U0WFZDeUFmZWIyTTJJSjAwRXZ0Uk50dmdrVG8yU2JIaTVQZkQ5?=
- =?utf-8?B?VWx3S2R2dEtqVnB1cWNteTV3UEt2RmhBT2h2RjA0VERva3BFdEZacTlzeHZl?=
- =?utf-8?B?WGZxOVY2a0RtWjNDZCt6NktNNEZPRWFSbkdTSWFVc05zZmtLT2ZLNGZIVmd2?=
- =?utf-8?B?OS90R3RqNVh1ZjFaQ3l3elpCSWZybDFnbldTNzBOSE9uZVpVRXBGMUcwaktY?=
- =?utf-8?B?eHoxemwxc25EZ1FCV09STElUTkRFVWxiSmEvYVpXQXNrc0hWSHJUTE04aFVY?=
- =?utf-8?B?OHlhd0VkREo5V1ZVNU9oVmlzaS9GQ000WVpVYTl0aHpPQWNCN2ttMGNiTk5u?=
- =?utf-8?B?RlhLN1F1NXRCYWt2bGJmOHR1NHlwcFhsRjlaVG5seDZqQm54aE9aMndwUk1s?=
- =?utf-8?B?S21zNXV0SVVvdmhWWlptTzlRVkptbmloL1RTS2ErZmIrT2QyUWpnTndDcnY1?=
- =?utf-8?B?NHIrVTAyLzVnNDZXZzc4NXQzT0ZBUE1FKzRQQ3lIQjhkTlJrbnpVV3dab2tF?=
- =?utf-8?B?SHJ4Q0RMZ0VnVkJUV0JIRGFyb2pMaDZ1aVBVV09VSUM4aS9jWmFTbTJaZ3B4?=
- =?utf-8?B?bk00QnlOZHhUMk5qQ2w4Wk94VDZVRWF3QlpVaGRSaU80ZkYzSUExY2ZpYWYx?=
- =?utf-8?B?UGsyTFdDQXpzL0phaFRyL2RNUWF3T0o1dW5jZU1WUURKTHZGUmVXUHArRGxE?=
- =?utf-8?B?QktqVDdndHJra3ZqNXNLRjg5ZkR5Zlc1ckVVQWorNXFMQzZWMWU1T3RRYUxJ?=
- =?utf-8?B?WGdwNlBkWlNic3lsaXgvdDVvem9EM0p0TVl6ZjFhcWJOLzJwNWc3NTlNSmpE?=
- =?utf-8?B?Q0JoRStuUVRVTkIwVVpYbSs1T1RIcURwbDRFYlJMK1FkbzAwVUJUSXozbVd1?=
- =?utf-8?B?cW5FV1dhaExMbGlhZ2lDRmFRVis5MWM3YmZxNGJ6cTdtSFN3c2NiaWxTTUhB?=
- =?utf-8?B?ekhWZmxZb2lpbDYrZmh1cXZmMzVETTlReGpScVpyckVsT1NwQ2JUclRFbmFq?=
- =?utf-8?B?VXpzTzJXZWlCNmNLcndqM0dmbXJzN1NTbmFoRldhaEw3RmZrdVdLSnBtVkFI?=
- =?utf-8?B?M3dnVTdZT3NWKzcvbDhLQ2tZcWRSV1krZzhjVTNWS3dkbzhOdVZTUXB6Y2tN?=
- =?utf-8?B?UU9BUDFycW5RL0IrL0UzY2t6R1FsTUsyWTFVYmJoSmhHQUdpbGs5eTlNU2hU?=
- =?utf-8?B?RXRhQ3ltc3UzUFVrTUxBSlNkWnBRSFA2TVAweGFmc29QallqcWFlN1JhdExV?=
- =?utf-8?B?MmcwQWlSMExZZEJjUi9acTFKOENaWXN6S00wNjNmajZmOXd0ZnRqalBLUElp?=
- =?utf-8?B?V3h4cEhMSVZBbUlSY1pYRWwzZDhzdlRYV1VSYTlPKzRlZUJzUGZ4TG40Vmtu?=
- =?utf-8?B?ak1OaUJ2cnk1NHZZS0o0VkxrcGNIR0pWQVlWM09pUVJUN2l0VUlOS0xNRkNy?=
- =?utf-8?B?WjJaQ2UrMlJSSHZKMi9wOW1rb0FOTEY2YnFMTEd6MklLY3ArMXZNRFBTVXUr?=
- =?utf-8?B?cXFwUklRNUZTbnhFa1cxU3hldlNtek5jREQzZEY2cDNpY1JlM0JCalVNeElH?=
- =?utf-8?B?N0FtTHowcXlUb1BuTGJ3TThscVlpREEwWEhIZE1kVm9kTzhvNWV5aFRpb0pU?=
- =?utf-8?B?TUsxeGxNWEhDckZEOVZYMUxsTkQyV0VnMWU4VDFTTVBKTVQzelJod05PQld6?=
- =?utf-8?B?YkhoRGJaUEYxZXBxaDF1R1BBOFIyWXlxbTVCV1ZESEhjSlJ6UWphUzBnRERZ?=
- =?utf-8?B?QTRoR2FYRTkvcVF1SWdjbjVUUFlHWnIxTWRRMkxJZCtFMjg3KzJFM1lRRnFu?=
- =?utf-8?B?cVZMY3Zhbml5NllNUGxvSCtLc0VmKzJxbWJxSG0wQWE5b2RqdXhFQWNsaTE5?=
- =?utf-8?B?S05JdWo2TWpIZnEySlYybDkralRyWmpYZzN3L1VSNnNXK1hCa2ovTDR3dVA2?=
- =?utf-8?B?UFZiR2pZM3lrZmZyRWZBOEZwaFpzMkUraUxaZE5XY0RTaXJFeGZxOVdVWEFS?=
- =?utf-8?B?RkdhWWI5a1N1Q1ZkSVpFN3o5NnJoVDE1czB3azNOakdMZUZBa3NUWUQrY3Zj?=
- =?utf-8?B?VFpyYjNzcmUrL0V3Z0l6L1BGcDU0c2dyTmNMRUhnZHo0KzJiL0Z0cm03akFK?=
- =?utf-8?B?bGc9PQ==?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	jh8eE7O0zIQhUwbJp7MRLWV+vj9eybXEtsTgjfI1t1uIJi84dXXvo/m+KwZBZgwehAp6G4dqeS3erY+rsmD/sYUVJGHgHfBzXTEojwZWqUnGSnFm+hd2KoUtdeWIgwtuYa6BNyWgXYfNmlkWre2ert8mV2Zy3+xc92ipdvfzsgfF/CMLRew1269vk0XEAP5L35C6TuFJV3OnpAVRAvVHnVXJ02f5ErldsGnVJxjckX8zD9nl8OP6LhvUlDcY0Jdx2CZIKoB3yF2N+W4iYvKhjdFSDKR2tXbSB8yobRSbOcTtbt68JBf+RicObWeCvUiCyVMYZOZO3Ixk5I1iz78nmnPSjZmstBmLisZatvfTK3QNz8npLEDz+Ftlao9YoLEmNyGGHAXJo09UvQQt6ARp/MbmENsLPkfNHFIb11I8usTalMPrzyJ06KnQ8R6LXyg0TNjPMgH/fAkHlbpdZzSf+r/g1ZHWPuhML4tIVjCD/gI8SsWNo2Qrmbs+wjy8bKWVr67KnSch084q2k4amc5Nk7TGbQXJGnewKJ1Zp7NDbgVCfSxHDFMEOGduXBZi5WnrqG32H52mkm9tAqiKBMqH86u7KCTPsbVphDzfBE4eLb8=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 65ba9234-bc73-40fe-6b9c-08dda1f138d9
-X-MS-Exchange-CrossTenant-AuthSource: CY8PR10MB7243.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Jun 2025 16:19:18.5180
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: PRzz0jrNePEaBDekmGMUgcbAVTtMOew5/4M4TXd4m+upF8HET0+oohq3JFhkvlWwdYgI1xU07hTmmSwGLzwCrNqGgYWShefe4MFvzm18ysg=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR10MB8152
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-02_07,2025-06-02_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 spamscore=0 bulkscore=0
- mlxscore=0 phishscore=0 suspectscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
- definitions=main-2506020133
-X-Authority-Analysis: v=2.4 cv=fs7cZE4f c=1 sm=1 tr=0 ts=683dcf0a b=1 cx=c_pps a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=GoEa3M9JfhUA:10 a=yPCof4ZbAAAA:8 a=Ig4ASaX-K0eTDnHDiQUA:9 a=QEXdDO2ut3YA:10 cc=ntf awl=host:13207
-X-Proofpoint-GUID: 2ttu_e9dMqxSOOndvQLVgRT-EmIEtggA
-X-Proofpoint-ORIG-GUID: 2ttu_e9dMqxSOOndvQLVgRT-EmIEtggA
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjAyMDEzMyBTYWx0ZWRfX/gkJ1Zmp6lXq Q61/WQzM6zJmIlV5fvjYvbWIC4IHaNu97m0cO/BF2NAyJmybCxPaNmDp4PWrZDSLgNP8VtapU/r C8BGv5mZpxPXTWIC23cUHhDeanZsKkm/1lrikjk9QNwHhgqK0F1JDXJ2E5IL+rLeqyHg1Z89qDG
- PeWUoeBpywlAIeBxX9kmTxlUCG0cgNT7V/k6G9diq0KHa7Tr/wmDiOEHT2czXYjGw4J6Sv3geEd jlVFk32wELnrXkLlAIvkDZuhybhb71OfH7xAOmAuPa1lzaxwqj42MuG4jfO9h9Xs7MDXsfybdZy ummjFA+yEDqBwai5vxp+pfoPtBewIbOmu/y6qXi/WVlcYvKLGXHYBMsy9RSRpQLAQNiz/Zny2IP
- anEFCFPkkV1pvlxjoePyViV9Il9HbyfLYtIJhc/o8XT8rYwSoMhijPtu1g7J5hNyLe7o/qyr
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250602-rk3576-pwm-v2-5-a6434b0ce60c@collabora.com>
+References: <20250602-rk3576-pwm-v2-0-a6434b0ce60c@collabora.com>
+In-Reply-To: <20250602-rk3576-pwm-v2-0-a6434b0ce60c@collabora.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
+ William Breathitt Gray <wbg@kernel.org>, 
+ Sebastian Reichel <sebastian.reichel@collabora.com>, 
+ Kever Yang <kever.yang@rock-chips.com>, Yury Norov <yury.norov@gmail.com>, 
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
+ Leon Romanovsky <leon@kernel.org>, Lee Jones <lee@kernel.org>, 
+ linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org, 
+ linux-iio@vger.kernel.org, kernel@collabora.com, 
+ Jonas Karlman <jonas@kwiboo.se>, 
+ Detlev Casanova <detlev.casanova@collabora.com>, 
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+X-Mailer: b4 0.14.2
 
-On 5/30/25 2:29 PM, Alok Tiwari wrote:
-> Correct the error handling goto labels used when host lookup fails in
-> various flashnode-related event handlers:
-> - iscsi_new_flashnode()
-> - iscsi_del_flashnode()
-> - iscsi_login_flashnode()
-> - iscsi_logout_flashnode()
-> - iscsi_logout_flashnode_sid()
-> 
-> scsi_host_put() is not required when shost is NULL, so jumping to the
-> correct label avoids unnecessary operations. These functions previously
-> jumped to the wrong goto label (put_host), which did not match the
-> intended cleanup logic.
-> Updated to use the correct exit labels (exit_new_fnode, exit_del_fnode,
-> etc.) to ensure proper error handling.
-> Also removed the unused put_host label under iscsi_new_flashnode()
-> as it is no longer needed.
-> 
-> No functional changes beyond accurate error path correction.
-> 
-> Fixes: c6a4bb2ef596 ("[SCSI] scsi_transport_iscsi: Add flash node mgmt support")
-> Signed-off-by: Alok Tiwari <alok.a.tiwari@oracle.com>
+The Rockchip RK3576 brings with it a new PWM IP, in downstream code
+referred to as "v4". This new IP is different enough from the previous
+Rockchip IP that I felt it necessary to add a new driver for it, instead
+of shoehorning it in the old one.
 
+Add this new driver, based on the PWM core's waveform APIs. Its platform
+device is registered by the parent mfpwm driver, from which it also
+receives a little platform data struct, so that mfpwm can guarantee that
+all the platform device drivers spread across different subsystems for
+this specific hardware IP do not interfere with each other.
 
-Thanks.
+Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+---
+ MAINTAINERS                   |   1 +
+ drivers/pwm/Kconfig           |  13 ++
+ drivers/pwm/Makefile          |   1 +
+ drivers/pwm/pwm-rockchip-v4.c | 372 ++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 387 insertions(+)
 
-Reviewed-by: Mike Christie <michael.christie@oracle.com>
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 39177b52be34d48967075b4f5983365725e9c055..0014af1cbd3a7729a04bfdd0b0ed50e9df425693 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -21424,6 +21424,7 @@ L:	linux-rockchip@lists.infradead.org
+ L:	linux-pwm@vger.kernel.org
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/pwm/rockchip,rk3576-pwm.yaml
++F:	drivers/pwm/pwm-rockchip-v4.c
+ F:	drivers/soc/rockchip/mfpwm.c
+ F:	include/soc/rockchip/mfpwm.h
+ 
+diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
+index d9bcd1e8413eaed1602d6686873e263767c58f5f..903138128bca910276fe16efc28f55d05657e385 100644
+--- a/drivers/pwm/Kconfig
++++ b/drivers/pwm/Kconfig
+@@ -586,6 +586,19 @@ config PWM_ROCKCHIP
+ 	  Generic PWM framework driver for the PWM controller found on
+ 	  Rockchip SoCs.
+ 
++config PWM_ROCKCHIP_V4
++	tristate "Rockchip PWM v4 support"
++	depends on ARCH_ROCKCHIP || COMPILE_TEST
++	depends on ROCKCHIP_MFPWM
++	depends on HAS_IOMEM
++	help
++	  Generic PWM framework driver for the PWM controller found on
++	  later Rockchip SoCs such as the RK3576.
++
++	  Uses the Rockchip Multi-function PWM controller driver infrastructure
++	  to guarantee fearlessly concurrent operation with other functions of
++	  the same device implemented by drivers in other subsystems.
++
+ config PWM_SAMSUNG
+ 	tristate "Samsung PWM support"
+ 	depends on PLAT_SAMSUNG || ARCH_S5PV210 || ARCH_EXYNOS || COMPILE_TEST
+diff --git a/drivers/pwm/Makefile b/drivers/pwm/Makefile
+index 96160f4257fcb0e0951581af0090615c0edf5260..c03083de5dbf38d68caee6b7e089ddaa235b538b 100644
+--- a/drivers/pwm/Makefile
++++ b/drivers/pwm/Makefile
+@@ -53,6 +53,7 @@ obj-$(CONFIG_PWM_RENESAS_RZG2L_GPT)	+= pwm-rzg2l-gpt.o
+ obj-$(CONFIG_PWM_RENESAS_RZ_MTU3)	+= pwm-rz-mtu3.o
+ obj-$(CONFIG_PWM_RENESAS_TPU)	+= pwm-renesas-tpu.o
+ obj-$(CONFIG_PWM_ROCKCHIP)	+= pwm-rockchip.o
++obj-$(CONFIG_PWM_ROCKCHIP_V4)	+= pwm-rockchip-v4.o
+ obj-$(CONFIG_PWM_SAMSUNG)	+= pwm-samsung.o
+ obj-$(CONFIG_PWM_SIFIVE)	+= pwm-sifive.o
+ obj-$(CONFIG_PWM_SL28CPLD)	+= pwm-sl28cpld.o
+diff --git a/drivers/pwm/pwm-rockchip-v4.c b/drivers/pwm/pwm-rockchip-v4.c
+new file mode 100644
+index 0000000000000000000000000000000000000000..9af71e79c2c7e006e805604fb66b4448ab5ecbc4
+--- /dev/null
++++ b/drivers/pwm/pwm-rockchip-v4.c
+@@ -0,0 +1,372 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ * Copyright (c) 2025 Collabora Ltd.
++ *
++ * A Pulse-Width-Modulation (PWM) generator driver for the generators found in
++ * Rockchip SoCs such as the RK3576, internally referred to as "PWM v4". Uses
++ * the MFPWM infrastructure to guarantee exclusive use over the device without
++ * other functions of the device from different drivers interfering with its
++ * operation while it's active.
++ *
++ * Authors:
++ *     Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
++ *
++ * Limitations:
++ * - When the output is disabled, it will end abruptly without letting the
++ *   current period complete.
++ *   TODO: This can be fixed in the driver in the future by having the enable-
++ *         to-disable transition switch to oneshot mode with one repetition,
++ *         and then disable the pwmclk and release mfpwm when the oneshot
++ *         complete interrupt fires.
++ * - When the output is disabled, the pin will remain driven to whatever state
++ *   it last had.
++ * - Adjustments to the duty cycle will only take effect during the next period.
++ * - Adjustments to the period length will only take effect during the next
++ *   period.
++ */
++
++#include <linux/math64.h>
++#include <linux/platform_device.h>
++#include <linux/pwm.h>
++#include <soc/rockchip/mfpwm.h>
++
++struct rockchip_pwm_v4 {
++	struct rockchip_mfpwm_func *pwmf;
++	struct pwm_chip chip;
++};
++
++struct rockchip_pwm_v4_wf {
++	u32 period;
++	u32 duty;
++	u32 offset;
++	u8 enable;
++};
++
++static inline struct rockchip_pwm_v4 *to_rockchip_pwm_v4(struct pwm_chip *chip)
++{
++	return pwmchip_get_drvdata(chip);
++}
++
++/**
++ * rockchip_pwm_v4_round_single - convert a PWM parameter to hardware
++ * @rate: clock rate of the PWM clock, as per clk_get_rate
++ * @in_val: parameter in nanoseconds to convert
++ * @out_val: pointer to location where converted result should be stored.
++ *
++ * Return:
++ * * %0          - Success
++ * * %-EOVERFLOW - Result too large for target type
++ */
++static int rockchip_pwm_v4_round_single(unsigned long rate, u64 in_val,
++					u32 *out_val)
++{
++	u64 tmp;
++
++	tmp = mul_u64_u64_div_u64(rate, in_val, NSEC_PER_SEC);
++	if (tmp > U32_MAX)
++		return -EOVERFLOW;
++
++	*out_val = tmp;
++
++	return 0;
++}
++
++/**
++ * rockchip_pwm_v4_round_params - convert PWM parameters to hardware
++ * @rate: PWM clock rate to do the calculations at
++ * @duty: PWM duty cycle in nanoseconds
++ * @period: PWM period in nanoseconds
++ * @offset: PWM offset in nanoseconds
++ * @out_duty: pointer to where the rounded duty value should be stored
++ * @out_period: pointer to where the rounded period value should be stored
++ * @out_offset: pointer to where the rounded offset value should be stored
++ *
++ * Convert nanosecond-based duty/period/offset parameters to the PWM hardware's
++ * native rounded representation in number of cycles at clock rate @rate. Should
++ * any of the input parameters be out of range for the hardware, the
++ * corresponding output parameter is the maximum permissible value for said
++ * parameter with considerations to the others.
++ */
++static void rockchip_pwm_v4_round_params(unsigned long rate, u64 duty,
++					u64 period, u64 offset, u32 *out_duty,
++					u32 *out_period, u32 *out_offset)
++{
++	int ret;
++
++	ret = rockchip_pwm_v4_round_single(rate, period, out_period);
++	if (ret)
++		*out_period = U32_MAX;
++
++	ret = rockchip_pwm_v4_round_single(rate, duty, out_duty);
++	if (ret || *out_duty > *out_period)
++		*out_duty = *out_period;
++
++	ret = rockchip_pwm_v4_round_single(rate, offset, out_offset);
++	if (ret || *out_offset > (*out_period - *out_duty))
++		*out_offset = *out_period - *out_duty;
++}
++
++static int rockchip_pwm_v4_round_wf_tohw(struct pwm_chip *chip,
++					 struct pwm_device *pwm,
++					 const struct pwm_waveform *wf,
++					 void *_wfhw)
++{
++	struct rockchip_pwm_v4 *pc = to_rockchip_pwm_v4(chip);
++	struct rockchip_pwm_v4_wf *wfhw = _wfhw;
++	unsigned long rate;
++	int ret;
++
++	/* We do not want chosen_clk to change out from under us here */
++	ret = mfpwm_acquire(pc->pwmf);
++	if (ret)
++		return ret;
++
++	rate = clk_get_rate(pc->pwmf->core);
++
++	rockchip_pwm_v4_round_params(rate, wf->duty_length_ns,
++				     wf->period_length_ns, wf->duty_offset_ns,
++				     &wfhw->duty, &wfhw->period, &wfhw->offset);
++
++	if (wf->period_length_ns > 0)
++		wfhw->enable = PWMV4_EN_BOTH_MASK;
++	else
++		wfhw->enable = 0;
++
++	dev_dbg(&chip->dev, "tohw: duty = %u, period = %u, offset = %u, rate %lu\n",
++		wfhw->duty, wfhw->period, wfhw->offset, rate);
++
++	mfpwm_release(pc->pwmf);
++	return 0;
++}
++
++static int rockchip_pwm_v4_round_wf_fromhw(struct pwm_chip *chip,
++					   struct pwm_device *pwm,
++					   const void *_wfhw,
++					   struct pwm_waveform *wf)
++{
++	struct rockchip_pwm_v4 *pc = to_rockchip_pwm_v4(chip);
++	const struct rockchip_pwm_v4_wf *wfhw = _wfhw;
++	unsigned long rate;
++	int ret = 0;
++
++	/* We do not want chosen_clk to change out from under us here */
++	ret = mfpwm_acquire(pc->pwmf);
++	if (ret)
++		return ret;
++
++	rate = clk_get_rate(pc->pwmf->core);
++
++	if (rockchip_pwm_v4_is_enabled(wfhw->enable)) {
++		if (!rate) {
++			ret = -EINVAL;
++			goto out_mfpwm_release;
++		}
++		wf->period_length_ns = mul_u64_u64_div_u64(wfhw->period, NSEC_PER_SEC, rate);
++		wf->duty_length_ns = mul_u64_u64_div_u64(wfhw->duty, NSEC_PER_SEC, rate);
++		wf->duty_offset_ns = mul_u64_u64_div_u64(wfhw->offset, NSEC_PER_SEC, rate);
++	} else {
++		wf->period_length_ns = 0;
++		wf->duty_length_ns = 0;
++		wf->duty_offset_ns = 0;
++	}
++
++	dev_dbg(&chip->dev, "fromhw: duty = %llu, period = %llu, offset = %llu, rate = %lu\n",
++		wf->duty_length_ns, wf->period_length_ns, wf->duty_offset_ns, rate);
++
++out_mfpwm_release:
++	mfpwm_release(pc->pwmf);
++	return ret;
++}
++
++static int rockchip_pwm_v4_read_wf(struct pwm_chip *chip, struct pwm_device *pwm,
++				   void *_wfhw)
++{
++	struct rockchip_pwm_v4 *pc = to_rockchip_pwm_v4(chip);
++	struct rockchip_pwm_v4_wf *wfhw = _wfhw;
++	int ret = 0;
++
++
++	ret = mfpwm_acquire(pc->pwmf);
++	if (ret)
++		return ret;
++
++	wfhw->period = mfpwm_reg_read(pc->pwmf->base, PWMV4_REG_PERIOD);
++	wfhw->duty = mfpwm_reg_read(pc->pwmf->base, PWMV4_REG_DUTY);
++	wfhw->offset = mfpwm_reg_read(pc->pwmf->base, PWMV4_REG_OFFSET);
++	wfhw->enable = mfpwm_reg_read(pc->pwmf->base, PWMV4_REG_ENABLE) & PWMV4_EN_BOTH_MASK;
++
++	mfpwm_release(pc->pwmf);
++
++	return 0;
++}
++
++static int rockchip_pwm_v4_write_wf(struct pwm_chip *chip, struct pwm_device *pwm,
++				    const void *_wfhw)
++{
++	struct rockchip_pwm_v4 *pc = to_rockchip_pwm_v4(chip);
++	const struct rockchip_pwm_v4_wf *wfhw = _wfhw;
++	bool was_enabled = false;
++	int ret = 0;
++
++	ret = mfpwm_acquire(pc->pwmf);
++	if (ret)
++		return ret;
++
++	was_enabled = rockchip_pwm_v4_is_enabled(mfpwm_reg_read(pc->pwmf->base,
++								PWMV4_REG_ENABLE));
++
++	/*
++	 * "But Nicolas", you ask with valid concerns, "why would you enable the
++	 * PWM before setting all the parameter registers?"
++	 *
++	 * Excellent question, Mr. Reader M. Strawman! The RK3576 TRM Part 1
++	 * Section 34.6.3 specifies that this is the intended order of writes.
++	 * Doing the PWM_EN and PWM_CLK_EN writes after the params but before
++	 * the CTRL_UPDATE_EN, or even after the CTRL_UPDATE_EN, results in
++	 * erratic behaviour where repeated turning on and off of the PWM may
++	 * not turn it off under all circumstances. This is also why we don't
++	 * use relaxed writes; it's not worth the footgun.
++	 */
++	mfpwm_reg_write(pc->pwmf->base, PWMV4_REG_ENABLE,
++			FIELD_PREP_HI16_WE(PWMV4_EN_BOTH_MASK, wfhw->enable));
++
++	mfpwm_reg_write(pc->pwmf->base, PWMV4_REG_PERIOD, wfhw->period);
++	mfpwm_reg_write(pc->pwmf->base, PWMV4_REG_DUTY, wfhw->duty);
++	mfpwm_reg_write(pc->pwmf->base, PWMV4_REG_OFFSET, wfhw->offset);
++
++	mfpwm_reg_write(pc->pwmf->base, PWMV4_REG_CTRL, PWMV4_CTRL_CONT_FLAGS);
++
++	/* Commit new configuration to hardware output. */
++	mfpwm_reg_write(pc->pwmf->base, PWMV4_REG_ENABLE,
++			PWMV4_CTRL_UPDATE_EN);
++
++	if (rockchip_pwm_v4_is_enabled(wfhw->enable)) {
++		if (!was_enabled) {
++			dev_dbg(&chip->dev, "enabling PWM output\n");
++			ret = clk_enable(pc->pwmf->core);
++			if (ret)
++				goto err_mfpwm_release;
++			ret = clk_rate_exclusive_get(pc->pwmf->core);
++			if (ret) {
++				clk_disable(pc->pwmf->core);
++				goto err_mfpwm_release;
++			}
++
++			/*
++			 * Output should be on now, acquire device to guarantee
++			 * exclusion with other device functions while it's on.
++			 */
++			ret = mfpwm_acquire(pc->pwmf);
++			if (ret)
++				goto err_mfpwm_release;
++		}
++	} else if (was_enabled) {
++		dev_dbg(&chip->dev, "disabling PWM output\n");
++		clk_rate_exclusive_put(pc->pwmf->core);
++		clk_disable(pc->pwmf->core);
++		/* Output is off now, extra release to balance extra acquire */
++		mfpwm_release(pc->pwmf);
++	}
++
++err_mfpwm_release:
++	mfpwm_release(pc->pwmf);
++
++	return ret;
++}
++
++static const struct pwm_ops rockchip_pwm_v4_ops = {
++	.sizeof_wfhw = sizeof(struct rockchip_pwm_v4_wf),
++	.round_waveform_tohw = rockchip_pwm_v4_round_wf_tohw,
++	.round_waveform_fromhw = rockchip_pwm_v4_round_wf_fromhw,
++	.read_waveform = rockchip_pwm_v4_read_wf,
++	.write_waveform = rockchip_pwm_v4_write_wf,
++};
++
++static bool rockchip_pwm_v4_on_and_continuous(struct rockchip_pwm_v4 *pc)
++{
++	bool en;
++	u32 val;
++
++	en = rockchip_pwm_v4_is_enabled(mfpwm_reg_read(pc->pwmf->base,
++						       PWMV4_REG_ENABLE));
++	val = mfpwm_reg_read(pc->pwmf->base, PWMV4_REG_CTRL);
++
++	return en && ((val & PWMV4_MODE_MASK) == PWMV4_MODE_CONT);
++}
++
++static int rockchip_pwm_v4_probe(struct platform_device *pdev)
++{
++	struct rockchip_mfpwm_func *pwmf = dev_get_platdata(&pdev->dev);
++	struct rockchip_pwm_v4 *pc;
++	struct pwm_chip *chip;
++	struct device *dev = &pdev->dev;
++	int ret;
++
++	chip = devm_pwmchip_alloc(dev, 1, sizeof(*pc));
++	if (IS_ERR(chip))
++		return PTR_ERR(chip);
++
++	pc = to_rockchip_pwm_v4(chip);
++	pc->pwmf = pwmf;
++
++	ret = mfpwm_acquire(pwmf);
++	if (ret == -EBUSY)
++		dev_warn(dev, "pwm hardware already in use, can't check initial state\n");
++	else if (ret < 0)
++		return dev_err_probe(dev, ret, "couldn't acquire mfpwm in probe\n");
++
++	if (!rockchip_pwm_v4_on_and_continuous(pc))
++		mfpwm_release(pwmf);
++	else {
++		dev_dbg(dev, "pwm was already on at probe time\n");
++		ret = clk_enable(pwmf->core);
++		if (ret)
++			return dev_err_probe(dev, ret, "enabling pwm clock failed\n");
++		ret = clk_rate_exclusive_get(pc->pwmf->core);
++		if (ret) {
++			clk_disable(pwmf->core);
++			return dev_err_probe(dev, ret, "protecting pwm clock failed\n");
++		}
++	}
++
++	platform_set_drvdata(pdev, chip);
++
++	chip->ops = &rockchip_pwm_v4_ops;
++
++	ret = pwmchip_add(chip);
++	if (ret)
++		return dev_err_probe(dev, ret, "failed to add PWM chip\n");
++
++	return 0;
++}
++
++static void rockchip_pwm_v4_remove(struct platform_device *pdev)
++{
++	struct pwm_chip *chip = platform_get_drvdata(pdev);
++	struct rockchip_pwm_v4 *pc = to_rockchip_pwm_v4(chip);
++
++	mfpwm_remove_func(pc->pwmf);
++
++	pwmchip_remove(chip);
++}
++
++static const struct platform_device_id rockchip_pwm_v4_ids[] = {
++	{ .name = "pwm-rockchip-v4", },
++	{ /* sentinel */ }
++};
++MODULE_DEVICE_TABLE(platform, rockchip_pwm_v4_ids);
++
++static struct platform_driver rockchip_pwm_v4_driver = {
++	.probe = rockchip_pwm_v4_probe,
++	.remove = rockchip_pwm_v4_remove,
++	.driver = {
++		.name = "pwm-rockchip-v4",
++	},
++	.id_table = rockchip_pwm_v4_ids,
++};
++module_platform_driver(rockchip_pwm_v4_driver);
++
++MODULE_AUTHOR("Nicolas Frattaroli <nicolas.frattaroli@collabora.com>");
++MODULE_DESCRIPTION("Rockchip PWMv4 Driver");
++MODULE_LICENSE("GPL");
++MODULE_IMPORT_NS("ROCKCHIP_MFPWM");
+
+-- 
+2.49.0
 
 
