@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-670504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1502BACAF45
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 15:42:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B368ACAF44
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 15:42:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FA7E3B4AC7
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 13:41:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA71D7A652B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 13:41:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87FC22192EC;
-	Mon,  2 Jun 2025 13:42:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDCED2AD1C;
+	Mon,  2 Jun 2025 13:42:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F8trEMFF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VKy5TlQt"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4F362AD1C;
-	Mon,  2 Jun 2025 13:42:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 260C935968
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 13:42:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748871732; cv=none; b=jL707zS7f+aBcWmwh+SnFrnrdTDGShuQt+iTC5vBuL7nURJqf2Ns7tIbO5/pebwTSm2uDNx2M0Fe/+/a29tqRePVlDpJ3p2oGdBfn3B2R0jQlqjqVCjm+pMlmhy134pW372WY6KHXyk6DmpAKmV7D8OqYKR0SyX0e3PPajL7dQM=
+	t=1748871738; cv=none; b=eREnATOmKtXFqtmTPJ9FjcwptrZGD7tA62K6k7LTpnzuFYvZgoyXYs2mIMBflT741JZOTVyqXlUxMKT+jCDyoTMNBKrXU77TF6B3cmQ1r94m/nOBdLksjLJQgjO4iqvnRq4BdGYh/KP/LhiWQC8gMFOoVC+Ry+KyQEsqtIjtqtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748871732; c=relaxed/simple;
-	bh=awCLTapDYtSLunhjJmur8jP9nvPrd0Ml3WwwNIr/xQ8=;
+	s=arc-20240116; t=1748871738; c=relaxed/simple;
+	bh=jkYyX5QrYNlPQg4LO+RDwsQSbIqgIsVYqXblJxyQ2+g=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UJ8sAlhdLDuXSO0rXOhwhoqlTLJlONBiKwvBsbW1tXE7++nNOItF9qfooTIIN8QKB2ltWHT+qZZ4qFWui/U7IS1bVHXY1pzMwzZiRXBwCtBX/PRXNzdHORBEgMvFuihyfJXDEZf0J8Ly8ilShMa22E7B9nWO+jgroX80+0yYhMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F8trEMFF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A68BC4CEEB;
-	Mon,  2 Jun 2025 13:42:08 +0000 (UTC)
+	 MIME-Version:Content-Type; b=hCTOi0hXtVgPZdJ6SxJTN9hhGbjazUDpDyDVirdOzzRPGvaJN2oF8CKq1qcUCm/3kKY20WlC/8RFfdWR6ACBhbacwAxb1qIfIztxQcuXdvQkefNY9ANZcSRgQja8KfsSC1rZ7ziOjWgqtCc9Zb4TbVEZYiKk+Rme1Cl/Idf5HqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VKy5TlQt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC62EC4CEF0;
+	Mon,  2 Jun 2025 13:42:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748871730;
-	bh=awCLTapDYtSLunhjJmur8jP9nvPrd0Ml3WwwNIr/xQ8=;
+	s=k20201202; t=1748871734;
+	bh=jkYyX5QrYNlPQg4LO+RDwsQSbIqgIsVYqXblJxyQ2+g=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=F8trEMFFNU2PciE7wqR3jyQF70v8wlnypdjcFuhGrR50KHgO6yywiaxQOS/nsJAm4
-	 DbZzlRsClJhuvI4iUurDptSom65I4dbTTFr24iyDs8T5/taK5yhTMBWH9tayQFCGBp
-	 UVrj0VAo2BTjsbHNhNfL/BJCIUmTqraLmgWvRpS+/9gLi3jr2XdLSQkjJbapfUin4d
-	 nsYaxu9Hn4qQDWwHa8ChbNDMUwtww5UuRFer7X+KUGZFVccIEis1WsH6rKe5n0kZ+8
-	 eZ97bkziJSMRQwSRmNo8IBSbdGvw9SE3XLLnvKiGipQ9+eURuWJ7atKF2I2Rc5yt2t
-	 E4FfLPc9sWhdQ==
+	b=VKy5TlQtkXufd3uJ/05+eDCZ0R5k8Ou7xsC+/Pz653VI2YlS/tRp29CGnD80+w5hL
+	 wzYMXkmbBVRu2L1+ikUuYQcXWXjVr83HbEYUHW8N/wMVjOoffiFtRkKfGFFDnoQVZp
+	 3xWex2RIq5wqTP0mqMMkYyiyASfp9lzNE4XVLh/cRkOD7gbT1AAGYESmR5JvzexZTS
+	 4WRTel7zlNyaBJmPgDhh6i7CWkbVrXJ/6jl7L/Lf8r6TyQdbzQZj0QmZHvhmy+zmNz
+	 iNjctu1VWxaNkDHzoAS7ulFokO0JRu/qv8pV0VJrSyp8trW6o1fl/FSEfA3BCPS2WR
+	 9heaNnj8/j3eQ==
 From: Will Deacon <will@kernel.org>
-To: linux-arm-kernel@lists.infradead.org,
-	Ard Biesheuvel <ardb+git@google.com>
-Cc: catalin.marinas@arm.com,
-	kernel-team@android.com,
+To: Catalin Marinas <catalin.marinas@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Barry Song <baohua@kernel.org>,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	Ryan Roberts <ryan.roberts@arm.com>
+Cc: kernel-team@android.com,
 	Will Deacon <will@kernel.org>,
-	llvm@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	nathan@kernel.org,
-	Ard Biesheuvel <ardb@kernel.org>
-Subject: Re: [PATCH] arm64: Disable LLD linker ASSERT()s for the time being
-Date: Mon,  2 Jun 2025 14:42:02 +0100
-Message-Id: <174886496430.2938723.8299701252646132199.b4-ty@kernel.org>
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] arm64/mm: Close theoretical race where stale TLB entry remains valid
+Date: Mon,  2 Jun 2025 14:42:04 +0100
+Message-Id: <174886573625.2942690.14376639867334964612.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20250529073507.2984959-2-ardb+git@google.com>
-References: <20250529073507.2984959-2-ardb+git@google.com>
+In-Reply-To: <20250530152445.2430295-1-ryan.roberts@arm.com>
+References: <20250530152445.2430295-1-ryan.roberts@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,17 +65,23 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On Thu, 29 May 2025 09:35:08 +0200, Ard Biesheuvel wrote:
-> It turns out that the way LLD handles ASSERT()s in the linker script can
-> result in spurious failures, so disable them for the newly introduced
-> BSS symbol export checks.
+On Fri, 30 May 2025 16:23:47 +0100, Ryan Roberts wrote:
+> Commit 3ea277194daa ("mm, mprotect: flush TLB if potentially racing with
+> a parallel reclaim leaving stale TLB entries") describes a race that,
+> prior to the commit, could occur between reclaim and operations such as
+> mprotect() when using reclaim's tlbbatch mechanism. See that commit for
+> details but the summary is:
 > 
+> """
+> Nadav Amit identified a theoritical race between page reclaim and
+> mprotect due to TLB flushes being batched outside of the PTL being held.
 > 
+> [...]
 
 Applied to arm64 (for-next/core), thanks!
 
-[1/1] arm64: Disable LLD linker ASSERT()s for the time being
-      https://git.kernel.org/arm64/c/e21560b7d33c
+[1/1] arm64/mm: Close theoretical race where stale TLB entry remains valid
+      https://git.kernel.org/arm64/c/4b634918384c
 
 Cheers,
 -- 
