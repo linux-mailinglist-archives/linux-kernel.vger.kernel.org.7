@@ -1,141 +1,149 @@
-Return-Path: <linux-kernel+bounces-670833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1804EACB9E5
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 18:53:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 310F7ACB9E0
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 18:53:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC3B716F3A6
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 16:53:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E302A16CD3D
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 16:53:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A669E224B10;
-	Mon,  2 Jun 2025 16:53:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F368225792;
+	Mon,  2 Jun 2025 16:52:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C2mZsHDg"
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y4guQdPu"
+Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99145221280
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 16:53:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ACE8221280;
+	Mon,  2 Jun 2025 16:52:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748883218; cv=none; b=DuNEolUU4qJIsqu9tS9RAnwwZTSv0luH6UpA263qVFYTHKl8An55Xh2FWd9u96iv1Mmo/lw20Cy49Tl3WotJ/P/RBaRgVQnN9uUX0MNBWdkfJCT2OVWRufgbzcCsESoHbcdaHll2cS/IFjI5bpW/n/abZJ/vWi65V98bEACmGJw=
+	t=1748883171; cv=none; b=b0WPd5ig0eLIYaHaPodTggJssrE3+04w7M/d5wIRCkiojpvzzo0Y4tU8HLfGACOhA9Pr1yzhdpbbrD72oPECugllQgkRdPjcplIjgV638Tq/RW4jhirL7qiLOQ1HpMmFCSA2Ywuws/pGXQ9U1zFjNvVaAS4bhMYsDDpnJUPa8r4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748883218; c=relaxed/simple;
-	bh=qfYGX5uf3SN2A72mhHtHMLZvVQ4BrJ7GbTCkW23d4dc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SEXVKad7TijfSHpGDw+MIrz+cFYf3zdCQFz/Sw3ufqhzPBMHlhAbEo7hH/IVre6uDOX5PD5jFROWlKEo4SJOwoj75QIMwm/5O+7Dg6xcIWA5Hk8KRpmfehPIi1MhbqOFcd+ocMD0ja/HBGo6MKyXgzqpnLdfI/LdHvvl+pf5oNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C2mZsHDg; arc=none smtp.client-ip=209.85.219.170
+	s=arc-20240116; t=1748883171; c=relaxed/simple;
+	bh=ePf765SQYuwJZAPdzzPBFspRg6Q3ylotrkU8EfBBeHY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aRsOjreXV2z5cf9Q12a/Vfm0HtzfTuiPqBafXFiaqtCv+1Y8xmMVzlL74cXpxqHFwHVyhgXh/c7aFgVqYNQNfNiGyg+jjX/nxag56TL4mYtaT/OxYjQm0Jxm8gwzr+GQPyYNLbbqJ0/j2MteZ5prtQ/eVodfj0SZqlRqWxp/sXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y4guQdPu; arc=none smtp.client-ip=209.85.221.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e812fc35985so1558546276.0
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jun 2025 09:53:36 -0700 (PDT)
+Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-527a2b89a11so1790577e0c.2;
+        Mon, 02 Jun 2025 09:52:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748883215; x=1749488015; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xDHMuqo6RzMoJIRbVQT8ztx5HK0kzx4NSGfmPKbpaeM=;
-        b=C2mZsHDgKGjj6xg5TokIyRXKDswfYeCwDzRjAGDeuRJ+Nl3zxNWcfKKxB+EGCF8hp9
-         VhFS0lbNOjQBattHnG3ReGGpYjh8+gwccXK9DzGCg6BcOVjNypBq7iPMCgiXo2UgorRX
-         MJWYi92UmiXR9ByBZA705Q1gFqItbglS1elyx89/m5p1cda7diTwCgYs3ZveUPGmb0KM
-         rnyNvIEkf65DEWWiDyKg9dUaQuG7EFmzaUyQDiSK/FtGMM07YM1b8LU6V/7ctsJWGtp7
-         CtZ/aGUK1J3Vslf2bCSqkFQiX5TjjIzaQsfa3knqe1K8Yyq4KlDOIGPgWncxCj+89ASx
-         j49g==
+        d=gmail.com; s=20230601; t=1748883169; x=1749487969; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=UaHylnij5ODN/rPLDB2SjQz/P4QohjD/xWcVVYel2fo=;
+        b=Y4guQdPuiwoDdzc2ilerX/Apcj7Onufr1LlkYV5CiVxppK4XXTLnsTAvvPrD9IwfQ6
+         rkrZA1iDrs0scMvtyxnUt+4AeCpoqfPRnBBt6JZHSqxpzzR8JepDA82E6C4flmETujge
+         fQ4BQ6SR2Mgjv7Faz4njz1qZDJtjorK8+fJ4dSgtOL/+VSgzGi3nK3EB+he5Id5yREk6
+         K6YP3Ox1ArfrJ+5qDegW2oxEII86Y8U//A0dH5s7/cGxbqibABVjHylhBzKCG2hoe2rb
+         kILHUu6EfYA/Ygvz66O4M2K04D0HH4EAYd8BXRe7JsAI1APGerME7iLHjkxy5hQNn/Mp
+         m9sw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748883215; x=1749488015;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xDHMuqo6RzMoJIRbVQT8ztx5HK0kzx4NSGfmPKbpaeM=;
-        b=fhNi/wKQNcS9mTLy+b88NKahS4wE71veEoBHCpOnyIOJ80ggUxZutbOYRfUFbf7sj1
-         Ah0Iw5/iqnFFE3MvyFR0tsm4kAJCe8vnuXi3mqQd/MKFpVBDqQggDFQmYrVq7cM8Gu7a
-         X8xdrrhq0vdl2E5ux1s2YKeFNTQNMb+sSfMjBG2NBzVMr7/aswRXv2J8CNYL4uRiP9id
-         sKC+FiHmEMJsWlBIXRqUky7HR2Linyi97tA7k8WSdzgTV5HSpuAG6Fxglc1mFPTGMhYz
-         LXy8ZChI/Hp8x8fDgedDgno7mngr04qL5xRpGYFJd6lJVRR0EMASTGI5k/l3UwE3NUVb
-         C6zA==
-X-Forwarded-Encrypted: i=1; AJvYcCXQeT4VIGo91GprWK6bfntWyRpbIldt2NCA7QLdz1PWSogxMmeQoWEjpiJqwYCffaerNEWiJ1A5N2oZkeY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQh/A0oHBLBBxIdnt3EPgmSDJPocYMDVSg23W42iqyJwXvDu66
-	6tJ5vIsq7eL7R949B1INS3jcyk7XJ0KEtU5pDxS/9648mfRHhQrWtG1V
-X-Gm-Gg: ASbGnctlJaQTiIyThyQgTIUYBsPEIjoKRpc5pnUoCUnqCjr/GBM2Y+b5/d8a7LddlEY
-	UYJMKUV8ipQ8QH5NpPiCKW7ZHDsfIC/3a/8QPJ8GmSvPCsNpzWA42WcmHd8sX9111S1atjDF8qJ
-	c7D9la7N4rtyUAGknllIBaxRgIQsv8D73bO/IPS/zl2ZCj5sC3MaedPDhB4cydOWm4pFF77yWCc
-	vH1R8XpZzgfIIrHRcnDHO1Qo1O+5uo6FF5xqCr45VHTmQ6C7rVDvs3Y0DmCMAotPNLLA+BSYUcr
-	iIJyreK6nA1Fe3kmj4l/JHX5m60+pcTkXTwvoYItkDptP2lXN/U=
-X-Google-Smtp-Source: AGHT+IHn23nMGp0B35ZPqUDMayqPq1AMBdtqerU9zasbWOYSJSaq5D+zdFs6bGTN3Xvsede1apJ8jg==
-X-Received: by 2002:a05:690c:6a02:b0:70e:142d:9c69 with SMTP id 00721157ae682-70f97f2f43emr206017637b3.31.1748883215244;
-        Mon, 02 Jun 2025 09:53:35 -0700 (PDT)
-Received: from localhost ([2a03:2880:25ff:72::])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-70f8abd6052sm21510437b3.24.2025.06.02.09.53.33
+        d=1e100.net; s=20230601; t=1748883169; x=1749487969;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UaHylnij5ODN/rPLDB2SjQz/P4QohjD/xWcVVYel2fo=;
+        b=SAiQvLqOyElu1FA6v6m7kXz5IGt39dBh7xxMhqSN98J1/LYQWrpXS/3vLaIObvT4hw
+         Ook8r4x1T+DWzno3GUYomXyFwIuG/hn71EvE2kDTZIGqYGGjTyE1jll1/sOjATwhg47o
+         ddgg9wx5y0lb7PZBcp3P3tL9+U52AvbBT9ZjtsEzyRj2w8fdf2VHCfl+5cmhnlU1/Ri9
+         o72zZRQ8QrUSLqqnMFEcS8zJJuK3x2y/lwJv/WZlBXlPbU57zZ5hf93ntTibX+G7XNtO
+         bQE82uGXTPv1EXVp7b8KZUsSjSqIUx4+gZHi3hY8DGRcb3REw2JWqJ6dG3r0Os3zyGPn
+         PXxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUY1HirOpy3uUKdEG6Wfr8xuNsjgYD7hOU3a/nE/XGlIulED88MYVbx63cYwjVEp2Sm6I4nvP0lk6fjzeDF@vger.kernel.org, AJvYcCUzGwtfAOKYdB1zoLR4TKd56eVe3IWJ48Xf2MDXwDrBWFKWF3sCY1dZ4FakaYpXeP27Ipyblf99coAg@vger.kernel.org, AJvYcCVW6gxc692nH2SrKwLq2Qa+pTBiaHKb6qJf1j7by6YLzHo4J4NztyIVjv6hggZzinOgaco7sYwTSxAlyw==@vger.kernel.org, AJvYcCWGHCGKfDIkQMi9dmCpOqtjfBir2Wf3qMKeSjv5y38Qi/et5iFUEi1IqiYMjh9AkxU1yZXeTvAC0M1Q@vger.kernel.org
+X-Gm-Message-State: AOJu0YyM92LcnePVGGT1rJYjhnmTd+sek2oNGQCblFCTY3m66zmRQnAp
+	7nhV+6zMvL0iLn22CH14/fm4zil5EQ1q5Jn17hukIul+O8lwttBS4FfE
+X-Gm-Gg: ASbGncv6TPQFdh3kc6QGhbyQbZDEmrmPltX6tyGwRXLNcv6P+GhrGKl1l+gs1iSwyWK
+	19OiZJ23W4CFGRLJshExLAuEjaohtIuk1+MZb5FncXtHvBKGcKG41IBV/2g3M6tbAtmszaw2sPu
+	ceuFDXOwBDQLxiOU3t3o4t4z7Uyez0UaLvY8PqhlV+72TTcV1++c0imYz2FNV5H6bHExeBcgWnT
+	MDj3w5e6g7V2QtU+BqFGeQrfg+QT4unTKVJjyZz780a73XZDmcUZltxwlbFsJHMwFp8QrZ+UUQU
+	iZ58KTD90uFSiQQiFwtolU4+wFVSU3yidG5WD9YL7av8dAFscjagY2nzBBuGpsuegpIZbwy7YC1
+	cAcNS
+X-Google-Smtp-Source: AGHT+IEdZ3vdLWHi5wrwjpkN9fh88F/jznYlhx4DCKgBK46LxS+SxZlTBGaOLUAZuZ12R7bzJaBKMw==
+X-Received: by 2002:a05:6122:8c0d:b0:520:4996:7d2a with SMTP id 71dfb90a1353d-530811020efmr9909613e0c.10.1748883168825;
+        Mon, 02 Jun 2025 09:52:48 -0700 (PDT)
+Received: from localhost ([2804:30c:406b:9100:2a26:16f5:c81:e61f])
+        by smtp.gmail.com with UTF8SMTPSA id 71dfb90a1353d-53074b09342sm7796437e0c.28.2025.06.02.09.52.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Jun 2025 09:53:34 -0700 (PDT)
-From: Joshua Hahn <joshua.hahnjy@gmail.com>
-To: Joshua Hahn <joshua.hahnjy@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Gregory Price <gourry@gourry.net>,
-	David Hildenbrand <david@redhat.com>,
-	Zi Yan <ziy@nvidia.com>,
-	Matthew Brost <matthew.brost@intel.com>,
-	Rakie Kim <rakie.kim@sk.com>,
-	Byungchul Park <byungchul@sk.com>,
-	Ying Huang <ying.huang@linux.alibaba.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	linux-mm@kvack.org,
+        Mon, 02 Jun 2025 09:52:47 -0700 (PDT)
+Date: Mon, 2 Jun 2025 13:54:25 -0300
+From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+To: Andy Shevchenko <andy@kernel.org>
+Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	kernel-team@meta.com,
-	kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH 1/2] mm/mempolicy: Fix incorrect freeing of wi_kobj
-Date: Mon,  2 Jun 2025 09:53:31 -0700
-Message-ID: <20250602165332.2746843-1-joshua.hahnjy@gmail.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20250602162345.2595696-1-joshua.hahnjy@gmail.com>
-References: 
+	Ana-Maria Cusco <ana-maria.cusco@analog.com>, jic23@kernel.org,
+	lars@metafoo.de, Michael.Hennerich@analog.com,
+	dlechner@baylibre.com, nuno.sa@analog.com, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, linus.walleij@linaro.org,
+	brgl@bgdev.pl
+Subject: Re: [PATCH v4 02/11] iio: adc: Add basic support for AD4170
+Message-ID: <aD3XQfUfxIiz62ZU@debian-BULLSEYE-live-builder-AMD64>
+References: <cover.1748829860.git.marcelo.schmitt@analog.com>
+ <e79f9a126672b33b8a7c01f650fee43a68c74029.1748829860.git.marcelo.schmitt@analog.com>
+ <aD27cobHWeBX8o30@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aD27cobHWeBX8o30@smile.fi.intel.com>
 
-On Mon,  2 Jun 2025 09:23:39 -0700 Joshua Hahn <joshua.hahnjy@gmail.com> wrote:
+...
+> > +static bool ad4170_setup_eq(struct ad4170_setup *a, struct ad4170_setup *b)
+> > +{
+> > +	/*
+> > +	 * The use of static_assert() here is to make sure that the comparison
+> > +	 * is adapted whenever struct ad4170_setup is changed.
+> > +	 */
+> > +	static_assert(sizeof(*a) ==
+> > +		      sizeof(struct {
+> > +				     u16 misc;
+> > +				     u16 afe;
+> > +				     u16 filter;
+> > +				     u16 filter_fs;
+> > +				     u32 offset;
+> > +				     u32 gain;
+> > +			     }));
+> 
+> I think it doesn't make much sense unless one uses memcpy().
 
-> We should not free wi_group->wi_kobj here. In the error path of
-> add_weighted_interleave_group() where this snippet is called from,
-> kobj_{del, put} is immediately called right after this section. Thus,
-> it is not only unnecessary but also incorrect to free it here. 
+memcpy() is used to update the setups after reg write succeeds.
+Also, previously, memcmp() was used to compare setups.
+Since struct ad4170_setup has only unsigned integers (no floating point fields
+like ad7124 had [1]), ad4170 works properly when comparing setups with memcmp().
+Though, it was asked to do explicit field matching on previous reviews [2] so
+that's how it had been since then. Well, both ways work for ad4170. We can
+compare setup with memcmp(), or do the comparison field by field. I don't mind
+changing it again if requested. I guess we only need to reach an agreement about
+what to go with.
+
+[1]: https://lore.kernel.org/all/20250303114659.1672695-13-u.kleine-koenig@baylibre.com/
+[2]: https://lore.kernel.org/linux-iio/20250504192117.5e19f44b@jic23-huawei/
+
 > 
-Fixes: e341f9c3c841 ("mm/mempolicy: Weighted Interleave Auto-tuning")
-> Signed-off-by: Joshua Hahn <joshua.hahnjy@gmail.com>
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202506011545.Fduxqxqj-lkp@intel.com/
-> ---
->  mm/mempolicy.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
+> > +	if (a->misc != b->misc ||
+> > +	    a->afe != b->afe ||
+> > +	    a->filter != b->filter ||
+> > +	    a->filter_fs != b->filter_fs ||
+> > +	    a->offset != b->offset ||
+> > +	    a->gain != b->gain)
+> > +		return false;
+> > +
+> > +	return true;
+> > +}
 > 
-> diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-> index 72fd72e156b1..3b1dfd08338b 100644
-> --- a/mm/mempolicy.c
-> +++ b/mm/mempolicy.c
-> @@ -3708,15 +3708,13 @@ static void wi_state_free(void)
->  			lockdep_is_held(&wi_state_lock));
->  	if (!old_wi_state) {
->  		mutex_unlock(&wi_state_lock);
-> -		goto out;
-> +		return;
->  	}
->  
->  	rcu_assign_pointer(wi_state, NULL);
->  	mutex_unlock(&wi_state_lock);
->  	synchronize_rcu();
->  	kfree(old_wi_state);
-> -out:
-> -	kfree(&wi_group->wi_kobj);
->  }
->  
->  static struct kobj_attribute wi_auto_attr =
-> -- 
-> 2.47.1
+> ...
+> 
+
+Thanks,
+Marcelo
 
