@@ -1,168 +1,272 @@
-Return-Path: <linux-kernel+bounces-670580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14583ACB126
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 16:16:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DD9DACB0C3
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 16:10:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3969416609D
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 14:12:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3586B482097
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 14:07:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCFEF223719;
-	Mon,  2 Jun 2025 14:03:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99F0123024D;
+	Mon,  2 Jun 2025 14:02:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d4O0muln"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="df1SS2LE"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19FDF2405FD;
-	Mon,  2 Jun 2025 14:03:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0757B22F384;
+	Mon,  2 Jun 2025 14:02:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748873002; cv=none; b=TIoc6I/ZzqkYEKwje6n3Cz1wbi7ayECZmVejbztFer6fZFwy4cJJIcevudxMdr248sGx6bj9gH16sXsXJavgTOA7uQMbtkI70oTwJEf8LJZK3GPTKarBRbXyzlb45s5XsSQeUoWqRlRo11Cn8/xghapa0smATkGgNkvHMOvEer4=
+	t=1748872967; cv=none; b=NDLE0R9531wIxn/7C+0e8WDI3pzvGixyOINOUnEav6IikUGufhlgUYnVHRqJ+Xr0WLveJtoIZd5LOK8pNiuF51UZ0w1RITVVNfRBLYeu9NxeELEamlwG9urNxoTuLaoS30IFMzdtACpBsf4C9AYvVIFp362HOW9zRpC8JjGQb7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748873002; c=relaxed/simple;
-	bh=WRTUFe5zAa4ehyUDpuZU2A396vCsORsejbqIXvfw4eM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Nb4VGUEJAOHQsg0VsNjeVJzcSPxpOMThnFWWyHJPBYLXv0wejvSm86t9Qig5FEpSPbY0i2Ddx2eYsMUPzS9h61h+o+TV04cVaV8MUVcz+wlIj1ZGvExfvk8A5auFY3hl9bmHLtdG0uyr+DsxbinAAHR9BtfEGn7t8TedRlu/Rns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d4O0muln; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A54F5C4CEF6;
-	Mon,  2 Jun 2025 14:03:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748873001;
-	bh=WRTUFe5zAa4ehyUDpuZU2A396vCsORsejbqIXvfw4eM=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=d4O0mulna5zpsC6abaqW7ZzC6op2McHxHnBQVPqnQwhFOlxMsWRGVVWKLUXcf8a9c
-	 ohFTvdxrxc7Mw85ldB9a5qQBhmlJxwyhnI3A2zQS2IwOxh1AqxlItPsdXlfHF9ulzu
-	 yZjj/k8bPLr0m9dlKgzUOFoIHWUg7nPX5mPdQam6R5qUbEsyJjbdzRH7Kd5fCmDO1g
-	 ImOxd8OSI1VJKt5JelTrmpxO82lN+wO7Ddskf308gJgCtkZWMUf40TMHO5LBvSdWXa
-	 n88yEb3aCDXEDuEH26sbPdu8rmrtCoVVIHmhmaMURopXs2VOEuq283oc1xJH5V32Yj
-	 8ardsieZOx80w==
-From: Jeff Layton <jlayton@kernel.org>
-Date: Mon, 02 Jun 2025 10:02:11 -0400
-Subject: [PATCH RFC v2 28/28] nfsd: add support for NOTIFY4_RENAME_ENTRY
- events
+	s=arc-20240116; t=1748872967; c=relaxed/simple;
+	bh=/cB+a7rwajGpblAy9fvnPZX+2E9i45cREbh/9pNRuQA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Bj08d7kIopn316I3BhTHY8+hen9sncwe/dq1+K7HZC4mNfPEOweghNCjNH53WGpFeY7Y+2CZe5oQyDXCetEvnbPx6xRoSQAx14xO+XjtosJbl8q3hXwnjxahOXxl2vk0eoaArona7HXjggo5+P3qkIuQuEyXfsWB6TXDm9VqCgU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=df1SS2LE; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id AE3CB379;
+	Mon,  2 Jun 2025 16:02:42 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1748872962;
+	bh=/cB+a7rwajGpblAy9fvnPZX+2E9i45cREbh/9pNRuQA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=df1SS2LElV0Y67BO1x+o54cbGBV3HtkRGE1EQosHheZ/2+manOTJahdWyfhX+oWyj
+	 4p9FeWHX4bUKCyWYfF8L1/rsmek4kogZiH+hendALKpTHiUHLUndV7+sf7iNYBIFVt
+	 kgds+3BdyWFQ5v81NWDmuTpTsxRjfRK5NilT3Mdw=
+Date: Mon, 2 Jun 2025 17:02:35 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Hans Verkuil <hans@jjverkuil.nl>
+Cc: Ricardo Ribalda <ribalda@chromium.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] media: uvcvideo: Remove stream->is_streaming field
+Message-ID: <20250602140235.GE23515@pendragon.ideasonboard.com>
+References: <20250602-uvc-fop-v2-0-508a293eae81@chromium.org>
+ <20250602-uvc-fop-v2-3-508a293eae81@chromium.org>
+ <dba66347-7b6c-49b5-8d31-166845efd1a0@jjverkuil.nl>
+ <CANiDSCttXAu0bJHG7L=Y4Y0LqfRQa=Y-wC8PKr1Pv7Hwpq6Txg@mail.gmail.com>
+ <663123d4-9ac4-4c8d-bc88-d4e197786199@jjverkuil.nl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250602-dir-deleg-v2-28-a7919700de86@kernel.org>
-References: <20250602-dir-deleg-v2-0-a7919700de86@kernel.org>
-In-Reply-To: <20250602-dir-deleg-v2-0-a7919700de86@kernel.org>
-To: Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
- Chuck Lever <chuck.lever@oracle.com>, 
- Alexander Aring <alex.aring@gmail.com>, 
- Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
- Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>, 
- Ronnie Sahlberg <ronniesahlberg@gmail.com>, 
- Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>, 
- Bharath SM <bharathsm@microsoft.com>, NeilBrown <neil@brown.name>, 
- Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
- Jonathan Corbet <corbet@lwn.net>, Amir Goldstein <amir73il@gmail.com>, 
- Miklos Szeredi <miklos@szeredi.hu>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org, 
- samba-technical@lists.samba.org, linux-doc@vger.kernel.org, 
- Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2877; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=WRTUFe5zAa4ehyUDpuZU2A396vCsORsejbqIXvfw4eM=;
- b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBoPa7rYWh5WPyBqmd/mpYouoAaeCmO7iYpghNrL
- 2FZXSv49syJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaD2u6wAKCRAADmhBGVaC
- FRLAD/9Nrz7K/6BZh3J7GzB7TSD3Iu8DHCsSAkiig2bJ4KYuyJdr/v9vr7B1pSdCR+UN7OFPToX
- Cm6Lbv3HaVp1569JJ5aYfDQoaZhxDg0IQIajjWvorce9w+r9GbvoOvWAAe5BWBJugD1asZSxQqI
- wiB9z2fvE0r2MQwvvooV7GfDANY0anAIEkbYzEWIN4fecGqDWn9Frk/3sichSwRgrrOQuYz+o5d
- zVb+QPivMvVfFmkfe9v8NbGkSFuB40v84Ab3uWvui0QTRbag79oAdWGoo+EYsACgW8fPGxMiPad
- byakNt0nXAuGnwBKf8zV3emFCUt/PcIcK7soVpY1b5UAXn7lJ2Rn3TKIORKcLJEtIZwXmRxG78a
- WzbYtyBOGJie63ytKV43ixhN0S8UghXP0Spi7OB2nn7NxwqjT3E52Cb23yNABtf4fbkVKqd0aMm
- GEnYGTeTvDnC6gzAOYqd0lBVRwPURcrqbWe1kKqJ8fqTjRjJNTJQYtpEyKGWwGrsdpYMtG0AaFj
- QxE+AnC27WCcQlSJ6dk00isFmg8Sl9aFtZ/anoVk75oIoztNAr+3gbhRNzEs/XNEQV5iIfwWD07
- P4nOoepshUDmBrvKd/rsdpJLAH/J8sdZqByh/vnJfaGnhpB5RhXUSakmBErmo95bsnfmRExVT1j
- IS0rm0gaUtKGXmA==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <663123d4-9ac4-4c8d-bc88-d4e197786199@jjverkuil.nl>
 
-Add support for RENAME events. Marshal the event into the notifylist4
-buffer and kick the callback handler.
+On Mon, Jun 02, 2025 at 03:47:50PM +0200, Hans Verkuil wrote:
+> On 02/06/2025 15:33, Ricardo Ribalda wrote:
+> > On Mon, 2 Jun 2025 at 15:23, Hans Verkuil wrote:
+> >> On 02/06/2025 14:59, Ricardo Ribalda wrote:
+> >>> The is_streaming field is used by modular PM to know if the device is
+> >>> currently streaming or not.
+> >>>
+> >>> With the transition to vb2 and fop helpers, we can use vb2 functions for
+> >>> the same functionality. The great benefit is that vb2 already takes
+> >>> track of the streaming state for us.
+> >>>
+> >>> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> >>> ---
+> >>>  drivers/media/usb/uvc/uvc_queue.c | 11 ++++++++-
+> >>>  drivers/media/usb/uvc/uvc_v4l2.c  | 51 ++-------------------------------------
+> >>>  drivers/media/usb/uvc/uvcvideo.h  |  1 -
+> >>>  3 files changed, 12 insertions(+), 51 deletions(-)
+> >>>
+> >>> diff --git a/drivers/media/usb/uvc/uvc_queue.c b/drivers/media/usb/uvc/uvc_queue.c
+> >>> index 72c5494dee9f46ff61072e7d293bfaddda40e615..dff93bec204428b8aebc09332e0322fa68823fa4 100644
+> >>> --- a/drivers/media/usb/uvc/uvc_queue.c
+> >>> +++ b/drivers/media/usb/uvc/uvc_queue.c
+> >>> @@ -165,12 +165,18 @@ static int uvc_start_streaming(struct vb2_queue *vq, unsigned int count)
+> >>>
+> >>>       lockdep_assert_irqs_enabled();
+> >>>
+> >>> +     ret = uvc_pm_get(stream->dev);
+> >>> +     if (ret)
+> >>> +             return ret;
+> >>> +
+> >>>       queue->buf_used = 0;
+> >>>
+> >>>       ret = uvc_video_start_streaming(stream);
+> >>
+> >> I'm not sure this is correct. See comments below.
+> >>
+> >>>       if (ret == 0)
+> >>>               return 0;
+> >>>
+> >>> +     uvc_pm_put(stream->dev);
+> >>> +
+> >>>       spin_lock_irq(&queue->irqlock);
+> >>>       uvc_queue_return_buffers(queue, UVC_BUF_STATE_QUEUED);
+> >>>       spin_unlock_irq(&queue->irqlock);
+> >>> @@ -181,11 +187,14 @@ static int uvc_start_streaming(struct vb2_queue *vq, unsigned int count)
+> >>>  static void uvc_stop_streaming(struct vb2_queue *vq)
+> >>>  {
+> >>>       struct uvc_video_queue *queue = vb2_get_drv_priv(vq);
+> >>> +     struct uvc_streaming *stream = uvc_queue_to_stream(queue);
+> >>>
+> >>>       lockdep_assert_irqs_enabled();
+> >>>
+> >>> -     if (vq->type != V4L2_BUF_TYPE_META_CAPTURE)
+> >>> +     if (vq->type != V4L2_BUF_TYPE_META_CAPTURE) {
+> >>> +             uvc_pm_put(stream->dev);
+> >>
+> >> This doesn't look right, for both video and metadata uvc_pm_get is called,
+> >> but only for video is put called.
+> > 
+> > Please take a look at
+> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/media/usb/uvc/uvc_queue.c#n195
+> > 
+> > start_streaming is not called for metadata nodes, only for video nodes.
+> 
+> So when you start streaming metadata and no video is streaming, then nothing
+> happens. I noticed this before, in fact. Only after you also start to stream
+> video will the metadata start to arrive. And it stops again as soon as you
+> stop streaming video.
+> 
+> That's not really how it is supposed to work: whoever starts streaming first
+> is the one that calls uvc_video_start_streaming. And only when nobody is streaming
+> should uvc_video_stop_streaming be called. That's how it works in other drivers
+> (e.g. those that stream both video and vbi, or even more different types of data).
+> 
+> Fixing this would change the behavior of uvc, and I'm not sure if this is
+> something we want. I leave that to Laurent and Hans.
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/nfsd/nfs4proc.c  |  2 +-
- fs/nfsd/nfs4state.c | 39 +++++++++++++++++++++++++++++++++++++++
- 2 files changed, 40 insertions(+), 1 deletion(-)
+I don't see a use case for capturing metadata only, so I think we can
+keep the behaviour as-is.
 
-diff --git a/fs/nfsd/nfs4proc.c b/fs/nfsd/nfs4proc.c
-index a2996343fa0db33e014731f62aaa4e7c72506a76..4573c0651aa49df6089bcc4e5d40f45d46b1c499 100644
---- a/fs/nfsd/nfs4proc.c
-+++ b/fs/nfsd/nfs4proc.c
-@@ -2292,7 +2292,7 @@ nfsd4_verify(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
- 	return status == nfserr_same ? nfs_ok : status;
- }
- 
--#define SUPPORTED_NOTIFY_MASK BIT(NOTIFY4_REMOVE_ENTRY|NOTIFY4_ADD_ENTRY)
-+#define SUPPORTED_NOTIFY_MASK BIT(NOTIFY4_REMOVE_ENTRY|NOTIFY4_ADD_ENTRY|NOTIFY4_RENAME_ENTRY)
- 
- static __be32
- nfsd4_get_dir_delegation(struct svc_rqst *rqstp,
-diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
-index 9dc607e355d5839d80946d4983205c15ece6a71e..6333e95c075259af0c160eb130149c776e55f5a8 100644
---- a/fs/nfsd/nfs4state.c
-+++ b/fs/nfsd/nfs4state.c
-@@ -9722,6 +9722,45 @@ nfsd_handle_dir_event(u32 mask, const struct inode *dir, const void *data,
- 			ent->notify_vals.data = p;
- 			++nns->nns_idx;
- 		}
-+		if (mask & FS_RENAME) {
-+			struct dentry *new_dentry = fsnotify_data_dentry(data, data_type);
-+			static uint32_t notify_rename_bitmap = BIT(NOTIFY4_RENAME_ENTRY);
-+			struct notify4 *ent = &nns->nns_ent[nns->nns_idx];
-+			struct notify_rename4 nr = { };
-+			u8 *p = (u8 *)(stream->p);
-+			struct name_snapshot n;
-+			bool ret;
-+
-+			if (!(flc->flc_flags & FL_IGN_DIR_RENAME))
-+				continue;
-+
-+			/* FIXME: warn? */
-+			if (!new_dentry)
-+				continue;
-+
-+			nr.nrn_old_entry.nrm_old_entry.ne_file.len = name->len;
-+			nr.nrn_old_entry.nrm_old_entry.ne_file.data = (char *)name->name;
-+			nr.nrn_old_entry.nrm_old_entry.ne_attrs.attrmask.count = 1;
-+			nr.nrn_old_entry.nrm_old_entry.ne_attrs.attrmask.element = &zerobm;
-+			take_dentry_name_snapshot(&n, new_dentry);
-+			nr.nrn_new_entry.nad_new_entry.ne_file.len = n.name.len;
-+			nr.nrn_new_entry.nad_new_entry.ne_file.data = (char *)n.name.name;
-+			nr.nrn_new_entry.nad_new_entry.ne_attrs.attrmask.count = 1;
-+			nr.nrn_new_entry.nad_new_entry.ne_attrs.attrmask.element = &zerobm;
-+			ret = xdrgen_encode_notify_rename4(stream, &nr);
-+			release_dentry_name_snapshot(&n);
-+			if (!ret) {
-+				pr_warn("nfsd: unable to marshal notify_rename4 to xdr stream\n");
-+				continue;
-+			}
-+
-+			/* grab a notify4 in the buffer and set it up */
-+			ent->notify_mask.count = 1;
-+			ent->notify_mask.element = &notify_rename_bitmap;
-+			ent->notify_vals.len = (u8 *)stream->p - p;
-+			ent->notify_vals.data = p;
-+			++nns->nns_idx;
-+		}
- 
- 		if (nns->nns_idx)
- 			nfsd4_run_cb_notify(ncn);
+> If this isn't fixed, then at least add a comment explaining why you test for
+> != V4L2_BUF_TYPE_META_CAPTURE before calling uvc_pm_put. It's not obvious.
+
+Agreed.
+
+> >>>               uvc_video_stop_streaming(uvc_queue_to_stream(queue));
+> >>
+> >> And this is odd too.
+> >>
+> >>> +     }
+> >>
+> >> My assumption is that uvc_video_start_streaming and uvc_video_stop_streaming
+> >> are valid for both video and meta: i.e. the first time you start streaming
+> >> (either video or meta) you call uvc_video_start_streaming. If you were already
+> >> streaming for e.g. video, then start streaming metadata (or vice versa), then
+> >> you don't need to do anything in start_streaming.
+> >>
+> >> Same for stop_streaming: only if both video and metadata stopped streaming
+> >> is uvc_video_stop_streaming called.
+> >>
+> >> Please correct me if I am wrong.
+> >>
+> >> In any case, if I am right, then you have to rework this code accordingly.
+> >>
+> >> Regardless, you need to test various sequences of streaming video and metadata
+> >> in different orders and make sure this is handled correctly.
+> > 
+> > I have tried streaming and getting frames. After some seconds the
+> > device turns off as expected.
+> > 
+> >>>       spin_lock_irq(&queue->irqlock);
+> >>>       uvc_queue_return_buffers(queue, UVC_BUF_STATE_ERROR);
+> >>> diff --git a/drivers/media/usb/uvc/uvc_v4l2.c b/drivers/media/usb/uvc/uvc_v4l2.c
+> >>> index 7a5ecbefa32c0a6b74c85d7f77a25b433598471e..d4bee0d4334b764c0cf02363b573b55fb44eb228 100644
+> >>> --- a/drivers/media/usb/uvc/uvc_v4l2.c
+> >>> +++ b/drivers/media/usb/uvc/uvc_v4l2.c
+> >>> @@ -617,9 +617,6 @@ static int uvc_v4l2_release(struct file *file)
+> >>>
+> >>>       uvc_ctrl_cleanup_fh(handle);
+> >>>
+> >>> -     if (handle->is_streaming)
+> >>> -             uvc_pm_put(stream->dev);
+> >>> -
+> >>>       /* Release the file handle. */
+> >>>       vb2_fop_release(file);
+> >>>       file->private_data = NULL;
+> >>> @@ -677,50 +674,6 @@ static int uvc_ioctl_try_fmt(struct file *file, void *fh,
+> >>>       return uvc_v4l2_try_format(stream, fmt, &probe, NULL, NULL);
+> >>>  }
+> >>>
+> >>> -static int uvc_ioctl_streamon(struct file *file, void *fh,
+> >>> -                           enum v4l2_buf_type type)
+> >>> -{
+> >>> -     struct uvc_fh *handle = fh;
+> >>> -     struct uvc_streaming *stream = handle->stream;
+> >>> -     int ret;
+> >>> -
+> >>> -     if (handle->is_streaming)
+> >>> -             return 0;
+> >>> -
+> >>> -     ret = uvc_pm_get(stream->dev);
+> >>> -     if (ret)
+> >>> -             return ret;
+> >>> -
+> >>> -     ret = vb2_ioctl_streamon(file, fh, type);
+> >>> -     if (ret) {
+> >>> -             uvc_pm_put(stream->dev);
+> >>> -             return ret;
+> >>> -     }
+> >>> -
+> >>> -     handle->is_streaming = true;
+> >>> -
+> >>> -     return 0;
+> >>> -}
+> >>> -
+> >>> -static int uvc_ioctl_streamoff(struct file *file, void *fh,
+> >>> -                            enum v4l2_buf_type type)
+> >>> -{
+> >>> -     struct uvc_fh *handle = fh;
+> >>> -     struct uvc_streaming *stream = handle->stream;
+> >>> -     int ret;
+> >>> -
+> >>> -     ret = vb2_ioctl_streamoff(file, fh, type);
+> >>> -     if (ret)
+> >>> -             return ret;
+> >>> -
+> >>> -     if (handle->is_streaming) {
+> >>> -             handle->is_streaming = false;
+> >>> -             uvc_pm_put(stream->dev);
+> >>> -     }
+> >>> -
+> >>> -     return 0;
+> >>> -}
+> >>> -
+> >>>  static int uvc_ioctl_enum_input(struct file *file, void *fh,
+> >>>                               struct v4l2_input *input)
+> >>>  {
+> >>> @@ -1323,8 +1276,8 @@ const struct v4l2_ioctl_ops uvc_ioctl_ops = {
+> >>>       .vidioc_expbuf = vb2_ioctl_expbuf,
+> >>>       .vidioc_dqbuf = vb2_ioctl_dqbuf,
+> >>>       .vidioc_create_bufs = vb2_ioctl_create_bufs,
+> >>> -     .vidioc_streamon = uvc_ioctl_streamon,
+> >>> -     .vidioc_streamoff = uvc_ioctl_streamoff,
+> >>> +     .vidioc_streamon = vb2_ioctl_streamon,
+> >>> +     .vidioc_streamoff = vb2_ioctl_streamoff,
+> >>>       .vidioc_enum_input = uvc_ioctl_enum_input,
+> >>>       .vidioc_g_input = uvc_ioctl_g_input,
+> >>>       .vidioc_s_input = uvc_ioctl_s_input,
+> >>> diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
+> >>> index 3ddbf065a2cbae40ee48cb06f84ca8f0052990c4..f895f690f7cdc1af942d5f3a5f10e9dd1c956a35 100644
+> >>> --- a/drivers/media/usb/uvc/uvcvideo.h
+> >>> +++ b/drivers/media/usb/uvc/uvcvideo.h
+> >>> @@ -626,7 +626,6 @@ struct uvc_fh {
+> >>>       struct uvc_video_chain *chain;
+> >>>       struct uvc_streaming *stream;
+> >>>       unsigned int pending_async_ctrls;
+> >>> -     bool is_streaming;
+> >>>  };
+> >>>
+> >>>  /* ------------------------------------------------------------------------
 
 -- 
-2.49.0
+Regards,
 
+Laurent Pinchart
 
