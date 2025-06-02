@@ -1,118 +1,84 @@
-Return-Path: <linux-kernel+bounces-670176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F54EACAA1E
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 09:53:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0FF1ACAA29
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 09:55:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 888F17A5C5B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 07:52:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAD471785BD
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 07:55:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 519B01BE86E;
-	Mon,  2 Jun 2025 07:53:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 096C21C1F13;
+	Mon,  2 Jun 2025 07:55:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gj+9cT8G"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pPNnLfuq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6813F4F1;
-	Mon,  2 Jun 2025 07:53:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F6F22C3255;
+	Mon,  2 Jun 2025 07:55:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748850794; cv=none; b=Uoefkxdhlo1c/jO6SQl9IgktfkCHzwS9w9BfVIFPfozmMZ0iyi3gCWkRkuAWJnmkpXbvpBxHJ+N9At7PCxRGYS1I2NRFBp5QIu+6C7fh7L1ASznVd8T0SBOQ+/L28w8wLBcjxHXLS8E1kf3KLfAPpSk8tW5OadqMyuAhhNwJRvk=
+	t=1748850940; cv=none; b=sCd1D9neU2DbEBr4ovyGpB1Osd/cDwDYg7torfvYkLp+r1FRzbuG2YO7umG6+yy+jjwlUR8//njXJ6aED3pbariqPfPGoHn2wGRiOonpHI/7n35soyMNyre+PLzumClAKw0QkmAbwUMIfu9+XROzW7BhHDu+S0R3d0j/HV8Si0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748850794; c=relaxed/simple;
-	bh=/rJBYGBscvluJvJ9wRw39FEpgeLiRZYfywd1G8dpbXU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NpJ0OECKPvm3U0GnyMRzMr+AZz4IT45r7csc8BmDjqh8toqlJbz4qanNK1ybhvCvkQBeP+Mlk2YKxwoHlH7G0otxC28z6+WeOgzpXsr5X5YGSmhMIjJqOb8rtODuGdosMWScq7Rr+OR89CKVzi2KwhSynlXyOys+6SWb6oMBsO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gj+9cT8G; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 171F1C4CEF3;
-	Mon,  2 Jun 2025 07:53:14 +0000 (UTC)
+	s=arc-20240116; t=1748850940; c=relaxed/simple;
+	bh=vwKZcs1C6yEncVvS5kE7dcFpNl1BI7JiVnonDdJR4bE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=clRYw+/N+dlfYg3Hi3+VwF4yN4bCtBHLbBEaIphWoeXyXCEDKFkOWmR4tqiF+gHWapBHam8o6S+J+hSsD611t6Jy3O4/71VC0pcQMCQVN3HPcNKspNevuxrRXih2upn+lar4E4JTUIMhieJQylAPJ4dCYDAFHQMtyEnidczMdew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pPNnLfuq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C856C4CEED;
+	Mon,  2 Jun 2025 07:55:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748850794;
-	bh=/rJBYGBscvluJvJ9wRw39FEpgeLiRZYfywd1G8dpbXU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=gj+9cT8GYb0SjjrEuboE+A78RfRblG1M+OzkjpTvaas4oTu1rjpBK9gTpRHZHvQh8
-	 yLfKNJUDtZNiX66KGqLo5Yv0Pg7sbJCyVW1T2lps7eXJ+/5ZwD09NlAghY+fr52naU
-	 yVTcm3uAJYvaLCQjOzk+x14djv/Lf8BN23keQEJCUemRCy6IQEeXvlWrexZ7Ug4AkC
-	 H5BxCz94fuSePFTPRo4dReXN3R+PewnOC3UPJILJ5DWLnEWRcgc7d0zGUjQQyDK1+F
-	 20DbXsymhhF//rMPK5R7Cmwe4PN0Bqnjq+GFqLzydOnz6Sn3NvwXeaeTHFq1PQ5sOF
-	 t5ZTkfnhTnEcQ==
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-553245cad29so4292830e87.1;
-        Mon, 02 Jun 2025 00:53:13 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVrlw6mJdBDcF5jeXoGQ4vfI5m3YuibJbFXf9oxKCNbm3zwQYc3oJvVEgnTagMfla1+ZE940exyXtGw+nY=@vger.kernel.org, AJvYcCWfckKudZOZbjHiQmxOwzNSMtmXr+nrZSYZm2SIZj66KmhNwA99x36gkQze9aSSJbWuVfzLAK8kdcDaBgl//w==@vger.kernel.org, AJvYcCXpROGIqpzL/Ho0DRlmZ26lzfxNpCd2dqXA2umk7WefGixts873xaOPCjXrPoR68XBMXYzikO+4rQapU0+S@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmY7yHMINB85jiATCSkeDQeecpJbbgUDPy3do9zzKt3o+vQ+mQ
-	IZZnD6wbGxUf2Pzh8NID12fVLkPPmn99h7HxfBK8k2hGfT43nL/Gh+9CP3UNltTOQEXH6scECWz
-	j8cilZx7UGx2bOqyOR5V1XLX7zvLnoqw=
-X-Google-Smtp-Source: AGHT+IHrzP5vCzNBO8rsuuZc4MUBn4InHXHGM1Mh7yraHQYlpwpZQVqX7n/e+bDSzixs4WpA9pChtdNeV8Vm7GHzUZA=
-X-Received: by 2002:a05:6512:138b:b0:553:2bf2:e303 with SMTP id
- 2adb3069b0e04-5533d1ad7f8mr3217556e87.30.1748850792779; Mon, 02 Jun 2025
- 00:53:12 -0700 (PDT)
+	s=k20201202; t=1748850939;
+	bh=vwKZcs1C6yEncVvS5kE7dcFpNl1BI7JiVnonDdJR4bE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pPNnLfuq2rQGrFzdg3ii4IMMrY2DePvgtINGiBjyjeBmc1lIwVZAhnWVYzFjzdoLQ
+	 JCEXvjwaoHDxOICRt8He2Qd4a7KEtUYlBCUNVFvnVI/H7P23+nqB6fMVTCxo9NljoL
+	 h/7ygDq4FRwR4tMBeIXW++adPulEbxRoKm/Er7zLMcfmGSEdCZgscXEO8p1aUk6oW7
+	 zQQLY+lHiJmDRjTxdx1tMtDOhwzSNOjxgwjRdbC0d4k6/ZvyRw+uyU+TvfNFYi6y7L
+	 Q7ozZasjExml+/0qBp8DXsqB9M9SCjRhyzwy35Nf2wXeF9Dw1f5nQ9oR0cDcODRgdv
+	 QvXBb8KeawSqQ==
+Date: Mon, 2 Jun 2025 09:55:37 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Chiang Brian <chiang.brian@inventec.com>
+Cc: jdelvare@suse.com, linux@roeck-us.net, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, geert+renesas@glider.be, 
+	grant.peltier.jg@renesas.com, linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v4 2/2] hwmon: (pmbus/isl68137) Add support for RAA229621
+Message-ID: <20250602-elated-aspiring-squid-d27ee4@kuoka>
+References: <20250602050415.848112-1-chiang.brian@inventec.com>
+ <20250602050415.848112-3-chiang.brian@inventec.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1748335606.git.legion@kernel.org> <ecf0ebdda5bcf82464ed1cebbf50afdcd8b5b23a.1748335606.git.legion@kernel.org>
-In-Reply-To: <ecf0ebdda5bcf82464ed1cebbf50afdcd8b5b23a.1748335606.git.legion@kernel.org>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Mon, 2 Jun 2025 16:52:36 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARm1+L0CrE8TYrFaipfOX4pjEJ7Uz7dn=3g+26PER6jNg@mail.gmail.com>
-X-Gm-Features: AX0GCFtkjb31-WAYHWscWDXqBhwu5LeuN-xEm1GdcdTfFK0q6AEDTTpEFsEdaEc
-Message-ID: <CAK7LNARm1+L0CrE8TYrFaipfOX4pjEJ7Uz7dn=3g+26PER6jNg@mail.gmail.com>
-Subject: Re: [PATCH v3 3/6] modpost: Make mod_device_table aliases more unique
-To: Alexey Gladkov <legion@kernel.org>
-Cc: Petr Pavlu <petr.pavlu@suse.com>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez <da.gomez@samsung.com>, 
-	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas.schier@linux.dev>, 
-	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250602050415.848112-3-chiang.brian@inventec.com>
 
-On Tue, May 27, 2025 at 6:08=E2=80=AFPM Alexey Gladkov <legion@kernel.org> =
-wrote:
->
-> In order to avoid symbol conflicts if they appear in the same binary, a
-> more unique alias identifier can be generated.
->
-> Signed-off-by: Alexey Gladkov <legion@kernel.org>
-> Reviewed-by: Petr Pavlu <petr.pavlu@suse.com>
-> ---
->  include/linux/module.h   | 14 ++++++++++++--
->  scripts/mod/file2alias.c | 18 ++++++++++++++----
->  2 files changed, 26 insertions(+), 6 deletions(-)
->
-> diff --git a/include/linux/module.h b/include/linux/module.h
-> index 88048561360f..e7506684069d 100644
-> --- a/include/linux/module.h
-> +++ b/include/linux/module.h
-> @@ -249,10 +249,20 @@ struct module_kobject *lookup_or_create_module_kobj=
-ect(const char *name);
->  /* What your module does. */
->  #define MODULE_DESCRIPTION(_description) MODULE_INFO(description, _descr=
-iption)
->
-> +/* Format: __mod_device_table__<counter>__kmod_<modname>__<type>__<name>=
- */
+On Mon, Jun 02, 2025 at 01:04:15PM GMT, Chiang Brian wrote:
+> The RAA229621 is a digital dual output multiphase
+> (X+Y <= 8) PWM controller designed to be compliant
+> with AMD SVI3 specifications, targeting
+> VDDCR_CPU and VDDCR_SOC rails.
+> Add support for it to the isl68137 driver.
 
-This format relies on module-name mangling, but
-I hope we will be able to stop doing it some day.
+Please wrap commit message according to Linux coding style / submission
+process (neither too early nor over the limit):
+https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/submitting-patches.rst#L597
 
-Can we come up with a different idea
-in case <modname> contains hyphens?
+> 
+> this patch depends on patch:
+> dt-bindings: hwmon: (pmbus/isl68137) Add RAA229621 support
 
+No, it does not, please drop this sentence.
 
+Best regards,
+Krzysztof
 
-
-
-
-
-
---
-Best Regards
-Masahiro Yamada
 
