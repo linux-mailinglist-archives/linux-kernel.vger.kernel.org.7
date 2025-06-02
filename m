@@ -1,139 +1,115 @@
-Return-Path: <linux-kernel+bounces-670195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3AD7ACAA7A
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 10:18:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E6C9ACAA5B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 10:05:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 824D7176AB3
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 08:18:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B0FC3BA853
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 08:05:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EBA91C861B;
-	Mon,  2 Jun 2025 08:18:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="JAGMVMHs"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD8EF1C84B3;
+	Mon,  2 Jun 2025 08:05:26 +0000 (UTC)
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34E8F282ED
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 08:18:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97F071DA3D;
+	Mon,  2 Jun 2025 08:05:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748852311; cv=none; b=BULE03veBwR3Mt2GyPxfwH3yQUoeEFwBT8zHBGs8iEOAY/6SZF+hNobSNFZn9I/mTEPRs3Etinae3gFiAiOOqRA9yRRsF0H8EfvHgYyV5VRH5zl/t2yrsQqPUqjcO5EOaw1hkTiMqoMBt9uQyxOnwYzROtzHydHfiTasp2VPYVk=
+	t=1748851526; cv=none; b=dF0oxWSnZp7FyBMo91F1aaySNq9xHr0AKF1esVEbkX0MBZCIR5A1RM3+vYmZ0Ind8V77Cutj9sXOwywycIXfIAHBjo5xA8I6NGON9NmD9A7HleFk43palrrzVALw9qSNnmR2EZWI6WLUsRXrus0ZBpSLGr+7DBM5K3a4vIaKrFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748852311; c=relaxed/simple;
-	bh=/RFOq4tGmeyFKeuL1aJwKo243e3t8ubbFw7suug1/gM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=llvHWUDJUnjM+BUukLi2SR5eGSqKVPS0sOw26+kZ0bALSoQ7MJuvCK+uvmObEF70ykk928EP8JakuGqx67IZlUGMMU+hxEh7OCVMhsYl1KdsB5YjevALAQOZSq9sNdPvgnpPJ4uJ9arP4v1J1lr7oWo7Q1jA5oA2EsWuqIlGQps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=JAGMVMHs; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=zdlCEeVUF00zQmejJCPvNPj1mEF7JVnwwI488w34Yp4=; b=JAGMVMHs5wf6yum9C+K1SKtaS2
-	PVIm/YKmwXru4q7WOgDyM2q3z1KJvVTH9ZOnXGPngr7dhXg0NLfvXDv3L47o0aNwCXF/31+qOKXEn
-	6A11OGevXgn2w2lPAIrRxIdoR8sDNdDpvIfbO8IsRnFnfCY1mN4ji9i6wRCMn+Qhe0JOlhb7E9GWA
-	ryaeRQx+tQdvU73KLpnaURFiYlQ5j+wFrX/ijd8a2S1deagE1/YkeHN7S8S5NKtQHtRNNeJ6Znxa3
-	856tsj06ytZqI7Az5lDnps2f7uDjDYBmB/EaDV6AMNVREj3sN1OGddpWUwkXYfdLR9d8w+9ciKeXj
-	5UBAxOQw==;
-Received: from [81.79.92.254] (helo=[192.168.0.101])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1uM03z-00GCSq-9Y; Mon, 02 Jun 2025 09:58:31 +0200
-Message-ID: <9783f727-faad-44bb-b47d-3ba06ef8b82d@igalia.com>
-Date: Mon, 2 Jun 2025 08:58:30 +0100
+	s=arc-20240116; t=1748851526; c=relaxed/simple;
+	bh=D96eIVOxJQ+rek4K05aRdoIjN1z88eGFOvWxNezKpKQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P2eqt000cZcj9OJ88UczVmg/8mwYeOsKBvYskes5Rt3eLqYCvbIEJSBJ681A1P1R3e/WP9M5rFyEHnlDCrsX+SKhpk3F3FuUqTBQpZWGqeFteFUgxbNUfbp0KwIVTDX9lEx/jmUlr37L4a2wniLznX3KHZsyoKiUSXYCx3snLMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ad89f9bb725so832015266b.2;
+        Mon, 02 Jun 2025 01:05:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748851523; x=1749456323;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0TnpUBJv6ndq4yD0mJwW3UwYjXvudmMh804MNYleN4Q=;
+        b=sMWp2ETJsHPItQIPHxonbDo/QS7oKTLNW1LQTMx7BYMuDW7fNhklJk2yZNeaVkWEvy
+         7r3bgY5KZYFusW/Z8NbTvUXuDvl/Wc1LJijMQOy8WAIwWhdc4ZRCeiGLbbv8cBBRJydo
+         ZMkrun7NSr0s4iWnvXA+Kxx68eTD4kI1maJbxtPTfUdqCibEel4kvBlCS4V/V9kCLFtc
+         KQ2laWAYsAoUbLqjB40h1aIHOCCAiamg6d79El8yMMUr5ZH088Jy7aS/Rggxi7ESr1P4
+         T26IrsNgin5icxUpNtPcpSTuCU9Lj4vmvgu+rWED5q4T9WNXAfDls5UsOzNPsk1ygjkR
+         6kGA==
+X-Forwarded-Encrypted: i=1; AJvYcCWHYyiDEgArNoBTN6q9DOHsQXd7k7Xhw3w7fIbpoRb800sHyLYSI08UyzBR3KkuMHMj9RNQGC7/@vger.kernel.org, AJvYcCXDeHU5QUCbxO5vQiIO7S//MG2g6BeoDWUpX47EKpMOlpVns4eLSMHmOfPR3aERqc8j8BlGCydxxtBBhZ4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzoForp42/DuQ9HWMa0VcOS/zsJg01pS335tdFk9+3Y1BUkXRWj
+	k90FDoDzrQTI0JH7jhfTBj2DEquYVWSriRcRORbgQIZBEurzi+qCxFW+
+X-Gm-Gg: ASbGncta1xMO5IBP14WzDOEwwjHKfWp/pL47PGX+I6oH7P9xC8lFnEmsJa4lUsO2ee2
+	Gkt/1s5EaGctewIE+Nstd+U8YLPfqUjqP9o4ymrRcE7kV/cWg0/zaH9JYzamdeolgGgSTMhMsZM
+	AtRi3ItjWgq+a4RfSE9FM+XJym/uVnSCRV1JHLdCux+2Dc70DM5ZHxzgKpwtj0WNxu6rjr5Hen5
+	VtYQEdxLI/7TRXC+wgzzeM7ppO0pwnU/88UBF6gz+pDsgk/HS95hbW31j7C7AwkZiCEZGDT495B
+	jOokvk40J0MgSfRar5UYFWUv/dyw2lLPmPdF6Kp8Gg==
+X-Google-Smtp-Source: AGHT+IGsaRGKpbNo4CLvIKmr8AgOECTRgdOOpIFTSHWhx2VcsQ0PH7nvD4Q1b7jOn3RZkzgXB3lSyA==
+X-Received: by 2002:a17:907:7246:b0:ad8:9c97:c2fc with SMTP id a640c23a62f3a-adb36b31a5dmr951412566b.13.1748851522528;
+        Mon, 02 Jun 2025 01:05:22 -0700 (PDT)
+Received: from gmail.com ([2a03:2880:30ff:4::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-adb2fb63cdasm611884166b.120.2025.06.02.01.05.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Jun 2025 01:05:22 -0700 (PDT)
+Date: Mon, 2 Jun 2025 01:04:25 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Tejun Heo <tj@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>, horms@kernel.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-team@meta.com
+Subject: Re: [PATCH net] netconsole: Only register console drivers when
+ targets are configured
+Message-ID: <aD1bCTmWWrOZs+Lu@gmail.com>
+References: <20250528-netcons_ext-v1-1-69f71e404e00@debian.org>
+ <20250530193052.1bdbc879@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] drm/sched/tests: Use one lock for fence context
-To: Philipp Stanner <phasta@kernel.org>,
- Matthew Brost <matthew.brost@intel.com>, Danilo Krummrich <dakr@kernel.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
- airlied@gmail.com, Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20250527101029.56491-2-phasta@kernel.org>
-Content-Language: en-GB
-From: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
-In-Reply-To: <20250527101029.56491-2-phasta@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250530193052.1bdbc879@kernel.org>
 
+Hello Jakub,
 
-On 27/05/2025 11:10, Philipp Stanner wrote:
-> There is no need for separate locks for single jobs and the entire
-> scheduler. The dma_fence context can be protected by the scheduler lock,
-> allowing for removing the jobs' locks. This simplifies things and
-> reduces the likelyhood of deadlocks etc.
+On Fri, May 30, 2025 at 07:30:52PM -0700, Jakub Kicinski wrote:
+> On Wed, 28 May 2025 10:20:19 -0700 Breno Leitao wrote:
+> > The netconsole driver currently registers the basic console driver
+> > unconditionally during initialization, even when only extended targets
+> > are configured. This results in unnecessary console registration and
+> > performance overhead, as the write_msg() callback is invoked for every
+> > log message only to return early when no matching targets are found.
+> > 
+> > Optimize the driver by conditionally registering console drivers based
+> > on the actual target configuration. The basic console driver is now
+> > registered only when non-extended targets exist, same as the extended
+> > console. The implementation also handles dynamic target creation through
+> > the configfs interface.
+> > 
+> > This change eliminates unnecessary console driver registrations,
+> > redundant write_msg() callbacks for unused console types, and associated
+> > lock contention and target list iterations. The optimization is
+> > particularly beneficial for systems using only the most common extended
+> > console type.
+> > 
+> > Fixes: e2f15f9a79201 ("netconsole: implement extended console support")
 > 
-> Replace the jobs' locks with the mock scheduler lock.
-> 
-> Signed-off-by: Philipp Stanner <phasta@kernel.org>
-> ---
-> Changes in v2:
->    - Make commit message more neutral by stating it's about simplifying
->      the code. (Tvrtko)
-> ---
->   drivers/gpu/drm/scheduler/tests/mock_scheduler.c | 5 ++---
->   drivers/gpu/drm/scheduler/tests/sched_tests.h    | 1 -
->   2 files changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/scheduler/tests/mock_scheduler.c b/drivers/gpu/drm/scheduler/tests/mock_scheduler.c
-> index f999c8859cf7..17023276f4b0 100644
-> --- a/drivers/gpu/drm/scheduler/tests/mock_scheduler.c
-> +++ b/drivers/gpu/drm/scheduler/tests/mock_scheduler.c
-> @@ -64,7 +64,7 @@ static void drm_mock_sched_job_complete(struct drm_mock_sched_job *job)
->   
->   	job->flags |= DRM_MOCK_SCHED_JOB_DONE;
->   	list_move_tail(&job->link, &sched->done_list);
-> -	dma_fence_signal(&job->hw_fence);
-> +	dma_fence_signal_locked(&job->hw_fence);
->   	complete(&job->done);
->   }
->   
-> @@ -123,7 +123,6 @@ drm_mock_sched_job_new(struct kunit *test,
->   	job->test = test;
->   
->   	init_completion(&job->done);
-> -	spin_lock_init(&job->lock);
->   	INIT_LIST_HEAD(&job->link);
->   	hrtimer_setup(&job->timer, drm_mock_sched_job_signal_timer,
->   		      CLOCK_MONOTONIC, HRTIMER_MODE_ABS);
-> @@ -169,7 +168,7 @@ static struct dma_fence *mock_sched_run_job(struct drm_sched_job *sched_job)
->   
->   	dma_fence_init(&job->hw_fence,
->   		       &drm_mock_sched_hw_fence_ops,
-> -		       &job->lock,
-> +		       &sched->lock,
->   		       sched->hw_timeline.context,
->   		       atomic_inc_return(&sched->hw_timeline.next_seqno));
->   
-> diff --git a/drivers/gpu/drm/scheduler/tests/sched_tests.h b/drivers/gpu/drm/scheduler/tests/sched_tests.h
-> index 27caf8285fb7..fbba38137f0c 100644
-> --- a/drivers/gpu/drm/scheduler/tests/sched_tests.h
-> +++ b/drivers/gpu/drm/scheduler/tests/sched_tests.h
-> @@ -106,7 +106,6 @@ struct drm_mock_sched_job {
->   	unsigned int		duration_us;
->   	ktime_t			finish_at;
->   
-> -	spinlock_t		lock;
->   	struct dma_fence	hw_fence;
->   
->   	struct kunit		*test;
+> Code makes sense but I think it's net-next material.
 
-Reviewed-by: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
+Sure, let me resend it (with the other patches) to net-next.
 
-Regards,
-
-Tvrtko
-
+Thanks for the review,
+--breno
 
