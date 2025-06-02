@@ -1,257 +1,174 @@
-Return-Path: <linux-kernel+bounces-670158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55934ACA9DD
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 09:23:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D152ACA9E2
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 09:24:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8D9D3B6D31
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 07:23:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C622C189D0F9
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 07:24:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73B3F1AB6F1;
-	Mon,  2 Jun 2025 07:23:38 +0000 (UTC)
-Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com [209.85.217.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22B711B0F19;
+	Mon,  2 Jun 2025 07:24:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="liVC8gij"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2CFD143736;
-	Mon,  2 Jun 2025 07:23:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3FB21AD403
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 07:24:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748849017; cv=none; b=g12pq+zklsHnjsdECv1Y9dn9pdFguTd50hWyRqqihTIOt+hlii+YDREesVj43GMdIJpIlFYwQnYePliAgdTt6QZsDmdRxeVOEaRHe9fzeGQFE4gy74jHkusHsxH+QrNocmeKERRrSbs61YzRHpBTQUdyXM7vdYWsDb2//V8x67I=
+	t=1748849043; cv=none; b=rAPVO17agWGVeZ+UhDCVjBO1IBfiBtkcgVKrWKRmR1NPqJ7hy/yh82cgu8z/Tm3RJw5UJkze3BNnwKhFclRbpfMCuqG5yFfDYTx6cZlMVolz5lz7b/Cz+Od4p4QtXEFL9MI7g8ZjW8mpO8K5YQOSDOrEW9o+RLIi7eR5GnNT0S8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748849017; c=relaxed/simple;
-	bh=aMkjYDfS4hKBq4E8F8Ko1Lj7bLsFOrFanKHtkT5UWGQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PaxfJbixe0ve1Q/JyW6aAZpZTKgj85ZqUZrr2+4PgnV+GIjMgRs3ivbFD0Yop0UZx/YUmETW4P9BspxNJumKoFr4R6BTC4wrpB8hpLUqix8FWtpWH+FRIOvKurk40NrhFHlwqyvkkLPtqk2FtKY4ni08gN/gzCzrAqikBrwMQt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-4c9cea30173so1278247137.3;
-        Mon, 02 Jun 2025 00:23:34 -0700 (PDT)
+	s=arc-20240116; t=1748849043; c=relaxed/simple;
+	bh=CBMo3phr83jgUMZt0jAUHfVtoIwsR8eJ386zFfEoaeg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=mCKZNmv5B3h9ZLmGq0lYZ3BGtI4PyyUuwFIPkbOmCqN2nAUlf+fHkcRO5JiS/9JtbInrsFC4qBvqWxaopsIbRlx9v2PQrQDfIjl/NHKHd5T1ISm7vgIoSmW2W6F9BGr3GabCnE5WPzk+utca8VkKqRD5WqIqU7b1Zq1vBb38QBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=liVC8gij; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5523rDBq011073
+	for <linux-kernel@vger.kernel.org>; Mon, 2 Jun 2025 07:24:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=s5eocu6KdfbwskievOHz6Y
+	oQu6IRRUX5nAFu7iMHziU=; b=liVC8gijDD+weKUsy6yL44vlqnj2ih1Ghgc23u
+	ghpzFY1WjyltGL9FaJJLrNeecsIxXFa4/OYpgkOMoCScGsP0sPsa9Ro0/PkVflB3
+	BnuPqF88t1qeHztTvkYcT81YIKiau76tXpJ3En6CRjG/BQr3/UHIMv9DGqgPs6Pz
+	dUw/7Ifbuz4/0jXnn/xo/n1eCob7etq6qFMcnmC48VZTbT20ct3JBUTxRScMjlc3
+	Xc2eYTPQlKzkxIBvXX1zB3LVjbw1nSASTEY5mymX7+LNOjydQVGDXTLMEmFfPELe
+	rZz7C+CbrjqwC8OHNK8+5Og3QEQ8iG2JKPJpEoZ08MVOReCA==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46ytkwbpd4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 02 Jun 2025 07:24:00 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4a584d066a2so17275601cf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jun 2025 00:24:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748849013; x=1749453813;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1748849039; x=1749453839;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=o9BTeLSuqq/rx8xkHWscFhlPkXYJse76ozXbRV6bBME=;
-        b=chPOQRKEMuHCdy1kjMnddTxbJ10SBJwVeocgmT6w+xfk08uFgppGUUw74JGkkU6QdD
-         NbRfjR/Dvhjmo8JMaUbpssNEkIC0afX4yx4whhj9PJA9XqXQKnNXeN7sQWBPXMrDXqoH
-         pwbNeQRS/yW3+Gj5NMRZ0YVFIU/7g/TvWJGbjfYlzzY5tN1N62zsKU7361AUIdW4djm2
-         yVKuZjF95pi1iZJyRY0KafhqnBETE9u3+71Ccs1UgNbHRhwzTK3pqpOrdZo7Jg0wY28u
-         vQl5uenYWV0YRCnVLSr8u0JJmj4tatClOAgNwqdYMJD/YcDHt4wCOXXOOGnA3dgJc9EI
-         hkDw==
-X-Forwarded-Encrypted: i=1; AJvYcCUl6UB+uXWvvozlidGxfBmn2tGgGd9AJuwKXGmtRM6PlTnBcvGCLY7ABw8+5W9JBp5V7ER+7A1Srz3mFyBs@vger.kernel.org, AJvYcCWFqYvj6b9O3ciMK2jQvPe7fpYkF150WWCMVq93aTBE8k2fyPYNYTrBWiCfsj6ORa7cLa4A+YwZnH4=@vger.kernel.org, AJvYcCXDe8RRphmnwHxGYkoCYcFO/qKXLIYbdjWSygnaKkNcvQ6P5gGTAmYD8mTdEaXqgKQh2i7R6H5g@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzIoyT9sDu+7rZCBnhDx31CeW2G+zrdXQimCPyv+qWyyc9bIh9
-	nnXspw/Dtnlyuz7FJaiZskbLdup4TTFiT+RlUO4x8u5YPVTBYBJN3/35j3QNSGaC
-X-Gm-Gg: ASbGncuEcel6X/paADAiThUyym8dt1kGgdulDtn8L85HX+BNcwQYozilV/pudzJSSJo
-	9PA30LDTqZQQqwe5G++xbSkQWn7h9PsinoouIaZhMega4rGKnmY8twYCaljkdrn8Psa5SQ8PGae
-	316dsp6GDh7sslBJOvSlx4GvWq0q5TrBUcQKxSpp0akJj2gGbKxQy/X93GMzaclc5KuV2Ame7c+
-	fRIybXDsSaPKSpbf0hyXirOs2DxONJi9NC2ehVWFq/WO7Zt0c0VsaVJKDDb26NwPtKaRY0VnUFJ
-	cslQ9dkcuOllLYWI+A9ZN9Qq+HARt4fVELMIJ7ogLQPhbOSJj4QcdQ0MIr89gSz59BOOu3MlrC4
-	V59L0cnsl3l/ncA==
-X-Google-Smtp-Source: AGHT+IGlxGHtSFHEPHPgyRPGRqlkW4+lRzlOdAz8TDWmyfbTUfAQFa3z8EH8IkORSAFAzeFHY0dtcw==
-X-Received: by 2002:a05:6102:3751:b0:4e5:a67d:92a6 with SMTP id ada2fe7eead31-4e6e410d895mr8750020137.14.1748849012988;
-        Mon, 02 Jun 2025 00:23:32 -0700 (PDT)
-Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com. [209.85.217.50])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4e64e9f7ff2sm6621922137.27.2025.06.02.00.23.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Jun 2025 00:23:31 -0700 (PDT)
-Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-4e2b5ffb932so1454662137.0;
-        Mon, 02 Jun 2025 00:23:31 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVioNEWTaAC7CwrtFkSTgW3IfGAzJc4etHmT5Kdz9TaAPEhIGEmmAPXM9mweSTQjN715PUoLtKtfhMZfhRC@vger.kernel.org, AJvYcCWf8YGxgVniegxAFvksF39WRZwoova57o8v7LwaoeGdk5yRUI26Na9juvahr7AYuysMH8vtH9jU+ZY=@vger.kernel.org, AJvYcCX6piSUVfc1UeVYqzf97s53Lv/pWPN7V+9btlVbK1Hp58AeFV/LN84Lpf5LlidCVjgNwlrfKHKF@vger.kernel.org
-X-Received: by 2002:a05:6102:949:b0:4e2:955a:b12f with SMTP id
- ada2fe7eead31-4e6e40d8cc2mr10526652137.3.1748849011142; Mon, 02 Jun 2025
- 00:23:31 -0700 (PDT)
+        bh=s5eocu6KdfbwskievOHz6YoQu6IRRUX5nAFu7iMHziU=;
+        b=VEl8SN9sFFZvD3BVjkAk34o54gFOcAxwKguLcdGcRNYn+IaXOqwuBof3HkC48z2w/D
+         kFFOBVNoWGbopgcyX0MvBIaspLOE4v03Ca0k7oe771lJS2bvwiTRXwgsAQRd40myViAG
+         JuLc4ANqyHrwrFHi3bR4mL+RiYSZIurOk57bwXFi9YGIFdrIC0Jy3mjazkAqus1WAhhe
+         IqFc0y8CETDaDjP87kBXou2yYNFCWvU7ZYMZwWXtxjzpAbSfayUlciyFoRM2YcH6BPI/
+         36bFHVGDlu6OHZSyZ7OY3WxmBtF1Gs6+nCfoLfkHCWpz6fm5a+MgOSeudH8PY71T041L
+         dy4g==
+X-Forwarded-Encrypted: i=1; AJvYcCVRY3KSNaAIKONHPqUXv72ra7k9/hyF3m9U9iNKrwTcpvGVpKXW8aws2qK2S6Nf+PAv0nn05hh0lg3pT2w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDYcpLNoDkyyYS6KGtGEzVT86FsOlQ9jEld/r6X5chr6/WMf5y
+	nbDYnP5YBydzpIvhosIib2suJSYHYB6D9WQbrfO27CQax8W2Xd5kPe17/u4EP/HyoX40UoB59bc
+	myzahOhTQ+RSrHv/5CRmNrxw5TxQJBJ2wbbmJ3D5kaxiw4SpxeMedjVYnM++qOVu4LHFOb+X8HW
+	0Ajw==
+X-Gm-Gg: ASbGncsfY5htUJpiAnDLl7WZejBS0uzgek8Gnv6F1f7QkoShHgdITA4Bwj1lcSk4pwx
+	DQ1jY09x9UNUXCnKO7Gr8UykqIENhQHwCI5j9lsCVYSoKS+IPBBkhWc5yIpB+qz9tqnfzIziU2i
+	ZmNYgmdLAsFBO3TKDt5dw7XOLQbruF0fU0dRzb5RbYnuTQjv/k330BTpx8CIYnjizYK21hyBwiG
+	Lb4v67ulbOVSW0Qpqzp63Zvx7moIWpqPZCXYUckLryPngK51HGA3iC4dBM2AAewrjeiCDjnCG1F
+	683a+oUbvrlM0CKIVy15Uaxo9TZyS7mwAb0tmEVot2w4Tb+s84yP9hiZEDfHg01VvVBAUfKy/zc
+	87vnh3L7r612SIMLWbk3pIYjS
+X-Received: by 2002:a05:622a:590a:b0:478:f4bd:8b8e with SMTP id d75a77b69052e-4a443f49ab5mr221625691cf.39.1748849028231;
+        Mon, 02 Jun 2025 00:23:48 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE9X0R68E0LR8x13//Ryjo6YwI+eu+JAVFDVLT6gzXGpkgI0ipcxWqMxe6MCHG0NjqSq+7vDQ==
+X-Received: by 2002:a05:620a:248a:b0:7ce:ca97:a6bf with SMTP id af79cd13be357-7d0a4e5263emr1714898485a.41.1748849017202;
+        Mon, 02 Jun 2025 00:23:37 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5533787d46asm1506607e87.47.2025.06.02.00.23.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Jun 2025 00:23:36 -0700 (PDT)
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Date: Mon, 02 Jun 2025 10:23:35 +0300
+Subject: [PATCH] arm64: dts: qcom: sa8775p: rename bus clock to follow the
+ bindings
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20210918095637.20108-1-mailhol.vincent@wanadoo.fr>
- <20210918095637.20108-5-mailhol.vincent@wanadoo.fr> <CAMuHMdVEBLoG084rhBtELcFO+3cA9_UrZrUfspOeLNo80zyb9g@mail.gmail.com>
- <10ed3ec2-ac66-494a-9d3f-bf2df459ebc0@wanadoo.fr>
-In-Reply-To: <10ed3ec2-ac66-494a-9d3f-bf2df459ebc0@wanadoo.fr>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 2 Jun 2025 09:23:19 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWDUpkwPVCm2Dha04F59MES4QvKFUVfvg70x5GPZHsxDA@mail.gmail.com>
-X-Gm-Features: AX0GCFvuHoKAt7ecSBaNwjIw6CAOIDvkHYg2PitGrYaCrTuLaODgZOujsJnxogU
-Message-ID: <CAMuHMdWDUpkwPVCm2Dha04F59MES4QvKFUVfvg70x5GPZHsxDA@mail.gmail.com>
-Subject: Re: [PATCH v6 4/6] can: netlink: add interface for CAN-FD Transmitter
- Delay Compensation (TDC)
-To: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Cc: Marc Kleine-Budde <mkl@pengutronix.de>, linux-can@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, =?UTF-8?Q?Stefan_M=C3=A4tje?= <Stefan.Maetje@esd.eu>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250602-sa8775p-fix-dts-v1-1-f9f6271b33a3@oss.qualcomm.com>
+X-B4-Tracking: v=1; b=H4sIAHZRPWgC/x2MSQqAMAwAv1JyNlDrUvEr4qFL1FyqNCKC+HeLx
+ 2GYeUAoMwmM6oFMFwvvqUBdKQibSyshx8JgtOl0rw2KG6ztDlz4xngKGvKtrpvQRk9QqiNTUf9
+ xmt/3AwvQCXlhAAAA
+X-Change-ID: 20250602-sa8775p-fix-dts-2eb4013c4dbe
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Mahadevan <quic_mahap@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1179;
+ i=dmitry.baryshkov@oss.qualcomm.com; h=from:subject:message-id;
+ bh=CBMo3phr83jgUMZt0jAUHfVtoIwsR8eJ386zFfEoaeg=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBoPVF3Zrk5u/MQx2/FPnPzUHbdt1p8IZaKdfCdb
+ xyyyycFzfuJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCaD1RdwAKCRCLPIo+Aiko
+ 1RpfB/0UBjBA/fQWxqPvppkAmBJKv/kPwZHnMh6h/dBCmuR7HOh2GsmOADgnBcXfZjaRB3tzuq+
+ coL33ywP1DyN+goQaDsmCAslSrCZ4nsBZvh3mDycFDj5i/xCFaKbrDIUcIP6AuzSMr94pISio6D
+ 6ASKwWgZcfXzNmdyBzypxAtgR2q70Q7M7Vwk/7hB5dwbAHG7u62tBNlRUVR9u5iz+kt432+kXtx
+ F3dyx0L9/H/cgjzrUmZfFpPpCmpqhfw1/n/yHpxC5bnyI+tuBTBc5dnDQjwTMx68EN3E3KQ3SQQ
+ 7Y4Ls+YyKifLd5gOLMyHwZq0luiRbMsTKQYsYTlrHKKCrMq7
+X-Developer-Key: i=dmitry.baryshkov@oss.qualcomm.com; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
+X-Authority-Analysis: v=2.4 cv=JIE7s9Kb c=1 sm=1 tr=0 ts=683d5190 cx=c_pps
+ a=WeENfcodrlLV9YRTxbY/uA==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=6IFa9wvqVegA:10 a=EUspDBNiAAAA:8 a=1MI5CES3H8l_R7eW8KIA:9 a=QEXdDO2ut3YA:10
+ a=kacYvNCVWA4VmyqE58fU:22
+X-Proofpoint-GUID: 3am66oQvZEFgiDHtoDoobJoAXZ-Od5qr
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjAyMDA2MyBTYWx0ZWRfX2/0ANTIBf7xt
+ EQLOw+RtffDiUzvGVxK+HS12hzhwBWyuhACEVApyFrs3toalCW4iYcmbIVZBkJJlbuBrcD44nAq
+ pxTELM8COAbJpxBXMGHZriVnzXZfUZqCal0Kq38/YFSyz3CrJzrHq7ivlPx8FdyOn3i8suHwi65
+ zRvhQeSb0GSwowR5lFBvi2E4mAcmpsIsIJoZsIWfOKvK2shNoL88woVU6nfMNn05bh76XasR5Hb
+ KY9xeJB+9rV4bGD3TQU5Euw4v/Ogx0UWzqj8ph5uF4T63rTcjGRdDwh4afghtxOgxcHG8W98F1O
+ BH8u3zH+uzaPnNWTSTQUQYgGH1BtaPJSZovOb2QBwNyfzHakNwFKNoJsilZqvi4PIc6oSzoFxMf
+ gGFwQjgmVk/GQYZYgKv/fURNtI/yOcNCNV0H/RuptAEhsNP/Zu2ckIZhNjzR7xD8izUQ8h1R
+X-Proofpoint-ORIG-GUID: 3am66oQvZEFgiDHtoDoobJoAXZ-Od5qr
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-02_03,2025-05-30_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxlogscore=900 priorityscore=1501 suspectscore=0 adultscore=0 phishscore=0
+ spamscore=0 impostorscore=0 clxscore=1015 malwarescore=0 lowpriorityscore=0
+ mlxscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505160000
+ definitions=main-2506020063
 
-Hi Vincent,
+DT bindings for the DPU SA8775P declare the first clock to be "nrt_bus",
+not just "bus". Fix the DT file accordingly.
 
-On Sat, 31 May 2025 at 10:25, Vincent Mailhol
-<mailhol.vincent@wanadoo.fr> wrote:
-> On 30/05/2025 at 20:44, Geert Uytterhoeven wrote:
-> > Thanks for your patch, which is now commit d99755f71a80df33
-> > ("can: netlink: add interface for CAN-FD Transmitter Delay
-> > Compensation (TDC)") in v5.16.
-> >
-> > On Sat, 18 Sept 2021 at 20:23, Vincent Mailhol
-> > <mailhol.vincent@wanadoo.fr> wrote:
-> >> Add the netlink interface for TDC parameters of struct can_tdc_const
-> >> and can_tdc.
-> >>
-> >> Contrary to the can_bittiming(_const) structures for which there is
-> >> just a single IFLA_CAN(_DATA)_BITTMING(_CONST) entry per structure,
-> >> here, we create a nested entry IFLA_CAN_TDC. Within this nested entry,
-> >> additional IFLA_CAN_TDC_TDC* entries are added for each of the TDC
-> >> parameters of the newly introduced struct can_tdc_const and struct
-> >> can_tdc.
-> >>
-> >> For struct can_tdc_const, these are:
-> >>         IFLA_CAN_TDC_TDCV_MIN
-> >>         IFLA_CAN_TDC_TDCV_MAX
-> >>         IFLA_CAN_TDC_TDCO_MIN
-> >>         IFLA_CAN_TDC_TDCO_MAX
-> >>         IFLA_CAN_TDC_TDCF_MIN
-> >>         IFLA_CAN_TDC_TDCF_MAX
-> >>
-> >> For struct can_tdc, these are:
-> >>         IFLA_CAN_TDC_TDCV
-> >>         IFLA_CAN_TDC_TDCO
-> >>         IFLA_CAN_TDC_TDCF
-> >>
-> >> This is done so that changes can be applied in the future to the
-> >> structures without breaking the netlink interface.
-> >>
-> >> The TDC netlink logic works as follow:
-> >>
-> >>  * CAN_CTRLMODE_FD is not provided:
-> >>     - if any TDC parameters are provided: error.
-> >>
-> >>     - TDC parameters not provided: TDC parameters unchanged.
-> >>
-> >>  * CAN_CTRLMODE_FD is provided and is false:
-> >>      - TDC is deactivated: both the structure and the
-> >>        CAN_CTRLMODE_TDC_{AUTO,MANUAL} flags are flushed.
-> >>
-> >>  * CAN_CTRLMODE_FD provided and is true:
-> >>     - CAN_CTRLMODE_TDC_{AUTO,MANUAL} and tdc{v,o,f} not provided: call
-> >>       can_calc_tdco() to automatically decide whether TDC should be
-> >>       activated and, if so, set CAN_CTRLMODE_TDC_AUTO and uses the
-> >>       calculated tdco value.
-> >
-> > This is not reflected in the code (see below).
->
-> Let me first repost what I wrote but this time using numerals and letters
-> instead of the bullet points:
->
->   The TDC netlink logic works as follow:
->
->    1. CAN_CTRLMODE_FD is not provided:
->       a) if any TDC parameters are provided: error.
->
->       b) TDC parameters not provided: TDC parameters unchanged.
->
->    2. CAN_CTRLMODE_FD is provided and is false:
->       a) TDC is deactivated: both the structure and the
->          CAN_CTRLMODE_TDC_{AUTO,MANUAL} flags are flushed.
->
->    3. CAN_CTRLMODE_FD provided and is true:
->       a) CAN_CTRLMODE_TDC_{AUTO,MANUAL} and tdc{v,o,f} not provided: call
->          can_calc_tdco() to automatically decide whether TDC should be
->          activated and, if so, set CAN_CTRLMODE_TDC_AUTO and uses the
->          calculated tdco value.
->
->       b) CAN_CTRLMODE_TDC_AUTO and tdco provided: set
->          CAN_CTRLMODE_TDC_AUTO and use the provided tdco value. Here,
->          tdcv is illegal and tdcf is optional.
->
->       c) CAN_CTRLMODE_TDC_MANUAL and both of tdcv and tdco provided: set
->          CAN_CTRLMODE_TDC_MANUAL and use the provided tdcv and tdco
->          value. Here, tdcf is optional.
->
->       d) CAN_CTRLMODE_TDC_{AUTO,MANUAL} are mutually exclusive. Whenever
->          one flag is turned on, the other will automatically be turned
->          off. Providing both returns an error.
->
->       e) Combination other than the one listed above are illegal and will
->          return an error.
->
-> You can double check that it is the exact same as before.
->
-> > By default, a CAN-FD interface comes up in TDC-AUTO mode (if supported),
-> > using a calculated tdco value.  However, enabling "tdc-mode auto"
-> > explicitly from userland requires also specifying an explicit tdco
-> > value.  I.e.
-> >
-> >     ip link set can0 type can bitrate 500000 dbitrate 8000000 fd on
->                                                                 ^^^^^
-> Here:
->
->   - CAN_CTRLMODE_FD provided and is true: so we are in close 3.
->
->   - CAN_CTRLMODE_TDC_{AUTO,MANUAL} and tdc{v,o,f} not provided: so we *are* in
->     sub-clause a)
->
-> 3.a) tells that the framework will decide whether or not TDC should be
-> activated, and if activated, will set the TDCO.
->
-> > gives "can <FD,TDC-AUTO>" and "tdcv 0 tdco 3", while
->
-> Looks perfectly coherent with 3.a)
->
-> Note that with lower data bitrate, the framework might have decided to set TDC off.
+Fixes: 2f39d2d46c73 ("arm64: dts: qcom: sa8775p: add display dt nodes for MDSS0 and DPU")
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+---
+ arch/arm64/boot/dts/qcom/sa8775p.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Yes, that case is fine for sure.
+diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+index 45f536633f6449e6ce6bb0109b5446968921f684..7eac6919b2992a3512df1e042af22d0cbad04853 100644
+--- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
++++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+@@ -4122,7 +4122,7 @@ mdss0_mdp: display-controller@ae01000 {
+ 					 <&dispcc0 MDSS_DISP_CC_MDSS_MDP_LUT_CLK>,
+ 					 <&dispcc0 MDSS_DISP_CC_MDSS_MDP_CLK>,
+ 					 <&dispcc0 MDSS_DISP_CC_MDSS_VSYNC_CLK>;
+-				clock-names = "bus",
++				clock-names = "nrt_bus",
+ 					      "iface",
+ 					      "lut",
+ 					      "core",
 
-> >     ip link set can0 type can bitrate 500000 dbitrate 8000000 fd on
-> > tdc-mode auto
->
-> This time:
->
->   - CAN_CTRLMODE_FD provided and is true: so we are in close 3.
->
->   - CAN_CTRLMODE_TDC_AUTO is provided, we are *not* in sub-clause a)
->
->   - tdco is not provided.
->
-> No explicit clauses matches this pattern so it defaults to the last
-> sub-clause: e), which means an error.
->
-> > gives:
-> >
-> >     tdc-mode auto: RTNETLINK answers: Operation not supported
->
-> Looks perfectly coherent with 3.e)
+---
+base-commit: 460178e842c7a1e48a06df684c66eb5fd630bcf7
+change-id: 20250602-sa8775p-fix-dts-2eb4013c4dbe
 
-Thanks, I misread this as clause 3.a being applicable (hasn't NOT a
-higher precedence than AND? ;-)
-
-> > unless I add an explicit "tdco 3".
->
-> Yes, if you provide tcdo 3, then you are under 3.b).
->
-> > According to your commit description, this is not the expected behavior?
-> > Thanks!
->
-> Looking back to my commit, I admit that the explanation is convoluted and could
-> be hard to digest, but I do not see a mismatch between the description and the
-> behaviour.
-
-OK, so the description and the behaviour do match.
-
-However, I still find it a bit counter-intuitive that
-CAN_CTRLMODE_TDC_AUTO is not fully automatic, but automatic-with-one-
-manual-knob.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+Best regards,
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
