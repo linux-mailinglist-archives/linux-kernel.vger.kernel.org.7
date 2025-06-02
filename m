@@ -1,59 +1,59 @@
-Return-Path: <linux-kernel+bounces-671099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A2F3ACBCD8
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 23:55:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 369A8ACBCDA
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 23:57:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB8BB7A7CA3
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 21:54:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BEE018941C1
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 21:58:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 447F424CEEA;
-	Mon,  2 Jun 2025 21:55:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AA6B24DCEE;
+	Mon,  2 Jun 2025 21:57:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="jpIjGecw"
-Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Xv7MitK5"
+Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECCD42C3250
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 21:55:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 200542629D
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 21:57:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748901322; cv=none; b=sR/B2YT2ZdXtfgVETsgbPaaTKpiYwKgn3lFtxIaH9+ek4QridHelJ5JGMuPGIih+zIorTy4hQMsfF5FOy9g1OjQukGxcJVRu9aYBpuJLnpHUxiscxR9NaoI2TYvyHw7f/DzN+YvZZh3t3PnWYoQrVv2d8FQ41//H0QdbxyJbHdI=
+	t=1748901461; cv=none; b=G0MBacCJ3NJ5mdUcf71GtnxxSsCxeMy1n+KDWtSt8dEl5k5bTJLrtx8UutJnYqbSZ23Zl6CbCH/gpE4YBb+qoTPwXo0VZ1EWtDrlXCY5hOEe0W0LcVkGyqaZkvUmhOV0XIsqZXOpt6Au2xrRdSXpktKtPjewjtx2D/YipFnXkp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748901322; c=relaxed/simple;
-	bh=oo3I4f30jXyErZDGdaAuUMEz0xSs68rR1L+FyYncphg=;
+	s=arc-20240116; t=1748901461; c=relaxed/simple;
+	bh=5ONrfrV4v6p5aGon1KG4bYL2RjbY1NYGsVSB2rTgu2w=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=RAuW0j2T9f5+pqIcNYfwLwmvtYCU7C2FPOUwDM5/+nfseMcQKUdM7Qe2tUidkvNgIlQwDlsMy6GoW/2Knc0NYtA0Lu3vLm1IzEaTL8OMx1kkMxdzmj66HYSjWEKwxXdOGBTj2M9KHa8fWhwFkyi9d3S/V3tsUCk/e6hS6RIV6WY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=jpIjGecw; arc=none smtp.client-ip=95.215.58.186
+	 MIME-Version:Content-Type; b=JYQ8HhS6P2E9W+vwmpRCyKioIhZRWZHXdU5HGIFFiB4aVa7KNDiv167t0/eCrxz9apNVdlwbuGJ0lSV0DI/DFn7cF43taXaAyY0I73ToCgZq9jTpqJQ1zh6oPBzb+yyEiZEsfvb6hOUVnFvTwHhcrKqr2nqtSsxNEt8ZNHK3WBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Xv7MitK5; arc=none smtp.client-ip=95.215.58.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1748901316;
+	t=1748901457;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=oo3I4f30jXyErZDGdaAuUMEz0xSs68rR1L+FyYncphg=;
-	b=jpIjGecwXp0f/ZnGZp/RUblspujfr4DhcN1BFhelkLBby5XZXJl2R1Z5jxzBJLieK9wOd9
-	uSRhsKulxKoUbfbRbcHq2f3/oQc5xs2TpnGxSt5dY/yiDRYNGCIDWPQKs5GQAoXSU4PeTX
-	MOB4k8hrNplMguBNPuG+K9eilzEk+D8=
+	bh=5ONrfrV4v6p5aGon1KG4bYL2RjbY1NYGsVSB2rTgu2w=;
+	b=Xv7MitK5l/EfFeD02fXfgnEr2EV8me4qUK+T3O2VddjSXVTmYm2a9Cfd/sqHfVh/3cejPS
+	YzoMLNUCZpJT+PMfaIOUnHbPpWGwlVkjKXEHlbdu06tNXMXR+PMwnAZSYoL8lnD5iUDury
+	eEPw1TvPBVvEJx8Ed1YcjiBeQxn5egE=
 From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Christoph Lameter <cl@linux.com>,  David Rientjes <rientjes@google.com>,
-  Andrew Morton <akpm@linux-foundation.org>,  Harry Yoo
- <harry.yoo@oracle.com>,  Matthew Wilcox <willy@infradead.org>,
-  linux-mm@kvack.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] mm, slab: restore NUMA policy support for large
- kmalloc
-In-Reply-To: <20250602-frozen-pages-for-large-kmalloc-v2-1-84a21f2c3640@suse.cz>
-	(Vlastimil Babka's message of "Mon, 02 Jun 2025 13:02:12 +0200")
-References: <20250602-frozen-pages-for-large-kmalloc-v2-0-84a21f2c3640@suse.cz>
-	<20250602-frozen-pages-for-large-kmalloc-v2-1-84a21f2c3640@suse.cz>
-Date: Mon, 02 Jun 2025 21:54:21 +0000
-Message-ID: <7ia4tt4xvmgi.fsf@castle.c.googlers.com>
+To: Usama Arif <usamaarif642@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,  surenb@google.com,
+  hannes@cmpxchg.org,  shakeel.butt@linux.dev,  vlad.wing@gmail.com,
+  linux-mm@kvack.org,  kent.overstreet@linux.dev,  cl@gentwo.org,
+  rientjes@google.com,  vbabka@suse.cz,  harry.yoo@oracle.com,
+  linux-kernel@vger.kernel.org,  kernel-team@meta.com
+Subject: Re: [PATCH v3] mm: slub: only warn once when allocating slab obj
+ extensions fails
+In-Reply-To: <20250523165240.1477006-1-usamaarif642@gmail.com> (Usama Arif's
+	message of "Fri, 23 May 2025 17:52:40 +0100")
+References: <20250523165240.1477006-1-usamaarif642@gmail.com>
+Date: Mon, 02 Jun 2025 21:57:20 +0000
+Message-ID: <7ia4ldq9vmbj.fsf@castle.c.googlers.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,16 +63,16 @@ MIME-Version: 1.0
 Content-Type: text/plain
 X-Migadu-Flow: FLOW_OUT
 
-Vlastimil Babka <vbabka@suse.cz> writes:
+Usama Arif <usamaarif642@gmail.com> writes:
 
-> The slab allocator observes the task's NUMA policy in various places
-> such as allocating slab pages. Large kmalloc() allocations used to do
-> that too, until an unintended change by c4cab557521a ("mm/slab_common:
-> cleanup kmalloc_large()") resulted in ignoring mempolicy and just
-> preferring the local node. Restore the NUMA policy support.
+> In memory bound systems, a large number of warnings for failing this
+> allocation repeatedly may mask any real issues in the system
+> during memory pressure being reported in dmesg. Change this to
+> warning only once.
 >
-> Fixes: c4cab557521a ("mm/slab_common: cleanup kmalloc_large()")
-> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
+> Reported-by: Vlad Poenaru <vlad.wing@gmail.com>
+> Closes: https://lore.kernel.org/all/17fab2d6-5a74-4573-bcc3-b75951508f0a@gmail.com/
 
 Acked-by: Roman Gushchin <roman.gushchin@linux.dev>
 
