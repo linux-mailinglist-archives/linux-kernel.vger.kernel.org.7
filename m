@@ -1,84 +1,107 @@
-Return-Path: <linux-kernel+bounces-670837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40701ACB9EB
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 19:00:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32567ACB9F1
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 19:02:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C058A7A82E8
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 16:59:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 010CE40289F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 17:01:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5171F139CF2;
-	Mon,  2 Jun 2025 17:00:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98CC213BC35;
+	Mon,  2 Jun 2025 17:02:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="csW27FLs"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2047.outbound.protection.outlook.com [40.107.92.47])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="F6x1FFJi";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="omfTqxWL"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1486D2AE6C
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 17:00:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C41EEBA49;
+	Mon,  2 Jun 2025 17:02:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748883611; cv=fail; b=DKBxFKTMQ5HxaLXjn1p0zwESfazpzdydPanyex4HOdPGzIfa/Xc66cZEafPYq0EC9P9NEHu7NeISCN4o0uB9GNDSb7c1q/6CDSfBeqcz/TquLSIo2bf5/VOUVM2/+iAnkSwobn9Y74SvyaqfuJvaHWddb+q3JBS7HjL4uURoo1M=
+	t=1748883726; cv=fail; b=H0tUlFG4CqEM8s7OG03AE/bEZ31VYCWdKTbCBfCWgO4LzezvoEXQ0DaWROqDmeMdeHxi/EsfMMx26MhbdzRZ7NStPT1aYW1KmQuGDZR62rRFV90rPwr5gAtOYKUkwaRjsTGSpgeESpBL7i6ZT7Pacmtxqiwmkp01PLynjJJX05g=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748883611; c=relaxed/simple;
-	bh=3oGB38lirtT3oJDcJJwEQhHvIf2IQnPI92XHRfnMw0s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=sstk3FJMfYlzxxsnUcGDOQQMEBuS90WTS19BSJBzDyPI/WxeMru0VkIGCUkfVJERkL/7EPatq+ZQ2NjEKxFkP7c+ub35SvOciBfcWqReNPqP4Fpgc6jE0kiYR0nJsRe3etOG9N7A0Yqe5ZHObpKBf28H0GLFboQCs6e1xCLqu0Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=csW27FLs; arc=fail smtp.client-ip=40.107.92.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	s=arc-20240116; t=1748883726; c=relaxed/simple;
+	bh=MwH/KxF3su7cA0XurlYWK7g5MUYDx1tO/HNJFX4f9o4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=J92oxlwVoXPSWL+v2KjrK93xQrXu9ZA9f6UB++umVoWO3rY2YX8mqnq9AoiNDY+N6ppv0VC589N6Mwabj275altWezeZ2HjF/fjhIsAsK98bYi1LyEDunMVDBhI1KlWmra9R//rnlC+RXmDUunSK9iZBnQcqgmNoP6XAgbtJocc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=F6x1FFJi; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=omfTqxWL; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 552C4XTQ031289;
+	Mon, 2 Jun 2025 17:01:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=58SKQ+rjGpcEX2H6Za
+	rAUYycW0ipKmJs8W57bmQreCk=; b=F6x1FFJiaOktFDzLs2I0+ZnHcNNEVc3KVO
+	OdfVh+T+f6KVZ3cyTDj/5uiYjY6LE4V4puwgkGSOSfpueB9VHZKkZMMVNLzYm/BM
+	vVA06wmNT1xsZxjKe5q3NkOqZkJkPs5ntSZjlG8+50X+tEyRdAvUmRSpNg5NAKDT
+	qf3NLbuNpl7zntwdZjnKxVKjS3Fb4B7k3laexG2Y7AATxyH0f8tHzHZ5rvG3EI0K
+	01KhEYu0lOK7uc5zqKqp7JxpLQQrg0AdXMvn1k5jvABekhZZ7mTSrPEiX8hXtHjL
+	li98hXdjwNt32kxeYP1uJTVqVVyiZpFXbosPS/RkhKh08KiqSNHA==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 46yrpe32cq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 02 Jun 2025 17:01:28 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 552GoJSo030620;
+	Mon, 2 Jun 2025 17:01:27 GMT
+Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11on2052.outbound.protection.outlook.com [40.107.220.52])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 46yr7886yd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 02 Jun 2025 17:01:27 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ylQ4XZTVMJeqxdvZK72/CMUDSUXGB7vx2EX4McZMY0YxzrfvN69WG/TVQhMY+WeFItQ1c5XF+1E7zgGVAYYVGIbAMQnx65vigAh3MKUaer4WHkNVhPG+YimjAtvU0t7B02TXGKJMVM+Hf7AFDx9TybHDYDFZmO+xIrPdmshcphiRyEviZ0+jmscoKSu5nZf9snb+7SxUqo/lHoXIqjnL0r4iOZc03Bd8Dx65X2srU4jHkiz5XNn7yf1gjOEucft5zs4N4f/Jir0DKRtxh7FRl52cMd3Kf0FhQCbGMUoaGQuEk8iovwdGZ+w0tJMehsLEvTIPqFostMj3UdijmR179A==
+ b=Uq+j2hDc875dAo6kT1JfN7Lqq4m3YZUwyJivDKWOU51ITMR8yOnOBFy89f9XSPvUZrljBm2sHVx3cu3vsddPe7BNEIHv82KBGY55iH2C/5+QfYOIdh6s9nzM5eBytr8oNOHOMwfEh2BQZboLsEj6qIYEf30iCYsERzagnE6/f1t2IyBXJVe27aW6U6nZ9jJ2o/b3gR/SJvgUV9V6mVesoteIOiOvxG/YUuVFQSlb0b/11wFr5XXmHu2b+uOvqaI++dI6zLvMchZQgS7QiEDfFT10A1zcypet/VBFOG26q8m5lpUPfbge8eGAPo8VkFvEgHRvYB91tZs0UxUSndmozA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=UUrqyZM7nxwdce6+sD2NXsoI0Swj/MtgEWal5D+m9wk=;
- b=y11dfLAXKJ5cv0herTFdvQacTdd47Lbjt8GQC5nippD0Dk1J3b+Fvl1USKXDXaJizxOwVAtSRc2g8gn+LRm4TWqBJNHNOdPzfgng2ITZVHJM6t4BmsEt5XYsUPiCrCW61Fi+uhAz6UnVETLCrUPy037DxO07//axjfR5QX6NiPQgSGSvhnVsYqf+fkg+ro/mQ5j7zdyYGHyXePwXNps9hR5X3C3BlUfejRTO1M/8TmLlcsvOCHFM4mMfgEBf/vYb0nTlnQDbWEjbZ9hiIirPnsIpjzJTA9ZdeK9a6PkEyQcpJDTNV6ITFhwrCumoJfppVjweCI03znsKoDXiNWi6UQ==
+ bh=58SKQ+rjGpcEX2H6ZarAUYycW0ipKmJs8W57bmQreCk=;
+ b=yplTMJBqU+IoZm1+j45Oc3CgaZHoTQ1LBh4sr540w8Ne4SNBlsRE3UTFeGF4/d3Ws4BvijKBJK42gQ7LAA7S3V1mSNKpAH56N7tdfIVWbSJE7AmniiZasHfgKSWkT2Z4Zsuj54DkGNn71O9Vwywcuyo7pv9hmSOJaLgIlpEHlp6E5xSGRWNGcmmpvq5zzaolIabPOZVbdbcKEh1GwZcm3A0nCwKL6bFnZerHtBI6DofRH9hXppRzJ4pfy4VwWoNWnx0FwEKLw4b0YGU1g3NXELkOb6KsyUlH503zLPY44JfJ+xRWDFLVEXTwNeU56EZh2H4nMYC+WavfwTA4ubiKxg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UUrqyZM7nxwdce6+sD2NXsoI0Swj/MtgEWal5D+m9wk=;
- b=csW27FLsM75VNPumTjZx+0gtHuxTBR3Og40s8JsCyRlngxCfHZcj2JA7u48HvH/QfDxZEIFyOB1Ns0l89hTdpDrribxT1fMh2CL6g+uZ1Z2YS7sq+gcZUlgW8JYybfz1Gj2IMH7SPvhbp4MhAOn/cmZBHyk3hLTVeDyGew9caBKwjPyagNsrmqxAm5+OYsFvSsnsCv9+FSCJkpcZzYXwTU4M60hEMx7LU/imseExTt/l5E+P1iR76JISkhWagc9UE7SLJ3RyHLD4scbIwoXKKjccFqYSQ4KHbN6dNV2uAPFTOu476g5JCRgRPWf6dXWWaUdYjrkAr6HAHDF6LzrjNw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
- SA1PR12MB8742.namprd12.prod.outlook.com (2603:10b6:806:373::6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8792.33; Mon, 2 Jun 2025 16:59:58 +0000
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a%5]) with mapi id 15.20.8792.034; Mon, 2 Jun 2025
- 16:59:58 +0000
-From: Zi Yan <ziy@nvidia.com>
-To: David Hildenbrand <david@redhat.com>,
- Johannes Weiner <hannes@cmpxchg.org>, Vlastimil Babka <vbabka@suse.cz>,
- <linux-mm@kvack.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Oscar Salvador <osalvador@suse.de>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
- Mel Gorman <mgorman@techsingularity.net>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Brendan Jackman <jackmanb@google.com>, Richard Chang <richardycc@google.com>,
- <linux-kernel@vger.kernel.org>, Zi Yan <ziy@nvidia.com>
-Subject: Re: [PATCH v7 6/6] mm/page_isolation: remove migratetype parameter
- from more functions.
-Date: Mon, 02 Jun 2025 12:59:56 -0400
-X-Mailer: MailMate (2.0r6255)
-Message-ID: <7BD9FB05-4125-4EA8-841D-9D08907D01D5@nvidia.com>
-In-Reply-To: <20250602151807.987731-7-ziy@nvidia.com>
-References: <20250602151807.987731-1-ziy@nvidia.com>
- <20250602151807.987731-7-ziy@nvidia.com>
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: MN2PR01CA0055.prod.exchangelabs.com (2603:10b6:208:23f::24)
- To DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5)
+ bh=58SKQ+rjGpcEX2H6ZarAUYycW0ipKmJs8W57bmQreCk=;
+ b=omfTqxWLfkUHgph1uVmrJdbopR8zLM2KEU/BjTsGW1XQaCom9zsr0F5ar+nUOskH7kjI5Akt1srd4w92Y4Y5OXKugldLvKyQ59anGvZs40JcZ9ii7uUBxyDgM7QhWRPskzIBTeRhs45n81H3daTFdIPrrldN6kimqzOtBGqm9uw=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by SN4PR10MB5558.namprd10.prod.outlook.com (2603:10b6:806:201::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8746.40; Mon, 2 Jun
+ 2025 17:01:22 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%6]) with mapi id 15.20.8746.041; Mon, 2 Jun 2025
+ 17:01:22 +0000
+Date: Mon, 2 Jun 2025 18:01:20 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Pu Lehui <pulehui@huaweicloud.com>, mhiramat@kernel.org, oleg@redhat.com,
+        peterz@infradead.org, akpm@linux-foundation.org,
+        Liam.Howlett@oracle.com, vbabka@suse.cz, jannh@google.com,
+        pfalcato@suse.de, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, pulehui@huawei.com
+Subject: Re: [PATCH v1 1/4] mm: Fix uprobe pte be overwritten when expanding
+ vma
+Message-ID: <86b7cfb9-65d2-4737-a84d-e151702895f1@lucifer.local>
+References: <20250529155650.4017699-1-pulehui@huaweicloud.com>
+ <20250529155650.4017699-2-pulehui@huaweicloud.com>
+ <962c6be7-e37a-4990-8952-bf8b17f6467d@redhat.com>
+ <009fe1d5-9d98-45f1-89f0-04e2ee8f0ade@lucifer.local>
+ <6dd3af08-b3be-4a68-af3d-1fc1b79f4279@redhat.com>
+ <117e92c1-d514-4661-a04b-abe663a72995@lucifer.local>
+ <702d4035-281f-4045-aaa7-3d6c3f7bdb68@redhat.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <702d4035-281f-4045-aaa7-3d6c3f7bdb68@redhat.com>
+X-ClientProxiedBy: LO4P265CA0144.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:2c4::17) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,396 +109,195 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|SA1PR12MB8742:EE_
-X-MS-Office365-Filtering-Correlation-Id: 84838f14-e059-4243-a0b6-08dda1f6e832
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|SN4PR10MB5558:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2df7cd63-7a8c-4d2c-ad98-08dda1f71a1a
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?XskbN8TG0dSkV2A2JiVPFi6gtZlRa9kcWY35laxT+36s50vgQom0a9aXCHke?=
- =?us-ascii?Q?gynmCM3UMT/m6aE3V1TXquFuPAhytjw78Mvb4Y4XGYvFlq4BYDnqMFSil5o0?=
- =?us-ascii?Q?nR5APtbXhgKB/AVfo0bRmyDSGxHhqn81VWgRQhF+VzzmdBmsf6V9gZiwi7Wy?=
- =?us-ascii?Q?5y1n5pNGb/HQ/1wdKlAyyzB84kqQedMYQbiT+8T0AEeugliPKvfqZxlAWF95?=
- =?us-ascii?Q?zSdfK2/K+RoOkAhzayy81B/vuepjAq6EE/5hoR7TTKxtjeWPWcyC5fwAzCzt?=
- =?us-ascii?Q?IUvMlVkodXHny0pd68fbJajqVnWJG2RTpKbuP5+IMQ9cxSKzDYS0v1tmDDOc?=
- =?us-ascii?Q?HihcazA4H7uPOpRBk0MOjaQdhnkiLngzWmMchXioL0jLqczbgB3aRljRVonR?=
- =?us-ascii?Q?G6PaAORjlO+2YFX4os8VzT/GL+z5YveU8gz55iYGg4/vibcunDANIfJVQCMv?=
- =?us-ascii?Q?7/+dJaV56eV5aIHqsCiLzpQzU5Q3nM1nNKZ23jus28xNU+0JOMgEbp0ZpHSg?=
- =?us-ascii?Q?9VP24Xrj1kb/sdWR3VgYTxOO3Jg5dlwXtI8K4hzCFo4YxmBlky3O0Jj4N7bw?=
- =?us-ascii?Q?CeUyZ1n6r95zpdqiRxjk8scSYL4o4UzuSQQBp3sc7q9Soprz/BgN7odLiWRH?=
- =?us-ascii?Q?y9l2wvw06hfemCnO7+HBEwr0GL/GUXnkhsQCwnuOuPibUHX6JSJeoNv9fvfa?=
- =?us-ascii?Q?nT1+XoQsjTjwxvKK7L5cKOkZZMCffTtLOggYpMVIoG6aTyoqUdcO+4WYt3DV?=
- =?us-ascii?Q?PPxHW/1B+GJz0MUotlKIUrRSRJDOYKkUGEx5rK0V623+jkJisLsagQDJlHux?=
- =?us-ascii?Q?HdyipoPO1TB/P3c5iacheNiRX9Y5i7Pyo2Z0EWONvInGw8JVlMg+R6rPT/jS?=
- =?us-ascii?Q?Eeo5h4ty7UfIfR2H9cV4evM876PJMtG0gPHhQtUcpxBcCRivPLBKPJQLqQxQ?=
- =?us-ascii?Q?SA89tnI3aPe6QYKzyGDiwVa5QndU4nPudfciBCPKvy38gkL126d5rnxEMuiT?=
- =?us-ascii?Q?GnYo5pvGDr2ggh9wjQJ5sRE+6RTWBN4iJHXIu0suVoVwyvyOhJ1RaDZ85ylF?=
- =?us-ascii?Q?RCS4vMRh/eRyzk10B5hHjiDnQvkdkGoGsIWob8mJ73Ft/FjkeHIaU41HRCCI?=
- =?us-ascii?Q?DYXGowIxF3pjd1cwBYSVdsiN3abplmNFoDowsT7Qc4kb571q1QS4gAXko+d+?=
- =?us-ascii?Q?2G39yDH5uNj2oRMx16U8Lb0VOVbI7DtXf0NrTFEZ5uIqxhF64US+DJL1+t6w?=
- =?us-ascii?Q?gq8mGOuTrionIxz+LckVWl+hY3/8gZyMvgU1Se5inUUEawHgPUP3GFDsOZBq?=
- =?us-ascii?Q?ALtQcSDtSYT45AxzsmG12Qr7Y0GlvLUEmNOHslbdI7eHXg7Ojx7P08mn9GHz?=
- =?us-ascii?Q?d9VUAY4nL8hZAdNA9epd6BkCe9rNVhzEHRAsjInaY0OQ0mn5dqkYY7Gzc7vw?=
- =?us-ascii?Q?/OsPRNGH/cg=3D?=
+	=?us-ascii?Q?oj6w48dhry1JgHeydTSwQcLrzAUuOUJYo66Z1grK9jpw3xT92+vCV6Vh9PkH?=
+ =?us-ascii?Q?JmVuRow2xEDgfuj6m0ceWgxPn1DJxGyYThBxIFIKbEbupZyc3HsCRMZMDaaQ?=
+ =?us-ascii?Q?FAHcE55LQQ6FeQ+/nh7sXx8xgeIgYAaW1GGdqAcxsAQyPBdkJvjga7g0i+Pp?=
+ =?us-ascii?Q?CBV3VlS2SD71qMDsjGFb3O8NurRkJtpcc9hny2nqgoA1L2ZvLah9pf3uJK3V?=
+ =?us-ascii?Q?9kEy/Zqv+q4xtTo7k88CXGrt9OEtzoNY9wgUQRCR3eoGvFpXYjZn7tu9jbyI?=
+ =?us-ascii?Q?VO2XKbLsIqGlWJ/5VdXrkQnSyh7eTioISSSpWWnJLcaUTDBYnTgRrHadXaX0?=
+ =?us-ascii?Q?CZjmmN1l74FoZSAm5nYzBk7JIA8kiXWxpF3FxDDVJJJB5AJJw7xQaGT/u9Fr?=
+ =?us-ascii?Q?dJPTgyS7a/jh9mq0Z0WvleECweMCT7DkthxMnFtILBTJOZ6eiid6BI3Gr54z?=
+ =?us-ascii?Q?MID+SbvIEf19PgiGQrIXTDNXAjKskGW57qoNJ6YR0sS7rT52u/IUwgD6e8wu?=
+ =?us-ascii?Q?8ET7gtUstrSioCcSLl44TOo9i/sIXBHXo3MZScWxYUWablQgBWR4KViU1rWa?=
+ =?us-ascii?Q?HvNq27B6G7TKjpmpq4Lfn9yTlyNXIKt5qiBWeIXFkBbRfJtqXmetXRrDHeiq?=
+ =?us-ascii?Q?bTzZ4hrzJTi2tBifLj4N5pNPfJ15KOET7ejSBhMiO9lsnILOg8pYS5I6X/A5?=
+ =?us-ascii?Q?Tef2irdfhr0ZE9oiENaZJrapU1Q6E8RuSGc7DVWH5r8SqafMqNoesiCBuP+w?=
+ =?us-ascii?Q?4FzPi/Pq1J1JlpvuR7MsPlWvK88u+BObSYNfaXIkUDiJjbi08/p/kEQ8b2jD?=
+ =?us-ascii?Q?HSYu3BLvnruhb/EOJ9ng8nXg5MfZ4vcg2BjAuB75FQ6BxqIryXvcvbTcD8mQ?=
+ =?us-ascii?Q?F/a6EYxXxtB8cHGY3s6P6zcvD4xGCalRbK5wm2bk+R8emALb+hDak1Kbt0J+?=
+ =?us-ascii?Q?/xFJbV6DeQIWgGHqQnG8LLCssS5DYC8yTQwIIBqf/9Jqj/YMFzFbU+uDJTEO?=
+ =?us-ascii?Q?oBSerOj6s80/woWYa/DzpIuFC9RIwSC0oyAtM7+e1HWeogz/MJULTU9a8CEh?=
+ =?us-ascii?Q?5wrRB3hwF+VsDg7HuYfMjiYobRjI0qV6E62n9Gm1fj17+MGew9Rxw8vKrS8S?=
+ =?us-ascii?Q?SzbYXX95aM2Vgu4mkQPTD2U05E+tDDIOnKkO6Pus2M8ZECvLu+b+tM4u6fve?=
+ =?us-ascii?Q?ioGJIaIKEr3vDs4+9OsOeIMRKfTL4+eYggFfPmQgsKSUH/vbtN0sA2Z3Fz/G?=
+ =?us-ascii?Q?h01c6nEv6sojtN9RxUUk9EKbFe2rLMA8HypfIVHNZLWk/yvQpu81jnNaDruX?=
+ =?us-ascii?Q?2AiHHHd6T33ZaavyoQ8JEPs9kGoaMS9oCW+0OGcRNTcdmdT70Kb2vMZtN3NG?=
+ =?us-ascii?Q?kUPfrwoquGORMe00OY+8F0QuO7wlcjmC7Xt6VivMI5SP9+ymUoWN3RCuj3G9?=
+ =?us-ascii?Q?GtiDnLMu7LU=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?5t1UNx06xYfHKfBFQNFDUxQ/7dlf8Ci1+yvEBaHKcqlVUSvZmS3S3kz3WoZI?=
- =?us-ascii?Q?7RmNx4yWHjcx+vebU9bxXRjFnC/eVtWX78Iwhx1aM3WS78uSabmk0eN9K5Mz?=
- =?us-ascii?Q?+C+NcrIDh7uYr3O8LGQ6OlMpMq/DL6h4vvVbYJdcxRzvVDv3GjbLxOH7PFBa?=
- =?us-ascii?Q?R6HQoBZRuWxfZWs9aJoWi9VI4PUrSYatlQJp6dCJiwFMFTtQMHKrrwDVdMnt?=
- =?us-ascii?Q?qELLUHcoE8DyJ7vmYzACi0Tf+6zfOxBNEg3Ftu3ZxinG9s848S5vN+N439Zh?=
- =?us-ascii?Q?mKAqj1bkllaaMUOl3butP62c/vmxyK3HbUCypkjynHsS7Y6OxQedEU5SwdSV?=
- =?us-ascii?Q?4syC8M/0xdaOp+6vPFHyUkxg/etMhG9sjRrlPgoc51BOWYtryJCN6YLIAgq2?=
- =?us-ascii?Q?G0KrYyuGSd02kBP6kgOky6c+8KaXjfT4m+vyYCJ0lAE6mt1qog/bV8SbBiGA?=
- =?us-ascii?Q?LqzPytTdYJ/9N8QPdafFptHKArPeGBSAn/Sn4UKwfmPkKctcAXfh4HpAE7BW?=
- =?us-ascii?Q?UyrlMGTWcYVSKJU2iPHQ1RyfrpyHqpmbdLDjqfiWoKPHKUrACSwRw1MDcjBV?=
- =?us-ascii?Q?AnQuNBHbAztZuey0ViG90swIzhZKY5RkXOuEvRqX7qOLHwUV5jb4QbzbvcWM?=
- =?us-ascii?Q?/y3xMDa5KQE/qMYkeBmb55jpX831uICyL2EsAcfnHxNZgLXHahNO20qa2/iM?=
- =?us-ascii?Q?XBd+B1t91Uvxsm1P5yhIrai7gM113eDXPzEH2L9WGiC4yihNYVPpz3kqW1IG?=
- =?us-ascii?Q?X58Rrbp/+zxNbXo1SgGD30WJ9V64SACQwQV2RoYdroYvY0pfo7sVX+pYRg++?=
- =?us-ascii?Q?I+8Qu9cotiy4/Omaf5sOso4PMO5rGgnrlJxIb2y31ijHC90DjRASRStawYFP?=
- =?us-ascii?Q?C4NR6DgVm65OIP+WaEe8qqiGvtrwpIehB8zpp8c58Syurwi1nyaiWLzTycMq?=
- =?us-ascii?Q?QeG++GjVqhuPVTsY381PM9svDFVOUiIgaLtmZIhBW1y2ugrYpeqdmztp+LOJ?=
- =?us-ascii?Q?O74iTgyHuhh+UC7yv6kELNXVTxL9IpvlSA+90jT2cHUDc4i52/RuczmPYibn?=
- =?us-ascii?Q?pbTT7KcBz/IMhAFb5Vq0odlsJS2HKpoGH+wdzpLlwooU+ZIRcpmrrhL06Gfd?=
- =?us-ascii?Q?X82It8cpEwq8UccipPPpquDvYmuPf9K5daNeAQwiEJuWDqAYxlot47S9ye2Z?=
- =?us-ascii?Q?ndHINTbAS1hWF+10rN1ZbjY8UNk+IpUXad8Jtu2UXIYTFnN6+82zFjFBoG0L?=
- =?us-ascii?Q?LPCsx8qZb4aTYBNCslhRyZu/HoT4lhMVfqmnFGlS3r9w906409FnOQI3zGME?=
- =?us-ascii?Q?eHjAcayqx9sZy4PZyDGF21Emtb+iWi1PO/BMQ2h1Gu8ijkRcw2pfEbsWNGRr?=
- =?us-ascii?Q?tphLq74XU2HNJWYxqUy7bsOqqWMe9Iokz0xI0W/pOoDq2tyqoSo/gHu2oRmv?=
- =?us-ascii?Q?XkqagoviWj0O2pTWyuA1jHmV6AEVW7yBRYmEFJk7cNjXBpb0zsElLND1E3BF?=
- =?us-ascii?Q?IYD2qcDAfYFzdX/1JuUBQf1dOc1kO5kvVzH00Y4oSk5PzqS2j0ukXKxQCMKk?=
- =?us-ascii?Q?zcPw/wyBQAa/XhmV29Hs/d02HFJznpKPqdMY9o6Q?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 84838f14-e059-4243-a0b6-08dda1f6e832
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
+	=?us-ascii?Q?j4eNWBgE7BKh+6iYi/DAUoWTozE8nBPCcy8IdxlEtk7kXXhThFOl5gsq5LCD?=
+ =?us-ascii?Q?RdLoRrm9SfUBdV5fs5mwaRFYYc2PhoebzjGZ9S1LlYg9vnJ2wYXezkjVQMqe?=
+ =?us-ascii?Q?5JuwN69DtEtpNY/NzGSDodFcddaNnwMt/5lYzk/DbDWHvAvmfVUwJnrKAoHZ?=
+ =?us-ascii?Q?/FvOOWoLzjLcw9OWrCjEW2y1oB8aWCGGYeszKrLcs1XoA8LIRjBkTQi/X4WV?=
+ =?us-ascii?Q?yrXj+fxC+FoFs8gpBjQoDhde1Uxsx/eBl6JMj1yRBN/H3DyoygABZ+R6XUJy?=
+ =?us-ascii?Q?vVbv4KpqdrJH0ASv59RXRbflZgeC9BZdf5H4qUOuYYiJPigFeuCRW4Oqgbs/?=
+ =?us-ascii?Q?4PB5wKdUMzVNVn5SZsWxFL+TshpeVOE98ODfmNw9iR06/85w2pSTmg10W44x?=
+ =?us-ascii?Q?zZsqW+BYae5lMuc5ccNSnfIvyBG2/oWnKDFv9xBIb1n202QYePgBjpzFngFs?=
+ =?us-ascii?Q?JbKOaT8C6EcNMYgRtumQ0CgCxTU2TfbiUsJCujEDuBuAgI1VoMeA2Ryy88NJ?=
+ =?us-ascii?Q?wXFTSFEUtKCG8rByiM3iWCU7x/rEthFpSFUZ2hS8G1niJB0UBEddMSRTYFE+?=
+ =?us-ascii?Q?dO2luScgccSNkIZHRxHIgU0wx53Rg91jk1RVI3Nu+PxehJRSek0rqCg4W1pA?=
+ =?us-ascii?Q?FA/PwaAEgx37ucfCSVeTEyTv+ciCWldhkLI49jroa/fthu7bnv2OpsgyKOIt?=
+ =?us-ascii?Q?x03HuLoAyNRyuvvjoboPA/54XONHEpe0RFwRYC8BgZUCP3FfJTx9OMsE62+D?=
+ =?us-ascii?Q?o8qUZTD84uYLk+zQZwvzOplv2epwIsuS2b78FbXdJtgigMuHCCXba+8yGSz5?=
+ =?us-ascii?Q?evnDmU8quCTz1Bll6DTomKl+ayp8MA2jp7xiaH6o7O1+y69nHqkPsFnGcoJA?=
+ =?us-ascii?Q?F2tCVoIxFv7bCdupzfdt7T77Bwi2I8Z6ME5r7LqMPDPrd7+EixVRScIRgsae?=
+ =?us-ascii?Q?YV6aKYvcKTW2/3/1weqvXHECA7VpAFgM4eP+LmYU3fJbyLcj5VbG+/qNS3yo?=
+ =?us-ascii?Q?goWL7TPjd50FtBsOEUWwpSAOpteoC5Y00jmDDs//uNpiBkFwrSWEkdW8SzwU?=
+ =?us-ascii?Q?AHQmvqM5452D3Py0Lrde+QOe5vAR1sotLz0YWrlb/uCiLaMzuegn0HL3kVFy?=
+ =?us-ascii?Q?0G/bPyob5Zvkdx4aXYLRF/ogjQMgekb0Q119YxdEoy7cQPpqh55R0lsVxL33?=
+ =?us-ascii?Q?RYdTS/ANjzlzdNS2ojeUyjInILuI1BkzHT4eLa8uETxrbryDMCyevp1STwSG?=
+ =?us-ascii?Q?eONnJTY46ygZuCe1/BFvBTVTVokAZffZ4usvijh4VWhlLqBcJuJpLzBUgu4G?=
+ =?us-ascii?Q?Y7ujfCEEL4bhLwJ/snCPiZ2dXQV/mBePjxuqL/YOKuHCok3u8KwiTzT7jdVo?=
+ =?us-ascii?Q?4rQAtaNLj1w3BQyIubuQKLusaMPs/4gQV2HEfxO6rvdaY2ZP2ZVb/tQdhvHg?=
+ =?us-ascii?Q?WUT3YDb3D5NvbT9l7Vaqb/MHMrWqMdIjcbOUlRWUyOnKkgtTNbHODLEZrcSR?=
+ =?us-ascii?Q?j080qI/onmMN8xz5KlDuLs+ifKpzVIsa6WBQkWKFP4C2rdyxZZiIxdS3Xntw?=
+ =?us-ascii?Q?/wP47QAQEFBU5iYm+4aGHTdVgVGYDeRUd4lQ0F6ArsD5OSpIujgyU25K+1fW?=
+ =?us-ascii?Q?rg=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	p99cu1AYEgJ2sv2OcEIFjD9+3hfW2dpG8tTlwH5F2v/wCv3zVkDNOXaHgYzAVoEv/XhzDUVYVt3lWC7Q/J4Uz25yJXB3FsAAPJo6KD+3X1WLjjlSGCfqAyWmDuLOk2ctPvhWJApvQB9KIl9TsrK26VTupjiUEvz7C3TRj6uJpiwoHe8pnbtCn30K4yFwfxiKKdg32ml89yp0L3T4//Z81dSk+pmCtHTSYEnYMvJbkKfFjtrg/xhc/B4SeqEUUJXdA3/1zfKBgoqsFep3EA7qQznectjyu+PUfpfKjv+JubyEMk5i/+KXsE0C246a64HTdOHejY12J+SRbBqtpOfpbUehL1b+hQfezCVcqas0gEsg0TYlYlyhkNDJVOFuDM5IctjDSgrM3i28QvX/eKPZDUWD2AgWiXsFdWMLOY4FLIol1U2QGL9gFFHIcctwh4ag+jqn56kXqC9euVgfVK4XiQSOSFWr8NDUDaWLXvrS8rNMmV5f5vdEPsw783bdFRUnPAMlwD9pawk8ntIKUODbvpQbrewUYbH/4VGwsy0pgeFjQFc4UEdK+4ultV+EHZ1JweeeYcD78BGV1EAE2cTSnVcrD786MzX6h0BGcVZD7+c=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2df7cd63-7a8c-4d2c-ad98-08dda1f71a1a
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Jun 2025 16:59:58.7191
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Jun 2025 17:01:22.4424
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: pehExhmKySsHUt9A2VdfUo1X3ppqmODctVNS14C9pPLkbD3dT6avaQ7ImPBkMIvC
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8742
+X-MS-Exchange-CrossTenant-UserPrincipalName: 09UXDfescAYyaFmM6MrH6YhelZMPinUCyVI49XNODQ6ZWQZR4xSZt/2Bm6n+65Iq3GJNOOTMSyd70InQHBGhBFwK2+kBa0YI+Mm5+uK1rTA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN4PR10MB5558
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-02_07,2025-06-02_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 malwarescore=0
+ suspectscore=0 phishscore=0 adultscore=0 spamscore=0 mlxlogscore=999
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2505160000 definitions=main-2506020138
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjAyMDEzOCBTYWx0ZWRfXzOriS6O7+5Sq eFsZLsthpDAAqjOZcMZY89mTjHdDA4sA5hyb3Pj93aOxYYnulbJsVr3C5cbWnr3FqArbgZnI4Hh 3wr29rUW71gpwRj+Gg1v2yvoR1nR/KfSRPCU3ZGTqX4vWMXMQc0d9k6Fzw7/9eckvK/CQxFpo5e
+ A/iz8kZaP7ye3FVuhgyumCyRjC0H9p1HvE88zRDWMK4QJh/3woiNWjDVRbNeEi3veyuX93HhsDg ClY37XeDcAgmGSY21Nd5aVHtF7GI0Jf69PlArtpFCsGnCFl26BdN1CUwauf/ClQFx4THHnal/C2 HIOZLqbzf6uyQpYZNdaUwZ9yHwT4kOjX+VlwhFIP1IR1OuMKMoJxcl+QjaBK+bbhY4iv2im/eDX
+ HrYOp97FEAY5zibp5aMkwdSIH6h2HDgAhRD+FqlfzkYyLzW1j4DmQ6q8oHTCw/e2mAcNwt0r
+X-Authority-Analysis: v=2.4 cv=NN7V+16g c=1 sm=1 tr=0 ts=683dd8e8 b=1 cx=c_pps a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=6IFa9wvqVegA:10 a=GoEa3M9JfhUA:10 a=JKzNtrQx2KmTOcwNqaUA:9 a=CjuIK1q_8ugA:10 cc=ntf awl=host:14714
+X-Proofpoint-GUID: RBeii5_5vapF85TCxdsYOB8ktqI7jxXS
+X-Proofpoint-ORIG-GUID: RBeii5_5vapF85TCxdsYOB8ktqI7jxXS
 
-On 2 Jun 2025, at 11:18, Zi Yan wrote:
-
-> migratetype is no longer overwritten during pageblock isolation,
-> start_isolate_page_range(), has_unmovable_pages(), and
-> set_migratetype_isolate() no longer need which migratetype to restore
-> during isolation failure.
+On Mon, Jun 02, 2025 at 06:28:58PM +0200, David Hildenbrand wrote:
+> On 02.06.25 15:26, Lorenzo Stoakes wrote:
+> > On Mon, Jun 02, 2025 at 02:26:21PM +0200, David Hildenbrand wrote:
+> > > On 02.06.25 13:55, Lorenzo Stoakes wrote:
+> > > > On Fri, May 30, 2025 at 08:51:14PM +0200, David Hildenbrand wrote:
+> > > > > >     	if (vp->remove) {
+> > > > > > @@ -1823,6 +1829,14 @@ struct vm_area_struct *copy_vma(struct vm_area_struct **vmap,
+> > > > > >     		faulted_in_anon_vma = false;
+> > > > > >     	}
+> > > > > > +	/*
+> > > > > > +	 * If the VMA we are copying might contain a uprobe PTE, ensure
+> > > > > > +	 * that we do not establish one upon merge. Otherwise, when mremap()
+> > > > > > +	 * moves page tables, it will orphan the newly created PTE.
+> > > > > > +	 */
+> > > > > > +	if (vma->vm_file)
+> > > > > > +		vmg.skip_vma_uprobe = true;
+> > > > > > +
+> > > > >
+> > > > > Assuming we extend the VMA on the way (not merge), would we handle that
+> > > > > properly?
+> > > > >
+> > > > > Or is that not possible on this code path or already broken either way?
+> > > >
+> > > > I'm not sure in what context you mean expand, vma_merge_new_range() calls
+> > > > vma_expand() so we call an expand a merge here, and this flag will be
+> > > > obeyed.
+> > >
+> > > Essentially, an mremap() that grows an existing mapping while moving it.
+> > >
+> > > Assume we have
+> > >
+> > > [ VMA 0 ] [ VMA X]
+> > >
+> > > And want to grow VMA 0 by 1 page.
+> > >
+> > > We cannot grow in-place, so we'll have to copy VMA 0 to another VMA, and
+> > > while at it, expand it by 1 page.
+> > >
+> > > expand_vma()->move_vma()->copy_vma_and_data()->copy_vma()
+> >
+> > OK so in that case you'd not have a merge at all, you'd have a new VMA and all
+> > would be well and beautiful :) or I mean hopefully. Maybe?
 >
-> For has_unmoable_pages(), it needs to know if the isolation is for CMA
-> allocation, so adding PB_ISOLATE_MODE_CMA_ALLOC provide the information=
-=2E
-> At the same time change isolation flags to enum pb_isolate_mode
-> (PB_ISOLATE_MODE_MEM_OFFLINE, PB_ISOLATE_MODE_CMA_ALLOC,
-> PB_ISOLATE_MODE_OTHER). Remove REPORT_FAILURE and check
-> PB_ISOLATE_MODE_MEM_OFFLINE, since only PB_ISOLATE_MODE_MEM_OFFLINE
-> reports isolation failures.
+> I'm really not sure. :)
 >
-> alloc_contig_range() no longer needs migratetype. Replace it with
-> PB_ISOLATE_MODE_CMA_ALLOC to tell if an allocation is for CMA. So does
-> __alloc_contig_migrate_range().
+> Could there be some very odd cases like
+>
+> [VMA 0 ][ VMA 1 ][ VMA X]
+>
+> and when we mremap() [ VMA 1 ] to grow, we would place it before [VMA 0 ],
+> and just by pure lick end up merging with that if the ranges match?
 
-This paragraph should be changed to:
+When we invoke copy_vma() we pass vrm->new_addr and vrm->new_len so this would
+trigger a merge and the correct uprobe handling.
 
-alloc_contig_range() no longer needs migratetype. Replace it with
-a newly defined acr_flags_t to tell if an allocation is for CMA. So does
-__alloc_contig_migrate_range(). Add ACR_OTHER (set to 0) to indicate
-other cases.
+Since we just don't trigger the breakpoint install in this situation, we'd
+correctly move over the breakpoint to the right position, and overwrite anything
+we expanded into.
+
+I do want to do a mremap doc actually to cover all the weird cases, because
+there's some weird stuff in there and it's worth covering off stuff for users
+and stuff for kernel people :)
 
 >
-> Signed-off-by: Zi Yan <ziy@nvidia.com>
-> Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
-> ---
->  drivers/virtio/virtio_mem.c    |  4 +-
->  include/linux/gfp.h            | 18 ++++++++-
->  include/linux/page-isolation.h |  7 +---
->  include/trace/events/kmem.h    | 14 ++++---
->  mm/cma.c                       |  3 +-
->  mm/memory_hotplug.c            |  6 +--
->  mm/page_alloc.c                | 27 ++++++-------
->  mm/page_isolation.c            | 70 +++++++++++++++-------------------=
+> We're in the corner cases now, ... so this might not be relevant. But I hope
+> we can clean up that uprobe mmap call later ...
 
->  8 files changed, 79 insertions(+), 70 deletions(-)
+Yeah with this initial fix in we can obviously revisit as needed!
+
+>
+> >
+> > >
+> > >
+> > > But maybe I'm getting lost in the code. (e.g., expand_vma() vs. vma_expand()
+> > > ... confusing :) )
+> >
+> > Yeah I think Liam or somebody else called me out for this :P I mean it's
+> > accurate naming in mremap.c but that's kinda in the context of the mremap.
+> >
+> > For VMA merging vma_expand() is used generally for a new VMA, since you're
+> > always expanding into the gap, but because we all did terrible things in past
+> > lives also called by relocate_vma_down() which is a kinda-hack for initial stack
+> > relocation on initial process setup.
+> >
+> > It maybe needs renaming... But expand kinda accurately describes what's going on
+> > just semi-overloaded vs. mremap() now :>)
+> >
+> > VMA merge code now at least readable enough that you can pick up on the various
+> > oddnesses clearly :P
+>
+> :)
+>
+> --
+> Cheers,
+>
+> David / dhildenb
 >
 
-
-The fixup to restore acr_flags_t:
-
-
-=46rom d0205580ab70aaf93f3f7c04b53dc595ee387bac Mon Sep 17 00:00:00 2001
-From: Zi Yan <ziy@nvidia.com>
-Date: Mon, 2 Jun 2025 12:53:58 -0400
-Subject: [PATCH] restore acr_flags_t.
-
-Signed-off-by: Zi Yan <ziy@nvidia.com>
----
- drivers/virtio/virtio_mem.c    |  4 ++--
- include/linux/gfp.h            | 21 +++++----------------
- include/linux/page-isolation.h | 15 +++++++++++++++
- include/trace/events/kmem.h    | 12 ++++++------
- mm/cma.c                       |  3 +--
- mm/page_alloc.c                | 24 ++++++++++++------------
- 6 files changed, 41 insertions(+), 38 deletions(-)
-
-diff --git a/drivers/virtio/virtio_mem.c b/drivers/virtio/virtio_mem.c
-index 535680a54ff5..6bce70b139b2 100644
---- a/drivers/virtio/virtio_mem.c
-+++ b/drivers/virtio/virtio_mem.c
-@@ -1243,8 +1243,8 @@ static int virtio_mem_fake_offline(struct virtio_me=
-m *vm, unsigned long pfn,
- 		if (atomic_read(&vm->config_changed))
- 			return -EAGAIN;
-
--		rc =3D alloc_contig_range(pfn, pfn + nr_pages,
--					PB_ISOLATE_MODE_OTHER, GFP_KERNEL);
-+		rc =3D alloc_contig_range(pfn, pfn + nr_pages, ACR_OTHER,
-+					GFP_KERNEL);
- 		if (rc =3D=3D -ENOMEM)
- 			/* whoops, out of memory */
- 			return rc;
-diff --git a/include/linux/gfp.h b/include/linux/gfp.h
-index 17b92888d6de..95065cec85e5 100644
---- a/include/linux/gfp.h
-+++ b/include/linux/gfp.h
-@@ -423,25 +423,14 @@ static inline bool gfp_compaction_allowed(gfp_t gfp=
-_mask)
- extern gfp_t vma_thp_gfp_mask(struct vm_area_struct *vma);
-
- #ifdef CONFIG_CONTIG_ALLOC
--/*
-- * Pageblock isolation modes:
-- * PB_ISOLATE_MODE_MEM_OFFLINE - isolate to offline (!allocate) memory
-- *				 e.g., skip over PageHWPoison() pages and
-- *				 PageOffline() pages. Unmovable pages will be
-- *				 reported in this mode.
-- * PB_ISOLATE_MODE_CMA_ALLOC   - isolate for CMA allocations
-- * PB_ISOLATE_MODE_OTHER       - isolate for other purposes
-- */
--enum pb_isolate_mode {
--	PB_ISOLATE_MODE_MEM_OFFLINE,
--	PB_ISOLATE_MODE_CMA_ALLOC,
--	PB_ISOLATE_MODE_OTHER,
--};
-+
-+typedef unsigned int __bitwise acr_flags_t;
-+#define ACR_OTHER	((__force acr_flags_t)0)	// other allocations
-+#define ACR_CMA		((__force acr_flags_t)BIT(0))	// allocate for CMA
-
- /* The below functions must be run on a range from a single zone. */
- extern int alloc_contig_range_noprof(unsigned long start, unsigned long =
-end,
--				     enum pb_isolate_mode isol_mode,
--				     gfp_t gfp_mask);
-+				     acr_flags_t alloc_flags, gfp_t gfp_mask);
- #define alloc_contig_range(...)			alloc_hooks(alloc_contig_range_noprof(=
-__VA_ARGS__))
-
- extern struct page *alloc_contig_pages_noprof(unsigned long nr_pages, gf=
-p_t gfp_mask,
-diff --git a/include/linux/page-isolation.h b/include/linux/page-isolatio=
-n.h
-index 7ed60a339a02..3e2f960e166c 100644
---- a/include/linux/page-isolation.h
-+++ b/include/linux/page-isolation.h
-@@ -38,6 +38,21 @@ static inline void set_pageblock_isolate(struct page *=
-page)
- }
- #endif
-
-+/*
-+ * Pageblock isolation modes:
-+ * PB_ISOLATE_MODE_MEM_OFFLINE - isolate to offline (!allocate) memory
-+ *				 e.g., skip over PageHWPoison() pages and
-+ *				 PageOffline() pages. Unmovable pages will be
-+ *				 reported in this mode.
-+ * PB_ISOLATE_MODE_CMA_ALLOC   - isolate for CMA allocations
-+ * PB_ISOLATE_MODE_OTHER       - isolate for other purposes
-+ */
-+enum pb_isolate_mode {
-+	PB_ISOLATE_MODE_MEM_OFFLINE,
-+	PB_ISOLATE_MODE_CMA_ALLOC,
-+	PB_ISOLATE_MODE_OTHER,
-+};
-+
- void __meminit init_pageblock_migratetype(struct page *page,
- 					  enum migratetype migratetype,
- 					  bool isolate);
-diff --git a/include/trace/events/kmem.h b/include/trace/events/kmem.h
-index e0bcbc43a548..efffcf578217 100644
---- a/include/trace/events/kmem.h
-+++ b/include/trace/events/kmem.h
-@@ -312,9 +312,9 @@ TRACE_EVENT(mm_alloc_contig_migrate_range_info,
- 		 unsigned long nr_migrated,
- 		 unsigned long nr_reclaimed,
- 		 unsigned long nr_mapped,
--		 enum pb_isolate_mode isol_mode),
-+		 acr_flags_t alloc_flags),
-
--	TP_ARGS(start, end, nr_migrated, nr_reclaimed, nr_mapped, isol_mode),
-+	TP_ARGS(start, end, nr_migrated, nr_reclaimed, nr_mapped, alloc_flags),=
-
-
- 	TP_STRUCT__entry(
- 		__field(unsigned long, start)
-@@ -322,7 +322,7 @@ TRACE_EVENT(mm_alloc_contig_migrate_range_info,
- 		__field(unsigned long, nr_migrated)
- 		__field(unsigned long, nr_reclaimed)
- 		__field(unsigned long, nr_mapped)
--		__field(enum pb_isolate_mode, isol_mode)
-+		__field(acr_flags_t, alloc_flags)
- 	),
-
- 	TP_fast_assign(
-@@ -331,13 +331,13 @@ TRACE_EVENT(mm_alloc_contig_migrate_range_info,
- 		__entry->nr_migrated =3D nr_migrated;
- 		__entry->nr_reclaimed =3D nr_reclaimed;
- 		__entry->nr_mapped =3D nr_mapped;
--		__entry->isol_mode =3D isol_mode;
-+		__entry->alloc_flags =3D alloc_flags;
- 	),
-
--	TP_printk("start=3D0x%lx end=3D0x%lx isol_mode=3D%d nr_migrated=3D%lu n=
-r_reclaimed=3D%lu nr_mapped=3D%lu",
-+	TP_printk("start=3D0x%lx end=3D0x%lx alloc_flags=3D%d nr_migrated=3D%lu=
- nr_reclaimed=3D%lu nr_mapped=3D%lu",
- 		  __entry->start,
- 		  __entry->end,
--		  __entry->isol_mode,
-+		  __entry->alloc_flags,
- 		  __entry->nr_migrated,
- 		  __entry->nr_reclaimed,
- 		  __entry->nr_mapped)
-diff --git a/mm/cma.c b/mm/cma.c
-index 23aa35193122..9ee8fad797bc 100644
---- a/mm/cma.c
-+++ b/mm/cma.c
-@@ -822,8 +822,7 @@ static int cma_range_alloc(struct cma *cma, struct cm=
-a_memrange *cmr,
-
- 		pfn =3D cmr->base_pfn + (bitmap_no << cma->order_per_bit);
- 		mutex_lock(&cma->alloc_mutex);
--		ret =3D alloc_contig_range(pfn, pfn + count,
--					 PB_ISOLATE_MODE_CMA_ALLOC, gfp);
-+		ret =3D alloc_contig_range(pfn, pfn + count, ACR_CMA, gfp);
- 		mutex_unlock(&cma->alloc_mutex);
- 		if (ret =3D=3D 0) {
- 			page =3D pfn_to_page(pfn);
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 02a0f5621d10..c12442fdb579 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -6695,12 +6695,12 @@ static void alloc_contig_dump_pages(struct list_h=
-ead *page_list)
-
- /*
-  * [start, end) must belong to a single zone.
-- * @isol_mode: using pb_isolate_mode filter the type of migration in
-+ * @alloc_flags: using acr_flags_t to filter the type of migration in
-  *		trace_mm_alloc_contig_migrate_range_info.
-  */
- static int __alloc_contig_migrate_range(struct compact_control *cc,
- 					unsigned long start, unsigned long end,
--					enum pb_isolate_mode isol_mode)
-+					acr_flags_t alloc_flags)
- {
- 	/* This function is based on compact_zone() from compaction.c. */
- 	unsigned int nr_reclaimed;
-@@ -6772,7 +6772,7 @@ static int __alloc_contig_migrate_range(struct comp=
-act_control *cc,
- 		putback_movable_pages(&cc->migratepages);
- 	}
-
--	trace_mm_alloc_contig_migrate_range_info(start, end, isol_mode,
-+	trace_mm_alloc_contig_migrate_range_info(start, end, alloc_flags,
- 						 total_migrated,
- 						 total_reclaimed,
- 						 total_mapped);
-@@ -6843,7 +6843,7 @@ static int __alloc_contig_verify_gfp_mask(gfp_t gfp=
-_mask, gfp_t *gfp_cc_mask)
-  * alloc_contig_range() -- tries to allocate given range of pages
-  * @start:	start PFN to allocate
-  * @end:	one-past-the-last PFN to allocate
-- * @isol_mode:	allocation information used for pageblock isolation
-+ * @alloc_flags:	allocation information
-  * @gfp_mask:	GFP mask. Node/zone/placement hints are ignored; only some=
-
-  *		action and reclaim modifiers are supported. Reclaim modifiers
-  *		control allocation behavior during compaction/migration/reclaim.
-@@ -6860,7 +6860,7 @@ static int __alloc_contig_verify_gfp_mask(gfp_t gfp=
-_mask, gfp_t *gfp_cc_mask)
-  * need to be freed with free_contig_range().
-  */
- int alloc_contig_range_noprof(unsigned long start, unsigned long end,
--			      enum pb_isolate_mode isol_mode, gfp_t gfp_mask)
-+			      acr_flags_t alloc_flags, gfp_t gfp_mask)
- {
- 	unsigned long outer_start, outer_end;
- 	int ret =3D 0;
-@@ -6875,9 +6875,9 @@ int alloc_contig_range_noprof(unsigned long start, =
-unsigned long end,
- 		.alloc_contig =3D true,
- 	};
- 	INIT_LIST_HEAD(&cc.migratepages);
--
--	if (isol_mode =3D=3D PB_ISOLATE_MODE_MEM_OFFLINE)
--		return -EINVAL;
-+	enum pb_isolate_mode mode =3D (alloc_flags & ACR_CMA) ?
-+					    PB_ISOLATE_MODE_CMA_ALLOC :
-+					    PB_ISOLATE_MODE_OTHER;
-
- 	gfp_mask =3D current_gfp_context(gfp_mask);
- 	if (__alloc_contig_verify_gfp_mask(gfp_mask, (gfp_t *)&cc.gfp_mask))
-@@ -6904,7 +6904,7 @@ int alloc_contig_range_noprof(unsigned long start, =
-unsigned long end,
- 	 * put back to page allocator so that buddy can use them.
- 	 */
-
--	ret =3D start_isolate_page_range(start, end, isol_mode);
-+	ret =3D start_isolate_page_range(start, end, mode);
- 	if (ret)
- 		goto done;
-
-@@ -6920,7 +6920,7 @@ int alloc_contig_range_noprof(unsigned long start, =
-unsigned long end,
- 	 * allocated.  So, if we fall through be sure to clear ret so that
- 	 * -EBUSY is not accidentally used or returned to caller.
- 	 */
--	ret =3D __alloc_contig_migrate_range(&cc, start, end, isol_mode);
-+	ret =3D __alloc_contig_migrate_range(&cc, start, end, alloc_flags);
- 	if (ret && ret !=3D -EBUSY)
- 		goto done;
-
-@@ -6954,7 +6954,7 @@ int alloc_contig_range_noprof(unsigned long start, =
-unsigned long end,
- 	outer_start =3D find_large_buddy(start);
-
- 	/* Make sure the range is really isolated. */
--	if (test_pages_isolated(outer_start, end, isol_mode)) {
-+	if (test_pages_isolated(outer_start, end, mode)) {
- 		ret =3D -EBUSY;
- 		goto done;
- 	}
-@@ -6997,7 +6997,7 @@ static int __alloc_contig_pages(unsigned long start=
-_pfn,
- {
- 	unsigned long end_pfn =3D start_pfn + nr_pages;
-
--	return alloc_contig_range_noprof(start_pfn, end_pfn, PB_ISOLATE_MODE_OT=
-HER,
-+	return alloc_contig_range_noprof(start_pfn, end_pfn, ACR_OTHER,
- 					 gfp_mask);
- }
-
--- =
-
-2.47.2
-
-
-Best Regards,
-Yan, Zi
+Cheers, Lorenzo
 
