@@ -1,224 +1,268 @@
-Return-Path: <linux-kernel+bounces-670053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B598ACA812
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 03:28:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C738ACA817
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 03:43:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B77663AA5E1
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 01:26:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58BBB3BA98F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 01:43:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E40B079E1;
-	Mon,  2 Jun 2025 01:26:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57EEB8C1F;
+	Mon,  2 Jun 2025 01:43:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="l6GCEhyQ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xNchlMuY"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 363BB4C7C;
-	Mon,  2 Jun 2025 01:26:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A504129B0
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 01:43:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748827602; cv=none; b=HO6mKGd6DK+jsPyGw+aQzVRfs9tz3ztxpzo/N2PlG0iYZLtYI4tUWJOO3qCWL0YbUHzTK48QfwP2z+oWJn+ktNGGj+QQQ0N1WJWmjVBzaedmuest8EL57RYMrG81PWd0Q+y4qqf9dAFVCS9UoJ6hTbmc6zQfQNJtto4bFa0JRfw=
+	t=1748828620; cv=none; b=nfzH95/CgXhobbwp9befEohvLf1sZnOVx6ocArW0Jj6Ib6dnbcwjJc4PJHrRlF/rT8s5XXZMqS+ilwKZeBEXUhaN5OBhu4797hkIL3+2csqM1uLy+12F1RoOZH0DeQ+syi7VyDV4N2hwg65w/VL5OWJzeqfMmes+E5Hh8cp9bdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748827602; c=relaxed/simple;
-	bh=KHOrI/tcUQxQ/4g8TO2DNZqo8MwNVeHh8Rb/WFAhsMY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fNFU8ystIFRD6+Nmfie8uOSa+2lJtAwv1S8KRQAI2cJDJqZ+2c4huWxuWUO1s9BveCh61ULY5nUs7pwZA9whfH842aNCXkwCQs0ndenPUI0BgHwT59lBI0IwPBRi74ltUpiczg/KDU7Rknpsv4G/i/akDRW363+ANMbdhtmsVpM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=l6GCEhyQ; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1748827600; x=1780363600;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=KHOrI/tcUQxQ/4g8TO2DNZqo8MwNVeHh8Rb/WFAhsMY=;
-  b=l6GCEhyQV7xOonqcrkFtLccw6t+nmJEkLcyCEbbEXuLqkqUpMYXOnpiU
-   GPhp6A6+4PnD/kA9GhxfGJ+DmDrqDPwzV+6OycEjJXPodNAEj9Kdo7HFu
-   mTkLqqyP79MzXNOj00es52cCD1zJ/YSNYzhCko836ohjW9XF23T73ldGC
-   gHw2R/qO0fxiRO4LNbGyoNRtK9yFetQdWwj7ai4l8HKyvS01A1uwNPV5a
-   wPPB79hh/Jq9L/7WhgMVTpRM0m7bEIi8l/X5xC9WdUELpEMIAMa9AyZ5Z
-   slxmmYFzbIVVSVEBZ4kf7Ditd0OiI/HGNTWUeTeluOOwv0nH6om9dx4do
-   g==;
-X-CSE-ConnectionGUID: cYNFZuT/SkKCJBbMrq6fZQ==
-X-CSE-MsgGUID: ViAWmTSkR8+rp49WzVuFXg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11450"; a="50936428"
-X-IronPort-AV: E=Sophos;i="6.16,202,1744095600"; 
-   d="scan'208";a="50936428"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jun 2025 18:26:39 -0700
-X-CSE-ConnectionGUID: dHD8CikpSNaf/8GLC5VgOg==
-X-CSE-MsgGUID: q7DJSSPfTvanbnzLXeEggg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,202,1744095600"; 
-   d="scan'208";a="149695206"
-Received: from ranerica-svr.sc.intel.com ([172.25.110.23])
-  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jun 2025 18:26:39 -0700
-Date: Sun, 1 Jun 2025 18:31:44 -0700
-From: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-To: Rob Herring <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, x86@kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	Michael Kelley <mhklinux@outlook.com>, devicetree@vger.kernel.org,
-	Saurabh Sengar <ssengar@linux.microsoft.com>,
-	Chris Oo <cho@microsoft.com>, linux-hyperv@vger.kernel.org,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-	Ricardo Neri <ricardo.neri@intel.com>
-Subject: Re: [PATCH v3 06/13] dt-bindings: reserved-memory: Wakeup Mailbox
- for Intel processors
-Message-ID: <20250602013144.GA27991@ranerica-svr.sc.intel.com>
-References: <20250506-pompous-meaty-crane-97efce@kuoka>
- <20250507032339.GA27243@ranerica-svr.sc.intel.com>
- <20250512153224.GA3377771-robh@kernel.org>
- <20250513221456.GA2794@ranerica-svr.sc.intel.com>
- <20250514154248.GA2375202-robh@kernel.org>
- <20250515035338.GA4955@ranerica-svr.sc.intel.com>
- <20250519152937.GA2227051-robh@kernel.org>
- <20250519175606.GA9693@ranerica-svr.sc.intel.com>
- <20250524155650.GA16942@ranerica-svr.sc.intel.com>
- <20250529131634.GA2784667-robh@kernel.org>
+	s=arc-20240116; t=1748828620; c=relaxed/simple;
+	bh=3D5N5qY69CbwZgHWptHWeTHskJpWRrvqNIYWE4h9DbM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=N9+RZl5SYQgexZBjagbOIS7mgBO0uoyE0VDAWNThZMYc+NmtgNLyyaze/7uzn34hnAjNsyoZBJAqMh/ee5XB3Gbu3JMSZbVwdpya9LHgtpSBVWhrcbDL9GpxD9bl2PmJlnX1tLSY/HXNSpizMl68rrZdqM2I4txowqenrX1ahtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xNchlMuY; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-6024087086dso8548a12.0
+        for <linux-kernel@vger.kernel.org>; Sun, 01 Jun 2025 18:43:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1748828617; x=1749433417; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wYvGcWQJ9d1k2IJ1WZ8pmBWN9v/WGRaKrwMXLLXLqzw=;
+        b=xNchlMuYtftLvVQqSzNfvE2gnP+s/RrAFC6uHlIs/phC+IO8IHR0G8PTP5Kh1iUO4o
+         mcnaQ4CKWzfAEUCVsHPNyh3BR8gt/IAlYzWqMRLvFDii6rfgKyPZwxeXVrN5LNX5CoCD
+         qj/CTIwnI75pRnsfDYqmbEbTod67nBehIP+9Wfrq6SALyVK9vFZp9OWCs0MxQ5yjssws
+         5CzhXl8X3avlTsquuOx74+CCeiftNJC4vx7LDhbyjD1DxNdHFzguGb75xlqOA0MdoyAA
+         GhmUBYGs0ji3dobUsMlipZhPBZtyFxtN32HXv1mPfOvFLrcq8hRa9RxI7NS91Ptuex/C
+         23rw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748828617; x=1749433417;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wYvGcWQJ9d1k2IJ1WZ8pmBWN9v/WGRaKrwMXLLXLqzw=;
+        b=ggbZR5nZjJbWqtBzdKENnOJ9oMfjzk5dLhO/6Ofvqds/D8yTzLkNT4Rgfk+ccfMqCF
+         9YApyhw2bn64WJP9X7PA9GLnSNbbI3KxmRrKaoZCUC4o3INTu64WyvCp9HBKoYR7iWPf
+         YYd7bHoSMdx1eFCJmVLLpnN04A42guiKvbeOoB3HDgndcMamZit2gBvXOZ8CHGMxa1mr
+         9nk1EQETkEPAOqawbEg2fSMgDdYf4PUhUnyjwgpgp0Kd1woDZ/RAOt8ncrAbsdDwgsDd
+         /y8VmoSOOhWTLIqTYF7n1l5eLYhHzC+9oNh9stHbmaPMWKQcw+gpaVxfHwcJDJl0WDjW
+         d9yQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVkEv5zOPtrFlFUdToXktKKWk/F+TO/OMR1dTwBtmOcJ2Qnkxtl+J7hULRt7JiC/ViwqhQwna2AC4I4+fA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEabIZ59zd+IWDBsgdSUxtKNvn7P7EBRmKotOBPLAnrnivPfHD
+	k1g9y63Wa3dIlwb+/wNkF4MWOx4YtIOQ0LQFFf60YDdWV1K1WYrJdSN0NnmhhYhNCIxSxSD9fxE
+	TeEjhXSk4K4VhHFWOWvgjX3uA0xHXYqyPU0KkOtjm
+X-Gm-Gg: ASbGnctWeylXBi3a5R0TEIXL8IJ/f/w2r7HNsELssCDesum+JcSkOEZ0uO5xPT4y9VB
+	N9ba8qfH87xPjx6zy9lfKN/p2XYCH7aysHq3vKIMbvST5kMgtfCayieKOY9bz0RYpRAgeAcAL0K
+	fvn3x+3IDEHE2Q0RW46hQlWCTA+d249cVTHfQQ1n+h2iZIrTv5/H33IJ4eJKy6xpRqvYiggz9X0
+	xX4
+X-Google-Smtp-Source: AGHT+IFMz4mfq5Y8/o5Yf0vlPV+OHhh4I+9hHTwnCw8e89qHhyt4L6kmwID2mb8bj9joV5ZdYADHSGEV4nVYb0ujbYU=
+X-Received: by 2002:a05:6402:1852:b0:5fd:2041:88f7 with SMTP id
+ 4fb4d7f45d1cf-605ad29d9d5mr95107a12.2.1748828616702; Sun, 01 Jun 2025
+ 18:43:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250529131634.GA2784667-robh@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20250601200108.23186-1-ryncsn@gmail.com>
+In-Reply-To: <20250601200108.23186-1-ryncsn@gmail.com>
+From: Lokesh Gidra <lokeshgidra@google.com>
+Date: Sun, 1 Jun 2025 18:43:25 -0700
+X-Gm-Features: AX0GCFsO6EmUtlJ041E_1X1dTrIiqSlIvY3mMfgpc6Yn0ldxuA-DlfU3YYsdO14
+Message-ID: <CA+EESO5DWB1C3ggH53n=DQL6xNz1bU+NWh7C7_ao=o9NGLvQ4w@mail.gmail.com>
+Subject: Re: [PATCH v2] mm: userfaultfd: fix race of userfaultfd_move and swap cache
+To: Kairui Song <kasong@tencent.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Barry Song <21cnbao@gmail.com>, Peter Xu <peterx@redhat.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Andrea Arcangeli <aarcange@redhat.com>, 
+	David Hildenbrand <david@redhat.com>, stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 29, 2025 at 08:16:34AM -0500, Rob Herring wrote:
-> On Sat, May 24, 2025 at 08:56:50AM -0700, Ricardo Neri wrote:
-> > On Mon, May 19, 2025 at 10:56:06AM -0700, Ricardo Neri wrote:
-> > > On Mon, May 19, 2025 at 10:29:37AM -0500, Rob Herring wrote:
-> > > > On Wed, May 14, 2025 at 08:53:38PM -0700, Ricardo Neri wrote:
-> > > > > On Wed, May 14, 2025 at 10:42:48AM -0500, Rob Herring wrote:
-> > > > > > On Tue, May 13, 2025 at 03:14:56PM -0700, Ricardo Neri wrote:
-> > > > > > > On Mon, May 12, 2025 at 10:32:24AM -0500, Rob Herring wrote:
-> > > > > > > > On Tue, May 06, 2025 at 08:23:39PM -0700, Ricardo Neri wrote:
-> > > > > > > > > On Tue, May 06, 2025 at 09:10:22AM +0200, Krzysztof Kozlowski wrote:
-> > > > > > > > > > On Mon, May 05, 2025 at 10:16:10PM GMT, Ricardo Neri wrote:
-> > > > > > > > > > > > If this is a device, then compatibles specific to devices. You do not
-> > > > > > > > > > > > get different rules than all other bindings... or this does not have to
-> > > > > > > > > > > > be binding at all. Why standard reserved-memory does not work for here?
-> > > > > > > > > > > > 
-> > > > > > > > > > > > Why do you need compatible in the first place?
-> > > > > > > > > > > 
-> > > > > > > > > > > Are you suggesting something like this?
-> > > > > > > > > > > 
-> > > > > > > > > > > reserved-memory {
-> > > > > > > > > > > 	# address-cells = <2>;
-> > > > > > > > > > > 	# size-cells = <1>;
-> > > > > > > > > > > 
-> > > > > > > > > > > 	wakeup_mailbox: wakeupmb@fff000 {
-> > > > > > > > > > > 		reg = < 0x0 0xfff000 0x1000>
-> > > > > > > > > > > 	}
-> > > > > > > > > > > 
-> > > > > > > > > > > and then reference to the reserved memory using the wakeup_mailbox
-> > > > > > > > > > > phandle?
-> > > > > > > > > > 
-> > > > > > > > > > Yes just like every other, typical reserved memory block.
-> > > > > > > > > 
-> > > > > > > > > Thanks! I will take this approach and drop this patch.
-> > > > > > > > 
-> > > > > > > > If there is nothing else to this other than the reserved region, then 
-> > > > > > > > don't do this. Keep it like you had. There's no need for 2 nodes.
-> > > > > > > 
-> > > > > > > Thank you for your feedback!
-> > > > > > > 
-> > > > > > > I was planning to use one reserved-memory node and inside of it a child
-> > > > > > > node to with a `reg` property to specify the location and size of the
-> > > > > > > mailbox. I would reference to that subnode from the kernel code.
-> > > > > > > 
-> > > > > > > IIUC, the reserved-memory node is only the container and the actual memory
-> > > > > > > regions are expressed as child nodes.
-> > > > > > > 
-> > > > > > > I had it like that before, but with a `compatible` property that I did not
-> > > > > > > need.
-> > > > > > > 
-> > > > > > > Am I missing anything?
-> > > > > > 
-> > > > > > Without a compatible, how do you identify which reserved region is the 
-> > > > > > wakeup mailbox?
-> > > > > 
-> > > > > I thought using a phandle to the wakeup_mailbox. Then I realized that the
-> > > > > device nodes using the mailbox would be CPUs. They would need a `memory-
-> > > > > region` property. This does not look right to me.
-> > > > 
-> > > > That doesn't really make sense unless it's a memory region per CPU.
-> > > 
-> > > Agreed.
-> > > 
-> > > > 
-> > > > 
-> > > > > > Before you say node name, those are supposed to be 
-> > > > > > generic though we failed to enforce anything for /reserved-memory child 
-> > > > > > nodes.
-> > > > > 
-> > > > > I see. Thanks for preventing me from doing this.
-> > > > > 
-> > > > > Then the `compatible` property seems the way to go after all.
-> > > > > 
-> > > > > This what motivated this patch in the first place. On further analysis,
-> > > > > IIUC, defining bindings and schema is not needed, IMO, since the mailbox
-> > > > > is already defined in the ACPI spec. No need to redefine.
-> > > > 
-> > > > You lost me...
-> > > > 
-> > > > You don't need to redefine the layout of the memory region as that's 
-> > > > defined already somewhere,
-> > > 
-> > > Great!
-> > > 
-> > > > but you do need to define where it is for DT. 
-> > > > And for that, you need a compatible. Do you know where it is in this 
-> > > > case?
-> > > 
-> > > The compatible is not defined anywhere yet. Is a DT schema needed to
-> > > document it? If yes, I am usure what to put in the description. We tried
-> > > to not redefine the mailbox and refer to the ACPI spec. That was a NAK
-> > > from Krzysztof [1].
-> > > 
-> > > [1]. https://lore.kernel.org/r/624e1985-7dd2-4abe-a918-78cb43556967@kernel.org
-> > 
-> > In summary, documenting the `compatible` property for the mailbox is
-> > necessary. There is no need to redefine the malbox on a schema but
-> > referring to the ACPI spec is not acceptable.
-> 
-> There's the whole "DT bindings in ACPI systems" where ACPI tables 
-> contain compatibles and DT properties which I think is what 
-> Krzysztof was objecting to (and I do too). But this is a DT based system 
-> that implements a mailbox region defined in an ACPI spec. That is 
-> perfectly fine to refer to.
+On Sun, Jun 1, 2025 at 1:01=E2=80=AFPM Kairui Song <ryncsn@gmail.com> wrote=
+:
+>
+> From: Kairui Song <kasong@tencent.com>
+>
+> On seeing a swap entry PTE, userfaultfd_move does a lockless swap cache
+> lookup, and try to move the found folio to the faulting vma when.
+> Currently, it relies on the PTE value check to ensure the moved folio
+> still belongs to the src swap entry, which turns out is not reliable.
+>
+> While working and reviewing the swap table series with Barry, following
+> existing race is observed and reproduced [1]:
+>
+> ( move_pages_pte is moving src_pte to dst_pte, where src_pte is a
+>  swap entry PTE holding swap entry S1, and S1 isn't in the swap cache.)
+>
+> CPU1                               CPU2
+> userfaultfd_move
+>   move_pages_pte()
+>     entry =3D pte_to_swp_entry(orig_src_pte);
+>     // Here it got entry =3D S1
+>     ... < Somehow interrupted> ...
+>                                    <swapin src_pte, alloc and use folio A=
+>
+>                                    // folio A is just a new allocated fol=
+io
+>                                    // and get installed into src_pte
+>                                    <frees swap entry S1>
+>                                    // src_pte now points to folio A, S1
+>                                    // has swap count =3D=3D 0, it can be =
+freed
+>                                    // by folio_swap_swap or swap
+>                                    // allocator's reclaim.
+>                                    <try to swap out another folio B>
+>                                    // folio B is a folio in another VMA.
+>                                    <put folio B to swap cache using S1 >
+>                                    // S1 is freed, folio B could use it
+>                                    // for swap out with no problem.
+>                                    ...
+>     folio =3D filemap_get_folio(S1)
+>     // Got folio B here !!!
+>     ... < Somehow interrupted again> ...
+>                                    <swapin folio B and free S1>
+>                                    // Now S1 is free to be used again.
+>                                    <swapout src_pte & folio A using S1>
+>                                    // Now src_pte is a swap entry pte
+>                                    // holding S1 again.
+>     folio_trylock(folio)
+>     move_swap_pte
+>       double_pt_lock
+>       is_pte_pages_stable
+>       // Check passed because src_pte =3D=3D S1
+>       folio_move_anon_rmap(...)
+>       // Moved invalid folio B here !!!
+>
+> The race window is very short and requires multiple collisions of
+> multiple rare events, so it's very unlikely to happen, but with a
+> deliberately constructed reproducer and increased time window, it can be
+> reproduced [1].
+>
+> It's also possible that folio (A) is swapped in, and swapped out again
+> after the filemap_get_folio lookup, in such case folio (A) may stay in
+> swap cache so it needs to be moved too. In this case we should also try
+> again so kernel won't miss a folio move.
+>
+> Fix this by checking if the folio is the valid swap cache folio after
+> acquiring the folio lock, and checking the swap cache again after
+> acquiring the src_pte lock.
+>
+> SWP_SYNCRHONIZE_IO path does make the problem more complex, but so far
+> we don't need to worry about that since folios only might get exposed to
+> swap cache in the swap out path, and it's covered in this patch too by
+> checking the swap cache again after acquiring src_pte lock.
+>
+> Testing with a simple C program to allocate and move several GB of memory
+> did not show any observable performance change.
+>
+> Cc: <stable@vger.kernel.org>
+> Fixes: adef440691ba ("userfaultfd: UFFDIO_MOVE uABI")
+> Closes: https://lore.kernel.org/linux-mm/CAMgjq7B1K=3D6OOrK2OUZ0-tqCzi+EJ=
+t+2_K97TPGoSt=3D9+JwP7Q@mail.gmail.com/ [1]
+> Signed-off-by: Kairui Song <kasong@tencent.com>
+>
+> ---
+>
+> V1: https://lore.kernel.org/linux-mm/20250530201710.81365-1-ryncsn@gmail.=
+com/
+> Changes:
+> - Check swap_map instead of doing a filemap lookup after acquiring the
+>   PTE lock to minimize critical section overhead [ Barry Song, Lokesh Gid=
+ra ]
+>
+>  mm/userfaultfd.c | 27 +++++++++++++++++++++++++--
+>  1 file changed, 25 insertions(+), 2 deletions(-)
+>
+> diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+> index bc473ad21202..a74ede04996c 100644
+> --- a/mm/userfaultfd.c
+> +++ b/mm/userfaultfd.c
+> @@ -1084,8 +1084,11 @@ static int move_swap_pte(struct mm_struct *mm, str=
+uct vm_area_struct *dst_vma,
+>                          pte_t orig_dst_pte, pte_t orig_src_pte,
+>                          pmd_t *dst_pmd, pmd_t dst_pmdval,
+>                          spinlock_t *dst_ptl, spinlock_t *src_ptl,
+> -                        struct folio *src_folio)
+> +                        struct folio *src_folio,
+> +                        struct swap_info_struct *si)
+>  {
+> +       swp_entry_t entry;
+> +
+>         double_pt_lock(dst_ptl, src_ptl);
+>
+>         if (!is_pte_pages_stable(dst_pte, src_pte, orig_dst_pte, orig_src=
+_pte,
+> @@ -1102,6 +1105,16 @@ static int move_swap_pte(struct mm_struct *mm, str=
+uct vm_area_struct *dst_vma,
+>         if (src_folio) {
+>                 folio_move_anon_rmap(src_folio, dst_vma);
+>                 src_folio->index =3D linear_page_index(dst_vma, dst_addr)=
+;
+> +       } else {
+> +               /*
+> +                * Check if the swap entry is cached after acquiring the =
+src_pte
+> +                * lock. Or we might miss a new loaded swap cache folio.
+> +                */
+> +               entry =3D pte_to_swp_entry(orig_src_pte);
 
-That is correct. It is a DT-based system.
+Can we pass this also from move_pages_pte()? It would be great to
+minimize PTL critical section.
 
-Great! I will refer to the ACPI spec in my schema in my next version.
+> +               if (si->swap_map[swp_offset(entry)] & SWAP_HAS_CACHE) {
+> +                       double_pt_unlock(dst_ptl, src_ptl);
+> +                       return -EAGAIN;
+> +               }
+>         }
+>
+>         orig_src_pte =3D ptep_get_and_clear(mm, src_addr, src_pte);
+> @@ -1409,10 +1422,20 @@ static int move_pages_pte(struct mm_struct *mm, p=
+md_t *dst_pmd, pmd_t *src_pmd,
+>                                 folio_lock(src_folio);
+>                                 goto retry;
+>                         }
+> +                       /*
+> +                        * Check if the folio still belongs to the target=
+ swap entry after
+> +                        * acquiring the lock. Folio can be freed in the =
+swap cache while
+> +                        * not locked.
+> +                        */
+> +                       if (unlikely(!folio_test_swapcache(folio) ||
+> +                                    entry.val !=3D folio->swap.val)) {
+> +                               err =3D -EAGAIN;
+> +                               goto out;
+> +                       }
 
-> 
-> > 
-> > What about referring in the schema to the Intel TDX Virtual Firmware Design
-> > Guide[2]? It describes how firmware should implement the mailbox the section
-> > 4.3.5.
-> > 
-> > A mailbox with compatible = "intel,wakeup-mailbox" is implemented after the
-> > guide that Intel published.
-> 
-> Use whatever you think best describes the programming model of the 
-> region.
+This check will get skipped if the folio was locked by folio_lock()
+rather than folio_trylock(). It seems to me that the correct way to do
+this is to check outside this if block (right before calling
+move_swap_pte()) and with 'src_folio' instead of 'folio'. Even better,
+if you pass 'entry' as well to move_swap_pte() as per my previous
+comment, then you can move this check also in move_swap_pte().
 
-Understood.
-
-Thanks and BR,
-Ricardo
+>                 }
+>                 err =3D move_swap_pte(mm, dst_vma, dst_addr, src_addr, ds=
+t_pte, src_pte,
+>                                 orig_dst_pte, orig_src_pte, dst_pmd, dst_=
+pmdval,
+> -                               dst_ptl, src_ptl, src_folio);
+> +                               dst_ptl, src_ptl, src_folio, si);
+>         }
+>
+>  out:
+> --
+> 2.49.0
+>
 
