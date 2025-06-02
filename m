@@ -1,404 +1,270 @@
-Return-Path: <linux-kernel+bounces-670757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00F86ACB8C6
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 17:46:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F0B1ACB909
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 17:54:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6C679442E2
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 15:36:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7691E945833
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 15:36:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 525F720E026;
-	Mon,  2 Jun 2025 15:36:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A237E221299;
+	Mon,  2 Jun 2025 15:37:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="ifuRmfE6"
-Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011017.outbound.protection.outlook.com [40.107.130.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Ws5S/c5L"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1603221FD0;
-	Mon,  2 Jun 2025 15:36:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.17
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748878565; cv=fail; b=ZrjHZDPKU9cGNR4iYYv7CxEA5pUasgM1n8O1sdpmzx97o4dDZTZbCIf9bD/wlMpGabaFd87zhYecPXafzFf8hcKye8jtpYsadJSf6ko4/iGGDV+jNLFQYwiXLjh9SAQLUWJ8T8xxxJg5/Hpf7Jlz8/Ei5pGKtLithVUuIOJsRCU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748878565; c=relaxed/simple;
-	bh=sDK7lc8oLTazG7XXg7wwhHNnJSUDmhNZ87nHlr7RW1g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=nMzYDeaVy4ULPgsiwAMrbiXGvWvQhnK/KCsVGd6iebg/S127lugWp5lEIyFv/0QU4yP6pO9EQ3H0guRQ1Iu3wdiO2+29zqGqC2CDKPbHx7Wu95RLdLmAUpwKuaODxeGbAKdjlx4VLWd/FP2n7wMKn4Ar3yr1LTsYEAPN/NV686g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=ifuRmfE6; arc=fail smtp.client-ip=40.107.130.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nm78blvVl/1OEAA/a/PIJ2f0SfoX7dRj5HcAfS5+YKHQ+Xk0AvjoyP14XVfGcHL5JUAOocMu8ne+Ff8b91+2bYeKZ/yhy8NAOOQdOtcXqaclm7o7BVZrfucz+UwnhYPRuEDo3gFoviUEH3/d2qq4yP9j7ZkaKCPkaLsaTDNq1KRqzrmol3o1XJWZyv2R8KrxaYgGo6WCuvlpyGI8MfMvNM9UUKlPjWbVR2FUJp49nJzRgWvSl6gG5J/IKt+dbxwCpZ6t37nk26RNSbLvXI9sQ2AvNPytibJ6V/Hu35Vc5xFdKmtOPFBWmOknyWrcoUweDguAzs07NQzziYwmR2ZN8A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DChxUJEJ6k3tEydSSmsri0Uj34BaVdQKnqzQHRHLadw=;
- b=PDeJOQEoThGhUVEklkxQJKh6ptaE1gQuNOol8HD2DWqcU6/Ft/+HHStapNDBt+UXXo9ZHCYC7Rr8z/aMt9YKIt6eJvws7oXrz1nG0jNV7uORtjTqpanfki+MtVQRcmlKli0m29CsYRG4vLcY1qB+Ot7Am+iYCA3IE3mKmYMP8CskHws5atoyjFjL1ydodQWir6XWLGv8xMrkTvnFZGmcIZJOsdVI8MYXbTEssqvhP3FgYsYEjjAm4lzCg6MBYAVHI6qMb3vRI0EEOds5jhkAoIhUjCFnRwbpTEt/TvQrZtw0SbnEL9P2eWQcI+ZDblonvlGttHvTN11MYR1BbCijVQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DChxUJEJ6k3tEydSSmsri0Uj34BaVdQKnqzQHRHLadw=;
- b=ifuRmfE65D1ZO6sKLJTS1mEZzA8yM2YZMmmObfzgwLt0jwFrNPBAfLWkTk+giuvKX42N+k7oRMPSMTOdU70PSq1kWTHgHqDHRUnk2DJK1tHqWKcER/FGPRQEASjNfYm26bqmoQkaVFXTYB65c4qICHofN+hRzo6HU58hhuT9wBKbAHtAOqrc1oKVR0TevhX9wa+uhzz0edlQt6OqnTOaNnOawmeVSSLrhXbBd9oEXvCw5N/YBpSMZdDWOjyJpmltbsR7t4E7Wf+3TNEdb5nM1og+c4q/AdCeQerELTolTXp+yE4q1Hshwfn61+1hTBiKWDOoaZTgvRKNJI8XDJhBxQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by PR3PR04MB7420.eurprd04.prod.outlook.com (2603:10a6:102:93::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.37; Mon, 2 Jun
- 2025 15:36:00 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%6]) with mapi id 15.20.8769.025; Mon, 2 Jun 2025
- 15:36:00 +0000
-Date: Mon, 2 Jun 2025 11:35:52 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Stefan Wahren <wahrenst@gmx.net>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"open list:NETWORKING DRIVERS" <netdev@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
-Subject: Re: [PATCH 1/1] dt-bindings: net: convert qca,qca7000.txt yaml format
-Message-ID: <aD3E2ONB6Ay1wwmk@lizhi-Precision-Tower-5810>
-References: <20250529191727.789915-1-Frank.Li@nxp.com>
- <047fb49e-1ca8-43a6-b122-0d6fa9a61c74@gmx.net>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <047fb49e-1ca8-43a6-b122-0d6fa9a61c74@gmx.net>
-X-ClientProxiedBy: SJ0PR03CA0049.namprd03.prod.outlook.com
- (2603:10b6:a03:33e::24) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF55A188907
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 15:36:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748878621; cv=none; b=Z2YpfQRuV8iT4Q1tKn2Uf34TaOpcU7NnnjmjkLblOuug5M8X7iG5S4EhT/oRm7G+UOTeT6qOIG8Qzqh5yeieW6PNtZE5XTovsDGbNkzRudkknz3oLXEHe0zDUc+KRAt2yoG8oo4Oycaw/2Ye7Rxscfk9nag0rXE/A9mqe0farGo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748878621; c=relaxed/simple;
+	bh=3pVngmV9mQTMkPWE3piKLOBdpJ4NfJJcPoFfSAWhpeo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ILShDEeT91Nh0wHc1C/5cieoDa3fLwgpMZ72qQtW+2IHCMI98i9z9v6jpvXrEEl5dMmcvZ1yf/cmF1FflhOy392sUfxxDG+HFpqbi31zE2WWi/b0MDcDpx2J1DU+VRZD5sxNu9we8JSxQgv0g4XRH3TKP3ZU4bqUXRYTdUEykEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=Ws5S/c5L; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-32aabfd3813so11906211fa.3
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jun 2025 08:36:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1748878618; x=1749483418; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=9QK6b48IzoYZ1czrVDC4E9lcyQE5tyMzcuV+x/G4A10=;
+        b=Ws5S/c5Lz6cu7Acwy1SUC9IpArUBWF+CY11rQ4lMCI9gY/rs5i2n+Uwf34a9eFPcQg
+         jwNFx+RboazEc323Am4fjIDvCrCfMaafWxxY5KIAMN34HiZEIGE/xLGOLbPkecoOu3Fx
+         cMCSGdBYsYUmXHLKqpfqn6B2e428C18ex5hv0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748878618; x=1749483418;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9QK6b48IzoYZ1czrVDC4E9lcyQE5tyMzcuV+x/G4A10=;
+        b=OEqQRhpOyjHzajlzZpoKJOB4oVH3Dhh5Z811/B6e/fWkgRTlmYLcVk0V8KGSQfXB8Q
+         /Hi8BDYJ4pwkYW33mkZaB6ZR/inhIn9qTF11RXdlCwaG1DUapPuQz3qm31XYQGjHOrEB
+         oQKrjF/jnjZgq28AE/nDpVdD+zeMXvexU8H1v+u08fcCRoU9klF1jeEBVThaN9HF1VCn
+         TbQDZbOQ3x0d38O323htB0icpgxPse338qO4G9fD5vqwF5+WvPZYX4C+UQeuNFR5C7Lk
+         ymBzRMEKZvBbgFekq7dsfxdXNx3oTpRE9B+gEuhAeJWJA6w/uJpEOINRPLxDD4A7cZ4l
+         3Xkw==
+X-Forwarded-Encrypted: i=1; AJvYcCVkEQPWH1qApR1ZVg4kCwEpsTrFLmU+bC0Pc9N3tpug/CS70iUSLCdPTvPSE8FCdQo4h0/tRVZdJu8jwXA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7HT7pkPEJt/03DucPrB7oTB0Di+zhlHQ2HEzC7UNtVDDSIcgI
+	k4jkXlMgZqZGs7L3n+DhyJnIKLBq5rO9T7so4fbnFz+NHU9cWIDzgtKmJY4yHd0AqYHTjwmvEIS
+	OOtOIZjofWLIl7j1QTfXRnIVh3y7U91Y8qGp9b25z
+X-Gm-Gg: ASbGnct5qkifZN1nVjmIKM/PP7dQDgD8JrFsVeggTPph73bzXXv86ujWlBxd1FTV0n6
+	snroBm8L9fr5u7YkrDKygpt5AvlN3ZfSEXPzXItpuQalHsJGHFGn9/Y7K6mkUiRX//ASyA1zxne
+	p5lTMG2CCq3oX9Y4q+vUXw6k1hXsAAlsS9rg==
+X-Google-Smtp-Source: AGHT+IGVdqEkKnUyCTSFT+9+5Aa03z5mtKupyjnf1plFynTemOAfSu/8mZNsQ15tprQhbCLpstHUfH+3BYqpCdCELEM=
+X-Received: by 2002:a2e:a9a7:0:b0:32a:885b:d0f with SMTP id
+ 38308e7fff4ca-32a907b5ffemr33324241fa.24.1748878617891; Mon, 02 Jun 2025
+ 08:36:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|PR3PR04MB7420:EE_
-X-MS-Office365-Filtering-Correlation-Id: bc25c9fa-eaba-4395-5a77-08dda1eb2cd5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|7416014|376014|52116014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?xhgecGJlHh8+pgslEJF5ar47H9Yxz2FzwzzkRIjtDgGf4Nehaj8CjsNEUWw5?=
- =?us-ascii?Q?47WC3h+6mRQnwUZOLEoZMF0l5ih6yxOc86If9bsqfB1dNlTZ+QNYHJ4a3MvW?=
- =?us-ascii?Q?WXjQAMUuc65anJ7MpSrB9BwdHYmbhNY2d6UHilS1g2DnLINX5NgIBRZ5h/TT?=
- =?us-ascii?Q?cO2KIHsFuEnu2XV9D7USE5//XOD+5d/ee1T0q3lGm27PnBUzLR+8KQaTOZ+f?=
- =?us-ascii?Q?CipJP/rVPwWWa/u+mzAxGhnbyNpenzCFzT5fJ9PT7mCY6IOhIlnNQ7SQu+/w?=
- =?us-ascii?Q?2R3PNwCiFn0tzXZdIFy+b5pVsIpghX8ashD131KHOc8Z/YFkMAqZjOTmawnP?=
- =?us-ascii?Q?SLzX7eRw+UC7cOfU+qQL22rbAXuigHAbUCO/mZeIN35Db4je72f9TtisVC9Q?=
- =?us-ascii?Q?IzoCTR7aKoW116naGzvcXwQdsPLYhgZY4UPs0ZLpRVjzguYSqNljNs6yn5B1?=
- =?us-ascii?Q?oad7horMUtqzx4K+eg3vohdEiAU6EGYgADNbKVn0YnmRX/xTHqzUisMEBAuW?=
- =?us-ascii?Q?yLYPylY2XxXHSxHXBlvwdQta8qBo0QQ2a3f7l0qbGVHP109tXi6nqKQ3/zT/?=
- =?us-ascii?Q?PmnFOphFbUwcpqM5u4HldWFQdnQAdd36VacSKr6AGjrh6UHOc2JL18+tae/0?=
- =?us-ascii?Q?LmvQv3XKlJKDP4UFIFfXDw2CoxG/6gCgLXvIt/TGJGRHNVC7Sfsr9v5F4Pax?=
- =?us-ascii?Q?XpQMtye8+nmBxw9UJIGBrwQ6AOOELW7IWrPHYeUe5VxreXCPfjiJmv2QkZj9?=
- =?us-ascii?Q?4LtjSkXnMzFbq+jV/bk96kWgz1UOr3/3apVU+z8Kz3xIAoufz81LqAYNLbjo?=
- =?us-ascii?Q?tG36esxY/djoanQprBYVsrbyg0ej6W8zuwunhYkH5EbDJnTuEOHnUoacdnhD?=
- =?us-ascii?Q?laaVthSeM5IR1Fa3uOvN+k9vdi0t41hISTvwwWGK75vNa1e/P/zDenWzY/t8?=
- =?us-ascii?Q?C8mNJJkY8ClxDUti67aEipaNwl6IoGd21U/tu1DXfvbfkj/rxOG46qSP+b20?=
- =?us-ascii?Q?n4VmlvtubKlLBt9YDy34Bm4OEUkct1UH+8429RwkvhwamCXgr2TZD/igY+/z?=
- =?us-ascii?Q?2NweGtxGDb6yAFvCoscED+7igAWmjHzASYc6wQg4iar4eEJzcutzfoRHuAgF?=
- =?us-ascii?Q?LsGR0x6wHuODOkJ3FgR6rxIlE77jbAdmPDOigFfVR3ojbLLyVTAS+Ij4BLih?=
- =?us-ascii?Q?rwXWTgfp74c5gTdB44fc7VCTpnFX4N6B/VKeCmAUHfbsNGSxYZm3TZRmF23Q?=
- =?us-ascii?Q?PipYq36t0TCnXwGLHjXEjKfLtbnPTPzavvXqg5D5w61qoKfEfaODPkf2br8m?=
- =?us-ascii?Q?eNUCRBs+wkzWEAsLnXzn8EAUDjg0cKtdkGNHojapq2UN0lgnXhYUE9CQJUgW?=
- =?us-ascii?Q?XayaxJyQ/51cxA7vxMDSwJ/9o+pggdqeWwhCTxHrsSkpUhMYyQch0Kiddu6j?=
- =?us-ascii?Q?bkHHWKAP1zw=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?FB5sRqeJVnHFqPxqPQXdyMhl7dZmMR/x3sN0cY8AmlVdKPTugVe/Wbqzew3E?=
- =?us-ascii?Q?6c+oIvZ3nzdqhTUISOTlH2gjrrrXbB9/nz5b60JEM1Q6AME53i9DnNZ7ysnd?=
- =?us-ascii?Q?nksz0L9XkgXkBIIcU61/vzqUhE5fEeD4RZ+cmhmkgn4WzVb9xViK+KFLzAYh?=
- =?us-ascii?Q?GahpD5BmdBaC7EEb8FJGO46ZHC/VdJYu84CyH9soays1qzMrAOfqhNXwDvNa?=
- =?us-ascii?Q?Nm142AHVbI8+zHsQF/ZTmGofUSQJbHunnVIDLA3OhstUbuj5VTpgBslutgdu?=
- =?us-ascii?Q?MdOGBgXopDqw1i0sWFKNzxl0hbNlk+cxLIqTy3CMmjqMwAMHk+Oi5IGPQluP?=
- =?us-ascii?Q?QMd9KtBFhoTYY7NMCLRPBwuX21BJWXnpWc7UtmLWX+dWvq+vvdVTsJXvvXnP?=
- =?us-ascii?Q?badzWpcVYZwu5wXLopbs1OxiN0X8OMXSvGWkVfahAO1SvUEzgxUppKWjWS8M?=
- =?us-ascii?Q?VmTvuNnT0vZuAS4KxiW76oou/GgOlEeuATZcus4JNNyD5RBb0n1v5mDCk+0n?=
- =?us-ascii?Q?NmYGuFuXFc+q5NJostnL8R3sMvM39jazO++/LazqQcoz2XL6/Zi5eH/XCqdc?=
- =?us-ascii?Q?ySNXWEOWzChpzYBVuJ/y39PClZ2m8FYvOitm8kkYMu2Ho28k7Sy7nBTcuiab?=
- =?us-ascii?Q?L2ZHuO/jgQDqgKpQV/JqF5JnS0yhjOOwx4vbioG1fBs0CEHag8NovGBvaVm/?=
- =?us-ascii?Q?uc2fyJuSfUaaF0okVnxYOI1aqK398RAHX1j6e0e+EJ8KXaL+jBhhdQB9VqLa?=
- =?us-ascii?Q?w3VEfvuzM+T7ReEpqjXuEqt0il/RvHLD78Wic3g6gCWtuGdUHMcndKLBSbPV?=
- =?us-ascii?Q?SzCnNyMwbbl8wC32zOs+6V8LH36+ibzDli7efkk9g/c/5sT/7iWo1btohXhO?=
- =?us-ascii?Q?HUzm1eSg/AwuKu4Wwm7e1BERcQrez1H+ywFeiw9xtC+P7NlwlE5PsKoTj+OL?=
- =?us-ascii?Q?NAHuRe0csQiQMFGDbt3pYUg/zlha+E8HmXaXtyCmmHa9HDOwLEqeuGi2sC9v?=
- =?us-ascii?Q?XpBZwyKDOsBcfFADS61+6XnGbjw7aDSq++f7sXscGr3m9UrW2dTaxeld8ab0?=
- =?us-ascii?Q?/Z1EMU7WjkGe/Hms4Rmz+NexeM1zgjYQGZ/xaqwcqUawrxbUoMMH6obXdEDa?=
- =?us-ascii?Q?Bgip9Z41t+3t2TgCt7BI+8mfB89GUtA2khtWwIMrFfuboxoOcbAbOtlvLcwE?=
- =?us-ascii?Q?b03z4ulLQbcaiQGJGlX3bW8Jwg2UU5tL2xYMq0zhurlWZimigd5BTe5tgTS6?=
- =?us-ascii?Q?b3zgYOVf/ZJPh0R7Kt+V4MWlBuJbKd+BTsy+x4BEVg9LOTOkvLKvU8gN4v27?=
- =?us-ascii?Q?nPC25l18lICsQiYctfOs8cn3iyvdcW9QNk3bj47nyXvdQXo58xFvR8OPBLBt?=
- =?us-ascii?Q?cDOqigvd7ZdFLIVj7uW/hTX1BAl6d97oBBHzVJIwUXxavYZ+sX/VmjUFG3xl?=
- =?us-ascii?Q?2sl9EREYnpmREe/N2vbKK0Fw+vBAv/yrT+bH91ibV957aF8u17Ae0WUfmzPn?=
- =?us-ascii?Q?trAlOsU3AKhomCRYAr5EGPfrMOwV0b+BnY0FLC6MCfnbvhxWX5Wfmp4iMIUo?=
- =?us-ascii?Q?GBmwm0zIuJYfyimgKLNyOrf3nBf5hxl6VGqvHTiS?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bc25c9fa-eaba-4395-5a77-08dda1eb2cd5
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Jun 2025 15:36:00.0857
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: gZ+MtBe9wine5RKtVEJY6Yf/MyrdwRs2j/DLwJP2uoreHAPzWPVtnzXVCrYs/Dyjiq8iz9ka7MSSZ0pDIfKWsg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR3PR04MB7420
+References: <20250530224035.41886-1-james.quinlan@broadcom.com>
+ <20250530224035.41886-3-james.quinlan@broadcom.com> <g5rhfbvlx77imub6nn2bx2q6zest3hgsmssjdjrpwqhs2wuan5@uo2ca5asxbpe>
+In-Reply-To: <g5rhfbvlx77imub6nn2bx2q6zest3hgsmssjdjrpwqhs2wuan5@uo2ca5asxbpe>
+From: Jim Quinlan <james.quinlan@broadcom.com>
+Date: Mon, 2 Jun 2025 11:36:45 -0400
+X-Gm-Features: AX0GCFvQM320POU3IkAr8ibVY9VrUJrRaRz6J6JSXGjCiwYnJUu3TuOgVjnkxwo
+Message-ID: <CA+-6iNxioAQH8vsdPxhjP6gHzhzy3EAKtgOCMncCqgMSMZNRPg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] PCI: brcmstb: Use "num-lanes" DT property if present
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, 
+	bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+	Rob Herring <robh@kernel.org>, 
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, 
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, 
+	open list <linux-kernel@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="000000000000cd212306369888c5"
 
-On Fri, May 30, 2025 at 10:33:28AM +0200, Stefan Wahren wrote:
-> Hi Frank,
+--000000000000cd212306369888c5
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Sat, May 31, 2025 at 2:34=E2=80=AFAM Manivannan Sadhasivam
+<manivannan.sadhasivam@linaro.org> wrote:
 >
-> thanks for this patch.
->
-> Am 29.05.25 um 21:17 schrieb Frank Li:
-> > Convert qca,qca7000.txt yaml format.
+> On Fri, May 30, 2025 at 06:40:33PM -0400, Jim Quinlan wrote:
+> > By default, we use automatic HW negotiation to ascertain the number of
+> > lanes of the PCIe connection.  If the "num-lanes" DT property is presen=
+t,
+> > assume that the chip's built-in capability information is incorrect or
+> > undesired, and use the specified value instead.
 > >
-> > Additional changes:
-> > - add refs: spi-peripheral-props.yaml, serial-peripheral-props.yaml and
-> >    ethernet-controller.yaml.
-> > - simple spi and uart node name.
-> > - use low case for mac address in examples.
-> >
-> > Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> > Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
 > > ---
-> >   .../devicetree/bindings/net/qca,qca7000.txt   | 87 -------------------
-> >   .../devicetree/bindings/net/qca,qca7000.yaml  | 86 ++++++++++++++++++
-> >   MAINTAINERS                                   |  2 +-
-> >   3 files changed, 87 insertions(+), 88 deletions(-)
-> >   delete mode 100644 Documentation/devicetree/bindings/net/qca,qca7000.txt
-> >   create mode 100644 Documentation/devicetree/bindings/net/qca,qca7000.yaml
+> >  drivers/pci/controller/pcie-brcmstb.c | 26 +++++++++++++++++++++++++-
+> >  1 file changed, 25 insertions(+), 1 deletion(-)
 > >
-> > diff --git a/Documentation/devicetree/bindings/net/qca,qca7000.txt b/Documentation/devicetree/bindings/net/qca,qca7000.txt
-> > deleted file mode 100644
-> > index 8f5ae0b84eec2..0000000000000
-> > --- a/Documentation/devicetree/bindings/net/qca,qca7000.txt
-> > +++ /dev/null
-> > @@ -1,87 +0,0 @@
-> > -* Qualcomm QCA7000
-> > -
-> > -The QCA7000 is a serial-to-powerline bridge with a host interface which could
-> > -be configured either as SPI or UART slave. This configuration is done by
-> > -the QCA7000 firmware.
-> > -
-> > -(a) Ethernet over SPI
-> > -
-> > -In order to use the QCA7000 as SPI device it must be defined as a child of a
-> > -SPI master in the device tree.
-> > -
-> > -Required properties:
-> > -- compatible	    : Should be "qca,qca7000"
-> > -- reg		    : Should specify the SPI chip select
-> > -- interrupts	    : The first cell should specify the index of the source
-> > -		      interrupt and the second cell should specify the trigger
-> > -		      type as rising edge
-> > -- spi-cpha	    : Must be set
-> > -- spi-cpol	    : Must be set
-> > -
-> > -Optional properties:
-> > -- spi-max-frequency : Maximum frequency of the SPI bus the chip can operate at.
-> > -		      Numbers smaller than 1000000 or greater than 16000000
-> > -		      are invalid. Missing the property will set the SPI
-> > -		      frequency to 8000000 Hertz.
-> > -- qca,legacy-mode   : Set the SPI data transfer of the QCA7000 to legacy mode.
-> > -		      In this mode the SPI master must toggle the chip select
-> > -		      between each data word. In burst mode these gaps aren't
-> > -		      necessary, which is faster. This setting depends on how
-> > -		      the QCA7000 is setup via GPIO pin strapping. If the
-> > -		      property is missing the driver defaults to burst mode.
-> > -
-> > -The MAC address will be determined using the optional properties
-> > -defined in ethernet.txt.
-> > -
-> > -SPI Example:
-> > -
-> > -/* Freescale i.MX28 SPI master*/
-> > -ssp2: spi@80014000 {
-> > -	#address-cells = <1>;
-> > -	#size-cells = <0>;
-> > -	compatible = "fsl,imx28-spi";
-> > -	pinctrl-names = "default";
-> > -	pinctrl-0 = <&spi2_pins_a>;
-> > -
-> > -	qca7000: ethernet@0 {
-> > -		compatible = "qca,qca7000";
-> > -		reg = <0x0>;
-> > -		interrupt-parent = <&gpio3>;      /* GPIO Bank 3 */
-> > -		interrupts = <25 0x1>;            /* Index: 25, rising edge */
-> > -		spi-cpha;                         /* SPI mode: CPHA=1 */
-> > -		spi-cpol;                         /* SPI mode: CPOL=1 */
-> > -		spi-max-frequency = <8000000>;    /* freq: 8 MHz */
-> > -		local-mac-address = [ A0 B0 C0 D0 E0 F0 ];
-> > -	};
-> > -};
-> > -
-> > -(b) Ethernet over UART
-> > -
-> > -In order to use the QCA7000 as UART slave it must be defined as a child of a
-> > -UART master in the device tree. It is possible to preconfigure the UART
-> > -settings of the QCA7000 firmware, but it's not possible to change them during
-> > -runtime.
-> > -
-> > -Required properties:
-> > -- compatible        : Should be "qca,qca7000"
-> > -
-> > -Optional properties:
-> > -- local-mac-address : see ./ethernet.txt
-> > -- current-speed     : current baud rate of QCA7000 which defaults to 115200
-> > -		      if absent, see also ../serial/serial.yaml
-> > -
-> > -UART Example:
-> > -
-> > -/* Freescale i.MX28 UART */
-> > -auart0: serial@8006a000 {
-> > -	compatible = "fsl,imx28-auart", "fsl,imx23-auart";
-> > -	reg = <0x8006a000 0x2000>;
-> > -	pinctrl-names = "default";
-> > -	pinctrl-0 = <&auart0_2pins_a>;
-> > -
-> > -	qca7000: ethernet {
-> > -		compatible = "qca,qca7000";
-> > -		local-mac-address = [ A0 B0 C0 D0 E0 F0 ];
-> > -		current-speed = <38400>;
-> > -	};
-> > -};
-> > diff --git a/Documentation/devicetree/bindings/net/qca,qca7000.yaml b/Documentation/devicetree/bindings/net/qca,qca7000.yaml
-> > new file mode 100644
-> > index 0000000000000..348b8e9af975b
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/net/qca,qca7000.yaml
-> > @@ -0,0 +1,86 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/net/qca,qca7000.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/contro=
+ller/pcie-brcmstb.c
+> > index e19628e13898..79fc6d00b7bc 100644
+> > --- a/drivers/pci/controller/pcie-brcmstb.c
+> > +++ b/drivers/pci/controller/pcie-brcmstb.c
+> > @@ -46,6 +46,7 @@
+> >  #define  PCIE_RC_CFG_PRIV1_ID_VAL3_CLASS_CODE_MASK   0xffffff
+> >
+> >  #define PCIE_RC_CFG_PRIV1_LINK_CAPABILITY                    0x04dc
+> > +#define  PCIE_RC_CFG_PRIV1_LINK_CAPABILITY_MAX_LINK_WIDTH_MASK       0=
+x1f0
+> >  #define  PCIE_RC_CFG_PRIV1_LINK_CAPABILITY_ASPM_SUPPORT_MASK 0xc00
+> >
+> >  #define PCIE_RC_CFG_PRIV1_ROOT_CAP                   0x4f8
+> > @@ -55,6 +56,9 @@
+> >  #define PCIE_RC_DL_MDIO_WR_DATA                              0x1104
+> >  #define PCIE_RC_DL_MDIO_RD_DATA                              0x1108
+> >
+> > +#define PCIE_RC_PL_REG_PHY_CTL_1                     0x1804
+> > +#define  PCIE_RC_PL_REG_PHY_CTL_1_REG_P2_POWERDOWN_ENA_NOSYNC_MASK   0=
+x8
 > > +
-> > +title: Qualcomm QCA7000
-> > +
-> > +maintainers:
-> > +  - Frank Li <Frank.Li@nxp.com>
-> > +
-> > +description: |
-> > +  The QCA7000 is a serial-to-powerline bridge with a host interface which could
-> > +  be configured either as SPI or UART slave. This configuration is done by
-> > +  the QCA7000 firmware.
-> > +
-> > +  (a) Ethernet over SPI
-> > +
-> > +  In order to use the QCA7000 as SPI device it must be defined as a child of a
-> > +  SPI master in the device tree.
-> Could you please add the dropped "(b) Ethernet over UART" description here?
-
-Okay, I will add back.
-
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: qca,qca7000
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  interrupts:
-> > +    maxItems: 1
-> > +
-> > +  spi-cpha: true
-> > +
-> > +  spi-cpol: true
-> In case of a SPI setup these properties should be required. Unfortunately
-> i'm not sure how to enforce this. Maybe depending on the presence of "reg"?
-
-But It think depend on reg is not good idea, which too obscure. Ideally it
-should be use two compatible strings. It should treat as two kinds device.
-It is really old devices and not worth to update compatible string.
-
-Maybe some one in dt team can provide suggestion!
-
-Rob and Krzysztof Kozlowski:
-  any idea about this?
-
-Frank
+> >  #define PCIE_RC_PL_PHY_CTL_15                                0x184c
+> >  #define  PCIE_RC_PL_PHY_CTL_15_DIS_PLL_PD_MASK               0x400000
+> >  #define  PCIE_RC_PL_PHY_CTL_15_PM_CLK_PERIOD_MASK    0xff
+> > @@ -1072,7 +1076,7 @@ static int brcm_pcie_setup(struct brcm_pcie *pcie=
+)
+> >       void __iomem *base =3D pcie->base;
+> >       struct pci_host_bridge *bridge;
+> >       struct resource_entry *entry;
+> > -     u32 tmp, burst, aspm_support;
+> > +     u32 tmp, burst, aspm_support, num_lanes, num_lanes_cap;
+> >       u8 num_out_wins =3D 0;
+> >       int num_inbound_wins =3D 0;
+> >       int memc, ret;
+> > @@ -1180,6 +1184,26 @@ static int brcm_pcie_setup(struct brcm_pcie *pci=
+e)
+> >               PCIE_RC_CFG_PRIV1_LINK_CAPABILITY_ASPM_SUPPORT_MASK);
+> >       writel(tmp, base + PCIE_RC_CFG_PRIV1_LINK_CAPABILITY);
+> >
+> > +     /* 'tmp' still holds the contents of PRIV1_LINK_CAPABILITY */
+> > +     num_lanes_cap =3D u32_get_bits(tmp, PCIE_RC_CFG_PRIV1_LINK_CAPABI=
+LITY_MAX_LINK_WIDTH_MASK);
+> > +     num_lanes =3D 0;
+> > +     /*
+> > +      * Use automatic num-lanes HW negotiation by default.  If the
+>
+> "Use hardware negotiated Max Link Width value by default."
+>
+> > +      * "num-lanes" DT property is present, assume that the chip's
+> > +      * built-in link width capability information is
+> > +      * incorrect/undesired and use the specified value instead.
+> > +      */
+> > +     if (!of_property_read_u32(pcie->np, "num-lanes", &num_lanes) &&
+> > +         num_lanes && num_lanes <=3D 4 && num_lanes_cap !=3D num_lanes=
+) {
+>
+> I think you should drop the 'num_lanes && num_lanes <=3D 4' check since t=
+he DT
+> binding should take care of that. Otherwise, once link width gets increas=
+ed, you
+> need to update both binding and the driver, which is redundant.
+Not all Linux release configuration systems run a comprehensive DT
+validator  before execution.  Our bootloader modifies the DT blob on
+the fly and also permits -- with restrictions -- customers to modify
+the DT at the bootloader command line.  Yes, we can do partial a
+priori DT validation, but there is still value to checking the params
+in the driver code, at least for us.
 
 >
-> Regards
-> > +
-> > +  spi-max-frequency:
-> > +    default: 8000000
-> > +    maximum: 16000000
-> > +    minimum: 1000000
-> > +
-> > +  qca,legacy-mode:
-> > +    $ref: /schemas/types.yaml#/definitions/flag
-> > +    description:
-> > +      Set the SPI data transfer of the QCA7000 to legacy mode.
-> > +      In this mode the SPI master must toggle the chip select
-> > +      between each data word. In burst mode these gaps aren't
-> > +      necessary, which is faster. This setting depends on how
-> > +      the QCA7000 is setup via GPIO pin strapping. If the
-> > +      property is missing the driver defaults to burst mode.
-> > +
-> > +  current-speed:
-> > +    default: 115200
-> > +
-> > +allOf:
-> > +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
-> > +  - $ref: /schemas/serial/serial-peripheral-props.yaml#
-> > +  - $ref: ethernet-controller.yaml#
-> > +
-> > +unevaluatedProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    spi {
-> > +        #address-cells = <1>;
-> > +        #size-cells = <0>;
-> > +
-> > +        ethernet@0 {
-> > +            compatible = "qca,qca7000";
-> > +            reg = <0x0>;
-> > +            interrupt-parent = <&gpio3>;      /* GPIO Bank 3 */
-> > +            interrupts = <25 0x1>;            /* Index: 25, rising edge */
-> > +            spi-cpha;                         /* SPI mode: CPHA=1 */
-> > +            spi-cpol;                         /* SPI mode: CPOL=1 */
-> > +            spi-max-frequency = <8000000>;    /* freq: 8 MHz */
-> > +            local-mac-address = [ a0 b0 c0 d0 e0 f0 ];
-> > +        };
-> > +    };
-> > +
-> > +  - |
-> > +    serial {
-> > +        ethernet {
-> > +            compatible = "qca,qca7000";
-> > +            local-mac-address = [ a0 b0 c0 d0 e0 f0 ];
-> > +            current-speed = <38400>;
-> > +        };
-> > +    };
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index 7761b5ef87674..c163c80688c23 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -20295,7 +20295,7 @@ QUALCOMM ATHEROS QCA7K ETHERNET DRIVER
-> >   M:	Stefan Wahren <wahrenst@gmx.net>
-> >   L:	netdev@vger.kernel.org
-> >   S:	Maintained
-> > -F:	Documentation/devicetree/bindings/net/qca,qca7000.txt
-> > +F:	Documentation/devicetree/bindings/net/qca,qca7000.yaml
-> >   F:	drivers/net/ethernet/qualcomm/qca*
-> >   QUALCOMM BAM-DMUX WWAN NETWORK DRIVER
+> - Mani
 >
+> --
+> =E0=AE=AE=E0=AE=A3=E0=AE=BF=E0=AE=B5=E0=AE=A3=E0=AF=8D=E0=AE=A3=E0=AE=A9=
+=E0=AF=8D =E0=AE=9A=E0=AE=A4=E0=AE=BE=E0=AE=9A=E0=AE=BF=E0=AE=B5=E0=AE=AE=
+=E0=AF=8D
+
+--000000000000cd212306369888c5
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+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
+mOAplh6h3nMZUZxBguxG3g2p3iD4EgibUYneEzqOQafIQB/naf2uetKb8y9jKgWJxq2Y4y8Jqg2u
+uVIO1AyOJjWwqdgN+QhuIlat+qZd03P48Gim9ZPEMDUCAwEAAaOCAdswggHXMA4GA1UdDwEB/wQE
+AwIFoDCBowYIKwYBBQUHAQEEgZYwgZMwTgYIKwYBBQUHMAKGQmh0dHA6Ly9zZWN1cmUuZ2xvYmFs
+c2lnbi5jb20vY2FjZXJ0L2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNydDBBBggrBgEFBQcw
+AYY1aHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAw
+TQYDVR0gBEYwRDBCBgorBgEEAaAyASgKMDQwMgYIKwYBBQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2Jh
+bHNpZ24uY29tL3JlcG9zaXRvcnkvMAkGA1UdEwQCMAAwSQYDVR0fBEIwQDA+oDygOoY4aHR0cDov
+L2NybC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcmwwJQYDVR0R
+BB4wHIEaamFtZXMucXVpbmxhbkBicm9hZGNvbS5jb20wEwYDVR0lBAwwCgYIKwYBBQUHAwQwHwYD
+VR0jBBgwFoAUljPR5lgXWzR1ioFWZNW+SN6hj88wHQYDVR0OBBYEFGx/E27aeGBP2eJktrILxlhK
+z8f6MA0GCSqGSIb3DQEBCwUAA4IBAQBdQQukiELsPfse49X4QNy/UN43dPUw0I1asiQ8wye3nAuD
+b3GFmf3SZKlgxBTdWJoaNmmUFW2H3HWOoQBnTeedLtV9M2Tb9vOKMncQD1f9hvWZR6LnZpjBIlKe
++R+v6CLF07qYmBI6olvOY/Rsv9QpW9W8qZYk+2RkWHz/fR5N5YldKlJHP0NDT4Wjc5fEzV+mZC8A
+AlT80qiuCVv+IQP08ovEVSLPhUp8i1pwsHT9atbWOfXQjbq1B/ditFIbPzwmwJPuGUc7n7vpmtxB
+75sSFMj27j4JXl5W9vORgHR2YzuPBzfzDJU1ul0DIofSWVF6E1dx4tZohRED1Yl/T/ZGMYICYDCC
+AlwCAQEwazBbMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UE
+AxMoR2xvYmFsU2lnbiBHQ0MgUjMgUGVyc29uYWxTaWduIDIgQ0EgMjAyMAIMSO43VW7D5NP1X/KD
+MA0GCWCGSAFlAwQCAQUAoIHHMC8GCSqGSIb3DQEJBDEiBCB7fVqOARSYGFt2JOOBULuds9u54j59
+wPH4/m0Ve3sFcTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNTA2
+MDIxNTM2NThaMFwGCSqGSIb3DQEJDzFPME0wCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBFjALBglg
+hkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0B
+AQEFAASCAQAcSVt7SZZrW+HiQeZds/0lPTeAtCri8ow40DfjvJbKFB1/fjYMndPw4T/ZnxD5tfeI
+aFVUUta6+mKhmy6lUr/q94j9tZYnwtDOjy85kH+C3HqvSCgwia+gcDaWqrbitA1rcCO9Yga+8oXV
+0nITDsnxVcaMDQjJDk8JBsPW+XBITPk7KKo5WA6+zgB6UWEihgnp458SJuc7zsu28sEVHX2cuKS8
+R8CtOELzXAlvn3Ge0Et9isrNGpLd6eMMgSn9NhuI3fm/DzH5Sm5nSO2vlBqGQKr8td1hI2pazqPp
+LzlVN6EvXb9toNIu7AwvADS1BgdSWGiPfbJy+Mc7IfI4NULN
+--000000000000cd212306369888c5--
 
