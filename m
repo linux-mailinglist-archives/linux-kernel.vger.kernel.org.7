@@ -1,72 +1,115 @@
-Return-Path: <linux-kernel+bounces-670236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88F23ACAB04
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 11:00:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C585ACAB08
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 11:01:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DD4D3BC7D1
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 09:00:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 455FB3A927E
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 09:01:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8266A2C3255;
-	Mon,  2 Jun 2025 09:00:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9E6519DFA7;
+	Mon,  2 Jun 2025 09:01:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s2BHSymk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="odW6szYp"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3D3413AA31
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 09:00:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CBAF13AA31
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 09:01:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748854849; cv=none; b=hItiDIPeX/thOTE31ujytRtdfB0lY6Fj5n6FDAfPtKXY0//Sd2KtzXIdA8zH71xdWLKwIuYHHCillh0oTb3VnZQ0Mj8V/YFwnt9etD62zDT9aL4AHzE0yhdBp/gbqRhMYZX3tbOLJyUqWv1dR9rpAEAQNJkwblQxv+DaIALHh94=
+	t=1748854905; cv=none; b=uwlR6cjfaWkRiBs2rZWAlKNnV/shFIRk69adAR+LxOlOvJ7AW6/aRxhGdPyzEUu0Qf7o2xVu+AqYRweohxXzwZ9TOcK/yvETOva6LO3xYZX1geFm9F5KsFuJedSrj/iZJHrjuI6gewPnDe3d6wormqMojOT7c7uCNJ+tt2B8+Es=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748854849; c=relaxed/simple;
-	bh=0hBwvoxh3BG0lGW2hjquqO/cNNQ8t/KhdZFDOIIiOrM=;
-	h=Message-ID:Date:From:To:Subject:In-Reply-To:References:Cc; b=VCnFVnuIyKPhlWktzwJKMB68lpBp0NTUi9RylQEp2Fc0m+YPLHEsjcKhnbPyZb9xdxuGEmrsoa5j1omSrLRWToOLyuj1cIj1EMlLJCI7rrWwXOqKqXzsNf0pj3TjT0C668SQoc+cDpdbEfJJWVM0onarilmgTGkWx4ENrt7b6I8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s2BHSymk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F469C4CEEB;
-	Mon,  2 Jun 2025 09:00:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748854848;
-	bh=0hBwvoxh3BG0lGW2hjquqO/cNNQ8t/KhdZFDOIIiOrM=;
-	h=Date:From:To:Subject:In-Reply-To:References:Cc:From;
-	b=s2BHSymkg0sfbq1HuhUf/k2UUWXkEwRFYYSriQyrtIrYIoDGfV2kBrSzRGscBwpOe
-	 jMAUadFkWKIAV2EinZfU17LkVhQRs0RdFs7bduKhXoXJJap8xFcI8pTWp4+pOOTngb
-	 YvDy57+XIDyICTQE6hJyRCS7D6T9ysoe7+TsUTjv014BGO5lpAPzzwbE9UKhXwcnPh
-	 q7kENBmaoOgFUB+oqmyD/oyDCEy9KS9+3Idxfotmz+JcLRk9HTAu66pUJpaAyLL+5i
-	 j/5ztFLC9+iI2QMHn5/Jp/izTflVFJsPQ3iPJZ4dZBEBMdX3GFILXn8F4I0CJRKTY7
-	 LRWAfR3I6b8WQ==
-Message-ID: <6423ca1050404aaa9ae3f9964ba98fc8@kernel.org>
-Date: Mon, 02 Jun 2025 09:00:46 +0000
-From: "Maxime Ripard" <mripard@kernel.org>
-To: "Cristian Ciocaltea" <cristian.ciocaltea@collabora.com>
-Subject: Re: [PATCH v5 06/19] drm/connector: hdmi: Use YUV420 output format
- as an RGB fallback
-In-Reply-To: <20250527-hdmi-conn-yuv-v5-6-74c9c4a8ac0c@collabora.com>
-References: <20250527-hdmi-conn-yuv-v5-6-74c9c4a8ac0c@collabora.com>
-Cc: dri-devel@lists.freedesktop.org, kernel@collabora.com, linux-kernel@vger.kernel.org, "Dave
- Stevenson" <dave.stevenson@raspberrypi.com>, "David Airlie" <airlied@gmail.com>, "Dmitry
- Baryshkov" <dmitry.baryshkov@oss.qualcomm.com>, "Dmitry Baryshkov" <lumag@kernel.org>, "Maarten
- Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>, "Simona
- Vetter" <simona@ffwll.ch>, "Thomas Zimmermann" <tzimmermann@suse.de>
-Content-Transfer-Encoding: 7bit
+	s=arc-20240116; t=1748854905; c=relaxed/simple;
+	bh=5L/HO89i91CBOEvIwOi6CpU0lXjQdG3dUBRaVby2iuA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JDV6FTIWHEE8iP+aVk5M0U+Ds5IYZO4zbLOux5WdlVJ9FFSiSAl83yGYmtTYgdHKxY14lVgVUKuO2jDqcJU1CtLTWqSfM92d7DA0jejLgAgVoUMKb9gWjrt2sRfRVMJCYdFczGGFpmIImzusircaV32gSxYCLtGN54oc23oqO1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=odW6szYp; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5532e0ad84aso5069681e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jun 2025 02:01:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1748854899; x=1749459699; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5L/HO89i91CBOEvIwOi6CpU0lXjQdG3dUBRaVby2iuA=;
+        b=odW6szYpRI3EmFensdcwnVCYi3yEt8zG78135qjRh+kWAeOxi+PI9fcLDXoUgLHh9/
+         sn2xpJ69JWEH2caRUD9kBJBpD+2dRXElfYtJKYZSBU9HqA1es1/vKR+EeMJ0s2zdMmWe
+         yxUnHjEhlWpurBd7Eh2iqcZPiLac5jzSXrocSRGzTzLj49h2Q4VbTDswE2MZ+38XsZ1Z
+         xUqfRfbVFnIgBr//N1HgTmwiAzTLWMGRah77WftglTRCBbsxQc9YZzs1MqSjG5A8xwjR
+         XRHtJH2kQOxsGYtwrsVbFprGW0u69kaFLQ1iuyv/YdiNOy0sBYSCeb6XTAM/YSC/WK3r
+         SaBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748854899; x=1749459699;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5L/HO89i91CBOEvIwOi6CpU0lXjQdG3dUBRaVby2iuA=;
+        b=Z0CzgxDM1MIeWhe+4wl1Q+rdoqMUoQiTB9eK4/IpcWUqlSOuGuIoBtRaDlOtExKswY
+         T3Z5/OHcqmR4MhbG9WpHiDZ/WJkBR4tXGx5vBF23wKut2PSaC/u33NGhHppi8GHM+7o4
+         p+Hy0pOTXsI+lv8gVMsCEq4YTYtCYOTGY8jZbXAklKd8UwjBG7YeZDo1/So9eyPTazTl
+         U25Es2PPu7YxnL/4JCSBQZgCw3PlvN4pJH74LSdzi3FwT8O6kIAXC4ueAsdhpklvLO8+
+         KzPMlHvSnv86ps4B6r4KU56YDoGC9H3GtqzGFtf1pbaJnLNWpcEypwXt79yI4IXciplI
+         Q+5w==
+X-Forwarded-Encrypted: i=1; AJvYcCVtFJhHDNAAer+OZLXFmMUxbsD2KE/21YmbrZ8Oh9bSRlyoU4o7T29CfDp7l1L9GjRESZF5UTGJSZvySR4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyyP5sqc8Q2/X0v+X7Zttae7+Dqy3LrL057uq4RNOCkng/OsEfF
+	2Z5hhqyUQWJBcNMzrKgcZ714Cwab+5CPW3JAXKySd746n8UdLs//X/555QQK7NeLsnkwLIZC0/4
+	d2fJSjXZxHt4oex3aEZko8VsYmzn8hc7AMCF81xI/1Q==
+X-Gm-Gg: ASbGncvVaQlRQNphFLE8aiQlhgrL5I89cZ1Nh+w7q+LPaGfWp5ngyMfZxFhGj3hATnA
+	nOJgNGNlvFvPGwMULY5kXBGZrgp/a94ecU2xHdbBf/lyuHXkUAqZX3Lgrr0jrZnPm7CXSD92+jw
+	/c4Lz2YNzzj42RPpPFc0YLBUfMSISUYwZphgIr2NvGq3Ia4SBEBEY0t76vSp+Y9rxP
+X-Google-Smtp-Source: AGHT+IF7JzftWwBtbdxn3eRdY2g5R0ABLfyCCe/FWeTYczv7PUkyVOJRx3e2k3Y8Pc2+u0CtYYyLp681MfBoTrjlx1c=
+X-Received: by 2002:a05:6512:350e:b0:553:2bc1:e26d with SMTP id
+ 2adb3069b0e04-55343183e70mr1314549e87.46.1748854899308; Mon, 02 Jun 2025
+ 02:01:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20250522-gpio-palmas-gpio-v2-1-89f209d4a949@gmail.com> <CALHNRZ-z4+a-h4GZepODbqcmcPKkvGXvX4wpJSinr_gcZptjrQ@mail.gmail.com>
+In-Reply-To: <CALHNRZ-z4+a-h4GZepODbqcmcPKkvGXvX4wpJSinr_gcZptjrQ@mail.gmail.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Mon, 2 Jun 2025 11:01:28 +0200
+X-Gm-Features: AX0GCFvQfCgbCs500n43zWgfaAQRPWyohpTKwcUG4tS-dFrmVzQQCaFyT1e44NQ
+Message-ID: <CAMRc=MdJ91n1TU7gaiwtQiKFZXKEFwqyNHzhZcw+qXH4KXBdKg@mail.gmail.com>
+Subject: Re: [PATCH v2] gpio: palmas: Allow building as a module
+To: Aaron Kling <webgeek1234@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 27 May 2025 15:11:14 +0300, Cristian Ciocaltea wrote:
-> Try to make use of YUV420 when computing the best output format and
-> RGB cannot be supported for any of the available color depths.
-> 
-> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+On Wed, May 28, 2025 at 7:44=E2=80=AFPM Aaron Kling <webgeek1234@gmail.com>=
+ wrote:
+>
+> On Thu, May 22, 2025 at 5:22=E2=80=AFPM Aaron Kling via B4 Relay
+> <devnull+webgeek1234.gmail.com@kernel.org> wrote:
+> >
+> > From: Aaron Kling <webgeek1234@gmail.com>
+> >
+> > The driver works fine as a module, so allowing building as such. This
+> > drops the driver specific init in favor of the module macro which does
+> > the same, plus handling exit.
+> >
+> > Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> > ---
+>
+> Friendly reminder about this patch.
 
-Reviewed-by: Maxime Ripard <mripard@kernel.org>
+Hi Aaron,
 
-Thanks!
-Maxime
+We're in the middle of the merge window and you sent this patch at rc7
+(too late to make the next release). I will not be picking it up
+before v6.16-rc1 is tagged. Please don't ping me for at least 2 weeks
+after you send a patch nor during the merge window.
+
+Thanks,
+Bartosz
 
