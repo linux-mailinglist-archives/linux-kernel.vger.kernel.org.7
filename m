@@ -1,113 +1,143 @@
-Return-Path: <linux-kernel+bounces-670348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B38B0ACAD04
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 13:11:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20FABACAD0B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 13:13:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4AFA1960730
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 11:11:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E68713A4501
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 11:13:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 796DB2080E8;
-	Mon,  2 Jun 2025 11:11:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FC35206F2A;
+	Mon,  2 Jun 2025 11:13:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JkbeG9Lr"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qHrFdgoK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E8DA1B412A;
-	Mon,  2 Jun 2025 11:11:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B89901D6DB4;
+	Mon,  2 Jun 2025 11:13:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748862693; cv=none; b=J8n5wBmeZmPGld3tPZmwrflWxUy5slgLyHRlVaJrRhj9ZwC6/WEPsbDqHyhk/+QdGaseCPYRDiqOGbhdZQJ+3zQuqXTSS2WTzxv7i6aPE4jM3cE707f0qiTm1HAGgBqAWpxevCCQQ2KSdAZ9EvFidrg0AH0LQdpmU9K080ZHZfE=
+	t=1748862812; cv=none; b=jANpNLedN4lwSwkCcfMLwHxynvDFyUSg4R8vy2ml2p9pJ5pjreePlSxJ1NqXibkRQgcVyUfSl+uF3ELqLDpLHmDi0PsJ+17u7DfHiTqlXeT1wmKvLFQjrbiLCZosLVD73yojdsc3H5FkNR57LVcN8TYLzYvWXGqoaXHpv04kNV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748862693; c=relaxed/simple;
-	bh=SOjGNSW14/xBT2UsSSuvfNWvvNMcBWixS2oXTkx416c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TG2cFqGEBccd/xwp2ujdoqAJGUnBqJZMRqIZJ35e/t1A0I9Pmy5ds5zVq8owT/6wqK2CQFQaCyiA7Sf3htubWa+mK0t5aGkuZbAchV4ACJ8W54vDXWZZ+gW+RGx+JdohKDu7M/CLiXzzyIqlPiVmlVV8hJb3Ub+tIioVtc21zIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JkbeG9Lr; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7406c6dd2b1so4163530b3a.0;
-        Mon, 02 Jun 2025 04:11:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748862692; x=1749467492; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=SOjGNSW14/xBT2UsSSuvfNWvvNMcBWixS2oXTkx416c=;
-        b=JkbeG9Lr0KKdtHoUIPMFDfWIcRfcjwSB08BlWI+0222a5aeepREsAvdL6x86AD3rS6
-         yvv1l5yGhZARcuzDL17ifT6+M41CClAWrmlwSNqbB2YzCaHNirRgz/TBqxcOdTsp66hE
-         KycpBZjlhKfyjOLY2/o9f1b/q6m5rhP0lO3Xz4KKt6YCtgjF+ChiK1jTpdU+mMnCfFfF
-         YihhfcB4C8VR6pwaGAU+Az+j9PYki9hxzI+dX5EeG8IlVdfy79U4I3W7DmYHzhkeer9Q
-         8BnbScxdx5IujvWYiTdthFVcz/zzh4+IDMDJSvhcsRWvjw1HJVGuSwxM3neFYeA+9EKb
-         jljw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748862692; x=1749467492;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SOjGNSW14/xBT2UsSSuvfNWvvNMcBWixS2oXTkx416c=;
-        b=ohcsAEITWFw8xnNcYQ6LYo/HFirQIkVifjzOE3PJuWnIcbDN+fhx9zjsZZ50NsrANr
-         0c5p0aozGxZDSZc4AojRnmwSUJzj3Ipv37+D+7p7LHvE9KpuIF5pJrJkGl/8WbPnpcCE
-         byY96B+Elr7xzcWv2HC5MLlyQa40oYexw2pxObNskCM8ZDP1xwj+rrWeExY/NJOpUAM/
-         RwNbYCxtpN+84EFLjqTdZgXq5u4nO6Fli3xfQR6GjNwa6b70lYCAoJqK7FB5Oo0BqrqV
-         GD56WQoTzfrPTt15xyk6ln6lKRhFH7K3/zew5E9HBKsM81SRH6CKE2hK5oeYL68pR+W+
-         4Nyg==
-X-Forwarded-Encrypted: i=1; AJvYcCVI3ni3oGreT4wplcwZjxom1Dfdx8vDnFDoMWZ03ehlEQDSSVB1jfFLgUxUCejI1cBO8HUnqAmFj1rGfZA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmgRn9Sy88l/CLekNqmtMxU37ayIzrKlM5IibrqIGW4i95/+/V
-	4ETHICEJIyQdpNmCUe+RIppMe3CtGDXiMpCih79Ih9tnNitObByubQ88LXcil+45P4SOnz96Ujx
-	XVuBzHUpdTGy2QnevxgxCdniG18ysrJU=
-X-Gm-Gg: ASbGnctvLIcjzAy4Hdb2e1tPtjuB3WrHCGPu6ElOT25q7AMYlcILkT3GJa5Y++dGUjb
-	H0IiQV0BO2N+5XXbppkTGOXJ5y+/Vkb5lkls5Ry87tfbYgRKQ6nSTD9w8/7/ZZDsi44Gkt86EHN
-	0YojGeOFuWjpWgfo4YR8eulLXk7U3CPSwH8mmYGX9PwSFQNlxP3wl9QnsR5/iPyAAQgg==
-X-Google-Smtp-Source: AGHT+IEndQjLdhiP6A0nQ6vA7U2d5miDEZEf1JYhcaA1W5PWXcjW92kStxqRleNjUCIRM/jEy5sYYGpvQDJY/zv1Dxo=
-X-Received: by 2002:a17:90b:264c:b0:311:1617:5bc4 with SMTP id
- 98e67ed59e1d1-31214ecdacamr24038231a91.12.1748862691728; Mon, 02 Jun 2025
- 04:11:31 -0700 (PDT)
+	s=arc-20240116; t=1748862812; c=relaxed/simple;
+	bh=mpkiAxp0RtEKPIpdKzXz8jZ22lmjIK9Sp2k/YSb3uRM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QV7rkC7uOa7iDEq7/h9pAeR6vs1+hZfI5xK/LkMj4oz89P2kBbIDpxRPMtf0KicEAkUm+HgnWb08jyTxWIXXqfg+zN++Y6nxCoHyRdxQVZYwvRsUdB+I77ztjIL5QncFbjjtJZI0inkm7BubXz0YJZSVnHV/dyZrgvApRpvgVQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qHrFdgoK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B599CC4CEEB;
+	Mon,  2 Jun 2025 11:13:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748862812;
+	bh=mpkiAxp0RtEKPIpdKzXz8jZ22lmjIK9Sp2k/YSb3uRM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qHrFdgoKolYrJm2pQgspjLDl3Zf2qSPtHyKVlLibr0HLZXVBnOfp0pRcwIvaf9Ddp
+	 MLKr0l95As4mGvcH+GiwlE5Dt9+SgaODj2Hr2M2RZHC/WGnDlXhactJilGI2v7fyof
+	 b/LA5tAIUysceyvxL7sjv1ZvLa5AxC+dByl/AkQRHqzCmNEDbEdbYdST0lnHqUL0Wg
+	 qxDfujOhlZY/yrS2AuInwBsGzLKKII/jQCPzKyOJuB2Xci8x/gWca3952RO8MnlUbL
+	 5rk+CGaRBer2cjzQDCXa9sJ53QaRVcrP0E4VgfvnoZnDXlQkd+BA1vOiKsMoysGKOP
+	 pHvYnQXDEG3HA==
+Date: Mon, 2 Jun 2025 13:13:29 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Kees Cook <kees@kernel.org>, 
+	Alessandro Carminati <acarmina@redhat.com>, linux-kselftest@vger.kernel.org, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Daniel Diaz <daniel.diaz@linaro.org>, 
+	David Gow <davidgow@google.com>, Arthur Grillo <arthurgrillo@riseup.net>, 
+	Brendan Higgins <brendan.higgins@linux.dev>, Naresh Kamboju <naresh.kamboju@linaro.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Ville Syrjala <ville.syrjala@linux.intel.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Guenter Roeck <linux@roeck-us.net>, 
+	Alessandro Carminati <alessandro.carminati@gmail.com>, Jani Nikula <jani.nikula@intel.com>, 
+	Jeff Johnson <jeff.johnson@oss.qualcomm.com>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	Shuah Khan <skhan@linuxfoundation.org>, Linux Kernel Functional Testing <lkft@linaro.org>, 
+	dri-devel@lists.freedesktop.org, kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org, 
+	Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH v5 1/5] bug/kunit: Core support for suppressing warning
+ backtraces
+Message-ID: <20250602-phenomenal-turkey-of-hurricane-aadcde@houat>
+References: <20250526132755.166150-1-acarmina@redhat.com>
+ <20250526132755.166150-2-acarmina@redhat.com>
+ <20250529090129.GZ24938@noisy.programming.kicks-ass.net>
+ <CAGegRW76X8Fk_5qqOBw_aqBwAkQTsc8kXKHEuu9ECeXzdJwMSw@mail.gmail.com>
+ <20250530140140.GE21197@noisy.programming.kicks-ass.net>
+ <202505301037.D816A49@keescook>
+ <20250531102304.GF21197@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250602083119.17752-2-saivishnu725@gmail.com> <2025060244-dragster-unknowing-23f0@gregkh>
-In-Reply-To: <2025060244-dragster-unknowing-23f0@gregkh>
-From: Sai Vishnu <saivishnu725@gmail.com>
-Date: Mon, 2 Jun 2025 16:41:20 +0530
-X-Gm-Features: AX0GCFu3T3OR2_GG4ZzL7Loc9bKzO9dhY9CsI7icXQD9dgQfxG219UDY6QCd2ZY
-Message-ID: <CAFttn56vNVcE=pcGgxGrSZf=r=h_ceFwEf+D71yc9GnANww5Aw@mail.gmail.com>
-Subject: Re: [PATCH v3] rust: doc: Clean up formatting in io.rs
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Miguel Ojeda <ojeda@kernel.org>, alex.gaynor@gmail.com, boqun.feng@gmail.com, 
-	gary@garyguo.net, bjorn3_gh@protonmail.com, Benno Lossin <lossin@kernel.org>, 
-	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu, 
-	dakr@kernel.org, daniel.almeida@collabora.com, me@kloenk.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="qoxbr2ctkkwebol6"
+Content-Disposition: inline
+In-Reply-To: <20250531102304.GF21197@noisy.programming.kicks-ass.net>
 
-> below the first --- line
 
-Is it the one below the Signed off by line? To get the complete picture:
-1. commit title
-2. commit message
-3. signed off and other tags
----
-4. The version log or any other necessary comments
-5. actual diff
----
+--qoxbr2ctkkwebol6
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v5 1/5] bug/kunit: Core support for suppressing warning
+ backtraces
+MIME-Version: 1.0
 
-Additionally, I suppose the `base-commit` tag should also be placed in
-3 (above/below Signed-off-by), as it was added to the very end by
-`git` when generating the patch.
-I am sincerely apologizing for taking at least 4 versions for a simple
-fix, but I am trying to figure out how to properly create and send
-patches.
-This clearly explains what you meant:
-https://www.kernel.org/doc/html/latest/process/submitting-patches.html#commentary
-.
-I will send v4 after thoroughly reading it multiple times.
+On Sat, May 31, 2025 at 12:23:04PM +0200, Peter Zijlstra wrote:
+> On Fri, May 30, 2025 at 10:48:47AM -0700, Kees Cook wrote:
+> > On Fri, May 30, 2025 at 04:01:40PM +0200, Peter Zijlstra wrote:
+> > > I'm not really concerned with performance here, but more with the size
+> > > of the code emitted by WARN_ONCE(). There are a *ton* of WARN sites,
+> > > while only one report_bug() and printk().
+> > >=20
+> > > The really offensive thing is that this is for a feature most nobody
+> > > will ever need :/
+> >=20
+> > Well, it won't be enabled often -- this reminds me of ftrace: it needs
+> > to work, but it'll be off most of the time.
+>=20
+> Well, ftrace is useful, but when would I *ever* care about this stuff? I
+> can't operate kunit
 
-Thanks for all the time and patience!
+Why not?
+
+> don't give a crap about kunit
+
+That's your choice, of course, and it might not be useful to you anyway,
+but it's *really* nice and closed a major gap in testing in some other
+areas.
+
+I'd still encourage you to try it, it might be worth your time.
+
+> and if I were to magically run it, I would be more than capable of
+> ignoring WARNs.
+
+Yeah, it's not just about ignoring WARNs, but mostly about knowing which
+ones you can ignore, and which ones you should fix.
+
+We're getting at a point (on some subsystems I guess) where we actually
+have a decent testing suite we can ask contributors to run and have all
+tests passing.
+
+We also want to ask them to fix whatever issue they might introduce :)
+
+Thanks for your help on getting a cleaner solution!
+
+Maxime
+
+--qoxbr2ctkkwebol6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaD2HWQAKCRAnX84Zoj2+
+diZpAX9dV/a6ieVWLNCtG594KpHg9fUqoQ9HH+DhV86VbFAsQS2WE6+HlIIx3qgt
+ESmZR28BgPLrnPHMz49zNdnmZNinh4e3QfxkMJYbTN5PsPUlk45N0OsqOy5s7HAG
+wUcPFDzBnQ==
+=WE6O
+-----END PGP SIGNATURE-----
+
+--qoxbr2ctkkwebol6--
 
