@@ -1,94 +1,105 @@
-Return-Path: <linux-kernel+bounces-670125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B799ACA944
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 08:09:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 896F7ACA956
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 08:14:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E43E7189988F
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 06:09:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65BD63BCB53
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 06:14:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89B311A3029;
-	Mon,  2 Jun 2025 06:08:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16F95198833;
+	Mon,  2 Jun 2025 06:14:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RKV3AwYA"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="V7vtTMST"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68D8C1A2C27
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 06:08:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B0AC17BB21
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 06:14:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748844515; cv=none; b=XdEoigdDvQ9ZsbFkqJNsRi45Im+f4jLEXUefVi7UDPQ7/4SNssxw0xo0pYjYoqNso5BF4sLkCYPaY8ltRnwU0/pqbn54wKgz1EQB4ww0hs5GyddAi4Ddgt8XEdnlr892PkvSSJrJTaDZR61kTh9Ds4mOZ33B6JB4XwvCXyI64dA=
+	t=1748844863; cv=none; b=R+Pf4Jej5FEaFmuQKlbZV+6Y15HebTM1z9Z8u2ONX+bKv31jNWu8Z6RQffVRsSLVOPpkh7rtx5oRWqkMBuRVwyriKF1tZTcm27SwlpoWhNFT2drFNCC70LEhVQeKtCY9EMKlEFwLK8rH6xPRU68ZQrKkFZcgWeUuYAQp2j2065U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748844515; c=relaxed/simple;
-	bh=Xh9WnzSfgu+m0GMDti5P07SLsI9o4jWrD0yuJ3eYVjM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=at3XAcv7j2JouYfbTn4eDr4Kcl5PabsXH6bjKGKUTOZ4+K5zLk4qJwf0ExdEgdZVaqQ0gafyORfWQ+WeeDn5IHmzXjHUr7m/dSr4/G5TeAh31dp81s5r6kqf/07Vpjr7XpwWBrzX/CiNGj3WH8Z5IXhYF2JbhYIGNo6XG1hUD1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RKV3AwYA; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3a4f71831abso2704262f8f.3
-        for <linux-kernel@vger.kernel.org>; Sun, 01 Jun 2025 23:08:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1748844512; x=1749449312; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=nUg394UUqvjb/oidDzwm9pG7XoUFy0Z+jw1O2ucewGg=;
-        b=RKV3AwYAZeCz/xvq2cZnTzl50mMef7bBFfYRV/t8f6xYgW6eKR14YPoNmVFYPB7zdz
-         TqGviriu+hTAg5DNPrNbqZvLtQzDFR35MYyBAA8gxdN2sk+a20uc+c91Racg/F345b9v
-         ilY7d1xuJnxv115mInIwtaOV99txDV9ppiPDQGKWAVlJp6yNL/xQVKKAm/oN1dmyjGCr
-         qtfgUnnrlriorPAQCKS+quQGUywdMx0mjic57QcedyCz5mG8l1TBVzBzvWSJTmDypHIZ
-         SxhrMxLrNbVmqGOLKCfjO/m6yRvFLW18d7x6RiE1j0/b/mSDOct4g4iQ6h+9JdJxGjt1
-         x6DA==
+	s=arc-20240116; t=1748844863; c=relaxed/simple;
+	bh=yfDMLKTywq1rgMhTpI3zIvk32bTPAbLabXGgDUmWeVU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X+Qqxg/oN6TjJy2Eh1c6mf6VvjgbM4RSCwVhCZ4ur0t7iegR8L4kVHDNhvaBGNzBqLl6m9bTV3+Pa1EC4Di9wQ9X7Jx9CzxEQ+ZmoPMmRWTu/aRLzsPJ8CingGqV0X0/blDJ9qFAru5vKXxjQXo2T2Jy9ujZB3qKShRHF9UDDMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=V7vtTMST; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 551NBvUW006130
+	for <linux-kernel@vger.kernel.org>; Mon, 2 Jun 2025 06:14:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=flmDUdRzTSdQ3XB1WaSuNgXC
+	/xzzeHQUFd3cOSxNmi8=; b=V7vtTMSTMwAUZ9hMvxn/zls9XMsTDaNXheuveFRg
+	WJkaCRzloXG/wxQ8s4VNzQHIlkphpx1KZActvR3PnZxIBCLCNPpMGw3+gMENCnzK
+	AhmVVBOgnVIL21Njy5kQfLH8dMgn+yXmK7OxEiJiLYzn2Ddwl+1UkzNUoq9CX3LI
+	4RGEJEMdG5OBLRpS5CIIQ+jWvY0+35az3kdD7k6Uw9N0vInNQRG44CmEN2UCfyfm
+	xv8X+JfxrTpWxvzN9EdWFfUR5YE6xrwEiQopf+bUSyQ9RLp/17Ty+f26wIP78kCO
+	sCex+YDtanz0SwHxQXnWhrMzcLEyYuOcqa3/P42TkYKRPA==
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46ytxm3h6v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 02 Jun 2025 06:14:21 +0000 (GMT)
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7c790dc38b4so710260485a.0
+        for <linux-kernel@vger.kernel.org>; Sun, 01 Jun 2025 23:14:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748844512; x=1749449312;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nUg394UUqvjb/oidDzwm9pG7XoUFy0Z+jw1O2ucewGg=;
-        b=AtLWK8/MX3fc92mdSyapUF+IQ0/tAmze0bmABbLDnOsI0ERG6Gx9X+ejYw5XxHyFUF
-         EVip1UO+MdQoUo8dnwIDfrjCGg5AKSX8ZpljcD+cmpXh9ujG4ReEYFPMb2NRXLuxUaeK
-         dVcRXwWjvVVUHz+xVFkqYnsXbHmQkcgZUsGO7i0oElhA8Gl/MLj0kZ1TBu8qQ+OYsEq1
-         jHDkp+JUV4jfNH4RIOiopbAa5ow7TByEzIyJ+4XQMTTGMZGnwPV+L2ZF9BUBqBCUYiX9
-         ZGOUj0wRa+0TvnZo5vH7s+rcl6QWC3WrgU2cl1DiVLvlaw4JG8Ib5/rtxCdxWencA7Wb
-         btXg==
-X-Forwarded-Encrypted: i=1; AJvYcCXV5i8Ez1UE05Z5Om+yT62BGr0zEH8oQNjd+qNzbKJM/EiiIxc5iVRO+mu8NW41KmluScMeWhSLUwDc4Jo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOyYt4IsEo/C5gswXbbAzWfJz4xAmFwdrB6cQNNZRrW6ZUJSWi
-	9q2H1Vj3d2uaBKAQuc92Z5doubilNEFw3btcdL++LUMQIfA+b5gymU9+FMeY4MDmFTU=
-X-Gm-Gg: ASbGnctaIQZkhKKuXUBczEVjfWX6+2+VEgGPHytjQQyhssj6r8HdlEaovWmb663UU7X
-	6srQXZR5AFUBO9RmiajeH10quaB04XX10BarzrHy3aRi1/TnNRJa/t6jBAbL5MZnpN6rbAx0imH
-	vCPruUB9oIXn01BgBWCa+rqJTdZDrq9AWNjlng49P9DHM51uaE2MowbSIqrpk9y+Vv5p6VrBD1C
-	AFfmWIx/v2rAdvbEiSGQHURj1APHdpwwfv6VZryiVkw3d1kvcU9xR2KO1wSMoIYEroTkyApuHNb
-	nF5VbYm0CBTcSxjaArjK9wvcdsKDYf6/7vcuZYxwzAs4a5MPIstAnFFPv9RMZMAqww==
-X-Google-Smtp-Source: AGHT+IECaagk3g9nLoafLTcr2Co0rEQWyMHI31p8lTu8Ivf/YK9+vSssiruussNYu28rBIZV/D4I1w==
-X-Received: by 2002:a5d:5f54:0:b0:39c:30cd:352c with SMTP id ffacd0b85a97d-3a4f89a482fmr8521278f8f.8.1748844511667;
-        Sun, 01 Jun 2025 23:08:31 -0700 (PDT)
-Received: from localhost ([41.210.143.146])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a4f00a02cdsm13745291f8f.94.2025.06.01.23.08.30
+        d=1e100.net; s=20230601; t=1748844860; x=1749449660;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=flmDUdRzTSdQ3XB1WaSuNgXC/xzzeHQUFd3cOSxNmi8=;
+        b=oCpRrguXm0rxo0BWI+Lq6RzFUIVmq6vs6A08pVOPiyuXjDI7FFHKELqJZI/KgBxev2
+         DL+xOFCgTMKWyfahkgjhfJYj3RuAReDumojSSjZU/oZimfJYfsiMh+oiexkclQ6EMXkN
+         3sxglkmzavC5d1kWmK+ZLtR2cU/H/rxj/r+V1l+XWK0/vMNBdCUF06otTESzty6eyErn
+         nQ+YWW0/ywOSPYAOMOKdOSsFsbZthnLOhqQXGrEVTSYT3F3/ps/nuuYqX4sfhTKn1hvK
+         hNidBw3zP/R3+xS1NOsp1wQYQ7zrKthioe1uT7efv0aveRww7GTRvOpfFtFi5NrC06N3
+         CyrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWuwPLguRDEIQpQO7XrZd2C2MVrWQD2XZPD/ninVWKa6yyK0scWNVCftAPcgXlz+J0ZLTkRB+XCqDV48rE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzO7ecyLPaLxEEWCF2awWDaWTOMKAmcorD9KUgjlHemqt+BJsI3
+	hWvTyzxOWuGs8Tph/jXCy7dxDg3WWNzdfyToMTrL9OQCnR5EOhqaFnOcFPktndMsD0L9tCSEx8x
+	MV1q3isV+VJ+n1VxIa5Fe11Xcgz8O7kHDbSKlVHcDChBZpaShZqNfNNFj6NpwhW3+dc0=
+X-Gm-Gg: ASbGnctBvLM1viGjMGn8PS7dIoGtoF7VIcy8irpQ/U4pa6L3YaZAv38vW9VWoG+Jmxd
+	Wtf5E42PlB4t/riM1EBOuKECXlEqljKhuimJrIeKqZQjyuI/j0uiYMXvKnL8QcpZge4HxSktpzo
+	hOiIRSSgJ5bKwnimstle+a+qXzBBRQv+3QuDXO46Km9IORF22uQNG1lDAqu3PztkD6ZHDyYNsds
+	iNyd5v4DgilFBLwmbw735EApUqiz7bG0N1jpnNxAQiJhe4ogHBSYxiR8zXJ6D3LoprAj+ZTA2eH
+	8F3i7pO1Lzl09tu2Tirf+1WJ2zm4+yIsXNIX18YpVRMZPk0OrSshu5/wlZFJPo4YurUTC9lq8z8
+	=
+X-Received: by 2002:a05:620a:4488:b0:7ce:eb40:5abc with SMTP id af79cd13be357-7d0987d73f0mr2372748785a.21.1748844859765;
+        Sun, 01 Jun 2025 23:14:19 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGfa/HyjwuKIFtyqKUXOSM36DThgJJlHokJlZLC6wMsaXWoh8NnPBLRYAhqMEAaUk+Mohp66w==
+X-Received: by 2002:a05:620a:4488:b0:7ce:eb40:5abc with SMTP id af79cd13be357-7d0987d73f0mr2372745685a.21.1748844859380;
+        Sun, 01 Jun 2025 23:14:19 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5533787d1d2sm1480413e87.7.2025.06.01.23.14.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 01 Jun 2025 23:08:31 -0700 (PDT)
-Date: Mon, 2 Jun 2025 09:08:27 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev,
-	Samuel Kayode via B4 Relay <devnull+samuel.kayode.savoirfairelinux.com@kernel.org>,
-	Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Sebastian Reichel <sre@kernel.org>
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-input@vger.kernel.org, linux-pm@vger.kernel.org,
-	Samuel Kayode <samuel.kayode@savoirfairelinux.com>,
-	eballetbo@gmail.com, abelvesa@linux.com, b38343@freescale.com,
-	yibin.gong@nxp.com, Abel Vesa <abelvesa@kernel.org>
-Subject: Re: [PATCH v3 2/6] mfd: pf1550: add core mfd driver
-Message-ID: <202505290859.CKZrTkZu-lkp@intel.com>
+        Sun, 01 Jun 2025 23:14:17 -0700 (PDT)
+Date: Mon, 2 Jun 2025 09:14:15 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Renjiang Han <quic_renjiang@quicinc.com>
+Cc: Vikash Garodia <quic_vgarodia@quicinc.com>,
+        Dikshita Agarwal <quic_dikshita@quicinc.com>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, linux-media@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Nicolas Dufresne <nicolas.dufresne@collabora.com>
+Subject: Re: [PATCH v8 3/3] arm64: dts: qcom: qcs615-ride: enable venus node
+ to initialize video codec
+Message-ID: <x27shu4eaqa4qc4mld5xryelyvhic7vneq4tetxy5j7zrxll6m@ssxg4jehdsyy>
+References: <20250530-add-venus-for-qcs615-v8-0-c0092ac616d0@quicinc.com>
+ <20250530-add-venus-for-qcs615-v8-3-c0092ac616d0@quicinc.com>
+ <qeuxv2mpnnsieygdwvsb63k4n53tnc6yekiv2wels4jjwwpxf3@wutnfkefi7yj>
+ <05ccb3ce-1954-4a6c-8cfc-edc8313e9875@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,69 +108,76 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250527-pf1550-v3-2-45f69453cd51@savoirfairelinux.com>
+In-Reply-To: <05ccb3ce-1954-4a6c-8cfc-edc8313e9875@quicinc.com>
+X-Proofpoint-GUID: 2rvqit4lOkX1zxRnIJRznJpqOV0_vZ2k
+X-Proofpoint-ORIG-GUID: 2rvqit4lOkX1zxRnIJRznJpqOV0_vZ2k
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjAyMDA1MiBTYWx0ZWRfX6olUvcEoIMmX
+ MPZkrP0MH5ZhwzrIinUhE+RXQcZsaD15fPTEwr+sw0PmQK4GHbcVeH2Y+pZPgbUyQgZBOQX1Wwu
+ e1uqiyj61x1SdYEcGllhViWi3sXR2QuSAndhxbqUE+a6pXcIBDy8cY0lRil/yLX3DzY6Ef+KtvR
+ 4EC9FGMKrSntund1YeWBScbZVL3mDRJInugZUd2rwX+qn/qhOFT7YCa1JwVXOJuYqjgo7L2RuMT
+ rt+J8GBy2mBD+8L3L7eAaMKHmp4mQ7otLARZk6S1jyWuXfJtXTNvx6sk1sLtu0GciAF5UXmEVW6
+ fRLlRRVezU7i5sFu7k0w4bhvKYqEdHcOoPi2C8iJtgmJ12US59k/u6bp9F5uTYMgJH2LrO6X7xn
+ B1FPkE+MXIRjBzy717E97wDd+Kr+pUA3fYPzEKjAnJmMp2HaAE5N425n7pHDFxIGjlh1WckC
+X-Authority-Analysis: v=2.4 cv=XdKJzJ55 c=1 sm=1 tr=0 ts=683d413d cx=c_pps
+ a=HLyN3IcIa5EE8TELMZ618Q==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=6IFa9wvqVegA:10 a=QX4gbG5DAAAA:8 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8
+ a=2kupvtxIihpKMtcpfgAA:9 a=CjuIK1q_8ugA:10 a=bTQJ7kPSJx9SKPbeHEYW:22
+ a=AbAUZ8qAyYyZVLSsDulk:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-02_02,2025-05-30_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 mlxlogscore=999 spamscore=0 lowpriorityscore=0
+ suspectscore=0 phishscore=0 impostorscore=0 clxscore=1015 mlxscore=0
+ bulkscore=0 malwarescore=0 adultscore=0 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505160000 definitions=main-2506020052
 
-Hi Samuel,
+On Sat, May 31, 2025 at 08:07:06AM +0800, Renjiang Han wrote:
+> 
+> On 5/31/2025 4:31 AM, Dmitry Baryshkov wrote:
+> > On Fri, May 30, 2025 at 09:32:15AM +0530, Renjiang Han wrote:
+> > > Enable the venus node to allow the video codec to start working properly
+> > > by setting its status to "okay".
+> > > 
+> > > Acked-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+> > > Signed-off-by: Renjiang Han <quic_renjiang@quicinc.com>
+> > > ---
+> > >   arch/arm64/boot/dts/qcom/qcs615-ride.dts | 4 ++++
+> > >   1 file changed, 4 insertions(+)
+> > > 
+> > > diff --git a/arch/arm64/boot/dts/qcom/qcs615-ride.dts b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+> > > index 2b5aa3c66867676bda59ff82b902b6e4974126f8..0686f5c10bdaf7ba3f522e16acd2107d25742dd9 100644
+> > > --- a/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+> > > +++ b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+> > > @@ -338,6 +338,10 @@ &ufs_mem_phy {
+> > >   	status = "okay";
+> > >   };
+> > > +&venus {
+> > > +	status = "okay";
+> > Does QCS615 work with existing qcom/venus-5.4/venus.mbn or does it need
+> > another VPU firmware?
+> yes, QCS615 works with existing qcom/venus-5.4/venus.mbn.
 
-kernel test robot noticed the following build warnings:
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Samuel-Kayode-via-B4-Relay/dt-bindings-mfd-add-pf1550/20250528-062840
-base:   0a4b866d08c6adaea2f4592d31edac6deeb4dcbd
-patch link:    https://lore.kernel.org/r/20250527-pf1550-v3-2-45f69453cd51%40savoirfairelinux.com
-patch subject: [PATCH v3 2/6] mfd: pf1550: add core mfd driver
-config: nios2-randconfig-r072-20250529 (https://download.01.org/0day-ci/archive/20250529/202505290859.CKZrTkZu-lkp@intel.com/config)
-compiler: nios2-linux-gcc (GCC) 10.5.0
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202505290859.CKZrTkZu-lkp@intel.com/
-
-smatch warnings:
-drivers/mfd/pf1550.c:162 pf1550_i2c_probe() warn: passing zero to 'dev_err_probe'
-
-vim +/dev_err_probe +162 drivers/mfd/pf1550.c
-
-fc62e32ad9eb64 Samuel Kayode 2025-05-27  140  static int pf1550_i2c_probe(struct i2c_client *i2c)
-fc62e32ad9eb64 Samuel Kayode 2025-05-27  141  {
-fc62e32ad9eb64 Samuel Kayode 2025-05-27  142  	struct pf1550_dev *pf1550;
-fc62e32ad9eb64 Samuel Kayode 2025-05-27  143  	unsigned int reg_data = 0;
-fc62e32ad9eb64 Samuel Kayode 2025-05-27  144  	int ret = 0;
-fc62e32ad9eb64 Samuel Kayode 2025-05-27  145  
-fc62e32ad9eb64 Samuel Kayode 2025-05-27  146  	pf1550 = devm_kzalloc(&i2c->dev, sizeof(*pf1550), GFP_KERNEL);
-fc62e32ad9eb64 Samuel Kayode 2025-05-27  147  	if (!pf1550)
-fc62e32ad9eb64 Samuel Kayode 2025-05-27  148  		return -ENOMEM;
-fc62e32ad9eb64 Samuel Kayode 2025-05-27  149  
-fc62e32ad9eb64 Samuel Kayode 2025-05-27  150  	i2c_set_clientdata(i2c, pf1550);
-fc62e32ad9eb64 Samuel Kayode 2025-05-27  151  	pf1550->dev = &i2c->dev;
-fc62e32ad9eb64 Samuel Kayode 2025-05-27  152  	pf1550->i2c = i2c;
-fc62e32ad9eb64 Samuel Kayode 2025-05-27  153  	pf1550->irq = i2c->irq;
-fc62e32ad9eb64 Samuel Kayode 2025-05-27  154  
-fc62e32ad9eb64 Samuel Kayode 2025-05-27  155  	pf1550->regmap = devm_regmap_init_i2c(i2c, &pf1550_regmap_config);
-fc62e32ad9eb64 Samuel Kayode 2025-05-27  156  	if (IS_ERR(pf1550->regmap))
-fc62e32ad9eb64 Samuel Kayode 2025-05-27  157  		return dev_err_probe(pf1550->dev, PTR_ERR(pf1550->regmap),
-fc62e32ad9eb64 Samuel Kayode 2025-05-27  158  				     "failed to allocate register map\n");
-fc62e32ad9eb64 Samuel Kayode 2025-05-27  159  
-fc62e32ad9eb64 Samuel Kayode 2025-05-27  160  	ret = regmap_read(pf1550->regmap, PF1550_PMIC_REG_DEVICE_ID, &reg_data);
-fc62e32ad9eb64 Samuel Kayode 2025-05-27  161  	if (ret < 0 || reg_data != PF1550_DEVICE_ID)
-fc62e32ad9eb64 Samuel Kayode 2025-05-27 @162  		return dev_err_probe(pf1550->dev, ret, "device not found!\n");
-
-return dev_err_probe(pf1550->dev, ret ?: -EINVAL, "device not found!\n");
-
-fc62e32ad9eb64 Samuel Kayode 2025-05-27  163  
-fc62e32ad9eb64 Samuel Kayode 2025-05-27  164  	pf1550->type = PF1550;
-fc62e32ad9eb64 Samuel Kayode 2025-05-27  165  
-fc62e32ad9eb64 Samuel Kayode 2025-05-27  166  	ret = devm_regmap_add_irq_chip(pf1550->dev, pf1550->regmap,
-fc62e32ad9eb64 Samuel Kayode 2025-05-27  167  				       pf1550->irq,
-fc62e32ad9eb64 Samuel Kayode 2025-05-27  168  				       IRQF_ONESHOT | IRQF_SHARED |
-fc62e32ad9eb64 Samuel Kayode 2025-05-27  169  				       IRQF_TRIGGER_FALLING, 0,
-fc62e32ad9eb64 Samuel Kayode 2025-05-27  170  				       &pf1550_regulator_irq_chip,
-fc62e32ad9eb64 Samuel Kayode 2025-05-27  171  				       &pf1550->irq_data_regulator);
-fc62e32ad9eb64 Samuel Kayode 2025-05-27  172  	if (ret)
+> > 
+> > > +};
+> > > +
+> > >   &watchdog {
+> > >   	clocks = <&sleep_clk>;
+> > >   };
+> > > 
+> > > -- 
+> > > 2.34.1
+> > > 
+> -- 
+> Best Regards,
+> Renjiang
+> 
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
-
+With best wishes
+Dmitry
 
