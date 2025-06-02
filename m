@@ -1,150 +1,163 @@
-Return-Path: <linux-kernel+bounces-670693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA493ACB73B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 17:26:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 38639ACB613
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 17:13:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97DD0A2517E
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 15:04:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B95FA24C38
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 15:03:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7487B230996;
-	Mon,  2 Jun 2025 14:56:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96508227E94;
+	Mon,  2 Jun 2025 14:55:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3010zrvg"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="jeWyvWNp";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="apFAX9Vi";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="jeWyvWNp";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="apFAX9Vi"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03E67227BA4
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 14:56:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 638D8226D1D
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 14:55:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748876186; cv=none; b=g91poQWg1G+niSsFj+wyfGixFQG8aS23a/j3q+/rvQCTcKbjEhCXTizNY12jVpIC1RThI15AnzAZz3dkgJX4lTOXgruvFzv2cjV4mvx+wmywUrvRSP1Mjq3xuvL05iJIJ7H2TR/zJbNvRqD12lTy4GYptcuXJBXv00GEPOvvjQw=
+	t=1748876153; cv=none; b=IM5LsDHlOMzjJhUvS/jqqdBMC96EcAAQruNTGCvslyjOGyXJ8AnZ/Pm/wC7tPxJl0mJeDATwP5WxqtkqYei/27xhGF30/92/1Oa+CsX/XE6hX5i9p/MrWI8Muq3E/yE8NNCwUAy+Ha9Y9MwCrY6kqAnwMW/fzxK+Ezrkgsh2Zao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748876186; c=relaxed/simple;
-	bh=o3GVNCy1IvSNRk1KHzjX2Q14BU/Xa3tgEobLjN7s8/M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Fmj7V+vy9PA8dfMVaWVXI4O6VJ1aH6UQSx3AYQHf+MNVldo8sIKtuEtBsMbWqWSFn2RKdDNgTT2wVIH/1gRw61Y5aTyGBGVH64X8oEfbrQ6wXyS6nzGEvxEE6GUYyyvtcGDioQ9TDAmZuvoNvnkcQ1TlYpqBPKkMUZqqB/gkwrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3010zrvg; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-6024087086dso14544a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jun 2025 07:56:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1748876183; x=1749480983; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pNF511MgaFtsD48A90MDbHZtD9Ll5lctEsJk06IOH/4=;
-        b=3010zrvgAHGBdCmhhR0lFbZF9Ucb8/WbaxHC/MogbNVC4fgjZILg+OMunbTLTnHuTK
-         1tSHfUEffSu9QXQ+5YLCvXOKcuxfeMwonyK22RU6qtfb9oluHhU/EB2ClkjGK+0PHsk1
-         K2oOcSgRENRoqbYJ53JE7pHeUhUlQ9PGxUOuFUGMa/0TI26qTSoarjgTxy3H0uDNQlXj
-         pxLRdc1k8Xq5GLeDCvz399/v7M9kSKpIiumv0x6A5zVrI0FIKuzpK4KWps/P6Fqcq61y
-         Lah7Ohx+FiGKEqEhf4NPp6JQZQW89QAw5vvft9VhmarIMHFt0nRjh/S2mpWgebr1Kg7P
-         DNDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748876183; x=1749480983;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pNF511MgaFtsD48A90MDbHZtD9Ll5lctEsJk06IOH/4=;
-        b=iAaiPzyWWpQUmXMZTBZQQzr+ZBk14j7LfjsjgjausYBnZzGn+oosvTuOjlYGfAf+6d
-         M1vmDib3B4vGIQPSsbpxrMn3Awvo9pppLlZnaB4iKGGuLo+rX+jJ6NVXPkOn1Q/67bOW
-         bn3rqqZbLri047g6bYbMrMMb+eS8++6OACFEU/urvGSgprzz6eF3uMm00JbggwRL5Q5c
-         B54O97L6RO+Q/b6YJLGTMzW1+qPy9K48NOyu2TwbPCUVlvX6eUG7Sj1PKEpa+/TWMQht
-         ruhLq9JTxnDVR3qCcFaUBcA+SSFVC9qQBjMCYtoB02RjmS0Qs0hzZaNUtY9E/O/YAg2/
-         z36A==
-X-Forwarded-Encrypted: i=1; AJvYcCV3AvILS2RBya7/0E0VOUhx3174FrW8HlJT6w5BSDc075tql91Tzk9ueJ80JypUwomwSZ15mi0TlpAwB4s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZEE1IgNF4fnwlGGJnpRrMjYg/U1WJRGC0clsDhG4rIrJWJFyy
-	6OgQo+oGPL9SRc1zMysq+Jzwqao2hzAHBX8dvqznVge7t42Jje9MbcjfeV3mqZG7I3Fqi87Sltl
-	5AvBmrjvvJJYzUIQWzfLPi9dhG3K2i+Wa9jxyubdT
-X-Gm-Gg: ASbGncvPpXJz4PtZtBxAlbda89KoWIGmm3W3KuDr18fszQjuuhB96F9CGekqGF5/tXO
-	RQ4WsRDudt+BT9FvQFKnm2LU6K4cWKDTwhscoGhVOcCWZlQFlX7tkt2tDpoxYQh6C3/0nAN+c+E
-	yem//Zqyc5TaZdpOxP9HJlB27lERCIibfDW8Nj+Lbmc0EOqVun7/cAcYhNQJQD0ru2kDOsHLUWV
-	NWrYFAS3EM=
-X-Google-Smtp-Source: AGHT+IGQtc3WBIVJZRLnX8hZQzlRbDDYAStKVAzE1RREAckOOqW5UwtvA2umiVPi5uY6NCwFxiD63Zy+fl33mDpdslk=
-X-Received: by 2002:a50:baa3:0:b0:602:3bf:ce71 with SMTP id
- 4fb4d7f45d1cf-605b3d6f8e3mr115449a12.3.1748876182849; Mon, 02 Jun 2025
- 07:56:22 -0700 (PDT)
+	s=arc-20240116; t=1748876153; c=relaxed/simple;
+	bh=mmsuWg92E1oRARJsckfmaN9kCc+sTcUE7a4qFv2JjcY=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PbCpOepN/kIgpVgCCd/7FqKSfeAA/yMOKSPAN19xs8MguWwEPngREX70GQVycst/gwCenDQgs4L3ZKXNTrc3PCO8wuHo5LBDw5DP7i8jqcMeGwjrX7p04UuDVpiVOgpW5tDamWpHyseOa8f5SfkVIW6clky3i65NPVvy3honodc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=jeWyvWNp; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=apFAX9Vi; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=jeWyvWNp; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=apFAX9Vi; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 92E781F7BD;
+	Mon,  2 Jun 2025 14:55:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1748876149; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aGgH2NC4M/mYCe/ce1FmqHa6Dl8VRr5A1u9oMQuPP5Q=;
+	b=jeWyvWNpHb1y6AAXrn5cbsuxUSq0HkLL8QEwl3BGs1pjzQFzShw3UA5Tkw+4eV2odPj6kp
+	sWI5PJnh6Shj1Yi2aU2hwTbW6AiFPg1euTy6tnHnabk5fe6gc8dFbV1VIe8LkHwR4Xd4rD
+	QnkGtEYbEk1MIY2EkGrZfs0YAd1RdKQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1748876149;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aGgH2NC4M/mYCe/ce1FmqHa6Dl8VRr5A1u9oMQuPP5Q=;
+	b=apFAX9ViT3BTWfUZu24e6mWYkx8J8Z1xccr16w4qFiYzRhZqzgO2Qqo7fm0JHLP/T0hanf
+	99X2TL4uEtAajGDQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1748876149; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aGgH2NC4M/mYCe/ce1FmqHa6Dl8VRr5A1u9oMQuPP5Q=;
+	b=jeWyvWNpHb1y6AAXrn5cbsuxUSq0HkLL8QEwl3BGs1pjzQFzShw3UA5Tkw+4eV2odPj6kp
+	sWI5PJnh6Shj1Yi2aU2hwTbW6AiFPg1euTy6tnHnabk5fe6gc8dFbV1VIe8LkHwR4Xd4rD
+	QnkGtEYbEk1MIY2EkGrZfs0YAd1RdKQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1748876149;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aGgH2NC4M/mYCe/ce1FmqHa6Dl8VRr5A1u9oMQuPP5Q=;
+	b=apFAX9ViT3BTWfUZu24e6mWYkx8J8Z1xccr16w4qFiYzRhZqzgO2Qqo7fm0JHLP/T0hanf
+	99X2TL4uEtAajGDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 59A65136C7;
+	Mon,  2 Jun 2025 14:55:49 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id h77BE3W7PWhnYAAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Mon, 02 Jun 2025 14:55:49 +0000
+Date: Mon, 02 Jun 2025 16:55:48 +0200
+Message-ID: <87jz5uxkej.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Cc: Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	kernel@collabora.com,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/9] ALSA: usb-audio: Support jack detection on Sony DualSense PS5
+In-Reply-To: <20250526-dualsense-alsa-jack-v1-0-1a821463b632@collabora.com>
+References: <20250526-dualsense-alsa-jack-v1-0-1a821463b632@collabora.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250530104439.64841-1-21cnbao@gmail.com> <CAG48ez11zi-1jicHUZtLhyoNPGGVB+ROeAJCUw48bsjk4bbEkA@mail.gmail.com>
- <CAGsJ_4zMcptS5iJGOn+17KSMpM4NcS9F_PW0jMicK6UC7cAbKw@mail.gmail.com>
-In-Reply-To: <CAGsJ_4zMcptS5iJGOn+17KSMpM4NcS9F_PW0jMicK6UC7cAbKw@mail.gmail.com>
-From: Jann Horn <jannh@google.com>
-Date: Mon, 2 Jun 2025 16:55:46 +0200
-X-Gm-Features: AX0GCFs5qpWJTcbQ9fFL1U98ltPX_aaeb9EoUWAY5hf-6w2pnymfyPDVvrasKGg
-Message-ID: <CAG48ez1ZKEkHHx5muofnc=wTsfCpj__3wMROCR4Wy8-GEF_Ogg@mail.gmail.com>
-Subject: Re: [PATCH RFC v2] mm: use per_vma lock for MADV_DONTNEED
-To: Barry Song <21cnbao@gmail.com>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Barry Song <v-songbaohua@oppo.com>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	David Hildenbrand <david@redhat.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Suren Baghdasaryan <surenb@google.com>, Lokesh Gidra <lokeshgidra@google.com>, 
-	Tangquan Zheng <zhengtangquan@oppo.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Flag: NO
+X-Spam-Score: -3.30
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCPT_COUNT_FIVE(0.00)[6];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,collabora.com:email,suse.de:mid]
+X-Spam-Level: 
 
-On Sat, May 31, 2025 at 12:00=E2=80=AFAM Barry Song <21cnbao@gmail.com> wro=
-te:
-> On Fri, May 30, 2025 at 10:07=E2=80=AFPM Jann Horn <jannh@google.com> wro=
-te:
-> > On Fri, May 30, 2025 at 12:44=E2=80=AFPM Barry Song <21cnbao@gmail.com>=
- wrote:
-> > > @@ -1714,19 +1770,24 @@ static int madvise_do_behavior(struct mm_stru=
-ct *mm,
-> > >                 unsigned long start, size_t len_in,
-> > >                 struct madvise_behavior *madv_behavior)
-> > >  {
-> > > +       struct vm_area_struct *vma =3D madv_behavior->vma;
-> > >         int behavior =3D madv_behavior->behavior;
-> > > +
-> > >         struct blk_plug plug;
-> > >         unsigned long end;
-> > >         int error;
-> > >
-> > >         if (is_memory_failure(behavior))
-> > >                 return madvise_inject_error(behavior, start, start + =
-len_in);
-> > > -       start =3D untagged_addr_remote(mm, start);
-> > > +       start =3D untagged_addr(start);
-> >
-> > Why is this okay? I see that X86's untagged_addr_remote() asserts that
-> > the mmap lock is held, which is no longer the case here with your
-> > patch, but untagged_addr() seems wrong here, since we can be operating
-> > on another process. I think especially on X86 with 5-level paging and
-> > LAM, there can probably be cases where address bits are used for part
-> > of the virtual address in one task while they need to be masked off in
-> > another task?
-> >
-> > I wonder if you'll have to refactor X86 and Risc-V first to make this
-> > work... ideally by making sure that their address tagging state
-> > updates are atomic and untagged_area_remote() works locklessly.
->
-> If possible, can we try to avoid this at least for this stage? We all
-> agree that
-> a per-VMA lock for DONTNEED is long overdue. The main goal of the patch
-> is to drop the mmap_lock for high-frequency madvise operations like
-> MADV_DONTNEED and potentially MADV_FREE. For these two cases, it's highly
-> unlikely that one process would be managing the memory of another. In v2,
-> we're modifying common code, which is why we ended up here.
->
-> We could consider doing:
->
-> if (current->mm =3D=3D mm)
->        untagged_addr(start);
-> else
->        untagged_addr_remote(mm, start);
+On Mon, 26 May 2025 16:07:39 +0200,
+Cristian Ciocaltea wrote:
+> 
+> The Sony DualSense PS5 controller has an internal mono speaker, but it
+> also provides a 3.5mm jack socket for headphone output and headset
+> microphone input.
+> 
+> Since this is a UAC1 device, it doesn't advertise any jack detection
+> capability.  However, the controller is able to report HP & MIC insert
+> events via HID, i.e. through a dedicated input device managed by the
+> hid-playstation driver [1].
+> 
+> This patch series implements a quirk to create the jack controls for
+> headphone and headset mic, respectively, and registers an input handler
+> for each of them in order to intercept the related hotplug events.
+> 
+> It's worth noting there is no hard dependency on the HID patch set [1],
+> as the usb-audio driver will simply bind the jack controls to the input
+> devices when they become available - this is managed internally by the
+> input handler framework.
+> 
+> Unrelated to the above, the series also provides fixes to a bunch of
+> general coding style issues as reported by checkpatch.
+> 
+> [1] https://lore.kernel.org/all/20250526-dualsense-hid-jack-v1-0-a65fee4a60cc@collabora.com/
+> 
+> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
 
-Ah, in other words, basically make it so that for now we don't use VMA
-locking on remote processes, and then we can have two different paths
-here for "local operation" and "MM-locked operation"? That's not very
-pretty but from a correctness perspective I'm fine with that.
+Thanks for patches.  Through a quick glance, the code change looks OK,
+but since it's with significant amount of changes, so I'll postpone
+after 6.16 merge window (once after I'm back from traveling).
+
+
+Takashi
 
