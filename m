@@ -1,163 +1,144 @@
-Return-Path: <linux-kernel+bounces-670691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38639ACB613
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 17:13:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77CBBACB606
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 17:13:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B95FA24C38
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 15:03:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9B4B4C2CB1
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 15:05:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96508227E94;
-	Mon,  2 Jun 2025 14:55:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A447823184F;
+	Mon,  2 Jun 2025 14:57:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="jeWyvWNp";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="apFAX9Vi";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="jeWyvWNp";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="apFAX9Vi"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="IcL/sGjB"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 638D8226D1D
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 14:55:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748876153; cv=none; b=IM5LsDHlOMzjJhUvS/jqqdBMC96EcAAQruNTGCvslyjOGyXJ8AnZ/Pm/wC7tPxJl0mJeDATwP5WxqtkqYei/27xhGF30/92/1Oa+CsX/XE6hX5i9p/MrWI8Muq3E/yE8NNCwUAy+Ha9Y9MwCrY6kqAnwMW/fzxK+Ezrkgsh2Zao=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748876153; c=relaxed/simple;
-	bh=mmsuWg92E1oRARJsckfmaN9kCc+sTcUE7a4qFv2JjcY=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PbCpOepN/kIgpVgCCd/7FqKSfeAA/yMOKSPAN19xs8MguWwEPngREX70GQVycst/gwCenDQgs4L3ZKXNTrc3PCO8wuHo5LBDw5DP7i8jqcMeGwjrX7p04UuDVpiVOgpW5tDamWpHyseOa8f5SfkVIW6clky3i65NPVvy3honodc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=jeWyvWNp; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=apFAX9Vi; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=jeWyvWNp; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=apFAX9Vi; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 92E781F7BD;
-	Mon,  2 Jun 2025 14:55:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1748876149; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aGgH2NC4M/mYCe/ce1FmqHa6Dl8VRr5A1u9oMQuPP5Q=;
-	b=jeWyvWNpHb1y6AAXrn5cbsuxUSq0HkLL8QEwl3BGs1pjzQFzShw3UA5Tkw+4eV2odPj6kp
-	sWI5PJnh6Shj1Yi2aU2hwTbW6AiFPg1euTy6tnHnabk5fe6gc8dFbV1VIe8LkHwR4Xd4rD
-	QnkGtEYbEk1MIY2EkGrZfs0YAd1RdKQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1748876149;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aGgH2NC4M/mYCe/ce1FmqHa6Dl8VRr5A1u9oMQuPP5Q=;
-	b=apFAX9ViT3BTWfUZu24e6mWYkx8J8Z1xccr16w4qFiYzRhZqzgO2Qqo7fm0JHLP/T0hanf
-	99X2TL4uEtAajGDQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1748876149; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aGgH2NC4M/mYCe/ce1FmqHa6Dl8VRr5A1u9oMQuPP5Q=;
-	b=jeWyvWNpHb1y6AAXrn5cbsuxUSq0HkLL8QEwl3BGs1pjzQFzShw3UA5Tkw+4eV2odPj6kp
-	sWI5PJnh6Shj1Yi2aU2hwTbW6AiFPg1euTy6tnHnabk5fe6gc8dFbV1VIe8LkHwR4Xd4rD
-	QnkGtEYbEk1MIY2EkGrZfs0YAd1RdKQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1748876149;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aGgH2NC4M/mYCe/ce1FmqHa6Dl8VRr5A1u9oMQuPP5Q=;
-	b=apFAX9ViT3BTWfUZu24e6mWYkx8J8Z1xccr16w4qFiYzRhZqzgO2Qqo7fm0JHLP/T0hanf
-	99X2TL4uEtAajGDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 59A65136C7;
-	Mon,  2 Jun 2025 14:55:49 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id h77BE3W7PWhnYAAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Mon, 02 Jun 2025 14:55:49 +0000
-Date: Mon, 02 Jun 2025 16:55:48 +0200
-Message-ID: <87jz5uxkej.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Cc: Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	kernel@collabora.com,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/9] ALSA: usb-audio: Support jack detection on Sony DualSense PS5
-In-Reply-To: <20250526-dualsense-alsa-jack-v1-0-1a821463b632@collabora.com>
-References: <20250526-dualsense-alsa-jack-v1-0-1a821463b632@collabora.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6027322A4DB;
+	Mon,  2 Jun 2025 14:57:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748876233; cv=pass; b=BLNuEX0vVgET4fysWzh45Czew6J6Af8Lq19iYX+opUe6mic2alMYSlyggzImmQwYcAWtemw5osOUQaBHa+GmwTIRCyjCu7g6gpiEY3BnfyPLWMpxRq/EToVTRwImwKRymsmf7sp0V4IxB6FT4IBNoD9/kar3eGGRupDVCJOE+Gs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748876233; c=relaxed/simple;
+	bh=fqmaKdL6+SP2p0NooH1UzlIgSWoHuY1uQbCgGLpfntQ=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=kZ21UBY7bo+ZdScufVw8L1ManfKf0YSst66JRRUlLAS45gR2EcAOJNpuL/h8jOxr46jTtR0ZQPjSIY8ja1EbnygLKN4kS3Gftu47zMrr20ItBmcO3hRQ5pWUxJekpze4QfSpk+4Q9of8wkp0Ffi8dAjIXcaTrRQlaxldEMcVrcQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=IcL/sGjB; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1748876207; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=XmfrqtlhlnldH4kwzX4xslwYHfQBNdHqcBelQXZ6Lrcg7iHEviQmrTe484+B/xbtqKltYjBoA7hv30bsOrW5l+9qFgt5w63z3CLt7Ic4BG9A6qlvwb6xLgm2N/tI8KTnV4yxABMuhHgBBMqrkLAfJn2UzOztNkd0zECYmwQNmaY=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1748876207; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=3qYcFLdgo7IjTr+AbRql4HwQ6X5sGT8wD6ZLBAhVXkw=; 
+	b=V2Pgs07EDkFlFzQZYf8C2Eu8sLYTW4UkxbSudhkqHGH2B+lucnObRvfhD2J29nmrUPus6qYkq3KfZDcAw4T2IBh5EapHUv/O3uL+MGLhLW8RJSt4/JONbADXfG+5m9HO/o96xTZQ8u69OtgK9awa3NLDBz/URPSXisDM5PWsWU4=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1748876207;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=3qYcFLdgo7IjTr+AbRql4HwQ6X5sGT8wD6ZLBAhVXkw=;
+	b=IcL/sGjBT3DRi2YktskR8cKL3Je68UDw+2KjwU3PSWChgPgVgG/dBjRUtXJTCKJC
+	Evu8mwiN6SMxFkupAvGNr8utQwkAxrKvaBB185mzeVeb+yeQ5ZeYiiKQUDwLggDrUOs
+	PU/A8XS18f+meXanq4e42XbngvGHl8exX2QywJIw=
+Received: by mx.zohomail.com with SMTPS id 1748876204841691.2107514249591;
+	Mon, 2 Jun 2025 07:56:44 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Flag: NO
-X-Spam-Score: -3.30
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCPT_COUNT_FIVE(0.00)[6];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,collabora.com:email,suse.de:mid]
-X-Spam-Level: 
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH v3 2/2] rust: platform: add irq accessors
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <aCsK7s0qepzIiA-l@pollux>
+Date: Mon, 2 Jun 2025 11:56:28 -0300
+Cc: Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <CA34AB78-D9DC-433A-B6DF-663849A07370@collabora.com>
+References: <20250514-topics-tyr-request_irq-v3-0-d6fcc2591a88@collabora.com>
+ <20250514-topics-tyr-request_irq-v3-2-d6fcc2591a88@collabora.com>
+ <aCsK7s0qepzIiA-l@pollux>
+To: Danilo Krummrich <dakr@kernel.org>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
+X-ZohoMailClient: External
 
-On Mon, 26 May 2025 16:07:39 +0200,
-Cristian Ciocaltea wrote:
-> 
-> The Sony DualSense PS5 controller has an internal mono speaker, but it
-> also provides a 3.5mm jack socket for headphone output and headset
-> microphone input.
-> 
-> Since this is a UAC1 device, it doesn't advertise any jack detection
-> capability.  However, the controller is able to report HP & MIC insert
-> events via HID, i.e. through a dedicated input device managed by the
-> hid-playstation driver [1].
-> 
-> This patch series implements a quirk to create the jack controls for
-> headphone and headset mic, respectively, and registers an input handler
-> for each of them in order to intercept the related hotplug events.
-> 
-> It's worth noting there is no hard dependency on the HID patch set [1],
-> as the usb-audio driver will simply bind the jack controls to the input
-> devices when they become available - this is managed internally by the
-> input handler framework.
-> 
-> Unrelated to the above, the series also provides fixes to a bunch of
-> general coding style issues as reported by checkpatch.
-> 
-> [1] https://lore.kernel.org/all/20250526-dualsense-hid-jack-v1-0-a65fee4a60cc@collabora.com/
-> 
-> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Hi Danilo,
 
-Thanks for patches.  Through a quick glance, the code change looks OK,
-but since it's with significant amount of changes, so I'll postpone
-after 6.16 merge window (once after I'm back from traveling).
+[=E2=80=A6]
 
+>> +
+>> +    /// Same as [`Self::irq_by_name`] but does not print an error =
+message if an IRQ
+>> +    /// cannot be obtained.
+>> +    pub fn optional_irq_by_name(&self, name: &CStr) -> Result<u32> {
+>> +        // SAFETY: `self.as_raw` returns a valid pointer to a =
+`struct platform_device`.
+>> +        let res =3D unsafe {
+>> +            =
+bindings::platform_get_irq_byname_optional(self.as_raw(), =
+name.as_char_ptr())
+>> +        };
+>> +
+>> +        if res < 0 {
+>> +            return Err(Error::from_errno(res));
+>> +        }
+>> +
+>> +        Ok(res as u32)
+>> +    }
+>=20
+> I don't like the indirection of claiming a u32 representing the IRQ =
+number from
+> a bus device and stuffing it into an irq::Registration.
+>=20
+> It would be better we we'd make it impossible (or at least harder) for =
+a driver
+> to pass the wrong number to irq::Registration.
+>=20
+> I see two options:
+>=20
+>  1) Make the platform::Device accessors themselves return an
+>     irq::Registration.
+>=20
+>  2) Make the platform::Device accessors return some kind of =
+transparent cookie,
+>     that drivers can't create themselves that can be fed into the
+>     irq::Registration.
+>=20
+> My preference would be 1) if there's no major ergonomic issue with =
+that.
 
-Takashi
+Isn=E2=80=99t 1 way more cluttered?
+
+That's because the accessors would have to forward all of the arguments =
+(i.e.:
+currently 4) to register().
+
+Going with approach 2 lets us keep the two APIs distinct, we'd only have =
+to
+take in the cookie in place of the u32, of course.
+
+=E2=80=94 Daniel=
 
