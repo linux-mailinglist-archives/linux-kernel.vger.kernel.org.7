@@ -1,42 +1,42 @@
-Return-Path: <linux-kernel+bounces-670690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 051A3ACB6B4
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 17:20:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DDC48ACB5BF
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 17:09:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CA6C9E1802
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 15:03:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CED59E36FC
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 14:49:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA0A4226861;
-	Mon,  2 Jun 2025 14:55:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFF38229B26;
+	Mon,  2 Jun 2025 14:44:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="XhZ+/M83"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="j2g7X/wz"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1330A225419;
-	Mon,  2 Jun 2025 14:55:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 208CE228CA9;
+	Mon,  2 Jun 2025 14:44:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748876133; cv=none; b=DSDO4J0rg49hF4JqeNgxmvtf4OVXPNXx6ACUNC3XPU0LkAF+ErLXNmB6AMwJeAVsGCqXU6swLRhc0bhVPqWr2G8e0tuvETupNEd7aqklO3Ken/w00Eya66K681pAeWl46Drf5uCkjNt/vvavz8et9Xs61X55mgb5VUQ+sfh4+4I=
+	t=1748875493; cv=none; b=W+l4qYpLQ//tSURAPSyrk/0U07fJWW8wA79fi+j8cww6nbbbDArCTEvLCLPQ85OY/lpAti/KLuqmKVSkfnnu9ju2u2UPd4cwETf8cyFMEwZ4lF0jLns7v200QfNXWZCi62xhtcZjSbwflvBVacYGH3cSYDq1q7FSpDvtPPLVT4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748876133; c=relaxed/simple;
-	bh=n7FXRIlvdX+k0OorLeiytXznOYDzrxzd4eMJQ/3DAf4=;
+	s=arc-20240116; t=1748875493; c=relaxed/simple;
+	bh=2zfCz0bQ9ZyjWwzdJ2DPjgfxbQImJEtM69s+b1+tP3E=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=J/3Eid5nXOkD8ulZByEhxX40WMxdgSpGB7KP/QtENW7EuwyOd2OcfPHma2dNsB4vd+3jwL9U3TiR5OwDzcVh9Qiq9iAgpAsl7nvZ8NHUdxYe+lvT6krOobRl6T/yWq3M96nO/hWYJnc6QWTP3jbM22tCyWh1Sjpj/xYKRQmPx8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=XhZ+/M83; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8ED7CC4CEEB;
-	Mon,  2 Jun 2025 14:55:32 +0000 (UTC)
+	 MIME-Version; b=KIJ1e1zsuv0oACzlWsiJ66AJG7vMF0CBr+Os+vVv4CVFHd0CjoMy8KUflBMcBzn2keCzr4RmPvcBOtoIYZJkyBg3jZ3WSR3jkATX1n5lQchSQSUXl0ZOpGVHDAW2ZfywIbXRFSiFV2yjMnNmWxGQ6p/WrtLkA6BVlsVKaUgUVgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=j2g7X/wz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C823C4CEEB;
+	Mon,  2 Jun 2025 14:44:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1748876132;
-	bh=n7FXRIlvdX+k0OorLeiytXznOYDzrxzd4eMJQ/3DAf4=;
+	s=korg; t=1748875493;
+	bh=2zfCz0bQ9ZyjWwzdJ2DPjgfxbQImJEtM69s+b1+tP3E=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=XhZ+/M83l5jfTtYQWIVovTJmFdu26ho4fmt7Ium+mKlm74M+P7i7IEm20pPQLSX6p
-	 jOnYvzqEU9WHefaJuvdjfSNhfyau2F7HYpss0l/EfIrE6TM/5o3ymGyjdUe2o/oTFU
-	 DwbOGo9WRde/uOMfijAMc00mmTW80i6HmQr7A7hI=
+	b=j2g7X/wz2+JUaH9bBg69fkY895M5bfj5NdEwxYqsIoEBp/D1cKNc/1rcCs0NXO0jL
+	 3t2QRz9K+xMk1LLHKzbOysEUem+DVCxKsltKw77zNu0TvTwbeXA03hS5moadeB8Sz2
+	 TOb1sne6x6HfRSJ1vgMYr7zRvsoWBhbJrZePHwfM=
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -50,12 +50,12 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Anshuman Khandual <anshuman.khandual@arm.com>,
 	Catalin Marinas <catalin.marinas@arm.com>,
 	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.15 054/207] arm64/mm: Check PUD_TYPE_TABLE in pud_bad()
-Date: Mon,  2 Jun 2025 15:47:06 +0200
-Message-ID: <20250602134300.870526061@linuxfoundation.org>
+Subject: [PATCH 5.10 151/270] arm64/mm: Check PUD_TYPE_TABLE in pud_bad()
+Date: Mon,  2 Jun 2025 15:47:16 +0200
+Message-ID: <20250602134313.390180682@linuxfoundation.org>
 X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250602134258.769974467@linuxfoundation.org>
-References: <20250602134258.769974467@linuxfoundation.org>
+In-Reply-To: <20250602134307.195171844@linuxfoundation.org>
+References: <20250602134307.195171844@linuxfoundation.org>
 User-Agent: quilt/0.68
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -67,7 +67,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-5.15-stable review patch.  If anyone has any objections, please let me know.
+5.10-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
@@ -99,10 +99,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-index b5e969bc074d3..a0bfa9cd76dab 100644
+index 7756a365d4c49..d92b5aed354e9 100644
 --- a/arch/arm64/include/asm/pgtable.h
 +++ b/arch/arm64/include/asm/pgtable.h
-@@ -623,7 +623,8 @@ static inline unsigned long pmd_page_vaddr(pmd_t pmd)
+@@ -601,7 +601,8 @@ static inline unsigned long pmd_page_vaddr(pmd_t pmd)
  	pr_err("%s:%d: bad pmd %016llx.\n", __FILE__, __LINE__, pmd_val(e))
  
  #define pud_none(pud)		(!pud_val(pud))
