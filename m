@@ -1,183 +1,133 @@
-Return-Path: <linux-kernel+bounces-670532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2849ACAFBF
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 15:55:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C07BACAFC6
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 15:56:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 399634803AC
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 13:55:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0D3E480E8A
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 13:56:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEF11221FC7;
-	Mon,  2 Jun 2025 13:54:34 +0000 (UTC)
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC6CD20F07C;
+	Mon,  2 Jun 2025 13:55:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l4ShsCKN"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3C40221FB4
-	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 13:54:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BBF722156B;
+	Mon,  2 Jun 2025 13:55:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748872474; cv=none; b=F//6GTrwFECNNZfzjLKbS3CeBanIiW1zbML3ah6pqshZwGADFUj7UFR6t9tlD5gvnoqDKsyD+GE1MfCffD1+DTfPXxHAqTwWCuXBALuSI4Ag8P5LonuPJ724QqwO/foF65dwTZEb5fhTzjuiFFCzTHAPVJ+ciNQUcWLGMSn6vaU=
+	t=1748872526; cv=none; b=AKzFvFpOvrJiQofyoHkopmXbOtQTrMM/VOOeCBXHW0QL5jiy/7uZfJ+VsoV+dd3juXUteUE0jiyxbixjK+L/joCWzkjZxwSA6d4Yqci9L6386g013EQrx8SBp4gFpvkCWrfEt099achl7KiwHOkrut5ohL6dxzl8V39/kyyy0NU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748872474; c=relaxed/simple;
-	bh=Vid+FEUoJKFMrUZGrDSzl6LsuWKYDUaU90e4+EdKkRo=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=SiFgKXwHvXysQEqPvryUH5LonUmL7PShWFIBOayFhFz/fJiwbZ0n1iMNIeFlDGf9XlufsAR1gzNTorUqAr6nj6NrYA75ANoLj/OW5Qn4S3umrAAtHoMw+HTpH9KZytSERJUCZEAe1qek7MK7O91pwqpJs4aTyHXvEGEmWiLiWKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3dc9cd70437so52495875ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jun 2025 06:54:32 -0700 (PDT)
+	s=arc-20240116; t=1748872526; c=relaxed/simple;
+	bh=CE13FvVd/oZWld/RcBibj9PFe0iI8IjGbKlr0iRzhJk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jeG/ffpwN/aiMw+4y1Wmr7PdhuMYScSE47WoIA/1vfWQmf4oQ23/sVxlgLSqZ0jPSgp2xHFDlTmAdj118NPHX47x0f1heyRWo6InbMneuuXsQ+ArW+7ii7lE9sXd20cQ6DgqCRcTGkhcKELcYBMESqHpFtNJcOxxIiD/L6D7ij0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l4ShsCKN; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-30f30200b51so43862661fa.3;
+        Mon, 02 Jun 2025 06:55:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748872522; x=1749477322; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CE13FvVd/oZWld/RcBibj9PFe0iI8IjGbKlr0iRzhJk=;
+        b=l4ShsCKNg7+k7oI0iYW2iMqd72zFVCCjLncJcLa3gBoZCwCTQgArZuB9GI5XzqEW7h
+         Rl8yI7b7sIGmPtiDsi0xEwqMJy72tDRNVERDetHGsdGE+jyZuRdICLp4s0V2uiSd3Ti0
+         0SCWDbV/RWCgdBhxT9N2wdwUoWiqxeH47Wvn9j1riZEeLm7BikagkvaYAIwgsn4RgKT2
+         nLk9revPzlRqsasOj0fKlQ9PjbtUZu84b8SawtANqGSBh/mpTzxaKXjMgKpW45+bihIN
+         MsfajiqRavsgxnjKgafDZNsRx3IbjJ2el6YCgAwieJsgOhhz0kwS2fAwOaQw+z7R3p05
+         OFaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748872472; x=1749477272;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8KVbGpUMlPxut20Iu0UwV8Qrt7EeeVNR+/KWAMkeocI=;
-        b=C1kzjbwt0DeepXgvW9a57tPPbjgJNX0BcBZN249yk2HOX3gKlYhG/+5YEAr8Z2X8Ab
-         5wK+pTr5W9m5sW/VZfGOwxbw+nsI7NrMFlxJT41RDnSh1NvDcevd7iVKGbaYkwu2vu+y
-         2OI70fuw/xDiwUtQ2autFh9JogiYXpGncn1wmoNHt31NG6wo2kxuyhUSnks9EMBcBAX9
-         sovsOEPJ5YY2leKWv72DbV5YsXu7t8eIzan8XpvLT0fycddc/i2w3INvhfcZcaPBdCNx
-         tg8H2aI0yqsEpDpfW5Yyxv9qqJR0oafc4fPAELVFI4Wtev9Lo+ibe1FmfUNaL7FD+DKq
-         KOOw==
-X-Forwarded-Encrypted: i=1; AJvYcCUBD4i/b90KtqhSCqwFa/dpvhwR64uHGWTmYDu79AkXSvyJ+W3YjVCABag5deLcTqp5CIaH1Ol4LpxKq+k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrVF1DfyoriFfVr7HGm3kRKpkpa+Ttygk+4LoAePfDLmVlBynM
-	AUp31W+WX/UrPgrsQG8dHSOMafbi87uG1d2vmiqmVmT5FrdWEu0hqKrKbyX1ZhzdQ1qRwWFjSaD
-	i0HMSHQHwfL74DRwT5NfD9tF/k7XLLQrMOn8o1Z/g/czkC9B+6vBM2xKQ8/c=
-X-Google-Smtp-Source: AGHT+IEbbr8aC5OBIH675LUi1XviHRh7vpww8ni/7KPCRegtkfA3qlcgVPD6SK3VS37vequJElmZgcA1DdnH1XMm3+GEL8HzU2aX
+        d=1e100.net; s=20230601; t=1748872522; x=1749477322;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CE13FvVd/oZWld/RcBibj9PFe0iI8IjGbKlr0iRzhJk=;
+        b=RPPBw67INP2GAuXWJFINTV4u/8xQMjXAL1gm4QqjE8O9ivPiUHQfY0XIgXcQm3qPyL
+         8hliFKGvXMaW5jBDIZh5kM2EhOJBpk4gSDoaW5ssyvlAhXlVTL6YvS9Q1In7ttRRKFW5
+         qpIE7c16TuCAvulz2qIX944vA5lkHKtcLxHX2Y3yHcydp8ijv53h3Jnppqhr8bAk5Qe0
+         YioEYDyHMfZoNNbUp9fuVKbyZW2qyEBIdrfx43DB1hWQ9kIbJyNfBc62WdvwXDfZHps3
+         xoyNFodRJFiRwLn+YMaoGy5MjJS2VMwIc0on+JMPm7gMESJvKCW4R3/2mcX6hiYPmFMN
+         QK0A==
+X-Forwarded-Encrypted: i=1; AJvYcCUnzd5gDhLQjh4pV5j0EEbumhxt5kjDDalh7rtSlxZQgQ4JrDsRRGHCYDw5yvyKwSkYehUgKkAOEeMZBrU=@vger.kernel.org, AJvYcCV44kj7QDZSNLf0f0MCD+h7f7qqs/ginKvvqlsSPjlLjDIANSc4YysdseRrYuBCPSt5gGJ64GWxbQCa@vger.kernel.org, AJvYcCVmqvgFcFUmFqrkuR3vYFfeW0Vs8NaGyY7gz1wiN6TJKPgdT7GkJ/d4T3ZQ09BirPbqTAyujoQ7Z8XU@vger.kernel.org, AJvYcCVxZuOp6BXvW/7wNx51K2ju1Z9oxirPNYPdSb4OnGkpjwiQfUwo8ECXGhq0M3al3yADB7ssyvqsf2KapKNbjc4=@vger.kernel.org, AJvYcCWlag8hCH6T7f0eLSy5JT01s8PglZFgo1960Qj3rA8y2Y73NoiGxaf4y/+nI65yUZ+k3vxkkNoHNwAggoEgbCzK@vger.kernel.org, AJvYcCXIhX3DFPX0dsZ7doOmmlzNR+IGEQogvcOn8LQf/ZrV1tWM1tI4BjJAFBRk8ak0UUMaSTX36fNxpvpGHx1y@vger.kernel.org, AJvYcCXhAsq6PzohomSjUR5VkB/N233Bd4WHomngaqdLcbgHtUt8S4Lah6ABH+eoS7MXG3S84e2B63+I@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYbJScFfNUjdAWL6HWUGgwwR8/Zq1HcSz9qfwngaf8gxYrn6A7
+	46833FpPNhgOFke8itm0/elxUvHndJJ1yb0fYoCQFH2taFPhpw/h7pU1qZLjTdlHxXakR0k8fg/
+	SB18DVquRc95l+TiTWZC8wGl7//NUtuI=
+X-Gm-Gg: ASbGncsWdqQjWEuhZavoD/Rfrgu6LkbzZs9XfWRkzrBW0qkzAhWC5+IaQN/Eg3kvCIc
+	KXQ/jwrAH5hGhio9Hs3j69cKTawTuozktfYb6khy84JbNmdM+uhI+i376Zz93KOXZhHTkxXkAJt
+	vZOEHql/jb4Ti2JAkx704xS/xQkLlyfJ1Q7bUfTlupXNJNWVJV
+X-Google-Smtp-Source: AGHT+IHz2uBVrN38mqcMJz16ScrK52REQ3KL0NzpCYQfCXahCS+RixLkxRyOA9nPkDFUugfUGTPzmT74dbDRz5uF7Uw=
+X-Received: by 2002:a05:651c:2223:b0:306:10d6:28b0 with SMTP id
+ 38308e7fff4ca-32a9e99cea5mr28582111fa.1.1748872522258; Mon, 02 Jun 2025
+ 06:55:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3801:b0:3dc:7a56:18f6 with SMTP id
- e9e14a558f8ab-3dda339e432mr94719635ab.22.1748872471778; Mon, 02 Jun 2025
- 06:54:31 -0700 (PDT)
-Date: Mon, 02 Jun 2025 06:54:31 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <683dad17.a00a0220.d8eae.0054.GAE@google.com>
-Subject: [syzbot] [bcachefs?] kernel BUG in bch2_bkey_pack_pos_lossy (2)
-From: syzbot <syzbot+a6af6dbf934175da5161@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <20250530-cstr-core-v11-0-cd9c0cbcb902@gmail.com>
+ <20250530-cstr-core-v11-4-cd9c0cbcb902@gmail.com> <aD1knOuEFxv6VQy1@google.com>
+In-Reply-To: <aD1knOuEFxv6VQy1@google.com>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Mon, 2 Jun 2025 09:54:46 -0400
+X-Gm-Features: AX0GCFttP_CQMaSyNKDR25_XJh3x3vRlTYDuJ8CXsXgGcEC-sRFuWZHUykb5COc
+Message-ID: <CAJ-ks9mmkpvgbQs+EjPeN5N+TwOHKB2-9NV-FauGnymmxhxUrA@mail.gmail.com>
+Subject: Re: [PATCH v11 4/5] rust: replace `kernel::c_str!` with C-Strings
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Michal Rostecki <vadorovsky@protonmail.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
+	Rae Moar <rmoar@google.com>, Danilo Krummrich <dakr@kernel.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, 
+	FUJITA Tomonori <fujita.tomonori@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Saravana Kannan <saravanak@google.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, 
+	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, Andrew Lunn <andrew@lunn.ch>, 
+	Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Jens Axboe <axboe@kernel.dk>, Benno Lossin <lossin@kernel.org>, 
+	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
+	dri-devel@lists.freedesktop.org, netdev@vger.kernel.org, 
+	devicetree@vger.kernel.org, llvm@lists.linux.dev, linux-pci@vger.kernel.org, 
+	nouveau@lists.freedesktop.org, linux-block@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Mon, Jun 2, 2025 at 4:45=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> wr=
+ote:
+>
+> On Fri, May 30, 2025 at 08:27:45AM -0400, Tamir Duberstein wrote:
+> > C-String literals were added in Rust 1.77. Replace instances of
+> > `kernel::c_str!` with C-String literals where possible and rename
+> > `kernel::c_str!` to `str_to_cstr!` to clarify its intended use.
+> >
+> > Closes: https://github.com/Rust-for-Linux/linux/issues/1075
+> > Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+>
+> > -/// Creates a new [`CStr`] from a string literal.
+> > +/// Creates a static C string wrapper at compile time.
+>
+> A C string *wrapper*? What do you mean? I would drop the word "wrapper"
+> here.
 
-syzbot found the following issue on:
-
-HEAD commit:    90b83efa6701 Merge tag 'bpf-next-6.16' of git://git.kernel..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=16a2c970580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ae6d9a7dd3ac8772
-dashboard link: https://syzkaller.appspot.com/bug?extid=a6af6dbf934175da5161
-compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=159907f4580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1758a482580000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/fc8b15fe0000/disk-90b83efa.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/01f6377bcdf4/vmlinux-90b83efa.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/afd1bac4b4ac/bzImage-90b83efa.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/6c680e5364cd/mount_0.gz
-
-The issue was bisected to:
-
-commit cd3cdb1ef706a1ac725194d81858d58375739b25
-Author: Kent Overstreet <kent.overstreet@linux.dev>
-Date:   Tue Apr 22 13:14:19 2025 +0000
-
-    bcachefs: Single err message for btree node reads
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14841ed4580000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=16841ed4580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=12841ed4580000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+a6af6dbf934175da5161@syzkaller.appspotmail.com
-Fixes: cd3cdb1ef706 ("bcachefs: Single err message for btree node reads")
-
-bcachefs (loop0): invalid bkey in btree_node btree=subvolumes level=0: u64s 8 type snapshot 0:4294967295:0 len 0 ver 0: subvol parent          0 children          0          0 subvol 1 tree 0
-  invalid key type for btree subvolumes (snapshot), deleting
-------------[ cut here ]------------
-kernel BUG at fs/bcachefs/bkey.c:389!
-Oops: invalid opcode: 0000 [#1] SMP KASAN PTI
-CPU: 1 UID: 0 PID: 5831 Comm: read_btree_node Not tainted 6.15.0-syzkaller-07774-g90b83efa6701 #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-RIP: 0010:set_inc_field_lossy fs/bcachefs/bkey.c:389 [inline]
-RIP: 0010:bch2_bkey_pack_pos_lossy+0x13de/0x24e0 fs/bcachefs/bkey.c:518
-Code: e8 57 ce 08 fe 48 ba 00 00 00 00 00 fc ff df e9 a5 f8 ff ff e8 c3 d5 a7 fd 90 0f 0b e8 bb d5 a7 fd 90 0f 0b e8 b3 d5 a7 fd 90 <0f> 0b e8 ab d5 a7 fd 90 0f 0b e8 a3 d5 a7 fd 90 0f 0b f3 0f 1e fa
-RSP: 0018:ffffc900043aeb40 EFLAGS: 00010293
-RAX: ffffffff8418244d RBX: 0000090000000000 RCX: ffff888030f41e00
-RDX: 0000000000000000 RSI: 00000000ffffffff RDI: 0000090000000000
-RBP: ffffc900043aed78 R08: ffffffffffffffff R09: ffffffffffffffff
-R10: ffffffffffffffff R11: ffffffffffffffff R12: ffff88814c4490c4
-R13: fffff700ffffffff R14: 0000000000000000 R15: fffffffffffffffe
-FS:  0000000000000000(0000) GS:ffff888125d98000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00005633c0c98470 CR3: 000000003443a000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- bkey_pack_pos fs/bcachefs/bkey.h:382 [inline]
- __build_ro_aux_tree+0xb21/0x1800 fs/bcachefs/bset.c:743
- bch2_bset_build_aux_tree+0x3f5/0x570 fs/bcachefs/bset.c:787
- bch2_btree_node_read_done+0x39e4/0x4f60 fs/bcachefs/btree_io.c:1322
- btree_node_read_work+0x426/0xe30 fs/bcachefs/btree_io.c:1400
- bch2_btree_node_read+0x887/0x29f0 fs/bcachefs/btree_io.c:-1
- bch2_btree_node_fill+0xd12/0x14f0 fs/bcachefs/btree_cache.c:994
- bch2_btree_node_get_noiter+0xa2c/0x1000 fs/bcachefs/btree_cache.c:1261
- found_btree_node_is_readable fs/bcachefs/btree_node_scan.c:85 [inline]
- try_read_btree_node fs/bcachefs/btree_node_scan.c:220 [inline]
- read_btree_nodes_worker+0x1319/0x1e20 fs/bcachefs/btree_node_scan.c:269
- kthread+0x70e/0x8a0 kernel/kthread.c:464
- ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:set_inc_field_lossy fs/bcachefs/bkey.c:389 [inline]
-RIP: 0010:bch2_bkey_pack_pos_lossy+0x13de/0x24e0 fs/bcachefs/bkey.c:518
-Code: e8 57 ce 08 fe 48 ba 00 00 00 00 00 fc ff df e9 a5 f8 ff ff e8 c3 d5 a7 fd 90 0f 0b e8 bb d5 a7 fd 90 0f 0b e8 b3 d5 a7 fd 90 <0f> 0b e8 ab d5 a7 fd 90 0f 0b e8 a3 d5 a7 fd 90 0f 0b f3 0f 1e fa
-RSP: 0018:ffffc900043aeb40 EFLAGS: 00010293
-RAX: ffffffff8418244d RBX: 0000090000000000 RCX: ffff888030f41e00
-RDX: 0000000000000000 RSI: 00000000ffffffff RDI: 0000090000000000
-RBP: ffffc900043aed78 R08: ffffffffffffffff R09: ffffffffffffffff
-R10: ffffffffffffffff R11: ffffffffffffffff R12: ffff88814c4490c4
-R13: fffff700ffffffff R14: 0000000000000000 R15: fffffffffffffffe
-FS:  0000000000000000(0000) GS:ffff888125c98000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055f7477e8168 CR3: 0000000034d24000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Yeah, I don't remember where this wording came from. I'll change it to
+be mostly the same as it was: "Creates a new [`CStr`] at compile
+time.".
 
