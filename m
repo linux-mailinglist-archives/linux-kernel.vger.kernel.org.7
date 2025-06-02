@@ -1,47 +1,39 @@
-Return-Path: <linux-kernel+bounces-670194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01FE7ACAA78
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 10:17:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 73293ACAA7F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 10:22:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36C49189BE58
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 08:17:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CEC9189A776
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 08:22:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC68D1CDFD4;
-	Mon,  2 Jun 2025 08:17:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qADoffoH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25C442C325A;
-	Mon,  2 Jun 2025 08:17:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9BD61CAA96;
+	Mon,  2 Jun 2025 08:22:32 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 893E319DF4A
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 08:22:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748852230; cv=none; b=ixliRSuAQBzepbbf3ZUCTvEpQTs9l8ukOPsV/49glXtgQOJ0fL4rXKTwzB52suOIAZZARn5SnvXR6mybkb9XY3tVXvf5pjp/hTUMkQui0hXgJSVMJGN4uNTPUsdY22qyG3OKZiogmnecFkCw/XM5jQ04Qiru2spLLYKWPdMqGTI=
+	t=1748852552; cv=none; b=eSe84GDAGnPKQ+MCkC2vbe8ZzMLx3CDx1iJmDBg+Wby9NsWzri0hMR30+xRuCU9J+F3Xu7K78yFLPF3wM7liKhozCnRBuaqQM0GlcYCCWENmYY3ZIxbsg8z/KDW6I8yx/1vxFJaBrfl0WLvk4wGYFo3CA/xDCdk9LK7KiHaMlA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748852230; c=relaxed/simple;
-	bh=6BJBW7hoyakG5udJhK64Z32vJN+hzccr4+Nx1CdInn8=;
+	s=arc-20240116; t=1748852552; c=relaxed/simple;
+	bh=y1j6MgfUV7skCqVqjGpBKy2eh5JDvcAEDEyStgasCAs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tVNaFVBvkhZmPrDtZUP7/mMCiRGz6kF/IYKA8emQh/BWhs6bN+sHIJbllB16GjccsnRl++kScwkFNx/oyFOo2O2n8zEMjiAGx7fTVbkOoWUo/1V6MmdoqYREvd7+gsstjzNXs6TNFlMu0frA//2h1GK+7PkQpB9tXbSPquOeVFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qADoffoH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F257BC4CEED;
-	Mon,  2 Jun 2025 08:17:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748852229;
-	bh=6BJBW7hoyakG5udJhK64Z32vJN+hzccr4+Nx1CdInn8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=qADoffoHweZjsKnSJcQ1gLtNtlO/yVLCwXzzu26LCCar32NB5fc2fl/e9syTJ+vDZ
-	 sSYh1Mu1JzcgzLywOMwN9bpoXOywsMOUADhYo98VNn3wHzphGPDIozyEMGgHHJx9L+
-	 X3axm0Bz0zWOsCC7gaTNUM6uoOTmF9dxYuaRfCpCuAW4sh38M6nGRgfLNrqlSICFvM
-	 gdfkGWWIz0A9y1+gEm+U6/EbTEmkm1b9wekPzA53y7wg3fYls0rP3i3jcYEV3E0gub
-	 okkaoZn9jSszErbR0WMNXC4TduBjvkVjhFykNqDcFJU+BUHhJYZ+cSxmHgGl2xcQ8r
-	 nxladnBpVmuDg==
-Message-ID: <93434285-ebef-4039-9a7a-e5786fd8bcd2@kernel.org>
-Date: Mon, 2 Jun 2025 10:17:04 +0200
+	 In-Reply-To:Content-Type; b=Iv+ROUhsNsUj7cXaoxgHeqHbEpEJMLBsu0I1MBJ3RhiZq+6xadHTnD6TIMHgvWRzP31aheJqyZoj42LKoAtnrePMJnfpFwZz3nKXFXr5ruZE36Guks2B7/699P7Hm+S1Y5Iwntg86yQ3I9iR5U7VnNFE3DMykOIJ6KaAd3Wdvfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 252D01424;
+	Mon,  2 Jun 2025 01:22:12 -0700 (PDT)
+Received: from [10.57.95.206] (unknown [10.57.95.206])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5928D3F59E;
+	Mon,  2 Jun 2025 01:22:27 -0700 (PDT)
+Message-ID: <5edca678-b335-45b7-8a41-243115806daf@arm.com>
+Date: Mon, 2 Jun 2025 09:22:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,106 +41,132 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/4] dt-bindings: input: Add TouchNetix axiom
- touchscreen
-To: Marco Felsch <m.felsch@pengutronix.de>
-Cc: Luis Chamberlain <mcgrof@kernel.org>, Russ Weight
- <russ.weight@linux.dev>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
- Kamel Bouhara <kamel.bouhara@bootlin.com>,
- Marco Felsch <kernel@pengutronix.de>, Henrik Rydberg <rydberg@bitmath.org>,
- Danilo Krummrich <dakr@redhat.com>, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-input@vger.kernel.org
-References: <20250529-v6-10-topic-touchscreen-axiom-v2-0-a5edb105a600@pengutronix.de>
- <20250529-v6-10-topic-touchscreen-axiom-v2-3-a5edb105a600@pengutronix.de>
- <119eba0a-2c81-4232-8b20-acc0a0eea969@kernel.org>
- <20250530084516.ee2kre7kmdd6uikv@pengutronix.de>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250530084516.ee2kre7kmdd6uikv@pengutronix.de>
+Subject: Re: [PATCH v1] arm64/mm: Close theoretical race where stale TLB entry
+ remains valid
+Content-Language: en-GB
+To: Dev Jain <dev.jain@arm.com>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Barry Song <baohua@kernel.org>, Yicong Yang <yangyicong@hisilicon.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250530152445.2430295-1-ryan.roberts@arm.com>
+ <7b71c574-0c52-440c-a83f-1e7d5dcd68b0@arm.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <7b71c574-0c52-440c-a83f-1e7d5dcd68b0@arm.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 30/05/2025 10:45, Marco Felsch wrote:
->>> +
->>> +  interrupts:
->>> +    maxItems: 1
->>> +
->>> +  reset-gpios:
->>> +    maxItems: 1
->>> +
->>> +  panel: true
->>
->> So that was the reason of dropping tag?
->> https://lore.kernel.org/lkml/821ce1d4-bc15-4764-bbe0-315c57e8536e@linaro.org/
->>
->> Anyway, drop the property. Redundant.
+On 02/06/2025 05:59, Dev Jain wrote:
 > 
-> Why is this redundant? The touchscreen.yaml defines it but I need to
-
-It is redundant, because it has ZERO effect. The presence of this
-property or lack of it changes nothing. Binding has exactly the same
-meaning. Binding behaves exactly the same way in validation/checks. Zero
-difference. If there is a difference, please paste checks results.
-
-> request it? At least I understood it that way and all other users of
-> this property do it same way. Same is true for all the touchscreen-*
-
-And these users end the binding with additionalProps, right? So that's
-the difference.
-
-> properties definied in touchscreen.yaml.
+> On 30/05/25 8:53 pm, Ryan Roberts wrote:
+>> Commit 3ea277194daa ("mm, mprotect: flush TLB if potentially racing with
+>> a parallel reclaim leaving stale TLB entries") describes a race that,
+>> prior to the commit, could occur between reclaim and operations such as
+>> mprotect() when using reclaim's tlbbatch mechanism. See that commit for
+>> details but the summary is:
+>>
+>> """
+>> Nadav Amit identified a theoritical race between page reclaim and
+>> mprotect due to TLB flushes being batched outside of the PTL being held.
+>>
+>> He described the race as follows:
+>>
+>>     CPU0                CPU1
+>>     ----                ----
+>>                     user accesses memory using RW PTE
+>>                     [PTE now cached in TLB]
+>>     try_to_unmap_one()
+>>     ==> ptep_get_and_clear()
+>>     ==> set_tlb_ubc_flush_pending()
+>>                     mprotect(addr, PROT_READ)
+>>                     ==> change_pte_range()
+>>                     ==> [ PTE non-present - no flush ]
+>>
+>>                     user writes using cached RW PTE
+>>     ...
+>>
+>>     try_to_unmap_flush()
+>> """
+>>
+>> The solution was to insert flush_tlb_batched_pending() in mprotect() and
+>> friends to explcitly drain any pending reclaim TLB flushes. In the
+>> modern version of this solution, arch_flush_tlb_batched_pending() is
+>> called to do that synchronisation.
+>>
+>> arm64's tlbbatch implementation simply issues TLBIs at queue-time
+>> (arch_tlbbatch_add_pending()), eliding the trailing dsb(ish). The
+>> trailing dsb(ish) is finally issued in arch_tlbbatch_flush() at the end
+>> of the batch to wait for all the issued TLBIs to complete.
+>>
+>> Now, the Arm ARM states:
+>>
+>> """
+>> The completion of the TLB maintenance instruction is guaranteed only by
+>> the execution of a DSB by the observer that performed the TLB
+>> maintenance instruction. The execution of a DSB by a different observer
+>> does not have this effect, even if the DSB is known to be executed after
+>> the TLB maintenance instruction is observed by that different observer.
+>> """
+>>
+>> arch_tlbbatch_add_pending() and arch_tlbbatch_flush() conform to this
+>> requirement because they are called from the same task (either kswapd or
+>> caller of madvise(MADV_PAGEOUT)), so either they are on the same CPU or
+>> if the task was migrated, __switch_to() contains an extra dsb(ish).
+>>
+>> HOWEVER, arm64's arch_flush_tlb_batched_pending() is also implemented as
+>> a dsb(ish). But this may be running on a CPU remote from the one that
+>> issued the outstanding TLBIs. So there is no architectural gurantee of
+>> synchonization. Therefore we are still vulnerable to the theoretical
+>> race described in Commit 3ea277194daa ("mm, mprotect: flush TLB if
+>> potentially racing with a parallel reclaim leaving stale TLB entries").
+>>
+>> Fix this by flushing the entire mm in arch_flush_tlb_batched_pending().
+>> This aligns with what the other arches that implement the tlbbatch
+>> feature do.
+>>
+>> Fixes: 43b3dfdd0455 ("arm64: support batched/deferred tlb shootdown during
+>> page reclamation/migration")
 > 
-> Regards,
->   Marco
+> Do we need Cc stable?
 
+Yeah, good point. Assuming I haven't missed something critical that means this
+isn't an issue in practice...
 
-Best regards,
-Krzysztof
+> 
+> The patch logic looks good to me, but again, will leave it to the experts : )
+> 
+>> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+>> ---
+>>   arch/arm64/include/asm/tlbflush.h | 9 +++++----
+>>   1 file changed, 5 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/arch/arm64/include/asm/tlbflush.h b/arch/arm64/include/asm/
+>> tlbflush.h
+>> index eba1a98657f1..7d564c2a126f 100644
+>> --- a/arch/arm64/include/asm/tlbflush.h
+>> +++ b/arch/arm64/include/asm/tlbflush.h
+>> @@ -323,13 +323,14 @@ static inline bool arch_tlbbatch_should_defer(struct
+>> mm_struct *mm)
+>>   }
+>>
+>>   /*
+>> - * If mprotect/munmap/etc occurs during TLB batched flushing, we need to
+>> - * synchronise all the TLBI issued with a DSB to avoid the race mentioned in
+>> - * flush_tlb_batched_pending().
+>> + * If mprotect/munmap/etc occurs during TLB batched flushing, we need to ensure
+>> + * all the previously issued TLBIs targeting mm have completed. But since we
+>> + * can be executing on a remote CPU, a DSB cannot guarrantee this like it can
+>> + * for arch_tlbbatch_flush(). Our only option is to flush the entire mm.
+>>    */
+>>   static inline void arch_flush_tlb_batched_pending(struct mm_struct *mm)
+>>   {
+>> -    dsb(ish);
+>> +    flush_tlb_mm(mm);
+>>   }
+>>
+>>   /*
+>> -- 
+>> 2.43.0
+>>
+>>
+
 
