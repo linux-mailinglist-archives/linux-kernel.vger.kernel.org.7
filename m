@@ -1,165 +1,181 @@
-Return-Path: <linux-kernel+bounces-671142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E824AACBD55
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 00:29:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 78060ACBD5E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 00:35:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C97F189433B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 22:29:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 880B9188FE61
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 22:35:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1728824DD06;
-	Mon,  2 Jun 2025 22:28:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E21A724BBEE;
+	Mon,  2 Jun 2025 22:35:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="dLkDnC/k"
-Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=quora.org header.i=@quora.org header.b="OdCcr4a+"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 992681CAA7D;
-	Mon,  2 Jun 2025 22:28:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DEEC182D0
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 22:34:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748903337; cv=none; b=ZLGst31l65zI2XSP+gFVO98yBKwRNKpXPw3FCfLALIKljvz/PJJZDT11CXqGtZYfPy1Bh4uvdGQB2DbLEgKDxR+1vt3sfimQM4ejrRbHmrbGYmFvYE6YwDsnDdlqJ03XPIy7DsGv94NU1lLeD7BbcW0XcenaK28sK6tPyt33d+Q=
+	t=1748903700; cv=none; b=IAJQO3zx5zs2hlFCVOSSbQ6g7y6dow8VNJxiIeUW7QZOE1rUcK6WBNZJRtxgKhrkWlNVIBGNkzD69QTnV01PD8uy11W9UjH87oPAdxLd1WyRwj+EG2qd/emHMtDIYntiQe81+fQW9TPqm95jTKnBTF9FlizNS8UGxPy4SpzRH0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748903337; c=relaxed/simple;
-	bh=H0NjcqbIYmVFaD2SMYEyho+w8OcsQD4+OwNZPON43z8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rQb1li3UvAApjomJMBNnxIEI28vYM9is0tgVo7EcDzoRNn704JBCS6aCzZn+PFYmUTbEjwoOtPZqsgc5Ubz1B4ZcnKjQXtseak7GrKmlBkaFZkTtA1mVGm+SCvxc8HUO9HfOgfBTG4iDzNdpPe5dVg0mRlMLU23IIx7+vA7jGPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=dLkDnC/k; arc=none smtp.client-ip=95.215.58.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 2 Jun 2025 15:28:36 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1748903323;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JyAngPhIQbmFxpOkTVU6v6SdO9Gi9CMJI3HF9w1IXag=;
-	b=dLkDnC/krH+92XTW3f77z4XEc02c1hJe+EH6+S9Z68FVr0z1NxsEAVDVlaC67uXYBNARf5
-	tCEutPsJK9/pSDzJbkCAypP2Z3TdXW7P4ubIClxG9UPWTzvQZlOid6b344V0BZ0Uk0J01N
-	GU5QSzmYCVMCnAdtrS7dnQRq/qWpdrU=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Oliver Upton <oliver.upton@linux.dev>
-To: Colton Lewis <coltonlewis@google.com>
-Cc: kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Mark Rutland <mark.rutland@arm.com>, Shuah Khan <shuah@kernel.org>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	linux-perf-users@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH 06/17] KVM: arm64: Introduce method to partition the PMU
-Message-ID: <aD4llDZwb_sC_Ptj@linux.dev>
-References: <20250602192702.2125115-1-coltonlewis@google.com>
- <20250602192702.2125115-7-coltonlewis@google.com>
+	s=arc-20240116; t=1748903700; c=relaxed/simple;
+	bh=I0r8HlHEHZMZBQdFgXJR+5ZLORRLtKIQdIWM17hD9EY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Pyb5KqsAF4cMLiJsTG7rL7V9sPVKHJ/rG5x4DPTBs36U+21rq40JLqTBoba1u6bm7nvDEo3YmDZXLhWq4EXobhptrD3Yg3IsoPC51APKX7rILu7MrAkd1ECpBOKFoH0xPV7vl1B7nD9YnTBwh4d0t6JBK4CC7bGH00HZ25Xee+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=quora.org; spf=pass smtp.mailfrom=quora.org; dkim=pass (1024-bit key) header.d=quora.org header.i=@quora.org header.b=OdCcr4a+; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=quora.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quora.org
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-22e09f57ed4so49669675ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jun 2025 15:34:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=quora.org; s=google; t=1748903697; x=1749508497; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gisDcoPpjnzkdeg7wyEUyVREO6oQMsPscCNJQoCfPb4=;
+        b=OdCcr4a+5dH9ecF8yoveYtNNTjycGkqo6oGUPLfvhGLnn/57Mu1CnHgP4ux8xKiKIN
+         MGPdev/Fu0cDIOwEoM9omcsbVDdmbD7eduMi2+f1Tdaenct+Cb158xYxkipnlXBoPp0M
+         /FxYtxXBri/AJvDiyst9oVg6aFLdKFh5pri3I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748903697; x=1749508497;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gisDcoPpjnzkdeg7wyEUyVREO6oQMsPscCNJQoCfPb4=;
+        b=SxF5xq6kNMQzLUQRgZPSH7UAZaQpoWIcJbuceprogz5h6ucW520yQCZAbTxOXnwP0I
+         uXFelKFhjzQ8cSBULyHn16c7WOpfTkAXRny7m4ZqEctts25F0jvkH670c7q/uA8gfNhJ
+         GRpx/qu/ZxMgxfwSIdb908dh1b5UnXJCLm0gnYej8+953I2ODVW9fXAduC2vImK2ca1U
+         oXGxqI0K9tpesZcYHfywUuVbJ1vs+a7N5CPRChbO/fzgqSalbJVSzWXpofbD/81B2dSQ
+         6+HSO2Zo0y57+zNqH1Oz6HbNZhNqQLMizXnTkHRWRE22qs8v3uBVCp4lHagVRk2kA+HV
+         cK9Q==
+X-Gm-Message-State: AOJu0Yy2lAVbR/USXUwLic/I9Yy8fqyUgPujS1tAF7wPBMsXhfpZghoV
+	uSL+Yv8m8CUWcAeF45AgQv/UmrxHg93vqwyVMsu1E2K8rff33FpwuoZJzOQIFC3RGlo=
+X-Gm-Gg: ASbGncvBeQx1EDJzUAD88xK6BqXqYEGzrNXroOlbspm0HzFNitQ+jsjrC4aK5qMh8O6
+	ORHMwTRkc5Jwvgu9tZQxh43O5P8dtRD7dgrggDG00J1AG3PWU3HaRfIAytQiY+lXg7C+xAjFFgr
+	XmwbLYyRB/pwTMS0YA4vF+449qxMdamRrdX8ir/Wap2hlwK5PAghY1xd5kJ2oRTQUetmA5m51FG
+	LJWDkFKMhgb794hp5/Y51Qosr8lX4nL10Jq6PMp8WsFSNtGfL/iUmx/AFI6tFAtl51n3BHKUgaS
+	ojzjvkNAdyBs77LmHTkqENQeBt1nrNbHPnxN41oPi/z8GtUB2TyB
+X-Google-Smtp-Source: AGHT+IG8TcfJYc/8H0X4JilsCkVS4DlUC1+3xYaF4/HK8bkT4e56ad3EvTw+5nX/hMP/0sc2RKufSA==
+X-Received: by 2002:a17:902:ccce:b0:235:1b50:7245 with SMTP id d9443c01a7336-235c9d7d3c5mr2727265ad.7.1748903697450;
+        Mon, 02 Jun 2025 15:34:57 -0700 (PDT)
+Received: from spectre.. ([2406:3003:2006:4886:5ec2:5d7a:4b11:47e])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23506cf47c0sm75468345ad.175.2025.06.02.15.34.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Jun 2025 15:34:56 -0700 (PDT)
+From: Daniel J Blueman <daniel@quora.org>
+To: John Stultz <jstultz@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	stable@kernel.org,
+	Daniel J Blueman <daniel@quora.org>,
+	Scott Hamilton <scott.hamilton@eviden.com>
+Subject: [PATCH RESEND] Prevent unexpected TSC to HPET clocksource fallback on many-socket systems
+Date: Tue,  3 Jun 2025 06:32:49 +0800
+Message-ID: <20250602223251.496591-1-daniel@quora.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250602192702.2125115-7-coltonlewis@google.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 02, 2025 at 07:26:51PM +0000, Colton Lewis wrote:
->  static void kvm_arm_setup_mdcr_el2(struct kvm_vcpu *vcpu)
->  {
-> +	u8 hpmn = vcpu->kvm->arch.arm_pmu->hpmn;
-> +
->  	preempt_disable();
->  
->  	/*
->  	 * This also clears MDCR_EL2_E2PB_MASK and MDCR_EL2_E2TB_MASK
->  	 * to disable guest access to the profiling and trace buffers
->  	 */
-> -	vcpu->arch.mdcr_el2 = FIELD_PREP(MDCR_EL2_HPMN,
-> -					 *host_data_ptr(nr_event_counters));
-> -	vcpu->arch.mdcr_el2 |= (MDCR_EL2_TPM |
-> +	vcpu->arch.mdcr_el2 = FIELD_PREP(MDCR_EL2_HPMN, hpmn);
-> +	vcpu->arch.mdcr_el2 |= (MDCR_EL2_HPMD |
-> +				MDCR_EL2_TPM |
+On systems with many sockets, kernel timekeeping may quietly fallback from
+using the inexpensive core-level TSCs to the expensive legacy socket HPET,
+notably impacting application performance until the system is rebooted.
+This may be triggered by adverse workloads generating considerable
+coherency or processor mesh congestion.
 
-This isn't safe, as there's no guarantee that kvm_arch::arm_pmu is
-pointing that the PMU for this CPU. KVM needs to derive HPMN from some
-per-CPU state, not anything tied to the VM/vCPU.
+This manifests in the kernel log as:
+ clocksource: timekeeping watchdog on CPU1750: Marking clocksource 'tsc' as unstable because the skew is too large:
+ clocksource:                       'hpet' wd_nsec: 503029760 wd_now: 48a38f74 wd_last: 47e3ab74 mask: ffffffff
+ clocksource:                       'tsc' cs_nsec: 503466648 cs_now: 3224653e7bd cs_last: 3220d4f8d57 mask: ffffffffffffffff
+ clocksource:                       Clocksource 'tsc' skewed 436888 ns (0 ms) over watchdog 'hpet' interval of 503029760 ns (503 ms)
+ clocksource:                       'tsc' is current clocksource.
+ tsc: Marking TSC unstable due to clocksource watchdog
+ TSC found unstable after boot, most likely due to broken BIOS. Use 'tsc=unstable'.
+ sched_clock: Marking unstable (882011139159, 1572951254)<-(913395032446, -29810979023)
+ clocksource: Checking clocksource tsc synchronization from CPU 1800 to CPUs 0,187,336,434,495,644,1719,1792.
+ clocksource: Switched to clocksource hpet
 
-> +/**
-> + * kvm_pmu_partition() - Partition the PMU
-> + * @pmu: Pointer to pmu being partitioned
-> + * @host_counters: Number of host counters to reserve
-> + *
-> + * Partition the given PMU by taking a number of host counters to
-> + * reserve and, if it is a valid reservation, recording the
-> + * corresponding HPMN value in the hpmn field of the PMU and clearing
-> + * the guest-reserved counters from the counter mask.
-> + *
-> + * Passing 0 for @host_counters has the effect of disabling partitioning.
-> + *
-> + * Return: 0 on success, -ERROR otherwise
-> + */
-> +int kvm_pmu_partition(struct arm_pmu *pmu, u8 host_counters)
-> +{
-> +	u8 nr_counters;
-> +	u8 hpmn;
-> +
-> +	if (!kvm_pmu_reservation_is_valid(host_counters))
-> +		return -EINVAL;
-> +
-> +	nr_counters = *host_data_ptr(nr_event_counters);
-> +	hpmn = kvm_pmu_hpmn(host_counters);
-> +
-> +	if (hpmn < nr_counters) {
-> +		pmu->hpmn = hpmn;
-> +		/* Inform host driver of available counters */
-> +		bitmap_clear(pmu->cntr_mask, 0, hpmn);
-> +		bitmap_set(pmu->cntr_mask, hpmn, nr_counters);
-> +		clear_bit(ARMV8_PMU_CYCLE_IDX, pmu->cntr_mask);
-> +		if (pmuv3_has_icntr())
-> +			clear_bit(ARMV8_PMU_INSTR_IDX, pmu->cntr_mask);
-> +
-> +		kvm_debug("Partitioned PMU with HPMN %u", hpmn);
-> +	} else {
-> +		pmu->hpmn = nr_counters;
-> +		bitmap_set(pmu->cntr_mask, 0, nr_counters);
-> +		set_bit(ARMV8_PMU_CYCLE_IDX, pmu->cntr_mask);
-> +		if (pmuv3_has_icntr())
-> +			set_bit(ARMV8_PMU_INSTR_IDX, pmu->cntr_mask);
-> +
-> +		kvm_debug("Unpartitioned PMU");
-> +	}
-> +
-> +	return 0;
-> +}
+Scale the default timekeeping watchdog uncertinty margin by the log2 of
+the number of online NUMA nodes; this allows a more appropriate margin
+from embedded systems to many-socket systems.
 
-Hmm... Just in terms of code organization I'm not sure I like having KVM
-twiddling with *host* support for PMUv3. Feels like the ARM PMU driver
-should own partitioning and KVM just takes what it can get.
+This fix successfully prevents HPET fallback on Eviden 12 socket/1440
+thread SH120 and 16 socket/1920 thread SH160 Intel SPR systems with
+Numascale XNC node controllers.
 
-> @@ -239,6 +245,13 @@ void kvm_host_pmu_init(struct arm_pmu *pmu)
->  	if (!pmuv3_implemented(kvm_arm_pmu_get_pmuver_limit()))
->  		return;
->  
-> +	if (reserved_host_counters) {
-> +		if (kvm_pmu_partition_supported())
-> +			WARN_ON(kvm_pmu_partition(pmu, reserved_host_counters));
-> +		else
-> +			kvm_err("PMU Partition is not supported");
-> +	}
-> +
+Reviewed-by: Scott Hamilton <scott.hamilton@eviden.com>
+Signed-off-by: Daniel J Blueman <daniel@quora.org>
+---
+ kernel/time/Kconfig       | 8 +++++---
+ kernel/time/clocksource.c | 9 ++++++++-
+ 2 files changed, 13 insertions(+), 4 deletions(-)
 
-Hasn't the ARM PMU been registered with perf at this point? Surely the
-driver wouldn't be very pleased with us ripping counters out from under
-its feet.
+diff --git a/kernel/time/Kconfig b/kernel/time/Kconfig
+index b0b97a60aaa6..48dd517bc0b3 100644
+--- a/kernel/time/Kconfig
++++ b/kernel/time/Kconfig
+@@ -200,10 +200,12 @@ config CLOCKSOURCE_WATCHDOG_MAX_SKEW_US
+ 	int "Clocksource watchdog maximum allowable skew (in microseconds)"
+ 	depends on CLOCKSOURCE_WATCHDOG
+ 	range 50 1000
+-	default 125
++	default 50
+ 	help
+-	  Specify the maximum amount of allowable watchdog skew in
+-	  microseconds before reporting the clocksource to be unstable.
++	  Specify the maximum allowable watchdog skew in microseconds, scaled
++	  by the log2 of the number of online NUMA nodes to track system
++	  latency, before reporting the clocksource to be unstable.
++
+ 	  The default is based on a half-second clocksource watchdog
+ 	  interval and NTP's maximum frequency drift of 500 parts
+ 	  per million.	If the clocksource is good enough for NTP,
+diff --git a/kernel/time/clocksource.c b/kernel/time/clocksource.c
+index bb48498ebb5a..43e2e9cc086a 100644
+--- a/kernel/time/clocksource.c
++++ b/kernel/time/clocksource.c
+@@ -10,7 +10,9 @@
+ #include <linux/device.h>
+ #include <linux/clocksource.h>
+ #include <linux/init.h>
++#include <linux/log2.h>
+ #include <linux/module.h>
++#include <linux/nodemask.h>
+ #include <linux/sched.h> /* for spin_unlock_irq() using preempt_count() m68k */
+ #include <linux/tick.h>
+ #include <linux/kthread.h>
+@@ -133,9 +135,12 @@ static u64 suspend_start;
+  * under test is not permitted to go below the 500ppm minimum defined
+  * by MAX_SKEW_USEC.  This 500ppm minimum may be overridden using the
+  * CLOCKSOURCE_WATCHDOG_MAX_SKEW_US Kconfig option.
++ *
++ * If overridden, linearly scale this value by the log2 of the number of
++ * online NUMA nodes for a reasonable upper bound on system latency.
+  */
+ #ifdef CONFIG_CLOCKSOURCE_WATCHDOG_MAX_SKEW_US
+-#define MAX_SKEW_USEC	CONFIG_CLOCKSOURCE_WATCHDOG_MAX_SKEW_US
++#define MAX_SKEW_USEC	(CONFIG_CLOCKSOURCE_WATCHDOG_MAX_SKEW_US * max(ilog2(nr_online_nodes), 1))
+ #else
+ #define MAX_SKEW_USEC	(125 * WATCHDOG_INTERVAL / HZ)
+ #endif
+@@ -1195,6 +1200,8 @@ void __clocksource_update_freq_scale(struct clocksource *cs, u32 scale, u32 freq
+ 	 * comment preceding CONFIG_CLOCKSOURCE_WATCHDOG_MAX_SKEW_US above.
+ 	 */
+ 	if (scale && freq && !cs->uncertainty_margin) {
++		pr_info("Using clocksource watchdog maximum skew of %uus\n", MAX_SKEW_USEC);
++
+ 		cs->uncertainty_margin = NSEC_PER_SEC / (scale * freq);
+ 		if (cs->uncertainty_margin < 2 * WATCHDOG_MAX_SKEW)
+ 			cs->uncertainty_margin = 2 * WATCHDOG_MAX_SKEW;
+-- 
+2.48.1
 
-Thanks,
-Oliver
 
