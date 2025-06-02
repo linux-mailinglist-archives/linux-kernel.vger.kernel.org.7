@@ -1,193 +1,138 @@
-Return-Path: <linux-kernel+bounces-670209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD5C0ACAAA4
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 10:33:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3FF7ACAAAA
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 10:36:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03CC07AAAEF
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 08:32:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3B193B016A
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 08:35:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C26BF1D54EE;
-	Mon,  2 Jun 2025 08:33:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96D041C7008;
+	Mon,  2 Jun 2025 08:36:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NQPaEqKN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ql6VNaH+"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A6E2199BC;
-	Mon,  2 Jun 2025 08:33:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 486581474DA;
+	Mon,  2 Jun 2025 08:36:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748853196; cv=none; b=U7JQSdX9DIf5UmleeVXNwJWxPvMaonkhiYLdQFJOQ1fxjO6dzJMcGNNehkIHw8u+zbCZ5yQlvT8wdgUlUYzpuFAO7tcU08uqC//LUI0BFq35Cg2qygioAbGiQDfaTsfGY1fZKt0g8C8ENo4lirOU9KYA+g+VbOHhqEF0bIfISNc=
+	t=1748853370; cv=none; b=n0i8B0AtPHkFiTyWunH5InPFT8PI21+mDhLpFASeMA9Qi1GKYRGcAnqT2MSQ7o4vK6K2i5fPMlUgn9SRg3UgMSpOfWt9f4+asNID4PjhN7mIyHNDhJ0Ql23pjW70obxAnYg7jskswpHJgca9wXr+iwDvnbmDWaM80LUfEAbaCGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748853196; c=relaxed/simple;
-	bh=/wTafBF8qOuGiJ4CYA1MjNK4q44bceVQ223gTo0gXcw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GygIeyARmJHqDsxbyFVVZ4gRZtfG0CZ5G4DXH0GB9FNGVdJPt3H9kRhKL4ZFhxqsQol5GGGyLL0SMIn3mGbqq5kTpOUtwKACbVH0Vikg5p2DSwlU/j0tbAIB+ZMG8LDQlZZbfE+1Z+e17v4pRQhvnRHoarUtVv+hUwrNAcM0Dvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NQPaEqKN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84682C4CEEB;
-	Mon,  2 Jun 2025 08:33:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748853195;
-	bh=/wTafBF8qOuGiJ4CYA1MjNK4q44bceVQ223gTo0gXcw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=NQPaEqKNG71yoJw1St3sTO8r2coKkuEhEiVv62Afug75/vwji95o6OaUMTXrR/XnZ
-	 2a/bLNrP9MUIJ1W0QndEk5LW6jL4AGtgs574AIy0JGIHYOvzGnRvV7qMmmE5LWHF0A
-	 USYwpem35iDohS6nI3oZq7IYPR9Q+bjbWbfPl+pe36kMxMavLUTXnndY/vshJK8H5Z
-	 f/WDV3oUFiHB4IzYZeEAuhs0wWfTdmcqon+W3ESiO182qwpctAbVokqdryOxtUpkyw
-	 qD0NYzWzx7/VX7v6rJMbPFSbQ074t7y3qbcGmwIbRvDq4eE5dbt/yI4QDXzA9V9HWY
-	 zeyZ1h4R5d9Bg==
-Message-ID: <ae1a799c-202e-4aab-8ed8-1be91c780f50@kernel.org>
-Date: Mon, 2 Jun 2025 10:33:09 +0200
+	s=arc-20240116; t=1748853370; c=relaxed/simple;
+	bh=ReE2S4t4eNnXYC4QcPdCyI65wJEE6x8E+xUxw2N25lk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uhuaBVt1cftExv2UZLFUYFPzYI+u/v932PBHz7uR60iGKOxDE1Y+DmNqSRke1J3RQ7QuAw8y0Kr2uijQ900fQ3d3UDtCzCrXo/UzdTWrnkFno1c3lE/2XMd/T2eJwBVmJdlDXSSnjfHTC8X7TGyzmXef9jZOSCbOw2mjpfFj+0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ql6VNaH+; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-451d7b50815so7250085e9.2;
+        Mon, 02 Jun 2025 01:36:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748853366; x=1749458166; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ReE2S4t4eNnXYC4QcPdCyI65wJEE6x8E+xUxw2N25lk=;
+        b=Ql6VNaH+d2JFXP/02fFFFZSstTTwnw1PDQgzTaFpSTu9brJhFTn364UwaOtHELSRPa
+         4VQD9LxOMgPU2m+sA95YOmKMnoJ2aVqaj+LeOS5H+C08X1W9u2dZje6LrKP0gHIA603k
+         D/V0KcQQjzn3ROxlHdhypRDSklwpEfBxUB8YR30yQO0KCPnirTVjbp7XMHny0Bd21dbv
+         cifzAI5asKBe6Um7Irw6H2Fvd7wLhF19ZnHW5KzLsYKEBWAhATWqzX+EExMlKWFjCdZE
+         V6HJYfKBbHPX6jV6CDJtT1MXUT+kXjPh6SoGLw71sifS8NCLNrRS84wiMMICB7G10Fvt
+         ZnFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748853366; x=1749458166;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ReE2S4t4eNnXYC4QcPdCyI65wJEE6x8E+xUxw2N25lk=;
+        b=DX1/SRF7v6bWsw1bnDk1shQ5Co2fznD54CLvbxmwrs9IWRy4mQpFPy9Jg9cCyRvc1y
+         kFP1NjAdKmK6/MCLP9bJPy6CpGdizOVQtytBLof283uMWU31E+d1zgmriRO1dnvEA5dR
+         qcrf8RaPdSuWeGG6SSeIQpO2b+TAE64eG5pIe30C9guOoqFxmIEd0LvOIiY2RQvGhvD+
+         smBrniGFBmw24nuNoDvi0OuEb62ynETJx1i0IBJlSzl+nWWnVDqbYjA6WGahdV3TJDRU
+         Mlqiwdpt6kqJtOPlm4fO7JvxygDHLKADXn2usQ/r8MnxDvxhKpatIN0iJUqz9rTfedB6
+         Ovfw==
+X-Forwarded-Encrypted: i=1; AJvYcCURXgUIPm8YD5BFZac9bFAlAYIzRfwuYAb0kKlY0fPG8gkKp4B3n5y8ZiFGXogKOl9If6iVTYNoqVbp@vger.kernel.org, AJvYcCVd9aE8VOyICsJUAXKyzbl/VF6QgvOG9I/JfPWsLX6Umf0TUIgDKies7QrxYR7fxMOZvhJTnZLs6olMRMNFXuKO5mQ=@vger.kernel.org, AJvYcCXa1lIa+ueR61eQCC3oRxxlnoyy8LzJVKh/IPhmUPd1sLAZq8mwcRsgBlkbmCsd8ceHJOGb4uQoWPhm4k9U@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8B+mSMtWvNDeeImki/T8Fj2fkH1d+nH8+ZeUkyQXtVKGuQhyB
+	eqJleH4Wgcbll/Dv3AOYXa+Ne5M/kitZLEjComVDDxjAsDFd+0ZEbG9CcxPp8X7RQiKSs2VlqCD
+	cIDeWXFnKG26ilLYwUrftBv+072jk6Ac=
+X-Gm-Gg: ASbGncvGVQx8dTZ8kRmtNGQtvm+jUXJqhlAiZoHAnDyNTjiTwwftopBaGiyeMyVN9UV
+	lm2L6EE1tsSY+h2bz6tLHzYKCZ18qQk3SGgj/Db6wdNHMIHS8YewDGiGUEg9lqTZgX19zjEdwgb
+	gEQZwmW7gSW/p3MxYimp9cyZLgFIvAu4RDQ19P+bi4yd0t2FmZMmukxeT/H4NSSsvDDg==
+X-Google-Smtp-Source: AGHT+IG69W12ZGCu5Ibciyi2Few70A36JIuKBZMWYr79JALU3NtHlWhrRdJTCqzf2SQLeYSHqe3MtZ5/V8bjZkDa+Eg=
+X-Received: by 2002:a05:600c:1553:b0:442:f482:c42d with SMTP id
+ 5b1f17b1804b1-450d884316fmr106851685e9.9.1748853366163; Mon, 02 Jun 2025
+ 01:36:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: clk: mt8189: Porting driver for clk
-To: "irving.ch.lin" <irving-ch.lin@mediatek.com>,
- Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck
- <linux@roeck-us.net>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Matthias Brugger <matthias.bgg@gmail.com>, Rob Herring <robh+dt@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>, nfraprado@collabora.com
-Cc: angelogioacchino.delregno@collabora.com,
- Project_Global_Chrome_Upstream_Group@mediatek.com,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-pm@vger.kernel.org, netdev@vger.kernel.org,
- linux-mediatek@lists.infradead.org,
- Irving lin <irving-ch.lin@mediatek.corp-partner.google.com>
-References: <20250602082610.1848291-1-irving-ch.lin@mediatek.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250602082610.1848291-1-irving-ch.lin@mediatek.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250530165906.411144-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250530165906.411144-2-prabhakar.mahadev-lad.rj@bp.renesas.com> <TY3PR01MB11346CF2602E4EE4E85657C868660A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+In-Reply-To: <TY3PR01MB11346CF2602E4EE4E85657C868660A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Mon, 2 Jun 2025 09:35:40 +0100
+X-Gm-Features: AX0GCFsFXa2JOBjYEpsHfPlVUmvrmRBndrkCsSDYAoOZHvKxkEjaIaPstCsLrCA
+Message-ID: <CA+V-a8tXt+ky-gSPN-mthkj2rcX4q86QbF_Bm409_rSAmdsYgg@mail.gmail.com>
+Subject: Re: [PATCH v6 01/12] dt-bindings: display: renesas,rzg2l-du: Add
+ support for RZ/V2H(P) SoC
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Magnus Damm <magnus.damm@gmail.com>, 
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 02/06/2025 10:25, irving.ch.lin wrote:
-> From: Irving lin <irving-ch.lin@mediatek.corp-partner.google.com>
-> 
-> 1. Add mt8189 clk driver
-> 2. Fix mux failed
+On Sat, May 31, 2025 at 7:35=E2=80=AFAM Biju Das <biju.das.jz@bp.renesas.co=
+m> wrote:
+>
+> Hi Prabhakar,
+>
+> > -----Original Message-----
+> > From: Prabhakar <prabhakar.csengg@gmail.com>
+> > Sent: 30 May 2025 17:59
+> > Subject: [PATCH v6 01/12] dt-bindings: display: renesas,rzg2l-du: Add s=
+upport for RZ/V2H(P) SoC
+> >
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > The DU block on the RZ/V2H(P) SoC is identical to the one found on the =
+RZ/G2L SoC. However, it only
+> > supports the DSI interface, whereas the RZ/G2L supports both DSI and DP=
+I interfaces.
+> >
+> > Due to this difference, a SoC-specific compatible string 'renesas,r9a09=
+g057-du' is added for the
+> > RZ/V2H(P) SoC.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> > Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+> > Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.co=
+m>
+>
+> This patch is already applied in drm-misc-next [1]
+> [1] https://cgit.freedesktop.org/drm/drm-misc/commit/?id=3Ded6a6d63513ee5=
+199841c0a0dc2772ad944e63ee
+>
+Thanks Biju.
 
-I don't understand this.
-
-
-> 3. Add apll12_div_tdmout_b
-> 4. Add disable-unused configs
-
-Neither this
-
-> 
-> BUG=b:387252012
-> TEST=emerge-skywalker chromeos-kernel-6_6
-
-Drop these
-
-> 
-> Signed-off-by: Irving lin <irving-ch.lin@mediatek.corp-partner.google.com>
-> ---
-
-Missing bindings / undocumented ABI
-
-There are also several other trivial issues, so this looks like you sent
-us old, straight downstream code. This won't work, you need to clean it
-up seriously or better start from scratch from recent drivers. Plus read
-carefully submitting patches. The way you organized it and sent makes
-review very difficult.
-
-Please run standard kernel tools for static analysis, like coccinelle,
-smatch and sparse, and fix reported warnings. Also please check for
-warnings when building with W=1 for gcc and clang. Most of these
-commands (checks or W=1 build) can build specific targets, like some
-directory, to narrow the scope to only your code. The code here looks
-like it needs a fix. Feel free to get in touch if the warning is not clear.
-
-
-...
-
-> +static int clk_dbg_mt8189_probe(struct platform_device *pdev)
-> +{
-> +	set_clkdbg_ops(&clkdbg_mt8189_ops);
-> +
-> +	return 0;
-> +}
-> +
-> +static struct platform_driver clk_dbg_mt8189_drv = {
-> +	.probe = clk_dbg_mt8189_probe,
-> +	.driver = {
-> +		.name = "clk-dbg-mt8189",
-> +		.owner = THIS_MODULE,
-
-10 year old downstream code. Use the tools please or better start from
-recent drivers, don't send us 10 year old vendor code.
-
-
-> +	},
-> +};
-> +
-> +/*
-> + * init functions
-> + */
-> +
-> +static int __init clkdbg_mt8189_init(void)
-> +{
-> +	scpsys_base = ioremap(0x1C001000, PAGE_SIZE);
-
-So on module load on Qcom platform you will map it? You just broke
-absolutely EVERY possible user, platform, machine,
-
-This is really, really terrible code.
-
-
-Best regards,
-Krzysztof
+Cheers,
+Prabhakar
 
