@@ -1,70 +1,120 @@
-Return-Path: <linux-kernel+bounces-670111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-670112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 275E1ACA91E
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 07:50:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9A7FACA925
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 07:58:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 108483BB6CB
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 05:50:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71229179E55
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Jun 2025 05:58:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A1311922DC;
-	Mon,  2 Jun 2025 05:50:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="SgjAxFxm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D70F7156F45;
+	Mon,  2 Jun 2025 05:58:30 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93BB618E20;
-	Mon,  2 Jun 2025 05:50:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F7A42C3251
+	for <linux-kernel@vger.kernel.org>; Mon,  2 Jun 2025 05:58:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748843417; cv=none; b=ASimCCwTSYtu8rfqsgHCeCho7+grL8ph/aOaACCoETTHN99aO0/CVVgbHMo2HQRdVM93umdquE43x+eAaz2DRK+4fRSbCiPZdAKXeanGvgeHKVgvjcl1EmW+F8uYMF1gnuf/3MemuPjq5ylZkHocGky6+ZaWDmWDUtSa/Anb2AA=
+	t=1748843910; cv=none; b=UcdUUKFfpnLnPCY+f0F5oAkxEv3qs0rdryMUlzjJF+vmc/2VEHoZhnA++pB0efIwufFMHuaNjIOGGJx7fSjUzchg3wOYtswmuoS11qWeHVRqKrjQ9VrylqGx5DRKKy+ugcQu4s4qapLZw2EwqeOUWtzb1DlHgIV/z3VBFyEaGpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748843417; c=relaxed/simple;
-	bh=wExWTR9doFTPzuPNcFKSPCzLiF9SavNGYWxoU1RBEzk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bOxgpT3tv//rE70CkUjexqMPUf7InxosnO3rS8VjefCXDJol8tFlEVsb4A/7n/2b9aRTpQ6Yn3uPm3HFAcuC+RadHM7ABFLSaFpX0qrPMueaYtDb/Q/2FKxrrrI8KYMTcnbecgWUprtXuRgpMnAzTF644eEA3BEZMrKuUXJi5YU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=SgjAxFxm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C31E5C4CEF0;
-	Mon,  2 Jun 2025 05:50:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1748843414;
-	bh=wExWTR9doFTPzuPNcFKSPCzLiF9SavNGYWxoU1RBEzk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SgjAxFxmvZTEGPt4fPTbCs4kXUhHUpY6dTEWjKf2S1Rzknc3k/ULdRmmbiqDxkQSl
-	 jO9g9Jg5DhEMqWNxsAheb8/E68BlXydZJxRXScVG7sWcMuO1DeWoJ0xWCm+nMHqRDx
-	 EMCO/Km25lmf7pNd12nZaZ/12+LkD40Pnzw0S2d0=
-Date: Mon, 2 Jun 2025 07:50:11 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Achill Gilgenast <fossdd@pwned.life>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] kallsyms: fix build without execinfo
-Message-ID: <2025060248-splendor-riverside-c8fe@gregkh>
-References: <20250601183309.225569-1-fossdd@pwned.life>
+	s=arc-20240116; t=1748843910; c=relaxed/simple;
+	bh=BlAccEP7azyMG34bgH8C4z4l7+9bBb4IqMdJOIlkm+I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DFfrY5VDWZ6Pfmsthcwq6fXApNPC5edBm/F/fDjIY6Da6yzvSoSJBgskIwf3zi9QtG2v/3dQR/WU6vL6j4yfILg+vvNx46yPhLjdjDQMl/kXd1Qx78/pUcTI7CH9QcLQbi6uxZllCSIu2EgHb9XuBxd//4/AFPoMfiRhMLxiwGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[127.0.0.1])
+	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
+	(envelope-from <a.fatoum@pengutronix.de>)
+	id 1uLyBT-0004cf-Q8; Mon, 02 Jun 2025 07:58:07 +0200
+Message-ID: <1214db7b-dc79-4a3a-a1cc-0b09b3216d30@pengutronix.de>
+Date: Mon, 2 Jun 2025 07:58:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250601183309.225569-1-fossdd@pwned.life>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] arm64: dts: imx8mp-nominal: Explicitly configure
+ nominal VPU clocks
+To: Adam Ford <aford173@gmail.com>, linux-arm-kernel@lists.infradead.org
+Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ aford@beaconembedded.com, m.felsch@pengutronix.de, imx@lists.linux.dev,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org
+References: <20250530221713.54804-1-aford173@gmail.com>
+ <20250530221713.54804-4-aford173@gmail.com>
+Content-Language: en-US
+From: Ahmad Fatoum <a.fatoum@pengutronix.de>
+In-Reply-To: <20250530221713.54804-4-aford173@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Sun, Jun 01, 2025 at 08:32:50PM +0200, Achill Gilgenast wrote:
-> Signed-off-by: Achill Gilgenast <fossdd@pwned.life>
-> Cc: stable@vger.kernel.org
+Hello Adam,
+
+On 31.05.25 00:17, Adam Ford wrote:
+> In preparation for increasing the default VPU clocks to overdrive,
+> configure the nominal values first to avoid running the nominal
+> devices out of spec when imx8mp.dtsi is changed.
+
+Thanks for keeping imx8mp-nominal.dtsi users in mind.
+
+> 
+> Signed-off-by: Adam Ford <aford173@gmail.com>
+
+Reviewed-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
+
+Cheers,
+Ahmad
+
 > ---
->  tools/include/linux/kallsyms.h | 4 ++++
->  1 file changed, 4 insertions(+)
+>  .../boot/dts/freescale/imx8mp-nominal.dtsi     | 18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/freescale/imx8mp-nominal.dtsi b/arch/arm64/boot/dts/freescale/imx8mp-nominal.dtsi
+> index 2ce1860b244d..f269f7a004fc 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8mp-nominal.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/imx8mp-nominal.dtsi
+> @@ -89,4 +89,22 @@ &media_blk_ctrl {
+>  			       <1039500000>;
+>  };
+>  
+> +&vpu_g1 {
+> +	assigned-clocks = <&clk IMX8MP_CLK_VPU_G1>;
+> +	assigned-clock-parents = <&clk IMX8MP_VPU_PLL_OUT>;
+> +	assigned-clock-rates = <600000000>;
+> +};
+> +
+> +&vpu_g2 {
+> +	assigned-clocks = <&clk IMX8MP_CLK_VPU_G2>;
+> +	assigned-clock-parents = <&clk IMX8MP_SYS_PLL2_1000M>;
+> +	assigned-clock-rates = <500000000>;
+> +};
+> +
+> +&vpumix_blk_ctrl {
+> +	assigned-clocks = <&clk IMX8MP_VPU_PLL>, <&clk IMX8MP_CLK_VPU_BUS>;
+> +	assigned-clock-parents = <0>, <&clk IMX8MP_VPU_PLL_OUT>;
+> +	assigned-clock-rates = <600000000>, <600000000>;
+> +};
+> +
+>  /delete-node/ &{noc_opp_table/opp-1000000000};
 
-I know I can't take patches without any changelog text, but maybe other
-maintainers are more lax.
 
-good luck!
-
-greg k-h
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
