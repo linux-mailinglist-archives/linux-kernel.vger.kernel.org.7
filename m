@@ -1,244 +1,161 @@
-Return-Path: <linux-kernel+bounces-672381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-672367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB858ACCE87
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 22:55:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD2EAACCE67
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 22:50:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5996F3A560F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 20:54:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 631A81766D6
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 20:50:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84AA8223321;
-	Tue,  3 Jun 2025 20:54:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B22CE24C67A;
+	Tue,  3 Jun 2025 20:49:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a5tHDZrp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KDMsNvsP"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C028D227B88;
-	Tue,  3 Jun 2025 20:54:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 601CD22539F;
+	Tue,  3 Jun 2025 20:49:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748984074; cv=none; b=cPuk55+CVeu76/wpO3pxcUUOglejOUla+D6ErfupqUg2XtbvHmvCBNX+9OevuWDhB/Dv0GSSClZ2CEik9auZPKWKji6RonqnYu8tTLO90ufsfkHaE7m+v59URDBtH2NpwX1kyQVV1RK6zH92CkB+mF8Vd4RzLvyaGy19qPPRwZA=
+	t=1748983752; cv=none; b=D79t6aPddyu+J8/CWLCuFHMqcuv2/byEOR10L2L5Hqhdv/rHs2oTUgWbFadgP7BoctQ7L+C46BB45qHJ9Ndm+qupYtCFyfOEfhl5ihyOEmCfIvX8PotE+zJtMKNNWHeU/fOSsckKw+VT0J+Z/ZUjocGYKjEAIk0EnyYi0JUV9JA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748984074; c=relaxed/simple;
-	bh=Cuq7Ww7nEJyWWFz5oCrQNOd5vgYOWL4JTJoTvsd7FGg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JeuEaqmQPlxNBA/l+BcbVjSYugIaYX4AIYOZ99b2f5J79Hq8wcmxs3TYrVSsr70KxPnp7+nIR+wsx+t8uOU2it5uZA3G85dUjPdaRXTYXwS40Jxdxb1wvTS9STRGolDs9iwGVdhQS+S3IPVK6Bv+4KsE4eBsKawUkW9exGN3r5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a5tHDZrp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 411AEC4CEF2;
-	Tue,  3 Jun 2025 20:54:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748984074;
-	bh=Cuq7Ww7nEJyWWFz5oCrQNOd5vgYOWL4JTJoTvsd7FGg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=a5tHDZrpPuhronMitPUAmsO/BUrUflWE7i613wMZEhz3TGMy/L6ygpbLbhSo/W9/+
-	 ZbhQ1+oXtnUOP47KynBz7QVX+SutEPRPrsQ9IdO/NVcsMadxeQ5I8nBFixd0d4/uQv
-	 CP2lj45JXL9uEXev8g0kS8xnczdSBTFGgLDXHcH3zJ1CfTjmCBV1hL+wg6TIdyo/Vn
-	 Y1LRgVIPLkFav40mDUUl/tsEhe8qJncTx/q6yA30oSSjJUz3+wru/HujzwWyCHonpZ
-	 LQG1bZ67j6XGIEHHlDH0qO8dArBn2HvYXi5g/7JWuMSzLtm8AIoUo/MNdwKVsdEoVK
-	 MVlsnWjkRDXRg==
-From: Danilo Krummrich <dakr@kernel.org>
-To: gregkh@linuxfoundation.org,
-	rafael@kernel.org,
-	ojeda@kernel.org,
-	alex.gaynor@gmail.com,
-	boqun.feng@gmail.com,
-	gary@garyguo.net,
-	bjorn3_gh@protonmail.com,
-	benno.lossin@proton.me,
-	a.hindborg@kernel.org,
-	aliceryhl@google.com,
-	tmgross@umich.edu,
-	chrisi.schrefl@gmail.com
-Cc: rust-for-linux@vger.kernel.org,
+	s=arc-20240116; t=1748983752; c=relaxed/simple;
+	bh=R9PLylbzZUPbUe0c6KxGPPdXB8z4mSNhSyKwVyQ3f4s=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Szp8if30bnH9tMoAVsXz6ghvBD9+7hjhlZHg+Cc3frx2bZAGmROBdj5pOxAvZAuVZYaY/x6GACQZC6C8rOzuply0NTTDtvy9jbMTAoMtR6iKHR8DKJFlnQp4JpCK7BdPdR0qLxsg59+8uBA7eA/ieXl7/sYA7akj+HNARq1Pwqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KDMsNvsP; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3a36e090102so3547060f8f.2;
+        Tue, 03 Jun 2025 13:49:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748983749; x=1749588549; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HyjQbUGLzhevUUG6mqEZwljpIOzcn4r41+/GD9oU9Ms=;
+        b=KDMsNvsPk92UurnpoWzTPNBQminy5Xyzw/wpd0zFJlmY1mSdgk7UuylF5UvtlKVIkT
+         gZ7GitqhGA3eS1143NI0kYgTt8AzswOh9uKzPp88EYDrIZqsKj/HSMNUgumX5NH4sPN4
+         hxu8tGqVDGNrpGN+blLgCmEVGTnkkHyR5RDUU1KbDXkhDCgpECOsR1ZEuHuVp9KZOb1f
+         PfesIZDWsCYdBdojK6LmKt3QU4e8+08k0yctB4muOBTeBmFtwN5gkFrRDLpp6Je9DZIf
+         ZpDJ0NjEcQ9vBZA+Sg5WrDIs4Vv5cmSw5zvG535pzYsRag/4ELFQDI/CP7mycIQ/jq3V
+         dppA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748983749; x=1749588549;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HyjQbUGLzhevUUG6mqEZwljpIOzcn4r41+/GD9oU9Ms=;
+        b=dnkfWmuL8So5n9xXoGpmUcUbl+4+BpJNvbuNFRi5QaxC+PdhSYAUr+42ysbqZKXC/2
+         voVaTGP8dlOThHQhcgySNj6kRRMQ/HLxDnhIsaGcG8AWd/NUHEzOBEhyHgcY2CT0VOnM
+         KC4rUByHSH+FduE7Txgne429mE5i5yuVda/Eg3a4FPu/m9VZbYennt2H8Nw5YfhWCiSC
+         ESX7dvLnFPYjLfChUZPirx1FhIph4+OZbO4d77VSp5L5r1TWzmob1zKTz+zhhLafwhil
+         8H9pztDNA22MCE2fbHKVgORl4VtfUIWmD7xsaOUTvTmoEVVzDoyNEEXxiaQO+eo7YN01
+         k+Eg==
+X-Forwarded-Encrypted: i=1; AJvYcCV7dvbc0iFlpyMk9v2FaE182TuiuvPUOjuj8ehaKaFMlTzKQmvH1I8o0MgMAS6v2ABScFfdq2qGKrBDhoM=@vger.kernel.org, AJvYcCXMlS5QlEB3mJZZvtvFaGudzsfgVJqaWLSiZel0Aq/LtG1WdIZEIj6sni29lSPQ1Qpzq8vSnuCA@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRoQjb7cSFIs5kpQyS2mE4vZZkFduk7j/cDSg/akamL9ve9+RI
+	Nm94aovTjawv8WdHnG3+QrdEnN8G/vomIqC8yyQRtwa2dA6sV3pD5qyFQ2CRDA==
+X-Gm-Gg: ASbGncvnEq7taagf9q9hT0lDTh84fBo0WTm48tqRb9zZPevET2NNfg3lFamMmW02Wz2
+	U5LG8iF/tspxT1VgT8IZurO2bIpEQTDx4Qe5MgsfaAYyzLTm6EMDlxtiEB9cZqTJZ2GdzTXXg5b
+	J7KuY4FIT2FYu1m4eqH1TCgAUHDs688ACn8j3Im/kbHqvDzIZJbwh3ebIBd6BuWvFCPtxaiut/o
+	kfDHBBtitP9k43MaS5YDrfLjcFUiZ5DOhzBxy01ePfa3CZfFqQz9Nu2kjg5o9f1+xWDZ0fABqF/
+	ph1OZ3i7ts3iQQKf+mmmhmPtzDWDXkWkZu+mpWJ6dqEnw9/hAWOizjVo8u4ZEhFcHdN4Pfu7wJq
+	H1PCIxK63VrYSUpMlKIYDMZjEIKkHg04+pNYG22BQyY1kE+b0eKKN
+X-Google-Smtp-Source: AGHT+IFxbgmPgPy8L1rNEmifwRytupcobckAzCPFGEe3JDSyLkdSwcMYVhhle3hat9C4q0vsawS76Q==
+X-Received: by 2002:a05:6000:2dca:b0:3a4:e672:deef with SMTP id ffacd0b85a97d-3a51dc316bamr74245f8f.36.1748983748670;
+        Tue, 03 Jun 2025 13:49:08 -0700 (PDT)
+Received: from skynet.lan (2a02-9142-4580-1500-0000-0000-0000-0008.red-2a02-914.customerbaf.ipv6.rima-tde.net. [2a02:9142:4580:1500::8])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-451e58c348asm26258225e9.3.2025.06.03.13.49.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Jun 2025 13:49:08 -0700 (PDT)
+From: =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= <noltari@gmail.com>
+To: jonas.gorski@gmail.com,
+	florian.fainelli@broadcom.com,
+	andrew@lunn.ch,
+	olteanv@gmail.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	vivien.didelot@gmail.com,
+	netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Danilo Krummrich <dakr@kernel.org>
-Subject: [PATCH 3/3] rust: devres: fix race in Devres::drop()
+	dgcbueu@gmail.com
+Cc: =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= <noltari@gmail.com>
+Subject: [RFC PATCH net-next v2 04/10] net: dsa: b53: fix IP_MULTICAST_CTRL on BCM5325
 Date: Tue,  3 Jun 2025 22:48:52 +0200
-Message-ID: <20250603205416.49281-4-dakr@kernel.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250603205416.49281-1-dakr@kernel.org>
-References: <20250603205416.49281-1-dakr@kernel.org>
+Message-Id: <20250603204858.72402-5-noltari@gmail.com>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250603204858.72402-1-noltari@gmail.com>
+References: <20250603204858.72402-1-noltari@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-In Devres::drop() we first remove the devres action and then drop the
-wrapped device resource.
+BCM5325 doesn't implement B53_UC_FWD_EN, B53_MC_FWD_EN or B53_IPMC_FWD_EN.
 
-The design goal is to give the owner of a Devres object control over when
-the device resource is dropped, but limit the overall scope to the
-corresponding device being bound to a driver.
-
-However, there's a race that was introduced with commit 8ff656643d30
-("rust: devres: remove action in `Devres::drop`"), but also has been
-(partially) present from the initial version on.
-
-In Devres::drop(), the devres action is removed successfully and
-subsequently the destructor of the wrapped device resource runs.
-However, there is no guarantee that the destructor of the wrapped device
-resource completes before the driver core is done unbinding the
-corresponding device.
-
-If in Devres::drop(), the devres action can't be removed, it means that
-the devres callback has been executed already, or is still running
-concurrently. In case of the latter, either Devres::drop() wins revoking
-the Revocable or the devres callback wins revoking the Revocable. If
-Devres::drop() wins, we (again) have no guarantee that the destructor of
-the wrapped device resource completes before the driver core is done
-unbinding the corresponding device.
-
-Depending on the specific device resource, this can potentially lead to
-user-after-free bugs.
-
-In order to fix this, implement the following logic.
-
-In the devres callback, we're always good when we get to revoke the
-device resource ourselves, i.e. Revocable::revoke() returns true.
-
-If Revocable::revoke() returns false, it means that Devres::drop(),
-concurrently, already drops the device resource and we have to wait for
-Devres::drop() to signal that it finished dropping the device resource.
-
-Note that if we hit the case where we need to wait for the completion of
-Devres::drop() in the devres callback, it means that we're actually
-racing with a concurrent Devres::drop() call, which already started
-revoking the device resource for us. This is rather unlikely and means
-that the concurrent Devres::drop() already started doing our work and we
-just need to wait for it to complete it for us. Hence, there should not
-be any additional overhead from that.
-
-(Actually, for now it's even better if Devres::drop() does the work for
-us, since it can bypass the synchronize_rcu() call implied by
-Revocable::revoke(), but this goes away anyways once I get to implement
-the split devres callback approach, which allows us to first flip the
-atomics of all registered Devres objects of a certain device, execute a
-single synchronize_rcu() and then drop all revocable objects.)
-
-In Devres::drop() we try to revoke the device resource. If that is *not*
-successful, it means that the devres callback already did and we're good.
-
-Otherwise, we try to remove the devres action, which, if successful,
-means that we're good, since the device resource has just been revoked
-by us *before* we removed the devres action successfully.
-
-If the devres action could not be removed, it means that the devres
-callback must be running concurrently, hence we signal that the device
-resource has been revoked by us, using the completion.
-
-This makes it safe to drop a Devres object from any task and at any point
-of time, which is one of the design goals.
-
-Fixes: 8ff656643d30 ("rust: devres: remove action in `Devres::drop`") [1]
-Reported-by: Alice Ryhl <aliceryhl@google.com>
-Closes: https://lore.kernel.org/lkml/aD64YNuqbPPZHAa5@google.com/
-Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+Fixes: 53568438e381 ("net: dsa: b53: Add support for port_egress_floods callback")
+Signed-off-by: Álvaro Fernández Rojas <noltari@gmail.com>
 ---
- rust/kernel/devres.rs | 33 ++++++++++++++++++++++++++-------
- 1 file changed, 26 insertions(+), 7 deletions(-)
+ drivers/net/dsa/b53/b53_common.c | 18 +++++++++++-------
+ drivers/net/dsa/b53/b53_regs.h   |  1 +
+ 2 files changed, 12 insertions(+), 7 deletions(-)
 
-diff --git a/rust/kernel/devres.rs b/rust/kernel/devres.rs
-index 0f79a2ec9474..dedb39d83cbe 100644
---- a/rust/kernel/devres.rs
-+++ b/rust/kernel/devres.rs
-@@ -13,7 +13,7 @@
-     ffi::c_void,
-     prelude::*,
-     revocable::Revocable,
--    sync::Arc,
-+    sync::{Arc, Completion},
-     types::ARef,
- };
+ v2: add changes proposed by Jonas:
+  - Change b53_set_forwarding function flow.
+
+diff --git a/drivers/net/dsa/b53/b53_common.c b/drivers/net/dsa/b53/b53_common.c
+index 1e47ef9f6fb88..f1e82a0e84ea9 100644
+--- a/drivers/net/dsa/b53/b53_common.c
++++ b/drivers/net/dsa/b53/b53_common.c
+@@ -365,14 +365,18 @@ static void b53_set_forwarding(struct b53_device *dev, int enable)
+ 		b53_read8(dev, B53_CTRL_PAGE, B53_SWITCH_CTRL, &mgmt);
+ 		mgmt |= B53_MII_DUMB_FWDG_EN;
+ 		b53_write8(dev, B53_CTRL_PAGE, B53_SWITCH_CTRL, mgmt);
+-	}
  
-@@ -25,6 +25,8 @@ struct DevresInner<T> {
-     callback: unsafe extern "C" fn(*mut c_void),
-     #[pin]
-     data: Revocable<T>,
-+    #[pin]
-+    revoke: Completion,
+-	/* Look at B53_UC_FWD_EN and B53_MC_FWD_EN to decide whether
+-	 * frames should be flooded or not.
+-	 */
+-	b53_read8(dev, B53_CTRL_PAGE, B53_IP_MULTICAST_CTRL, &mgmt);
+-	mgmt |= B53_UC_FWD_EN | B53_MC_FWD_EN | B53_IPMC_FWD_EN;
+-	b53_write8(dev, B53_CTRL_PAGE, B53_IP_MULTICAST_CTRL, mgmt);
++		/* Look at B53_UC_FWD_EN and B53_MC_FWD_EN to decide whether
++		 * frames should be flooded or not.
++		 */
++		b53_read8(dev, B53_CTRL_PAGE, B53_IP_MULTICAST_CTRL, &mgmt);
++		mgmt |= B53_UC_FWD_EN | B53_MC_FWD_EN | B53_IPMC_FWD_EN;
++		b53_write8(dev, B53_CTRL_PAGE, B53_IP_MULTICAST_CTRL, mgmt);
++	} else {
++		b53_read8(dev, B53_CTRL_PAGE, B53_IP_MULTICAST_CTRL, &mgmt);
++		mgmt |= B53_IP_MCAST_25;
++		b53_write8(dev, B53_CTRL_PAGE, B53_IP_MULTICAST_CTRL, mgmt);
++	}
  }
  
- /// This abstraction is meant to be used by subsystems to containerize [`Device`] bound resources to
-@@ -102,6 +104,7 @@ fn new(dev: &Device<Bound>, data: T, flags: Flags) -> Result<Arc<DevresInner<T>>
-                 dev: dev.into(),
-                 callback: Self::devres_callback,
-                 data <- Revocable::new(data),
-+                revoke <- Completion::new(),
-             }),
-             flags,
-         )?;
-@@ -130,26 +133,28 @@ fn as_ptr(&self) -> *const Self {
-         self as _
-     }
+ static void b53_enable_vlan(struct b53_device *dev, int port, bool enable,
+diff --git a/drivers/net/dsa/b53/b53_regs.h b/drivers/net/dsa/b53/b53_regs.h
+index 1f15332fb2a7c..896684d7f5947 100644
+--- a/drivers/net/dsa/b53/b53_regs.h
++++ b/drivers/net/dsa/b53/b53_regs.h
+@@ -106,6 +106,7 @@
  
--    fn remove_action(this: &Arc<Self>) {
-+    fn remove_action(this: &Arc<Self>) -> bool {
-         // SAFETY:
-         // - `self.inner.dev` is a valid `Device`,
-         // - the `action` and `data` pointers are the exact same ones as given to devm_add_action()
-         //   previously,
-         // - `self` is always valid, even if the action has been released already.
--        let ret = unsafe {
-+        let success = unsafe {
-             bindings::devm_remove_action_nowarn(
-                 this.dev.as_raw(),
-                 Some(this.callback),
-                 this.as_ptr() as _,
-             )
--        };
-+        } == 0;
- 
--        if ret == 0 {
-+        if success {
-             // SAFETY: We leaked an `Arc` reference to devm_add_action() in `DevresInner::new`; if
-             // devm_remove_action_nowarn() was successful we can (and have to) claim back ownership
-             // of this reference.
-             let _ = unsafe { Arc::from_raw(this.as_ptr()) };
-         }
-+
-+        success
-     }
- 
-     #[allow(clippy::missing_safety_doc)]
-@@ -161,7 +166,12 @@ fn remove_action(this: &Arc<Self>) {
-         //         `DevresInner::new`.
-         let inner = unsafe { Arc::from_raw(ptr) };
- 
--        inner.data.revoke();
-+        if !inner.data.revoke() {
-+            // If `revoke()` returns false, it means that `Devres::drop` already started revoking
-+            // `inner.data` for us. Hence we have to wait until `Devres::drop()` signals that it
-+            // completed revoking `inner.data`.
-+            inner.revoke.wait_for_completion();
-+        }
-     }
- }
- 
-@@ -232,6 +242,15 @@ fn deref(&self) -> &Self::Target {
- 
- impl<T> Drop for Devres<T> {
-     fn drop(&mut self) {
--        DevresInner::remove_action(&self.0);
-+        // SAFETY: When `drop` runs, it is guaranteed that nobody is accessing the revocable data
-+        // anymore, hence it is safe not to wait for the grace period to finish.
-+        if unsafe { self.revoke_nosync() } {
-+            // We revoked `self.0.data` before the devres action did, hence try to remove it.
-+            if !DevresInner::remove_action(&self.0) {
-+                // We could not remove the devres action, which means that it now runs concurrently,
-+                // hence signal that `self.0.data` has been revoked successfully.
-+                self.0.revoke.complete_all();
-+            }
-+        }
-     }
- }
+ /* IP Multicast control (8 bit) */
+ #define B53_IP_MULTICAST_CTRL		0x21
++#define  B53_IP_MCAST_25		BIT(0)
+ #define  B53_IPMC_FWD_EN		BIT(1)
+ #define  B53_UC_FWD_EN			BIT(6)
+ #define  B53_MC_FWD_EN			BIT(7)
 -- 
-2.49.0
+2.39.5
 
 
