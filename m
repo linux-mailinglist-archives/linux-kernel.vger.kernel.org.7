@@ -1,439 +1,267 @@
-Return-Path: <linux-kernel+bounces-671271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24136ACBEF7
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 05:53:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D904BACBF0A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 06:03:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4B1E47A23C2
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 03:52:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A37B116C8C0
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 04:02:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 335B119E975;
-	Tue,  3 Jun 2025 03:53:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C52D319F422;
+	Tue,  3 Jun 2025 04:02:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kxumlCYv"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fqHySapO"
+Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com [209.85.217.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAC0E1547CC;
-	Tue,  3 Jun 2025 03:52:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24E6A19DF5F
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 04:02:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748922781; cv=none; b=ZbkQ7kaluP7HyPxVDa1u/WyZLbw/bSQhz1Tvt1dREBhDCj+D+8pkl+v1HDm3wUAvSLc1kAHVuKFiEEXPTAv++MKgMz9Uqb3m7VtZJJJ4dCBmZoLungHRO/0bsp4659UPfEvtt1vld7+Sibh9ZXWnJ/NAwQjwI51h91zj28TqHyc=
+	t=1748923358; cv=none; b=UkBTdzRC0b/3CsWTB2ZRDXzgS53YAzs5tCZq8fjGS/+hPrLlda4DMEBVqs7JUUOeXXsYo/2DJq6I7SJuBrl+OPemUyEdl+N9JgkHtJZo2p9qG1CI9+6VIk0hn5T9EAw3XbhIhtzz5snNFo8PAhK/tZDQGwuoIEtyK74XfgX1ze4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748922781; c=relaxed/simple;
-	bh=3GzzoqyGWJHpwlcI2zrvuLpf3wJOuywQpbyUpi19BI4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=f6NCTh7MXoC7aQer1TBbPQVS+FuWkzwqNw1DIb0xXgR2Z8AK3tszZKPD0qMdHoORvcI52qTWcrefIjWl06udL2tgjI8hqH14ba2iAk6DY/oFnl5+h9xYO3Zltc9m6RjQqMzOxSRHtLshZh2gttk+mZhJJQcyRqfcUKKJhhE2LMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kxumlCYv; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1748922779; x=1780458779;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=3GzzoqyGWJHpwlcI2zrvuLpf3wJOuywQpbyUpi19BI4=;
-  b=kxumlCYvzVm14Cb8P7c+1Xvj7IVcfMjcLF/YQhjsE/4naT7y+htH12CV
-   n7ul9T+IXFUE60WY/TgIB1b8elPmw4ktJW3nUOCIuKNp4Ql5HaXSJwzT1
-   2pIGAxiu0uP1qN4inz+yI4/K2Rm9/s/tdpWAKpaC9K45Px/tMT18fRiyl
-   UDE5YeBbymqOhID5xVWFdOG6+XT7RschfKY3J1UzNEZpylYZSY2xEwb0q
-   /ulUPGQl/2Pzizd0ytWrV0JjSyvf81GxQ4AJBm53dZKboaswGT7on/mCp
-   /suaQQx6X99tkzD3DvX4bQ6VURlF445mQvMPiLb977TRJVNH/Ijb72lhW
-   g==;
-X-CSE-ConnectionGUID: sJwiu5UgR6u1L6o219JPdQ==
-X-CSE-MsgGUID: f2KhPDzsS9+PV0f5v6MlhA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11451"; a="51091618"
-X-IronPort-AV: E=Sophos;i="6.16,205,1744095600"; 
-   d="scan'208";a="51091618"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2025 20:52:58 -0700
-X-CSE-ConnectionGUID: CHo+rePZQKqtYl6t+eFUHg==
-X-CSE-MsgGUID: hdBp5Jv3QS2SZcW/zBEwBA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,205,1744095600"; 
-   d="scan'208";a="145064341"
-Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.245.144]) ([10.124.245.144])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2025 20:52:56 -0700
-Message-ID: <e75da0ce-670a-4a01-b68a-81201babe1bf@linux.intel.com>
-Date: Tue, 3 Jun 2025 11:52:54 +0800
+	s=arc-20240116; t=1748923358; c=relaxed/simple;
+	bh=jCNGG60p46LaPYgfFJ5QpGYJ+h4VGB1FBMJKm5y2Qlo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SZownJLgxC2jSbuXZ4J2nguvIv1vHRtfw0QuWC09HUNk2MeVOqKVIM127V81GFNrPvMfL6ZAD0gMubVTbbWzIZJG+JRSHSiHe2dyvmbX+aQnB1TGyQsNpeqzoQvMlZ9cFCHOmhFmEGb6EBSI5ksfevjQsrT/Hwd1eyMBnvTiVXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fqHySapO; arc=none smtp.client-ip=209.85.217.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-4e5a0ec639dso3384998137.3
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jun 2025 21:02:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1748923355; x=1749528155; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=CZSYANcoh02egzStrY3RoKo9uj8NAmebnQzKfityk0Y=;
+        b=fqHySapOowOglf5FDYRSKTQLKikokvcisMMXo1SSVo16V5Sw0stGHepO8gDs9xiCe5
+         ZWYno0/BlTB9tn3obspMgwtAFQH21V47R4XOdQzPItW0+KKa8dp9BszGjaXwpqLuJ6O4
+         R9L0zS07xqv0Io2nipYvb6g3UVf/N6MfliMToLOStosOarlmkgcvnDuJOxKpPAdicEqM
+         iG7MRKWzTSF990PNBJfnQx8zFw5uh6mTYk36xAPrbEkkthy7GX+K2rmbpSwvfI395Mh5
+         Jz155plEbwoDCgJvABQSeaB0ovWA34MPa/Pln0iv82xJTuJMmODsCoCcI3cZkkjONjuO
+         X3Zg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748923355; x=1749528155;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CZSYANcoh02egzStrY3RoKo9uj8NAmebnQzKfityk0Y=;
+        b=n/rcCy9p85fm0qypSsQ64grvAoEzcxH5ZhjwYaFiRyifVTnxaXaLq5VLuII7TTjt+t
+         0eL3hTT+M3EQzOK8CB6PW8G13bSSZYuCi9irrHsoNO/NFGNRRENB+QyWi+NRSOKhj/Cu
+         Ptp3fnytQbHCyMxxDGB0ZSvmrOaudb2e+orfN7I/gslpSSDefNyWD2Bgd8qRJF1kwYxz
+         B+k2vnrk6sY3OkeCaWLCT7WR9DWo2askObe6/x+OCmq1DIFptD0BUxNfMXnHlFbFP8oX
+         oz3v/lyEcRK/4QQStY7eviv18Sn4GQcTvdNfpco7SiBmtPN45YpWQjh7KEyVcn+iUUzV
+         ZvmA==
+X-Forwarded-Encrypted: i=1; AJvYcCU6xMyPsginCYq5/4f9loY+c1Ic37/49JmsSOj2EXFQpZUXomPEAWFiLrr5hoqAmoShCXgS02f2OCer0iw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPOyOVv8zCBiJl6osxfYcBAy2ra/ej4w4NeTTg8rvpPiwXkd0G
+	ftoRm8Ti6p1fN02yJ894l01hcMys2UvklL+p5C1PDwD/HUMNKqpCIvOZKcVhhChyinBJ7dWaFq0
+	ki9bh9CzFAuRK85o9FAyUNAK/efyiK6MMN1fq3DgpuA==
+X-Gm-Gg: ASbGncuvnGLTXL+wYVMq+UlqHKqP+KTg/0SEZ4fPf/DIUiewf3k5Pmn3TNlN18UF81q
+	l/53b59DC2Fr6ZiSFsWQDYaEdndmMRt7PsM1KymiVpa05YyPQb0MNtvsP4e0PzAejgeGO21vQfU
+	o5xG0++vZKHQhLl/Tj/SyyFSrqI5p48Lc=
+X-Google-Smtp-Source: AGHT+IGkOetwlNnX5s8zn15GQEFGskzIFZQZi0/612ZECsIcqYmnwLKcrK2xZfNc9zdTQogG+rVr9fN7sa6upW9SCoo=
+X-Received: by 2002:a05:6102:2acf:b0:4df:4a04:8d5e with SMTP id
+ ada2fe7eead31-4e6e40f71admr14095821137.8.1748923354768; Mon, 02 Jun 2025
+ 21:02:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 16/28] KVM: VMX: Manually recalc all MSR intercepts on
- userspace MSR filter change
-To: Sean Christopherson <seanjc@google.com>,
- Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Borislav Petkov <bp@alien8.de>, Xin Li <xin@zytor.com>,
- Chao Gao <chao.gao@intel.com>
-References: <20250529234013.3826933-1-seanjc@google.com>
- <20250529234013.3826933-17-seanjc@google.com>
-Content-Language: en-US
-From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-In-Reply-To: <20250529234013.3826933-17-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250602134258.769974467@linuxfoundation.org>
+In-Reply-To: <20250602134258.769974467@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Tue, 3 Jun 2025 09:32:22 +0530
+X-Gm-Features: AX0GCFvenA7GD9lGj2DxjtvBcXycpF-ABe7XpXNK4CElwwYaFXsTFnpt3eZB3Aw
+Message-ID: <CA+G9fYt12w2ZvFdGf-m5d1y4BKd6rZXYya_2-++s1qLqZT=Dcg@mail.gmail.com>
+Subject: Re: [PATCH 5.15 000/207] 5.15.185-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
+	broonie@kernel.org, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Nick Hu <nick.hu@sifive.com>, Anup Patel <anup@brainfault.org>, 
+	Alexandre Ghiti <alexghiti@rivosinc.com>
+Content-Type: text/plain; charset="UTF-8"
 
-
-On 5/30/2025 7:40 AM, Sean Christopherson wrote:
-> On a userspace MSR filter change, recalculate all MSR intercepts using the
-> filter-agnostic logic instead of maintaining a "shadow copy" of KVM's
-> desired intercepts.  The shadow bitmaps add yet another point of failure,
-> are confusing (e.g. what does "handled specially" mean!?!?), an eyesore,
-> and a maintenance burden.
+On Mon, 2 Jun 2025 at 20:22, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
 >
-> Given that KVM *must* be able to recalculate the correct intercepts at any
-> given time, and that MSR filter updates are not hot paths, there is zero
-> benefit to maintaining the shadow bitmaps.
+> This is the start of the stable review cycle for the 5.15.185 release.
+> There are 207 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 >
-> Link: https://lore.kernel.org/all/aCdPbZiYmtni4Bjs@google.com
-> Link: https://lore.kernel.org/all/20241126180253.GAZ0YNTdXH1UGeqsu6@fat_crate.local
-> Cc: Borislav Petkov <bp@alien8.de>
-> Cc: Xin Li <xin@zytor.com>
-> Cc: Chao Gao <chao.gao@intel.com>
-> Cc: Dapeng Mi <dapeng1.mi@linux.intel.com>
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->  arch/x86/kvm/vmx/vmx.c | 184 +++++++++++------------------------------
->  arch/x86/kvm/vmx/vmx.h |   7 --
->  2 files changed, 47 insertions(+), 144 deletions(-)
+> Responses should be made by Wed, 04 Jun 2025 13:42:20 +0000.
+> Anything received after that time might be too late.
 >
-> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> index 8f7fe04a1998..6ffa2b2b85ce 100644
-> --- a/arch/x86/kvm/vmx/vmx.c
-> +++ b/arch/x86/kvm/vmx/vmx.c
-> @@ -166,31 +166,6 @@ module_param(allow_smaller_maxphyaddr, bool, S_IRUGO);
->  	RTIT_STATUS_ERROR | RTIT_STATUS_STOPPED | \
->  	RTIT_STATUS_BYTECNT))
->  
-> -/*
-> - * List of MSRs that can be directly passed to the guest.
-> - * In addition to these x2apic, PT and LBR MSRs are handled specially.
-> - */
-> -static u32 vmx_possible_passthrough_msrs[MAX_POSSIBLE_PASSTHROUGH_MSRS] = {
-> -	MSR_IA32_SPEC_CTRL,
-> -	MSR_IA32_PRED_CMD,
-> -	MSR_IA32_FLUSH_CMD,
-> -	MSR_IA32_TSC,
-> -#ifdef CONFIG_X86_64
-> -	MSR_FS_BASE,
-> -	MSR_GS_BASE,
-> -	MSR_KERNEL_GS_BASE,
-> -	MSR_IA32_XFD,
-> -	MSR_IA32_XFD_ERR,
-> -#endif
-> -	MSR_IA32_SYSENTER_CS,
-> -	MSR_IA32_SYSENTER_ESP,
-> -	MSR_IA32_SYSENTER_EIP,
-> -	MSR_CORE_C1_RES,
-> -	MSR_CORE_C3_RESIDENCY,
-> -	MSR_CORE_C6_RESIDENCY,
-> -	MSR_CORE_C7_RESIDENCY,
-> -};
-> -
->  /*
->   * These 2 parameters are used to config the controls for Pause-Loop Exiting:
->   * ple_gap:    upper bound on the amount of time between two successive
-> @@ -672,40 +647,6 @@ static inline bool cpu_need_virtualize_apic_accesses(struct kvm_vcpu *vcpu)
->  	return flexpriority_enabled && lapic_in_kernel(vcpu);
->  }
->  
-> -static int vmx_get_passthrough_msr_slot(u32 msr)
-> -{
-> -	int i;
-> -
-> -	switch (msr) {
-> -	case 0x800 ... 0x8ff:
-> -		/* x2APIC MSRs. These are handled in vmx_update_msr_bitmap_x2apic() */
-> -		return -ENOENT;
-> -	case MSR_IA32_RTIT_STATUS:
-> -	case MSR_IA32_RTIT_OUTPUT_BASE:
-> -	case MSR_IA32_RTIT_OUTPUT_MASK:
-> -	case MSR_IA32_RTIT_CR3_MATCH:
-> -	case MSR_IA32_RTIT_ADDR0_A ... MSR_IA32_RTIT_ADDR3_B:
-> -		/* PT MSRs. These are handled in pt_update_intercept_for_msr() */
-> -	case MSR_LBR_SELECT:
-> -	case MSR_LBR_TOS:
-> -	case MSR_LBR_INFO_0 ... MSR_LBR_INFO_0 + 31:
-> -	case MSR_LBR_NHM_FROM ... MSR_LBR_NHM_FROM + 31:
-> -	case MSR_LBR_NHM_TO ... MSR_LBR_NHM_TO + 31:
-> -	case MSR_LBR_CORE_FROM ... MSR_LBR_CORE_FROM + 8:
-> -	case MSR_LBR_CORE_TO ... MSR_LBR_CORE_TO + 8:
-> -		/* LBR MSRs. These are handled in vmx_update_intercept_for_lbr_msrs() */
-> -		return -ENOENT;
-> -	}
-> -
-> -	for (i = 0; i < ARRAY_SIZE(vmx_possible_passthrough_msrs); i++) {
-> -		if (vmx_possible_passthrough_msrs[i] == msr)
-> -			return i;
-> -	}
-> -
-> -	WARN(1, "Invalid MSR %x, please adapt vmx_possible_passthrough_msrs[]", msr);
-> -	return -ENOENT;
-> -}
-> -
->  struct vmx_uret_msr *vmx_find_uret_msr(struct vcpu_vmx *vmx, u32 msr)
->  {
->  	int i;
-> @@ -4015,25 +3956,12 @@ void vmx_disable_intercept_for_msr(struct kvm_vcpu *vcpu, u32 msr, int type)
->  {
->  	struct vcpu_vmx *vmx = to_vmx(vcpu);
->  	unsigned long *msr_bitmap = vmx->vmcs01.msr_bitmap;
-> -	int idx;
->  
->  	if (!cpu_has_vmx_msr_bitmap())
->  		return;
->  
->  	vmx_msr_bitmap_l01_changed(vmx);
->  
-> -	/*
-> -	 * Mark the desired intercept state in shadow bitmap, this is needed
-> -	 * for resync when the MSR filters change.
-> -	 */
-> -	idx = vmx_get_passthrough_msr_slot(msr);
-> -	if (idx >= 0) {
-> -		if (type & MSR_TYPE_R)
-> -			__clear_bit(idx, vmx->shadow_msr_intercept.read);
-> -		if (type & MSR_TYPE_W)
-> -			__clear_bit(idx, vmx->shadow_msr_intercept.write);
-> -	}
-> -
-
-The patch looks good to me. Only a minor code refine on
-vmx_disable_intercept_for_msr().
-
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index 9a83d5b174c8..e898ff296fd5 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -4041,23 +4041,19 @@ void vmx_disable_intercept_for_msr(struct kvm_vcpu
-*vcpu, u32 msr, int type)
-                        clear_bit(idx, vmx->shadow_msr_intercept.write);
-        }
-
--       if ((type & MSR_TYPE_R) &&
--           !kvm_msr_allowed(vcpu, msr, KVM_MSR_FILTER_READ)) {
--               vmx_set_msr_bitmap_read(msr_bitmap, msr);
--               type &= ~MSR_TYPE_R;
-+       if (type & MSR_TYPE_R) {
-+               if (!kvm_msr_allowed(vcpu, msr, KVM_MSR_FILTER_READ))
-+                       vmx_set_msr_bitmap_read(msr_bitmap, msr);
-+               else
-+                       vmx_clear_msr_bitmap_read(msr_bitmap, msr);
-        }
-
--       if ((type & MSR_TYPE_W) &&
--           !kvm_msr_allowed(vcpu, msr, KVM_MSR_FILTER_WRITE)) {
--               vmx_set_msr_bitmap_write(msr_bitmap, msr);
--               type &= ~MSR_TYPE_W;
-+       if (type & MSR_TYPE_W) {
-+               if (!kvm_msr_allowed(vcpu, msr, KVM_MSR_FILTER_WRITE))
-+                       vmx_set_msr_bitmap_write(msr_bitmap, msr);
-+               else
-+                       vmx_clear_msr_bitmap_write(msr_bitmap, msr);
-        }
--
--       if (type & MSR_TYPE_R)
--               vmx_clear_msr_bitmap_read(msr_bitmap, msr);
--
--       if (type & MSR_TYPE_W)
--               vmx_clear_msr_bitmap_write(msr_bitmap, msr);
- }
-
-It looks simpler and easily understood.
-
-Reviewed-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.185-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
 
+Regressions on riscv defconfig builds failing with gcc-12, gcc-8 and
+clang-20 toolchains on 5.15.185-rc1.
 
->  	if ((type & MSR_TYPE_R) &&
->  	    !kvm_msr_allowed(vcpu, msr, KVM_MSR_FILTER_READ)) {
->  		vmx_set_msr_bitmap_read(msr_bitmap, msr);
-> @@ -4057,25 +3985,12 @@ void vmx_enable_intercept_for_msr(struct kvm_vcpu *vcpu, u32 msr, int type)
->  {
->  	struct vcpu_vmx *vmx = to_vmx(vcpu);
->  	unsigned long *msr_bitmap = vmx->vmcs01.msr_bitmap;
-> -	int idx;
->  
->  	if (!cpu_has_vmx_msr_bitmap())
->  		return;
->  
->  	vmx_msr_bitmap_l01_changed(vmx);
->  
-> -	/*
-> -	 * Mark the desired intercept state in shadow bitmap, this is needed
-> -	 * for resync when the MSR filter changes.
-> -	 */
-> -	idx = vmx_get_passthrough_msr_slot(msr);
-> -	if (idx >= 0) {
-> -		if (type & MSR_TYPE_R)
-> -			__set_bit(idx, vmx->shadow_msr_intercept.read);
-> -		if (type & MSR_TYPE_W)
-> -			__set_bit(idx, vmx->shadow_msr_intercept.write);
-> -	}
-> -
->  	if (type & MSR_TYPE_R)
->  		vmx_set_msr_bitmap_read(msr_bitmap, msr);
->  
-> @@ -4159,35 +4074,59 @@ void pt_update_intercept_for_msr(struct kvm_vcpu *vcpu)
->  	}
->  }
->  
-> -void vmx_msr_filter_changed(struct kvm_vcpu *vcpu)
-> +static void vmx_recalc_msr_intercepts(struct kvm_vcpu *vcpu)
->  {
-> -	struct vcpu_vmx *vmx = to_vmx(vcpu);
-> -	u32 i;
-> -
->  	if (!cpu_has_vmx_msr_bitmap())
->  		return;
->  
-> -	/*
-> -	 * Redo intercept permissions for MSRs that KVM is passing through to
-> -	 * the guest.  Disabling interception will check the new MSR filter and
-> -	 * ensure that KVM enables interception if usersepace wants to filter
-> -	 * the MSR.  MSRs that KVM is already intercepting don't need to be
-> -	 * refreshed since KVM is going to intercept them regardless of what
-> -	 * userspace wants.
-> -	 */
-> -	for (i = 0; i < ARRAY_SIZE(vmx_possible_passthrough_msrs); i++) {
-> -		u32 msr = vmx_possible_passthrough_msrs[i];
-> -
-> -		if (!test_bit(i, vmx->shadow_msr_intercept.read))
-> -			vmx_disable_intercept_for_msr(vcpu, msr, MSR_TYPE_R);
-> -
-> -		if (!test_bit(i, vmx->shadow_msr_intercept.write))
-> -			vmx_disable_intercept_for_msr(vcpu, msr, MSR_TYPE_W);
-> +	vmx_disable_intercept_for_msr(vcpu, MSR_IA32_TSC, MSR_TYPE_R);
-> +#ifdef CONFIG_X86_64
-> +	vmx_disable_intercept_for_msr(vcpu, MSR_FS_BASE, MSR_TYPE_RW);
-> +	vmx_disable_intercept_for_msr(vcpu, MSR_GS_BASE, MSR_TYPE_RW);
-> +	vmx_disable_intercept_for_msr(vcpu, MSR_KERNEL_GS_BASE, MSR_TYPE_RW);
-> +#endif
-> +	vmx_disable_intercept_for_msr(vcpu, MSR_IA32_SYSENTER_CS, MSR_TYPE_RW);
-> +	vmx_disable_intercept_for_msr(vcpu, MSR_IA32_SYSENTER_ESP, MSR_TYPE_RW);
-> +	vmx_disable_intercept_for_msr(vcpu, MSR_IA32_SYSENTER_EIP, MSR_TYPE_RW);
-> +	if (kvm_cstate_in_guest(vcpu->kvm)) {
-> +		vmx_disable_intercept_for_msr(vcpu, MSR_CORE_C1_RES, MSR_TYPE_R);
-> +		vmx_disable_intercept_for_msr(vcpu, MSR_CORE_C3_RESIDENCY, MSR_TYPE_R);
-> +		vmx_disable_intercept_for_msr(vcpu, MSR_CORE_C6_RESIDENCY, MSR_TYPE_R);
-> +		vmx_disable_intercept_for_msr(vcpu, MSR_CORE_C7_RESIDENCY, MSR_TYPE_R);
->  	}
->  
->  	/* PT MSRs can be passed through iff PT is exposed to the guest. */
->  	if (vmx_pt_mode_is_host_guest())
->  		pt_update_intercept_for_msr(vcpu);
-> +
-> +	if (vcpu->arch.xfd_no_write_intercept)
-> +		vmx_disable_intercept_for_msr(vcpu, MSR_IA32_XFD, MSR_TYPE_RW);
-> +
-> +
-> +	vmx_set_intercept_for_msr(vcpu, MSR_IA32_SPEC_CTRL, MSR_TYPE_RW,
-> +				  !to_vmx(vcpu)->spec_ctrl);
-> +
-> +	if (kvm_cpu_cap_has(X86_FEATURE_XFD))
-> +		vmx_set_intercept_for_msr(vcpu, MSR_IA32_XFD_ERR, MSR_TYPE_R,
-> +					  !guest_cpu_cap_has(vcpu, X86_FEATURE_XFD));
-> +
-> +	if (boot_cpu_has(X86_FEATURE_IBPB))
-> +		vmx_set_intercept_for_msr(vcpu, MSR_IA32_PRED_CMD, MSR_TYPE_W,
-> +					  !guest_has_pred_cmd_msr(vcpu));
-> +
-> +	if (boot_cpu_has(X86_FEATURE_FLUSH_L1D))
-> +		vmx_set_intercept_for_msr(vcpu, MSR_IA32_FLUSH_CMD, MSR_TYPE_W,
-> +					  !guest_cpu_cap_has(vcpu, X86_FEATURE_FLUSH_L1D));
-> +
-> +	/*
-> +	 * x2APIC and LBR MSR intercepts are modified on-demand and cannot be
-> +	 * filtered by userspace.
-> +	 */
-> +}
-> +
-> +void vmx_msr_filter_changed(struct kvm_vcpu *vcpu)
-> +{
-> +	vmx_recalc_msr_intercepts(vcpu);
->  }
->  
->  static int vmx_deliver_nested_posted_interrupt(struct kvm_vcpu *vcpu,
-> @@ -7537,26 +7476,6 @@ int vmx_vcpu_create(struct kvm_vcpu *vcpu)
->  		evmcs->hv_enlightenments_control.msr_bitmap = 1;
->  	}
->  
-> -	/* The MSR bitmap starts with all ones */
-> -	bitmap_fill(vmx->shadow_msr_intercept.read, MAX_POSSIBLE_PASSTHROUGH_MSRS);
-> -	bitmap_fill(vmx->shadow_msr_intercept.write, MAX_POSSIBLE_PASSTHROUGH_MSRS);
-> -
-> -	vmx_disable_intercept_for_msr(vcpu, MSR_IA32_TSC, MSR_TYPE_R);
-> -#ifdef CONFIG_X86_64
-> -	vmx_disable_intercept_for_msr(vcpu, MSR_FS_BASE, MSR_TYPE_RW);
-> -	vmx_disable_intercept_for_msr(vcpu, MSR_GS_BASE, MSR_TYPE_RW);
-> -	vmx_disable_intercept_for_msr(vcpu, MSR_KERNEL_GS_BASE, MSR_TYPE_RW);
-> -#endif
-> -	vmx_disable_intercept_for_msr(vcpu, MSR_IA32_SYSENTER_CS, MSR_TYPE_RW);
-> -	vmx_disable_intercept_for_msr(vcpu, MSR_IA32_SYSENTER_ESP, MSR_TYPE_RW);
-> -	vmx_disable_intercept_for_msr(vcpu, MSR_IA32_SYSENTER_EIP, MSR_TYPE_RW);
-> -	if (kvm_cstate_in_guest(vcpu->kvm)) {
-> -		vmx_disable_intercept_for_msr(vcpu, MSR_CORE_C1_RES, MSR_TYPE_R);
-> -		vmx_disable_intercept_for_msr(vcpu, MSR_CORE_C3_RESIDENCY, MSR_TYPE_R);
-> -		vmx_disable_intercept_for_msr(vcpu, MSR_CORE_C6_RESIDENCY, MSR_TYPE_R);
-> -		vmx_disable_intercept_for_msr(vcpu, MSR_CORE_C7_RESIDENCY, MSR_TYPE_R);
-> -	}
-> -
->  	vmx->loaded_vmcs = &vmx->vmcs01;
->  
->  	if (cpu_need_virtualize_apic_accesses(vcpu)) {
-> @@ -7842,18 +7761,6 @@ void vmx_vcpu_after_set_cpuid(struct kvm_vcpu *vcpu)
->  		}
->  	}
->  
-> -	if (kvm_cpu_cap_has(X86_FEATURE_XFD))
-> -		vmx_set_intercept_for_msr(vcpu, MSR_IA32_XFD_ERR, MSR_TYPE_R,
-> -					  !guest_cpu_cap_has(vcpu, X86_FEATURE_XFD));
-> -
-> -	if (boot_cpu_has(X86_FEATURE_IBPB))
-> -		vmx_set_intercept_for_msr(vcpu, MSR_IA32_PRED_CMD, MSR_TYPE_W,
-> -					  !guest_has_pred_cmd_msr(vcpu));
-> -
-> -	if (boot_cpu_has(X86_FEATURE_FLUSH_L1D))
-> -		vmx_set_intercept_for_msr(vcpu, MSR_IA32_FLUSH_CMD, MSR_TYPE_W,
-> -					  !guest_cpu_cap_has(vcpu, X86_FEATURE_FLUSH_L1D));
-> -
->  	set_cr4_guest_host_mask(vmx);
->  
->  	vmx_write_encls_bitmap(vcpu, NULL);
-> @@ -7869,6 +7776,9 @@ void vmx_vcpu_after_set_cpuid(struct kvm_vcpu *vcpu)
->  		vmx->msr_ia32_feature_control_valid_bits &=
->  			~FEAT_CTL_SGX_LC_ENABLED;
->  
-> +	/* Recalc MSR interception to account for feature changes. */
-> +	vmx_recalc_msr_intercepts(vcpu);
-> +
->  	/* Refresh #PF interception to account for MAXPHYADDR changes. */
->  	vmx_update_exception_bitmap(vcpu);
->  }
-> diff --git a/arch/x86/kvm/vmx/vmx.h b/arch/x86/kvm/vmx/vmx.h
-> index 0afe97e3478f..a26fe3d9e1d2 100644
-> --- a/arch/x86/kvm/vmx/vmx.h
-> +++ b/arch/x86/kvm/vmx/vmx.h
-> @@ -294,13 +294,6 @@ struct vcpu_vmx {
->  	struct pt_desc pt_desc;
->  	struct lbr_desc lbr_desc;
->  
-> -	/* Save desired MSR intercept (read: pass-through) state */
-> -#define MAX_POSSIBLE_PASSTHROUGH_MSRS	16
-> -	struct {
-> -		DECLARE_BITMAP(read, MAX_POSSIBLE_PASSTHROUGH_MSRS);
-> -		DECLARE_BITMAP(write, MAX_POSSIBLE_PASSTHROUGH_MSRS);
-> -	} shadow_msr_intercept;
-> -
->  	/* ve_info must be page aligned. */
->  	struct vmx_ve_information *ve_info;
->  };
+Regression Analysis:
+ - New regression? Yes
+ - Reproducible? Yes
+
+Build regression: riscv defconfig timer-riscv.c:82:2: error: implicit
+declaration of function 'riscv_clock_event_stop'
+
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+
+
+Build log:
+---------
+drivers/clocksource/timer-riscv.c:82:2: error: implicit declaration of
+function 'riscv_clock_event_stop'
+[-Werror,-Wimplicit-function-declaration]
+   82 |         riscv_clock_event_stop();
+      |         ^
+1 error generated.
+
+This patch caused the build error,
+
+  clocksource/drivers/timer-riscv: Stop stimecmp when cpu hotplug
+  [ Upstream commit 70c93b026ed07078e933583591aa9ca6701cd9da ]
+
+
+## Boot log
+* Build log: https://qa-reports.linaro.org/api/testruns/28635911/log_file/
+* Build details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-5.15.y/build/v5.15.184-208-g5f6a7d9dc0f9/testrun/28635907/suite/build/test/clang-20-defconfig/details/
+* Build history:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-5.15.y/build/v5.15.184-208-g5f6a7d9dc0f9/testrun/28635907/suite/build/test/clang-20-defconfig/history/
+* architecture: riscv
+* toolchain: gcc-8, gcc-12, clang-20
+* config : defconfig
+* Build config:
+https://storage.tuxsuite.com/public/linaro/lkft/builds/2xxPvfQW4MFgulEP3Uu0GG4r5ra/config
+* Build: https://storage.tuxsuite.com/public/linaro/lkft/builds/2xxPvfQW4MFgulEP3Uu0GG4r5ra/
+
+
+## Steps to reproduce
+ - tuxmake --runtime podman --target-arch riscv --toolchain clang-20
+--kconfig defconfig LLVM=1 LLVM_IAS=1
+
+## Build
+* kernel: 5.15.185-rc1
+* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+* git commit: 5f6a7d9dc0f9396244df99f4b257b066f41d1f4f
+* git describe: v5.15.184-208-g5f6a7d9dc0f9
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-5.15.y/build/v5.15.184-208-g5f6a7d9dc0f9
+
+## Test Regressions (compared to v5.15.183-60-gba6ee53cdfad)
+* riscv, build
+  - clang-20-defconfig
+  - gcc-12-defconfig
+  - gcc-8-defconfig
+
+## Metric Regressions (compared to v5.15.183-60-gba6ee53cdfad)
+
+## Test Fixes (compared to v5.15.183-60-gba6ee53cdfad)
+
+## Metric Fixes (compared to v5.15.183-60-gba6ee53cdfad)
+
+## Test result summary
+total: 50016, pass: 38348, fail: 1860, skip: 9551, xfail: 257
+
+## Build Summary
+* arc: 5 total, 5 passed, 0 failed
+* arm: 101 total, 101 passed, 0 failed
+* arm64: 28 total, 28 passed, 0 failed
+* i386: 18 total, 18 passed, 0 failed
+* mips: 22 total, 22 passed, 0 failed
+* parisc: 3 total, 3 passed, 0 failed
+* powerpc: 22 total, 22 passed, 0 failed
+* riscv: 8 total, 5 passed, 3 failed
+* riscv: 9 total, 9 passed, 0 failed
+* sh: 10 total, 10 passed, 0 failed
+* sparc: 6 total, 6 passed, 0 failed
+* x86_64: 24 total, 24 passed, 0 failed
+
+## Test suites summary
+* boot
+* kselftest-arm64
+* kselftest-breakpoints
+* kselftest-capabilities
+* kselftest-clone3
+* kselftest-core
+* kselftest-cpu-hotplug
+* kselftest-exec
+* kselftest-fpu
+* kselftest-futex
+* kselftest-intel_pstate
+* kselftest-kcmp
+* kselftest-membarrier
+* kselftest-mincore
+* kselftest-mm
+* kselftest-mqueue
+* kselftest-net
+* kselftest-net-mptcp
+* kselftest-openat2
+* kselftest-ptrace
+* kselftest-rseq
+* kselftest-rtc
+* kselftest-seccomp
+* kselftest-sigaltstack
+* kselftest-size
+* kselftest-tc-testing
+* kselftest-timers
+* kselftest-tmpfs
+* kselftest-tpm2
+* kselftest-user_events
+* kselftest-vDSO
+* kselftest-x86
+* kunit
+* kvm-unit-tests
+* lava
+* libgpiod
+* libhugetlbfs
+* log-parser-boot
+* log-parser-build-clang
+* log-parser-build-gcc
+* log-parser-test
+* ltp-capability
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-crypto
+* ltp-cve
+* ltp-fcntl-locktests
+* ltp-fs
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-hugetlb
+* ltp-ipc
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-pty
+* ltp-sched
+* ltp-smoke
+* ltp-syscalls
+* ltp-tracing
+* perf
+* rcutorture
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
