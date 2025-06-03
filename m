@@ -1,153 +1,84 @@
-Return-Path: <linux-kernel+bounces-671360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C26D9ACC068
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 08:45:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EBD7ACC077
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 08:50:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F2933A44F1
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 06:44:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7D073A42E2
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 06:49:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C961267F70;
-	Tue,  3 Jun 2025 06:44:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="kN3/iB2M"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24E39268686;
+	Tue,  3 Jun 2025 06:50:14 +0000 (UTC)
+Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1E4E1F5434;
-	Tue,  3 Jun 2025 06:44:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA1D01F4CBD;
+	Tue,  3 Jun 2025 06:50:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748933094; cv=none; b=ro6GmoWBIxCmEAvqXvjXULUIQCLof0oa9fufmKbVRNCxqdWFvshjfIpLtQpgBO6/US/SeUhRNtSPOppdiORtpbTsOKdIvz9kff7Yoed0SWxWMlPCba8cSAdya9FaCF1nB8dJx9dsHZXLybM8zQMEcNQ1DZiangmB+Oj5ip1akUY=
+	t=1748933413; cv=none; b=pP/ofPFmEu9ItaDap/5qDhSvFr/aZeThrFMHNJ8nlIJptCZ4fu0+sQQXPGxrjzswCL0odHwHko+/sJcRhO5lk3QefKPySsePUX9RX6k9Bj7pdwZrxNGbjIz8F/NR1ode/k229ri/HZFxDJx4183YIqgEZRJXg2rcLBh2A+wg/Yo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748933094; c=relaxed/simple;
-	bh=UVp0LbQx8sBlvoHqjY1yfV+T6PtviStZ9VovgcKpHh0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p2B3A67fX16UElQJhk5LnAvSB2mb8c3O7uTQD6piUdXqV/OPSOE0LCkfzkkTb/+5FaodR0RWXpbaCIyGlIw3MlA58CXM7w0DUBbzKuXxCvNJIMVWaGA/iUGTGhsE0BoGh3ZJajLVT8TmimS7pwzFlJOiy/09bk3nqkHCihp8jGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=kN3/iB2M; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 7C96025E04;
-	Tue,  3 Jun 2025 08:44:44 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id CfiClaMm0-wl; Tue,  3 Jun 2025 08:44:43 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1748933083; bh=UVp0LbQx8sBlvoHqjY1yfV+T6PtviStZ9VovgcKpHh0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=kN3/iB2MXKttgpnuUEEUJMJPyEyGSQ9GzuKNbSfEfOu1Ts6kBOWvbPHShh4vtEL/8
-	 XBY+k1wM3sxrQuida/SOfm9HWiNd+TRZ1Z47s5leTpSyx8JbGjgBymy568VgNLuudn
-	 BHY+ON5CUsGzBAOGYLoTTxDoHDMXhPm9Gv61c2k44JHYxRZKi/PLOtwDk4Q6wW6KrY
-	 3fGdjKNSohf8wLeKSR90RBirmacuHshHOiGwGOHbrth6opLhDWLWZEbMMWhutSYvI+
-	 s+TirXSkyU/EzXye8RCHn4kABgayMToGCDNX6mvAqcvwKIa/fLG9pImHs+J9iooJaK
-	 WY76iZft5GCpw==
-Date: Tue, 3 Jun 2025 06:44:31 +0000
-From: Yao Zi <ziyao@disroot.org>
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: Jianmin Lv <lvjianmin@loongson.cn>, WANG Xuerui <kernel@xen0n.name>,
-	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
-	Mingcong Bai <jeffbai@aosc.io>, Kexy Biscuit <kexybiscuit@aosc.io>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH 1/2] platform/loongarch: laptop: Get brightness setting
- from EC on probe
-Message-ID: <aD6Zz8L9WJRXvwaW@pie.lan>
-References: <20250531113851.21426-1-ziyao@disroot.org>
- <20250531113851.21426-2-ziyao@disroot.org>
- <CAAhV-H7pvaz5N0-EfvhDNHAXJtR13p9Xi5hfgDxOpeXi9zMbTQ@mail.gmail.com>
+	s=arc-20240116; t=1748933413; c=relaxed/simple;
+	bh=7ArF5YzrxRPHNf7/61zGZMMOUvKVPDKgRU1KI+bNLDY=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ueSyd/sKq+kw/LTgmJzn4u87q69mjPffNGy7onUeyphClSxbV3fW8LyCdWwyJInsRX5S+ytLdcs/Wyo+kJ12fF4h7DoaF8c9/cw25BY/g9p1LFMgji0Vv2bn2rnaDI97fXbrCBG3CEYypzb15KgQA4A01YRAhs5gLN2mj19QJl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
+Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Tue, 3 Jun
+ 2025 14:45:00 +0800
+Received: from twmbx02.aspeed.com (192.168.10.13) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
+ Transport; Tue, 3 Jun 2025 14:45:00 +0800
+From: Jammy Huang <jammy_huang@aspeedtech.com>
+To: <eajames@linux.ibm.com>, <mchehab@kernel.org>, <joel@jms.id.au>,
+	<andrew@aj.id.au>, <linux-media@vger.kernel.org>, <openbmc@lists.ozlabs.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-aspeed@lists.ozlabs.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH v7 0/1] media: aspeed: Allow to capture from SoC display (GFX)
+Date: Tue, 3 Jun 2025 14:44:59 +0800
+Message-ID: <20250603064500.94048-1-jammy_huang@aspeedtech.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAAhV-H7pvaz5N0-EfvhDNHAXJtR13p9Xi5hfgDxOpeXi9zMbTQ@mail.gmail.com>
+Content-Type: text/plain
 
-On Tue, Jun 03, 2025 at 12:11:48PM +0800, Huacai Chen wrote:
-> On Sat, May 31, 2025 at 7:39 PM Yao Zi <ziyao@disroot.org> wrote:
-> >
-> > Previously 1 is unconditionally taken as current brightness value. This
-> > causes problems since it's required to restore brightness settings on
-> > resumption, and a value that doesn't match EC's state before suspension
-> > will cause surprising changes of screen brightness.
-> laptop_backlight_register() isn't called at resuming, so I think your
-> problem has nothing to do with suspend (S3).
+ v7 changes:
+  - The change for Documentation is moved to a separate patch and has
+    been accepted.
+ v6 changes:
+  - Replace aspeed-video.txt with aspeed,video-engine.yaml.
+ v5 changes:
+  - Remove dts.
+  - Add doc, aspeed,video.yaml.
+  - Simplify aspeed_regmap_lookup.
+ v4 changes:
+  - Use scoped/cleanup to make aspeed_regmap_lookup simpler.
+  - Update dts
+ v3 changes:
+  - Update for enum_input.
+ v2 changes:
+  - Update patch subject and comments.
 
-It does have something to do with it. In loongson_hotkey_resume() which
-is called when leaving S3 (suspension), the brightness is restored
-according to props.brightness,
+Jammy Huang (1):
+  media: aspeed: Allow to capture from SoC display (GFX)
 
-        bd = backlight_device_get_by_type(BACKLIGHT_PLATFORM);
-        if (bd) {
-                loongson_laptop_backlight_update(bd) ?
-                pr_warn("Loongson_backlight: resume brightness failed") :
-                pr_info("Loongson_backlight: resume brightness %d\n", bd->props
-.brightness);
-        }
+ drivers/media/platform/aspeed/aspeed-video.c | 189 ++++++++++++++++---
+ include/uapi/linux/aspeed-video.h            |   7 +
+ 2 files changed, 168 insertions(+), 28 deletions(-)
 
-and without this patch, props.brightness is always set to 1 when the
-driver probes, but actually (at least with the firmware on my laptop)
-the screen brightness is set to 80 instead of 1 on cold boot, IOW, a
-brightness value that doesn't match hardware state is set to
-props.brightness.
 
-On resumption, loongson_hotkey_resume() restores the brightness
-settings according to props.brightness. But as the value isn't what is
-used by hardware before suspension. the screen brightness will look very
-different (1 v.s. 80) comparing to the brightness before suspension.
+base-commit: b6ea1680d0ac0e45157a819c41b46565f4616186
+-- 
+2.25.1
 
-Some dmesg proves this as well, without this patch it says
-
-	loongson_laptop: Loongson_backlight: resume brightness 1
-
-but before suspension, reading
-/sys/class/backlight/loongson3_laptop/actual_brightness yields 80.
-
-> But there is really a problem about hibernation (S4): the brightness
-> is 1 during booting, but when switching to the target kernel, the
-> brightness may jump to the old value.
-> 
-> If the above case is what you meet, please update the commit message.
-> 
-> Huacai
-
-Thanks,
-Yao Zi
-
-> >
-> > Let's get brightness from EC and take it as the current brightness on
-> > probe of the laptop driver to avoid the surprising behavior. Tested on
-> > TongFang L860-T2 3A5000 laptop.
-> >
-> > Cc: stable@vger.kernel.org
-> > Fixes: 6246ed09111f ("LoongArch: Add ACPI-based generic laptop driver")
-> > Signed-off-by: Yao Zi <ziyao@disroot.org>
-> > ---
-> >  drivers/platform/loongarch/loongson-laptop.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/platform/loongarch/loongson-laptop.c b/drivers/platform/loongarch/loongson-laptop.c
-> > index 99203584949d..828bd62e3596 100644
-> > --- a/drivers/platform/loongarch/loongson-laptop.c
-> > +++ b/drivers/platform/loongarch/loongson-laptop.c
-> > @@ -392,7 +392,7 @@ static int laptop_backlight_register(void)
-> >         if (!acpi_evalf(hotkey_handle, &status, "ECLL", "d"))
-> >                 return -EIO;
-> >
-> > -       props.brightness = 1;
-> > +       props.brightness = ec_get_brightness();
-> >         props.max_brightness = status;
-> >         props.type = BACKLIGHT_PLATFORM;
-> >
-> > --
-> > 2.49.0
-> >
-> >
 
