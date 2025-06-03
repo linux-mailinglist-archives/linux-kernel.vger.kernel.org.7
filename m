@@ -1,125 +1,122 @@
-Return-Path: <linux-kernel+bounces-671893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 878EDACC7D7
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 15:31:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91E7CACC7E8
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 15:34:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 430FB16D973
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 13:31:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5063C3A369F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 13:34:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76CE1231854;
-	Tue,  3 Jun 2025 13:31:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37A54233134;
+	Tue,  3 Jun 2025 13:34:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UXkXnMfT"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="lrAku4ce"
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F35F18C00B;
-	Tue,  3 Jun 2025 13:31:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9649229B12
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 13:34:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748957476; cv=none; b=nGkCMj8lQi3e0y+ahFeIbHp20h3x+at/lDLOTtVmvhT/R7izTEL5ZudVyxk2W88+ltVeFqMWJXW+Ov9UcmT6ZdNDn0mmVtS7ddqDEXPNScznmHYSzLvgq1Jn15uP9VhmQ/9rgSBiZqwRDxNVUoTFjIEn29YQTQGwZSIc3MWCupk=
+	t=1748957675; cv=none; b=g9e04sJ1qCN0wk53c8stBajfaJaCn5w1SAi3OFoCzvqXTsyiXNk0Sk/BQHIbC4C+1Meu9QRDPd1JwPz3cCy8XvmMG40Ec/SuFcf9a7wDZMh23dx9v3DzxKwQsV7rCZHdHjSWS8enuLdwr47j7VVr/XhoxTp4fjhT0bRx35eOdwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748957476; c=relaxed/simple;
-	bh=4M38nY14Zk4uIT4KNRMaOqbkR6WTrZ0EgcH/VHetF+Q=;
-	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=dio40EjBZmQd7WTpww6J4ku4gSspWJFyCbIolYd+47dv42Dgy3NEPUaVfiHNKf117URiPFvaVyTh/Cpd/hChb9W0z6UZbwtH9YXClyRrbfgrOAH61rFnepz2uJVcTQv5JnK2iJ2+fdkELyIwcL2wskteWwcLR8psfGvhibQfW5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UXkXnMfT; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-22e16234307so46450885ad.0;
-        Tue, 03 Jun 2025 06:31:15 -0700 (PDT)
+	s=arc-20240116; t=1748957675; c=relaxed/simple;
+	bh=Lw5cSrf9yXELvBT6bTYGu3OBlBOa4jK7fmgeC+bgcao=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IUaCmlpP5Cu0iiIZVXOLDhx0SFT0dkrhP/JEFtMFzC8su37UXfMKdIv4IGatm3KK+Ee3W9QvrvitExgIgg1iiJbVYiEC0jcYL3Kie/svS8emjy0FT7UndYwOqroAr8LHCvwelqF+NWtusDR17mAij5IyjBLwbhE0bX442B8HiGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=lrAku4ce; arc=none smtp.client-ip=209.85.219.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6f0c30a1cb6so36679516d6.2
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jun 2025 06:34:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748957475; x=1749562275; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zCsykEXQA3gGGqXe33kKDyL1+M4szlXxFg36Pt4llCQ=;
-        b=UXkXnMfTeemBI09TBxLN4R/FG372Kjw+dxo1bMyHSd0A4KFeA3l2AkWs3EURtB/l5e
-         pYEo1TbDQQ/9SvKB/LHNhXwmFnDbDblaZr67XwnWsGm0sU6b5uSGuT0py3zgR4UDoenA
-         JiHW7TWuRL0oD/3g8FgUPobcC18t3hqg3NDBMhIenLZi8cRIlBpBC23CfzTpHW9M9p79
-         60ZhH3KJqp8omkHkSGMOAZepRKUd3CRiQJEfMiN3tvgkx495mlqlT57K24/vJWQ4+Q+D
-         K2P3exXLE0he/JawW7IhjhR6I5Th9VGNxNmucCv4rdtNZb7bnhOKR5yNmB4oNCxbYcqj
-         htTQ==
+        d=ziepe.ca; s=google; t=1748957672; x=1749562472; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=o9eD6fBv50JvJ7Gx4KUjwD3EkSFG+lO7duRzw9dtFZs=;
+        b=lrAku4ceWFfd92z3vNIRNznkctKgFgmmyMQzW81z4NHUxFQj/l3xSfa7PCLr00O6ew
+         UM6mT2kD6Ct/OECKUDQZG53FXfqFij9nZhl/zpvcIBTGZn0q3FfWJ3rmLOcj/MsP7Gsy
+         SVIVWQB/Z0dVQA9/oora/QY9tOLyr7TtDGd6V19zHnLrc/gLS2DpuqdvOgmR3z0NjizF
+         6j42V4uqsJf+D3RxJVZDuduTu2Id0UiwGsV0mqt2UAsFiOvCgjL9MRxPLV8RIvcsMdYA
+         frhFnACPi8wIvshwXOGxlFJ9wjx1nmtTgJh0ufocXr2a1Sf83OiQD3w05nQQJ5mc9Zww
+         TEHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748957475; x=1749562275;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=zCsykEXQA3gGGqXe33kKDyL1+M4szlXxFg36Pt4llCQ=;
-        b=gQm29ZGna+YV2XDQOmAL31L2EabwzyN+fYpAKyPI2y16LmvOZUgbfJiTrVH1zHYDWv
-         0JnCr/2hjnN5LCPgDLiw323nwdSMcTpD3BfYHTwThzFIraZRxwMSrvd3TQ9/Z1x0YlgA
-         IDneU2/xJlmSCAT8tkze0tc+/6NbZ1HFGeArmRQx+pjUHv2fagezydVrCkbx5KjBCMu+
-         x20kUmOOF85lwYuHxy0PG2hEdUFLmU4/k+0pjSyk+hVgW17OiBYg6eqbSmHPRmgxgG8a
-         TaXJMwbyHjsRtkuDx76N2NwbK8Oi86Gd9OorJDzdLVR/NqTD9YjnEkBsB69ry+JrgZIf
-         vBXg==
-X-Forwarded-Encrypted: i=1; AJvYcCWx9HJvXTFEuywa97pR5n5DDWyPsDt/G2JkP8pI015eBWUCNd5mzsjdbnp7ZG6AJgi50Y0F6m26BKbOwTQ=@vger.kernel.org, AJvYcCXLGmQM8pWmHNaLHkKfZk2/ILamZv7TPiTabWZfy5ME70sFIf7MgfXnGJkVDnfVc+M72yz0gg+6RLIrFs7KulY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywhk80W0EQDICHe7jpCX36Rvtp67gDQR0HU8ug1bWZkQ5ryXQYT
-	gQ67rVm6+mCyRPgYybncr6yfJK1glYRWcLc3fXSXJoV9Qnli5KKha/LK/71XRJkt
-X-Gm-Gg: ASbGncuF3TNkMArN9mkQUesacFDgM2to3lVum5eNA1Z9hXiL91dIfArHgZKvv2BZEHv
-	UOPUp7u4xEuqtKBl8j/o5pK2w5ibXTzqr2AV5wlDVDUXZW4IYk9THBVKm86O8dCVG8U/qe80b9y
-	jFMvImJUTej9scNJurfWDQZw4v9TGsDFf/uDLUPJmfdxT47TvUKBcO8bLbWYgCSopwYbRpU5ErD
-	wqFuQv2xLz6VFRiVi+XJWIF7oiN5q1l6Rq4hM3GsvQt8B5JQRmTs/artGFInkpMNsEzMc4YsiQh
-	WZGaI4pLiULMGFyYGSGeJmfHwK5cl31rtrX+WBZrzyWgoWzAfFSYXfALn2F/q2eobf3n9KcX38m
-	cHc5QxYrNJCszljSAEwxn2NVGq4K9sPGp1g==
-X-Google-Smtp-Source: AGHT+IGPnYH7ig/dELvu/tvaDE6VqviOSLWl/L6Wgl5h0diS8DlJPtnA9Bpqq5UdH9AidfCPbPdlpw==
-X-Received: by 2002:a17:902:efcf:b0:221:1497:7b08 with SMTP id d9443c01a7336-235c9b52d4amr30337935ad.23.1748957474675;
-        Tue, 03 Jun 2025 06:31:14 -0700 (PDT)
-Received: from localhost (p4138183-ipxg22701hodogaya.kanagawa.ocn.ne.jp. [153.129.206.183])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23506bdb4besm87281045ad.64.2025.06.03.06.31.10
+        d=1e100.net; s=20230601; t=1748957672; x=1749562472;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=o9eD6fBv50JvJ7Gx4KUjwD3EkSFG+lO7duRzw9dtFZs=;
+        b=FX3l8f5FixfF2iSTNZb5rN99/EPp5xf5FQIfLs88MxDk3IReP/QXHh9qSYDUROmjLk
+         jTvdDY1OX8ormpcaAzChm37pZoqylhOTxN5WgrrkefjnH0vJAq5Vs011i5yYtt/eWy9S
+         FASzuHPGzd3XATc3pVVsvgTJDkl+vtaAvYSs3WDPVbPsLc4Yr/XbQlJn4JGSwWjypgtB
+         UfjKyYqxIZeGGleLKK1lCtHWnrf9gXPFDXsO88gLaA51OWHN/9j6taJus/+P9Di3vvdE
+         UqcDd/SxDIxL1uEMSX0Z1m/R29AB5/PuSdL5CYnu20QaRbA4dk+qvVDY7ZtgbFe9bsBz
+         NvDw==
+X-Forwarded-Encrypted: i=1; AJvYcCURdoXEVCY1o3bndyv3uY/Q89JMo6j2w5dt7psVka4hhv31d0nvYDI9siu1NQZkNxKZXLTKrG2vsqG2x4c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/uLq2568QKMUEEKnMnvg5ZS/ub9sdqzLYCX8q8fEW+uoJVjyt
+	gUMkPK0N+b+meX4mPYgcZBUkQ4lZMCanl5uNJxamFSQAKRPtEbi14p2k1mlWBCtVAHY=
+X-Gm-Gg: ASbGncvWIIBJKrMxLiQRGL+KtREGNd8jyqlTJ9mhN4acGQQrodR0Htby8WKnUqu4cpz
+	AYQdu0oWTHh+COi1KQzzVSPP0/eIGincktpnyMWSjsG5ZHZ8EP0JXVXJfv40UJaqNuqWLZtRWUb
+	Hk3J9ICczNrCcCtybhEplXhmSLKd3LBxp7dsRmsqeO2Shnd21uSGp5QXnQn/IMj4GJVcEAXRVxf
+	hrkshhQeB+8tjvr15kDVsA6TfKQg4najbykKDZSMf6jgjiAVCAjklYJZ1gU2N55zKbHWGBaIS3O
+	7dF9jvYo1Tk5qSOb2VD3dTebHDVlBqANKlxRVOfLsfmCnXzaLADElTrH3d0jkSwC6H68IvxVENf
+	r9cwQ4oubJoQ7LzMaRU3sz7vRiy4=
+X-Google-Smtp-Source: AGHT+IH3/hKllTZ0eEK/dcuWTgO5QsHZ5LZ3JNRLIXTEioRhdRSPfL4GWfnU3eDieGqXq6aFnuzp+A==
+X-Received: by 2002:a05:6214:5096:b0:6ed:1651:e8c1 with SMTP id 6a1803df08f44-6fad90aa622mr189063246d6.13.1748957671754;
+        Tue, 03 Jun 2025 06:34:31 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-167-56-70.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.167.56.70])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6fac6e00b78sm80064216d6.75.2025.06.03.06.34.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Jun 2025 06:31:14 -0700 (PDT)
-Date: Tue, 03 Jun 2025 22:31:02 +0900 (JST)
-Message-Id: <20250603.223102.1013545444814279294.fujita.tomonori@gmail.com>
-To: a.hindborg@kernel.org
-Cc: aliceryhl@google.com, fujita.tomonori@gmail.com,
- rust-for-linux@vger.kernel.org, boqun.feng@gmail.com, frederic@kernel.org,
- lyude@redhat.com, tglx@linutronix.de, anna-maria@linutronix.de,
- jstultz@google.com, sboyd@kernel.org, ojeda@kernel.org,
- alex.gaynor@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
- benno.lossin@proton.me, tmgross@umich.edu, dakr@kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/5] rust: time: Change Delta methods to take &self
- instead of self
-From: FUJITA Tomonori <fujita.tomonori@gmail.com>
-In-Reply-To: <87cybm72ud.fsf@kernel.org>
-References: <Mt0LwmRyNV7VeUvIiRpECX8VzX1D-BG2wI48N58jht_p7RwsCKlrAM1nXjlqUdVIe3cXdhia_xjlVOav1TikdA==@protonmail.internalid>
-	<aD1fgizC4FPT07vt@google.com>
-	<87cybm72ud.fsf@kernel.org>
+        Tue, 03 Jun 2025 06:34:31 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1uMRmg-00000001h3q-2scY;
+	Tue, 03 Jun 2025 10:34:30 -0300
+Date: Tue, 3 Jun 2025 10:34:30 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Alistair Popple <apopple@nvidia.com>
+Cc: linux-mm@kvack.org, gerald.schaefer@linux.ibm.com,
+	dan.j.williams@intel.com, willy@infradead.org, david@redhat.com,
+	linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+	linux-xfs@vger.kernel.org, jhubbard@nvidia.com, hch@lst.de,
+	zhang.lyra@gmail.com, debug@rivosinc.com, bjorn@kernel.org,
+	balbirs@nvidia.com, lorenzo.stoakes@oracle.com,
+	linux-arm-kernel@lists.infradead.org, loongarch@lists.linux.dev,
+	linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+	linux-cxl@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	John@groves.net
+Subject: Re: [PATCH 01/12] mm: Remove PFN_MAP, PFN_SG_CHAIN and PFN_SG_LAST
+Message-ID: <20250603133430.GB386142@ziepe.ca>
+References: <cover.541c2702181b7461b84f1a6967a3f0e823023fcc.1748500293.git-series.apopple@nvidia.com>
+ <cb45fa705b2eefa1228e262778e784e9b3646827.1748500293.git-series.apopple@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cb45fa705b2eefa1228e262778e784e9b3646827.1748500293.git-series.apopple@nvidia.com>
 
-On Mon, 02 Jun 2025 14:19:38 +0200
-Andreas Hindborg <a.hindborg@kernel.org> wrote:
-
-> "Alice Ryhl" <aliceryhl@google.com> writes:
+On Thu, May 29, 2025 at 04:32:02PM +1000, Alistair Popple wrote:
+> The PFN_MAP flag is no longer used for anything, so remove it. The
+> PFN_SG_CHAIN and PFN_SG_LAST flags never appear to have been used so
+> also remove them.
 > 
->> On Sun, May 04, 2025 at 01:59:54PM +0900, FUJITA Tomonori wrote:
->>> Change several methods of the `Delta` type in Rust to take `&self`
->>> instead of `self`. These methods do not mutate or consume the `Delta`
->>> value and are more idiomatically expressed as taking a shared
->>> reference. This change improves consistency with common Rust practice
->>> and allows calling these methods on references without requiring an
->>> explicit copy or move of the value.
->>
->> For small values that can be freely copied, I actualy think that using
->> `self` is more common Rust practice.
-> 
-> Besides best practice, the value will pass in a register. There is no
-> benefit at all from passing a reference here and no improved ergonomics
-> from using a reference.
+> Signed-off-by: Alistair Popple <apopple@nvidia.com>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  include/linux/pfn_t.h             | 31 +++----------------------------
+>  mm/memory.c                       |  2 --
+>  tools/testing/nvdimm/test/iomap.c |  4 ----
+>  3 files changed, 3 insertions(+), 34 deletions(-)
 
-Yeah, but somehow I thought that using &self is more common practice
-in Rust.
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 
-I'll drop this patch in the next version.
+Jason
 
