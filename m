@@ -1,146 +1,141 @@
-Return-Path: <linux-kernel+bounces-672216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-672221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14FB3ACCC71
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 19:48:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 755AAACCC80
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 19:51:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8EA516A555
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 17:48:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A47E16FDD3
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 17:51:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C75F21E7660;
-	Tue,  3 Jun 2025 17:48:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71C221E8353;
+	Tue,  3 Jun 2025 17:51:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="duz1kGW7"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="X0ud+K1O"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C070CA937
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 17:48:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B05421B414A;
+	Tue,  3 Jun 2025 17:51:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748972931; cv=none; b=XAkT9hhTKANdE6BOTLvD8EzRVYlMnhMrF+dVbVfwhtN262TMWi7ZNzqAMN87OFXgotQVBq5ATdwt+ksndQNCsAiAMyOxwtcYtVi5hT6tZ+eYLpdg5jm3RYXResl9iByoCHn57cnI+D4XHDlrrnLa+Vp4ZoF6HlycTG1nd5QzIow=
+	t=1748973081; cv=none; b=nXbPxwq6f/aoVY5NE8h7IAcHiBA+bJeiU3Tc9tghxw301HlpPCjphlLHewVmiztTWQx0bXpaBKb8CLqYvfjbUT7bRrCssFmJg+M52vUrBjVT/o6qxAkXtr9M/6tKWZwMrTb9jQ1Javsgmefrl6fRF9B1HFfumr8nWhGLh2w/Ow0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748972931; c=relaxed/simple;
-	bh=eEBuMoSNI7au+HNe76KotnFGWKYETVSxnFoLxaa7t74=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QJR+T33+v0fXypW8wptVrlCilzZm7Yp2xVMb/yoiSlo1z2+jfUlFQc1u4sb3mWP68UfcSHKrpK4aQh6NnnOj17yETN8Q3MPTm+lTPNoECj9uSCFITTyZxckErmUOT8GLaNZYKKsIgQ4Hqf2Z+gbIiViIEhHOuiP1fDVZj8BJ5bY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=duz1kGW7; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-23539a1a421so32529575ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jun 2025 10:48:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1748972929; x=1749577729; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=AZQvVO8nyC+ZKLyjCrtVBxSwB/yFvzMpPXbPJR/HF0A=;
-        b=duz1kGW7PAtnkdkfCcjOIelyryshY4G4Jm2w3ktysiA1PSI00KLpQNpyKAJ8/Jg3ls
-         byNUdz8Drt00ALRWVJmYZNV1RgK9AYtu1BtOswL6Bq5OlZ6WySPNW5C+bBCaDVR9tJyj
-         SlVyrrKyYqaAq6mQpBbUBMDuYNr1Y0KFDG2i5HDmGDSfwilzchLn8mXT3PVkEIr+SOUa
-         C3BNkvrbs5f0ycMCsgjEabxFCjW4HD29R35ZCzVXCkJUNxxWz6t0FVfI45fyzgl3IDaK
-         twLNFPop8zJa7RIDY1inon6rGtViA5UmlMCDC9VhmrGzhoBH4vloCqHoQXTV1jyziYB8
-         dVHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748972929; x=1749577729;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AZQvVO8nyC+ZKLyjCrtVBxSwB/yFvzMpPXbPJR/HF0A=;
-        b=mmwBl5YWjRKpSja3D9dLlQ0OqAy46dSq2iIqwA8Wzi43TIDoSpOGHcHUcPyPgg7LR4
-         C9Ng7Q9qqZlOlDXxpKEP4SVMt326FqNO8qEZwUUorHbdfd2pueU2GGBaudurrWGrDgoZ
-         UDzdo3RZLs3CZty2eNcLY0owLAbOn3Oyfr22JeZAuJIUZpu6ZC4UpT6TdWzmOryvC1vT
-         SnkvXFMKNE/t+VuWpZM9T/oGLkqVYqsioX+e/V+ZTDIU3lImK3tlvsLziZNtv9mfFuwu
-         1kcjkQvtwKkloLgQxwMENfiYULLXnz8l2Lf0w5TYGPHjhWcljcNe/aeEDYWAV3NpZ3ZE
-         /xcg==
-X-Forwarded-Encrypted: i=1; AJvYcCVFGnXmQOin3AbpfV4TYsw2tek14v5yk1QIfcnvobXod3n4EiPezlii3Vz/KwRIxfIxr2o7GV1gF3IzsZk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3wQhHnhJeYNyat+xZRlS/i+UKD2cPUw9ju4n1ok53W0SVIQm5
-	rW7xoWctuPEmFYqcIIaE6lVqlmVkols/EAMaoY+vFISimFbT7eRKleTWTaMwSLapeA==
-X-Gm-Gg: ASbGncsZd0z1pbDuXA7I9N1BEIRkUod5CVko4XQQGI6nSbOSb7UbFOXHwJ4y5zDpjbB
-	/v02jcTDyL51kYJ5tmMS10so8zDNOblfKMEKE8D/LXCX1rUY4V2OxOweDbTfPBE4kiFb7VXZNd2
-	HjF8YfQLknVuSwbYL5XSWtC+h9o+C7VC/ZtaYCxCXRqiAr+hDfMu4k/lUfxiH8S26rLU4mCLo2C
-	lbZh5SBjEBstTIzCgyXu1akO25EU7hRbQRTaADZUGVi9nUsxrjXDxN3raMysJF4q81iz5mrb8KA
-	Gw6Axx5UnYd2DM5pEMxabs+GPAwciJGgDALDgO+wyMUQJMQ3dLLIovUaRD/dJcBbewTrb3VD732
-	Yrej4Q4arfvkuQlbLdD3DPLc6GkQ=
-X-Google-Smtp-Source: AGHT+IFw/hM9KjB2+YIvlfPv7TCR6YjgHHZTSPyy4qbS7jSH9/Uc2dPgZocX8nOAauHg/zfpx7Iegw==
-X-Received: by 2002:a17:903:234f:b0:234:98eb:8eda with SMTP id d9443c01a7336-2355f762d1amr220323805ad.28.1748972928721;
-        Tue, 03 Jun 2025 10:48:48 -0700 (PDT)
-Received: from google.com (128.65.83.34.bc.googleusercontent.com. [34.83.65.128])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23506bc95fcsm89801555ad.11.2025.06.03.10.48.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Jun 2025 10:48:48 -0700 (PDT)
-Date: Tue, 3 Jun 2025 10:48:44 -0700
-From: William McVicker <willmcvicker@google.com>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: tglx@linutronix.de, Jim Cromie <jim.cromie@gmail.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	Marco Elver <elver@google.com>, Nam Cao <namcao@linutronix.de>,
-	linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-	linux-tegra@vger.kernel.org, John Stulz <jstultz@google.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Saravan Kanna <saravanak@google.com>
-Subject: Re: [PATCH v1 1/7] clocksource/drivers/scx200: Add module owner
-Message-ID: <aD81fLvQQOBd7cot@google.com>
-References: <20250602151853.1942521-1-daniel.lezcano@linaro.org>
- <20250602151853.1942521-2-daniel.lezcano@linaro.org>
+	s=arc-20240116; t=1748973081; c=relaxed/simple;
+	bh=T1yBpxkEeKTkbxh3nl7K4IOHkcNT1Kd9NXHCRN7clqo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qO7EloFxSsQBW4Hcn6zIswid6i3PyXmlxIMgy6dUB8YBKuPVmG6elcex9Lj9J3nZS+DEYnr5nHyoOMF4vTWPfEvyMD4PyPORrBXov8dgDo6yhB3am2+JaU8kzh3noVCLb9CFj7SQ9YsaEugKpGFG9kB8XoslhYnRIZdaJeoLsLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=X0ud+K1O; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [IPV6:2601:646:8081:9482:7211:64cb:5036:d2b9] ([IPv6:2601:646:8081:9482:7211:64cb:5036:d2b9])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 553Hne8u3926666
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Tue, 3 Jun 2025 10:49:41 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 553Hne8u3926666
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025052101; t=1748972985;
+	bh=WjcKG8tapzY+DwZpr1CTpwzaMFTYG50aHolFcfHdfs4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=X0ud+K1ObXeIOmkFYd4oZPi19mpm7QhPbViuLKFsUdAnzO94VI+3AnlPSbZSzijQ8
+	 WPu1ufL6nvVHW04XF/MECy3aNKi3jUpR7gB3qLvkIAsXFjT3uJB9nj8bCMwgirEiTv
+	 +siS7X5E4aWy3AvIjRgGHvnJdLXTnNTzRUku1MJMx7dwPGQNfOv0GQDGD6NMP23knP
+	 PBfWAvUzbpsj+VnpW3bwW4CwOter3tKgFuoXD9kQ8q1FiHLU9CXsjMSwLRGdYFCyLB
+	 IBs3jDqdc3fSs4hgdxuQ93k0Sl/119q0UB7t4c36TPeDCm6b4p5tM9+XKqRyIqD23t
+	 riIZ13jyEUqHw==
+Message-ID: <380a64b9-e796-4345-a9a0-cf70d0f6c26f@zytor.com>
+Date: Tue, 3 Jun 2025 10:49:35 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250602151853.1942521-2-daniel.lezcano@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC v2 00/35] optimize cost of inter-process communication
+To: Bo Li <libo.gcs85@bytedance.com>, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
+        luto@kernel.org, kees@kernel.org, akpm@linux-foundation.org,
+        david@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+        peterz@infradead.org
+Cc: dietmar.eggemann@arm.com, acme@kernel.org, namhyung@kernel.org,
+        mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+        jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
+        kan.liang@linux.intel.com, viro@zeniv.linux.org.uk, brauner@kernel.org,
+        jack@suse.cz, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
+        vbabka@suse.cz, rppt@kernel.org, surenb@google.com, mhocko@suse.com,
+        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+        vschneid@redhat.com, jannh@google.com, pfalcato@suse.de,
+        riel@surriel.com, harry.yoo@oracle.com, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, duanxiongchun@bytedance.com,
+        yinhongbo@bytedance.com, dengliang.1214@bytedance.com,
+        xieyongji@bytedance.com, chaiwen.cc@bytedance.com,
+        songmuchun@bytedance.com, yuanzhu@bytedance.com,
+        chengguozhu@bytedance.com, sunjiadong.lff@bytedance.com
+References: <cover.1748594840.git.libo.gcs85@bytedance.com>
+Content-Language: en-US
+From: "H. Peter Anvin" <hpa@zytor.com>
+In-Reply-To: <cover.1748594840.git.libo.gcs85@bytedance.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 06/02/2025, Daniel Lezcano wrote:
-> The conversion to modules requires a correct handling of the module
-> refcount in order to prevent to unload it if it is in use. That is
-> especially true with the clockevents where there is no function to
-> unregister them.
+On 5/30/25 02:27, Bo Li wrote:
+> Changelog:
 > 
-> The core time framework correctly handles the module refcount with the
-> different clocksource and clockevents if the module owner is set.
+> v2:
+> - Port the RPAL functions to the latest v6.15 kernel.
+> - Add a supplementary introduction to the application scenarios and
+>   security considerations of RPAL.
 > 
-> Add the module owner to make sure the core framework will prevent
-> stupid things happening when the driver will be converted into a
-> module.
+> link to v1:
+> https://lore.kernel.org/lkml/CAP2HCOmAkRVTci0ObtyW=3v6GFOrt9zCn2NwLUbZ+Di49xkBiw@mail.gmail.com/
 > 
-> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 
-Reviewed-by: Will McVicker <willmcvicker@google.com>
+Okay,
 
-Thanks,
-Will
+First of all, I agree with most of the other reviewers that this is
+insane. Second of all, calling this "optimize cost of inter-process
+communication" is *extremely* misleading, to the point that one could
+worry about it being malicious.
 
-> ---
->  drivers/clocksource/scx200_hrt.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/clocksource/scx200_hrt.c b/drivers/clocksource/scx200_hrt.c
-> index c3536fffbe9a..5a99801a1657 100644
-> --- a/drivers/clocksource/scx200_hrt.c
-> +++ b/drivers/clocksource/scx200_hrt.c
-> @@ -52,6 +52,7 @@ static struct clocksource cs_hrt = {
->  	.mask		= CLOCKSOURCE_MASK(32),
->  	.flags		= CLOCK_SOURCE_IS_CONTINUOUS,
->  	/* mult, shift are set based on mhz27 flag */
-> +	.owner		= THIS_MODULE,
->  };
->  
->  static int __init init_hrt_clocksource(void)
-> -- 
-> 2.43.0
-> 
+What you are doing is attempting to provide isolation between threads
+running in the same memory space. *By definition* those are not processes.
+
+Secondly, doing function calls from one thread to another in the same
+memory space isn't really IPC at all, as the scheduler is not involved.
+
+Third, this is something that should be possible to do entirely in user
+space (mostly in a modified libc). Most of the facilities that you seem
+to implement already have equivalents (/dev/shm, ET_DYN, ld.so, ...)
+
+This isn't a new idea; this is where the microkernel people eventually
+ended up when they tried to get performant. It didn't work well for the
+same reason -- without involving the kernel (or dedicated hardware
+facilities; x86 segments and MPK are *not* designed for this), the
+isolation *can't* be enforced. You can, of course, have a kernel
+interface to switch the address space around -- and you have just
+(re)invented processes.
+
+From what I can see, a saner version of this would probably be something
+like a sched_yield_to(X) system call, basically a request to the
+scheduler "if possible, give the rest of my time slice to process/thread
+<X>, as if I had been continuing to run." The rest of the communication
+can be done with shared memory.
+
+The other option is that if you actually are OK with your workloads
+living in the same privilege domain to simply use threads.
+
+If this somehow isn't what you're doing, and I (and others) have somehow
+misread the intentions entirely, we will need a whole lot of additional
+explanations.
+
+	-hpa
+
+
+	-hpa
+
 
