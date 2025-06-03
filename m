@@ -1,114 +1,128 @@
-Return-Path: <linux-kernel+bounces-671322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71120ACBFB6
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 07:46:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 950FDACBFBF
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 07:50:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35E4C3A306B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 05:45:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B5221890AC3
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 05:51:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 148A61EF38E;
-	Tue,  3 Jun 2025 05:45:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73C7A1F8690;
+	Tue,  3 Jun 2025 05:50:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="pFhkpe9+"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DnU92xcq"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A9BA12CD88;
-	Tue,  3 Jun 2025 05:45:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 340B3137C52;
+	Tue,  3 Jun 2025 05:50:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748929555; cv=none; b=N1IyHJZLw3nlXGfxqXZi7nP/YtnwePBNdI6DMjtthZt/+wzyTK+I8r4zjst4XjgDJJ8AAuFJStrDCFAZNM/8N4DS8fwp50S06Iw5Y8k29j4rYJz2QeTJpjM6Drp7g6+sTbnCfps47FqJnyh/30hXu8iVUPd22zlVQ5llkheR0p4=
+	t=1748929847; cv=none; b=laPn3ynwJxAKMLmDjDJAuRekUpAq/g9x9CECHbb3TxgTi51vHdVM9U6+tyUy3f4mJqK2hEk/WTB2+NcL3F4E0AWcM1La42HtWccgG+sTHwessUIeD8PZgoODnwL0g2JG76kKOMmOh5CdB908qvDqEbiOOF6Wi/Dl9dZjAxOVgGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748929555; c=relaxed/simple;
-	bh=LtHvPdT+Q7lR9OGt4/pM1UjYaajoB9iYZBB/9f95i/8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=UkIO4ltvDxO8WeC4GbPjPOiVesvZ1xUfmkOWWAPez7w4mj0KpU9+fB3A+F8RPpd9FTpQSTrZsmj2/PpJ4arW9O0IDrhyNmEN+fpzliHynI7SCNZKPeY5URjtIrfJOZhRHvJeR54u4xgcuhVuNdn9eLThGNpzD5yQnTUNJ6rjYxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=pFhkpe9+; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1748929548;
-	bh=eNCFXTw8XKmhEt8tKCJxKFbM+gDPJPPm7GtD8paQF7A=;
-	h=Date:From:To:Cc:Subject:From;
-	b=pFhkpe9+gfoPDdb11J79OsaYCry/skjlbdbapH0mpLRePOSNk4OmTOa9x6PdE1UhS
-	 4LlJsC46fbzJS7KUvc/XkdN3M/c2/+R4J3s4QsiOz27WhceJV0iwEDHeGKITXrR0qn
-	 Ot8Q+HQbAd/qyP8CcoeMrFdJIwDQ20e872wFK/wmFGfCNUfIZkh+7voPmsZ6VVGvOq
-	 6hai7/OWVWfHORmjNAtqWmiwLy0o0uW+w5hHjFNZWucLqoIEifQantGCahaACVlBM4
-	 Tfdb8XpbmfsebrR68oTfxuOiSLw0Xls3PROEOumDFfkole/nv8Afv+mjsfzQkDM1WG
-	 75CQwA2m7uuRQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bBKST2Xtmz4xgW;
-	Tue,  3 Jun 2025 15:45:45 +1000 (AEST)
-Date: Tue, 3 Jun 2025 15:45:44 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul@pwsan.com>
-Cc: Alexandre Ghiti <alexghiti@rivosinc.com>, Andy Chiu
- <andybnac@gmail.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build warnings after merge of the risc-v tree
-Message-ID: <20250603154544.1602a8b5@canb.auug.org.au>
+	s=arc-20240116; t=1748929847; c=relaxed/simple;
+	bh=9Mf0QNUymzZG5jrtVYhs1cOl5GQlP0WgmJqukvnLxsI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kk33O4yAJlvMXbcCcYqS6zWucl4SNg7GaWTsCbCJ5jlzosYsaCWTJWYVzppccebz9WZbveWacdHjTPRdww7ksAZscU0Hyhv2iDweBbI5mWO95fjkB2JQAA2biNUYazDFg31LTxiziEOuXDKsExxvwikyld0FTZYWh+GKGQfxemc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DnU92xcq; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1748929846; x=1780465846;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=9Mf0QNUymzZG5jrtVYhs1cOl5GQlP0WgmJqukvnLxsI=;
+  b=DnU92xcqaxFhmJRhriCoplBKUrtbZz7sCQwNwyomubITsB0Bo+WRSABH
+   ZWRatB5uDlNno/7L7Yts3aM+tpSpm16ndKMigK7xcqtyZpguIymPpysep
+   eP8S6nHb7kC8WLZGansrez3F56KaOkZ40GJpCcqCdcKSVAhUF4YRXT7Hx
+   1PoY3/8dz4a2hn92psbCi/aKD39m+zX0zfl74QX6PhPsmQdkrMEUr7e0B
+   Hmdy9hbMpZ+jvwy/0X5HmUB2Bt1Fff24zPqGAWnTHudE1GC4ft5CsXfvl
+   zH6DNOh9Ap4WwT1ZzC2DnAIoVBOhccrp30B2AWNoLrfqnZJWd4A7gmVUU
+   Q==;
+X-CSE-ConnectionGUID: UN+N3QMyQQGTjvQWXfc+CA==
+X-CSE-MsgGUID: N9SKw47+R9SOG6ueXcuKPg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11451"; a="62310188"
+X-IronPort-AV: E=Sophos;i="6.16,205,1744095600"; 
+   d="scan'208";a="62310188"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2025 22:47:11 -0700
+X-CSE-ConnectionGUID: G9hnGvk6TeGnEz4ienUFNw==
+X-CSE-MsgGUID: Z+7sL2tPRt2gjksowo4+cw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,205,1744095600"; 
+   d="scan'208";a="149906053"
+Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.245.144]) ([10.124.245.144])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2025 22:47:08 -0700
+Message-ID: <83d8cd7d-0e7a-4d01-bff9-4c05815474ae@linux.intel.com>
+Date: Tue, 3 Jun 2025 13:47:06 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/.NHMe63MR8k.cRvvDTizoPq";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 28/28] KVM: selftests: Verify KVM disable interception
+ (for userspace) on filter change
+To: Sean Christopherson <seanjc@google.com>,
+ Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Borislav Petkov <bp@alien8.de>, Xin Li <xin@zytor.com>,
+ Chao Gao <chao.gao@intel.com>
+References: <20250529234013.3826933-1-seanjc@google.com>
+ <20250529234013.3826933-29-seanjc@google.com>
+Content-Language: en-US
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <20250529234013.3826933-29-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
---Sig_/.NHMe63MR8k.cRvvDTizoPq
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On 5/30/2025 7:40 AM, Sean Christopherson wrote:
+> Re-read MSR_{FS,GS}_BASE after restoring the "allow everything" userspace
+> MSR filter to verify that KVM stops forwarding exits to userspace.  This
+> can also be used in conjunction with manual verification (e.g. printk) to
+> ensure KVM is correctly updating the MSR bitmaps consumed by hardware.
+>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> ---
+>  tools/testing/selftests/kvm/x86/userspace_msr_exit_test.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+>
+> diff --git a/tools/testing/selftests/kvm/x86/userspace_msr_exit_test.c b/tools/testing/selftests/kvm/x86/userspace_msr_exit_test.c
+> index 32b2794b78fe..8463a9956410 100644
+> --- a/tools/testing/selftests/kvm/x86/userspace_msr_exit_test.c
+> +++ b/tools/testing/selftests/kvm/x86/userspace_msr_exit_test.c
+> @@ -343,6 +343,12 @@ static void guest_code_permission_bitmap(void)
+>  	data = test_rdmsr(MSR_GS_BASE);
+>  	GUEST_ASSERT(data == MSR_GS_BASE);
+>  
+> +	/* Access the MSRs again to ensure KVM has disabled interception.*/
+> +	data = test_rdmsr(MSR_FS_BASE);
+> +	GUEST_ASSERT(data != MSR_FS_BASE);
+> +	data = test_rdmsr(MSR_GS_BASE);
+> +	GUEST_ASSERT(data != MSR_GS_BASE);
+> +
+>  	GUEST_DONE();
+>  }
+>  
+> @@ -682,6 +688,8 @@ KVM_ONE_VCPU_TEST(user_msr, msr_permission_bitmap, guest_code_permission_bitmap)
+>  		    "Expected ucall state to be UCALL_SYNC.");
+>  	vm_ioctl(vm, KVM_X86_SET_MSR_FILTER, &filter_gs);
+>  	run_guest_then_process_rdmsr(vcpu, MSR_GS_BASE);
+> +
+> +	vm_ioctl(vm, KVM_X86_SET_MSR_FILTER, &filter_allow);
+>  	run_guest_then_process_ucall_done(vcpu);
+>  }
+>  
 
-After merging the risc-v tree, today's linux-next build (htmldocs)
-produced these warnings:
+Test passes on Intel platform (Sapphire Rapids).
 
-Documentation/arch/riscv/cmodx.rst:14: WARNING: Title underline too short.
+Tested-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
 
-CMODX in the Kernel Space
---------------------- [docutils]
-Documentation/arch/riscv/cmodx.rst:43: WARNING: Title underline too short.
 
-CMODX in the User Space
---------------------- [docutils]
-Documentation/arch/riscv/cmodx.rst:43: WARNING: Title underline too short.
-
-CMODX in the User Space
---------------------- [docutils]
-
-Introduced by commit
-
-  0e07200b2af6 ("riscv: Documentation: add a description about dynamic ftra=
-ce")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/.NHMe63MR8k.cRvvDTizoPq
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmg+jAgACgkQAVBC80lX
-0Gxrqwf/S5QiDPzs0yjPbAzUPF+T52/OnTecTUUpNb5TjMHrf1kbasGKEIcih6hm
-35+5MOEUbfxWObcxXc4VEZwZwo96si5BKfRglWzdpAJEeXw1PV9LRTWj1cbdJOKC
-NJcJgPDZkxgUmtVaFd0rZowa3qh/2EQIvjraTXFDfd+mwwK2eLypJfLduxQxiW5m
-C/F9Vdsjc8g5Bi3/sXdFkcPoU3lSiv6JkczPX4frwr/JWWrWciIR1nGemkkilGGk
-HicC01vegPlHRnrV1n2klbHYoDzN8taCKNDYVEqhnaGeOaDp1xlX8M+fW/Frtsrr
-BYWf1mNfP5hDNoEdzygJYyYbodc2vg==
-=EoZT
------END PGP SIGNATURE-----
-
---Sig_/.NHMe63MR8k.cRvvDTizoPq--
 
