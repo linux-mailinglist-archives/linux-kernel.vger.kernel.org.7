@@ -1,156 +1,238 @@
-Return-Path: <linux-kernel+bounces-672480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-672478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2AEFACD00B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 00:50:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 680E1ACD005
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 00:50:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB49618978A1
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 22:51:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 46B467A5A67
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 22:49:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22B5D254861;
-	Tue,  3 Jun 2025 22:50:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FF5C2528EF;
+	Tue,  3 Jun 2025 22:50:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=columbia.edu header.i=@columbia.edu header.b="mxYJ7tSe"
-Received: from mx0b-00364e01.pphosted.com (mx0b-00364e01.pphosted.com [148.163.139.74])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HscKQvZW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0095124DD06
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 22:50:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.139.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C612A2C3253;
+	Tue,  3 Jun 2025 22:50:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748991042; cv=none; b=Ftyo8842dIXBSK5bcVKgMUf7udOEQXSTfcwVWcTa+5I3sJiy3fNKBV4Pz9H4HJjMGeGo2t7lpw/pBFB5KxX7/UuD6/jUBqHH5WFfeQiXTuAufeIv8zZ4Eg06bKEDSg/NBbAL2EBd2hZ5YpC26Pcamdua0gOrUWEgYWPT1Q7Q21Q=
+	t=1748991030; cv=none; b=N+abjp3DMmZQeKhVFGvgW4SjEmtRhF6FwURSLumV0zYNkYdsaypF/zT+ghW5+sWA0Nxg80IAFyDiNjkVzZeOGjnelZ5KRLdtVXQ0duJt7MG0JMhJg8215hCgZUCYnDAYe9uCGPS50RM/6/0yHteFRsi+8q4OQCginQ+dWSNeejo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748991042; c=relaxed/simple;
-	bh=i2lx+JkxNZ+W3TCDZnRYDvhiaw/fRSyKyaRCnDad9K4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=d0QMgEmfp9MkcrNjImSSd5EsNjLeNqJmcSGa6dg23IvPBf/bdcltN7+FquRALBwXnpwzBpmwzVifpFWnOIW8FyPSWJkXEIj33uqqvVpSo89hN/wGmvJJSrZdR2VD1HTYZdic0VEGpuBrJi33yT2fAbbhdO9NsTAYRYc2HG1Hbbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=columbia.edu; spf=pass smtp.mailfrom=columbia.edu; dkim=pass (2048-bit key) header.d=columbia.edu header.i=@columbia.edu header.b=mxYJ7tSe; arc=none smtp.client-ip=148.163.139.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=columbia.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=columbia.edu
-Received: from pps.filterd (m0167074.ppops.net [127.0.0.1])
-	by mx0b-00364e01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 553Mj8hE017751
-	for <linux-kernel@vger.kernel.org>; Tue, 3 Jun 2025 18:50:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=columbia.edu; h=cc :
- content-transfer-encoding : content-type : date : from : message-id :
- mime-version : subject : to; s=pps01;
- bh=mnOINAIPGY/Ou83vSuinfWElCEeIzSaRYKDK+hS7UK4=;
- b=mxYJ7tSeNSr/qKkG5dt7HYyNshWTHjvf+KyWfX0UBtJSjA7y8kJfbNxxRwOznIBK5UnF
- QPwD12fVSOVOjv32y4qe0HJzTHVENSyOQM5FwC6U7Fy/NcVS3SBll2lWBu5DaecN31KU
- zQyUSyFUSm73i3zu52EU0F4G5xtqsBfsNOZZ1/HEkYiWllWp0CrjvnmxsRPuuME0t3i9
- kXn/W7eXiAYYsgShQtWV1uTAmVRE/KrR4v4zFh3GtHuOqcmOvqVQeyBqgXv6ZFJ6qFck
- VRzApgAEtG/HeaR8Bs0ZAdxFCRwou0ddbu+sSKCJ8x6bdz+GPhI/ZQral/bpzB0IiaG6 FQ== 
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0b-00364e01.pphosted.com (PPS) with ESMTPS id 470f2uwbj7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 03 Jun 2025 18:50:34 -0400
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c791987cf6so1191776285a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jun 2025 15:50:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748991033; x=1749595833;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mnOINAIPGY/Ou83vSuinfWElCEeIzSaRYKDK+hS7UK4=;
-        b=rebk9ikmAlt5hOeHdwUMsUPmejKaTPjP3B9QI9rz35sBTTouVVL2piIUoMSK+NTNaH
-         HpP2uAk+zz/xtJ5jIwrGWQr1bbcsbs2yTtUR3+WbuaWVfvJ0tIC/af97ipnR3mI+9uFA
-         75JyEbuECB75zVEsedkRfMxNTKXHaw+5Ch8QAgIK2WW5B3pKhLsYqBbkIbYvBoqqBuGd
-         ntLKJRIQ0enFhpThSbKzE6+Z7ti1SXal3U4Un867TVtnwjGvT4LYUap6QBBvnlF07B1v
-         jiBrBcx9Z+LJ5afAQwBZJh9BNowBXXWIO4s+YnVd7IevNLR50YWBbtWqSKiaMLfIR7vy
-         W84Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU8zcDkInC5ei8Pq+oTrEvZiirEHQk5L0kXFhnLJcMtWWrwdRQCWa9meODsn8r7/H69B6KiLpJRLZriSI8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzH5PUZ50kFegoOLle4MMmpDQdsVxo11sORn2yuFft8p2iWrQKq
-	TWEJLGBvofZ/SdxOR2IbwR7jRsUWJ6REweC0QzF8DBmPx7GhrTrQSZbx1OER9L2a+rd/BJEaUjA
-	cS09kJfzalTTuvaVCKRoBriO9m1cf5kiw0XrveiCUZLtoBYkv7WTR5R2stNjpwg==
-X-Gm-Gg: ASbGncvV/AVoZxHCqbGMHQH9r40K/FyZ7JsokjiMSx16bob8Tpukff52AJa5ng2AMk2
-	36eGUbWKQhw8CB5O68snC2glZc2WJzliGWPC2zc4Q32EyfqvXkwsjTdYUUXkLxIiD0XyDCD4kLL
-	H7fztLvqbsO11Icci5TuvCib5G55ghSckiB7izFfkilnTYM8ZJxTvWaVHU9TSFVvkHswtsNuSI7
-	MCmF428O1BicYSuiIK5n4tqCKyGmlhccI/yvHNsVXw5Aecq5HSTRpJ556cFEyCwloXwEFIQS4Um
-	R3by4mFMrHlgcbJGxoMVZHoSAbSuGtFOEQ3gj2xKButdc/xX5YygQH98sA==
-X-Received: by 2002:a05:620a:84ca:b0:7d2:18a1:ce8 with SMTP id af79cd13be357-7d2198ef699mr126686385a.26.1748991033493;
-        Tue, 03 Jun 2025 15:50:33 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHtrJnD/OOKXUtzOLplJe6RJMGdW40f/XS2eC47ExOwD2Rj25DN3kAGNiiVAICHB9OlX7/n1A==
-X-Received: by 2002:a05:620a:84ca:b0:7d2:18a1:ce8 with SMTP id af79cd13be357-7d2198ef699mr126683885a.26.1748991033102;
-        Tue, 03 Jun 2025 15:50:33 -0700 (PDT)
-Received: from [127.0.1.1] (nat-128-59-176-95.net.columbia.edu. [128.59.176.95])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7d09a0f9940sm920370085a.44.2025.06.03.15.50.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Jun 2025 15:50:32 -0700 (PDT)
-From: Tal Zussman <tz2294@columbia.edu>
-Date: Tue, 03 Jun 2025 18:50:17 -0400
-Subject: [PATCH] MAINTAINERS: add tlb trace events to MMU GATHER AND TLB
- INVALIDATION
+	s=arc-20240116; t=1748991030; c=relaxed/simple;
+	bh=ySCtaLDfIXsTjWXWf2eulOqAXKx8N58PL2CQUxQhQSE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hAZnL7npgq7C5Nh9mpg6WR9HyHQ+KmIV9y908Kze9wrIvNwxCMcm0dPWfp91nGqCeM7Gj95xZ3yRfB9J9gLXLH1QzT/uu5wO6wwHZGTYNdz3mk4jGHRWLlNzK2QO7anpTQZJ40u14Zgclp+TGwKDjN1mHoSM0oj+sLEVMcim+tM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HscKQvZW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B42FC4CEED;
+	Tue,  3 Jun 2025 22:50:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748991030;
+	bh=ySCtaLDfIXsTjWXWf2eulOqAXKx8N58PL2CQUxQhQSE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HscKQvZWpJSy4J2WcMzk3d6midXALoC3NjHjZKEti9OTHbKijfoj77EKJB+UVW/mX
+	 SIHU0UR36v385qjqHludsQDjfSHo+0q2+OJ9QRby1CQw6kTy3yZ6QzPcm+/9O6xMWK
+	 tFA38A9lG9QuUCayGPYBcum2pms/MErrftj36f9poarr+KQsLU3bEdMya6/O9qgPOw
+	 W0dB/ks57NktyLtLCA5UIg6HQnN1x8/r9JMTMySEcxhy37tNm5pfOs7DyL+z7AKFlf
+	 WeOHc5UCaq4vSidO1C4LNLUBD7jtTnxPXwSFkogEgD1tFXkyDGvxk+oAOiBXDB4ROG
+	 5ZuBZXj6QGztQ==
+Date: Tue, 3 Jun 2025 15:50:28 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	James Clark <james.clark@linaro.org>, Ze Gao <zegao2021@gmail.com>,
+	Weilin Wang <weilin.wang@intel.com>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Jean-Philippe Romain <jean-philippe.romain@foss.st.com>,
+	Junhao He <hejunhao3@huawei.com>, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Aditya Bodkhe <Aditya.Bodkhe1@ibm.com>, Leo Yan <leo.yan@arm.com>,
+	Thomas Falcon <thomas.falcon@intel.com>,
+	Atish Patra <atishp@rivosinc.com>
+Subject: Re: [PATCH v8 0/4] Prefer sysfs/JSON events also when no PMU is
+ provided
+Message-ID: <aD98NFhyTcEU_qim@google.com>
+References: <20250416045117.876775-1-irogers@google.com>
+ <CAP-5=fU3VW1MjHMiaPG+JirLCCunMC6bEWpsJ3h0E7bTDkh9cA@mail.gmail.com>
+ <aD54ptuIFHcKPkRQ@google.com>
+ <CAP-5=fWSfFa6ncV6JkKSN4ByQ9HR+2ff4+uzwpMO5n-GaNbwxQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250603-tlb-maintainers-v1-1-726d193c6693@columbia.edu>
-X-B4-Tracking: v=1; b=H4sIACh8P2gC/x2MQQqAIBAAvxJ7TjAjxb4SHdS2WigLlQjEvycd5
- jCHmQwRA2GEsckQ8KFIl6/StQ243fgNGS3VQXAxcMl7lg7LTkM+VTBEpqRW1gmlhHZQqzvgSu9
- /nOZSPgZRAihhAAAA
-X-Change-ID: 20250603-tlb-maintainers-7697bc27729c
-To: Will Deacon <will@kernel.org>,
-        "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Nick Piggin <npiggin@gmail.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Tal Zussman <tz2294@columbia.edu>
-X-Mailer: b4 0.14.3-dev-d7477
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1748991032; l=864;
- i=tz2294@columbia.edu; s=20250528; h=from:subject:message-id;
- bh=i2lx+JkxNZ+W3TCDZnRYDvhiaw/fRSyKyaRCnDad9K4=;
- b=ELGpz4PKz6KnOE0I1m3t5q/WTtlfcOk9x20TCo/QeW2il8vqxP9bLBoLtBHjB5pbEU6k+LyrL
- S8pI1+lZQGnBatK79aCq7nnjr5+uflg0Jc8VvRruDbdEAjeAtiJsEPE
-X-Developer-Key: i=tz2294@columbia.edu; a=ed25519;
- pk=BIj5KdACscEOyAC0oIkeZqLB3L94fzBnDccEooxeM5Y=
-X-Proofpoint-ORIG-GUID: jNKaSf_lbqd4-FVkAJj_S0zOoaBqhZOz
-X-Proofpoint-GUID: jNKaSf_lbqd4-FVkAJj_S0zOoaBqhZOz
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjAzMDE5NyBTYWx0ZWRfX98LRL90iwjZ4 qs7yC1DF1fZPI9Mhwpc99VNYLzgXyi0PtWyWDv/OorVkAtlxGwtGmUSWEiJo1QrxvzRBTtmo7h6 ur0yQ/L75V2dkUl4VWX180ac0I+cn4N3UlhkHNRato26uqCQwhCpjKP+o0ESxVP1QJzTnTSD3/W
- WKwAoj91eh0uaubE+FgceHtB0zAxawea4Wa4fEAYmxGY63GD4TqSjLZvGwUUMR62fcJvVJUIKDe lbFwKwjDAaNk1AhAP/yJEJxIC4xLdzMKK2gKTLDFjR8jdOx2a+WcYxWN8Xgy8mrPb0aBfg4gsKt sz/GvZGchZ1dxWlCKcc5jqKwCxbIxGe2m/4IzlMeyLDN/d6fNQ+EheZr9TcyJSXUeNnuYV5B8Aq w0QxmqcA
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-03_03,2025-06-03_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 spamscore=0
- mlxlogscore=772 phishscore=0 priorityscore=1501 impostorscore=0
- clxscore=1015 mlxscore=0 bulkscore=10 adultscore=0 lowpriorityscore=10
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2505160000 definitions=main-2506030197
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fWSfFa6ncV6JkKSN4ByQ9HR+2ff4+uzwpMO5n-GaNbwxQ@mail.gmail.com>
 
-The MMU GATHER AND TLB INVALIDATION entry lists other TLB-related files.
-Add the tlb.h tracepoint file there as well.
+On Mon, Jun 02, 2025 at 11:08:34PM -0700, Ian Rogers wrote:
+> On Mon, Jun 2, 2025 at 9:23 PM Namhyung Kim <namhyung@kernel.org> wrote:
+> >
+> > Hi Ian,
+> >
+> > On Tue, May 27, 2025 at 01:50:32PM -0700, Ian Rogers wrote:
+> > > On Tue, Apr 15, 2025 at 9:51 PM Ian Rogers <irogers@google.com> wrote:
+> > > >
+> > > > At the RISC-V summit the topic of avoiding event data being in the
+> > > > RISC-V PMU kernel driver came up. There is a preference for sysfs/JSON
+> > > > events being the priority when no PMU is provided so that legacy
+> > > > events maybe supported via json. Originally Mark Rutland also
+> > > > expressed at LPC 2023 that doing this would resolve bugs on ARM Apple
+> > > > M? processors, but James Clark more recently tested this and believes
+> > > > the driver issues there may not have existed or have been resolved. In
+> > > > any case, it is inconsistent that with a PMU event names avoid legacy
+> > > > encodings, but when wildcarding PMUs (ie without a PMU with the event
+> > > > name) the legacy encodings have priority.
+> > > >
+> > > > The situation is further inconsistent as legacy events are case
+> > > > sensitive, so on Intel that provides a sysfs instructions event, the
+> > > > instructions event without a PMU and lowercase is legacy while with
+> > > > uppercase letters it matches with sysfs which is case insensitive. Are
+> > > > there legacy events with upper case letters? Yes there are, the cache
+> > > > ones mix case freely:
+> > > >
+> > > > L1-dcache|l1-d|l1d|L1-data|L1-icache|l1-i|l1i|L1-instruction|LLC|L2|dTLB|d-tlb|Data-TLB|iTLB|i-tlb|Instruction-TLB|branch|branches|bpu|btb|bpc|node
+> > > >
+> > > > meaning LLC that means L2 (which is wrong) both match as part of a
+> > > > legacy cache name but llc and l2 would only match sysfs/json
+> > > > events. The whole thing just points at the ridiculous nature of legacy
+> > > > events and why we'd want them to be preffered I don't know. Why should
+> > > > case of a letter or having a PMU prefix impact the encoding in the
+> > > > perf_event_attr?
+> > > >
+> > > > The patch doing this work was reverted in a v6.10 release candidate
+> > > > as, even though the patch was posted for weeks and had been on
+> > > > linux-next for weeks without issue, Linus was in the habit of using
+> > > > explicit legacy events with unsupported precision options on his
+> > > > Neoverse-N1. This machine has SLC PMU events for bus and CPU cycles
+> > > > where ARM decided to call the events bus_cycles and cycles, the latter
+> > > > being also a legacy event name. ARM haven't renamed the cycles event
+> > > > to a more consistent cpu_cycles and avoided the problem. With these
+> > > > changes the problematic event will now be skipped, a large warning
+> > > > produced, and perf record will continue for the other PMU events. This
+> > > > solution was proposed by Arnaldo.
+> > > >
+> > > > v8: Change removing of failed to open events that are tracking so that
+> > > >     the tracking moves to the next event. Make software events able to
+> > > >     specified with a PMU. Change the perf_api_probe to not load all
+> > > >     PMUs through scanning, specify a PMU when parsing events.
+> > > >
+> > > > v7: Expand cover letter, fix a missed core_ok check in the v6
+> > > >     rebase. Note, as with v6 there is an alternate series that
+> > > >     prioritizes legacy events but that is silly and I'd prefer we
+> > > >     didn't do it.
+> > > >
+> > > > v6: Rebase of v5 (dropping already merged patches):
+> > > >     https://lore.kernel.org/lkml/20250109222109.567031-1-irogers@google.com/
+> > > >     that unusually had an RFC posted for it:
+> > > >     https://lore.kernel.org/lkml/Z7Z5kv75BMML2A1q@google.com/
+> > > >     Note, this patch conflicts/contradicts:
+> > > >     https://lore.kernel.org/lkml/20250312211623.2495798-1-irogers@google.com/
+> > > >     that I posted so that we could either consistently prioritize
+> > > >     sysfs/json (these patches) or legacy events (the other
+> > > >     patches). That lack of event printing and encoding inconsistency
+> > > >     is most prominent in the encoding of events like "instructions"
+> > > >     which on hybrid are reported as "cpu_core/instructions/" but
+> > > >     "instructions" before these patches gets a legacy encoding while
+> > > >     "cpu_core/instructions/" gets a sysfs/json encoding. These patches
+> > > >     make "instructions" always get a sysfs/json encoding while the
+> > > >     alternate patches make it always get a legacy encoding.
+> > > >
+> > > > v5: Follow Namhyung's suggestion and ignore the case where command
+> > > >     line dummy events fail to open alongside other events that all
+> > > >     fail to open. Note, the Tested-by tags are left on the series as
+> > > >     v4 and v5 were changing an error case that doesn't occur in
+> > > >     testing but was manually tested by myself.
+> > > >
+> > > > v4: Rework the no events opening change from v3 to make it handle
+> > > >     multiple dummy events. Sadly an evlist isn't empty if it just
+> > > >     contains dummy events as the dummy event may be used with "perf
+> > > >     record -e dummy .." as a way to determine whether permission
+> > > >     issues exist. Other software events like cpu-clock would suffice
+> > > >     for this, but the using dummy genie has left the bottle.
+> > > >
+> > > >     Another problem is that we appear to have an excessive number of
+> > > >     dummy events added, for example, we can likely avoid a dummy event
+> > > >     and add sideband data to the original event. For auxtrace more
+> > > >     dummy events may be opened too. Anyway, this has led to the
+> > > >     approach taken in patch 3 where the number of dummy parsed events
+> > > >     is computed. If the number of removed/failing-to-open non-dummy
+> > > >     events matches the number of non-dummy events then we want to
+> > > >     fail, but only if there are no parsed dummy events or if there was
+> > > >     one then it must have opened. The math here is hard to read, but
+> > > >     passes my manual testing.
+> > > >
+> > > > v3: Make no events opening for perf record a failure as suggested by
+> > > >     James Clark and Aditya Bodkhe <Aditya.Bodkhe1@ibm.com>. Also,
+> > > >     rebase.
+> > > >
+> > > > v2: Rebase and add tested-by tags from James Clark, Leo Yan and Atish
+> > > >     Patra who have tested on RISC-V and ARM CPUs, including the
+> > > >     problem case from before.
+> > >
+> > > Ping. Thanks,
+> > > Ian
+> > >
+> > > > Ian Rogers (4):
+> > > >   perf record: Skip don't fail for events that don't open
+> > > >   perf parse-events: Reapply "Prefer sysfs/JSON hardware events over
+> > > >     legacy"
+> > > >   perf parse-events: Allow software events to be terms
+> > > >   perf perf_api_probe: Avoid scanning all PMUs, try software PMU first
+> >
+> > Sorry for the delay.  But I think we wanted to move to this instead:
+> >
+> > https://lore.kernel.org/linux-perf-users/20250312211623.2495798-1-irogers@google.com/
+> 
+> Hi Namhyung,
+> 
+> The preference for sysfs/json over legacy was done as a bug fix and
+> because ARM (Mark Rutland) argued strongly that it was the most
+> sensible priority. Intel (Kan Liang) approved the change in priority.
+> RISC-V have wanted this behavior as it enables the migration of event
+> mappings from the driver to the tool. As the primary maintainer of the
+> event parsing and metric code I prefer the priority as legacy events
+> are weird, for example they aren't case insensitive in their naming.
+> For example, on Intel with legacy events as the priority cpu-cycles
+> would be a legacy event, but cpu-Cyles a sysfs one. On ARM cpu_cycles
+> would be a sysfs event, but cpu-cycles a legacy one. A minor character
+> difference and very different and imo surprising event encodings.
 
-Link: https://lore.kernel.org/linux-mm/ce048e11-f79d-44a6-bacc-46e1ebc34b24@redhat.com/
-Suggested-by: David Hildenbrand <david@redhat.com>
-Signed-off-by: Tal Zussman <tz2294@columbia.edu>
----
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+Yeah, but it has worked like that for a long time.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 98201e1f4ab5..678eae27688b 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -16653,6 +16653,7 @@ L:	linux-mm@kvack.org
- S:	Maintained
- F:	arch/*/include/asm/tlb.h
- F:	include/asm-generic/tlb.h
-+F:	include/trace/events/tlb.h
- F:	mm/mmu_gather.c
- 
- MN88472 MEDIA DRIVER
+> 
+> On your RFC thread Arnaldo and James said that legacy events somehow
+> enabled a form of drill down. As event parsing is mapping a name to a
+> perf_event_attr I completely don't see this as the mapping is opaque.
 
----
-base-commit: 546b1c9e93c2bb8cf5ed24e0be1c86bb089b3253
-change-id: 20250603-tlb-maintainers-7697bc27729c
+Is it opaque?  (I'd say it standard event rather than legacy event.)  I
+think the mapping for the standard events are clearly defined.
 
-Best regards,
--- 
-Tal Zussman <tz2294@columbia.edu>
+> 
+> I strongly believe we need consistency. If `perf stat -e cycles .. `
+> prints cpu_core/cycles/ as the event name on a hybrid Intel, then
+> `perf stat -e cpu_core/cycles/ .. ` should have the same
+> perf_event_attr. Both patch series achieve this but this one does it
+> with consistency, and from what I see it, the support of 3 vendors.
+
+Right, it's not consistent.  Maybe we need a different uniq event name
+for extended (standard) events.  How about "cycles(cpu_core)"?  I guess
+we don't want to add a space between the PMU and event names to avoid
+potential user impact when they parse the output.
+
+Thanks,
+Namhyung
 
 
