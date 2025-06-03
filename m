@@ -1,159 +1,194 @@
-Return-Path: <linux-kernel+bounces-672391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-672382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DE88ACCEA3
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 23:07:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF470ACCE89
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 22:59:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A38CA18958C6
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 21:07:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B7B03A5719
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 20:59:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26CB9224AE8;
-	Tue,  3 Jun 2025 21:07:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8C5E223321;
+	Tue,  3 Jun 2025 20:59:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fau.de header.i=@fau.de header.b="BHXbgFqX"
-Received: from mx-rz-3.rrze.uni-erlangen.de (mx-rz-3.rrze.uni-erlangen.de [131.188.11.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="a8VhylAd";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="RZsHFvqs";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="a8VhylAd";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="RZsHFvqs"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D32CF19ABC3;
-	Tue,  3 Jun 2025 21:07:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=131.188.11.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 889967081F
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 20:59:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748984843; cv=none; b=bJWgQCODcQh5gHzzQ5gSlrPlyGEeJquRaF2ggQ0xumUMFX2BlwpGCUfQ1otEOBwGYTHyXJeL8/yB9ryHakxFJja4OwQrNkkAtUV3mu2R8Vr0R9hDbGYBrmdZAotVxwxD25o1TwWFR2YLk9MYp+1ESy6LibiwHiBvfx4Q4kkJ5+A=
+	t=1748984391; cv=none; b=jCbBT3MFPIFxvUVy9raZ+4nShgUO3YBhD/QO/DmC2pA4rUaUS2q0KTGA2E4s+QQqriUZQ4ha/nUZkEL6h/zVC+FksOjwwU6K3WdI7GfWfTKj+xOquOaA5KJJVWOFey3Hhihtx0JqJS5U9Udnp1X6d+b+Mq1hyQW4TOLVjxKwWsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748984843; c=relaxed/simple;
-	bh=J/k4gYkZjn289vq7cf6/VQwnVRCn685tu5A4lQ4ohUY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gdgBO4G0VtKWZqfmfKaiboo+bHbHXZKG5wxx1mXtZDuoYsp/fWVwm1rrgWNm1NvZcw+iQ6ZmBy7W9rMP81pEdxe4Q0M19MQad3j6BDvLsR3+30rQcYZq8y4ZINQ7BrD2TvltKYFChF28j4EZmQXZU+8lpVpOWiCcPKmlD+9TIVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fau.de; spf=pass smtp.mailfrom=fau.de; dkim=pass (2048-bit key) header.d=fau.de header.i=@fau.de header.b=BHXbgFqX; arc=none smtp.client-ip=131.188.11.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fau.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fau.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fau.de; s=fau-2021;
-	t=1748984839; bh=YVxtmO4xn8cSl7FBJlgzMb9wooxDCpxLcAclWqMaFmg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From:To:CC:
-	 Subject;
-	b=BHXbgFqXtexbXiv6sFCqsIvSTwIIN1FMHcHaPV/j0mKpceFyEZkaMimsfvHqxhHYn
-	 g7m2ycAwHH99GxDrX5JaRlXlOXQESK/D5kJc/V3Bi2OYgH2WlKfAXD/BImG1fLtZ8w
-	 L89Kbi3GXnubdsYpALrgw0T6MOgu7mni3knFqc/a5Qw9n38LE3Zy5Lp8pzQM9iVWHL
-	 Ur3kZpqYhF/2wCmmvjIdnxrNWyVejF32jtn3vg/LVTlvctYHJg71tQFLrIyYFTQjqW
-	 P7eyaobt3/S5GVDmOWhUpxQFqHxc4Xe+6u+jOHBz3n2BYVZrI10O8kJpfVWDOM+P2u
-	 IibavPDvr3hcg==
-Received: from mx-rz-smart.rrze.uni-erlangen.de (mx-rz-smart.rrze.uni-erlangen.de [IPv6:2001:638:a000:1025::1e])
+	s=arc-20240116; t=1748984391; c=relaxed/simple;
+	bh=HskaPhgOZtUmrCR0dK7cbyBrVTpX1LUwwk3mr/058yk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kEviP480NpojqSja96ksh3aMz0/5fww9hFjV8i99sqirOA4+E4O28cC8CISdkHkzyOIBeQKF/g9Cr/q8XF43hoFgelUEAP5l8+q+CgzNV5ine09shXanjWo8ItGKmqHOiq8rc/kQhV81s0c29Nm8kUvKWeY5VoGzctUFGvaw/80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=a8VhylAd; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=RZsHFvqs; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=a8VhylAd; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=RZsHFvqs; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-rz-3.rrze.uni-erlangen.de (Postfix) with ESMTPS id 4bBjvq3ZCmz1yTV;
-	Tue,  3 Jun 2025 23:07:19 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at boeck5.rrze.uni-erlangen.de (RRZE)
-X-RRZE-Flag: Not-Spam
-X-RRZE-Submit-IP: 2001:9e8:3639:fe00:a21f:4ce4:8495:5578
-Received: from luis-tp.fritz.box (unknown [IPv6:2001:9e8:3639:fe00:a21f:4ce4:8495:5578])
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 5322F21C25;
+	Tue,  3 Jun 2025 20:59:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1748984387; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Tbh/wSI18MgZkL0lNSZSfVY7UbYTbmhbITCCvYgLRSk=;
+	b=a8VhylAd/iR4bokazEEmD2YvoNRPwofTT94bxIw3DM5XpP2Tojo6GsaSnZ/kQwdAIik83Z
+	X/iTZPZDbClKOlSGLFYcWNnJ+TfZQXPznvqE0fHi9umjSSx7vv9ChYg8zWVwhfUO6lbF6n
+	ynDFUe2xvMzNcoi2RSYNDwee+uPruoI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1748984387;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Tbh/wSI18MgZkL0lNSZSfVY7UbYTbmhbITCCvYgLRSk=;
+	b=RZsHFvqsiqbegcvpCXl4VFK3KcYyLW3Fq+NCy2bUCuOMp5BqE1nWeq3NJ9gk6JhdhWUIrX
+	yHoYjdHicmf9jZDw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=a8VhylAd;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=RZsHFvqs
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1748984387; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Tbh/wSI18MgZkL0lNSZSfVY7UbYTbmhbITCCvYgLRSk=;
+	b=a8VhylAd/iR4bokazEEmD2YvoNRPwofTT94bxIw3DM5XpP2Tojo6GsaSnZ/kQwdAIik83Z
+	X/iTZPZDbClKOlSGLFYcWNnJ+TfZQXPznvqE0fHi9umjSSx7vv9ChYg8zWVwhfUO6lbF6n
+	ynDFUe2xvMzNcoi2RSYNDwee+uPruoI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1748984387;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Tbh/wSI18MgZkL0lNSZSfVY7UbYTbmhbITCCvYgLRSk=;
+	b=RZsHFvqsiqbegcvpCXl4VFK3KcYyLW3Fq+NCy2bUCuOMp5BqE1nWeq3NJ9gk6JhdhWUIrX
+	yHoYjdHicmf9jZDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: U2FsdGVkX18Ca/MPWWDtOYDvTUE1FQFkkdhcs5t0j4o=)
-	by smtp-auth.uni-erlangen.de (Postfix) with ESMTPSA id 4bBjvl5qDwz1y0m;
-	Tue,  3 Jun 2025 23:07:15 +0200 (CEST)
-From: Luis Gerhorst <luis.gerhorst@fau.de>
-To: Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Puranjay Mohan <puranjay@kernel.org>,
-	Xu Kuohai <xukuohai@huaweicloud.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Hari Bathini <hbathini@linux.ibm.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Mykola Lysenko <mykolal@fb.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Luis Gerhorst <luis.gerhorst@fau.de>,
-	Henriette Herzog <henriette.herzog@rub.de>,
-	Saket Kumar Bhaskar <skb99@linux.ibm.com>,
-	Cupertino Miranda <cupertino.miranda@oracle.com>,
-	Jiayuan Chen <mrpre@163.com>,
-	Matan Shachnai <m.shachnai@gmail.com>,
-	Dimitar Kanaliev <dimitar.kanaliev@siteground.com>,
-	Shung-Hsi Yu <shung-hsi.yu@suse.com>,
-	Daniel Xu <dxu@dxuuu.xyz>,
-	bpf@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-kselftest@vger.kernel.org
-Cc: Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-	Maximilian Ott <ott@cs.fau.de>,
-	Milan Stephan <milan.stephan@fau.de>
-Subject: [PATCH bpf-next v4 3/9] bpf: Return -EFAULT on internal errors
-Date: Tue,  3 Jun 2025 22:57:54 +0200
-Message-ID: <20250603205800.334980-4-luis.gerhorst@fau.de>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250603205800.334980-1-luis.gerhorst@fau.de>
-References: <20250603205800.334980-1-luis.gerhorst@fau.de>
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 78D6D13A1D;
+	Tue,  3 Jun 2025 20:59:46 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id tvIpGkJiP2iDGwAAD6G6ig
+	(envelope-from <pfalcato@suse.de>); Tue, 03 Jun 2025 20:59:46 +0000
+Date: Tue, 3 Jun 2025 21:59:46 +0100
+From: Pedro Falcato <pfalcato@suse.de>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Barry Song <21cnbao@gmail.com>, akpm@linux-foundation.org, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, Barry Song <v-songbaohua@oppo.com>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, David Hildenbrand <david@redhat.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Lokesh Gidra <lokeshgidra@google.com>, 
+	Tangquan Zheng <zhengtangquan@oppo.com>
+Subject: Re: [PATCH RFC v2] mm: use per_vma lock for MADV_DONTNEED
+Message-ID: <hafjpizztpwazia2ubkieavxw375pb3ziwhd7bfq24i4gv5ayn@ah4zz2zy2lhv>
+References: <20250530104439.64841-1-21cnbao@gmail.com>
+ <0b96ce61-a52c-4036-b5b6-5c50783db51f@lucifer.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0b96ce61-a52c-4036-b5b6-5c50783db51f@lucifer.local>
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[gmail.com,linux-foundation.org,kvack.org,vger.kernel.org,oppo.com,oracle.com,redhat.com,suse.cz,google.com];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 5322F21C25
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Score: -4.01
 
-This prevents us from trying to recover from these on speculative paths
-in the future.
+On Tue, Jun 03, 2025 at 07:43:04PM +0100, Lorenzo Stoakes wrote:
+> Hi Barry,
+> 
+> As promised, I enclose a patch to give a sense of how I think we might
+> thread state through this operation.
+> 
+> There's a todo on the untagged stuff so you can figure that out. This is
+> based on the v1 so it might not encompass everything you addressed in the
+> v2.
+> 
+> Passing in madv_behavior to madvise_walk_vmas() twice kinda sucks, I
+> _despise_ the void *arg function ptr stuff there added just for the anon
+> vma name stuff (ughhh) so might be the only sensible way of threading
+> state.
+> 
+> I don't need any attribution, so please use this patch as you see
+> fit/adapt/delete/do whatever with it, just an easier way for me to show the
+> idea!
+> 
+> I did some very basic testing and it seems to work, but nothing deeper.
+> 
+> Cheers, Lorenzo
+> 
+> ----8<----
+> >From ff4ba0115cb31a0630b6f8c02c68f11b3fb71f7a Mon Sep 17 00:00:00 2001
+> From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Date: Tue, 3 Jun 2025 18:22:55 +0100
+> Subject: [PATCH] mm/madvise: support VMA read locks for MADV_DONTNEED[_LOCKED]
+> 
+> Refactor the madvise() code to retain state about the locking mode utilised
+> for traversing VMAs.
+> 
+> Then use this mechanism to permit VMA locking to be done later in the
+> madvise() logic and also to allow altering of the locking mode to permit
+> falling back to an mmap read lock if required.
+> 
 
-Signed-off-by: Luis Gerhorst <luis.gerhorst@fau.de>
-Reviewed-by: Eduard Zingerman <eddyz87@gmail.com>
-Acked-by: Kumar Kartikeya Dwivedi <memxor@gmail.com>
-Acked-by: Henriette Herzog <henriette.herzog@rub.de>
-Cc: Maximilian Ott <ott@cs.fau.de>
-Cc: Milan Stephan <milan.stephan@fau.de>
----
- kernel/bpf/verifier.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Just as a quick drive-by comment: I was playing around with using per-vma locks
+for GUP and mm_populate a few weeks ago. I never actually finished the work (and I
+still plan on getting around doing it Eventually(tm)), but my final concept of an
+approach was to simply read-lock every VMA in a range (if that fails, go back
+to the mmap_lock).
 
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index c76fbf46a365..46cf737acad5 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -11653,7 +11653,7 @@ static int check_helper_call(struct bpf_verifier_env *env, struct bpf_insn *insn
- 				verbose(env, "verifier internal error:");
- 				verbose(env, "func %s has non-overwritten BPF_PTR_POISON return type\n",
- 					func_id_name(func_id));
--				return -EINVAL;
-+				return -EFAULT;
- 			}
- 			ret_btf = btf_vmlinux;
- 			ret_btf_id = *fn->ret_btf_id;
-@@ -15278,12 +15278,12 @@ static int adjust_reg_min_max_vals(struct bpf_verifier_env *env,
- 	if (WARN_ON_ONCE(ptr_reg)) {
- 		print_verifier_state(env, vstate, vstate->curframe, true);
- 		verbose(env, "verifier internal error: unexpected ptr_reg\n");
--		return -EINVAL;
-+		return -EFAULT;
- 	}
- 	if (WARN_ON(!src_reg)) {
- 		print_verifier_state(env, vstate, vstate->curframe, true);
- 		verbose(env, "verifier internal error: no src_reg\n");
--		return -EINVAL;
-+		return -EFAULT;
- 	}
- 	err = adjust_scalar_min_max_vals(env, insn, dst_reg, *src_reg);
- 	if (err)
+I *think* it works, and doesn't have the same limitation for single VMAs.
+
+I understand this is a super handwavy suggestion, but I know this discussion has
+been happening and I just wanted to get this idea out of obscure IRC logs :)
+
 -- 
-2.49.0
-
+Pedro
 
