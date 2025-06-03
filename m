@@ -1,487 +1,467 @@
-Return-Path: <linux-kernel+bounces-671779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5403EACC60C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 13:59:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D051ACC619
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 14:02:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AB173A43CD
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 11:58:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5887F18825C9
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 12:03:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10B3B235076;
-	Tue,  3 Jun 2025 11:57:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F3FF22E402;
+	Tue,  3 Jun 2025 12:02:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="FdyS8OdC"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	dkim=pass (1024-bit key) header.d=vayavyalabs.com header.i=@vayavyalabs.com header.b="iDSwMKXD"
+Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92F67235059
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 11:57:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE20746B8
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 12:02:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748951865; cv=none; b=f5lmG/CpClf0WXzoSxyMNgvfgeALBM42gg3BEX5dqa3XuPNtd+H8qCw8oT96/Zdkn+oUcjr0pAncXbsur1ChaUEFl3wVS9S1UMaIfv+DvyvQwyWURLq92nAuD4cm/FK4wRqvm8saOD6eof0NOtd5qajAq0zEtkTfTpMs2sgvsLY=
+	t=1748952159; cv=none; b=sHtbLJtreEMvozENpQ2yZ1Vs3m+SZTnXsVd2XjmEAxxnFM6TvI14BXzXDQzusGiVNCDIULsK29ea1yJKUMSAgGvciLBFx3bUs0V11opnx41jSMcgidCbuRwQ3sr2QsXIZMU4Wrrh06ld1XYxnn3OByT8WorCPs7srS+k9jTmva4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748951865; c=relaxed/simple;
-	bh=gbbddoWIkSxtgMbjiStS9u+ATaAQTgpY4F0QR3RS7bg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VbwHU/TEgJHBleDHUss97hJ+F7LTVc51T0gkIqFYbDvqY3qsQyVn9C69Fq0Wi77OsxDDJchqtgOjchm91CisOLAwjm3+fMAgzd8v5wGDqEFgxKcwYzE1/G2JV6UPBAr6iITRQYuG6zSrTAGmQxysBnw0M3sIG5jNPP5VXQcy3sA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=FdyS8OdC; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ad51ba0af48so1150713366b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jun 2025 04:57:42 -0700 (PDT)
+	s=arc-20240116; t=1748952159; c=relaxed/simple;
+	bh=ySecT7oudCi62ydAA9H9f0Ik2okzEegA1oZYeqkiocA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LvcYg6D8H+5N67jtW+ph30yuwcmDGFEm/2S0llyjoCZQLdj9SIhvr36PftXVJ4ghdNniut2IDIpKM/zErMhr6jv0HAzmc3OXK9JT45xCzfGQThH/xYIAsHmgdRcTSr0FKDR2zDDSrFlM5qjpd0Z1TBGWDQy0+HMBeq51NVU5Udo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=vayavyalabs.com; spf=pass smtp.mailfrom=vayavyalabs.com; dkim=pass (1024-bit key) header.d=vayavyalabs.com header.i=@vayavyalabs.com header.b=iDSwMKXD; arc=none smtp.client-ip=209.85.160.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=vayavyalabs.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vayavyalabs.com
+Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-2cc89c59cc0so3836960fac.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jun 2025 05:02:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1748951861; x=1749556661; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jZPvUCvE2vPO2qd4IMAnQgX90yJMpfw/oC9yH8/Z6qM=;
-        b=FdyS8OdCqbSsAPgUFNHOOg+JSNKlznimiWW5JZFs2xn77aC3JFUHKamQSoLwBrwBFI
-         wDU6c9WI4qGk/5b+sWBnC834bE0ghfpk4w9VNQUdpUtj9BYecTPufTDwX4HMkYq0cwV7
-         v/06vIaUe6PC8aNFvaMtjiCo4ogkUsXa4j5259xCXeTDbOmGWxjl2Hh/GHmoc53EmOS2
-         OA5LHuPaUlhuuRbHvZes35sb0w4KVsioDIF9tL5YcEcaP1borfm2k/O/HyqzPsvvzTdd
-         v4hsFzOGmQlID246iznyboGot20TFmfzVGiOOeYOnwA7y3y1495yjlZGMPXapht5uesj
-         pSMQ==
+        d=vayavyalabs.com; s=google; t=1748952157; x=1749556957; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=l28DzIkqr4LEntW5mAp5FkeCY/PQV5pWO6CRFrpZ3n4=;
+        b=iDSwMKXDrZdADo6shR67KH5gemOxSmhF5uAXvuxY2mYkAtUtR6Ig2FDANKKRMm7fco
+         OjFbZhDJipDFoufWo3jYD+6pwAj4mBfZMV+2t8xYOOqbXvex6QoSyOKpK7vXxm1YVSsI
+         jJYGHnMcubliFRa1Oxx5+o3Kg4TfOkFh4OUSM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748951861; x=1749556661;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jZPvUCvE2vPO2qd4IMAnQgX90yJMpfw/oC9yH8/Z6qM=;
-        b=Z8SsqAL4/kYICDy6OYhh53W/xfIouXuIbPqKGnJc9fZ6NfswWybf+DnTTOBDUZZ+fL
-         /FzJdd+6EeS3OTah1eFVYJ9vvpYae5JpFpUlkhfdEe5uyFZt7fhSfB1oAg+tzp2pg7FX
-         9HmOzsX8YuwNkWUdRX3rap9do2jOYo2fPM3zOhQgPBxlwpCXgPOaTSL4HkbheK2epVTi
-         +Vyo4J7qNt1FCGfK+cXjHOgoExUb12cp37SCnNIruykuaL3qWIYV0DPx9kZLMUoEyF6v
-         l+hzqsjrCIyeXuLY3/qzdbI571YuS1wXx50Y6guaDVC0WE3/fDvM2oOTmJFvt+DzI4rR
-         EDMA==
-X-Gm-Message-State: AOJu0Yw66YBACJgFNqmS3alpDeW42At6jtMY/wlP36RHt1XnvbOfFec3
-	MtSMfLk6fx3k7kPe3i4Rb2KLPNTan67MSkde5h6n7fz4fPik2by5dm5/kpFVz8zueWXKhRw9nkZ
-	rAXSRWWI=
-X-Gm-Gg: ASbGncvnODVeYxW4i8ryQ7/zasaA4INXkCGb9UiOKcnMgqqFTdtHcSYL8VSnCi6pB6R
-	SppocU7GkqD70fTMtzkU3Mfp8D5CeAeR9FXQwpohhlVYYBkgbRn47Bgy/mRK/alxmDdgYISL9dL
-	/zC+Mg+eVamxwZeUb911M9e+i6/HPgJYnYVPR0DCCnzeDMDIBsUqszOPxRJpcLZ8EiOrGl+UXK5
-	YUB4gqopDKd5wskpACAertrAjCNap36R673xD5Itanorpgq3rSnfxTfED49kZAzsCej3/CDlj4s
-	p5jY/MHiuEAqoRCPwlANM9tsw0E/JSX44OuqTvJ0GHK1BpyzFpVHaLmxALLBmJkpgfx3GsVphd1
-	3OrTUXKpxbWO3+IY1OpvmSTGkBdgGJg==
-X-Google-Smtp-Source: AGHT+IHLlMuP+TZs4HVRxvQpw+pqDPLlMsQ1ntB8DXhAeDV1zQadXo1krOr1aO2nMZq2ulkc+ahj4A==
-X-Received: by 2002:a17:907:2d07:b0:ad5:4cde:fb97 with SMTP id a640c23a62f3a-adde606f7c3mr232767466b.29.1748951860722;
-        Tue, 03 Jun 2025 04:57:40 -0700 (PDT)
-Received: from ?IPV6:2001:a61:13d8:aa01:df7e:747c:99cb:b944? ([2001:a61:13d8:aa01:df7e:747c:99cb:b944])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ada5dd045e2sm945247366b.90.2025.06.03.04.57.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Jun 2025 04:57:40 -0700 (PDT)
-Message-ID: <2ff4dd60-7579-40ce-a4e5-3ad846659f9c@suse.com>
-Date: Tue, 3 Jun 2025 13:57:39 +0200
+        d=1e100.net; s=20230601; t=1748952157; x=1749556957;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=l28DzIkqr4LEntW5mAp5FkeCY/PQV5pWO6CRFrpZ3n4=;
+        b=Zf+1hxtrHzVNzoq6h3yE1YmxU1IQhCSqVurTNYaFjWS7ZezcBxfVuo3Lv54NE2BgVH
+         YIn/+1+UGWfpLzHOrakgcVHyrbKJXlwDhYzyPy8a/yUJ/LDbnv7IRNZHbWUCE+J8DOfA
+         d4qOkJS9v43quTxzphMeydKd2z2NSm/T00oHmQquyllOKLc1GLFX3XSUJZgvvyWabGQq
+         swATF05ohWnvUk7dom4rXRa6wPAPVtKZfAugdss5flImQdcXKPcFjvLtq1W6gj+TACq1
+         Ynif3vF39wmDbXoSrWSBaycCT1M7XKuQberQGRPr7mHu2FDZAXhm0iB5FKJc9sE4RI27
+         C8jA==
+X-Forwarded-Encrypted: i=1; AJvYcCVn0ez5Pgb3w9P/qHT2l8Gj+jVlCxBPHsAqK0d8Lw9ylvyUErw8OzmJPtuF6UKy90LgGgrS+AuHqepzz3g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHZoM0hz6YMOjXNhdY+RmmXy61nnUGQ5scVz8P7bLE8tJMnjRJ
+	SK/zX9OEPqDBH+VVr5X3+X0OX691dKPgvYqvUPhXi2CmKy5k4jo6ZWplJF+pLxTjgBz2neGLMaA
+	rRTJxP3O6PXXszQQlcCkU5wa8xzqxzF5VWsHH8Ofi1XD0DXBI+N+ek4NVjg==
+X-Gm-Gg: ASbGncupHFODFfUiMBRbeUGGKDKzbwvwytAcjRnG0LgFWijaQqhVactsHvYS7cq/IXF
+	ta9i4Z9B08OUzMMpl4et8KdKScvx4Iaq5WivL8OShfS/i1frK5/HJdJxhG/aBsZPDqqQJtvXkmu
+	74gDMp/gZuIRNiK71fI9pfRiROVMRIwaIf2OI9arcq2WVj
+X-Google-Smtp-Source: AGHT+IH90LSqAhHHbxsryMPOBXHIM+oacXfr+Ou9Le9aECoKuqARpni6suYK1t3MEspshUGQKSRE8tFDeNvwiZvRRg0=
+X-Received: by 2002:a05:6830:7201:b0:734:f8d1:6ab3 with SMTP id
+ 46e09a7af769-7385906511bmr1302534a34.0.1748952146469; Tue, 03 Jun 2025
+ 05:02:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/1] USB: serial: nct_usb_serial: add support for
- Nuvoton USB adapter
-To: hsyemail2@gmail.com, Johan Hovold <johan@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
- Sheng-Yuan Huang <syhuang3@nuvoton.com>
-References: <20250603032057.5174-1-syhuang3@nuvoton.com>
- <20250603032057.5174-2-syhuang3@nuvoton.com>
-Content-Language: en-US
-From: Oliver Neukum <oneukum@suse.com>
-In-Reply-To: <20250603032057.5174-2-syhuang3@nuvoton.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250602053231.403143-1-pavitrakumarm@vayavyalabs.com>
+ <20250602053231.403143-3-pavitrakumarm@vayavyalabs.com> <9f6b4442-1fb0-479d-9514-410d4d8bfd98@kernel.org>
+In-Reply-To: <9f6b4442-1fb0-479d-9514-410d4d8bfd98@kernel.org>
+From: Pavitrakumar Managutte <pavitrakumarm@vayavyalabs.com>
+Date: Tue, 3 Jun 2025 17:32:15 +0530
+X-Gm-Features: AX0GCFtmQ3LxaxdSxQJE58tRGgH3M_sO7OJwM7eQB8o9k6zn20ZEaWVsKEKH-DE
+Message-ID: <CALxtO0kitR0MnjzPwVT8nsuYThTRX+fbyOH9i2z1KKnCPg1dqg@mail.gmail.com>
+Subject: Re: [PATCH v3 2/6] Add SPAcc Skcipher support
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, herbert@gondor.apana.org.au, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, Ruud.Derwig@synopsys.com, 
+	manjunath.hadli@vayavyalabs.com, adityak@vayavyalabs.com, 
+	Shweta Raikar <shwetar@vayavyalabs.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Hi Krzysztof,
+  Thank you for your inputs. My comments are embedded below.
 
-On 03.06.25 05:20, hsyemail2@gmail.com wrote:
-> From: Sheng-Yuan Huang <syhuang3@nuvoton.com>
-> 
-> Add support for the Nuvoton USB-to-serial adapter, which provides
-> multiple serial ports over a single USB interface.
-> 
-> The device exposes one control endpoint, one bulk-in endpoint, and
-> one bulk-out endpoint for data transfer. Port status is reported via
-> an interrupt-in or bulk-in endpoint, depending on device configuration.
+Warm regards,
+PK
 
-I am afraid there are a few issue that will not to be addressed
-before this can be merged.
+On Mon, Jun 2, 2025 at 11:35=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.or=
+g> wrote:
+>
+> On 02/06/2025 07:32, Pavitrakumar Managutte wrote:
+> > +
+> > +static int spacc_init_device(struct platform_device *pdev)
+> > +{
+> > +     int vspacc_id =3D -1;
+> > +     u64 timer =3D 100000;
+> > +     void __iomem *baseaddr;
+> > +     struct pdu_info   info;
+> > +     struct spacc_priv *priv;
+> > +     int err =3D 0;
+> > +     int oldmode;
+> > +     int irq_num;
+> > +     const u64 oldtimer =3D 100000;
+> > +
+> > +     /* initialize DDT DMA pools based on this device's resources */
+> > +     if (pdu_mem_init(&pdev->dev)) {
+> > +             dev_err(&pdev->dev, "Could not initialize DMA pools\n");
+> > +             return -ENOMEM;
+> > +     }
+> > +
+> > +     priv =3D devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
+> > +     if (!priv) {
+> > +             err =3D -ENOMEM;
+> > +             goto free_ddt_mem_pool;
+> > +     }
+> > +
+> > +     /* default to little-endian */
+> > +     priv->spacc.config.big_endian    =3D false;
+> > +     priv->spacc.config.little_endian =3D true;
+> > +
+> > +     if (of_property_read_u32(pdev->dev.of_node, "snps,vspacc-id",
+> > +                              &vspacc_id)) {
+> > +             dev_err(&pdev->dev, "No virtual spacc id specified\n");
+>
+> This makes no sense. It's not a required property. Just look at your
+> binding.
 
-> This driver implements basic TTY operations.
-> 
-> Signed-off-by: Sheng-Yuan Huang <syhuang3@nuvoton.com>
-> ---
->   drivers/usb/serial/nct_usb_serial.c | 1523 +++++++++++++++++++++++++++
->   1 file changed, 1523 insertions(+)
->   create mode 100644 drivers/usb/serial/nct_usb_serial.c
-> 
-> diff --git a/drivers/usb/serial/nct_usb_serial.c b/drivers/usb/serial/nct_usb_serial.c
-> new file mode 100644
-> index 000000000000..424c604229b3
-> --- /dev/null
-> +++ b/drivers/usb/serial/nct_usb_serial.c
+PK: My bad, this is a required property. I will fix that.
 
-> +/* Index definition */
-> +enum {
-> +	NCT_VCOM_INDEX_0 = 0,
-> +	NCT_VCOM_INDEX_1,
-> +	NCT_VCOM_INDEX_2,
-> +	NCT_VCOM_INDEX_3,
-> +	NCT_VCOM_INDEX_4,
-> +	NCT_VCOM_INDEX_5,
-> +	NCT_VCOM_INDEX_GLOBAL = 0xF,
-> +};
+>
+> > +             err =3D -EINVAL;
+> > +             goto free_ddt_mem_pool;
+> > +     }
+> > +
+> > +     priv->spacc.config.idx =3D vspacc_id;
+> > +     priv->spacc.config.oldtimer =3D oldtimer;
+> > +
+> > +     if (of_property_read_u64(pdev->dev.of_node, "spacc-internal-count=
+er",
+>
+> You never tested this.
 
-What use is this? A number is a number.
+PK: This has been tested, but on failure it picks up the default value
+for the counter. I will fix that sting.
 
-> +/* Command */
-> +enum {
-> +	NCT_VCOM_GET_NUM_PORTS = 0,
-> +	NCT_VCOM_GET_PORTS_SUPPORT,
-> +	NCT_VCOM_GET_BAUD,
-> +	NCT_VCOM_SET_INIT,
-> +	NCT_VCOM_SET_CONFIG,
-> +	NCT_VCOM_SET_BAUD,
-> +	NCT_VCOM_SET_HCR,
-> +	NCT_VCOM_SET_OPEN_PORT,
-> +	NCT_VCOM_SET_CLOSE_PORT,
-> +	NCT_VCOM_SILENT,
-> +	/* Use bulk-in status instead of interrupt-in status */
-> +	NCT_VCON_SET_BULK_IN_STATUS,
-> +};
+>
+> > +                              &timer)) {
+> > +             dev_dbg(&pdev->dev, "No spacc-internal-counter specified\=
+n");
+> > +             dev_dbg(&pdev->dev, "Default internal-counter: (100000)\n=
+");
+> > +             timer =3D 100000;
+> > +     }
+> > +     priv->spacc.config.timer =3D timer;
+> > +
+> > +     baseaddr =3D devm_platform_ioremap_resource(pdev, 0);
+> > +     if (IS_ERR(baseaddr)) {
+> > +             dev_err(&pdev->dev, "Unable to map iomem\n");
+> > +             err =3D PTR_ERR(baseaddr);
+> > +             goto free_ddt_mem_pool;
+> > +     }
+> > +
+> > +     pdu_get_version(baseaddr, &info);
+> > +
+> > +     dev_dbg(&pdev->dev, "EPN %04X : virt [%d]\n",
+> > +             info.spacc_version.project,
+> > +             info.spacc_version.vspacc_id);
+> > +
+> > +     /*
+> > +      * Validate virtual spacc index with vspacc count read from
+> > +      * VERSION_EXT.VSPACC_CNT. Thus vspacc count=3D3, gives valid ind=
+ex 0,1,2
+> > +      */
+> > +     if (vspacc_id !=3D info.spacc_version.vspacc_id) {
+> > +             dev_err(&pdev->dev, "DTS vspacc_id mismatch read value\n"=
+);
+> > +             err =3D -EINVAL;
+> > +             goto free_ddt_mem_pool;
+> > +     }
+> > +
+> > +     if (vspacc_id < 0 || vspacc_id > (info.spacc_config.num_vspacc - =
+1)) {
+> > +             dev_err(&pdev->dev, "Invalid vspacc index specified\n");
+> > +             err =3D -EINVAL;
+> > +             goto free_ddt_mem_pool;
+> > +     }
+> > +
+> > +     err =3D spacc_init(baseaddr, &priv->spacc, &info);
+> > +     if (err !=3D 0) {
+> > +             dev_err(&pdev->dev, "Failed to initialize SPAcc device\n"=
+);
+> > +             err =3D -ENXIO;
+>
+> No, use real errors.
 
-No. This is an abuse of enumeration. These are just commands that
-happen to use the number space consecutively. These need to be
-defines.
+PK: I will fix that
 
-> +union nct_vendor_cmd {
-> +	struct pkg0 {
-> +		u16 index:4;
-> +		u16 cmd:8;
-> +	} p;
-> +	u16 val;
-> +} __packed;
+>
+> > +             goto free_ddt_mem_pool;
+> > +     }
+> > +
+> > +     /* Set the priority from kernel config */
+> > +     priv->spacc.config.priority =3D CONFIG_CRYPTO_DEV_SPACC_PRIORITY;
+> > +     dev_dbg(&pdev->dev, "VSPACC priority set from config: %u\n",
+> > +             priv->spacc.config.priority);
+> > +
+> > +     /* Set the priority for this virtual SPAcc instance */
+> > +     spacc_set_priority(&priv->spacc, priv->spacc.config.priority);
+> > +
+> > +     priv->spacc_wq =3D alloc_workqueue("spacc_workqueue", WQ_UNBOUND,=
+ 0);
+> > +     if (!priv->spacc_wq) {
+> > +             dev_err(&pdev->dev, "failed to allocated workqueue\n");
+>
+> Memory allocations NEVER result in error messages.
 
-This definition is an endianness bug waiting to happen.
-If this goes over the wire, it has a defined endianness,
-which needs to be declared.
+PK: I will fix that
 
-> +#define NCT_HDR_MAGIC		0xA5
-> +#define NCT_HDR_MAGIC2		0x5A
-> +#define NCT_HDR_MAGIC_STATUS	0x5B
-> +
-> +struct nct_packet_header {
-> +	unsigned int magic:8;
-> +	unsigned int magic2:8;
-> +	unsigned int idx:4;
-> +	unsigned int len:12;
-> +} __packed;
+>
+> Please run standard kernel tools for static analysis, like coccinelle,
+> smatch and sparse, and fix reported warnings. Also please check for
+> warnings when building with W=3D1 for gcc and clang. Most of these
+> commands (checks or W=3D1 build) can build specific targets, like some
+> directory, to narrow the scope to only your code. The code here looks
+> like it needs a fix. Feel free to get in touch if the warning is not clea=
+r.
+>
+> > +             err =3D -ENOMEM;
+> > +             goto free_spacc_ctx;
+> > +     }
+> > +
+> > +     spacc_irq_glbl_disable(&priv->spacc);
+> > +     INIT_WORK(&priv->pop_jobs, spacc_pop_jobs);
+> > +
+> > +     priv->spacc.dptr =3D &pdev->dev;
+> > +     platform_set_drvdata(pdev, priv);
+> > +
+> > +     irq_num =3D platform_get_irq(pdev, 0);
+> > +     if (irq_num < 0) {
+> > +             dev_err(&pdev->dev, "No irq resource for spacc\n");
+> > +             err =3D -ENXIO;
+>
+> No, you must use actual error code.
 
-Again endianness.
+PK: I will fix that
 
-> +/* The definitions are for the feilds of nct_ctrl_msg */
-> +#define NCT_VCOM_1_STOP_BIT		0
-> +#define NCT_VCOM_2_STOP_BITS		1
-> +#define NCT_VCOM_PARITY_NONE		0
-> +#define NCT_VCOM_PARITY_ODD		1
-> +#define NCT_VCOM_PARITY_EVEN		2
-> +#define NCT_VCOM_DL5			0
-> +#define NCT_VCOM_DL6			1
-> +#define NCT_VCOM_DL7			2
-> +#define NCT_VCOM_DL8			3
-> +#define NCT_VCOM_DISABLE_FLOW_CTRL	0
-> +#define NCT_VCOM_XOFF			1
-> +#define NCT_VCOM_RTS_CTS		2
-> +union nct_ctrl_msg {
-> +	struct pkg1 {
-> +		u16 stop_bit:1;
-> +		u16 parity:2;
-> +		u16 data_len:2;
-> +		u16 flow:2;
-> +		u16 spd:5;
-> +		u16 reserved:4;
-> +	} p;
-> +	u16 val;
-> +} __packed;
+>
+> > +             goto free_spacc_workq;
+> > +     }
+> > +
+> > +     /* determine configured maximum message length */
+> > +     priv->max_msg_len =3D priv->spacc.config.max_msg_size;
+> > +
+> > +     if (devm_request_irq(&pdev->dev, irq_num, spacc_irq_handler,
+> > +                          IRQF_SHARED, dev_name(&pdev->dev),
+> > +                          &pdev->dev)) {
+> > +             dev_err(&pdev->dev, "Failed to request IRQ\n");
+> > +             err =3D -EBUSY;
+>
+> No, you must use actual error code.
 
-At the risk of repeating myself: endianness
+PK: I will fix that
 
-> +
-> +/* Read from USB control pipe */
-> +static int nct_vendor_read(struct usb_interface *intf, union nct_vendor_cmd cmd,
-> +			   unsigned char *buf, int size)
-> +{
-> +	struct device *dev = &intf->dev;
-> +	struct usb_device *udev = interface_to_usbdev(intf);
-> +	u8 *tmp_buf;
-> +	int res;
-> +
-> +	tmp_buf = kmalloc(NCT_MAX_VENDOR_READ_SIZE, GFP_KERNEL);
-> +	if (!tmp_buf)
-> +		return -ENOMEM;
-> +
-> +	if (size > NCT_MAX_VENDOR_READ_SIZE)
-> +		dev_err(dev, NCT_DRVNAME ": %s - failed to read [%04x]: over size %d\n",
-> +			__func__, cmd.p.cmd, size);
+>
+> > +             goto free_spacc_workq;
+> > +     }
+> > +
+> > +     priv->spacc.irq_cb_stat =3D spacc_stat_process;
+> > +     priv->spacc.irq_cb_cmdx =3D spacc_cmd_process;
+> > +     oldmode                 =3D priv->spacc.op_mode;
+> > +     priv->spacc.op_mode     =3D SPACC_OP_MODE_IRQ;
+> > +
+> > +     /* Enable STAT and CMD interrupts */
+> > +     spacc_irq_stat_enable(&priv->spacc, 1);
+> > +     spacc_irq_cmdx_enable(&priv->spacc, 0, 1);
+> > +     spacc_irq_stat_wd_disable(&priv->spacc);
+> > +     spacc_irq_glbl_enable(&priv->spacc);
+> > +
+> > +#if IS_ENABLED(CONFIG_CRYPTO_DEV_SPACC_AUTODETECT)
+>
+> Drop all such conditionals from the code.
 
-And you just go on and overwrite kernel memory?
-If you test for plausibility, do something with the result.
+PK: This is needed in the driver since SPAcc has two configuration
+modes, "Auto-detect" and "Static" configuration. In the case of
+"Auto-detect mode we have a golden input and golden output for
+matching based on a sample operation on the SPAcc device. Whereas in
+case of static configuration the algos are enabled based on an input
+list.
 
+>
+> > +
+> > +     err =3D spacc_autodetect(&priv->spacc);
+> > +     if (err < 0) {
+> > +             spacc_irq_glbl_disable(&priv->spacc);
+> > +             goto free_spacc_workq;
+> > +     }
+> > +#else
+> > +     err =3D spacc_static_config(&priv->spacc);
+> > +     if (err < 0) {
+> > +             spacc_irq_glbl_disable(&priv->spacc);
+> > +             goto free_spacc_workq;
+> > +     }
+> > +#endif
+> > +
+> > +     priv->spacc.op_mode =3D oldmode;
+> > +     if (priv->spacc.op_mode =3D=3D SPACC_OP_MODE_IRQ) {
+> > +             priv->spacc.irq_cb_stat =3D spacc_stat_process;
+> > +             priv->spacc.irq_cb_cmdx =3D spacc_cmd_process;
+> > +
+> > +             /* Enable STAT and CMD interrupts */
+> > +             spacc_irq_stat_enable(&priv->spacc, 1);
+> > +             spacc_irq_cmdx_enable(&priv->spacc, 0, 1);
+> > +             spacc_irq_glbl_enable(&priv->spacc);
+> > +     } else {
+> > +             priv->spacc.irq_cb_stat =3D spacc_stat_process;
+> > +             priv->spacc.irq_cb_stat_wd =3D spacc_stat_process;
+> > +
+> > +             spacc_irq_stat_enable(&priv->spacc,
+> > +                                   priv->spacc.config.ideal_stat_level=
+);
+> > +
+> > +             /* Enable STAT and WD interrupts */
+> > +             spacc_irq_cmdx_disable(&priv->spacc, 0);
+> > +             spacc_irq_stat_wd_enable(&priv->spacc);
+> > +             spacc_irq_glbl_enable(&priv->spacc);
+> > +
+> > +             /* enable the wd by setting the wd_timer =3D 100000 */
+> > +             spacc_set_wd_count(&priv->spacc,
+> > +                                priv->spacc.config.wd_timer =3D
+> > +                                             priv->spacc.config.timer)=
+;
+> > +     }
+> > +
+> > +     /* unlock normal */
+> > +     if (priv->spacc.config.is_secure_port) {
+> > +             u32 t;
+> > +
+> > +             t =3D readl(baseaddr + SPACC_REG_SECURE_CTRL);
+> > +             t &=3D ~(1UL << 31);
+> > +             writel(t, baseaddr + SPACC_REG_SECURE_CTRL);
+> > +     }
+> > +
+> > +     /* unlock device by default */
+> > +     writel(0, baseaddr + SPACC_REG_SECURE_CTRL);
+> > +
+> > +     return err;
+> > +
+> > +free_spacc_workq:
+> > +     flush_workqueue(priv->spacc_wq);
+> > +     destroy_workqueue(priv->spacc_wq);
+> > +
+> > +free_spacc_ctx:
+> > +     spacc_fini(&priv->spacc);
+> > +
+> > +free_ddt_mem_pool:
+> > +     pdu_mem_deinit(&pdev->dev);
+> > +
+> > +
+> > +     return err;
+> > +}
+> > +
+> > +static void spacc_unregister_algs(void)
+> > +{
+> > +#if IS_ENABLED(CONFIG_CRYPTO_DEV_SPACC_HASH)
+> > +     spacc_unregister_hash_algs();
+> > +#endif
+> > +#if  IS_ENABLED(CONFIG_CRYPTO_DEV_SPACC_AEAD)
+> > +     spacc_unregister_aead_algs();
+> > +#endif
+> > +#if IS_ENABLED(CONFIG_CRYPTO_DEV_SPACC_CIPHER)
+> > +     spacc_unregister_cipher_algs();
+> > +#endif
+> > +}
+> > +
+> > +static int spacc_crypto_probe(struct platform_device *pdev)
+> > +{
+> > +     int rc =3D 0;
+> > +
+> > +     rc =3D spacc_init_device(pdev);
+> > +     if (rc < 0)
+> > +             goto err;
+> > +
+> > +#if IS_ENABLED(CONFIG_CRYPTO_DEV_SPACC_HASH)
+> > +     rc =3D spacc_probe_hashes(pdev);
+> > +     if (rc < 0)
+> > +             goto err;
+> > +#endif
+> > +
+> > +#if IS_ENABLED(CONFIG_CRYPTO_DEV_SPACC_CIPHER)
+> > +     rc =3D spacc_probe_ciphers(pdev);
+> > +     if (rc < 0)
+> > +             goto err;
+> > +#endif
+> > +
+> > +#if IS_ENABLED(CONFIG_CRYPTO_DEV_SPACC_AEAD)
+> > +     rc =3D spacc_probe_aeads(pdev);
+> > +     if (rc < 0)
+> > +             goto err;
+> > +#endif
+> > +
+> > +     return 0;
+> > +err:
+> > +     spacc_unregister_algs();
+> > +
+> > +     return rc;
+> > +}
+> > +
+> > +static void spacc_crypto_remove(struct platform_device *pdev)
+> > +{
+> > +     struct spacc_priv *priv =3D platform_get_drvdata(pdev);
+> > +
+> > +     if (priv->spacc_wq) {
+> > +             flush_workqueue(priv->spacc_wq);
+> > +             destroy_workqueue(priv->spacc_wq);
+> > +     }
+> > +
+> > +     spacc_unregister_algs();
+> > +     spacc_remove(pdev);
+> > +}
+> > +
+> > +static const struct of_device_id snps_spacc_id[] =3D {
+> > +     {.compatible =3D "snps,nsimosci-hs-spacc" },
+> > +     { /* sentinel */        }
+> > +};
+> > +
+> > +MODULE_DEVICE_TABLE(of, snps_spacc_id);
+> > +
+> > +static struct platform_driver spacc_driver =3D {
+> > +     .probe  =3D spacc_crypto_probe,
+> > +     .remove =3D spacc_crypto_remove,
+> > +     .driver =3D {
+> > +             .name  =3D "spacc",
+> > +             .of_match_table =3D snps_spacc_id,
+> > +             .owner =3D THIS_MODULE,
+>
+> This is some ancient downstream code. Base your work (means START from)
+> a new, recent drivers. This was fixed many years ago.
 
-> +static int nct_vendor_write(struct usb_interface *intf, union nct_vendor_cmd cmd, u16 val)
-> +{
-> +	struct device *dev = &intf->dev;
-> +	struct usb_device *udev = interface_to_usbdev(intf);
-> +	int res;
-> +	u8 *buf_val;
+PK: Sure, I will update this as per the recent driver changes.
 
-Why is this u8* ?
-It should be le16*
-
-> +	buf_val = kmalloc(2, GFP_KERNEL);
-> +	if (!buf_val)
-> +		return -ENOMEM;
-> +
-> +	/* Copy data to the buffer for sending */
-> +	buf_val[0] = val & 0xff;
-> +	buf_val[1] = (val >> 8) & 0xff;
-
-We have macros for that.
-
-> +static u16 nct_set_baud(struct usb_interface *intf, u16 index, unsigned int cflag)
-> +{
-> +	union nct_ctrl_msg msg;
-> +	union nct_vendor_cmd cmd;
-> +	u16 i;
-> +
-> +	msg.val = 0;
-> +	cmd.p.cmd = NCT_VCOM_SET_BAUD;
-> +	msg.p.spd = NCT_DEFAULT_BAUD;
-> +	cmd.p.index = index;
-> +	dev_dbg(&intf->dev, NCT_DRVNAME ": %s tty baud: 0x%X\n", __func__,
-> +		(cflag & CBAUD));
-> +	for (i = 0; i < ARRAY_SIZE(NCT_BAUD_SUP); i++) {
-> +		if ((cflag & CBAUD) == NCT_BAUD_SUP[i]) {
-> +			msg.p.spd = i;
-> +			dev_dbg(&intf->dev,
-> +				NCT_DRVNAME ": %s index %d set baud: NCT_BAUD_SUP[%d]=%d\n",
-> +				__func__, cmd.p.index, msg.p.spd, NCT_BAUD_SUP[i]);
-> +			if (nct_vendor_write(intf, cmd, msg.val))
-> +				dev_err(&intf->dev,
-> +					NCT_DRVNAME ": %s - Set index: %d speed error\n",
-> +					__func__, cmd.p.index);
-> +
-> +			break;
-> +		}
-
-If nothing matches, you do nothing?
-> +	}
-> +
-> +	return msg.p.spd;
-
-So errors are ignored?
-
-
-> +static int nct_serial_tiocmset(struct tty_struct *tty, unsigned int set,
-> +			       unsigned int clear)
-> +{
-> +	return nct_tiocmset_helper(tty, set, clear);
-> +}
-
-Why? Does this function do anything useful?
-
-> +static void nct_rx_throttle(struct tty_struct *tty)
-> +{
-> +	unsigned int set;
-> +	unsigned int clear = 0;
-
-Why?
-
-> +
-> +	/* If we are implementing RTS/CTS, control that line */
-> +	if (C_CRTSCTS(tty)) {
-> +		set = 0;
-> +		clear = TIOCM_RTS;
-> +		nct_tiocmset_helper(tty, set, clear);
-> +	}
-> +}
-> +
-> +static void nct_rx_unthrottle(struct tty_struct *tty)
-> +{
-> +	unsigned int set;
-> +	unsigned int clear = 0;
-
-Why?
-
-> +	/* If we are implementing RTS/CTS, control that line */
-> +	if (C_CRTSCTS(tty)) {
-> +		set = 0;
-> +		set |= TIOCM_RTS;
-> +		nct_tiocmset_helper(tty, set, clear);
-> +	}
-> +}
-> +
-> +static int nct_serial_write_data(struct tty_struct *tty, struct usb_serial_port *port,
-> +				 const unsigned char *buf, int count)
-> +{
-> +	int ret;
-> +	unsigned long flags;
-> +	struct nct_packet_header hdr;
-> +	int wr_len;
-> +	struct nct_tty_port *tport = usb_get_serial_port_data(port);
-> +
-> +	wr_len = min((unsigned int)count, NCT_MAX_SEND_BULK_SIZE - sizeof(hdr));
-> +
-> +	if (!wr_len)
-> +		return 0;
-> +
-> +	spin_lock_irqsave(&tport->port_lock, flags);
-> +
-> +	if (tport->write_urb_in_use) {
-> +		spin_unlock_irqrestore(&tport->port_lock, flags);
-> +		return 0;
-> +	}
-> +
-> +	/* Fill header */
-> +	hdr.magic = NCT_HDR_MAGIC;
-> +	hdr.magic2 = NCT_HDR_MAGIC2;
-> +	hdr.idx = tport->hw_idx; /* The 'hw_idx' is based on 1 */
-
-Endianness.
-
-> +
-> +	/* Copy data */
-> +	memcpy(port->write_urb->transfer_buffer + sizeof(hdr),
-> +	       (const void *)buf, wr_len);
-> +
-> +	hdr.len = wr_len; /* File filed 'len' of header */
-
-Endiannes
-
-> +static int nct_startup_device(struct usb_serial *serial)
-> +{
-> +	int ret = 0;
-> +	struct nct_serial *serial_priv = usb_get_serial_data(serial);
-> +	struct usb_serial_port *port;
-> +	unsigned long flags;
-> +
-> +	/* Be sure this happens exactly once */
-> +	spin_lock_irqsave(&serial_priv->serial_lock, flags);
-> +
-> +	if (serial_priv->device_init) {
-> +		spin_unlock_irqrestore(&serial_priv->serial_lock, flags);
-> +		return 0;
-> +	}
-> +	serial_priv->device_init = true;
-> +	spin_unlock_irqrestore(&serial_priv->serial_lock, flags);
-> +
-> +	/* Start reading from bulk in endpoint */
-> +	port = serial->port[0];
-> +	if (!port->read_urb)
-> +		dev_dbg(&port->dev, NCT_DRVNAME ": %s: port->read_urb is null, index=%d\n",
-> +			__func__, 0);
-> +
-> +	ret = usb_submit_urb(port->read_urb, GFP_KERNEL);
-> +	if (ret)
-> +		dev_err(&port->dev,
-> +			NCT_DRVNAME ": %s: usb_submit_urb failed, ret=%d, port=%d\n",
-> +			__func__, ret, 0);
-
-Error handling?
-> +
-> +	/* For getting status from interrupt-in */
-> +	if (!serial_priv->status_trans_mode) {
-> +		/* Start reading from interrupt pipe */
-> +		port = serial->port[0];
-> +		ret = usb_submit_urb(port->interrupt_in_urb, GFP_KERNEL);
-> +		if (ret)
-> +			dev_err(&port->dev,
-> +				NCT_DRVNAME ": %s: usb_submit_urb(intr) failed, ret=%d, port=%d\n",
-> +				__func__, ret, 0);
-> +	}
-> +	return ret;
-> +}
-> +
-> +static void nct_serial_port_end(struct usb_serial_port *port)
-> +{
-> +	struct nct_tty_port *tport = usb_get_serial_port_data(port);
-> +	struct usb_serial *serial = port->serial;
-> +	struct usb_interface *intf = serial->interface;
-> +	union nct_ctrl_msg msg;
-> +	union nct_vendor_cmd cmd;
-> +
-> +	/* Send 'Close Port' to the device */
-> +	cmd.p.index = (u16)tport->hw_idx;
-> +	cmd.p.cmd = NCT_VCOM_SET_CLOSE_PORT;
-
-Endianness
-
-
-> +again:
-> +	spin_lock_irqsave(&serial_priv->serial_lock, flags);
-> +	tport = serial_priv->cur_port;
-> +	if (!tport) {
-> +		/*
-> +		 * Handle a new data package (i.e., it is not
-> +		 * the remaining data without a header).
-> +		 * The package does not need to be combined this time.
-> +		 */
-> +
-> +		for (i = 0; i < urb->actual_length; i++) {
-> +			hdr = (struct nct_packet_header *)data;
-> +			/* Decode the header */
-> +
-> +			if (serial_priv->status_trans_mode) {
-> +				/*
-> +				 * Status data is also transmitted via bulk-in
-> +				 * pipe.
-> +				 */
-> +				if (hdr->magic == NCT_HDR_MAGIC &&
-> +				    hdr->magic2 == NCT_HDR_MAGIC_STATUS &&
-> +				    hdr->len == 24 && actual_len >= 28) {
-
-Endianness
-
-> +					/*
-> +					 * Notice: actual_len will be decreased,
-> +					 * it is equal to urb->actual_length
-> +					 * only at the beginning.
-> +					 */
-> +
-> +					/*
-> +					 * Status report.
-> +					 * It should be a standalone package in
-> +					 * one URB
-> +					 */
-> +					data += sizeof(struct nct_packet_header);
-> +					actual_len -=
-> +						sizeof(struct nct_packet_header);
-> +
-> +					nps = (struct nct_port_status *)data;
-> +
-> +					for (j = 0; j < actual_len - 4; j++) {
-> +						nct_update_status(serial,
-> +								  (unsigned char *)nps);
-> +						nps++;
-> +					}
-> +
-> +					spin_unlock_irqrestore(&serial_priv->serial_lock, flags);
-> +					return;
-> +				}
-> +			}
-> +
-> +			if (hdr->magic == NCT_HDR_MAGIC &&
-> +			    hdr->magic2 == NCT_HDR_MAGIC2 &&
-> +			    hdr->idx <= NCT_MAX_NUM_COM_DEVICES &&
-> +			    hdr->len <= 512)
-> +				break;
-
-Endianness
-
-	Regards
-		Oliver
-
+>
+> Please run standard kernel tools for static analysis, like coccinelle,
+> smatch and sparse, and fix reported warnings. Also please check for
+> warnings when building with W=3D1 for gcc and clang. Most of these
+> commands (checks or W=3D1 build) can build specific targets, like some
+> directory, to narrow the scope to only your code. The code here looks
+> like it needs a fix. Feel free to get in touch if the warning is not clea=
+r.
+>
+> > +     },
+> > +};
+> > +
+> > +module_platform_driver(spacc_driver);
+> > +
+>
+>
+> Best regards,
+> Krzysztof
 
