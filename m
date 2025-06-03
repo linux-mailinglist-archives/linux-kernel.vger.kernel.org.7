@@ -1,219 +1,211 @@
-Return-Path: <linux-kernel+bounces-672018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-672020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C623ACC9DE
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 17:12:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2671ACC9E1
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 17:13:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6D75188259C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 15:12:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98E0C16FB72
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 15:13:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 488B5239E97;
-	Tue,  3 Jun 2025 15:12:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50B2223BCE4;
+	Tue,  3 Jun 2025 15:13:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BS8fUwTM"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="CK8M2izD"
+Received: from AS8PR03CU001.outbound.protection.outlook.com (mail-westeuropeazon11012064.outbound.protection.outlook.com [52.101.71.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDB0B1DA23
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 15:12:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748963534; cv=none; b=adP4zRC7CamPS3rcX2Y6v048RxBUMKlIHdH2/JSjmtWDQXUPRPobnpBSakgZzlBIjveaaX9rZrZGo3ilFgt1NtKNrf4hkk4G2UcbtTpYJSU6Bm6syG/NE07hIW6Ra6VAF/gwGNMxsIakCUoNkkFgaTWAKRlUMrNu81w41PpnUUQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748963534; c=relaxed/simple;
-	bh=WXeE+4zgw5yDzH+wtBhzq4tF/NMbUK61HahSBhGOHZA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nBwUhAeborFIvV748eKZJXzb2QTeaZPX3cPMstMEMy7XwfYWzug5tITiD0PYEPgeAcQhGmivcTUQ635Grz5kBY29N1iQpfcBxt+gd5xsr3kWQkiZU5FdeHEOHjZe0EAyoBboVSfr/DK5K6LvOMIxUr2u13yrq+FFD6QVpTCDcdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BS8fUwTM; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1748963531;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=yV4upcIcEeZPkezK/N+B1d4V9SBJPPW756Iw1M95E3g=;
-	b=BS8fUwTMygWlYV9drss0L1l1fBTUBUoOr2FQJl9TgW7Y+8Ay9ZJH0jEHeAjPQ8KgM+BdVo
-	Srq+sjh1blwVQkGMAQuhViQ8idTr8/CubIGXeBbU4JfA53VvGwRxNl5pWS525JnC7c9uyr
-	yxpo0ENxRSRCBkNOR+PtXV5SsYJSBf8=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-652-OX_FWQYXNWOganzDSwUHJA-1; Tue, 03 Jun 2025 11:12:10 -0400
-X-MC-Unique: OX_FWQYXNWOganzDSwUHJA-1
-X-Mimecast-MFC-AGG-ID: OX_FWQYXNWOganzDSwUHJA_1748963529
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3a4f7f1b932so3216010f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jun 2025 08:12:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748963529; x=1749568329;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=yV4upcIcEeZPkezK/N+B1d4V9SBJPPW756Iw1M95E3g=;
-        b=wL6CsWCuKl+CBNl3k+qv5ARcgn3Ib2CoJdt64i2gbbwZ+KNBukD5PUvC+FrPhI+8kD
-         +/IMVMvAzOmvWfZCYxEi3Kq+MpuEjHW8piAQ7y9sEHeCwrihOqbiaGws0u+v2OnZQq7K
-         bmAOaNj7b3MLNwbjgaoyNSSmyUkIVbmXFETzqG7Dmot5Wq17dlnEpHp4ZsfCF08tvQkh
-         kVjj8tNTzljsohN1DDc1ze9syblg+0aZLOBRTAc8P9NV/0lbiPulOPfprdkA6zuWZ+sa
-         qVQJOopt+RxN4io1ZVgUoE7dl9+I4u47cMZb9EOh2wdW7KZkY9voyL+QAUkDKxIm2GRG
-         AhFA==
-X-Forwarded-Encrypted: i=1; AJvYcCUC0f8XCbRwWXpc60F+UByo1JMfiRqW/tS1p8bgkFDJg70qighLXX9zGVQYAkxIEXSKLQKr5QR/bAbWgng=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJVSVl5tSCfPYOzFYog0mKUxgWDjdnA1zE7GQbTprO8Rh6ZHg8
-	yptw9k3OW6siut1gKAgQF6RmvKvewIedRvWPrW2+iET8lv1aJ7gdpG4EtoWZ35vFtkh4k6tyT9b
-	l/qcB7WjfOx5byU1hwbjm4oSEgh0w/+4Udmeg/14hk00w8lQ5icMKFfCKr16ealpT/g==
-X-Gm-Gg: ASbGnctdTC1a467YsiJJ2AaCsFHCG8x9xldxn/GbuZxXb8GdPsUJeapw7UuXlG433lI
-	hbaeX1egzmxtskXyIK8C7b+c0Ew6OvGdkSaBetvHYiIhSAFjS53XOYZTaqPmiXU9sxNvW1NN6li
-	59Arq/DfUuIcUnSGfKUdzGchlJwQrVMe3rSJz0/f5fgGA1JQLYtkQLBysOXNzAYhiLJ5xwb4OYE
-	DFk4CWMxJ/P4F6Jo0NJPc0Fq7kCluBJCyFYhL+vUfMMTFngfI5HZN0m3POu/U9kG4jzTvZr1ioN
-	nMSkEAoPLKucr6brI/Zrqo/lCAcc9iidShP7dCQVy2Rfx8ObDfUXAJFSQ0cIJrhcfSGVaHEHFi8
-	KvSQ6YuRL1rvBOjALqXteRglQthYOa/gi+N1tGIg=
-X-Received: by 2002:adf:e28b:0:b0:3a5:1471:d89b with SMTP id ffacd0b85a97d-3a51471dbcdmr2350831f8f.53.1748963529402;
-        Tue, 03 Jun 2025 08:12:09 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG157vsFvHZVR7gc9EUIrYlGRxrorA7wkbvqHQGOvbvXc5DC6JejPz3WyJ6qQ2gZng0u3kXng==
-X-Received: by 2002:adf:e28b:0:b0:3a5:1471:d89b with SMTP id ffacd0b85a97d-3a51471dbcdmr2350812f8f.53.1748963528946;
-        Tue, 03 Jun 2025 08:12:08 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f0d:f000:eec9:2b8d:4913:f32a? (p200300d82f0df000eec92b8d4913f32a.dip0.t-ipconnect.de. [2003:d8:2f0d:f000:eec9:2b8d:4913:f32a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4efe740bbsm18632212f8f.54.2025.06.03.08.12.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Jun 2025 08:12:08 -0700 (PDT)
-Message-ID: <305bde6b-dd5a-4eb4-afc4-f7ed2b46d5b8@redhat.com>
-Date: Tue, 3 Jun 2025 17:12:07 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D6941DA23;
+	Tue,  3 Jun 2025 15:13:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.71.64
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748963582; cv=fail; b=euANzUlSAMmBlKTIw3RbfRaC9A790+Re3dGn1CDfJq18y4I0yUq53wkUJH8uxts2I2YFfNlZLggvZ1ECoqs5dtKzRW0r7/7XCwjCq2eNkPjiH0DIF2cONpZw/MBIraNlBsXh8FAb/Lg8NPYuUAMoGRI2wIPKNshhXWNc7W1gkI0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748963582; c=relaxed/simple;
+	bh=lXpJBNrS0BCuSXiTNUiSA2WBCZovLKCFEWjSvoK/Nys=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=lL6Ush+48G6w5F4e8C0esJnkpJV3XqO01NB/lfL1rwK9d0clBo+sUNJiKL60pDAyAxoxr1ScUmyaQyYMCFFFw53ZYyPao5D0RBNf6wDQzmMDzB3AlZHp9CPj4SGxm6VflKw8LciEnxYB+PSWcFZ7lAK641XL4IiaSNZVEzkvP5c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=CK8M2izD; arc=fail smtp.client-ip=52.101.71.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=wF87f4OdxDMycGAf4rbzH8RHQ+PAP6ZMa2it72Y6jroVYsu9FB2vdd6ue07YDFD3LNh4mF9CtciF2a32hX2FTqPCjzDl554WgTIwaalrzEAj9q1oQnyonK2WcySbAiZ6VM8Z7sobJ2CvVqzZcNZFWuLww2yT/9r2e2P0xTh6SE8fYngm6tY800HhYWgwWNb5eR9qIKOFSv9ekzAVgnOiLbw3VvuuxubvEfi0gNTul6zCmVkf9fXIaJHzwLvMGHVwxtXUf4JursW45rliIvz+6W168v4SeDJe65VjZxM7SYTwod2+0GWeIgqF5MaSEvcS8hVq9+Bm3RNyLGA0PwdI6g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=PMeJsRPB1iKdMfEdnVQghbx/iRnAPbzPhocvHbC4Cpo=;
+ b=rrw4C6+TyQf0zzfCdz8f5r93uNKQsK6q6tbRqX4SaQTA0trlzqtnTSXtaxMGjv0DDnrmkMTMH61HRm3QCdfGQtW+2BNRkLQmfpBDAnVLAxAMgoDcvAPi+6BPsCaHo0vzj7t1J7pAGn+CrqjXyfqGJphS8aHVwMyfrYz2EZb58spZqoEpTNy3VdjQHxLTKO50xZMI9aQKZzSyUgpF8ajLqs3vC1MPdfBBSKu/FEHF214enA8nKeLppvdlLceSB+Jm/wQpsc4c1A1eCaYkJq1DJ9PFoIj30qQZoZM2SSx9pQFT5+49oUTCmbRf5UZnhYkTHJUQWIzldYh73xzMD6XooA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=PMeJsRPB1iKdMfEdnVQghbx/iRnAPbzPhocvHbC4Cpo=;
+ b=CK8M2izDKyFZ5R9ptP1vZ8VZbf3VIjoOf1NuXy2g4im1rkcI+4Mg1k9cqGYWe+kf6ks4TRYIx/Jpai/Og02J+yviUODoH9Xy4DK1096WXOKxy+B3fMekozo77j6nFVJ0nBh85erNV6MyRA4hHzv8b3QsBVsJ+wECmWoElyg8e2U89Ju2PYDc7qr0RfYmAmsWhTYvqLvALbW0RtkCJpDke80okY63yjj/G+b9TaWK9RnSIYeGAHKSdwuE/DdRBKZ+c+CvfuwVdsp/ALOWpzGUTfbvP9H59gBm78718KjQD27FE5YA+bSJ9pefJj5qNb07LV0yb7IcRnDFiiCRQPcULg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by AM9PR04MB8164.eurprd04.prod.outlook.com (2603:10a6:20b:3ea::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8792.34; Tue, 3 Jun
+ 2025 15:12:57 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%6]) with mapi id 15.20.8769.025; Tue, 3 Jun 2025
+ 15:12:57 +0000
+From: Frank Li <Frank.Li@nxp.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Noah Wang <noahwang.wang@outlook.com>,
+	Naresh Solanki <naresh.solanki@9elements.com>,
+	Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>,
+	Michal Simek <michal.simek@amd.com>,
+	Grant Peltier <grantpeltier93@gmail.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Kever Yang <kever.yang@rock-chips.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
+	linux-kernel@vger.kernel.org (open list)
+Cc: imx@lists.linux.dev,
+	wahrenst@gmx.net
+Subject: [PATCH v2 1/1] dt-bindings: trivial-devices: Add compatible string synaptics,synaptics_i2c
+Date: Tue,  3 Jun 2025 11:12:37 -0400
+Message-Id: <20250603151239.1065763-1-Frank.Li@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: PH7PR13CA0022.namprd13.prod.outlook.com
+ (2603:10b6:510:174::24) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/3] mm, hugetlb: Clean up locking in hugetlb_fault
- and hugetlb_wp
-To: Oscar Salvador <osalvador@suse.de>, Peter Xu <peterx@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Muchun Song <muchun.song@linux.dev>, James Houghton <jthoughton@google.com>,
- Gavin Guo <gavinguo@igalia.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <20250602141610.173698-1-osalvador@suse.de>
- <20250602141610.173698-2-osalvador@suse.de> <aD2_0qoh1Os6srsA@x1.local>
- <aD4NyEmRc50OCUBy@localhost.localdomain> <aD4X68QSmrvI4P_D@x1.local>
- <aD79vg-jQQU69raX@localhost.localdomain>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <aD79vg-jQQU69raX@localhost.localdomain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AM9PR04MB8164:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5159f490-39a9-4dd2-e02b-08dda2b11f61
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|1800799024|366016|52116014|7416014|376014|921020|38350700014;
+X-Microsoft-Antispam-Message-Info:
+ =?us-ascii?Q?FIW5qSpyGElKkcTJD7Mri5LPbDf3Inu8W8dWGQpfxauM3lUXagolc4OzQUcg?=
+ =?us-ascii?Q?mODlbmC1dbCte53qAVEX3fGiOkVf8X+JDtRHBHvs5IhDX27IlLK8M/el0xxV?=
+ =?us-ascii?Q?U6Kt3Fbsc4C68EPutmB/owQs/y9S2gkeA8fhXt3znFBtMkjxn4eZeYQl6vqN?=
+ =?us-ascii?Q?/wCCk9RgzUr9mmX3Xfdg0Iocw8OMhyUSSZSdzEDBcAS61ej38jv45B+J3OjS?=
+ =?us-ascii?Q?UTjUcuHqIJ7vTbrbHHj9QLGRkpd0ERv5waIm4W0Rj+RUv42L9p7cD7BM860F?=
+ =?us-ascii?Q?xC5n87Rh++Y3fmR019Ve1MTdi1FxHH4It8FK6HXVslvn2OGCbHyh5wWdmWX9?=
+ =?us-ascii?Q?VRsXJ3QdNEUPR2iQYiOpdk5DlkiSbzgwgfv97ovL6wUGID53rXU9/a4lnU1a?=
+ =?us-ascii?Q?v5gB21yLqt/ZpUwVVGbUmkOG3u83BVBOucwVoL9VJiupOMULC4OHmbw3WuHw?=
+ =?us-ascii?Q?cf6fs06wQPK3VOtxafV3CmIWrvmdewRY+asx+9kwS0NA411s2bxpNwdt2Lx8?=
+ =?us-ascii?Q?/OiaiXwGBThzsbS4ck/XD0kuYXu85Gag+K32WHTv81giUebyjio/lObgZVy3?=
+ =?us-ascii?Q?0p7eAtjBeEMBzFnNagO8z6Arue3b/r9/A+srEF174uo81vd1eHqhg2WZcqTX?=
+ =?us-ascii?Q?HPHU7SL4q8b2DVi3bjpTrjCQ8vjbR/t1c2goi7y9KxW2B3LEe6YGRN+9A8rJ?=
+ =?us-ascii?Q?gaoAKYroJF6U74evAUxPk/yTmlRPsqLpScM+e/RhNsRfEuY4XuUu5ddEoWUo?=
+ =?us-ascii?Q?TN9y9iRdUJi8ZDnivF3Nra2LjqIOzkmKDONdi4S/Y+lRD2z+x5P0NBoBm8a7?=
+ =?us-ascii?Q?wZZWy+26UWI7F7vdQKcg2EtqAmHiWrDaTuiueyeV2NFfxEsA9vD4jIVhUZRt?=
+ =?us-ascii?Q?6uxm7u3MwB9CMFeW0ECZsaOHDz/jXUM3G9b9ox0IPaJA0wmGZtCexFtLCDV5?=
+ =?us-ascii?Q?tNSz5IxxyLguhhKRuAMtXZ37Jyq4hbIaQig6YAmz8E+U8UXnGC8OVaaW3cQp?=
+ =?us-ascii?Q?resdmtoByZV0vIlaoKBtgUqhcxhNgaZaC6Pz3PX3aNjSUr3eSR94aPo7Er6Y?=
+ =?us-ascii?Q?7R0CB1Tah5GCxQXnRwwtmRV5PfVRWIUfxIoC0vSua7btO/9TWzZzTq5tO8mN?=
+ =?us-ascii?Q?lxmDH+1ldzJP0QrGH1/ilFb1ZPBevGk37rOfJymoyQMaXVsKl4PJkU86t2fR?=
+ =?us-ascii?Q?jfMjAiknWvwZumMLWYS7E7FMhmU9oe5PfzK8XwsRjb+NaQwWe1eFxpXTDpoO?=
+ =?us-ascii?Q?fIflx7Okt5OEqaj9esekh5AUFgwNbPyQtt8lzE4JnJW1AWpp0q5GxHErkZNE?=
+ =?us-ascii?Q?//8ZbNAP+rzqGpqo6xGE9gCV56b+SoGVSd/pr4NaWaLRDimmkY2j1bMYZqYi?=
+ =?us-ascii?Q?vizXxv19puY3foUlVW8x/C1Vc2jFrGNNfEBVRxuZxTuLeF2CWTdXgzLzDub7?=
+ =?us-ascii?Q?zxQehfRR0RthaiKXj0A34fURUzNWoJsxDl6wo6v6890xnzi1TwCAPfVxDOZP?=
+ =?us-ascii?Q?1kXP9lo15nES2bQ=3D?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(7416014)(376014)(921020)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?us-ascii?Q?5IXMoG/fu4u3HKaAp19uh5AJqRwKoKHSJH9OUqiArObTHMcWB0s6Avh/NsMo?=
+ =?us-ascii?Q?p2hgS7LpXZQAds72VNaHQsJ98uO4Zaflf93adhxneB7NMH4THxZDhWtHv9Z8?=
+ =?us-ascii?Q?b5aGCIt5Yr21p4VIvUHzHRkRHha6cmSlvuwUSK7hjqp2KcDAeQkJwc3awQeZ?=
+ =?us-ascii?Q?bJrvbkxRO9UzUkRpN5A3j5tZD0DK3fqP1pOfO9nalGOLmgmMBLNlDX+8xOM6?=
+ =?us-ascii?Q?x8eoqUW/JrWxvkjUQpW2lBRWNUXduq6lt5Jl7HiGJNcnOW48PWZUXLS/GZGb?=
+ =?us-ascii?Q?VhGXsyjjM4Pj5M0TVsNpFASu+OeJUC9PNGoanTs/pLvxh3lRyRYGO6+XjzVf?=
+ =?us-ascii?Q?g+S1YlFCI1b2J12Me9/8eofy/VYrHbgMISMYxa8lfpXiOTs0PlSNwb4jRQnC?=
+ =?us-ascii?Q?yrDG3Ng7cCP6h01zbGojpaN/0EVogZFvmY6QmlU2aMKsJw0Mj8QucvL6OW/2?=
+ =?us-ascii?Q?czhsqnvc7NqYN2Dbt2E+eyKvGm231faFIPi7bC5owGzlq9fVma0duV9e2Ov/?=
+ =?us-ascii?Q?HwZUkpHTA3hTkbIi8GkWsDJLiKPiUdk7YI6ErzWbaCvt7e+e/08TH3t0ScEo?=
+ =?us-ascii?Q?f/n7PU0SHBIc3/wKMqnAUnkJYNmX2F29uqk0vFtEZ+d8f8FX97UqoeGSZm7x?=
+ =?us-ascii?Q?QR0XN8lEo3E4dWN2LCOV6XKQZSD2at+1nkMUpzdvZsirJ0hxqzntPvtiCaTa?=
+ =?us-ascii?Q?23rWnaQ7kIj1Jma4zVMymVzCtaQWf7FzQjojQaESLsSNWMbBE6HltQv+d7l6?=
+ =?us-ascii?Q?9Bcw7V16OnTam8Js8IC1pZMfJbHuqHA83Kypi9RaaBWv4uRK6iS6sg1cEI1V?=
+ =?us-ascii?Q?Vcyz4qKAgELE9Uj4y+dn+D4Fe6bgsLntmMH0ppEkmBFBm8MGZNuLrukYV15m?=
+ =?us-ascii?Q?CqUGK2PoNiQqaf/UOAw5htryGSdxTlm32i50LwQ1X3/ZvvxgXtKTDJcQ2Z1X?=
+ =?us-ascii?Q?ObOmCgW81/1kcJJbpmSHGZ9a14cbwLLPp5WhVuOo2XBKWJ+AGpjz67g44C0V?=
+ =?us-ascii?Q?HRp4enzkQaxVY3+UHyiKWthgQJtVRK9HQvbTW35XKgW+IpgYs3T5i/QMmL5N?=
+ =?us-ascii?Q?D8Aa3fEcRnS1iteItYrXCkMgA5GjUSeUAkQ8X+yDls5/oeSNfnrh86bKjDVM?=
+ =?us-ascii?Q?WvJIcIXeEnzOuYfOzP8tlqFFdh01v/X6RpJaW/TM5Z2Rvio4TbxMGZmI85lh?=
+ =?us-ascii?Q?iZzaRRQJLlDfOgTXROG44/jS0cM67e1cSlAvPxjBI3nWJLNqDs8WhQb3qb8v?=
+ =?us-ascii?Q?N3nKzhGYAQpKsjuh+4kDWP5P+8C0v+e4zGucflERmsOzfRHyRYmY+ipelmrD?=
+ =?us-ascii?Q?6Y9QDYu3LeAAFmKdks160p+f1GuP3/d/oCYsxhrv6iWn98aXpbp9oXgIEFSN?=
+ =?us-ascii?Q?cyjFaKEZFAGCKYUZWmoQlde0a469BcBih8XhITf1ZzC1Z+lauVGn09MzY7Ts?=
+ =?us-ascii?Q?qovSJDMudXjbTxX4Q57fdCDs78Oj7t+rQqZBLeFp46aXfoFzGgM2IORF3UlM?=
+ =?us-ascii?Q?PkwJ5I73eJoby7cs8QYBqwC2DVyoArHXbGtLFiJEn/Mfkw9f1E2FqiJ4fd63?=
+ =?us-ascii?Q?bJj13TSQjRg1ns49amPZT8124SRiB54Qj0QGgaMf?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5159f490-39a9-4dd2-e02b-08dda2b11f61
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jun 2025 15:12:57.8167
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 1OTJhKaTGAJp/UUicfiFnRBSzNK6yEyh8R6Kh90EtwwUQeT29UHNi5J/1fZDpCqcVs4ti4KinHIfdQtkYxsNxA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8164
 
-On 03.06.25 15:50, Oscar Salvador wrote:
-> On Mon, Jun 02, 2025 at 05:30:19PM -0400, Peter Xu wrote:
->> Right, and thanks for the git digging as usual.  I would agree hugetlb is
->> more challenge than many other modules on git archaeology. :)
->>
->> Even if I mentioned the invalidate_lock, I don't think I thought deeper
->> than that. I just wished whenever possible we still move hugetlb code
->> closer to generic code, so if that's the goal we may still want to one day
->> have a closer look at whether hugetlb can also use invalidate_lock.  Maybe
->> it isn't worthwhile at last: invalidate_lock is currently a rwsem, which
->> normally at least allows concurrent fault, but that's currently what isn't
->> allowed in hugetlb anyway..
->>
->> If we start to remove finer grained locks that work will be even harder,
->> and removing folio lock in this case in fault path also brings hugetlbfs
->> even further from other file systems.  That might be slightly against what
->> we used to wish to do, which is to make it closer to others.  Meanwhile I'm
->> also not yet sure the benefit of not taking folio lock all across, e.g. I
->> don't expect perf would change at all even if lock is avoided.  We may want
->> to think about that too when doing so.
-> 
-> Ok, I have to confess I was not looking things from this perspective,
-> but when doing so, yes, you are right, we should strive to find
-> replacements wherever we can for not using hugetlb-specific code.
-> 
-> I do not know about this case though, not sure what other options do we
-> have when trying to shut concurrent faults while doing other operation.
-> But it is something we should definitely look at.
-> 
-> Wrt. to the lock.
-> There were two locks, old_folio (taken in hugetlb_fault) and
-> pagecache_folio one.
-> The thing was not about worry as how much perf we leave on the table
-> because of these locks, as I am pretty sure is next to 0, but my drive
-> was to understand what are protection and why, because as the discussion
-> showed, none of us really had a good idea about it and it turns out that this
-> goes back more than ~20 years ago.
-> 
-> Another topic for the lock (old_folio, so the one we copy from),
-> when we compare it to generic code, we do not take the lock there.
-> Looking at do_wp_page(), we do __get__ a reference on the folio we copy
-> from, but not the lock, so AFAIU, the lock seems only to please
-> folio_move_anon_rmap() from hugetlb_wp.
-> 
-> Taking a look at do_wp_page()->wp_can_reuse_anon_folio() which also
-> calls folio_move_anon_rmap() in case we can re-use the folio, it only
-> takes the lock before the call to folio_move_anon_rmap(), and then
-> unlocks it.
+Add compatible string synaptics,synaptics_i2c for synaptics touch pad. It
+match existed driver drivers/input/mouse/synaptics_i2c.c.
 
-No.
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
+---
+change in v2
+- update vendor-prefixes
+---
+ Documentation/devicetree/bindings/trivial-devices.yaml | 2 ++
+ Documentation/devicetree/bindings/vendor-prefixes.yaml | 3 +++
+ 2 files changed, 5 insertions(+)
 
-It takes the lock around "folio_ref_count(folio) != 1" as well.
-
-IOW, if the ref_count is 1, the mapcount must be <= 1, and as the page 
-*is* mapped, we know the mapcount is >= 1.
-
-So if the ref_count == mapcount == 1 and the folio is locked, we cannot 
-have concurrent unmapping/splitting/migration of the folio that could 
-affect the mapcount/refcount.
-
+diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b/Documentation/devicetree/bindings/trivial-devices.yaml
+index 38bc1937ff3c9..dbec1300bb7ed 100644
+--- a/Documentation/devicetree/bindings/trivial-devices.yaml
++++ b/Documentation/devicetree/bindings/trivial-devices.yaml
+@@ -362,6 +362,8 @@ properties:
+           - sparkfun,qwiic-joystick
+             # Sierra Wireless mangOH Green SPI IoT interface
+           - swir,mangoh-iotport-spi
++            # Synaptics I2C touchpad
++          - synaptics,synaptics_i2c
+             # Ambient Light Sensor with SMBUS/Two Wire Serial Interface
+           - taos,tsl2550
+             # Temperature and humidity sensor with i2c interface
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+index 5d2a7a8d3ac6c..5b9c7ab6d8185 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
++++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+@@ -1496,6 +1496,9 @@ patternProperties:
+   "^synopsys,.*":
+     description: Synopsys, Inc. (deprecated, use snps)
+     deprecated: true
++  "^synaptics,.*":
++    description: Synaptics, Inc.
++    deprecated: true
+   "^tbs,.*":
+     description: TBS Technologies
+   "^tbs-biometrics,.*":
 -- 
-Cheers,
-
-David / dhildenb
+2.34.1
 
 
