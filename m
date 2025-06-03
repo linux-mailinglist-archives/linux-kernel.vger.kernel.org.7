@@ -1,83 +1,163 @@
-Return-Path: <linux-kernel+bounces-671968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2171ACC920
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 16:29:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F34AACC929
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 16:31:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81A4C16EB4E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 14:29:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF107188491B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 14:31:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77D9523AE84;
-	Tue,  3 Jun 2025 14:28:47 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E642231858;
+	Tue,  3 Jun 2025 14:31:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mIsyMEYj"
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2123823956A
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 14:28:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38F012F2D
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 14:31:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748960927; cv=none; b=JJV5T2LsmPkndeI0sEBfzVYitJz67AcjEqJc8bTM4KJAGcaFLnxDEnerc3+8hganurUqmNk7kPkWD0lIPpkvMq7B2DA/9YBTbnTaz+evoPK9+YZ3ZPniXOu0pKRPx2TXiRZXuvpQ1BCV53bQ2uR7Raz4HOPEvVJc2SZurcuNLW4=
+	t=1748961066; cv=none; b=OdbMWun8L61CZwLefCLs32csLtLhPJT+ucXcbhXEScobvsJejJ1UssdMeGAWl+oC+y9EqfStYPwsiaqqchHacyWxuIvAn84Lqr0QqPXKup69iynxp/DF4jmTIiBG268OknRGaZOMkw0niopmAE/U6kZsxr4ciLETCE8Y06Ab2MI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748960927; c=relaxed/simple;
-	bh=84arr64fJqUwFWGQ/5viSuxqmTf76JKBuvpYkZ9qiBQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=G9LpB6fC9tZBbt6C4XSkiIkMT59rIFw/ImlV6pD5yte1o5kJdIVRdAUnTkRhnGfyqp6ojjSAaUEydLwEOj++LUhEHPTC47bZ6JgXvaWlwZy/J/kaP6s0Zp7tKmUXeZz1Yd8S5ZsaODWS3pWCUXIVDs+aMlf9V4dTV1FGAwgQqz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E196DC4CEED;
-	Tue,  3 Jun 2025 14:28:45 +0000 (UTC)
-Date: Tue, 3 Jun 2025 10:29:59 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Hugh Dickins <hughd@google.com>
-Cc: Matthew Wilcox <willy@infradead.org>, LKML
- <linux-kernel@vger.kernel.org>, linux-mm@kvack.org, Andrew Morton
- <akpm@linux-foundation.org>, Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH] mm: Fix compile error when CONFIG_SHMEM is not set
-Message-ID: <20250603102959.20c85adb@gandalf.local.home>
-In-Reply-To: <fc2b6a94-bd2d-a5d9-c935-381a1613f47e@google.com>
-References: <20250602170500.48713a2b@gandalf.local.home>
-	<20250602171458.7ceabb1c@gandalf.local.home>
-	<aD4boBrdZXtz_5kL@casper.infradead.org>
-	<fc2b6a94-bd2d-a5d9-c935-381a1613f47e@google.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1748961066; c=relaxed/simple;
+	bh=6NNo+pvF/dHKDwGSOV/TA10QNoZmenREAqrjMtkqFXs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=qDk5ahZoGn/BPUM99WWxsM/3xQZmGgOunk1EEhkL7bg8Hn2clS/B/+UgLygcXb+0qVo8NGNDwsLXbAcn0DbcVQu+c90N4AD1OyUUUHE7sWW/IYKyHCGv2mOZkysstmVoVO2xmAfPCYQdI8JCdz2eTl+QqfYahCF1ZmN2Fr0x5sc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mIsyMEYj; arc=none smtp.client-ip=209.85.128.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-70df67e1b17so53315767b3.1
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jun 2025 07:31:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748961064; x=1749565864; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zoEEammRMNXgpQPQrPR9ZfAnkri+pzRkn1GdyQ+ROtU=;
+        b=mIsyMEYj6DKKYlfumBzi2/Xg3IctoEz+VXomJgFOLh3ge6hlWb9z+by6G/tOBTQ+3w
+         j/UuHZ8U5FcEnIMCBKQlI8rak/xTHmJXSKFvtG0FWErc4ORLleinPBmuK50mq3sIfKmv
+         Clx6vGYzcQuqG16S72yIyI5qmunEcWGhocdJhhJNa1JpYcxjt/lPWEgly1HqMWLrZAD4
+         YDjKWkmRHOLk8u9/9vv377RfSOvc5dsJ4tqi7u7XNuW4shMBA5whnKLABtC3fGbzZb+X
+         suim3KqXiVpGh+he2PgkyNuVeOGzHxJb0DVsAy2uDrjEgHbmFESO18C9QnVkKWCav6jA
+         r4Jw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748961064; x=1749565864;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zoEEammRMNXgpQPQrPR9ZfAnkri+pzRkn1GdyQ+ROtU=;
+        b=rkyrdY1q5r1l/YG2nA25vspVi2ULXl/NRELdKXdWKCyxQhKnRRFbkZ6XnM/yLnw9BO
+         IBDf+NHGJsaBDsge1dLrF9PdwVxroZ7z1prvbmAnEIJAQypAj7hr9eZ5k8yAnqQARa/X
+         376WU8tjBS+FfrI/hf00ywbirP8jguAfwO1cVwo1lDTILR39wWFE/CxGDsfGA3qwUyoe
+         oOMeiDAdmGfdT7BrBMOsOQpZhuX4R3wDLpJ+lMegpJOJqlnPFA2Lyam8ln0qGtAPmocz
+         z2ZpILxWCwHDddRTbMEG8TxQSAfoNgHIuM7CQuiuWhVldinqhWX39cri5BAkF0k/e0tW
+         TwIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXHJXmSsGoOUiQOA5eKzMiy/afybg92rjr0SSyI1B4TyY1/SQdjYdDzwjVnXk3DV/3p8nDncSua1t5cTt8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyyZJDGZJK+aICGQ9pPJE3WCe4UgAsWKNMXdKK21/PRXwz0wX3h
+	o06u/WZnmD73moSwKKGVhGc4SRCxGc5q5NaQuGvft2zNwUWBl2elf5z1n1agYw==
+X-Gm-Gg: ASbGnctYNH003flFu6zSxdCha2qB9tXf2V1Wonx9Q71wnKAzJTsnorDPzndnQsNs+oH
+	GF5BKGJNiNrb5GMI8nirEzjs1OFI/VbnOZvCYh+Fnf35rx1RfXAC6QAkWlOrDJlDsBuGZqYcx22
+	qP6CLBUIbT5NkgHx6sQg8FVm71vhlttzjC9uPRoniK5bsxSuylLfGbm4ncvjNS1qbn+HcbTkaqb
+	XdFhiYEsdndBjaXyT5u7y0cHiBd6k7P/ogRvADqkCbOUKK0jacL9md3q/s9FDAjiLp+w+NnfCRI
+	5fBmBGYI/Q/i/y4gfBLYkHHG+nxAc8bRGNAZuk8Izn8c7rduWWw=
+X-Google-Smtp-Source: AGHT+IHsk1RcYi7vSjqqd/5hsrEkV88SxfHjr9SD115HXad5863u6FxD3TtpgsUoH/o6Jj1rWrIkuA==
+X-Received: by 2002:a05:690c:380e:b0:70d:f47a:7e21 with SMTP id 00721157ae682-71097c2a902mr182608127b3.1.1748961063965;
+        Tue, 03 Jun 2025 07:31:03 -0700 (PDT)
+Received: from localhost ([2a03:2880:25ff:71::])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-70f8ad2439asm25380787b3.125.2025.06.03.07.31.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Jun 2025 07:31:03 -0700 (PDT)
+From: Joshua Hahn <joshua.hahnjy@gmail.com>
+To: "Huang, Ying" <ying.huang@linux.alibaba.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Gregory Price <gourry@gourry.net>,
+	David Hildenbrand <david@redhat.com>,
+	Zi Yan <ziy@nvidia.com>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Rakie Kim <rakie.kim@sk.com>,
+	Byungchul Park <byungchul@sk.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	kernel-team@meta.com
+Subject: Re: [PATCH 2/2] mm/mempolicy: Skip unnecessary synchronize_rcu()
+Date: Tue,  3 Jun 2025 07:31:00 -0700
+Message-ID: <20250603143101.1231739-1-joshua.hahnjy@gmail.com>
+X-Mailer: git-send-email 2.47.1
+In-Reply-To: <87h60xtw0p.fsf@DESKTOP-5N7EMDA>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Tue, 3 Jun 2025 01:02:36 -0700 (PDT)
-Hugh Dickins <hughd@google.com> wrote:
+On Tue, 03 Jun 2025 10:10:46 +0800 "Huang, Ying" <ying.huang@linux.alibaba.com> wrote:
 
-> Agreed that ramfs does not use swap, so calling swap_writepage() would
-> be weird.  But, thanks for the build fix Steve, but it cannot be right
-> because return 0 says shmem_writeout() successfully sent the page to
-> swap, and that has unlocked the page (or soon will do so).  It should
-> return an error (-ENXIO?), but I haven't checked what the callers do with
+> Joshua Hahn <joshua.hahnjy@gmail.com> writes:
+> 
+> > By unconditionally setting wi_state to NULL and conditionally calling
+> > synchronize_rcu(), we can save an unncessary call when there is no
+> > old_wi_state.
+> 
+> Per my understanding, in the original code, if !old_wi_state, we will
+> return immediately instead of calling synchronize_rcu() too.  Or I miss
+> something?
+> 
+> The patch itself is a nice cleanup with reduced line number.  Feel free
+> to add my
+> 
+> Reviewed-by: Huang Ying <ying.huang@linux.alibaba.com>
 
-Yeah, I figured it should return an error, but looking at the code I
-couldn't figure out what the proper error would be. Then I also noticed
-that the other stub functions just returned zero so I did the same.
+Hi Ying, you are correct. I was thinking in my mind to write "save an
+unnecessary goto" but my mind must have slipped. Thank you for the catch,
+and thank you for reviewing always. Have a great day!
+Joshua
 
-Perhaps add a WARN_ON_ONCE() if it is called without CONFIG_SHMEM configured?
-
-> that, nor whether they need the folio to be redirtied.  And wouldn't it
-> need an EXPORT like the real one?  Sorry, can't keep up, there are many
-> many things I should have looked at but have not... Tomorrow?
-
-Yeah, it probably needs an export as well.
-
-Note, if you come up with a solution, by all means use it and don't use my
-patch. I'm happy with a "Reported-by" and don't need to be the author. This
-is the "fix" I'm using so that I can test my code because without it, my
-tests fail.
-
-I'm also happy to send another update if it's simple.
-
--- Steve
+> in the future version.
+> 
+> > Suggested-by: David Hildenbrand <david@redhat.com>
+> > Signed-off-by: Joshua Hahn <joshua.hahnjy@gmail.com>
+> > ---
+> >  mm/mempolicy.c | 13 +++++--------
+> >  1 file changed, 5 insertions(+), 8 deletions(-)
+> >
+> > diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+> > index 3b1dfd08338b..b0619d0020c9 100644
+> > --- a/mm/mempolicy.c
+> > +++ b/mm/mempolicy.c
+> > @@ -3703,18 +3703,15 @@ static void wi_state_free(void)
+> >  	struct weighted_interleave_state *old_wi_state;
+> >  
+> >  	mutex_lock(&wi_state_lock);
+> > -
+> >  	old_wi_state = rcu_dereference_protected(wi_state,
+> >  			lockdep_is_held(&wi_state_lock));
+> > -	if (!old_wi_state) {
+> > -		mutex_unlock(&wi_state_lock);
+> > -		return;
+> > -	}
+> > -
+> >  	rcu_assign_pointer(wi_state, NULL);
+> >  	mutex_unlock(&wi_state_lock);
+> > -	synchronize_rcu();
+> > -	kfree(old_wi_state);
+> > +
+> > +	if (old_wi_state) {
+> > +		synchronize_rcu();
+> > +		kfree(old_wi_state);
+> > +	}
+> >  }
+> >  
+> >  static struct kobj_attribute wi_auto_attr =
+> 
+> ---
+> Best Regards,
+> Huang, Ying
 
