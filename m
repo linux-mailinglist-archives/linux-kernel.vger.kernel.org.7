@@ -1,128 +1,144 @@
-Return-Path: <linux-kernel+bounces-671325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 220E4ACBFBE
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 07:50:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6C07ACBFB2
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 07:44:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9F2E3A4519
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 05:49:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F6137A3B1A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 05:43:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93B921F4E59;
-	Tue,  3 Jun 2025 05:50:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EEE2664C6;
+	Tue,  3 Jun 2025 05:44:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xen0n.name header.i=@xen0n.name header.b="hm233AD0"
-Received: from mailbox.box.xen0n.name (mail.xen0n.name [115.28.160.31])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E0vXruVq"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEB19137C52
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 05:50:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.28.160.31
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FB951EF38E;
+	Tue,  3 Jun 2025 05:44:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748929813; cv=none; b=bcSQRP7HWOHHRTeudmC/m/iQguKQGwbsYrEGmSY2Di8thzQfKJ/CLg2/uer00p5wdsH+9wXFxPHS/2a9IvyZMUzUaqJpgjfVUj51silyjZgt112IGeJzKIzfKQGi6ihBao+4hmSuv/rHJ+suRXbpA9BDOhGqoOp0P2oAmHEvq54=
+	t=1748929468; cv=none; b=kYcb1Uf/LfMx1ZEdOGou2x3YbmDMBBX1MnIcnIFYBP9/X4/XSCoEoH7+CfNY+i/KymZeGfMwMgFNq/OUkdE1gzF7XoyZQic5drYTGdP69P9WQ3wdUp1sHnMOSmkr2y+GD7teYHK7eEk6Hv20+KvVm7w/NGx4gCN8GhjHAWglDH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748929813; c=relaxed/simple;
-	bh=pMJ4jUFH5A+k3056tldetExu6M15kPKHya2L/T2Yi0M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QCZRGq4qPh2AEthHkqFQFb6hHzMpKJmJOchRaI+3XO8/l7AlEdWB2AWn98DYCfrU3BIlScKCah0Nlg6GAsy8geM246JEgktelsbX0gE02LffD4lgFlvv1aJjisbGFJjBKwtWfjkXQ18ilZKUlwqxtW4/Fk/Ia3ePcxAob22cnuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=xen0n.name; spf=pass smtp.mailfrom=xen0n.name; dkim=pass (1024-bit key) header.d=xen0n.name header.i=@xen0n.name header.b=hm233AD0; arc=none smtp.client-ip=115.28.160.31
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=xen0n.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xen0n.name
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xen0n.name; s=mail;
-	t=1748929460; bh=pMJ4jUFH5A+k3056tldetExu6M15kPKHya2L/T2Yi0M=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=hm233AD0tlldOAMFtNJQWzJRSi93k0lraM6iNJL+/SP1jN/HYvk0HF0cLh8dJSmgi
-	 zeu6BEDp9mpZu9se9D+hjJZM1bW4EH/FG/nZlTX6sCJY9wScRDVUueSt3glDjiC0pd
-	 6sIPQCZt/Qugjgb4ky2+0BpFNAtZ1UU4yAIGhi6w=
-Received: from [IPV6:240e:b8f:949a:9000:a4ce:c2af:a2c2:7c9c] (unknown [IPv6:240e:b8f:949a:9000:a4ce:c2af:a2c2:7c9c])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mailbox.box.xen0n.name (Postfix) with ESMTPSA id B372D6011B;
-	Tue,  3 Jun 2025 13:44:20 +0800 (CST)
-Message-ID: <77dc0324-ce8d-4af4-9aaf-815bb9a1bd82@xen0n.name>
-Date: Tue, 3 Jun 2025 13:44:20 +0800
+	s=arc-20240116; t=1748929468; c=relaxed/simple;
+	bh=dPPB+e2AKQjQRxjQXvvyG2LTlZlQK8dCkvNjuc80I34=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DcVhnOocKvdIol2Z3fUjfv+sT56L8g6+RhWQ962+sJEM7kdNlFundj0NqyCWVPc8qXnvtxBVXZBCGwBdEkAHfQJs/H0Vf+Ii8ISbsiD/A0W33ibEQUOiLcnbjkjYCFErfBgzRFcUqw30Eg6/hVpPmSyo9QCOU7Oqa9e1J0hDvm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E0vXruVq; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-23508d30142so54172885ad.0;
+        Mon, 02 Jun 2025 22:44:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748929466; x=1749534266; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aKpAgpUCHhlrOnuYk46IsDIW82QvDojs8/hkNeBtlKc=;
+        b=E0vXruVqDK5soXNv6pczlBhcQn75raIbiZOKN3sNIca6hXVIPvwdkWbgdNsMvsGNwh
+         IrD1J71yCuIS79QfpY5KpyExICYjGG7+cM3cslxmEp+H7uMIsLyhxe9q4fBzRmaL8WtA
+         FL50Q6aC3s2ZAF9fOynRlfQ1SyMfymwZUE/Qp6XzOgFROZ8KDWqVpjjKY4NbSzELBDLC
+         2UTnvB2nf3VZU7hTlest9/vKWFzIgV614ZDwj0qrpiTgb5hB0a0dIhn0kovtDLNrkpNu
+         D1ypE1lLQCWhWjd+E3s26akRnioigwwy+tRCBnTr2y6eUoQai5uS7Zolvl4PrrZXFD/I
+         +6Qg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748929466; x=1749534266;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aKpAgpUCHhlrOnuYk46IsDIW82QvDojs8/hkNeBtlKc=;
+        b=pR9nSLk/lWKTIen90pVTvnIbq2sCvCjAILl5XHcpQNFv8mhu95mxUZq3+gsPi9e/i3
+         OpH9VMjQumzbhBAzV4RxtiA2X6ygPOzP/uR316RBfk0BRuLfJmptwYYBfYqFe0C2E6pw
+         bNKpqyuPr925RzjhJLiOlz9C/dmdII0zdKwlRE/GheVw6u/g6D8S9/+rgooWHd7QK28c
+         beUJcsMuWs49Zd7HLWVpP8KozEDtdZaf9K2Gy45Eg5DubC7njJJdDed0X9Hq2VRRX5te
+         VlPlKDYq/dOJYxhdtfw3HlJeKZ+lYM9/JFyTNgeY7jGCVgA2Gm9Rf/7ZlPzjOCePqbaH
+         LFjg==
+X-Forwarded-Encrypted: i=1; AJvYcCUh1VIbyLAwrg1LQpSacmk/ShrdmMWZ3xD9/gWlu64nYvz7sosfXT0IhDduftY6lAGyS4Eq3aFcwLCgQqpB@vger.kernel.org, AJvYcCVzR5iCWNS7C2kDPuOEC2w1DXCLSWNY3QlAoW0e+tSLCmNYwLSpav3G7gy4ciET9VCEXR+9DWZrIvhw0lWs@vger.kernel.org, AJvYcCXu7OkwhCNK//Qa1lAUH9DtxZnX6oBkTjedc9ZTcpm/8tAVfIR3YgGyYz80ZhhSS/UnUKEYJCXxuGKk@vger.kernel.org
+X-Gm-Message-State: AOJu0YwInFGi0aEoYVzSuo1SXB1PpRQX0casBdk22C/RfDlJ7uOODsoV
+	zyhQTLrZtUtwTqX4jN/DbCjn8X4EdLVdyvoQ6mKfp7U5+TqHtynevh+x
+X-Gm-Gg: ASbGncu+B553jzdGtHZjcm8vzmPrE/HH83Usulf+PhtuMlKBIm9YgzqXsjJ4pzeyACm
+	S3htJ2fHQciyoB+mu7aoS8fV6krmVEgMAMgigGLli0Wt9Fr3hg2tcBBsi/Nh1ECmo8YqJkgdhkS
+	dpgYYS954Gp52VwXLTka/urAN5mmCXgf7p7vxEN60JvoDV29aI/3Hf0BwtFDZX3Sp5RZNC9mDQY
+	qNZHQetk8vR6OJSSwYGN/PcyF2znnsC0wN2svldMlRliaXP1PUTAT51teYc8GmMNB/I5DKrCFJ9
+	ms00jiegQiCr+/TRfrvBtI/aHvf4tYDbEXpdOpuBXCqOl0xLcmI4QsKJNx3cJHOg
+X-Google-Smtp-Source: AGHT+IE1VqfVkYV88+WJOAzxaRArGW9u48gtcbqgzCXLWxDE7uKmXgDwxTUrlP+CCGErpeNTzvEQxg==
+X-Received: by 2002:a17:902:e94d:b0:234:eb6:a35d with SMTP id d9443c01a7336-235395a1e69mr204174135ad.27.1748929466385;
+        Mon, 02 Jun 2025 22:44:26 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23506bc88a7sm80031165ad.39.2025.06.02.22.44.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Jun 2025 22:44:25 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Mon, 2 Jun 2025 22:44:25 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Huacai Chen <chenhuacai@loongson.cn>
+Cc: Arnd Bergmann <arnd@arndb.de>, Huacai Chen <chenhuacai@gmail.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	linux-arch@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Biggers <ebiggers@kernel.org>, linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] asm-generic: Add sched.h inclusion in simd.h
+Message-ID: <4c787fc1-637d-41dd-84eb-d11fbd71ddfb@roeck-us.net>
+References: <20250530041658.909576-1-chenhuacai@loongson.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] platform/loongarch: laptop: Support backlight power
- control
-To: Huacai Chen <chenhuacai@kernel.org>, Yao Zi <ziyao@disroot.org>
-Cc: Jianmin Lv <lvjianmin@loongson.cn>, linux-kernel@vger.kernel.org,
- loongarch@lists.linux.dev, Mingcong Bai <jeffbai@aosc.io>,
- Kexy Biscuit <kexybiscuit@aosc.io>
-References: <20250531113851.21426-1-ziyao@disroot.org>
- <20250531113851.21426-3-ziyao@disroot.org>
- <CAAhV-H7RBcaAP8WjjrX20cvuMixarqyeTLoMPdb8QMztz_648g@mail.gmail.com>
-Content-Language: en-US
-From: WANG Xuerui <kernel@xen0n.name>
-In-Reply-To: <CAAhV-H7RBcaAP8WjjrX20cvuMixarqyeTLoMPdb8QMztz_648g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250530041658.909576-1-chenhuacai@loongson.cn>
 
-On 6/3/25 12:16, Huacai Chen wrote:
-> On Sat, May 31, 2025 at 7:39 PM Yao Zi <ziyao@disroot.org> wrote:
->>
->> loongson_laptop_turn_{on,off}_backlight() are designed for controlling
->> power of the backlight, but they aren't really used in the driver
->> previously.
->>
->> Unify these two functions since they only differ in arguments passed to
->> ACPI method, and wire up loongson_laptop_backlight_update() to update
->> power state of the backlight as well. Tested on TongFang L860-T2 3A5000
->> laptop.
->>
->> Signed-off-by: Yao Zi <ziyao@disroot.org>
->> ---
->>   drivers/platform/loongarch/loongson-laptop.c | 53 +++++++-------------
->>   1 file changed, 19 insertions(+), 34 deletions(-)
->>
->> [snip]
->>
->> -int loongson_laptop_turn_on_backlight(void)
->> -{
->> -       int status;
->> -       union acpi_object arg0 = { ACPI_TYPE_INTEGER };
->> -       struct acpi_object_list args = { 1, &arg0 };
->> -
->> -       arg0.integer.value = 1;
->> -       status = acpi_evaluate_object(NULL, "\\BLSW", &args, NULL);
->> -       if (ACPI_FAILURE(status)) {
->> -               pr_info("Loongson lvds error: 0x%x\n", status);
->> -               return -ENODEV;
->> -       }
->> -
->> -       return 0;
->> -}
->> -
->> -int loongson_laptop_turn_off_backlight(void)
->> -{
->> -       int status;
->> -       union acpi_object arg0 = { ACPI_TYPE_INTEGER };
->> -       struct acpi_object_list args = { 1, &arg0 };
->> -
->> -       arg0.integer.value = 0;
->> -       status = acpi_evaluate_object(NULL, "\\BLSW", &args, NULL);
->> -       if (ACPI_FAILURE(status)) {
->> -               pr_info("Loongson lvds error: 0x%x\n", status);
->> -               return -ENODEV;
->> -       }
->> -
->> -       return 0;
->> -}
-> I prefer to keep them, in downstream kernels there are users of them,
-> I don't want to add them back if one day those users are upstream.
+On Fri, May 30, 2025 at 12:16:58PM +0800, Huacai Chen wrote:
+> Commit 7ba8df47810f073 ("asm-generic: Make simd.h more resilient")
+> causes a build error for PREEMPT_RT kernels:
+> 
+>   CC      lib/crypto/sha256.o
+> In file included from ./include/asm-generic/simd.h:6,
+>                  from ./arch/loongarch/include/generated/asm/simd.h:1,
+>                  from ./include/crypto/internal/simd.h:9,
+>                  from ./include/crypto/internal/sha2.h:6,
+>                  from lib/crypto/sha256.c:15:
+> ./include/asm-generic/simd.h: In function 'may_use_simd':
+> ./include/linux/preempt.h:111:34: error: 'current' undeclared (first use in this function)
+>   111 | # define softirq_count()        (current->softirq_disable_cnt & SOFTIRQ_MASK)
+>       |                                  ^~~~~~~
+> ./include/linux/preempt.h:112:82: note: in expansion of macro 'softirq_count'
+>   112 | # define irq_count()            ((preempt_count() & (NMI_MASK | HARDIRQ_MASK)) | softirq_count())
+>       |                                                                                  ^~~~~~~~~~~~~
+> ./include/linux/preempt.h:143:34: note: in expansion of macro 'irq_count'
+>   143 | #define in_interrupt()          (irq_count())
+>       |                                  ^~~~~~~~~
+> ./include/asm-generic/simd.h:18:17: note: in expansion of macro 'in_interrupt'
+>    18 |         return !in_interrupt();
+>       |                 ^~~~~~~~~~~~
+> 
+> So add sched.h inclusion in simd.h to fix it.
+> 
+> Fixes: 7ba8df47810f073 ("asm-generic: Make simd.h more resilient")
+> Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
 
-Then these symbols should be properly EXPORT_SYMBOL_GPL marked?
+Tested-by: Guenter Roeck <linux@roeck-us.net>
 
--- 
-WANG "xen0n" Xuerui
-
-Linux/LoongArch mailing list: https://lore.kernel.org/loongarch/
+> ---
+>  include/asm-generic/simd.h | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/include/asm-generic/simd.h b/include/asm-generic/simd.h
+> index ac29a22eb7cf..70c8716ad32a 100644
+> --- a/include/asm-generic/simd.h
+> +++ b/include/asm-generic/simd.h
+> @@ -4,6 +4,7 @@
+>  
+>  #include <linux/compiler_attributes.h>
+>  #include <linux/preempt.h>
+> +#include <linux/sched.h>
+>  #include <linux/types.h>
+>  
+>  /*
 
