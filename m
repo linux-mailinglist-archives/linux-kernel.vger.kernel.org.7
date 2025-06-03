@@ -1,154 +1,121 @@
-Return-Path: <linux-kernel+bounces-672286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-672280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37874ACCD48
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 20:45:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58290ACCD41
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 20:43:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C1A61897BB6
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 18:45:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91EA23A5329
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 18:43:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9C88289E03;
-	Tue,  3 Jun 2025 18:44:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3227288C36;
+	Tue,  3 Jun 2025 18:43:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h6P2mhWF"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RZ1SFDya"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B263289832
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 18:44:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86E2A288C23;
+	Tue,  3 Jun 2025 18:43:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748976251; cv=none; b=M8eFqAJuFNrQdFjkE2bbENIjBjXbyRklMvSKi+HIGORXQr/RJ69ZKUP8CyBBqFZOMRPPaBMiX6cXLpxMseMpSCWOyfgQQg+7xfI+bBChZaegJQ6HWpGHeqAfcYryZN3ODxpKR+yxNruGV8IiL9bjLjq1pWLSOnmBFbSlu0qXFS0=
+	t=1748976226; cv=none; b=OU0oXicmh2tDEgT2GIeTRqgzO1woV++aGf5AmB2n1RFtHxlR+e5mdhW5vMEVnV/tuvV5it7e22rC4k+32/B3HA/JOFffYzt1LERJqFoRM7WicH6LM84Lisk9uIK1P+0e1XN+rIcAU4tpkKKd8/bcSFKtAIq82BmSZ/6B3n90nR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748976251; c=relaxed/simple;
-	bh=cs0d62jUhTsQ4M0UtMJEMQnYLyBLCUuZP7GJM7VZ4Mc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=j4XLb3kFTUmNOGFzdtQjIHLtzND+4z+bavmyyQB3TH1R7tGkVkIZKpxld1xpTk1R/UD0VTnjPBTyMWz0WQb4xilKzVHEqGGJLCTU4MEb/AnvAO+tA57gv2XfDESJl7uXZ6vd8qjTyieTm8XFNFhSmURl5qhy/4Pp2ZiMcJ+ra4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h6P2mhWF; arc=none smtp.client-ip=209.85.221.53
+	s=arc-20240116; t=1748976226; c=relaxed/simple;
+	bh=kch8Nb5zEEuVRy69il7fuRGCjksvYPemCS0QdMlvh9o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sbs2EI6Hbrr/S+0pfRX6/mPzPzi1LJrTifHLHealaEhQDIU1kOqSKLUrq5kudqSUwIXqCy+B4fnHel47EdFplnvlCyORF+USz4D/aiUA6/4fs3snjZhGaGueKCFUr+T5BPta54ieiAJKoSFQm6+7gCi2ynPj8clI958XCe8ZQR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RZ1SFDya; arc=none smtp.client-ip=209.85.221.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3a3758b122cso3977997f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jun 2025 11:44:09 -0700 (PDT)
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3a4f72cba73so130440f8f.1;
+        Tue, 03 Jun 2025 11:43:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748976248; x=1749581048; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1748976223; x=1749581023; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=B9FZ5oqjuv5Ikr1VhUnEUNb3J4Oy/+PaHPwc/4HpVkQ=;
-        b=h6P2mhWFj/Wh14JvoZTqlDsCRl0yLer1qZTqY6mO5NvHagL5CMrB7GUEXfKtVo4OHo
-         eTYz4eqvuL1KPoZ4X/HyGXd+YHoduUYf2+dh4T9cCTw+jtunGCwAXrrYr2p9HMV8hJDL
-         2B5TyWQNt/62hNETkPA+kSiRvuhAEBi4EEZk+8mXlJAoM/9s3Ks4qyX82tkfQtP5+eai
-         sL0RvQRKHaRHgQ5YGtAFusGMv7/2Vrg25IdJu9LnCMURq+dxaYPUV9q+//6a1HxhMDAT
-         0hUfkRcsSilxJ7tlLl1ReaKjMiq2kcIgcZ8MGBRLKvaJuUQqZNhX0o/SyoLo+ja29mLm
-         00ug==
+        bh=kch8Nb5zEEuVRy69il7fuRGCjksvYPemCS0QdMlvh9o=;
+        b=RZ1SFDya8Wh30DIZdv/yFFD6VYMHeiXoTSqVVuNLZHvtuMEZHua+zssM/hzclu00Lm
+         G5Y756/A53gn29St7a1vH3x5ET8scAT5JV+Q+MBw4zA2tsJMcaC0nfd+3UzL5FrnBT4p
+         6y5IFp9hOhBwQyL1e8jJIbf7YbUvbRta1EkAqBLjksPcsSj35fZDXw1g+dOsOomRPb4n
+         FJP/D4Wde6li3qVUWLZtx7ZmveBcA0pa5TUWGSVVkz7apkjKjndvEIJXxPJVcel/T6Fh
+         QG87q1a2yd5QfE1xtArT6WK3OYC3jMuqth1E2hyC+Nt9BKKDFw5kWR4UG7E7qlZnAQ9R
+         3yhg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748976248; x=1749581048;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1748976223; x=1749581023;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=B9FZ5oqjuv5Ikr1VhUnEUNb3J4Oy/+PaHPwc/4HpVkQ=;
-        b=AMKttGj9noy5sEaWdmGddaQYl3EMKLp2s58s6vkbuZQPMxRaAPVwEyb4HfQtCQGSr0
-         82TBIHVjSjFeZqXi3+AXY6E9yDKlEzsf6VLIJp0FY2Io/aVHpeq+0yD30wDRWFXNXLWy
-         mQ40w+slPqxOlFupWrjt5aKiANb8jKCN7cYz+v+bpTKZJYVnXqAWdxuemtFaFHYHrmPj
-         HthWjjVZHQQzy8IRqvVBbK0bU9rfXpQ5v8sNnVOC78nMslq64igyWclvJquESwYd1m4t
-         dsEPe27xmdkrgGYAAuDgq1D8T/Qfr4pEDd2ZYgSkTr4wF43XvL3lQiFzJC6bL4gXwB5f
-         rl8w==
-X-Forwarded-Encrypted: i=1; AJvYcCXS0f452tLjofDODGp4pVJqGHBZSw9Pqykzs3D1HfPr3HZDRUr+lnHbsyvzUocpi6fBLmYHOv+geJYxCPk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZ8i4DlhenfLaXEXRRAChsmtc2dMsrUMIakhPWOCPw3s0Q7Z+y
-	e3AoL9YIlff3y2uVFWpmme+BBIp9yGUnXVnBxfjnIfNT/XaH/r3EGFLl
-X-Gm-Gg: ASbGnctZM26oNYGyeOoEuJcWDcmcvCXDseNlJ0VIC1Ea7+LXAe1E7dycVkfvnfc1Au5
-	raD2i58m4BlA5OQNDoyaH+CWvXfw5SZ7V76SarnvQFCowK3KXGO2/5Zec0Hq/Z9CJZFK0nnuetR
-	Ph6hBXhhT3lp4S59pZg/+PAnuX+ufQDYHsiKhhKKHxkR+1EfEwcfyjSBPHTEeNujauc2GakkzDp
-	F7p0mo35OytULegg6w3vCmDIA5XFLa7Czhx+xbuEbiD6i5rQ0IsoSO/m79uiEPnbQFMbo8nLNPd
-	5IK4DKT5jNv86MLfzw0t2o8SVd+Bzl5zdss05MVDtBYBd2d4QuHp+66wJgIMqvByrs8KW4XnSeu
-	SoZy/D0W//hU=
-X-Google-Smtp-Source: AGHT+IF5Hwuvnc/0J0y8rHsrGxR6kUfr4vat5I1FdEtpqaq/YMu7JxaNXcvi1U8W2zY7/o/ig/bjaw==
-X-Received: by 2002:a05:6000:2089:b0:3a4:e68c:beeb with SMTP id ffacd0b85a97d-3a4f7a4d34dmr12758179f8f.22.1748976247866;
-        Tue, 03 Jun 2025 11:44:07 -0700 (PDT)
-Received: from localhost.localdomain (82-64-73-52.subs.proxad.net. [82.64.73.52])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4efe73f83sm18449959f8f.49.2025.06.03.11.44.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Jun 2025 11:44:07 -0700 (PDT)
-From: Dave Penkler <dpenkler@gmail.com>
-To: gregkh@linuxfoundation.org,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Cc: Dave Penkler <dpenkler@gmail.com>
-Subject: [PATCH 4/4] staging: gpib: Add bit and byte padding to ioctl structs
-Date: Tue,  3 Jun 2025 20:43:20 +0200
-Message-ID: <20250603184320.30594-5-dpenkler@gmail.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250603184320.30594-1-dpenkler@gmail.com>
-References: <20250603184320.30594-1-dpenkler@gmail.com>
+        bh=kch8Nb5zEEuVRy69il7fuRGCjksvYPemCS0QdMlvh9o=;
+        b=KNlMojUM+PsxzvGYRUOU7fci3RvU4+j8/Fv2C4xWKPtvDPKZ/vafo0O/1schqYnHUG
+         HCepfvmxv6iV83L32bsdKSyPomq7XpCz9NSWAtl+nh3oLubQ3A7vzU4rQeg9/Ll99aGy
+         2h7AkARJf/IY9q4Ve2URaCgOESwpqs1PqRni99VKLshuZpjWMCnpCiRxtcxNst2jcBKP
+         ZuLLp+QahQVgHmviqBZKD6+LP+uEUALMWHAKHNYyCJeWkZB3BAfPLIwC9aNxCEtgQjCL
+         izJzhOcRCrO4KdQT/Xac25YyKzcGA9YSG/EbPKFu0k/GcK9xIEcHLRynnEy5qnWJL4s+
+         46wQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUKb2oTkW6RlJWkJYkEXI6dVWI5bV4cebdFVoZi/klk2Ie36sknoHzNn8dAKIoZ/2vaxmM=@vger.kernel.org, AJvYcCV1f5FP+mpRcGma13IkM6u9q2e5WUeOinP3NR03xsaGp6unbs4qWY0QWF4JSn7CG45Pwyaybg9TMAK5Q6YiF5Lb1w==@vger.kernel.org, AJvYcCXft3HM3L8wqFT2OGJhmkNOV9kg4Tl6un3LulczlVu9M1DO3FqncD+nYX9/ZcQGIDitxd0uNWDqZlVmQYbI@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7aTAOa+7d8Rm70u+aylc1f3n+EwYQsnimpXHgiZippUKDtPBt
+	KyKf04Plq9noBALw1Vw6OmugxMbrBAzWXuk9o8FpVw721JS80pDU2VflCv9ASBHrMqJdws7NhOJ
+	nvcQc0tsT4AmQT8KuZWiI5MtiOXzpYZ4=
+X-Gm-Gg: ASbGnct0rBH8IlewOX+uyMu70uODgO5MTH81VwpeumRhrEKUB09wAlKFWz5PgB6Rv9f
+	mvZeF66j4hJSY/yz2dpukHyQ5O1sRURs0JxVvQGb/EwPqHUHHwR8C6wwoLlLqRFgKR7wn/cnps6
+	AqPRS22HQB9gtK8Mck1hn1Of/6h9T6HOwlO4RmLWpXWTEEaH+qS+jDHik0v6g=
+X-Google-Smtp-Source: AGHT+IHtAF6H5lxG7AUR9eWXQtiTtAAlk2tzZWQDxyPjZxQeyvoi6n/3OdG5W8tknilp89tmpfnxn3B+hx96ybhtJIo=
+X-Received: by 2002:a5d:5847:0:b0:3a4:ed9a:7016 with SMTP id
+ ffacd0b85a97d-3a5141cfce3mr3213641f8f.26.1748976222612; Tue, 03 Jun 2025
+ 11:43:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250521222725.3895192-1-blakejones@google.com>
+ <20250521222725.3895192-2-blakejones@google.com> <aC9iF4_eASPkPxXd@x1>
+ <CAP_z_Cg_vH1+BAm87U4gYQ0hDRGtHkkYb2DHtTRSd_QNvg3ZLQ@mail.gmail.com>
+ <CAP_z_ChErhmooT5rhyXH8L-Ltkz3xdJ7PG20UKDpn9usMUgqTA@mail.gmail.com>
+ <aDntjJcJsrQWfPkB@google.com> <CAP_z_CjLtMq_FvmijnFUQbD5UUw=T9jP_pHWCw5fS=38dgSh9g@mail.gmail.com>
+ <CAP_z_Ch8hKvGvot7140ShuCZOxkb+7M7Wpa4AY-D-Arp9P5ffg@mail.gmail.com>
+In-Reply-To: <CAP_z_Ch8hKvGvot7140ShuCZOxkb+7M7Wpa4AY-D-Arp9P5ffg@mail.gmail.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Tue, 3 Jun 2025 11:43:29 -0700
+X-Gm-Features: AX0GCFsPfQN6jWaDMpO2qBFUYadYsNqbhI_iC3UvHyKkQ97waCljVp6CsG0xuY4
+Message-ID: <CAADnVQ+pnP-L7WOxBHGfiT2yF5WBWa_6=UccnYib8ugm+o6G3Q@mail.gmail.com>
+Subject: Re: [PATCH 1/3] perf: add support for printing BTF character arrays
+ as strings
+To: Blake Jones <blakejones@google.com>
+Cc: Namhyung Kim <namhyung@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Ian Rogers <irogers@google.com>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	Chun-Tse Shao <ctshao@google.com>, Zhongqiu Han <quic_zhonhan@quicinc.com>, 
+	James Clark <james.clark@linaro.org>, Charlie Jenkins <charlie@rivosinc.com>, 
+	Andi Kleen <ak@linux.intel.com>, Dmitry Vyukov <dvyukov@google.com>, Leo Yan <leo.yan@arm.com>, 
+	Yujie Liu <yujie.liu@intel.com>, Graham Woodward <graham.woodward@arm.com>, 
+	Yicong Yang <yangyicong@hisilicon.com>, Ben Gainey <ben.gainey@arm.com>, 
+	LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
+	"linux-perf-use." <linux-perf-users@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Ensure that all structs have a size that is an integral mutliple
-of 32 bits.
+On Tue, Jun 3, 2025 at 11:24=E2=80=AFAM Blake Jones <blakejones@google.com>=
+ wrote:
+>
+> The libbpf patch set is under discussion right now. Once it converges,
+> is there a way to include those patches in the perf tree without
+> waiting for them to go up to the main tree and then back down? Could I
+> resend them here, or include them as the first part of my next patch
+> series?
 
-Change trailing single bit field to __u32 in gpib_open_dev_ioctl
-Add byte padding to  gpib_serial_poll_ioctl and gpib_request_service2
-Add bit padding to gpib_board_info_ioctl and gpib_ppoll_config_ioctl
-
-Signed-off-by: Dave Penkler <dpenkler@gmail.com>
----
- drivers/staging/gpib/uapi/gpib_ioctl.h | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/staging/gpib/uapi/gpib_ioctl.h b/drivers/staging/gpib/uapi/gpib_ioctl.h
-index 0da47e28caaa..55bf5e55507a 100644
---- a/drivers/staging/gpib/uapi/gpib_ioctl.h
-+++ b/drivers/staging/gpib/uapi/gpib_ioctl.h
-@@ -29,7 +29,7 @@ struct gpib_open_dev_ioctl {
- 	__u32 handle;
- 	__u32 pad;
- 	__s32 sad;
--	unsigned is_board : 1;
-+	__u32 is_board;
- };
- 
- struct gpib_close_dev_ioctl {
-@@ -40,6 +40,7 @@ struct gpib_serial_poll_ioctl {
- 	__u32 pad;
- 	__s32 sad;
- 	__u8 status_byte;
-+	__u8 padding[3];   // align to 32 bit boundary
- };
- 
- struct gpib_eos_ioctl {
-@@ -79,6 +80,7 @@ struct gpib_board_info_ioctl {
- 	__u32 t1_delay;
- 	unsigned ist : 1;
- 	unsigned no_7_bit_eos : 1;
-+	unsigned padding :30; // align to 32 bit boundary
- };
- 
- struct gpib_select_pci_ioctl {
-@@ -90,6 +92,7 @@ struct gpib_ppoll_config_ioctl {
- 	__u8 config;
- 	unsigned set_ist : 1;
- 	unsigned clear_ist : 1;
-+	unsigned padding :22; // align to 32 bit boundary
- };
- 
- struct gpib_pad_ioctl {
-@@ -110,6 +113,7 @@ struct gpib_select_device_path_ioctl {
- // update status byte and request service
- struct gpib_request_service2 {
- 	__u8 status_byte;
-+	__u8 padding[3]; // align to 32 bit boundary
- 	__s32 new_reason_for_service;
- };
- 
--- 
-2.49.0
-
+Not really. libbpf is developed in kernel tree, sync to github
+and released from github.
 
