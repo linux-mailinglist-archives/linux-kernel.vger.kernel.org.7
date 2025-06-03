@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-671364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCB2DACC075
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 08:49:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 738EFACC083
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 08:52:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B1883A3D4F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 06:49:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33BEC16CF37
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 06:52:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A84DB267F70;
-	Tue,  3 Jun 2025 06:49:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C1F2268FDE;
+	Tue,  3 Jun 2025 06:52:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FHUi0GKN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pQsEk4KY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEF7C1F4CBD;
-	Tue,  3 Jun 2025 06:49:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D601F268C62;
+	Tue,  3 Jun 2025 06:52:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748933367; cv=none; b=D55k8SMwlQY2yRT+jdLvKKmHSAZMYU0TcYSpW6z7GiAWGR3hfQWWsQJefaW1eg4SasMNwxczKOkiSVzhB59ZbYPDbS9Ok7JWQw2E7kHWncOPkXTndc6N0FiqBkVmjZ1+293frCG5HLalFXgHv7lHXoqgsEtkB+bwTNBO85ZvSyo=
+	t=1748933525; cv=none; b=bYwDGfH1ZBnctXPzWrHPE0sqDuuqasCWEADqOgTOG+ABtzEoE84ZkGTNb/Z4N05BnZYxMocz0Iy8Db+Maor2HOAU8wNI9L9gdXbqaqBwWeenmXhErPzXqhUdRVVheCFqhvZSFgdNL/ll+hGjzJKV+SyffTQF/wE+ro8/kyQry3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748933367; c=relaxed/simple;
-	bh=uuxUKrwj5FlrVqRIz/X9tvz7d2b4yrJTKmnkoMpxRIk=;
+	s=arc-20240116; t=1748933525; c=relaxed/simple;
+	bh=lzFWTJcfuXOBClAas9MZhq4SE623nomGZJJDIWUBeao=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Sd3YCKwrmWwF+AkE32LguAt0QAMiuPoHbBCQsZ4aRiqfKb16Qdy8FulBtdwxdZ/Vmss7mEKgRfVnd+kEtrqfEQncO95Czph3rnmE31fNr5mPaxF6WbLlagfsRxRKp678GtnpMDx+7ajwrslzVdUts/OR5TGdEfG+6T/+vcs/Er0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FHUi0GKN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07957C4CEED;
-	Tue,  3 Jun 2025 06:49:20 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=qdB42TvL/hsHjf1WoCtcSGJ3Rp/s9Creq1im+BdmIoJn3mw+pmr64Ag3C6KtAnkSPROuD5eD5uLvivyPZNZRfeMOOvX19raT0sBl1jQTj2DbAoBfGbKjLBWBTY+VlIIQCz6AvipIUe8HPw/MFq4LZOF+3lRcktL24uA2zaRG270=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pQsEk4KY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDBFBC4CEF1;
+	Tue,  3 Jun 2025 06:52:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748933366;
-	bh=uuxUKrwj5FlrVqRIz/X9tvz7d2b4yrJTKmnkoMpxRIk=;
+	s=k20201202; t=1748933524;
+	bh=lzFWTJcfuXOBClAas9MZhq4SE623nomGZJJDIWUBeao=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=FHUi0GKNuVuMh9vwZWOciEoW9DiYFrD+Es9+fsgwHR3nkIMMshz1WNB9iDa//XDbf
-	 ANSOpB1naR7kFTL99CB71/ZMSUyfmtnwWvHwBkmrAHq1wl4azinrMALwvYYsHcX97e
-	 5y0FFfZRtfO9BNDLbt/bRHCwh4qUE6XpS8P3FfKXBj0v2yLG3qCcsbo9YeME8QwFU1
-	 I7HDehUILa0g1NtY05zJxmccHyc+3SGugKdHqf2NyepnnKq7R0pDl68e3aGCVklqbA
-	 gQU0A8Aln+Ab0Vsv+GUSsZk4iMMEHxXmIhZrCAirmC8CdO145dC+Hg4zJnM0XihuNA
-	 UaO5bwxeKoevg==
-Message-ID: <f3f72ade-1ead-46e7-b420-82e8a921bc55@kernel.org>
-Date: Tue, 3 Jun 2025 08:49:19 +0200
+	b=pQsEk4KYKFv043uT2ksf1vsov/djJPEWvFanpxuaJ8nYi7AJbOloqeL3kboeYQnbM
+	 BfVX0BmuEPU3p9IG2/yHSI49SXq9uYDrHEVz2i6pI5RdzPe9iiCORY7wBRpkS7/oO6
+	 YZURw3M2DMthp07VDM1SRGbA0/HRUAJrt7yGPuNpGRI90gefrStaDM6FTugZ2XBPzG
+	 /eFvprl1WnQvMvu4r9YcgbK/0IDYY/IlOAu7d5vJYVXwwG2JLKVb2EEzyke+hvAy+H
+	 cawXnY0fB15gvaHKHcfpSxhFTW9vRe0XH2CwJyo/wDGdGXkVbuzjf5x/Npsw4b0VVc
+	 iG2ZekZ407B6A==
+Message-ID: <0fb4b411-1b27-43fc-8d48-e5220fc85478@kernel.org>
+Date: Tue, 3 Jun 2025 08:51:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,24 +49,21 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] dt-bindings: arm: lpc: add missed lpc43xx board
-To: Frank Li <Frank.li@nxp.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Alexander Stein <alexander.stein@ew.tq-group.com>,
- Marek Vasut <marex@denx.de>, Peng Fan <peng.fan@nxp.com>,
- Michael Walle <mwalle@kernel.org>, Fabio Estevam <festevam@denx.de>,
- Markus Niebel <Markus.Niebel@tq-group.com>,
- Frieder Schrempf <frieder.schrempf@kontron.de>,
- Francesco Dolcini <francesco.dolcini@toradex.com>,
- Max Merchel <Max.Merchel@ew.tq-group.com>, Tim Harvey
- <tharvey@gateworks.com>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
- imx@lists.linux.dev
-References: <20250602140613.940785-1-Frank.Li@nxp.com>
- <5014a8ff-aa91-4ea4-81c5-7aeafc13b330@kernel.org>
- <aD4jZ3QrOS4fM99s@lizhi-Precision-Tower-5810>
+Subject: Re: [PATCH 1/3] dt-bindings: mfd: Add power-button option for TI
+ TPS6594 PMIC
+To: Job Sava <jsava@criticallink.com>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Julien Panis <jpanis@baylibre.com>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+ jcormier@criticallink.com
+References: <20250520-linux-stable-tps6594-pwrbutton-v1-0-0cc5c6e0415c@criticallink.com>
+ <20250520-linux-stable-tps6594-pwrbutton-v1-1-0cc5c6e0415c@criticallink.com>
+ <20250521-wandering-tested-porpoise-acbef7@kuoka>
+ <CAKMwjwTP=xSsX3UuK02sKbXWaU7y-ErytNYCL_P0UveDytQW2A@mail.gmail.com>
+ <20250529-wise-tremendous-stork-a7d091@kuoka>
+ <CAKMwjwQOBE651A-5VVjwcv5TspO2eNZfgwWzMpTTWxhR3nGKUw@mail.gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -112,56 +109,90 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <aD4jZ3QrOS4fM99s@lizhi-Precision-Tower-5810>
+In-Reply-To: <CAKMwjwQOBE651A-5VVjwcv5TspO2eNZfgwWzMpTTWxhR3nGKUw@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 03/06/2025 00:19, Frank Li wrote:
-> On Mon, Jun 02, 2025 at 06:17:49PM +0200, Krzysztof Kozlowski wrote:
->> On 02/06/2025 16:06, Frank Li wrote:
->>> Add missed legancy lpc43xx board compatible string to fix below CHECK_DTB
+On 02/06/2025 15:07, Job Sava wrote:
+> On Thu, May 29, 2025 at 5:26 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
 >>
->> typo: legacy
->>
->>> warnings:
->>> arch/arm/boot/dts/nxp/lpc/lpc4337-ciaa.dtb: /: failed to match any schema with compatible: ['ciaa,lpc4337', 'nxp,lpc4337', 'nxp,lpc4350']
->>
->>
+>> On Fri, May 23, 2025 at 09:46:49AM GMT, Job Sava wrote:
+>>> On Wed, May 21, 2025 at 6:01 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>>>
+>>>> On Tue, May 20, 2025 at 01:43:36PM GMT, Job Sava wrote:
+>>>>> The TPS6594 power-button option permits users to enter STANDBY or
+>>>>> ACTIVE state by a push, release, or short push button request.
+>>>>>
+>>>>> Signed-off-by: Job Sava <jsava@criticallink.com>
+>>>>> ---
+>>>>>  Documentation/devicetree/bindings/mfd/ti,tps6594.yaml | 15 +++++++++++++++
+>>>>>  1 file changed, 15 insertions(+)
+>>>>>
+>>>>> diff --git a/Documentation/devicetree/bindings/mfd/ti,tps6594.yaml b/Documentation/devicetree/bindings/mfd/ti,tps6594.yaml
+>>>>> index 6341b6070366..a40808fd2747 100644
+>>>>> --- a/Documentation/devicetree/bindings/mfd/ti,tps6594.yaml
+>>>>> +++ b/Documentation/devicetree/bindings/mfd/ti,tps6594.yaml
+>>>>> @@ -37,6 +37,21 @@ properties:
+>>>>>        device on the SPMI bus, and the secondary PMICs are the target devices
+>>>>>        on the SPMI bus.
+>>>>>
+>>>>> +  ti,power-button:
+>>>>> +    type: boolean
+>>>>> +    description: |
+>>>>> +      Optional property that sets the EN/PB/VSENSE pin to be a
+>>>>> +      power-button.
+>>>>> +      TPS6594 has a multipurpose pin called EN/PB/VSENSE that can be either
+>>>>> +      1. EN in which case it functions as an enable pin.
+>>>>> +      2. VSENSE which compares the voltages and triggers an automatic
+>>>>> +      on/off request.
+>>>>> +      3. PB in which case it can be configured to trigger an interrupt
+>>>>> +      to the SoC.
+>>>>> +      ti,power-button reflects the last one of those options
+>>>>> +      where the board has a button wired to the pin and triggers
+>>>>> +      an interrupt on pressing it.
+>>>>
+>>>> Don't you need to handle two other cases as well? I assume you copied
+>>>> this from the other binding, but all three options are valid?
+>>>>
+>>>> Best regards,
+>>>> Krzysztof
+>>>>
+>>> Hello Krzysztof,
 >>>
->>> Signed-off-by: Frank Li <Frank.Li@nxp.com>
->>> ---
->>>  .../devicetree/bindings/arm/fsl.yaml          | 23 +++++++++++++++++++
->>>  1 file changed, 23 insertions(+)
+>>> Thank you for your response!
 >>>
->>> diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Documentation/devicetree/bindings/arm/fsl.yaml
->>> index d3b5e6923e416..75e46ffe9ba8c 100644
->>> --- a/Documentation/devicetree/bindings/arm/fsl.yaml
->>> +++ b/Documentation/devicetree/bindings/arm/fsl.yaml
->>> @@ -1711,6 +1711,29 @@ properties:
->>>                - traverse,ten64            # Ten64 Networking Appliance / Board
->>>            - const: fsl,ls1088a
->>>
->>> +      - description: lpc based Boards
->>> +        items:
->>> +          - enum:
->>> +              - ea,lpc4357-developers-kit
->>> +              - ciaa,lpc4337
->>> +          - enum:
->>> +              - nxp,lpc4337
->>> +              - nxp,lpc4357
+>>> I agree that the other two cases are valid options. However, for this
+>>> particular patch series, they may be out of scope. The primary goal of
+>>> this patch is to enable push-button functionality, rather than
+>>> addressing the VSENSE or EN modes.
 >>
->> This feels wrong. Why 4337-based board is compatible with 4357 SoC? If
->> this was intentional either DTS is wrong or commit msg needs explanation.
+>> Binding should be complete, because if you design this as bool, it
+>> cannot be later changed to three-state (enum).
+>>
+>> I don't know if the EN and VSENSE modes are anyhow useful, maybe people
+>> interested in this hardware should say.
+>>
+>> Best regards,
+>> Krzysztof
+>>
 > 
-> I think it is that legacy board dts mess up. I am okay to fix boards's dts.
-> but I have not hardware to test such changes. There are some risk to toggle
-> such old boards, such as the uboot may check these comaptible string to do
-> some fixup. Anyways, these boards is too old.
+> Hi Krzysztof,
 > 
-> Do you think it worth to fix dts by take some little risk.
-Well, I do not see ea,lpc4357-developers-kit with 4337 fallback, so I
-don't understand what existing DTS. If you mean out of tree DTS, it's
-their problem.
+> Thanks again for the feedback.
+> 
+> I modeled this binding after the TPS65219 PMIC, which uses a boolean
+
+Yeah, that's what I meant in my first reply.
+
+> for ti,power-button, despite the same EN/PB/VSENSE options. Since this
+> patch only enables PB mode, I felt a boolean was appropriate and
+> consistent.
+
+Properties should have only one type, so that would be a different
+property. Someone knowing the device should come with arguments whether
+other states for this are useful at all. Or not useful and then argument
+that in commit msg for example.
+
 
 Best regards,
 Krzysztof
