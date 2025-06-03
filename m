@@ -1,184 +1,159 @@
-Return-Path: <linux-kernel+bounces-671798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C8B3ACC651
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 14:18:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EAE8ACC656
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 14:19:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCC9C3A2F42
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 12:18:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F0D016EC7B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 12:19:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C077A146A66;
-	Tue,  3 Jun 2025 12:18:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4B67228CB0;
+	Tue,  3 Jun 2025 12:19:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SGbf4Fie"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NwTKIThU"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 652AB38B
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 12:18:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79492208CA;
+	Tue,  3 Jun 2025 12:19:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748953121; cv=none; b=rYFESlU/xdZbiBj5KMp21B7ia62lQ9MPz4duNEzk2indhArfsltPANKAIFCsjW6xmZrSjvv1B6ITYRYIjmqntOlGw8D0PU3wr01yKtYHFzOPILU+eGehWqYVzqMdemGpxoaYWGLPTWSxw+rXvgV5+X/3WR5icpHDcBHYZLXA6+Y=
+	t=1748953166; cv=none; b=uoUWxTJDfAQ449L3SzSTylwDN/fCD0MiGNMeBQ/vkwwHVLDylJBn6lP3cfeECvyIgup9GcnwinSw9WkDdRQrFy9/dQgOY3DzBAw8KYmEM4x5ILgdA3jOeYArl/US46OeQb6/LpAGejb9+Y8sx9AWxJuPuDuUbMRWDmXs3I/alCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748953121; c=relaxed/simple;
-	bh=qqelr6WefH4ksn4hmxQIH+uD8LjnzY/T2HQdhdN1d9g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tfvnfDDl27hE82LvM9OnLGBo4IIv+RMUDar7u/lN2ulwW5lCp5hyMb1o0/nfBKf+d5Rb6caJDwFh9PcBKytKnm9AJ4Cju0ZL3T9+AD8gEYWKh9vhMz0iSjL991KwNb3TDATDhViqOhIPWrr9VnUWohZdlkV4qf/EThZULseFjjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SGbf4Fie; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1748953118;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=rGnUEgcN+7RA/ytGOeobTKPAhnPkELxdJYjsHxSNJHc=;
-	b=SGbf4Fieq0mMg+5lypyz3A+jWWhbTyEYHCB5rd0dwSeNd/iCS+FfaC0QtiHyzXXwqNHL1k
-	tRSYDUa2p793iIelNDa8MfHYxmBlALTejNrXAK+kITcJZu3cUv1B3Ia4Br22NBHtSkQeTW
-	9lDPd/AH+W45cb9zSc3XsSu5CvMA6Io=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-142-tnwDMuTbNi-fOZfg9ebWvw-1; Tue, 03 Jun 2025 08:18:37 -0400
-X-MC-Unique: tnwDMuTbNi-fOZfg9ebWvw-1
-X-Mimecast-MFC-AGG-ID: tnwDMuTbNi-fOZfg9ebWvw_1748953116
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-450cb8f8b1bso13964435e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jun 2025 05:18:36 -0700 (PDT)
+	s=arc-20240116; t=1748953166; c=relaxed/simple;
+	bh=DqInlHgGUC8wA/jx/Z/vUgDAF4d8VLW898q95/N8Pgc=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rd2Sgbx1bCtg5lTkGLlaqt3a2JbamfMRvU3NkC7dUbzEOikWuUPX0uP++Gqo99zrjvErhMyRJWv235l7l5udsbB/BDBup8W9OBWKZ05e2aWRoZEdbYZOg7ROUJwlyufnXCdOGrqIrUWwlYMu8vAWyL+seDYBTLobwjI9cJVXEnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NwTKIThU; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3a50fc819f2so1201564f8f.2;
+        Tue, 03 Jun 2025 05:19:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748953163; x=1749557963; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=bl03MDUx0F/SrGXUBQC5RzPHEcFKL9mDrZ+xTfAWQRg=;
+        b=NwTKIThUB4djT0JpEeMCaT4KN6ArEMWoJyxOAtg31yQWb9wijHa3G+t2wK7+2WzOHd
+         SFmXr+E+HYyDLD1L1FB76LZIWYBXiaeAKdT1ZF1NGLiCsDlNf3fkgf1XwLTx9EAWJeBr
+         sCxHac39+VDAAMFB9Ju+B3AgY5jYz56ZmfQ6OdW/6WcK7e5+XcjGYaWc8RnVVeMLo3dK
+         Q+8tFu/k5rr10xRWnrdoH7ONXqCeOatzi+SPv7BYN0K0Sr8rwUvn6IDFuL5Zrwo1Cfg1
+         Jcz5S3YUrJbkLUABJ9KCiWIbez5QaQ0JpccbQtoO0sRs/IwWQOVZQGJiiuuEVsOziBcK
+         zxqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748953116; x=1749557916;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=rGnUEgcN+7RA/ytGOeobTKPAhnPkELxdJYjsHxSNJHc=;
-        b=sQygcHxbQWXr4cwhCb7ISWPTTcmvSgSE5H3zdWBSA5cDBQYdgpGF5+r5xbImILvYvB
-         60nvrdaO94pHC/9S8TvoYjVYZGqXJXaNFHqgv5bTe9h3lJoBtEnkY/lsXh8SBdp/MiPr
-         WCl7C3UgGhauLtDSZZp/GHtIumVEf6L+qzl4QCcc/ErHwjmmWz2F9G7syNHe6IaMUPHD
-         2R4vFZ6Str0JoilZ4bIUSP2nRKVFbbjia+eGxN+oRBUffb4qFzyeyy8S1qGyNjuBy3wC
-         Pt0G7L0EYyAGmolyBbdPOIrHto473Snu/S9mSgyv9dFwYaB/Rf7KnfaqXk4U34z8iXT5
-         qSIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXjQfPoTv8CtKUuhL0f4x/XP8/56pB36BTtC4Pk/P17lgkpHePQUJVEC1whWhImLklSc3HhY7VBT+OMUHc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJzmZzwF2oCLlY0SWH5AA4g7ZTsMJHZa41+7WttuT59E/pDy0i
-	LSC8bq59E/cFJMyJzMexxrCPWBPbw18CmUQwUS0jBwJvFMYVYZsoAyVtDrXHBujb/9f1GhaqWrV
-	wh1RD+5vzGq1U4GZBJzzeTvncWaBl9VOQDlImK8IbwcbWVzYh5S1P25OYVzx8BtCzfA==
-X-Gm-Gg: ASbGncuhw23D63HUcXNy7o3M7Ddicsu/MwM6cXiuCc7S+r8T6oDs6j6SuorSda6Fpww
-	xZmDjkg2ZqYEtOlUjUReICX+zjH6WHP/QgCeRt2tXxN3PC72u5aVa5HL3FhG8AZTlqsEHotntgc
-	LRzU15ZZKQAPt01MI5xOucOs/Q9L6pnEvtSV4oST88QLhEsQ7UtTtH+oZ/a5XSeAKRf1sLxZYo2
-	83khLpoT6748BLSJqOOZeyPVJYcvHjVyZEfqFd/iNo+oJMUxsYfRPhxr/jzYe03j9kFa+64wVpc
-	kwwpAIZhh3Ygpib7iv2y8Hv4BCXYo8sjktZrxz7P7DLIvP5lAZUcIH7HiExr1eO+Pbp9YGiFVpj
-	ieqC6BtBj3K8GE8w/tv8Mj9WYivLoBYu5fW5AMGI=
-X-Received: by 2002:a05:6000:40e1:b0:3a4:ec02:739f with SMTP id ffacd0b85a97d-3a4fe3a7fd4mr10355204f8f.53.1748953115775;
-        Tue, 03 Jun 2025 05:18:35 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFNvHT62UHgjopRVOc72VPbTa45IgYePiLCTNYPu63GrRHjm/n/UNxhItLC6lUI5d5CVUBvnA==
-X-Received: by 2002:a05:6000:40e1:b0:3a4:ec02:739f with SMTP id ffacd0b85a97d-3a4fe3a7fd4mr10355180f8f.53.1748953115388;
-        Tue, 03 Jun 2025 05:18:35 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f0d:f000:eec9:2b8d:4913:f32a? (p200300d82f0df000eec92b8d4913f32a.dip0.t-ipconnect.de. [2003:d8:2f0d:f000:eec9:2b8d:4913:f32a])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-450d7fb8751sm157456315e9.29.2025.06.03.05.18.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Jun 2025 05:18:34 -0700 (PDT)
-Message-ID: <76768319-5c74-4d14-9515-3679e00f2efc@redhat.com>
-Date: Tue, 3 Jun 2025 14:18:33 +0200
+        d=1e100.net; s=20230601; t=1748953163; x=1749557963;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bl03MDUx0F/SrGXUBQC5RzPHEcFKL9mDrZ+xTfAWQRg=;
+        b=G0Tgokl/dCTo/Mlz8lUuBRXNAMGk+/wYqnU8zl39uq25CXMpK0/z81syc97roD8HV2
+         3mPB+7amD6quTuyovjUMVMFZ2fdhdv7zNTI7y8DKgkE7S405XL3jCv7XDGtbagkt8IiI
+         X3g9WBxNO/6epeegUNm3++VI8a18gSEf0/imeZZFwiq+OCwBbL+2OMEJw13cYyFX1eZt
+         PFK45Rst1ymVQLJp2FFw3hGlFZgwdzZHTfTkZqqqeA3er0QXa2Y/mMLDj6ZkodegFYPH
+         3Pg09zDga3zsEhKnqJZIv1pd4JSmT+kwbtziXxwGCR+62thNoDrRi80c+y4Ve0oyBB/D
+         LADQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWaAhDVSTcW24EwdaLwvTNCth5ACxRVjBmz/WOaaLgRx20f4vlWte/npA7hUJk7tZW/Qls=@vger.kernel.org, AJvYcCXVAsU1PRW8EOd14C/nPY5RWzRr5rQ0kXmRGjz94sX71jGxs7FQgo6MaZsekYHBXoTkt0BvXbbG3M6RWqUo@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1J+LhPUJLwVx0wWNoCOrIwd18XnNd1gGIn5TWMCGAdFlwevw1
+	ZSd8Bvy9xyIQuMsyXqr0TSbq17OmhMJvxITfsCYJ7Xu29tPNyeI2HKe29g4cPsOfcYQ=
+X-Gm-Gg: ASbGncsgAPLHecb92vCzWnbUq8WLTW8ha7HiWywBMKMqnIi8dpFkw5+JF8ypMpDuCFr
+	cc0rVAjiGJY4wOo0Mf8H4VVppLb+91F1mYgiwH+5OAHDbe8h2dP2Wgh7DTNiym/spqAySbJBIlQ
+	WdsGtKm4lxJEKstdUmqygGWGUxQSkrRwWMkWXJPLQaUbUzMV7FXxm4DyFx5A/R9o6BksWY4ZTxz
+	2xKjWT7pzBpSmIK+NiJviK6Cw1vfgSjiD3CKDzl890FZe39roT+SMuV+r3YqfxHAX04flSGlAFb
+	IkFeZ3gxsgYSVwuGTqUuLfagd5Rbb3C75YIs/4c=
+X-Google-Smtp-Source: AGHT+IGItsfgYlbHQZDCP71xRq6KTlEQWb1ZRdGAl6gV1Z1mtfsj/v0ABe4kDBl3vVSrU+o1K3l0rg==
+X-Received: by 2002:a05:6000:3112:b0:3a0:7f9c:189a with SMTP id ffacd0b85a97d-3a4f799acd4mr13508939f8f.0.1748953162464;
+        Tue, 03 Jun 2025 05:19:22 -0700 (PDT)
+Received: from krava ([176.74.159.170])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4f009fbf7sm17998771f8f.83.2025.06.03.05.19.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Jun 2025 05:19:22 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Tue, 3 Jun 2025 14:19:19 +0200
+To: Tao Chen <chen.dylane@linux.dev>
+Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+	martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+	yonghong.song@linux.dev, john.fastabend@gmail.com,
+	kpsingh@kernel.org, sdf@fomichev.me, qmo@kernel.org,
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH bpf-next v2 1/3] bpf: Add cookie to raw_tp bpf_link_info
+Message-ID: <aD7oR_JGXuG4ru9W@krava>
+References: <20250603022610.3005963-1-chen.dylane@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] MAINTAINERS: add mm swap section
-To: Hugh Dickins <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>
-Cc: Kemeng Shi <shikemeng@huaweicloud.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Yu Zhao <yuzhao@google.com>,
- Kairui Song <kasong@tencent.com>, Nhat Pham <nphamcs@gmail.com>,
- Baoquan He <bhe@redhat.com>, Barry Song <baohua@kernel.org>,
- Chris Li <chrisl@kernel.org>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <20250602152015.54366-1-lorenzo.stoakes@oracle.com>
- <0599e483-fe41-f8b4-ace4-d570ba10c9d5@huaweicloud.com>
- <20250602185706.fc305626e7885f6b63f3955c@linux-foundation.org>
- <4ac34306-b674-5862-969a-0ac089a86f3e@google.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <4ac34306-b674-5862-969a-0ac089a86f3e@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250603022610.3005963-1-chen.dylane@linux.dev>
 
-On 03.06.25 09:20, Hugh Dickins wrote:
-> On Mon, 2 Jun 2025, Andrew Morton wrote:
->> On Tue, 3 Jun 2025 09:17:50 +0800 Kemeng Shi <shikemeng@huaweicloud.com> wrote:
->>
->>>> +MEMORY MANAGEMENT - SWAP
->>>> +M:	Andrew Morton <akpm@linux-foundation.org>
->>>> +R:	Yu Zhao <yuzhao@google.com>
->>>> +R:	Kemeng Shi <shikemeng@huaweicloud.com>
->>>> +R:	Kairui Song <kasong@tencent.com>
->>>> +R:	Nhat Pham <nphamcs@gmail.com>
->>>> +R:	Baoquan He <bhe@redhat.com>
->>>> +R:	Barry Song <baohua@kernel.org>
->>>> +R:	Chris Li <chrisl@kernel.org>
->>
->> Whoa.  Hugh doesn't escape that easily.
+On Tue, Jun 03, 2025 at 10:26:08AM +0800, Tao Chen wrote:
+> After commit 68ca5d4eebb8 ("bpf: support BPF cookie in raw tracepoint
+> (raw_tp, tp_btf) programs"), we can show the cookie in bpf_link_info
+> like kprobe etc.
 > 
-> Sorry, no, please leave me out. I don't need to be in any of these
-> lists to comment when and if I can, and Reviewer I'm certainly not.
+> Signed-off-by: Tao Chen <chen.dylane@linux.dev>
+
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+
+jirka
+
+> ---
+>  include/uapi/linux/bpf.h       | 2 ++
+>  kernel/bpf/syscall.c           | 1 +
+>  tools/include/uapi/linux/bpf.h | 2 ++
+>  3 files changed, 5 insertions(+)
 > 
-> (And Lorenzo and David already know I've opted out of these,
-> there was no disrespect in omitting me.)
-
-I'm glad we still have you as M for TMPFS :)
-
--- 
-Cheers,
-
-David / dhildenb
-
+> Change list:
+> - v1 -> v2:
+>     - fill the hole in bpf_link_info.(Jiri)
+> - v1:
+>     https://lore.kernel.org/bpf/20250529165759.2536245-1-chen.dylane@linux.dev
+> 
+> diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
+> index 07ee73cdf9..f3e2aae302 100644
+> --- a/include/uapi/linux/bpf.h
+> +++ b/include/uapi/linux/bpf.h
+> @@ -6644,6 +6644,8 @@ struct bpf_link_info {
+>  		struct {
+>  			__aligned_u64 tp_name; /* in/out: tp_name buffer ptr */
+>  			__u32 tp_name_len;     /* in/out: tp_name buffer len */
+> +			__u32 reserved; /* just fill the hole */
+> +			__u64 cookie;
+>  		} raw_tracepoint;
+>  		struct {
+>  			__u32 attach_type;
+> diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+> index 9794446bc8..1c3dbe44ac 100644
+> --- a/kernel/bpf/syscall.c
+> +++ b/kernel/bpf/syscall.c
+> @@ -3687,6 +3687,7 @@ static int bpf_raw_tp_link_fill_link_info(const struct bpf_link *link,
+>  		return -EINVAL;
+>  
+>  	info->raw_tracepoint.tp_name_len = tp_len + 1;
+> +	info->raw_tracepoint.cookie = raw_tp_link->cookie;
+>  
+>  	if (!ubuf)
+>  		return 0;
+> diff --git a/tools/include/uapi/linux/bpf.h b/tools/include/uapi/linux/bpf.h
+> index 07ee73cdf9..f3e2aae302 100644
+> --- a/tools/include/uapi/linux/bpf.h
+> +++ b/tools/include/uapi/linux/bpf.h
+> @@ -6644,6 +6644,8 @@ struct bpf_link_info {
+>  		struct {
+>  			__aligned_u64 tp_name; /* in/out: tp_name buffer ptr */
+>  			__u32 tp_name_len;     /* in/out: tp_name buffer len */
+> +			__u32 reserved; /* just fill the hole */
+> +			__u64 cookie;
+>  		} raw_tracepoint;
+>  		struct {
+>  			__u32 attach_type;
+> -- 
+> 2.43.0
+> 
 
