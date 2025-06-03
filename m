@@ -1,93 +1,78 @@
-Return-Path: <linux-kernel+bounces-671203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99D8FACBDFF
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 02:45:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4A54ACBDFB
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 02:44:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78A357A7029
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 00:43:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6986C3A450D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 00:44:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E6F413C8EA;
-	Tue,  3 Jun 2025 00:45:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF69670824;
+	Tue,  3 Jun 2025 00:44:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NOdcD/1p"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M6yReL/t"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D62D072616;
-	Tue,  3 Jun 2025 00:45:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11ECB33E1;
+	Tue,  3 Jun 2025 00:44:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748911505; cv=none; b=GQsAdychgiAVhecDs/2TTk10/FQxkCvb3kpYcVTN6QYIBp7MQ7NYERcomKwcXP/1YRM6w2jH/G6Yk1zQYckJAoaeLxfGEfDQpzhsLKm6Jq0EGogEu17IB3vQyy/pylO07k9AqQfBirVjP7vhu9dlZVmp5K3Rx8spSjcR1Lsxcr8=
+	t=1748911471; cv=none; b=tgcz5umGTF316A8+tE3RTot2rJdZXDada818CznEOX7IloKSG8acoc51qEeIppEYcMGa0XuaIpkvu2uZNVPzb2bVTcqWJL9nu1GNv+xO8vSC1kmDrNIIAW2hsOAAy305pCSEkSYPr67/fJsD/8LOioSAN+gbUVQA7k4gT0OaEqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748911505; c=relaxed/simple;
-	bh=CtdqVukD0DJI27l2rhdGZkkUVaZv1kkMZXA6szMAXy0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Xo2djNUp59rizKd+UHakPhW4gdNi3pvBuzkA4WZWshEowitQzIvXiDon1PK/jZgjE8+ncd377x+aJyt37j9q+aKY5cuSU1arDb9K78kxDlfPusBY/ew2x7f2z1sxrcf3tgpAa/hBzF+I/MmoXhQYfEestjqdvsYmYoHZbyyRB9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NOdcD/1p; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB42CC4CEEB;
-	Tue,  3 Jun 2025 00:45:03 +0000 (UTC)
+	s=arc-20240116; t=1748911471; c=relaxed/simple;
+	bh=GZlx8iTnrJuj41NTaVD5xc2P1HxNEVVh4V46DfqGG3o=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=bOuWLZELs17goNzhRlpaG0FRNeHVZ0rHFN+2E0sJ5LJCRsC/KtPDDdG2t35QhS79a4I8HK8Of9ecYKmx4JPLk4r0EM+P7Czrf2DN0EPG3PwR9QtnEWrpFrvcH6SFS2CZdqN5E1adZWRlw/U4CDvaJ3D4qePsUH/dt+isL1GSvDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M6yReL/t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF29AC4CEEB;
+	Tue,  3 Jun 2025 00:44:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748911504;
-	bh=CtdqVukD0DJI27l2rhdGZkkUVaZv1kkMZXA6szMAXy0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=NOdcD/1pHxsJW0QkTuPCdpokqjTaEs/RgqtoGRwNdPAGAR/ze2bDpWE4285V75Zwn
-	 lkas9BP/nSwSOY32w2g/ZogOdB1WVQZhYRgRuK4cB7oBHNmTWOByJgBoPmZHtpGxcC
-	 VIbQjL+tSr22FQS16R7KRccnEiyi3vik4YfyrO/s8EeBuH2ju/B2+muHSeVWecswjH
-	 qGtpFQS/7YaASKpgWAGeDPQiio/vvnVqxDP5dHt5RjUlpR/uzaMsw8Djb1Ja1q/X18
-	 MICYIcfKxydT01Dc4SpRHBUwq8f8H1lVs2okd+gMLTorvrXvtiUQvkhvFJxYMmi3oT
-	 5y7jR7IsvmaLg==
-Date: Mon, 2 Jun 2025 17:45:03 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Stefan Wahren
- <wahrenst@gmx.net>, netdev@vger.kernel.org (open list:NETWORKING DRIVERS),
- devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE
- TREE BINDINGS), linux-kernel@vger.kernel.org (open list),
- imx@lists.linux.dev
-Subject: Re: [PATCH v2 1/1] dt-bindings: net: convert qca,qca7000.txt yaml
- format
-Message-ID: <20250602174503.7e1998e6@kernel.org>
-In-Reply-To: <20250602224402.1047281-1-Frank.Li@nxp.com>
-References: <20250602224402.1047281-1-Frank.Li@nxp.com>
+	s=k20201202; t=1748911470;
+	bh=GZlx8iTnrJuj41NTaVD5xc2P1HxNEVVh4V46DfqGG3o=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=M6yReL/tSTvpVs/cdnvyzPnOk2rIzOleBBCDjr3EsNLgcb0Hh1ZUtQTUPU4dIZh3e
+	 zW/99j7U0ovpRJ+aeffP8jNfSCeey5VxOXLf7He1EPrjMztLrfQDq2VN7ReGC5No+8
+	 A24Mo7II2ZEwnc7NNRWKObN8tfImF5lrVkrLAYBB0NwcjWz8svceJZVEOsI4He/ZZH
+	 7hjLDD9wZ/gJA3TQdc/GTqo/CYh858IMpjRcxtSQqrKPcG2V6m0JbKX3aDGSkXbf2m
+	 MA/jRl9vPqmtQNg0bqheAsDExBVtjH6m2AwzbKGa6BNGZwGMtAPjXfBOcQzCPuUwG+
+	 sUzRC8xtusEpQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE090380AAD0;
+	Tue,  3 Jun 2025 00:45:04 +0000 (UTC)
+Subject: Re: [GIT PULL] Modules changes for v6.16-rc1
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <458901be-1da8-4987-9c72-5aa3da6db15e@suse.com>
+References: <458901be-1da8-4987-9c72-5aa3da6db15e@suse.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <458901be-1da8-4987-9c72-5aa3da6db15e@suse.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/modules/linux.git/ tags/modules-6.16-rc1
+X-PR-Tracked-Commit-Id: a0b018a495a3f68693e45ab570fae8191d907d86
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: c8be54240893dbf89c294cb6a9e338fdc2f73ead
+Message-Id: <174891150313.965188.592284763854275037.pr-tracker-bot@kernel.org>
+Date: Tue, 03 Jun 2025 00:45:03 +0000
+To: Petr Pavlu <petr.pavlu@suse.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Luis Chamberlain <mcgrof@kernel.org>, Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez <da.gomez@samsung.com>, linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org, Valentin Schneider <vschneid@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 
-On Mon,  2 Jun 2025 18:44:01 -0400 Frank Li wrote:
-> Convert qca,qca7000.txt yaml format.
-> 
-> Additional changes:
-> - add refs: spi-peripheral-props.yaml, serial-peripheral-props.yaml and
->   ethernet-controller.yaml.
-> - simple spi and uart node name.
-> - use low case for mac address in examples.
-> - add check reg choose spi-peripheral-props.yaml or
->   spi-peripheral-props.yaml.
+The pull request you sent on Mon, 2 Jun 2025 16:34:45 +0200:
 
-## Form letter - net-next-closed
+> git://git.kernel.org/pub/scm/linux/kernel/git/modules/linux.git/ tags/modules-6.16-rc1
 
-Linus has already merged our PR with features for v6.16.
-net-next is closed for new drivers, features, code refactoring and
-optimizations for the remained for the merge window.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/c8be54240893dbf89c294cb6a9e338fdc2f73ead
 
-Please repost when net-next reopens after June 9th.
+Thank you!
 
-RFC patches sent for review only are obviously welcome at any time.
-
-See: https://www.kernel.org/doc/html/next/process/maintainer-netdev.html#development-cycle
 -- 
-pw-bot: defer
-pv-bot: closed
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
