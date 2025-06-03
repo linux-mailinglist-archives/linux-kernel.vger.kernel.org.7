@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-672489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-672492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9896BACD02F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 01:19:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A3D2ACD03B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 01:21:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53A42176D90
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 23:19:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C33723A7336
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 23:21:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 618FC253937;
-	Tue,  3 Jun 2025 23:19:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6139924DD08;
+	Tue,  3 Jun 2025 23:21:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fFsS37vC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rKmuiKIB"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8F5D22A4EB;
-	Tue,  3 Jun 2025 23:19:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBD1F17A30A;
+	Tue,  3 Jun 2025 23:21:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748992779; cv=none; b=EpCqDJIyowJKWVvvToW/Aq3SChBb2Awu25aYAOoTdZmoMjqIETAcTcMum0BIWovbMRfpSNOX1kUh+0W4RQl55214ZwpX4ff8fPzfjjJeXiXb57eP+XshG9KSxA4jdwrNQAavEMdssvxL7rqiWVPwlM0rAUddBgztwsqrCWRWNQ4=
+	t=1748992877; cv=none; b=Fd8Oxvb/1iHZGISSLiYOhj9J1ZlnWd7ammsMr0JKIuEKEyaNWDZUhvG4A25vCWfnUYGlBjad2SNUCzOPE7bK/326z1jjQIoAwD7CehMLmIKFLesyNfvdXkOZtWEe/terQeywp3qcTlaOfmKvVl9eeiuqeqWeI0mt9q7c6TLxB9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748992779; c=relaxed/simple;
-	bh=zgyzLu0186S6pt9BoBS4AN19AzSRhe5EDhGuHICiHYY=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=i0VPCkrb2fKcu10ahYctTVPDk6E5xdBW1GApIbLrM6o+xQPt+0JN3AxrnWd4zFXSv2j62AN2uDKmsUZIYM+OC0A02J+3o4M4lNAf0q3GtNxuJmlZzckt3ZSj+lXOj4QNAlwyVztqYpfpAy9rxM6uhVV2fizRFV2bhQ4V+Hw/HaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fFsS37vC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 937F7C4CEED;
-	Tue,  3 Jun 2025 23:19:39 +0000 (UTC)
+	s=arc-20240116; t=1748992877; c=relaxed/simple;
+	bh=bFG5b1AMa/2P9t68S10S8ansVI+Q8NxdN/Hbdj7MEg4=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=BKntP1++uHu1Wb/l/9QpzfyqZln7gRDoNKjUReu4yfH/5vodiYWM0QCAFdiIifWF3FR2u1L7lvNNc4l5Z0WJi1XoqnlHF17Oazgp+55UXw7eLMWPEU/SP3zz4PiOQ14ViioA4A2b9EBwviNu4xmL8yWder96Ya88RuoXwwlXCbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rKmuiKIB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90F6FC4CEEF;
+	Tue,  3 Jun 2025 23:21:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748992779;
-	bh=zgyzLu0186S6pt9BoBS4AN19AzSRhe5EDhGuHICiHYY=;
+	s=k20201202; t=1748992877;
+	bh=bFG5b1AMa/2P9t68S10S8ansVI+Q8NxdN/Hbdj7MEg4=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=fFsS37vCHufzXpJnUmtrH7kP+HsfZ+Nc7bR+YhYRZAGTsqwq+bleCInXR8XqP4wWE
-	 RekwNzH2astJyxkN4nDMerURlImkFRsPo1xFQDcKu2XF7D/TCa8U2iSfmrg3BtjAsd
-	 /jMBtnP1FlQStfnV1O4ku3cRST6KZwii3JSs/R+JT+WBel5ZDXxWVXqfZ2fAuez9y8
-	 Q9ZyqXchtIemUCqiV/MVl8rVQ01I0XPbUNeLBLkW/u7LZle6PZPztbmyF+SL8O7S3f
-	 f8YDDbI/T6pweflmcMvKcGCopTXy+tWyTphDy1RHNS7yV2tUDl4ZQNSIC7mXpyIFFL
-	 +2nSN0ve2XGsQ==
+	b=rKmuiKIBf7/xGO60kiMHp9ACaEehISsblaSjMWPzltpAsbs/OXQCh02bsTU7yiECt
+	 4IHApdz+H4zwmD4M28YNCoCPvd3snL7cHS3unK992DaDNzw1HebmnnZKo1hlTgU+k+
+	 WywJFEQ/PQZOhgxRZF/iD0ENJdlC6RECji/OsSKpPeBN3SjnVM/UhTzEJVss0mB8JA
+	 CNtnHr7wQ3h7j1fKEQTXCrjHFMKYeaA50UuvzHJAruMSRJ4EFItEgeTck8t8O0TiAs
+	 +OaTR5AEXnoTAAh/Z+Fod0Pl5CkrH2RENKXvWkR7jneU4wtXE0BKXIb+Brfm4CMP/R
+	 hp6Y5DpjDVPTA==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 3431D380DBEC;
-	Tue,  3 Jun 2025 23:20:13 +0000 (UTC)
-Subject: Re: [GIT PULL] perf tools changes for v6.16
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 359A0380DBEE;
+	Tue,  3 Jun 2025 23:21:51 +0000 (UTC)
+Subject: Re: [GIT PULL] smb3 client fixes
 From: pr-tracker-bot@kernel.org
-In-Reply-To: <20250603203501.1961487-1-acme@kernel.org>
-References: <20250603203501.1961487-1-acme@kernel.org>
-X-PR-Tracked-List-Id: <linux-perf-users.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20250603203501.1961487-1-acme@kernel.org>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools.git tags/perf-tools-for-v6.16-1-2025-06-03
-X-PR-Tracked-Commit-Id: a913ef6fd883c05bd6538ed21ee1e773f0d750b7
+In-Reply-To: <CAH2r5mt-jcxLBK96EiF_w_QtOM1-2DHH4QAYKhikWSOkD1t-mA@mail.gmail.com>
+References: <CAH2r5mt-jcxLBK96EiF_w_QtOM1-2DHH4QAYKhikWSOkD1t-mA@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CAH2r5mt-jcxLBK96EiF_w_QtOM1-2DHH4QAYKhikWSOkD1t-mA@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.samba.org/sfrench/cifs-2.6.git tags/v6.16-rc-part1-smb-client-fixes
+X-PR-Tracked-Commit-Id: 8a5ebd2be99a1f4630d0382f7fdf581561d317cd
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 0939bd2fcf337243133b0271335a2838857c319f
-Message-Id: <174899281172.1701538.2545209801834676409.pr-tracker-bot@kernel.org>
-Date: Tue, 03 Jun 2025 23:20:11 +0000
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, Arnaldo Carvalho de Melo <acme@kernel.org>, Chun-Tse Shao <ctshao@google.com>, Heiko Carstens <hca@linux.ibm.com>, Jakub Brnak <jbrnak@redhat.com>, Junhao He <hejunhao3@huawei.com>, Ravi Bangoria <ravi.bangoria@amd.com>, Stephane Eranian <eranian@google.com>, Sumanth Korikkar <sumanthk@linux.ibm.com>, Thomas Falcon <thomas.falcon@intel.com>, Thomas Richter <tmricht@linux.ibm.com>, Weilin Wang <weilin.wang@intel.com>, Arnaldo Carvalho de Melo <acme@redhat.com>
+X-PR-Merge-Commit-Id: 6d9b5f6b81ace1b2b0830271ad46628d6fad31bb
+Message-Id: <174899290991.1704306.18338155974798122543.pr-tracker-bot@kernel.org>
+Date: Tue, 03 Jun 2025 23:21:49 +0000
+To: Steve French <smfrench@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, CIFS <linux-cifs@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-The pull request you sent on Tue,  3 Jun 2025 17:35:01 -0300:
+The pull request you sent on Tue, 3 Jun 2025 10:36:55 -0500:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools.git tags/perf-tools-for-v6.16-1-2025-06-03
+> git://git.samba.org/sfrench/cifs-2.6.git tags/v6.16-rc-part1-smb-client-fixes
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/0939bd2fcf337243133b0271335a2838857c319f
+https://git.kernel.org/torvalds/c/6d9b5f6b81ace1b2b0830271ad46628d6fad31bb
 
 Thank you!
 
