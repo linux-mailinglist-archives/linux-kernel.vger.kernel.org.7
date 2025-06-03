@@ -1,173 +1,106 @@
-Return-Path: <linux-kernel+bounces-672462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-672464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54C04ACCFD6
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 00:23:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3735ACCFDC
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 00:26:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83ED81897595
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 22:23:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4FFC7A426E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 22:25:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B053324C664;
-	Tue,  3 Jun 2025 22:23:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB62D2522BE;
+	Tue,  3 Jun 2025 22:26:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TBve22C1"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BIoX8otJ"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B2EB1B95B
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 22:23:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB99518DB24;
+	Tue,  3 Jun 2025 22:26:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748989397; cv=none; b=EQYeBqsEH4ylpCX4ICD7/fAJ16qfWjq/8AMoLVkvZ8szgwtuRX04I7p5keV8r2HvMgvN8BRF7NZJqw+rlA+sOxG3wuYiI8qPBoetqz9XWa+LfoBeLlqYrecM58mRKVyU18LVek11qrsn+nn171xVFdy/+pm7oqno5asLvafxnpM=
+	t=1748989589; cv=none; b=LqxBBZtM/csuFlmaCwzjRAB+Had0XUxsgmbWceOlp77dOXNXK1enSuUIBgWgD2enHlZR95fTuVa1WMXogjUs+UXGReDaKJgRdQrY+Zrcs6JUFevKvYUfT2IJTnm6Ssdw6jimhoQuQhkr8U1dVdXTQ63bZNgO4OYIe6+/o/UrcKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748989397; c=relaxed/simple;
-	bh=ujR7+YNFVwdyJod/Ln3HICzV48zkmFm+xlMOBh2rkXY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ri+TcgBx1yw8WI+6UkjPGgt0o/gJlklTbkBeN4Zb/LuqfRgA2ORkauSZt45VfjkX64KOwLd5x9cIK2UHBZPgkG9JbWOafw5emc68UGLztBr8NNcOWSkh+i8/NX8d+OSR85Zf2Zek39bhfMUtzwBQhecBjKGcEW0vGhZMl32OzGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TBve22C1; arc=none smtp.client-ip=209.85.221.50
+	s=arc-20240116; t=1748989589; c=relaxed/simple;
+	bh=zfz0c69FmOJCdnkXBAWjeZ3ec55qgxSzUQXGbh7JbEE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=F3Yra8inr9ft494GnqlrvU5bG7Z7luGCSKt2mY6pIeeTAyQ0YSKJopcqypRW36C3tFEhXe2jwpDIYEuY10rRfkCBDTSdiK0RR0qZRBZLNUrJrXCiYJyjomJYYDvr6/Z6oVGycZFV+UqyVWi/gVx7SsWXXUIgowMh5e3GX4wXEcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BIoX8otJ; arc=none smtp.client-ip=209.85.214.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3a4fd1ba177so255216f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jun 2025 15:23:15 -0700 (PDT)
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-23519817b57so4993005ad.3;
+        Tue, 03 Jun 2025 15:26:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748989393; x=1749594193; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1748989587; x=1749594387; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=cf7cdnxo/lNWyds1JKJmBHm432KIhVOdVcIeUTbnMfo=;
-        b=TBve22C1QW6W5OJcfaASdvElTT8sNz/ML6S2tep1JnAAIavE5IO49PmHrto21cSBAF
-         uZyZw3EnbA25k8iL5aQ1WCNjCvU2JWnZzyLCeP3R+gp4i+hWOzSrJGKyo3K0nBTuVF7H
-         KvNSEjBDKBf0eIhDE3TAcZIHZmjsSftepsdhOdEfvwLuVON5fIoaDRrGBA3wdEr2Lf3C
-         +k5PntvXCbY5sECwVwu6sKLpgk/99tf1AD/heQEdmKsrF5emEfMlVXrBSOIq4pmKsiWn
-         yhzc5KEK1cNcAGJTD1DAqaDzlx3InfIVUdsQFB5IoOQ3VxbQGfFu+ZG2J+g3awG56IDz
-         tZgA==
+        bh=spS60ybMSuhEoBnhprr08UeCQOS996miorjWsXmMPCI=;
+        b=BIoX8otJihRarstr08r5VaWztJTwd6L7Y8CvA3Lkmh3CdBfnvC1hsnQeiouR7DtJCl
+         CVCL25X/2tZWkrmyJt7q6k8kuiXS+Yz5pgidkUzkZ8Fnlo0HqSSb9p7T7ClIMzba5569
+         et+7pYDdDORFZMW/GabbncslrW1L2bu15LzlwKjuh8VbmcBw+yin1/1GjUdpq8yaK5C/
+         tPEXrcNfUSLdF/dn9gg8hSudZd7XzLdqrQQDJyvxxTvXNssQH1Z/V4maZ7IJKC3XMuvj
+         dx/WSuwTxMaV0I7PAOYB38dP75JihtCehHdcHVKT6ovWadQPHZd6DNnw9/QBqwTo9kOd
+         Bzzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748989393; x=1749594193;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1748989587; x=1749594387;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=cf7cdnxo/lNWyds1JKJmBHm432KIhVOdVcIeUTbnMfo=;
-        b=I9u7Nwr/v6qmJbAu70fnrlGmWchLlJwqr3VTLKq4oPDqOAJvgVhfDWScFc6+Ayk7Vc
-         OWFRCoMJzNQGjRAsP7e0pjyEjbFOZ/++pj00/l2JjcL3yfUYolBJeSBL8maVEj8zN7YH
-         EqqSBQlLpWVr2CFsv15FAAvruEQl0tMyCnCTMvkw41lQuIhA4IfEu4qqzYLWrLlr7g74
-         NCke0FiEznuFr41gDsDUSwlo0t3eCGPn7KBxTw5Poq6IHN54sEuDPB2xPO4ID/jQehjb
-         mIoorJRQN8wtuit6WW8Q16LSsUxjxWETie8UgMubx2UxLvolKAA+atmvN93EwAHpM/AE
-         X30A==
-X-Forwarded-Encrypted: i=1; AJvYcCVH1aTN/z6sLq5nMwt17Bp0+gSa2hZ/qzixYJeGB1WueCgehYbBTcA3/BABh/65l7U1Fx6lFtD74nTR5xk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHSjcsfkSNmiwRBtXqtQow1wnq131DVxhCAaDukzFBincgDVbS
-	04IA7US0h9rzemUscVdUxM7Em73+4ZmrIOthj+IkLhVolOVsPHO5khho
-X-Gm-Gg: ASbGnctMHk4A697LMpFuYXY9DTJC5WYjX0Q8RUGuMsuC2JJ88sFTzaI1HkXVMFac5i0
-	n6ZrpgWcdGpvYXUA3jOnqD5findyQgw3fGKXur4NVCRlDjmszaX9ESLfx3o7JjX8MM/EFpZX8BT
-	dOsdJdG7DibqnQtnLH+tI3wkS626wI92eSxjnKgWMDda9psUtoIPPB7cYwnG2FbsDUyAxHFBPLl
-	hi5nLyb/7z6yTidNTwq/z0txxZfe9Rd5yanQkz0ASW/8jslraZUlcCV1Am01knkgmwfjcg3y5pl
-	eA0+XUZuXoaHwXY/An3Gt+yREurYd9agQb0UuCHrLLITdcgeFOi5sqY5bV1b+lrC8tI7lM0qzpN
-	wrYNNOFUUVT0lTIuhhYz9zhmM
-X-Google-Smtp-Source: AGHT+IEGYsxfnq75yBV046eCf2C6bfv4GXEyK+rhrzPBHWrsHGEFRWDcZKf+jRLmD17a/VFJaVfeuQ==
-X-Received: by 2002:a5d:5f54:0:b0:3a4:f7ae:77c9 with SMTP id ffacd0b85a97d-3a51d507bf6mr449428f8f.5.1748989393563;
-        Tue, 03 Jun 2025 15:23:13 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4f00a00f5sm19745427f8f.95.2025.06.03.15.23.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Jun 2025 15:23:13 -0700 (PDT)
-Date: Tue, 3 Jun 2025 23:23:12 +0100
-From: David Laight <david.laight.linux@gmail.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linuxfoundation.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org, kees@kernel.org, acarmina@redhat.com,
- jpoimboe@kernel.org, mark.rutland@arm.com
-Subject: Re: [RFC 6/8] x86_64/bug: Implement __WARN_printf()
-Message-ID: <20250603232312.73ab608c@pumpkin>
-In-Reply-To: <20250603130455.GL21197@noisy.programming.kicks-ass.net>
-References: <20250602144201.301974933@infradead.org>
-	<20250602144755.928750774@infradead.org>
-	<CAHk-=whkD=pveK6X_5gtVbJ62+86oBOr9JokneYpSJyxjHFBpQ@mail.gmail.com>
-	<20250602154943.GB30486@noisy.programming.kicks-ass.net>
-	<CAHk-=wiYHv2duN1Aj3E5UD3zH=z6A9YpGJ1Mxj_CWL7_FRMKgw@mail.gmail.com>
-	<20250602215725.GA39782@noisy.programming.kicks-ass.net>
-	<CAHk-=whOEyTJb6MAcy2ojN98RrEzU5TW031sGpHMhMMFAg5bnw@mail.gmail.com>
-	<20250603130455.GL21197@noisy.programming.kicks-ass.net>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+        bh=spS60ybMSuhEoBnhprr08UeCQOS996miorjWsXmMPCI=;
+        b=YKqlmDCAX6AZgQiP3ujmRnVUSoyOTirCwYBkA2fmmtIqjOjkhRKTcUr3JCDNI/dHmY
+         iCaG+i11Vh9+LHMm4BDAQXm2TPQsbEu0yc63xdUY7T4l+ns5KxhlAdcF1UNieLt2mwyd
+         Atc1mHC2iUZwXU1jzMSzoOUlFXBDs151Ttacb4wCHn6pyu3I+XX4JgeVM4D2IalwE70O
+         XAtm/QJXTx2yxVPZub9KayQ/LD5ZQ5IvF9H0H9DDR1TRJ1WgwphV3xNN1V7QizeIpuh1
+         kh/EmnLYzXd9UibUELF+6jl6zd4moC26qM33hJFTgkorYTzsdhkR5qYm6vCG0ZzqibaN
+         psvA==
+X-Forwarded-Encrypted: i=1; AJvYcCUwVuKap2eE4f3ZoFHhL17nh5+ND4qkJ09tAAjgxabuMN2MxZenE6SKKYXgTGpzp3EZaQRyFpcnuCDRvmo=@vger.kernel.org, AJvYcCW9TRk6xAKoIWzRdfo2pDmR462cswl9HtZ8QQpVuwlRybXuKLAvO8xUMPsXtb3GCKCoVrZ+FLUNyRLyoffyHkg=@vger.kernel.org, AJvYcCXbv2Efn2nu7ytkCRYvgGvfjahZmNxeMQAjFxVYnFhvVA53u0K0TkEVtUS8V7LGDh/J7L/OBKjZnFtUqg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwP+5NMjJhjwte30UTmTqfA9VuJyikZoky+cHQjbBLLNJosFK+L
+	WQk+vv6tYhNMDj7n7CrZ9EBgZwAAXAdGC6ei9QN6aBzlOzbXbZWP7VIGKrBE/fc3fHgmIm20aLN
+	rRT5saXxHdO6gn1ASFCrhZcLKKZrfwaY=
+X-Gm-Gg: ASbGncvRwAu2l+iIQjbTcBth9WaRUcatvUDT4wzOl3Fr6TItA+35S5yL0TxqSSvp9em
+	qT4zAQZW10quKBlovctYEJJzUVF0ORNpuu5hhg9a5aGrpXRNRKb63smzH0PRl8u29OxWFfZhCjo
+	4TKjfvAvKwcTc2zEPzIbn8sa/9xihSov22
+X-Google-Smtp-Source: AGHT+IHYe4MifwZmarTiGrmPgQXYs94V6HqZaBrwfAdvRpZP4olnAr0bDFZ1PORuNElDs5cZ2+9XBUxmqKGqQyL6VWI=
+X-Received: by 2002:a17:903:32cf:b0:234:c549:da0c with SMTP id
+ d9443c01a7336-235e0f37687mr2464635ad.0.1748989587025; Tue, 03 Jun 2025
+ 15:26:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <700ebe13-c2d3-48e3-800f-8dc327efb6fc@gmail.com>
+ <CANiq72mFL4dn+0JppLLfxyKnM+xYwKeduFw2j07hUfxWVVHdUw@mail.gmail.com>
+ <f5d5b84c-0850-4df9-bad7-61fff12c4248@leemhuis.info> <CANiq72=+qUNJu5j+uoveMrTbngwA89+ScwjUPd9OyVGqps54aw@mail.gmail.com>
+ <20250604073118.4205f303@canb.auug.org.au>
+In-Reply-To: <20250604073118.4205f303@canb.auug.org.au>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Wed, 4 Jun 2025 00:26:14 +0200
+X-Gm-Features: AX0GCFsOpisR9zReSwsbnHOeUt07nmPeJXowIYZoqNdvdu6R35lnffHM6XE6fuk
+Message-ID: <CANiq72=EttF8tieqakoyYxfu_-LyUjCTcaogtO-Z1HajGx7LMg@mail.gmail.com>
+Subject: Re: REGRESSION: armv7 build mismatched types
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thorsten Leemhuis <linux@leemhuis.info>, linux-kernel@vger.kernel.org, 
+	Linux regressions mailing list <regressions@lists.linux.dev>, rust-for-linux@vger.kernel.org, 
+	Miguel Ojeda <ojeda@kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 3 Jun 2025 15:04:55 +0200
-Peter Zijlstra <peterz@infradead.org> wrote:
+On Tue, Jun 3, 2025 at 11:32=E2=80=AFPM Stephen Rothwell <sfr@canb.auug.org=
+.au> wrote:
+>
+> Damn!  I knew I would forget.  Sorry about that, it will be applied
+> today.
 
-> On Mon, Jun 02, 2025 at 04:10:16PM -0700, Linus Torvalds wrote:
-> > On Mon, 2 Jun 2025 at 14:57, Peter Zijlstra <peterz@infradead.org> wrote:  
-> > >
-> > > So if I stuff the asm macro in a global asm() block then GCC ends up
-> > > looking like so:  
-> > 
-> > Better, but as then the clang thing looks like a horrendous disaster.
-> > 
-> > How about we simply make this all *code* instead of playing games with
-> > register numbers?
-> > 
-> > Why not just push the arguments by hand on the stack, and make that be
-> > the interface? A 'push %reg' is like a byte or two. And you'd do it in
-> > the cold section, so nobody cares.
-> > 
-> > And the asm would look somewhat sane, instead of being crazy noise due
-> > to crazy macros.
-> > 
-> > Or so I imagine, because I didn't actually try it.  
-> 
-> Yeah, I can make that work. 
-> 
-> I've been trying to make __WARN_printk() (or similar) do a tail-call to
-> a "UD2; RET;" stub. But doing printk() in a function makes GCC generate
-> wild code that refuses to actually tail-call :/
-> 
-> The next crazy idea was to make a variant of __WARN_printk() that takes
-> a struct bug_entry * as first argument such that it has access to the
-> bug entry and then take the trap on the way out (while keeping the
-> pointer in the first argument) and then have the trap handler complete
-> things.
-> 
-> That way it would all 'just work'. Except I can't seem to force GCC to
-> emit that tail-call :-(
-> 
-> I'll prod at it some more.
+No worries! If you prefer that I send a reminder in this kind of
+cases, I would be happy to do so.
 
-How about a slightly less generic macro, something that could be:
-#define WARN_IF(a, op, b, msg) \
-	if (unlikely((a) op (b)) { \
-		printf("WARN: %s (%x " #op " %x)\n", \
-			msg ? msg : "(" #a ") " #op " (" #b ")", (a), (b)); \
-	}
-but could just be:
-	if (unlikely((a) op (b)) {
-		asm(	" ud2; cmp %0, %1"
-			" .asciz msg; .asciz #op"
-			:: "r" (a), "r" (b));
-	}
-So a ud2 followed by a reg-reg compare (should be REX/D16 prefix followed
-by '3[89ab] /r') and two strings (literals or addresses).
-With a suitable exception table entry.
+Thanks!
 
-That saves the problem of a generic printf format while still giving the
-values of the variables associated with the failing test (for simple tests).
-It should also avoid destroying register assignment for the rest of the
-function.
-
-If gcc refuses to do a jump for the 'if (unlikely...))' try adding an 'else'
-clause containing an asm comment.
-I've done that in the past to convert a backwards conditional jump (predicted taken)
-into a forwards jump (predicted not taken) to an unconditional jump to the
-actual target.
-(I had a very tight clock limit for the 'worst case' path.)
-
-	David
-
-
+Cheers,
+Miguel
 
