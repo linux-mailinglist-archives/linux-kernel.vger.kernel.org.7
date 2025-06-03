@@ -1,131 +1,129 @@
-Return-Path: <linux-kernel+bounces-672069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-672064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C559AACCA76
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 17:45:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 334F0ACCA6A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 17:43:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 814303A49C2
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 15:44:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95C423A4645
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 15:43:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 221F1241CAF;
-	Tue,  3 Jun 2025 15:43:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E2D923D2AE;
+	Tue,  3 Jun 2025 15:43:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="sTs1Xz0H"
-Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dn5Lp0bK"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E6D72417C3
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 15:43:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5DB923C512
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 15:43:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748965414; cv=none; b=dzlAMscjU+TvwwiZfCN4J7rAuTqRYCqpGXap/tNts2veVVDyLOdri16F31LolheLehsrxYolRZ4Gx9UX9kTrUzw6F9kWngx2Bjbf5ip8ot9SQ/k0Tkf0kfGbkJbaDgWVs2YxVuRT4ETrnrOV0B49lxRpFolMphOEludoHURnF+E=
+	t=1748965405; cv=none; b=Tajk2Hg/fXXk3yyoKTI0VHT03QCv8IsuXHT6/qVpyabNzGW39Q2j5g0NQJcv9Cj6v83dNV1KhteHD3jkfBbQ9emuXXRin+D73KeUyIIiNRWdevwBhqbI9HRnwI3sNH/SYa00GvpXZPWRjr70auYhAFStHz90qcsAXlPAOtTwJdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748965414; c=relaxed/simple;
-	bh=PZ4XL5eRWZXD26bFVpv2EJoMUERQolnkOLa2DLO2T54=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=dA7KBU5ml6C33ayoOwyb5fQAtcZP2Lbs55RbIWg97ZNsfg1CqBFPTELZtEng52vxat/9kNG2tX2pxF/0PfASNuP/OTQmhVgePALn4698EfxVVw9YMMp9WUJ54difp//ILc+3+yCH9bORXsPcjKFym0EfFO+b2RAbpOCI76vTY5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=sTs1Xz0H; arc=none smtp.client-ip=91.218.175.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1748965410;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ijbJoJ9Li5MjIp1TVN65GWZtg4IBHYVp0TEzJB7Nk2w=;
-	b=sTs1Xz0HOtFRUQyr4PZc2lXWxWT2obzLD9Af4Xr39LGVE+aAdcgQ+ivBoTW/ZMJgaMFlec
-	3bPWtxVTtXPIfYeDeIeAe20LAY+m1yJlywwTDFJiAIoud78uY1yyLsrzDYO5rWA2NfCLfq
-	Wc0OyRsVLwMtIlbuubbSn6B6mRbvvTY=
-From: Tao Chen <chen.dylane@linux.dev>
-To: ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	qmo@kernel.org,
-	jolsa@kernel.org
-Cc: bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Tao Chen <chen.dylane@linux.dev>
-Subject: [PATCH bpf-next v3 3/3] bpftool: Display cookie for raw_tp link probe
-Date: Tue,  3 Jun 2025 23:43:09 +0800
-Message-Id: <20250603154309.3063644-3-chen.dylane@linux.dev>
-In-Reply-To: <20250603154309.3063644-1-chen.dylane@linux.dev>
-References: <20250603154309.3063644-1-chen.dylane@linux.dev>
+	s=arc-20240116; t=1748965405; c=relaxed/simple;
+	bh=aKo9WNWRBL0f8HmrtPSASNW+mdOzeR3AWVqy7W4T820=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=HrbuKD7XP/ag8IrUVPvBe8l5qb8GvVw0dArMQr5sXJ1P3ltucSIXPjyL7HuQhJSunUKKNekQxYHrX88CnlDKtghBuwyD4ktVsjCgRZhaR1JfLrUQITvww834bvwk7/bzTNjvrmhdQ3xTGq0y1RMYF7JJ2Kk+8NwXuOj9DK0mgn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dn5Lp0bK; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-adb4e36904bso645704466b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jun 2025 08:43:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1748965401; x=1749570201; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=172AOsAQz4QlRBaW+nRn36onwnXefgQKgc9WvkOzeXc=;
+        b=dn5Lp0bKDGpLka3BIU+PNOMDBTnjqJ6TcNBnKA9IurpOBFORDMHiLUAEjLqZeRP41o
+         Zj6fUUGPeYh/id/u7KywDsovgxjJuhM+SeRFTOS8O4uQxx4T9Hlq7teWVVH14RHccAHL
+         Od0g948M8zIZEtLNuEnq4tLUr3UNLpSWDqJIA88+8RVqcJ3BHQKCULikJ9jRbpO1AB/i
+         HtOz15pKID+N50w7l8dV6YG5ynL9aro1I1VFXxwJgmujgHhpununNuG2C2qiPp0+V61B
+         tiJNJoUh9aFI1BU3UEe1qlLuLZqV45Jah85mO1oioqLh4nF77pWv9WH3QWYLQJiBS2j2
+         h3yQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748965401; x=1749570201;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=172AOsAQz4QlRBaW+nRn36onwnXefgQKgc9WvkOzeXc=;
+        b=LBkpvKV+Cxrn/33HZb4bqBQgePL15OSWqxDyEHKzdo1JRjbIBhpB7jOUYXZew5DwCa
+         NT07a5fIjCI/oSn6ij+nHTQHRNPDHLBi016fUEwzs0qpHe+e9vR7HeoVotxU9oIfzPn+
+         iH8I4l/9mdmUIyHr3fkDy6V5pYpTZ9cvK8l2CbXateO90dlAaazeEzcdF4E1qnmUEcY3
+         DaoFVRfxHdYB9FzvpT6n0ow0tmKAm2ApfvjazMHFH+MLAbbkz29QmVX0+ons+RmUA3T5
+         wQtj0iEDFjQl3Oa7jj67rhrbKsU1g9rMfnhZIZ1vk5WsHVrP9apVSNg/umnU/T+4bfER
+         QFSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWai7an9Cr0UI7tCf57AMBv4dz2fEm2llDv8hXqy6KKxNgyEXMtaDCnvGLBxATQSqQ4msIRrXCnT/e+9CA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVaS6kdQfhSoUGReNj2IkqYEPrepNoN1LchBfKWnhbjDIGHPZ0
+	YzrL3XQ/qADnyBvQcpQbueRbaCYPBjJLGko0pDJDU/QcxlQ38p2EDYb4BajUlahkCGw=
+X-Gm-Gg: ASbGncs1B+GRy7fOpWeJh5haQboehL3bzYYpYoR255GDjt1KenqqxOBXZnwEk71dTXN
+	9AtqoAp7Ij9uJW5SIySbH0aY389r2RJdZ+F2BpFrInAFCd7h9VdTJcdPKg4Sg4i3DV+0j4OEsdE
+	ZdSSErreK7oZZqOrulfqSzrH8FCs+iYVBTxwC40cB40Nj2hY1qy6DhvetuoCwEVAqUpbTgofgo7
+	Jy5ZhQOmcK5j7U+ScsgqfNGGeMGnInzajUcRhm5l+51B5YYGYBWSock2WZC0rPSUbv2B7Q5TIb0
+	ooew+iW/7xWjy0Q/H6cijH9t9bGLwpUbaeAX3PVOIrUEVsZJ3Kj9aT4NFcNzpkNkc1RkmTNZPER
+	ARmygeJqcEqzmhm8tzWoG9N+Pz3C1MaFgdoY=
+X-Google-Smtp-Source: AGHT+IGloNqlwgmA2JLdwpv1Sfgyhpoy3jA6UsqagxeRD/QCKnQisvHafq6ll76RsV6qpOjXtFvGFg==
+X-Received: by 2002:a17:906:478d:b0:ace:5461:81dd with SMTP id a640c23a62f3a-adb36b05802mr1654872166b.3.1748965401077;
+        Tue, 03 Jun 2025 08:43:21 -0700 (PDT)
+Received: from puffmais.c.googlers.com (140.20.91.34.bc.googleusercontent.com. [34.91.20.140])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ada5d82de9bsm959277166b.47.2025.06.03.08.43.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Jun 2025 08:43:20 -0700 (PDT)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Subject: [PATCH 0/3] clk: samsung: gs101 & exynos850 fixes
+Date: Tue, 03 Jun 2025 16:43:18 +0100
+Message-Id: <20250603-samsung-clk-fixes-v1-0-49daf1ff4592@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-B4-Tracking: v=1; b=H4sIABYYP2gC/x3LSwqAMAwA0atI1gbqp4heRVzUmtagVmlQBPHuF
+ pePYR4QikwCXfZApIuF95BQ5BnY2QRPyFMylKrUShctitnkDB7tuqDjmwRN7fToRl3bpoL0HZH
+ +kLZ+eN8PPxlKomMAAAA=
+X-Change-ID: 20250519-samsung-clk-fixes-a4f5bfb54c73
+To: Peter Griffin <peter.griffin@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Sam Protsenko <semen.protsenko@linaro.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ stable@vger.kernel.org
+X-Mailer: b4 0.14.2
 
-Display cookie for raw_tp link probe, in plain mode:
+Hi,
 
- #bpftool link
+The patches fix some errors in the gs101 clock driver as well as a
+trivial comment typo in the Exynos E850 clock driver.
 
-22: raw_tracepoint  prog 14
-        tp 'sys_enter'  cookie 23925373020405760
-        pids test_progs(176)
+Cheers,
+Andre
 
-And in json mode:
-
- #bpftool link -j | jq
-
-[
-  {
-    "id": 47,
-    "type": "raw_tracepoint",
-    "prog_id": 79,
-    "tp_name": "sys_enter",
-    "cookie": 23925373020405760,
-    "pids": [
-      {
-        "pid": 274,
-        "comm": "test_progs"
-      }
-    ]
-  }
-]
-
-Signed-off-by: Tao Chen <chen.dylane@linux.dev>
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
 ---
- tools/bpf/bpftool/link.c | 3 +++
- 1 file changed, 3 insertions(+)
+André Draszik (3):
+      clk: samsung: gs101: fix CLK_DOUT_CMU_G3D_BUSD
+      clk: samsung: gs101: fix alternate mout_hsi0_usb20_ref parent clock
+      clk: samsung: exynos850: fix a comment
 
-diff --git a/tools/bpf/bpftool/link.c b/tools/bpf/bpftool/link.c
-index 52fd2c9fac..0a0ef3a80a 100644
---- a/tools/bpf/bpftool/link.c
-+++ b/tools/bpf/bpftool/link.c
-@@ -484,6 +484,7 @@ static int show_link_close_json(int fd, struct bpf_link_info *info)
- 	case BPF_LINK_TYPE_RAW_TRACEPOINT:
- 		jsonw_string_field(json_wtr, "tp_name",
- 				   u64_to_ptr(info->raw_tracepoint.tp_name));
-+		jsonw_uint_field(json_wtr, "cookie", info->raw_tracepoint.cookie);
- 		break;
- 	case BPF_LINK_TYPE_TRACING:
- 		err = get_prog_info(info->prog_id, &prog_info);
-@@ -876,6 +877,8 @@ static int show_link_close_plain(int fd, struct bpf_link_info *info)
- 	case BPF_LINK_TYPE_RAW_TRACEPOINT:
- 		printf("\n\ttp '%s'  ",
- 		       (const char *)u64_to_ptr(info->raw_tracepoint.tp_name));
-+		if (info->raw_tracepoint.cookie)
-+			printf("cookie %llu  ", info->raw_tracepoint.cookie);
- 		break;
- 	case BPF_LINK_TYPE_TRACING:
- 		err = get_prog_info(info->prog_id, &prog_info);
+ drivers/clk/samsung/clk-exynos850.c | 2 +-
+ drivers/clk/samsung/clk-gs101.c     | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+---
+base-commit: a0bea9e39035edc56a994630e6048c8a191a99d8
+change-id: 20250519-samsung-clk-fixes-a4f5bfb54c73
+
+Best regards,
 -- 
-2.43.0
+André Draszik <andre.draszik@linaro.org>
 
 
