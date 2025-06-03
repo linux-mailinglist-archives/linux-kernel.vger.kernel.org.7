@@ -1,148 +1,153 @@
-Return-Path: <linux-kernel+bounces-671414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D98DCACC123
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 09:20:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C26D9ACC068
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 08:45:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1D60164B6C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 07:20:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F2933A44F1
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 06:44:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 816BF268FF1;
-	Tue,  3 Jun 2025 07:20:37 +0000 (UTC)
-Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59DCC25761
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 07:20:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C961267F70;
+	Tue,  3 Jun 2025 06:44:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="kN3/iB2M"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1E4E1F5434;
+	Tue,  3 Jun 2025 06:44:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748935237; cv=none; b=GpRLf23ecHfOF7xAlhqP7s0p2+vbK/85V1p6WGhZRRKM2GCS625A8A+l9cf3wiH7fnOXMHMcigpJg2K2d+AV1xksMIqA2VO61dqHzsWDKot46Dy/fRwjYH3Y+ktV6B9cyXzTroIvecmpSsAgJFyM7acABtPvwfptMp03Vbnll8U=
+	t=1748933094; cv=none; b=ro6GmoWBIxCmEAvqXvjXULUIQCLof0oa9fufmKbVRNCxqdWFvshjfIpLtQpgBO6/US/SeUhRNtSPOppdiORtpbTsOKdIvz9kff7Yoed0SWxWMlPCba8cSAdya9FaCF1nB8dJx9dsHZXLybM8zQMEcNQ1DZiangmB+Oj5ip1akUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748935237; c=relaxed/simple;
-	bh=I1rWHPG1Var68cD3urblSC4rQhrXEaK0reNfkq52rNI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kMyvv/3LxyUWKMwZsyZa70hanqTZIpzbORw33EbRgl4tFnEwfsKM9VKlXlBpqIbgxI2owTZonCszqUX7v7UoRRW+i1W2zM298XcGiuevGwNrtp5/xVQ7MMlwgRNwz959FOHDA4MiQWvTrpHiDdqcO4HKvW0aVaLVvuoi/qOGRqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
-	by localhost (Postfix) with ESMTP id 4bBLln4vWSz9vY5;
-	Tue,  3 Jun 2025 08:44:05 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id jjqPCRYCwsSv; Tue,  3 Jun 2025 08:44:05 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase1.c-s.fr (Postfix) with ESMTP id 4bBLln47Zbz9vY4;
-	Tue,  3 Jun 2025 08:44:05 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 88DBB8B765;
-	Tue,  3 Jun 2025 08:44:05 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id WDcIPDlhdCxM; Tue,  3 Jun 2025 08:44:05 +0200 (CEST)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 2D7CC8B763;
-	Tue,  3 Jun 2025 08:44:05 +0200 (CEST)
-Message-ID: <3cebc3c4-dbaf-41f6-b98d-1d33bea2eeeb@csgroup.eu>
-Date: Tue, 3 Jun 2025 08:44:04 +0200
+	s=arc-20240116; t=1748933094; c=relaxed/simple;
+	bh=UVp0LbQx8sBlvoHqjY1yfV+T6PtviStZ9VovgcKpHh0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p2B3A67fX16UElQJhk5LnAvSB2mb8c3O7uTQD6piUdXqV/OPSOE0LCkfzkkTb/+5FaodR0RWXpbaCIyGlIw3MlA58CXM7w0DUBbzKuXxCvNJIMVWaGA/iUGTGhsE0BoGh3ZJajLVT8TmimS7pwzFlJOiy/09bk3nqkHCihp8jGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=kN3/iB2M; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 7C96025E04;
+	Tue,  3 Jun 2025 08:44:44 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id CfiClaMm0-wl; Tue,  3 Jun 2025 08:44:43 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1748933083; bh=UVp0LbQx8sBlvoHqjY1yfV+T6PtviStZ9VovgcKpHh0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=kN3/iB2MXKttgpnuUEEUJMJPyEyGSQ9GzuKNbSfEfOu1Ts6kBOWvbPHShh4vtEL/8
+	 XBY+k1wM3sxrQuida/SOfm9HWiNd+TRZ1Z47s5leTpSyx8JbGjgBymy568VgNLuudn
+	 BHY+ON5CUsGzBAOGYLoTTxDoHDMXhPm9Gv61c2k44JHYxRZKi/PLOtwDk4Q6wW6KrY
+	 3fGdjKNSohf8wLeKSR90RBirmacuHshHOiGwGOHbrth6opLhDWLWZEbMMWhutSYvI+
+	 s+TirXSkyU/EzXye8RCHn4kABgayMToGCDNX6mvAqcvwKIa/fLG9pImHs+J9iooJaK
+	 WY76iZft5GCpw==
+Date: Tue, 3 Jun 2025 06:44:31 +0000
+From: Yao Zi <ziyao@disroot.org>
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: Jianmin Lv <lvjianmin@loongson.cn>, WANG Xuerui <kernel@xen0n.name>,
+	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
+	Mingcong Bai <jeffbai@aosc.io>, Kexy Biscuit <kexybiscuit@aosc.io>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH 1/2] platform/loongarch: laptop: Get brightness setting
+ from EC on probe
+Message-ID: <aD6Zz8L9WJRXvwaW@pie.lan>
+References: <20250531113851.21426-1-ziyao@disroot.org>
+ <20250531113851.21426-2-ziyao@disroot.org>
+ <CAAhV-H7pvaz5N0-EfvhDNHAXJtR13p9Xi5hfgDxOpeXi9zMbTQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] powerpc: use always-y instead of extra-y in Makefiles
-To: Masahiro Yamada <masahiroy@kernel.org>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Naveen N Rao <naveen@kernel.org>, linuxppc-dev@lists.ozlabs.org
-Cc: linux-kernel@vger.kernel.org
-References: <20250602163302.478765-1-masahiroy@kernel.org>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <20250602163302.478765-1-masahiroy@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAAhV-H7pvaz5N0-EfvhDNHAXJtR13p9Xi5hfgDxOpeXi9zMbTQ@mail.gmail.com>
 
+On Tue, Jun 03, 2025 at 12:11:48PM +0800, Huacai Chen wrote:
+> On Sat, May 31, 2025 at 7:39 PM Yao Zi <ziyao@disroot.org> wrote:
+> >
+> > Previously 1 is unconditionally taken as current brightness value. This
+> > causes problems since it's required to restore brightness settings on
+> > resumption, and a value that doesn't match EC's state before suspension
+> > will cause surprising changes of screen brightness.
+> laptop_backlight_register() isn't called at resuming, so I think your
+> problem has nothing to do with suspend (S3).
 
+It does have something to do with it. In loongson_hotkey_resume() which
+is called when leaving S3 (suspension), the brightness is restored
+according to props.brightness,
 
-Le 02/06/2025 à 18:32, Masahiro Yamada a écrit :
-> The extra-y syntax is planned for deprecation because it is similar
-> to always-y.
+        bd = backlight_device_get_by_type(BACKLIGHT_PLATFORM);
+        if (bd) {
+                loongson_laptop_backlight_update(bd) ?
+                pr_warn("Loongson_backlight: resume brightness failed") :
+                pr_info("Loongson_backlight: resume brightness %d\n", bd->props
+.brightness);
+        }
+
+and without this patch, props.brightness is always set to 1 when the
+driver probes, but actually (at least with the firmware on my laptop)
+the screen brightness is set to 80 instead of 1 on cold boot, IOW, a
+brightness value that doesn't match hardware state is set to
+props.brightness.
+
+On resumption, loongson_hotkey_resume() restores the brightness
+settings according to props.brightness. But as the value isn't what is
+used by hardware before suspension. the screen brightness will look very
+different (1 v.s. 80) comparing to the brightness before suspension.
+
+Some dmesg proves this as well, without this patch it says
+
+	loongson_laptop: Loongson_backlight: resume brightness 1
+
+but before suspension, reading
+/sys/class/backlight/loongson3_laptop/actual_brightness yields 80.
+
+> But there is really a problem about hibernation (S4): the brightness
+> is 1 during booting, but when switching to the target kernel, the
+> brightness may jump to the old value.
 > 
-> When building the boot wrapper, always-y and extra-y are equivalent.
-> Use always-y instead.
+> If the above case is what you meet, please update the commit message.
 > 
-> In arch/powerpc/kernel/Makefile, I added ifdef KBUILD_BUILTIN to
-> keep the current behavior: prom_init_check is skipped when building
-> only modular objects.
+> Huacai
 
-I don't understand what you mean.
+Thanks,
+Yao Zi
 
-CONFIG_PPC_OF_BOOT_TRAMPOLINE is a bool, it cannot be a module.
-
-prom_init_check is only to check the content of prom_init.o which is 
-never a module.
-
-Is always-y to run _after_ prom_init.o is built ?
-
-Christophe
-
-> 
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> ---
-> 
->   arch/powerpc/boot/Makefile   | 6 +++---
->   arch/powerpc/kernel/Makefile | 4 +++-
->   2 files changed, 6 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/powerpc/boot/Makefile b/arch/powerpc/boot/Makefile
-> index 184d0680e661..b003f7ac8755 100644
-> --- a/arch/powerpc/boot/Makefile
-> +++ b/arch/powerpc/boot/Makefile
-> @@ -242,13 +242,13 @@ $(obj)/wrapper.a: $(obj-wlib) FORCE
->   hostprogs	:= addnote hack-coff mktree
->   
->   targets		+= $(patsubst $(obj)/%,%,$(obj-boot) wrapper.a) zImage.lds
-> -extra-y		:= $(obj)/wrapper.a $(obj-plat) $(obj)/empty.o \
-> +always-y	:= $(obj)/wrapper.a $(obj-plat) $(obj)/empty.o \
->   		   $(obj)/zImage.lds $(obj)/zImage.coff.lds $(obj)/zImage.ps3.lds
->   
->   dtstree		:= $(src)/dts
->   
->   wrapper		:= $(src)/wrapper
-> -wrapperbits	:= $(extra-y) $(addprefix $(obj)/,addnote hack-coff mktree) \
-> +wrapperbits	:= $(always-y) $(addprefix $(obj)/,addnote hack-coff mktree) \
->   			$(wrapper) FORCE
->   
->   #############
-> @@ -455,7 +455,7 @@ WRAPPER_DTSDIR := /usr/lib/kernel-wrapper/dts
->   WRAPPER_BINDIR := /usr/sbin
->   INSTALL := install
->   
-> -extra-installed		:= $(patsubst $(obj)/%, $(DESTDIR)$(WRAPPER_OBJDIR)/%, $(extra-y))
-> +extra-installed		:= $(patsubst $(obj)/%, $(DESTDIR)$(WRAPPER_OBJDIR)/%, $(always-y))
->   hostprogs-installed	:= $(patsubst %, $(DESTDIR)$(WRAPPER_BINDIR)/%, $(hostprogs))
->   wrapper-installed	:= $(DESTDIR)$(WRAPPER_BINDIR)/wrapper
->   dts-installed		:= $(patsubst $(dtstree)/%, $(DESTDIR)$(WRAPPER_DTSDIR)/%, $(wildcard $(dtstree)/*.dts))
-> diff --git a/arch/powerpc/kernel/Makefile b/arch/powerpc/kernel/Makefile
-> index 4d2daa8e7bca..ac01cedad107 100644
-> --- a/arch/powerpc/kernel/Makefile
-> +++ b/arch/powerpc/kernel/Makefile
-> @@ -201,7 +201,9 @@ obj-$(CONFIG_ALTIVEC)		+= vector.o
->   
->   obj-$(CONFIG_PPC_OF_BOOT_TRAMPOLINE) += prom_init.o
->   obj64-$(CONFIG_PPC_OF_BOOT_TRAMPOLINE) += prom_entry_64.o
-> -extra-$(CONFIG_PPC_OF_BOOT_TRAMPOLINE) += prom_init_check
-> +ifdef KBUILD_BUILTIN
-> +always-$(CONFIG_PPC_OF_BOOT_TRAMPOLINE) += prom_init_check
-> +endif
->   
->   obj-$(CONFIG_PPC64)		+= $(obj64-y)
->   obj-$(CONFIG_PPC32)		+= $(obj32-y)
-
+> >
+> > Let's get brightness from EC and take it as the current brightness on
+> > probe of the laptop driver to avoid the surprising behavior. Tested on
+> > TongFang L860-T2 3A5000 laptop.
+> >
+> > Cc: stable@vger.kernel.org
+> > Fixes: 6246ed09111f ("LoongArch: Add ACPI-based generic laptop driver")
+> > Signed-off-by: Yao Zi <ziyao@disroot.org>
+> > ---
+> >  drivers/platform/loongarch/loongson-laptop.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/platform/loongarch/loongson-laptop.c b/drivers/platform/loongarch/loongson-laptop.c
+> > index 99203584949d..828bd62e3596 100644
+> > --- a/drivers/platform/loongarch/loongson-laptop.c
+> > +++ b/drivers/platform/loongarch/loongson-laptop.c
+> > @@ -392,7 +392,7 @@ static int laptop_backlight_register(void)
+> >         if (!acpi_evalf(hotkey_handle, &status, "ECLL", "d"))
+> >                 return -EIO;
+> >
+> > -       props.brightness = 1;
+> > +       props.brightness = ec_get_brightness();
+> >         props.max_brightness = status;
+> >         props.type = BACKLIGHT_PLATFORM;
+> >
+> > --
+> > 2.49.0
+> >
+> >
 
