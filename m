@@ -1,174 +1,146 @@
-Return-Path: <linux-kernel+bounces-671491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CAECACC23C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 10:33:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D2E23ACC23D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 10:34:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18185164444
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 08:33:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1E30164BFD
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 08:34:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22FCF26980B;
-	Tue,  3 Jun 2025 08:33:37 +0000 (UTC)
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1890826980B;
+	Tue,  3 Jun 2025 08:34:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="m5vEW+eC"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C2C92C3271
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 08:33:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B607228137D;
+	Tue,  3 Jun 2025 08:33:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748939616; cv=none; b=QY/+uzj3yQsqhleuMqKZVSoiOLptiojY7bqeEy2ma2U6ZZUG4fPLbPZw5a7YgB+AiEpPB6wFT41gNgwkOQk0kNRe//Z3wGCCle5HQ0Qav4bsH0bJDVeWPY8uSTYHMUNmRJ4Qhky3QU6pl0IuEOlpC9gdXV4YEf0ysxnQMgOkhgs=
+	t=1748939641; cv=none; b=BsenGov7+peL0Vh8ucASPk3ZVug7PJIYYWyn1BDz58cB9bWzO5DgNGAfHMuNphOFXz/jIQ41nRGncf0L0TNwRX7EsJ3mzelwH+YoH+RecAfUErtmMlnRjqMUJq0A8eBpPCzY8VqxMWSlcEfGyqeNQXVOZzXjhRXClB5nsaKKqws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748939616; c=relaxed/simple;
-	bh=QDd5gO3VmW4PsIQs2/PqN2ib6jDK3YOpIlYaKTtg5rM=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Euy7ol+Eee1TSARuN8AMwFNgUz/sgV4VeHsurhTmUAvTQeHEpn4pAEO+SBuyOay0muwMm3RXSn3K3eSwBGieo2D/PqHpAPo+nGC3AGBu21II0z972BwfSS13UlbZx2wSTqAV3xGXENfYpE0DwdWGVEJDPsCyW6tXFaECclRLV/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3ddb8522720so9684575ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jun 2025 01:33:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748939614; x=1749544414;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PnDXQQ+eXJvD3MKBP/vy3SLNLiIY9oiD1zSTePQgx/0=;
-        b=wA9PLAe8vII1olBPnwWmwGAWGwe5lqF9UJklnYVjydVqJX6cmdals08UjSNeXldECW
-         XRMU9GXYTredTAiMNViroROOr6RV3kUdCPeRO917C7OJlJSTObMcg8znPUb3/R4j7ShP
-         AUVBtm1VglYab40Hb2X2Q3Trj67c+f+nMFd3mmJz2g8S34xUo+MhM44ozin6kcuCEnWp
-         xIJphuHbNVJeEkqXUHs04m9Rufmqc3jht5UHK2GIybPUz/5fdlZIhr3R7AOEiMXe8lL2
-         2yXj6SviWuqzDDs9VX00nfgJJNb+6T2ujnZ/Ivn6DCLXe9vzH8JCuvEaZ5V1HWmHzw/8
-         JoJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV93tza5MN3XfFI5PRvmdNXXJC49ZoEVqtImwiyqnZ4oXVF3KDr8jgnpCje3EttGapVvxJFvs2fYOuWrLU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHeVF6m46BVCnMXsrUfqjSE+n6UfaTCHUIPXFb7Sp2n943VjtU
-	8e+tcNL1WMeyKu5nmPqV8x5k/qiqWoMFHJZcBotAk3OV489jdZoEPZKmXwGXNtMU97Z/izQuM9G
-	yrunBBqPRjUSZ3a+hS9or/BCn7nzj1UeQhqJZWqU5N4sgC7vt7q3yz99tm5c=
-X-Google-Smtp-Source: AGHT+IFavsB8h7+yWi6f2dQJlVvPgrl8pLo7lS7OGVCB5+DuKHXjBTm7uok/halrKk/E/hlCNrUTXUhemXXgH/VrfnuZv6zSY1C6
+	s=arc-20240116; t=1748939641; c=relaxed/simple;
+	bh=6I08uDTKcAQGN/a1ejgxT2X3Yj5mTmjSPZuG++wTGII=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D2xPatR5QFYtkHLeBMt7Md0PKT0QSjzjkC4vO2bXIUbQrGJmke31/4lp18V6gl4tJAyNCCl9SkKTHeAh5wzPC7BfGs7b7ygVt/980/1yIZ/ahR8cInNoj9uifHiA6hJYkyVozOeA5n+DGdFO64Q1yySRCA9tdp5xktlLlzX7gw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=m5vEW+eC; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1748939640; x=1780475640;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=6I08uDTKcAQGN/a1ejgxT2X3Yj5mTmjSPZuG++wTGII=;
+  b=m5vEW+eCEyFJPT4RpKYBMFC8RSnJmHTHQsthDrWC749C3djQVx780s0K
+   02/D4I6j6Si/2XzeVo8yePvCGirHIjcVcu2rw7KBqxhqJBPFp/abZQiSr
+   kuUpNLwkvMT1a33JSDV8S9QoehPRbQuUheeiChd19mU3c6FcaqWWAl6ET
+   rD3qG9W9ur/Qoaxj2AvvWooAiUIa+hSuzwZIJ8CQDNpoFF0zAVf8wGlif
+   HgnuTg0B8G9aTg6HBTGHqk5oLY4lQUopNx9IE7lrrh9FolQ9z+dVbJeAd
+   ixp+n5seficgFSWpKbnbiPN4VitlfKUmc0LhKbxzU6+svH4XRdCpUKd8c
+   A==;
+X-CSE-ConnectionGUID: rZxcwEPETxaghYYC4lh9Ow==
+X-CSE-MsgGUID: Z9+Q1QQVQI+tZqEbpMu2cg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11451"; a="73501160"
+X-IronPort-AV: E=Sophos;i="6.16,205,1744095600"; 
+   d="scan'208";a="73501160"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2025 01:33:59 -0700
+X-CSE-ConnectionGUID: q/EF/En/TSSgP7GHtoFsaA==
+X-CSE-MsgGUID: zq5IgQeSQGGApg3ljPIyOQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,205,1744095600"; 
+   d="scan'208";a="145285714"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2025 01:33:56 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1uMN5l-000000035SG-43gV;
+	Tue, 03 Jun 2025 11:33:53 +0300
+Date: Tue, 3 Jun 2025 11:33:53 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Aditya Garg <gargaditya08@live.com>
+Cc: agski33 <agski33@proton.me>,
+	"linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	dmaengine@vger.kernel.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>
+Subject: Re: [REGRESSION] Re: ELAN1206 Touchpad Bugzilla 219799
+Message-ID: <aD6zcaMAK_r0Bei6@smile.fi.intel.com>
+References: <z9A_-FfhGGSZqAHPl-DnF-qPhbI563CsiUUiC8nhdhcZUZYkgpkruvHQ6Vdt8Jt0s0ogm9tCNXFAfn06utR9Zwh_UNTUy4whJ2Z9oVcfPEA=@proton.me>
+ <PN3PR01MB9597C74E424033DC90B6F3B2B862A@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+ <PN3PR01MB9597F96188E061EB0B7ACBD6B862A@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d99:b0:3dc:7fa4:804 with SMTP id
- e9e14a558f8ab-3dda3387dc3mr110544985ab.16.1748939614144; Tue, 03 Jun 2025
- 01:33:34 -0700 (PDT)
-Date: Tue, 03 Jun 2025 01:33:34 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <683eb35e.a00a0220.d8eae.0062.GAE@google.com>
-Subject: [syzbot] [jfs?] kernel BUG in jfs_truncate_nolock
-From: syzbot <syzbot+630f6d40b3ccabc8e96e@syzkaller.appspotmail.com>
-To: jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
-	shaggy@kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <PN3PR01MB9597F96188E061EB0B7ACBD6B862A@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Hello,
+On Mon, Jun 02, 2025 at 11:37:21PM +0530, Aditya Garg wrote:
+> On 02-06-2025 11:35 pm, Aditya Garg wrote:
+> > On 28-05-2025 07:44 pm, agski33 wrote:
 
-syzbot found the following issue on:
+...
 
-HEAD commit:    f66bc387efbe Merge tag 'scsi-misc' of git://git.kernel.org..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=14ccbff4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5035170c334b10e0
-dashboard link: https://syzkaller.appspot.com/bug?extid=630f6d40b3ccabc8e96e
-compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1725f7f4580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=158147f4580000
+> >> I am currently experiencing the issue that was previously reported in the
+> >> following BugZilla
+> >> entry: https://bugzilla.kernel.org/show_bug.cgi?id=219799.  I noticed that
+> >> the bug was marked as NEEDINFO so I attempted to fill in the relevant
+> >> information.
+> >>
+> >>  From my testing, it seems like IDMA transfers relating to the touchpad
+> >> input are taking too long and causing timeouts within hid-multitouch.  
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/fd515d0ab520/disk-f66bc387.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/02091b462a17/vmlinux-f66bc387.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/963425e89030/bzImage-f66bc387.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/41b7b3dad955/mount_0.gz
-  fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=10a93482580000)
+Is touchpad interface is I²C?
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+630f6d40b3ccabc8e96e@syzkaller.appspotmail.com
+> >> I contacted ASUS in an attempt to obtain information relating to the
+> >> workings of the touchpad that may assist with this issue, however I
+> >> believe it is unlikely that I will be able to obtain anything useful from
+> >> them.
+> >>
+> >> I am wondering if anyone has any additional suggestions for next debugging
+> >> steps or things that I may try - would be happy to provide any additional
+> >> information or do additional debugging etc.
+> >>
+> >> System Details:
+> >> Device: ASUS Q528EH with ELAN1206 Touchpad
+> >> Kernel versions: 6.9-rc6 is where the issue starts, persists through all
+> >> kernel versions after including latest.
+> >> Symptoms: Touchpad cursor will not move.  
+> >>  Additional Observations: Something of potential interest that I noticed
+> >> was that it appeared the touchpad is sending data byte by byte when doing
+> >> an IDMA transfer, not sure if that is normal or not.
+> >>
+> >> Any suggestions for next steps are appreciated!  Thank you in advance for your time and input.
+> > 
+> > Looking at https://bugzilla.kernel.org/show_bug.cgi?id=219799#c2, dd4478d63b6a2b6891fcc1800eb26ce3f1ead1d4
+> > seems to be the patch causing regression.
+> 
+> My bad, its 9140ce47872bfd89fca888c2f992faa51d20c2bc, the mailing list link is correct though.
 
-loop0: detected capacity change from 0 to 32768
-BUG at fs/jfs/inode.c:370 assert(length >= 0)
-------------[ cut here ]------------
-kernel BUG at fs/jfs/inode.c:370!
-Oops: invalid opcode: 0000 [#1] SMP KASAN PTI
-CPU: 1 UID: 0 PID: 5823 Comm: syz-executor203 Not tainted 6.15.0-syzkaller-08486-gf66bc387efbe #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-RIP: 0010:jfs_truncate_nolock+0x33b/0x340 fs/jfs/inode.c:370
-Code: e8 aa a9 25 08 e8 25 01 89 fe 48 c7 c7 80 6f c3 8b 48 c7 c6 a0 6b c3 8b ba 72 01 00 00 48 c7 c1 c0 6f c3 8b e8 76 4f f0 fd 90 <0f> 0b 0f 1f 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 66
-RSP: 0018:ffffc900043af860 EFLAGS: 00010246
-RAX: 000000000000002d RBX: ffff8880770d1fd8 RCX: 6cc80c570e63f800
-RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
-RBP: ffffc900043af910 R08: ffffc900043af547 R09: 1ffff92000875ea8
-R10: dffffc0000000000 R11: fffff52000875ea9 R12: fffffa000000000a
-R13: dffffc0000000000 R14: ffff8880770d1fd8 R15: 1ffff92000875f10
-FS:  0000555593cd0380(0000) GS:ffff888125d98000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fd7dd58a000 CR3: 00000000338e4000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- jfs_truncate fs/jfs/inode.c:412 [inline]
- jfs_write_failed+0x119/0x190 fs/jfs/inode.c:289
- jfs_direct_IO+0x1f4/0x220 fs/jfs/inode.c:342
- generic_file_direct_write+0x1d8/0x3e0 mm/filemap.c:4037
- __generic_file_write_iter+0x11d/0x230 mm/filemap.c:4206
- generic_file_write_iter+0x10f/0x540 mm/filemap.c:4246
- new_sync_write fs/read_write.c:593 [inline]
- vfs_write+0x548/0xa90 fs/read_write.c:686
- ksys_write+0x145/0x250 fs/read_write.c:738
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fce1ba0eb99
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffd0e6719b8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fce1ba0eb99
-RDX: 00000000000000a0 RSI: 0000200000000340 RDI: 0000000000000004
-RBP: 00007fce1ba875f0 R08: 0000000000000000 R09: 0000555593cd14c0
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffd0e6719e0
-R13: 00007ffd0e671c08 R14: 431bde82d7b634db R15: 00007fce1ba5703b
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:jfs_truncate_nolock+0x33b/0x340 fs/jfs/inode.c:370
-Code: e8 aa a9 25 08 e8 25 01 89 fe 48 c7 c7 80 6f c3 8b 48 c7 c6 a0 6b c3 8b ba 72 01 00 00 48 c7 c1 c0 6f c3 8b e8 76 4f f0 fd 90 <0f> 0b 0f 1f 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 66
-RSP: 0018:ffffc900043af860 EFLAGS: 00010246
-RAX: 000000000000002d RBX: ffff8880770d1fd8 RCX: 6cc80c570e63f800
-RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
-RBP: ffffc900043af910 R08: ffffc900043af547 R09: 1ffff92000875ea8
-R10: dffffc0000000000 R11: fffff52000875ea9 R12: fffffa000000000a
-R13: dffffc0000000000 R14: ffff8880770d1fd8 R15: 1ffff92000875f10
-FS:  0000555593cd0380(0000) GS:ffff888125c98000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055923e290368 CR3: 00000000338e4000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+It doesn't matter, the patch is technically correct — we do not serve the
+spurious (not ours) interrupts.
+
+> > https://lore.kernel.org/lkml/20240321120453.1360138-1-andriy.shevchenko@linux.intel.com/
+> > 
+> > Ccing relevant folks here.
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
