@@ -1,180 +1,111 @@
-Return-Path: <linux-kernel+bounces-671244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE286ACBE84
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 04:32:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C590AACBE89
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 04:36:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1276F18915F5
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 02:32:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B5723A5B5C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 02:36:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CFC9156C6F;
-	Tue,  3 Jun 2025 02:32:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2838D156C6F;
+	Tue,  3 Jun 2025 02:36:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ahJo5/04"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ff1qe2e2"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB3C22C3242;
-	Tue,  3 Jun 2025 02:32:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13BE0A944;
+	Tue,  3 Jun 2025 02:36:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748917945; cv=none; b=rP7aclaV5eltnb/Vqms4Mz7FvvwsY3ax5N76/Tpiy33HrrhqZ/QTYoE+ezELYYE/yUChU5ngsP6BrdTIIkYx+l4eXuaS/KtZlyJoVGf3z6VY82CAYLE6zC5XYroKcWzfYVbJpfGzNz/ot3H+ndjgTUdQYIn+SELvFBR19yvP2dI=
+	t=1748918181; cv=none; b=E/Z3VFJI8ryOUc12cTNVsBTL7sxOnO0NjytdzUXWLhAU0LWvKh1r5V59Q2J959XiDbd7ByLku4Od2eB2UMlZ+jxwgH3M12e4IRk4G1c0ozC4bFwidc0SaUypLj1fbm8h3P9PmKmjjIPPuWunZm8b0e5eKNAWn8wV9s9cen4/JaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748917945; c=relaxed/simple;
-	bh=iukzqPLEHUEamTvzln+FXjqg8pe2ST7JYjMWxBm2Z8E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XRAv0dvzI3SDCo+VFNtT6g/Yi5tvMM7h7kCEnoploIDsOierEi4Gd66aKXS+8OPe2uJQci2ISuAON5Nmm8PSfGCWNpfVUjhhCH879M7yLM4kdIhTQuBKxmEHrWH6lpOFw3LQLMHuvLfmZRCoFlzOSA5L6oYvwspuL/YjHqWTwQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ahJo5/04; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1748917944; x=1780453944;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=iukzqPLEHUEamTvzln+FXjqg8pe2ST7JYjMWxBm2Z8E=;
-  b=ahJo5/04EAq9fowbjC1P6mWk1k9c7ieoGgBaBP2D2qYX9i8E3XZa8ReR
-   V/De9qtzSL2II/P943FoHj9OHjTdQJP7LTtugPJUmfxT8vCA3HutKJ6BU
-   u7ZN0qQO/n8Vu6LKSw9iLeKYlX05ayWg7GS9lHgTDLTaN7wC5Mj1zGylR
-   c9z7EHRkI5Iad+DmLJCTbAoY1/skH8VMeJQd2TuCz98Ez/clsQo4884CU
-   NLQBZIz1Igl9SsGSeNIoDNQCQgivUGERoDe4BnN7qYAdID88BpDNRDDhZ
-   35rpCZOzT+QOoml/a5NYeb2uDTzNTixig/C9cH0COD5rvYrhMOCvlWaEe
-   Q==;
-X-CSE-ConnectionGUID: In1D+8zvQQabJ9kRSPteDg==
-X-CSE-MsgGUID: 3/k66s/2R+C4IdTjs/ys6g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11451"; a="61992996"
-X-IronPort-AV: E=Sophos;i="6.16,205,1744095600"; 
-   d="scan'208";a="61992996"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2025 19:32:23 -0700
-X-CSE-ConnectionGUID: 6nURPut1TEqDQMkzHPPAXA==
-X-CSE-MsgGUID: SkYJvXOGSSa/37gUShZ+yw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,205,1744095600"; 
-   d="scan'208";a="175571632"
-Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.245.144]) ([10.124.245.144])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2025 19:32:21 -0700
-Message-ID: <89f66499-26b6-4b7d-a17e-4e74007e8c53@linux.intel.com>
-Date: Tue, 3 Jun 2025 10:32:18 +0800
+	s=arc-20240116; t=1748918181; c=relaxed/simple;
+	bh=PLbrIncQTZNf25SSQJU4VBhsCLcnQYITDZamoS0zpho=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ohs0vnRl0dARSGcQLLMsawT6IT9boINuSA1ld9GwJ9bj3bKz36kdq86Z4To1onAWLZXSTsnzsYbZqVHGJyReU+edjF6ltShU3yPlWdvnnl0t7LlK3J6772gdtAQLrn+7r8LhbjHCiABnETQxvjz+JHZoFapSNeozOuec3DNzSwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=ff1qe2e2; arc=none smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 552LN0wO026935;
+	Tue, 3 Jun 2025 02:36:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2025-04-25; bh=D1b2SUoFaLh5N1PDzjLwDIm1J/89SDZfWxJe2iHPeRs=; b=
+	ff1qe2e2v0Egb9lVmn7ssi0UOrD0v9DaghO50HqrQdU57rbLh2MaycEiHSAJ5uKH
+	ZK//pLPoRgqF8wGgo6flgK+0b+OtPhpGI7pUavtfIJogyBCn2UHFJQD7QKb9xPI5
+	bttxzeRzIbIzqLhMY0vU2oS1pBZWiLqNa0P5zjRZr7EwPShuFgIejn8NsELevsrK
+	9DBE7hzTPL3fWXCWnrvqdnOayec0fp22eHiMCT245IzVCR13clt5CbbFDFbIND6T
+	qwo4Y7bmVPTGg08GiHw5Jq3Rn0GkAoVYiQmgkh9lJAak/RRI/CzU8Fgs50LC+DU5
+	y+yZlihmdStUSwxbaTGxbA==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 471g8k8wgh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 03 Jun 2025 02:36:16 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 552Njsna030643;
+	Tue, 3 Jun 2025 02:36:14 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 46yr78qkdn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 03 Jun 2025 02:36:14 +0000
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 5532aEk9008766;
+	Tue, 3 Jun 2025 02:36:14 GMT
+Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 46yr78qkdh-1;
+	Tue, 03 Jun 2025 02:36:14 +0000
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+To: James.Bottomley@HansenPartnership.com,
+        mrigendrachaubey <mrigendra.chaubey@gmail.com>
+Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] scsi: scsi_devinfo: Fix typo in comment
+Date: Mon,  2 Jun 2025 22:35:47 -0400
+Message-ID: <174889162399.672400.9949610085993639164.b4-ty@oracle.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250524035516.27341-1-mrigendra.chaubey@gmail.com>
+References: <20250524035516.27341-1-mrigendra.chaubey@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 06/28] KVM: SVM: Massage name and param of helper that
- merges vmcb01 and vmcb12 MSRPMs
-To: Sean Christopherson <seanjc@google.com>,
- Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Borislav Petkov <bp@alien8.de>, Xin Li <xin@zytor.com>,
- Chao Gao <chao.gao@intel.com>
-References: <20250529234013.3826933-1-seanjc@google.com>
- <20250529234013.3826933-7-seanjc@google.com>
-Content-Language: en-US
-From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-In-Reply-To: <20250529234013.3826933-7-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-02_08,2025-06-02_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 malwarescore=0
+ suspectscore=0 phishscore=0 adultscore=0 spamscore=0 mlxlogscore=942
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2505160000 definitions=main-2506030021
+X-Proofpoint-GUID: ulkaTYvrqtZR2DOG7G0n4sLbdamI0ohX
+X-Proofpoint-ORIG-GUID: ulkaTYvrqtZR2DOG7G0n4sLbdamI0ohX
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjAzMDAyMSBTYWx0ZWRfXyDIcRI8gnVka mhP1r+R4cHJc33SCY5Zwc2KwRAo582f33BLGZ42p5cZBbX/nVk8xHa1RQ2UvduyJjoFj53O/BiR cXVGpztDyLqW4bm61QIXRMTmoe004mWKfqtCZuTqK+T+DwBylVkS5bMiS5K8CBimbPOOQ9h5Urv
+ m2U0P7uJgGxHC2oVz5bj7Or1GN+pCLtfEvPz4vJjmhOfTZMrzTvTbiW0hzsQxpN7C+sE1fEsh9/ 06OqBugcOhUgu7VdFcfszsGPdpaTGdexlio8bENOMa/0Dh7qfl1Z34XK5CtSjs3NU0urRfx2xDE EV+/sFXNlVJMxoeK2S0hXPs4+cqPXHTPqJj1BLzGBpX4APmlHqT/n0zxkegv2Jz+P1MKcSljrQe
+ NXlrsu/TueUMjDoHcjOFXaG0h4VF1NL6XQbDIGF2Sb/DkBMCHo6Ithgd4SA7liuuHKHSqYcr
+X-Authority-Analysis: v=2.4 cv=FM4bx/os c=1 sm=1 tr=0 ts=683e5fa0 b=1 cx=c_pps a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=VwQbUJbxAAAA:8 a=5YornGoTVulL9ZZtH-MA:9 a=QEXdDO2ut3YA:10 cc=ntf
+ awl=host:14714
 
-On 5/30/2025 7:39 AM, Sean Christopherson wrote:
-> Renam nested_svm_vmrun_msrpm() to nested_svm_merge_msrpm() to better
+On Sat, 24 May 2025 09:25:16 +0530, mrigendrachaubey wrote:
 
-"Renam" -> "Rename".
+> This patch corrects a minor typo in a comment within scsi_devinfo.c,
+> replacing "compatibile" with the correct spelling "compatible".
+> 
+> 
 
+Applied to 6.16/scsi-queue, thanks!
 
-> capture its role, and opportunistically feed it @vcpu instead of @svm, as
-> grabbing "svm" only to turn around and grab svm->vcpu is rather silly.
->
-> No functional change intended.
->
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->  arch/x86/kvm/svm/nested.c | 15 +++++++--------
->  arch/x86/kvm/svm/svm.c    |  2 +-
->  2 files changed, 8 insertions(+), 9 deletions(-)
->
-> diff --git a/arch/x86/kvm/svm/nested.c b/arch/x86/kvm/svm/nested.c
-> index 8427a48b8b7a..89a77f0f1cc8 100644
-> --- a/arch/x86/kvm/svm/nested.c
-> +++ b/arch/x86/kvm/svm/nested.c
-> @@ -189,8 +189,9 @@ void recalc_intercepts(struct vcpu_svm *svm)
->   * is optimized in that it only merges the parts where KVM MSR permission bitmap
->   * may contain zero bits.
->   */
-> -static bool nested_svm_vmrun_msrpm(struct vcpu_svm *svm)
-> +static bool nested_svm_merge_msrpm(struct kvm_vcpu *vcpu)
->  {
-> +	struct vcpu_svm *svm = to_svm(vcpu);
->  	int i;
->  
->  	/*
-> @@ -205,7 +206,7 @@ static bool nested_svm_vmrun_msrpm(struct vcpu_svm *svm)
->  	if (!svm->nested.force_msr_bitmap_recalc) {
->  		struct hv_vmcb_enlightenments *hve = &svm->nested.ctl.hv_enlightenments;
->  
-> -		if (kvm_hv_hypercall_enabled(&svm->vcpu) &&
-> +		if (kvm_hv_hypercall_enabled(vcpu) &&
->  		    hve->hv_enlightenments_control.msr_bitmap &&
->  		    (svm->nested.ctl.clean & BIT(HV_VMCB_NESTED_ENLIGHTENMENTS)))
->  			goto set_msrpm_base_pa;
-> @@ -230,7 +231,7 @@ static bool nested_svm_vmrun_msrpm(struct vcpu_svm *svm)
->  
->  		offset = svm->nested.ctl.msrpm_base_pa + (p * 4);
->  
-> -		if (kvm_vcpu_read_guest(&svm->vcpu, offset, &value, 4))
-> +		if (kvm_vcpu_read_guest(vcpu, offset, &value, 4))
->  			return false;
->  
->  		svm->nested.msrpm[p] = svm->msrpm[p] | value;
-> @@ -937,7 +938,7 @@ int nested_svm_vmrun(struct kvm_vcpu *vcpu)
->  	if (enter_svm_guest_mode(vcpu, vmcb12_gpa, vmcb12, true))
->  		goto out_exit_err;
->  
-> -	if (nested_svm_vmrun_msrpm(svm))
-> +	if (nested_svm_merge_msrpm(vcpu))
->  		goto out;
->  
->  out_exit_err:
-> @@ -1819,13 +1820,11 @@ static int svm_set_nested_state(struct kvm_vcpu *vcpu,
->  
->  static bool svm_get_nested_state_pages(struct kvm_vcpu *vcpu)
->  {
-> -	struct vcpu_svm *svm = to_svm(vcpu);
-> -
->  	if (WARN_ON(!is_guest_mode(vcpu)))
->  		return true;
->  
->  	if (!vcpu->arch.pdptrs_from_userspace &&
-> -	    !nested_npt_enabled(svm) && is_pae_paging(vcpu))
-> +	    !nested_npt_enabled(to_svm(vcpu)) && is_pae_paging(vcpu))
->  		/*
->  		 * Reload the guest's PDPTRs since after a migration
->  		 * the guest CR3 might be restored prior to setting the nested
-> @@ -1834,7 +1833,7 @@ static bool svm_get_nested_state_pages(struct kvm_vcpu *vcpu)
->  		if (CC(!load_pdptrs(vcpu, vcpu->arch.cr3)))
->  			return false;
->  
-> -	if (!nested_svm_vmrun_msrpm(svm)) {
-> +	if (!nested_svm_merge_msrpm(vcpu)) {
->  		vcpu->run->exit_reason = KVM_EXIT_INTERNAL_ERROR;
->  		vcpu->run->internal.suberror =
->  			KVM_INTERNAL_ERROR_EMULATION;
-> diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-> index b55a60e79a73..2085259644b6 100644
-> --- a/arch/x86/kvm/svm/svm.c
-> +++ b/arch/x86/kvm/svm/svm.c
-> @@ -3134,7 +3134,7 @@ static int svm_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr)
->  		 *
->  		 * For nested:
->  		 * The handling of the MSR bitmap for L2 guests is done in
-> -		 * nested_svm_vmrun_msrpm.
-> +		 * nested_svm_merge_msrpm().
->  		 * We update the L1 MSR bit as well since it will end up
->  		 * touching the MSR anyway now.
->  		 */
+[1/1] scsi: scsi_devinfo: Fix typo in comment
+      https://git.kernel.org/mkp/scsi/c/c8426f258a0a
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
 
