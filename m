@@ -1,142 +1,145 @@
-Return-Path: <linux-kernel+bounces-671786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD8ADACC622
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 14:06:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 371F5ACC62B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 14:08:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D2FE166171
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 12:06:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01BE816774A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 12:08:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1883222DA08;
-	Tue,  3 Jun 2025 12:06:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="rjf9dCmd"
-Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 434BA2B2CF
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 12:06:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59C0222F38B;
+	Tue,  3 Jun 2025 12:08:02 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B16E7146A66;
+	Tue,  3 Jun 2025 12:07:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748952366; cv=none; b=onITKibDRjzFLqM/ImTFqUehEKzcOi1e2gEdi5zzAZUxtAZBm7dh0wYoFptldmdfQ1zroe4Z6c/WaNtHm2jlb/bOHytM0zYGk4N+bb/FKj06IvE3GoLDdJAbM5U1SXVIxSvg0J8u9fqIoCjpUCFgt/tAqwItKgFjinVyYC9t6rY=
+	t=1748952482; cv=none; b=oim4EXGbgcP4yTstpvRwrLg3lHlL0dpThcKfFwt7m3qI2/5W7V4CD/usMIVLCmzCHbtVFJ7/l5KGIUHy92h6+UFUsm+hzZpeiDqtgP7NMoUKDZxTDRjs/rOL0047wx/oanTPtIKvIyHxYjivzBUNvkiaVOUGhkC4JcD6A+udrog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748952366; c=relaxed/simple;
-	bh=fPmKHi75xwI/I4zLEnhov/ZVHLXU+TfLkgaePipJgwk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mAyrtzB+BXK+4XBFS0xfZhHfPjEEBuHC6gNikxZrjGNNNvORhYERqZ5QduZs2MyZllhd8XWMM+T54wnc2RxeMYyFzoTpr5YyvqMfS4xONBEvfbae88bMYi6z4ON54Ur+4RYGm8HwY9CgY1wtx9mQIIDQq+iJCtcpPRcMFHOPgH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=rjf9dCmd; arc=none smtp.client-ip=91.218.175.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <2f41a74e-06a6-4dc3-806b-a88783d26c8f@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1748952359;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mOTHkJYnIu7YqcktCvF/rulIgNRIgccYCV1pgoiilTw=;
-	b=rjf9dCmd/OIdOpetURczVXrOVdxR8NdeLpzrBFv14occaGV0KjibZpFG4s2D2+m3pc/zzA
-	ljirg6ZNcFpNo8wbEaTvrODKzEvJhrXBFxRtnoyhh5dQmT7c1Fc8Mqu8BmklgdadNRCXAa
-	q2N0tHQM/Ltt2e5V7upSMEYxYuwhTuY=
-Date: Tue, 3 Jun 2025 20:05:51 +0800
+	s=arc-20240116; t=1748952482; c=relaxed/simple;
+	bh=cKHzIUgnW7PSnuX/LD1d2vlKQO6VXKzAPDVdGxCLw4g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=u7hN0HddX814gT1WqRzSQJw0dY5MMgXMWt3Qnhe55ugB6u9m/g6svMBJ3uP1b4FS6OYloai0p9QQvReurSa7aL4G43xqj3/Zig0LjF9i66mUmQ+ySSr7I2Bo85ieblxI3i9T042tt0zZrSIh9UClxhxTNcZAkG6f160hXH1SYLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2F77412FC;
+	Tue,  3 Jun 2025 05:07:42 -0700 (PDT)
+Received: from e129166.arm.com (unknown [10.57.27.15])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id E81923F673;
+	Tue,  3 Jun 2025 05:07:55 -0700 (PDT)
+From: Lukasz Luba <lukasz.luba@arm.com>
+To: linux-kernel@vger.kernel.org
+Cc: lukasz.luba@arm.com,
+	rostedt@goodmis.org,
+	mhiramat@kernel.org,
+	mathieu.desnoyers@efficios.com,
+	mingo@redhat.com,
+	peterz@infradead.org,
+	juri.lelli@redhat.com,
+	vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com,
+	bsegall@google.com,
+	mgorman@suse.de,
+	vschneid@redhat.com,
+	andrii@kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	rafael@kernel.org
+Subject: [PATCH] sched/tp: Add new tracepoint for tracking uclamp set from user-space
+Date: Tue,  3 Jun 2025 13:07:14 +0100
+Message-ID: <20250603120755.1028396-1-lukasz.luba@arm.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH bpf-next v2 3/3] bpftool: Display cookie for raw_tp link
- probe
-To: Quentin Monnet <qmo@kernel.org>, ast@kernel.org, daniel@iogearbox.net,
- andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
- sdf@fomichev.me, jolsa@kernel.org
-Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250603022610.3005963-1-chen.dylane@linux.dev>
- <20250603022610.3005963-3-chen.dylane@linux.dev>
- <c3b326ea-8d79-47c1-82b7-a9f2f46ab0c3@kernel.org>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Tao Chen <chen.dylane@linux.dev>
-In-Reply-To: <c3b326ea-8d79-47c1-82b7-a9f2f46ab0c3@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-在 2025/6/3 17:36, Quentin Monnet 写道:
-> On 03/06/2025 03:26, Tao Chen wrote:
->> Display cookie for raw_tp link probe, in plain mode:
->>
->>   #bpftool link
->>
->> 22: raw_tracepoint  prog 14
->>          tp 'sys_enter'  cookie 23925373020405760
->>          pids test_progs(176)
->>
->> And in json mode:
->>
->>   #bpftool link -j | jq
->>
->> [
->>    {
->>      "id": 47,
->>      "type": "raw_tracepoint",
->>      "prog_id": 79,
->>      "tp_name": "sys_enter",
->>      "cookie": 23925373020405760,
->>      "pids": [
->>        {
->>          "pid": 274,
->>          "comm": "test_progs"
->>        }
->>      ]
->>    }
->> ]
->>
->> Signed-off-by: Tao Chen <chen.dylane@linux.dev>
->> ---
->>   tools/bpf/bpftool/link.c | 3 +++
->>   1 file changed, 3 insertions(+)
->>
->> diff --git a/tools/bpf/bpftool/link.c b/tools/bpf/bpftool/link.c
->> index 52fd2c9fac..bd37f364be 100644
->> --- a/tools/bpf/bpftool/link.c
->> +++ b/tools/bpf/bpftool/link.c
->> @@ -484,6 +484,7 @@ static int show_link_close_json(int fd, struct bpf_link_info *info)
->>   	case BPF_LINK_TYPE_RAW_TRACEPOINT:
->>   		jsonw_string_field(json_wtr, "tp_name",
->>   				   u64_to_ptr(info->raw_tracepoint.tp_name));
->> +		jsonw_lluint_field(json_wtr, "cookie", info->raw_tracepoint.cookie);
->>   		break;
->>   	case BPF_LINK_TYPE_TRACING:
->>   		err = get_prog_info(info->prog_id, &prog_info);
->> @@ -876,6 +877,8 @@ static int show_link_close_plain(int fd, struct bpf_link_info *info)
->>   	case BPF_LINK_TYPE_RAW_TRACEPOINT:
->>   		printf("\n\ttp '%s'  ",
-> 
-> 
-> Nit: See how we use a double space at the end of the string here, to
-> separate the different fields in the plain output...
-> 
-> 
->>   		       (const char *)u64_to_ptr(info->raw_tracepoint.tp_name));
->> +		if (info->raw_tracepoint.cookie)
->> +			printf("cookie %llu ", info->raw_tracepoint.cookie);
-> 
-> 
-> ... Please use a double space here in a similar way, at the end of your
-> "cookie %llu  " format string.
-> 
+The user-space can set uclamp value for a given task. It impacts task
+placement decisions made by the task scheduler. The user-space services
+can dynamically change the uclamp values for tasks. Tracking the uclamp
+changes is a very useful information and helps to understand the system
+behavior. It allows to track improvements in the OS middleware and
+applications which start using uclamp mechanisms and report test results.
 
-Will fix it in v3, thanks.
+This tracepoint is going to help in the further development of combined
+kernel and middleware solutions.
 
-> Looks good otherwise. Thanks,
-> Quentin
+Signed-off-by: Lukasz Luba <lukasz.luba@arm.com>
+---
+
+Hi all,
+
+This patch is an attempt to refresh a bit my previous attempt in this
+area, which can be found here [1]. It's a smaller version than the
+previous one.
+
+It's based on next-20250530.
+
+Regards,
+Lukasz Luba
+
+[1] https://lore.kernel.org/lkml/20230509122246.1702397-1-lukasz.luba@arm.com/
 
 
+ include/trace/events/sched.h | 3 +++
+ kernel/sched/core.c          | 1 +
+ kernel/sched/syscalls.c      | 4 ++++
+ 3 files changed, 8 insertions(+)
+
+diff --git a/include/trace/events/sched.h b/include/trace/events/sched.h
+index 4e6b2910cec3f..1b14d5bbc9e2a 100644
+--- a/include/trace/events/sched.h
++++ b/include/trace/events/sched.h
+@@ -894,6 +894,9 @@ DECLARE_TRACE_CONDITION(sched_set_state,
+ 	TP_ARGS(tsk, state),
+ 	TP_CONDITION(!!(tsk->__state) != !!state));
+ 
++DECLARE_TRACE(uclamp_update_task,
++	TP_PROTO(struct task_struct *p, int uclamp_id,  unsigned int value),
++	TP_ARGS(p, uclamp_id, value));
+ #endif /* _TRACE_SCHED_H */
+ 
+ /* This part must be outside protection */
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index dce50fa57471d..2c3bf0b6830fa 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -116,6 +116,7 @@ EXPORT_TRACEPOINT_SYMBOL_GPL(sched_util_est_cfs_tp);
+ EXPORT_TRACEPOINT_SYMBOL_GPL(sched_util_est_se_tp);
+ EXPORT_TRACEPOINT_SYMBOL_GPL(sched_update_nr_running_tp);
+ EXPORT_TRACEPOINT_SYMBOL_GPL(sched_compute_energy_tp);
++EXPORT_TRACEPOINT_SYMBOL_GPL(uclamp_update_task_tp);
+ 
+ DEFINE_PER_CPU_SHARED_ALIGNED(struct rq, runqueues);
+ 
+diff --git a/kernel/sched/syscalls.c b/kernel/sched/syscalls.c
+index 547c1f05b667e..e8dbc7fbe99d5 100644
+--- a/kernel/sched/syscalls.c
++++ b/kernel/sched/syscalls.c
+@@ -430,12 +430,16 @@ static void __setscheduler_uclamp(struct task_struct *p,
+ 	    attr->sched_util_min != -1) {
+ 		uclamp_se_set(&p->uclamp_req[UCLAMP_MIN],
+ 			      attr->sched_util_min, true);
++		trace_uclamp_update_task_tp(p, UCLAMP_MIN,
++					    attr->sched_util_min);
+ 	}
+ 
+ 	if (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP_MAX &&
+ 	    attr->sched_util_max != -1) {
+ 		uclamp_se_set(&p->uclamp_req[UCLAMP_MAX],
+ 			      attr->sched_util_max, true);
++		trace_uclamp_update_task_tp(p, UCLAMP_MAX,
++					    attr->sched_util_max);
+ 	}
+ }
+ 
 -- 
-Best Regards
-Tao Chen
+2.48.1
+
 
