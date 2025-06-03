@@ -1,238 +1,264 @@
-Return-Path: <linux-kernel+bounces-671410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84843ACC11B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 09:18:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2682ACC116
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 09:17:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D25718885CA
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 07:18:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13D401887207
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 07:17:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39B4626988A;
-	Tue,  3 Jun 2025 07:17:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 544ED2690D6;
+	Tue,  3 Jun 2025 07:17:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="kXiH7u82"
-Received: from esa1.fujitsucc.c3s2.iphmx.com (esa1.fujitsucc.c3s2.iphmx.com [68.232.152.245])
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="OxLIyA1Z";
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="OxLIyA1Z"
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012066.outbound.protection.outlook.com [52.101.66.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31CC3269820;
-	Tue,  3 Jun 2025 07:17:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=68.232.152.245
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748935066; cv=fail; b=hQyO8G0Seg4pUdc/FOik9BLpx0NomZeBvsqYBw7xOUQFHpCtn37aLHvSabvQncjPiUVnUwVeojlTiEijtbSRnDx604z8sq4wufSPxIIj6RSVgvWhsmv+UfpGYXOE68NLoDfin8kZWISsxb7KfJ21R6/90X55ot753lbRG6nBhHk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748935066; c=relaxed/simple;
-	bh=QTk46uE0GRfgG7CeMOUVBe70mVQej5CxzTkyjvV+icM=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=LNzf5LHy0IjNUZOgEiBN2eTC6fPkLjRgIRbSiWlTS2Q1hHYT0aiAN04XM6ozJ4g/KO3v/YmoKvTeAc1o4zD0jzX66D1LvrVtYMP+TeDCeVFjDISsTyWylS8Pft/Y5FFnP5k7xSP5LBkZwoNIjiEuzQw+ie4kmtliSTyJwfjyipw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com; spf=pass smtp.mailfrom=fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=kXiH7u82; arc=fail smtp.client-ip=68.232.152.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fujitsu.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj1;
-  t=1748935063; x=1780471063;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=QTk46uE0GRfgG7CeMOUVBe70mVQej5CxzTkyjvV+icM=;
-  b=kXiH7u82JChMtEtRO31Xh3+1ZrTxjNhCF1m5oz333/vpGfh5g+UyWXw3
-   YpU2nz+4Eai/CBPgLG0TLvUvWV6vfluHCg1oxLp8tEyS10D3igp+AptAd
-   7+jt907wK+yw/Q/JrQ1l0tVmSPcAzFCHu1nROPlBpNn+QIlr3yTXCvhtc
-   Ufm6B+8Af3oBL11Zsgl4p13lxMyU/zvXKM8MsM3aiVlYq0pC/Hh4dHepD
-   YkCwvHgzr0K3MT6h8GPMJW0N9oWQwPLYMro2Bw5OtwzQ5f6+Ec/u3/08j
-   DdmFXGVUHAqeKbbPcKvSn5ArR65d4A06zu9KWPhn94pcNm6uezJ3pj+Iq
-   A==;
-X-CSE-ConnectionGUID: K87v2t/aThGO/l+J+nXhEg==
-X-CSE-MsgGUID: FgJhBL6fTrqkGyMXN2+Yzw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11451"; a="68480282"
-X-IronPort-AV: E=Sophos;i="6.16,205,1744038000"; 
-   d="scan'208";a="68480282"
-Received: from mail-japanwestazon11010055.outbound.protection.outlook.com (HELO OS0P286CU011.outbound.protection.outlook.com) ([52.101.228.55])
-  by ob1.fujitsucc.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2025 16:16:28 +0900
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4AAF2686AC;
+	Tue,  3 Jun 2025 07:17:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.66
+ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748935046; cv=fail; b=uNGriraRid1+Gc+OInaY8QYmPCEunu4VMI1ri6iYtnXDZbJ/jrGwA7J3hfUqbJNq2i9KSenVqpAwDredpim0VZio/WDD/jzP6TlgrpohcnWjD22c9F03tiTvSAd/xLxWtgCL0uSi+XdIArY3Lf5K7JWeT22WHIwTVz/onU5iuKc=
+ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748935046; c=relaxed/simple;
+	bh=RMZeeXSyWaTX02cPh+wGBiG6R0JncDzoqTRp9uLWTEc=;
+	h=Date:From:To:Cc:Subject:Message-ID:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=QEgslDv7LnpGE/QSOO7918+TC2E203yb8pAfPZU9dVrDOUReNtgTd6JtWTuNJprBMwXBlS40MZE4pAxXunDCWgVo9gwFir/sSlEAKw4r+/nNFhdL44uO8l9ES1pDeUrwBJb0RIo2UdLfR9tLSxThKkJPpKmitIxrAYeo2rM5P1s=
+ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=OxLIyA1Z; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=OxLIyA1Z; arc=fail smtp.client-ip=52.101.66.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
+ b=IOBhKH+hFQjZuJwItjCOYIPGYA9cMZGvAA9gMN4t8izN573XJMMVCuUgUxh53xHzHyhMT7DSKBtyqXDsLT3D7PXThIuHQp6wBiOu+TnBpFIogxbTJbtwNhvdptmbd2jPgl9JrLZypOny9f+R+3+exdDpVJaLISwb6TAyCjQUVTT8QNI1ubjzx5gq62DydDruo/sm5VDnkVBmigVz59QB0yvmBmXfZsgPHfXKkAG86Oj+Bles3Zkj7mfKXg3na/dk+2mSBmKg8NZoRzC31FXkmU6eeJaNdy5tJuObyTgdv5cnjuABdXHMqkP8S8+AMOvlPVZjuQKRXujakBP8FYRhwQ==
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hI581lGmatDQWL/C2R2L+X0zHglhBjNWy5P/6hEVOc4=;
+ b=GAau7+Zm7RSPVp0j9ZgEj+1zQdalLQAvITHeNwOG0Vzls4udL2n4AK9nVkG3dI6scv7MxLCRwRUSGs9HH85QkFjfZp15avz5P5D4v6uNr5gNsS6x2t6vqSJIivcYpRNGMk2vo2ZGQ5HdZfiqLBUiXhhylpvnsB5+vMV7IB6b7J1j3z50ou5DYC9BpMAWLOkAQTw7+wsM8bPMNyMv89Lcbd4VjpS6O5d8KpcHcA32kulDsK9V4q8GyHKXPEYAqqo3sDjjvaB96irvc0yVBcrmMeS0bZJ+mtZIVRDPZ/gWjYLvnfddwJI/thfdQJv9BnwOa5yZGXJ8wzYxCsmb7F+bkA==
+ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
+ 4.158.2.129) smtp.rcpttodomain=infradead.org smtp.mailfrom=arm.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=arm.com;
+ dkim=pass (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
+ spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
+ dmarc=[1,1,header.from=arm.com])
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hI581lGmatDQWL/C2R2L+X0zHglhBjNWy5P/6hEVOc4=;
+ b=OxLIyA1Z61eWzGSsEPVY0qxqSQElnFLdXurJo9YRj1XnvHTCNhFMYLF6eAKnq9YUqrAlSSehbFggf4vgN8EcBlOxI3JmdRRIL9bjMW1ezq7g0Dr5DvA2VrD8Bdi/7F1Hfcb2eIzaPPJaduzwGHgEO0tIFDupr9IEx4FIikL1GvY=
+Received: from DU7P194CA0015.EURP194.PROD.OUTLOOK.COM (2603:10a6:10:553::10)
+ by GV1PR08MB10979.eurprd08.prod.outlook.com (2603:10a6:150:1f0::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8792.34; Tue, 3 Jun
+ 2025 07:17:16 +0000
+Received: from DB1PEPF000509F9.eurprd02.prod.outlook.com
+ (2603:10a6:10:553:cafe::6b) by DU7P194CA0015.outlook.office365.com
+ (2603:10a6:10:553::10) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8792.31 via Frontend Transport; Tue,
+ 3 Jun 2025 07:17:16 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 4.158.2.129)
+ smtp.mailfrom=arm.com; dkim=pass (signature was verified)
+ header.d=arm.com;dmarc=pass action=none header.from=arm.com;
+Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
+ 4.158.2.129 as permitted sender) receiver=protection.outlook.com;
+ client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
+Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
+ DB1PEPF000509F9.mail.protection.outlook.com (10.167.242.155) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8792.29
+ via Frontend Transport; Tue, 3 Jun 2025 07:17:15 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wYGX5NPBzRmQKzRCA/t8WESu7khLp0PbzNyoIbcWbepgjbEa+BPsgkDlvW2/TkHdWE6aIXxGMZErfcoqU8rWkPC6+JOcmjB3d3vcEa0X55Uzv9Z0lnVhOkHbwpzS2RpXGVn95fWiVBvqIYyZbPQEZEso4BkTlfsxwt3l0lQdRwg0Z9DLSC3OOn2f8I9JIU6Ti6aLggx17l0JKRMUK1OQH80uaohtWrFR6ydajctJRgAJiV2i4TQ0wtC34Zg0dGmFixAOOlPPWuENJdd3taYAV3N2jb7wAjpL/ogbkEcQ3B4JCIBh0VHzXDlvA7Tm0vhZOsEL4BZmXmpHE2M14qMDbg==
+ b=VfCdNX3w6UZg5+rOC/pymHtghOQM82n62D+bXeZWUhZ97sYs07hEBU13goKa37NyKVSfLEU6jXYSGlhBrAk6cSh/89tPRhDTJp/EWatteF+SoSyWQlC49CC9l8656K/ad1rgL4VCmODB9Gc15Hv+Pqmj+xOjea+LwQwEdrnzaILFmeui3DTDhRuXAIix5ttDO/WRRka7TZTau09pGSpdwRo8pH1qQl0f1Zp2lblCRe6bpKb+6F/vR6A3L/9gzIWOoPEAJ6DL/q537KkK934NGzjmPxgOGnT2t/8vp+cP+0L/MBBc4KssFcMmVu9rtx2pMw8WMf3rPPpMlwDvpOXxCg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=QTk46uE0GRfgG7CeMOUVBe70mVQej5CxzTkyjvV+icM=;
- b=lrtgtlNXt2887NsIIpbWM8wrZ+lj2qDhsMqhWcrW58nVs69TCi02lgLWRoy6WB6RI4ImszBvOnTvJpDgthtyHsJvKxUYwzR8yD2GBLkw7P8v/OKgwZYlBZrSxn5s7xFU6gawr397WVR6Pbj4pg/Es9dj3Aky4asPW200ILrQsaidB5ETkBlvAc0v8t9n3Rd65wLaENnaTFeMAuoeYAaYEmwuyYm4+I3pH6T+KUowtUcjihR7yaGT5S1tJZiVNcAb3F+Z0CctbjRdqT1FcWgIMBpeiBPPHaF5Jyi7Qht8CizHtDBVNkmkRI8/UsAq4bgrNYYl8lR7CinDPNFULBqriQ==
+ bh=hI581lGmatDQWL/C2R2L+X0zHglhBjNWy5P/6hEVOc4=;
+ b=mt3g9j+kU7gG3tQCL+DZyfAjpbSFc3jeDrsp1BPInnf0GeffLbA/3CkExrlhhoJlP7m8W+aXqd+w/yZD8uf6EsvECHlOI7T31Q8p9YJQWfZNjGpFtLrFDd52AjFDjkSZvyxkvWA6Hz4F7Ot9EVh1JUvQ8fwMTPBuqpgs+67F9BRdmwe/aPQvFfFx5xU64jgn1Ql+NPKKXA8DLFjVzfYjXyO3SLuci866GkRaRtREbptVvJC5THE66lInXraW2p3uqeo4g0HiZtd9o0Fr7C+GcrkKOhSTh0k039qCAfD7Inw2IKw8+MLq9YIM/0jzkj9p6w7HGLd3TNXMdXW1e55uew==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fujitsu.com; dmarc=pass action=none header.from=fujitsu.com;
- dkim=pass header.d=fujitsu.com; arc=none
-Received: from OS9PR01MB14003.jpnprd01.prod.outlook.com
- (2603:1096:604:361::13) by TYYPR01MB12981.jpnprd01.prod.outlook.com
- (2603:1096:405:1c6::12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8792.34; Tue, 3 Jun
- 2025 07:16:23 +0000
-Received: from OS9PR01MB14003.jpnprd01.prod.outlook.com
- ([fe80::bf61:4fd9:7b06:2485]) by OS9PR01MB14003.jpnprd01.prod.outlook.com
- ([fe80::bf61:4fd9:7b06:2485%4]) with mapi id 15.20.8792.033; Tue, 3 Jun 2025
- 07:16:23 +0000
-From: "Shinji Nomoto (Fujitsu)" <fj5851bi@fujitsu.com>
-To: "'John B. Wyatt IV'" <jwyatt@redhat.com>
-CC: Thomas Renninger <trenn@suse.com>, Shuah Khan <shuah@kernel.org>, John
- Kacur <jkacur@redhat.com>, "linux-pm@vger.kernel.org"
-	<linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "Shinji Nomoto (Fujitsu)"
-	<fj5851bi@fujitsu.com>
-Subject: RE: [PATCH 0/2] cpupower: Allow control of boost feature on non-x86
- based systems with boost support.
-Thread-Topic: [PATCH 0/2] cpupower: Allow control of boost feature on non-x86
- based systems with boost support.
-Thread-Index: AQHbyuBa+atM0fAVk0qKi5bwr9ll97PpiVOAgAeOYkA=
-Date: Tue, 3 Jun 2025 07:16:23 +0000
-Message-ID:
- <OS9PR01MB14003E72236096AD987D2D4CED96DA@OS9PR01MB14003.jpnprd01.prod.outlook.com>
-References: <20250522061122.2149188-1-fj5851bi@fujitsu.com>
- <aDhJdTWzDihchywc@thinkpad2024>
-In-Reply-To: <aDhJdTWzDihchywc@thinkpad2024>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_ActionId=a3fe2e6e-0aef-48cc-819b-359cdf063e9a;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_ContentBits=0;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_Enabled=true;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_Method=Standard;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_Name=FUJITSU-RESTRICTED?;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_SetDate=2025-06-03T07:11:31Z;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_SiteId=a19f121d-81e1-4858-a9d8-736e267fd4c7;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=fujitsu.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: OS9PR01MB14003:EE_|TYYPR01MB12981:EE_
-x-ms-office365-filtering-correlation-id: 632ab43e-341d-421d-28f7-08dda26e8c1c
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|376014|366016|1580799027|38070700018;
-x-microsoft-antispam-message-info:
- =?iso-2022-jp?B?aXIrZnJROWozU0ZDVVE4MUc1NC9BVGhQYTNFZFpsbUd5U0srYjVSUFhP?=
- =?iso-2022-jp?B?YWptWk1makxUckFJSDVSOTlVY21RZ0NUUmVTRG9kRG1Pd0I4YTlyZDlZ?=
- =?iso-2022-jp?B?WHhTeEhoUnNEZ1JOK3hxa1crQzl4VFUraFk4MWE2YklmTVNHMC9PS240?=
- =?iso-2022-jp?B?MjdDUlpNYklGNmQ1YzF6TnBIRWU3U2Y2elVCOFNtbERzNWY0TWU2TGhn?=
- =?iso-2022-jp?B?WnE0MHlrb2FVb3piZFhxOGY0VkErcEQ2Z3hTTHpxQ0Q5ZlNyZ2hoZm94?=
- =?iso-2022-jp?B?UEQ0dGtFVHIwWnllNTdLNVhoYWtHT05qMExUa2F1d2x1WjFuUDgyR1hj?=
- =?iso-2022-jp?B?NnhkbTg2dGpoRit6RjFjVVdxMW1FQ0hhREhQRURGSVN0YkdqaGdTVDBK?=
- =?iso-2022-jp?B?R25ZWXJBRTZIMERUbnRQWTN3Umw1ZGR1ZkxHaTlEbkpIUEFRV1QzNnVp?=
- =?iso-2022-jp?B?bkE1VUpuVFF2WDFxcGRFSllPb2drYTlzSHA5STZmQ2ZRSm5uRXFyWlhK?=
- =?iso-2022-jp?B?RXpqRk1lZVplZDZPNkxmZ0RURHYybGdMcVBua2tYWHhXQ2RCR3F4K2Jm?=
- =?iso-2022-jp?B?QnQzcmhUQ1phR0tEWlEva1B3U2RRSGNYcW16ZGdXMlFNRU1hVjZiMWZT?=
- =?iso-2022-jp?B?RU9LMG9qbzNGY2paZk16NVpwYVQ0VnZrTVdoMmFCTytWUWF3ZndLVDFm?=
- =?iso-2022-jp?B?NkNGU3VVMUNYTU90c2syemdIZ21XejVGUFQwazhLWDBMY0NFTFdWVjZK?=
- =?iso-2022-jp?B?ak5PNnhXd09QaHZNM0FOWXNlcnJHNFJJQXlGeDNCL1M4TUNZSjZUMXNW?=
- =?iso-2022-jp?B?UHRiUjAzYjdFeDV5SEtleGM5NzUvdnltdEpFQ2pyV01SUFV3ZWdMUzlQ?=
- =?iso-2022-jp?B?SUhsT1krSWRRTllKczEzUkVYZ01tVUo4MmlkVXUwV1UyTFlpK01TZFAr?=
- =?iso-2022-jp?B?MkUrbE01VFpXb3ZlRjRQTHRhcXdJTytYNWJ4T0VDR0ZhY3krOWxHMjA1?=
- =?iso-2022-jp?B?eTJDeGtwZ0NNS2hzcVB4M0ExZi81QzB3NXUvaHE1TTY3SlhodHpabUZ1?=
- =?iso-2022-jp?B?US96eGJGd1RKZDhJbGt5VE8vQzNnOHNwOWlGbExmMURwd09PWEFuU2FJ?=
- =?iso-2022-jp?B?eFdaQnAxQ01HeWVEU1lVaDNGb1hCa2F4VExGcmFmU3pYU2gyNVdralpN?=
- =?iso-2022-jp?B?VjhESndmZTJESVBxYXBnNmZ6OTJnSGtZYTZTVng5TWlua05rOVdibk8x?=
- =?iso-2022-jp?B?MG5xZGM5blVrbVpnbmlsTTlUQU5UTmI3QU5WN1d6RENXbTI4S1FXYjEv?=
- =?iso-2022-jp?B?ZVBCRG9iL28xWjQrclYvWjdqWHFBTEVYSEd1Q2pJR2cxOGVPVXdib1JB?=
- =?iso-2022-jp?B?UnFkakNWTlRHcVVsTDdGeWw5OTU0ZVNNSUJDMUp5RnBDb3dZZFJzVmFz?=
- =?iso-2022-jp?B?OHB3LzZMOTcrUEQyOTNSU3YwaWJVRWZjTWN1M3ZPYkVvWnJvN1YxSjhE?=
- =?iso-2022-jp?B?amR1dzI0eElscTFTWlNIV3NmUmI0ZXlEaWt3WmNqS3JibkFONnV3akhq?=
- =?iso-2022-jp?B?SzBldU1UYVowa0V6NG1oVXc2M1ZMVzJCNzROMVNpUjVZQlN1dGFMSllO?=
- =?iso-2022-jp?B?RHIzY09MM3VSRlJuSE1NdG5aU1g1Z1RLbkVkbW43ZktBVDcyWjROdnF3?=
- =?iso-2022-jp?B?c3Awamllc1dZZUtqRUdLUUl3Ym44bkxVT3ZOR2RWK1NoZVNDTFdNTHIx?=
- =?iso-2022-jp?B?aFkrbHAwTTBrRGo5a2N0R3JpVjkvM2VwdUVGVVd3cDBNVmFwZDlqYlhQ?=
- =?iso-2022-jp?B?LzZZcEZHcUlYdXpGLzFZSFpYUmFMRGlpendVTnN5eldrQmY5cmdiT2dU?=
- =?iso-2022-jp?B?QlhweVBiZm11ZjBUZ2JBVXZrdER6MllubGhLZnpaNTdsNUg3YlYvRmVY?=
- =?iso-2022-jp?B?akZvMGF4U1NlcWZTeEVlNGkyR0w5VW1kMklBUG1KUk1IOStQNHRwak9G?=
- =?iso-2022-jp?B?ekVXRnU1Z2xiZjNQZ0YyM3R4SUJaMG5PbjNOOGhoVzduVU5Ua1dRaGhZ?=
- =?iso-2022-jp?B?LzZEVEVrbW1hM3I3WW9hVnNxYlpxZFlBM0hEMi9hSmZZVHZZNlk5OE1U?=
- =?iso-2022-jp?B?WTByTDIrWkptWEVTalNqRHg0QVdyNHl4UWEzdEoxQ2xVSVVibDBDN2Nh?=
- =?iso-2022-jp?B?bFVkVVo0MTJ5MmhkSTArZ2tDcy9FbXh5?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS9PR01MB14003.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(1580799027)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-2022-jp?B?a1dPMWpkYUhiZ3ZuT1UzTFBtYXc1RG04RTJaOHQ0WFVnU09XSUl1U2hD?=
- =?iso-2022-jp?B?OUQraDJTNGMrbk1kbnFSMW1XODNMbVM5aDVtNlZmZWtwYWdRbE5FZ2Za?=
- =?iso-2022-jp?B?SHlycng2MVhuSms4cDhHZEtYSG04bFloZnZPWEF3K2FhUmJJUEt4U0dG?=
- =?iso-2022-jp?B?RHUyMXluOW95eDFWdmQrK3FSZ1I1QkF0VldHalJYZHlta0RFRFVUN2NN?=
- =?iso-2022-jp?B?cjducWFpR3dseVZXRmRTZ0w5dnYxUjh4MVc1WkZ6Qngwc3pOMTBHcGxK?=
- =?iso-2022-jp?B?QUZxMnE2TkVucTdrVWVSazdOK1RwOFBSd1BpNFN5OXlmbjhJMUtGK3Rv?=
- =?iso-2022-jp?B?dWtkVDd6bVk2VU8xYVJZbW1hdEcwVmkwdFpxNXhrWDNnOHRyaUN2UFNw?=
- =?iso-2022-jp?B?UnpQWVpVdERkSHNmeFlrOWxRS2Y2OVhNMHEwSVpwTHRDVE15L0ZGaTJ4?=
- =?iso-2022-jp?B?UGc5V0xkSTVZVm1xejRLaStlVXFQK1JQL1ZiWjI4TE81SlF4YTluMWRv?=
- =?iso-2022-jp?B?ZFlOcjV6SFdScEx0VURGZ0tNSXRqWTZiVlJ2WldNL2Y4ODE0M0ZGbVZk?=
- =?iso-2022-jp?B?aHJ5MzdGalhCdUc4K0pLNGt5dDF5SjVHbnVlcFJrejJXNVB5S1dEb2ky?=
- =?iso-2022-jp?B?SXVUaVBrZnN6L3IySERSUi9TR3BMSzRYRm9La2RnRmJ3ZTR5b0hPYlky?=
- =?iso-2022-jp?B?ZnpYV0k0U2NLNnBrdmhoSGlUenFjN3p0dk9Rc3ZWMWkySFNnT0poeXdP?=
- =?iso-2022-jp?B?QmlpSTNGdjQ0eTVrWFRtejJESHhGWGlMemFxT2JnamZyVzRMWG90YWVO?=
- =?iso-2022-jp?B?M1JScVlIOW9PQ25IRC8vUWtmeEQ1T0Jscmp0NGxTeTltQVJxNG9rWGtL?=
- =?iso-2022-jp?B?b2U1Tm1SdVFyTmFJbmp5VE9KM2lONmpKZE5ybWZEd2ttYzVWYlFJUGdD?=
- =?iso-2022-jp?B?eHAzSDhsOEpRNGZwV2ZBQnJZa1ZtLzRJTlRLemxyamlRR3BZdXQ0UDE0?=
- =?iso-2022-jp?B?Z3pXb0NJWXdKUmJDOXpqTkJGTCt4UmpuWFhvVVZYamhEYmExQzlNUytH?=
- =?iso-2022-jp?B?YWQwTHpFRnpuaXd5bHdJcGpyWUFmYkR2WURhTWhJMzFxTWtyYmJZbXJz?=
- =?iso-2022-jp?B?aFFCd1hUdGh4SCtjYXc2dkRuTUNXOExJU0d6eWNkdTBEanBGSzhhMm5W?=
- =?iso-2022-jp?B?bC9tUjBmOGwyNlhoK3BlNkRrcUtPN3Y4Q1RrQklEK0F4aWRNQ1MzM1FT?=
- =?iso-2022-jp?B?UW04UmswdkViZjNQR3RtL2VnRlp2VzZuTFJpS2lxWkZiaXpNWWJMR2w0?=
- =?iso-2022-jp?B?bWMyNXVOWWxnQ1MrbXhCZ1pJaGFUWDVtTFY4Nk5tSTdxZUFRLzYvS3ph?=
- =?iso-2022-jp?B?ZGZwSFVkYUFyTHUzTXBsbkxQZEVuSG1kWFJGU1FzMy9EWXZVeWhGbXZi?=
- =?iso-2022-jp?B?RE5nZlMwK3RvWVNYbTZCbnBOU05CYVhJMmxFMUdkTURxRUwwZCtPRTZG?=
- =?iso-2022-jp?B?bXh6TTBRSzFRUHczczNrQWc2L1lYWHlyM3RObndtMlJtcGZ0RXF5ajhv?=
- =?iso-2022-jp?B?K1oyNFI5MkRaY2xLemRBR21zOERyZHJ3b0M5MjRtTGFXRHU1ZzZMUTFE?=
- =?iso-2022-jp?B?WG9VdVl1eTc3ZHlVWUpsQVFDaWRZdXJUcmlpSGxyeXpmNDkxaXYvM3NO?=
- =?iso-2022-jp?B?Tit4SHF2a2RjRWRIbENOVDBlcmhWMTdpb21UZUNqcHlJOUZ6U1F6TlpQ?=
- =?iso-2022-jp?B?UHVmV2J6WUFkYmJGdHRPS0VsbE9ucUNvV2M1K0lPSUExcHFYMXVHVEVY?=
- =?iso-2022-jp?B?cUlvUUxwNG55UGpMWkVIZ1R6aGYvcUtRaGxmWkNCS21ROFlOeTJCdkxI?=
- =?iso-2022-jp?B?ZHFYY3oweGFqS3hNamkvZEN4NWc4ZmwyaXJZMjJCK3lZdnkzTzNRNHBm?=
- =?iso-2022-jp?B?dnJFNjk2dVZ0ZUVlTTZnQjVZQmY5VjB4TmVFd21Ydmpqc2FIckNCZFBr?=
- =?iso-2022-jp?B?UEJaQ0N3YTRjN2QrZ3ZFSVhGMlZxSS9INHNDUHRqQzJtMUE1MUJDUExx?=
- =?iso-2022-jp?B?SGdrd21qTU9CeVd5em1CU053Q2JnVDJiRkVrUlFYUUhtalY0eDlGS3Bp?=
- =?iso-2022-jp?B?UHh4ZzFBS3VRclJ5UjdkUlNyZ1Rzby9EOWNiMmEyOTZ1Z1dBTkRnbkxB?=
- =?iso-2022-jp?B?cWZxMCt0Tmk4TGk3UXNWRGhQRloxK0xDc0VkNG1POVRzT2l5MkZ1K2p2?=
- =?iso-2022-jp?B?dGhXQW1SUEI4M3E2SzVnMFN0OHlocUR0M2tJS0VCSWw3L2dFVkl2WTRR?=
- =?iso-2022-jp?B?cnluUGpmaGx4YlY4d0lBUVh0c0FWOElia1E9PQ==?=
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-Transfer-Encoding: quoted-printable
+ smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
+ header.d=arm.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hI581lGmatDQWL/C2R2L+X0zHglhBjNWy5P/6hEVOc4=;
+ b=OxLIyA1Z61eWzGSsEPVY0qxqSQElnFLdXurJo9YRj1XnvHTCNhFMYLF6eAKnq9YUqrAlSSehbFggf4vgN8EcBlOxI3JmdRRIL9bjMW1ezq7g0Dr5DvA2VrD8Bdi/7F1Hfcb2eIzaPPJaduzwGHgEO0tIFDupr9IEx4FIikL1GvY=
+Authentication-Results-Original: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=arm.com;
+Received: from GV1PR08MB10521.eurprd08.prod.outlook.com
+ (2603:10a6:150:163::20) by GV2PR08MB9232.eurprd08.prod.outlook.com
+ (2603:10a6:150:d9::10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.27; Tue, 3 Jun
+ 2025 07:16:39 +0000
+Received: from GV1PR08MB10521.eurprd08.prod.outlook.com
+ ([fe80::d430:4ef9:b30b:c739]) by GV1PR08MB10521.eurprd08.prod.outlook.com
+ ([fe80::d430:4ef9:b30b:c739%7]) with mapi id 15.20.8792.033; Tue, 3 Jun 2025
+ 07:16:39 +0000
+Date: Tue, 3 Jun 2025 08:16:36 +0100
+From: Yeoreum Yun <yeoreum.yun@arm.com>
+To: peterz@infradead.org, mingo@redhat.com, mingo@kernel.org,
+	acme@kernel.org, namhyung@kernel.org, leo.yan@arm.com,
+	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com
+Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	David Wang <00107082@163.com>
+Subject: Re: [PATCH 1/1] perf/core: fix dangling cgroup pointer in cpuctx
+Message-ID: <aD6hVAuHGNZjrKpr@e129823.arm.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4939eff.64be.19734874658.Coremail.00107082@163.com>
+X-ClientProxiedBy: LO4P123CA0066.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:153::17) To GV1PR08MB10521.eurprd08.prod.outlook.com
+ (2603:10a6:150:163::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	/NVzrWZJ6E9soKBDq3/HTKoTkzteWfvkPNpNajV7NVqmMK1pri3TGal4i8+VnlQbrQ/LAwlaF/8ksfnfrItyjoti5RLDCp2bOXyqnVjaPOlR5Q++DPkYQhZgLeZf5IM17tjmWX9fqP4cbZ+rNZnCM6qEqiiKypYYdq7IrySobLUHeB/MVPCcISQL30wm/+bLrU7V6rXmajKzQc1Rc1wgL7ipLKX1kqV7o0du3/hIaAR+L6f2t1Y6GyQ0EEF0qmaFnktD09gTQYGdmNl9EmatYXcIwFCRyMn915SndamKTGNNcx5Seu3USTWohdhn0Rm/gqXIxCd8gyR5SVtyGX7UPZ2kQTbZx7tCRlw7FMSsLJVypsQf2zWN/xqDuceXmiauR7IKrdjNWSliI22s8o2CVLx5/Eq4A7K24H59mWhhWANaMT4K7Gd1CPW7HrU/tTqrYGQ+64S6hcTU2cGYd52CRTD8LcEC6rEtLs2ij5xjXUS7TmCu3TjWR18GsXT1SD1/4lbnebDMPWiTklz2seB6t9uT5mE4Zi28N0JtxJ4wmoFVxs2us25/DJaaJwp7F8mZEKw9zS2hISO7IeXdM65KInaBJRoHCh3JcIPLhOhlrqaHMzlwD/W8v3k4RfkRGFsb
-X-OriginatorOrg: fujitsu.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OS9PR01MB14003.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 632ab43e-341d-421d-28f7-08dda26e8c1c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Jun 2025 07:16:23.6815
+X-MS-TrafficTypeDiagnostic:
+	GV1PR08MB10521:EE_|GV2PR08MB9232:EE_|DB1PEPF000509F9:EE_|GV1PR08MB10979:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5345a0cf-69b8-49ad-7e1c-08dda26eab45
+x-checkrecipientrouted: true
+NoDisclaimer: true
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam-Untrusted:
+ BCL:0;ARA:13230040|366016|7416014|376014|1800799024|921020;
+X-Microsoft-Antispam-Message-Info-Original:
+ =?us-ascii?Q?MQjszNi9XB6RryRfBGBTpIVtWUewaUXiBi0mdgHh2udD9Q8STIjjFQZ+AB3I?=
+ =?us-ascii?Q?yexrHS4RL68rGRuz+iSUBANo3hKw65+y3/2z5YPOcvjAKjuZC1IiQx26kl6e?=
+ =?us-ascii?Q?KnuBShKj/Iqp28vfwv3AY8Xf/icSuuy6XYT0SdWqjNikruo63ikkQyQePY4J?=
+ =?us-ascii?Q?nT8vmIpK1Bws9GlDCUD8WT8t4/BeawTYav4IT1LCfVzEgYkC1gjbMQfOt/q2?=
+ =?us-ascii?Q?I4MZjo7bWe4Tt/Bzx23BtHMoX4Cisj+Jo0bOLoFej8Th63ae+d0d6756DuAx?=
+ =?us-ascii?Q?PUdd3jB3xBoz1w6RSpuglN/Ou7wO7Mqg6U2IBHwjp8yIN/TYQ44HGLil8awa?=
+ =?us-ascii?Q?6doXEoDShN7zYO3LSgZoGpt1KjOrXPVGIgqtVmmFYovozR78eYYBWLIqE/6K?=
+ =?us-ascii?Q?PAna3DocQC2wPptD19Z48vAE+uoH9pW/KCh2BhNWE++/HDGsmXOCK5t6XAt2?=
+ =?us-ascii?Q?nc7AvDGm2rZTYa6FUPZQAT+tZ2UuNPrXZetLnCjdVFtlrdMJl29SfPrJb34M?=
+ =?us-ascii?Q?cwAi7ukoCBRO/f0nFrEeB3JCHvRJCAI/YFh48o4x02FMEX0R/inH6/wIiyV4?=
+ =?us-ascii?Q?iPYduV2563kThEpd89ez3MLED67mZHHDCngg/IzFd1SbMBWtJlwinpMhuWBP?=
+ =?us-ascii?Q?xGJevUQWyrLhhjk4WTs7U5b+KnAYBg4CyI0m3ibxIJfExkm/cBqkgKkhJ16s?=
+ =?us-ascii?Q?QgCsbbQXibxq9hYBo8Np8meOWHu11KeAGUptJRw98UIxYdRu7UBLx/W2Zz+A?=
+ =?us-ascii?Q?JoPw0KYNfaAs424uHhLRd3LQpYTC/s5sOLy84uRjY3brsAOWmtsEQE8hyQbp?=
+ =?us-ascii?Q?gpw3GeBy3ZknN7n6LmFWMG91okTcoD5kEYON90Kqvw2sPnlh01NBZ9a05htt?=
+ =?us-ascii?Q?lzanjSCKQUjdYnwpCh0VS9uvHyWsUszDtpqeLV3Mc4lFiS0GYlycMSuZPsUP?=
+ =?us-ascii?Q?ifXc1nH4HogS6DGCPJYObwHx2TVW5tEftHivRKglzCoRmVx//3Lk6JGUGBoD?=
+ =?us-ascii?Q?W3OpfRvA1e/AA4WBCMe68dTfRyNabbsqWFVREJvb2KnuAiYSwXMtQY4X/jo5?=
+ =?us-ascii?Q?KpIWI7Udykk6LPQ+FlprARK63H+pyyvfDSOYEFMlYTzbSnRNSI7r7ZLQVGJ3?=
+ =?us-ascii?Q?Cw9TQnuL7M9HQ1n5fZ+Goh1FLPJHR9JR+go4lylvL54Bm6yL7MMQ8vhcftzu?=
+ =?us-ascii?Q?fjt1eV6aiQtJ8qJMG2F69KbTYo/RqcnVVl2dxyCkG5XlD0+S9HCy+tGIPXih?=
+ =?us-ascii?Q?DecRM5E5/H3z/AgUGXepJy/RHIKBAreIrro7DgpMhuTaaF2H4mwNYyOdctcF?=
+ =?us-ascii?Q?uZkzquxWlyoIYcUwa+xAhEqtmQGU3Og+0JlCDViD8WeqRvmlSMJtLl9+jCH2?=
+ =?us-ascii?Q?k1UHjtF9jQ5q5NYdsmos4GyUIXAAjOJ3072UeME4JNZtOtmVZBmZUGXB1TTE?=
+ =?us-ascii?Q?c4612st66qDls6FnVC2qVLbnOOrndF8vIzUfJfOrL1y0+u7DagC5gg=3D=3D?=
+X-Forefront-Antispam-Report-Untrusted:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV1PR08MB10521.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV2PR08MB9232
+X-EOPAttributedMessage: 0
+X-MS-Exchange-Transport-CrossTenantHeadersStripped:
+ DB1PEPF000509F9.eurprd02.prod.outlook.com
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id-Prvs:
+	6c0cb7f3-9453-43f7-2cea-08dda26e9509
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|82310400026|1800799024|376014|7416014|14060799003|35042699022|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?vfr6hQd7caBr/mXbPcYLOfJhv2xALfNCXgZqBS2gShxnSHIJ7jlyHv+QPLn1?=
+ =?us-ascii?Q?njGdf8qbdnRNrhUaUdVBpqGepHnZZFnpjjnTUoFcgB1zSJav620cx4ZLrcp/?=
+ =?us-ascii?Q?AFU+l0dRg2+kjLHKXe8bSq56L2Rvb4o3v6+Ns2pPY3JTawMWyLiB5Ezm3O63?=
+ =?us-ascii?Q?vx0PbozZvEehtIQ7qzUPHScNYMK0cNEdNa8WH+LEXkm17hZTZelIkYEfLDSM?=
+ =?us-ascii?Q?vjFCdsMF2L3Hajq911QwPUY2+pBboonAI8Y3DDa0YTzJ40MsM/6a+CJYJ5t0?=
+ =?us-ascii?Q?H0LQY6E6zkPL2OS2j3i4gTU0nmSfc2pm8faSx4h6EP5ClxK3tJCExXBS4wNv?=
+ =?us-ascii?Q?yUHNvC7/hin2CRTDAUcroPrML/mdshqblM4TT1234VOCOjft3aZEg4iXE4pK?=
+ =?us-ascii?Q?4u7vgEdk09VSbSmx/84UwgcPt9NET8BhUqWWBpgdboW3s3LgoKMl0dXkbAeq?=
+ =?us-ascii?Q?I7rcHQyi3M3qP8SvV50ch93dhiukWeytxiqPwthYn9h+UVktVS+jpPlmxLbo?=
+ =?us-ascii?Q?qZ99xvZymsN1xEjiO/5zGUzvQMvFu2KwcCuUZlR7O2Vtwudd6LciLAs5r/1H?=
+ =?us-ascii?Q?w361HSY2Esb3Qyz/mr3ypQewZu7C1iiRhLiS+bOFeM2LdeuhSHnz/n0U9VN1?=
+ =?us-ascii?Q?DX5fQAIbB1+hEk7+qjbaRNFTg/fPlTZ163rLvPmz34alNOp7Oj/VZU2fzpWW?=
+ =?us-ascii?Q?mSIrIlMc14fICaiA4D98wZiXkDYalSrWYWlD9oMDUzcElFvBSOa3hIDO6HXo?=
+ =?us-ascii?Q?ztGKJPb7hGpqkU9RrIrbwMrhqpRbzDfSosdYIshgvZxqqaAmn3uPRsEMFsFA?=
+ =?us-ascii?Q?0ShX6hqIuCrw6f4ShXSn628dlDPmm8nAnTEXWG179MLqLQHJXZv3jU8fM6tt?=
+ =?us-ascii?Q?U5cQMZ02GMXZ6bZNi5dy357ZXSNbWW732b5aDSZj1xdaoWjAXbXzjN9b1xh2?=
+ =?us-ascii?Q?+0tlMTnhBJZM5AdWISkfh5jbHDTAYLPXmn4qMOCLTl+8UkzoOb+6I531n2ds?=
+ =?us-ascii?Q?D8Sajo7pKgwrg31G01UMoUeqjNMqyToJF7WZpX+Hsmg5HfBBHOKodBIGj8Tx?=
+ =?us-ascii?Q?Koq8Xx8KhcmpsxgkcCeT5U1FpznCn+A8XOKHUs+sDu0Pcsveap2asJ6mYCjp?=
+ =?us-ascii?Q?6XW76G06FjIJNFwk69ZY1Cl8a3IczKCL2KgA0CpIL2WbE7bZ41LdBZsKBKuE?=
+ =?us-ascii?Q?bTxIIdYroqN0j/kzKxgqW4/OHlRTsyZ3HJJF0WLTVBRoicZ8eynAZ2pFZPTe?=
+ =?us-ascii?Q?FvIwRxnLFmS8/6yuvcMAs4zbi/2ji08sEuBrxpUK6NB9cBlhYEUS/8klet5P?=
+ =?us-ascii?Q?lO55mFTPVn772+jD1iW2UphDURHBI8NYp8CKJG8gn6zKXRGLLuP4kIt/fGK/?=
+ =?us-ascii?Q?AhltTb4PxuWzyPIUEk7e/fpysdTeEkyk5xFYYC0cCkTWhpJ1TpFpmh9r6qWt?=
+ =?us-ascii?Q?5rwdA9o6WibuOSsOKFYfEEilj1KHs2z72lj2jeNlWwlCsRHaKDRfvnUAVXSf?=
+ =?us-ascii?Q?BPYxGsJY+01uhROheiw1bIhTW+m0a0EGMEBfI1RaowpZizjCurrPs2uDpA?=
+ =?us-ascii?Q?=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:4.158.2.129;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:outbound-uk1.az.dlp.m.darktrace.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(1800799024)(376014)(7416014)(14060799003)(35042699022)(921020);DIR:OUT;SFP:1101;
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jun 2025 07:17:15.9055
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a19f121d-81e1-4858-a9d8-736e267fd4c7
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: PLTyhhN3GstzDDwFAeL/wnQaqSU+ghqewFhyciXnZJIasz5GNBCDhtn1QSzC6Pri0i/cZSohuE7AQvqSfdsTHtMIhIKEisOR/80UT86K4pk=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYYPR01MB12981
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5345a0cf-69b8-49ad-7e1c-08dda26eab45
+X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[4.158.2.129];Helo=[outbound-uk1.az.dlp.m.darktrace.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DB1PEPF000509F9.eurprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR08MB10979
 
-John Wyatt wrote:
-> Hello Shinji, ty for your patch.
->=20
-> On Thu, May 22, 2025 at 03:10:57PM +0900, Shinji Nomoto wrote:
-> > The cpufreq subsystem has a generic sysfs interface for controlling=20
-> > boost (/sys/devices/system/cpu/cpufreq/boost).
-> > The sysfs interface can be used to enable boost control from the=20
-> > cpupower command on non-x86 platforms as well. So, allow boost=20
-> > controlling on
-> > non-x86 system if boost sysfs file exists.
+Hi David,
+
+> >
+> > >
+> > > Also, your patch couldn't solve a problem describe in
+> > > commit a3c3c6667("perf/core: Fix child_total_time_enabled accounting bug at task exit")
+> > > for INCATIVE event's total_enable_time.
+> >
+> > I do not think so.
+> > Correct me if I am making silly  mistakes,
+> > The patch, https://lore.kernel.org/lkml/20250603032651.3988-1-00107082@163.com/
+> > calls perf_event_set_state() based on DETACH_EXIT flag, which cover the INACTIVE state, right?
+> > If DETACH_EXIT is not used for this purpose? Then why should it exist at the first place?
+> > I think I does not revert the purpose of commit a3c3c6667.....But I could be wrong
+> > Would you show a call path where DETACH_EXIT is not set, but the changes in commit a3c3c6667 is still needed?
+> >
+> > Sorry for my bad explaination without detail.
+> > Think about cpu specific event and closed by task.
+> > If there is specific child cpu event specified in cpu 0.
+> > 1. cpu 0 -> active
+> > 2. scheulded to cpu1 -> inactive
+> > 3. close the cpu event from parent -> inactive close
+> >
+> > Can be failed to count total_enable_time.
 >
-> Did you test this on non-x86 systems? If so, would you please provide det=
-ails on those architectures and systems?
+> Is this explaining the purpose of commit a3c3c6667 ?
+> I am not arguing with it. And I also not suggest reverting it. (it is just that reverting it can fix the kernel panic.)
 
-Hello,
+In commit a3c3c6667, I explain the specific case but not with above
+case. But the commit's purpose is "account total_enable_time" properly.
 
-This patch has been tested on Arm-based systems.
+> > And also, considering the your patch, for DETACH_EXIT case,
+> > If it changes the state before list_del_event() that wouldn't disable
+> > related to the cgroup. So it would make cpuctx->cgrp pointer could be dangled
+> > as patch describe...
+> No, I don't think so.
+> change state before list_del_event(), this is the same behavior before commit a3c3c6667, right?
+> And no such kernel panic happened  before commit a3c3c6667.
 
-* It was tested on our internal simulator based on QEMU which supports boos=
-t.
-* It was tested on the Nvidia grace system (which does not support boost).
-* The cppc_cpufreq driver is working on both of the above systems.
+That's why list_del_event() handle the perf_cgroup_disable() before the
+commit a3c3c6667. However because of *my mistake*, I've forget to
+perf_cgroup_disable() properly before change the event state.
+Yes, your patch can make avoid the panic since as soon as exit,
+the event->cgrp switched.
 
-We have also confirmed that it continues to work as expected on AMD systems=
-.
+However, as I said, the INACTIVE event could be failed to count
+total_enable_time.
 
-Regards.
-----
-Shinji
+So, set event should be occured before list_del_event().
+And since it's event->state change on remove.
+It shouldn't have any side effect the state change isn't cause of your
+panic. But missed perf_cgroup_disable().
+
+Thanks.
+--
+Sincerely,
+Yeoreum Yun
 
