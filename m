@@ -1,113 +1,97 @@
-Return-Path: <linux-kernel+bounces-672242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-672254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A213ACCCBB
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 20:17:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBA8DACCCDF
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 20:25:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE7C43A6CBD
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 18:16:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93E7617389D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 18:25:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2BF1288CB2;
-	Tue,  3 Jun 2025 18:16:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35320288C86;
+	Tue,  3 Jun 2025 18:25:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscv-rocks.de header.i=@riscv-rocks.de header.b="evnlob9Z"
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=0upti.me header.i=@0upti.me header.b="lfjC88AQ"
+Received: from forward502d.mail.yandex.net (forward502d.mail.yandex.net [178.154.239.210])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2B57288C9F
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 18:16:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 312D65FB95;
+	Tue,  3 Jun 2025 18:25:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748974612; cv=none; b=d886LvxpPFzCQanGGe4z3gMxioaprlhDuCiofQ7aT7q0l9RjwK1k95vXyLtAousR7acHP8FOYvTf5MeuVg1pTWfxWB+WTmJgguVWPCiWmPar8uQTLHdqx7E62ecZSL8OBDiY0P87SQkkq1MdS3UcHFC6C2eTGmCK0hqL1iOPpQM=
+	t=1748975124; cv=none; b=mKB/BxUpa6iwco3WenfygI0JJHqMQ2upFfUJuuy3oHr09hCBVtat2VwLMvDvbYgu3e59iuAqLt0dHXJ3sVf50xa4fhH8EyJL9ZNcRxSKl6n9f4FEPBLv7gm3Ym7LYt5xFSJLdZbrKd0UKoZAIIaREJG67RYlAeDb0xtcSCz+RVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748974612; c=relaxed/simple;
-	bh=XwZYNNYPEhCRT8H8UpMTHiRDWFFej+uLkqOYGvKnWqc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EqA21yFolj7aBcPMOl15rEgEMAmRdMWofQQo9tjPQR3wPVoyk0M5L4sb3XgBD4JzbrSsrhW8faW1sOQMEz5rn1QHBHNK5TKH873ewOcPcQYmyD8B0+h+/CzY1oH/NkslcDYZi7qsFKK+vI/WCrCNAx2EoQE8GsOU27IJNkDEHGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=riscv-rocks.de; spf=pass smtp.mailfrom=tometzki.de; dkim=pass (2048-bit key) header.d=riscv-rocks.de header.i=@riscv-rocks.de header.b=evnlob9Z; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=riscv-rocks.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tometzki.de
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-70e4b1acf41so50235897b3.3
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jun 2025 11:16:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscv-rocks.de; s=google; t=1748974609; x=1749579409; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XwZYNNYPEhCRT8H8UpMTHiRDWFFej+uLkqOYGvKnWqc=;
-        b=evnlob9ZzLNV28C1gxEo6ftwlN4sjSnk1SjzS2x+wUfx3A1i6+a7uSuhssvlZsSVnU
-         otsyxwNsGZXlDVx3S2Vd0IG0tNdU4ZkL8Jv/cxt6y6jbfmxVFoonSCUveF0cZrqs0mV6
-         CrsXnSjjp6gJ3S+Ok/jCAw64LV/tTkzkh4CnWg7TcT1jmDyma1ohRE5Pg2WG3ZapGG3Y
-         Q31x7RjPYMHuBLHUgJegDRMbIyLD4zY4fPOrcdubX06tYSPqkyfUUqHt2F5zHAzaJaTS
-         jQutileHkHkwFEVhL5wbhuMCy2tfDvXQe8iRonXGrfS5XOfF0kscQxTPVnip4KI2kXb6
-         SQyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748974609; x=1749579409;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XwZYNNYPEhCRT8H8UpMTHiRDWFFej+uLkqOYGvKnWqc=;
-        b=JHfGk4L6pWMg/gyb8/qQJCpkRxVs1HEEnWu78v+UHpZeGjWI2eoJ75OLpHKTF/jp5B
-         rG9tj1lqqCVd14cOed65tYNVBwAShvJhi4RfrtcOliAZF3qkxaQ3POLsu16SCIEW0BDg
-         igAOG0FVPEMBIi1rteprqn8r7UF/AwXTnAm9TSlipN2UMI/VXZeRCnSK7f5KmtQn9Nk1
-         bvUD6yeT5i66Kbl9thlQrh8jjEZ3yLhALrByk5dD8+23/cAEf0+UBhVdyFfsLBwXHhWO
-         Pk62HatzDvK/xOE8b7C9ZlwFnK0z27BKaPHQojGqsks/3+56i2FpU6V162Fl+KRShMlP
-         tr0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVSkXsb0A4ugplFfRH8+uKdnxoEeiFMCYmHn2jo9SDQrU+FcodAxq1ejZjPSKi/T1FAmQ4gT3lx3nwh5JE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyExfnsJFOcKGkiFPe6Urz/p5OibqFYSYiLHnxsCwnSaIfFMK9M
-	iLws1JUzWZGnx52a9H4VhO5/AaG1UujbH1mRQVkicZNyDKv0fsoW4tRuFhmKIh0mrirmulR3LAa
-	hgcS978OjT+ol0QxkFeC8uHqZYD1+vgasaDN5wrQWfA==
-X-Gm-Gg: ASbGnctpLPtxfPa7sCwVtI5/pIlOR6KbuNOusdJfsmIbhAjwa93RNLelc+NqDxM/CSl
-	g+Rt/i/TcBj78HGuHZOWmVZO3u6asr+tnAM4zAPzCEpksYkplLshpqZ8rZwfQVNdPY7kfAMi9CI
-	va6rlBq09hlGnL3x/eAw1uJfxWkx+B7kRPzoHXgCQ4cEOUfjanaY2kit7fwu1XMlt1t3TvNLe3D
-	Io=
-X-Google-Smtp-Source: AGHT+IFBIpNs5ZFdnmrMyOSBi+WesTkbjtEja3Fo1Yjt1PD6fJ9G9DUcF4K51Sm5nZUrijd5LAIIjQgaZFbzpSu/HG8=
-X-Received: by 2002:a05:690c:6107:b0:70a:2675:70b3 with SMTP id
- 00721157ae682-71057cf83e4mr246755997b3.17.1748974609387; Tue, 03 Jun 2025
- 11:16:49 -0700 (PDT)
+	s=arc-20240116; t=1748975124; c=relaxed/simple;
+	bh=tBzj3CA4+7TehMQW8dgTuM4sRw0JZHsMeayjCn7V8XI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RDXibchTcUWvkN0bvvGGis7yvu2kt1UeniZzkETqITdejQHoUmKFgrdb49UUkQ+IYFwAGILJKntdyah+VP9E0HXPtc8F2HqLoYKIYBoKkEO4h47rIxJCeqBprP503zl6gf+5iQAkvfQjYmoSXe5vD2YF3keVfLqw6Hus2+UNYX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=0upti.me; spf=pass smtp.mailfrom=0upti.me; dkim=pass (1024-bit key) header.d=0upti.me header.i=@0upti.me header.b=lfjC88AQ; arc=none smtp.client-ip=178.154.239.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=0upti.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=0upti.me
+Received: from mail-nwsmtp-smtp-production-main-63.klg.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-63.klg.yp-c.yandex.net [IPv6:2a02:6b8:c42:842f:0:640:b96f:0])
+	by forward502d.mail.yandex.net (Yandex) with ESMTPS id EBB8760C59;
+	Tue,  3 Jun 2025 21:17:25 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-63.klg.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id LHgCkEULiKo0-pLzcZTYY;
+	Tue, 03 Jun 2025 21:17:24 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=0upti.me; s=mail;
+	t=1748974644; bh=pOpYljZuYO3T7PKQuPSq6hSLphxMmYBM9c7hIldkB8Q=;
+	h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
+	b=lfjC88AQLYLUsUJy3b7nRVzevTZKollL8zItXcXC4rgjno4MWLGx6K+HDJLEJW5Rh
+	 YYsmCJsPg7cOuXLi+Dm6HNyLtLYQKa+LofdjRX7bQxnh6dlTW3AwOjaGjOb6PbLec6
+	 iyRtRNFb5eGkXo7L0wJ2J1pBv0BJdWAL954cjgbw=
+Authentication-Results: mail-nwsmtp-smtp-production-main-63.klg.yp-c.yandex.net; dkim=pass header.i=@0upti.me
+Message-ID: <40ac27ab-00f7-4fc4-97ca-f3b519167f5c@0upti.me>
+Date: Tue, 3 Jun 2025 21:17:21 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <0107019736e3a599-79e58a4a-0dfa-4f43-aeaf-4a4208845b32-000000@eu-central-1.amazonses.com>
- <DM3PPF63A6024A98E210FB9D166A3CD1316A36DA@DM3PPF63A6024A9.namprd11.prod.outlook.com>
-In-Reply-To: <DM3PPF63A6024A98E210FB9D166A3CD1316A36DA@DM3PPF63A6024A9.namprd11.prod.outlook.com>
-From: Damian Tometzki <damian@riscv-rocks.de>
-Date: Tue, 3 Jun 2025 20:16:38 +0200
-X-Gm-Features: AX0GCFuLbmz7320MGfValmAaRgWc694_-_RyvStDPr9rmaaBAYCOu-qNr0PlmX0
-Message-ID: <CAL=B37=-q=Veghr7bo2GGiy1eyKP_xF0g8SeK5Lu6uKTVZgxoQ@mail.gmail.com>
-Subject: Re: [wireless] WARNING in iwl_mvm_sta_rx_agg+0x9d3/0xb70 [iwlmvm]
-To: "Korenblit, Miriam Rachel" <miriam.rachel.korenblit@intel.com>
-Cc: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC net-next] net: phylink: always config mac for
+ (delayed) phy
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Eric Woudstra <ericwouds@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
+ Heiner Kallweit <hkallweit1@gmail.com>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Frank Wunderlich <frank-w@public-files.de>,
+ Daniel Golle <daniel@makrotopia.org>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org,
+ coreteam@netfilter.org, bridge@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+References: <20250107123615.161095-1-ericwouds@gmail.com>
+ <Z30iUj6DE9-fRp0n@shell.armlinux.org.uk>
+ <4b9b2a9a-061b-43ad-b402-a49aee317f41@gmail.com>
+ <Z31CJS1YUvPGiEXs@shell.armlinux.org.uk>
+ <98234080-946e-4b36-832f-113b185e7bca@gmail.com>
+ <Z3-Tz5WdLCat91vm@shell.armlinux.org.uk>
+ <9cc913d7-7e5b-4b6c-886c-ca9778c3f970@0upti.me>
+ <aD1lRha-enQ9Pw0g@shell.armlinux.org.uk>
+ <2894a781-4d4b-4e3c-9f4e-7c1f04122f8a@0upti.me>
+ <aD3Cc7gmB2Tev_ul@shell.armlinux.org.uk>
+Content-Language: en-US
+From: Ilya K <me@0upti.me>
+In-Reply-To: <aD3Cc7gmB2Tev_ul@shell.armlinux.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Miri,
-If you need a kernel trace, I can provide a trace-cmd log. Please
-confirm which events are relevant ?
-My idee ?
-sudo trace-cmd record -e mac80211 -e cfg80211
+On 2025-06-02 18:25, Russell King (Oracle) wrote:
+> On Mon, Jun 02, 2025 at 04:00:14PM +0300, Ilya K wrote:
+>> That's weird, because I do have all the patches applied. I think this may have been broken by the pcs_inband_caps changes, because without the patch I'm just getting "autoneg setting not compatible with PCS", after which it bails, when it should really reconfigure the MAC instead.
+> 
+> Please enable phylink and sfp debug (adding #define DEBUG to the top of
+> phylink.c and sfp.c, and then send the kernel messages after reproducing
+> the issue.
+> 
+> Thanks.
+> 
 
-I will reproduce the issue and attach the resulting trace.dat file.
-
-Regarding suspend/resume:
-- The warning appears after resuming from suspend-to-RAM.
-Please let me know if you need further details or a specific test scenario.
-
-Best regards,
-Damian
-
-On Tue, Jun 3, 2025 at 7:50=E2=80=AFPM Korenblit, Miriam Rachel
-<miriam.rachel.korenblit@intel.com> wrote:
->
-> Could you please provide a trace-cmd?
-> Does this happen also before suspend?
->
-> Miri
+OK, somehow it just works normally now, even with the patch reverted. I think I grew a few gray hairs over the last few days. Sorry for the trouble, everyone, I'm off to not touch this thing ever again.
 
