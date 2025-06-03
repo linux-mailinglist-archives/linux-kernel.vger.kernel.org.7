@@ -1,209 +1,322 @@
-Return-Path: <linux-kernel+bounces-671424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19AF0ACC13B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 09:33:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57BEBACC140
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 09:34:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2B093A3C85
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 07:33:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1182D188D6C6
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 07:35:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAE0D267F6E;
-	Tue,  3 Jun 2025 07:33:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B20BB269AFA;
+	Tue,  3 Jun 2025 07:34:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="OWIAlPB5"
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2066.outbound.protection.outlook.com [40.107.95.66])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TaoWiPlM"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6632117A30B
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 07:33:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748936016; cv=fail; b=grrpJz1q2oFWDgbQrDCTU6GM3EyR0wHi/av0jpCvHqRShiee/PPfP1+ADpQqHEwVjZOP0QeznYumacC9LjSLH1CHA1MyCsmgGAy5MIxiqkTBW14DQi/4yJ8oLbj2/E5NeE1FpWOYReF49wzwSVe6rWu/moTLXMVZ1UYGPq74DYA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748936016; c=relaxed/simple;
-	bh=8oBII/Dkua9UPgvYpxVC4fjaLHZR4YV/Jkpw+SgCEoQ=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ibh4bv91uoUMyhMqQi5YwNpTNBiPrmTJvfm8fOn9W5RoTH3uy7awu8qORV/ZJVYLkcmBL24M6YmFKjl9gW4AckOyYR8rauP5Z+6TpkNluYjm5HtnlN564/XPsory5p4LNctzH0YipRaExMltlt9twaQjCOx9Isg6ZzqmVKyTBDA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=OWIAlPB5; arc=fail smtp.client-ip=40.107.95.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=GqatYSGnAKe0n5IwWXM615cgxrjKJ1BHQILdvNVC/zW0v4L1oCfudKJQbrnKpjWr4V6YtW2Kw5sQxHIE3k88PmQgU+kidqWxI7oplJg3WbJ9GwivUGke3sMox2cXKQfFjEiEi+QFZH+0Si7rOKmC+BWtuGsX7hKScWXJiCaSjfTZb1T52Pk8y83cnk/El7FPKkGaNF5upVYMTtg2Dyf2HclsZIK8wHltievy5ZZ8k7UED47DNDPNuAQ1NOA/sdXS4p2EtA1lLFodd0hwElDnmF1RP0w2V6eqeGto5E7H19rwm77aGCB2SJp9PiG7BOogY7drAfWwpA/nl7PVgDrMOw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8oBII/Dkua9UPgvYpxVC4fjaLHZR4YV/Jkpw+SgCEoQ=;
- b=Ftosd85oISSvO8zRaI3ZIINPkCULSyOpTEOR1Zrsj/XNW+t/u7L+xUKHmCtX8MmA97uMF0Ib8rxQXo6MlgONIusWff0Xca7zuKHNPR2z8EG2Jz0LkwLs1GAcXWjm/p7vniFt6cqs1E9hk/Kzts+8l9tgUDD71O5wcvO0vOTfPCGeumvBgF5Bbrh7Ytrf7uiTMidV+F21YNzbStnz9yibfmvAQ8Umso4/4kiyyTpn6TN7O6JZ9jqzPThUWum3YyRveNHUGt4ooe5oXGI7+395iaOaBQRxLZQHCBMt4Y5aZs98TDm9L+ZCjsKhWZpf7QQjyv3bIdPdY9jvjY1A3HKY8A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8oBII/Dkua9UPgvYpxVC4fjaLHZR4YV/Jkpw+SgCEoQ=;
- b=OWIAlPB5myifTd0czDW6hQ0RH+TvcXeHYXs8pOo50mQ78HNCbKb2zBeNyuMJsYOM/rHzddm8KmXOU2UcKGcEubq5kzf2HTVG7gcwUDdpOpdRLacTLTL1MmhbrSS7uWpkALxAyks7nIuvMyJWMAD7xU7bsMfoM44vkGxQlgtNZXQ=
-Received: from BL1PR12MB5333.namprd12.prod.outlook.com (2603:10b6:208:31f::11)
- by IA0PR12MB7627.namprd12.prod.outlook.com (2603:10b6:208:437::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8792.34; Tue, 3 Jun
- 2025 07:33:31 +0000
-Received: from BL1PR12MB5333.namprd12.prod.outlook.com
- ([fe80::d4a:9dd1:afd9:1c70]) by BL1PR12MB5333.namprd12.prod.outlook.com
- ([fe80::d4a:9dd1:afd9:1c70%7]) with mapi id 15.20.8792.034; Tue, 3 Jun 2025
- 07:33:31 +0000
-From: "Agarwal, Nikhil" <nikhil.agarwal@amd.com>
-To: Greg KH <gregkh@linuxfoundation.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Krzysztof
- Kozlowski <krzysztof.kozlowski@linaro.org>, "Gupta, Nipun"
-	<Nipun.Gupta@amd.com>
-Subject: RE: [PATCH v3 0/5] cdx: Minor cleanups
-Thread-Topic: [PATCH v3 0/5] cdx: Minor cleanups
-Thread-Index: AQHbuypbMy3CpimwhEKW+6Xfejvbv7PFdM/QgBmkJoCAEiL3IA==
-Date: Tue, 3 Jun 2025 07:33:31 +0000
-Message-ID:
- <BL1PR12MB53335655AF9C3B4216CF1B729D6DA@BL1PR12MB5333.namprd12.prod.outlook.com>
-References: <20250502-cdx-clean-v3-0-6aaa5b369fc5@linaro.org>
- <BL1PR12MB53333E728D0A5837E453ED629D892@BL1PR12MB5333.namprd12.prod.outlook.com>
- <5c43b201-68ed-4d6f-8595-bd3df203e81f@linaro.org>
-In-Reply-To: <5c43b201-68ed-4d6f-8595-bd3df203e81f@linaro.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_94523dde-f9d1-4aa7-80a9-c0900420d3c3_ActionId=7357dcaa-758c-4b4c-8d05-1f8fb1691f07;MSIP_Label_94523dde-f9d1-4aa7-80a9-c0900420d3c3_ContentBits=0;MSIP_Label_94523dde-f9d1-4aa7-80a9-c0900420d3c3_Enabled=true;MSIP_Label_94523dde-f9d1-4aa7-80a9-c0900420d3c3_Method=Privileged;MSIP_Label_94523dde-f9d1-4aa7-80a9-c0900420d3c3_Name=Non-Business_New;MSIP_Label_94523dde-f9d1-4aa7-80a9-c0900420d3c3_SetDate=2025-06-03T07:29:20Z;MSIP_Label_94523dde-f9d1-4aa7-80a9-c0900420d3c3_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;MSIP_Label_94523dde-f9d1-4aa7-80a9-c0900420d3c3_Tag=10,
- 0, 1, 1;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BL1PR12MB5333:EE_|IA0PR12MB7627:EE_
-x-ms-office365-filtering-correlation-id: c72d34a6-1907-4f59-9d64-08dda270f08c
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?bnF0Qlo1YVdtRk03M1I4L1FFZk55aWtWdiswN1dRazRFOGI1bjNIVXVlV3Z2?=
- =?utf-8?B?YVFseHRieUpHV2RueUJVdm0yeVNMZUtRdVBYV1BjYWl4L1AxQWd4eXc3ZzNN?=
- =?utf-8?B?YzlGMU96YXYvVndvT2YxYlZnTUJmdUxNRDNDdHU5d3lqSGV0MTZodktYaUlq?=
- =?utf-8?B?Y2tEb0hNZWhmakk4emhmYWZDaHZaYTZkVGJBaW9ZaDNtQnNSeDMxMXhVQ2Zr?=
- =?utf-8?B?SjdKcFFrWmNsRzR1RTYvNnh3MWYyOHc1dVc1dlV0dDdIak5rSFZNQ2xzakEr?=
- =?utf-8?B?NU1VTlpDTUNkUzZTSUVFZlNWMEM3blg3dEJzN3lNbWg4RFFaRXIvZzFqaVB4?=
- =?utf-8?B?K1YvWVlnOXllcjE0eWtyUFBIMWdFS3BDS2EzcU9QcDdtWFhCTm51L1pjRFJC?=
- =?utf-8?B?M29ETmtzdjNLODEzQjRUSHBvbVV3UUlLdUI1eHFrSnJYZGluR09YS2R6dFZL?=
- =?utf-8?B?cTdXS2wzS2VUTFlmUlhZUFJ0THRWaHRXbEd5eTBEVmpITFl0c0ZzellSKzR0?=
- =?utf-8?B?MDVVVHNZUTRwOHVBZkRxS1lUcG05TnJiQkkxZDR0S2JHNmc0WU1lT3pmTWlo?=
- =?utf-8?B?dVRHMHFMNlRmWk5mc21RMzFhQ0MreURzT2NQWG0rZGg3c1l6WnNKRVJuSmJQ?=
- =?utf-8?B?WXlnOHJTNXdMSUlJTy9EeWtkeFR0bkZpTzlzRnBuK084S2hWbXJ0blZLUnZC?=
- =?utf-8?B?N0FZVTh4anE3OEhwQVFUMzVyQk14R0ZPamduTEFkVi9KNmI2UWtKZHpYbnha?=
- =?utf-8?B?UG9XL1RqaUt1WHpIblBJZE1YTTBmTTdSN1dOV3Z2TGxadC91QWtNUlJIRDZm?=
- =?utf-8?B?WUZ5OHQ3cktMaHJHWld3VlJGNnNLNjJoS2VweWk3cVA2U2p6dGh1R1hxK3dw?=
- =?utf-8?B?NHRwbFlYUUNDWXZsZnBBL21iNFdUbWhWRGJGeGdjZ3Q4T2JlRFdCYjlpTlpy?=
- =?utf-8?B?eGhlc0V3aldPQXNabklKc0lGK0xUUWpST242ZmRYWnJUUm1LODdVNkpkNHJl?=
- =?utf-8?B?YTZYakI0TGs0Vkd1M04rQklaNWVtNEZ1OHN5ZkM3RjkvSjF2Qm9qclc3eGdX?=
- =?utf-8?B?OWgyUzZFZ1VhajBVeUhWQlpaZ2ZKU1ByWFpTU2NUT0d5M2huN1N4MEpPbVZH?=
- =?utf-8?B?MWxEaG9VT3FsU3RxZldjalNkU0dWNE96VWxvaVFVTmZRdWdtSmRPRU05OVRJ?=
- =?utf-8?B?UUxvaGdPRmlOaGtYb0pTRmtMSnU3R2pPME12VHc3UkVhNVArT1ZNTEhOWGNV?=
- =?utf-8?B?RS9zOWRncDNNUlRWcURLNXBMTGJOVjVBTXZHaGhHaWQ5a3QxNm13R3RkUEhj?=
- =?utf-8?B?RTF2RzFXQXB2TisxK1FPdDBNRFdWK1hKWkRCakZyMStOYVF2Yk0wbzhLbmU5?=
- =?utf-8?B?ZUVMK2hHM3c1M0dzeDNkR0Y4M2plYXoxU01KT0c0MWZnN0c3WHFqTEhKS21j?=
- =?utf-8?B?MUNpY0p3UVBmZFAxYmNBeVpqcllscFNzbVE5Z1RveE80VFNyTkNpVVRYSjF5?=
- =?utf-8?B?NXdNMUtvMFQwRldOUThZYjlxVElPWk5xbDhvZTQ2QnBRdzR2OXgzQmJUbEVk?=
- =?utf-8?B?NTFlTytwR0ZtdXFzcXoyWS9EdnhESDBpTzZ6THhIY3ZvN0EwYWdmNXlsQU1x?=
- =?utf-8?B?b0NWNytqWTBYRFd5UjJVcmMva24zaWZUOHROa1BjOVJYcFVDL3QzeFlpWWRW?=
- =?utf-8?B?dTNuREkrWXlLNlg5Z0hjRXdDMUs4bkV0Z1V4MjhSSk10Tm85RDU1Y1lnUUhC?=
- =?utf-8?B?RlpsRHIvSFJsN3FrZjdjSFdadVpyYlJoTk1QRk1xMllIMEJTczRTenpDbDB1?=
- =?utf-8?B?YXQ5RzhNZjlKRkdLcDNwVlNxeEY2SkZjWHBVc1V3N2l5UVI0T2FBNDkzemN0?=
- =?utf-8?B?SEVIMXdrQ21DTmptNml4bUVabUZ0a29FRVpXOTI3eFVGdVp0T0YzcS9WZWsz?=
- =?utf-8?B?aXhkYzV2NnlqRUlDWVZSUTl5c3pvTzA3bERTV3QvK0VNR0ZZNHMxYjhTekpR?=
- =?utf-8?Q?bVoJlmvVrib1MvXjekQd15FC7WQeg0=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5333.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?djFkZzdYSUJIZmZ3b2tCaTNXQ2RSYWZkcE1TaU1uWnpqYjNpZkVLdkZZRnRG?=
- =?utf-8?B?eXVMUjNIUmJRbXFIRzBIQ2xaUVVEQVhNbVZTbHBBc2tKbDlKVy8vWURDbzhF?=
- =?utf-8?B?RjVmT2pvcXYwRWxINjJlMzlpZ0doRzVHc09mRGJONHppS2Ixc3pkMWZSL0hl?=
- =?utf-8?B?cnQvTlRZV2o2SW1iRE0xUklwamZ6aU9GN1dEazBFc0F0cEMwWU5CVnY5ZGpp?=
- =?utf-8?B?UjU2VHRVV0R2cTYxb3E3bzhzb1BVdkRqTkdBRGw2cHd0dFprZkgrbE9ubTVr?=
- =?utf-8?B?MjJpY0wxRWZDbXpyTXpFVHVkRFdjRTZUVncySkh4OUhtRkU1bHJnd1kwaUNH?=
- =?utf-8?B?c0xlRkRvMVdYYjlCS3lZR3A2N2ZhU3k1WXZoYVd4S0V0YlNRVHpyb0c5UXdV?=
- =?utf-8?B?ZHYzNEVMWU5IVnN3MjdHallaREZjODJ1a0orUWw0QlMxd0NUdnJaMGxZdEJZ?=
- =?utf-8?B?RVJLNVluaHhQbXRKS2xSUzJSL3VLVk05SkpCajViSHhLUmRpQVlGSjF0TWJW?=
- =?utf-8?B?bTI4STg3Zy84dWRFQ25WMjFxYi9EQS9kZHlRbjE3dkdRTjFlU0lnbWRsaU82?=
- =?utf-8?B?T25LN3l1SWt2SFEyN291TnBQY0l5V0tQK2RtVm5Ja2RZMkdGYzZ3QWlLVS84?=
- =?utf-8?B?VlBpZ1NUeEl5d3ZWOHFzTEhkeE92cVg3bENmRE8wdmFBRTM2UlNKaDdpRFMy?=
- =?utf-8?B?cEIyTlZxZFloRVZKdGpqV1MrNnQ4LzhZbUdxcTFUbllpaGNST3hGZ05ZZW84?=
- =?utf-8?B?MlJFQUticVp0YW5LWjF0elg3Zkh3SjRuekNyak96VU5BQVZ2WVlxbzJJWGtn?=
- =?utf-8?B?NlJkU2prTUJwOVRFbkk2eGVGclg3OWpIc3pzNUREbUttdU03MWVFTlFHOG45?=
- =?utf-8?B?d2lyMk1pVHlRVTZhRTlzNTEwUHBHR0tMZFRtQUoyMWVKdVZtWkJhaXpha1hY?=
- =?utf-8?B?NkpoOGZock94TlN2enNvQ2lvdFJ6V0ZsTmpxUERWeWJkOVF6TG5neUIwa1ox?=
- =?utf-8?B?QXJuTlc5d043djRsaXg1bHRLdmVQU1VJeXYvaWROVk9IOG9zaTJkV0RjQXk2?=
- =?utf-8?B?TzFKSWxVZzNzR0NWampqRUc3MXF6dWNQV2R4OHVkdTdnVi9sK3BBMjU4cndn?=
- =?utf-8?B?U0h0eGZhRjhJTXdPVnNBUXJOYktnTmJZUFpzaU5EcDl0ZTdaRU54TlZ5aWkv?=
- =?utf-8?B?b3hmQlVlKzlSbkdzMFZyTVdmTSsyWERacVR3cm5jZnlrZWhKdDBpTUd2cUVK?=
- =?utf-8?B?TkJ2RnFQRENhd0tvQVNFcVE5MTFGUzFaTGE2OVVtdThCTmMxYjYzTDRNQXlY?=
- =?utf-8?B?cWVVM1JTSkZ3ZDltWU9zWENQY3IzaG5URDBlSXdaeWUyZ0haTEF6Z2I5aTZI?=
- =?utf-8?B?cU1hRmNPZ3h2UUlyaFY5emRXbXRRSGFBRjNnM1ZKOW4zOEhNTmFENm8xd3Nq?=
- =?utf-8?B?WmdKWVU4bDBZYkxrOEhXN25lRTNIV3pUckhya2JEUGFJdXNFS2IxMDdwZFpF?=
- =?utf-8?B?R3dwWm5Ta2NaY3VtNW5UUWJ5Zy9UeklPNTF0WDZGOGJFMVA0YWZqT1V2aE00?=
- =?utf-8?B?NmFDM2JzRlhoSFp4VittZTNadHczVEk4dTJPY2wwb01FaHZYaDVSblZWQVZR?=
- =?utf-8?B?OWc1TjJNWXlqZGpkeU9tWlpLOGQyeG9RMkNXbVZCbmNDTHptUkxLOXNrWDZ2?=
- =?utf-8?B?RE9nY1BPTUdjb3dFYkRlaTBRL0laU1ErTisrR0trRUJuNkNLK1ZzMDNZbGt1?=
- =?utf-8?B?cVNmUXpQcUtMclBVYjBWeUZ1OHY4KzdMU0ZGQWhBSW5ocGQ2bndzcHJSd1ds?=
- =?utf-8?B?MjVsRlhxRk5Jb0JLVzA2R28yQVQvRExnd1NGTyt6T280OTUxdkQ2NVR4QWxU?=
- =?utf-8?B?VGlxQjRyRVVTUUJFdXFCWU9wZmlSWHZQcTBJV2I5a2ZMS1VGa1hHZ2tvVlRD?=
- =?utf-8?B?MVl1cTE0MnAyVU4ydllEcVAxVzN1WmtvdnRIc3g1OTJYTHlySXhRM1R0eVRh?=
- =?utf-8?B?T2QrZ2wvak15bVJsWmxQdlMxSUhtTGloUmFoa0ZPWkhLcG1VdUQ1SEUzbTJT?=
- =?utf-8?B?QjFqZ3A4YUpkUnB1SHpOUElIVlJpVWxXMGovNFBtV3hITjIrM2lvMjVDMzJo?=
- =?utf-8?Q?cQDk=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C33E269832
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 07:34:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748936070; cv=none; b=rHLUPDmm7HZUfXwe956MiH295rC0Eax8wBpcpwgMkq0tzFa87LIcKFmwEFLoAbREyfPVp3ZbrGQ6uxSBBdx32oZEUH4LyPZCp+N1ukEMEZQcIxoM0LmfVLaHRzaSZdqfgQAbCO+Cx5v+bpJqudAYiYooHFRoWYRJMdiX55GOutM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748936070; c=relaxed/simple;
+	bh=rW9/yqGiV3S9x9WQao6qghKACpjIMMP8euSf951KQjY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Sqg5JHu4F/41ekJFASnucvaIT7plMZ3uxL2PHbf2p+MUxBXKr5h2KQugSxsKLa59oj94/kP4Uv8Uo/wrEpzEMtCajMeo9wtfpYsmJFXRFeNve3aG60ygiJ2xaJOJPslIuIWDaA2pb44hxheKfOLjE3+yvtxlHZVwHDYXHKgIlWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TaoWiPlM; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1748936067;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DGZ8ov4IZxTG4JISCQwIvXH2B18I0oSFw28Pds6ZzE8=;
+	b=TaoWiPlM8bwEozMGPrNL84FAe34ah7BmiuTmWKpHWkscv6+im0UXozIqo6ZOoDwQk4aSG8
+	bIrxG/NKUmJYEUipWoiHtqHI4c5BtExeKVA51GlN66a8PmWZkjStAnkNkwISwf9RdwP2+M
+	NucpH3LMFAzmx+8fw3KbPtrfLkCQPjg=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-314-3s-Ev6WROW6WuxaQnAal8A-1; Tue, 03 Jun 2025 03:34:26 -0400
+X-MC-Unique: 3s-Ev6WROW6WuxaQnAal8A-1
+X-Mimecast-MFC-AGG-ID: 3s-Ev6WROW6WuxaQnAal8A_1748936065
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3a4eb9c80deso2237537f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jun 2025 00:34:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748936065; x=1749540865;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DGZ8ov4IZxTG4JISCQwIvXH2B18I0oSFw28Pds6ZzE8=;
+        b=FAn3C0jVI2RjZ4/sOe7SZNs8pJ3tFu1tY96ylUENr4vrjH2G6r3JI4pmJetDREjC5u
+         kWUEqzaxkAgW9/9KhXs3G61QhtYYIVndPJuxuBsT/OCVx2TayZqauLiMGfhSDLMce5rq
+         le9YoJ4+eKkbDNca21vFk/lO7KZb8e7ROtfVfSWw3CNwexEo3MCI/KFBv+n1gvlb34/M
+         yldCY9Mlsjw9eFdX8Rg/lTu9AfgUtWd65MkNflZmzzch8ngnCGb2e/4vezb4cCOA5+qu
+         Gx0jZVX93kcYyxsCWeV0R0v2Laepa+px0d266qztO9NuABIlDKZg5lJChDSTCRlxU3mr
+         JTZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV+NjRWEZsuQm9CN6C9T/L6VLyvWroPPJkMzoX4s8oEU/qUMT6rP5vazyPfs3OcG0A1Lb5etc8jvPB539U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyg/t622IH3+7KIMl/PTmCh/sP07uFTohDdQiDqhgSJ8c6eLIty
+	lSHBrygqHKwM0kZBMpKg+sdIy2WQ3qr+Pan8P5n68EUqm7LIG3AKUfqvMiD0pwSO0oIFD/mAWdy
+	arbejwg7At8t+RT4OOEeBV0msmmkGdRkarLs4YHS4YZUO6ps79b6pu6HTxxau2q9V/Q==
+X-Gm-Gg: ASbGnctW1tf2OTG549gib8qdKOylvCHCxJ7ZIm4uVsKGLXfgIwmM4fUaNX+fM+/stLK
+	mLIjg2zLQEtw8wSIJj9w2HWFNIwk8Rq2eUcjp6f0QYa188DIRX1ucA6+enThNlgRVXSgqU4ecMc
+	wqVM7pbh762NBjS6qxrXTLo9vo+N5QKINloJ5L600+R+gC+B7bhEQrDN4+a36MHvDMA5YDWDaPM
+	bDRJvoq+yeNdc3j1VRjjGjyL9V1EUqHLvTyqx+Ez8ImLtg7AY2kgVrTuSnWEUUPmJDVDLTIJ9KY
+	qukjKKIz0zDBi7d2cI9HTPHzkgOrmdWTvu9Z0AD5nbzarGU+wRWJKZ4M
+X-Received: by 2002:a05:6000:2303:b0:3a4:da87:3a73 with SMTP id ffacd0b85a97d-3a4f89dcc3amr10777706f8f.42.1748936064720;
+        Tue, 03 Jun 2025 00:34:24 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGekbDNecdjQ6X2LglfERanw6xFXa9R4votcNrIbvinDs10plhgGJLYQyYNskjzw++qgcRa7w==
+X-Received: by 2002:a05:6000:2303:b0:3a4:da87:3a73 with SMTP id ffacd0b85a97d-3a4f89dcc3amr10777679f8f.42.1748936064264;
+        Tue, 03 Jun 2025 00:34:24 -0700 (PDT)
+Received: from ?IPV6:2a0d:3341:cc2d:3210:4b21:7487:446:42ea? ([2a0d:3341:cc2d:3210:4b21:7487:446:42ea])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-450d7fa27b4sm147958215e9.15.2025.06.03.00.34.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Jun 2025 00:34:23 -0700 (PDT)
+Message-ID: <d74f610d-679a-4cb2-804b-8c4c40260143@redhat.com>
+Date: Tue, 3 Jun 2025 09:34:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BL1PR12MB5333.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c72d34a6-1907-4f59-9d64-08dda270f08c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Jun 2025 07:33:31.1853
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: weA/kLk9GqRBlePbW1wTA8lPM7N2R3h8hM59uI4Cfvs0CsBL5bjRYqajPNbKhDxg
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB7627
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [net?] possible deadlock in __netdev_update_features
+To: Stanislav Fomichev <stfomichev@gmail.com>,
+ syzbot <syzbot+7e0f89fb6cae5d002de0@syzkaller.appspotmail.com>
+Cc: andrew@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ horms@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <683d677f.a00a0220.d8eae.004b.GAE@google.com>
+ <aD5Sfmu0qXuskU-q@mini-arch>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <aD5Sfmu0qXuskU-q@mini-arch>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBLcnp5c3p0b2YgS296bG93c2tp
-IDxrcnp5c3p0b2Yua296bG93c2tpQGxpbmFyby5vcmc+DQo+IFNlbnQ6IEZyaWRheSwgTWF5IDIz
-LCAyMDI1IDEyOjAxIEFNDQo+IFRvOiBBZ2Fyd2FsLCBOaWtoaWwgPG5pa2hpbC5hZ2Fyd2FsQGFt
-ZC5jb20+OyBHdXB0YSwgTmlwdW4NCj4gPE5pcHVuLkd1cHRhQGFtZC5jb20+OyBHcmVnIEtIIDxn
-cmVna2hAbGludXhmb3VuZGF0aW9uLm9yZz4NCj4gQ2M6IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5l
-bC5vcmcNCj4gU3ViamVjdDogUmU6IFtQQVRDSCB2MyAwLzVdIGNkeDogTWlub3IgY2xlYW51cHMN
-Cj4gDQo+IE9uIDA2LzA1LzIwMjUgMTI6NTksIEFnYXJ3YWwsIE5pa2hpbCB3cm90ZToNCj4gPj4g
-Q2hhbmdlcyBpbiB2MzoNCj4gPj4gLSBEcm9wIG1haW50YWluZXIncyB1cGRhdGUsIG9uIEdyZWcn
-cyByZXF1ZXN0DQo+ID4+IC0gTGluayB0byB2MjogaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvci8y
-MDI1MDQzMC1jZHgtY2xlYW4tdjItMC0NCj4gPj4gN2RiZmRhOTM2NGE5QGxpbmFyby5vcmcNCj4g
-Pj4NCj4gPj4gQ2hhbmdlcyBpbiB2MjoNCj4gPj4gLSBQYXRjaCAjMTogQWRkIEhBU19ETUEgZGVw
-ZW5kZW5jeQ0KPiA+PiAtIFBhdGNoICM1OiBOZXcgcGF0Y2gsIHNwbGl0IGZyb20gcHJldmlvdXMN
-Cj4gPj4gLSBMaW5rIHRvIHYxOiBodHRwczovL2xvcmUua2VybmVsLm9yZy9yLzIwMjUwNDI1LWNk
-eC1jbGVhbi12MS0wLQ0KPiA+PiBlYTIwMDJkZDQwMGRAbGluYXJvLm9yZw0KPiA+Pg0KPiA+PiBG
-ZXcgc2ltcGxlIGNsZWFudXBzIGZvciBDRFggZHJpdmVycy4NCj4gPj4NCj4gPj4gQmVzdCByZWdh
-cmRzLA0KPiA+PiBLcnp5c3p0b2YNCj4gPj4NCj4gPj4gLS0tDQo+ID4+IEtyenlzenRvZiBLb3ps
-b3dza2kgKDUpOg0KPiA+PiAgICAgICBjZHg6IEVuYWJsZSBjb21waWxlIHRlc3RpbmcNCj4gPj4g
-ICAgICAgY2R4OiBjb250cm9sbGVyOiBTaW1wbGlmeSB3aXRoIGRldl9lcnJfcHJvYmUoKQ0KPiA+
-PiAgICAgICBjZHg6IGNvbnRyb2xsZXI6IERyb3AgdXNlbGVzcyBwcm9iZSBzdWNjZXNzIG1lc3Nh
-Z2UNCj4gPj4gICAgICAgY2R4OiBjb250cm9sbGVyOiBEbyBub3Qgb3Blbi1jb2RlIG1vZHVsZV9w
-bGF0Zm9ybV9kcml2ZXIoKQ0KPiA+PiAgICAgICBjZHg6IGNvbnRyb2xsZXI6IERyb3AgdW5uZWVk
-ZWQgZHJpdmVyLnBtIE5VTEwgYXNzaWdubWVudA0KPiA+Pg0KPiA+DQo+ID4gRm9yIHNlcmllcw0K
-PiA+IEFja2VkLWJ5OiBOaWtoaWwgQWdhcndhbCA8bmlraGlsLmFnYXJ3YWxAYW1kLmNvbT4NCj4g
-DQo+IFRoaXMgd2FzIHNlbnQgMjAgZGF5cyBhZ28sIGdvdCBhY2tlZCBhbmQgc3RpbGwgZGlkIG5v
-dCByZWFjaCBsaW51eC1uZXh0Lg0KPiBBcmUgdGhlcmUgYW55IG1vcmUgY29tbWVudHM/IFdoYXQg
-aXMgaGFwcGVuaW5nIGhlcmUgd2l0aCBjZHggYW5kIHRoaXMgcGF0Y2hzZXQ/DQo+IA0KDQpHcmVn
-LCBjb3VsZCB5b3UgcGxlYXNlIGFwcGx5IHRoaXMgc2VyaWVzIG9uIHlvdXIgbmV4dCB0cmVlPw0K
-DQo=
+On 6/3/25 3:40 AM, Stanislav Fomichev wrote:
+> On 06/02, syzbot wrote:
+>> syzbot found the following issue on:
+>>
+>> HEAD commit:    7d4e49a77d99 Merge tag 'mm-nonmm-stable-2025-05-31-15-28' ..
+>> git tree:       upstream
+>> console output: https://syzkaller.appspot.com/x/log.txt?x=1298600c580000
+>> kernel config:  https://syzkaller.appspot.com/x/.config?x=2ea0d63949bc4278
+>> dashboard link: https://syzkaller.appspot.com/bug?extid=7e0f89fb6cae5d002de0
+>> compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
+>>
+>> Unfortunately, I don't have any reproducer for this issue yet.
+>>
+>> Downloadable assets:
+>> disk image: https://storage.googleapis.com/syzbot-assets/eb4b617767b5/disk-7d4e49a7.raw.xz
+>> vmlinux: https://storage.googleapis.com/syzbot-assets/d0be53c5da74/vmlinux-7d4e49a7.xz
+>> kernel image: https://storage.googleapis.com/syzbot-assets/9a5769a0ff61/bzImage-7d4e49a7.xz
+>>
+>> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+>> Reported-by: syzbot+7e0f89fb6cae5d002de0@syzkaller.appspotmail.com
+>>
+>> netdevsim netdevsim1 netdevsim0: unset [0, 0] type 1 family 0 port 8472 - 0
+>> netdevsim netdevsim1 netdevsim0: unset [1, 0] type 2 family 0 port 6081 - 0
+>> ============================================
+>> WARNING: possible recursive locking detected
+>> 6.15.0-syzkaller-10769-g7d4e49a77d99 #0 Not tainted
+>> --------------------------------------------
+>> syz.1.2750/15558 is trying to acquire lock:
+>> ffff88805a35cd30 (&dev_instance_lock_key#20){+.+.}-{4:4}, at: netdev_lock include/linux/netdevice.h:2756 [inline]
+>> ffff88805a35cd30 (&dev_instance_lock_key#20){+.+.}-{4:4}, at: netdev_lock_ops include/net/netdev_lock.h:42 [inline]
+>> ffff88805a35cd30 (&dev_instance_lock_key#20){+.+.}-{4:4}, at: netdev_sync_lower_features net/core/dev.c:10549 [inline]
+>> ffff88805a35cd30 (&dev_instance_lock_key#20){+.+.}-{4:4}, at: __netdev_update_features+0xcb1/0x1a20 net/core/dev.c:10719
+>>
+>> but task is already holding lock:
+>> ffff88805a35cd30 (&dev_instance_lock_key#20){+.+.}-{4:4}, at: netdev_lock include/linux/netdevice.h:2756 [inline]
+>> ffff88805a35cd30 (&dev_instance_lock_key#20){+.+.}-{4:4}, at: netdev_lock_ops include/net/netdev_lock.h:42 [inline]
+>> ffff88805a35cd30 (&dev_instance_lock_key#20){+.+.}-{4:4}, at: __dev_ethtool net/ethtool/ioctl.c:3227 [inline]
+>> ffff88805a35cd30 (&dev_instance_lock_key#20){+.+.}-{4:4}, at: dev_ethtool+0x716/0x1990 net/ethtool/ioctl.c:3490
+>> and the lock comparison function returns 0:
+>>
+>> other info that might help us debug this:
+>>  Possible unsafe locking scenario:
+>>
+>>        CPU0
+>>        ----
+>>   lock(&dev_instance_lock_key#20);
+>>   lock(&dev_instance_lock_key#20);
+>>
+>>  *** DEADLOCK ***
+>>
+>>  May be due to missing lock nesting notation
+>>
+>> 2 locks held by syz.1.2750/15558:
+>>  #0: ffffffff8f50b248 (rtnl_mutex){+.+.}-{4:4}, at: dev_ethtool+0x1d0/0x1990 net/ethtool/ioctl.c:3489
+>>  #1: ffff88805a35cd30 (&dev_instance_lock_key#20){+.+.}-{4:4}, at: netdev_lock include/linux/netdevice.h:2756 [inline]
+>>  #1: ffff88805a35cd30 (&dev_instance_lock_key#20){+.+.}-{4:4}, at: netdev_lock_ops include/net/netdev_lock.h:42 [inline]
+>>  #1: ffff88805a35cd30 (&dev_instance_lock_key#20){+.+.}-{4:4}, at: __dev_ethtool net/ethtool/ioctl.c:3227 [inline]
+>>  #1: ffff88805a35cd30 (&dev_instance_lock_key#20){+.+.}-{4:4}, at: dev_ethtool+0x716/0x1990 net/ethtool/ioctl.c:3490
+>>
+>> stack backtrace:
+>> CPU: 0 UID: 0 PID: 15558 Comm: syz.1.2750 Not tainted 6.15.0-syzkaller-10769-g7d4e49a77d99 #0 PREEMPT(full) 
+>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+>> Call Trace:
+>>  <TASK>
+>>  dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+>>  print_deadlock_bug+0x28b/0x2a0 kernel/locking/lockdep.c:3044
+>>  check_deadlock kernel/locking/lockdep.c:3096 [inline]
+>>  validate_chain+0x1a3f/0x2140 kernel/locking/lockdep.c:3898
+>>  __lock_acquire+0xab9/0xd20 kernel/locking/lockdep.c:5240
+>>  lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5871
+>>  __mutex_lock_common kernel/locking/mutex.c:602 [inline]
+>>  __mutex_lock+0x182/0xe80 kernel/locking/mutex.c:747
+>>  netdev_lock include/linux/netdevice.h:2756 [inline]
+>>  netdev_lock_ops include/net/netdev_lock.h:42 [inline]
+>>  netdev_sync_lower_features net/core/dev.c:10549 [inline]
+>>  __netdev_update_features+0xcb1/0x1a20 net/core/dev.c:10719
+>>  netdev_change_features+0x72/0xd0 net/core/dev.c:10791
+>>  bond_compute_features+0x615/0x680 drivers/net/bonding/bond_main.c:1614
+>>  bond_slave_netdev_event drivers/net/bonding/bond_main.c:4112 [inline]
+>>  bond_netdev_event+0x72e/0xe80 drivers/net/bonding/bond_main.c:4157
+>>  notifier_call_chain+0x1b6/0x3e0 kernel/notifier.c:85
+>>  call_netdevice_notifiers_extack net/core/dev.c:2268 [inline]
+>>  call_netdevice_notifiers net/core/dev.c:2282 [inline]
+>>  netdev_features_change+0x85/0xc0 net/core/dev.c:1571
+>>  __dev_ethtool net/ethtool/ioctl.c:3457 [inline]
+>>  dev_ethtool+0x1520/0x1990 net/ethtool/ioctl.c:3490
+>>  dev_ioctl+0x392/0x1150 net/core/dev_ioctl.c:758
+>>  sock_do_ioctl+0x22c/0x300 net/socket.c:1204
+>>  sock_ioctl+0x576/0x790 net/socket.c:1311
+>>  vfs_ioctl fs/ioctl.c:51 [inline]
+>>  __do_sys_ioctl fs/ioctl.c:907 [inline]
+>>  __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:893
+>>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>>  do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+>>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>> RIP: 0033:0x7fa86e38e969
+>> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+>> RSP: 002b:00007fa86b98f038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+>> RAX: ffffffffffffffda RBX: 00007fa86e5b6320 RCX: 00007fa86e38e969
+>> RDX: 0000200000000080 RSI: 0000000000008946 RDI: 0000000000000006
+>> RBP: 00007fa86e410ab1 R08: 0000000000000000 R09: 0000000000000000
+>> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+>> R13: 0000000000000000 R14: 00007fa86e5b6320 R15: 00007fa86e6dfa28
+>>  </TASK>
+>>
+>>
+>> ---
+>> This report is generated by a bot. It may contain errors.
+>> See https://goo.gl/tpsmEJ for more information about syzbot.
+>> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>>
+>> syzbot will keep track of this issue. See:
+>> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+>>
+>> If the report is already addressed, let syzbot know by replying with:
+>> #syz fix: exact-commit-title
+>>
+>> If you want to overwrite report's subsystems, reply with:
+>> #syz set subsystems: new-subsystem
+>> (See the list of subsystem names on the web dashboard)
+>>
+>> If the report is a duplicate of another one, reply with:
+>> #syz dup: exact-subject-of-another-report
+>>
+>> If you want to undo deduplication, reply with:
+>> #syz undup
+> 
+> I'll keep poking this, but I hope to get a reproducer at some point.
+> The features are evidently changed on the slave device (since it's the
+> netdevsim who's lock is grabbed twice), but I can't understand which
+> ethtool call leads to it.
+
+FWIW, looking at the console log, the program that triggered the splat is:
+
+447.453794ms ago: executing program 1 (id=2750):
+bpf$BPF_PROG_RAW_TRACEPOINT_LOAD(0x5, 0x0, 0x0)
+syz_emit_ethernet(0x4a, &(0x7f0000000080)={@local, @link_local={0x1,
+0x80, 0xc2, 0x0, 0x0, 0xe}, @void, {@ipv4={0x800, @tcp={{0x5, 0x4, 0x0,
+0x0, 0x3c, 0x0, 0x0, 0x0, 0x6, 0x0, @rand_addr=0x64010102, @local},
+{{0x4001, 0x0, 0x41424344, 0x41424344, 0x0, 0x6, 0xa, 0x0, 0x1, 0x0,
+0x0, {[@md5sig={0x13, 0x12, "473ecfd2106a00"}]}}}}}}}, 0x0)
+socketpair$unix(0x1, 0x3, 0x0,
+&(0x7f0000000080)={<r0=>0xffffffffffffffff, <r1=>0xffffffffffffffff})
+openat$audio(0xffffff9c, 0x0, 0x402, 0x0)
+connect$unix(r0, &(0x7f000057eff8)=@abs, 0x6e)
+sendmmsg$unix(r1, &(0x7f00000bd000), 0x318, 0x0)
+recvmmsg(r0, &(0x7f00000000c0), 0x10106, 0x2, 0x0)
+prctl$PR_SCHED_CORE(0x3e, 0x1, 0x0, 0x2, 0x0)
+socket$netlink(0x10, 0x3, 0xe)
+sendmsg(r1, &(0x7f0000000180)={0x0, 0x0, 0x0}, 0x0)
+sched_setattr(0x0, &(0x7f0000000100)={0x38, 0x5, 0x0, 0x0, 0x0, 0xb49,
+0x9, 0x8, 0x0, 0x3}, 0x0)
+bpf$MAP_CREATE(0x0, 0x0, 0x0)
+socketpair$unix(0x1, 0x1, 0x0, &(0x7f0000000240)={0xffffffffffffffff,
+<r2=>0xffffffffffffffff})
+ioctl$sock_SIOCETHTOOL(r2, 0x8946, &(0x7f0000000080)={'netdevsim0\x00',
+&(0x7f0000000000)=@ethtool_sfeatures={0x3b, 0x2, [{0xfe}, {0xfffffff9}]}})
+bpf$PROG_LOAD(0x5, 0x0, 0x0)
+r3 = socket$netlink(0x10, 0x3, 0x10)
+socketpair$unix(0x1, 0x3, 0x0, 0x0)
+getsockopt$sock_cred(r3, 0x1, 0x11, &(0x7f0000000180)={0x0, <r4=>0x0,
+<r5=>0x0}, &(0x7f0000000240)=0xc)
+bpf$BPF_PROG_RAW_TRACEPOINT_LOAD(0x5, &(0x7f00000006c0)={0x1, 0x4, 0x0,
+&(0x7f0000000040)='GPL\x00', 0x8, 0x0, 0x0, 0x0, 0x0, '\x00', 0x0, 0x0,
+0xffffffffffffffff, 0x8, 0x0, 0x0, 0x10, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+0x0, 0x10, 0x203, @void, @value}, 0x94)
+r6 = syz_open_dev$sndctrl(&(0x7f0000000000), 0x1, 0x0)
+ioctl$SNDRV_CTL_IOCTL_ELEM_READ(r6, 0xc4c85512, &(0x7f0000000280)={{0x6,
+0x0, 0x0, 0x0, 'syz0\x00'}, 0x0, [0x0, 0x0, 0x0, 0xffffffffffffffff,
+0xffffffefffffffff, 0x0, 0x3, 0x0, 0x0, 0x4, 0x0, 0x0,
+0xffffffffbfffffff, 0x0, 0x0, 0x0, 0x3, 0x80000000, 0x3, 0x0, 0x0, 0x4,
+0x0, 0x6, 0x0, 0x40, 0x0, 0xfffffffffffffffd, 0x100200000, 0x0, 0x0,
+0x8, 0x0, 0x0, 0x9, 0x0, 0x10000, 0x1000, 0x0, 0x3, 0xfffffffffffffffd,
+0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x3, 0x0, 0x7, 0x10000, 0x7785, 0x0, 0x4,
+0x4, 0x8, 0x0, 0xfffffffffffffffe, 0x0, 0x8, 0x0, 0x0, 0x80000000000,
+0x0, 0x4, 0x0, 0xfffffffffffffffe, 0x0, 0x0, 0x0, 0xfffffffffffffffe,
+0x0, 0x4000000000, 0x0, 0x80000000000000, 0x0, 0xfffffffffffffffc, 0x0,
+0x0, 0xfffffffffffffffe, 0x0, 0x2000, 0x0, 0x0, 0x0, 0x0, 0x0,
+0xfffffffffffffffd, 0x0, 0x0, 0x0, 0x100, 0x0, 0xfffffffffffffffd, 0x0,
+0x0, 0x0, 0x2, 0x0, 0x0, 0x3, 0x2, 0x0, 0x0, 0xc0c0, 0x0, 0x0, 0x0, 0x0,
+0x1, 0x0, 0x3, 0x0, 0xffffffffffeffffc, 0x0, 0x8000000000001, 0x0, 0x0,
+0x0, 0x0, 0xffffffffffffffff, 0x0, 0x0, 0x0, 0x0, 0x20000000, 0x0, 0x80]})
+bind$netlink(r3, &(0x7f0000514ff4)={0x10, 0x0, 0x2, 0x2ff7afedf}, 0xc)
+mmap(&(0x7f0000000000/0xb36000)=nil, 0xb36000, 0xb635773f06ebbeee,
+0x8031, 0xffffffffffffffff, 0x0)
+mlock(&(0x7f0000000000/0x800000)=nil, 0x800000)
+madvise(&(0x7f0000000000/0x600000)=nil, 0x600003, 0x19)
+mount$fuse(0x0, 0x0, &(0x7f0000002100), 0x0, &(0x7f00000008c0)={{},
+0x2c, {'rootmode', 0x3d, 0x4000}, 0x2c, {'user_id', 0x3d, r4}, 0x2c, {},
+0x2c, {[{@blksize={'blksize', 0x3d, 0x1000}}, {@max_read={'max_read',
+0x3d, 0x3}}, {@blksize={'blksize', 0x3d, 0x1000}},
+{@max_read={'max_read', 0x3d, 0x3}}, {@blksize={'blksize', 0x3d,
+0x1400}}, {@blksize}]}})
+read$FUSE(0xffffffffffffffff, &(0x7f0000006380)={0x2020, 0x0, 0x0, 0x0,
+<r7=>0x0}, 0x2020)
+r8 = socket(0x10, 0x2, 0x0)
+ioctl$KVM_SET_PIT(0xffffffffffffffff, 0x4048aec9,
+&(0x7f0000000080)={[{0x80000000, 0x0, 0x0, 0x3, 0x0, 0x10, 0x6, 0x0,
+0x2, 0x0, 0xa, 0x0, 0x4}, {0xa, 0x0, 0x0, 0x0, 0x40, 0x1, 0x8, 0xff,
+0x7, 0x0, 0x4, 0x0, 0xfffffffffffffff7}, {0x200000, 0xc, 0x21, 0x53,
+0x0, 0x2, 0x0, 0x0, 0x58, 0xb, 0x0, 0x0, 0x8080}], 0x3fb})
+sendmsg$nl_route(r8, &(0x7f0000000140)={0x0, 0x0,
+&(0x7f0000000100)={&(0x7f0000000780)=ANY=[@ANYBLOB="2ea8d2811b2a246ba8a8a78787aee7bb20c96807b6d8761f859ec6fa331e777591ed11248a94c0cfc19c61fe7c081ddaf685d4d5b414a01ac8d511cfb5d75e8878514da879142e585b1f9213b0f04d67baae20dd2e742f1286afc7a9bb0ad44aa05e2e3db382651792f2945409e7c6dda83d14fef1fb50a3cb8d0a189d28277f501a04c5d4414479db27bd23c1fbdf28124c317129fe42ebf9",
+@ANYRES8, @ANYRES64, @ANYRESOCT=r2, @ANYRES32, @ANYRES16=r7,
+@ANYRESDEC=r5], 0x30}, 0x1, 0x0, 0x0, 0xc885}, 0x4000880)
+
+and the suspect ethtool operation should be:
+
+ioctl$sock_SIOCETHTOOL(r2, 0x8946, &(0x7f0000000080)={'netdevsim0\x00',
+&(0x7f0000000000)=@ethtool_sfeatures={0x3b, 0x2, [{0xfe}, {0xfffffff9}]}})
+
+Since syzkaller has no reproducer, I guess the splat depends on some
+additional state/race, but I don't see how/where the lower -> bond ->
+lowers features update chain is (should be) interrupted to break this
+double lock.
+
+/P
+
 
