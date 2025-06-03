@@ -1,136 +1,127 @@
-Return-Path: <linux-kernel+bounces-671899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62669ACC7FD
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 15:37:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46763ACC801
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 15:37:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4DC377A9AAA
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 13:35:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7502118954D0
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 13:37:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2732C23182D;
-	Tue,  3 Jun 2025 13:36:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C89623236D;
+	Tue,  3 Jun 2025 13:37:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VrwXo6N6"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="QdRqef0e"
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEE51231826;
-	Tue,  3 Jun 2025 13:36:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4C9B233D91
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 13:37:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748957816; cv=none; b=ZvoHiW9PAMvUXQuzbBTpdFg2YrRJBB49Z03Iz6hd6qdVL9qV9lqwi0Nx4To3ZI3ua/bM+bMCq03yM7NgW0iIXNX0Jm+LA50FTskPj+O+N/U9y9uzT0nfW4Oa8dKCSPCpgBqSsK7knJzhlCmEckyGeb9S5sbXtHXITECWqpVQPTE=
+	t=1748957823; cv=none; b=hTitVOJid3uRpYpSXhi7nMAZgf/A4VP2KrzLJR5h/ZEdVo5sKVsS4bzTAT6w73DL/setG3qfnQupuq7JS/5rApdWmG49G1SL8CPCrmDuW+WmYvgGs6L5BQDMDXj9L2QxYfpE8okIFaKmk85Gu01sOCatVaPPgRzQD1Yt2r9jDmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748957816; c=relaxed/simple;
-	bh=le5QR41xeH5K5QxGsVQri/RDT/2BLTURcIV+cKyLXfg=;
+	s=arc-20240116; t=1748957823; c=relaxed/simple;
+	bh=MfnZO5lFJA5kphVhQXFmjyYwzPaWj6A9QLg5HcsjC6c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PeYyJVriG7ljD1DlnnfTHVfCll6Rf7Aqs7dOhc3w0mbpvORBFzeOxak7D2NPc5F5+aoTVikH8AD0n2Iz8yRBp7ymE83YtBUgzszk6oyxnpw65UktYV5b9oE8lPGIr9uD6AHC1xPOTO19FcVTgq/oNkBpulTbcm2hgYo5mslgArk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VrwXo6N6; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43cfe63c592so65365625e9.2;
-        Tue, 03 Jun 2025 06:36:54 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ExHtv/ZbQNj/KrhNno2uzJHulVYhx2HOEEopNTpD/3atVSKt2GbPmUbQmlW1ypiJFgnmkUXWjfmEqOwH2DTyld7pFxYJ014H82oEXNBXnr3mBwOorakkgjdMT8Qdb7LBUqn/I2qDuzimyWUiXkpCANMAusyAxncLSEPZQhzjoIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=QdRqef0e; arc=none smtp.client-ip=209.85.222.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7d09f11657cso510011185a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jun 2025 06:37:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748957813; x=1749562613; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=XwaOA2UFIdL6uhmEEF3zq5uKFSYlQf1QNo+y/xH05aY=;
-        b=VrwXo6N6GUzTFMR8BX0VInjiMpGuyzAj6kv98URXp8LjZi3vZ+OSJ1XsiFCkNqXxMM
-         q0ic76K1o3+QMasx0MkEHwWtEMVfSAsbPpt4G3Y2DfOim9VOj0oVcrBM5N8dVNAir4us
-         3t5t445VP333qrC46zMudLH5VqHJJUGhrN7gLgohJp2RAfyyIHVYVYvdPJGcExNuLM/Y
-         rS7ikHuMkh4wHyraUnKlVG/uMB0x0mSJGvPU3xoson8m9KPdYQ0YL7EZmyaBC+c8FBCk
-         5by/MJg7jP/6LEfFLxX37sJZusQbtt8QL9qaMK9pm0vBYrskTjMjXa2W74bxEw7lTpBz
-         xtzg==
+        d=ziepe.ca; s=google; t=1748957821; x=1749562621; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=M2tOvYIRYhJ3zgazeT9iy9SxHIfkqCxujQJZWAlLZ4g=;
+        b=QdRqef0eufvBDPsFNSKgItk8ioK5rW0bITD7h/gaJVlsLti5kJbkAWQoNEmZWRe68Y
+         Q4oF4tefxOI7cERsX4wsVaBuaHz22hTf4BcC/yjkMVx+8DuPCBDLYZ3A+RWTRvaraqNs
+         e7pqxu3qqrej8RwTwZermIn33SpopTq52Y2nm/rfb3Wh5IxZqh6cLkWQPdwWIBjD+YoN
+         aiioFJ+ghZ9yPVDMy/MALzaSX/kPFwincvLa9cv4TcSSylFCgKj10d+Rbd3GZwiNMEHs
+         ubZ2U/8vLM8FJ3hFzQB993FiXCNvO+ks/3rtygYKqSmy9D7l/904PPCBEYVreULiWIuI
+         rFWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748957813; x=1749562613;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XwaOA2UFIdL6uhmEEF3zq5uKFSYlQf1QNo+y/xH05aY=;
-        b=ZmE9C6tor85KNQwCo4s3ELO1Uc356q40BkPlgxh7irTGqZ73f1mIrusRvrm9sbEyyM
-         sJ8tU5th43k1ZG5nbtHXtzOARdh9YU2q4r1wqm4rLxF22ZmXmJ4qCS9fEnPSTwqH6zg8
-         Oxvnt4AQ/cEZpFDuaAz2yHckxDxcwwgAZPYkqtxbOKyQYVCqbY1gFFCqwuXQ5FzXol4K
-         aIUXNwZle/WzxNUzI3rta6WozS2i/GANTMNy9Q8E6UP7Wu7gojpRRwVYfXg5wT6ONupC
-         UicGu8xMq/QUBUYzN44GT9Qk+Ldu9WHa+rHkLcwNL23y6MO1ieWCAZ3Okm40Lg5Xd+gS
-         D26A==
-X-Forwarded-Encrypted: i=1; AJvYcCWJKZ4Tq2uRUjbReyrd4FniYg7LoFdcjZ1Cs10eX7IykFwsHFgND+sDwZoFGX7tik38a10q5OYQY8g=@vger.kernel.org, AJvYcCWyz7nebBLlRQZ8D41507tY21wHomCFVFc4A5XGDHV2JvPP7H3CVRIuBQx+FTaRU+bb9MrCubRDhkxg+A0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzbr6KpyLSTrlW+qhYKUOqlNvon074Es8AjXCZJH/JVtZ5PrGEb
-	7iJftdaWCxEsqCNB17E38Njt8Vukbxze7c/cd1BNVWdzB8WCU/EaajfK
-X-Gm-Gg: ASbGncvUeRrKepyuXl2Ia7xNMSsFCk0rDk2twP+Ci4n1ZBp7P3dn5Giv/93sIsfeHJI
-	fRFObntnWanamxY+10KN4L63uBpFlou/kEo0bpaLzcYaHrXT/EA9EFjkBXjK2OKx5mC7fTbJIan
-	SksAmP+HnU8woyw4Y9Xvq+hIDXXxIWprpBMv7ttq+y6j6zSHHhX68VybafbX4gNnZkhojL12mOM
-	1gxdZjBSHXSG35YwKF0FxaMOWq9wj/Jk04hLrUGB866TW1sO6mdKJQZTfv2L8ndqWWPypNztBfF
-	CzIyUdNubouToJVANQuDQlOXndng9dHPxwM05UV1YNEAfqblYF5UtRR6QZ59
-X-Google-Smtp-Source: AGHT+IHlffBpVFQtzIlEFJvBh6YUPRlNSnuEKeo8Dt5LtNWl5139bqwkGJfzkGnuetqW1tpQrNzwAg==
-X-Received: by 2002:a05:600c:8b11:b0:450:d4ad:b7de with SMTP id 5b1f17b1804b1-4511ecb9cd9mr122631155e9.3.1748957811494;
-        Tue, 03 Jun 2025 06:36:51 -0700 (PDT)
-Received: from debian.local ([81.78.104.57])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-450d7fa27b4sm159437275e9.15.2025.06.03.06.36.50
+        d=1e100.net; s=20230601; t=1748957821; x=1749562621;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=M2tOvYIRYhJ3zgazeT9iy9SxHIfkqCxujQJZWAlLZ4g=;
+        b=fZlW2OXXdECpSRbBY4Y1C14lOkwcb0YTZtDE5aKNJ0D2bU0GNV4irrXBvom0kgBWST
+         UtaCj52DhHwLIyTOPD3S2lE0zKA81FlaxZZQ+Hq0koJrNJr4djK4pluuy2Hth6hOTleT
+         A3Ux9pcGRcMGUGr5j+3lt7oZgNFvwjOtJenFiZ3I9SpnWfLRbmplrROhF4DkCs+V0/7E
+         vPA32OxoMQDX97tpT0zjnp2U1HQNM8ILqO49szDczwuE4I4BKxD88lLYXYJo60UtEa21
+         Jw1T7nzA9hm0vCu9aHjPkbAfcTki51HKWttOkLlXmj5VY/l1AwAdTDMBM7SoqEuf/G/H
+         TYzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWJv25XZQEIfZqlwr9+5FQ2PyFPouOky5d979f/SxepLpMH9EHZ2YmuwjBS21sSY9xSJGq45VTzLBZruyk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzh6SAw/Y0x0jstKwmrhvrC+IFXsC4LoAZ5KIAokqk7gnjK6cHh
+	kmTTTMyeu93m2ScJWjE7zHJdP5GEJka7m6Efk0+1w5AawwoJIWQFOyU7FXAHH4eXzMY=
+X-Gm-Gg: ASbGncuqn6jDcQrWzrASm8At2deLzhc3xylYAIc9zrwpIGMsC+4mzNIl9kmKzLjHJXx
+	jdRXsXQI6Ob754/SyXy/MQ7piy8tBaNZYkpTexK9aHeBBQuL2RIzWleMo+ddMPKrWVksqJ683j7
+	VF9t9a6SzuCmZCS2bHE3UphLpLTASFoNx7vJM5fgPldZm01zstPrr2yiyG3glgWkwysC1npqQHR
+	f87eHKKMcP7ws4ffV7GORkBAepkn0sa5vYOuA72m1FwrycS23UrW5bf9zNl/AamDzuzDTsDP1z/
+	JQX0uXkbXNdS7paYW+3SiRREKELDbtOBft7d9Eu4tH3liF6eTgPEHu3HmwwUWAF7QkczN2S+VCX
+	0SdYwKpfPhoRYtrVl9Br6unEz+to=
+X-Google-Smtp-Source: AGHT+IF/1nQKKWghBymIv6kapapYp3T/T+mDb2uBcjAQYD1rkFwd/p2CMx7wy82AG8RXeUKzw729SQ==
+X-Received: by 2002:a05:620a:4408:b0:7c5:3d60:7f8d with SMTP id af79cd13be357-7d0a1fb91a0mr2626422385a.19.1748957820692;
+        Tue, 03 Jun 2025 06:37:00 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-167-56-70.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.167.56.70])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7d09a0fa38fsm842635185a.35.2025.06.03.06.37.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Jun 2025 06:36:50 -0700 (PDT)
-Date: Tue, 3 Jun 2025 14:36:48 +0100
-From: Chris Bainbridge <chris.bainbridge@gmail.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Mario Limonciello <superm1@kernel.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Linux PM <linux-pm@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Johan Hovold <johan@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Jon Hunter <jonathanh@nvidia.com>,
-	Saravana Kannan <saravanak@google.com>,
-	amd-gfx@lists.freedesktop.org
-Subject: Re: [PATCH v3 2/5] PM: sleep: Suspend async parents after suspending
- children
-Message-ID: <aD76cCE5qyALjKHc@debian.local>
-References: <CAJZ5v0jDZQaR8S6Kn_RoXHBU86+tpjp=qgyxm5h03YEe2S=nPg@mail.gmail.com>
- <aD7L0RD4HT-mEtBc@debian.local>
- <CAJZ5v0h65Gt1Fw35vp2k8kKu62+goCD8WF8u-tvhfWW6a7xHxQ@mail.gmail.com>
- <CAJZ5v0ggPHhYcdNos2o8savvq+-zpPTaQunjOkR36k3VwF3_CA@mail.gmail.com>
- <CAJZ5v0gF=ewooE0cUrNfe5_inhnzq6bqw8VTjkFwr56_wrptJQ@mail.gmail.com>
- <CAJZ5v0hpJSVdiCN29=kbV8KfgU1y1d3hFfshtBoMpVFXf+LvBQ@mail.gmail.com>
- <aD7nOMP3xA9BR781@debian.local>
- <CAJZ5v0gAcohRWuSZbFWvyfAU9Vjc7nRyj+AFRYQ7hcGEXdPxyQ@mail.gmail.com>
- <CAP-bSRbVjcXBvxDT6ZQuoRB+JF6A4LhdMVnNqnaQC0bg-xg2BQ@mail.gmail.com>
- <CAJZ5v0gTRtPzrROdkxRjTeXv4BsRyUkyGpCWmh-gHNx3X2L9RA@mail.gmail.com>
+        Tue, 03 Jun 2025 06:37:00 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1uMRp5-00000001h5Y-2rWO;
+	Tue, 03 Jun 2025 10:36:59 -0300
+Date: Tue, 3 Jun 2025 10:36:59 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Alistair Popple <apopple@nvidia.com>
+Cc: linux-mm@kvack.org, gerald.schaefer@linux.ibm.com,
+	dan.j.williams@intel.com, willy@infradead.org, david@redhat.com,
+	linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+	linux-xfs@vger.kernel.org, jhubbard@nvidia.com, hch@lst.de,
+	zhang.lyra@gmail.com, debug@rivosinc.com, bjorn@kernel.org,
+	balbirs@nvidia.com, lorenzo.stoakes@oracle.com,
+	linux-arm-kernel@lists.infradead.org, loongarch@lists.linux.dev,
+	linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+	linux-cxl@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	John@groves.net
+Subject: Re: [PATCH 03/12] mm/pagewalk: Skip dax pages in pagewalk
+Message-ID: <20250603133659.GD386142@ziepe.ca>
+References: <cover.541c2702181b7461b84f1a6967a3f0e823023fcc.1748500293.git-series.apopple@nvidia.com>
+ <1799c6772825e1401e7ccad81a10646118201953.1748500293.git-series.apopple@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJZ5v0gTRtPzrROdkxRjTeXv4BsRyUkyGpCWmh-gHNx3X2L9RA@mail.gmail.com>
+In-Reply-To: <1799c6772825e1401e7ccad81a10646118201953.1748500293.git-series.apopple@nvidia.com>
 
-On Tue, Jun 03, 2025 at 03:04:33PM +0200, Rafael J. Wysocki wrote:
-> On Tue, Jun 3, 2025 at 2:27 PM Chris Bainbridge
-> <chris.bainbridge@gmail.com> wrote:
-> >
-> > On Tue, 3 Jun 2025 at 13:24, Rafael J. Wysocki <rafael@kernel.org> wrote:
-> > > >
-> > > > This patch does fix the list corruption, but the "Unbalanced
-> > > > pm_runtime_enable" still occurs:
-> > >
-> > > Have you applied it together with the previous patch?
-> >
-> > Yes
+On Thu, May 29, 2025 at 04:32:04PM +1000, Alistair Popple wrote:
+> Previously dax pages were skipped by the pagewalk code as pud_special() or
+> vm_normal_page{_pmd}() would be false for DAX pages. Now that dax pages are
+> refcounted normally that is no longer the case, so add explicit checks to
+> skip them.
 > 
-> So it looks like some devices have power.is_suspended set from the
-> previous cycle which causes device_resume() to attempt to resume them
-> even though they have not been suspended in the current cycle yet.
-> 
-> Please try the attached patch in addition to the previous 2 patches.
-> 
-> Thanks!
+> Signed-off-by: Alistair Popple <apopple@nvidia.com>
+> ---
+>  include/linux/memremap.h | 11 +++++++++++
+>  mm/pagewalk.c            | 12 ++++++++++--
+>  2 files changed, 21 insertions(+), 2 deletions(-)
 
-That fixed it. Passed 30 attempted suspends without error.
+But why do we want to skip them?
 
-Reported-and-tested-by: Chris Bainbridge <chris.bainbridge@gmail.com>
+Like hmm uses pagewalk and it would like to see DAX pages?
+
+I guess it makes sense from the perspective of not changing things,
+but it seems like a comment should be left behind explaining that this
+is just for legacy reasons until someone audits the callers.
+
+Jason
 
