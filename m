@@ -1,85 +1,134 @@
-Return-Path: <linux-kernel+bounces-671874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01B90ACC798
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 15:20:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00BF3ACC79B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 15:21:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 473771894B0D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 13:21:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C1CD1894BB1
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 13:21:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AE65231827;
-	Tue,  3 Jun 2025 13:20:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED2F3230BF8;
+	Tue,  3 Jun 2025 13:21:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T0ReAnAt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=outer-limits.org header.i=@outer-limits.org header.b="Fi1RKISd";
+	dkim=permerror (0-bit key) header.d=outer-limits.org header.i=@outer-limits.org header.b="BkwicBqF"
+Received: from mo4-p00-ob.smtp.rzone.de (mo4-p00-ob.smtp.rzone.de [81.169.146.216])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B07A21A08AF;
-	Tue,  3 Jun 2025 13:20:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748956845; cv=none; b=hR6XDoWy1aX5rjm2ruwRVZPAVIkRkOHdI3grkjWxxL1G9LFndK7qlWMpON7COcNBj9iuzkHXGGD0RSYDY9nDPgB4Jaj/yWdfuBTwdua6lI6Rv2/6XKALPfNykFjdwcIL+8gW3CgK8NOB/iNpjrasRxHpuDATW3SeiXWjUhuKEYc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748956845; c=relaxed/simple;
-	bh=RLET0vNHW12fPEu2WD0/7IfHIEMQvJ29hvwt3raNVWc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VzzRqfHeIWkTpaMXlWDMRmXWnqfR+u8T6P4Rr5K137/u7+Ly6GjnuNBh1gm3SGGwzUlHTK/dL0Qs+EQmEE9aVcvAfJ+sfDUylXcjbe+NJyQI7dohd72a6/kMNbE7XHUaV24gvXbwXtPyhOFjeb8scW+DKlbmWwDVbprADT/E1oo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T0ReAnAt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62F34C4CEED;
-	Tue,  3 Jun 2025 13:20:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748956844;
-	bh=RLET0vNHW12fPEu2WD0/7IfHIEMQvJ29hvwt3raNVWc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=T0ReAnAt9ELewq8mhN1MKu8QAhUBd75lgYpwe/y0CJrqDw6NT+FXDbtF9D5Urf8+R
-	 cekywChSI4uLND1SK0Bn5LKBsmUdSS4y9xooQ7sbIx3t2UFvuhYAetxGCfRiWyarSw
-	 lpxtLwTHqkGlISZNDoK76o5Vyma7W6+nyM83Oc/lw55lo8umALKXhAERYZ6daDB54F
-	 idE2D7diFj8XpVZD1B8ScJiRh/wByJt2+wAFDq9xdFPySNqJzdiycQs17Z+3URIQus
-	 HxbKBuAXer5DK+Psal5gAlH0jurXXkKKNylzOyRRnplJRWgdg27xzMHqt69B0Mfwzd
-	 GMuFGku2QmpwQ==
-Date: Tue, 3 Jun 2025 15:20:36 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>, 
-	Fu Wei <wefu@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Frank Binns <frank.binns@imgtec.com>, Matt Coster <matt.coster@imgtec.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Alexandre Ghiti <alex@ghiti.fr>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	Marek Szyprowski <m.szyprowski@samsung.com>, linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v3 5/8] riscv: dts: thead: th1520: Add missing reset
- controller header include
-Message-ID: <20250603-tactful-valiant-mackerel-bfb6be@kuoka>
-References: <20250530-apr_14_for_sending-v3-0-83d5744d997c@samsung.com>
- <CGME20250529222407eucas1p233be883d7e84e5a000e4d44b37cf7265@eucas1p2.samsung.com>
- <20250530-apr_14_for_sending-v3-5-83d5744d997c@samsung.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A709D22FE02
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 13:21:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=81.169.146.216
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748956899; cv=pass; b=hCRcjP/o9up3RkDExKMCS4SrqcRrS0mD1yyamaLQct5Z0oLuF6vqKcr0UGb372ayTOlchUf9MlN5FAhQZN3odcmAqbrZDgiAukhnwFiClqwyrrYWC10cb1w/+x3eNCGwD16j9u52gYW7JQCf9Bs7k0e8ZstDmjnvuY+x7fYS15g=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748956899; c=relaxed/simple;
+	bh=3686iIqcrD1v0rIwnE5BDEhqKpyTR1lXHiLv92Viv20=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=QL2FrpR+ujjBkfkvX5p1MILgumTDxsK28TDAQiZT/3h/SR8HEN1BAN4+8yXWV51+80bpcTbMQyRAsfnm45ipeJWQAS1wMCJW9ZhZRsMb6jARMgoF35np/kDaHMbh6FpfFnuU1oPabl19PQ2xfopW5u7rGuNNqaXRb5p2lZyuqkA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=outer-limits.org; spf=none smtp.mailfrom=outer-limits.org; dkim=pass (2048-bit key) header.d=outer-limits.org header.i=@outer-limits.org header.b=Fi1RKISd; dkim=permerror (0-bit key) header.d=outer-limits.org header.i=@outer-limits.org header.b=BkwicBqF; arc=pass smtp.client-ip=81.169.146.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=outer-limits.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=outer-limits.org
+ARC-Seal: i=1; a=rsa-sha256; t=1748956894; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=BBByrgHiqQockSFqGHFjQ0HjVGMsx0uDeImcsY4M+hbSDL/t22NRaLpCSewa3CeZWP
+    lsGWz9xWhL7AMSbGJtvjAqt+GldOvIcxGK4wzdoeHvNDoz74jAi1p1vaE3NuakaPM0Q0
+    fkPxL9R97E5q1z9s7erxVzvFpaFUwVR6AEVewYm+wIv5/QLEbaXErNuzI+H7t5Q78LdU
+    ieHhpuajT4ITrwD7lQ/PEt3dKsj5Ye/2F47itIvZjMfUzFOmieceGsIOM6DrN8nDIOsm
+    J3r3PMzAb6LMMIQRpYjIUjyXnro/wNDnzM2ig396qsyCj9UCWLOPtyMbUAAr2mkTosYM
+    5CfA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1748956894;
+    s=strato-dkim-0002; d=strato.com;
+    h=Message-Id:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
+    bh=Uw2joeTt8PfL+vQ6RmT2S3am/XAVy6q4yrugxQwId/U=;
+    b=hvqWCxMyG5QLMgfydDNg0wYw2dbjQoiUuW5O4Sp5fzzGda2bW5CRCwruNGlQq04fae
+    TyPh+M6MjEaI90Cv6QRBApCeSqlnafb8R+krX+rl3h36qaEMP4al52OnUp650o8T/6zj
+    lmKagKfvmHo+3hQWfwEXUnY+V7OS8MolzdyFrAWtxC4Ik+VdlkRJ+NogWgO9UeCVhGF3
+    m2theL3o+dM1YV5Nv8L+N620AjZPX8a0W9llSzjpHpxcsHjswdW44KpubEiljZeV5MN9
+    wZ2Gusp8blgTRQPNpDjuxsSzMZ8Gmo4zlck6LKYDt4C2NNUZ1ODptW3ESsIh+5fx4r2N
+    ey+g==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo00
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1748956894;
+    s=strato-dkim-0002; d=outer-limits.org;
+    h=Message-Id:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
+    bh=Uw2joeTt8PfL+vQ6RmT2S3am/XAVy6q4yrugxQwId/U=;
+    b=Fi1RKISdLQz4WvUmInHJ/4uxPB6yn7mPvDf2pKBOUYJsleaVUFArDHdU7W+JGLueLJ
+    ufLFgF8C5uIbANcOJlnvNNC1uCSjASqinh+np9nPmbhcTp5iRQLDQDaJ56dP4Y+MSw84
+    HHXEBEarP6QSkvTYG6XFCIP2NRIqN5lEtcHiVECwUSUupsTHh/pT/wElfYjOM+zkOIbb
+    EAxHs1uGtqn8Ew4kUuyObZP0XRFsYNzPifzs5sCbNs1l0LBdyjb1Y51JsVzCMW37DYrJ
+    p51yYvq9a++N8PaQrU8kyFJSGC7NLBNZXgV4YsnNXXNFRjLqAJzxYdp/6Lgo1hDRx6Jj
+    fJuA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1748956894;
+    s=strato-dkim-0003; d=outer-limits.org;
+    h=Message-Id:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
+    bh=Uw2joeTt8PfL+vQ6RmT2S3am/XAVy6q4yrugxQwId/U=;
+    b=BkwicBqFn1mCKK5xtlY38hETY+wi5Z2I7AW5vNUQGwjGl1CDqlePZayA349HofQ9k+
+    YJzU11ItgzCg6P7fgPBw==
+X-RZG-AUTH: ":JnkIfEGmW/AMJS6HttH4FbRVwc4dHlPLCp4e/IoHo8zEMMHAgwTfqBEHcVJSv9P5mRTGd2ImeA=="
+Received: from ws2104.lan.kalrayinc.com
+    by smtp.strato.de (RZmta 51.3.0 AUTH)
+    with ESMTPSA id J2b110153DLXwOm
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+	(Client did not present a certificate);
+    Tue, 3 Jun 2025 15:21:33 +0200 (CEST)
+From: Julian Vetter <julian@outer-limits.org>
+To: Arnd Bergmann <arnd@arndb.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Wei-Hsin Yeh <weihsinyeh168@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	Julian Vetter <julian@outer-limits.org>
+Subject: [PATCH] Replace __get_unaligned_cpu32 in jhash function
+Date: Tue,  3 Jun 2025 15:21:21 +0200
+Message-Id: <20250603132121.3674066-1-julian@outer-limits.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250530-apr_14_for_sending-v3-5-83d5744d997c@samsung.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
 
-On Fri, May 30, 2025 at 12:23:52AM GMT, Michal Wilczynski wrote:
-> TH1520_RESET_ID_GPU_CLKGEN and TH1520_RESET_ID_GPU are required for GPU
-> power sequencing to work.  To make these symbols available, add the
-> necessary include for the T-HEAD TH1520 reset controller bindings.
+The __get_unaligned_cpu32 function is deprecated. So, replace it with
+the more generic get_unaligned and just cast the input parameter.
 
-How would it compile/build without it? If there are no users, then do
-not add unused header just to add it.
+Signed-off-by: Julian Vetter <julian@outer-limits.org>
+---
+ include/linux/jhash.h | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Best regards,
-Krzysztof
+diff --git a/include/linux/jhash.h b/include/linux/jhash.h
+index fa26a2dd3b52..7c1c1821c694 100644
+--- a/include/linux/jhash.h
++++ b/include/linux/jhash.h
+@@ -24,7 +24,7 @@
+  * Jozsef
+  */
+ #include <linux/bitops.h>
+-#include <linux/unaligned/packed_struct.h>
++#include <linux/unaligned.h>
+ 
+ /* Best hash sizes are of power of two */
+ #define jhash_size(n)   ((u32)1<<(n))
+@@ -77,9 +77,9 @@ static inline u32 jhash(const void *key, u32 length, u32 initval)
+ 
+ 	/* All but the last block: affect some 32 bits of (a,b,c) */
+ 	while (length > 12) {
+-		a += __get_unaligned_cpu32(k);
+-		b += __get_unaligned_cpu32(k + 4);
+-		c += __get_unaligned_cpu32(k + 8);
++		a += get_unaligned((u32 *)k);
++		b += get_unaligned((u32 *)(k + 4));
++		c += get_unaligned((u32 *)(k + 8));
+ 		__jhash_mix(a, b, c);
+ 		length -= 12;
+ 		k += 12;
+-- 
+2.34.1
 
 
