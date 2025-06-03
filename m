@@ -1,130 +1,177 @@
-Return-Path: <linux-kernel+bounces-671875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 152CAACC79A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 15:21:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EB5AACC7A0
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 15:22:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A7C5189494B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 13:21:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A291D3A2EE4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 13:21:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A90B230D14;
-	Tue,  3 Jun 2025 13:21:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B010823184E;
+	Tue,  3 Jun 2025 13:22:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dht3Pp93"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="o152PGGX"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87F561A08AF;
-	Tue,  3 Jun 2025 13:21:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACF1713AA2A
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 13:21:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748956886; cv=none; b=tGZX6MmBxldBU0xwj+FKJS/iBYSy22yAC+CtqzSXTqW6mlkuDhYP2QsWHuaA4JTzncdJQHtr/8C0XEMfZrNnQaC6iASQJ+x3dxvOCiA40YuWIeJ6zgIB6CHlkX/m2QLoam/FZPguSavefAe0UXnMCxDUG6JkemZ5pEhc4QH+bV8=
+	t=1748956921; cv=none; b=s6jJl6VxSLiu4D7I+6PBt9p8BxIv52MWa80NHlRdqMf/0Tz0oC064qLOoChpaxd32DtihsM3/v4gRB4F9jUqn+U3BfyVtV5r8oXSODTKrzAvb5OPbPvVwFl5E29P8p7uhWT4NLS2trkDn1JHjBOvdAhfE0zZb98uWuzhaMLbEiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748956886; c=relaxed/simple;
-	bh=zH4rUyvq8kOPfx1d1qPsT3TCt7wQNpsiju3FOhyNFCQ=;
+	s=arc-20240116; t=1748956921; c=relaxed/simple;
+	bh=JYe6k00hY3KhqKNWZZYfrcga6wMeu5mCl8qy/F3JZ/0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WYeC5zbN+Yb/Ym4gfgyb7DEuGCzQAtzSFqm72PG8wZ/HyN4Ujltd7EjeUDWtCfkEZnEIIsVwd5JljVnyq11MCex1WP1GOvX+st+tJ7Xiv7m4BK+BExTN07p0MnnZ9GbPIpbakPEuTaJye/1yck3fcgb1upltecjRRX3gcBjWx+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dht3Pp93; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79F95C4CEED;
-	Tue,  3 Jun 2025 13:21:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748956886;
-	bh=zH4rUyvq8kOPfx1d1qPsT3TCt7wQNpsiju3FOhyNFCQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dht3Pp931bj65euV99zmThwCaRTyizAb+Jan0MzDsI8jPYpT/7k+RwXq34aF3Rr4w
-	 +fvYFNDVUmsw1dgmKRJ0h4h9mYSsNA/0hgOCgcFDVH8UzVjVBCj9kQUlCUTcZkFg7m
-	 05z0UG4j9eaxtvBdqWjz4K/JyfS6iVdJVtIkig5sLp7HDJIKE4IrUt+gZMG8XNdL6e
-	 AvnuZO0A7XCqCFWq+b3b5duJVDHhUy0/2TnS5iGTp1qX1EebT1YroY3BqvIjhoGSJ6
-	 KhkcD1oHSSPWuR1A1Onr2WvJbtZPMBKrzQaraQ8ErCmsmAij2uCnOS8UBNzcZQdFNx
-	 5NlA3MeYaa3Cg==
-Date: Tue, 3 Jun 2025 14:21:21 +0100
-From: Mark Brown <broonie@kernel.org>
-To: David Hildenbrand <david@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Shuah Khan <shuah@kernel.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/4] selftests/mm: Report unique test names for each
- cow test
-Message-ID: <9961082f-848d-43d3-b97d-3df675ca4415@sirena.org.uk>
-References: <20250527-selftests-mm-cow-dedupe-v2-0-ff198df8e38e@kernel.org>
- <20250527-selftests-mm-cow-dedupe-v2-3-ff198df8e38e@kernel.org>
- <c43347ce-433b-498e-bfd7-f09b8e781197@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=b4NNVR1cJd1s8O4cdUHqnzd8zE/scHDRyW/aRwiB1859OAKi23lILQ48DOLVsxTc9GcV7a5i58q75bnGIe5lVFJR9oQVn4PvGo396K18CXTKgRpTkLFdmkMam1d5JQnrkaP/3O8U3iD3+RPfF/pmKVx2FMcWSDvKlQi27Dmya2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=o152PGGX; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5539JJRn032523
+	for <linux-kernel@vger.kernel.org>; Tue, 3 Jun 2025 13:21:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	1/QCS45DMhIwg/CzFK0EOT/Et0qY2IoNb/r6dL3eUVU=; b=o152PGGXC3Ybpcrb
+	qPGaW/9vi7py8OlNRmkJrupgdfDC8HBpMkzVCOR+XS6/rPU1jfXeRkpu5QjR5lmd
+	oofVEmjIKEIM1bmOdq17Uc6iF/JdoM2F5QeVrl5fvOJd2mv/yXnqx9YDJSYTtK55
+	oBPGBPqWW3Hy39U7rqWYdSDm8xTtwQ9EqSgyAPT1TQoZcrF3IwbsZHM3ldj32V6n
+	RcCFc6++9VvEQ1f6BhUtb8fBlnqAYWgwDE3KafGYzPprftuiJlxmD9n8fs1UdPAE
+	ixjRcNCmlryZaRGLnsIhGA0hFeLpAeYV/r9al6EYOkqJ0X4/H6IrNjomgc5wVKxk
+	9WUNSw==
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 471gb2amvj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 03 Jun 2025 13:21:58 +0000 (GMT)
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7d09f7052bcso803685985a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jun 2025 06:21:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748956917; x=1749561717;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1/QCS45DMhIwg/CzFK0EOT/Et0qY2IoNb/r6dL3eUVU=;
+        b=qNvRo/Vs2o6npUQzMLQxgPH3rq+l/FVrbG2wUX/U+2nhWF2iFFHz1xXxp0Wmr/CsTT
+         QePvLDPLiyRrsQmpqRYQP+nGVV1eYTffLeDfadCnz6hn1UbQqHBbZKColJrNqKxDmiRC
+         1Is7DjZbTUv0P2DsYOVR9VrsVtEIBYOb6d+RmZGLmXjzBTOyGIZxH3hdeJ1K4gCRVE+a
+         rh2QLKpl1bdJCMCzabfbNkm3aNLO77DoBVcREvAvnN9Xhz31nOnKVEzBQExNU46tVJG/
+         FfHrRTpppg75vH/8HAyEdqODLtr510DEX3XDSDFw4mFnVUIBpD0YsX/d/rCNkXyqkdyH
+         1Ybw==
+X-Forwarded-Encrypted: i=1; AJvYcCUMEMss9XI55//A6DKoIO+gHulMAYmqpPD0fy0aIqzcjdWic18VylVpnkI9YnJQGD7lGg4bV001dmbyewg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxG8uiAn1zZAMvMqD5Bt785JcNKUeq2IRfgXN7KIB0nlmkeJaWt
+	0aeXf+2nEzambO/EAdSyEsV5jpSykdmd/1uPcbLFDJxn6BxnKIt8v7bOIVBc/cKuMT6RRO2yukI
+	5Q2z+AwOhT8lCnpC3BHM2mytss2KZMf7B8QRjchPFPEnhwKP+zVNkeSElQli4yXctnuw=
+X-Gm-Gg: ASbGncse9aLt6ECUm4bWVrrmMON9DKMedwKmuz600CgulEF/lCaSIDTEC61a3PQIloz
+	d4sPo88BvzoTwijOMEwh3iarZhMZG5pJIWY7F1tkmT1HN4xKXHgULX6+LXMVTv2dXXzETeAJMS+
+	CQkwGHbADJt1DhH348lVUo3tNnDTKoQLrH4wDYSn43m90xb7Iesl272WREUkbJnlVnGwYr9wpI4
+	vvMn2mtFNxNzjotm5LPvnhFsOaDq66xC7JiuMhVD0L8tXDSxwKLsUgtzz4pRM7Qr2XE33aYNkSg
+	XPI/TDXmKt3PVO/LmDO2fXch9Q4pTs7KpOh4zE3MEPjNHSyg8z+E6jOdeSrdPz5KTV5nSoCE6lo
+	=
+X-Received: by 2002:a05:620a:600d:b0:7cf:4d0:32ca with SMTP id af79cd13be357-7d0a1f9817cmr2666074985a.7.1748956916998;
+        Tue, 03 Jun 2025 06:21:56 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG61Q5Fuf4lCs/bjxvDWw40qTbdRGjOr1Yrj23L146uOkG+6rBGInFbVy3+zf7+2f5RoMF6Mg==
+X-Received: by 2002:a05:620a:600d:b0:7cf:4d0:32ca with SMTP id af79cd13be357-7d0a1f9817cmr2666069885a.7.1748956916431;
+        Tue, 03 Jun 2025 06:21:56 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-553510a7905sm409284e87.134.2025.06.03.06.21.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Jun 2025 06:21:55 -0700 (PDT)
+Date: Tue, 3 Jun 2025 16:21:54 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Renjiang Han <quic_renjiang@quicinc.com>
+Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Vikash Garodia <quic_vgarodia@quicinc.com>,
+        Dikshita Agarwal <quic_dikshita@quicinc.com>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, linux-media@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v7 2/3] arm64: dts: qcom: qcs615: add venus node to
+ devicetree
+Message-ID: <d6udpwmocodvlsm5ljqz7zbyonj2yahtlzmm2jjjveqrm2hmkz@andh5j4jgixr>
+References: <20250527-add-venus-for-qcs615-v7-0-cca26e2768e3@quicinc.com>
+ <20250527-add-venus-for-qcs615-v7-2-cca26e2768e3@quicinc.com>
+ <429b4c99-b312-4015-8678-0371eac86de4@oss.qualcomm.com>
+ <6a9e7daf-c0df-42db-b02d-96d9893afcde@quicinc.com>
+ <idc4476ibh4geraklzpas5536jnwvbp6xhjjaajcdcwxicorrf@myh7kyz77rxy>
+ <43e1f8db-5ab1-44ce-97c8-50910704788f@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="6FZ12iParXl9eD5E"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <c43347ce-433b-498e-bfd7-f09b8e781197@redhat.com>
-X-Cookie: Avec!
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <43e1f8db-5ab1-44ce-97c8-50910704788f@quicinc.com>
+X-Authority-Analysis: v=2.4 cv=EsXSrTcA c=1 sm=1 tr=0 ts=683ef6f6 cx=c_pps
+ a=50t2pK5VMbmlHzFWWp8p/g==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=6IFa9wvqVegA:10 a=COk6AnOGAAAA:8 a=amOMt7fZymVLnIenHDcA:9 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10 a=IoWCM6iH3mJn3m4BftBB:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: xF_g8OPBm8Qgbsgw79rvF13s2jaISSSV
+X-Proofpoint-ORIG-GUID: xF_g8OPBm8Qgbsgw79rvF13s2jaISSSV
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjAzMDExNSBTYWx0ZWRfX4PmQne4cqgsN
+ +XUXqrhj7jklXc0LqEPQSuoZ7OVdiQ5k3GFA3w2B+k3SsiN6PpfZSk/EnOrXC8GRh87m0xaP6wh
+ 9NjeB8PIl1xjdDOkaFYCrpbfHho7z8ZsRdMXIKgG/lJG25SqNZlbcI1N6OvSNTRv4delmOyp5Zz
+ Mj3CwVezE8dxyXU2C8X5xcnkmd6sfdDx9XzEmDjrZ3b1hgJ5mJaEPOclU/d0YbcZFeKOtQWXWMP
+ IkoLyPjWoOVkU8BBkQn0uQ7cGFXAc3N01XMaD0LLOx5j7IpAK8WhXKOiCeoZGV2BfMoI37SLNsh
+ 7asOPFmVSpX63LghYCEGtBdlgZBhdzFrJJ6Lm7aAtPfz+qVGABoJ3y69+BC1iQTtO+koDybBFk3
+ Zoz1knsptUFAZOSNqQquAvnNGsIqCV9lSjLYlKLSg+9zzpg4PJDS32gHf+6IZeAbtrzI583e
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-03_01,2025-06-02_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 mlxlogscore=849 suspectscore=0 lowpriorityscore=0 spamscore=0
+ adultscore=0 clxscore=1015 phishscore=0 bulkscore=0 impostorscore=0
+ mlxscore=0 priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2506030115
 
+On Thu, May 29, 2025 at 10:29:46AM +0800, Renjiang Han wrote:
+> 
+> On 5/28/2025 7:04 PM, Dmitry Baryshkov wrote:
+> > On Wed, May 28, 2025 at 05:13:06PM +0800, Renjiang Han wrote:
+> > > On 5/27/2025 9:57 PM, Konrad Dybcio wrote:
+> > > > On 5/27/25 5:32 AM, Renjiang Han wrote:
+> > > > > Add the venus node to the devicetree for the qcs615 platform to enable
+> > > > > video functionality. The qcs615 platform currently lacks video
+> > > > > functionality due to the absence of the venus node. Fallback to sc7180 due
+> > > > > to the same video core.
+> > > > > 
+> > > > > Signed-off-by: Renjiang Han <quic_renjiang@quicinc.com>
+> > > > > ---
+> > > > [...]
+> > > > 
+> > > > > +			interconnect-names = "video-mem",
+> > > > > +					     "cpu-cfg";
+> > > > > +
+> > > > > +			iommus = <&apps_smmu 0xe40 0x20>;
+> > > > fwiw docs mention 0xe60 0x20 (which result in the exact same resulting sid)
+> > > OK. Will update it with next version.
+> > How would you update this?
+> Thanks for your comments. I'll update it like this.
+> iommus = <&apps_smmu 0xe60 0x20>;
+> 
+> This 0xe40 SID was based on a previous project. However, after rechecking
+> the documentation yesterday and confirming with colleagues, the correct
+> SID value should be 0xe60. I’ve also validated it on local device, it
+> works as expected. The reason 0xe40 seemed to work earlier is due to the
+> mask value being 0x20, which causes the effective SID derived from 0xe40
+> to be the same as 0xe60.
 
---6FZ12iParXl9eD5E
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Using 0xe60 would be counterintuitive, as we have a non-zero masked bits
+in the base value. It should be either <0xe60 0x0> or <0xe40 0x20>.
 
-On Tue, Jun 03, 2025 at 02:51:45PM +0200, David Hildenbrand wrote:
-> On 27.05.25 18:04, Mark Brown wrote:
-
-> >   		ret = mprotect(mem, size, PROT_READ);
-> > -		ret |= mprotect(mem, size, PROT_READ|PROT_WRITE);
-> >   		if (ret) {
-
-> Not sure if that change is really required: if the second mprotect succeeds,
-> errno should not be updated. At least if my memory is correct :)
-
-> Same applies to similar cases below.
-
-I thought about checking to see if that was guaranteed to be the case,
-then I thought that if that wasn't clear to me right now without
-checking it probably also wasn't going to be obvious to future readers
-so it was better to just write something clear.  Previously we didn't
-report errno so it didn't matter.
-
-> >   	} else {
-> > -		ksft_test_result_fail("Leak from parent into child\n");
-
-> Same here and in other cases below (I probably didn't catch all).
-
-> We should log that somehow to indicate what exactly is going wrong, likely
-> using ksft_print_msg().
-
-Can you send a patch with the logging that you think would be clear
-please?  I dropped these because they just seemed to be reporting the
-overall point of the test, unlike the cases where we ran into some error
-during the setup and didn't actually manage to perform the test we were
-trying to do.  Perhaps the tests should be renamed.
-
-> >   	tmp = malloc(size);
-> >   	if (!tmp) {
-> > -		ksft_test_result_fail("malloc() failed\n");
-> > +		ksft_print_msg("malloc() failed\n");
-
-> perror?
-
-malloc() can only set one errno.
-
---6FZ12iParXl9eD5E
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmg+9tAACgkQJNaLcl1U
-h9ALZwf+KcO2BAip9nr8HfmSM0LrVxshV2/1yhu+F0+8i7WhuFXk+1gK/ub0Ue0F
-IhbjYpgC19NQXStOO+NNyG3VJ8ldaOZL3225ADsAjUT+0e7mKaDI3oW2XKNGQOK8
-XCi0/c2xaSCRyANRmYvVHGdzwDqmGZMNDBucCKdr9OZk80s2899XAFqQV35Wp2zV
-71B0pJeaiW0Leb2ym6pzfr6mq/+0FBaEFwk/J14FvzBsyVQYTXPM/WVGbcyW+iEb
-xpdn2cWjA1JRkzA6P/AA7Qhler6UxFACZ2HiVDrlOSP0fNQMFOqw3Im07giphodQ
-QONqZpVJ4ofJp/RM1pN29stc12RnXA==
-=eR7D
------END PGP SIGNATURE-----
-
---6FZ12iParXl9eD5E--
+-- 
+With best wishes
+Dmitry
 
