@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-671624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17300ACC3DD
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 12:01:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89038ACC3E2
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 12:02:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C90FF3A288A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 10:01:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA9F31885E77
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 10:02:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97D0D1684A4;
-	Tue,  3 Jun 2025 10:01:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF6781A0BC9;
+	Tue,  3 Jun 2025 10:02:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W4hDsGeW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TVNr+7Z6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE86B2AD02
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 10:01:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24A9977111
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 10:02:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748944896; cv=none; b=tfLToXOyASRU8hT9q97ebJNURhrplOw01lO2Xrp/4L4Ff1xiCG3dq6Y/J1kUFPlBW1PQWk1ylxktnOVhn8DqA4H17GYNKVcB2kumPEpcXI0hMDge2BQR+T8cBvoPq8P1VOBhD1gfP6r4CbWrxxHDrV2XymwG+3jrWxj4NONOOtY=
+	t=1748944959; cv=none; b=DgqLq53/sTUFaxBC1QX+BHQJxOzT92JU+7uhpVfHJQRQysco/uT6yolvrTLOeWyKQH1xiRdu5uj9/Z97E/AR8zEsaJQyIamWwNxd1SJ7VSjmrrWLfyHbnIkdklspNf6EqKEjYCwrQFsJU7HphaOwwx0LLeaFAu2JkS3fSo0vLjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748944896; c=relaxed/simple;
-	bh=bhUQSJT37BwnybJSvBTp18NkMZ6E9ttwpcVQ0cS4p3I=;
+	s=arc-20240116; t=1748944959; c=relaxed/simple;
+	bh=5PKIFHRzec6lAxHM2SRU66PHIbwaH9IVizeIwvP3LEw=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=twXgtsxUVsKEOTGFClDKE7H1mT5y2yFwsP9LxPvFkAA7uT/OLEOxG9gbZqp5OOImvjxs25vlCz/BooOyJtVaGwyghROqL9v/NyqfQ9nfVPjQHBkVDStvucHD+4JGFQ93zID+X3KR8Is/7lq+mFVhOpqhIvypq7GYAd07vh4Alq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W4hDsGeW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EC86C4CEED;
-	Tue,  3 Jun 2025 10:01:35 +0000 (UTC)
+	 Content-Disposition; b=icTgKKMNqjOkclwhMP3qA1UwPfWeDSTEWa+UkZJHcDJYSazw4SnJTtRz4/mpho7HwXgjSx9Zdhpyf+Wco5Puk4K5UsgVSOP2C75qOmSWORxL9iOG4arAiLqmIo+DOvE2QahkU28Ax3SnozV9nSDOtGWj72Jv2mwrKa9IS4FMd28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TVNr+7Z6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9CBAC4CEED;
+	Tue,  3 Jun 2025 10:02:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748944896;
-	bh=bhUQSJT37BwnybJSvBTp18NkMZ6E9ttwpcVQ0cS4p3I=;
+	s=k20201202; t=1748944958;
+	bh=5PKIFHRzec6lAxHM2SRU66PHIbwaH9IVizeIwvP3LEw=;
 	h=Date:From:To:Cc:Subject:From;
-	b=W4hDsGeWJFH4S04LdvvElJ5xcjNg2rtaBAxbsBYbm0L4qyqocxF/sPNQ0ymSghnYH
-	 TjNKkt/F9q2lAVox0qGjY+N9Aj8/hIOoFJTOxjViWVzR7G0nzrtukB7srA0bpbDRJB
-	 VNwccaZTBsimreRzs/cO+2waGpWuVK880vil93MyIC/9XMhywfYoUtc15s5nhwP50v
-	 Pb8wnfYS0SeW4SduDZugYzlcss4PEWgHkUGtb+Lvkq8xugoKq+92+3k/LPQ6OIg+xy
-	 GISir7ozet44Co4Jgl9PHEgO5p4CGEojgGQ3NzPElXF6nfUKl0bleF1L0dFbo3ocur
-	 Xz43ch67MwYQw==
-Date: Tue, 3 Jun 2025 11:01:32 +0100
+	b=TVNr+7Z6p8Afj5ExGqD/UB98gcKR8o/mwWIUItN5T7ARLx/nVrg0x0sigr9fblYIU
+	 VVWiD68wvyIGB1BRRoQmeNu3F9ECL9HgzrngU7uFJ39l7/WcYO4vH3Pl5npIcKDLyb
+	 3Uvl9GNJ3wq0ostpJKVRQYWJqthRsUt4tOngOKSXGMd4NZfKt64uiDxOSIjsL0ga7p
+	 oi2uDpu7RUUmhy+OeRQaacxDCrYlzU9a6sFrKy12aQEIruKQ3IKONWACvBi7DMXWLi
+	 8ppvLgaGoBF0zzAPPCjCdV0nN3tg/J9SKUA4wmke2O9amD0u2lfBrNrAzj1FsJ4wd/
+	 yYcY/kWaY0Mnw==
+Date: Tue, 3 Jun 2025 11:02:34 +0100
 From: Lee Jones <lee@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Pavel Machek <pavel@ucw.cz>
-Subject: [GIT PULL] LEDs for v6.16
-Message-ID: <20250603100132.GD7758@google.com>
+	Daniel Thompson <danielt@kernel.org>
+Subject: [GIT PULL] Backlight for v6.16
+Message-ID: <20250603100234.GE7758@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,175 +65,93 @@ The following changes since commit 0af2f6be1b4281385b618cb86ad946eded089ac8:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/lee/leds.git leds-next-6.16
+  git://git.kernel.org/pub/scm/linux/kernel/git/lee/backlight.git backlight-next-6.16
 
-for you to fetch changes up to b338a2ae9b316df1d81b5289badcc8cbbbfe1b2b:
+for you to fetch changes up to e12d3e1624a02706cdd3628bbf5668827214fa33:
 
-  leds: tps6131x: Add support for Texas Instruments TPS6131X flash LED driver (2025-05-22 09:24:51 +0100)
-
-----------------------------------------------------------------
-LEDs for v6.16
-
-  * LED Triggers:
-    * Allow writing "default" to the sysfs 'trigger' attribute to set an LED to its default trigger
-    * If the default trigger is "none", writing "default" will remove the current trigger
-    * Updated sysfs ABI documentation for the new "default" trigger functionality
-  * LED KUnit Testing:
-    * Provide a skeleton KUnit test suite for the LEDs framework
-    * Expand the LED class device registration KUnit test to cover more scenarios, including
-      `brightness_get` behavior
-    * Add KUnit tests for the LED lookup and get API (`led_add_lookup`, `devm_led_get`)
-  * LED Flash Class:
-    * Add support for setting flash/strobe duration through a new `duration_set` op and
-      `led_set_flash_duration()` function, aligning with `V4L2_CID_FLASH_DURATION`
-  * Texas Instruments TPS6131x:
-    * Add a new driver for the TPS61310/TPS61311 flash LED controllers
-    * The driver supports the device's three constant-current sinks for flash and torch modes
-
-  * LED Core:
-    * Prevent potential `snprintf()` truncations in LED names by checking for buffer overflows
-  * ChromeOS EC LEDs:
-    * Avoid a -Wflex-array-member-not-at-end GCC warning by replacing an on-stack flexible structure
-      definition with a utility function call
-  * Multicolor LEDs:
-    * Fix issue where setting multi_intensity while software blinking is active could stop blinking
-  * PCA955x LEDs:
-    * Avoid potential buffer overflow when creating default labels by changing a field's type to
-      `u8` and updating format specifiers
-  * PCA995x LEDs:
-    * Fix a typo (stray space) in an `of_device_id` entry in the `pca995x_of_match` table
-  * Kconfig:
-    * Prevent LED drivers from being enabled by default when `COMPILE_TEST` is set
-
-  * Device Property API:
-    * Split `device_get_child_node_count()` into a new helper `fwnode_get_child_node_count()` that
-      doesn't require a device struct, making the API more symmetrical
-  * Driver Modernization (using `fwnode_get_child_node_count()`):
-    * Update `leds-pwm-multicolor`, `leds-ncp5623` and `leds-ncp5623` to use the new
-      `fwnode_get_child_node_count()` helper, removing their custom implementation
-    * As above in the USB Type-C TCPM driver
-  * Driver Modernization (using new GPIO setter callbacks):
-    * Convert `leds-lgm-sso` to use new GPIO line value setter callbacks which return an integer
-      for error handling
-    * Convert `leds-pca955x`, `leds-pca9532` and `leds-tca6507` to use new GPIO setter callbacks
-  * Documentation:
-    * Remove the `.rst` extension for `leds-st1202` in the documentation index for consistency
-  * LP8860 LEDs:
-    * Use `regmap_multi_reg_write()` for EEPROM writes instead of manual looping
-    * Use scoped mutex guards and `devm_mutex_init()` to simplify function exits and ensure
-      automatic cleanup
-    * Remove default register definitions that are unused when regmap caching is not active
-    * Use `devm_regulator_get_enable_optional()` to handle the optional regulator, simplifying
-      enabling and removing manual disabling
-    * Refactor `lp8860_unlock_eeprom()` to only perform the unlock operation, removing the lock
-      part and an unnecessary parameter
-    * Use a `devm` action to disable the enable-GPIO, simplifying cleanup and error paths, and
-      remove the now-empty `.remove()` function
-  * Turris Omnia LEDs:
-    * Drop unnecessary commas in terminator entries of `struct attribute` and
-      `struct of_device_id` arrays
-  * MT6370 RGB LEDs:
-    * Use the `LINEAR_RANGE()` for defining `struct linear_range` entries to improve robustness
-
-  * Texas Instruments TPS6131x:
-    * Add new devicetree bindings for the TI TPS61310/TPS61311 flash LED driver
+  backlight: pm8941: Add NULL check in wled_configure() (2025-04-15 18:27:38 +0100)
 
 ----------------------------------------------------------------
-Andrew Davis (6):
-      leds: lp8860: Use regmap_multi_reg_write for EEPROM writes
-      leds: lp8860: Use new mutex guards to cleanup function exits
-      leds: lp8860: Remove default regs when not caching
-      leds: lp8860: Enable regulator using enable_optional helper
-      leds: lp8860: Only unlock in lp8860_unlock_eeprom()
-      leds: lp8860: Disable GPIO with devm action
+Backlight for v6.16
 
-Andy Shevchenko (6):
-      device property: Split fwnode_get_child_node_count()
-      leds: pwm-multicolor: Use fwnode_get_child_node_count()
-      leds: ncp5623: Use fwnode_get_child_node_count()
-      usb: typec: tcpm: Use fwnode_get_child_node_count()
-      leds: core: Bail out when composed name can't fit the buffer
-      leds: pca955x: Avoid potential overflow when filling default_label
+  * Framebuffer Subsystem (fbdev):
+    * The display's blanking status is now tracked in `struct fb_info`
+    * `framebuffer_alloc()` initializes the blank state to `FB_BLANK_UNBLANK`
+    * `register_framebuffer()` sets the state to `FB_BLANK_POWERDOWN` if an `fb_blank`
+      callback exists, ensuring `FB_EVENT_BLANK` listeners correctly see the display
+      being turned on during the first modeset
+    * The `FB_EVENT_BLANK` event data now includes both the new and the old blank states
+  * Qualcomm WLED Backlight:
+    * Added a NULL check after `devm_kasprintf()` in `wled_configure()` to prevent a
+      potential NULL pointer dereference if memory allocation fails
 
-Bartosz Golaszewski (4):
-      leds: lgm-sso: Use new GPIO line value setter callbacks
-      leds: pca955x: Use new GPIO line value setter callbacks
-      leds: pca9532: Use new GPIO line value setter callbacks
-      leds: tca6507: Use new GPIO line value setter callbacks
+  * Framebuffer Subsystem (fbdev):
+    * `fb_blank()` has been reworked to return early on errors, without functional
+      changes, in preparation for further state tracking improvements
+    * Fbdev now calls dedicated functions in the backlight subsystems to notify them
+      of blank state changes, instead of relying on fbdev event notifiers
+    * For LCDs, fbdev also calls a dedicated function to notify of mode changes
+  * Backlight Subsystem:
+    * Implemented fbdev blank state tracking using the (newly enhanced) blank state
+      information provided directly by `FB_EVENT_BLANK`
+    * Removed internal blank state tracking fields (`fb_bl_on`) from
+      `struct backlight_device`
+    * Moved the handling of blank-state updates into a separate internal helper
+      function, `backlight_notify_blank()`
+    * Removed support for fbdev events and replaced it with a dedicated function call
+      interface (`backlight_notify_blank()` and `backlight_notify_blank_all()`) for
+      display drivers to update backlight status
+  * LCD Subsystem:
+    * Moved the handling of display updates (blank events and mode changes) from
+      fbdev event notifiers to separate internal helper functions (`lcd_notify_blank`,
+      `lcd_notify_mode_change`)
+    * Removed support for fbdev events and replaced it with dedicated function call
+      interfaces (`lcd_notify_blank_all()`, `lcd_notify_mode_change_all()`)
+    * The LCD subsystem now maintains its own internal list of LCD devices instead of
+      relying on fbdev notifiers
+  * LED Backlight Trigger:
+    * Moved the handling of blank-state updates into a separate internal helper,
+      `ledtrig_backlight_notify_blank()`
+    * Removed support for fbdev events and replaced it with a dedicated function call,
+      `ledtrig_backlight_blank()`, for fbdev to notify trigger of blank state changes
+    * The LED backlight trigger now maintains its own internal list of triggers
+      instead of relying on fbdev notifiers
 
-Christophe JAILLET (1):
-      leds: rgb: leds-mt6370-rgb: Improve definition of some struct linear_range
+  * Framebuffer Subsystem (fbdev):
+    * Removed the definitions for the unused fbdev event constants
+      `FB_EVENT_MODE_CHANGE` and `FB_EVENT_BLANK` from the header file
 
-Craig McQueen (1):
-      leds: led-triggers: Improvements for default trigger
+----------------------------------------------------------------
+Henry Martin (1):
+      backlight: pm8941: Add NULL check in wled_configure()
 
-Gustavo A. R. Silva (1):
-      leds: leds-cros_ec: Avoid -Wflex-array-member-not-at-end warning
+Thomas Zimmermann (11):
+      fbdev: Rework fb_blank()
+      fbdev: Track display blanking state
+      fbdev: Send old blank state in FB_EVENT_BLANK
+      backlight: Implement fbdev tracking with blank state from event
+      backlight: Move blank-state handling into helper
+      backlight: Replace fb events with a dedicated function call
+      backlight: lcd: Move event handling into helpers
+      backlight: lcd: Replace fb events with a dedicated function call
+      leds: backlight trigger: Move blank-state handling into helper
+      leds: backlight trigger: Replace fb events with a dedicated function call
+      fbdev: Remove constants of unused events
 
-Jesse Karjalainen (1):
-      leds: pca995x: Fix typo in pca995x_of_match's of_device_id entry
+ drivers/leds/trigger/ledtrig-backlight.c |  48 +++++++-------
+ drivers/video/backlight/backlight.c      |  93 ++++++--------------------
+ drivers/video/backlight/lcd.c            | 108 ++++++++++++-------------------
+ drivers/video/backlight/qcom-wled.c      |   6 +-
+ drivers/video/fbdev/core/fb_backlight.c  |  12 ++++
+ drivers/video/fbdev/core/fb_info.c       |   1 +
+ drivers/video/fbdev/core/fbmem.c         |  82 +++++++++++++++++++----
+ drivers/video/fbdev/core/fbsysfs.c       |   8 +--
+ include/linux/backlight.h                |  32 ++++-----
+ include/linux/fb.h                       |  12 ++--
+ include/linux/lcd.h                      |  21 +++++-
+ include/linux/leds.h                     |   6 ++
+ 12 files changed, 219 insertions(+), 210 deletions(-)
 
-Krzysztof Kozlowski (1):
-      leds: Do not enable by default during compile testing
-
-Lee Jones (4):
-      leds: Provide skeleton KUnit testing for the LEDs framework
-      leds: led-test: Remove standard error checking after KUNIT_ASSERT_*()
-      leds: led-test: Fill out the registration test to cover more test cases
-      leds: led-test: Provide tests for the lookup and get infrastructure
-
-Manuel Fombuena (1):
-      Documentation: leds: Remove .rst extension for leds-st1202 on index
-
-Marek Behún (1):
-      leds: turris-omnia: Drop commas in the terminator entries
-
-Matthias Fend (2):
-      dt-bindings: leds: Add Texas Instruments TPS6131x flash LED driver
-      leds: tps6131x: Add support for Texas Instruments TPS6131X flash LED driver
-
-Richard Leitner (1):
-      leds: flash: Add support for flash/strobe duration
-
-Sven Schwermer (1):
-      leds: multicolor: Fix intensity setting while SW blinking
-
- Documentation/ABI/testing/sysfs-class-led          |   6 +
- .../devicetree/bindings/leds/ti,tps61310.yaml      | 120 +++
- Documentation/leds/index.rst                       |   2 +-
- MAINTAINERS                                        |   7 +
- drivers/base/property.c                            |  12 +-
- drivers/leds/.kunitconfig                          |   4 +
- drivers/leds/Kconfig                               |  11 +-
- drivers/leds/Makefile                              |   1 +
- drivers/leds/blink/leds-lgm-sso.c                  |   6 +-
- drivers/leds/flash/Kconfig                         |  11 +
- drivers/leds/flash/Makefile                        |   1 +
- drivers/leds/flash/leds-tps6131x.c                 | 815 +++++++++++++++++++++
- drivers/leds/led-class-flash.c                     |  15 +
- drivers/leds/led-class-multicolor.c                |   3 +-
- drivers/leds/led-core.c                            |  43 +-
- drivers/leds/led-test.c                            | 132 ++++
- drivers/leds/led-triggers.c                        |  13 +
- drivers/leds/leds-cros_ec.c                        |  21 +-
- drivers/leds/leds-lp8860.c                         | 214 ++----
- drivers/leds/leds-pca9532.c                        |  11 +-
- drivers/leds/leds-pca955x.c                        |  28 +-
- drivers/leds/leds-pca995x.c                        |   2 +-
- drivers/leds/leds-tca6507.c                        |  11 +-
- drivers/leds/leds-turris-omnia.c                   |   4 +-
- drivers/leds/rgb/leds-mt6370-rgb.c                 |  16 +-
- drivers/leds/rgb/leds-ncp5623.c                    |   5 +-
- drivers/leds/rgb/leds-pwm-multicolor.c             |   7 +-
- drivers/usb/typec/tcpm/tcpm.c                      |   6 +-
- include/linux/led-class-flash.h                    |  16 +
- include/linux/property.h                           |   7 +-
- 30 files changed, 1290 insertions(+), 260 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/leds/ti,tps61310.yaml
- create mode 100644 drivers/leds/.kunitconfig
- create mode 100644 drivers/leds/flash/leds-tps6131x.c
- create mode 100644 drivers/leds/led-test.c
- 
 -- 
 Lee Jones [李琼斯]
 
