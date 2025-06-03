@@ -1,82 +1,144 @@
-Return-Path: <linux-kernel+bounces-672277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-672235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82981ACCD35
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 20:40:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FBB9ACCCA6
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 20:04:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D85A7A9114
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 18:39:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87AD31892C8A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 18:04:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5848F288C36;
-	Tue,  3 Jun 2025 18:40:39 +0000 (UTC)
-Received: from smtp.hosts.co.uk (smtp.hosts.co.uk [85.233.160.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 612BB1EB5D6;
+	Tue,  3 Jun 2025 18:04:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z82t3Gu8"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3D5C1E5B8A;
-	Tue,  3 Jun 2025 18:40:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.233.160.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 272551C84CB
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 18:04:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748976039; cv=none; b=h2Ka23uYJhvt2NEc9d4mcuWbyEIkufcaNko5dmXiJrieDXyPxYMg9ir1Gk4B6I3m1LQdwLt861m9NqZiDH0ZHqfU7D503fotnpWv9VNDqa6n4UWMN/TDSolajnykVvLWqlYrMApLb75l1hg10xQ+wPLxqqwtsqMn265WXJrCfqQ=
+	t=1748973866; cv=none; b=NMjCRWKzkC1NEoq3cP8S+DoFlESapsD/mh4SGri961R0MINtZf6QOB3s3UoUGkWYa5GxkEVc5JpCSkIm5F37laKEaeode7tDlwR7T4ldtcYScjRim7gpdknm7sZcNG3/OVpWHe24P/41l3pA6biPLX6TpmJJXq1F5+/S1pf0JZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748976039; c=relaxed/simple;
-	bh=A5uCvfqMH8V0O9TQhO/y9GstSvTUkLvakjDtT1bYCMA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kpDsgCfwfFZgcidvlyc3ipvdjsioT5kZSMM0AxJ4MJmFiqM78OKtxirMkR71Lw3knFZsTQDC7dXkXxQocd2cBtJ9+dGD0Khq35hPUdLIbnNLu33iMzTVCGrhV9KgE5rapwoxEYz1fj91aXH9etd9v7ySH5ukOEHHMD3SwEo/79E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=youngman.org.uk; spf=pass smtp.mailfrom=youngman.org.uk; arc=none smtp.client-ip=85.233.160.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=youngman.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=youngman.org.uk
-Received: from host86-158-182-88.range86-158.btcentralplus.com ([86.158.182.88] helo=[192.168.1.65])
-	by smtp.hosts.co.uk with esmtpa (Exim)
-	(envelope-from <antlists@youngman.org.uk>)
-	id 1uMUm2-000000009Sz-8ek7;
-	Tue, 03 Jun 2025 17:46:03 +0100
-Message-ID: <24815d81-2e4f-4ddf-b194-b03ea3232b91@youngman.org.uk>
-Date: Tue, 3 Jun 2025 17:46:01 +0100
+	s=arc-20240116; t=1748973866; c=relaxed/simple;
+	bh=8FS4grgCBfFaDpBRnEs8PhpvZFsbnfZNEcOJcPe3WQg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=T8nPa+U+qocfUJ7m76eDy5VqBFYDNbcDRI4RC5zEQUz/WeR1Mft/9EIH+VPhvtNm6AgdEQehVnLCvr0oqZuAQLN61ghbOr1pNLzxm0uOyQvLSt4F4Uz3ZuMhv0KYR0TJcQ+P+11VosLtGGlrU6N8qlib/bkverGzoUak/XqzPjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z82t3Gu8; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3a3798794d3so4999202f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jun 2025 11:04:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748973863; x=1749578663; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UUV+ii5u6eXM/9z4t0zPuEnw9506tcp6lSpVIjqTuQM=;
+        b=Z82t3Gu8uXVp+kWDia5MmI7dvy0VWkLS75y7OdtFZXR24oI/zwcDvpqWGkga+5VCVB
+         wLDAmhCdiqTiK615WUflFp7r7iy5+ZSZ3K75R4s43KVpA3ITyRIBSiXndNHN4AaRwf+q
+         QiaxNxV5gJYqzwen3CbpdcIMNt+pX/tzGbQ9IlDxIcmOxVXuXmT7bhpfIh8hzJsDMh6S
+         GCJ9cCDxqlmL8fpOPk1dhbm8aHcaiEZKkNgOA8BN5QNDY/EpNkQKyRHaFIszjXijDnmi
+         cwIY8TYAJG1OYjs59Fq9z326u6Pu5zdoRft9YRy0tRUo3PW66wdH8x8v64jwB5YHtO5E
+         BdjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748973863; x=1749578663;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UUV+ii5u6eXM/9z4t0zPuEnw9506tcp6lSpVIjqTuQM=;
+        b=slUANaAutcFxkFdLDUhQSf25f2I1BTGb56iUUtg820rx9WdsOtVeI8D7/2O/BHo/et
+         rxvVME0pHuH9K+ugQJ3k5oEBqQw2yigt+efLsjUOOb3aj8uVck1Vk8ai8dvRBN94ewFp
+         xzRGn81fEyL0Qeh5O5fTttLhDw0eCETXRpsVABGVWce9JgCaVNKAMlsrn1CeXmDHO5Bn
+         AGg0QNex9iyXCaCHKWZPYBOit+UVB4/dL6dS5kNbtDnK5+mr89bICzvrvsWahMN3EEB/
+         rPG2L/hZJOSUtdR8ZMmSWGMGDKU92CqN5FntQvSZeiL3dZj5QAnmz5A033d7P1ss8rMS
+         bM3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVhMTeAKqGIl/+zeQBzZDWNuS6s+p+uKfwohxo1R2slMzFA9bQ3yAn1rR0qvl8Yhrg9rx9+YA6AnpX6xC0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YycG9/FzVUzplHTnDTEwDU2Mi/eWJZU2AMF+GRllWoApepyZtj1
+	6yHVqh3ot3K19+pyQ7nZaO8Ftawjc3peIkwBWHXPLROurrO2VMHfg6Ce
+X-Gm-Gg: ASbGncsAn9qvsRgpfaVDdAIBmJ0hFWPa0ZisUqAvwknMbF6zStVED6ue1mg/+z/NL0Q
+	YBhj6+IR3fm9TKH3r0evkPjmMHficyFfEkeRhrWAFNf066e7upGvywmffBOpZAshsz2HLZ8P86r
+	N+ub9Pi8wov/f8EqkHm33KBY4NZjssjSk6sdiEd4AK02IJqJFaoJ0pDGe4PiFuD/l7U5whGsiJ4
+	F1YTZ2ijThQKr9sYARLoPW8ZvHiO6g9kKpP5WZBXLQTR+iob4jqyX9SC2fm0xpCn9XnzeY6G7DL
+	VrOxKqNrVWVwvvFbYNuqoiZ07yEIqugfmMetIIjOWOExQ5WvxfaZDSeVIVdRefY=
+X-Google-Smtp-Source: AGHT+IFWDRZ5DMF8AWYghMojAC19CnsoSoHQTSNpwtp6Jv2nP6IRBRnbRL5Y916DRs9zZwsULYr8uQ==
+X-Received: by 2002:a05:6000:18ad:b0:3a3:727d:10e8 with SMTP id ffacd0b85a97d-3a4fe3a6ac9mr9056440f8f.50.1748973863165;
+        Tue, 03 Jun 2025 11:04:23 -0700 (PDT)
+Received: from qasdev.Home ([2a02:c7c:6696:8300:397c:823b:f900:56d9])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4efe5b887sm19468210f8f.18.2025.06.03.11.04.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Jun 2025 11:04:22 -0700 (PDT)
+From: Qasim Ijaz <qasdev00@gmail.com>
+To: lucas.demarchi@intel.com,
+	thomas.hellstrom@linux.intel.com,
+	rodrigo.vivi@intel.com,
+	airlied@gmail.com,
+	simona@ffwll.ch
+Cc: intel-xe@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/xe/hwmon: fix uninitialised access in xe_hwmon_pcode_write_power_limit
+Date: Tue,  3 Jun 2025 19:03:33 +0100
+Message-Id: <20250603180333.32117-1-qasdev00@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Need help increasing raid scan efficiency.
-To: David Niklas <simd@vfemail.net>, Linux RAID <linux-raid@vger.kernel.org>
-Cc: linux-kernel@vger.kernel.org
-References: <20250602210514.7acd5325@Zen-II-x12.niklas.com>
-Content-Language: en-GB
-From: Wol <antlists@youngman.org.uk>
-In-Reply-To: <20250602210514.7acd5325@Zen-II-x12.niklas.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=n
+Content-Transfer-Encoding: 8bit
 
-On 03/06/2025 02:05, David Niklas wrote:
-> So I setup the array into read-only mode and started the array with only
-> two of the drives. Drives 0 and 1. Then I proceeded to try and start a
-> second pair, drives 2 and 3, so that I could scan them simultaneously.
-> With the intent of then switching it over to 0 and 2 and 1 and 3, then 0
-> and 3 and 1 and 2.
+val0/val1 are not initialised and are passed to xe_pcode_read():
 
-BACKUP! BACKUP!! BACKUP!!!
+    xe_hwmon_pcode_write_power_limit()
+      └─▶ xe_pcode_read()
+            └─▶ pcode_mailbox_rw()
+                  └─▶ __pcode_mailbox_rw()
 
-Is your array that messed up that it won't assemble? If you can just get 
-it to assemble normally that's your best bet by far. Trying to assemble 
-it as two pairs is throwing away the whole point of a raid 6!
+If __pcode_mailbox_rw fails, val0/val1 could be left
+uninitialised leading to xe_hwmon_pcode_write_power_limit()
+to access them via drm_dbg. Or an uninitialised val0/val1
+could be dereferenced inside __pcode_mailbox_rw.
 
-And make sure you know the order of the drives in the array! I hope you 
-haven't lost that infof.
+To fix zero-initialise them to avoid potential UB and 
+propagate error on failure.
 
-If your event counts are all similar, then you'll hopefully recover most 
-of your data. Your biggest worry will be the mobo and ram having 
-trashing an in-flight write that corrupts the disk.
+Fixes: 7596d839f622 ("drm/xe/hwmon: Add support to manage power limits though mailbox")
+Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
+---
+ drivers/gpu/drm/xe/xe_hwmon.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-Then once you've got the array assembled, I can't remember the command, 
-but there is a command that will read the entire stripe, check the 
-paritIES - both of them, and recreate the data. If that fails, your data 
-is probably toast, and nothing you can do will be able to retrieve much :-(
+diff --git a/drivers/gpu/drm/xe/xe_hwmon.c b/drivers/gpu/drm/xe/xe_hwmon.c
+index 0d32e977537c..04acb47488a0 100644
+--- a/drivers/gpu/drm/xe/xe_hwmon.c
++++ b/drivers/gpu/drm/xe/xe_hwmon.c
+@@ -179,7 +179,7 @@ static int xe_hwmon_pcode_write_power_limit(const struct xe_hwmon *hwmon, u32 at
+ 					    u32 uval)
+ {
+ 	struct xe_tile *root_tile = xe_device_get_root_tile(hwmon->xe);
+-	u32 val0, val1;
++	u32 val0 = 0, val1 = 0;
+ 	int ret = 0;
+ 
+ 	ret = xe_pcode_read(root_tile, PCODE_MBOX(PCODE_POWER_SETUP,
+@@ -190,9 +190,11 @@ static int xe_hwmon_pcode_write_power_limit(const struct xe_hwmon *hwmon, u32 at
+ 						  READ_PL_FROM_PCODE : READ_PL_FROM_FW),
+ 						  &val0, &val1);
+ 
+-	if (ret)
++	if (ret) {
+ 		drm_dbg(&hwmon->xe->drm, "read failed ch %d val0 0x%08x, val1 0x%08x, ret %d\n",
+ 			channel, val0, val1, ret);
++		return ret;
++	}
+ 
+ 	if (attr == PL1_HWMON_ATTR)
+ 		val0 = uval;
+-- 
+2.39.5
 
-Cheers,
-Wol
 
