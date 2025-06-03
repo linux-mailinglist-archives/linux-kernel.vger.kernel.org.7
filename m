@@ -1,179 +1,150 @@
-Return-Path: <linux-kernel+bounces-672469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-672450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45244ACCFE9
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 00:35:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0357AACCFAA
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 00:15:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 348077A61AE
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 22:34:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C63B917384E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 22:15:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A85DF253346;
-	Tue,  3 Jun 2025 22:35:14 +0000 (UTC)
-Received: from sxb1plsmtpa01-03.prod.sxb1.secureserver.net (sxb1plsmtpa01-03.prod.sxb1.secureserver.net [188.121.53.27])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E78D221FDD;
+	Tue,  3 Jun 2025 22:15:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=columbia.edu header.i=@columbia.edu header.b="u4dmPpXI"
+Received: from mx0a-00364e01.pphosted.com (mx0a-00364e01.pphosted.com [148.163.135.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FB27221D92
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 22:35:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.121.53.27
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 020D21A00F0
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 22:15:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748990114; cv=none; b=bl8+L9Co4oKAMuUAFBloqwRBRxLVRm63ygNazfT/wtaqlSU+6GDvmjdNV5BtFyxep7TI6TL2zeTNqfelFZkhRgOfLtO7BgKoPy8DjNrVK886reqhmUBiAGpNVM8/D2C+zW+YrNVaLS4PkwJrFYZVa/Mn4RjAMBCZJivrrsV0Xvs=
+	t=1748988929; cv=none; b=O7JyoTrGLIe85pu6LgH09Vi7LqopIyRbbP6nyhCveECgi/jHd1RH8daDlK4lA4yL3GeN0EO+AldH/ENnSWgkFsabFUYEoBlsqiB9fFjMJ1gq5Ut9TfrYvvk9KQ7M6S/Z7Y7k9GR0ET4IYBZ8wjWLpbk5C6SJ/kVsijgGVZK47yU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748990114; c=relaxed/simple;
-	bh=7ngBQjX9Q91ssI5lebIYGFFeYZ2yHNUu6b3oaCH742s=;
-	h=Message-ID:Date:MIME-Version:From:To:Subject:Cc:Content-Type; b=FHkS0aVP6nKpO50CLKxTMBtpak8UA27C9JypHGRFh9N+tTht86gQN/Gy1ELGncwZVJp0cmhFGBbq6vsXmMJXgitPNn1MOwW/mjmUt3irMdXe4RwiB4FiLqz7hQWHBclDuO8KoXZax5zaslZJZ3OIlIYRwNbie1fgfoz+IUdRlR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk; spf=pass smtp.mailfrom=squashfs.org.uk; arc=none smtp.client-ip=188.121.53.27
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squashfs.org.uk
-Received: from [192.168.178.95] ([82.69.79.175])
-	by :SMTPAUTH: with ESMTPSA
-	id MZvJuGVfW9ZMtMZvLuFZ3Y; Tue, 03 Jun 2025 15:16:00 -0700
-X-CMAE-Analysis: v=2.4 cv=b66y4sGx c=1 sm=1 tr=0 ts=683f7421
- a=84ok6UeoqCVsigPHarzEiQ==:117 a=84ok6UeoqCVsigPHarzEiQ==:17
- a=IkcTkHD0fZMA:10 a=FP58Ms26AAAA:8 a=NEAV23lmAAAA:8 a=ib7_shvKizCky_gvI0gA:9
- a=QEXdDO2ut3YA:10
-X-SECURESERVER-ACCT: phillip@squashfs.org.uk
-Message-ID: <2d23004d-862d-44c4-814b-3a7f453a4448@squashfs.org.uk>
-Date: Tue, 3 Jun 2025 23:14:18 +0100
+	s=arc-20240116; t=1748988929; c=relaxed/simple;
+	bh=Mhu5UgsGKVBtr694zPgKzOcZMIqd8uhkAolGEdGjAxM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=nrHov+/ErjhDtGbc7rnixb1fo85aKpgqrQkjlrexE7N/cOxR6Sz8o2v7V0IaSuYWy1CAIo7GfM9m+dNg4weOE+zBY6vZMMEwO1niu2rQARGzXJC2xyfr6T1zPIbJQXNpxvkL6zW6K1cheUmrWmoSFWpP/eHMuePlJr0EwP9UW7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=columbia.edu; spf=pass smtp.mailfrom=columbia.edu; dkim=pass (2048-bit key) header.d=columbia.edu header.i=@columbia.edu header.b=u4dmPpXI; arc=none smtp.client-ip=148.163.135.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=columbia.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=columbia.edu
+Received: from pps.filterd (m0167071.ppops.net [127.0.0.1])
+	by mx0a-00364e01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 553L6OgD016387
+	for <linux-kernel@vger.kernel.org>; Tue, 3 Jun 2025 18:15:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=columbia.edu; h=cc :
+ content-transfer-encoding : content-type : date : from : message-id :
+ mime-version : subject : to; s=pps01;
+ bh=pR5/XontXtxtAuJG6F7B70YU8ZyR64gw9geu5D2VmVw=;
+ b=u4dmPpXIIMS133fFgojn5PBhvFIVLpvbaURdXnQd6TGtBsW8Vx9r4H2Y8307ukB8ehF7
+ OAzWB3LLvxfrKVjw6XQRK7NjkeG6ucOFIQhgIcjUTIPy7AzxjpfBmo85VmEFBp01XOR6
+ zM5eE3KlQx0lISUODrN4pg3JiDK6EHmujL1TdgSWHVqHOT7s9+CGYhOoEugpb+4BxHBs
+ ko89rPM0+gxL89jDS+R2/9uw5QWN/PNvlMAxMeRDoyUVj45bfoeyKsZ9ELcCl+9cHIeN
+ cp6A9AgQR8bltwiCVN7HgPpJ3OI6mZp/o6cT1DGMxL0zMiNs2fiox3XSVl6TbsgLPFyh yw== 
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-00364e01.pphosted.com (PPS) with ESMTPS id 46yxqt8vdn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 03 Jun 2025 18:15:26 -0400
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4a44e392584so87567291cf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jun 2025 15:15:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748988904; x=1749593704;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pR5/XontXtxtAuJG6F7B70YU8ZyR64gw9geu5D2VmVw=;
+        b=BFHjChvJJC888fOCv2R19+YTdUcvrP9bU/gCubJhe4vXyrwpFbfRhLXuN7+KX3uj0S
+         D5cRqXt+RFLfp64HyCM24eR550MzZbE599JkyswcnCw7gQ5tNZw1Zm91rl/Qe1x7tWni
+         A572SwHuJ8aFQxFq1CP2fxmQ8Ahd+UEKCeuSM95Uc4N7nchxr40S/2kH8HVrVI1PMJRm
+         qRG68syMKbFPa/9/yEgRtpFfe+KVvq1EKPjMU1Zx90dXDdD18rz+sK84LUz/3bgQ954Q
+         8MNPyuh+uWkC1MOcGWTaDW3GopkuXsZAjL9tr69gfEHJ9vZ8+XpsgryR5ajPBLC+oOmb
+         uQ5w==
+X-Forwarded-Encrypted: i=1; AJvYcCVopa//L/6CC+nQukBt+NknxSWl0vpqGWBOHzJ6ckyb4mT2p37yNfxFlMej1LBcmPBEJGF28lxChkRGdHc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1iJ5intPs9Q7STlK959OQQQgrFQdhme/ENNac0+O5nLCrkhAY
+	zx/ilMqca+g/D7ZdyeqUkOmucW6k0YnFQdQ7VDlzum5sqdrlXWd9aZXyzHyGH9lug5rEW4TFYvK
+	vx6gQQmM1cVf40A1HOm5Tj1iVFnUbNb+yvWOYfeyOsHuJ4V5s51JkJSKt3p5Ykg==
+X-Gm-Gg: ASbGncuVuxSG//WRHy6ncQDfmIm8XAuHKTdvJDhQqe1khEtvkr+i83xZw94YdyMoB3l
+	KP2opQ5op1ewFizXzIRqQtu1tygl4DADsvbxogdmB28Ev6Fqhk7uKh7AY/EEG2oHdBL4Zs5eLdq
+	xPJzZKraoonRpRj9jFY0WU3Bz2DddjKHsiD+WULZIl2u8rNua+h1xTtDn2C5LUSj6aGVXb/gMmq
+	Z/LFmX3MVEz6f9a69+uO0MJIG34HlTrRRIjCh9QeFbIUBRXgFwOIcgxKK3JehwSm8hVVvKAlATn
+	O87XujmuWzgy4p6GtHayHJbbhQCzeRaWnq8mn/yNGA8tJqFrhRE5ye5VcQ==
+X-Received: by 2002:a05:622a:4184:b0:494:993d:ec30 with SMTP id d75a77b69052e-4a5a57f0bcdmr10800291cf.16.1748988903724;
+        Tue, 03 Jun 2025 15:15:03 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHxNXrwYeZso4epO+Rxc5EeKdK7iBln5yFli1M2Ii71UtbPVNvQj17eNdr9KOBrhoWgtfOe+A==
+X-Received: by 2002:a05:622a:4184:b0:494:993d:ec30 with SMTP id d75a77b69052e-4a5a57f0bcdmr10799791cf.16.1748988903278;
+        Tue, 03 Jun 2025 15:15:03 -0700 (PDT)
+Received: from [127.0.1.1] (nat-128-59-176-95.net.columbia.edu. [128.59.176.95])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a5919064dbsm33085741cf.53.2025.06.03.15.15.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Jun 2025 15:15:02 -0700 (PDT)
+From: Tal Zussman <tz2294@columbia.edu>
+Subject: [PATCH 0/3] mm: userfaultfd: assorted fixes and cleanups
+Date: Tue, 03 Jun 2025 18:14:19 -0400
+Message-Id: <20250603-uffd-fixes-v1-0-9c638c73f047@columbia.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-From: Phillip Lougher <phillip@squashfs.org.uk>
-To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- news@phoronix.com
-Subject: [ANN] Squashfs-tools 4.7 released
-Cc: phillip.lougher@gmail.com
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4xfBanUkbAAABwj8+bRKvywtzLQ7zm35FWJ9r0768jwJuVQlMozUCnOdmXs10uDPhLFlYTSKHfC30RhNW32RcFMzGO2htduwZzg1uazGh3UqhvMZ6lFcPH
- pBG4S96l/77wx45ZPZn9mWRNbPq/9nvq6ENKsT50d3rp2pIk238y1acqlxSlKfOSlSruKV3Qw2wlkxQsWG8p05vtWHY9XD+iH1NOXh76wtSjSSUzE/oTKojX
- wIIPoxOcLJbAsD1qTepZsuuAo5u3bIJesE5+8vDu+2D1kYybToMHCuixJ+FzGjPl/Un/vIAY+Fhnxr1e54a1HA==
+X-B4-Tracking: v=1; b=H4sIALtzP2gC/x2LQQqAIBAAvyJ7TnA1O/SV6FC51l4slCIQ/97Sc
+ ZiZCoUyU4FRVcj0cOEzCWCnYDuWtJPmIAzWWG+8Q33HGHTkl4rG3jqHK3oaHMhwZfqF9NPc2gc
+ VvqtFXAAAAA==
+X-Change-ID: 20250531-uffd-fixes-142331b15e63
+To: Andrew Morton <akpm@linux-foundation.org>, Peter Xu <peterx@redhat.com>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        David Hildenbrand <david@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+        Pavel Emelyanov <xemul@parallels.com>,
+        Andrea Arcangeli <aarcange@redhat.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Tal Zussman <tz2294@columbia.edu>
+X-Mailer: b4 0.14.3-dev-d7477
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1748988902; l=861;
+ i=tz2294@columbia.edu; s=20250528; h=from:subject:message-id;
+ bh=Mhu5UgsGKVBtr694zPgKzOcZMIqd8uhkAolGEdGjAxM=;
+ b=4q8yWH3RUQtdW6CPPg1ymoUjwCjvIh7v83CMiLiZGVa2qENAAcH/07MkUGP97IU1TtObvFyjV
+ YN5DzKGNRbWCpE2mOJNC05z6Ya0oPs1o89uhFUs+wuVkFsiZHUJCoyT
+X-Developer-Key: i=tz2294@columbia.edu; a=ed25519;
+ pk=BIj5KdACscEOyAC0oIkeZqLB3L94fzBnDccEooxeM5Y=
+X-Proofpoint-GUID: t9uCSLIdRRJZyS3R3zzLAK9tfgGSpkDE
+X-Proofpoint-ORIG-GUID: t9uCSLIdRRJZyS3R3zzLAK9tfgGSpkDE
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjAzMDE5MyBTYWx0ZWRfX6kESaGLNa61h LtnftGW3Sn0YesKg2w86+om/qhnrkbBaly43XPxvx3pyswiMeU/ac+lYJXzZcQa79vAmL7uKQjr 7Qiw1XOhwiCqx2MWH1BgJdZOzYod2BUIC1ZBPIZ+jjrL/f9CF5Lq2T6Z51Yu08xYjz3ZC0gNSgK
+ Ii5od1Mq+Gntcb71oxB52debYLzGx//wFJSHLV7UjgO0BqcFxdHTkgturU8avh8K53XsOO4JuEV 1z+1d9nxJvjpqfMb8DjR0+s71BAvBfNyc46lXSu4HghSMoJVJqMVGBisDCA7lvbf4pSycg61H3C 8B8tJcFfKtrPdtO93VuwCBk3KoPW5Ms8XSNjLVWXFCOlVs2dd+6K0S/opQhMQAYd9pEFaKmjM37 FPVJdv9R
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-03_03,2025-06-03_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=10 adultscore=0
+ suspectscore=0 phishscore=0 mlxscore=0 malwarescore=0 mlxlogscore=439
+ clxscore=1015 impostorscore=0 spamscore=0 lowpriorityscore=10
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2505160000 definitions=main-2506030193
 
-Hi,
+Two fixes and one cleanup for userfaultfd.
 
-I'm pleased to announce the release of Squashfs tools 4.7.
+The second patch is a more of an RFC, as it changes previously allowed
+user behavior. However, being able to unregister memory through a uffd
+different from the uffd it was originally registered with seems odd enough
+that I'd argue it's a bug :)
 
-The release can be downloaded either from Sourceforge, or GitHub.
+---
+Tal Zussman (3):
+      userfaultfd: correctly prevent registering VM_DROPPABLE regions
+      userfaultfd: prevent unregistering VMAs through a different userfaultfd
+      userfaultfd: remove UFFD_CLOEXEC, UFFD_NONBLOCK, and UFFD_FLAGS_SET
 
-https://sourceforge.net/projects/squashfs/files/latest/download
+ fs/userfaultfd.c              | 17 +++++++++++++----
+ include/linux/userfaultfd_k.h |  6 +-----
+ 2 files changed, 14 insertions(+), 9 deletions(-)
+---
+base-commit: 546b1c9e93c2bb8cf5ed24e0be1c86bb089b3253
+change-id: 20250531-uffd-fixes-142331b15e63
 
-https://github.com/plougher/squashfs-tools/archive/refs/tags/4.7.tar.gz
+Best regards,
+-- 
+Tal Zussman <tz2294@columbia.edu>
 
-There are substantial improvements to the tools in this release, in
-particular Mksquashfs can now be 20% to more than ten times faster
-(dependant on source media and input files).  The help system has also
-been completely rewritten and improved for Mksquashfs/Unsquashfs/
-Sqfstar/Sqfscat.  There are also new options for building reproducible
-images, and a lot of other improvements.
-
-A summary of the changes is below.  Please see the README file in
-the release tarball for more information.  The README can also be
-read here
-
-https://github.com/plougher/squashfs-tools/blob/master/Documentation/4.7/README
-
-Thanks
-
-Phillip
-
-Summary of changes
-------------------
-
-1. Mksquashfs now reads files in parallel from the input directories
-
-    1.1. This can significantly increase I/O when reading lots of small files,
-         and/or the input media benefits from parallel reading e.g. modern SSD
-         drives, or network filesystems etc.
-    1.2  In cases where speed of I/O is the bottleneck in Mksquashfs, this can
-         make Mksquashfs run significantly faster, in some cases Mksquashfs can
-         be more than ten times faster.
-    1.3. New -small-readers option to specify number of parallel small file
-         reader threads (files less than a block size).  Default 4 threads.
-    1.4. New -block-readers option to specify number of parallel block reader
-         threads (files one block or larger).  Default 4 threads.
-    1.5. New -single-reader option to specify a single reader thread, similar to
-         previous Mksquashfs versions.
-
-2. Rewritten and improved help system (Mksquashfs/Unsquashfs/Sqfstar/Sqfscat)
-
-    2.1. Help text now uses the full width of the terminal (rather than being
-         pre-formatted to 80 columns).
-    2.2. The help text is now automatically paged (using pager, less or more).
-    2.3. The tools now print a summary on failure to parse the command line (or
-         encountering other errors that prevent the tool from running), rather
-         than displaying the help text.
-    2.4. The help text can be displayed in full, by section, or by option using
-         regex matching.
-    2.5. New -help-all option to display all help text
-    2.6. New -help-section option to display help for a particular section
-    2.7. New -help-option to display all options matching regex.
-    2.8. New -help-comp option to display compressor options for given
-         compressor.
-
-3. New options for building reproducible filesystems (Mksquash/Sqfstar)
-
-   3.1 Low level timestamp setting options extended
-      -mkfs-time inode sets the fs creation time to the latest inode timestamp
-      -inode-time inode sets all inode timestamps to the latest inode timestamp
-      -root-time inode sets the root dir timestamp to the latest inode timestamp
-
-   3.2 New easier to remember shorthand options
-      -repro builds a reproducible fs image, it is shorthand for -mkfs-time inode
-      -repro-time <time> builds a reproducible fs image, it is shorthand for
-       specifying -mkfs-time <time> and -inode-time <time>.
-
-4. Elimination of "fragment block stall" and -(not-)reproducible options
-
-   A technical issue called "the fragment block stall" has been eliminated in
-   this release in a way that generates a reproducible ordering of files in the
-   filesystem image.  This can increase performance by 20% or more, in addition
-   to the parallel reader performance improvements.
-
-   This "fragment block stall" was introduced in release 4.4 (2019) to produce
-   a reproducible ordering of files in the filesystem image, but which led to a
-   reduction in parallelisation and performance.  Due to this reduction, the
-   previous behaviour was retained and enabled using the -not-reproducible option.
-   As the "fragment block stall" has now been removed, the options
-   -not-reproducible and -reproducible now do nothing, but are still recognised
-   for backwards compatibility.
-
-5. Other improvements for Mksquashfs/Sqfstar
-
-    3.1. New -force-file-mode option, which sets all file (non-directory)
-         permissions to the given mode.
-    3.2. New -force-dir-mode option, which sets all directory permissions to
-         the given mode.
-    3.3. -root-mode and above new -force-file-mode/-force-dir-mode options
-         now take a symbolic mode in addition to an octal mode.
-    3.4. New -info-file option, which prints files written to the filesystem to
-         a file rather than stdout.  Allows -info-file to be used in conjunction
-         with the progress bar.
-    3.5. New -pseudo-dir (or -pd) option which supplies a default directory
-         if any directories in a pseudo file definition pathname doesn't exist.
-    3.6. New pseudo file 'h' definition which creates a hard link to a file,
-         and follows symbolic links.
-    3.7. Previously if a directory was missing (or not a directory) in a
-         Pseudo file definition pathname, the pseudo file definition would be
-         ignored.  This has been hardened to a fatal error.
-
-6. Other improvements for Unsquashfs/Sqfscat
-
-    4.1. New -mem option, which sets the amount of memory to be used,
-         K, M and G can be used to specify Kbytes, Mbytes and Gbytes.
-    4.2. New -mem-percent option, which sets the amount of memory to be
-         used as percentage of available physical memory.
-    4.3. Memory specified is limited to 75% of physical memory or less.
-
-7. New environment variable SQFS_CMDLINE (Mksquashfs/Unsquashfs/Sqfstar/Sqfscat)
-
-    If set, this is used as the directory to write the file sqfs_cmdline
-    which contains the command line arguments given to Mksquashfs etc.  Intended
-    to be used to debug scripts/discover what is being passed to Mksquashfs.
 
