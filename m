@@ -1,232 +1,268 @@
-Return-Path: <linux-kernel+bounces-671536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 938F9ACC2D1
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 11:20:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 011F3ACC279
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 10:53:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FB663A55D0
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 09:20:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B67283A4F6A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 08:52:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13912280CE0;
-	Tue,  3 Jun 2025 09:20:40 +0000 (UTC)
-Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 891A818DB29;
-	Tue,  3 Jun 2025 09:20:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3994B20E32D;
+	Tue,  3 Jun 2025 08:53:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VO5Miahl"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 332D81AF0AF
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 08:52:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748942439; cv=none; b=L6fqDWHBODVtvHFAiNBxphL9WxZZM5IWs/rSxdWGAPwxn47e1Gi+jb3K1Q64PqW4ECfc0cCWAVV9LoCDddt08dr3F1AQdZ7i5gQLuV3edU4J6WOoveTWLLs4Sv7YFtpWJiepigcsot0DoTicDroP6wP+iFanfWFtK3vyZtkIzPA=
+	t=1748940780; cv=none; b=NXSblIcaTp1z2LUzHX1chesvtv8K+s3kRYYiNOdGCe5JnJumkHaSmcZUfcSXDy6/jOBT0OXd4da7HQiY8sIn3XHiS15JGC7PNg1hv4GEXqA8oPPwKeWb4hqp1TptdZdX8/dePWNZWeNoMd9fFTTBQBRjIxGJHu52j2C/Dijfe7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748942439; c=relaxed/simple;
-	bh=p9NjpU4OCCgM7bTR4DIZZaxlvncFkcQUC79/F9rivEk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ktMNihGruZIl+v801DfnzEGsvbnBcDg07lqpFfl+cTCGlfdDSlg+4pLnrqpTxRMqyMGdoq4Nz1lWAqHpp37gf3gvJtNNPKzjAMnvhN8EX1vDaocq4IwXinQKZAY9Q9XtDXF55JE1VWYy7atztnjnagryWesvhWPUezM05EpQ6Ys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
-	by localhost (Postfix) with ESMTP id 4bBPbv4FNNz9s92;
-	Tue,  3 Jun 2025 10:52:27 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id U7IUxrE3Y_nw; Tue,  3 Jun 2025 10:52:27 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase1.c-s.fr (Postfix) with ESMTP id 4bBPbm3Y1Nz9vY6;
-	Tue,  3 Jun 2025 10:52:20 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 742888B765;
-	Tue,  3 Jun 2025 10:52:20 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id IcNMaBpAWABq; Tue,  3 Jun 2025 10:52:20 +0200 (CEST)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id CD8958B763;
-	Tue,  3 Jun 2025 10:52:19 +0200 (CEST)
-Message-ID: <840249c5-2602-4178-a408-f7d502111f79@csgroup.eu>
-Date: Tue, 3 Jun 2025 10:52:19 +0200
+	s=arc-20240116; t=1748940780; c=relaxed/simple;
+	bh=9/C2MTtGy92Vv0hPG8laZGxliqByuslaG4nla4YUdig=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=HFtJLq5HMuhv5Zss0HDJeOpS/iCaWOGQLEuA1fT0OI7Z7gHqgk+afZrPIOBBMmwug+HE8ZpkyT2sw8435YxAMPqYJiyX2eP5KnykB1w/UfyWDjFdUDxdzLnurB/zpz4UziWhukJSGlauU8onLfy4yvM5wgAYsfa7KhPNdEfI8dg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VO5Miahl; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1748940777;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fokWVoE1/UZZzyISn1y7Db8mSF3EnEdFgZvjp1rn9Hg=;
+	b=VO5Miahlqqj311drb25ZuizB7Dlf6lnnbXzn72Bn9CdWLbwB7ss7EhAl8I1oM0Yrk5zsNI
+	kf70S+Yv8qrQysBpxatzzC/2eOb5CUeXgJvIblRjQ+vuqdNuhWizxGOxO3hDUpjrdRZGUU
+	sBrhq252EL8XT/nAxOHJe9IAPG83k+w=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-620-JOyCMyw6P2COtQJRCW8iTA-1; Tue, 03 Jun 2025 04:52:56 -0400
+X-MC-Unique: JOyCMyw6P2COtQJRCW8iTA-1
+X-Mimecast-MFC-AGG-ID: JOyCMyw6P2COtQJRCW8iTA_1748940775
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-450df53d461so26188315e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jun 2025 01:52:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748940775; x=1749545575;
+        h=content-transfer-encoding:mime-version:message-id:date:references
+         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fokWVoE1/UZZzyISn1y7Db8mSF3EnEdFgZvjp1rn9Hg=;
+        b=QUJefLTBlMJSyN83ygq3LbfH70NyX5CD/tgkSWFtn/ft9jGoQaU/qO4fFqxWSrJSXw
+         sCPMvQMIiuaBJ97bxn4QmZcrAlYLYuJV+GD/BiCQKotxfKy4f+qAuduRMzWa8ObrRRgP
+         yn+MdsGe5LuzowELkk5v9GiEMv9pnXVXbsfWBnJTZNmhjWeL9N8/YnpOC2UhqPTRaSI9
+         ZJ/SLKbJL//SmmK2T5INkTuqZypsg40PzCWGrTmzx6SRjvw5NiEny8sMBceYfQ7XQt+d
+         SkBYkNbtGb77GCAeWSmoaJ9d+7RNZ4tn2uU+ARW4FpLkIAAb27u9qNw11wZM33YYUyRz
+         cWOQ==
+X-Gm-Message-State: AOJu0YyevTWhyZRisjJJWgJjhyC3aoazOJe37bSnR/2LSxOUYstZsI2b
+	Wky2TPJu+komsw7CLqlPvGoXn8R2sFU9/Yp9aEQ70V7QfC0abWG2iJksUUqpOJTc5yZ4bVh3JWQ
+	UCsCiaSn3jm3zegtv2831CQvOouzcGt0+OBzQnmJckH7W2pVOpreoRn2QJKSr9JzSQg==
+X-Gm-Gg: ASbGncvVyHYXvzMUUpKSWWhH+syHXf7hxLZIw83piWuzlmVqKXc6ohCnMAY6f4+xsoO
+	c5N+TCpbie47vO84HRk9ogu3cpiOBaj/X6JqyTU8HQ+zE+p2wAtfDupuAFD5tQKUJkEVJ+plZf0
+	8ZKzXHk0Jl0BpfveP9OjJs3Nvm2MlalKzpK4vD4mFRPdTHQH4JX+cigsEy77Vj0CTDIfF68/Sxb
+	5Hpo4Fo67onmvYFkNekLcpBSfHiOErx9hoVEjldRKVgWPjqj2q7Dp46U1fqOQpYQyKYR8RIH/n4
+	CJftVvk=
+X-Received: by 2002:a5d:5f50:0:b0:3a4:d994:be4b with SMTP id ffacd0b85a97d-3a4f89a47a7mr12821677f8f.1.1748940774728;
+        Tue, 03 Jun 2025 01:52:54 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEGEHrNubrNeaL99rs9CvcijC7m6ROFlnCc2yKxqiTtySjgF89euRWCZceONTzwb++Fm8VsBg==
+X-Received: by 2002:a5d:5f50:0:b0:3a4:d994:be4b with SMTP id ffacd0b85a97d-3a4f89a47a7mr12821635f8f.1.1748940774311;
+        Tue, 03 Jun 2025 01:52:54 -0700 (PDT)
+Received: from fedora (g3.ign.cz. [91.219.240.17])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4efe6c842sm17289467f8f.29.2025.06.03.01.52.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Jun 2025 01:52:53 -0700 (PDT)
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>,
+ linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org,
+ linux-modules@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ keyrings@vger.kernel.org, David Howells <dhowells@redhat.com>, David
+ Woodhouse <dwmw2@infradead.org>, Jonathan Corbet <corbet@lwn.net>, Luis
+ Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>, Sami
+ Tolvanen <samitolvanen@google.com>, Daniel Gomez <da.gomez@samsung.com>,
+ Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu
+ <roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+ Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore
+ <paul@paul-moore.com>, James Morris <jmorris@namei.org>, "Serge E. Hallyn"
+ <serge@hallyn.com>, Peter Jones <pjones@redhat.com>, Robert Holmes
+ <robeholmes@gmail.com>, Jeremy Cline <jcline@redhat.com>, Coiby Xu
+ <coxu@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>
+Subject: Re: [PATCH RFC 1/1] module: Make use of platform keyring for module
+ signature verify
+In-Reply-To: <948f5567fe4d9ae39aa2528965f123e42bf82b46.camel@HansenPartnership.com>
+References: <20250602132535.897944-1-vkuznets@redhat.com>
+ <20250602132535.897944-2-vkuznets@redhat.com>
+ <948f5567fe4d9ae39aa2528965f123e42bf82b46.camel@HansenPartnership.com>
+Date: Tue, 03 Jun 2025 10:52:52 +0200
+Message-ID: <87r001yzob.fsf@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] powerpc/ftrace: support CONFIG_FUNCTION_GRAPH_RETVAL
-To: Aditya Bodkhe <adityab1@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- maddy@linux.ibm.com, mpe@ellerman.id.au, npiggin@gmail.com,
- rostedt@goodmis.org, mhiramat@kernel.org, mark.rutland@arm.com,
- Aditya Bodkhe <aditya.b1@linux.ibm.com>
-References: <20250528134820.74121-1-adityab1@linux.ibm.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <20250528134820.74121-1-adityab1@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
+James Bottomley <James.Bottomley@HansenPartnership.com> writes:
 
+> On Mon, 2025-06-02 at 15:25 +0200, Vitaly Kuznetsov wrote:
+>> This patch complements commit 278311e417be ("kexec, KEYS: Make use of
+>> platform keyring for signature verify") and commit 6fce1f40e951
+>> ("dm verity: add support for signature verification with platform
+>> keyring")
+>> and allows for signing modules using keys from SecureBoot 'db'. This
+>> may
+>> come handy when the user has control over it, e.g. in a virtualized
+>> or a
+>> cloud environment.
+>>=20
+>> Suggested-by: Robert Holmes <robeholmes@gmail.com>
+>> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+>> ---
+>> =C2=A0Documentation/admin-guide/module-signing.rst |=C2=A0 6 ++++++
+>> =C2=A0kernel/module/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 | 11 +++++++++++
+>> =C2=A0kernel/module/signing.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 |=C2=A0 9 ++++++++-
+>> =C2=A0security/integrity/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=
+=A0 2 +-
+>> =C2=A04 files changed, 26 insertions(+), 2 deletions(-)
+>>=20
+>> diff --git a/Documentation/admin-guide/module-signing.rst
+>> b/Documentation/admin-guide/module-signing.rst
+>> index a8667a777490..44ed93e586b9 100644
+>> --- a/Documentation/admin-guide/module-signing.rst
+>> +++ b/Documentation/admin-guide/module-signing.rst
+>> @@ -118,6 +118,12 @@ This has a number of options available:
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 additional certificates which will be inc=
+luded in the system
+>> keyring by
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 default.
+>> =C2=A0
+>> + (5) :menuselection:`Use .platform keyring for verifying kernel
+>> modules signatures`
+>> +=C2=A0=C2=A0=C2=A0=C2=A0 (``CONFIG_MODULE_SIG_PLATFORM``)
+>> +
+>> +=C2=A0=C2=A0=C2=A0=C2=A0 This option additionally allows modules to be =
+signed with a key
+>> present
+>> +=C2=A0=C2=A0=C2=A0=C2=A0 in ``.platform`` keyring, e.g. a SecureBoot 'd=
+b' key.
+>> +
+>> =C2=A0Note that enabling module signing adds a dependency on the OpenSSL
+>> devel
+>> =C2=A0packages to the kernel build processes for the tool that does the
+>> signing.
+>> =C2=A0
+>> diff --git a/kernel/module/Kconfig b/kernel/module/Kconfig
+>> index 39278737bb68..f1b85c14548a 100644
+>> --- a/kernel/module/Kconfig
+>> +++ b/kernel/module/Kconfig
+>> @@ -340,6 +340,17 @@ config MODULE_SIG_HASH
+>> =C2=A0	default "sha3-384" if MODULE_SIG_SHA3_384
+>> =C2=A0	default "sha3-512" if MODULE_SIG_SHA3_512
+>> =C2=A0
+>> +config MODULE_SIG_PLATFORM
+>> +	bool "Use .platform keyring for verifying kernel modules
+>> signatures"
+>> +	depends on INTEGRITY_PLATFORM_KEYRING
+>> +	depends on MODULE_SIG
+>> +	help
+>> +	=C2=A0 When selected, keys from .platform keyring can be used for
+>> verifying
+>> +	=C2=A0 modules signatures. In particular, this allows to use UEFI
+>> SecureBoot
+>> +	=C2=A0 'db' for verification.
+>> +
+>> +	=C2=A0 If unsure, say N.
+>> +
+>> =C2=A0config MODULE_COMPRESS
+>> =C2=A0	bool "Module compression"
+>> =C2=A0	help
+>> diff --git a/kernel/module/signing.c b/kernel/module/signing.c
+>> index a2ff4242e623..3327e7243211 100644
+>> --- a/kernel/module/signing.c
+>> +++ b/kernel/module/signing.c
+>> @@ -61,10 +61,17 @@ int mod_verify_sig(const void *mod, struct
+>> load_info *info)
+>> =C2=A0	modlen -=3D sig_len + sizeof(ms);
+>> =C2=A0	info->len =3D modlen;
+>> =C2=A0
+>> -	return verify_pkcs7_signature(mod, modlen, mod + modlen,
+>> sig_len,
+>> +	ret =3D verify_pkcs7_signature(mod, modlen, mod + modlen,
+>> sig_len,
+>> =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 VERIFY_USE_SECONDARY_KEYRING,
+>> =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 VERIFYING_MODULE_SIGNATURE,
+>> =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 NULL, NULL);
+>> +	if (ret =3D=3D -ENOKEY &&
+>> IS_ENABLED(CONFIG_MODULE_SIG_PLATFORM)) {
+>> +		ret =3D verify_pkcs7_signature(mod, modlen, mod +
+>> modlen, sig_len,
+>> +				VERIFY_USE_PLATFORM_KEYRING,
+>> +				VERIFYING_MODULE_SIGNATURE,
+>> +				NULL, NULL);
+>> +	}
+>> +	return ret;
+>> =C2=A0}
+>
+> I don't think this is the correct way to do it.  If, as you say, db is
+> controlled by the end user and therefore has trusted contents, then I
+> think you want to update certs/system_keyring.c to link the platform
+> keyring into the secondary trusted one (like it does today for the
+> machine keyring), so it can be used by *every* application that checks
+> keyrings rather than just modules.
 
-Le 28/05/2025 à 15:48, Aditya Bodkhe a écrit :
-> [Vous ne recevez pas souvent de courriers de adityab1@linux.ibm.com. Découvrez pourquoi ceci est important à https://aka.ms/LearnAboutSenderIdentification ]
-> 
-> From: Aditya Bodkhe <aditya.b1@linux.ibm.com>
-> 
-> commit a1be9ccc57f0 ("function_graph: Support recording and printing the
-> return value of function") introduced support for function graph return
-> value tracing.
-> 
-> Additionally, commit a3ed4157b7d8 ("fgraph: Replace fgraph_ret_regs with
-> ftrace_regs") further refactored and optimized the implementation,
-> making `struct fgraph_ret_regs` unnecessary.
-> 
-> This patch enables the above modifications for powerpc64, ensuring that
-> function graph return value tracing is available on this architecture.
+Yea, that would be the solution I allude to at the end of my cover
+letter: make .platform globally trusted so we don't need the 'trusted
+for kexec', 'trusted for dm-verity' zoo we already have.
 
-Why only powerpc64 ?
+>
+> Also, are you sure a config option is the right thing?  Presumably Red
+> Hat wants to limit its number of kernels and the design of just linking
+> the machine keyring (i.e. MoK) was for the use case where trust is
+> being pivoted away from db by shim, so users don't want to trust the db
+> keys they don't control.  If the same kernel gets used for both
+> situations (trusted and untrusted db) you might want a runtime means to
+> distinguish them.
 
-I see nothing specific to powerpc64 in your patch, will it work on 
-powerpc32 too ?
+I was not personally involved when RH put the patch downstream (and
+wasn't very successful in getting the background story) but it doesn't
+even have an additional Kconfig, e.g.:
+https://gitlab.com/redhat/centos-stream/src/kernel/centos-stream-10/-/commi=
+t/03d4694fa6511132989bac0da11fa677ea5d29f6
+so apparently there's no desire to limit anything, basically, .platform
+is always trusted on Fedora/RHEL systems (for a long time already).
 
-> 
-> After this patch, v6.14+ kernel can also be built with FPROBE on powerpc
-> but there are a few other build and runtime dependencies for FPROBE to
-> work properly. The next patch addresses them.
-> 
-> Signed-off-by: Aditya Bodkhe <aditya.b1@linux.ibm.com>
-> ---
->   arch/powerpc/Kconfig                     |  1 +
->   arch/powerpc/include/asm/ftrace.h        | 15 +++++++++
->   arch/powerpc/kernel/trace/ftrace_entry.S | 41 ++++++++++++++----------
->   3 files changed, 40 insertions(+), 17 deletions(-)
-> 
-> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-> index c3e0cc83f120..9163521bc4b9 100644
-> --- a/arch/powerpc/Kconfig
-> +++ b/arch/powerpc/Kconfig
-> @@ -250,6 +250,7 @@ config PPC
->          select HAVE_FUNCTION_ARG_ACCESS_API
->          select HAVE_FUNCTION_DESCRIPTORS        if PPC64_ELF_ABI_V1
->          select HAVE_FUNCTION_ERROR_INJECTION
-> +       select HAVE_FUNCTION_GRAPH_FREGS
->          select HAVE_FUNCTION_GRAPH_TRACER
->          select HAVE_FUNCTION_TRACER             if !COMPILE_TEST && (PPC64 || (PPC32 && CC_IS_GCC))
->          select HAVE_GCC_PLUGINS                 if GCC_VERSION >= 50200   # plugin support on gcc <= 5.1 is buggy on PPC
-> diff --git a/arch/powerpc/include/asm/ftrace.h b/arch/powerpc/include/asm/ftrace.h
-> index 82da7c7a1d12..6ffc9c9cf4e3 100644
-> --- a/arch/powerpc/include/asm/ftrace.h
-> +++ b/arch/powerpc/include/asm/ftrace.h
-> @@ -50,6 +50,21 @@ static __always_inline struct pt_regs *arch_ftrace_get_regs(struct ftrace_regs *
->                  asm volatile("mfmsr %0" : "=r" ((_regs)->msr)); \
->          } while (0)
-> 
-> +#undef ftrace_regs_get_return_value
-> +static __always_inline unsigned long
-> +ftrace_regs_get_return_value(const struct ftrace_regs *fregs)
-> +{
-> +       return arch_ftrace_regs(fregs)->regs.gpr[3];
-> +}
-> +#define ftrace_regs_get_return_value ftrace_regs_get_return_value
-> +
-> +#undef ftrace_regs_get_frame_pointer
-> +static __always_inline unsigned long
-> +ftrace_regs_get_frame_pointer(const struct ftrace_regs *fregs)
-> +{
-> +       return arch_ftrace_regs(fregs)->regs.gpr[1];
-> +}
-> +
+As part of the RFC, I'd like to try to understand under which conditions
+people may not want to trust 'db'. In the most common use case, 'db' is
+used to authorize shim and the kernel is signed by a cert from shim's
+vendor_db, not trusting 'db' for modules after that seems somawhat
+silly. Maybe we can detect the fact that the user took control over the
+system with MOK and untrust .platform only then (while trusting it by
+default)?
 
-Why unset and redefine ftrace_regs_get_return_value() and 
-ftrace_regs_get_frame_pointer() ? Please explain why the default ones 
-can't be used on powerpc.
+A runtime toggle is not something I thought much about: the sole purpose
+of this part of 'lockdown' (limitimg unsigned modules load) seems to be
+to prevent someone who already has 'root' on the system to gain kernel
+level access to e.g. hide its activities. In case root can decide which
+keys are trusted, isn't it all in vain? Or maybe if the toggle is to
+just trust/not trust .platform (and not e.g. disable signatures
+verification completely, inject a new key,...) this is acceptable?
+Another option is to have a kernel command line parameter but this is
+complicated for users.
 
->   static __always_inline void
->   ftrace_regs_set_instruction_pointer(struct ftrace_regs *fregs,
->                                      unsigned long ip)
-> diff --git a/arch/powerpc/kernel/trace/ftrace_entry.S b/arch/powerpc/kernel/trace/ftrace_entry.S
-> index 3565c67fc638..eafbfb7584ed 100644
-> --- a/arch/powerpc/kernel/trace/ftrace_entry.S
-> +++ b/arch/powerpc/kernel/trace/ftrace_entry.S
-> @@ -409,23 +409,30 @@ EXPORT_SYMBOL(_mcount)
->   _GLOBAL(return_to_handler)
->          /* need to save return values */
->   #ifdef CONFIG_PPC64
-> -       std     r4,  -32(r1)
-> -       std     r3,  -24(r1)
-> +       stdu    r1, -SWITCH_FRAME_SIZE(r1)
-> +       std     r4, GPR4(r1)
-> +       std     r3, GPR3(r1)
-> +  /* Save previous stack pointer (r1) */
-> +       addi    r3, r1, SWITCH_FRAME_SIZE
-> +       std     r3, GPR1(r1)
->          /* save TOC */
-> -       std     r2,  -16(r1)
-> -       std     r31, -8(r1)
-> +       std     r2,  24(r1)
-> +       std     r31, 32(r1)
->          mr      r31, r1
-> -       stdu    r1, -112(r1)
-> -
-> +  /* pass ftrace_regs/pt_regs to ftrace_return_to_handler */
-> +       addi    r3,  r1, STACK_INT_FRAME_REGS
-
-Some of the changes seems to only be renaming and should be done in a 
-cleanup/preparatory patch in order to only focus on real necessary 
-changes in this patch.
-
->          /*
->           * We might be called from a module.
->           * Switch to our TOC to run inside the core kernel.
->           */
->          LOAD_PACA_TOC()
->   #else
-> -       stwu    r1, -16(r1)
-> -       stw     r3, 8(r1)
-> -       stw     r4, 12(r1)
-> +       stwu    r1, -SWITCH_FRAME_SIZE(r1)
-
-Why do we need such a big frame size just to save two registers ?
-
-> +       stw     r4, GPR4(r1)
-> +       stw     r3, GPR3(r1)
-> +       addi    r3, r1, SWITCH_FRAME_SIZE
-> +       stw     r3, GPR1(r1)
- > +       addi    r3, r1, STACK_INT_FRAME_REGS
-
-Why is this needed ?
-
->   #endif
-> 
->          bl      ftrace_return_to_handler
-> @@ -435,15 +442,15 @@ _GLOBAL(return_to_handler)
->          mtlr    r3
-> 
->   #ifdef CONFIG_PPC64
-> -       ld      r1, 0(r1)
-> -       ld      r4,  -32(r1)
-> -       ld      r3,  -24(r1)
-> -       ld      r2,  -16(r1)
-> -       ld      r31, -8(r1)
-> +       ld      r4,  GPR4(r1)
-> +       ld      r3,  GPR3(r1)
-> +       ld      r2,  24(r1)
-> +       ld      r31, 32(r1)
-> +       ld      r1,  0(r1)
->   #else
-> -       lwz     r3, 8(r1)
-> -       lwz     r4, 12(r1)
-> -       addi    r1, r1, 16
-> +       lwz     r3, GPR3(r1)
-> +       lwz     r4, GPR4(r1)
-> +       addi    r1, r1, SWITCH_FRAME_SIZE
->   #endif
-> 
->          /* Jump back to real return address */
-> --
-> 2.43.5
-> 
+--=20
+Vitaly
 
 
