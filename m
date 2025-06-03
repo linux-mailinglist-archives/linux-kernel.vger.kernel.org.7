@@ -1,49 +1,80 @@
-Return-Path: <linux-kernel+bounces-671936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7149ACC89E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 16:00:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4910ACC8A4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 16:01:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B650317443E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 14:00:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C08B31895A54
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 14:01:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8D7A233707;
-	Tue,  3 Jun 2025 14:00:48 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 682002AE8D;
-	Tue,  3 Jun 2025 14:00:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64635238C36;
+	Tue,  3 Jun 2025 14:01:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hX/ulD3n"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86DB8230268;
+	Tue,  3 Jun 2025 14:01:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748959248; cv=none; b=rxSJBnEKulggEVPUcvCkR7OJ5lPkectxabqYv2yASVr5iYzT9q2rZ5Skb0DMyOGGMvoU7T0Ryccbgw2gNTG3jdqWR5d67bUQZU+8xN/8ytUcV+O+ezvVaz+vIQ54/Gr/8BXL6YgeIx/qfkKzmZgMab726yuy0ThwhTc9CioCrvo=
+	t=1748959279; cv=none; b=OD5mQbsRSakcS5C53SOosvGNBqitihi8TKLfRulVjLXMz1qq0IvTCjllcGCEfao2TV9oKoYjYWMor5J1FeWsuAiZguedpnpqgiyrx0mtx2zyzg6C6DiCmtjzjR5jH9NhwbNSUUhxtv1S4/ps41oMzvt86XPjQ7U1IdSvLCUbFBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748959248; c=relaxed/simple;
-	bh=LfQhyG+gAeQ7nIAhOL9ZjWWzy98MrKRoup70yuP6NiY=;
+	s=arc-20240116; t=1748959279; c=relaxed/simple;
+	bh=3q0Obe4Cn9KiuhkbJK81hf7Mt1MlSJlm7+3onifiVyc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nqvVWvM9twwjcMGUqenUoEDsQlKNZK1Sv+dr/6u3+hIrNFsoecQSPEqKKlbFJIol9pdDTOIARBCddT2VQ0f7lUPpbwHReJA4bu0YDFn5jzd5MBW2nV1U+1yCGVs/h9YECOX9gel2xYKGbdRbSIBvaOqZMInabgoCWVZF18io2wY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8D88012FC;
-	Tue,  3 Jun 2025 07:00:28 -0700 (PDT)
-Received: from localhost (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EC7D73F5A1;
-	Tue,  3 Jun 2025 07:00:44 -0700 (PDT)
-Date: Tue, 3 Jun 2025 15:00:40 +0100
-From: Leo Yan <leo.yan@arm.com>
-To: Yeoreum Yun <yeoreum.yun@arm.com>
-Cc: peterz@infradead.org, mingo@redhat.com, mingo@kernel.org,
-	acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org, David Wang <00107082@163.com>
-Subject: Re: [PATCH 1/1] perf/core: fix dangling cgroup pointer in cpuctx
-Message-ID: <20250603140040.GB8020@e132581.arm.com>
-References: <20250602184049.4010919-1-yeoreum.yun@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BJLq0t77hqn4iJ6ic2eI4GNe9lpQffUh8S87PvWSxVfCSo7t2hMHNLNq+jpPnSwH/DlP0UBSXcxJMYs/yMNyo1xXdeFJspQrUfY1pXMA2wDaYkK+vcmxBJpVh1ZR2sIDmkgy+o0LfXqCaWjcIDFoJUbUGydniP6TkcjJmOr9RMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hX/ulD3n; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1748959276; x=1780495276;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=3q0Obe4Cn9KiuhkbJK81hf7Mt1MlSJlm7+3onifiVyc=;
+  b=hX/ulD3nsKTvvtGTE4P6egq7KjsvK8RlTdtGxdW2VCoOJU4Ws8y8cfSY
+   ACeeF8rdziLBHWq37XhaT7LPAl8jEOGmHX7/dEso0jKZHqxMY5ble39Gk
+   nAldIjf5JN+EjV4ePCGQWFGOzRlRuexUvEoXKoFh+U3MoX8liV3Tz6GDh
+   Xq6lTUsEHo0S7UhAotLI7iVOHd3L5QEWzm3oIB5tumAnaF6F8HhA9lPJG
+   APxXZX1+y5Q8mERJsvwPB55qGu3/AVIAvhdQCBp0q+gnuJuHJjN7Q+ado
+   HLDVITfgdffpxeS0hId9Nf067hX8s4kTJclw0Jm1S6wM/V6ARXfi7tW9P
+   Q==;
+X-CSE-ConnectionGUID: iHXR31chRJemZ2j6A2Tz2w==
+X-CSE-MsgGUID: CbeBxpZ4Q4OckJ/1W/EamA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11453"; a="50917607"
+X-IronPort-AV: E=Sophos;i="6.16,206,1744095600"; 
+   d="scan'208";a="50917607"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2025 07:01:15 -0700
+X-CSE-ConnectionGUID: 7a90o6iiTQC8JluBJZh12A==
+X-CSE-MsgGUID: JX6gQmiOR4GZElohKVUDVw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,206,1744095600"; 
+   d="scan'208";a="144898424"
+Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
+  by orviesa009.jf.intel.com with ESMTP; 03 Jun 2025 07:01:11 -0700
+Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uMSCS-0002Uz-2q;
+	Tue, 03 Jun 2025 14:01:08 +0000
+Date: Tue, 3 Jun 2025 22:00:43 +0800
+From: kernel test robot <lkp@intel.com>
+To: Marcelo Schmitt <marcelo.schmitt@analog.com>, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev,
+	Ana-Maria Cusco <ana-maria.cusco@analog.com>, jic23@kernel.org,
+	lars@metafoo.de, Michael.Hennerich@analog.com,
+	dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	linus.walleij@linaro.org, brgl@bgdev.pl, marcelo.schmitt1@gmail.com
+Subject: Re: [PATCH v4 02/11] iio: adc: Add basic support for AD4170
+Message-ID: <202506032131.wuzW0a3k-lkp@intel.com>
+References: <e79f9a126672b33b8a7c01f650fee43a68c74029.1748829860.git.marcelo.schmitt@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,107 +83,81 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250602184049.4010919-1-yeoreum.yun@arm.com>
+In-Reply-To: <e79f9a126672b33b8a7c01f650fee43a68c74029.1748829860.git.marcelo.schmitt@analog.com>
 
-Hi Levi,
+Hi Marcelo,
 
-On Mon, Jun 02, 2025 at 07:40:49PM +0100, Yeoreum Yun wrote:
-> commit a3c3c6667("perf/core: Fix child_total_time_enabled accounting bug at task exit")
-> changes the event->state update before list_del_event().
-> This change prevents calling perf_cgroup_event_disable() as a result,
-> cpuctx->cgrp can't be cleared properly and point to dangling point of cgroup.
-> 
-> Because of this problem, some machin meets the below panic[0]:
-> 
-> 863.881960] sysved_call_function_sing le+0x4c/0xc0
-> 863.881301] asm_sysvec_call_function_single+0x16/0x20
-> 869.881344] RIP: 0633:0x7f9alcea3367
-> 663.681373] Code: 00 66 99 b8 ff ff ff ff c3 66 ....
-> 863.881524] RSP: 002b:00007fffa526fcf8 EFLAGS: 00000246
-> 869.881567] RAX: 0000562060c962d0 RBX: 0000000000000002 RCX: 00007f9a1cff1c60
-> 863.881625] RDX: 00007f9a0c000030 RSI: 00007f9alcff1c60 RDI: 00007f9a1ca91c20
-> 863.081682] RBP: 0000000000000001 R08: 0000000000000000 R09: 00007f9a1d6217a0
-> 869.881740] R10: 00007f9alca91c10 R11: 0000000000000246 R12: 00007f9a1d70c020
-> 869.881798] R13: 00007fffa5270030 R14: 00007fffa526fd00 R15: 0000000000000000
-> 863.881860] </TASK>
-> 863.881876) Modules linked in: snd_seq_dummy (E) snd_hrtimer (E)...
-> ...
-> 863.887142] button (E)
-> 863.912127] CR2: ffffe4afcc079650
-> 863.914593] --- [ end trace 0000000000000000 1--
-> 864.042750] RIP: 0010:ctx_sched_out+0x1ce/0x210
-> 864.045214] Code: 89 c6 4c 8b b9 de 00 00 00 48 ...
-> 864.050343] RSP: 0000:ffffaa4ec0f3fe60 EFLAGS: 00010086
-> 864.052929] RAX: 0000000000000002 RBX: ffff8e8eeed2a580 RCX: ffff8e8bded9bf00
-> 864.055518] RDX: 000000c92340b051 RSI: 000000c92340b051 RDI: ffff
-> 864.058093] RBP: 0000000000000000 R08: 0000000000000002 R09: 00
-> 864.060654] R10: 0000000000000000 R11: 0000000000000000 R12: 000
-> 864.063183] R13: ffff8e8eeed2a580 R14: 0000000000000007 R15: ffffe4afcc079650
-> 864.065729] FS: 00007f9a1ca91940 (0000) GS:ffff8e8f6b1c3000(0000) knIGS:0000000000000000
-> 864.068312] CS: 0010 DS: 0000 ES: 0000 CRO: 0000000080050033
-> 864.070898] CR2: ffffe4afcc079650 CR3: 00000001136d8000 CR4: 0000000000350ef0
-> 864.673523] Kernel panic - not syncing: Fatal exception in interrupt
-> 864.076410] Kernel Offset: 0xc00000 from 0xffffffff81000000 (relocation range: 0xff
-> 864.205401] --- [ end Kernel panic - not syncing: Fatal exception in interrupt ]---
-> 
-> To address this call the perf_cgroup_event_disable() properly before
-> list_del_event() in __perf_remove_from_context().
-> 
-> Link: https://lore.kernel.org/all/aD2TspKH%2F7yvfYoO@e129823.arm.com/ [0]
-> Fixes: a3c3c6667("perf/core: Fix child_total_time_enabled accounting bug at task exit")
-> Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
-> Tested-by: David Wang <00107082@163.com>
-> ---
->  kernel/events/core.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index f34c99f8ce8f..909b9d5a65c1 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -2498,6 +2498,10 @@ __perf_remove_from_context(struct perf_event *event,
->  		state = PERF_EVENT_STATE_DEAD;
->  	}
->  	event_sched_out(event, ctx);
-> +
-> +	if (event->state > PERF_EVENT_STATE_OFF)
-> +		perf_cgroup_event_disable(event, ctx);
-> +
+kernel test robot noticed the following build warnings:
 
-As we discussed, seems to me, the issue is caused by an ambigous state
-machine transition:
+[auto build test WARNING on c06335516e8c14f501a479a4d9de0e6c09c52ef2]
 
-When a PMU event state is PERF_EVENT_STATE_EXIT, the current code does
-not transite the state to PERF_EVENT_STATE_OFF. As a result, the
-list_del_event() function skips to clean up cgroup pointer for non OFF
-states. This is different from the code prior to the commit a3c3c6667,
-which transits states EXIT -> INACTIVE -> OFF.
+url:    https://github.com/intel-lab-lkp/linux/commits/Marcelo-Schmitt/dt-bindings-iio-adc-Add-AD4170/20250603-105744
+base:   c06335516e8c14f501a479a4d9de0e6c09c52ef2
+patch link:    https://lore.kernel.org/r/e79f9a126672b33b8a7c01f650fee43a68c74029.1748829860.git.marcelo.schmitt%40analog.com
+patch subject: [PATCH v4 02/11] iio: adc: Add basic support for AD4170
+config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20250603/202506032131.wuzW0a3k-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250603/202506032131.wuzW0a3k-lkp@intel.com/reproduce)
 
-My suggestion is not reliable. Roughly read code, except for the
-PERF_EVENT_STATE_EXIT case, I think other error cases should also clean
-up the cgroup pointer.  The reason is I don't see other places to
-clean up the cgroup pointer for these error cases:
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202506032131.wuzW0a3k-lkp@intel.com/
 
-  PERF_EVENT_STATE_REVOKED
-  PERF_EVENT_STATE_DEAD
+All warnings (new ones prefixed by >>):
 
-Only in the PERF_EVENT_STATE_ERROR state, we don't need to cleanup
-cgroup as this has already been handled in merge_sched_in().
+   drivers/iio/adc/ad4170.c: In function 'ad4170_parse_reference':
+>> drivers/iio/adc/ad4170.c:1130:13: warning: variable 'ret' set but not used [-Wunused-but-set-variable]
+    1130 |         int ret;
+         |             ^~~
 
-So a correct condition would be:
 
-    if (event->state > PERF_EVENT_STATE_OFF ||
-        event->state <= PERF_EVENT_STATE_EXIT)
-        perf_cgroup_event_disable(event, ctx);
+vim +/ret +1130 drivers/iio/adc/ad4170.c
 
-And we need to remove the perf_cgroup_event_disable() from
-list_del_event() to avoid duplicate code.
+  1124	
+  1125	static int ad4170_parse_reference(struct ad4170_state *st,
+  1126					  struct fwnode_handle *child,
+  1127					  struct ad4170_setup *setup)
+  1128	{
+  1129		struct device *dev = &st->spi->dev;
+> 1130		int ret;
+  1131		u32 aux;
+  1132	
+  1133		/* Optional positive reference buffering */
+  1134		aux = AD4170_REF_BUF_FULL; /* Default to full precharge buffer enabled. */
+  1135		fwnode_property_read_u32(child, "adi,positive-reference-buffer", &aux);
+  1136		if (aux < AD4170_REF_BUF_PRE || aux > AD4170_REF_BUF_BYPASS)
+  1137			return dev_err_probe(dev, -EINVAL,
+  1138					     "Invalid adi,positive-reference-buffer: %u\n",
+  1139					     aux);
+  1140	
+  1141		setup->afe |= FIELD_PREP(AD4170_AFE_REF_BUF_P_MSK, aux);
+  1142	
+  1143		/* Optional negative reference buffering */
+  1144		aux = AD4170_REF_BUF_FULL; /* Default to full precharge buffer enabled. */
+  1145		fwnode_property_read_u32(child, "adi,negative-reference-buffer", &aux);
+  1146		if (aux < AD4170_REF_BUF_PRE || aux > AD4170_REF_BUF_BYPASS)
+  1147			return dev_err_probe(dev, -EINVAL,
+  1148					     "Invalid adi,negative-reference-buffer: %u\n",
+  1149					     aux);
+  1150	
+  1151		setup->afe |= FIELD_PREP(AD4170_AFE_REF_BUF_M_MSK, aux);
+  1152	
+  1153		/* Optional voltage reference selection */
+  1154		aux = AD4170_REF_REFOUT; /* Default reference selection. */
+  1155		ret = fwnode_property_read_u32(child, "adi,reference-select", &aux);
+  1156		if (aux > AD4170_REF_AVDD)
+  1157			return dev_err_probe(dev, -EINVAL,
+  1158					     "Invalid reference selected %u\n",
+  1159					     aux);
+  1160	
+  1161		setup->afe |= FIELD_PREP(AD4170_AFE_REF_SELECT_MSK, aux);
+  1162	
+  1163		return 0;
+  1164	}
+  1165	
 
-Perhaps a better approach for code consolidation would be to modify
-the conditions in list_del_event() to ensure the cgroup pointer is
-cleaned up in error cases. However, I'm not confident that this is the
-correct direction, so I would wait for suggestions from the maintainers.
-
-Thanks,
-Leo
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
