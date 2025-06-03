@@ -1,127 +1,133 @@
-Return-Path: <linux-kernel+bounces-671945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83CFAACC8C6
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 16:09:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAE12ACC8D2
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 16:10:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 815BA3A7226
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 14:08:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70C0216A1B5
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 14:09:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BCD8239E9F;
-	Tue,  3 Jun 2025 14:08:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD472239096;
+	Tue,  3 Jun 2025 14:08:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="AuUCoHVF"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e9mXz4Wf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C8B4239090;
-	Tue,  3 Jun 2025 14:08:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A30B231835
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 14:08:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748959706; cv=none; b=pWYG6b0LfwCoFS/2dTkEOaQJ1a0y5o+z2U9OBEqDlPKrP6/FgqwsEIVPIYE8ReLjbQ6PB/y8LR784sMIGPfhhy+0yVWoXmQKCVdmjfJEL9Tn/un+zPhXfMBU+BlImkUFjnl7CZkC7rL4cGdVyGerJEJDr9oLgU30hsEjcJnUw5U=
+	t=1748959739; cv=none; b=XU6f93yQVpdNlBosN55mpUHVRvNhUpN8TChQmYy9U2TgAqIoszucmKxLi2tLakFprK+NRgw2vjQi2WYGaAxSk+9OR7FIud+oiPCJ3XfGRGKbJeRDLLgL9+dgcSP1GbrYbi3x/jy/f7Es7zj1xQxvYerNSBL8+yqjoD7fNjLpEYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748959706; c=relaxed/simple;
-	bh=IGHl6mgtMPm/WARHB875ORoxrLBWMkfhUmfHv0MTJb8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=n7KyDlfNGXTmCQnKtzvyUNJs49q4KsNBjrHuJsDQy3eFLsfA1VmCqBestUJuJOKx55rIpjMZxFOueaXxhjwDJVD4uoQLsL/Drj+luqfbcBQ+4SJtcXFql3QYuuZ1m2P4zu7qzp8WQf5Q1bYfpaJbQXiPKAGgVHvwDubUZIniDr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=AuUCoHVF; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 00F8241ED0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1748959703; bh=kPV8PzmODhGoCbC5F8Uzo9NG4JabbIz25OZ6D+Zy0Y0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=AuUCoHVFyP/+6UWarP9xJqL7C2WXKUBUpyIAN0K4+AG0tawllQExHgh2sRNEpcEuR
-	 6s4Ttz3NjxVz42xza4rj5t/zXrJIUqVOyRGhRBzKZE7OPMyQMaMqwAp7aQNZ67azwX
-	 9SqQj/7Z80bRxCRiX8xwXhtQYKBA0zaDvOkn7F/bA73Hre/11vG5oGssvzxui9xXlQ
-	 5zQB2rgfcezVs+0CLAHJ4jUVooRvD/FrIPpjkcGwwUDpkUPwkQG0d8p5WiH05MwhP+
-	 M565Ol68KibHzRpc1nXPqpjWFvsr+b9tBjWPHOexXBdAYTpTboiEMNzBtNwUHcFA8b
-	 9ir1HmuW1S2IA==
-Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 00F8241ED0;
-	Tue,  3 Jun 2025 14:08:22 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Suren Baghdasaryan
- <surenb@google.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Shakeel Butt <shakeel.butt@linux.dev>,
- Jann Horn <jannh@google.com>, Qi Zheng <zhengqi.arch@bytedance.com>,
- linux-mm@kvack.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] docs/mm: expand vma doc to highlight pte freeing,
- non-vma traversal
-In-Reply-To: <9fc9ac50-abce-48bd-979f-2e00b26917b5@lucifer.local>
-References: <20250602210710.106159-1-lorenzo.stoakes@oracle.com>
- <87bjr59634.fsf@trenco.lwn.net>
- <9fc9ac50-abce-48bd-979f-2e00b26917b5@lucifer.local>
-Date: Tue, 03 Jun 2025 08:08:22 -0600
-Message-ID: <8734cg9auh.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1748959739; c=relaxed/simple;
+	bh=OlwtmLY1WNbhrrXFyRfa7IAa9h6HaHr459rqJj8wtLk=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UUTYlPoJ+hML7tumHwk/pnfAZbEON6rVpj7hH6+aj6fUx4dXL0XS5ZXRHxyIIhIlKmDkSPAcOrBhPBlKLk2QVwNG5s0ZUnc+puoQR7xTJxzJtoOA8K2lGzp66LS4gylAO14voCgi8dVfiK/TvRbDtblYe7CniKvTpg7dnaubSIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e9mXz4Wf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7E17C4CEED;
+	Tue,  3 Jun 2025 14:08:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748959738;
+	bh=OlwtmLY1WNbhrrXFyRfa7IAa9h6HaHr459rqJj8wtLk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=e9mXz4WfQJHliuVYxmJFfPPB/T39ya3TyRloaF7hBQ26SCILVz4H6Z9XY6hegwwcp
+	 V4ymDCr9RBza6v8mbG7uUFBfOpSR/xVnUdxVHbqE7kyUEFWk70OW+KyDXiq58FnK55
+	 LzvEE/EpF2/0ZO39svzhL8HwoEsZV3b/qM5Ock6DNhX5p3Zh84qADYS9vNxsYO/Vub
+	 euwo+WEtFMjtt4REvSUX6Duuy5a534vNBBYfPF2OMozlCmxgYvIBDEto2+MRhTum7n
+	 w7aYC1Jy47sC/V9gnBJ83+XGdYskPT0hnItTeZp9OtP01YJPrHBNfg9ztHUQSJ0VLG
+	 BSLbR6Yplp3jw==
+Received: from [149.88.19.236] (helo=lobster-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1uMSK0-002rHL-6y;
+	Tue, 03 Jun 2025 15:08:56 +0100
+Date: Tue, 03 Jun 2025 15:08:54 +0100
+Message-ID: <87frggex3d.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Lorenzo Pieralisi <lpieralisi@kernel.org>
+Cc: Zenghui Yu <yuzenghui@huawei.com>,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Sascha Bischoff <sascha.bischoff@arm.com>,
+	Timothy Hayes <timothy.hayes@arm.com>
+Subject: Re: [PATCH v2 3/5] genirq/msi: Move prepare() call to per-device allocation
+In-Reply-To: <87h60wexch.wl-maz@kernel.org>
+References: <20250513163144.2215824-1-maz@kernel.org>
+	<20250513163144.2215824-4-maz@kernel.org>
+	<0b1d7aec-1eac-a9cd-502a-339e216e08a1@huawei.com>
+	<87ldq9dm54.wl-maz@kernel.org>
+	<aD741hI7MfTmi7Rl@lpieralisi>
+	<87h60wexch.wl-maz@kernel.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 149.88.19.236
+X-SA-Exim-Rcpt-To: lpieralisi@kernel.org, yuzenghui@huawei.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, tglx@linutronix.de, sascha.bischoff@arm.com, timothy.hayes@arm.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Lorenzo Stoakes <lorenzo.stoakes@oracle.com> writes:
+On Tue, 03 Jun 2025 15:03:26 +0100,
+Marc Zyngier <maz@kernel.org> wrote:
+> 
+> On Tue, 03 Jun 2025 14:29:58 +0100,
+> Lorenzo Pieralisi <lpieralisi@kernel.org> wrote:
+> > 
+> > > +	if (!pci_setup_msi_device_domain(dev, nvec))
+> > 
+> > If pci_msi_vec_count(dev) > maxvec we would cap nvec and size the
+> > domain with the capped value.
+> > 
+> > In __pci_enable_msix_range() we are sizing the device according to
+> > pci_msix_vec_count(dev) regardless of maxvec, if I read the code correctly.
+> > 
+> > While fixing it it would be good to make them consistent unless there is
+> > a reason why they should not.
+> 
+> This is indeed odd, but that'd be a separate fix. Something like:
+> 
+> diff --git a/drivers/pci/msi/msi.c b/drivers/pci/msi/msi.c
+> index 2090eef64b14..6ede55a7c5e6 100644
+> --- a/drivers/pci/msi/msi.c
+> +++ b/drivers/pci/msi/msi.c
+> @@ -439,9 +439,6 @@ int __pci_enable_msi_range(struct pci_dev *dev, int minvec, int maxvec,
+>  	if (nvec < minvec)
+>  		return -ENOSPC;
+>  
+> -	if (nvec > maxvec)
+> -		nvec = maxvec;
+> -
+>  	rc = pci_setup_msi_context(dev);
+>  	if (rc)
+>  		return rc;
+> @@ -449,6 +446,9 @@ int __pci_enable_msi_range(struct pci_dev *dev, int minvec, int maxvec,
+>  	if (!pci_setup_msi_device_domain(dev, nvec))
+>  		return -ENODEV;
+>  
+> +	if (nvec > maxvec)
+> +		nvec = maxvec;
+> +
+>  	for (;;) {
+>  		if (affd) {
+>  			nvec = irq_calc_affinity_vectors(minvec, nvec, affd);
+> 
 
-> On Mon, Jun 02, 2025 at 03:38:55PM -0600, Jonathan Corbet wrote:
->> Lorenzo Stoakes <lorenzo.stoakes@oracle.com> writes:
->>
->> > --- a/Documentation/mm/process_addrs.rst
->> > +++ b/Documentation/mm/process_addrs.rst
->> > @@ -303,7 +303,9 @@ There are four key operations typically performed on page tables:
->> >  1. **Traversing** page tables - Simply reading page tables in order to traverse
->> >     them. This only requires that the VMA is kept stable, so a lock which
->> >     establishes this suffices for traversal (there are also lockless variants
->> > -   which eliminate even this requirement, such as :c:func:`!gup_fast`).
->> > +   which eliminate even this requirement, such as :c:func:`!gup_fast`). There is
->> > +   also a special case of page table traversal for non-VMA regions which we
->>
->> The "!gup_fast" caught my attention - I was unaware that Sphinx had such
->> a thing.  Its purpose would be to appear to suppress the generation of the
->> link that turns the cross reference into a cross reference.
->>
->> The MM docs are full of these, do we know why?
->
-> Removing it from the struct vm_area_struct struct immediately give:
->
-> /home/lorenzo/kerndev/kernels/mm/Documentation/mm/process_addrs.rst:11: WARNING: Unparseable C cross-reference: 'struct vm_area_struct'
-> Invalid C declaration: Expected identifier in nested name, got keyword: struct [error at 6]
->   struct vm_area_struct
->
-> And given C's weirdness with typing I really prefer to be explicit in
-> referencing a struct vs. e.g. a typedef.
+Actually, let's lump the two together. There is no reason to wait.
 
-That's because the :c:struct: markup doesn't want the word "struct" in
-there.  In this case, the "!" is being used, essentially, to hide the
-fact that the Sphinx markup is being entirely misused here.  You would
-be far better off just saying:
+	M.
 
-  **struct vm_area_struct**
-
-and avoiding the uglier markup in this case.
-
-Once again, taking out the markup entirely will cause the automarkup
-code to do the right thing, with the proviso that undocumented
-structures (which, tragically, includes struct vm_area_struct) won't be
-marked up in the current implementation.  By far the best solution here
-is to remove all of the markup and add a kerneldoc comment for this
-rather important structure.
-
-> At any rate I'm not sure it's all that useful to cross-reference these?
-
-Why would you *not* want to cross-reference something and make life easier
-for your reader?
-
-Thanks,
-
-jon
+-- 
+Jazz isn't dead. It just smells funny.
 
