@@ -1,115 +1,192 @@
-Return-Path: <linux-kernel+bounces-671878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0887ACC7A4
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 15:22:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65622ACC7AA
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 15:23:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D6E8189516F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 13:22:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0ED616D0AF
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 13:23:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CF6F23184E;
-	Tue,  3 Jun 2025 13:22:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E94A231845;
+	Tue,  3 Jun 2025 13:23:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NzT5xA3O"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="C2El2JD9"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5C001A08AF;
-	Tue,  3 Jun 2025 13:22:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43623230BD4;
+	Tue,  3 Jun 2025 13:22:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748956929; cv=none; b=IeGedlJK3750FozwyuVrcn2lbs1hnoaZrmUs4lBFx41RwgBrJwV4OoZ4cykuGcmh/JY3Y+dngLWUKcYAeUunPAddG7L+KS2hGdli4uDfUUTLyW9ursyn7cgB4wmxsQVWIXv2KSD4+enX04EnBtDFDjLwmlkO4FRVlyZ5fBqEiZE=
+	t=1748956981; cv=none; b=Jql+3PZTvZZx/6EH1p9yhbTbK6qIpImbfgjcbeS8PwLwmBkJ+I+ZeI1CHIgg4Jd5deUQK4o+seU6MIqbLJoaRkAgSU3ZPLqDfEUbWCarvTvE4X/EcbyDiYnqvx4xLyfUkGldN517g//grtuonmJjSCAhRvYfTHfttm5mjpMeLQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748956929; c=relaxed/simple;
-	bh=AeP+iL5P7qpLgfVgmLcOenednHQMm95Ci593umBxRE8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=APqPR9Ryj4OPWNgCPgp4isyAYcxVq7OZBuihFviE089O9PesD6WBEbLexK5l0bksSQZEBWalVQx6qUr3lmrfm6TK/x5IXrLXVoFsrh9JI7N2/DyvFhvT9O3swZaf3cRZ0AjEYzFpe+t+KFQ4lr+Masg5W9ueWZ1dwSiyxNn7Nko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NzT5xA3O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0281C4CEED;
-	Tue,  3 Jun 2025 13:22:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748956928;
-	bh=AeP+iL5P7qpLgfVgmLcOenednHQMm95Ci593umBxRE8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NzT5xA3OmAdEgRSvkvLt9CI1a+FbVuq2tkARJG7t186qPTmQtIBAqDj3Riq4lYU3X
-	 hh7augS36aqONwII4MdyqFp8Cm0MD4oq5vTNoinNv5wPB7eOOpd536RG+bbiYTK5fU
-	 K66Hai7QwRu4Vd/vvPeiQ7XJul0Soe/BtUzqMzGPus5AxEvZiewHu58dhX+CGt2Ex6
-	 RKOYR23e8jQSTbxbSF6/Pc9+FiFjqXXDCViGzSGgQpFpHdXF8nKtO0GZoXA+SHtT5r
-	 abxL40K0qMXZ0aTcHfXbJ+gjEz+wN6rXdMoxE5XeYkzO8gooxbgalqtlwh4GoCAvzF
-	 KjN/DUfmd3fRQ==
-Date: Tue, 3 Jun 2025 15:22:05 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>, 
-	Fu Wei <wefu@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Frank Binns <frank.binns@imgtec.com>, Matt Coster <matt.coster@imgtec.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Alexandre Ghiti <alex@ghiti.fr>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	Marek Szyprowski <m.szyprowski@samsung.com>, linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v3 6/8] riscv: dts: thead: Add GPU power sequencer node
-Message-ID: <20250603-gleaming-mammoth-of-kindness-538add@kuoka>
-References: <20250530-apr_14_for_sending-v3-0-83d5744d997c@samsung.com>
- <CGME20250529222408eucas1p20f62cea4c9c64bb5dda6db1fd38fb333@eucas1p2.samsung.com>
- <20250530-apr_14_for_sending-v3-6-83d5744d997c@samsung.com>
+	s=arc-20240116; t=1748956981; c=relaxed/simple;
+	bh=fnkZG4fUiYH27YYi3be0ESBZWsoCI9tzkPb/0NiZcAI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uaiAAX5pSrG8hIwqNvcZ77ekOrTADE2rZ0HVs68kK1q7irXUpVae3jKeSrVItpj0ySzUR7gctD+2A6Tw7wnShRLMqliCj2Vl3TV+vzIerrKQhyt+lQC5kgKxzDpsXu5I9+VX8lsaTE9DtNTuTzFuuKMLi+9IM9n09XFn6MSrbGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=C2El2JD9; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=xNyEHGRWVx5wQoM6WyQwXxbRi5u/oo3Fp4uebsLvVr8=; b=C2El2JD95SXo0DjUQ7L0MjuYsZ
+	7Nz5V1iSmhvrKwxeiajVqXxDSpU3mizBRhAyhDU9GOWonsXqlMBXAS8JZObbI9n4Ck4lK6wMVD6PQ
+	2ArpJVxTGZ9YCC0WIIADiwCfzLwN2TuRGkWSDbOk52LSlmKnkJCTcMho10kovOQ1RBD0+pwn0c4/X
+	BawfQN7ZNNnhUqisXaJKmzwKuDAHbOYCDKjM54VUqtO4y5cYxy8K5gilleeETdS7fExv8WjTBLjDn
+	Z9rj11Gk/J3t/i2Fy2m0Loz+y20CqYu8vjFE1p1XRx0RXtYaEVT0jVWfwEdDOY8GBuQfWHnYT+0EK
+	KVcUhMPA==;
+Received: from [81.79.92.254] (helo=[192.168.0.101])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1uMRbB-00GgkT-V3; Tue, 03 Jun 2025 15:22:38 +0200
+Message-ID: <f65d9f96-68f8-4883-b6bd-20bf5b145cb9@igalia.com>
+Date: Tue, 3 Jun 2025 14:22:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250530-apr_14_for_sending-v3-6-83d5744d997c@samsung.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 1/6] drm/sched: Avoid memory leaks with cancel_job()
+ callback
+To: Philipp Stanner <phasta@kernel.org>, Lyude Paul <lyude@redhat.com>,
+ Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Matthew Brost <matthew.brost@intel.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Sumit Semwal <sumit.semwal@linaro.org>,
+ Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
+Cc: dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
+References: <20250603093130.100159-2-phasta@kernel.org>
+ <20250603093130.100159-3-phasta@kernel.org>
+Content-Language: en-GB
+From: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
+In-Reply-To: <20250603093130.100159-3-phasta@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, May 30, 2025 at 12:23:53AM GMT, Michal Wilczynski wrote:
-> Add the device tree node for the T-HEAD TH1520 GPU power sequencer
-> (gpu_pwrseq) to the th1520.dtsi file.
+
+On 03/06/2025 10:31, Philipp Stanner wrote:
+> Since its inception, the GPU scheduler can leak memory if the driver
+> calls drm_sched_fini() while there are still jobs in flight.
 > 
-> This node instantiates the thead,th1520-gpu-pwrseq driver, which
-
-Explain the hardware, not what drivers do.
-
-> is responsible for managing the GPU's power-on/off sequence. The node
-> specifies the gpu-clkgen reset, which is one of the resources
-> controlled by this sequencer.
+> The simplest way to solve this in a backwards compatible manner is by
+> adding a new callback, drm_sched_backend_ops.cancel_job(), which
+> instructs the driver to signal the hardware fence associated with the
+> job. Afterwards, the scheduler can savely use the established free_job()
+> callback for freeing the job.
 > 
-> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+> Implement the new backend_ops callback cancel_job().
+> 
+> Suggested-by: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
+> Signed-off-by: Philipp Stanner <phasta@kernel.org>
 > ---
->  arch/riscv/boot/dts/thead/th1520.dtsi | 6 ++++++
->  1 file changed, 6 insertions(+)
+>   drivers/gpu/drm/scheduler/sched_main.c | 34 ++++++++++++++++----------
+>   include/drm/gpu_scheduler.h            |  9 +++++++
+>   2 files changed, 30 insertions(+), 13 deletions(-)
 > 
-> diff --git a/arch/riscv/boot/dts/thead/th1520.dtsi b/arch/riscv/boot/dts/thead/th1520.dtsi
-> index bdbb1b985b0b76cf669a9bf40c6ec37258329056..6170eec79e919b606a2046ac8f52db07e47ef441 100644
-> --- a/arch/riscv/boot/dts/thead/th1520.dtsi
-> +++ b/arch/riscv/boot/dts/thead/th1520.dtsi
-> @@ -238,6 +238,12 @@ aon: aon {
->  		#power-domain-cells = <1>;
->  	};
->  
-> +	gpu_pwrseq: pwrseq {
+> diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/scheduler/sched_main.c
+> index d20726d7adf0..3f14f1e151fa 100644
+> --- a/drivers/gpu/drm/scheduler/sched_main.c
+> +++ b/drivers/gpu/drm/scheduler/sched_main.c
+> @@ -1352,6 +1352,18 @@ int drm_sched_init(struct drm_gpu_scheduler *sched, const struct drm_sched_init_
+>   }
+>   EXPORT_SYMBOL(drm_sched_init);
+>   
+> +static void drm_sched_kill_remaining_jobs(struct drm_gpu_scheduler *sched)
 
-Node names should be generic. See also an explanation and list of
-examples (not exhaustive) in DT specification:
-https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+Only some bikeshedding comments, no need to act on them.
 
-> +		compatible = "thead,th1520-gpu-pwrseq";
-> +		resets = <&rst TH1520_RESET_ID_GPU_CLKGEN>;
-> +		reset-names = "gpu-clkgen";
+1)
+I would maybe s/kill/cancel/ to align with the ->cancel_job naming.
 
-What is the point of pwrseq if there is no consumer/user of it? Looks
-like simple placeholder and anyway maybe the future consumer should just
-use reset directly.
+2)
+Would the callback presence check look better inside this helper so it 
+is all consolidated and streamlined?
 
-Best regards,
-Krzysztof
+Regards,
+
+Tvrtko
+
+> +{
+> +	struct drm_sched_job *job, *tmp;
+> +
+> +	/* All other accessors are stopped. No locking necessary. */
+> +	list_for_each_entry_safe_reverse(job, tmp, &sched->pending_list, list) {
+> +		sched->ops->cancel_job(job);
+> +		list_del(&job->list);
+> +		sched->ops->free_job(job);
+> +	}
+> +}
+> +
+>   /**
+>    * drm_sched_fini - Destroy a gpu scheduler
+>    *
+> @@ -1359,19 +1371,11 @@ EXPORT_SYMBOL(drm_sched_init);
+>    *
+>    * Tears down and cleans up the scheduler.
+>    *
+> - * This stops submission of new jobs to the hardware through
+> - * drm_sched_backend_ops.run_job(). Consequently, drm_sched_backend_ops.free_job()
+> - * will not be called for all jobs still in drm_gpu_scheduler.pending_list.
+> - * There is no solution for this currently. Thus, it is up to the driver to make
+> - * sure that:
+> - *
+> - *  a) drm_sched_fini() is only called after for all submitted jobs
+> - *     drm_sched_backend_ops.free_job() has been called or that
+> - *  b) the jobs for which drm_sched_backend_ops.free_job() has not been called
+> - *     after drm_sched_fini() ran are freed manually.
+> - *
+> - * FIXME: Take care of the above problem and prevent this function from leaking
+> - * the jobs in drm_gpu_scheduler.pending_list under any circumstances.
+> + * This stops submission of new jobs to the hardware through &struct
+> + * drm_sched_backend_ops.run_job. If &struct drm_sched_backend_ops.cancel_job
+> + * is implemented, all jobs will be canceled through it and afterwards cleaned
+> + * up through &struct drm_sched_backend_ops.free_job. If cancel_job is not
+> + * implemented, memory could leak.
+>    */
+>   void drm_sched_fini(struct drm_gpu_scheduler *sched)
+>   {
+> @@ -1401,6 +1405,10 @@ void drm_sched_fini(struct drm_gpu_scheduler *sched)
+>   	/* Confirm no work left behind accessing device structures */
+>   	cancel_delayed_work_sync(&sched->work_tdr);
+>   
+> +	/* Avoid memory leaks if supported by the driver. */
+> +	if (sched->ops->cancel_job)
+> +		drm_sched_kill_remaining_jobs(sched);
+> +
+>   	if (sched->own_submit_wq)
+>   		destroy_workqueue(sched->submit_wq);
+>   	sched->ready = false;
+> diff --git a/include/drm/gpu_scheduler.h b/include/drm/gpu_scheduler.h
+> index e62a7214e052..81dcbfc8c223 100644
+> --- a/include/drm/gpu_scheduler.h
+> +++ b/include/drm/gpu_scheduler.h
+> @@ -512,6 +512,15 @@ struct drm_sched_backend_ops {
+>            * and it's time to clean it up.
+>   	 */
+>   	void (*free_job)(struct drm_sched_job *sched_job);
+> +
+> +	/**
+> +	 * @cancel_job: Used by the scheduler to guarantee remaining jobs' fences
+> +	 * get signaled in drm_sched_fini().
+> +	 *
+> +	 * Drivers need to signal the passed job's hardware fence with
+> +	 * -ECANCELED in this callback. They must not free the job.
+> +	 */
+> +	void (*cancel_job)(struct drm_sched_job *sched_job);
+>   };
+>   
+>   /**
 
 
