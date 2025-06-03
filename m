@@ -1,149 +1,218 @@
-Return-Path: <linux-kernel+bounces-672503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-672509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 794ACACD04C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 01:37:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39857ACD055
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 01:39:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66BA03A2BDD
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 23:37:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F0BC188D263
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 23:39:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AF66253937;
-	Tue,  3 Jun 2025 23:37:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 521C0253359;
+	Tue,  3 Jun 2025 23:38:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="TKfALx6Y"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="KTM4WEDp"
+Received: from mail-il1-f225.google.com (mail-il1-f225.google.com [209.85.166.225])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F1FD24DCFE
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 23:37:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73D6F2528EF
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 23:38:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.225
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748993839; cv=none; b=Nr5KlGUx3e+IViR0B2zc2L/Wc5lbIKr6fBowZRIo483pGRSIzB5nSJ6fU+/30JiRxxQj9EWXRiDgtckVput5fAiHDQRk3DbIOFwOD3XbzGKKAgMv5ZQsIoQpDBr7ZgHnF5xhYFgyhxX8RMYhvaiE/61F+WI9fKHg2R0Kcv3FyBg=
+	t=1748993921; cv=none; b=t4sIk0bBS3KgRQyFzompOYUN7f8Fx5ZpJGQeLuZ4144nFl4tHzzYzrdMphaF+o54Oa2pqakrCwpvL4J9QlCROofWFnzOuLC2rzK4jakWHm5WM9AT1Iuzx1/+B2fh/DB3cH+kTvgg+eaPakYDqGQEUDHQBZGmuBOoJqvWNGMLkgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748993839; c=relaxed/simple;
-	bh=CpW5+EnRH/eprOB2Im5mjNYvWXmMldYepx3fogdbW78=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mpW8S7FeuGzxOlpgG7NT6XPQ2YIWqQlXdHJc5AOWrydTe+KfjHKIkCOMUJJMYll8oqFNhOdQa1/el3N/BboEYAOTMsdMkS0v9rdvSGX0jtUtSw4XNLDMuvTkN3i8T37Wd22K+tg2XjENKz775bE8OqgXzTi7OtpFrWwwlVOL3NU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=TKfALx6Y; arc=none smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 553MN19S032342;
-	Tue, 3 Jun 2025 23:36:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=corp-2025-04-25; bh=2ziAp
-	oYnxEqaxK0lHJjI7BRw8C3lEmMXkqJPO+VXKv8=; b=TKfALx6YhyegGOsg7CzRp
-	M/SSTWtsTl0fRo/Z4ghCOQNus42M7cbb77ZiT+O0XaWkDVP+J2i2qjpaw1hYCoZh
-	hdjVVu8dGuE0S650uftf7OayqDZ5ylClNoBSOhsDKdYPzYAfEOQsTjWY3JWOpl4w
-	vwmW6vVY+kt6NGYObOzS2bVraoqOAGQ0OowVdVktB6+YmiyKkds323rrDslXLDSD
-	OPs+4GqO6bDFka4ZgP55lF9U5G5ooAgWjHIHd0t+WoItxMr3rwhV4Lkkg+I5vFHQ
-	o9gEy9/4P+Xn/rEqrqxSjfj69LFI/dYxK4+VMb5y9JdRV3oZDZn6/6dPL4rVKhPH
-	w==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 471g8dty3c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 03 Jun 2025 23:36:58 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 553MtHr0030803;
-	Tue, 3 Jun 2025 23:36:58 GMT
-Received: from psang-work.osdevelopmeniad.oraclevcn.com (psang-work.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.253.35])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 46yr7a2j93-7
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Tue, 03 Jun 2025 23:36:58 +0000
-From: Prakash Sangappa <prakash.sangappa@oracle.com>
-To: linux-kernel@vger.kernel.org
-Cc: peterz@infradead.org, rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
-        tglx@linutronix.de, bigeasy@linutronix.de, kprateek.nayak@amd.com,
-        vineethr@linux.ibm.com
-Subject: [PATCH V5 6/6] Add API to query supported rseq cs flags
-Date: Tue,  3 Jun 2025 23:36:54 +0000
-Message-ID: <20250603233654.1838967-7-prakash.sangappa@oracle.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20250603233654.1838967-1-prakash.sangappa@oracle.com>
-References: <20250603233654.1838967-1-prakash.sangappa@oracle.com>
+	s=arc-20240116; t=1748993921; c=relaxed/simple;
+	bh=GRKko8U6tkBwoDvqev25212EMIC0D1LUxb+uSFlHjvA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=uWxqHwfgCnoUZ22nB+MfyCLQZVa3/Rv5RPwB7Ve7fmZ15u/4/BLgPVkl9b/sZ/UD2l3rk+g64FyHaYLnyGDHL0o4aUpXch5pC9WS0+1VpH1pI+d44HGjcqgVt7Ip1DJCjPa7njGiaiN3aegJGePxh3YlOBd4bQ/IakqG47oWVuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=KTM4WEDp; arc=none smtp.client-ip=209.85.166.225
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-il1-f225.google.com with SMTP id e9e14a558f8ab-3da73df6b6bso18635205ab.3
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jun 2025 16:38:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1748993917; x=1749598717; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/R0RpgCFKdTj3IOKRqUkoQl1YyksTGBaXOZihTi8ctY=;
+        b=KTM4WEDp1d4DHkOu92A6lL7h/GBr5zNy5dZ7BMk2MYTg+ip5aeLGTRcY6XgT5Iy+xx
+         +uAA2thmT0uoHnNf3WrcliZN/ririxeGYhzprzlazkTRGT2UFFuONWR8GxtIax1AAS6P
+         PSzSdGFOM8R4rg066jLU9ZD9OQLc/Ag6ew0ZQRolvZnItRC14GaVXNMVhopVdj+2eEQc
+         TpksRpE0IPQi8iUcQLbVuOTWr8i68ip8SHJoaQCqM/LfXV536e232lyIjQWn6qmoneCu
+         mzo0+6x/aCp8vKr+qZGf6/SDKmrZWg2QUsx7RZXVxUaDZTnzvvc4X+Uhw8gOEJ2WsRpr
+         xL0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748993917; x=1749598717;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/R0RpgCFKdTj3IOKRqUkoQl1YyksTGBaXOZihTi8ctY=;
+        b=bOCSFqIhCLgMHuZlzxQILHJY0y2mgOZPEkwyCTEu6H1WVLmN6PMylIo5hLFe/RZ/Ax
+         0Tczgd+ljmSTaY3z7G+UIdcd1PryGCMjF83mFVTzhHXRwKL0Opj5V9BTssEyVZea5he4
+         arbk6Y2C41gBvWWH+XGMaWISsBqE8s3t08seximszLjYguwrQh9wcevvpMXTYFCXdyKK
+         lOm9a7p0NQRwbr6nm9K3+nYciNq6rCbE4tsxOlWFLRLH5CJVnWe9rWhVXeC+FJO1kepx
+         Ca3trPfXGhT93GO4CEfyI+xssgYZ5UDVs7ryRduw9/guoy2K8iewLiW5gpEOpVUHrQdI
+         MSDg==
+X-Forwarded-Encrypted: i=1; AJvYcCUOoIxL2EMS9zYsxM+1B0Q9Hh185JW9eRNhLG947ggddVeBpaQeZ2bWhiP2q6it5vFZBWwRVrX8wZROj/g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpVqZkWASxYkuJudxcr+CYf5mB9Mlvn8nYWrJGoOTj96IH4Ihi
+	zftJDwORchCtmuCYQ1ZHFY49eJXf9TibgbK3Njx0QiBC13e8OSfxF16tx/GWO4H5BZB+mxudOOc
+	yYL079q53dyo/eIWgzAcZttVfcrbsOgO4SO0x
+X-Gm-Gg: ASbGncvkdQIQKfgknf27LX5KmlvILT7vHTIxs4H5JXZsSolURFxBepKJHAC8uLrQR3R
+	8whQh7F/Na6goYfSoQIcqvJGgORZdPJqrFMBg4d51xgE4ozPXY1tKrMKPfKiQq0eA0yJo5dkaHr
+	gosMChbISZh0tyyoK6awD6onURkMmXkTiBu2TRliLxoCxJdqnVGgjh+47Rl8NlVpzw5uF1wEYFh
+	mNaWeT2Rx5A5hKN6UM/Uadpz2rN0ONAbXLvGNajJSyPzFNz8xah7eDuny9PtkT65NKOg+g5MeOU
+	w5TFb8xqQ9KUaYB+4ycHIVVdnSrVEPyHm7ucB30xkp+FWw==
+X-Google-Smtp-Source: AGHT+IE2Clg33E/8c+qwuR12THXL4yJ4NH4pmMoiTeWYcHOgHxUyzjy7wBBi6+80u6OaDk7frWPxrt/0AjAt
+X-Received: by 2002:a05:6e02:3989:b0:3dc:7fa4:832 with SMTP id e9e14a558f8ab-3ddbee093d0mr9255995ab.9.1748993917492;
+        Tue, 03 Jun 2025 16:38:37 -0700 (PDT)
+Received: from c7-smtp-2023.dev.purestorage.com ([208.88.159.128])
+        by smtp-relay.gmail.com with ESMTPS id 8926c6da1cb9f-4fdd7e3ee09sm297542173.37.2025.06.03.16.38.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Jun 2025 16:38:37 -0700 (PDT)
+X-Relaying-Domain: purestorage.com
+Received: from dev-ushankar.dev.purestorage.com (dev-ushankar.dev.purestorage.com [IPv6:2620:125:9007:640:7:70:36:0])
+	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id ED38C3401B8;
+	Tue,  3 Jun 2025 17:38:36 -0600 (MDT)
+Received: by dev-ushankar.dev.purestorage.com (Postfix, from userid 1557716368)
+	id DBCA5E40EF7; Tue,  3 Jun 2025 17:38:36 -0600 (MDT)
+From: Uday Shankar <ushankar@purestorage.com>
+Date: Tue, 03 Jun 2025 17:38:33 -0600
+Subject: [PATCH] selftests: ublk: kublk: improve behavior on init failure
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-03_03,2025-06-03_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 malwarescore=0
- suspectscore=0 phishscore=0 adultscore=0 spamscore=0 mlxlogscore=999
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2505160000 definitions=main-2506030202
-X-Authority-Analysis: v=2.4 cv=Va/3PEp9 c=1 sm=1 tr=0 ts=683f871a b=1 cx=c_pps a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17 a=6IFa9wvqVegA:10 a=7d_E57ReAAAA:8 a=yPCof4ZbAAAA:8 a=f51I_UcxYSrpky289IcA:9 a=jhqOcbufqs7Y1TYCrUUU:22 cc=ntf
- awl=host:14714
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjAzMDIwMiBTYWx0ZWRfX6UgiaRWLlONQ MZ9uMgK0uDGxIEl6TpDg9YiaR4GZNuRgDk/KsVJHsSCC0deyKoAE5JoNhMXgsf6FDm5b0kZ6twt qx1ngG5gbnIh32SUkFVeNriJkTBFCg2KFLEuxBouX2yeKXM3suxYIQgKsU61SQeNNHzCMLIss05
- Pkri9Wl/sxmZ3ST0DMR5ZaaJ34qov0DwKZgqAHI0ozGLJHKiGn6lIESK9ypUQO4nIJidBu26dFq Ra7yiXR7kwLlL5BPDGSnmKGmx3fO1Hin54xB/knK6JMy/I39+EMWOds22Qy6uVJ+TL9tLa1pn4p wxAaHctAiKupWpSnkKHhMJWOvm2qkVGSlzcbgehplwiYa4eZDcj7UIRox16YAC8Nl39NoZbEQwc
- vXSac5K2ZOLhRiNnZ8mH1xm8+kQa1OTbHeLIhOoyR8yPAn1gxZOgsqySRKskHW5/yq7/rvFN
-X-Proofpoint-ORIG-GUID: rlXCmcjw8u6UR_QqL1MTkPuegnRj75D0
-X-Proofpoint-GUID: rlXCmcjw8u6UR_QqL1MTkPuegnRj75D0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250603-ublk_init_fail-v1-1-87c91486230e@purestorage.com>
+X-B4-Tracking: v=1; b=H4sIAHiHP2gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDMwNj3dKknOz4zLzMkvi0xMwc3SQTSwtLA1NDU8vUJCWgpoKi1LTMCrC
+ B0bG1tQCSUc+VYAAAAA==
+X-Change-ID: 20250603-ublk_init_fail-b498905159eb
+To: Ming Lei <ming.lei@redhat.com>, Shuah Khan <shuah@kernel.org>
+Cc: linux-block@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Uday Shankar <ushankar@purestorage.com>
+X-Mailer: b4 0.14.2
 
-For the API, add a new flag to sys_rseq 'flags' argument called
-RSEQ_FLAG_QUERY_CS_FLAGS.
+Some failure modes are handled poorly by kublk. For example, if ublk_drv
+is built as a module but not currently loaded into the kernel, ./kublk
+add ... just hangs forever. This happens because in this case (and a few
+others), the worker process does not notify its parent (via a write to
+the shared eventfd) that it has tried and failed to initialize, so the
+parent hangs forever. Fix this by ensuring that we always notify the
+parent process of any initialization failure, and have the parent print
+a (not very descriptive) log line when this happens.
 
-When this flag is passed it returns a bit mask of all the supported
-rseq cs flags in the user provided rseq struct's 'flags' member.
-
-Suggested-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Signed-off-by: Prakash Sangappa <prakash.sangappa@oracle.com>
+Signed-off-by: Uday Shankar <ushankar@purestorage.com>
 ---
-v5:
-- Removed deprecated flags from supported cs flags returned.
-- Added IS_ENABLED(CONFIG_SCHED_HRTICK)
----
- include/uapi/linux/rseq.h |  1 +
- kernel/rseq.c             | 16 ++++++++++++++++
- 2 files changed, 17 insertions(+)
+ tools/testing/selftests/ublk/kublk.c | 34 +++++++++++++++++++++++-----------
+ 1 file changed, 23 insertions(+), 11 deletions(-)
 
-diff --git a/include/uapi/linux/rseq.h b/include/uapi/linux/rseq.h
-index 015534f064af..44baea9dd10a 100644
---- a/include/uapi/linux/rseq.h
-+++ b/include/uapi/linux/rseq.h
-@@ -20,6 +20,7 @@ enum rseq_cpu_id_state {
+diff --git a/tools/testing/selftests/ublk/kublk.c b/tools/testing/selftests/ublk/kublk.c
+index a98e14e4c245965d817b93843ff9a4011291223b..e2d2042810d4bb472e48a0ed91317d2bdf6e2f2a 100644
+--- a/tools/testing/selftests/ublk/kublk.c
++++ b/tools/testing/selftests/ublk/kublk.c
+@@ -1112,7 +1112,7 @@ static int __cmd_dev_add(const struct dev_ctx *ctx)
+ 	__u64 features;
+ 	const struct ublk_tgt_ops *ops;
+ 	struct ublksrv_ctrl_dev_info *info;
+-	struct ublk_dev *dev;
++	struct ublk_dev *dev = NULL;
+ 	int dev_id = ctx->dev_id;
+ 	int ret, i;
  
- enum rseq_flags {
- 	RSEQ_FLAG_UNREGISTER = (1 << 0),
-+	RSEQ_FLAG_QUERY_CS_FLAGS = (1 << 1),
- };
- 
- enum rseq_cs_flags_bit {
-diff --git a/kernel/rseq.c b/kernel/rseq.c
-index c4bc52f8ba9c..d2b010dccff5 100644
---- a/kernel/rseq.c
-+++ b/kernel/rseq.c
-@@ -576,6 +576,22 @@ SYSCALL_DEFINE4(rseq, struct rseq __user *, rseq, u32, rseq_len,
- 		return 0;
+@@ -1120,13 +1120,15 @@ static int __cmd_dev_add(const struct dev_ctx *ctx)
+ 	if (!ops) {
+ 		ublk_err("%s: no such tgt type, type %s\n",
+ 				__func__, tgt_type);
+-		return -ENODEV;
++		ret = -ENODEV;
++		goto fail;
  	}
  
-+	/*
-+	 * Return supported rseq_cs flags.
-+	 */
-+	if (flags & RSEQ_FLAG_QUERY_CS_FLAGS) {
-+		u32 rseq_csflags = RSEQ_CS_FLAG_DELAY_RESCHED |
-+				   RSEQ_CS_FLAG_RESCHEDULED;
-+		/* Following is required for delay resched support */
-+		if (!IS_ENABLED(CONFIG_SCHED_HRTICK))
-+			return -EINVAL;
-+		if (!rseq)
-+			return -EINVAL;
-+		if (copy_to_user(&rseq->flags, &rseq_csflags, sizeof(u32)))
-+			return -EFAULT;
-+		return 0;
-+	}
-+
- 	if (unlikely(flags))
- 		return -EINVAL;
+ 	if (nr_queues > UBLK_MAX_QUEUES || depth > UBLK_QUEUE_DEPTH) {
+ 		ublk_err("%s: invalid nr_queues or depth queues %u depth %u\n",
+ 				__func__, nr_queues, depth);
+-		return -EINVAL;
++		ret = -EINVAL;
++		goto fail;
+ 	}
  
+ 	/* default to 1:1 threads:queues if nthreads is unspecified */
+@@ -1136,30 +1138,37 @@ static int __cmd_dev_add(const struct dev_ctx *ctx)
+ 	if (nthreads > UBLK_MAX_THREADS) {
+ 		ublk_err("%s: %u is too many threads (max %u)\n",
+ 				__func__, nthreads, UBLK_MAX_THREADS);
+-		return -EINVAL;
++		ret = -EINVAL;
++		goto fail;
+ 	}
+ 
+ 	if (nthreads != nr_queues && !ctx->per_io_tasks) {
+ 		ublk_err("%s: threads %u must be same as queues %u if "
+ 			"not using per_io_tasks\n",
+ 			__func__, nthreads, nr_queues);
+-		return -EINVAL;
++		ret = -EINVAL;
++		goto fail;
+ 	}
+ 
+ 	dev = ublk_ctrl_init();
+ 	if (!dev) {
+ 		ublk_err("%s: can't alloc dev id %d, type %s\n",
+ 				__func__, dev_id, tgt_type);
+-		return -ENOMEM;
++		ret = -ENOMEM;
++		goto fail;
+ 	}
+ 
+ 	/* kernel doesn't support get_features */
+ 	ret = ublk_ctrl_get_features(dev, &features);
+-	if (ret < 0)
+-		return -EINVAL;
++	if (ret < 0) {
++		ret = -EINVAL;
++		goto fail;
++	}
+ 
+-	if (!(features & UBLK_F_CMD_IOCTL_ENCODE))
+-		return -ENOTSUP;
++	if (!(features & UBLK_F_CMD_IOCTL_ENCODE)) {
++		ret = -ENOTSUP;
++		goto fail;
++	}
+ 
+ 	info = &dev->dev_info;
+ 	info->dev_id = ctx->dev_id;
+@@ -1200,7 +1209,8 @@ static int __cmd_dev_add(const struct dev_ctx *ctx)
+ fail:
+ 	if (ret < 0)
+ 		ublk_send_dev_event(ctx, dev, -1);
+-	ublk_ctrl_deinit(dev);
++	if (dev)
++		ublk_ctrl_deinit(dev);
+ 	return ret;
+ }
+ 
+@@ -1262,6 +1272,8 @@ static int cmd_dev_add(struct dev_ctx *ctx)
+ 		shmctl(ctx->_shmid, IPC_RMID, NULL);
+ 		/* wait for child and detach from it */
+ 		wait(NULL);
++		if (exit_code == EXIT_FAILURE)
++			ublk_err("%s: command failed\n", __func__);
+ 		exit(exit_code);
+ 	} else {
+ 		exit(EXIT_FAILURE);
+
+---
+base-commit: c09a8b00f850d3ca0af998bff1fac4a3f6d11768
+change-id: 20250603-ublk_init_fail-b498905159eb
+
+Best regards,
 -- 
-2.43.5
+Uday Shankar <ushankar@purestorage.com>
 
 
