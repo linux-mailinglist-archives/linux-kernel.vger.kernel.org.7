@@ -1,303 +1,179 @@
-Return-Path: <linux-kernel+bounces-671538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2969ACC2D3
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 11:21:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7E5EACC2DC
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 11:22:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC5151720B2
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 09:21:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A7DF17214E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 09:22:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57B6A2820AA;
-	Tue,  3 Jun 2025 09:20:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E2DC28135F;
+	Tue,  3 Jun 2025 09:21:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="fRO2mrUt";
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="fRO2mrUt"
-Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011041.outbound.protection.outlook.com [52.101.65.41])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F5dhN3aq"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D6942C327A;
-	Tue,  3 Jun 2025 09:20:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.41
-ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748942450; cv=fail; b=YxcbNJihl90/02dJTB4FF8cMFbu9m/nNVIRhdAP1uzAaMH4qqgSgMhnPCWGDNDQfAW89fXq0WP0BZrcEgZZbEJUqzAoA1QoQnOP+7g1ZBzVGebtKBc1Ki6KZpifujGE6WNuIc8T1Mpdh4uu6fIFGwwfrUVS9W/Jz8vduusgui4o=
-ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748942450; c=relaxed/simple;
-	bh=9AKOcbIhlKXRwpN8KkOorjP2FGhoeAoVBU5BfZMZOHo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=eH7aacdjGgx75TKhy/p4hCyjaePUeCQtEIhAcAgjxazVuODZAcgjU+NvfJjhO+aI2LKsAL8mrclxzNjnoUJsmVAFibK4BDiZxTtWefzxl6SBZqOzNymDyuZ6fK49242F4sgdCIlWP/RWEdWCAtC7dBtHSZFdx+ChOdEN9Shoroo=
-ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=fRO2mrUt; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=fRO2mrUt; arc=fail smtp.client-ip=52.101.65.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
- b=IBc/IJcAW140xXzpFUxs11f5eCwJDt/tRx4QxmaLthCvwmS1RNdZUnbIBxjDbCq3L1Fn65WIvT8miy8ARVhbJoLty7siySInCk+4ehS5tfOW25YbS7OpqE9AxPAOYng7uEFp7CC7iET7CPD7NuT+CTOMpueYyddZkJ+EzOTsFf952Hmp5wgS3BRiX6g7K15gzOr81kwUt91xSX3pbMp6nxCAlr10GuUm29MrcAon7QSdE5rYyE6DAz9fQPRsvbRQ1aSvbvIOqms7xFsmyhI1mWYPDI9bhpb0AmAyrjJOZ9vfWpUNfa/e6pXpdAhP1lcdpYbhyfnevVsjw41sj8Vvhg==
-ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6ghKWsE/SfAsRFxxVZYv3b6ZSDB5cWUyWCdW1LMeL24=;
- b=Ntmn0P6bBP+dgEEKKU8+iBlNPBJnYQU5ioernWIDWsPKciiywsi9tQ639zzG0w9d/37TkRtOURraLXAR+UBQ5RFT8EDNWPP9nwrJuAM8BiNU8gI0jWMiT626BvlpPcmx4XjH7iC3UGCDttHPl7wuLxHS5VJv25jieTO7HWF8jBxzocWWqr/IE1h+DRuHmPRBwwss+biFOKPA8w16WC8Cv+gaQA3zu9cE7gprc0K+22KK924AsisZGXEFdSdq3XZLUNG1Gq8Yd4DQM5V5XkOHSgnwm90zrCPO5CcfePcPzfgmDACtWFFVXrxyZX8Wd2Ed+rQZio4k+LB90BDoaSmvzA==
-ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
- 4.158.2.129) smtp.rcpttodomain=infradead.org smtp.mailfrom=arm.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=arm.com;
- dkim=pass (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
- spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
- dmarc=[1,1,header.from=arm.com])
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6ghKWsE/SfAsRFxxVZYv3b6ZSDB5cWUyWCdW1LMeL24=;
- b=fRO2mrUtwF0411tFXLp51489Gb1cphubiP4/pd3DNxPMxm4RDYCXaMHlJktqCkXjDa8+syA8aGFZ8GGxt93AiI5zcQZt4GCNBpaoPT07zUqbf3i+xMbOZI3fF11ggi0hZCxcCnSFpkOHP6anNfS8arMrWtIAPlMXBDvjYQUlZMc=
-Received: from CWLP265CA0543.GBRP265.PROD.OUTLOOK.COM (2603:10a6:400:18d::8)
- by GV2PR08MB9349.eurprd08.prod.outlook.com (2603:10a6:150:da::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.29; Tue, 3 Jun
- 2025 09:20:43 +0000
-Received: from AM2PEPF0001C713.eurprd05.prod.outlook.com
- (2603:10a6:400:18d:cafe::c8) by CWLP265CA0543.outlook.office365.com
- (2603:10a6:400:18d::8) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8792.31 via Frontend Transport; Tue,
- 3 Jun 2025 09:20:43 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 4.158.2.129)
- smtp.mailfrom=arm.com; dkim=pass (signature was verified)
- header.d=arm.com;dmarc=pass action=none header.from=arm.com;
-Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
- 4.158.2.129 as permitted sender) receiver=protection.outlook.com;
- client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
-Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
- AM2PEPF0001C713.mail.protection.outlook.com (10.167.16.183) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8792.29
- via Frontend Transport; Tue, 3 Jun 2025 09:20:41 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=PQAZiFzb4EozP1fR49BUb51NODSha2FtYwQCbJAn7wJUW3eNI4bYPhwK9lO9Swop4yGDbGzmKcBxpn5WcxKjcvwAABCO4mDwHPp4bWseOYnlJ+h2T54sPoHKqhEayMldj1ZOQ5D8GQiu2hKilqpu93CEdqTkPVR883vajd7QHR9lwmnUYs8Of4XdL+Eu3f0A5Qsjx+n7DKEOMhhZcY5cWtYlOJ6svLPHTL0DB4CP4YGvCD7BovNsSrI87LoKn3PFq9joBFMlvumcuugmVDnM8p0mf9cjOlOsUcUUARqy/bpN1nIPRigaq9k/g+PvRXL7PkPkAL1zEpHSpXU7xw45UA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6ghKWsE/SfAsRFxxVZYv3b6ZSDB5cWUyWCdW1LMeL24=;
- b=GlkQKdefjdPET0TVjD5ieqcLOukHm2CTMFEc+3owxgF8I1OqPIFY6fhPzCyMUJUGAUzFKvka+nGs4ND2ENe+cfFJlr86wDNqZYsaiCYuETlwzgU9HxXkK9rPW1ns9VWp76iE/+Ugpt+6FhDeVJZFdsUGtdNCUXvrXXvg6rDsFpgGywf2HSijPWjDMew2eFf1dwvyP8u067ORJc9iSJSDdg2Fno4mIGNUxgvFCvYr65ksSXgTGLqW6wLzA9UkpY61EwKlca7Bv9Gk80yYNkD9fBLqPuV7lK7xCpSwDSdC5YkRv+6ukWrBlA2MGrlLNyLKaW3teyUi9EWYq24rMmM0Og==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
- header.d=arm.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6ghKWsE/SfAsRFxxVZYv3b6ZSDB5cWUyWCdW1LMeL24=;
- b=fRO2mrUtwF0411tFXLp51489Gb1cphubiP4/pd3DNxPMxm4RDYCXaMHlJktqCkXjDa8+syA8aGFZ8GGxt93AiI5zcQZt4GCNBpaoPT07zUqbf3i+xMbOZI3fF11ggi0hZCxcCnSFpkOHP6anNfS8arMrWtIAPlMXBDvjYQUlZMc=
-Authentication-Results-Original: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=arm.com;
-Received: from GV1PR08MB10521.eurprd08.prod.outlook.com
- (2603:10a6:150:163::20) by DB8PR08MB5402.eurprd08.prod.outlook.com
- (2603:10a6:10:11b::16) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8792.34; Tue, 3 Jun
- 2025 09:20:08 +0000
-Received: from GV1PR08MB10521.eurprd08.prod.outlook.com
- ([fe80::d430:4ef9:b30b:c739]) by GV1PR08MB10521.eurprd08.prod.outlook.com
- ([fe80::d430:4ef9:b30b:c739%7]) with mapi id 15.20.8792.033; Tue, 3 Jun 2025
- 09:20:08 +0000
-Date: Tue, 3 Jun 2025 10:20:04 +0100
-From: Yeoreum Yun <yeoreum.yun@arm.com>
-To: peterz@infradead.org, mingo@redhat.com, mingo@kernel.org,
-	acme@kernel.org, namhyung@kernel.org, leo.yan@arm.com,
-	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com
-Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	David Wang <00107082@163.com>
-Subject: Re: [PATCH 1/1] perf/core: fix dangling cgroup pointer in cpuctx
-Message-ID: <aD6+RGnAOyIS+tik@e129823.arm.com>
-References: <19514ed5.5692.19734522326.Coremail.00107082@163.com>
- <aD6Xk2rdBjnVy6DA@e129823.arm.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aD6Xk2rdBjnVy6DA@e129823.arm.com>
-X-ClientProxiedBy: LO4P123CA0033.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:151::20) To GV1PR08MB10521.eurprd08.prod.outlook.com
- (2603:10a6:150:163::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5995A2C327A;
+	Tue,  3 Jun 2025 09:21:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748942516; cv=none; b=lj0P8pjxKgbO2pzUfBuy/hbgD9moMyvuLg4iw/vwp1SXyxCwoyvjlUK1cu25HhKLa6QqyewjWT5dMbO0r+AA7Ti/iZ3Yku8hUIc4HW6idh14ILwqbBMYIv1sf8BxnW4Jm8jU78LodcO3UuVYsRtQJAzABGTpO8oPzJ7dW02CUXQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748942516; c=relaxed/simple;
+	bh=PYgH8ZouwZAnmjYl7YyPQ0wAj9nKCxAhyBzwcs3OqRQ=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=pf83F2eOzlTjg+r+9flVx0blYgMmjThcMjPqF8egmJE9qqPDyAzqg3BMEAsMtN9lg3QTJsf1BM9IGytWZG+4c87o35NRFeMgsJPed5AeDJfKZZTKr9Ks35HsCABzGSTx6JT4e99lqPx7+/NZn76oG0p9ZM2hm1zgB+tA2LSli/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F5dhN3aq; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1748942516; x=1780478516;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=PYgH8ZouwZAnmjYl7YyPQ0wAj9nKCxAhyBzwcs3OqRQ=;
+  b=F5dhN3aq1NItEzLfFR59mU3b8JWKYaAgL7AFC4WZBQPO4WQ9aLLe1Vf9
+   AC1FZSpBQkAxvosjjirmkVNAfykMcK1zSIx+p3tVtN+8QqYrI3VMLDVzV
+   J4Pc8eyQsHoiW8ROfYq73iy9HKyYEvErn1W10ogaUYdKEcCsMmkJohnxm
+   /nPFMmgGCRyfhl4gjE1LSg3xdMq9Z1CyRJWlfG0VlGQfAfJV4Cp1ckHHU
+   0XsAmSU5MRSUe1N/tPslVacsRoMFo0aLZ+E4WR8gYX+FxedJe1BKbR3nV
+   K3Fh/dfuFZa30nQTg/gd6mmyfirZmWtIuDklqLx6O5KiBJtO6i2nm0qPS
+   g==;
+X-CSE-ConnectionGUID: hOZtJAE9QAehetOnrj74gg==
+X-CSE-MsgGUID: ie3/vL0uQZWTl8eKmufoZA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11451"; a="54776800"
+X-IronPort-AV: E=Sophos;i="6.16,205,1744095600"; 
+   d="scan'208";a="54776800"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2025 02:21:54 -0700
+X-CSE-ConnectionGUID: bRDcFgofRsGTQWVvt1fq/Q==
+X-CSE-MsgGUID: u2rW9rOzTyeUrEQcuwfvEQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,205,1744095600"; 
+   d="scan'208";a="144685825"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.141])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2025 02:21:50 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Tue, 3 Jun 2025 12:21:46 +0300 (EEST)
+To: Hans Zhang <18255117159@163.com>
+cc: lpieralisi@kernel.org, bhelgaas@google.com, 
+    manivannan.sadhasivam@linaro.org, kw@linux.com, cassel@kernel.org, 
+    robh@kernel.org, jingoohan1@gmail.com, linux-pci@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v12 1/6] PCI: Introduce generic bus config read helper
+ function
+In-Reply-To: <d6eeb0b5-53b3-5c40-00df-f79aa2619711@linux.intel.com>
+Message-ID: <e486d187-e869-98b5-a0cb-8bd463540312@linux.intel.com>
+References: <20250514161258.93844-1-18255117159@163.com> <20250514161258.93844-2-18255117159@163.com> <d6eeb0b5-53b3-5c40-00df-f79aa2619711@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-TrafficTypeDiagnostic:
-	GV1PR08MB10521:EE_|DB8PR08MB5402:EE_|AM2PEPF0001C713:EE_|GV2PR08MB9349:EE_
-X-MS-Office365-Filtering-Correlation-Id: 12ec1221-f666-4226-96bb-08dda27fe97d
-x-checkrecipientrouted: true
-NoDisclaimer: true
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam-Untrusted:
- BCL:0;ARA:13230040|1800799024|376014|7416014|366016|921020;
-X-Microsoft-Antispam-Message-Info-Original:
- =?us-ascii?Q?yHv8KqD3SIxblauYJ3meD+6Y5xJw0OzXeUFenhXZMHAxNFLkmlqjwOnvQcsj?=
- =?us-ascii?Q?JDeeV2+k0AWrVB+iaYwbkQu24HoJa3qmF+JgpdONfIpIA6dv7B0O2qR+Jk4i?=
- =?us-ascii?Q?fVVFE6LWRncJ8WmzmX4Sfrfm9ZKHTtMcnlAgp9cRQvx8fVQEHfz7UIrg8Mzd?=
- =?us-ascii?Q?UzXI3KG496JkMopRDYWRXa3wWEoHQzep+d8ZDCLyc7mnTlNGOwHCl7JNBR1C?=
- =?us-ascii?Q?14aEnybjTrP0H9NbLD8f0iIFuA0bxZSzFzq/171Iquo0g40sCKRLZ39a45Ek?=
- =?us-ascii?Q?FDqtxlVdWAO1Zzxkljw7hDy0rHbsCJPU5a01jwgIaGl9PP3ebgFe7iZr1GWp?=
- =?us-ascii?Q?karAlZzB9H4wid56J8ei1Zu86I1FheztG1NUhCPrmFHj/DMbubkdLjjejXMA?=
- =?us-ascii?Q?pZVVrxkQNQ8l8Qi6+M/D1b/ZtLaD7qZCqjB9cofckMiop5mYZ0ZoO+QCMf7J?=
- =?us-ascii?Q?6D9fA3uF7csb8MfwvuETc/OKX7iJOybdVP+H+FWzmvRsrddtcy4H0mZEoXJG?=
- =?us-ascii?Q?cRoINSFihIZW5ah04BszhJ8+yDUBroJ98yIg5WzE4wc547TyPxS+RsqUw/u1?=
- =?us-ascii?Q?kymVbGGy0LqPKb2Pyk6ATIhuN8LKd/3/O8XQGCI1b6VFwegfa7L/murQyUhI?=
- =?us-ascii?Q?35G+xJ/7YLKp8zNw+wYMI+2tUKqUrKqF6BWO/cYppgqzB/O6dBAwUcPisVE0?=
- =?us-ascii?Q?3GN7EAjUAbYYFXldNgjPiElNyd6Zj/VjbwhxgtuOJAj8FN43Q4UI6ycgDSb2?=
- =?us-ascii?Q?dR1g3a+bzR5ZXkjrj6kk5FR8g+oROkIYKp9SZqi8sYkQNQfSshFJA1CVJd90?=
- =?us-ascii?Q?jyg8zp+48KeRK3DNAmuTXr0NCVotp009aeN8EI4bChGjojPu8LNJ1Ix2z0oT?=
- =?us-ascii?Q?1z6ZONXFvR78I43YG609TEHI9vuJ2bCXjtCdtnyYzKWdZ0+vDIO4R8Bl++0w?=
- =?us-ascii?Q?USAY5sdNIUK9JjbQowj7pxsqrbfCWgIIDrMLpDlbCAV42784vyZrG+VwN3rT?=
- =?us-ascii?Q?OyCJDWIn2+WVLKIgfVh15af5AmpcNdvBiXFfqgsbEXWB35t+/aZGOXC8HcxN?=
- =?us-ascii?Q?OnTz409vq/w9oT925GX5Y+GPrFzz4FiCQDjWzWGZIiRSbudKBTmYPbjAbLgM?=
- =?us-ascii?Q?LID8G0RTuNOgy/rcyn5k1qxTxPvkoBsJWRBjnY3Ses88Lqv2oL9ZOeJkYqDJ?=
- =?us-ascii?Q?h4LQZ5j9yfFZPJozr5I4kdryVVP4RAAxQHKe1WTAkoUHNyrLw3jIJ6l2ox26?=
- =?us-ascii?Q?6hLMQZnfmdAowf7e0os3S5CJ3Mhq7vgdgRQ1PHbNhaHQR8WcwpKWcFINRrfO?=
- =?us-ascii?Q?YbNq8XU4s90oNcDfvcZTxFoC7z61u03IeHpLtzGa3UE4wNKcQQyfJUofCM+U?=
- =?us-ascii?Q?TPFDTZO9hFllCKWxXW3t0jtPGGJ/KR94bnr6MlKAEX0vUDqLyaSflpbDuhO2?=
- =?us-ascii?Q?50wnYoTjO3aSuPgzYVVJ5MO5dNOlMxEK2j4IU/RUBlcLyvSRDlgEVA=3D=3D?=
-X-Forefront-Antispam-Report-Untrusted:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV1PR08MB10521.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR08MB5402
-X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped:
- AM2PEPF0001C713.eurprd05.prod.outlook.com
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs:
-	564c8389-b843-4fa2-d0e4-08dda27fd547
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|35042699022|1800799024|36860700013|82310400026|14060799003|376014|7416014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?7Ync0RGO4679iBxTeM+MzyUxm/fSzdnGvzFnteBTtpB242yK7jFbQ/FNjpUD?=
- =?us-ascii?Q?zhm6izW84QA1AsbMWHACJraO+4Lu0lvXQK1Ghz4KpBGcIDRl+/QRjoUVRS/k?=
- =?us-ascii?Q?aRVVM19D6fqXkcqbsHLROFUz4oGqWMZpzWpYgHzBfInxyGcN2GEWU1VEmebc?=
- =?us-ascii?Q?DkuVRaO+7G1oH6SVMOF7VuwJ+zk+JuujeK7fRqjqdmLoFTwWslUiHFK5jZTM?=
- =?us-ascii?Q?XWrw+lFBz3TP6sSikmwy95L/Q0k1RjzZUNc4flSqLlXCVU4svspTJJi4Auit?=
- =?us-ascii?Q?EKBKImG74cg8waB+dBuJRVIroX3YqlBKATPP7b5d4cv0drvbejq09wscGqWG?=
- =?us-ascii?Q?DEwP/mkvEj7d4t95iIPf2MBIoq3nREeAfJd54KaHe2oSTLM6Zml6I7tjQkzl?=
- =?us-ascii?Q?c4ej14nJiqKKhYrAlf2lbSHzAnwDRVrdqjzV6jZgZqx6yGXF94vei26rr5v3?=
- =?us-ascii?Q?q8JZMfwskHYZ3NTik/AjX5f87SWCWzeQoo8l7RgxvRMt7SbNy3idUkH5aK8l?=
- =?us-ascii?Q?OoK/UXlufVlc7PGfrlqWTP1sFf1VLiDVSZCSCUanGnWD25oT25kF+aw50cmP?=
- =?us-ascii?Q?x92JNSVM3HnNQ29c/g1wITOL/2pMLURm1ewXYSj5FiMB5mvRaOVEiR2H1rIe?=
- =?us-ascii?Q?6pA4gKIPqL4IvnDViLNSYB2s1I8LHGk0JTxEzxBpL+V7uh39O8xpGe5ltE/e?=
- =?us-ascii?Q?54q1LAobAB7K91GoRNAftlQ4zguuiIZskfSX45GrghEAWg8t/JLphyOAIfFq?=
- =?us-ascii?Q?rDJawIie8iH6q7fHiUcLHALobI8uYyMbKMaOrDsTlk2m7lHtUHzhML/GkfcB?=
- =?us-ascii?Q?6bs6fT6WWZuRbAZTwYNR7dxsRzlEhgH3TT0QwYW2qsMs5XX+W2RhyOSH5lDk?=
- =?us-ascii?Q?Ifk+fBn8fIE+IXo4pONOnfCerjUYk/hDmOGt7zQjclzDPAxyr45QDHH46HK2?=
- =?us-ascii?Q?wwUf865bXpMR2B0U4tUDNhcGUspNzG1H1XSB3UnWQmxAiFStjByNB7a7uUd1?=
- =?us-ascii?Q?vsfYjz2mZx8TQoS6hnbOAFmjtN1MMSqBlrGHU75umtIM+xgHWbXhmXtx5V1i?=
- =?us-ascii?Q?SjzjxKgda0Sjg907oT0UHvFe4SWPHxRFouOMaWGeq8Hk968Ep+mGMg/lRlnM?=
- =?us-ascii?Q?gWfsuXdUIG2v1YoE9N2KVGf9b6IaQ1q6Lv/ENiM8k+CqsEmLYv3QVi8S/etS?=
- =?us-ascii?Q?ztELaPfQlIoik7uqd3MINO2Tl2Qc5IADpBfWQGallyaugSyBdWFyZqrdMagn?=
- =?us-ascii?Q?3akLj3OkyScsCkbWk5oPmTC1OpW8VEqgZLJJ6JLIDjO/s3E+D9kjZSB3uEQH?=
- =?us-ascii?Q?TWTHV/XncHfIty5NLiujZvjfWZO627rUn9I/QZpnRVM2ye4gxjDB9TsBPALr?=
- =?us-ascii?Q?CPJLWx3fUsrTBS1b8t4VfT15AV5S3ULK5+ya3PhWOT4tJ3BKwAKDaohZCq++?=
- =?us-ascii?Q?LHrJ/2ERyAeNnks1JzBO/SYtx2wzmUxPF/9sZM7XB8GQbV+xP4v9Ssk60+66?=
- =?us-ascii?Q?g0GvtiuyAkxUVj8pzvnaXEBJi4wNDGcpfi/+3RdG8IgrOiWPWghChi2Tiw?=
- =?us-ascii?Q?=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:4.158.2.129;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:outbound-uk1.az.dlp.m.darktrace.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(35042699022)(1800799024)(36860700013)(82310400026)(14060799003)(376014)(7416014)(921020);DIR:OUT;SFP:1101;
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jun 2025 09:20:41.7540
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 12ec1221-f666-4226-96bb-08dda27fe97d
-X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[4.158.2.129];Helo=[outbound-uk1.az.dlp.m.darktrace.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	AM2PEPF0001C713.eurprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV2PR08MB9349
+Content-Type: multipart/mixed; boundary="8323328-132017667-1748942506=:937"
 
-Hi David,
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-> > > > >
-> > > > > Also, your patch couldn't solve a problem describe in
-> > > > > commit a3c3c6667("perf/core: Fix child_total_time_enabled accounting bug at task exit")
-> > > > > for INCATIVE event's total_enable_time.
-> > > >
-> > > > I do not think so.
-> > > > Correct me if I am making silly  mistakes,
-> > > > The patch, https://lore.kernel.org/lkml/20250603032651.3988-1-00107082@163.com/
-> > > > calls perf_event_set_state() based on DETACH_EXIT flag, which cover the INACTIVE state, right?
-> > > > If DETACH_EXIT is not used for this purpose? Then why should it exist at the first place?
-> > > > I think I does not revert the purpose of commit a3c3c6667.....But I could be wrong
-> > > > Would you show a call path where DETACH_EXIT is not set, but the changes in commit a3c3c6667 is still needed?
-> > > >
-> > > > Sorry for my bad explaination without detail.
-> > > > Think about cpu specific event and closed by task.
-> > > > If there is specific child cpu event specified in cpu 0.
-> > > > 1. cpu 0 -> active
-> > > > 2. scheulded to cpu1 -> inactive
-> > > > 3. close the cpu event from parent -> inactive close
-> > > >
-> > > > Can be failed to count total_enable_time.
-> > >
-> > > Is this explaining the purpose of commit a3c3c6667 ?
-> > > I am not arguing with it. And I also not suggest reverting it. (it is just that reverting it can fix the kernel panic.)
-> >
-> > In commit a3c3c6667, I explain the specific case but not with above
-> > case. But the commit's purpose is "account total_enable_time" properly.
-> >
-> > > > And also, considering the your patch, for DETACH_EXIT case,
-> > > > If it changes the state before list_del_event() that wouldn't disable
-> > > > related to the cgroup. So it would make cpuctx->cgrp pointer could be dangled
-> > > > as patch describe...
-> > > No, I don't think so.
-> > > change state before list_del_event(), this is the same behavior before commit a3c3c6667, right?
-> > > And no such kernel panic happened  before commit a3c3c6667.
->
-> Oh! I was wrong, before commit a3c3c6667, "change state" happened *after* list_del_event()
-> >
-> > That's why list_del_event() handle the perf_cgroup_disable() before the
-> > commit a3c3c6667. However because of *my mistake*, I've forget to
-> > perf_cgroup_disable() properly before change the event state.
-> > Yes, your patch can make avoid the panic since as soon as exit,
-> > the event->cgrp switched.
->
-> I cannot agree with the reasoning,
-> The panic dose not happened when exit, it happened when reboot/shutdown.
-> (I close perf_event_open before reboot)
-> >
-> > However, as I said, the INACTIVE event could be failed to count
-> >total_enable_time.
-> >
-> > So, set event should be occured before list_del_event().
-> >And since it's event->state change on remove.
-> >It shouldn't have any side effect the state change isn't cause of your
-> > panic. But missed perf_cgroup_disable().
->
-> Any procedure to bring out the impact of this missed perf_cgroup_disable()?
-> My system seems all normal, where should I check it?
+--8323328-132017667-1748942506=:937
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-Here is possible senario:
-  1. perf event open with cgroup.
-  2. perf event open with cpu event (no cgroup).
-  3. above task sets the cpuctx->cgrp the same to (1).
-  3. close (1) events.
-     here, perf_cgroup_event_disable() isn't called,
-     cpuctx->cgrp still point the cgroup.
-  4. by other task, the cgroup and is destroied.
-  5. close (2) events.
-     here, it is last event, in __perf_remove_from_context()
-     and last event, it calls update_cgrp_time_from_cpuctx(),
-     And this refers invalid pointer.
+On Tue, 3 Jun 2025, Ilpo J=E4rvinen wrote:
 
-> But to fix it,  isn't following change less aggressive?
->         event_sched_out(event, ctx);
-> -       perf_event_set_state(event, min(event->state, state));
->         if (flags & DETACH_GROUP)
->                 perf_group_detach(event);
->         if (flags & DETACH_CHILD)
->                perf_child_detach(event);
->         list_del_event(event, ctx);
-> +       perf_event_set_state(event, min(event->state, state));
+> On Thu, 15 May 2025, Hans Zhang wrote:
+>=20
+> > The primary PCI config space accessors are tied to the size of the read
+> > (byte/word/dword). Upcoming refactoring of PCI capability discovery log=
+ic
+> > requires passing a config accessor function that must be able to perfor=
+m
+> > read with different sizes.
+> >=20
+> > Add any size config space read accessor pci_bus_read_config() to allow
+> > giving it as the config space accessor to the upcoming PCI capability
+> > discovery macro.
+> >=20
+> > Reconstructs the PCI function discovery logic to prepare for unified
+> > configuration of access modes. No function changes are intended.
+> >=20
+> > Signed-off-by: Hans Zhang <18255117159@163.com>
+> > ---
+> > Changes since v9 ~ v11:
+> > - None
+> >=20
+> > Changes since v8:
+> > - The new split is patch 1/6.
+> > - The patch commit message were modified.
+> > ---
+> >  drivers/pci/access.c | 17 +++++++++++++++++
+> >  drivers/pci/pci.h    |  2 ++
+> >  2 files changed, 19 insertions(+)
+> >=20
+> > diff --git a/drivers/pci/access.c b/drivers/pci/access.c
+> > index b123da16b63b..603332658ab3 100644
+> > --- a/drivers/pci/access.c
+> > +++ b/drivers/pci/access.c
+> > @@ -85,6 +85,23 @@ EXPORT_SYMBOL(pci_bus_write_config_byte);
+> >  EXPORT_SYMBOL(pci_bus_write_config_word);
+> >  EXPORT_SYMBOL(pci_bus_write_config_dword);
+> > =20
+> > +int pci_bus_read_config(void *priv, unsigned int devfn, int where, u32=
+ size,
+> > +=09=09=09u32 *val)
+> > +{
+> > +=09struct pci_bus *bus =3D priv;
+> > +=09int ret;
+> > +
+> > +=09if (size =3D=3D 1)
+> > +=09=09ret =3D pci_bus_read_config_byte(bus, devfn, where, (u8 *)val);
+> > +=09else if (size =3D=3D 2)
+> > +=09=09ret =3D pci_bus_read_config_word(bus, devfn, where, (u16 *)val);
+> > +=09else
+> > +=09=09ret =3D pci_bus_read_config_dword(bus, devfn, where, val);
+>=20
+> Perhaps this should check also size =3D=3D 4 and return=20
+> PCIBIOS_BAD_REGISTER_NUMBER in case size is wrong.
+>=20
+> > +
+> > +=09return ret;
 
-If perf_child_detach() is called first and perf_event_set_state() call,
-since the parent is removed in perf_child_detatced,
-It would be failed to account the total_enable_time which caculating
-child_event's enable_time too.
+I'd also forgo ret variable and return directly.
 
-Thanks
+> > +}
+> > +EXPORT_SYMBOL_GPL(pci_bus_read_config);
+>=20
+> Does this even need to be exported? Isn't the capability search always=20
+> built in?
+>=20
+> >  int pci_generic_config_read(struct pci_bus *bus, unsigned int devfn,
+> >  =09=09=09    int where, int size, u32 *val)
+> >  {
+> > diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+> > index b81e99cd4b62..5e1477d6e254 100644
+> > --- a/drivers/pci/pci.h
+> > +++ b/drivers/pci/pci.h
+> > @@ -88,6 +88,8 @@ extern bool pci_early_dump;
+> >  bool pcie_cap_has_lnkctl(const struct pci_dev *dev);
+> >  bool pcie_cap_has_lnkctl2(const struct pci_dev *dev);
+> >  bool pcie_cap_has_rtctl(const struct pci_dev *dev);
+> > +int pci_bus_read_config(void *priv, unsigned int devfn, int where, u32=
+ size,
+> > +=09=09=09u32 *val);
+> > =20
+> >  /* Functions internal to the PCI core code */
+> > =20
+> >=20
+>=20
+>=20
 
---
-Sincerely,
-Yeoreum Yun
+--=20
+ i.
+
+--8323328-132017667-1748942506=:937--
 
