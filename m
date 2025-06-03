@@ -1,87 +1,88 @@
-Return-Path: <linux-kernel+bounces-671794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 711F3ACC63E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 14:15:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 08384ACC64B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 14:16:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2556F3A398C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 12:15:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9AA43A2D56
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 12:16:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DE5222A4E1;
-	Tue,  3 Jun 2025 12:15:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3E662AE6C;
+	Tue,  3 Jun 2025 12:16:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GGWU+uWo"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z1vtRpJQ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A40592744D
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 12:15:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E9F038B
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 12:16:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748952925; cv=none; b=bSeANQRDN9E9PS9GDzOUj+XEPjM1vUu7M1erDRvtnQv2Okitp7F3eapiFmIN+SfRnn61TujJhaDP/cp+MIV0a2frhtKIwfTkGMnvP1T431DLP04njkfLJOZk5z62ExrX2gzVzR8fSho4h06OaLh+e/AFfhoJTpDCf9X8+or1rAw=
+	t=1748953005; cv=none; b=VlRLe86jxYxy6YPr32npsiglF1Jd6rP6/m6Z9cMdoANqCTQHGoQT5dC6YlbR8S9bBsxFnJ7XKql65Tps/0XWmhZUH+z9wqoBC5gLouX9mr2bW3hBQ8hJSkzM++zVBTwjLaj9rxLvqMH7CViproKNluFFU0lYX2uNo2eCR+hTWHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748952925; c=relaxed/simple;
-	bh=Gx9zGZsE5PgxVIjkvOukU6sQCQHBbVJg4M/tkfsRGUw=;
+	s=arc-20240116; t=1748953005; c=relaxed/simple;
+	bh=idG4OPS38xvnojkFXb6OAtxBXPgYhX6sJRAn0jf0zp4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dCYv8f676wc0A9/ggUqQ7R4mmefzOHXaAYNoLxfZcW4hLVti3R5nEPSDA8BEz2IdPM7T4DUDw0209bFIHIj/Ic3ZkDKrzKJ1nDiYJCjvDqlWggtK9BuX/IB/ML8H5Yk5D1Mc+FYVgs+8O/e3VAhbSLvINSM5PIdJPr6zIgdPzEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GGWU+uWo; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:Content-Type; b=PtIUghlOe2Rn4On1Bz9GyQ1OrlO3LVb0DWA7eA3gUW13Yg7SxM1KeONXf/qJJAOglOnyXziKSHH8HdRJAWKQSPEfqy94P2dv66Y5twm0jE3oBsFHIwMjYM7qmllHz4XNXoi/rWoLPoB/Re9qWZ6BwijMeb6f7+iHSugbJ9KUQ0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Z1vtRpJQ; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1748952922;
+	s=mimecast20190719; t=1748953002;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=TasztSvEy0KptHyXQjrgiaCFMzH0ysJYTfsnvkcKii8=;
-	b=GGWU+uWo+22dfIphcRl/nkOE1q3QCF0RYgDkbin1gjno5i2857F2N/RBJqi/wk1vBJlSwO
-	GOFmFDhBAV5l4plKo7BReVEUejelzOBODDcTXoctwCSu1TO1inCuJVmVOOGG4aqLcnxY1T
-	ehsncg/1kTOpqGOvmwVnlTBIK26b/vo=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=zFkVskIoPLKZci5KmRyw1Ujf2GM9YO/6k18+0dJGRXI=;
+	b=Z1vtRpJQmo2crZ9HaHiEydTn550iFCrmHMZPNYGAL4t5HItn4q4wU4OI7QJAsUvyRl/PqW
+	nWDRMoGsD4dOKwQ9TE08d6v/3SHaIiwHz472RqSbtqukJl7VeGV/QOWmRNvOYoQY40xcF8
+	6dNn+wiw/H3V71apM3aoSrrRdjasuI8=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-223-hUA4nxN0OqmtcS_IrWq22A-1; Tue, 03 Jun 2025 08:15:20 -0400
-X-MC-Unique: hUA4nxN0OqmtcS_IrWq22A-1
-X-Mimecast-MFC-AGG-ID: hUA4nxN0OqmtcS_IrWq22A_1748952919
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-442e0e6eb84so35450775e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jun 2025 05:15:20 -0700 (PDT)
+ us-mta-594-oAXHZ8jiP4WkasNpbqbqug-1; Tue, 03 Jun 2025 08:16:41 -0400
+X-MC-Unique: oAXHZ8jiP4WkasNpbqbqug-1
+X-Mimecast-MFC-AGG-ID: oAXHZ8jiP4WkasNpbqbqug_1748953000
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-440667e7f92so38455535e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jun 2025 05:16:40 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748952919; x=1749557719;
+        d=1e100.net; s=20230601; t=1748953000; x=1749557800;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=TasztSvEy0KptHyXQjrgiaCFMzH0ysJYTfsnvkcKii8=;
-        b=ntPkEfi00pD86ZymM3I/PvywKgD9tndcSdxn0iiizZ97N9BJ+MnznT+GxhKPDxIh1W
-         yRsgTWZo1RUuPFbgyQd3rxCAa+RTW72+WWin2x1hH/1UYT0c2TgDgD/dMyg8fmxMuaXZ
-         ucWTH66nC+5efeN1Cin/2VnnhK2dIz8ATHwLgjDvPRmlBHsey2kcadiPLshMyacnXFq/
-         1qogTYOKp+lllSgFq+xDduad0gR4WGAdZZe3++0TOq51NFdSSGdfjcsxHWE7vr6vpH+P
-         pAt0WN7gtFJETZer9cpm0gJ0zzLVSgzyVlMxiDA7z+ydu5kqxBYTH80m3fA+T1NVXge7
-         A2dA==
-X-Forwarded-Encrypted: i=1; AJvYcCV1t8G7/pLNJAvdZdLOEEMtqjDp4ZSV7Hxshpp68EWyYv4ecqRttNqb15DjE0e1KKnJS7u1cpeaDoAqFFE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdkcEQvFCKGTpWdqL3ERoCaKgsPXVR8QptEup0BzDTQqWKYm7R
-	k+kNG+Aa9VrM8+/CiLMGDBIcQyPdGJj8WIdxGmPL1YnuaewSb5zec0FTReJLN9uwLId0Ed7lPOQ
-	NKtfa3v58vdeRl11GGhVGP/WSGcSKgSQccW/guTKIjICsQ7rpf9YnNyjKFwKIstNIiQ==
-X-Gm-Gg: ASbGnctPAvhmsySMUWCwqArTOoox3wOrqA1HxAyiW3E2B47lms6cRM74SScjpeqq3fw
-	B0z9Cf65mGiyc4cEGO58W+RSMNlEWLN4oFm2gXwK5KvtehWL47jCuo+13GuLfDJMedLc9u69IyR
-	Fsz92lXgO95+oMnzpaUuTXs+ArvktobFKjoHbgiw+jPzsjl9bVNr5eV+XF5uHSzBkUWXgp0RKU3
-	/4wR/uFzktWcQD/4LD1h3EpagfzF2r0q6Yj3iN/3ifLI46sYYv6VBBfEnWCOYJb/1hSrNY8nEBm
-	WYMIhGTfAtfoF6oPl1OR09uu4k2V2fQDfPtyZ9po3gtUb8m0t3T53kb2+43Sgg/RnwOYGwkAt+Y
-	/3aozyVg6vhLgrjDluOsMNhwM2tEvK3f+tXrHvrw=
-X-Received: by 2002:a05:600c:8b68:b0:440:6852:5b31 with SMTP id 5b1f17b1804b1-450d651182fmr193445135e9.10.1748952918988;
-        Tue, 03 Jun 2025 05:15:18 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEiHaGOk8I+UeX8+pvGCa89rKh+KLPclMDESQfssTO2f3GKAiDIyMQLwhS6/fd1DVCtRLsNiA==
-X-Received: by 2002:a05:600c:8b68:b0:440:6852:5b31 with SMTP id 5b1f17b1804b1-450d651182fmr193444655e9.10.1748952918541;
-        Tue, 03 Jun 2025 05:15:18 -0700 (PDT)
+        bh=zFkVskIoPLKZci5KmRyw1Ujf2GM9YO/6k18+0dJGRXI=;
+        b=Wd09P7Rzifo2HC89r1GJxGXHdPFL24hr28yx34mww2BMeHldVo2o9lf7ZtnU1qjdQT
+         K3hWUPJjTG3L6Y3Q+4TOfxOOlESIwQvoJOeK+ItIMVtwuz5e5hBy4qRa+5fWVNw6szsV
+         GGH4J87fUQ9Wo3dLJ+gLovzISXq8hNvwgc0QF0hxX8T+zHh3NthuC2QDP5+RSTKXcQ97
+         IwJoIvh46qmClVmkTAp904zpUjH5wSopofEXGabSO/9IJnVqZWMvqj+NFOzBfZ7+5mvN
+         /lsPWDxtnSf9Y3vqzeBqbVEyLkZiL5mMC7C3d+yiTSvS8abkmJ61Wo11XHwNUNd/Eb6d
+         gAVA==
+X-Forwarded-Encrypted: i=1; AJvYcCVVadGPSASQHGvzkMyc9LAQNSETdUnQz7ud/6EuLK7NHaz9vl+ePz/hR59hKTPkuoDvzJNnasqJ7SZdoSU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxd+Loet6v2TFOHjxfubtVnN1+CI6eFRtM1cB6rAmCm+FsRmksK
+	gALmFKmT6skn7bjoWF/FC3ZcdRd7I5y0cgqF9isEGO5/R/0yurieW8uyZU9kJ5inFjxob9N5aMi
+	4yxwSZ49v/mH1i5ZY3wf76g7wxWtjYdIzdwrba9ouoi08564bfJaeqAgHis2d3iryXwVA6b4O68
+	HQ
+X-Gm-Gg: ASbGnctfjOpa44n5OPxFa2tIHLWcIjj74FY7+p+s3TDFJ3E2ZU+OL6kC2ksRB0RHfHK
+	J4XpMuFiq+ipK+OnrQOo99ciwIWASVyqkyCW0dGL6+f8moX61HWTOI4dIEYGzco9izGNGmglP9L
+	cErMl+YLPpgEP1gprMHpWgZj5DKUMyo2nAIl2ZMLnnSGsfV+cbcWiyr08avpnvSms9YApWE/T5p
+	DyYDo3PlT1UnGvI45SpgIIrlfqRyeQZ57VSaz0arjaFJcehhU7etQXFyEOQlrXw5TOb0bI5ocmI
+	JYxZQ/XflceV+52pG7lIDUT5VUVidgR6cFaC+l8t7dmJrkTTHorfcBioBH636+NdIzmEzUSlEo+
+	WYT8f7mrMFOQH+VcK62wotE/JInz+TKgoTBo8N1w=
+X-Received: by 2002:a05:600c:6219:b0:43c:ec97:75db with SMTP id 5b1f17b1804b1-4511ecc3e06mr108883715e9.11.1748952999757;
+        Tue, 03 Jun 2025 05:16:39 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGS1DnA0XkpW31VCHiq9SeAcnd5vAQKnQl/rGx7fh5/gtTlrZFw/1Wvm8mBkCINymrUlGLFLQ==
+X-Received: by 2002:a05:600c:6219:b0:43c:ec97:75db with SMTP id 5b1f17b1804b1-4511ecc3e06mr108883385e9.11.1748952999325;
+        Tue, 03 Jun 2025 05:16:39 -0700 (PDT)
 Received: from ?IPV6:2003:d8:2f0d:f000:eec9:2b8d:4913:f32a? (p200300d82f0df000eec92b8d4913f32a.dip0.t-ipconnect.de. [2003:d8:2f0d:f000:eec9:2b8d:4913:f32a])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-450d8000d45sm159598675e9.25.2025.06.03.05.15.17
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-450d7f8edebsm158198345e9.6.2025.06.03.05.16.37
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Jun 2025 05:15:18 -0700 (PDT)
-Message-ID: <0003a78b-e66f-41a5-9244-89c2c430cfa4@redhat.com>
-Date: Tue, 3 Jun 2025 14:15:16 +0200
+        Tue, 03 Jun 2025 05:16:38 -0700 (PDT)
+Message-ID: <6d7c2cd2-061e-4295-8e9a-832cd0185d8c@redhat.com>
+Date: Tue, 3 Jun 2025 14:16:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,21 +90,21 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC] mm: madvise: use walk_page_range_vma() for
- madvise_free_single_vma()
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Barry Song <21cnbao@gmail.com>
-Cc: Dev Jain <dev.jain@arm.com>, akpm@linux-foundation.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- Barry Song <v-songbaohua@oppo.com>, "Liam R. Howlett"
- <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>,
- Jann Horn <jannh@google.com>, Suren Baghdasaryan <surenb@google.com>,
- Lokesh Gidra <lokeshgidra@google.com>,
- Tangquan Zheng <zhengtangquan@oppo.com>
-References: <20250603013154.5905-1-21cnbao@gmail.com>
- <7bd57eba-42a0-4bf3-8632-b91c401b7316@arm.com>
- <CAGsJ_4y3zWS_rHY4=WWuA9BANYwR=r-j9nrfiX2TAQwuo11JdA@mail.gmail.com>
- <bd61e018-5fbb-4aac-8672-0c16254ba09e@lucifer.local>
+Subject: Re: [PATCH v1 1/4] mm: Fix uprobe pte be overwritten when expanding
+ vma
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Pu Lehui <pulehui@huaweicloud.com>, mhiramat@kernel.org, oleg@redhat.com,
+ peterz@infradead.org, akpm@linux-foundation.org, Liam.Howlett@oracle.com,
+ vbabka@suse.cz, jannh@google.com, pfalcato@suse.de, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org, pulehui@huawei.com
+References: <20250529155650.4017699-1-pulehui@huaweicloud.com>
+ <20250529155650.4017699-2-pulehui@huaweicloud.com>
+ <962c6be7-e37a-4990-8952-bf8b17f6467d@redhat.com>
+ <009fe1d5-9d98-45f1-89f0-04e2ee8f0ade@lucifer.local>
+ <6dd3af08-b3be-4a68-af3d-1fc1b79f4279@redhat.com>
+ <117e92c1-d514-4661-a04b-abe663a72995@lucifer.local>
+ <702d4035-281f-4045-aaa7-3d6c3f7bdb68@redhat.com>
+ <86b7cfb9-65d2-4737-a84d-e151702895f1@lucifer.local>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -151,77 +152,86 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <bd61e018-5fbb-4aac-8672-0c16254ba09e@lucifer.local>
+In-Reply-To: <86b7cfb9-65d2-4737-a84d-e151702895f1@lucifer.local>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 03.06.25 11:41, Lorenzo Stoakes wrote:
-> On Tue, Jun 03, 2025 at 08:47:04PM +1200, Barry Song wrote:
->> On Tue, Jun 3, 2025 at 6:11 PM Dev Jain <dev.jain@arm.com> wrote:
+On 02.06.25 19:01, Lorenzo Stoakes wrote:
+> On Mon, Jun 02, 2025 at 06:28:58PM +0200, David Hildenbrand wrote:
+>> On 02.06.25 15:26, Lorenzo Stoakes wrote:
+>>> On Mon, Jun 02, 2025 at 02:26:21PM +0200, David Hildenbrand wrote:
+>>>> On 02.06.25 13:55, Lorenzo Stoakes wrote:
+>>>>> On Fri, May 30, 2025 at 08:51:14PM +0200, David Hildenbrand wrote:
+>>>>>>>      	if (vp->remove) {
+>>>>>>> @@ -1823,6 +1829,14 @@ struct vm_area_struct *copy_vma(struct vm_area_struct **vmap,
+>>>>>>>      		faulted_in_anon_vma = false;
+>>>>>>>      	}
+>>>>>>> +	/*
+>>>>>>> +	 * If the VMA we are copying might contain a uprobe PTE, ensure
+>>>>>>> +	 * that we do not establish one upon merge. Otherwise, when mremap()
+>>>>>>> +	 * moves page tables, it will orphan the newly created PTE.
+>>>>>>> +	 */
+>>>>>>> +	if (vma->vm_file)
+>>>>>>> +		vmg.skip_vma_uprobe = true;
+>>>>>>> +
+>>>>>>
+>>>>>> Assuming we extend the VMA on the way (not merge), would we handle that
+>>>>>> properly?
+>>>>>>
+>>>>>> Or is that not possible on this code path or already broken either way?
+>>>>>
+>>>>> I'm not sure in what context you mean expand, vma_merge_new_range() calls
+>>>>> vma_expand() so we call an expand a merge here, and this flag will be
+>>>>> obeyed.
+>>>>
+>>>> Essentially, an mremap() that grows an existing mapping while moving it.
+>>>>
+>>>> Assume we have
+>>>>
+>>>> [ VMA 0 ] [ VMA X]
+>>>>
+>>>> And want to grow VMA 0 by 1 page.
+>>>>
+>>>> We cannot grow in-place, so we'll have to copy VMA 0 to another VMA, and
+>>>> while at it, expand it by 1 page.
+>>>>
+>>>> expand_vma()->move_vma()->copy_vma_and_data()->copy_vma()
 >>>
->>>
->>> On 03/06/25 7:01 am, Barry Song wrote:
->>>> From: Barry Song <v-songbaohua@oppo.com>
->>>>
->>>> We've already found the VMA before calling madvise_free_single_vma(),
->>>> so calling walk_page_range() and doing find_vma() again seems
->>>> unnecessary. It also prevents potential optimizations for MADV_FREE
->>>> to use a per-VMA lock.
->>>>
->>>> Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
->>>> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
->>>> Cc: David Hildenbrand <david@redhat.com>
->>>> Cc: Vlastimil Babka <vbabka@suse.cz>
->>>> Cc: Jann Horn <jannh@google.com>
->>>> Cc: Suren Baghdasaryan <surenb@google.com>
->>>> Cc: Lokesh Gidra <lokeshgidra@google.com>
->>>> Cc: Tangquan Zheng <zhengtangquan@oppo.com>
->>>> Signed-off-by: Barry Song <v-songbaohua@oppo.com>
->>>> ---
->>>>    mm/madvise.c | 2 +-
->>>>    1 file changed, 1 insertion(+), 1 deletion(-)
->>>>
->>>> diff --git a/mm/madvise.c b/mm/madvise.c
->>>> index d408ffa404b3..c6a28a2d3ff8 100644
->>>> --- a/mm/madvise.c
->>>> +++ b/mm/madvise.c
->>>> @@ -826,7 +826,7 @@ static int madvise_free_single_vma(struct madvise_behavior *madv_behavior,
->>>>
->>>>        mmu_notifier_invalidate_range_start(&range);
->>>>        tlb_start_vma(tlb, vma);
->>>> -     walk_page_range(vma->vm_mm, range.start, range.end,
->>>> +     walk_page_range_vma(vma, range.start, range.end,
->>>>                        &madvise_free_walk_ops, tlb);
->>>>        tlb_end_vma(tlb, vma);
->>>>        mmu_notifier_invalidate_range_end(&range);
->>>
->>> Can similar optimizations be made in madvise_willneed(), madvise_cold_page_range(), etc?
+>>> OK so in that case you'd not have a merge at all, you'd have a new VMA and all
+>>> would be well and beautiful :) or I mean hopefully. Maybe?
 >>
->> Yes, I think the same code flow applies to madvise_willneed,
->> madvise_cold_page_range, and similar functions, though my current
->> interest is more on madvise_free.
+>> I'm really not sure. :)
 >>
->> Let me prepare a v2 that includes those as well.
+>> Could there be some very odd cases like
+>>
+>> [VMA 0 ][ VMA 1 ][ VMA X]
+>>
+>> and when we mremap() [ VMA 1 ] to grow, we would place it before [VMA 0 ],
+>> and just by pure lick end up merging with that if the ranges match?
 > 
-> FWIW Dev makes a great point here and I agree wholeheartedly, let's fix all such
-> cases...
+> When we invoke copy_vma() we pass vrm->new_addr and vrm->new_len so this would
+> trigger a merge and the correct uprobe handling.
 > 
-> As an aside, I wonder if we previously didn't do this because we hadn't
-> previously exposed the walk_page_range_vma() API or something?
+> Since we just don't trigger the breakpoint install in this situation, we'd
+> correctly move over the breakpoint to the right position, and overwrite anything
+> we expanded into.
+> 
+> I do want to do a mremap doc actually to cover all the weird cases, because
+> there's some weird stuff in there and it's worth covering off stuff for users
+> and stuff for kernel people :)
+> 
+>>
+>> We're in the corner cases now, ... so this might not be relevant. But I hope
+>> we can clean up that uprobe mmap call later ...
+> 
+> Yeah with this initial fix in we can obviously revisit as needed!
 
-IIRC, yes:
+As Andrew was asking off-list:
 
-commit e07cda5f232fac4de0925d8a4c92e51e41fa2f6e
-Author: David Hildenbrand <david@redhat.com>
-Date:   Fri Oct 21 12:11:39 2022 +0200
+Acked-by: David Hildenbrand <david@redhat.com>
 
-     mm/pagewalk: add walk_page_range_vma()
-     
-     Let's add walk_page_range_vma(), which is similar to walk_page_vma(),
-     however, is only interested in a subset of the VMA range.
-     
-     To be used in KSM code to stop using follow_page() next.
 
+:)
 
 -- 
 Cheers,
