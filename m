@@ -1,130 +1,156 @@
-Return-Path: <linux-kernel+bounces-671787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45EA4ACC62A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 14:07:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9415DACC62E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 14:10:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AB3B3A4DA7
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 12:07:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A6921682DA
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 12:10:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 265C222F74A;
-	Tue,  3 Jun 2025 12:07:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D153B22F74D;
+	Tue,  3 Jun 2025 12:09:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bZ1tIPBC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QKjE60on"
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 795CC146A66;
-	Tue,  3 Jun 2025 12:07:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BEA2146A66
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 12:09:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748952462; cv=none; b=RlfsCAGBQ/cL90uiivchCLGW0e8IyYuQcX6tMr/yyQd5l18Fu0BXfNHdnMOEvO4BIuWdKjazjKEdalywnk+r6556HP/QKydPppe5mNhJVAqZc9FErj54qNfvNbQIX1JTVVELZXq0Tv/lF9hdoicLQD6OqxUvGLdF4F7koc0hek8=
+	t=1748952595; cv=none; b=nLpIlxuFgCmEvLrCgMiKlEmvd6oyEjd6CjQ0tG3jan1TSK/ULloa/CW7b1vinICQtE+mIl6tN8RZI9qVnmkUGKb3orqJLkGUuEUA/YqLVELzKbEvWmijWJvWShVaf7RDKv5imnDlHYY3+m9p5kc4TbaBfVmjMa28yJvB6NDEKLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748952462; c=relaxed/simple;
-	bh=BbD8Z3F2Z41vAioRdlDjKkkvrHAem1eOimWX5TqDL6w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i3Nza/i1vFISmkkoKoFfe7k6830c7puFrA1Sd084qPRNmHGo/w0dlG8E447CufkGdrNAfY8kAeOkFyGIdQ7VATKgLz+4Kk+1Nhz1lOO0rkodI58cell/7wHsqBpu0NPHp5r5CHGuM3EujTvjjMe+KpE5bryZa6iBk9s7F6eBvEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bZ1tIPBC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96808C4CEEF;
-	Tue,  3 Jun 2025 12:07:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748952461;
-	bh=BbD8Z3F2Z41vAioRdlDjKkkvrHAem1eOimWX5TqDL6w=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=bZ1tIPBCMC0FV0OvYa4IU2MI/zLxD6HAAJ/fn3ZQ+kC9SxgorXCRZkF7HWoXqEK0n
-	 iAUDRNsvbeHoYigOApXD/k43x+CXVPQ3n9oDBwYZZffCLBEEqfB1PfpYx9Y3hJ9hXU
-	 hVej6reVni5cdK8W5VOfHAxJLh/bYcfqAAuabxzwug1kXfUlMOrZfzgkq/YUWfF0TH
-	 fB8Jy9pBgprYgPdAxioRfm/9W0rVDFCbfWILT3l/j630UfqzWRXTtcZT2Z47Einhkc
-	 Ky5GLbIPIcidz7PtV6EeAhFEP3IaCAhYrnEn0f7QeqN9wBAPoMPFwVWUYSrCeI5hMn
-	 ULpe6x+Vrd1Wg==
-Message-ID: <ba13c2f1-9b08-4ba7-8093-d55c16143cb2@kernel.org>
-Date: Tue, 3 Jun 2025 14:07:24 +0200
+	s=arc-20240116; t=1748952595; c=relaxed/simple;
+	bh=YryBAYYqkusGLWOaZUx/ENPVrzfzihfvA3OAF4RkZyE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GBFQfJJUbUq/AFU55yxR2noe7fH+qogOU2+OMR7GfcJWwp3+chNtJ+wggaSFZcX5vQ96gTyGh50XQmPoLkLwGBAhqpY7TEivHaiwOeLcir/n4Ob5k1B3T99WR8PKx4ZdD1dXyJy40Vcu8srsvb4Kq3pLMrQbUzJgcA4gDCeQ+DE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QKjE60on; arc=none smtp.client-ip=209.85.128.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-70b4e497d96so53167077b3.2
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jun 2025 05:09:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1748952591; x=1749557391; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=wkgkfx1ZHJ5WRXN3wk71OJao3glFFdhvQiWlOBbCHtw=;
+        b=QKjE60on8C0B1uf7Wkdr4vd3wZEUNW/3x685xZ2L1Ujg5MCiUKYJVHko1af2IRHuCw
+         eiZlimKJqQe561ASjCIvjujo/a63N+xe4UPdANf0Mk+eP172bgz2yHZQ5ZKgItNkps0d
+         8bjOdPteDQF4uyTGMcvppPAeOERxrH+gdS1gvmyPh9phN9LCKcbXM7dMEqGStpPMaWd6
+         fPzTKrePbM7X2xzNuiOxKfGnErudddrnTJoRo6luOt5ona3WXNTPktOj4HgeFNRsCyB7
+         vZCC9fQycUzJqkIMqqatqK6CtGCOD28cecO9XgWuaZypgtdmUSX+VMK9NHfOtxU0YoQU
+         xr8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748952591; x=1749557391;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wkgkfx1ZHJ5WRXN3wk71OJao3glFFdhvQiWlOBbCHtw=;
+        b=ffLegEYNVb9DJccsHq1Jzeo8rIbsyz+pc5iHDuUiHEO4mQQeMqBOg5vNiexXaT8dZi
+         juRXsiQLFWC4AvvdeNOU4gXG+K1wuyPkhN4MgkWpP6laujSeUol/NuGdqQISfFsSvNU2
+         S+mUhEU696dbHZ40+yAaYfKI55l4wR0b97/2rlaKyJm83m9eABQMKt8jbBrlhhxiZp6W
+         1CIMzDW0SL+J2HG2oMJjh9OMuux1P55U96K/qIfiNngLGa6ltG7xJQRI4prxXvZj8ncq
+         THcmqGnvwVGORW6WyAv8DDeCGwchOKGuEp24LS/4O4MqMkVAv/1Z9NOZe0ynNh7gPGgs
+         1oRA==
+X-Forwarded-Encrypted: i=1; AJvYcCVnLnxPrh8JodZomLyE0vR9V0012SDVAUfwZ7L7hONQdNFcuolW3GN/fxd8aT5/lgPkumwvayVxPLF1Xwk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/lMIeCPbQuncZawHOiHqbgZpK6Vu4b2b3pE6NDpn/RcrEOJpC
+	j90/uZrk5R4WCoSLTnKdWH4sRzwFEP1RgeT07SJYH7Yrj7QrMtq9SkZsysakKCs8PywFitpgtbR
+	40IkV/3VDetBegH3f5ANW5YBr60w7aCiG+T2X5Lclug==
+X-Gm-Gg: ASbGncv46k6I42TjOzKAajsWviS/cJbcSxzXjDKpp9VJM25rKbkcPnhqdFr4khKyjR0
+	vvH7rXtLReutwY0UFOZNS0P+fVw8B1eYb95TLLvW0L0Ov9EtVSvcxQkdj11G56wQHHIgGQygi9K
+	3r7O7biBTNeXTcft6GLZTkOnX1b0fne3/mGMAvkKBEs/s=
+X-Google-Smtp-Source: AGHT+IEBu6kRLR+QihKU16+LErg47sPGw3yJ9MbHWp+STBlEAPmBRdPA2kKSotqf4d+nhihTdrEqxcQCav79Y/SEImk=
+X-Received: by 2002:a05:690c:6888:b0:70e:923:2173 with SMTP id
+ 00721157ae682-71097c2a76fmr158597817b3.5.1748952591135; Tue, 03 Jun 2025
+ 05:09:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/6] Add SPAcc Skcipher support
-To: Pavitrakumar Managutte <pavitrakumarm@vayavyalabs.com>
-Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, herbert@gondor.apana.org.au, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, Ruud.Derwig@synopsys.com,
- manjunath.hadli@vayavyalabs.com, adityak@vayavyalabs.com,
- Shweta Raikar <shwetar@vayavyalabs.com>
-References: <20250602053231.403143-1-pavitrakumarm@vayavyalabs.com>
- <20250602053231.403143-3-pavitrakumarm@vayavyalabs.com>
- <9f6b4442-1fb0-479d-9514-410d4d8bfd98@kernel.org>
- <CALxtO0kitR0MnjzPwVT8nsuYThTRX+fbyOH9i2z1KKnCPg1dqg@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <CALxtO0kitR0MnjzPwVT8nsuYThTRX+fbyOH9i2z1KKnCPg1dqg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250602131906.25751-1-hiagofranco@gmail.com>
+In-Reply-To: <20250602131906.25751-1-hiagofranco@gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 3 Jun 2025 14:09:14 +0200
+X-Gm-Features: AX0GCFuMy0nMLljWiQ8PZlmv65MxrymGJ77Eb8A4CZbrmvODDSNF3Eq2H4oVdUw
+Message-ID: <CAPDyKFrUAF5oWkyc3mLf0+R9VAypBotNyR4B5Chr3KQFYJOjbw@mail.gmail.com>
+Subject: Re: [PATCH v4 0/3] remoteproc: imx_rproc: allow attaching to running
+ core kicked by the bootloader
+To: Hiago De Franco <hiagofranco@gmail.com>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>, linux-pm@vger.kernel.org, 
+	linux-remoteproc@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Bjorn Andersson <andersson@kernel.org>, 
+	Hiago De Franco <hiago.franco@toradex.com>, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Peng Fan <peng.fan@oss.nxp.com>, daniel.baluta@nxp.com, iuliana.prodan@oss.nxp.com, 
+	"Rafael J . Wysocki" <rafael@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On 03/06/2025 14:02, Pavitrakumar Managutte wrote:
+On Mon, 2 Jun 2025 at 15:19, Hiago De Franco <hiagofranco@gmail.com> wrote:
+>
+> From: Hiago De Franco <hiago.franco@toradex.com>
+>
+> This patch series depends on Ulf's patches that are currently under review,
+> "pmdomain: Add generic ->sync_state() support to genpd" [1]. Without them,
+> this series is not going to work.
+>
+> For the i.MX8X and i.MX8 family SoCs, currently when the remotecore is
+> started by the bootloader and the M core and A core are in the same
+> partition, the driver is not capable to detect the remote core and
+> report the correct state of it.
+>
+> This patch series implement a new function, dev_pm_genpd_is_on(), which
+> returns the power status of a given power domain (M core power domains
+> IMX_SC_R_M4_0_PID0 and IMX_SC_R_M4_0_MU_1A in this case). If it is already
+> powered on, the driver will attach to it.
+>
+> Finally, the imx_rproc_clk_enable() function was also changed to make it
+> return before dev_clk_get() is called, as it currently generates an SCU
+> fault reset if the remote core is already running and the kernel tries
+> to enable the clock again. These changes are a follow up from a v1 sent
+> to imx_rproc [2] and from a reported regression [3].
+>
+> [1] https://lore.kernel.org/all/20250523134025.75130-1-ulf.hansson@linaro.org/
+> [2] https://lore.kernel.org/lkml/20250423155131.101473-1-hiagofranco@gmail.com/
+> [3] https://lore.kernel.org/lkml/20250404141713.ac2ntcsjsf7epdfa@hiago-nb/
+>
+> v4:
+> - dev_pm_genpd_is_on() introduced to drivers/pmdomain/core.c
+> - imx_rproc.c updated to use the generic power domains instead of the
+>   SCU API call, which depends on Ulf's patch series.
+>
+> v3:
+> - https://lore.kernel.org/all/20250519171514.61974-1-hiagofranco@gmail.com/
+>
+> v2:
+> - https://lore.kernel.org/lkml/20250507160056.11876-1-hiagofranco@gmail.com/
+>
+> v1:
+> - https://lore.kernel.org/lkml/20250505154849.64889-1-hiagofranco@gmail.com/
+>
+> Hiago De Franco (3):
+>   pmdomain: core: introduce dev_pm_genpd_is_on
+>   remoteproc: imx_rproc: skip clock enable when M-core is managed by the
+>     SCU
+>   remoteproc: imx_rproc: detect and attach to pre-booted remote cores
+>
+>  drivers/pmdomain/core.c        | 27 +++++++++++++++++++++++++++
+>  drivers/remoteproc/imx_rproc.c | 33 ++++++++++++++++++++++++++-------
+>  include/linux/pm_domain.h      |  6 ++++++
+>  3 files changed, 59 insertions(+), 7 deletions(-)
+>
 
->> Please run standard kernel tools for static analysis, like coccinelle,
->> smatch and sparse, and fix reported warnings. Also please check for
->> warnings when building with W=1 for gcc and clang. Most of these
->> commands (checks or W=1 build) can build specific targets, like some
->> directory, to narrow the scope to only your code. The code here looks
->> like it needs a fix. Feel free to get in touch if the warning is not clear.
->>
-Confirm that you understood this. You sent us code with obvious flaws
-which would be found with tools. It's a proof you did not run these
-static tools. It's not the job of community reviewers to replace the
-tools. Using us instead of tools is... well, a mistake but if you think
-about our limited time then kind of close to inappropriate request. So
-did you understand the need of using tools BEFORE you post it?
+We are awaiting further feedback on the other series [1]. As you have
+tested it, may I add your tested-by tag for it? Or perhaps if you can
+send a reply to the cover-letter for it?
 
-Best regards,
-Krzysztof
+Anyway, for $subject series:
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+
+Kind regards
+Uffe
 
