@@ -1,205 +1,146 @@
-Return-Path: <linux-kernel+bounces-671707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 770ECACC50E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 13:12:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A188ACC4B1
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 12:52:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9358E1736CF
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 11:11:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2905816B4A9
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 10:52:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4099322D7B0;
-	Tue,  3 Jun 2025 11:11:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83A4D22B8B6;
+	Tue,  3 Jun 2025 10:52:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Qc4+vsRP"
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010030.outbound.protection.outlook.com [52.101.84.30])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="WaB5EMNC"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41EDE149C41;
-	Tue,  3 Jun 2025 11:11:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.30
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748949082; cv=fail; b=iHgtKPw4wSymeYALKbkeJMXVDmWuNl1gAF8F45ScnmBbc54zpGrvfdsQZXrmDdsF4679nSOLfJolAg6bpiX58jQMCza2zZOTKV9b2W7naXZg2JeepAp4WdBZ0YD4ZE7MxhxsqiqHbRnrq3/lgHsMzOebSNhqt2CLpdS0Z5Ubh6E=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748949082; c=relaxed/simple;
-	bh=cmwqfcszbeT0XzRgVoenGFA8XvfEuHBtJDXq0zqnd0Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=U1fu1mwpiVSQnsPk05t0xHDJrRawYqyLRbvOSWys+JPaGOkqgjlhx1w2p1TAGJZhePBdNO0gs39OCvpLzwexbs/Qkenj7Rmy8c8x+LNCVkDNaTWXxFse7MhbNRrX8yIGO5o4woutOkbB1dYeb/+80QyxAqzyRlNWfKyejrH+OYQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Qc4+vsRP; arc=fail smtp.client-ip=52.101.84.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jj+FJpzO8pu1X4oVtJc23CSxfvljVmFLXD+o5aPEomLmgAnAUUGG7E9FKwDhi21WJPx2O1fbRyJ/NJQkvtLPOGIyOGmUGTeQYFYMgAPCi0BHMWrsZTf5nrSK7vidGaY/8KbPUXfm5IqF1CmtwzhCpHUonp48jCmSDDGoU0dAXUjWK3lVt3RsgEE+AjJMTWKkna8GRQP2TkqyQxPBc90U0Y0yrXt/F0vcyuVzG3+DiDmzKJAB2Fbg6tbH1Nnd1OnqgGdaH+IrlyVdHJqEqhT17Q/n5trGyolUeiLzI5YLqUrdaLyPevBs7X4uj2gtPkWqkMVpyBmjev9G6pW6FlkGMA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qZqCrGQP2itdV/BrEbAxXIGWcKLKh3dB3khO48Z0JFM=;
- b=F5zM0iyVImdXLV3kF7gU8HQeL8eyOD7z209qKiYU+M+wzs4lwTz1+XuJ9zcLSCDlY8hVUDHmaY22vf6WRVOuAf/SUaQPvJsolukjkSivU4VngRdLtx/rSDkdTyoHPq7vD22OkidvDQC6pX/xfgBTUeWEj2umdTHeC/Of+uESjRhpliQazr8iUn1qiqKlSQq7DBogdyN+Z3+QDTUth1jfj9VYYjEhFsJIJxnBhFMKZwcS7bm5PuRd7IupHgPUlI5l7NxPp4O7kjeRxGxnBmKptnGTk20Zz7QV0y+Jt/AveZien70CJKIKCxAgsKGNpWZjpSW/XMWKVNx/1MMwE1FWog==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qZqCrGQP2itdV/BrEbAxXIGWcKLKh3dB3khO48Z0JFM=;
- b=Qc4+vsRPxMIBpTvJayIkxW1WFoUfgmMKwfBA/dTzH+3Z/E8YCDT2xGxAr43l8YdOeniSGYTdYW+1AGcuC8RhvQMv09BtXJbCz1TUV2Ni8N4Pn7g1yCWEFAwoYOVQ2HQEJZwjKECyfJoop1X/OgYepmbzXQZ4LCqKdli96kOEKeV3AFdUzjmKiIucXZWOyNemqy2ASCUkhxzg9q1vQyNJe59WeZwFZ6G5Bm2pBPmCniEEAsTPz7DJWW5QFdewI31EgtHAMfF78arxPFgVWQvct4VRoy7fbR0hTOIGXAkZHMrcIRK5LQMHJii9H+JSXmFmSY6UBjVpNgZklaSmBNvuRg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB8510.eurprd04.prod.outlook.com (2603:10a6:102:211::7)
- by VI1PR04MB7197.eurprd04.prod.outlook.com (2603:10a6:800:129::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8792.33; Tue, 3 Jun
- 2025 11:11:14 +0000
-Received: from PAXPR04MB8510.eurprd04.prod.outlook.com
- ([fe80::a7c2:e2fa:8e04:40db]) by PAXPR04MB8510.eurprd04.prod.outlook.com
- ([fe80::a7c2:e2fa:8e04:40db%5]) with mapi id 15.20.8769.035; Tue, 3 Jun 2025
- 11:11:14 +0000
-From: Wei Fang <wei.fang@nxp.com>
-To: claudiu.manoil@nxp.com,
-	vladimir.oltean@nxp.com,
-	xiaoning.wang@nxp.com,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev,
-	arnd@kernel.org
-Subject: [PATCH net] net: enetc: fix the netc-lib driver build dependency
-Date: Tue,  3 Jun 2025 18:50:56 +0800
-Message-Id: <20250603105056.4052084-1-wei.fang@nxp.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: MA1PR01CA0178.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:d::7) To PAXPR04MB8510.eurprd04.prod.outlook.com
- (2603:10a6:102:211::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82C021B3725
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 10:52:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748947922; cv=none; b=opMnWaTWmkAvzjexAyobzq3kPHuE1WcSa0LXXcsJfchZntPSrQb7RVkM0lK+lgRX4WLrfqMFiadokivCrOfZDtNih45XGIyzZVZGsVSOtawFVX6WRwGuslMLx3R8nyWn9ya2Z5gvkabJgkh3jsjaKKzX3v/MDqagBxbvUnCWf9A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748947922; c=relaxed/simple;
+	bh=xksPMyRBHmUawJmvrqG72dG1bQL/nqL7/zl7hnCq6mE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O09oUh0YYzgBdkFjuHBDwVIRMbYB9iajy7CZL8cAK0ub7KBOFee4N7I3clKH4d7wG4XcEU8A1nM9t7Y24qiwlI8OHA/paZwhCXu7dXA9sQqnnDqC3uBbxlJlmaW2wR70jsQl8ApJ3UiFq/AYh2v/xBzTaSzBms5Rd8wdnFJ1hug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=WaB5EMNC; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5539JJHh000560
+	for <linux-kernel@vger.kernel.org>; Tue, 3 Jun 2025 10:52:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=gG6LcmYQ46WfznvSwyEBH55u
+	Vk21hBJH1RbGwGrUNAc=; b=WaB5EMNC6oRdUMCoP7WZm2YeOQ/AFgfgY5GTWEiU
+	1HEBNjw2exJ7dmFwO3Jna7RhzSVVK39cWNeSw5RT09LTIapclaN+Lz/dKfWdJPMR
+	HG4ODwFfCb42HbLbx9T0n2BuyveEq5PXhNAkO3pip5m0a96tfEouC8oaZt/+MnbE
+	ZWo872rV2Pnw7IDciBzN81TDR2Pd4MRAIjSafSz524LaOF8KyZZ8IsEQBHmjPFWV
+	wDMSt5ZS5DJfhtcNOcRF5GkVpLgsoUc31UQq5tP4gWODTV1bmkJMINsvs4dBXSyv
+	WIJaUvFVjnabVsTbvPR030PIh3mQm4H/mazl9ItsAlt3yw==
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 471g8taam5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 03 Jun 2025 10:52:00 +0000 (GMT)
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7d09f7052bcso783482885a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jun 2025 03:52:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748947919; x=1749552719;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gG6LcmYQ46WfznvSwyEBH55uVk21hBJH1RbGwGrUNAc=;
+        b=fYHEpTB/+3PalcSp+wAaH4Ix9sapArZCjkmD39XFt7VI0DHjt7SI6nrHMtOeL37EzR
+         LBMDXC8lLHuISuniuPBFweiqEvJtv8lAz3kT7seo+k+gWnPd2lRlD0g0D3aVPnDpWfky
+         8hI7Rm7VCBPpTAfeAFgwLFlBzAd5CDjBzfLdlGh+h4kUjmhnsgNeyjN1tJWCm3vt9x6w
+         yEokarKneDrGK1zWwGoP7sQAqknP4ZZIQm5bZP3NbqQ9DmKnT8iuvcFpqFPTO84j10zy
+         qxr8N2qWExwg5UkTGiJMxKtN1oySHmLtkobo0tNBfhU6sDC9iol0Vn7TZcPm0/ujRlX7
+         ozAw==
+X-Forwarded-Encrypted: i=1; AJvYcCXHI+G1/fsUTaMxHlnpEgezOYrVKAkMjc69QkRQCiYebpi/aeQ/ygampv1g7ILGsJesScc/eZZ9dEAWaOg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMfa+Yb251rozmjkNXJkoM+8nwIExt/ZWPAw66CiWQx+21r3sI
+	1+WrBdPF8TdFyVUeoFb0+vS5Hz8J67S9/4tqqRX9tvVZ208ez0kBsOHW6lZ+FN2eRYP8ssUyY5Q
+	A8ilrhKdQ0ltbMWZJnWkD4dbWkmNNv1UzeTnzfz61Uhu2B+gjAMtehfPYpATQ596ywPw=
+X-Gm-Gg: ASbGncu3cOhvRxHl0S5gB2k73P/4hADGJuDu9NDUluY9GMDrdNc1H6Ax+mWEAp2LpbC
+	XQCfQhd/M/8S00/i6XejaI04FEJI80LLBaHzq/dHzNX4PpstDD7PWxOLf7qMikb6BZ+PfbzE0Dd
+	sfHnFn0cNm/npslgu3vKu23TsWG63jUE79InIrE20jNc4sm8MQ6yTS2oK01R+AyKbtDG+fUzztu
+	Z3kN+TFiSoJBe1OqDzgRLisiUQGDe2QbG5fc44DyueUplUdZ4KTe1vk4GVFE8jxSLR2LDIz02tx
+	CMF4xuoP/43O+5S3UhcoeQDwzF/iA9Jhz37OHlnnJvuREvrgmYl1YWQQS0Q6yW3CEOWL/FVkw+s
+	=
+X-Received: by 2002:a05:620a:190c:b0:7c7:9a85:d395 with SMTP id af79cd13be357-7d0a201cae3mr2458425185a.44.1748947919254;
+        Tue, 03 Jun 2025 03:51:59 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE2GiN9U2uANhBh2sl7jgw3VrcRzOZN+8sBe5jX67so9Kh/4ZlV1XnhUls63lXZyPIojeacfg==
+X-Received: by 2002:a05:620a:190c:b0:7c7:9a85:d395 with SMTP id af79cd13be357-7d0a201cae3mr2458422285a.44.1748947918924;
+        Tue, 03 Jun 2025 03:51:58 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-32a85b35cb6sm17578341fa.43.2025.06.03.03.51.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Jun 2025 03:51:57 -0700 (PDT)
+Date: Tue, 3 Jun 2025 13:51:56 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>
+Cc: amitk@kernel.org, thara.gopinath@gmail.com, rafael@kernel.org,
+        daniel.lezcano@linaro.org, rui.zhang@intel.com, lukasz.luba@arm.com,
+        david.collins@oss.qualcomm.com, srinivas.kandagatla@linaro.org,
+        stefan.schmidt@linaro.org, quic_tsoni@quicinc.com,
+        linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 5/5] thermal: qcom-spmi-temp-alarm: add support for
+ LITE PMIC peripherals
+Message-ID: <wsvdkte56d2avhhnte2r4udxpdaluz2jegwajhlik72ajk3nw3@l7daoy2lqvd2>
+References: <20250528235026.4171109-1-anjelique.melendez@oss.qualcomm.com>
+ <20250528235026.4171109-6-anjelique.melendez@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB8510:EE_|VI1PR04MB7197:EE_
-X-MS-Office365-Filtering-Correlation-Id: 22bdc941-e313-4e27-b8cf-08dda28f5a8e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|52116014|376014|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?mtO3+bESIwQPNwK4N+83JrBR950oLD/hGG5PaPPdOFOlT0PlC+SxJGppZrLc?=
- =?us-ascii?Q?2hzOIj72k3zNFI4GPvkpKlkpIdRdpkSjJLO8TMkW7IyrqksuDn5kIQ0Z/sQH?=
- =?us-ascii?Q?kKrRRpllyvH3xXQyHzBOgZbVFIlJZa1AOxNtRADGiod9iuuqgbBph+D67vXM?=
- =?us-ascii?Q?iUxkTaYU8JgkacEnP/R69plO0PC3K6f/BSkwul+SwWkgtn/3TsB2y3AZzdRY?=
- =?us-ascii?Q?O4yHoVgmz55hLG1GdwwksdU3nDKABVnjzB5cysatK982ix640FFS217Ioq2U?=
- =?us-ascii?Q?dEiNnoKDryN0FphjkKuzk/VJTL9QgB8yYXJGctFVmSwRrG3yQCW5vwh+lsFe?=
- =?us-ascii?Q?ogVPLnbUvTBHY++Y2oEn7wVI3VMdtPA1BVyn5R6EE4jM54TAA2FjzmC5cjhh?=
- =?us-ascii?Q?PhEA6/raK8cf18/2zWZWoC8kK4KMoTO6uzq+gKTGJv9phGHTjLubjdyqCFC7?=
- =?us-ascii?Q?DaQNHUEfg7z9d9KAsCTnvxgDINNgeZuDB8p6t7t8nZCPb+p+skyynDyOQaqW?=
- =?us-ascii?Q?GsYb27BqhBcNeD3ZVzp2yfmkJbgApdqlKUpJbSZk8b36rmuH0lZLpnzu/fKz?=
- =?us-ascii?Q?R9tgKpqVI5sqj7yXK6gsbj8rKiQG5qdItBnvPLK3QcY9Vs0//T60w+JuWwk5?=
- =?us-ascii?Q?DWjrRMFKuaEvkyGytDPrSzi5c0T+fj/+8nznVDb4COiqjYlno3n+BSYnHXoF?=
- =?us-ascii?Q?5G51eKjnkHxgQo1+6btlDxUuughab0PmjdesmVJaYDC3m4NPdIKEb/fxquMj?=
- =?us-ascii?Q?2mTPe1EH9jYCwfjvOUCk236Vn5vswDxSZ4QcD4UvzAnL1fc6R04nxOTl7tue?=
- =?us-ascii?Q?spHiUhLtRojapNTpHEt/VtgjraXixxHOJiv5nQMq1uPMTzhMpWK9iKv5Z5S1?=
- =?us-ascii?Q?0aGDN1RcWrRtO3OkgTW5OgIH0M8GnjWmXKMEIsCyyKXwPQ0E3Bdblpncl+n0?=
- =?us-ascii?Q?JwNM+PrJAYKHKAJ3KR2syDIT0lzIoumJccZPbOKRh/EgjsOBMMJeP2IGGguw?=
- =?us-ascii?Q?eFeoY/N3XO3njvR9Mh7e17bhpM/5swA//0hLgKrxW4b7XDD7ObXjCYsr92q2?=
- =?us-ascii?Q?X9OkLCfSB+HpOP4059wrPwqLBvLhh7aXM4PdLYnX3gpjlslAD2XxHHPYPy5p?=
- =?us-ascii?Q?pdXHKWVE2BF3L746hau/KksHc/YY++nON/uz5hRX6blirpqDiGzP8haxuqQO?=
- =?us-ascii?Q?N7f/voy5UXpWVVDG4/aJaKaSNHW9jrXsypRFrFgHZ2uG8ORlRmkxMiVT/R0E?=
- =?us-ascii?Q?SXmJBTfz6wt6KEMj8wA1ww4u3v21Yv0vCe0xg7xJ0KGqjPjD36EdqoKBQ8e6?=
- =?us-ascii?Q?03xZZqvi+YUTWkY8BQXH+LapJafTa/+6H5PdlJTv+u2i/1tHfGMAbhLu6BW3?=
- =?us-ascii?Q?bpu6GFhkyUaDX+EK5ee2CWFOxaAPFKIGqd+pWfRMpmEsu9ANiylQBHVZvtrt?=
- =?us-ascii?Q?YAhRBvk1s2PZrkaEMwsDdb4PGwNhW1h4EhYdU1QQbCYp+QRj3LdlptvhTQZd?=
- =?us-ascii?Q?jbvOj31Xs+0fn3I=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8510.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(376014)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?rNnVhWlvwGww62BXVhiCN/tg3n4QNfrhhfEGqfrxe71+14TGa7ar6xT7XPlZ?=
- =?us-ascii?Q?f6tJQ3kHpeP/XHIQYJaCMF4pM7n5wGs+FDgTq9HiW562SZZgD2lltR6vkTG2?=
- =?us-ascii?Q?TqVU/b+lfGrdkXiq7xf8mWvx5SKqg4LIyasXiToB3oHGQ4/uQUE2p4PD+ygC?=
- =?us-ascii?Q?li8eGY+OOHIS1T6XsInZ707pe5OfmMarx9hjjBy0ZQDn2wY+zL7mE/zc0Q4w?=
- =?us-ascii?Q?KH3tA5G+Br4Sl7+PPTreTgT3r3li6XXXUhtFdzPxDb/EzBtMyEwAu906sq9Q?=
- =?us-ascii?Q?flXhozodM6LZ757R9VFQRl4z9kR1D4tLUd3Gjx9b1L02L2JOg8f29FyGWa9H?=
- =?us-ascii?Q?fFqNLgjuse9xFNIK44LmafcTo+BL1J2jOhA558MbHF03FR/hharCnglJesVA?=
- =?us-ascii?Q?aT+YM5B9EJv1HAQhN/2X1ZiC0oQBJLjSrbY/0GWN3jt9VxVVphR7uT+9sfSb?=
- =?us-ascii?Q?44FBciGjsgnLD6Y9GwIdbIK8zVMnRvHCpCqx9uM5Yq8YnRsT6rhIUcm84TjH?=
- =?us-ascii?Q?4rRl6+q5w5S55DhGfZ/jML5denacnGBFESWABqxGRMm/w3PZr0bAxfHmV+f+?=
- =?us-ascii?Q?oF4uoQhQV7TlmeEKMtTm8gX7pD047Itq8QomovBUcImkgUtCqulmmUEfh3lq?=
- =?us-ascii?Q?sAGe4/FOEzVpFRJeyGV624jJdtx6xlqQU8E4jAzBGDXB6+7yfP+Qu1j5yA1H?=
- =?us-ascii?Q?arXDsMbCDYUwapNnNwlviElWdNbPiSOrymux/kLloA9IQUZ9dA0xSrzq5lco?=
- =?us-ascii?Q?cyxpQVI4TkD9ROSLpuUyo024syIkKzm0lbjbrwH0PJ/ID+HYsJZfb0YUrPlV?=
- =?us-ascii?Q?JJDRXqvwWnAuCR66+QovYUFmKZlhEX1ew3GfO6HXjiYfQh7ebIZI0cuI6FFG?=
- =?us-ascii?Q?f058J54orkVqIu/sJKW/6WCQkPhFho5RRit7SvnwDSLjrpLgbkNTXU93Celg?=
- =?us-ascii?Q?kP7Ery/v8FgI+WQXdPTOXyDzfuUSMLUi1PmsAlpUzsDRKH4EspBHEuELzeCz?=
- =?us-ascii?Q?ClrcGGMkzVKbhYMhIPJAfF8jI3bNpT5czco/aUYcccI4qr5u9jwjw9L/S+p5?=
- =?us-ascii?Q?DTrUm/ZGL4b7CFDBhUOgvJ+NZBmAjAeCu6z+6iE822GHnJMKhw0XJPUj4lBP?=
- =?us-ascii?Q?2LXYTA1/buFJ4QtPbetA9PYwLLx2aOdZ+aEFRG6Syi8KxFjb9udVEhxoHAw8?=
- =?us-ascii?Q?7fH/G8iwMbRhLprgIRmmioIP2DqJI6z+cB63Zg73658uoTTJm+AOBeMnVzQO?=
- =?us-ascii?Q?RPyho4SmzlQZDWoHzjYCVl9O/IZxdXT5Ba/3m5YxJEvDfkklHd/fJg2952HP?=
- =?us-ascii?Q?Cchb9fGGXQzkpWeozhU1I0U15Q//4zOFVpZniajen838dol5ge+RFK3CZ8aD?=
- =?us-ascii?Q?W0nUwKVhUKR9PgB1tpjNMtUzHsa1NSR3TF2YVOPbS297RaBO0OGd0vyREcD0?=
- =?us-ascii?Q?j5xbrbJInQNRoCJiILdEQDVZkDzZ5jo2h50Ntt/dyucZOp4BhiqyrUjmMBt7?=
- =?us-ascii?Q?GzgrAFxQxIl/L24iDO/NUb+KVSU035IclbyKIgo+zaYpIuCx0JOlJ5xu3AEp?=
- =?us-ascii?Q?9QUqfo6+c1yZ1hINjYuXit3SEM+ocinHFnGz34Cn?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 22bdc941-e313-4e27-b8cf-08dda28f5a8e
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8510.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jun 2025 11:11:14.2997
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +BOODE8UREkCWfUKnnqzPnykMDe5KyEv8OrGhGEW+x2PVa8UNkPYMdI9orVHlLNrZrTmTXqotHegmcXKwdTpjQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB7197
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250528235026.4171109-6-anjelique.melendez@oss.qualcomm.com>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjAzMDA5NSBTYWx0ZWRfX7nazeMfWbcTR
+ rL1YHJdvk+G0617EiUaxmKRdkgLSpnBMRm2xqnBng61QS9khBbnhrRJnR5PAtXiJkQrR0V/Phtr
+ 18H28LYs5TxPWNVTeyuxVON3nGAZqh2mZwfV4cBvPON5vRf0ZqekTsr++9rmCZh6FNWeuLPxAwy
+ tWwMSRr6/n79XcqlLBiobOusWGKH754njEevhwC+PuG5W+U/einZUSEzqyfyb6wtsNkZsQxC3XA
+ SmUBHTdUxDPdpYrA7te2WYltSCWXOILsPfg9uF655dg5lpMKRQAGGhlfUWdRH/lwsN/1/1nyUx+
+ OZ5By14qai75LBURb8G5czfN7jflSXrNrpuoZiXQ+s9NNLQbOb8ecOVes3yw2rtHF2Xuv0L851H
+ 0QuMU/f+RlijQ7OxWTi3ENVsN7g2JsFmUFrobvtGZiQp0T0pT1TONJ9zowUkd4FwAZaOengg
+X-Proofpoint-ORIG-GUID: Uz4vcdxzYHhP-3mErJGs9o2UMGI6nzft
+X-Authority-Analysis: v=2.4 cv=OuxPyz/t c=1 sm=1 tr=0 ts=683ed3d0 cx=c_pps
+ a=HLyN3IcIa5EE8TELMZ618Q==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=6IFa9wvqVegA:10 a=EUspDBNiAAAA:8 a=C_YEPuUXS4kB9x-TF1IA:9 a=CjuIK1q_8ugA:10
+ a=bTQJ7kPSJx9SKPbeHEYW:22
+X-Proofpoint-GUID: Uz4vcdxzYHhP-3mErJGs9o2UMGI6nzft
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-03_01,2025-06-02_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 bulkscore=0 malwarescore=0 impostorscore=0 mlxlogscore=999
+ lowpriorityscore=0 spamscore=0 mlxscore=0 suspectscore=0 priorityscore=1501
+ adultscore=0 clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2506030095
 
-The kernel robot reported the following errors when the netc-lib driver
-was compiled as a loadable module and the enetc-core driver was built-in.
+On Wed, May 28, 2025 at 04:50:26PM -0700, Anjelique Melendez wrote:
+> Add support for TEMP_ALARM LITE PMIC peripherals. This subtype
+> utilizes a pair of registers to configure a warning interrupt
+> threshold temperature and an automatic hardware shutdown
+> threshold temperature.
+> 
+> Signed-off-by: David Collins <david.collins@oss.qualcomm.com>
+> Signed-off-by: Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>
+> ---
+>  drivers/thermal/qcom/qcom-spmi-temp-alarm.c | 208 +++++++++++++++++++-
+>  1 file changed, 207 insertions(+), 1 deletion(-)
+> 
 
-ld.lld: error: undefined symbol: ntmp_init_cbdr
-referenced by enetc_cbdr.c:88 (drivers/net/ethernet/freescale/enetc/enetc_cbdr.c:88)
-ld.lld: error: undefined symbol: ntmp_free_cbdr
-referenced by enetc_cbdr.c:96 (drivers/net/ethernet/freescale/enetc/enetc_cbdr.c:96)
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
-Simply changing "tristate" to "bool" can fix this issue, but take into
-account that the netc-lib driver needs to support being compiled as a
-loadable module. So we can solve this issue and support "tristate" by
-setting the default value.
-
-Reported-by: Arnd Bergmann <arnd@kernel.org>
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202505220734.x6TF6oHR-lkp@intel.com/
-Fixes: 4701073c3deb ("net: enetc: add initial netc-lib driver to support NTMP")
-Signed-off-by: Wei Fang <wei.fang@nxp.com>
----
-Arnd Bergmann has posted a similar patch [1], but it has not been updated
-since the first version, perhaps he is busy with more important things.
-In order to fix the issue ASAP, I made this patch. And I added the
-Reported-by tag to give credit to Arnd Bergmann.
-[1] https://lore.kernel.org/imx/20250520161218.3581272-1-arnd@kernel.org/
----
- drivers/net/ethernet/freescale/enetc/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/net/ethernet/freescale/enetc/Kconfig b/drivers/net/ethernet/freescale/enetc/Kconfig
-index e917132d3714..06759bedb193 100644
---- a/drivers/net/ethernet/freescale/enetc/Kconfig
-+++ b/drivers/net/ethernet/freescale/enetc/Kconfig
-@@ -17,6 +17,7 @@ config NXP_ENETC_PF_COMMON
- 
- config NXP_NETC_LIB
- 	tristate
-+	default y if FSL_ENETC_CORE=y && NXP_ENETC4=m
- 	help
- 	  This module provides common functionalities for both ENETC and NETC
- 	  Switch, such as NETC Table Management Protocol (NTMP) 2.0, common tc
 -- 
-2.34.1
-
+With best wishes
+Dmitry
 
