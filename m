@@ -1,420 +1,160 @@
-Return-Path: <linux-kernel+bounces-672468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-672472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2E07ACCFE8
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 00:34:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50D0FACCFF1
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 00:39:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70CE33A4652
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 22:34:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1221816B3CD
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 22:39:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03F2624C06A;
-	Tue,  3 Jun 2025 22:34:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F457252903;
+	Tue,  3 Jun 2025 22:39:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="g5RU409n"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NYc7FGr8"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DFED73451
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 22:34:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF6504B5AE;
+	Tue,  3 Jun 2025 22:39:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748990087; cv=none; b=CALvmGy4wFFiWCzIugqlSJU0Wso46e+Acbpf0PcTcb5mJhRm0P8ScNvYy1JHRl3gIc8PJMGMyYsAnwQafEFrF2IW6HcXKmFZComjfn3gHbYToPvsR7z0yLMouWO1Hdj2LKU0MaFRP6h0cyEycG0XwNWi6nr4eKpnruiZbasnlrE=
+	t=1748990370; cv=none; b=BfzDu8l47P/bM+jCL0VeWmlt4aTzN+JdWiO1jlQ1XLXuea/K/irhqh4yOAdGEdbwyo0ansl68BI7VH4L0yd9W+HedBNFKI7PZUT+GY3skRmQGrc47u/CLgrYsyAndgvdrmQQpi3VF1pt1mQLAJXpYSDZrUZvaY2ba6t0Zg2L1qY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748990087; c=relaxed/simple;
-	bh=kavXB5sHW+8FRFSxRVwkvQ6p4iM4uiiYnXBEgSfjBm8=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Qv+INMgFoFQ9AFXaqNjatky9u6bwhfrI/kvgfN0eulp6px+AgbLGLbu1f0mtq1CLPCEGoHH2Hb0OFdvgian9O+Lz8naOGpepCiBEa13gDhZLfMs2QLZhCDOtnkRZa4vcGeqkVK083Q7MTflPZ/j4ske6FHc29ye9QvL548YBrzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--dylanbhatch.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=g5RU409n; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--dylanbhatch.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2356ce55d33so45277525ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jun 2025 15:34:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1748990084; x=1749594884; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=PggB325dJ9PtoG7B050iJ9R2hDVazb0GKCVx2b3mgII=;
-        b=g5RU409nvV/oAnqNXbmjR6bqVUovn9seWUo460dfG6w5oS24O/1u9bwbwevL24cCAI
-         ybZ0A7OkMfh26u4gOQeUck1HV61giAj1k9nhpc1jLOjn5XNwfbUll5Q8yxnFueQyV6/f
-         F20uSV82UoUO14vqKegWGZlFQVd5BBdmBx75qiNq9rXygpERj2MerWHrPbYKwfYpspG0
-         madJUmcEDIk+1vD6FtlsaT3sKiX4wH6LWDv81pAUrr+chpExOGEtm6oxgIAwHRTcJiKP
-         v77Z8419F8NRIjzkSfqYyBbhV4J4HPt8ut/T1Cg52tpPP9s7E6snHZ177AO+SJmKhXnr
-         LH8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748990084; x=1749594884;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PggB325dJ9PtoG7B050iJ9R2hDVazb0GKCVx2b3mgII=;
-        b=rKbsypbIP9sCtwjPBS/3hn8rIyy1rxZhOaU0YsOKAqXCC64Iy8Q8p5TVAxJisJzvcb
-         ead8zjsdL+5E55gY7c9ofb/Q8pRKxkds9hIP+p5FRxat60GXpBNUDV0RlOUwEApYDLV7
-         eWVbL8lIesm/gM0g5WgijKtHQ11wBB7JolcMoofzogM5W90A1aQuduCPS1B9zfF0gUIA
-         f0qGGHwExV6YZkvu00ylqkg+1X42Y93kyqP4j8tgkUcNSPcapvQDbBbCLvFZROqEMoHb
-         xddV+KSgAH7j9pnYyPw1KL2ojqP3x0w1IDdfK9QnJkoPbPdKZhD7MubSClTfzombuOuT
-         458g==
-X-Forwarded-Encrypted: i=1; AJvYcCWqxL+CDDWySPQT96w+VLnCANapZYCGdAkDZpReXEG6fDjCLM1N9sROSti92Qx5uXOy6sPM2/YfVNPBw2o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQ0b1JS13+ByDjq63LI3lRuDsQs8e3NGAde4xnKtG0byq9EeQW
-	+jK/vf6QHbEMjg7GIzvpvR8MFoF4T/XqCMl3+DpHBW46Rja965vZ4YT2RCzo65v1qy2uTxSPc0E
-	TVYIGXFhVq0iyLy2iJRH7viT8Nw==
-X-Google-Smtp-Source: AGHT+IEBHivgCLLm44V2z/ofussANf58SvxC9boakKuQOnXHqte3QejZO1+8lVF/CDIsOgk6nItAe98oxoIqhD8STw==
-X-Received: from pleg11.prod.google.com ([2002:a17:902:e38b:b0:235:160a:76e])
- (user=dylanbhatch job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:902:e951:b0:235:779:edfe with SMTP id d9443c01a7336-235e1255989mr6364675ad.43.1748990084684;
- Tue, 03 Jun 2025 15:34:44 -0700 (PDT)
-Date: Tue,  3 Jun 2025 22:34:17 +0000
+	s=arc-20240116; t=1748990370; c=relaxed/simple;
+	bh=DVBbmxIjry/eIkd9G9v1joTK+MoRInTFHzpy62nsXvI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RpJTy/IokiXMmuIFjr/6wtYnplozrdBB2pZzrRtTQxRFCkn/k8yk1UOr3rFhMyAFvJcQn6hSi9OgTNzCGEticphK3PqkRl0g90YMQWgM95GDHQmp5w9azbgm4F6b+IfbP9BL7L4/91O2xGk9hLuGzpF/0HpoGh8Q5ZeRYCErtJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NYc7FGr8; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1748990369; x=1780526369;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=DVBbmxIjry/eIkd9G9v1joTK+MoRInTFHzpy62nsXvI=;
+  b=NYc7FGr8TbAyCVVEhstYuQXaa5sAm4uOvmDZsIPKPGscd9UWQkH5udEZ
+   BSznMR1fcOkB8FGlZApk5x7haWcMTrVS5qUHp3xnOVH5dOi5NAL+T4sOl
+   hW2cAAArEihHdwxstuUazXDp8ev03mhgNx0DjRq5Kfb+q9DIFd3cf6eyw
+   4XTB9xaKl6uJE9RvFuS5M9pv54eZhLIM2Hx+3NhgaLmsSzhfzyEhGtFtu
+   tVG6BdVJex7zDb5he8yqCGJP7FOhrtSWcIX01Qhkw/Cjj32winW9V1ED7
+   5HMkmt/ClIlboUdsJHWV3+FQhDtydxqAQAzUcOSBNoTzuKlgeoqiA5HJT
+   w==;
+X-CSE-ConnectionGUID: 1GDb9qq2Ruu29+Wfu4MslA==
+X-CSE-MsgGUID: 8UUEs8KaSBaJk0SYOEH2Gg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11453"; a="51195135"
+X-IronPort-AV: E=Sophos;i="6.16,207,1744095600"; 
+   d="scan'208";a="51195135"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2025 15:39:28 -0700
+X-CSE-ConnectionGUID: slVkNPJHT4mxaA3Ku5HC/A==
+X-CSE-MsgGUID: 4xN63lyHTkiHMmFmiXAVUw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,207,1744095600"; 
+   d="scan'208";a="144964692"
+Received: from iherna2-mobl4.amr.corp.intel.com (HELO [10.125.110.198]) ([10.125.110.198])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2025 15:39:28 -0700
+Message-ID: <e664212f-728b-44d3-b0da-ade53c088cb1@intel.com>
+Date: Tue, 3 Jun 2025 15:39:26 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.49.0.1204.g71687c7c1d-goog
-Message-ID: <20250603223417.3700218-1-dylanbhatch@google.com>
-Subject: [PATCH v7] arm64/module: Use text-poke API for late relocations.
-From: Dylan Hatch <dylanbhatch@google.com>
-To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Ard Biesheuvel <ardb@kernel.org>, Sami Tolvanen <samitolvanen@google.com>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, Song Liu <song@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Dylan Hatch <dylanbhatch@google.com>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Toshiyuki Sato <fj6611ie@aa.jp.fujitsu.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/2] cxl/edac: Fix the min_scrub_cycle of a region
+ miscalculation
+To: Li Ming <ming.li@zohomail.com>, dave@stgolabs.net,
+ jonathan.cameron@huawei.com, alison.schofield@intel.com,
+ vishal.l.verma@intel.com, ira.weiny@intel.com, dan.j.williams@intel.com,
+ shiju.jose@huawei.com
+Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250603104314.25569-1-ming.li@zohomail.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20250603104314.25569-1-ming.li@zohomail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-To enable late module patching, livepatch modules need to be able to
-apply some of their relocations well after being loaded. In this
-scenario however, the livepatch module text and data is already RX-only,
-so special treatment is needed to make the late relocations possible. To
-do this, use the text-poking API for these late relocations.
 
-This patch is partially based off commit 88fc078a7a8f6 ("x86/module: Use
-text_poke() for late relocations").
 
-Signed-off-by: Dylan Hatch <dylanbhatch@google.com>
-Acked-by: Song Liu <song@kernel.org>
----
- arch/arm64/kernel/module.c | 101 +++++++++++++++++++++----------------
- 1 file changed, 57 insertions(+), 44 deletions(-)
+On 6/3/25 3:43 AM, Li Ming wrote:
+> When trying to update the scrub_cycle value of a cxl region, which means
+> updating the scrub_cycle value of each memdev under a cxl region. cxl
+> driver needs to guarantee the new scrub_cycle value is greater than the
+> min_scrub_cycle value of a memdev, otherwise the updating operation will
+> fail(Per Table 8-223 in CXL r3.2 section 8.2.10.9.11.1).
+> 
+> Current implementation logic of getting the min_scrub_cycle value of a
+> cxl region is that getting the min_scrub_cycle value of each memdevs
+> under the cxl region, then using the minimum min_scrub_cycle value as
+> the region's min_scrub_cycle. Checking if the new scrub_cycle value is
+> greater than this value. If yes, updating the new scrub_cycle value to
+> each memdevs. The issue is that the new scrub_cycle value is possibly
+> greater than the minimum min_scrub_cycle value of all memdevs but less
+> than the maximum min_scrub_cycle value of all memdevs if memdevs have
+> a different min_scrub_cycle value. The updating operation will always
+> fail on these memdevs which have a greater min_scrub_cycle than the new
+> scrub_cycle.
+> 
+> The correct implementation logic is to get the maximum value of these
+> memdevs' min_scrub_cycle, check if the new scrub_cycle value is greater
+> than the value. If yes, the new scrub_cycle value is fit for the region.
+> 
+> The change also impacts the result of
+> cxl_patrol_scrub_get_min_scrub_cycle(), the interface returned the
+> minimum min_scrub_cycle value among all memdevs under the region before
+> the change. The interface will return the maximum min_scrub_cycle value
+> among all memdevs under the region with the change.
+> 
+> Signed-off-by: Li Ming <ming.li@zohomail.com>
 
-diff --git a/arch/arm64/kernel/module.c b/arch/arm64/kernel/module.c
-index 06bb680bfe975..5b793ec6f2e03 100644
---- a/arch/arm64/kernel/module.c
-+++ b/arch/arm64/kernel/module.c
-@@ -23,6 +23,7 @@
- #include <asm/insn.h>
- #include <asm/scs.h>
- #include <asm/sections.h>
-+#include <asm/text-patching.h>
- 
- enum aarch64_reloc_op {
- 	RELOC_OP_NONE,
-@@ -48,7 +49,17 @@ static u64 do_reloc(enum aarch64_reloc_op reloc_op, __le32 *place, u64 val)
- 	return 0;
- }
- 
--static int reloc_data(enum aarch64_reloc_op op, void *place, u64 val, int len)
-+#define WRITE_PLACE(place, val, mod) do {				\
-+	__typeof__(val) __val = (val);					\
-+									\
-+	if (mod->state == MODULE_STATE_UNFORMED)			\
-+		*(place) = __val;					\
-+	else								\
-+		aarch64_insn_copy(place, &(__val), sizeof(*place));	\
-+} while (0)
-+
-+static int reloc_data(enum aarch64_reloc_op op, void *place, u64 val, int len,
-+		      struct module *me)
- {
- 	s64 sval = do_reloc(op, place, val);
- 
-@@ -66,7 +77,7 @@ static int reloc_data(enum aarch64_reloc_op op, void *place, u64 val, int len)
- 
- 	switch (len) {
- 	case 16:
--		*(s16 *)place = sval;
-+		WRITE_PLACE((s16 *)place, sval, me);
- 		switch (op) {
- 		case RELOC_OP_ABS:
- 			if (sval < 0 || sval > U16_MAX)
-@@ -82,7 +93,7 @@ static int reloc_data(enum aarch64_reloc_op op, void *place, u64 val, int len)
- 		}
- 		break;
- 	case 32:
--		*(s32 *)place = sval;
-+		WRITE_PLACE((s32 *)place, sval, me);
- 		switch (op) {
- 		case RELOC_OP_ABS:
- 			if (sval < 0 || sval > U32_MAX)
-@@ -98,7 +109,7 @@ static int reloc_data(enum aarch64_reloc_op op, void *place, u64 val, int len)
- 		}
- 		break;
- 	case 64:
--		*(s64 *)place = sval;
-+		WRITE_PLACE((s64 *)place, sval, me);
- 		break;
- 	default:
- 		pr_err("Invalid length (%d) for data relocation\n", len);
-@@ -113,7 +124,8 @@ enum aarch64_insn_movw_imm_type {
- };
- 
- static int reloc_insn_movw(enum aarch64_reloc_op op, __le32 *place, u64 val,
--			   int lsb, enum aarch64_insn_movw_imm_type imm_type)
-+			   int lsb, enum aarch64_insn_movw_imm_type imm_type,
-+			   struct module *me)
- {
- 	u64 imm;
- 	s64 sval;
-@@ -145,7 +157,7 @@ static int reloc_insn_movw(enum aarch64_reloc_op op, __le32 *place, u64 val,
- 
- 	/* Update the instruction with the new encoding. */
- 	insn = aarch64_insn_encode_immediate(AARCH64_INSN_IMM_16, insn, imm);
--	*place = cpu_to_le32(insn);
-+	WRITE_PLACE(place, cpu_to_le32(insn), me);
- 
- 	if (imm > U16_MAX)
- 		return -ERANGE;
-@@ -154,7 +166,8 @@ static int reloc_insn_movw(enum aarch64_reloc_op op, __le32 *place, u64 val,
- }
- 
- static int reloc_insn_imm(enum aarch64_reloc_op op, __le32 *place, u64 val,
--			  int lsb, int len, enum aarch64_insn_imm_type imm_type)
-+			  int lsb, int len, enum aarch64_insn_imm_type imm_type,
-+			  struct module *me)
- {
- 	u64 imm, imm_mask;
- 	s64 sval;
-@@ -170,7 +183,7 @@ static int reloc_insn_imm(enum aarch64_reloc_op op, __le32 *place, u64 val,
- 
- 	/* Update the instruction's immediate field. */
- 	insn = aarch64_insn_encode_immediate(imm_type, insn, imm);
--	*place = cpu_to_le32(insn);
-+	WRITE_PLACE(place, cpu_to_le32(insn), me);
- 
- 	/*
- 	 * Extract the upper value bits (including the sign bit) and
-@@ -189,17 +202,17 @@ static int reloc_insn_imm(enum aarch64_reloc_op op, __le32 *place, u64 val,
- }
- 
- static int reloc_insn_adrp(struct module *mod, Elf64_Shdr *sechdrs,
--			   __le32 *place, u64 val)
-+			   __le32 *place, u64 val, struct module *me)
- {
- 	u32 insn;
- 
- 	if (!is_forbidden_offset_for_adrp(place))
- 		return reloc_insn_imm(RELOC_OP_PAGE, place, val, 12, 21,
--				      AARCH64_INSN_IMM_ADR);
-+				      AARCH64_INSN_IMM_ADR, me);
- 
- 	/* patch ADRP to ADR if it is in range */
- 	if (!reloc_insn_imm(RELOC_OP_PREL, place, val & ~0xfff, 0, 21,
--			    AARCH64_INSN_IMM_ADR)) {
-+			    AARCH64_INSN_IMM_ADR, me)) {
- 		insn = le32_to_cpu(*place);
- 		insn &= ~BIT(31);
- 	} else {
-@@ -211,7 +224,7 @@ static int reloc_insn_adrp(struct module *mod, Elf64_Shdr *sechdrs,
- 						   AARCH64_INSN_BRANCH_NOLINK);
- 	}
- 
--	*place = cpu_to_le32(insn);
-+	WRITE_PLACE(place, cpu_to_le32(insn), me);
- 	return 0;
- }
- 
-@@ -255,23 +268,23 @@ int apply_relocate_add(Elf64_Shdr *sechdrs,
- 		/* Data relocations. */
- 		case R_AARCH64_ABS64:
- 			overflow_check = false;
--			ovf = reloc_data(RELOC_OP_ABS, loc, val, 64);
-+			ovf = reloc_data(RELOC_OP_ABS, loc, val, 64, me);
- 			break;
- 		case R_AARCH64_ABS32:
--			ovf = reloc_data(RELOC_OP_ABS, loc, val, 32);
-+			ovf = reloc_data(RELOC_OP_ABS, loc, val, 32, me);
- 			break;
- 		case R_AARCH64_ABS16:
--			ovf = reloc_data(RELOC_OP_ABS, loc, val, 16);
-+			ovf = reloc_data(RELOC_OP_ABS, loc, val, 16, me);
- 			break;
- 		case R_AARCH64_PREL64:
- 			overflow_check = false;
--			ovf = reloc_data(RELOC_OP_PREL, loc, val, 64);
-+			ovf = reloc_data(RELOC_OP_PREL, loc, val, 64, me);
- 			break;
- 		case R_AARCH64_PREL32:
--			ovf = reloc_data(RELOC_OP_PREL, loc, val, 32);
-+			ovf = reloc_data(RELOC_OP_PREL, loc, val, 32, me);
- 			break;
- 		case R_AARCH64_PREL16:
--			ovf = reloc_data(RELOC_OP_PREL, loc, val, 16);
-+			ovf = reloc_data(RELOC_OP_PREL, loc, val, 16, me);
- 			break;
- 
- 		/* MOVW instruction relocations. */
-@@ -280,88 +293,88 @@ int apply_relocate_add(Elf64_Shdr *sechdrs,
- 			fallthrough;
- 		case R_AARCH64_MOVW_UABS_G0:
- 			ovf = reloc_insn_movw(RELOC_OP_ABS, loc, val, 0,
--					      AARCH64_INSN_IMM_MOVKZ);
-+					      AARCH64_INSN_IMM_MOVKZ, me);
- 			break;
- 		case R_AARCH64_MOVW_UABS_G1_NC:
- 			overflow_check = false;
- 			fallthrough;
- 		case R_AARCH64_MOVW_UABS_G1:
- 			ovf = reloc_insn_movw(RELOC_OP_ABS, loc, val, 16,
--					      AARCH64_INSN_IMM_MOVKZ);
-+					      AARCH64_INSN_IMM_MOVKZ, me);
- 			break;
- 		case R_AARCH64_MOVW_UABS_G2_NC:
- 			overflow_check = false;
- 			fallthrough;
- 		case R_AARCH64_MOVW_UABS_G2:
- 			ovf = reloc_insn_movw(RELOC_OP_ABS, loc, val, 32,
--					      AARCH64_INSN_IMM_MOVKZ);
-+					      AARCH64_INSN_IMM_MOVKZ, me);
- 			break;
- 		case R_AARCH64_MOVW_UABS_G3:
- 			/* We're using the top bits so we can't overflow. */
- 			overflow_check = false;
- 			ovf = reloc_insn_movw(RELOC_OP_ABS, loc, val, 48,
--					      AARCH64_INSN_IMM_MOVKZ);
-+					      AARCH64_INSN_IMM_MOVKZ, me);
- 			break;
- 		case R_AARCH64_MOVW_SABS_G0:
- 			ovf = reloc_insn_movw(RELOC_OP_ABS, loc, val, 0,
--					      AARCH64_INSN_IMM_MOVNZ);
-+					      AARCH64_INSN_IMM_MOVNZ, me);
- 			break;
- 		case R_AARCH64_MOVW_SABS_G1:
- 			ovf = reloc_insn_movw(RELOC_OP_ABS, loc, val, 16,
--					      AARCH64_INSN_IMM_MOVNZ);
-+					      AARCH64_INSN_IMM_MOVNZ, me);
- 			break;
- 		case R_AARCH64_MOVW_SABS_G2:
- 			ovf = reloc_insn_movw(RELOC_OP_ABS, loc, val, 32,
--					      AARCH64_INSN_IMM_MOVNZ);
-+					      AARCH64_INSN_IMM_MOVNZ, me);
- 			break;
- 		case R_AARCH64_MOVW_PREL_G0_NC:
- 			overflow_check = false;
- 			ovf = reloc_insn_movw(RELOC_OP_PREL, loc, val, 0,
--					      AARCH64_INSN_IMM_MOVKZ);
-+					      AARCH64_INSN_IMM_MOVKZ, me);
- 			break;
- 		case R_AARCH64_MOVW_PREL_G0:
- 			ovf = reloc_insn_movw(RELOC_OP_PREL, loc, val, 0,
--					      AARCH64_INSN_IMM_MOVNZ);
-+					      AARCH64_INSN_IMM_MOVNZ, me);
- 			break;
- 		case R_AARCH64_MOVW_PREL_G1_NC:
- 			overflow_check = false;
- 			ovf = reloc_insn_movw(RELOC_OP_PREL, loc, val, 16,
--					      AARCH64_INSN_IMM_MOVKZ);
-+					      AARCH64_INSN_IMM_MOVKZ, me);
- 			break;
- 		case R_AARCH64_MOVW_PREL_G1:
- 			ovf = reloc_insn_movw(RELOC_OP_PREL, loc, val, 16,
--					      AARCH64_INSN_IMM_MOVNZ);
-+					      AARCH64_INSN_IMM_MOVNZ, me);
- 			break;
- 		case R_AARCH64_MOVW_PREL_G2_NC:
- 			overflow_check = false;
- 			ovf = reloc_insn_movw(RELOC_OP_PREL, loc, val, 32,
--					      AARCH64_INSN_IMM_MOVKZ);
-+					      AARCH64_INSN_IMM_MOVKZ, me);
- 			break;
- 		case R_AARCH64_MOVW_PREL_G2:
- 			ovf = reloc_insn_movw(RELOC_OP_PREL, loc, val, 32,
--					      AARCH64_INSN_IMM_MOVNZ);
-+					      AARCH64_INSN_IMM_MOVNZ, me);
- 			break;
- 		case R_AARCH64_MOVW_PREL_G3:
- 			/* We're using the top bits so we can't overflow. */
- 			overflow_check = false;
- 			ovf = reloc_insn_movw(RELOC_OP_PREL, loc, val, 48,
--					      AARCH64_INSN_IMM_MOVNZ);
-+					      AARCH64_INSN_IMM_MOVNZ, me);
- 			break;
- 
- 		/* Immediate instruction relocations. */
- 		case R_AARCH64_LD_PREL_LO19:
- 			ovf = reloc_insn_imm(RELOC_OP_PREL, loc, val, 2, 19,
--					     AARCH64_INSN_IMM_19);
-+					     AARCH64_INSN_IMM_19, me);
- 			break;
- 		case R_AARCH64_ADR_PREL_LO21:
- 			ovf = reloc_insn_imm(RELOC_OP_PREL, loc, val, 0, 21,
--					     AARCH64_INSN_IMM_ADR);
-+					     AARCH64_INSN_IMM_ADR, me);
- 			break;
- 		case R_AARCH64_ADR_PREL_PG_HI21_NC:
- 			overflow_check = false;
- 			fallthrough;
- 		case R_AARCH64_ADR_PREL_PG_HI21:
--			ovf = reloc_insn_adrp(me, sechdrs, loc, val);
-+			ovf = reloc_insn_adrp(me, sechdrs, loc, val, me);
- 			if (ovf && ovf != -ERANGE)
- 				return ovf;
- 			break;
-@@ -369,46 +382,46 @@ int apply_relocate_add(Elf64_Shdr *sechdrs,
- 		case R_AARCH64_LDST8_ABS_LO12_NC:
- 			overflow_check = false;
- 			ovf = reloc_insn_imm(RELOC_OP_ABS, loc, val, 0, 12,
--					     AARCH64_INSN_IMM_12);
-+					     AARCH64_INSN_IMM_12, me);
- 			break;
- 		case R_AARCH64_LDST16_ABS_LO12_NC:
- 			overflow_check = false;
- 			ovf = reloc_insn_imm(RELOC_OP_ABS, loc, val, 1, 11,
--					     AARCH64_INSN_IMM_12);
-+					     AARCH64_INSN_IMM_12, me);
- 			break;
- 		case R_AARCH64_LDST32_ABS_LO12_NC:
- 			overflow_check = false;
- 			ovf = reloc_insn_imm(RELOC_OP_ABS, loc, val, 2, 10,
--					     AARCH64_INSN_IMM_12);
-+					     AARCH64_INSN_IMM_12, me);
- 			break;
- 		case R_AARCH64_LDST64_ABS_LO12_NC:
- 			overflow_check = false;
- 			ovf = reloc_insn_imm(RELOC_OP_ABS, loc, val, 3, 9,
--					     AARCH64_INSN_IMM_12);
-+					     AARCH64_INSN_IMM_12, me);
- 			break;
- 		case R_AARCH64_LDST128_ABS_LO12_NC:
- 			overflow_check = false;
- 			ovf = reloc_insn_imm(RELOC_OP_ABS, loc, val, 4, 8,
--					     AARCH64_INSN_IMM_12);
-+					     AARCH64_INSN_IMM_12, me);
- 			break;
- 		case R_AARCH64_TSTBR14:
- 			ovf = reloc_insn_imm(RELOC_OP_PREL, loc, val, 2, 14,
--					     AARCH64_INSN_IMM_14);
-+					     AARCH64_INSN_IMM_14, me);
- 			break;
- 		case R_AARCH64_CONDBR19:
- 			ovf = reloc_insn_imm(RELOC_OP_PREL, loc, val, 2, 19,
--					     AARCH64_INSN_IMM_19);
-+					     AARCH64_INSN_IMM_19, me);
- 			break;
- 		case R_AARCH64_JUMP26:
- 		case R_AARCH64_CALL26:
- 			ovf = reloc_insn_imm(RELOC_OP_PREL, loc, val, 2, 26,
--					     AARCH64_INSN_IMM_26);
-+					     AARCH64_INSN_IMM_26, me);
- 			if (ovf == -ERANGE) {
- 				val = module_emit_plt_entry(me, sechdrs, loc, &rel[i], sym);
- 				if (!val)
- 					return -ENOEXEC;
- 				ovf = reloc_insn_imm(RELOC_OP_PREL, loc, val, 2,
--						     26, AARCH64_INSN_IMM_26);
-+						     26, AARCH64_INSN_IMM_26, me);
- 			}
- 			break;
- 
--- 
-2.49.0.1204.g71687c7c1d-goog
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+
+> ---
+> Changes from RFC:
+> 1. Add more description about the max scrub cycle. (Alison)
+> 2. Add more description about the min scrub cycle of a region. (Alison)
+> 3. Drop RFC tag.
+> 
+> base-commit: 9f153b7fb5ae45c7d426851f896487927f40e501 cxl/next
+> ---
+>  drivers/cxl/core/edac.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/cxl/core/edac.c b/drivers/cxl/core/edac.c
+> index 2cbc664e5d62..0ef245d0bd9f 100644
+> --- a/drivers/cxl/core/edac.c
+> +++ b/drivers/cxl/core/edac.c
+> @@ -103,10 +103,10 @@ static int cxl_scrub_get_attrbs(struct cxl_patrol_scrub_context *cxl_ps_ctx,
+>  				u8 *cap, u16 *cycle, u8 *flags, u8 *min_cycle)
+>  {
+>  	struct cxl_mailbox *cxl_mbox;
+> -	u8 min_scrub_cycle = U8_MAX;
+>  	struct cxl_region_params *p;
+>  	struct cxl_memdev *cxlmd;
+>  	struct cxl_region *cxlr;
+> +	u8 min_scrub_cycle = 0;
+>  	int i, ret;
+>  
+>  	if (!cxl_ps_ctx->cxlr) {
+> @@ -133,8 +133,12 @@ static int cxl_scrub_get_attrbs(struct cxl_patrol_scrub_context *cxl_ps_ctx,
+>  		if (ret)
+>  			return ret;
+>  
+> +		/*
+> +		 * The min_scrub_cycle of a region is the max of minimum scrub
+> +		 * cycles supported by memdevs that back the region.
+> +		 */
+>  		if (min_cycle)
+> -			min_scrub_cycle = min(*min_cycle, min_scrub_cycle);
+> +			min_scrub_cycle = max(*min_cycle, min_scrub_cycle);
+>  	}
+>  
+>  	if (min_cycle)
 
 
