@@ -1,157 +1,196 @@
-Return-Path: <linux-kernel+bounces-671741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E84CACC592
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 13:39:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82B8DACC5D2
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 13:53:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C61017178C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 11:39:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACBCA1892CDA
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 11:53:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB51C22CBD9;
-	Tue,  3 Jun 2025 11:39:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 218BD22DF85;
+	Tue,  3 Jun 2025 11:53:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yw6e1kL+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BiyXegF1"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4172CC2F2;
-	Tue,  3 Jun 2025 11:39:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0AED22A80D
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 11:53:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748950753; cv=none; b=LONmeRZmWkEiL+np5lftiEyigtNpmUdtqnzaHA382NLKzG/JKOZN8G+iRGYYA3whPN7JdLVc8ZTib3YkK3aOZ9mjbNV3eGdN2ij4KpoN84GkCllANr+DaiYJ00vcRp+EV2lydezcidcvNTndQynAOXpce0q5+V3L4I6DMzzHzXc=
+	t=1748951609; cv=none; b=cPrt3R3pb3tSkrHCtU2KdxyCOOwT5eim+/h4Oqe+iTYqdbtRqHytFaFttsT0AJAOCqkbhzIT0ihRvbw5rrORIEYH/IeJIKgfcXerWYjHE2tgmcTAAchuYiYwpmRza++gBUH7MdHD2Gcd3t5aKQIEOyanfNR874QOfXef0dGwSvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748950753; c=relaxed/simple;
-	bh=Yb14ENIXi8lF1HTt0lNeGnwO8I39Yh0YDJvUJX5aNR0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SXdyC705NH5ct5FSW8mCbU/XGCzQMlPRqrYShVHSJWZHFiSFNtk2g0RmJwoS7srr17noHja3SPnPskdLiLtTE5lwYOp+IG1EJsfxEpBwemMWBOx5+WcRaI/NTIiCBYZw6A9wI+ycqg6wWuqQZwSHM87C38noTq4ERIjZZB2cMM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yw6e1kL+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 180FBC4AF09;
-	Tue,  3 Jun 2025 11:39:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748950753;
-	bh=Yb14ENIXi8lF1HTt0lNeGnwO8I39Yh0YDJvUJX5aNR0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Yw6e1kL+uIg9LmU7VUt27OWJKkCfJwx75VMKPUAvUvSHROnNsmeUKn+2h0YCmliC3
-	 kpiLH3w+o3dEBnlwTvkDP2mOx0IZHwiyKGJ4oLNwiQoC10NLr/uZT5MutWcwxjUaj0
-	 HnaKrBYYkKuIUIuIEpxlNpWGanF8kOFZvYJUJ0gnlpsuqXX6B7Swh5CHCv3Hp0i2vs
-	 ueqk/betPLR34hiNKOVPDZ8WiqQ+NJhV0y5zGOxMPgCIel7L55z8qhqNl3PMcJSxmS
-	 +0zREjdbJh9AhxDEMuUHAfgZbPtkvYs7qPVU4SJ5wNZ6sGc6YtOhdEUijI3sROX71r
-	 fbuxtO0Ic114Q==
-Received: by mail-oi1-f169.google.com with SMTP id 5614622812f47-4067106dd56so3319578b6e.3;
-        Tue, 03 Jun 2025 04:39:13 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUvfbAPvNwkhHLvEu0SDV4v8gXQlU40V65ffQhVy1Gef9c4AmPOhvoBK9dZPEign7db8MZ8loiiLGI=@vger.kernel.org, AJvYcCWHvYQ60oDW9fluLXBVS0Ogx4ZQf4h2EqGnTHtRwUv4L3j1wMF6AquJHynt+YaAnoaeK/I8f7MqBZZTTfM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/wJLnAMe8DhwOgF517Awq1/CyBcPGJcnXOxzLrnCOnqOxEYF7
-	828gwr3M7Vt+sEWLqwGwJ1vEMxK7+x2yoXkFs0kdZ9y+qsLOb6ilrsucanC45glflsqzg26yY0K
-	xsODjK27QzfGBnXpp5jiDPpEtizpgHww=
-X-Google-Smtp-Source: AGHT+IFDu03qUeJMkdYUHWsBENIzrz1YxhUxEIulqlfwOmxS15tsO4GBjesBRAqyi6jffbVeh7ZrwG+s7lire+KJ2HU=
-X-Received: by 2002:a05:6808:3992:b0:406:7af5:30f2 with SMTP id
- 5614622812f47-4067e6e470bmr9798684b6e.34.1748950752440; Tue, 03 Jun 2025
- 04:39:12 -0700 (PDT)
+	s=arc-20240116; t=1748951609; c=relaxed/simple;
+	bh=mLrPvPCoIseAvMK7yzYSe7ZQ6TqXWL+oY5ypd8T0b04=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=b+cCIIBMKKmTOxBIvT+do52tHtBpQswUrqzZmkG0FnPGQHWZF36HRtPp3YY2F3uum5fnK+LKXfcwMLrH8hr4599/PwVkVisQLjpPoXDowSPqmKH+XMbO+fXbdUCUIddynB1t3zzQKc7u2/vKGdIPbVh2j78nrD2sKy3aOXWg9OE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BiyXegF1; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1748951608; x=1780487608;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=mLrPvPCoIseAvMK7yzYSe7ZQ6TqXWL+oY5ypd8T0b04=;
+  b=BiyXegF1pmTtrjeY5sI+3qs83bJpBHJUE/FgK2e/ryGXLqCyoZr9tPPZ
+   6u2QJDLpS1xEq01JQUoFRrhGeCboUGA+yfUrLzgqgRK0lt9x8Ofy1hHwM
+   P2shAC1+54HCwLv8QO/9TaP+6OEb+1LUzVKvrf5Jl30vAFrili7hc/67B
+   qRfIOSPQ4mpbhSknRPggrLYHM6iWmOiO9jcbea114awZkpVLgNLCSSe0c
+   NAmMRkNawIULw1keJXoYdbDTcplSHuzMf3CzAbWP0NfKwaRCZkJ5ISAn2
+   U/rOP7/ezpDMZvmihQ8v/gDO7YD6ksuxe+aQ1Y0P3fUEDxDytJ+cmMy10
+   g==;
+X-CSE-ConnectionGUID: zBORubZ7S3WwaBuPtkEaRQ==
+X-CSE-MsgGUID: AcUJy5A2RhqnhK1bHRToFg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11451"; a="53616386"
+X-IronPort-AV: E=Sophos;i="6.16,206,1744095600"; 
+   d="scan'208";a="53616386"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2025 04:53:27 -0700
+X-CSE-ConnectionGUID: o3W8DgHnTtCAJyInaGhuiA==
+X-CSE-MsgGUID: 83o5mtmjTiKeZJJVBCRYQw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,206,1744095600"; 
+   d="scan'208";a="149993292"
+Received: from sannilnx-dsk.jer.intel.com ([10.12.231.107])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2025 04:53:21 -0700
+From: Alexander Usyskin <alexander.usyskin@intel.com>
+To: Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Lucas De Marchi <lucas.demarchi@intel.com>,
+	=?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	Karthik Poosa <karthik.poosa@intel.com>,
+	Raag Jadav <raag.jadav@intel.com>
+Cc: Reuven Abliyev <reuven.abliyev@intel.com>,
+	Oren Weil <oren.jer.weil@intel.com>,
+	linux-mtd@lists.infradead.org,
+	intel-xe@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	intel-gfx@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Alexander Usyskin <alexander.usyskin@intel.com>
+Subject: [PATCH v12 00/10] mtd: add driver for Intel discrete graphics
+Date: Tue,  3 Jun 2025 14:39:43 +0300
+Message-ID: <20250603113953.3599816-1-alexander.usyskin@intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <10629535.nUPlyArG6x@rjwysocki.net> <3541233.QJadu78ljV@rjwysocki.net>
- <aD2U3VIhf8vDkl09@debian.local> <CAJZ5v0h-nrVamqiAJ957aYjHqaeAZUUW7BRi0WxPgCFc40M5cQ@mail.gmail.com>
- <7f0e2865-d35e-4a13-8617-8679afb4b23f@kernel.org> <CAJZ5v0gL3rW8dOxXdPWYjZuq5kAaD8qTa4vZ5++k9+0WniNAdQ@mail.gmail.com>
- <CAJZ5v0jDZQaR8S6Kn_RoXHBU86+tpjp=qgyxm5h03YEe2S=nPg@mail.gmail.com>
- <aD7L0RD4HT-mEtBc@debian.local> <CAJZ5v0h65Gt1Fw35vp2k8kKu62+goCD8WF8u-tvhfWW6a7xHxQ@mail.gmail.com>
- <CAJZ5v0ggPHhYcdNos2o8savvq+-zpPTaQunjOkR36k3VwF3_CA@mail.gmail.com> <CAJZ5v0gF=ewooE0cUrNfe5_inhnzq6bqw8VTjkFwr56_wrptJQ@mail.gmail.com>
-In-Reply-To: <CAJZ5v0gF=ewooE0cUrNfe5_inhnzq6bqw8VTjkFwr56_wrptJQ@mail.gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 3 Jun 2025 13:39:01 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hpJSVdiCN29=kbV8KfgU1y1d3hFfshtBoMpVFXf+LvBQ@mail.gmail.com>
-X-Gm-Features: AX0GCFtS5glXNhKWvyz0xGKaOokKN9SbXfOGRMr96fRNjyvJTqf98g39wnvGnQQ
-Message-ID: <CAJZ5v0hpJSVdiCN29=kbV8KfgU1y1d3hFfshtBoMpVFXf+LvBQ@mail.gmail.com>
-Subject: Re: [PATCH v3 2/5] PM: sleep: Suspend async parents after suspending children
-To: Chris Bainbridge <chris.bainbridge@gmail.com>
-Cc: Mario Limonciello <superm1@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, 
-	Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Alan Stern <stern@rowland.harvard.edu>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	Johan Hovold <johan@kernel.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
-	Jon Hunter <jonathanh@nvidia.com>, Saravana Kannan <saravanak@google.com>, 
-	amd-gfx@lists.freedesktop.org
-Content-Type: multipart/mixed; boundary="00000000000054578c0636a954fa"
+Content-Transfer-Encoding: 8bit
 
---00000000000054578c0636a954fa
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Add driver for access to Intel discrete graphics card
+internal NVM device.
+Expose device on auxiliary bus by i915 and Xe drivers and
+provide mtd driver to register this device with MTD framework.
 
-On Tue, Jun 3, 2025 at 1:37=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.org=
-> wrote:
->
-> On Tue, Jun 3, 2025 at 12:30=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.=
-org> wrote:
-> >
-> > On Tue, Jun 3, 2025 at 12:29=E2=80=AFPM Rafael J. Wysocki <rafael@kerne=
-l.org> wrote:
-> > >
-> > > On Tue, Jun 3, 2025 at 12:17=E2=80=AFPM Chris Bainbridge
-> > > <chris.bainbridge@gmail.com> wrote:
-> > > >
-> > > > On Tue, Jun 03, 2025 at 11:38:37AM +0200, Rafael J. Wysocki wrote:
-> > > > >
-> > > > > Chris, please check if the attached patch helps.  I'm going to po=
-st it
-> > > > > as a fix anyway later today, but it would be good to verify that =
-it is
-> > > > > sufficient.
-> > > >
-> > > > This did not fix my test case, pstore crash log was:
-> > >
-> > > OK, so can you please enable PM debug messages:
-> > >
-> > > # echo 1 > /sys/power/pm_debug/messages
-> >
-> > This should be
-> >
-> > # echo 1 > /sys/power/pm_debug_messages
-> >
-> > sorry.
-> >
-> > > and enabled dynamic debug in drivers/base/power/main.c:
-> > >
-> > > # echo "file drivers/base/power/main.c +p" > /proc/dynamic_debug/cont=
-rol
-> > >
-> > > repeat the test and capture the log?
->
-> Actually, no need to do this, there is an obvious bug:
-> list_splice_init() should be used instead of list_splice() when the
-> emptied list is going to be used again.  Ugh.
->
-> Please check if the attached patch along with the previous one makes
-> the issue go away entirely.
+This is a rewrite of "drm/i915/spi: spi access for discrete graphics"
+and "spi: add driver for Intel discrete graphics"
+series with connection to the Xe driver and splitting
+the spi driver part to separate module in mtd subsystem.
 
-Really attached this time, sorry.
+This series intended to be pushed through drm-xe-next.
 
---00000000000054578c0636a954fa
-Content-Type: text/x-patch; charset="US-ASCII"; name="pm-sleep-fix-error-paths.patch"
-Content-Disposition: attachment; filename="pm-sleep-fix-error-paths.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_mbgg3g3c0>
-X-Attachment-Id: f_mbgg3g3c0
+V2: Replace dev_* prints with drm_* prints in drm (xe and i915) patches.
+    Enable NVM device on Battlemage HW (xe driver patch)
+    Fix overwrite register address (xe driver patch)
+    Add Rodrigo's r-b
 
-LS0tCiBkcml2ZXJzL2Jhc2UvcG93ZXIvbWFpbi5jIHwgICAgNiArKystLS0KIDEgZmlsZSBjaGFu
-Z2VkLCAzIGluc2VydGlvbnMoKyksIDMgZGVsZXRpb25zKC0pCgotLS0gYS9kcml2ZXJzL2Jhc2Uv
-cG93ZXIvbWFpbi5jCisrKyBiL2RyaXZlcnMvYmFzZS9wb3dlci9tYWluLmMKQEAgLTE0NTgsNyAr
-MTQ1OCw3IEBACiAJCQkgKiBNb3ZlIGFsbCBkZXZpY2VzIHRvIHRoZSB0YXJnZXQgbGlzdCB0byBy
-ZXN1bWUgdGhlbQogCQkJICogcHJvcGVybHkuCiAJCQkgKi8KLQkJCWxpc3Rfc3BsaWNlKCZkcG1f
-bGF0ZV9lYXJseV9saXN0LCAmZHBtX25vaXJxX2xpc3QpOworCQkJbGlzdF9zcGxpY2VfaW5pdCgm
-ZHBtX2xhdGVfZWFybHlfbGlzdCwgJmRwbV9ub2lycV9saXN0KTsKIAkJCWJyZWFrOwogCQl9CiAJ
-fQpAQCAtMTY2MCw3ICsxNjYwLDcgQEAKIAkJCSAqIE1vdmUgYWxsIGRldmljZXMgdG8gdGhlIHRh
-cmdldCBsaXN0IHRvIHJlc3VtZSB0aGVtCiAJCQkgKiBwcm9wZXJseS4KIAkJCSAqLwotCQkJbGlz
-dF9zcGxpY2UoJmRwbV9zdXNwZW5kZWRfbGlzdCwgJmRwbV9sYXRlX2Vhcmx5X2xpc3QpOworCQkJ
-bGlzdF9zcGxpY2VfaW5pdCgmZHBtX3N1c3BlbmRlZF9saXN0LCAmZHBtX2xhdGVfZWFybHlfbGlz
-dCk7CiAJCQlicmVhazsKIAkJfQogCX0KQEAgLTE5NTMsNyArMTk1Myw3IEBACiAJCQkgKiBNb3Zl
-IGFsbCBkZXZpY2VzIHRvIHRoZSB0YXJnZXQgbGlzdCB0byByZXN1bWUgdGhlbQogCQkJICogcHJv
-cGVybHkuCiAJCQkgKi8KLQkJCWxpc3Rfc3BsaWNlKCZkcG1fcHJlcGFyZWRfbGlzdCwgJmRwbV9z
-dXNwZW5kZWRfbGlzdCk7CisJCQlsaXN0X3NwbGljZV9pbml0KCZkcG1fcHJlcGFyZWRfbGlzdCwg
-JmRwbV9zdXNwZW5kZWRfbGlzdCk7CiAJCQlicmVhazsKIAkJfQogCX0K
---00000000000054578c0636a954fa--
+V3: Use devm_pm_runtime_enable to simplify flow.
+    Drop print in i915 unload that was accidentally set as error.
+    Drop HAS_GSC_NVM macro in line with latest Xe changes.
+    Add more Rodrigo's r-b and Miquel's ack.
+
+V4: Add patch that always creates mtd master device
+    and adjust mtd-intel-dg power management to use this device.
+
+V5: Fix master device creation to accomodate for devices without
+    partitions (create partitoned master in this case)
+    Rebase over latest drm-xe-next
+    Add ack's
+V6: Fix master device release (use rigth idr in release)
+    Rebase over latest drm-xe-next
+    Grammar and style fixes
+
+V7: Add patch with non-posted erase support (fix hang on BMG)
+    Rebase over latest drm-xe-next
+
+V8: Create separate partition device under master device, if requested
+    and configure parent of usual partitions to this partition.
+    Rebase over drm-tip.
+
+V9: Fix checkpatch warning on non-posted erase patch.
+    Add Rodrigo's review and ack.
+
+V10: Drop master device creation patch as it now in mtd-next.
+     Drop power-management patch, it will be merged lately after
+     master device patch is propagated.
+     Rebase over drm-tip.
+
+V11: Fix review comments.
+     Add reviewed-by.
+     Add cleanup in error path.
+     Add PADDING region that exists on some BMG devices.
+
+V12: Add Raag's r-b.
+     Rebase over drm-tip.
+
+Alexander Usyskin (9):
+  mtd: add driver for intel graphics non-volatile memory device
+  mtd: intel-dg: implement region enumeration
+  mtd: intel-dg: implement access functions
+  mtd: intel-dg: register with mtd
+  mtd: intel-dg: align 64bit read and write
+  drm/i915/nvm: add nvm device for discrete graphics
+  drm/i915/nvm: add support for access mode
+  drm/xe/nvm: add on-die non-volatile memory device
+  drm/xe/nvm: add support for access mode
+
+Reuven Abliyev (1):
+  drm/xe/nvm: add support for non-posted erase
+
+ MAINTAINERS                           |   7 +
+ drivers/gpu/drm/i915/Makefile         |   4 +
+ drivers/gpu/drm/i915/i915_driver.c    |   6 +
+ drivers/gpu/drm/i915/i915_drv.h       |   3 +
+ drivers/gpu/drm/i915/i915_reg.h       |   1 +
+ drivers/gpu/drm/i915/intel_nvm.c      | 121 ++++
+ drivers/gpu/drm/i915/intel_nvm.h      |  15 +
+ drivers/gpu/drm/xe/Makefile           |   1 +
+ drivers/gpu/drm/xe/regs/xe_gsc_regs.h |   4 +
+ drivers/gpu/drm/xe/xe_device.c        |   5 +
+ drivers/gpu/drm/xe/xe_device_types.h  |   6 +
+ drivers/gpu/drm/xe/xe_heci_gsc.c      |   5 +-
+ drivers/gpu/drm/xe/xe_nvm.c           | 167 ++++++
+ drivers/gpu/drm/xe/xe_nvm.h           |  15 +
+ drivers/gpu/drm/xe/xe_pci.c           |   6 +
+ drivers/mtd/devices/Kconfig           |  11 +
+ drivers/mtd/devices/Makefile          |   1 +
+ drivers/mtd/devices/mtd_intel_dg.c    | 830 ++++++++++++++++++++++++++
+ include/linux/intel_dg_nvm_aux.h      |  32 +
+ 19 files changed, 1236 insertions(+), 4 deletions(-)
+ create mode 100644 drivers/gpu/drm/i915/intel_nvm.c
+ create mode 100644 drivers/gpu/drm/i915/intel_nvm.h
+ create mode 100644 drivers/gpu/drm/xe/xe_nvm.c
+ create mode 100644 drivers/gpu/drm/xe/xe_nvm.h
+ create mode 100644 drivers/mtd/devices/mtd_intel_dg.c
+ create mode 100644 include/linux/intel_dg_nvm_aux.h
+
+-- 
+2.43.0
+
 
