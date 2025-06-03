@@ -1,927 +1,222 @@
-Return-Path: <linux-kernel+bounces-671825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02018ACC6E3
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 14:43:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D0E4ACC6C1
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 14:37:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 659733A38F2
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 12:43:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 290D6170EA1
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 12:37:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62CA2230268;
-	Tue,  3 Jun 2025 12:43:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 349CC1F237A;
+	Tue,  3 Jun 2025 12:37:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="iTY3DUOy"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SzNfIW+8"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A02781DA23;
-	Tue,  3 Jun 2025 12:43:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC5521E50E
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 12:37:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748954599; cv=none; b=VnQVzB0uS6XP0vogLm5n6Lc0SzOQiJCWNA66ehfLqAWeP6r5AM9/EF4TrvG9uLXIO4qhsAAIQtPt+LoC/6h8ed8SWvqY0rNkb1pZLi4aOUU3RRUo00tEZg9HrbtY7kv3pPnn+lpjayoFmpDSUV1IIktZJUzcn3NJAOk6CTaTpTc=
+	t=1748954269; cv=none; b=bBbk6se8fMkzlUfCTCMG8IIH5qO9KokDad6Y0KZJdVBGbiT4MsiLgu6hfn6VCWbDRE5lut1i70QpsuGbr9QCUjY9l/rh0f7+yB58ZYlaZh7EYzQeh6Msd8TBD7gunH5jZHL7L8hjYfUOUgbHNqf6gWMFMTitspp5OoH5CjH/qEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748954599; c=relaxed/simple;
-	bh=auHo6hJAqQGMT0pYAxnRSu02inUHB7fIgBb+1i81Vbc=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hNbXzndvEqM3VPBELBCGhyFAHmaKl7eRCBXU5Fy06dY6YcIrnGv0PqsYeemqUR48FyNNviVXPI9pthMJQ7tDt77wHX7xUb4RMWRIUpMxOJai/T4jOp3Yh3AfetLXONsRmZnlwu+Z3A2kS1K6v+t1p6U3p8weJfkqkczcBVENlNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=iTY3DUOy; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 553ChAv7462803;
-	Tue, 3 Jun 2025 07:43:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1748954590;
-	bh=G+4KTGx5QjekRmlK7QUeXXSGvZEVLd4x2LzFpYo1LwI=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=iTY3DUOyZ732MylD0vlQCLG8oUna7Ill76H3v8kpffu0QzLfDOHzS/C/0S82zyv/1
-	 HxupYtN0o+XILDAlkwJF9YDj/bUL/kE5LAt2H6YD+jDcirhxrd086IsscWDazONRQk
-	 yM8ZJpeqbyW+ZMDDwceapJDdB4l8VEkpwiJWYoHY=
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 553ChAKl1317475
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Tue, 3 Jun 2025 07:43:10 -0500
-Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 3
- Jun 2025 07:43:10 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 3 Jun 2025 07:43:10 -0500
-Received: from pratham-Workstation-PC (pratham-workstation-pc.dhcp.ti.com [172.24.227.40])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 553Ch9H0352187;
-	Tue, 3 Jun 2025 07:43:09 -0500
-From: T Pratham <t-pratham@ti.com>
-To: Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller"
-	<davem@davemloft.net>, T Pratham <t-pratham@ti.com>
-CC: Kamlesh Gurudasani <kamlesh@ti.com>,
-        Vignesh Raghavendra
-	<vigneshr@ti.com>,
-        Praneeth Bajjuri <praneeth@ti.com>,
-        Manorit Chawdhry
-	<m-chawdhry@ti.com>, <linux-kernel@vger.kernel.org>,
-        <linux-crypto@vger.kernel.org>
-Subject: [PATCH v5 2/2] crypto: ti: Add driver for DTHE V2 AES Engine (ECB, CBC)
-Date: Tue, 3 Jun 2025 18:07:29 +0530
-Message-ID: <20250603124217.957116-3-t-pratham@ti.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250603124217.957116-1-t-pratham@ti.com>
-References: <20250603124217.957116-1-t-pratham@ti.com>
+	s=arc-20240116; t=1748954269; c=relaxed/simple;
+	bh=HVxuF/TLh3KWMJoR0FiCFN0I7IF2BxKS9juTKwwH2Ww=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PKuYqHTFV46bP3u8b2EdkFG7nwzsPaueHze5duU2Hgx4x/nYT6HTZslUo9Z/4pm7tG9i5PWIcHX9WlpyjxfskSe4jYBvVRuow9L0LspSvoqBjXERyER5nxoiM+kYbQQ6Z5JETbJei1w/XWSW9klqscFZwZ7rtE9gmsKj/w+xktU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SzNfIW+8; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1748954266;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=kHS2t2oaHj5ILyKgrMhDZwz0UVPhJxY3OnyQEFGAuCE=;
+	b=SzNfIW+8OFJevEbSitgMPuofhiBR+8evR/D+S06q+BRwDv2nPu+yWG05VJUSXm/xyljdEF
+	RGwNqpUI0Q/daqUW5nITiDdk/Pem6+X76vqW0eCDBXdN2vATv1JJk8d/dN8ktUwQxQWOVn
+	5q+SA8DgcZV9bgGH6nm9l2k50sexPso=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-614-FPj2HpDlOvSJhNrd6NAUJg-1; Tue, 03 Jun 2025 08:37:45 -0400
+X-MC-Unique: FPj2HpDlOvSJhNrd6NAUJg-1
+X-Mimecast-MFC-AGG-ID: FPj2HpDlOvSJhNrd6NAUJg_1748954264
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-441c122fa56so28845165e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jun 2025 05:37:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748954264; x=1749559064;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=kHS2t2oaHj5ILyKgrMhDZwz0UVPhJxY3OnyQEFGAuCE=;
+        b=Ow/Re3KxJyR6xduiTwlLTnQXEC8IOpDbD0j2ndPAc+xpg71n2r4gU3KuatdQlpSer0
+         Tw2+Rd4en3FHArp/eAPsyXDxqYxf41eVhOw83Ark1SkycNiUnQ4NVmgS/H1UfKtubGdL
+         M777Q+zoIf4rqapcQ446Js9JrcveHuJZUVGGkmmH3604R+o/F8wXs2BNjckBwp1C4Bgo
+         H1I7PWMFbAguk2Ua23+IVWLkft++jZOP6OXBVwlwsWGONSGSeOOvPwJz5FnSiWllNRth
+         RYTTM1vf1AK9WwJQHSHw+001C3VOsfjsuZRvut1sZvWRiU/0vpftQXsv6brDvVLEMhtr
+         cFeg==
+X-Forwarded-Encrypted: i=1; AJvYcCUS/Z549Vx07OR+V6/2sRFrt3mJGONX4I8IYY3S7kqvyHHIqkX9sZRPj9JLanfaHLgVrIm89axBDu+QIyI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjCCWw084Bltit0QCxUs3zPjejD7cQRh8FHkjKHWrfmkstk8AB
+	WkNobGW69Fr7j12OTqm43poiYvPRS9uw3Cld07w94sD03Ik3rTI5Kp+fpppa9oI+lVaYERitYu0
+	ic+hjQG72YlZeMNFjTFzC+P7SObv+ZqJ68bhZXGZhhnNTTjyawv8SXrN9hFx+iMG+wg==
+X-Gm-Gg: ASbGncvl7G1VWhEaPILnDxlrqcGKbC/D5PF8gDPbKzALExqik60kXVIN/VceUX3DEpn
+	gjRhTm2FUjeFoS1rgfdBvwyyK2P32p1zJ0CeGQGs5jyNpV1qjsrrAVGFgaScnFjOSe85o47j7bV
+	OcpT3ZJRJod5CrZo3o5X9ZjKDTUBEDjXzw7D1yadV7+RHKadYwkhxqeqKwF3UniKzhYTIjL1tNs
+	gmP/zzaPmz2LZRpcWmqIsLUZFqQUVJX9ygK8RjcY1/6W+9N5tFb73xKhqkb3CofwBUDQ6zrq0HP
+	hyJhRxcd6cB6YOjcc1CmrveJWP0AoAkgzZMOr/N8SS2NraxUK7mOKCr/v2o7+fHiwkaW6mMlzm+
+	LWiZ9zGVxj7+Pla7NARpntcKlB8GYyCnSI5aF+C8=
+X-Received: by 2002:a05:600c:3b27:b0:450:d00d:d0 with SMTP id 5b1f17b1804b1-450d6515da1mr135417995e9.19.1748954264348;
+        Tue, 03 Jun 2025 05:37:44 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF6hOntpImmJhhOr2kc0P39r0QNY5mPbQ/1OxLQCnMbzyUGLdDBvPRo5mvUE9vEi3arTd5ONw==
+X-Received: by 2002:a05:600c:3b27:b0:450:d00d:d0 with SMTP id 5b1f17b1804b1-450d6515da1mr135417775e9.19.1748954263972;
+        Tue, 03 Jun 2025 05:37:43 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f0d:f000:eec9:2b8d:4913:f32a? (p200300d82f0df000eec92b8d4913f32a.dip0.t-ipconnect.de. [2003:d8:2f0d:f000:eec9:2b8d:4913:f32a])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-450d7fb86d2sm161320595e9.30.2025.06.03.05.37.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Jun 2025 05:37:43 -0700 (PDT)
+Message-ID: <63e00cf8-8592-4117-bb27-42bc8c1f8921@redhat.com>
+Date: Tue, 3 Jun 2025 14:37:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/4] selftests/mm: Add helper for logging test start
+ and results
+To: Mark Brown <broonie@kernel.org>, Andrew Morton
+ <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, linux-mm@kvack.org,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250527-selftests-mm-cow-dedupe-v2-0-ff198df8e38e@kernel.org>
+ <20250527-selftests-mm-cow-dedupe-v2-2-ff198df8e38e@kernel.org>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20250527-selftests-mm-cow-dedupe-v2-2-ff198df8e38e@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Add support for ECB and CBC modes in the AES Engine of the DTHE V2
-hardware crypto accelerator.
+On 27.05.25 18:04, Mark Brown wrote:
+> Several of the MM tests have a pattern of printing a description of the
+> test to be run then reporting the actual TAP result using a generic string
+> not connected to the specific test, often in a shared function used by many
+> tests. The name reported typically varies depending on the specific result
+> rather than the test too. This causes problems for tooling that works with
+> test results, the names reported with the results are used to deduplicate
+> tests and track them between runs so both duplicated names and changing
+> names cause trouble for things like UIs and automated bisection.
+> 
+> As a first step towards matching these tests better with the expectations
+> of kselftest provide helpers which record the test name as part of the
+> initial print and then use that as part of reporting a result.
+> 
+> This is not added as a generic kselftest helper partly because the use of
+> a variable to store the test name doesn't fit well with the header only
+> implementation of kselftest.h and partly because it's not really an
+> intended pattern. Ideally at some point the mm tests that use it will be
+> updated to not need it.
+> 
+> Signed-off-by: Mark Brown <broonie@kernel.org>
+> ---
+>   tools/testing/selftests/mm/vm_util.h | 20 ++++++++++++++++++++
+>   1 file changed, 20 insertions(+)
+> 
+> diff --git a/tools/testing/selftests/mm/vm_util.h b/tools/testing/selftests/mm/vm_util.h
+> index 6effafdc4d8a..4944e4c79051 100644
+> --- a/tools/testing/selftests/mm/vm_util.h
+> +++ b/tools/testing/selftests/mm/vm_util.h
+> @@ -3,6 +3,7 @@
+>   #include <stdbool.h>
+>   #include <sys/mman.h>
+>   #include <err.h>
+> +#include <stdarg.h>
+>   #include <strings.h> /* ffsl() */
+>   #include <unistd.h> /* _SC_PAGESIZE */
+>   #include "../kselftest.h"
+> @@ -74,6 +75,25 @@ int uffd_register_with_ioctls(int uffd, void *addr, uint64_t len,
+>   unsigned long get_free_hugepages(void);
+>   bool check_vmflag_io(void *addr);
+>   
+> +/* These helpers need to be inline to match the kselftest.h idiom. */
+> +static char test_name[1024];
+> +
+> +static inline void log_test_start(const char *name, ...)
+> +{
+> +	va_list args;
+> +	va_start(args, name);
+> +
+> +	vsnprintf(test_name, sizeof(test_name), name, args);
+> +	ksft_print_msg("[RUN] %s\n", test_name);
+> +
+> +	va_end(args);
+> +}
+> +
+> +static inline void log_test_result(int result)
+> +{
+> +	ksft_test_result_report(result, "%s\n", test_name);
+> +}
 
-Signed-off-by: T Pratham <t-pratham@ti.com>
----
- MAINTAINERS                       |   1 +
- drivers/crypto/Kconfig            |   1 +
- drivers/crypto/Makefile           |   1 +
- drivers/crypto/ti/Kconfig         |  13 +
- drivers/crypto/ti/Makefile        |   3 +
- drivers/crypto/ti/dthev2-aes.c    | 420 ++++++++++++++++++++++++++++++
- drivers/crypto/ti/dthev2-common.c | 220 ++++++++++++++++
- drivers/crypto/ti/dthev2-common.h | 101 +++++++
- 8 files changed, 760 insertions(+)
- create mode 100644 drivers/crypto/ti/Kconfig
- create mode 100644 drivers/crypto/ti/Makefile
- create mode 100644 drivers/crypto/ti/dthev2-aes.c
- create mode 100644 drivers/crypto/ti/dthev2-common.c
- create mode 100644 drivers/crypto/ti/dthev2-common.h
+Won't win a beauty contest, but should get the job done.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index b990850b4994..25a42e0b19e4 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -24557,6 +24557,7 @@ M:	T Pratham <t-pratham@ti.com>
- L:	linux-crypto@vger.kernel.org
- S:	Supported
- F:	Documentation/devicetree/bindings/crypto/ti,am62l-dthev2.yaml
-+F:	drivers/crypto/ti/
- 
- TI DAVINCI MACHINE SUPPORT
- M:	Bartosz Golaszewski <brgl@bgdev.pl>
-diff --git a/drivers/crypto/Kconfig b/drivers/crypto/Kconfig
-index 5686369779be..c1407236f137 100644
---- a/drivers/crypto/Kconfig
-+++ b/drivers/crypto/Kconfig
-@@ -849,5 +849,6 @@ config CRYPTO_DEV_SA2UL
- source "drivers/crypto/aspeed/Kconfig"
- source "drivers/crypto/starfive/Kconfig"
- source "drivers/crypto/inside-secure/eip93/Kconfig"
-+source "drivers/crypto/ti/Kconfig"
- 
- endif # CRYPTO_HW
-diff --git a/drivers/crypto/Makefile b/drivers/crypto/Makefile
-index 22eadcc8f4a2..c0e8d4acc37c 100644
---- a/drivers/crypto/Makefile
-+++ b/drivers/crypto/Makefile
-@@ -48,3 +48,4 @@ obj-$(CONFIG_CRYPTO_DEV_AMLOGIC_GXL) += amlogic/
- obj-y += intel/
- obj-y += starfive/
- obj-y += cavium/
-+obj-$(CONFIG_ARCH_K3) += ti/
-diff --git a/drivers/crypto/ti/Kconfig b/drivers/crypto/ti/Kconfig
-new file mode 100644
-index 000000000000..575e09fa7d96
---- /dev/null
-+++ b/drivers/crypto/ti/Kconfig
-@@ -0,0 +1,13 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+config CRYPTO_DEV_TI_DTHEV2
-+	tristate "Support for TI DTHE V2 crypto accelerators"
-+	depends on CRYPTO && CRYPTO_HW && ARCH_K3
-+	select CRYPTO_ENGINE
-+	select CRYPTO_SKCIPHER
-+	select CRYPTO_ECB
-+	select CRYPTO_CBC
-+	help
-+	  This enables support for the TI DTHE V2 hw crypto accelerator
-+	  which can be found on TI K3 SOCs. Selecting this enables use
-+	  of hardware acceleration for cryptographic algorithms on
-+	  these devices.
-diff --git a/drivers/crypto/ti/Makefile b/drivers/crypto/ti/Makefile
-new file mode 100644
-index 000000000000..b883078f203d
---- /dev/null
-+++ b/drivers/crypto/ti/Makefile
-@@ -0,0 +1,3 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+obj-$(CONFIG_CRYPTO_DEV_TI_DTHEV2) += dthev2.o
-+dthev2-objs := dthev2-common.o dthev2-aes.o
-diff --git a/drivers/crypto/ti/dthev2-aes.c b/drivers/crypto/ti/dthev2-aes.c
-new file mode 100644
-index 000000000000..7e02797b7b14
---- /dev/null
-+++ b/drivers/crypto/ti/dthev2-aes.c
-@@ -0,0 +1,420 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * K3 DTHE V2 crypto accelerator driver
-+ *
-+ * Copyright (C) Texas Instruments 2025 - https://www.ti.com
-+ * Author: T Pratham <t-pratham@ti.com>
-+ */
-+
-+#include <crypto/aead.h>
-+#include <crypto/aes.h>
-+#include <crypto/algapi.h>
-+#include <crypto/engine.h>
-+#include <crypto/internal/aead.h>
-+#include <crypto/internal/skcipher.h>
-+
-+#include "dthev2-common.h"
-+
-+#include <linux/delay.h>
-+#include <linux/dmaengine.h>
-+#include <linux/dma-mapping.h>
-+#include <linux/io.h>
-+#include <linux/scatterlist.h>
-+
-+/* Registers */
-+
-+// AES Engine
-+#define DTHE_P_AES_BASE		0x7000
-+#define DTHE_P_AES_KEY1_0	0x0038
-+#define DTHE_P_AES_KEY1_1	0x003C
-+#define DTHE_P_AES_KEY1_2	0x0030
-+#define DTHE_P_AES_KEY1_3	0x0034
-+#define DTHE_P_AES_KEY1_4	0x0028
-+#define DTHE_P_AES_KEY1_5	0x002C
-+#define DTHE_P_AES_KEY1_6	0x0020
-+#define DTHE_P_AES_KEY1_7	0x0024
-+#define DTHE_P_AES_IV_IN_0	0x0040
-+#define DTHE_P_AES_IV_IN_1	0x0044
-+#define DTHE_P_AES_IV_IN_2	0x0048
-+#define DTHE_P_AES_IV_IN_3	0x004C
-+#define DTHE_P_AES_CTRL		0x0050
-+#define DTHE_P_AES_C_LENGTH_0	0x0054
-+#define DTHE_P_AES_C_LENGTH_1	0x0058
-+#define DTHE_P_AES_AUTH_LENGTH	0x005C
-+#define DTHE_P_AES_DATA_IN_OUT	0x0060
-+
-+#define DTHE_P_AES_SYSCONFIG	0x0084
-+#define DTHE_P_AES_IRQSTATUS	0x008C
-+#define DTHE_P_AES_IRQENABLE	0x0090
-+
-+/* Register write values and macros */
-+
-+enum aes_ctrl_mode_masks {
-+	AES_CTRL_ECB_MASK = 0x00,
-+	AES_CTRL_CBC_MASK = BIT(5),
-+};
-+
-+#define DTHE_AES_CTRL_MODE_CLEAR_MASK		~GENMASK(28, 5)
-+
-+#define DTHE_AES_CTRL_DIR_ENC			BIT(2)
-+
-+#define DTHE_AES_CTRL_KEYSIZE_16B		BIT(3)
-+#define DTHE_AES_CTRL_KEYSIZE_24B		BIT(4)
-+#define DTHE_AES_CTRL_KEYSIZE_32B		(BIT(3) | BIT(4))
-+
-+#define DTHE_AES_CTRL_SAVE_CTX_SET		BIT(29)
-+
-+#define DTHE_AES_CTRL_OUTPUT_READY		BIT_MASK(0)
-+#define DTHE_AES_CTRL_INPUT_READY		BIT_MASK(1)
-+#define DTHE_AES_CTRL_SAVED_CTX_READY		BIT_MASK(30)
-+#define DTHE_AES_CTRL_CTX_READY			BIT_MASK(31)
-+
-+#define DTHE_AES_SYSCONFIG_DMA_DATA_IN_OUT_EN	GENMASK(6, 5)
-+#define DTHE_AES_IRQENABLE_EN_ALL		GENMASK(3, 0)
-+
-+/* Misc */
-+#define AES_IV_SIZE				AES_BLOCK_SIZE
-+#define AES_BLOCK_WORDS				(AES_BLOCK_SIZE / sizeof(u32))
-+#define AES_IV_WORDS				AES_BLOCK_WORDS
-+
-+static int dthe_cipher_init_tfm(struct crypto_skcipher *tfm)
-+{
-+	struct dthe_tfm_ctx *ctx = crypto_skcipher_ctx(tfm);
-+	struct dthe_data *dev_data = dthe_get_dev(ctx);
-+
-+	memzero_explicit(ctx, sizeof(*ctx));
-+	ctx->dev_data = dev_data;
-+	ctx->keylen = 0;
-+
-+	return 0;
-+}
-+
-+static void dthe_cipher_exit_tfm(struct crypto_skcipher *tfm)
-+{
-+	struct dthe_tfm_ctx *ctx = crypto_skcipher_ctx(tfm);
-+
-+	ctx->keylen = 0;
-+}
-+
-+static int dthe_aes_setkey(struct crypto_skcipher *tfm, const u8 *key, unsigned int keylen)
-+{
-+	struct dthe_tfm_ctx *ctx = crypto_skcipher_ctx(tfm);
-+
-+	if (keylen != AES_KEYSIZE_128 && keylen != AES_KEYSIZE_192 && keylen != AES_KEYSIZE_256)
-+		return -EINVAL;
-+
-+	ctx->keylen = keylen;
-+	memcpy(ctx->key, key, keylen);
-+
-+	return 0;
-+}
-+
-+static void dthe_aes_set_ctrl_key(struct dthe_tfm_ctx *ctx,
-+				  struct dthe_aes_req_ctx *rctx,
-+				  u32 *iv_in)
-+{
-+	struct dthe_data *dev_data = dthe_get_dev(ctx);
-+	void __iomem *aes_base_reg = dev_data->regs + DTHE_P_AES_BASE;
-+	u32 ctrl_val = 0;
-+
-+	writel_relaxed(ctx->key[0], aes_base_reg + DTHE_P_AES_KEY1_0);
-+	writel_relaxed(ctx->key[1], aes_base_reg + DTHE_P_AES_KEY1_1);
-+	writel_relaxed(ctx->key[2], aes_base_reg + DTHE_P_AES_KEY1_2);
-+	writel_relaxed(ctx->key[3], aes_base_reg + DTHE_P_AES_KEY1_3);
-+
-+	if (ctx->keylen > AES_KEYSIZE_128) {
-+		writel_relaxed(ctx->key[4], aes_base_reg + DTHE_P_AES_KEY1_4);
-+		writel_relaxed(ctx->key[5], aes_base_reg + DTHE_P_AES_KEY1_5);
-+	}
-+	if (ctx->keylen == AES_KEYSIZE_256) {
-+		writel_relaxed(ctx->key[6], aes_base_reg + DTHE_P_AES_KEY1_6);
-+		writel_relaxed(ctx->key[7], aes_base_reg + DTHE_P_AES_KEY1_7);
-+	}
-+
-+	if (rctx->enc)
-+		ctrl_val |= DTHE_AES_CTRL_DIR_ENC;
-+
-+	if (ctx->keylen == AES_KEYSIZE_128)
-+		ctrl_val |= DTHE_AES_CTRL_KEYSIZE_16B;
-+	else if (ctx->keylen == AES_KEYSIZE_192)
-+		ctrl_val |= DTHE_AES_CTRL_KEYSIZE_24B;
-+	else
-+		ctrl_val |= DTHE_AES_CTRL_KEYSIZE_32B;
-+
-+	// Write AES mode
-+	ctrl_val &= DTHE_AES_CTRL_MODE_CLEAR_MASK;
-+	switch (rctx->mode) {
-+	case DTHE_AES_ECB:
-+		ctrl_val |= AES_CTRL_ECB_MASK;
-+		break;
-+	case DTHE_AES_CBC:
-+		ctrl_val |= AES_CTRL_CBC_MASK;
-+		break;
-+	}
-+
-+	if (iv_in) {
-+		ctrl_val |= DTHE_AES_CTRL_SAVE_CTX_SET;
-+		for (int i = 0; i < AES_IV_WORDS; ++i)
-+			writel_relaxed(iv_in[i],
-+				       aes_base_reg + DTHE_P_AES_IV_IN_0 + (DTHE_REG_SIZE * i));
-+	}
-+
-+	writel_relaxed(ctrl_val, aes_base_reg + DTHE_P_AES_CTRL);
-+}
-+
-+static void dthe_aes_dma_in_callback(void *data)
-+{
-+	struct skcipher_request *req = (struct skcipher_request *)data;
-+	struct dthe_aes_req_ctx *rctx = skcipher_request_ctx(req);
-+
-+	complete(&rctx->aes_compl);
-+}
-+
-+static int dthe_aes_run(struct crypto_engine *engine, void *areq)
-+{
-+	struct skcipher_request *req = container_of(areq, struct skcipher_request, base);
-+	struct dthe_tfm_ctx *ctx = crypto_skcipher_ctx(crypto_skcipher_reqtfm(req));
-+	struct dthe_data *dev_data = dthe_get_dev(ctx);
-+	struct dthe_aes_req_ctx *rctx = skcipher_request_ctx(req);
-+
-+	unsigned int len = req->cryptlen;
-+	struct scatterlist *src = req->src;
-+	struct scatterlist *dst = req->dst;
-+
-+	int src_nents = sg_nents_for_len(src, len);
-+	int dst_nents;
-+
-+	int src_mapped_nents;
-+	int dst_mapped_nents;
-+
-+	bool diff_dst;
-+	enum dma_data_direction src_dir, dst_dir;
-+
-+	struct device *tx_dev, *rx_dev;
-+	struct dma_async_tx_descriptor *desc_in, *desc_out;
-+
-+	int ret;
-+
-+	void __iomem *aes_base_reg = dev_data->regs + DTHE_P_AES_BASE;
-+
-+	u32 aes_irqenable_val = readl_relaxed(aes_base_reg + DTHE_P_AES_IRQENABLE);
-+	u32 aes_sysconfig_val = readl_relaxed(aes_base_reg + DTHE_P_AES_SYSCONFIG);
-+
-+	aes_sysconfig_val |= DTHE_AES_SYSCONFIG_DMA_DATA_IN_OUT_EN;
-+	writel_relaxed(aes_sysconfig_val, aes_base_reg + DTHE_P_AES_SYSCONFIG);
-+
-+	aes_irqenable_val |= DTHE_AES_IRQENABLE_EN_ALL;
-+	writel_relaxed(aes_irqenable_val, aes_base_reg + DTHE_P_AES_IRQENABLE);
-+
-+	if (src == dst) {
-+		diff_dst = false;
-+		src_dir = DMA_BIDIRECTIONAL;
-+		dst_dir = DMA_BIDIRECTIONAL;
-+	} else {
-+		diff_dst = true;
-+		src_dir = DMA_TO_DEVICE;
-+		dst_dir  = DMA_FROM_DEVICE;
-+	}
-+
-+	tx_dev = dmaengine_get_dma_device(dev_data->dma_aes_tx);
-+	rx_dev = dmaengine_get_dma_device(dev_data->dma_aes_rx);
-+
-+	src_mapped_nents = dma_map_sg(tx_dev, src, src_nents, src_dir);
-+	if (src_mapped_nents == 0) {
-+		ret = -EINVAL;
-+		goto aes_err;
-+	}
-+
-+	if (!diff_dst) {
-+		dst_nents = src_nents;
-+		dst_mapped_nents = src_mapped_nents;
-+	} else {
-+		dst_nents = sg_nents_for_len(dst, len);
-+		dst_mapped_nents = dma_map_sg(rx_dev, dst, dst_nents, dst_dir);
-+		if (dst_mapped_nents == 0) {
-+			dma_unmap_sg(tx_dev, src, src_nents, src_dir);
-+			ret = -EINVAL;
-+			goto aes_err;
-+		}
-+	}
-+
-+	desc_in = dmaengine_prep_slave_sg(dev_data->dma_aes_rx, dst, dst_mapped_nents,
-+					  DMA_DEV_TO_MEM, DMA_PREP_INTERRUPT | DMA_CTRL_ACK);
-+	if (!desc_in) {
-+		dev_err(dev_data->dev, "IN prep_slave_sg() failed\n");
-+		ret = -EINVAL;
-+		goto aes_prep_err;
-+	}
-+
-+	desc_out = dmaengine_prep_slave_sg(dev_data->dma_aes_tx, src, src_mapped_nents,
-+					   DMA_MEM_TO_DEV, DMA_PREP_INTERRUPT | DMA_CTRL_ACK);
-+	if (!desc_out) {
-+		dev_err(dev_data->dev, "OUT prep_slave_sg() failed\n");
-+		ret = -EINVAL;
-+		goto aes_prep_err;
-+	}
-+
-+	desc_in->callback = dthe_aes_dma_in_callback;
-+	desc_in->callback_param = req;
-+
-+	init_completion(&rctx->aes_compl);
-+
-+	if (rctx->mode == DTHE_AES_ECB)
-+		dthe_aes_set_ctrl_key(ctx, rctx, NULL);
-+	else
-+		dthe_aes_set_ctrl_key(ctx, rctx, (u32 *)req->iv);
-+
-+	writel_relaxed(req->cryptlen, aes_base_reg + DTHE_P_AES_C_LENGTH_0);
-+
-+	dmaengine_submit(desc_in);
-+	dmaengine_submit(desc_out);
-+
-+	dma_async_issue_pending(dev_data->dma_aes_rx);
-+	dma_async_issue_pending(dev_data->dma_aes_tx);
-+
-+	// Need to do a timeout to ensure finalise gets called if DMA callback fails for any reason
-+	ret = wait_for_completion_timeout(&rctx->aes_compl, msecs_to_jiffies(DTHE_DMA_TIMEOUT_MS));
-+	if (!ret) {
-+		ret = -ETIMEDOUT;
-+
-+		for (int i = 0; i < AES_BLOCK_WORDS; ++i)
-+			readl_relaxed(aes_base_reg + DTHE_P_AES_DATA_IN_OUT + (DTHE_REG_SIZE * i));
-+	} else {
-+		ret = 0;
-+	}
-+
-+	// For modes other than ECB, read IV_OUT
-+	if (rctx->mode != DTHE_AES_ECB) {
-+		u32 *iv_out = (u32 *)req->iv;
-+
-+		for (int i = 0; i < AES_IV_WORDS; ++i)
-+			iv_out[i] = readl_relaxed(aes_base_reg +
-+						  DTHE_P_AES_IV_IN_0 +
-+						  (DTHE_REG_SIZE * i));
-+	}
-+
-+aes_prep_err:
-+	dma_unmap_sg(tx_dev, src, src_nents, src_dir);
-+	if (dst_dir != DMA_BIDIRECTIONAL)
-+		dma_unmap_sg(rx_dev, dst, dst_nents, dst_dir);
-+
-+aes_err:
-+	local_bh_disable();
-+	crypto_finalize_skcipher_request(dev_data->engine, req, ret);
-+	local_bh_enable();
-+	return 0;
-+}
-+
-+static int dthe_aes_crypt(struct skcipher_request *req)
-+{
-+	struct dthe_tfm_ctx *ctx = crypto_skcipher_ctx(crypto_skcipher_reqtfm(req));
-+	struct dthe_data *dev_data = dthe_get_dev(ctx);
-+	struct crypto_engine *engine;
-+
-+	/*
-+	 * If data is not a multiple of AES_BLOCK_SIZE, need to return -EINVAL
-+	 * If data length input is zero, no need to do any operation.
-+	 */
-+	if (req->cryptlen % AES_BLOCK_SIZE)
-+		return -EINVAL;
-+
-+	if (req->cryptlen == 0)
-+		return 0;
-+
-+	engine = dev_data->engine;
-+	return crypto_transfer_skcipher_request_to_engine(engine, req);
-+}
-+
-+static int dthe_aes_ecb_encrypt(struct skcipher_request *req)
-+{
-+	struct dthe_aes_req_ctx *rctx = skcipher_request_ctx(req);
-+
-+	rctx->enc = 1;
-+	rctx->mode = DTHE_AES_ECB;
-+	return dthe_aes_crypt(req);
-+}
-+
-+static int dthe_aes_ecb_decrypt(struct skcipher_request *req)
-+{
-+	struct dthe_aes_req_ctx *rctx = skcipher_request_ctx(req);
-+
-+	rctx->enc = 0;
-+	rctx->mode = DTHE_AES_ECB;
-+	return dthe_aes_crypt(req);
-+}
-+
-+static int dthe_aes_cbc_encrypt(struct skcipher_request *req)
-+{
-+	struct dthe_aes_req_ctx *rctx = skcipher_request_ctx(req);
-+
-+	rctx->enc = 1;
-+	rctx->mode = DTHE_AES_CBC;
-+	return dthe_aes_crypt(req);
-+}
-+
-+static int dthe_aes_cbc_decrypt(struct skcipher_request *req)
-+{
-+	struct dthe_aes_req_ctx *rctx = skcipher_request_ctx(req);
-+
-+	rctx->enc = 0;
-+	rctx->mode = DTHE_AES_CBC;
-+	return dthe_aes_crypt(req);
-+}
-+
-+static struct skcipher_engine_alg cipher_algs[] = {
-+	{
-+		.base.init			= dthe_cipher_init_tfm,
-+		.base.exit			= dthe_cipher_exit_tfm,
-+		.base.setkey			= dthe_aes_setkey,
-+		.base.encrypt			= dthe_aes_ecb_encrypt,
-+		.base.decrypt			= dthe_aes_ecb_decrypt,
-+		.base.min_keysize		= AES_MIN_KEY_SIZE,
-+		.base.max_keysize		= AES_MAX_KEY_SIZE,
-+		.base.base = {
-+			.cra_name		= "ecb(aes)",
-+			.cra_driver_name	= "ecb-aes-dthev2",
-+			.cra_priority		= 30000,
-+			.cra_flags		= CRYPTO_ALG_TYPE_SKCIPHER |
-+						  CRYPTO_ALG_KERN_DRIVER_ONLY,
-+			.cra_alignmask		= AES_BLOCK_SIZE - 1,
-+			.cra_blocksize		= AES_BLOCK_SIZE,
-+			.cra_ctxsize		= sizeof(struct dthe_tfm_ctx),
-+			.cra_reqsize		= sizeof(struct dthe_aes_req_ctx),
-+			.cra_module		= THIS_MODULE,
-+		},
-+		.op.do_one_request = dthe_aes_run,
-+	}, /* ECB AES */
-+	{
-+		.base.init			= dthe_cipher_init_tfm,
-+		.base.exit			= dthe_cipher_exit_tfm,
-+		.base.setkey			= dthe_aes_setkey,
-+		.base.encrypt			= dthe_aes_cbc_encrypt,
-+		.base.decrypt			= dthe_aes_cbc_decrypt,
-+		.base.min_keysize		= AES_MIN_KEY_SIZE,
-+		.base.max_keysize		= AES_MAX_KEY_SIZE,
-+		.base.ivsize			= AES_IV_SIZE,
-+		.base.base = {
-+			.cra_name		= "cbc(aes)",
-+			.cra_driver_name	= "cbc-aes-dthev2",
-+			.cra_priority		= 30000,
-+			.cra_flags		= CRYPTO_ALG_TYPE_SKCIPHER |
-+						  CRYPTO_ALG_KERN_DRIVER_ONLY,
-+			.cra_alignmask		= AES_BLOCK_SIZE - 1,
-+			.cra_blocksize		= AES_BLOCK_SIZE,
-+			.cra_ctxsize		= sizeof(struct dthe_tfm_ctx),
-+			.cra_reqsize		= sizeof(struct dthe_aes_req_ctx),
-+			.cra_module		= THIS_MODULE,
-+		},
-+		.op.do_one_request = dthe_aes_run,
-+	} /* CBC AES */
-+};
-+
-+int dthe_register_aes_algs(void)
-+{
-+	return crypto_engine_register_skciphers(cipher_algs, ARRAY_SIZE(cipher_algs));
-+}
-+
-+void dthe_unregister_aes_algs(void)
-+{
-+	crypto_engine_unregister_skciphers(cipher_algs, ARRAY_SIZE(cipher_algs));
-+}
-diff --git a/drivers/crypto/ti/dthev2-common.c b/drivers/crypto/ti/dthev2-common.c
-new file mode 100644
-index 000000000000..4d5b59d3ef1f
---- /dev/null
-+++ b/drivers/crypto/ti/dthev2-common.c
-@@ -0,0 +1,220 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * K3 DTHE V2 crypto accelerator driver
-+ *
-+ * Copyright (C) Texas Instruments 2025 - https://www.ti.com
-+ * Author: T Pratham <t-pratham@ti.com>
-+ */
-+
-+#include <crypto/aes.h>
-+#include <crypto/algapi.h>
-+#include <crypto/engine.h>
-+#include <crypto/internal/aead.h>
-+#include <crypto/internal/skcipher.h>
-+
-+#include "dthev2-common.h"
-+
-+#include <linux/delay.h>
-+#include <linux/dmaengine.h>
-+#include <linux/dmapool.h>
-+#include <linux/dma-mapping.h>
-+#include <linux/io.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/platform_device.h>
-+#include <linux/scatterlist.h>
-+
-+#define DRIVER_NAME	"dthev2"
-+
-+static struct dthe_list dthe_dev_list = {
-+	.dev_list = LIST_HEAD_INIT(dthe_dev_list.dev_list),
-+	.lock = __SPIN_LOCK_UNLOCKED(dthe_dev_list.lock),
-+};
-+
-+struct dthe_data *dthe_get_dev(struct dthe_tfm_ctx *ctx)
-+{
-+	struct dthe_data *dev_data;
-+
-+	if (ctx->dev_data)
-+		return ctx->dev_data;
-+
-+	spin_lock_bh(&dthe_dev_list.lock);
-+	dev_data = list_first_entry(&dthe_dev_list.dev_list, struct dthe_data, list);
-+	if (dev_data)
-+		list_move_tail(&dev_data->list, &dthe_dev_list.dev_list);
-+	spin_unlock_bh(&dthe_dev_list.lock);
-+
-+	return dev_data;
-+}
-+
-+static int dthe_dma_init(struct dthe_data *dev_data)
-+{
-+	int ret;
-+	struct dma_slave_config cfg;
-+
-+	dev_data->dma_aes_rx = NULL;
-+	dev_data->dma_aes_tx = NULL;
-+	dev_data->dma_sha_tx = NULL;
-+
-+	dev_data->dma_aes_rx = dma_request_chan(dev_data->dev, "rx");
-+	if (IS_ERR(dev_data->dma_aes_rx)) {
-+		return dev_err_probe(dev_data->dev, PTR_ERR(dev_data->dma_aes_rx),
-+				     "Unable to request rx DMA channel\n");
-+	}
-+
-+	dev_data->dma_aes_tx = dma_request_chan(dev_data->dev, "tx1");
-+	if (IS_ERR(dev_data->dma_aes_tx)) {
-+		ret = dev_err_probe(dev_data->dev, PTR_ERR(dev_data->dma_aes_tx),
-+				    "Unable to request tx1 DMA channel\n");
-+		goto err_dma_aes_tx;
-+	}
-+
-+	dev_data->dma_sha_tx = dma_request_chan(dev_data->dev, "tx2");
-+	if (IS_ERR(dev_data->dma_sha_tx)) {
-+		ret = dev_err_probe(dev_data->dev, PTR_ERR(dev_data->dma_sha_tx),
-+				    "Unable to request tx2 DMA channel\n");
-+		goto err_dma_sha_tx;
-+	}
-+
-+	memzero_explicit(&cfg, sizeof(cfg));
-+
-+	cfg.src_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
-+	cfg.src_maxburst = 4;
-+
-+	ret = dmaengine_slave_config(dev_data->dma_aes_rx, &cfg);
-+	if (ret) {
-+		dev_err(dev_data->dev, "Can't configure IN dmaengine slave: %d\n", ret);
-+		goto err_dma_config;
-+	}
-+
-+	cfg.dst_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
-+	cfg.dst_maxburst = 4;
-+
-+	ret = dmaengine_slave_config(dev_data->dma_aes_tx, &cfg);
-+	if (ret) {
-+		dev_err(dev_data->dev, "Can't configure OUT dmaengine slave: %d\n", ret);
-+		goto err_dma_config;
-+	}
-+
-+	return 0;
-+
-+err_dma_config:
-+	dma_release_channel(dev_data->dma_sha_tx);
-+err_dma_sha_tx:
-+	dma_release_channel(dev_data->dma_aes_tx);
-+err_dma_aes_tx:
-+	dma_release_channel(dev_data->dma_aes_rx);
-+
-+	return ret;
-+}
-+
-+static int dthe_register_algs(void)
-+{
-+	return dthe_register_aes_algs();
-+}
-+
-+static void dthe_unregister_algs(void)
-+{
-+	dthe_unregister_aes_algs();
-+}
-+
-+static int dthe_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct dthe_data *dev_data;
-+	int ret;
-+
-+	dev_data = devm_kzalloc(dev, sizeof(*dev_data), GFP_KERNEL);
-+	if (!dev_data)
-+		return -ENOMEM;
-+
-+	dev_data->dev = dev;
-+	dev_data->regs = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(dev_data->regs))
-+		return PTR_ERR(dev_data->regs);
-+
-+	platform_set_drvdata(pdev, dev_data);
-+
-+	spin_lock(&dthe_dev_list.lock);
-+	list_add(&dev_data->list, &dthe_dev_list.dev_list);
-+	spin_unlock(&dthe_dev_list.lock);
-+
-+	ret = dthe_dma_init(dev_data);
-+	if (ret)
-+		goto probe_dma_err;
-+
-+	dev_data->engine = crypto_engine_alloc_init(dev, 1);
-+	if (!dev_data->engine) {
-+		ret = -ENOMEM;
-+		goto probe_engine_err;
-+	}
-+
-+	ret = crypto_engine_start(dev_data->engine);
-+	if (ret) {
-+		dev_err(dev, "Failed to start crypto engine\n");
-+		goto probe_engine_start_err;
-+	}
-+
-+	ret = dthe_register_algs();
-+	if (ret) {
-+		dev_err(dev, "Failed to register algs\n");
-+		goto probe_reg_err;
-+	}
-+
-+	return 0;
-+
-+probe_reg_err:
-+	crypto_engine_stop(dev_data->engine);
-+probe_engine_start_err:
-+	crypto_engine_exit(dev_data->engine);
-+probe_engine_err:
-+	dma_release_channel(dev_data->dma_aes_rx);
-+	dma_release_channel(dev_data->dma_aes_tx);
-+	dma_release_channel(dev_data->dma_sha_tx);
-+probe_dma_err:
-+	spin_lock(&dthe_dev_list.lock);
-+	list_del(&dev_data->list);
-+	spin_unlock(&dthe_dev_list.lock);
-+
-+	return ret;
-+}
-+
-+static void dthe_remove(struct platform_device *pdev)
-+{
-+	struct dthe_data *dev_data = platform_get_drvdata(pdev);
-+
-+	spin_lock(&dthe_dev_list.lock);
-+	list_del(&dev_data->list);
-+	spin_unlock(&dthe_dev_list.lock);
-+
-+	dthe_unregister_algs();
-+
-+	crypto_engine_stop(dev_data->engine);
-+	crypto_engine_exit(dev_data->engine);
-+
-+	dma_release_channel(dev_data->dma_aes_rx);
-+	dma_release_channel(dev_data->dma_aes_tx);
-+	dma_release_channel(dev_data->dma_sha_tx);
-+}
-+
-+static const struct of_device_id dthe_of_match[] = {
-+	{ .compatible = "ti,am62l-dthev2", },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, dthe_of_match);
-+
-+static struct platform_driver dthe_driver = {
-+	.probe	= dthe_probe,
-+	.remove	= dthe_remove,
-+	.driver = {
-+		.name		= DRIVER_NAME,
-+		.of_match_table	= dthe_of_match,
-+	},
-+};
-+
-+module_platform_driver(dthe_driver);
-+
-+MODULE_AUTHOR("T Pratham <t-pratham@ti.com>");
-+MODULE_DESCRIPTION("Texas Instruments DTHE V2 driver");
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/crypto/ti/dthev2-common.h b/drivers/crypto/ti/dthev2-common.h
-new file mode 100644
-index 000000000000..a6c1a69a2437
---- /dev/null
-+++ b/drivers/crypto/ti/dthev2-common.h
-@@ -0,0 +1,101 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * K3 DTHE V2 crypto accelerator driver
-+ *
-+ * Copyright (C) Texas Instruments 2025 - https://www.ti.com
-+ * Author: T Pratham <t-pratham@ti.com>
-+ */
-+
-+#ifndef __TI_DTHEV2_H__
-+#define __TI_DTHEV2_H__
-+
-+#include <crypto/aead.h>
-+#include <crypto/aes.h>
-+#include <crypto/algapi.h>
-+#include <crypto/engine.h>
-+#include <crypto/hash.h>
-+#include <crypto/internal/aead.h>
-+#include <crypto/internal/hash.h>
-+#include <crypto/internal/skcipher.h>
-+
-+#include <linux/delay.h>
-+#include <linux/dmaengine.h>
-+#include <linux/dmapool.h>
-+#include <linux/dma-mapping.h>
-+#include <linux/io.h>
-+#include <linux/scatterlist.h>
-+
-+#define DTHE_REG_SIZE		4
-+#define DTHE_DMA_TIMEOUT_MS	2000
-+
-+enum dthe_aes_mode {
-+	DTHE_AES_ECB = 0,
-+	DTHE_AES_CBC,
-+};
-+
-+/* Driver specific struct definitions */
-+
-+/**
-+ * struct dthe_data - DTHE_V2 driver instance data
-+ * @dev: Device pointer
-+ * @regs: Base address of the register space
-+ * @list: list node for dev
-+ * @engine: Crypto engine instance
-+ * @dma_aes_rx: AES Rx DMA Channel
-+ * @dma_aes_tx: AES Tx DMA Channel
-+ * @dma_sha_tx: SHA Tx DMA Channel
-+ */
-+struct dthe_data {
-+	struct device *dev;
-+	void __iomem *regs;
-+	struct list_head list;
-+	struct crypto_engine *engine;
-+
-+	struct dma_chan *dma_aes_rx;
-+	struct dma_chan *dma_aes_tx;
-+
-+	struct dma_chan *dma_sha_tx;
-+};
-+
-+/**
-+ * struct dthe_list - device data list head
-+ * @dev_list: linked list head
-+ * @lock: Spinlock protecting accesses to the list
-+ */
-+struct dthe_list {
-+	struct list_head dev_list;
-+	spinlock_t lock;
-+};
-+
-+/**
-+ * struct dthe_tfm_ctx - Transform ctx struct containing ctx for all sub-components of DTHE V2
-+ * @dev_data: Device data struct pointer
-+ * @keylen: AES key length
-+ * @key: AES key
-+ */
-+struct dthe_tfm_ctx {
-+	struct dthe_data *dev_data;
-+	unsigned int keylen;
-+	u32 key[AES_KEYSIZE_256 / sizeof(u32)];
-+};
-+
-+/**
-+ * struct dthe_aes_req_ctx - AES engine req ctx struct
-+ * @mode: AES mode
-+ * @enc: flag indicating encryption or decryption operation
-+ * @aes_compl: Completion variable for use in manual completion in case of DMA callback failure
-+ */
-+struct dthe_aes_req_ctx {
-+	enum dthe_aes_mode mode;
-+	int enc;
-+	struct completion aes_compl;
-+};
-+
-+/* Struct definitions end */
-+
-+struct dthe_data *dthe_get_dev(struct dthe_tfm_ctx *ctx);
-+
-+int dthe_register_aes_algs(void);
-+void dthe_unregister_aes_algs(void);
-+
-+#endif
+We could allocate the array in log_test_start() and free it in 
+log_test_result(). Then, we could assert more easily that we always have 
+a log_test_result() follow exactly one log_test_start() etc.
+
 -- 
-2.43.0
+Cheers,
+
+David / dhildenb
 
 
