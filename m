@@ -1,108 +1,112 @@
-Return-Path: <linux-kernel+bounces-671937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 973A5ACC8A0
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 16:01:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F86FACC8A9
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 16:04:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3B1318956FF
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 14:01:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0539E18827B3
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 14:04:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DCCE231835;
-	Tue,  3 Jun 2025 14:01:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65EE3235076;
+	Tue,  3 Jun 2025 14:03:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="F93Y/bpn"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 157122AE8D;
-	Tue,  3 Jun 2025 14:01:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="PVg/kYSG"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95E972356C3;
+	Tue,  3 Jun 2025 14:03:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748959266; cv=none; b=Xkli0SyPJZnQOq80MvbhH9eYVYZof222BcLxTBO3AIagqn8352jy4DUoWpdPjgisTmqkfmQCbMKl+AbqPjl41NTYT9jUbonFpAR52CcGKs+d5FxcATj9b5Y/eu6xi1MCuw74VingFSUhbJLBsovqhUmBvJAqIo/8Rh8IEBYNsyw=
+	t=1748959415; cv=none; b=ULR0fjBLpD6gi9ngFr9p+V2HlhoxkuQhq3zDxEnwV49UkkjIctJhEnOS4LOvVnnlxA6bFAxlUtrxuWCgUekDGp4UvEX+AVbZMMyICX5ELYtCLeha0cCELEz5zQtKsq2oBFtwpgpODwnsSTQaYBRG1DUndpXlJBfWzg2B9J7olJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748959266; c=relaxed/simple;
-	bh=SvFJ05RAnyGbskOSqhSoo7yM02PL9fGa0NvU2AiQ9Ok=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=a8LBPdmsoYSkN3md5CucLo02L98bD1uz57Uy8/Ox/DX82/0lVS9ueKTm1rkwjjxPGW0F1M4sWxvbZ/ksNl5y69mhHEDDtAMWeMwNwjFzX6fUWv3is2W1dMtGXjXF09L6x6bo7CC4e5ov+iKSUH/BXxRYk3i6jaQQOxiDUvmqHtU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=F93Y/bpn; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net D571F41ED0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1748959264; bh=uOyNUmXYmGjvQ8M6ifu04w16RP5byp/ebrZPnuwV0QI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=F93Y/bpnWL4BxMcfbzMXUVjpLlzjzDrdmpEj/FZcpS9d4LazP5I/V92Hk4Szna1V3
-	 oL+bMlZ23kHsdrqVWowvjQ4inyGrUdMx7zW5xTEk/vkdPDqtokWvtsF+gmUwSJ7wzo
-	 CEov2CzSe1ze2h8J20GaTId8iIPX03ApU5Xjtu+vpn2ytirpqW5zmeYaixQ12QHMrA
-	 Xz8Xryed0VVyuXRE4HVBlLyV2g/612fqFqLTGPx1O/TmdfZUh8q6I0J+9p1SaA2mdE
-	 qQo9LX4IhKUfmkBq8Du6hLSrdorBvfNM4EA1BqjXSoO1WWfDxcDmrtcymOpUPGLGVO
-	 N3L1EbKYrSTdg==
-Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id D571F41ED0;
-	Tue,  3 Jun 2025 14:01:03 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Suren Baghdasaryan
- <surenb@google.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Shakeel Butt <shakeel.butt@linux.dev>,
- Jann Horn <jannh@google.com>, Qi Zheng <zhengqi.arch@bytedance.com>,
- linux-mm@kvack.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] docs/mm: expand vma doc to highlight pte freeing,
- non-vma traversal
-In-Reply-To: <38bcf562-86dc-42b2-9ffc-53cbc5d8ac22@lucifer.local>
-References: <20250602210710.106159-1-lorenzo.stoakes@oracle.com>
- <87bjr59634.fsf@trenco.lwn.net>
- <9fc9ac50-abce-48bd-979f-2e00b26917b5@lucifer.local>
- <38bcf562-86dc-42b2-9ffc-53cbc5d8ac22@lucifer.local>
-Date: Tue, 03 Jun 2025 08:01:02 -0600
-Message-ID: <877c1s9b6p.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1748959415; c=relaxed/simple;
+	bh=pwIE30QMCig7fjCkc2DTK/ld/x9ovYw2kzOaBb+RcWE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=pHby0zIrOrtCKL8O131yhsazpqjy6AyTQuqRs+fCTn8XGZnuLClKQpUg7Uaims9oTxC9QDJiwxk2Px+IwXugejXbtY8QmnzJBjOGpQCuRwrspyi/1cFjA34OqwprEntnUZqoO5O8JHuqn0B7EAKtbfGIiIhbickHqYOAW36qSFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=PVg/kYSG reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=M7Al/KHLw0HvdtmRejhXZXVdVgs2fxQYH6vUcx0wuok=; b=P
+	Vg/kYSGk1uYctobUjzplZZm0geCnR2cqShwYdHE44kyBoL8SyWHBjgq2AhtpPI5c
+	N4JFyEgCffW6sOL2Fw2ESaQwIYPdXszFxR138X6p80vSCgpF3sm3gVmD+IdvTbJ9
+	QremQwkEwX6G51Q8mxIj7O1q5mf6g58AWcz74ByggM=
+Received: from 00107082$163.com ( [111.35.189.95] ) by
+ ajax-webmail-wmsvr-40-103 (Coremail) ; Tue, 3 Jun 2025 22:02:03 +0800 (CST)
+Date: Tue, 3 Jun 2025 22:02:03 +0800 (CST)
+From: "David Wang" <00107082@163.com>
+To: "Yeoreum Yun" <yeoreum.yun@arm.com>
+Cc: peterz@infradead.org, mingo@redhat.com, mingo@kernel.org,
+	acme@kernel.org, namhyung@kernel.org, leo.yan@arm.com,
+	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] perf/core: fix dangling cgroup pointer in cpuctx
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
+ Copyright (c) 2002-2025 www.mailtech.cn 163com
+In-Reply-To: <aD77ih5zOrZyXVit@e129823.arm.com>
+References: <aD77ih5zOrZyXVit@e129823.arm.com>
+X-NTES-SC: AL_Qu2fCvWetksp5SCRZekXn0oTju85XMCzuv8j3YJeN500tSTX4wA4cW9GFHDV986uDAqhoAiVSRNw8OpieZNiVY7Za4YOX4w+fQJuITaH7RjT
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=GBK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Message-ID: <45723708.beca.197361963d8.Coremail.00107082@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:ZygvCgD3H+JbAD9oJCMTAA--.13866W
+X-CM-SenderInfo: qqqrilqqysqiywtou0bp/xtbBkAZhqmg+9NnRwgAHsy
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-Lorenzo Stoakes <lorenzo.stoakes@oracle.com> writes:
-
->> Re: the c:func: stuff -
->>
->> Well, the right thing is making function + type names clearly discernable, and
->> it just putting in the function name like that absolutely does not do the right
->> thing in that respect.
->>
->> I feel strongly on this, as I've tried it both ways and it's a _really_ big
->> difference in how readable the document is.
->>
->> I spent a lot of time trying to make it as readable as possible (given the
->> complexity) so would really rather not do anything that would hurt that.
->>
->
-> Somebody told me that in _other_ .rst's, seemingly, it does figure out xxx() ->
-> function and highlights it like this.
->
-> But for me, it does not... :)
-
-OK ... If you look at what's going on, some of the functions will be
-marked, others not.  The difference is that there is no markup for
-functions where a cross-reference cannot be made (because they are
-undocumented).
-
-We could easily change the automarkup code to always do the markup; the
-problem with that (which is also a problem with the existing markup
-under Documentation/mm) is you'll have rendered text that looks like a
-cross-reference link, but which is not.  We also lose a clue as to which
-functions are still in need of documentation.
-
-The right answer might be to mark them up differently, I guess.
-
-jon
+CkF0IDIwMjUtMDYtMDMgMjE6NDE6MzAsICJZZW9yZXVtIFl1biIgPHllb3JldW0ueXVuQGFybS5j
+b20+IHdyb3RlOgo+SGkgRGF2aWQsCj4KPj4gPgo+PiA+ID4gQnV0IHRvIGZpeCBpdCwgIGlzbid0
+IGZvbGxvd2luZyBjaGFuZ2UgbGVzcyBhZ2dyZXNzaXZlPwo+PiA+ID4gICAgICAgICBldmVudF9z
+Y2hlZF9vdXQoZXZlbnQsIGN0eCk7Cj4+ID4gPiAtICAgICAgIHBlcmZfZXZlbnRfc2V0X3N0YXRl
+KGV2ZW50LCBtaW4oZXZlbnQtPnN0YXRlLCBzdGF0ZSkpOwo+PiA+ID4gICAgICAgICBpZiAoZmxh
+Z3MgJiBERVRBQ0hfR1JPVVApCj4+ID4gPiAgICAgICAgICAgICAgICAgcGVyZl9ncm91cF9kZXRh
+Y2goZXZlbnQpOwo+PiA+ID4gICAgICAgICBpZiAoZmxhZ3MgJiBERVRBQ0hfQ0hJTEQpCj4+ID4g
+PiAgICAgICAgICAgICAgICBwZXJmX2NoaWxkX2RldGFjaChldmVudCk7Cj4+ID4gPiAgICAgICAg
+IGxpc3RfZGVsX2V2ZW50KGV2ZW50LCBjdHgpOwo+PiA+ID4gKyAgICAgICBwZXJmX2V2ZW50X3Nl
+dF9zdGF0ZShldmVudCwgbWluKGV2ZW50LT5zdGF0ZSwgc3RhdGUpKTsKPj4gPgo+PiA+IElmIHBl
+cmZfY2hpbGRfZGV0YWNoKCkgaXMgY2FsbGVkIGZpcnN0IGFuZCBwZXJmX2V2ZW50X3NldF9zdGF0
+ZSgpIGNhbGwsCj4+ID4gc2luY2UgdGhlIHBhcmVudCBpcyByZW1vdmVkIGluIHBlcmZfY2hpbGRf
+ZGV0YXRjZWQsCj4+ID4gSXQgd291bGQgYmUgZmFpbGVkIHRvIGFjY291bnQgdGhlIHRvdGFsX2Vu
+YWJsZV90aW1lIHdoaWNoIGNhY3VsYXRpbmcKPj4gPiBjaGlsZF9ldmVudCdzIGVuYWJsZV90aW1l
+IHRvby4KPj4KPj4gVGhhbmtzIGZvciBjbGFyaWZ5aW5nIHRoaXMsCj4+IFNvIHRoZSB3aG9sZSBw
+b2ludCAgaW4gY29tbWl0IGEzYzNjNjY2NyBpcyB0byBtYWtlICBwZXJmX2V2ZW50X3NldF9zdGF0
+ZSgpIGhhcHBlbnMgYmVmb3JlIHBlcmZfY2hpbGRfZGV0YWNoKCksIHJpZ2h0Pwo+PiBJIGZlZWwg
+SSBnb3QgbG9zdCBzb21ld2hlcmUgd2hlbiBJIHJ1c2ggdG8gdGhpcyBzdWdnZXN0aW9uLiBCdXQg
+SSBzdGlsbCBkb24ndCB1bmRlcnN0YW5kIHdoeSBteSBwYXRjaHYxICBicmVha3MgY29tbWl0Cj4+
+IGEzYzNjNjY2NywgcmVhbGx5IGNvbmZ1c2VkLgo+Cj5JIGV4cGxhaW5lZCB0aGlzIGluOgo+ICAg
+aHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvYWxsLzVkMTdmMWQ3LjY2NmQuMTk3MzQ4Yjc4ZDEuQ29y
+ZW1haWwuMDAxMDcwODJAMTYzLmNvbS8KPgo+Pj4gSWYgdGhlcmUgaXMgc3BlY2lmaWMgY2hpbGQg
+Y3B1IGV2ZW50IHNwZWNpZmllZCBpbiBjcHUgMC4KPj4+ICAgMS4gY3B1IDAgLT4gYWN0aXZlCj4+
+PiAgIDIuIHNjaGV1bGRlZCB0byBjcHUxIC0+IGluYWN0aXZlCj4+PiAgIDMuIGNsb3NlIHRoZSBj
+cHUgZXZlbnQgZnJvbSBwYXJlbnQgLT4gaW5hY3RpdmUgY2xvc2UKPj4+Cj4+PiBDYW4gYmUgZmFp
+bGVkIHRvIGNvdW50IHRvdGFsX2VuYWJsZV90aW1lLgo+Cj4KPkNvbnNpZGVyIG9uZSBldmVudCB3
+aGljaCBhdHRhY2hlZCB0byB0YXNrY3R4IHdpdGggc3BlY2lmaWMgY3B1Lgo+SW4gY2FzZSBvZiB5
+b3VyIG9yaWdpbmFsIHBhdGNoIGlzIGZvciBvbmx5ICJERVRBQ0hfRVhJVCIgY2FzZS4KPkhlcmUg
+d2hhdCBJIG1lYW4sIHRoZSBldmVudCBpcyAiY2xvc2VkIi4KPkluIHRoaXMgY2FzZSwgYmFzZWQg
+b24geW91ciBwYXRjaCwgaXQgZG9lc24ndCBjYWxsIHRoZSBwZXJmX2V2ZW50X3NldF9zdGF0ZSgp
+Cj5iZWZvcmUgbGlzdF9kZWxfZXZlbnQoKSwgYnV0IHBlcmZfZXZlbnRfc2V0X3N0YXRlKCkgaXMg
+Y2FsbGVkIGFmdGVyIGxpc3RfZGVsX2V2ZW50KCkuCgpEbyB5b3UgbWVhbiBpbiB0aGlzIGNhc2Us
+IHRoZSBldmVudCBpcyBub3QgcGFzc2VkIHRvIHBlcmZfZXZlbnRfZXhpdF9ldmVudCgpPwpCZWNh
+dXNlIGluIG15IG1pbmQsIGFzIGxvbmcgYXMgYSBldmVudCByZWFjaCBwZXJmX2V2ZW50X2V4aXRf
+ZXZlbnQsIERFVEFDSF9FWElUIGZsYWcgd291bGQgYWx3YXlzIGJlIHNldC4KcGVyZl9ldmVudF9l
+eGl0X2V2ZW50KCkKICAgLS0tPiBwZXJmX3JlbW92ZV9mcm9tX2NvbnRleHQoZXZlbnQsIGRldGFj
+aF9mbGFncyB8IERFVEFDSF9FWElUKTsgIDwtLS0KICAgICAgICAgICAgLS0tPiBfX3BlcmZfcmVt
+b3ZlX2Zyb21fY29udGV4dAogICAgICAgICAgICAgICAgICAgIC0tLS0+IHBlcmZfZXZlbnRfc2V0
+X3N0YXRlICAoREVUQUNIX0VYSVQgaXMgYWx3YXlzIHNldCBpbiB0aGlzIGNhbGwgcGF0aCkKICAg
+ICAgICAgICAgICAgICAgICAtLS0tPiBsaXN0X2RlbF9ldmVudAoKU28gSSBhbSBzdGlsbCBjb25m
+dXNlZCwgZXZlbiB3aXRoIGNwdSBzd2l0Y2gsIHRoZSBERVRBQ0hfRVhJVCBmbGFnIGlzIHN0aWxs
+IHRoZXJlLgpDb3VsZCB5b3UgZXhwbGFpbiBpdCB3aXRoIGEgY2FsbGNoYWluPwoKVGhhbmtzCkRh
+dmlkCgo+Cj5UaGFua3MKPgo+LS0KPlNpbmNlcmVseSwKPlllb3JldW0gWXVuCg==
 
