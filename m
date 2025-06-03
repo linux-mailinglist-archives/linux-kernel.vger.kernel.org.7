@@ -1,66 +1,93 @@
-Return-Path: <linux-kernel+bounces-671367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F6F3ACC080
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 08:52:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DFE3ACC088
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 08:53:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00FB23A4737
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 06:51:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20A2516E418
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 06:53:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3435268696;
-	Tue,  3 Jun 2025 06:52:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 792B72686BB;
+	Tue,  3 Jun 2025 06:52:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cp9ubILs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JulYCSmX"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 266831482E7;
-	Tue,  3 Jun 2025 06:52:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4F4A267AF2
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 06:52:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748933523; cv=none; b=FLfecIH0tTrECt0AFzsr/ObQj2gYJghuTXRz19I8KZi8e9vVJl86LBNHqXWhjvw30DMr9IQpAUayBjlX8EP0qr/wLr+0kyARJ5p8o/EBCOLajV6RiSp1gyk0Y7mzp+9stx9IK5Z1gVUYm83hUkD4BQq/BxcAwfveJM6Rr5yp6wU=
+	t=1748933571; cv=none; b=m1e+wbSPvS0lPzF6NFUfZHmbib/bdODFi2jC8pk84uyWDYB3BTsn9urvhFkITOJPVjWNQy7s3tuye8o6HKjy+pZ+bJeg6WA7u3ZQnM0Lnzm6yBoUrAVXUbXeOsme18k5I8udWWyCtQSRI4LYu6nQ8rKYEN4Y552or6220+K0kic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748933523; c=relaxed/simple;
-	bh=Kjp0tuLw4XvD1ShgDjXom8aEbBouPSch+dAuZVlg1lc=;
+	s=arc-20240116; t=1748933571; c=relaxed/simple;
+	bh=a2Xhzzi3QY9KeC6g0mvy+JMY/3ewUcjrru9xzEIQsXM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bbPm83fsGiBoJQ4e+pP052P9tULlPWvtUAMBQjPJIIcDWDtPNOm62T42sn3i8U/YAj2a7cTKk6zYX3YMEhpt/U9+rEekbA8I6QR3ufy11Bou68Wxw0nS5sB4riY3T4L+WjL9+85oSxwH7IM3Tr76Jfj7mxs87Ph5u9/3upM7qdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cp9ubILs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEA8AC4CEED;
-	Tue,  3 Jun 2025 06:52:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748933522;
-	bh=Kjp0tuLw4XvD1ShgDjXom8aEbBouPSch+dAuZVlg1lc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Cp9ubILs58FREDHmwfcXTl8H52EfWllmO2J0fZq/mnImXJRpewkU3Dj5Jkd2ZtHHB
-	 aX6aPQTM1xqYQKsOexgJP0gWMY4hquIuD3hKbJdOc48XFGFiH+OX6RCLbfqc2WomgU
-	 IWxwN52klZVJ6GdpmAh4Cms02mu8bw0QTZFRexRU5C6cvBeNXl6cBSXPkYg0LlcqKP
-	 i2HIclhrTkgfCWe/kDRFBzBZMbtbZpQigz7BEudTCxD3YEK2l+JXVTsc9RINhrezI3
-	 kPIgAa70f//PDY/7axp7PBSUIXBHgpma25WDymPfpsko3IDWHiozSt+ihOsvkCmHUp
-	 63/oCweUJ0/HQ==
-Date: Mon, 2 Jun 2025 23:52:00 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Ravi Bangoria <ravi.bangoria@amd.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Stephane Eranian <eranian@google.com>,
-	Ian Rogers <irogers@google.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	James Clark <james.clark@linaro.org>, Leo Yan <leo.yan@arm.com>,
-	Joe Mario <jmario@redhat.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Santosh Shukla <santosh.shukla@amd.com>,
-	Ananth Narayan <ananth.narayan@amd.com>,
-	Sandipan Das <sandipan.das@amd.com>, bpf@vger.kernel.org
-Subject: Re: [PATCH 1/4] perf/amd/ibs: Add load/store SW filters to IBS OP PMU
-Message-ID: <aD6bkAXjRllFvRTV@google.com>
-References: <20250529123456.1801-1-ravi.bangoria@amd.com>
- <20250529123456.1801-2-ravi.bangoria@amd.com>
- <aDq1iG3P9_BBnx7C@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PLIVTkoS2UUBdxPAbs7+9D2x4a/4HfJBGrgvMCvENOy9kU1brPsZHG58NJdY+1I4/CdxPJFd5GlBlSCkr8NwDQWEukJfV6vzMnmJMJP1WU6Rxx/V2TnwUem7KqZrCL5r8svGs3CGsbdREFsBoz/hCT4y6yUlsGcNIJM9ZMJZ/ro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JulYCSmX; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b2d46760950so5044882a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jun 2025 23:52:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1748933569; x=1749538369; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=wxJyD1Wr6giGGGMhwdcwxe8wm378R6kiZUi+LdBaw9U=;
+        b=JulYCSmXmnzIfSHXAWo8n6FCZuy+TYeBCvu5wclg24pD7lmI5rGOCqifUTR3mN2UMJ
+         7d4qLPY+wMnhZnhTRmHQgWJUshuPEt0ggjxFDzMjtjjusJYzA3qcWX42PTFD0oPhW4LX
+         EAeZX8YZt40tip6eo4RAbmNM4mzRPlxo10uN6XqpL7Fjmg5ee3Skkvp1d/p73n8/9rNh
+         7PM+3bVu4ay4eK3pXw2btIqkKLV+M1B9g8JYWTVm3iD8a9MoMdeMu2IZYKJ8VOnrwfv/
+         vWbEIFTqiKjHefFZkW6qgq+Tb5y2flIkxKfZiHBgdmANicfAGDt5goPPDUXQQnEn41Ke
+         ndHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748933569; x=1749538369;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wxJyD1Wr6giGGGMhwdcwxe8wm378R6kiZUi+LdBaw9U=;
+        b=AxrfSgkTn5rxz81Eqn2yt1gqU6iE6Bmg0bUCEB+eboQUjaY8MmU8NYiSzjopVB6WvC
+         26M+4zErH/kMCumSZf7MiBQcWG/GlwruV2cEQcPEWU11RAVq0/RwFOqlz3GoGZU0/nrs
+         QoNKYrywjYt01n1MmgX/MdnURym0zV8RfEr6zKKLcIsJu+u2BR3qww7sJskEWrwttxq7
+         QSiSTfPc0NV58La6E1rCt5Ncv7W/mx9vvxfYLrdA+tKVLov9PRLbmRDbOFKfVB7UjjRI
+         TAxUHLNJ3JEHDWEMfqhEa4zi3OaueQFdAjtGrEqmA6dhJzr4vUT0zXozA0p4d88JEIaT
+         nZPA==
+X-Forwarded-Encrypted: i=1; AJvYcCVvKUC8Fkd0oGHKQYVub8UJbiyQOQtgj4N03+2FNXhKEa2/USvZr+64RJGyF5hZuLT2Fkq8fNPxE6geEYM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzyOdv2AKeTkW366D2SOsAkbj/TYbSg+dYEL6faUD8Jj9oVqgLr
+	yuXauwo4cYPgmUSpR9YBxc1fb8H2lpWBL1bPB57al2juNLiIWlo3vcDwgKasu8AOag==
+X-Gm-Gg: ASbGncvak+pfhXv//qNBeG8GFNSZLlN0Rcp3UnAeIhLRiThgr7QpOoLmV8d6Z1/UFak
+	/PHmRDQqY5ZxDFdLPQEeAcPBpo4MMrwWKf2k9YhD/JTxKcoeB8ySM7TQ1x5uz8T2VS4Km/Hj/td
+	I0q3+90b/6LaPyZwaz8rcVflebbZ6LbkdE1I8UmeQpDFEqTW9VKdSR9637oiNukm6fxNwH74H27
+	NUddw2o7TjCPybRhlX1HhC+/KymJO8FzOmfxCabdCcJFvUqBMN6AgwblBhd9yUf9ktmu+kPveJJ
+	H7gPRdQUUFndiufEO2ohEg5LJVzWE4eyjRNrhMreqr8OoXCsCv9JQq/W+aZNdl3f
+X-Google-Smtp-Source: AGHT+IHYXjOCnfjKFDJMsvXQhP7ZQM81wMsQjlNn1UPAKq3ILM9rjBY85bZGaOI3BGHiLdo5YQgppg==
+X-Received: by 2002:a17:90b:5790:b0:311:c1ec:7d11 with SMTP id 98e67ed59e1d1-3127c73d3c9mr19065135a91.18.1748933568932;
+        Mon, 02 Jun 2025 23:52:48 -0700 (PDT)
+Received: from thinkpad ([220.158.156.133])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3124e30cb3bsm6616776a91.38.2025.06.02.23.52.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Jun 2025 23:52:48 -0700 (PDT)
+Date: Tue, 3 Jun 2025 12:22:41 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, Rob Herring <robh@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, cros-qcom-dts-watchers@chromium.org, 
+	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, quic_vbadigan@quicinc.com, quic_mrana@quicinc.com
+Subject: Re: [PATCH v3 3/3] arm64: qcom: sc7280: Move phy, perst to root port
+ node
+Message-ID: <pb7rsvlslvyqlheyhwwjgje6iiolgkj6cqfsi6jmvetritc7lr@jxndd5rfzbfy>
+References: <20250419-perst-v3-0-1afec3c4ea62@oss.qualcomm.com>
+ <20250419-perst-v3-3-1afec3c4ea62@oss.qualcomm.com>
+ <r4mtndc6tww6eqfumensnsrnk6j6dw5nljgmiz2azzg2evuoy6@hog3twb22euq>
+ <0e1d8b8e-9dd3-a377-d7e0-93ec77cf397f@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,81 +96,67 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <aDq1iG3P9_BBnx7C@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <0e1d8b8e-9dd3-a377-d7e0-93ec77cf397f@oss.qualcomm.com>
 
-Hello,
-
-+ bpf list
-
-On Sat, May 31, 2025 at 09:53:44AM +0200, Ingo Molnar wrote:
+On Tue, Jun 03, 2025 at 12:03:01PM +0530, Krishna Chaitanya Chundru wrote:
 > 
-> * Ravi Bangoria <ravi.bangoria@amd.com> wrote:
 > 
-> > Since current IBS OP PMU does not have the capability to tag only load/
-> > stores instructions, tools like perf mem/c2c ends up recording lots of
-> > unwanted samples. So, introduce a load/store software filter in the IBS
-> > OP PMU:
+> On 6/1/2025 12:35 PM, Manivannan Sadhasivam wrote:
+> > On Sat, Apr 19, 2025 at 10:49:26AM +0530, Krishna Chaitanya Chundru wrote:
+> > > There are many places we agreed to move the wake and perst gpio's
+> > > and phy etc to the pcie root port node instead of bridge node[1].
 > > 
-> >   ibs_op/swfilt=1,ldop=1/         --> Only load samples
-> >   ibs_op/swfilt=1,stop=1/         --> Only store samples
-> >   ibs_op/swfilt=1,ldop=1,stop=1/  --> Load OR store samples
+> > Same comment as binding patch applies here.
 > > 
-> > Other HW or SW filters in combination with this ldst filter are logical
-> > AND. For ex:
+> > > 
+> > > So move the phy, phy-names, wake-gpio's in the root port.
 > > 
-> >   ibs_op/swfilt=1,ldop=1,stop=1/u is
-> >   "privilege == userspace && (ldop == 1 || stop == 1)"
+> > You are not moving any 'wake-gpios' property.
 > > 
-> >   ibs_op/swfilt=1,ldop=1,stop=1,l3missonly=1/ is
-> >   "l3missonly == 1 && (ldop == 1 || stop == 1)"
-> 
-> No objections, but:
-> 
-> > An alternate approach is mem_op BPF filter:
+> ack I will remove it.
+> > > There is already reset-gpio defined for PERST# in pci-bus-common.yaml,
+> > > start using that property instead of perst-gpio.
+> > > 
+> > > [1] https://lore.kernel.org/linux-pci/20241211192014.GA3302752@bhelgaas/
+> > > 
+> > > Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+> > > ---
+> > >   arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts   | 5 ++++-
+> > >   arch/arm64/boot/dts/qcom/sc7280-herobrine.dtsi | 5 ++++-
+> > >   arch/arm64/boot/dts/qcom/sc7280-idp.dtsi       | 5 ++++-
+> > >   arch/arm64/boot/dts/qcom/sc7280.dtsi           | 6 ++----
+> > >   4 files changed, 14 insertions(+), 7 deletions(-)
+> > > 
+> > > diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+> > > index 7a36c90ad4ec8b52f30b22b1621404857d6ef336..3dd58986ad5da0f898537a51715bb5d0fecbe100 100644
+> > > --- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+> > > +++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+> > > @@ -709,8 +709,11 @@ &mdss_edp_phy {
+> > >   	status = "okay";
+> > >   };
+> > > +&pcie1_port0 {
+> > > +	reset-gpios = <&tlmm 2 GPIO_ACTIVE_LOW>;
+> > > +};
+> > > +
+> > >   &pcie1 {
+> > > -	perst-gpios = <&tlmm 2 GPIO_ACTIVE_LOW>;
+> > >   	pinctrl-0 = <&pcie1_reset_n>, <&pcie1_wake_n>;
+> > >   	pinctrl-names = "default";
 > > 
-> >   perf record --filter "mem_op == load || mem_op == store" ...
+> > What about the pinctrl properties? They should also be moved.
 > > 
-> > However, there are few issues with it:
-> > o BPF filter is called after preparing entire perf sample. If the sample
-> >   does not satisfy the filtering criteria, all the efforts of preparing
-> >   perf sample gets wasted.
+> pinctrl can still reside in the host bridge node, which has
+> all the gpio's for all the root ports. If we move them to the
+> root ports we need to explicitly apply pinctrl settings as these
+> not tied with the driver yet.
 > 
-> Could we add an 'early' BPF callback point as well, to fast-discard 
-> samples?
 
-I guess that would require a new BPF program type than PERF_EVENT and
-handle driver-specific details.
+If the DT node is associated with a device, then the driver core should bind the
+pinctrl pins and configure them. Is that not happening here?
 
-> 
-> > o BPF filter requires root privilege.
-> 
-> Could we add 'built-in', 'safe' BPF scripts that are specifically 
-> prepared for perf events filtering purposes, that can be toggled by 
-> non-root users as well? These could be toggled by tooling via sysfs or 
-> so, or even via the perf syscall if that turns out to be the better 
-> approach.
+- Mani
 
-We have BPF filter framework in the perf tools and it can be run as
-normal user.  But root user should load and pin the BPF program prior
-to use like below.
-
-  $ sudo perf record --setup-filter pin
-
-  $ perf record -d -e ibs_op/swfilt/u --filter 'mem_op == load' ...
-
-Thanks,
-Namhyung
-
-> 
-> It would give us the flexibility and extensibility of BPF, combining it 
-> with the safety & compatibility of the filtering functionality being 
-> provided by the kernel.
-> 
-> It could be provided in the form of a BPF program crypto signature 
-> registry of upstream-approved BPF scripts for perf BPF callback(s),
-> or so. (While root could load any BPF script.)
-> 
-> Thanks,
-> 
-> 	Ingo
+-- 
+மணிவண்ணன் சதாசிவம்
 
