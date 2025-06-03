@@ -1,211 +1,232 @@
-Return-Path: <linux-kernel+bounces-671507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1ED9ACC273
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 10:51:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 938F9ACC2D1
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 11:20:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1A93171F45
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 08:51:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FB663A55D0
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 09:20:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EE6B4F5E0;
-	Tue,  3 Jun 2025 08:51:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DaasIIU+"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21BFF49659;
-	Tue,  3 Jun 2025 08:51:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13912280CE0;
+	Tue,  3 Jun 2025 09:20:40 +0000 (UTC)
+Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 891A818DB29;
+	Tue,  3 Jun 2025 09:20:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748940667; cv=none; b=jfySVjsI/lzoDmD6k2IS+VZWzfw0vWcg+1BQWMnkIAfXMnQ5iDi7KDGJw1CRetgsN42mL3+EYbXlxsjaVUW2g4nXqOPSgl87OcA0IcNj/iAZ/zrLoXkZtvkeAjhf99BtBWicZ8riCPcXUIAg6Ce4HZlD3sVLjjeKIyUSpDiKrJ4=
+	t=1748942439; cv=none; b=L6fqDWHBODVtvHFAiNBxphL9WxZZM5IWs/rSxdWGAPwxn47e1Gi+jb3K1Q64PqW4ECfc0cCWAVV9LoCDddt08dr3F1AQdZ7i5gQLuV3edU4J6WOoveTWLLs4Sv7YFtpWJiepigcsot0DoTicDroP6wP+iFanfWFtK3vyZtkIzPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748940667; c=relaxed/simple;
-	bh=Lgsa5MJFhl8K4fETFUbeTctJhVv+6uLgpq39ZSdpBPU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Lzpoi/Ht4Hf89bXUen4sIpJLEMWM7Egy+0BzdYAn8quexiLFp57qaTyIfx5oFK90GByZqAGN70QtFOwTlHQXHx2N+Xi0Z7OT1frenyOb/ZQie1yMB3ydBjrB72zvT+pf4YpOAMxIBmj5AUXpwSfyOo5CKIOSRNPBK+LzwHiABC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DaasIIU+; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-3109f106867so6743967a91.1;
-        Tue, 03 Jun 2025 01:51:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748940665; x=1749545465; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=H/jzSrNNGwegJxjn5PzW04cTG3AcB9ieJwNwESrXMSE=;
-        b=DaasIIU+rXBvjGXZuGhne3D3ljLo4ywExIs2r2+GzL0VNDkmsmRfBUv90/ZLfFMFMp
-         FM4xdXOdX//w1brQJVSdWUedEUyYrafWCEMK3hCV2jfjjY5mvS6tQ9QldDVTcQ7/hORD
-         4PXSAmzMfs2ykjAtiRy8yE7H/KfXod05kI85ekEcgJ2ouZFiTVzQ5tZR58ZYOedPam0i
-         uWPrEf0OGozv91BQgw5x7SouAB8o3BKqvHbSHVv0Nh6fEWodegk9BhoNyZn6JDZqga5l
-         qaKwZuzbiFDUNe7KgXbQqltcobe/25fN88lC8THccONwij03nyeMWw00LlasALwhGr1x
-         lo1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748940665; x=1749545465;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=H/jzSrNNGwegJxjn5PzW04cTG3AcB9ieJwNwESrXMSE=;
-        b=pG+AiU33fh/HfYsn11p/GHmFNB7+nYIOSbicScZnv1dcrX6nJAzdbhJcsQhUXFqAnk
-         q31Aq9GlLAFHoBwzqD45ikwQlepSoDphzg2k7ZI+YXdl2hQwScRY4D7hYGW3HpAmS1Ri
-         Jzf/aViuS6IOwLkfKc8xtMG0CBMbdTnrEbES2Q6muzA9B4JaJFeEOav+MQnJU3xLiImm
-         IbL9LwIW1h+z5rzfr7AGwnNQl2mq8OVq000q0BdwGl4UBCcKWhjsgZCxtNu4WaLIRxwe
-         e11EOyNcqEBUJzUiC32JnNmZ7EzvT6jGJbaGBSlMSHL2JnE1QgkgPrzH5oOnmri+VX4u
-         rcXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWPfLK7BnKqilfz/yuycaaN85hT/g+yNmErzBPWEEzRfDkzARmxDkRsPXxw3idHqN0BXl4iDlG12NEQQJ4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8fWDdYETGqeUIdS3Rkakz1iF3wWPRG+ckODos1niuBod4GkD7
-	KfnMXcW5GMJx78LTyowHzpR+bgn4PKPaOmLuvlBD5kLzh6y3lpUoHNPA
-X-Gm-Gg: ASbGncuQvOjmjpMntHdPkDb3ES534W9bPt0sByWf3x/EGQtEgBdPeSJzZIPkn75tD9b
-	eAVQxL8JAsiATX+xt6KmGSO3AO7Psz3gTF+pWvay+JGlvUCF7njlxGZc6ADzeD+BcTKhqF9wSWN
-	3Tx/sFQhafYAURiauWC1Pdb6+rvkmnZqoBfZdXg/+K7PBhC2Y8MjYyXspdRvu+xPqe6/etZ+zj9
-	AS+lQ3D6hwzEgSQbtNE1x8tMaA2Kg8Hu6dKnUCsSryhgtOtaVA2uu96vjTt6kzFgdlNfAh7ENWX
-	6EU1iQaahQlEVCKfLOqSjNjITW2dJM5ylbCziNorwnfs9WVuFbbJmx6EFqNaMv0i78q4vzgZvca
-	gJP1/OGPl
-X-Google-Smtp-Source: AGHT+IElla0nEGMKETLbUX+7W3iyU+Fakjen00uH8Qq58oXST6ashLmAvUW8ZcSrTXtiFgagP5KfJQ==
-X-Received: by 2002:a17:90b:55c5:b0:311:9c9a:58da with SMTP id 98e67ed59e1d1-312413f54eemr24659151a91.8.1748940665215;
-        Tue, 03 Jun 2025 01:51:05 -0700 (PDT)
-Received: from localhost.localdomain ([117.88.121.64])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-235caa81bc2sm7331655ad.205.2025.06.03.01.51.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Jun 2025 01:51:04 -0700 (PDT)
-From: luminosity1999@gmail.com
-X-Google-Original-From: txpeng@tencent.com
-To: chandan.babu@oracle.com
-Cc: linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Tianxiang Peng <txpeng@tencent.com>,
-	Qing Zhang <diasyzhang@tencent.com>,
-	Hao Peng <flyingpeng@tencent.com>,
-	Jinliang Zheng <alexjlzheng@tencent.com>,
-	Hui Li <caelli@tencent.com>
-Subject: [PATCH 5.4] xfs: Reset cnt_cur to NULL after deletion to prevent UAF
-Date: Tue,  3 Jun 2025 16:50:56 +0800
-Message-ID: <20250603085056.191073-1-txpeng@tencent.com>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1748942439; c=relaxed/simple;
+	bh=p9NjpU4OCCgM7bTR4DIZZaxlvncFkcQUC79/F9rivEk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ktMNihGruZIl+v801DfnzEGsvbnBcDg07lqpFfl+cTCGlfdDSlg+4pLnrqpTxRMqyMGdoq4Nz1lWAqHpp37gf3gvJtNNPKzjAMnvhN8EX1vDaocq4IwXinQKZAY9Q9XtDXF55JE1VWYy7atztnjnagryWesvhWPUezM05EpQ6Ys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
+	by localhost (Postfix) with ESMTP id 4bBPbv4FNNz9s92;
+	Tue,  3 Jun 2025 10:52:27 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id U7IUxrE3Y_nw; Tue,  3 Jun 2025 10:52:27 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase1.c-s.fr (Postfix) with ESMTP id 4bBPbm3Y1Nz9vY6;
+	Tue,  3 Jun 2025 10:52:20 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 742888B765;
+	Tue,  3 Jun 2025 10:52:20 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id IcNMaBpAWABq; Tue,  3 Jun 2025 10:52:20 +0200 (CEST)
+Received: from [192.168.235.99] (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id CD8958B763;
+	Tue,  3 Jun 2025 10:52:19 +0200 (CEST)
+Message-ID: <840249c5-2602-4178-a408-f7d502111f79@csgroup.eu>
+Date: Tue, 3 Jun 2025 10:52:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] powerpc/ftrace: support CONFIG_FUNCTION_GRAPH_RETVAL
+To: Aditya Bodkhe <adityab1@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ maddy@linux.ibm.com, mpe@ellerman.id.au, npiggin@gmail.com,
+ rostedt@goodmis.org, mhiramat@kernel.org, mark.rutland@arm.com,
+ Aditya Bodkhe <aditya.b1@linux.ibm.com>
+References: <20250528134820.74121-1-adityab1@linux.ibm.com>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <20250528134820.74121-1-adityab1@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-From: Tianxiang Peng <txpeng@tencent.com>
 
-Our test environment detected a use-after-free bug in XFS:
 
-[ 1396.210852] Allocated by task 26155:
-[ 1396.212769]  save_stack+0x21/0x90
-[ 1396.214670]  __kasan_kmalloc.constprop.8+0xc1/0xd0
-[ 1396.216738]  kasan_slab_alloc+0x11/0x20
-[ 1396.218694]  kmem_cache_alloc+0xfb/0x280
-[ 1396.220750]  kmem_zone_alloc+0xb9/0x240 [xfs]
-[ 1396.222859]  xfs_allocbt_init_cursor+0x60/0x270 [xfs]
-[ 1396.225058]  xfs_alloc_ag_vextent_near+0x2bc/0x1aa0 [xfs]
-[ 1396.227312]  xfs_alloc_ag_vextent+0x3a0/0x5a0 [xfs]
-[ 1396.229503]  xfs_alloc_vextent+0xc11/0xd80 [xfs]
-[ 1396.231665]  xfs_bmap_btalloc+0x632/0xf20 [xfs]
-[ 1396.233804]  xfs_bmap_alloc+0x78/0x90 [xfs]
-[ 1396.235883]  xfs_bmapi_allocate+0x243/0x760 [xfs]
-[ 1396.238032]  xfs_bmapi_convert_delalloc+0x3cf/0x850 [xfs]
-[ 1396.240267]  xfs_map_blocks+0x352/0x820 [xfs]
-[ 1396.242379]  xfs_do_writepage+0x2c2/0x8d0 [xfs]
-[ 1396.244417]  write_cache_pages+0x341/0x760
-[ 1396.246490]  xfs_vm_writepages+0xc8/0x120 [xfs]
-[ 1396.248755]  do_writepages+0x8f/0x160
-[ 1396.250710]  __filemap_fdatawrite_range+0x1a4/0x200
-[ 1396.252823]  filemap_flush+0x1c/0x20
-[ 1396.254847]  xfs_release+0x1b3/0x1f0 [xfs]
-[ 1396.256920]  xfs_file_release+0x15/0x20 [xfs]
-[ 1396.258936]  __fput+0x155/0x390
-[ 1396.260781]  ____fput+0xe/0x10
-[ 1396.262620]  task_work_run+0xbf/0xe0
-[ 1396.264492]  exit_to_usermode_loop+0x11d/0x120
-[ 1396.266496]  do_syscall_64+0x1c3/0x1f0
-[ 1396.268391]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+Le 28/05/2025 à 15:48, Aditya Bodkhe a écrit :
+> [Vous ne recevez pas souvent de courriers de adityab1@linux.ibm.com. Découvrez pourquoi ceci est important à https://aka.ms/LearnAboutSenderIdentification ]
+> 
+> From: Aditya Bodkhe <aditya.b1@linux.ibm.com>
+> 
+> commit a1be9ccc57f0 ("function_graph: Support recording and printing the
+> return value of function") introduced support for function graph return
+> value tracing.
+> 
+> Additionally, commit a3ed4157b7d8 ("fgraph: Replace fgraph_ret_regs with
+> ftrace_regs") further refactored and optimized the implementation,
+> making `struct fgraph_ret_regs` unnecessary.
+> 
+> This patch enables the above modifications for powerpc64, ensuring that
+> function graph return value tracing is available on this architecture.
 
-[ 1396.272067] Freed by task 26155:
-[ 1396.273909]  save_stack+0x21/0x90
-[ 1396.275758]  __kasan_slab_free+0x131/0x180
-[ 1396.277722]  kasan_slab_free+0xe/0x10
-[ 1396.279627]  kmem_cache_free+0x8c/0x2c0
-[ 1396.281625]  xfs_btree_del_cursor+0xb2/0x100 [xfs]
-[ 1396.283739]  xfs_alloc_ag_vextent_near+0x90b/0x1aa0 [xfs]
-[ 1396.285932]  xfs_alloc_ag_vextent+0x3a0/0x5a0 [xfs]
-[ 1396.288049]  xfs_alloc_vextent+0xc11/0xd80 [xfs]
-[ 1396.290065]  xfs_bmap_btalloc+0x632/0xf20 [xfs]
-[ 1396.292008]  xfs_bmap_alloc+0x78/0x90 [xfs]
-[ 1396.293871]  xfs_bmapi_allocate+0x243/0x760 [xfs]
-[ 1396.295801]  xfs_bmapi_convert_delalloc+0x3cf/0x850 [xfs]
-[ 1396.297811]  xfs_map_blocks+0x352/0x820 [xfs]
-[ 1396.299706]  xfs_do_writepage+0x2c2/0x8d0 [xfs]
-[ 1396.301522]  write_cache_pages+0x341/0x760
-[ 1396.303379]  xfs_vm_writepages+0xc8/0x120 [xfs]
-[ 1396.305204]  do_writepages+0x8f/0x160
-[ 1396.306902]  __filemap_fdatawrite_range+0x1a4/0x200
-[ 1396.308756]  filemap_flush+0x1c/0x20
-[ 1396.310545]  xfs_release+0x1b3/0x1f0 [xfs]
-[ 1396.312386]  xfs_file_release+0x15/0x20 [xfs]
-[ 1396.314180]  __fput+0x155/0x390
-[ 1396.315825]  ____fput+0xe/0x10
-[ 1396.317442]  task_work_run+0xbf/0xe0
-[ 1396.319126]  exit_to_usermode_loop+0x11d/0x120
-[ 1396.320928]  do_syscall_64+0x1c3/0x1f0
-[ 1396.322648]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+Why only powerpc64 ?
 
-[ 1396.325958] The buggy address belongs to the object at ffff8898039945a0
-                which belongs to the cache xfs_btree_cur of size 224
-[ 1396.330097] The buggy address is located 181 bytes inside of
-                224-byte region [ffff8898039945a0, ffff889803994680)
+I see nothing specific to powerpc64 in your patch, will it work on 
+powerpc32 too ?
 
-This issue stems from an incomplete backport of upstream commit
-8ebbf262d468 ("xfs: don't block in busy flushing when freeing
-extents") to the 5.4 LTS kernel. The backport introduced error
-handling that may goto error0 when xfs_extent_busy_flush() fails:
+> 
+> After this patch, v6.14+ kernel can also be built with FPROBE on powerpc
+> but there are a few other build and runtime dependencies for FPROBE to
+> work properly. The next patch addresses them.
+> 
+> Signed-off-by: Aditya Bodkhe <aditya.b1@linux.ibm.com>
+> ---
+>   arch/powerpc/Kconfig                     |  1 +
+>   arch/powerpc/include/asm/ftrace.h        | 15 +++++++++
+>   arch/powerpc/kernel/trace/ftrace_entry.S | 41 ++++++++++++++----------
+>   3 files changed, 40 insertions(+), 17 deletions(-)
+> 
+> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+> index c3e0cc83f120..9163521bc4b9 100644
+> --- a/arch/powerpc/Kconfig
+> +++ b/arch/powerpc/Kconfig
+> @@ -250,6 +250,7 @@ config PPC
+>          select HAVE_FUNCTION_ARG_ACCESS_API
+>          select HAVE_FUNCTION_DESCRIPTORS        if PPC64_ELF_ABI_V1
+>          select HAVE_FUNCTION_ERROR_INJECTION
+> +       select HAVE_FUNCTION_GRAPH_FREGS
+>          select HAVE_FUNCTION_GRAPH_TRACER
+>          select HAVE_FUNCTION_TRACER             if !COMPILE_TEST && (PPC64 || (PPC32 && CC_IS_GCC))
+>          select HAVE_GCC_PLUGINS                 if GCC_VERSION >= 50200   # plugin support on gcc <= 5.1 is buggy on PPC
+> diff --git a/arch/powerpc/include/asm/ftrace.h b/arch/powerpc/include/asm/ftrace.h
+> index 82da7c7a1d12..6ffc9c9cf4e3 100644
+> --- a/arch/powerpc/include/asm/ftrace.h
+> +++ b/arch/powerpc/include/asm/ftrace.h
+> @@ -50,6 +50,21 @@ static __always_inline struct pt_regs *arch_ftrace_get_regs(struct ftrace_regs *
+>                  asm volatile("mfmsr %0" : "=r" ((_regs)->msr)); \
+>          } while (0)
+> 
+> +#undef ftrace_regs_get_return_value
+> +static __always_inline unsigned long
+> +ftrace_regs_get_return_value(const struct ftrace_regs *fregs)
+> +{
+> +       return arch_ftrace_regs(fregs)->regs.gpr[3];
+> +}
+> +#define ftrace_regs_get_return_value ftrace_regs_get_return_value
+> +
+> +#undef ftrace_regs_get_frame_pointer
+> +static __always_inline unsigned long
+> +ftrace_regs_get_frame_pointer(const struct ftrace_regs *fregs)
+> +{
+> +       return arch_ftrace_regs(fregs)->regs.gpr[1];
+> +}
+> +
 
--		xfs_extent_busy_flush(args->mp, args->pag, busy_gen,
--				alloc_flags);
-+		error = xfs_extent_busy_flush(args->tp, args->pag,
-+				busy_gen, alloc_flags);
-+		if (error)
-+			goto error0;
+Why unset and redefine ftrace_regs_get_return_value() and 
+ftrace_regs_get_frame_pointer() ? Please explain why the default ones 
+can't be used on powerpc.
 
-However, in the 5.4 codebase, the existing cursor deletion logic
-failed to reset cnt_cur to NULL after deletion. While the original
-code's goto restart path reinitialized the cursor, the new goto
-error0 path attempts to delete an already-freed cursor (now
-dangling pointer), causing a use-after-free. Reset cnt_cur to NULL
-after deletion to prevent double-free. This aligns with the cursor
-management pattern used at other deletion sites in the same
-function.
+>   static __always_inline void
+>   ftrace_regs_set_instruction_pointer(struct ftrace_regs *fregs,
+>                                      unsigned long ip)
+> diff --git a/arch/powerpc/kernel/trace/ftrace_entry.S b/arch/powerpc/kernel/trace/ftrace_entry.S
+> index 3565c67fc638..eafbfb7584ed 100644
+> --- a/arch/powerpc/kernel/trace/ftrace_entry.S
+> +++ b/arch/powerpc/kernel/trace/ftrace_entry.S
+> @@ -409,23 +409,30 @@ EXPORT_SYMBOL(_mcount)
+>   _GLOBAL(return_to_handler)
+>          /* need to save return values */
+>   #ifdef CONFIG_PPC64
+> -       std     r4,  -32(r1)
+> -       std     r3,  -24(r1)
+> +       stdu    r1, -SWITCH_FRAME_SIZE(r1)
+> +       std     r4, GPR4(r1)
+> +       std     r3, GPR3(r1)
+> +  /* Save previous stack pointer (r1) */
+> +       addi    r3, r1, SWITCH_FRAME_SIZE
+> +       std     r3, GPR1(r1)
+>          /* save TOC */
+> -       std     r2,  -16(r1)
+> -       std     r31, -8(r1)
+> +       std     r2,  24(r1)
+> +       std     r31, 32(r1)
+>          mr      r31, r1
+> -       stdu    r1, -112(r1)
+> -
+> +  /* pass ftrace_regs/pt_regs to ftrace_return_to_handler */
+> +       addi    r3,  r1, STACK_INT_FRAME_REGS
 
-This pitfall was eliminated in 5.15+ LTS kernels via XFS code
-refactoring, making the fix unnecessary for newer versions.
+Some of the changes seems to only be renaming and should be done in a 
+cleanup/preparatory patch in order to only focus on real necessary 
+changes in this patch.
 
-Signed-off-by: Tianxiang Peng <txpeng@tencent.com>
-Reviewed-by: Qing Zhang <diasyzhang@tencent.com>
-Reviewed-by: Hao Peng <flyingpeng@tencent.com>
-Reviewed-by: Jinliang Zheng <alexjlzheng@tencent.com>
-Reviewed-by: Hui Li <caelli@tencent.com>
----
- fs/xfs/libxfs/xfs_alloc.c | 1 +
- 1 file changed, 1 insertion(+)
+>          /*
+>           * We might be called from a module.
+>           * Switch to our TOC to run inside the core kernel.
+>           */
+>          LOAD_PACA_TOC()
+>   #else
+> -       stwu    r1, -16(r1)
+> -       stw     r3, 8(r1)
+> -       stw     r4, 12(r1)
+> +       stwu    r1, -SWITCH_FRAME_SIZE(r1)
 
-diff --git a/fs/xfs/libxfs/xfs_alloc.c b/fs/xfs/libxfs/xfs_alloc.c
-index 1193fd6e4..ff0c05901 100644
---- a/fs/xfs/libxfs/xfs_alloc.c
-+++ b/fs/xfs/libxfs/xfs_alloc.c
-@@ -1417,6 +1417,7 @@ xfs_alloc_ag_vextent_near(
- 	 */
- 	if (bno_cur_lt == NULL && bno_cur_gt == NULL) {
- 		xfs_btree_del_cursor(cnt_cur, XFS_BTREE_NOERROR);
-+		cnt_cur = NULL;
- 
- 		if (busy) {
- 			trace_xfs_alloc_near_busy(args);
--- 
-2.43.5
+Why do we need such a big frame size just to save two registers ?
+
+> +       stw     r4, GPR4(r1)
+> +       stw     r3, GPR3(r1)
+> +       addi    r3, r1, SWITCH_FRAME_SIZE
+> +       stw     r3, GPR1(r1)
+ > +       addi    r3, r1, STACK_INT_FRAME_REGS
+
+Why is this needed ?
+
+>   #endif
+> 
+>          bl      ftrace_return_to_handler
+> @@ -435,15 +442,15 @@ _GLOBAL(return_to_handler)
+>          mtlr    r3
+> 
+>   #ifdef CONFIG_PPC64
+> -       ld      r1, 0(r1)
+> -       ld      r4,  -32(r1)
+> -       ld      r3,  -24(r1)
+> -       ld      r2,  -16(r1)
+> -       ld      r31, -8(r1)
+> +       ld      r4,  GPR4(r1)
+> +       ld      r3,  GPR3(r1)
+> +       ld      r2,  24(r1)
+> +       ld      r31, 32(r1)
+> +       ld      r1,  0(r1)
+>   #else
+> -       lwz     r3, 8(r1)
+> -       lwz     r4, 12(r1)
+> -       addi    r1, r1, 16
+> +       lwz     r3, GPR3(r1)
+> +       lwz     r4, GPR4(r1)
+> +       addi    r1, r1, SWITCH_FRAME_SIZE
+>   #endif
+> 
+>          /* Jump back to real return address */
+> --
+> 2.43.5
+> 
 
 
