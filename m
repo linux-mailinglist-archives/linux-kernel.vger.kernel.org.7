@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-671599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33779ACC390
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 11:50:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D5E6ACC39D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 11:52:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B3B43A6FAE
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 09:50:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38A573A38C0
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 09:51:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 083C02820CE;
-	Tue,  3 Jun 2025 09:50:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02AC12820D3;
+	Tue,  3 Jun 2025 09:52:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U8OOUjWq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CmQrNugT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59082664C6;
-	Tue,  3 Jun 2025 09:50:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C47813D24D;
+	Tue,  3 Jun 2025 09:52:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748944252; cv=none; b=YdLR52DDv0WZebKIeApCWcoFm2Oup97Grw4HHYA16fdS5FNiDap3QPQTQje1Ei+BuiiNoNZCpFizEPOHvWzvjiBhJk+Cie9hh1wc4ml9UPas+9yWhT1Y2D5shl+NhU0JjG4d6nNVPO6CwhsWRMQAMCSAZHnrQ30cIhNI2l+5Aqk=
+	t=1748944327; cv=none; b=keEH+w6iQk2ZHV3/4N5xUfz7640+ZTb2B/gVlqVf4DKZqtEY8qV6Z+5tp42JCAixxGv35iCrewNgpC83Gur5lUNqAWtOioA6F1AYFORghQa2+GSOB4CS90ZQYxJNz+OKaF+eiDHgz7/mDMArsWOcDn88IwChmkRbWzqNlFPCVeU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748944252; c=relaxed/simple;
-	bh=0leUrnde8WOyRarESb5qHADqe22dgZdXAHnGHgbjV60=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AH3/oSai8EZl20WD7PsD7KVXnCZ1E4RZAoU07y7n3sAvmF0Vy8bPt55WK52XN4eTrApgyC1mJikUzigQRsotM1FkBtRJV6pC4JWmXfC1f9BygHmjBevarh29gLwdAN+j2gqOsydWy9YBOxcJ4GR1S4ICQ5sPiSy8CMLbe+epDQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U8OOUjWq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7F0CC4CEED;
-	Tue,  3 Jun 2025 09:50:48 +0000 (UTC)
+	s=arc-20240116; t=1748944327; c=relaxed/simple;
+	bh=QRzllN9ZhpJRQsgTFqhHDyIbdPVibkxs3YZiz99qpoE=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
+	 In-Reply-To:Content-Type; b=q/fT0H0ORE6guXLOaIguDDLhRcmVSih9aWR1z5nvPRnR2tHIUa67BMNiHO+EcuxX1pJCansRUmwiTjpKFAlfIzIMXbfnxlTo6xWaQna/+SxwNYVqna9nrRfRnAXyDTBn0LI1CYkGPNCyIksXsiquoPgLQiTQ7xpgFtdwB8pwLnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CmQrNugT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 173B2C4CEED;
+	Tue,  3 Jun 2025 09:52:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748944251;
-	bh=0leUrnde8WOyRarESb5qHADqe22dgZdXAHnGHgbjV60=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=U8OOUjWqXmHE3c98DVN94Ef25x4W2eVKC0ZquXD0P6dTZZI+IpKsH0xqCNsVIo49A
-	 tY7YXgWXIjZq5GKIr/yIi530eTgj1cRxT8fOgTKXYuWTLpotoiEJAMwGp6A58Q8bzd
-	 pJQgXmT+nZNaaNJbE/XfA6Mhpzua6cuGUYyFVhkZCqSzdA/UaJAUHJ3G1Rw4Jfmyer
-	 VM6RwFOuNqyGU8rBjDS0gRyPPBPHgFq5I2SEBshhyvaddQ1i0Nd5f8NWl6ORXqQR/x
-	 OB5X//F5a6+8D9zDBNMKv8vfZkyVcSIogeU0wqf5K7yQSN05EzI2+PsYqtiS4OZSB6
-	 rJyMXpvf/HqIQ==
-Message-ID: <366cdccf-571c-4f7f-ae26-2e529de5d5ec@kernel.org>
-Date: Tue, 3 Jun 2025 11:50:46 +0200
+	s=k20201202; t=1748944325;
+	bh=QRzllN9ZhpJRQsgTFqhHDyIbdPVibkxs3YZiz99qpoE=;
+	h=Date:Subject:From:To:References:In-Reply-To:From;
+	b=CmQrNugTBsS/Ry6/OZhNgPDPGv9zH5sb447HlOXfXo6LJblZye/CyxdCE62h3anGq
+	 w+5eNLIEHo6MEcKTCqlkakR8VtRB++SronjTJIeFBvteP4nWgUl47ZU4FmkBNQ1XzQ
+	 tlE2+DZ9vM2ovxo/ipuIRlVk1ExqvTK+ZRHP//GcFLgO84J4Mt56wQVSGJSh3MFkZL
+	 gkwunZc2WEeLy419mp+/c1oAdO4IIU4KtuoVtvfpQgLHXWhzW+QfOtSse2zKdx1kx+
+	 6sqHJqkv6vfoXa/7moyKQupynn9EBqrpCb6FvIhMDCDyJPRTd7n3xYdhtvYdEZt/jR
+	 a3Blq1OmrzU7Q==
+Message-ID: <a8c4ec8e-51bb-48f3-a47a-b7a848a44951@kernel.org>
+Date: Tue, 3 Jun 2025 11:52:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,17 +49,17 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: amlogic: meson-gxm-rbox-pro: fix wifi node
- name
-To: Neil Armstrong <neil.armstrong@linaro.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
- Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250603-topic-amlogic-upstream-bindings-fixes-dts-round-3-v1-1-2d54a476757d@linaro.org>
+Subject: Re: [PATCH v1 1/2] dt-bindings: mailbox: Add ASPEED AST2700 series
+ SoC
 From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Jammy Huang <jammy_huang@aspeedtech.com>, jassisinghbrar@gmail.com,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au,
+ andrew@codeconstruct.com.au, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org
+References: <20250603075450.133604-1-jammy_huang@aspeedtech.com>
+ <20250603075450.133604-2-jammy_huang@aspeedtech.com>
+ <273da934-deeb-4129-917c-5d7038930941@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -104,20 +104,33 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250603-topic-amlogic-upstream-bindings-fixes-dts-round-3-v1-1-2d54a476757d@linaro.org>
+In-Reply-To: <273da934-deeb-4129-917c-5d7038930941@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 03/06/2025 09:47, Neil Armstrong wrote:
-> This fixes the following error:
-> meson-gxm-rbox-pro.dtb: brcmf@1: $nodename:0: 'brcmf@1' does not match '^wifi(@.*)?$'
-> 	from schema $id: http://devicetree.org/schemas/net/wireless/brcm,bcm4329-fmac.yaml#
+On 03/06/2025 11:22, Krzysztof Kozlowski wrote:
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - interrupts
+>> +  - "#mbox-cells"
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    #include <dt-bindings/interrupt-controller/irq.h>
+>> +
+>> +    mbox@12c1c200 {
 > 
+> mailbox@
+> 
+> With these fixed:
+> 
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Huh, not tested.... so obviously un-reviewed.
 
-I already sent it:
-https://lore.kernel.org/linux-arm-kernel/3c3c3652-be5f-4f54-a0b8-4829f9549116@linaro.org/
-
-Can you pick that one instead?
+Test your code BEFORE you send, not via community services.
 
 Best regards,
 Krzysztof
