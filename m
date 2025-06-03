@@ -1,216 +1,390 @@
-Return-Path: <linux-kernel+bounces-672084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-672090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBB10ACCAAA
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 17:55:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5D62ACCACA
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 17:57:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF1083A49BA
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 15:55:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCDD81894648
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 15:57:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D91C23D298;
-	Tue,  3 Jun 2025 15:55:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9601823C8D3;
+	Tue,  3 Jun 2025 15:56:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="BOgOnPjd"
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2066.outbound.protection.outlook.com [40.107.101.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C10862C325E;
-	Tue,  3 Jun 2025 15:55:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748966132; cv=fail; b=XmJr3BJMCs1IkUgMRLqEAVu4khpUSOB6Mj0LJBQ4uj9wNo08yOb+Xlym2jghZkxYumxdqpbb/OUQEHd5CkPFOJvbkA8AdowFcOI/UJea5m54L3hoQ1HZEevos2a9nuckPqLhmnorZZRoGVWdJ/icKQnrBOC0DjJxQzGSEX+x2rg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748966132; c=relaxed/simple;
-	bh=VDxxOvzqiRZI4C7sO+ClFmRGC/euLva5tpQ1xWqDnrQ=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Vd75ynByHUpS2ACDbnelms5zqfoU4oYmuQDNgth2t3KZhQp3kntDZC9YphswpbY7A1y8pXCGaeDottWXQyNePLQGNojxvsSCDXwKn3n1hAM2dDJAEYStD40JqdITvNDJH3mevoAi3qhr1mLDB623z9OIvsGj4APelDvefgqwKXw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=BOgOnPjd; arc=fail smtp.client-ip=40.107.101.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=AFLd7ZpknsVQOYfl4tX+ognWG51EIh6WJ7KD2Adp3NIq2DaSj7z/giN3bU1DfuqPskOrxATRdtbgz7GwRheoTislh7KhQGQk/A8Y41JiUnNGwnhaPbgeu4kuCapq/UDpGVFbwJ0DX/Oe9eK89uQw8RqntHKcQBoR1/esf0vVUvYlYcx7oOiEkyxP3Ie8kmSYMSrW7sU5k2aBsVkmMw4601cl7GLhjMVkni+rbK172OZvaJsI3ZjSwzmp1TiL8SPStrXj2EW9x27oI1JnUUBcTvykOOmK1L3cua0BLbQBYbTQUkTKdFeQD6HktrlK9wSuXjHGRli89W9wjciORyfBmQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=NhN6OtR2DNkChZ4eUPzc0cWptaMdyaPqDpYFDNhkZY8=;
- b=zN52+M/cWcw/LBYM/h46RxkHiA1z3W6wSkMm8HqqoW9AnfygEVhp8pF9EcEbAshISLObDxBcZUXCtJun+L98A8Jv8LKiozyLM94Fy0uXDWOqJpoHNdFd2Z4pylAn/BpIVPBHoLCSxmlAr+LNvQauFzZXLetH/SzdnHoiEvGXXY5BsosnqtSQtcqU6lRXPYZc6/uurMfRmQLq9Ds20gIxu8ppYEF/geOcLgez3vPP03JVBeWDTUjXR+Gr84wc97lo6UrVSsEEBHNHCfk3puT99NGv8yLOfIGv83FWWcT1UbtZVuH7w+2PPZtZVby/4WcwqCXXxmvHUWnOlYpKtmBupg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NhN6OtR2DNkChZ4eUPzc0cWptaMdyaPqDpYFDNhkZY8=;
- b=BOgOnPjdUZbB5N/isifqnNUJqdKCH3ymyewceKt+fG8ycdfANF6UKOd6u8c0n7GFtjqKpbbjMVvD1a1Lr1qIf4KMXSsh7MobeXFO/caUnWtL1MRnVT0FpPqYxvj7eXldXLDUN2ZdbD9fvS9VTKlNpK1KuoxsrvTH//EkKUszrRk=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
- by MN2PR12MB4406.namprd12.prod.outlook.com (2603:10b6:208:268::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8792.33; Tue, 3 Jun
- 2025 15:55:26 +0000
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5%7]) with mapi id 15.20.8722.031; Tue, 3 Jun 2025
- 15:55:26 +0000
-Message-ID: <d1937343-5fc3-4450-b31a-d45b6f5cfc16@amd.com>
-Date: Tue, 3 Jun 2025 17:55:18 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/4] Implement dmabuf direct I/O via copy_file_range
-To: Christoph Hellwig <hch@infradead.org>
-Cc: wangtao <tao.wangtao@honor.com>, sumit.semwal@linaro.org,
- kraxel@redhat.com, vivek.kasireddy@intel.com, viro@zeniv.linux.org.uk,
- brauner@kernel.org, hughd@google.com, akpm@linux-foundation.org,
- amir73il@gmail.com, benjamin.gaignard@collabora.com, Brian.Starkey@arm.com,
- jstultz@google.com, tjmercier@google.com, jack@suse.cz,
- baolin.wang@linux.alibaba.com, linux-media@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, bintian.wang@honor.com, yipengxiang@honor.com,
- liulu.liu@honor.com, feng.han@honor.com
-References: <20250603095245.17478-1-tao.wangtao@honor.com>
- <aD7x_b0hVyvZDUsl@infradead.org>
- <09c8fb7c-a337-4813-9f44-3a538c4ee8b1@amd.com>
- <aD72alIxu718uri4@infradead.org>
- <924ac01f-b86b-4a03-b563-878fa7736712@amd.com>
- <aD8Gi9ShWDEYqWjB@infradead.org>
-Content-Language: en-US
-From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-In-Reply-To: <aD8Gi9ShWDEYqWjB@infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: BL1P223CA0008.NAMP223.PROD.OUTLOOK.COM
- (2603:10b6:208:2c4::13) To PH7PR12MB5685.namprd12.prod.outlook.com
- (2603:10b6:510:13c::22)
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="eqbtvJoM"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E87523F419;
+	Tue,  3 Jun 2025 15:56:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748966175; cv=none; b=r9moW7FWZpd6ooAwC7Qxj8EqLQkuCa4XSc58Qo7GRlG6w9tVbgO/ildd1UGDu5dmewWSEygf6PBixjvMr68Z9jHzOMaw5u/CVqWAbmOENFWTuH/2fz7rxnXONbBEBm5jEhosBHWg5wAX76mXOlZJ4Y8rmi3qiLu89AkHydkMRAg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748966175; c=relaxed/simple;
+	bh=FSdx0jgVmlGQHfR6McdT0UC6fg/m3xH9/Ng932OThRY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LtKx2wvaVWHVyUwla+zqONNq/LoB5ZPGvZwRWJn+IeB7+IUK3RetbslqrvoJhLcVSpU/hR50gLAJNbELOKMLADegkNb///VxZTsdgMwkXl8sIcnGVIn+az23/D5veHUbzLwnb7+EgYU8BWm4ohEgBI5MCdFRh6i8mZltf5aJFf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=eqbtvJoM; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
+	Content-Type; bh=g8w0GihKn9TF4gRbxN/DHUKGmxq5uy9Aj7RG/b62tDY=;
+	b=eqbtvJoMeWIlOgPGP6e8jTUUFS+Cc9pkU0551OA+d8g0dG0oOL4vfEtCpmwB/c
+	3XSAHC6OCrqgsS1aoo6h6wb6Ah6il1Wcs2KcSlcubAl9FvriPvragVdZjI6z+xsU
+	ZiD4SGrhkvkFEBD64lxoNdr8KISNYGo+JaM6a8eL7o5XQ=
+Received: from [192.168.71.94] (unknown [])
+	by gzsmtp2 (Coremail) with SMTP id PSgvCgD3Hz_vGj9o3hriBA--.18789S2;
+	Tue, 03 Jun 2025 23:55:28 +0800 (CST)
+Message-ID: <62b35061-ca77-40ce-b10b-709dd862285e@163.com>
+Date: Tue, 3 Jun 2025 23:55:27 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|MN2PR12MB4406:EE_
-X-MS-Office365-Filtering-Correlation-Id: b9f79322-bfe4-4a53-e8b6-08dda2b70e6e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?aW9lUmpWMk9LQWVqZVdpK0QzSWFPQ1BXNGJVN0hERWo2NkRES3R5TUJFRnFs?=
- =?utf-8?B?NXhJK2VHWHlOY1R3M0FkMStLVVgrZjJjU3E5bmJJZ3hmNnBhZ3N0ZGIxZWxN?=
- =?utf-8?B?WGpqRnZTVDROaXBLUVphZFBEMkRQSUR3YTVKRWMzbWdKUW5oR3MvMDBHdktD?=
- =?utf-8?B?M1ArcVBQUCtRSktFL05FdlFLbjhJZWdHSVZDa3dETFVjb3l3WkYyVFZrZ0JU?=
- =?utf-8?B?dXpRWGhtYVBNdTJFMTZrYTQvWlpidGNEMTBGYXB2SmsrUGtyVm9TZUQwZ1Z0?=
- =?utf-8?B?bUFiMmhLaklLUWh1YUg0MjdGM0R2azdDeld3bEtWcld4dWRFNGIwM292c0Mr?=
- =?utf-8?B?WjFsZWxUdHMxZWhJZDZKekp3RHhJVVc3aUFpdTlWYjd6aHBJLzhNc2Z4Qzgr?=
- =?utf-8?B?S1RtRzExRjFoak90K0hEN0FHNXJzbTEzRWhId29qNnVRU09nNFo0MGlETFYw?=
- =?utf-8?B?R2NCM05CZHdIVnFvVEI1alFKdWZ0WDBPUkVKZEdrMm5mU3IzMmFLQTdVOGVI?=
- =?utf-8?B?OU5XbXVRYjJrMFd1a3ZHeVBrMnBydys0cjRCNmd3ekhNdWJLQ2F6eW1GSHp0?=
- =?utf-8?B?VTVHWXRjQ1AvMCtWUy9SWElDYmkrVE0wUW5FUzl5Ly9LenRoTG1WV0tRclo4?=
- =?utf-8?B?VkY0MElxSHNjK0xha2ZsSmdUNGdyWHI2UDFHOFR2em5uMmxTL0E5dmVJR01U?=
- =?utf-8?B?RVZZRTBybFZYZ0FSVG1ueWVLTDBOUGpLZ3BQQXNVOUI5WkY1akJPTVNnUncx?=
- =?utf-8?B?WUdQRzIvSXdpaTlIdWNCM3o5S2N3ZFlUdGMxRjk3WTZReStWMTBveGR2aE11?=
- =?utf-8?B?ZCswdTdBWFU3elZ2UERFVjlnOUtsR1FLVkNFa3F4dyswK0JjMDdGcWYzY0JT?=
- =?utf-8?B?L0trdmtQNWdtYlg2V3c0VVRlMWpnRmJnbk0zY1hyL3BhUTd3K0pXY21JSDJJ?=
- =?utf-8?B?MDhTS3RucHl1S2l1YW1UNFUxOHptd0o5YzlyVTZsSkJlWW9pbmtMcTl5QTRw?=
- =?utf-8?B?b3RNYkgvTlhCdmlSRzVGS0tmMzZzWklDQTVyclF5Mjl4ZnJhaE4ybklveHRS?=
- =?utf-8?B?cmhFeCtob213ZmhXcFFaaDFHN2ZrWFIvakNwRkVKcU1VLzl5T3g0dHBkNHJl?=
- =?utf-8?B?aERFT0Y4VU1EODlRVlBjeEpMaEdhdzdjQml1WW9PckZwYjNYWUlWblc1MFhH?=
- =?utf-8?B?dzBvaE50bkZPMnpXT2UyM0RUK0NXY055TEFnQzM1QzhVTXlHSjN4dFphOXNH?=
- =?utf-8?B?b2s3bmxyRERmamV2TGsxVE1ITE9raXBUQmpvbCs4WjRMc2dQUUJqWUhUNnll?=
- =?utf-8?B?aG5TOWtEYzBoTTNFeXYyUmRpUWlRbTQrVjFhQjFBZlRXNlhybHcybENSUXVL?=
- =?utf-8?B?T2xuL1JDZmJqeW5zTjN2V0QxQnlmNkZjNUNnbnRwZk90b3RNWVBOR0J5Q3VB?=
- =?utf-8?B?aG9NR084S1ByVU5rbEsvNDRXY0c4TzVKTkMyMHh1ZVhLUVZsdkpZREJXeVhY?=
- =?utf-8?B?amM5N3F3a29xY2xhRzJ0UlIxL25MamVDTFJ1V1djNWIvaGl1Q0F5OU4yVjRw?=
- =?utf-8?B?QzNqVDlONWhrRHJ1eS9GRGlqenRJbEJ6RnJ0SkJ3TWVCMkxHUkZjZkRadTk5?=
- =?utf-8?B?NHMyNlpUQUNWL3ZQOFFhYmtYU3Qydk5xa3JkcWRIWDhxYXlzNStFekk4YXFs?=
- =?utf-8?B?eU13SFNCaXZqZy9tZlJlSHk1RjNJaDFSM2ZwUWtHcWpWbDRpaVhCbi9VNUhm?=
- =?utf-8?B?TjNYQlM5SStGcVhDNFlzWU9ROGorSGtNc0VaSGc4VVhxUGx1TExqUWhnMlpk?=
- =?utf-8?B?TUhiRUJ3WEQ4K1V3V1Fya0RPcU13MmJHZGljRmVySGw4RXBCMVNxTEJUMUdj?=
- =?utf-8?B?K0ZKRXBlbkpuSmU2eHo0cFoySTNjY2V3WGNMbkNxZENDUG5XZENndWh1ZE11?=
- =?utf-8?Q?XE3tZgrUPL8=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dnZjdzdCVmdwSTRYNkg4emVRTFJQYkM3SE03emJMVkdocElxSlZzTjVnU2lv?=
- =?utf-8?B?Szh4dlFyRURMbGRvZnZHOTN2S1V3NVBZd29EcVFpYkRVWFRRNk5LampQTDM5?=
- =?utf-8?B?WE5RaWxVS0NNM3NMWWRVRFFoU004aHl0VzdNdm9CKzlKNUh1VEwybWtmdU1q?=
- =?utf-8?B?SlZ6L2tuZ2I0SGdqSTJUYVpYbGlEd0ZGSHlQMTJTanlsTWhVM1NpTHA5TGVa?=
- =?utf-8?B?UWY2cXJyUHRzQkpJeWNrRU5RMzJIV1pBR0o4MXhGRHdvZXVyRmc2SHY1anFk?=
- =?utf-8?B?SnRpOXpOclRueHUxTExndTNZNEN2c2FnRXFXVHcvWlBUeFhMR21XMnkzbk45?=
- =?utf-8?B?VXhpU0d5YVI0NUFXd0YrMU9UTXlXVmhYUUxOQkRIeCs5WkUzVllyTUltMjQ2?=
- =?utf-8?B?bVhxb2VpRUx2MUZNZTBjWEFkUmE3Z1o3d0J3cm9TeE5XUG9JNWZqTHV5MEtk?=
- =?utf-8?B?MkpWSnBxRVJ6L1cxKzM5SzR1dHlPNWcyczZuM2VzdTFIWHR5UmpJS1U1Q0hL?=
- =?utf-8?B?b08wMUMxZFRic083NnlPU0xkZHJrRy90cGtlcHBXQXBzcVUyRVl1MTRnNkdi?=
- =?utf-8?B?VlRyYWwxMHJKVUV5bkdZV05EcE9xbUxKTlNUL3k3OHNNV3hGUDVrcGtMeDE5?=
- =?utf-8?B?TWxVU2ZlWFVoc2YxSEpuWkZEZUx4U0MzQVRLTTRpckJ6cmdsUWV3RGJMNVZl?=
- =?utf-8?B?UldQTVRXTGJzUDd5R1BybTducW1EMVU4SUxSL2kyK0Vqc0xnSmlSc3FEeklJ?=
- =?utf-8?B?OENBalBySHF6Wk9NWUgrbENmZ3JEOTBPZFhZejBrLzFMWFFyUU8xOWxxMERv?=
- =?utf-8?B?VVFHZ0RGYTlJMXhLdG9Jb2xra2ZWQWhKUHRvT0JtRUd4VzgvOXI0N01YZzBI?=
- =?utf-8?B?aVQxSU04Mi9heEFyeE1sdTVQbVZ0d1lWVHJqWmZxUG1Dd0JmNVhRMlZ2eitx?=
- =?utf-8?B?eUZ0b2ZJWGJOOFh2Y09rUHE3Mk9uWUttNW1qWDBTMzdZeEhyRzJydnE5WUFB?=
- =?utf-8?B?TVNpRGFtalJXQkx1ZmR0TkM3TjhGcjN6d29ubmgyNzRPam55RFZlTjNYQnAy?=
- =?utf-8?B?amlxajV6YTRvTDIwMG1vV25LUVRFOVBwTExkN0pQRHQ5Y3pKWmRhcEZ4VExp?=
- =?utf-8?B?ekFqd3VoNmZTWVVOblZ6ZEVOVkNTcFFWazV3V05jSm5FVDhBVW9TRmkwSFNL?=
- =?utf-8?B?bUt4aUUxNDlRWG9WNllNclBLNFBSNVl5RE1lWjBZSXl2Q3haT0tvTW5RWDls?=
- =?utf-8?B?cHJ5c1gxamJEQk40THFYSC9JeGtYeTRyWkZRdlFscWJzUlk4UWFENUJWZEZx?=
- =?utf-8?B?czZWQ3lZdm5RazFReThtL1g2OWlROGp2aFJyNnR1cnVSRm1qUkU3MzBBTmt0?=
- =?utf-8?B?b1dEbUxUL21zSGxsN2ZtNnBNWGNwd2V4dXhlK1ArYTh5dEoxY29wdy8xcWpo?=
- =?utf-8?B?T0dhZGxRUWJkUXE4WVhyakhNQS9OeE13VkNOa1A4Z0g3V0p1OGNEVG5TU084?=
- =?utf-8?B?cFVMM0sxUTM1YWE1VnZCTVhBcDVmMklxZHpJZ1RnODhoYjM0VzBKdFBWb0x4?=
- =?utf-8?B?ZjlRUEU5VEMzMWtIQ2VUUDltVXhmM1dDcExSR3NxaUFWWi9TWnk0eHpUeEZv?=
- =?utf-8?B?b015aGhDRk8zdUZQbk5UVG5USVgzSDBLWlBtODcwYnowTHRPMmZKcEtBTGtp?=
- =?utf-8?B?R2hxRmNwWVN5cjZ5QTA1eFFpTElMcVJZWlZkMTJGL3FwUmEzK1VPZWdwZ0xo?=
- =?utf-8?B?c0d3Qm9jc3dxWTNmclZQRFZIV0xLb0ZxalNYL3BabURKcGpwVW9mUWV2SUwr?=
- =?utf-8?B?bGZpaXc2dWlMY1FJNDJNejJOcnpBdEVpaVIwcFFQRUt1eGFwMjdaSUY3Ni9K?=
- =?utf-8?B?SThUeFBBNjcrMUl5ZUR1REVZUDFvWHlnN2xEZmdEWDJXcVhBOXZsVEJiOFdV?=
- =?utf-8?B?aXRmeCtpbm9YNFZpVjVqZjRTWkJ3dDRaWE9BVDQvR09rN0JJMm80VW5LNy9E?=
- =?utf-8?B?TDAxUVNHdXQ0ZlQ3cWtvdk9YV2pQUDd5Y0VtVEphK0dWV3hyS1p4VjE5VDly?=
- =?utf-8?B?V01zUENhd1UweU9uemxCTXA1bWdEQVdMbGQyUnhJVUZuREpYVmdmbmtrcFZ1?=
- =?utf-8?Q?x7stdCFXvanN8Nj27UMyNFubU?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b9f79322-bfe4-4a53-e8b6-08dda2b70e6e
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jun 2025 15:55:26.2941
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 03/WtGQEDuoBjhlEc7sz18vTVCp82IvYY4QrdQrBjk657IEKpTT6ef2pcW5kstwp
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4406
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v12 3/6] PCI: Refactor capability search into common
+ macros
+To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: lpieralisi@kernel.org, bhelgaas@google.com,
+ manivannan.sadhasivam@linaro.org, kw@linux.com, cassel@kernel.org,
+ robh@kernel.org, jingoohan1@gmail.com, linux-pci@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>
+References: <20250514161258.93844-1-18255117159@163.com>
+ <20250514161258.93844-4-18255117159@163.com>
+ <cb70dfc1-d576-110b-66f2-173e9bdf86dd@linux.intel.com>
+Content-Language: en-US
+From: Hans Zhang <18255117159@163.com>
+In-Reply-To: <cb70dfc1-d576-110b-66f2-173e9bdf86dd@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:PSgvCgD3Hz_vGj9o3hriBA--.18789S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW3WFyUWF4xtr1UXrW8JFyrJFb_yoWfCFW5pr
+	y5A3WayrWUJF12gwnFqa1Uta4aqan7JFWxurW7Gwn8XFyqkFn7KFyFkr1agFy2yrZ7uF1x
+	Xan0qF93C3Z0yFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UIiihUUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiOgdho2g-EXSq6AABsO
 
-On 6/3/25 16:28, Christoph Hellwig wrote:
-> On Tue, Jun 03, 2025 at 04:18:22PM +0200, Christian König wrote:
->>> Does it matter compared to the I/O in this case?
+
+
+On 2025/6/3 17:38, Ilpo Järvinen wrote:
+> On Thu, 15 May 2025, Hans Zhang wrote:
+> 
+>> The PCI Capability search functionality is duplicated across the PCI core
+>> and several controller drivers. The core's current implementation requires
+>> fully initialized PCI device and bus structures, which prevents controller
+>> drivers from using it during early initialization phases before these
+>> structures are available.
 >>
->> It unfortunately does, see the numbers on patch 3 and 4.
+>> Move the Capability search logic into a header-based macro that accepts a
+>> config space accessor function as an argument. This enables controller
+>> drivers to perform Capability discovery using their early access
+>> mechanisms prior to full device initialization while sharing the
+>> Capability search code.
+>>
+>> Convert the existing PCI core Capability search implementation to use this
+>> new macro. Controller drivers can later use the same macros with their
+>> early access mechanisms while maintaining the existing protection against
+>> infinite loops through preserved TTL checks.
+>>
+>> The ttl parameter was originally an additional safeguard to prevent
+>> infinite loops in corrupted config space.  However, the
+>> PCI_FIND_NEXT_CAP_TTL macro already enforces a TTL limit internally.
 > 
-> That's kinda weird.  Why does the page table lookup tage so much
-> time compared to normal I/O?
+> PCI_FIND_NEXT_CAP_TTL()
 
-I have absolutely no idea. It's rather surprising for me as well.
+Dear Ilpo,
 
-The user seems to have a rather slow CPU paired with fast I/O, but it still looks rather fishy to me.
+Will change.
 
-Additional to that allocating memory through memfd_create() is *much* slower on that box than through dma-buf-heaps (which basically just uses GFP and an array).
-
-We have seen something similar with customers systems which we couldn't explain so far.
-
->> My question is rather if it's ok to call f_op->write_iter() and 
->> f_op->read_iter() with pages allocated by alloc_pages(), e.g.
->> where drivers potentially ignore the page count and just re-use pages
->> as they like?
 > 
-> read_iter and write_iter with ITER_BVEC just use the pages as source
-> and destination of the I/O.  They must not touch the refcounts or
-> do anything fancy with them.  Various places in the kernel rely on
-> that.
+>> Removing redundant ttl handling simplifies the interface while maintaining
+>> the safety guarantee. This aligns with the macro's design intent of
+>> encapsulating TTL management.
+>>
+>> Signed-off-by: Hans Zhang <18255117159@163.com>
+>> ---
+>> Changes since v11:
+>> - Add #include <linux/bitfield.h>, solve the compilation warnings caused by the subsequent patch calls.
+>>
+>> Changes since v10:
+>> - Remove #include <uapi/linux/pci_regs.h>.
+>> - The patch commit message were modified.
+>>
+>> Changes since v9:
+>> - None
+>>
+>> Changes since v8:
+>> - The patch commit message were modified.
+>> ---
+>>   drivers/pci/pci.c | 69 +++++--------------------------------
+>>   drivers/pci/pci.h | 86 +++++++++++++++++++++++++++++++++++++++++++++++
+>>   2 files changed, 95 insertions(+), 60 deletions(-)
+>>
+>> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+>> index 27d2adb18a30..271d922abdcc 100644
+>> --- a/drivers/pci/pci.c
+>> +++ b/drivers/pci/pci.c
+>> @@ -9,7 +9,6 @@
+>>    */
+>>   
+>>   #include <linux/acpi.h>
+>> -#include <linux/align.h>
+>>   #include <linux/kernel.h>
+>>   #include <linux/delay.h>
+>>   #include <linux/dmi.h>
+>> @@ -425,35 +424,16 @@ static int pci_dev_str_match(struct pci_dev *dev, const char *p,
+>>   }
+>>   
+>>   static u8 __pci_find_next_cap_ttl(struct pci_bus *bus, unsigned int devfn,
+>> -				  u8 pos, int cap, int *ttl)
+>> +				  u8 pos, int cap)
+>>   {
+>> -	u8 id;
+>> -	u16 ent;
+>> -
+>> -	pci_bus_read_config_byte(bus, devfn, pos, &pos);
+>> -
+>> -	while ((*ttl)--) {
+>> -		if (pos < PCI_STD_HEADER_SIZEOF)
+>> -			break;
+>> -		pos = ALIGN_DOWN(pos, 4);
+>> -		pci_bus_read_config_word(bus, devfn, pos, &ent);
+>> -
+>> -		id = FIELD_GET(PCI_CAP_ID_MASK, ent);
+>> -		if (id == 0xff)
+>> -			break;
+>> -		if (id == cap)
+>> -			return pos;
+>> -		pos = FIELD_GET(PCI_CAP_LIST_NEXT_MASK, ent);
+>> -	}
+>> -	return 0;
+>> +	return PCI_FIND_NEXT_CAP_TTL(pci_bus_read_config, pos, cap, bus,
+>> +				     devfn);
+>>   }
 
-Perfect, thanks for that info.
+Will delete __pci_find_next_cap_ttl function.
 
-Regards,
-Christian.
+>>   
+>>   static u8 __pci_find_next_cap(struct pci_bus *bus, unsigned int devfn,
+>>   			      u8 pos, int cap)
+>>   {
+>> -	int ttl = PCI_FIND_CAP_TTL;
+>> -
+>> -	return __pci_find_next_cap_ttl(bus, devfn, pos, cap, &ttl);
+>> +	return __pci_find_next_cap_ttl(bus, devfn, pos, cap);
+>>   }
+> 
+> Please just get rid of the ttl variant, use PCI_FIND_NEXT_CAP_TTL()
+> directly here, and adjust the other callers of the ttl variable to call
+> this one instead.
+> 
+
+Will change.
+
+>>   
+>>   u8 pci_find_next_capability(struct pci_dev *dev, u8 pos, int cap)
+>> @@ -554,42 +534,11 @@ EXPORT_SYMBOL(pci_bus_find_capability);
+>>    */
+>>   u16 pci_find_next_ext_capability(struct pci_dev *dev, u16 start, int cap)
+>>   {
+>> -	u32 header;
+>> -	int ttl;
+>> -	u16 pos = PCI_CFG_SPACE_SIZE;
+>> -
+>> -	/* minimum 8 bytes per capability */
+>> -	ttl = (PCI_CFG_SPACE_EXP_SIZE - PCI_CFG_SPACE_SIZE) / 8;
+>> -
+>>   	if (dev->cfg_size <= PCI_CFG_SPACE_SIZE)
+>>   		return 0;
+>>   
+>> -	if (start)
+>> -		pos = start;
+>> -
+>> -	if (pci_read_config_dword(dev, pos, &header) != PCIBIOS_SUCCESSFUL)
+>> -		return 0;
+>> -
+>> -	/*
+>> -	 * If we have no capabilities, this is indicated by cap ID,
+>> -	 * cap version and next pointer all being 0.
+>> -	 */
+>> -	if (header == 0)
+>> -		return 0;
+>> -
+>> -	while (ttl-- > 0) {
+>> -		if (PCI_EXT_CAP_ID(header) == cap && pos != start)
+>> -			return pos;
+>> -
+>> -		pos = PCI_EXT_CAP_NEXT(header);
+>> -		if (pos < PCI_CFG_SPACE_SIZE)
+>> -			break;
+>> -
+>> -		if (pci_read_config_dword(dev, pos, &header) != PCIBIOS_SUCCESSFUL)
+>> -			break;
+>> -	}
+>> -
+>> -	return 0;
+>> +	return PCI_FIND_NEXT_EXT_CAPABILITY(pci_bus_read_config, start, cap,
+>> +					    dev->bus, dev->devfn);
+>>   }
+>>   EXPORT_SYMBOL_GPL(pci_find_next_ext_capability);
+>>   
+>> @@ -649,7 +598,7 @@ EXPORT_SYMBOL_GPL(pci_get_dsn);
+>>   
+>>   static u8 __pci_find_next_ht_cap(struct pci_dev *dev, u8 pos, int ht_cap)
+>>   {
+>> -	int rc, ttl = PCI_FIND_CAP_TTL;
+>> +	int rc;
+>>   	u8 cap, mask;
+>>   
+>>   	if (ht_cap == HT_CAPTYPE_SLAVE || ht_cap == HT_CAPTYPE_HOST)
+>> @@ -658,7 +607,7 @@ static u8 __pci_find_next_ht_cap(struct pci_dev *dev, u8 pos, int ht_cap)
+>>   		mask = HT_5BIT_CAP_MASK;
+>>   
+>>   	pos = __pci_find_next_cap_ttl(dev->bus, dev->devfn, pos,
+
+Will use PCI_FIND_NEXT_CAP_TTL().
+
+>> -				      PCI_CAP_ID_HT, &ttl);
+>> +				      PCI_CAP_ID_HT);
+>>   	while (pos) {
+>>   		rc = pci_read_config_byte(dev, pos + 3, &cap);
+>>   		if (rc != PCIBIOS_SUCCESSFUL)
+>> @@ -669,7 +618,7 @@ static u8 __pci_find_next_ht_cap(struct pci_dev *dev, u8 pos, int ht_cap)
+>>   
+>>   		pos = __pci_find_next_cap_ttl(dev->bus, dev->devfn,
+
+Will use PCI_FIND_NEXT_CAP_TTL().
+
+>>   					      pos + PCI_CAP_LIST_NEXT,
+>> -					      PCI_CAP_ID_HT, &ttl);
+>> +					      PCI_CAP_ID_HT);
+>>   	}
+>>   
+>>   	return 0;
+>> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+>> index 5e1477d6e254..f9cf45026e6e 100644
+>> --- a/drivers/pci/pci.h
+>> +++ b/drivers/pci/pci.h
+>> @@ -2,6 +2,8 @@
+>>   #ifndef DRIVERS_PCI_H
+>>   #define DRIVERS_PCI_H
+>>   
+>> +#include <linux/align.h>
+>> +#include <linux/bitfield.h>
+>>   #include <linux/pci.h>
+>>   
+>>   struct pcie_tlp_log;
+>> @@ -91,6 +93,90 @@ bool pcie_cap_has_rtctl(const struct pci_dev *dev);
+>>   int pci_bus_read_config(void *priv, unsigned int devfn, int where, u32 size,
+>>   			u32 *val);
+>>   
+>> +/* Standard Capability finder */
+>> +/**
+>> + * PCI_FIND_NEXT_CAP_TTL - Find a PCI standard capability
+>> + * @read_cfg: Function pointer for reading PCI config space
+>> + * @start: Starting position to begin search
+>> + * @cap: Capability ID to find
+>> + * @args: Arguments to pass to read_cfg function
+>> + *
+>> + * Iterates through the capability list in PCI config space to find
+>> + * the specified capability. Implements TTL (time-to-live) protection
+> 
+> to find @cap.
+
+Will change.
+
+> 
+>> + * against infinite loops.
+>> + *
+>> + * Returns: Position of the capability if found, 0 otherwise.
+>> + */
+>> +#define PCI_FIND_NEXT_CAP_TTL(read_cfg, start, cap, args...)		\
+>> +({									\
+>> +	int __ttl = PCI_FIND_CAP_TTL;					\
+>> +	u8 __id, __found_pos = 0;					\
+>> +	u8 __pos = (start);						\
+>> +	u16 __ent;							\
+>> +									\
+>> +	read_cfg(args, __pos, 1, (u32 *)&__pos);			\
+>> +									\
+>> +	while (__ttl--) {						\
+>> +		if (__pos < PCI_STD_HEADER_SIZEOF)			\
+>> +			break;						\
+>> +									\
+>> +		__pos = ALIGN_DOWN(__pos, 4);				\
+>> +		read_cfg(args, __pos, 2, (u32 *)&__ent);		\
+>> +									\
+>> +		__id = FIELD_GET(PCI_CAP_ID_MASK, __ent);		\
+>> +		if (__id == 0xff)					\
+>> +			break;						\
+>> +									\
+>> +		if (__id == (cap)) {					\
+>> +			__found_pos = __pos;				\
+>> +			break;						\
+>> +		}							\
+>> +									\
+>> +		__pos = FIELD_GET(PCI_CAP_LIST_NEXT_MASK, __ent);	\
+>> +	}								\
+>> +	__found_pos;							\
+>> +})
+>> +
+>> +/* Extended Capability finder */
+>> +/**
+>> + * PCI_FIND_NEXT_EXT_CAPABILITY - Find a PCI extended capability
+>> + * @read_cfg: Function pointer for reading PCI config space
+>> + * @start: Starting position to begin search (0 for initial search)
+>> + * @cap: Extended capability ID to find
+>> + * @args: Arguments to pass to read_cfg function
+>> + *
+>> + * Searches the extended capability space in PCI config registers
+>> + * for the specified capability. Implements TTL protection against
+> 
+> for @cap.
+
+Will change.
+
+Best regards,
+Hans
+
+> 
+>> + * infinite loops using a calculated maximum search count.
+>> + *
+>> + * Returns: Position of the capability if found, 0 otherwise.
+>> + */
+>> +#define PCI_FIND_NEXT_EXT_CAPABILITY(read_cfg, start, cap, args...)		\
+>> +({										\
+>> +	u16 __pos = (start) ?: PCI_CFG_SPACE_SIZE;				\
+>> +	u16 __found_pos = 0;							\
+>> +	int __ttl, __ret;							\
+>> +	u32 __header;								\
+>> +										\
+>> +	__ttl = (PCI_CFG_SPACE_EXP_SIZE - PCI_CFG_SPACE_SIZE) / 8;		\
+>> +	while (__ttl-- > 0 && __pos >= PCI_CFG_SPACE_SIZE) {			\
+>> +		__ret = read_cfg(args, __pos, 4, &__header);			\
+>> +		if (__ret != PCIBIOS_SUCCESSFUL)				\
+>> +			break;							\
+>> +										\
+>> +		if (__header == 0)						\
+>> +			break;							\
+>> +										\
+>> +		if (PCI_EXT_CAP_ID(__header) == (cap) && __pos != start) {	\
+>> +			__found_pos = __pos;					\
+>> +			break;							\
+>> +		}								\
+>> +										\
+>> +		__pos = PCI_EXT_CAP_NEXT(__header);				\
+>> +	}									\
+>> +	__found_pos;								\
+>> +})
+>> +
+>>   /* Functions internal to the PCI core code */
+>>   
+>>   #ifdef CONFIG_DMI
+>>
+> 
+
 
